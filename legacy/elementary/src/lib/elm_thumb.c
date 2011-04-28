@@ -39,9 +39,10 @@ struct _Widget_Data
         const char *thumb_path;
         const char *thumb_key;
         Ethumb_Exists *exists;
-        Ecore_Idle_Enterer *idler;
 
         Ethumb_Thumb_Format format;
+
+        Eina_Bool retry : 1;
 #endif
      } thumb;
    Ecore_Event_Handler *eeh;
@@ -83,6 +84,8 @@ static const Evas_Smart_Cb_Description _signals[] =
 
 struct _Ethumb_Client *_elm_ethumb_client = NULL;
 Eina_Bool _elm_ethumb_connected = EINA_FALSE;
+static Eina_List *retry = NULL;
+static int pending_request = 0;
 
 EAPI int ELM_ECORE_EVENT_ETHUMB_CONNECT = 0;
 
@@ -103,10 +106,10 @@ _del_hook(Evas_Object *obj)
         ethumb_client_thumb_exists_cancel(wd->thumb.exists);
         wd->thumb.exists = NULL;
      }
-   if (wd->thumb.idler)
+   if (wd->thumb.retry)
      {
-        ecore_idle_enterer_del(wd->thumb.idler);
-        wd->thumb.idler = NULL;
+        retry = eina_list_remove(retry, wd);
+        wd->thumb.retry = EINA_FALSE;
      }
 
    eina_stringshare_del(wd->thumb.thumb_path);
@@ -165,40 +168,40 @@ _mouse_up_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *
 
 /* As we do use stat to check if a thumbnail is available, it's possible
    that we end up accessing before the file is completly written on disk.
-   By using an idler enterer, I hope to wait enought before trying accessing
-   it again.
+   By retrying each time a thumbnail is finished we should be fine or not.
 */
 static Eina_Bool
-_retry_thumb(void *data)
+_retry_thumb(Widget_Data *wd)
 {
-   Widget_Data *wd = data;
    Evas_Coord mw, mh;
    int r;
 
-   wd->thumb.idler = NULL;
-
    if ((wd->is_video) && (wd->thumb.format == ETHUMB_THUMB_EET))
      {
+        edje_object_file_set(wd->view, NULL, NULL);
         if (!edje_object_file_set(wd->view,
                                   wd->thumb.thumb_path,
                                   "movie/thumb"))
           {
-             ERR("could not set file=%s key=%s for %s",
-                 wd->thumb.thumb_path,
-                 wd->thumb.thumb_key,
-                 wd->file);
+             if (pending_request == 0)
+               ERR("could not set file=%s key=%s for %s",
+                   wd->thumb.thumb_path,
+                   wd->thumb.thumb_key,
+                   wd->file);
              goto view_err;
           }
      }
    else
      {
+        evas_object_image_file_set(wd->view, NULL, NULL);
         evas_object_image_file_set(wd->view,
                                    wd->thumb.thumb_path,
                                    wd->thumb.thumb_key);
         r = evas_object_image_load_error_get(wd->view);
         if (r != EVAS_LOAD_ERROR_NONE)
           {
-             ERR("%s: %s", wd->thumb.thumb_path, evas_load_error_str(r));
+             if (pending_request == 0)
+               ERR("%s: %s", wd->thumb.thumb_path, evas_load_error_str(r));
              goto view_err;
           }
      }
@@ -218,22 +221,10 @@ _retry_thumb(void *data)
    eina_stringshare_del(wd->thumb.thumb_key);
    wd->thumb.thumb_key = NULL;
 
-   return ECORE_CALLBACK_CANCEL;
+   return EINA_TRUE;
 
  view_err:
-   eina_stringshare_del(wd->thumb.thumb_path);
-   wd->thumb.thumb_path = NULL;
-
-   eina_stringshare_del(wd->thumb.thumb_key);
-   wd->thumb.thumb_key = NULL;
-
-   evas_object_del(wd->view);
-   wd->view = NULL;
-
-   edje_object_signal_emit(wd->frame, EDJE_SIGNAL_LOAD_ERROR, "elm");
-   evas_object_smart_callback_call(wd->self, SIG_LOAD_ERROR, NULL);
-
-   return ECORE_CALLBACK_CANCEL;
+   return EINA_FALSE;
 }
 
 static void
@@ -241,6 +232,7 @@ _finished_thumb(Widget_Data *wd,
                 const char *thumb_path,
                 const char *thumb_key)
 {
+   Eina_List *l, *ll;
    Evas *evas;
    Evas_Coord mw, mh;
    int r;
@@ -272,7 +264,9 @@ _finished_thumb(Widget_Data *wd,
              wd->thumb.thumb_path = eina_stringshare_ref(thumb_path);
              wd->thumb.thumb_key = eina_stringshare_ref(thumb_key);
              wd->thumb.format = ethumb_client_format_get(_elm_ethumb_client);
-             wd->thumb.idler = ecore_idle_enterer_add(_retry_thumb, wd);
+             wd->thumb.retry = EINA_TRUE;
+
+             retry = eina_list_append(retry, wd);
              return ;
           }
      }
@@ -297,7 +291,9 @@ _finished_thumb(Widget_Data *wd,
              wd->thumb.thumb_path = eina_stringshare_ref(thumb_path);
              wd->thumb.thumb_key = eina_stringshare_ref(thumb_key);
              wd->thumb.format = ethumb_client_format_get(_elm_ethumb_client);
-             wd->thumb.idler = ecore_idle_enterer_add(_retry_thumb, wd);
+             wd->thumb.retry = EINA_TRUE;
+
+             retry = eina_list_append(retry, wd);
              return ;
           }
      }
@@ -310,6 +306,27 @@ _finished_thumb(Widget_Data *wd,
    eina_stringshare_replace(&(wd->thumb.key), thumb_key);
    edje_object_signal_emit(wd->frame, EDJE_SIGNAL_GENERATE_STOP, "elm");
    evas_object_smart_callback_call(wd->self, SIG_GENERATE_STOP, NULL);
+
+   EINA_LIST_FOREACH_SAFE(retry, l, ll, wd)
+     if (_retry_thumb(wd))
+       retry = eina_list_remove_list(retry, l);
+
+   if (pending_request == 0)
+     EINA_LIST_FREE(retry, wd)
+       {
+          eina_stringshare_del(wd->thumb.thumb_path);
+          wd->thumb.thumb_path = NULL;
+
+          eina_stringshare_del(wd->thumb.thumb_key);
+          wd->thumb.thumb_key = NULL;
+
+          evas_object_del(wd->view);
+          wd->view = NULL;
+
+          edje_object_signal_emit(wd->frame, EDJE_SIGNAL_LOAD_ERROR, "elm");
+          evas_object_smart_callback_call(wd->self, SIG_LOAD_ERROR, NULL);
+       }
+
    return;
 
 err:
@@ -324,6 +341,8 @@ _finished_thumb_cb(void *data, Ethumb_Client *c __UNUSED__, int id, const char *
 
    EINA_SAFETY_ON_FALSE_RETURN(wd->thumb.id == id);
    wd->thumb.id = -1;
+
+   pending_request--;
 
    edje_object_signal_emit(wd->frame, EDJE_SIGNAL_PULSE_STOP, "elm");
 
@@ -353,6 +372,8 @@ _thumb_exists(Ethumb_Client *client __UNUSED__, Ethumb_Exists *thread,
      {
         const char *thumb_path, *thumb_key;
 
+        pending_request--;
+
         wd->thumb.id = -1;
         ethumb_client_thumb_path_get(_elm_ethumb_client, &thumb_path,
                                      &thumb_key);
@@ -368,6 +389,8 @@ _thumb_exists(Ethumb_Client *client __UNUSED__, Ethumb_Exists *thread,
      }
    else
      {
+        pending_request--;
+
         wd->thumb.id = -1;
         edje_object_signal_emit(wd->frame, EDJE_SIGNAL_GENERATE_ERROR, "elm");
         evas_object_smart_callback_call(wd->self, SIG_GENERATE_ERROR, NULL);
@@ -391,14 +414,15 @@ _thumb_apply(Widget_Data *wd)
         wd->thumb.exists = NULL;
      }
 
-   if (wd->thumb.idler)
+   if (wd->thumb.retry)
      {
-        ecore_idle_enterer_del(wd->thumb.idler);
-        wd->thumb.idler = NULL;
+        retry = eina_list_remove(retry, wd);
+        wd->thumb.retry = EINA_FALSE;
      }
 
    if (!wd->file) return;
 
+   pending_request++;
    ethumb_client_file_set(_elm_ethumb_client, wd->file, wd->key);
    wd->thumb.exists = ethumb_client_thumb_exists(_elm_ethumb_client,
                                                  _thumb_exists,
@@ -457,10 +481,10 @@ _thumb_hide_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void
         wd->thumb.exists = NULL;
      }
 
-   if (wd->thumb.idler)
+   if (wd->thumb.retry)
      {
-        ecore_idle_enterer_del(wd->thumb.idler);
-        wd->thumb.idler = NULL;
+        retry = eina_list_remove(retry, wd);
+        wd->thumb.retry = EINA_FALSE;
      }
 
    if (wd->eeh)
@@ -591,7 +615,6 @@ elm_thumb_add(Evas_Object *parent)
    wd->thumb.thumb_path = NULL;
    wd->thumb.thumb_key = NULL;
    wd->thumb.exists = NULL;
-   wd->thumb.idler = NULL;
    evas_object_event_callback_add(obj, EVAS_CALLBACK_MOUSE_DOWN,
                                   _mouse_down_cb, wd);
    evas_object_event_callback_add(obj, EVAS_CALLBACK_MOUSE_UP,
