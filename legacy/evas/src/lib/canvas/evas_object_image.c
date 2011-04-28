@@ -1999,7 +1999,7 @@ image_filter_draw_under_recurse(Evas *e, Evas_Object *obj, Evas_Object *stop,
                                 int x, int y)
 {
    Evas_Object *obj2;
-
+   
    if (obj->clip.clipees) return;
    /* FIXME: Doing bounding box test */
    if (!evas_object_is_in_output_rect(obj, stop->cur.geometry.x,
@@ -2007,26 +2007,26 @@ image_filter_draw_under_recurse(Evas *e, Evas_Object *obj, Evas_Object *stop,
                                       stop->cur.geometry.w,
                                       stop->cur.geometry.h))
       return;
-
+   
    if (!evas_object_is_visible(obj)) return;
    obj->pre_render_done = 1;
-     ctx = e->engine.func->context_new(output);
-
+   ctx = e->engine.func->context_new(output);
+   
    if (obj->smart.smart)
      {
-        EINA_INLIST_FOREACH(evas_object_smart_members_get_direct(obj), obj2){
+        EINA_INLIST_FOREACH(evas_object_smart_members_get_direct(obj), obj2)
+          {
              if (obj2 == stop) return;
-             image_filter_draw_under_recurse(e, obj2, stop, output, surface, ctx, x,y);
-        }
+             image_filter_draw_under_recurse(e, obj2, stop, output, surface, 
+                                             ctx, x, y);
+          }
      }
    else
      {
         obj->func->render(obj, output, ctx, surface,x,y);
      }
-     e->engine.func->context_free(output, ctx);
-
+   e->engine.func->context_free(output, ctx);
 }
-
 
 /*
  * Draw all visible objects intersecting an object which are _beneath_ it.
@@ -2035,11 +2035,11 @@ static void
 image_filter_draw_under(Evas *e, Evas_Object *stop, void *output, void *ctx, void *surface, int dx, int dy)
 {
    Evas_Layer *lay;
-   int x,y;
-
+   int x, y;
+   
    x = stop->cur.geometry.x - dx;
    y = stop->cur.geometry.y - dy;
-
+   
    EINA_INLIST_FOREACH(e->layers, lay)
      {
         Evas_Object *obj;
@@ -2048,15 +2048,12 @@ image_filter_draw_under(Evas *e, Evas_Object *stop, void *output, void *ctx, voi
              if (obj->delete_me) continue;
              if (obj == stop) return;
              /* FIXME: Do bounding box check */
-
-             image_filter_draw_under_recurse(e, obj, stop, output, ctx, surface,
-                                             -x, -y);
-
+             image_filter_draw_under_recurse(e, obj, stop, output, ctx, 
+                                             surface, -x, -y);
           }
      }
-  e->engine.func->image_dirty_region(output, surface, 0, 0, 300, 300);
-  e->engine.func->output_flush(output);
-
+   e->engine.func->image_dirty_region(output, surface, 0, 0, 300, 300);
+   e->engine.func->output_flush(output);
 }
 
 /*
@@ -2067,14 +2064,14 @@ image_filter_draw_under(Evas *e, Evas_Object *stop, void *output, void *ctx, voi
 Filtered_Image *
 image_filter_update(Evas *e, Evas_Object *obj, void *src, int imagew, int imageh, int *outw, int *outh)
 {
-   int w,h;
+   int w, h;
    void *ctx;
    Evas_Filter_Info *info;
    void *surface;
    Eina_Bool alpha;
 
    info = obj->filter;
-
+   
    if (info->mode == EVAS_FILTER_MODE_BELOW)
      {
         w = obj->cur.geometry.w;
@@ -2087,45 +2084,45 @@ image_filter_update(Evas *e, Evas_Object *obj, void *src, int imagew, int imageh
         evas_filter_get_size(info, imagew, imageh, &w, &h, EINA_FALSE);
         alpha = e->engine.func->image_alpha_get(e->engine.data.output, src);
      }
-
+   
    /* Certain filters may make alpha images anyway */
    if (alpha == EINA_FALSE)
      {
         alpha = evas_filter_always_alpha(info);
      }
-
+   
    surface = e->engine.func->image_map_surface_new(e->engine.data.output, w, h,
                                                    alpha);
-
+   
    if (info->mode == EVAS_FILTER_MODE_BELOW)
      {
         void *subsurface;
-        int disw,dish;
-        int dx,dy;
+        int disw, dish;
+        int dx, dy;
         disw = obj->cur.geometry.w;
         dish = obj->cur.geometry.h;
         dx = (imagew - w) >> 1;
         dy = (imageh - h) >> 1;
-        subsurface = e->engine.func->image_map_surface_new(
-           e->engine.data.output, imagew, imageh, 1);
+        subsurface = e->engine.func->image_map_surface_new
+           (e->engine.data.output, imagew, imageh, 1);
         ctx = e->engine.func->context_new(e->engine.data.output);
         e->engine.func->context_color_set(e->engine.data.output, ctx, 0, 255, 0, 255);
         e->engine.func->context_render_op_set(e->engine.data.output, ctx, EVAS_RENDER_COPY);
         e->engine.func->rectangle_draw(e->engine.data.output, ctx,
                                        subsurface, 0, 0, imagew, imageh);
-
+        
         image_filter_draw_under(e, obj, e->engine.data.output, ctx,
-                                 subsurface, dx, dy);
-
+                                subsurface, dx, dy);
+        
         e->engine.func->context_free(e->engine.data.output, ctx);
-
+        
         ctx = e->engine.func->context_new(e->engine.data.output);
-
+        
         e->engine.func->image_draw_filtered(e->engine.data.output,
-                                       ctx, surface, subsurface, info);
-
+                                            ctx, surface, subsurface, info);
+        
         e->engine.func->context_free(e->engine.data.output, ctx);
-
+        
         e->engine.func->image_map_surface_free(e->engine.data.output,
                                                subsurface);
      }
@@ -2133,18 +2130,18 @@ image_filter_update(Evas *e, Evas_Object *obj, void *src, int imagew, int imageh
      {
         ctx = e->engine.func->context_new(e->engine.data.output);
         e->engine.func->image_draw_filtered(e->engine.data.output,
-                                       ctx, surface, src, info);
+                                            ctx, surface, src, info);
         e->engine.func->context_free(e->engine.data.output, ctx);
      }
-
-   e->engine.func->image_dirty_region(e->engine.data.output, surface, 0,0,w,h);
+   
+   e->engine.func->image_dirty_region(e->engine.data.output, surface, 
+                                      0, 0, w, h);
    if (outw) *outw = w;
    if (outh) *outh = h;
    return e->engine.func->image_filtered_save(src, surface,
                                               obj->filter->key,
                                               obj->filter->len);
 }
-
 
 static void
 evas_object_image_unload(Evas_Object *obj, Eina_Bool dirty)
@@ -2444,7 +2441,7 @@ evas_object_image_render(Evas_Object *obj, void *output, void *context, void *su
                {
                   uint32_t len;
                   uint8_t *key;
-
+                  
                   if (obj->filter->key) free(obj->filter->key);
                   obj->filter->key = NULL;
                   obj->filter->len = 0;
@@ -2466,7 +2463,7 @@ evas_object_image_render(Evas_Object *obj, void *output, void *context, void *su
              else if (obj->filter->cached)
                {
                   obj->layer->evas->engine.func->image_filtered_free
-                  (o->engine_data, obj->filter->cached);
+                     (o->engine_data, obj->filter->cached);
                }
              if (!fi)
                 fi = image_filter_update(obj->layer->evas, obj, pixels, 

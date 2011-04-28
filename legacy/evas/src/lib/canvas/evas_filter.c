@@ -624,8 +624,8 @@ gaussian_filter(Evas_Filter_Info *filter, RGBA_Image *src, RGBA_Image *dst)
    
    if (!in) return EINA_FALSE;
    
-   nw = w + 2 * blur->radius;
-   nh = h + 2 * blur->radius;
+   nw = w + (2 * blur->radius);
+   nh = h + (2 * blur->radius);
    
    out = dst->image.data;
    if (!out) return EINA_FALSE;
