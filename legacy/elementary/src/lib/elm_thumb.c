@@ -88,8 +88,11 @@ _del_hook(Evas_Object *obj)
 
 #ifdef HAVE_ELEMENTARY_ETHUMB
    if (wd->thumb.id >= 0)
-     ethumb_client_generate_cancel(_elm_ethumb_client, wd->thumb.id,
-                                   NULL, NULL, NULL);
+     {
+        ethumb_client_generate_cancel(_elm_ethumb_client, wd->thumb.id,
+                                      NULL, NULL, NULL);
+        wd->thumb.id = -1;
+     }
    if (wd->thumb.exists)
      {
         ethumb_client_thumb_exists_cancel(wd->thumb.exists);
@@ -255,6 +258,8 @@ _thumb_exists(Ethumb_Client *client __UNUSED__, Ethumb_Exists *thread,
    if (ethumb_client_thumb_exists_check(thread))
      return ;
 
+   wd->thumb.exists = NULL;
+
    if (exists)
      {
         const char *thumb_path, *thumb_key;
@@ -300,7 +305,9 @@ _thumb_apply(Widget_Data *wd)
    if (!wd->file) return;
 
    ethumb_client_file_set(_elm_ethumb_client, wd->file, wd->key);
-   ethumb_client_thumb_exists(_elm_ethumb_client, _thumb_exists, wd);
+   wd->thumb.exists = ethumb_client_thumb_exists(_elm_ethumb_client,
+                                                 _thumb_exists,
+                                                 wd);
 }
 
 static Eina_Bool
