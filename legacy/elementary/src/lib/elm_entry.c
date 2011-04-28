@@ -582,15 +582,24 @@ static void
 _elm_win_recalc_job(void *data)
 {
    Widget_Data *wd = elm_widget_data_get(data);
-   Evas_Coord minh = -1, resw = -1;
+   Evas_Coord minh = -1, resw = -1, minw = -1;
    if (!wd) return;
    wd->deferred_recalc_job = NULL;
    evas_object_geometry_get(wd->ent, NULL, NULL, &resw, NULL);
-   edje_object_size_min_restricted_calc(wd->ent, NULL, &minh, resw, 0);
-   elm_coords_finger_size_adjust(1, NULL, 1, &minh);
-   evas_object_size_hint_min_set(data, -1, minh);
+   edje_object_size_min_restricted_calc(wd->ent, &minw, &minh, resw, 0);
+   elm_coords_finger_size_adjust(1, &minw, 1, &minh);
+   /* This is a hack to workaround the way min size hints are treated.
+    * If the minimum width is smaller than the restricted width, it means
+    * the mininmum doesn't matter. */
+   if (minw <= resw)
+     {
+        Evas_Coord ominw = -1;
+        evas_object_size_hint_min_get(data, &ominw, NULL);
+        minw = ominw;
+     }
+   evas_object_size_hint_min_set(data, minw, minh);
    if (wd->single_line)
-     evas_object_size_hint_max_set(data, -1, minh);
+     evas_object_size_hint_max_set(data, minw, minh);
 
    if (wd->deferred_cur)
      elm_widget_show_region_set(data, wd->cx, wd->cy, wd->cw, wd->ch);
@@ -614,7 +623,6 @@ _sizing_eval(Evas_Object *obj)
      }
    else
      {
-        evas_object_geometry_get(wd->ent, NULL, NULL, &resw, &resh);
         edje_object_size_min_calc(wd->ent, &minw, &minh);
         elm_coords_finger_size_adjust(1, &minw, 1, &minh);
         evas_object_size_hint_min_set(obj, minw, minh);
@@ -1099,6 +1107,8 @@ _signal_entry_changed(void *data, Evas_Object *obj __UNUSED__, const char *emiss
    Widget_Data *wd = elm_widget_data_get(data);
    if (!wd) return;
    wd->changed = EINA_TRUE;
+   /* Reset the size hints which are no more relevant. */
+   evas_object_size_hint_min_set(data, -1, -1);
    _sizing_eval(data);
    if (wd->text) eina_stringshare_del(wd->text);
    wd->text = NULL;
