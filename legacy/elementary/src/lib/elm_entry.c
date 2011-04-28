@@ -116,7 +116,6 @@ struct _Widget_Data
    Elm_Text_Format format;
    Evas_Coord lastw;
    Evas_Coord downx, downy;
-   Evas_Coord cx, cy, cw, ch;
    Eina_List *items;
    Eina_List *item_providers;
    Eina_List *text_filters;
@@ -585,6 +584,7 @@ _elm_win_recalc_job(void *data)
    Evas_Coord minh = -1, resw = -1, minw = -1;
    if (!wd) return;
    wd->deferred_recalc_job = NULL;
+
    evas_object_geometry_get(wd->ent, NULL, NULL, &resw, NULL);
    edje_object_size_min_restricted_calc(wd->ent, &minw, &minh, resw, 0);
    elm_coords_finger_size_adjust(1, &minw, 1, &minh);
@@ -602,7 +602,12 @@ _elm_win_recalc_job(void *data)
      evas_object_size_hint_max_set(data, minw, minh);
 
    if (wd->deferred_cur)
-     elm_widget_show_region_set(data, wd->cx, wd->cy, wd->cw, wd->ch);
+     {
+        Evas_Coord cx, cy, cw, ch;
+        edje_object_part_text_cursor_geometry_get(wd->ent, "elm.text",
+              &cx, &cy, &cw, &ch);
+        elm_widget_show_region_set(data, cx, cy, cw, ch);
+     }
 }
 
 static void
@@ -1244,21 +1249,19 @@ static void
 _signal_cursor_changed(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
 {
    Widget_Data *wd = elm_widget_data_get(data);
-   Evas_Coord cx, cy, cw, ch;
    if (!wd) return;
    evas_object_smart_callback_call(data, SIG_CURSOR_CHANGED, NULL);
-   edje_object_part_text_cursor_geometry_get(wd->ent, "elm.text",
-                                             &cx, &cy, &cw, &ch);
    wd->cursor_pos = edje_object_part_text_cursor_pos_get(wd->ent, "elm.text", EDJE_CURSOR_MAIN);
    if (!wd->deferred_recalc_job)
-     elm_widget_show_region_set(data, cx, cy, cw, ch);
+     {
+        Evas_Coord cx, cy, cw, ch;
+        edje_object_part_text_cursor_geometry_get(wd->ent, "elm.text",
+              &cx, &cy, &cw, &ch);
+        elm_widget_show_region_set(data, cx, cy, cw, ch);
+     }
    else
      {
         wd->deferred_cur = EINA_TRUE;
-        wd->cx = cx;
-        wd->cy = cy;
-        wd->cw = cw;
-        wd->ch = ch;
      }
 }
 
