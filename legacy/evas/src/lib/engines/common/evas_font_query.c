@@ -3,17 +3,25 @@
 #include "evas_font_private.h" /* for Frame-Queuing support */
 #include "evas_font_ot.h"
 
+/**
+ * @internal
+ * Calculate the kerning between "left" and "right.
+ *
+ * @param fi the font instance to use
+ * @param left the left glyph index
+ * @param right the right glyph index
+ * @param[out] kerning the kerning calculated.
+ * @return FALSE on error, TRUE on success.
+ */
 EAPI int
-evas_common_font_query_kerning(RGBA_Font_Int* fi,
-			       FT_UInt left, FT_UInt right,
-			       int* kerning)
+evas_common_font_query_kerning(RGBA_Font_Int *fi, FT_UInt left, FT_UInt right,
+			       int *kerning)
 {
    int *result;
    FT_Vector delta;
    int key[2];
    int error = 1;
 
-//   return 0;
    key[0] = left;
    key[1] = right;
 
@@ -58,7 +66,16 @@ evas_common_font_query_kerning(RGBA_Font_Int* fi,
    return error;
 }
 
-/* text x inset */
+/**
+ * @internal
+ * Calculate the inset of the text. Inset is the difference between the pen
+ * position of the first char in the string, and the first pixel drawn.
+ * (can be negative).
+ *
+ * @param fn the font set to use.
+ * @param text_props the string object.
+ * @return the calculated inset.
+ */
 EAPI int
 evas_common_font_query_inset(RGBA_Font *fn __UNUSED__, const Evas_Text_Props *text_props)
 {
@@ -66,7 +83,18 @@ evas_common_font_query_inset(RGBA_Font *fn __UNUSED__, const Evas_Text_Props *te
    return text_props->info->glyph[text_props->start].x_bear;
 }
 
-/* text right x inset */
+/**
+ * @internal
+ * Calculate the right inset of the text. This is the difference between the
+ * pen position of the glyph after the last glyph in the text, and the last
+ * pixel drawn in the text (essentially "advance - width" of the last char).
+ *
+ * @param fn the font set to use.
+ * @param text_props the string object.
+ * @return the calculated inset.
+ *
+ * @see evas_common_font_query_inset()
+ */
 EAPI int
 evas_common_font_query_right_inset(RGBA_Font *fn __UNUSED__, const Evas_Text_Props *text_props)
 {
@@ -89,13 +117,18 @@ evas_common_font_query_right_inset(RGBA_Font *fn __UNUSED__, const Evas_Text_Pro
       );
 }
 
-/* size of the string (width and height) in pixels
- * BiDi handling: We receive the shaped string + other props from text_props,
- * We only care about the size, and the size does not depend on the visual order.
- * As long as we follow the logical string and get kerning data like we should,
- * we are fine.
+/**
+ * @internal
+ * Calculate the size of the string (width and height).
+ * The width is the disntance between the first pen position and the last pixel
+ * drawn.
+ * The height is the max ascent+descent of the font.
+ *
+ * @param fn the font set to use.
+ * @param text_props the string object.
+ * @param[out] w the calculated width
+ * @param[out] h the calculated height
  */
-
 EAPI void
 evas_common_font_query_size(RGBA_Font *fn, const Evas_Text_Props *text_props, int *w, int *h)
 {
@@ -125,11 +158,15 @@ evas_common_font_query_size(RGBA_Font *fn, const Evas_Text_Props *text_props, in
    if (h) *h = evas_common_font_max_ascent_get(fn) + evas_common_font_max_descent_get(fn);
 }
 
-/* h & v advance
- * BiDi handling: We receive the shaped string + other props from text_props,
- * We don't care about the order, as heights will remain the same (we already did
- * shaping) and as long as we go through the logical string and match the kerning
- * this way, we are safe.
+/**
+ * @internal
+ * Calculate the advance of the string. Advance is the distance between the
+ * first pen position and the pen position after the string.
+ *
+ * @param fn the font set to use.
+ * @param text_props the string object.
+ * @param[out] h_adv the calculated horizontal advance.
+ * @param[out] v_adv the calculated vertical advance.
  */
 EAPI void
 evas_common_font_query_advance(RGBA_Font *fn, const Evas_Text_Props *text_props, int *h_adv, int *v_adv)
@@ -148,16 +185,25 @@ evas_common_font_query_advance(RGBA_Font *fn, const Evas_Text_Props *text_props,
    if (v_adv) *v_adv = evas_common_font_get_line_advance(fn);
 }
 
-/* x y w h for char at char pos for null it returns the position right after
- * the last char with 0 as width and height.
- * BiDi handling: We receive the shaped string + other props from text_props,
- * We care about the actual drawing location of the string, this is why we need
- * the visual string. We need to know how it's printed. After that we need to calculate
- * the reverse kerning in case of rtl parts. "pos" passed to this function is an
- * index in bytes, that is the actual byte location of the string, we need to find
- * the index in order to find it in the visual string.
+/**
+ * @internal
+ * Query the coordinates of the char at position pos. If the position is at the
+ * end of the string (i.e where the finishing null would be) it returns the
+ * coordinates of the position right after the last char. This is either on
+ * the left or on the right of the string, depending on BiDi direction. Returned
+ * width in this case is 0. It returns the x of the leftmost pixel drawn.
+ *
+ * @param fn the font set to use.
+ * @param text_props the string object.
+ * @param pos the position of the char in the string object (not actual position in the string object, but the position of the source character).
+ * @param[out] cx the calculated x - CAN BE NULL
+ * @param[out] cy the calculated y - CAN BE NULL
+ * @param[out] cw the calculated width - CAN BE NULL
+ * @param[out] ch the calculated height - CAN BE NULL
+ * @return TRUE on success, FALSE otherwise.
+ *
+ * @see evas_common_font_query_pen_coords()
  */
-
 EAPI int
 evas_common_font_query_char_coords(RGBA_Font *fn, const Evas_Text_Props *text_props, int pos, int *cx, int *cy, int *cw, int *ch)
 {
@@ -271,17 +317,29 @@ end:
    return ret_val;
 }
 
-/* x y w h for pen at char pos for null it returns the position right after
- * the last char with 0 as width and height. This is the same as char_coords
- * but it returns the pen_x and adv instead of x and w.
- * BiDi handling: We receive the shaped string + other props from text_props,
- * We care about the actual drawing location of the string, this is why we need
- * the visual string. We need to know how it's printed. After that we need to calculate
- * the reverse kerning in case of rtl parts. "pos" passed to this function is an
- * index in bytes, that is the actual byte location of the string, we need to find
- * the index in order to find it in the visual string.
+/**
+ * @internal
+ * Query the coordinates of the char at position pos. If the position is at the
+ * end of the string (i.e where the finishing null would be) it returns the
+ * coordinates of the position right after the last char. This is either on
+ * the left or on the right of the string, depending on BiDi direction. Returned
+ * advance in this case is 0.
+ *
+ * This is the same as evas_common_font_query_char_coords() except that the
+ * advance of the character is returned instead of the width and the pen
+ * position is returned instead of the actual pixel position.
+ *
+ * @param fn the font set to use.
+ * @param text_props the string object.
+ * @param pos the position of the char in the string object (not actual position in the string object, but the position of the source character).
+ * @param[out] cpenx the calculated x - CAN BE NULL
+ * @param[out] cy the calculated y - CAN BE NULL
+ * @param[out] cadv the calculated advance - CAN BE NULL
+ * @param[out] ch the calculated height - CAN BE NULL
+ * @return TRUE on success, FALSE otherwise.
+ *
+ * @see evas_common_font_query_char_coords()
  */
-
 EAPI int
 evas_common_font_query_pen_coords(RGBA_Font *fn, const Evas_Text_Props *text_props, int pos, int *cpen_x, int *cy, int *cadv, int *ch)
 {
@@ -391,13 +449,22 @@ end:
    return ret_val;
 }
 
-/* char pos of text at xy pos
- * BiDi handling: Since we are looking for the char at the specific coords,
- * we have to get the visual string (to which the coords relate to), do
- * reverse kerning query because we are working on the visual string, and then
- * we need to get the logical position of the char we found from the visual string.
+/**
+ * @internal
+ * Find the character at a specific x, y coordinates and return it's position
+ * in the text (not in the text object, but in the source text). Also calculate
+ * the char's geometry.
+ *
+ * @param fn the font set to use.
+ * @param text_props the string object.
+ * @param x the x to look at.
+ * @param y the y to look at.
+ * @param[out] cx the calculated x - CAN BE NULL
+ * @param[out] cy the calculated y - CAN BE NULL
+ * @param[out] cw the calculated width - CAN BE NULL
+ * @param[out] ch the calculated height - CAN BE NULL
+ * @return the position found, -1 on failure.
  */
-
 EAPI int
 evas_common_font_query_char_at_coords(RGBA_Font *fn, const Evas_Text_Props *text_props, int x, int y, int *cx, int *cy, int *cw, int *ch)
 {
@@ -474,13 +541,18 @@ end:
    return ret_val;
 }
 
-/* position of the char after the last char in the text that will fit in xy.
- * BiDi handling: We receive the shaped string + other props from text_props,
- * All we care about is char sizes + kerning so we only really need to get the
- * shaped string to utf8, and then just go through it like in english, as it's
- * just the logical string, nothing special about that.
+/**
+ * @internal
+ * Find the last character that fits until the boundaries set by x and y.
+ * This LOGICALLY walks the string. This is needed for wrapping for example
+ * where we want the first part to be the first logical part.
+ *
+ * @param fn the font set to use.
+ * @param text_props the string object.
+ * @param x the x boundary.
+ * @param y the y boundary.
+ * @return the position found, -1 on failure.
  */
-
 EAPI int
 evas_common_font_query_last_up_to_pos(RGBA_Font *fn, const Evas_Text_Props *text_props, int x, int y)
 {
@@ -512,7 +584,7 @@ evas_common_font_query_last_up_to_pos(RGBA_Font *fn, const Evas_Text_Props *text
         for (i = text_props->len - 1 ; i >= 0 ; i--, gli--)
           {
              pen_x = full_adv - (gli->pen_after - start_pen);
-             /* If inivisible, skip */
+             /* If invisible, skip */
              if (gli->index == 0) continue;
              if ((x >= pen_x) &&
                  (((i == 0) && (x <= full_adv)) ||
