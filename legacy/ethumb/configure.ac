@@ -195,6 +195,27 @@ fi
 AM_CONDITIONAL(HAVE_LIBEXIF, test $HAVE_LIBEXIF = yes)
 AC_SUBST(HAVE_LIBEXIF)
 
+AC_COMPILE_IFELSE(
+   [AC_LANG_PROGRAM(
+       [[
+#include <stdlib.h>
+#include <sys/types.h>
+#include <sys/xattr.h>
+       ]],
+       [[
+size_t tmp = listxattr("/", NULL, 0);
+tmp = getxattr("/", "user.ethumb.md5", NULL, 0);
+setxattr("/", "user.ethumb.md5", NULL, 0, 0);
+       ]])],
+    [
+      AC_DEFINE(HAVE_XATTR, 1, [Define to 1 if you have 'listxattr', 'setxattr' and 'getxattr'])
+      have_xattr="yes"
+    ],
+    [have_xattr="no"])
+
+AC_MSG_CHECKING([for Xattr])
+AC_MSG_RESULT([${have_xattr}])
+
 AC_SUBST(requirement_ethumb)
 AC_SUBST(requirement_ethumb_client)
 AC_SUBST(dbusservicedir)
@@ -248,6 +269,7 @@ Summary:
 
 Configuration Options Summary:
 
+ * use xattr........: ${have_xattr}
  * maximum log level: ${with_max_log_level}
  * documentation....: ${build_doc}
 

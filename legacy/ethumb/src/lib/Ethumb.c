@@ -52,6 +52,10 @@ void *alloca (size_t);
 #include <dlfcn.h>
 #include <ctype.h>
 
+#ifdef HAVE_XATTR
+# include <sys/xattr.h>
+#endif
+
 #ifndef PATH_MAX
 # define PATH_MAX 4096
 #endif
@@ -824,6 +828,27 @@ _ethumb_generate_hash(const char *file)
   char *t;
   const unsigned char *c;
 
+#ifdef HAVE_XATTR
+  ssize_t length;
+
+  length = getxattr(file, "user.e.md5", NULL, 0);
+
+  if (length > 0)
+    {
+       char *tmp;
+
+       tmp = alloca(length);
+       length = getxattr(file, "user.e.md5", tmp, length);
+
+       /* check if we have at least something that look like a md5 hash */
+       if (length > 0 && (length == MD5_HASHBYTES * 2 + 1))
+         {
+            tmp[length] = '\0';
+            return eina_stringshare_add(tmp);
+         }
+    }
+#endif
+
 #define _check_uri_char(c) \
   ((c) >= 32 && (c) < 128 && (ACCEPTABLE_URI_CHARS[(c) - 32] & 0x08))
 
@@ -858,6 +883,10 @@ _ethumb_generate_hash(const char *file)
       md5out[2 * n + 1] = hex[hash[n] & 0x0f];
     }
   md5out[2 * n] = '\0';
+
+#ifdef HAVE_XATTR
+  setxattr(file, "user.e.md5", md5out, 2 * n + 1, 0);
+#endif
 
   DBG("md5=%s, file=%s", md5out, file);
   return eina_stringshare_add(md5out);
@@ -924,7 +953,6 @@ _ethumb_file_generate_path(Ethumb *e)
    const char *ext;
    int fdo_format;
 
-
    fdo_format = _ethumb_file_check_fdo(e);
 
    if (e->thumb_dir)
@@ -956,7 +984,6 @@ _ethumb_file_generate_path(Ethumb *e)
      ext = "jpg";
    else
      ext = "eet";
-
 
    fullname = ecore_file_realpath(e->src_path);
    hash = _ethumb_generate_hash(fullname);
