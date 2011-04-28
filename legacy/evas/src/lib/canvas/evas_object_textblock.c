@@ -5136,7 +5136,7 @@ EAPI void
 evas_textblock_node_format_remove_pair(Evas_Object *obj,
       Evas_Object_Textblock_Node_Format *n)
 {
-   Evas_Object_Textblock_Node_Text *tnode;
+   Evas_Object_Textblock_Node_Text *tnode1;
    Evas_Object_Textblock_Node_Format *fmt, *pnode;
    int level;
    TB_HEAD();
@@ -5145,7 +5145,6 @@ evas_textblock_node_format_remove_pair(Evas_Object *obj,
 
    pnode = NULL;
    fmt = n;
-   tnode = fmt->text_node;
    level = 0;
 
    do
@@ -5181,12 +5180,29 @@ evas_textblock_node_format_remove_pair(Evas_Object *obj,
           }
         _evas_textblock_cursors_update_offset(&cur, n->text_node, index, -1);
      }
+   tnode1 = n->text_node;
    _evas_textblock_node_format_remove(o, n, 0);
    if (pnode && (pnode != n))
      {
+        Evas_Object_Textblock_Node_Text *tnode2;
+        tnode2 = pnode->text_node;
         /* pnode can never be visible! (it's the closing format) */
         _evas_textblock_node_format_remove(o, pnode, 0);
+
+        /* FIXME: Should be unified in the layout, for example, added to a list
+         * that checks this kind of removals. But until then, this is very fast
+         * and works. */
+        /* Mark all the text nodes in between the removed formats as dirty. */
+        while (tnode1)
+          {
+             tnode1->dirty = EINA_TRUE;
+             if (tnode1 == tnode2)
+                break;
+             tnode1 =
+                _NODE_TEXT(EINA_INLIST_GET(tnode1)->next);
+          }
      }
+
    _evas_textblock_changed(o, obj);
 }
 
