@@ -7976,10 +7976,6 @@ evas_object_textblock_render(Evas_Object *obj, void *output, void *context, void
    Evas_Object_Textblock_Line *ln;
    Evas_Object_Textblock *o;
    int i, j;
-   int pbacking = 0, backingx = 0;
-   int punderline = 0, underlinex = 0;
-   int punderline2 = 0, underline2x = 0;
-   int pstrikethrough = 0, strikethroughx = 0;
    unsigned char r = 0, g = 0, b = 0, a = 0;
    unsigned char r2 = 0, g2 = 0, b2 = 0, a2 = 0;
    unsigned char r3 = 0, g3 = 0, b3 = 0, a3 = 0;
@@ -8016,8 +8012,6 @@ evas_object_textblock_render(Evas_Object *obj, void *output, void *context, void
           { \
              Evas_Object_Textblock_Item *itr; \
              \
-             backingx = underlinex = underline2x = strikethroughx = 0; \
-             pbacking = punderline = punderline2 = pstrikethrough = 0; \
              if (clip) \
                { \
                   if ((obj->cur.geometry.y + y + ln->par->y + ln->y + ln->h) < (cy - 20)) \
@@ -8096,36 +8090,25 @@ evas_object_textblock_render(Evas_Object *obj, void *output, void *context, void
 #define DRAW_FORMAT(oname, oy, oh, or, og, ob, oa) \
    do \
      { \
-        if ((p ## oname) && (itr->x > oname ## x)) \
-          { \
-             DRAW_RECT(oname ## x, oy, itr->x - oname ## x, oh, or, og, ob, \
-                   oa); \
-          } \
-        \
         if (itr->format->oname) \
           { \
-             p ## oname = 1; \
              or = itr->format->color.oname.r; \
              og = itr->format->color.oname.g; \
              ob = itr->format->color.oname.b; \
              oa = itr->format->color.oname.a; \
+             if (!EINA_INLIST_GET(itr)->next) \
+               { \
+                  DRAW_RECT(itr->x, oy, itr->w, oh, or, og, ob, oa); \
+               } \
+             else \
+               { \
+                  DRAW_RECT(itr->x, oy, itr->adv, oh, or, og, ob, oa); \
+               } \
           } \
-        else \
-          { \
-             p ## oname = 0; \
-          } \
-        \
-        if (p ## oname && !EINA_INLIST_GET(itr)->next) \
-          { \
-             DRAW_RECT(itr->x, oy, itr->w, oh, or, og, ob, oa); \
-          } \
-        p ## oname = itr->format->oname; \
-        oname ## x = itr->x; \
      } \
    while (0)
 
 
-   pbacking = punderline = punderline2 = pstrikethrough = 0;
    ITEM_WALK()
      {
         ITEM_WALK_LINE_SKIP_DROP();
