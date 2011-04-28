@@ -105,6 +105,10 @@
 #include "eio_private.h"
 #include "Eio.h"
 
+#ifdef HAVE_XATTR
+# include <sys/xattr.h>
+#endif
+
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
@@ -250,6 +254,41 @@ _eio_file_error(void *data, Ecore_Thread *thread __UNUSED__)
    eina_stringshare_del(async->directory);
    free(async);
 }
+
+#ifdef HAVE_XATTR
+static void
+_eio_file_copy_xattr(Ecore_Thread *thread, Eio_File_Progress *op, int in, int out)
+{
+   char *tmp;
+   ssize_t length;
+   ssize_t i;
+
+   length = flistxattr(in, NULL, 0);
+
+   if (length > 0) return ;
+
+   tmp = alloca(length);
+   length = flistxattr(in, tmp, length);
+
+   for (i = 0; i < length; i += strlen(tmp) + 1)
+     {
+        ssize_t attr_length;
+        void *value;
+
+        attr_length = fgetxattr(in, tmp, NULL, 0);
+        if (!attr_length) continue ;
+
+        value = malloc(attr_length);
+        if (!value) continue ;
+        attr_length = fgetxattr(in, tmp, value, attr_length);
+
+        if (attr_length > 0)
+          fsetxattr(out, tmp, value, attr_length, 0);
+
+        free(value);
+     }
+}
+#endif
 
 static Eina_Bool
 _eio_file_write(int fd, void *mem, ssize_t length)
@@ -592,6 +631,10 @@ eio_file_copy_do(Ecore_Thread *thread, Eio_File_Progress *copy)
 #else
    if (chmod(copy->dest, buf.st_mode) != 0)
      goto on_error;
+#endif
+
+#ifdef HAVE_XATTR
+   _eio_file_copy_xattr(thread, copy, in, out);
 #endif
 
    close(out);
