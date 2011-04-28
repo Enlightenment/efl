@@ -80,3 +80,7 @@
 	* Add Feature: Support explicit shadow direction with extra effect
         param (optional). Default as before.
 
+2011-04-28  Tom Hacohen (TAsn)
+
+        * size_min_restricted_calc: Fixed textblock handling.
+

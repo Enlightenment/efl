@@ -2203,16 +2203,23 @@ edje_object_size_min_restricted_calc(Evas_Object *obj, Evas_Coord *minw, Evas_Co
 	       {
 		  if (!ep->chosen_description->fixed.w)
 		    {
+		       if ((ep->part->type == EDJE_PART_TYPE_TEXTBLOCK))
+			 {
+                            Evas_Coord tb_mw;
+                            evas_object_textblock_size_formatted_get(ep->object,
+                               &tb_mw, NULL);
+                            tb_mw -= ep->req.w;
+                            if (tb_mw > w)
+                              {
+                                 w = tb_mw;
+                              }
+			 }
 		       if (w > maxw)
 			 {
 			    maxw = w;
 			    ok = 1;
 			    pep = ep;
 			    didw = 1;
-			 }
-		       if ((ep->part->type == EDJE_PART_TYPE_TEXTBLOCK))
-			 {
-			    /* FIXME: do something */
 			 }
 		    }
 		  if (!ep->chosen_description->fixed.h)
