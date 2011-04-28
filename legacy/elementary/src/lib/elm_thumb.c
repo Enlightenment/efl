@@ -35,7 +35,9 @@ struct _Widget_Data
         int id;
         const char *file;
         const char *key;
+#ifdef HAVE_ELEMENTARY_ETHUMB
         Ethumb_Exists *exists;
+#endif
      } thumb;
    Ecore_Event_Handler *eeh;
    Elm_Thumb_Animation_Setting anim_setting;
@@ -473,12 +475,12 @@ elm_thumb_add(Evas_Object *parent)
    wd->key = NULL;
    wd->eeh = NULL;
    wd->thumb.id = -1;
-   wd->thumb.exists = NULL;
    wd->on_hold = EINA_FALSE;
    wd->is_video = EINA_FALSE;
    wd->was_video = EINA_FALSE;
 
 #ifdef HAVE_ELEMENTARY_ETHUMB
+   wd->thumb.exists = NULL;
    evas_object_event_callback_add(obj, EVAS_CALLBACK_MOUSE_DOWN,
                                   _mouse_down_cb, wd);
    evas_object_event_callback_add(obj, EVAS_CALLBACK_MOUSE_UP,
