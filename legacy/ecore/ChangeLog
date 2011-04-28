@@ -149,3 +149,11 @@
         callback which it can then use the new pos map call to map to
         some ease in/out, bounce, spring or whatever position.
 
+2011-04-28  Eduardo Felipe Castegnaro
+
+        * Add a monotonic clock implementation for Mac OS X to fix warning.
+        Mac OS X does not provide an implementation of clock_gettime()
+        even though it's POSIX, but it does provide a fast high-resolution
+        monotonic clock through mach specific APIs that are perfectly suited
+        for usage in ecore_timer.
+
