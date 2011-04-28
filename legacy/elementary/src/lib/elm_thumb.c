@@ -245,7 +245,7 @@ _finished_thumb_cb(void *data, Ethumb_Client *c __UNUSED__, int id, const char *
 }
 
 static void
-_thumb_exists(Ethumb_Client *client, Ethumb_Exists *thread,
+_thumb_exists(Ethumb_Client *client __UNUSED__, Ethumb_Exists *thread,
               Eina_Bool exists, void *data)
 {
    Widget_Data *wd = data;
