@@ -2343,6 +2343,8 @@ extern "C" {
    EAPI void                  elm_map_name_remove(Elm_Map_Name *name) EINA_ARG_NONNULL(1);
    EAPI void                  elm_map_rotate_set(Evas_Object *obj, double degree, Evas_Coord cx, Evas_Coord cy) EINA_ARG_NONNULL(1);
    EAPI void                  elm_map_rotate_get(const Evas_Object *obj, double *degree, Evas_Coord *cx, Evas_Coord *cy) EINA_ARG_NONNULL(1, 2, 3, 4);
+   EAPI void                  elm_map_wheel_disabled_set(Evas_Object *obj, Eina_Bool disabled) EINA_ARG_NONNULL(1);
+   EAPI Eina_Bool             elm_map_wheel_disabled_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
 
    /* smart callbacks called:
     * "clicked" - when image clicked

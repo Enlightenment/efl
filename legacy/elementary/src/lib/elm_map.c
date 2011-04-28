@@ -425,6 +425,9 @@ struct _Widget_Data
         Evas_Coord cx, cy;
         double level;
    } pinch_zoom;
+   double wheel_zoom;
+   Ecore_Timer *wheel_timer;
+   Eina_Bool wheel_disabled : 1;
 };
 
 struct _Mod_Api
@@ -550,6 +553,7 @@ static const Evas_Smart_Cb_Description _signals[] = {
 static void _pan_calculate(Evas_Object *obj);
 
 static Eina_Bool _hold_timer_cb(void *data);
+static Eina_Bool _wheel_timer_cb(void *data);
 static void _rect_resize_cb(void *data, Evas *e, Evas_Object *obj, void *event_info);
 static void _del_hook(Evas_Object *obj);
 static void _theme_hook(Evas_Object *obj);
@@ -1514,6 +1518,13 @@ _mouse_down(void *data, Evas *evas __UNUSED__, Evas_Object *obj, void *event_inf
    Evas_Event_Mouse_Down *ev = event_info;
    Event *ev0;
 
+   if (ev->button == 2)
+     {
+        if (wd->wheel_timer) ecore_timer_del(wd->wheel_timer);
+        wd->wheel_timer = ecore_timer_add(0.35, _wheel_timer_cb, data);
+        return;
+     }
+
    ev0 = get_event_object(data, 0);
    if (ev0) return;
    ev0 = create_event_object(data, obj, 0);
@@ -1748,6 +1759,40 @@ _mouse_multi_up(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSED__, 
    destroy_event_object(data, ev);
 }
 
+static void
+_mouse_wheel_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
+{
+   ELM_CHECK_WIDTYPE(data, widtype);
+   Widget_Data *wd = elm_widget_data_get(data);
+   Evas_Event_Mouse_Wheel *ev = (Evas_Event_Mouse_Wheel*) event_info;
+   Evas_Coord x, y, w, h;
+   float half_w, half_h;
+   evas_object_geometry_get(data, &x, &y, &w, &h);
+   half_w = (float)w * 0.5;
+   half_h = (float)h * 0.5;
+
+   if (!wd->wheel_zoom) wd->wheel_zoom = 1.0;
+   if (ev->z > 0)
+     {
+        wd->zoom_method = ZOOM_METHOD_OUT;
+        wd->wheel_zoom -= 0.1;
+        if (wd->wheel_zoom <= PINCH_ZOOM_MIN) wd->wheel_zoom = PINCH_ZOOM_MIN;
+     }
+   else
+     {
+        wd->zoom_method = ZOOM_METHOD_IN;
+        wd->wheel_zoom += 0.1;
+        if (wd->wheel_zoom >= PINCH_ZOOM_MAX) wd->wheel_zoom = PINCH_ZOOM_MAX;
+     }
+
+   wd->pinch.level = wd->wheel_zoom;
+   wd->pinch.cx = x + half_w;
+   wd->pinch.cy = y + half_h;
+   if (wd->calc_job) ecore_job_del(wd->calc_job);
+   wd->calc_job = ecore_job_add(_calc_job, wd);
+}
+
+
 static Evas_Smart_Class _pan_sc = EVAS_SMART_CLASS_INIT_NULL;
 
 static Eina_Bool
@@ -1756,6 +1801,22 @@ _hold_timer_cb(void *data)
    Event *ev0 = data;
 
    ev0->hold_timer = NULL;
+   return ECORE_CALLBACK_CANCEL;
+}
+
+static Eina_Bool
+_wheel_timer_cb(void *data)
+{
+   ELM_CHECK_WIDTYPE(data, widtype) ECORE_CALLBACK_CANCEL;
+   Widget_Data *wd = elm_widget_data_get(data);
+   int zoom;
+
+   wd->wheel_timer = NULL;
+   if (wd->zoom_method == ZOOM_METHOD_IN) zoom = (int)ceil(wd->wheel_zoom - 1.0);
+   else if (wd->zoom_method == ZOOM_METHOD_OUT) zoom = (int)floor((-1.0 / wd->wheel_zoom) + 1.0);
+   else return ECORE_CALLBACK_CANCEL;
+   elm_map_zoom_set(data, wd->zoom + zoom);
+   wd->wheel_zoom = 0.0;
    return ECORE_CALLBACK_CANCEL;
 }
 
@@ -2878,6 +2939,7 @@ elm_map_add(Evas_Object *parent)
    evas_object_smart_callback_add(wd->scr, "scroll", _scr, obj);
    evas_object_smart_callback_add(wd->scr, "drag", _scr, obj);
    elm_widget_resize_object_set(obj, wd->scr);
+   elm_smart_scroller_wheel_disabled_set(wd->scr, EINA_TRUE);
 
    evas_object_smart_callback_add(wd->scr, "animate,start", _scr_anim_start, obj);
    evas_object_smart_callback_add(wd->scr, "animate,stop", _scr_anim_stop, obj);
@@ -2942,6 +3004,8 @@ elm_map_add(Evas_Object *parent)
                                   _mouse_multi_move, obj);
    evas_object_event_callback_add(wd->rect, EVAS_CALLBACK_MULTI_UP,
                                   _mouse_multi_up, obj);
+   evas_object_event_callback_add(wd->rect, EVAS_CALLBACK_MOUSE_WHEEL,
+                                  _mouse_wheel_cb, obj);
 
    evas_object_smart_member_add(wd->rect, wd->pan_smart);
    elm_widget_sub_object_add(obj, wd->rect);
@@ -4814,6 +4878,43 @@ elm_map_rotate_get(const Evas_Object *obj, double *degree, Evas_Coord *cx, Evas_
    if (degree) *degree = wd->rotate.d;
    if (cx) *cx = wd->rotate.cx;
    if (cy) *cy = wd->rotate.cy;
+}
+
+/**
+ * Set the wheel control state of the map
+ *
+ * @param obj The map object
+ * @param disabled status of wheel control
+ *
+ * @ingroup Map
+ */
+EAPI void
+elm_map_wheel_disabled_set(Evas_Object *obj, Eina_Bool disabled)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+
+   if ((!wd->wheel_disabled) && (disabled))
+     evas_object_event_callback_del_full(wd->rect, EVAS_CALLBACK_MOUSE_WHEEL, _mouse_wheel_cb, obj);
+   else if ((wd->wheel_disabled) && (!disabled))
+     evas_object_event_callback_add(wd->rect, EVAS_CALLBACK_MOUSE_WHEEL, _mouse_wheel_cb, obj);
+   wd->wheel_disabled = disabled;
+}
+
+/**
+ * Get the wheel control state of the map
+ *
+ * @param obj The map object
+ * @return Returns the status of wheel control
+ *
+ * @ingroup Map
+ */
+EAPI Eina_Bool
+elm_map_wheel_disabled_get(const Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   return wd->wheel_disabled;
 }
 
 static char *

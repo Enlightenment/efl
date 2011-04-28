@@ -519,26 +519,6 @@ _group_icon_get(Evas_Object *obj, void *data)
 }
 
 static void
-_map_mouse_wheel_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
-{
-   Evas_Object *map = data;
-   Evas_Event_Mouse_Wheel *ev = (Evas_Event_Mouse_Wheel*) event_info;
-   int zoom;
-   //unset the mouse wheel
-   ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
-
-   zoom = elm_map_zoom_get(map);
-
-   if (ev->z > 0)
-     zoom--;
-   else
-     zoom++;
-
-   elm_map_zoom_mode_set(map, ELM_MAP_ZOOM_MODE_MANUAL);
-   if ((zoom >= 0) && (zoom <= 18)) elm_map_zoom_set(map, zoom);
-}
-
-static void
 _map_move_resize_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    int x,y,w,h;
@@ -607,8 +587,6 @@ test_map(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __
         evas_object_color_set(rect, 0, 0, 0, 0);
         evas_object_repeat_events_set(rect,1);
         evas_object_show(rect);
-        evas_object_event_callback_add(rect, EVAS_CALLBACK_MOUSE_WHEEL,
-                                       _map_mouse_wheel_cb, map);
         evas_object_raise(rect);
 
         evas_object_event_callback_add(map, EVAS_CALLBACK_RESIZE,
