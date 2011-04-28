@@ -2945,7 +2945,7 @@ elm_main(int    argc,
    elm_app_info_set(elm_main, "elementary", "images/logo.png");
    elm_app_compile_bin_dir_set(PACKAGE_BIN_DIR);
    elm_app_compile_data_dir_set(PACKAGE_DATA_DIR);
-   
+
    for (i = 1; i < argc; i++)
      {
         if (!strcmp(argv[i], "-h"))

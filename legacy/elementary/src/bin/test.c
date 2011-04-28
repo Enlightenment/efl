@@ -233,9 +233,9 @@ my_win_main(char *autorun)
 
    lb = elm_label_add(win);
    elm_label_label_set(lb,
-		       "Please select a test from the list below<br>"
-		       "by clicking the test button to show the<br>"
-		       "test window.");
+                       "Please select a test from the list below<br>"
+                       "by clicking the test button to show the<br>"
+                       "test window.");
    elm_frame_content_set(fr, lb);
    evas_object_show(lb);
 
@@ -385,26 +385,26 @@ my_win_main(char *autorun)
    if (autorun)
      {
         EINA_LIST_FOREACH(tests, l, t)
-          if ((t->name) && (t->cb) && (!strcmp(t->name, autorun)))
-            t->cb(NULL, NULL, NULL);
+           if ((t->name) && (t->cb) && (!strcmp(t->name, autorun)))
+             t->cb(NULL, NULL, NULL);
      }
 
    if (tests)
      {
-	char last_letter = 0;
-	EINA_LIST_FREE(tests, t)
-	  {
-	     Elm_List_Item *it;
-	     it = elm_list_item_append(li, t->name, NULL, NULL, t->cb, NULL);
-	     if (last_letter != t->name[0])
-	       {
-		  char letter[2] = {t->name[0], '\0'};
-		  elm_index_item_append(idx, letter, it);
-		  last_letter = t->name[0];
-	       }
-	     free(t);
-	  }
-	elm_index_item_go(idx, 0);
+        char last_letter = 0;
+        EINA_LIST_FREE(tests, t)
+          {
+             Elm_List_Item *it;
+             it = elm_list_item_append(li, t->name, NULL, NULL, t->cb, NULL);
+             if (last_letter != t->name[0])
+               {
+                  char letter[2] = {t->name[0], '\0'};
+                  elm_index_item_append(idx, letter, it);
+                  last_letter = t->name[0];
+               }
+             free(t);
+          }
+        elm_index_item_go(idx, 0);
      }
 
    elm_list_go(li);
@@ -427,9 +427,9 @@ elm_main(int argc, char **argv)
    elm_app_info_set(elm_main, "elementary", "images/logo.png");
    elm_app_compile_bin_dir_set(PACKAGE_BIN_DIR);
    elm_app_compile_data_dir_set(PACKAGE_DATA_DIR);
-   
+
    printf("my prefix: %s\n", elm_app_prefix_dir_get());
-   
+
    printf("elm test data in %s\n", elm_app_data_dir_get());
    /* if called with a single argument try to autorun a test with
     * the same name as the given param
