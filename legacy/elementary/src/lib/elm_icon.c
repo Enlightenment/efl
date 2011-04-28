@@ -356,7 +356,7 @@ _icon_size_min_get(Evas_Object *icon)
 }
 
 /**
- * Set the theme, as standard, for a icon.
+ * Set the theme, as standard, for an icon.
  * If theme was not found and it is the absolute path of an image file, this
  * image will be used.
  *
@@ -418,7 +418,7 @@ elm_icon_standard_set(Evas_Object *obj, const char *name)
 }
 
 /**
- * Get the theme, as standard, for a icon
+ * Get the theme, as standard, for an icon
  *
  * @param obj The icon object
  * @return The theme name
@@ -468,7 +468,7 @@ elm_icon_order_lookup_get(const Evas_Object *obj)
 }
 
 /**
- * Set the smooth effect for a icon
+ * Set the smooth effect for an icon
  *
  * @param obj The icon object
  * @param smooth A bool to set (or no) smooth effect
@@ -488,7 +488,7 @@ elm_icon_smooth_set(Evas_Object *obj, Eina_Bool smooth)
 }
 
 /**
- * Get the smooth effect for a icon
+ * Get the smooth effect for an icon
  *
  * @param obj The icon object
  * @return If setted smooth effect
