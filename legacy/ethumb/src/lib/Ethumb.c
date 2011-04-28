@@ -1563,7 +1563,7 @@ ethumb_exists(Ethumb *e)
    return r;
 }
 
-Evas *
+EAPI Evas *
 ethumb_evas_get(const Ethumb *e)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(e, NULL);
@@ -1571,7 +1571,7 @@ ethumb_evas_get(const Ethumb *e)
    return e->sub_e;
 }
 
-Ecore_Evas *
+EAPI Ecore_Evas *
 ethumb_ecore_evas_get(const Ethumb *e)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(e, NULL);
@@ -1579,7 +1579,7 @@ ethumb_ecore_evas_get(const Ethumb *e)
    return e->sub_ee;
 }
 
-Ethumb *
+EAPI Ethumb *
 ethumb_dup(const Ethumb *e)
 {
    Ecore_Evas *ee;
@@ -1659,7 +1659,7 @@ ethumb_dup(const Ethumb *e)
   if (e1->Param != e2->Param)                   \
     return EINA_TRUE;
 
-Eina_Bool
+EAPI Eina_Bool
 ethumb_cmp(const Ethumb *e1, const Ethumb *e2)
 {
    CHECK_DELTA(thumb_dir);
@@ -1683,4 +1683,90 @@ ethumb_cmp(const Ethumb *e1, const Ethumb *e2)
    CHECK_DELTA(document.page);
 
    return EINA_FALSE;
+}
+
+EAPI unsigned int
+ethumb_length(__UNUSED__ const void *key)
+{
+   return sizeof (Ethumb);
+}
+
+#define CMP_PARAM(Param)			\
+  if (e1->Param != e2->Param)			\
+    return e1->Param - e2->Param;
+
+EAPI int
+ethumb_key_cmp(const void *key1, __UNUSED__ int key1_length,
+               const void *key2, __UNUSED__ int key2_length)
+{
+   const Ethumb *e1 = key1;
+   const Ethumb *e2 = key2;
+
+   CMP_PARAM(thumb_dir);
+   CMP_PARAM(category);
+   CMP_PARAM(thumb_dir);
+   CMP_PARAM(category);
+   CMP_PARAM(tw);
+   CMP_PARAM(th);
+   CMP_PARAM(format);
+   CMP_PARAM(aspect);
+   CMP_PARAM(orientation);
+   CMP_PARAM(crop_x);
+   CMP_PARAM(crop_y);
+   CMP_PARAM(quality);
+   CMP_PARAM(compress);
+   CMP_PARAM(rw);
+   CMP_PARAM(rh);
+   CMP_PARAM(video.start);
+   CMP_PARAM(video.time);
+   CMP_PARAM(video.interval);
+   CMP_PARAM(video.ntimes);
+   CMP_PARAM(video.fps);
+   CMP_PARAM(document.page);
+   CMP_PARAM(src_path);
+   CMP_PARAM(src_key);
+
+   return 0;
+}
+
+#undef CMP_PARAM
+
+#define HASH_PARAM_I(Param) r ^= eina_hash_int32((unsigned int*) &e->Param, 0);
+#ifdef __LP64__
+# define HASH_PARAM_P(Param) r ^= eina_hash_int64((unsigned long int*) &e->Param, 0);
+#else
+# define HASH_PARAM_P(Param) r ^= eina_hash_int32((unsigned int*) &e->Param, 0);
+#endif
+#define HASH_PARAM_D(Param) r ^= eina_hash_int64((unsigned long int*)&e->Param, 0);
+#define HASH_PARAM_F(Param) r ^= eina_hash_int32((unsigned int*) &e->Param, 0);
+
+EAPI int
+ethumb_hash(const void *key, int key_length)
+{
+   const Ethumb *e = key;
+   int r = 0;
+
+   HASH_PARAM_P(thumb_dir);
+   HASH_PARAM_P(category);
+   HASH_PARAM_I(tw);
+   HASH_PARAM_I(th);
+   HASH_PARAM_I(format);
+   HASH_PARAM_I(aspect);
+   HASH_PARAM_I(orientation);
+   HASH_PARAM_F(crop_x);
+   HASH_PARAM_F(crop_y);
+   HASH_PARAM_I(quality);
+   HASH_PARAM_I(compress);
+   HASH_PARAM_P(src_path);
+   HASH_PARAM_P(src_key);
+   HASH_PARAM_I(rw);
+   HASH_PARAM_I(rh);
+   HASH_PARAM_D(video.start);
+   HASH_PARAM_D(video.time);
+   HASH_PARAM_D(video.interval);
+   HASH_PARAM_I(video.ntimes);
+   HASH_PARAM_I(video.fps);
+   HASH_PARAM_I(document.page);
+
+   return r;
 }
