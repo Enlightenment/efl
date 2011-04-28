@@ -342,6 +342,7 @@ struct _Evas_Object_Textblock_Format
    unsigned char        underline2 : 1;
    unsigned char        strikethrough : 1;
    unsigned char        backing : 1;
+   unsigned char        password : 1;
 };
 
 struct _Evas_Textblock_Style
@@ -1026,6 +1027,7 @@ static const char *linerelgapstr = NULL;
 static const char *itemstr = NULL;
 static const char *linefillstr = NULL;
 static const char *ellipsisstr = NULL;
+static const char *passwordstr = NULL;
 
 /**
  * @internal
@@ -1066,6 +1068,7 @@ _format_command_init(void)
         itemstr = eina_stringshare_add("item");
         linefillstr = eina_stringshare_add("linefill");
         ellipsisstr = eina_stringshare_add("ellipsis");
+        passwordstr = eina_stringshare_add("password");
      }
    format_refcount++;
 }
@@ -1109,6 +1112,7 @@ _format_command_shutdown(void)
    eina_stringshare_del(itemstr);
    eina_stringshare_del(linefillstr);
    eina_stringshare_del(ellipsisstr);
+   eina_stringshare_del(passwordstr);
 }
 
 /**
@@ -1509,6 +1513,13 @@ _format_command(Evas_Object *obj, Evas_Object_Textblock_Format *fmt, const char 
              o = (Evas_Object_Textblock *)(obj->object_data);
              o->have_ellipsis = 1;
           }
+     }
+   else if (cmd == passwordstr)
+     {
+        if (!strcmp(tmp_param, "off"))
+          fmt->password = 0;
+        else if (!strcmp(tmp_param, "on"))
+          fmt->password = 1;
      }
 
    if (new_font)
@@ -1993,6 +2004,7 @@ _layout_format_push(Ctxt *c, Evas_Object_Textblock_Format *fmt)
         fmt->linerelsize = 0.0;
         fmt->linegap = 0;
         fmt->linerelgap = 0.0;
+        fmt->password = 1;
      }
    return fmt;
 }
@@ -2770,7 +2782,7 @@ _layout_text_append(Ctxt *c, Evas_Object_Textblock_Format *fmt, Evas_Object_Text
 
         /* If we work with a replacement char, create a string which is the same
          * but with replacement chars instead of regular chars. */
-        if ((repch) && (eina_ustrbuf_length_get(n->unicode)))
+        if ((fmt->password) && (repch) && (eina_ustrbuf_length_get(n->unicode)))
           {
              int i, ind;
              Eina_Unicode *ptr;

@@ -285,3 +285,8 @@
         evas_image_loader.extension e.g. evas_image_loader.pdf or
         evas_image_loader.xcf or evas_image_loader.xcf.gz etc. etc.
 
+2011-04-28 Shilpaonkar Singh
+
+	* Textblock: Add "password" tag to turn on/off password in the middle
+	  of the textblok. Especially useful for implementing "show last char"
+	  for password entries.
