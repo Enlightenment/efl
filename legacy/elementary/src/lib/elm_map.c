@@ -714,6 +714,7 @@ route_place(Evas_Object *obj, Grid *g __UNUSED__, Evas_Coord px, Evas_Coord py, 
    Elm_Map_Route *r;
    int nodes;
    int x, y, rx, ry;
+   double a;
 
    if (!wd) return;
    Evas_Coord size = pow(2.0, wd->zoom)*wd->tsize;
@@ -722,7 +723,7 @@ route_place(Evas_Object *obj, Grid *g __UNUSED__, Evas_Coord px, Evas_Coord py, 
      {
         EINA_LIST_FOREACH(r->path, lp, p)
           {
-             evas_object_hide(p);
+             evas_object_polygon_points_clear(p);
           }
 
         evas_object_geometry_get(wd->rect, &rx, &ry, NULL, NULL);
@@ -742,7 +743,22 @@ route_place(Evas_Object *obj, Grid *g __UNUSED__, Evas_Coord px, Evas_Coord py, 
                        y = y - py + ry;
 
                        p = eina_list_nth(r->path, n->idx);
-                       evas_object_line_xy_set(p, r->x, r->y, x, y);
+                       a = (double)(y - r->y) / (double)(x - r->x);
+                       if ((abs(a) >= 1) || (r->x == x))
+                         {
+                            evas_object_polygon_point_add(p, r->x - 3, r->y);
+                            evas_object_polygon_point_add(p, r->x + 3, r->y);
+                            evas_object_polygon_point_add(p, x + 3, y);
+                            evas_object_polygon_point_add(p, x - 3, y);
+                         }
+                       else
+                         {
+                            evas_object_polygon_point_add(p, r->x, r->y - 3);
+                            evas_object_polygon_point_add(p, r->x, r->y + 3);
+                            evas_object_polygon_point_add(p, x, y + 3);
+                            evas_object_polygon_point_add(p, x, y - 3);
+                         }
+
                        evas_object_color_set(p, r->color.r, r->color.g, r->color.b, r->color.a);
                        evas_object_raise(p);
                        obj_rotate_zoom(obj, p);
@@ -1439,14 +1455,14 @@ zoom_do(Evas_Object *obj)
 
    if (wd->center_on.enabled)
      {
-	elm_map_utils_convert_geo_into_coord(obj, wd->center_on.lon, wd->center_on.lat, wd->size.w, &xx, &yy);
-	xx -= ow / 2;
-	yy -= oh / 2;
+        elm_map_utils_convert_geo_into_coord(obj, wd->center_on.lon, wd->center_on.lat, wd->size.w, &xx, &yy);
+        xx -= ow / 2;
+        yy -= oh / 2;
      }
    else
      {
-	xx = (wd->size.spos.x * wd->size.w) - (ow / 2);
-	yy = (wd->size.spos.y * wd->size.h) - (oh / 2);
+        xx = (wd->size.spos.x * wd->size.w) - (ow / 2);
+        yy = (wd->size.spos.y * wd->size.h) - (oh / 2);
      }
 
 
@@ -1705,7 +1721,6 @@ _mouse_multi_move(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSED__
              if (!wd->rotate.a) wd->rotate.a = a;
              else
                {
-
                   a_diff = wd->rotate.a - a;
                   if (a_diff > 0) wd->rotate.d -= 1.0;
                   else if (a_diff < 0) wd->rotate.d += 1.0;
@@ -2765,7 +2780,7 @@ _parse_kml(void *data)
                        n->pos.address = NULL;
                        r->nodes = eina_list_append(r->nodes, n);
 
-                       path = evas_object_line_add(evas_object_evas_get(r->wd->obj));
+                       path = evas_object_polygon_add(evas_object_evas_get(r->wd->obj));
                        evas_object_smart_member_add(path, r->wd->pan_smart);
                        r->path = eina_list_append(r->path, path);
                     }
@@ -3120,7 +3135,7 @@ elm_map_zoom_set(Evas_Object *obj, int zoom)
           {
              EINA_LIST_FOREACH(r->path, l, p)
                {
-                  evas_object_hide(p);
+                  evas_object_polygon_points_clear(p);
                }
           }
      }
@@ -3229,13 +3244,13 @@ done:
    wd->t_end = wd->t_start + _elm_config->zoom_friction;
    if ((wd->size.w > 0) && (wd->size.h > 0))
      {
-	wd->size.spos.x = (double)(rx + (rw / 2)) / (double)wd->size.ow;
-	wd->size.spos.y = (double)(ry + (rh / 2)) / (double)wd->size.oh;
+        wd->size.spos.x = (double)(rx + (rw / 2)) / (double)wd->size.ow;
+        wd->size.spos.y = (double)(ry + (rh / 2)) / (double)wd->size.oh;
      }
    else
      {
-	wd->size.spos.x = 0.5;
-	wd->size.spos.y = 0.5;
+        wd->size.spos.x = 0.5;
+        wd->size.spos.y = 0.5;
      }
    if (rw > wd->size.ow) wd->size.spos.x = 0.5;
    if (rh > wd->size.oh) wd->size.spos.y = 0.5;

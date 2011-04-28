@@ -71,18 +71,6 @@ my_map_longpressed(void *data, Evas_Object *obj __UNUSED__, void *event_info)
    elm_map_utils_convert_coord_into_geo(obj, x, y, pow(2.0, zoom)*256, &lon, &lat);
 
    name = elm_map_utils_convert_coord_into_name(data, lon, lat);
-
-   itc1 = elm_map_marker_class_new(data);
-
-   elm_map_marker_class_del_cb_set(itc1, NULL);
-
-   itc_group1 = elm_map_group_class_new(data);
-   elm_map_group_class_icon_cb_set(itc_group1, _group_icon_get);
-   elm_map_group_class_data_set(itc_group1, (void *)PACKAGE_DATA_DIR"/images/bubble.png");
-   elm_map_group_class_style_set(itc_group1, "empty");
-   elm_map_group_class_zoom_displayed_set(itc_group1, 5);
-
-   names = eina_list_append(names, elm_map_marker_add(data, lon, lat, itc1, itc_group1, NULL));
 }
 
 static void
@@ -186,15 +174,15 @@ my_map_anim_stop(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event
 }
 
 static void
-my_map_drag_start(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+my_map_drag_start(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   printf("drag,start\n");
+   evas_object_smart_callback_del(data, "longpressed", my_map_longpressed);
 }
 
 static void
-my_map_drag_stop(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+my_map_drag_stop(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   printf("drag_stop\n");
+   evas_object_smart_callback_add(data, "longpressed", my_map_longpressed, data);
 }
 
 static void
@@ -622,8 +610,8 @@ test_map(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __
         evas_object_smart_callback_add(map, "zoom,change", my_map_zoom_change, win);
         evas_object_smart_callback_add(map, "scroll,anim,start", my_map_anim_start, win);
         evas_object_smart_callback_add(map, "scroll,anim,stop", my_map_anim_stop, win);
-        evas_object_smart_callback_add(map, "scroll,drag,start", my_map_drag_start, win);
-        evas_object_smart_callback_add(map, "scroll,drag,stop", my_map_drag_stop, win);
+        evas_object_smart_callback_add(map, "scroll,drag,start", my_map_drag_start, map);
+        evas_object_smart_callback_add(map, "scroll,drag,stop", my_map_drag_stop, map);
         evas_object_smart_callback_add(map, "scroll", my_map_scroll, win);
         evas_object_smart_callback_add(map, "downloaded", my_map_downloaded, map);
         evas_object_smart_callback_add(map, "route,load", my_map_route_load, map);
