@@ -1436,9 +1436,19 @@ zoom_do(Evas_Object *obj)
    wd->size.h = wd->size.nh;
 
    elm_smart_scroller_child_viewport_size_get(wd->scr, &ow, &oh);
-   elm_map_utils_convert_geo_into_coord(obj, wd->center_on.lon, wd->center_on.lat, wd->size.w, &xx, &yy);
-   xx -= ow / 2;
-   yy -= oh / 2;
+
+   if (wd->center_on.enabled)
+     {
+	elm_map_utils_convert_geo_into_coord(obj, wd->center_on.lon, wd->center_on.lat, wd->size.w, &xx, &yy);
+	xx -= ow / 2;
+	yy -= oh / 2;
+     }
+   else
+     {
+	xx = (wd->size.spos.x * wd->size.w) - (ow / 2);
+	yy = (wd->size.spos.y * wd->size.h) - (oh / 2);
+     }
+
 
    if (xx < 0) xx = 0;
    else if (xx > (wd->size.w - ow)) xx = wd->size.w - ow;
@@ -1477,39 +1487,26 @@ _zoom_anim(void *data)
 
    if ((t >= 2.0) || (t <= 0.5))
      {
-        double lon, lat;
-        Evas_Coord sx, sy, sw, sh;
-        elm_smart_scroller_child_pos_get(wd->scr, &sx, &sy);
-        elm_smart_scroller_child_viewport_size_get(wd->scr, &sw, &sh);
-        sx += sw / 2;
-        sy += sh / 2;
-        elm_map_utils_convert_coord_into_geo(obj, sx, sy, wd->size.w, &lon, &lat);
-
-        wd->pinch.level = 1.0;
-        wd->center_on.enabled = EINA_TRUE;
-        wd->center_on.lon = lon;
-        wd->center_on.lat = lat;
-        zoom_do(obj);
         wd->zoom_animator = NULL;
+        wd->pinch.level = 1.0;
+        zoom_do(obj);
         evas_object_smart_callback_call(obj, SIG_ZOOM_STOP, NULL);
         return ECORE_CALLBACK_CANCEL;
      }
-   else
+   else if (t != 1.0)
      {
         Evas_Coord x, y, w, h;
         float half_w, half_h;
-
         evas_object_geometry_get(data, &x, &y, &w, &h);
         half_w = (float)w * 0.5;
         half_h = (float)h * 0.5;
-
-        wd->pinch.level = t;
         wd->pinch.cx = x + half_w;
         wd->pinch.cy = y + half_h;
+        wd->pinch.level = t;
         if (wd->calc_job) ecore_job_del(wd->calc_job);
         wd->calc_job = ecore_job_add(_calc_job, wd);
-        return ECORE_CALLBACK_RENEW;
      }
+   return ECORE_CALLBACK_RENEW;
 }
 
 static Eina_Bool
@@ -3230,6 +3227,21 @@ done:
 
    wd->t_start = ecore_loop_time_get();
    wd->t_end = wd->t_start + _elm_config->zoom_friction;
+   if ((wd->size.w > 0) && (wd->size.h > 0))
+     {
+	wd->size.spos.x = (double)(rx + (rw / 2)) / (double)wd->size.ow;
+	wd->size.spos.y = (double)(ry + (rh / 2)) / (double)wd->size.oh;
+     }
+   else
+     {
+	wd->size.spos.x = 0.5;
+	wd->size.spos.y = 0.5;
+     }
+   if (rw > wd->size.ow) wd->size.spos.x = 0.5;
+   if (rh > wd->size.oh) wd->size.spos.y = 0.5;
+   if (wd->size.spos.x > 1.0) wd->size.spos.x = 1.0;
+   if (wd->size.spos.y > 1.0) wd->size.spos.y = 1.0;
+
    if (wd->paused)
      {
         zoom_do(obj);
