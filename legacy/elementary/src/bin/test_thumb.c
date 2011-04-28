@@ -11,15 +11,15 @@ test_thumb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
    char buf[PATH_MAX];
    const char *img[9] =
      {
-	"panel_01.jpg",
-	"plant_01.jpg",
-	"rock_01.jpg",
-	"rock_02.jpg",
-	"sky_01.jpg",
-	"sky_02.jpg",
-	"sky_03.jpg",
-	"sky_04.jpg",
-	"wood_01.jpg",
+        "panel_01.jpg",
+        "plant_01.jpg",
+        "rock_01.jpg",
+        "rock_02.jpg",
+        "sky_01.jpg",
+        "sky_02.jpg",
+        "sky_03.jpg",
+        "sky_04.jpg",
+        "wood_01.jpg",
      };
 
    elm_need_ethumb();
@@ -43,15 +43,15 @@ test_thumb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
           {
              th = elm_thumb_add(win);
              snprintf(buf, sizeof(buf), "%s/images/%s", PACKAGE_DATA_DIR,
-		      img[n]);
-	     n = (n + 1) % 9;
+                      img[n]);
+             n = (n + 1) % 9;
              elm_thumb_file_set(th, buf, img[n]);
              evas_object_size_hint_weight_set(th, EVAS_HINT_EXPAND,
                                               EVAS_HINT_EXPAND);
-	     evas_object_size_hint_align_set(th, EVAS_HINT_FILL,
-					     EVAS_HINT_FILL);
+             evas_object_size_hint_align_set(th, EVAS_HINT_FILL,
+                                             EVAS_HINT_FILL);
              elm_table_pack(tb, th, i, j, 1, 1);
-	     elm_thumb_editable_set(th, EINA_TRUE);
+             elm_thumb_editable_set(th, EINA_TRUE);
              evas_object_show(th);
           }
      }
