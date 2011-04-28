@@ -3550,6 +3550,7 @@ EAPI void
 elm_map_utils_convert_coord_into_geo(const Evas_Object *obj, int x, int y, int size, double *lon, double *lat)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
    int zoom = floor(log(size/256) / log(2));
 
    if (elm_map_source_get(obj) == ELM_MAP_SOURCE_MODULE)
@@ -3583,6 +3584,7 @@ EAPI void
 elm_map_utils_convert_geo_into_coord(const Evas_Object *obj, double lon, double lat, int size, int *x, int *y)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
    int zoom = floor(log(size/256) / log(2));
 
    if (elm_map_source_get(obj) == ELM_MAP_SOURCE_MODULE)
@@ -4853,6 +4855,7 @@ elm_map_rotate_set(Evas_Object *obj, double degree, Evas_Coord cx, Evas_Coord cy
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
 
+   if (!wd) return;
    wd->rotate.d = degree;
    wd->rotate.cx = cx;
    wd->rotate.cy = cy;
@@ -4875,6 +4878,7 @@ elm_map_rotate_get(const Evas_Object *obj, double *degree, Evas_Coord *cx, Evas_
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
 
+   if (!wd) return;
    if (degree) *degree = wd->rotate.d;
    if (cx) *cx = wd->rotate.cx;
    if (cy) *cy = wd->rotate.cy;
@@ -4894,6 +4898,7 @@ elm_map_wheel_disabled_set(Evas_Object *obj, Eina_Bool disabled)
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
 
+   if (!wd) return;
    if ((!wd->wheel_disabled) && (disabled))
      evas_object_event_callback_del_full(wd->rect, EVAS_CALLBACK_MOUSE_WHEEL, _mouse_wheel_cb, obj);
    else if ((wd->wheel_disabled) && (!disabled))
@@ -4914,6 +4919,7 @@ elm_map_wheel_disabled_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
    Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return EINA_FALSE;
    return wd->wheel_disabled;
 }
 
