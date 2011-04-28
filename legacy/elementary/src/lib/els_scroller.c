@@ -105,6 +105,7 @@ struct _Smart_Data
    Eina_Bool momentum_animator_disabled :1;
    Eina_Bool bounce_animator_disabled :1;
    Eina_Bool is_mirrored : 1;
+   Eina_Bool wheel_disabled : 1;
 };
 
 /* local subsystem functions */
@@ -353,6 +354,24 @@ elm_smart_scroller_bounce_animator_disabled_set(Evas_Object *obj, Eina_Bool disa
              sd->scrollto.y.animator = NULL;
           }
      }
+}
+
+Eina_Bool
+elm_smart_scroller_wheel_disabled_get(Evas_Object *obj)
+{
+   API_ENTRY return EINA_FALSE;
+   return sd->wheel_disabled;
+}
+
+void
+elm_smart_scroller_wheel_disabled_set(Evas_Object *obj, Eina_Bool disabled)
+{
+   API_ENTRY return;
+   if ((!sd->wheel_disabled) && (disabled))
+     evas_object_event_callback_del_full(sd->event_obj, EVAS_CALLBACK_MOUSE_WHEEL, _smart_event_wheel, sd);
+   else if ((sd->wheel_disabled) && (!disabled))
+     evas_object_event_callback_add(sd->event_obj, EVAS_CALLBACK_MOUSE_WHEEL, _smart_event_wheel, sd);
+   sd->wheel_disabled = disabled;
 }
 
 /* Update the wanted coordinates according to the x, y passed

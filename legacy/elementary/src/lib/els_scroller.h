@@ -38,3 +38,5 @@ Eina_Bool elm_smart_scroller_momentum_animator_disabled_get   (Evas_Object *obj)
 void elm_smart_scroller_momentum_animator_disabled_set             (Evas_Object *obj, Eina_Bool disabled);
 void elm_smart_scroller_bounce_animator_disabled_set               (Evas_Object *obj, Eina_Bool disabled);
 Eina_Bool elm_smart_scroller_bounce_animator_disabled_get     (Evas_Object *obj);
+Eina_Bool elm_smart_scroller_wheel_disabled_get (Evas_Object *obj);
+void elm_smart_scroller_wheel_disabled_set      (Evas_Object *obj, Eina_Bool disabled);
