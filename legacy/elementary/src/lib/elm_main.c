@@ -159,7 +159,7 @@ sudo make install
 @endverbatim
  *
  * Note sudo was assumed to get root permissions, as this would install in
- * /usr/local which is system-owned. Ue any way you like to gain root, or
+ * /usr/local which is system-owned. Use any way you like to gain root, or
  * specify a different prefix with configure:
  *
 @verbatim
@@ -188,7 +188,7 @@ make distcheck
  * included (that is sources for your application, not libraries it depends
  * on like Elementary). It builds cleanly in a buildroot and does not
  * contain any files that are temporarily generated like binaries and other
- * build-gnerated files, so the tarball is clean, and no need to worry
+ * build-generated files, so the tarball is clean, and no need to worry
  * about cleaning up your tree before packaging.
  *
 @verbatim
@@ -1174,7 +1174,7 @@ elm_policy_get(unsigned int policy)
 /**
  * @defgroup UI-Mirroring Selective Widget mirroring
  *
- * These functions allow you to set ui-miroring on specific widgets or whe
+ * These functions allow you to set ui-mirroring on specific widgets or the
  * whole interface. Widgets can be in one of two modes, automatic and manual.
  * Automatic means they'll be changed according to the system mirroring mode
  * and manual means only explicit changes will matter. You are not supposed to
