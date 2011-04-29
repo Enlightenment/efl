@@ -1043,7 +1043,7 @@ extern "C" {
    EAPI Eina_Bool          elm_layout_file_set(Evas_Object *obj, const char *file, const char *group) EINA_ARG_NONNULL(1);
    EAPI Eina_Bool          elm_layout_theme_set(Evas_Object *obj, const char *clas, const char *group, const char *style) EINA_ARG_NONNULL(1);
    EAPI void               elm_layout_content_set(Evas_Object *obj, const char *swallow, Evas_Object *content) EINA_ARG_NONNULL(1);
-   EAPI const Evas_Object *elm_layout_content_get(const Evas_Object *obj, const char *swallow) EINA_ARG_NONNULL(1);
+   EAPI Evas_Object       *elm_layout_content_get(const Evas_Object *obj, const char *swallow) EINA_ARG_NONNULL(1);
    EAPI Evas_Object       *elm_layout_content_unset(Evas_Object *obj, const char *swallow) EINA_ARG_NONNULL(1);
    EAPI void               elm_layout_text_set(Evas_Object *obj, const char *part, const char *text) EINA_ARG_NONNULL(1);
    EAPI const char        *elm_layout_text_get(const Evas_Object *obj, const char *part) EINA_ARG_NONNULL(1);

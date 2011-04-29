@@ -464,7 +464,7 @@ elm_layout_content_set(Evas_Object *obj, const char *swallow, Evas_Object *conte
  *
  * @ingroup Layout
  */
-EAPI const Evas_Object *
+EAPI Evas_Object *
 elm_layout_content_get(const Evas_Object *obj, const char *swallow)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
