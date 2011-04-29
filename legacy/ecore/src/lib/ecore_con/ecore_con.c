@@ -1932,7 +1932,7 @@ _ecore_con_svr_tcp_handler(void                        *data,
    Ecore_Con_Server *svr;
    Ecore_Con_Client *cl = NULL;
    unsigned char client_addr[256];
-   unsigned int client_addr_len = sizeof(client_addr);
+   unsigned int client_addr_len;
 
    svr = data;
    if (svr->dead)
@@ -1955,6 +1955,7 @@ _ecore_con_svr_tcp_handler(void                        *data,
      }
    cl->host_server = svr;
 
+   client_addr_len = sizeof(client_addr);
    memset(&client_addr, 0, client_addr_len);
    cl->fd = accept(svr->fd, (struct sockaddr *)&client_addr, (socklen_t *)&client_addr_len);
    if (cl->fd < 0)
