@@ -166,7 +166,7 @@ struct _Eio_Monitor
 
    const char *path;
 
-   int refcount;
+   EINA_REFCOUNT;
    int error;
 
    Eina_Bool fallback : 1;

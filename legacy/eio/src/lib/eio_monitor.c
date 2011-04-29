@@ -36,9 +36,9 @@ static Eina_Hash *_eio_monitors = NULL;
 static pid_t _monitor_pid = -1;
 
 static void
-_eio_monitor_del(void *data)
+_eio_monitor_free(Eio_Monitor *monitor)
 {
-   Eio_Monitor *monitor = data;
+   eina_hash_del(_eio_monitors, monitor->path, monitor);
 
    if (monitor->exist) eio_file_cancel(monitor->exist);
 
@@ -50,20 +50,8 @@ _eio_monitor_del(void *data)
           eio_monitor_fallback_del(monitor);
      }
 
-   if (monitor->refcount > 0)
-     return ;
-
    eina_stringshare_del(monitor->path);
    free(monitor);
-}
-
-static void
-_eio_monitor_unref(Eio_Monitor *monitor)
-{
-   monitor->refcount--;
-
-   if (monitor->refcount <= 0)
-     eina_hash_del(_eio_monitors, monitor->path, monitor);
 }
 
 static void
@@ -71,7 +59,7 @@ _eio_monitor_error_cleanup_cb(void *user_data, __UNUSED__ void *func_data)
 {
    Eio_Monitor_Error *ev = user_data;
 
-   _eio_monitor_unref(ev->monitor);
+   EINA_REFCOUNT_UNREF(ev->monitor, _eio_monitor_free);
    free(ev);
 }
 
@@ -80,7 +68,7 @@ _eio_monitor_event_cleanup_cb(void *user_data, __UNUSED__ void *func_data)
 {
    Eio_Monitor_Event *ev = user_data;
 
-   _eio_monitor_unref(ev->monitor);
+   EINA_REFCOUNT_UNREF(ev->monitor, _eio_monitor_free);
    eina_stringshare_del(ev->filename);
    free(ev);
 }
@@ -91,16 +79,11 @@ _eio_monitor_stat_cb(void *data, __UNUSED__ Eio_File *handler, __UNUSED__ const 
    Eio_Monitor *monitor = data;
 
    monitor->exist = NULL;
-   monitor->refcount--;
 
-   if (monitor->refcount > 0)
-     {
-        eio_monitor_backend_add(monitor);
-     }
-   else
-     {
-        eina_hash_del(_eio_monitors, monitor->path, monitor);
-     }
+   if (EINA_REFCOUNT_GET(monitor) > 1)
+     eio_monitor_backend_add(monitor);
+
+   EINA_REFCOUNT_UNREF(monitor, _eio_monitor_free);
 }
 
 static void
@@ -112,7 +95,7 @@ _eio_monitor_error(Eio_Monitor *monitor, int error)
    if (!ev) return ;
 
    ev->monitor = monitor;
-   ev->monitor->refcount++;
+   EINA_REFCOUNT_REF(ev->monitor);
    ev->error = error;
 
    ecore_event_add(EIO_MONITOR_ERROR, ev, _eio_monitor_error_cleanup_cb, NULL);
@@ -125,16 +108,13 @@ _eio_monitor_error_cb(void *data, Eio_File *handler, int error)
 
    monitor->error = error;
    monitor->exist = NULL;
-   monitor->refcount--;
 
-   if (monitor->refcount == 0) goto on_empty;
+   if (EINA_REFCOUNT_GET(monitor) > 1)
+     _eio_monitor_error(monitor, error);
 
-   _eio_monitor_error(monitor, error);
+   EINA_REFCOUNT_UNREF(monitor, _eio_monitor_free);
 
    return ;
-
- on_empty:
-   eina_hash_del(_eio_monitors, monitor->path, monitor);
 }
 
 void
@@ -155,7 +135,7 @@ eio_monitor_init(void)
    eio_monitor_backend_init();
    eio_monitor_fallback_init();
 
-   _eio_monitors = eina_hash_stringshared_new(_eio_monitor_del);
+   _eio_monitors = eina_hash_stringshared_new(NULL);
 
    _monitor_pid = getpid();
 }
@@ -163,6 +143,7 @@ eio_monitor_init(void)
 void
 eio_monitor_shutdown(void)
 {
+   /* FIXME: Need to cancel all request... */
    eina_hash_free(_eio_monitors);
 
    eio_monitor_backend_shutdown();
@@ -195,26 +176,28 @@ eio_monitor_stringshared_add(const char *path)
 
    monitor = eina_hash_find(_eio_monitors, path);
 
-   if (!monitor)
+   if (monitor)
      {
-        monitor = malloc(sizeof (Eio_Monitor));
-        if (!monitor) return NULL;
-
-        monitor->backend = NULL; // This is needed to avoid race condition
-        monitor->path = eina_stringshare_ref(path);
-        monitor->fallback = EINA_FALSE;
-        monitor->rename = EINA_FALSE;
-        monitor->refcount = 1;
-
-        monitor->exist = eio_file_direct_stat(monitor->path,
-                                              _eio_monitor_stat_cb,
-                                              _eio_monitor_error_cb,
-                                              monitor);
-
-        eina_hash_direct_add(_eio_monitors, path, monitor);
+        EINA_REFCOUNT_REF(monitor);
+        return monitor;
      }
 
-   monitor->refcount++;
+   monitor = malloc(sizeof (Eio_Monitor));
+   if (!monitor) return NULL;
+
+   monitor->backend = NULL; // This is needed to avoid race condition
+   monitor->path = eina_stringshare_ref(path);
+   monitor->fallback = EINA_FALSE;
+   monitor->rename = EINA_FALSE;
+
+   EINA_REFCOUNT_INIT(monitor);
+
+   monitor->exist = eio_file_direct_stat(monitor->path,
+                                         _eio_monitor_stat_cb,
+                                         _eio_monitor_error_cb,
+                                         monitor);
+
+   eina_hash_direct_add(_eio_monitors, path, monitor);
 
    return monitor;
 }
@@ -222,11 +205,7 @@ eio_monitor_stringshared_add(const char *path)
 EAPI void
 eio_monitor_del(Eio_Monitor *monitor)
 {
-   monitor->refcount--;
-
-   if (monitor->refcount > 0) return ;
-
-   eina_hash_del(_eio_monitors, monitor->path, monitor);
+   EINA_REFCOUNT_UNREF(monitor, _eio_monitor_free);
 }
 
 EAPI const char *
@@ -244,7 +223,7 @@ _eio_monitor_send(Eio_Monitor *monitor, const char *filename, int event_code)
    if (!ev) return ;
 
    ev->monitor = monitor;
-   ev->monitor->refcount++;
+   EINA_REFCOUNT_REF(ev->monitor);
    ev->filename = eina_stringshare_add(filename);
 
    ecore_event_add(event_code, ev, _eio_monitor_event_cleanup_cb, NULL);
