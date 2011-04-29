@@ -62,8 +62,12 @@ typedef int Eina_Refcount;
 
 /** Used when removing a reference to an object. Free_Callback will automatically be called when necessary */
 #define EINA_REFCOUNT_UNREF(Variable, Free_Callback) \
-  if (--((Variable)->__refcount) == 0)		     \
-    Free_Callback(Variable);
+   do                                                \
+     {                                               \
+        if (--((Variable)->__refcount) == 0)         \
+           Free_Callback(Variable);                  \
+     }                                               \
+   while (0)
 
 /** Get refcounting value */
 #define EINA_REFCOUNT_GET(Variable) (Variable)->__refcount
