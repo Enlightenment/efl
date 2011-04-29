@@ -46,15 +46,15 @@
 
 	* Add eina_inlist_sort.
 	* Add eina_mempool_repack.
-	* Add Eina_Object API.
+	* Add Eina_Object API, an helper for providing memory allocation with a redirection.
 
 2011-04-13  Cedric Bail & Vincent Torri
 
-	* Add Eina_File API.
+	* Add Eina_File API, a portable mmap helper with some cache and tracking feature.
 
 2011-04-22  Vincent Torri
 
-        * Add Eina_Lock API
+        * Add Eina_Lock API, a portable solution across various system for locking/unlocking mutex.
 
 2011-04-24  Carsten Haitzler (The Rasterman)
 
@@ -68,3 +68,7 @@
 2011-04-27  Vincent Torri
 
         * Fix static build of the buddy mempool
+
+2011-04-29  Cedric Bail
+
+	* Add Eina_Refcount macro helper. You should really use them when running with thread !
