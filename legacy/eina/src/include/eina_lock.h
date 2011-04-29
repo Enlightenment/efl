@@ -36,7 +36,7 @@
 #ifdef EINA_HAVE_THREADS
 # ifdef _WIN32_WCE
 #  include "eina_inline_lock_wince.x"
-# elif _WIN32
+# elif defined(_WIN32)
 #  include "eina_inline_lock_win32.x"
 # else
 #  include "eina_inline_lock_posix.x"
