@@ -1592,6 +1592,7 @@ evas_object_text_render(Evas_Object *obj, void *output, void *context, void *sur
 	{0, 1, 2, 1, 0}
      };
    int sl = 0, st = 0;
+   int shad_dst, shad_sz, dx, dy, haveshad;
 
    /* render object to surface with context, and offxet by x,y */
    o = (Evas_Object_Text *)(obj->object_data);
@@ -1666,80 +1667,83 @@ evas_object_text_render(Evas_Object *obj, void *output, void *context, void *sur
 		     obj->cur.geometry.w, \
 		     obj->cur.geometry.h, \
 		     it->text, &it->text_props);
+
+   /* shadows */
+   shad_dst = shad_sz = dx = dy = haveshad = 0;
+   switch (o->cur.style & EVAS_TEXT_STYLE_MASK_BASIC)
+     {
+      case EVAS_TEXT_STYLE_SHADOW:
+      case EVAS_TEXT_STYLE_OUTLINE_SOFT_SHADOW:
+         shad_dst = 1;
+         haveshad = 1;
+         break;
+      case EVAS_TEXT_STYLE_OUTLINE_SHADOW:
+      case EVAS_TEXT_STYLE_FAR_SHADOW:
+         shad_dst = 2;
+         haveshad = 1;
+         break;
+      case EVAS_TEXT_STYLE_FAR_SOFT_SHADOW:
+         shad_dst = 2;
+         shad_sz = 2;
+         haveshad = 1;
+         break;
+      case EVAS_TEXT_STYLE_SOFT_SHADOW:
+         shad_dst = 1;
+         shad_sz = 2;
+         haveshad = 1;
+         break;
+      default:
+         break;
+     }
+   if (haveshad)
+     {
+        if (shad_dst > 0)
+          {
+             switch (o->cur.style & EVAS_TEXT_STYLE_MASK_SHADOW_DIRECTION)
+               {
+                case EVAS_TEXT_STYLE_SHADOW_DIRECTION_BOTTOM_RIGHT:
+                   dx = 1;
+                   dy = 1;
+                   break;
+                case EVAS_TEXT_STYLE_SHADOW_DIRECTION_BOTTOM:
+                   dx = 0;
+                   dy = 1;
+                   break;
+                case EVAS_TEXT_STYLE_SHADOW_DIRECTION_BOTTOM_LEFT:
+                   dx = -1;
+                   dy = 1;
+                   break;
+                case EVAS_TEXT_STYLE_SHADOW_DIRECTION_LEFT:
+                   dx = -1;
+                   dy = 0;
+                   break;
+                case EVAS_TEXT_STYLE_SHADOW_DIRECTION_TOP_LEFT:
+                   dx = -1;
+                   dy = -1;
+                   break;
+                case EVAS_TEXT_STYLE_SHADOW_DIRECTION_TOP:
+                   dx = 0;
+                   dy = -1;
+                   break;
+                case EVAS_TEXT_STYLE_SHADOW_DIRECTION_TOP_RIGHT:
+                   dx = 1;
+                   dy = -1;
+                   break;
+                case EVAS_TEXT_STYLE_SHADOW_DIRECTION_RIGHT:
+                   dx = 1;
+                   dy = 0;
+                default:
+                   break;
+               }
+             dx *= shad_dst;
+             dy *= shad_dst;
+          }
+     }
    EINA_INLIST_FOREACH(EINA_INLIST_GET(o->items), it)
      {
-        int shad_dst, shad_sz, dx, dy, haveshad;
-
-        /* shadows */
-        shad_dst = shad_sz = dx = dy = haveshad = 0;
-        switch (o->cur.style & EVAS_TEXT_STYLE_MASK_BASIC)
-          {
-           case EVAS_TEXT_STYLE_SHADOW:
-           case EVAS_TEXT_STYLE_OUTLINE_SOFT_SHADOW:
-             shad_dst = 1;
-             haveshad = 1;
-             break;
-           case EVAS_TEXT_STYLE_OUTLINE_SHADOW:
-           case EVAS_TEXT_STYLE_FAR_SHADOW:
-             shad_dst = 2;
-             haveshad = 1;
-             break;
-           case EVAS_TEXT_STYLE_FAR_SOFT_SHADOW:
-             shad_dst = 2;
-             shad_sz = 2;
-             haveshad = 1;
-             break;
-           case EVAS_TEXT_STYLE_SOFT_SHADOW:
-             shad_dst = 1;
-             shad_sz = 2;
-             haveshad = 1;
-             break;
-           default:
-             break;
-          }
+        /* Shadows */
         if (haveshad)
           {
-             if (shad_dst > 0)
-               {
-                  switch (o->cur.style & EVAS_TEXT_STYLE_MASK_SHADOW_DIRECTION)
-                    {
-                     case EVAS_TEXT_STYLE_SHADOW_DIRECTION_BOTTOM_RIGHT:
-                       dx = 1;
-                       dy = 1;
-                       break;
-                     case EVAS_TEXT_STYLE_SHADOW_DIRECTION_BOTTOM:
-                       dx = 0;
-                       dy = 1;
-                       break;
-                     case EVAS_TEXT_STYLE_SHADOW_DIRECTION_BOTTOM_LEFT:
-                       dx = -1;
-                       dy = 1;
-                       break;
-                     case EVAS_TEXT_STYLE_SHADOW_DIRECTION_LEFT:
-                       dx = -1;
-                       dy = 0;
-                       break;
-                     case EVAS_TEXT_STYLE_SHADOW_DIRECTION_TOP_LEFT:
-                       dx = -1;
-                       dy = -1;
-                       break;
-                     case EVAS_TEXT_STYLE_SHADOW_DIRECTION_TOP:
-                       dx = 0;
-                       dy = -1;
-                       break;
-                     case EVAS_TEXT_STYLE_SHADOW_DIRECTION_TOP_RIGHT:
-                       dx = 1;
-                       dy = -1;
-                       break;
-                     case EVAS_TEXT_STYLE_SHADOW_DIRECTION_RIGHT:
-                       dx = 1;
-                       dy = 0;
-                     default:
-                       break;
-                    }
-                  dx *= shad_dst;
-                  dy *= shad_dst;
-               }
              switch (shad_sz)
                {
                 case 0:
@@ -1763,7 +1767,7 @@ evas_object_text_render(Evas_Object *obj, void *output, void *context, void *sur
                   break;
                }
           }
-        
+
         /* glows */
         if (o->cur.style == EVAS_TEXT_STYLE_GLOW)
           {
