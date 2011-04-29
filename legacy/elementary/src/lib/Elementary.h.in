@@ -900,7 +900,7 @@ extern "C" {
    /* table */
    EAPI Evas_Object *elm_table_add(Evas_Object *parent) EINA_ARG_NONNULL(1);
    EAPI void         elm_table_homogenous_set(Evas_Object *obj, Eina_Bool homogenous) EINA_ARG_NONNULL(1);
-   EAPI Eina_Bool    elm_table_homogeneous_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+   EAPI Eina_Bool    elm_table_homogenous_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
    EAPI void         elm_table_padding_set(Evas_Object *obj, Evas_Coord horizontal, Evas_Coord vertical) EINA_ARG_NONNULL(1);
    EAPI void         elm_table_padding_get(const Evas_Object *obj, Evas_Coord *horizontal, Evas_Coord *vertical) EINA_ARG_NONNULL(1);
    EAPI void         elm_table_pack(Evas_Object *obj, Evas_Object *subobj, int x, int y, int w, int h) EINA_ARG_NONNULL(1);
