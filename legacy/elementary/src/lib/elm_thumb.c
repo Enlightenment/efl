@@ -84,8 +84,10 @@ static const Evas_Smart_Cb_Description _signals[] =
 
 struct _Ethumb_Client *_elm_ethumb_client = NULL;
 Eina_Bool _elm_ethumb_connected = EINA_FALSE;
+#ifdef HAVE_ELEMENTARY_ETHUMB
 static Eina_List *retry = NULL;
 static int pending_request = 0;
+#endif
 
 EAPI int ELM_ECORE_EVENT_ETHUMB_CONNECT = 0;
 
