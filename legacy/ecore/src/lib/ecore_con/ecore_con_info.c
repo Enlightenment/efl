@@ -327,7 +327,7 @@ static void
 _ecore_con_info_readdata(CB_Data *cbdata)
 {
    Ecore_Con_Info container;
-   Ecore_Con_Info *recv;
+   Ecore_Con_Info *recv_info;
    unsigned char *torecv;
    int torecv_len;
 
@@ -348,22 +348,22 @@ _ecore_con_info_readdata(CB_Data *cbdata)
         if ((size > 0) &&
             ((size_t)size == torecv_len - sizeof(Ecore_Con_Info)))
           {
-             recv = (Ecore_Con_Info *)torecv;
+             recv_info = (Ecore_Con_Info *)torecv;
 
-             recv->info.ai_addr =
+             recv_info->info.ai_addr =
                (struct sockaddr *)(torecv + sizeof(Ecore_Con_Info));
              if ((size_t)torecv_len !=
-                 (sizeof(Ecore_Con_Info) + recv->info.ai_addrlen))
-               recv->info.ai_canonname = (char *)
-                 (torecv + sizeof(Ecore_Con_Info) + recv->info.ai_addrlen);
+                 (sizeof(Ecore_Con_Info) + recv_info->info.ai_addrlen))
+               recv_info->info.ai_canonname = (char *)
+                 (torecv + sizeof(Ecore_Con_Info) + recv_info->info.ai_addrlen);
              else
-               recv->info.ai_canonname = NULL;
+               recv_info->info.ai_canonname = NULL;
 
-             recv->info.ai_next = NULL;
+             recv_info->info.ai_next = NULL;
 
              if (cbdata->data)
                {
-                  cbdata->cb_done(cbdata->data, recv);
+                  cbdata->cb_done(cbdata->data, recv_info);
                   ecore_con_server_infos_del(cbdata->data, cbdata);
                }
 
