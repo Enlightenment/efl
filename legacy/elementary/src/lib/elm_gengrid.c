@@ -1339,9 +1339,9 @@ _calc_job(void *data)
           }
 
         wd->nmax = nmax;
-        wd->calc_job = NULL;
         evas_object_smart_changed(wd->pan_smart);
      }
+   wd->calc_job = NULL;
 }
 
 static void
