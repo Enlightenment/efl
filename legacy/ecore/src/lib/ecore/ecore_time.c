@@ -72,7 +72,7 @@ ecore_time_get(void)
      }
 
    return (double)t.tv_sec + (((double)t.tv_nsec) / 1000000000.0);
-#elif HAVE_EVIL
+#elif defined(HAVE_EVIL)
    return evil_time_get();
 #elif defined(__APPLE__) && defined(__MACH__)
    return _ecore_time_clock_conversion * (double) mach_absolute_time();
