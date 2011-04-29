@@ -1933,7 +1933,6 @@ _ecore_con_svr_tcp_handler(void                        *data,
    Ecore_Con_Client *cl = NULL;
    unsigned char client_addr[256];
    unsigned int client_addr_len = sizeof(client_addr);
-   int new_fd;
 
    svr = data;
    if (svr->dead)
@@ -1947,42 +1946,45 @@ _ecore_con_svr_tcp_handler(void                        *data,
      return ECORE_CALLBACK_RENEW;
 
    /* a new client */
+
+   cl = calloc(1, sizeof(Ecore_Con_Client));
+   if (!cl)
+     {
+        ecore_con_event_server_error(svr, "Memory allocation failure when attempting to add a new client");
+        return ECORE_CALLBACK_RENEW;
+     }
+   cl->host_server = svr;
+
    memset(&client_addr, 0, client_addr_len);
-   new_fd = accept(svr->fd, (struct sockaddr *)&client_addr, (socklen_t *)&client_addr_len);
-   if (new_fd < 0)
+   cl->fd = accept(svr->fd, (struct sockaddr *)&client_addr, (socklen_t *)&client_addr_len);
+   if (cl->fd < 0)
      {
         ecore_con_event_server_error(svr, strerror(errno));
-        return ECORE_CALLBACK_RENEW;
+        goto free_cl;
      }
 
    if ((svr->client_limit >= 0) && (svr->reject_excess_clients) &&
        (svr->client_count >= (unsigned int)svr->client_limit))
      {
         ecore_con_event_server_error(svr, "Maximum client limit reached");
-        goto error;
+        goto close_fd;
      }
 
-   cl = calloc(1, sizeof(Ecore_Con_Client));
-   if (!cl)
-     {
-        ecore_con_event_server_error(svr, "Memory allocation failure when attempting to add a new client");
-        goto error;
-     }
-
-   cl->fd = new_fd;
-   cl->host_server = svr;
-   if (fcntl(new_fd, F_SETFL, O_NONBLOCK) < 0)
+   if (fcntl(cl->fd, F_SETFL, O_NONBLOCK) < 0)
      {
         ecore_con_event_server_error(svr, strerror(errno));
-        goto error;
+        goto close_fd;
      }
-   if (fcntl(new_fd, F_SETFD, FD_CLOEXEC) < 0)
+   if (fcntl(cl->fd, F_SETFD, FD_CLOEXEC) < 0)
      {
         ecore_con_event_server_error(svr, strerror(errno));
-        goto error;
+        goto close_fd;
      }
    cl->fd_handler = ecore_main_fd_handler_add(cl->fd, ECORE_FD_READ,
                                               _ecore_con_svr_cl_handler, cl, NULL, NULL);
+   if (!cl->fd_handler)
+     goto close_fd;
+
    ECORE_MAGIC_SET(cl, ECORE_MAGIC_CON_CLIENT);
 
    if (svr->type & ECORE_CON_SSL)
@@ -1990,14 +1992,14 @@ _ecore_con_svr_tcp_handler(void                        *data,
         cl->handshaking = EINA_TRUE;
         cl->ssl_state = ECORE_CON_SSL_STATE_INIT;
         if (ecore_con_ssl_client_init(cl))
-          goto error;
+          goto del_handler;
      }
 
    cl->client_addr = malloc(client_addr_len);
    if (!cl->client_addr)
      {
         ecore_con_event_server_error(svr, "Memory allocation failure when attempting to add a new client");
-        return ECORE_CALLBACK_RENEW;
+        goto del_handler;
      }
    cl->client_addr_len = client_addr_len;
    memcpy(cl->client_addr, &client_addr, client_addr_len);
@@ -2010,13 +2012,13 @@ _ecore_con_svr_tcp_handler(void                        *data,
 
    return ECORE_CALLBACK_RENEW;
 
-error:
-   if (cl && cl->fd_handler)
-     {
-        ecore_main_fd_handler_del(cl->fd_handler);
-        close(cl->fd);
-        free(cl);
-     }
+ del_handler:
+   ecore_main_fd_handler_del(cl->fd_handler);
+ close_fd:
+   close(cl->fd);
+ free_cl:
+   free(cl);
+
    return ECORE_CALLBACK_RENEW;
 }
 
@@ -2324,7 +2326,7 @@ _ecore_con_server_flush(Ecore_Con_Server *svr)
 {
    int count, num;
 
-   if (!svr->write_buf)
+   if (!svr->write_buf && svr->fd_handler)
      {
         ecore_main_fd_handler_active_set(svr->fd_handler, ECORE_FD_READ);
         return;
@@ -2374,7 +2376,7 @@ _ecore_con_server_flush(Ecore_Con_Server *svr)
         if (svr->fd_handler)
           ecore_main_fd_handler_active_set(svr->fd_handler, ECORE_FD_READ);
      }
-   else if (count < num)
+   else if ((count < num) && svr->fd_handler)
      ecore_main_fd_handler_active_set(svr->fd_handler, ECORE_FD_WRITE);
 }
 
@@ -2383,7 +2385,7 @@ _ecore_con_client_flush(Ecore_Con_Client *cl)
 {
    int num, count = 0;
 
-   if (!cl->buf)
+   if (!cl->buf && cl->fd_handler)
      {
         ecore_main_fd_handler_active_set(cl->fd_handler, ECORE_FD_READ);
         return;
