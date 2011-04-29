@@ -22,7 +22,6 @@ static Elm_Map_Marker *markers[MARKER_MAX];
 static Elm_Map_Marker *route_from, *route_to;
 static Elm_Map_Route *route;
 static Elm_Map_Name *name;
-static Eina_List *names;
 
 Marker_Data data1 = {PACKAGE_DATA_DIR"/images/logo.png"};
 Marker_Data data2 = {PACKAGE_DATA_DIR"/images/logo_small.png"};
