@@ -120,6 +120,14 @@ typedef enum
    ECORE_IMF_PREEDIT_TYPE_SUB3
 } Ecore_IMF_Preedit_Type;
 
+typedef enum
+{
+   ECORE_IMF_AUTOCAPITAL_TYPE_NONE,
+   ECORE_IMF_AUTOCAPITAL_TYPE_WORD,
+   ECORE_IMF_AUTOCAPITAL_TYPE_SENTENCE,
+   ECORE_IMF_AUTOCAPITAL_TYPE_ALLCHARACTER
+} Ecore_IMF_Autocapital_Type;
+
 struct _Ecore_IMF_Event_Preedit_Start
 {
    Ecore_IMF_Context *ctx;
@@ -295,6 +303,8 @@ struct _Ecore_IMF_Context_Class
    void (*input_mode_set)      (Ecore_IMF_Context *ctx, Ecore_IMF_Input_Mode input_mode);
    Eina_Bool (*filter_event)   (Ecore_IMF_Context *ctx, Ecore_IMF_Event_Type type, Ecore_IMF_Event *event);
    void (*preedit_string_with_attributes_get) (Ecore_IMF_Context *ctx, char **str, Eina_List **attrs, int *cursor_pos);
+   void (*prediction_allow_set)(Ecore_IMF_Context *ctx, Eina_Bool prediction);
+   void (*autocapital_type_set)(Ecore_IMF_Context *ctx, Ecore_IMF_Autocapital_Type autocapital_type);
 };
 
 struct _Ecore_IMF_Context_Info
@@ -348,6 +358,10 @@ EAPI void                          ecore_imf_context_preedit_end_event_add(Ecore
 EAPI void                          ecore_imf_context_preedit_changed_event_add(Ecore_IMF_Context *ctx);
 EAPI void                          ecore_imf_context_commit_event_add(Ecore_IMF_Context *ctx, const char *str);
 EAPI void                          ecore_imf_context_delete_surrounding_event_add(Ecore_IMF_Context *ctx, int offset, int n_chars);
+EAPI void                          ecore_imf_context_prediction_allow_set(Ecore_IMF_Context *ctx, Eina_Bool prediction);
+EAPI Eina_Bool                     ecore_imf_context_prediction_allow_get(Ecore_IMF_Context *ctx);
+EAPI void                          ecore_imf_context_autocapital_type_set(Ecore_IMF_Context *ctx, Ecore_IMF_Autocapital_Type autocapital_type);
+EAPI Ecore_IMF_Autocapital_Type    ecore_imf_context_autocapital_type_get(Ecore_IMF_Context *ctx);
 
 /* The following entry points must be exported by each input method module
  */

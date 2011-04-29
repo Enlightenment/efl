@@ -175,6 +175,15 @@ ecore_imf_context_add(const char *id)
    /* default use_preedit is EINA_TRUE, so let's make sure it's
     * set on the immodule */
    ecore_imf_context_use_preedit_set(ctx, EINA_TRUE);
+
+   /* default prediction is EINA_TRUE, so let's make sure it's
+    * set on the immodule */
+   ecore_imf_context_prediction_allow_set(ctx, EINA_TRUE);
+
+   /* default autocapital type is SENTENCE type, so let's make sure it's
+    * set on the immodule */
+   ecore_imf_context_autocapital_type_set(ctx, ECORE_IMF_AUTOCAPITAL_TYPE_SENTENCE);
+
    /* default input_mode is ECORE_IMF_INPUT_MODE_FULL, so let's make sure it's
     * set on the immodule */
    ecore_imf_context_input_mode_set(ctx, ECORE_IMF_INPUT_MODE_FULL);
@@ -510,6 +519,96 @@ ecore_imf_context_use_preedit_set(Ecore_IMF_Context *ctx, Eina_Bool use_preedit)
         return;
      }
    if (ctx->klass->use_preedit_set) ctx->klass->use_preedit_set(ctx, use_preedit);
+}
+
+/**
+ * Set whether the IM context should allow to use the text prediction.
+ * If @prediction is EINA_FALSE (default is EINA_TRUE), then the IM context will not display the text prediction window.
+ *
+ * @param ctx An #Ecore_IMF_Context.
+ * @param prediction Whether the IM context should allow to use the text prediction.
+ * @ingroup Ecore_IMF_Context_Group
+ * @since 1.1.0
+ */
+EAPI void
+ecore_imf_context_prediction_allow_set(Ecore_IMF_Context *ctx, Eina_Bool prediction)
+{
+   if (!ECORE_MAGIC_CHECK(ctx, ECORE_MAGIC_CONTEXT))
+     {
+        ECORE_MAGIC_FAIL(ctx, ECORE_MAGIC_CONTEXT,
+                         "ecore_imf_context_prediction_allow_set");
+        return;
+     }
+
+   ctx->allow_prediction = prediction;
+
+   if (ctx->klass->prediction_allow_set)
+     ctx->klass->prediction_allow_set(ctx, prediction);
+}
+
+/**
+ * Get whether the IM context should allow to use the text prediction.
+ *
+ * @param ctx An #Ecore_IMF_Context.
+ * @return EINA_TRUE if it allows to use the text prediction, otherwise EINA_FALSE.
+ * @ingroup Ecore_IMF_Context_Group
+ * @since 1.1.0
+ */
+EAPI Eina_Bool
+ecore_imf_context_prediction_allow_get(Ecore_IMF_Context *ctx)
+{
+   if (!ECORE_MAGIC_CHECK(ctx, ECORE_MAGIC_CONTEXT))
+     {
+        ECORE_MAGIC_FAIL(ctx, ECORE_MAGIC_CONTEXT,
+                         "ecore_imf_context_prediction_allow_get");
+        return EINA_FALSE;
+     }
+
+   return ctx->allow_prediction;
+}
+
+/**
+ * Set the autocapitalization type on the immodule. 
+ *
+ * @param ctx An #Ecore_IMF_Context.
+ * @param autocapital_type the autocapitalization type.
+ * @ingroup Ecore_IMF_Context_Group
+ * @since 1.1.0
+ */
+EAPI void
+ecore_imf_context_autocapital_type_set(Ecore_IMF_Context *ctx, Ecore_IMF_Autocapital_Type autocapital_type)
+{
+   if (!ECORE_MAGIC_CHECK(ctx, ECORE_MAGIC_CONTEXT))
+     {
+        ECORE_MAGIC_FAIL(ctx, ECORE_MAGIC_CONTEXT,
+                         "ecore_imf_context_autocapital_type_set");
+        return;
+     }
+
+   ctx->autocapital_type = autocapital_type;
+
+   if (ctx->klass->autocapital_type_set) ctx->klass->autocapital_type_set(ctx, autocapital_type);
+}
+
+/**
+ * Get the autocapitalization type.
+ *
+ * @param ctx An #Ecore_IMF_Context.
+ * @return The autocapital type being used by @p ctx.
+ * @ingroup Ecore_IMF_Context_Group
+ * @since 1.1.0
+ */
+EAPI Ecore_IMF_Autocapital_Type
+ecore_imf_context_autocapital_type_get(Ecore_IMF_Context *ctx)
+{
+   if (!ECORE_MAGIC_CHECK(ctx, ECORE_MAGIC_CONTEXT))
+     {
+        ECORE_MAGIC_FAIL(ctx, ECORE_MAGIC_CONTEXT,
+                         "ecore_imf_context_autocapital_allow_get");
+        return ECORE_IMF_AUTOCAPITAL_TYPE_NONE;
+     }
+
+   return ctx->autocapital_type;
 }
 
 /**

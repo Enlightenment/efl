@@ -157,3 +157,8 @@
         monotonic clock through mach specific APIs that are perfectly suited
         for usage in ecore_timer.
 
+2011-04-20  Jihoon Kim
+
+        * Ecore_IMF: Added support for auto-capitalization and prediction
+        control API's
+

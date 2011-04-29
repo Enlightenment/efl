@@ -47,6 +47,8 @@ struct _Ecore_IMF_Context
    void                          *client_canvas;
    Eina_Bool                    (*retrieve_surrounding_func)(void *data, Ecore_IMF_Context *ctx, char **text, int *cursor_pos);
    void                          *retrieve_surrounding_data;
+   Ecore_IMF_Autocapital_Type     autocapital_type;
+   Eina_Bool                      allow_prediction : 1;
 };
 
 struct _Ecore_IMF_Module
