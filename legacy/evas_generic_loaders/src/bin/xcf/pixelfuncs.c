@@ -1,5 +1,5 @@
 /*
-  
+
   -----------------------------[ XCF Loader ]-----------------------------
 
   This program is free software; you can redistribute it and/or modify
@@ -100,7 +100,7 @@ DATA8
 gimp_hls_value (double n1, double n2, double hue)
 {
   double value;
-  
+
   if (hue > 255)
     hue -= 255;
   else if (hue < 0)
@@ -278,21 +278,21 @@ void _clip(int * src_tl_x, int * src_tl_y,
 	  int * dest_x, int * dest_y,
 	  int dest_w, int dest_h)
 {
-  if (*dest_x + *src_br_x >= dest_w) 
-    { *src_br_x -= (*dest_x + *src_br_x) - dest_w; }  
+  if (*dest_x + *src_br_x >= dest_w)
+    { *src_br_x -= (*dest_x + *src_br_x) - dest_w; }
 
-  if (*dest_y + *src_br_y >= dest_h) 
-    { *src_br_y -= (*dest_y + *src_br_y) - dest_h; }  
+  if (*dest_y + *src_br_y >= dest_h)
+    { *src_br_y -= (*dest_y + *src_br_y) - dest_h; }
 
-  if (*dest_x < 0) 
-    { 
-      *src_tl_x = -(*dest_x); 
-      *dest_x = 0; 
-    } 
-  if (*dest_y < 0) 
-    { 
-      *src_tl_y = -(*dest_y); 
-      *dest_y = 0; 
+  if (*dest_x < 0)
+    {
+      *src_tl_x = -(*dest_x);
+      *dest_x = 0;
+    }
+  if (*dest_y < 0)
+    {
+      *src_tl_y = -(*dest_y);
+      *dest_y = 0;
     }
 }
 
@@ -309,7 +309,7 @@ combine_pixels_normal (DATA8* src, int src_w, int src_h, DATA8* dest, int dest_w
   unsigned char new_alpha;
   float ratio, compl_ratio;
   long tmp;
- 
+
   _clip(&src_tl_x, &src_tl_y, &src_br_x, &src_br_y, &dest_x, &dest_y, dest_w, dest_h);
 
   for (y = src_tl_y; y < src_br_y; y++)
@@ -317,9 +317,9 @@ combine_pixels_normal (DATA8* src, int src_w, int src_h, DATA8* dest, int dest_w
       {
 	d_idx = LINEAR((dest_x + x - src_tl_x), (dest_y + y - src_tl_y), dest_w);
 	s_idx = LINEAR(x, y, src_w);
-	
+
 	src_alpha = AS;
-	
+
 	if (src_alpha != 0)
 	  {
 	    if (src_alpha == 255)
@@ -327,22 +327,22 @@ combine_pixels_normal (DATA8* src, int src_w, int src_h, DATA8* dest, int dest_w
 	    else
 	      new_alpha = AD + INT_MULT((255 - AD), src_alpha, tmp);
 
-	    b = 3;                                                                                  
-	    if (new_alpha != 0)		       				                        
-	      {											
-		ratio = (float) src_alpha / new_alpha;						
-		compl_ratio = 1.0 - ratio;							
-		
+	    b = 3;
+	    if (new_alpha != 0)
+	      {
+		ratio = (float) src_alpha / new_alpha;
+		compl_ratio = 1.0 - ratio;
+
 		do
 		  {
-		    b--; 
-		    dest[d_idx + b] =        								
-		      (unsigned char) (src[s_idx + b] * ratio + dest[d_idx + b] * compl_ratio + EPS);   
+		    b--;
+		    dest[d_idx + b] =
+		      (unsigned char) (src[s_idx + b] * ratio + dest[d_idx + b] * compl_ratio + EPS);
 		  }
-		while (b); 
+		while (b);
 	      }
 
-	    AD = new_alpha;	      
+	    AD = new_alpha;
 	  }
       }
 }
@@ -363,7 +363,7 @@ combine_pixels_add (DATA8* src, int src_w, int src_h, DATA8* dest, int dest_w, i
       {
 	d_idx = LINEAR((dest_x + x - src_tl_x), (dest_y + y - src_tl_y), dest_w);
 	s_idx = LINEAR(x, y, src_w);
-	
+
         tmp2 = INT_MULT(AS, RS, tmp);
 	tmp = RD + tmp2;
 	RD = (tmp > 255 ? 255 : tmp);
@@ -396,7 +396,7 @@ combine_pixels_sub (DATA8* src, int src_w, int src_h, DATA8* dest, int dest_w, i
       {
 	d_idx = LINEAR((dest_x + x - src_tl_x), (dest_y + y - src_tl_y), dest_w);
 	s_idx = LINEAR(x, y, src_w);
-	
+
         tmp2 = INT_MULT(AS, RS, tmp);
 	tmp = RD - tmp2;
 	RD = (tmp < 0 ? 0 : tmp);
@@ -429,7 +429,7 @@ combine_pixels_diff (DATA8* src, int src_w, int src_h, DATA8* dest, int dest_w, 
       {
 	d_idx = LINEAR((dest_x + x - src_tl_x), (dest_y + y - src_tl_y), dest_w);
 	s_idx = LINEAR(x, y, src_w);
-	
+
         tmp2 = INT_MULT(AS, RS, tmp);
 	tmp = RD - tmp2;
 	RD = (tmp < 0 ? -tmp : tmp);
@@ -461,7 +461,7 @@ combine_pixels_darken (DATA8* src, int src_w, int src_h, DATA8* dest, int dest_w
       {
 	d_idx = LINEAR((dest_x + x - src_tl_x), (dest_y + y - src_tl_y), dest_w);
 	s_idx = LINEAR(x, y, src_w);
-	
+
 	RD = MIN(RD, RS);
 	GD = MIN(GD, GS);
 	BD = MIN(BD, BS);
@@ -485,7 +485,7 @@ combine_pixels_lighten (DATA8* src, int src_w, int src_h, DATA8* dest, int dest_
       {
 	d_idx = LINEAR((dest_x + x - src_tl_x), (dest_y + y - src_tl_y), dest_w);
 	s_idx = LINEAR(x, y, src_w);
-	
+
 	RD = MAX(RD, RS);
 	GD = MAX(GD, GS);
 	BD = MAX(BD, BS);
@@ -515,7 +515,7 @@ combine_pixels_mult (DATA8* src, int src_w, int src_h, DATA8* dest, int dest_w, 
         tmp2 = INT_MULT(RD, tmp2, tmp);
         tmp3 = INT_MULT(RD, (255 - AS), tmp);
         RD = (tmp2 + tmp3);
-         
+
         tmp2 = INT_MULT(GS, AS, tmp);
         tmp2 = INT_MULT(GD, tmp2, tmp);
         tmp3 = INT_MULT(GD, (255 - AS), tmp);
@@ -547,7 +547,7 @@ combine_pixels_div (DATA8* src, int src_w, int src_h, DATA8* dest, int dest_w, i
       {
 	d_idx = LINEAR((dest_x + x - src_tl_x), (dest_y + y - src_tl_y), dest_w);
 	s_idx = LINEAR(x, y, src_w);
-	
+
 	RS = MIN(255, ((float)RD / (RS + 1)) * 256);
 	GS = MIN(255, ((float)GD / (GS + 1)) * 256);
 	BS = MIN(255, ((float)BD / (BS + 1)) * 256);
@@ -573,7 +573,7 @@ combine_pixels_screen (DATA8* src, int src_w, int src_h, DATA8* dest, int dest_w
       {
 	d_idx = LINEAR((dest_x + x - src_tl_x), (dest_y + y - src_tl_y), dest_w);
 	s_idx = LINEAR(x, y, src_w);
-	
+
 	RD = 255 - (((255 - RD) * (255 - RS)) >> 8);
 	GD = 255 - (((255 - GD) * (255 - GS)) >> 8);
 	BD = 255 - (((255 - BD) * (255 - BS)) >> 8);
@@ -598,7 +598,7 @@ combine_pixels_overlay (DATA8* src, int src_w, int src_h, DATA8* dest, int dest_
       {
 	d_idx = LINEAR((dest_x + x - src_tl_x), (dest_y + y - src_tl_y), dest_w);
 	s_idx = LINEAR(x, y, src_w);
-	
+
 	tmp_screen = 255 - (((255 - RD) * (255 - RS)) >> 8);
 	tmp_mult   = (RD * RS) >> 8;
 	RD = (RD * tmp_screen + (255 - RD) * tmp_mult) >> 8;
@@ -630,7 +630,7 @@ combine_pixels_hsv (DATA8* src, int src_w, int src_h, DATA8* dest, int dest_w, i
       {
 	d_idx = LINEAR((dest_x + x - src_tl_x), (dest_y + y - src_tl_y), dest_w);
 	s_idx = LINEAR(x, y, src_w);
-	
+
 	rgb_to_hsv(&RS, &GS, &BS);
 	rgb_to_hsv(&RD, &GD, &BD);
 
@@ -648,9 +648,9 @@ combine_pixels_hsv (DATA8* src, int src_w, int src_h, DATA8* dest, int dest_w, i
 	  default:
 	    break;
 	  }
-	
+
 	hsv_to_rgb(&RD, &GD, &BD);
-//	AD = MIN(AD, AS);	
+//	AD = MIN(AD, AS);
       }
 }
 
@@ -684,19 +684,19 @@ combine_pixels_col (DATA8* src, int src_w, int src_h, DATA8* dest, int dest_w, i
   int src_br_x = src_w, src_br_y = src_h;
 
   _clip(&src_tl_x, &src_tl_y, &src_br_x, &src_br_y, &dest_x, &dest_y, dest_w, dest_h);
-  
+
   for (y = src_tl_y; y < src_br_y; y++)
     for (x = src_tl_x; x < src_br_x; x++)
       {
 	d_idx = LINEAR((dest_x + x - src_tl_x), (dest_y + y - src_tl_y), dest_w);
 	s_idx = LINEAR(x, y, src_w);
-	
+
 	rgb_to_hls(&RS, &GS, &BS);
 	rgb_to_hls(&RD, &GD, &BD);
 	RD = RS;
 	BD = BS;
 	hls_to_rgb(&RD, &GD, &BD);
-	
+
 //	AD = MIN(AD, AS);
       }
 }
@@ -726,32 +726,32 @@ combine_pixels_diss (DATA8* src, int src_w, int src_h, DATA8* dest, int dest_w, 
 	    unsigned char new_alpha;
 	    float ratio, compl_ratio;
 	    long tmp;
-	    
+
 	    src_alpha = AS;
-	    
+
 	    if (src_alpha != 0)
 	      {
 		if (src_alpha == 255)
 		  new_alpha = src_alpha;
 		else
 		  new_alpha = AD + INT_MULT((255 - AD), src_alpha, tmp);
-		
-		b = 3;                                                                                  
-		if (new_alpha != 0)		       				                        
-		  {											
-		    ratio = (float) src_alpha / new_alpha;						
-		    compl_ratio = 1.0 - ratio;							
-		    
+
+		b = 3;
+		if (new_alpha != 0)
+		  {
+		    ratio = (float) src_alpha / new_alpha;
+		    compl_ratio = 1.0 - ratio;
+
 		    do
 		      {
-			b--; 
-			dest[d_idx + b] =        								
-			  (unsigned char) (src[s_idx + b] * ratio + dest[d_idx + b] * compl_ratio + EPS);   
+			b--;
+			dest[d_idx + b] =
+			  (unsigned char) (src[s_idx + b] * ratio + dest[d_idx + b] * compl_ratio + EPS);
 		      }
-		    while (b); 
+		    while (b);
 		  }
-		
-		AD = new_alpha;	      
+
+		AD = new_alpha;
 	      }
 	  }
       }
