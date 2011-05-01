@@ -1012,13 +1012,14 @@ elm_smart_scroller_child_pos_get(Evas_Object *obj, Evas_Coord *x, Evas_Coord *y)
 static void
 _elm_smart_scroller_child_region_show_internal(Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h, Eina_Bool internal_call)
 {
-   Evas_Coord mx = 0, my = 0, cw = 0, ch = 0, px = 0, py = 0, nx, ny, minx = 0, miny = 0;
+   Evas_Coord mx = 0, my = 0, cw = 0, ch = 0, px = 0, py = 0, nx, ny, minx = 0, miny = 0, pw = 0, ph = 0;
 
    API_ENTRY return;
    sd->pan_func.max_get(sd->pan_obj, &mx, &my);
    sd->pan_func.min_get(sd->pan_obj, &minx, &miny);
    sd->pan_func.child_size_get(sd->pan_obj, &cw, &ch);
    sd->pan_func.get(sd->pan_obj, &px, &py);
+   evas_object_geometry_get(sd->pan_obj, NULL, NULL, &pw, &ph);
 
    nx = px;
    if ((x < px) && ((x + w) < (px + (cw - mx)))) nx = x;
@@ -1032,7 +1033,6 @@ _elm_smart_scroller_child_region_show_internal(Evas_Object *obj, Evas_Coord x, E
         sd->wy = y;
         sd->ww = w;
         sd->wh = h;
-        if ((nx == px) && (ny == py)) return;
      }
 
    if ((sd->down.bounce_x_animator) || (sd->down.bounce_y_animator) ||
@@ -1079,12 +1079,15 @@ _elm_smart_scroller_child_region_show_internal(Evas_Object *obj, Evas_Coord x, E
         sd->down.pdx = 0;
         sd->down.pdy = 0;
      }
+
    x = nx;
-   if ((x + w) > cw) x = cw - w;
+   if ((x + pw) > cw) x = cw - pw;
    if (x < minx) x = minx;
    y = ny;
-   if ((y + h) > ch) y = ch - h;
+   if ((y + ph) > ch) y = ch - ph;
    if (y < miny) y = miny;
+
+   if ((x == px) && (y == py)) return;
    elm_smart_scroller_child_pos_set(obj, x, y);
 }
 
@@ -1296,13 +1299,14 @@ elm_smart_scroller_paging_get(Evas_Object *obj, double *pagerel_h, double *pager
 void
 elm_smart_scroller_region_bring_in(Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h)
 {
-   Evas_Coord mx = 0, my = 0, cw = 0, ch = 0, px = 0, py = 0, nx, ny, minx = 0, miny = 0;
+   Evas_Coord mx = 0, my = 0, cw = 0, ch = 0, px = 0, py = 0, nx, ny, minx = 0, miny = 0, pw = 0, ph = 0;
 
    API_ENTRY return;
    sd->pan_func.max_get(sd->pan_obj, &mx, &my);
    sd->pan_func.min_get(sd->pan_obj, &minx, &miny);
    sd->pan_func.child_size_get(sd->pan_obj, &cw, &ch);
    sd->pan_func.get(sd->pan_obj, &px, &py);
+   evas_object_geometry_get(sd->pan_obj, NULL, NULL, &pw, &ph);
 
    nx = px;
    if ((x < px) && ((x + w) < (px + (cw - mx)))) nx = x;
@@ -1314,7 +1318,6 @@ elm_smart_scroller_region_bring_in(Evas_Object *obj, Evas_Coord x, Evas_Coord y,
    sd->wy = y;
    sd->ww = w;
    sd->wh = h;
-   if ((nx == px) && (ny == py)) return;
    if ((sd->down.bounce_x_animator) || (sd->down.bounce_y_animator) ||
        (sd->scrollto.x.animator) || (sd->scrollto.y.animator))
      {
@@ -1360,12 +1363,14 @@ elm_smart_scroller_region_bring_in(Evas_Object *obj, Evas_Coord x, Evas_Coord y,
         sd->down.pdy = 0;
      }
    x = nx;
-   if ((x + w) > cw) x = cw - w;
+   if ((x + pw) > cw) x = cw - pw;
    if (x < minx) x = minx;
-   _smart_scrollto_x(sd, _elm_config->bring_in_scroll_friction, x);
    y = ny;
-   if ((y + h) > ch) y = ch - h;
+   if ((y + ph) > ch) y = ch - ph;
    if (y < miny) y = miny;
+
+   if ((x == px) && (y == py)) return;
+   _smart_scrollto_x(sd, _elm_config->bring_in_scroll_friction, x);
    _smart_scrollto_y(sd, _elm_config->bring_in_scroll_friction, y);
 }
 
