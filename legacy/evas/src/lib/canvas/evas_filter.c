@@ -1152,27 +1152,71 @@ greyscale_filter(Evas_Filter_Info *info __UNUSED__, RGBA_Image *src, RGBA_Image 
 }
 
 static Eina_Bool
-brightness_filter(Evas_Filter_Info *info __UNUSED__, RGBA_Image *src, RGBA_Image *dst)
+brightness_filter(Evas_Filter_Info *info, RGBA_Image *src, RGBA_Image *dst)
 {
    uint32_t *in, *out;
    int i, j;
    int w, h;
+   int a,r,g,b;
+   int delta;
+   int adjdelta;
+   Evas_Filter_Info_Brightness *bness;
 
    in = src->image.data;
    out = dst->image.data;
    w = src->cache_entry.w;
    h = src->cache_entry.h;
+   bness = info->data;
 
-   for (i = 0; i < h; i++)
+   delta = bness->adjust * 255;
+   if (delta > 255)
+      delta = 255;
+   else if (delta < -255)
+      delta = -255;
+
+   /* Note we could optimise the -255, 0 and 255 cases, but why would people
+    * be doing that */
+   if (delta >= 0)
      {
-        for (j = 0; j < w; j++)
+       for (i = 0; i < h; i++)
+         {
+            for (j = 0; j < w; j++)
+              {
+                 a = A_VAL(in);
+                 r = R_VAL(in);
+                 g = G_VAL(in);
+                 b = B_VAL(in);
+                 adjdelta = (a * delta) >> 8;
+                 r = MIN(r + adjdelta, 255);
+                 g = MIN(g + adjdelta, 255);
+                 b = MIN(b + adjdelta, 255);
+                 *out = ARGB_JOIN(a, r ,g, b);
+                 out++;
+                 in++;
+              }
+         }
+     }
+   else
+     {
+        /* Delta negative */
+        for (i = 0; i < h; i++)
           {
-             // FIXME: not even implemented
-             out++;
-             in++;
+             for (j = 0; j < w; j++)
+               {
+                  a = A_VAL(in);
+                  r = R_VAL(in);
+                  g = G_VAL(in);
+                  b = B_VAL(in);
+                  adjdelta = (a * delta) >> 8;
+                  r = MAX(r - adjdelta, 0);
+                  g = MAX(g - adjdelta, 0);
+                  b = MAX(b - adjdelta, 0);
+                  *out = ARGB_JOIN(a, r ,g, b);
+                  out++;
+                  in++;
+               }
           }
      }
-
 
    return EINA_TRUE;
 
