@@ -207,12 +207,10 @@ _evas_cache_image_entry_delete(Evas_Cache_Image *cache, Image_Entry *ie)
    if (cache->func.debug) cache->func.debug("deleting", ie);
 #ifdef BUILD_ASYNC_PRELOAD
    if (ie->flags.delete_me == 1) return;
-   LKL(ie->lock);
    if (ie->preload)
      {
 	ie->flags.delete_me = 1;
 	_evas_cache_image_entry_preload_remove(ie, NULL);
-        LKU(ie->lock);
 	return;
      }
 #endif
@@ -230,10 +228,7 @@ _evas_cache_image_entry_delete(Evas_Cache_Image *cache, Image_Entry *ie)
    cache->func.surface_delete(ie);
 
 #ifdef BUILD_ASYNC_PRELOAD
-   LKU(ie->lock);
-#ifndef SCALECACHE
    LKD(ie->lock);
-#endif   
    LKD(ie->lock_cancel);
 #endif
 #ifdef EVAS_FRAME_QUEUING
@@ -308,9 +303,7 @@ _evas_cache_image_entry_new(Evas_Cache_Image *cache,
    LKI(ie->lock_references);
 #endif
 #ifdef BUILD_ASYNC_PRELOAD
-#ifndef SCALECACHE
    LKI(ie->lock);
-#endif   
    LKI(ie->lock_cancel); 
 #endif
    
@@ -412,22 +405,18 @@ _evas_cache_image_async_end(void *data)
    Image_Entry *ie = (Image_Entry *)data;
    Evas_Cache_Target *tmp;
 
-   LKL(ie->lock);
    ie->cache->preload = eina_list_remove(ie->cache->preload, ie);
    ie->cache->pending = eina_list_remove(ie->cache->pending, ie);
    ie->preload = NULL;
    ie->flags.preload_done = ie->flags.loaded;
    while ((tmp = ie->targets))
      {
+	evas_object_inform_call_image_preloaded((Evas_Object*) tmp->target);
 	ie->targets = (Evas_Cache_Target *)
            eina_inlist_remove(EINA_INLIST_GET(ie->targets), 
                               EINA_INLIST_GET(ie->targets));
-        LKU(ie->lock);
-	evas_object_inform_call_image_preloaded((Evas_Object *)tmp->target);
-        LKL(ie->lock);
 	free(tmp);
      }
-   LKU(ie->lock);
 }
 
 static void
@@ -436,19 +425,15 @@ _evas_cache_image_async_cancel(void *data)
    Evas_Cache_Image *cache = NULL;
    Image_Entry *ie = (Image_Entry *)data;
    
-   LKL(ie->lock);
    ie->preload = NULL;
    ie->cache->pending = eina_list_remove(ie->cache->pending, ie);
    if ((ie->flags.delete_me) || (ie->flags.dirty))
      {
 	ie->flags.delete_me = 0;
-        LKU(ie->lock);
 	_evas_cache_image_entry_delete(ie->cache, ie);
 	return;
      }
-   LKU(ie->lock);
    if (ie->flags.loaded) _evas_cache_image_async_end(ie);
-   LKL(ie->lock);
 #ifdef EVAS_FRAME_QUEUING
    LKL(ie->lock_references);
 #endif
@@ -460,7 +445,6 @@ _evas_cache_image_async_cancel(void *data)
 #ifdef EVAS_FRAME_QUEUING
    LKU(ie->lock_references);
 #endif
-   LKU(ie->lock);
    if (cache) evas_cache_image_flush(cache);
 }
 
@@ -606,15 +590,12 @@ evas_cache_image_shutdown(Evas_Cache_Image *cache)
 #endif
         return;
      }
-   // XXX: i smell concurrency problem here
 #ifdef BUILD_ASYNC_PRELOAD
    EINA_LIST_FREE(cache->preload, im)
      {
-        LKL(im->lock);
 	/* By doing that we are protecting us from destroying image when the cache is no longuer available. */
 	im->flags.delete_me = 1;
 	_evas_cache_image_entry_preload_remove(im, NULL);
-        LKU(im->lock);
      }
    evas_async_events_process();
 #endif
@@ -1142,12 +1123,7 @@ evas_cache_image_load_data(Image_Entry *im)
 #endif
    int error;
 
-   LKL(im->lock);
-   if (im->flags.loaded)
-     {
-        LKU(im->lock);
-        return;
-     }
+   if (im->flags.loaded) return;
 #ifdef BUILD_ASYNC_PRELOAD
    if (im->preload)
      {
@@ -1165,19 +1141,14 @@ evas_cache_image_load_data(Image_Entry *im)
 	  {
 	     pthread_cond_wait(&cond_wakeup, &wakeup);
 	     LKU(wakeup);
-             LKU(im->lock);
 	     evas_async_events_process();
-             LKL(im->lock);	
-             LKL(wakeup);
+	     LKL(wakeup);
 	  }
 	LKU(wakeup);
      }
    
-   if (im->flags.loaded)
-     {
-        LKU(im->lock);
-        return;
-     }
+   if (im->flags.loaded) return;
+   LKL(im->lock);
 #endif
    im->flags.in_progress = EINA_TRUE;
    error = im->cache->func.load(im);
@@ -1192,7 +1163,6 @@ evas_cache_image_load_data(Image_Entry *im)
         _evas_cache_image_entry_surface_alloc(im->cache, im, im->w, im->h);
         im->flags.loaded = 0;
      }
-   LKU(im->lock);
 #ifdef BUILD_ASYNC_PRELOAD
    if (preload) _evas_cache_image_async_end(im);
 #endif
