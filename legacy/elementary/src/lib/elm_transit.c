@@ -140,6 +140,7 @@ _elm_transit_object_remove_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj, 
 {
    Elm_Transit *transit = data;
    Elm_Obj_Data *obj_data = evas_object_data_del(obj, _transit_key);
+   if (!obj_data) return;
    evas_object_pass_events_set(obj, obj_data->pass_events);
    if (obj_data->state)
      free(obj_data->state);
