@@ -207,10 +207,12 @@ _evas_cache_image_entry_delete(Evas_Cache_Image *cache, Image_Entry *ie)
    if (cache->func.debug) cache->func.debug("deleting", ie);
 #ifdef BUILD_ASYNC_PRELOAD
    if (ie->flags.delete_me == 1) return;
+   LKL(ie->lock);
    if (ie->preload)
      {
 	ie->flags.delete_me = 1;
 	_evas_cache_image_entry_preload_remove(ie, NULL);
+        LKU(ie->lock);
 	return;
      }
 #endif
@@ -228,7 +230,10 @@ _evas_cache_image_entry_delete(Evas_Cache_Image *cache, Image_Entry *ie)
    cache->func.surface_delete(ie);
 
 #ifdef BUILD_ASYNC_PRELOAD
+   LKU(ie->lock);
+#ifndef SCALECACHE
    LKD(ie->lock);
+#endif   
    LKD(ie->lock_cancel);
 #endif
 #ifdef EVAS_FRAME_QUEUING
@@ -303,7 +308,9 @@ _evas_cache_image_entry_new(Evas_Cache_Image *cache,
    LKI(ie->lock_references);
 #endif
 #ifdef BUILD_ASYNC_PRELOAD
+#ifndef SCALECACHE
    LKI(ie->lock);
+#endif   
    LKI(ie->lock_cancel); 
 #endif
    
@@ -590,12 +597,15 @@ evas_cache_image_shutdown(Evas_Cache_Image *cache)
 #endif
         return;
      }
+   // XXX: i smell concurrency problem here
 #ifdef BUILD_ASYNC_PRELOAD
    EINA_LIST_FREE(cache->preload, im)
      {
+        LKL(im->lock);
 	/* By doing that we are protecting us from destroying image when the cache is no longuer available. */
 	im->flags.delete_me = 1;
 	_evas_cache_image_entry_preload_remove(im, NULL);
+        LKU(im->lock);
      }
    evas_async_events_process();
 #endif
