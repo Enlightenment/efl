@@ -412,18 +412,22 @@ _evas_cache_image_async_end(void *data)
    Image_Entry *ie = (Image_Entry *)data;
    Evas_Cache_Target *tmp;
 
+   LKL(ie->lock);
    ie->cache->preload = eina_list_remove(ie->cache->preload, ie);
    ie->cache->pending = eina_list_remove(ie->cache->pending, ie);
    ie->preload = NULL;
    ie->flags.preload_done = ie->flags.loaded;
    while ((tmp = ie->targets))
      {
-	evas_object_inform_call_image_preloaded((Evas_Object*) tmp->target);
 	ie->targets = (Evas_Cache_Target *)
            eina_inlist_remove(EINA_INLIST_GET(ie->targets), 
                               EINA_INLIST_GET(ie->targets));
+        LKU(ie->lock);
+	evas_object_inform_call_image_preloaded((Evas_Object *)tmp->target);
+        LKL(ie->lock);
 	free(tmp);
      }
+   LKU(ie->lock);
 }
 
 static void
@@ -432,15 +436,19 @@ _evas_cache_image_async_cancel(void *data)
    Evas_Cache_Image *cache = NULL;
    Image_Entry *ie = (Image_Entry *)data;
    
+   LKL(ie->lock);
    ie->preload = NULL;
    ie->cache->pending = eina_list_remove(ie->cache->pending, ie);
    if ((ie->flags.delete_me) || (ie->flags.dirty))
      {
 	ie->flags.delete_me = 0;
+        LKU(ie->lock);
 	_evas_cache_image_entry_delete(ie->cache, ie);
 	return;
      }
+   LKU(ie->lock);
    if (ie->flags.loaded) _evas_cache_image_async_end(ie);
+   LKL(ie->lock);
 #ifdef EVAS_FRAME_QUEUING
    LKL(ie->lock_references);
 #endif
@@ -452,6 +460,7 @@ _evas_cache_image_async_cancel(void *data)
 #ifdef EVAS_FRAME_QUEUING
    LKU(ie->lock_references);
 #endif
+   LKU(ie->lock);
    if (cache) evas_cache_image_flush(cache);
 }
 
@@ -1133,7 +1142,12 @@ evas_cache_image_load_data(Image_Entry *im)
 #endif
    int error;
 
-   if (im->flags.loaded) return;
+   LKL(im->lock);
+   if (im->flags.loaded)
+     {
+        LKU(im->lock);
+        return;
+     }
 #ifdef BUILD_ASYNC_PRELOAD
    if (im->preload)
      {
@@ -1151,14 +1165,19 @@ evas_cache_image_load_data(Image_Entry *im)
 	  {
 	     pthread_cond_wait(&cond_wakeup, &wakeup);
 	     LKU(wakeup);
+             LKU(im->lock);
 	     evas_async_events_process();
-	     LKL(wakeup);
+             LKL(im->lock);	
+             LKL(wakeup);
 	  }
 	LKU(wakeup);
      }
    
-   if (im->flags.loaded) return;
-   LKL(im->lock);
+   if (im->flags.loaded)
+     {
+        LKU(im->lock);
+        return;
+     }
 #endif
    im->flags.in_progress = EINA_TRUE;
    error = im->cache->func.load(im);
@@ -1173,6 +1192,7 @@ evas_cache_image_load_data(Image_Entry *im)
         _evas_cache_image_entry_surface_alloc(im->cache, im, im->w, im->h);
         im->flags.loaded = 0;
      }
+   LKU(im->lock);
 #ifdef BUILD_ASYNC_PRELOAD
    if (preload) _evas_cache_image_async_end(im);
 #endif
