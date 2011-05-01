@@ -100,6 +100,7 @@ evas_common_rgba_image_scalecache_init(Image_Entry *ie)
 {
 #ifdef SCALECACHE
    RGBA_Image *im = (RGBA_Image *)ie;
+   // NOTE: this conflicts with evas image cache init and del of lock
    LKI(im->cache.lock);
 #endif
 }
@@ -110,6 +111,7 @@ evas_common_rgba_image_scalecache_shutdown(Image_Entry *ie)
 #ifdef SCALECACHE
    RGBA_Image *im = (RGBA_Image *)ie;
    evas_common_rgba_image_scalecache_dirty(ie);
+   // NOTE: this conflicts with evas image cache init and del of lock
    LKD(im->cache.lock);
 #endif
 }
@@ -247,7 +249,6 @@ _sci_find(RGBA_Image *im,
           _sci_fix_newest(im);
         if (sci->im)
           {
-             LKL(cache_lock);
              evas_common_rgba_image_free(&sci->im->cache_entry);
              if (!sci->forced_unload)
                cache_size -= sci->dst_w * sci->dst_h * 4;
@@ -255,7 +256,6 @@ _sci_find(RGBA_Image *im,
                cache_size -= sci->size_adjust;
 //             INF(" 1- %i", sci->dst_w * sci->dst_h * 4);
              cache_list = eina_inlist_remove(cache_list, (Eina_Inlist *)sci);
-             LKU(cache_lock);
           }
 #ifdef EVAS_FRAME_QUEUING
         RWLKU(sci->lock);
