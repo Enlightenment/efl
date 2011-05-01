@@ -1110,10 +1110,14 @@ static void
 _signal_entry_changed(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
 {
    Widget_Data *wd = elm_widget_data_get(data);
+   Evas_Coord minh;
    if (!wd) return;
    wd->changed = EINA_TRUE;
-   /* Reset the size hints which are no more relevant. */
-   evas_object_size_hint_min_set(data, -1, -1);
+   /* Reset the size hints which are no more relevant.
+    * Keep the height, this is a hack, but doesn't really matter
+    * cause we'll re-eval in a moment. */
+   evas_object_size_hint_min_get(data, NULL, &minh);
+   evas_object_size_hint_min_set(data, -1, minh);
    _sizing_eval(data);
    if (wd->text) eina_stringshare_del(wd->text);
    wd->text = NULL;
