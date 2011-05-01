@@ -1010,7 +1010,8 @@ negation_filter(Evas_Filter_Info *info, RGBA_Image *src, RGBA_Image *dst)
    uint32_t *in, *out;
    int i,j;
    int w,h;
-   uint32_t mask,a;
+   uint32_t a;
+   uint8_t r,g,b;
 
 #if BUILD_NEON0
    if (evas_common_cpu_has_feature(CPU_FEATURE_NEON) &&
@@ -1029,10 +1030,11 @@ negation_filter(Evas_Filter_Info *info, RGBA_Image *src, RGBA_Image *dst)
           {
              for (j = 0; j < w; j++)
                {
-                  a = (*in >> 24) & 0xff;
-                  mask = a | (a << 8) | (a << 16);
-                  // FIXME: use *out = ARGB_JOIN(a, r, g, b);
-                  *out = (mask - (*in & 0xffffff)) | (a << 24);
+                  a = A_VAL(in);
+                  r = R_VAL(in);
+                  g = G_VAL(in);
+                  b = B_VAL(in);
+                  *out = ARGB_JOIN(a, a - r, a - g, a - b);
                   out++;
                   in++;
                }
@@ -1044,8 +1046,11 @@ negation_filter(Evas_Filter_Info *info, RGBA_Image *src, RGBA_Image *dst)
           {
              for (j = 0; j < w; j++)
                {
-                  // FIXME: use *out = ARGB_JOIN(a, r, g, b);
-                  *out = ~(*in & ~0xff000000) | ((*in) & 0xff000000);
+                  a = A_VAL(in);
+                  r = R_VAL(in);
+                  g = G_VAL(in);
+                  b = B_VAL(in);
+                  *out = ARGB_JOIN(a, ~r, ~g, ~b);
                   out++;
                   in++;
                }
@@ -1061,7 +1066,7 @@ sepia_filter(Evas_Filter_Info *info __UNUSED__, RGBA_Image *src, RGBA_Image *dst
    uint32_t *in, *out;
    int i, j;
    int w, h;
-   uint32_t r, g, b, nr, ng, nb;
+   uint32_t a, r, g, b, nr, ng, nb;
 
    in = src->image.data;
    out = dst->image.data;
@@ -1072,6 +1077,7 @@ sepia_filter(Evas_Filter_Info *info __UNUSED__, RGBA_Image *src, RGBA_Image *dst
      {
         for (j = 0; j < w; j++)
           {
+             a = A_VAL(in);
              r = R_VAL(in);
              g = G_VAL(in);
              b = B_VAL(in);
@@ -1081,8 +1087,7 @@ sepia_filter(Evas_Filter_Info *info __UNUSED__, RGBA_Image *src, RGBA_Image *dst
              if (nr > 255) nr = 255;
              if (ng > 255) ng = 255;
              if (nb > 255) nb = 255;
-             // FIXME: use *out = ARGB_JOIN(a, r, g, b);
-             *out = (*in & 0xff000000) | (nr << 16) | (ng << 8) | nb;
+             *out = ARGB_JOIN(a, nr, ng, nb);
              out++;
              in++;
           }
@@ -1117,9 +1122,7 @@ greyscale_filter(Evas_Filter_Info *info __UNUSED__, RGBA_Image *src, RGBA_Image 
                   g = G_VAL(in);
                   b = B_VAL(in);
                   cur = (r * 0.3) + (g * 0.59) + (b * 0.11);
-                  cur |= cur << 16;
-                  // FIXME: use *out = ARGB_JOIN(a, r, g, b);
-                  *out = (a << 24) | cur | (cur << 8);
+                  *out = ARGB_JOIN(a, r, g, b);
                   out++;
                   in++;
                }
@@ -1135,9 +1138,7 @@ greyscale_filter(Evas_Filter_Info *info __UNUSED__, RGBA_Image *src, RGBA_Image 
                   g = G_VAL(in);
                   b = B_VAL(in);
                   cur = r * 0.3 + g * 0.59 + b * 0.11;
-                  cur |= cur << 16;
-                  // FIXME: use *out = ARGB_JOIN(a, r, g, b);
-                  *out = 0xff000000 | cur | (cur << 8);
+                  *out = ARGB_JOIN(255, r, g, b);
                   out++;
                   in++;
                }
