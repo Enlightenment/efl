@@ -30,7 +30,7 @@ static Eina_Bool
 illegal_char(const char *str)
 {
    const char *p;
-   
+
    for (p = str; *p; p++)
      {
         if (*p <  '-')  return EINA_TRUE;
@@ -58,7 +58,7 @@ escape_copy(const char *src, char *dst)
 {
    const char *s;
    char *d;
-   
+
    for (s = src, d = dst; *s; s++, d++)
      {
         // FIXME: escape tab, newline linefeed and friends
@@ -96,7 +96,7 @@ dotcat(char *dest, const char *src)
    int len = strlen(dest);
    const char *s;
    char *d;
-   
+
    for (d = dest + len, s = src; *s; d++, s++) *d = tolower(*s);
    *d = 0;
 }
@@ -113,10 +113,10 @@ _load(Image_Entry *ie, const char *file, const char *key, int *error, Eina_Bool 
    int cmd_len, len, decoders_num = 0, try_count = 0;
    int read_data = 0;
    char *tmpfname = NULL, *shmfname = NULL;
-   
+
    DATA32 *body;
    FILE *f;
-   
+
    // enough for command + params excluding filem key and loadopts
    cmd_len = 1024 + strlen(img_loader);
    cmd_len += strlen(file) * 2;
@@ -132,13 +132,13 @@ _load(Image_Entry *ie, const char *file, const char *key, int *error, Eina_Bool 
    end = file + len;
    for (p = end - 1; p >= file; p--)
      {
-        if      ((!dot1) && (*p == '.')) dot1 = p; 
+        if      ((!dot1) && (*p == '.')) dot1 = p;
         else if ((!dot2) && (*p == '.')) dot2 = p;
         else if ((dot1) && (dot2)) break;
     }
    if (dot2)
      {
-        // double extn not too long        
+        // double extn not too long
         if (((end - dot2) <= 10) && (!illegal_char(dot2)))
           {
              strcpy(&(decoders[decoders_num][0]), img_loader);
@@ -172,7 +172,7 @@ _load(Image_Entry *ie, const char *file, const char *key, int *error, Eina_Bool 
         strcpy(decoders[decoders_num], img_loader);
         decoders_num++;
      }
-   
+
    for (try_count = 0; try_count < decoders_num; try_count++)
      {
         // FIXME: strcats could be more efficient, not that it matters much
@@ -231,7 +231,7 @@ _load(Image_Entry *ie, const char *file, const char *key, int *error, Eina_Bool 
              if (!strncmp(buf, "size ", 5))
                {
                   int tw = 0, th = 0;
-                  
+
                   len = sscanf(buf, "%*s %i %i", &tw, &th);
                   if (len == 2)
                     {
@@ -245,7 +245,7 @@ _load(Image_Entry *ie, const char *file, const char *key, int *error, Eina_Bool 
              else if (!strncmp(buf, "alpha ", 6))
                {
                   int ta;
-                  
+
                   len = sscanf(buf, "%*s %i", &ta);
                   if (len == 1)
                     {
@@ -257,13 +257,13 @@ _load(Image_Entry *ie, const char *file, const char *key, int *error, Eina_Bool 
                   tmpfname = buf + 8;
                   goto getdata;
                }
-#ifdef HAVE_SHM_OPEN        
+#ifdef HAVE_SHM_OPEN
              else if (!strncmp(buf, "shmfile ", 8))
                {
                   shmfname = buf + 8;
                   goto getdata;
                }
-#endif             
+#endif
              else if (!strncmp(buf, "data", 4))
                {
                   read_data = 1;
@@ -300,7 +300,7 @@ getdata:
    if (alpha) ie->flags.alpha = 1;
    ie->w = w;
    ie->h = h;
-   
+
    if (get_data)
      {
         if (!body) evas_cache_image_surface_alloc(ie, ie->w, ie->h);
@@ -310,24 +310,24 @@ getdata:
              *error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
              goto on_error;
           }
-        
+
         if ((tmpfname) || (shmfname))
           {
              int fd = -1;
-             
+
              // open
              if (tmpfname)
                 fd = open(tmpfname, O_RDONLY, S_IRUSR);
-#ifdef HAVE_SHM_OPEN        
+#ifdef HAVE_SHM_OPEN
              else if (shmfname)
                 fd = shm_open(shmfname, O_RDONLY, S_IRUSR);
-#endif        
+#endif
              if (fd >= 0)
                {
                   void *addr;
-                  
+
                   // mmap
-                  addr = mmap(NULL, w * h * sizeof(DATA32), 
+                  addr = mmap(NULL, w * h * sizeof(DATA32),
                               PROT_READ, MAP_SHARED, fd, 0);
                   if (addr != MAP_FAILED)
                     {
@@ -340,13 +340,13 @@ getdata:
                        close(fd);
                        unlink(tmpfname);
                     }
-#ifdef HAVE_SHM_OPEN        
+#ifdef HAVE_SHM_OPEN
                   else if (shmfname)
                     {
                        close(fd);
                        shm_unlink(shmfname);
                     }
-#endif             
+#endif
                }
              else
                {
@@ -363,10 +363,10 @@ getdata:
                }
           }
      }
-   
+
    res = EINA_TRUE;
    *error = EVAS_LOAD_ERROR_NONE;
-   
+
  on_error:
    if (f) pclose(f);
    return res;
