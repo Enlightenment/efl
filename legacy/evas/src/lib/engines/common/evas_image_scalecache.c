@@ -398,19 +398,59 @@ evas_common_rgba_image_scalecache_prepare(Image_Entry *ie, RGBA_Image *dst __UNU
                                           int dst_region_w, int dst_region_h)
 {
 #ifdef SCALECACHE
+   int locked = 0;
+   Eina_Bool ret;
    RGBA_Image *im = (RGBA_Image *)ie;
    Scaleitem *sci;
    if (!im->image.data) return;
    if ((dst_region_w == 0) || (dst_region_h == 0) ||
        (src_region_w == 0) || (src_region_h == 0)) return;
-   LKL(im->cache.lock);
+   // was having major lock issues here - LKL was deadlocking. what was
+   // going on? it may have been an eina treads badness but this will stay here
+   // for now for debug
+#if 1
+   ret = LKT(im->cache.lock);
+   if (ret == EINA_FALSE) /* can't get image lock */
+     {
+        useconds_t slp = 1, slpt = 0;
+        
+        while (slpt < 500000)
+          {
+             usleep(slp);
+             slpt += slp;
+             slp++;
+             ret = LKT(im->cache.lock);
+             if (ret == 2) // MAGIC for now
+               {
+                  printf("WARNING: DEADLOCK on image %p (%s)\n", im, ie->file);
+               }
+             else
+               {
+                  locked = 1;
+                  break;
+               }
+          }
+        if (ret == EINA_FALSE)
+          {
+             printf("WARNING: lock still there after %i usec\n", slpt);
+             printf("WARNING: stucklock on image %p (%s)\n", im, ie->file);
+             LKDBG(im->cache.lock);
+          }
+     }
+   else if (ret == 2) // MAGIC for now
+     {
+        printf("WARNING: DEADLOCK on image %p (%s)\n", im, ie->file);
+     }
+   else locked = 1;
+#endif   
+   if (!locked) { LKL(im->cache.lock); locked = 1; }
    use_counter++;
    if ((src_region_w == dst_region_w) && (src_region_h == dst_region_h))
      {
         // 1:1 scale.
         im->cache.orig_usage++;
         im->cache.usage_count = use_counter;
-        LKU(im->cache.lock);
+        if (locked) LKU(im->cache.lock);
         return;
      }
    if ((!im->cache_entry.flags.alpha) && (!smooth))
@@ -419,7 +459,7 @@ evas_common_rgba_image_scalecache_prepare(Image_Entry *ie, RGBA_Image *dst __UNU
         // or in some cases faster not cached
         im->cache.orig_usage++;
         im->cache.usage_count = use_counter;
-        LKU(im->cache.lock);
+        if (locked) LKU(im->cache.lock);
         return;
      }
    LKL(cache_lock);
@@ -429,7 +469,7 @@ evas_common_rgba_image_scalecache_prepare(Image_Entry *ie, RGBA_Image *dst __UNU
    if (!sci)
      {
         LKU(cache_lock);
-        LKU(im->cache.lock);
+        if (locked) LKU(im->cache.lock);
         return;
      }
 //   INF("%10i | %4i %4i %4ix%4i -> %4i %4i %4ix%4i | %i",
@@ -466,7 +506,7 @@ evas_common_rgba_image_scalecache_prepare(Image_Entry *ie, RGBA_Image *dst __UNU
    if (sci->usage_count > im->cache.newest_usage_count) 
      im->cache.newest_usage_count = sci->usage_count;
 //   INF("  -------------- used %8i#, %8i@", (int)sci->usage, (int)sci->usage_count);
-   LKU(im->cache.lock);
+   if (locked) LKU(im->cache.lock);
 #endif
 }
 

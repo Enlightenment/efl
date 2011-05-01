@@ -629,7 +629,10 @@ evas_cache_image_shutdown(Evas_Cache_Image *cache)
      {
 	evas_async_events_process();
 	LKL(wakeup);
-	if (cache->pending) pthread_cond_wait(&cond_wakeup, &wakeup);
+        // the lazy bum who did eain threads and converted this code
+        // didnt bother to worry about Eina_Lock being a different type
+        // to a pthread mutex.
+	if (cache->pending) pthread_cond_wait(&cond_wakeup, &(wakeup.mutex));
 	LKU(wakeup);
      }
 #endif
@@ -1139,7 +1142,7 @@ evas_cache_image_load_data(Image_Entry *im)
 	LKL(wakeup);
 	while (im->preload)
 	  {
-	     pthread_cond_wait(&cond_wakeup, &wakeup);
+	     pthread_cond_wait(&cond_wakeup, &(wakeup.mutex));
 	     LKU(wakeup);
 	     evas_async_events_process();
 	     LKL(wakeup);
@@ -1175,7 +1178,7 @@ evas_cache_image_unload_data(Image_Entry *im)
    evas_cache_image_preload_cancel(im, NULL);
 #ifdef BUILD_ASYNC_PRELOAD
    LKL(im->lock_cancel);
-   if (LKT(im->lock) != 0) /* can't get image lock - busy async load */
+   if (LKT(im->lock) == EINA_FALSE) /* can't get image lock - busy async load */
      {
         im->unload_cancel = EINA_TRUE;
         LKU(im->lock_cancel);
