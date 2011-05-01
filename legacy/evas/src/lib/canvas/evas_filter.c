@@ -282,7 +282,8 @@ evas_object_filter_param_int_get(Evas_Object *o, const char *param)
 
    if ((!o->filter) || (!o->filter->data)) return -1;
 
-   fields = blurfields;
+   fields = filterfields[o->filter->filter];
+   if (!fields) return -1;
    data = o->filter->data;
 
    for (i = 0; fields[i].field; i++)
@@ -343,7 +344,9 @@ evas_object_filter_param_float_set(Evas_Object *o, const char *param,
    if ((!o->filter) || (!o->filter->data)) return EINA_FALSE;
 
    rv = EINA_FALSE;
-   fields = blurfields;
+   fields = filterfields[o->filter->filter];
+   if (!fields) return EINA_FALSE;
+
    data = o->filter->data;
 
    for (i = 0; fields[i].field; i++)
@@ -375,7 +378,8 @@ evas_object_filter_param_float_get(Evas_Object *o, const char *param)
 
    if ((!o->filter) || (!o->filter->data)) return -1;
 
-   fields = blurfields;
+   fields = filterfields[o->filter->filter];
+   if (!fields) return -1;
    data = o->filter->data;
 
    for (i = 0; fields[i].field; i++)
