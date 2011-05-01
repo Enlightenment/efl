@@ -21,10 +21,6 @@
 # include <ws2tcpip.h>
 #endif
 
-#ifdef HAVE_EVIL
-# include <Evil.h>
-#endif
-
 #include <Ecore.h>
 #include <ecore_private.h>
 
