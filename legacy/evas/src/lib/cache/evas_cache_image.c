@@ -1083,12 +1083,6 @@ evas_cache_image_size_set(Image_Entry *im, unsigned int w, unsigned int h)
    Image_Entry *im2 = NULL;
    int error;
 
-#ifdef EVAS_FRAME_QUEUING
-   LKL(im->lock_references);
-#endif
-#ifdef EVAS_FRAME_QUEUING
-   LKU(im->lock_references);
-#endif
    if ((im->space == EVAS_COLORSPACE_YCBCR422P601_PL) ||
        (im->space == EVAS_COLORSPACE_YCBCR422P709_PL))
      w &= ~0x1;
