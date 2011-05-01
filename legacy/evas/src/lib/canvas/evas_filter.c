@@ -1187,9 +1187,9 @@ brightness_filter(Evas_Filter_Info *info, RGBA_Image *src, RGBA_Image *dst)
                  g = G_VAL(in);
                  b = B_VAL(in);
                  adjdelta = (a * delta) >> 8;
-                 r = MIN(r + adjdelta, 255);
-                 g = MIN(g + adjdelta, 255);
-                 b = MIN(b + adjdelta, 255);
+                 r = MIN(r + adjdelta, a);
+                 g = MIN(g + adjdelta, a);
+                 b = MIN(b + adjdelta, a);
                  *out = ARGB_JOIN(a, r ,g, b);
                  out++;
                  in++;
@@ -1208,9 +1208,9 @@ brightness_filter(Evas_Filter_Info *info, RGBA_Image *src, RGBA_Image *dst)
                   g = G_VAL(in);
                   b = B_VAL(in);
                   adjdelta = (a * delta) >> 8;
-                  r = MAX(r - adjdelta, 0);
-                  g = MAX(g - adjdelta, 0);
-                  b = MAX(b - adjdelta, 0);
+                  r = MAX(r + adjdelta, 0);
+                  g = MAX(g + adjdelta, 0);
+                  b = MAX(b + adjdelta, 0);
                   *out = ARGB_JOIN(a, r ,g, b);
                   out++;
                   in++;
