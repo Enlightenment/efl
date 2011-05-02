@@ -1,6 +1,6 @@
 #include "evas_font_ot.h"
 
-#ifdef OT_SUPPORT
+#ifdef USE_HARFBUZZ
 # include <hb.h>
 # include <hb-ft.h>
 #endif

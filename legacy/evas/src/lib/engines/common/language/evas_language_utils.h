@@ -105,7 +105,7 @@ typedef enum
   EVAS_SCRIPT_JAVANESE,               /* Java */
   EVAS_SCRIPT_KAITHI,                 /* Kthi */
   EVAS_SCRIPT_LISU,                   /* Lisu */
-  EVAS_SCRIPT_MEITEI_MAYEK,           /* Mtei */
+  EVAS_SCRIPT_MEETEI_MAYEK,           /* Mtei */
   EVAS_SCRIPT_OLD_SOUTH_ARABIAN,      /* Sarb */
   EVAS_SCRIPT_OLD_TURKIC,             /* Orkh */
   EVAS_SCRIPT_SAMARITAN,              /* Samr */
