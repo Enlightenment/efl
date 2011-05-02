@@ -117,6 +117,7 @@ config_exit(void *data       __UNUSED__,
      }
 
    elm_font_available_hash_del(fdata.font_hash);
+   fdata.font_hash = NULL;
 
    EINA_LIST_FREE(fdata.font_px_list, sd)
      {
@@ -131,7 +132,10 @@ config_exit(void *data       __UNUSED__,
      }
 
    if (fdata.cur_font) eina_stringshare_del(fdata.cur_font);
+   fdata.cur_font = NULL;
+
    if (fdata.cur_style) eina_stringshare_del(fdata.cur_style);
+   fdata.cur_style = NULL;
 
    elm_config_save();
    elm_exit(); /* exit the program's main loop that runs in elm_run() */
