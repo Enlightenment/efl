@@ -223,7 +223,7 @@ eina_lock_debug(Eina_Lock *mutex)
           mutex, (int)mutex->locked, (int)mutex->lock_thread_id);
    backtrace_symbols_fd((void **)mutex->lock_bt, mutex->lock_bt_num, 1);
 #else
-   mutex = 0;
+   (void) mutex;
 #endif
 }
 
