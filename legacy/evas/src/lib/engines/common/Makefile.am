@@ -104,6 +104,7 @@ evas_scale_span.h \
 evas_pipe.h \
 language/evas_bidi_utils.h \
 language/evas_language_utils.h \
+language/evas_script_table.h \
 evas_text_utils.h \
 evas_font_ot.h \
 evas_map_image_internal.c \

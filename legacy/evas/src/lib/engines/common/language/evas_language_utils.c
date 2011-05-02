@@ -23,6 +23,8 @@
 # include <hb.h>
 #endif
 
+#include "evas_script_table.h"
+
 /* FIXME: rename and move */
 void *
 evas_common_language_unicode_funcs_get(void)
@@ -33,19 +35,38 @@ evas_common_language_unicode_funcs_get(void)
    return NULL;
 }
 
+static Evas_Script_Type
+_evas_common_language_char_script_search(Eina_Unicode unicode)
+{
+   int min = 0;
+   int max  = (sizeof(_evas_script_slow_table) /
+      sizeof(_evas_script_slow_table[0])) - 1;
+   int mid;
+
+   do
+     {
+        mid = (min + max) / 2;
+
+        if (unicode < _evas_script_slow_table[mid].start)
+           max = mid - 1;
+        else if (unicode >= _evas_script_slow_table[mid].start +
+              _evas_script_slow_table[mid].len)
+           min = mid + 1;
+        else
+           return _evas_script_slow_table[mid].script;
+     }
+   while (min <= max);
+
+   return EVAS_SCRIPT_UNKNOWN;
+}
+
 Evas_Script_Type
 evas_common_language_char_script_get(Eina_Unicode unicode)
 {
-#ifdef USE_HARFBUZZ
-   static hb_unicode_funcs_t *funcs;
-   if (!funcs)
-        funcs = evas_common_language_unicode_funcs_get();
-   if (funcs)
-      return hb_unicode_get_script(funcs, unicode);
-#else
-   (void) unicode;
-#endif
-   return EVAS_SCRIPT_COMMON;
+   if (unicode < EVAS_SCRIPT_DIRECT_TABLE_LIMIT)
+      return _evas_script_fast_table[unicode];
+   else
+      return _evas_common_language_char_script_search(unicode);
 }
 
 int
