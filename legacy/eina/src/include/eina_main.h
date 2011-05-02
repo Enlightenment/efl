@@ -111,6 +111,8 @@ EAPI int eina_shutdown(void);
  *
  * When the mutexes are not used anymore, call eina_threads_shutdown() to shut down
  * the mutexes.
+ *
+ * This function should never be called outside of the main loop.
  */
 EAPI int eina_threads_init(void);
 
@@ -127,6 +129,8 @@ EAPI int eina_threads_init(void);
  * Once this function succeeds (that is, @c 0 is returned), you must
  * not call any of the Eina function in a thread anymore. You must call
  * eina_threads_init() again to use the Eina functions in a thread again.
+ *
+ * This function should never be called outside of the main loop.
  */
 EAPI int eina_threads_shutdown(void);
 

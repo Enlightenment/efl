@@ -28,6 +28,7 @@
 # undef WIN32_LEAN_AND_MEAN
 #endif
 
+#include "eina_lock.h"
 #include "eina_config.h"
 #include "eina_private.h"
 #include "eina_types.h"
@@ -46,7 +47,6 @@
 #include "eina_magic.h"
 #include "eina_rectangle.h"
 #include "eina_safety_checks.h"
-#include "eina_lock.h"
 
 /*============================================================================*
 *                                  Local                                     *
@@ -78,6 +78,7 @@ EAPI Eina_Bool _eina_threads_activated = EINA_FALSE;
 
 #ifdef EINA_HAVE_DEBUG_THREADS
 EAPI int _eina_threads_debug = 0;
+EAPI pthread_t _eina_main_loop = NULL;
 #endif
 
 static Eina_Lock _mutex;
@@ -216,8 +217,11 @@ eina_init(void)
           }
      }
 
+
    eina_lock_new(&_mutex);
 #ifdef EINA_HAVE_DEBUG_THREADS
+   _eina_main_loop = pthread_self();
+
    if (getenv("EINA_DEBUG_THREADS"))
      _eina_threads_debug = atoi(getenv("EINA_DEBUG_THREADS");
 #endif
@@ -247,6 +251,9 @@ eina_threads_init(void)
 #ifdef EFL_HAVE_THREADS
    int ret;
 
+#ifdef EINA_HAVE_DEBUG_THREADS
+   assert(pthread_equal(_eina_main_loop, pthread_self()));
+#endif
 
    eina_lock_take(&_mutex);
    ++_eina_main_thread_count;
@@ -275,6 +282,11 @@ eina_threads_shutdown(void)
 {
 #ifdef EFL_HAVE_THREADS
    int ret;
+
+#ifdef EINA_HAVE_DEBUG_THREADS
+   assert(pthread_equal(_eina_main_loop, pthread_self()));
+   assert(_eina_main_thread_count > 0);
+#endif
 
    eina_lock_take(&_mutex);
    ret = --_eina_main_thread_count;
