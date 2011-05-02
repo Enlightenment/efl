@@ -45,7 +45,7 @@ struct _Evas_Preload_Pthread_Data
 static int _threads_count = 0;
 static Evas_Preload_Pthread_Worker *_workers = NULL;
 
-static LK(_mutex) = PTHREAD_MUTEX_INITIALIZER;
+static LK(_mutex) = EINA_LOCK_INITIALIZER;
 
 static void
 _evas_preload_thread_end(void *data)

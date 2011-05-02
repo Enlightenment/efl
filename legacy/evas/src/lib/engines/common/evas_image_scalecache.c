@@ -399,7 +399,7 @@ evas_common_rgba_image_scalecache_prepare(Image_Entry *ie, RGBA_Image *dst __UNU
 {
 #ifdef SCALECACHE
    int locked = 0;
-   Eina_Bool ret;
+   Eina_Lock_Result ret;
    RGBA_Image *im = (RGBA_Image *)ie;
    Scaleitem *sci;
    if (!im->image.data) return;
@@ -420,7 +420,7 @@ evas_common_rgba_image_scalecache_prepare(Image_Entry *ie, RGBA_Image *dst __UNU
              slpt += slp;
              slp++;
              ret = LKT(im->cache.lock);
-             if (ret == 2) // MAGIC for now
+             if (ret == EINA_LOCK_DEADLOCK)
                {
                   printf("WARNING: DEADLOCK on image %p (%s)\n", im, ie->file);
                }
@@ -437,7 +437,7 @@ evas_common_rgba_image_scalecache_prepare(Image_Entry *ie, RGBA_Image *dst __UNU
              LKDBG(im->cache.lock);
           }
      }
-   else if (ret == 2) // MAGIC for now
+   else if (ret == EINA_LOCK_DEADLOCK)
      {
         printf("WARNING: DEADLOCK on image %p (%s)\n", im, ie->file);
      }

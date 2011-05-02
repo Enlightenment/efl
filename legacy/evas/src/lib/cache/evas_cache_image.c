@@ -31,8 +31,8 @@ struct _Evas_Cache_Preload
    Image_Entry *ie;
 };
 
-static LK(engine_lock) = PTHREAD_MUTEX_INITIALIZER;
-static LK(wakeup) = PTHREAD_MUTEX_INITIALIZER;
+static LK(engine_lock) = EINA_LOCK_INITIALIZER; 
+static LK(wakeup) = EINA_LOCK_INITIALIZER;
 
 static pthread_cond_t cond_wakeup = PTHREAD_COND_INITIALIZER;
 
