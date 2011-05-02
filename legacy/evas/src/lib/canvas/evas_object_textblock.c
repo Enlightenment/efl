@@ -2351,15 +2351,19 @@ loop_advance:
            ((c->w - c->ln->w -
              c->o->style_pad.l - c->o->style_pad.r -
              c->marginl - c->marginr) * _layout_line_align_get(c));
-        if ((c->par->x + c->ln->x + c->ln->w + c->marginr - c->o->style_pad.l) > c->wmax)
-          c->wmax = c->par->x + c->ln->x + c->ln->w + c->marginl + c->marginr - c->o->style_pad.l;
      }
    else
      {
         c->ln->x = c->marginl + c->o->style_pad.l;
-        if ((c->par->x + c->ln->x + c->ln->w + c->marginr - c->o->style_pad.l) > c->wmax)
-          c->wmax = c->par->x + c->ln->x + c->ln->w + c->marginl + c->marginr - c->o->style_pad.l;
      }
+
+     {
+        Evas_Coord new_wmax = c->par->x + c->ln->x + c->ln->w +
+           c->marginl + c->marginr - (c->o->style_pad.l + c->o->style_pad.r);
+        if (new_wmax > c->wmax)
+           c->wmax = new_wmax;
+     }
+
    c->par->h = c->ln->y + c->ln->h;
    if (c->ln->w + c->ln->x > c->par->w)
      c->par->w = c->ln->x + c->ln->w;
