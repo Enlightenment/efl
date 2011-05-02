@@ -1087,9 +1087,9 @@ _getbase(Evas_Object *obj)
                      case ELM_WRAP_CHAR:
                         return "base-charwrap";
                      case ELM_WRAP_WORD:
-                     case ELM_WRAP_MIXED:
-                        /* FIXME: separate mixed and word. */
                         return "base";
+                     case ELM_WRAP_MIXED:
+                        return "base-mixedwrap";
                      case ELM_WRAP_NONE:
                      default:
                         return "base-nowrap";
@@ -1110,9 +1110,9 @@ _getbase(Evas_Object *obj)
                      case ELM_WRAP_CHAR:
                         return "base-noedit-charwrap";
                      case ELM_WRAP_WORD:
-                     case ELM_WRAP_MIXED:
-                        /* FIXME: separate mixed and word. */
                         return "base-noedit";
+                     case ELM_WRAP_MIXED:
+                        return "base-noedit-mixedwrap";
                      case ELM_WRAP_NONE:
                      default:
                         return "base-nowrap-noedit";
