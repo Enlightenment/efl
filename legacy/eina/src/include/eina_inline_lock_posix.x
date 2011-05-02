@@ -102,7 +102,7 @@ eina_lock_free(Eina_Lock *mutex)
 static inline Eina_Lock_Result
 eina_lock_take(Eina_Lock *mutex)
 {
-   Eina_Bool ret;
+   Eina_Bool ret = EINA_FALSE;
    int ok;
 
 #ifdef EINA_HAVE_DEBUG_THREADS
