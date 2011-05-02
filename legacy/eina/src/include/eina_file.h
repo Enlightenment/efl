@@ -21,6 +21,10 @@
 
 #include <limits.h>
 
+#if defined(__APPLE__) && defined(__MACH__)
+# include <mach/mach_time.h>
+#endif
+
 #include "eina_types.h"
 #include "eina_array.h"
 #include "eina_iterator.h"
