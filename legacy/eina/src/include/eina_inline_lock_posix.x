@@ -51,6 +51,19 @@ struct _Eina_Lock
 #endif   
 };
 
+#ifdef EINA_LOCK_DEBUG
+# define EINA_LOCK_INITIALIZER { PTHREAD_MUTEX_INITIALIZER, 0, { 0 }, 0, 0 }
+#else
+# define EINA_LOCK_INITIALIZER { PTHREAD_MUTEX_INITIALIZER }
+#endif
+
+typedef enum
+{
+   EINA_LOCK_FAIL     = EINA_FALSE,
+   EINA_LOCK_SUCCEED  = EINA_TRUE,
+   EINA_LOCK_DEADLOCK
+} Eina_Lock_Result;
+
 EAPI extern Eina_Bool _eina_threads_activated;
 
 #ifdef EINA_HAVE_DEBUG_THREADS
@@ -59,7 +72,7 @@ EAPI extern Eina_Bool _eina_threads_activated;
 EAPI extern int _eina_threads_debug;
 #endif
 
-static inline Eina_Bool
+static inline Eina_Lock_Result
 eina_lock_new(Eina_Lock *mutex)
 {
    pthread_mutexattr_t attr;
@@ -94,7 +107,7 @@ eina_lock_free(Eina_Lock *mutex)
 #endif   
 }
 
-static inline Eina_Bool
+static inline Eina_Lock_Result
 eina_lock_take(Eina_Lock *mutex)
 {
    Eina_Bool ret;
@@ -128,7 +141,7 @@ eina_lock_take(Eina_Lock *mutex)
    return ret;
 }
 
-static inline Eina_Bool
+static inline Eina_Lock_Result
 eina_lock_take_try(Eina_Lock *mutex)
 {
    Eina_Bool ret = EINA_FALSE;
@@ -139,7 +152,7 @@ eina_lock_take_try(Eina_Lock *mutex)
    else if (ok == EDEADLK)
      {
         printf("ERROR ERROR: DEADLOCK on lock %p\n", mutex);
-        ret = 2; // magic
+        ret = EINA_LOCK_DEADLOCK; // magic
      }
 #ifdef EINA_LOCK_DEBUG
    if (ret == EINA_TRUE)
@@ -152,7 +165,7 @@ eina_lock_take_try(Eina_Lock *mutex)
    return ret;
 }
 
-static inline Eina_Bool
+static inline Eina_Lock_Result
 eina_lock_release(Eina_Lock *mutex)
 {
    Eina_Bool ret;
