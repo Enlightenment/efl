@@ -122,6 +122,12 @@ fi
 AC_SUBST(EINA_CONFIGURE_HAVE_DEBUG_THREADS)
 AM_CONDITIONAL([EINA_DEBUG_THREADS], [! test "x${have_debug_threads}" = "xno"])
 
+if ! test "x${have_on_off_threads}" = "xno"; then
+   EINA_CONFIGURE_HAVE_ON_OFF_THREADS="#define EINA_ON_OFF_THREADS"
+fi
+AC_SUBST(EINA_CONFIGURE_HAVE_ON_OFF_THREADS)
+AM_CONDITIONAL([EINA_ON_OFF_THREADS], [! test "x${have_on_off_threads}" = "xno"])
+
 ### Additional options to configure
 
 # Magic debug
@@ -675,6 +681,7 @@ echo "  Thread Support.......: ${have_threads}"
 if test "${have_threads}" = "POSIX" ; then
 echo "    spinlock...........: ${have_posix_threads_spinlock}"
 echo "    debug usage........: ${have_debug_threads}"
+echo "    on/off support.....: ${have_on_off_threads}"
 fi
 echo "  Amalgamation.........: ${do_amalgamation}"
 echo "  Iconv support........: ${have_iconv}"

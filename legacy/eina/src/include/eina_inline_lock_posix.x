@@ -102,13 +102,20 @@ eina_lock_free(Eina_Lock *mutex)
 static inline Eina_Lock_Result
 eina_lock_take(Eina_Lock *mutex)
 {
-   Eina_Bool ret = EINA_FALSE;
+   Eina_Lock_Result ret = EINA_FALSE;
    int ok;
 
+#ifdef EINA_HAVE_ON_OFF_THREADS
+   if (!_eina_threads_activated)
+     {
 #ifdef EINA_HAVE_DEBUG_THREADS
-   if (_eina_threads_activated)
-     assert(pthread_equal(_eina_main_loop, pthread_self()));
+        assert(pthread_equal(_eina_main_loop, pthread_self()));
+#endif
+        return EINA_FALSE;
+     }
+#endif
 
+#ifdef EINA_HAVE_DEBUG_THREADS
    if (_eina_threads_debug)
      {
         struct timeval t0, t1;
@@ -146,11 +153,21 @@ eina_lock_take(Eina_Lock *mutex)
 static inline Eina_Lock_Result
 eina_lock_take_try(Eina_Lock *mutex)
 {
-   Eina_Bool ret = EINA_FALSE;
+   Eina_Lock_Result ret = EINA_FALSE;
    int ok;
 
+#ifdef EINA_HAVE_ON_OFF_THREADS
+   if (!_eina_threads_activated)
+     {
 #ifdef EINA_HAVE_DEBUG_THREADS
-   if (_eina_threads_activated)
+        assert(pthread_equal(_eina_main_loop, pthread_self()));
+#endif
+        return EINA_FALSE;
+     }
+#endif
+
+#ifdef EINA_HAVE_DEBUG_THREADS
+   if (!_eina_threads_activated)
      assert(pthread_equal(_eina_main_loop, pthread_self()));
 #endif
 
@@ -175,11 +192,16 @@ eina_lock_take_try(Eina_Lock *mutex)
 static inline Eina_Lock_Result
 eina_lock_release(Eina_Lock *mutex)
 {
-   Eina_Bool ret;
+   Eina_Lock_Result ret;
 
+#ifdef EINA_HAVE_ON_OFF_THREADS
+   if (!_eina_threads_activated)
+     {
 #ifdef EINA_HAVE_DEBUG_THREADS
-   if (_eina_threads_activated)
-     assert(pthread_equal(_eina_main_loop, pthread_self()));
+        assert(pthread_equal(_eina_main_loop, pthread_self()));
+#endif
+        return EINA_FALSE;
+     }
 #endif
 
 #ifdef EINA_HAVE_DEBUG_THREADS

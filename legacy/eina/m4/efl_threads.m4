@@ -134,6 +134,19 @@ fi
 AC_SUBST(EFL_PTHREAD_CFLAGS)
 AC_SUBST(EFL_PTHREAD_LIBS)
 
+_efl_enable_on_off_threads="no"
+AC_ARG_ENABLE([on-off-threads],
+   [AC_HELP_STRING([--enable-on-off-threads], [only turn this on if you know what you are doing, and don't complain if the world freeze])],
+   [_efl_enable_on_off_threads="${enableval}"])
+
+have_on_off_threads="no"
+if test "x${_efl_enable_on_off_threads}" = "xyes"; then
+   have_on_off_threads="yes"
+   AC_DEFINE([EFL_ON_OFF_THREADS], [1], [make it possible to disable all locks])
+fi
+AC_MSG_CHECKING([whether to turn on/off threads lock on demand])
+AC_MSG_RESULT([${_efl_enable_on_off_threads}])
+
 _efl_enable_debug_threads="no"
 AC_ARG_ENABLE([debug-threads],
    [AC_HELP_STRING([--enable-debug-threads], [disable assert when you forgot to call eina_threads_init])],
