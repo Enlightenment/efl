@@ -202,18 +202,15 @@ evas_common_text_props_content_create(void *_fn, const Eina_Unicode *text,
         fi->src->current_size = fi->size;
      }
 
-#ifdef OT_SUPPORT
-   /* FIXME: as soon as we start caching fi for non-harfbuzz as well, move
-    * this (until text_props->fi = fi outside the ifdef */
-   /* Load the glyph according to the first letter of the script, preety
+   /* Load the glyph according to the first letter of the script, pretty
     * bad, but will have to do */
      {
         const Eina_Unicode *base_char;
         /* Skip common chars */
         for (base_char = text ;
              *base_char &&
-             evas_common_language_char_script_get(*base_char) ==
-             EVAS_SCRIPT_COMMON ;
+             (evas_common_language_char_script_get(*base_char) !=
+             text_props->script) ;
              base_char++)
            ;
         if (!*base_char && (base_char > text)) base_char--;
@@ -222,7 +219,7 @@ evas_common_text_props_content_create(void *_fn, const Eina_Unicode *text,
 
    text_props->font_instance = fi;
 
-
+#ifdef OT_SUPPORT
    size_t char_index;
    Evas_Font_Glyph_Info *gl_itr;
    Evas_Coord pen_x = 0, adjust_x = 0;
@@ -290,9 +287,6 @@ evas_common_text_props_content_create(void *_fn, const Eina_Unicode *text,
         gl_itr++;
      }
 #else
-   /* FIXME: Move outside when we can (read comment above). */
-   text_props->font_instance = NULL;
-
    /* We are walking the string in visual ordering */
    Evas_Font_Glyph_Info *gl_itr;
    Eina_Bool use_kerning;

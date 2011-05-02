@@ -518,12 +518,13 @@ evas_common_font_draw_internal(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font
 # endif
           }
      }
+#else
+   (void) text;
+   (void) fn;
 #endif
 
    im = dst->image.data;
-#ifdef OT_SUPPORT
-   /* FIXME-tom: Should be applied to non-ot as well once we are capable of
-    * doing it */
+
    fi = text_props->font_instance;
    if (fi)
      {
@@ -537,7 +538,6 @@ evas_common_font_draw_internal(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font
              fi->src->current_size = fi->size;
           }
      }
-#endif
 
    EVAS_FONT_WALK_TEXT_START()
      {
@@ -546,31 +546,8 @@ evas_common_font_draw_internal(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font
         int chr_x, chr_y, chr_w;
         if (!EVAS_FONT_WALK_IS_VISIBLE) continue;
 
-#ifdef OT_SUPPORT
         index = EVAS_FONT_WALK_INDEX;
-#else
-        /* FIXME: Should be removed once we split according to script without
-         * the use of harfbuzz */
-        if (text_props->repch)
-           index =
-              evas_common_font_glyph_search(fn, &fi, text_props->repch);
-        else
-           index =
-              evas_common_font_glyph_search(fn, &fi, text[EVAS_FONT_WALK_POS]);
 
-        if (index == 0)
-          {
-             index = evas_common_font_glyph_search(fn, &fi, REPLACEMENT_CHAR);
-          }
-
-        if (fi->src->current_size != fi->size)
-          {
-             FTLOCK();
-             FT_Activate_Size(fi->ft.size);
-             FTUNLOCK();
-             fi->src->current_size = fi->size;
-          }
-#endif
         LKL(fi->ft_mutex);
         fg = evas_common_font_int_cache_glyph_get(fi, index);
         if (!fg)
@@ -843,9 +820,6 @@ evas_font_word_prerender(RGBA_Draw_Context *dc, const Eina_Unicode *in_text, con
    gl = dc->font_ext.func.gl_new ? 1: 0;
 
    above = 0; below = 0; baseline = 0; height = 0; descent = 0;
-#ifdef OT_SUPPORT
-   /* FIXME-tom: Should be applied to non-ot as well once we are capable of
-    * doing it */
    fi = text_props->font_instance;
    if (fi)
      {
@@ -859,7 +833,6 @@ evas_font_word_prerender(RGBA_Draw_Context *dc, const Eina_Unicode *in_text, con
              fi->src->current_size = fi->size;
           }
      }
-#endif
 
    /* First pass: Work out how big and populate */
    /* It's a bit hackish to use index and fg here as they are internal,
@@ -871,26 +844,7 @@ evas_font_word_prerender(RGBA_Draw_Context *dc, const Eina_Unicode *in_text, con
      {
         FT_UInt index;
         RGBA_Font_Glyph *fg;
-#ifdef OT_SUPPORT
         index = EVAS_FONT_WALK_INDEX;
-#else
-        /* FIXME: Should be removed once we split according to script without
-         * the use of harfbuzz */
-        if (text_props->repch)
-           index =
-              evas_common_font_glyph_search(fn, &fi, text_props->repch);
-        else
-           index =
-              evas_common_font_glyph_search(fn, &fi, text[EVAS_FONT_WALK_POS]);
-
-        if (fi->src->current_size != fi->size)
-          {
-             FTLOCK();
-             FT_Activate_Size(fi->ft.size);
-             FTUNLOCK();
-             fi->src->current_size = fi->size;
-          }
-#endif
         LKL(fi->ft_mutex);
         fg = evas_common_font_int_cache_glyph_get(fi, index);
         if (!fg)
