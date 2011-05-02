@@ -4,10 +4,9 @@
 #include <Eina.h>
 #include "evas_bidi_utils.h"
 
-/* Unicode Script property - conforming to HARFBUZZ's */
+/* Unicode Script property */
 typedef enum
 {
-  EVAS_SCRIPT_INVALID_CODE = -1,
   EVAS_SCRIPT_COMMON       = 0,   /* Zyyy */
   EVAS_SCRIPT_INHERITED,          /* Qaai */
   EVAS_SCRIPT_ARABIC,             /* Arab */
@@ -110,7 +109,12 @@ typedef enum
   EVAS_SCRIPT_OLD_TURKIC,             /* Orkh */
   EVAS_SCRIPT_SAMARITAN,              /* Samr */
   EVAS_SCRIPT_TAI_THAM,               /* Lana */
-  EVAS_SCRIPT_TAI_VIET                /* Tavt */
+  EVAS_SCRIPT_TAI_VIET,                /* Tavt */
+
+  /* Unicode-6.0 additions */
+  EVAS_SCRIPT_BATAK,                  /* Batk */
+  EVAS_SCRIPT_BRAHMI,                 /* Brah */
+  EVAS_SCRIPT_MANDAIC,                /* Mand */
 } Evas_Script_Type;
 
 int
