@@ -18,12 +18,8 @@ static int max_cached_words = WORD_CACHE_NWORDS;
 struct prword 
 {
    EINA_INLIST;
-   /* FIXME: Need to save font/size et al */
-   int size;
    struct cinfo *cinfo;
-   RGBA_Font *font;
-   const Eina_Unicode *str;
-   int len;
+   Evas_Text_Props text_props;
    DATA8 *im;
    int roww;
    int width;
@@ -52,7 +48,7 @@ struct cinfo
 #if defined(METRIC_CACHE) || defined(WORD_CACHE)
 LK(lock_words); // for word cache call
 static Eina_Inlist *words = NULL;
-static struct prword *evas_font_word_prerender(RGBA_Draw_Context *dc, const Eina_Unicode *text, const Evas_Text_Props *text_props, int len, RGBA_Font *fn, RGBA_Font_Int *fi);
+static struct prword *evas_font_word_prerender(RGBA_Draw_Context *dc, const Evas_Text_Props *text_props);
 #endif
 
 EAPI void
@@ -410,27 +406,41 @@ evas_common_font_glyph_search(RGBA_Font *fn, RGBA_Font_Int **fi_ret, int gl)
  * is on the right, and not on the left).
  */
 static void
-evas_common_font_draw_internal(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font *fn, int x, int y, const Eina_Unicode *in_text,
+evas_common_font_draw_internal(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font *fn __UNUSED__, int x, int y,
                                const Evas_Text_Props *text_props, RGBA_Gfx_Func func, int ext_x, int ext_y, int ext_w, 
-                               int ext_h, RGBA_Font_Int *fi, int im_w, int im_h __UNUSED__)
+                               int ext_h, int im_w, int im_h __UNUSED__)
 {
-   const Eina_Unicode *text = in_text;
    DATA32 *im;
    FT_Face pface = NULL;
+   RGBA_Font_Int *fi;
    EVAS_FONT_WALK_TEXT_INIT();
+
+   fi = text_props->font_instance;
+   if (fi)
+     {
+        evas_common_font_int_reload(fi);
+
+        if (fi->src->current_size != fi->size)
+          {
+             FTLOCK();
+             FT_Activate_Size(fi->ft.size);
+             FTUNLOCK();
+             fi->src->current_size = fi->size;
+          }
+     }
+
 
 #if defined(METRIC_CACHE) || defined(WORD_CACHE)
    unsigned int len;
 
-   len = text_props->text_len;
+   len = text_props->len;
 
    if (len > 2 && (len < WORD_CACHE_MAXLEN))
      {
         struct prword *word;
 
         word =
-          evas_font_word_prerender(dc, text, text_props,
-                                   len, fn, fi);
+          evas_font_word_prerender(dc, text_props);
         if (word)
           {
              int j, rowstart, rowend, xstart, xrun;
@@ -477,7 +487,7 @@ evas_common_font_draw_internal(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font
                   return;
                }
 # elif defined(METRIC_CACHE)
-             int ind;
+             unsigned int ind;
 
              y += word->baseline;
              for (ind = 0 ; ind < len ; ind ++)
@@ -512,20 +522,6 @@ evas_common_font_draw_internal(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font
 #endif
 
    im = dst->image.data;
-
-   fi = text_props->font_instance;
-   if (fi)
-     {
-        evas_common_font_int_reload(fi);
-
-        if (fi->src->current_size != fi->size)
-          {
-             FTLOCK();
-             FT_Activate_Size(fi->ft.size);
-             FTUNLOCK();
-             fi->src->current_size = fi->size;
-          }
-     }
 
    EVAS_FONT_WALK_TEXT_START()
      {
@@ -690,19 +686,16 @@ evas_common_font_draw_internal(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font
 }
 
 EAPI void
-evas_common_font_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font *fn, int x, int y, const Eina_Unicode *text,
+evas_common_font_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font *fn, int x, int y, const Eina_Unicode *text __UNUSED__,
                       const Evas_Text_Props *text_props)
 {
    int ext_x, ext_y, ext_w, ext_h;
    int im_w, im_h;
    RGBA_Gfx_Func func;
-   RGBA_Font_Int *fi;
    Cutout_Rects *rects;
    Cutout_Rect  *r;
    int c, cx, cy, cw, ch;
    int i;
-
-   fi = fn->fonts->data;
 
    im_w = dst->cache_entry.w;
    im_h = dst->cache_entry.h;
@@ -735,14 +728,13 @@ evas_common_font_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font *fn, int
 #ifdef EVAS_FRAME_QUEUING
    LKL(fn->lock);
 #endif
-   evas_common_font_int_reload(fi);
 //   evas_common_font_size_use(fn);
    func = evas_common_gfx_func_composite_mask_color_span_get(dc->col.col, dst, 1, dc->render_op);
 
    if (!dc->cutout.rects)
      {
-        evas_common_font_draw_internal(dst, dc, fn, x, y, text, text_props,
-                                       func, ext_x, ext_y, ext_w, ext_h, fi,
+        evas_common_font_draw_internal(dst, dc, fn, x, y, text_props,
+                                       func, ext_x, ext_y, ext_w, ext_h,
                                        im_w, im_h);
      }
    else
@@ -757,8 +749,8 @@ evas_common_font_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font *fn, int
                {
                   r = rects->rects + i;
                   evas_common_draw_context_set_clip(dc, r->x, r->y, r->w, r->h);
-                  evas_common_font_draw_internal(dst, dc, fn, x, y, text, text_props,
-                                                 func, r->x, r->y, r->w, r->h, fi,
+                  evas_common_font_draw_internal(dst, dc, fn, x, y, text_props,
+                                                 func, r->x, r->y, r->w, r->h,
                                                  im_w, im_h);
                }
              evas_common_draw_context_apply_clear_cutouts(rects);
@@ -770,23 +762,42 @@ evas_common_font_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font *fn, int
 #endif
 }
 
-/* FIXME: Where is it freed at? */
 /* Only used if cache is on */
 #if defined(METRIC_CACHE) || defined(WORD_CACHE)
-struct prword *
-evas_font_word_prerender(RGBA_Draw_Context *dc, const Eina_Unicode *in_text, const Evas_Text_Props *text_props, int len, RGBA_Font *fn, RGBA_Font_Int *fi)
+
+static Eina_Bool
+_evas_font_word_prerender_text_props_equal(const Evas_Text_Props *_a, const Evas_Text_Props *_b)
+{
+   Evas_Font_Glyph_Info *gl1, *gl2;
+   size_t i;
+
+   if ((_a->len != _b->len) ||
+       (_a->font_instance != _b->font_instance))
+     return EINA_FALSE;
+
+   gl1 = _a->info->glyph + _a->start;
+   gl2 = _b->info->glyph + _b->start;
+   i = _a->len;
+   for ( ; (i > 0) && (gl1->index == gl2->index) ; i--, gl1++, gl2++)
+      ;
+
+   return (i == 0);
+}
+
+static struct prword *
+evas_font_word_prerender(RGBA_Draw_Context *dc, const Evas_Text_Props *text_props)
 {
    struct cinfo *metrics;
-   const Eina_Unicode *text = in_text;
-   (void) text;
    unsigned char *im;
    int width;
    int height, above, below, baseline, descent;
-   int i,j;
+   unsigned int i,j;
    struct prword *w;
    int last_delta = 0;
    int gl;
    struct cinfo *ci;
+   unsigned int len = text_props->len;
+   RGBA_Font_Int *fi = (RGBA_Font_Int *) text_props->font_instance;
    EVAS_FONT_WALK_TEXT_INIT();
 
 # ifndef METRIC_CACHE
@@ -797,36 +808,21 @@ evas_font_word_prerender(RGBA_Draw_Context *dc, const Eina_Unicode *in_text, con
    LKL(lock_words);
    EINA_INLIST_FOREACH(words,w)
      {
-	if (w->len == len && w->font == fn && fi->size == w->size &&
-            (w->str == in_text || memcmp(w->str, in_text, len * sizeof(Eina_Unicode)) == 0)){
-           words = eina_inlist_promote(words, EINA_INLIST_GET(w));
-           LKU(lock_words);
-           return w;
-	}
+        if (_evas_font_word_prerender_text_props_equal(&w->text_props,
+                                                       text_props))
+          {
+             words = eina_inlist_promote(words, EINA_INLIST_GET(w));
+             LKU(lock_words);
+             return w;
+          }
      }
    LKU(lock_words);
 
    gl = dc->font_ext.func.gl_new ? 1: 0;
 
    above = 0; below = 0; baseline = 0; height = 0; descent = 0;
-   fi = text_props->font_instance;
-   if (fi)
-     {
-        evas_common_font_int_reload(fi);
-
-        if (fi->src->current_size != fi->size)
-          {
-             FTLOCK();
-             FT_Activate_Size(fi->ft.size);
-             FTUNLOCK();
-             fi->src->current_size = fi->size;
-          }
-     }
 
    /* First pass: Work out how big and populate */
-   /* It's a bit hackish to use index and fg here as they are internal,
-    * but that'll have to be good enough ATM */
-   len = text_props->len;
    metrics = malloc(sizeof(struct cinfo) * len);
    ci = metrics;
    EVAS_FONT_WALK_TEXT_START()
@@ -909,10 +905,7 @@ evas_font_word_prerender(RGBA_Draw_Context *dc, const Eina_Unicode *in_text, con
 
    save = malloc(sizeof(struct prword));
    save->cinfo = metrics;
-   save->str = eina_ustringshare_add(in_text);
-   save->font = fn;
-   save->size = fi->size;
-   save->len = len;
+   evas_common_text_props_content_copy_and_ref(&save->text_props, text_props);
    save->im = im;
    save->width = EVAS_FONT_WALK_PEN_X;
    if (last_delta < 0)
@@ -932,7 +925,7 @@ evas_font_word_prerender(RGBA_Draw_Context *dc, const Eina_Unicode *in_text, con
           {
              if (last->im) free(last->im);
              if (last->cinfo) free(last->cinfo);
-             eina_ustringshare_del(last->str);
+             evas_common_text_props_content_unref(&last->text_props);
              words = eina_inlist_remove(words, EINA_INLIST_GET(last));
              free(last);
           }
