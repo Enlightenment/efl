@@ -110,7 +110,9 @@ eina_lock_free(Eina_Lock *mutex)
 static inline Eina_Lock_Result
 eina_lock_take(Eina_Lock *mutex)
 {
-   Eina_Bool ret;
+   Eina_Bool ret = EINA_FALSE;
+   int ok;
+   
 #ifdef EINA_HAVE_DEBUG_THREADS
    if (_eina_threads_debug)
      {
@@ -131,8 +133,13 @@ eina_lock_take(Eina_Lock *mutex)
         if (dt > _eina_threads_debug) abort();
      }
 #endif
-   ret = (pthread_mutex_lock(&(mutex->mutex)) == 0) ? 
-      EINA_TRUE : EINA_FALSE;
+   ok = pthread_mutex_lock(&(mutex->mutex));
+   if (ok == 0) ret = EINA_TRUE;
+   else if (ok == EDEADLK)
+     {
+        printf("ERROR ERROR: DEADLOCK on lock %p\n", mutex);
+        ret = EINA_LOCK_DEADLOCK; // magic
+     }
 #ifdef EINA_LOCK_DEBUG
    mutex->locked = 1;
    mutex->lock_thread_id = pthread_self();
@@ -151,7 +158,7 @@ eina_lock_take_try(Eina_Lock *mutex)
    if (ok == 0) ret = EINA_TRUE;
    else if (ok == EDEADLK)
      {
-        printf("ERROR ERROR: DEADLOCK on lock %p\n", mutex);
+        printf("ERROR ERROR: DEADLOCK on trylock %p\n", mutex);
         ret = EINA_LOCK_DEADLOCK; // magic
      }
 #ifdef EINA_LOCK_DEBUG
