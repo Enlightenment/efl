@@ -134,6 +134,7 @@ extern EAPI int _evas_log_dom_global;
 #define LKL(x) eina_lock_take(&(x))
 #define LKT(x) eina_lock_take_try(&(x))
 #define LKU(x) eina_lock_release(&(x))
+#define LKDBG(x) eina_lock_debug(&(x))
 
 # define TH(x)  pthread_t x
 # define THI(x) int x
@@ -141,11 +142,11 @@ extern EAPI int _evas_log_dom_global;
 
 /* for rwlocks */
 #define RWLK(x) pthread_rwlock_t x
-#define RWLKI(x) pthread_rwlock_init(&(x), NULL);
-#define RWLKD(x) pthread_rwlock_destroy(&(x));
-#define RDLKL(x) pthread_rwlock_rdlock(&(x));
-#define WRLKL(x) pthread_rwlock_wrlock(&(x));
-#define RWLKU(x) pthread_rwlock_unlock(&(x));
+#define RWLKI(x) pthread_rwlock_init(&(x), NULL)
+#define RWLKD(x) pthread_rwlock_destroy(&(x))
+#define RDLKL(x) pthread_rwlock_rdlock(&(x))
+#define WRLKL(x) pthread_rwlock_wrlock(&(x))
+#define RWLKU(x) pthread_rwlock_unlock(&(x))
 
 
 // even though in theory having every Nth rendered line done by a different
@@ -162,6 +163,7 @@ extern EAPI int _evas_log_dom_global;
 # define TH(x)
 # define THI(x)
 # define TH_MAX 0
+# define LKDBG(x)
 
 /* for rwlocks */
 #define RWLK(x) 
