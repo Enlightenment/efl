@@ -263,7 +263,7 @@ _evas_common_font_ot_hb_get_kerning(hb_font_t *font, hb_face_t *face,
 
 /* End of harfbuzz font funcs */
 
-static hb_font_funcs_t *
+static inline hb_font_funcs_t *
 _evas_common_font_ot_font_funcs_get(void)
 {
    static hb_font_funcs_t *font_funcs = NULL;
@@ -284,6 +284,18 @@ _evas_common_font_ot_font_funcs_get(void)
      }
 
    return font_funcs;
+}
+
+static inline hb_unicode_funcs_t *
+_evas_common_font_ot_unicode_funcs_get(void)
+{
+   static hb_unicode_funcs_t *unicode_funcs = NULL;
+   if (!unicode_funcs)
+     {
+        unicode_funcs = hb_unicode_funcs_get_default();
+     }
+
+   return unicode_funcs;
 }
 
 static void
@@ -345,7 +357,7 @@ evas_common_font_ot_populate_text_props(void *_fn, const Eina_Unicode *text,
      }
 
    buffer = hb_buffer_create(slen);
-   hb_buffer_set_unicode_funcs(buffer, evas_common_language_unicode_funcs_get());
+   hb_buffer_set_unicode_funcs(buffer, _evas_common_font_ot_unicode_funcs_get());
    hb_buffer_set_language(buffer, hb_language_from_string(
             evas_common_language_from_locale_get()));
    hb_buffer_set_script(buffer, _evas_script_to_harfbuzz[props->script]);

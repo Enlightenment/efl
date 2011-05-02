@@ -25,16 +25,6 @@
 
 #include "evas_script_table.h"
 
-/* FIXME: rename and move */
-void *
-evas_common_language_unicode_funcs_get(void)
-{
-#if defined(USE_HARFBUZZ)
-   return hb_unicode_funcs_get_default();
-#endif
-   return NULL;
-}
-
 static Evas_Script_Type
 _evas_common_language_char_script_search(Eina_Unicode unicode)
 {
