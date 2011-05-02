@@ -814,6 +814,7 @@ _smart_momentum_animator(void *data)
              y = py;
           }
         elm_smart_scroller_child_pos_set(sd->smart_obj, x, y);
+        _update_wanted_coordinates(sd, x, y);
         sd->pan_func.max_get(sd->pan_obj, &maxx, &maxy);
         sd->pan_func.min_get(sd->pan_obj, &minx, &miny);
         if (!sd->bounce_horiz)
@@ -831,7 +832,6 @@ _smart_momentum_animator(void *data)
             (no_bounce_x_end && no_bounce_y_end))
           {
              _smart_anim_stop(sd->smart_obj);
-             _update_wanted_coordinates(sd, px, py);
 
              sd->down.momentum_animator = NULL;
              sd->down.bounce_x_hold = 0;
@@ -1321,6 +1321,10 @@ _elm_smart_scroller_wanted_region_set(Evas_Object *obj)
 {
    INTERNAL_ENTRY;
    Evas_Coord ww, wh, wx = sd->wx;
+
+   if (sd->down.now || sd->down.momentum_animator ||
+       sd->down.bounce_x_animator || sd->down.bounce_y_animator ||
+       sd->down.hold_animator || sd->down.onhold_animator) return;
 
    /* Flip to RTL cords only if init in RTL mode */
    if(sd->is_mirrored)
