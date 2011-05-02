@@ -35,6 +35,11 @@
         }             \
      } while(0)
 
+#if SIZEOF_FRIBIDICHAR != SIZEOF_EINA_UNICODE
+# define EVAS_FRIBIDI_EINA_UNICODE_UNEQUAL
+#endif
+
+#ifdef EVAS_FRIBIDI_EINA_UNICODE_UNEQUAL
 /* Convert bidichar to eina_unicode assume both are valid pointers */
 static Eina_Unicode *
 _evas_bidi_fribidichar_to_unicode(Eina_Unicode *dest, const FriBidiChar *src)
@@ -58,6 +63,7 @@ _evas_bidi_unicode_to_fribidichar(FriBidiChar *dest, const Eina_Unicode *src)
    *dest = 0;
    return ret;
 }
+#endif
 
 /**
  * @internal
@@ -104,18 +110,13 @@ evas_bidi_shape_string(Eina_Unicode *eina_ustr, const Evas_BiDi_Paragraph_Props 
      return EINA_FALSE;
 
    /* The size of fribidichar is different than eina_unicode, convert */
-   /*FIXME: Make this comparison at compile time and compile out
-    * unwanted code. - In all of this source file. (including the actual
-    * function declerations. */
-   if (sizeof(Eina_Unicode) != sizeof(FriBidiChar))
-     {
-        base_ustr = ustr = calloc(len + 1, sizeof(FriBidiChar));
-        ustr = _evas_bidi_unicode_to_fribidichar(ustr, eina_ustr);
-     }
-   else
-     {
-        ustr = (FriBidiChar *) eina_ustr;
-     }
+#ifdef EVAS_FRIBIDI_EINA_UNICODE_UNEQUAL
+   base_ustr = ustr = calloc(len + 1, sizeof(FriBidiChar));
+   ustr = _evas_bidi_unicode_to_fribidichar(ustr, eina_ustr);
+#else
+   (void) base_ustr;
+   ustr = (FriBidiChar *) eina_ustr;
+#endif
 
 
    EvasBiDiJoiningType *join_types = NULL;
@@ -137,11 +138,10 @@ evas_bidi_shape_string(Eina_Unicode *eina_ustr, const Evas_BiDi_Paragraph_Props 
    if (join_types) free(join_types);
 
    /* Convert back */
-   if (sizeof(Eina_Unicode) != sizeof(FriBidiChar))
-     {
-        eina_ustr = _evas_bidi_fribidichar_to_unicode(eina_ustr, ustr);
-        if (base_ustr) free(base_ustr);
-     }
+#ifdef EVAS_FRIBIDI_EINA_UNICODE_UNEQUAL
+   eina_ustr = _evas_bidi_fribidichar_to_unicode(eina_ustr, ustr);
+   if (base_ustr) free(base_ustr);
+#endif
    return EINA_TRUE;
 }
 
@@ -237,16 +237,13 @@ evas_bidi_paragraph_props_get(const Eina_Unicode *eina_ustr, size_t len,
 
    len = eina_unicode_strlen(eina_ustr);
    /* The size of fribidichar s different than eina_unicode, convert */
-   if (sizeof(Eina_Unicode) != sizeof(FriBidiChar))
-     {
-        base_ustr = calloc(len + 1, sizeof(FriBidiChar));
-        base_ustr = _evas_bidi_unicode_to_fribidichar(base_ustr, eina_ustr);
-        ustr = base_ustr;
-     }
-   else
-     {
-        ustr = (const FriBidiChar *) eina_ustr;
-     }
+#ifdef EVAS_FRIBIDI_EINA_UNICODE_UNEQUAL
+   base_ustr = calloc(len + 1, sizeof(FriBidiChar));
+   base_ustr = _evas_bidi_unicode_to_fribidichar(base_ustr, eina_ustr);
+   ustr = base_ustr;
+#else
+   ustr = (const FriBidiChar *) eina_ustr;
+#endif
 
    bidi_props = evas_bidi_paragraph_props_new();
 
@@ -398,15 +395,12 @@ evas_bidi_props_reorder_line(Eina_Unicode *eina_ustr, size_t start, size_t len, 
    if (eina_ustr)
      {
         /* The size of fribidichar is different than eina_unicode, convert */
-        if (sizeof(Eina_Unicode) != sizeof(FriBidiChar))
-          {
-             base_ustr = ustr = calloc(len + 1, sizeof(FriBidiChar));
-             ustr = _evas_bidi_unicode_to_fribidichar(ustr, eina_ustr);
-          }
-        else
-          {
-             ustr = (FriBidiChar *) eina_ustr;
-          }
+#ifdef EVAS_FRIBIDI_EINA_UNICODE_UNEQUAL
+        base_ustr = ustr = calloc(len + 1, sizeof(FriBidiChar));
+        ustr = _evas_bidi_unicode_to_fribidichar(ustr, eina_ustr);
+#else
+        ustr = (FriBidiChar *) eina_ustr;
+#endif
      }
 
 
@@ -445,11 +439,10 @@ evas_bidi_props_reorder_line(Eina_Unicode *eina_ustr, size_t start, size_t len, 
 
 
    /* The size of fribidichar is different than eina_unicode, convert */
-   if (sizeof(Eina_Unicode) != sizeof(FriBidiChar))
-     {
-        _evas_bidi_fribidichar_to_unicode(eina_ustr, base_ustr);
-        free(base_ustr);
-     }
+#ifdef EVAS_FRIBIDI_EINA_UNICODE_UNEQUAL
+   _evas_bidi_fribidichar_to_unicode(eina_ustr, base_ustr);
+   free(base_ustr);
+#endif
    return EINA_FALSE;
 /* ERROR HANDLING */
 error:

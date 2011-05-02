@@ -231,6 +231,10 @@ esac
 
 # Eina
 PKG_CHECK_MODULES([EINA], [eina >= 1.0.0])
+CPPFLAGS_SAVE="$CPPFLAGS"
+CPPFLAGS="$CPPFLAGS $EINA_CFLAGS"
+AC_CHECK_SIZEOF(Eina_Unicode,, [#include <Eina.h>])
+CPPFLAGS="$CPPFLAGS_SAVE"
 
 # Freetype
 PKG_CHECK_MODULES([FREETYPE], [freetype2 >= 9.3.0])
@@ -288,6 +292,10 @@ if test "x${want_fribidi}" = "xyes" -o "x${want_fribidi}" = "xauto" ; then
        have_fribidi="yes"
        AC_DEFINE(HAVE_FRIBIDI, 1, [have fribidi support])
        requirement_evas="fribidi ${requirement_evas}"
+       CPPFLAGS_SAVE="$CPPFLAGS"
+       CPPFLAGS="$CPPFLAGS $FRIBIDI_CFLAGS"
+       AC_CHECK_SIZEOF(FriBidiChar,, [#include <fribidi/fribidi.h>])
+       CPPFLAGS="$CPPFLAGS_SAVE"
       ],
       [
        if test "x$want_fribidi" = "xyes" -a "x$use_strict" = "xyes" ; then
