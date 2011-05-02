@@ -2152,6 +2152,7 @@ edje_object_size_min_restricted_calc(Evas_Object *obj, Evas_Coord *minw, Evas_Co
    int ok;
    int reset_maxwh;
    Edje_Real_Part *pep = NULL;
+   Eina_Bool has_non_fixed_tb = EINA_FALSE;
 
    ed = _edje_fetch(obj);
    if ((!ed) || (!ed->collection))
@@ -2213,6 +2214,7 @@ edje_object_size_min_restricted_calc(Evas_Object *obj, Evas_Coord *minw, Evas_Co
                               {
                                  w = tb_mw;
                               }
+                            has_non_fixed_tb = EINA_TRUE;
 			 }
 		       if (w > maxw)
 			 {
@@ -2234,6 +2236,7 @@ edje_object_size_min_restricted_calc(Evas_Object *obj, Evas_Coord *minw, Evas_Co
 				 ok = 1;
 				 pep = ep;
 			      }
+                            has_non_fixed_tb = EINA_TRUE;
 			 }
 		    }
 	       }
@@ -2247,12 +2250,18 @@ edje_object_size_min_restricted_calc(Evas_Object *obj, Evas_Coord *minw, Evas_Co
 	  }
 	if ((ed->w > 4000) || (ed->h > 4000))
 	  {
-             if (pep)
-               ERR("file %s, group %s has a non-fixed part '%s'. Adding 'fixed: 1 1;' to source EDC may help. Continuing discarding faulty part.",
-                   ed->path, ed->group, pep->part->name);
-             else
-               ERR("file %s, group %s overflowed 4000x4000 with minimum size of %dx%d. Continuing discarding faulty parts.",
-                   ed->path, ed->group, ed->w, ed->h);
+             /* Only print it if we have a non-fixed textblock.
+              * We should possibly avoid all of this if in this case, but in
+              * the meanwhile, just doing this. */
+             if (!has_non_fixed_tb)
+               {
+                  if (pep)
+                     ERR("file %s, group %s has a non-fixed part '%s'. Adding 'fixed: 1 1;' to source EDC may help. Continuing discarding faulty part.",
+                         ed->path, ed->group, pep->part->name);
+                  else
+                     ERR("file %s, group %s overflowed 4000x4000 with minimum size of %dx%d. Continuing discarding faulty parts.",
+                         ed->path, ed->group, ed->w, ed->h);
+               }
 
 	     if (reset_maxwh)
 	       {
