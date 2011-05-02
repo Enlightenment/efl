@@ -2,6 +2,8 @@
 #include "evas_engine.h"
 
 #include <dlfcn.h>      /* dlopen,dlclose,etc */
+#define EVAS_GL_NO_GL_H_CHECK 1
+#include "Evas_GL.h"
 
 #if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
 // EGL / GLES
@@ -91,6 +93,9 @@ typedef _eng_fn (*glsym_func_eng_fn) ();
 typedef void    (*glsym_func_void) ();
 typedef int     (*glsym_func_int) ();
 typedef XID     (*glsym_func_xid) ();
+typedef unsigned int     (*glsym_func_uint) ();
+typedef unsigned char    (*glsym_func_uchar) ();
+typedef unsigned char   *(*glsym_func_uchar_ptr) ();
 
 _eng_fn  (*glsym_glXGetProcAddress)  (const char *a) = NULL;
 void     (*glsym_glXBindTexImage)    (Display *a, GLXDrawable b, int c, int *d) = NULL;
@@ -185,6 +190,9 @@ _sym_init(void)
 int _evas_engine_GL_X11_log_dom = -1;
 /* function tables - filled in later (func and parent func) */
 static Evas_Func func, pfunc;
+
+/* Function table for GL APIs */
+static Evas_GL_API gl_funcs;
 
 struct xrdb_user
 {
@@ -2567,7 +2575,7 @@ eng_gl_make_current(void *data, void *surface, void *context)
    glBindFramebuffer(GL_FRAMEBUFFER, ctx->fbo);
 #if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
 #else
-   glDrawBuffer(GL_COLOR_ATTACHMENT0);
+   //glDrawBuffer(GL_COLOR_ATTACHMENT0);
 #endif
 
    return 1;
@@ -2608,6 +2616,256 @@ eng_gl_native_surface_get(void *data, void *surface, void *native_surface)
    
    return 1;
 }
+
+#if 1
+static void
+evgl_glBindFramebuffer(GLenum target, GLuint framebuffer)
+{
+   // Add logic to take care when framebuffer=0
+   glBindFramebuffer(target, framebuffer);
+}
+
+static void
+evgl_glBindRenderbuffer(GLenum target, GLuint renderbuffer)
+{
+   // Add logic to take care when renderbuffer=0
+   glBindRenderbuffer(target, renderbuffer);
+}
+
+static void
+evgl_glClearDepthf(GLclampf depth)
+{
+#if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
+   glClearDepthf(depth);
+#else
+   glClearDepth(depth);
+#endif
+}
+
+static void
+evgl_glDepthRangef(GLclampf zNear, GLclampf zFar)
+{
+#if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
+   glDepthRangef(zNear, zFar);
+#else
+   glDepthRange(zNear, zFar);
+#endif
+}
+
+static void
+evgl_glGetShaderPrecisionFormat(GLenum shadertype, GLenum precisiontype, GLint* range, GLint* precision)
+{
+#if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
+   glGetShaderPrecisionFormat(shadertype, precisiontype, range, precision);
+#else
+   if (range)
+     {
+        range[0] = -126; // floor(log2(FLT_MIN))
+        range[1] = 127; // floor(log2(FLT_MAX))
+     }
+   if (precision)
+     {
+        precision[0] = 24; // floor(-log2((1.0/16777218.0)));
+     }
+   return;
+   shadertype = precisiontype = 0;
+#endif
+}
+
+static void
+evgl_glReleaseShaderCompiler(void)
+{
+#if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
+   glReleaseShaderCompiler();
+#else
+#endif
+}
+
+static void
+evgl_glShaderBinary(GLsizei n, const GLuint* shaders, GLenum binaryformat, const void* binary, GLsizei length)
+{
+#if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
+   glShaderBinary(n, shaders, binaryformat, binary, length);
+#else
+// FIXME: need to dlsym/getprocaddress for this
+   return;
+   n = binaryformat = length = 0;
+   shaders = binary = 0;
+#endif
+}
+
+#endif 
+
+static void *
+eng_gl_api_get(void *data)
+{
+   Render_Engine *re;
+
+   re  = (Render_Engine *)data;
+
+   gl_funcs.version = EVAS_GL_API_VERSION;
+#if 1
+#define ORD(f) EVAS_API_OVERRIDE(f, &gl_funcs, )
+   ORD(glActiveTexture);
+   ORD(glAttachShader);
+   ORD(glBindAttribLocation);
+   ORD(glBindBuffer);
+   ORD(glBindTexture);
+   ORD(glBlendColor);
+   ORD(glBlendEquation);
+   ORD(glBlendEquationSeparate);
+   ORD(glBlendFunc);
+   ORD(glBlendFuncSeparate);
+   ORD(glBufferData);
+   ORD(glBufferSubData);
+   ORD(glCheckFramebufferStatus);
+   ORD(glClear);
+   ORD(glClearColor);
+//   ORD(glClearDepthf);
+   ORD(glClearStencil);
+   ORD(glColorMask);
+   ORD(glCompileShader);
+   ORD(glCompressedTexImage2D);
+   ORD(glCompressedTexSubImage2D);
+   ORD(glCopyTexImage2D);
+   ORD(glCopyTexSubImage2D);
+   ORD(glCreateProgram);
+   ORD(glCreateShader);
+   ORD(glCullFace);
+   ORD(glDeleteBuffers);
+   ORD(glDeleteFramebuffers);
+   ORD(glDeleteProgram);
+   ORD(glDeleteRenderbuffers);
+   ORD(glDeleteShader);
+   ORD(glDeleteTextures);
+   ORD(glDepthFunc);
+   ORD(glDepthMask);
+//   ORD(glDepthRangef);
+   ORD(glDetachShader);
+   ORD(glDisable);
+   ORD(glDisableVertexAttribArray);
+   ORD(glDrawArrays);
+   ORD(glDrawElements);
+   ORD(glEnable);
+   ORD(glEnableVertexAttribArray);
+   ORD(glFinish);
+   ORD(glFlush);
+   ORD(glFramebufferRenderbuffer);
+   ORD(glFramebufferTexture2D);
+   ORD(glFrontFace);
+   ORD(glGenBuffers);
+   ORD(glGenerateMipmap);
+   ORD(glGenFramebuffers);
+   ORD(glGenRenderbuffers);
+   ORD(glGenTextures);
+   ORD(glGetActiveAttrib);
+   ORD(glGetActiveUniform);
+   ORD(glGetAttachedShaders);
+   ORD(glGetAttribLocation);
+   ORD(glGetBooleanv);
+   ORD(glGetBufferParameteriv);
+   ORD(glGetError);
+   ORD(glGetFloatv);
+   ORD(glGetFramebufferAttachmentParameteriv);
+   ORD(glGetIntegerv);
+   ORD(glGetProgramiv);
+   ORD(glGetProgramInfoLog);
+   ORD(glGetRenderbufferParameteriv);
+   ORD(glGetShaderiv);
+   ORD(glGetShaderInfoLog);
+//   ORD(glGetShaderPrecisionFormat);
+   ORD(glGetShaderSource);
+   ORD(glGetString);
+   ORD(glGetTexParameterfv);
+   ORD(glGetTexParameteriv);
+   ORD(glGetUniformfv);
+   ORD(glGetUniformiv);
+   ORD(glGetUniformLocation);
+   ORD(glGetVertexAttribfv);
+   ORD(glGetVertexAttribiv);
+   ORD(glGetVertexAttribPointerv);
+   ORD(glHint);
+   ORD(glIsBuffer);
+   ORD(glIsEnabled);
+   ORD(glIsFramebuffer);
+   ORD(glIsProgram);
+   ORD(glIsRenderbuffer);
+   ORD(glIsShader);
+   ORD(glIsTexture);
+   ORD(glLineWidth);
+   ORD(glLinkProgram);
+   ORD(glPixelStorei);
+   ORD(glPolygonOffset);
+   ORD(glReadPixels);
+//   ORD(glReleaseShaderCompiler);
+   ORD(glRenderbufferStorage);
+   ORD(glSampleCoverage);
+   ORD(glScissor);
+//   ORD(glShaderBinary);
+   ORD(glShaderSource);
+   ORD(glStencilFunc);
+   ORD(glStencilFuncSeparate);
+   ORD(glStencilMask);
+   ORD(glStencilMaskSeparate);
+   ORD(glStencilOp);
+   ORD(glStencilOpSeparate);
+   ORD(glTexImage2D);
+   ORD(glTexParameterf);
+   ORD(glTexParameterfv);
+   ORD(glTexParameteri);
+   ORD(glTexParameteriv);
+   ORD(glTexSubImage2D);
+   ORD(glUniform1f);
+   ORD(glUniform1fv);
+   ORD(glUniform1i);
+   ORD(glUniform1iv);
+   ORD(glUniform2f);
+   ORD(glUniform2fv);
+   ORD(glUniform2i);
+   ORD(glUniform2iv);
+   ORD(glUniform3f);
+   ORD(glUniform3fv);
+   ORD(glUniform3i);
+   ORD(glUniform3iv);
+   ORD(glUniform4f);
+   ORD(glUniform4fv);
+   ORD(glUniform4i);
+   ORD(glUniform4iv);
+   ORD(glUniformMatrix2fv);
+   ORD(glUniformMatrix3fv);
+   ORD(glUniformMatrix4fv);
+   ORD(glUseProgram);
+   ORD(glValidateProgram);
+   ORD(glVertexAttrib1f);
+   ORD(glVertexAttrib1fv);
+   ORD(glVertexAttrib2f);
+   ORD(glVertexAttrib2fv);
+   ORD(glVertexAttrib3f);
+   ORD(glVertexAttrib3fv);
+   ORD(glVertexAttrib4f);
+   ORD(glVertexAttrib4fv);
+   ORD(glVertexAttribPointer);
+   ORD(glViewport);
+#undef ORD
+
+// Override functions wrapped by Evas_GL
+#define ORD(f) EVAS_API_OVERRIDE(f, &gl_funcs, evgl_)
+   ORD(glBindFramebuffer);         
+   ORD(glBindRenderbuffer);        
+   
+// GLES2.0 API compat on top of desktop gl
+   ORD(glClearDepthf);
+   ORD(glDepthRangef);
+   ORD(glGetShaderPrecisionFormat);
+   ORD(glReleaseShaderCompiler);
+   ORD(glShaderBinary);
+#undef ORD
+
+#endif 
+
+   return &gl_funcs;
+}
+
 
 static int
 module_open(Evas_Module *em)
@@ -2710,6 +2968,8 @@ module_open(Evas_Module *em)
    ORD(gl_make_current);
    ORD(gl_proc_address_get);
    ORD(gl_native_surface_get);
+
+   ORD(gl_api_get);
    
    /* now advertise out own api */
    em->functions = (void *)(&func);

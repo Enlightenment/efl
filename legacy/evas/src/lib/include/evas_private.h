@@ -731,6 +731,7 @@ struct _Evas_Func
    int  (*gl_make_current)               (void *data, void *surface, void *context); 
    void *(*gl_proc_address_get)          (void *data, const char *name);
    int  (*gl_native_surface_get)         (void *data, void *surface, void *native_surface);
+   void *(*gl_api_get)                   (void *data);
 };
 
 struct _Evas_Image_Load_Func

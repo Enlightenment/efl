@@ -583,9 +583,9 @@ eng_window_use(Evas_GL_X11_Window *gw)
              evas_gl_common_context_use(_evas_gl_x11_window->gl_context);
              evas_gl_common_context_flush(_evas_gl_x11_window->gl_context);
           }
-	_evas_gl_x11_window = gw;
-       if (gw)
-         {
+        _evas_gl_x11_window = gw;
+        if (gw)
+          {
 // EGL / GLES
 #if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
            if (gw->egl_surface[0] != EGL_NO_SURFACE)
@@ -616,7 +616,7 @@ eng_window_use(Evas_GL_X11_Window *gw)
                  }
              }
 #endif
-         }
+          }
      }
    if (gw) evas_gl_common_context_use(gw->gl_context);
 }

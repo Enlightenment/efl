@@ -2688,8 +2688,12 @@ again:
 
    if ((tex->im) && (tex->im->native.data) && (!tex->im->native.yinvert))
      {
-        // FIXME: handle yinvert
-        ERR("not handling inverted y case for map");
+        for (i = 0; i < 4; i++)
+          {
+             ty[i] = 1.0 - ty[i];
+             if (yuv)
+                t2y[i] = 1.0 - t2y[i];
+          }
      }
    
    cmul = ARGB_JOIN(a, r, g, b);

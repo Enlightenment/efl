@@ -11,7 +11,7 @@
 
 #include <Eina.h>
 #include "Evas.h"
-#include "Evas_GL.h"
+//#include "Evas_GL.h"
 
 #ifdef HAVE_PIXMAN
 #include <pixman.h>

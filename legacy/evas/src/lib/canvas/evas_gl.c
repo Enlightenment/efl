@@ -215,3 +215,15 @@ evas_gl_native_surface_get(Evas_GL *evas_gl, Evas_GL_Surface *surf, Evas_Native_
 
    return (Eina_Bool)evas_gl->evas->engine.func->gl_native_surface_get(evas_gl->evas->engine.data.output, surf->data, ns); 
 }
+
+
+EAPI Evas_GL_API *
+evas_gl_api_get(Evas_GL *evas_gl)
+{
+   MAGIC_CHECK(evas_gl, Evas_GL, MAGIC_EVAS_GL);
+   return NULL;
+   MAGIC_CHECK_END();
+
+   return (Evas_GL_API*)evas_gl->evas->engine.func->gl_api_get(evas_gl->evas->engine.data.output); 
+
+}
