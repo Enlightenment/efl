@@ -60,13 +60,12 @@ struct _Evas_GL_Config
  *
  * @ingroup Evas_Canvas
  */
-
    
 /**
  * Creates a new Evas_GL object and returns a handle for gl rendering on efl.
  *
- * @param e The given evas.
- * @return The created evas_gl object.
+ * @param e The given evas canvas OpenGL is to be used on.
+ * @return The created evas_gl object, or NULl on fasilure.
  */
 EAPI Evas_GL                 *evas_gl_new                (Evas *e) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
    
@@ -84,7 +83,7 @@ EAPI void                     evas_gl_free               (Evas_GL *evas_gl) EINA
  * @param config The pixel format and configuration of the rendering surface.
  * @param width The width of the surface.
  * @param height The height of the surface.
- * @return The created GL surface object.
+ * @return The created GL surface object, or NULL on failure.
  */
 EAPI Evas_GL_Surface         *evas_gl_surface_create     (Evas_GL *evas_gl, Evas_GL_Config *cfg, int w, int h) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1,2);
    
@@ -100,6 +99,7 @@ EAPI void                     evas_gl_surface_destroy    (Evas_GL *evas_gl, Evas
  * Creates and returns a new Evas GL context object
  *
  * @param evas_gl The given Evas_GL object.
+ * @return The created context, or NULL on failure.
  */
 EAPI Evas_GL_Context         *evas_gl_context_create     (Evas_GL *evas_gl, Evas_GL_Context *share_ctx) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1); 
    
@@ -117,6 +117,7 @@ EAPI void                     evas_gl_context_destroy    (Evas_GL *evas_gl, Evas
  * @param evas_gl The given Evas_GL object.
  * @param surf The given Evas GL surface.
  * @param ctx The given Evas GL context.
+ * @return EINA_TRUE if successful, EINA_FALSE if not.
  */
 EAPI Eina_Bool                evas_gl_make_current       (Evas_GL *evas_gl, Evas_GL_Surface *surf, Evas_GL_Context *ctx) EINA_ARG_NONNULL(1,2);
    
@@ -135,9 +136,23 @@ EAPI Evas_GL_Func             evas_gl_proc_address_get   (Evas_GL *evas_gl, cons
  * @param evas_gl The given Evas_GL object.
  * @param surf The given Evas GL surface to retrieve the Native Surface info from.
  * @param ns The native surface structure that the function fills in.
+ * @return EINA_TRUE if successful, EINA_FALSE if not.
  */
 EAPI Eina_Bool                evas_gl_native_surface_get (Evas_GL *evas_gl, Evas_GL_Surface *surf, Evas_Native_Surface *ns) EINA_ARG_NONNULL(1,2,3);
- 
+
+/**
+ * Get the API for rendering using OpenGL
+ * 
+ * @param evas_gl The given Eva_GL object.
+ * @return The API to use.
+ * 
+ * This returns a structure that contains all the OpenGL functions you can
+ * use to render in Evas. These functions consist of all the standard
+ * OpenGL-ES2.0 functions and any extra ones Evas has decided to provide in
+ * addition. This means that if you have your code ported to OpenGL-ES2.0,
+ * it will be easy to render to Evas.
+ * 
+ */
 EAPI Evas_GL_API             *evas_gl_api_get            (Evas_GL *evas_gl) EINA_ARG_NONNULL(1);
 
 #ifndef __gl_h_
