@@ -2842,7 +2842,6 @@ skip:
                         c->par->bidi_props, ti->parent.text_pos, tmp_len);
                }
           }
-        ti->text_props.repch = urepch;
         str += tmp_len;
         cur_len -= tmp_len;
 
@@ -8063,8 +8062,7 @@ evas_object_textblock_render(Evas_Object *obj, void *output, void *context, void
          obj->cur.geometry.x + ln->par->x + ln->x + ti->parent.x + x + (ox), \
          obj->cur.geometry.y + ln->par->y + ln->y + yoff + y + (oy), \
          ti->parent.w, ti->parent.h, ti->parent.w, ti->parent.h, \
-         /* FIXME: inline if - awful hack until we don't need text in draw */ \
-         (ti != ln->ellip_ti) ? GET_ITEM_TEXT(ti) : _ellip_str, \
+         GET_ITEM_TEXT(ti), \
          &ti->text_props);
 #define ITEM_WALK_LINE_SKIP_DROP() \
    if ((ln->par->y + ln->y + ln->h) <= 0) continue; \
