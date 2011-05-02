@@ -20,10 +20,7 @@
 #define EINA_FILE_H_
 
 #include <limits.h>
-
-#if defined(__APPLE__) && defined(__MACH__)
-# include <mach/mach_time.h>
-#endif
+#include <time.h>
 
 #include "eina_types.h"
 #include "eina_array.h"
