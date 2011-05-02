@@ -45,7 +45,7 @@ struct _Evas_Preload_Pthread_Data
 static int _threads_count = 0;
 static Evas_Preload_Pthread_Worker *_workers = NULL;
 
-static LK(_mutex) = EINA_LOCK_INITIALIZER;
+static LK(_mutex);
 
 static void
 _evas_preload_thread_end(void *data)
@@ -54,6 +54,8 @@ _evas_preload_thread_end(void *data)
    Evas_Preload_Pthread_Data *p = NULL;
 
    if (pthread_join(pth->thread, (void **)&p) != 0) free(p);
+
+   eina_threads_shutdown();
 }
 
 static void
@@ -67,7 +69,6 @@ _evas_preload_thread_done(void *target __UNUSED__, Evas_Callback_Type type __UNU
    else
       work->func_end(work->data);
 
-   eina_threads_shutdown();
    free(work);
 }
 
@@ -76,7 +77,7 @@ _evas_preload_thread_worker(void *data)
 {
    Evas_Preload_Pthread_Data *pth = data;
    Evas_Preload_Pthread_Worker *work;
-   
+
    eina_sched_prio_drop();
    pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, NULL);
    pthread_setcanceltype(PTHREAD_CANCEL_ASYNCHRONOUS, NULL);
@@ -129,6 +130,8 @@ _evas_preload_thread_init(void)
 {
    _threads_max = eina_cpu_count();
    if (_threads_max < 1) _threads_max = 1;
+
+   LKI(_mutex);
 }
 
 void
@@ -151,6 +154,8 @@ _evas_preload_thread_shutdown(void)
 	free(work);
      }
    LKU(_mutex);
+
+   LKD(_mutex);
 #endif
 }
 

@@ -31,8 +31,9 @@ struct _Evas_Cache_Preload
    Image_Entry *ie;
 };
 
-static LK(engine_lock) = EINA_LOCK_INITIALIZER; 
-static LK(wakeup) = EINA_LOCK_INITIALIZER;
+static LK(engine_lock);
+static LK(wakeup);
+static int _evas_cache_mutex_init = 0;
 
 static pthread_cond_t cond_wakeup = PTHREAD_COND_INITIALIZER;
 
@@ -553,6 +554,12 @@ evas_cache_image_init(const Evas_Cache_Image_Func *cb)
 {
    Evas_Cache_Image *cache;
 
+   if (_evas_cache_mutex_init++ == 0)
+     {
+        LKI(engine_lock);
+        LKI(wakeup);
+     }
+
    cache = calloc(1, sizeof(Evas_Cache_Image));
    if (!cache) return NULL;
    cache->func = *cb;
@@ -583,13 +590,19 @@ evas_cache_image_shutdown(Evas_Cache_Image *cache)
    LKL(cache->lock);
 #endif
    cache->references--;
-   if (cache->references > 0)
+   if (cache->references != 0)
      {
 #ifdef EVAS_FRAME_QUEUING
         LKU(cache->lock);
 #endif
         return;
      }
+#ifdef EVAS_FRAME_QUEUING
+   /* Release and destroy lock early ! */
+   LKU(cache->lock);
+   LKD(cache->lock);
+#endif
+
 #ifdef BUILD_ASYNC_PRELOAD
    EINA_LIST_FREE(cache->preload, im)
      {
@@ -638,11 +651,13 @@ evas_cache_image_shutdown(Evas_Cache_Image *cache)
 #endif
    eina_hash_free(cache->activ);
    eina_hash_free(cache->inactiv);
-#ifdef EVAS_FRAME_QUEUING
-   LKU(cache->lock);
-   LKD(cache->lock);
-#endif
    free(cache);
+
+   if (--_evas_cache_mutex_init == 0)
+     {
+        LKD(engine_lock);
+        LKD(wakeup);
+     }
 }
 
 EAPI Image_Entry *
