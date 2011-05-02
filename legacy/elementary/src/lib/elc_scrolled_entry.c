@@ -821,40 +821,19 @@ elm_scrolled_entry_entry_insert(Evas_Object *obj, const char *entry)
  * See also elm_scrolled_entry_line_char_wrap_set().
  *
  * @param obj The scrolled entry object
- * @param wrap If true, the scrolled entry will be wrapped once it reaches the end
+ * @param wrap wrap according to Elm_Wrap_Type
  * of the object. Wrapping will occur at the end of the word before the end of the
  * object.
  *
  * @ingroup Scrolled_Entry
  */
 EAPI void
-elm_scrolled_entry_line_wrap_set(Evas_Object *obj, Eina_Bool wrap)
+elm_scrolled_entry_line_wrap_set(Evas_Object *obj, Elm_Wrap_Type wrap)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
    elm_entry_line_wrap_set(wd->entry, wrap);
-}
-
-/**
- * This enables character line wrapping in the scrolled entry object.  It is the opposite
- * of elm_scrolled_entry_single_line_set().  Additionally, setting this disables
- * word line wrapping.
- * See also elm_scrolled_entry_line_wrap_set().
- *
- * @param obj The scrolled entry object
- * @param wrap If true, the scrolled entry will be wrapped once it reaches the end
- * of the object. Wrapping will occur immediately upon reaching the end of the object.
- *
- * @ingroup Scrolled_Entry
- */
-EAPI void
-elm_scrolled_entry_line_char_wrap_set(Evas_Object *obj, Eina_Bool wrap)
-{
-   ELM_CHECK_WIDTYPE(obj, widtype);
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return;
-   elm_entry_line_char_wrap_set(wd->entry, wrap);
 }
 
 /**

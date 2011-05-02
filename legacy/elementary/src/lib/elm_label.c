@@ -729,12 +729,14 @@ elm_label_label_get(const Evas_Object *obj)
 /**
  * Set the wrapping behavior of the label
  *
+ * FIXME: currently all types wrap the same way (as defined in theme).
+ *
  * @param obj The label object
  * @param wrap To wrap text or not
  * @ingroup Label
  */
 EAPI void
-elm_label_line_wrap_set(Evas_Object *obj, Eina_Bool wrap)
+elm_label_line_wrap_set(Evas_Object *obj, Elm_Wrap_Type wrap)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -754,10 +756,10 @@ elm_label_line_wrap_set(Evas_Object *obj, Eina_Bool wrap)
  * Get the wrapping behavior of the label
  *
  * @param obj The label object
- * @return To wrap text or not
+ * @return Wrap type
  * @ingroup Label
  */
-EAPI Eina_Bool
+EAPI Elm_Wrap_Type
 elm_label_line_wrap_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;

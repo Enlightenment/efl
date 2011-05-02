@@ -76,7 +76,7 @@ test_entry(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
    evas_object_show(bx);
 
    en = elm_entry_add(win);
-   elm_entry_line_wrap_set(en, 0);
+   elm_entry_line_wrap_set(en, ELM_WRAP_NONE);
    snprintf(buf, sizeof(buf),
             "This is an entry widget in this window that<br>"
             "uses markup <b>like this</> for styling and<br>"
@@ -1256,7 +1256,7 @@ test_entry4(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    evas_object_show(en);
 
    en = elm_entry_add(win);
-   elm_entry_line_wrap_set(en, 0);
+   elm_entry_line_wrap_set(en, ELM_WRAP_NONE);
    elm_entry_entry_set(en,
 		       "This is an entry widget<br>"
 		       "that uses markup<br>"
@@ -1311,7 +1311,7 @@ test_entry5(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    evas_object_show(bx);
 
    en = elm_scrolled_entry_add(win);
-   elm_scrolled_entry_line_char_wrap_set(en, 1);
+   elm_scrolled_entry_line_wrap_set(en, ELM_WRAP_CHAR);
    evas_object_size_hint_weight_set(en, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(en, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_scrolled_entry_entry_set(en,

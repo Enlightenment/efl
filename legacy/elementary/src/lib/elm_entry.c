@@ -122,9 +122,8 @@ struct _Widget_Data
    Ecore_Job *hovdeljob;
    Mod_Api *api; // module api if supplied
    int cursor_pos;
+   Elm_Wrap_Type linewrap;
    Eina_Bool changed : 1;
-   Eina_Bool linewrap : 1;
-   Eina_Bool char_linewrap : 1;
    Eina_Bool single_line : 1;
    Eina_Bool password : 1;
    Eina_Bool editable : 1;
@@ -617,7 +616,7 @@ _sizing_eval(Evas_Object *obj)
    Evas_Coord minw = -1, minh = -1;
    Evas_Coord resw, resh;
    if (!wd) return;
-   if ((wd->linewrap) || (wd->char_linewrap))
+   if (wd->linewrap)
      {
         evas_object_geometry_get(wd->ent, NULL, NULL, &resw, &resh);
         if ((resw == wd->lastw) && (!wd->changed)) return;
@@ -738,7 +737,7 @@ _resize(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event
 {
    Widget_Data *wd = elm_widget_data_get(data);
    if (!wd) return;
-   if ((wd->linewrap) || (wd->char_linewrap))
+   if (wd->linewrap)
      {
         _sizing_eval(data);
      }
@@ -1083,9 +1082,18 @@ _getbase(Evas_Object *obj)
              if (wd->single_line) return "base-single";
              else
                {
-                  if (wd->linewrap) return "base";
-                  else if (wd->char_linewrap) return "base-charwrap";
-                  else  return "base-nowrap";
+                  switch (wd->linewrap)
+                    {
+                     case ELM_WRAP_CHAR:
+                        return "base-charwrap";
+                     case ELM_WRAP_WORD:
+                     case ELM_WRAP_MIXED:
+                        /* FIXME: separate mixed and word. */
+                        return "base";
+                     case ELM_WRAP_NONE:
+                     default:
+                        return "base-nowrap";
+                    }
                }
           }
      }
@@ -1097,9 +1105,18 @@ _getbase(Evas_Object *obj)
              if (wd->single_line) return "base-single-noedit";
              else
                {
-                  if (wd->linewrap) return "base-noedit";
-                  else if (wd->char_linewrap) return "base-noedit-charwrap";
-                  else  return "base-nowrap-noedit";
+                  switch (wd->linewrap)
+                    {
+                     case ELM_WRAP_CHAR:
+                        return "base-noedit-charwrap";
+                     case ELM_WRAP_WORD:
+                     case ELM_WRAP_MIXED:
+                        /* FIXME: separate mixed and word. */
+                        return "base-noedit";
+                     case ELM_WRAP_NONE:
+                     default:
+                        return "base-nowrap-noedit";
+                    }
                }
           }
      }
@@ -1575,8 +1592,7 @@ elm_entry_add(Evas_Object *parent)
    elm_widget_can_focus_set(obj, EINA_TRUE);
    elm_widget_highlight_ignore_set(obj, EINA_TRUE);
 
-   wd->linewrap     = EINA_TRUE;
-   wd->char_linewrap= EINA_FALSE;
+   wd->linewrap     = ELM_WRAP_WORD;
    wd->editable     = EINA_TRUE;
    wd->disabled     = EINA_FALSE;
    wd->context_menu = EINA_TRUE;
@@ -1686,8 +1702,7 @@ elm_entry_single_line_set(Evas_Object *obj, Eina_Bool single_line)
    if (!wd) return;
    if (wd->single_line == single_line) return;
    wd->single_line = single_line;
-   wd->linewrap = EINA_FALSE;
-   wd->char_linewrap = EINA_FALSE;
+   wd->linewrap = ELM_WRAP_NONE;
    elm_entry_cnp_textonly_set(obj, EINA_TRUE);
    _theme_hook(obj);
 }
@@ -1729,8 +1744,7 @@ elm_entry_password_set(Evas_Object *obj, Eina_Bool password)
    if (wd->password == password) return;
    wd->password = password;
    wd->single_line = EINA_TRUE;
-   wd->linewrap = EINA_FALSE;
-   wd->char_linewrap = EINA_FALSE;
+   wd->linewrap = ELM_WRAP_NONE;
    _theme_hook(obj);
 }
 
@@ -1883,7 +1897,6 @@ elm_entry_entry_insert(Evas_Object *obj, const char *entry)
  * This enables word line wrapping in the entry object.  It is the opposite
  * of elm_entry_single_line_set().  Additionally, setting this disables
  * character line wrapping.
- * See also elm_entry_line_char_wrap_set().
  *
  * @param obj The entry object
  * @param wrap If true, the entry will be wrapped once it reaches the end
@@ -1893,40 +1906,14 @@ elm_entry_entry_insert(Evas_Object *obj, const char *entry)
  * @ingroup Entry
  */
 EAPI void
-elm_entry_line_wrap_set(Evas_Object *obj, Eina_Bool wrap)
+elm_entry_line_wrap_set(Evas_Object *obj, Elm_Wrap_Type wrap)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
    if (wd->linewrap == wrap) return;
-   wd->linewrap = wrap;
-   if(wd->linewrap)
-     wd->char_linewrap = EINA_FALSE;
-   _theme_hook(obj);
-}
 
-/**
- * This enables character line wrapping in the entry object.  It is the opposite
- * of elm_entry_single_line_set().  Additionally, setting this disables
- * word line wrapping.
- * See also elm_entry_line_wrap_set().
- *
- * @param obj The entry object
- * @param wrap If true, the entry will be wrapped once it reaches the end
- * of the object. Wrapping will occur immediately upon reaching the end of the object.
- *
- * @ingroup Entry
- */
-EAPI void
-elm_entry_line_char_wrap_set(Evas_Object *obj, Eina_Bool wrap)
-{
-   ELM_CHECK_WIDTYPE(obj, widtype);
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return;
-   if (wd->char_linewrap == wrap) return;
-   wd->char_linewrap = wrap;
-   if(wd->char_linewrap)
-     wd->linewrap = EINA_FALSE;
+   wd->linewrap = wrap;
    _theme_hook(obj);
 }
 

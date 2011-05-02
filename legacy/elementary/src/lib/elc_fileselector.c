@@ -654,7 +654,7 @@ elm_fileselector_add(Evas_Object *parent)
    elm_widget_mirrored_automatic_set(en, EINA_FALSE);
    elm_scrolled_entry_editable_set(en, EINA_FALSE);
    elm_scrolled_entry_single_line_set(en, EINA_TRUE);
-   elm_scrolled_entry_line_char_wrap_set(en, EINA_TRUE);
+   elm_scrolled_entry_line_wrap_set(en, ELM_WRAP_CHAR);
    evas_object_size_hint_weight_set(en, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(en, EVAS_HINT_FILL, EVAS_HINT_FILL);
 
@@ -668,7 +668,7 @@ elm_fileselector_add(Evas_Object *parent)
    elm_widget_mirrored_automatic_set(en, EINA_FALSE);
    elm_scrolled_entry_editable_set(en, EINA_TRUE);
    elm_scrolled_entry_single_line_set(en, EINA_TRUE);
-   elm_scrolled_entry_line_char_wrap_set(en, EINA_TRUE);
+   elm_scrolled_entry_line_wrap_set(en, ELM_WRAP_CHAR);
    evas_object_size_hint_weight_set(en, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(en, EVAS_HINT_FILL, EVAS_HINT_FILL);
 

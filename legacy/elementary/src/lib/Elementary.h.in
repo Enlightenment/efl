@@ -200,6 +200,19 @@ extern "C" {
      } Elm_Text_Format;
 
    /**
+    * Line wrapping types.
+    */
+   typedef enum _Elm_Wrap_Type
+     {
+        ELM_WRAP_NONE = 0, /**< No wrap - value is zero */
+        ELM_WRAP_CHAR, /**< Char wrap - wrap between graphmes */
+        ELM_WRAP_WORD, /**< Word wrap - wrap in allowed wrapping points (as defined in the unicode standard) */
+        ELM_WRAP_MIXED, /**< Mixed wrap - Word wrap, and if that fails, char wrap. */
+        ELM_WRAP_LAST = ELM_WRAP_MIXED
+     } Elm_Wrap_Type;
+
+
+   /**
     * Called back when a widget's tooltip is activated and needs content.
     * @param data user-data given to elm_object_tooltip_content_cb_set()
     * @param obj owner widget.
@@ -838,8 +851,8 @@ extern "C" {
    EAPI Evas_Object *elm_label_add(Evas_Object *parent) EINA_ARG_NONNULL(1);
    EAPI void         elm_label_label_set(Evas_Object *obj, const char *label) EINA_ARG_NONNULL(1);
    EAPI const char  *elm_label_label_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
-   EAPI void         elm_label_line_wrap_set(Evas_Object *obj, Eina_Bool wrap) EINA_ARG_NONNULL(1);
-   EAPI Eina_Bool    elm_label_line_wrap_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+   EAPI void         elm_label_line_wrap_set(Evas_Object *obj, Elm_Wrap_Type wrap) EINA_ARG_NONNULL(1);
+   EAPI Elm_Wrap_Type elm_label_line_wrap_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
    EAPI void         elm_label_wrap_width_set(Evas_Object *obj, Evas_Coord w) EINA_ARG_NONNULL(1);
    EAPI Evas_Coord   elm_label_wrap_width_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
    EAPI void         elm_label_wrap_height_set(Evas_Object *obj, Evas_Coord h) EINA_ARG_NONNULL(1);
@@ -1227,8 +1240,7 @@ extern "C" {
    EAPI Eina_Bool    elm_entry_is_empty(const Evas_Object *obj) EINA_ARG_NONNULL(1);
    EAPI const char  *elm_entry_selection_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
    EAPI void         elm_entry_entry_insert(Evas_Object *obj, const char *entry) EINA_ARG_NONNULL(1);
-   EAPI void         elm_entry_line_wrap_set(Evas_Object *obj, Eina_Bool wrap) EINA_ARG_NONNULL(1);
-   EAPI void         elm_entry_line_char_wrap_set(Evas_Object *obj, Eina_Bool wrap) EINA_ARG_NONNULL(1);
+   EAPI void         elm_entry_line_wrap_set(Evas_Object *obj, Elm_Wrap_Type wrap) EINA_ARG_NONNULL(1);
    EAPI void         elm_entry_editable_set(Evas_Object *obj, Eina_Bool editable) EINA_ARG_NONNULL(1);
    EAPI Eina_Bool    elm_entry_editable_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
    EAPI void         elm_entry_select_none(Evas_Object *obj) EINA_ARG_NONNULL(1);
@@ -2439,8 +2451,7 @@ extern "C" {
    EAPI Eina_Bool    elm_scrolled_entry_is_empty(const Evas_Object *obj) EINA_ARG_NONNULL(1);
    EAPI const char  *elm_scrolled_entry_selection_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
    EAPI void         elm_scrolled_entry_entry_insert(Evas_Object *obj, const char *entry) EINA_ARG_NONNULL(1);
-   EAPI void         elm_scrolled_entry_line_wrap_set(Evas_Object *obj, Eina_Bool wrap) EINA_ARG_NONNULL(1);
-   EAPI void         elm_scrolled_entry_line_char_wrap_set(Evas_Object *obj, Eina_Bool wrap) EINA_ARG_NONNULL(1);
+   EAPI void         elm_scrolled_entry_line_wrap_set(Evas_Object *obj, Elm_Wrap_Type wrap) EINA_ARG_NONNULL(1);
    EAPI void         elm_scrolled_entry_editable_set(Evas_Object *obj, Eina_Bool editable) EINA_ARG_NONNULL(1);
    EAPI Eina_Bool    elm_scrolled_entry_editable_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
    EAPI void         elm_scrolled_entry_select_none(Evas_Object *obj) EINA_ARG_NONNULL(1);
