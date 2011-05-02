@@ -168,6 +168,33 @@ _mouse_up_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *
    wd->on_hold = EINA_FALSE;
 }
 
+static void
+_thumb_ready(Widget_Data *wd, const char *thumb_path, const char *thumb_key)
+{
+   Evas_Coord mw, mh;
+
+   edje_object_part_swallow(wd->frame, "elm.swallow.content", wd->view);
+   edje_object_size_min_get(wd->frame, &mw, &mh);
+   edje_object_size_min_restricted_calc(wd->frame, &mw, &mh, mw, mh);
+   evas_object_size_hint_min_set(wd->self, mw, mh);
+   eina_stringshare_replace(&(wd->thumb.file), thumb_path);
+   eina_stringshare_replace(&(wd->thumb.key), thumb_key);
+   edje_object_signal_emit(wd->frame, EDJE_SIGNAL_GENERATE_STOP, "elm");
+   evas_object_smart_callback_call(wd->self, SIG_GENERATE_STOP, NULL);
+}
+
+static void
+_thumb_loaded(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+   Widget_Data *wd = data;
+   const char *thumb_path;
+   const char *thumb_key;
+
+   evas_object_image_file_get(wd->view, &thumb_path, &thumb_key);
+
+   _thumb_ready(wd, thumb_path, thumb_key);
+}
+
 /* As we do use stat to check if a thumbnail is available, it's possible
    that we end up accessing before the file is completly written on disk.
    By retrying each time a thumbnail is finished we should be fine or not.
@@ -175,7 +202,6 @@ _mouse_up_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *
 static Eina_Bool
 _retry_thumb(Widget_Data *wd)
 {
-   Evas_Coord mw, mh;
    int r;
 
    if ((wd->is_video) && (wd->thumb.format == ETHUMB_THUMB_EET))
@@ -206,16 +232,15 @@ _retry_thumb(Widget_Data *wd)
                ERR("%s: %s", wd->thumb.thumb_path, evas_load_error_str(r));
              goto view_err;
           }
+
+        evas_object_event_callback_add(wd->view,
+                                       EVAS_CALLBACK_IMAGE_PRELOADED,
+                                       _thumb_loaded, wd);
+        evas_object_image_preload(wd->view, EINA_TRUE);
+        return EINA_TRUE;
      }
 
-   edje_object_part_swallow(wd->frame, "elm.swallow.content", wd->view);
-   edje_object_size_min_get(wd->frame, &mw, &mh);
-   edje_object_size_min_restricted_calc(wd->frame, &mw, &mh, mw, mh);
-   evas_object_size_hint_min_set(wd->self, mw, mh);
-   eina_stringshare_replace(&(wd->thumb.file), wd->thumb.thumb_path);
-   eina_stringshare_replace(&(wd->thumb.key), wd->thumb.thumb_key);
-   edje_object_signal_emit(wd->frame, EDJE_SIGNAL_GENERATE_STOP, "elm");
-   evas_object_smart_callback_call(wd->self, SIG_GENERATE_STOP, NULL);
+   _thumb_ready(wd, wd->thumb.thumb_path, wd->thumb.thumb_key);
 
    eina_stringshare_del(wd->thumb.thumb_path);
    wd->thumb.thumb_path = NULL;
@@ -236,7 +261,6 @@ _finished_thumb(Widget_Data *wd,
 {
    Eina_List *l, *ll;
    Evas *evas;
-   Evas_Coord mw, mh;
    int r;
 
    evas = evas_object_evas_get(wd->self);
@@ -282,7 +306,11 @@ _finished_thumb(Widget_Data *wd,
                   ERR("could not create image object");
                   goto err;
                }
+             evas_object_event_callback_add(wd->view,
+                                            EVAS_CALLBACK_IMAGE_PRELOADED,
+                                            _thumb_loaded, wd);
              elm_widget_sub_object_add(wd->self, wd->view);
+             evas_object_hide(wd->view);
           }
 
         evas_object_image_file_set(wd->view, thumb_path, thumb_key);
@@ -298,16 +326,12 @@ _finished_thumb(Widget_Data *wd,
              retry = eina_list_append(retry, wd);
              return ;
           }
+
+        evas_object_image_preload(wd->view, 0);
+        return ;
      }
 
-   edje_object_part_swallow(wd->frame, "elm.swallow.content", wd->view);
-   edje_object_size_min_get(wd->frame, &mw, &mh);
-   edje_object_size_min_restricted_calc(wd->frame, &mw, &mh, mw, mh);
-   evas_object_size_hint_min_set(wd->self, mw, mh);
-   eina_stringshare_replace(&(wd->thumb.file), thumb_path);
-   eina_stringshare_replace(&(wd->thumb.key), thumb_key);
-   edje_object_signal_emit(wd->frame, EDJE_SIGNAL_GENERATE_STOP, "elm");
-   evas_object_smart_callback_call(wd->self, SIG_GENERATE_STOP, NULL);
+   _thumb_ready(wd, thumb_path, thumb_key);
 
    EINA_LIST_FOREACH_SAFE(retry, l, ll, wd)
      if (_retry_thumb(wd))
