@@ -61,10 +61,6 @@ evas_common_text_props_content_unref(Evas_Text_Props *props)
         if (props->info->ot)
           free(props->info->ot);
 #endif
-#if !defined(OT_SUPPORT) && defined(BIDI_SUPPORT)
-        if (props->info->shaped_text)
-           free(props->info->shaped_text);
-#endif
         free(props->info);
         props->info = NULL;
      }
@@ -295,9 +291,9 @@ evas_common_text_props_content_create(void *_fn, const Eina_Unicode *text,
    Evas_Coord pen_x = 0;
    int adv_d, i;
 #if !defined(OT_SUPPORT) && defined(BIDI_SUPPORT)
-   text = text_props->info->shaped_text = eina_unicode_strndup(text, len);
-   evas_bidi_shape_string(text_props->info->shaped_text, par_props, par_pos,
-                          len);
+   Eina_Unicode *base_str;
+   text = base_str = eina_unicode_strndup(text, len);
+   evas_bidi_shape_string(base_str, par_props, par_pos, len);
 #else
    (void) par_props;
    (void) par_pos;
@@ -392,6 +388,9 @@ evas_common_text_props_content_create(void *_fn, const Eina_Unicode *text,
         prev_index = index;
      }
    text_props->len = len;
+# if !defined(OT_SUPPORT) && defined(BIDI_SUPPORT)
+   free(base_str);
+# endif
 #endif
    text_props->text_len = len;
    text_props->info->refcount = 1;

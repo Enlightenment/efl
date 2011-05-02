@@ -414,19 +414,7 @@ evas_common_font_draw_internal(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font
                                const Evas_Text_Props *text_props, RGBA_Gfx_Func func, int ext_x, int ext_y, int ext_w, 
                                int ext_h, RGBA_Font_Int *fi, int im_w, int im_h __UNUSED__)
 {
-#if !defined(OT_SUPPORT) && defined(BIDI_SUPPORT)
-   const Eina_Unicode *text = (text_props->info) ?
-      text_props->info->shaped_text + text_props->text_offset :
-      in_text;
-#else
    const Eina_Unicode *text = in_text;
-   /* Not relevant in the Harfbuzz case, and will soon will not be relevant
-    * at all */
-   (void) text;
-   /* Should be marked as unused? or should I do something fancy about it to
-    * make sure the given fi is relevant? */
-   (void) fn;
-#endif
    DATA32 *im;
    FT_Face pface = NULL;
    EVAS_FONT_WALK_TEXT_INIT();
@@ -790,6 +778,7 @@ evas_font_word_prerender(RGBA_Draw_Context *dc, const Eina_Unicode *in_text, con
 {
    struct cinfo *metrics;
    const Eina_Unicode *text = in_text;
+   (void) text;
    unsigned char *im;
    int width;
    int height, above, below, baseline, descent;

@@ -31,9 +31,6 @@ struct _Evas_Text_Props_Info
    unsigned int refcount;
    Evas_Font_Glyph_Info *glyph;
    Evas_Font_OT_Info *ot;
-#if !defined(OT_SUPPORT) && defined(BIDI_SUPPORT)
-   Eina_Unicode *shaped_text;
-#endif
 };
 
 /* Sorted in visual order when created */
