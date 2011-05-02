@@ -56,7 +56,314 @@ struct _Evas_GL_Config
 /**
  * @defgroup Evas_GL group for rendering GL on Evas
  *
- * Functions that are used to do GL rendering on Evas.
+ * Functions that are used to do OpenGL rendering on Evas. Evas allows you
+ * to use OpenGL to render to specially set up image objects (which act as
+ * render target surfaces).
+ * 
+ * Below is an illlustrative example of how to use OpenGL to render to an
+ * object in Evas.
+ * 
+ * @code
+// Simple Evas_GL example
+#include <Ecore_Evas.h>
+#include <Ecore.h>
+#include <Evas_GL.h>
+#include <stdio.h>
+
+// GL related data here..
+typedef struct _GLData
+{
+   Evas_GL_Context *ctx;
+   Evas_GL_Surface *sfc;
+   Evas_GL         *evasgl;
+   Evas_GL_API     *glapi;
+   GLuint           program;
+   GLuint           vtx_shader;
+   GLuint           fgmt_shader;
+   Eina_Bool        initialized : 1;
+} GLData;
+
+// callbacks we want to handle deletion on the object and updates/draws
+static void      on_del       (void *data, Evas *e, Evas_Object *obj, void *event_info);
+static void      on_pixels    (void *data, Evas_Object *obj);
+// demo - animator just to keep ticking over saying to draw the image
+static Eina_Bool on_animate   (void *data);
+// gl stuff
+static int       init_shaders (GLData *gld);
+static GLuint    load_shader  (GLData *gld, GLenum type, const char *shader_src);
+
+int
+main(int argc, char **argv)
+{
+   // config for the surface for evas_gl
+   Evas_GL_Config config = 
+     {
+        EVAS_GL_RGBA_8, 
+        EVAS_GL_DEPTH_NONE, 
+        EVAS_GL_STENCIL_NONE
+     };
+   // a size by default
+   int w = 256, h = 256;
+   // some variables we will use
+   Ecore_Evas  *ee;
+   Evas *canvas;
+   Evas_Object *r1;
+   Evas_Native_Surface ns;
+   GLData *gld = NULL;
+
+   // regular low-leve EFL (ecore+ecore-evas) init. elm is simpler
+   ecore_init();
+   ecore_evas_init();
+   ee = ecore_evas_gl_x11_new(NULL, 0, 0, 0, 512, 512);
+   ecore_evas_title_set(ee, "Ecore_Evas Template");
+   canvas = ecore_evas_get(ee);
+
+   // alloc a data struct to hold our relevant gl info in
+   if (!(gld = calloc(1, sizeof(GLData)))) return 0;
+   
+   //-//-//-// THIS IS WHERE GL INIT STUFF HAPPENS (ALA EGL)
+   //-//
+   // get the evas gl handle for doing gl things
+   gld->evasgl = evas_gl_new(canvas);
+   gld->glapi = evas_gl_api_get(gld->evasgl);
+   // create a surface and context 
+   gld->sfc = evas_gl_surface_create(gld->evasgl, &config, w, h);
+   gld->ctx = evas_gl_context_create(gld->evasgl, NULL);
+   //-//
+   //-//-//-// END GL INIT BLOB
+
+   // set up the image object. a filled one by default
+   r1 = evas_object_image_filled_add(canvas);
+   // attach important data we need to the object using key names. this just
+   // avoids some global variables and means we can do nice cleanup. you can
+   // avoid this if you are lazy
+   evas_object_data_set(r1, "..gld", gld);
+   // when the object is deleted - call the on_del callback. like the above,
+   // this is just being clean
+   evas_object_event_callback_add(r1, EVAS_CALLBACK_DEL, on_del, NULL);
+   // set up an actual pixel size fot the buffer data. it may be different
+   // to the output size. any windowing system has something like this, just
+   // evas has 2 sizes, a pixel size and the output object size
+   evas_object_image_size_set(r1, w, h);
+   // set up the native surface info to use the context and surface created
+   // above
+
+   //-//-//-// THIS IS WHERE GL INIT STUFF HAPPENS (ALA EGL)
+   //-//
+   evas_gl_native_surface_get(gld->evasgl, gld->sfc, &ns);
+   evas_object_image_native_surface_set(r1, &ns);
+   evas_object_image_pixels_get_callback_set(r1, on_pixels, r1);
+   //-//
+   //-//-//-// END GL INIT BLOB
+
+   // move the image object somewhere, resize it and show it. any windowing
+   // system would need this kind of thing - place a child "window"
+   evas_object_move(r1, 128, 128);
+   evas_object_resize(r1, w, h);
+   evas_object_show(r1);
+
+   // animating - just a demo. as long as you trigger an update on the image
+   // object via evas_object_image_pixels_dirty_set(). any display system,
+   // mainloop siztem etc. will have something of this kind unless it's making
+   // you spin infinitely yourself and invent your own animation mechanism
+   // 
+   // NOTE: if you delete r1, this animator will keep runing trying to access
+   // r1 so you'd better delete this animator with ecore_animator_del() or
+   // structure how you do animation differently. you can also attach it like
+   // evasgl, sfc, etc. etc. if this animator is specific to this object
+   // only and delete it in the del handler for the obj.
+   ecore_animator_add(on_animate, r1);
+
+   // finally show the window for the world to see. windowing system generic
+   ecore_evas_show(ee);
+   
+   // begin the mainloop and tick over the animator, handle events etc.
+   // also windowing system generic
+   ecore_main_loop_begin();
+
+   // standard EFL shutdown stuff - generic for most systems, EFL or not
+   ecore_evas_shutdown();
+   ecore_shutdown();
+   return 0;
+}
+
+static void
+on_del(void *data, Evas *e, Evas_Object *obj, void *event_info)
+{
+   // on delete of our object clean up some things that don't get auto
+   // celeted for us as they are not intrinsically bound to the image
+   // object as such (you could use the same context and surface across
+   // multiple image objects and re-use the evasgl handle too multiple times.
+   // here we bind them to 1 object only though by doing this.
+   GLData *gld = evas_object_data_get(obj, "..gld");
+   if (!gld) return;
+   Evas_GL_API *gl = gld->glapi;
+   
+   evas_object_data_del(obj, "..gld");
+
+   // Do a make_current before deleting all the GL stuff.
+   evas_gl_make_current(gld->evasgl, gld->sfc, gld->ctx);
+   gl->glDeleteShader(gld->vtx_shader);
+   gl->glDeleteShader(gld->fgmt_shader);
+   gl->glDeleteProgram(gld->program);
+
+   evas_gl_surface_destroy(gld->evasgl, gld->sfc);
+   evas_gl_context_destroy(gld->evasgl, gld->ctx);
+   evas_gl_free(gld->evasgl);
+   free(gld);
+}
+
+static void
+on_pixels(void *data, Evas_Object *obj)
+{
+   // get some variable we need from the object data keys
+   GLData *gld = evas_object_data_get(obj, "..gld");
+   if (!gld) return;
+   Evas_GL_API *gl = gld->glapi;
+   GLfloat vVertices[] = 
+     {
+         0.0f,  0.5f, 0.0f, 
+        -0.5f, -0.5f, 0.0f,
+         0.5f, -0.5f, 0.0f
+     };
+   int w, h;
+
+   // get the image size in case it changed with evas_object_image_size_set()
+   evas_object_image_size_get(obj, &w, &h);
+   // set up the context and surface as the current one
+   evas_gl_make_current(gld->evasgl, gld->sfc, gld->ctx);
+
+   if (!gld->initialized)
+     {
+        if (!init_shaders(gld)) printf("Error Initializing Shaders\n");
+        gld->initialized = EINA_TRUE;
+     }
+
+   // GL Viewport stuff. you can avoid doing this if viewport is all the
+   // same as last frame if you want
+   gl->glViewport(0, 0, w, h);
+
+   // Clear the buffer
+   gl->glClearColor(1.0, 0.0, 0.0, 1);
+   gl->glClear(GL_COLOR_BUFFER_BIT);
+   
+   // Draw a Triangle
+   gl->glEnable(GL_BLEND);
+
+   gl->glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, vVertices);
+   gl->glEnableVertexAttribArray(0);
+
+   gl->glDrawArrays(GL_TRIANGLES, 0, 3);
+   
+   // Optional - Flush the GL pipeline
+   gl->glFlush();
+}
+
+static Eina_Bool
+on_animate(void *data)
+{
+   // just a demo - animate here whenever an animation tick happens and then
+   // mark the image as "dirty" meaning it needs an update next time evas
+   // renders. it will call the pixel get callback then.
+   evas_object_image_pixels_dirty_set(data, EINA_TRUE);
+   return EINA_TRUE; // keep looping
+}
+
+static GLuint
+load_shader(GLData *gld, GLenum type, const char *shader_src)
+{
+   Evas_GL_API *gl = gld->glapi;
+   GLuint shader;
+   GLint compiled = 0;
+
+   // Create the shader object
+   if (!(shader = gl->glCreateShader(type))) return 0;
+   gl->glShaderSource(shader, 1, &shader_src, NULL);
+   // Compile the shader
+   gl->glCompileShader(shader);
+   gl->glGetShaderiv(shader, GL_COMPILE_STATUS, &compiled);
+
+   if (!compiled) 
+     {
+        GLint len = 0;
+        
+        gl->glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &len);
+        if (len > 1)
+          {
+             char *info = malloc(sizeof(char) * len);
+             
+             if (info)
+               {
+                  gl->glGetShaderInfoLog(shader, len, NULL, info);
+                  printf("Error compiling shader:\n"
+                         "%s\n", info);
+                  free(info);
+               }
+          }
+        gl->glDeleteShader(shader);
+        return 0;
+     }
+   return shader;
+}
+
+// Initialize the shader and program object
+static int 
+init_shaders(GLData *gld)
+{
+   Evas_GL_API *gl = gld->glapi;
+   const char vShaderStr[] =  
+      "attribute vec4 vPosition;    \n"
+      "void main()                  \n"
+      "{                            \n"
+      "   gl_Position = vPosition;  \n"
+      "}                            \n";
+   const char fShaderStr[] =
+      "precision mediump float;                    \n"
+      "void main()                                 \n"
+      "{                                           \n"
+      "  gl_FragColor = vec4( 1.0, 0.0, 0.0, 1.0 );\n"
+      "}                                           \n";
+   GLint linked = 0;
+
+   // Load the vertex/fragment shaders
+   gld->vtx_shader  = load_shader(gld, GL_VERTEX_SHADER, vShaderStr);
+   gld->fgmt_shader = load_shader(gld, GL_FRAGMENT_SHADER, fShaderStr);
+
+   // Create the program object
+   if (!(gld->program = gl->glCreateProgram())) return 0;
+
+   gl->glAttachShader(gld->program, gld->vtx_shader);
+   gl->glAttachShader(gld->program, gld->fgmt_shader);
+
+   // Bind vPosition to attribute 0   
+   gl->glBindAttribLocation(gld->program, 0, "vPosition");
+   // Link the program
+   gl->glLinkProgram(gld->program);
+   gl->glGetProgramiv(gld->program, GL_LINK_STATUS, &linked);
+
+   if (!linked) 
+     {
+        GLint len = 0;
+        
+        gl->glGetProgramiv(gld->program, GL_INFO_LOG_LENGTH, &len);
+        if (len > 1)
+          {
+             char *info = malloc(sizeof(char) * len);
+             
+             if (info)
+               {
+                  gl->glGetProgramInfoLog(gld->program, len, NULL, info);
+                  printf("Error linking program:\n"
+                         "%s\n", info);
+                  free(info);
+               }
+          }
+        gl->glDeleteProgram(gld->program);
+        return 0;
+     }
+   return 1;
+}
+ * @endcode
  *
  * @ingroup Evas_Canvas
  */
