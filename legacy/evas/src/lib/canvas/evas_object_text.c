@@ -1666,7 +1666,7 @@ evas_object_text_render(Evas_Object *obj, void *output, void *context, void *sur
 		     obj->cur.geometry.h, \
 		     obj->cur.geometry.w, \
 		     obj->cur.geometry.h, \
-		     it->text, &it->text_props);
+		     &it->text_props);
 
    /* shadows */
    shad_dst = shad_sz = dx = dy = haveshad = 0;

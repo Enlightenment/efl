@@ -691,7 +691,7 @@ struct _Evas_Func
    int  (*font_v_advance_get)              (void *data, void *font, const Evas_Text_Props *intl_props);
    int  (*font_char_coords_get)            (void *data, void *font, const Evas_Text_Props *intl_props, int pos, int *cx, int *cy, int *cw, int *ch);
    int  (*font_char_at_coords_get)         (void *data, void *font, const Evas_Text_Props *intl_props, int x, int y, int *cx, int *cy, int *cw, int *ch);
-   void (*font_draw)                       (void *data, void *context, void *surface, void *font, int x, int y, int w, int h, int ow, int oh, const Eina_Unicode *text, const Evas_Text_Props *intl_props);
+   void (*font_draw)                       (void *data, void *context, void *surface, void *font, int x, int y, int w, int h, int ow, int oh, const Evas_Text_Props *intl_props);
 
    void (*font_cache_flush)                (void *data);
    void (*font_cache_set)                  (void *data, int bytes);

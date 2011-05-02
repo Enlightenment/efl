@@ -693,7 +693,6 @@ struct _RGBA_Pipe_Op
       struct {
 	 RGBA_Font          *font;
 	 int                 x, y;
-	 Eina_Unicode       *text;
          Evas_Text_Props     intl_props;
       } text;
       struct {

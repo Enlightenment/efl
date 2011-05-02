@@ -8059,7 +8059,6 @@ evas_object_textblock_render(Evas_Object *obj, void *output, void *context, void
          obj->cur.geometry.x + ln->par->x + ln->x + ti->parent.x + x + (ox), \
          obj->cur.geometry.y + ln->par->y + ln->y + yoff + y + (oy), \
          ti->parent.w, ti->parent.h, ti->parent.w, ti->parent.h, \
-         GET_ITEM_TEXT(ti), \
          &ti->text_props);
 #define ITEM_WALK_LINE_SKIP_DROP() \
    if ((ln->par->y + ln->y + ln->h) <= 0) continue; \

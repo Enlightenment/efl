@@ -2043,7 +2043,7 @@ eng_image_stride_get(void *data __UNUSED__, void *image, int *stride)
 }
 
 static void
-eng_font_draw(void *data, void *context, void *surface, void *font, int x, int y, int w __UNUSED__, int h __UNUSED__, int ow __UNUSED__, int oh __UNUSED__, const Eina_Unicode *text, const Evas_Text_Props *intl_props)
+eng_font_draw(void *data, void *context, void *surface, void *font, int x, int y, int w __UNUSED__, int h __UNUSED__, int ow __UNUSED__, int oh __UNUSED__, const Evas_Text_Props *intl_props)
 {
    Render_Engine *re;
 
@@ -2064,7 +2064,7 @@ eng_font_draw(void *data, void *context, void *surface, void *font, int x, int y
    					      evas_gl_font_texture_new,
    					      evas_gl_font_texture_free,
    					      evas_gl_font_texture_draw);
-	evas_common_font_draw(im, context, font, x, y, text, intl_props);
+	evas_common_font_draw(im, context, font, x, y, intl_props);
 	evas_common_draw_context_font_ext_set(context,
 					      NULL,
 					      NULL,

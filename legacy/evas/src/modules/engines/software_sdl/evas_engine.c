@@ -750,7 +750,7 @@ evas_engine_sdl_font_draw(void *data __UNUSED__, void *context, void *surface, v
 	_SDL_UPDATE_PIXELS(eim);
      }
 
-   evas_common_font_draw((RGBA_Image *) eim->cache_entry.src, context, font, x, y, text, intl_props);
+   evas_common_font_draw((RGBA_Image *) eim->cache_entry.src, context, font, x, y, intl_props);
    evas_common_cpu_end_opt();
 
    if (mustlock_im)

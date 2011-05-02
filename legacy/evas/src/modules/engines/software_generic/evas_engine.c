@@ -797,7 +797,7 @@ eng_font_last_up_to_pos(void *data __UNUSED__, void *font, const Evas_Text_Props
 }
 
 static void
-eng_font_draw(void *data __UNUSED__, void *context, void *surface, void *font, int x, int y, int w __UNUSED__, int h __UNUSED__, int ow __UNUSED__, int oh __UNUSED__, const Eina_Unicode *text, const Evas_Text_Props *text_props)
+eng_font_draw(void *data __UNUSED__, void *context, void *surface, void *font, int x, int y, int w __UNUSED__, int h __UNUSED__, int ow __UNUSED__, int oh __UNUSED__, const Evas_Text_Props *text_props)
 {
 #ifdef BUILD_PIPE_RENDER
    if ((cpunum > 1)
@@ -805,11 +805,11 @@ eng_font_draw(void *data __UNUSED__, void *context, void *surface, void *font, i
         && evas_common_frameq_enabled()
 #endif
         )
-     evas_common_pipe_text_draw(surface, context, font, x, y, text, text_props);
+     evas_common_pipe_text_draw(surface, context, font, x, y, text_props);
    else
 #endif   
      {
-	evas_common_font_draw(surface, context, font, x, y, text, text_props);
+	evas_common_font_draw(surface, context, font, x, y, text_props);
 	evas_common_cpu_end_opt();
      }
 }

@@ -338,9 +338,9 @@ eng_image_cache_get(void *data __UNUSED__)
 
 static void
 eng_font_draw(void *data __UNUSED__, void *context, void *surface, void *font,
-              int x, int y, int w __UNUSED__, int h __UNUSED__, int ow __UNUSED__, int oh __UNUSED__, const Eina_Unicode *text, const Evas_Text_Props *text_props)
+              int x, int y, int w __UNUSED__, int h __UNUSED__, int ow __UNUSED__, int oh __UNUSED__, const Evas_Text_Props *text_props)
 {
-   evas_common_font_draw(surface, context, font, x, y, text, text_props);
+   evas_common_font_draw(surface, context, font, x, y, text_props);
    evas_common_draw_context_font_ext_set(context, NULL, NULL, NULL, NULL);
 }
 
