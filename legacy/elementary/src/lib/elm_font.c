@@ -123,6 +123,7 @@ _font_hash_free_cb(const Eina_Hash *hash __UNUSED__, const void *key __UNUSED__,
 void
 _elm_font_available_hash_del(Eina_Hash *hash)
 {
+   if (!hash) return ;
+
    eina_hash_foreach(hash, _font_hash_free_cb, NULL);
-   eina_hash_free(hash);
 }
