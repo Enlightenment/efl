@@ -20,6 +20,7 @@
 #define EINA_LOCK_H_
 
 #include "eina_config.h"
+#include "eina_types.h"
 
 /**
  * @addtogroup Eina_Tools_Group Tools
@@ -33,6 +34,13 @@
  * @{
  */
 
+typedef enum
+{
+   EINA_LOCK_FAIL     = EINA_FALSE,
+   EINA_LOCK_SUCCEED  = EINA_TRUE,
+   EINA_LOCK_DEADLOCK
+} Eina_Lock_Result;
+
 #ifdef EINA_HAVE_THREADS
 # ifdef _WIN32_WCE
 #  include "eina_inline_lock_wince.x"
@@ -44,6 +52,13 @@
 #else
 # include "eina_inline_lock_void.x"
 #endif
+
+static inline Eina_Lock_Result eina_lock_new(Eina_Lock *mutex);
+static inline void eina_lock_free(Eina_Lock *mutex);
+static inline Eina_Lock_Result eina_lock_take(Eina_Lock *mutex);
+static inline Eina_Lock_Result eina_lock_take_try(Eina_Lock *mutex);
+static inline Eina_Lock_Result eina_lock_release(Eina_Lock *mutex);
+static inline void eina_lock_debug(Eina_Lock *mutex);
 
 /**
  * @}

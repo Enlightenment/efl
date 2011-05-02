@@ -28,11 +28,7 @@
 # include <pthread.h>
 #endif
 
-/*
-#define EINA_LOCK_DEBUG 1
-*/
-
-#ifdef EINA_LOCK_DEBUG
+#ifdef EINA_HAVE_DEBUG_THREADS
 #include <execinfo.h>
 #define EINA_LOCK_DEBUG_BT_NUM 64
 typedef void (*Eina_Lock_Bt_Func) ();
@@ -43,26 +39,13 @@ typedef struct _Eina_Lock Eina_Lock;
 struct _Eina_Lock
 {
    pthread_mutex_t  mutex;
-#ifdef EINA_LOCK_DEBUG   
+#ifdef EINA_HAVE_DEBUG_THREADS
    pthread_t         lock_thread_id;
    Eina_Lock_Bt_Func lock_bt[EINA_LOCK_DEBUG_BT_NUM];
    int               lock_bt_num;
    Eina_Bool         locked : 1;
-#endif   
-};
-
-#ifdef EINA_LOCK_DEBUG
-# define EINA_LOCK_INITIALIZER { PTHREAD_MUTEX_INITIALIZER, 0, { 0 }, 0, 0 }
-#else
-# define EINA_LOCK_INITIALIZER { PTHREAD_MUTEX_INITIALIZER }
 #endif
-
-typedef enum
-{
-   EINA_LOCK_FAIL     = EINA_FALSE,
-   EINA_LOCK_SUCCEED  = EINA_TRUE,
-   EINA_LOCK_DEADLOCK
-} Eina_Lock_Result;
+};
 
 EAPI extern Eina_Bool _eina_threads_activated;
 
@@ -70,6 +53,7 @@ EAPI extern Eina_Bool _eina_threads_activated;
 # include <sys/time.h>
 
 EAPI extern int _eina_threads_debug;
+EAPI extern pthread_t _eina_main_loop;
 #endif
 
 static inline Eina_Lock_Result
@@ -77,9 +61,13 @@ eina_lock_new(Eina_Lock *mutex)
 {
    pthread_mutexattr_t attr;
 
+#ifdef EINA_HAVE_DEBUG_THREADS
+   assert(pthread_equal(_eina_main_loop, pthread_self()));
+#endif
+
    if (pthread_mutexattr_init(&attr) != 0)
      return EINA_FALSE;
-/* use errorcheck locks. detect deadlocks.   
+/* use errorcheck locks. detect deadlocks.
 #ifdef PTHREAD_MUTEX_RECURSIVE
    if (pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_RECURSIVE) != 0)
      return EINA_FALSE;
@@ -87,9 +75,9 @@ eina_lock_new(Eina_Lock *mutex)
  */
    if (pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_ERRORCHECK) != 0)
      return EINA_FALSE;
-#ifdef EINA_LOCK_DEBUG
+#ifdef EINA_HAVE_DEBUG_THREADS
    memset(mutex, 0, sizeof(Eina_Lock));
-#endif   
+#endif
    if (pthread_mutex_init(&(mutex->mutex), &attr) != 0)
      return EINA_FALSE;
 
@@ -101,35 +89,42 @@ eina_lock_new(Eina_Lock *mutex)
 static inline void
 eina_lock_free(Eina_Lock *mutex)
 {
+#ifdef EINA_HAVE_DEBUG_THREADS
+   assert(pthread_equal(_eina_main_loop, pthread_self()));
+#endif
+
    pthread_mutex_destroy(&(mutex->mutex));
-#ifdef EINA_LOCK_DEBUG
+#ifdef EINA_HAVE_DEBUG_THREADS
    memset(mutex, 0, sizeof(Eina_Lock));
-#endif   
+#endif
 }
 
 static inline Eina_Lock_Result
 eina_lock_take(Eina_Lock *mutex)
 {
-   Eina_Bool ret = EINA_FALSE;
+   Eina_Bool ret;
    int ok;
-   
+
 #ifdef EINA_HAVE_DEBUG_THREADS
+   if (_eina_threads_activated)
+     assert(pthread_equal(_eina_main_loop, pthread_self()));
+
    if (_eina_threads_debug)
      {
         struct timeval t0, t1;
         int dt;
-        
+
         gettimeofday(&t0, NULL);
         pthread_mutex_lock(&(x));
         gettimeofday(&t1, NULL);
-        
+
         dt = (t1.tv_sec - t0.tv_sec) * 1000000;
         if (t1.tv_usec > t0.tv_usec)
            dt += (t1.tv_usec - t0.tv_usec);
         else
            dt -= t0.tv_usec - t1.tv_usec;
         dt /= 1000;
-        
+
         if (dt > _eina_threads_debug) abort();
      }
 #endif
@@ -140,11 +135,11 @@ eina_lock_take(Eina_Lock *mutex)
         printf("ERROR ERROR: DEADLOCK on lock %p\n", mutex);
         ret = EINA_LOCK_DEADLOCK; // magic
      }
-#ifdef EINA_LOCK_DEBUG
+#ifdef EINA_HAVE_DEBUG_THREADS
    mutex->locked = 1;
    mutex->lock_thread_id = pthread_self();
    mutex->lock_bt_num = backtrace((void **)(mutex->lock_bt), EINA_LOCK_DEBUG_BT_NUM);
-#endif         
+#endif
    return ret;
 }
 
@@ -153,7 +148,12 @@ eina_lock_take_try(Eina_Lock *mutex)
 {
    Eina_Bool ret = EINA_FALSE;
    int ok;
-   
+
+#ifdef EINA_HAVE_DEBUG_THREADS
+   if (_eina_threads_activated)
+     assert(pthread_equal(_eina_main_loop, pthread_self()));
+#endif
+
    ok = pthread_mutex_trylock(&(mutex->mutex));
    if (ok == 0) ret = EINA_TRUE;
    else if (ok == EDEADLK)
@@ -161,14 +161,14 @@ eina_lock_take_try(Eina_Lock *mutex)
         printf("ERROR ERROR: DEADLOCK on trylock %p\n", mutex);
         ret = EINA_LOCK_DEADLOCK; // magic
      }
-#ifdef EINA_LOCK_DEBUG
+#ifdef EINA_HAVE_DEBUG_THREADS
    if (ret == EINA_TRUE)
      {
         mutex->locked = 1;
         mutex->lock_thread_id = pthread_self();
         mutex->lock_bt_num = backtrace((void **)(mutex->lock_bt), EINA_LOCK_DEBUG_BT_NUM);
      }
-#endif         
+#endif
    return ret;
 }
 
@@ -176,13 +176,19 @@ static inline Eina_Lock_Result
 eina_lock_release(Eina_Lock *mutex)
 {
    Eina_Bool ret;
-#ifdef EINA_LOCK_DEBUG
+
+#ifdef EINA_HAVE_DEBUG_THREADS
+   if (_eina_threads_activated)
+     assert(pthread_equal(_eina_main_loop, pthread_self()));
+#endif
+
+#ifdef EINA_HAVE_DEBUG_THREADS
    mutex->locked = 0;
    mutex->lock_thread_id = 0;
    memset(mutex->lock_bt, 0, EINA_LOCK_DEBUG_BT_NUM * sizeof(Eina_Lock_Bt_Func));
    mutex->lock_bt_num = 0;
-#endif         
-   ret = (pthread_mutex_unlock(&(mutex->mutex)) == 0) ? 
+#endif
+   ret = (pthread_mutex_unlock(&(mutex->mutex)) == 0) ?
       EINA_TRUE : EINA_FALSE;
    return ret;
 }
@@ -190,8 +196,8 @@ eina_lock_release(Eina_Lock *mutex)
 static inline void
 eina_lock_debug(Eina_Lock *mutex)
 {
-#ifdef EINA_LOCK_DEBUG
-   printf("lock %p, locked: %i, by %i\n", 
+#ifdef EINA_HAVE_DEBUG_THREADS
+   printf("lock %p, locked: %i, by %i\n",
           mutex, (int)mutex->locked, (int)mutex->lock_thread_id);
    backtrace_symbols_fd((void **)mutex->lock_bt, mutex->lock_bt_num, 1);
 #else
