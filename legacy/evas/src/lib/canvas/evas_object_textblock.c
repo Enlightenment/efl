@@ -3266,9 +3266,6 @@ _layout_ellipsis_item_new(Ctxt *c, const Evas_Object_Textblock_Item *cur_it)
 {
    Evas_Object_Textblock_Text_Item *ellip_ti;
    size_t len = 1; /* The length of _ellip_str */
-   /* We assume that the format stack has at least one time,
-    * the only reason it may not have, is more </> than <>, other
-    * than that, we're safe. The last item is the base format. */
    ellip_ti = _layout_text_item_new(c,
          eina_list_data_get(eina_list_last(c->format_stack)));
    ellip_ti->parent.text_node = cur_it->text_node;
