@@ -1948,56 +1948,56 @@ _proxy_error(Evas_Object *proxy, void *context, void *output, void *surface,
    int r = rand() % 255;
    int g = rand() % 255;
    int b = rand() % 255;
-
+   
    /* XXX: Eina log error or something I'm sure
     * If it bugs you, just fix it.  Don't tell me */
    if (VERBOSE_PROXY_ERROR) printf("Err: Argh! Recursive proxies.\n");
-
+   
    func = proxy->layer->evas->engine.func;
-   func->context_color_set(output, context, r,g,b,255);
+   func->context_color_set(output, context, r, g, b, 255);
    func->context_multiplier_unset(output, context);
    func->context_render_op_set(output, context, proxy->cur.render_op);
    func->rectangle_draw(output, context, surface, proxy->cur.geometry.x + x,
-                                                      proxy->cur.geometry.y + y,
-                                                      proxy->cur.geometry.w,
-                                                      proxy->cur.geometry.h);
+                        proxy->cur.geometry.y + y,
+                        proxy->cur.geometry.w,
+                        proxy->cur.geometry.h);
    return;
 }
 
 
 static void
-_proxy_subrender_recurse(Evas_Object *obj, Evas_Object *clip, void *output, void *surface, void *ctx, int x, int y){
-     Evas_Object *obj2;
-     Evas *e;
-     e = obj->layer->evas;
-     if (obj->clip.clipees) return;
-     /* evas_object_is_visible, inline and tweaked to handle it's clip hidden*/
-     if (!obj->cur.visible) return;
-     if (!clip || clip != obj->cur.clipper)
-       {
-          if (!obj->cur.cache.clip.visible) return;
-          if (obj->cur.cache.clip.a == 0 &&
-              obj->cur.render_op == EVAS_RENDER_BLEND) return;
-       }
-     if (obj->func->is_visible && !obj->func->is_visible(obj)) return;
-
-     if (!obj->pre_render_done)
-        obj->func->render_pre(obj);
-     ctx = e->engine.func->context_new(output);
-     if (obj->smart.smart)
-       {
-          EINA_INLIST_FOREACH(evas_object_smart_members_get_direct(obj), obj2){
-               _proxy_subrender_recurse(obj2, clip, output, surface, ctx, x,y);
+_proxy_subrender_recurse(Evas_Object *obj, Evas_Object *clip, void *output, void *surface, void *ctx, int x, int y)
+{
+   Evas_Object *obj2;
+   Evas *e = obj->layer->evas;
+   
+   if (obj->clip.clipees) return;
+   /* evas_object_is_visible, inline and tweaked to handle it's clip hidden*/
+   if (!obj->cur.visible) return;
+   if ((!clip) || (clip != obj->cur.clipper))
+     {
+        if (!obj->cur.cache.clip.visible) return;
+        if ((obj->cur.cache.clip.a == 0) &&
+            (obj->cur.render_op == EVAS_RENDER_BLEND)) return;
+     }
+   if ((obj->func->is_visible) && (!obj->func->is_visible(obj))) return;
+   
+   if (!obj->pre_render_done)
+      obj->func->render_pre(obj);
+   ctx = e->engine.func->context_new(output);
+   if (obj->smart.smart)
+     {
+        EINA_INLIST_FOREACH(evas_object_smart_members_get_direct(obj), obj2)
+          {
+             _proxy_subrender_recurse(obj2, clip, output, surface, ctx, x, y);
           }
-       }
-     else
-       {
-          obj->func->render(obj, output, ctx, surface,x,y);
-       }
-     e->engine.func->context_free(output, ctx);
+     }
+   else
+     {
+        obj->func->render(obj, output, ctx, surface, x, y);
+     }
+   e->engine.func->context_free(output, ctx);
 }
-
-
 
 /**
  * Render the source object when a proxy is set.
@@ -2009,7 +2009,7 @@ _proxy_subrender(Evas *e, Evas_Object *source)
 {
    void *ctx;
    Evas_Object *obj2, *clip;
-   int w,h;
+   int w, h;
 
    if (!source) return;
 
@@ -2019,56 +2019,57 @@ _proxy_subrender(Evas *e, Evas_Object *source)
    source->proxy.redraw = EINA_FALSE;
 
    /* We need to redraw surface then */
-   if (source->proxy.surface && (source->proxy.w != w || source->proxy.h != h))
+   if ((source->proxy.surface) && 
+       ((source->proxy.w != w) || (source->proxy.h != h)))
      {
         e->engine.func->image_map_surface_free(e->engine.data.output,
                                                source->proxy.surface);
         source->proxy.surface = NULL;
      }
-
+   
    /* FIXME: Hardcoded alpha 'on' */
    /* FIXME (cont): Should see if the object has alpha */
    if (!source->proxy.surface)
      {
-        source->proxy.surface = e->engine.func->image_map_surface_new(
-           e->engine.data.output, w, h, 1);
+        source->proxy.surface = e->engine.func->image_map_surface_new
+           (e->engine.data.output, w, h, 1);
         source->proxy.w = w;
         source->proxy.h = h;
      }
-
+   
    ctx = e->engine.func->context_new(e->engine.data.output);
    e->engine.func->context_color_set(e->engine.data.output, ctx, 0, 0, 0, 0);
    e->engine.func->context_render_op_set(e->engine.data.output, ctx, EVAS_RENDER_COPY);
    e->engine.func->rectangle_draw(e->engine.data.output, ctx,
                                   source->proxy.surface, 0, 0, w, h);
    e->engine.func->context_free(e->engine.data.output, ctx);
-
+   
    ctx = e->engine.func->context_new(e->engine.data.output);
    if (source->smart.smart)
      {
         clip = evas_object_smart_clipped_clipper_get(source);
-        EINA_INLIST_FOREACH(evas_object_smart_members_get_direct(source), obj2){
+        EINA_INLIST_FOREACH(evas_object_smart_members_get_direct(source), obj2)
+          {
              _proxy_subrender_recurse(obj2, clip, e->engine.data.output,
                                       source->proxy.surface,
                                       ctx,
                                       -source->cur.geometry.x,
                                       -source->cur.geometry.y);
-        }
+          }
      }
    else
      {
         if (!source->pre_render_done)
            source->func->render_pre(source);
         source->func->render(source, e->engine.data.output, ctx,
-                                    source->proxy.surface,
-                                    -source->cur.geometry.x,
-                                    -source->cur.geometry.y);
+                             source->proxy.surface,
+                             -source->cur.geometry.x,
+                             -source->cur.geometry.y);
      }
-
+   
    e->engine.func->context_free(e->engine.data.output, ctx);
-   source->proxy.surface = e->engine.func->image_dirty_region(
-               e->engine.data.output, source->proxy.surface, 0,0,w,h);
-
+   source->proxy.surface = e->engine.func->image_dirty_region
+      (e->engine.data.output, source->proxy.surface, 0, 0, w, h);
 }
 
 /*
@@ -2105,9 +2106,7 @@ image_filter_draw_under_recurse(Evas *e, Evas_Object *obj, Evas_Object *stop,
           }
      }
    else
-     {
-        obj->func->render(obj, output, ctx, surface,x,y);
-     }
+      obj->func->render(obj, output, ctx, surface, x ,y);
    e->engine.func->context_free(output, ctx);
 }
 
@@ -2152,7 +2151,7 @@ image_filter_update(Evas *e, Evas_Object *obj, void *src, int imagew, int imageh
    Evas_Filter_Info *info;
    void *surface;
    Eina_Bool alpha;
-
+   
    info = obj->filter;
    
    if (info->mode == EVAS_FILTER_MODE_BELOW)
@@ -2169,10 +2168,7 @@ image_filter_update(Evas *e, Evas_Object *obj, void *src, int imagew, int imageh
      }
    
    /* Certain filters may make alpha images anyway */
-   if (alpha == EINA_FALSE)
-     {
-        alpha = evas_filter_always_alpha(info);
-     }
+   if (alpha == EINA_FALSE) alpha = evas_filter_always_alpha(info);
    
    surface = e->engine.func->image_map_surface_new(e->engine.data.output, w, h,
                                                    alpha);
@@ -2230,15 +2226,15 @@ static void
 evas_object_image_unload(Evas_Object *obj, Eina_Bool dirty)
 {
    Evas_Object_Image *o;
-
+   
    o = (Evas_Object_Image *)(obj->object_data);
-
+   
    if ((!o->cur.file) ||
        (o->pixels_checked_out > 0)) return;
    if (dirty)
      {
         if (o->engine_data)
-          o->engine_data = obj->layer->evas->engine.func->image_dirty_region
+           o->engine_data = obj->layer->evas->engine.func->image_dirty_region
            (obj->layer->evas->engine.data.output,
                o->engine_data,
                0, 0,
@@ -2594,7 +2590,7 @@ evas_object_image_render(Evas_Object *obj, void *output, void *context, void *su
 	     p = obj->cur.map->points;
 	     p_end = p + obj->cur.map->count;
 	     pt = pts;
-
+             
              pts[0].px = obj->cur.map->persp.px << FP;
              pts[0].py = obj->cur.map->persp.py << FP;
              pts[0].foc = obj->cur.map->persp.foc << FP;
