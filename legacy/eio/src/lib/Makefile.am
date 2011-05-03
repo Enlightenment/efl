@@ -15,7 +15,8 @@ eio_main.c \
 eio_single.c \
 eio_dir.c \
 eio_monitor.c \
-eio_poll.c
+eio_poll.c \
+eio_xattr.c
 
 if EIO_HAVE_INOTIFY
 libeio_la_SOURCES += eio_inotify.c

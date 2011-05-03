@@ -233,28 +233,6 @@ _eio_file_direct_notify(void *data, Ecore_Thread *thread __UNUSED__, void *msg_d
    eio_direct_info_free(info);
 }
 
-static void
-_eio_file_end(void *data, Ecore_Thread *thread __UNUSED__)
-{
-   Eio_File_Ls *async = data;
-
-   async->common.done_cb((void*) async->common.data, &async->common);
-
-   eina_stringshare_del(async->directory);
-   free(async);
-}
-
-static void
-_eio_file_error(void *data, Ecore_Thread *thread __UNUSED__)
-{
-   Eio_File_Ls *async = data;
-
-   eio_file_error(&async->common);
-
-   eina_stringshare_del(async->directory);
-   free(async);
-}
-
 #ifdef HAVE_XATTR
 static void
 _eio_file_copy_xattr(Ecore_Thread *thread, Eio_File_Progress *op, int in, int out)
@@ -265,7 +243,7 @@ _eio_file_copy_xattr(Ecore_Thread *thread, Eio_File_Progress *op, int in, int ou
 
    length = flistxattr(in, NULL, 0);
 
-   if (length > 0) return ;
+   if (length <= 0) return ;
 
    tmp = alloca(length);
    length = flistxattr(in, tmp, length);
@@ -652,6 +630,28 @@ eio_file_copy_do(Ecore_Thread *thread, Eio_File_Progress *copy)
    return EINA_FALSE;
 }
 
+void
+eio_async_end(void *data, Ecore_Thread *thread __UNUSED__)
+{
+   Eio_File_Ls *async = data;
+
+   async->common.done_cb((void*) async->common.data, &async->common);
+
+   eina_stringshare_del(async->directory);
+   free(async);
+}
+
+void
+eio_async_error(void *data, Ecore_Thread *thread __UNUSED__)
+{
+   Eio_File_Ls *async = data;
+
+   eio_file_error(&async->common);
+
+   eina_stringshare_del(async->directory);
+   free(async);
+}
+
 /**
  * @endcond
  */
@@ -708,8 +708,8 @@ eio_file_ls(const char *dir,
 			  data,
 			  _eio_file_heavy,
 			  _eio_file_notify,
-			  _eio_file_end,
-			  _eio_file_error))
+			  eio_async_end,
+			  eio_async_error))
      return NULL;
 
    return &async->ls.common;
@@ -756,8 +756,8 @@ eio_file_direct_ls(const char *dir,
 			  data,
 			  _eio_file_direct_heavy,
 			  _eio_file_direct_notify,
-			  _eio_file_end,
-			  _eio_file_error))
+			  eio_async_end,
+			  eio_async_error))
      return NULL;
 
    return &async->ls.common;
@@ -804,8 +804,8 @@ eio_file_stat_ls(const char *dir,
 			  data,
 			  _eio_file_stat_heavy,
 			  _eio_file_direct_notify,
-			  _eio_file_end,
-			  _eio_file_error))
+			  eio_async_end,
+			  eio_async_error))
      return NULL;
 
    return &async->ls.common;

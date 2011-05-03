@@ -223,4 +223,7 @@ void eio_monitor_fallback_del(Eio_Monitor *monitor);
 void _eio_monitor_send(Eio_Monitor *monitor, const char *filename, int event_code);
 void _eio_monitor_rename(Eio_Monitor *monitor, const char *newpath);
 
+void eio_async_end(void *data, Ecore_Thread *thread);
+void eio_async_error(void *data, Ecore_Thread *thread);
+
 #endif
