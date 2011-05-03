@@ -1007,10 +1007,10 @@ evas_object_image_preload(Evas_Object *obj, Eina_Bool cancel)
      {
         if (!o->preloading)
           {
+             o->preloading = 1;
              obj->layer->evas->engine.func->image_data_preload_request(obj->layer->evas->engine.data.output,
                                                                        o->engine_data,
                                                                        obj);
-             o->preloading = 1;
           }
      }
 }
@@ -3420,6 +3420,10 @@ Eina_Bool
 _evas_object_image_preloading_get(const Evas_Object *obj)
 {
    Evas_Object_Image *o = (Evas_Object_Image *)(obj->object_data);
+   if (!o) return EINA_FALSE;
+   MAGIC_CHECK(o, Evas_Object_Image, MAGIC_OBJ_IMAGE);
+   return EINA_FALSE;
+   MAGIC_CHECK_END();
    return o->preloading;
 }
 
