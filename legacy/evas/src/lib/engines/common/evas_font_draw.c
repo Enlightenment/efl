@@ -290,8 +290,8 @@ struct _Font_Char_Index
    int gl;
 };
 
-static FT_UInt
-_evas_common_get_char_index(RGBA_Font_Int* fi, int gl)
+EAPI FT_UInt
+evas_common_get_char_index(RGBA_Font_Int* fi, int gl)
 {
    Font_Char_Index result;
    //FT_UInt ret;
@@ -379,7 +379,7 @@ evas_common_font_glyph_search(RGBA_Font *fn, RGBA_Font_Int **fi_ret, int gl)
 	  }
         if (fi->src->ft.face)
 	  {
-	     index = _evas_common_get_char_index(fi, gl);
+	     index = evas_common_get_char_index(fi, gl);
 	     if (index != 0)
 	       {
 		  if (!fi->ft.size)

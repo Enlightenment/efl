@@ -233,9 +233,7 @@ evas_common_text_props_content_create(void *_fn, const Eina_Unicode *text,
         /* If we got a malformed index, show the replacement char instead */
         if (gl_itr->index == 0)
           {
-             /* FIXME: search inside the same fi. */
-             gl_itr->index =
-                evas_common_font_glyph_search(fn, &fi, REPLACEMENT_CHAR);
+             gl_itr->index = evas_common_get_char_index(fi, REPLACEMENT_CHAR);
              is_replacement = EINA_TRUE;
           }
         index = gl_itr->index;
@@ -328,10 +326,10 @@ evas_common_text_props_content_create(void *_fn, const Eina_Unicode *text,
         _gl = *text;
         if (_gl == 0) break;
 
-        index = evas_common_font_glyph_search(fn, &fi, _gl);
+        index = evas_common_get_char_index(fi, _gl);
         if (index == 0)
           {
-             index = evas_common_font_glyph_search(fn, &fi, REPLACEMENT_CHAR);
+             index = evas_common_get_char_index(fi, REPLACEMENT_CHAR);
           }
 
         /* Should we really set the size per fi? This fixes a bug for Korean
