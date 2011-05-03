@@ -75,6 +75,7 @@ struct _Evas_Object_Image
    unsigned char     dirty_pixels : 1;
    unsigned char     filled : 1;
    unsigned char     proxyrendering : 1;
+   unsigned char     preloading : 1;
 };
 
 /* private methods for image objects */
@@ -295,9 +296,13 @@ evas_object_image_file_set(Evas_Object *obj, const char *file, const char *key)
    o->prev.key = NULL;
    if (o->engine_data)
      {
-        obj->layer->evas->engine.func->image_data_preload_cancel(obj->layer->evas->engine.data.output,
-                                                                 o->engine_data,
-                                                                 obj);
+        if (o->preloading)
+          {
+             o->preloading = 0;
+             obj->layer->evas->engine.func->image_data_preload_cancel(obj->layer->evas->engine.data.output,
+                                                                      o->engine_data,
+                                                                      obj);
+          }
         obj->layer->evas->engine.func->image_free(obj->layer->evas->engine.data.output,
                                                   o->engine_data);
      }
@@ -694,6 +699,13 @@ evas_object_image_size_set(Evas_Object *obj, int w, int h)
    MAGIC_CHECK(o, Evas_Object_Image, MAGIC_OBJ_IMAGE);
    return;
    MAGIC_CHECK_END();
+   if ((o->preloading) && (o->engine_data))
+     {
+        o->preloading = 0;
+        obj->layer->evas->engine.func->image_data_preload_cancel(obj->layer->evas->engine.data.output,
+                                                                 o->engine_data,
+                                                                 obj);
+     }
    if (w < 1) w = 1;
    if (h < 1) h = 1;
    if (w > 32768) return;
@@ -806,6 +818,13 @@ evas_object_image_data_convert(Evas_Object *obj, Evas_Colorspace to_cspace)
    MAGIC_CHECK(o, Evas_Object_Image, MAGIC_OBJ_IMAGE);
    return NULL;
    MAGIC_CHECK_END();
+   if ((o->preloading) && (o->engine_data))
+     {
+        o->preloading = 0;
+        obj->layer->evas->engine.func->image_data_preload_cancel(obj->layer->evas->engine.data.output,
+                                                                 o->engine_data,
+                                                                 obj);
+     }
    if (!o->engine_data) return NULL;
    if (!o->cur.cspace == to_cspace) return NULL;
    data = NULL;
@@ -829,6 +848,13 @@ evas_object_image_data_set(Evas_Object *obj, void *data)
    MAGIC_CHECK(o, Evas_Object_Image, MAGIC_OBJ_IMAGE);
    return;
    MAGIC_CHECK_END();
+   if ((o->preloading) && (o->engine_data))
+     {
+        o->preloading = 0;
+        obj->layer->evas->engine.func->image_data_preload_cancel(obj->layer->evas->engine.data.output,
+                                                                 o->engine_data,
+                                                                 obj);
+     }
 #ifdef EVAS_FRAME_QUEUING
    if (o->engine_data)
      evas_common_pipe_op_image_flush(o->engine_data);
@@ -961,17 +987,32 @@ evas_object_image_preload(Evas_Object *obj, Eina_Bool cancel)
    MAGIC_CHECK_END();
    if (!o->engine_data)
      {
+        o->preloading = 1;
 	evas_object_inform_call_image_preloaded(obj);
 	return;
      }
+   // FIXME: if already busy preloading, then dont request again until
+   // preload done
    if (cancel)
-     obj->layer->evas->engine.func->image_data_preload_cancel(obj->layer->evas->engine.data.output,
-							      o->engine_data,
-							      obj);
+     {
+        if (o->preloading)
+          {
+             o->preloading = 0;
+             obj->layer->evas->engine.func->image_data_preload_cancel(obj->layer->evas->engine.data.output,
+                                                                      o->engine_data,
+                                                                      obj);
+          }
+     }
    else
-     obj->layer->evas->engine.func->image_data_preload_request(obj->layer->evas->engine.data.output,
-							       o->engine_data,
-							       obj);
+     {
+        if (!o->preloading)
+          {
+             obj->layer->evas->engine.func->image_data_preload_request(obj->layer->evas->engine.data.output,
+                                                                       o->engine_data,
+                                                                       obj);
+             o->preloading = 1;
+          }
+     }
 }
 
 EAPI void
@@ -987,6 +1028,13 @@ evas_object_image_data_copy_set(Evas_Object *obj, void *data)
    MAGIC_CHECK(o, Evas_Object_Image, MAGIC_OBJ_IMAGE);
    return;
    MAGIC_CHECK_END();
+   if ((o->preloading) && (o->engine_data))
+     {
+        o->preloading = 0;
+        obj->layer->evas->engine.func->image_data_preload_cancel(obj->layer->evas->engine.data.output,
+                                                                 o->engine_data,
+                                                                 obj);
+     }
    if ((o->cur.image.w <= 0) ||
        (o->cur.image.h <= 0)) return;
    if (o->engine_data)
@@ -1058,6 +1106,13 @@ evas_object_image_alpha_set(Evas_Object *obj, Eina_Bool has_alpha)
    MAGIC_CHECK(o, Evas_Object_Image, MAGIC_OBJ_IMAGE);
    return;
    MAGIC_CHECK_END();
+   if ((o->preloading) && (o->engine_data))
+     {
+        o->preloading = 0;
+        obj->layer->evas->engine.func->image_data_preload_cancel(obj->layer->evas->engine.data.output,
+                                                                 o->engine_data,
+                                                                 obj);
+     }
    if (((has_alpha) && (o->cur.has_alpha)) ||
        ((!has_alpha) && (!o->cur.has_alpha)))
      return;
@@ -1155,6 +1210,13 @@ evas_object_image_reload(Evas_Object *obj)
    MAGIC_CHECK(o, Evas_Object_Image, MAGIC_OBJ_IMAGE);
    return;
    MAGIC_CHECK_END();
+   if ((o->preloading) && (o->engine_data))
+     {
+        o->preloading = 0;
+        obj->layer->evas->engine.func->image_data_preload_cancel(obj->layer->evas->engine.data.output,
+                                                                 o->engine_data,
+                                                                 obj);
+     }
    if ((!o->cur.file) ||
        (o->pixels_checked_out > 0)) return;
    if (o->engine_data)
@@ -1247,6 +1309,13 @@ evas_object_image_pixels_import(Evas_Object *obj, Evas_Pixel_Import_Source *pixe
    return 0;
    MAGIC_CHECK_END();
 
+   if ((o->preloading) && (o->engine_data))
+     {
+        o->preloading = 0;
+        obj->layer->evas->engine.func->image_data_preload_cancel(obj->layer->evas->engine.data.output,
+                                                                 o->engine_data,
+                                                                 obj);
+     }
    if ((pixels->w != o->cur.image.w) || (pixels->h != o->cur.image.h)) return 0;
    switch (pixels->format)
      {
@@ -1548,6 +1617,13 @@ evas_object_image_colorspace_set(Evas_Object *obj, Evas_Colorspace cspace)
    return;
    MAGIC_CHECK_END();
 
+   if ((o->preloading) && (o->engine_data))
+     {
+        o->preloading = 0;
+        obj->layer->evas->engine.func->image_data_preload_cancel(obj->layer->evas->engine.data.output,
+                                                                 o->engine_data,
+                                                                 obj);
+     }
 #ifdef EVAS_FRAME_QUEUING
    if ((Evas_Colorspace)o->cur.cspace != cspace)
      {
@@ -1590,6 +1666,13 @@ evas_object_image_native_surface_set(Evas_Object *obj, Evas_Native_Surface *surf
    MAGIC_CHECK(o, Evas_Object_Image, MAGIC_OBJ_IMAGE);
    return;
    MAGIC_CHECK_END();
+   if ((o->preloading) && (o->engine_data))
+     {
+        o->preloading = 0;
+        obj->layer->evas->engine.func->image_data_preload_cancel(obj->layer->evas->engine.data.output,
+                                                                 o->engine_data,
+                                                                 obj);
+     }
    if (o->cur.source) _proxy_unset(obj);
    if (!obj->layer->evas->engine.func->image_native_set) return;
    if ((surf) &&
@@ -2163,9 +2246,13 @@ evas_object_image_unload(Evas_Object *obj, Eina_Bool dirty)
      }
    if (o->engine_data)
      {
-        obj->layer->evas->engine.func->image_data_preload_cancel(obj->layer->evas->engine.data.output,
-                                                                 o->engine_data,
-                                                                 obj);
+        if (o->preloading)
+          {
+             o->preloading = 0;
+             obj->layer->evas->engine.func->image_data_preload_cancel(obj->layer->evas->engine.data.output,
+                                                                      o->engine_data,
+                                                                      obj);
+          }
         obj->layer->evas->engine.func->image_free(obj->layer->evas->engine.data.output,
                                                   o->engine_data);
      }
@@ -2342,9 +2429,13 @@ evas_object_image_free(Evas_Object *obj)
    if (o->cur.source) _proxy_unset(obj);
    if (o->engine_data)
      {
-        obj->layer->evas->engine.func->image_data_preload_cancel(obj->layer->evas->engine.data.output,
-                                                                 o->engine_data,
-                                                                 obj);
+        if (o->preloading)
+          {
+             o->preloading = 0;
+             obj->layer->evas->engine.func->image_data_preload_cancel(obj->layer->evas->engine.data.output,
+                                                                      o->engine_data,
+                                                                      obj);
+          }
         obj->layer->evas->engine.func->image_free(obj->layer->evas->engine.data.output,
                                                   o->engine_data);
      }
@@ -3326,6 +3417,21 @@ evas_object_image_filled_resize_listener(void *data __UNUSED__, Evas *e __UNUSED
    o = obj->object_data;
    evas_object_geometry_get(obj, NULL, NULL, &w, &h);
    evas_object_image_fill_set(obj, 0, 0, w, h);
+}
+
+
+Eina_Bool
+_evas_object_image_preloading_get(const Evas_Object *obj)
+{
+   Evas_Object_Image *o = (Evas_Object_Image *)(obj->object_data);
+   return o->preloading;
+}
+
+void
+_evas_object_image_preloading_set(Evas_Object *obj, Eina_Bool preloading)
+{
+   Evas_Object_Image *o = (Evas_Object_Image *)(obj->object_data);
+   o->preloading = preloading;
 }
 
 /* vim:set ts=8 sw=3 sts=3 expandtab cino=>5n-2f0^-2{2(0W1st0 :*/
