@@ -6,10 +6,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: elementary\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2011-04-21 20:57+0900\n"
+"POT-Creation-Date: 2011-04-29 19:58-0700\n"
 "PO-Revision-Date: 2010-12-26 10:05+0200\n"
 "Last-Translator: Aharon Hillel <a.hillel@partner.samsung.com>\n"
 "Language-Team: General\n"
+"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -23,7 +24,7 @@ msgstr ""
 msgid "Home"
 msgstr ""
 
-#: src/lib/elc_fileselector.c:791 src/lib/elm_entry.c:917
+#: src/lib/elc_fileselector.c:791 src/lib/elm_entry.c:930
 msgid "Cancel"
 msgstr "בטל"
 
@@ -31,22 +32,22 @@ msgstr "בטל"
 msgid "OK"
 msgstr "אשר"
 
-#: src/lib/elm_config.c:1545
+#: src/lib/elm_config.c:1544
 msgid "default:LTR"
 msgstr "default:RTL"
 
-#: src/lib/elm_entry.c:911
+#: src/lib/elm_entry.c:924
 msgid "Copy"
 msgstr "העתק"
 
-#: src/lib/elm_entry.c:914
+#: src/lib/elm_entry.c:927
 msgid "Cut"
 msgstr "גזור"
 
-#: src/lib/elm_entry.c:928
+#: src/lib/elm_entry.c:941
 msgid "Select"
 msgstr "התחל בחירה"
 
-#: src/lib/elm_entry.c:934
+#: src/lib/elm_entry.c:947
 msgid "Paste"
 msgstr "הדבק"
