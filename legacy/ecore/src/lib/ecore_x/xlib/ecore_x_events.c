@@ -1338,7 +1338,7 @@ _ecore_x_event_handle_selection_request(XEvent *xevent)
 {
    Ecore_X_Event_Selection_Request *e;
    Ecore_X_Selection_Intern *sd;
-   void *data;
+   void *data = NULL;
    int len;
    int typesize;
 
@@ -1377,7 +1377,7 @@ _ecore_x_event_handle_selection_request(XEvent *xevent)
                                             &data, &len, &type, &typesize))
                 /* Refuse selection, conversion to requested target failed */
                 property = None;
-             else
+             else if (data)
                {
                   /* FIXME: This does not properly handle large data transfers */
                   ecore_x_window_prop_property_set(
