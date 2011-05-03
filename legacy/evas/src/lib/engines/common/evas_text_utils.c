@@ -188,16 +188,6 @@ evas_common_text_props_content_create(void *_fn, const Eina_Unicode *text,
    text_props->info = calloc(1, sizeof(Evas_Text_Props_Info));
 
    fi = fn->fonts->data;
-   /* evas_common_font_size_use(fn); */
-   evas_common_font_int_reload(fi);
-   if (fi->src->current_size != fi->size)
-     {
-        FTLOCK();
-        FT_Activate_Size(fi->ft.size);
-        FTUNLOCK();
-        fi->src->current_size = fi->size;
-     }
-
    /* Load the glyph according to the first letter of the script, pretty
     * bad, but will have to do */
      {
@@ -210,10 +200,20 @@ evas_common_text_props_content_create(void *_fn, const Eina_Unicode *text,
              base_char++)
            ;
         if (!*base_char && (base_char > text)) base_char--;
+
         evas_common_font_glyph_search(fn, &fi, *base_char);
      }
 
    text_props->font_instance = fi;
+
+   evas_common_font_int_reload(fi);
+   if (fi->src->current_size != fi->size)
+     {
+        FTLOCK();
+        FT_Activate_Size(fi->ft.size);
+        FTUNLOCK();
+        fi->src->current_size = fi->size;
+     }
 
 #ifdef OT_SUPPORT
    size_t char_index;
@@ -330,18 +330,6 @@ evas_common_text_props_content_create(void *_fn, const Eina_Unicode *text,
         if (index == 0)
           {
              index = evas_common_get_char_index(fi, REPLACEMENT_CHAR);
-          }
-
-        /* Should we really set the size per fi? This fixes a bug for Korean
-         * because for some reason different fis are chosen for different
-         * chars in some cases. But we should find the source of the problem
-         * and not just fix the symptom. */
-        if (fi->src->current_size != fi->size)
-          {
-             FTLOCK();
-             FT_Activate_Size(fi->ft.size);
-             FTUNLOCK();
-             fi->src->current_size = fi->size;
           }
 
         LKL(fi->ft_mutex);
