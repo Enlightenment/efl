@@ -2008,7 +2008,7 @@ _item_block_recalc(Item_Block *itb,
    itb->minh = minh;
    itb->changed = EINA_FALSE;
    /* force an evas norender to garbage collect deleted objects */
-   if (norender) evas_norender(evas_object_evas_get(itb->wd->obj));
+//   if (norender) evas_norender(evas_object_evas_get(itb->wd->obj));
    return showme;
 }
 
