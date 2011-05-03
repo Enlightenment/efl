@@ -462,8 +462,10 @@ EAPI Eina_Bool                evas_gl_native_surface_get (Evas_GL *evas_gl, Evas
  */
 EAPI Evas_GL_API             *evas_gl_api_get            (Evas_GL *evas_gl) EINA_ARG_NONNULL(1);
 
-#ifndef __gl_h_
-#define __gl_h_
+#if !defined(__gl_h_) && !defined(__gl2_h_)
+# define __gl_h_
+# define __gl2_h_
+   
 /*
  * This document is licensed under the SGI Free Software B License Version
  * 2.0. For details, see http://oss.sgi.com/projects/FreeB/ .
