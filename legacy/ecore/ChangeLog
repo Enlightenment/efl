@@ -162,3 +162,8 @@
         * Ecore_IMF: Added support for auto-capitalization and prediction
         control API's
 
+2011-05-03  Carsten Haitzler (The Rasterman)
+
+        * Fixed null pointer dereference in selection notification
+        handling in Ecore_X.
+
