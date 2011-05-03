@@ -1965,7 +1965,7 @@ static Eina_Bool
 _item_block_recalc(Item_Block *itb,
                    int         in,
                    int         qadd,
-                   int         norender)
+                   int         norender __UNUSED__)
 {
    const Eina_List *l;
    Elm_Genlist_Item *it;
