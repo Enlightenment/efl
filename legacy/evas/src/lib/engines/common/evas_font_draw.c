@@ -287,11 +287,11 @@ typedef struct _Font_Char_Index Font_Char_Index;
 struct _Font_Char_Index
 {
    FT_UInt index;
-   int gl;
+   Eina_Unicode gl;
 };
 
 EAPI FT_UInt
-evas_common_get_char_index(RGBA_Font_Int* fi, int gl)
+evas_common_get_char_index(RGBA_Font_Int* fi, Eina_Unicode gl)
 {
    Font_Char_Index result;
    //FT_UInt ret;
@@ -328,7 +328,7 @@ evas_common_get_char_index(RGBA_Font_Int* fi, int gl)
 }
 
 EAPI int
-evas_common_font_glyph_search(RGBA_Font *fn, RGBA_Font_Int **fi_ret, int gl)
+evas_common_font_glyph_search(RGBA_Font *fn, RGBA_Font_Int **fi_ret, Eina_Unicode gl)
 {
    Eina_List *l;
 
@@ -790,7 +790,7 @@ evas_font_word_prerender(RGBA_Draw_Context *dc, const Evas_Text_Props *text_prop
    unsigned int i,j;
    struct prword *w;
    int last_delta = 0;
-   int gl;
+   Eina_Unicode gl;
    struct cinfo *ci;
    unsigned int len = text_props->len;
    RGBA_Font_Int *fi = (RGBA_Font_Int *) text_props->font_instance;

@@ -18,9 +18,9 @@ EAPI int               evas_common_font_get_line_advance     (RGBA_Font *fn);
 /* draw */
 
 EAPI void              evas_common_font_draw                 (RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font *fn, int x, int y, const Evas_Text_Props *intl_props);
-EAPI int               evas_common_font_glyph_search         (RGBA_Font *fn, RGBA_Font_Int **fi_ret, int gl);
+EAPI int               evas_common_font_glyph_search         (RGBA_Font *fn, RGBA_Font_Int **fi_ret, Eina_Unicode gl);
 EAPI RGBA_Font_Glyph  *evas_common_font_int_cache_glyph_get  (RGBA_Font_Int *fi, FT_UInt index);
-EAPI FT_UInt           evas_common_get_char_index            (RGBA_Font_Int* fi, int gl);
+EAPI FT_UInt           evas_common_get_char_index            (RGBA_Font_Int* fi, Eina_Unicode gl);
 EAPI void              evas_common_font_draw_init            (void);
 
 /* load */
