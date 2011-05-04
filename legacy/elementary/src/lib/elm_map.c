@@ -92,8 +92,8 @@ typedef struct _Name_Dump Name_Dump;
 #define NOMINATIM_ATTR_LON "lon"
 #define NOMINATIM_ATTR_LAT "lat"
 
-#define PINCH_ZOOM_MIN 0.25
-#define PINCH_ZOOM_MAX 3.0
+#define PINCH_ZOOM_MIN 0.1
+#define PINCH_ZOOM_MAX 5.0
 
 // Map sources
 // Currently the size of a tile must be 256*256
@@ -1625,13 +1625,6 @@ _mouse_down(void *data, Evas *evas __UNUSED__, Evas_Object *obj, void *event_inf
    Event *ev0;
 
    if (!wd) return;
-   if (ev->button == 2)
-     {
-        if (wd->wheel_timer) ecore_timer_del(wd->wheel_timer);
-        wd->wheel_timer = ecore_timer_add(0.35, _wheel_timer_cb, data);
-        return;
-     }
-
    ev0 = get_event_object(data, 0);
    if (ev0) return;
    ev0 = create_event_object(data, obj, 0);
@@ -1894,13 +1887,13 @@ _mouse_wheel_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, voi
    if (ev->z > 0)
      {
         wd->zoom_method = ZOOM_METHOD_OUT;
-        wd->wheel_zoom -= 0.1;
+        wd->wheel_zoom -= 0.05;
         if (wd->wheel_zoom <= PINCH_ZOOM_MIN) wd->wheel_zoom = PINCH_ZOOM_MIN;
      }
    else
      {
         wd->zoom_method = ZOOM_METHOD_IN;
-        wd->wheel_zoom += 0.1;
+        wd->wheel_zoom += 0.2;
         if (wd->wheel_zoom >= PINCH_ZOOM_MAX) wd->wheel_zoom = PINCH_ZOOM_MAX;
      }
 
@@ -1909,6 +1902,9 @@ _mouse_wheel_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, voi
    wd->pinch.cy = y + half_h;
    if (wd->calc_job) ecore_job_del(wd->calc_job);
    wd->calc_job = ecore_job_add(_calc_job, wd);
+
+   if (wd->wheel_timer) ecore_timer_del(wd->wheel_timer);
+   wd->wheel_timer = ecore_timer_add(0.35, _wheel_timer_cb, data);
 }
 
 
