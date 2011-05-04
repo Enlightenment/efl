@@ -133,7 +133,6 @@ evas_event_objects_event_list(Evas *e, Evas_Object *stop, int x, int y)
    return in;
 }
 
-static Eina_List *evas_event_list_copy(Eina_List *list);
 static Eina_List *
 evas_event_list_copy(Eina_List *list)
 {
