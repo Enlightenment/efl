@@ -295,3 +295,10 @@
 
 	* Improved table layout for homogenous mode to handle not column
         or row multiple sized table better.
+        
+2011-05-04  Jiyoun Park
+
+	* OpenGL binary shader ability to cache (save and load back
+        later) to avoid re-compiling shaders on every time an app starts and
+        uses the GL engine. Faster startup time.
+
