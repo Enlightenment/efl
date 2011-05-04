@@ -290,3 +290,8 @@
 	* Textblock: Add "password" tag to turn on/off password in the middle
 	  of the textblok. Especially useful for implementing "show last char"
 	  for password entries.
+
+2011-05-04  Carsten Haitzler (The Rasterman)
+
+	* Improved table layout for homogenous mode to handle not column
+        or row multiple sized table better.
