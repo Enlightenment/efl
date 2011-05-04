@@ -676,8 +676,7 @@ eina_class_repack(Eina_Class *class)
   if (!eina_lock_take(&class->mutex))
     {
 #ifdef EINA_HAVE_DEBUG_THREADS
-  else
-    assert(pthread_equal(class->self, pthread_self()));
+      assert(pthread_equal(class->self, pthread_self()));
 #endif
     }
 

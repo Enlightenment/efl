@@ -58,7 +58,7 @@ static inline void eina_lock_free(Eina_Lock *mutex);
 static inline Eina_Lock_Result eina_lock_take(Eina_Lock *mutex);
 static inline Eina_Lock_Result eina_lock_take_try(Eina_Lock *mutex);
 static inline Eina_Lock_Result eina_lock_release(Eina_Lock *mutex);
-static inline void eina_lock_debug(Eina_Lock *mutex);
+static inline void eina_lock_debug(const Eina_Lock *mutex);
 
 /**
  * @}

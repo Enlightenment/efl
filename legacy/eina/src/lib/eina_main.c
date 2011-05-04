@@ -78,7 +78,9 @@ EAPI Eina_Bool _eina_threads_activated = EINA_FALSE;
 
 #ifdef EINA_HAVE_DEBUG_THREADS
 EAPI int _eina_threads_debug = 0;
-EAPI pthread_t _eina_main_loop = NULL;
+EAPI pthread_t _eina_main_loop;;
+EAPI pthread_mutex_t _eina_tracking_lock;
+EAPI Eina_Inlist *_eina_tracking = NULL;
 #endif
 
 static Eina_Lock _mutex;
@@ -205,6 +207,14 @@ eina_init(void)
         return 0;
      }
 
+#ifdef EINA_HAVE_DEBUG_THREADS
+   _eina_main_loop = pthread_self();
+   pthread_mutex_init(&_eina_tracking_lock, NULL);
+
+   if (getenv("EINA_DEBUG_THREADS"))
+     _eina_threads_debug = atoi(getenv("EINA_DEBUG_THREADS"));
+#endif
+
    itr = _eina_desc_setup;
    itr_end = itr + _eina_desc_setup_len;
    for (; itr < itr_end; itr++)
@@ -217,14 +227,7 @@ eina_init(void)
           }
      }
 
-
    eina_lock_new(&_mutex);
-#ifdef EINA_HAVE_DEBUG_THREADS
-   _eina_main_loop = pthread_self();
-
-   if (getenv("EINA_DEBUG_THREADS"))
-     _eina_threads_debug = atoi(getenv("EINA_DEBUG_THREADS");
-#endif
 
    _eina_main_count = 1;
    return 1;
@@ -237,6 +240,10 @@ eina_shutdown(void)
    if (EINA_UNLIKELY(_eina_main_count == 0))
      {
         _eina_shutdown_from_desc(_eina_desc_setup + _eina_desc_setup_len);
+
+#ifdef EINA_HAVE_DEBUG_THREADS
+	pthread_mutex_destroy(&_eina_tracking_lock);
+#endif
 
         eina_lock_free(&_mutex);
      }
@@ -284,8 +291,25 @@ eina_threads_shutdown(void)
    int ret;
 
 #ifdef EINA_HAVE_DEBUG_THREADS
+   const Eina_Lock *lk;
+
    assert(pthread_equal(_eina_main_loop, pthread_self()));
    assert(_eina_main_thread_count > 0);
+
+   pthread_mutex_lock(&_eina_tracking_lock);
+   if (_eina_tracking)
+     {
+       fprintf(stderr, "*************************\n");
+       fprintf(stderr, "* The IMPOSSIBLE HAPPEN *\n");
+       fprintf(stderr, "* LOCK STILL TAKEN :    *\n");
+       fprintf(stderr, "*************************\n");
+       EINA_INLIST_FOREACH(_eina_tracking, lk)
+	 eina_lock_debug(lk);
+       fprintf(stderr, "*************************\n");
+       abort();
+     }
+   pthread_mutex_unlock(&_eina_tracking_lock);
+
 #endif
 
    eina_lock_take(&_mutex);
