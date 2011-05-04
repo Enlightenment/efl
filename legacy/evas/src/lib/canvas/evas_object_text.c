@@ -43,7 +43,6 @@ struct _Evas_Object_Text_Item
 {
    EINA_INLIST;
 
-   Eina_Unicode        *text; /*The shaped text */
    size_t               text_pos;
    size_t               visual_pos;
    Evas_Text_Props      text_props;
@@ -109,7 +108,7 @@ _evas_object_text_char_coords_get(const Evas_Object *obj,
    EINA_INLIST_FOREACH(EINA_INLIST_GET(o->items), it)
      {
         if ((it->text_pos <= pos) &&
-              (pos < it->text_pos + eina_unicode_strlen(it->text)))
+              (pos < (it->text_pos + it->text_props.text_len)))
           {
              return ENFN->font_char_coords_get(ENDT, o->engine_data,
                    &it->text_props, pos - it->text_pos, x, y, w, h);
@@ -122,10 +121,6 @@ static void
 _evas_object_text_item_clean(Evas_Object_Text_Item *it)
 {
    evas_common_text_props_content_unref(&it->text_props);
-   if (it->text)
-     {
-        free(it->text);
-     }
 }
 
 static void
@@ -468,19 +463,18 @@ _evas_object_text_item_new(Evas_Object *obj, Evas_Object_Text *o,
       size_t pos, size_t visual_pos, size_t len)
 {
    Evas_Object_Text_Item *it;
+   const Eina_Unicode *text = str + pos;
 
    it = calloc(1, sizeof(Evas_Object_Text_Item));
-   it->text = calloc(sizeof(Eina_Unicode), len + 1);
    it->text_pos = pos;
    it->visual_pos = visual_pos;
-   eina_unicode_strncpy(it->text, str + pos, len);
    evas_common_text_props_bidi_set(&it->text_props, o->bidi_par_props,
          it->text_pos);
-   evas_common_text_props_script_set(&it->text_props, it->text, len);
+   evas_common_text_props_script_set(&it->text_props, text, len);
    if (o->engine_data)
      {
         ENFN->font_text_props_info_create(ENDT,
-              o->engine_data, it->text, &it->text_props,
+              o->engine_data, text, &it->text_props,
               o->bidi_par_props, it->text_pos, len);
         ENFN->font_string_size_get(ENDT,
               o->engine_data,
@@ -1653,7 +1647,7 @@ evas_object_text_render(Evas_Object *obj, void *output, void *context, void *sur
 				(((int)object->sub.col.a) * (amul)) / 255);
 
 #define DRAW_TEXT(ox, oy) \
-   if ((o->engine_data) && (it->text)) \
+   if ((o->engine_data) && (it->text_props.len > 0)) \
      ENFN->font_draw(output, \
 		     context, \
 		     surface, \
