@@ -3,6 +3,7 @@ MAINTAINERCLEANFILES = Makefile.in
 
 AM_CPPFLAGS = \
 -DELM_INTERNAL_API_ARGESFSDFEFC=1 \
+-DMODULES_PATH=\"$(libdir)/elementary/modules\" \
 -I. \
 -I$(top_builddir) \
 -I$(top_srcdir) \

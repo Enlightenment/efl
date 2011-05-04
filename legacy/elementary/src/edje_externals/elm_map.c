@@ -14,9 +14,7 @@ typedef struct _Elm_Params_Map
 static const char *zoom_choices[] = {"manual",	"auto fit", "auto fill", NULL};
 
 static const char *source_choices[] =
-  {"Mapnik", "Osmarender", "Cycle Map", "Maplint",
-   "Custom 1", "Custom 2", "Custom 3", "Custom 4",
-   "Custom 5", "Custom 6", "Custom 7"};
+  {"Mapnik", "Osmarender", "CycleMap", "Maplint"};
 
 static Elm_Map_Zoom_Mode
 _zoom_mode_get(const char *map_src)
@@ -32,20 +30,6 @@ _zoom_mode_get(const char *map_src)
    return ELM_MAP_ZOOM_MODE_LAST;
 }
 
-static Elm_Map_Sources
-_map_source_get(const char *map_src)
-{
-   unsigned int i;
-
-   assert(sizeof(source_choices)/sizeof(source_choices[0]) ==
-	  ELM_MAP_SOURCE_LAST);
-
-   for (i = 0; i < sizeof(source_choices); i++)
-     if (!strcmp(map_src, source_choices[i])) return i;
-
-   return ELM_MAP_SOURCE_LAST;
-}
-
 static void
 external_map_state_set(void *data __UNUSED__, Evas_Object *obj, const void *from_params, const void *to_params, float pos __UNUSED__)
 {
@@ -57,9 +41,7 @@ external_map_state_set(void *data __UNUSED__, Evas_Object *obj, const void *from
 
    if (p->map_source)
      {
-	Elm_Map_Sources set = _map_source_get(p->map_source);
-	if (set == ELM_MAP_SOURCE_LAST) return;
-	elm_map_source_set(obj, set);
+	elm_map_source_name_set(obj, p->map_source);
      }
    if (p->zoom_mode)
      {
@@ -77,9 +59,7 @@ external_map_param_set(void *data __UNUSED__, Evas_Object *obj, const Edje_Exter
      {
 	if (param->type == EDJE_EXTERNAL_PARAM_TYPE_CHOICE)
 	  {
-	     Elm_Map_Sources set = _map_source_get(param->s);
-	     if (set == ELM_MAP_SOURCE_LAST) return EINA_FALSE;
-	     elm_map_source_set(obj, set);
+	     elm_map_source_name_set(obj, param->s);
 	     return EINA_TRUE;
 	  }
      }
@@ -115,9 +95,8 @@ external_map_param_get(void *data __UNUSED__, const Evas_Object *obj, Edje_Exter
      {
 	if (param->type == EDJE_EXTERNAL_PARAM_TYPE_CHOICE)
 	  {
-	     Elm_Map_Sources set = elm_map_source_get(obj);
-	     if (set == ELM_MAP_SOURCE_LAST) return EINA_FALSE;
-	     param->s = source_choices[set];
+	     const char *set = elm_map_source_name_get(obj);
+	     param->s = set;
 	     return EINA_TRUE;
 	  }
      }
@@ -195,8 +174,7 @@ external_map_params_free(void *params)
 static Edje_External_Param_Info external_map_params[] =
   {
     DEFINE_EXTERNAL_COMMON_PARAMS,
-    EDJE_EXTERNAL_PARAM_INFO_CHOICE_FULL("map source", "Mapnik",
-					 source_choices),
+    EDJE_EXTERNAL_PARAM_INFO_CHOICE_FULL("map source", "Mapnik", source_choices),
     EDJE_EXTERNAL_PARAM_INFO_CHOICE_FULL("zoom mode", "manual", zoom_choices),
     EDJE_EXTERNAL_PARAM_INFO_DOUBLE("zoom level"),
     EDJE_EXTERNAL_PARAM_INFO_SENTINEL

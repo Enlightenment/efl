@@ -22,6 +22,7 @@ static Elm_Map_Marker *markers[MARKER_MAX];
 static Elm_Map_Marker *route_from, *route_to;
 static Elm_Map_Route *route;
 static Elm_Map_Name *name;
+static const char **source_names = NULL;
 
 Marker_Data data1 = {PACKAGE_DATA_DIR"/images/logo.png"};
 Marker_Data data2 = {PACKAGE_DATA_DIR"/images/logo_small.png"};
@@ -344,33 +345,12 @@ my_bt_zoom_fill(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUS
 }
 
 static void
-my_bt_source_mapnik(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+my_bt_source(void *data, Evas_Object *obj __UNUSED__, void *event_info)
 {
-   elm_map_source_set(data, ELM_MAP_SOURCE_MAPNIK);
-}
+   Elm_Flipselector_Item *it;
 
-static void
-my_bt_source_osmarender(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
-{
-   elm_map_source_set(data, ELM_MAP_SOURCE_OSMARENDER);
-}
-
-static void
-my_bt_source_cyclemap(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
-{
-   elm_map_source_set(data, ELM_MAP_SOURCE_CYCLEMAP);
-}
-
-static void
-my_bt_source_maplint(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
-{
-   elm_map_source_set(data, ELM_MAP_SOURCE_MAPLINT);
-}
-
-static void
-my_bt_source_module(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
-{
-   elm_map_source_set(data, ELM_MAP_SOURCE_MODULE);
+   it = event_info;
+   elm_map_source_name_set(data,  elm_flipselector_item_label_get(it));
 }
 
 static void
@@ -519,6 +499,7 @@ void
 test_map(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *win, *bg, *map, *tb2, *bt, *bx, *en;
+   int idx = 0;
 
    win = elm_win_add(NULL, "map", ELM_WIN_BASIC);
    elm_win_title_set(win, "Map");
@@ -532,7 +513,14 @@ test_map(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __
    map = elm_map_add(win);
    if (map)
      {
-        srand( time(NULL) );
+        srand(time(NULL));
+
+        source_names = elm_map_source_names_get(map);
+
+        if (!source_names) return;
+        printf("map sources [ ");
+        for (idx = 0; source_names[idx] ; idx++) printf("%s ", source_names[idx]);
+        printf("]\n");
 
         evas_object_size_hint_weight_set(map, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
         elm_win_resize_object_add(win, map);
@@ -763,43 +751,10 @@ test_map(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __
         evas_object_size_hint_align_set(bx, 1.0, 0.9);
         elm_table_pack(tb2, bx, 2, 2, 1, 1);
 
-        bt = elm_button_add(win);
-        elm_button_label_set(bt, "Mapnik");
-        evas_object_smart_callback_add(bt, "clicked", my_bt_source_mapnik, map);
+        bt = elm_flipselector_add(win);
         evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-        evas_object_size_hint_align_set(bt, 1.0, 0.9);
-        evas_object_show(bt);
-        elm_box_pack_end(bx, bt);
-
-        bt = elm_button_add(win);
-        elm_button_label_set(bt, "Osmarender");
-        evas_object_smart_callback_add(bt, "clicked", my_bt_source_osmarender, map);
-        evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-        evas_object_size_hint_align_set(bt, 1.0, 0.9);
-        evas_object_show(bt);
-        elm_box_pack_end(bx, bt);
-
-        bt = elm_button_add(win);
-        elm_button_label_set(bt, "Cycle Map");
-        evas_object_smart_callback_add(bt, "clicked", my_bt_source_cyclemap, map);
-        evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-        evas_object_size_hint_align_set(bt, 1.0, 0.9);
-        evas_object_show(bt);
-        elm_box_pack_end(bx, bt);
-
-        bt = elm_button_add(win);
-        elm_button_label_set(bt, "Maplint");
-        evas_object_smart_callback_add(bt, "clicked", my_bt_source_maplint, map);
-        evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-        evas_object_size_hint_align_set(bt, 1.0, 0.9);
-        evas_object_show(bt);
-        elm_box_pack_end(bx, bt);
-
-        bt = elm_button_add(win);
-        elm_button_label_set(bt, "Module");
-        evas_object_smart_callback_add(bt, "clicked", my_bt_source_module, map);
-        evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-        evas_object_size_hint_align_set(bt, 1.0, 0.9);
+        for (idx = 0; source_names[idx] ; idx++)
+          elm_flipselector_item_append(bt, source_names[idx], my_bt_source, map);
         evas_object_show(bt);
         elm_box_pack_end(bx, bt);
         //
