@@ -729,6 +729,11 @@ evas_gl_common_context_new(void)
         GETENVOPT("EVAS_GL_ATLAS_MAX_W", atlas.max_w, 0, MAX_ATLAS_W);
         GETENVOPT("EVAS_GL_ATLAS_MAX_H", atlas.max_h, 0, MAX_ATLAS_H);
         GETENVOPT("EVAS_GL_ATLAS_SLOT_SIZE", atlas.slot_size, MIN_ATLAS_SLOT, MAX_ATLAS_SLOT);
+        s = (const char *)getenv("EVAS_GL_GET_PROGRAM_BINARY");
+        if (s)
+          {
+             if (atoi(s) == 0) shared->info.bin_program = 0;
+          }
 
         if (getenv("EVAS_GL_INFO"))
            fprintf(stderr,
@@ -743,6 +748,7 @@ evas_gl_common_context_new(void)
                    "\n"
                    "(can set EVAS_GL_VERTEX_MAX  EVAS_GL_NO_MAP_IMAGE_SEC  EVAS_GL_INFO  EVAS_GL_MEMINFO )\n"
                    "\n"
+                   "EVAS_GL_GET_PROGRAM_BINARY: %i\n"
                    "EVAS_GL_CUTOUT_MAX: %i\n"
                    "EVAS_GL_PIPES_MAX: %i\n"
                    "EVAS_GL_ATLAS_ALLOC_SIZE: %i\n"
@@ -759,6 +765,7 @@ evas_gl_common_context_new(void)
                    (int)shared->info.sec_image_map,
                    (int)shared->info.max_vertex_elements,
                    
+                   (int)shared->info.bin_program,
                    (int)shared->info.tune.cutout.max,
                    (int)shared->info.tune.pipes.max,
                    (int)shared->info.tune.atlas.max_alloc_size,

@@ -663,7 +663,6 @@ _evas_gl_shader_file_exists(const char *file)
    struct stat st;
    if (!file) return EINA_FALSE;
    if (stat(file, &st) < 0) return EINA_FALSE;
-
    return EINA_TRUE;
 }
 
@@ -775,8 +774,9 @@ _evas_gl_common_shader_program_binary_init(Evas_GL_Program *p,
    p->prog = glCreateProgram();
 
 #if 0
-   // TOOD: invalid rendering error occurs when attempting to use a glProgramBinary.
-   // in order to render correctly we should create a dummy vertex shader.
+   // TODO: invalid rendering error occurs when attempting to use a 
+   // glProgramBinary. in order to render correctly we should create a dummy 
+   // vertex shader.
    p->vert = glCreateShader(GL_VERTEX_SHADER);
    glAttachShader(p->prog, p->vert);
    p->frag = glCreateShader(GL_FRAGMENT_SHADER);
@@ -1044,7 +1044,6 @@ _evas_gl_common_shader_binary_init(Evas_GL_Shared *shared)
 {
    /* check eet */
    Eet_File *et = NULL;
-
    char bin_dir_path[PATH_MAX];
    char bin_file_path[PATH_MAX];
 
@@ -1183,12 +1182,12 @@ int
 evas_gl_common_shader_program_init(Evas_GL_Shared *shared)
 {
    // gl support binary shader and get env of binary shader path
-   if (shared->info.bin_program && _evas_gl_common_shader_binary_init(shared)) return 1;
+   if (shared->info.bin_program && 
+       _evas_gl_common_shader_binary_init(shared)) return 1;
    /* compile all shader.*/
    if (!_evas_gl_common_shader_source_init(shared)) return 0;
    /* sucess compile all shader. if gl support binary shader, we need to save */
    if (shared->info.bin_program) _evas_gl_common_shader_binary_save(shared);
-
    return 1;
 }
 
