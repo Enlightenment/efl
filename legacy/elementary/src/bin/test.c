@@ -69,6 +69,7 @@ void test_genlist8(void *data, Evas_Object *obj, void *event_info);
 void test_genlist9(void *data, Evas_Object *obj, void *event_info);
 void test_genlist10(void *data, Evas_Object *obj, void *event_info);
 void test_table(void *data, Evas_Object *obj, void *event_info);
+void test_table2(void *data, Evas_Object *obj, void *event_info);
 void test_gengrid(void *data, Evas_Object *obj, void *event_info);
 void test_gengrid2(void *data, Evas_Object *obj, void *event_info);
 void test_pager(void *data, Evas_Object *obj, void *event_info);
@@ -282,6 +283,7 @@ my_win_main(char *autorun)
    ADD_TEST("File Selector Entry", test_fileselector_entry);
    ADD_TEST("Toggles", test_toggle);
    ADD_TEST("Table", test_table);
+   ADD_TEST("Table Homogeneous", test_table2); 
    ADD_TEST("Clock", test_clock);
    ADD_TEST("Clock 2", test_clock2);
    ADD_TEST("Layout", test_layout);
