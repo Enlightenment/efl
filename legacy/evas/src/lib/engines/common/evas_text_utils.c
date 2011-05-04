@@ -289,9 +289,12 @@ evas_common_text_props_content_create(void *_fn, const Eina_Unicode *text,
    Evas_Coord pen_x = 0;
    int adv_d, i;
 #if !defined(OT_SUPPORT) && defined(BIDI_SUPPORT)
-   Eina_Unicode *base_str;
-   text = base_str = eina_unicode_strndup(text, len);
-   evas_bidi_shape_string(base_str, par_props, par_pos, len);
+   Eina_Unicode *base_str = NULL;
+   if (text_props->bidi.dir == EVAS_BIDI_DIRECTION_RTL)
+     {
+        text = base_str = eina_unicode_strndup(text, len);
+        evas_bidi_shape_string(base_str, par_props, par_pos, len);
+     }
 #else
    (void) par_props;
    (void) par_pos;
@@ -375,7 +378,8 @@ evas_common_text_props_content_create(void *_fn, const Eina_Unicode *text,
      }
    text_props->len = len;
 # if !defined(OT_SUPPORT) && defined(BIDI_SUPPORT)
-   free(base_str);
+   if (base_str)
+      free(base_str);
 # endif
 #endif
    text_props->text_len = len;
