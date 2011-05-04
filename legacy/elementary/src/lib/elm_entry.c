@@ -598,7 +598,7 @@ _elm_win_recalc_job(void *data)
      }
    evas_object_size_hint_min_set(data, minw, minh);
    if (wd->single_line)
-     evas_object_size_hint_max_set(data, minw, minh);
+     evas_object_size_hint_max_set(data, -1, minh);
 
    if (wd->deferred_cur)
      {
