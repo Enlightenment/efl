@@ -491,11 +491,12 @@ _evas_object_table_calculate_layout_homogeneous_sizes(const Evas_Object *o, cons
 static void
 _evas_object_table_calculate_layout_homogeneous(Evas_Object *o, Evas_Object_Table_Data *priv)
 {
-   Evas_Coord x = 0, y = 0, w = 0, h = 0, ww, hh;
+   Evas_Coord x = 0, y = 0, w = 0, h = 0, ww, hh, cellw = 0, cellh = 0;
    Eina_List *l;
    Evas_Object_Table_Option *opt;
    
-   evas_object_geometry_get(o, &x, &y, &w, &h);
+   _evas_object_table_calculate_layout_homogeneous_sizes
+     (o, priv, &x, &y, &w, &h, &cellw, &cellh);
    
    ww = w - ((priv->size.cols - 1) * priv->pad.h);
    hh = h - ((priv->size.rows - 1) * priv->pad.v);
