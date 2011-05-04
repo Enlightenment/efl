@@ -165,40 +165,52 @@ elm_table_add(Evas_Object *parent)
 }
 
 /**
- * Set the homogenous layout in the table
+ * Set the homogeneous layout in the table
  *
  * @param obj The layout object
- * @param homogenous A boolean to set (or no) layout homogenous
+ * @param homogeneous A boolean to set (or no) layout homogeneous
  * in the table
- * (1 = homogenous,  0 = no homogenous)
+ * (1 = homogeneous,  0 = no homogeneous)
  *
  * @ingroup Table
  */
 EAPI void
-elm_table_homogenous_set(Evas_Object *obj, Eina_Bool homogenous)
+elm_table_homogeneous_set(Evas_Object *obj, Eina_Bool homogeneous)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
-   evas_object_table_homogeneous_set(wd->tbl, homogenous);
+   evas_object_table_homogeneous_set(wd->tbl, homogeneous);
+}
+
+EINA_DEPRECATED EAPI void
+elm_table_homogenous_set(Evas_Object *obj, Eina_Bool homogenous)
+{
+   elm_table_homogeneous_set(obj, homogenous);
 }
 
 /**
- * Get the current table homogenous mode.
+ * Get the current table homogeneous mode.
  *
  * @param obj The table object
- * @return a boolean to set (or no) layout homogenous in the table
- * (1 = homogenous,  0 = no homogenous)
+ * @return a boolean to set (or no) layout homogeneous in the table
+ * (1 = homogeneous,  0 = no homogeneous)
  *
  * @ingroup Table
  */
 EAPI Eina_Bool
-elm_table_homogenous_get(const Evas_Object *obj)
+elm_table_homogeneous_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return EINA_FALSE;
    return evas_object_table_homogeneous_get(wd->tbl);
+}
+
+EINA_DEPRECATED EAPI Eina_Bool
+elm_table_homogenous_get(const Evas_Object *obj)
+{
+   return elm_table_homogeneous_get(obj);
 }
 
 /**

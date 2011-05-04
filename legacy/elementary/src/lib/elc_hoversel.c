@@ -194,7 +194,7 @@ _activate(Evas_Object *obj)
 
    bx = elm_box_add(wd->hover);
    elm_widget_mirrored_automatic_set(bx, EINA_FALSE);
-   elm_box_homogenous_set(bx, 1);
+   elm_box_homogeneous_set(bx, 1);
 
    elm_box_horizontal_set(bx, wd->horizontal);
 

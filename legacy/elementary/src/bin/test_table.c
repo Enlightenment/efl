@@ -82,7 +82,7 @@ test_table2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    evas_object_show(bg);
 
    tb = elm_table_add(win);
-   elm_table_homogenous_set(tb, EINA_TRUE);
+   elm_table_homogeneous_set(tb, EINA_TRUE);
    elm_win_resize_object_add(win, tb);
    evas_object_size_hint_weight_set(tb, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_show(tb);

@@ -2213,7 +2213,7 @@ _status_config_profiles(Evas_Object *win,
    evas_object_size_hint_weight_set(fr_bx1, EVAS_HINT_EXPAND,
                                     EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(fr_bx1, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   elm_box_homogenous_set(fr_bx1, EINA_TRUE);
+   elm_box_homogeneous_set(fr_bx1, EINA_TRUE);
    evas_object_show(fr_bx1);
 
    fr_bx2 = elm_box_add(win);
@@ -2855,7 +2855,7 @@ _status_config_full(Evas_Object *win,
 
    tb = elm_toolbar_add(win);
    elm_toolbar_menu_parent_set(tb, win);
-   elm_toolbar_homogenous_set(tb, 0);
+   elm_toolbar_homogeneous_set(tb, 0);
    evas_object_size_hint_weight_set(tb, 1.0, 0.0);
    evas_object_size_hint_align_set(tb, EVAS_HINT_FILL, EVAS_HINT_FILL);
 

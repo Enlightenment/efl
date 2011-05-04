@@ -706,8 +706,10 @@ extern "C" {
    EAPI Evas_Object        *elm_box_add(Evas_Object *parent) EINA_ARG_NONNULL(1);
    EAPI void                elm_box_horizontal_set(Evas_Object *obj, Eina_Bool horizontal) EINA_ARG_NONNULL(1);
    EAPI Eina_Bool           elm_box_horizontal_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
-   EAPI void                elm_box_homogenous_set(Evas_Object *obj, Eina_Bool homogenous) EINA_ARG_NONNULL(1);
-   EAPI Eina_Bool           elm_box_homogenous_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+   EAPI void                elm_box_homogeneous_set(Evas_Object *obj, Eina_Bool homogeneous) EINA_ARG_NONNULL(1);
+   EAPI Eina_Bool           elm_box_homogeneous_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+   EINA_DEPRECATED EAPI void elm_box_homogenous_set(Evas_Object *obj, Eina_Bool homogenous) EINA_ARG_NONNULL(1);
+   EINA_DEPRECATED EAPI Eina_Bool elm_box_homogenous_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
    EAPI void                elm_box_pack_start(Evas_Object *obj, Evas_Object *subobj) EINA_ARG_NONNULL(1);
    EAPI void                elm_box_pack_end(Evas_Object *obj, Evas_Object *subobj) EINA_ARG_NONNULL(1);
    EAPI void                elm_box_pack_before(Evas_Object *obj, Evas_Object *subobj, Evas_Object *before) EINA_ARG_NONNULL(1);
@@ -912,8 +914,10 @@ extern "C" {
 
    /* table */
    EAPI Evas_Object *elm_table_add(Evas_Object *parent) EINA_ARG_NONNULL(1);
-   EAPI void         elm_table_homogenous_set(Evas_Object *obj, Eina_Bool homogenous) EINA_ARG_NONNULL(1);
-   EAPI Eina_Bool    elm_table_homogenous_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+   EAPI void         elm_table_homogeneous_set(Evas_Object *obj, Eina_Bool homogeneous) EINA_ARG_NONNULL(1);
+   EAPI Eina_Bool    elm_table_homogeneous_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+   EINA_DEPRECATED EAPI void elm_table_homogenous_set(Evas_Object *obj, Eina_Bool homogenous) EINA_ARG_NONNULL(1);
+   EINA_DEPRECATED EAPI Eina_Bool elm_table_homogenous_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
    EAPI void         elm_table_padding_set(Evas_Object *obj, Evas_Coord horizontal, Evas_Coord vertical) EINA_ARG_NONNULL(1);
    EAPI void         elm_table_padding_get(const Evas_Object *obj, Evas_Coord *horizontal, Evas_Coord *vertical) EINA_ARG_NONNULL(1);
    EAPI void         elm_table_pack(Evas_Object *obj, Evas_Object *subobj, int x, int y, int w, int h) EINA_ARG_NONNULL(1);
@@ -1526,8 +1530,10 @@ extern "C" {
    EAPI Eina_Bool               elm_toolbar_item_separator_get(const Elm_Toolbar_Item *item) EINA_ARG_NONNULL(1);
    EAPI void                    elm_toolbar_mode_shrink_set(Evas_Object *obj, Elm_Toolbar_Shrink_Mode shrink_mode) EINA_ARG_NONNULL(1);
    EAPI Elm_Toolbar_Shrink_Mode elm_toolbar_mode_shrink_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
-   EAPI void                    elm_toolbar_homogenous_set(Evas_Object *obj, Eina_Bool homogenous) EINA_ARG_NONNULL(1);
-   EAPI Eina_Bool               elm_toolbar_homogenous_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+   EAPI void                    elm_toolbar_homogeneous_set(Evas_Object *obj, Eina_Bool homogeneous) EINA_ARG_NONNULL(1);
+   EAPI Eina_Bool               elm_toolbar_homogeneous_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+   EINA_DEPRECATED EAPI void    elm_toolbar_homogenous_set(Evas_Object *obj, Eina_Bool homogenous) EINA_ARG_NONNULL(1);
+   EINA_DEPRECATED EAPI Eina_Bool elm_toolbar_homogenous_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
    EAPI void                    elm_toolbar_menu_parent_set(Evas_Object *obj, Evas_Object *parent) EINA_ARG_NONNULL(1);
    EAPI Evas_Object            *elm_toolbar_menu_parent_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
    EAPI void                    elm_toolbar_align_set(Evas_Object *obj, double align) EINA_ARG_NONNULL(1);

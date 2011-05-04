@@ -432,7 +432,7 @@ test_list2(void        *data __UNUSED__,
 
    bx2 = elm_box_add(win);
    elm_box_horizontal_set(bx2, EINA_TRUE);
-   elm_box_homogenous_set(bx2, EINA_TRUE);
+   elm_box_homogeneous_set(bx2, EINA_TRUE);
    evas_object_size_hint_weight_set(bx2, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(bx2, EVAS_HINT_FILL, EVAS_HINT_FILL);
 
@@ -605,7 +605,7 @@ test_list4_swipe(void        *data,
 
    box = elm_box_add(info->win);
    elm_box_horizontal_set(box, EINA_FALSE);
-   elm_box_homogenous_set(box, EINA_FALSE);
+   elm_box_homogeneous_set(box, EINA_FALSE);
    evas_object_size_hint_weight_set(box, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(box, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_show(box);

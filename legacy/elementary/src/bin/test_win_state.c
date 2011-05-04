@@ -136,7 +136,7 @@ test_win_state(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
 
    bx2 = elm_box_add(win);
    elm_box_horizontal_set(bx2, EINA_TRUE);
-   elm_box_homogenous_set(bx2, EINA_TRUE);
+   elm_box_homogeneous_set(bx2, EINA_TRUE);
    evas_object_size_hint_weight_set(bx2, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_fill_set(bx2, EVAS_HINT_FILL, EVAS_HINT_FILL);
 
@@ -161,7 +161,7 @@ test_win_state(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
 
    bx2 = elm_box_add(win);
    elm_box_horizontal_set(bx2, EINA_TRUE);
-   elm_box_homogenous_set(bx2, EINA_TRUE);
+   elm_box_homogeneous_set(bx2, EINA_TRUE);
    evas_object_size_hint_weight_set(bx2, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_fill_set(bx2, EVAS_HINT_FILL, EVAS_HINT_FILL);
 
@@ -191,7 +191,7 @@ test_win_state(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
 
    bx2 = elm_box_add(win);
    elm_box_horizontal_set(bx2, EINA_TRUE);
-   elm_box_homogenous_set(bx2, EINA_TRUE);
+   elm_box_homogeneous_set(bx2, EINA_TRUE);
    evas_object_size_hint_weight_set(bx2, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_fill_set(bx2, EVAS_HINT_FILL, EVAS_HINT_FILL);
 
@@ -294,7 +294,7 @@ test_win_state2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_
 
    bx2 = elm_box_add(win);
    elm_box_horizontal_set(bx2, EINA_TRUE);
-   elm_box_homogenous_set(bx2, EINA_TRUE);
+   elm_box_homogeneous_set(bx2, EINA_TRUE);
    evas_object_size_hint_weight_set(bx2, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_fill_set(bx2, EVAS_HINT_FILL, EVAS_HINT_FILL);
 
@@ -324,7 +324,7 @@ test_win_state2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_
 
    bx2 = elm_box_add(win);
    elm_box_horizontal_set(bx2, EINA_TRUE);
-   elm_box_homogenous_set(bx2, EINA_TRUE);
+   elm_box_homogeneous_set(bx2, EINA_TRUE);
    evas_object_size_hint_weight_set(bx2, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_fill_set(bx2, EVAS_HINT_FILL, EVAS_HINT_FILL);
 

@@ -1767,26 +1767,32 @@ elm_toolbar_mode_shrink_get(const Evas_Object *obj)
 }
 
 /**
- * Set the homogenous mode of toolbar @p obj.
+ * Set the homogeneous mode of toolbar @p obj.
  *
  * @param obj The toolbar object
- * @param homogenous If true, the toolbar items will be uniform in size
+ * @param homogeneous If true, the toolbar items will be uniform in size
  *
  * @ingroup Toolbar
  */
 EAPI void
-elm_toolbar_homogenous_set(Evas_Object *obj, Eina_Bool homogenous)
+elm_toolbar_homogeneous_set(Evas_Object *obj, Eina_Bool homogeneous)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
 
    if (!wd) return;
-   wd->homogeneous = !!homogenous;
+   wd->homogeneous = !!homogeneous;
    evas_object_smart_calculate(wd->bx);
 }
 
+EINA_DEPRECATED EAPI void
+elm_toolbar_homogenous_set(Evas_Object *obj, Eina_Bool homogenous)
+{
+   elm_toolbar_homogeneous_set(obj, homogenous);
+}
+
 /**
- * Get the homogenous mode of toolbar @p obj.
+ * Get the homogeneous mode of toolbar @p obj.
  *
  * @param obj The toolbar object
  * @return If true, the toolbar items are uniform in size
@@ -1794,13 +1800,19 @@ elm_toolbar_homogenous_set(Evas_Object *obj, Eina_Bool homogenous)
  * @ingroup Toolbar
  */
 EAPI Eina_Bool
-elm_toolbar_homogenous_get(const Evas_Object *obj)
+elm_toolbar_homogeneous_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
    Widget_Data *wd = elm_widget_data_get(obj);
 
    if (!wd) return EINA_FALSE;
    return wd->homogeneous;
+}
+
+EINA_DEPRECATED EAPI Eina_Bool
+elm_toolbar_homogenous_get(const Evas_Object *obj)
+{
+   return elm_toolbar_homogeneous_get(obj);
 }
 
 /**

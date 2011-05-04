@@ -803,7 +803,7 @@ elm_diskselector_add(Evas_Object *parent)
 
    wd->main_box = elm_box_add(parent);
    elm_box_horizontal_set(wd->main_box, EINA_TRUE);
-   elm_box_homogenous_set(wd->main_box, EINA_TRUE);
+   elm_box_homogeneous_set(wd->main_box, EINA_TRUE);
    evas_object_size_hint_weight_set(wd->main_box, EVAS_HINT_EXPAND,
                                     EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(wd->main_box, EVAS_HINT_FILL,

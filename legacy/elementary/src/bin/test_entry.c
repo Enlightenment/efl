@@ -1621,7 +1621,7 @@ test_entry_notepad(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *eve
 
    bx2 = elm_box_add(win);
    elm_box_horizontal_set(bx2, EINA_TRUE);
-   elm_box_homogenous_set(bx2, EINA_TRUE);
+   elm_box_homogeneous_set(bx2, EINA_TRUE);
    evas_object_size_hint_weight_set(bx2, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(bx2, EVAS_HINT_FILL, EVAS_HINT_FILL);
 

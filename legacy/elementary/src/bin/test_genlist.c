@@ -399,7 +399,7 @@ test_genlist2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
 
    bx2 = elm_box_add(win);
    elm_box_horizontal_set(bx2, EINA_TRUE);
-   elm_box_homogenous_set(bx2, EINA_TRUE);
+   elm_box_homogeneous_set(bx2, EINA_TRUE);
    evas_object_size_hint_weight_set(bx2, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(bx2, EVAS_HINT_FILL, EVAS_HINT_FILL);
 
@@ -440,7 +440,7 @@ test_genlist2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
 
    bx2 = elm_box_add(win);
    elm_box_horizontal_set(bx2, EINA_TRUE);
-   elm_box_homogenous_set(bx2, EINA_TRUE);
+   elm_box_homogeneous_set(bx2, EINA_TRUE);
    evas_object_size_hint_weight_set(bx2, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(bx2, EVAS_HINT_FILL, EVAS_HINT_FILL);
 
@@ -473,7 +473,7 @@ test_genlist2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
 
    bx3 = elm_box_add(win);
    elm_box_horizontal_set(bx3, EINA_TRUE);
-   elm_box_homogenous_set(bx3, EINA_TRUE);
+   elm_box_homogeneous_set(bx3, EINA_TRUE);
    evas_object_size_hint_weight_set(bx3, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(bx3, EVAS_HINT_FILL, EVAS_HINT_FILL);
 
@@ -616,7 +616,7 @@ test_genlist3(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
 
    bx2 = elm_box_add(win);
    elm_box_horizontal_set(bx2, EINA_TRUE);
-   elm_box_homogenous_set(bx2, EINA_TRUE);
+   elm_box_homogeneous_set(bx2, EINA_TRUE);
    evas_object_size_hint_weight_set(bx2, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(bx2, EVAS_HINT_FILL, EVAS_HINT_FILL);
 
@@ -753,7 +753,7 @@ test_genlist4(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
 
    bx2 = elm_box_add(win);
    elm_box_horizontal_set(bx2, EINA_TRUE);
-   elm_box_homogenous_set(bx2, EINA_TRUE);
+   elm_box_homogeneous_set(bx2, EINA_TRUE);
    evas_object_size_hint_weight_set(bx2, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(bx2, EVAS_HINT_FILL, EVAS_HINT_FILL);
 
@@ -984,7 +984,7 @@ test_genlist5(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
 
    bx2 = elm_box_add(win);
    elm_box_horizontal_set(bx2, EINA_TRUE);
-   elm_box_homogenous_set(bx2, EINA_TRUE);
+   elm_box_homogeneous_set(bx2, EINA_TRUE);
    evas_object_size_hint_weight_set(bx2, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(bx2, EVAS_HINT_FILL, EVAS_HINT_FILL);
 
@@ -1158,7 +1158,7 @@ test_genlist6(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
 
    bx2 = elm_box_add(win);
    elm_box_horizontal_set(bx2, EINA_TRUE);
-   elm_box_homogenous_set(bx2, EINA_TRUE);
+   elm_box_homogeneous_set(bx2, EINA_TRUE);
    evas_object_size_hint_weight_set(bx2, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(bx2, EVAS_HINT_FILL, EVAS_HINT_FILL);
 
@@ -1228,7 +1228,7 @@ test_genlist7_swipe(void *data, Evas_Object *obj __UNUSED__, void *event_info)
    if ((!event_info) || (!data)) return;
 
    box = elm_box_add(info->win);
-   elm_box_homogenous_set(box, EINA_FALSE);
+   elm_box_homogeneous_set(box, EINA_FALSE);
    evas_object_size_hint_weight_set(box, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(box, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_show(box);
@@ -1386,7 +1386,7 @@ test_genlist8(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
 
    bx2 = elm_box_add(win);
    elm_box_horizontal_set(bx2, EINA_TRUE);
-   elm_box_homogenous_set(bx2, EINA_TRUE);
+   elm_box_homogeneous_set(bx2, EINA_TRUE);
    evas_object_size_hint_weight_set(bx2, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(bx2, EVAS_HINT_FILL, EVAS_HINT_FILL);
 
@@ -1424,7 +1424,7 @@ test_genlist8(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
 
    bx3 = elm_box_add(win);
    elm_box_horizontal_set(bx3, EINA_TRUE);
-   elm_box_homogenous_set(bx3, EINA_TRUE);
+   elm_box_homogeneous_set(bx3, EINA_TRUE);
    evas_object_size_hint_weight_set(bx3, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(bx3, EVAS_HINT_FILL, EVAS_HINT_FILL);
 

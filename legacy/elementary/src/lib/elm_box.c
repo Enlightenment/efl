@@ -436,23 +436,23 @@ elm_box_horizontal_get(const Evas_Object *obj)
 }
 
 /**
- * Set homogenous layout
+ * Set homogeneous layout
  *
- * If enabled, homogenous layout makes all items the same size. This size is
+ * If enabled, homogeneous layout makes all items the same size. This size is
  * of course governed by the size of the largest item in the box.
  *
  * @param obj The box object
- * @param homogenous The homogenous flag (1 = on, 2 = off)
+ * @param homogeneous The homogeneous flag (1 = on, 2 = off)
  *
  * @ingroup Box
  */
 EAPI void
-elm_box_homogenous_set(Evas_Object *obj, Eina_Bool homogenous)
+elm_box_homogeneous_set(Evas_Object *obj, Eina_Bool homogeneous)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
-   wd->homogeneous = !!homogenous;
+   wd->homogeneous = !!homogeneous;
    evas_object_smart_calculate(wd->box);
  /*if (wd->horizontal)
      {
@@ -474,21 +474,33 @@ elm_box_homogenous_set(Evas_Object *obj, Eina_Bool homogenous)
      } */
 }
 
+EINA_DEPRECATED EAPI void
+elm_box_homogenous_set(Evas_Object *obj, Eina_Bool homogenous)
+{
+   elm_box_homogeneous_set(obj, homogenous);
+}
+
 /**
- * Get homogenous layout
+ * Get homogeneous layout
  *
  * @param obj The box object
- * @return If is homogenous
+ * @return If is homogeneous
  *
  * @ingroup Box
  */
 EAPI Eina_Bool
-elm_box_homogenous_get(const Evas_Object *obj)
+elm_box_homogeneous_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return EINA_FALSE;
    return wd->homogeneous;
+}
+
+EINA_DEPRECATED EAPI Eina_Bool
+elm_box_homogenous_get(const Evas_Object *obj)
+{
+   return elm_box_homogeneous_get(obj);
 }
 
 /**
@@ -650,7 +662,7 @@ elm_box_unpack_all(Evas_Object *obj)
  * @note Changing the layout function will make horizontal/homogeneous fields
  * from Widget_Data have NO further usage as they are controlled by default
  * layout function. So calling elm_box_horizontal_set() or
- * elm_box_homogenous_set() won't affect layout behavior.
+ * elm_box_homogeneous_set() won't affect layout behavior.
  *
  * @param obj The box object
  * @param cb The callback function used for layout

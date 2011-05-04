@@ -333,7 +333,7 @@ test_tooltip(void *data       __UNUSED__,
    evas_object_show(bx);
 
    tb = elm_toolbar_add(win);
-   elm_toolbar_homogenous_set(tb, 0);
+   elm_toolbar_homogeneous_set(tb, 0);
    evas_object_size_hint_weight_set(tb, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(tb, EVAS_HINT_FILL, 0.0);
    elm_box_pack_end(bx, tb);
