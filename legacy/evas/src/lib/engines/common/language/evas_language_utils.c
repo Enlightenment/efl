@@ -16,7 +16,7 @@
 #include <Eina.h>
 
 #include "evas_language_utils.h"
-#include "evas_bidi_utils.h" /* Used for fallback. */
+#include "evas_bidi_utils.h" /* Used for splitting according to bidi */
 #include "../evas_font_ot.h" /* Used for harfbuzz info */
 
 #ifdef USE_HARFBUZZ
@@ -93,6 +93,7 @@ evas_common_language_script_end_of_run_get(const Eina_Unicode *str,
      }
 #else
    (void) bidi_props;
+   (void) start;
 #endif
    return (i < len) ? i : 0;
 }
