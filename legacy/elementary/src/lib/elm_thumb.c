@@ -172,7 +172,12 @@ static void
 _thumb_ready(Widget_Data *wd, const char *thumb_path, const char *thumb_key)
 {
    Evas_Coord mw, mh;
+   Evas_Coord aw, ah;
 
+   evas_object_image_size_get(wd->view, &aw, &ah);
+   evas_object_size_hint_aspect_set(wd->view,
+				    EVAS_ASPECT_CONTROL_BOTH,
+				    aw, ah);
    edje_object_part_swallow(wd->frame, "elm.swallow.content", wd->view);
    edje_object_size_min_get(wd->frame, &mw, &mh);
    edje_object_size_min_restricted_calc(wd->frame, &mw, &mh, mw, mh);

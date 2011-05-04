@@ -9,7 +9,7 @@ test_thumb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
    Evas_Object *win, *bg, *sc, *tb, *th;
    int i, j, n;
    char buf[PATH_MAX];
-   const char *img[9] =
+   const char *img[11] =
      {
         "panel_01.jpg",
         "plant_01.jpg",
@@ -20,6 +20,8 @@ test_thumb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
         "sky_03.jpg",
         "sky_04.jpg",
         "wood_01.jpg",
+	"mystrale.jpg",
+	"mystrale_2.jpg"
      };
 
    elm_need_ethumb();
@@ -44,7 +46,7 @@ test_thumb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
              th = elm_thumb_add(win);
              snprintf(buf, sizeof(buf), "%s/images/%s", PACKAGE_DATA_DIR,
                       img[n]);
-             n = (n + 1) % 9;
+             n = (n + 1) % 11;
              elm_thumb_file_set(th, buf, img[n]);
              evas_object_size_hint_weight_set(th, EVAS_HINT_EXPAND,
                                               EVAS_HINT_EXPAND);
