@@ -491,10 +491,63 @@ _evas_object_table_calculate_layout_homogeneous_sizes(const Evas_Object *o, cons
 static void
 _evas_object_table_calculate_layout_homogeneous(Evas_Object *o, Evas_Object_Table_Data *priv)
 {
+   Evas_Coord x = 0, y = 0, w = 0, h = 0, ww, hh;
+   Eina_List *l;
+   Evas_Object_Table_Option *opt;
+   
+   evas_object_geometry_get(o, &x, &y, &w, &h);
+   
+   ww = w - ((priv->size.cols - 1) * priv->pad.h);
+   hh = h - ((priv->size.rows - 1) * priv->pad.v);
+   
+   if (ww < 0) ww = 0;
+   if (ww < 0) ww = 0;
+   
+   EINA_LIST_FOREACH(priv->children, l, opt)
+     {
+	Evas_Object *child = opt->obj;
+	Evas_Coord cx, cy, cw, ch, cox, coy, cow, coh;
+
+	cx = x + ((opt->col * ww) / priv->size.cols);
+        cw = x + (((opt->col + opt->colspan) * ww) / priv->size.cols) - cx;
+	cy = y + ((opt->row * hh) / priv->size.rows);
+        ch = y + (((opt->row + opt->rowspan) * hh) / priv->size.rows) - cy;
+
+        cx += (opt->col) * priv->pad.h;
+        cy += (opt->row) * priv->pad.v;
+        
+        cox = cx;
+        coy = cy;
+        cow = cw;
+        coh = ch;
+
+	_evas_object_table_calculate_cell(opt, &cx, &cy, &cw, &ch);
+        if (cw > cow)
+          {
+             cx = cox;
+             cw = cow;
+          }
+        if (ch > coh)
+          {
+             cy = coy;
+             ch = coh;
+          }
+
+        if (priv->is_mirrored)
+          {
+             evas_object_move(opt->obj, x + w - (cx - x + cw), cy);
+          }
+        else
+          {
+             evas_object_move(child, cx, cy);
+          }
+	evas_object_resize(child, cw, ch);
+     }
+/* old homogenous layout - didn't adjust to table size if table size != multiple of rows or cols
    Evas_Coord x, y, w, h, cellw, cellh;
    Eina_List *l;
    Evas_Object_Table_Option *opt;
-
+   
    _evas_object_table_calculate_layout_homogeneous_sizes
      (o, priv, &x, &y, &w, &h, &cellw, &cellh);
 
@@ -521,6 +574,7 @@ _evas_object_table_calculate_layout_homogeneous(Evas_Object *o, Evas_Object_Tabl
           }
 	evas_object_resize(child, cw, ch);
      }
+ */
 }
 
 static void
