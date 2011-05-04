@@ -32,6 +32,10 @@ struct _Elm_Win
 
    Elm_Win_Type type;
    Elm_Win_Keyboard_Mode kbdmode;
+   struct {
+      const char *info;
+      Ecore_Timer *timer;
+   } shot;
    Eina_Bool autodel : 1;
    int *autodel_clear, rot;
    struct {
@@ -98,6 +102,118 @@ static const Evas_Smart_Cb_Description _signals[] = {
 
 Eina_List *_elm_win_list = NULL;
 int _elm_win_deferred_free = 0;
+
+// exmaple shot spec (wait 0.1 sec then save as my-window.png):
+// ELM_ENGINE="shot:delay=0.1:file=my-window.png"
+
+static double
+_shot_delay_get(Elm_Win *win)
+{
+   char *p, *pd;
+   char *d = strdup(win->shot.info);
+   
+   if (!d) return 0.5;
+   for (p = (char *)win->shot.info; *p; p++)
+     {
+        if (!strncmp(p, "delay=", 6))
+          {
+             double v;
+             
+             for (pd = d, p += 6; (*p) && (*p != ':'); p++, pd++)
+               {
+                  *pd = *p;
+               }
+             *pd = 0;
+             v = atof(d);
+             free(d);
+             return v;
+          }
+     }
+   free(d);
+   return 0.5;
+}
+
+static char *
+_shot_file_get(Elm_Win *win)
+{
+   char *p;
+   char *tmp = strdup(win->shot.info);
+   
+   if (!tmp) return NULL;
+   for (p = (char *)win->shot.info; *p; p++)
+     {
+        if (!strncmp(p, "file=", 5))
+          {
+             strcpy(tmp, p + 5);
+             return tmp;
+          }
+     }
+   free(tmp);
+   return strdup("out.png");
+}
+
+static char *
+_shot_key_get(Elm_Win *win __UNUSED__)
+{
+   return NULL;
+}
+
+static char *
+_shot_flags_get(Elm_Win *win __UNUSED__)
+{
+   return NULL;
+}
+
+static void
+_shot_do(Elm_Win *win)
+{
+   Ecore_Evas *ee;
+   Evas_Object *o;
+   unsigned int *pixels;
+   int w, h;
+   char *file, *key, *flags;
+
+   ecore_evas_manual_render(win->ee);
+   pixels = (void *)ecore_evas_buffer_pixels_get(win->ee);
+   if (!pixels) return;
+   ecore_evas_geometry_get(win->ee, NULL, NULL, &w, &h);
+   if ((w < 1) || (h < 1)) return;
+   file = _shot_file_get(win);
+   if (!file) return;
+   key = _shot_key_get(win);
+   flags = _shot_flags_get(win);
+   ee = ecore_evas_buffer_new(1, 1);
+   o = evas_object_image_add(ecore_evas_get(ee));
+   evas_object_image_alpha_set(o, ecore_evas_alpha_get(win->ee));
+   evas_object_image_size_set(o, w, h);
+   evas_object_image_data_set(o, pixels);
+   if (!evas_object_image_save(o, file, key, flags))
+     {
+        ERR("Cannot save window to '%s' (key '%s', flags '%s')",
+            file, key, flags);
+     }
+   free(file);
+   if (key) free(key);
+   if (flags) free(flags);
+   ecore_evas_free(ee);
+}
+
+static Eina_Bool
+_shot_delay(void *data)
+{
+   Elm_Win *win = data;
+   _shot_do(win);
+   win->shot.timer = NULL;
+   elm_exit();
+   return EINA_FALSE;
+}
+
+static void
+_shot_handle(Elm_Win *win)
+{
+   if (!win->shot.info) return;
+   win->shot.timer = ecore_timer_add(_shot_delay_get(win), _shot_delay, win);
+}
 
 static void
 _elm_win_move(Ecore_Evas *ee)
@@ -246,7 +362,10 @@ _deferred_ecore_evas_free(void *data)
 static void
 _elm_win_obj_callback_show(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
+   Elm_Win *win = data;
+   
    elm_object_focus(obj);
+   if (win->shot.info) _shot_handle(win);
 }
 
 static void
@@ -285,6 +404,8 @@ _elm_win_obj_callback_del(void *data, Evas *e, Evas_Object *obj, void *event_inf
      }
    if (win->deferred_resize_job) ecore_job_del(win->deferred_resize_job);
    if (win->deferred_child_eval_job) ecore_job_del(win->deferred_child_eval_job);
+   if (win->shot.info) eina_stringshare_del(win->shot.info);
+   if (win->shot.timer) ecore_timer_del(win->shot.timer);
    while (((child = evas_object_bottom_get(win->evas))) &&
           (child != obj))
      {
@@ -507,10 +628,12 @@ _elm_win_xwindow_get(Elm_Win *win)
      {
         if (win->ee) win->xwin = ecore_evas_software_x11_8_window_get(win->ee);
      }
+/* killed        
    else if (ENGINE_COMPARE(ELM_XRENDER_X11))
      {
         if (win->ee) win->xwin = ecore_evas_xrender_x11_window_get(win->ee);
      }
+ */
    else if (ENGINE_COMPARE(ELM_OPENGL_X11))
      {
         if (win->ee) win->xwin = ecore_evas_gl_x11_window_get(win->ee);
@@ -1235,6 +1358,7 @@ elm_win_add(Evas_Object *parent, const char *name, Elm_Win_Type type)
                 (ECORE_X_EVENT_CLIENT_MESSAGE, _elm_win_client_message, win);
 #endif
           }
+/* killed        
         else if (ENGINE_COMPARE(ELM_XRENDER_X11))
           {
              win->ee = ecore_evas_xrender_x11_new(NULL, 0, 0, 0, 1, 1);
@@ -1244,6 +1368,7 @@ elm_win_add(Evas_Object *parent, const char *name, Elm_Win_Type type)
                 (ECORE_X_EVENT_CLIENT_MESSAGE, _elm_win_client_message, win);
 #endif
           }
+ */
         else if (ENGINE_COMPARE(ELM_OPENGL_X11))
           {
              win->ee = ecore_evas_gl_x11_new(NULL, 0, 0, 0, 1, 1);
@@ -1277,6 +1402,12 @@ elm_win_add(Evas_Object *parent, const char *name, Elm_Win_Type type)
           {
              win->ee = ecore_evas_gl_sdl_new(NULL, 1, 1, 0, 0);
              FALLBACK_TRY("OpenGL SDL");
+          }
+        else if (!strncmp(_elm_config->engine, "shot:", 5))
+          {
+             win->ee = ecore_evas_buffer_new(1, 1);
+             ecore_evas_manual_render_set(win->ee, EINA_TRUE);
+             win->shot.info = eina_stringshare_add(_elm_config->engine + 5);
           }
 #undef FALLBACK_TRY
         break;
