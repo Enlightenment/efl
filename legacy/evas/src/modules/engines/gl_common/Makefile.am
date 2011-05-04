@@ -7,6 +7,7 @@ AM_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/include \
 @FREETYPE_CFLAGS@ \
 @PIXMAN_CFLAGS@ \
+@GL_EET_CFLAGS@ \
 @EINA_CFLAGS@
 
 if BUILD_ENGINE_GL_COMMON
@@ -81,9 +82,7 @@ shader/filter_blur_nomul.h \
 shader/filter_blur_bgra.h \
 shader/filter_blur_bgra_nomul.h
 
-
-
-libevas_engine_gl_common_la_LIBADD = @EINA_LIBS@ @evas_engine_gl_common_libs@ @dlopen_libs@
+libevas_engine_gl_common_la_LIBADD = @EINA_LIBS@ @GL_EET_LIBS@ @evas_engine_gl_common_libs@ @dlopen_libs@
 endif
 
 EXTRA_DIST = \
