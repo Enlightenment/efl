@@ -3391,8 +3391,8 @@ _layout_visualize_par(Ctxt *c)
                        /* Don't wrap if it's the only item */
                        if (c->ln->items)
                          {
-                            /*FIXME: I should handle tabs correctly, i.e like
-                             * spaces */
+                            /*FIXME: I should handle format correctly,
+                              i.e verify we are allowed to break here */
                             _layout_line_advance(c, it->format);
                          }
                     }
