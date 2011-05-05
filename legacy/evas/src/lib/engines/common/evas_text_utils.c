@@ -136,7 +136,7 @@ evas_common_text_props_split(Evas_Text_Props *base,
    /* If we didn't find a reasonable cut location, return. */
    if (cutoff == 0)
      {
-        ERR("Couldn't find the cutoff position. Is it inside a cluster?");
+        ERR("Couldn't find the cutoff position (%d). Is it inside a cluster?", _cutoff);
         return;
      }
 #else
