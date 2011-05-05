@@ -79,6 +79,12 @@ static const char o_type[] = "textblock";
 
 /* The char to be inserted instead of visible formats */
 #define EVAS_TEXTBLOCK_REPLACEMENT_CHAR 0xFFFC
+#define _PARAGRAPH_SEPARATOR 0x2029
+#define EVAS_TEXTBLOCK_IS_VISIBLE_FORMAT_CHAR(ch) \
+   (((ch) == EVAS_TEXTBLOCK_REPLACEMENT_CHAR) || \
+    ((ch) == '\n') || \
+    ((ch) == '\t') || \
+    ((ch) == _PARAGRAPH_SEPARATOR))
 
 /* private struct for textblock object internal data */
 /**
@@ -2798,6 +2804,13 @@ _layout_format_item_add(Ctxt *c, Evas_Object_Textblock_Node_Format *n, const cha
    return fi;
 }
 
+/**
+ * @internal
+ * Returns true if the item is a tab
+ * @def _IS_TAB(item)
+ */
+#define _IS_TAB(item)                                             \
+   (!strcmp(item, "\t") || !strcmp(item, "\\t"))
 /**
  * @internal
  * Returns true if the item is a line spearator, false otherwise
@@ -6498,8 +6511,19 @@ evas_textblock_cursor_format_append(Evas_Textblock_Cursor *cur, const char *form
      }
    if (is_visible && cur->node)
      {
-        eina_ustrbuf_insert_char(cur->node->unicode,
-              EVAS_TEXTBLOCK_REPLACEMENT_CHAR, cur->pos);
+        Eina_Unicode insert_char;
+        /* Insert a visual representation according to the type of the
+           format */
+        if (_IS_PARAGRAPH_SEPARATOR(o, format))
+           insert_char = _PARAGRAPH_SEPARATOR;
+        else if (_IS_LINE_SEPARATOR(format))
+           insert_char = '\n';
+        else if (_IS_TAB(format))
+           insert_char = '\t';
+        else
+           insert_char = EVAS_TEXTBLOCK_REPLACEMENT_CHAR;
+
+        eina_ustrbuf_insert_char(cur->node->unicode, insert_char, cur->pos);
 
         /* Advance all the cursors after our cursor */
         _evas_textblock_cursors_update_offset(cur, cur->node, cur->pos, 1);
@@ -6910,8 +6934,7 @@ evas_textblock_cursor_format_is_visible_get(const Evas_Textblock_Cursor *cur)
    if (!cur) return EINA_FALSE;
    if (!cur->node) return EINA_FALSE;
    text = eina_ustrbuf_string_get(cur->node->unicode);
-   return (text[cur->pos] == EVAS_TEXTBLOCK_REPLACEMENT_CHAR) ?
-              EINA_TRUE : EINA_FALSE;
+   return EVAS_TEXTBLOCK_IS_VISIBLE_FORMAT_CHAR(text[cur->pos]);
 }
 
 EAPI int
