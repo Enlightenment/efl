@@ -3407,12 +3407,13 @@ _layout_visualize_par(Ctxt *c)
                         * do */
                        if (!line_breaks)
                          {
-                            size_t len =
-                               eina_ustrbuf_length_get(it->text_node->unicode);
-                            line_breaks = malloc(len);
                             /* Only relevant in those cases */
                             if (it->format->wrap_word || it->format->wrap_mixed)
                               {
+                                 size_t len =
+                                    eina_ustrbuf_length_get(
+                                          it->text_node->unicode);
+                                 line_breaks = malloc(len);
                                  set_linebreaks_utf32((const utf32_t *)
                                     eina_ustrbuf_string_get(
                                        it->text_node->unicode),
