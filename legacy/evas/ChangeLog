@@ -295,10 +295,20 @@
 
 	* Improved table layout for homogenous mode to handle not column
         or row multiple sized table better.
-        
+
 2011-05-04  Jiyoun Park
 
 	* OpenGL binary shader ability to cache (save and load back
         later) to avoid re-compiling shaders on every time an app starts and
         uses the GL engine. Faster startup time.
+
+2011-05-04 Tom Hacohen (TAsn)
+
+	* Textblock: Do standard compliant line breaks. In order to achieve
+	  that we now statically link against liblinebreak (available in
+	  src/static_deps/liblinebreak). It's usage can be disabled using the
+	  configure flag: "--disable-liblinebreak"; Disabling it will activate
+	  the fallback line breaking methods which are not very correct, but
+	  are possibly faster. I haven't noticed any difference between the
+	  two speed-wise, but there probably are in some rare cases.
 
