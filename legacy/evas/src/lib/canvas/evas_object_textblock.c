@@ -3016,21 +3016,25 @@ _layout_update_par(Ctxt *c)
 /* -1 means no wrap */
 static int
 _layout_get_charwrap(Ctxt *c, Evas_Object_Textblock_Format *fmt,
-      const Evas_Object_Textblock_Text_Item *ti, const char *breaks)
+      const Evas_Object_Textblock_Text_Item *ti, size_t line_start,
+      const char *breaks)
 {
    int wrap;
    const Eina_Unicode *str = GET_ITEM_TEXT(ti);
    /* Currently not being used, because it doesn't contain relevant
     * information */
    (void) breaks;
+   /* Currently not being used, because we don't enforce the ligature breaking
+      here just yet. */
+   (void) line_start;
 
    wrap = _layout_text_cutoff_get(c, fmt, ti);
    if (wrap == 0)
      GET_NEXT(str, ti, wrap);
    if ((wrap < 0) || IS_AT_END(ti, (size_t) wrap))
-     wrap = -1;
+      return -1;
 
-   return wrap;
+   return wrap + ti->parent.text_pos;
 }
 
 /* -1 means no wrap */
@@ -3038,27 +3042,41 @@ _layout_get_charwrap(Ctxt *c, Evas_Object_Textblock_Format *fmt,
 
 /* Allow break means: if we can break after the current char */
 #define ALLOW_BREAK(i) \
-   ((((i) + ti->parent.text_pos) > 0) ? \
-    (breaks[ti->parent.text_pos + (i)] == LINEBREAK_ALLOWBREAK) : \
-    (EINA_FALSE))
+   (breaks[i] == LINEBREAK_ALLOWBREAK)
 
 #else
 
 #define ALLOW_BREAK(i) \
-   ((((i) + ti->parent.text_pos) > 0) ? \
-    (_is_white(str[(i)])) : \
-    (EINA_FALSE))
+   (_is_white(str[i]))
 
 #endif
 
+#define MOVE_PREV_UNTIL(line_start, ind) \
+   do \
+     { \
+        if ((line_start) < (ind)) \
+           (ind)--; \
+     } \
+   while (0)
+
+#define MOVE_NEXT_UNTIL(len, ind) \
+   do \
+     { \
+        if ((ind) < (len)) \
+           (ind)++; \
+     } \
+   while (0)
 static int
 _layout_get_word_mixwrap_common(Ctxt *c, Evas_Object_Textblock_Format *fmt,
       const Evas_Object_Textblock_Text_Item *ti, Eina_Bool mixed_wrap,
-      const char *breaks)
+      int line_start, const char *breaks)
 {
    int wrap = -1;
    int orig_wrap;
-   const Eina_Unicode *str = GET_ITEM_TEXT(ti);
+   const Eina_Unicode *str = eina_ustrbuf_string_get(
+         ti->parent.text_node->unicode);
+   int item_start = ti->parent.text_pos;
+   int len = eina_ustrbuf_length_get(ti->parent.text_node->unicode);
 #ifndef HAVE_LINEBREAK
    /* Not used without liblinebreak ATM. */
    (void) breaks;
@@ -3068,75 +3086,76 @@ _layout_get_word_mixwrap_common(Ctxt *c, Evas_Object_Textblock_Format *fmt,
    /* Avoiding too small textblocks to even contain one char.
     * FIXME: This can cause breaking inside ligatures. */
 
-   orig_wrap = wrap;
-   if (wrap > 0)
+   if (wrap < 0)
+      return -1;
+
+   orig_wrap = wrap = wrap + item_start;
+
+   if (wrap > line_start)
      {
         /* The wrapping point found is the first char of the next string
            the rest works on the last char of the previous string.
            If it's a whitespace, then it's ok, and no need to go back
            because we'll remove it anyway. */
         if (!_is_white(str[wrap]))
-           GET_PREV(str, wrap);
+           MOVE_PREV_UNTIL(line_start, wrap);
         /* If there's a breakable point inside the text, scan backwards until
          * we find it */
-        do
+        while (wrap >= line_start)
           {
              if (ALLOW_BREAK(wrap))
                 break;
              wrap--;
           }
-        while (wrap >= 0);
 
-        if (wrap >= 0)
+        if (wrap >= line_start)
           {
              /* We found a suitable wrapping point, break here. */
-             GET_NEXT(str, ti, wrap);
+             MOVE_NEXT_UNTIL(len, wrap);
              return wrap;
           }
         else
           {
-             /* If there are already items in this line, we
-              * should just try creating a new line for it */
-             if (c->ln->items)
+             /* If this is the start of the line, we should just try creating a
+                new line for it */
+             if (line_start < item_start)
                {
                   return 0;
                }
 
              if (mixed_wrap)
                {
-                  return ((orig_wrap >= 0) &&
-                        !IS_AT_END(ti, (size_t) orig_wrap)) ? orig_wrap : -1;
+                  return ((orig_wrap >= line_start) && (orig_wrap < len)) ?
+                     ((int) orig_wrap) : -1;
                }
              else
                {
                   /* Scan forward to find the next wrapping point */
-                  wrap = orig_wrap;
-                  do
-                    {
-                       if (ALLOW_BREAK(wrap))
-                          break;
-                       wrap++;
-                    }
-                  while (!IS_AT_END(ti, (size_t) wrap));
-
-
-                  if (!IS_AT_END(ti, (size_t) wrap))
-                    {
-                       GET_NEXT(str, ti, wrap);
-                       return wrap;
-                    }
-                  else
-                    {
-                       return -1;
-                    }
+                  wrap = item_start;
                }
           }
-
      }
-   else if (wrap == 0)
+
+   /* If we need to find the position after the cutting point */
+   if (wrap == line_start)
      {
-        /* Just to avoid too small textblocks */
-        GET_NEXT(str, ti, wrap);
+        while (wrap < len)
+          {
+             if (ALLOW_BREAK(wrap))
+                break;
+             wrap++;
+          }
+
+
+        if (wrap < len)
+          {
+             MOVE_NEXT_UNTIL(len, wrap);
+             return wrap;
+          }
+        else
+          {
+             return -1;
+          }
         return wrap;
      }
 
@@ -3146,17 +3165,21 @@ _layout_get_word_mixwrap_common(Ctxt *c, Evas_Object_Textblock_Format *fmt,
 /* -1 means no wrap */
 static int
 _layout_get_wordwrap(Ctxt *c, Evas_Object_Textblock_Format *fmt,
-      const Evas_Object_Textblock_Text_Item *ti, const char *breaks)
+      const Evas_Object_Textblock_Text_Item *ti, size_t line_start,
+      const char *breaks)
 {
-   return _layout_get_word_mixwrap_common(c, fmt, ti, EINA_FALSE, breaks);
+   return _layout_get_word_mixwrap_common(c, fmt, ti, EINA_FALSE, line_start,
+         breaks);
 }
 
 /* -1 means no wrap */
 static int
 _layout_get_mixedwrap(Ctxt *c, Evas_Object_Textblock_Format *fmt,
-      const Evas_Object_Textblock_Text_Item *ti, const char *breaks)
+      const Evas_Object_Textblock_Text_Item *ti, size_t line_start,
+      const char *breaks)
 {
-   return _layout_get_word_mixwrap_common(c, fmt, ti, EINA_TRUE, breaks);
+   return _layout_get_word_mixwrap_common(c, fmt, ti, EINA_TRUE, line_start,
+         breaks);
 }
 
 /* Should be moved inside _layout_ellipsis_item_new once we fix the hack in
@@ -3377,6 +3400,7 @@ _layout_visualize_par(Ctxt *c)
                     {
                        Evas_Object_Textblock_Text_Item *ti = _ITEM_TEXT(it);
                        int wrap;
+                       size_t line_start;
 
 #ifdef HAVE_LINEBREAK
                        /* If we haven't calculated the linebreaks yet,
@@ -3397,19 +3421,31 @@ _layout_visualize_par(Ctxt *c)
                               }
                          }
 #endif
+                       if (c->ln->items)
+                          line_start = c->ln->items->text_pos;
+                       else
+                          line_start = ti->parent.text_pos;
 
                        adv_line = 1;
                        if (it->format->wrap_word)
                          wrap = _layout_get_wordwrap(c, it->format, ti,
-                               line_breaks);
+                               line_start, line_breaks);
                        else if (it->format->wrap_char)
                          wrap = _layout_get_charwrap(c, it->format, ti,
-                               line_breaks);
+                               line_start, line_breaks);
                        else if (it->format->wrap_mixed)
                          wrap = _layout_get_mixedwrap(c, it->format, ti,
-                               line_breaks);
+                               line_start, line_breaks);
                        else
                          wrap = -1;
+
+                       if (wrap > 0)
+                         {
+                            if ((size_t) wrap < ti->parent.text_pos)
+                               wrap = 0;
+                            else
+                               wrap -= ti->parent.text_pos;
+                         }
 
                        if (wrap > 0)
                          {
