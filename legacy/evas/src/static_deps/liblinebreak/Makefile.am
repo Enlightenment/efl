@@ -1,5 +1,5 @@
 #noinst_PROGRAMS = filter_dup
-include_HEADERS = linebreak.h linebreakdef.h
+noinst_HEADERS = linebreak.h linebreakdef.h
 noinst_LTLIBRARIES = liblinebreak.la
 
 liblinebreak_la_SOURCES = \
