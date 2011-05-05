@@ -3071,6 +3071,7 @@ _layout_get_word_mixwrap_common(Ctxt *c, Evas_Object_Textblock_Format *fmt,
       const Evas_Object_Textblock_Text_Item *ti, Eina_Bool mixed_wrap,
       int line_start, const char *breaks)
 {
+   Eina_Bool wrap_after = EINA_FALSE;
    int wrap = -1;
    int orig_wrap;
    const Eina_Unicode *str = eina_ustrbuf_string_get(
@@ -3116,13 +3117,6 @@ _layout_get_word_mixwrap_common(Ctxt *c, Evas_Object_Textblock_Format *fmt,
           }
         else
           {
-             /* If this is the start of the line, we should just try creating a
-                new line for it */
-             if (line_start < item_start)
-               {
-                  return 0;
-               }
-
              if (mixed_wrap)
                {
                   return ((orig_wrap >= line_start) && (orig_wrap < len)) ?
@@ -3131,13 +3125,14 @@ _layout_get_word_mixwrap_common(Ctxt *c, Evas_Object_Textblock_Format *fmt,
              else
                {
                   /* Scan forward to find the next wrapping point */
-                  wrap = item_start;
+                  wrap = orig_wrap;
+                  wrap_after = EINA_TRUE;
                }
           }
      }
 
    /* If we need to find the position after the cutting point */
-   if (wrap == line_start)
+   if ((wrap == line_start) || (wrap_after))
      {
         while (wrap < len)
           {
@@ -3156,7 +3151,6 @@ _layout_get_word_mixwrap_common(Ctxt *c, Evas_Object_Textblock_Format *fmt,
           {
              return -1;
           }
-        return wrap;
      }
 
    return -1;
@@ -3229,6 +3223,7 @@ _layout_visualize_par(Ctxt *c)
    Evas_Object_Textblock_Item *it;
    Eina_List *i;
    int ret = 0;
+   int wrap = -1;
    char *line_breaks = NULL;
 
    if (!c->par->logical_items)
@@ -3303,11 +3298,12 @@ _layout_visualize_par(Ctxt *c)
           }
 
 
-        /* Check if we need to wrap, i.e the text is bigger than the width */
+        /* Check if we need to wrap, i.e the text is bigger than the width,
+           or we already found a wrap point. */
         if ((c->w >= 0) &&
-              ((c->x + it->w) >
-               (c->w - c->o->style_pad.l - c->o->style_pad.r -
-                c->marginl - c->marginr)))
+              (((c->x + it->w) >
+                (c->w - c->o->style_pad.l - c->o->style_pad.r -
+                 c->marginl - c->marginr)) || (wrap > 0)))
           {
              /* Handle ellipsis here */
              if ((it->format->ellipsis == 1.0) && (c->h >= 0) &&
@@ -3399,7 +3395,6 @@ _layout_visualize_par(Ctxt *c)
                   else
                     {
                        Evas_Object_Textblock_Text_Item *ti = _ITEM_TEXT(it);
-                       int wrap;
                        size_t line_start;
 
 #ifdef HAVE_LINEBREAK
@@ -3428,24 +3423,57 @@ _layout_visualize_par(Ctxt *c)
                           line_start = ti->parent.text_pos;
 
                        adv_line = 1;
-                       if (it->format->wrap_word)
-                         wrap = _layout_get_wordwrap(c, it->format, ti,
-                               line_start, line_breaks);
-                       else if (it->format->wrap_char)
-                         wrap = _layout_get_charwrap(c, it->format, ti,
-                               line_start, line_breaks);
-                       else if (it->format->wrap_mixed)
-                         wrap = _layout_get_mixedwrap(c, it->format, ti,
-                               line_start, line_breaks);
-                       else
-                         wrap = -1;
+                       /* If we don't already have a wrap point from before */
+                       if (wrap < 0)
+                         {
+                            if (it->format->wrap_word)
+                               wrap = _layout_get_wordwrap(c, it->format, ti,
+                                     line_start, line_breaks);
+                            else if (it->format->wrap_char)
+                               wrap = _layout_get_charwrap(c, it->format, ti,
+                                     line_start, line_breaks);
+                            else if (it->format->wrap_mixed)
+                               wrap = _layout_get_mixedwrap(c, it->format, ti,
+                                     line_start, line_breaks);
+                            else
+                               wrap = -1;
+                         }
 
+                       /* If it's before the item, rollback and apply.
+                          if it's in the item, cut.
+                          If it's after the item, delay the cut */
                        if (wrap > 0)
                          {
-                            if ((size_t) wrap < ti->parent.text_pos)
-                               wrap = 0;
+                            size_t uwrap = (size_t) wrap;
+                            if (uwrap < ti->parent.text_pos)
+                              {
+                                 /* Rollback latest additions, and cut that
+                                    item */
+                                 i = eina_list_prev(i);
+                                 it = eina_list_data_get(i);
+                                 while (uwrap <= it->text_pos)
+                                   {
+                                      c->ln->items = _ITEM(
+                                            eina_inlist_remove(
+                                               EINA_INLIST_GET(c->ln->items),
+                                               EINA_INLIST_GET(it)));
+                                      i = eina_list_prev(i);
+                                      it = eina_list_data_get(i);
+                                   }
+                                 c->x = it->x;
+                                 c->ln->items = _ITEM(
+                                       eina_inlist_remove(
+                                          EINA_INLIST_GET(c->ln->items),
+                                          EINA_INLIST_GET(it)));
+                                 continue;
+                              }
+                            else if (uwrap >= ti->parent.text_pos +
+                                  ti->text_props.text_len)
+                               wrap = -1; /* Delay the cut in a smart way
+                               i.e use the item_pos as the line_start, because
+                               there's already no cut before*/
                             else
-                               wrap -= ti->parent.text_pos;
+                               wrap -= ti->parent.text_pos; /* Cut here */
                          }
 
                        if (wrap > 0)
@@ -3459,6 +3487,8 @@ _layout_visualize_par(Ctxt *c)
                             redo_item = 1;
                             _layout_line_advance(c, it->format);
                          }
+                       /* Reset wrap */
+                       wrap = -1;
                     }
                }
           }
