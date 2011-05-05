@@ -330,7 +330,7 @@ struct _Widget_Data
    Ecore_Timer *scr_timer;
    Ecore_Timer *long_timer;
    Ecore_Animator *zoom_animator;
-   double t_start, t_end;
+   double t;
    struct {
         int w, h;
         int ow, oh, nw, nh;
@@ -718,7 +718,6 @@ source_init(void *data)
    module_init(data);
 
    int n = eina_list_count(wd->map_sources_tab);
-   printf("size of source list = %d\n", n);
    wd->source_names = malloc(sizeof(char *) * (n + 1));
    if (!wd->source_names)
      {
@@ -914,9 +913,9 @@ marker_place(Evas_Object *obj, Grid *g, Evas_Coord px, Evas_Coord py, Evas_Coord
    if (g_xx < 0) g_xx = 0;
    g_yy = wd->pan_y / wd->tsize;
    if (g_yy < 0) g_yy = 0;
-   g_ww =  ow / wd->tsize + 1;
+   g_ww = (ow / wd->tsize) + 1;
    if (g_xx + g_ww >= g->gw) g_ww = g->gw - g_xx - 1;
-   g_hh =  oh / wd->tsize + 1;
+   g_hh = (oh / wd->tsize) + 1;
    if (g_yy + g_hh >= g->gh) g_hh = g->gh - g_yy - 1;
 
    //hide groups no more displayed
@@ -930,6 +929,12 @@ marker_place(Evas_Object *obj, Grid *g, Evas_Coord px, Evas_Coord py, Evas_Coord
                   if (group->obj) _group_object_free(group);
                }
           }
+     }
+
+   if (!wd->marker_zoom)
+     {
+        g_ww = 0;
+        g_hh = 0;
      }
 
    for (y = g_yy; y <= g_yy + g_hh; y++)
@@ -1566,21 +1571,17 @@ _zoom_anim(void *data)
    ELM_CHECK_WIDTYPE(data, widtype) ECORE_CALLBACK_CANCEL;
    Evas_Object *obj = data;
    Widget_Data *wd = elm_widget_data_get(obj);
-   double t;
 
    if (!wd) return ECORE_CALLBACK_CANCEL;
-   t = ecore_loop_time_get();
-   if (t >= wd->t_end)
-     t = 1.0;
-   else if (wd->t_end > wd->t_start)
-     t = (t - wd->t_start) / (wd->t_end - wd->t_start);
+   if (wd->zoom_method == ZOOM_METHOD_IN) wd->t += 0.1 ;
+   else if (wd->zoom_method == ZOOM_METHOD_OUT) wd->t -= 0.1;
    else
-     t = 1.0;
-   if (wd->zoom_method == ZOOM_METHOD_IN) t = 1.0 + (t * t);
-   else if (wd->zoom_method == ZOOM_METHOD_OUT) t = 1.0 - (t * t);
-   else return ECORE_CALLBACK_CANCEL;
+     {
+        zoom_do(obj);
+        return ECORE_CALLBACK_CANCEL;
+     }
 
-   if ((t >= 2.0) || (t <= 0.5))
+   if ((wd->t >= 2.0) || (wd->t <= 0.5))
      {
         wd->zoom_animator = NULL;
         wd->pinch.level = 1.0;
@@ -1588,7 +1589,7 @@ _zoom_anim(void *data)
         evas_object_smart_callback_call(obj, SIG_ZOOM_STOP, NULL);
         return ECORE_CALLBACK_CANCEL;
      }
-   else if (t != 1.0)
+   else if (wd->t != 1.0)
      {
         Evas_Coord x, y, w, h;
         float half_w, half_h;
@@ -1597,7 +1598,7 @@ _zoom_anim(void *data)
         half_h = (float)h * 0.5;
         wd->pinch.cx = x + half_w;
         wd->pinch.cy = y + half_h;
-        wd->pinch.level = t;
+        wd->pinch.level = wd->t;
         if (wd->calc_job) ecore_job_del(wd->calc_job);
         wd->calc_job = ecore_job_add(_calc_job, wd);
      }
@@ -1927,9 +1928,10 @@ _wheel_timer_cb(void *data)
    int zoom;
 
    wd->wheel_timer = NULL;
-   if (wd->zoom_method == ZOOM_METHOD_IN) zoom = (int)ceil(wd->wheel_zoom - 1.0);
+   if (wd->zoom_method == ZOOM_METHOD_IN) zoom = (int)ceil(wd->wheel_zoom);
    else if (wd->zoom_method == ZOOM_METHOD_OUT) zoom = (int)floor((-1.0 / wd->wheel_zoom) + 1.0);
    else return ECORE_CALLBACK_CANCEL;
+   wd->mode = ELM_MAP_ZOOM_MODE_MANUAL;
    elm_map_zoom_set(data, wd->zoom + zoom);
    wd->wheel_zoom = 0.0;
    return ECORE_CALLBACK_CANCEL;
@@ -2620,7 +2622,7 @@ _event_hook(Evas_Object *obj, Evas_Object *src __UNUSED__, Evas_Callback_Type ty
 {
    ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
    Widget_Data *wd = elm_widget_data_get(obj);
-   double zoom;
+   int zoom;
    Evas_Coord x = 0;
    Evas_Coord y = 0;
    Evas_Coord step_x = 0;
@@ -2672,16 +2674,14 @@ _event_hook(Evas_Object *obj, Evas_Object *src __UNUSED__, Evas_Callback_Type ty
      }
    else if (!strcmp(ev->keyname, "KP_Add"))
      {
-        zoom = elm_map_zoom_get(obj);
-        zoom += 1;
+        zoom = elm_map_zoom_get(obj) + 1;
         elm_map_zoom_mode_set(obj, ELM_MAP_ZOOM_MODE_MANUAL);
         elm_map_zoom_set(obj, zoom);
         return EINA_TRUE;
      }
    else if (!strcmp(ev->keyname, "KP_Subtract"))
      {
-        zoom = elm_map_zoom_get(obj);
-        zoom -= 1;
+        zoom = elm_map_zoom_get(obj) - 1;
         elm_map_zoom_mode_set(obj, ELM_MAP_ZOOM_MODE_MANUAL);
         elm_map_zoom_set(obj, zoom);
         return EINA_TRUE;
@@ -3225,10 +3225,8 @@ elm_map_zoom_set(Evas_Object *obj, int zoom)
    if (!s) return;
 
    if (zoom < 0 ) zoom = 0;
-   if (zoom > s->zoom_max)
-     zoom = s->zoom_max;
-   if (zoom < s->zoom_min)
-     zoom = s->zoom_min;
+   if (zoom > s->zoom_max) zoom = s->zoom_max;
+   if (zoom < s->zoom_min) zoom = s->zoom_min;
 
    if ((wd->zoom - zoom) > 0) wd->zoom_method = ZOOM_METHOD_OUT;
    else if ((wd->zoom - zoom) < 0) wd->zoom_method = ZOOM_METHOD_IN;
@@ -3250,12 +3248,7 @@ elm_map_zoom_set(Evas_Object *obj, int zoom)
           }
      }
 
-   if (wd->mode == ELM_MAP_ZOOM_MODE_MANUAL)
-     {
-        wd->size.nw = pow(2.0, wd->zoom) * wd->tsize;
-        wd->size.nh = pow(2.0, wd->zoom) * wd->tsize;
-     }
-   else if (wd->mode == ELM_MAP_ZOOM_MODE_AUTO_FIT)
+   if (wd->mode == ELM_MAP_ZOOM_MODE_AUTO_FIT)
      {
         int p2w, p2h;
         int cumulw, cumulh;
@@ -3284,8 +3277,6 @@ elm_map_zoom_set(Evas_Object *obj, int zoom)
           z = p2h;
 
         wd->zoom = z;
-        wd->size.nw = pow(2.0, wd->zoom) * wd->tsize;
-        wd->size.nh = pow(2.0, wd->zoom) * wd->tsize;
      }
    else if (wd->mode == ELM_MAP_ZOOM_MODE_AUTO_FILL)
      {
@@ -3316,9 +3307,9 @@ elm_map_zoom_set(Evas_Object *obj, int zoom)
           z = p2h;
 
         wd->zoom = z;
-        wd->size.nw = pow(2.0, wd->zoom) * wd->tsize;
-        wd->size.nh = pow(2.0, wd->zoom) * wd->tsize;
      }
+   wd->size.nw = pow(2.0, wd->zoom) * wd->tsize;
+   wd->size.nh = pow(2.0, wd->zoom) * wd->tsize;
 
    EINA_LIST_FOREACH(wd->grids, l, g)
      {
@@ -3350,8 +3341,7 @@ elm_map_zoom_set(Evas_Object *obj, int zoom)
      }
 done:
 
-   wd->t_start = ecore_loop_time_get();
-   wd->t_end = wd->t_start + _elm_config->zoom_friction;
+   wd->t = 1.0;
    if ((wd->size.w > 0) && (wd->size.h > 0))
      {
         wd->size.spos.x = (double)(rx + (rw / 2)) / (double)wd->size.ow;
@@ -3416,13 +3406,13 @@ done:
  *
  * @ingroup Map
  */
-EAPI double
+EAPI int
 elm_map_zoom_get(const Evas_Object *obj)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype) 1.0;
+   ELM_CHECK_WIDTYPE(obj, widtype) 0;
    Widget_Data *wd = elm_widget_data_get(obj);
 
-   if (!wd) return 1.0;
+   if (!wd) return 0;
    return wd->zoom;
 }
 
@@ -3434,7 +3424,7 @@ elm_map_zoom_get(const Evas_Object *obj)
  * elm_map_zoom_set() and will stay at that level until changed by code
  * or until zoom mode is changed. This is the default mode.
  * The Automatic modes will allow the map object to automatically
- * adjust zoom mode based on properties. ELM_MAP_ZOOM_MODE_AUTO_FIT) will
+ * adjust zoom mode based on properties. ELM_MAP_ZOOM_MODE_AUTO_FIT will
  * adjust zoom so the map fits inside the scroll frame with no pixels
  * outside this area. ELM_MAP_ZOOM_MODE_AUTO_FILL will be similar but
  * ensure no pixels within the frame are left unfilled. Do not forget that the valid sizes are 2^zoom, consequently the map may be smaller than the scroller view.

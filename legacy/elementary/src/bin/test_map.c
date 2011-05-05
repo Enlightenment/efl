@@ -74,10 +74,10 @@ my_map_longpressed(void *data, Evas_Object *obj __UNUSED__, void *event_info)
    evas_object_geometry_get(data, &ox, &oy, &w, &h);
    zoom = elm_map_zoom_get(data);
    elm_map_geo_region_get(obj, &lon, &lat);
-   elm_map_utils_convert_geo_into_coord(obj, lon, lat, pow(2.0, zoom)*256, &x, &y);
+   elm_map_utils_convert_geo_into_coord(obj, lon, lat, pow(2.0, zoom) * 256, &x, &y);
    x += down->output.x - (w / 2) - ox;
    y += down->output.y - (h / 2) - oy;
-   elm_map_utils_convert_coord_into_geo(obj, x, y, pow(2.0, zoom)*256, &lon, &lat);
+   elm_map_utils_convert_coord_into_geo(obj, x, y, pow(2.0, zoom) * 256, &lon, &lat);
 
    name = elm_map_utils_convert_coord_into_name(data, lon, lat);
 }
@@ -96,7 +96,7 @@ my_map_clicked_double(void *data, Evas_Object *obj, void *event_info)
 
    evas_object_geometry_get(data, &ox, &oy, &w, &h);
    zoom = elm_map_zoom_get(data);
-   if (zoom<5) return;
+   if (zoom < 5) return;
    size = pow(2.0, zoom) * 256;
    elm_map_geo_region_get(obj, &lon, &lat);
    elm_map_utils_convert_geo_into_coord(obj, lon, lat, size, &x, &y);
@@ -263,23 +263,21 @@ my_map_name_loaded(void *data, Evas_Object *obj __UNUSED__, void *event_info __U
 static void
 map_zoom_in(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   double zoom;
+   int zoom;
 
-   zoom = elm_map_zoom_get(data);
-   zoom += 1;
+   zoom = elm_map_zoom_get(data) + 1;
    elm_map_zoom_mode_set(data, ELM_MAP_ZOOM_MODE_MANUAL);
-   if (zoom >= (1.0 / 32.0)) elm_map_zoom_set(data, zoom);
+   elm_map_zoom_set(data, zoom);
 }
 
 static void
 map_zoom_out(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   double zoom;
+   int zoom;
 
-   zoom = elm_map_zoom_get(data);
-   zoom -= 1;
+   zoom = elm_map_zoom_get(data) - 1;
    elm_map_zoom_mode_set(data, ELM_MAP_ZOOM_MODE_MANUAL);
-   if (zoom <= 256.0) elm_map_zoom_set(data, zoom);
+   elm_map_zoom_set(data, zoom);
 }
 
 static void

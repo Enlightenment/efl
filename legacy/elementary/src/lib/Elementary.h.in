@@ -2279,7 +2279,7 @@ extern "C" {
 
    EAPI Evas_Object          *elm_map_add(Evas_Object *parent) EINA_ARG_NONNULL(1);
    EAPI void                  elm_map_zoom_set(Evas_Object *obj, int zoom) EINA_ARG_NONNULL(1);
-   EAPI double                elm_map_zoom_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+   EAPI int                   elm_map_zoom_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
    EAPI void                  elm_map_zoom_mode_set(Evas_Object *obj, Elm_Map_Zoom_Mode mode) EINA_ARG_NONNULL(1);
    EAPI Elm_Map_Zoom_Mode     elm_map_zoom_mode_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
    EAPI void                  elm_map_geo_region_get(const Evas_Object *obj, double *lon, double *lat) EINA_ARG_NONNULL(1);
