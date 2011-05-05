@@ -66,6 +66,10 @@
 #include "evas_common.h"
 #include "evas_private.h"
 
+#ifdef HAVE_LINEBREAK
+#include "linebreak.h"
+#endif
+
 /* save typing */
 #define ENFN obj->layer->evas->engine.func
 #define ENDT obj->layer->evas->engine.data.output
@@ -2434,7 +2438,7 @@ _layout_text_cutoff_get(Ctxt *c, Evas_Object_Textblock_Format *fmt,
 
 /**
  * @internal
- * Cut the text up until cut and split
+ * Split before cut, and strip if str[cut - 1] is a whitespace.
  *
  * @param c the context to work on - Not NULL.
  * @param ti the item to cut - not null.
@@ -2451,10 +2455,11 @@ _layout_item_text_split_strip_white(Ctxt *c,
    size_t cut2;
 
    ts = GET_ITEM_TEXT(ti);
-   if (!IS_AT_END(ti, cut) && _is_white(ts[cut]))
-     cut2 = cut + 1;
-   else
-     cut2 = cut;
+
+   cut2 = cut;
+   /* Also strip the previous white */
+   if ((cut > 1) && _is_white(ts[cut - 1]))
+      cut--;
 
    if (!IS_AT_END(ti, cut2) && (ti->text_props.text_len > 0))
      {
@@ -2510,108 +2515,6 @@ _layout_item_merge_and_free(Ctxt *c,
    item1->parent.visually_deleted = EINA_FALSE;
 
    _item_free(c->obj, NULL, _ITEM(item2));
-}
-
-/**
- * @internal
- * Return the start of the last word up until start.
- *
- * @param ti the relevant text item
- * @param start the start of where to look at.
- * @return the start of the last word up until start.
- */
-static int
-_layout_word_start(const Evas_Object_Textblock_Text_Item *ti, int start)
-{
-   size_t p, tp;
-   Eina_Unicode chr = 0;
-   const Eina_Unicode *str = GET_ITEM_TEXT(ti);
-
-   p = start;
-   chr = GET_NEXT(str, ti, p);
-   if (_is_white(chr))
-     {
-        tp = p;
-        while (_is_white(chr))
-          {
-             tp = p;
-             chr = GET_NEXT(str, ti, p);
-          }
-        return tp;
-     }
-   p = start;
-   tp = p;
-   while (p > 0)
-     {
-        chr = GET_PREV(str, p);
-        if (_is_white(chr)) break;
-        tp = p;
-     }
-   if (_is_white(chr))
-     {
-        GET_NEXT(str, ti, p);
-     }
-   return p;
-}
-
-/**
- * @internal
- * returns the index of the words end starting from p
- *
- * @param ti the relevant text item
- * @param p start position - must be within strings range..
- *
- * @return the position of the end of the word. -1 on error.
- */
-static int
-_layout_word_end(const Evas_Object_Textblock_Text_Item *ti, int p)
-{
-   size_t tp;
-   Eina_Unicode ch;
-   const Eina_Unicode *str = GET_ITEM_TEXT(ti);
-
-   tp = p;
-   ch = GET_NEXT(str, ti, tp);
-   while ((!_is_white(ch)) && (ch != 0))
-     {
-        p = tp;
-        ch = GET_NEXT(str, ti, tp);
-     }
-   if (ch == 0) return -1;
-   return p;
-}
-
-/**
- * @internal
- * returns the index of the start of the next word.
- *
- * @param ti the relevant text item
- * @param p start position - must be within strings range..
- *
- * @return the position of the start of the next word. -1 on error.
- */
-static int
-_layout_word_next(const Evas_Object_Textblock_Text_Item *ti, int p)
-{
-   size_t tp;
-   Eina_Unicode ch;
-   const Eina_Unicode *str = GET_ITEM_TEXT(ti);
-
-   tp = p;
-   ch = GET_NEXT(str, ti, tp);
-   while ((!_is_white(ch)) && (ch != 0))
-     {
-        p = tp;
-        ch = GET_NEXT(str, ti, tp);
-     }
-   if (ch == 0) return -1;
-   while ((_is_white(ch)) && (ch != 0))
-     {
-        p = tp;
-        ch = GET_NEXT(str, ti, tp);
-     }
-   if (ch == 0) return -1;
-   return p;
 }
 
 /**
@@ -3100,10 +3003,13 @@ _layout_update_par(Ctxt *c)
 /* -1 means no wrap */
 static int
 _layout_get_charwrap(Ctxt *c, Evas_Object_Textblock_Format *fmt,
-      const Evas_Object_Textblock_Text_Item *ti)
+      const Evas_Object_Textblock_Text_Item *ti, const char *breaks)
 {
    int wrap;
    const Eina_Unicode *str = GET_ITEM_TEXT(ti);
+   /* Currently not being used, because it doesn't contain relevant
+    * information */
+   (void) breaks;
 
    wrap = _layout_text_cutoff_get(c, fmt, ti);
    if (wrap == 0)
@@ -3115,146 +3021,129 @@ _layout_get_charwrap(Ctxt *c, Evas_Object_Textblock_Format *fmt,
 }
 
 /* -1 means no wrap */
+#ifdef HAVE_LINEBREAK
+
+/* Allow break means: if we can break after the current char */
+#define ALLOW_BREAK(i) \
+   ((((i) + ti->parent.text_pos) > 0) ? \
+    (breaks[ti->parent.text_pos + (i)] == LINEBREAK_ALLOWBREAK) : \
+    (EINA_FALSE))
+
+#else
+
+#define ALLOW_BREAK(i) \
+   ((((i) + ti->parent.text_pos) > 0) ? \
+    (_is_white(str[(i)])) : \
+    (EINA_FALSE))
+
+#endif
+
 static int
 _layout_get_word_mixwrap_common(Ctxt *c, Evas_Object_Textblock_Format *fmt,
-      const Evas_Object_Textblock_Text_Item *ti, Eina_Bool mixed_wrap)
+      const Evas_Object_Textblock_Text_Item *ti, Eina_Bool mixed_wrap,
+      const char *breaks)
 {
-   int wrap = -1, twrap;
+   int wrap = -1;
    int orig_wrap;
-   Eina_Unicode ch;
    const Eina_Unicode *str = GET_ITEM_TEXT(ti);
+#ifndef HAVE_LINEBREAK
+   /* Not used without liblinebreak ATM. */
+   (void) breaks;
+#endif
 
    wrap = _layout_text_cutoff_get(c, fmt, ti);
-   /* Avoiding too small textblocks to even contain one char */
-   if (wrap == 0)
-     GET_NEXT(str, ti, wrap);
+   /* Avoiding too small textblocks to even contain one char.
+    * FIXME: This can cause breaking inside ligatures. */
+
    orig_wrap = wrap;
-   /* We need to wrap and found the position that overflows */
    if (wrap > 0)
      {
-        size_t index = (size_t) wrap;
-        ch = GET_NEXT(str, ti, index);
-        if (!_is_white(ch))
-          wrap = _layout_word_start(ti, wrap);
-        /* If we found where to cut the text at, i.e the start
-         * of the word we were pointing at */
-        if (wrap > 0)
+        /* The wrapping point found is the first char of the next string
+           the rest works on the last char of the previous string.
+           If it's a whitespace, then it's ok, and no need to go back
+           because we'll remove it anyway. */
+        if (!_is_white(str[wrap]))
+           GET_PREV(str, wrap);
+        /* If there's a breakable point inside the text, scan backwards until
+         * we find it */
+        do
           {
-             twrap = wrap;
-             ch = GET_PREV(str, twrap);
-             /* the text intersects the wrap point on a whitespace char */
-             if (_is_white(ch))
-               {
-                  return wrap;
-               }
-             /* intersects a word */
-             else
-               {
-                  /* walk back to start of word */
-                  twrap = _layout_word_start(ti, wrap);
-                  if (twrap > 0)
-                    {
-                       wrap = twrap;
-                       ch = GET_PREV(str, wrap);
-                       return (!IS_AT_END(ti, (size_t) wrap)) ? wrap : -1;
-                    }
-                  else if (twrap < 0)
-                    {
-                       return -1;
-                    }
-               }
+             if (ALLOW_BREAK(wrap))
+                break;
+             wrap--;
           }
-        /* If we weren't able to find the start of the word we
-         * are currently pointing at, or we were able but it's
-         * the first word - the end of this word is the wrap point, o */
+        while (wrap >= 0);
+
+        if (wrap >= 0)
+          {
+             /* We found a suitable wrapping point, break here. */
+             GET_NEXT(str, ti, wrap);
+             return wrap;
+          }
         else
           {
-             /* wrap now is the index of the word START */
-             index = wrap;
-             ch = GET_NEXT(str, ti, index);
-
              /* If there are already items in this line, we
               * should just try creating a new line for it */
              if (c->ln->items)
                {
                   return 0;
                }
-             /* If there were no items in this line, try to do
-              * our best wrapping possible since it's the middle
-              * of the word */
+
+             if (mixed_wrap)
+               {
+                  return ((orig_wrap >= 0) &&
+                        !IS_AT_END(ti, (size_t) orig_wrap)) ? orig_wrap : -1;
+               }
              else
                {
-                  if (mixed_wrap)
+                  /* Scan forward to find the next wrapping point */
+                  wrap = orig_wrap;
+                  do
                     {
-                       return ((orig_wrap >= 0) &&
-                             !IS_AT_END(ti, (size_t) orig_wrap)) ? orig_wrap : -1;
+                       if (ALLOW_BREAK(wrap))
+                          break;
+                       wrap++;
+                    }
+                  while (!IS_AT_END(ti, (size_t) wrap));
+
+
+                  if (!IS_AT_END(ti, (size_t) wrap))
+                    {
+                       GET_NEXT(str, ti, wrap);
+                       return wrap;
                     }
                   else
                     {
-                       wrap = 0;
-                       twrap = _layout_word_end(ti, wrap);
-                       wrap = twrap;
-                       if (twrap >= 0)
-                         {
-                            ch = GET_NEXT(str, ti, wrap);
-                            return (!IS_AT_END(ti, (size_t) wrap)) ? wrap : -1;
-                         }
-                       else
-                         {
-                            return -1;
-                         }
+                       return -1;
                     }
                }
           }
-     }
-   /* We need to wrap, but for some reason we failed obatining the
-    * overflow position. */
-   else
-     {
-        /*FIXME: sanitize this error handling - should probably
-         * never get here anyway unless something really bad
-         * has happend */
-        /* wrap now is the index of the word START */
-        if (wrap < 0) wrap = 0;
 
-        /* If there are already items in the line, break before. */
-        if (c->ln->items)
-          {
-             return 0;
-          }
-        else
-          {
-             twrap = _layout_word_end(ti, wrap);
-             wrap = _layout_word_next(ti, wrap);
-             if (wrap >= 0)
-               {
-                  ch = GET_NEXT(str, ti, wrap);
-                  return (!IS_AT_END(ti, (size_t) wrap)) ? wrap : -1;
-               }
-             else if (twrap >= 0)
-               {
-                  ch = GET_NEXT(str, ti, twrap);
-                  return (!IS_AT_END(ti, (size_t) twrap)) ? twrap : -1;
-               }
-          }
      }
+   else if (wrap == 0)
+     {
+        /* Just to avoid too small textblocks */
+        GET_NEXT(str, ti, wrap);
+        return wrap;
+     }
+
    return -1;
 }
 
 /* -1 means no wrap */
 static int
 _layout_get_wordwrap(Ctxt *c, Evas_Object_Textblock_Format *fmt,
-      const Evas_Object_Textblock_Text_Item *ti)
+      const Evas_Object_Textblock_Text_Item *ti, const char *breaks)
 {
-   return _layout_get_word_mixwrap_common(c, fmt, ti, EINA_FALSE);
+   return _layout_get_word_mixwrap_common(c, fmt, ti, EINA_FALSE, breaks);
 }
 
 /* -1 means no wrap */
 static int
 _layout_get_mixedwrap(Ctxt *c, Evas_Object_Textblock_Format *fmt,
-      const Evas_Object_Textblock_Text_Item *ti)
+      const Evas_Object_Textblock_Text_Item *ti, const char *breaks)
 {
-   return _layout_get_word_mixwrap_common(c, fmt, ti, EINA_TRUE);
+   return _layout_get_word_mixwrap_common(c, fmt, ti, EINA_TRUE, breaks);
 }
 
 /* Should be moved inside _layout_ellipsis_item_new once we fix the hack in
@@ -3303,6 +3192,9 @@ _layout_visualize_par(Ctxt *c)
 {
    Evas_Object_Textblock_Item *it;
    Eina_List *i;
+   int ret = 0;
+   char *line_breaks = NULL;
+
    if (!c->par->logical_items)
      return 2;
 
@@ -3452,7 +3344,8 @@ _layout_visualize_par(Ctxt *c)
                   c->ln->ellip_ti = ellip_ti;
                   _layout_line_finalize(c, ellip_ti->parent.format);
 
-                  return 1;
+                  ret = 1;
+                  goto end;
                }
              else if (it->format->wrap_word || it->format->wrap_char ||
                 it->format->wrap_mixed)
@@ -3472,13 +3365,36 @@ _layout_visualize_par(Ctxt *c)
                        Evas_Object_Textblock_Text_Item *ti = _ITEM_TEXT(it);
                        int wrap;
 
+#ifdef HAVE_LINEBREAK
+                       /* If we haven't calculated the linebreaks yet,
+                        * do */
+                       if (!line_breaks)
+                         {
+                            size_t len =
+                               eina_ustrbuf_length_get(it->text_node->unicode);
+                            line_breaks = malloc(len);
+                            /* Only relevant in those cases */
+                            if (it->format->wrap_word || it->format->wrap_mixed)
+                              {
+                                 set_linebreaks_utf32((const utf32_t *)
+                                    eina_ustrbuf_string_get(
+                                       it->text_node->unicode),
+                                    len, "", line_breaks);
+                                 /* FIXME: "" should be text_props language */
+                              }
+                         }
+#endif
+
                        adv_line = 1;
                        if (it->format->wrap_word)
-                         wrap = _layout_get_wordwrap(c, it->format, ti);
+                         wrap = _layout_get_wordwrap(c, it->format, ti,
+                               line_breaks);
                        else if (it->format->wrap_char)
-                         wrap = _layout_get_charwrap(c, it->format, ti);
+                         wrap = _layout_get_charwrap(c, it->format, ti,
+                               line_breaks);
                        else if (it->format->wrap_mixed)
-                         wrap = _layout_get_mixedwrap(c, it->format, ti);
+                         wrap = _layout_get_mixedwrap(c, it->format, ti,
+                               line_breaks);
                        else
                          wrap = -1;
 
@@ -3536,7 +3452,14 @@ _layout_visualize_par(Ctxt *c)
         /* Here 'it' is the last format used */
         _layout_line_finalize(c, it->format);
      }
-   return 0;
+
+end:
+#ifdef HAVE_LINEBREAK
+   if (line_breaks)
+      free(line_breaks);
+#endif
+
+   return ret;
 }
 
 /**
@@ -7905,6 +7828,14 @@ static void
 evas_object_textblock_init(Evas_Object *obj)
 {
    Evas_Object_Textblock *o;
+#ifdef HAVE_LINEBREAK
+   static Eina_Bool linebreak_init = EINA_FALSE;
+   if (!linebreak_init)
+     {
+        linebreak_init = EINA_TRUE;
+        init_linebreak();
+     }
+#endif
 
    /* alloc image ob, setup methods and default values */
    obj->object_data = evas_object_textblock_new();
