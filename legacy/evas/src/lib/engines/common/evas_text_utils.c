@@ -66,6 +66,31 @@ evas_common_text_props_content_unref(Evas_Text_Props *props)
      }
 }
 
+EAPI Eina_Bool
+evas_common_text_props_can_split(Evas_Text_Props *props, int _cutoff)
+{
+#ifdef OT_SUPPORT
+   Evas_Font_OT_Info *itr;
+   size_t i;
+   itr = props->info->ot + props->start;
+   _cutoff += props->text_offset;
+   /* FIXME: can I binary search? I don't think this is always sorted */
+   for (i = 0 ; i < props->len ; i++, itr++)
+     {
+        if (itr->source_cluster == (size_t) _cutoff)
+          {
+             return EINA_TRUE;
+          }
+     }
+
+   /* We didn't find the cutoff position. */
+   ERR("Couldn't find the cutoff position. Is it inside a cluster?");
+   return EINA_FALSE;
+#else
+   return EINA_TRUE;
+#endif
+}
+
 /* Won't work in the middle of ligatures, assumes cutoff < len.
  * Also won't work in the middle of indic words, should handle that in a
  * smart way. */

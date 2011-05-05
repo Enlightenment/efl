@@ -72,6 +72,8 @@ evas_common_text_props_content_ref(Evas_Text_Props *props);
 void
 evas_common_text_props_content_unref(Evas_Text_Props *props);
 
+EAPI Eina_Bool
+evas_common_text_props_can_split(Evas_Text_Props *props, int _cutoff);
 
 EAPI void
 evas_common_text_props_split(Evas_Text_Props *base, Evas_Text_Props *ext,
