@@ -1,3 +1,3 @@
 MAINTAINERCLEANFILES = Makefile.in
 
-SUBDIRS = lib bin modules examples
+SUBDIRS = static_deps lib bin modules examples

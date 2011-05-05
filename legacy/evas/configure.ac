@@ -272,6 +272,33 @@ if test "x${want_fontconfig}" = "xyes" -o "x${want_fontconfig}" = "xauto" ; then
       ])
 fi
 
+# linebreak
+have_linebreak="no"
+want_linebreak="yes"
+AC_ARG_ENABLE([liblinebreak],
+   AC_HELP_STRING([--disable-liblinebreak],
+      [disable linking against liblinebreak. @<:@default=enabled@:>@]),
+   [
+    if test "x${enableval}" = "xyes" ; then
+       want_linebreak="yes"
+    else
+       want_linebreak="no"
+    fi
+   ])
+
+
+AM_CONDITIONAL(EVAS_USE_LINEBREAK, test "x${want_linebreak}" = "xyes")
+if test "x${want_linebreak}" = "xyes" ; then
+   have_linebreak="yes"
+   LINEBREAK_CFLAGS='-I$(top_srcdir)/src/static_deps/liblinebreak'
+   LINEBREAK_LIBS='$(top_builddir)/src/static_deps/liblinebreak/liblinebreak.la'
+   AC_SUBST(LINEBREAK_CFLAGS)
+   AC_SUBST(LINEBREAK_LIBS)
+   AC_DEFINE(HAVE_LINEBREAK, 1, [have liblinebreak support])
+else
+   have_linebreak="no"
+fi
+
 # fribidi support
 have_fribidi="no"
 AC_ARG_ENABLE([fribidi],
@@ -1645,6 +1672,8 @@ src/modules/savers/eet/Makefile
 src/modules/savers/jpeg/Makefile
 src/modules/savers/png/Makefile
 src/modules/savers/tiff/Makefile
+src/static_deps/Makefile
+src/static_deps/liblinebreak/Makefile
 src/lib/include/Makefile
 src/examples/Makefile
 README
@@ -1742,6 +1771,7 @@ echo
 echo "Font Rendering Helpers:"
 echo "  Fribidi.................: $have_fribidi"
 echo "  Harfbuzz................: $have_harfbuzz"
+echo "  liblinebreak............: $have_linebreak"
 # FIXME: add non freetype2 font engine support
 # FIXME: make freetype2 optional
 echo
