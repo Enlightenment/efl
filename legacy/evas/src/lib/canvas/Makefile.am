@@ -54,3 +54,7 @@ evas_gl.c
 
 libevas_canvas_la_LIBADD = @EVIL_LIBS@
 
+if EVAS_USE_LINEBREAK
+AM_CPPFLAGS += @LINEBREAK_CFLAGS@
+libevas_canvas_la_LIBADD += @LINEBREAK_LIBS@
+endif
