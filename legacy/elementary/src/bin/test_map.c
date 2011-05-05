@@ -24,7 +24,7 @@ static Elm_Map_Group_Class *itc_group1, *itc_group2, *itc_group_parking;
 
 static Evas_Object *rect, *menu;
 static int nb_elts;
-static Elm_Map_Marker *markers[MARKER_MAX];
+/*static Elm_Map_Marker *markers[MARKER_MAX];*/
 static Elm_Map_Marker *route_from, *route_to;
 static Elm_Map_Route *route;
 static Elm_Map_Name *name;
@@ -345,6 +345,7 @@ map_source(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
    elm_map_source_name_set(ms->map, ms->source_name);
 }
 
+/*
 static void
 map_marker_add(void *data)
 {
@@ -415,6 +416,7 @@ my_map_entry_activated(void *data, Evas_Object *obj, void *event_info __UNUSED__
    name = elm_map_utils_convert_name_into_coord(data, addr);
    if (addr) free (addr);
 }
+*/
 
 static Evas_Object *
 _marker_get(Evas_Object *obj, Elm_Map_Marker *marker __UNUSED__, void *data)
@@ -492,7 +494,6 @@ _populate(void *data, Elm_Menu_Item *item)
 {
    int idx;
 
-   if (!ms) return;
    if ((!data) || (!item) || (!source_names)) return;
    for (idx = 0; source_names[idx]; idx++)
      {
@@ -574,7 +575,7 @@ _map_mouse_move(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSED__, 
 }
 
 static void
-_map_mouse_up(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
+_map_mouse_up(void *data __UNUSED__, Evas *evas __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
 {
    Evas_Event_Mouse_Up *up = event_info;
    if (!up) return;
