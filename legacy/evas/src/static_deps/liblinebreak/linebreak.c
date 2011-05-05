@@ -554,6 +554,9 @@ nextline:
 	case LBP_NL:
 		lbcCur = LBP_BK;
 		break;
+	case LBP_CB:
+		lbcCur = LBP_BA;
+		break;
 	case LBP_SP:
 		lbcCur = LBP_WJ;
 		break;
