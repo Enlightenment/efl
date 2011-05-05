@@ -543,7 +543,8 @@ end:
 
 /**
  * @internal
- * Find the last character that fits until the boundaries set by x and y.
+ * Find one after the last character that fits until the boundaries set by x
+ * and y. I.e find the first char that doesn't fit.
  * This LOGICALLY walks the string. This is needed for wrapping for example
  * where we want the first part to be the first logical part.
  *
