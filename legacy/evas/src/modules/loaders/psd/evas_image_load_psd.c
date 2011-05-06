@@ -141,6 +141,7 @@ evas_image_load_file_head_psd(Image_Entry *ie, const char *FileName,
 {
    FILE	*f;
    PSD_Header header;
+   Eina_Bool correct;
 
    *error = EVAS_LOAD_ERROR_NONE;
 
@@ -150,10 +151,10 @@ evas_image_load_file_head_psd(Image_Entry *ie, const char *FileName,
         *error = EVAS_LOAD_ERROR_DOES_NOT_EXIST;
         return EINA_FALSE;
      }
-   psd_get_header(&header, f);
+   correct = psd_get_header(&header, f);
    fclose(f);
 
-   if (!is_psd(&header))
+   if (!correct || !is_psd(&header))
      {
         *error = EVAS_LOAD_ERROR_UNKNOWN_FORMAT;
         return EINA_FALSE;
@@ -846,9 +847,9 @@ evas_image_load_file_data_psd(Image_Entry *ie,
         return bpsd;
      }
 
-   psd_get_header(&header, f);
-   if (!is_psd(&header))
+   if (!psd_get_header(&header, f) || !is_psd(&header))
      {
+        fclose(f);
         *error = EVAS_LOAD_ERROR_GENERIC;
         return EINA_FALSE;
      }
