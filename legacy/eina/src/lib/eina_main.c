@@ -83,8 +83,6 @@ EAPI pthread_mutex_t _eina_tracking_lock;
 EAPI Eina_Inlist *_eina_tracking = NULL;
 #endif
 
-static Eina_Lock _mutex;
-
 /* place module init/shutdown functions here to avoid other modules
  * calling them by mistake.
  */
@@ -227,8 +225,6 @@ eina_init(void)
           }
      }
 
-   eina_lock_new(&_mutex);
-
    _eina_main_count = 1;
    return 1;
 }
@@ -244,8 +240,6 @@ eina_shutdown(void)
 #ifdef EINA_HAVE_DEBUG_THREADS
 	pthread_mutex_destroy(&_eina_tracking_lock);
 #endif
-
-        eina_lock_free(&_mutex);
      }
 
    return _eina_main_count;
@@ -262,21 +256,15 @@ eina_threads_init(void)
    assert(pthread_equal(_eina_main_loop, pthread_self()));
 #endif
 
-   eina_lock_take(&_mutex);
    ++_eina_main_thread_count;
    ret = _eina_main_thread_count;
 
    if(_eina_main_thread_count > 1)
-     {
-        eina_lock_release(&_mutex);
-        return ret;
-     }
+     return ret;
 
    eina_share_common_threads_init();
    eina_log_threads_init();
    _eina_threads_activated = EINA_TRUE;
-
-   eina_lock_release(&_mutex);
 
    return ret;
 #else
@@ -312,18 +300,12 @@ eina_threads_shutdown(void)
 
 #endif
 
-   eina_lock_take(&_mutex);
    ret = --_eina_main_thread_count;
    if(_eina_main_thread_count > 0)
-     {
-        eina_lock_release(&_mutex);
-        return ret;
-     }
+     return ret;
 
    eina_share_common_threads_shutdown();
    eina_log_threads_shutdown();
-
-   eina_lock_release(&_mutex);
 
    _eina_threads_activated = EINA_FALSE;
 
