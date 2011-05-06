@@ -425,6 +425,37 @@ elm_slideshow_item_add(Evas_Object *obj, const Elm_Slideshow_Item_Class *itc, co
 }
 
 /**
+ * Insert a object in the list. The object can be a evas object image or a elm photo for example.
+ *
+ * @param obj The slideshow object
+ * @aram itc Callbacks used to create the object and delete the data associated when the item is deleted.
+ * @param data Data used by the user to identified the item
+ * @param func The function to compare data
+ * @return Returns The slideshow item
+ *
+ * @ingroup Slideshow
+ */
+EAPI Elm_Slideshow_Item*
+elm_slideshow_item_sorted_insert(Evas_Object *obj, const Elm_Slideshow_Item_Class *itc, const void *data, Eina_Compare_Cb func)
+{
+   Elm_Slideshow_Item *item;
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+   Widget_Data *wd = elm_widget_data_get(obj);
+
+   if (!wd) return NULL;
+   item = elm_widget_item_new(obj, Elm_Slideshow_Item);
+   item->base.data = data;
+   item->itc = itc;
+   item->l = eina_list_append(item->l, item);
+
+   wd->items = eina_list_sorted_merge(wd->items, item->l, func);
+
+   if (!wd->current) elm_slideshow_show(item);
+
+   return item;
+}
+
+/**
  * Go to the item
  *
  * @param obj The slideshow object

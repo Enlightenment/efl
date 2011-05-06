@@ -2022,6 +2022,7 @@ extern "C" {
 
    EAPI Evas_Object        *elm_slideshow_add(Evas_Object *parent) EINA_ARG_NONNULL(1);
    EAPI Elm_Slideshow_Item *elm_slideshow_item_add(Evas_Object *obj, const Elm_Slideshow_Item_Class *itc, const void *data) EINA_ARG_NONNULL(1);
+   EAPI Elm_Slideshow_Item *elm_slideshow_item_sorted_insert(Evas_Object *obj, const Elm_Slideshow_Item_Class *itc, const void *data, Eina_Compare_Cb func) EINA_ARG_NONNULL(1);
    EAPI void                elm_slideshow_show(Elm_Slideshow_Item *item) EINA_ARG_NONNULL(1);
    EAPI void                elm_slideshow_next(Evas_Object *obj) EINA_ARG_NONNULL(1);
    EAPI void                elm_slideshow_previous(Evas_Object *obj) EINA_ARG_NONNULL(1);
