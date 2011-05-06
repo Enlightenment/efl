@@ -1928,7 +1928,7 @@ _wheel_timer_cb(void *data)
    int zoom;
 
    wd->wheel_timer = NULL;
-   if (wd->zoom_method == ZOOM_METHOD_IN) zoom = (int)ceil(wd->wheel_zoom);
+   if (wd->zoom_method == ZOOM_METHOD_IN) zoom = (int)ceil(wd->wheel_zoom - 1.0);
    else if (wd->zoom_method == ZOOM_METHOD_OUT) zoom = (int)floor((-1.0 / wd->wheel_zoom) + 1.0);
    else return ECORE_CALLBACK_CANCEL;
    wd->mode = ELM_MAP_ZOOM_MODE_MANUAL;
