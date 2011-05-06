@@ -712,11 +712,14 @@ evas_object_smart_member_cache_invalidate(Evas_Object *obj)
    Evas_Object_Smart *o;
    Eina_Inlist *l;
 
+   MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
+   obj->parent_cache_valid = 0;
+   MAGIC_CHECK_END();
+
    o = (Evas_Object_Smart *)(obj->object_data);
    if (o->magic != MAGIC_OBJ_SMART)
      return;
 
-   obj->parent_cache_valid = 0;
    for (l = o->contained; l; l = l->next)
      {
 	Evas_Object *obj2;
