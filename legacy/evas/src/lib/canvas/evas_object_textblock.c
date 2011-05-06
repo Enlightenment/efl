@@ -3162,6 +3162,7 @@ _layout_get_wordwrap(Ctxt *c, Evas_Object_Textblock_Format *fmt,
       const Evas_Object_Textblock_Text_Item *ti, size_t line_start,
       const char *breaks)
 {
+   if (!ti->parent.text_node) return -1;
    return _layout_get_word_mixwrap_common(c, fmt, ti, EINA_FALSE, line_start,
          breaks);
 }
@@ -3172,6 +3173,7 @@ _layout_get_mixedwrap(Ctxt *c, Evas_Object_Textblock_Format *fmt,
       const Evas_Object_Textblock_Text_Item *ti, size_t line_start,
       const char *breaks)
 {
+   if (!ti->parent.text_node) return -1;
    return _layout_get_word_mixwrap_common(c, fmt, ti, EINA_TRUE, line_start,
          breaks);
 }
@@ -3403,7 +3405,7 @@ _layout_visualize_par(Ctxt *c)
                        if (!line_breaks)
                          {
                             /* Only relevant in those cases */
-                            if (it->format->wrap_word || it->format->wrap_mixed)
+                            if ((it->format->wrap_word || it->format->wrap_mixed) && it->text_node)
                               {
                                  size_t len =
                                     eina_ustrbuf_length_get(
