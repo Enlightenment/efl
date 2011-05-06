@@ -291,9 +291,8 @@ static void
 elm_mod_shutdown(void)
 {
    edje_external_type_array_unregister(elm_external_types);
-   eina_log_domain_unregister(_elm_log_dom);
+   if (_elm_log_dom >= 0) eina_log_domain_unregister(_elm_log_dom);
    _elm_log_dom = -1;
-
 }
 
 EINA_MODULE_INIT(elm_mod_init);
