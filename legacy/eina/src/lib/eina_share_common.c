@@ -810,7 +810,6 @@ eina_share_common_ref(Eina_Share *share, const char *str)
    node = _eina_share_common_node_from_str(str, share->node_magic);
    if (!node) return str;
    node->references++;
-   DBG("str=%p refs=%u", str, node->references);
 
    eina_lock_release(&_mutex_big);
 
@@ -843,12 +842,10 @@ eina_share_common_del(Eina_Share *share, const char *str)
    if (node->references > 1)
      {
         node->references--;
-        DBG("str=%p refs=%u", str, node->references);
         eina_lock_release(&_mutex_big);
         return;
      }
 
-   DBG("str=%p refs=0, delete.", str);
    node->references = 0;
 
    hash = eina_hash_superfast(str, slen);
