@@ -1,4 +1,4 @@
-2011-01-29  Carsten Haitzler (The Rasterman)
+6~2011-01-29  Carsten Haitzler (The Rasterman)
 
 	1.0.0 release
 
@@ -311,4 +311,8 @@
 	  the fallback line breaking methods which are not very correct, but
 	  are possibly faster. I haven't noticed any difference between the
 	  two speed-wise, but there probably are in some rare cases.
+
+2011-05-06 Cedric Bail
+
+	* Don't try all image loader when user is pointing them on a directory.
 

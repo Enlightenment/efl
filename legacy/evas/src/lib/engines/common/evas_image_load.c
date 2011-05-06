@@ -1,3 +1,7 @@
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
+
 #include "evas_common.h"
 #include "evas_private.h"
 #include "evas_cs.h"
@@ -82,6 +86,7 @@ evas_common_load_rgba_image_module_from_file(Image_Entry *ie)
    Evas_Image_Load_Func *evas_image_load_func = NULL;
    const char           *loader = NULL, *end;
    Evas_Module          *em;
+   struct stat		 st;
    unsigned int          i;
    int                   len, ret = EVAS_LOAD_ERROR_NONE;
    struct evas_image_foreach_loader_data fdata;
@@ -100,6 +105,12 @@ evas_common_load_rgba_image_module_from_file(Image_Entry *ie)
           }
      }
 #endif
+   if (stat(ie->file, &st) != 0 || S_ISDIR(st.st_mode))
+     {
+        DBG("trying to open directory '%s' !", ie->file);
+        return EVAS_LOAD_ERROR_DOES_NOT_EXIST;
+     }
+
    len = strlen(ie->file);
    end = ie->file + len;
    for (i = 0; i < (sizeof (loaders) / sizeof(struct ext_loader_s)); i++)
