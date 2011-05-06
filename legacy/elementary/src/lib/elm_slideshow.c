@@ -11,7 +11,7 @@
  *
  * The slideshow use 2 callbacks to create and delete the objects displayed. When an item
  * is displayed the function itc->func.get() is called. This function should create the object,
- * for example the object can be an evas_object_image or a photocam. When a object is no more
+ * for example the object can be an evas_object_image or a photocam. When an object is no more
  * displayed the function itc->func.del() is called, the user can delete the dana associated to the item.
  *
  * Signals that you can add callbacks for are:
@@ -395,7 +395,7 @@ elm_slideshow_add(Evas_Object *parent)
 }
 
 /**
- * Add a object in the list. The object can be a evas object image or a elm photo for example.
+ * Add an object in the list. The object can be a evas object image or a elm photo for example.
  *
  * @param obj The slideshow object
  * @aram itc Callbacks used to create the object and delete the data associated when the item is deleted.
@@ -425,7 +425,7 @@ elm_slideshow_item_add(Evas_Object *obj, const Elm_Slideshow_Item_Class *itc, co
 }
 
 /**
- * Insert a object in the list. The object can be a evas object image or a elm photo for example.
+ * Insert an object in the list. The object can be a evas object image or a elm photo for example.
  *
  * @param obj The slideshow object
  * @aram itc Callbacks used to create the object and delete the data associated when the item is deleted.
