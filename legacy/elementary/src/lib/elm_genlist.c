@@ -3791,7 +3791,7 @@ elm_genlist_item_selected_set(Elm_Genlist_Item *it,
    ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(it);
    Widget_Data *wd = elm_widget_data_get(it->base.widget);
    if (!wd) return;
-   if ((it->delete_me) && (it->disabled)) return;
+   if ((it->delete_me) || (it->disabled)) return;
    selected = !!selected;
    if (it->selected == selected) return;
 
@@ -5162,6 +5162,7 @@ elm_genlist_item_mode_set(Elm_Genlist_Item *it,
 
    if (!wd) return;
    if (!mode_type) return;
+   if ((it->delete_me) || (it->disabled)) return;
 
    if ((wd->mode_item == it) &&
        (!strcmp(mode_type, wd->mode_type)) &&
