@@ -402,6 +402,7 @@ struct _Widget_Data
    const char *source_name;
    const char **source_names;
    Evas_Map *map;
+   Ecore_Timer *zoom_timer;
 };
 
 struct _Pan
@@ -1325,16 +1326,16 @@ grid_load(Evas_Object *obj, Grid *g)
      }
    eina_iterator_free(it);
 
-   xx = wd->pan_x / size;
+   xx = wd->pan_x / size - 2;
    if (xx < 0) xx = 0;
 
-   yy = wd->pan_y / size;
+   yy = wd->pan_y / size - 2;
    if (yy < 0) yy = 0;
 
-   ww = ow / size + 1;
+   ww = ow / size + 4;
    if (xx + ww >= g->gw) ww = g->gw - xx - 1;
 
-   hh = oh / size + 1;
+   hh = oh / size + 4;
    if (yy + hh >= g->gh) hh = g->gh - yy - 1;
 
    for (y = yy; y <= yy + hh; y++)
@@ -1545,6 +1546,20 @@ zoom_do(Evas_Object *obj)
 }
 
 static Eina_Bool
+_zoom_timeout(void *data)
+{
+   ELM_CHECK_WIDTYPE(data, widtype) ECORE_CALLBACK_CANCEL;
+   Widget_Data *wd = elm_widget_data_get(data);
+
+   if (!wd) return ECORE_CALLBACK_CANCEL;
+   wd->zoom_timer = NULL;
+   wd->pinch.level = 1.0;
+   zoom_do(data);
+   evas_object_smart_callback_call(data, SIG_ZOOM_STOP, NULL);
+   return ECORE_CALLBACK_CANCEL;
+}
+
+static Eina_Bool
 _zoom_anim(void *data)
 {
    ELM_CHECK_WIDTYPE(data, widtype) ECORE_CALLBACK_CANCEL;
@@ -1558,15 +1573,24 @@ _zoom_anim(void *data)
      {
         wd->zoom_animator = NULL;
         zoom_do(obj);
+        evas_object_smart_callback_call(data, SIG_ZOOM_STOP, NULL);
         return ECORE_CALLBACK_CANCEL;
      }
 
-   if ((wd->t >= 2.0) || (wd->t <= 0.5))
+   if (wd->t >= 2.0)
      {
         wd->zoom_animator = NULL;
         wd->pinch.level = 1.0;
-        zoom_do(obj);
-        evas_object_smart_callback_call(obj, SIG_ZOOM_STOP, NULL);
+        if (wd->zoom_timer) ecore_timer_del(wd->zoom_timer);
+        wd->zoom_timer = ecore_timer_add(0.35, _zoom_timeout, obj);
+        return ECORE_CALLBACK_CANCEL;
+     }
+   else if (wd->t <= 0.5)
+     {
+        wd->zoom_animator = NULL;
+        wd->pinch.level = 0.5;
+        if (wd->zoom_timer) ecore_timer_del(wd->zoom_timer);
+        wd->zoom_timer = ecore_timer_add(1.35, _zoom_timeout, obj);
         return ECORE_CALLBACK_CANCEL;
      }
    else if (wd->t != 1.0)
@@ -2249,7 +2273,7 @@ _pan_calculate(Evas_Object *obj)
    rect_place(sd->wd->obj, sd->wd->pan_x, sd->wd->pan_y, ox, oy, ow, oh);
    EINA_LIST_FOREACH(sd->wd->grids, l, g)
      {
-        if (sd->wd->pinch.level == 1.0) grid_load(sd->wd->obj, g);
+        grid_load(sd->wd->obj, g);
         grid_place(sd->wd->obj, g, sd->wd->pan_x, sd->wd->pan_y, ox, oy, ow, oh);
         marker_place(sd->wd->obj, g, sd->wd->pan_x, sd->wd->pan_y, ox, oy, ow, oh);
         if (!sd->wd->zoom_animator) route_place(sd->wd->obj, g, sd->wd->pan_x, sd->wd->pan_y, ox, oy, ow, oh);
@@ -3202,8 +3226,7 @@ elm_map_zoom_set(Evas_Object *obj, int zoom)
    Evas_Coord rx, ry, rw, rh;
    Evas_Object *p;
    Elm_Map_Route *r;
-   int z;
-   int zoom_changed = 0, started = 0;
+   int z = 0, zoom_changed = 0, started = 0;
 
    if ((!wd) || (wd->zoom_animator)) return;
    EINA_LIST_FOREACH(wd->map_sources_tab, l, ss)
