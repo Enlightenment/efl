@@ -1580,7 +1580,7 @@ _zoom_anim(void *data)
    if (wd->t >= 2.0)
      {
         wd->zoom_animator = NULL;
-        wd->pinch.level = 1.0;
+        wd->pinch.level = 2.0;
         if (wd->zoom_timer) ecore_timer_del(wd->zoom_timer);
         wd->zoom_timer = ecore_timer_add(0.35, _zoom_timeout, obj);
         return ECORE_CALLBACK_CANCEL;
