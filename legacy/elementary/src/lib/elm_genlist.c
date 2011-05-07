@@ -3144,14 +3144,14 @@ _item_idle_enterer(void *data)
    Widget_Data *wd = data;
    Eina_Bool wakeup = EINA_FALSE;
    Eina_Bool ok = _idle_process(data, &wakeup);
-   
+
    if (wakeup)
      {
         // wake up mainloop
         if (wd->calc_job) ecore_job_del(wd->calc_job);
         wd->calc_job = ecore_job_add(_calc_job, wd);
      }
-   if (ok == ECORE_CALLBACK_CANCEL) wd->queue_idle_enterer = NULL;   
+   if (ok == ECORE_CALLBACK_CANCEL) wd->queue_idle_enterer = NULL;
    return ok;
 }
 
@@ -3171,7 +3171,7 @@ _item_queue(Widget_Data      *wd,
           }
         _queue_process(wd, 0);
      }
-   if (!wd->queue_idle_enterer) 
+   if (!wd->queue_idle_enterer)
       wd->queue_idle_enterer = ecore_idle_enterer_add(_item_idle_enterer, wd);
 }
 

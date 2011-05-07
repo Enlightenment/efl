@@ -111,14 +111,14 @@ _shot_delay_get(Elm_Win *win)
 {
    char *p, *pd;
    char *d = strdup(win->shot.info);
-   
+
    if (!d) return 0.5;
    for (p = (char *)win->shot.info; *p; p++)
      {
         if (!strncmp(p, "delay=", 6))
           {
              double v;
-             
+
              for (pd = d, p += 6; (*p) && (*p != ':'); p++, pd++)
                {
                   *pd = *p;
@@ -138,7 +138,7 @@ _shot_file_get(Elm_Win *win)
 {
    char *p;
    char *tmp = strdup(win->shot.info);
-   
+
    if (!tmp) return NULL;
    for (p = (char *)win->shot.info; *p; p++)
      {
@@ -363,7 +363,7 @@ static void
 _elm_win_obj_callback_show(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
    Elm_Win *win = data;
-   
+
    elm_object_focus(obj);
    if (win->shot.info) _shot_handle(win);
 }
@@ -628,7 +628,7 @@ _elm_win_xwindow_get(Elm_Win *win)
      {
         if (win->ee) win->xwin = ecore_evas_software_x11_8_window_get(win->ee);
      }
-/* killed        
+/* killed
    else if (ENGINE_COMPARE(ELM_XRENDER_X11))
      {
         if (win->ee) win->xwin = ecore_evas_xrender_x11_window_get(win->ee);
@@ -1358,7 +1358,7 @@ elm_win_add(Evas_Object *parent, const char *name, Elm_Win_Type type)
                 (ECORE_X_EVENT_CLIENT_MESSAGE, _elm_win_client_message, win);
 #endif
           }
-/* killed        
+/* killed
         else if (ENGINE_COMPARE(ELM_XRENDER_X11))
           {
              win->ee = ecore_evas_xrender_x11_new(NULL, 0, 0, 0, 1, 1);

@@ -283,7 +283,7 @@ my_win_main(char *autorun)
    ADD_TEST("File Selector Entry", test_fileselector_entry);
    ADD_TEST("Toggles", test_toggle);
    ADD_TEST("Table", test_table);
-   ADD_TEST("Table Homogeneous", test_table2); 
+   ADD_TEST("Table Homogeneous", test_table2);
    ADD_TEST("Clock", test_clock);
    ADD_TEST("Clock 2", test_clock2);
    ADD_TEST("Layout", test_layout);
