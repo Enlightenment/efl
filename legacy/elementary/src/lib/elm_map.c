@@ -401,6 +401,7 @@ struct _Widget_Data
    Eina_List *map_sources_tab;
    const char *source_name;
    const char **source_names;
+   Evas_Map *map;
 };
 
 struct _Pan
@@ -745,15 +746,11 @@ obj_rotate_zoom(void *data, Evas_Object *obj)
         wd->pinch.cy = wd->rotate.cy;
      }
 
-   Evas_Map *map = evas_map_new(4);
-   if (!map) return;
-
-   evas_map_util_points_populate_from_object_full(map, obj, 0);
-   evas_map_util_zoom(map, wd->pinch.level, wd->pinch.level, wd->pinch.cx, wd->pinch.cy);
-   evas_map_util_rotate(map, wd->rotate.d, wd->rotate.cx, wd->rotate.cy);
+   evas_map_util_points_populate_from_object_full(wd->map, obj, 0);
+   evas_map_util_zoom(wd->map, wd->pinch.level, wd->pinch.level, wd->pinch.cx, wd->pinch.cy);
+   evas_map_util_rotate(wd->map, wd->rotate.d, wd->rotate.cx, wd->rotate.cy);
    evas_object_map_enable_set(obj, EINA_TRUE);
-   evas_object_map_set(obj, map);
-   evas_map_free(map);
+   evas_object_map_set(obj, wd->map);
 }
 
 static void
@@ -1477,24 +1474,6 @@ _smooth_update(Evas_Object *obj)
      }
 }
 
-static void
-_grid_raise(Grid *g)
-{
-   Eina_Iterator *it = eina_matrixsparse_iterator_new(g->grid);
-   Eina_Matrixsparse_Cell *cell;
-
-   g->wd->size.w = g->w;
-   g->wd->size.h = g->h;
-
-   EINA_ITERATOR_FOREACH(it, cell)
-     {
-        Grid_Item *gi = eina_matrixsparse_cell_data_get(cell);
-        evas_object_raise(gi->img);
-        //evas_object_raise(gi->txt);
-     }
-   eina_iterator_free(it);
-}
-
 static Eina_Bool
 _scr_timeout(void *data)
 {
@@ -1574,9 +1553,10 @@ _zoom_anim(void *data)
 
    if (!wd) return ECORE_CALLBACK_CANCEL;
    if (wd->zoom_method == ZOOM_METHOD_IN) wd->t += 0.1 ;
-   else if (wd->zoom_method == ZOOM_METHOD_OUT) wd->t -= 0.1;
+   else if (wd->zoom_method == ZOOM_METHOD_OUT) wd->t -= 0.05;
    else
      {
+        wd->zoom_animator = NULL;
         zoom_do(obj);
         return ECORE_CALLBACK_CANCEL;
      }
@@ -1880,6 +1860,8 @@ _mouse_wheel_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, voi
    Evas_Event_Mouse_Wheel *ev = (Evas_Event_Mouse_Wheel*) event_info;
    Evas_Coord x, y, w, h;
    float half_w, half_h;
+
+   if (!wd) return;
    evas_object_geometry_get(data, &x, &y, &w, &h);
    half_w = (float)w * 0.5;
    half_h = (float)h * 0.5;
@@ -1898,11 +1880,14 @@ _mouse_wheel_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, voi
         if (wd->wheel_zoom >= PINCH_ZOOM_MAX) wd->wheel_zoom = PINCH_ZOOM_MAX;
      }
 
+   if (!wd->paused)
+     {
    wd->pinch.level = wd->wheel_zoom;
    wd->pinch.cx = x + half_w;
    wd->pinch.cy = y + half_h;
    if (wd->calc_job) ecore_job_del(wd->calc_job);
    wd->calc_job = ecore_job_add(_calc_job, wd);
+     }
 
    if (wd->wheel_timer) ecore_timer_del(wd->wheel_timer);
    wd->wheel_timer = ecore_timer_add(0.35, _wheel_timer_cb, data);
@@ -1927,13 +1912,22 @@ _wheel_timer_cb(void *data)
    Widget_Data *wd = elm_widget_data_get(data);
    int zoom;
 
-   wd->wheel_timer = NULL;
+   if (!wd)
+     {
+        wd->wheel_timer = NULL;
+        return ECORE_CALLBACK_CANCEL;
+     }
    if (wd->zoom_method == ZOOM_METHOD_IN) zoom = (int)ceil(wd->wheel_zoom - 1.0);
    else if (wd->zoom_method == ZOOM_METHOD_OUT) zoom = (int)floor((-1.0 / wd->wheel_zoom) + 1.0);
-   else return ECORE_CALLBACK_CANCEL;
+   else
+     {
+        wd->wheel_timer = NULL;
+        return ECORE_CALLBACK_CANCEL;
+     }
    wd->mode = ELM_MAP_ZOOM_MODE_MANUAL;
    elm_map_zoom_set(data, wd->zoom + zoom);
    wd->wheel_zoom = 0.0;
+   wd->wheel_timer = NULL;
    return ECORE_CALLBACK_CANCEL;
 }
 
@@ -2027,6 +2021,7 @@ _del_hook(Evas_Object *obj)
           }
      }
 
+   if (wd->map) evas_map_free(wd->map);
    if (wd->source_names) free(wd->source_names);
    if (wd->calc_job) ecore_job_del(wd->calc_job);
    if (wd->scr_timer) ecore_timer_del(wd->scr_timer);
@@ -2136,7 +2131,7 @@ _calc_job(void *data)
    minh = wd->size.h;
    if (wd->resized)
      {
-        wd->resized = 0;
+        wd->resized = EINA_FALSE;
         if (wd->mode != ELM_MAP_ZOOM_MODE_MANUAL)
           {
              double tz = wd->zoom;
@@ -2237,7 +2232,7 @@ _pan_resize(Evas_Object *obj, Evas_Coord w, Evas_Coord h)
    if (!sd) return;
    evas_object_geometry_get(obj, NULL, NULL, &ow, &oh);
    if ((ow == w) && (oh == h)) return;
-   sd->wd->resized = 1;
+   sd->wd->resized = EINA_TRUE;
    if (sd->wd->calc_job) ecore_job_del(sd->wd->calc_job);
    sd->wd->calc_job = ecore_job_add(_calc_job, sd->wd);
 }
@@ -2763,7 +2758,7 @@ cb_name_dump(void *data, Eina_Simple_XML_Type type, const char *value, unsigned 
            attrs = eina_simple_xml_tag_attributes_find(value, length);
            if (attrs)
              {
-                if (!strncmp(value, NOMINATIM_RESULT, sizeof(NOMINATIM_RESULT)-1)) dump->id = NAME_XML_NAME;
+                if (!strncmp(value, NOMINATIM_RESULT, sizeof(NOMINATIM_RESULT) - 1)) dump->id = NAME_XML_NAME;
                 else dump->id = NAME_XML_NONE;
 
                 eina_simple_xml_attributes_parse
@@ -3097,6 +3092,8 @@ elm_map_add(Evas_Object *parent)
    source_init(obj);
 
    wd->obj = obj;
+   wd->map = evas_map_new(4);
+   if (!wd->map) return NULL;
 
    wd->markers_max_num = 30;
    wd->source_name = eina_stringshare_add("Mapnik");
@@ -3156,7 +3153,6 @@ elm_map_add(Evas_Object *parent)
    evas_object_show(wd->rect);
    evas_object_color_set(wd->rect, 0, 0, 0, 0);
 
-   wd->zoom = -1;
    wd->mode = ELM_MAP_ZOOM_MODE_MANUAL;
    wd->id = ((int)getpid() << 16) | idnum;
    idnum++;
@@ -3166,14 +3162,6 @@ elm_map_add(Evas_Object *parent)
    edje_object_size_min_calc(elm_smart_scroller_edje_object_get(wd->scr),
                              &minw, &minh);
    evas_object_size_hint_min_set(obj, minw, minh);
-
-   wd->paused = EINA_TRUE;
-   elm_map_zoom_set(obj, 0);
-   wd->paused = EINA_FALSE;
-
-   _sizing_eval(obj);
-
-   wd->calc_job = ecore_job_add(_calc_job, wd);
 
    wd->sep_maps_markers = evas_object_rectangle_add(evas_object_evas_get(obj));
    evas_object_smart_member_add(wd->sep_maps_markers, wd->pan_smart);
@@ -3186,6 +3174,10 @@ elm_map_add(Evas_Object *parent)
      {
         ERR("Ecore must be built with curl support for the map widget!");
      }
+
+   elm_map_zoom_set(obj, 0);
+   _sizing_eval(obj);
+
    return obj;
 }
 
@@ -3231,6 +3223,7 @@ elm_map_zoom_set(Evas_Object *obj, int zoom)
    if ((wd->zoom - zoom) > 0) wd->zoom_method = ZOOM_METHOD_OUT;
    else if ((wd->zoom - zoom) < 0) wd->zoom_method = ZOOM_METHOD_IN;
    else wd->zoom_method = ZOOM_METHOD_NONE;
+   if (wd->zoom != zoom ) zoom_changed = 1;
    wd->zoom = zoom;
    wd->size.ow = wd->size.w;
    wd->size.oh = wd->size.h;
@@ -3248,7 +3241,7 @@ elm_map_zoom_set(Evas_Object *obj, int zoom)
           }
      }
 
-   if (wd->mode == ELM_MAP_ZOOM_MODE_AUTO_FIT)
+   if (wd->mode != ELM_MAP_ZOOM_MODE_MANUAL)
      {
         int p2w, p2h;
         int cumulw, cumulh;
@@ -3271,54 +3264,21 @@ elm_map_zoom_set(Evas_Object *obj, int zoom)
           }
         p2h--;
 
-        if (p2w < p2h)
-          z = p2w;
-        else
-          z = p2h;
-
-        wd->zoom = z;
-     }
-   else if (wd->mode == ELM_MAP_ZOOM_MODE_AUTO_FILL)
-     {
-        int p2w, p2h;
-        int cumulw, cumulh;
-
-        cumulw = wd->tsize;
-        p2w = 0;
-        while (cumulw <= rw)
+        if (wd->mode == ELM_MAP_ZOOM_MODE_AUTO_FIT)
           {
-             p2w++;
-             cumulw *= 2;
+             if (p2w < p2h) z = p2w;
+             else z = p2h;
           }
-        p2w--;
-
-        cumulh = wd->tsize;
-        p2h = 0;
-        while (cumulh <= rh)
+        else if (wd->mode == ELM_MAP_ZOOM_MODE_AUTO_FILL)
           {
-             p2h++;
-             cumulh *= 2;
+             if (p2w > p2h) z = p2w;
+             else z = p2h;
           }
-        p2h--;
-
-        if (p2w > p2h)
-          z = p2w;
-        else
-          z = p2h;
-
         wd->zoom = z;
      }
    wd->size.nw = pow(2.0, wd->zoom) * wd->tsize;
    wd->size.nh = pow(2.0, wd->zoom) * wd->tsize;
 
-   EINA_LIST_FOREACH(wd->grids, l, g)
-     {
-        if (g->zoom == wd->zoom)
-          {
-             _grid_raise(g);
-             goto done;
-          }
-     }
    g = grid_create(obj);
    if (g)
      {
@@ -3339,7 +3299,6 @@ elm_map_zoom_set(Evas_Object *obj, int zoom)
              free(g);
           }
      }
-done:
 
    wd->t = 1.0;
    if ((wd->size.w > 0) && (wd->size.h > 0))
@@ -3352,6 +3311,7 @@ done:
         wd->size.spos.x = 0.5;
         wd->size.spos.y = 0.5;
      }
+
    if (rw > wd->size.ow) wd->size.spos.x = 0.5;
    if (rh > wd->size.oh) wd->size.spos.y = 0.5;
    if (wd->size.spos.x > 1.0) wd->size.spos.x = 1.0;
@@ -3360,6 +3320,8 @@ done:
    if (wd->paused)
      {
         zoom_do(obj);
+        if (wd->calc_job) ecore_job_del(wd->calc_job);
+        wd->calc_job = ecore_job_add(_calc_job, wd);
      }
    else
      {
@@ -3371,26 +3333,14 @@ done:
              started = 1;
           }
      }
-   if (wd->zoom_animator)
-     {
-        if (!_zoom_anim(obj))
-          {
-             ecore_animator_del(wd->zoom_animator);
-             wd->zoom_animator = NULL;
-          }
-     }
-   if (wd->calc_job) ecore_job_del(wd->calc_job);
-   wd->calc_job = ecore_job_add(_calc_job, wd);
+
    if (!wd->paused)
      {
-        if (started)
-          evas_object_smart_callback_call(obj, SIG_ZOOM_START, NULL);
-        if (!wd->zoom_animator)
-          evas_object_smart_callback_call(obj, SIG_ZOOM_STOP, NULL);
+        if (started) evas_object_smart_callback_call(obj, SIG_ZOOM_START, NULL);
+        if (!wd->zoom_animator) evas_object_smart_callback_call(obj, SIG_ZOOM_STOP, NULL);
      }
 
-   if (zoom_changed)
-     evas_object_smart_callback_call(obj, SIG_ZOOM_CHANGE, NULL);
+   if (zoom_changed) evas_object_smart_callback_call(obj, SIG_ZOOM_CHANGE, NULL);
 }
 
 /**
@@ -3443,9 +3393,11 @@ elm_map_zoom_mode_set(Evas_Object *obj, Elm_Map_Zoom_Mode mode)
    if (!wd) return;
    if (wd->mode == mode) return;
    wd->mode = mode;
+
+   if (wd->mode != ELM_MAP_ZOOM_MODE_MANUAL)
      {
-        double tz = wd->zoom;
-        wd->zoom = 0.0;
+        int tz = wd->zoom;
+        wd->zoom = 0;
         elm_map_zoom_set(wd->obj, tz);
      }
 }
@@ -3601,7 +3553,7 @@ elm_map_paused_set(Evas_Object *obj, Eina_Bool paused)
      {
         if (wd->zoom_animator)
           {
-             ecore_animator_del(wd->zoom_animator);
+             if (wd->zoom_animator) ecore_animator_del(wd->zoom_animator);
              wd->zoom_animator = NULL;
              zoom_do(obj);
              evas_object_smart_callback_call(obj, SIG_ZOOM_STOP, NULL);

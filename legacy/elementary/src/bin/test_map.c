@@ -261,6 +261,35 @@ my_map_name_loaded(void *data, Evas_Object *obj __UNUSED__, void *event_info __U
 }
 
 static void
+map_show_seoul(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+   Eina_Bool b = elm_map_paused_get(data);
+   elm_map_paused_set(data, EINA_TRUE);
+   elm_map_zoom_mode_set(data, ELM_MAP_ZOOM_MODE_MANUAL);
+   elm_map_geo_region_show(data, 126.977969, 37.566535);
+   elm_map_zoom_set(data, 18);
+   elm_map_paused_set(data, b);
+}
+
+static void
+map_bring_seoul(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+   elm_map_geo_region_bring_in(data, 126.977969, 37.566535);
+}
+
+static void
+map_paused_set(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+   elm_map_paused_set(data, EINA_TRUE);
+}
+
+static void
+map_paused_unset(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+   elm_map_paused_set(data, EINA_FALSE);
+}
+
+static void
 map_zoom_in(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    int zoom;
@@ -520,6 +549,10 @@ _map_mouse_down(void *data, Evas *evas __UNUSED__, Evas_Object *obj, void *event
         menu = elm_menu_add(obj);
         item = elm_menu_item_add(menu, NULL, NULL, "Source", NULL, NULL);
         _populate(data, item);
+        elm_menu_item_add(menu, NULL, NULL, "Show Seoul", map_show_seoul, data);
+        elm_menu_item_add(menu, NULL, NULL, "Bring Seoul", map_bring_seoul, data);
+        elm_menu_item_add(menu, NULL, NULL, "Paused Set", map_paused_set, data);
+        elm_menu_item_add(menu, NULL, NULL, "Paused Unset", map_paused_unset, data);
         elm_menu_item_add(menu, NULL, NULL, "Zoom +", map_zoom_in, data);
         elm_menu_item_add(menu, NULL, NULL, "Zoom -", map_zoom_out, data);
         elm_menu_item_add(menu, NULL, NULL, "Zoom Fit", map_zoom_fit, data);
