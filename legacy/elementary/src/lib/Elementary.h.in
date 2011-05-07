@@ -1955,6 +1955,7 @@ extern "C" {
     *                     out.
     * "multi,pinch,in" - This is called when the genlist is multi-touch pinched
     *                    in.
+    * "swipe" - This is called when the genlist is swiped.
     */
 
    /* check */
