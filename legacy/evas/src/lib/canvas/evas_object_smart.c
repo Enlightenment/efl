@@ -42,26 +42,26 @@ static const Evas_Object_Func object_func =
 {
    /* methods (compulsory) */
    evas_object_smart_free,
-     evas_object_smart_render,
-     evas_object_smart_render_pre,
-     evas_object_smart_render_post,
-     evas_object_smart_id_get,
-     evas_object_smart_visual_id_get,
-     evas_object_smart_engine_data_get,
-     /* these are optional. NULL = nothing */
-     NULL,
-     NULL,
-     NULL,
-     NULL,
-     NULL,
-     NULL,
-     NULL,
-     NULL,
-     NULL,
-     NULL,
-     NULL,
-     NULL,
-     NULL
+   evas_object_smart_render,
+   evas_object_smart_render_pre,
+   evas_object_smart_render_post,
+   evas_object_smart_id_get,
+   evas_object_smart_visual_id_get,
+   evas_object_smart_engine_data_get,
+   /* these are optional. NULL = nothing */
+   NULL,
+   NULL,
+   NULL,
+   NULL,
+   NULL,
+   NULL,
+   NULL,
+   NULL,
+   NULL,
+   NULL,
+   NULL,
+   NULL,
+   NULL
 };
 
 EVAS_MEMPOOL(_mp_obj);
@@ -132,27 +132,27 @@ evas_object_smart_member_add(Evas_Object *obj, Evas_Object *smart_obj)
    if (obj->delete_me)
      {
         CRIT("Adding deleted object %p to smart obj %p", obj, smart_obj);
-	abort();
-	return;
+        abort();
+        return;
      }
    if (smart_obj->delete_me)
      {
-	CRIT("Adding object %p to deleted smart obj %p", obj, smart_obj);
-	abort();
-	return;
+        CRIT("Adding object %p to deleted smart obj %p", obj, smart_obj);
+        abort();
+        return;
      }
    if (!smart_obj->layer)
      {
-	CRIT("No evas surface associated with smart object (%p)", smart_obj);
-	abort();
-	return;
+        CRIT("No evas surface associated with smart object (%p)", smart_obj);
+        abort();
+        return;
      }
    if (obj->layer && smart_obj->layer
        && obj->layer->evas != smart_obj->layer->evas)
      {
-	CRIT("Adding object %p from Evas (%p) from another Evas (%p)", obj, obj->layer->evas, smart_obj->layer->evas);
-	abort();
-	return;
+        CRIT("Adding object %p from Evas (%p) from another Evas (%p)", obj, obj->layer->evas, smart_obj->layer->evas);
+        abort();
+        return;
      }
 
    if (obj->smart.parent == smart_obj) return;
@@ -225,9 +225,9 @@ evas_object_smart_type_check(const Evas_Object *obj, const char *type)
    sc = obj->smart.smart->smart_class;
    while (sc)
      {
-	if (!strcmp(sc->name, type))
-	  return EINA_TRUE;
-	sc = sc->parent;
+        if (!strcmp(sc->name, type))
+          return EINA_TRUE;
+        sc = sc->parent;
      }
 
    return EINA_FALSE;
@@ -247,9 +247,9 @@ evas_object_smart_type_check_ptr(const Evas_Object *obj, const char *type)
    sc = obj->smart.smart->smart_class;
    while (sc)
      {
-	if (sc->name == type)
-	  return EINA_TRUE;
-	sc = sc->parent;
+        if (sc->name == type)
+          return EINA_TRUE;
+        sc = sc->parent;
      }
 
    return EINA_FALSE;
@@ -272,7 +272,7 @@ evas_object_smart_members_get(const Evas_Object *obj)
 
    members = NULL;
    for (member = o->contained; member; member = member->next)
-      members = eina_list_append(members, member);
+     members = eina_list_append(members, member);
 
    return members;
 }
@@ -297,7 +297,7 @@ _evas_object_smart_members_all_del(Evas_Object *obj)
 {
    Evas_Object_Smart *o = (Evas_Object_Smart *)(obj->object_data);
    while (o->contained)
-      evas_object_del((Evas_Object *)(o->contained));
+     evas_object_del((Evas_Object *)(o->contained));
 }
 
 EAPI Evas_Object *
@@ -368,16 +368,16 @@ evas_object_smart_callback_del(Evas_Object *obj, const char *event, Evas_Smart_C
    if (!event) return NULL;
    EINA_LIST_FOREACH(o->callbacks, l, cb)
      {
-	if ((!strcmp(cb->event, event)) && (cb->func == func))
-	  {
-	     void *data;
+        if ((!strcmp(cb->event, event)) && (cb->func == func))
+          {
+             void *data;
 
-	     data = cb->func_data;
-	     cb->delete_me = 1;
-	     o->deletions_waiting = 1;
-	     evas_object_smart_callbacks_clear(obj);
-	     return data;
-	  }
+             data = cb->func_data;
+             cb->delete_me = 1;
+             o->deletions_waiting = 1;
+             evas_object_smart_callbacks_clear(obj);
+             return data;
+          }
      }
    return NULL;
 }
@@ -403,13 +403,13 @@ evas_object_smart_callback_call(Evas_Object *obj, const char *event, void *event
    strshare = eina_stringshare_add(event);
    EINA_LIST_FOREACH(o->callbacks, l, cb)
      {
-	if (!cb->delete_me)
-	  {
-	     if (cb->event == strshare)
-	       cb->func(cb->func_data, obj, event_info);
-	  }
-	if (obj->delete_me)
-	  break;
+        if (!cb->delete_me)
+          {
+             if (cb->event == strshare)
+               cb->func(cb->func_data, obj, event_info);
+          }
+        if (obj->delete_me)
+          break;
      }
    eina_stringshare_del(strshare);
    o->walking_list--;
@@ -433,8 +433,8 @@ evas_object_smart_callbacks_descriptions_set(Evas_Object *obj, const Evas_Smart_
 
    if ((!descriptions) || (!descriptions->name))
      {
-	evas_smart_cb_descriptions_resize(&o->callbacks_descriptions, 0);
-	return 1;
+        evas_smart_cb_descriptions_resize(&o->callbacks_descriptions, 0);
+        return 1;
      }
 
    for (count = 0, d = descriptions; d->name; d++)
@@ -490,9 +490,9 @@ evas_object_smart_callback_description_find(const Evas_Object *obj, const char *
 
    if (!name)
      {
-	if (class_description) *class_description = NULL;
-	if (instance_description) *instance_description = NULL;
-	return;
+        if (class_description) *class_description = NULL;
+        if (instance_description) *instance_description = NULL;
+        return;
      }
 
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
@@ -509,11 +509,11 @@ evas_object_smart_callback_description_find(const Evas_Object *obj, const char *
 
    if (class_description)
      *class_description = evas_smart_cb_description_find
-       (&obj->smart.smart->callbacks, name);
+        (&obj->smart.smart->callbacks, name);
 
    if (instance_description)
      *instance_description = evas_smart_cb_description_find
-       (&o->callbacks_descriptions, name);
+        (&o->callbacks_descriptions, name);
 }
 
 EAPI void
@@ -542,8 +542,8 @@ evas_object_smart_need_recalculate_set(Evas_Object *obj, Eina_Bool value)
     */
    if (o->need_recalculate)
      {
-	Evas *e = obj->layer->evas;
-	eina_array_push(&e->calculate_objects, obj);
+        Evas *e = obj->layer->evas;
+        eina_array_push(&e->calculate_objects, obj);
      }
    /* TODO: else, remove from array */
 }
@@ -607,21 +607,21 @@ evas_call_smarts_calculate(Evas *e)
    calculate = &e->calculate_objects;
    for (i = 0; i < calculate->count; i++)
      {
-	Evas_Object *obj;
-	Evas_Object_Smart *o;
+        Evas_Object *obj;
+        Evas_Object_Smart *o;
         int before;
 
-	obj = eina_array_data_get(calculate, i);
-	if (obj->delete_me)
-	  continue;
+        obj = eina_array_data_get(calculate, i);
+        if (obj->delete_me)
+          continue;
 
         before = calculate->count;
-	o = obj->object_data;
-	if (o->need_recalculate)
-	  {
-	     o->need_recalculate = 0;
-	     obj->smart.smart->smart_class->calculate(obj);
-	  }
+        o = obj->object_data;
+        if (o->need_recalculate)
+          {
+             o->need_recalculate = 0;
+             obj->smart.smart->smart_class->calculate(obj);
+          }
      }
    in_smart_calc--;
    if (in_smart_calc == 0) eina_array_flush(calculate);
@@ -651,14 +651,14 @@ evas_object_smart_callbacks_clear(Evas_Object *obj)
    if (!o->deletions_waiting) return;
    for (l = o->callbacks; l;)
      {
-	cb = eina_list_data_get(l);
-	l = eina_list_next(l);
-	if (cb->delete_me)
-	  {
-	     o->callbacks = eina_list_remove(o->callbacks, cb);
-	     if (cb->event) eina_stringshare_del(cb->event);
+        cb = eina_list_data_get(l);
+        l = eina_list_next(l);
+        if (cb->delete_me)
+          {
+             o->callbacks = eina_list_remove(o->callbacks, cb);
+             if (cb->event) eina_stringshare_del(cb->event);
              EVAS_MEMPOOL_FREE(_mp_cb, cb);
-	  }
+          }
      }
 }
 
@@ -685,21 +685,21 @@ evas_object_smart_cleanup(Evas_Object *obj)
    o = (Evas_Object_Smart *)(obj->object_data);
    if (o->magic == MAGIC_OBJ_SMART)
      {
-	while (o->contained)
-	  evas_object_smart_member_del((Evas_Object *)o->contained);
+        while (o->contained)
+          evas_object_smart_member_del((Evas_Object *)o->contained);
 
-	while (o->callbacks)
-	  {
-	     Evas_Smart_Callback *cb;
+        while (o->callbacks)
+          {
+             Evas_Smart_Callback *cb;
 
-	     cb = o->callbacks->data;
-	     o->callbacks = eina_list_remove(o->callbacks, cb);
-	     if (cb->event) eina_stringshare_del(cb->event);
+             cb = o->callbacks->data;
+             o->callbacks = eina_list_remove(o->callbacks, cb);
+             if (cb->event) eina_stringshare_del(cb->event);
              EVAS_MEMPOOL_FREE(_mp_cb, cb);
-	  }
+          }
 
-	evas_smart_cb_descriptions_resize(&o->callbacks_descriptions, 0);
-	o->data = NULL;
+        evas_smart_cb_descriptions_resize(&o->callbacks_descriptions, 0);
+        o->data = NULL;
      }
 
    obj->smart.parent = NULL;
@@ -724,10 +724,10 @@ evas_object_smart_member_cache_invalidate(Evas_Object *obj)
 
    for (l = o->contained; l; l = l->next)
      {
-	Evas_Object *obj2;
+        Evas_Object *obj2;
 
-	obj2 = (Evas_Object *)l;
-	evas_object_smart_member_cache_invalidate(obj2);
+        obj2 = (Evas_Object *)l;
+        evas_object_smart_member_cache_invalidate(obj2);
      }
 }
 
@@ -833,10 +833,10 @@ evas_object_smart_render_pre(Evas_Object *obj)
    if ((obj->cur.map != obj->prev.map) ||
        (obj->cur.usemap != obj->prev.usemap))
      {
-	evas_object_render_pre_prev_cur_add(&obj->layer->evas->clip_changes, obj);
+        evas_object_render_pre_prev_cur_add(&obj->layer->evas->clip_changes, obj);
         goto done;
      }
-   done:
+done:
    obj->pre_render_done = 1;
 }
 
