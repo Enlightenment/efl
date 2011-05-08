@@ -484,6 +484,5 @@ elm_panel_toggle(Evas_Object *obj)
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
-   wd->hidden = !(wd->hidden);
    _toggle_panel(obj, NULL, "elm,action,panel,toggle", "*");
 }
