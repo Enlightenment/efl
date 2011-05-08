@@ -3054,7 +3054,7 @@ _layout_get_charwrap(Ctxt *c, Evas_Object_Textblock_Format *fmt,
 
 /* Allow break means: if we can break after the current char */
 #define ALLOW_BREAK(i) \
-   (breaks[i] == LINEBREAK_ALLOWBREAK)
+   (breaks[i] <= LINEBREAK_ALLOWBREAK)
 
 #else
 
