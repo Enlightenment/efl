@@ -1,7 +1,7 @@
 " Vim syntax file
 " Language:	EDC
 " Maintainer:	billiob <billiob@gmail.com>
-" Last Change:	04/21/2010
+" Last Change:	05/08/2011
 
 " For version 5.x: Clear all syntax items
 " For version 6.x: Quit when a syntax file was already loaded
@@ -31,10 +31,10 @@ syn keyword	cLabel		alias events entry_mode select_mode multiline
 syn keyword	cLabel		source1 source2 source3 source4 source5 source6
 syn keyword	cLabel		text_source transitions layout padding
 syn keyword	cLabel		size_w size_h size_max_w size_max_h size_min_w size_min_w
-syn keyword	cLabel		spread scale_hint elipsis pointer_mode prefer
+syn keyword	cLabel		spread scale_hint elipsis ellipsis pointer_mode prefer
 syn keyword	cLabel		precise_is_inside use_alternate_font_metrics options
 syn keyword	cLabel		aspect_mode position span angle repch api
-syn keyword	cLabel		external
+syn keyword	cLabel		external params size_range border_scale
 
 syn keyword	cConditional	if else switch
 syn keyword	cRepeat		while for do
