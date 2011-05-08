@@ -2,6 +2,82 @@
  *
  * vim:ts=8:sw=3:sts=3:expandtab:cino=>5n-3f0^-2{2(0W1st0
  */
+
+/**
+@file elementary.dox
+@brief Elementary Widget Library
+*/
+
+/**
+@mainpage Elementary
+@image html  elementary.png
+@version @PACKAGE_VERSION@
+@author Carsten Haitzler <raster@@rasterman.com>
+@author Gustavo Sverzut Barbieri <barbieri@@profusion.mobi>
+@author Cedric Bail <cedric.bail@@free.fr>
+@author Vincent Torri <vtorri@@univ-evry.fr>
+@author Daniel Kolesa <quaker66@@gmail.com>
+@author Jaime Thomas <avi.thomas@@gmail.com>
+@author Swisscom - http://www.swisscom.ch/
+@author Christopher Michael <devilhorns@@comcast.net>
+@author Marco Trevisan (Treviño) <mail@@3v1n0.net>
+@author Michael Bouchaud <michael.bouchaud@@gmail.com>
+@author Jonathan Atton (Watchwolf) <jonathan.atton@@gmail.com>
+@author Brian Wang <brian.wang.0721@@gmail.com>
+@author Mike Blumenkrantz (zmike) <mike@@zentific.com>
+@author Samsung Electronics <tbd>
+@author Samsung SAIT <tbd>
+@author Brett Nash <nash@@nash.id.au>
+@author Bruno Dilly <bdilly@@profusion.mobi>
+@author Rafael Fonseca <rfonseca@@profusion.mobi>
+@author Chuneon Park <chuneon.park@@samsung.com>
+@author Woohyun Jung <wh0705.jung@@samsung.com>
+@author Jaehwan Kim <jae.hwan.kim@@samsung.com>
+@author Wonguk Jeong <wonguk.jeong@@samsung.com>
+@author Leandro A. F. Pereira <leandro@@profusion.mobi>
+@author Helen Fornazier <helen.fornazier@@profusion.mobi>
+@author Gustavo Lima Chaves <glima@@profusion.mobi>
+@author Fabiano Fidêncio <fidencio@@profusion.mobi>
+@author Tiago Falcão <tiago@@profusion.mobi>
+@author Otavio Pontes <otavio@@profusion.mobi>
+@author Viktor Kojouharov <vkojouharov@@gmail.com>
+@author Daniel Juyung Seo (SeoZ) <juyung.seo@@samsung.com> <seojuyung2@@gmail.com>
+@author Sangho Park <sangho.g.park@@samsung.com> <gouache95@@gmail.com>
+@author Rajeev Ranjan (Rajeev) <rajeev.r@@samsung.com> <rajeev.jnnce@@gmail.com>
+@author Seunggyun Kim <sgyun.kim@@samsung.com> <tmdrbs@@gmail.com>
+@author Sohyun Kim <anna1014.kim@@samsung.com> <sohyun.anna@@gmail.com>
+@author Jihoon Kim <jihoon48.kim@@samsung.com>
+@author Jeonghyun Yun (arosis) <jh0506.yun@@samsung.com>
+@author Tom Hacohen <tom@@stosb.com>
+@author Aharon Hillel <a.hillel@@partner.samsung.com>
+@author Jonathan Atton (Watchwolf) <jonathan.atton@@gmail.com>
+@author Shinwoo Kim <kimcinoo@@gmail.com>
+@author Govindaraju SM <govi.sm@@samsung.com> <govism@@gmail.com>
+@author Prince Kumar Dubey <prince.dubey@@samsung.com> <prince.dubey@@gmail.com>
+@date 2008-2011
+
+@section intro What is Elementary?
+
+This is a VERY SIMPLE toolkit. It is not meant for writing extensive desktop
+applications (yet). Small simple ones with simple needs.
+
+It is meant to make the programmers work almost brainless but give them lots
+of flexibility.
+
+License: LGPL v2 (see COPYING in the base of Elementary's source). This
+applies to all files in the source here.
+
+Acknowledgements: There is a lot that goes into making a widget set, and
+they don't happen out of nothing. It's like trying to make everyone
+everywhere happy, regardless of age, gender, race or nationality - and
+that is really tough. So thanks to people and organisations behind this,
+aslisted in the Authors section above.
+
+@verbatim
+Pants
+@endverbatim
+*/
+
 #ifndef ELEMENTARY_H
 #define ELEMENTARY_H
 
