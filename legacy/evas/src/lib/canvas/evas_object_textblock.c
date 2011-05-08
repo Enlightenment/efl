@@ -8052,15 +8052,22 @@ evas_object_textblock_render(Evas_Object *obj, void *output, void *context, void
    EINA_INLIST_FOREACH(o->paragraphs, par) \
      { \
         if (!par->visible) continue; \
+        if (clip) \
+          { \
+             if ((obj->cur.geometry.y + y + par->y + par->h) < (cy - 20)) \
+             continue; \
+             if ((obj->cur.geometry.y + y + par->y) > (cy + ch + 20)) \
+             break; \
+          } \
         EINA_INLIST_FOREACH(par->lines, ln) \
           { \
              Evas_Object_Textblock_Item *itr; \
              \
              if (clip) \
                { \
-                  if ((obj->cur.geometry.y + y + ln->par->y + ln->y + ln->h) < (cy - 20)) \
+                  if ((obj->cur.geometry.y + y + par->y + ln->y + ln->h) < (cy - 20)) \
                   continue; \
-                  if ((obj->cur.geometry.y + y + ln->par->y + ln->y) > (cy + ch + 20)) \
+                  if ((obj->cur.geometry.y + y + par->y + ln->y) > (cy + ch + 20)) \
                   break; \
                } \
              EINA_INLIST_FOREACH(ln->items, itr) \
@@ -8073,11 +8080,13 @@ evas_object_textblock_render(Evas_Object *obj, void *output, void *context, void
                      _ITEM_TEXT(itr)->baseline : ln->baseline; \
                   if (clip) \
                     { \
-                       if ((obj->cur.geometry.x + x + ln->par->x + ln->x + itr->x + itr->w) < (cx - 20)) \
+                       if ((obj->cur.geometry.x + x + par->x + ln->x + itr->x + itr->w) < (cx - 20)) \
                        continue; \
-                       if ((obj->cur.geometry.x + x + ln->par->x + ln->x + itr->x) > (cx + cw + 20)) \
+                       if ((obj->cur.geometry.x + x + par->x + ln->x + itr->x) > (cx + cw + 20)) \
                        break; \
                     } \
+                  if ((par->x + ln->x + itr->x + itr->w) <= 0) continue; \
+                  if (par->x + ln->x + itr->x > obj->cur.geometry.w) break; \
                   do
 
 #define ITEM_WALK_END() \
@@ -8104,10 +8113,6 @@ evas_object_textblock_render(Evas_Object *obj, void *output, void *context, void
          obj->cur.geometry.y + ln->par->y + ln->y + yoff + y + (oy), \
          ti->parent.w, ti->parent.h, ti->parent.w, ti->parent.h, \
          &ti->text_props);
-#define ITEM_WALK_LINE_SKIP_DROP() \
-   if ((ln->par->y + ln->y + ln->h) <= 0) continue; \
-   if (ln->par->y + ln->y > obj->cur.geometry.h) break
-
 
    /* backing */
 #define DRAW_RECT(ox, oy, ow, oh, or, og, ob, oa) \
@@ -8153,8 +8158,6 @@ evas_object_textblock_render(Evas_Object *obj, void *output, void *context, void
 
    ITEM_WALK()
      {
-        ITEM_WALK_LINE_SKIP_DROP();
-
         DRAW_FORMAT(backing, 0, ln->h, r, g, b, a);
      }
    ITEM_WALK_END();
@@ -8169,7 +8172,6 @@ evas_object_textblock_render(Evas_Object *obj, void *output, void *context, void
      {
         int shad_dst, shad_sz, dx, dy, haveshad;
         Evas_Object_Textblock_Text_Item *ti;
-        ITEM_WALK_LINE_SKIP_DROP();
         ti = (itr->type == EVAS_TEXTBLOCK_ITEM_TEXT) ? _ITEM_TEXT(itr) : NULL;
         if (!ti) continue;
 
@@ -8272,7 +8274,6 @@ evas_object_textblock_render(Evas_Object *obj, void *output, void *context, void
    ITEM_WALK()
      {
         Evas_Object_Textblock_Text_Item *ti;
-        ITEM_WALK_LINE_SKIP_DROP();
         ti = (itr->type == EVAS_TEXTBLOCK_ITEM_TEXT) ? _ITEM_TEXT(itr) : NULL;
         if (!ti) continue;
 
@@ -8302,7 +8303,6 @@ evas_object_textblock_render(Evas_Object *obj, void *output, void *context, void
    ITEM_WALK()
      {
         Evas_Object_Textblock_Text_Item *ti;
-        ITEM_WALK_LINE_SKIP_DROP();
         ti = (itr->type == EVAS_TEXTBLOCK_ITEM_TEXT) ? _ITEM_TEXT(itr) : NULL;
         if (!ti) continue;
 
@@ -8337,7 +8337,6 @@ evas_object_textblock_render(Evas_Object *obj, void *output, void *context, void
    ITEM_WALK()
      {
         Evas_Object_Textblock_Text_Item *ti;
-        ITEM_WALK_LINE_SKIP_DROP();
         ti = (itr->type == EVAS_TEXTBLOCK_ITEM_TEXT) ? _ITEM_TEXT(itr) : NULL;
         /* NORMAL TEXT */
         if (ti)
