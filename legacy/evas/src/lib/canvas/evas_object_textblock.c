@@ -156,22 +156,29 @@ typedef struct _Evas_Object_Textblock_Format      Evas_Object_Textblock_Format;
 
 /**
  * @internal
- * @def GET_PREV(text, ind)
- * Gets the index of the previous char in the text text, this simply returns
- * the current char pointed to and decrements ind but ensures it stays in
- * the text range.
+ * @def MOVE_PREV_UNTIL(limit, ind)
+ * This decrements ind as long as ind > limit.
  */
-#define GET_PREV(text, ind) ((text) ? (((ind) > 0) ? ((text)[(ind)--]) : \
-         ((text)[ind])) : 0)
+#define MOVE_PREV_UNTIL(limit, ind) \
+   do \
+     { \
+        if ((limit) < (ind)) \
+           (ind)--; \
+     } \
+   while (0)
+
 /**
  * @internal
- * @def GET_NEXT(text, ind)
- * Gets the index of the next in the text text, this simply returns
- * the current char pointed to and increments indd but ensures it stays in
- * the text range.
+ * @def MOVE_NEXT_UNTIL(limit, ind)
+ * This increments ind as long as ind < limit
  */
-#define GET_NEXT(text, ti, ind) (((text) && !IS_AT_END(ti, (size_t) ind)) ? \
-   ((text)[(ind)++]) : 0)
+#define MOVE_NEXT_UNTIL(limit, ind) \
+   do \
+     { \
+        if ((ind) < (limit)) \
+           (ind)++; \
+     } \
+   while (0)
 
 /**
  * @internal
@@ -3019,22 +3026,27 @@ _layout_get_charwrap(Ctxt *c, Evas_Object_Textblock_Format *fmt,
       const Evas_Object_Textblock_Text_Item *ti, size_t line_start,
       const char *breaks)
 {
-   int wrap;
-   const Eina_Unicode *str = GET_ITEM_TEXT(ti);
+   size_t uwrap;
+   size_t len = eina_ustrbuf_length_get(ti->parent.text_node->unicode);
    /* Currently not being used, because it doesn't contain relevant
     * information */
    (void) breaks;
-   /* Currently not being used, because we don't enforce the ligature breaking
-      here just yet. */
-   (void) line_start;
 
-   wrap = _layout_text_cutoff_get(c, fmt, ti);
-   if (wrap == 0)
-     GET_NEXT(str, ti, wrap);
-   if ((wrap < 0) || IS_AT_END(ti, (size_t) wrap))
+     {
+        int wrap;
+        wrap = _layout_text_cutoff_get(c, fmt, ti);
+        if (wrap < 0)
+           return -1;
+        uwrap = (size_t) wrap + ti->parent.text_pos;
+     }
+
+
+   if (uwrap == line_start)
+     MOVE_NEXT_UNTIL(len, uwrap);
+   if ((uwrap < line_start) || (uwrap > len))
       return -1;
 
-   return wrap + ti->parent.text_pos;
+   return uwrap;
 }
 
 /* -1 means no wrap */
@@ -3050,22 +3062,6 @@ _layout_get_charwrap(Ctxt *c, Evas_Object_Textblock_Format *fmt,
    (_is_white(str[i]))
 
 #endif
-
-#define MOVE_PREV_UNTIL(line_start, ind) \
-   do \
-     { \
-        if ((line_start) < (ind)) \
-           (ind)--; \
-     } \
-   while (0)
-
-#define MOVE_NEXT_UNTIL(len, ind) \
-   do \
-     { \
-        if ((ind) < (len)) \
-           (ind)++; \
-     } \
-   while (0)
 static int
 _layout_get_word_mixwrap_common(Ctxt *c, Evas_Object_Textblock_Format *fmt,
       const Evas_Object_Textblock_Text_Item *ti, Eina_Bool mixed_wrap,
