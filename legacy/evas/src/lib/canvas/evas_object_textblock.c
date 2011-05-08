@@ -3065,28 +3065,31 @@ _layout_get_charwrap(Ctxt *c, Evas_Object_Textblock_Format *fmt,
 static int
 _layout_get_word_mixwrap_common(Ctxt *c, Evas_Object_Textblock_Format *fmt,
       const Evas_Object_Textblock_Text_Item *ti, Eina_Bool mixed_wrap,
-      int line_start, const char *breaks)
+      size_t line_start, const char *breaks)
 {
    Eina_Bool wrap_after = EINA_FALSE;
-   int wrap = -1;
-   int orig_wrap;
+   size_t wrap;
+   size_t orig_wrap;
    const Eina_Unicode *str = eina_ustrbuf_string_get(
          ti->parent.text_node->unicode);
    int item_start = ti->parent.text_pos;
-   int len = eina_ustrbuf_length_get(ti->parent.text_node->unicode);
+   size_t len = eina_ustrbuf_length_get(ti->parent.text_node->unicode);
 #ifndef HAVE_LINEBREAK
    /* Not used without liblinebreak ATM. */
    (void) breaks;
 #endif
 
-   wrap = _layout_text_cutoff_get(c, fmt, ti);
-   /* Avoiding too small textblocks to even contain one char.
-    * FIXME: This can cause breaking inside ligatures. */
+     {
+        int swrap = -1;
+        swrap = _layout_text_cutoff_get(c, fmt, ti);
+        /* Avoiding too small textblocks to even contain one char.
+         * FIXME: This can cause breaking inside ligatures. */
 
-   if (wrap < 0)
-      return -1;
+        if (swrap < 0)
+           return -1;
 
-   orig_wrap = wrap = wrap + item_start;
+        orig_wrap = wrap = swrap + item_start;
+     }
 
    if (wrap > line_start)
      {
@@ -3098,14 +3101,15 @@ _layout_get_word_mixwrap_common(Ctxt *c, Evas_Object_Textblock_Format *fmt,
            MOVE_PREV_UNTIL(line_start, wrap);
         /* If there's a breakable point inside the text, scan backwards until
          * we find it */
-        while (wrap >= line_start)
+        while (wrap > line_start)
           {
              if (ALLOW_BREAK(wrap))
                 break;
              wrap--;
           }
 
-        if (wrap >= line_start)
+        if ((wrap > line_start) ||
+              ((wrap == line_start) && (ALLOW_BREAK(wrap))))
           {
              /* We found a suitable wrapping point, break here. */
              MOVE_NEXT_UNTIL(len, wrap);
