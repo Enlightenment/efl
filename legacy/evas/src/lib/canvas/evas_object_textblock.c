@@ -261,7 +261,7 @@ struct _Evas_Object_Textblock_Paragraph
    Evas_BiDi_Paragraph_Props         *bidi_props;
    int                                x, y, w, h;
    int                                line_no;
-   Eina_Bool                          visible;
+   Eina_Bool                          visible : 1;
 };
 
 struct _Evas_Object_Textblock_Line
@@ -319,7 +319,7 @@ struct _Evas_Object_Textblock_Format_Item
    int                                  y, ascent, descent;
    unsigned char                        vsize : 2;
    unsigned char                        size : 2;
-   unsigned char                        formatme : 1;
+   Eina_Bool                            formatme : 1;
 };
 
 struct _Evas_Object_Textblock_Format
@@ -350,16 +350,16 @@ struct _Evas_Object_Textblock_Format
    double               linerelgap;
    double               linefill;
    double               ellipsis;
-   Eina_Bool            halign_auto;
    unsigned char        style;
-   unsigned char        wrap_word : 1;
-   unsigned char        wrap_char : 1;
-   unsigned char        wrap_mixed : 1;
-   unsigned char        underline : 1;
-   unsigned char        underline2 : 1;
-   unsigned char        strikethrough : 1;
-   unsigned char        backing : 1;
-   unsigned char        password : 1;
+   Eina_Bool            wrap_word : 1;
+   Eina_Bool            wrap_char : 1;
+   Eina_Bool            wrap_mixed : 1;
+   Eina_Bool            underline : 1;
+   Eina_Bool            underline2 : 1;
+   Eina_Bool            strikethrough : 1;
+   Eina_Bool            backing : 1;
+   Eina_Bool            password : 1;
+   Eina_Bool            halign_auto : 1;
 };
 
 struct _Evas_Textblock_Style
@@ -368,7 +368,7 @@ struct _Evas_Textblock_Style
    char                  *default_tag;
    Evas_Object_Style_Tag *tags;
    Eina_List             *objects;
-   unsigned char          delete_me : 1;
+   Eina_Bool              delete_me : 1;
 };
 
 struct _Evas_Textblock_Cursor
@@ -399,13 +399,13 @@ struct _Evas_Object_Textblock
    const char                         *bidi_delimiters;
    struct {
       int                              w, h;
-      unsigned char                    valid : 1;
+      Eina_Bool                        valid : 1;
    } formatted, native;
-   unsigned char                       redraw : 1;
-   unsigned char                       changed : 1;
-   unsigned char                       content_changed : 1;
+   Eina_Bool                           redraw : 1;
+   Eina_Bool                           changed : 1;
+   Eina_Bool                           content_changed : 1;
    Eina_Bool                           format_changed : 1;
-   unsigned char                       have_ellipsis : 1;
+   Eina_Bool                           have_ellipsis : 1;
    Eina_Bool                           newline_is_ps : 1;
 };
 
