@@ -2965,9 +2965,6 @@ _layout_do_format(const Evas_Object *obj __UNUSED__, Ctxt *c,
           }
         while ((item = _format_parse(&s)))
           {
-             char *tmp = alloca(s - item + 1);
-             strncpy(tmp, item, s - item);
-             tmp[s - item] = '\0';
              if (_format_is_param(item))
                {
                   _layout_format_value_handle(c, fmt, item);
