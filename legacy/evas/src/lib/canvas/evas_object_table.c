@@ -1330,6 +1330,6 @@ evas_object_table_mirrored_set(Evas_Object *obj, Eina_Bool mirrored)
    if (priv->is_mirrored != mirrored)
      {
         priv->is_mirrored = mirrored;
-        _evas_object_table_smart_calculate_regular(obj, priv);
+        _evas_object_table_smart_calculate(obj);
      }
 }
