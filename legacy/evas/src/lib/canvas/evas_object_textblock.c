@@ -3554,6 +3554,76 @@ end:
 
 /**
  * @internal
+ * Invalidate text nodes according to format changes
+ * This goes through all the new format changes and marks the text nodes
+ * that should be invalidated because of format changes.
+ *
+ * @param c the working context.
+ */
+static inline void
+_format_changes_invalidate_text_nodes(Ctxt *c)
+{
+   Evas_Object_Textblock_Node_Format *fnode = c->o->format_nodes;
+   Evas_Object_Textblock_Node_Text *start_n = NULL;
+   int balance = 0;
+   while (fnode)
+     {
+        if (fnode->new)
+          {
+             const char *fstr = eina_strbuf_string_get(fnode->format);
+             /* balance < 0 means we gave up and everything should be
+              * invalidated */
+             if (*fstr == '+')
+               {
+                  balance++;
+                  if (balance == 1)
+                     start_n = fnode->text_node;
+               }
+             else if (*fstr == '-')
+               {
+                  balance--;
+                  if (balance == 0)
+                    {
+                       Evas_Object_Textblock_Node_Text *f_tnode =
+                          fnode->text_node;
+                       while (start_n)
+                         {
+                            start_n->dirty = EINA_TRUE;
+                            if (start_n == f_tnode)
+                               break;
+                            start_n =
+                               _NODE_TEXT(EINA_INLIST_GET(start_n)->next);
+                         }
+                       start_n = NULL;
+                    }
+               }
+             else if (!fnode->visible)
+                balance = -1;
+
+             if (balance < 0)
+               {
+                  /* if we don't already have a starting point, use the
+                   * current paragraph. */
+                  if (!start_n)
+                     start_n = fnode->text_node;
+                  break;
+               }
+          }
+        fnode = _NODE_FORMAT(EINA_INLIST_GET(fnode)->next);
+     }
+
+   if (balance != 0)
+     {
+        while (start_n)
+          {
+             start_n->dirty = EINA_TRUE;
+             start_n = _NODE_TEXT(EINA_INLIST_GET(start_n)->next);
+          }
+     }
+}
+
+/**
+ * @internal
  * Create the layout from the nodes.
  *
  * @param obj the evas object - NOT NULL.
@@ -3598,67 +3668,10 @@ _layout(const Evas_Object *obj, int calc_only, int w, int h, int *w_ret, int *h_
    /* Mark text nodes as dirty if format have changed. */
    if (c->o->format_changed)
      {
-        Evas_Object_Textblock_Node_Format *fnode = c->o->format_nodes;
-        Evas_Object_Textblock_Node_Text *start_n = NULL;
-        int balance = 0;
-        while (fnode)
-          {
-             if (fnode->new)
-               {
-                  const char *fstr = eina_strbuf_string_get(fnode->format);
-                  /* balance < 0 means we gave up and everything should be
-                   * invalidated */
-                  if (*fstr == '+')
-                    {
-                       balance++;
-                       if (balance == 1)
-                          start_n = fnode->text_node;
-                    }
-                  else if (*fstr == '-')
-                    {
-                       balance--;
-                       if (balance == 0)
-                         {
-                            Evas_Object_Textblock_Node_Text *f_tnode =
-                               fnode->text_node;
-                            while (start_n)
-                              {
-                                 start_n->dirty = EINA_TRUE;
-                                 if (start_n == f_tnode)
-                                    break;
-                                 start_n =
-                                    _NODE_TEXT(EINA_INLIST_GET(start_n)->next);
-                              }
-                            start_n = NULL;
-                         }
-                    }
-                  else if (!fnode->visible)
-                     balance = -1;
-
-                  if (balance < 0)
-                    {
-                       /* if we don't already have a starting point, use the
-                        * current paragraph. */
-                       if (!start_n)
-                          start_n = fnode->text_node;
-                       break;
-                    }
-               }
-             fnode = _NODE_FORMAT(EINA_INLIST_GET(fnode)->next);
-          }
-
-        if (balance != 0)
-          {
-             while (start_n)
-               {
-                  start_n->dirty = EINA_TRUE;
-                  start_n = _NODE_TEXT(EINA_INLIST_GET(start_n)->next);
-               }
-          }
+        _format_changes_invalidate_text_nodes(c);
      }
 
    /* Start of logical layout creation */
-
    /* setup default base style */
    if ((c->o->style) && (c->o->style->default_tag))
      {
