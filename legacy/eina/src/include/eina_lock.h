@@ -60,6 +60,12 @@ static inline Eina_Lock_Result eina_lock_take_try(Eina_Lock *mutex);
 static inline Eina_Lock_Result eina_lock_release(Eina_Lock *mutex);
 static inline void eina_lock_debug(const Eina_Lock *mutex);
 
+static inline Eina_Bool eina_condition_new(Eina_Condition *cond, Eina_Lock *mutex);
+static inline void eina_condition_free(Eina_Condition *cond);
+static inline Eina_Bool eina_condition_wait(Eina_Condition *cond);
+static inline Eina_Bool eina_condition_broadcast(Eina_Condition *cond);
+static inline Eina_Bool eina_condition_signal(Eina_Condition *cond);
+
 /**
  * @}
  */

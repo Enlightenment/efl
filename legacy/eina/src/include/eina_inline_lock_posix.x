@@ -40,19 +40,26 @@ typedef void (*Eina_Lock_Bt_Func) ();
 #endif
 
 typedef struct _Eina_Lock Eina_Lock;
+typedef struct _Eina_Condition Eina_Condition;
 
 struct _Eina_Lock
 {
 #ifdef EINA_HAVE_DEBUG_THREADS
    EINA_INLIST;
 #endif
-   pthread_mutex_t  mutex;
+   pthread_mutex_t   mutex;
 #ifdef EINA_HAVE_DEBUG_THREADS
    pthread_t         lock_thread_id;
    Eina_Lock_Bt_Func lock_bt[EINA_LOCK_DEBUG_BT_NUM];
    int               lock_bt_num;
    Eina_Bool         locked : 1;
 #endif
+};
+
+struct _Eina_Condition
+{
+   Eina_Lock      *lock;
+   pthread_cond_t  condition;
 };
 
 EAPI extern Eina_Bool _eina_threads_activated;
@@ -255,5 +262,62 @@ eina_lock_debug(const Eina_Lock *mutex)
    (void) mutex;
 #endif
 }
+
+static inline Eina_Bool
+eina_condition_new(Eina_Condition *cond, Eina_Lock *mutex)
+{
+#ifdef EINA_HAVE_DEBUG_THREADS
+   assert(pthread_equal(_eina_main_loop, pthread_self()));
+   memset(cond, 0, sizeof (Eina_Condition));
+#endif
+
+   cond->lock = mutex;
+   if (pthread_cond_init(&cond->condition, NULL) != 0)
+     {
+#ifdef EINA_HAVE_DEBUG_THREADS
+        if (errno == EBUSY)
+          printf("eina_condition_new on already initialized Eina_Condition\n");
+#endif
+        return EINA_FALSE;
+     }
+
+   return EINA_TRUE;
+}
+
+static inline void
+eina_condition_free(Eina_Condition *cond)
+{
+#ifdef EINA_HAVE_DEBUG_THREADS
+   assert(pthread_equal(_eina_main_loop, pthread_self()));
+#endif
+
+   pthread_cond_destroy(&(cond->condition));
+#ifdef EINA_HAVE_DEBUG_THREADS
+   memset(cond, 0, sizeof (Eina_Condition));
+#endif
+}
+
+static inline Eina_Bool
+eina_condition_wait(Eina_Condition *cond)
+{
+#ifdef EINA_HAVE_DEBUG_THREADS
+   assert(_eina_threads_activated);
+#endif
+
+   return pthread_cond_wait(&(cond->condition), &(cond->lock->mutex)) == 0 ? EINA_TRUE : EINA_FALSE;
+}
+
+static inline Eina_Bool
+eina_condition_broadcast(Eina_Condition *cond)
+{
+   return pthread_cond_broadcast(&(cond->condition)) == 0 ? EINA_TRUE : EINA_FALSE;
+}
+
+static inline Eina_Bool
+eina_condition_signal(Eina_Condition *cond)
+{
+   return pthread_cond_signal(&(cond->condition)) == 0 ? EINA_TRUE : EINA_FALSE;
+}
+
 
 #endif
