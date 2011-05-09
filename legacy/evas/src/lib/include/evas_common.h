@@ -552,7 +552,7 @@ struct _Image_Entry
 #ifdef EVAS_FRAME_QUEUING
    LK(ref_fq_add);
    LK(ref_fq_del);
-   pthread_cond_t cond_fq_del;
+   Eina_Condition cond_fq_del;
    int ref_fq[2];		// ref_fq[0] is for addition, ref_fq[1] is for deletion
 #endif
 #endif
@@ -861,7 +861,7 @@ struct _RGBA_Font
    int              references;
 #ifdef EVAS_FRAME_QUEUING
    int              ref_fq[2]; //ref_fq[0] is for addition, ref_fq[1] is for deletion
-   pthread_cond_t   cond_fq_del;
+   Eina_Condition   cond_fq_del;
    LK(ref_fq_add);
    LK(ref_fq_del);
 #endif

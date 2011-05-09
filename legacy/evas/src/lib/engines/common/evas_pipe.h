@@ -46,9 +46,9 @@ struct _Evas_FrameQ
 {
    int initialised;
    Evas_Frame   *frames;
-   pthread_cond_t cond_new;
-   pthread_cond_t cond_ready;
-   pthread_cond_t cond_done;
+   Eina_Condition cond_new;
+   Eina_Condition cond_ready;
+   Eina_Condition cond_done;
    LK(mutex);
 
    int             thread_num;

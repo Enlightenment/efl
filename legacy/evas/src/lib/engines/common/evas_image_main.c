@@ -140,7 +140,8 @@ _evas_common_rgba_image_new(void)
 #ifdef EVAS_FRAME_QUEUING
    LKI(im->cache_entry.ref_fq_add);
    LKI(im->cache_entry.ref_fq_del);
-   pthread_cond_init(&(im->cache_entry.cond_fq_del), NULL);
+   eina_condition_new(&(im->cache_entry.cond_fq_del),
+		      &(im->cache_entry.ref_fq_del));
 #endif
 
    evas_common_rgba_image_scalecache_init(&im->cache_entry);
@@ -158,7 +159,7 @@ _evas_common_rgba_image_delete(Image_Entry *ie)
 # ifdef EVAS_FRAME_QUEUING
    LKD(im->cache_entry.ref_fq_add);
    LKD(im->cache_entry.ref_fq_del);
-   pthread_cond_destroy(&(im->cache_entry.cond_fq_del));
+   eina_condition_free(&(im->cache_entry.cond_fq_del));
 # endif
 #endif   
    evas_common_rgba_image_scalecache_shutdown(&im->cache_entry);

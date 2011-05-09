@@ -75,7 +75,7 @@ evas_common_frame_add(Evas_FrameQ *frameq, Evas_Frame *frame)
    while ((int)eina_inlist_count(EINA_INLIST_GET(frameq->frames)) >= frameq->frameq_sz)
      {
         /* wait a worker thread finish previous frame */
-        pthread_cond_wait(&(frameq->cond_done), &(frameq->mutex));
+        eina_condition_wait(&(frameq->cond_done));
      }
    frameq->frames = (Evas_Frame *) eina_inlist_append(EINA_INLIST_GET(frameq->frames), EINA_INLIST_GET(frame));
 
@@ -92,7 +92,7 @@ evas_common_frame_add(Evas_FrameQ *frameq, Evas_Frame *frame)
 
    LKU(frameq->mutex);
 
-   pthread_cond_signal(&(frameq->cond_new));
+   eina_condition_signal(&(frameq->cond_new));
 }
 
 EAPI Evas_Surface *
@@ -146,10 +146,10 @@ EAPI void
 evas_common_frameq_init(void)
 {
    gframeq.frames = NULL;
-   pthread_cond_init(&(gframeq.cond_new), NULL);
-   pthread_cond_init(&(gframeq.cond_ready), NULL);
-   pthread_cond_init(&(gframeq.cond_done), NULL);
    LKI(gframeq.mutex);
+   eina_condition_new(&(gframeq.cond_new), &(gframeq.mutex));
+   eina_condition_new(&(gframeq.cond_ready), &(gframeq.mutex));
+   eina_condition_new(&(gframeq.cond_done), &(gframeq.mutex));
    gframeq.initialised = 0;	// worker thread are not created yet
    gframeq.frameq_sz = 1;	// this value ensures the first frame can be enqueued.
 }
@@ -159,14 +159,12 @@ evas_common_frameq_destroy(void)
 {
 #if 0 // let them destroyed indirectly with program exit
    LKL(gframeq.mutex);
-   pthread_cond_destroy(&(gframeq.cond_new));
-   pthread_cond_destroy(&(gframeq.cond_ready));
-   pthread_cond_destroy(&(gframeq.cond_done));
+   eina_condition_free(&(gframeq.cond_new));
+   eina_condition_free(&(gframeq.cond_ready));
+   eina_condition_free(&(gframeq.cond_done));
    LKU(gframeq.mutex);
 #endif
    LKD(gframeq.mutex);
-
-   eina_threads_shutdown();
 
    gframeq.frames = NULL;
    gframeq.initialised = 0;
@@ -182,7 +180,7 @@ evas_common_frameq_flush(void)
    while(eina_inlist_count(EINA_INLIST_GET(gframeq.frames)) > 0)
      {
         /* wait a worker thread finish previous frame */
-        pthread_cond_wait(&(gframeq.cond_done), &(gframeq.mutex));
+        eina_condition_wait(&(gframeq.cond_done));
    }
    LKU(gframeq.mutex);
 }
@@ -362,7 +360,7 @@ evas_common_frameq_thread(void *data)
                   break;
                }
              pthread_testcancel();
-             pthread_cond_wait(&(frameq->cond_new), &(frameq->mutex));
+             eina_condition_wait(&(frameq->cond_new));
           }
         LKU(frameq->mutex);
 
@@ -401,7 +399,7 @@ evas_common_frameq_thread(void *data)
 
         LKL(frameq->mutex);
         frame->ready = 1;
-        pthread_cond_signal(&frameq->cond_ready);
+        eina_condition_signal(&(frameq->cond_ready));
         LKU(frameq->mutex);
      }
 
@@ -737,7 +735,7 @@ evas_common_frameq_thread_post(void *data)
         LKL(frameq->mutex);
         while(!frameq->frames || !frameq->frames->ready)
           {
-             pthread_cond_wait(&(frameq->cond_ready), &(frameq->mutex));
+             eina_condition_wait(&(frameq->cond_ready));
           }
         frame = frameq->frames;
 
@@ -787,7 +785,7 @@ evas_common_frameq_thread_post(void *data)
                   EINA_INLIST_GET(frame));
 
         LKU(frameq->mutex);
-        pthread_cond_broadcast(&frameq->cond_done);
+        eina_condition_broadcast(&frameq->cond_done);
         evas_common_frame_dealloc(frame);
      }
 
@@ -942,10 +940,10 @@ evas_common_frameq_finish(void)
    /* 2. send signal to worker threads so that they enter to the thread cancelation cleanup handler */
    for (i = 0; i < gframeq.thread_num; i++)
      {
-        pthread_cond_signal(&(gframeq.cond_new));
+        eina_condition_signal(&(gframeq.cond_new));
      }
    // send signal to post-worker thread
-   pthread_cond_signal(&(gframeq.cond_ready));
+   eina_condition_signal(&(gframeq.cond_ready));
 
    /* all the workers were created and detached before
     *  so don't need to join them here.
@@ -1178,7 +1176,7 @@ evas_common_pipe_op_text_free(RGBA_Pipe_Op *op)
    LKL(op->op.text.font->ref_fq_del);
    op->op.text.font->ref_fq[1]++;
    LKU(op->op.text.font->ref_fq_del);
-   pthread_cond_signal(&(op->op.text.font->cond_fq_del));
+   eina_condition_signal(&(op->op.text.font->cond_fq_del));
 #else
    evas_common_font_free(op->op.text.font);
 #endif
@@ -1198,7 +1196,7 @@ evas_common_pipe_op_text_flush(RGBA_Font *fn)
    LKL(fn->ref_fq_del);
 
    while (fn->ref_fq[0] != fn->ref_fq[1])
-      pthread_cond_wait(&(fn->cond_fq_del), &(fn->ref_fq_del));
+     eina_condition_wait(&(fn->cond_fq_del));
 
    LKU(fn->ref_fq_del);
    LKU(fn->ref_fq_add);
@@ -1264,7 +1262,7 @@ evas_common_pipe_op_image_free(RGBA_Pipe_Op *op)
    LKL(op->op.image.src->cache_entry.ref_fq_del);
    op->op.image.src->cache_entry.ref_fq[1]++;
    LKU(op->op.image.src->cache_entry.ref_fq_del);
-   pthread_cond_signal(&(op->op.image.src->cache_entry.cond_fq_del)); 
+   eina_condition_signal(&(op->op.image.src->cache_entry.cond_fq_del));
 #else
    op->op.image.src->ref--;
    if (op->op.image.src->ref == 0)
@@ -1286,7 +1284,7 @@ evas_common_pipe_op_image_flush(RGBA_Image *im)
    LKL(im->cache_entry.ref_fq_del);
 
    while (im->cache_entry.ref_fq[0] != im->cache_entry.ref_fq[1])
-      pthread_cond_wait(&(im->cache_entry.cond_fq_del), &(im->cache_entry.ref_fq_del));
+     eina_condition_wait(&(im->cache_entry.cond_fq_del));
 
    LKU(im->cache_entry.ref_fq_del);
    LKU(im->cache_entry.ref_fq_add);
@@ -1568,7 +1566,7 @@ evas_common_pipe_map_render(RGBA_Image *root)
 static Eina_List *task = NULL;
 static Thinfo task_thinfo[TH_MAX];
 static pthread_barrier_t task_thbarrier[2];
-static LK(task_mutext) = PTHREAD_MUTEX_INITIALIZER;
+static LK(task_mutext);
 #endif
 
 #ifdef BUILD_PTHREAD
@@ -1640,6 +1638,8 @@ evas_common_pipe_init(void)
 //	if (thread_num == 1) return EINA_FALSE;
 
 	eina_threads_init();
+
+        LKI(task_mutext);
 
 	pthread_barrier_init(&(thbarrier[0]), NULL, thread_num + 1);
 	pthread_barrier_init(&(thbarrier[1]), NULL, thread_num + 1);

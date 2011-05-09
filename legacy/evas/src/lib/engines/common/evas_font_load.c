@@ -486,7 +486,7 @@ evas_common_font_memory_load(const char *name, int size, const void *data, int d
 #ifdef EVAS_FRAME_QUEUING
    LKI(fn->ref_fq_add);
    LKI(fn->ref_fq_del);
-   pthread_cond_init(&(fn->cond_fq_del), NULL);
+   eina_condition_new(&(fn->cond_fq_del), &(fn->ref_fq_del));
 #endif
    if (fi->inuse) evas_common_font_int_promote(fi);
    else
@@ -550,7 +550,7 @@ evas_common_font_load(const char *name, int size, Font_Rend_Flags wanted_rend)
 #ifdef EVAS_FRAME_QUEUING
    LKI(fn->ref_fq_add);
    LKI(fn->ref_fq_del);
-   pthread_cond_init(&(fn->cond_fq_del), NULL);
+   eina_condition_new(&(fn->cond_fq_del), &(fn->ref_fq_del));
 #endif
    if (fi->inuse) evas_common_font_int_promote(fi);
    else
@@ -643,7 +643,7 @@ evas_common_font_free(RGBA_Font *fn)
 #ifdef EVAS_FRAME_QUEUING
    LKD(fn->ref_fq_add);
    LKD(fn->ref_fq_del);
-   pthread_cond_destroy(&(fn->cond_fq_del));
+   eina_condition_free(&(fn->cond_fq_del));
 #endif
    free(fn);
 }
