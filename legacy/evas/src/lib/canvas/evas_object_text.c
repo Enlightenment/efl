@@ -1399,124 +1399,124 @@ evas_string_char_len_get(const char *str)
 void
 evas_text_style_pad_get(Evas_Text_Style_Type style, int *l, int *r, int *t, int *b)
 {
-   int shad_sz = 0, shad_dst = 0, out_sz = 0;
-   int dx = 0, minx = 0, maxx = 0;
-   int dy = 0, miny = 0, maxy = 0;
    int sl = 0, sr = 0, st = 0, sb = 0;
-   Eina_Bool have_shadow = EINA_FALSE;
 
    /* Don't calc anything if there's no style. */
-   if (style == EVAS_TEXT_STYLE_PLAIN)
-      goto end;
-
-   switch (style & EVAS_TEXT_STYLE_MASK_BASIC)
+   if (style != EVAS_TEXT_STYLE_PLAIN)
      {
-      case EVAS_TEXT_STYLE_SHADOW:
-        shad_dst = 1;
-        have_shadow = EINA_TRUE;
-        break;
-      case EVAS_TEXT_STYLE_OUTLINE_SHADOW:
-      case EVAS_TEXT_STYLE_FAR_SHADOW:
-        shad_dst = 2;
-        out_sz = 1;
-        have_shadow = EINA_TRUE;
-        break;
-      case EVAS_TEXT_STYLE_OUTLINE_SOFT_SHADOW:
-        shad_dst = 1;
-        shad_sz = 2;
-        out_sz = 1;
-        have_shadow = EINA_TRUE;
-        break;
-      case EVAS_TEXT_STYLE_FAR_SOFT_SHADOW:
-        shad_dst = 2;
-        shad_sz = 2;
-        have_shadow = EINA_TRUE;
-        break;
-      case EVAS_TEXT_STYLE_SOFT_SHADOW:
-        shad_dst = 1;
-        shad_sz = 2;
-        have_shadow = EINA_TRUE;
-        break;
-      case EVAS_TEXT_STYLE_GLOW:
-      case EVAS_TEXT_STYLE_SOFT_OUTLINE:
-        out_sz = 2;
-        break;
-      case EVAS_TEXT_STYLE_OUTLINE:
-        out_sz = 1;
-        break;
-      default:
-        break;
-     }
+        int shad_sz = 0, shad_dst = 0, out_sz = 0;
+        int dx = 0, minx = 0, maxx = 0;
+        int dy = 0, miny = 0, maxy = 0;
+        Eina_Bool have_shadow = EINA_FALSE;
 
-   minx = -out_sz;
-   maxx = out_sz;
-   miny = -out_sz;
-   maxy = out_sz;
-   if (have_shadow)
-     {
-        int shx1, shx2, shy1, shy2;
-        switch (style & EVAS_TEXT_STYLE_MASK_SHADOW_DIRECTION)
+        switch (style & EVAS_TEXT_STYLE_MASK_BASIC)
           {
-           case EVAS_TEXT_STYLE_SHADOW_DIRECTION_BOTTOM_RIGHT:
-              dx = 1;
-              dy = 1;
+           case EVAS_TEXT_STYLE_SHADOW:
+              shad_dst = 1;
+              have_shadow = EINA_TRUE;
               break;
-           case EVAS_TEXT_STYLE_SHADOW_DIRECTION_BOTTOM:
-              dx = 0;
-              dy = 1;
+           case EVAS_TEXT_STYLE_OUTLINE_SHADOW:
+           case EVAS_TEXT_STYLE_FAR_SHADOW:
+              shad_dst = 2;
+              out_sz = 1;
+              have_shadow = EINA_TRUE;
               break;
-           case EVAS_TEXT_STYLE_SHADOW_DIRECTION_BOTTOM_LEFT:
-              dx = -1;
-              dy = 1;
+           case EVAS_TEXT_STYLE_OUTLINE_SOFT_SHADOW:
+              shad_dst = 1;
+              shad_sz = 2;
+              out_sz = 1;
+              have_shadow = EINA_TRUE;
               break;
-           case EVAS_TEXT_STYLE_SHADOW_DIRECTION_LEFT:
-              dx = -1;
-              dy = 0;
+           case EVAS_TEXT_STYLE_FAR_SOFT_SHADOW:
+              shad_dst = 2;
+              shad_sz = 2;
+              have_shadow = EINA_TRUE;
               break;
-           case EVAS_TEXT_STYLE_SHADOW_DIRECTION_TOP_LEFT:
-              dx = -1;
-              dy = -1;
+           case EVAS_TEXT_STYLE_SOFT_SHADOW:
+              shad_dst = 1;
+              shad_sz = 2;
+              have_shadow = EINA_TRUE;
               break;
-           case EVAS_TEXT_STYLE_SHADOW_DIRECTION_TOP:
-              dx = 0;
-              dy = -1;
+           case EVAS_TEXT_STYLE_GLOW:
+           case EVAS_TEXT_STYLE_SOFT_OUTLINE:
+              out_sz = 2;
               break;
-           case EVAS_TEXT_STYLE_SHADOW_DIRECTION_TOP_RIGHT:
-              dx = 1;
-              dy = -1;
+           case EVAS_TEXT_STYLE_OUTLINE:
+              out_sz = 1;
               break;
-           case EVAS_TEXT_STYLE_SHADOW_DIRECTION_RIGHT:
-              dx = 1;
-              dy = 0;
            default:
               break;
           }
-        shx1 = dx * shad_dst;
-        shx1 -= shad_sz;
-        shx2 = dx * shad_dst;
-        shx2 += shad_sz;
-        if (shx1 < minx) minx = shx1;
-        if (shx2 > maxx) maxx = shx2;
 
-        shy1 = dy * shad_dst;
-        shy1 -= shad_sz;
-        shy2 = dy * shad_dst;
-        shy2 += shad_sz;
-        if (shy1 < miny) miny = shy1;
-        if (shy2 > maxy) maxy = shy2;
+        minx = -out_sz;
+        maxx = out_sz;
+        miny = -out_sz;
+        maxy = out_sz;
+        if (have_shadow)
+          {
+             int shx1, shx2, shy1, shy2;
+             switch (style & EVAS_TEXT_STYLE_MASK_SHADOW_DIRECTION)
+               {
+                case EVAS_TEXT_STYLE_SHADOW_DIRECTION_BOTTOM_RIGHT:
+                   dx = 1;
+                   dy = 1;
+                   break;
+                case EVAS_TEXT_STYLE_SHADOW_DIRECTION_BOTTOM:
+                   dx = 0;
+                   dy = 1;
+                   break;
+                case EVAS_TEXT_STYLE_SHADOW_DIRECTION_BOTTOM_LEFT:
+                   dx = -1;
+                   dy = 1;
+                   break;
+                case EVAS_TEXT_STYLE_SHADOW_DIRECTION_LEFT:
+                   dx = -1;
+                   dy = 0;
+                   break;
+                case EVAS_TEXT_STYLE_SHADOW_DIRECTION_TOP_LEFT:
+                   dx = -1;
+                   dy = -1;
+                   break;
+                case EVAS_TEXT_STYLE_SHADOW_DIRECTION_TOP:
+                   dx = 0;
+                   dy = -1;
+                   break;
+                case EVAS_TEXT_STYLE_SHADOW_DIRECTION_TOP_RIGHT:
+                   dx = 1;
+                   dy = -1;
+                   break;
+                case EVAS_TEXT_STYLE_SHADOW_DIRECTION_RIGHT:
+                   dx = 1;
+                   dy = 0;
+                default:
+                   break;
+               }
+             shx1 = dx * shad_dst;
+             shx1 -= shad_sz;
+             shx2 = dx * shad_dst;
+             shx2 += shad_sz;
+             if (shx1 < minx) minx = shx1;
+             if (shx2 > maxx) maxx = shx2;
+
+             shy1 = dy * shad_dst;
+             shy1 -= shad_sz;
+             shy2 = dy * shad_dst;
+             shy2 += shad_sz;
+             if (shy1 < miny) miny = shy1;
+             if (shy2 > maxy) maxy = shy2;
+          }
+
+        if (l) sl = *l;
+        if (r) sr = *r;
+        if (t) st = *t;
+        if (b) sb = *b;
+
+        if (sr < maxx) sr = maxx;
+        if (sl < -minx) sl = -minx;
+        if (sb < maxy) sb = maxy;
+        if (st < -miny) st = -miny;
      }
 
-   if (l) sl = *l;
-   if (r) sr = *r;
-   if (t) st = *t;
-   if (b) sb = *b;
-
-   if (sr < maxx) sr = maxx;
-   if (sl < -minx) sl = -minx;
-   if (sb < maxy) sb = maxy;
-   if (st < -miny) st = -miny;
-
-end:
    if (l) *l = sl;
    if (r) *r = sr;
    if (t) *t = st;
