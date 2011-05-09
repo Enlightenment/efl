@@ -267,6 +267,7 @@ static inline Eina_Bool
 eina_condition_new(Eina_Condition *cond, Eina_Lock *mutex)
 {
 #ifdef EINA_HAVE_DEBUG_THREADS
+   assert(mutex != NULL);
    assert(pthread_equal(_eina_main_loop, pthread_self()));
    memset(cond, 0, sizeof (Eina_Condition));
 #endif
