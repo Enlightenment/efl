@@ -73,6 +73,18 @@ EAPI extern pthread_mutex_t _eina_tracking_lock;
 EAPI extern Eina_Inlist *_eina_tracking;
 #endif
 
+static inline void
+eina_lock_debug(const Eina_Lock *mutex)
+{
+#ifdef EINA_HAVE_DEBUG_THREADS
+   printf("lock %p, locked: %i, by %i\n",
+          mutex, (int)mutex->locked, (int)mutex->lock_thread_id);
+   backtrace_symbols_fd((void **)mutex->lock_bt, mutex->lock_bt_num, 1);
+#else
+   (void) mutex;
+#endif
+}
+
 static inline Eina_Bool
 eina_lock_new(Eina_Lock *mutex)
 {
@@ -159,7 +171,9 @@ eina_lock_take(Eina_Lock *mutex)
    else if (ok == EDEADLK)
      {
         printf("ERROR ERROR: DEADLOCK on lock %p\n", mutex);
+        eina_lock_debug(mutex);
         ret = EINA_LOCK_DEADLOCK; // magic
+        if (_eina_threads_debug) abort();
      }
 
 #ifdef EINA_HAVE_DEBUG_THREADS
@@ -249,18 +263,6 @@ eina_lock_release(Eina_Lock *mutex)
    ret = (pthread_mutex_unlock(&(mutex->mutex)) == 0) ?
       EINA_LOCK_SUCCEED : EINA_LOCK_FAIL;
    return ret;
-}
-
-static inline void
-eina_lock_debug(const Eina_Lock *mutex)
-{
-#ifdef EINA_HAVE_DEBUG_THREADS
-   printf("lock %p, locked: %i, by %i\n",
-          mutex, (int)mutex->locked, (int)mutex->lock_thread_id);
-   backtrace_symbols_fd((void **)mutex->lock_bt, mutex->lock_bt_num, 1);
-#else
-   (void) mutex;
-#endif
 }
 
 static inline Eina_Bool
