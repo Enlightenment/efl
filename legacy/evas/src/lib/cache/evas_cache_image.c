@@ -1405,6 +1405,7 @@ EAPI void
 evas_cache_image_wakeup(void)
 {
 #ifdef BUILD_ASYNC_PRELOAD
-   eina_condition_broadcast(&cond_wakeup);
+   if (_evas_cache_mutex_init > 0)
+     eina_condition_broadcast(&cond_wakeup);
 #endif
 }
