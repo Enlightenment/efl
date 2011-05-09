@@ -546,10 +546,10 @@ evas_cache_image_set(Evas_Cache_Image *cache, unsigned int limit)
         return;
      }
    cache->limit = limit;
-   evas_cache_image_flush(cache);
 #ifdef EVAS_FRAME_QUEUING
    LKU(cache->lock);
 #endif
+   evas_cache_image_flush(cache);
 }
 
 EAPI Evas_Cache_Image *
