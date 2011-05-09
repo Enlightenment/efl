@@ -173,7 +173,9 @@ eina_lock_take(Eina_Lock *mutex)
         printf("ERROR ERROR: DEADLOCK on lock %p\n", mutex);
         eina_lock_debug(mutex);
         ret = EINA_LOCK_DEADLOCK; // magic
+#ifdef EINA_HAVE_DEBUG_THREADS
         if (_eina_threads_debug) abort();
+#endif
      }
 
 #ifdef EINA_HAVE_DEBUG_THREADS
