@@ -42,7 +42,9 @@ eina_lock_free(Eina_Lock *mutex)
 static inline Eina_Bool
 eina_lock_take(Eina_Lock *mutex)
 {
+#ifdef EINA_HAVE_ON_OFF_THREADS
    if (!_eina_threads_activated) return EINA_FALSE;
+#endif
 
    EnterCriticalSection(mutex);
 
@@ -52,7 +54,9 @@ eina_lock_take(Eina_Lock *mutex)
 static inline Eina_Bool
 eina_lock_take_try(Eina_Lock *mutex)
 {
+#ifdef EINA_HAVE_ON_OFF_THREADS
    if (!_eina_threads_activated) return EINA_FALSE;
+#endif
 
    return TryEnterCriticalSection(mutex) == 0 ? EINA_FALSE : EINA_TRUE;
 }
@@ -60,7 +64,9 @@ eina_lock_take_try(Eina_Lock *mutex)
 static inline Eina_Bool
 eina_lock_release(Eina_Lock *mutex)
 {
+#ifdef EINA_HAVE_ON_OFF_THREADS
    if (!_eina_threads_activated) return EINA_FALSE;
+#endif
 
    LeaveCriticalSection(mutex);
 

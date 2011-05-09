@@ -46,7 +46,9 @@ eina_lock_take(Eina_Lock *mutex)
 {
    DWORD res;
 
+#ifdef EINA_HAVE_ON_OFF_THREADS
    if (!_eina_threads_activated) return EINA_FALSE;
+#endif
 
    res = WaitForSingleObject(*mutex, INFINITE);
    if ((res == WAIT_ABANDONED) || (res == WAIT_FAILED))
@@ -64,7 +66,9 @@ eina_lock_take_try(Eina_Lock *mutex)
 static inline Eina_Bool
 eina_lock_release(Eina_Lock *mutex)
 {
+#ifdef EINA_HAVE_ON_OFF_THREADS
    if (!_eina_threads_activated) return EINA_FALSE;
+#endif
 
    return ReleaseMutex(*mutex);
 }
