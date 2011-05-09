@@ -1326,16 +1326,16 @@ grid_load(Evas_Object *obj, Grid *g)
      }
    eina_iterator_free(it);
 
-   xx = wd->pan_x / size - 2;
+   xx = wd->pan_x / size - 1;
    if (xx < 0) xx = 0;
 
-   yy = wd->pan_y / size - 2;
+   yy = wd->pan_y / size - 1;
    if (yy < 0) yy = 0;
 
-   ww = ow / size + 4;
+   ww = ow / size + 2;
    if (xx + ww >= g->gw) ww = g->gw - xx - 1;
 
-   hh = oh / size + 4;
+   hh = oh / size + 2;
    if (yy + hh >= g->gh) hh = g->gh - yy - 1;
 
    for (y = yy; y <= yy + hh; y++)
@@ -2273,7 +2273,8 @@ _pan_calculate(Evas_Object *obj)
    rect_place(sd->wd->obj, sd->wd->pan_x, sd->wd->pan_y, ox, oy, ow, oh);
    EINA_LIST_FOREACH(sd->wd->grids, l, g)
      {
-        grid_load(sd->wd->obj, g);
+        if ((sd->wd->pinch.level == 1.0) || (sd->wd->pinch.level ==0.5))
+          grid_load(sd->wd->obj, g);
         grid_place(sd->wd->obj, g, sd->wd->pan_x, sd->wd->pan_y, ox, oy, ow, oh);
         marker_place(sd->wd->obj, g, sd->wd->pan_x, sd->wd->pan_y, ox, oy, ow, oh);
         if (!sd->wd->zoom_animator) route_place(sd->wd->obj, g, sd->wd->pan_x, sd->wd->pan_y, ox, oy, ow, oh);
