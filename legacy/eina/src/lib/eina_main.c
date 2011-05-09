@@ -283,7 +283,13 @@ eina_threads_shutdown(void)
 
    assert(pthread_equal(_eina_main_loop, pthread_self()));
    assert(_eina_main_thread_count > 0);
+#endif
 
+   ret = --_eina_main_thread_count;
+   if(_eina_main_thread_count > 0)
+     return ret;
+
+#ifdef EINA_HAVE_DEBUG_THREADS
    pthread_mutex_lock(&_eina_tracking_lock);
    if (_eina_tracking)
      {
@@ -297,12 +303,7 @@ eina_threads_shutdown(void)
        abort();
      }
    pthread_mutex_unlock(&_eina_tracking_lock);
-
 #endif
-
-   ret = --_eina_main_thread_count;
-   if(_eina_main_thread_count > 0)
-     return ret;
 
    eina_share_common_threads_shutdown();
    eina_log_threads_shutdown();
