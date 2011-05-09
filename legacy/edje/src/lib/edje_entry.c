@@ -896,18 +896,15 @@ _anchors_clear(Evas_Textblock_Cursor *c __UNUSED__, Evas_Object *o __UNUSED__, E
 static void
 _anchors_get(Evas_Textblock_Cursor *c, Evas_Object *o, Entry *en)
 {
-   Evas_Textblock_Cursor *c1;
    const Evas_Object_Textblock_Node_Format *node;
    Anchor *an = NULL;
 
    _anchors_clear(c, o, en);
-   c1 = evas_object_textblock_cursor_new(o);
    node = evas_textblock_node_format_first_get(o);
    for (; node; node = evas_textblock_node_format_next_get(node))
      {
         const char *s;
 
-        evas_textblock_cursor_at_format_set(c1, node);
         s = evas_textblock_node_format_text_get(node);
         if (s)
           {
@@ -927,8 +924,8 @@ _anchors_get(Evas_Textblock_Cursor *c, Evas_Object *o, Entry *en)
                        en->anchors = eina_list_append(en->anchors, an);
                        an->start = evas_object_textblock_cursor_new(o);
                        an->end = evas_object_textblock_cursor_new(o);
-                       evas_textblock_cursor_copy(c1, an->start);
-                       evas_textblock_cursor_copy(c1, an->end);
+                       evas_textblock_cursor_at_format_set(an->start, node);
+                       evas_textblock_cursor_copy(an->start, an->end);
                     }
                }
              else if ((!strcmp(s, "- a")) || (!strcmp(s, "-a")))
@@ -965,8 +962,8 @@ _anchors_get(Evas_Textblock_Cursor *c, Evas_Object *o, Entry *en)
                        en->anchors = eina_list_append(en->anchors, an);
                        an->start = evas_object_textblock_cursor_new(o);
                        an->end = evas_object_textblock_cursor_new(o);
-                       evas_textblock_cursor_copy(c1, an->start);
-                       evas_textblock_cursor_copy(c1, an->end);
+                       evas_textblock_cursor_at_format_set(an->start, node);
+                       evas_textblock_cursor_copy(an->start, an->end);
                     }
                }
              else if ((!strcmp(s, "- item")) || (!strcmp(s, "-item")))
@@ -988,7 +985,6 @@ _anchors_get(Evas_Textblock_Cursor *c, Evas_Object *o, Entry *en)
                }
           }
      }
-   evas_textblock_cursor_free(c1);
 }
 
 
