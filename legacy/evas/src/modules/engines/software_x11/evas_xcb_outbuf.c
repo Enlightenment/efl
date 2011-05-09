@@ -1,3 +1,7 @@
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
 #include <xcb/shm.h>
 #include <xcb/xcb_image.h>
 #include <pixman.h>
