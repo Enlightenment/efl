@@ -35,7 +35,7 @@ static LK(engine_lock);
 static LK(wakeup);
 static int _evas_cache_mutex_init = 0;
 
-static pthread_cond_t cond_wakeup = PTHREAD_COND_INITIALIZER;
+static Eina_Condition cond_wakeup;
 
 static void _evas_cache_image_entry_preload_remove(Image_Entry *ie, const void *target);
 #endif
@@ -561,6 +561,7 @@ evas_cache_image_init(const Evas_Cache_Image_Func *cb)
      {
         LKI(engine_lock);
         LKI(wakeup);
+	eina_condition_new(&cond_wakeup, &wakeup);
      }
 
    cache = calloc(1, sizeof(Evas_Cache_Image));
@@ -648,7 +649,7 @@ evas_cache_image_shutdown(Evas_Cache_Image *cache)
         // the lazy bum who did eain threads and converted this code
         // didnt bother to worry about Eina_Lock being a different type
         // to a pthread mutex.
-	if (cache->pending) pthread_cond_wait(&cond_wakeup, &(wakeup.mutex));
+	if (cache->pending) eina_condition_wait(&cond_wakeup);
 	LKU(wakeup);
      }
 #endif
@@ -658,6 +659,7 @@ evas_cache_image_shutdown(Evas_Cache_Image *cache)
 
    if (--_evas_cache_mutex_init == 0)
      {
+	eina_condition_free(&cond_wakeup);
         LKD(engine_lock);
         LKD(wakeup);
      }
@@ -1160,7 +1162,7 @@ evas_cache_image_load_data(Image_Entry *im)
 	LKL(wakeup);
 	while (im->preload)
 	  {
-	     pthread_cond_wait(&cond_wakeup, &(wakeup.mutex));
+             eina_condition_wait(&cond_wakeup);
 	     LKU(wakeup);
 	     evas_async_events_process();
 	     LKL(wakeup);
@@ -1403,6 +1405,6 @@ EAPI void
 evas_cache_image_wakeup(void)
 {
 #ifdef BUILD_ASYNC_PRELOAD
-   pthread_cond_broadcast(&cond_wakeup);
+   eina_condition_broadcast(&cond_wakeup);
 #endif
 }
