@@ -451,7 +451,7 @@ _ecore_file_mkpath_if_not_exists(const char *path)
  * @param  path The path to create
  * @return EINA_TRUE on success, EINA_FALSE otherwise.
  *
- * This function create @p path and all the subdirectories it
+ * This function creates @p path and all the subdirectories it
  * contains. The separator is '/' or '\'. If @p path exists, this
  * function returns EINA_TRUE immediatly. It returns EINA_TRUE on
  * success, EINA_FALSE otherwise.
