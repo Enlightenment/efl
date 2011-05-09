@@ -307,6 +307,7 @@ eina_condition_wait(Eina_Condition *cond)
 {
 #ifdef EINA_HAVE_DEBUG_THREADS
    assert(_eina_threads_activated);
+   assert(cond->lock != NULL);
 #endif
 
    return pthread_cond_wait(&(cond->condition), &(cond->lock->mutex)) == 0 ? EINA_TRUE : EINA_FALSE;
@@ -315,12 +316,20 @@ eina_condition_wait(Eina_Condition *cond)
 static inline Eina_Bool
 eina_condition_broadcast(Eina_Condition *cond)
 {
+#ifdef EINA_HAVE_DEBUG_THREADS
+   assert(cond->lock != NULL);
+#endif
+
    return pthread_cond_broadcast(&(cond->condition)) == 0 ? EINA_TRUE : EINA_FALSE;
 }
 
 static inline Eina_Bool
 eina_condition_signal(Eina_Condition *cond)
 {
+#ifdef EINA_HAVE_DEBUG_THREADS
+   assert(cond->lock != NULL);
+#endif
+
    return pthread_cond_signal(&(cond->condition)) == 0 ? EINA_TRUE : EINA_FALSE;
 }
 
