@@ -958,3 +958,39 @@ elm_slideshow_cache_after_set(Evas_Object *obj, int count)
    if (count < 0) count = 0;
    wd->count_item_pre_after = count;
 }
+
+/**
+ * Get the nth item of the slideshow
+ *
+ * @param obj The slideshow object
+ * @param nth The number of the element (0 being first)
+ * @return The item stored in slideshow at position required
+ *
+ * @ingroup Slideshow
+ */
+EAPI Elm_Slideshow_Item *
+elm_slideshow_item_nth_get(const Evas_Object *obj, unsigned int nth)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return NULL;
+   return eina_list_nth(wd->items, nth);
+}
+
+/**
+ * Get count of items stored in slideshow
+ *
+ * @param obj The slideshow object
+ * @return The count of items
+ *
+ * @ingroup Slideshow
+ */
+EAPI unsigned int
+elm_slideshow_count_get(const Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return 0;
+   return eina_list_count(wd->items);
+}
+

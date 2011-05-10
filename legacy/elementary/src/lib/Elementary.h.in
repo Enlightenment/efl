@@ -2116,6 +2116,7 @@ extern "C" {
    EAPI void               *elm_slideshow_item_data_get(const Elm_Slideshow_Item *item) EINA_ARG_NONNULL(1);
    EAPI Elm_Slideshow_Item *elm_slideshow_item_current_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
    EAPI Evas_Object*        elm_slideshow_item_object_get(const Elm_Slideshow_Item* item) EINA_ARG_NONNULL(1);
+   EAPI Elm_Slideshow_Item *elm_slideshow_item_nth_get(const Evas_Object *obj, unsigned int nth) EINA_ARG_NONNULL(1);
    EAPI const char         *elm_slideshow_layout_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
    EAPI void                elm_slideshow_layout_set(Evas_Object *obj, const char *layout) EINA_ARG_NONNULL(1);
    EAPI const Eina_List    *elm_slideshow_layouts_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
@@ -2123,6 +2124,7 @@ extern "C" {
    EAPI int                 elm_slideshow_cache_before_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
    EAPI void                elm_slideshow_cache_after_set(Evas_Object *obj, int count) EINA_ARG_NONNULL(1);
    EAPI int                 elm_slideshow_cache_after_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+   EAPI unsigned int        elm_slideshow_count_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
    /* smart callbacks called:
     * "changed" - when the slideshow switch to another item
     */
