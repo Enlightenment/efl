@@ -241,46 +241,54 @@ _item_realize(Elm_Slideshow_Item *item)
           {
              --ac;
              --lc;
-             _item_next = _item_next_get(_item_next);
-             if ((_item_next)
-                 && (!_item_next->base.view)
-                 && (_item_next->itc->func.get))
+             if (_item_next)
                {
-                  _item_next->base.view =
-                     _item_next->itc->func.get((void*)_item_next->base.data,
-                                               obj);
-                  evas_object_smart_member_add(_item_next->base.view, obj);
-                  _item_next->l_built = eina_list_append(NULL, _item_next);
-                  wd->items_built = eina_list_merge(wd->items_built,
-                                                    _item_next->l_built);
-                  evas_object_hide(_item_next->base.view);
+                  _item_next = _item_next_get(_item_next);
+                  if ((_item_next)
+                      && (!_item_next->base.view)
+                      && (_item_next->itc->func.get))
+                    {
+                       _item_next->base.view =
+                          _item_next->itc->func.get(
+                             (void*)_item_next->base.data, obj);
+                       evas_object_smart_member_add(_item_next->base.view, obj);
+                       _item_next->l_built = eina_list_append(NULL, _item_next);
+                       wd->items_built = eina_list_merge(wd->items_built,
+                                                         _item_next->l_built);
+                       evas_object_hide(_item_next->base.view);
+                    }
+                  else if (_item_next && _item_next->l_built)
+                    wd->items_built =
+                       eina_list_demote_list(wd->items_built,
+                                             _item_next->l_built);
                }
-             else if (_item_next && _item_next->l_built)
-               wd->items_built = eina_list_demote_list(wd->items_built,
-                                                       _item_next->l_built);
           }
 
         if (lc > 0 && bc > 0)
           {
              --bc;
              --lc;
-             _item_prev = _item_prev_get(_item_prev);
-             if ((_item_prev)
-                 && (!_item_prev->base.view)
-                 && (_item_prev->itc->func.get))
+             if (_item_prev)
                {
-                  _item_prev->base.view =
-                     _item_prev->itc->func.get((void*)_item_prev->base.data,
-                                               obj);
-                  evas_object_smart_member_add(_item_prev->base.view, obj);
-                  _item_prev->l_built = eina_list_append(NULL, _item_prev);
-                  wd->items_built = eina_list_merge(wd->items_built,
-                                                    _item_prev->l_built);
-                  evas_object_hide(_item_prev->base.view);
+                  _item_prev = _item_prev_get(_item_prev);
+                  if ((_item_prev)
+                      && (!_item_prev->base.view)
+                      && (_item_prev->itc->func.get))
+                    {
+                       _item_prev->base.view =
+                          _item_prev->itc->func.get(
+                             (void*)_item_prev->base.data, obj);
+                       evas_object_smart_member_add(_item_prev->base.view, obj);
+                       _item_prev->l_built = eina_list_append(NULL, _item_prev);
+                       wd->items_built = eina_list_merge(wd->items_built,
+                                                         _item_prev->l_built);
+                       evas_object_hide(_item_prev->base.view);
+                    }
+                  else if (_item_prev && _item_prev->l_built)
+                    wd->items_built =
+                       eina_list_demote_list(wd->items_built,
+                                             _item_prev->l_built);
                }
-             else if (_item_prev && _item_prev->l_built)
-               wd->items_built = eina_list_demote_list(wd->items_built,
-                                                       _item_prev->l_built);
           }
      }
 
