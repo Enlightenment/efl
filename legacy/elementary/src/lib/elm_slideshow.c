@@ -971,7 +971,7 @@ elm_slideshow_cache_after_set(Evas_Object *obj, int count)
 EAPI Elm_Slideshow_Item *
 elm_slideshow_item_nth_get(const Evas_Object *obj, unsigned int nth)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype);
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return NULL;
    return eina_list_nth(wd->items, nth);
@@ -988,9 +988,8 @@ elm_slideshow_item_nth_get(const Evas_Object *obj, unsigned int nth)
 EAPI unsigned int
 elm_slideshow_count_get(const Evas_Object *obj)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype);
+   ELM_CHECK_WIDTYPE(obj, widtype) 0;
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return 0;
    return eina_list_count(wd->items);
 }
-
