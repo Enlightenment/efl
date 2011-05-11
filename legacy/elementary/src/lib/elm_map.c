@@ -399,10 +399,10 @@ struct _Widget_Data
 
    Eina_Array *modules;
    Eina_List *map_sources_tab;
-   const char *source_name;
    const char **source_names;
    Evas_Map *map;
    Ecore_Timer *zoom_timer;
+   Map_Sources_Tab *src;
 };
 
 struct _Pan
@@ -716,6 +716,7 @@ source_init(void *data)
         s->geo_into_coord = default_map_sources_tab[idx].geo_into_coord;
         s->coord_into_geo = default_map_sources_tab[idx].coord_into_geo;
         wd->map_sources_tab = eina_list_append(wd->map_sources_tab, s);
+        if (!idx) wd->src = s;
      }
    module_init(data);
 
@@ -1184,28 +1185,17 @@ grid_create(Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd = elm_widget_data_get(obj);
-   Map_Sources_Tab *s  = NULL, *ss;
-   Eina_List *l;
    Grid *g;
 
-   if (!wd) return NULL;
+   if ((!wd) || (!wd->src)) return NULL;
    g = calloc(1, sizeof(Grid));
 
    g->zoom = wd->zoom;
    g->tsize = wd->tsize;
    g->wd = wd;
 
-   EINA_LIST_FOREACH(wd->map_sources_tab, l, ss)
-     {
-        if (!strcmp(ss->name, wd->source_name))
-          {
-             s = ss;
-             break;
-          }
-     }
-   if (!s) return NULL;
-   if (g->zoom > s->zoom_max) return NULL;
-   if (g->zoom < s->zoom_min) return NULL;
+   if (g->zoom > wd->src->zoom_max) return NULL;
+   if (g->zoom < wd->src->zoom_min) return NULL;
 
    int size =  pow(2.0, wd->zoom);
    g->gw = size;
@@ -1230,20 +1220,8 @@ grid_load(Evas_Object *obj, Grid *g)
    Eina_Iterator *it;
    Eina_Matrixsparse_Cell *cell;
    Grid_Item *gi;
-   Map_Sources_Tab *s = NULL, *ss;
-   Eina_List *l;
 
-   if (!wd) return;
-   EINA_LIST_FOREACH(wd->map_sources_tab, l, ss)
-     {
-        if (!strcmp(ss->name, wd->source_name))
-          {
-             s = ss;
-             break;
-          }
-     }
-   if (!s) return;
-
+   if ((!wd) || (!wd->src)) return;
    evas_object_geometry_get(wd->pan_smart, &ox, &oy, &ow, &oh);
    evas_output_viewport_get(evas_object_evas_get(wd->obj), &cvx, &cvy, &cvw, &cvh);
 
@@ -1396,7 +1374,7 @@ grid_load(Evas_Object *obj, Grid *g)
 
                   snprintf(buf2, sizeof(buf2), DEST_FILE_PATH, buf, y);
 
-                  source = s->url_cb(obj, x, y, g->zoom);
+                  source = wd->src->url_cb(obj, x, y, g->zoom);
                   if ((!source) || (strlen(source)==0)) continue;
 
                   eina_stringshare_replace(&gi->file, buf2);
@@ -1752,24 +1730,12 @@ _mouse_multi_move(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSED__
    ELM_CHECK_WIDTYPE(data, widtype);
    Widget_Data *wd = elm_widget_data_get(data);
    Evas_Event_Multi_Move *move = event_info;
-   Map_Sources_Tab *s = NULL, *ss;
-   Eina_List *l;
    int dis_new;
    double t, tt, a, a_diff;
    Event *ev0;
    Event *ev;
 
-   if (!wd) return;
-   EINA_LIST_FOREACH(wd->map_sources_tab, l, ss)
-     {
-        if (!strcmp(ss->name, wd->source_name))
-          {
-             s = ss;
-             break;
-          }
-     }
-   if (!s) return;
-
+   if ((!wd) || (!wd->src)) return;
    ev = get_event_object(data, move->device);
    if (!ev) return;
 
@@ -1793,8 +1759,8 @@ _mouse_multi_move(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSED__
              tt = wd->pinch.diff;
              wd->pinch.diff = (double)(ev->pinch_dis - ev->pinch_start_dis);
              t = (wd->pinch.diff * 0.01) + 1.0;
-             if (((wd->zoom + (int)t - 1) < s->zoom_min) ||
-                 ((wd->zoom + (int)t - 1) > s->zoom_max) ||
+             if ((!wd->zoom) || ((wd->zoom + (int)t - 1) <= wd->src->zoom_min) ||
+                 ((wd->zoom + (int)t - 1) >= wd->src->zoom_max) ||
                  (t > PINCH_ZOOM_MAX) || (t < PINCH_ZOOM_MIN))
                {
                   wd->pinch.diff = tt;
@@ -2999,23 +2965,11 @@ _utils_convert_name(const Evas_Object *obj, int method, char *address, double lo
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd = elm_widget_data_get(obj);
-   Map_Sources_Tab *s = NULL, *ss;
-   Eina_List *l;
    char buf[PATH_MAX];
    char *source;
    int fd;
 
-   if (!wd) return NULL;
-   EINA_LIST_FOREACH(wd->map_sources_tab, l, ss)
-     {
-        if (!strcmp(ss->name, wd->source_name))
-          {
-             s = ss;
-             break;
-          }
-     }
-   if (!s) return NULL;
-
+   if ((!wd) || (!wd->src)) return NULL;
    Elm_Map_Name *name = ELM_NEW(Elm_Map_Name);
    if (!name) return NULL;
 
@@ -3047,7 +3001,7 @@ _utils_convert_name(const Evas_Object *obj, int method, char *address, double lo
    name->lon = lon;
    name->lat = lat;
 
-   source = s->name_url_cb(wd->obj, method, address, lon, lat);
+   source = wd->src->name_url_cb(wd->obj, method, address, lon, lat);
    INF("name url = %s", source);
 
    wd->names = eina_list_append(wd->names, name);
@@ -3120,7 +3074,6 @@ elm_map_add(Evas_Object *parent)
    if (!wd->map) return NULL;
 
    wd->markers_max_num = 30;
-   wd->source_name = eina_stringshare_add("Mapnik");
    wd->pinch.level = 1.0;
 
    evas_object_smart_callback_add(obj, "scroll-hold-on", _hold_on, obj);
@@ -3220,28 +3173,17 @@ elm_map_zoom_set(Evas_Object *obj, int zoom)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
-   Map_Sources_Tab *s = NULL, *ss;
-   Eina_List *l, *lr;
+   Eina_List *l;
    Grid *g, *g_zoom = NULL;
    Evas_Coord rx, ry, rw, rh;
    Evas_Object *p;
    Elm_Map_Route *r;
    int z = 0, zoom_changed = 0, started = 0;
 
-   if ((!wd) || (wd->zoom_animator)) return;
-   EINA_LIST_FOREACH(wd->map_sources_tab, l, ss)
-     {
-        if (!strcmp(ss->name, wd->source_name))
-          {
-             s = ss;
-             break;
-          }
-     }
-   if (!s) return;
-
+   if ((!wd) || (!wd->src) || (wd->zoom_animator)) return;
    if (zoom < 0 ) zoom = 0;
-   if (zoom > s->zoom_max) zoom = s->zoom_max;
-   if (zoom < s->zoom_min) zoom = s->zoom_min;
+   if (zoom > wd->src->zoom_max) zoom = wd->src->zoom_max;
+   if (zoom < wd->src->zoom_min) zoom = wd->src->zoom_min;
 
    if ((wd->zoom - zoom) > 0) wd->zoom_method = ZOOM_METHOD_OUT;
    else if ((wd->zoom - zoom) < 0) wd->zoom_method = ZOOM_METHOD_IN;
@@ -3253,7 +3195,7 @@ elm_map_zoom_set(Evas_Object *obj, int zoom)
    elm_smart_scroller_child_pos_get(wd->scr, &rx, &ry);
    elm_smart_scroller_child_viewport_size_get(wd->scr, &rw, &rh);
 
-   EINA_LIST_FOREACH(wd->route, lr, r)
+   EINA_LIST_FOREACH(wd->route, l, r)
      {
         if (r)
           {
@@ -3693,22 +3635,12 @@ elm_map_utils_convert_coord_into_geo(const Evas_Object *obj, int x, int y, int s
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
-   Map_Sources_Tab *s = NULL, *ss;
-   Eina_List *l;
 
    if (!wd) return;
-   int zoom = floor(log(size/256) / log(2));
-   EINA_LIST_FOREACH(wd->map_sources_tab, l, ss)
+   int zoom = floor(log(size / 256) / log(2));
+   if ((wd->src) && (wd->src->coord_into_geo))
      {
-        if (!strcmp(ss->name, wd->source_name))
-          {
-             s = ss;
-             break;
-          }
-     }
-   if ((s) && (s->coord_into_geo))
-     {
-        if (s->coord_into_geo(obj, zoom, x, y, size, lon, lat)) return;
+        if (wd->src->coord_into_geo(obj, zoom, x, y, size, lon, lat)) return;
      }
 
    if (lon)
@@ -3739,28 +3671,18 @@ elm_map_utils_convert_geo_into_coord(const Evas_Object *obj, double lon, double 
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
-   Map_Sources_Tab *s = NULL, *ss;
-   Eina_List *l;
 
    if (!wd) return;
-   int zoom = floor(log(size/256) / log(2));
-   EINA_LIST_FOREACH(wd->map_sources_tab, l, ss)
+   int zoom = floor(log(size / 256) / log(2));
+   if ((wd->src) && (wd->src->geo_into_coord))
      {
-        if (!strcmp(ss->name, wd->source_name))
-          {
-             s = ss;
-             break;
-          }
-     }
-   if ((s) && (s->geo_into_coord))
-     {
-        if (s->geo_into_coord(obj, zoom, lon, lat, size, x, y)) return;
+        if (wd->src->geo_into_coord(obj, zoom, lon, lat, size, x, y)) return;
      }
 
    if (x)
      *x = floor((lon + 180.0) / 360.0 * size);
    if (y)
-     *y = floor((1.0 - log( tan(lat * ELM_PI/180.0) + 1.0 / cos(lat * ELM_PI/180.0)) / ELM_PI) / 2.0 * size);
+     *y = floor((1.0 - log( tan(lat * ELM_PI / 180.0) + 1.0 / cos(lat * ELM_PI / 180.0)) / ELM_PI) / 2.0 * size);
 }
 
 /**
@@ -4164,7 +4086,6 @@ elm_map_markers_list_show(Eina_List *markers)
    Elm_Map_Marker *marker, *m_max_lon = NULL, *m_max_lat = NULL, *m_min_lon = NULL, *m_min_lat = NULL;
    Evas_Coord rw, rh, xc, yc;
    Widget_Data *wd;
-   Map_Sources_Tab *s = NULL, *ss;
 
    EINA_SAFETY_ON_NULL_RETURN(markers);
    EINA_LIST_FOREACH(markers, l, marker)
@@ -4184,21 +4105,11 @@ elm_map_markers_list_show(Eina_List *markers)
           m_max_lat = marker;
      }
 
-   EINA_LIST_FOREACH(wd->map_sources_tab, l, ss)
-     {
-        if (!strcmp(ss->name, wd->source_name))
-          {
-             s = ss;
-             break;
-          }
-     }
-   if (!s) return;
-
    lon = (m_max_lon->longitude - m_min_lon->longitude) / 2. + m_min_lon->longitude;
    lat = (m_max_lat->latitude - m_min_lat->latitude) / 2. + m_min_lat->latitude;
 
    elm_smart_scroller_child_viewport_size_get(wd->scr, &rw, &rh);
-   for (zoom = s->zoom_max; zoom>s->zoom_min; zoom--)
+   for (zoom = wd->src->zoom_max; zoom > wd->src->zoom_min; zoom--)
      {
         Evas_Coord size = pow(2.0, zoom)*wd->tsize;
         elm_map_utils_convert_geo_into_coord(wd->obj, lon, lat, size, &xc, &yc);
@@ -4552,35 +4463,31 @@ elm_map_source_name_set(Evas_Object *obj, const char *source_name)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
-   Map_Sources_Tab *s = NULL, *ss;
+   Map_Sources_Tab *s;
    Eina_List *l;
    Grid *grid;
    int zoom;
 
    if (!wd) return;
-   if (!strcmp(wd->source_name, source_name)) return;
-   EINA_LIST_FOREACH(wd->map_sources_tab, l, ss)
+   if ((wd->src) && (!strcmp(wd->src->name, source_name))) return;
+   if ((wd->src) && (!wd->src->url_cb)) return;
+
+   EINA_LIST_FREE(wd->grids, grid) grid_clear(obj, grid);
+   EINA_LIST_FOREACH(wd->map_sources_tab, l, s)
      {
-        if (!strcmp(ss->name, wd->source_name))
+        if (!strcmp(s->name, source_name))
           {
-             s = ss;
+             wd->src = s;
              break;
           }
      }
-   if (!s) return;
-
-   if (!s->url_cb) return;
-
-   EINA_LIST_FREE(wd->grids, grid) grid_clear(obj, grid);
-
-   eina_stringshare_replace(&wd->source_name, source_name);
    zoom = wd->zoom;
    wd->zoom = -1;
 
-   if (s->zoom_max < zoom)
-     zoom = s->zoom_max;
-   if (s->zoom_min > zoom)
-     zoom = s->zoom_min;
+   if (wd->src->zoom_max < zoom)
+     zoom = wd->src->zoom_max;
+   if (wd->src->zoom_min > zoom)
+     zoom = wd->src->zoom_min;
 
    elm_map_zoom_set(obj, zoom);
 }
@@ -4598,21 +4505,9 @@ elm_map_source_name_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd = elm_widget_data_get(obj);
-   Map_Sources_Tab *s = NULL, *ss;
-   Eina_List *l;
 
-   if (!wd) return NULL;
-   EINA_LIST_FOREACH(wd->map_sources_tab, l, ss)
-     {
-        if (!strcmp(ss->name, wd->source_name))
-          {
-             s = ss;
-             break;
-          }
-     }
-   if (!s) return NULL;
-
-   return s->name;
+   if ((!wd) || (!wd->src)) return NULL;
+   return wd->src->name;
 }
 
 /**
@@ -4624,13 +4519,13 @@ elm_map_source_name_get(const Evas_Object *obj)
  * @ingroup Map
  */
 EAPI void
-elm_map_route_source_name_set(Evas_Object *obj, char *source_name)
+elm_map_route_source_set(Evas_Object *obj, Elm_Map_Route_Sources source)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
 
    if (!wd) return;
-   eina_stringshare_replace(&wd->source_name, source_name);
+   wd->route_source = source;
 }
 
 /**
@@ -4664,21 +4559,9 @@ elm_map_source_zoom_max_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) 18;
    Widget_Data *wd = elm_widget_data_get(obj);
-   Map_Sources_Tab *s = NULL, *ss;
-   Eina_List *l;
 
-   if (!wd) return 18;
-   EINA_LIST_FOREACH(wd->map_sources_tab, l, ss)
-     {
-        if (!strcmp(ss->name, wd->source_name))
-          {
-             s = ss;
-             break;
-          }
-     }
-   if (!s) return 0;
-
-   return s->zoom_max;
+   if ((!wd) || (!wd->src)) return 18;
+   return wd->src->zoom_max;
 }
 
 /**
@@ -4694,21 +4577,9 @@ elm_map_source_zoom_min_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) 0;
    Widget_Data *wd = elm_widget_data_get(obj);
-   Map_Sources_Tab *s = NULL, *ss;
-   Eina_List *l;
 
-   if (!wd) return 0;
-   EINA_LIST_FOREACH(wd->map_sources_tab, l, ss)
-     {
-        if (!strcmp(ss->name, wd->source_name))
-          {
-             s = ss;
-             break;
-          }
-     }
-   if (!s) return 0;
-
-   return s->zoom_min;
+   if ((!wd) || (!wd->src)) return 0;
+   return wd->src->zoom_min;
 }
 
 /**
@@ -4777,23 +4648,12 @@ elm_map_route_add(Evas_Object *obj,
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd = elm_widget_data_get(obj);
-   Map_Sources_Tab *s = NULL, *ss;
-   Eina_List *l;
    char buf[PATH_MAX];
    char *source;
    char *type_name = NULL;
    int fd;
 
-   if (!wd) return NULL;
-   EINA_LIST_FOREACH(wd->map_sources_tab, l, ss)
-     {
-        if (!strcmp(ss->name, wd->source_name))
-          {
-             s = ss;
-             break;
-          }
-     }
-   if (!s) return NULL;
+   if ((!wd) || (!wd->src)) return NULL;
 
    Elm_Map_Route *route = ELM_NEW(Elm_Map_Route);
    if (!route) return NULL;
@@ -4850,7 +4710,7 @@ elm_map_route_add(Evas_Object *obj,
         break;
      }
 
-   source = s->route_url_cb(obj, type_name, method, flon, flat, tlon, tlat);
+   source = wd->src->route_url_cb(obj, type_name, method, flon, flat, tlon, tlat);
    INF("route url = %s", source);
 
    wd->route = eina_list_append(wd->route, route);
