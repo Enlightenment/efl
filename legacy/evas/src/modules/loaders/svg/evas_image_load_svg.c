@@ -110,11 +110,8 @@ evas_image_load_file_head_svg(Image_Entry *ie, const char *file, const char *key
 	h2 = (ie->load_opts.w * h) / w;
 	if (h2 > ie->load_opts.h)
 	  {
-	     unsigned int w3;
 	     h2 = ie->load_opts.h;
-	     w3 = (ie->load_opts.h * w) / h;
-	     if (w3 > w2)
-	        w2 = w3;
+	     w2 = (ie->load_opts.h * w) / h;
 	  }
 	w = w2;
 	h = h2;
@@ -198,6 +195,11 @@ evas_image_load_file_data_svg(Image_Entry *ie, const char *file, const char *key
      }
    if (w < 1) w = 1;
    if (h < 1) h = 1;
+   if ((w != (int)ie->w) || (h != (int)ie->h))
+     {
+        *error = EVAS_LOAD_ERROR_GENERIC;
+        goto error;
+     }
    ie->flags.alpha = 1;
    evas_cache_image_surface_alloc(ie, w, h);
    pixels = evas_cache_image_pixels(ie);
