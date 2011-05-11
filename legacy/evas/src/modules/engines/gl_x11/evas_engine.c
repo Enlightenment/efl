@@ -698,8 +698,16 @@ eng_output_flush(void *data)
         else eglSwapInterval(re->win->egl_disp, 0);
         re->vsync = 1;
      }
+   if (re->info->callback.pre_swap)
+     {
+        re->info->callback.pre_swap(re->info->callback.data, re->evas);
+     }
    eglSwapBuffers(re->win->egl_disp, re->win->egl_surface[0]);
    if (!safe_native) eglWaitGL();
+   if (re->info->callback.post_swap)
+     {
+        re->info->callback.post_swap(re->info->callback.data, re->evas);
+     }
 #ifdef FRAMECOUNT
    double t1 = get_time();
    printf("%1.5f\n", t1 - t0);
