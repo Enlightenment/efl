@@ -218,6 +218,7 @@ struct _Evas_Object_Textblock_Node_Format
    Evas_Object_Textblock_Node_Text    *text_node;
    size_t                              offset;
    Eina_Bool                           visible : 1;
+   Eina_Bool                           format_change : 1;
    Eina_Bool                           new : 1;
 };
 
@@ -483,7 +484,6 @@ static void _evas_textblock_node_text_remove(Evas_Object_Textblock *o, Evas_Obje
 static void _evas_textblock_node_text_remove_formats_between(Evas_Object_Textblock *o, Evas_Object_Textblock_Node_Text *n, int start, int end);
 static Evas_Object_Textblock_Node_Format *_evas_textblock_cursor_node_format_before_or_at_pos_get(const Evas_Textblock_Cursor *cur);
 static size_t _evas_textblock_node_format_pos_get(const Evas_Object_Textblock_Node_Format *fmt);
-static Eina_Bool _evas_textblock_format_is_visible(const char *s);
 static void _evas_textblock_node_format_remove(Evas_Object_Textblock *o, Evas_Object_Textblock_Node_Format *n, int visual_adjustment);
 static void _evas_textblock_node_format_free(Evas_Object_Textblock_Node_Format *n);
 static void _evas_textblock_node_text_free(Evas_Object_Textblock_Node_Text *n);
@@ -2967,7 +2967,12 @@ _layout_do_format(const Evas_Object *obj __UNUSED__, Ctxt *c,
           {
              if (_format_is_param(item))
                {
-                  _layout_format_value_handle(c, fmt, item);
+                  /* Only handle it if it's a push format, otherwise,
+                   * don't let overwrite the format stack.. */
+                  if (push_fmt)
+                    {
+                       _layout_format_value_handle(c, fmt, item);
+                    }
                }
              else if (create_item)
                {
@@ -3734,9 +3739,11 @@ _layout(const Evas_Object *obj, int calc_only, int w, int h, int *w_ret, int *h_
                        fnode = n->format_node;
                        while (fnode && (fnode->text_node == n))
                          {
-                            _layout_do_format(obj, c, &fmt, fnode,
-                                  &style_pad_l, &style_pad_r,
-                                  &style_pad_t, &style_pad_b, EINA_FALSE);
+                            /* Only do this if this actually changes format */
+                            if (fnode->format_change)
+                               _layout_do_format(obj, c, &fmt, fnode,
+                                     &style_pad_l, &style_pad_r,
+                                     &style_pad_t, &style_pad_b, EINA_FALSE);
                             fnode = _NODE_FORMAT(EINA_INLIST_GET(fnode)->next);
                          }
                        continue;
@@ -5563,24 +5570,29 @@ evas_textblock_cursor_line_char_last(Evas_Textblock_Cursor *cur)
 
 /**
  * @internal
- * checks if a format (as a string) is visible.
+ * checks if a format (as a string) is visible/changes format and sets the
+ * fnode properties accordingly.
  *
- * @param the string.
- * @return #EINA_TRUE if it represents a visible format #EINA_FALSE otherwise.
+ * @param fnode the format node
+ * @param s the string.
  */
-static Eina_Bool
-_evas_textblock_format_is_visible(const char *s)
+static void
+_evas_textblock_format_is_visible(Evas_Object_Textblock_Node_Format *fnode,
+      const char *s)
 {
    const char *item;
    Eina_Bool is_opener = EINA_TRUE;
 
-   if (!s) return EINA_FALSE;
+   fnode->visible = fnode->format_change = EINA_FALSE;
+   if (!s) return;
 
    if (s[0] == '+' || s[0] == '-')
      {
-        is_opener = (s[0] == '+') ? EINA_TRUE : EINA_FALSE;
+        is_opener = (s[0] == '+');
         s++;
+        fnode->format_change = EINA_TRUE;
      }
+
    while ((item = _format_parse(&s)))
      {
         int itlen = s - item;
@@ -5591,9 +5603,11 @@ _evas_textblock_format_is_visible(const char *s)
               (!strncmp(item, "\t", itlen) || !strncmp(item, "\\t", itlen)) ||
               !strncmp(item, "ps", itlen) ||
               (!strncmp(item, "item", itlen) && is_opener))
-          return EINA_TRUE;
+          {
+             fnode->visible = EINA_TRUE;
+             return;
+          }
      }
-   return EINA_FALSE;
 }
 
 /**
@@ -6486,7 +6500,7 @@ _evas_textblock_node_format_new(const char *format)
    n = calloc(1, sizeof(Evas_Object_Textblock_Node_Format));
    n->format = eina_strbuf_new();
    eina_strbuf_append(n->format, format);
-   n->visible = _evas_textblock_format_is_visible(format);
+   _evas_textblock_format_is_visible(n, format);
    n->new = EINA_TRUE;
 
    return n;
