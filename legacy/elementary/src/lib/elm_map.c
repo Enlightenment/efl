@@ -1837,7 +1837,7 @@ _mouse_multi_up(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSED__, 
    Event *ev0;
    Event *ev;
    Eina_Bool tp;
-   double t = 0.0;
+   int zoom;
 
    wd->multi_count--;
    if (wd->calc_job) ecore_job_del(wd->calc_job);
@@ -1848,9 +1848,9 @@ _mouse_multi_up(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSED__, 
      }
    tp = wd->paused;
    wd->paused = EINA_TRUE;
-   if (wd->pinch.diff >= 0.0) t = wd->pinch.diff * 0.01;
-   else if (wd->pinch.diff < 0.0) t = -1.0 / ((wd->pinch.diff * 0.01) + 1.0);
-   elm_map_zoom_set(data, wd->zoom + (int)ceil(t));
+   if (wd->pinch.diff >= 0.0) zoom = (int)ceil((wd->pinch.diff * 0.01) - 1.0);
+   else if (wd->pinch.diff < 0.0) zoom = (int)floor(-1.0 / ((wd->pinch.diff * 0.01) + 1.0));
+   elm_map_zoom_set(data, wd->zoom + zoom);
    wd->pinch.level = 1.0;
    wd->paused = tp;
    wd->rotate.a = 0.0;
@@ -2273,8 +2273,7 @@ _pan_calculate(Evas_Object *obj)
    rect_place(sd->wd->obj, sd->wd->pan_x, sd->wd->pan_y, ox, oy, ow, oh);
    EINA_LIST_FOREACH(sd->wd->grids, l, g)
      {
-        if ((sd->wd->pinch.level == 1.0) || (sd->wd->pinch.level ==0.5))
-          grid_load(sd->wd->obj, g);
+        if ((sd->wd->pinch.level == 1.0) || (sd->wd->pinch.level == 0.5)) grid_load(sd->wd->obj, g);
         grid_place(sd->wd->obj, g, sd->wd->pan_x, sd->wd->pan_y, ox, oy, ow, oh);
         marker_place(sd->wd->obj, g, sd->wd->pan_x, sd->wd->pan_y, ox, oy, ow, oh);
         if (!sd->wd->zoom_animator) route_place(sd->wd->obj, g, sd->wd->pan_x, sd->wd->pan_y, ox, oy, ow, oh);
