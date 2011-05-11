@@ -1793,8 +1793,8 @@ _mouse_multi_move(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSED__
              tt = wd->pinch.diff;
              wd->pinch.diff = (double)(ev->pinch_dis - ev->pinch_start_dis);
              t = (wd->pinch.diff * 0.01) + 1.0;
-             if ((!wd->zoom) || ((wd->zoom + (int)t - 1) <= s->zoom_min) ||
-                 ((wd->zoom + (int)t - 1) >= s->zoom_max) ||
+             if (((wd->zoom + (int)t - 1) < s->zoom_min) ||
+                 ((wd->zoom + (int)t - 1) > s->zoom_max) ||
                  (t > PINCH_ZOOM_MAX) || (t < PINCH_ZOOM_MIN))
                {
                   wd->pinch.diff = tt;
@@ -1837,7 +1837,7 @@ _mouse_multi_up(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSED__, 
    Event *ev0;
    Event *ev;
    Eina_Bool tp;
-   int zoom;
+   int zoom = 0;
 
    wd->multi_count--;
    if (wd->calc_job) ecore_job_del(wd->calc_job);
@@ -1849,7 +1849,7 @@ _mouse_multi_up(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSED__, 
    tp = wd->paused;
    wd->paused = EINA_TRUE;
    if (wd->pinch.diff >= 0.0) zoom = (int)ceil((wd->pinch.diff * 0.01) - 1.0);
-   else if (wd->pinch.diff < 0.0) zoom = (int)floor(-1.0 / ((wd->pinch.diff * 0.01) + 1.0));
+   else if (wd->pinch.diff < 0.0) zoom = (int)floor(-1.0 / ((wd->pinch.diff * 0.005) + 1.0));
    elm_map_zoom_set(data, wd->zoom + zoom);
    wd->pinch.level = 1.0;
    wd->paused = tp;
