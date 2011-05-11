@@ -1636,7 +1636,7 @@ main(int argc, char **argv)
         shm_free();
      }
    else
-      printf("done");
+      printf("done\n");
    xcf_cleanup();
    return 0;
 }
