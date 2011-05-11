@@ -316,3 +316,8 @@
 
 	* Don't try all image loader when user is pointing them on a directory.
 
+2011-05-11  Carsten Haitzler (The Rasterman)
+
+	* Fix problem with Evas engine not calling pre/post swap functions
+        in the GL engine when using EGL/OpenGL-ES2
+
