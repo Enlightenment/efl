@@ -896,93 +896,89 @@ _anchors_clear(Evas_Textblock_Cursor *c __UNUSED__, Evas_Object *o __UNUSED__, E
 static void
 _anchors_get(Evas_Textblock_Cursor *c, Evas_Object *o, Entry *en)
 {
-   const Evas_Object_Textblock_Node_Format *node;
+   const Eina_List *anchors_a, *anchors_item;
    Anchor *an = NULL;
-
    _anchors_clear(c, o, en);
-   node = evas_textblock_node_format_first_get(o);
-   for (; node; node = evas_textblock_node_format_next_get(node))
+
+   anchors_a = evas_textblock_node_format_list_get(o, "a");
+   anchors_item = evas_textblock_node_format_list_get(o, "item");
+
+   if (anchors_a)
      {
-        const char *s;
-
-        s = evas_textblock_node_format_text_get(node);
-        if (s)
+        const Evas_Object_Textblock_Node_Format *node;
+        const Eina_List *itr;
+        EINA_LIST_FOREACH(anchors_a, itr, node)
           {
-             if ((!strncmp(s, "+ a ", 4)) || (!strncmp(s, "+a ", 3)))
-               {
-                  an = calloc(1, sizeof(Anchor));
-                  if (an)
-                    {
-                       char *p;
+             const char *s = evas_textblock_node_format_text_get(node);
+             char *p;
+             an = calloc(1, sizeof(Anchor));
+             if (!an)
+                break;
 
-                       an->en = en;
-                       p = strstr(s, "href=");
-                       if (p)
-                         {
-                            an->name = strdup(p + 5);
-                         }
-                       en->anchors = eina_list_append(en->anchors, an);
-                       an->start = evas_object_textblock_cursor_new(o);
-                       an->end = evas_object_textblock_cursor_new(o);
-                       evas_textblock_cursor_at_format_set(an->start, node);
-                       evas_textblock_cursor_copy(an->start, an->end);
-                    }
-               }
-             else if ((!strcmp(s, "- a")) || (!strcmp(s, "-a")))
+             an->en = en;
+             p = strstr(s, "href=");
+             if (p)
                {
-                  /* Close the anchor, if the anchor was without text, free it as well */
-                  if (an)
-                    {
-                       evas_textblock_cursor_at_format_set(an->end, node);
-                       if (!evas_textblock_cursor_compare(an->start, an->end))
-                         {
-                            if (an->name) free(an->name);
-                            evas_textblock_cursor_free(an->start);
-                            evas_textblock_cursor_free(an->end);
-                            en->anchors = eina_list_remove(en->anchors, an);
-                            free(an);
-                         }
-                       an = NULL;
-                    }
+                  an->name = strdup(p + 5);
                }
-             else if (!strncmp(s, "+ item ", 7))
-               {
-                  an = calloc(1, sizeof(Anchor));
-                  if (an)
-                    {
-                       char *p;
+             en->anchors = eina_list_append(en->anchors, an);
+             an->start = evas_object_textblock_cursor_new(o);
+             an->end = evas_object_textblock_cursor_new(o);
+             evas_textblock_cursor_at_format_set(an->start, node);
+             evas_textblock_cursor_copy(an->start, an->end);
 
-                       an->en = en;
-                       an->item = 1;
-                       p = strstr(s, "href=");
-                       if (p)
-                         {
-                            an->name = strdup(p + 5);
-                         }
-                       en->anchors = eina_list_append(en->anchors, an);
-                       an->start = evas_object_textblock_cursor_new(o);
-                       an->end = evas_object_textblock_cursor_new(o);
-                       evas_textblock_cursor_at_format_set(an->start, node);
-                       evas_textblock_cursor_copy(an->start, an->end);
-                    }
-               }
-             else if ((!strcmp(s, "- item")) || (!strcmp(s, "-item")))
+             /* Close the anchor, if the anchor was without text,
+              * free it as well */
+             node = evas_textblock_node_format_next_get(node);
+             for (; node; node = evas_textblock_node_format_next_get(node))
                {
-                  if (an)
-                    {
-                       /*
-                          if (!firsttext)
-                          {
-                          if (an->name) free(an->name);
-                          evas_textblock_cursor_free(an->start);
-                          evas_textblock_cursor_free(an->end);
-                          en->anchors = eina_list_remove(en->anchors, an);
-                          free(an);
-                          }
-                          */
-                       an = NULL;
-                    }
+                  s = evas_textblock_node_format_text_get(node);
+                  if ((!strcmp(s, "- a")) || (!strcmp(s, "-a")))
+                     break;
                }
+
+             if (node)
+               {
+                  evas_textblock_cursor_at_format_set(an->end, node);
+               }
+             else if (!evas_textblock_cursor_compare(an->start, an->end))
+               {
+                  if (an->name) free(an->name);
+                  evas_textblock_cursor_free(an->start);
+                  evas_textblock_cursor_free(an->end);
+                  en->anchors = eina_list_remove(en->anchors, an);
+                  free(an);
+               }
+             an = NULL;
+          }
+     }
+
+   if (anchors_item)
+     {
+        const Evas_Object_Textblock_Node_Format *node;
+        const Eina_List *itr;
+        EINA_LIST_FOREACH(anchors_item, itr, node)
+          {
+             const char *s = evas_textblock_node_format_text_get(node);
+             char *p;
+             an = calloc(1, sizeof(Anchor));
+             if (!an)
+                break;
+
+             an->en = en;
+             an->item = 1;
+             p = strstr(s, "href=");
+             if (p)
+               {
+                  an->name = strdup(p + 5);
+               }
+             en->anchors = eina_list_append(en->anchors, an);
+             an->start = evas_object_textblock_cursor_new(o);
+             an->end = evas_object_textblock_cursor_new(o);
+             evas_textblock_cursor_at_format_set(an->start, node);
+             evas_textblock_cursor_copy(an->start, an->end);
+             /* Although needed in textblock, don't bother with finding the end
+              * here cause it doesn't really matter. */
           }
      }
 }
