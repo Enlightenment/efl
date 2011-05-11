@@ -321,3 +321,8 @@
 	* Fix problem with Evas engine not calling pre/post swap functions
         in the GL engine when using EGL/OpenGL-ES2
 
+2011-05-11 Tom Hacohen (TAsn)
+
+	* Textblock: Added evas_textblock_node_format_list_get. This is very
+	  useful for edje_entry that uses anchors in the text.
+

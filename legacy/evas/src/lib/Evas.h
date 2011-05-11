@@ -5766,6 +5766,15 @@ EAPI Eina_Bool                    evas_textblock_cursor_paragraph_next(Evas_Text
 EAPI Eina_Bool                    evas_textblock_cursor_paragraph_prev(Evas_Textblock_Cursor *cur) EINA_ARG_NONNULL(1);
 
 /**
+ * Returns the
+ *
+ * @param obj The evas, must not be NULL.
+ * @param anchor the anchor name to get
+ * @return Returns the list format node corresponding to the anchor, may be null if there are none.
+ */
+EAPI const Eina_List             *evas_textblock_node_format_list_get(const Evas_Object *obj, const char *anchor) EINA_ARG_NONNULL(1, 2);
+
+/**
  * Returns the first format node.
  *
  * @param obj The evas, must not be NULL.

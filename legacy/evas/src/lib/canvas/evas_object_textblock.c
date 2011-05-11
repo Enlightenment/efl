@@ -217,10 +217,15 @@ struct _Evas_Object_Textblock_Node_Format
    Eina_Strbuf                        *format;
    Evas_Object_Textblock_Node_Text    *text_node;
    size_t                              offset;
+   unsigned char                       anchor : 2;
    Eina_Bool                           visible : 1;
    Eina_Bool                           format_change : 1;
    Eina_Bool                           new : 1;
 };
+
+#define ANCHOR_NONE 0
+#define ANCHOR_A 1
+#define ANCHOR_ITEM 2
 
 /**
  * @internal
@@ -389,6 +394,8 @@ struct _Evas_Object_Textblock
    Evas_Object_Textblock_Node_Text    *text_nodes;
    Evas_Object_Textblock_Node_Format  *format_nodes;
    Evas_Object_Textblock_Paragraph    *paragraphs;
+   Eina_List                          *anchors_a;
+   Eina_List                          *anchors_item;
    int                                 last_w, last_h;
    struct {
       int                              l, r, t, b;
@@ -485,7 +492,7 @@ static void _evas_textblock_node_text_remove_formats_between(Evas_Object_Textblo
 static Evas_Object_Textblock_Node_Format *_evas_textblock_cursor_node_format_before_or_at_pos_get(const Evas_Textblock_Cursor *cur);
 static size_t _evas_textblock_node_format_pos_get(const Evas_Object_Textblock_Node_Format *fmt);
 static void _evas_textblock_node_format_remove(Evas_Object_Textblock *o, Evas_Object_Textblock_Node_Format *n, int visual_adjustment);
-static void _evas_textblock_node_format_free(Evas_Object_Textblock_Node_Format *n);
+static void _evas_textblock_node_format_free(Evas_Object_Textblock *o, Evas_Object_Textblock_Node_Format *n);
 static void _evas_textblock_node_text_free(Evas_Object_Textblock_Node_Text *n);
 static void _evas_textblock_changed(Evas_Object_Textblock *o, Evas_Object *obj);
 static void _evas_textblock_invalidate_all(Evas_Object_Textblock *o);
@@ -610,7 +617,7 @@ _nodes_clear(const Evas_Object *obj)
 
         n = o->format_nodes;
         o->format_nodes = _NODE_FORMAT(eina_inlist_remove(EINA_INLIST_GET(o->format_nodes), EINA_INLIST_GET(n)));
-        _evas_textblock_node_format_free(n);
+        _evas_textblock_node_format_free(o, n);
      }
 }
 
@@ -5147,12 +5154,25 @@ evas_textblock_cursor_is_format(const Evas_Textblock_Cursor *cur)
       EINA_TRUE : EINA_FALSE;
 }
 
+EAPI const Eina_List *
+evas_textblock_node_format_list_get(const Evas_Object *obj, const char *anchor)
+{
+   TB_HEAD_RETURN(NULL);
+   if (!strcmp(anchor, "a"))
+      return o->anchors_a;
+   else if (!strcmp(anchor, "item"))
+      return o->anchors_item;
+
+   return NULL;
+}
+
 EAPI const Evas_Object_Textblock_Node_Format *
 evas_textblock_node_format_first_get(const Evas_Object *obj)
 {
    TB_HEAD_RETURN(NULL);
    return o->format_nodes;
 }
+
 EAPI const Evas_Object_Textblock_Node_Format *
 evas_textblock_node_format_last_get(const Evas_Object *obj)
 {
@@ -5586,6 +5606,7 @@ _evas_textblock_format_is_visible(Evas_Object_Textblock_Node_Format *fnode,
    Eina_Bool is_opener = EINA_TRUE;
 
    fnode->visible = fnode->format_change = EINA_FALSE;
+   fnode->anchor = ANCHOR_NONE;
    if (!s) return;
 
    if (s[0] == '+' || s[0] == '-')
@@ -5607,7 +5628,15 @@ _evas_textblock_format_is_visible(Evas_Object_Textblock_Node_Format *fnode,
               (!strncmp(item, "item", itlen) && is_opener))
           {
              fnode->visible = EINA_TRUE;
-             return;
+          }
+
+        if (is_opener && !strncmp(item, "a", itlen))
+          {
+             fnode->anchor = ANCHOR_A;
+          }
+        else if (is_opener && !strncmp(item, "item", itlen))
+          {
+             fnode->anchor = ANCHOR_ITEM;
           }
      }
 }
@@ -5780,7 +5809,7 @@ _evas_textblock_node_format_remove(Evas_Object_Textblock *o, Evas_Object_Textblo
 
    o->format_nodes = _NODE_FORMAT(eina_inlist_remove(
            EINA_INLIST_GET(o->format_nodes), EINA_INLIST_GET(n)));
-   _evas_textblock_node_format_free(n);
+   _evas_textblock_node_format_free(o, n);
 }
 
 /**
@@ -6477,13 +6506,19 @@ evas_textblock_cursor_text_prepend(Evas_Textblock_Cursor *cur, const char *_text
  * @internal
  * Free a format node
  *
- * @prama n the format node to free
+ * @param o the textblock object
+ * @param n the format node to free
  */
 static void
-_evas_textblock_node_format_free(Evas_Object_Textblock_Node_Format *n)
+_evas_textblock_node_format_free(Evas_Object_Textblock *o,
+      Evas_Object_Textblock_Node_Format *n)
 {
    if (!n) return;
    eina_strbuf_free(n->format);
+   if (n->anchor == ANCHOR_ITEM)
+      o->anchors_item = eina_list_remove(o->anchors_item, n);
+   else if (n->anchor == ANCHOR_A)
+      o->anchors_a = eina_list_remove(o->anchors_a, n);
    free(n);
 }
 
@@ -6492,10 +6527,11 @@ _evas_textblock_node_format_free(Evas_Object_Textblock_Node_Format *n)
  * Create a new format node.
  *
  * @param format the text to create the format node from.
+ * @param o the textblock object.
  * @return Returns the new format node
  */
 static Evas_Object_Textblock_Node_Format *
-_evas_textblock_node_format_new(const char *format)
+_evas_textblock_node_format_new(Evas_Object_Textblock *o, const char *format)
 {
    Evas_Object_Textblock_Node_Format *n;
 
@@ -6503,6 +6539,14 @@ _evas_textblock_node_format_new(const char *format)
    n->format = eina_strbuf_new();
    eina_strbuf_append(n->format, format);
    _evas_textblock_format_is_visible(n, format);
+   if (n->anchor == ANCHOR_A)
+     {
+        o->anchors_a = eina_list_append(o->anchors_a, n);
+     }
+   else if (n->anchor == ANCHOR_ITEM)
+     {
+        o->anchors_item = eina_list_append(o->anchors_item, n);
+     }
    n->new = EINA_TRUE;
 
    return n;
@@ -6536,7 +6580,7 @@ evas_textblock_cursor_format_append(Evas_Textblock_Cursor *cur, const char *form
         evas_textblock_cursor_text_prepend(cur, "");
      }
 
-   n = _evas_textblock_node_format_new(format);
+   n = _evas_textblock_node_format_new(o, format);
    is_visible = n->visible;
    if (!cur->node)
      {
