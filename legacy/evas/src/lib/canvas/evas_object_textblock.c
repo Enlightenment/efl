@@ -2953,10 +2953,12 @@ _layout_do_format(const Evas_Object *obj __UNUSED__, Ctxt *c,
 
    if (!handled)
      {
+        Eina_Bool push_fmt = EINA_FALSE;
         if (s[0] == '+')
           {
              fmt = _layout_format_push(c, fmt);
              s++;
+             push_fmt = EINA_TRUE;
           }
         else if (s[0] == '-')
           {
