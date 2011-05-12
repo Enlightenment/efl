@@ -29,10 +29,109 @@ struct _Ecore_Animator
 static Eina_Bool _ecore_animator_run(void *data);
 static Eina_Bool _ecore_animator(void *data);
 
-static Ecore_Timer    *timer = NULL;
-static int             animators_delete_me = 0;
-static Ecore_Animator *animators = NULL;
-static double          animators_frametime = 1.0 / 30.0;
+static int                    animators_delete_me = 0;
+static Ecore_Animator        *animators = NULL;
+static double                 animators_frametime = 1.0 / 30.0;
+
+static Ecore_Animator_Source  src = ECORE_ANIMATOR_SOURCE_TIMER;
+static Ecore_Timer           *timer = NULL;
+static int                    ticking = 0;
+static Ecore_Cb               begin_tick_cb = NULL;
+static const void            *begin_tick_data = NULL;
+static Ecore_Cb               end_tick_cb = NULL;
+static const void            *end_tick_data = NULL;
+
+static void
+_begin_tick(void)
+{
+   if (ticking) return;
+   ticking = 1;
+   switch (src)
+     {
+      case ECORE_ANIMATOR_SOURCE_TIMER:
+        if (!timer)
+          {
+             double t_loop = ecore_loop_time_get();
+             double sync_0 = 0.0;
+             double d = -fmod(t_loop - sync_0, animators_frametime);
+             
+             timer = ecore_timer_loop_add(animators_frametime, 
+                                          _ecore_animator, NULL);
+             ecore_timer_delay(timer, d);
+          }
+        break;
+      case ECORE_ANIMATOR_SOURCE_CUSTOM:
+        if (begin_tick_cb) begin_tick_cb((void *)begin_tick_data);
+        break;
+      default:
+        break;
+     }
+}
+
+static void
+_end_tick(void)
+{
+   if (!ticking) return;
+   ticking = 0;
+   switch (src)
+     {
+      case ECORE_ANIMATOR_SOURCE_TIMER:
+        if (timer)
+          {
+             ecore_timer_del(timer);
+             timer = NULL;
+          }
+        break;
+      case ECORE_ANIMATOR_SOURCE_CUSTOM:
+        if (end_tick_cb) end_tick_cb((void *)end_tick_data);
+        break;
+      default:
+        break;
+     }
+}
+
+static Eina_Bool
+_do_tick(void)
+{
+   Ecore_Animator *animator;
+
+   EINA_INLIST_FOREACH(animators, animator)
+     {
+        if (!animator->delete_me && !animator->suspended)
+          {
+             if (!animator->func(animator->data))
+               {
+                  animator->delete_me = EINA_TRUE;
+                  animators_delete_me++;
+               }
+          }
+     }
+   if (animators_delete_me)
+     {
+        Ecore_Animator *l;
+        for (l = animators; l;)
+          {
+             animator = l;
+             l = (Ecore_Animator *) EINA_INLIST_GET(l)->next;
+             if (animator->delete_me)
+               {
+                  animators = (Ecore_Animator *)
+                     eina_inlist_remove(EINA_INLIST_GET(animators), 
+                                        EINA_INLIST_GET(animator));
+                  ECORE_MAGIC_SET(animator, ECORE_MAGIC_NONE);
+                  free(animator);
+                  animators_delete_me--;
+                  if (animators_delete_me == 0) break;
+               }
+          }
+     }
+   if (!animators)
+     {
+        _end_tick();
+        return ECORE_CALLBACK_CANCEL;
+     }
+   return ECORE_CALLBACK_RENEW;
+}
 
 /**
  * @addtogroup Ecore_Group Ecore - Main Loop and Job Functions.
@@ -74,15 +173,7 @@ ecore_animator_add(Ecore_Task_Cb func, const void *data)
    animator->func = func;
    animator->data = (void *)data;
    animators = (Ecore_Animator *)eina_inlist_append(EINA_INLIST_GET(animators), EINA_INLIST_GET(animator));
-   if (!timer)
-     {
-        double t_loop = ecore_loop_time_get();
-        double sync_0 = 0.0;
-        double d = -fmod(t_loop - sync_0, animators_frametime);
-
-        timer = ecore_timer_loop_add(animators_frametime, _ecore_animator, NULL);
-        ecore_timer_delay(timer, d);
-     }
+   _begin_tick();
    return animator;
 }
 
@@ -280,13 +371,8 @@ ecore_animator_frametime_set(double frametime)
    if (frametime < 0.0) frametime = 0.0;
    if (animators_frametime == frametime) return;
    animators_frametime = frametime;
-   if (timer)
-     {
-        ecore_timer_del(timer);
-        timer = NULL;
-     }
-   if (animators)
-     timer = ecore_timer_add(animators_frametime, _ecore_animator, NULL);
+   _end_tick();
+   if (animators) _begin_tick();
 }
 
 /**
@@ -341,14 +427,111 @@ ecore_animator_thaw(Ecore_Animator *animator)
    animator->suspended = EINA_FALSE;
 }
 
+/**
+ * Set the source of animator ticks for the mainloop
+ * 
+ * @param source The source of animator ticks to use
+ *
+ * This sets the source of animator ticks. When an animator is active the
+ * mainloop will "tick" over frame by frame calling all animators that are
+ * registered until none are. The mainloop will tick at a given rate based
+ * on the animator source. The default source is the system clock timer
+ * source - ECORE_ANIMATOR_SOURCE_TIMER. This source uses the system clock
+ * to tick over every N seconds (specified by ecore_animator_frametime_set(),
+ * with the default being 1/30th of a second unless set otherwise). You can
+ * set a custom tick source by setting the source to 
+ * ECORE_ANIMATOR_SOURCE_CUSTOM and then drive it yourself based on some input
+ * tick source (like another application via ipc, some vertical blanking
+ * interrupt etc.) using ecore_animator_custom_source_tick_begin_callback_set()
+ * and ecore_animator_custom_source_tick_end_callback_set() to set the
+ * functions that will be called to start and stop the ticking source, which
+ * when it gets a "tick" should call ecore_animator_custom_tick() to make
+ * the animator "tick" over 1 frame.
+ */
+EAPI void
+ecore_animator_source_set(Ecore_Animator_Source source)
+{
+   src = source;
+   _end_tick();
+   if (animators) _begin_tick();
+}
+
+/**
+ * Get the animator source currently set
+ * @return The current animator source
+ *
+ * This gets the current animator source. See ecore_animator_source_set() for
+ * more information.
+ */
+EAPI Ecore_Animator_Source
+ecore_animator_source_get(void)
+{
+   return src;
+}
+
+/**
+ * Set the function that begins a custom animator tick source
+ * 
+ * @param func The function to call when ticking is to begin
+ * @param data The data passed to the tick begin function as its parameter
+ *
+ * The Ecore Animator infrastructure handles tracking if animators are needed
+ * or not and which ones need to be called and when, but when the tick source
+ * is custom, you have to provide a tick source by calling
+ * ecore_animator_custom_tick() to indicate a frame tick happened. In order
+ * to allow the source of ticks to be dynamically enabled or disabled as
+ * needed, the @p func when set is called to enable the tick source to
+ * produce tick events that call ecore_animator_custom_tick(). If @p func
+ * is NULL then no function is called to begin custom ticking.
+ */
+EAPI void
+ecore_animator_custom_source_tick_begin_callback_set(Ecore_Cb func, const void *data)
+{
+   begin_tick_cb = func;
+   begin_tick_data = data;
+   _end_tick();
+   if (animators) _begin_tick();
+}
+
+/**
+ * Set the function that ends a custom animator tick source
+ * @param func The function to call when ticking is to end
+ * @param data The data passed to the tick end function as its parameter
+ *
+ * This function is a matching pair to the function set by
+ * ecore_animator_custom_source_tick_begin_callback_set() and is called
+ * when ticking is to stop. If @p func is NULL then no function will be
+ * called to stop ticking. For more information please see
+ * ecore_animator_custom_source_tick_begin_callback_set().
+ */
+EAPI void
+ecore_animator_custom_source_tick_end_callback_set(Ecore_Cb func, const void *data)
+{
+   end_tick_cb = func;
+   end_tick_data = data;
+   _end_tick();
+   if (animators) _begin_tick();
+}
+
+/**
+ * Trigger a custom animator tick
+ *
+ * When animator source is set to ECORE_ANIMATOR_SOURCE_CUSTOM, then calling
+ * this function triggers a run of all animators currently registered with
+ * Ecore as this indicates a "frame tick" happened. This will do nothing
+ * if the animator source (set by ecore_animator_source_set() ) is not set
+ * to ECORE_ANIMATOR_SOURCE_CUSTOM.
+ */
+EAPI void
+ecore_animator_custom_tick(void)
+{
+   if (src == ECORE_ANIMATOR_SOURCE_CUSTOM) _do_tick();
+}
+
 void
 _ecore_animator_shutdown(void)
 {
-   if (timer)
-     {
-        ecore_timer_del(timer);
-        timer = NULL;
-     }
+   _end_tick();
    while (animators)
      {
         Ecore_Animator *animator;
@@ -382,42 +565,7 @@ _ecore_animator_run(void *data)
 static Eina_Bool
 _ecore_animator(void *data __UNUSED__)
 {
-   Ecore_Animator *animator;
-
-   EINA_INLIST_FOREACH(animators, animator)
-     {
-        if (!animator->delete_me && !animator->suspended)
-          {
-             if (!animator->func(animator->data))
-               {
-                  animator->delete_me = EINA_TRUE;
-                  animators_delete_me++;
-               }
-          }
-     }
-   if (animators_delete_me)
-     {
-        Ecore_Animator *l;
-        for(l = animators; l;)
-          {
-             animator = l;
-             l = (Ecore_Animator *) EINA_INLIST_GET(l)->next;
-             if (animator->delete_me)
-               {
-                  animators = (Ecore_Animator *) eina_inlist_remove(EINA_INLIST_GET(animators), EINA_INLIST_GET(animator));
-                  ECORE_MAGIC_SET(animator, ECORE_MAGIC_NONE);
-                  free(animator);
-                  animators_delete_me--;
-                  if (animators_delete_me == 0) break;
-               }
-          }
-     }
-   if (!animators)
-     {
-        timer = NULL;
-        return ECORE_CALLBACK_CANCEL;
-     }
-   return ECORE_CALLBACK_RENEW;
+   return _do_tick();
 }
 
 /**

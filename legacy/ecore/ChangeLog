@@ -167,3 +167,8 @@
         * Fixed null pointer dereference in selection notification
         handling in Ecore_X.
 
+2011-05-12  Carsten Haitzler (The Rasterman)
+
+        * Add a custom Ecore Aniamtor source and tick ability to be able
+        to plug in external animator tick sources like vblank interrupts
+        and so on.

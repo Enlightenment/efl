@@ -162,6 +162,13 @@ extern "C" {
      };
    typedef enum _Ecore_Pos_Map Ecore_Pos_Map;
 
+   enum _Ecore_Animator_Source /* Timing sources for animators */
+     {
+        ECORE_ANIMATOR_SOURCE_TIMER, /**< The default system clock/timer based animator that ticks every "frametime" seconds */
+        ECORE_ANIMATOR_SOURCE_CUSTOM /**< A custom animator trigger that you need to call ecore_animator_trigger() to make it tick */
+     };
+   typedef enum _Ecore_Animator_Source Ecore_Animator_Source;
+   
    typedef struct _Ecore_Exe                   Ecore_Exe; /**< A handle for spawned processes */
    typedef struct _Ecore_Timer                 Ecore_Timer; /**< A handle for timers */
    typedef struct _Ecore_Idler                 Ecore_Idler; /**< A handle for idlers */
@@ -582,6 +589,11 @@ extern "C" {
    EAPI void            ecore_animator_frametime_set(double frametime);
    EAPI double          ecore_animator_frametime_get(void);
    EAPI double          ecore_animator_pos_map(double pos, Ecore_Pos_Map map, double v1, double v2);
+   EAPI void            ecore_animator_source_set(Ecore_Animator_Source source);
+   EAPI Ecore_Animator_Source ecore_animator_source_get(void);
+   EAPI void            ecore_animator_custom_source_tick_begin_callback_set(Ecore_Cb func, const void *data);
+   EAPI void            ecore_animator_custom_source_tick_end_callback_set(Ecore_Cb func, const void *data);
+   EAPI void            ecore_animator_custom_tick(void);
          
   /**
    * @}
