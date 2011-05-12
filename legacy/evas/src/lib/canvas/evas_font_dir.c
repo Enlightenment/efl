@@ -329,7 +329,7 @@ evas_font_load(Evas *evas, const char *name, const char *source, int size)
 	     if (((!source) && (!fd->source)) ||
 		 ((source) && (fd->source) && (!strcmp(source, fd->source))))
 	       {
-		  if ((size == fd->size) && (wanted_rend = fd->wanted_rend))
+		  if ((size == fd->size) && (wanted_rend == fd->wanted_rend))
 		    {
 		       fonts_cache = eina_list_promote_list(fonts_cache, l);
 		       fd->ref++;
@@ -354,7 +354,7 @@ evas_font_load(Evas *evas, const char *name, const char *source, int size)
 	     if (((!source) && (!fd->source)) ||
 		 ((source) && (fd->source) && (!strcmp(source, fd->source))))
 	       {
-		  if ((size == fd->size) && (wanted_rend = fd->wanted_rend))
+		  if ((size == fd->size) && (wanted_rend == fd->wanted_rend))
 		    {
 		       fonts_zero = eina_list_remove_list(fonts_zero, l);
 		       fonts_cache = eina_list_prepend(fonts_cache, fd);
