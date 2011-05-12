@@ -1759,8 +1759,8 @@ _mouse_multi_move(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSED__
              tt = wd->pinch.diff;
              wd->pinch.diff = (double)(ev->pinch_dis - ev->pinch_start_dis);
              t = (wd->pinch.diff * 0.01) + 1.0;
-             if ((!wd->zoom) || ((wd->zoom + (int)t - 1) <= wd->src->zoom_min) ||
-                 ((wd->zoom + (int)t - 1) >= wd->src->zoom_max) ||
+             if (((wd->zoom + (int)t - 1) < wd->src->zoom_min) ||
+                 ((wd->zoom + (int)t - 1) > wd->src->zoom_max) ||
                  (t > PINCH_ZOOM_MAX) || (t < PINCH_ZOOM_MIN))
                {
                   wd->pinch.diff = tt;
@@ -3135,13 +3135,17 @@ elm_map_add(Evas_Object *parent)
    idnum++;
 
    wd->tsize = 256;
-
    edje_object_size_min_calc(elm_smart_scroller_edje_object_get(wd->scr),
                              &minw, &minh);
    evas_object_size_hint_min_set(obj, minw, minh);
 
    wd->sep_maps_markers = evas_object_rectangle_add(evas_object_evas_get(obj));
    evas_object_smart_member_add(wd->sep_maps_markers, wd->pan_smart);
+
+   wd->paused = EINA_TRUE;
+   elm_map_zoom_set(obj, 0);
+   wd->paused = EINA_FALSE;
+   _sizing_eval(obj);
 
    // TODO: convert Elementary to subclassing of Evas_Smart_Class
    // TODO: and save some bytes, making descriptions per-class and not instance!
@@ -3151,9 +3155,6 @@ elm_map_add(Evas_Object *parent)
      {
         ERR("Ecore must be built with curl support for the map widget!");
      }
-
-   elm_map_zoom_set(obj, 0);
-   _sizing_eval(obj);
 
    return obj;
 }
