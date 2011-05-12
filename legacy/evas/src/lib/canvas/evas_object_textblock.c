@@ -6890,7 +6890,7 @@ evas_textblock_cursor_content_get(const Evas_Textblock_Cursor *cur)
         tmp  = evas_textblock_node_format_text_get(
               _evas_textblock_node_visible_at_pos_get(
                  evas_textblock_cursor_format_get(cur)));
-        return strdup(tmp);
+        return (tmp) ? strdup(tmp) : NULL;
      }
 
    ustr = eina_ustrbuf_string_get(cur->node->unicode);

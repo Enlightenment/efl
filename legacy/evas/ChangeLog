@@ -333,3 +333,7 @@
 	* Add smart instance usage count get function for ability to free
         data from memory from a smart class if needed.
 
+2011-05-12 Brian Wang
+
+	* Textblock: fix segfault with evas_textblock_cursor_content_get
+
