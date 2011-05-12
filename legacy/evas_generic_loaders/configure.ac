@@ -28,11 +28,6 @@ AC_CONFIG_HEADERS([config.h])
 AM_INIT_AUTOMAKE([1.6 dist-bzip2])
 m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
 
-AC_LIBTOOL_WIN32_DLL
-define([AC_LIBTOOL_LANG_CXX_CONFIG], [:])dnl
-define([AC_LIBTOOL_LANG_F77_CONFIG], [:])dnl
-AC_PROG_LIBTOOL
-
 ##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##
 ##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##
 m4_ifdef([v_rev], , [m4_define([v_rev], [0])])
@@ -54,8 +49,10 @@ AC_SUBST(VMAJ)
 
 AC_CANONICAL_BUILD
 AC_CANONICAL_HOST
-AC_C_BIGENDIAN
+
+### Checks for libraries
 AC_PROG_CC
+AC_PROG_CXX
 PKG_PROG_PKG_CONFIG
 
 ### Checks for libraries
@@ -63,13 +60,15 @@ PKG_PROG_PKG_CONFIG
 # Eina library
 PKG_CHECK_MODULES(EINA, [eina >= 1.0.0])
 
+PKG_CHECK_MODULES([POPPLER], [poppler >= 0.14], [have_poppler="yes"], [have_poppler="no"])
+
+AM_CONDITIONAL([HAVE_PDF], [test "x${have_poppler}" = "xyes"])
+
 ### Checks for header files
 
 AC_CHECK_HEADER([zlib.h],
    [dummy="yes"],
    [AC_MSG_ERROR("Cannot find zlib.h. Make sure your CFLAGS environment variable contains include lines for the location of this file")])
-
-AC_CHECK_HEADERS(netinet/in.h)
 
 SHM_OPEN_LIBS=""
 AC_MSG_CHECKING([whether shm_open() is present])
@@ -102,15 +101,44 @@ AM_PROG_CC_C_O
 AC_C_CONST
 AC_C_INLINE
 AC_PROG_CC_STDC
+AC_C_BIGENDIAN
 AC_C___ATTRIBUTE__
 
 ### Checks for library functions
 AC_ISC_POSIX
-AC_FUNC_ALLOCA
 
-AC_OUTPUT([
+AC_CONFIG_FILES([
 Makefile
 src/Makefile
 src/bin/Makefile
 src/bin/xcf/Makefile
+src/bin/pdf/Makefile
 ])
+
+AC_OUTPUT
+
+#####################################################################
+## Info
+
+echo
+echo
+echo
+echo "------------------------------------------------------------------------"
+echo "$PACKAGE $VERSION"
+echo "------------------------------------------------------------------------"
+echo
+echo
+echo "Configuration Options Summary:"
+echo
+echo "Loaders:"
+echo "  XCF..................: yes"
+echo "  PDF..................: ${have_poppler}"
+echo
+echo "Compilation............: make (or gmake)"
+echo "  CPPFLAGS.............: $CPPFLAGS"
+echo "  CFLAGS...............: $CFLAGS"
+echo "  LDFLAGS..............: $LDFLAGS"
+echo
+echo "Installation...........: make install (as root if needed, with 'su' or 'sudo')"
+echo "  prefix...............: $prefix"
+echo
