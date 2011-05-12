@@ -88,6 +88,7 @@ evas_common_text_props_can_split(Evas_Text_Props *props, int _cutoff)
    return EINA_FALSE;
 #else
    return EINA_TRUE;
+   props = 0; _cutoff = 0;
 #endif
 }
 
