@@ -327,3 +327,9 @@
 
 	* Textblock: Added evas_textblock_node_format_list_get. This is very
 	  useful for edje_entry that uses anchors in the text.
+
+2011-05-12  Carsten Haitzler (The Rasterman)
+
+	* Add smart instance usage count get function for ability to free
+        data from memory from a smart class if needed.
+

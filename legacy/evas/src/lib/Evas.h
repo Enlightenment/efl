@@ -6708,6 +6708,28 @@ EAPI const Evas_Smart_Cb_Description *evas_smart_callback_description_find(const
  *        using regular memcpy().
  */
 EAPI Eina_Bool                        evas_smart_class_inherit_full       (Evas_Smart_Class *sc, const Evas_Smart_Class *parent_sc, unsigned int parent_sc_size) EINA_ARG_NONNULL(1, 2);
+
+/**
+ * Get the number of users of the smart instance
+ * 
+ * @param s The Evas_Smart to get the usage count of
+ * @return The number of uses of the smart instance
+ * 
+ * This function tells you how many more uses of the smart instance are in
+ * existance. This should be used before freeing/clearing any of the
+ * Evas_Smart_Class that was used to create the smart instance. The smart
+ * instance will refer to data in the Evas_Smart_Class used to create it and
+ * thus you cannot remove the original data until all users of it are gone.
+ * When the usage count goes to 0, you can evas_smart_free() the smart
+ * instance @p s and remove from memory any of the Evas_Smart_Class that
+ * was used to create the smart instance, if you desire. Removing it from
+ * memory without doing this will cause problems (crashes, undefined
+ * behavior etc. etc.), so either never remove the original 
+ * Evas_Smart_Class data from memory (have it be a constant structure and
+ * data), or use this API call and be very careful.
+ */
+EAPI int                              evas_smart_usage_get(const Evas_Smart *s);
+         
   /**
    * @def evas_smart_class_inherit
    * Easy to use version of evas_smart_class_inherit_full().

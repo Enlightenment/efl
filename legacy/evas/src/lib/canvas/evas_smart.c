@@ -112,6 +112,16 @@ evas_smart_class_inherit_full(Evas_Smart_Class *sc, const Evas_Smart_Class *pare
    return 1;
 }
 
+EAPI int
+evas_smart_usage_get(const Evas_Smart *s)
+{
+   MAGIC_CHECK(s, Evas_Smart, MAGIC_SMART);
+   return 0;
+   MAGIC_CHECK_END();
+   return s->usage;
+}
+
+
 /* internal funcs */
 void
 evas_object_smart_use(Evas_Smart *s)
