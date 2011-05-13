@@ -60,7 +60,7 @@ PKG_PROG_PKG_CONFIG
 # Eina library
 PKG_CHECK_MODULES(EINA, [eina >= 1.0.0])
 
-PKG_CHECK_MODULES([POPPLER], [poppler >= 0.14], [have_poppler="yes"], [have_poppler="no"])
+PKG_CHECK_MODULES([POPPLER], [poppler >= 0.12], [have_poppler="yes"], [have_poppler="no"])
 
 AM_CONDITIONAL([HAVE_PDF], [test "x${have_poppler}" = "xyes"])
 
