@@ -1373,7 +1373,7 @@ elm_win_add(Evas_Object *parent, const char *name, Elm_Win_Type type)
           {
              int opt[10];
              int opt_i = 0;
-             
+
              if (_elm_config->vsync)
                {
                   opt[opt_i] = ECORE_EVAS_GL_X11_OPT_VSYNC;
