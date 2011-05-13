@@ -282,8 +282,6 @@ main(int argc, char **argv)
              size_h = atoi(argv[i]);
           }
      }
-   size_w = 400;
-   size_h = 400;
 
    D("poppler_file_init\n");
    D("dpi....: %f\n", dpi);
