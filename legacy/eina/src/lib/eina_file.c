@@ -92,6 +92,9 @@ void *alloca (size_t);
 #endif
 #define DBG(...) EINA_LOG_DOM_DBG(_eina_file_log_dom, __VA_ARGS__)
 
+#define EINA_SMALL_PAGE 4096
+# define EINA_HUGE_PAGE 16 * 1024 * 1024
+
 typedef struct _Eina_File_Iterator Eina_File_Iterator;
 typedef struct _Eina_File_Map Eina_File_Map;
 
@@ -113,7 +116,7 @@ struct _Eina_File
    Eina_Hash *rmap;
    void *global_map;
 
-   unsigned long length;
+   unsigned long long length;
    time_t mtime;
 
    int refcount;
@@ -416,22 +419,51 @@ _eina_file_map_key_hash(const unsigned long int *key, int key_length __UNUSED__)
      ^ eina_hash_int64(&key[1], sizeof (unsigned long int));
 }
 
-static void
+#ifndef MAP_POPULATE
+static int
+_eina_file_map_populate(char *map, unsigned int size)
+{
+   int r = 0xDEADBEEF;
+   int i;
+   int s;
+
+#ifdef MAP_HUGETLB
+   s = size > EINA_HUGE_PAGE ? EINA_HUGE_PAGE : EINA_SMALL_PAGE;
+#else
+   s = EINA_SMALL_PAGE;
+#endif
+
+   for (i = 0; i < size; i += s)
+     r ^= map[i];
+
+   r ^= map[size];
+
+   return r;
+}
+#endif
+
+static int
 _eina_file_map_rule_apply(Eina_File_Populate rule, void *addr, unsigned long int size)
 {
-   int flag;
+   int tmp = 42;
+   int flag = MADV_RANDOM;
 
    switch (rule)
      {
       case EINA_FILE_RANDOM: flag = MADV_RANDOM; break;
       case EINA_FILE_SEQUENTIAL: flag = MADV_SEQUENTIAL; break;
-      case EINA_FILE_WILLNEED:
-      case EINA_FILE_POPULATE:
-          flag = MADV_WILLNEED;
-          break;
+      case EINA_FILE_POPULATE: flag = MADV_WILLNEED; break;
+      case EINA_FILE_WILLNEED: flag = MADV_WILLNEED; break;
      }
 
    madvise(addr, size, flag);
+
+#ifndef MAP_POPULATE
+   if (rule == EINA_FILE_POPULATE)
+     tmp ^= _eina_file_map_populate(addr, size);
+#endif
+
+   return tmp;
 }
 
 Eina_Bool
@@ -738,7 +770,7 @@ eina_file_open(const char *filename, Eina_Bool shared)
 
    file = eina_hash_find(_eina_file_cache, filename);
    if (file && (file->mtime != file_stat.st_mtime
-                || file->length != file_stat.st_size))
+                || file->length != (unsigned long long) file_stat.st_size))
      {
         create = EINA_TRUE;
 
@@ -839,10 +871,13 @@ eina_file_map_all(Eina_File *file, Eina_File_Populate rule)
    int flags = MAP_SHARED;
 
 // bsd people will lack this feature
-#ifdef MAP_POPULATE   
+#ifdef MAP_POPULATE
    if (rule == EINA_FILE_POPULATE) flags |= MAP_POPULATE;
 #endif
-   
+#ifdef MAP_HUGETLB
+   if (file->length > EINA_HUGE_PAGE) flags |= MAP_HUGETLB;
+#endif
+
    if (file->global_map == MAP_FAILED)
      file->global_map = mmap(NULL, file->length, PROT_READ, flags, file->fd, 0);
 
@@ -879,9 +914,13 @@ eina_file_map_new(Eina_File *file, Eina_File_Populate rule,
         int flags = MAP_SHARED;
 
 // bsd people will lack this feature
-#ifdef MAP_POPULATE   
+#ifdef MAP_POPULATE
         if (rule == EINA_FILE_POPULATE) flags |= MAP_POPULATE;
 #endif
+#ifdef MAP_HUGETLB
+        if (length > EINA_HUGE_PAGE) flags |= MAP_HUGETLB;
+#endif
+
         map = malloc(sizeof (Eina_File_Map));
         if (!map) return NULL;
 
