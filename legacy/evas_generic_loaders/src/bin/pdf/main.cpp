@@ -31,14 +31,17 @@ bool locked = false;
 SplashOutputDev *output_dev;
 
 ::Page *page;
-int width = 0;
-int height = 0;
-void *data;
+int width = 0, height = 0;
+int crop_width = 0, crop_height = 0;
+void *data = NULL;
+double dpi = -1.0;
 
 static int shm_fd = -1;
 static int shm_size = 0;
 static void *shm_addr = NULL;
 static char shmfile[1024] = "";
+
+#define DEF_DPI 72.0
 
 static void
 shm_alloc(int dsize)
@@ -93,10 +96,12 @@ shm_free(void)
    shm_fd = -1;
 }
 
-Eina_Bool poppler_init(const char *file, int page_nbr, double dpi, int size_w, int size_h)
+Eina_Bool poppler_init(const char *file, int page_nbr, int size_w, int size_h)
 {
    Object obj;
    SplashColor white;
+   double w, h, cw, ch;
+   int rot;
 
    if (!file || !*file)
      return EINA_FALSE;
@@ -131,42 +136,49 @@ Eina_Bool poppler_init(const char *file, int page_nbr, double dpi, int size_w, i
    if (!page || !page->isOk())
      goto del_pdfdoc;
 
-   width = page->getMediaWidth();
-   height = page->getMediaHeight();
-
+   w = page->getMediaWidth();
+   h = page->getMediaHeight();
+   cw = page->getCropWidth();
+   ch = page->getCropHeight();
+   rot = page->getRotate();
+   if (cw > w) cw = w;
+   if (ch > h) ch = h;
+   if ((rot == 90) || (rot == 270))
+     {
+        double t;
+        // swap width & height
+        t = w; w = h; h = t;
+        // swap crop width & height
+        t = cw; cw = ch; ch = t;
+     }
+   
    if ((size_w > 0) || (size_h > 0))
      {
-        /* FIXME: tell poller to render at the new width and height
-        unsigned int w2 = width, h2 = height;
-        if (size_w > 0)
-          {
-             w2 = size_w;
-             h2 = (size_w * h) / w;
-             if ((size_h > 0) && (h2 > size_h))
-               {
-                  unsigned int w3;
-                  h2 = size_h;
-                  w3 = (size_h * w) / h;
-                  if (w3 > w2)
-                     w2 = w3;
-               }
-          }
-        else if (size_h > 0)
+        double w2 = cw, h2 = ch;
+        
+        w2 = size_w;
+        h2 = (size_w * ch) / cw;
+        if (h2 > size_h)
           {
              h2 = size_h;
-             w2 = (size_h * w) / h;
+             w2 = (size_h * cw) / ch;
           }
-        width = w2;
-        height = h2;
-         */
+        D("XXXXXXXXXXXXXXXXXXXXx %3.3fx%3.3f\n", w2, h2);
+        if (w2 > h2) dpi = (w2 * DEF_DPI) / cw;
+        else dpi = (h2 * DEF_DPI) / ch;
      }
-   else if (dpi > 0.0)
+   
+   if (dpi > 0.0)
      {
-        /* FIXME: tell poppler to render at this size
-        width = (width * dpi) / 72.0;
-        height = (height * dpi) / 72.0;
-         */
+        cw = (cw * dpi) / DEF_DPI;
+        ch = (ch * dpi) / DEF_DPI;
+        w = (w * dpi) / DEF_DPI;
+        h = (h * dpi) / DEF_DPI;
      }
+   width = w;
+   height = h;
+   crop_width = cw;
+   crop_height = ch;
 
    return EINA_TRUE;
 
@@ -185,11 +197,13 @@ void poppler_shutdown()
    delete globalParams;
 }
 
-void poppler_load_image(double dpi, int size_w, int size_h)
+void poppler_load_image(int size_w, int size_h)
 {
    SplashOutputDev *output_dev;
    SplashColor      white;
    SplashColorPtr   color_ptr;
+   DATA32          *src, *dst;
+   int              y;
 
    white[0] = 255;
    white[1] = 255;
@@ -202,19 +216,25 @@ void poppler_load_image(double dpi, int size_w, int size_h)
 
    output_dev->startDoc(pdfdoc->getXRef());
 
-   if (dpi <= 0.0) dpi = 72.0;
+   if (dpi <= 0.0) dpi = DEF_DPI;
 
-   page->display(output_dev,
-                 dpi, dpi, 0,
-                 false, false, false,
-                 pdfdoc->getCatalog());
+   page->displaySlice(output_dev, dpi, dpi, 
+                      0, false, false,
+                      0, 0, width, height,
+                      false, pdfdoc->getCatalog());
    color_ptr = output_dev->getBitmap()->getDataPtr();
 
-   shm_alloc(width * height * sizeof(DATA32));
-   if (!shm_addr)
-     goto del_outpput_dev;
+   shm_alloc(crop_width * crop_height * sizeof(DATA32));
+   if (!shm_addr) goto del_outpput_dev;
    data = shm_addr;
-   memcpy(data, color_ptr, width * height * sizeof(DATA32));
+   src = (DATA32 *)color_ptr;
+   dst = (DATA32 *)data;
+   for (y = 0; y < crop_height; y++)
+     {
+        memcpy(dst, src, crop_width * sizeof(DATA32));
+        src += width;
+        dst += crop_width;
+     }
 
  del_outpput_dev:
    delete output_dev;
@@ -228,7 +248,6 @@ main(int argc, char **argv)
    int size_w = 0, size_h = 0;
    int head_only = 0;
    int page = 0;
-   double dpi = -1.0;
 
    if (argc < 2) return -1;
    // file is ALWAYS first arg, other options come after
@@ -263,24 +282,28 @@ main(int argc, char **argv)
              size_h = atoi(argv[i]);
           }
      }
+   size_w = 400;
+   size_h = 400;
 
    D("poppler_file_init\n");
    D("dpi....: %f\n", dpi);
    D("page...: %d\n", page);
 
-   if (!poppler_init(file, page, dpi, size_w, size_h))
+   if (!poppler_init(file, page, size_w, size_h))
      return -1;
    D("poppler_file_init done\n");
 
+   D("dpi2...: %f\n", dpi);
    if (!head_only)
      {
-        poppler_load_image(dpi, size_w, size_h);
+        poppler_load_image(size_w, size_h);
      }
 
    D("size...: %ix%i\n", width, height);
+   D("crop...: %ix%i\n", crop_width, crop_height);
    D("alpha..: 1\n");
 
-   printf("size %i %i\n", width, height);
+   printf("size %i %i\n", crop_width, crop_height);
    printf("alpha 0\n");
 
    if (!head_only)
@@ -291,7 +314,7 @@ main(int argc, char **argv)
              // could also to "tmpfile %s\n" like shmfile but just
              // a mmaped tmp file on the system
              printf("data\n");
-             fwrite(data, width * height * sizeof(DATA32), 1, stdout);
+             fwrite(data, crop_width * crop_height * sizeof(DATA32), 1, stdout);
           }
         shm_free();
      }
