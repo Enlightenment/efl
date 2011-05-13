@@ -1438,7 +1438,7 @@ _env_get(void)
         else if ((!strncmp(s, "shot:", 5)))
           eina_stringshare_replace(&_elm_config->engine, s);
      }
-   
+
    s = getenv("ELM_VSYNC");
    if (s) _elm_config->vsync = !!atoi(s);
 
