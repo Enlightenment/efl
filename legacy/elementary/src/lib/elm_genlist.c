@@ -4888,6 +4888,7 @@ elm_genlist_compress_mode_set(Evas_Object *obj,
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
    wd->compress = compress;
+   if (!compress) elm_genlist_homogeneous_set(obj, EINA_FALSE);
 }
 
 /**
