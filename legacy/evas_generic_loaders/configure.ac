@@ -1,7 +1,7 @@
 y##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##
 ##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##
 m4_define([v_maj], [0])
-m4_define([v_min], [9])
+m4_define([v_min], [1])
 m4_define([v_mic], [999])
 m4_define([v_rev], m4_esyscmd([(svnversion "${SVN_REPO_PATH:-.}" | grep -v export || echo 0) | awk -F : '{printf("%s\n", $1);}' | tr -d ' :MSP\n']))
 m4_if(v_rev, [0], [m4_define([v_rev], m4_esyscmd([git log 2> /dev/null | (grep -m1 git-svn-id || echo 0) | sed -e 's/.*@\([0-9]*\).*/\1/' | tr -d '\n']))])
@@ -111,6 +111,7 @@ AC_CONFIG_FILES([
 Makefile
 src/Makefile
 src/bin/Makefile
+src/bin/common/Makefile
 src/bin/xcf/Makefile
 src/bin/pdf/Makefile
 ])

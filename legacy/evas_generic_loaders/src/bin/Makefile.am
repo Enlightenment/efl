@@ -1,6 +1,7 @@
 MAINTAINERCLEANFILES = Makefile.in
 
-SUBDIRS = xcf
+SUBDIRS = common \
+xcf
 
 if HAVE_PDF
 SUBDIRS += pdf

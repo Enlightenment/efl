@@ -14,6 +14,7 @@
 
 #include <Eina.h>
 
+#include "shmfile.h"
 
 #define DATA32  unsigned int
 
@@ -36,65 +37,7 @@ int crop_width = 0, crop_height = 0;
 void *data = NULL;
 double dpi = -1.0;
 
-static int shm_fd = -1;
-static int shm_size = 0;
-static void *shm_addr = NULL;
-static char shmfile[1024] = "";
-
 #define DEF_DPI 72.0
-
-static void
-shm_alloc(int dsize)
-{
-#ifdef HAVE_SHM_OPEN
-   srand(time(NULL));
-   do
-     {
-        snprintf(shmfile, sizeof(shmfile), "/evas-loader-xcf.%i.%i",
-                 (int)getpid(), (int)rand());
-        shm_fd = shm_open(shmfile, O_RDWR | O_CREAT | O_EXCL, S_IRUSR | S_IWUSR);
-     }
-   while (shm_fd < 0);
-
-   if (ftruncate(shm_fd, dsize) < 0)
-     {
-        close(shm_fd);
-        shm_unlink(shmfile);
-        shm_fd = -1;
-	goto failed;
-     }
-   shm_addr = mmap(NULL, dsize, PROT_READ | PROT_WRITE, MAP_SHARED, shm_fd, 0);
-   if (shm_addr == MAP_FAILED)
-     {
-        close(shm_fd);
-        shm_unlink(shmfile);
-        shm_fd = -1;
-        goto failed;
-     }
-   shm_size = dsize;
-   return;
-failed:
-#endif
-   shm_addr = malloc(dsize);
-}
-
-static void
-shm_free(void)
-{
-#ifdef HAVE_SHM_OPEN
-   if (shm_fd >= 0)
-     {
-        munmap(shm_addr, shm_size);
-        close(shm_fd);
-        shm_fd = -1;
-        shm_addr = NULL;
-        return;
-     }
-#endif
-   free(shm_addr);
-   shm_addr = NULL;
-   shm_fd = -1;
-}
 
 Eina_Bool poppler_init(const char *file, int page_nbr, int size_w, int size_h)
 {
