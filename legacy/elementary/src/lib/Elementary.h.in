@@ -284,7 +284,7 @@ extern "C" {
         ELM_WRAP_CHAR, /**< Char wrap - wrap between graphmes */
         ELM_WRAP_WORD, /**< Word wrap - wrap in allowed wrapping points (as defined in the unicode standard) */
         ELM_WRAP_MIXED, /**< Mixed wrap - Word wrap, and if that fails, char wrap. */
-        ELM_WRAP_LAST = ELM_WRAP_MIXED
+        ELM_WRAP_LAST
      } Elm_Wrap_Type;
 
 
