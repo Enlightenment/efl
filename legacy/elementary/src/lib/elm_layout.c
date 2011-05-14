@@ -1278,6 +1278,3 @@ elm_layout_part_cursor_engine_only_get(const Evas_Object *obj, const char *part_
    EINA_SAFETY_ON_NULL_RETURN_VAL(pc->obj, EINA_FALSE);
    return elm_object_cursor_engine_only_get(pc->obj);
 }
-
-
-
