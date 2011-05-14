@@ -172,3 +172,7 @@
         * Add a custom Ecore Aniamtor source and tick ability to be able
         to plug in external animator tick sources like vblank interrupts
         and so on.
+
+2011-05-14  Cedric Bail
+
+	* Sync GNUTLS threads activation with Eina.

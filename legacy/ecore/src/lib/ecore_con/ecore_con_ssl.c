@@ -23,11 +23,11 @@
 
 static int _init_con_ssl_init_count = 0;
 
-#if USE_GNUTLS
-# ifdef EFL_HAVE_PTHREAD
-#include <pthread.h>
+#ifdef EINA_HAVE_THREADS
+# ifdef USE_GNUTLS
 GCRY_THREAD_OPTION_PTHREAD_IMPL;
 # endif
+#endif
 
 static int _client_connected = 0;
 # define SSL_SUFFIX(ssl_func) ssl_func ## _gnutls
@@ -422,7 +422,7 @@ ecore_con_ssl_server_crl_add(Ecore_Con_Server *svr,
 static Ecore_Con_Ssl_Error
 _ecore_con_ssl_init_gnutls(void)
 {
-#ifdef EFL_HAVE_PTHREAD
+#ifdef EINA_HAVE_THREADS
    if (gcry_control(GCRYCTL_SET_THREAD_CBS, &gcry_threads_pthread))
      WRN("YOU ARE USING PTHREADS, BUT I CANNOT INITIALIZE THREADSAFE GCRYPT OPERATIONS!");
 #endif
