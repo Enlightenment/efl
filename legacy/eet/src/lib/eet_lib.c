@@ -46,6 +46,8 @@ void *    alloca (size_t);
 # include <Evil.h>
 #endif /* ifdef HAVE_EVIL */
 
+#include <Eina.h>
+
 #ifdef HAVE_GNUTLS
 # include <gnutls/gnutls.h>
 # include <gcrypt.h>
@@ -56,14 +58,11 @@ void *    alloca (size_t);
 # include <openssl/evp.h>
 #endif /* ifdef HAVE_OPENSSL */
 
-#ifdef EFL_HAVE_POSIX_THREADS
-# include <pthread.h>
+#ifdef EINA_HAVE_THREADS
 # ifdef HAVE_GNUTLS
 GCRY_THREAD_OPTION_PTHREAD_IMPL;
 # endif /* ifdef HAVE_GNUTLS */
-#endif /* ifdef EFL_HAVE_POSIX_THREADS */
-
-#include <Eina.h>
+#endif /* ifdef EINA_HAVE_THREADS */
 
 #include "Eet.h"
 #include "Eet_private.h"
@@ -108,13 +107,7 @@ struct _Eet_File
 
    time_t               mtime;
 
-#ifdef EFL_HAVE_THREADS
-# ifdef EFL_HAVE_POSIX_THREADS
-   pthread_mutex_t      file_lock;
-# else /* ifdef EFL_HAVE_POSIX_THREADS */
-   HANDLE               file_lock;
-# endif /* ifdef EFL_HAVE_POSIX_THREADS */
-#endif /* ifdef EFL_HAVE_THREADS */
+   Eina_Lock            file_lock;
 
    unsigned char        writes_pending : 1;
    unsigned char        delete_me_now : 1;
@@ -244,45 +237,15 @@ static int                read_data_from_disk(Eet_File      *ef,
 
 static Eet_Error          eet_internal_close(Eet_File *ef, Eina_Bool locked);
 
-#ifdef EFL_HAVE_THREADS
+static Eina_Lock          eet_cache_lock;
 
-# ifdef EFL_HAVE_POSIX_THREADS
+#define LOCK_CACHE        eina_lock_take(&eet_cache_lock)
+#define UNLOCK_CACHE      eina_lock_release(&eet_cache_lock)
 
-static pthread_mutex_t eet_cache_lock = PTHREAD_MUTEX_INITIALIZER;
-
-#  define LOCK_CACHE   pthread_mutex_lock(&eet_cache_lock)
-#  define UNLOCK_CACHE pthread_mutex_unlock(&eet_cache_lock)
-
-#  define INIT_FILE(File)    pthread_mutex_init(&File->file_lock, NULL)
-#  define LOCK_FILE(File)    pthread_mutex_lock(&File->file_lock)
-#  define UNLOCK_FILE(File)  pthread_mutex_unlock(&File->file_lock)
-#  define DESTROY_FILE(File) pthread_mutex_destroy(&File->file_lock)
-
-# else /* EFL_HAVE_WIN32_THREADS */
-
-static HANDLE eet_cache_lock = NULL;
-
-#  define LOCK_CACHE   WaitForSingleObject(eet_cache_lock, INFINITE)
-#  define UNLOCK_CACHE ReleaseMutex(eet_cache_lock)
-
-#  define INIT_FILE(File)    File->file_lock = CreateMutex(NULL, FALSE, NULL)
-#  define LOCK_FILE(File)    WaitForSingleObject(File->file_lock, INFINITE)
-#  define UNLOCK_FILE(File)  ReleaseMutex(File->file_lock)
-#  define DESTROY_FILE(File) CloseHandle(File->file_lock)
-
-# endif /* EFL_HAVE_WIN32_THREADS */
-
-#else /* ifdef EFL_HAVE_THREADS */
-
-# define LOCK_CACHE   do {} while (0)
-# define UNLOCK_CACHE do {} while (0)
-
-# define INIT_FILE(File)    do {} while (0)
-# define LOCK_FILE(File)    do {} while (0)
-# define UNLOCK_FILE(File)  do {} while (0)
-# define DESTROY_FILE(File) do {} while (0)
-
-#endif /* EFL_HAVE_THREADS */
+#define INIT_FILE(File)    eina_lock_new(&File->file_lock)
+#define LOCK_FILE(File)    eina_lock_take(&File->file_lock)
+#define UNLOCK_FILE(File)  eina_lock_release(&File->file_lock)
+#define DESTROY_FILE(File) eina_lock_free(&File->file_lock)
 
 /* cache. i don't expect this to ever be large, so arrays will do */
 static int eet_writers_num = 0;
@@ -717,6 +680,8 @@ eet_init(void)
         goto shutdown_eina;
      }
 
+   eina_lock_new(&eet_cache_lock);
+
    if (!eet_node_init())
      {
         EINA_LOG_ERR("Eet: Eet_Node mempool creation failed");
@@ -743,12 +708,12 @@ eet_init(void)
               "BIG FAT WARNING: I AM UNABLE TO REQUEST SECMEM, Cryptographic operation are at risk !");
      }
 
-# ifdef EFL_HAVE_POSIX_THREADS
+# ifdef EINA_HAVE_THREADS
    if (gcry_control(GCRYCTL_SET_THREAD_CBS, &gcry_threads_pthread))
       WRN(
          "YOU ARE USING PTHREADS, BUT I CANNOT INITIALIZE THREADSAFE GCRYPT OPERATIONS!");
 
-# endif /* ifdef EFL_HAVE_POSIX_THREADS */
+# endif /* ifdef EINA_HAVE_THREADS */
    if (gnutls_global_init())
       goto shutdown_eet;
 
@@ -762,7 +727,7 @@ eet_init(void)
 
 #ifdef HAVE_GNUTLS
 shutdown_eet:
-#endif   
+#endif
    eet_node_shutdown();
 unregister_log_domain:
    eina_log_domain_unregister(_eet_log_dom_global);
@@ -780,6 +745,9 @@ eet_shutdown(void)
 
    eet_clearcache();
    eet_node_shutdown();
+
+   eina_lock_free(&eet_cache_lock);
+
 #ifdef HAVE_GNUTLS
    gnutls_global_deinit();
 #endif /* ifdef HAVE_GNUTLS */
