@@ -23,13 +23,13 @@
 
 static int _init_con_ssl_init_count = 0;
 
-#ifdef EINA_HAVE_THREADS
-# ifdef USE_GNUTLS
+#ifdef USE_GNUTLS
+# ifdef EINA_HAVE_THREADS
 GCRY_THREAD_OPTION_PTHREAD_IMPL;
 # endif
-#endif
 
 static int _client_connected = 0;
+
 # define SSL_SUFFIX(ssl_func) ssl_func ## _gnutls
 # define _ECORE_CON_SSL_AVAILABLE 1
 
