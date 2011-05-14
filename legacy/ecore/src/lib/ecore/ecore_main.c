@@ -435,7 +435,7 @@ _ecore_main_gsource_prepare(GSource *source, gint *next_time)
    if (!ecore_idling)
      {
          while (_ecore_timer_call(_ecore_time_loop_time));
-          _ecore_timer_cleanup();
+         _ecore_timer_cleanup();
 
          /* when idling, busy loop checking the fds only */
          if (!ecore_idling) _ecore_idle_enterer_call();
@@ -479,7 +479,6 @@ _ecore_main_gsource_check(GSource *source)
    ecore_fds_ready = (_ecore_main_fdh_poll_mark_active() > 0);
    _ecore_main_fd_handlers_cleanup();
 
-   _ecore_time_loop_time = ecore_time_get();
    _ecore_timer_enable_new();
 
    in_main_loop--;
@@ -1150,7 +1149,7 @@ _ecore_main_select(double timeout)
    if (_ecore_signal_count_get()) return -1;
 
    ret = main_loop_select(max_fd + 1, &rfds, &wfds, &exfds, t);
-
+   
    _ecore_time_loop_time = ecore_time_get();
    if (ret < 0)
      {
@@ -1414,7 +1413,6 @@ _ecore_main_loop_iterate_internal(int once_only)
         _ecore_idle_enterer_call();
         have_event = 1;
         _ecore_main_select(0.0);
-        _ecore_time_loop_time = ecore_time_get();
         _ecore_timer_enable_new();
         goto process_events;
      }
@@ -1428,7 +1426,6 @@ _ecore_main_loop_iterate_internal(int once_only)
         if (_ecore_signal_count_get() > 0) have_signal = 1;
         if (have_signal || have_event)
           {
-             _ecore_time_loop_time = ecore_time_get();
              _ecore_timer_enable_new();
              goto process_events;
           }
@@ -1443,7 +1440,6 @@ _ecore_main_loop_iterate_internal(int once_only)
      {
         have_event = 1;
         _ecore_main_select(0.0);
-        _ecore_time_loop_time = ecore_time_get();
         _ecore_timer_enable_new();
         goto process_events;
      }
@@ -1451,7 +1447,6 @@ _ecore_main_loop_iterate_internal(int once_only)
      {
         _ecore_idle_enterer_call();
         in_main_loop--;
-        _ecore_time_loop_time = ecore_time_get();
         _ecore_timer_enable_new();
         return;
      }
@@ -1467,7 +1462,6 @@ _ecore_main_loop_iterate_internal(int once_only)
    _ecore_timer_enable_new();
    if (do_quit)
      {
-        _ecore_time_loop_time = ecore_time_get();
         in_main_loop--;
         _ecore_timer_enable_new();
         return;
@@ -1490,6 +1484,7 @@ _ecore_main_loop_iterate_internal(int once_only)
                {
                   for (;;)
                     {
+                       _ecore_time_loop_time = ecore_time_get();
                        if (!_ecore_idler_call()) goto start_loop;
                        if (_ecore_event_exist()) break;
                        if (_ecore_main_select(0.0) > 0) have_event = 1;
@@ -1513,6 +1508,7 @@ _ecore_main_loop_iterate_internal(int once_only)
                {
                   for (;;)
                     {
+                       _ecore_time_loop_time = ecore_time_get();
                        if (!_ecore_idler_call()) goto start_loop;
                        if (_ecore_event_exist()) break;
                        if (_ecore_main_select(0.0) > 0) have_event = 1;
@@ -1524,7 +1520,6 @@ _ecore_main_loop_iterate_internal(int once_only)
                     }
                }
           }
-        _ecore_time_loop_time = ecore_time_get();
      }
    if (_ecore_fps_debug) t1 = ecore_time_get();
    /* we came out of our "wait state" so idle has exited */
