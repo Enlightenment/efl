@@ -72,3 +72,7 @@
 2011-04-29  Cedric Bail
 
 	* Add Eina_Refcount macro helper. You should really use them when running with thread !
+
+2011-05-14  Cedric Bail
+
+	* Add Eina_Condition API on Windows.

@@ -41,36 +41,70 @@ eina_lock_free(Eina_Lock *mutex)
    CloseHandle(*mutex);
 }
 
-static inline Eina_Bool
+static inline Eina_Lock_Result
 eina_lock_take(Eina_Lock *mutex)
 {
    DWORD res;
 
 #ifdef EINA_HAVE_ON_OFF_THREADS
-   if (!_eina_threads_activated) return EINA_FALSE;
+   if (!_eina_threads_activated) return EINA_LOCK_FAIL;
 #endif
 
    res = WaitForSingleObject(*mutex, INFINITE);
    if ((res == WAIT_ABANDONED) || (res == WAIT_FAILED))
-     return EINA_FALSE;
+     return EINA_LOCK_FAIL;
 
-   return EINA_TRUE;
+   return EINA_LOCK_SUCCEED;
 }
 
-static inline Eina_Bool
+static inline Eina_Lock_Result
 eina_lock_take_try(Eina_Lock *mutex)
 {
    return eina_lock_take(*mutex);
 }
 
-static inline Eina_Bool
+static inline Eina_Lock_Result
 eina_lock_release(Eina_Lock *mutex)
 {
 #ifdef EINA_HAVE_ON_OFF_THREADS
-   if (!_eina_threads_activated) return EINA_FALSE;
+   if (!_eina_threads_activated) return ;
 #endif
 
-   return ReleaseMutex(*mutex);
+   return ReleaseMutex(*mutex) ? EINA_LOCK_SUCCEED : EINA_LOCK_FAIL;
+}
+
+static inline void
+eina_lock_debug(const Eina_Lock *mutex)
+{
+}
+
+static inline Eina_Bool
+eina_condition_new(Eina_Condition *cond, Eina_Lock *mutex)
+{
+   return EINA_FALSE;
+}
+
+static inline void
+eina_condition_free(Eina_Condition *cond)
+{
+}
+
+static inline Eina_Bool
+eina_condition_wait(Eina_Condition *cond)
+{
+   return EINA_FALSE;
+}
+
+static inline Eina_Bool
+eina_condition_broadcast(Eina_Condition *cond)
+{
+   return EINA_FALSE;
+}
+
+static inline Eina_Bool
+eina_condition_signal(Eina_Condition *cond)
+{
+   return EINA_FALSE;
 }
 
 
