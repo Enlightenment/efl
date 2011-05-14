@@ -3239,6 +3239,8 @@ EAPI Eina_Bool      ecore_x_image_to_argb_convert(void *src, int sbpp,
 
 EAPI Eina_Bool      ecore_x_input_multi_select(Ecore_X_Window win);
 
+EAPI Eina_Bool      ecore_x_vsync_animator_tick_source_set(Ecore_X_Window win);
+         
 #ifdef __cplusplus
 }
 #endif // ifdef __cplusplus

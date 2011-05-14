@@ -63,6 +63,7 @@ ecore_x_atoms.c \
 ecore_x_region.c \
 ecore_x_image.c \
 ecore_x_xi2.c \
+ecore_x_vsync.c \
 ecore_x_randr.h
 
 libecore_x_xlib_la_LIBADD = \
@@ -82,7 +83,8 @@ libecore_x_xlib_la_LIBADD = \
 @x_libs@ \
 $(top_builddir)/src/lib/ecore/libecore.la \
 $(top_builddir)/src/lib/ecore_input/libecore_input.la \
-@EINA_LIBS@
+@EINA_LIBS@ \
+@dlopen_libs@
 
 endif
 
