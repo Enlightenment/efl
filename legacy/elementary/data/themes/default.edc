@@ -35307,7 +35307,7 @@ collections {
                   offset: -2 1;
                }
                rel2 {
-                  relative: 1.0 1.0;
+                  relative: 1.0 0.0;
                   offset: -1 32;
                }
             }
@@ -35316,12 +35316,12 @@ collections {
          part { name: "elm.text.title";
             type: TEXT;
             effect: SOFT_SHADOW;
-            scale: 1;
+            scale: 1; 
             description { state: "default" 0.0;
                rel1 {
                   to_x: "back";
                   relative: 1.0 0.0;
-                  offset: 2 1;
+                  offset: -2 1;
                }
                rel2 { to_y: "back";
                   to_x: "elm.swallow.end";
