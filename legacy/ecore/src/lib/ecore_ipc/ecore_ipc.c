@@ -13,11 +13,18 @@
 # include <winsock2.h>
 #endif
 
-#include "Ecore.h"
-#include "ecore_private.h"
-#include "Ecore_Con.h"
-#include "ecore_ipc_private.h"
+#if USE_GNUTLS_OPENSSL
+# include <gnutls/openssl.h>
+#elif USE_OPENSSL
+# include <openssl/ssl.h>
+#endif
+
+#include <Ecore.h>
+#include <ecore_private.h>
+#include <Ecore_Con.h>
+
 #include "Ecore_Ipc.h"
+#include "ecore_ipc_private.h"
 
 #define DLT_ZERO   0
 #define DLT_ONE    1

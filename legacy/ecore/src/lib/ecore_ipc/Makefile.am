@@ -7,7 +7,9 @@ AM_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/ecore \
 -I$(top_srcdir)/src/lib/ecore_con \
 -I$(top_srcdir)/src/lib/ecore_ipc \
-@SSL_CFLAGS@ @EINA_CFLAGS@
+@EFL_ECORE_IPC_BUILD@ \
+@SSL_CFLAGS@ \
+@EINA_CFLAGS@
 
 lib_LTLIBRARIES = libecore_ipc.la
 includes_HEADERS = Ecore_Ipc.h

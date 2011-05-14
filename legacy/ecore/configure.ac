@@ -108,7 +108,7 @@ want_glib="no"
 
 # core modules
 want_ecore_con="yes"
-want_ecore_ipc="no"
+want_ecore_ipc="yes"
 want_ecore_file="yes"
 #want_ecore_config="no"
 want_ecore_imf="no"
@@ -165,6 +165,7 @@ want_ecore_evas_software_16_wince="no"
 case "$host_os" in
    mingw32ce* | cegcc*)
       want_ecore_con="no"
+      want_ecore_ipc="no"
       want_ecore_wince="yes"
       want_ecore_evas_software_16_wince="yes"
       ;;
@@ -187,7 +188,6 @@ case "$host_os" in
       want_glib="auto"
       want_gnutls="auto"
       want_openssl="auto"
-      want_ecore_ipc="yes"
       want_ecore_imf="yes"
       want_ecore_cocoa="yes"
       want_ecore_evas_software_sdl="yes"
@@ -204,7 +204,6 @@ case "$host_os" in
       want_inotify="yes"
       want_tslib="yes"
       want_ecore_fb="yes"
-      want_ecore_ipc="yes"
       want_ecore_imf="yes"
       want_ecore_x="yes"
       want_ecore_evas_software_x11="yes"
@@ -367,6 +366,7 @@ case "$host_os" in
       EFL_ECORE_IMF_EVAS_BUILD="-DEFL_ECORE_IMF_EVAS_BUILD"
       EFL_ECORE_INPUT_BUILD="-DEFL_ECORE_INPUT_BUILD"
       EFL_ECORE_INPUT_EVAS_BUILD="-DEFL_ECORE_INPUT_EVAS_BUILD"
+      EFL_ECORE_IPC_BUILD="-DEFL_ECORE_IPC_BUILD"
       ;;
 esac
 
@@ -395,6 +395,7 @@ AC_SUBST(EFL_ECORE_IMF_BUILD)
 AC_SUBST(EFL_ECORE_IMF_EVAS_BUILD)
 AC_SUBST(EFL_ECORE_INPUT_BUILD)
 AC_SUBST(EFL_ECORE_INPUT_EVAS_BUILD)
+AC_SUBST(EFL_ECORE_IPC_BUILD)
 AC_SUBST(EFL_ECORE_WINCE_BUILD)
 AC_SUBST(EFL_ECORE_WIN32_BUILD)
 AC_SUBST(EFL_ECORE_SDL_BUILD)

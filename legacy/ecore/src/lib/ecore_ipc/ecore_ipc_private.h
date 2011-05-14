@@ -34,19 +34,20 @@ extern int _ecore_ipc_log_dom;
 #endif
 #define CRIT(...) EINA_LOG_DOM_CRIT(_ecore_ipc_log_dom, __VA_ARGS__)
 
-#if USE_GNUTLS_OPENSSL
-# include <gnutls/openssl.h>
-#elif USE_OPENSSL
-# include <openssl/ssl.h>
-#endif
-
 #define ECORE_MAGIC_IPC_SERVER             0x87786556
 #define ECORE_MAGIC_IPC_CLIENT             0x78875665
 
-typedef struct _Ecore_Ipc_Client Ecore_Ipc_Client;
-typedef struct _Ecore_Ipc_Server Ecore_Ipc_Server;
 typedef struct _Ecore_Ipc_Msg_Head Ecore_Ipc_Msg_Head;
 
+
+#if defined (_MSC_VER) || (defined (__SUNPRO_C) && __SUNPRO_C < 0x5100)
+# pragma pack(1)
+# define ECORE_IPC_STRUCT_PACKED
+#elif defined (__GNUC__) || (defined (__SUNPRO_C) && __SUNPRO_C >= 0x5100)
+# define ECORE_IPC_STRUCT_PACKED __attribute__((packed))
+#else
+# define ECORE_IPC_STRUCT_PACKED
+#endif
 
 #ifdef __sgi
 #pragma pack 4
@@ -59,11 +60,7 @@ struct _Ecore_Ipc_Msg_Head
       int ref_to;
       int response;
       int size;
-} 
-#ifdef _GNU_C_
-__attribute__ ((packed));
-#endif
-;
+} ECORE_IPC_STRUCT_PACKED;
 #ifdef __sgi
 #pragma pack 0
 #endif

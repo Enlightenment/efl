@@ -181,3 +181,4 @@
 
 	* Make ecore_con work on Windows (only the local connections
 	need a port)
+	* Make ecore_ipc compile on Windows

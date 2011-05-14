@@ -5,9 +5,13 @@
 # undef EAPI
 #endif
 
-#ifdef _MSC_VER
-# ifdef BUILDING_DLL
-#  define EAPI __declspec(dllexport)
+#ifdef _WIN32
+# ifdef EFL_ECORE_IPC_BUILD
+#  ifdef DLL_EXPORT
+#   define EAPI __declspec(dllexport)
+#  else
+#   define EAPI
+#  endif
 # else
 #  define EAPI __declspec(dllimport)
 # endif
@@ -31,11 +35,9 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
- 
-#ifndef _ECORE_IPC_PRIVATE_H
-   typedef void Ecore_Ipc_Server; /**< An IPC connection handle */
-   typedef void Ecore_Ipc_Client; /**< An IPC connection handle */
-#endif
+
+typedef struct _Ecore_Ipc_Server Ecore_Ipc_Server; /**< An IPC connection handle */
+typedef struct _Ecore_Ipc_Client Ecore_Ipc_Client; /**< An IPC connection handle */
 
 /**
  * Macros used for generic data packing
