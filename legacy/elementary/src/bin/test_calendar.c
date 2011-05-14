@@ -145,6 +145,8 @@ test_calendar2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
    elm_entry_editable_set(en, EINA_FALSE);
    evas_object_show(win);
 
+   elm_calendar_min_max_year_set(cal3, -1, -1);
+
    elm_calendar_weekdays_names_set(cal, weekdays);
    elm_calendar_interval_set(cal, 0.4);
    elm_calendar_format_function_set(cal, _format_month_year);
