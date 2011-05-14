@@ -491,3 +491,8 @@
 
 	* Improve Eet_Data to make decoding of EET_G_UNION and EET_G_*ARRAY
 	faster and less memory heavy.
+
+2011-05-14  Cedric BAIL
+
+	* Use Eina_Lock.
+	* Sync GNUTLS initialisation with Eina.
