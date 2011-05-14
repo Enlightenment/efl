@@ -157,6 +157,16 @@ struct _Ecore_Con_Server
    Eina_Bool verify : 1; /* EINA_TRUE if certificates will be verified */
    Eina_Bool reject_excess_clients : 1;
    Eina_Bool delete_me : 1;
+#ifdef _WIN32
+   Eina_Bool want_write : 1;
+   Eina_Bool read_stop : 1;
+   Eina_Bool read_stopped : 1;
+   HANDLE pipe;
+   HANDLE thread_read;
+   HANDLE event_read;
+   HANDLE event_peek;
+   DWORD nbr_bytes;
+#endif
 };
 
 #ifdef HAVE_CURL
@@ -200,9 +210,26 @@ struct _Ecore_Con_Lookup
 
 /* from ecore_con.c */
 void ecore_con_server_infos_del(Ecore_Con_Server *svr, void *info);
+void ecore_con_event_server_data(Ecore_Con_Server *svr, unsigned char *buf, int num, Eina_Bool duplicate);
+void ecore_con_event_server_del(Ecore_Con_Server *svr);
 void ecore_con_event_server_error(Ecore_Con_Server *svr, const char *error);
+void ecore_con_event_client_add(Ecore_Con_Client *cl);
+void ecore_con_event_client_data(Ecore_Con_Client *cl, unsigned char *buf, int num, Eina_Bool duplicate);
+void ecore_con_event_client_del(Ecore_Con_Client *cl);
 void ecore_con_event_client_error(Ecore_Con_Client *cl, const char *error);
 
+/* from ecore_local_win32.c */
+#ifdef _WIN32
+Eina_Bool ecore_con_local_listen(Ecore_Con_Server *svr);
+Eina_Bool ecore_con_local_connect(Ecore_Con_Server *svr,
+                            Eina_Bool (*cb_done)(void *data,
+                                                 Ecore_Fd_Handler *fd_handler),
+                            void (*cb_free)(void *data, void *ev));
+Eina_Bool ecore_con_local_win32_server_flush(Ecore_Con_Server *svr);
+Eina_Bool ecore_con_local_win32_client_flush(Ecore_Con_Client *cl);
+void      ecore_con_local_win32_server_del(Ecore_Con_Server *svr);
+void      ecore_con_local_win32_client_del(Ecore_Con_Client *cl);
+#else
 /* from ecore_local.c */
 int ecore_con_local_init(void);
 int ecore_con_local_shutdown(void);
@@ -218,6 +245,8 @@ int ecore_con_local_listen(Ecore_Con_Server *svr,
                               void *data,
                               Ecore_Fd_Handler *fd_handler),
                            void *data);
+#endif
+
 /* from ecore_con_info.c */
 int                 ecore_con_info_init(void);
 int                 ecore_con_info_shutdown(void);

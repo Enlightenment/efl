@@ -5,6 +5,7 @@ AM_CPPFLAGS = \
 -I$(top_builddir)/src/lib/ecore_con \
 -I$(top_srcdir)/src/lib/ecore \
 -I$(top_srcdir)/src/lib/ecore_con \
+@EFL_ECORE_CON_BUILD@ \
 @SSL_CFLAGS@ \
 @CURL_CFLAGS@ \
 @EINA_CFLAGS@ \
@@ -19,8 +20,13 @@ includesdir = $(includedir)/ecore-@VMAJ@
 libecore_con_la_SOURCES = \
 ecore_con.c \
 ecore_con_ssl.c \
-ecore_con_url.c \
-ecore_con_local.c
+ecore_con_url.c
+
+if ECORE_HAVE_WIN32
+libecore_con_la_SOURCES += ecore_con_local_win32.c
+else
+libecore_con_la_SOURCES += ecore_con_local.c
+endif
 
 if HAVE_CARES
 libecore_con_la_SOURCES += ecore_con_ares.c

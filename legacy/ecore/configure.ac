@@ -172,7 +172,6 @@ case "$host_os" in
       want_notify_win32="yes"
       want_curl="yes"
       want_glib="auto"
-      want_ecore_con="no"
       want_ecore_imf="yes"
       want_ecore_win32="yes"
       want_ecore_evas_software_gdi="yes"
@@ -271,14 +270,14 @@ AC_ARG_ENABLE([abstract-sockets],
    [AC_HELP_STRING([--disable-abstract-sockets], [disable abstract sockets.])],
    [
     if test "x${enableval}" = "xyes" ; then
-       want_abstract_sockets="yes"
+       want_ecore_con_abstract_sockets="yes"
     else
-       want_abstract_sockets="no"
+       want_ecore_con_abstract_sockets="no"
     fi
    ],
-   [want_abstract_sockets="yes"])
+   [want_ecore_con_abstract_sockets=${want_abstract_sockets}])
 
-if test "x${want_abstract_sockets}" = "xyes" ; then
+if test "x${want_ecore_con_abstract_sockets}" = "xyes" ; then
    AC_DEFINE([HAVE_ABSTRACT_SOCKETS], [1], [Have abstract sockets namespace])
 fi
 
@@ -361,8 +360,9 @@ case "$host_os" in
       requirements_ecore_imf="evil ${requirements_ecore_imf}"
       requirements_ecore_imf_evas="evil ${requirements_ecore_imf_evas}"
       EFL_ECORE_BUILD="-DEFL_ECORE_BUILD"
-      EFL_ECORE_FILE_BUILD="-DEFL_ECORE_FILE_BUILD"
+      EFL_ECORE_CON_BUILD="-DEFL_ECORE_CON_BUILD"
       EFL_ECORE_EVAS_BUILD="-DEFL_ECORE_EVAS_BUILD"
+      EFL_ECORE_FILE_BUILD="-DEFL_ECORE_FILE_BUILD"
       EFL_ECORE_IMF_BUILD="-DEFL_ECORE_IMF_BUILD"
       EFL_ECORE_IMF_EVAS_BUILD="-DEFL_ECORE_IMF_EVAS_BUILD"
       EFL_ECORE_INPUT_BUILD="-DEFL_ECORE_INPUT_BUILD"
@@ -388,8 +388,9 @@ case "$host_os" in
 esac
 
 AC_SUBST(EFL_ECORE_BUILD)
-AC_SUBST(EFL_ECORE_FILE_BUILD)
+AC_SUBST(EFL_ECORE_CON_BUILD)
 AC_SUBST(EFL_ECORE_EVAS_BUILD)
+AC_SUBST(EFL_ECORE_FILE_BUILD)
 AC_SUBST(EFL_ECORE_IMF_BUILD)
 AC_SUBST(EFL_ECORE_IMF_EVAS_BUILD)
 AC_SUBST(EFL_ECORE_INPUT_BUILD)
