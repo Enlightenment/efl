@@ -100,7 +100,8 @@ typedef Eina_Bool    (*Eina_Hash_Foreach)(const Eina_Hash *hash, const void *key
  * @param key_length_cb The function called when getting the size of the key.
  * @param key_cmp_cb The function called when comparing the keys.
  * @param key_hash_cb The function called when getting the values.
- * @param data_free_cb The function called when the hash table is freed.
+ * @param data_free_cb The function called on each value when the hash
+ * table is freed. @c NULL can be passed as callback.
  * @param buckets_power_size The size of the buckets.
  * @return The new hash table.
  *
@@ -126,37 +127,37 @@ EAPI Eina_Hash *eina_hash_new(Eina_Key_Length key_length_cb,
 /**
  * @brief Create a new hash table using the djb2 algorithm.
  *
- * @param data_free_cb The function called when the hash table is freed.
+ * @param data_free_cb The function called on each value when the hash table
+ * is freed. @c NULL can be passed as callback.
  * @return The new hash table.
  *
  * This function creates a new hash table using the djb2 algorithm for
  * table management and strcmp() to compare the keys. Values can then
  * be looked up with pointers other than the original key pointer that
  * was used to add values. On failure, this function returns @c NULL.
- * @p data_free_cb is a callback called when the hash table is
- * freed. @c NULL can be passed as callback.
  */
 EAPI Eina_Hash *eina_hash_string_djb2_new(Eina_Free_Cb data_free_cb);
 
 /**
  * @brief Create a new hash table for use with strings.
  *
- * @param data_free_cb The function called when the hash table is freed.
+ * @param data_free_cb The function called on each value when the hash table
+ * is freed. @c NULL can be passed as callback.
  * @return The new hash table.
  *
  * This function creates a new hash table using the superfast algorithm
  * for table management and strcmp() to compare the keys. Values can
  * then be looked up with pointers other than the original key pointer
  * that was used to add values. On failure, this function returns
- * @c NULL. @p data_free_cb is a callback called when the hash table is
- * freed. @c NULL can be passed as callback.
+ * @c NULL.
  */
 EAPI Eina_Hash *eina_hash_string_superfast_new(Eina_Free_Cb data_free_cb);
 
 /**
  * @brief Create a new hash table for use with strings with small bucket size.
  *
- * @param data_free_cb  The function called when the hash table is freed.
+ * @param data_free_cb  The function called on each value when the hash table
+ * is freed. @c NULL can be passed as callback.
  * @return  The new hash table.
  *
  * This function creates a new hash table using the superfast algorithm
@@ -165,15 +166,15 @@ EAPI Eina_Hash *eina_hash_string_superfast_new(Eina_Free_Cb data_free_cb);
  * which will minimize the memory used by the returned hash
  * table. Values can then be looked up with pointers other than the
  * original key pointer that was used to add values. On failure, this
- * function returns @c NULL. @p data_free_cb is a callback called when
- * the hash table is freed. @c NULL can be passed as callback.
+ * function returns @c NULL.
  */
 EAPI Eina_Hash *eina_hash_string_small_new(Eina_Free_Cb data_free_cb);
 
 /**
  * @brief Create a new hash table for use with 32bit integers.
  *
- * @param data_free_cb  The function called when the hash table is freed.
+ * @param data_free_cb  The function called on each value when the hash table
+ * is freed. @c NULL can be passed as callback.
  * @return  The new hash table.
  *
  * This function creates a new hash table where keys are 32bit integers.
@@ -184,15 +185,14 @@ EAPI Eina_Hash *eina_hash_string_small_new(Eina_Free_Cb data_free_cb);
  * used to add values. This method is not suitable to match string keys as
  * it would only match the first character.
  * On failure, this function returns @c NULL.
- * @p data_free_cb is a callback called when the hash table is freed.
- * @c NULL can be passed as callback.
  */
 EAPI Eina_Hash *eina_hash_int32_new(Eina_Free_Cb data_free_cb);
 
 /**
  * @brief Create a new hash table for use with 64bit integers.
  *
- * @param data_free_cb  The function called when the hash table is freed.
+ * @param data_free_cb  The function called on each value when the hash table
+ * is freed. @c NULL can be passed as callback.
  * @return  The new hash table.
  *
  * This function creates a new hash table where keys are 64bit integers.
@@ -202,15 +202,14 @@ EAPI Eina_Hash *eina_hash_int32_new(Eina_Free_Cb data_free_cb);
  * used to add values. This method is not suitable to match string keys as
  * it would only match the first character.
  * On failure, this function returns @c NULL.
- * @p data_free_cb is a callback called when the hash table is freed.
- * @c NULL can be passed as callback.
  */
 EAPI Eina_Hash *eina_hash_int64_new(Eina_Free_Cb data_free_cb);
 
 /**
  * @brief Create a new hash table for use with pointers.
  *
- * @param data_free_cb  The function called when the hash table is freed.
+ * @param data_free_cb  The function called on each value when the hash table
+ * is freed. @c NULL can be passed as callback.
  * @return  The new hash table.
  *
  * This function creates a new hash table using the int64/int32 algorithm for
@@ -219,23 +218,20 @@ EAPI Eina_Hash *eina_hash_int64_new(Eina_Free_Cb data_free_cb);
  * original key pointer that was used to add values. This method may
  * appear to be able to match string keys, actually it only matches
  * the first character. On failure, this function returns @c NULL.
- * @p data_free_cb is a callback called when the hash table is freed.
- * @c NULL can be passed as callback.
  */
 EAPI Eina_Hash *eina_hash_pointer_new(Eina_Free_Cb data_free_cb);
 
 /**
  * @brief Create a new hash table optimized for stringshared values.
  *
- * @param data_free_cb  The function called when the hash table is freed.
+ * @param data_free_cb  The function called on each value when the hash table
+ * is freed. @c NULL can be passed as callback.
  * @return  The new hash table.
  *
  * This function creates a new hash table optimized for stringshared
  * values. Values CAN NOT be looked up with pointers not
  * equal to the original key pointer that was used to add a value. On failure,
  * this function returns @c NULL.
- * @p data_free_cb is a callback called when the hash table is freed.
- * @c NULL can be passed as callback.
  *
  * Excerpt of code that will NOT work with this type of hash:
  *
