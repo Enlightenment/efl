@@ -20,6 +20,12 @@ SUBDIRS += eet
 endif
 endif
 
+if BUILD_LOADER_GENERIC
+if !EVAS_STATIC_BUILD_GENERIC
+SUBDIRS += generic
+endif
+endif
+
 if BUILD_LOADER_GIF
 if !EVAS_STATIC_BUILD_GIF
 SUBDIRS += gif
@@ -47,6 +53,12 @@ endif
 if BUILD_LOADER_PNG
 if !EVAS_STATIC_BUILD_PNG
 SUBDIRS += png
+endif
+endif
+
+if BUILD_LOADER_PSD
+if !EVAS_STATIC_BUILD_PSD
+SUBDIRS += psd
 endif
 endif
 
@@ -79,16 +91,3 @@ if !EVAS_STATIC_BUILD_XPM
 SUBDIRS += xpm
 endif
 endif
-
-if BUILD_LOADER_PSD
-if !EVAS_STATIC_BUILD_PSD
-SUBDIRS += psd
-endif
-endif
-
-if BUILD_LOADER_GENERIC
-if !EVAS_STATIC_BUILD_GENERIC
-SUBDIRS += generic
-endif
-endif
-

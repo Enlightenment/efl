@@ -418,7 +418,7 @@ fi
 
 ### Checks for header files
 AC_HEADER_STDC
-AC_CHECK_HEADERS([unistd.h stdint.h sys/param.h])
+AC_CHECK_HEADERS([unistd.h stdint.h sys/param.h netinet/in.h])
 
 EFL_CHECK_PATH_MAX
 
@@ -1749,18 +1749,18 @@ echo "Image Loaders:"
 echo "  BMP.....................: $have_evas_image_loader_bmp"
 echo "  EDB.....................: $have_evas_image_loader_edb"
 echo "  EET.....................: $have_evas_image_loader_eet"
+echo "  GENERIC.................: $have_evas_image_loader_generic"
 echo "  GIF.....................: $have_evas_image_loader_gif"
 echo "  ICO.....................: $have_evas_image_loader_ico"
 echo "  JPEG....................: $have_evas_image_loader_jpeg (region: $have_jpeg_region)"
 echo "  PMAPS...................: $have_evas_image_loader_pmaps"
 echo "  PNG.....................: $have_evas_image_loader_png"
+echo "  PSD.....................: $have_evas_image_loader_psd"
 echo "  SVG.....................: $have_evas_image_loader_svg"
 echo "  TGA.....................: $have_evas_image_loader_tga"
 echo "  TIFF....................: $have_evas_image_loader_tiff"
 echo "  WBMP....................: $have_evas_image_loader_wbmp"
 echo "  XPM.....................: $have_evas_image_loader_xpm"
-echo "  PSD.....................: $have_evas_image_loader_psd"
-echo "  GENERIC.................: $have_evas_image_loader_generic"
 echo
 echo "Font Sourcing Systems:"
 echo "  EET.....................: $have_evas_font_loader_eet"
