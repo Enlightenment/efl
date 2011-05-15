@@ -6489,6 +6489,9 @@ evas_textblock_cursor_text_append(Evas_Textblock_Cursor *cur, const char *_text)
    _evas_textblock_changed(o, cur->obj);
    n->dirty = EINA_TRUE;
    free(text);
+
+   if (!o->cursor->node)
+      o->cursor->node = o->text_nodes;
    return len;
 }
 
@@ -6692,6 +6695,8 @@ evas_textblock_cursor_format_append(Evas_Textblock_Cursor *cur, const char *form
 
    _evas_textblock_changed(o, cur->obj);
 
+   if (!o->cursor->node)
+      o->cursor->node = o->text_nodes;
    return is_visible;
 }
 
