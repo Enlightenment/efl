@@ -1,4 +1,3 @@
-#include <Eina.h>
 #include <Ecore_Con.h>
 #include "Elementary.h"
 #include "elm_priv.h"
