@@ -169,6 +169,33 @@ eeze_disk_mountopts_get(Eeze_Disk *disk)
 }
 
 EAPI Eina_Bool
+eeze_disk_mount_wrapper_set(Eeze_Disk *disk, const char *wrapper)
+{
+   struct stat s;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(disk, EINA_FALSE);
+   if (wrapper) EINA_SAFETY_ON_TRUE_RETURN_VAL(!*wrapper, EINA_FALSE);
+   else
+     {
+        eina_stringshare_del(disk->mount_wrapper);
+        return EINA_TRUE;
+     }
+   if ((!stat(wrapper, &s)) && S_ISREG(s.st_mode))
+     {
+        eina_stringshare_replace(&disk->mount_wrapper, wrapper);
+        return EINA_TRUE;
+     }
+   ERR("%s does not exist!", wrapper);
+   return EINA_FALSE;
+}
+
+EAPI const char *
+eeze_disk_mount_wrapper_get(Eeze_Disk *disk)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(disk, NULL);
+   return disk->mount_wrapper;
+}
+
+EAPI Eina_Bool
 eeze_disk_mount(Eeze_Disk *disk)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(disk, EINA_FALSE);
@@ -218,6 +245,8 @@ eeze_disk_mount(Eeze_Disk *disk)
           }
 
         if ((!disk->mount_point) || (!disk->mount_point[0])) return EINA_FALSE;
+        if (disk->mount_wrapper)
+          eina_strbuf_append_printf(disk->mount_cmd, "%s ", disk->mount_wrapper);
         if (disk->mount_opts == EEZE_DISK_MOUNTOPT_DEFAULTS)
           eina_strbuf_append_printf(disk->mount_cmd, EEZE_MOUNT_BIN" -o "EEZE_MOUNT_DEFAULT_OPTS" UUID=%s %s", disk->cache.uuid, disk->mount_point);
         else if (!disk->mount_opts)

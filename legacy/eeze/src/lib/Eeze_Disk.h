@@ -250,6 +250,27 @@ EAPI Eina_Bool      eeze_disk_removable_get(Eeze_Disk *disk);
 EAPI Eina_Bool      eeze_disk_mounted_get(Eeze_Disk *disk);
 
 /**
+ * @brief Get the previously set mount wrapper for a disk
+ * @param disk The disk
+ * @return The wrapper, or NULL on failure
+ *
+ * This returns the wrapper previously set with eeze_disk_mount_wrapper_set
+ */
+EAPI const char    *eeze_disk_mount_wrapper_get(Eeze_Disk *disk);
+
+/**
+ * @brief Set a wrapper to run mount commands with
+ * @param disk The disk to wrap mount commands for
+ * @param wrapper The wrapper executable
+ * @return EINA_TRUE on success, else EINA_FALSE
+ *
+ * Use this function to set up a wrapper for running mount/umount commands. The wrapper must
+ * NOT use any of the standard mount/umount error code return values, and it must return 0 on success.
+ * Note that this function will call stat() on @p wrapper if not NULL to test for existence.
+ */
+EAPI Eina_Bool      eeze_disk_mount_wrapper_set(Eeze_Disk *disk, const char *wrapper);
+
+/**
  * @brief Begin a mount operation on the disk
  * @param disk The disk
  * @return #EINA_TRUE if the operation was started, else #EINA_FALSE

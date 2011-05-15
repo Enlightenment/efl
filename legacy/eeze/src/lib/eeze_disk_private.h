@@ -53,6 +53,7 @@ struct _Eeze_Disk
    const char *devpath;
    const char *fstype;
    const char *mount_point;
+   const char *mount_wrapper;
    unsigned long mount_opts;
 
    struct
