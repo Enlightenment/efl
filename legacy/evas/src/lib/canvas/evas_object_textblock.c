@@ -8073,7 +8073,7 @@ evas_object_textblock_free(Evas_Object *obj)
 static void
 evas_object_textblock_render(Evas_Object *obj, void *output, void *context, void *surface, int x, int y)
 {
-   Evas_Object_Textblock_Paragraph *par;
+   Evas_Object_Textblock_Paragraph *par, *start;
    Evas_Object_Textblock_Line *ln;
    Evas_Object_Textblock *o;
    int i, j;
@@ -8106,7 +8106,7 @@ evas_object_textblock_render(Evas_Object *obj, void *output, void *context, void
    if (!o->paragraphs) return;
 
 #define ITEM_WALK() \
-   EINA_INLIST_FOREACH(o->paragraphs, par) \
+   EINA_INLIST_FOREACH(start, par) \
      { \
         if (!par->visible) continue; \
         if (clip) \
@@ -8212,6 +8212,21 @@ evas_object_textblock_render(Evas_Object *obj, void *output, void *context, void
      } \
    while (0)
 
+   /* Find the first paragraph and start working on that */
+   EINA_INLIST_FOREACH(o->paragraphs, par)
+     {
+        if (!par->visible) continue;
+
+        if ((par->y + par->h) <= 0) continue;
+        if (clip)
+          {
+             if ((obj->cur.geometry.y + y + par->y + par->h) < (cy - 20))
+                continue;
+          }
+        break;
+     }
+
+   start = par;
 
    ITEM_WALK()
      {
