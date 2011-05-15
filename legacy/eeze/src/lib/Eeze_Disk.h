@@ -52,12 +52,6 @@ typedef enum
 } Eeze_Mount_Opts;
 
 
-/**
- * @brief Use this function to determine whether your eeze is disk-capable
- *
- * Since applications will die if they run against a function that doesn't exist,
- * if your application successfully runs this function then you have eeze_disk.
- */
 EAPI extern int EEZE_EVENT_DISK_MOUNT;
 EAPI extern int EEZE_EVENT_DISK_UNMOUNT;
 EAPI extern int EEZE_EVENT_DISK_ERROR;
@@ -90,6 +84,12 @@ struct _Eeze_Event_Disk_Error
    } type;
 };
 
+/**
+ * @brief Use this function to determine whether your eeze is disk-capable
+ *
+ * Since applications will die if they run/compile against a function that doesn't exist,
+ * if your application successfully runs/compiles with this function then you have eeze_disk.
+ */
 EAPI void           eeze_disk_function(void);
 
 /**
