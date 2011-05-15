@@ -66,8 +66,13 @@ _eeze_disk_mount_result_handler(void *data __UNUSED__, int type __UNUSED__, Ecor
    eeze_events = eina_list_remove_list(eeze_events, l);
    if (disk->mount_status == EEZE_DISK_MOUNTING)
      {
-        if (ev->exit_code & 1)
-           _eeze_disk_mount_error_handler(disk, "incorrect invocation or permissions");
+        if (!ev->exit_code)
+          { 
+              e = malloc(sizeof(Eeze_Event_Disk_Mount));
+              EINA_SAFETY_ON_NULL_RETURN_VAL(e, ECORE_CALLBACK_RENEW);
+              e->disk = disk;
+              ecore_event_add(EEZE_EVENT_DISK_MOUNT, e, NULL, NULL);
+          }
         else if (ev->exit_code & 2)
            _eeze_disk_mount_error_handler(disk, "system error (out of memory, cannot fork, no more loop devices)");
         else if (ev->exit_code & 4)
@@ -80,13 +85,8 @@ _eeze_disk_mount_result_handler(void *data __UNUSED__, int type __UNUSED__, Ecor
            _eeze_disk_mount_error_handler(disk, "mount failure");
         else if (ev->exit_code & 64)
            _eeze_disk_mount_error_handler(disk, "some mount succeeded");
-        else if (!ev->exit_code)
-          { 
-              e = malloc(sizeof(Eeze_Event_Disk_Mount));
-              EINA_SAFETY_ON_NULL_RETURN_VAL(e, ECORE_CALLBACK_RENEW);
-              e->disk = disk;
-              ecore_event_add(EEZE_EVENT_DISK_MOUNT, e, NULL, NULL);
-          }
+        else
+           _eeze_disk_mount_error_handler(disk, "incorrect invocation or permissions");
      }
    else
      switch (ev->exit_code)
