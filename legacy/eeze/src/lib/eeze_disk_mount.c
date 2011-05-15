@@ -65,58 +65,45 @@ _eeze_disk_mount_result_handler(void *data __UNUSED__, int type __UNUSED__, Ecor
 
    eeze_events = eina_list_remove_list(eeze_events, l);
    if (disk->mount_status == EEZE_DISK_MOUNTING)
+     {
+        if (ev->exit_code & 1)
+           _eeze_disk_mount_error_handler(disk, "incorrect invocation or permissions");
+        else if (ev->exit_code & 2)
+           _eeze_disk_mount_error_handler(disk, "system error (out of memory, cannot fork, no more loop devices)");
+        else if (ev->exit_code & 4)
+           _eeze_disk_mount_error_handler(disk, "internal mount bug");
+        else if (ev->exit_code & 8)
+           _eeze_disk_mount_error_handler(disk, "user interrupt");
+        else if (ev->exit_code & 16)
+           _eeze_disk_mount_error_handler(disk, "problems writing or locking /etc/mtab");
+        else if (ev->exit_code & 32)
+           _eeze_disk_mount_error_handler(disk, "mount failure");
+        else if (ev->exit_code & 64)
+           _eeze_disk_mount_error_handler(disk, "some mount succeeded");
+        else if (!ev->exit_code)
+          { 
+              e = malloc(sizeof(Eeze_Event_Disk_Mount));
+              EINA_SAFETY_ON_NULL_RETURN_VAL(e, ECORE_CALLBACK_RENEW);
+              e->disk = disk;
+              ecore_event_add(EEZE_EVENT_DISK_MOUNT, e, NULL, NULL);
+          }
+     }
+   else
      switch (ev->exit_code)
        {
-         case 1:
-           _eeze_disk_mount_error_handler(disk, "incorrect invocation or permissions");
-           break;
+        case 0:
+          e = malloc(sizeof(Eeze_Event_Disk_Unmount));
+          EINA_SAFETY_ON_NULL_RETURN_VAL(e, ECORE_CALLBACK_RENEW);
+          e->disk = disk;
+          ecore_event_add(EEZE_EVENT_DISK_UNMOUNT, e, NULL, NULL);
+          break;
 
-         case 2:
-           _eeze_disk_mount_error_handler(disk, "system error (out of memory, cannot fork, no more loop devices)");
-           break;
-
-         case 4:
-           _eeze_disk_mount_error_handler(disk, "internal mount bug");
-           break;
-
-         case 8:
-           _eeze_disk_mount_error_handler(disk, "user interrupt");
-           break;
-
-         case 16:
-           _eeze_disk_mount_error_handler(disk, "problems writing or locking /etc/mtab");
-           break;
-
-         case 32:
-           _eeze_disk_mount_error_handler(disk, "mount failure");
-           break;
-
-         case 64:
-           _eeze_disk_mount_error_handler(disk, "some mount succeeded");
-           break;
-
-         default:
-           e = malloc(sizeof(Eeze_Event_Disk_Mount));
-           EINA_SAFETY_ON_NULL_RETURN_VAL(e, ECORE_CALLBACK_RENEW);
-           e->disk = disk;
-           ecore_event_add(EEZE_EVENT_DISK_MOUNT, e, NULL, NULL);
-        }
-    else
-      switch (ev->exit_code)
-        {
-         case 0:
-           e = malloc(sizeof(Eeze_Event_Disk_Unmount));
-           EINA_SAFETY_ON_NULL_RETURN_VAL(e, ECORE_CALLBACK_RENEW);
-           e->disk = disk;
-           ecore_event_add(EEZE_EVENT_DISK_UNMOUNT, e, NULL, NULL);
-           break;
-
-         default:
-           INF("Could not unmount disk, retrying");
-           disk->mounter = ecore_exe_pipe_run(eina_strbuf_string_get(disk->unmount_cmd), 0, disk);
-           eeze_events = eina_list_append(eeze_events, disk);
-           return ECORE_CALLBACK_RENEW;
-        }
+        default:
+          INF("Could not unmount disk, retrying");
+          disk->mounter = ecore_exe_pipe_run(eina_strbuf_string_get(disk->unmount_cmd), 0, disk);
+          eeze_events = eina_list_append(eeze_events, disk);
+          return ECORE_CALLBACK_RENEW;
+       }
 
    return ECORE_CALLBACK_RENEW;
 }
