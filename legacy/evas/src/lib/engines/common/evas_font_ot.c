@@ -197,28 +197,18 @@ evas_common_font_ot_unload_face(void *_font)
 }
 
 /* Harfbuzz font functions */
-static hb_font_funcs_t *_ft_font_funcs = NULL;
-
-static hb_codepoint_t
-_evas_common_font_ot_hb_get_glyph(hb_font_t *font, hb_face_t *face,
-    const void *user_data, hb_codepoint_t unicode,
-    hb_codepoint_t variation_selector)
-{
-   RGBA_Font_Int *fi = (RGBA_Font_Int *) user_data;
-   return hb_font_funcs_get_glyph_func(_ft_font_funcs)(font, face,
-      fi->src->ft.face, unicode, variation_selector);
-}
 
 static void
-_evas_common_font_ot_hb_get_glyph_advance(hb_font_t *font, hb_face_t *face,
-   const void *user_data, hb_codepoint_t glyph,
-   hb_position_t *x_advance, hb_position_t *y_advance)
+_evas_common_font_ot_hb_get_glyph_advance(hb_font_t *font,
+      void *font_data, hb_codepoint_t glyph,
+      hb_position_t *x_advance, hb_position_t *y_advance,
+      void *user_data)
 {
    /* Use our cache*/
-   RGBA_Font_Int *fi = (RGBA_Font_Int *) user_data;
+   RGBA_Font_Int *fi = (RGBA_Font_Int *) font_data;
    RGBA_Font_Glyph *fg;
    (void) font;
-   (void) face;
+   (void) user_data;
    fg = evas_common_font_int_cache_glyph_get(fi, glyph);
    if (fg)
      {
@@ -228,37 +218,19 @@ _evas_common_font_ot_hb_get_glyph_advance(hb_font_t *font, hb_face_t *face,
 }
 
 static void
-_evas_common_font_ot_hb_get_glyph_extents(hb_font_t *font, hb_face_t *face,
-   const void *user_data, hb_codepoint_t glyph, hb_glyph_extents_t *extents)
+_evas_common_font_ot_hb_get_kerning(hb_font_t *font, void *font_data,
+   hb_codepoint_t first_glyph, hb_codepoint_t second_glyph,
+   hb_position_t *x_kern, hb_position_t *y_kern, void *user_data)
 {
-   RGBA_Font_Int *fi = (RGBA_Font_Int *) user_data;
-   hb_font_funcs_get_glyph_extents_func(_ft_font_funcs)(font, face,
-      fi->src->ft.face, glyph, extents);
-}
-
-static hb_bool_t
-_evas_common_font_ot_hb_get_contour_point(hb_font_t *font, hb_face_t *face,
-   const void *user_data, unsigned int point_index, hb_codepoint_t glyph,
-   hb_position_t *x, hb_position_t *y)
-{
-   RGBA_Font_Int *fi = (RGBA_Font_Int *) user_data;
-   return hb_font_funcs_get_contour_point_func(_ft_font_funcs)(font, face,
-      fi->src->ft.face, point_index, glyph, x, y);
-}
-
-static hb_position_t
-_evas_common_font_ot_hb_get_kerning(hb_font_t *font, hb_face_t *face,
-   const void *user_data, hb_codepoint_t first_glyph,
-   hb_codepoint_t second_glyph)
-{
-   RGBA_Font_Int *fi = (RGBA_Font_Int *) user_data;
+   RGBA_Font_Int *fi = (RGBA_Font_Int *) font_data;
    int kern;
    (void) font;
-   (void) face;
+   (void) user_data;
    if (evas_common_font_query_kerning(fi, first_glyph, second_glyph, &kern))
-      return kern;
+        *x_kern = kern;
    else
-      return 0;
+      return;
+   *y_kern = 0;
 }
 
 /* End of harfbuzz font funcs */
@@ -269,18 +241,11 @@ _evas_common_font_ot_font_funcs_get(void)
    static hb_font_funcs_t *font_funcs = NULL;
    if (!font_funcs)
      {
-        _ft_font_funcs = hb_ft_get_font_funcs();
         font_funcs = hb_font_funcs_create();
-        hb_font_funcs_set_glyph_func(font_funcs,
-            _evas_common_font_ot_hb_get_glyph);
         hb_font_funcs_set_glyph_advance_func(font_funcs,
-            _evas_common_font_ot_hb_get_glyph_advance);
-        hb_font_funcs_set_glyph_extents_func(font_funcs,
-            _evas_common_font_ot_hb_get_glyph_extents);
-        hb_font_funcs_set_contour_point_func(font_funcs,
-            _evas_common_font_ot_hb_get_contour_point);
+            _evas_common_font_ot_hb_get_glyph_advance, NULL, NULL);
         hb_font_funcs_set_kerning_func(font_funcs,
-            _evas_common_font_ot_hb_get_kerning);
+            _evas_common_font_ot_hb_get_kerning, NULL, NULL);
      }
 
    return font_funcs;
@@ -301,13 +266,17 @@ _evas_common_font_ot_unicode_funcs_get(void)
 static void
 _evas_common_font_ot_shape(hb_buffer_t *buffer, RGBA_Font_Int *fi)
 {
-   hb_font_t   *hb_font;
+   hb_font_t   *hb_font, *hb_ft_font;
 
-   hb_font = hb_ft_font_create(fi->src->ft.face, NULL);
+   hb_ft_font = hb_ft_font_create(fi->src->ft.face, NULL);
+   hb_font = hb_font_create_sub_font(hb_ft_font);
+
    hb_font_set_funcs(hb_font, _evas_common_font_ot_font_funcs_get(), fi, NULL);
 
-   hb_shape(hb_font, fi->src->hb.face, buffer, NULL, 0);
+   hb_shape(hb_font, buffer, NULL, 0);
+
    hb_font_destroy(hb_font);
+   hb_font_destroy(hb_ft_font);
 }
 
 EAPI Eina_Bool
