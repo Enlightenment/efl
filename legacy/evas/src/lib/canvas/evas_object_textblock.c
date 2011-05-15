@@ -382,7 +382,6 @@ struct _Evas_Textblock_Cursor
    Evas_Object                     *obj;
    size_t                           pos;
    Evas_Object_Textblock_Node_Text *node;
-
 };
 
 struct _Evas_Object_Textblock
@@ -3120,7 +3119,7 @@ _layout_get_word_mixwrap_common(Ctxt *c, Evas_Object_Textblock_Format *fmt,
           }
 
         if ((wrap > line_start) ||
-              ((wrap == line_start) && (ALLOW_BREAK(wrap))))
+              ((wrap == line_start) && (ALLOW_BREAK(wrap)) && (wrap < len)))
           {
              /* We found a suitable wrapping point, break here. */
              MOVE_NEXT_UNTIL(len, wrap);
@@ -3153,7 +3152,7 @@ _layout_get_word_mixwrap_common(Ctxt *c, Evas_Object_Textblock_Format *fmt,
           }
 
 
-        if (wrap < len)
+        if ((wrap < len) && (wrap > line_start))
           {
              MOVE_NEXT_UNTIL(len, wrap);
              return wrap;
@@ -3411,6 +3410,7 @@ _layout_visualize_par(Ctxt *c)
                             /*FIXME: I should handle format correctly,
                               i.e verify we are allowed to break here */
                             _layout_line_advance(c, it->format);
+                            wrap = -1;
                          }
                     }
                   else
@@ -3472,7 +3472,7 @@ _layout_visualize_par(Ctxt *c)
                                     item */
                                  i = eina_list_prev(i);
                                  it = eina_list_data_get(i);
-                                 while (uwrap <= it->text_pos)
+                                 while (uwrap < it->text_pos)
                                    {
                                       c->ln->items = _ITEM(
                                             eina_inlist_remove(
