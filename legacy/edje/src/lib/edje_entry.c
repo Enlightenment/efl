@@ -2044,6 +2044,27 @@ _edje_entry_text_markup_set(Edje_Real_Part *rp, const char *text)
 }
 
 void
+_edje_entry_text_markup_append(Edje_Real_Part *rp, const char *text)
+{
+   Entry *en = rp->entry_data;
+   Evas_Textblock_Cursor *end_cur;
+   if (!en) return;
+   end_cur = evas_object_textblock_cursor_new(rp->object);
+   evas_textblock_cursor_paragraph_last(end_cur);
+
+   _text_filter_markup_prepend(en, end_cur, text);
+   evas_textblock_cursor_free(end_cur);
+
+   /* We are updating according to the real cursor on purpose */
+   _anchors_get(en->cursor, rp->object, en);
+   _curs_update_from_curs(en->cursor, rp->object, en);
+   _edje_emit(rp->edje, "entry,changed", rp->part->name);
+   _edje_emit(rp->edje, "cursor,changed", rp->part->name);
+
+   _edje_entry_real_part_configure(rp);
+}
+
+void
 _edje_entry_text_markup_insert(Edje_Real_Part *rp, const char *text)
 {
    Entry *en = rp->entry_data;

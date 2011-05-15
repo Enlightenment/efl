@@ -1770,6 +1770,7 @@ const char *_edje_entry_selection_get(Edje_Real_Part *rp);
 const char *_edje_entry_text_get(Edje_Real_Part *rp);
 void _edje_entry_text_markup_set(Edje_Real_Part *rp, const char *text);
 void _edje_entry_text_markup_insert(Edje_Real_Part *rp, const char *text);
+void _edje_entry_text_markup_append(Edje_Real_Part *rp, const char *text);
 void _edje_entry_set_cursor_start(Edje_Real_Part *rp);
 void _edje_entry_set_cursor_end(Edje_Real_Part *rp);
 void _edje_entry_cursor_copy(Edje_Real_Part *rp, Edje_Cursor cur, Edje_Cursor dst);

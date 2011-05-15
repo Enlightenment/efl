@@ -1173,6 +1173,28 @@ edje_object_part_text_insert(Evas_Object *obj, const char *part, const char *tex
      rp->edje->text_change.func(rp->edje->text_change.data, obj, part);
 }
 
+EAPI void
+edje_object_part_text_append(Evas_Object *obj, const char *part, const char *text)
+{
+   Edje *ed;
+   Edje_Real_Part *rp;
+
+   ed = _edje_fetch(obj);
+   if ((!ed) || (!part)) return;
+   rp = _edje_real_part_recursive_get(ed, (char *)part);
+   if (!rp) return;
+   if ((rp->part->type != EDJE_PART_TYPE_TEXTBLOCK)) return;
+   if (rp->part->entry_mode <= EDJE_ENTRY_EDIT_MODE_NONE) return;
+   _edje_entry_text_markup_append(rp, text);
+   rp->edje->dirty = 1;
+#ifdef EDJE_CALC_CACHE
+   rp->invalidate = 1;
+#endif
+   _edje_recalc(rp->edje);
+   if (rp->edje->text_change.func)
+     rp->edje->text_change.func(rp->edje->text_change.data, obj, part);
+}
+
 EAPI const Eina_List *
 edje_object_part_text_anchor_list_get(const Evas_Object *obj, const char *part)
 {
