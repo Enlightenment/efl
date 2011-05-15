@@ -557,12 +557,14 @@ evas_cache_image_init(const Evas_Cache_Image_Func *cb)
 {
    Evas_Cache_Image *cache;
 
+#ifdef BUILD_ASYNC_PRELOAD
    if (_evas_cache_mutex_init++ == 0)
      {
         LKI(engine_lock);
         LKI(wakeup);
 	eina_condition_new(&cond_wakeup, &wakeup);
      }
+#endif
 
    cache = calloc(1, sizeof(Evas_Cache_Image));
    if (!cache) return NULL;
@@ -657,12 +659,14 @@ evas_cache_image_shutdown(Evas_Cache_Image *cache)
    eina_hash_free(cache->inactiv);
    free(cache);
 
+#ifdef BUILD_ASYNC_PRELOAD
    if (--_evas_cache_mutex_init == 0)
      {
 	eina_condition_free(&cond_wakeup);
         LKD(engine_lock);
         LKD(wakeup);
      }
+#endif
 }
 
 EAPI Image_Entry *
