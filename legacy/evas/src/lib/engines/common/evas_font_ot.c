@@ -178,24 +178,6 @@ evas_common_font_ot_cluster_size_get(const Evas_Text_Props *props, size_t char_i
    return (items > 0) ? items : 1;
 }
 
-EAPI void
-evas_common_font_ot_load_face(void *_font)
-{
-   RGBA_Font_Source *font = (RGBA_Font_Source *) _font;
-   /* Unload the face if by any chance it's already loaded */
-   evas_common_font_ot_unload_face(font);
-   font->hb.face = hb_ft_face_create(font->ft.face, NULL);
-}
-
-EAPI void
-evas_common_font_ot_unload_face(void *_font)
-{
-   RGBA_Font_Source *font = (RGBA_Font_Source *) _font;
-   if (!font->hb.face) return;
-   hb_face_destroy(font->hb.face);
-   font->hb.face = NULL;
-}
-
 /* Harfbuzz font functions */
 
 static void

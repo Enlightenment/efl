@@ -34,12 +34,6 @@ struct _Evas_Font_OT_Info
 #  define EVAS_FONT_OT_POS_GET(a)   ((a).source_cluster)
 # endif
 
-EAPI void
-evas_common_font_ot_load_face(void *_font);
-
-EAPI void
-evas_common_font_ot_unload_face(void *_font);
-
 # include "evas_text_utils.h"
 EAPI int
 evas_common_font_ot_cluster_size_get(const Evas_Text_Props *props, size_t char_index);

@@ -906,11 +906,6 @@ struct _RGBA_Font_Source
       int            orig_upem;
       FT_Face        face;
    } ft;
-#ifdef OT_SUPPORT
-   struct {
-      void *face;
-   } hb;
-#endif
 };
 
 struct _RGBA_Font_Glyph
