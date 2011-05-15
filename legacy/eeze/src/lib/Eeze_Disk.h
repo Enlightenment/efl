@@ -368,6 +368,49 @@ EAPI Eina_Bool      eeze_mount_mtab_scan(void);
  */
 EAPI Eina_Bool      eeze_mount_fstab_scan(void);
 
+/**
+ * @brief Get the property value of a disk
+ *
+ * @param disk The disk
+ * @param property The property to get; full list of these is a FIXME
+ * @return A stringshared char* with the property or NULL on failure
+ */
+
+EAPI const char    *eeze_disk_udev_get_property(Eeze_Disk *disk, const char *property);
+
+/**
+ * @brief Get the sysattr value of a disk.
+ *
+ * @param disk The disk
+ * @param sysattr The sysattr to get; full list of these is a FIXME
+ * @return A stringshared char* with the sysattr or NULL on failure
+ */
+
+EAPI const char    *eeze_disk_udev_get_sysattr(Eeze_Disk *disk, const char *sysattr);
+
+/**
+ * Walks up the device chain using the device from @p disk,
+ * checking each device for @p sysattr with (optional) @p value.
+ *
+ * @param disk The disk to walk
+ * @param sysattr The attribute to find
+ * @param value OPTIONAL: The value that @p sysattr should have, or NULL
+ *
+ * @return If the sysattr (with value) is found, returns TRUE.  Else, false.
+ */
+EAPI Eina_Bool      eeze_disk_udev_walk_check_sysattr(Eeze_Disk *disk, const char *sysattr, const char *value);
+
+/**
+ * @brief Walks up the device chain of @p disk
+ * checking each device for @p sysattr and returns the value if found.
+ *
+ * @param disk The disk
+ * @param sysattr The attribute to find
+ *
+ * @return The stringshared value of @p sysattr if found, or NULL
+ */
+EAPI const char    *eeze_disk_udev_walk_get_sysattr(Eeze_Disk *disk, const char *sysattr);
+
 #ifdef __cplusplus
 }
 #endif

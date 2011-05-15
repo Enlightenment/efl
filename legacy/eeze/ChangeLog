@@ -1,3 +1,10 @@
+2011-05-15  Mike Blumenkrantz (discomfitor/zmike)
++eeze_disk_udev_get_property
++eeze_disk_udev_get_sysattr
++eeze_disk_udev_walk_check_sysattr
++eeze_disk_udev_walk_get_sysattr
+New functions to perform udev lookups directly on disk devices without wasting unnecessary function calls
+
 2011-03-12  Mike Blumenkrantz (discomfitor/zmike)
 +eeze_udev_syspath_get_devname, added from patch sent by Clement Battin
 
