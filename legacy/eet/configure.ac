@@ -341,7 +341,7 @@ AC_CHECK_HEADER([jpeglib.h],
    [dummy="yes"],
    [AC_MSG_ERROR("Cannot find jpeglib.h. Make sure your CFLAGS environment variable contains include lines for the location of this file")])
 
-AC_CHECK_HEADERS(netinet/in.h)
+AC_CHECK_HEADERS(netinet/in.h unistd.h)
 EFL_CHECK_PATH_MAX
 
 ### Checks for types

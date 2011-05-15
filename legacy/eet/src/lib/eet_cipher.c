@@ -25,9 +25,9 @@ void *    alloca (size_t);
 #include <sys/stat.h>
 #include <sys/mman.h>
 
-#ifndef _MSC_VER
+#ifdef HAVE_UNISTD_H
 # include <unistd.h>
-#endif /* ifndef _MSC_VER */
+#endif /* ifdef HAVE_UNISTD_H */
 
 #ifdef HAVE_NETINET_IN_H
 # include <netinet/in.h>
