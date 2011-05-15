@@ -294,12 +294,14 @@ eeze_disk_unmount(Eeze_Disk *disk)
    if (disk->unmount_cmd_changed)
      {
         eina_strbuf_string_free(disk->unmount_cmd);
-        eina_strbuf_append_printf(disk->unmount_cmd, "%s %s", EEZE_UNMOUNT_BIN, disk->mount_point);
+        if (disk->mount_wrapper)
+          eina_strbuf_append_printf(disk->unmount_cmd, "%s ", disk->mount_wrapper);
+        eina_strbuf_append_printf(disk->unmount_cmd, EEZE_UNMOUNT_BIN" %s", disk->mount_point);
         disk->unmount_cmd_changed = EINA_FALSE;
      }
 
    INF("Unmounting: %s", eina_strbuf_string_get(disk->unmount_cmd));
-   disk->mounter = ecore_exe_pipe_run(eina_strbuf_string_get(disk->unmount_cmd), 0, disk);
+   disk->mounter = ecore_exe_run(eina_strbuf_string_get(disk->unmount_cmd), disk);
    if (!disk->mounter)
      return EINA_FALSE;
 
