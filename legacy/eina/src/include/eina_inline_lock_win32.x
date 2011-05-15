@@ -63,7 +63,7 @@ static inline Eina_Lock_Result
 eina_lock_take(Eina_Lock *mutex)
 {
 #ifdef EINA_HAVE_ON_OFF_THREADS
-   if (!_eina_threads_activated) return EINA_LOCK_FAIL;
+  if (!_eina_threads_activated) return EINA_LOCK_SUCCEED;
 #endif
 
    EnterCriticalSection(mutex);
@@ -75,7 +75,7 @@ static inline Eina_Lock_Result
 eina_lock_take_try(Eina_Lock *mutex)
 {
 #ifdef EINA_HAVE_ON_OFF_THREADS
-   if (!_eina_threads_activated) return EINA_LOCK_FAIL;
+   if (!_eina_threads_activated) return EINA_LOCK_SUCCEED;
 #endif
 
    return TryEnterCriticalSection(mutex) == 0 ? EINA_LOCK_FAIL : EINA_LOCK_SUCCEED;
@@ -85,7 +85,7 @@ static inline Eina_Lock_Result
 eina_lock_release(Eina_Lock *mutex)
 {
 #ifdef EINA_HAVE_ON_OFF_THREADS
-   if (!_eina_threads_activated) return EINA_LOCK_FAIL;
+   if (!_eina_threads_activated) return EINA_LOCK_SUCCEED;
 #endif
 
    LeaveCriticalSection(mutex);
@@ -102,13 +102,12 @@ eina_lock_debug(const Eina_Lock *mutex)
 static inline Eina_Bool
 eina_condition_new(Eina_Condition *cond, Eina_Lock *mutex)
 {
+   cond->mutex = *mutex;
 #if _WIN32_WINNT >= 0x0600
-   InitializeCriticalSection(&cond->mutex);
    InitializeConditionVariable(&cond->condition);
 #else
    cond->waiters_count = 0;
    cond->was_broadcast = EINA_FALSE;
-   cond->mutex = *mutex;
    cond->semaphore = CreateSemaphore(NULL,       // no security
                                      0,          // initially 0
                                      0x7fffffff, // max count
@@ -140,7 +139,6 @@ eina_condition_free(Eina_Condition *cond)
    DeleteCriticalSection(&cond->mutex);
 #else
    CloseHandle(cond->waiters_done);
-   DeleteCriticalSection(&cond->mutex);
    DeleteCriticalSection(&cond->waiters_count_lock);
    CloseHandle(cond->semaphore);
 #endif
