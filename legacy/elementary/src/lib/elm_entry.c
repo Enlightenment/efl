@@ -93,6 +93,12 @@
  * "anchor,clicked" - The anchor has been clicked
  */
 
+/* Maximum chunk size to be inserted to the entry at once
+ * FIXME: This size is arbitrary, should probably choose a better size.
+ * Possibly also find a way to set it to a low value for weak computers,
+ * and to a big value for better computers. */
+#define _CHUNK_SIZE 10000
+
 typedef struct _Mod_Api Mod_Api;
 
 typedef struct _Widget_Data Widget_Data;
@@ -109,6 +115,11 @@ struct _Widget_Data
    Ecore_Event_Handler *sel_clear_handler;
    Ecore_Timer *longpress_timer;
    Ecore_Timer *delay_write;
+   /* for deferred appending */
+   Ecore_Idler *append_text_idler;
+   char *append_text_left;
+   int append_text_position;
+   int append_text_len;
    /* Only for clipboard */
    const char *cut_sel;
    const char *text;
@@ -509,6 +520,13 @@ _del_hook(Evas_Object *obj)
    if (wd->cut_sel) eina_stringshare_del(wd->cut_sel);
    if (wd->text) eina_stringshare_del(wd->text);
    if (wd->deferred_recalc_job) ecore_job_del(wd->deferred_recalc_job);
+   if (wd->append_text_idler)
+     {
+        ecore_idler_del(wd->append_text_idler);
+        free(wd->append_text_left);
+        wd->append_text_left = NULL;
+        wd->append_text_idler = NULL;
+     }
    if (wd->longpress_timer) ecore_timer_del(wd->longpress_timer);
    EINA_LIST_FREE(wd->items, it)
      {
@@ -1558,6 +1576,56 @@ _text_filter(void *data, Evas_Object *edje __UNUSED__, const char *part __UNUSED
      }
 }
 
+/* This function is used to insert text by chunks in jobs */
+static Eina_Bool
+_text_append_idler(void *data)
+{
+   int start;
+   char backup;
+   Evas_Object *obj = (Evas_Object *) data;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (wd->text) eina_stringshare_del(wd->text);
+   wd->text = NULL;
+   wd->changed = EINA_TRUE;
+
+   start = wd->append_text_position;
+   if(start + _CHUNK_SIZE < wd->append_text_len)
+     {
+        wd->append_text_position = (start + _CHUNK_SIZE);
+        /* Go to the start of the nearest codepoint, because we don't want
+         * to cut it in the middle */
+        eina_unicode_utf8_get_prev(wd->append_text_left,
+              &wd->append_text_position);
+     }
+   else
+     {
+        wd->append_text_position = wd->append_text_len;
+     }
+
+   backup = wd->append_text_left[wd->append_text_position];
+   wd->append_text_left[wd->append_text_position] = '\0';
+
+   edje_object_part_text_append(wd->ent, "elm.text",
+         wd->append_text_left + start);
+
+   wd->append_text_left[wd->append_text_position] = backup;
+
+   _sizing_eval(obj);
+
+   /* If there's still more to go, renew the idler, else, cleanup */
+   if (wd->append_text_position < wd->append_text_len)
+     {
+        return ECORE_CALLBACK_RENEW;
+     }
+   else
+     {
+        free(wd->append_text_left);
+        wd->append_text_left = NULL;
+        wd->append_text_idler = NULL;
+        return ECORE_CALLBACK_CANCEL;
+     }
+}
+
 /**
  * This adds an entry to @p parent object.
  *
@@ -1778,15 +1846,40 @@ elm_entry_password_get(const Evas_Object *obj)
 EAPI void
 elm_entry_entry_set(Evas_Object *obj, const char *entry)
 {
+   int len = 0;
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
    if (!entry) entry = "";
-   edje_object_part_text_set(wd->ent, "elm.text", entry);
    if (wd->text) eina_stringshare_del(wd->text);
    wd->text = NULL;
    wd->changed = EINA_TRUE;
-   _sizing_eval(obj);
+
+   /* Clear currently pending job if there is one */
+   if (wd->append_text_idler)
+     {
+        ecore_idler_del(wd->append_text_idler);
+        free(wd->append_text_left);
+        wd->append_text_left = NULL;
+        wd->append_text_idler = NULL;
+     }
+
+   len = strlen(entry);
+   /* Split to ~_CHUNK_SIZE chunks */
+   if (len <= _CHUNK_SIZE)
+     {
+        edje_object_part_text_set(wd->ent, "elm.text", entry);
+        _sizing_eval(obj);
+     }
+   else
+     {
+        /* Need to clear the entry first */
+        edje_object_part_text_set(wd->ent, "elm.text", "");
+        wd->append_text_left = strndup(entry, len);
+        wd->append_text_position = 0;
+        wd->append_text_len = len;
+        wd->append_text_idler = ecore_idler_add(_text_append_idler, obj);
+     }
 }
 
 /**
