@@ -271,7 +271,7 @@ eeze_disk_mount(Eeze_Disk *disk)
      }
 
    INF("Mounting: %s", eina_strbuf_string_get(disk->mount_cmd));
-   disk->mounter = ecore_exe_pipe_run(eina_strbuf_string_get(disk->mount_cmd), 0, disk);
+   disk->mounter = ecore_exe_run(eina_strbuf_string_get(disk->mount_cmd), disk);
    if (!disk->mounter)
      return EINA_FALSE;
    eeze_events = eina_list_append(eeze_events, disk);
