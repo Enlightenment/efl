@@ -22,16 +22,18 @@ extern "C" {
 int shm_fd = -1;
 int shm_size = 0;
 void *shm_addr = NULL;
-char shmfile[1024] = "";
+char *shmfile = NULL;
 
 void
 shm_alloc(int dsize)
 {
 #ifdef HAVE_SHM_OPEN
+   if (!shmfile) shmfile = malloc(1024);
+   shmfile[0] = 0;
    srand(time(NULL));
    do
      {
-        snprintf(shmfile, sizeof(shmfile), "/evas-loader-xcf.%i.%i",
+        snprintf(shmfile, sizeof(shmfile), "/evas-loader.%i.%i",
                  (int)getpid(), (int)rand());
         shm_fd = shm_open(shmfile, O_RDWR | O_CREAT | O_EXCL, S_IRUSR | S_IWUSR);
      }
@@ -69,6 +71,8 @@ shm_free(void)
         close(shm_fd);
         shm_fd = -1;
         shm_addr = NULL;
+        if (shmfile) free(shmfile);
+        shmfile = NULL;
         return;
      }
 #endif
