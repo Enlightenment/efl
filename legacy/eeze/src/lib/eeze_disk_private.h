@@ -55,6 +55,7 @@ struct _Eeze_Disk
    const char *mount_point;
    const char *mount_wrapper;
    unsigned long mount_opts;
+   uid_t uid;
 
    struct
      {

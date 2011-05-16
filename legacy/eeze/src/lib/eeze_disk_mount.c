@@ -2,6 +2,8 @@
 #include "config.h"
 #endif
 
+#include <unistd.h>
+
 #include <Ecore.h>
 #include <Eeze.h>
 #include <Eeze_Disk.h>
@@ -154,6 +156,8 @@ eeze_disk_mountopts_set(Eeze_Disk *disk, unsigned long opts)
    if (opts != disk->mount_opts)
      disk->mount_cmd_changed = EINA_TRUE;
    disk->mount_opts = opts;
+   if (opts & EEZE_DISK_MOUNTOPT_UID)
+     disk->uid = getuid();
    return EINA_TRUE;
 }
 
@@ -265,6 +269,8 @@ eeze_disk_mount(Eeze_Disk *disk)
                eina_strbuf_append(disk->mount_cmd, "nosuid,");
              if (disk->mount_opts & EEZE_DISK_MOUNTOPT_REMOUNT)
                eina_strbuf_append(disk->mount_cmd, "remount,");
+             if (disk->mount_opts & EEZE_DISK_MOUNTOPT_UID)
+               eina_strbuf_append_printf(disk->mount_cmd, "uid=%i,", (int)disk->uid);
              eina_strbuf_append_printf(disk->mount_cmd, " UUID=%s %s", disk->cache.uuid, disk->mount_point);
           }
         disk->mount_cmd_changed = EINA_FALSE;

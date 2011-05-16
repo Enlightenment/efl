@@ -1,4 +1,7 @@
 2011-05-15  Mike Blumenkrantz (discomfitor/zmike)
++EEZE_DISK_MOUNTOPT_UID
+Add a uid=%i mount option using getuid, NOT geteuid
+--------------------------------------
 +eeze_disk_mount_wrapper_set
 +eeze_disk_mount_wrapper_get
 Allow use of wrapper exes for mount commands (such as sudo)
