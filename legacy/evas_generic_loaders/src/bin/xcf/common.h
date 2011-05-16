@@ -40,7 +40,7 @@
 
 #endif
 
-//#define XCF_DBG
+//#define XCF_DBG 1
 
 #ifdef XCF_DBG
 #define D(fmt, args...) fprintf(stderr, fmt, ## args)

@@ -218,10 +218,9 @@ struct _Tile
 */
 struct _GimpImage
 {
-  int                 fd;
-  gzFile              fp;
-  char*               filename;
-  int                 cp;              /*  file stream pointer          */
+  void               *file;
+  char               *filename;
+  long                cp;
   int                 compression;     /*  file compression mode        */
   int                 file_version;
 
@@ -249,12 +248,156 @@ _image;
 
 /* ------------------------------------------------------------------------- prototypes ------------ */
 
+typedef struct _File  File;
+typedef struct _Chunk Chunk;
+
+#define FBUF 1
+#define CHUNK_SIZE (32 * 1024)
+
+struct _Chunk
+{
+   int            size;
+   unsigned char  data[CHUNK_SIZE];
+};
+
+struct _File
+{
+   int            fd;
+   gzFile         fp;
+   long           pos, size;
+   int            chunk_num;
+   Chunk        **chunk;
+};
+
+static File *
+f_open(const char *file)
+{
+   File *f;
+   
+   f = calloc(1, sizeof(File));
+   if (!f) return NULL;
+   f->fd = open(file, O_RDONLY);
+   if (f->fd < 0)
+     {
+        D("open of %s failed\n", file);
+        free(f);
+        return NULL;
+     }
+   f->fp = gzdopen(f->fd, "r");
+   if (!f->fp)
+     {
+        D("gzdopen of %i failed\n", f->fd);
+        close(f->fd);
+        free(f);
+        return NULL;
+     }
+   return f;
+}
+
+static void
+f_close(File *f)
+{
+   // FIXME: free chunks
+   gzclose(f->fp);
+   free(f);
+}
+
+#ifdef FBUF   
+static void
+_f_read_pos(File *f, long pos, long bytes)
+{
+   long i, cnum;
+   Chunk **cks;
+   
+   if (f->size > 0) return;
+   cnum = ((pos + bytes) / CHUNK_SIZE) + 1;
+   if (f->chunk_num >= cnum) return;
+   D("FFFF: go up to %li + %li, chunks %li\n", pos, bytes, cnum);
+   cks = realloc(f->chunk, sizeof(Chunk *) * cnum);
+   if (!cks) return;
+   f->chunk = cks;
+   for (i = f->chunk_num; i < cnum; i++)
+     {
+        if (f->size != 0)
+          {
+             f->chunk[i] = NULL;
+             continue;
+          }
+        f->chunk[i] = malloc(sizeof(Chunk));
+        if (f->chunk[i])
+          {
+             f->chunk[i]->size = gzread(f->fp, f->chunk[i]->data, CHUNK_SIZE);
+             D("FFFF: go %i\n", f->chunk[i]->size);
+             if (f->chunk[i]->size < CHUNK_SIZE)
+               {
+                  f->size = (i * CHUNK_SIZE) + f->chunk[i]->size;
+               }
+          }
+     }
+   f->chunk_num = cnum;
+}
+#endif
+
+static long
+f_read(File *f, unsigned char *dest, long bytes)
+{
+#ifdef FBUF   
+   long done = 0, off = 0;
+   int c;
+   unsigned char *p;
+   _f_read_pos(f, f->pos, bytes);
+   
+   c = f->pos / CHUNK_SIZE;
+   off = f->pos - (c * CHUNK_SIZE);
+   p = dest;
+   while ((done < bytes) && (c < f->chunk_num))
+     {
+        long amount = bytes - done;
+        
+        if (!f->chunk[c]) break;
+        if (amount > (f->chunk[c]->size - off))
+           amount = (f->chunk[c]->size - off);
+        if (amount < 1) return 0;
+        memcpy(p, f->chunk[c]->data + off, amount);
+        p += amount;
+        off = 0;
+        done += amount;
+        c++;
+     }
+   f->pos += done;
+   return done;
+#else
+   long done = gzread(f->fp, dest, bytes);
+   f->pos += done;
+   return done;
+#endif   
+}
+
+static void
+f_seek(File *f, long pos)
+{
+#ifdef FBUF
+   if (f->size > 0)
+     {
+        if (pos >= f->size) pos = f->size -1;
+     }
+#endif   
+   if (f->pos == pos) return;
+   f->pos = pos;
+#ifdef FBUF
+   _f_read_pos(f, f->pos, 1);
+#else
+   gzseek(f->fp, f->pos, SEEK_SET);
+#endif   
+}
+
+
 /* stuff that was adapted from xcf.c */
 
 static void       xcf_seek_pos(int pos);
-static int        xcf_read_int32(gzFile *fp, DATA32 *data, int count);
-static int        xcf_read_int8(gzFile *fp, DATA8 *data, int count);
-static int        xcf_read_string(gzFile *fp, char **data, int count);
+static int        xcf_read_int32(void *fp, DATA32 *data, int count);
+static int        xcf_read_int8(void *fp, DATA8 *data, int count);
+static int        xcf_read_string(void *fp, char **data, int count);
 static char       xcf_load_prop(PropType *prop_type, DATA32 *prop_size);
 static void       xcf_load_image(void);
 static char       xcf_load_image_props(void);
@@ -314,12 +457,12 @@ xcf_seek_pos(int pos)
    if (image->cp != pos)
      {
         image->cp = pos;
-        gzseek(image->fp, image->cp, SEEK_SET);
+        f_seek(image->file, image->cp);
      }
 }
 
 static int
-xcf_read_int32(gzFile   *fp,
+xcf_read_int32(void     *fp,
                DATA32   *data,
                int       count)
 {
@@ -331,7 +474,7 @@ xcf_read_int32(gzFile   *fp,
         xcf_read_int8(fp, (DATA8*) data, count * 4);
         while (count--)
           {
-             *data = (DATA32) ntohl (*data);
+             *data = (DATA32)ntohl(*data);
              data++;
           }
      }
@@ -339,7 +482,7 @@ xcf_read_int32(gzFile   *fp,
 }
 
 static int
-xcf_read_int8(gzFile    *fp,
+xcf_read_int8(void     *fp,
               DATA8    *data,
               int       count)
 {
@@ -349,7 +492,7 @@ xcf_read_int8(gzFile    *fp,
    total = count;
    while (count > 0)
      {
-        bytes = gzread(fp, data, count);
+        bytes = f_read(fp, data, count);
         if (bytes <= 0) /* something bad happened */
            break;
         count -= bytes;
@@ -359,7 +502,7 @@ xcf_read_int8(gzFile    *fp,
 }
 
 static int
-xcf_read_string(gzFile   *fp,
+xcf_read_string(void     *fp,
                 char    **data,
                 int       count)
 {
@@ -387,8 +530,8 @@ static char
 xcf_load_prop(PropType *prop_type,
               DATA32 *prop_size)
 {
-   image->cp += xcf_read_int32(image->fp, (DATA32 *)prop_type, 1);
-   image->cp += xcf_read_int32(image->fp, (DATA32 *)prop_size, 1);
+   image->cp += xcf_read_int32(image->file, (DATA32 *)prop_type, 1);
+   image->cp += xcf_read_int32(image->file, (DATA32 *)prop_size, 1);
    return 1;
 }
 
@@ -418,7 +561,7 @@ xcf_load_image_props(void)
                                 "XCF warning: version 0 of XCF file format\n"
                                 "did not save indexed colormaps correctly.\n"
                                 "Substituting grayscale map.\n");
-                       image->cp += xcf_read_int32(image->fp, (DATA32 *)&image->num_cols, 1);
+                       image->cp += xcf_read_int32(image->file, (DATA32 *)&image->num_cols, 1);
                        image->cmap = malloc(sizeof(DATA8) * image->num_cols * 3);
                        if (!image->cmap) return 0;
                        xcf_seek_pos (image->cp + image->num_cols);
@@ -432,10 +575,10 @@ xcf_load_image_props(void)
                   else
                     {
                        D("Loading colormap.\n");
-                       image->cp += xcf_read_int32(image->fp, (DATA32 *)&image->num_cols, 1);
+                       image->cp += xcf_read_int32(image->file, (DATA32 *)&image->num_cols, 1);
                        image->cmap = malloc(sizeof(DATA8) * image->num_cols * 3);
                        if (!image->cmap) return 0;
-                       image->cp += xcf_read_int8(image->fp, (DATA8 *)image->cmap, image->num_cols * 3);
+                       image->cp += xcf_read_int8(image->file, (DATA8 *)image->cmap, image->num_cols * 3);
                     }
                }
              break;
@@ -443,7 +586,7 @@ xcf_load_image_props(void)
                {
                   char compression;
 
-                  image->cp += xcf_read_int8(image->fp, (DATA8 *)&compression, 1);
+                  image->cp += xcf_read_int8(image->file, (DATA8 *)&compression, 1);
 
                   if ((compression != COMPRESS_NONE) &&
                       (compression != COMPRESS_RLE) &&
@@ -477,7 +620,7 @@ xcf_load_image_props(void)
                   while (prop_size > 0)
                     {
                        amount = (16 < prop_size ? 16 : prop_size);
-                       image->cp += xcf_read_int8 (image->fp, buf, amount);
+                       image->cp += xcf_read_int8(image->file, buf, amount);
                        prop_size -= (16 < amount ? 16 : amount);
                     }
                }
@@ -502,7 +645,7 @@ xcf_load_image(void)
    while (1)
      {
         /* read in the offset of the next layer */
-        image->cp += xcf_read_int32(image->fp, &offset, 1);
+        image->cp += xcf_read_int32(image->file, &offset, 1);
         /* if the offset is 0 then we are at the end
          *  of the layer list. */
         if (offset == 0) break;
@@ -554,23 +697,23 @@ xcf_load_layer_props(Layer *layer)
            case PROP_FLOATING_SELECTION:
              D("Loading floating selection.\n");
              image->floating_sel = layer;
-             image->cp += xcf_read_int32(image->fp, (DATA32 *)&image->floating_sel_offset, 1);
+             image->cp += xcf_read_int32(image->file, (DATA32 *)&image->floating_sel_offset, 1);
              break;
            case PROP_OPACITY:
-             image->cp += xcf_read_int32(image->fp, (DATA32 *)&layer->opacity, 1);
+             image->cp += xcf_read_int32(image->file, (DATA32 *)&layer->opacity, 1);
              break;
            case PROP_VISIBLE:
-             image->cp += xcf_read_int32(image->fp, (DATA32 *)&layer->visible, 1);
+             image->cp += xcf_read_int32(image->file, (DATA32 *)&layer->visible, 1);
              break;
            case PROP_PRESERVE_TRANSPARENCY:
-             image->cp += xcf_read_int32(image->fp, (DATA32 *)&layer->preserve_trans, 1);
+             image->cp += xcf_read_int32(image->file, (DATA32 *)&layer->preserve_trans, 1);
              break;
            case PROP_OFFSETS:
-             image->cp += xcf_read_int32(image->fp, (DATA32 *)&layer->offset_x, 1);
-             image->cp += xcf_read_int32(image->fp, (DATA32 *)&layer->offset_y, 1);
+             image->cp += xcf_read_int32(image->file, (DATA32 *)&layer->offset_x, 1);
+             image->cp += xcf_read_int32(image->file, (DATA32 *)&layer->offset_y, 1);
              break;
            case PROP_MODE:
-             image->cp += xcf_read_int32(image->fp, (DATA32 *)&layer->mode, 1);
+             image->cp += xcf_read_int32(image->file, (DATA32 *)&layer->mode, 1);
              break;
 
              /* I threw out all of the following: --cK */
@@ -590,7 +733,7 @@ xcf_load_layer_props(Layer *layer)
                   while (prop_size > 0)
                     {
                        amount = (16 < prop_size ? 16 : prop_size);
-                       image->cp += xcf_read_int8 (image->fp, buf, amount);
+                       image->cp += xcf_read_int8 (image->file, buf, amount);
                        prop_size -= (16 < amount ? 16 : amount);
                     }
                }
@@ -616,10 +759,10 @@ xcf_load_layer(void)
 
   D("Loading one layer ...\n");
   /* read in the layer width, height and type */
-  image->cp += xcf_read_int32(image->fp, (DATA32 *)&width, 1);
-  image->cp += xcf_read_int32(image->fp, (DATA32 *)&height, 1);
-  image->cp += xcf_read_int32(image->fp, (DATA32 *)&type, 1);
-  image->cp += xcf_read_string(image->fp, &name, 1);
+  image->cp += xcf_read_int32(image->file, (DATA32 *)&width, 1);
+  image->cp += xcf_read_int32(image->file, (DATA32 *)&height, 1);
+  image->cp += xcf_read_int32(image->file, (DATA32 *)&type, 1);
+  image->cp += xcf_read_string(image->file, &name, 1);
   /* ugly, I know */
   FREE(name);
 
@@ -634,8 +777,8 @@ xcf_load_layer(void)
    if (!layer->visible) return layer;
 
    /* read the hierarchy and layer mask offsets */
-   image->cp += xcf_read_int32(image->fp, &hierarchy_offset, 1);
-   image->cp += xcf_read_int32(image->fp, &layer_mask_offset, 1);
+   image->cp += xcf_read_int32(image->file, &hierarchy_offset, 1);
+   image->cp += xcf_read_int32(image->file, &layer_mask_offset, 1);
    /* read in the hierarchy */
    xcf_seek_pos(hierarchy_offset);
    if (!xcf_load_hierarchy(&(layer->tiles), &(layer->num_rows),
@@ -790,9 +933,9 @@ xcf_load_channel(void)
 
    D("Loading channel ...\n");
    /* read in the layer width, height and name */
-   image->cp += xcf_read_int32(image->fp, (DATA32 *)&width, 1);
-   image->cp += xcf_read_int32(image->fp, (DATA32 *)&height, 1);
-   image->cp += xcf_read_string(image->fp, &name, 1);
+   image->cp += xcf_read_int32(image->file, (DATA32 *)&width, 1);
+   image->cp += xcf_read_int32(image->file, (DATA32 *)&height, 1);
+   image->cp += xcf_read_string(image->file, &name, 1);
 
    /* Yeah, still ugly :) */
    FREE(name);
@@ -803,7 +946,7 @@ xcf_load_channel(void)
    /* read in the channel properties */
    if (!xcf_load_channel_props(layer)) goto error;
    /* read the hierarchy and layer mask offsets */
-   image->cp += xcf_read_int32(image->fp, &hierarchy_offset, 1);
+   image->cp += xcf_read_int32(image->file, &hierarchy_offset, 1);
    /* read in the hierarchy */
    xcf_seek_pos(hierarchy_offset);
    if (!xcf_load_hierarchy(&(layer->tiles), &(layer->num_rows), &(layer->num_cols), &(layer->bpp)))
@@ -839,10 +982,10 @@ xcf_load_channel_props(Layer *layer)
                   return 1;
                }
            case PROP_OPACITY:
-             image->cp += xcf_read_int32(image->fp, (DATA32 *)&layer->opacity, 1);
+             image->cp += xcf_read_int32(image->file, (DATA32 *)&layer->opacity, 1);
              break;
            case PROP_VISIBLE:
-             image->cp += xcf_read_int32(image->fp, (DATA32 *)&layer->visible, 1);
+             image->cp += xcf_read_int32(image->file, (DATA32 *)&layer->visible, 1);
              break;
            case PROP_ACTIVE_CHANNEL:
            case PROP_SHOW_MASKED:
@@ -860,7 +1003,7 @@ xcf_load_channel_props(Layer *layer)
                   while (prop_size > 0)
                     {
                        amount = (16 < prop_size ? 16 : prop_size);
-                       image->cp += xcf_read_int8(image->fp, buf, amount);
+                       image->cp += xcf_read_int8(image->file, buf, amount);
                        prop_size -= (16 < amount ? 16 : amount);
                     }
                }
@@ -879,17 +1022,17 @@ xcf_load_hierarchy(Tile **tiles, int *num_rows, int *num_cols, int *bpp)
    int width;
    int height;
 
-   image->cp += xcf_read_int32(image->fp, (DATA32 *)&width, 1);
-   image->cp += xcf_read_int32(image->fp, (DATA32 *)&height, 1);
-   image->cp += xcf_read_int32(image->fp, (DATA32 *)bpp, 1);
-   image->cp += xcf_read_int32(image->fp, &offset, 1); /* top level */
+   image->cp += xcf_read_int32(image->file, (DATA32 *)&width, 1);
+   image->cp += xcf_read_int32(image->file, (DATA32 *)&height, 1);
+   image->cp += xcf_read_int32(image->file, (DATA32 *)bpp, 1);
+   image->cp += xcf_read_int32(image->file, &offset, 1); /* top level */
 
    D("Loading hierarchy: width %i, height %i,  bpp %i\n", width, height, *bpp);
 
    /* discard offsets for layers below first, if any. */
    do
      {
-        image->cp += xcf_read_int32(image->fp, &junk, 1);
+        image->cp += xcf_read_int32(image->file, &junk, 1);
      }
    while (junk != 0);
    /* save the current position as it is where the
@@ -921,8 +1064,8 @@ xcf_load_level(Tile **tiles_p, int hierarchy_width, int hierarchy_height,
    Tile *tiles;
    Tile *current_tile;
 
-   image->cp += xcf_read_int32(image->fp, (DATA32*) &width, 1);
-   image->cp += xcf_read_int32(image->fp, (DATA32*) &height, 1);
+   image->cp += xcf_read_int32(image->file, (DATA32*) &width, 1);
+   image->cp += xcf_read_int32(image->file, (DATA32*) &height, 1);
 
    if ((width != hierarchy_width) || (height != hierarchy_height)) return 0;
 
@@ -930,7 +1073,7 @@ xcf_load_level(Tile **tiles_p, int hierarchy_width, int hierarchy_height,
    (*tiles_p) = allocate_tiles(width, height, bpp, num_rows, num_cols);
    tiles = (*tiles_p);
 
-   image->cp += xcf_read_int32(image->fp, &offset, 1);
+   image->cp += xcf_read_int32(image->file, &offset, 1);
    if (offset == 0) return 1;
 
    ntiles = (*num_rows) * (*num_cols);
@@ -952,7 +1095,7 @@ xcf_load_level(Tile **tiles_p, int hierarchy_width, int hierarchy_height,
 
         /* read in the offset of the next tile so we can calculate the amount
 	 of data needed for this tile*/
-        image->cp += xcf_read_int32(image->fp, &offset2, 1);
+        image->cp += xcf_read_int32(image->file, &offset2, 1);
 
         /* if the offset is 0 then we need to read in the maximum possible
 	 allowing for negative compression */
@@ -993,7 +1136,7 @@ xcf_load_level(Tile **tiles_p, int hierarchy_width, int hierarchy_height,
          */
         xcf_seek_pos(saved_pos);
         /* read in the offset of the next tile */
-        image->cp += xcf_read_int32(image->fp, &offset, 1);
+        image->cp += xcf_read_int32(image->file, &offset, 1);
      }
 
    if (offset != 0)
@@ -1009,7 +1152,7 @@ xcf_load_level(Tile **tiles_p, int hierarchy_width, int hierarchy_height,
 static char
 xcf_load_tile(Tile *tile)
 {
-   image->cp += xcf_read_int8(image->fp, tile->data,
+   image->cp += xcf_read_int8(image->file, tile->data,
                               tile->ewidth * tile->eheight * tile->bpp);
    return 1;
 }
@@ -1038,7 +1181,7 @@ xcf_load_tile_rle(Tile    *tile,
 
    /* we have to use fread instead of xcf_read_* because we may be
     reading past the end of the file here */
-   nmemb_read_successfully = gzread(image->fp, xcfdata, data_length);
+   nmemb_read_successfully = f_read(image->file, xcfdata, data_length);
    image->cp += nmemb_read_successfully;
 
    xcfdatalimit = &xcfodata[nmemb_read_successfully - 1];
@@ -1429,10 +1572,9 @@ xcf_file_init(char *filename)
    int image_type;
 
    image->single_layer_index = -1;
-   image->fd = open(filename, O_RDONLY);
-   if (image->fd < 0) return 0;
-   image->fp = gzdopen(image->fd, "r");
-   if (!image->fp) return 0;
+   image->file = f_open(filename);
+   D("image->file = %p\n", image->file);
+   if (!image->file) return 0;
 
    image->filename = filename;
    image->layers = NULL;
@@ -1443,12 +1585,11 @@ xcf_file_init(char *filename)
 
    image->cp = 0;
 
-   image->cp += xcf_read_int8(image->fp, (DATA8 *)id, 14);
+   image->cp += xcf_read_int8(image->file, (DATA8 *)id, 14);
    if (strncmp(id, "gimp xcf ", 9))
      {
         success = 0;
-        gzclose(image->fp);
-        close(image->fd);
+        f_close(image->file);
      }
    else if (!strcmp(id + 9, "file"))
      {
@@ -1461,15 +1602,14 @@ xcf_file_init(char *filename)
    else
      {
         success = 0;
-        gzclose(image->fp);
-        close(image->fd);
+        f_close(image->file);
      }
 
    if (success)
      {
-        image->cp += xcf_read_int32(image->fp, (DATA32 *)&width, 1);
-        image->cp += xcf_read_int32(image->fp, (DATA32 *)&height, 1);
-        image->cp += xcf_read_int32(image->fp, (DATA32 *)&image_type, 1);
+        image->cp += xcf_read_int32(image->file, (DATA32 *)&width, 1);
+        image->cp += xcf_read_int32(image->file, (DATA32 *)&height, 1);
+        image->cp += xcf_read_int32(image->file, (DATA32 *)&image_type, 1);
 
         image->width = width;
         image->height = height;
@@ -1486,8 +1626,7 @@ xcf_cleanup(void)
 {
    Layer *l, *lp;
 
-   if (image->fp) gzclose(image->fp);
-   if (image->fd >= 0) close(image->fd);
+   if (image->file) f_close(image->file);
    for (l = image->last_layer; l; l = lp)
      {
         lp = l->prev;
