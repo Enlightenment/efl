@@ -2171,7 +2171,7 @@ edje_object_size_min_restricted_calc(Evas_Object *obj, Evas_Coord *minw, Evas_Co
    Edje *ed;
    Evas_Coord pw, ph;
    int maxw, maxh;
-   int ok;
+   int okw, okh;
    int reset_maxwh;
    Edje_Real_Part *pep = NULL;
    Eina_Bool has_non_fixed_tb = EINA_FALSE;
@@ -2195,12 +2195,11 @@ edje_object_size_min_restricted_calc(Evas_Object *obj, Evas_Coord *minw, Evas_Co
    maxw = 0;
    maxh = 0;
 
-   ok = 1;
-   while (ok)
+   do
      {
 	unsigned int i;
 
-	ok = 0;
+        okw = okh = 0;
 	ed->dirty = 1;
 #ifdef EDJE_CALC_CACHE
 	ed->all_part_change = 1;
@@ -2241,7 +2240,7 @@ edje_object_size_min_restricted_calc(Evas_Object *obj, Evas_Coord *minw, Evas_Co
 		       if (w > maxw)
 			 {
 			    maxw = w;
-			    ok = 1;
+			    okw = 1;
 			    pep = ep;
 			    didw = 1;
 			 }
@@ -2255,7 +2254,7 @@ edje_object_size_min_restricted_calc(Evas_Object *obj, Evas_Coord *minw, Evas_Co
 			    if (h > maxh)
 			      {
 				 maxh = h;
-				 ok = 1;
+				 okh = 1;
 				 pep = ep;
 			      }
                             has_non_fixed_tb = EINA_TRUE;
@@ -2263,11 +2262,14 @@ edje_object_size_min_restricted_calc(Evas_Object *obj, Evas_Coord *minw, Evas_Co
 		    }
 	       }
 	  }
-	if (ok)
+	if (okw)
 	  {
 	     ed->w += maxw;
-	     ed->h += maxh;
 	     if (ed->w < restrictedw) ed->w = restrictedw;
+          }
+        if (okh)
+          {
+	     ed->h += maxh;
 	     if (ed->h < restrictedh) ed->h = restrictedh;
 	  }
 	if ((ed->w > 4000) || (ed->h > 4000))
@@ -2292,6 +2294,7 @@ edje_object_size_min_restricted_calc(Evas_Object *obj, Evas_Coord *minw, Evas_Co
 	       }
 	  }
      }
+   while (okw || okh);
    ed->min.w = ed->w;
    ed->min.h = ed->h;
 
