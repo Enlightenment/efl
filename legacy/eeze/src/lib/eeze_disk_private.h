@@ -47,6 +47,7 @@ struct _Eeze_Disk
    Eina_Strbuf *unmount_cmd;
    Eina_Bool mount_cmd_changed : 1;
    Eina_Bool unmount_cmd_changed : 1;
+   Eina_Bool mounted : 1;
    Ecore_Exe *mounter;
 
    const char *syspath;

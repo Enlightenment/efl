@@ -68,7 +68,6 @@ _eeze_disk_mount_result_handler(void *data __UNUSED__, int type __UNUSED__, Ecor
    eeze_events = eina_list_remove_list(eeze_events, l);
    if (disk->mount_status == EEZE_DISK_MOUNTING)
      {
-        disk->mount_status = EEZE_DISK_NULL;
         disk->mounter = NULL;
         if (!ev->exit_code)
           { 
@@ -99,7 +98,6 @@ _eeze_disk_mount_result_handler(void *data __UNUSED__, int type __UNUSED__, Ecor
           e = malloc(sizeof(Eeze_Event_Disk_Unmount));
           EINA_SAFETY_ON_NULL_RETURN_VAL(e, ECORE_CALLBACK_RENEW);
           e->disk = disk;
-          disk->mount_status = EEZE_DISK_NULL;
           disk->mounter = NULL;
           ecore_event_add(EEZE_EVENT_DISK_UNMOUNT, e, NULL, NULL);
           break;

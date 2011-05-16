@@ -9,6 +9,8 @@
 #include "eeze_udev_private.h"
 #include "eeze_disk_private.h"
 
+Eina_List *_eeze_disks = NULL;
+
 static Eeze_Disk_Type
 _eeze_disk_type_find(Eeze_Disk *disk)
 {
@@ -110,6 +112,8 @@ eeze_disk_new(const char *path)
    disk->mount_cmd_changed = EINA_TRUE;
    disk->unmount_cmd_changed = EINA_TRUE;
 
+   _eeze_disks = eina_list_append(_eeze_disks, disk);
+
    return disk;
 }
 
@@ -165,6 +169,8 @@ eeze_disk_new_from_mount(const char *mount_point)
    else
      disk->devpath = devpath;
    disk->mount_point = eina_stringshare_add(mount_point);
+   
+   _eeze_disks = eina_list_append(_eeze_disks, disk);
 
    return disk;
 error:
@@ -186,12 +192,12 @@ eeze_disk_free(Eeze_Disk *disk)
 {
    EINA_SAFETY_ON_NULL_RETURN(disk);
 
-
    udev_device_unref(disk->device);
    if (disk->mount_cmd)
      eina_strbuf_free(disk->mount_cmd);
    if (disk->unmount_cmd)
      eina_strbuf_free(disk->unmount_cmd);
+   _eeze_disks = eina_list_remove(_eeze_disks, disk);
    free(disk);
 }
 

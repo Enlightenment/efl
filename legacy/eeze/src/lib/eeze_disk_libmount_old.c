@@ -26,6 +26,7 @@ static Eina_Bool _fstab_scan_active = EINA_FALSE;
 static mnt_tab *_eeze_mount_mtab = NULL;
 static mnt_tab *_eeze_mount_fstab = NULL;
 static mnt_lock *_eeze_mtab_lock = NULL;
+extern Eina_List *_eeze_disks;
 
 static mnt_tab *_eeze_mount_tab_parse(const char *filename);
 static void _eeze_mount_tab_watcher(void *data, Ecore_File_Monitor *mon __UNUSED__, Ecore_File_Event event __UNUSED__, const char *path);
@@ -108,6 +109,44 @@ _eeze_mount_tab_watcher(void *data, Ecore_File_Monitor *mon __UNUSED__, Ecore_Fi
         goto error;
      }
 
+   if (data)
+     {
+        Eina_List *l;
+        Eeze_Disk *disk;
+
+        /* catch externally initiated mounts on existing disks by comparing known mount state to current state */
+        EINA_LIST_FOREACH(_eeze_disks, l, disk)
+          {
+             Eina_Bool mounted;
+
+             mounted = disk->mounted;
+
+             if ((eeze_disk_libmount_mounted_get(disk) != mounted) && (!disk->mount_status))
+               {
+                  if (!mounted)
+                    {
+                        Eeze_Event_Disk_Mount *e;
+                        e = malloc(sizeof(Eeze_Event_Disk_Mount));
+                        if (e)
+                          {
+                             e->disk = disk;
+                             ecore_event_add(EEZE_EVENT_DISK_MOUNT, e, NULL, NULL);
+                          }
+                    }
+                  else
+                    {
+                       Eeze_Event_Disk_Unmount *e;
+                       e = malloc(sizeof(Eeze_Event_Disk_Unmount));
+                       if (e)
+                         {
+                            e->disk = disk;
+                            ecore_event_add(EEZE_EVENT_DISK_UNMOUNT, e, NULL, NULL);
+                         }
+                    }
+               }
+          }
+     }
+
    mnt_free_tab(bak);
    return;
 
@@ -159,9 +198,13 @@ eeze_disk_libmount_mounted_get(Eeze_Disk *disk)
 
    mnt = mnt_tab_find_srcpath(_eeze_mount_mtab, eeze_disk_devpath_get(disk), MNT_ITER_BACKWARD);
    if (!mnt)
-     return EINA_FALSE;
+     {
+        disk->mounted = EINA_FALSE;
+        return EINA_FALSE;
+     }
 
    disk->mount_point = eina_stringshare_add(mnt_fs_get_target(mnt));
+   disk->mounted = EINA_TRUE;
    return EINA_TRUE;
 }
 
