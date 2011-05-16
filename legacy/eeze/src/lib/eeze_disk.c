@@ -197,6 +197,9 @@ eeze_disk_free(Eeze_Disk *disk)
      eina_strbuf_free(disk->mount_cmd);
    if (disk->unmount_cmd)
      eina_strbuf_free(disk->unmount_cmd);
+   if (disk->eject_cmd)
+     eina_strbuf_free(disk->eject_cmd);
+   if (disk->mounter) ecore_exe_kill(disk->mounter);
    _eeze_disks = eina_list_remove(_eeze_disks, disk);
    free(disk);
 }

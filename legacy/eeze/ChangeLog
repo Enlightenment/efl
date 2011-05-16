@@ -1,3 +1,8 @@
+2011-05-16  Mike Blumenkrantz (discomfitor/zmike)
++EEZE_EVENT_DISK_EJECT
++eeze_disk_eject
+Functions for ejecting a disk
+
 2011-05-15  Mike Blumenkrantz (discomfitor/zmike)
 +eeze_disk_cancel
 Cancel the current pending mount/umount operation on a disk

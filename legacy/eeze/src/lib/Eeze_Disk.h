@@ -55,22 +55,18 @@ typedef enum
 
 EAPI extern int EEZE_EVENT_DISK_MOUNT;
 EAPI extern int EEZE_EVENT_DISK_UNMOUNT;
+EAPI extern int EEZE_EVENT_DISK_EJECT;
 EAPI extern int EEZE_EVENT_DISK_ERROR;
 
-typedef struct _Eeze_Event_Disk_Mount Eeze_Event_Disk_Mount;
-typedef struct _Eeze_Event_Disk_Unmount Eeze_Event_Disk_Unmount;
+typedef struct _Eeze_Event_Disk Eeze_Event_Disk_Mount;
+typedef struct _Eeze_Event_Disk Eeze_Event_Disk_Unmount;
+typedef struct _Eeze_Event_Disk Eeze_Event_Disk_Eject;
 typedef struct _Eeze_Disk Eeze_Disk;
 
-struct _Eeze_Event_Disk_Mount
+struct _Eeze_Event_Disk
 {
    Eeze_Disk *disk;
 };
-
-struct _Eeze_Event_Disk_Unmount
-{
-   Eeze_Disk *disk;
-};
-
 
 typedef struct _Eeze_Event_Disk_Error Eeze_Event_Disk_Error;
 

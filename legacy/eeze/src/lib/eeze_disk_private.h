@@ -34,7 +34,8 @@ typedef enum
 {
    EEZE_DISK_NULL,
    EEZE_DISK_MOUNTING,
-   EEZE_DISK_UNMOUNTING
+   EEZE_DISK_UNMOUNTING,
+   EEZE_DISK_EJECTING
 } Eeze_Disk_Status;
 
 struct _Eeze_Disk
@@ -45,6 +46,7 @@ struct _Eeze_Disk
    Eeze_Disk_Status mount_status;
    Eina_Strbuf *mount_cmd;
    Eina_Strbuf *unmount_cmd;
+   Eina_Strbuf *eject_cmd;
    Eina_Bool mount_cmd_changed : 1;
    Eina_Bool unmount_cmd_changed : 1;
    Eina_Bool mounted : 1;

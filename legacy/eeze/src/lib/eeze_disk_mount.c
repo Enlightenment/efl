@@ -15,6 +15,7 @@
 
 EAPI int EEZE_EVENT_DISK_MOUNT = 0;
 EAPI int EEZE_EVENT_DISK_UNMOUNT = 0;
+EAPI int EEZE_EVENT_DISK_EJECT = 0;
 EAPI int EEZE_EVENT_DISK_ERROR = 0;
 static Ecore_Event_Handler *_mount_handler = NULL;
 static Eina_List *eeze_events = NULL;
@@ -91,7 +92,7 @@ _eeze_disk_mount_result_handler(void *data __UNUSED__, int type __UNUSED__, Ecor
         else
            _eeze_disk_mount_error_handler(disk, "incorrect invocation or permissions");
      }
-   else
+   else if (disk->mount_status == EEZE_DISK_UNMOUNTING)
      switch (ev->exit_code)
        {
         case 0:
@@ -104,11 +105,27 @@ _eeze_disk_mount_result_handler(void *data __UNUSED__, int type __UNUSED__, Ecor
 
         default:
           INF("Could not unmount disk, retrying");
-          disk->mounter = ecore_exe_pipe_run(eina_strbuf_string_get(disk->unmount_cmd), 0, disk);
+          disk->mounter = ecore_exe_run(eina_strbuf_string_get(disk->unmount_cmd), disk);
           eeze_events = eina_list_append(eeze_events, disk);
           return ECORE_CALLBACK_RENEW;
        }
+     else
+       switch (ev->exit_code)
+         {
+          case 0:
+            e = malloc(sizeof(Eeze_Event_Disk_Eject));
+            EINA_SAFETY_ON_NULL_RETURN_VAL(e, ECORE_CALLBACK_RENEW);
+            e->disk = disk;
+            disk->mounter = NULL;
+            ecore_event_add(EEZE_EVENT_DISK_EJECT, e, NULL, NULL);
+            break;
 
+          default:
+            INF("Could not eject disk, retrying");
+            disk->mounter = ecore_exe_run(eina_strbuf_string_get(disk->unmount_cmd), disk);
+            eeze_events = eina_list_append(eeze_events, disk);
+            return ECORE_CALLBACK_RENEW;
+         }
    return ECORE_CALLBACK_RENEW;
 }
 
@@ -123,6 +140,7 @@ eeze_mount_init(void)
 {
    EEZE_EVENT_DISK_MOUNT = ecore_event_type_new();
    EEZE_EVENT_DISK_UNMOUNT = ecore_event_type_new();
+   EEZE_EVENT_DISK_EJECT = ecore_event_type_new();
    EEZE_EVENT_DISK_ERROR = ecore_event_type_new();
    _mount_handler = ecore_event_handler_add(ECORE_EXE_EVENT_DEL,
                                            (Ecore_Event_Handler_Cb)_eeze_disk_mount_result_handler, NULL);
@@ -324,13 +342,37 @@ eeze_disk_unmount(Eeze_Disk *disk)
    return EINA_TRUE;
 }
 
+EAPI Eina_Bool
+eeze_disk_eject(Eeze_Disk *disk)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(disk, EINA_FALSE);
+
+   if (!disk->eject_cmd)
+     {
+        disk->eject_cmd = eina_strbuf_new();
+        if (disk->mount_wrapper)
+          eina_strbuf_append_printf(disk->eject_cmd, "%s ", disk->mount_wrapper);
+        eina_strbuf_append_printf(disk->eject_cmd, EEZE_EJECT_BIN" %s", eeze_disk_devpath_get(disk));
+     }
+
+   INF("Ejecting: %s", eina_strbuf_string_get(disk->eject_cmd));
+   disk->mounter = ecore_exe_run(eina_strbuf_string_get(disk->eject_cmd), disk);
+   if (!disk->mounter)
+     return EINA_FALSE;
+
+   eeze_events = eina_list_append(eeze_events, disk);
+   disk->mount_status = EEZE_DISK_EJECTING;
+   return EINA_TRUE;
+}
+
 EAPI void
 eeze_disk_cancel(Eeze_Disk *disk)
 {
    EINA_SAFETY_ON_NULL_RETURN(disk);
    if ((!disk->mount_status) || (!disk->mounter)) return;
    disk->mount_status = EEZE_DISK_NULL;
-   ecore_exe_quit(disk->mounter);
+   ecore_exe_kill(disk->mounter);
+   disk->mounter = NULL;
 }
 
 EAPI const char *
