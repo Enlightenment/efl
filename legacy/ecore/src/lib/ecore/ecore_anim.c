@@ -215,11 +215,23 @@ ecore_animator_timeline_add(double runtime, Ecore_Timeline_Cb func, const void *
 }
 
 static double
+_pos_map_sin(double in)
+{
+   return eina_f32p32_double_to(eina_f32p32_sin(eina_f32p32_double_from(in)));
+}
+
+static double
+_pos_map_cos(double in)
+{
+   return eina_f32p32_double_to(eina_f32p32_cos(eina_f32p32_double_from(in)));
+}
+
+static double
 _pos_map_accel_factor(double pos, double v1)
 {
    int i, fact = (int)v1;
    double p, o1 = pos, o2 = pos, v;
-   p = 1.0 - sin((M_PI / 2.0) + ((pos * M_PI) / 2.0));
+   p = 1.0 - _pos_map_sin((M_PI / 2.0) + ((pos * M_PI) / 2.0));
    o2 = p;
    for (i = 0; i < fact; i++)
      {
@@ -255,7 +267,7 @@ _pos_map_spring(double pos, int bounces, double decfac)
    if (b1 < 0) b1 = 0;
    decpos = (double)b1 / (double)b2;
    decay = _pos_map_accel_factor(1.0 - decpos, decfac);
-   return sin((M_PI / 2.0) + (p2 * len)) * decay;
+   return _pos_map_sin((M_PI / 2.0) + (p2 * len)) * decay;
 }
 
 /**
@@ -296,13 +308,13 @@ ecore_animator_pos_map(double pos, Ecore_Pos_Map map, double v1, double v2)
       case ECORE_POS_MAP_LINEAR:
         return pos;
       case ECORE_POS_MAP_ACCELERATE:
-        pos = 1.0 - sin((M_PI / 2.0) + ((pos * M_PI) / 2.0));
+        pos = 1.0 - _pos_map_sin((M_PI / 2.0) + ((pos * M_PI) / 2.0));
         return pos;
       case ECORE_POS_MAP_DECELERATE:
-        pos = sin((pos * M_PI) / 2.0);
+        pos = _pos_map_sin((pos * M_PI) / 2.0);
         return pos;
       case ECORE_POS_MAP_SINUSOIDAL:
-        pos = (1.0 - cos(pos * M_PI)) / 2.0;
+        pos = (1.0 - _pos_map_cos(pos * M_PI)) / 2.0;
         return pos;
       case ECORE_POS_MAP_ACCELERATE_FACTOR:
         pos = _pos_map_accel_factor(pos, v1);
