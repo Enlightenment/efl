@@ -777,7 +777,7 @@ create_script_file(Eet_File *ef, const char *filename, const Code *cd)
 		     else if (sp[0] == '\n') hash = 0;
 		  }
 	     }
-	     fprintf(f, "}");
+	     fprintf(f, "}\n");
 	     ln += cp->l2 - cp->l1 + 1;
 	  }
      }
