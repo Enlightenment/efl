@@ -294,7 +294,9 @@ _edje_program_run_iterate(Edje_Running_Program *runp, double tim)
 	  {
 	     rp = ed->table_parts[pt->id % ed->table_parts_size];
 	     if (rp) _edje_part_pos_set(ed, rp,
-					runp->program->tween.mode, t);
+					runp->program->tween.mode, t,
+                                        runp->program->tween.v1,
+                                        runp->program->tween.v2);
 	  }
      }
    if (t >= FROM_INT(1))
@@ -314,7 +316,9 @@ _edje_program_run_iterate(Edje_Running_Program *runp, double tim)
 						    NULL,
 						    0.0);
 		       _edje_part_pos_set(ed, rp,
-					  runp->program->tween.mode, ZERO);
+					  runp->program->tween.mode, ZERO,
+                                          runp->program->tween.v1,
+                                          runp->program->tween.v2);
 		       rp->program = NULL;
 		    }
 	       }
@@ -389,7 +393,9 @@ _edje_program_end(Edje *ed, Edje_Running_Program *runp)
 					       NULL,
 					       0.0);
 		  _edje_part_pos_set(ed, rp,
-				     runp->program->tween.mode, ZERO);
+				     runp->program->tween.mode, ZERO,
+                                     runp->program->tween.v1,
+                                     runp->program->tween.v2);
 		  rp->program = NULL;
 	       }
 	  }
@@ -479,7 +485,9 @@ _edje_program_run(Edje *ed, Edje_Program *pr, Eina_Bool force, const char *ssig,
 							 rp->param1.description->state.value,
 							 pr->state,
 							 pr->value);
-			    _edje_part_pos_set(ed, rp, pr->tween.mode, ZERO);
+			    _edje_part_pos_set(ed, rp, pr->tween.mode, ZERO,
+                                               pr->tween.v1,
+                                               pr->tween.v2);
 			    rp->program = runp;
 			 }
 		    }
@@ -516,7 +524,9 @@ _edje_program_run(Edje *ed, Edje_Program *pr, Eina_Bool force, const char *ssig,
 							 pr->value,
 							 NULL,
 							 0.0);
-			    _edje_part_pos_set(ed, rp, pr->tween.mode, ZERO);
+			    _edje_part_pos_set(ed, rp, pr->tween.mode, ZERO,
+                                               pr->tween.v1,
+                                               pr->tween.v2);
 			 }
 		    }
 	       }

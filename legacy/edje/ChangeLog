@@ -90,3 +90,10 @@
 	   text to the end of the textblock part. This lets us do cool thing
 	   like population of textblock using idler.
 
+2011-05-16  Carsten Haitzler (The Rasterman)
+
+	* Add new interpolation modes for programs to make animation
+        much easier. Added: ACCEL_FAC, DECEL_FAC, SIN_FAC, DIVIS,
+        BOUNCE, SPRING (also made short name versions of the long ones
+        possible too).
+

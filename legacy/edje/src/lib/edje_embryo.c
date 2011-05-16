@@ -846,7 +846,7 @@ _edje_embryo_fn_set_state(Embryo_Program *ep, Embryo_Cell *params)
      {
 	if (rp->program) _edje_program_end(ed, rp->program);
 	_edje_part_description_apply(ed, rp, state, value, NULL, 0.0);
-	_edje_part_pos_set(ed, rp, EDJE_TWEEN_MODE_LINEAR, ZERO);
+	_edje_part_pos_set(ed, rp, EDJE_TWEEN_MODE_LINEAR, ZERO, ZERO, ZERO);
 	_edje_recalc(ed);
      }
    return 0;
@@ -928,7 +928,7 @@ _edje_embryo_fn_set_tween_state(Embryo_Program *ep, Embryo_Cell *params)
      {
 	if (rp->program) _edje_program_end(ed, rp->program);
 	_edje_part_description_apply(ed, rp, state1, value1, state2, value2);
-	_edje_part_pos_set(ed, rp, EDJE_TWEEN_MODE_LINEAR, FROM_DOUBLE(tween));
+	_edje_part_pos_set(ed, rp, EDJE_TWEEN_MODE_LINEAR, FROM_DOUBLE(tween), ZERO, ZERO);
 	_edje_recalc(ed);
      }
    return 0;

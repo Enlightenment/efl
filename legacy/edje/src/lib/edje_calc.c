@@ -16,7 +16,7 @@ static void _edje_part_recalc_single(Edje *ed, Edje_Real_Part *ep,
 static void _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags);
 
 void
-_edje_part_pos_set(Edje *ed, Edje_Real_Part *ep, int mode, FLOAT_T pos)
+_edje_part_pos_set(Edje *ed, Edje_Real_Part *ep, int mode, FLOAT_T pos, FLOAT_T v1, FLOAT_T v2)
 {
    FLOAT_T fp_pos;
    FLOAT_T npos;
@@ -26,6 +26,7 @@ _edje_part_pos_set(Edje *ed, Edje_Real_Part *ep, int mode, FLOAT_T pos)
    fp_pos = pos;
 
    npos = ZERO;
+#if 0 // old code - easy to enable for comparing float vs fixed point
    /* take linear pos along timescale and use interpolation method */
    switch (mode)
      {
@@ -51,8 +52,69 @@ _edje_part_pos_set(Edje *ed, Edje_Real_Part *ep, int mode, FLOAT_T pos)
 	 npos = fp_pos;
 	 break;
       default:
-	 break;
+         npos = fp_pos;
+         break;
      }
+#else
+   switch (mode)
+     {
+      case EDJE_TWEEN_MODE_SINUSOIDAL:
+        npos = FROM_DOUBLE(ecore_animator_pos_map(TO_DOUBLE(pos),
+                                                  ECORE_POS_MAP_SINUSOIDAL, 
+                                                  0.0, 0.0));
+        break;
+      case EDJE_TWEEN_MODE_ACCELERATE:
+        npos = FROM_DOUBLE(ecore_animator_pos_map(TO_DOUBLE(pos),
+                                                  ECORE_POS_MAP_ACCELERATE, 
+                                                  0.0, 0.0));
+        break;
+      case EDJE_TWEEN_MODE_DECELERATE:
+        npos = FROM_DOUBLE(ecore_animator_pos_map(TO_DOUBLE(pos),
+                                                  ECORE_POS_MAP_DECELERATE, 
+                                                  0.0, 0.0));
+        break;
+      case EDJE_TWEEN_MODE_LINEAR:
+        npos = fp_pos;
+/*        npos = FROM_DOUBLE(ecore_animator_pos_map(TO_DOUBLE(pos),
+                                                  ECORE_POS_MAP_LINEAR, 
+                                                  0.0, 0.0));
+ */
+        break;
+      case EDJE_TWEEN_MODE_ACCELERATE_FACTOR:
+        npos = FROM_DOUBLE(ecore_animator_pos_map(TO_DOUBLE(pos),
+                                                  ECORE_POS_MAP_ACCELERATE_FACTOR,
+                                                  TO_DOUBLE(v1), 0.0));
+        break;
+      case EDJE_TWEEN_MODE_DECELERATE_FACTOR:
+        npos = FROM_DOUBLE(ecore_animator_pos_map(TO_DOUBLE(pos),
+                                                  ECORE_POS_MAP_DECELERATE_FACTOR, 
+                                                  TO_DOUBLE(v1), 0.0));
+        break;
+      case EDJE_TWEEN_MODE_SINUSOIDAL_FACTOR:
+        npos = FROM_DOUBLE(ecore_animator_pos_map(TO_DOUBLE(pos),
+                                                  ECORE_POS_MAP_SINUSOIDAL_FACTOR, 
+                                                  TO_DOUBLE(v1), 0.0));
+        break;
+      case EDJE_TWEEN_MODE_DIVISOR_INTERP:
+        npos = FROM_DOUBLE(ecore_animator_pos_map(TO_DOUBLE(pos),
+                                                  ECORE_POS_MAP_DIVISOR_INTERP, 
+                                                  TO_DOUBLE(v1), TO_DOUBLE(v2)));
+        break;
+      case EDJE_TWEEN_MODE_BOUNCE:
+        npos = FROM_DOUBLE(ecore_animator_pos_map(TO_DOUBLE(pos),
+                                                  ECORE_POS_MAP_BOUNCE, 
+                                                  TO_DOUBLE(v1), TO_DOUBLE(v2)));
+        break;
+      case EDJE_TWEEN_MODE_SPRING:
+        npos = FROM_DOUBLE(ecore_animator_pos_map(TO_DOUBLE(pos),
+                                                  ECORE_POS_MAP_SPRING, 
+                                                  TO_DOUBLE(v1), TO_DOUBLE(v2)));
+        break;
+      default:
+        npos = fp_pos;
+        break;
+     }
+#endif   
    if (npos == ep->description_pos) return;
 
    ep->description_pos = npos;
@@ -1859,7 +1921,7 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
    Edje_Calc_Params *p1, *pf;
    Edje_Part_Description_Common *chosen_desc;
    Edje_Real_Part *confine_to = NULL;
-   FLOAT_T pos = ZERO;
+   FLOAT_T pos = ZERO, pos2;
    Edje_Calc_Params lp3;
 
    /* GRADIENT ARE GONE, WE MUST IGNORE IT FROM OLD FILE. */
@@ -2058,6 +2120,9 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
  	  }
 
   	pos = ep->description_pos;
+        pos2 = pos;
+        if (pos2 < ZERO) pos2 = ZERO;
+        else if (pos2 > FROM_INT(1)) pos2 = FROM_INT(1);
   	beginning_pos = (pos < FROM_DOUBLE(0.5));
   	part_type = ep->part->type;
 
@@ -2106,10 +2171,10 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
  	     p3->req_drag.h = INTP(p1->req_drag.h, p2->req_drag.h, pos);
  	  }
 
-	p3->color.r = INTP(p1->color.r, p2->color.r, pos);
- 	p3->color.g = INTP(p1->color.g, p2->color.g, pos);
- 	p3->color.b = INTP(p1->color.b, p2->color.b, pos);
- 	p3->color.a = INTP(p1->color.a, p2->color.a, pos);
+	p3->color.r = INTP(p1->color.r, p2->color.r, pos2);
+ 	p3->color.g = INTP(p1->color.g, p2->color.g, pos2);
+ 	p3->color.b = INTP(p1->color.b, p2->color.b, pos2);
+ 	p3->color.a = INTP(p1->color.a, p2->color.a, pos2);
 
   	switch (part_type)
   	  {
@@ -2127,19 +2192,19 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
   	   case EDJE_PART_TYPE_TEXT:
  	      p3->type.text.size = INTP(p1->type.text.size, p2->type.text.size, pos);
   	   case EDJE_PART_TYPE_TEXTBLOCK:
- 	      p3->type.text.color2.r = INTP(p1->type.text.color2.r, p2->type.text.color2.r, pos);
- 	      p3->type.text.color2.g = INTP(p1->type.text.color2.g, p2->type.text.color2.g, pos);
-	      p3->type.text.color2.b = INTP(p1->type.text.color2.b, p2->type.text.color2.b, pos);
- 	      p3->type.text.color2.a = INTP(p1->type.text.color2.a, p2->type.text.color2.a, pos);
+ 	      p3->type.text.color2.r = INTP(p1->type.text.color2.r, p2->type.text.color2.r, pos2);
+ 	      p3->type.text.color2.g = INTP(p1->type.text.color2.g, p2->type.text.color2.g, pos2);
+	      p3->type.text.color2.b = INTP(p1->type.text.color2.b, p2->type.text.color2.b, pos2);
+ 	      p3->type.text.color2.a = INTP(p1->type.text.color2.a, p2->type.text.color2.a, pos2);
 
- 	      p3->type.text.color3.r = INTP(p1->type.text.color3.r, p2->type.text.color3.r, pos);
-	      p3->type.text.color3.g = INTP(p1->type.text.color3.g, p2->type.text.color3.g, pos);
-	      p3->type.text.color3.b = INTP(p1->type.text.color3.b, p2->type.text.color3.b, pos);
-	      p3->type.text.color3.a = INTP(p1->type.text.color3.a, p2->type.text.color3.a, pos);
+ 	      p3->type.text.color3.r = INTP(p1->type.text.color3.r, p2->type.text.color3.r, pos2);
+	      p3->type.text.color3.g = INTP(p1->type.text.color3.g, p2->type.text.color3.g, pos2);
+	      p3->type.text.color3.b = INTP(p1->type.text.color3.b, p2->type.text.color3.b, pos2);
+	      p3->type.text.color3.a = INTP(p1->type.text.color3.a, p2->type.text.color3.a, pos2);
 
 	      p3->type.text.align.x = FFP(p1->type.text.align.x, p2->type.text.align.x, pos);
 	      p3->type.text.align.y = FFP(p1->type.text.align.y, p2->type.text.align.y, pos);
-	      p3->type.text.elipsis = TO_DOUBLE(FINTP(p1->type.text.elipsis, p2->type.text.elipsis, pos));
+	      p3->type.text.elipsis = TO_DOUBLE(FINTP(p1->type.text.elipsis, p2->type.text.elipsis, pos2));
   	      break;
   	  }
 
@@ -2277,6 +2342,9 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
              desc2 = NULL;
              if (ep->param2) desc2 = ep->param2->description;
              pos = ep->description_pos;
+             pos2 = pos;
+             if (pos2 < ZERO) pos2 = ZERO;
+             else if (pos2 > FROM_INT(1)) pos2 = FROM_INT(1);
 
              ed->have_mapped_part = 1;
              // create map and populate with part geometry
@@ -2387,7 +2455,7 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
                        if (ep2)
                          {
                             Edje_Part_Description_Common *ep2desc1, *ep2desc2;
-                            FLOAT_T ep2pos;
+                            FLOAT_T ep2pos, ep2pos2;
 
                             do1 = 1;
                             if (!ep2->calculated)
@@ -2396,6 +2464,9 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
                             ep2desc2 = NULL;
                             if (ep2->param2) ep2desc2 = ep2->param2->description;
                             ep2pos = ep2->description_pos;
+                            ep2pos2 = ep2pos;
+                            if (ep2pos2 < ZERO) ep2pos2 = ZERO;
+                            else if (ep2pos2 > FROM_INT(1)) ep2pos2 = FROM_INT(1);
 
                             // light x and y are already interpolated in part geom
                             lx1 = ed->x + ep2->x + (ep2->w / 2);
@@ -2407,22 +2478,22 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
                                    TO_INT(SCALE(ep2pos, ep2desc2->persp.zplane -
                                                 ep2desc1->persp.zplane));
                                  lr1 = ep2desc1->color.r +
-                                   TO_INT(SCALE(ep2pos, ep2desc2->color.r -
+                                   TO_INT(SCALE(ep2pos2, ep2desc2->color.r -
                                                 ep2desc1->color.r));
                                  lg1 = ep2desc1->color.g +
-                                   TO_INT(SCALE(ep2pos, ep2desc2->color.g -
+                                   TO_INT(SCALE(ep2pos2, ep2desc2->color.g -
                                                 ep2desc1->color.b));
                                  lb1 = ep2desc1->color.b +
-                                   TO_INT(SCALE(ep2pos, ep2desc2->color.g -
+                                   TO_INT(SCALE(ep2pos2, ep2desc2->color.g -
                                                 ep2desc1->color.b));
                                  lar1 = ep2desc1->color2.r +
-                                   TO_INT(SCALE(ep2pos, ep2desc2->color2.r -
+                                   TO_INT(SCALE(ep2pos2, ep2desc2->color2.r -
                                                 ep2desc1->color2.r));
                                  lag1 = ep2desc1->color2.g +
-                                   TO_INT(SCALE(ep2pos, ep2desc2->color2.g -
+                                   TO_INT(SCALE(ep2pos2, ep2desc2->color2.g -
                                                 ep2desc1->color2.b));
                                  lab1 = ep2desc1->color2.b +
-                                   TO_INT(SCALE(ep2pos, ep2desc2->color2.g -
+                                   TO_INT(SCALE(ep2pos2, ep2desc2->color2.g -
                                                 ep2desc1->color2.b));
                               }
                             else
@@ -2448,7 +2519,7 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
                        if (ep2)
                          {
                             Edje_Part_Description_Common *ep2desc1, *ep2desc2;
-                            FLOAT_T ep2pos;
+                            FLOAT_T ep2pos, ep2pos2;
 
                             do2 = 1;
                             if (!ep2->calculated)
@@ -2457,6 +2528,9 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
                             ep2desc2 = NULL;
                             if (ep2->param2) ep2desc2 = ep2->param2->description;
                             ep2pos = ep2->description_pos;
+                            ep2pos2 = ep2pos;
+                            if (ep2pos2 < ZERO) ep2pos2 = ZERO;
+                            else if (ep2pos2 > FROM_INT(1)) ep2pos2 = FROM_INT(1);
 
                             // light x and y are already interpolated in part geom
                             lx2 = ed->x + ep2->x + (ep2->w / 2);
@@ -2468,22 +2542,22 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
                                    TO_INT(SCALE(ep2pos, ep2desc2->persp.zplane -
                                                 ep2desc1->persp.zplane));
                                  lr2 = ep2desc1->color.r +
-                                   TO_INT(SCALE(ep2pos, ep2desc2->color.r -
+                                   TO_INT(SCALE(ep2pos2, ep2desc2->color.r -
                                                 ep2desc1->color.r));
                                  lg2 = ep2desc1->color.g +
-                                   TO_INT(SCALE(ep2pos, ep2desc2->color.g -
+                                   TO_INT(SCALE(ep2pos2, ep2desc2->color.g -
                                                 ep2desc1->color.b));
                                  lb2 = ep2desc1->color.b +
-                                   TO_INT(SCALE(ep2pos, ep2desc2->color.g -
+                                   TO_INT(SCALE(ep2pos2, ep2desc2->color.g -
                                                 ep2desc1->color.b));
                                  lar2 = ep2desc1->color2.r +
-                                   TO_INT(SCALE(ep2pos, ep2desc2->color2.r -
+                                   TO_INT(SCALE(ep2pos2, ep2desc2->color2.r -
                                                 ep2desc1->color2.r));
                                  lag2 = ep2desc1->color2.g +
-                                   TO_INT(SCALE(ep2pos, ep2desc2->color2.g -
+                                   TO_INT(SCALE(ep2pos2, ep2desc2->color2.g -
                                                 ep2desc1->color2.b));
                                  lab2 = ep2desc1->color2.b +
-                                   TO_INT(SCALE(ep2pos, ep2desc2->color2.g -
+                                   TO_INT(SCALE(ep2pos2, ep2desc2->color2.g -
                                                 ep2desc1->color2.b));
                               }
                             else
@@ -2503,12 +2577,12 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
                        lx = lx1 + TO_INT(SCALE(pos, lx2 - lx1));
                        ly = ly1 + TO_INT(SCALE(pos, ly2 - ly1));
                        lz = lz1 + TO_INT(SCALE(pos, lz2 - lz1));
-                       lr = lr1 + TO_INT(SCALE(pos, lr2 - lr1));
-                       lg = lg1 + TO_INT(SCALE(pos, lg2 - lg1));
-                       lb = lb1 + TO_INT(SCALE(pos, lb2 - lb1));
-                       lar = lar1 + TO_INT(SCALE(pos, lar2 - lar1));
-                       lag = lag1 + TO_INT(SCALE(pos, lag2 - lag1));
-                       lab = lab1 + TO_INT(SCALE(pos, lab2 - lab1));
+                       lr = lr1 + TO_INT(SCALE(pos2, lr2 - lr1));
+                       lg = lg1 + TO_INT(SCALE(pos2, lg2 - lg1));
+                       lb = lb1 + TO_INT(SCALE(pos2, lb2 - lb1));
+                       lar = lar1 + TO_INT(SCALE(pos2, lar2 - lar1));
+                       lag = lag1 + TO_INT(SCALE(pos2, lag2 - lag1));
+                       lab = lab1 + TO_INT(SCALE(pos2, lab2 - lab1));
                     }
                   else if (do1)
                     {

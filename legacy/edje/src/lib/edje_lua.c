@@ -3761,7 +3761,7 @@ _edje_lua_part_set_state(lua_State *L)
    _edje_part_description_apply(obj->ed, obj->rp,
 				luaL_checkstring(L, -2), luaL_checknumber(L, -1),
 				NULL, 0.0);
-   _edje_part_pos_set(obj->ed, obj->rp, EDJE_TWEEN_MODE_LINEAR, ZERO);
+   _edje_part_pos_set(obj->ed, obj->rp, EDJE_TWEEN_MODE_LINEAR, ZERO, ZERO, ZERO);
    _edje_recalc(obj->ed);
    return 0;
 }
@@ -3780,7 +3780,7 @@ _edje_lua_part_set_tween_state(lua_State *L)
 				luaL_checkstring(L, -4), luaL_checknumber(L, -3),
 				luaL_checkstring(L, -2), luaL_checknumber(L, -1));
    _edje_part_pos_set(obj->ed, obj->rp, EDJE_TWEEN_MODE_LINEAR,
-		      FROM_DOUBLE(luaL_checknumber(L, -5)));
+		      FROM_DOUBLE(luaL_checknumber(L, -5)), ZERO, ZERO);
    _edje_recalc(obj->ed);
    return 0;
 }

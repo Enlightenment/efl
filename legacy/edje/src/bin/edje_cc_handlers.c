@@ -7187,26 +7187,110 @@ st_collections_group_programs_program_action(void)
     @property
         transition
     @parameters
-        [type] [length]
+        [type] [length] [[interp val 1]] [[interp val 2]]
     @effect
         Defines how transitions occur using STATE_SET action.\n
         Where 'type' is the style of the transition and 'length' is a double
         specifying the number of seconds in which to preform the transition.\n
-        Valid types are: LINEAR, SINUSOIDAL, ACCELERATE, and DECELERATE.
+        Valid types are: LIN or LINEAR, SIN or SINUSOIDAL, 
+        ACCEL or ACCELERATE, DECEL or DECELERATE, 
+        ACCEL_FAC or ACCELERATE_FACTOR, DECEL_FAC or DECELERATE_FACTOR,
+        SIN_FAC or SINUSOIDAL_FACTOR, DIVIS or DIVISOR_INTERP,
+        BOUNCE, SPRING.
+        
+        ACCEL_FAC, DECEL_FAC and SIN_FAC need the extra optional
+        "interp val 1" to determine the "factor" of curviness. 1.0 is the same
+        as their non-factor counterparts, where 0.0 is equal to linear.
+        numbers higher than one make the curve angles steeper with a more
+        prnounced curve point.
+        
+        DIVIS, BOUNCE and SPRING also require "interp val 2" in addition
+        to "interp val 1".
+        
+        DIVIS uses val 1 as the initial graident start
+        (0.0 is horizontal, 1.0 is diagonal (linear), 2.0 is twice the
+        gradient of linear etc.). val 2 is interpreted as an integer factor
+        defining how much the value swings "outside" the gradient only to come
+        back to the final resting spot at the end. 0.0 for val 2 is equivalent
+        to linear interpolation. Note that DIVIS can exceed 1.0
+        
+        BOUNCE uses val 2 as the number of bounces (so its rounded down to
+        the nearest integer value), with val 2 determining how much the
+        bounce decays, with 0.0 giving linear decay per bounce, and higher
+        values giving much more decay.
+
+        SPRING is similar to bounce, where val 2 specifies the number of
+        spring "swings" and val 1 specifies the decay, but it can exceed 1.0
+        on the outer swings.
+
     @endproperty
 */
 static void
 st_collections_group_programs_program_transition(void)
 {
-   check_arg_count(2);
+   check_min_arg_count(2);
 
    current_program->tween.mode = parse_enum(0,
+                                            // short names
+					    "LIN", EDJE_TWEEN_MODE_LINEAR,
+					    "SIN", EDJE_TWEEN_MODE_SINUSOIDAL,
+					    "ACCEL", EDJE_TWEEN_MODE_ACCELERATE,
+					    "DECEL", EDJE_TWEEN_MODE_DECELERATE,
+					    "ACCEL_FAC", EDJE_TWEEN_MODE_ACCELERATE_FACTOR,
+					    "DECEL_FAC", EDJE_TWEEN_MODE_DECELERATE_FACTOR,
+					    "SIN_FAC", EDJE_TWEEN_MODE_SINUSOIDAL_FACTOR,
+					    "DIVIS", EDJE_TWEEN_MODE_DIVISOR_INTERP,
+                                            
+                                            // long/full names
 					    "LINEAR", EDJE_TWEEN_MODE_LINEAR,
 					    "SINUSOIDAL", EDJE_TWEEN_MODE_SINUSOIDAL,
 					    "ACCELERATE", EDJE_TWEEN_MODE_ACCELERATE,
 					    "DECELERATE", EDJE_TWEEN_MODE_DECELERATE,
+					    "ACCELERATE_FACTOR", EDJE_TWEEN_MODE_ACCELERATE_FACTOR,
+					    "DECELERATE_FACTOR", EDJE_TWEEN_MODE_DECELERATE_FACTOR,
+					    "SINUSOIDAL_FACTOR", EDJE_TWEEN_MODE_SINUSOIDAL_FACTOR,
+					    "DIVISOR_INTERP", EDJE_TWEEN_MODE_DIVISOR_INTERP,
+                                            
+                                            // long/full is short enough
+					    "BOUNCE", EDJE_TWEEN_MODE_BOUNCE,
+					    "SPRING", EDJE_TWEEN_MODE_SPRING,
 					    NULL);
    current_program->tween.time = FROM_DOUBLE(parse_float_range(1, 0.0, 999999999.0));
+   // the following need v1
+   // EDJE_TWEEN_MODE_ACCELERATE_FACTOR
+   // EDJE_TWEEN_MODE_DECELERATE_FACTOR
+   // EDJE_TWEEN_MODE_SINUSOIDAL_FACTOR
+   // current_program->tween.v1
+   if ((current_program->tween.mode >= EDJE_TWEEN_MODE_ACCELERATE_FACTOR) &&
+       (current_program->tween.mode <= EDJE_TWEEN_MODE_SINUSOIDAL_FACTOR))
+     {
+        if (get_arg_count() != 3)
+          {
+	     ERR("%s: Error. parse error %s:%i. "
+		 "Need 3rd parameter to set factor",
+		 progname, file_in, line - 1);
+	     exit(-1);
+          }
+        current_program->tween.v1 = FROM_DOUBLE(parse_float_range(2, 0.0, 999999999.0));
+     }
+   // the followjng also need v2
+   // EDJE_TWEEN_MODE_DIVISOR_INTERP
+   // EDJE_TWEEN_MODE_BOUNCE
+   // EDJE_TWEEN_MODE_SPRING
+   // current_program->tween.v2
+   else if ((current_program->tween.mode >= EDJE_TWEEN_MODE_DIVISOR_INTERP) &&
+            (current_program->tween.mode <= EDJE_TWEEN_MODE_SPRING))
+     {
+        if (get_arg_count() != 4)
+          {
+	     ERR("%s: Error. parse error %s:%i. "
+		 "Need 3rd and 4th parameters to set factor and counts",
+		 progname, file_in, line - 1);
+	     exit(-1);
+          }
+        current_program->tween.v1 = FROM_DOUBLE(parse_float_range(2, 0.0, 999999999.0));
+        current_program->tween.v2 = FROM_DOUBLE(parse_float_range(3, 0.0, 999999999.0));
+     }
 }
 
 /**
