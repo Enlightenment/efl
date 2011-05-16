@@ -6,6 +6,7 @@ Add a uid=%i mount option using getuid, NOT geteuid
 +eeze_disk_mount_wrapper_get
 Allow use of wrapper exes for mount commands (such as sudo)
 ---------------------------------------
++eeze_disk_udev_get_parent
 +eeze_disk_udev_get_property
 +eeze_disk_udev_get_sysattr
 +eeze_disk_udev_walk_check_sysattr

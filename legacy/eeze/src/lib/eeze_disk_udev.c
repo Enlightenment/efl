@@ -33,12 +33,21 @@ eeze_disk_udev_get_sysattr(Eeze_Disk *disk, const char *sysattr)
    return eina_stringshare_add(ret);
 }
 
+EAPI const char *
+eeze_disk_udev_get_parent(Eeze_Disk *disk)
+{
+   _udev_device *parent;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(disk, NULL);
+
+   parent = udev_device_get_parent(disk->device);
+   return eina_stringshare_add(udev_device_get_syspath(parent));
+}
+
 EAPI Eina_Bool
 eeze_disk_udev_walk_check_sysattr(Eeze_Disk *disk,
                                   const char *sysattr,
                                   const char *value)
 {
-
    _udev_device *child, *parent;
    const char *test = NULL;
    
@@ -64,7 +73,6 @@ EAPI const char *
 eeze_disk_udev_walk_get_sysattr(Eeze_Disk *disk,
                                   const char *sysattr)
 {
-
    _udev_device *child, *parent;
    const char *test = NULL;
    

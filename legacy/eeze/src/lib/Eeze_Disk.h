@@ -411,6 +411,16 @@ EAPI const char    *eeze_disk_udev_get_property(Eeze_Disk *disk, const char *pro
 EAPI const char    *eeze_disk_udev_get_sysattr(Eeze_Disk *disk, const char *sysattr);
 
 /**
+ * Find the root device of a disk.
+ *
+ * @param disk The disk
+ * @return The syspath of the parent device
+ *
+ * Return a stringshared syspath (/sys/$syspath) for the parent device.
+ */
+EAPI const char    *eeze_disk_udev_get_parent(Eeze_Disk *disk);
+
+/**
  * Walks up the device chain using the device from @p disk,
  * checking each device for @p sysattr with (optional) @p value.
  *
