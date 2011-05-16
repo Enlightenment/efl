@@ -27,6 +27,7 @@ static struct libmnt_optmap eeze_optmap[] =
    { "noexec", EEZE_DISK_MOUNTOPT_NOEXEC, 0 },
    { "nosuid", EEZE_DISK_MOUNTOPT_NOSUID, 0 },
    { "remount", EEZE_DISK_MOUNTOPT_REMOUNT, 0 },
+   { "uid[=]", EEZE_DISK_MOUNTOPT_LOOP, 0 },
    { NULL, 0, 0 }
 };
 typedef struct libmnt_table libmnt_table;
