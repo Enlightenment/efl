@@ -18,7 +18,7 @@ EAPI int EEZE_EVENT_DISK_UNMOUNT = 0;
 EAPI int EEZE_EVENT_DISK_EJECT = 0;
 EAPI int EEZE_EVENT_DISK_ERROR = 0;
 static Ecore_Event_Handler *_mount_handler = NULL;
-static Eina_List *eeze_events = NULL;
+Eina_List *eeze_events = NULL;
 
 /*
  *
@@ -67,6 +67,11 @@ _eeze_disk_mount_result_handler(void *data __UNUSED__, int type __UNUSED__, Ecor
      return ECORE_CALLBACK_RENEW;
 
    eeze_events = eina_list_remove_list(eeze_events, l);
+   if (!disk->mounter) /* killed */
+     {
+        disk->mount_status = EEZE_DISK_NULL;
+        return ECORE_CALLBACK_RENEW;
+     }
    if (disk->mount_status == EEZE_DISK_MOUNTING)
      {
         disk->mounter = NULL;

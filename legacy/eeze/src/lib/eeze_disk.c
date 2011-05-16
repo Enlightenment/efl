@@ -190,6 +190,7 @@ error:
 EAPI void
 eeze_disk_free(Eeze_Disk *disk)
 {
+   extern Eina_List *eeze_events;
    EINA_SAFETY_ON_NULL_RETURN(disk);
 
    udev_device_unref(disk->device);
@@ -201,6 +202,7 @@ eeze_disk_free(Eeze_Disk *disk)
      eina_strbuf_free(disk->eject_cmd);
    if (disk->mounter) ecore_exe_kill(disk->mounter);
    _eeze_disks = eina_list_remove(_eeze_disks, disk);
+   eeze_events = eina_list_remove(eeze_events, disk);
    free(disk);
 }
 
