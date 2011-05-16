@@ -16,7 +16,7 @@ eeze_disk_udev_get_property(Eeze_Disk *disk, const char *property)
    EINA_SAFETY_ON_NULL_RETURN_VAL(disk, NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(property, NULL);
    EINA_SAFETY_ON_TRUE_RETURN_VAL(*property, NULL);
-   
+
    ret = udev_device_get_property_value(disk->device, property);
    return eina_stringshare_add(ret);
 }
@@ -50,7 +50,7 @@ eeze_disk_udev_walk_check_sysattr(Eeze_Disk *disk,
 {
    _udev_device *child, *parent;
    const char *test = NULL;
-   
+
    EINA_SAFETY_ON_NULL_RETURN_VAL(disk, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(sysattr, EINA_FALSE);
    EINA_SAFETY_ON_TRUE_RETURN_VAL(*sysattr, EINA_FALSE);
@@ -75,7 +75,7 @@ eeze_disk_udev_walk_get_sysattr(Eeze_Disk *disk,
 {
    _udev_device *child, *parent;
    const char *test = NULL;
-   
+
    EINA_SAFETY_ON_NULL_RETURN_VAL(disk, NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(sysattr, NULL);
    EINA_SAFETY_ON_TRUE_RETURN_VAL(*sysattr, NULL);

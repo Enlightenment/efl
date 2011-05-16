@@ -70,7 +70,7 @@ _eeze_disk_mount_result_handler(void *data __UNUSED__, int type __UNUSED__, Ecor
      {
         disk->mounter = NULL;
         if (!ev->exit_code)
-          { 
+          {
               e = malloc(sizeof(Eeze_Event_Disk_Mount));
               EINA_SAFETY_ON_NULL_RETURN_VAL(e, ECORE_CALLBACK_RENEW);
               e->disk = disk;

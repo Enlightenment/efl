@@ -169,7 +169,7 @@ eeze_disk_new_from_mount(const char *mount_point)
    else
      disk->devpath = devpath;
    disk->mount_point = eina_stringshare_add(mount_point);
-   
+
    _eeze_disks = eina_list_append(_eeze_disks, disk);
 
    return disk;
