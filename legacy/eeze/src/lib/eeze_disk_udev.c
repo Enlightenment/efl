@@ -15,7 +15,7 @@ eeze_disk_udev_get_property(Eeze_Disk *disk, const char *property)
    const char *ret;
    EINA_SAFETY_ON_NULL_RETURN_VAL(disk, NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(property, NULL);
-   EINA_SAFETY_ON_TRUE_RETURN_VAL(*property, NULL);
+   EINA_SAFETY_ON_TRUE_RETURN_VAL(!*property, NULL);
 
    ret = udev_device_get_property_value(disk->device, property);
    return eina_stringshare_add(ret);
@@ -27,7 +27,7 @@ eeze_disk_udev_get_sysattr(Eeze_Disk *disk, const char *sysattr)
    const char *ret;
    EINA_SAFETY_ON_NULL_RETURN_VAL(disk, NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(sysattr, NULL);
-   EINA_SAFETY_ON_TRUE_RETURN_VAL(*sysattr, NULL);
+   EINA_SAFETY_ON_TRUE_RETURN_VAL(!*sysattr, NULL);
 
    ret = udev_device_get_sysattr_value(disk->device, sysattr);
    return eina_stringshare_add(ret);
@@ -53,7 +53,7 @@ eeze_disk_udev_walk_check_sysattr(Eeze_Disk *disk,
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(disk, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(sysattr, EINA_FALSE);
-   EINA_SAFETY_ON_TRUE_RETURN_VAL(*sysattr, EINA_FALSE);
+   EINA_SAFETY_ON_TRUE_RETURN_VAL(!*sysattr, EINA_FALSE);
 
    for (parent = disk->device; parent;
         child = parent, parent = udev_device_get_parent(child))
@@ -78,7 +78,7 @@ eeze_disk_udev_walk_get_sysattr(Eeze_Disk *disk,
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(disk, NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(sysattr, NULL);
-   EINA_SAFETY_ON_TRUE_RETURN_VAL(*sysattr, NULL);
+   EINA_SAFETY_ON_TRUE_RETURN_VAL(!*sysattr, NULL);
 
    for (parent = disk->device; parent;
         child = parent, parent = udev_device_get_parent(child))
