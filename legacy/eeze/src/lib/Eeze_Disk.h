@@ -302,6 +302,15 @@ EAPI Eina_Bool      eeze_disk_mount(Eeze_Disk *disk);
 EAPI Eina_Bool      eeze_disk_unmount(Eeze_Disk *disk);
 
 /**
+ * @brief Cancel a pending operation on the disk
+ * @param disk The disk
+ *
+ * This function cancels the current pending operation on @p disk which was previously
+ * started with eeze_disk_mount or eeze_disk_unmount.
+ */
+EAPI void           eeze_disk_cancel(Eeze_Disk *disk);
+
+/**
  * @brief Return the mount point of a disk
  * @param disk The disk
  * @return The mount point

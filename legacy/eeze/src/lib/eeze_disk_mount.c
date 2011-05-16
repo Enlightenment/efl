@@ -68,6 +68,8 @@ _eeze_disk_mount_result_handler(void *data __UNUSED__, int type __UNUSED__, Ecor
    eeze_events = eina_list_remove_list(eeze_events, l);
    if (disk->mount_status == EEZE_DISK_MOUNTING)
      {
+        disk->mount_status = EEZE_DISK_NULL;
+        disk->mounter = NULL;
         if (!ev->exit_code)
           { 
               e = malloc(sizeof(Eeze_Event_Disk_Mount));
@@ -97,6 +99,8 @@ _eeze_disk_mount_result_handler(void *data __UNUSED__, int type __UNUSED__, Ecor
           e = malloc(sizeof(Eeze_Event_Disk_Unmount));
           EINA_SAFETY_ON_NULL_RETURN_VAL(e, ECORE_CALLBACK_RENEW);
           e->disk = disk;
+          disk->mount_status = EEZE_DISK_NULL;
+          disk->mounter = NULL;
           ecore_event_add(EEZE_EVENT_DISK_UNMOUNT, e, NULL, NULL);
           break;
 
@@ -320,6 +324,15 @@ eeze_disk_unmount(Eeze_Disk *disk)
    eeze_events = eina_list_append(eeze_events, disk);
    disk->mount_status = EEZE_DISK_UNMOUNTING;
    return EINA_TRUE;
+}
+
+EAPI void
+eeze_disk_cancel(Eeze_Disk *disk)
+{
+   EINA_SAFETY_ON_NULL_RETURN(disk);
+   if ((!disk->mount_status) || (!disk->mounter)) return;
+   disk->mount_status = EEZE_DISK_NULL;
+   ecore_exe_quit(disk->mounter);
 }
 
 EAPI const char *

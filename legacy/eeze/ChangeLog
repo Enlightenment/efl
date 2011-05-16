@@ -1,4 +1,7 @@
 2011-05-15  Mike Blumenkrantz (discomfitor/zmike)
++eeze_disk_cancel
+Cancel the current pending mount/umount operation on a disk
+-------------------------------------
 +EEZE_DISK_MOUNTOPT_UID
 Add a uid=%i mount option using getuid, NOT geteuid
 --------------------------------------
