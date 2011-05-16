@@ -1128,11 +1128,11 @@ evas_cache_image_size_set(Image_Entry *im, unsigned int w, unsigned int h)
 #ifdef EVAS_FRAME_QUEUING
    LKL(im2->lock_references);
 #endif
-   im->references = 1;
+   im2->references = 1;
 #ifdef EVAS_FRAME_QUEUING
    LKU(im2->lock_references);
 #endif
-   _evas_cache_image_dirty_add(im);
+   evas_cache_image_drop(im);
    if (cache->func.debug) cache->func.debug("size_set", im2);
    return im2;
 
