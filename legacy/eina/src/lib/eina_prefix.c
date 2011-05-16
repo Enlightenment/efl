@@ -20,6 +20,32 @@
 # include "config.h"
 #endif
 
+#ifdef STDC_HEADERS
+# include <stdlib.h>
+# include <stddef.h>
+#else
+# ifdef HAVE_STDLIB_H
+#  include <stdlib.h>
+# endif
+#endif
+#ifdef HAVE_ALLOCA_H
+# include <alloca.h>
+#elif defined __GNUC__
+# define alloca __builtin_alloca
+#elif defined _AIX
+# define alloca __alloca
+#elif defined _MSC_VER
+# include <malloc.h>
+# define alloca _alloca
+#else
+# ifndef HAVE_ALLOCA
+#  ifdef  __cplusplus
+extern "C"
+#  endif
+void *alloca (size_t);
+# endif
+#endif
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -175,7 +201,7 @@ _try_argv(Eina_Prefix *pfx, const char *argv0)
 
    /* 1. is argv0 abs path? */
 #ifdef _WIN32
-   if (argv0[0] && (argv0[1] == PSEP_C))
+   if (argv0[0] && (argv0[1] == ':'))
 #else
    if (argv0[0] == DSEP_C)
 #endif
@@ -456,11 +482,11 @@ eina_prefix_new(const char *argv0, void *symbol, const char *envprefix,
           {
              if (info_dl.dli_fname)
                {
-#ifdef _WIN32
-                  if (info_dl.dli_fname[0] && (info_dl.dli_fname[0] == PSEP_C))
-#else
+# ifdef _WIN32
+                  if (info_dl.dli_fname[0] && (info_dl.dli_fname[1] == ':'))
+# else
                   if (info_dl.dli_fname[0] == DSEP_C)
-#endif
+# endif
                      STRDUP_REP(pfx->exe_path, info_dl.dli_fname);
                }
           }
