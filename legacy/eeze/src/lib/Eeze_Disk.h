@@ -288,7 +288,7 @@ EAPI Eina_Bool      eeze_disk_mount(Eeze_Disk *disk);
  * @return #EINA_TRUE if the operation was started, else #EINA_FALSE
  *
  * This call is used to begin an unmount operation on @p disk.  The operation will
- * run asynchronously in a pipe, emitting an EEZE_EVENT_DISK_MOUNT event with the disk object
+ * run asynchronously in a pipe, emitting an EEZE_EVENT_DISK_UNMOUNT event with the disk object
  * as its event on completion.  If any errors are encountered, they will automatically logged
  * to the eeze_disk domain and an EEZE_EVENT_DISK_ERROR event will be generated with
  * an #Eeze_Event_Disk_Error struct as its event.
@@ -297,6 +297,20 @@ EAPI Eina_Bool      eeze_disk_mount(Eeze_Disk *disk);
  */
 EAPI Eina_Bool      eeze_disk_unmount(Eeze_Disk *disk);
 
+/**
+ * @brief Begin an eject operation on the disk
+ * @param disk The disk
+ * @return #EINA_TRUE if the operation was started, else #EINA_FALSE
+ *
+ * This call is used to begin an eject operation on @p disk.  The operation will
+ * run asynchronously in a pipe, emitting an EEZE_EVENT_DISK_EJECT event with the disk object
+ * as its event on completion.  If any errors are encountered, they will automatically logged
+ * to the eeze_disk domain and an EEZE_EVENT_DISK_ERROR event will be generated with
+ * an #Eeze_Event_Disk_Error struct as its event.
+ *
+ * NOTE: The return value of this function does not in any way reflect the mount state of a disk.
+ */
+EAPI Eina_Bool      eeze_disk_eject(Eeze_Disk *disk);
 /**
  * @brief Cancel a pending operation on the disk
  * @param disk The disk

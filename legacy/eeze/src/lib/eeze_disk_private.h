@@ -32,10 +32,10 @@ extern int _eeze_disk_log_dom;
 
 typedef enum
 {
-   EEZE_DISK_NULL,
-   EEZE_DISK_MOUNTING,
-   EEZE_DISK_UNMOUNTING,
-   EEZE_DISK_EJECTING
+   EEZE_DISK_NULL = 0,
+   EEZE_DISK_MOUNTING = 1,
+   EEZE_DISK_UNMOUNTING = 2,
+   EEZE_DISK_EJECTING = 4
 } Eeze_Disk_Status;
 
 struct _Eeze_Disk
@@ -43,7 +43,7 @@ struct _Eeze_Disk
    _udev_device *device;
    void *data;
 
-   Eeze_Disk_Status mount_status;
+   int mount_status;
    Eina_Strbuf *mount_cmd;
    Eina_Strbuf *unmount_cmd;
    Eina_Strbuf *eject_cmd;

@@ -100,6 +100,7 @@ _eeze_disk_mount_result_handler(void *data __UNUSED__, int type __UNUSED__, Ecor
           EINA_SAFETY_ON_NULL_RETURN_VAL(e, ECORE_CALLBACK_RENEW);
           e->disk = disk;
           disk->mounter = NULL;
+          disk->mounted = EINA_FALSE;
           ecore_event_add(EEZE_EVENT_DISK_UNMOUNT, e, NULL, NULL);
           break;
 
@@ -117,12 +118,23 @@ _eeze_disk_mount_result_handler(void *data __UNUSED__, int type __UNUSED__, Ecor
             EINA_SAFETY_ON_NULL_RETURN_VAL(e, ECORE_CALLBACK_RENEW);
             e->disk = disk;
             disk->mounter = NULL;
-            ecore_event_add(EEZE_EVENT_DISK_EJECT, e, NULL, NULL);
+            if (disk->mount_status & EEZE_DISK_UNMOUNTING)
+              {
+                 disk->mount_status |= EEZE_DISK_UNMOUNTING;
+                 disk->mounted = EINA_FALSE;
+                 ecore_event_add(EEZE_EVENT_DISK_UNMOUNT, e, NULL, NULL);
+                 eeze_disk_eject(disk);
+              }
+            else
+              ecore_event_add(EEZE_EVENT_DISK_EJECT, e, NULL, NULL);
             break;
 
           default:
             INF("Could not eject disk, retrying");
-            disk->mounter = ecore_exe_run(eina_strbuf_string_get(disk->unmount_cmd), disk);
+            if (disk->mount_status & EEZE_DISK_UNMOUNTING)
+              disk->mounter = ecore_exe_run(eina_strbuf_string_get(disk->unmount_cmd), disk);
+            else
+              disk->mounter = ecore_exe_run(eina_strbuf_string_get(disk->eject_cmd), disk);
             eeze_events = eina_list_append(eeze_events, disk);
             return ECORE_CALLBACK_RENEW;
          }
@@ -356,6 +368,14 @@ eeze_disk_eject(Eeze_Disk *disk)
      }
 
    INF("Ejecting: %s", eina_strbuf_string_get(disk->eject_cmd));
+   if (eeze_disk_libmount_mounted_get(disk))
+     {
+        Eina_Bool ret;
+
+        ret = eeze_disk_unmount(disk);
+        if (ret) disk->mount_status |= EEZE_DISK_EJECTING;
+        return ret;
+     }
    disk->mounter = ecore_exe_run(eina_strbuf_string_get(disk->eject_cmd), disk);
    if (!disk->mounter)
      return EINA_FALSE;
