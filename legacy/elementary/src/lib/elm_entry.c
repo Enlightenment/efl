@@ -1610,8 +1610,6 @@ _text_append_idler(void *data)
 
    wd->append_text_left[wd->append_text_position] = backup;
 
-   _sizing_eval(obj);
-
    /* If there's still more to go, renew the idler, else, cleanup */
    if (wd->append_text_position < wd->append_text_len)
      {
@@ -1869,7 +1867,6 @@ elm_entry_entry_set(Evas_Object *obj, const char *entry)
    if (len <= _CHUNK_SIZE)
      {
         edje_object_part_text_set(wd->ent, "elm.text", entry);
-        _sizing_eval(obj);
      }
    else
      {
