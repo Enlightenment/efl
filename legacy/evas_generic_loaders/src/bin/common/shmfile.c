@@ -29,11 +29,12 @@ shm_alloc(int dsize)
 {
 #ifdef HAVE_SHM_OPEN
    if (!shmfile) shmfile = malloc(1024);
+   if (!shmfile) goto failed;
    shmfile[0] = 0;
    srand(time(NULL));
    do
      {
-        snprintf(shmfile, sizeof(shmfile), "/evas-loader.%i.%i",
+        snprintf(shmfile, 1024, "/evas-loader.%i.%i",
                  (int)getpid(), (int)rand());
         shm_fd = shm_open(shmfile, O_RDWR | O_CREAT | O_EXCL, S_IRUSR | S_IWUSR);
      }
