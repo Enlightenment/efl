@@ -262,7 +262,13 @@ eeze_disk_mount(Eeze_Disk *disk)
              if (disk->mount_opts & EEZE_DISK_MOUNTOPT_LOOP)
                eina_strbuf_append(disk->mount_cmd, "loop,");
              if (disk->mount_opts & EEZE_DISK_MOUNTOPT_UTF8)
-               eina_strbuf_append(disk->mount_cmd, "utf8,");
+               {
+                  const char *fstype;
+                  eina_strbuf_append(disk->mount_cmd, "utf8,");
+                  fstype = eeze_disk_fstype_get(disk);
+                  if (fstype && (!strcmp(fstype, "jfs")))
+                    eina_strbuf_append(disk->mount_cmd, "iocharset=utf8,");
+               }
              if (disk->mount_opts & EEZE_DISK_MOUNTOPT_NOEXEC)
                eina_strbuf_append(disk->mount_cmd, "noexec,");
              if (disk->mount_opts & EEZE_DISK_MOUNTOPT_NOSUID)
