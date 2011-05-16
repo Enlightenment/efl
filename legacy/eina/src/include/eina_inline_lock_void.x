@@ -19,6 +19,14 @@
 #ifndef EINA_INLINE_LOCK_VOID_X_
 #define EINA_INLINE_LOCK_VOID_X_
 
+#ifdef EINA_UNUSED
+# undef EINA_UNUSED
+#endif
+#ifdef __GNUC__
+# define EINA_UNUSED __attribute__((unused))
+#else
+# define EINA_UNUSED
+#endif
 
 /**
  * @addtogroup Eina_Lock_Group Lock
@@ -36,6 +44,7 @@
  * Abtract type for a mutual exclusive object.
  */
 typedef void *Eina_Lock;
+typedef void *Eina_Condition;
 
 /**
  * @brief Create a new #Eina_Lock.
@@ -50,7 +59,7 @@ typedef void *Eina_Lock;
  * is done on @p mutex.
  */
 static inline Eina_Bool
-eina_lock_new(Eina_Lock *mutex)
+eina_lock_new(Eina_Lock *mutex EINA_UNUSED)
 {
    return EINA_FALSE;
 }
@@ -65,7 +74,7 @@ eina_lock_new(Eina_Lock *mutex)
  * @p mutex.
  */
 static inline void
-eina_lock_free(Eina_Lock mutex)
+eina_lock_free(Eina_Lock *mutex EINA_UNUSED)
 {
 }
 
@@ -81,7 +90,7 @@ eina_lock_free(Eina_Lock mutex)
  * @p mutex.
  */
 static inline Eina_Lock_Result
-eina_lock_take(Eina_Lock mutex)
+eina_lock_take(Eina_Lock *mutex EINA_UNUSED)
 {
    return EINA_LOCK_FAIL;
 }
@@ -102,7 +111,7 @@ eina_lock_take(Eina_Lock mutex)
  * @note On Windows CE, this function is actually eina_lock_take().
  */
 static inline Eina_Lock_Result
-eina_lock_take_try(Eina_Lock mutex)
+eina_lock_take_try(Eina_Lock *mutex EINA_UNUSED)
 {
    return EINA_LOCK_FAIL;
 }
@@ -119,41 +128,41 @@ eina_lock_take_try(Eina_Lock mutex)
  * @p mutex.
  */
 static inline Eina_Lock_Result
-eina_lock_release(Eina_Lock mutex)
+eina_lock_release(Eina_Lock *mutex EINA_UNUSED)
 {
    return EINA_LOCK_FAIL;
 }
 
 static inline void
-eina_lock_debug(const Eina_Lock *mutex)
+eina_lock_debug(const Eina_Lock *mutex EINA_UNUSED)
 {
 }
 
 static inline Eina_Bool
-eina_condition_new(Eina_Condition *cond, Eina_Lock *mutex)
+eina_condition_new(Eina_Condition *cond EINA_UNUSED, Eina_Lock *mutex EINA_UNUSED)
 {
    return EINA_FALSE;
 }
 
 static inline void
-eina_condition_free(Eina_Condition *cond)
+eina_condition_free(Eina_Condition *cond EINA_UNUSED)
 {
 }
 
 static inline Eina_Bool
-eina_condition_wait(Eina_Condition *cond)
-{
-   return EINA_FALSE;
-}
-
-static inline Eina_Bool
-eina_condition_broadcast(Eina_Condition *cond)
+eina_condition_wait(Eina_Condition *cond EINA_UNUSED)
 {
    return EINA_FALSE;
 }
 
 static inline Eina_Bool
-eina_condition_signal(Eina_Condition *cond)
+eina_condition_broadcast(Eina_Condition *cond EINA_UNUSED)
+{
+   return EINA_FALSE;
+}
+
+static inline Eina_Bool
+eina_condition_signal(Eina_Condition *cond EINA_UNUSED)
 {
    return EINA_FALSE;
 }
