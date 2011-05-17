@@ -21,6 +21,18 @@
 #include "Eet.h"
 #include "Eet_private.h"
 
+#ifdef _WIN32
+# define FMT_CHAR "%c"
+# define FMT_UCHAR "%c"
+# define FMT_LONG_LONG "%I64i"
+# define FMT_ULONG_LONG "%I64u"
+#else
+# define FMT_CHAR "%hhi"
+# define FMT_UCHAR "%hhu"
+# define FMT_LONG_LONG "%lli"
+# define FMT_ULONG_LONG "%llu"
+#endif
+
 /*
  * routines for doing data -> struct and struct -> data conversion
  *
@@ -3022,7 +3034,7 @@ _eet_data_dump_parse(Eet_Dictionary *ed,
                                            if      (!strcmp(tok3, "char:"))
                                              {
                                                 n->type = EET_T_CHAR;
-                                                sscanf(tok4, "%hhi",
+                                                sscanf(tok4, FMT_CHAR,
                                                        &(n->data.value.c));
                                              }
                                            else if (!strcmp(tok3, "short:"))
@@ -3040,7 +3052,7 @@ _eet_data_dump_parse(Eet_Dictionary *ed,
                                            else if (!strcmp(tok3, "long_long:"))
                                              {
                                                 n->type = EET_T_LONG_LONG;
-                                                sscanf(tok4, "%lli",
+                                                sscanf(tok4, FMT_LONG_LONG,
                                                        &(n->data.value.l));
                                              }
                                            else if (!strcmp(tok3, "float:"))
@@ -3058,7 +3070,7 @@ _eet_data_dump_parse(Eet_Dictionary *ed,
                                            else if (!strcmp(tok3, "uchar:"))
                                              {
                                                 n->type = EET_T_UCHAR;
-                                                sscanf(tok4, "%hhu",
+                                                sscanf(tok4, FMT_UCHAR,
                                                        &(n->data.value.uc));
                                              }
                                            else if (!strcmp(tok3, "ushort:"))
@@ -3076,7 +3088,7 @@ _eet_data_dump_parse(Eet_Dictionary *ed,
                                            else if (!strcmp(tok3, "ulong_long:"))
                                              {
                                                 n->type = EET_T_ULONG_LONG;
-                                                sscanf(tok4, "%llu",
+                                                sscanf(tok4, FMT_ULONG_LONG,
                                                        &(n->data.value.ul));
                                              }
                                            else if (!strcmp(tok3, "string:"))
