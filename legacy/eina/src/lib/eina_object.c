@@ -139,12 +139,10 @@ struct _Eina_Class
 
   Eina_Bool repack_needed : 1;
 
-#ifdef EINA_HAVE_THREADS
-# ifdef EINA_HAVE_DEBUG_THREADS
+#ifdef EINA_HAVE_DEBUG_THREADS
   pthread_t self;
-# endif
-  Eina_Lock mutex;
 #endif
+  Eina_Lock mutex;
 
   EINA_MAGIC;
 };
@@ -582,12 +580,10 @@ eina_class_new(const char *name,
   c->allocated_range = NULL;
   c->childs = NULL;
 
-#ifdef EINA_HAVE_THREADS
-# ifdef EINA_HAVE_DEBUG_THREADS
+#ifdef EINA_HAVE_DEBUG_THREADS
   c->self = pthread_self();
-# endif
-  eina_lock_new(&c->mutex);
 #endif
+  eina_lock_new(&c->mutex);
 
   EINA_MAGIC_SET(c, EINA_MAGIC_CLASS);
 
@@ -655,12 +651,10 @@ eina_class_del(Eina_Class *class)
 	}
     }
 
-#ifdef EINA_HAVE_THREADS
-# ifdef EINA_HAVE_DEBUG_THREADS
+#ifdef EINA_HAVE_DEBUG_THREADS
   assert(pthread_equal(class->self, pthread_self()));
-# endif
-  eina_lock_free(&class->mutex);
 #endif
+  eina_lock_free(&class->mutex);
 
   eina_mempool_del(class->mempool);
   eina_mempool_free(_eina_class_mp, class);
