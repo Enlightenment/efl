@@ -118,6 +118,7 @@ struct _Eina_File
 
    unsigned long long length;
    time_t mtime;
+   ino_t inode;
 
    int refcount;
    int global_refcount;
@@ -378,6 +379,8 @@ _eina_file_stat_ls_iterator_next(Eina_File_Direct_Iterator *it, void **data)
 static void
 _eina_file_real_close(Eina_File *file)
 {
+   if (file->refcount != 0) return ;
+
    eina_hash_free(file->rmap);
    eina_hash_free(file->map);
 
@@ -385,8 +388,6 @@ _eina_file_real_close(Eina_File *file)
      munmap(file->global_map, file->length);
 
    close(file->fd);
-
-   eina_stringshare_del(file->filename);
 
    free(file);
 }
@@ -747,8 +748,10 @@ eina_file_open(const char *filename, Eina_Bool shared)
    int flags;
    Eina_Bool create = EINA_FALSE;
 
-   /* FIXME: always open absolute path (need to fix filename according to current
-      directory) */
+   /*
+     FIXME: always open absolute path
+     (need to fix filename according to current directory)
+   */
 
    if (shared)
      fd = shm_open(filename, O_RDONLY, S_IRWXU | S_IRWXG | S_IRWXO);
@@ -770,13 +773,14 @@ eina_file_open(const char *filename, Eina_Bool shared)
 
    file = eina_hash_find(_eina_file_cache, filename);
    if (file && (file->mtime != file_stat.st_mtime
-                || file->length != (unsigned long long) file_stat.st_size))
+                || file->length != (unsigned long long) file_stat.st_size
+                || file->inode != file_stat.st_ino))
      {
         create = EINA_TRUE;
 
         if (file->refcount == 0)
           {
-             _eina_file_cache_lru = eina_list_prepend(_eina_file_cache_lru, file);
+             _eina_file_cache_lru = eina_list_remove(_eina_file_cache_lru, file);
              eina_hash_del(_eina_file_cache, file->filename, file);
 
              file = NULL;
@@ -790,10 +794,11 @@ eina_file_open(const char *filename, Eina_Bool shared)
 
    if (!file || create)
      {
-        n = malloc(sizeof (Eina_File));
+        n = malloc(sizeof (Eina_File) + strlen(filename) + 1);
         if (!n) goto on_error;
 
-        n->filename = eina_stringshare_add(filename);
+        n->filename = (char*) (n + 1);
+        strcpy((char*) n->filename, filename);
         n->map = eina_hash_new(EINA_KEY_LENGTH(_eina_file_map_key_length),
                                EINA_KEY_CMP(_eina_file_map_key_cmp),
                                EINA_KEY_HASH(_eina_file_map_key_hash),
@@ -801,14 +806,17 @@ eina_file_open(const char *filename, Eina_Bool shared)
                                3);
         n->rmap = eina_hash_pointer_new(NULL);
         n->global_map = MAP_FAILED;
+	n->global_refcount = 0;
         n->length = file_stat.st_size;
         n->mtime = file_stat.st_mtime;
+        n->inode = file_stat.st_ino;
         n->refcount = 0;
         n->fd = fd;
         n->shared = shared;
         n->delete_me = EINA_FALSE;
 
-        eina_hash_set(_eina_file_cache, filename, n);
+        if (file) eina_hash_del(_eina_file_cache, filename, file);
+        eina_hash_direct_add(_eina_file_cache, n->filename, n);
      }
    else
      {
