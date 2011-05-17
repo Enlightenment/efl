@@ -496,3 +496,8 @@
 
 	* Use Eina_Lock.
 	* Sync GNUTLS initialisation with Eina.
+
+2011-05-17  Cedric BAIL
+
+	* Use Eina_File.
+	* Fix test forgetting to initialize eet.

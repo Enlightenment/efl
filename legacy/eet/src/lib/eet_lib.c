@@ -86,7 +86,7 @@ typedef struct _Eet_File_Directory   Eet_File_Directory;
 struct _Eet_File
 {
    char                *path;
-   FILE                *readfp;
+   Eina_File           *readfp;
    Eet_File_Header     *header;
    Eet_Dictionary      *ed;
    Eet_Key             *key;
@@ -100,12 +100,10 @@ struct _Eet_File
    int                  magic;
    int                  references;
 
-   int                  data_size;
+   unsigned long int    data_size;
    int                  x509_length;
    unsigned int         signature_length;
    int                  sha1_length;
-
-   time_t               mtime;
 
    Eina_Lock            file_lock;
 
@@ -131,13 +129,13 @@ struct _Eet_File_Node
    void          *data;
    Eet_File_Node *next;  /* FIXME: make buckets linked lists */
 
-   int            offset;
-   int            dictionary_offset;
-   int            name_offset;
+   unsigned long int   offset;
+   unsigned long int   dictionary_offset;
+   unsigned long int   name_offset;
 
-   int            name_size;
-   int            size;
-   int            data_size;
+   unsigned int   name_size;
+   unsigned int   size;
+   unsigned int   data_size;
 
    unsigned char  free_name : 1;
    unsigned char  compression : 1;
@@ -850,12 +848,12 @@ eet_internal_read2(Eet_File *ef)
    const int *data = (const int *)ef->data;
    const char *start = (const char *)ef->data;
    int idx = 0;
-   int num_directory_entries;
-   int bytes_directory_entries;
-   int num_dictionary_entries;
-   int bytes_dictionary_entries;
-   int signature_base_offset;
-   int i;
+   unsigned long int bytes_directory_entries;
+   unsigned long int bytes_dictionary_entries;
+   unsigned long int signature_base_offset;
+   unsigned long int num_directory_entries;
+   unsigned long int num_dictionary_entries;
+   unsigned int i;
 
    idx += sizeof(int);
    if (eet_test_close((int)ntohl(*data) != EET_MAGIC_FILE2, ef))
@@ -916,8 +914,8 @@ eet_internal_read2(Eet_File *ef)
      {
         const char *name;
         Eet_File_Node *efn;
-        int name_offset;
-        int name_size;
+        unsigned long int name_offset;
+        unsigned long int name_size;
         int hash;
         int flag;
 
@@ -1022,8 +1020,8 @@ eet_internal_read2(Eet_File *ef)
 
         for (j = 0; j < ef->ed->count; ++j)
           {
+             unsigned int offset;
              int hash;
-             int offset;
 
              GET_INT(hash,                dico, idx);
              GET_INT(offset,              dico, idx);
@@ -1104,10 +1102,10 @@ eet_internal_read1(Eet_File *ef)
 {
    const unsigned char *dyn_buf = NULL;
    const unsigned char *p = NULL;
+   unsigned long int byte_entries;
+   unsigned long int num_entries;
+   unsigned int i;
    int idx = 0;
-   int num_entries;
-   int byte_entries;
-   int i;
 
    WRN(
       "EET file format of '%s' is deprecated. You should just open it one time with mode == EET_FILE_MODE_READ_WRITE to solve this issue.",
@@ -1334,7 +1332,13 @@ eet_internal_close(Eet_File *ef,
    ef->references--;
    /* if its still referenced - dont go any further */
    if (ef->references > 0)
-      goto on_error;  /* flush any writes */
+     {
+        /* flush any writes */
+        if ((ef->mode == EET_FILE_MODE_WRITE) ||
+            (ef->mode == EET_FILE_MODE_READ_WRITE))
+          eet_sync(ef);
+        goto on_error;
+     }
 
    err = eet_flush2(ef);
 
@@ -1349,10 +1353,7 @@ eet_internal_close(Eet_File *ef,
    if (ef->mode == EET_FILE_MODE_READ)
       eet_cache_del(ef, &eet_readers, &eet_readers_num, &eet_readers_alloc);
    else if ((ef->mode == EET_FILE_MODE_WRITE) ||
-            (
-               ef
-               ->
-               mode == EET_FILE_MODE_READ_WRITE))
+            (ef->mode == EET_FILE_MODE_READ_WRITE))
       eet_cache_del(ef, &eet_writers, &eet_writers_num, &eet_writers_alloc);
 
    /* we can unlock the cache now */
@@ -1400,13 +1401,13 @@ eet_internal_close(Eet_File *ef,
    eet_dictionary_free(ef->ed);
 
    if (ef->sha1)
-      free(ef->sha1);
+     free(ef->sha1);
 
    if (ef->data)
-      munmap((void *)ef->data, ef->data_size);
+     eina_file_map_free(ef->readfp, (void *) ef->data);
 
    if (ef->readfp)
-      fclose(ef->readfp);
+     eina_file_close(ef->readfp);
 
    /* zero out ram for struct - caution tactic against stale memory use */
    memset(ef, 0, sizeof(Eet_File));
@@ -1443,7 +1444,6 @@ eet_memopen_read(const void *data,
    ef->references = 1;
    ef->mode = EET_FILE_MODE_READ;
    ef->header = NULL;
-   ef->mtime = 0;
    ef->delete_me_now = 1;
    ef->readfp = NULL;
    ef->data = data;
@@ -1462,10 +1462,10 @@ EAPI Eet_File *
 eet_open(const char   *file,
          Eet_File_Mode mode)
 {
-   FILE *fp;
+   Eina_File *fp;
    Eet_File *ef;
    int file_len;
-   struct stat file_stat;
+   unsigned long int size;
 
    if (!file)
       return NULL;
@@ -1504,28 +1504,18 @@ eet_open(const char   *file,
    if ((mode == EET_FILE_MODE_READ) || (mode == EET_FILE_MODE_READ_WRITE))
      {
         /* Prevent garbage in futur comparison. */
-        file_stat.st_mtime = 0;
-
-        fp = fopen(file, "rb");
+        fp = eina_file_open(file, EINA_FALSE);
         if (!fp)
            goto open_error;
 
-        if (fstat(fileno(fp), &file_stat))
+        size = eina_file_size_get(fp);
+
+        if (size < ((int)sizeof(int) * 3))
           {
-             fclose(fp);
+             eina_file_close(fp);
              fp = NULL;
 
-             memset(&file_stat, 0, sizeof(file_stat));
-
-             goto open_error;
-          }
-
-        if (file_stat.st_size < ((int)sizeof(int) * 3))
-          {
-             fclose(fp);
-             fp = NULL;
-
-             memset(&file_stat, 0, sizeof(file_stat));
+             size = 0;
 
              goto open_error;
           }
@@ -1539,15 +1529,13 @@ open_error:
         if (mode != EET_FILE_MODE_WRITE)
            return NULL;
 
-        memset(&file_stat, 0, sizeof(file_stat));
+        size = 0;
 
         fp = NULL;
      }
 
    /* We found one */
-   if (ef &&
-       ((file_stat.st_mtime != ef->mtime) ||
-        (file_stat.st_size != ef->data_size)))
+   if (ef && ef->readfp != fp)
      {
         ef->delete_me_now = 1;
         ef->references++;
@@ -1559,7 +1547,7 @@ open_error:
      {
         /* reference it up and return it */
         if (fp)
-           fclose(fp);
+          eina_file_close(fp);
 
         ef->references++;
         UNLOCK_CACHE;
@@ -1583,7 +1571,6 @@ open_error:
    ef->references = 1;
    ef->mode = mode;
    ef->header = NULL;
-   ef->mtime = file_stat.st_mtime;
    ef->writes_pending = 0;
    ef->delete_me_now = 0;
    ef->data = NULL;
@@ -1603,14 +1590,12 @@ open_error:
    if (eet_test_close(!ef->readfp, ef))
       goto on_error;
 
-   fcntl(fileno(ef->readfp), F_SETFD, FD_CLOEXEC);
    /* if we opened for read or read-write */
    if ((mode == EET_FILE_MODE_READ) || (mode == EET_FILE_MODE_READ_WRITE))
      {
-        ef->data_size = file_stat.st_size;
-        ef->data = mmap(NULL, ef->data_size, PROT_READ,
-                        MAP_SHARED, fileno(ef->readfp), 0);
-        if (eet_test_close((ef->data == MAP_FAILED), ef))
+        ef->data_size = size;
+        ef->data = eina_file_map_all(fp, EINA_FILE_SEQUENTIAL);
+        if (eet_test_close((ef->data == NULL), ef))
            goto on_error;
 
         ef = eet_internal_read(ef);
@@ -1623,11 +1608,10 @@ empty_file:
    if (ef->references == 1)
      {
         if (ef->mode == EET_FILE_MODE_READ)
-           eet_cache_add(ef, &eet_readers, &eet_readers_num, &eet_readers_alloc);
-        else
-        if ((ef->mode == EET_FILE_MODE_WRITE) ||
-            (ef->mode == EET_FILE_MODE_READ_WRITE))
-           eet_cache_add(ef, &eet_writers, &eet_writers_num, &eet_writers_alloc);
+          eet_cache_add(ef, &eet_readers, &eet_readers_num, &eet_readers_alloc);
+        else if ((ef->mode == EET_FILE_MODE_WRITE) ||
+                 (ef->mode == EET_FILE_MODE_READ_WRITE))
+          eet_cache_add(ef, &eet_writers, &eet_writers_num, &eet_writers_alloc);
      }
 
    UNLOCK_CACHE;
@@ -1723,7 +1707,7 @@ eet_read_cipher(Eet_File   *ef,
 {
    Eet_File_Node *efn;
    char *data = NULL;
-   int size = 0;
+   unsigned long int size = 0;
 
    if (size_ret)
       *size_ret = 0;
@@ -1928,7 +1912,8 @@ eet_read_direct(Eet_File   *ef,
    if (!efn)
       goto on_error;
 
-   if (efn->offset < 0 && !efn->data)
+   /* trick to detect data in memory instead of mmaped from disk */
+   if (efn->offset > ef->data_size && !efn->data)
       goto on_error;
 
    /* get size (uncompressed, if compressed at all) */
@@ -2106,8 +2091,10 @@ eet_alias(Eet_File   *ef,
              efn->size = data_size;
              efn->data_size = strlen(destination) + 1;
              efn->data = data2;
-             efn->offset = -1;
+             /* Put the offset above the limit to avoid direct access */
+             efn->offset = ef->data_size + 1;
              exists_already = EINA_TRUE;
+
              break;
           }
      }
@@ -2126,7 +2113,8 @@ eet_alias(Eet_File   *ef,
 
         efn->next = ef->header->directory->nodes[hash];
         ef->header->directory->nodes[hash] = efn;
-        efn->offset = -1;
+        /* Put the offset above the limit to avoid direct access */
+        efn->offset = ef->data_size + 1;
         efn->alias = 1;
         efn->ciphered = 0;
         efn->compression = !!comp;
@@ -2288,7 +2276,8 @@ eet_write_cipher(Eet_File   *ef,
              efn->size = data_size;
              efn->data_size = size;
              efn->data = data2;
-             efn->offset = -1;
+             /* Put the offset above the limit to avoid direct access */
+             efn->offset = ef->data_size + 1;
              exists_already = 1;
              break;
           }
@@ -2308,7 +2297,8 @@ eet_write_cipher(Eet_File   *ef,
 
         efn->next = ef->header->directory->nodes[hash];
         ef->header->directory->nodes[hash] = efn;
-        efn->offset = -1;
+        /* Put the offset above the limit to avoid direct access */
+        efn->offset = ef->data_size + 1;
         efn->alias = 0;
         efn->ciphered = cipher_key ? 1 : 0;
         efn->compression = !!comp;
@@ -2544,28 +2534,16 @@ read_data_from_disk(Eet_File      *ef,
                     void          *buf,
                     int            len)
 {
-   if (efn->offset < 0)
+   if (efn->offset > ef->data_size)
       return 0;
 
-   if (ef->data)
-     {
-        if ((efn->offset + len) > ef->data_size)
-           return 0;
+   if (!ef->data)
+     return 0;
 
-        memcpy(buf, ef->data + efn->offset, len);
-     }
-   else
-     {
-        if (!ef->readfp)
-           return 0;
+   if ((efn->offset + len) > ef->data_size)
+     return 0;
 
-        /* seek to data location */
-        if (fseek(ef->readfp, efn->offset, SEEK_SET) < 0)
-           return 0;
-
-        /* read it */
-        len = fread(buf, len, 1, ef->readfp);
-     }
+   memcpy(buf, ef->data + efn->offset, len);
 
    return len;
 } /* read_data_from_disk */

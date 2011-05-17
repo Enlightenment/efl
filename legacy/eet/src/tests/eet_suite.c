@@ -1018,6 +1018,12 @@ START_TEST(eet_file_data_test)
 
    fail_if(!eet_data_write(ef, edd, EET_TEST_FILE_KEY1, &etbt, 0));
 
+   result = eet_data_read(ef, edd, EET_TEST_FILE_KEY1);
+   fail_if(!result);
+
+   /* Test the resulting data. */
+   fail_if(_eet_test_ex_check(result, 0) != 0);
+
    eet_close(ef);
 
    /* Read back the data. */
@@ -1203,6 +1209,8 @@ START_TEST(eet_image)
    int alpha;
    unsigned int w;
    unsigned int h;
+
+   eet_init();
 
    fail_if(!(file = tmpnam(file)));
 
