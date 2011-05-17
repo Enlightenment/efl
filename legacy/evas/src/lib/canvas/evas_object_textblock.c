@@ -3488,7 +3488,10 @@ _layout_visualize_par(Ctxt *c)
                                           EINA_INLIST_GET(it)));
                                  continue;
                               }
-                            else if (uwrap >= ti->parent.text_pos +
+                            /* If it points to the end, it means the previous
+                             * char is a whitespace we should remove, so this
+                             * is a wanted cutting point. */
+                            else if (uwrap > ti->parent.text_pos +
                                   ti->text_props.text_len)
                                wrap = -1; /* Delay the cut in a smart way
                                i.e use the item_pos as the line_start, because
