@@ -48,7 +48,7 @@ _get_syspath_from_watch(void             *data,
    Eeze_Udev_Watch_Cb func = store->func;
    void *sdata = store->data;
    Eeze_Udev_Watch *watch = store->watch;
-   int cap = 0, event = 0;
+   int event = 0;
 
    if (!ecore_main_fd_handler_active_get(fd_handler, ECORE_FD_READ))
      return EINA_TRUE;
@@ -171,18 +171,13 @@ _get_syspath_from_watch(void             *data,
             || (strcmp(test, "block")))
           goto error;
 #endif
-        test = udev_device_get_sysattr_value(device, "capability");
-
-        if (test)
-          cap = strtol(test, NULL, 10);
-
         if (!(test = (udev_device_get_property_value(device, "ID_FS_USAGE"))) ||
-            (strcmp("filesystem", test)) || (cap == 50))
+            (strcmp("filesystem", test)))
           goto error;
         {
            int devcheck;
 
-           devcheck = open(udev_device_get_devnode(device), O_RDONLY | O_EXCL);
+           devcheck = open(udev_device_get_devnode(device), O_RDONLY);
            if (devcheck < 0) goto error;
            close(devcheck);
         }
@@ -190,39 +185,20 @@ _get_syspath_from_watch(void             *data,
         break;
 
       case EEZE_UDEV_TYPE_DRIVE_INTERNAL:
-#ifdef OLD_UDEV_RRRRRRRRRRRRRR
-        if ((!(test = udev_device_get_subsystem(device)))
-            || (strcmp(test, "block")))
-          goto error;
-#endif
-        if (!(test = udev_device_get_property_value(device, "ID_BUS"))
-            || (strcmp("ata", test))
-            || !(test = udev_device_get_sysattr_value(device, "removable"))
-            || (strtol(test, NULL, 10)))
-          goto error;
+        if (udev_device_get_property_value(device, "ID_FS_USAGE")) goto error;
+        test = udev_device_get_sysattr_value(device, "removable");
+        if (test[0] == '1') goto error;
 
         break;
 
       case EEZE_UDEV_TYPE_DRIVE_REMOVABLE:
-#ifdef OLD_UDEV_RRRRRRRRRRRRRR
-        if ((!(test = udev_device_get_subsystem(device)))
-            || (strcmp(test, "block")))
-          goto error;
-#endif
-        if ((!(test = udev_device_get_sysattr_value(device, "removable"))
-             || (!strtol(test, NULL, 10)))
-            && (!(test = udev_device_get_sysattr_value(device, "capability"))
-                || (strtol(test, NULL, 10) != 10)))
-          goto error;
+        if (udev_device_get_property_value(device, "ID_FS_USAGE")) goto error;
+        test = udev_device_get_sysattr_value(device, "removable");
+        if (test[0] == '0') goto error;
 
         break;
 
       case EEZE_UDEV_TYPE_DRIVE_CDROM:
-#ifdef OLD_UDEV_RRRRRRRRRRRRRR
-        if ((!(test = udev_device_get_subsystem(device)))
-            || (strcmp(test, "block")))
-          goto error;
-#endif
         if (!udev_device_get_property_value(device, "ID_CDROM"))
           goto error;
 
@@ -338,11 +314,11 @@ eeze_udev_watch_add(Eeze_Udev_Type     type,
         break;
 
       case EEZE_UDEV_TYPE_DRIVE_INTERNAL:
-        udev_monitor_filter_add_match_subsystem_devtype(mon, "block", NULL);
+        udev_monitor_filter_add_match_subsystem_devtype(mon, NULL, "disk");
         break;
 
       case EEZE_UDEV_TYPE_DRIVE_REMOVABLE:
-        udev_monitor_filter_add_match_subsystem_devtype(mon, "block", NULL);
+        udev_monitor_filter_add_match_subsystem_devtype(mon, NULL, "disk");
         break;
 
       case EEZE_UDEV_TYPE_DRIVE_CDROM:

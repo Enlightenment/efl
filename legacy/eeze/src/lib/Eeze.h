@@ -292,6 +292,8 @@ EAPI Eina_List       *eeze_udev_find_similar_from_syspath(const char *syspath);
  * This function will update @p list to include all devices matching
  * devices with syspaths currently stored in @p list.  All strings are
  * stringshared.
+ *
+ * @note This is an expensive call, do not use it unless you must.
  */
 EAPI Eina_List       *eeze_udev_find_unlisted_similar(Eina_List *list);
 

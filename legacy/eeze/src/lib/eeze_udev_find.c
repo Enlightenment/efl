@@ -96,18 +96,28 @@ eeze_udev_find_unlisted_similar(Eina_List *list)
 
         if ((vendor = udev_device_get_property_value(device, "ID_VENDOR_ID")))
           udev_enumerate_add_match_property(en, "ID_VENDOR_ID", vendor);
-        else
-        if ((vendor = udev_device_get_property_value(device, "ID_VENDOR")))
+        else if ((vendor = udev_device_get_property_value(device, "ID_VENDOR")))
           udev_enumerate_add_match_property(en, "ID_VENDOR", vendor);
+        else if ((vendor = udev_device_get_sysattr_value(device, "vendor")))
+          udev_enumerate_add_match_sysattr(en, "vendor", vendor);
+        else if ((vendor = udev_device_get_sysattr_value(device, "manufacturer")))
+          udev_enumerate_add_match_sysattr(en, "manufacturer", vendor);
 
         if ((model = udev_device_get_property_value(device, "ID_MODEL_ID")))
           udev_enumerate_add_match_property(en, "ID_MODEL_ID", model);
-        else
-        if ((model = udev_device_get_property_value(device, "ID_MODEL")))
+        else if ((model = udev_device_get_property_value(device, "ID_MODEL")))
           udev_enumerate_add_match_property(en, "ID_MODEL", model);
+        else if ((model = udev_device_get_sysattr_value(device, "model")))
+          udev_enumerate_add_match_sysattr(en, "model", model);
+        else if ((model = udev_device_get_sysattr_value(device, "product")))
+          udev_enumerate_add_match_sysattr(en, "product", model);
 
         if ((revision = udev_device_get_property_value(device, "ID_REVISION")))
           udev_enumerate_add_match_property(en, "ID_REVISION", revision);
+        else if ((revision = udev_device_get_sysattr_value(device, "revision")))
+          udev_enumerate_add_match_sysattr(en, "revision", revision);
+
+        udev_enumerate_add_match_subsystem(en, udev_device_get_subsystem(device));
 
         udev_enumerate_scan_devices(en);
         udev_device_unref(device);
@@ -137,7 +147,7 @@ eeze_udev_find_by_type(Eeze_Udev_Type etype,
    _udev_enumerate *en;
    _udev_list_entry *devs, *cur;
    _udev_device *device, *parent;
-   const char *devname, *test;
+   const char *devname;
    Eina_List *ret = NULL;
 
    if ((!etype) && (!name))
@@ -181,8 +191,6 @@ eeze_udev_find_by_type(Eeze_Udev_Type etype,
       case EEZE_UDEV_TYPE_DRIVE_MOUNTABLE:
         udev_enumerate_add_match_subsystem(en, "block");
         udev_enumerate_add_match_property(en, "ID_FS_USAGE", "filesystem");
-        /* parent node */
-        udev_enumerate_add_nomatch_sysattr(en, "capability", "50");
         break;
 
       case EEZE_UDEV_TYPE_DRIVE_INTERNAL:
@@ -193,12 +201,11 @@ eeze_udev_find_by_type(Eeze_Udev_Type etype,
         break;
 
       case EEZE_UDEV_TYPE_DRIVE_REMOVABLE:
-        udev_enumerate_add_match_subsystem(en, "block");
+        udev_enumerate_add_match_sysattr(en, "removable", "1");
         udev_enumerate_add_match_property(en, "ID_TYPE", "disk");
         break;
 
       case EEZE_UDEV_TYPE_DRIVE_CDROM:
-        udev_enumerate_add_match_subsystem(en, "block");
         udev_enumerate_add_match_property(en, "ID_CDROM", "1");
         break;
 
@@ -258,21 +265,16 @@ eeze_udev_find_by_type(Eeze_Udev_Type etype,
                     goto out;
                }
           }
-        else if (etype == EEZE_UDEV_TYPE_DRIVE_INTERNAL)
-          {
-             if (udev_device_get_property_value(device, "ID_USB_DRIVER"))
-               goto out;
-          }
         else if (etype == EEZE_UDEV_TYPE_DRIVE_REMOVABLE)
           {
-             if (!(test = udev_device_get_property_value(device, "ID_BUS")) || (!strncmp(test, "ata", 3)))
-               goto out;
+             /* this yields the actual hw device, not to be confused with the filesystem */
+             devname = udev_device_get_syspath(udev_device_get_parent(device));
           }
         else if (etype == EEZE_UDEV_TYPE_DRIVE_MOUNTABLE)
           {
              int devcheck;
 
-             devcheck = open(udev_device_get_devnode(device), O_RDONLY | O_EXCL);
+             devcheck = open(udev_device_get_devnode(device), O_RDONLY);
              if (devcheck < 0) goto out;
              close(devcheck);
           }

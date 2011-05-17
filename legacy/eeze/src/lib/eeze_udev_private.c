@@ -111,9 +111,13 @@ _get_unlisted_parents(Eina_List    *list,
 
    if (!(vendor = udev_device_get_property_value(child, "ID_VENDOR_ID")))
      vendor = udev_device_get_property_value(child, "ID_VENDOR");
+   if (!vendor) vendor = udev_device_get_sysattr_value(child, "vendor");
+   if (!vendor) vendor = udev_device_get_sysattr_value(child, "manufacturer");
 
    if (!(model = udev_device_get_property_value(child, "ID_MODEL_ID")))
      model = udev_device_get_property_value(child, "ID_MODEL");
+   if (!model) model = udev_device_get_sysattr_value(child, "model");
+   if (!model) model = udev_device_get_sysattr_value(child, "product");
 
    parent = udev_device_get_parent(child);
 
@@ -123,9 +127,13 @@ _get_unlisted_parents(Eina_List    *list,
 
         if (!(vendor2 = udev_device_get_property_value(child, "ID_VENDOR_ID")))
           vendor2 = udev_device_get_property_value(child, "ID_VENDOR");
+        if (!vendor2) vendor2 = udev_device_get_sysattr_value(child, "vendor");
+        if (!vendor2) vendor2 = udev_device_get_sysattr_value(child, "manufacturer");
 
         if (!(model2 = udev_device_get_property_value(child, "ID_MODEL_ID")))
           model2 = udev_device_get_property_value(child, "ID_MODEL");
+        if (!model2) model2 = udev_device_get_sysattr_value(child, "model");
+        if (!model2) model2 = udev_device_get_sysattr_value(child, "product");
 
         if ((!model2 && model) || (model2 && !model) || (!vendor2 && vendor)
             || (vendor2 && !vendor))

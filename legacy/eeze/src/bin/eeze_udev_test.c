@@ -194,10 +194,10 @@ main()
    type = eeze_udev_find_unlisted_similar(type);
    EINA_LIST_FREE(type, name)  /* get a property using the device's syspath */
      {
-        if ((check = eeze_udev_syspath_get_property(name, "ID_MODEL")))
+        if ((check = eeze_udev_syspath_get_sysattr(name, "model")))
           {
-             check2 = eeze_udev_syspath_get_property(name, "ID_BUS");
-             printf("\tOoh, a %s attached on your %s bus!\n", check, check2);
+             check2 = eeze_udev_syspath_get_subsystem(name);
+             printf("\tOoh, a %s attached to the %s subsytem!\n", check, check2);
              eina_stringshare_del(check);
              eina_stringshare_del(check2);
           }
