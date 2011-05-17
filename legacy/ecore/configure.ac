@@ -344,6 +344,16 @@ else
 fi
 AC_SUBST(pkgconfig_requires_private)
 
+### Checks for some build time option
+want_ecore_timer_dump="yes"
+
+AC_ARG_ENABLE([ecore-timer-dump],
+   [AC_HELP_STRING([--disable-ecore-timer-dump], [disable tracking of timer allocation. @<:@default=enable@:>@])],
+   [want_ecore_timer_dump=$enableval], [])
+
+if test "x$want_ecore_timer_dump" = "xyes"; then
+   AC_DEFINE(WANT_ECORE_TIMER_DUMP, [1], [Want Ecore_Timer dump infrastructure])
+fi
 
 ### Checks for libraries
 
@@ -1469,6 +1479,7 @@ echo "    GLib support...............: $have_glib"
 echo "    Always integrate GLib......: $want_glib_integration_always"
 echo "    Use g_main_loop............: $want_g_main_loop"
 echo "    Gathering memory statistic.: $have_mallinfo"
+echo "    Gathering timer allocation.: $want_ecore_timer_dump"
 echo "  Ecore_Con....................: $have_ecore_con"
 if test "x$have_ecore_con" = "xyes" ; then
   echo $ECHO_N "    OpenSSL....................: $have_openssl $ECHO_C"

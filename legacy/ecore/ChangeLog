@@ -182,3 +182,7 @@
 	* Make ecore_con work on Windows (only the local connections
 	need a port)
 	* Make ecore_ipc compile on Windows
+
+2011-05-17  Cedric Bail
+
+	* Add ecore_timer_dump.

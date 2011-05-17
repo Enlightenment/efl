@@ -570,6 +570,7 @@ extern "C" {
    EAPI double       ecore_timer_pending_get(Ecore_Timer *timer);
    EAPI double       ecore_timer_precision_get(void);
    EAPI void         ecore_timer_precision_set(double precision);
+   EAPI char        *ecore_timer_dump(void);
 
   /**
    * @}
