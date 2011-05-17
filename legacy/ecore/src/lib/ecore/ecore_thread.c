@@ -677,7 +677,11 @@ _ecore_thread_worker(Ecore_Pthread_Data *pth)
    LKU(_ecore_pending_job_threads_mutex);
 
    /* Sleep a little to prevent premature death */
+#ifdef _WIN32
+   Sleep(1); /* around 50ms */
+#else
    usleep(200);
+#endif
 
    LKL(_ecore_pending_job_threads_mutex);
    if (_ecore_pending_job_threads || _ecore_pending_job_threads_feedback)
