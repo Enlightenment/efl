@@ -14,6 +14,7 @@ eina_accessor.c \
 eina_array.c \
 eina_benchmark.c \
 eina_binshare.c \
+eina_binbuf.c \
 eina_convert.c \
 eina_counter.c \
 eina_cpu.c \
@@ -60,7 +61,8 @@ EXTRA_DIST = \
 eina_share_common.h \
 eina_private.h \
 eina_strbuf_common.h \
-eina_strbuf_template_c.x
+eina_strbuf_template_c.x \
+eina_binbuf_template_c.x
 
 
 

@@ -154,6 +154,7 @@ extern "C" {
 #include "eina_matrixsparse.h"
 #include "eina_str.h"
 #include "eina_strbuf.h"
+#include "eina_binbuf.h"
 #include "eina_ustrbuf.h"
 #include "eina_unicode.h"
 #include "eina_quadtree.h"

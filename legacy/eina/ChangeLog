@@ -76,3 +76,9 @@
 2011-05-14  Vincent Torri
 
 	* Add Eina_Condition API on Windows.
+
+2011-05-17  Tom Hacohen (TAsn)
+
+	* Added eina_binbuf: This is just like strbuf but for binary blobs.
+	  Requested by discomfitor and honestly it looks needed.
+

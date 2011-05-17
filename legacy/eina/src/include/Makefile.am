@@ -26,6 +26,7 @@ eina_inline_array.x \
 eina_magic.h \
 eina_stringshare.h \
 eina_binshare.h \
+eina_binbuf.h \
 eina_ustringshare.h \
 eina_inline_stringshare.x \
 eina_inline_ustringshare.x \

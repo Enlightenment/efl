@@ -37,6 +37,7 @@ eina_test_stringshare.c \
 eina_test_ustringshare.c\
 eina_test_ustr.c	\
 eina_test_binshare.c    \
+eina_test_binbuf.c	\
 eina_test_array.c 	\
 eina_test_error.c	\
 eina_test_sched.c       \
