@@ -253,7 +253,7 @@ evas_common_font_draw_internal(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font
                        else
                          {
                             if ((fg->glyph_out->bitmap.num_grays == 256) &&
-                                  (fg->glyph_out->bitmap.pixel_mode == ft_pixel_mode_grays))
+                                  (fg->glyph_out->bitmap.pixel_mode == FT_PIXEL_MODE_GRAY))
                               {
                                  for (i = 0; i < h; i++)
                                    {

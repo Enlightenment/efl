@@ -40,7 +40,7 @@ evas_common_font_query_kerning(RGBA_Font_Int *fi, FT_UInt left, FT_UInt right,
    FTLOCK();
    if (FT_Get_Kerning(fi->src->ft.face,
 		      key[0], key[1],
-		      ft_kerning_default, &delta) == 0)
+		      FT_KERNING_DEFAULT, &delta) == 0)
      {
 	int *push;
 
