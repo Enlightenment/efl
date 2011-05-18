@@ -30,6 +30,12 @@ static int _log_dom;
 #define FLOAT_PRECISION 0.0001
 #define FDIFF(a, b) (fabs((a) - (b)) > FLOAT_PRECISION)
 
+#ifdef _WIN32
+# define FMT_UCHAR "%c"
+#else
+# define FMT_UCHAR "%hhu"
+#endif
+
 /* context */
 static Eina_List *groups;
 static Ecore_Evas *ee;
@@ -1572,8 +1578,8 @@ main(int argc, char **argv)
    file = argv[arg_index];
 
 
-   DBG("mode=%s, detail=%d(%s), group=%s, part=%s, program=%s, api-only=%hhu, "
-       "api-fix=%hhu, machine=%hhu, file=%s",
+   DBG("mode=%s, detail=%d(%s), group=%s, part=%s, program=%s, api-only=" FMT_UCHAR
+       ", api-fix=" FMT_UCHAR ", machine=" FMT_UCHAR ", file=%s",
        mode, detail, detail_name,
        group ? group : "",
        part ? part : "",

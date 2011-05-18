@@ -3,6 +3,12 @@
 //--------------------------------------------------------------------------//
 #define MAX_LUA_MEM (4 * (1024 * 1024))
 
+#ifdef _WIN32
+# define FMT_SIZE_T "%Iu"
+#else
+# define FMT_SIZE_T "%zu"
+#endif
+
 
 //--------------------------------------------------------------------------//
 typedef struct _Edje_Lua_Alloc       Edje_Lua_Alloc;
@@ -250,7 +256,7 @@ _elua_alloc(void *ud, void *ptr, size_t osize, size_t nsize)
    ela->cur += nsize - osize;
    if (ela->cur > ela->max)
      {
-        ERR("Edje Lua memory limit of %zu bytes reached (%zu allocated)",
+        ERR("Edje Lua memory limit of " FMT_SIZE_T " bytes reached (" FMT_SIZE_T  " allocated)",
             ela->max, ela->cur);
         return NULL;
      }
@@ -262,7 +268,7 @@ _elua_alloc(void *ud, void *ptr, size_t osize, size_t nsize)
    
    ptr2 = realloc(ptr, nsize);
    if (ptr2) return ptr2;
-   ERR("Edje Lua cannot re-allocate %zu bytes", nsize);
+   ERR("Edje Lua cannot re-allocate " FMT_SIZE_T " bytes", nsize);
    return ptr2;
 }
 

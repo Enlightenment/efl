@@ -20,6 +20,12 @@
 #include <Ecore_Evas.h>
 #include <Edje.h>
 
+#ifdef _WIN32
+# define FMT_UCHAR "%c"
+#else
+# define FMT_UCHAR "%hhu"
+#endif
+
 struct opts {
    char *file;
    char *group;
@@ -548,7 +554,7 @@ static unsigned char _parse_color(__UNUSED__ const Ecore_Getopt *parser, __UNUSE
 {
    unsigned char *color = (unsigned char *)storage->ptrp;
 
-   if (sscanf(str, "%hhu,%hhu,%hhu", color, color + 1, color + 2) != 3)
+   if (sscanf(str, FMT_UCHAR "," FMT_UCHAR "," FMT_UCHAR, color, color + 1, color + 2) != 3)
      {
 	fprintf(stderr, "ERROR: incorrect color value '%s'\n", str);
 	return 0;
