@@ -142,6 +142,7 @@ struct _Widget_Data
    Eina_Bool have_selection : 1;
    Eina_Bool selmode : 1;
    Eina_Bool deferred_cur : 1;
+   Eina_Bool cur_changed : 1;
    Eina_Bool disabled : 1;
    Eina_Bool context_menu : 1;
    Eina_Bool drag_selection_asked : 1;
@@ -623,7 +624,34 @@ _elm_win_recalc_job(void *data)
         Evas_Coord cx, cy, cw, ch;
         edje_object_part_text_cursor_geometry_get(wd->ent, "elm.text",
               &cx, &cy, &cw, &ch);
-        elm_widget_show_region_set(data, cx, cy, cw, ch);
+        if (wd->cur_changed)
+          {
+             elm_widget_show_region_set(data, cx, cy, cw, ch);
+             wd->cur_changed = EINA_FALSE;
+          }
+     }
+}
+
+static void
+_recalc_cursor_geometry(Evas_Object *obj)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   evas_object_smart_callback_call(obj, SIG_CURSOR_CHANGED, NULL);
+   if (!wd->deferred_recalc_job)
+     {
+        Evas_Coord cx, cy, cw, ch;
+        edje_object_part_text_cursor_geometry_get(wd->ent, "elm.text",
+              &cx, &cy, &cw, &ch);
+        if (wd->cur_changed)
+          {
+             elm_widget_show_region_set(obj, cx, cy, cw, ch);
+             wd->cur_changed = EINA_FALSE;
+          }
+     }
+   else
+     {
+        wd->deferred_cur = EINA_TRUE;
      }
 }
 
@@ -651,6 +679,8 @@ _sizing_eval(Evas_Object *obj)
         if (wd->single_line)
           evas_object_size_hint_max_set(obj, -1, minh);
      }
+
+   _recalc_cursor_geometry(obj);
 }
 
 static void
@@ -1289,19 +1319,9 @@ _signal_cursor_changed(void *data, Evas_Object *obj __UNUSED__, const char *emis
 {
    Widget_Data *wd = elm_widget_data_get(data);
    if (!wd) return;
-   evas_object_smart_callback_call(data, SIG_CURSOR_CHANGED, NULL);
    wd->cursor_pos = edje_object_part_text_cursor_pos_get(wd->ent, "elm.text", EDJE_CURSOR_MAIN);
-   if (!wd->deferred_recalc_job)
-     {
-        Evas_Coord cx, cy, cw, ch;
-        edje_object_part_text_cursor_geometry_get(wd->ent, "elm.text",
-              &cx, &cy, &cw, &ch);
-        elm_widget_show_region_set(data, cx, cy, cw, ch);
-     }
-   else
-     {
-        wd->deferred_cur = EINA_TRUE;
-     }
+   wd->cur_changed = EINA_TRUE;
+   _recalc_cursor_geometry(data);
 }
 
 static void
