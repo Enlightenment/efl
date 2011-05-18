@@ -1,6 +1,14 @@
 #include <Elementary.h>
 #include "elm_priv.h"
 
+#ifndef MIN
+# define MIN(a,b) ((a) < (b)) ? (a) : (b)
+#endif
+
+#ifndef MAX
+# define MAX(a,b) ((a) < (b)) ? (b) : (a)
+#endif
+
 /**
  * @defgroup Conformant Conformant
  *
