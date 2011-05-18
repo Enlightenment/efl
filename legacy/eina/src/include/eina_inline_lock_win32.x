@@ -48,7 +48,6 @@ EAPI extern Eina_Bool _eina_threads_activated;
 static inline Eina_Bool
 eina_lock_new(Eina_Lock *mutex)
 {
-  printf(" mutex init: %p\n", mutex);
    InitializeCriticalSection(mutex);
 
    return EINA_TRUE;
@@ -57,7 +56,6 @@ eina_lock_new(Eina_Lock *mutex)
 static inline void
 eina_lock_free(Eina_Lock *mutex)
 {
-  printf(" mutex free: %p\n", mutex);
    DeleteCriticalSection(mutex);
 }
 
@@ -68,7 +66,6 @@ eina_lock_take(Eina_Lock *mutex)
   if (!_eina_threads_activated) return EINA_LOCK_SUCCEED;
 #endif
 
-  printf(" mutex take: %p\n", mutex);
    EnterCriticalSection(mutex);
 
    return EINA_LOCK_SUCCEED;
@@ -91,7 +88,6 @@ eina_lock_release(Eina_Lock *mutex)
    if (!_eina_threads_activated) return EINA_LOCK_SUCCEED;
 #endif
 
-  printf(" mutex release: %p\n", mutex);
    LeaveCriticalSection(mutex);
 
    return EINA_LOCK_SUCCEED;
