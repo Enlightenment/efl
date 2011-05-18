@@ -31,6 +31,7 @@ START_TEST(eina_simple_xml_parser_node_dump)
 {
    FILE *f;
 
+   eina_init();
    f = fopen("sample.gpx", "rb");
    if (f)
      {
