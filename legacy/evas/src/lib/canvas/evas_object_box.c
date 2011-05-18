@@ -1373,7 +1373,7 @@ evas_object_box_layout_flow_horizontal(Evas_Object *o, Evas_Object_Box_Data *pri
    int *row_max_h;
    int *row_break;
    int *row_width;
-   int off_y;
+   int offset_y;
 
    n_children = eina_list_count(priv->children);
    if (!n_children)
@@ -1395,11 +1395,11 @@ evas_object_box_layout_flow_horizontal(Evas_Object *o, Evas_Object_Box_Data *pri
    evas_object_geometry_get(o, &x, &y, &w, &h);
 
    _evas_object_box_layout_flow_horizontal_row_info_collect
-     (priv, w, &row_count, row_max_h, row_break, row_width, &off_y, &max_h);
+     (priv, w, &row_count, row_max_h, row_break, row_width, &offset_y, &max_h);
 
    inc_y = 0;
    v_justify = 0;
-   remain_y = h - (off_y + max_h);
+   remain_y = h - (offset_y + max_h);
 
    if (remain_y > 0)
      {
@@ -1554,7 +1554,7 @@ evas_object_box_layout_flow_vertical(Evas_Object *o, Evas_Object_Box_Data *priv,
    int *col_max_w;
    int *col_break;
    int *col_height;
-   int off_x;
+   int offset_x;
 
    n_children = eina_list_count(priv->children);
    if (!n_children)
@@ -1576,10 +1576,10 @@ evas_object_box_layout_flow_vertical(Evas_Object *o, Evas_Object_Box_Data *priv,
    evas_object_geometry_get(o, &x, &y, &w, &h);
 
    _evas_object_box_layout_flow_vertical_col_info_collect
-     (priv, h, &col_count, col_max_w, col_break, col_height, &off_x, &max_w);
+     (priv, h, &col_count, col_max_w, col_break, col_height, &offset_x, &max_w);
 
    inc_x = 0;
-   remain_x = w - (off_x + max_w);
+   remain_x = w - (offset_x + max_w);
 
    if (remain_x > 0)
      {

@@ -416,10 +416,10 @@ evas_font_load(Evas *evas, const char *name, const char *source, int size)
 		    font = evas->engine.func->font_load(evas->engine.data.output, (char *)nm, size, wanted_rend);
 		  else /* search font path */
 		    {
-		       Eina_List *l;
+		       Eina_List *ll;
 		       char *dir;
 
-		       EINA_LIST_FOREACH(evas->font_path, l, dir)
+		       EINA_LIST_FOREACH(evas->font_path, ll, dir)
 			 {
 			    const char *f_file;
 
@@ -479,10 +479,10 @@ evas_font_load(Evas *evas, const char *name, const char *source, int size)
 		    evas->engine.func->font_add(evas->engine.data.output, font, (char *)nm, size, wanted_rend);
 		  else
 		    {
-		       Eina_List *l;
+		       Eina_List *ll;
 		       char *dir;
 
-		       EINA_LIST_FOREACH(evas->font_path, l, dir)
+		       EINA_LIST_FOREACH(evas->font_path, ll, dir)
 			 {
 			    const char *f_file;
 

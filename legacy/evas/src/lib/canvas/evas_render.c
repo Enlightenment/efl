@@ -744,27 +744,27 @@ evas_render_mapped(Evas *e, Evas_Object *obj, void *context, void *surface,
           }
         if (obj->smart.smart)
           {
-             Evas_Object *obj2;
+             Evas_Object *o2;
              
-             EINA_INLIST_FOREACH(evas_object_smart_members_get_direct(obj), obj2)
+             EINA_INLIST_FOREACH(evas_object_smart_members_get_direct(obj), o2)
                {
-                  if (!evas_object_is_visible(obj2) &&
-                      !evas_object_was_visible(obj2))
+                  if (!evas_object_is_visible(o2) &&
+                      !evas_object_was_visible(o2))
                     {
-                       obj2->changed = 0;
-                       obj2->changed_move_only = 0;
-                       obj2->changed_nomove = 0;
-                       obj2->changed_move = 0;
+                       o2->changed = 0;
+                       o2->changed_move_only = 0;
+                       o2->changed_nomove = 0;
+                       o2->changed_move = 0;
                        continue;
                     }
-                  if (obj2->changed)
+                  if (o2->changed)
                     {
-//                       chlist(obj2, 0);
+//                       chlist(o2, 0);
                        changed = 1;
-                       obj2->changed = 0;
-                       obj2->changed_move_only = 0;
-                       obj2->changed_nomove = 0;
-                       obj2->changed_move = 0;
+                       o2->changed = 0;
+                       o2->changed_move_only = 0;
+                       o2->changed_nomove = 0;
+                       o2->changed_move = 0;
                        break;
                     }
                }

@@ -315,7 +315,7 @@ evas_event_feed_mouse_up(Evas *e, int b, Evas_Button_Flags flags, unsigned int t
    if (!e->pointer.button)
      {
 	Eina_List *ins;
-	Eina_List *l;
+	Eina_List *ll;
 	  {
 	     Evas_Event_Mouse_Out ev;
 	     Evas_Object *obj;
@@ -337,7 +337,7 @@ evas_event_feed_mouse_up(Evas *e, int b, Evas_Button_Flags flags, unsigned int t
 	     ins = evas_event_objects_event_list(e, NULL, e->pointer.x, e->pointer.y);
 	     /* go thru old list of in objects */
 	     copy = evas_event_list_copy(e->pointer.object.in);
-	     EINA_LIST_FOREACH(copy, l, obj)
+	     EINA_LIST_FOREACH(copy, ll, obj)
 	       {
                   ev.canvas.x = e->pointer.x;
                   ev.canvas.y = e->pointer.y;
@@ -1247,14 +1247,14 @@ evas_event_feed_key_up(Evas *e, const char *keyname, const char *key, const char
 	       {
 		  while (e->delete_grabs > 0)
 		    {
-		       Eina_List *l, *l_next;
-		       Evas_Key_Grab *g;
+		       Eina_List *ll, *l_next;
+		       Evas_Key_Grab *gr;
 
 		       e->delete_grabs--;
-		       EINA_LIST_FOREACH_SAFE(e->grabs, l, l_next, g)
+		       EINA_LIST_FOREACH_SAFE(e->grabs, ll, l_next, gr)
 			 {
-			    if (g->delete_me)
-			      evas_key_grab_free(g->object, g->keyname, g->modifiers, g->not_modifiers);
+			    if (gr->delete_me)
+			      evas_key_grab_free(gr->object, gr->keyname, gr->modifiers, gr->not_modifiers);
 			 }
 		    }
 	       }
