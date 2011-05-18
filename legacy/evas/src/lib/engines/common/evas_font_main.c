@@ -389,21 +389,20 @@ evas_common_font_int_cache_glyph_get(RGBA_Font_Int *fi, FT_UInt index)
         if (fi->fash) _fash_gl_add(fi->fash, index, (void *)(-1));
 	return NULL;
      }
-   if (fg->glyph->format != FT_GLYPH_FORMAT_BITMAP)
+
+   FTLOCK();
+   error = FT_Glyph_To_Bitmap(&(fg->glyph), FT_RENDER_MODE_NORMAL, 0, 1);
+   if (error)
      {
-        FTLOCK();
-	error = FT_Glyph_To_Bitmap(&(fg->glyph), FT_RENDER_MODE_NORMAL, 0, 1);
-	if (error)
-	  {
-	     FT_Done_Glyph(fg->glyph);
-             FTUNLOCK();
-	     free(fg);
-             if (!fi->fash) fi->fash = _fash_gl_new();
-             if (fi->fash) _fash_gl_add(fi->fash, index, (void *)(-1));
-	     return NULL;
-	  }
+        FT_Done_Glyph(fg->glyph);
         FTUNLOCK();
+        free(fg);
+        if (!fi->fash) fi->fash = _fash_gl_new();
+        if (fi->fash) _fash_gl_add(fi->fash, index, (void *)(-1));
+        return NULL;
      }
+   FTUNLOCK();
+
    fg->glyph_out = (FT_BitmapGlyph)fg->glyph;
    fg->index = hindex;
    fg->fi = fi;
