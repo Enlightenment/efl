@@ -50,8 +50,8 @@
 #define _STRBUF_CSIZE             sizeof(_STRBUF_DATA_TYPE)
 #define _STRBUF_STRUCT_NAME       Eina_Binbuf
 #define _STRBUF_MAGIC             EINA_MAGIC_BINBUF
-#define _STRBUF_MAGIC_STR         __STRBUF_MAGIC_STR
-static const char __STRBUF_MAGIC_STR[] = "Eina Binbuf";
+#define _STRBUF_MAGIC_STR         __BINBUF_MAGIC_STR
+static const char __BINBUF_MAGIC_STR[] = "Eina Binbuf";
 
 #define _FUNC_EXPAND(y) eina_binbuf_ ## y
 
