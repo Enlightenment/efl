@@ -35,7 +35,7 @@ static int
 _edje_match_states_alloc(Edje_Patterns *ppat, int n)
 {
    Edje_States *l;
-   
+
    const size_t patterns_size = ppat->patterns_size;
    const size_t patterns_max_length = ppat->max_length;
 
@@ -76,6 +76,7 @@ _edje_match_states_alloc(Edje_Patterns *ppat, int n)
      {
         l[i].states = (Edje_State *) states;
         l[i].has = (Eina_Bool *) has;
+        l[i].size = 0;
 
 	memset(l[i].has, 0, has_size);
 
@@ -273,6 +274,7 @@ _edje_match_patterns_exec_init_states(Edje_States       *states,
           const char    *str;                                   \
           Type          *data;                                  \
           size_t         j;                                     \
+          int            special = 0;                           \
                                                                 \
           data = eina_list_data_get(lst);                       \
           if (!data)                                            \
@@ -291,14 +293,18 @@ _edje_match_patterns_exec_init_states(Edje_States       *states,
           r->finals[i] = 0;                                     \
           for (j = 0; str[j]; ++j)                              \
             if (str[j] != '*')                                  \
-              r->finals[i] = j + 1;                             \
+              {                                                 \
+                 r->finals[i] = j + 1;                          \
+                 special++;                                     \
+              }                                                 \
+          j += special ? special + 1 : 0;                       \
                                                                 \
           if (j > r->max_length)                                \
             r->max_length = j;                                  \
-                                                                \
+	                                                        \
           lst = eina_list_next(lst);                            \
        }                                                        \
-                                                                \
+     								\
      if (!_edje_match_states_alloc(r, 2))                       \
        {                                                        \
           free(r);                                              \
@@ -334,6 +340,7 @@ _edje_match_patterns_exec_init_states(Edje_States       *states,
        {                                                        \
           const char    *str;                                   \
           size_t         j;                                     \
+          int            special = 0;                           \
                                                                 \
           if (!lst[i])						\
             {                                                   \
@@ -351,7 +358,11 @@ _edje_match_patterns_exec_init_states(Edje_States       *states,
           r->finals[i] = 0;                                     \
           for (j = 0; str[j]; ++j)                              \
             if (str[j] != '*')                                  \
-              r->finals[i] = j + 1;                             \
+              {                                                 \
+                 r->finals[i] = j + 1;                          \
+                 special++;                                     \
+              }                                                 \
+          j += special ? special + 1 : 0;                       \
                                                                 \
           if (j > r->max_length)                                \
             r->max_length = j;                                  \
