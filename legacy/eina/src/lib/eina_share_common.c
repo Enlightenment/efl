@@ -601,9 +601,6 @@ eina_share_common_init(Eina_Share **_share,
 {
    Eina_Share *share;
 
-   if (_eina_share_common_count++ != 0)
-     return EINA_TRUE;
-
    share = *_share = calloc(sizeof(Eina_Share), 1);
    if (!share) goto on_error;
 
@@ -640,6 +637,10 @@ eina_share_common_init(Eina_Share **_share,
 
    _eina_share_common_population_init(share);
 
+   /* below is the common part among other all eina_share_common user */
+   if (_eina_share_common_count++ != 0)
+     return EINA_TRUE;
+
    eina_lock_new(&_mutex_big);
    return EINA_TRUE;
 
@@ -665,9 +666,6 @@ eina_share_common_shutdown(Eina_Share **_share)
    unsigned int i;
    Eina_Share *share = *_share;
 
-   if (--_eina_share_common_count != 0)
-     return EINA_TRUE;
-
    eina_lock_take(&_mutex_big);
 
    _eina_share_common_population_stats(share);
@@ -692,10 +690,15 @@ eina_share_common_shutdown(Eina_Share **_share)
 
    eina_lock_release(&_mutex_big);
 
-   eina_lock_free(&_mutex_big);
-
    free(*_share);
    *_share = NULL;
+
+   /* below is the common part among other all eina_share_common user */
+   if (--_eina_share_common_count != 0)
+     return EINA_TRUE;
+
+   eina_lock_free(&_mutex_big);
+
    return EINA_TRUE;
 }
 
