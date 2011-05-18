@@ -62,7 +62,8 @@ eina_test_matrixsparse.c \
 eina_test_tiler.c       \
 eina_test_strbuf.c	\
 eina_test_str.c		\
-eina_test_quadtree.c
+eina_test_quadtree.c	\
+eina_test_simple_xml_parser.c
 
 eina_suite_LDADD = @CHECK_LIBS@ $(top_builddir)/src/lib/libeina.la -lm
 
