@@ -1003,6 +1003,28 @@ _ecore_x_window_shadow_tree_find(Window base)
    return NULL;
 } /* _ecore_x_window_shadow_tree_find */
 
+static int
+_inside_rects(Shadow *s, int x, int y, int bx, int by, Ecore_X_Rectangle *rects, int num)
+{
+   int i, inside;
+        
+   if (!rects) return 0;
+   inside = 0;
+   for (i = 0; i < num; i++)
+     {
+        if ((x >= s->x + bx + rects[i].x) && 
+            (y >= s->y + by + rects[i].y) && 
+            (x < (int)(s->x + bx + rects[i].width)) && 
+            (y < (int)(s->y + by + rects[i].height)))
+          {
+             inside = 1;
+             break;
+          }
+     }
+   free(rects);
+   return inside;
+}
+
 static Window
 _ecore_x_window_shadow_tree_at_xy_get_shadow(Shadow         *s,
                                              int             bx,
@@ -1020,6 +1042,19 @@ _ecore_x_window_shadow_tree_at_xy_get_shadow(Shadow         *s,
    wy = s->y + by;
    if (!((x >= wx) && (y >= wy) && (x < (wx + s->w)) && (y < (wy + s->h))))
       return 0;
+   
+   /* FIXME: get shape */
+     {
+        int num;
+        Ecore_X_Rectangle *rects;
+
+        num = 0;
+        rects = ecore_x_window_shape_rectangles_get(s->win, &num);
+        if (!_inside_rects(s, x, y, bx, by, rects, num)) return 0;
+        num = 0;
+        rects = ecore_x_window_shape_input_rectangles_get(s->win, &num);
+        if (!_inside_rects(s, x, y, bx, by, rects, num)) return 0;
+     }
 
    if (s->children)
      {

@@ -619,9 +619,23 @@ ecore_x_window_shape_input_rectangles_get(Ecore_X_Window win, int *num_ret)
    if (num_ret) *num_ret = num;
    return rects;
 #else
+   // have to return fake shape input rect of size of window
+   Window dw;
+   unsigned int di;
+   
    if (num_ret) *num_ret = 0;
-   return NULL;
-   win = 0;
+   rects = malloc(sizeof(Ecore_X_Rectangle));
+   if (!rects) return NULL;
+   if (!XGetGeometry(_ecore_x_disp, win, &dw,
+                     &(rects[i].x), &(rects[i].y),
+                     &(rects[i].width), &(rects[i].height),
+                     &di, &di))
+     {
+        free(rects);
+        return NULL;
+     }
+   if (num_ret) *num_ret = 1;
+   return rects;
 #endif
 } /* ecore_x_window_shape_input_rectangles_get */
 

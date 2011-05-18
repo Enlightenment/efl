@@ -186,3 +186,9 @@
 2011-05-17  Cedric Bail
 
 	* Add ecore_timer_dump.
+
+2011-05-19  Carsten Haitzler (The Rasterman)
+
+        * Fix Ecore_X shadow tree search handling to respect shape and
+        shape input of windows.
+
