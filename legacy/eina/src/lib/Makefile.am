@@ -13,8 +13,8 @@ base_sources = \
 eina_accessor.c \
 eina_array.c \
 eina_benchmark.c \
-eina_binshare.c \
 eina_binbuf.c \
+eina_binshare.c \
 eina_convert.c \
 eina_counter.c \
 eina_cpu.c \
