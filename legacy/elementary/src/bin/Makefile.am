@@ -97,7 +97,8 @@ test_tooltip.c \
 test_transit.c \
 test_weather.c \
 test_win_inline.c \
-test_win_state.c
+test_win_state.c \
+test_grid.c
 
 elementary_test_LDADD = $(top_builddir)/src/lib/libelementary.la \
 	@ELEMENTARY_EWEATHER_LIBS@ \

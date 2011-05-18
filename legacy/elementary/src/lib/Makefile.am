@@ -67,6 +67,7 @@ elm_font.c \
 elm_frame.c \
 elm_gengrid.c \
 elm_genlist.c \
+elm_grid.c \
 elm_hover.c \
 elm_icon.c \
 elm_image.c \
