@@ -337,3 +337,10 @@
 
 	* Textblock: fix segfault with evas_textblock_cursor_content_get
 
+2011-05-12  Carsten Haitzler (The Rasterman)
+
+	* Add a smart "Grid" layout object that lays out objects in a regular
+        "virtual resolution" grid (eg 100x100) so you can lay them out
+        as a "scaled percentage" of the virtual resolution. virtual
+        resolution is defineable as is the geometry of each member.
+
