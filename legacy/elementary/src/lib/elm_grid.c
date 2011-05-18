@@ -135,6 +135,7 @@ elm_grid_pack(Evas_Object *obj, Evas_Object *subobj, int x, int y, int w, int h)
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
+   elm_widget_sub_object_add(obj, subobj);
    evas_object_grid_pack(wd->grd, subobj, x, y, w, h);
 }
 
