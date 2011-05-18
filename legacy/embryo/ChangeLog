@@ -2,3 +2,6 @@
 
         1.0.0 release
         
+2011-05-12  Carsten Haitzler (The Rasterman)
+
+	* Make embryo_cc use eina and eina_prefix to determine include location

@@ -106,6 +106,7 @@ case "$host_os" in
 esac
 AC_SUBST(EFL_EMBRYO_BUILD)
 
+PKG_CHECK_MODULES([EINA], [eina >= 1.0.999])
 
 ### Checks for header files
 
