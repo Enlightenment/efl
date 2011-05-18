@@ -262,10 +262,9 @@ _evas_common_font_ot_shape(hb_buffer_t *buffer, RGBA_Font_Int *fi)
 }
 
 EAPI Eina_Bool
-evas_common_font_ot_populate_text_props(void *_fn, const Eina_Unicode *text,
-      Evas_Text_Props *props, int len)
+evas_common_font_ot_populate_text_props(void *_fn __UNUSED__,
+      const Eina_Unicode *text, Evas_Text_Props *props, int len)
 {
-   RGBA_Font *fn = (RGBA_Font *) _fn;
    RGBA_Font_Int *fi;
    hb_buffer_t *buffer;
    hb_glyph_position_t *positions;
@@ -276,27 +275,7 @@ evas_common_font_ot_populate_text_props(void *_fn, const Eina_Unicode *text,
    Evas_Font_OT_Info *ot_itr;
    Evas_Coord pen_x = 0;
 
-   fi = fn->fonts->data;
-   /* Load the font needed for this script */
-     {
-        /* Skip common chars */
-        const Eina_Unicode *tmp;
-        for (tmp = text ;
-              *tmp &&
-              evas_common_language_char_script_get(*tmp) == EVAS_SCRIPT_COMMON ;
-              tmp++)
-          ;
-        if (!*tmp && (tmp > text)) tmp--;
-        evas_common_font_glyph_search(fn, &fi, *tmp);
-     }
-   evas_common_font_int_reload(fi);
-   if (fi->src->current_size != fi->size)
-     {
-        FTLOCK();
-        FT_Activate_Size(fi->ft.size);
-        FTUNLOCK();
-        fi->src->current_size = fi->size;
-     }
+   fi = props->font_instance;
 
    if (len < 0)
      {
