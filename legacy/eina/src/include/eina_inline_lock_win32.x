@@ -27,18 +27,18 @@ typedef struct _Eina_Condition Eina_Condition;
 #if _WIN32_WINNT >= 0x0600
 struct _Eina_Condition
 {
-   CRITICAL_SECTION mutex;
+   CRITICAL_SECTION  *mutex;
    CONDITION_VARIABLE condition;
 };
 #else
 struct _Eina_Condition
 {
-   int              waiters_count;
-   CRITICAL_SECTION waiters_count_lock;
-   CRITICAL_SECTION mutex;
-   HANDLE           semaphore;
-   HANDLE           waiters_done;
-   Eina_Bool        was_broadcast;
+   int               waiters_count;
+   CRITICAL_SECTION  waiters_count_lock;
+   CRITICAL_SECTION *mutex;
+   HANDLE            semaphore;
+   HANDLE            waiters_done;
+   Eina_Bool         was_broadcast;
 };
 #endif
 
@@ -48,6 +48,7 @@ EAPI extern Eina_Bool _eina_threads_activated;
 static inline Eina_Bool
 eina_lock_new(Eina_Lock *mutex)
 {
+  printf(" mutex init: %p\n", mutex);
    InitializeCriticalSection(mutex);
 
    return EINA_TRUE;
@@ -56,6 +57,7 @@ eina_lock_new(Eina_Lock *mutex)
 static inline void
 eina_lock_free(Eina_Lock *mutex)
 {
+  printf(" mutex free: %p\n", mutex);
    DeleteCriticalSection(mutex);
 }
 
@@ -66,6 +68,7 @@ eina_lock_take(Eina_Lock *mutex)
   if (!_eina_threads_activated) return EINA_LOCK_SUCCEED;
 #endif
 
+  printf(" mutex take: %p\n", mutex);
    EnterCriticalSection(mutex);
 
    return EINA_LOCK_SUCCEED;
@@ -88,6 +91,7 @@ eina_lock_release(Eina_Lock *mutex)
    if (!_eina_threads_activated) return EINA_LOCK_SUCCEED;
 #endif
 
+  printf(" mutex release: %p\n", mutex);
    LeaveCriticalSection(mutex);
 
    return EINA_LOCK_SUCCEED;
@@ -102,7 +106,7 @@ eina_lock_debug(const Eina_Lock *mutex)
 static inline Eina_Bool
 eina_condition_new(Eina_Condition *cond, Eina_Lock *mutex)
 {
-   cond->mutex = *mutex;
+   cond->mutex = mutex;
 #if _WIN32_WINNT >= 0x0600
    InitializeConditionVariable(&cond->condition);
 #else
@@ -116,7 +120,6 @@ eina_condition_new(Eina_Condition *cond, Eina_Lock *mutex)
      return EINA_FALSE;
 
    InitializeCriticalSection(&cond->waiters_count_lock);
-   InitializeCriticalSection(&cond->mutex);
 
    cond->waiters_done = CreateEvent(NULL,  // no security
                                     FALSE, // auto-reset
@@ -136,7 +139,7 @@ static inline void
 eina_condition_free(Eina_Condition *cond)
 {
 #if _WIN32_WINNT >= 0x0600
-   DeleteCriticalSection(&cond->mutex);
+   /* Nothing to do */
 #else
    CloseHandle(cond->waiters_done);
    DeleteCriticalSection(&cond->waiters_count_lock);
@@ -148,7 +151,7 @@ static inline Eina_Bool
 eina_condition_wait(Eina_Condition *cond)
 {
 #if _WIN32_WINNT >= 0x0600
-   SleepConditionVariableCS(&cond->condition, &cond->mutex, INFINITE);
+   SleepConditionVariableCS(&cond->condition, cond->mutex, INFINITE);
 #else
    DWORD ret;
    Eina_Bool last_waiter;
@@ -163,7 +166,7 @@ eina_condition_wait(Eina_Condition *cond)
     * semaphore until <pthread_cond_signal> or <pthread_cond_broadcast>
     * are called by another thread.
     */
-   ret = SignalObjectAndWait(&cond->mutex, cond->semaphore, INFINITE, FALSE);
+   ret = SignalObjectAndWait(cond->mutex, cond->semaphore, INFINITE, FALSE);
    if (ret == WAIT_FAILED)
      return EINA_FALSE;
 
@@ -188,7 +191,7 @@ eina_condition_wait(Eina_Condition *cond)
         * This call atomically signals the <waiters_done_> event and waits until
         * it can acquire the <external_mutex>.  This is required to ensure fairness.
         */
-       ret = SignalObjectAndWait(cond->waiters_done, &cond->mutex, INFINITE, FALSE);
+       ret = SignalObjectAndWait(cond->waiters_done, cond->mutex, INFINITE, FALSE);
        if (ret == WAIT_FAILED)
          return EINA_FALSE;
     }
@@ -198,7 +201,7 @@ eina_condition_wait(Eina_Condition *cond)
         * Always regain the external mutex since that's the guarantee we
         * give to our callers.
         */
-       ret = WaitForSingleObject(&cond->mutex, INFINITE);
+       ret = WaitForSingleObject(cond->mutex, INFINITE);
        if (ret == WAIT_FAILED)
          return EINA_FALSE;
     }
