@@ -344,3 +344,9 @@
         as a "scaled percentage" of the virtual resolution. virtual
         resolution is defineable as is the geometry of each member.
 
+2011-05-18  Sung W. Park
+
+	* Fix some internal stencil and depth requests for OpenGL-ES2
+        due to OpenGL-ES limitations.
+        * Fix Surface recreation for FBO in Evas GL support.
+

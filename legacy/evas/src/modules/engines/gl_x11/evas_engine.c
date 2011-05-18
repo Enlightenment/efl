@@ -37,6 +37,7 @@ struct _Render_Engine
 struct _Render_Engine_GL_Surface
 {
    int     initialized;
+   int     fbo_attached;
    int     w, h;
    int     depth_bits;
    int     stencil_bits;
@@ -2120,7 +2121,12 @@ _set_internal_config(Render_Engine_GL_Surface *sfc, Evas_GL_Config *cfg)
       case EVAS_GL_DEPTH_BIT_8:
       case EVAS_GL_DEPTH_BIT_16:
       case EVAS_GL_DEPTH_BIT_24:
+#if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
+         // 24 bit doesn't work... just cover it with 16 for now..
+         sfc->rb_depth_fmt = GL_DEPTH_COMPONENT16;
+#else
          sfc->rb_depth_fmt = GL_DEPTH_COMPONENT;
+#endif
          break;
       case EVAS_GL_DEPTH_BIT_32:
       default:
@@ -2136,7 +2142,11 @@ _set_internal_config(Render_Engine_GL_Surface *sfc, Evas_GL_Config *cfg)
       case EVAS_GL_STENCIL_BIT_2:
       case EVAS_GL_STENCIL_BIT_4:
       case EVAS_GL_STENCIL_BIT_8:
+#if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
+         sfc->rb_stencil_fmt = GL_STENCIL_INDEX8;
+#else
          sfc->rb_stencil_fmt = GL_STENCIL_INDEX;
+#endif
          break;
       case EVAS_GL_STENCIL_BIT_16:
       default:
@@ -2188,14 +2198,13 @@ _create_rt_buffers(Render_Engine *data __UNUSED__,
 }
 
 static int
-_create_fbo_surface(Render_Engine *data __UNUSED__, 
+_attach_fbo_surface(Render_Engine *data __UNUSED__, 
                     Render_Engine_GL_Surface *sfc, 
                     Render_Engine_GL_Context *ctx)
 {
    int fb_status;
 
    // FBO
-   glGenFramebuffers(1, &ctx->fbo);
    glBindFramebuffer(GL_FRAMEBUFFER, ctx->fbo);
    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
                           GL_TEXTURE_2D, sfc->rt_tex, 0);
@@ -2229,16 +2238,6 @@ _create_fbo_surface(Render_Engine *data __UNUSED__,
    return 1;
 }
 
-/*
-static void
-eng_gl_options_set(void *data, int options __UNUSED__)
-{
-   Render_Engine *re;
-
-   re  = (Render_Engine *)data;
-}
-*/
-
 static void *
 eng_gl_surface_create(void *data, void *config, int w, int h)
 {
@@ -2255,6 +2254,7 @@ eng_gl_surface_create(void *data, void *config, int w, int h)
    cfg = (Evas_GL_Config *)config;
 
    sfc->initialized  = 0;
+   sfc->fbo_attached = 0;
    sfc->w            = w;
    sfc->h            = h;
    sfc->depth_bits   = cfg->depth_bits;
@@ -2443,6 +2443,8 @@ eng_gl_context_create(void *data, void *share_context)
 #endif
 
    ctx->initialized = 0;
+   ctx->fbo = 0;
+   ctx->current_sfc = NULL;
 
    return ctx;
 }
@@ -2517,6 +2519,7 @@ eng_gl_make_current(void *data, void *surface, void *context)
    sfc = (Render_Engine_GL_Surface*)surface;
    ctx = (Render_Engine_GL_Context*)context;
 
+   // Flush remainder of what's in Evas' pipeline
    if (re->win)
      {
 #if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
@@ -2536,6 +2539,7 @@ eng_gl_make_current(void *data, void *surface, void *context)
 #endif   
      }
 
+   // Unset surface/context
    if ((!sfc) || (!ctx))
      {
 #if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
@@ -2553,11 +2557,18 @@ eng_gl_make_current(void *data, void *surface, void *context)
         return ret;
      }
 
+   // Don't do a make current if it's already current
 #if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
-   ret = eglMakeCurrent(re->win->egl_disp, re->win->egl_surface[0], 
-                        re->win->egl_surface[0], ctx->context);
+   if ((eglGetCurrentContext() != ctx->context))
+     {
+        ret = eglMakeCurrent(re->win->egl_disp, re->win->egl_surface[0], 
+                             re->win->egl_surface[0], ctx->context);
+     }
 #else
-   ret = glXMakeCurrent(re->info->info.display, re->win->win, ctx->context);
+   if (glXGetCurrentContext() != ctx->context)
+     {
+        ret = glXMakeCurrent(re->info->info.display, re->win->win, ctx->context);
+     }
 #endif
    if (!ret) 
      {
@@ -2565,17 +2576,25 @@ eng_gl_make_current(void *data, void *surface, void *context)
         return 0;
      }
 
-   // Create FBO if not initalized already
+   // Create FBO if not already created
    if (!ctx->initialized) 
      {
-        if (!_create_fbo_surface(re, sfc, ctx)) 
-          {
-             ERR("_create_fbo_surface() failed.");
-             return 0;
-          }
+        glGenFramebuffers(1, &ctx->fbo);
         ctx->initialized = 1;
      }
 
+   // Attach FBO if it hasn't been attached or if surface changed
+   if ( (!sfc->fbo_attached) || (ctx != sfc->current_ctx))
+     {
+        if (!_attach_fbo_surface(re, sfc, ctx)) 
+          {
+             ERR("_attach_fbo_surface() failed.");
+             return 0;
+          }
+        sfc->fbo_attached = 1;
+     }
+
+   // Set the current surface/context 
    ctx->current_sfc = sfc;
    sfc->current_ctx = ctx;
 
