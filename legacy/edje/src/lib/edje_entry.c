@@ -2057,9 +2057,12 @@ _edje_entry_text_markup_append(Edje_Real_Part *rp, const char *text)
 
    /* We are updating according to the real cursor on purpose */
    _anchors_get(en->cursor, rp->object, en);
-   _curs_update_from_curs(en->cursor, rp->object, en);
    _edje_emit(rp->edje, "entry,changed", rp->part->name);
+#if 0
+   /* Cursor didn't really change, don't say it did. */
+   _curs_update_from_curs(en->cursor, rp->object, en);
    _edje_emit(rp->edje, "cursor,changed", rp->part->name);
+#endif
 
    _edje_entry_real_part_configure(rp);
 }
