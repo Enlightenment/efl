@@ -82,3 +82,6 @@
 	* Added eina_binbuf: This is just like strbuf but for binary blobs.
 	  Requested by discomfitor and honestly it looks needed.
 
+2011-05-18  Cedric Bail
+
+	* Fix eina_share_common_init to be called only once.
