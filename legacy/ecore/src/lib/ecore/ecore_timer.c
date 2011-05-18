@@ -377,11 +377,9 @@ ecore_timer_dump(void)
    EINA_LIST_FREE(tmp, tm)
      {
         char **strings;
-        int nptrs;
         int j;
 
-        nptrs = backtrace((void**) tm->timer_bt, ECORE_TIMER_DEBUG_BT_NUM);
-        strings = backtrace_symbols((void**) tm->timer_bt, nptrs);
+        strings = backtrace_symbols((void**) tm->timer_bt, tm->timer_bt_num);
         if (strings == NULL)
           continue ;
 
@@ -390,7 +388,7 @@ ecore_timer_dump(void)
           eina_strbuf_append(result, "FROZEN\n");
         if (tm->delete_me)
           eina_strbuf_append(result, "DELETED\n");
-        for (j = 0; j < nptrs; j++)
+        for (j = 0; j < tm->timer_bt_num; j++)
           eina_strbuf_append_printf(result, "%s\n", strings[j]);
 
         free(strings);

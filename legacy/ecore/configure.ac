@@ -345,13 +345,16 @@ fi
 AC_SUBST(pkgconfig_requires_private)
 
 ### Checks for some build time option
+have_backtrace="no"
+AC_CHECK_FUNCS([backtrace], [have_backtrace="yes"], [])
+
 want_ecore_timer_dump="yes"
 
 AC_ARG_ENABLE([ecore-timer-dump],
    [AC_HELP_STRING([--disable-ecore-timer-dump], [disable tracking of timer allocation. @<:@default=enable@:>@])],
    [want_ecore_timer_dump=$enableval], [])
 
-if test "x$want_ecore_timer_dump" = "xyes"; then
+if test "x$want_ecore_timer_dump" = "xyes" -a "x$have_backtrace" = "xyes"; then
    AC_DEFINE(WANT_ECORE_TIMER_DUMP, [1], [Want Ecore_Timer dump infrastructure])
 fi
 
