@@ -225,9 +225,21 @@ evas_common_text_props_content_create(void *_fn, const Eina_Unicode *text,
              text_props->script) ;
              base_char++)
            ;
-        if (!*base_char && (base_char > text)) base_char--;
+        if (!*base_char) base_char = text;
 
-        evas_common_font_glyph_search(fn, &fi, *base_char);
+        /* Find the first renderable char, and if there is none, find
+         * one that can show the replacement char. */
+        while (*base_char)
+          {
+             /* 0x1F is the last ASCII contral char. */
+             if ((*base_char > 0x1F) &&
+                   evas_common_font_glyph_search(fn, &fi, *base_char))
+                break;
+             base_char++;
+          }
+
+        if (!*base_char)
+           evas_common_font_glyph_search(fn, &fi, REPLACEMENT_CHAR);
      }
 
    text_props->font_instance = fi;
