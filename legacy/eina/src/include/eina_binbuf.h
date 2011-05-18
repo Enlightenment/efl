@@ -33,7 +33,7 @@
  * @typedef Eina_Binbuf
  * Type for a string buffer.
  */
-typedef struct _Eina_Binbuf Eina_Binbuf;
+typedef struct _Eina_Strbuf Eina_Binbuf;
 
 /**
  * @brief Create a new string buffer.

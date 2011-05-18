@@ -10,9 +10,8 @@
 #endif
 
 #include "eina_private.h"
-#include "eina_str.h"
 #include "eina_strbuf_common.h"
-#include "eina_unicode.h"
+#include "eina_binbuf.h"
 
 /*============================================================================*
  *                                  Local                                     *
@@ -50,7 +49,7 @@
 #define _STRBUF_DATA_TYPE         char
 #define _STRBUF_CSIZE             sizeof(_STRBUF_DATA_TYPE)
 #define _STRBUF_STRUCT_NAME       Eina_Binbuf
-#define _STRBUF_MAGIC             EINA_MAGIC_STRBUF
+#define _STRBUF_MAGIC             EINA_MAGIC_BINBUF
 #define _STRBUF_MAGIC_STR         __STRBUF_MAGIC_STR
 static const char __STRBUF_MAGIC_STR[] = "Eina Binbuf";
 
