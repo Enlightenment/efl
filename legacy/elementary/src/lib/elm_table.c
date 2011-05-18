@@ -300,8 +300,12 @@ elm_table_unpack(Evas_Object *obj, Evas_Object *subobj)
 EAPI void
 elm_table_clear(Evas_Object *obj, Eina_Bool clear)
 {
+   Eina_List *chld;
+   Evas_Object *o;
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
+   chld = evas_object_table_children_get(wd->tbl);
+   EINA_LIST_FREE(chld, o) elm_widget_sub_object_del(obj, o);
    evas_object_table_clear(wd->tbl, clear);
 }
