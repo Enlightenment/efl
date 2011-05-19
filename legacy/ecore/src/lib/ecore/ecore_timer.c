@@ -175,6 +175,12 @@ ecore_timer_loop_add(double in, Ecore_Task_Cb func, const void *data)
    if (!timer) return NULL;
    ECORE_MAGIC_SET(timer, ECORE_MAGIC_TIMER);
    now = ecore_loop_time_get();
+
+#ifdef WANT_ECORE_TIMER_DUMP
+   timer->timer_bt_num = backtrace((void**) (timer->timer_bt),
+                                   ECORE_TIMER_DEBUG_BT_NUM);
+#endif
+
    _ecore_timer_set(timer, now + in, in, func, (void *)data);
    return timer;
 }
@@ -368,6 +374,8 @@ ecore_timer_dump(void)
    char *out;
    Ecore_Timer *tm;
    Eina_List *tmp = NULL;
+   int living_timer = 0;
+   int unknow_timer = 0;
 
    result = eina_strbuf_new();
 
@@ -379,9 +387,15 @@ ecore_timer_dump(void)
         char **strings;
         int j;
 
+	if (!tm->frozen && !tm->delete_me)
+	  living_timer++;
+
         strings = backtrace_symbols((void**) tm->timer_bt, tm->timer_bt_num);
-        if (strings == NULL)
-          continue ;
+        if (tm->timer_bt_num <= 0 || strings == NULL)
+	  {
+	    unknow_timer++;
+	    continue ;
+	  }
 
         eina_strbuf_append_printf(result, "*** timer: %f ***\n", tm->in);
         if (tm->frozen)
@@ -393,6 +407,8 @@ ecore_timer_dump(void)
 
         free(strings);
      }
+
+   eina_strbuf_append_printf(result, "\n***\nThere is %i living timer.\nWe did lost track of %i timers.\n", living_timer, unknow_timer);
 
    out = eina_strbuf_string_steal(result);
    eina_strbuf_free(result);
@@ -669,5 +685,5 @@ _ecore_timer_cmp(const void *d1, const void *d2)
    const Ecore_Timer *t1 = d1;
    const Ecore_Timer *t2 = d2;
 
-   return (int) t1->in - t2->in;
+   return (int) ((t1->in - t2->in) * 100);
 }
