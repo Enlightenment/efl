@@ -277,6 +277,7 @@ eng_image_mask_create(void *data __UNUSED__, void *image)
    if (!im->image.data)
       evas_cache_image_load_data(&im->cache_entry);
    src = im->image.data;
+   if (!src) return;
    for (end = dst + sz ; dst < end ; dst ++, src ++)
       *dst = *src >> 24;
    im->mask.dirty = 0;
@@ -411,9 +412,10 @@ eng_image_dirty_region(void *data __UNUSED__, void *image, int x, int y, int w, 
 }
 
 static void *
-eng_image_data_get(void *data __UNUSED__, void *image, int to_write, DATA32 **image_data)
+eng_image_data_get(void *data __UNUSED__, void *image, int to_write, DATA32 **image_data, int *err)
 {
    RGBA_Image *im;
+   int error;
 
    if (!image)
      {
@@ -421,12 +423,12 @@ eng_image_data_get(void *data __UNUSED__, void *image, int to_write, DATA32 **im
 	return NULL;
      }
    im = image;
-   evas_cache_image_load_data(&im->cache_entry);
+   error = evas_cache_image_load_data(&im->cache_entry);
    switch (im->cache_entry.space)
      {
       case EVAS_COLORSPACE_ARGB8888:
 	if (to_write)
-          im = (RGBA_Image *) evas_cache_image_alone(&im->cache_entry);
+          im = (RGBA_Image *)evas_cache_image_alone(&im->cache_entry);
 	*image_data = im->image.data;
 	break;
       case EVAS_COLORSPACE_YCBCR422P601_PL:
@@ -437,6 +439,7 @@ eng_image_data_get(void *data __UNUSED__, void *image, int to_write, DATA32 **im
 	abort();
 	break;
      }
+   if (err) *err = error;
    return im;
 }
 
@@ -868,7 +871,6 @@ eng_image_draw_filtered(void *data __UNUSED__, void *context __UNUSED__,
    if (!fn) return;
    if (im->cache_entry.cache) evas_cache_image_load_data(&im->cache_entry);
    fn(filter, image, surface);
-
    return;
 }
 
@@ -935,6 +937,16 @@ eng_image_filtered_free(void *image, Filtered_Image *fi)
    fi->image = NULL;
 
    im->filtered = eina_list_remove(im->filtered, fi);
+}
+
+static int
+eng_image_load_error_get(void *data, void *image)
+{
+   RGBA_Image *im;
+   
+   if (!image) return EVAS_LOAD_ERROR_NONE;
+   im = image;
+   return im->cache_entry.load_error;
 }
 
 /*
@@ -1067,8 +1079,9 @@ static Evas_Func func =
      NULL, // FIXME: need software mesa for gl rendering <- gl_context_destroy
      NULL, // FIXME: need software mesa for gl rendering <- gl_make_current
      NULL, // FIXME: need software mesa for gl rendering <- gl_proc_address_get
-     NULL,  // FIXME: need software mesa for gl rendering <- gl_native_surface_get
-     NULL   // FIXME: need software mesa for gl rendering <- gl_api_get
+     NULL, // FIXME: need software mesa for gl rendering <- gl_native_surface_get
+     NULL, // FIXME: need software mesa for gl rendering <- gl_api_get
+     eng_image_load_error_get
    /* FUTURE software generic calls go here */
 };
 

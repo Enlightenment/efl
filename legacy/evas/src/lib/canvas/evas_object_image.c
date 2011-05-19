@@ -831,7 +831,8 @@ evas_object_image_data_convert(Evas_Object *obj, Evas_Colorspace to_cspace)
    o->engine_data = obj->layer->evas->engine.func->image_data_get(obj->layer->evas->engine.data.output,
 								  o->engine_data,
 								  0,
-								  &data);
+								  &data,
+                                                                  &o->load_error);
    return evas_object_image_data_convert_internal(o, data, to_cspace);
 }
 
@@ -951,7 +952,8 @@ evas_object_image_data_get(const Evas_Object *obj, Eina_Bool for_writing)
    o->engine_data = obj->layer->evas->engine.func->image_data_get(obj->layer->evas->engine.data.output,
 								  o->engine_data,
 								  for_writing,
-								  &data);
+								  &data,
+                                                                  &o->load_error);
    if (o->engine_data)
      {
         int stride = 0;
@@ -1250,7 +1252,8 @@ evas_object_image_save(const Evas_Object *obj, const char *file, const char *key
    o->engine_data = obj->layer->evas->engine.func->image_data_get(obj->layer->evas->engine.data.output,
 								  o->engine_data,
 								  0,
-								  &data);
+								  &data,
+                                                                  &o->load_error);
    if (flags)
      {
 	char *p, *pp;
@@ -1330,7 +1333,8 @@ evas_object_image_pixels_import(Evas_Object *obj, Evas_Pixel_Import_Source *pixe
 		    obj->layer->evas->engine.func->image_data_get(obj->layer->evas->engine.data.output,
 								  o->engine_data,
 								  1,
-								  &image_pixels);
+								  &image_pixels,
+                                                                  &o->load_error);
 /* FIXME: need to actualyl support this */
 /*		  memcpy(image_pixels, pixels->rows, o->cur.image.w * o->cur.image.h * 4);*/
 		  if (o->engine_data)
@@ -1360,7 +1364,8 @@ evas_object_image_pixels_import(Evas_Object *obj, Evas_Pixel_Import_Source *pixe
 		    obj->layer->evas->engine.func->image_data_get(obj->layer->evas->engine.data.output,
 								  o->engine_data,
 								  1,
-								  &image_pixels);
+								  &image_pixels,
+                                                                  &o->load_error);
 		  if (image_pixels)
 		    evas_common_convert_yuv_420p_601_rgba((DATA8 **) pixels->rows,
 							  (DATA8 *) image_pixels,
@@ -3304,7 +3309,8 @@ evas_object_image_is_inside(Evas_Object *obj, Evas_Coord x, Evas_Coord y)
       (obj->layer->evas->engine.data.output,
           o->engine_data,
           0,
-          &data);
+          &data,
+          &o->load_error);
    if (!data)
      return 0;
 
@@ -3440,6 +3446,15 @@ _evas_object_image_preloading_set(Evas_Object *obj, Eina_Bool preloading)
 {
    Evas_Object_Image *o = (Evas_Object_Image *)(obj->object_data);
    o->preloading = preloading;
+}
+
+void
+_evas_object_image_preloading_check(Evas_Object *obj)
+{
+   Evas_Object_Image *o = (Evas_Object_Image *)(obj->object_data);
+   if (obj->layer->evas->engine.func->image_load_error_get)
+      o->load_error = obj->layer->evas->engine.func->image_load_error_get
+      (obj->layer->evas->engine.data.output, o->engine_data);
 }
 
 /* vim:set ts=8 sw=3 sts=3 expandtab cino=>5n-2f0^-2{2(0W1st0 :*/

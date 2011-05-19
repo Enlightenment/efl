@@ -655,7 +655,7 @@ struct _Evas_Func
    void *(*image_size_set)                 (void *data, void *image, int w, int h);
    void (*image_stride_get)                (void *data, void *image, int *stride);
    void *(*image_dirty_region)             (void *data, void *image, int x, int y, int w, int h);
-   void *(*image_data_get)                 (void *data, void *image, int to_write, DATA32 **image_data);
+   void *(*image_data_get)                 (void *data, void *image, int to_write, DATA32 **image_data, int *err);
    void *(*image_data_put)                 (void *data, void *image, DATA32 *image_data);
    void  (*image_data_preload_request)     (void *data, void *image, const void *target);
    void  (*image_data_preload_cancel)      (void *data, void *image, const void *target);
@@ -732,6 +732,7 @@ struct _Evas_Func
    void *(*gl_proc_address_get)          (void *data, const char *name);
    int  (*gl_native_surface_get)         (void *data, void *surface, void *native_surface);
    void *(*gl_api_get)                   (void *data);
+   int  (*image_load_error_get)          (void *data, void *image);
 };
 
 struct _Evas_Image_Load_Func
@@ -800,6 +801,7 @@ const Evas_Smart_Cb_Description *evas_smart_cb_description_find(const Evas_Smart
 
 Eina_Bool _evas_object_image_preloading_get(const Evas_Object *obj);
 void _evas_object_image_preloading_set(Evas_Object *obj, Eina_Bool preloading);
+void _evas_object_image_preloading_check(Evas_Object *obj);
 void evas_object_smart_del(Evas_Object *obj);
 void evas_object_smart_cleanup(Evas_Object *obj);
 void evas_object_smart_member_raise(Evas_Object *member);

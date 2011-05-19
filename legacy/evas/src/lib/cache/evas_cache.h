@@ -130,7 +130,7 @@ EAPI void                     evas_cache_image_set(Evas_Cache_Image *cache, unsi
 
 EAPI Image_Entry*             evas_cache_image_alone(Image_Entry *im);
 EAPI Image_Entry*             evas_cache_image_dirty(Image_Entry *im, unsigned int x, unsigned int y, unsigned int w, unsigned int h);
-EAPI void                     evas_cache_image_load_data(Image_Entry *im);
+EAPI int                      evas_cache_image_load_data(Image_Entry *im);
 EAPI void                     evas_cache_image_unload_data(Image_Entry *im);
 EAPI Eina_Bool                evas_cache_image_is_loaded(Image_Entry *im);
 EAPI void                     evas_cache_image_unload_all(Evas_Cache_Image *cache);

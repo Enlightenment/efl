@@ -1735,30 +1735,34 @@ eng_image_dirty_region(void *data, void *image, int x, int y, int w, int h)
 }
 
 static void *
-eng_image_data_get(void *data, void *image, int to_write, DATA32 **image_data)
+eng_image_data_get(void *data, void *image, int to_write, DATA32 **image_data, int *err)
 {
    Render_Engine *re;
    Evas_GL_Image *im;
+   int error;
 
    re = (Render_Engine *)data;
    if (!image)
      {
 	*image_data = NULL;
+        if (err) *err = EVAS_LOAD_ERROR_GENERIC;
 	return NULL;
      }
    im = image;
    if (im->native.data)
      {
         *image_data = NULL;
+        if (err) *err = EVAS_LOAD_ERROR_NONE;
         return im;
      }
    if ((im->tex) && (im->tex->pt) && (im->tex->pt->dyn.data))
      {
         *image_data = im->tex->pt->dyn.data;
+        if (err) *err = EVAS_LOAD_ERROR_NONE;
         return im;
      }
    eng_window_use(re->win);
-   evas_cache_image_load_data(&im->im->cache_entry);
+   error = evas_cache_image_load_data(&im->im->cache_entry);
    switch (im->cs.space)
      {
       case EVAS_COLORSPACE_ARGB8888:
@@ -1776,6 +1780,7 @@ eng_image_data_get(void *data, void *image, int to_write, DATA32 **image_data)
    		  if (!im_new)
    		    {
    		       *image_data = NULL;
+                       if (err) *err = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
    		       return im;
    		    }
    		  evas_gl_common_image_free(im);
@@ -1794,6 +1799,7 @@ eng_image_data_get(void *data, void *image, int to_write, DATA32 **image_data)
 	abort();
 	break;
      }
+   if (err) *err = error;
    return im;
 }
 
@@ -2513,7 +2519,7 @@ eng_gl_make_current(void *data, void *surface, void *context)
    Render_Engine *re;
    Render_Engine_GL_Surface *sfc;
    Render_Engine_GL_Context *ctx;
-   int ret;
+   int ret = 0;
 
    re  = (Render_Engine *)data;
    sfc = (Render_Engine_GL_Surface*)surface;
@@ -2893,6 +2899,15 @@ eng_gl_api_get(void *data)
    return &gl_funcs;
 }
 
+static int
+eng_image_load_error_get(void *data __UNUSED__, void *image)
+{
+   Evas_GL_Image *im;
+   
+   if (!image) return EVAS_LOAD_ERROR_NONE;
+   im = image;
+   return im->im->cache_entry.load_error;
+}
 
 static int
 module_open(Evas_Module *em)
@@ -2997,6 +3012,8 @@ module_open(Evas_Module *em)
    ORD(gl_native_surface_get);
 
    ORD(gl_api_get);
+   
+   ORD(image_load_error_get);
    
    /* now advertise out own api */
    em->functions = (void *)(&func);

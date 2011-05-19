@@ -666,18 +666,19 @@ evas_engine_sdl16_image_dirty_region(void *data __UNUSED__,
 
 static void*
 evas_engine_sdl16_image_data_get(void *data __UNUSED__, void *image,
-                                 int to_write, DATA32** image_data)
+                                 int to_write, DATA32** image_data, int *err)
 {
    SDL_Engine_Image_Entry       *eim = image;
    Soft16_Image                 *im;
-
+   int                           error;
+   
    if (!eim)
      {
         *image_data = NULL;
         return NULL;
      }
    im = (Soft16_Image *) eim->cache_entry.src;
-   evas_cache_image_load_data(&im->cache_entry);
+   error = evas_cache_image_load_data(&im->cache_entry);
 
    if (to_write)
      eim = (SDL_Engine_Image_Entry *) evas_cache_engine_image_alone(&eim->cache_entry,
@@ -686,6 +687,7 @@ evas_engine_sdl16_image_data_get(void *data __UNUSED__, void *image,
    /* FIXME: Handle colorspace conversion correctly. */
    if (image_data) *image_data = (DATA32 *) im->pixels;
 
+   if (err) *err = error;
    return eim;
 }
 

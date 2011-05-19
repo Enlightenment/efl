@@ -588,6 +588,7 @@ struct _Image_Entry
    int                    server_id;
    int                    connect_num;
    int                    channel;
+   int                    load_error;
 };
 
 struct _Engine_Image_Entry

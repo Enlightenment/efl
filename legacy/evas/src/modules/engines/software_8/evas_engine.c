@@ -225,9 +225,10 @@ eng_image_dirty_region(void *data __UNUSED__, void *image __UNUSED__,
 
 static void *
 eng_image_data_get(void *data __UNUSED__, void *image, int to_write,
-                   DATA32 ** image_data)
+                   DATA32 ** image_data, int *err)
 {
    Soft8_Image *im;
+   int error;
 
    if (!image)
      {
@@ -236,7 +237,7 @@ eng_image_data_get(void *data __UNUSED__, void *image, int to_write,
      }
 
    im = image;
-   evas_cache_image_load_data(&im->cache_entry);
+   error = evas_cache_image_load_data(&im->cache_entry);
 
    if (to_write)
       im = (Soft8_Image *) evas_cache_image_alone(&im->cache_entry);
@@ -244,6 +245,7 @@ eng_image_data_get(void *data __UNUSED__, void *image, int to_write,
    if (image_data)
       *image_data = (DATA32 *) im->pixels;
 
+   if (err) *err = error;
    return im;
 }
 

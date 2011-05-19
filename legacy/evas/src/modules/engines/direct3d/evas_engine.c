@@ -321,10 +321,11 @@ eng_image_dirty_region(void *data, void *image, int x, int y, int w, int h)
 }
 
 static void *
-eng_image_data_get(void *data, void *image, int to_write, DATA32 **image_data)
+eng_image_data_get(void *data, void *image, int to_write, DATA32 **image_data, int *err)
 {
    Render_Engine *re = (Render_Engine *)data;
    evas_direct3d_image_data_get(re->d3d, image, to_write, image_data);
+   if (err) *err = EVAS_LOAD_ERROR_NONE;
    return image;
 }
 

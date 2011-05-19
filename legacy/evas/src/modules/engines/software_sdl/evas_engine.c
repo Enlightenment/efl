@@ -425,7 +425,7 @@ evas_engine_sdl_image_dirty_region(void *data,
 
 static void*
 evas_engine_sdl_image_data_get(void *data, void *image,
-			       int to_write, DATA32** image_data)
+			       int to_write, DATA32** image_data, int *err)
 {
    SDL_Engine_Image_Entry       *eim = image;
    RGBA_Image                   *im;
@@ -435,6 +435,7 @@ evas_engine_sdl_image_data_get(void *data, void *image,
    if (!eim)
      {
         *image_data = NULL;
+        if (err) *err = EVAS_LOAD_ERROR_GENERIC;
         return NULL;
      }
    im = (RGBA_Image *) eim->cache_entry.src;
@@ -456,6 +457,7 @@ evas_engine_sdl_image_data_get(void *data, void *image,
         abort();
         break;
      }
+   if (err) *err = EVAS_LOAD_ERROR_NONE;
    return eim;
 }
 

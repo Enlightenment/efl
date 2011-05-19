@@ -378,13 +378,17 @@ _evas_cache_image_async_heavy(void *data)
      {
 	error = cache->func.load(current);
 	if (cache->func.debug) cache->func.debug("load", current);
+        current->load_error = error;
 	if (error != EVAS_LOAD_ERROR_NONE)
 	  {
 	     current->flags.loaded = 0;
 	     _evas_cache_image_entry_surface_alloc(cache, current,
 						   current->w, current->h);
 	  }
-	else current->flags.loaded = 1;
+	else
+          {
+             current->flags.loaded = 1;
+          }
      }
    current->channel = pchannel;
    // check the unload cancel flag
@@ -1142,15 +1146,15 @@ evas_cache_image_size_set(Image_Entry *im, unsigned int w, unsigned int h)
    return NULL;
 }
 
-EAPI void
+EAPI int
 evas_cache_image_load_data(Image_Entry *im)
 {
 #ifdef BUILD_ASYNC_PRELOAD
    Eina_Bool preload = EINA_FALSE;
 #endif
-   int error;
+   int error = EVAS_LOAD_ERROR_NONE;
 
-   if (im->flags.loaded) return;
+   if (im->flags.loaded) return error;
 #ifdef BUILD_ASYNC_PRELOAD
    if (im->preload)
      {
@@ -1174,7 +1178,7 @@ evas_cache_image_load_data(Image_Entry *im)
 	LKU(wakeup);
      }
    
-   if (im->flags.loaded) return;
+   if (im->flags.loaded) return error;
    LKL(im->lock);
 #endif
    im->flags.in_progress = EINA_TRUE;
@@ -1193,6 +1197,7 @@ evas_cache_image_load_data(Image_Entry *im)
 #ifdef BUILD_ASYNC_PRELOAD
    if (preload) _evas_cache_image_async_end(im);
 #endif
+   return error;
 }
 
 EAPI void
