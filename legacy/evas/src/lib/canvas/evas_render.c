@@ -152,6 +152,22 @@ _evas_render_phase1_direct(Evas *e,
    Evas_Object *proxy;
 
    RD("  [--- PHASE 1 DIRECT\n");
+   for (i = 0; i < active_objects->count; i++)
+     {
+	Evas_Object *obj;
+
+	obj = eina_array_data_get(active_objects, i);
+	if (obj->changed)
+          {
+             /* Flag need redraw on proxy too */
+             evas_object_clip_recalc(obj);
+             if (obj->proxy.proxies)
+               {
+                  EINA_LIST_FOREACH(obj->proxy.proxies, l, proxy)
+                     proxy->proxy.redraw = 1;
+               }
+          }
+     }
    for (i = 0; i < render_objects->count; i++)
      {
 	Evas_Object *obj;
@@ -167,7 +183,14 @@ _evas_render_phase1_direct(Evas *e,
                {
                   obj->proxy.redraw = 1;
                   EINA_LIST_FOREACH(obj->proxy.proxies, l, proxy)
-                     proxy->func->render_pre(proxy);
+                    {
+                       proxy->func->render_pre(proxy);
+                       _evas_render_prev_cur_clip_cache_add(e, proxy);
+                    }
+               }
+             else if (obj->proxy.redraw)
+               {
+                  _evas_render_prev_cur_clip_cache_add(e, obj);
                }
              if (obj->pre_render_done)
                {

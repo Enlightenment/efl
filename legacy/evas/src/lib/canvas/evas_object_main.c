@@ -98,6 +98,10 @@ evas_object_change(Evas_Object *obj)
      {
         EINA_LIST_FOREACH(obj->clip.clipees, l, obj2) evas_object_change(obj2);
      }
+   EINA_LIST_FOREACH(obj->proxy.proxies, l, obj2)
+     {
+        evas_object_change(obj2);
+     }
    if (obj->smart.parent) evas_object_change(obj->smart.parent);
 }
 

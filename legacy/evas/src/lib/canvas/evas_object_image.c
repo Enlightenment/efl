@@ -2849,8 +2849,8 @@ evas_object_image_render_pre(Evas_Object *obj)
 
    if ((o->cur.fill.w < 1) || (o->cur.fill.h < 1))
      {
-       ERR("%p has invalid fill size: %dx%d. Ignored",
-	     obj, o->cur.fill.w, o->cur.fill.h);
+        ERR("%p has invalid fill size: %dx%d. Ignored",
+            obj, o->cur.fill.w, o->cur.fill.h);
 	return;
      }
 
@@ -2862,13 +2862,12 @@ evas_object_image_render_pre(Evas_Object *obj)
 	obj->cur.clipper->func->render_pre(obj->cur.clipper);
      }
    /* Proxy: Do it early */
-   if (o->cur.source && o->cur.source->proxy.redraw)
+   if (o->cur.source && 
+       (o->cur.source->proxy.redraw || o->cur.source->changed))
      {
         /* XXX: Do I need to sort out the map here? */
-        obj->changed = 1;
-        evas_add_rect(&e->clip_changes,
-                      obj->cur.geometry.x, obj->cur.geometry.y,
-                      obj->cur.geometry.w, obj->cur.geometry.h);
+        evas_object_render_pre_prev_cur_add(&e->clip_changes, obj);
+        goto done;
      }
 
    /* now figure what changed and add draw rects */
@@ -3161,6 +3160,7 @@ evas_object_image_is_opaque(Evas_Object *obj)
         if (!o->engine_data) return 0;
         o->cur.opaque = 1;
      }
+   // FIXME: use proxy
    if (o->cur.source) return 0; /* FIXME: Should go poke at the object */
    if ((obj->cur.map) && (obj->cur.usemap)) return 0;
    if (obj->cur.render_op == EVAS_RENDER_COPY) return 1;
@@ -3194,6 +3194,7 @@ evas_object_image_was_opaque(Evas_Object *obj)
         if (!o->engine_data) return 0;
         o->prev.opaque = 1;
      }
+   // FIXME: use proxy
    if (o->prev.source) return 0; /* FIXME: Should go poke at the object */
    if (obj->prev.usemap) return 0;
    if (obj->prev.render_op == EVAS_RENDER_COPY) return 1;
@@ -3222,6 +3223,7 @@ evas_object_image_is_inside(Evas_Object *obj, Evas_Coord x, Evas_Coord y)
    if ((x < 0) || (y < 0) || (x >= w) || (y >= h)) return 0;
    if (!o->cur.has_alpha) return 1;
 
+   // FIXME: proxy needs to be honored
    if (obj->cur.map)
      {
         x = obj->cur.map->mx;
