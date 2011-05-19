@@ -97,3 +97,9 @@
         BOUNCE, SPRING (also made short name versions of the long ones
         possible too).
 
+2011-05-19  Tom Hacohen (TAsn)
+
+	 * Entry: Don't emit "cursor,changed" when setting the text, because
+	   the cursor really didn't change, it's more like a new cursor.
+	   Also, when setting position, don't do anything if position is as it
+	   was.

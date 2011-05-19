@@ -2035,11 +2035,14 @@ _edje_entry_text_markup_set(Edje_Real_Part *rp, const char *text)
    // set text as markup
    _sel_clear(en->cursor, rp->object, en);
    evas_object_textblock_text_markup_set(rp->object, text);
+   _edje_entry_set_cursor_start(rp);
 
    _anchors_get(en->cursor, rp->object, en);
    _edje_emit(rp->edje, "entry,changed", rp->part->name);
+#if 0
+   /* Don't emit cursor changed cause it didn't. It's just init to 0. */
    _edje_emit(rp->edje, "cursor,changed", rp->part->name);
-   _edje_entry_set_cursor_start(rp);
+#endif
 }
 
 void
@@ -2057,10 +2060,6 @@ _edje_entry_text_markup_append(Edje_Real_Part *rp, const char *text)
    /* We are updating according to the real cursor on purpose */
    _anchors_get(en->cursor, rp->object, en);
    _edje_emit(rp->edje, "entry,changed", rp->part->name);
-#if 0
-   /* Cursor didn't really change, don't say it did. */
-   _edje_emit(rp->edje, "cursor,changed", rp->part->name);
-#endif
 
    _edje_entry_real_part_configure(rp);
 }
@@ -2669,6 +2668,10 @@ _edje_entry_cursor_pos_set(Edje_Real_Part *rp, Edje_Cursor cur, int pos)
    Entry *en = rp->entry_data;
    Evas_Textblock_Cursor *c = _cursor_get(rp, cur);
    if (!c) return;
+   /* Abort if cursor position didn't really change */
+   if (evas_textblock_cursor_pos_get(c) == pos)
+      return;
+
    evas_textblock_cursor_pos_set(c, pos);
    _sel_update(c, rp->object, rp->entry_data);
 
