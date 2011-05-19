@@ -2571,6 +2571,7 @@ extern "C" {
    EAPI void         elm_conformant_content_set(Evas_Object *obj, Evas_Object *content) EINA_ARG_NONNULL(1);
    EAPI Evas_Object *elm_conformant_content_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
    EAPI Evas_Object *elm_conformant_content_unset(Evas_Object *obj) EINA_ARG_NONNULL(1);
+   EAPI Evas_Object *elm_conformant_content_area_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
 
    /* mapbuf */
    EAPI Evas_Object *elm_mapbuf_add(Evas_Object *parent) EINA_ARG_NONNULL(1);
