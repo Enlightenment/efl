@@ -261,6 +261,7 @@ struct _Evas_Object_Textblock_Node_Format
 struct _Evas_Object_Textblock_Paragraph
 {
    EINA_INLIST;
+   EINA_RBTREE;
    Evas_Object_Textblock_Line        *lines;
    Evas_Object_Textblock_Node_Text   *text_node;
    Eina_List                         *logical_items;
@@ -268,6 +269,7 @@ struct _Evas_Object_Textblock_Paragraph
    int                                x, y, w, h;
    int                                line_no;
    Eina_Bool                          visible : 1;
+   Eina_Bool                          indexed : 1;
 };
 
 struct _Evas_Object_Textblock_Line
@@ -393,6 +395,7 @@ struct _Evas_Object_Textblock
    Evas_Object_Textblock_Node_Text    *text_nodes;
    Evas_Object_Textblock_Node_Format  *format_nodes;
    Evas_Object_Textblock_Paragraph    *paragraphs;
+   Eina_Rbtree                        *par_index;
    Eina_List                          *anchors_a;
    Eina_List                          *anchors_item;
    int                                 last_w, last_h;
@@ -1839,6 +1842,75 @@ _layout_line_new(Ctxt *c, Evas_Object_Textblock_Format *fmt)
    _layout_format_ascent_descent_adjust(c, fmt);
 }
 
+/* par index functions */
+static Eina_Rbtree_Direction
+_par_index_node_cmp(const Eina_Rbtree *left, const Eina_Rbtree *right,
+      void *data __UNUSED__)
+{
+   Evas_Object_Textblock_Paragraph *lpar, *rpar;
+   lpar = EINA_RBTREE_CONTAINER_GET(left, Evas_Object_Textblock_Paragraph);
+   rpar = EINA_RBTREE_CONTAINER_GET(right, Evas_Object_Textblock_Paragraph);
+   /* Because they can't be equal or overlap, we don't need to compare
+    * anything except for the y position */
+   return (lpar->y < rpar->y) ? EINA_RBTREE_LEFT : EINA_RBTREE_RIGHT;
+}
+
+static int
+_par_index_y_key_cmp(const Eina_Rbtree *node, const void *key,
+      int length __UNUSED__, void *data __UNUSED__)
+{
+   Evas_Coord y = *((const Evas_Coord *) key);
+   Evas_Object_Textblock_Paragraph *par;
+   par = EINA_RBTREE_CONTAINER_GET(node, Evas_Object_Textblock_Paragraph);
+
+   if (y < par->y)
+      return 1;
+   else if ((par->y <= y) && (y < par->y + par->h))
+      return 0;
+   else
+      return -1;
+}
+
+static int
+_par_index_line_no_key_cmp(const Eina_Rbtree *node, const void *key,
+      int length __UNUSED__, void *data __UNUSED__)
+{
+   int line_no = *((const int *) key);
+   Evas_Object_Textblock_Paragraph *par, *npar;
+   par = EINA_RBTREE_CONTAINER_GET(node, Evas_Object_Textblock_Paragraph);
+   npar = (Evas_Object_Textblock_Paragraph *) EINA_INLIST_GET(par)->next;
+
+   if (line_no < par->line_no)
+      return 1;
+   else if ((par->line_no <= par->line_no) &&
+         (!npar || (line_no < npar->line_no)))
+      return 0;
+   else return -1;
+}
+
+static inline Evas_Object_Textblock_Paragraph *
+_layout_find_paragraph_by_y(Evas_Object_Textblock *o, Evas_Coord y)
+{
+   Eina_Rbtree *tmp = eina_rbtree_inline_lookup(o->par_index, &y, 0,
+         _par_index_y_key_cmp, NULL);
+
+   return (tmp) ?
+      EINA_RBTREE_CONTAINER_GET(tmp, Evas_Object_Textblock_Paragraph) :
+      NULL;
+}
+
+static inline Evas_Object_Textblock_Paragraph *
+_layout_find_paragraph_by_line_no(Evas_Object_Textblock *o, int line_no)
+{
+   Eina_Rbtree *tmp = eina_rbtree_inline_lookup(o->par_index,
+         &line_no, 0, _par_index_line_no_key_cmp, NULL);
+
+   return (tmp) ?
+      EINA_RBTREE_CONTAINER_GET(tmp, Evas_Object_Textblock_Paragraph) :
+      NULL;
+}
+/* End of rbtree index functios */
+
 /**
  * @internal
  * Create a new layout paragraph.
@@ -1932,6 +2004,8 @@ _paragraph_clear(const Evas_Object *obj, Evas_Object_Textblock_Paragraph *par)
 static void
 _paragraph_free(const Evas_Object *obj, Evas_Object_Textblock_Paragraph *par)
 {
+   Evas_Object_Textblock *o;
+   o = (Evas_Object_Textblock *)(obj->object_data);
    _paragraph_clear(obj, par);
 
      {
@@ -1950,6 +2024,9 @@ _paragraph_free(const Evas_Object *obj, Evas_Object_Textblock_Paragraph *par)
    /* If we are the active par of the text node, set to NULL */
    if (par->text_node && (par->text_node->par == par))
       par->text_node->par = NULL;
+   o->par_index = eina_rbtree_inline_remove(o->par_index,
+            EINA_RBTREE_GET(par), _par_index_node_cmp, NULL);
+
    free(par);
 }
 
@@ -1987,6 +2064,8 @@ _paragraphs_free(const Evas_Object *obj, Evas_Object_Textblock_Paragraph *pars)
 {
    Evas_Object_Textblock *o;
    o = (Evas_Object_Textblock *)(obj->object_data);
+   o->par_index = NULL;
+
    while (pars)
      {
         Evas_Object_Textblock_Paragraph *par;
@@ -3027,6 +3106,16 @@ _layout_update_par(Ctxt *c)
    else
      {
         c->par->y = 0;
+     }
+
+   /* Insert it to the index now that we calculated it's y
+    * We don't need to reinsert even if y (they key) changed, because the
+    * order remains the same. */
+   if (!c->calc_only && !c->par->indexed)
+     {
+        c->o->par_index = eina_rbtree_inline_insert(c->o->par_index,
+              EINA_RBTREE_GET(c->par), _par_index_node_cmp, NULL);
+        c->par->indexed = EINA_TRUE;
      }
 }
 
@@ -4089,24 +4178,18 @@ _find_layout_item_line_match(Evas_Object *obj, Evas_Object_Textblock_Node_Text *
 static Evas_Object_Textblock_Line *
 _find_layout_line_num(const Evas_Object *obj, int line)
 {
-   Evas_Object_Textblock_Paragraph *par, *prev_par = NULL;
+   Evas_Object_Textblock_Paragraph *par;
    Evas_Object_Textblock_Line *ln;
    Evas_Object_Textblock *o;
 
    o = (Evas_Object_Textblock *)(obj->object_data);
-   EINA_INLIST_FOREACH(o->paragraphs, par)
+
+   par = _layout_find_paragraph_by_line_no(o, line);
+   if (par)
      {
-        if (prev_par && (prev_par->line_no <= line) && (line < par->line_no))
+        EINA_INLIST_FOREACH(par->lines, ln)
           {
-             break;
-          }
-        prev_par = par;
-     }
-   if (prev_par)
-     {
-        EINA_INLIST_FOREACH(prev_par->lines, ln)
-          {
-             if (ln->par->line_no + ln->line_no == line) return ln;
+             if (par->line_no + ln->line_no == line) return ln;
           }
      }
    return NULL;
@@ -7384,7 +7467,7 @@ EAPI Eina_Bool
 evas_textblock_cursor_char_coord_set(Evas_Textblock_Cursor *cur, Evas_Coord x, Evas_Coord y)
 {
    Evas_Object_Textblock *o;
-   Evas_Object_Textblock_Paragraph *par, *found_par = NULL;
+   Evas_Object_Textblock_Paragraph *found_par;
    Evas_Object_Textblock_Line *ln;
    Evas_Object_Textblock_Item *it = NULL, *it_break = NULL;
 
@@ -7393,15 +7476,8 @@ evas_textblock_cursor_char_coord_set(Evas_Textblock_Cursor *cur, Evas_Coord x, E
    if (!o->formatted.valid) _relayout(cur->obj);
    x += o->style_pad.l;
    y += o->style_pad.t;
-   EINA_INLIST_FOREACH(o->paragraphs, par)
-     {
-        if ((par->x <= x) && (par->x + par->w > x) &&
-              (par->y <= y) && (par->y + par->h > y))
-          {
-             found_par = par;
-             break;
-          }
-     }
+
+   found_par = _layout_find_paragraph_by_y(o, y);
    if (found_par)
      {
         EINA_INLIST_FOREACH(found_par->lines, ln)
@@ -7475,7 +7551,7 @@ EAPI int
 evas_textblock_cursor_line_coord_set(Evas_Textblock_Cursor *cur, Evas_Coord y)
 {
    Evas_Object_Textblock *o;
-   Evas_Object_Textblock_Paragraph *par, *found_par = NULL;
+   Evas_Object_Textblock_Paragraph *found_par;
    Evas_Object_Textblock_Line *ln;
 
    if (!cur) return -1;
@@ -7483,14 +7559,7 @@ evas_textblock_cursor_line_coord_set(Evas_Textblock_Cursor *cur, Evas_Coord y)
    if (!o->formatted.valid) _relayout(cur->obj);
    y += o->style_pad.t;
 
-   EINA_INLIST_FOREACH(o->paragraphs, par)
-     {
-        if ((par->y <= y) && (par->y + par->h > y))
-          {
-             found_par = par;
-             break;
-          }
-     }
+   found_par = _layout_find_paragraph_by_y(o, y);
 
    if (found_par)
      {
@@ -8075,7 +8144,7 @@ evas_object_textblock_free(Evas_Object *obj)
 static void
 evas_object_textblock_render(Evas_Object *obj, void *output, void *context, void *surface, int x, int y)
 {
-   Evas_Object_Textblock_Paragraph *par, *start;
+   Evas_Object_Textblock_Paragraph *par, *start = NULL;
    Evas_Object_Textblock_Line *ln;
    Evas_Object_Textblock *o;
    int i, j;
@@ -8214,21 +8283,21 @@ evas_object_textblock_render(Evas_Object *obj, void *output, void *context, void
      } \
    while (0)
 
-   /* Find the first paragraph and start working on that */
-   EINA_INLIST_FOREACH(o->paragraphs, par)
      {
-        if (!par->visible) continue;
-
-        if ((par->y + par->h) <= 0) continue;
+        Evas_Coord look_for_y = 0 - (obj->cur.geometry.y + y);
         if (clip)
           {
-             if ((obj->cur.geometry.y + y + par->y + par->h) < (cy - 20))
-                continue;
+             Evas_Coord tmp_lfy = cy - (obj->cur.geometry.y + y);
+             if (tmp_lfy > look_for_y)
+                look_for_y = tmp_lfy;
           }
-        break;
-     }
 
-   start = par;
+        if (look_for_y >= 0)
+           start = _layout_find_paragraph_by_y(o, look_for_y);
+
+        if (!start)
+           start = o->paragraphs;
+     }
 
    ITEM_WALK()
      {
