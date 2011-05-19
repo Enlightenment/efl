@@ -6,3 +6,7 @@ xcf
 if HAVE_PDF
 SUBDIRS += pdf
 endif
+
+if HAVE_PS
+SUBDIRS += ps
+endif

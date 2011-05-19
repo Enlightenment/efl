@@ -62,7 +62,10 @@ PKG_CHECK_MODULES(EINA, [eina >= 1.0.0])
 
 PKG_CHECK_MODULES([POPPLER], [poppler >= 0.12], [have_poppler="yes"], [have_poppler="no"])
 
+PKG_CHECK_MODULES([SPECTRE], [libspectre], [have_ps="yes"], [have_ps="no"])
+
 AM_CONDITIONAL([HAVE_PDF], [test "x${have_poppler}" = "xyes"])
+AM_CONDITIONAL([HAVE_PS], [test "x${have_ps}" = "xyes"])
 
 ### Checks for header files
 
@@ -114,6 +117,7 @@ src/bin/Makefile
 src/bin/common/Makefile
 src/bin/xcf/Makefile
 src/bin/pdf/Makefile
+src/bin/ps/Makefile
 ])
 
 AC_OUTPUT
@@ -134,6 +138,7 @@ echo
 echo "Loaders:"
 echo "  XCF..................: yes"
 echo "  PDF..................: ${have_poppler}"
+echo "  PS...................: ${have_ps}"
 echo
 echo "Compilation............: make (or gmake)"
 echo "  CPPFLAGS.............: $CPPFLAGS"
