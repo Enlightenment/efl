@@ -98,7 +98,8 @@ test_transit.c \
 test_weather.c \
 test_win_inline.c \
 test_win_state.c \
-test_grid.c
+test_grid.c \
+test_flip_page.c
 
 elementary_test_LDADD = $(top_builddir)/src/lib/libelementary.la \
 	@ELEMENTARY_EWEATHER_LIBS@ \

@@ -100,6 +100,7 @@ void test_weather(void *data, Evas_Object *obj, void *event_info);
 void test_flip(void *data, Evas_Object *obj, void *event_info);
 void test_flip2(void *data, Evas_Object *obj, void *event_info);
 void test_flip3(void *data, Evas_Object *obj, void *event_info);
+void test_flip_page(void *data, Evas_Object *obj, void *event_info);
 void test_label(void *data, Evas_Object *obj, void *event_info);
 void test_conformant(void *data, Evas_Object *obj, void *event_info);
 void test_conformant2(void *data, Evas_Object *obj, void *event_info);
@@ -356,6 +357,7 @@ my_win_main(char *autorun)
    ADD_TEST("Flip", test_flip);
    ADD_TEST("Flip 2", test_flip2);
    ADD_TEST("Flip 3", test_flip3);
+   ADD_TEST("Flip Page", test_flip_page);
    ADD_TEST("Label", test_label);
    ADD_TEST("Conformant", test_conformant);
    ADD_TEST("Conformant 2", test_conformant2);
