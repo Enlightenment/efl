@@ -40,6 +40,7 @@ static const struct ext_loader_s loaders[] =
    { ".cur", "ico" },
    { ".psd", "psd" },
    { ".pdf", "generic" },
+   { ".ps", "generic" },
    { ".xcf", "generic" },
    { ".xcf.gz", "generic" }
 };
