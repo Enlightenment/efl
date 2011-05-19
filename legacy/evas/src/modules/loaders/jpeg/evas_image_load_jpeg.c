@@ -333,6 +333,11 @@ evas_image_load_file_data_jpeg_internal(Image_Entry *ie, FILE *f, int *error)
 	return EINA_TRUE;
      }
    ptr2 = evas_cache_image_pixels(ie);
+   if (!ptr2)
+     {
+        *error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
+        return EINA_FALSE;
+     }
 
    /* We handle first CMYK (4 components) */
    if (cinfo.output_components == 4)
