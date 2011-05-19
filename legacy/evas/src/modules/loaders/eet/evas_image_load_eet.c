@@ -69,7 +69,7 @@ evas_image_load_file_data_eet(Image_Entry *ie, const char *file, const char *key
    unsigned int         w, h;
    int                  alpha, compression, quality, lossy, ok;
    Eet_File            *ef;
-   DATA32              *body, *p, *end;
+   DATA32              *body, *p, *end, *data;
    DATA32               nas = 0;
    Eina_Bool		res = EINA_FALSE;
 
@@ -102,8 +102,14 @@ evas_image_load_file_data_eet(Image_Entry *ie, const char *file, const char *key
 	goto on_error;
      }
    evas_cache_image_surface_alloc(ie, w, h);
+   data = evas_cache_image_pixels(ie);
+   if (!data)
+     {
+	*error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
+	goto on_error;
+     }
    ok = eet_data_image_read_to_surface(ef, key, 0, 0,
-				       evas_cache_image_pixels(ie), w, h, w * 4,
+				       data, w, h, w * 4,
 				       &alpha, &compression, &quality, &lossy);
    if (!ok)
      {
