@@ -267,13 +267,15 @@ _curs_update_from_curs(Evas_Textblock_Cursor *c, Evas_Object *o __UNUSED__, Entr
 }
 
 static void
-_curs_back(Evas_Textblock_Cursor *c, Evas_Object *o, Entry *en)
+_curs_back(Evas_Textblock_Cursor *c, Evas_Object *o __UNUSED__,
+           Entry *en __UNUSED__)
 {
    evas_textblock_cursor_char_prev(c);
 }
 
 static void
-_curs_next(Evas_Textblock_Cursor *c, Evas_Object *o, Entry *en)
+_curs_next(Evas_Textblock_Cursor *c, Evas_Object *o __UNUSED__,
+           Entry *en __UNUSED__)
 {
    evas_textblock_cursor_char_next(c);
 }
@@ -292,19 +294,22 @@ _curs_line_last_get(Evas_Textblock_Cursor *c __UNUSED__, Evas_Object *o, Entry *
 }
 
 static void
-_curs_lin_start(Evas_Textblock_Cursor *c, Evas_Object *o, Entry *en)
+_curs_lin_start(Evas_Textblock_Cursor *c, Evas_Object *o __UNUSED__,
+                Entry *en __UNUSED__)
 {
    evas_textblock_cursor_line_char_first(c);
 }
 
 static void
-_curs_lin_end(Evas_Textblock_Cursor *c, Evas_Object *o, Entry *en)
+_curs_lin_end(Evas_Textblock_Cursor *c, Evas_Object *o __UNUSED__,
+              Entry *en __UNUSED__)
 {
    evas_textblock_cursor_line_char_last(c);
 }
 
 static void
-_curs_start(Evas_Textblock_Cursor *c, Evas_Object *o, Entry *en)
+_curs_start(Evas_Textblock_Cursor *c, Evas_Object *o __UNUSED__,
+            Entry *en __UNUSED__)
 {
    evas_textblock_cursor_paragraph_first(c);
 }
