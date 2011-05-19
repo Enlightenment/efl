@@ -4029,20 +4029,14 @@ _relayout(const Evas_Object *obj)
 static void
 _find_layout_item_line_match(Evas_Object *obj, Evas_Object_Textblock_Node_Text *n, int pos, Evas_Object_Textblock_Line **lnr, Evas_Object_Textblock_Item **itr)
 {
-   Evas_Object_Textblock_Paragraph *par, *found_par = NULL;
+   Evas_Object_Textblock_Paragraph *found_par;
    Evas_Object_Textblock_Line *ln;
    Evas_Object_Textblock *o;
 
    o = (Evas_Object_Textblock *)(obj->object_data);
    if (!o->formatted.valid) _relayout(obj);
-   EINA_INLIST_FOREACH(o->paragraphs, par)
-     {
-        if (par->text_node == n)
-          {
-             found_par = par;
-             break;
-          }
-     }
+
+   found_par = n->par;
    if (found_par)
      {
         EINA_INLIST_FOREACH(found_par->lines, ln)
