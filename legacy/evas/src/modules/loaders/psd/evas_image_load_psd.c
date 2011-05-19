@@ -594,6 +594,11 @@ read_psd_grey(Image_Entry *ie, PSD_Header *head, FILE * f, int *error)
 
    evas_cache_image_surface_alloc(ie, ie->w, ie->h);
    surface = evas_cache_image_pixels(ie);
+   if (!surface)
+     {
+        *error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
+        goto cleanup_error;
+     }
 
    if (!psd_get_data(ie, head, f, surface, compressed, error))
      goto cleanup_error;
@@ -654,6 +659,11 @@ read_psd_indexed(Image_Entry *ie, PSD_Header *head, FILE * f, int *error)
 
    evas_cache_image_surface_alloc(ie, ie->w, ie->h);
    surface = evas_cache_image_pixels(ie);
+   if (!surface)
+     {
+        *error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
+        return EINA_FALSE;
+     }
 
    if (!psd_get_data(ie, head, f, surface, compressed, error))
      return EINA_FALSE;
@@ -707,6 +717,11 @@ read_psd_rgb(Image_Entry *ie, PSD_Header *head, FILE *f, int *error)
 
    evas_cache_image_surface_alloc(ie, ie->w, ie->h);
    surface = evas_cache_image_pixels(ie);
+   if (!surface)
+     {
+        *error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
+        goto cleanup_error;
+     }
 
    if (!psd_get_data(ie, head, f, surface, compressed, error))
      goto cleanup_error;
@@ -784,6 +799,11 @@ read_psd_cmyk(Image_Entry *ie, PSD_Header *head, FILE *f, int *error)
 
    evas_cache_image_surface_alloc(ie, ie->w, ie->h);
    surface = evas_cache_image_pixels(ie);
+   if (!surface)
+     {
+        *error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
+        goto cleanup_error;
+     }
 
    if (!psd_get_data(ie, head, f, surface, compressed, error))
      goto cleanup_error;
