@@ -1884,18 +1884,24 @@ elm_entry_entry_set(Evas_Object *obj, const char *entry)
 
    len = strlen(entry);
    /* Split to ~_CHUNK_SIZE chunks */
-   if (len <= _CHUNK_SIZE)
+   if (len > _CHUNK_SIZE)
      {
-        edje_object_part_text_set(wd->ent, "elm.text", entry);
+        wd->append_text_left = (char *) malloc(len + 1);
      }
-   else
+
+   /* If we decided to use the idler */
+   if (wd->append_text_left)
      {
         /* Need to clear the entry first */
         edje_object_part_text_set(wd->ent, "elm.text", "");
-        wd->append_text_left = strndup(entry, len);
+        memcpy(wd->append_text_left, entry, len + 1);
         wd->append_text_position = 0;
         wd->append_text_len = len;
         wd->append_text_idler = ecore_idler_add(_text_append_idler, obj);
+     }
+   else
+     {
+        edje_object_part_text_set(wd->ent, "elm.text", entry);
      }
 }
 
