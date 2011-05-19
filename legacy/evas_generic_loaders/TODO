@@ -4,6 +4,9 @@ Modules to add:
 
  [x] XCF
  [x] PDF
- [ ] PS
+ [X] PS
  [ ] DVI
  [ ] Djvu
+ [ ] video files
+ [ ] RAW
+ [ ] PPT/PPTX

@@ -4,17 +4,17 @@ evas may run from its generic loader module.
 Generic loaders currently provided:
 
   XCF (.xcf .xcf.gz)
-
-Wanted:
-
-  RAW
-    (libopenraw1 ??)
   PDF
     (use -key option to specific what page to get and load options for size
      and use poppler and/or mupdf - look at epdf)
   PS
     (use -key option to specific what page to get and load options for size
      and use ghostscript (libgs) to render etc.)
+
+Wanted:
+
+  RAW
+    (libopenraw1 ??)
 
 Possible fun ones:
 
