@@ -2446,7 +2446,7 @@ static void
 evas_object_image_render(Evas_Object *obj, void *output, void *context, void *surface, int x, int y)
 {
    Evas_Object_Image *o;
-   int imagew,imageh;
+   int imagew, imageh, uvw, uvh;
    void *pixels;
 
    /* render object to surface with context, and offset by x,y */
@@ -2491,12 +2491,16 @@ evas_object_image_render(Evas_Object *obj, void *output, void *context, void *su
         pixels = o->engine_data;
         imagew = o->cur.image.w;
         imageh = o->cur.image.h;
+        uvw = imagew;
+        uvh = imageh;
      }
    else if (o->cur.source->proxy.surface && !o->cur.source->proxy.redraw)
      {
         pixels = o->cur.source->proxy.surface;
         imagew = o->cur.source->proxy.w;
         imageh = o->cur.source->proxy.h;
+        uvw = imagew;
+        uvh = imageh;
      }
    else if (o->cur.source->type == o_type &&
             ((Evas_Object_Image *)o->cur.source->object_data)->engine_data)
@@ -2506,6 +2510,8 @@ evas_object_image_render(Evas_Object *obj, void *output, void *context, void *su
         pixels = oi->engine_data;
         imagew = oi->cur.image.w;
         imageh = oi->cur.image.h;
+        uvw = o->cur.source->cur.geometry.w;
+        uvh = o->cur.source->cur.geometry.h;
      }
    else
      {
@@ -2514,6 +2520,8 @@ evas_object_image_render(Evas_Object *obj, void *output, void *context, void *su
         pixels = o->cur.source->proxy.surface;
         imagew = o->cur.source->proxy.w;
         imageh = o->cur.source->proxy.h;
+        uvw = imagew;
+        uvh = imageh;
         o->proxyrendering = 0;
      }
 
@@ -2604,12 +2612,12 @@ evas_object_image_render(Evas_Object *obj, void *output, void *context, void *su
                   pt->fx = p->px;
                   pt->fy = p->py;
                   pt->fz = p->z;
-                  pt->u = p->u * FP1;
-                  pt->v = p->v * FP1;
+                  pt->u = ((p->u * imagew) / uvw) * FP1;
+                  pt->v = ((p->v * imageh) / uvh) * FP1;
                   if      (pt->u < 0) pt->u = 0;
-                  else if (pt->u > (o->cur.image.w * FP1)) pt->u = (imagew * FP1);
+                  else if (pt->u > (imagew * FP1)) pt->u = (imagew * FP1);
                   if      (pt->v < 0) pt->v = 0;
-                  else if (pt->v > (o->cur.image.h * FP1)) pt->v = (imageh * FP1);
+                  else if (pt->v > (imageh * FP1)) pt->v = (imageh * FP1);
                   pt->col = ARGB_JOIN(p->a, p->r, p->g, p->b);
               }
 	     if (obj->cur.map->count & 0x1)
