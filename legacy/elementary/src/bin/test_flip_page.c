@@ -58,6 +58,7 @@ _slice_update(State *st)
    if (!st->base)
      {
         st->base = evas_object_image_add(evas_object_evas_get(st->win));
+        evas_object_image_smooth_scale_set(st->base, 0);
         evas_object_image_fill_set(st->base, 0, 0, w, h);
         evas_object_pass_events_set(st->base, 1);
         evas_object_image_source_set(st->base, st->orig);
@@ -117,6 +118,7 @@ _slice_update(State *st)
         sl = calloc(1, sizeof(Slice));
         st->slices = eina_list_append(st->slices, sl);
         sl->obj = evas_object_image_add(evas_object_evas_get(st->win));
+        evas_object_image_smooth_scale_set(sl->obj, 0);
         evas_object_image_fill_set(sl->obj, 0, 0, w, h);
         evas_object_pass_events_set(sl->obj, 1);
         evas_object_image_source_set(sl->obj, st->orig);
@@ -169,6 +171,7 @@ _slice_update(State *st)
         sl = calloc(1, sizeof(Slice));
         st->slices = eina_list_append(st->slices, sl);
         sl->obj = evas_object_image_add(evas_object_evas_get(st->win));
+        evas_object_image_smooth_scale_set(sl->obj, 0);
         evas_object_image_fill_set(sl->obj, 0, 0, w, h);
         evas_object_pass_events_set(sl->obj, 1);
         evas_object_image_source_set(sl->obj, st->orig);
