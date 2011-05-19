@@ -180,11 +180,11 @@ dladdr (const void *addr __UNUSED__, Dl_info *info)
        path[PATH_MAX - 1] = '\0';
      }
 
-   /* replace '\' by '/' */
+   /* replace '/' by '\' */
    tmp = path;
    while (*tmp)
      {
-        if (*tmp == '\\') *tmp = '/';
+        if (*tmp == '/') *tmp = '\\';
         tmp++;
      }
 

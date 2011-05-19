@@ -1,3 +1,16 @@
+2011-05-19  Vincent Torri  <doursse at users dot sf dot net>
+
+	* src/lib/dlfcn/dlfcn.c:
+	change '/' to '\' in paths
+
+	* src/lib/evil_inet.c:
+	* src/lib/evil_inet.h:
+	* src/lib/Evil.h:
+	* src/lib/Makefile.am:
+	* AUTHORS:
+	add inet_pton() function. Implementation from curl library.
+	See AUTHORS.
+
 2011-04-20  Vincent Torri  <doursse at users dot sf dot net>
 
 	* evil_stdlib.c:
