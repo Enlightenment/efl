@@ -488,5 +488,25 @@ elm_image_editable_get(const Evas_Object *obj)
    return _els_smart_icon_edit_get(wd->img);
 }
 
+/**
+ * Get the image object
+ *
+ * When you create a image with elm_image_add(). You can get this object (be
+ * careful to not manipulate it as it is under control of elementary), and use
+ * it to do things like get pixel data, save the image to a file, etc.
+ *
+ * @param obj The image object to get the inlined image from
+ * @return The inlined image object, or NULL if none exists
+ *
+ * @ingroup Win
+ */
+EAPI Evas_Object *
+elm_image_object_get(const Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return NULL;
+   return _els_smart_icon_object_get(wd->img);
+}
 
 /* vim:set ts=8 sw=3 sts=3 expandtab cino=>5n-2f0^-2{2(0W1st0 :*/
