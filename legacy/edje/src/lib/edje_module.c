@@ -31,9 +31,9 @@ edje_module_load(const char *module)
 	char tmp[PATH_MAX];
 
 	snprintf(tmp, sizeof (tmp), "%s/%s/%s/" EDJE_MODULE_NAME, path, module, MODULE_ARCH
-#ifdef EDJE_EXTRA_MODULE_NAME                 
+#ifdef EDJE_EXTRA_MODULE_NAME
                  , module
-#endif                 
+#endif
                 );
 	em = eina_module_new(tmp);
 	if (!em) continue ;
@@ -129,7 +129,7 @@ edje_available_modules_get(void)
 		  char tmp[PATH_MAX];
 
 		  snprintf(tmp, sizeof (tmp), "%s/%s/" EDJE_MODULE_NAME, info->path, MODULE_ARCH
-#ifdef EDJE_EXTRA_MODULE_NAME                 
+#ifdef EDJE_EXTRA_MODULE_NAME
                            , ecore_file_file_get(info->path)
 #endif
                            );
