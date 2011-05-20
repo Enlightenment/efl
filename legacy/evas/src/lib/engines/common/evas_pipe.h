@@ -1,5 +1,7 @@
 #ifndef _EVAS_PIPE_H
 #define _EVAS_PIPE_H
+
+#include <sys/time.h>
 #include "language/evas_bidi_utils.h"
 
 #ifdef BUILD_PTHREAD
