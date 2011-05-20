@@ -241,10 +241,9 @@ im_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info)
 }
 
 static void
-im_up_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info)
+im_up_cb(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj, void *event_info)
 {
    Evas_Event_Mouse_Up *ev = event_info;
-   Evas_Object *win = data;
    Evas_Coord x, y;
 
    if (ev->button != 1) return;
@@ -258,10 +257,9 @@ im_up_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info)
 }
 
 static void
-im_move_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info)
+im_move_cb(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj, void *event_info)
 {
    Evas_Event_Mouse_Move *ev = event_info;
-   Evas_Object *win = data;
    Evas_Coord x, y;
 
    if (!state.down) return;
