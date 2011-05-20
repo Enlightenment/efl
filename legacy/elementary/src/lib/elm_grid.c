@@ -7,7 +7,7 @@
  * The grid is a grid layout widget that lays out a series of children as a
  * fixed "grid" of widgets using a given percentage of the grid width and
  * height each using the child object.
- * 
+ *
  * The Grid uses a "Virtual resolution" that is stretched to fill the grid
  * widgets size itself. The default is 100 x 100, so that means the
  * position and sizes of children will effectively be percentages (0 to 100)
@@ -34,7 +34,7 @@ _del_hook(Evas_Object *obj)
    free(wd);
 }
 
-static void 
+static void
 _mirrored_set(Evas_Object *obj, Eina_Bool rtl)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -101,7 +101,7 @@ elm_grid_size_set(Evas_Object *obj, int w, int h)
 
 /**
  * Get the virtual size of the grid
- * 
+ *
  * @param obj The grid object
  * @param w Pointer to integer to store the virtual width of the grid
  * @param h Pointer to integer to store the virtual height of the grid
@@ -141,12 +141,12 @@ elm_grid_pack(Evas_Object *obj, Evas_Object *subobj, int x, int y, int w, int h)
 
 /**
  * Unpack a child from a grid object
- * 
+ *
  * @param obj The grid object
  * @param subobj The child to unpack
- * 
+ *
  * @ingroup Grid
- */ 
+ */
 EAPI void
 elm_grid_unpack(Evas_Object *obj, Evas_Object *subobj)
 {

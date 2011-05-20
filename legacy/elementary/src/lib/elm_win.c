@@ -11,7 +11,7 @@
  * Engines that may be supported (depending on Evas and Ecore-Evas compilation
  * setup and modules actually installed at runtime) are (listed in order of
  * best supported and most likely to be complete and work to lowest quality).
- * 
+ *
  * "x11", "x", "software-x11", "software_x11"
  *   (Software rendering in X11)
  * "gl", "opengl", "opengl-x11", "opengl_x11"
@@ -36,14 +36,14 @@
  *   (Windows CE rendering via GDI with 16bit software renderer)
  * "sdl-16", "software-16-sdl", "software_16_sdl"
  *   (Rendering to SDL buffer with 16bit software renderer)
- * 
+ *
  * All engines use a simple string to select the engine to render, EXCEPT
  * the "shot" engine. This actually encodes the output of the virtual
  * screenshot and how long to delay in the engine string. The engine string
  * is encoded in the following way:
- * 
+ *
  *   "shot:[delay=XX][:][file=XX]"
- * 
+ *
  * Where options are separated by a ":" char if more than one option is given,
  * with delay, if provided being the first option and file the last (order
  * is important). The delay specifies how long to wait after the window is
@@ -51,7 +51,7 @@
  * output to the file specified by the file option (and then exit). If no
  * delay is given, the default is 0.5 seconds. If no file is given the
  * default output file is "out.png". Some examples of using the shot engine:
- * 
+ *
  *   ELM_ENGINE="shot:delay=1.0:file=elm_test.png" elementary_test
  *   ELM_ENGINE="shot:file=elm_test2.png" elementary_test
  *   ELM_ENGINE="shot:delay=2.0" elementary_test

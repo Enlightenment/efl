@@ -1402,7 +1402,7 @@ _env_get(void)
                  (!strcasecmp(s, "software-16-x11")) ||
                  (!strcasecmp(s, "software_16_x11")))
           eina_stringshare_replace(&_elm_config->engine, ELM_SOFTWARE_16_X11);
-/*        
+/*
         else if ((!strcasecmp(s, "xrender")) ||
                  (!strcasecmp(s, "xr")) ||
                  (!strcasecmp(s, "xrender-x11")) ||
