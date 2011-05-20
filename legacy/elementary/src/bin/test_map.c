@@ -22,12 +22,13 @@ typedef struct Map_Source
 static Elm_Map_Marker_Class *itc1, *itc2, *itc_parking;
 static Elm_Map_Group_Class *itc_group1, *itc_group2, *itc_group_parking;
 
-static Evas_Object *rect, *menu;
+static Evas_Object *rect, *menu, *fs_win;
 static int nb_elts;
 /*static Elm_Map_Marker *markers[MARKER_MAX];*/
 static Elm_Map_Marker *route_from, *route_to;
 static Elm_Map_Route *route;
 static Elm_Map_Name *name;
+static Elm_Map_Track *track;
 static const char **source_names = NULL;
 static Evas_Coord old_x, old_y;
 static Evas_Coord old_d;
@@ -49,6 +50,19 @@ Marker_Data data_parking= {PACKAGE_DATA_DIR"/images/parking.png"};
 
 static Evas_Object * _marker_get(Evas_Object *obj, Elm_Map_Marker *marker __UNUSED__, void *data);
 static Evas_Object * _group_icon_get(Evas_Object *obj, void *data);
+
+static void
+my_map_gpx_fileselector_done(void *data, Evas_Object *obj __UNUSED__, void *event_info)
+{
+   const char *selected = event_info;
+
+   if (selected)
+     {
+        printf("Selected file: %s\n", selected);
+        track = elm_map_track_add(data, selected);
+     }
+   evas_object_del(fs_win);
+}
 
 static void
 my_map_clicked(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
@@ -322,6 +336,57 @@ map_zoom_fill(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED
 }
 
 static void
+map_track_add(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+   Evas_Object *fs, *bg, *vbox, *hbox, *sep;
+
+   fs_win = elm_win_add(NULL, "fileselector", ELM_WIN_BASIC);
+   elm_win_title_set(fs_win, "File Selector");
+   elm_win_autodel_set(fs_win, 1);
+
+   bg = elm_bg_add(fs_win);
+   elm_win_resize_object_add(fs_win, bg);
+   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_show(bg);
+
+   vbox = elm_box_add(fs_win);
+   elm_win_resize_object_add(fs_win, vbox);
+   evas_object_size_hint_weight_set(vbox, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_show(vbox);
+
+   fs = elm_fileselector_add(fs_win);
+   elm_fileselector_is_save_set(fs, EINA_TRUE);
+   elm_fileselector_expandable_set(fs, EINA_FALSE);
+   elm_fileselector_path_set(fs, getenv("HOME"));
+   evas_object_size_hint_weight_set(fs, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(fs, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_box_pack_end(vbox, fs);
+   evas_object_show(fs);
+
+   evas_object_smart_callback_add(fs, "done", my_map_gpx_fileselector_done, data);
+
+   sep = elm_separator_add(fs_win);
+   elm_separator_horizontal_set(sep, EINA_TRUE);
+   elm_box_pack_end(vbox, sep);
+   evas_object_show(sep);
+
+   hbox = elm_box_add(fs_win);
+   elm_box_horizontal_set(hbox, EINA_TRUE);
+   elm_box_pack_end(vbox, hbox);
+   evas_object_show(hbox);
+
+   evas_object_resize(fs_win, 240, 350);
+   evas_object_show(fs_win);
+}
+
+
+static void
+map_track_remove(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+   elm_map_track_remove(track);
+}
+
+static void
 map_rotate_cw(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    double d;
@@ -557,6 +622,8 @@ _map_mouse_down(void *data, Evas *evas __UNUSED__, Evas_Object *obj, void *event
         elm_menu_item_add(menu, NULL, NULL, "Zoom -", map_zoom_out, data);
         elm_menu_item_add(menu, NULL, NULL, "Zoom Fit", map_zoom_fit, data);
         elm_menu_item_add(menu, NULL, NULL, "Zoom Fill", map_zoom_fill, data);
+        elm_menu_item_add(menu, NULL, NULL, "Add Track", map_track_add, data);
+        elm_menu_item_add(menu, NULL, NULL, "Remove Track", map_track_remove, data);
         elm_menu_item_add(menu, NULL, NULL, "Add Marker", NULL, NULL);
         elm_menu_item_add(menu, NULL, NULL, "Rotate CW", map_rotate_cw, data);
         elm_menu_item_add(menu, NULL, NULL, "Rotate CCW", map_rotate_ccw, data);

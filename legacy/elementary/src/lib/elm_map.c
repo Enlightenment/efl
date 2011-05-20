@@ -61,11 +61,12 @@ typedef struct _Grid Grid;
 typedef struct _Grid_Item Grid_Item;
 typedef struct _Marker_Group Marker_Group;
 typedef struct _Event Event;
-typedef struct _Route_Node Route_Node;
-typedef struct _Route_Waypoint Route_Waypoint;
+typedef struct _Path_Node Path_Node;
+typedef struct _Path_Waypoint Path_Waypoint;
 typedef struct _Url_Data Url_Data;
 typedef struct _Route_Dump Route_Dump;
 typedef struct _Name_Dump Name_Dump;
+typedef struct _Track_Dump Track_Dump;
 
 #define DEST_DIR_ZOOM_PATH "/tmp/elm_map/%d/%d/"
 #define DEST_DIR_PATH DEST_DIR_ZOOM_PATH"%d/"
@@ -93,6 +94,13 @@ typedef struct _Name_Dump Name_Dump;
 
 #define PINCH_ZOOM_MIN 0.1
 #define PINCH_ZOOM_MAX 5.0
+
+#define GPX_NAME "name>"
+#define GPX_COORDINATES "trkpt "
+#define GPX_LON "lon"
+#define GPX_LAT "lat"
+#define GPX_ELE "ele>"
+#define GPX_TIME "time>"
 
 // Map sources
 // Currently the size of a tile must be 256*256
@@ -220,8 +228,8 @@ struct _Elm_Map_Route
 {
    Widget_Data *wd;
 
-   Route_Node *n;
-   Route_Waypoint *w;
+   Path_Node *n;
+   Path_Waypoint *w;
    Ecore_Con_Url *con_url;
 
    int type;
@@ -253,7 +261,7 @@ struct _Elm_Map_Route
    Eina_Bool inbound : 1;
 };
 
-struct _Route_Node
+struct _Path_Node
 {
    Widget_Data *wd;
 
@@ -264,7 +272,7 @@ struct _Route_Node
    } pos;
 };
 
-struct _Route_Waypoint
+struct _Path_Waypoint
 {
    Widget_Data *wd;
 
@@ -281,6 +289,37 @@ struct _Elm_Map_Name
    double lon, lat;
    Url_Data ud;
    Ecore_Event_Handler *handler;
+};
+
+struct _Elm_Map_Track
+{
+   Widget_Data *wd;
+
+   Path_Node *n;
+   Path_Waypoint *w;
+
+   int x, y;
+   double flon, flat, tlon, tlat;
+
+   Eina_List *nodes, *path;
+   Eina_List *waypoint;
+
+   struct {
+      int node_count;
+      int waypoint_count;
+      const char *nodes;
+      const char *waypoints;
+      double distance; /* unit : km */
+   } info;
+
+   struct {
+      int r;
+      int g;
+      int b;
+      int a;
+   } color;
+
+   Eina_Bool inbound : 1;
 };
 
 struct _Grid_Item
@@ -374,6 +413,7 @@ struct _Widget_Data
    Eina_Hash *ua;
    const char *user_agent;
    Eina_List *route;
+   Eina_List *track;
    Evas_Event_Mouse_Down ev;
    Eina_List *names;
    int multi_count;
@@ -402,6 +442,7 @@ struct _Widget_Data
    Evas_Map *map;
    Ecore_Timer *zoom_timer;
    Map_Sources_Tab *src;
+   const char *gpx_file;
 };
 
 struct _Pan
@@ -473,6 +514,22 @@ enum _Zoom_Method
    ZOOM_METHOD_OUT,
    ZOOM_METHOD_LAST
 } Zoom_Mode;
+
+struct _Track_Dump
+{
+   Elm_Map_Track *track;
+   int idx;
+   double lon;
+   double lat;
+};
+
+enum _Track_Xml_Attribute
+{
+   TRACK_XML_NONE,
+   TRACK_XML_COORDINATES,
+   TRACK_XML_LAST
+} Track_Xml_Attibute;
+
 
 static const char *widtype = NULL;
 
@@ -556,6 +613,7 @@ static void _mouse_multi_up(void *data, Evas *evas, Evas_Object *obj, void *even
 static void _mouse_multi_move(void *data, Evas *evas, Evas_Object *obj, void *event_info);
 
 static void route_place(Evas_Object *obj, Grid *g, Evas_Coord px, Evas_Coord py, Evas_Coord ox, Evas_Coord oy, Evas_Coord ow, Evas_Coord oh);
+static void track_place(Evas_Object *obj, Grid *g, Evas_Coord px, Evas_Coord py, Evas_Coord ox, Evas_Coord oy, Evas_Coord ow, Evas_Coord oh);
 
 static int
 get_multi_device(Evas_Object *obj)
@@ -755,12 +813,91 @@ obj_rotate_zoom(void *data, Evas_Object *obj)
 }
 
 static void
+track_place(Evas_Object *obj, Grid *g __UNUSED__, Evas_Coord px, Evas_Coord py, Evas_Coord ox __UNUSED__, Evas_Coord oy __UNUSED__, Evas_Coord ow, Evas_Coord oh)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   Eina_List *lr, *lp, *ln;
+   Path_Node *n;
+   Evas_Object *p;
+   Elm_Map_Track *t;
+   int nodes;
+   int x, y, rx, ry;
+   double a;
+
+   if (!wd) return;
+   Evas_Coord size = pow(2.0, wd->zoom)*wd->tsize;
+
+   EINA_LIST_FOREACH(wd->track, lr, t)
+     {
+        EINA_LIST_FOREACH(t->path, lp, p)
+          {
+             evas_object_polygon_points_clear(p);
+          }
+
+        evas_object_geometry_get(wd->rect, &rx, &ry, NULL, NULL);
+        nodes = eina_list_count(t->nodes);
+
+        EINA_LIST_FOREACH(t->nodes, ln, n)
+          {
+             if (t->inbound)
+               {
+                  elm_map_utils_convert_geo_into_coord(wd->obj, n->pos.lon, n->pos.lat, size, &x, &y);
+                  if ((x >= px - ow) && (x <= (px + ow*2)) &&
+                      (y >= py - oh) && (y <= (py + oh*2)))
+                    {
+                       x = x - px + rx;
+                       y = y - py + ry;
+
+                       p = eina_list_nth(t->path, n->idx);
+                       a = (double)(y - t->y) / (double)(x - t->x);
+                       if ((abs(a) >= 1) || (t->x == x))
+                         {
+                            evas_object_polygon_point_add(p, t->x - 3, t->y);
+                            evas_object_polygon_point_add(p, t->x + 3, t->y);
+                            evas_object_polygon_point_add(p, x + 3, y);
+                            evas_object_polygon_point_add(p, x - 3, y);
+                         }
+                       else
+                         {
+                            evas_object_polygon_point_add(p, t->x, t->y - 3);
+                            evas_object_polygon_point_add(p, t->x, t->y + 3);
+                            evas_object_polygon_point_add(p, x, y + 3);
+                            evas_object_polygon_point_add(p, x, y - 3);
+                         }
+
+                       evas_object_color_set(p, t->color.r, t->color.g, t->color.b, t->color.a);
+                       evas_object_raise(p);
+                       obj_rotate_zoom(obj, p);
+                       evas_object_show(p);
+                       t->x = x;
+                       t->y = y;
+                    }
+                  else t->inbound = EINA_FALSE;
+               }
+             else
+               {
+                  elm_map_utils_convert_geo_into_coord(wd->obj, n->pos.lon, n->pos.lat, size, &x, &y);
+                  if ((x >= px - ow) && (x <= (px + ow*2)) &&
+                      (y >= py - oh) && (y <= (py + oh*2)))
+                    {
+                       t->x = x - px + rx;
+                       t->y = y - py + ry;
+                       t->inbound = EINA_TRUE;
+                    }
+                  else t->inbound = EINA_FALSE;
+               }
+          }
+          t->inbound = EINA_FALSE;
+     }
+}
+static void
 route_place(Evas_Object *obj, Grid *g __UNUSED__, Evas_Coord px, Evas_Coord py, Evas_Coord ox __UNUSED__, Evas_Coord oy __UNUSED__, Evas_Coord ow, Evas_Coord oh)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    Eina_List *lr, *lp, *ln;
-   Route_Node *n;
+   Path_Node *n;
    Evas_Object *p;
    Elm_Map_Route *r;
    int nodes;
@@ -1943,11 +2080,12 @@ _del_hook(Evas_Object *obj)
    Eina_List *l;
    Event *ev;
    Evas_Object *p;
-   Route_Node *n;
-   Route_Waypoint *w;
+   Path_Node *n;
+   Path_Waypoint *w;
    Ecore_Event_Handler *h;
    Elm_Map_Route *r;
    Elm_Map_Name *na;
+   Elm_Map_Track *t;
 
    if (!wd) return;
    EINA_LIST_FREE(wd->groups_clas, group_clas)
@@ -2007,6 +2145,20 @@ _del_hook(Evas_Object *obj)
              ecore_file_remove(na->ud.fname);
              free(na->ud.fname);
              na->ud.fname = NULL;
+          }
+     }
+
+   EINA_LIST_FOREACH(wd->track, l, t)
+     {
+        EINA_LIST_FREE(t->path, p)
+          {
+             evas_object_del(p);
+          }
+
+        EINA_LIST_FREE(t->nodes, n)
+          {
+             if (n->pos.address) eina_stringshare_del(n->pos.address);
+             free(n);
           }
      }
 
@@ -2242,6 +2394,7 @@ _pan_calculate(Evas_Object *obj)
         grid_place(sd->wd->obj, g, sd->wd->pan_x, sd->wd->pan_y, ox, oy, ow, oh);
         marker_place(sd->wd->obj, g, sd->wd->pan_x, sd->wd->pan_y, ox, oy, ow, oh);
         if (!sd->wd->zoom_animator) route_place(sd->wd->obj, g, sd->wd->pan_x, sd->wd->pan_y, ox, oy, ow, oh);
+        if (!sd->wd->zoom_animator) track_place(sd->wd->obj, g, sd->wd->pan_x, sd->wd->pan_y, ox, oy, ow, oh);
      }
 }
 
@@ -2817,7 +2970,7 @@ _parse_kml(void *data)
              r->info.waypoint_count = ele;
              for (idx = 0 ; idx < ele ; idx++)
                {
-                  Route_Waypoint *wp = ELM_NEW(Route_Waypoint);
+                  Path_Waypoint *wp = ELM_NEW(Path_Waypoint);
                   if (wp)
                     {
                        wp->wd = r->wd;
@@ -2842,7 +2995,7 @@ _parse_kml(void *data)
              for (idx = 0 ; idx < ele ; idx++)
                {
                   sscanf(str[idx], "%lf,%lf", &lon, &lat);
-                  Route_Node *n = ELM_NEW(Route_Node);
+                  Path_Node *n = ELM_NEW(Path_Node);
                   if (n)
                     {
                        n->wd = r->wd;
@@ -3018,6 +3171,66 @@ _utils_convert_name(const Evas_Object *obj, int method, char *address, double lo
 
 }
 
+static Eina_Bool
+cb_dump_track_attr(void *data, const char *key, const char *value)
+{
+   Track_Dump *dump = data;
+   Evas_Object *path;
+   double d;
+
+   if (!dump) return EINA_FALSE;
+   if (!strcmp(GPX_LON, key))
+     {
+        sscanf(value, "%lf", &d);
+        dump->lon  = d;
+     }
+   else if (!strcmp(GPX_LAT, key))
+     {
+        sscanf(value, "%lf", &d);
+        dump->lat  = d;
+     }
+
+   if ((dump->lon) && (dump->lat))
+     {
+        Path_Node *n = ELM_NEW(Path_Node);
+        if (n)
+          {
+             n->wd = dump->track->wd;
+             n->pos.lon = dump->lon;
+             n->pos.lat = dump->lat;
+             n->idx = dump->idx++;
+             INF("[%d] %lf:%lf", n->idx, dump->lon, dump->lat);
+             n->pos.address = NULL;
+             dump->track->nodes = eina_list_append(dump->track->nodes, n);
+
+             path = evas_object_polygon_add(evas_object_evas_get(dump->track->wd->obj));
+             evas_object_smart_member_add(path, dump->track->wd->pan_smart);
+             dump->track->path = eina_list_append(dump->track->path, path);
+             dump->lon = 0.0;
+             dump->lat = 0.0;
+          }
+     }
+
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+cb_track_dump(void *data, Eina_Simple_XML_Type type, const char *content, unsigned offset __UNUSED__, unsigned length __UNUSED__)
+{
+   Track_Dump *d = data;
+
+   if (!d) return EINA_FALSE;
+   if (type == EINA_SIMPLE_XML_OPEN)
+     {
+        if (!strncmp(GPX_COORDINATES, content, strlen(GPX_COORDINATES)))
+          {
+             const char *tags = eina_simple_xml_tag_attributes_find(content, length);
+             eina_simple_xml_attributes_parse(tags, length - (tags - content), cb_dump_track_attr, d);
+          }
+     }
+   return EINA_TRUE;
+}
+
 static int idnum = 1;
 
 /**
@@ -3178,6 +3391,7 @@ elm_map_zoom_set(Evas_Object *obj, int zoom)
    Evas_Coord rx, ry, rw, rh;
    Evas_Object *p;
    Elm_Map_Route *r;
+   Elm_Map_Track *t;
    int z = 0, zoom_changed = 0, started = 0;
 
    if ((!wd) || (!wd->src) || (wd->zoom_animator)) return;
@@ -3200,6 +3414,17 @@ elm_map_zoom_set(Evas_Object *obj, int zoom)
         if (r)
           {
              EINA_LIST_FOREACH(r->path, l, p)
+               {
+                  evas_object_polygon_points_clear(p);
+               }
+          }
+     }
+
+   EINA_LIST_FOREACH(wd->track, l, t)
+     {
+        if (t)
+          {
+             EINA_LIST_FOREACH(t->path, l, p)
                {
                   evas_object_polygon_points_clear(p);
                }
@@ -4741,8 +4966,8 @@ elm_map_route_remove(Elm_Map_Route *route)
 {
    EINA_SAFETY_ON_NULL_RETURN(route);
 
-   Route_Waypoint *w;
-   Route_Node *n;
+   Path_Waypoint *w;
+   Path_Node *n;
    Evas_Object *p;
    Ecore_Event_Handler *h;
 
@@ -5013,6 +5238,152 @@ elm_map_wheel_disabled_get(const Evas_Object *obj)
 
    if (!wd) return EINA_FALSE;
    return wd->wheel_disabled;
+}
+
+/**
+ * Add a track on the map
+ *
+ * @param obj The map object
+ * @param  the type if transport
+ *
+ * @return The Track object
+ *
+ * @ingroup Map
+ */
+EAPI Elm_Map_Track *
+elm_map_track_add(Evas_Object *obj, const char *gpx_file)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   FILE *f;
+
+   if (!wd) return EINA_FALSE;
+
+   Elm_Map_Track *track = ELM_NEW(Elm_Map_Track);
+   if (!track) return NULL;
+   track->wd = wd;
+   track->inbound = EINA_FALSE;
+   track->color.r = 0;
+   track->color.g = 0;
+   track->color.b = 255;
+   track->color.a = 255;
+
+   Track_Dump dump = {track, 0, 0.0, 0.0};
+   if (!wd->gpx_file) wd->gpx_file = eina_stringshare_add(gpx_file);
+   else eina_stringshare_replace(&wd->gpx_file, gpx_file);
+
+   f = fopen(gpx_file, "rb");
+   if (f)
+   {
+      long sz;
+
+      fseek(f, 0, SEEK_END);
+      sz = ftell(f);
+      if (sz > 0)
+      {
+         char *buf;
+
+         fseek(f, 0, SEEK_SET);
+         buf = malloc(sz);
+         if (buf)
+         {
+            if (fread(buf, 1, sz, f))
+              {
+                 eina_simple_xml_parse(buf, sz, EINA_TRUE, cb_track_dump, &dump);
+                 free(buf);
+              }
+         }
+      }
+      fclose(f);
+   }
+   else
+   {
+      ERR("can't open the file %s", gpx_file);
+      return NULL;
+   }
+   DBG("[Done] Load GPX file %s", gpx_file);
+
+   wd->track = eina_list_append(wd->track, track);
+   if (wd->grids)
+     {
+        Evas_Coord ox, oy, ow, oh;
+        evas_object_geometry_get(wd->obj, &ox, &oy, &ow, &oh);
+        track_place(wd->obj, eina_list_data_get(wd->grids), wd->pan_x, wd->pan_y, ox, oy, ow, oh);
+     }
+
+   return track;
+}
+
+/**
+ * Remove a track from the map
+ *
+ * @param track The track to remove
+ *
+ * @ingroup Map
+ */
+
+EAPI void
+elm_map_track_remove(Elm_Map_Track *track)
+{
+   EINA_SAFETY_ON_NULL_RETURN(track);
+
+   Path_Node *n;
+   Evas_Object *p;
+
+   EINA_LIST_FREE(track->path, p)
+     {
+        evas_object_del(p);
+     }
+
+   EINA_LIST_FREE(track->nodes, n)
+     {
+        if (n->pos.address) eina_stringshare_del(n->pos.address);
+        free(n);
+     }
+}
+
+/**
+ * Set the option used for the background color
+ *
+ * @param track The track object
+ * @param r
+ * @param g
+ * @param b
+ * @param a
+ *
+ * This sets the color used for the track
+ *
+ * @ingroup Map
+ */
+EAPI void
+elm_map_track_color_set(Elm_Map_Track *track, int r, int g , int b, int a)
+{
+   EINA_SAFETY_ON_NULL_RETURN(track);
+   track->color.r = r;
+   track->color.g = g;
+   track->color.b = b;
+   track->color.a = a;
+}
+
+/**
+ * Get the option used for the background color
+ *
+ * @param track The track object
+ * @param r
+ * @param g
+ * @param b
+ * @param a
+ *
+ * @ingroup Map
+ */
+EAPI void
+elm_map_track_color_get(const Elm_Map_Track *track, int *r, int *g , int *b, int *a)
+{
+   EINA_SAFETY_ON_NULL_RETURN(track);
+   if (r) *r = track->color.r;
+   if (g) *g = track->color.g;
+   if (b) *b = track->color.b;
+   if (a) *a = track->color.a;
 }
 
 static char *
