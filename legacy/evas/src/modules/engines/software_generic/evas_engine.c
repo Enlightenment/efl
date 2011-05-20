@@ -940,7 +940,7 @@ eng_image_filtered_free(void *image, Filtered_Image *fi)
 }
 
 static int
-eng_image_load_error_get(void *data, void *image)
+eng_image_load_error_get(void *data __UNUSED__, void *image)
 {
    RGBA_Image *im;
    
