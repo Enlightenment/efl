@@ -620,13 +620,10 @@ elm_transit_event_enabled_set(Elm_Transit *transit, Eina_Bool enabled)
 {
    ELM_TRANSIT_CHECK_OR_RETURN(transit);
    Evas_Object *obj;
-   Eina_List *elist;
    Elm_Obj_Data *obj_data;
 
    if (transit->event_enabled == enabled) return;
-
    transit->event_enabled = !!enabled;
-
    eina_hash_foreach(transit->objs_data_hash, _hash_foreach_pass_events_set, transit);
 }
 
@@ -985,7 +982,6 @@ elm_transit_progress_value_get(const Elm_Transit *transit)
 EAPI void
 elm_transit_objects_final_state_keep_set(Elm_Transit *transit, Eina_Bool state_keep)
 {
-   Eina_List *list;
    Evas_Object *obj;
    Elm_Obj_Data *obj_data;
 
