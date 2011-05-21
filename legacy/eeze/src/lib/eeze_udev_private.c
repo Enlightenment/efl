@@ -12,19 +12,11 @@
 _udev_device *
 _new_device(const char *syspath)
 {
-   Eina_Strbuf *sbuf;
    _udev_device *device;
 
-   sbuf = eina_strbuf_new();
-
-   if (strncmp(syspath, "/sys/", 5))
-     eina_strbuf_append(sbuf, "/sys/");
-
-   eina_strbuf_append(sbuf, syspath);
-   device = udev_device_new_from_syspath(udev, eina_strbuf_string_get(sbuf));
+   device = udev_device_new_from_syspath(udev, syspath);
    if (!device)
      ERR("device %s does not exist!", syspath);
-   eina_strbuf_free(sbuf);
    return device;
 }
 
@@ -34,12 +26,7 @@ _new_device(const char *syspath)
 _udev_device *
 _copy_device(_udev_device *device)
 {
-   const char *syspath;
-
-   if (!(syspath = udev_device_get_syspath(device)))
-     return NULL;
-
-   return udev_device_new_from_syspath(udev, syspath);
+   return udev_device_ref(device);
 }
 
 /*
