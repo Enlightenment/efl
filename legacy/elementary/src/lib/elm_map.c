@@ -118,8 +118,6 @@ typedef struct _Map_Sources_Tab
    ElmMapModuleCoordIntoGeoFunc coord_into_geo;
 } Map_Sources_Tab;
 
-#define ZOOM_MAX 18
-
 //Zemm min is supposed to be 0
 static char *_mapnik_url_cb(Evas_Object *obj __UNUSED__, int x, int y, int zoom);
 static char *_osmarender_url_cb(Evas_Object *obj __UNUSED__, int x, int y, int zoom);
@@ -174,11 +172,9 @@ struct _Elm_Map_Marker
    double longitude, latitude;
 
    Evas_Coord map_size;
-   Evas_Coord x[ZOOM_MAX+1], y[ZOOM_MAX+1];
+   Evas_Coord *x, *y;
    void *data;
-
-   Marker_Group *groups[ZOOM_MAX+1];
-
+   Marker_Group **groups;
    Evas_Object *content;
 };
 
@@ -395,7 +391,7 @@ struct _Widget_Data
    } center_on;
 
    Ecore_Job *markers_place_job;
-   Eina_Matrixsparse *markers[ZOOM_MAX+1];
+   Eina_Matrixsparse **markers;
    Eina_List *cells_displayed; // list of Eina_Matrixsparse_Cell
    Evas_Coord markers_max_num;
    int marker_max_w, marker_max_h;
@@ -443,6 +439,7 @@ struct _Widget_Data
    Ecore_Timer *zoom_timer;
    Map_Sources_Tab *src;
    const char *gpx_file;
+   int zoom_min, zoom_max;
 };
 
 struct _Pan
@@ -784,6 +781,40 @@ source_init(void *data)
         idx++;
      }
    wd->source_names[idx] = NULL;
+}
+
+static void
+zoom_min_get(void *data)
+{
+   ELM_CHECK_WIDTYPE(data, widtype);
+   Widget_Data *wd = elm_widget_data_get(data);
+   Map_Sources_Tab *s;
+   Eina_List *l;
+   int tz;
+
+   if (!wd) return;
+   EINA_LIST_FOREACH(wd->map_sources_tab, l, s)
+     {
+        tz = s->zoom_min;
+        if (tz < wd->zoom_min) wd->zoom_min = tz;
+     }
+}
+
+static void
+zoom_max_get(void *data)
+{
+   ELM_CHECK_WIDTYPE(data, widtype);
+   Widget_Data *wd = elm_widget_data_get(data);
+   Map_Sources_Tab *s;
+   Eina_List *l;
+   int tz;
+
+   if (!wd) return;
+   EINA_LIST_FOREACH(wd->map_sources_tab, l, s)
+     {
+        tz = s->zoom_max;
+        if (tz > wd->zoom_max) wd->zoom_max = tz;
+     }
 }
 
 static void
@@ -2164,6 +2195,7 @@ _del_hook(Evas_Object *obj)
    if (wd->long_timer) ecore_timer_del(wd->long_timer);
    if (wd->user_agent) eina_stringshare_del(wd->user_agent);
    if (wd->ua) eina_hash_free(wd->ua);
+   if (wd->markers) free(wd->markers);
 
    free(wd);
 }
@@ -2181,7 +2213,7 @@ _del_pre_hook(Evas_Object *obj)
 
    if (!wd) return;
    grid_clearall(obj);
-   for (i = 0; i < ZOOM_MAX + 1; i++)
+   for (i = 0; i <= wd->zoom_max; i++)
      {
         if (!wd->markers[i]) continue;
         Eina_Iterator *it = eina_matrixsparse_iterator_new(wd->markers[i]);
@@ -3279,8 +3311,13 @@ elm_map_add(Evas_Object *parent)
    wd->map = evas_map_new(4);
    if (!wd->map) return NULL;
 
+   wd->zoom_min = 0xFF;
+   wd->zoom_max = 0X00;
    wd->markers_max_num = 30;
    wd->pinch.level = 1.0;
+   zoom_min_get(obj);
+   zoom_max_get(obj);
+   wd->markers = calloc(wd->zoom_max + 1, sizeof(void*));
 
    evas_object_smart_callback_add(obj, "scroll-hold-on", _hold_on, obj);
    evas_object_smart_callback_add(obj, "scroll-hold-off", _hold_off, obj);
@@ -4016,6 +4053,9 @@ elm_map_marker_add(Evas_Object *obj, double lon, double lat, Elm_Map_Marker_Clas
    marker->longitude = lon;
    marker->latitude = lat;
    marker->data = data;
+   marker->x = calloc(wd->zoom_max + 1, sizeof(Evas_Coord));
+   marker->y = calloc(wd->zoom_max + 1, sizeof(Evas_Coord));
+   marker->groups = calloc(wd->zoom_max + 1, sizeof(Marker_Group*));
 
    tabi[1] = tabi[4] = tabi[6] = -1;
    tabi[2] = tabi[0] = tabi[7] = 0;
@@ -4069,7 +4109,7 @@ elm_map_marker_add(Evas_Object *obj, double lon, double lat, Elm_Map_Marker_Clas
         clas->priv.set = EINA_TRUE;
      }
 
-   for (i = clas_group->zoom_displayed; i <= ZOOM_MAX; i++)
+   for (i = clas_group->zoom_displayed; i <= wd->zoom_max; i++)
      {
         elm_map_utils_convert_geo_into_coord(obj, lon, lat, pow(2.0, i)*wd->tsize,
                                              &(marker->x[i]), &(marker->y[i]));
@@ -4187,7 +4227,7 @@ elm_map_marker_remove(Elm_Map_Marker *marker)
    EINA_SAFETY_ON_NULL_RETURN(marker);
    wd = marker->wd;
    if (!wd) return;
-   for (i = marker->clas_group->zoom_displayed; i <= ZOOM_MAX; i++)
+   for (i = marker->clas_group->zoom_displayed; i <= wd->zoom_max; i++)
      {
         marker->groups[i]->markers = eina_list_remove(marker->groups[i]->markers, marker);
         if (!eina_list_count(marker->groups[i]->markers))
@@ -4229,6 +4269,10 @@ elm_map_marker_remove(Elm_Map_Marker *marker)
      marker->clas->func.del(marker->wd->obj, marker, marker->data, marker->content);
    else if (marker->content)
      evas_object_del(marker->content);
+
+   if (marker->x) free(marker->x);
+   if (marker->y) free(marker->y);
+   if (marker->groups) free(marker->groups);
 
    free(marker);
 
@@ -4442,7 +4486,7 @@ elm_map_group_class_new(Evas_Object *obj)
 
    if (!wd) return NULL;
    Elm_Map_Group_Class *clas = calloc(1, sizeof(Elm_Map_Group_Class));
-   clas->zoom_grouped = ZOOM_MAX;
+   clas->zoom_grouped = wd->zoom_max;
    wd->groups_clas = eina_list_append(wd->groups_clas, clas);
    return clas;
 }
