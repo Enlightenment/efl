@@ -629,14 +629,6 @@ get_multi_device(Evas_Object *obj)
    return 0;
 }
 
-static int
-get_distance(Evas_Coord x1, Evas_Coord y1, Evas_Coord x2, Evas_Coord y2)
-{
-   int dx = x1 - x2;
-   int dy = y1 - y2;
-   return sqrt((dx * dx) + (dy * dy));
-}
-
 static Event *
 create_event_object(void *data, Evas_Object *obj, int device)
 {
@@ -1866,7 +1858,7 @@ _mouse_multi_move(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSED__
    ELM_CHECK_WIDTYPE(data, widtype);
    Widget_Data *wd = elm_widget_data_get(data);
    Evas_Event_Multi_Move *move = event_info;
-   int dis_new;
+   int dis_new, dx, dy;
    double t, tt, a, a_diff;
    Event *ev0;
    Event *ev;
@@ -1886,7 +1878,9 @@ _mouse_multi_move(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSED__
         evas_object_geometry_get(data, &x, &y, &w, &h);
         half_w = (float)w * 0.5;
         half_h = (float)h * 0.5;
-        dis_new = get_distance(ev0->prev.x, ev0->prev.y, ev->prev.x, ev->prev.y);
+        dx = ev0->prev.x - ev->prev.x;
+        dy = ev0->prev.y - ev->prev.y;
+        dis_new = sqrt((dx * dx) + (dy * dy));
 
         if (!ev->pinch_start_dis) ev->pinch_start_dis = dis_new;
         else

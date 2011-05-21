@@ -431,10 +431,10 @@ map_rotate_reset(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNU
 static void
 map_source(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Map_Source *ms = data;
+   Map_Source *s = data;
 
-   if (!ms) return;
-   elm_map_source_name_set(ms->map, ms->source_name);
+   if (!s) return;
+   elm_map_source_name_set(s->map, s->source_name);
 }
 
 /*
