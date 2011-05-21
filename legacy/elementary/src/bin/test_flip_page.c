@@ -136,6 +136,120 @@ _slice_uv(Slice *sl,
    sl->u[3] = u4; sl->v[3] = v4;
 }
 
+static void
+_slice_update(State *st)
+{
+   Evas_Coord x1, y1, x2, y2, mx, my, px, rx, ry, prx, pry, dst, dx, dy, pdst;
+   Evas_Coord x, y, w, h;
+   int i;
+   Slice *sl;
+   int rad;
+
+   evas_object_geometry_get(st->orig, &x, &y, &w, &h);
+   x1 = st->down_x;
+   y1 = st->down_y;
+   x2 = st->x;
+   y2 = st->y;
+   mx = (x1 + x2) / 2;
+   my = (y1 + y2) / 2;
+
+   if (mx < 0) mx = 0;
+   else if (mx >= w) mx = w - 1;
+   if (my < 0) my = 0;
+   else if (my >= h) my = h - 1;
+
+   if (!st->base) st->base = _slice_new(st);
+   sl = st->base;
+   
+   _slice_xyz(sl,
+              0,  0,  0,
+              mx, 0,  0,
+              mx, h,  0,
+              0,  h,  0);
+   _slice_uv(sl,
+             0,  0,
+             mx, 0,
+             mx, h,
+             0,  h);
+   _slice_apply(sl, x, y, w, h);
+   
+   EINA_LIST_FREE(st->slices, sl) _slice_free(sl);
+
+   // cylinder radius is width / 8
+   rad = (w - mx) / 4;
+   if (rad < (w / 16)) rad = (w / 16);
+   if (rad > (w / 8)) rad = w / 8;
+
+   rad = w / 10;
+
+   px = mx;
+   prx = 0;
+   pry = rad;
+   for (i = 1; i < RES; i++)
+     {
+        rx = (double)rad * sin((i * M_PI) / RES);
+        ry = (double)rad * cos((i * M_PI) / RES);
+        dx = rx - prx;
+        dy = ry - pry;
+        dst = sqrt((dx * dx) + (dy * dy));
+        if ((px + dst) > w)
+          {
+             pdst = dst;
+             dst = w - px;
+             rx = prx + (((rx - prx) * dst) / pdst);
+             ry = pry + (((ry - pry) * dst) / pdst);
+          }
+        if (dst <= 0) break;
+
+        sl = _slice_new(st);
+
+        _slice_xyz(sl, 
+                   mx + prx, 0, -(rad - pry),
+                   mx + rx,  0, -(rad - ry),
+                   mx + rx,  h, -(rad - ry),
+                   mx + prx, h, -(rad - pry));
+        _slice_uv(sl,
+                  px,       0,
+                  px + dst, 0,
+                  px + dst, h,
+                  px,       h);
+        _slice_apply(sl, x, y, w, h);
+        st->slices = eina_list_append(st->slices, sl);
+        
+        prx = rx;
+        pry = ry;
+        px += dst;
+     }
+   if (px < w)
+     {
+        sl = _slice_new(st);
+        
+        _slice_xyz(sl, 
+                   mx + prx,      0, -(rad - pry),
+                   mx + (px - w), 0, -(rad * 2),
+                   mx + (px - w), h, -(rad * 2),
+                   mx + prx,      h, -(rad - pry));
+        _slice_uv(sl,
+                  px, 0,
+                  w,  0,
+                  w,  h,
+                  px, h);
+        _slice_apply(sl, x, y, w, h);
+        st->slices = eina_list_append(st->slices, sl);
+     }
+}
+
+static void
+_slice_end(State *st)
+{
+   Slice *sl;
+   
+   if (st->base) _slice_free(st->base);
+   st->base = NULL;
+   EINA_LIST_FREE(st->slices, sl) _slice_free(sl);
+}
+
+
 #ifdef PAGEMESH
 static Evas_Object *sl_rho, *sl_theta, *sl_A;
 
@@ -249,119 +363,6 @@ _sl_ch(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UN
    _test();
 }
 #endif   
-
-static void
-_slice_update(State *st)
-{
-   Evas_Coord x1, y1, x2, y2, mx, my, px, rx, ry, prx, pry, dst, dx, dy, pdst;
-   Evas_Coord x, y, w, h;
-   int i;
-   Slice *sl;
-   int rad;
-
-   evas_object_geometry_get(st->orig, &x, &y, &w, &h);
-   x1 = st->down_x;
-   y1 = st->down_y;
-   x2 = st->x;
-   y2 = st->y;
-   mx = (x1 + x2) / 2;
-   my = (y1 + y2) / 2;
-
-   if (mx < 0) mx = 0;
-   else if (mx >= w) mx = w - 1;
-   if (my < 0) my = 0;
-   else if (my >= h) my = h - 1;
-
-   if (!st->base) st->base = _slice_new(st);
-   sl = st->base;
-   
-   _slice_xyz(sl,
-              0,  0,  0,
-              mx, 0,  0,
-              mx, h,  0,
-              0,  h,  0);
-   _slice_uv(sl,
-             0,  0,
-             mx, 0,
-             mx, h,
-             0,  h);
-   _slice_apply(sl, x, y, w, h);
-   
-   EINA_LIST_FREE(st->slices, sl) _slice_free(sl);
-
-   // cylinder radius is width / 8
-   rad = (w - mx) / 4;
-   if (rad < (w / 16)) rad = (w / 16);
-   if (rad > (w / 8)) rad = w / 8;
-
-   rad = w / 10;
-
-   px = mx;
-   prx = 0;
-   pry = rad;
-   for (i = 1; i < RES; i++)
-     {
-        rx = (double)rad * sin((i * M_PI) / RES);
-        ry = (double)rad * cos((i * M_PI) / RES);
-        dx = rx - prx;
-        dy = ry - pry;
-        dst = sqrt((dx * dx) + (dy * dy));
-        if ((px + dst) > w)
-          {
-             pdst = dst;
-             dst = w - px;
-             rx = prx + (((rx - prx) * dst) / pdst);
-             ry = pry + (((ry - pry) * dst) / pdst);
-          }
-        if (dst <= 0) break;
-
-        sl = _slice_new(st);
-
-        _slice_xyz(sl, 
-                   mx + prx, 0, -(rad - pry),
-                   mx + rx,  0, -(rad - ry),
-                   mx + rx,  h, -(rad - ry),
-                   mx + prx, h, -(rad - pry));
-        _slice_uv(sl,
-                  px,       0,
-                  px + dst, 0,
-                  px + dst, h,
-                  px,       h);
-        _slice_apply(sl, x, y, w, h);
-        st->slices = eina_list_append(st->slices, sl);
-        
-        prx = rx;
-        pry = ry;
-        px += dst;
-     }
-   if (px < w)
-     {
-        sl = _slice_new(st);
-        
-        _slice_xyz(sl, 
-                   mx + prx,      0, -(rad - pry),
-                   mx + (px - w), 0, -(rad * 2),
-                   mx + (px - w), h, -(rad * 2),
-                   mx + prx,      h, -(rad - pry));
-        _slice_uv(sl,
-                  px, 0,
-                  w,  0,
-                  w,  h,
-                  px, h);
-        _slice_apply(sl, x, y, w, h);
-        st->slices = eina_list_append(st->slices, sl);
-     }
-}
-
-static void
-_slice_end(State *st)
-{
-   Slice *sl;
-   
-   if (st->base) _slice_free(st->base);
-   st->base = NULL;
-   EINA_LIST_FREE(st->slices, sl) _slice_free(sl);
-}
 
 static void
 im_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info)
