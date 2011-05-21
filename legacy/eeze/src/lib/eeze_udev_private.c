@@ -77,23 +77,74 @@ _walk_parents_test_attr(_udev_device *device,
 
 const char *
 _walk_parents_get_attr(_udev_device *device,
-                       const char   *sysattr)
+                       const char   *sysattr,
+                       Eina_Bool property)
 {
    _udev_device *parent, *child = device;
    const char *test;
 
-   if ((test = udev_device_get_sysattr_value(device, sysattr)))
-     return eina_stringshare_add(test);
+   if (property)
+     test = udev_device_get_property_value(device, sysattr);
+   else
+     test = udev_device_get_sysattr_value(device, sysattr);
+   if (test) return eina_stringshare_add(test);
 
    parent = udev_device_get_parent(child);
 
    for (; parent; child = parent, parent = udev_device_get_parent(child))
      {
-        if ((test = udev_device_get_sysattr_value(parent, sysattr)))
-          return eina_stringshare_add(test);
+        if (property)
+          test = udev_device_get_property_value(parent, sysattr);
+        else
+          test = udev_device_get_sysattr_value(parent, sysattr);
+        if (test) return eina_stringshare_add(test);
      }
 
    return NULL;
+}
+
+const char *
+_walk_children_get_attr(const char *syspath,
+                        const char *sysattr,
+                        const char *subsystem,
+                        Eina_Bool property)
+{
+   char buf[PATH_MAX];
+   const char *path, *ret = NULL;
+   _udev_enumerate *en;
+   _udev_list_entry *devs, *cur;
+
+   en = udev_enumerate_new((udev));
+   EINA_SAFETY_ON_NULL_RETURN_VAL(en, NULL);
+   path = strrchr(syspath, '/');
+   if (path) path++;
+   else path = syspath;
+   snprintf(buf, sizeof(buf), "%s*", path);
+   udev_enumerate_add_match_sysname(en, buf);
+   if (subsystem) udev_enumerate_add_match_subsystem(en, subsystem);
+   udev_enumerate_scan_devices(en);
+   devs = udev_enumerate_get_list_entry(en);
+   udev_list_entry_foreach(cur, devs)
+     {
+        const char *devname, *test;
+        _udev_device *device;
+
+        devname = udev_list_entry_get_name(cur);
+        device = _new_device(devname);
+        if (property)
+          test = udev_device_get_property_value(device, sysattr);
+        else
+          test = udev_device_get_sysattr_value(device, sysattr);
+        if (test)
+          {
+             ret = eina_stringshare_add(test);
+             udev_device_unref(device);
+             break;
+          }
+        udev_device_unref(device);
+     }
+   udev_enumerate_unref(en);
+   return ret;
 }
 
 /*

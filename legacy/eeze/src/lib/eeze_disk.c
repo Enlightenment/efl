@@ -14,22 +14,54 @@ Eina_List *_eeze_disks = NULL;
 static Eeze_Disk_Type
 _eeze_disk_type_find(Eeze_Disk *disk)
 {
-   const char *bus;
-   bus = udev_device_get_property_value(disk->device, "ID_BUS");
-   if (!bus)
-     return EEZE_DISK_TYPE_UNKNOWN;
+   const char *test;
+   Eeze_Disk_Type ret;
+   Eina_Bool filesystem = EINA_FALSE; /* this will have no children */
 
-   if (!strcmp(bus, "ata") || !strcmp(bus, "scsi"))
-     { /* FIXME: I think some other types of devices fall into this, check later */
-        if (udev_device_get_property_value(disk->device, "ID_CDROM"))
-          return EEZE_DISK_TYPE_CDROM;
-        else
-          return EEZE_DISK_TYPE_INTERNAL;
+   if (udev_device_get_property_value(disk->device, "ID_CDROM"))
+     return EEZE_DISK_TYPE_CDROM;
+   test = udev_device_get_property_value(disk->device, "ID_FS_USAGE");
+   if ((!test) || strcmp(test, "filesystem"))
+     {
+        test = _walk_children_get_attr(disk->syspath, "ID_CDROM", "block", EINA_TRUE);
+        if (test)
+          {
+             eina_stringshare_del(test);
+             return EEZE_DISK_TYPE_CDROM;
+          }
      }
-   else if (!strcmp(bus, "usb"))
-     return EEZE_DISK_TYPE_USB;
+   else
+     filesystem = EINA_TRUE;
+   if (udev_device_get_property_value(disk->device, "ID_ATA"))
+     return EEZE_DISK_TYPE_INTERNAL;
+   if (!filesystem)
+     {
+        test = _walk_children_get_attr(disk->syspath, "ID_ATA", "block", EINA_TRUE);
+        if (test)
+          {
+             eina_stringshare_del(test);
+             return EEZE_DISK_TYPE_INTERNAL;
+          }
+     }
+   test = udev_device_get_property_value(disk->device, "ID_BUS");
+   if (test)
+     {
+        if (!strcmp(test, "ata")) return EEZE_DISK_TYPE_INTERNAL;
+        if (!strcmp(test, "usb")) return EEZE_DISK_TYPE_USB;
+        return EEZE_DISK_TYPE_UNKNOWN; /* FIXME */
+     }
+   if ((!test) && (!filesystem))
+     test = _walk_children_get_attr(disk->syspath, "ID_BUS", "block", EINA_TRUE);
+   if (!test)
+     return EEZE_DISK_TYPE_UNKNOWN; /* FIXME */
 
-   return EEZE_DISK_TYPE_UNKNOWN;
+   if (!strcmp(test, "ata")) ret = EEZE_DISK_TYPE_INTERNAL;
+   else if (!strcmp(test, "usb")) ret = EEZE_DISK_TYPE_USB;
+   else ret = EEZE_DISK_TYPE_UNKNOWN;
+
+   eina_stringshare_del(test);
+
+   return ret;
 }
 
 static _udev_device *
@@ -209,6 +241,7 @@ eeze_disk_free(Eeze_Disk *disk)
 EAPI void
 eeze_disk_scan(Eeze_Disk *disk)
 {
+   const char *test;
    EINA_SAFETY_ON_NULL_RETURN(disk);
    /* never rescan; if these values change then something is seriously wrong */
    if (disk->cache.filled) return;
@@ -229,7 +262,15 @@ eeze_disk_scan(Eeze_Disk *disk)
      disk->cache.type = _eeze_disk_type_find(disk);
    if (!disk->cache.label)
      disk->cache.label = udev_device_get_property_value(disk->device, "ID_FS_LABEL");
-   disk->cache.removable = !!strtol(udev_device_get_sysattr_value(disk->device, "removable"), NULL, 10);
+   test = udev_device_get_sysattr_value(disk->device, "removable");
+   if (test) disk->cache.removable = !!strtol(test, NULL, 10);
+   else
+     test = _walk_children_get_attr(disk->syspath, "removable", "block", EINA_FALSE);
+   if (test)
+     {
+        disk->cache.removable = !!strtol(test, NULL, 10);
+        eina_stringshare_del(test);
+     }
 
    disk->cache.filled = EINA_TRUE;
 }
@@ -350,11 +391,20 @@ eeze_disk_type_get(Eeze_Disk *disk)
 EAPI Eina_Bool
 eeze_disk_removable_get(Eeze_Disk *disk)
 {
+   const char *test;
    EINA_SAFETY_ON_NULL_RETURN_VAL(disk, EINA_FALSE);
 
    if (disk->cache.filled)
      return disk->cache.removable;
 
-   disk->cache.removable = !!strtol(udev_device_get_sysattr_value(disk->device, "removable"), NULL, 10);
+   test = udev_device_get_sysattr_value(disk->device, "removable");
+   if (test) disk->cache.removable = !!strtol(test, NULL, 10);
+   else
+     test = _walk_children_get_attr(disk->syspath, "removable", "block", EINA_FALSE);
+   if (test)
+     {
+        disk->cache.removable = !!strtol(test, NULL, 10);
+        eina_stringshare_del(test);
+     }
    return disk->cache.removable;
 }
