@@ -650,9 +650,9 @@ static int
 gaussian_filter_h(int rad, uint32_t *in, int w, uint32_t *out)
 {
    const uint32_t *points;
-   int npoints;
-   uint32_t weight;
-   int i, k;
+   int npoints = 0;
+   uint32_t weight = 0;
+   int i = 0, k = 0;
    uint32_t r, g, b, a;
    
    /* Get twice the radius: even rows have 1 element */
@@ -680,9 +680,9 @@ static int
 gaussian_filter_hd(int rad, uint32_t *in, int w, uint32_t *out)
 {
    const double *points;
-   int npoints;
-   double weight;
-   int i, k;
+   int npoints = 0;
+   double weight = 0.0;
+   int i = 0, k = 0;
    double r, g, b, a;
 
    /* Get twice the radius: even rows have 1 element */
@@ -711,9 +711,9 @@ static int
 gaussian_filter_h64(int rad, uint32_t *in, int w, uint32_t *out)
 {
    const uint64_t *points;
-   int npoints;
-   uint64_t weight;
-   int i, k;
+   int npoints = 0;
+   uint64_t weight = 0;
+   int i = 0, k = 0;
    uint64_t r, g, b, a;
 
    /* Get twice the radius: even rows have 1 element */
@@ -738,9 +738,9 @@ static int
 gaussian_filter_v(int rad, uint32_t *in, int h, int skip, uint32_t *out)
 {
    const uint32_t *points;
-   int npoints;
-   uint32_t weight;
-   int i, k;
+   int npoints = 0;
+   uint32_t weight = 0;
+   int i = 0, k = 0;
    uint32_t r, g, b, a;
 
    /* Get twice the radius: even rows have 1 element */
@@ -770,9 +770,9 @@ static int
 gaussian_filter_v64(int rad, uint32_t *in, int h, int skip, uint32_t *out)
 {
    const uint64_t *points;
-   int npoints;
+   int npoints = 0;
    uint64_t weight;
-   int i, k;
+   int i = 0, k = 0;
    uint64_t r, g, b, a;
 
    /* Get twice the radius: even rows have 1 element */
@@ -802,9 +802,9 @@ static int
 gaussian_filter_vd(int rad, uint32_t *in, int h, int skip, uint32_t *out)
 {
    const double *points;
-   int npoints;
-   double weight;
-   int i, k;
+   int npoints = 0;
+   double weight = 0.0;
+   int i = 0, k = 0;
    double r, g, b, a;
 
    /* Get twice the radius: even rows have 1 element */

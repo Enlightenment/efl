@@ -2833,7 +2833,7 @@ static void
 evas_object_image_render_pre(Evas_Object *obj)
 {
    Evas_Object_Image *o;
-   int is_v, was_v;
+   int is_v = 0, was_v = 0;
    Evas *e;
 
    /* dont pre-render the obj twice! */
