@@ -5238,7 +5238,7 @@ elm_map_wheel_disabled_get(const Evas_Object *obj)
  * Add a track on the map
  *
  * @param obj The map object
- * @param  the type if transport
+ * @param gpx_file the name of the gpx file
  *
  * @return The Track object
  *
