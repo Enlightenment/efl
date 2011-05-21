@@ -9,6 +9,7 @@
 #include "eeze_udev_private.h"
 #include "eeze_disk_private.h"
 
+int _eeze_disk_log_dom = -1;
 Eina_List *_eeze_disks = NULL;
 
 static Eeze_Disk_Type
@@ -92,6 +93,41 @@ _eeze_disk_device_from_property(const char *prop, Eina_Bool uuid)
    udev_enumerate_unref(en);
    return device;
 
+}
+
+void
+eeze_disk_shutdown(void)
+{
+   eeze_mount_shutdown();
+   ecore_file_shutdown();
+   eina_log_domain_unregister(_eeze_disk_log_dom);
+   _eeze_disk_log_dom = -1;
+}
+
+Eina_Bool
+eeze_disk_init(void)
+{
+   _eeze_disk_log_dom = eina_log_domain_register("eeze_disk", EINA_COLOR_LIGHTBLUE);
+
+   if (_eeze_disk_log_dom < 0)
+     {
+        EINA_LOG_ERR("Could not register 'eeze_disk' log domain.");
+        goto disk_fail;
+     }
+
+   if (!ecore_file_init())
+     goto disk_fail;
+   if  (!eeze_mount_init())
+     goto ecore_file_fail;
+
+   return EINA_TRUE;
+
+ecore_file_fail:
+   ecore_file_shutdown();
+disk_fail:
+   eina_log_domain_unregister(_eeze_disk_log_dom);
+   _eeze_disk_log_dom = -1;
+   return EINA_FALSE;
 }
 
 EAPI void

@@ -73,6 +73,9 @@ struct _Eeze_Disk
      } cache;
 };
 
+Eina_Bool eeze_disk_init(void);
+void eeze_disk_shutdown(void);
+
 Eina_Bool eeze_mount_init(void);
 void eeze_mount_shutdown(void);
 
