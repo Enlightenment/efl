@@ -18,8 +18,8 @@ struct _State
    Evas_Coord down_x, down_y;
    Eina_Bool  down : 1;
    Evas_Coord x, y;
-   Slice *base, *base2;
-   Eina_List *slices;
+   int slices_w, slices_h;
+   Slice **slices;
 };
 
 struct _Slice
@@ -49,7 +49,7 @@ static State state =
    0, 0,
    0,
    0, 0,
-   NULL, NULL,
+   0, 0,
    NULL
 };
 
@@ -95,14 +95,22 @@ _slice_apply(Slice *sl, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h)
 
    evas_map_util_3d_perspective(m, x + (w / 2), y + (h / 2), 0, 1024);
 
-/*
-   // FIXME: lighting should be manual with pt 0 and 3 being white and
-   // 2 and 3 matching the
+/*   
    evas_map_util_3d_lighting(m,
-                             0  , 0  , -1000,
+                             x + (w / 2)  , y + (h / 2)  , -h * 10,
                              255, 255, 255,
-                             20 , 20 , 20);
- */
+                             80 , 80 , 80);
+   for (i = 0; i < 4; i++)
+     {
+        int r, g, b, a;
+        
+        evas_map_point_color_get(m, i, &r, &g, &b, &a);
+        r = (double)r * 1.2; if (r > 255) r = 255;
+        g = (double)g * 1.2; if (g > 255) g = 255;
+        b = (double)b * 1.2; if (b > 255) b = 255;
+        evas_map_point_color_set(m, i, r, g, b, a);
+     }
+  */
 
    evas_object_map_enable_set(sl->obj, EINA_TRUE);
    evas_object_image_fill_set(sl->obj, 0, 0, w, h);
@@ -170,14 +178,109 @@ _interp_point(Vertex3 *vi1, Vertex3 *vi2, Vertex3 *vo, double v)
    vo->z = (v * vi2->z) + ((1.0 - v) * vi1->z);
 }
 
-static int
-_slice_update(State *st)
+static void
+_state_slices_clear(State *st)
 {
-   Evas_Coord x1, y1, x2, y2, mx, my, px, rx, ry, prx, pry, dst, dx, dy, pdst;
+   int i, j, num;
+   
+   if (st->slices)
+     {
+        num = 0;
+        for (j = 0; j < st->slices_h; j++)
+          {
+             for (i = 0; i < st->slices_w; i++)
+               {
+                  if (st->slices[num])
+                    {
+                       _slice_free(st->slices[num]);
+                       st->slices[num] = NULL;
+                    }
+                  num++;
+               }
+          }
+        free(st->slices);
+        st->slices = NULL;
+        st->slices_w = 0;
+        st->slices_h = 0;
+     }
+}
+
+/*
+static void
+_slice_obj_vert_color_merge(Slice *s1, int p1, Slice *s2, int p2, 
+                            Slice *s3, int p3, Slice *s4, int p4)
+{
+   int r1 = 0, g1 = 0, b1 = 0, a1 = 0, r2 = 0, g2 = 0, b2 = 0, a2 = 0, n = 0;
+   Evas_Map *m;
+   
+   if (s1)
+     {
+        m = (Evas_Map *)evas_object_map_get(s1->obj);
+        evas_map_point_color_get(m, p1, &r1, &g1, &b1, &a1);
+        r2 += r1; g2 += g1; b2 += b1; a2 += a1;
+        n++;
+     }
+   if (s2)
+     {
+        m = (Evas_Map *)evas_object_map_get(s2->obj);
+        evas_map_point_color_get(m, p2, &r1, &g1, &b1, &a1);
+        r2 += r1; g2 += g1; b2 += b1; a2 += a1;
+        n++;
+     }
+   if (s3)
+     {
+        m = (Evas_Map *)evas_object_map_get(s3->obj);
+        evas_map_point_color_get(m, p3, &r1, &g1, &b1, &a1);
+        r2 += r1; g2 += g1; b2 += b1; a2 += a1;
+        n++;
+     }
+   if (s4)
+     {
+        m = (Evas_Map *)evas_object_map_get(s4->obj);
+        evas_map_point_color_get(m, p4, &r1, &g1, &b1, &a1);
+        r2 += r1; g2 += g1; b2 += b1; a2 += a1;
+        n++;
+     }
+   
+   r2 /= n; g2 /= n; b2 /= n; a2 /= n;
+   
+   if (s1)
+     {
+        m = (Evas_Map *)evas_object_map_get(s1->obj);
+        evas_map_point_color_set(m, p1, r2, g2, b2, a2);
+        evas_object_map_set(s1->obj, m);
+     }
+   if (s2)
+     {
+        m = (Evas_Map *)evas_object_map_get(s2->obj);
+        evas_map_point_color_set(m, p2, r2, g2, b2, a2);
+        evas_object_map_set(s2->obj, m);
+     }
+   if (s3)
+     {
+        m = (Evas_Map *)evas_object_map_get(s3->obj);
+        evas_map_point_color_set(m, p3, r2, g2, b2, a2);
+        evas_object_map_set(s3->obj, m);
+     }
+   if (s4)
+     {
+        m = (Evas_Map *)evas_object_map_get(s4->obj);
+        evas_map_point_color_set(m, p4, r2, g2, b2, a2);
+        evas_object_map_set(s4->obj, m);
+     }
+}
+*/
+   
+static int
+_state_update(State *st)
+{
+   Evas_Coord x1, y1, x2, y2, mx, my, dst, dx, dy;
    Evas_Coord x, y, w, h;
-   int i;
+   int i, j, num;
    Slice *sl;
-   int rad;
+   double b, minv = 0.0, minva, mgrad;
+   int gx, gy, gsz, gw, gh;
+   double rho, A, theta, perc, percm, n, rhol, Al, thetal;
 
    evas_object_geometry_get(st->orig, &x, &y, &w, &h);
    x1 = st->down_x;
@@ -202,252 +305,192 @@ _slice_update(State *st)
          return 0;
       }
    
-#if 1
-   // MAGIC MATH STUFF!!!
+   b = (h / 2);
+   mgrad = (double)(y1 - y2) / (double)(x1 - x2);
+
+   gsz = 16;
+   
+   _state_slices_clear(st);
+   
+   st->slices_w = (w + gsz - 1) / gsz;
+   st->slices_h = (h + gsz - 1) / gsz;
+   st->slices = calloc(st->slices_w * st->slices_h, sizeof(Slice *));
+   if (!st->slices) return 0;
+   
+   if (mx < 1) mx = 1; // quick hack to keep curl line visible
+   
+   if (mgrad == 0.0) // special horizontal case
+      mgrad = 0.001; // quick dirty hack for now
+   // else
      {
-        double b = (h / 2), minv = 0.0, minva;
-        double mgrad = (double)(y1 - y2) / (double)(x1 - x2);
-        Evas_Coord slx1, slx2, sly;
-        int gx, gy, gsz, gw, gh;
-        double rho, A, theta, perc, percm, n, cd, rhol, Al, thetal;
-        
-        if (mx < 1) mx = 1; // quick hack to keep curl line visible
-        
-        if (mgrad == 0.0) // special horizontal case
-           mgrad = 0.001; // quick dirty hack for now
-        // else
+        minv = 1.0 / mgrad;
+        // y = (m * x) + b             
+        b = my + (minv * mx);
+     }
+   if ((b >= -5) && (b <= (h + 5)))
+     {
+        if (minv > 0.0) // clamp to h
           {
-             minv = 1.0 / mgrad;
-             // y = (m * x) + b             
+             minv = (double)(h + 5 - my) / (double)(mx);
              b = my + (minv * mx);
           }
-        if ((b >= -5) && (b <= (h + 5)))
+        else // clamp to 0
           {
-             if (minv > 0.0) // clamp to h
-               {
-                  minv = (double)(h + 5 - my) / (double)(mx);
-                  b = my + (minv * mx);
-               }
-             else // clamp to 0
-               {
-                  minv = (double)(-5 - my) / (double)(mx);
-                  b = my + (minv * mx);
-               }
+             minv = (double)(-5 - my) / (double)(mx);
+             b = my + (minv * mx);
           }
-        
-        // DEBUG
-        static Evas_Object *ol = NULL;
-        Evas_Coord lx1, ly1, lx2, ly2;
-        if (!ol) ol = evas_object_line_add(evas_object_evas_get(st->win));
-        evas_object_color_set(ol, 128, 0, 0, 128);
-        lx1 = x;
-        ly1 = y + b;
-        lx2 = x + w;
-        ly2 = y + b + (-minv * w);
-        evas_object_line_xy_set(ol, lx1, ly1, lx2, ly2);
-        evas_object_show(ol);
-
-        EINA_LIST_FREE(st->slices, sl) _slice_free(sl);
-
-        perc = (double)x2 / (double)x1;
-        percm = (double)mx / (double)x1;
-        if (perc < 0.0) perc = 0.0;
-        else if (perc > 1.0) perc = 1.0;
-        if (percm < 0.0) percm = 0.0;
-        else if (percm > 1.0) percm = 1.0;
-
-        minva = atan(minv) / (M_PI / 2);
-        if (minva < 0.0) minva = -minva;
-        
-        // A = apex of cone
-        if (b <= 0) A = b;
-        else A = h - b;
-        if (A < -(h * 20)) A = -h * 20;
-        //--//
-        Al = -5;
-        
-        // rho = is how much the page is turned
-        n = 1.0 - perc;
-        n = 1.0 - cos(n * M_PI / 2.0);
-        n = n * n;
-        rho = -(n * M_PI);
-        //--//
-        rhol = -(n * M_PI);
-        
-        // theta == curliness (how much page culrs in on itself
-        n = sin((1.0 - perc) * M_PI);
-        n = n * 1.2;
-        theta = 7.86 + n;
-        //--//
-        n = sin((1.0 - perc) * M_PI);
-        n = 1.0 - n;
-        n = n * n;
-        n = 1.0 - n;
-        thetal = 7.86 + n;
-        
-        gsz = 16;
-        for (gx = 0; gx < w; gx += gsz)
+     }
+   
+   // DEBUG
+   static Evas_Object *ol = NULL;
+   Evas_Coord lx1, ly1, lx2, ly2;
+   if (!ol) ol = evas_object_line_add(evas_object_evas_get(st->win));
+   evas_object_color_set(ol, 128, 0, 0, 128);
+   lx1 = x;
+   ly1 = y + b;
+   lx2 = x + w;
+   ly2 = y + b + (-minv * w);
+   evas_object_line_xy_set(ol, lx1, ly1, lx2, ly2);
+   evas_object_show(ol);
+   // END DEBUG
+   // 
+   perc = (double)x2 / (double)x1;
+   percm = (double)mx / (double)x1;
+   if (perc < 0.0) perc = 0.0;
+   else if (perc > 1.0) perc = 1.0;
+   if (percm < 0.0) percm = 0.0;
+   else if (percm > 1.0) percm = 1.0;
+   
+   minva = atan(minv) / (M_PI / 2);
+   if (minva < 0.0) minva = -minva;
+   
+   // A = apex of cone
+   if (b <= 0) A = b;
+   else A = h - b;
+   if (A < -(h * 20)) A = -h * 20;
+   //--//
+   Al = -5;
+   
+   // rho = is how much the page is turned
+   n = 1.0 - perc;
+   n = 1.0 - cos(n * M_PI / 2.0);
+   n = n * n;
+   rho = -(n * M_PI);
+   //--//
+   rhol = -(n * M_PI);
+   
+   // theta == curliness (how much page culrs in on itself
+   n = sin((1.0 - perc) * M_PI);
+   n = n * 1.2;
+   theta = 7.86 + n;
+   //--//
+   n = sin((1.0 - perc) * M_PI);
+   n = 1.0 - n;
+   n = n * n;
+   n = 1.0 - n;
+   thetal = 7.86 + n;
+   
+   num = 0;
+   for (gx = 0; gx < w; gx += gsz)
+     {
+        for (gy = 0; gy < h; gy += gsz)
           {
-             for (gy = 0; gy < h; gy += gsz)
+             Vertex2 vi[4], vil[2];
+             Vertex3 vo[4], vol[2];
+             gw = gsz;
+             gh = gsz;
+             if ((gx + gw) > w) gw = w - gx;
+             if ((gy + gh) > h) gh = h - gy;
+             
+             vi[0].x = gx;      vi[0].y = gy;
+             vi[1].x = gx + gw; vi[1].y = gy;
+             vi[2].x = gx + gw; vi[2].y = gy + gh;
+             vi[3].x = gx;      vi[3].y = gy + gh;
+             
+             vil[0].x = gx;      vil[0].y = h - gx;
+             vil[1].x = gx + gw; vil[1].y = h - (gx + gw);
+             
+             for (i = 0; i < 2; i++)
                {
-                  Vertex2 vi[4], vil[2];
-                  Vertex3 vo[4], vol[2];
-                  gw = gsz;
-                  gh = gsz;
-                  if ((gx + gw) > w) gw = w - gx;
-                  if ((gy + gh) > h) gh = h - gy;
+                  _deform_point(&(vil[i]), &(vol[i]), rhol, thetal, Al);
+               }
+             for (i = 0; i < 4; i++)
+               {
+                  _deform_point(&(vi[i]), &(vo[i]), rho, theta, A);
+               }
+             n = minva * sin(perc * M_PI);
+             n = n * n;
+             vol[0].y = gy;
+             vol[1].y = gy;
+             _interp_point(&(vo[0]), &(vol[0]), &(vo[0]), n);
+             _interp_point(&(vo[1]), &(vol[1]), &(vo[1]), n);
+             vol[0].y = gy + gh;
+             vol[1].y = gy + gh;
+             _interp_point(&(vo[2]), &(vol[1]), &(vo[2]), n);
+             _interp_point(&(vo[3]), &(vol[0]), &(vo[3]), n);
+             if (b > 0)
+               {
+                  Vertex3 vt;
                   
-                  vi[0].x = gx;      vi[0].y = gy;
-                  vi[1].x = gx + gw; vi[1].y = gy;
-                  vi[2].x = gx + gw; vi[2].y = gy + gh;
-                  vi[3].x = gx;      vi[3].y = gy + gh;
-                  
-                  vil[0].x = gx;      vil[0].y = h - gx;
-                  vil[1].x = gx + gw; vil[1].y = h - (gx + gw);
-                  
-                  for (i = 0; i < 2; i++)
-                    {
-                       _deform_point(&(vil[i]), &(vol[i]), rhol, thetal, Al);
-                    }
-                  for (i = 0; i < 4; i++)
-                    {
-                       _deform_point(&(vi[i]), &(vo[i]), rho, theta, A);
-                    }
-                  n = minva * sin(perc * M_PI);
-                  n = n * n;
-                  vol[0].y = gy;
-                  vol[1].y = gy;
-                  _interp_point(&(vo[0]), &(vol[0]), &(vo[0]), n);
-                  _interp_point(&(vo[1]), &(vol[1]), &(vo[1]), n);
-                  vol[0].y = gy + gh;
-                  vol[1].y = gy + gh;
-                  _interp_point(&(vo[2]), &(vol[1]), &(vo[2]), n);
-                  _interp_point(&(vo[3]), &(vol[0]), &(vo[3]), n);
-                  if (b > 0)
-                    {
-                       Vertex3 vt;
-                       
 #define SWPV3(a, b) do {vt = (a); (a) = (b); (b) = vt;} while (0)
-                       SWPV3(vo[0], vo[3]);
-                       SWPV3(vo[1], vo[2]);
-                       vo[0].y = h - vo[0].y;
-                       vo[1].y = h - vo[1].y;
-                       vo[2].y = h - vo[2].y;
-                       vo[3].y = h - vo[3].y;
-                    }
-                  sl = _slice_new(st);
-                  _slice_xyz(sl,
-                            vo[0].x, vo[0].y, vo[0].z,
-                            vo[1].x, vo[1].y, vo[1].z,
-                            vo[2].x, vo[2].y, vo[2].z,
-                            vo[3].x, vo[3].y, vo[3].z);
-                  if (b <= 0)
-                     _slice_uv(sl,
-                               gx,       gy,       gx + gw,  gy,
-                               gx + gw,  gy + gh,  gx,       gy + gh);
-                  else
-                     _slice_uv(sl,
-                               gx,       h - (gy + gh), gx + gw,  h - (gy + gh),
-                               gx + gw,  h - gy,        gx,       h - gy);
-                  _slice_apply(sl, x, y, w, h);
-                  st->slices = eina_list_append(st->slices, sl);
+                  SWPV3(vo[0], vo[3]);
+                  SWPV3(vo[1], vo[2]);
+                  vo[0].y = h - vo[0].y;
+                  vo[1].y = h - vo[1].y;
+                  vo[2].y = h - vo[2].y;
+                  vo[3].y = h - vo[3].y;
                }
+             
+             sl = _slice_new(st);
+             st->slices[num] = sl;
+             num++;
+             _slice_xyz(sl,
+                        vo[0].x, vo[0].y, vo[0].z,
+                        vo[1].x, vo[1].y, vo[1].z,
+                        vo[2].x, vo[2].y, vo[2].z,
+                        vo[3].x, vo[3].y, vo[3].z);
+             if (b <= 0)
+                _slice_uv(sl,
+                          gx,       gy,       gx + gw,  gy,
+                          gx + gw,  gy + gh,  gx,       gy + gh);
+             else
+                _slice_uv(sl,
+                          gx,       h - (gy + gh), gx + gw,  h - (gy + gh),
+                          gx + gw,  h - gy,        gx,       h - gy);
+             _slice_apply(sl, x, y, w, h);
           }
      }
-#else   
-   if (!st->base) st->base = _slice_new(st);
-   sl = st->base;
-
-   _slice_xyz(sl,
-              0,  0,  0,
-              mx, 0,  0,
-              mx, h,  0,
-              0,  h,  0);
-   _slice_uv(sl,
-             0,  0,
-             mx, 0,
-             mx, h,
-             0,  h);
-   _slice_apply(sl, x, y, w, h);
-
-   EINA_LIST_FREE(st->slices, sl) _slice_free(sl);
-
-   // cylinder radius is width / 8
-   rad = (w - mx) / 4;
-   if (rad < (w / 16)) rad = (w / 16);
-   if (rad > (w / 8)) rad = w / 8;
-
-   rad = w / 10;
-
-   px = mx;
-   prx = 0;
-   pry = rad;
-   for (i = 1; i < RES; i++)
+   
+   // FIX shading in the verticies to blend at the points
+/*
+   num = 0;
+   for (j = 0; j < st->slices_h; j++)
      {
-        rx = (double)rad * sin((i * M_PI) / RES);
-        ry = (double)rad * cos((i * M_PI) / RES);
-        dx = rx - prx;
-        dy = ry - pry;
-        dst = sqrt((dx * dx) + (dy * dy));
-        if ((px + dst) > w)
+        for (i = 0; i < st->slices_w; i++)
           {
-             pdst = dst;
-             dst = w - px;
-             rx = prx + (((rx - prx) * dst) / pdst);
-             ry = pry + (((ry - pry) * dst) / pdst);
+             Slice *s[4];
+             
+             s[0] = s[1] = s[2] = s[3] = NULL;
+             
+             if ((i > 0) && (j > 0)) s[0] = st->slices[num - 1 - st->slices_w];
+             if (j > 0) s[1] = st->slices[num - st->slices_w];
+             
+             if (i > 0) s[2] = st->slices[num - 1];
+             s[3] = st->slices[num];
+             
+             _slice_obj_vert_color_merge(s[0], 2, s[1], 3,
+                                         s[2], 1, s[3], 0);
+             num++;
           }
-        if (dst <= 0) break;
-
-        sl = _slice_new(st);
-
-        _slice_xyz(sl,
-                   mx + prx, 0, -(rad - pry),
-                   mx + rx,  0, -(rad - ry),
-                   mx + rx,  h, -(rad - ry),
-                   mx + prx, h, -(rad - pry));
-        _slice_uv(sl,
-                  px,       0,
-                  px + dst, 0,
-                  px + dst, h,
-                  px,       h);
-        _slice_apply(sl, x, y, w, h);
-        st->slices = eina_list_append(st->slices, sl);
-
-        prx = rx;
-        pry = ry;
-        px += dst;
      }
-   if (px < w)
-     {
-        sl = _slice_new(st);
-
-        _slice_xyz(sl,
-                   mx + prx,      0, -(rad - pry),
-                   mx + (px - w), 0, -(rad * 2),
-                   mx + (px - w), h, -(rad * 2),
-                   mx + prx,      h, -(rad - pry));
-        _slice_uv(sl,
-                  px, 0,
-                  w,  0,
-                  w,  h,
-                  px, h);
-        _slice_apply(sl, x, y, w, h);
-        st->slices = eina_list_append(st->slices, sl);
-     }
-#endif   
+ */
    return 1;
 }
 
 static void
-_slice_end(State *st)
+_state_end(State *st)
 {
-   Slice *sl;
-
-   if (st->base) _slice_free(st->base);
-   st->base = NULL;
-   if (st->base2) _slice_free(st->base2);
-   st->base2 = NULL;
-   EINA_LIST_FREE(st->slices, sl) _slice_free(sl);
+   _state_slices_clear(st);
 }
 
 
@@ -564,7 +607,7 @@ im_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info)
    state.y = ev->canvas.y - y;
    state.down_x = state.x;
    state.down_y = state.y;
-   if (_slice_update(&state))
+   if (_state_update(&state))
       evas_object_lower(obj);
    printf("v %i %i\n", state.x, state.y);
 }
@@ -582,7 +625,7 @@ im_up_cb(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj, void *even
    state.y = ev->canvas.y - y;
    evas_object_raise(obj);
    printf("^ %i %i\n", state.x, state.y);
-   _slice_end(&state);
+   _state_end(&state);
 }
 
 static void
@@ -596,7 +639,7 @@ im_move_cb(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj, void *ev
    state.x = ev->cur.canvas.x - x;
    state.y = ev->cur.canvas.y - y;
    printf("@ %i %i\n", state.x, state.y);
-   if (_slice_update(&state))
+   if (_state_update(&state))
       evas_object_lower(obj);
 }
 
