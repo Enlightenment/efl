@@ -141,6 +141,27 @@ _spectre_shutdown()
 }
 
 static void
+_pixcopy(DATA32 *dst, unsigned char *src, int size)
+{
+   DATA32 *d;
+   unsigned char *s, *e;
+
+   d = dst;
+   s = src;
+   e = s + size;
+   while (s < e)
+     {
+        d[0] = 
+           0xff000000 |
+           (s[2] << 16) |
+           (s[1] << 8 ) |
+           (s[0]      );
+        d++;
+        s += 4;
+     }
+}
+
+static void
 _spectre_load_image(int size_w, int size_h)
 {
    SpectreRenderContext *rc;
@@ -169,13 +190,13 @@ _spectre_load_image(int size_w, int size_h)
    data = shm_addr;
 
    if (stride == 4 * width)
-     memcpy(data, psdata, height * stride);
+     _pixcopy(data, psdata, height * stride);
    else
      {
         src = (DATA32 *)psdata;
         dst = (DATA32 *)data;
         for (yy = 0; yy < height; src += stride, dst += width, ++yy)
-          memcpy (dst, src, width * 4);
+          _pixcopy (dst, src, width * 4);
      }
 
    spectre_render_context_free(rc);
