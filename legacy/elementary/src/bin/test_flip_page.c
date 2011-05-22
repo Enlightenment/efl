@@ -18,7 +18,7 @@ struct _State
    Evas_Coord down_x, down_y;
    Eina_Bool  down : 1;
    Evas_Coord x, y;
-   Slice *base;
+   Slice *base, *base2;
    Eina_List *slices;
 };
 
@@ -49,7 +49,7 @@ static State state =
    0, 0,
    0,
    0, 0,
-   NULL,
+   NULL, NULL,
    NULL
 };
 
@@ -93,7 +93,7 @@ _slice_apply(Slice *sl, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h)
         evas_map_point_color_set(m, i, 255, 255, 255, 255);
      }
 
-   evas_map_util_3d_perspective(m, x + (w / 2), y + (h / 2), 0, 512);
+   evas_map_util_3d_perspective(m, x + (w / 2), y + (h / 2), 0, 1024);
 
 /*
    // FIXME: lighting should be manual with pt 0 and 3 being white and
@@ -136,7 +136,33 @@ _slice_uv(Slice *sl,
    sl->u[3] = u4; sl->v[3] = v4;
 }
 
-static void
+static void 
+_deform_point(Vertex2 *vi, Vertex3 *vo, double rho, double theta, double A)
+{
+   // ^Y
+   // |
+   // |    X
+   // +---->
+   // theta == cone angle (0 -> PI/2)
+   // A     == distance of cone apex from origin
+   // rho   == angle of cone from vertical axis (...-PI/2 to PI/2...)
+   Vertex3  v1;
+   double d, r, b;
+   
+   d = sqrt((vi->x * vi->x) + pow(vi->y - A, 2)); 
+   r = d * sin(theta);                       
+   b = asin(vi->x / d) / sin(theta);       
+   
+   v1.x = r * sin(b);
+   v1.y = d + A - (r * (1 - cos(b)) * sin(theta)); 
+   v1.z = r * (1 - cos(b)) * cos(theta);
+   
+   vo->x = (v1.x * cos(rho)) - (v1.z * sin(rho));
+   vo->y = v1.y;
+   vo->z = (v1.x * sin(rho)) + (v1.z * cos(rho));
+}
+
+static int
 _slice_update(State *st)
 {
    Evas_Coord x1, y1, x2, y2, mx, my, px, rx, ry, prx, pry, dst, dx, dy, pdst;
@@ -150,6 +176,7 @@ _slice_update(State *st)
    y1 = st->down_y;
    x2 = st->x;
    y2 = st->y;
+   if (x2 >= x1) x2 = x1 - 1;
    mx = (x1 + x2) / 2;
    my = (y1 + y2) / 2;
 
@@ -158,6 +185,138 @@ _slice_update(State *st)
    if (my < 0) my = 0;
    else if (my >= h) my = h - 1;
 
+   dx = x2 - x1;
+   dy = y2 - y1;
+   dst = sqrt((dx * dx) + (dy * dy));
+   if (dst < 10)
+      {
+         // FIXME: clean up old objects
+         return 0;
+      }
+   
+#if 1
+   // MAGIC MATH STUFF!!!
+     {
+        double b = (h / 2), minv = 0.0;
+        double mgrad = (double)(y1 - y2) / (double)(x1 - x2);
+        Evas_Coord slx1, slx2, sly;
+        int gx, gy, gsz, gw, gh;
+        double rho, A, theta, perc, percm, n, cd;
+        
+        if (mx < 1) mx = 1; // quick hack to keep curl line visible
+        
+        if (mgrad == 0.0) // special horizontal case
+           mgrad = 0.001; // quick dirty hack for now
+        // else
+          {
+             minv = 1.0 / mgrad;
+             // y = (m * x) + b             
+             b = my + (minv * mx);
+          }
+        if ((b >= -5) && (b <= (h + 5)))
+          {
+             if (minv > 0.0) // clamp to h
+               {
+                  minv = (double)(h + 5 - my) / (double)(mx);
+                  b = my + (minv * mx);
+               }
+             else // clamp to 0
+               {
+                  minv = (double)(-5 - my) / (double)(mx);
+                  b = my + (minv * mx);
+               }
+          }
+        
+        // DEBUG
+        static Evas_Object *ol = NULL;
+        Evas_Coord lx1, ly1, lx2, ly2;
+        if (!ol) ol = evas_object_line_add(evas_object_evas_get(st->win));
+        evas_object_color_set(ol, 128, 0, 0, 128);
+        lx1 = x;
+        ly1 = y + b;
+        lx2 = x + w;
+        ly2 = y + b + (-minv * w);
+        evas_object_line_xy_set(ol, lx1, ly1, lx2, ly2);
+        evas_object_show(ol);
+
+        EINA_LIST_FREE(st->slices, sl) _slice_free(sl);
+
+        perc = (double)x2 / (double)x1;
+        percm = (double)mx / (double)x1;
+        if (perc < 0.0) perc = 0.0;
+        else if (perc > 1.0) perc = 1.0;
+        if (percm < 0.0) percm = 0.0;
+        else if (percm > 1.0) percm = 1.0;
+        
+        // rho = is how much the page is turned
+        n = 1.0 - perc;
+        n = 1.0 - cos(n * M_PI / 2.0);
+        n = n * n * n;
+        rho = -(n * M_PI);
+        
+        // theta == curliness (how much page culrs in on itself
+        n = sin(perc * M_PI);
+//        cd = (double)dy / (double)h;
+//        if (cd < 0.0) cd = -cd;
+//        cd *= 1.0;
+        cd = 0.0;
+        n = (n * 1.2) + (cd * 1.6);
+        if (n > 2.0) n = 2.0;
+        theta = 7.86 + n;
+        
+        if (b <= 0) A = b;
+        else A = h - b;
+        
+        gsz = 16;
+        for (gx = 0; gx < w; gx += gsz)
+          {
+             for (gy = 0; gy < h; gy += gsz)
+               {
+                  Vertex2 vi[4];
+                  Vertex3 vo[4];
+                  gw = gsz;
+                  gh = gsz;
+                  if ((gx + gw) > w) gw = w - gx;
+                  if ((gy + gh) > h) gh = h - gy;
+                  
+                  vi[0].x = gx;      vi[0].y = gy;
+                  vi[1].x = gx + gw; vi[1].y = gy;
+                  vi[2].x = gx + gw; vi[2].y = gy + gh;
+                  vi[3].x = gx;      vi[3].y = gy + gh;
+                  for (i = 0; i < 4; i++)
+                     _deform_point(&(vi[i]), &(vo[i]), rho, theta, A);
+                  if (b > 0)
+                    {
+                       Vertex3 vt;
+                       
+#define SWPV3(a, b) do {vt = (a); (a) = (b); (b) = vt;} while (0)
+                       SWPV3(vo[0], vo[3]);
+                       SWPV3(vo[1], vo[2]);
+                       vo[0].y = h - vo[0].y;
+                       vo[1].y = h - vo[1].y;
+                       vo[2].y = h - vo[2].y;
+                       vo[3].y = h - vo[3].y;
+                    }
+                  sl = _slice_new(st);
+                  _slice_xyz(sl,
+                            vo[0].x, vo[0].y, vo[0].z,
+                            vo[1].x, vo[1].y, vo[1].z,
+                            vo[2].x, vo[2].y, vo[2].z,
+                            vo[3].x, vo[3].y, vo[3].z);
+                  if (b <= 0)
+                     _slice_uv(sl,
+                               gx,       gy,       gx + gw,  gy,
+                               gx + gw,  gy + gh,  gx,       gy + gh);
+                  else
+                     _slice_uv(sl,
+                               gx,       h - (gy + gh), gx + gw,  h - (gy + gh),
+                               gx + gw,  h - gy,        gx,       h - gy);
+                  _slice_apply(sl, x, y, w, h);
+                  st->slices = eina_list_append(st->slices, sl);
+               }
+          }
+     }
+#else   
    if (!st->base) st->base = _slice_new(st);
    sl = st->base;
 
@@ -237,6 +396,8 @@ _slice_update(State *st)
         _slice_apply(sl, x, y, w, h);
         st->slices = eina_list_append(st->slices, sl);
      }
+#endif   
+   return 1;
 }
 
 static void
@@ -246,48 +407,23 @@ _slice_end(State *st)
 
    if (st->base) _slice_free(st->base);
    st->base = NULL;
+   if (st->base2) _slice_free(st->base2);
+   st->base2 = NULL;
    EINA_LIST_FREE(st->slices, sl) _slice_free(sl);
 }
 
 
+
+
+
+
+
+
+
+
+
 #ifdef PAGEMESH
 static Evas_Object *sl_rho, *sl_theta, *sl_A;
-
-static void
-_deform_point(Vertex2 *vi, Vertex3 *vo, double rho, double theta, double A)
-{
-   // ^Y
-   // |
-   // |    X
-   // +---->
-   // theta == cone angle (0 -> PI/2)
-   // A     == distance of cone apex from origin
-   // rho   == angle of cone from vertical axis (...-PI/2 to PI/2...)
-   Vertex3  v1;   // First stage of the deformation
-   double R, r, beta;
-
-   // Radius of the circle circumscribed by vertex (vi->x, vi->y) around A
-   // on the x-y plane
-   R = sqrt(vi->x * vi->x + pow(vi->y - A, 2));
-   // Now get the radius of the cone cross section intersected by our vertex
-   // in 3D space.
-   r = R * sin(theta);
-   // Angle subtended by arc |ST| on the cone cross section.
-   beta = asin(vi->x / R) / sin(theta);
-
-   // *** MAGIC!!! ***
-   v1.x = r * sin(beta);
-   v1.y = R + A - r * (1 - cos(beta)) * sin(theta);
-   v1.z = r * (1 - cos(beta)) * cos(theta);
-
-   // Apply a basic rotation transform around the y axis to rotate the curled
-   // page. These two steps could be combined through simple substitution,
-   // but are left separate to keep the math simple for debugging and
-   // illustrative purposes.
-   vo->x = (v1.x * cos(rho)) - (v1.z * sin(rho));
-   vo->y = v1.y;
-   vo->z = (v1.x * sin(rho)) + (v1.z * cos(rho));
-}
 
 static void
 _test(void)
@@ -345,7 +481,7 @@ _test(void)
              evas_map_point_color_set(m, k, 255, 255, 255, 255);
              k++;
 
-             evas_map_util_3d_perspective(m, x + (w / 2), y + (h / 2), 0, 512);
+             evas_map_util_3d_perspective(m, x + (w / 2), y + (h / 2), 0, 1024);
 
              evas_object_map_enable_set(o, EINA_TRUE);
              evas_object_image_fill_set(o, 0, 0, w, h);
@@ -364,6 +500,16 @@ _sl_ch(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UN
 }
 #endif
 
+
+
+
+
+
+
+
+
+
+
 static void
 im_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info)
 {
@@ -380,9 +526,9 @@ im_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info)
    state.y = ev->canvas.y - y;
    state.down_x = state.x;
    state.down_y = state.y;
-   evas_object_lower(obj);
+   if (_slice_update(&state))
+      evas_object_lower(obj);
    printf("v %i %i\n", state.x, state.y);
-   _slice_update(&state);
 }
 
 static void
@@ -412,7 +558,8 @@ im_move_cb(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj, void *ev
    state.x = ev->cur.canvas.x - x;
    state.y = ev->cur.canvas.y - y;
    printf("@ %i %i\n", state.x, state.y);
-   _slice_update(&state);
+   if (_slice_update(&state))
+      evas_object_lower(obj);
 }
 
 void
@@ -441,8 +588,8 @@ test_flip_page(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
             PACKAGE_DATA_DIR, "twofish.jpg");
    evas_object_image_file_set(im, buf, NULL);
 #endif
-   evas_object_move(im, 40, 40);
-   evas_object_resize(im, 400, 400);
+   evas_object_move(im, 140, 140);
+   evas_object_resize(im, 200, 200);
    evas_object_show(im);
 
    evas_object_event_callback_add(im, EVAS_CALLBACK_MOUSE_DOWN, im_down_cb, win);
