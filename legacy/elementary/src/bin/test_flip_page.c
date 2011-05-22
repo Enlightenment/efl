@@ -59,7 +59,7 @@ static Slice *
 _slice_new(State *st)
 {
    Slice *sl;
-   
+
    sl = calloc(1, sizeof(Slice));
    if (!sl) return NULL;
    sl->obj = evas_object_image_add(evas_object_evas_get(st->win));
@@ -82,7 +82,7 @@ _slice_apply(Slice *sl, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h)
 {
    Evas_Map *m;
    int i;
-   
+
    m = evas_map_new(4);
    evas_map_smooth_set(m, 0);
 
@@ -92,7 +92,7 @@ _slice_apply(Slice *sl, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h)
         evas_map_point_image_uv_set(m, i, sl->u[i] , sl->v[i]);
         evas_map_point_color_set(m, i, 255, 255, 255, 255);
      }
-   
+
    evas_map_util_3d_perspective(m, x + (w / 2), y + (h / 2), 0, 512);
 
 /*
@@ -103,7 +103,7 @@ _slice_apply(Slice *sl, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h)
                              255, 255, 255,
                              20 , 20 , 20);
  */
-   
+
    evas_object_map_enable_set(sl->obj, EINA_TRUE);
    evas_object_image_fill_set(sl->obj, 0, 0, w, h);
    evas_object_map_set(sl->obj, m);
@@ -111,7 +111,7 @@ _slice_apply(Slice *sl, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h)
 }
 
 static void
-_slice_xyz(Slice *sl, 
+_slice_xyz(Slice *sl,
            double x1, double y1, double z1,
            double x2, double y2, double z2,
            double x3, double y3, double z3,
@@ -124,7 +124,7 @@ _slice_xyz(Slice *sl,
 }
 
 static void
-_slice_uv(Slice *sl, 
+_slice_uv(Slice *sl,
            double u1, double v1,
            double u2, double v2,
            double u3, double v3,
@@ -160,7 +160,7 @@ _slice_update(State *st)
 
    if (!st->base) st->base = _slice_new(st);
    sl = st->base;
-   
+
    _slice_xyz(sl,
               0,  0,  0,
               mx, 0,  0,
@@ -172,7 +172,7 @@ _slice_update(State *st)
              mx, h,
              0,  h);
    _slice_apply(sl, x, y, w, h);
-   
+
    EINA_LIST_FREE(st->slices, sl) _slice_free(sl);
 
    // cylinder radius is width / 8
@@ -203,7 +203,7 @@ _slice_update(State *st)
 
         sl = _slice_new(st);
 
-        _slice_xyz(sl, 
+        _slice_xyz(sl,
                    mx + prx, 0, -(rad - pry),
                    mx + rx,  0, -(rad - ry),
                    mx + rx,  h, -(rad - ry),
@@ -215,7 +215,7 @@ _slice_update(State *st)
                   px,       h);
         _slice_apply(sl, x, y, w, h);
         st->slices = eina_list_append(st->slices, sl);
-        
+
         prx = rx;
         pry = ry;
         px += dst;
@@ -223,8 +223,8 @@ _slice_update(State *st)
    if (px < w)
      {
         sl = _slice_new(st);
-        
-        _slice_xyz(sl, 
+
+        _slice_xyz(sl,
                    mx + prx,      0, -(rad - pry),
                    mx + (px - w), 0, -(rad * 2),
                    mx + (px - w), h, -(rad * 2),
@@ -243,7 +243,7 @@ static void
 _slice_end(State *st)
 {
    Slice *sl;
-   
+
    if (st->base) _slice_free(st->base);
    st->base = NULL;
    EINA_LIST_FREE(st->slices, sl) _slice_free(sl);
@@ -253,7 +253,7 @@ _slice_end(State *st)
 #ifdef PAGEMESH
 static Evas_Object *sl_rho, *sl_theta, *sl_A;
 
-static void 
+static void
 _deform_point(Vertex2 *vi, Vertex3 *vo, double rho, double theta, double A)
 {
    // ^Y
@@ -265,21 +265,21 @@ _deform_point(Vertex2 *vi, Vertex3 *vo, double rho, double theta, double A)
    // rho   == angle of cone from vertical axis (...-PI/2 to PI/2...)
    Vertex3  v1;   // First stage of the deformation
    double R, r, beta;
-   
+
    // Radius of the circle circumscribed by vertex (vi->x, vi->y) around A
    // on the x-y plane
-   R = sqrt(vi->x * vi->x + pow(vi->y - A, 2)); 
+   R = sqrt(vi->x * vi->x + pow(vi->y - A, 2));
    // Now get the radius of the cone cross section intersected by our vertex
    // in 3D space.
-   r = R * sin(theta);                       
+   r = R * sin(theta);
    // Angle subtended by arc |ST| on the cone cross section.
-   beta = asin(vi->x / R) / sin(theta);       
-   
+   beta = asin(vi->x / R) / sin(theta);
+
    // *** MAGIC!!! ***
    v1.x = r * sin(beta);
-   v1.y = R + A - r * (1 - cos(beta)) * sin(theta); 
+   v1.y = R + A - r * (1 - cos(beta)) * sin(theta);
    v1.z = r * (1 - cos(beta)) * cos(theta);
-   
+
    // Apply a basic rotation transform around the y axis to rotate the curled
    // page. These two steps could be combined through simple substitution,
    // but are left separate to keep the math simple for debugging and
@@ -298,10 +298,10 @@ _test(void)
    int i, j, k;
    Evas_Coord x, y, w, h;
    State *st = &state;
-   
+
    EINA_LIST_FREE(pts, o) evas_object_del(o);
-   
-   evas_object_geometry_get(st->orig, &x, &y, &w, &h); 
+
+   evas_object_geometry_get(st->orig, &x, &y, &w, &h);
   for (j = 0; j < h; j += 20)
      {
         for (i = 0; i < w; i += 20)
@@ -309,24 +309,24 @@ _test(void)
              Vertex2 vi;
              Vertex3 vo;
              double rho, theta, A, n;
-             
+
              vi.x = i;
              vi.y = j;
              rho = elm_slider_value_get(sl_rho);
              A = elm_slider_value_get(sl_A);
              theta = elm_slider_value_get(sl_theta);
-             
+
              _deform_point(&vi, &vo, rho, theta, A);
-             
+
              o = evas_object_image_add(evas_object_evas_get(st->win));
              evas_object_image_smooth_scale_set(o, 0);
              evas_object_pass_events_set(o, 1);
              evas_object_image_source_set(o, st->orig);
              evas_object_show(o);
-             
+
              m = evas_map_new(4);
              evas_map_smooth_set(m, 0);
-             
+
              k = 0;
              evas_map_point_coord_set(m, k, x + vo.x, y + vo.y, -vo.z);
              evas_map_point_image_uv_set(m, k, 0 , 0);
@@ -344,14 +344,14 @@ _test(void)
              evas_map_point_image_uv_set(m, k, 0 , h);
              evas_map_point_color_set(m, k, 255, 255, 255, 255);
              k++;
-             
+
              evas_map_util_3d_perspective(m, x + (w / 2), y + (h / 2), 0, 512);
-             
+
              evas_object_map_enable_set(o, EINA_TRUE);
              evas_object_image_fill_set(o, 0, 0, w, h);
              evas_object_map_set(o, m);
              evas_map_free(m);
-             
+
              pts = eina_list_append(pts, o);
           }
      }
@@ -362,7 +362,7 @@ _sl_ch(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UN
 {
    _test();
 }
-#endif   
+#endif
 
 static void
 im_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info)
@@ -451,7 +451,7 @@ test_flip_page(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
 
    evas_object_resize(win, 480, 480);
    evas_object_show(win);
-   
+
 #ifdef PAGEMESH
    Evas_Object *sl;
 
@@ -467,7 +467,7 @@ test_flip_page(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
    evas_object_resize(sl, 460, 40);
    evas_object_layer_set(sl, 100);
    evas_object_show(sl);
-   
+
    sl = elm_slider_add(win);
    elm_slider_min_max_set(sl, 0, 10);
    elm_slider_value_set(sl, 7.86);
@@ -480,7 +480,7 @@ test_flip_page(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
    evas_object_resize(sl, 460, 40);
    evas_object_layer_set(sl, 100);
    evas_object_show(sl);
-   
+
    sl = elm_slider_add(win);
    elm_slider_min_max_set(sl, -800, 800);
    elm_slider_value_set(sl, -400);
@@ -493,6 +493,6 @@ test_flip_page(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
    evas_object_resize(sl, 460, 40);
    evas_object_layer_set(sl, 100);
    evas_object_show(sl);
-#endif   
+#endif
 }
 #endif
