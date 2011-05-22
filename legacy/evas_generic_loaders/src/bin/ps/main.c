@@ -146,7 +146,7 @@ _spectre_load_image(int size_w, int size_h)
    SpectreRenderContext *rc;
    unsigned char        *psdata;
    int                   stride;
-   DATA32               *src;
+   unsigned char        *src;
    DATA32               *dst;
    int                   yy;
    SpectreStatus         status;
