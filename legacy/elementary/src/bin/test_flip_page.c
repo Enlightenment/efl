@@ -162,6 +162,14 @@ _deform_point(Vertex2 *vi, Vertex3 *vo, double rho, double theta, double A)
    vo->z = (v1.x * sin(rho)) + (v1.z * cos(rho));
 }
 
+static void
+_interp_point(Vertex3 *vi1, Vertex3 *vi2, Vertex3 *vo, double v)
+{
+   vo->x = (v * vi2->x) + ((1.0 - v) * vi1->x);
+   vo->y = (v * vi2->y) + ((1.0 - v) * vi1->y);
+   vo->z = (v * vi2->z) + ((1.0 - v) * vi1->z);
+}
+
 static int
 _slice_update(State *st)
 {
@@ -197,11 +205,11 @@ _slice_update(State *st)
 #if 1
    // MAGIC MATH STUFF!!!
      {
-        double b = (h / 2), minv = 0.0;
+        double b = (h / 2), minv = 0.0, minva;
         double mgrad = (double)(y1 - y2) / (double)(x1 - x2);
         Evas_Coord slx1, slx2, sly;
         int gx, gy, gsz, gw, gh;
-        double rho, A, theta, perc, percm, n, cd;
+        double rho, A, theta, perc, percm, n, cd, rhol, Al, thetal;
         
         if (mx < 1) mx = 1; // quick hack to keep curl line visible
         
@@ -247,33 +255,43 @@ _slice_update(State *st)
         else if (perc > 1.0) perc = 1.0;
         if (percm < 0.0) percm = 0.0;
         else if (percm > 1.0) percm = 1.0;
+
+        minva = atan(minv) / (M_PI / 2);
+        if (minva < 0.0) minva = -minva;
+        
+        // A = apex of cone
+        if (b <= 0) A = b;
+        else A = h - b;
+        if (A < -(h * 20)) A = -h * 20;
+        //--//
+        Al = -5;
         
         // rho = is how much the page is turned
         n = 1.0 - perc;
         n = 1.0 - cos(n * M_PI / 2.0);
-        n = n * n * n;
+        n = n * n;
         rho = -(n * M_PI);
+        //--//
+        rhol = -(n * M_PI);
         
         // theta == curliness (how much page culrs in on itself
-        n = sin(perc * M_PI);
-//        cd = (double)dy / (double)h;
-//        if (cd < 0.0) cd = -cd;
-//        cd *= 1.0;
-        cd = 0.0;
-        n = (n * 1.2) + (cd * 1.6);
-        if (n > 2.0) n = 2.0;
+        n = sin((1.0 - perc) * M_PI);
+        n = n * 1.2;
         theta = 7.86 + n;
-        
-        if (b <= 0) A = b;
-        else A = h - b;
+        //--//
+        n = sin((1.0 - perc) * M_PI);
+        n = 1.0 - n;
+        n = n * n;
+        n = 1.0 - n;
+        thetal = 7.86 + n;
         
         gsz = 16;
         for (gx = 0; gx < w; gx += gsz)
           {
              for (gy = 0; gy < h; gy += gsz)
                {
-                  Vertex2 vi[4];
-                  Vertex3 vo[4];
+                  Vertex2 vi[4], vil[2];
+                  Vertex3 vo[4], vol[2];
                   gw = gsz;
                   gh = gsz;
                   if ((gx + gw) > w) gw = w - gx;
@@ -283,8 +301,28 @@ _slice_update(State *st)
                   vi[1].x = gx + gw; vi[1].y = gy;
                   vi[2].x = gx + gw; vi[2].y = gy + gh;
                   vi[3].x = gx;      vi[3].y = gy + gh;
+                  
+                  vil[0].x = gx;      vil[0].y = h - gx;
+                  vil[1].x = gx + gw; vil[1].y = h - (gx + gw);
+                  
+                  for (i = 0; i < 2; i++)
+                    {
+                       _deform_point(&(vil[i]), &(vol[i]), rhol, thetal, Al);
+                    }
                   for (i = 0; i < 4; i++)
-                     _deform_point(&(vi[i]), &(vo[i]), rho, theta, A);
+                    {
+                       _deform_point(&(vi[i]), &(vo[i]), rho, theta, A);
+                    }
+                  n = minva * sin(perc * M_PI);
+                  n = n * n;
+                  vol[0].y = gy;
+                  vol[1].y = gy;
+                  _interp_point(&(vo[0]), &(vol[0]), &(vo[0]), n);
+                  _interp_point(&(vo[1]), &(vol[1]), &(vo[1]), n);
+                  vol[0].y = gy + gh;
+                  vol[1].y = gy + gh;
+                  _interp_point(&(vo[2]), &(vol[1]), &(vo[2]), n);
+                  _interp_point(&(vo[3]), &(vol[0]), &(vo[3]), n);
                   if (b > 0)
                     {
                        Vertex3 vt;
