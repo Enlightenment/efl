@@ -90,7 +90,7 @@ test_flipselector(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *even
    evas_object_smart_callback_add(fp, "underflowed", _overflow_cb, NULL);
    evas_object_smart_callback_add(fp, "overflowed", _underflow_cb, NULL);
    evas_object_size_hint_weight_set(fp, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   for (i = 1990; i < 2099; i++)
+   for (i = 2099; i >= 1990; i--)
      {
 	snprintf(buf, 8, "%d", i);
 	elm_flipselector_item_append(fp, buf, _sel_cb, NULL);
@@ -99,7 +99,7 @@ test_flipselector(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *even
    evas_object_show(fp);
 
    bt = elm_button_add(win);
-   elm_button_label_set(bt, "Select 1992");
+   elm_button_label_set(bt, "Select 2097");
    evas_object_smart_callback_add(bt, "clicked", _third_cb, fp);
    elm_box_pack_end(bx, bt);
    evas_object_show(bt);
