@@ -11,22 +11,22 @@ _evas_map_calc_geom_change(Evas_Object *obj)
    evas_object_clip_dirty(obj);
    if (obj->layer->evas->events_frozen <= 0)
      {
-	evas_object_recalc_clippees(obj);
-	if (!pass)
-	  {
-	     if (!obj->smart.smart)
-	       {
-		  is = evas_object_is_in_output_rect(obj,
-						     obj->layer->evas->pointer.x,
-						     obj->layer->evas->pointer.y, 1, 1);
-		  if ((is ^ was) && obj->cur.visible)
-		    evas_event_feed_mouse_move(obj->layer->evas,
-					       obj->layer->evas->pointer.x,
-					       obj->layer->evas->pointer.y,
-					       obj->layer->evas->last_timestamp,
-					       NULL);
-	       }
-	  }
+        evas_object_recalc_clippees(obj);
+        if (!pass)
+          {
+             if (!obj->smart.smart)
+               {
+                  is = evas_object_is_in_output_rect(obj,
+                                                     obj->layer->evas->pointer.x,
+                                                     obj->layer->evas->pointer.y, 1, 1);
+                  if ((is ^ was) && obj->cur.visible)
+                    evas_event_feed_mouse_move(obj->layer->evas,
+                                               obj->layer->evas->pointer.x,
+                                               obj->layer->evas->pointer.y,
+                                               obj->layer->evas->last_timestamp,
+                                               NULL);
+               }
+          }
      }
    evas_object_inform_call_move(obj);
    evas_object_inform_call_resize(obj);
@@ -46,11 +46,11 @@ _evas_map_calc_map_geometry(Evas_Object *obj)
         if (obj->prev.map->count == obj->cur.map->count)
           {
              const Evas_Map_Point *p2;
-             
+
              p = obj->cur.map->points;
              p_end = p + obj->cur.map->count;
              p2 = obj->prev.map->points;
-             
+
              for (; p < p_end; p++, p2++)
                {
                   if ((p->a != p2->a) ||
@@ -75,7 +75,7 @@ _evas_map_calc_map_geometry(Evas_Object *obj)
      }
    else
       ch = 1;
-   
+
    p = obj->cur.map->points;
    p_end = p + obj->cur.map->count;
    x1 = p->x;
@@ -134,8 +134,8 @@ _evas_map_copy(Evas_Map *dst, const Evas_Map *src)
 {
    if (dst->count != src->count)
      {
-	ERR("cannot copy map of different sizes: dst=%i, src=%i", dst->count, src->count);
-	return EINA_FALSE;
+        ERR("cannot copy map of different sizes: dst=%i, src=%i", dst->count, src->count);
+        return EINA_FALSE;
      }
    memcpy(dst->points, src->points, src->count * sizeof(Evas_Map_Point));
    dst->smooth = src->smooth;
@@ -392,7 +392,7 @@ evas_object_map_set(Evas_Object *obj, const Evas_Map *map)
              obj->prev.geometry = obj->cur.map->normal_geometry;
              if (!obj->prev.map)
                {
-		  _evas_map_free(obj, obj->cur.map);
+                  _evas_map_free(obj, obj->cur.map);
                   obj->cur.map = NULL;
                   evas_object_mapped_clip_across_mark(obj);
                   return;
@@ -418,7 +418,7 @@ evas_object_map_set(Evas_Object *obj, const Evas_Map *map)
      }
    else
      {
-	if (obj->cur.map) evas_map_free(obj->cur.map);
+        if (obj->cur.map) evas_map_free(obj->cur.map);
         obj->cur.map = _evas_map_dup(map);
         if (obj->cur.usemap)
            evas_object_mapped_clip_across_mark(obj);
@@ -441,8 +441,8 @@ evas_map_new(int count)
 {
    if (count < 4)
      {
-	ERR("num (%i) < 4 is unsupported!", count);
-	return NULL;
+        ERR("num (%i) < 4 is unsupported!", count);
+        return NULL;
      }
    return _evas_map_new(count);
 }
@@ -512,7 +512,7 @@ EAPI void
 evas_map_point_coord_get(const Evas_Map *m, int idx, Evas_Coord *x, Evas_Coord *y, Evas_Coord *z)
 {
    const Evas_Map_Point *p;
-   
+
    if (!m) goto error;
    if (idx >= m->count) goto error;
    p = m->points + idx;
@@ -588,7 +588,7 @@ _evas_map_util_points_populate(Evas_Map *m, const Evas_Coord x, const Evas_Coord
 {
    Evas_Map_Point *p = m->points;
    int i;
-   
+
    p[0].x = x;
    p[0].y = y;
    p[0].z = z;
@@ -612,7 +612,7 @@ _evas_map_util_points_populate(Evas_Map *m, const Evas_Coord x, const Evas_Coord
    p[3].z = z;
    p[3].u = 0.0;
    p[3].v = h;
-   
+
    for (i = 0; i < 4; i++)
      {
         p[i].px = p[i].x;
@@ -628,16 +628,16 @@ evas_map_util_points_populate_from_object_full(Evas_Map *m, const Evas_Object *o
    MAGIC_CHECK_END();
    if (!m)
      {
-	ERR("map == NULL");
-	return;
+        ERR("map == NULL");
+        return;
      }
    if (m->count != 4)
      {
-	ERR("map has count=%d where 4 was expected.", m->count);
-	return;
+        ERR("map has count=%d where 4 was expected.", m->count);
+        return;
      }
    _evas_map_util_points_populate(m, obj->cur.geometry.x, obj->cur.geometry.y,
-				  obj->cur.geometry.w, obj->cur.geometry.h, z);
+                                  obj->cur.geometry.w, obj->cur.geometry.h, z);
 }
 
 EAPI void
@@ -648,16 +648,16 @@ evas_map_util_points_populate_from_object(Evas_Map *m, const Evas_Object *obj)
    MAGIC_CHECK_END();
    if (!m)
      {
-	ERR("map == NULL");
-	return;
+        ERR("map == NULL");
+        return;
      }
    if (m->count != 4)
      {
-	ERR("map has count=%d where 4 was expected.", m->count);
-	return;
+        ERR("map has count=%d where 4 was expected.", m->count);
+        return;
      }
    _evas_map_util_points_populate(m, obj->cur.geometry.x, obj->cur.geometry.y,
-				  obj->cur.geometry.w, obj->cur.geometry.h, 0);
+                                  obj->cur.geometry.w, obj->cur.geometry.h, 0);
 }
 
 EAPI void
@@ -665,13 +665,13 @@ evas_map_util_points_populate_from_geometry(Evas_Map *m, Evas_Coord x, Evas_Coor
 {
    if (!m)
      {
-	ERR("map == NULL");
-	return;
+        ERR("map == NULL");
+        return;
      }
    if (m->count != 4)
      {
-	ERR("map has count=%d where 4 was expected.", m->count);
-	return;
+        ERR("map has count=%d where 4 was expected.", m->count);
+        return;
      }
    _evas_map_util_points_populate(m, x, y, w, h, z);
 }
@@ -682,17 +682,17 @@ evas_map_util_points_color_set(Evas_Map *m, int r, int g, int b, int a)
    Evas_Map_Point *p, *p_end;
    if (!m)
      {
-	ERR("map == NULL");
-	return;
+        ERR("map == NULL");
+        return;
      }
    p = m->points;
    p_end = p + m->count;
    for (; p < p_end; p++)
      {
-	p->r = r;
-	p->g = g;
-	p->b = b;
-	p->a = a;
+        p->r = r;
+        p->g = g;
+        p->b = b;
+        p->a = a;
      }
 }
 
@@ -748,7 +748,7 @@ evas_map_util_zoom(Evas_Map *m, double zoomx, double zoomy, Evas_Coord cx, Evas_
 }
 
 EAPI void
-evas_map_util_3d_rotate(Evas_Map *m, double dx, double dy, double dz, 
+evas_map_util_3d_rotate(Evas_Map *m, double dx, double dy, double dz,
                         Evas_Coord cx, Evas_Coord cy, Evas_Coord cz)
 {
    double rz = (dz * M_PI) / 180.0;
@@ -767,7 +767,7 @@ evas_map_util_3d_rotate(Evas_Map *m, double dx, double dy, double dz,
         x = p->x - cx;
         y = p->y - cy;
         z = p->z - cz;
-        
+
         if (rz != 0.0)
           {
              xx = x * cos(rz);
@@ -783,7 +783,7 @@ evas_map_util_3d_rotate(Evas_Map *m, double dx, double dy, double dz,
              x = xx + (z * cos(ry + M_PI_2));
              z = zz + (z * sin(ry + M_PI_2));
           }
-        
+
         if (rx != 0.0)
           {
              zz = z * cos(rx);
@@ -791,7 +791,7 @@ evas_map_util_3d_rotate(Evas_Map *m, double dx, double dy, double dz,
              z = zz + (y * cos(rx + M_PI_2));
              y = yy + (y * sin(rx + M_PI_2));
           }
-        
+
         p->px = p->x = x + cx;
         p->py = p->y = y + cy;
         p->z = z + cz;
@@ -799,20 +799,20 @@ evas_map_util_3d_rotate(Evas_Map *m, double dx, double dy, double dz,
 }
 
 EAPI void
-evas_map_util_3d_lighting(Evas_Map *m, 
+evas_map_util_3d_lighting(Evas_Map *m,
                           Evas_Coord lx, Evas_Coord ly, Evas_Coord lz,
                           int lr, int lg, int lb, int ar, int ag, int ab)
 {
    int i;
-   
+
    if (!m) return;
-   
+
    for (i = 0; i < m->count; i++)
      {
         double x, y, z;
         double nx, ny, nz, x1, y1, z1, x2, y2, z2, ln, br;
         int h, j, mr, mg, mb;
-        
+
         x = m->points[i].x;
         y = m->points[i].y;
         z = m->points[i].z;
@@ -823,17 +823,17 @@ evas_map_util_3d_lighting(Evas_Map *m,
         x1 = m->points[h].x - x;
         y1 = m->points[h].y - y;
         z1 = m->points[h].z - z;
-        
+
         x2 = m->points[j].x - x;
         y2 = m->points[j].y - y;
         z2 = m->points[j].z - z;
         nx = (y1 * z2) - (z1 * y2);
         ny = (z1 * x2) - (x1 * z2);
         nz = (x1 * y2) - (y1 * x2);
-        
+
         ln = (nx * nx) + (ny * ny) + (nz * nz);
         ln = sqrt(ln);
-        
+
         if (ln != 0.0)
           {
              nx /= ln;
@@ -845,25 +845,25 @@ evas_map_util_3d_lighting(Evas_Map *m,
         x = lx - x;
         y = ly - y;
         z = lz - z;
-        
+
         ln = (x * x) + (y * y) + (z * z);
         ln = sqrt(ln);
-        
+
         if (ln != 0.0)
           {
              x /= ln;
              y /= ln;
              z /= ln;
           }
-        
+
         // brightness - tan (0.0 -> 1.0 brightness really)
         br = (nx * x) + (ny * y) + (nz * z);
         if (br < 0.0) br = 0.0;
-        
+
         mr = ar + ((lr - ar) * br);
         mg = ag + ((lg - ag) * br);
         mb = ab + ((lb - ab) * br);
-	if (m->points[i].a != 255)
+        if (m->points[i].a != 255)
           {
              mr = (mr * m->points[i].a) / 255;
              mg = (mg * m->points[i].a) / 255;
@@ -898,15 +898,15 @@ evas_map_util_3d_perspective(Evas_Map *m,
           {
              x = p->x - px;
              y = p->y - py;
-             
+
              zz = ((p->z - z0) + foc);
-             
+
              if (zz > 0)
                {
                   x = (x * foc) / zz;
                   y = (y * foc) / zz;
                }
-             
+
              p->x = px + x;
              p->y = py + y;
           }
@@ -918,16 +918,16 @@ evas_map_util_clockwise_get(Evas_Map *m)
 {
    int i, j, k, count;
    long long c;
-   
+
    if (!m) return 0;
    if (m->count < 3) return 0;
-   
+
    count = 0;
    for (i = 0; i < m->count; i++)
      {
-        j = (i + 1) % m->count; 
+        j = (i + 1) % m->count;
         k = (i + 2) % m->count;
-        c = 
+        c =
           ((m->points[j].x - m->points[i].x) *
            (m->points[k].y - m->points[j].y))
           -
