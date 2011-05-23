@@ -28,6 +28,7 @@ void *    alloca (size_t);
 
 #ifdef _WIN32
 # include <winsock2.h>
+# define HAVE_BOOLEAN
 #endif /* ifdef _WIN32 */
 
 #include <stdio.h>
