@@ -297,7 +297,7 @@ _state_update(State *st)
 {
    Evas_Coord x1, y1, x2, y2, mx, my, dst, dx, dy;
    Evas_Coord x, y, w, h, ox, oy, ow, oh;
-   int i, j, num;
+   int i, j, num, nn;
    Slice *sl;
    double b, minv = 0.0, minva, mgrad;
    int gx, gy, gszw, gszh, gw, gh, col, row, nw, nh;
@@ -425,27 +425,31 @@ _state_update(State *st)
    n = 1.0 - n;
    thetal = 7.86 + n;
 
-   nw = 20;
-   nh = 20;
+   nw = 16;
+   nh = 16;
    if (nw < 1) nw = 1;
    if (nh < 1) nh = 1;
    gszw = w / nw;
    gszh = h / nh;
    if (gszw < 8) gszw = 8;
    if (gszh < 8) gszh = 8;
-   
-   _state_slices_clear(st);
-   
-   st->slices_w = (w + gszw - 1) / gszw;
-   st->slices_h = (h + gszh - 1) / gszh;
-   st->slices = calloc(st->slices_w * st->slices_h, sizeof(Slice *));
-   if (!st->slices) return 0;
-   st->slices2 = calloc(st->slices_w * st->slices_h, sizeof(Slice *));
-   if (!st->slices2)
+
+   nw = (w + gszw - 1) / gszw;
+   nh = (h + gszh - 1) / gszh;
+   if ((st->slices_w != nw) || (st->slices_h != nh)) _state_slices_clear(st);
+   st->slices_w = nw;
+   st->slices_h = nh;
+   if (!st->slices)
      {
-        free(st->slices);
-        st->slices = NULL;
-        return 0;
+        st->slices = calloc(st->slices_w * st->slices_h, sizeof(Slice *));
+        if (!st->slices) return 0;
+        st->slices2 = calloc(st->slices_w * st->slices_h, sizeof(Slice *));
+        if (!st->slices2)
+          {
+             free(st->slices);
+             st->slices = NULL;
+             return 0;
+          }
      }
 
    for (col = 0, gx = 0; gx < w; gx += gszh, col++)
@@ -494,11 +498,16 @@ _state_update(State *st)
                   vo[2].y = h - vo[2].y;
                   vo[3].y = h - vo[3].y;
                }
+             if (b > 0) nn = num + st->slices_h - row - 1;
+             else nn = num + row;
              
              // FRONT
-             sl = _slice_new(st, st->front);
-             if (b > 0) st->slices[num + st->slices_h - row - 1] = sl;
-             else st->slices[num + row] = sl;
+             sl = st->slices[nn];
+             if (!sl)
+               {
+                  sl = _slice_new(st, st->front);
+                  st->slices[nn] = sl;
+               }
              _slice_xyz(st, sl,
                         vo[0].x, vo[0].y, vo[0].z,
                         vo[1].x, vo[1].y, vo[1].z,
@@ -515,9 +524,12 @@ _state_update(State *st)
              _slice_apply(st, sl, x, y, w, h, ox, oy, ow, oh);
              
              // BACK
-             sl = _slice_new(st, st->back);
-             if (b > 0) st->slices2[num + st->slices_h - row - 1] = sl;
-             else st->slices2[num + row] = sl;
+             sl = st->slices2[nn];
+             if (!sl)
+               {
+                  sl = _slice_new(st, st->front);
+                  st->slices2[nn] = sl;
+               }
              _slice_xyz(st, sl,
                         vo[1].x, vo[1].y, vo[1].z,
                         vo[0].x, vo[0].y, vo[0].z,
