@@ -1596,6 +1596,7 @@ elm_win_resize_object_add(Evas_Object *obj, Evas_Object *subobj)
    ELM_CHECK_WIDTYPE(obj, widtype);
    win = elm_widget_data_get(obj);
    if (!win) return;
+   if (eina_list_data_find(win->subobjs, subobj)) return;
    win->subobjs = eina_list_append(win->subobjs, subobj);
    elm_widget_sub_object_add(obj, subobj);
    evas_object_event_callback_add(subobj, EVAS_CALLBACK_DEL,
