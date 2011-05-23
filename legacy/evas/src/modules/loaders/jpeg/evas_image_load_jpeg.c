@@ -3,12 +3,13 @@
 #endif
 
 #include <stdio.h>
-#include <jpeglib.h>
-#include <setjmp.h>
 
 #ifdef HAVE_EVIL
 # include <Evil.h>
 #endif
+
+#include <setjmp.h>
+#include <jpeglib.h>
 
 #include "evas_common.h"
 #include "evas_private.h"

@@ -350,3 +350,6 @@
         due to OpenGL-ES limitations.
         * Fix Surface recreation for FBO in Evas GL support.
 
+2011-05-23  Vincent Torri
+
+	* Fix compilation with libjpeg 8 on Windows.
