@@ -4070,7 +4070,7 @@ EAPI void                     *evas_object_data_get             (const Evas_Obje
  * @param key The string key the data was stored under
  * @return The original data pointer stored at @p key on @p obj
  *
- * This will remove thee stored data pointer from @p obj stored under @p key,
+ * This will remove the stored data pointer from @p obj stored under @p key,
  * and return the original pointer stored under @p key, if any, nor NULL if
  * nothing was stored under that key.
  *
