@@ -2025,8 +2025,7 @@ _item_unrealize(Elm_Genlist_Item *it, Eina_Bool calc)
 static Eina_Bool
 _item_block_recalc(Item_Block *itb,
                    int         in,
-                   int         qadd,
-                   int         norender __UNUSED__)
+                   int         qadd)
 {
    const Eina_List *l;
    Elm_Genlist_Item *it;
@@ -2068,8 +2067,6 @@ _item_block_recalc(Item_Block *itb,
    itb->minw = minw;
    itb->minh = minh;
    itb->changed = EINA_FALSE;
-   /* force an evas norender to garbage collect deleted objects */
-//   if (norender) evas_norender(evas_object_evas_get(itb->wd->obj));
    return showme;
 }
 
@@ -2278,7 +2275,7 @@ _calc_job(void *data)
                   itb->must_recalc = EINA_FALSE;
                }
              if (itb->realized) _item_block_unrealize(itb);
-             showme = _item_block_recalc(itb, in, 0, 1);
+             showme = _item_block_recalc(itb, in, 0);
              chb = itb;
           }
         itb->y = y;
@@ -2415,7 +2412,7 @@ _update_job(void *data)
           {
              position = 1;
              itb->changed = EINA_TRUE;
-             _item_block_recalc(itb, num0, 0, 1);
+             _item_block_recalc(itb, num0, 0);
              _item_block_position(itb, num0);
           }
      }
@@ -3086,8 +3083,7 @@ newblock:
 }
 
 static int
-_queue_process(Widget_Data *wd,
-               int          norender)
+_queue_process(Widget_Data *wd)
 {
    int n;
    Eina_Bool showme = EINA_FALSE;
@@ -3105,8 +3101,7 @@ _queue_process(Widget_Data *wd,
         t = ecore_time_get();
         if (it->block->changed)
           {
-             showme = _item_block_recalc(it->block, it->block->num, 1,
-                                         norender);
+             showme = _item_block_recalc(it->block, it->block->num, 1);
              it->block->changed = 0;
           }
         if (showme) it->block->showme = EINA_TRUE;
@@ -3127,7 +3122,7 @@ _idle_process(void *data, Eina_Bool *wakeup)
    //static double q_start = 0.0;
    //if (q_start == 0.0) q_start = ecore_time_get();
    //xxx
-   if (_queue_process(wd, 1) > 0) *wakeup = EINA_TRUE;
+   if (_queue_process(wd) > 0) *wakeup = EINA_TRUE;
    if (!wd->queue)
      {
         //xxx
@@ -3169,7 +3164,7 @@ _item_queue(Widget_Data      *wd,
              ecore_idle_enterer_del(wd->queue_idle_enterer);
              wd->queue_idle_enterer = NULL;
           }
-        _queue_process(wd, 0);
+        _queue_process(wd);
      }
    if (!wd->queue_idle_enterer)
       wd->queue_idle_enterer = ecore_idle_enterer_add(_item_idle_enterer, wd);
