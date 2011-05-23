@@ -1364,7 +1364,7 @@ _ecore_x_event_handle_selection_request(XEvent *xevent)
         si = _ecore_x_selection_get(xevent->xselectionrequest.selection);
         if (si->data)
           {
-             Ecore_X_Atom property;
+             Ecore_X_Atom property = None;
              Ecore_X_Atom type;
 
              /* Set up defaults for strings first */
