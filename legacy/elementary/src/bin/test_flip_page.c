@@ -713,6 +713,8 @@ im_up_cb(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__,
         if (st->y > (st->h / 2)) st->finish = 1;
         tm = 1.0 - ((double)st->y / (double)st->h);
      }
+   if (tm < 0.01) tm = 0.01;
+   else if (tm > 0.99) tm = 0.99;
    if (!st->finish) tm = 1.0 - tm;
    tm *= 0.5;
    st->anim = ecore_animator_timeline_add(tm, _state_anim, st);
