@@ -15,7 +15,7 @@ main(void)
    eeze_disk_function();
 
    disks = eeze_udev_find_by_type(EEZE_UDEV_TYPE_DRIVE_MOUNTABLE, NULL);
-   printf("Found the following unmounted disks:\n");
+   printf("Found the following mountable disks:\n");
    EINA_LIST_FREE(disks, syspath)
      {
         Eeze_Disk *disk;
