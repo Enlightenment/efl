@@ -3,42 +3,42 @@
         1.0.0 release
 
 2011-01-29  Mike Blumenkrantz (discomfitor/zmike)
-	* add some disk manipulation functions
+	* added disk manipulation functions
 	(eeze_disk_function, eeze_disk_new, eeze_disk_new_from_mount, eeze_disk_free, eeze_disk_scan,
 	eeze_disk_data_set, eeze_disk_data_get, eeze_disk_syspath_get, eeze_disk_devpath_get,
 	eeze_disk_fstype_get, eeze_disk_vendor_get, eeze_disk_model_get, eeze_disk_serial_get,
 	eeze_disk_uuid_get, eeze_disk_label_get, eeze_disk_type_get, eeze_disk_removable_get,
 	eeze_disk_mounted_get, eeze_disk_mount, eeze_disk_unmount, eeze_disk_mount_point_get,
 	eeze_disk_mount_point_set, eeze_mount_tabs_watch, eeze_mount_tabs_unwatch,
-	eeze_mount_mtab_scan, eeze_mount_fstab_scan).
+	eeze_mount_mtab_scan, eeze_mount_fstab_scan)
 
 2011-02-09  Mike Blumenkrantz (discomfitor/zmike)
-	* add handling of mountopts, utf8 to default mountopts, iso automounting in eeze_mount
+	* added handling of mountopts
+        * iso automounting in eeze_mount
 	(EEZE_DISK_MOUNTOPT_UTF8, EEZE_DISK_MOUNTOPT_NOEXEC, EEZE_DISK_MOUNTOPT_NOSUID,
-	EEZE_DISK_MOUNTOPT_REMOUNT, eeze_disk_mountopts_set, eeze_disk_mountopts_get).
+	EEZE_DISK_MOUNTOPT_REMOUNT, eeze_disk_mountopts_set, eeze_disk_mountopts_get)
 
 2011-03-03  Mike Blumenkrantz (discomfitor/zmike)
-	* fix bug with watches involving filtering being too aggressive for removed/offlined devices
+	* fixed bug with watches involving filtering being too aggressive for removed/offlined devices
 
-2011-03-12  Clement Battin
-	* add EEZE_UDEV_TYPE_NET
+2011-03-12  Mike Blumenkrantz (discomfitor/zmike)
+	* added EEZE_UDEV_TYPE_NET
 
-2011-03-12  Clement Battin
-	* add eeze_udev_syspath_get_devname.
+2011-03-12  Mike Blumenkrantz (discomfitor/zmike)
+	* added eeze_udev_syspath_get_devname
 
 2011-05-15  Mike Blumenkrantz (discomfitor/zmike)
-	* add eeze_disk_cancel, to cancel the current pending mount/umount operation on a disk
-	* add a uid=%i mount option using getuid, NOT geteuid
-	* add wrapper for mount commands exe (such as sudo) with eeze_disk_mount_wrapper_set
-	and eeze_disk_mount_wrapper_get.
-	* add function to perform udev lookups directly on disk devices without wasting
+	* added eeze_disk_cancel, to cancel the current pending mount/umount operation on a disk
+	* added a uid=%i mount option using getuid (NOT geteuid)
+	* added wrapper for mount command exes (such as sudo) with eeze_disk_mount_wrapper_set
+	and eeze_disk_mount_wrapper_get
+	* added functions to perform udev lookups directly on disk devices without wasting
 	unnecessary function calls (eeze_disk_udev_get_parent, eeze_disk_udev_get_property,
 	eeze_disk_udev_get_sysattr, eeze_disk_udev_walk_check_sysattr,
-	eeze_disk_udev_walk_get_sysattr).
+	eeze_disk_udev_walk_get_sysattr)
 
 2011-05-16  Mike Blumenkrantz (discomfitor/zmike)
-
-	* fix bug with EEZE_UDEV_TYPE_DRIVE_* detection
-	* fix eeze_udev_find_unlisted_similar to be less permissive
-	* add EEZE_EVENT_DISK_EJECT and eeze_disk_eject, functions for ejecting a disk
+	* fixed bug with EEZE_UDEV_TYPE_DRIVE_* detection
+	* fixed eeze_udev_find_unlisted_similar to be less permissive
+	* added EEZE_EVENT_DISK_EJECT and eeze_disk_eject, functions for ejecting a disk
 
