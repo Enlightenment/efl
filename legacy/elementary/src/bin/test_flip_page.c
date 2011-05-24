@@ -124,9 +124,17 @@ static void
 _slice_3d(State *st __UNUSED__, Slice *sl, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h)
 {
    Evas_Map *m = (Evas_Map *)evas_object_map_get(sl->obj);
+   int i;
+   
    if (!m) return;
    // vanishing point is center of page, and focal dist is 1024
    evas_map_util_3d_perspective(m, x + (w / 2), y + (h / 2), 0, 1024);
+   for (i = 0; i < 4; i++)
+     {
+        Evas_Coord x, y, z;
+        evas_map_point_coord_get(m, i, &x, &y, &z);
+        evas_map_point_coord_set(m, i, x, y, 0);
+     }
    if (evas_map_util_clockwise_get(m)) evas_object_show(sl->obj);
    else evas_object_hide(sl->obj);
    evas_object_map_set(sl->obj, m);
@@ -493,13 +501,18 @@ _state_update(State *st)
      {
         num = st->slices_h * col;
         num2 = jump * col;
+        
+        gw = gszw;
+        if ((gx + gw) > w) gw = w - gx;
+        
         for (row = 0, gy = 0; gy < h; gy += gszh, row++)
           {
              Vertex3 vo[4];
 
-             gw = gszw;
+             if (b > 0) nn = num + st->slices_h - row - 1;
+             else nn = num + row;
+             
              gh = gszh;
-             if ((gx + gw) > w) gw = w - gx;
              if ((gy + gh) > h) gh = h - gy;
              
              vo[0] = tvo[num2 + row];
@@ -516,8 +529,6 @@ _state_update(State *st)
                   vo[2].y = h - vo[2].y;
                   vo[3].y = h - vo[3].y;
                }
-             if (b > 0) nn = num + st->slices_h - row - 1;
-             else nn = num + row;
              
              // FRONT
              sl = st->slices[nn];
