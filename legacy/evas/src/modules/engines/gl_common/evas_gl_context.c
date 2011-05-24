@@ -2300,7 +2300,8 @@ evas_gl_common_context_image_map_push(Evas_Engine_GL_Context *gc,
    if (a < 255) blend = 1;
    if (npoints != 4)
      {
-        // FIXME: nash - you didnt fix this for n points. its still all 4 point stuff!!! grrrr.
+        // FIXME: nash - you didnt fix this for n points. its still all
+        // 4 point stuff!!! grrrr.
         abort();
      }
    if ((A_VAL(&(p[0].col)) < 0xff) || (A_VAL(&(p[1].col)) < 0xff) ||
@@ -2390,6 +2391,41 @@ evas_gl_common_context_image_map_push(Evas_Engine_GL_Context *gc,
                      prog = gc->shared->shader.img.prog;
                }
           }
+     }
+   
+   x = w = (p[points[0]].x >> FP);
+   y = h = (p[points[0]].y >> FP);
+   for (i = 0; i < 4; i++)
+     {
+        tx[i] = ((double)(tex->x) + (((double)p[i].u) / FP1)) /
+          (double)tex->pt->w;
+        ty[i] = ((double)(tex->y) + (((double)p[i].v) / FP1)) / 
+          (double)tex->pt->h;
+        px = (p[points[i]].x >> FP);
+        if      (px < x) x = px;
+        else if (px > w) w = px;
+        py = (p[points[i]].y >> FP);
+        if      (py < y) y = py;
+        else if (py > h) h = py;
+        if (yuv)
+          {
+             t2x[i] = ((((double)p[i].u / 2) / FP1)) / (double)tex->ptu->w;
+             t2y[i] = ((((double)p[i].v / 2) / FP1)) / (double)tex->ptu->h;
+          }
+     }
+   w = w - x;
+   h = h - y;
+   
+   if (clip)
+     {
+        int nx = x, ny = y, nw = w, nh = h;
+        
+        RECTS_CLIP_TO_RECT(nx, ny, nw, nh, cx, cy, cw, ch);
+        if ((nx == x) && (ny == y) && (nw == w) && (nh == h))
+          {
+             clip = 0; cx = 0; cy = 0; cw = 0; ch = 0;
+          }
+        x = nx; y = nw; w = nw; h = nh;
      }
    
    if (!flat)
@@ -2583,29 +2619,6 @@ again:
         gc->pipe[pn].array.use_texuv3 = 0;
      }
 #endif   
-   
-   x = w = (p[points[0]].x >> FP);
-   y = h = (p[points[0]].y >> FP);
-   for (i = 0; i < 4; i++)
-     {
-        tx[i] = ((double)(tex->x) + (((double)p[i].u) / FP1)) /
-          (double)tex->pt->w;
-        ty[i] = ((double)(tex->y) + (((double)p[i].v) / FP1)) / 
-          (double)tex->pt->h;
-        px = (p[points[i]].x >> FP);
-        if      (px < x) x = px;
-        else if (px > w) w = py;
-        py = (p[points[i]].y >> FP);
-        if      (py < y) y = py;
-        else if (py > h) h = py;
-        if (yuv)
-          {
-             t2x[i] = ((((double)p[i].u / 2) / FP1)) / (double)tex->ptu->w;
-             t2y[i] = ((((double)p[i].v / 2) / FP1)) / (double)tex->ptu->h;
-          }
-     }
-   w = w - x;
-   h = h - y;
    
    pipe_region_expand(gc, pn, x, y, w, h);
    
@@ -2932,7 +2945,6 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
           {
 	     if (gc->pipe[i].array.use_texm)
 	       {
-		       printf("using tex m (%d)\n",gc->pipe[i].shader.cur_texm);
 		  glEnableVertexAttribArray(SHAD_TEXM);
                   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
                   glVertexAttribPointer(SHAD_TEXM, 2, GL_FLOAT, GL_FALSE, 0, gc->pipe[i].array.texm);
