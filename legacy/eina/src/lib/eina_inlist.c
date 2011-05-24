@@ -422,6 +422,141 @@ eina_inlist_count(const Eina_Inlist *list)
    return i;
 }
 
+#define EINA_INLIST_JUMP_SIZE 256
+
+EAPI Eina_Inlist *
+eina_inlist_sorted_insert(Eina_Inlist *list,
+			  Eina_Inlist *item,
+			  Eina_Compare_Cb func)
+{
+   Eina_Inlist *ct = NULL;
+   Eina_Inlist *jump_table[EINA_INLIST_JUMP_SIZE];
+   int cmp = 0;
+   int inf, sup;
+   int cur = 0;
+   int count = 0;
+   unsigned short jump_limit = 0;
+   int jump_div = 1;
+   int jump_count = 1;
+
+   if (!list) return eina_inlist_append(NULL, item);
+
+   if (!list->next)
+     {
+        cmp = func(list, item);
+
+        if (cmp < 0)
+          return eina_inlist_append(list, item);
+        return eina_inlist_prepend(list, item);
+     }
+
+   /*
+    * prepare a jump table to avoid doing unecessary rewalk
+    * of the inlist as much as possible.
+    */
+   for (ct = list->next; ct; ct = ct->next, jump_count++, count++)
+     {
+        if (jump_count == jump_div)
+          {
+             if (jump_limit == EINA_INLIST_JUMP_SIZE)
+               {
+                  unsigned short i, j;
+
+                  /* compress the jump table */
+                  jump_div *= 2;
+                  jump_limit /= 2;
+
+                  for (i = 2, j = 1;
+                       i < EINA_INLIST_JUMP_SIZE;
+                       i += 2, j++)
+                    jump_table[j] = jump_table[i];
+               }
+
+             jump_table[jump_limit] = ct;
+             jump_limit++;
+             jump_count = 0;
+          }
+     }
+
+   /*
+    * now do a dychotomic search directly inside the jump_table.
+    */
+   inf = 0;
+   sup = jump_limit - 1;
+   cur = 0;
+   ct = jump_table[cur];
+
+   while (inf <= sup)
+     {
+        cur = inf + ((sup - inf) >> 1);
+        ct = jump_table[cur];
+
+        cmp = func(ct, item);
+        if (cmp == 0)
+          break ;
+        else if (cmp < 0)
+          inf = cur + 1;
+        else if (cmp > 0)
+          {
+             if (cur > 0)
+               sup = cur - 1;
+             else
+               break;
+          }
+        else
+          break;
+     }
+
+   /* If at the beginning of the table and cmp < 0,
+    * insert just after the head */
+   if (cur == 0 && cmp < 0)
+     return eina_inlist_append_relative(list, item, list->next);
+
+   /* If at the end of the table and cmp >= 0,
+    * just append the item to the list */
+   if (cmp >= 0 && ct == list->last)
+     return eina_inlist_append(list, item);
+
+   /*
+    * Now do a dychotomic search between two entries inside the jump_table
+    */
+   cur *= jump_div;
+   inf = cur;
+   sup = inf + jump_div;
+
+   if (sup > count - 1) sup = count - 1;
+
+   while (inf <= sup)
+     {
+        int tmp = cur;
+
+        cur = inf + ((sup - inf) >> 1);
+        if (tmp < cur)
+          for (; tmp != cur; tmp++, ct = ct->next);
+        else if (tmp > cur)
+          for (; tmp != cur; tmp--, ct = ct->prev);
+
+        cmp = func(ct, item);
+        if (cmp == 0)
+          break ;
+        else if (cmp < 0)
+          inf = cur + 1;
+        else if (cmp > 0)
+          {
+             if (cur > 0)
+               sup = cur - 1;
+             else
+               break;
+          }
+        else
+          break;
+     }
+
+   if (cmp < 0)
+     return eina_inlist_append_relative(list, item, ct);
+   return eina_inlist_prepend_relative(list, item, ct);
+}
+
 EAPI Eina_Inlist *
 eina_inlist_sort(Eina_Inlist *head, Eina_Compare_Cb func)
 {

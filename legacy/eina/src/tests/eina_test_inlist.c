@@ -135,8 +135,78 @@ START_TEST(eina_inlist_simple)
 }
 END_TEST
 
+typedef struct _Eina_Test_Inlist_Sorted Eina_Test_Inlist_Sorted;
+struct _Eina_Test_Inlist_Sorted
+{
+  EINA_INLIST;
+
+  int value;
+};
+
+static int
+_eina_test_inlist_cmp(const void *d1, const void *d2)
+{
+  const Eina_Test_Inlist_Sorted *t1 = d1;
+  const Eina_Test_Inlist_Sorted *t2 = d2;
+
+  return t1->value - t2->value;
+}
+
+static void
+_eina_test_inlist_check(const Eina_Inlist *list)
+{
+  const Eina_Test_Inlist_Sorted *t;
+  int last_value = 0;
+
+  EINA_INLIST_FOREACH(list, t)
+    {
+      fail_if(t->value < last_value);
+      last_value = t->value;
+    }
+}
+
+START_TEST(eina_inlist_sorted)
+{
+  Eina_Inlist *list = NULL;
+  Eina_Inlist *sorted = NULL;
+  int i;
+
+  srand(time(NULL));
+
+  for (i = 0; i < 5000; ++i)
+    {
+      Eina_Test_Inlist_Sorted *tmp;
+
+      tmp = malloc(sizeof (Eina_Test_Inlist_Sorted));
+      if (!tmp) continue ;
+
+      tmp->value = rand();
+
+      list = eina_inlist_prepend(list, EINA_INLIST_GET(tmp));
+    }
+
+  list = eina_inlist_sort(list, _eina_test_inlist_cmp);
+
+  _eina_test_inlist_check(list);
+
+  i = 0;
+  while (list)
+    {
+      Eina_Inlist *tmp = list;
+
+      list = eina_inlist_remove(list, list);
+
+      sorted = eina_inlist_sorted_insert(sorted, tmp, _eina_test_inlist_cmp);
+      _eina_test_inlist_check(sorted);
+    }
+
+  _eina_test_inlist_check(sorted);
+}
+END_TEST
+
 void
 eina_test_inlist(TCase *tc)
 {
    tcase_add_test(tc, eina_inlist_simple);
+   tcase_add_test(tc, eina_inlist_sorted);
 }

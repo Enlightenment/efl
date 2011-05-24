@@ -362,6 +362,29 @@ EAPI Eina_Iterator *eina_inlist_iterator_new(const Eina_Inlist *in_list) EINA_MA
 EAPI Eina_Accessor *eina_inlist_accessor_new(const Eina_Inlist *in_list) EINA_MALLOC EINA_WARN_UNUSED_RESULT;
 
 /**
+ * @brief Insert a new node into a sorted list.
+ *
+ * @param list The given linked list, @b must be sorted.
+ * @param item list node to insert, must not be NULL.
+ * @param func The function called for the sort.
+ * @return A list pointer.
+ *
+ * This function inserts item into a linked list assuming it was
+ * sorted and the result will be sorted. If @p list is @c NULLL, item
+ * is returned. On success, a new list pointer that should be
+ * used in place of the one given to this function is
+ * returned. Otherwise, the old pointer is returned. See eina_error_get().
+ *
+ * @note O(log2(n)) comparisons (calls to @p func) average/worst case
+ * performance as it uses eina_list_search_sorted_near_list() and thus
+ * is bounded to that. As said in eina_list_search_sorted_near_list(),
+ * lists do not have O(1) access time, so walking to the correct node
+ * can be costly, consider worst case to be almost O(n) pointer
+ * dereference (list walk).
+ */
+EAPI Eina_Inlist *eina_inlist_sorted_insert(Eina_Inlist *list, Eina_Inlist *item, Eina_Compare_Cb func) EINA_ARG_NONNULL(2, 3) EINA_WARN_UNUSED_RESULT;
+
+/**
  * @brief Sort a list according to the ordering func will return.
  *
  * @param list The list handle to sort.

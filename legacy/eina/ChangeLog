@@ -89,3 +89,7 @@
 2011-05-24  Vincent Torri
 
 	* Implement eina_sched_prio_drop() on Windows
+
+2011-05-24  Cedric Bail
+
+	* Add eina_inlist_sorted_insert.
