@@ -297,11 +297,13 @@ _state_update(State *st)
 {
    Evas_Coord x1, y1, x2, y2, mx, my, dst, dx, dy;
    Evas_Coord x, y, w, h, ox, oy, ow, oh;
-   int i, j, num, nn;
+   int i, j, num, nn, jump, num2;
    Slice *sl;
    double b, minv = 0.0, minva, mgrad;
    int gx, gy, gszw, gszh, gw, gh, col, row, nw, nh;
    double rho, A, theta, perc, percm, n, rhol, Al, thetal;
+   Vertex2 *tvi;
+   Vertex3 *tvo, *tvol;
 
    evas_object_geometry_get(st->front, &x, &y, &w, &h);
    ox = x; oy = y; ow = w; oh = h;
@@ -431,8 +433,8 @@ _state_update(State *st)
    if (nh < 1) nh = 1;
    gszw = w / nw;
    gszh = h / nh;
-   if (gszw < 8) gszw = 8;
-   if (gszh < 8) gszh = 8;
+   if (gszw < 4) gszw = 4;
+   if (gszh < 4) gszh = 4;
 
    nw = (w + gszw - 1) / gszw;
    nh = (h + gszh - 1) / gszh;
@@ -452,47 +454,63 @@ _state_update(State *st)
           }
      }
 
-   for (col = 0, gx = 0; gx < w; gx += gszh, col++)
+   num = (st->slices_w + 1) * (st->slices_h + 1);
+   tvi = alloca(sizeof(Vertex2) * num);
+   tvo = alloca(sizeof(Vertex3) * num);
+   tvol = alloca(sizeof(Vertex3) * (st->slices_w + 1));
+
+   for (col = 0, gx = 0; gx <= w; gx += gszw, col++)
      {
-        num =  st->slices_h * col;
-        for (row = 0, gy = 0; gy < h; gy += gszw, row++)
+        Vertex2 vil;
+        
+        vil.x = gx;
+        vil.y = h - gx;
+        _deform_point(&vil, &(tvol[col]), rhol, thetal, Al);
+     }
+   
+   n = minva * sin(perc * M_PI);
+   n = n * n;
+   
+   num = 0;
+   for (col = 0, gx = 0; gx <= w; gx += gszw, col++)
+     {
+        for (gy = 0; gy <= h; gy += gszh)
           {
-             Vertex2 vi[4], vil[2];
-             Vertex3 vo[4], vol[2];
+             Vertex2 vi;
+             Vertex3 vo, tvo1;
+             
+             vi.x = gx; vi.y = gy;
+             _deform_point(&vi, &vo, rho, theta, A);
+             tvo1 = tvol[col];
+             tvo1.y = gy;
+             _interp_point(&vo, &tvo1, &(tvo[num]), n);
+             num++;
+          }
+     }
+
+   jump = st->slices_h + 1;
+   for (col = 0, gx = 0; gx < w; gx += gszw, col++)
+     {
+        num = st->slices_h * col;
+        num2 = jump * col;
+        for (row = 0, gy = 0; gy < h; gy += gszh, row++)
+          {
+             Vertex3 vo[4];
+
              gw = gszw;
              gh = gszh;
              if ((gx + gw) > w) gw = w - gx;
              if ((gy + gh) > h) gh = h - gy;
              
-             vi[0].x = gx;      vi[0].y = gy;
-             vi[1].x = gx + gw; vi[1].y = gy;
-             vi[2].x = gx + gw; vi[2].y = gy + gh;
-             vi[3].x = gx;      vi[3].y = gy + gh;
-             
-             vil[0].x = gx;      vil[0].y = h - gx;
-             vil[1].x = gx + gw; vil[1].y = h - (gx + gw);
-             
-             for (i = 0; i < 2; i++)
-                _deform_point(&(vil[i]), &(vol[i]), rhol, thetal, Al);
-             for (i = 0; i < 4; i++)
-                _deform_point(&(vi[i]), &(vo[i]), rho, theta, A);
-             n = minva * sin(perc * M_PI);
-             n = n * n;
-             vol[0].y = gy;
-             vol[1].y = gy;
-             _interp_point(&(vo[0]), &(vol[0]), &(vo[0]), n);
-             _interp_point(&(vo[1]), &(vol[1]), &(vo[1]), n);
-             vol[0].y = gy + gh;
-             vol[1].y = gy + gh;
-             _interp_point(&(vo[2]), &(vol[1]), &(vo[2]), n);
-             _interp_point(&(vo[3]), &(vol[0]), &(vo[3]), n);
+             vo[0] = tvo[num2 + row];
+             vo[1] = tvo[num2 + row + jump];
+             vo[2] = tvo[num2 + row + jump + 1];
+             vo[3] = tvo[num2 + row + 1];
+#define SWP(a, b) do {typeof(a) vt; vt = (a); (a) = (b); (b) = vt;} while (0)
              if (b > 0)
                {
-                  Vertex3 vt;
-                  
-#define SWPV3(a, b) do {vt = (a); (a) = (b); (b) = vt;} while (0)
-                  SWPV3(vo[0], vo[3]);
-                  SWPV3(vo[1], vo[2]);
+                  SWP(vo[0], vo[3]);
+                  SWP(vo[1], vo[2]);
                   vo[0].y = h - vo[0].y;
                   vo[1].y = h - vo[1].y;
                   vo[2].y = h - vo[2].y;
@@ -521,7 +539,6 @@ _state_update(State *st)
                 _slice_uv(st, sl,
                           gx,       h - (gy + gh), gx + gw,  h - (gy + gh),
                           gx + gw,  h - gy,        gx,       h - gy);
-             _slice_apply(st, sl, x, y, w, h, ox, oy, ow, oh);
              
              // BACK
              sl = st->slices2[nn];
@@ -543,7 +560,6 @@ _state_update(State *st)
                 _slice_uv(st, sl,
                           w - (gx + gw), h - (gy + gh), w - (gx),      h - (gy + gh),
                           w - (gx),      h - gy,        w - (gx + gw), h - gy);
-             _slice_apply(st, sl, x, y, w, h, ox, oy, ow, oh);
           }
      }
    
@@ -552,6 +568,8 @@ _state_update(State *st)
      {
         for (i = 0; i < st->slices_w; i++)
           {
+             _slice_apply(st, st->slices[num], x, y, w, h, ox, oy, ow, oh);
+             _slice_apply(st, st->slices2[num], x, y, w, h, ox, oy, ow, oh);
              _slice_light(st, st->slices[num], ox, oy, ow, oh);
              _slice_light(st, st->slices2[num], ox, oy, ow, oh);
              num++;
@@ -677,7 +695,6 @@ im_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *ev
    st->down_x = st->x;
    st->down_y = st->y;
    st->dir = -1;
-   printf("D %i %i\n", st->x, st->y);
    if (_state_update(st)) evas_object_hide(st->front);
 }
 
@@ -730,7 +747,6 @@ im_up_cb(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__,
    if (!st->finish) tm = 1.0 - tm;
    tm *= 0.5;
    st->anim = ecore_animator_timeline_add(tm, _state_anim, st);
-   printf("U %i %i\n", st->x, st->y);
 }
 
 static void
@@ -746,7 +762,6 @@ im_move_cb(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj __UNUSED_
    st->y = ev->cur.canvas.y - y;
    st->w = w;
    st->h = h;
-   printf("M %i %i\n", st->x, st->y);
    if (st->job) ecore_job_del(st->job);
    st->job = ecore_job_add(_update_curl_job, st);
 }
