@@ -848,6 +848,22 @@ _item_highlight(Elm_Genlist_Item *it)
 }
 
 static void
+_item_unhighlight(Elm_Genlist_Item *it)
+{
+   const char *stacking, *selectraise;
+   if ((it->delete_me) || (!it->highlighted)) return;
+   edje_object_signal_emit(it->base.view, "elm,state,unselected", "elm");
+   stacking = edje_object_data_get(it->base.view, "stacking");
+   selectraise = edje_object_data_get(it->base.view, "selectraise");
+   if (!it->nostacking)
+     {
+       if ((it->order_num_in & 0x1) ^ it->stacking_even) evas_object_lower(it->base.view);
+       else evas_object_raise(it->base.view);
+     }
+   it->highlighted = EINA_FALSE;
+}
+
+static void
 _item_block_del(Elm_Genlist_Item *it)
 {
    Eina_Inlist *il;
@@ -981,24 +997,10 @@ call:
 static void
 _item_unselect(Elm_Genlist_Item *it)
 {
-   const char *stacking, *selectraise;
-
-   if ((it->delete_me) || (!it->highlighted)) return;
-   edje_object_signal_emit(it->base.view, "elm,state,unselected", "elm");
-   stacking = edje_object_data_get(it->base.view, "stacking");
-   selectraise = edje_object_data_get(it->base.view, "selectraise");
-   if (!it->nostacking)
-     {
-       if ((it->order_num_in & 0x1) ^ it->stacking_even) evas_object_lower(it->base.view);
-       else evas_object_raise(it->base.view);
-     }
-   it->highlighted = EINA_FALSE;
-   if (it->selected)
-     {
-        it->selected = EINA_FALSE;
-        it->wd->selected = eina_list_remove(it->wd->selected, it);
-        evas_object_smart_callback_call(it->base.widget, SIG_UNSELECTED, it);
-     }
+   if ((it->delete_me) || (!it->selected)) return;
+   it->selected = EINA_FALSE;
+   it->wd->selected = eina_list_remove(it->wd->selected, it);
+   evas_object_smart_callback_call(it->base.widget, SIG_UNSELECTED, it);
 }
 
 static void
@@ -1017,7 +1019,10 @@ _mouse_move(void        *data,
           {
              it->wd->on_hold = EINA_TRUE;
              if (!it->wd->wasselected)
-               _item_unselect(it);
+               {
+                  _item_unhighlight(it);
+                  _item_unselect(it);
+               }
           }
      }
    if (it->wd->multitouched)
@@ -1078,7 +1083,10 @@ _mouse_move(void        *data,
              it->long_timer = NULL;
           }
         if (!it->wd->wasselected)
-          _item_unselect(it);
+          {
+             _item_unhighlight(it);
+             _item_unselect(it);
+          }
         if (dy < 0)
           {
              if (ady > adx)
@@ -1242,7 +1250,11 @@ _multi_down(void        *data,
    it->wd->multitouched = EINA_TRUE;
    it->wd->prev_mx = ev->canvas.x;
    it->wd->prev_my = ev->canvas.y;
-   if (!it->wd->wasselected) _item_unselect(it);
+   if (!it->wd->wasselected)
+     {
+        _item_unhighlight(it);
+        _item_unselect(it);
+     }
    it->wd->wasselected = EINA_FALSE;
    it->wd->longpressed = EINA_FALSE;
    if (it->long_timer)
@@ -1406,7 +1418,10 @@ _mouse_up(void        *data,
      {
         it->wd->longpressed = EINA_FALSE;
         if (!it->wd->wasselected)
-          _item_unselect(it);
+          {
+             _item_unhighlight(it);
+             _item_unselect(it);
+          }
         it->wd->wasselected = EINA_FALSE;
         return;
      }
@@ -1428,7 +1443,11 @@ _mouse_up(void        *data,
              _item_highlight(it);
              _item_select(it);
           }
-        else _item_unselect(it);
+        else
+          {
+             _item_unhighlight(it);
+             _item_unselect(it);
+          }
      }
    else
      {
@@ -1437,7 +1456,11 @@ _mouse_up(void        *data,
              Widget_Data *wd = it->wd;
              if (wd)
                {
-                  while (wd->selected) _item_unselect(wd->selected->data);
+                  while (wd->selected)
+                    {
+                       _item_unhighlight(wd->selected->data);
+                       _item_unselect(wd->selected->data);
+                    }
                }
           }
         else
@@ -1446,7 +1469,11 @@ _mouse_up(void        *data,
              Elm_Genlist_Item *it2;
 
              EINA_LIST_FOREACH_SAFE(it->wd->selected, l, l_next, it2)
-               if (it2 != it) _item_unselect(it2);
+                if (it2 != it)
+                  {
+                     _item_unhighlight(it2);
+                     _item_unselect(it2);
+                  }
              //_item_highlight(it);
              //_item_select(it);
           }
@@ -3851,13 +3878,19 @@ elm_genlist_item_selected_set(Elm_Genlist_Item *it,
         if (!wd->multi)
           {
              while (wd->selected)
-               _item_unselect(wd->selected->data);
+               {
+                  _item_unhighlight(wd->selected->data);
+                  _item_unselect(wd->selected->data);
+               }
           }
         _item_highlight(it);
         _item_select(it);
      }
    else
-     _item_unselect(it);
+     {
+        _item_unhighlight(it);
+        _item_unselect(it);
+     }
 }
 
 /**
