@@ -85,3 +85,7 @@
 2011-05-18  Cedric Bail
 
 	* Fix eina_share_common_init to be called only once.
+
+2011-05-24  Vincent Torri
+
+	* Implement eina_sched_prio_drop() on Windows

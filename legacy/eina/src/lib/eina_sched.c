@@ -30,6 +30,14 @@
 # endif
 #endif
 
+#ifdef EFL_HAVE_WIN32_THREADS
+# ifndef WIN32_LEAN_AND_MEAN
+#  define WIN32_LEAN_AND_MEAN
+# endif
+# include <windows.h>
+# undef WIN32_LEAN_AND_MEAN
+#endif
+
 #include "eina_sched.h"
 #include "eina_log.h"
 
@@ -61,7 +69,7 @@ eina_sched_prio_drop(void)
 
         pthread_setschedparam(pthread_id, pol, &param);
      }
-#ifdef __linux__
+# ifdef __linux__
    else
      {
         errno = 0;
@@ -75,7 +83,23 @@ eina_sched_prio_drop(void)
              setpriority(PRIO_PROCESS, 0, prio);
           }
      }
-#endif
+# endif
+#elif defined EFL_HAVE_WIN32_THREADS
+   HANDLE thread;
+
+   thread = OpenThread(THREAD_SET_INFORMATION,
+		       FALSE,
+		       GetCurrentThreadId());
+   if (!thread)
+     {
+       EINA_LOG_ERR("Can not open current thread");
+       return;
+     }
+
+   if (!SetThreadPriority(thread, THREAD_PRIORITY_BELOW_NORMAL))
+     EINA_LOG_ERR("Can not set thread priority");
+
+   CloseHandle(thread);
 #else
    EINA_LOG_ERR("Eina does not have support for threads enabled"
                 "or it doesn't support setting scheduler priorities");
