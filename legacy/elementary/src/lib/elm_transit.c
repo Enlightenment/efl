@@ -162,9 +162,9 @@ _elm_transit_object_remove_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj, 
    if (!transit->objs) elm_transit_del(transit);
 }
 
-//TODO: Remove! 
-//Since evas map have a afterimage bug for this time. 
-//This function is added temporary.  
+//TODO: Remove!
+//Since evas map have a afterimage bug for this time.
+//This function is added temporary.
 static void
 _obj_damage_area_set(Evas_Object *obj)
 {
@@ -229,9 +229,9 @@ _elm_transit_object_remove(Elm_Transit *transit, Evas_Object *obj)
              if (state->map)
                 evas_object_map_set(obj, state->map);
 
-             //TODO: Remove! 
-             //Since evas map have a afterimage bug for this time. 
-             //This line is added temporary.  
+             //TODO: Remove!
+             //Since evas map have a afterimage bug for this time.
+             //This line is added temporary.
              _obj_damage_area_set(obj);
 
           }
