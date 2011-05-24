@@ -150,9 +150,9 @@ _slice_light(State *st __UNUSED__, Slice *sl, Evas_Coord x, Evas_Coord y, Evas_C
    evas_map_util_3d_lighting(m, 
                              // light position 
                              // (centered over page 10 * h toward camera)
-                             x + (w / 2)  , y + (h / 2)  , -h * 10,
+                             x + (w / 2)  , y + (h / 2)  , -10000,
                              255, 255, 255, // light color
-                             80 , 80 , 80); // ambient minimum
+                             0 , 0 , 0); // ambient minimum
    // multiply brightness by 1.2 to make lightish bits all white so we dont
    // add shading where we could otherwise be pure white
    for (i = 0; i < 4; i++)
@@ -463,11 +463,12 @@ _state_update(State *st)
      }
 
    num = (st->slices_w + 1) * (st->slices_h + 1);
+   
    tvi = alloca(sizeof(Vertex2) * num);
    tvo = alloca(sizeof(Vertex3) * num);
    tvol = alloca(sizeof(Vertex3) * (st->slices_w + 1));
 
-   for (col = 0, gx = 0; gx <= w; gx += gszw, col++)
+   for (col = 0, gx = 0; gx <= (w + gszw - 1); gx += gszw, col++)
      {
         Vertex2 vil;
         
@@ -480,17 +481,21 @@ _state_update(State *st)
    n = n * n;
    
    num = 0;
-   for (col = 0, gx = 0; gx <= w; gx += gszw, col++)
+   for (col = 0, gx = 0; gx <= (w + gszw - 1); gx += gszw, col++)
      {
-        for (gy = 0; gy <= h; gy += gszh)
+        for (gy = 0; gy <= (h + gszh - 1); gy += gszh)
           {
              Vertex2 vi;
              Vertex3 vo, tvo1;
              
-             vi.x = gx; vi.y = gy;
+             if (gx > w) vi.x = w;
+             else vi.x = gx;
+             if (gy > h) vi.y = h;
+             else vi.y = gy;
              _deform_point(&vi, &vo, rho, theta, A);
              tvo1 = tvol[col];
-             tvo1.y = gy;
+             if (gy > h) tvo1.y = h;
+             else tvo1.y = gy;
              _interp_point(&vo, &tvo1, &(tvo[num]), n);
              num++;
           }
