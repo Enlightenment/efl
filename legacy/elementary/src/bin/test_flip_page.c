@@ -13,11 +13,13 @@ typedef struct _Vertex3 Vertex3;
 struct _State
 {
    Evas_Object *front, *back;
+   Evas_Coord down_x, down_y, x, y;
+   Eina_Bool down : 1;
+   Eina_Bool backflip : 1;
+   
    Ecore_Animator *anim;
    Ecore_Job *job;
-   Evas_Coord down_x, down_y;
-   Eina_Bool  down : 1;
-   Evas_Coord ox, oy, x, y, w, h;
+   Evas_Coord ox, oy, w, h;
    int slices_w, slices_h;
    Slice **slices, **slices2;
    int dir; // 0 == left, 1 == right, 2 == up, 3 == down
@@ -47,11 +49,13 @@ struct _Vertex3
 static State state =
 {
    NULL, NULL,
-   NULL,
-   NULL,
-   0, 0,
+   0, 0, 0, 0,
    0,
-   0, 0, 0, 0, 0, 0,
+   0,
+   
+   NULL,
+   NULL,
+   0, 0, 0, 0,
    0, 0,
    NULL, NULL,
    -1,
@@ -95,23 +99,27 @@ _slice_apply(State *st, Slice *sl,
         evas_map_point_color_set(m, i, 255, 255, 255, 255);
         if (st->dir == 0)
           {
-             evas_map_point_coord_set(m, i, ox + sl->x[i], oy + sl->y[i], sl->z[i]);
-             evas_map_point_image_uv_set(m, i, sl->u[i] , sl->v[i]);
+             int p[4] = { 0, 1, 2, 3 };
+             evas_map_point_coord_set(m, i, ox + sl->x[p[i]], oy + sl->y[p[i]], sl->z[p[i]]);
+             evas_map_point_image_uv_set(m, i, sl->u[p[i]] , sl->v[p[i]]);
           }
         else if (st->dir == 1)
           {
-             evas_map_point_coord_set(m, i, ox + (w - sl->x[i]), oy + sl->y[i], sl->z[i]);
-             evas_map_point_image_uv_set(m, i, sl->u[i] , sl->v[i]);
+             int p[4] = { 1, 0, 3, 2 };
+             evas_map_point_coord_set(m, i, ox + (w - sl->x[p[i]]), oy + sl->y[p[i]], sl->z[p[i]]);
+             evas_map_point_image_uv_set(m, i, ow - sl->u[p[i]] , sl->v[p[i]]);
           }
         else if (st->dir == 2)
           {
-             evas_map_point_coord_set(m, i, ox + sl->y[i], oy + sl->x[i], sl->z[i]);
-             evas_map_point_image_uv_set(m, i, sl->v[i] , oh - sl->u[i]);
+             int p[4] = { 1, 0, 3, 2 };
+             evas_map_point_coord_set(m, i, ox + sl->y[p[i]], oy + sl->x[p[i]], sl->z[p[i]]);
+             evas_map_point_image_uv_set(m, i, sl->v[p[i]] , sl->u[p[i]]);
           }
         else if (st->dir == 3)
           {
-             evas_map_point_coord_set(m, i, ox + sl->y[i], oy + (w - sl->x[i]), sl->z[i]);
-             evas_map_point_image_uv_set(m, i, sl->v[i] , oh - sl->u[i]);
+             int p[4] = { 0, 1, 2, 3 };
+             evas_map_point_coord_set(m, i, ox + sl->y[p[i]], oy + (w - sl->x[p[i]]), sl->z[p[i]]);
+             evas_map_point_image_uv_set(m, i, sl->v[p[i]] , oh - sl->u[p[i]]);
           }
      }
    evas_object_map_enable_set(sl->obj, EINA_TRUE);
@@ -313,6 +321,8 @@ _state_update(State *st)
    Vertex2 *tvi;
    Vertex3 *tvo, *tvol;
 
+   st->backflip = 0;
+   
    evas_object_geometry_get(st->front, &x, &y, &w, &h);
    ox = x; oy = y; ow = w; oh = h;
    x1 = st->down_x;
@@ -560,22 +570,37 @@ _state_update(State *st)
              sl = st->slices2[nn];
              if (!sl)
                {
-                  sl = _slice_new(st, st->front);
+                  sl = _slice_new(st, st->back);
                   st->slices2[nn] = sl;
                }
+
              _slice_xyz(st, sl,
                         vo[1].x, vo[1].y, vo[1].z,
                         vo[0].x, vo[0].y, vo[0].z,
                         vo[3].x, vo[3].y, vo[3].z,
                         vo[2].x, vo[2].y, vo[2].z);
-             if (b <= 0)
-                _slice_uv(st, sl,
-                          w - (gx + gw), gy,       w - (gx),      gy,
-                          w - (gx),      gy + gh,  w - (gx + gw), gy + gh);
+             if (st->backflip)
+               {
+                  if (b <= 0)
+                     _slice_uv(st, sl,
+                               gx + gw, gy,       gx,       gy,
+                               gx,      gy + gh,  gx + gw,  gy + gh);
+                  else
+                     _slice_uv(st, sl,
+                               gx + gw, h - (gy + gh), gx,      h - (gy + gh),
+                               gx,      h - gy,        gx + gw, h - gy);
+               }
              else
-                _slice_uv(st, sl,
-                          w - (gx + gw), h - (gy + gh), w - (gx),      h - (gy + gh),
-                          w - (gx),      h - gy,        w - (gx + gw), h - gy);
+               {
+                  if (b <= 0)
+                     _slice_uv(st, sl,
+                               w - (gx + gw), gy,       w - (gx),      gy,
+                               w - (gx),      gy + gh,  w - (gx + gw), gy + gh);
+                  else
+                     _slice_uv(st, sl,
+                               w - (gx + gw), h - (gy + gh), w - (gx),      h - (gy + gh),
+                               w - (gx),      h - gy,        w - (gx + gw), h - gy);
+               }
           }
      }
    
@@ -600,7 +625,6 @@ _state_update(State *st)
              Slice *s[4];
              
              s[0] = s[1] = s[2] = s[3] = NULL;
-             
              if ((i > 0)            && (j > 0)) 
                 s[0] = st->slices[num - 1 - st->slices_h];
              if ((i < st->slices_w) && (j > 0))
@@ -609,10 +633,19 @@ _state_update(State *st)
                 s[2] = st->slices[num - st->slices_h];
              if ((i < st->slices_w) && (j < st->slices_h))
                 s[3] = st->slices[num];
-             _slice_obj_vert_color_merge(s[0], 2, s[1], 3,
-                                         s[2], 1, s[3], 0);
+             if (st->dir == 0)
+                _slice_obj_vert_color_merge(s[0], 2, s[1], 3,
+                                            s[2], 1, s[3], 0);
+             else if (st->dir == 1)
+                _slice_obj_vert_color_merge(s[0], 3, s[1], 2,
+                                            s[2], 0, s[3], 1);
+             else if (st->dir == 2)
+                _slice_obj_vert_color_merge(s[0], 3, s[1], 2,
+                                            s[2], 0, s[3], 1);
+             else if (st->dir == 3)
+                _slice_obj_vert_color_merge(s[0], 2, s[1], 3,
+                                            s[2], 1, s[3], 0);
              s[0] = s[1] = s[2] = s[3] = NULL;
-             
              if ((i > 0)            && (j > 0)) 
                 s[0] = st->slices2[num - 1 - st->slices_h];
              if ((i < st->slices_w) && (j > 0))
@@ -621,8 +654,18 @@ _state_update(State *st)
                 s[2] = st->slices2[num - st->slices_h];
              if ((i < st->slices_w) && (j < st->slices_h))
                 s[3] = st->slices2[num];
-             _slice_obj_vert_color_merge(s[0], 3, s[1], 2,
-                                         s[2], 0, s[3], 1);
+             if (st->dir == 0)
+                _slice_obj_vert_color_merge(s[0], 3, s[1], 2,
+                                            s[2], 0, s[3], 1);
+             else if (st->dir == 1)
+                _slice_obj_vert_color_merge(s[0], 2, s[1], 3,
+                                            s[2], 1, s[3], 0);
+             else if (st->dir == 2)
+                _slice_obj_vert_color_merge(s[0], 2, s[1], 3,
+                                            s[2], 1, s[3], 0);
+             else if (st->dir == 3)
+                _slice_obj_vert_color_merge(s[0], 3, s[1], 2,
+                                            s[2], 0, s[3], 1);
              num++;
           }
      }
@@ -679,6 +722,7 @@ _state_anim(void *data, double pos)
    _state_update(st);
    if (pos < 1.0) return EINA_TRUE;
    evas_object_show(st->front);
+   evas_object_show(st->back);
    _state_end(st);
    st->anim = NULL;
    return EINA_FALSE;
@@ -689,7 +733,11 @@ _update_curl_job(void *data)
 {
    State *st = data;
    st->job = NULL;
-   if (_state_update(st)) evas_object_hide(st->front);
+   if (_state_update(st))
+     {
+        evas_object_hide(st->front);
+        evas_object_hide(st->back);
+     }
 }
 
 static void
@@ -701,7 +749,8 @@ im_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *ev
 
    if (ev->button != 1) return;
    st->front = data;
-   st->back = data;
+   st->back = evas_object_data_get(data, "im2");
+   st->backflip = 1;
    st->down = 1;
    evas_object_geometry_get(st->front, &x, &y, &w, &h);
    st->x = ev->canvas.x - x;
@@ -711,7 +760,11 @@ im_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *ev
    st->down_x = st->x;
    st->down_y = st->y;
    st->dir = -1;
-   if (_state_update(st)) evas_object_hide(st->front);
+   if (_state_update(st))
+     {
+        evas_object_hide(st->front);
+        evas_object_hide(st->back);
+     }
 }
 
 static void
@@ -763,6 +816,7 @@ im_up_cb(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__,
    if (!st->finish) tm = 1.0 - tm;
    tm *= 0.5;
    st->anim = ecore_animator_timeline_add(tm, _state_anim, st);
+   _state_anim(st, 0.0);
 }
 
 static void
@@ -785,7 +839,7 @@ im_move_cb(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj __UNUSED_
 void
 test_flip_page(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Evas_Object *win, *bg, *im, *rc;
+   Evas_Object *win, *bg, *im, *im2, *rc;
    char buf[PATH_MAX];
 
    win = elm_win_add(NULL, "flip_page", ELM_WIN_BASIC);
@@ -798,6 +852,14 @@ test_flip_page(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
    evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_show(bg);
 
+   im2 = evas_object_image_filled_add(evas_object_evas_get(win));
+   snprintf(buf, sizeof(buf), "%s/images/%s",
+            PACKAGE_DATA_DIR, "sky_04.jpg");
+   evas_object_image_file_set(im2, buf, NULL);
+   evas_object_move(im2, 40, 40);
+   evas_object_resize(im2, 400, 400);
+   evas_object_show(im2);
+   
 #if 0
    im = elm_layout_add(win);
    snprintf(buf, sizeof(buf), "%s/objects/test.edj", PACKAGE_DATA_DIR);
@@ -811,7 +873,10 @@ test_flip_page(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
    evas_object_move(im, 40, 40);
    evas_object_resize(im, 400, 400);
    evas_object_show(im);
+   
+   evas_object_data_set(im, "im2", im2);
 
+   
    rc = evas_object_rectangle_add(evas_object_evas_get(win));
    evas_object_color_set(rc, 0, 0, 0, 0);
    evas_object_move(rc, 40, 340);
