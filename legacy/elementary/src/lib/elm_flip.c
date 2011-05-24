@@ -12,6 +12,10 @@
  * ELM_FLIP_ROTATE_X_CENTER_AXIS
  * ELM_FLIP_ROTATE_XZ_CENTER_AXIS
  * ELM_FLIP_ROTATE_YZ_CENTER_AXIS
+ * ELM_FLIP_CUBE_LEFT
+ * ELM_FLIP_CUBE_RIGHT
+ * ELM_FLIP_CUBE_UP
+ * ELM_FLIP_CUBE_DOWN
  *
  * Signals that you can add callbacks for are:
  *
@@ -675,9 +679,11 @@ elm_flip_perspective_set(Evas_Object *obj, Evas_Coord foc __UNUSED__, Evas_Coord
  * ELM_FLIP_ROTATE_YZ_CENTER_AXIS
  * ELM_FLIP_CUBE_LEFT
  * ELM_FLIP_CUBE_RIGHT
- *
+ * ELM_FLIP_CUBE_UP
+ * ELM_FLIP_CUBE_DOWN
+ * 
  * FIXME: add - ELM_FLIP_CUBE_UP
- * FIXMEL add - ELM_FLIP_CUBE_DOWN
+ * FIXME: add - ELM_FLIP_CUBE_DOWN
  *
  * @ingroup Flip
  */
@@ -695,7 +701,7 @@ elm_flip_go(Evas_Object *obj, Elm_Flip_Mode mode)
    // force calc to contents are the right size before transition
    evas_smart_objects_calculate(evas_object_evas_get(obj));
    _flip(obj);
-   // FIXME: hack around evas rendering bug (only fix makes evas bitch-slow
+   // FIXME: hack around evas rendering bug (only fix makes evas bitch-slow)
    evas_object_map_enable_set(wd->front.content, 0);
    evas_object_map_enable_set(wd->back.content, 0);
    evas_object_resize(wd->front.content, 0, 0);
