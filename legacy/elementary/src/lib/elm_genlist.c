@@ -1937,8 +1937,6 @@ _item_realize(Elm_Genlist_Item *it,
           {
              Evas_Coord mw = -1, mh = -1;
 
-             if (it->wd->height_for_width) mw = it->wd->w;
-
              if (!it->display_only)
                elm_coords_finger_size_adjust(1, &mw, 1, &mh);
              if (it->wd->height_for_width) mw = it->wd->prev_viewport_w;
@@ -2245,10 +2243,7 @@ _calc_job(void *data)
    t0 = ecore_time_get();
    evas_object_geometry_get(wd->pan_smart, NULL, NULL, &ow, &wd->h);
    if (wd->w != ow)
-     {
-        wd->w = ow;
-        //        if (wd->height_for_width) changed = EINA_TRUE;
-     }
+     wd->w = ow;
 
    EINA_INLIST_FOREACH(wd->blocks, itb)
      {
