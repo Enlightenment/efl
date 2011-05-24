@@ -275,6 +275,7 @@ eio_long_file_set(Eio_File *common,
    common->data = data;
    common->error = 0;
    common->thread = NULL;
+   common->container = NULL;
 
    /* Be aware that ecore_thread_feedback_run could call cancel_cb if something goes wrong.
       This means that common would be destroyed if thread == NULL.
@@ -305,6 +306,7 @@ eio_file_set(Eio_File *common,
    common->data = data;
    common->error = 0;
    common->thread = NULL;
+   common->container = NULL;
 
    /* Be aware that ecore_thread_run could call cancel_cb if something goes wrong.
       This means that common would be destroyed if thread == NULL.
@@ -313,6 +315,12 @@ eio_file_set(Eio_File *common,
 
    if (thread) common->thread = thread;
    return !!thread;
+}
+
+void
+eio_file_container_set(Eio_File *common, void *container)
+{
+   common->container = container;
 }
 
 /**

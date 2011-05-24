@@ -131,6 +131,8 @@ _eio_file_heavy(void *data, Ecore_Thread *thread)
 	return ;
      }
 
+   eio_file_container_set(&async->ls.common, eina_iterator_container_get(ls));
+
    EINA_ITERATOR_FOREACH(ls, file)
      {
 	Eina_Bool filter = EINA_TRUE;
@@ -146,6 +148,8 @@ _eio_file_heavy(void *data, Ecore_Thread *thread)
 	if (ecore_thread_check(thread))
 	  break;
      }
+
+   eio_file_container_set(&async->ls.common, NULL);
 
    eina_iterator_free(ls);
 }
@@ -172,6 +176,8 @@ _eio_file_eina_ls_heavy(Ecore_Thread *thread, Eio_File_Direct_Ls *async, Eina_It
 	return ;
      }
 
+   eio_file_container_set(&async->ls.common, eina_iterator_container_get(ls));
+
    EINA_ITERATOR_FOREACH(ls, info)
      {
 	Eina_Bool filter = EINA_TRUE;
@@ -196,6 +202,8 @@ _eio_file_eina_ls_heavy(Ecore_Thread *thread, Eio_File_Direct_Ls *async, Eina_It
 	if (ecore_thread_check(thread))
 	  break;
      }
+
+   eio_file_container_set(&async->ls.common, NULL);
 
    eina_iterator_free(ls);
 }
@@ -825,6 +833,22 @@ eio_file_cancel(Eio_File *ls)
    EINA_SAFETY_ON_NULL_RETURN_VAL(ls, EINA_FALSE);
    return ecore_thread_cancel(ls->thread);
 }
+
+/**
+ * @brief Return the container during EIO operation
+ * @param ls The asynchronous IO operation to retrieve container from.
+ * @return NULL if not available, a DIRP if it is.
+ *
+ * This is only available and make sense in the thread callback, not in
+ * the mainloop.
+ */
+EAPI void *
+eio_file_container_get(Eio_File *ls)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(ls, EINA_FALSE);
+   return ls->container;
+}
+
 
 /**
  * @brief Copy a file asynchronously

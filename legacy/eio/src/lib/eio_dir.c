@@ -239,6 +239,8 @@ _eio_file_recursiv_ls(Ecore_Thread *thread,
         return EINA_FALSE;
      }
 
+   eio_file_container_set(common, eina_iterator_container_get(it));
+
    EINA_ITERATOR_FOREACH(it, info)
      {
         Eina_Bool filter = EINA_TRUE;
@@ -263,6 +265,8 @@ _eio_file_recursiv_ls(Ecore_Thread *thread,
         if (ecore_thread_check(thread))
           goto on_error;
      }
+
+   eio_file_container_set(common, NULL);
 
    eina_iterator_free(it);
    it = NULL;

@@ -67,6 +67,7 @@ struct _Eio_File
 {
    Ecore_Thread *thread;
    const void *data;
+   void *container;
 
    int error;
 
@@ -191,6 +192,8 @@ Eina_Bool eio_long_file_set(Eio_File *common,
 			    Ecore_Thread_Notify_Cb notify_cb,
 			    Ecore_Thread_Cb end_cb,
 			    Ecore_Thread_Cb cancel_cb);
+
+void eio_file_container_set(Eio_File *common, void *container);
 
 void eio_file_error(Eio_File *common);
 void eio_file_thread_error(Eio_File *common, Ecore_Thread *thread);
