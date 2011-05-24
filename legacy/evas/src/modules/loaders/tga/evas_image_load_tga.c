@@ -5,9 +5,6 @@
 #include <stdio.h>
 #include <sys/types.h>
 #include <fcntl.h>
-#include <sys/stat.h>
-#include <sys/mman.h>
-#include <unistd.h>
 
 #ifdef HAVE_EVIL
 # include <Evil.h>
@@ -70,30 +67,27 @@ static Evas_Image_Load_Func evas_image_load_tga_func =
 static Eina_Bool
 evas_image_load_file_head_tga(Image_Entry *ie, const char *file, const char *key __UNUSED__, int *error)
 {
-   int fd;
-   unsigned char *seg = MAP_FAILED, *filedata;
-   struct stat ss;
+   Eina_File *f;
+   unsigned char *seg = NULL, *filedata;
    tga_header *header;
    tga_footer *footer, tfooter;
    char hasa = 0, footer_present = 0, vinverted = 0;
    int w = 0, h = 0, bpp;
 
-   fd = open(file, O_RDONLY);
-   
+   f = eina_file_open(file, EINA_FALSE);
    *error = EVAS_LOAD_ERROR_DOES_NOT_EXIST;
-   if (fd < 0) return EINA_FALSE;
-   if (fstat(fd, &ss) < 0) goto close_file;
-   
+   if (f == NULL) return EINA_FALSE;
+
    *error = EVAS_LOAD_ERROR_UNKNOWN_FORMAT;
-   if (ss.st_size < (off_t)(sizeof(tga_header) + sizeof(tga_footer)))
+   if (eina_file_size_get(f) < (off_t)(sizeof(tga_header) + sizeof(tga_footer)))
       goto close_file;
-   seg = mmap(0, ss.st_size, PROT_READ, MAP_SHARED, fd, 0);
-   if (seg == MAP_FAILED) goto close_file;
+   seg = eina_file_map_all(f, EINA_FILE_SEQUENTIAL);
+   if (seg == NULL) goto close_file;
    filedata = seg;
-   
+
    header = (tga_header *)filedata;
    // no unaligned data accessed, so ok
-   footer = (tga_footer *)(filedata + (ss.st_size - sizeof(tga_footer)));
+   footer = (tga_footer *)(filedata + (eina_file_size_get(f) - sizeof(tga_footer)));
    memcpy(&tfooter, footer, sizeof(tga_footer));
    if (!memcmp(tfooter.signature, TGA_SIGNATURE, sizeof(tfooter.signature)))
      {
@@ -131,48 +125,47 @@ evas_image_load_file_head_tga(Image_Entry *ie, const char *file, const char *key
    ie->w = w;
    ie->h = h;
    if (hasa) ie->flags.alpha = 1;
-   
-   if (seg != MAP_FAILED) munmap(seg, ss.st_size);
-   close(fd);
+
+   eina_file_map_free(f, seg);
+   eina_file_close(f);
    *error = EVAS_LOAD_ERROR_NONE;
    return EINA_TRUE;
 
 close_file:
-   if (seg != MAP_FAILED) munmap(seg, ss.st_size);
-   close(fd);
+   if (seg != NULL) eina_file_map_free(f, seg);
+   eina_file_close(f);
    return EINA_FALSE;
 }
 
 static Eina_Bool
 evas_image_load_file_data_tga(Image_Entry *ie, const char *file, const char *key __UNUSED__, int *error)
 {
-   int fd;
-   unsigned char *seg = MAP_FAILED, *filedata;
-   struct stat ss;
+   Eina_File *f;
+   unsigned char *seg = NULL, *filedata;
    tga_header *header;
    tga_footer *footer, tfooter;
    char hasa = 0, footer_present = 0, vinverted = 0, rle = 0;
    int w = 0, h = 0, x, y, bpp;
+   off_t size;
    unsigned int *surface, *dataptr;
    unsigned int  datasize;
    unsigned char *bufptr, *bufend;
-   
-   fd = open(file, O_RDONLY);
-   
+
+   f = eina_file_open(file, EINA_FALSE);
    *error = EVAS_LOAD_ERROR_DOES_NOT_EXIST;
-   if (fd < 0) return EINA_FALSE;
-   if (fstat(fd, &ss) < 0) goto close_file;
-   
+   if (f == NULL) return EINA_FALSE;
+
    *error = EVAS_LOAD_ERROR_UNKNOWN_FORMAT;
-   if (ss.st_size < (off_t)(sizeof(tga_header) + sizeof(tga_footer)))
+   if (eina_file_size_get(f) < (off_t)(sizeof(tga_header) + sizeof(tga_footer)))
       goto close_file;
-   seg = mmap(0, ss.st_size, PROT_READ, MAP_SHARED, fd, 0);
-   if (seg == MAP_FAILED) goto close_file;
+   seg = eina_file_map_all(f, EINA_FILE_SEQUENTIAL);
+   if (seg == NULL) goto close_file;
    filedata = seg;
-   
+   size = eina_file_size_get(f);
+
    header = (tga_header *)filedata;
    // no unaligned data accessed, so ok
-   footer = (tga_footer *)(filedata + (ss.st_size - sizeof(tga_footer)));
+   footer = (tga_footer *)(filedata + (size - sizeof(tga_footer)));
    memcpy(&tfooter, footer, sizeof(tga_footer));
    if (!memcmp(tfooter.signature, TGA_SIGNATURE, sizeof(tfooter.signature)))
      {
@@ -220,9 +213,9 @@ evas_image_load_file_data_tga(Image_Entry *ie, const char *file, const char *key
 	goto close_file;
      }
 
-   datasize = ss.st_size - sizeof(tga_header) - header->idLength;
+   datasize = size - sizeof(tga_header) - header->idLength;
    if (footer_present)
-     datasize = ss.st_size - sizeof(tga_header) - header->idLength - 
+     datasize = size - sizeof(tga_header) - header->idLength - 
      sizeof(tga_footer);
    
    bufptr = filedata + header->idLength;
@@ -457,15 +450,15 @@ evas_image_load_file_data_tga(Image_Entry *ie, const char *file, const char *key
      }
    
    evas_common_image_premul(ie);
-   
-   if (seg != MAP_FAILED) munmap(seg, ss.st_size);
-   close(fd);
+
+   eina_file_map_free(f, seg);
+   eina_file_close(f);
    *error = EVAS_LOAD_ERROR_NONE;
    return EINA_TRUE;
 
 close_file:
-   if (seg != MAP_FAILED) munmap(seg, ss.st_size);
-   close(fd);
+   if (seg != NULL) eina_file_map_free(f, seg);
+   eina_file_close(f);
    return EINA_FALSE;
 }
 
