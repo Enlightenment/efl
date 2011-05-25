@@ -1379,6 +1379,7 @@ _mouse_up(void        *data,
    it->wd->mouse_down = EINA_FALSE;
    if (it->wd->multitouched)
      {
+        if ((!it->wd->multi) && (!it->selected) && (it->highlighted)) _item_unhighlight(it);
         if (it->wd->multi_down) return;
         _multi_touch_gesture_eval(data);
         return;
