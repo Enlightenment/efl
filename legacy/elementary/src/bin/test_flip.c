@@ -492,17 +492,28 @@ test_flip3(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
    evas_object_show(win);
 }
 
+
 static void
 my_fl_go(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Evas_Object *fl = data;
-   elm_flip_go(fl, ELM_FLIP_ROTATE_Y_CENTER_AXIS);
+   Evas_Object *win = data;
+   Evas_Object *fl = evas_object_data_get(win, "fl");
+   elm_flip_go(fl, ELM_FLIP_PAGE_LEFT);
+}
+
+static void
+my_fl_ch(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+   Evas_Object *win = data;
+   Evas_Object *fl = evas_object_data_get(win, "fl");
+   Evas_Object *rdg = evas_object_data_get(win, "rdg");
+   elm_flip_interaction_set(fl, elm_radio_value_get(rdg));
 }
 
 void
 test_flip4(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Evas_Object *win, *bg, *bx, *fl, *im, *li, *bt;
+   Evas_Object *win, *bg, *bx, *fl, *im, *li, *bt, *rd, *rdg;
    char buf[PATH_MAX];
 
    win = elm_win_add(NULL, "flip4", ELM_WIN_BASIC);
@@ -523,12 +534,17 @@ test_flip4(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
    evas_object_size_hint_align_set(fl, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(fl, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_box_pack_end(bx, fl);
+   evas_object_data_set(win, "fl", fl);
    
-   elm_flip_interaction_set(fl, ELM_FLIP_INTERACTION_CUBE);
+   elm_flip_interaction_set(fl, ELM_FLIP_INTERACTION_NONE);
    elm_flip_interacton_direction_enabled_set(fl, ELM_FLIP_DIRECTION_UP, EINA_TRUE);
    elm_flip_interacton_direction_enabled_set(fl, ELM_FLIP_DIRECTION_DOWN, EINA_TRUE);
    elm_flip_interacton_direction_enabled_set(fl, ELM_FLIP_DIRECTION_LEFT, EINA_TRUE);
    elm_flip_interacton_direction_enabled_set(fl, ELM_FLIP_DIRECTION_RIGHT, EINA_TRUE);
+   elm_flip_interacton_direction_hitsize_set(fl, ELM_FLIP_DIRECTION_UP, 0.25);
+   elm_flip_interacton_direction_hitsize_set(fl, ELM_FLIP_DIRECTION_DOWN, 0.25);
+   elm_flip_interacton_direction_hitsize_set(fl, ELM_FLIP_DIRECTION_LEFT, 0.25);
+   elm_flip_interacton_direction_hitsize_set(fl, ELM_FLIP_DIRECTION_RIGHT, 0.25);
    evas_object_show(fl);
 
    im = evas_object_image_filled_add(evas_object_evas_get(win));
@@ -538,7 +554,16 @@ test_flip4(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
    evas_object_image_file_set(im, buf, NULL);
    elm_flip_content_front_set(fl, im);
    evas_object_show(im);
-   
+
+#if 0
+   im = evas_object_image_filled_add(evas_object_evas_get(win));
+   evas_object_size_hint_weight_set(im, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   snprintf(buf, sizeof(buf), "%s/images/%s",
+            PACKAGE_DATA_DIR, "sky_04.jpg");
+   evas_object_image_file_set(im, buf, NULL);
+   elm_flip_content_back_set(fl, im);
+   evas_object_show(im);
+#else   
    li = elm_list_add(win);
    evas_object_size_hint_weight_set(li, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_list_item_append(li, "Item 0", NULL, NULL, NULL, NULL);
@@ -548,10 +573,52 @@ test_flip4(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
    elm_list_go(li);
    elm_flip_content_back_set(fl, li);
    evas_object_show(li);
+#endif
+
+   rd = elm_radio_add(win);
+   evas_object_size_hint_align_set(rd, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_size_hint_weight_set(rd, EVAS_HINT_EXPAND, 0.0);
+   elm_radio_state_value_set(rd, ELM_FLIP_INTERACTION_NONE);
+   elm_radio_label_set(rd, "None");
+   elm_box_pack_end(bx, rd);
+   evas_object_show(rd);
+   evas_object_smart_callback_add(rd, "changed", my_fl_ch, win);
+   rdg = rd;
+   evas_object_data_set(win, "rdg", rdg);
    
+   rd = elm_radio_add(win);
+   evas_object_size_hint_align_set(rd, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_size_hint_weight_set(rd, EVAS_HINT_EXPAND, 0.0);
+   elm_radio_state_value_set(rd, ELM_FLIP_INTERACTION_ROTATE);
+   elm_radio_label_set(rd, "Rotate");
+   elm_radio_group_add(rd, rdg);
+   elm_box_pack_end(bx, rd);
+   evas_object_show(rd);
+   evas_object_smart_callback_add(rd, "changed", my_fl_ch, win);
+   
+   rd = elm_radio_add(win);
+   evas_object_size_hint_align_set(rd, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_size_hint_weight_set(rd, EVAS_HINT_EXPAND, 0.0);
+   elm_radio_state_value_set(rd, ELM_FLIP_INTERACTION_CUBE);
+   elm_radio_label_set(rd, "Cube");
+   elm_radio_group_add(rd, rdg);
+   elm_box_pack_end(bx, rd);
+   evas_object_show(rd);
+   evas_object_smart_callback_add(rd, "changed", my_fl_ch, win);
+   
+   rd = elm_radio_add(win);
+   evas_object_size_hint_align_set(rd, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_size_hint_weight_set(rd, EVAS_HINT_EXPAND, 0.0);
+   elm_radio_state_value_set(rd, ELM_FLIP_INTERACTION_PAGE);
+   elm_radio_label_set(rd, "Page");
+   elm_radio_group_add(rd, rdg);
+   elm_box_pack_end(bx, rd);
+   evas_object_show(rd);
+   evas_object_smart_callback_add(rd, "changed", my_fl_ch, win);
+
    bt = elm_button_add(win);
    elm_button_label_set(bt, "Go");
-   evas_object_smart_callback_add(bt, "clicked", my_fl_go, fl);
+   evas_object_smart_callback_add(bt, "clicked", my_fl_go, win);
    evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
    elm_box_pack_end(bx, bt);
