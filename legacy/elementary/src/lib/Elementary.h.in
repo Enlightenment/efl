@@ -2494,6 +2494,20 @@ extern "C" {
         ELM_FLIP_CUBE_UP,
         ELM_FLIP_CUBE_DOWN
      } Elm_Flip_Mode;
+   typedef enum _Elm_Flip_Interaction
+     {
+        ELM_FLIP_INTERACTION_NONE,
+        ELM_FLIP_INTERACTION_ROTATE,
+        ELM_FLIP_INTERACTION_CUBE,
+        ELM_FLIP_INTERACTION_PAGE
+     } Elm_Flip_Interaction;
+   typedef enum _Elm_Flip_Direction
+     {
+        ELM_FLIP_DIRECTION_UP,
+        ELM_FLIP_DIRECTION_DOWN,
+        ELM_FLIP_DIRECTION_LEFT,
+        ELM_FLIP_DIRECTION_RIGHT
+     } Elm_Flip_Direction;
 
    EAPI Evas_Object *elm_flip_add(Evas_Object *parent) EINA_ARG_NONNULL(1);
    EAPI void         elm_flip_content_front_set(Evas_Object *obj, Evas_Object *content) EINA_ARG_NONNULL(1);
@@ -2505,6 +2519,10 @@ extern "C" {
    EAPI Eina_Bool    elm_flip_front_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
    EAPI void         elm_flip_perspective_set(Evas_Object *obj, Evas_Coord foc, Evas_Coord x, Evas_Coord y) EINA_ARG_NONNULL(1);
    EAPI void         elm_flip_go(Evas_Object *obj, Elm_Flip_Mode mode) EINA_ARG_NONNULL(1);
+   EAPI void         elm_flip_interaction_set(Evas_Object *obj, Elm_Flip_Interaction mode);
+   EAPI Elm_Flip_Interaction elm_flip_interaction_get(const Evas_Object *obj);
+   EAPI void         elm_flip_interacton_direction_enabled_set(Evas_Object *obj, Elm_Flip_Direction dir, Eina_Bool enabled);
+   EAPI Eina_Bool    elm_flip_interacton_direction_enabled_get(Evas_Object *obj, Elm_Flip_Direction dir);
    /* smart callbacks called:
     * "animate,done" - when a flip animation is finished
     */
