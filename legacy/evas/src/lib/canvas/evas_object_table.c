@@ -161,7 +161,7 @@ _evas_object_table_cache_alloc(int cols, int rows)
    int size;
 
    size = (sizeof(Evas_Object_Table_Cache) +
-	   ((cols + rows) * (sizeof(Eina_Bool)) + sizeof(Evas_Coord)));
+           ((cols + rows) * (sizeof(Eina_Bool) + sizeof(Evas_Coord))));
    cache = malloc(size);
    if (!cache)
      {
@@ -621,7 +621,7 @@ _evas_object_table_calculate_hints_regular(Evas_Object *o, Evas_Object_Table_Dat
 	    ((opt->max.h < 0) ||
 	     ((opt->max.h > -1) && (opt->min.h < opt->max.h))))
 	  opt->expand_v = 1;
-
+        
 	opt->fill_h = 0;
 	if (opt->align.h < 0.0)
 	  {
