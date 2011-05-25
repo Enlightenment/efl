@@ -54,7 +54,7 @@ _elm_grid_focus_next_hook(const Evas_Object *obj, Elm_Focus_Direction dir, Evas_
      }
    else
      {
-        items = evas_object_table_children_get(wd->grd);
+        items = evas_object_grid_children_get(wd->grd);
         list_data_get = eina_list_data_get;
         list_free = eina_list_free;
         
