@@ -454,7 +454,7 @@ eina_inlist_sorted_insert(Eina_Inlist *list,
     * prepare a jump table to avoid doing unecessary rewalk
     * of the inlist as much as possible.
     */
-   for (ct = list->next; ct; ct = ct->next, jump_count++, count++)
+   for (ct = list; ct; ct = ct->next, jump_count++, count++)
      {
         if (jump_count == jump_div)
           {
@@ -485,6 +485,7 @@ eina_inlist_sorted_insert(Eina_Inlist *list,
    sup = jump_limit - 1;
    cur = 0;
    ct = jump_table[cur];
+   cmp = func(ct, item);
 
    while (inf <= sup)
      {
@@ -509,22 +510,23 @@ eina_inlist_sorted_insert(Eina_Inlist *list,
 
    /* If at the beginning of the table and cmp < 0,
     * insert just after the head */
-   if (cur == 0 && cmp < 0)
-     return eina_inlist_append_relative(list, item, list->next);
+   if (cur == 0 && cmp > 0)
+     return eina_inlist_prepend_relative(list, item, ct);
 
    /* If at the end of the table and cmp >= 0,
     * just append the item to the list */
-   if (cmp >= 0 && ct == list->last)
+   if (cmp < 0 && ct == list->last)
      return eina_inlist_append(list, item);
 
    /*
     * Now do a dychotomic search between two entries inside the jump_table
     */
    cur *= jump_div;
-   inf = cur;
-   sup = inf + jump_div;
+   inf = cur - jump_div;
+   sup = cur + jump_div;
 
    if (sup > count - 1) sup = count - 1;
+   if (inf < 0) inf = 0;
 
    while (inf <= sup)
      {
