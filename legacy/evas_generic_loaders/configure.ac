@@ -1,4 +1,4 @@
-y##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##
+##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##
 ##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##
 m4_define([v_maj], [0])
 m4_define([v_min], [1])
@@ -64,8 +64,11 @@ PKG_CHECK_MODULES([POPPLER], [poppler >= 0.12], [have_poppler="yes"], [have_popp
 
 PKG_CHECK_MODULES([SPECTRE], [libspectre], [have_ps="yes"], [have_ps="no"])
 
+PKG_CHECK_MODULES([LIBRAW], [libraw], [have_raw="yes"], [have_raw="no"])
+
 AM_CONDITIONAL([HAVE_PDF], [test "x${have_poppler}" = "xyes"])
 AM_CONDITIONAL([HAVE_PS], [test "x${have_ps}" = "xyes"])
+AM_CONDITIONAL(HAVE_RAW, test "x${have_raw}" = "xyes")
 
 ### Checks for header files
 
@@ -116,6 +119,7 @@ src/Makefile
 src/bin/Makefile
 src/bin/common/Makefile
 src/bin/xcf/Makefile
+src/bin/raw/Makefile
 src/bin/pdf/Makefile
 src/bin/ps/Makefile
 ])
@@ -139,6 +143,7 @@ echo "Loaders:"
 echo "  XCF..................: yes"
 echo "  PDF..................: ${have_poppler}"
 echo "  PS...................: ${have_ps}"
+echo "  RAW..................: ${have_raw}"
 echo
 echo "Compilation............: make (or gmake)"
 echo "  CPPFLAGS.............: $CPPFLAGS"
