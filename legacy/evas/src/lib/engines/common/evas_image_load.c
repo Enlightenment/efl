@@ -42,7 +42,27 @@ static const struct ext_loader_s loaders[] =
    { ".pdf", "generic" },
    { ".ps", "generic" },
    { ".xcf", "generic" },
-   { ".xcf.gz", "generic" }
+   { ".xcf.gz", "generic" },
+   { ".arw", "generic" },
+   { ".cr2", "generic" },
+   { ".crw", "generic" },
+   { ".dcr", "generic" },
+   { ".dng", "generic" },
+   { ".k25", "generic" },
+   { ".kdc", "generic" },
+   { ".erf", "generic" },
+   { ".mrw", "generic" },
+   { ".nef", "generic" },
+   { ".nrf", "generic" },
+   { ".nrw", "generic" },
+   { ".orf", "generic" },
+   { ".raw", "generic" },
+   { ".rw2", "generic" },
+   { ".pef", "generic" },
+   { ".raf", "generic" },
+   { ".sr2", "generic" },
+   { ".srf", "generic" },
+   { ".x3f", "generic" }
 };
 
 static const char *loaders_name[] =
