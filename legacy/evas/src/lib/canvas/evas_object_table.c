@@ -161,7 +161,7 @@ _evas_object_table_cache_alloc(int cols, int rows)
    int size;
 
    size = (sizeof(Evas_Object_Table_Cache) +
-	   (cols + rows) * (sizeof(Eina_Bool) + sizeof(Evas_Coord)));
+	   ((cols + rows) * (sizeof(Eina_Bool)) + sizeof(Evas_Coord)));
    cache = malloc(size);
    if (!cache)
      {
@@ -303,31 +303,6 @@ _evas_object_table_calculate_cell(const Evas_Object_Table_Option *opt, Evas_Coor
      }
 }
 
-/* static Eina_Bool */
-/* _evas_object_table_check_hints_homogeneous_table(Evas_Object *child, double *align, Evas_Coord min, const char *axis_name) */
-/* { */
-/*    if (*align < 0.0) */
-/*      { */
-/*	/\* assume expand and align to the center. */
-/*	 * this is compatible with evas_object_box behavior and is the */
-/*	 * same as weight > 0.0. */
-/*	 *\/ */
-/*	*align = 0.5; */
-/*	return 0; */
-/*      } */
-/*    else if (min < 1) */
-/*      { */
-/*	WRN("Child %p [%s, %s] has no minimum width " */
-/*		"and no %s expand (weight is not > 0.0). " */
-/*		"Assuming weight > 0.0\n", */
-/*		child, evas_object_type_get(child), evas_object_name_get(child), */
-/*		axis_name); */
-/*	return 0; */
-/*      } */
-
-/*    return 1; */
-/* } */
-
 static void
 _evas_object_table_calculate_hints_homogeneous(Evas_Object *o, Evas_Object_Table_Data *priv)
 {
@@ -370,14 +345,6 @@ _evas_object_table_calculate_hints_homogeneous(Evas_Object *o, Evas_Object_Table
 	     opt->expand_h = 1;
 	     expand_h = 1;
 	  }
-/*	else if ((priv->homogeneous == EVAS_OBJECT_TABLE_HOMOGENEOUS_TABLE) && */
-/*		 (!_evas_object_table_check_hints_homogeneous_table */
-/*		  (child, &opt->align.h, opt->min.w, "horizontal"))) */
-/*	  { */
-/*	     opt->expand_h = 1; */
-/*	     expand_h = 1; */
-/*	  } */
-
 
 	opt->expand_v = 0;
 	if ((weighth > 0.0) &&
@@ -387,13 +354,6 @@ _evas_object_table_calculate_hints_homogeneous(Evas_Object *o, Evas_Object_Table
 	     opt->expand_v = 1;
 	     expand_v = 1;
 	  }
-/*	else if ((priv->homogeneous == EVAS_OBJECT_TABLE_HOMOGENEOUS_TABLE) && */
-/*		 (!_evas_object_table_check_hints_homogeneous_table */
-/*		  (child, &opt->align.v, opt->min.h, "vertical"))) */
-/*	  { */
-/*	     opt->expand_v = 1; */
-/*	     expand_v = 1; */
-/*	  } */
 
 	opt->fill_h = 0;
 	if (opt->align.h < 0.0)
@@ -544,38 +504,6 @@ _evas_object_table_calculate_layout_homogeneous(Evas_Object *o, Evas_Object_Tabl
           }
 	evas_object_resize(child, cw, ch);
      }
-/* old homogenous layout - didn't adjust to table size if table size != multiple of rows or cols
-   Evas_Coord x, y, w, h, cellw, cellh;
-   Eina_List *l;
-   Evas_Object_Table_Option *opt;
-   
-   _evas_object_table_calculate_layout_homogeneous_sizes
-     (o, priv, &x, &y, &w, &h, &cellw, &cellh);
-
-   EINA_LIST_FOREACH(priv->children, l, opt)
-     {
-	Evas_Object *child = opt->obj;
-	Evas_Coord cx, cy, cw, ch;
-
-	cx = x + opt->col * (cellw + priv->pad.h);
-	cy = y + opt->row * (cellh + priv->pad.v);
-
-	cw = opt->colspan * cellw - priv->pad.h;
-	ch = opt->rowspan * cellh - priv->pad.v;
-
-	_evas_object_table_calculate_cell(opt, &cx, &cy, &cw, &ch);
-
-        if (priv->is_mirrored)
-          {
-             evas_object_move(opt->obj, x + w - (cx - x + cw), cy);
-          }
-        else
-          {
-             evas_object_move(child, cx, cy);
-          }
-	evas_object_resize(child, cw, ch);
-     }
- */
 }
 
 static void
