@@ -35,14 +35,14 @@ _del_hook(Evas_Object *obj)
 }
 
 static Eina_Bool
-_elm_table_focus_next_hook(const Evas_Object *obj, Elm_Focus_Direction dir, Evas_Object **next)
+_elm_grid_focus_next_hook(const Evas_Object *obj, Elm_Focus_Direction dir, Evas_Object **next)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    const Eina_List *items;
    void *(*list_data_get) (const Eina_List *list);
    Eina_List *(*list_free) (Eina_List *list);
    
-   if ((!wd) || (!wd->tbl))
+   if ((!wd) || (!wd->grd))
       return EINA_FALSE;
    
    /* Focus chain */
@@ -108,7 +108,7 @@ elm_grid_add(Evas_Object *parent)
    elm_widget_sub_object_add(parent, obj);
    elm_widget_data_set(obj, wd);
    elm_widget_del_hook_set(obj, _del_hook);
-   elm_widget_focus_next_hook_set(obj, _elm_table_focus_next_hook);
+   elm_widget_focus_next_hook_set(obj, _elm_grid_focus_next_hook);
    elm_widget_can_focus_set(obj, EINA_FALSE);
    elm_widget_theme_hook_set(obj, _theme_hook);
 
