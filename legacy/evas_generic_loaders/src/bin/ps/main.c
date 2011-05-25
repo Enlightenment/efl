@@ -167,7 +167,7 @@ _spectre_load_image(int size_w, int size_h)
    SpectreRenderContext *rc;
    unsigned char        *psdata;
    int                   stride;
-   unsigned char        *src;
+   DATA32        *src;
    DATA32               *dst;
    int                   yy;
    SpectreStatus         status;
@@ -196,7 +196,7 @@ _spectre_load_image(int size_w, int size_h)
         src = (DATA32 *)psdata;
         dst = (DATA32 *)data;
         for (yy = 0; yy < height; src += stride, dst += width, ++yy)
-          _pixcopy (dst, src, width * 4);
+          _pixcopy (dst, (unsigned char *)src, width * 4);
      }
 
    spectre_render_context_free(rc);
