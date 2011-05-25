@@ -212,6 +212,10 @@ PKG_CHECK_MODULES([ELEMENTARY],
    ]
 )
 
+PKG_CHECK_MODULES([EIO],[eio], [have_eio="yes"], [have_eio="no"])
+
+AM_CONDITIONAL([HAVE_EIO], [test "x${have_eio}" = "xyes"])
+
 requirement_elm="edje >= 1.0.0 ecore-file >= 1.0.0 ecore-evas >= 1.0.0 ecore >= 1.0.0 evas >= 1.0.0 eet >= 1.4.0 eina >= 1.0.0 ${requirement_elm}"
 
 have_elementary_x="no"
@@ -551,6 +555,7 @@ echo "    EFreet.................: ${have_elementary_efreet}"
 echo "    EWeather...............: ${have_elementary_eweather}"
 echo "    Ethumb.................: ${have_elementary_ethumb}"
 echo "    Quick Launch...........: ${have_fork}"
+echo "    eio....................: ${have_eio}"
 echo
 echo "  eet......................: ${eet_eet}"
 echo "  edje_cc..................: ${edje_cc}"

@@ -129,6 +129,9 @@ void test_segment_control(void *data, Evas_Object *obj, void *event_info);
 void test_store(void *data, Evas_Object *obj, void *event_info);
 void test_win_inline(void *data, Evas_Object *obj, void *event_info);
 void test_grid(void *data, Evas_Object *obj, void *event_info);
+#ifdef HAVE_EIO
+void test_eio(void *data, Evas_Object *obj, void *event_info);
+#endif
 
 struct elm_test
 {
@@ -330,6 +333,9 @@ my_win_main(char *autorun)
    ADD_TEST("Genlist Group", test_genlist8);
    ADD_TEST("Genlist Group Tree", test_genlist9);
    ADD_TEST("Genlist Mode", test_genlist10);
+#ifdef HAVE_EIO
+   ADD_TEST("Genlist Eio", test_eio);
+#endif
    ADD_TEST("GenGrid", test_gengrid);
    ADD_TEST("GenGrid 2", test_gengrid2);
    ADD_TEST("Checks", test_check);

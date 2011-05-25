@@ -19,6 +19,10 @@ AM_CPPFLAGS = \
 @ELEMENTARY_EWEATHER_CFLAGS@ \
 @ELEMENTARY_ETHUMB_CFLAGS@
 
+if HAVE_EIO
+AM_CPPFLAGS += -DHAVE_EIO @EIO_CFLAGS@
+endif
+
 if ELEMENTARY_WINDOWS_BUILD
 AM_CPPFLAGS += -DELEMENTARY_BUILD
 endif
@@ -101,12 +105,19 @@ test_win_state.c \
 test_grid.c \
 test_flip_page.c
 
+if HAVE_EIO
+elementary_test_SOURCES += test_eio.c
+endif
+
 elementary_test_LDADD = $(top_builddir)/src/lib/libelementary.la \
 	@ELEMENTARY_EWEATHER_LIBS@ \
 	@ELEMENTARY_EDBUS_LIBS@ \
 	@ELEMENTARY_EFREET_LIBS@ \
 	@ELEMENTARY_LIBS@ \
 	@my_libs@
+if HAVE_EIO
+elementary_test_LDADD += @EIO_LIBS@
+endif
 elementary_test_LDFLAGS =
 
 elementary_config_SOURCES = \
@@ -155,6 +166,11 @@ elementary_testql_LDADD = $(top_builddir)/src/lib/libelementary.la \
 	@ELEMENTARY_EFREET_LIBS@ \
 	@ELEMENTARY_LIBS@ \
 	@my_libs@
+
+if HAVE_EIO
+elementary_testql_LDADD += @EIO_LIBS@
+endif
+
 elementary_testql_CFLAGS = -DELM_LIB_QUICKLAUNCH=1
 elementary_testql_LDFLAGS =
 endif
