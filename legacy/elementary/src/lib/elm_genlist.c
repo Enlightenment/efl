@@ -450,6 +450,8 @@ static const Evas_Smart_Cb_Description _signals[] = {
    {NULL, NULL}
 };
 
+static Eina_Compare_Cb _elm_genlist_item_compare_cb;
+
 static Eina_Bool
 _event_hook(Evas_Object       *obj,
             Evas_Object       *src __UNUSED__,
@@ -3193,6 +3195,15 @@ _item_queue(Widget_Data      *wd,
       wd->queue_idle_enterer = ecore_idle_enterer_add(_item_idle_enterer, wd);
 }
 
+static int
+_elm_genlist_item_compare(const void *data, const void *data1)
+{
+   Elm_Genlist_Item *item, *item1;
+   item = ELM_GENLIST_ITEM_FROM_INLIST(data);
+   item1 = ELM_GENLIST_ITEM_FROM_INLIST(data1);
+   return _elm_genlist_item_compare_cb(item->base.data, item1->base.data);
+}
+
 /**
  * Append item to the end of the genlist
  *
@@ -3240,8 +3251,8 @@ elm_genlist_item_append(Evas_Object                  *obj,
         it->parent->items = eina_list_append(it->parent->items, it);
         if (!it2) it2 = it->parent;
         wd->items =
-          eina_inlist_append_relative(wd->items, EINA_INLIST_GET(it),
-                                      EINA_INLIST_GET(it2));
+           eina_inlist_append_relative(wd->items, EINA_INLIST_GET(it),
+                                       EINA_INLIST_GET(it2));
         it->rel = it2;
         it->rel->relcount++;
 
@@ -3357,6 +3368,71 @@ elm_genlist_item_insert_before(Evas_Object                  *obj,
    it->rel->relcount++;
    it->before = EINA_TRUE;
    _item_queue(wd, it);
+   return it;
+}
+
+
+
+/**
+ * Insert a new item into the sorted genlist object
+ *
+ * @param obj The genlist object
+ * @param itc The item class for the item
+ * @param data The item data
+ * @param parent The parent item, or NULL if none
+ * @param flags Item flags
+ * @param comp The function called for the sort
+ * @param func Convenience function called when item selected
+ * @param func_data Data passed to @p func above.
+ * @return A handle to the item added or NULL if not possible
+ *
+ * @ingroup Genlist
+ */
+EAPI Elm_Genlist_Item *
+elm_genlist_item_sorted_insert(Evas_Object                  *obj,
+                               const Elm_Genlist_Item_Class *itc,
+                               const void                   *data,
+                               Elm_Genlist_Item             *parent,
+                               Elm_Genlist_Item_Flags        flags,
+                               Eina_Compare_Cb               comp,
+                               Evas_Smart_Cb                 func,
+                               const void                   *func_data)
+{
+
+   Elm_Genlist_Item *search = NULL;
+   Eina_Inlist *s;
+   Eina_Accessor *ea;
+   int ret, min, max, i;
+
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return NULL;
+   Elm_Genlist_Item *it = _item_new(wd, itc, data, parent, flags, func,
+                                    func_data);
+   if (!it) return NULL;
+
+   _elm_genlist_item_compare_cb = comp;
+   if (it->parent)
+     {
+        it->parent->items =
+           eina_list_sorted_insert(it->parent->items, comp, it);
+     }
+   wd->items = eina_inlist_sorted_insert(wd->items, EINA_INLIST_GET(it),
+                                         _elm_genlist_item_compare);
+   if (EINA_INLIST_GET(it)->next)
+     {
+        it->rel = ELM_GENLIST_ITEM_FROM_INLIST(EINA_INLIST_GET(it)->next);
+        it->rel->relcount++;
+        it->before = EINA_TRUE;
+     }
+   else if (EINA_INLIST_GET(it)->prev)
+     {
+        it->rel = ELM_GENLIST_ITEM_FROM_INLIST(EINA_INLIST_GET(it)->prev);
+        it->rel->relcount++;
+        it->before = EINA_FALSE;
+     }
+   _item_queue(wd, it);
+
    return it;
 }
 

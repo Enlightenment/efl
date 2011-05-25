@@ -1899,6 +1899,7 @@ extern "C" {
    EAPI Elm_Genlist_Item *elm_genlist_item_prepend(Evas_Object *obj, const Elm_Genlist_Item_Class *itc, const void *data, Elm_Genlist_Item *parent, Elm_Genlist_Item_Flags flags, Evas_Smart_Cb func, const void *func_data) EINA_ARG_NONNULL(1);
    EAPI Elm_Genlist_Item *elm_genlist_item_insert_before(Evas_Object *obj, const Elm_Genlist_Item_Class *itc, const void *data, Elm_Genlist_Item *parent, Elm_Genlist_Item *before, Elm_Genlist_Item_Flags flags, Evas_Smart_Cb func, const void *func_data) EINA_ARG_NONNULL(1, 5);
    EAPI Elm_Genlist_Item *elm_genlist_item_insert_after(Evas_Object *obj, const Elm_Genlist_Item_Class *itc, const void *data, Elm_Genlist_Item *parent, Elm_Genlist_Item *after, Elm_Genlist_Item_Flags flags, Evas_Smart_Cb func, const void *func_data) EINA_ARG_NONNULL(1, 5);
+EAPI Elm_Genlist_Item *elm_genlist_item_sorted_insert(Evas_Object *obj, const Elm_Genlist_Item_Class *itc, const void *data, Elm_Genlist_Item *parent, Elm_Genlist_Item_Flags flags, Eina_Compare_Cb comp, Evas_Smart_Cb func,const void *func_data);
    /* operations to retrieve existing items */
    EAPI Elm_Genlist_Item *elm_genlist_selected_item_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
    EAPI const Eina_List  *elm_genlist_selected_items_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
