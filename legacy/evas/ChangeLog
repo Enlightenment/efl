@@ -363,4 +363,6 @@
 	* Fix Evas table to handle weighting correctly for items and veto
         rows or columns that have any child spanning that column not
         able to expand.
+        * Fix Evas table to use actual fractional weights, not just
+        boolean expand/not expand from weight value.
 
