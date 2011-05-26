@@ -251,7 +251,7 @@ main(int argc, char **argv)
 
    if (!_spectre_init(file, page, size_w, size_h))
      return -1;
-   D("poppler_file_init done\n");
+   D("_spectre_init done\n");
 
    D("dpi2...: %f\n", dpi);
    if (!head_only)
@@ -260,7 +260,7 @@ main(int argc, char **argv)
      }
 
    D("size...: %ix%i\n", width, height);
-   D("alpha..: 1\n");
+   D("alpha..: 0\n");
 
    printf("size %i %i\n", width, height);
    printf("alpha 0\n");
