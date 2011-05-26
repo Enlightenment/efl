@@ -521,8 +521,10 @@ _evas_object_table_count_expands(const Eina_Bool *expands, int start, int end)
    int count = 0;
 
    for (; itr < itr_end; itr++)
-     if (*itr)
-       count++;
+     {
+        if (*itr)
+           count++;
+     }
 
    return count;
 }
@@ -598,6 +600,8 @@ _evas_object_table_calculate_hints_regular(Evas_Object *o, Evas_Object_Table_Dat
    _evas_object_table_cache_reset(priv);
 
    /* cache interesting data */
+   memset(c->expands.h, 1, priv->size.cols);
+   memset(c->expands.v, 1, priv->size.rows);
    EINA_LIST_FOREACH(priv->children, l, opt)
      {
 	Evas_Object *child = opt->obj;
@@ -635,10 +639,10 @@ _evas_object_table_calculate_hints_regular(Evas_Object *o, Evas_Object_Table_Dat
 	     opt->fill_v = 1;
 	  }
 
-	if (opt->expand_h)
-	  memset(c->expands.h + opt->col, 1, opt->colspan);
-	if (opt->expand_v)
-	  memset(c->expands.v + opt->row, 1, opt->rowspan);
+	if (!opt->expand_h)
+	  memset(c->expands.h + opt->col, 0, opt->colspan);
+	if (!opt->expand_v)
+	  memset(c->expands.v + opt->row, 0, opt->rowspan);
      }
 
    /* calculate sizes for each row and column */
