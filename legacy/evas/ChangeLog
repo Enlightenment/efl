@@ -357,3 +357,10 @@
 2011-05-24  Cedric Bail
 
 	* Use Eina_File when possible.
+
+2011-05-26  Carsten Haitzler (The Rasterman)
+
+	* Fix Evas table to handle weighting correctly for items and veto
+        rows or columns that have any child spanning that column not
+        able to expand.
+
