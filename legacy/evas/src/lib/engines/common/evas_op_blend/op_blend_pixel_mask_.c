@@ -27,12 +27,12 @@ _op_blend_p_mas_dp(DATA32 *s, DATA8 *m, DATA32 c, DATA32 *d, int l) {
 }
 
 static void
-_op_blend_pas_mas_dp(DATA32 *s, DATA8 *m __UNUSED__, DATA32 c, DATA32 *d, int l) {
+_op_blend_pas_mas_dp(DATA32 *s, DATA8 *m, DATA32 c __UNUSED__, DATA32 *d, int l) {
    DATA32 *e;
    int alpha;
    UNROLL8_PLD_WHILE(d, l, e,
                      {
-                        alpha = (*s >> 24);
+                        alpha = *m;
                         switch(alpha)
                           {
                           case 0:
@@ -41,11 +41,11 @@ _op_blend_pas_mas_dp(DATA32 *s, DATA8 *m __UNUSED__, DATA32 c, DATA32 *d, int l)
                              *d = *s;
                              break;
                           default:
-                             c = MUL_SYM(alpha, *s);
-                             alpha = 256 - (c >> 24);
-                             *d = c + MUL_256(alpha, *d);
+                             alpha++;
+                             *d = INTERP_256(alpha, *s, *d);
                              break;
                           }
+                        m++;  s++;  d++;
                      });
 }
 

@@ -6,22 +6,22 @@ _op_blend_pas_mas_dp_neon(DATA32 *s, DATA8 *m, DATA32 c __UNUSED__, DATA32 *d, i
    DATA32 *e;
    int alpha;
    UNROLL8_PLD_WHILE(d, l, e,
-                     {
-                        alpha = (*s >> 24);
-                        switch(alpha)
-                          {
+                    {
+                       alpha = *m;
+                       switch(alpha)
+                         {
                           case 0:
-                             break;
+                            break;
                           case 255:
-                             *d = *s;
-                             break;
+                            *d = *s;
+                            break;
                           default:
-                             c = MUL_SYM(alpha, *s);
-                             alpha = 256 - (c >> 24);
-                             *d = c + MUL_256(alpha, *d);
-                             break;
-                          }
-                     });
+                            alpha++;
+                            *d = INTERP_256(alpha, *s, *d);
+                            break;
+                         }
+                       m++;  s++;  d++;
+                    });
 }
 
 static void
