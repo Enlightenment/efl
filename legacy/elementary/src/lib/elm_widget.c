@@ -2877,7 +2877,7 @@ _smart_hide(Evas_Object *obj)
    Eina_List *list;
    Evas_Object *o;
    INTERNAL_ENTRY
-      
+
    list = evas_object_smart_members_get(obj);
    EINA_LIST_FREE(list, o)
      {

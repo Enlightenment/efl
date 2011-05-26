@@ -41,10 +41,10 @@ _elm_grid_focus_next_hook(const Evas_Object *obj, Elm_Focus_Direction dir, Evas_
    const Eina_List *items;
    void *(*list_data_get) (const Eina_List *list);
    Eina_List *(*list_free) (Eina_List *list);
-   
+
    if ((!wd) || (!wd->grd))
       return EINA_FALSE;
-   
+
    /* Focus chain */
    /* TODO: Change this to use other chain */
    if ((items = elm_widget_focus_custom_chain_get(obj)))
@@ -57,16 +57,16 @@ _elm_grid_focus_next_hook(const Evas_Object *obj, Elm_Focus_Direction dir, Evas_
         items = evas_object_grid_children_get(wd->grd);
         list_data_get = eina_list_data_get;
         list_free = eina_list_free;
-        
+
         if (!items) return EINA_FALSE;
      }
-   
+
    Eina_Bool ret = elm_widget_focus_list_next_get(obj, items, list_data_get,
                                                   dir, next);
-   
+
    if (list_free)
       list_free((Eina_List *)items);
-   
+
    return ret;
 }
 
@@ -115,7 +115,7 @@ elm_grid_add(Evas_Object *parent)
    wd->grd = evas_object_grid_add(e);
    evas_object_grid_size_set(wd->grd, 100, 100);
    elm_widget_resize_object_set(obj, wd->grd);
-   
+
    _mirrored_set(obj, elm_widget_mirrored_get(obj));
    return obj;
 }

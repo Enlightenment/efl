@@ -138,7 +138,7 @@ my_tb_ch(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
    Evas_Object *win = data;
    Evas_Object *tb = evas_object_data_get(win, "tb");
    Evas_Object *b2 = evas_object_data_get(win, "b2");
-   
+
    elm_table_unpack(tb, b2);
    elm_table_pack(tb, b2, 1, 0, 1, 2);
 }
