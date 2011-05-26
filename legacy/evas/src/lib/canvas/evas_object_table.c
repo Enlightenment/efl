@@ -30,6 +30,9 @@ struct _Evas_Object_Table_Cache
 {
    struct {
       struct {
+         double h, v;
+      } weights;
+      struct {
 	 int h, v;
       } expands;
       struct {
@@ -37,11 +40,15 @@ struct _Evas_Object_Table_Cache
       } min;
    } total;
    struct {
+      double *h, *v;
+   } weights;
+   struct {
       Evas_Coord *h, *v;
    } sizes;
    struct {
       Eina_Bool *h, *v;
    } expands;
+   double ___pad; // padding to make sure doubles at end can be aligned
 };
 
 struct _Evas_Object_Table_Data
@@ -160,8 +167,9 @@ _evas_object_table_cache_alloc(int cols, int rows)
    Evas_Object_Table_Cache *cache;
    int size;
 
-   size = (sizeof(Evas_Object_Table_Cache) +
-           ((cols + rows) * (sizeof(Eina_Bool) + sizeof(Evas_Coord))));
+   size = sizeof(Evas_Object_Table_Cache) +
+      ((cols + rows) * 
+          (sizeof(double) + sizeof(Evas_Coord) + sizeof(Eina_Bool)));
    cache = malloc(size);
    if (!cache)
      {
@@ -170,7 +178,9 @@ _evas_object_table_cache_alloc(int cols, int rows)
 	return NULL;
      }
 
-   cache->sizes.h = (Evas_Coord *)(cache + 1);
+   cache->weights.h = (double *)(cache + 1);
+   cache->weights.v = (double *)(cache->weights.h + cols);
+   cache->sizes.h = (Evas_Coord *)(cache->weights.v + rows);
    cache->sizes.v = (Evas_Coord *)(cache->sizes.h + cols);
    cache->expands.h = (Eina_Bool *)(cache->sizes.v + rows);
    cache->expands.v = (Eina_Bool *)(cache->expands.h + cols);
@@ -196,7 +206,7 @@ _evas_object_table_cache_reset(Evas_Object_Table_Data *priv)
    c->total.min.h = 0;
 
    size = ((priv->size.rows + priv->size.cols) *
-	   (sizeof(Eina_Bool) + sizeof(Evas_Coord)));
+	   (sizeof(double) + sizeof(Evas_Coord) + sizeof(Eina_Bool)));
    memset(c + 1, 0, size);
 }
 
@@ -558,28 +568,55 @@ _evas_object_table_sizes_calc_noexpand(Evas_Coord *sizes, int start, int end, Ev
 }
 
 static void
-_evas_object_table_sizes_calc_expand(Evas_Coord *sizes, int start, int end, Evas_Coord space, const Eina_Bool *expands, int expand_count)
+_evas_object_table_sizes_calc_expand(Evas_Coord *sizes, int start, int end, Evas_Coord space, const Eina_Bool *expands, int expand_count, double *weights, double weighttot)
 {
    Evas_Coord *itr = sizes + start, *itr_end = sizes + end;
    const Eina_Bool *itr_expand = expands + start;
-   Evas_Coord step, last_space;
-
+   Evas_Coord step = 0, last_space = 0;
+   int total = 0, i = start;
+   
    /* XXX move to fixed point math and spread errors among cells */
-   step = space / expand_count;
-   last_space = space - step * (expand_count - 1);
+   if (weighttot > 0.0)
+     {
+        step = space / expand_count;
+        last_space = space - step * (expand_count - 1);
+     }
 
-   for (; itr < itr_end; itr++, itr_expand++)
-     if (*itr_expand)
-       {
-	  expand_count--;
-	  if (expand_count > 0)
-	    *itr += step;
-	  else
-	    {
-	       *itr += last_space;
-	       break;
-	    }
-       }
+   for (; itr < itr_end; itr++, itr_expand++, i++)
+     {
+        if (weighttot <= 0.0)
+          {
+             if (*itr_expand)
+               {
+                  expand_count--;
+                  if (expand_count > 0)
+                     *itr += step;
+                  else
+                    {
+                       *itr += last_space;
+                       break;
+                    }
+               }
+          }
+        else
+          {
+             if (*itr_expand)
+               {
+                  expand_count--;
+                  if (expand_count > 0)
+                    {
+                       step = (weights[i] / weighttot) * space;
+                       *itr += step;
+                       total += step;
+                    }
+                  else
+                    {
+                       *itr += space - total;
+                       break;
+                    }
+               }
+          }
+     }
 }
 
 static void
@@ -588,7 +625,9 @@ _evas_object_table_calculate_hints_regular(Evas_Object *o, Evas_Object_Table_Dat
    Evas_Object_Table_Option *opt;
    Evas_Object_Table_Cache *c;
    Eina_List *l;
-
+   double totweightw = 0.0, totweighth = 0.0;
+   int i;
+   
    if (!priv->cache)
      {
 	priv->cache = _evas_object_table_cache_alloc
@@ -602,6 +641,8 @@ _evas_object_table_calculate_hints_regular(Evas_Object *o, Evas_Object_Table_Dat
    /* cache interesting data */
    memset(c->expands.h, 1, priv->size.cols);
    memset(c->expands.v, 1, priv->size.rows);
+   memset(c->weights.h, 0, priv->size.cols);
+   memset(c->weights.v, 0, priv->size.rows);
    EINA_LIST_FOREACH(priv->children, l, opt)
      {
 	Evas_Object *child = opt->obj;
@@ -641,9 +682,21 @@ _evas_object_table_calculate_hints_regular(Evas_Object *o, Evas_Object_Table_Dat
 
 	if (!opt->expand_h)
 	  memset(c->expands.h + opt->col, 0, opt->colspan);
+        else
+          {
+             for (i = opt->col; i < opt->col + opt->colspan; i++)
+                c->weights.h[i] += (weightw / (double)opt->colspan);
+          }
 	if (!opt->expand_v)
 	  memset(c->expands.v + opt->row, 0, opt->rowspan);
+        else
+          {
+             for (i = opt->row; i < opt->row + opt->rowspan; i++)
+                c->weights.v[i] += (weighth / (double)opt->rowspan);
+          }
      }
+   for (i = 0; i < priv->size.cols; i++) totweightw += c->weights.h[i];
+   for (i = 0; i < priv->size.rows; i++) totweighth += c->weights.v[i];
 
    /* calculate sizes for each row and column */
    EINA_LIST_FOREACH(priv->children, l, opt)
@@ -664,7 +717,7 @@ _evas_object_table_calculate_hints_regular(Evas_Object *o, Evas_Object_Table_Dat
 	     if (count > 0)
 	       _evas_object_table_sizes_calc_expand
 		 (c->sizes.h, opt->col, opt->end_col, space,
-		  c->expands.h, count);
+		  c->expands.h, count, c->weights.h, totweightw);
 	     else
 	       _evas_object_table_sizes_calc_noexpand
 		 (c->sizes.h, opt->col, opt->end_col, space);
@@ -684,13 +737,16 @@ _evas_object_table_calculate_hints_regular(Evas_Object *o, Evas_Object_Table_Dat
 	     if (count > 0)
 	       _evas_object_table_sizes_calc_expand
 		 (c->sizes.v, opt->row, opt->end_row, space,
-		  c->expands.v, count);
+		  c->expands.v, count, c->weights.v, totweighth);
 	     else
 	       _evas_object_table_sizes_calc_noexpand
 		 (c->sizes.v, opt->row, opt->end_row, space);
 	  }
      }
 
+   c->total.weights.h = totweightw;
+   c->total.weights.v = totweighth;
+   
    c->total.expands.h = _evas_object_table_count_expands
      (c->expands.h, 0, priv->size.cols);
    c->total.expands.v = _evas_object_table_count_expands
@@ -742,7 +798,7 @@ _evas_object_table_calculate_layout_regular(Evas_Object *o, Evas_Object_Table_Da
 	memcpy(cols, c->sizes.h, size);
 	_evas_object_table_sizes_calc_expand
 	  (cols, 0, priv->size.cols, w - c->total.min.w,
-	   c->expands.h, c->total.expands.h);
+	   c->expands.h, c->total.expands.h, c->weights.h, c->total.weights.h);
      }
 
    /* handle vertical */
@@ -765,7 +821,7 @@ _evas_object_table_calculate_layout_regular(Evas_Object *o, Evas_Object_Table_Da
 	memcpy(rows, c->sizes.v, size);
 	_evas_object_table_sizes_calc_expand
 	  (rows, 0, priv->size.rows, h - c->total.min.h,
-	   c->expands.v, c->total.expands.v);
+	   c->expands.v, c->total.expands.v, c->weights.v, c->total.weights.v);
      }
 
    EINA_LIST_FOREACH(priv->children, l, opt)
