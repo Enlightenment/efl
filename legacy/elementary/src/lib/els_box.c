@@ -7,6 +7,7 @@ _smart_extents_calculate(Evas_Object *box, Evas_Object_Box_Data *priv, int horiz
    Evas_Coord minw, minh, mnw, mnh;
    const Eina_List *l;
    Evas_Object_Box_Option *opt;
+   int c;
 
    /* FIXME: need to calc max */
    minw = 0;
@@ -41,6 +42,12 @@ _smart_extents_calculate(Evas_Object *box, Evas_Object_Box_Data *priv, int horiz
                }
           }
      }
+   c = eina_list_count(priv->children) - 1;
+   if (c > 0)
+     {
+        if (horizontal) minw += priv->pad.h * c;
+        else minh += priv->pad.v * c;
+     }
    evas_object_size_hint_min_set(box, minw, minh);
 }
 
@@ -62,6 +69,7 @@ _els_box_layout(Evas_Object *o, Evas_Object_Box_Data *priv, int horizontal, int 
    evas_object_size_hint_min_get(o, &minw, &minh);
    evas_object_size_hint_align_get(o, &ax, &ay);
    count = eina_list_count(priv->children);
+   
    if (w < minw)
      {
         x = x + ((w - minw) * (1.0 - ax));
@@ -153,6 +161,7 @@ _els_box_layout(Evas_Object *o, Evas_Object_Box_Data *priv, int horizontal, int 
                               yy + (Evas_Coord)(((double)(hh - oh)) * ay));
              evas_object_resize(obj, ow, oh);
              xx += ww;
+             xx += priv->pad.h;
           }
         else
           {
@@ -185,6 +194,7 @@ _els_box_layout(Evas_Object *o, Evas_Object_Box_Data *priv, int horizontal, int 
                               yy + (Evas_Coord)(((double)(hh - oh)) * ay));
              evas_object_resize(obj, ow, oh);
              yy += hh;
+             yy += priv->pad.v;
           }
      }
 }

@@ -77,7 +77,8 @@ test_box_vert2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
 
    bx = elm_box_add(win);
    elm_win_resize_object_add(win, bx);
-   evas_object_size_hint_weight_set(bx, 0.0, 0.0);
+   elm_box_padding_set(bx, 10, 10);
+   evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_show(bx);
 
    bt = elm_button_add(win);
@@ -188,8 +189,8 @@ _test_box_transition_change(void *data)
    if (!data) return;
    next_layout = eina_list_data_get(tdata->transitions);
    layout_data = elm_box_transition_new(2.0, tdata->last_layout,
-         NULL, NULL, next_layout, NULL, NULL,
-         _test_box_transition_change, tdata);
+                                        NULL, NULL, next_layout, NULL, NULL,
+                                        _test_box_transition_change, tdata);
    elm_box_layout_set(tdata->box, elm_box_layout_transition, layout_data, elm_box_transition_free);
    tdata->last_layout = next_layout;
 
@@ -200,8 +201,9 @@ static void
 _win_del(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Transitions_Data *tdata = data;
+   if (!data) return;
    elm_box_layout_set(tdata->box, evas_object_box_layout_horizontal, NULL, NULL);
-   free(data);
+   free(tdata);
 }
 
 void
