@@ -72,6 +72,7 @@ void test_table(void *data, Evas_Object *obj, void *event_info);
 void test_table2(void *data, Evas_Object *obj, void *event_info);
 void test_table3(void *data, Evas_Object *obj, void *event_info);
 void test_table4(void *data, Evas_Object *obj, void *event_info);
+void test_table5(void *data, Evas_Object *obj, void *event_info);
 void test_gengrid(void *data, Evas_Object *obj, void *event_info);
 void test_gengrid2(void *data, Evas_Object *obj, void *event_info);
 void test_pager(void *data, Evas_Object *obj, void *event_info);
@@ -294,6 +295,7 @@ my_win_main(char *autorun)
    ADD_TEST("Table Homogeneous", test_table2);
    ADD_TEST("Table 3", test_table3);
    ADD_TEST("Table 4", test_table4);
+   ADD_TEST("Table 5", test_table5);
    ADD_TEST("Clock", test_clock);
    ADD_TEST("Clock 2", test_clock2);
    ADD_TEST("Layout", test_layout);
