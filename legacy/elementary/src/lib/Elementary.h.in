@@ -2405,7 +2405,9 @@ EAPI Elm_Genlist_Item *elm_genlist_item_sorted_insert(Evas_Object *obj, const El
    EAPI const char           *elm_map_source_name_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
    EAPI void                  elm_map_route_source_set(Evas_Object *obj, Elm_Map_Route_Sources source) EINA_ARG_NONNULL(1);
    EAPI Elm_Map_Route_Sources elm_map_route_source_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+   EAPI void                  elm_map_source_zoom_min_set(Evas_Object *obj, int zoom) EINA_ARG_NONNULL(1);
    EAPI int                   elm_map_source_zoom_min_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+   EAPI void                  elm_map_source_zoom_max_set(Evas_Object *obj, int zoom) EINA_ARG_NONNULL(1);
    EAPI int                   elm_map_source_zoom_max_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
    EAPI void                  elm_map_user_agent_set(Evas_Object *obj, const char *user_agent) EINA_ARG_NONNULL(1, 2);
    EAPI const char           *elm_map_user_agent_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);

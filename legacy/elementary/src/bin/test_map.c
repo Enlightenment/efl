@@ -429,6 +429,18 @@ map_rotate_reset(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNU
 }
 
 static void
+map_zoom_min_set(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+   elm_map_source_zoom_min_set(data, 1);
+}
+
+static void
+map_zoom_max_set(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+   elm_map_source_zoom_max_set(data, 10);
+}
+
+static void
 map_source(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Map_Source *s = data;
@@ -628,6 +640,8 @@ _map_mouse_down(void *data, Evas *evas __UNUSED__, Evas_Object *obj, void *event
         elm_menu_item_add(menu, NULL, NULL, "Rotate CW", map_rotate_cw, data);
         elm_menu_item_add(menu, NULL, NULL, "Rotate CCW", map_rotate_ccw, data);
         elm_menu_item_add(menu, NULL, NULL, "Reset Rotate", map_rotate_reset, data);
+        elm_menu_item_add(menu, NULL, NULL, "Set Zoom Min to 1", map_zoom_min_set, data);
+        elm_menu_item_add(menu, NULL, NULL, "Set Zoom Max to 10", map_zoom_max_set, data);
 
         elm_menu_move(menu, down->canvas.x, down->canvas.y);
         evas_object_show(menu);

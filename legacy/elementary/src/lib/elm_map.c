@@ -4810,6 +4810,24 @@ elm_map_route_source_get(const Evas_Object *obj)
 }
 
 /**
+ * Set the maximum zoom of the source.
+ *
+ * @param source the source
+ *
+ * @ingroup Map
+ */
+EAPI void
+elm_map_source_zoom_max_set(Evas_Object *obj, int zoom)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+
+   if ((!wd) || (!wd->src)) return;
+   if ((zoom > wd->zoom_max) || (zoom < wd->zoom_min)) return;
+   wd->src->zoom_max = zoom;
+}
+
+/**
  * Get the maximum zoom of the source.
  *
  * @param source the source
@@ -4826,6 +4844,25 @@ elm_map_source_zoom_max_get(const Evas_Object *obj)
    if ((!wd) || (!wd->src)) return 18;
    return wd->src->zoom_max;
 }
+
+/**
+ * Set the minimum zoom of the source.
+ *
+ * @param source the source
+ *
+ * @ingroup Map
+ */
+EAPI void
+elm_map_source_zoom_min_set(Evas_Object *obj, int zoom)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+
+   if ((!wd) || (!wd->src)) return;
+   if ((zoom > wd->zoom_max) || (zoom < wd->zoom_min)) return;
+   wd->src->zoom_min = zoom;
+}
+
 
 /**
  * Get the minimum zoom of the source.
