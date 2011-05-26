@@ -46,7 +46,7 @@ _smart_extents_calculate(Evas_Object *box, Evas_Object_Box_Data *priv, int horiz
    if (c > 0)
      {
         if (horizontal) minw += priv->pad.h * c;
-        else minh += priv->pad.v * c;
+        else            minh += priv->pad.v * c;
      }
    evas_object_size_hint_min_set(box, minw, minh);
 }

@@ -23,8 +23,6 @@ test_box_vert(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_show(bx);
 
-   elm_box_padding_set(bx, 1000, 1000);
-
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
    elm_icon_file_set(ic, buf, NULL);
