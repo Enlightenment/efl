@@ -1473,6 +1473,7 @@ _down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *even
    
    if (!wd) return;
    if (ev->button != 1) return;
+   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return ;
    if (wd->animator)
      {
         ecore_animator_del(wd->animator);
@@ -1500,6 +1501,7 @@ _up_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_
    
    if (!wd) return;
    if (ev->button != 1) return;
+   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return ;
    wd->down = 0;
    evas_object_geometry_get(data, &x, &y, &w, &h);
    wd->x = ev->canvas.x - x;
@@ -1553,6 +1555,7 @@ _move_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *even
    
    if (!wd) return;
    if (!wd->down) return;
+   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return ;
    evas_object_geometry_get(data, &x, &y, &w, &h);
    wd->x = ev->cur.canvas.x - x;
    wd->y = ev->cur.canvas.y - y;
@@ -1590,6 +1593,7 @@ _move_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *even
           }
         else return;
      }
+   ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
    if (wd->job) ecore_job_del(wd->job);
    wd->job = ecore_job_add(_update_job, wd);
 }
