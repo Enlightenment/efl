@@ -754,6 +754,26 @@ ecore_x_default_screen_get(void)
 } /* ecore_x_default_screen_get */
 
 /**
+ * Retrieves the size of an Ecore_X_Screen.
+ * @param screen the handle to the screen to query.
+ * @param w where to return the width. May be NULL. Returns 0 on errors.
+ * @param h where to return the height. May be NULL. Returns 0 on errors.
+ * @ingroup Ecore_X_Display_Attr_Group
+ * @see ecore_x_default_screen_get()
+ */
+EAPI void
+ecore_x_screen_size_get(const Ecore_X_Screen *screen, int *w, int *h)
+{
+   Screen *s = (Screen *)screen;
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   if (w) *w = 0;
+   if (h) *h = 0;
+   if (!s) return;
+   if (w) *w = s->width;
+   if (h) *h = s->height;
+}
+
+/**
  * Sets the timeout for a double and triple clicks to be flagged.
  *
  * This sets the time between clicks before the double_click flag is
