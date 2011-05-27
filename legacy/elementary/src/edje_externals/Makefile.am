@@ -57,7 +57,8 @@ elm_spinner.c \
 elm_thumb.c \
 elm_toggle.c \
 elm_toolbar.c \
-elm_segment_control.c
+elm_segment_control.c \
+elm_index.c
 
 module_la_LIBADD = $(top_builddir)/src/lib/libelementary.la
 module_la_LDFLAGS = -no-undefined -module -avoid-version -shared -fPIC
