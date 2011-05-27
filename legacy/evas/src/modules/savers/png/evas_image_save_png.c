@@ -29,7 +29,7 @@ static Evas_Image_Save_Func evas_image_save_png_func =
 };
 
 static int
-save_image_png(RGBA_Image *im, const char *file, int compress, int interlace)
+save_image_png(RGBA_Image *im, const char *file, int do_compress, int interlace)
 {
    FILE               *f;
    png_structp         png_ptr;
@@ -110,7 +110,7 @@ save_image_png(RGBA_Image *im, const char *file, int compress, int interlace)
    sig_bit.alpha = 8;
    png_set_sBIT(png_ptr, info_ptr, &sig_bit);
 
-   png_set_compression_level(png_ptr, compress);
+   png_set_compression_level(png_ptr, do_compress);
    png_write_info(png_ptr, info_ptr);
    png_set_shift(png_ptr, &sig_bit);
    png_set_packing(png_ptr);
@@ -155,9 +155,10 @@ save_image_png(RGBA_Image *im, const char *file, int compress, int interlace)
    return 0;
 }
 
-static int evas_image_save_file_png(RGBA_Image *im, const char *file, const char *key __UNUSED__, int quality __UNUSED__, int compress)
+static int 
+evas_image_save_file_png(RGBA_Image *im, const char *file, const char *key __UNUSED__, int quality __UNUSED__, int do_compress)
 {
-   return save_image_png(im, file, compress, 0);
+   return save_image_png(im, file, do_compress, 0);
 }
 
 static int
