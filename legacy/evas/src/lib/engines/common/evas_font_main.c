@@ -254,7 +254,7 @@ _fash_int_find(Fash_Int *fash, int item)
 }
 
 static void
-_fash_int_add(Fash_Int *fash, int item, RGBA_Font_Int *fint, int index)
+_fash_int_add(Fash_Int *fash, int item, RGBA_Font_Int *fint, int idx)
 {
    int grp, maj, min;
 
@@ -269,7 +269,7 @@ _fash_int_add(Fash_Int *fash, int item, RGBA_Font_Int *fint, int index)
      fash->bucket[grp]->bucket[maj] = calloc(1, sizeof(Fash_Int_Map));
    EINA_SAFETY_ON_NULL_RETURN(fash->bucket[grp]->bucket[maj]);
    fash->bucket[grp]->bucket[maj]->item[min].fint = fint;
-   fash->bucket[grp]->bucket[maj]->item[min].index = index;
+   fash->bucket[grp]->bucket[maj]->item[min].index = idx;
 }
 
 static void
@@ -331,7 +331,7 @@ _fash_gl_add(Fash_Glyph *fash, int item, RGBA_Font_Glyph *glyph)
 }
 
 EAPI RGBA_Font_Glyph *
-evas_common_font_int_cache_glyph_get(RGBA_Font_Int *fi, FT_UInt index)
+evas_common_font_int_cache_glyph_get(RGBA_Font_Int *fi, FT_UInt idx)
 {
    RGBA_Font_Glyph *fg;
    FT_UInt hindex;
@@ -344,26 +344,26 @@ evas_common_font_int_cache_glyph_get(RGBA_Font_Int *fi, FT_UInt index)
    evas_common_font_int_promote(fi);
    if (fi->fash)
      {
-        fg = _fash_gl_find(fi->fash, index);
+        fg = _fash_gl_find(fi->fash, idx);
         if (fg == (void *)(-1)) return NULL;
         else if (fg) return fg;
      }
 
-   hindex = index + (fi->hinting * 500000000);
+   hindex = idx + (fi->hinting * 500000000);
 
 //   fg = eina_hash_find(fi->glyphs, &hindex);
 //   if (fg) return fg;
 
    evas_common_font_int_reload(fi);
    FTLOCK();
-   error = FT_Load_Glyph(fi->src->ft.face, index,
+   error = FT_Load_Glyph(fi->src->ft.face, idx,
                          FT_LOAD_DEFAULT | FT_LOAD_NO_BITMAP |
                          hintflags[fi->hinting]);
    FTUNLOCK();
    if (error)
      {
         if (!fi->fash) fi->fash = _fash_gl_new();
-        if (fi->fash) _fash_gl_add(fi->fash, index, (void *)(-1));
+        if (fi->fash) _fash_gl_add(fi->fash, idx, (void *)(-1));
         return NULL;
      }
 
@@ -386,7 +386,7 @@ evas_common_font_int_cache_glyph_get(RGBA_Font_Int *fi, FT_UInt index)
      {
 	free(fg);
         if (!fi->fash) fi->fash = _fash_gl_new();
-        if (fi->fash) _fash_gl_add(fi->fash, index, (void *)(-1));
+        if (fi->fash) _fash_gl_add(fi->fash, idx, (void *)(-1));
 	return NULL;
      }
 
@@ -398,7 +398,7 @@ evas_common_font_int_cache_glyph_get(RGBA_Font_Int *fi, FT_UInt index)
         FTUNLOCK();
         free(fg);
         if (!fi->fash) fi->fash = _fash_gl_new();
-        if (fi->fash) _fash_gl_add(fi->fash, index, (void *)(-1));
+        if (fi->fash) _fash_gl_add(fi->fash, idx, (void *)(-1));
         return NULL;
      }
    FTUNLOCK();
@@ -408,7 +408,7 @@ evas_common_font_int_cache_glyph_get(RGBA_Font_Int *fi, FT_UInt index)
    fg->fi = fi;
 
    if (!fi->fash) fi->fash = _fash_gl_new();
-   if (fi->fash) _fash_gl_add(fi->fash, index, fg);
+   if (fi->fash) _fash_gl_add(fi->fash, idx, fg);
    /* This '+ 200' is just an estimation of how much memory freetype will use
     * on it's size. This value is not really used anywhere in code - it's
     * only for statistics. */
@@ -487,7 +487,7 @@ evas_common_font_glyph_search(RGBA_Font *fn, RGBA_Font_Int **fi_ret, Eina_Unicod
    for (l = fn->fonts; l; l = l->next)
      {
 	RGBA_Font_Int *fi;
-	int index;
+	int idx;
 
 	fi = l->data;
 
@@ -495,8 +495,8 @@ evas_common_font_glyph_search(RGBA_Font *fn, RGBA_Font_Int **fi_ret, Eina_Unicod
 /*        
 	if (fi->src->charmap) // Charmap loaded, FI/FS blank
 	  {
-	     index = evas_array_hash_search(fi->src->charmap, gl);
-	     if (index != 0)
+	     idx = evas_array_hash_search(fi->src->charmap, gl);
+	     if (idx != 0)
 	       {
 		  evas_common_font_source_load_complete(fi->src);
 		  evas_common_font_int_load_complete(fi);
@@ -505,7 +505,7 @@ evas_common_font_glyph_search(RGBA_Font *fn, RGBA_Font_Int **fi_ret, Eina_Unicod
 		  fi->src->charmap = NULL;
 
 		  *fi_ret = fi;
-		  return index;
+		  return idx;
                }
            }
         else
@@ -517,15 +517,15 @@ evas_common_font_glyph_search(RGBA_Font *fn, RGBA_Font_Int **fi_ret, Eina_Unicod
 	  }
         if (fi->src->ft.face)
 	  {
-	     index = evas_common_get_char_index(fi, gl);
-	     if (index != 0)
+	     idx = evas_common_get_char_index(fi, gl);
+	     if (idx != 0)
 	       {
 		  if (!fi->ft.size)
                      evas_common_font_int_load_complete(fi);
                   if (!fn->fash) fn->fash = _fash_int_new();
-                  if (fn->fash) _fash_int_add(fn->fash, gl, fi, index);
+                  if (fn->fash) _fash_int_add(fn->fash, gl, fi, idx);
 		  *fi_ret = fi;
-		  return index;
+		  return idx;
 	       }
              else
                {
@@ -536,4 +536,3 @@ evas_common_font_glyph_search(RGBA_Font *fn, RGBA_Font_Int **fi_ret, Eina_Unicod
      }
    return 0;
 }
-

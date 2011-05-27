@@ -195,15 +195,16 @@ evas_common_font_draw_internal(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font
 
    EVAS_FONT_WALK_TEXT_START()
      {
-        FT_UInt index;
+        FT_UInt idx;
         RGBA_Font_Glyph *fg;
         int chr_x, chr_y, chr_w;
+
         if (!EVAS_FONT_WALK_IS_VISIBLE) continue;
 
-        index = EVAS_FONT_WALK_INDEX;
+        idx = EVAS_FONT_WALK_INDEX;
 
         LKL(fi->ft_mutex);
-        fg = evas_common_font_int_cache_glyph_get(fi, index);
+        fg = evas_common_font_int_cache_glyph_get(fi, idx);
         if (!fg)
           {
              LKU(fi->ft_mutex);

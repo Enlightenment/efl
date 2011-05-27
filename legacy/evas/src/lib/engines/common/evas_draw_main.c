@@ -18,16 +18,15 @@ evas_common_draw_context_cutouts_free(Cutout_Rects* rects)
 }
 
 EAPI void
-evas_common_draw_context_cutouts_del(Cutout_Rects* rects,
-                                     int index)
+evas_common_draw_context_cutouts_del(Cutout_Rects* rects, int idx)
 {
-   if ((index >= 0) && (index < rects->active))
+   if ((idx >= 0) && (idx < rects->active))
      {
-        Cutout_Rect*    rect;
+        Cutout_Rect *rect;
 
-	rect = rects->rects + index;
+	rect = rects->rects + idx;
         memmove(rect, rect + 1,
-		sizeof(Cutout_Rect) * (rects->active - index - 1));
+		sizeof(Cutout_Rect) * (rects->active - idx - 1));
         rects->active--;
      }
 }
@@ -212,10 +211,10 @@ evas_common_draw_context_add_cutout(RGBA_Draw_Context *dc, int x, int y, int w, 
 }
 
 int
-evas_common_draw_context_cutout_split(Cutout_Rects* res, int index, Cutout_Rect *split)
+evas_common_draw_context_cutout_split(Cutout_Rects* res, int idx, Cutout_Rect *split)
 {
    /* 1 input rect, multiple out */
-   Cutout_Rect  in = res->rects[index];
+   Cutout_Rect in = res->rects[idx];
 
    /* this is to save me a LOT of typing */
 #define INX1 (in.x)
@@ -255,8 +254,8 @@ evas_common_draw_context_cutout_split(Cutout_Rects* res, int index, Cutout_Rect 
 	R_NEW(res, in.x, SPY1, SPX1 - in.x, SPY2 - SPY1);
 	R_NEW(res, SPX2, SPY1, INX2 - SPX2, SPY2 - SPY1);
         /* out => (in.x, SPY2, in.w, INY2 - SPY2) */
-        res->rects[index].h = INY2 - SPY2;
-        res->rects[index].y = SPY2;
+        res->rects[idx].h = INY2 - SPY2;
+        res->rects[idx].y = SPY2;
 	return 1;
      }
    /* SSSSSSS
@@ -269,7 +268,7 @@ evas_common_draw_context_cutout_split(Cutout_Rects* res, int index, Cutout_Rect 
     */
    if (!X1_IN && !X2_IN && !Y1_IN && !Y2_IN)
      {
-        evas_common_draw_context_cutouts_del(res, index);
+        evas_common_draw_context_cutouts_del(res, idx);
 	return 0;
      }
    /* SSS
@@ -283,8 +282,8 @@ evas_common_draw_context_cutout_split(Cutout_Rects* res, int index, Cutout_Rect 
    if (!X1_IN && X2_IN && !Y1_IN && !Y2_IN)
      {
         /* in => (SPX2, in.y, INX2 - SPX2, in.h) */
-        res->rects[index].w = INX2 - SPX2;
-        res->rects[index].x = SPX2;
+        res->rects[idx].w = INX2 - SPX2;
+        res->rects[idx].x = SPX2;
 	return 1;
      }
    /*    S
@@ -299,8 +298,8 @@ evas_common_draw_context_cutout_split(Cutout_Rects* res, int index, Cutout_Rect 
      {
         R_NEW(res, in.x, in.y, SPX1 - in.x, in.h);
         /* in => (SPX2, in.y, INX2 - SPX2, in.h) */
-        res->rects[index].w = INX2 - SPX2;
-        res->rects[index].x = SPX2;
+        res->rects[idx].w = INX2 - SPX2;
+        res->rects[idx].x = SPX2;
 	return 1;
      }
    /*     SSS
@@ -314,7 +313,7 @@ evas_common_draw_context_cutout_split(Cutout_Rects* res, int index, Cutout_Rect 
    if (X1_IN && !X2_IN && !Y1_IN && !Y2_IN)
      {
         /* in => (in.x, in.y, SPX1 - in.x, in.h) */
-        res->rects[index].w = SPX1 - in.x;
+        res->rects[idx].w = SPX1 - in.x;
 	return 1;
      }
    /* SSSSSSS
@@ -328,8 +327,8 @@ evas_common_draw_context_cutout_split(Cutout_Rects* res, int index, Cutout_Rect 
    if (!X1_IN && !X2_IN && !Y1_IN && Y2_IN)
      {
         /* in => (in.x, SPY2, in.w, INY2 - SPY2) */
-        res->rects[index].h = INY2 - SPY2;
-        res->rects[index].y = SPY2;
+        res->rects[idx].h = INY2 - SPY2;
+        res->rects[idx].y = SPY2;
 	return 1;
      }
    /*
@@ -344,7 +343,7 @@ evas_common_draw_context_cutout_split(Cutout_Rects* res, int index, Cutout_Rect 
      {
         R_NEW(res, in.x, SPY2, in.w, INY2 - SPY2);
         /* in => (in.x, in.y, in.w, SPY1 - in.y) */
-        res->rects[index].h = SPY1 - in.y;
+        res->rects[idx].h = SPY1 - in.y;
 	return 1;
      }
    /*
@@ -358,7 +357,7 @@ evas_common_draw_context_cutout_split(Cutout_Rects* res, int index, Cutout_Rect 
    if (!X1_IN && !X2_IN && Y1_IN && !Y2_IN)
      {
         /* in => (in.x, in.y, in.w, SPY1 - in.y) */
-        res->rects[index].h = SPY1 - in.y;
+        res->rects[idx].h = SPY1 - in.y;
 	return 1;
      }
    /* SSS
@@ -373,8 +372,8 @@ evas_common_draw_context_cutout_split(Cutout_Rects* res, int index, Cutout_Rect 
      {
 	R_NEW(res, SPX2, in.y, INX2 - SPX2, SPY2 - in.y);
         /* in => (in.x, SPY2, in.w, INY2 - SPY2) */
-        res->rects[index].h = INY2 - SPY2;
-        res->rects[index].y = SPY2;
+        res->rects[idx].h = INY2 - SPY2;
+        res->rects[idx].y = SPY2;
 	return 1;
      }
    /*    S
@@ -390,8 +389,8 @@ evas_common_draw_context_cutout_split(Cutout_Rects* res, int index, Cutout_Rect 
 	R_NEW(res, in.x, in.y, SPX1 - in.x, SPY2 - in.y);
 	R_NEW(res, SPX2, in.y, INX2 - SPX2, SPY2 - in.y);
         /* in => (in.x, SPY2, in.w, INY2 - SPY2) */
-        res->rects[index].h = INY2 - SPY2;
-        res->rects[index].y = SPY2;
+        res->rects[idx].h = INY2 - SPY2;
+        res->rects[idx].y = SPY2;
 	return 1;
      }
    /*     SSS
@@ -406,8 +405,8 @@ evas_common_draw_context_cutout_split(Cutout_Rects* res, int index, Cutout_Rect 
      {
 	R_NEW(res, in.x, in.y, SPX1 - in.x, SPY2 - in.y);
         /* in => (in.x, SPY2, in.w, INY2 - SPY2) */
-        res->rects[index].h = INY2 - SPY2;
-        res->rects[index].y = SPY2;
+        res->rects[idx].h = INY2 - SPY2;
+        res->rects[idx].y = SPY2;
 	return 1;
      }
    /*
@@ -423,7 +422,7 @@ evas_common_draw_context_cutout_split(Cutout_Rects* res, int index, Cutout_Rect 
 	R_NEW(res, in.x, SPY2, in.w, INY2 - SPY2);
 	R_NEW(res, SPX2, SPY1, INX2 - SPX2, SPY2 - SPY1);
         /* in => (in.x, SPY2, in.w, INY2 - SPY2) */
-        res->rects[index].h = SPY1 - in.y;
+        res->rects[idx].h = SPY1 - in.y;
 	return 1;
      }
    /*
@@ -439,7 +438,7 @@ evas_common_draw_context_cutout_split(Cutout_Rects* res, int index, Cutout_Rect 
 	R_NEW(res, in.x, SPY2, in.w, INY2 - SPY2);
 	R_NEW(res, in.x, SPY1, SPX1 - in.x, SPY2 - SPY1);
         /* in => (in.x, in.y, in.w, SPY1 - in.y) */
-        res->rects[index].h = SPY1 - in.y;
+        res->rects[idx].h = SPY1 - in.y;
 	return 1;
      }
    /*
@@ -454,7 +453,7 @@ evas_common_draw_context_cutout_split(Cutout_Rects* res, int index, Cutout_Rect 
      {
         R_NEW(res, SPX2, SPY1, INX2 - SPX2, INY2 - SPY1);
         /* in => (in.x, in.y, in.w, SPY1 - in.y) */
-        res->rects[index].h = SPY1 - in.y;
+        res->rects[idx].h = SPY1 - in.y;
 	return 1;
      }
    /*
@@ -470,7 +469,7 @@ evas_common_draw_context_cutout_split(Cutout_Rects* res, int index, Cutout_Rect 
 	R_NEW(res, in.x, SPY1, SPX1 - in.x, INY2 - SPY1);
         R_NEW(res, SPX2, SPY1, INX2 - SPX2, INY2 - SPY1);
         /* in => (in.x, in.y, in.w, SPY1 - in.y) */
-        res->rects[index].h = SPY1 - in.y;
+        res->rects[idx].h = SPY1 - in.y;
 	return 1;
      }
    /*
@@ -485,10 +484,10 @@ evas_common_draw_context_cutout_split(Cutout_Rects* res, int index, Cutout_Rect 
      {
         R_NEW(res, in.x, SPY1, SPX1 - in.x, INY2 - SPY1);
         /* in => (in.x, in.y, in.w, SPY1 - in.y) */
-        res->rects[index].h = SPY1 - in.y;
+        res->rects[idx].h = SPY1 - in.y;
 	return 1;
      }
-   evas_common_draw_context_cutouts_del(res, index);
+   evas_common_draw_context_cutouts_del(res, idx);
    return 0;
 #undef INX1
 #undef INX2
