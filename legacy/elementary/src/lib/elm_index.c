@@ -637,8 +637,8 @@ elm_index_active_set(Evas_Object *obj, Eina_Bool active)
  *
  * @ingroup Index
  */
-EAPI void
-elm_index_active_get(Evas_Object *obj)
+EAPI Eina_Bool
+elm_index_active_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
    Widget_Data *wd = elm_widget_data_get(obj);

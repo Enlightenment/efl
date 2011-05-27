@@ -2225,7 +2225,7 @@ EAPI Elm_Genlist_Item *elm_genlist_item_sorted_insert(Evas_Object *obj, const El
 
    EAPI Evas_Object    *elm_index_add(Evas_Object *parent) EINA_ARG_NONNULL(1);
    EAPI void            elm_index_active_set(Evas_Object *obj, Eina_Bool active) EINA_ARG_NONNULL(1);
-   EAPI Eina_Bool       elm_index_active_get(Evas_Object *obj) EINA_ARG_NONNULL(1);
+   EAPI Eina_Bool       elm_index_active_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
    EAPI void            elm_index_item_level_set(Evas_Object *obj, int level) EINA_ARG_NONNULL(1);
    EAPI int             elm_index_item_level_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
    EAPI void           *elm_index_item_selected_get(const Evas_Object *obj, int level) EINA_ARG_NONNULL(1);
