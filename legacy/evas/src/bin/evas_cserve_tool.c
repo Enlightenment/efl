@@ -10,7 +10,7 @@ int
 main(int argc, char **argv)
 {
    int i;
-   
+
    evas_init();
    if (!evas_cserve_init())
      {
@@ -86,8 +86,8 @@ main(int argc, char **argv)
           {
              Op_Getinfo_Reply *info;
              unsigned char *p;
-             int i, j;
-             
+             int h, j;
+
              info = evas_cserve_raw_info_get();
              if (!info)
                {
@@ -102,7 +102,7 @@ main(int argc, char **argv)
              printf("cache_memory: %i Kb\n", info->cached.mem_total);
              p = (unsigned char *)info;
              p += sizeof(Op_Getinfo_Reply);
-             for (i = 0; i < j; i++)
+             for (h = 0; h < j; h++)
                {
                   Op_Getinfo_Item it;
                   char *file, *key, buf[512];
@@ -111,7 +111,7 @@ main(int argc, char **argv)
                   memcpy(&it, p, sizeof(Op_Getinfo_Item));
                   file = (char*) (p + sizeof(Op_Getinfo_Item));
                   key = file + strlen(file) + 1;
-                  printf("-IMAGE- [#%i]\n", i);
+                  printf("-IMAGE- [#%i]\n", h);
                   printf("  file       : %s\n", file);
                   printf("  key        : %s\n", key);
                   printf("  size       : %i x %i\n", it.w, it.h);
