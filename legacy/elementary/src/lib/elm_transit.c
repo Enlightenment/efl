@@ -181,7 +181,7 @@ _obj_damage_area_set(Evas_Object *obj)
    map  = evas_object_map_get(obj);
    if (!map) return;
 
-  evas_map_point_coord_get(map, 0, &coords.x, &coords.y, NULL);
+   evas_map_point_coord_get(map, 0, &coords.x, &coords.y, NULL);
 
    max = min = coords;
 
@@ -233,8 +233,8 @@ _elm_transit_object_remove(Elm_Transit *transit, Evas_Object *obj)
    obj_data = eina_hash_find(transit->objs_data_hash, list);
    if (!obj_data)
      {
-       _remove_obj_from_list(transit, obj);
-       return;
+        _remove_obj_from_list(transit, obj);
+        return;
      }
    eina_hash_del_by_key(transit->objs_data_hash, list);
    _remove_obj_from_list(transit, obj);
@@ -251,11 +251,11 @@ _elm_transit_object_remove(Elm_Transit *transit, Evas_Object *obj)
              if (state->visible) evas_object_show(obj);
              else evas_object_hide(obj);
              if (state->map_enabled)
-                evas_object_map_enable_set(obj, EINA_TRUE);
+               evas_object_map_enable_set(obj, EINA_TRUE);
              else
-                evas_object_map_enable_set(obj, EINA_FALSE);
+               evas_object_map_enable_set(obj, EINA_FALSE);
              if (state->map)
-                evas_object_map_set(obj, state->map);
+               evas_object_map_set(obj, state->map);
 
              //TODO: Remove!
              //Since evas map have a afterimage bug for this time.
@@ -406,7 +406,7 @@ _animator_animate_cb(void *data)
      {
         /* run chain transit */
         if (transit->next_chain_transits)
-           _chain_transits_go(transit);
+          _chain_transits_go(transit);
 
         elm_transit_del(transit);
         return ECORE_CALLBACK_CANCEL;
@@ -1796,7 +1796,7 @@ _transit_effect_resizable_flip_op(Elm_Transit_Effect *effect, Elm_Transit *trans
 
    if (!resizable_flip->nodes)
      resizable_flip->nodes = _resizable_flip_nodes_build(transit,
-                                                          resizable_flip);
+                                                         resizable_flip);
 
    EINA_LIST_FOREACH(resizable_flip->nodes, elist, resizable_flip_node)
      {
@@ -2082,7 +2082,7 @@ _transit_effect_wipe_op(Elm_Transit_Effect *effect, Elm_Transit *transit, double
         if (wipe->type == ELM_TRANSIT_EFFECT_WIPE_TYPE_SHOW)
           _elm_fx_wipe_show(map, wipe->dir, _x, _y, _w, _h, (float)progress);
         else
-           _elm_fx_wipe_hide(map, wipe->dir, _x, _y, _w, _h, (float)progress);
+          _elm_fx_wipe_hide(map, wipe->dir, _x, _y, _w, _h, (float)progress);
 
         evas_object_map_enable_set(obj, EINA_TRUE);
         evas_object_map_set(obj, map);
