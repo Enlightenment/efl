@@ -211,24 +211,24 @@ static void evas_common_pipe_op_free(RGBA_Pipe_Op *op);
 
 /* utils */
 static RGBA_Pipe *
-evas_common_pipe_add(RGBA_Pipe *pipe, RGBA_Pipe_Op **op)
+evas_common_pipe_add(RGBA_Pipe *rpipe, RGBA_Pipe_Op **op)
 {
    RGBA_Pipe *p;
    int first_pipe = 0;
 
-   if (!pipe)
+   if (!rpipe)
      {
         first_pipe = 1;
         p = calloc(1, sizeof(RGBA_Pipe));
         if (!p) return NULL;
-        pipe = (RGBA_Pipe *)eina_inlist_append(EINA_INLIST_GET(pipe), EINA_INLIST_GET(p));
+        rpipe = (RGBA_Pipe *)eina_inlist_append(EINA_INLIST_GET(rpipe), EINA_INLIST_GET(p));
      }
-   p = (RGBA_Pipe *)(EINA_INLIST_GET(pipe))->last;
+   p = (RGBA_Pipe *)(EINA_INLIST_GET(rpipe))->last;
    if (p->op_num == PIPE_LEN)
      {
         p = calloc(1, sizeof(RGBA_Pipe));
         if (!p) return NULL;
-        pipe = (RGBA_Pipe *)eina_inlist_append(EINA_INLIST_GET(pipe), EINA_INLIST_GET(p));
+        rpipe = (RGBA_Pipe *)eina_inlist_append(EINA_INLIST_GET(rpipe), EINA_INLIST_GET(p));
      }
    p->op_num++;
    *op = &(p->op[p->op_num - 1]);
@@ -236,7 +236,7 @@ evas_common_pipe_add(RGBA_Pipe *pipe, RGBA_Pipe_Op **op)
      {
         /* FIXME: PTHREAD init any thread locks etc */
      }
-   return pipe;
+   return rpipe;
 }
 
 static void
@@ -1573,13 +1573,13 @@ static LK(task_mutext);
 static void*
 evas_common_pipe_load(void *data)
 {
-  Thinfo *thinfo;
+  Thinfo *tinfo;
 
-  thinfo = data;
+  tinfo = data;
   for (;;)
     {
       /* wait for start signal */
-      pthread_barrier_wait(&(thinfo->barrier[0]));
+      pthread_barrier_wait(&(tinfo->barrier[0]));
 
       while (task)
 	{
@@ -1601,7 +1601,7 @@ evas_common_pipe_load(void *data)
 	}
 
       /* send finished signal */    
-      pthread_barrier_wait(&(thinfo->barrier[1]));
+      pthread_barrier_wait(&(tinfo->barrier[1]));
     }
 
   return NULL;

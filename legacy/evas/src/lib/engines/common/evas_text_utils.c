@@ -360,21 +360,21 @@ evas_common_text_props_content_create(void *_fn, const Eina_Unicode *text,
    gl_itr = text_props->info->glyph;
    for ( ; i > 0 ; gl_itr++, text += adv_d, i--)
      {
-        FT_UInt index;
+        FT_UInt idx;
         RGBA_Font_Glyph *fg;
         int _gl, kern;
         Evas_Coord adv;
         _gl = *text;
         if (_gl == 0) break;
 
-        index = evas_common_get_char_index(fi, _gl);
-        if (index == 0)
+        idx = evas_common_get_char_index(fi, _gl);
+        if (idx == 0)
           {
-             index = evas_common_get_char_index(fi, REPLACEMENT_CHAR);
+             idx = evas_common_get_char_index(fi, REPLACEMENT_CHAR);
           }
 
         LKL(fi->ft_mutex);
-        fg = evas_common_font_int_cache_glyph_get(fi, index);
+        fg = evas_common_font_int_cache_glyph_get(fi, idx);
         if (!fg)
           {
              LKU(fi->ft_mutex);
@@ -382,10 +382,10 @@ evas_common_text_props_content_create(void *_fn, const Eina_Unicode *text,
           }
         kern = 0;
 
-        if ((use_kerning) && (prev_index) && (index) &&
+        if ((use_kerning) && (prev_index) && (idx) &&
             (pface == fi->src->ft.face))
           {
-             if (evas_common_font_query_kerning(fi, prev_index, index, &kern))
+             if (evas_common_font_query_kerning(fi, prev_index, idx, &kern))
                {
                   pen_x += kern;
                   (gl_itr - 1)->pen_after +=
@@ -396,7 +396,7 @@ evas_common_text_props_content_create(void *_fn, const Eina_Unicode *text,
         pface = fi->src->ft.face;
         LKU(fi->ft_mutex);
 
-        gl_itr->index = index;
+        gl_itr->index = idx;
         gl_itr->x_bear = fg->glyph_out->left;
         adv = fg->glyph->advance.x >> 10;
         gl_itr->width = fg->glyph_out->bitmap.width;
@@ -412,7 +412,7 @@ evas_common_text_props_content_create(void *_fn, const Eina_Unicode *text,
 
         gl_itr->pen_after = EVAS_FONT_ROUND_26_6_TO_INT(pen_x);
 
-        prev_index = index;
+        prev_index = idx;
      }
    text_props->len = len;
 # if !defined(OT_SUPPORT) && defined(BIDI_SUPPORT)
@@ -424,4 +424,3 @@ evas_common_text_props_content_create(void *_fn, const Eina_Unicode *text,
    text_props->info->refcount = 1;
    return EINA_TRUE;
 }
-
