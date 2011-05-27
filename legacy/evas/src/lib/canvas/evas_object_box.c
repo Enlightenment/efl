@@ -91,11 +91,11 @@ _evas_object_box_iterator_free(Evas_Object_Box_Iterator *it)
 }
 
 static Eina_Bool
-_evas_object_box_accessor_get_at(Evas_Object_Box_Accessor *it, unsigned int index, void **data)
+_evas_object_box_accessor_get_at(Evas_Object_Box_Accessor *it, unsigned int idx, void **data)
 {
    Evas_Object_Box_Option *opt = NULL;
 
-   if (!eina_accessor_data_get(it->real_accessor, index, (void *)&opt))
+   if (!eina_accessor_data_get(it->real_accessor, idx, (void *)&opt))
      return EINA_FALSE;
    if (data) *data = opt->obj;
    return EINA_TRUE;
