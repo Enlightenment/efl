@@ -832,12 +832,19 @@ ecore_evas_engine_name_get(const Ecore_Evas *ee)
  * Return the Ecore_Evas for this Evas
  *
  * @param e The Evas to get the Ecore_Evas from
- * @return The Ecore_Evas that holds this Evas
+ * @return The Ecore_Evas that holds this Evas, or NULL if not hold by one.
  */
 EAPI Ecore_Evas *
 ecore_evas_ecore_evas_get(const Evas *e)
 {
-   return evas_data_attach_get(e);
+   Ecore_Evas *ee = evas_data_attach_get(e);
+   if (!ee) return NULL;
+   if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
+     {
+        ECORE_MAGIC_FAIL(ee, ECORE_MAGIC_EVAS, "ecore_evas_ecore_evas_get");
+        return NULL;
+     }
+   return ee;
 }
 
 /**
