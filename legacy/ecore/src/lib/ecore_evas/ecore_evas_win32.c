@@ -925,7 +925,8 @@ static Ecore_Evas_Engine_Func _ecore_win32_engine_func =
      NULL,  /* _ecore_evas_x_alpha_set */
      NULL, //transparent
 
-     NULL // render
+     NULL, // render
+     NULL  //screen_geometry_get
 };
 
 #endif /* BUILD_ECORE_EVAS_WIN32 */

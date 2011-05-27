@@ -350,6 +350,8 @@ EAPI Eina_Bool   ecore_evas_comp_sync_get(const Ecore_Evas *ee);
        
 EAPI Ecore_Window ecore_evas_window_get(const Ecore_Evas *ee);
 
+EAPI void        ecore_evas_screen_geometry_get(const Ecore_Evas *ee, int *x, int *y, int *w, int *h);
+
 EAPI Eina_Bool    ecore_evas_object_associate(Ecore_Evas *ee, Evas_Object *obj, Ecore_Evas_Object_Associate_Flags flags);
 EAPI Eina_Bool    ecore_evas_object_dissociate(Ecore_Evas *ee, Evas_Object *obj);
 EAPI Evas_Object *ecore_evas_object_associate_get(const Ecore_Evas *ee);

@@ -721,7 +721,8 @@ static Ecore_Evas_Engine_Func _ecore_wince_engine_func =
    NULL, /* _ecore_evas_x_alpha_set */
    NULL, //transparent
 
-     NULL // render
+   NULL, // render
+   NULL  // screen_geometry_get
 };
 
 /* API */

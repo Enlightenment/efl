@@ -2912,6 +2912,14 @@ _ecore_evas_x_avoid_damage_set(Ecore_Evas *ee, int on)
      }
 }
 
+static void
+_ecore_evas_x_screen_geometry_get(const Ecore_Evas *ee __UNUSED__, int *x, int *y, int *w, int *h)
+{
+   if (x) *x = 0;
+   if (y) *y = 0;
+   ecore_x_screen_size_get(ecore_x_default_screen_get(), w, h);
+}
+
 int
 _ecore_evas_x_shutdown(void)
 {
@@ -2980,7 +2988,8 @@ static Ecore_Evas_Engine_Func _ecore_x_engine_func =
      _ecore_evas_x_alpha_set,
      _ecore_evas_x_transparent_set,
 
-     NULL // render
+     NULL, // render
+     _ecore_evas_x_screen_geometry_get
 };
 #endif /* BUILD_ECORE_EVAS_X11 */
 

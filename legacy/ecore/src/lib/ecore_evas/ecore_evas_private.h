@@ -186,6 +186,7 @@ struct _Ecore_Evas_Engine_Func
    void        (*fn_transparent_set) (Ecore_Evas *ee, int transparent);
 
    int         (*fn_render) (Ecore_Evas *ee);
+   void        (*fn_screen_geometry_get) (const Ecore_Evas *ee, int *x, int *y, int *w, int *h);
 };
 
 struct _Ecore_Evas_Engine

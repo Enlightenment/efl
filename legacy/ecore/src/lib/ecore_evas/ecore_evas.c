@@ -2675,6 +2675,35 @@ ecore_evas_window_get(const Ecore_Evas *ee)
    return ee->prop.window;
 }
 
+/**
+ * Get whole screen geometry associated with this Ecore_Evas.
+ *
+ * @param ee The Ecore_Evas whose window's to query container screen geometry.
+ * @param x where to return the horizontal offset value. May be NULL.
+ * @param y where to return the vertical offset value. May be NULL.
+ * @param w where to return the width value. May be NULL.
+ * @param h where to return the height value. May be NULL.
+ *
+ * @since 1.1
+ */
+EAPI void
+ecore_evas_screen_geometry_get(const Ecore_Evas *ee, int *x, int *y, int *w, int *h)
+{
+   if (x) *x = 0;
+   if (y) *y = 0;
+   if (w) *w = 0;
+   if (h) *h = 0;
+   if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
+     {
+        ECORE_MAGIC_FAIL(ee, ECORE_MAGIC_EVAS,
+                         "ecore_evas_screen_geometry_get");
+        return;
+     }
+
+   IFC(ee, fn_screen_geometry_get) (ee, x, y, w, h);
+   IFE;
+}
+
 /* fps debug calls - for debugging how much time your app actually spends */
 /* rendering graphics... :) */
 
