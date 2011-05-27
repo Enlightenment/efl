@@ -103,3 +103,10 @@
 	   the cursor really didn't change, it's more like a new cursor.
 	   Also, when setting position, don't do anything if position is as it
 	   was.
+
+2011-05-27  Carsten Haitzler (The Rasterman)
+
+	* Improve performance on create/delete of edje objects by using
+        evas freeze and thaw calls. May help in certain pathological
+        situations.
+
