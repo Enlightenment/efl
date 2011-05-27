@@ -201,4 +201,7 @@
 
 2011-05-27 Gustavo Sverzut Barbieri (k-s)
 
+	* Ecore_X: introduce ecore_x_screen_size_get()
+	* Ecore_Evas: be safer when returning Ecore_Evas* from
+	  ecore_evas_ecore_evas_get()
 	* Ecore_Evas: introduce ecore_evas_screen_geometry_get()
