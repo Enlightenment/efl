@@ -303,23 +303,12 @@ static void
 _parent_focus(Evas_Object *obj)
 {
    API_ENTRY return;
+   if (sd->focused) return;
 
    Evas_Object *o = elm_widget_parent_get(obj);
    sd->focus_order_on_calc = EINA_TRUE;
 
-   if (sd->focused) return;
-   if (o)
-     {
-        unsigned int i = 0;
-        Evas_Object *ret;
-
-        ret = _newest_focus_order_get(o, &i, EINA_TRUE);
-
-        /* we don't want to bump a common widget ancestor's
-           focus_order *twice* while parent focusing */
-        if (!ret || (!i) || (i != focus_order))
-          _parent_focus(o);
-     }
+   if (o) _parent_focus(o);
 
    if (!sd->focus_order_on_calc)
      return; /* we don't want to override it if by means of any of the

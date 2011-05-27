@@ -16,18 +16,18 @@ static struct tms en_cpu;
 
 
 static void
-_sel_file(void *data, Evas_Object *obj, void *event_info)
+_sel_file(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
 }
 
 static Eina_Bool
-_ls_filter_cb(void *data, Eio_File *handler, const char *file)
+_ls_filter_cb(void *data __UNUSED__, Eio_File *handler __UNUSED__, const char *file __UNUSED__)
 {
   return EINA_TRUE;
 }
 
 static void
-_ls_main_cb(void *data, Eio_File *handler, const char *file)
+_ls_main_cb(void *data, Eio_File *handler __UNUSED__, const char *file)
 {
    elm_genlist_item_sorted_insert(data,
                                   &it_eio,
@@ -40,18 +40,18 @@ _ls_main_cb(void *data, Eio_File *handler, const char *file)
 }
 
 void
-_ls_done_cb(void *data, Eio_File *handler)
+_ls_done_cb(void *data __UNUSED__, Eio_File *handler __UNUSED__)
 {
    en_time = times(&en_cpu);
    fprintf(stderr, "ls done\n");
    fprintf(stderr, "Real Time: %.jd, User Time: %.jd, System Time: %.jd\n",
-           en_time - st_time,
-           en_cpu.tms_utime - st_cpu.tms_utime,
-           en_cpu.tms_stime - st_cpu.tms_stime);
+           (intmax_t)(en_time - st_time),
+           (intmax_t)(en_cpu.tms_utime - st_cpu.tms_utime),
+           (intmax_t)(en_cpu.tms_stime - st_cpu.tms_stime));
 }
 
 void
-_ls_error_cb(void *data, Eio_File *handler, int error)
+_ls_error_cb(void *data __UNUSED__, Eio_File *handler __UNUSED__, int error)
 {
    fprintf(stderr, "error: [%s]\n", strerror(error));
 }
@@ -75,7 +75,7 @@ _file_chosen(void            *data,
 }
 
 static char *
-_gl_label_get(void *data, Evas_Object *obj, const char *part)
+_gl_label_get(void *data, Evas_Object *obj __UNUSED__, const char *part __UNUSED__)
 {
    char buf[PATH_MAX];
    snprintf(buf, sizeof(buf), "Item # %s", (char*)data);
@@ -83,33 +83,34 @@ _gl_label_get(void *data, Evas_Object *obj, const char *part)
 }
 
 static Evas_Object *
-_gl_icon_get(void *data, Evas_Object *obj, const char *part)
+_gl_icon_get(void *data __UNUSED__, Evas_Object *obj __UNUSED__, const char *part __UNUSED__)
 {
+   return NULL;
 }
 
 static Eina_Bool
-_gl_state_get(void *data , Evas_Object *obj, const char *part)
+_gl_state_get(void *data __UNUSED__, Evas_Object *obj __UNUSED__, const char *part __UNUSED__)
 {
    return EINA_FALSE;
 }
 
 static void
-_gl_del(void *data, Evas_Object *obj)
+_gl_del(void *data __UNUSED__, Evas_Object *obj __UNUSED__)
 {
 }
 
 static void
-_test_eio_clear(void *data, Evas_Object *obj, void *event)
+_test_eio_clear(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
 {
    elm_genlist_clear(data);
 }
 
 void
 test_eio(void *data       __UNUSED__,
-                         Evas_Object *obj __UNUSED__,
-                         void *event_info __UNUSED__)
+         Evas_Object *obj __UNUSED__,
+         void *event_info __UNUSED__)
 {
-   Evas_Object *win, *bg, *vbox, *hbox, *ic, *bt, *fs_bt, *en, *lb, *gl;
+   Evas_Object *win, *bg, *vbox, *hbox, *ic, *bt, *fs_bt, *gl;
 
    it_eio.item_style     = "default";
    it_eio.func.label_get = _gl_label_get;
