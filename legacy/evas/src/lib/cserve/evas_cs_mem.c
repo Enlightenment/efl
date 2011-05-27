@@ -71,7 +71,7 @@ evas_cserve_mem_free(Mem *m)
 }
 
 EAPI Mem *
-evas_cserve_mem_open(int pid, int id, const char *name, int size, int write)
+evas_cserve_mem_open(int pid, int id, const char *name, int size, int do_write)
 {
    Mem *m;
    char buf[PATH_MAX];
@@ -89,7 +89,7 @@ evas_cserve_mem_open(int pid, int id, const char *name, int size, int write)
         return NULL;
      }
    m->size = size;
-   if (write)
+   if (do_write)
      m->fd = shm_open(m->name, O_RDWR, S_IRUSR | S_IWUSR);
    else
      m->fd = shm_open(m->name, O_RDONLY, S_IRUSR);
@@ -99,8 +99,8 @@ evas_cserve_mem_open(int pid, int id, const char *name, int size, int write)
         free(m);
         return NULL;
      }
-   m->write = write;
-   if (write)
+   m->write = do_write;
+   if (do_write)
      m->data = mmap(NULL, m->size, PROT_READ | PROT_WRITE, MAP_SHARED, m->fd, 0);
    else
      m->data = mmap(NULL, m->size, PROT_READ, MAP_SHARED, m->fd, 0);
