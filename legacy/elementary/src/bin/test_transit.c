@@ -486,14 +486,15 @@ test_transit7(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
 void
 test_transit8(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Evas_Object *win, *bg, *bt, *bt2;
-   Elm_Transit *trans, *trans2;
+   Evas_Object *win, *bg, *bt;
+   Elm_Transit *trans;
    Elm_Transit_Effect *effect_context;
 
    win = elm_win_add(NULL, "transit8", ELM_WIN_BASIC);
    elm_win_title_set(win, "Transit 8");
    elm_win_autodel_set(win, EINA_TRUE);
    evas_object_resize(win, 400, 400);
+   evas_object_show(win);
 
    bg = elm_bg_add(win);
    elm_win_resize_object_add(win, bg);
@@ -506,14 +507,6 @@ test_transit8(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    evas_object_move(bt, 50, 50);
    evas_object_resize(bt, 150, 150);
 
-   bt2 = elm_button_add(win);
-   elm_button_label_set(bt2, "Button - Chain Transit");
-   evas_object_show(bt2);
-   evas_object_move(bt2, 200, 200);
-   evas_object_resize(bt2, 150, 150);
-
-   evas_object_show(win);
-
    /* Adding Transit */
    trans = elm_transit_add();
    elm_transit_auto_reverse_set(trans, EINA_TRUE);
@@ -524,18 +517,7 @@ test_transit8(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
                           _custom_op, effect_context,
                           _custom_context_free);
    elm_transit_duration_set(trans, 5.0);
-
-   /* Adding Chain Transit */
-   trans2 = elm_transit_add();
-   elm_transit_object_add(trans2, bt2);
-   elm_transit_object_add(trans2, bt2);
-   elm_transit_effect_flip_add(trans2, ELM_TRANSIT_EFFECT_FLIP_AXIS_Y, EINA_TRUE);
-   elm_transit_tween_mode_set(trans2, ELM_TRANSIT_TWEEN_MODE_ACCELERATE);
-   elm_transit_duration_set(trans2, 2.0);
-   //Negative value makes transition repeate for infinite times.
-   elm_transit_repeat_times_set(trans2, -1);
-
-   elm_transit_chain_transit_add(trans, trans2);
+   elm_transit_repeat_times_set(trans, -1);
    elm_transit_go(trans);
 }
 
