@@ -943,12 +943,10 @@ elm_hover_content_unset(Evas_Object *obj, const char *swallow)
  *         NULL, on errors.
  *
  * @p pref_axis may be one of
- * <ul>
  * - @c ELM_HOVER_AXIS_NONE -- no prefered orientation
  * - @c ELM_HOVER_AXIS_HORIZONTAL -- horizontal
  * - @c ELM_HOVER_AXIS_VERTICAL -- vertical
  * - @c ELM_HOVER_AXIS_BOTH -- both
- * </ul>
  *
  * See also elm_hover_content_set().
  *
