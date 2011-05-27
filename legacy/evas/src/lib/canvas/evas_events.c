@@ -189,6 +189,16 @@ evas_event_freeze_get(const Evas *e)
    return e->events_frozen;
 }
 
+EAPI void
+evas_event_thaw_eval(Evas *e)
+{
+   MAGIC_CHECK(e, Evas, MAGIC_EVAS);
+   return;
+   MAGIC_CHECK_END();
+   if (e->events_frozen != 0) return;
+   evas_event_feed_mouse_move(e, e->pointer.x, e->pointer.y, 
+                              e->last_timestamp, NULL);
+}
 
 EAPI void
 evas_event_feed_mouse_down(Evas *e, int b, Evas_Button_Flags flags, unsigned int timestamp, const void *data)

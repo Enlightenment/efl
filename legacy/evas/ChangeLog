@@ -366,3 +366,8 @@
         * Fix Evas table to use actual fractional weights, not just
         boolean expand/not expand from weight value.
 
+2011-05-27  Carsten Haitzler (The Rasterman)
+
+	* Add evas_event_thaw_eval() for conveneince of evaluating in state
+        and callbacks of the pointer after a thaw is complete.
+

@@ -1907,6 +1907,17 @@ EAPI void              evas_event_thaw                   (Evas *e) EINA_ARG_NONN
 EAPI int               evas_event_freeze_get             (const Evas *e) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
 
 /**
+ * After thaw of a canvas, re-evaluate the state of objects and call callbacks
+ * 
+ * @param e The canvas to evaluate after a thaw
+ * 
+ * This is normally called after evas_event_thaw() to re-evaluate mouse
+ * containment and other states and thus also call callbacks for mouse in and
+ * out on new objects if the state change demands it.
+ */
+EAPI void              evas_event_thaw_eval              (Evas *e) EINA_ARG_NONNULL(1);
+         
+/**
  * @defgroup Evas_Event_Feeding_Group Event Feeding Functions
  *
  * Functions to tell Evas that events happened and should be
