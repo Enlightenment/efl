@@ -200,15 +200,25 @@ _obj_damage_area_set(Evas_Object *obj)
                              max.x - min.x, max.y - min.y);
 }
 
-
-
 static void
 _elm_transit_object_remove(Elm_Transit *transit, Evas_Object *obj)
 {
-   Elm_Obj_Data *obj_data = eina_hash_find(transit->objs_data_hash, obj);
+   Elm_Obj_Data *obj_data;
+   Elm_Obj_State *state;
+
+   //Remove duplicated objects
+   //TODO: Need to consider about optimizing here
+   while(1)
+     {
+       if (!eina_list_data_find_list(transit->objs, obj))
+         break;
+       transit->objs = eina_list_remove(transit->objs, obj);
+     }
+
+   obj_data = eina_hash_find(transit->objs_data_hash, obj);
    if (!obj_data) return;
    eina_hash_del_by_key(transit->objs_data_hash, obj);
-   Elm_Obj_State *state = obj_data->state;
+   state = obj_data->state;
 
    evas_object_pass_events_set(obj, obj_data->pass_events);
 
@@ -239,14 +249,6 @@ _elm_transit_object_remove(Elm_Transit *transit, Evas_Object *obj)
      }
    free(obj_data);
 
-   //remove duplicated objects
-   //TODO: Need to consider about optimizing here
-   while(1)
-     {
-       if (!eina_list_data_find_list(transit->objs, obj))
-         break;
-       transit->objs = eina_list_remove(transit->objs, obj);
-     }
 
    evas_object_event_callback_del_full(obj, EVAS_CALLBACK_DEL,
                                        _elm_transit_object_remove_cb,
@@ -620,10 +622,6 @@ elm_transit_object_remove(Elm_Transit *transit, Evas_Object *obj)
 {
    ELM_TRANSIT_CHECK_OR_RETURN(transit);
    EINA_SAFETY_ON_NULL_RETURN(obj);
-   Elm_Obj_Data *obj_data;
-
-   obj_data = eina_hash_find(transit->objs_data_hash, obj);
-   if (!obj_data) return;
 
    _elm_transit_object_remove(transit, obj);
    if (!transit->objs) elm_transit_del(transit);
