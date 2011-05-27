@@ -3371,8 +3371,6 @@ elm_genlist_item_insert_before(Evas_Object                  *obj,
    return it;
 }
 
-
-
 /**
  * Insert a new item into the sorted genlist object
  *
@@ -3398,12 +3396,6 @@ elm_genlist_item_sorted_insert(Evas_Object                  *obj,
                                Evas_Smart_Cb                 func,
                                const void                   *func_data)
 {
-
-   Elm_Genlist_Item *search = NULL;
-   Eina_Inlist *s;
-   Eina_Accessor *ea;
-   int ret, min, max, i;
-
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return NULL;
