@@ -14,6 +14,17 @@ static clock_t en_time;
 static struct tms st_cpu;
 static struct tms en_cpu;
 
+static void _sel_file(void *data, Evas_Object *obj, void *event_info);
+static Eina_Bool _ls_filter_cb(void *data, Eio_File *handler, const char *file);
+static void _ls_main_cb(void *data, Eio_File *handler, const char *file);
+static void _ls_done_cb(void *data, Eio_File *handler);
+static void _ls_error_cb(void *data, Eio_File *handler, int error);
+static void _file_chosen(void *data, Evas_Object *obj, void *event_info);
+static char *_gl_label_get(void *data, Evas_Object *obj, const char *part);
+static Evas_Object *_gl_icon_get(void *data, Evas_Object *obj, const char *part);
+static Eina_Bool _gl_state_get(void *data, Evas_Object *obj, const char *part);
+static void _gl_del(void *data, Evas_Object *obj);
+static void _test_eio_clear(void *data, Evas_Object *obj, void *event);
 
 static void
 _sel_file(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
@@ -39,7 +50,7 @@ _ls_main_cb(void *data, Eio_File *handler __UNUSED__, const char *file)
                                   NULL);
 }
 
-void
+static void
 _ls_done_cb(void *data __UNUSED__, Eio_File *handler __UNUSED__)
 {
    en_time = times(&en_cpu);
@@ -50,16 +61,14 @@ _ls_done_cb(void *data __UNUSED__, Eio_File *handler __UNUSED__)
            (intmax_t)(en_cpu.tms_stime - st_cpu.tms_stime));
 }
 
-void
+static void
 _ls_error_cb(void *data __UNUSED__, Eio_File *handler __UNUSED__, int error)
 {
    fprintf(stderr, "error: [%s]\n", strerror(error));
 }
 
 static void
-_file_chosen(void            *data,
-             Evas_Object *obj __UNUSED__,
-             void            *event_info)
+_file_chosen(void *data, Evas_Object *obj __UNUSED__, void *event_info)
 {
    const char *file = event_info;
    if (file)
@@ -106,9 +115,7 @@ _test_eio_clear(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
 }
 
 void
-test_eio(void *data       __UNUSED__,
-         Evas_Object *obj __UNUSED__,
-         void *event_info __UNUSED__)
+test_eio(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *win, *bg, *vbox, *hbox, *ic, *bt, *fs_bt, *gl;
 
