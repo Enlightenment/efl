@@ -242,14 +242,14 @@ _ecore_file_monitor_poll_check(Ecore_File_Monitor *em)
           {
              Ecore_File *f = l;
              char buf[PATH_MAX];
-             int mtime;
+             int mt;
              Ecore_File_Event event;
 
              l = (Ecore_File *) EINA_INLIST_GET(l)->next;
 
              snprintf(buf, sizeof(buf), "%s/%s", em->path, f->name);
-             mtime = ecore_file_mod_time(buf);
-             if (mtime < f->mtime)
+             mt = ecore_file_mod_time(buf);
+             if (mt < f->mtime)
                {
                   if (f->is_dir)
                     event = ECORE_FILE_EVENT_DELETED_DIRECTORY;
@@ -262,21 +262,21 @@ _ecore_file_monitor_poll_check(Ecore_File_Monitor *em)
                   free(f);
                   _interval = ECORE_FILE_INTERVAL_MIN;
                }
-             else if ((mtime > f->mtime) && !(f->is_dir))
+             else if ((mt > f->mtime) && !(f->is_dir))
                {
                   em->func(em->data, em, ECORE_FILE_EVENT_MODIFIED, buf);
                   _interval = ECORE_FILE_INTERVAL_MIN;
-                  f->mtime = mtime;
+                  f->mtime = mt;
                }
              else
-               f->mtime = mtime;
+               f->mtime = mt;
           }
 
         /* Check for new files */
         if (ECORE_FILE_MONITOR_POLL(em)->mtime < mtime)
           {
              Eina_List *files;
-             Eina_List *l;
+             Eina_List *fl;
              char *file;
 
              /* Files have been added or removed */
@@ -284,7 +284,7 @@ _ecore_file_monitor_poll_check(Ecore_File_Monitor *em)
              if (files)
                {
                   /* Are we a directory? We should check first, rather than rely on null here*/
-                  EINA_LIST_FOREACH(files, l, file)
+                  EINA_LIST_FOREACH(files, fl, file)
                     {
                        Ecore_File *f;
                        char buf[PATH_MAX];
