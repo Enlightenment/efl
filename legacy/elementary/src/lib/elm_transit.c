@@ -150,10 +150,15 @@ _hash_foreach_obj_states_save(const Eina_Hash *hash __UNUSED__, const void *key,
 static void
 _elm_transit_object_remove_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
-   Elm_Transit *transit = data;
-   Elm_Obj_Data *obj_data = eina_hash_find(transit->objs_data_hash, obj);
+   Elm_Transit *transit;
+   Elm_Obj_Data *obj_data;
+   Eina_List *list;
+
+   transit = data;
+   list = eina_list_data_find_list(transit->objs, obj);
+   obj_data = eina_hash_find(transit->objs_data_hash, list);
    if (!obj_data) return;
-   eina_hash_del_by_key(transit->objs_data_hash, obj);
+   eina_hash_del_by_key(transit->objs_data_hash, list);
    evas_object_pass_events_set(obj, obj_data->pass_events);
    if (obj_data->state)
      free(obj_data->state);
@@ -201,27 +206,40 @@ _obj_damage_area_set(Evas_Object *obj)
 }
 
 static void
-_elm_transit_object_remove(Elm_Transit *transit, Evas_Object *obj)
+_remove_obj_from_list(Elm_Transit *transit, Evas_Object *obj)
 {
-   Elm_Obj_Data *obj_data;
-   Elm_Obj_State *state;
+   evas_object_event_callback_del_full(obj, EVAS_CALLBACK_DEL,
+                                       _elm_transit_object_remove_cb,
+                                       transit);
 
    //Remove duplicated objects
    //TODO: Need to consider about optimizing here
    while(1)
      {
-       if (!eina_list_data_find_list(transit->objs, obj))
-         break;
-       transit->objs = eina_list_remove(transit->objs, obj);
+        if (!eina_list_data_find_list(transit->objs, obj))
+          break;
+        transit->objs = eina_list_remove(transit->objs, obj);
      }
+}
 
-   obj_data = eina_hash_find(transit->objs_data_hash, obj);
-   if (!obj_data) return;
-   eina_hash_del_by_key(transit->objs_data_hash, obj);
-   state = obj_data->state;
+static void
+_elm_transit_object_remove(Elm_Transit *transit, Evas_Object *obj)
+{
+   Elm_Obj_Data *obj_data;
+   Elm_Obj_State *state;
+   Eina_List *list;
 
+   list = eina_list_data_find_list(transit->objs, obj);
+   obj_data = eina_hash_find(transit->objs_data_hash, list);
+   if (!obj_data)
+     {
+       _remove_obj_from_list(transit, obj);
+       return;
+     }
+   eina_hash_del_by_key(transit->objs_data_hash, list);
+   _remove_obj_from_list(transit, obj);
    evas_object_pass_events_set(obj, obj_data->pass_events);
-
+   state = obj_data->state;
    if (state)
      {
         //recover the states of the object.
@@ -249,10 +267,6 @@ _elm_transit_object_remove(Elm_Transit *transit, Evas_Object *obj)
      }
    free(obj_data);
 
-
-   evas_object_event_callback_del_full(obj, EVAS_CALLBACK_DEL,
-                                       _elm_transit_object_remove_cb,
-                                       transit);
 }
 
 static void
@@ -435,7 +449,7 @@ elm_transit_add(void)
 
    elm_transit_tween_mode_set(transit, ELM_TRANSIT_TWEEN_MODE_LINEAR);
 
-   transit->objs_data_hash = eina_hash_pointer_new(NULL);
+   transit->objs_data_hash = eina_hash_int32_new(NULL);
 
    return transit;
 }
@@ -587,7 +601,9 @@ elm_transit_object_add(Elm_Transit *transit, Evas_Object *obj)
    ELM_TRANSIT_CHECK_OR_RETURN(transit);
    EINA_SAFETY_ON_NULL_RETURN(obj);
    Elm_Obj_Data *obj_data;
+   Eina_List * list;
 
+//TODO: Check the remove case of the same objects in this transit. 
    obj_data = ELM_NEW(Elm_Obj_Data);
    obj_data->pass_events = evas_object_pass_events_get(obj);
    if (!transit->event_enabled)
@@ -598,7 +614,8 @@ elm_transit_object_add(Elm_Transit *transit, Evas_Object *obj)
                                   transit);
 
    transit->objs = eina_list_append(transit->objs, obj);
-   eina_hash_add(transit->objs_data_hash, obj, obj_data);
+   list = eina_list_last(transit->objs);
+   eina_hash_add(transit->objs_data_hash, list, obj_data);
 
    if (!transit->state_keep)
      _elm_transit_obj_states_save(obj, obj_data);
@@ -1058,7 +1075,8 @@ elm_transit_objects_final_state_keep_get(const Elm_Transit *transit)
  * @note @p chain_transit can not be NULL. Chain transits could be chained to the only one transit.
  *
  * @param transit The transit object.
- * @param chain_transit The chain transit object. This transit will be operated  *                      after transit is done.
+ * @param chain_transit The chain transit object. This transit will be operated  
+ *        after transit is done.
  *
  * @ingroup Transit
  */
