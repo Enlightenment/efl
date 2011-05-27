@@ -606,7 +606,7 @@ elm_index_add(Evas_Object *parent)
  * Set the active state of the index programatically
  *
  * @param obj The index object
- * @param active The active starte
+ * @param active The active state
  *
  * @ingroup Index
  */
@@ -627,6 +627,23 @@ elm_index_active_set(Evas_Object *obj, Eina_Bool active)
      }
    else
      edje_object_signal_emit(wd->base, "elm,state,inactive", "elm");
+}
+
+/**
+ * Get the active state of the index programatically
+ *
+ * @param obj The index object
+ * @return The active state
+ *
+ * @ingroup Index
+ */
+EAPI void
+elm_index_active_get(Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return EINA_FALSE;
+   return wd->active;
 }
 
 /**
