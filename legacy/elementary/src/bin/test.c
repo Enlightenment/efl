@@ -22,6 +22,7 @@ void test_transit5(void *data, Evas_Object *obj, void *event_info);
 void test_transit6(void *data, Evas_Object *obj, void *event_info);
 void test_transit7(void *data, Evas_Object *obj, void *event_info);
 void test_transit8(void *data, Evas_Object *obj, void *event_info);
+void test_transit9(void *data, Evas_Object *obj, void *event_info);
 void test_fileselector_button(void *data, Evas_Object *obj, void *event_info);
 void test_fileselector_entry(void *data, Evas_Object *obj, void *event_info);
 void test_toggle(void *data, Evas_Object *obj, void *event_info);
@@ -288,6 +289,7 @@ my_win_main(char *autorun)
    ADD_TEST("Transit 6", test_transit6);
    ADD_TEST("Transit 7", test_transit7);
    ADD_TEST("Transit 8", test_transit8);
+   ADD_TEST("Transit 9", test_transit9);
    ADD_TEST("File Selector Button", test_fileselector_button);
    ADD_TEST("File Selector Entry", test_fileselector_entry);
    ADD_TEST("Toggles", test_toggle);
