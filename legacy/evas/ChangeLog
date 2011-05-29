@@ -380,3 +380,7 @@
 
 	* Font-engine: Conform to the API changes in Harfbuzz 0.6.0
 
+2011-05-29  Raoul Hecky
+
+	* Textblock: Added support for numeric escape codes. e.g "&#x3c;".
+
