@@ -2842,6 +2842,13 @@ skip:
              script_len = tmp_cut;
           }
 
+        /* FIXME: This is a possible fix for an infinite loops that happens
+         * if script_len <= 0. Should find the source of the issue,
+         * i.e why (off - (str - tbase)) is ever < 0. I can't reproduce the
+         * issue so I can't really do anything about it. */
+        if (script_len <= 0)
+           break;
+
         script = evas_common_language_script_type_get(str, script_len);
 
 
