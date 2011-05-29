@@ -371,3 +371,8 @@
 	* Add evas_event_thaw_eval() for conveneince of evaluating in state
         and callbacks of the pointer after a thaw is complete.
 
+2011-05-29  Tom Hacohen (TAsn)
+
+	* Font-engine: Fixed a bug in glyph search causing inconsistent return
+	  values. The found fi should always be NULL if there was no fi found.
+
