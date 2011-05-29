@@ -3473,22 +3473,22 @@ _layout_visualize_par(Ctxt *c)
         /* Merge back and clear the paragraph */
           {
              Eina_List *itr, *itr_next;
-             Evas_Object_Textblock_Item *it, *prev_it = NULL;
+             Evas_Object_Textblock_Item *ititr, *prev_it = NULL;
              _paragraph_clear(c->obj, c->par);
-             EINA_LIST_FOREACH_SAFE(c->par->logical_items, itr, itr_next, it)
+             EINA_LIST_FOREACH_SAFE(c->par->logical_items, itr, itr_next, ititr)
                {
-                  if (it->merge && prev_it &&
+                  if (ititr->merge && prev_it &&
                         (prev_it->type == EVAS_TEXTBLOCK_ITEM_TEXT) &&
-                        (it->type == EVAS_TEXTBLOCK_ITEM_TEXT))
+                        (ititr->type == EVAS_TEXTBLOCK_ITEM_TEXT))
                     {
                        _layout_item_merge_and_free(c, _ITEM_TEXT(prev_it),
-                             _ITEM_TEXT(it));
+                             _ITEM_TEXT(ititr));
                        c->par->logical_items =
                           eina_list_remove_list(c->par->logical_items, itr);
                     }
                   else
                     {
-                       prev_it = it;
+                       prev_it = ititr;
                     }
                }
           }
@@ -5393,18 +5393,18 @@ evas_textblock_node_format_remove_pair(Evas_Object *obj,
 
    if (n->visible)
      {
-        size_t index = _evas_textblock_node_format_pos_get(n);
+        size_t ind = _evas_textblock_node_format_pos_get(n);
         const char *format = eina_strbuf_string_get(n->format);
         Evas_Textblock_Cursor cur;
         cur.obj = obj;
 
-        eina_ustrbuf_remove(n->text_node->unicode, index, index + 1);
+        eina_ustrbuf_remove(n->text_node->unicode, ind, ind + 1);
         if (format && _IS_PARAGRAPH_SEPARATOR(o, format))
           {
              evas_textblock_cursor_set_at_format(&cur, n);
              _evas_textblock_cursor_nodes_merge(&cur);
           }
-        _evas_textblock_cursors_update_offset(&cur, n->text_node, index, -1);
+        _evas_textblock_cursors_update_offset(&cur, n->text_node, ind, -1);
      }
    tnode1 = n->text_node;
    _evas_textblock_node_format_remove(o, n, 0);
@@ -5600,20 +5600,20 @@ evas_textblock_cursor_format_prev(Evas_Textblock_Cursor *cur)
 EAPI Eina_Bool
 evas_textblock_cursor_char_next(Evas_Textblock_Cursor *cur)
 {
-   int index;
+   int ind;
    const Eina_Unicode *text;
 
    if (!cur) return EINA_FALSE;
    if (!cur->node) return EINA_FALSE;
 
-   index = cur->pos;
+   ind = cur->pos;
    text = eina_ustrbuf_string_get(cur->node->unicode);
-   if (text[index]) index++;
+   if (text[ind]) ind++;
    /* Only allow pointing a null if it's the last paragraph.
     * because we don't have a PS there. */
-   if (text[index])
+   if (text[ind])
      {
-        cur->pos = index;
+        cur->pos = ind;
         return EINA_TRUE;
      }
    else
@@ -5622,10 +5622,10 @@ evas_textblock_cursor_char_next(Evas_Textblock_Cursor *cur)
           {
              /* If we already were at the end, that means we don't have
               * where to go next we should return FALSE */
-             if (cur->pos == (size_t) index)
+             if (cur->pos == (size_t) ind)
                return EINA_FALSE;
 
-             cur->pos = index;
+             cur->pos = ind;
              return EINA_TRUE;
           }
         else
@@ -5660,13 +5660,13 @@ evas_textblock_cursor_paragraph_char_first(Evas_Textblock_Cursor *cur)
 EAPI void
 evas_textblock_cursor_paragraph_char_last(Evas_Textblock_Cursor *cur)
 {
-   int index;
+   int ind;
 
    if (!cur) return;
    if (!cur->node) return;
-   index = eina_ustrbuf_length_get(cur->node->unicode) - 1;
-   if (index >= 0)
-      cur->pos = index;
+   ind = eina_ustrbuf_length_get(cur->node->unicode) - 1;
+   if (ind >= 0)
+      cur->pos = ind;
    else
       cur->pos = 0;
 
@@ -5735,15 +5735,15 @@ evas_textblock_cursor_line_char_last(Evas_Textblock_Cursor *cur)
      }
    if (it)
      {
-        size_t index;
+        size_t ind;
 
 	cur->node = it->text_node;
 	cur->pos = it->text_pos;
         if (it->type == EVAS_TEXTBLOCK_ITEM_TEXT)
           {
-             index = _ITEM_TEXT(it)->text_props.text_len - 1;
-             if (!IS_AT_END(_ITEM_TEXT(it), index)) index++;
-             cur->pos += index;
+             ind = _ITEM_TEXT(it)->text_props.text_len - 1;
+             if (!IS_AT_END(_ITEM_TEXT(it), ind)) ind++;
+             cur->pos += ind;
           }
         else if (!EINA_INLIST_GET(ln)->next && !EINA_INLIST_GET(ln->par)->next)
           {
@@ -6462,7 +6462,6 @@ _evas_textblock_cursor_break_paragraph(Evas_Textblock_Cursor *cur,
      }
    else
      {
-        Evas_Object_Textblock_Node_Format *fnode;
         fnode = o->format_nodes;
         if (fnode)
           {
@@ -6885,16 +6884,16 @@ evas_textblock_cursor_char_delete(Evas_Textblock_Cursor *cur)
    Evas_Object_Textblock_Node_Text *n, *n2;
    int merge_nodes = 0;
    const Eina_Unicode *text;
-   int chr, index, ppos;
+   int chr, ind, ppos;
 
    if (!cur || !cur->node) return;
    o = (Evas_Object_Textblock *)(cur->obj->object_data);
    n = cur->node;
 
    text = eina_ustrbuf_string_get(n->unicode);
-   index = cur->pos;
-   if (text[index])
-      chr = text[index++];
+   ind = cur->pos;
+   if (text[ind])
+      chr = text[ind++];
    else
       chr = 0;
 
@@ -6926,11 +6925,11 @@ evas_textblock_cursor_char_delete(Evas_Textblock_Cursor *cur)
         fmt2 = _evas_textblock_cursor_node_format_before_or_at_pos_get(cur);
         fmt2 = _evas_textblock_node_format_last_at_off(fmt2);
         _evas_textblock_node_format_adjust_offset(o, cur->node, fmt2,
-              -(index - cur->pos));
+              -(ind - cur->pos));
 
         _evas_textblock_node_format_remove_matching(o, fmt);
      }
-   eina_ustrbuf_remove(n->unicode, cur->pos, index);
+   eina_ustrbuf_remove(n->unicode, cur->pos, ind);
    /* If it was a paragraph separator, we should merge the current with the
     * next, there must be a next. */
    if (merge_nodes)
@@ -6948,7 +6947,7 @@ evas_textblock_cursor_char_delete(Evas_Textblock_Cursor *cur)
 	  }
      }
 
-   _evas_textblock_cursors_update_offset(cur, n, ppos, -(index - ppos));
+   _evas_textblock_cursors_update_offset(cur, n, ppos, -(ind - ppos));
    _evas_textblock_changed(o, cur->obj);
    cur->node->dirty = EINA_TRUE;
 }

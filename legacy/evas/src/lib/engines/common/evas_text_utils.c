@@ -234,7 +234,7 @@ evas_common_text_props_content_create(void *_fi, const Eina_Unicode *text,
    gl_itr = text_props->info->glyph;
    for (char_index = 0 ; char_index < text_props->len ; char_index++)
      {
-        FT_UInt index;
+        FT_UInt idx;
         RGBA_Font_Glyph *fg;
         Eina_Bool is_replacement = EINA_FALSE;
         /* If we got a malformed index, show the replacement char instead */
@@ -243,9 +243,9 @@ evas_common_text_props_content_create(void *_fi, const Eina_Unicode *text,
              gl_itr->index = evas_common_get_char_index(fi, REPLACEMENT_CHAR);
              is_replacement = EINA_TRUE;
           }
-        index = gl_itr->index;
+        idx = gl_itr->index;
         LKL(fi->ft_mutex);
-        fg = evas_common_font_int_cache_glyph_get(fi, index);
+        fg = evas_common_font_int_cache_glyph_get(fi, idx);
         if (!fg)
           {
              LKU(fi->ft_mutex);
