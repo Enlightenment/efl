@@ -675,140 +675,141 @@ eng_image_cache_get(void *data __UNUSED__)
    return evas_common_image_get_cache();
 }
 
-static void *
+static Evas_Font_Set *
 eng_font_load(void *data __UNUSED__, const char *name, int size,
       Font_Rend_Flags wanted_rend)
 {
-   return evas_common_font_load(name, size, wanted_rend);
+   return (Evas_Font_Set *) evas_common_font_load(name, size, wanted_rend);
 }
 
-static void *
+static Evas_Font_Set *
 eng_font_memory_load(void *data __UNUSED__, char *name, int size, const void *fdata, int fdata_size, Font_Rend_Flags wanted_rend)
 {
-   return evas_common_font_memory_load(name, size, fdata, fdata_size,
-         wanted_rend);
+   return (Evas_Font_Set *) evas_common_font_memory_load(name, size, fdata,
+         fdata_size, wanted_rend);
 }
 
-static void *
-eng_font_add(void *data __UNUSED__, void *font, const char *name, int size, Font_Rend_Flags wanted_rend)
+static Evas_Font_Set *
+eng_font_add(void *data __UNUSED__, Evas_Font_Set *font, const char *name, int size, Font_Rend_Flags wanted_rend)
 {
-   return evas_common_font_add(font, name, size, wanted_rend);
+   return (Evas_Font_Set *) evas_common_font_add((RGBA_Font *) font, name,
+         size, wanted_rend);
 }
 
-static void *
-eng_font_memory_add(void *data __UNUSED__, void *font, char *name, int size, const void *fdata, int fdata_size, Font_Rend_Flags wanted_rend)
+static Evas_Font_Set *
+eng_font_memory_add(void *data __UNUSED__, Evas_Font_Set *font, char *name, int size, const void *fdata, int fdata_size, Font_Rend_Flags wanted_rend)
 {
-   return evas_common_font_memory_add(font, name, size, fdata, fdata_size,
-         wanted_rend);
+   return (Evas_Font_Set *) evas_common_font_memory_add((RGBA_Font *) font,
+         name, size, fdata, fdata_size, wanted_rend);
 }
 
 static void
-eng_font_free(void *data __UNUSED__, void *font)
+eng_font_free(void *data __UNUSED__, Evas_Font_Set *font)
 {
-   evas_common_font_free(font);
+   evas_common_font_free((RGBA_Font *) font);
 }
 
 static int
-eng_font_ascent_get(void *data __UNUSED__, void *font)
+eng_font_ascent_get(void *data __UNUSED__, Evas_Font_Set *font)
 {
-   return evas_common_font_ascent_get(font);
+   return evas_common_font_ascent_get((RGBA_Font *) font);
 }
 
 static int
-eng_font_descent_get(void *data __UNUSED__, void *font)
+eng_font_descent_get(void *data __UNUSED__, Evas_Font_Set *font)
 {
-   return evas_common_font_descent_get(font);
+   return evas_common_font_descent_get((RGBA_Font *) font);
 }
 
 static int
-eng_font_max_ascent_get(void *data __UNUSED__, void *font)
+eng_font_max_ascent_get(void *data __UNUSED__, Evas_Font_Set *font)
 {
-   return evas_common_font_max_ascent_get(font);
+   return evas_common_font_max_ascent_get((RGBA_Font *) font);
 }
 
 static int
-eng_font_max_descent_get(void *data __UNUSED__, void *font)
+eng_font_max_descent_get(void *data __UNUSED__, Evas_Font_Set *font)
 {
-   return evas_common_font_max_descent_get(font);
+   return evas_common_font_max_descent_get((RGBA_Font *) font);
 }
 
 static void
-eng_font_string_size_get(void *data __UNUSED__, void *font, const Evas_Text_Props *text_props, int *w, int *h)
+eng_font_string_size_get(void *data __UNUSED__, Evas_Font_Set *font, const Evas_Text_Props *text_props, int *w, int *h)
 {
-   evas_common_font_query_size(font, text_props, w, h);
+   evas_common_font_query_size((RGBA_Font *) font, text_props, w, h);
 }
 
 static int
-eng_font_inset_get(void *data __UNUSED__, void *font, const Evas_Text_Props *text_props)
+eng_font_inset_get(void *data __UNUSED__, Evas_Font_Set *font, const Evas_Text_Props *text_props)
 {
-   return evas_common_font_query_inset(font, text_props);
+   return evas_common_font_query_inset((RGBA_Font *) font, text_props);
 }
 
 static int
-eng_font_right_inset_get(void *data __UNUSED__, void *font, const Evas_Text_Props *text_props)
+eng_font_right_inset_get(void *data __UNUSED__, Evas_Font_Set *font, const Evas_Text_Props *text_props)
 {
-   return evas_common_font_query_right_inset(font, text_props);
+   return evas_common_font_query_right_inset((RGBA_Font *) font, text_props);
 }
 
 static int
-eng_font_h_advance_get(void *data __UNUSED__, void *font, const Evas_Text_Props *text_props)
+eng_font_h_advance_get(void *data __UNUSED__, Evas_Font_Set *font, const Evas_Text_Props *text_props)
 {
    int h, v;
 
-   evas_common_font_query_advance(font, text_props, &h, &v);
+   evas_common_font_query_advance((RGBA_Font *) font, text_props, &h, &v);
    return h;
 }
 
 static int
-eng_font_v_advance_get(void *data __UNUSED__, void *font, const Evas_Text_Props *text_props)
+eng_font_v_advance_get(void *data __UNUSED__, Evas_Font_Set *font, const Evas_Text_Props *text_props)
 {
    int h, v;
 
-   evas_common_font_query_advance(font, text_props, &h, &v);
+   evas_common_font_query_advance((RGBA_Font *) font, text_props, &h, &v);
    return v;
 }
 
 static int
-eng_font_pen_coords_get(void *data __UNUSED__, void *font, const Evas_Text_Props *text_props, int pos, int *cpen_x, int *cy, int *cadv, int *ch)
+eng_font_pen_coords_get(void *data __UNUSED__, Evas_Font_Set *font, const Evas_Text_Props *text_props, int pos, int *cpen_x, int *cy, int *cadv, int *ch)
 {
-   return evas_common_font_query_pen_coords(font, text_props, pos, cpen_x, cy, cadv, ch);
+   return evas_common_font_query_pen_coords((RGBA_Font *) font, text_props, pos, cpen_x, cy, cadv, ch);
 }
 
 static Eina_Bool
-eng_font_text_props_info_create(void *data __UNUSED__, void *font, const Eina_Unicode *text, Evas_Text_Props *text_props, const Evas_BiDi_Paragraph_Props *par_props, size_t par_pos, size_t len)
+eng_font_text_props_info_create(void *data __UNUSED__, Evas_Font_Instance *fi, const Eina_Unicode *text, Evas_Text_Props *text_props, const Evas_BiDi_Paragraph_Props *par_props, size_t par_pos, size_t len)
 {
-   return evas_common_text_props_content_create(font, text, text_props,
-         par_props, par_pos, len);
+   return evas_common_text_props_content_create((RGBA_Font_Int *) fi, text,
+         text_props, par_props, par_pos, len);
 }
 
 static int
-eng_font_char_coords_get(void *data __UNUSED__, void *font, const Evas_Text_Props *text_props, int pos, int *cx, int *cy, int *cw, int *ch)
+eng_font_char_coords_get(void *data __UNUSED__, Evas_Font_Set *font, const Evas_Text_Props *text_props, int pos, int *cx, int *cy, int *cw, int *ch)
 {
-   return evas_common_font_query_char_coords(font, text_props, pos, cx, cy, cw, ch);
+   return evas_common_font_query_char_coords((RGBA_Font *) font, text_props, pos, cx, cy, cw, ch);
 }
 
 static int
-eng_font_char_at_coords_get(void *data __UNUSED__, void *font, const Evas_Text_Props *text_props, int x, int y, int *cx, int *cy, int *cw, int *ch)
+eng_font_char_at_coords_get(void *data __UNUSED__, Evas_Font_Set *font, const Evas_Text_Props *text_props, int x, int y, int *cx, int *cy, int *cw, int *ch)
 {
-   return evas_common_font_query_char_at_coords(font, text_props, x, y, cx, cy, cw, ch);
+   return evas_common_font_query_char_at_coords((RGBA_Font *) font, text_props, x, y, cx, cy, cw, ch);
 }
 
 static int
-eng_font_last_up_to_pos(void *data __UNUSED__, void *font, const Evas_Text_Props *text_props, int x, int y)
+eng_font_last_up_to_pos(void *data __UNUSED__, Evas_Font_Set *font, const Evas_Text_Props *text_props, int x, int y)
 {
-   return evas_common_font_query_last_up_to_pos(font, text_props, x, y);
+   return evas_common_font_query_last_up_to_pos((RGBA_Font *) font, text_props, x, y);
 }
 
 static int
-eng_font_run_font_end_get(void *data __UNUSED__, void *fn, void **script_fi, void **cur_fi, Evas_Script_Type script, const Eina_Unicode *text, int run_len)
+eng_font_run_font_end_get(void *data __UNUSED__, Evas_Font_Set *font, Evas_Font_Instance **script_fi, Evas_Font_Instance **cur_fi, Evas_Script_Type script, const Eina_Unicode *text, int run_len)
 {
-   return evas_common_font_query_run_font_end_get(fn,
+   return evas_common_font_query_run_font_end_get((RGBA_Font *) font,
          (RGBA_Font_Int **) script_fi, (RGBA_Font_Int **) cur_fi,
          script, text, run_len);
 }
 
 static void
-eng_font_draw(void *data __UNUSED__, void *context, void *surface, void *font, int x, int y, int w __UNUSED__, int h __UNUSED__, int ow __UNUSED__, int oh __UNUSED__, const Evas_Text_Props *text_props)
+eng_font_draw(void *data __UNUSED__, void *context, void *surface, Evas_Font_Set *font, int x, int y, int w __UNUSED__, int h __UNUSED__, int ow __UNUSED__, int oh __UNUSED__, const Evas_Text_Props *text_props)
 {
 #ifdef BUILD_PIPE_RENDER
    if ((cpunum > 1)
@@ -816,11 +817,13 @@ eng_font_draw(void *data __UNUSED__, void *context, void *surface, void *font, i
         && evas_common_frameq_enabled()
 #endif
         )
-     evas_common_pipe_text_draw(surface, context, font, x, y, text_props);
+     evas_common_pipe_text_draw(surface, context, (RGBA_Font *) font, x, y,
+           text_props);
    else
 #endif   
      {
-	evas_common_font_draw(surface, context, font, x, y, text_props);
+	evas_common_font_draw(surface, context, (RGBA_Font *) font, x, y,
+              text_props);
 	evas_common_cpu_end_opt();
      }
 }
@@ -849,9 +852,9 @@ eng_font_cache_get(void *data __UNUSED__)
 }
 
 static void
-eng_font_hinting_set(void *data __UNUSED__, void *font, int hinting)
+eng_font_hinting_set(void *data __UNUSED__, Evas_Font_Set *font, int hinting)
 {
-   evas_common_font_hinting_set(font, hinting);
+   evas_common_font_hinting_set((RGBA_Font *) font, hinting);
 }
 
 static int

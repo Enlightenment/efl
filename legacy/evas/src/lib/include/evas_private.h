@@ -46,6 +46,14 @@ typedef struct _Evas_Map_Point              Evas_Map_Point;
 typedef struct _Evas_Smart_Cb_Description_Array Evas_Smart_Cb_Description_Array;
 typedef struct _Evas_Post_Callback          Evas_Post_Callback;
 
+/* General types - used for script type chceking */
+#define OPAQUE_TYPE(type) struct __##type { int a; }; \
+   typedef struct __##type type
+
+OPAQUE_TYPE(Evas_Font_Set); /* General type for RGBA_Font */
+OPAQUE_TYPE(Evas_Font_Instance); /* General type for RGBA_Font_Int */
+/* End of general types */
+
 #define MAGIC_EVAS                 0x70777770
 #define MAGIC_OBJ                  0x71777770
 #define MAGIC_OBJ_RECTANGLE        0x71777771
@@ -676,22 +684,22 @@ struct _Evas_Func
    void (*image_cache_set)                 (void *data, int bytes);
    int  (*image_cache_get)                 (void *data);
 
-   void *(*font_load)                      (void *data, const char *name, int size, Font_Rend_Flags wanted_rend);
-   void *(*font_memory_load)               (void *data, char *name, int size, const void *fdata, int fdata_size, Font_Rend_Flags wanted_rend);
-   void *(*font_add)                       (void *data, void *font, const char *name, int size, Font_Rend_Flags wanted_rend);
-   void *(*font_memory_add)                (void *data, void *font, char *name, int size, const void *fdata, int fdata_size, Font_Rend_Flags wanted_rend);
-   void (*font_free)                       (void *data, void *font);
-   int  (*font_ascent_get)                 (void *data, void *font);
-   int  (*font_descent_get)                (void *data, void *font);
-   int  (*font_max_ascent_get)             (void *data, void *font);
-   int  (*font_max_descent_get)            (void *data, void *font);
-   void (*font_string_size_get)            (void *data, void *font, const Evas_Text_Props *intl_props, int *w, int *h);
-   int  (*font_inset_get)                  (void *data, void *font, const Evas_Text_Props *text_props);
-   int  (*font_h_advance_get)              (void *data, void *font, const Evas_Text_Props *intl_props);
-   int  (*font_v_advance_get)              (void *data, void *font, const Evas_Text_Props *intl_props);
-   int  (*font_char_coords_get)            (void *data, void *font, const Evas_Text_Props *intl_props, int pos, int *cx, int *cy, int *cw, int *ch);
-   int  (*font_char_at_coords_get)         (void *data, void *font, const Evas_Text_Props *intl_props, int x, int y, int *cx, int *cy, int *cw, int *ch);
-   void (*font_draw)                       (void *data, void *context, void *surface, void *font, int x, int y, int w, int h, int ow, int oh, const Evas_Text_Props *intl_props);
+   Evas_Font_Set *(*font_load)             (void *data, const char *name, int size, Font_Rend_Flags wanted_rend);
+   Evas_Font_Set *(*font_memory_load)      (void *data, char *name, int size, const void *fdata, int fdata_size, Font_Rend_Flags wanted_rend);
+   Evas_Font_Set *(*font_add)              (void *data, Evas_Font_Set *font, const char *name, int size, Font_Rend_Flags wanted_rend);
+   Evas_Font_Set *(*font_memory_add)       (void *data, Evas_Font_Set *font, char *name, int size, const void *fdata, int fdata_size, Font_Rend_Flags wanted_rend);
+   void (*font_free)                       (void *data, Evas_Font_Set *font);
+   int  (*font_ascent_get)                 (void *data, Evas_Font_Set *font);
+   int  (*font_descent_get)                (void *data, Evas_Font_Set *font);
+   int  (*font_max_ascent_get)             (void *data, Evas_Font_Set *font);
+   int  (*font_max_descent_get)            (void *data, Evas_Font_Set *font);
+   void (*font_string_size_get)            (void *data, Evas_Font_Set *font, const Evas_Text_Props *intl_props, int *w, int *h);
+   int  (*font_inset_get)                  (void *data, Evas_Font_Set *font, const Evas_Text_Props *text_props);
+   int  (*font_h_advance_get)              (void *data, Evas_Font_Set *font, const Evas_Text_Props *intl_props);
+   int  (*font_v_advance_get)              (void *data, Evas_Font_Set *font, const Evas_Text_Props *intl_props);
+   int  (*font_char_coords_get)            (void *data, Evas_Font_Set *font, const Evas_Text_Props *intl_props, int pos, int *cx, int *cy, int *cw, int *ch);
+   int  (*font_char_at_coords_get)         (void *data, Evas_Font_Set *font, const Evas_Text_Props *intl_props, int x, int y, int *cx, int *cy, int *cw, int *ch);
+   void (*font_draw)                       (void *data, void *context, void *surface, Evas_Font_Set *font, int x, int y, int w, int h, int ow, int oh, const Evas_Text_Props *intl_props);
 
    void (*font_cache_flush)                (void *data);
    void (*font_cache_set)                  (void *data, int bytes);
@@ -699,14 +707,14 @@ struct _Evas_Func
 
    /* Engine functions will over time expand from here */
 
-   void (*font_hinting_set)                (void *data, void *font, int hinting);
+   void (*font_hinting_set)                (void *data, Evas_Font_Set *font, int hinting);
    int  (*font_hinting_can_hint)           (void *data, int hinting);
 
 /*    void (*image_rotation_set)              (void *data, void *image); */
 
    void (*image_scale_hint_set)            (void *data, void *image, int hint);
    int  (*image_scale_hint_get)            (void *data, void *image);
-   int  (*font_last_up_to_pos)             (void *data, void *font, const Evas_Text_Props *intl_props, int x, int y);
+   int  (*font_last_up_to_pos)             (void *data, Evas_Font_Set *font, const Evas_Text_Props *intl_props, int x, int y);
 
    void (*image_map_draw)                  (void *data, void *context, void *surface, void *image, int npoints, RGBA_Map_Point *p, int smooth, int level);
    void *(*image_map_surface_new)          (void *data, int w, int h, int alpha);
@@ -714,9 +722,9 @@ struct _Evas_Func
 
    void (*image_content_hint_set)          (void *data, void *surface, int hint);
    int  (*image_content_hint_get)          (void *data, void *surface);
-   int  (*font_pen_coords_get)            (void *data, void *font, const Evas_Text_Props *intl_props, int pos, int *cpen_x, int *cy, int *cadv, int *ch);
-   Eina_Bool (*font_text_props_info_create)                (void *data __UNUSED__, void *font, const Eina_Unicode *text, Evas_Text_Props *intl_props, const Evas_BiDi_Paragraph_Props *par_props, size_t pos, size_t len);
-   int  (*font_right_inset_get)                  (void *data, void *font, const Evas_Text_Props *text_props);
+   int  (*font_pen_coords_get)             (void *data, Evas_Font_Set *font, const Evas_Text_Props *intl_props, int pos, int *cpen_x, int *cy, int *cadv, int *ch);
+   Eina_Bool (*font_text_props_info_create) (void *data __UNUSED__, Evas_Font_Instance *fi, const Eina_Unicode *text, Evas_Text_Props *intl_props, const Evas_BiDi_Paragraph_Props *par_props, size_t pos, size_t len);
+   int  (*font_right_inset_get)            (void *data, Evas_Font_Set *font, const Evas_Text_Props *text_props);
 
    void (*image_draw_filtered)             (void *data, void *context, void *surface, void *image, Evas_Filter_Info *filter);
    Filtered_Image *(*image_filtered_get)   (void *image, uint8_t *key, size_t len);
@@ -733,7 +741,7 @@ struct _Evas_Func
    int  (*gl_native_surface_get)         (void *data, void *surface, void *native_surface);
    void *(*gl_api_get)                   (void *data);
    int  (*image_load_error_get)          (void *data, void *image);
-   int  (*font_run_end_get)     (void *data __UNUSED__, void *fn, void **script_fi, void **cur_fi, Evas_Script_Type script, const Eina_Unicode *text, int run_len);
+   int  (*font_run_end_get)              (void *data, Evas_Font_Set *font, Evas_Font_Instance **script_fi, Evas_Font_Instance **cur_fi, Evas_Script_Type script, const Eina_Unicode *text, int run_len);
 };
 
 struct _Evas_Image_Load_Func

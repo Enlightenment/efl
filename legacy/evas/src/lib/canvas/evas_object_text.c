@@ -34,7 +34,7 @@ struct _Evas_Object_Text
    const char                 *bidi_delimiters;
    Evas_Object_Text_Item      *items;
 
-   void                       *engine_data;
+   Evas_Font_Set              *font;
 
    char                        changed : 1;
 };
@@ -110,7 +110,7 @@ _evas_object_text_char_coords_get(const Evas_Object *obj,
         if ((it->text_pos <= pos) &&
               (pos < (it->text_pos + it->text_props.text_len)))
           {
-             return ENFN->font_char_coords_get(ENDT, o->engine_data,
+             return ENFN->font_char_coords_get(ENDT, o->font,
                    &it->text_props, pos - it->text_pos, x, y, w, h);
           }
      }
@@ -180,7 +180,7 @@ _evas_object_text_last_up_to_pos(const Evas_Object *obj,
              if ((x <= cx) && (cx < x + it->adv))
                {
                   return it->text_pos + ENFN->font_last_up_to_pos(ENDT,
-                        o->engine_data,
+                        o->font,
                         &it->text_props,
                         cx - x,
                         cy);
@@ -197,7 +197,7 @@ _evas_object_text_last_up_to_pos(const Evas_Object *obj,
              if ((it->x <= cx) && (cx < it->x + it->adv))
                {
                   return it->text_pos + ENFN->font_last_up_to_pos(ENDT,
-                        o->engine_data,
+                        o->font,
                         &it->text_props,
                         cx - it->x,
                         cy);
@@ -219,7 +219,7 @@ _evas_object_text_char_at_coords(const Evas_Object *obj,
         if ((it->x <= cx) && (cx < it->x + it->adv))
           {
              return it->text_pos + ENFN->font_char_at_coords_get(ENDT,
-                   o->engine_data,
+                   o->font,
                    &it->text_props,
                    cx,
                    cy,
@@ -368,15 +368,15 @@ evas_object_text_font_set(Evas_Object *obj, const char *font, Evas_Font_Size siz
      }
 
 #ifdef EVAS_FRAME_QUEUING
-   if (o->engine_data)
-      evas_common_pipe_op_text_flush(o->engine_data);
+   if (o->font)
+      evas_common_pipe_op_text_flush(o->font);
 #endif
 
    /* DO IT */
-   if (o->engine_data)
+   if (o->font)
      {
-	evas_font_free(obj->layer->evas, o->engine_data);
-	o->engine_data = NULL;
+	evas_font_free(obj->layer->evas, o->font);
+	o->font = NULL;
      }
    if (!same_font)
      {
@@ -389,14 +389,14 @@ evas_object_text_font_set(Evas_Object *obj, const char *font, Evas_Font_Size siz
 	o->prev.font = NULL;
      }
    o->cur.size = size;
-   o->engine_data = evas_font_load(obj->layer->evas, o->cur.font, o->cur.source,
+   o->font = evas_font_load(obj->layer->evas, o->cur.font, o->cur.source,
 				   (int)(((double)o->cur.size) * obj->cur.scale));
-   if (o->engine_data)
+   if (o->font)
      {
-        o->ascent = ENFN->font_ascent_get(ENDT, o->engine_data);
-        o->descent = ENFN->font_descent_get(ENDT, o->engine_data);
-        o->max_ascent = ENFN->font_max_ascent_get(ENDT, o->engine_data);
-        o->max_descent = ENFN->font_max_descent_get(ENDT, o->engine_data);
+        o->ascent = ENFN->font_ascent_get(ENDT, o->font);
+        o->descent = ENFN->font_descent_get(ENDT, o->font);
+        o->max_ascent = ENFN->font_max_ascent_get(ENDT, o->font);
+        o->max_descent = ENFN->font_max_descent_get(ENDT, o->font);
      }
    else
      {
@@ -459,7 +459,7 @@ evas_object_text_font_get(const Evas_Object *obj, const char **font, Evas_Font_S
  */
 static Evas_Object_Text_Item *
 _evas_object_text_item_new(Evas_Object *obj, Evas_Object_Text *o,
-      void *fi, const Eina_Unicode *str, Evas_Script_Type script,
+      Evas_Font_Instance *fi, const Eina_Unicode *str, Evas_Script_Type script,
       size_t pos, size_t visual_pos, size_t len)
 {
    Evas_Object_Text_Item *it;
@@ -471,17 +471,17 @@ _evas_object_text_item_new(Evas_Object *obj, Evas_Object_Text *o,
          it->text_pos);
    evas_common_text_props_script_set(&it->text_props, script);
 
-   if (o->engine_data)
+   if (o->font)
      {
         ENFN->font_text_props_info_create(ENDT,
               fi, str + pos, &it->text_props,
               o->bidi_par_props, it->text_pos, len);
 
         ENFN->font_string_size_get(ENDT,
-              o->engine_data,
+              o->font,
               &it->text_props,
               &it->w, &it->h);
-        it->adv = ENFN->font_h_advance_get(ENDT, o->engine_data,
+        it->adv = ENFN->font_h_advance_get(ENDT, o->font,
               &it->text_props);
      }
    o->items = (Evas_Object_Text_Item *)
@@ -569,7 +569,7 @@ _evas_object_text_layout(Evas_Object *obj, Evas_Object_Text *o, const Eina_Unico
 
    while (len > 0)
      {
-        void *script_fi = NULL;
+        Evas_Font_Instance *script_fi = NULL;
         int script_len = len, tmp_cut;
         Evas_Script_Type script;
         tmp_cut = evas_common_language_script_end_of_run_get(
@@ -583,12 +583,12 @@ _evas_object_text_layout(Evas_Object *obj, Evas_Object_Text *o, const Eina_Unico
 
         while (script_len > 0)
           {
-             void *cur_fi;
+             Evas_Font_Instance *cur_fi;
              int run_len = script_len;
-             if (o->engine_data)
+             if (o->font)
                {
                   run_len = ENFN->font_run_end_get(ENDT,
-                        o->engine_data, &script_fi, &cur_fi,
+                        o->font, &script_fi, &cur_fi,
                         script, text + pos, script_len);
                }
 #ifdef BIDI_SUPPORT
@@ -812,9 +812,9 @@ evas_object_text_inset_get(const Evas_Object *obj)
    MAGIC_CHECK(o, Evas_Object_Text, MAGIC_OBJ_TEXT);
    return 0;
    MAGIC_CHECK_END();
-   if (!o->engine_data) return 0;
+   if (!o->font) return 0;
    if (!o->items) return 0;
-   return ENFN->font_inset_get(ENDT, o->engine_data, &o->items->text_props);
+   return ENFN->font_inset_get(ENDT, o->font, &o->items->text_props);
 }
 
 EAPI Evas_Coord
@@ -829,7 +829,7 @@ evas_object_text_horiz_advance_get(const Evas_Object *obj)
    MAGIC_CHECK(o, Evas_Object_Text, MAGIC_OBJ_TEXT);
    return 0;
    MAGIC_CHECK_END();
-   if (!o->engine_data) return 0;
+   if (!o->font) return 0;
    if (!o->items) return 0;
    return _evas_object_text_horiz_advance_get(obj, o);
 }
@@ -846,7 +846,7 @@ evas_object_text_vert_advance_get(const Evas_Object *obj)
    MAGIC_CHECK(o, Evas_Object_Text, MAGIC_OBJ_TEXT);
    return 0;
    MAGIC_CHECK_END();
-   if (!o->engine_data) return 0;
+   if (!o->font) return 0;
    if (!o->items) return o->ascent + o->descent;
    return _evas_object_text_vert_advance_get(obj, o);
 }
@@ -865,7 +865,7 @@ evas_object_text_char_pos_get(const Evas_Object *obj, int pos, Evas_Coord *cx, E
    MAGIC_CHECK(o, Evas_Object_Text, MAGIC_OBJ_TEXT);
    return EINA_FALSE;
    MAGIC_CHECK_END();
-   if (!o->engine_data) return EINA_FALSE;
+   if (!o->font) return EINA_FALSE;
    if (!o->items || (pos < 0)) return EINA_FALSE;
    ret = _evas_object_text_char_coords_get(obj, o, (size_t) pos,
             &x, &y, &w, &h);
@@ -906,7 +906,7 @@ evas_object_text_last_up_to_pos(const Evas_Object *obj, Evas_Coord x, Evas_Coord
    MAGIC_CHECK(o, Evas_Object_Text, MAGIC_OBJ_TEXT);
    return -1;
    MAGIC_CHECK_END();
-   if (!o->engine_data) return -1;
+   if (!o->font) return -1;
    if (!o->items) return -1;
    return _evas_object_text_last_up_to_pos(obj, o, x, y - o->max_ascent);
 }
@@ -925,7 +925,7 @@ evas_object_text_char_coords_get(const Evas_Object *obj, Evas_Coord x, Evas_Coor
    MAGIC_CHECK(o, Evas_Object_Text, MAGIC_OBJ_TEXT);
    return -1;
    MAGIC_CHECK_END();
-   if (!o->engine_data) return -1;
+   if (!o->font) return -1;
    if (!o->items) return -1;
    ret = _evas_object_text_char_at_coords(obj, o, x, y - o->max_ascent,
          &rx, &ry, &rw, &rh);
@@ -1591,7 +1591,7 @@ evas_object_text_free(Evas_Object *obj)
    if (o->cur.utf8_text) eina_stringshare_del(o->cur.utf8_text);
    if (o->cur.font) eina_stringshare_del(o->cur.font);
    if (o->cur.source) eina_stringshare_del(o->cur.source);
-   if (o->engine_data) evas_font_free(obj->layer->evas, o->engine_data);
+   if (o->font) evas_font_free(obj->layer->evas, o->font);
 #ifdef BIDI_SUPPORT
    evas_bidi_paragraph_props_unref(o->bidi_par_props);
 #endif
@@ -1675,11 +1675,11 @@ evas_object_text_render(Evas_Object *obj, void *output, void *context, void *sur
 				(((int)object->sub.col.a) * (amul)) / 255);
 
 #define DRAW_TEXT(ox, oy) \
-   if ((o->engine_data) && (it->text_props.len > 0)) \
+   if ((o->font) && (it->text_props.len > 0)) \
      ENFN->font_draw(output, \
 		     context, \
 		     surface, \
-		     o->engine_data, \
+		     o->font, \
 		     obj->cur.geometry.x + x + sl + ox + it->x, \
 		     obj->cur.geometry.y + y + st + oy + \
 		     (int) \
@@ -2004,7 +2004,7 @@ evas_object_text_engine_data_get(Evas_Object *obj)
 
    o = (Evas_Object_Text *)(obj->object_data);
    if (!o) return NULL;
-   return o->engine_data;
+   return o->font;
 }
 
 static int
@@ -2048,11 +2048,11 @@ _evas_object_text_rehint(Evas_Object *obj)
    int is, was;
 
    o = (Evas_Object_Text *)(obj->object_data);
-   if (!o->engine_data) return;
+   if (!o->font) return;
 #ifdef EVAS_FRAME_QUEUING
-   evas_common_pipe_op_text_flush(o->engine_data);
+   evas_common_pipe_op_text_flush(o->font);
 #endif
-   evas_font_load_hinting_set(obj->layer->evas, o->engine_data,
+   evas_font_load_hinting_set(obj->layer->evas, o->font,
 			      obj->layer->evas->hinting);
    was = evas_object_is_in_output_rect(obj,
 				       obj->layer->evas->pointer.x,
@@ -2093,7 +2093,7 @@ _evas_object_text_recalc(Evas_Object *obj)
 
    if (text) free(text);
 
-   if ((o->engine_data) && (o->items))
+   if ((o->font) && (o->items))
      {
 	int w, h;
 	int l = 0, r = 0, t = 0, b = 0;

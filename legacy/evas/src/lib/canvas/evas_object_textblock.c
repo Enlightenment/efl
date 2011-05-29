@@ -338,7 +338,7 @@ struct _Evas_Object_Textblock_Format
       const char       *name;
       const char       *source;
       const char       *fallbacks;
-      void             *font;
+      Evas_Font_Set    *font;
       int               size;
    } font;
    struct {
@@ -2829,7 +2829,7 @@ skip:
 
    while (str)
      {
-        void *script_fi = NULL;
+        Evas_Font_Instance *script_fi = NULL;
         int script_len, tmp_cut;
         Evas_Script_Type script;
 
@@ -2847,7 +2847,7 @@ skip:
 
         while (script_len > 0)
           {
-             void *cur_fi;
+             Evas_Font_Instance *cur_fi;
              int run_len = script_len;
              ti = _layout_text_item_new(c, fmt);
              ti->parent.text_node = n;
@@ -3316,7 +3316,7 @@ _layout_ellipsis_item_new(Ctxt *c, const Evas_Object_Textblock_Item *cur_it)
 {
    Evas_Object_Textblock_Text_Item *ellip_ti;
    Evas_Script_Type script;
-   void *script_fi = NULL, *cur_fi;
+   Evas_Font_Instance *script_fi = NULL, *cur_fi;
    size_t len = 1; /* The length of _ellip_str */
    ellip_ti = _layout_text_item_new(c,
          eina_list_data_get(eina_list_last(c->format_stack)));
@@ -3336,10 +3336,8 @@ _layout_ellipsis_item_new(Ctxt *c, const Evas_Object_Textblock_Item *cur_it)
               script, _ellip_str, len);
 
         c->ENFN->font_text_props_info_create(c->ENDT,
-              ellip_ti->parent.format->font.font,
-              _ellip_str, &ellip_ti->text_props,
-              c->par->bidi_props,
-              ellip_ti->parent.text_pos, len);
+              cur_fi, _ellip_str, &ellip_ti->text_props,
+              c->par->bidi_props, ellip_ti->parent.text_pos, len);
      }
 
    _text_item_update_sizes(c, ellip_ti);
@@ -7382,7 +7380,7 @@ evas_textblock_cursor_geometry_get(const Evas_Textblock_Cursor *cur, Evas_Coord 
  * @return line number of the char on success, -1 on error.
  */
 static int
-_evas_textblock_cursor_char_pen_geometry_common_get(int (*query_func) (void *data, void *font, const Evas_Text_Props *intl_props, int pos, int *cx, int *cy, int *cw, int *ch), const Evas_Textblock_Cursor *cur, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch)
+_evas_textblock_cursor_char_pen_geometry_common_get(int (*query_func) (void *data, Evas_Font_Set *font, const Evas_Text_Props *intl_props, int pos, int *cx, int *cy, int *cw, int *ch), const Evas_Textblock_Cursor *cur, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch)
 {
    Evas_Object_Textblock *o;
    Evas_Object_Textblock_Line *ln = NULL;
