@@ -384,3 +384,6 @@
 
 	* Textblock: Added support for numeric escape codes. e.g "&#x3c;".
 
+2011-05-29  Vincent Torri
+
+	* Fix compilation when --disable-async-preload is passed to configure.

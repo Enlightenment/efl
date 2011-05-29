@@ -17,9 +17,9 @@
 #include "evas_private.h"
 #include "Evas.h"
 
-static int _threads_max = 0;
-
 #ifdef BUILD_ASYNC_PRELOAD
+
+static int _threads_max = 0;
 
 typedef struct _Evas_Preload_Pthread_Worker Evas_Preload_Pthread_Worker;
 typedef struct _Evas_Preload_Pthread_Data Evas_Preload_Pthread_Data;
@@ -128,10 +128,12 @@ on_error:
 void
 _evas_preload_thread_init(void)
 {
+#ifdef BUILD_ASYNC_PRELOAD
    _threads_max = eina_cpu_count();
    if (_threads_max < 1) _threads_max = 1;
 
    LKI(_mutex);
+#endif
 }
 
 void
