@@ -2257,8 +2257,12 @@ edje_object_size_min_restricted_calc(Evas_Object *obj, Evas_Coord *minw, Evas_Co
 				 okh = 1;
 				 pep = ep;
 			      }
-                            has_non_fixed_tb = EINA_TRUE;
 			 }
+
+                       if (ep->part->type == EDJE_PART_TYPE_TEXTBLOCK)
+                         {
+                            has_non_fixed_tb = EINA_TRUE;
+                         }
 		    }
 	       }
 	  }
