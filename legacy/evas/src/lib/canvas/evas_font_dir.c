@@ -29,7 +29,7 @@ struct _Fndat
    const char      *name;
    const char      *source;
    int              size;
-   void            *font;
+   Evas_Font_Set   *font;
    int              ref;
    Font_Rend_Flags  wanted_rend;
 
@@ -230,11 +230,11 @@ evas_font_init(void)
 }
 
 #ifdef HAVE_FONTCONFIG
-static void *
+static Evas_Font_Set *
 evas_load_fontconfig(Evas *evas, FcFontSet *set, int size,
       Font_Rend_Flags wanted_rend)
 {
-   void *font = NULL;
+   Evas_Font_Set *font = NULL;
    int i;
 
    /* Do loading for all in family */
@@ -306,7 +306,7 @@ evas_font_load(Evas *evas, const char *name, const char *source, int size)
    FcFontSet *set = NULL;
 #endif
 
-   void *font = NULL;
+   Evas_Font_Set *font = NULL;
    Eina_List *fonts, *l;
    Fndat *fd;
    char *nm;
