@@ -26,7 +26,14 @@
 #define INF(...)      EINA_LOG_DOM_INFO(_elm_log_dom, __VA_ARGS__)
 #define DBG(...)      EINA_LOG_DOM_DBG (_elm_log_dom, __VA_ARGS__)
 
-#define E_(string) dgettext(PACKAGE, string)
+#ifdef ENABLE_NLS
+# include <libintl.h>
+# define E_(string) dgettext(PACKAGE, string)
+#else
+# define bindtextdomain(domain,dir)
+# define E_(string) (string)
+#endif
+
 
 typedef struct _Elm_Config    Elm_Config;
 typedef struct _Elm_Module    Elm_Module;
