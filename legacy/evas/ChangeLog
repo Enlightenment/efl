@@ -376,3 +376,7 @@
 	* Font-engine: Fixed a bug in glyph search causing inconsistent return
 	  values. The found fi should always be NULL if there was no fi found.
 
+2011-05-29  Tom Hacohen (TAsn)
+
+	* Font-engine: Conform to the API changes in Harfbuzz 0.6.0
+

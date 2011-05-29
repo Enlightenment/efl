@@ -180,10 +180,9 @@ evas_common_font_ot_cluster_size_get(const Evas_Text_Props *props, size_t char_i
 
 /* Harfbuzz font functions */
 
-static void
+static hb_position_t
 _evas_common_font_ot_hb_get_glyph_advance(hb_font_t *font,
       void *font_data, hb_codepoint_t glyph,
-      hb_position_t *x_advance, hb_position_t *y_advance,
       void *user_data)
 {
    /* Use our cache*/
@@ -194,25 +193,23 @@ _evas_common_font_ot_hb_get_glyph_advance(hb_font_t *font,
    fg = evas_common_font_int_cache_glyph_get(fi, glyph);
    if (fg)
      {
-        *x_advance = fg->glyph->advance.x >> 10;
-        *y_advance = fg->glyph->advance.y >> 10;
+        return fg->glyph->advance.x >> 10;
      }
+   return 0;
 }
 
-static void
+static hb_position_t
 _evas_common_font_ot_hb_get_kerning(hb_font_t *font, void *font_data,
-   hb_codepoint_t first_glyph, hb_codepoint_t second_glyph,
-   hb_position_t *x_kern, hb_position_t *y_kern, void *user_data)
+   hb_codepoint_t first_glyph, hb_codepoint_t second_glyph, void *user_data)
 {
    RGBA_Font_Int *fi = (RGBA_Font_Int *) font_data;
    int kern;
    (void) font;
    (void) user_data;
    if (evas_common_font_query_kerning(fi, first_glyph, second_glyph, &kern))
-        *x_kern = kern;
-   else
-      return;
-   *y_kern = 0;
+      return kern;
+
+   return 0;
 }
 
 /* End of harfbuzz font funcs */
@@ -224,9 +221,9 @@ _evas_common_font_ot_font_funcs_get(void)
    if (!font_funcs)
      {
         font_funcs = hb_font_funcs_create();
-        hb_font_funcs_set_glyph_advance_func(font_funcs,
+        hb_font_funcs_set_glyph_h_advance_func(font_funcs,
             _evas_common_font_ot_hb_get_glyph_advance, NULL, NULL);
-        hb_font_funcs_set_kerning_func(font_funcs,
+        hb_font_funcs_set_glyph_h_kerning_func(font_funcs,
             _evas_common_font_ot_hb_get_kerning, NULL, NULL);
      }
 
