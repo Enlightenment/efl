@@ -39,7 +39,7 @@ EAPI int
 evas_common_font_ot_cluster_size_get(const Evas_Text_Props *props, size_t char_index);
 
 EAPI Eina_Bool
-evas_common_font_ot_populate_text_props(void *fn, const Eina_Unicode *text,
+evas_common_font_ot_populate_text_props(const Eina_Unicode *text,
       Evas_Text_Props *props, int len);
 #endif
 

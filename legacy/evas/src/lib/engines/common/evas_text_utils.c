@@ -22,10 +22,9 @@ evas_common_text_props_bidi_set(Evas_Text_Props *props,
 }
 
 void
-evas_common_text_props_script_set(Evas_Text_Props *props,
-      const Eina_Unicode *str, size_t len)
+evas_common_text_props_script_set(Evas_Text_Props *props, Evas_Script_Type scr)
 {
-   props->script = evas_common_language_script_type_get(str, len);
+   props->script = scr;
 }
 
 void
@@ -195,12 +194,11 @@ evas_common_text_props_merge(Evas_Text_Props *item1,
 }
 
 EAPI Eina_Bool
-evas_common_text_props_content_create(void *_fn, const Eina_Unicode *text,
+evas_common_text_props_content_create(void *_fi, const Eina_Unicode *text,
       Evas_Text_Props *text_props, const Evas_BiDi_Paragraph_Props *par_props,
       size_t par_pos, int len)
 {
-   RGBA_Font *fn = (RGBA_Font *) _fn;
-   RGBA_Font_Int *fi;
+   RGBA_Font_Int *fi = (RGBA_Font_Int *) _fi;
 
    if (text_props->info)
      {
@@ -212,35 +210,6 @@ evas_common_text_props_content_create(void *_fn, const Eina_Unicode *text,
         text_props->start = text_props->len = text_props->text_offset = 0;
      }
    text_props->info = calloc(1, sizeof(Evas_Text_Props_Info));
-
-   fi = fn->fonts->data;
-   /* Load the glyph according to the first letter of the script, pretty
-    * bad, but will have to do */
-     {
-        const Eina_Unicode *base_char;
-        /* Skip common chars */
-        for (base_char = text ;
-             *base_char &&
-             (evas_common_language_char_script_get(*base_char) !=
-             text_props->script) ;
-             base_char++)
-           ;
-        if (!*base_char) base_char = text;
-
-        /* Find the first renderable char, and if there is none, find
-         * one that can show the replacement char. */
-        while (*base_char)
-          {
-             /* 0x1F is the last ASCII contral char. */
-             if ((*base_char > 0x1F) &&
-                   evas_common_font_glyph_search(fn, &fi, *base_char))
-                break;
-             base_char++;
-          }
-
-        if (!*base_char)
-           evas_common_font_glyph_search(fn, &fi, REPLACEMENT_CHAR);
-     }
 
    text_props->font_instance = fi;
 
@@ -260,7 +229,7 @@ evas_common_text_props_content_create(void *_fn, const Eina_Unicode *text,
    (void) par_props;
    (void) par_pos;
 
-   evas_common_font_ot_populate_text_props(fn, text, text_props, len);
+   evas_common_font_ot_populate_text_props(text, text_props, len);
 
    gl_itr = text_props->info->glyph;
    for (char_index = 0 ; char_index < text_props->len ; char_index++)

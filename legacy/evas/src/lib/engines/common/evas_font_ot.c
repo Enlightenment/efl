@@ -262,8 +262,8 @@ _evas_common_font_ot_shape(hb_buffer_t *buffer, RGBA_Font_Int *fi)
 }
 
 EAPI Eina_Bool
-evas_common_font_ot_populate_text_props(void *_fn __UNUSED__,
-      const Eina_Unicode *text, Evas_Text_Props *props, int len)
+evas_common_font_ot_populate_text_props(const Eina_Unicode *text,
+      Evas_Text_Props *props, int len)
 {
    RGBA_Font_Int *fi;
    hb_buffer_t *buffer;

@@ -2816,43 +2816,75 @@ skip:
    empty_item = 0;
 
 
+   /* If there's no parent text node, only create an empty item */
+   if (!n)
+     {
+        ti = _layout_text_item_new(c, fmt);
+        ti->parent.text_node = NULL;
+        ti->parent.text_pos = 0;
+        _layout_text_add_logical_item(c, ti, NULL);
+
+        goto end;
+     }
+
    while (str)
      {
-        int tmp_len;
+        void *script_fi = NULL;
+        int script_len, tmp_cut;
+        Evas_Script_Type script;
 
-        ti = _layout_text_item_new(c, fmt);
-        ti->parent.text_node = n;
-        ti->parent.text_pos = start + str - tbase;
-        tmp_len = off - (str - tbase);
-        if (ti->parent.text_node)
+        script_len = off - (str - tbase);
+
+        tmp_cut = evas_common_language_script_end_of_run_get(str,
+              c->par->bidi_props, start + str - tbase, script_len);
+        if (tmp_cut > 0)
           {
-             int tmp_cut;
-             tmp_cut = evas_common_language_script_end_of_run_get(str,
-                   c->par->bidi_props, ti->parent.text_pos, tmp_len);
-             if (tmp_cut > 0)
+             script_len = tmp_cut;
+          }
+
+        script = evas_common_language_script_type_get(str, script_len);
+
+
+        while (script_len > 0)
+          {
+             void *cur_fi;
+             int run_len = script_len;
+             ti = _layout_text_item_new(c, fmt);
+             ti->parent.text_node = n;
+             ti->parent.text_pos = start + str - tbase;
+
+             if (ti->parent.format->font.font)
                {
-                  tmp_len = tmp_cut;
+                  run_len = c->ENFN->font_run_end_get(c->ENDT,
+                        ti->parent.format->font.font, &script_fi, &cur_fi,
+                        script, str, script_len);
                }
+
              evas_common_text_props_bidi_set(&ti->text_props,
                    c->par->bidi_props, ti->parent.text_pos);
-             evas_common_text_props_script_set(&ti->text_props, str, tmp_len);
+             evas_common_text_props_script_set(&ti->text_props, script);
+
              if (ti->parent.format->font.font)
                {
                   c->ENFN->font_text_props_info_create(c->ENDT,
-                        ti->parent.format->font.font, str, &ti->text_props,
-                        c->par->bidi_props, ti->parent.text_pos, tmp_len);
+                        cur_fi, str, &ti->text_props, c->par->bidi_props,
+                        ti->parent.text_pos, run_len);
                }
+             str += run_len;
+             cur_len -= run_len;
+             script_len -= run_len;
+
+             _layout_text_add_logical_item(c, ti, NULL);
           }
-        str += tmp_len;
-        cur_len -= tmp_len;
 
-        _layout_text_add_logical_item(c, ti, NULL);
 
-        /* Break if we reached the end. */
+        /* Break if we reached the end. We do it here
+         * because we want at least one run if it's an empty string. */
         if (!*str)
           break;
      }
 
+end:
    if (alloc_str) free(alloc_str);
 }
 
@@ -3283,21 +3315,33 @@ static Evas_Object_Textblock_Text_Item *
 _layout_ellipsis_item_new(Ctxt *c, const Evas_Object_Textblock_Item *cur_it)
 {
    Evas_Object_Textblock_Text_Item *ellip_ti;
+   Evas_Script_Type script;
+   void *script_fi = NULL, *cur_fi;
    size_t len = 1; /* The length of _ellip_str */
    ellip_ti = _layout_text_item_new(c,
          eina_list_data_get(eina_list_last(c->format_stack)));
    ellip_ti->parent.text_node = cur_it->text_node;
    ellip_ti->parent.text_pos = cur_it->text_pos;
+   script = evas_common_language_script_type_get(_ellip_str, len);
 
    evas_common_text_props_bidi_set(&ellip_ti->text_props,
          c->par->bidi_props, ellip_ti->parent.text_pos);
-   evas_common_text_props_script_set (&ellip_ti->text_props,
-         _ellip_str, len);
-   c->ENFN->font_text_props_info_create(c->ENDT,
-         ellip_ti->parent.format->font.font,
-         _ellip_str, &ellip_ti->text_props,
-         c->par->bidi_props,
-         ellip_ti->parent.text_pos, len);
+   evas_common_text_props_script_set (&ellip_ti->text_props, script);
+
+   if (ellip_ti->parent.format->font.font)
+     {
+        /* It's only 1 char anyway, we don't need the run end. */
+        (void) c->ENFN->font_run_end_get(c->ENDT,
+              ellip_ti->parent.format->font.font, &script_fi, &cur_fi,
+              script, _ellip_str, len);
+
+        c->ENFN->font_text_props_info_create(c->ENDT,
+              ellip_ti->parent.format->font.font,
+              _ellip_str, &ellip_ti->text_props,
+              c->par->bidi_props,
+              ellip_ti->parent.text_pos, len);
+     }
+
    _text_item_update_sizes(c, ellip_ti);
 
    if (cur_it->type == EVAS_TEXTBLOCK_ITEM_TEXT)

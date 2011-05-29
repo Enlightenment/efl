@@ -3,6 +3,145 @@
 #include "evas_font_private.h" /* for Frame-Queuing support */
 #include "evas_font_ot.h"
 
+
+/* FIXME: Check coverage according to the font and not by actually loading */
+/**
+ * @internal
+ * Find the end of a run according to font coverage, and return the base script
+ * font and the current wanted font.
+ *
+ * @param[in] fn the font to use.
+ * @param script_fi The base font instance to be used with the script. If NULL, then it's calculated and returned in this variable, if not NULL, it's used and not modified.
+ * @param[out] cur_fi The font instance found for the current run.
+ * @param[in] script the base script
+ * @param[in] text the text to work on.
+ * @param[in] run_let the current run len, i.e "search limit".
+ * @return length of the run found.
+ */
+EAPI int
+evas_common_font_query_run_font_end_get(RGBA_Font *fn, RGBA_Font_Int **script_fi, RGBA_Font_Int **cur_fi, Evas_Script_Type script, const Eina_Unicode *text, int run_len)
+{
+   RGBA_Font_Int *fi;
+   const Eina_Unicode *run_end = text + run_len;
+   const Eina_Unicode *itr;
+
+   /* If there's no current script_fi, find it first */
+   if (!*script_fi)
+     {
+        const Eina_Unicode *base_char = NULL;
+        /* Skip common chars */
+        for (base_char = text ;
+             (base_char < run_end) &&
+             (evas_common_language_char_script_get(*base_char) != script) ;
+             base_char++)
+           ;
+        if (base_char == run_end) base_char = text;
+
+        /* Find the first renderable char */
+        while (base_char < run_end)
+          {
+             /* 0x1F is the last ASCII contral char, just a hack in
+              * the meanwhile. */
+             if ((*base_char > 0x1F) &&
+                   evas_common_font_glyph_search(fn, &fi, *base_char))
+                break;
+             base_char++;
+          }
+
+
+        /* If everything else fails, at least try to find a font for the
+         * replacement char */
+        if (base_char == run_end)
+           evas_common_font_glyph_search(fn, &fi, REPLACEMENT_CHAR);
+
+        *script_fi = fi;
+     }
+   else
+     {
+        fi = *script_fi;
+     }
+
+   /* Find the longest run of the same font starting from the start position
+    * and update cur_fi accordingly. */
+   itr = text;
+   while (itr < run_end)
+     {
+        RGBA_Font_Int *tmp_fi;
+        /* Itr will end up being the first of the next run  */
+        for ( ; itr < run_end ; itr++)
+          {
+             /* Break if either it's not in the font, or if it is in the
+              * script's font. */
+             if (fi == *script_fi)
+               {
+                  if (!evas_common_get_char_index(fi, *itr))
+                     break;
+               }
+             else
+               {
+                  if (evas_common_get_char_index(*script_fi, *itr))
+                     break;
+               }
+          }
+
+        /* If the script font doesn't fit even one char, find a new font. */
+        if (itr == text)
+          {
+             /* If we can find a font, use it. Otherwise, find the first
+              * char the run of chars that can't be rendered until the first
+              * one that can. */
+             if (evas_common_font_glyph_search(fn, &tmp_fi, *itr))
+               {
+                  fi = tmp_fi;
+               }
+             else
+               {
+                  itr++;
+                  /* Go through all the chars that can't be rendered with any
+                   * font */
+                  for ( ; itr < run_end ; itr++)
+                    {
+                       if (evas_common_get_char_index(fi, *itr) ||
+                             evas_common_font_glyph_search(fn, &fi, *itr))
+                          break;
+                    }
+
+                  /* If we found a renderable character and the found font
+                   * can render the replacement char, continue, otherwise
+                   * find a font most suitable for the replacement char and
+                   * break */
+                  if ((itr == run_end) ||
+                        !evas_common_get_char_index(fi, REPLACEMENT_CHAR))
+                    {
+                       evas_common_font_glyph_search(fn, &fi, REPLACEMENT_CHAR);
+                       break;
+                    }
+               }
+             itr++;
+          }
+        else
+          {
+             /* If this char is not renderable by any font, but the replacement
+              * char can be rendered using the currentfont, continue this
+              * run. */
+             if (!evas_common_font_glyph_search(fn, &tmp_fi, *itr) &&
+                   evas_common_get_char_index(fi, REPLACEMENT_CHAR))
+               {
+                  itr++;
+               }
+             else
+               {
+                  /* Done, we did as much as possible */
+                  break;
+               }
+          }
+     }
+
+   *cur_fi = fi;
+
+   return itr - text;
+}
+
 /**
  * @internal
  * Calculate the kerning between "left" and "right.

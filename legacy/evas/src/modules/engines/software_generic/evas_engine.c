@@ -799,6 +799,14 @@ eng_font_last_up_to_pos(void *data __UNUSED__, void *font, const Evas_Text_Props
    return evas_common_font_query_last_up_to_pos(font, text_props, x, y);
 }
 
+static int
+eng_font_run_font_end_get(void *data __UNUSED__, void *fn, void **script_fi, void **cur_fi, Evas_Script_Type script, const Eina_Unicode *text, int run_len)
+{
+   return evas_common_font_query_run_font_end_get(fn,
+         (RGBA_Font_Int **) script_fi, (RGBA_Font_Int **) cur_fi,
+         script, text, run_len);
+}
+
 static void
 eng_font_draw(void *data __UNUSED__, void *context, void *surface, void *font, int x, int y, int w __UNUSED__, int h __UNUSED__, int ow __UNUSED__, int oh __UNUSED__, const Evas_Text_Props *text_props)
 {
@@ -1081,7 +1089,8 @@ static Evas_Func func =
      NULL, // FIXME: need software mesa for gl rendering <- gl_proc_address_get
      NULL, // FIXME: need software mesa for gl rendering <- gl_native_surface_get
      NULL, // FIXME: need software mesa for gl rendering <- gl_api_get
-     eng_image_load_error_get
+     eng_image_load_error_get,
+     eng_font_run_font_end_get
    /* FUTURE software generic calls go here */
 };
 

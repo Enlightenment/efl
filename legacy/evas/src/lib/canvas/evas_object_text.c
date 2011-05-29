@@ -459,23 +459,24 @@ evas_object_text_font_get(const Evas_Object *obj, const char **font, Evas_Font_S
  */
 static Evas_Object_Text_Item *
 _evas_object_text_item_new(Evas_Object *obj, Evas_Object_Text *o,
-      const Eina_Unicode *str,
+      void *fi, const Eina_Unicode *str, Evas_Script_Type script,
       size_t pos, size_t visual_pos, size_t len)
 {
    Evas_Object_Text_Item *it;
-   const Eina_Unicode *text = str + pos;
 
    it = calloc(1, sizeof(Evas_Object_Text_Item));
    it->text_pos = pos;
    it->visual_pos = visual_pos;
    evas_common_text_props_bidi_set(&it->text_props, o->bidi_par_props,
          it->text_pos);
-   evas_common_text_props_script_set(&it->text_props, text, len);
+   evas_common_text_props_script_set(&it->text_props, script);
+
    if (o->engine_data)
      {
         ENFN->font_text_props_info_create(ENDT,
-              o->engine_data, text, &it->text_props,
+              fi, str + pos, &it->text_props,
               o->bidi_par_props, it->text_pos, len);
+
         ENFN->font_string_size_get(ENDT,
               o->engine_data,
               &it->text_props,
@@ -554,7 +555,6 @@ _evas_object_text_layout(Evas_Object *obj, Evas_Object_Text *o, const Eina_Unico
 {
    EvasBiDiStrIndex *v_to_l = NULL;
    size_t pos, visual_pos;
-   int cutoff;
    int len = eina_unicode_strlen(text);
 #ifdef BIDI_SUPPORT
    int *segment_idxs = NULL;
@@ -567,32 +567,44 @@ _evas_object_text_layout(Evas_Object *obj, Evas_Object_Text *o, const Eina_Unico
 #endif
    visual_pos = pos = 0;
 
-   do
+   while (len > 0)
      {
-        cutoff = evas_common_language_script_end_of_run_get(
+        void *script_fi = NULL;
+        int script_len = len, tmp_cut;
+        Evas_Script_Type script;
+        tmp_cut = evas_common_language_script_end_of_run_get(
               text + pos,
               o->bidi_par_props,
-              pos, len - pos);
-        if (cutoff > 0)
+              pos, len);
+        if (tmp_cut > 0)
+           script_len = tmp_cut;
+
+        script = evas_common_language_script_type_get(text, script_len);
+
+        while (script_len > 0)
           {
+             void *cur_fi;
+             int run_len = script_len;
+             if (o->engine_data)
+               {
+                  run_len = ENFN->font_run_end_get(ENDT,
+                        o->engine_data, &script_fi, &cur_fi,
+                        script, text + pos, script_len);
+               }
 #ifdef BIDI_SUPPORT
              visual_pos = evas_bidi_position_logical_to_visual(
-                   v_to_l, len, pos);
+                   v_to_l, run_len, pos);
 #else
              visual_pos = pos;
 #endif
-             _evas_object_text_item_new(obj, o, text, pos, visual_pos, cutoff);
-             pos += cutoff;
+             _evas_object_text_item_new(obj, o, cur_fi, text, script,
+                   pos, visual_pos, run_len);
+
+             pos += run_len;
+             script_len -= run_len;
+             len -= run_len;
           }
      }
-   while (cutoff > 0);
-#ifdef BIDI_SUPPORT
-   visual_pos = evas_bidi_position_logical_to_visual(
-         v_to_l, len, pos);
-#else
-   visual_pos = pos;
-#endif
-   _evas_object_text_item_new(obj, o, text, pos, visual_pos, len - pos);
 
    _evas_object_text_item_order(obj, o);
 

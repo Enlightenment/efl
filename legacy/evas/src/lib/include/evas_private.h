@@ -733,6 +733,7 @@ struct _Evas_Func
    int  (*gl_native_surface_get)         (void *data, void *surface, void *native_surface);
    void *(*gl_api_get)                   (void *data);
    int  (*image_load_error_get)          (void *data, void *image);
+   int  (*font_run_end_get)     (void *data __UNUSED__, void *fn, void **script_fi, void **cur_fi, Evas_Script_Type script, const Eina_Unicode *text, int run_len);
 };
 
 struct _Evas_Image_Load_Func
