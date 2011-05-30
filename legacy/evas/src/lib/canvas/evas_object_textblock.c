@@ -2827,7 +2827,7 @@ skip:
         goto end;
      }
 
-   while (str)
+   do
      {
         Evas_Font_Instance *script_fi = NULL;
         int script_len, tmp_cut;
@@ -2843,16 +2843,16 @@ skip:
           }
 
         /* FIXME: This is a possible fix for an infinite loops that happens
-         * if script_len <= 0. Should find the source of the issue,
+         * if script_len < 0. Should find the source of the issue,
          * i.e why (off - (str - tbase)) is ever < 0. I can't reproduce the
          * issue so I can't really do anything about it. */
-        if (script_len <= 0)
+        if (script_len < 0)
            break;
 
         script = evas_common_language_script_type_get(str, script_len);
 
 
-        while (script_len > 0)
+        do
           {
              Evas_Font_Instance *cur_fi;
              int run_len = script_len;
@@ -2883,13 +2883,9 @@ skip:
 
              _layout_text_add_logical_item(c, ti, NULL);
           }
-
-
-        /* Break if we reached the end. We do it here
-         * because we want at least one run if it's an empty string. */
-        if (!*str)
-          break;
+        while (script_len > 0);
      }
+   while (*str);
 
 end:
    if (alloc_str) free(alloc_str);
