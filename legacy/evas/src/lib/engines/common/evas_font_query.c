@@ -102,8 +102,11 @@ evas_common_font_query_run_font_end_get(RGBA_Font *fn, RGBA_Font_Int **script_fi
                   for ( ; itr < run_end ; itr++)
                     {
                        if (evas_common_get_char_index(fi, *itr) ||
-                             evas_common_font_glyph_search(fn, &fi, *itr))
-                          break;
+                             evas_common_font_glyph_search(fn, &tmp_fi, *itr))
+                         {
+                            fi = tmp_fi;
+                            break;
+                         }
                     }
 
                   /* If we found a renderable character and the found font
