@@ -583,7 +583,7 @@ _evas_object_text_layout(Evas_Object *obj, Evas_Object_Text *o, const Eina_Unico
 
         while (script_len > 0)
           {
-             Evas_Font_Instance *cur_fi;
+             Evas_Font_Instance *cur_fi = NULL;
              int run_len = script_len;
              if (o->font)
                {

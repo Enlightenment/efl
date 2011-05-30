@@ -2845,7 +2845,7 @@ skip:
 
         while (script_len > 0)
           {
-             Evas_Font_Instance *cur_fi;
+             Evas_Font_Instance *cur_fi = NULL;
              int run_len = script_len;
              ti = _layout_text_item_new(c, fmt);
              ti->parent.text_node = n;
