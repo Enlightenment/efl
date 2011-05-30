@@ -527,7 +527,6 @@ test_transit9(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
 {
    Evas_Object *win, *bg, *bt, *bt2, *bt3, *bt4;
    Elm_Transit *trans, *trans2, *trans3, *trans4;
-   Elm_Transit_Effect *effect_context;
 
    win = elm_win_add(NULL, "transit9", ELM_WIN_BASIC);
    elm_win_title_set(win, "Transit 9");
