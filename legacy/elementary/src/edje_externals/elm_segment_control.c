@@ -6,7 +6,7 @@ typedef struct _Elm_Params_Segment_Control
 } Elm_Params_Segment_Control;
 
 static void
-external_segment_control_state_set(void *data __UNUSED__, Evas_Object *obj, const void *from_params, const void *to_params, float pos __UNUSED__)
+external_segment_control_state_set(void *data __UNUSED__, Evas_Object *obj __UNUSED__, const void *from_params, const void *to_params, float pos __UNUSED__)
 {
    const Elm_Params_Segment_Control *p;
 
@@ -16,7 +16,7 @@ external_segment_control_state_set(void *data __UNUSED__, Evas_Object *obj, cons
 }
 
 static Eina_Bool
-external_segment_control_param_set(void *data __UNUSED__, Evas_Object *obj, const Edje_External_Param *param)
+external_segment_control_param_set(void *data __UNUSED__, Evas_Object *obj __UNUSED__, const Edje_External_Param *param)
 {
    ERR("unknown parameter '%s' of type '%s'",
        param->name, edje_external_param_type_str(param->type));
@@ -25,7 +25,7 @@ external_segment_control_param_set(void *data __UNUSED__, Evas_Object *obj, cons
 }
 
 static Eina_Bool
-external_segment_control_param_get(void *data __UNUSED__, const Evas_Object *obj, Edje_External_Param *param)
+external_segment_control_param_get(void *data __UNUSED__, const Evas_Object *obj __UNUSED__, Edje_External_Param *param)
 {
    ERR("unknown parameter '%s' of type '%s'",
        param->name, edje_external_param_type_str(param->type));
@@ -34,11 +34,11 @@ external_segment_control_param_get(void *data __UNUSED__, const Evas_Object *obj
 }
 
 static void *
-external_segment_control_params_parse(void *data __UNUSED__, Evas_Object *obj __UNUSED__, const Eina_List *params)
+external_segment_control_params_parse(void *data __UNUSED__, Evas_Object *obj __UNUSED__, const Eina_List *params __UNUSED__)
 {
    Elm_Params_Segment_Control *mem;
-   Edje_External_Param *param;
-   const Eina_List *l;
+   //Edje_External_Param *param;
+   //const Eina_List *l;
 
    mem = calloc(1, sizeof(Elm_Params_Segment_Control));
    if (!mem)
