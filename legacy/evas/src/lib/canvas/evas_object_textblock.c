@@ -214,7 +214,7 @@ struct _Evas_Object_Textblock_Node_Text
 struct _Evas_Object_Textblock_Node_Format
 {
    EINA_INLIST;
-   Eina_Strbuf                        *format;
+   const char                         *format;
    Evas_Object_Textblock_Node_Text    *text_node;
    size_t                              offset;
    unsigned char                       anchor : 2;
@@ -2964,7 +2964,7 @@ _layout_do_format(const Evas_Object *obj __UNUSED__, Ctxt *c,
    const char *item;
    int handled = 0;
 
-   s = eina_strbuf_string_get(n->format);
+   s = n->format;
    if (!strncmp(s, "+ item ", 7))
      {
         // one of:
@@ -3039,7 +3039,7 @@ _layout_do_format(const Evas_Object *obj __UNUSED__, Ctxt *c,
 
         if (create_item)
           {
-             fi = _layout_format_item_add(c, n, NULL, fmt);
+             fi = _layout_format_item_add(c, n, s, fmt);
              fi->vsize = vsize;
              fi->size = size;
              fi->formatme = 1;
@@ -3699,7 +3699,7 @@ _format_changes_invalidate_text_nodes(Ctxt *c)
      {
         if (fnode->new)
           {
-             const char *fstr = eina_strbuf_string_get(fnode->format);
+             const char *fstr = fnode->format;
              /* balance < 0 means we gave up and everything should be
               * invalidated */
              if (*fstr == '+')
@@ -4875,8 +4875,8 @@ _markup_get_format_append(Evas_Object_Textblock *o, Eina_Strbuf *txt, Evas_Objec
    const char *tag;
    const char *replace;
 
-   replace_len = eina_strbuf_length_get(fnode->format);
-   replace = eina_strbuf_string_get(fnode->format);
+   replace_len = strlen(fnode->format);
+   replace = fnode->format;
    tag = _style_match_replace(o->style, replace, replace_len, &tag_len);
    eina_strbuf_append_char(txt, '<');
    if (tag)
@@ -4890,7 +4890,7 @@ _markup_get_format_append(Evas_Object_Textblock *o, Eina_Strbuf *txt, Evas_Objec
         int pop = 0;
 
         // FIXME: need to escape
-        s = eina_strbuf_string_get(fnode->format);
+        s = fnode->format;
         if (*s == '+') push = 1;
         if (*s == '-') pop = 1;
         while ((*s == ' ') || (*s == '+') || (*s == '-')) s++;
@@ -5357,7 +5357,7 @@ evas_textblock_node_format_remove_pair(Evas_Object *obj,
 
    do
      {
-        const char *fstr = eina_strbuf_string_get(fmt->format);
+        const char *fstr = fmt->format;
 
         if (fstr && (*fstr == '+'))
           {
@@ -5376,7 +5376,7 @@ evas_textblock_node_format_remove_pair(Evas_Object *obj,
    if (n->visible)
      {
         size_t ind = _evas_textblock_node_format_pos_get(n);
-        const char *format = eina_strbuf_string_get(n->format);
+        const char *format = n->format;
         Evas_Textblock_Cursor cur;
         cur.obj = obj;
 
@@ -5843,7 +5843,7 @@ _evas_textblock_node_format_remove_matching(Evas_Object_Textblock *o,
    do
      {
         Evas_Object_Textblock_Node_Format *nnode;
-        const char *fstr = eina_strbuf_string_get(fmt->format);
+        const char *fstr = fmt->format;
 
         nnode = _NODE_FORMAT(EINA_INLIST_GET(fmt)->next);
         if (nnode)
@@ -6060,8 +6060,7 @@ _evas_textblock_node_text_adjust_offsets_to_start(Evas_Object_Textblock *o,
         if (!itr || (itr && (itr->text_node != n)))
           {
              /* Remove the PS, and return since it's the end of the node */
-             if (_IS_PARAGRAPH_SEPARATOR(o,
-                      eina_strbuf_string_get(last_node->format)))
+             if (_IS_PARAGRAPH_SEPARATOR(o, last_node->format))
                {
                   _evas_textblock_node_format_remove(o, last_node, 0);
                   return EINA_TRUE;
@@ -6663,7 +6662,7 @@ _evas_textblock_node_format_free(Evas_Object_Textblock *o,
       Evas_Object_Textblock_Node_Format *n)
 {
    if (!n) return;
-   eina_strbuf_free(n->format);
+   eina_stringshare_del(n->format);
    if (n->anchor == ANCHOR_ITEM)
       o->anchors_item = eina_list_remove(o->anchors_item, n);
    else if (n->anchor == ANCHOR_A)
@@ -6685,8 +6684,7 @@ _evas_textblock_node_format_new(Evas_Object_Textblock *o, const char *format)
    Evas_Object_Textblock_Node_Format *n;
 
    n = calloc(1, sizeof(Evas_Object_Textblock_Node_Format));
-   n->format = eina_strbuf_new();
-   eina_strbuf_append(n->format, format);
+   n->format = eina_stringshare_add(format);
    _evas_textblock_format_is_visible(n, format);
    if (n->anchor == ANCHOR_A)
      {
@@ -6895,7 +6893,7 @@ evas_textblock_cursor_char_delete(Evas_Textblock_Cursor *cur)
              Evas_Object_Textblock_Node_Format *last_fmt;
              /* If there's a PS it must be the last become it delimits paragraphs */
              last_fmt = _evas_textblock_node_format_last_at_off(fmt);
-             format = eina_strbuf_string_get(last_fmt->format);
+             format = last_fmt->format;
              if (format && _IS_PARAGRAPH_SEPARATOR(o, format))
                {
                   merge_nodes = 1;
@@ -7213,7 +7211,7 @@ EAPI const char *
 evas_textblock_node_format_text_get(const Evas_Object_Textblock_Node_Format *fmt)
 {
    if (!fmt) return NULL;
-   return eina_strbuf_string_get(fmt->format);
+   return fmt->format;
 }
 
 EAPI void
@@ -7269,8 +7267,7 @@ evas_textblock_cursor_geometry_get(const Evas_Textblock_Cursor *cur, Evas_Coord 
 
              fmt = _evas_textblock_cursor_node_format_at_pos_get(&cur2);
 
-             if (!fmt ||
-                   !_IS_LINE_SEPARATOR(eina_strbuf_string_get(fmt->format)))
+             if (!fmt || !_IS_LINE_SEPARATOR(fmt->format))
                {
                   dir_cur = &cur2;
                   before_char = EINA_FALSE;
