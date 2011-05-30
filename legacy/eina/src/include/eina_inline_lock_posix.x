@@ -98,9 +98,9 @@ eina_lock_new(Eina_Lock *mutex)
      return EINA_FALSE;
    /* NOTE: PTHREAD_MUTEX_RECURSIVE is not allowed at all, you will break on/off
       feature for sure with that change. */
+#ifdef EINA_HAVE_DEBUG_THREADS
    if (pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_ERRORCHECK) != 0)
      return EINA_FALSE;
-#ifdef EINA_HAVE_DEBUG_THREADS
    memset(mutex, 0, sizeof(Eina_Lock));
 #endif
    if (pthread_mutex_init(&(mutex->mutex), &attr) != 0)
