@@ -144,7 +144,7 @@ eina_condition_free(Eina_Condition *cond)
 }
 
 static inline Eina_Bool
-eina_condition_wait(Eina_Condition *cond)
+_eina_condition_internal_timedwait(Eina_Condition *cond, DWORD t)
 {
 #if _WIN32_WINNT >= 0x0600
    SleepConditionVariableCS(&cond->condition, cond->mutex, INFINITE);
@@ -162,7 +162,7 @@ eina_condition_wait(Eina_Condition *cond)
     * semaphore until <pthread_cond_signal> or <pthread_cond_broadcast>
     * are called by another thread.
     */
-   ret = SignalObjectAndWait(cond->mutex, cond->semaphore, INFINITE, FALSE);
+   ret = SignalObjectAndWait(cond->mutex, cond->semaphore, t, FALSE);
    if (ret == WAIT_FAILED)
      return EINA_FALSE;
 
@@ -187,7 +187,7 @@ eina_condition_wait(Eina_Condition *cond)
         * This call atomically signals the <waiters_done_> event and waits until
         * it can acquire the <external_mutex>.  This is required to ensure fairness.
         */
-       ret = SignalObjectAndWait(cond->waiters_done, cond->mutex, INFINITE, FALSE);
+       ret = SignalObjectAndWait(cond->waiters_done, cond->mutex, t, FALSE);
        if (ret == WAIT_FAILED)
          return EINA_FALSE;
     }
@@ -197,13 +197,25 @@ eina_condition_wait(Eina_Condition *cond)
         * Always regain the external mutex since that's the guarantee we
         * give to our callers.
         */
-       ret = WaitForSingleObject(cond->mutex, INFINITE);
+       ret = WaitForSingleObject(cond->mutex, t);
        if (ret == WAIT_FAILED)
          return EINA_FALSE;
     }
 
    return EINA_TRUE;
 #endif
+}
+
+static inline Eina_Bool
+eina_condition_timedwait(Eina_Condition *cond, double val)
+{
+   _eina_condition_internal_timedwait(cond, val * 1000);
+}
+
+static inline Eina_Bool
+eina_condition_wait(Eina_Condition *cond)
+{
+   _eina_condition_internal_timedwait(cond, INFINITE);
 }
 
 static inline Eina_Bool

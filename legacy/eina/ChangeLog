@@ -93,3 +93,7 @@
 2011-05-24  Cedric Bail
 
 	* Add eina_inlist_sorted_insert.
+
+2011-05-30  Cedric Bail
+
+	* Add eina_condition_timedwait.

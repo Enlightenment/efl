@@ -310,7 +310,27 @@ eina_condition_wait(Eina_Condition *cond)
    assert(cond->lock != NULL);
 #endif
 
-   return pthread_cond_wait(&(cond->condition), &(cond->lock->mutex)) == 0 ? EINA_TRUE : EINA_FALSE;
+   return pthread_cond_wait(&(cond->condition),
+                            &(cond->lock->mutex)) == 0 ? EINA_TRUE : EINA_FALSE;
+}
+
+static inline Eina_Bool
+eina_condition_timedwait(Eina_Condition *cond, double t)
+{
+   struct timespec tv;
+
+#ifdef EINA_HAVE_DEBUG_THREADS
+   assert(_eina_threads_activated);
+   assert(cond->lock != NULL);
+#endif
+
+   tv.tv_sec = t;
+   tv.tv_nsec = (t - (double) tv.tv_sec) * 1000000000;
+
+   return pthread_cond_timedwait(&(cond->condition),
+                                 &(cond->lock->mutex),
+                                 &tv) == 0 ?
+     EINA_TRUE : EINA_FALSE;
 }
 
 static inline Eina_Bool

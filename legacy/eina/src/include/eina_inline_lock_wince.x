@@ -96,6 +96,12 @@ eina_condition_wait(Eina_Condition *cond)
 }
 
 static inline Eina_Bool
+eina_condition_timedwait(Eina_Condition *cond, double t)
+{
+   return EINA_FALSE;
+}
+
+static inline Eina_Bool
 eina_condition_broadcast(Eina_Condition *cond)
 {
    return EINA_FALSE;
