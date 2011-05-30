@@ -603,7 +603,7 @@ elm_transit_object_add(Elm_Transit *transit, Evas_Object *obj)
    Elm_Obj_Data *obj_data;
    Eina_List * list;
 
-//TODO: Check the remove case of the same objects in this transit. 
+//TODO: Check the remove case of the same objects in this transit.
    obj_data = ELM_NEW(Elm_Obj_Data);
    obj_data->pass_events = evas_object_pass_events_get(obj);
    if (!transit->event_enabled)
@@ -1075,7 +1075,7 @@ elm_transit_objects_final_state_keep_get(const Elm_Transit *transit)
  * @note @p chain_transit can not be NULL. Chain transits could be chained to the only one transit.
  *
  * @param transit The transit object.
- * @param chain_transit The chain transit object. This transit will be operated  
+ * @param chain_transit The chain transit object. This transit will be operated
  *        after transit is done.
  *
  * @ingroup Transit

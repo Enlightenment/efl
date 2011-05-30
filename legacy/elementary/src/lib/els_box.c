@@ -69,7 +69,7 @@ _els_box_layout(Evas_Object *o, Evas_Object_Box_Data *priv, int horizontal, int 
    evas_object_size_hint_min_get(o, &minw, &minh);
    evas_object_size_hint_align_get(o, &ax, &ay);
    count = eina_list_count(priv->children);
-   
+
    if (w < minw)
      {
         x = x + ((w - minw) * (1.0 - ax));

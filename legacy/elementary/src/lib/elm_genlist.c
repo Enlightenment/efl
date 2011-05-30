@@ -937,7 +937,7 @@ static void
 _item_del(Elm_Genlist_Item *it)
 {
    Evas_Object *tob = it->wd->obj;
-   
+
    evas_event_freeze(evas_object_evas_get(tob));
    elm_widget_item_pre_notify_del(it);
    elm_genlist_item_subitems_clear(it);
@@ -1553,7 +1553,7 @@ _mode_finished_signal_cb(void        *data,
    Elm_Genlist_Item *it = data;
    if ((it->delete_me) || (!it->realized) || (!it->mode_view)) return;
    char buf[1024];
-   
+
    evas_event_freeze(evas_object_evas_get(obj));
    it->nocache = EINA_FALSE;
    _mode_item_unrealize(it);
@@ -2443,7 +2443,7 @@ _update_job(void *data)
    if (!wd) return;
    wd->update_job = NULL;
    num = 0;
-   
+
    evas_event_freeze(evas_object_evas_get(wd->obj));
    EINA_INLIST_FOREACH(wd->blocks, itb)
      {
