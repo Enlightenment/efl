@@ -21,7 +21,7 @@
 EAPI int
 evas_common_font_query_run_font_end_get(RGBA_Font *fn, RGBA_Font_Int **script_fi, RGBA_Font_Int **cur_fi, Evas_Script_Type script, const Eina_Unicode *text, int run_len)
 {
-   RGBA_Font_Int *fi;
+   RGBA_Font_Int *fi = NULL;
    const Eina_Unicode *run_end = text + run_len;
    const Eina_Unicode *itr;
 
@@ -101,6 +101,7 @@ evas_common_font_query_run_font_end_get(RGBA_Font *fn, RGBA_Font_Int **script_fi
                    * font */
                   for ( ; itr < run_end ; itr++)
                     {
+                       tmp_fi = fi;
                        if (evas_common_get_char_index(fi, *itr) ||
                              evas_common_font_glyph_search(fn, &tmp_fi, *itr))
                          {
