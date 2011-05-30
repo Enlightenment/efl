@@ -491,14 +491,13 @@ _sel_update(Evas_Textblock_Cursor *c __UNUSED__, Evas_Object *o, Entry *en)
    Sel *sel;
    Evas_Coord x, y, w, h;
    Evas_Object *smart, *clip;
-   Evas *tev = evas_object_evas_get(o);
 
    smart = evas_object_smart_parent_get(o);
    clip = evas_object_clip_get(o);
    if (en->sel_start)
      range = evas_textblock_cursor_range_geometry_get(en->sel_start, en->sel_end);
-   else return;
-   evas_event_freeze(tev);
+   else
+     return;
    if (eina_list_count(range) != eina_list_count(en->sel))
      {
         while (en->sel)
@@ -573,8 +572,6 @@ _sel_update(Evas_Textblock_Cursor *c __UNUSED__, Evas_Object *o, Entry *en)
              range = eina_list_remove_list(range, range);
           }
      }
-   evas_event_thaw(tev);
-   evas_event_thaw_eval(tev);
 }
 
 static void
