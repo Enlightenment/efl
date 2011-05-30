@@ -471,7 +471,7 @@ _evas_object_text_item_new(Evas_Object *obj, Evas_Object_Text *o,
          it->text_pos);
    evas_common_text_props_script_set(&it->text_props, script);
 
-   if (o->font)
+   if (fi)
      {
         ENFN->font_text_props_info_create(ENDT,
               fi, str + pos, &it->text_props,

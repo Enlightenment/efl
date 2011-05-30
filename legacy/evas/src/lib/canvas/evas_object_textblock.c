@@ -2862,7 +2862,7 @@ skip:
                    c->par->bidi_props, ti->parent.text_pos);
              evas_common_text_props_script_set(&ti->text_props, script);
 
-             if (ti->parent.format->font.font)
+             if (cur_fi)
                {
                   c->ENFN->font_text_props_info_create(c->ENDT,
                         cur_fi, str, &ti->text_props, c->par->bidi_props,
