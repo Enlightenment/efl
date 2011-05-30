@@ -2749,7 +2749,6 @@ static void
 _layout_text_append(Ctxt *c, Evas_Object_Textblock_Format *fmt, Evas_Object_Textblock_Node_Text *n, int start, int off, const char *repch)
 {
    int new_line, empty_item;
-   Eina_Unicode *alloc_str = NULL;
    const Eina_Unicode *str = EINA_UNICODE_EMPTY_STRING;
    const Eina_Unicode *tbase;
    Evas_Object_Textblock_Text_Item *ti;
@@ -2802,9 +2801,7 @@ _layout_text_append(Ctxt *c, Evas_Object_Textblock_Format *fmt, Evas_Object_Text
         /* Use the string, just cut the relevant parts */
         else
           {
-             str = eina_ustrbuf_string_get(n->unicode);
-             alloc_str = eina_unicode_strndup(str + start, off);
-             str = alloc_str;
+             str = eina_ustrbuf_string_get(n->unicode) + start;
           }
 
         cur_len = off;
@@ -2824,7 +2821,7 @@ skip:
         ti->parent.text_pos = 0;
         _layout_text_add_logical_item(c, ti, NULL);
 
-        goto end;
+        return;
      }
 
    do
@@ -2887,8 +2884,6 @@ skip:
      }
    while (*str);
 
-end:
-   if (alloc_str) free(alloc_str);
 }
 
 /**
