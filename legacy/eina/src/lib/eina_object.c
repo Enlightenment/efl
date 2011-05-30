@@ -42,7 +42,7 @@
  */
 
 /* If we are on a 64bits computer user bigger generation and ID */
-/* FIXME: make it GCC independant */
+/* FIXME: make it GCC independent */
 /* FIXME: maybe having 2^32 objects doesn't make sense and 2^24 are enough
    so instead of increasing the object count, we could just add a magic
    to first check if the pointer is valid at all (and maybe use a pointer

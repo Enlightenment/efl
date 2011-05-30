@@ -57,7 +57,7 @@ typedef int Eina_Refcount;
 /** Used just after allocating a object */
 #define EINA_REFCOUNT_INIT(Variable) (Variable)->__refcount = 1
 
-/** Used when using refering to an object one more time */
+/** Used when using referring to an object one more time */
 #define EINA_REFCOUNT_REF(Variable) (Variable)->__refcount++
 
 /** Used when removing a reference to an object. Free_Callback will automatically be called when necessary */

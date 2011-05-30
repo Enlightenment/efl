@@ -333,15 +333,15 @@ START_TEST(eina_unicode_utf8)
           } \
      } \
    while (0)
-   /* all first bytes of 2-byte sequences seperated by spaces. */
+   /* all first bytes of 2-byte sequences separated by spaces. */
    _FIRST_SEQUENCES(0xC0, 0xDF);
-   /* all first bytes of 3-byte sequences seperated by spaces. */
+   /* all first bytes of 3-byte sequences separated by spaces. */
    _FIRST_SEQUENCES(0xE0, 0xEF);
-   /* all first bytes of 4-byte sequences seperated by spaces. */
+   /* all first bytes of 4-byte sequences separated by spaces. */
    _FIRST_SEQUENCES(0xF0, 0xF7);
-   /* all first bytes of 5-byte sequences seperated by spaces. */
+   /* all first bytes of 5-byte sequences separated by spaces. */
    _FIRST_SEQUENCES(0xF8, 0xFB);
-   /* all first bytes of 6-byte sequences seperated by spaces. */
+   /* all first bytes of 6-byte sequences separated by spaces. */
    _FIRST_SEQUENCES(0xFC, 0xFD);
 
    /* Incomplete sequences first means the first utf8 char, len means

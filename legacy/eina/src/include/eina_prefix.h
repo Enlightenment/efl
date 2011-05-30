@@ -44,8 +44,8 @@ typedef struct _Eina_Prefix Eina_Prefix;
  * location at compile-time, but this disallows the ability to re-locate
  * the application (or library) somewhere else after compilation (if you run
  * out of space on a given disk, partition etc. for example), or necessitate
- * the need for having to maintain enviornment variables for every piece of
- * software to let it know its location, or or have to use large sets of
+ * the need for having to maintain environment variables for every piece of
+ * software to let it know its location, or have to use large sets of
  * symlinks pointing from the compiled location to the new one.
  *
  * Being re-locatable at runtime allows much easier distribution and
@@ -64,7 +64,7 @@ typedef struct _Eina_Prefix Eina_Prefix;
  * to determine its location. Call eina_prefix_new() early on before you
  * change working directory or anything about argv[0] so it gets accurate
  * information. It will use the first argument, being the executable itself,
- * to look in absolutel directories, relative paths and PATH to see if it
+ * to look in absolute directories, relative paths and PATH to see if it
  * finds the right executable to determine just where the actual binary is
  * installed and being run from. If you develop a share library, just pass
  * NULL as argv0
@@ -82,14 +82,14 @@ typedef struct _Eina_Prefix Eina_Prefix;
  * the exact install prefix for the software, or more specific environment
  * variables like "MYAPP_BIN_DIR", "MYAPP_LIB_DIR", "MYAPP_DATA_DIR" and
  * "MYAPP_LOCALE_DIR" which can be set by the user or scripts before
- * launching. If not provided (NULL) enviornment variables will not be
+ * launching. If not provided (NULL) environment variables will not be
  * used to override compiled-in defaults or auto detections.
  *
  * The @p sharedir string provides a subdirectory inside the system shared
  * data dir for data files. For example, if the system dir is
  * /usr/local/share then this dir name is appended, creating
  * /usr/local/share/appname if this dir was the "appname" string. It is
- * expexcted the application or library installs data files in this directory.
+ * expected the application or library installs data files in this directory.
  *
  * The @p magicsharefile is a filename or path of something inside the share
  * or data dir to be used to test that the prefix detection worked. For
@@ -126,7 +126,7 @@ typedef struct _Eina_Prefix Eina_Prefix;
  * {
  *   pfx = eina_prefix_new(argv[0], main, "APPNAME", "appname", NULL,
  *                         PACKAGE_BIN_DIR, PACKAGE_LIB_DIR,
- *                        PACKAGE_DATA_DIR, LOCALE_DIR);
+ *                         PACKAGE_DATA_DIR, LOCALE_DIR);
  *   if (!pfx) printf("ERROR: Critical error in finding prefix\n");
  *   printf("install prefix is: %s\n", eina_prefix_get(pfx));
  *   printf("binaries are in: %s\n", eina_prefix_bin_get(pfx));

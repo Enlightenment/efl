@@ -93,7 +93,7 @@ typedef enum {
 
 /* Why do this? Well PATH_MAX may vary from when eina itself is compiled
  * to when the app using eina is compiled. exposing the path buffer below
- * cant safely and portably vary based on how/when you compile. it should
+ * can't safely and portably vary based on how/when you compile. it should
  * always be the same for both eina inside AND for apps outside that use eina
  * so define this to 8192 - most PATH_MAX values are like 4096 or 1024 (with
  * windows i think being 260), so 8192 should cover almost all cases. there

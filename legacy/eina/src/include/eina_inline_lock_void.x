@@ -105,7 +105,7 @@ eina_lock_take(Eina_Lock *mutex EINA_UNUSED)
  * eina_lock_new(). If @p mutex can be locked, this function returns
  * #EINA_TRUE; if @p mutex can not be locked, or is already locked, it
  * returns #EINA_FALSE. This function does not block and returns
- * immediatly. For performance reasons, no check is done on
+ * immediately. For performance reasons, no check is done on
  * @p mutex.
  *
  * @note On Windows CE, this function is actually eina_lock_take().

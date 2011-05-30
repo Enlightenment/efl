@@ -451,7 +451,7 @@ eina_inlist_sorted_insert(Eina_Inlist *list,
      }
 
    /*
-    * prepare a jump table to avoid doing unecessary rewalk
+    * prepare a jump table to avoid doing unnecessary rewalk
     * of the inlist as much as possible.
     */
    for (ct = list; ct; ct = ct->next, jump_count++, count++)
