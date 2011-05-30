@@ -368,6 +368,52 @@ ecore_pipe_read_close(Ecore_Pipe *p)
 }
 
 /**
+ * Stop monitoring if necessary the pipe for reading. See ecore_pipe_thraw()
+ * for monitoring it again.
+ *
+ * @param p The Ecore_Pipe object.
+ */
+EAPI void
+ecore_pipe_freeze(Ecore_Pipe *p)
+{
+   if (!ECORE_MAGIC_CHECK(p, ECORE_MAGIC_PIPE))
+     {
+        ECORE_MAGIC_FAIL(p, ECORE_MAGIC_PIPE, "ecore_pipe_read_close");
+        return;
+     }
+   if (p->fd_handler)
+     {
+        ecore_main_fd_handler_del(p->fd_handler);
+        p->fd_handler = NULL;
+     }
+}
+
+/**
+ * Start monitoring again the pipe for reading. See ecore_pipe_freeze() for
+ * stopping the monitoring activity. This will not work if
+ * ecore_pipe_read_close() was previously called on the same pipe.
+ *
+ * @param p The Ecore_Pipe object.
+ */
+EAPI void
+ecore_pipe_thraw(Ecore_Pipe *p)
+{
+   if (!ECORE_MAGIC_CHECK(p, ECORE_MAGIC_PIPE))
+     {
+        ECORE_MAGIC_FAIL(p, ECORE_MAGIC_PIPE, "ecore_pipe_read_close");
+        return;
+     }
+   if (!p->fd_handler && p->fd_read != PIPE_FD_INVALID)
+     {
+        p->fd_handler = ecore_main_fd_handler_add(p->fd_read,
+                                                  ECORE_FD_READ,
+                                                  _ecore_pipe_read,
+                                                  p,
+                                                  NULL, NULL);
+     }
+}
+
+/**
  * Close the write end of an Ecore_Pipe object created with ecore_pipe_add().
  *
  * @param p The Ecore_Pipe object.

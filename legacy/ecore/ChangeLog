@@ -192,16 +192,21 @@
         * Fix Ecore_X shadow tree search handling to respect shape and
         shape input of windows.
 
-2011-05-20 Daniel Juyung Seo (SeoZ)
+2011-05-20  Daniel Juyung Seo (SeoZ)
 
         * Ecore ecore_main.c: Fixed ecore_main_loop
         (_ecore_main_loop_iterate_internal). This fixes fd handler pending
         issue when ecore_idler callback adds ecore_job/event.
         * Ecore ecore_main.c: Refactoring _ecore_main_loop_iterate_internal().
 
-2011-05-27 Gustavo Sverzut Barbieri (k-s)
+2011-05-27  Gustavo Sverzut Barbieri (k-s)
 
 	* Ecore_X: introduce ecore_x_screen_size_get()
 	* Ecore_Evas: be safer when returning Ecore_Evas* from
 	  ecore_evas_ecore_evas_get()
 	* Ecore_Evas: introduce ecore_evas_screen_geometry_get()
+
+2011-05-30  Cedric Bail
+
+	* Add ecore_pipe_freeze/thraw to suspend and restart watching the pipe
+	inside the main loop.
