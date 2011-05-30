@@ -6436,11 +6436,14 @@ _evas_textblock_cursor_break_paragraph(Evas_Textblock_Cursor *cur,
 
         /* cur->pos now points to the PS, move after. */
         start = cur->pos + 1;
-        text = eina_ustrbuf_string_get(cur->node->unicode);
         len = eina_ustrbuf_length_get(cur->node->unicode) - start;
-        eina_ustrbuf_append_length(n->unicode, text + start, len);
-        eina_ustrbuf_remove(cur->node->unicode, start, start + len);
-        cur->node->dirty = EINA_TRUE;
+        if (len > 0)
+          {
+             text = eina_ustrbuf_string_get(cur->node->unicode);
+             eina_ustrbuf_append_length(n->unicode, text + start, len);
+             eina_ustrbuf_remove(cur->node->unicode, start, start + len);
+             cur->node->dirty = EINA_TRUE;
+          }
      }
    else
      {
