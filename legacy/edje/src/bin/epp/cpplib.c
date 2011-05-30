@@ -5590,6 +5590,32 @@ open_include_file(cpp_reader * pfile __UNUSED__, char *filename,
 
 #endif /* USE_FILE_NAME_MAPS */
 
+static int
+dos2unix(cpp_buffer *fp, int length)
+{
+   unsigned char *tbuf;
+   int nlen = 0, i;
+   
+   tbuf = xmalloc(length + 4);
+   if (!tbuf) return length;
+   for (i = 0; i < length; i++)
+     {
+        if ((fp->buf[i] == '\r') &&
+            (fp->buf[i + 1] == '\n'))
+          {
+             // skip \r in \r\n
+             continue;
+          }
+        tbuf[nlen] = fp->buf[i];
+        nlen++;
+     }
+   tbuf[nlen] = 0;
+   
+   free(fp->buf);
+   fp->buf = tbuf;
+   return nlen;
+}
+
 /* Process the contents of include file FNAME, already open on descriptor F,
  * with output to OP.
  * SYSTEM_HEADER_P is 1 if this file resides in any one of the known
@@ -5629,12 +5655,13 @@ finclude(cpp_reader * pfile, int f, const char *fname, int system_header_p,
    if (S_ISREG(st_mode))
      {
 	fp->buf = (unsigned char *)xmalloc(st_size + 2);
-	fp->alimit = fp->buf + st_size + 2;
-	fp->cur = fp->buf;
-
 	/* Read the file contents, knowing that st_size is an upper bound
 	 * on the number of bytes we can read.  */
 	length = safe_read(f, (char *)fp->buf, st_size);
+        length = dos2unix(fp, length);
+        
+	fp->alimit = fp->buf + st_size + 2;
+	fp->cur = fp->buf;
 	fp->rlimit = fp->buf + length;
 	if (length < 0)
 	   goto nope;
@@ -5668,7 +5695,8 @@ finclude(cpp_reader * pfile, int f, const char *fname, int system_header_p,
 	     fp->buf = (unsigned char *)xrealloc(fp->buf, bsize + 2);
 	  }
 	length = st_size;
-     }
+        length = dos2unix(fp, length);
+   }
 
    if ((length > 0 && fp->buf[length - 1] != '\n')
        /* Backslash-newline at end is not good enough.  */
@@ -5677,6 +5705,7 @@ finclude(cpp_reader * pfile, int f, const char *fname, int system_header_p,
 	fp->buf[length++] = '\n';
      }
    fp->buf[length] = '\0';
+     
    fp->rlimit = fp->buf + length;
 
    /* Close descriptor now, so nesting does not use lots of descriptors.  */
