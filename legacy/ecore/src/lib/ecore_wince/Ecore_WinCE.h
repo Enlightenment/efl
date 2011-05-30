@@ -127,7 +127,7 @@ struct _Ecore_WinCE_Event_Mouse_In
    Ecore_WinCE_Window *window; /**< The window that received the event */
    int                 x; /**< The x coordinate where the mouse entered */
    int                 y; /**< The y coordinate where the mouse entered */
-   long                time; /**< The time the event occured */
+   long                time; /**< The time the event occurred */
 };
 
 /**
@@ -139,7 +139,7 @@ struct _Ecore_WinCE_Event_Mouse_Out
    Ecore_WinCE_Window *window; /**< The window that received the event */
    int                 x; /**< The x coordinate where the mouse leaved */
    int                 y; /**< The y coordinate where the mouse leaved */
-   long                time; /**< The time the event occured */
+   long                time; /**< The time the event occurred */
 };
 
 /**
@@ -149,7 +149,7 @@ struct _Ecore_WinCE_Event_Mouse_Out
 struct _Ecore_WinCE_Event_Window_Focus_In
 {
    Ecore_WinCE_Window *window; /**< The window that received the event */
-   long                time; /**< The time the event occured */
+   long                time; /**< The time the event occurred */
 };
 
 /**
@@ -159,7 +159,7 @@ struct _Ecore_WinCE_Event_Window_Focus_In
 struct _Ecore_WinCE_Event_Window_Focus_Out
 {
    Ecore_WinCE_Window *window; /**< The window that received the event */
-   long                time; /**< The time the event occured */
+   long                time; /**< The time the event occurred */
 };
 
 /**
@@ -173,7 +173,7 @@ struct _Ecore_WinCE_Event_Window_Damage
    int                 y; /**< The y coordinate of the top left corner of the damaged region */
    int                 width; /**< The width of the damaged region */
    int                 height; /**< The height of the damaged region */
-   long                time; /**< The time the event occured */
+   long                time; /**< The time the event occurred */
 };
 
 /**
@@ -183,7 +183,7 @@ struct _Ecore_WinCE_Event_Window_Damage
 struct _Ecore_WinCE_Event_Window_Create
 {
    Ecore_WinCE_Window *window; /**< The window that received the event */
-   long                time; /**< The time the event occured */
+   long                time; /**< The time the event occurred */
 };
 
 /**
@@ -193,7 +193,7 @@ struct _Ecore_WinCE_Event_Window_Create
 struct _Ecore_WinCE_Event_Window_Destroy
 {
    Ecore_WinCE_Window *window; /**< The window that received the event */
-   long                time; /**< The time the event occured */
+   long                time; /**< The time the event occurred */
 };
 
 /**
@@ -203,7 +203,7 @@ struct _Ecore_WinCE_Event_Window_Destroy
 struct _Ecore_WinCE_Event_Window_Hide
 {
    Ecore_WinCE_Window *window; /**< The window that received the event */
-   long                time; /**< The time the event occured */
+   long                time; /**< The time the event occurred */
 };
 
 /**
@@ -213,7 +213,7 @@ struct _Ecore_WinCE_Event_Window_Hide
 struct _Ecore_WinCE_Event_Window_Show
 {
    Ecore_WinCE_Window *window; /**< The window that received the event */
-   long                time; /**< The time the event occured */
+   long                time; /**< The time the event occurred */
 };
 
 /**
@@ -223,7 +223,7 @@ struct _Ecore_WinCE_Event_Window_Show
 struct _Ecore_WinCE_Event_Window_Delete_Request
 {
    Ecore_WinCE_Window *window; /**< The window that received the event */
-   long                time; /**< The time the event occured */
+   long                time; /**< The time the event occurred */
 };
 
 

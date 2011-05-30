@@ -267,7 +267,7 @@ ecore_x_randr_edid_display_ascii_get(unsigned char *edid, unsigned long edid_len
              const char *edid_ascii = (const char*)block +
                 _ECORE_X_RANDR_EDID_OFFSET_DESCRIPTOR_BLOCK_CONTENT;
              /*
-              * TODO: Two of these in a row, in the third and fouth slots,
+              * TODO: Two of these in a row, in the third and fourth slots,
               * seems to be specified by SPWG: http://www.spwg.org/
               */
              ascii = malloc(sizeof(char) * _ECORE_X_RANDR_EDID_DISPLAY_DESCRIPTOR_BLOCK_CONTENT_LENGTH_MAX);
@@ -299,7 +299,7 @@ ecore_x_randr_edid_display_serial_get(unsigned char *edid, unsigned long edid_le
              const char *edid_serial = (const char*)block +
                 _ECORE_X_RANDR_EDID_OFFSET_DESCRIPTOR_BLOCK_CONTENT;
              /*
-              * TODO: Two of these in a row, in the third and fouth slots,
+              * TODO: Two of these in a row, in the third and fourth slots,
               * seems to be specified by SPWG: http://www.spwg.org/
               */
              serial = malloc(sizeof(char) * _ECORE_X_RANDR_EDID_DISPLAY_DESCRIPTOR_BLOCK_CONTENT_LENGTH_MAX);

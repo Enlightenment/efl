@@ -216,7 +216,7 @@ ecore_win32_cursor_free(Ecore_Win32_Cursor *cursor)
  * @param shape The pre-defined shape of the cursor.
  * @return The new cursor.
  *
- * This funtion returns a pre-defined cursor with a specified
+ * This function returns a pre-defined cursor with a specified
  * @p shape. This cursor does not need to be freed, as it is loaded
  * from an existing resource.
  */
