@@ -137,7 +137,10 @@ evas_common_font_query_run_font_end_get(RGBA_Font *fn, RGBA_Font_Int **script_fi
           }
      }
 
-   *cur_fi = fi;
+   if (fi)
+      *cur_fi = fi;
+   else
+      *cur_fi = *script_fi;
 
    return itr - text;
 }
