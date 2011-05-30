@@ -8766,7 +8766,7 @@ _evas_object_textblock_rehint(Evas_Object *obj)
                        if (ti->parent.format->font.font)
                          {  
 #ifdef EVAS_FRAME_QUEUING
-                            evas_common_pipe_op_text_flush(ti->parent.format->font.font);
+                            evas_common_pipe_op_text_flush((RGBA_Font *) ti->parent.format->font.font);
 #endif
                             evas_font_load_hinting_set(obj->layer->evas,
                                   ti->parent.format->font.font,
