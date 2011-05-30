@@ -277,7 +277,6 @@ struct _Evas_Object_Textblock_Line
    EINA_INLIST;
    Evas_Object_Textblock_Item        *items;
    Evas_Object_Textblock_Paragraph   *par;
-   Evas_Object_Textblock_Text_Item   *ellip_ti;
    Evas_Coord                         x, y, w, h;
    int                                baseline;
    int                                line_no;
@@ -394,6 +393,7 @@ struct _Evas_Object_Textblock
    Evas_Object_Textblock_Node_Text    *text_nodes;
    Evas_Object_Textblock_Node_Format  *format_nodes;
    Evas_Object_Textblock_Paragraph    *paragraphs;
+   Evas_Object_Textblock_Text_Item    *ellip_ti;
    Eina_Rbtree                        *par_index;
    Eina_List                          *anchors_a;
    Eina_List                          *anchors_item;
@@ -678,10 +678,9 @@ _item_free(const Evas_Object *obj, Evas_Object_Textblock_Line *ln, Evas_Object_T
  * @param ln the layout line to be freed, must not be NULL.
  */
 static void
-_line_free(const Evas_Object *obj, Evas_Object_Textblock_Line *ln)
+_line_free(Evas_Object_Textblock_Line *ln)
 {
    /* Items are freed from the logical list, except for the ellip item */
-   if (ln->ellip_ti) _item_free(obj, NULL, _ITEM(ln->ellip_ti));
    if (ln) free(ln);
 }
 
@@ -1984,7 +1983,8 @@ _layout_update_bidi_props(const Evas_Object_Textblock *o,
  * Free the visual lines in the paragraph (logical items are kept)
  */
 static void
-_paragraph_clear(const Evas_Object *obj, Evas_Object_Textblock_Paragraph *par)
+_paragraph_clear(const Evas_Object *obj __UNUSED__,
+      Evas_Object_Textblock_Paragraph *par)
 {
    while (par->lines)
      {
@@ -1992,7 +1992,7 @@ _paragraph_clear(const Evas_Object *obj, Evas_Object_Textblock_Paragraph *par)
 
         ln = (Evas_Object_Textblock_Line *) par->lines;
         par->lines = (Evas_Object_Textblock_Line *)eina_inlist_remove(EINA_INLIST_GET(par->lines), EINA_INLIST_GET(par->lines));
-        _line_free(obj, ln);
+        _line_free(ln);
      }
 }
 
@@ -3302,7 +3302,10 @@ _layout_ellipsis_item_new(Ctxt *c, const Evas_Object_Textblock_Item *cur_it)
    Evas_Script_Type script;
    Evas_Font_Instance *script_fi = NULL, *cur_fi;
    size_t len = 1; /* The length of _ellip_str */
-   ellip_ti = _layout_text_item_new(c,
+
+   /* We can free it here, cause there's only one ellipsis item per tb. */
+   if (c->o->ellip_ti) _item_free(c->obj, NULL, _ITEM(c->o->ellip_ti));
+   c->o->ellip_ti = ellip_ti = _layout_text_item_new(c,
          eina_list_data_get(eina_list_last(c->format_stack)));
    ellip_ti->parent.text_node = cur_it->text_node;
    ellip_ti->parent.text_pos = cur_it->text_pos;
@@ -3408,7 +3411,6 @@ _layout_handle_ellipsis(Ctxt *c, Evas_Object_Textblock_Item *it, Eina_List *i)
    c->ln->items = (Evas_Object_Textblock_Item *)
       eina_inlist_append(EINA_INLIST_GET(c->ln->items),
             EINA_INLIST_GET(_ITEM(ellip_ti)));
-   c->ln->ellip_ti = ellip_ti;
    _layout_line_finalize(c, ellip_ti->parent.format);
 }
 
@@ -8197,6 +8199,7 @@ evas_object_textblock_free(Evas_Object *obj)
 	free(cur);
      }
    if (o->repch) eina_stringshare_del(o->repch);
+   if (o->ellip_ti) _item_free(obj, NULL, _ITEM(o->ellip_ti));
    o->magic = 0;
    EVAS_MEMPOOL_FREE(_mp_obj, o);
   _format_command_shutdown();
