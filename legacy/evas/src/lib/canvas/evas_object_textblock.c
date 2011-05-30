@@ -323,8 +323,7 @@ struct _Evas_Object_Textblock_Format_Item
    Evas_Object_Textblock_Item           parent;
    Evas_BiDi_Direction                  bidi_dir;
    const char                          *item;
-   Evas_Object_Textblock_Node_Format   *source_node;
-   int                                  y, ascent, descent;
+   int                                  y;
    unsigned char                        vsize : 2;
    unsigned char                        size : 2;
    Eina_Bool                            formatme : 1;
@@ -2328,14 +2327,12 @@ _layout_line_finalize(Ctxt *c, Evas_Object_Textblock_Format *fmt)
           {
              Evas_Object_Textblock_Format_Item *fi = _ITEM_FORMAT(it);
              if (!fi->formatme) goto loop_advance;
-             fi->ascent = c->maxascent;
-             fi->descent = c->maxdescent;
              /* Adjust sizes according to current line height/scale */
                {
                   Evas_Coord w, h;
                   const char *p, *s;
 
-                  s = eina_strbuf_string_get(fi->source_node->format);
+                  s = fi->item;
                   w = fi->parent.w;
                   h = fi->parent.h;
                   switch (fi->size)
@@ -2415,7 +2412,7 @@ _layout_line_finalize(Ctxt *c, Evas_Object_Textblock_Format *fmt)
                      {
                       case VSIZE_FULL:
                       case VSIZE_ASCENT:
-                         fi->y = -fi->ascent;
+                         fi->y = -c->maxascent;
                          break;
                       default:
                          break;
@@ -2893,7 +2890,6 @@ _layout_format_item_add(Ctxt *c, Evas_Object_Textblock_Node_Format *n, const cha
 
    fi = calloc(1, sizeof(Evas_Object_Textblock_Format_Item));
    fi->item = eina_stringshare_add(item);
-   fi->source_node = n;
    fi->parent.type = EVAS_TEXTBLOCK_ITEM_FORMAT;
    fi->parent.format = fmt;
    fi->parent.format->ref++;
@@ -7442,8 +7438,7 @@ _evas_textblock_cursor_char_pen_geometry_common_get(int (*query_func) (void *dat
      {
         if (previous_format)
           {
-             if (_IS_LINE_SEPARATOR(
-                      eina_strbuf_string_get(fi->source_node->format)))
+             if (_IS_LINE_SEPARATOR(fi->item))
                {
                   x = 0;
                   y = ln->par->y + ln->y + ln->h;
@@ -7587,7 +7582,7 @@ evas_textblock_cursor_char_coord_set(Evas_Textblock_Cursor *cur, Evas_Coord x, E
                                  Evas_Object_Textblock_Format_Item *fi;
                                  fi = _ITEM_FORMAT(it);
                                  cur->pos = fi->parent.text_pos;
-                                 cur->node = fi->source_node->text_node;
+                                 cur->node = found_par->text_node;
                                  return EINA_TRUE;
                               }
                          }
