@@ -2300,7 +2300,7 @@ evas_gl_common_context_image_map_push(Evas_Engine_GL_Context *gc,
    if (a < 255) blend = 1;
    if (npoints != 4)
      {
-        // FIXME: nash - you didnt fix this for n points. its still all
+        // FIXME: nash - you didn't fix this for n points. its still all
         // 4 point stuff!!! grrrr.
         abort();
      }

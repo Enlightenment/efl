@@ -167,7 +167,7 @@ main(int argc, char **argv)
    // mainloop siztem etc. will have something of this kind unless it's making
    // you spin infinitely yourself and invent your own animation mechanism
    // 
-   // NOTE: if you delete r1, this animator will keep runing trying to access
+   // NOTE: if you delete r1, this animator will keep running trying to access
    // r1 so you'd better delete this animator with ecore_animator_del() or
    // structure how you do animation differently. you can also attach it like
    // evasgl, sfc, etc. etc. if this animator is specific to this object

@@ -525,7 +525,7 @@ evas_font_load(Evas *evas, const char *name, const char *source, int size)
              // FIXME: this i think is a bugfix for a rare bug... but i'm
              // not sure 100%. it seems that way from fc. if trim is set
              // to FcTrue...
-             //  ok - not a bugfix... but there is something going on somewhere that's wierd?
+             //  ok - not a bugfix... but there is something going on somewhere that's weird?
 //             FcPatternReference(p_nm); /* we have to reference count the pat */
              font = evas_load_fontconfig(evas, set, size, wanted_rend);
           }

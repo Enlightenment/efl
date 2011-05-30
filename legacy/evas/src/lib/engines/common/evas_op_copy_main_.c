@@ -49,7 +49,7 @@ static RGBA_Gfx_Func op_copy_rel_mask_color_span_get(DATA32 col, RGBA_Image *dst
 static RGBA_Gfx_Func op_copy_rel_pixel_mask_span_get(RGBA_Image *src, RGBA_Image *dst, int pixels);
 
 static RGBA_Gfx_Pt_Func op_copy_rel_pixel_pt_get(Image_Entry_Flags src_flags, RGBA_Image *dst);
-/* XXX: doesnt exist
+/* XXX: doesn't exist
 static RGBA_Gfx_Pt_Func op_copy_rel_color_pt_get(DATA32 col, RGBA_Image *dst);
  */
 static RGBA_Gfx_Pt_Func op_copy_rel_pixel_color_pt_get(Image_Entry_Flags src_flags, DATA32 col, RGBA_Image *dst);

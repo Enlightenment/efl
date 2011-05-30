@@ -12,7 +12,7 @@ varying vec4 col;
 varying vec2 tex_c;
 
 void main(){
-	/* FIXME: This index shoudl be tweaked so for 
+	/* FIXME: This index should be tweaked so for 
 		radius 1, I want 3 points at 1/4, 2/4, 3/4 */
 	/*
 	for (float i = 0 ; i <= radius * 2 ; i ++){

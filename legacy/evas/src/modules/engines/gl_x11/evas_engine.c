@@ -1942,7 +1942,7 @@ eng_image_map_draw(void *data __UNUSED__, void *context, void *surface, void *im
    re->win->gl_context->dc = context;
    if (npoints != 4)
      {
-        // FIXME: nash - you didnt fix this
+        // FIXME: nash - you didn't fix this
         abort();
      }
    if ((p[0].x == p[3].x) &&

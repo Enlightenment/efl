@@ -12,7 +12,7 @@
 "varying vec2 tex_c;\n"
 "\n"
 "void main(){\n"
-"	/* FIXME: This index shoudl be tweaked so for \n"
+"	/* FIXME: This index should be tweaked so for \n"
 "		radius 1, I want 3 points at 1/4, 2/4, 3/4 */\n"
 "	/*\n"
 "	for (float i = 0 ; i <= radius * 2 ; i ++){\n"

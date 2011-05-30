@@ -616,7 +616,7 @@ evas_cache_image_shutdown(Evas_Cache_Image *cache)
 #ifdef BUILD_ASYNC_PRELOAD
    EINA_LIST_FREE(cache->preload, im)
      {
-	/* By doing that we are protecting us from destroying image when the cache is no longuer available. */
+	/* By doing that we are protecting us from destroying image when the cache is no longer available. */
 	im->flags.delete_me = 1;
 	_evas_cache_image_entry_preload_remove(im, NULL);
      }
@@ -653,7 +653,7 @@ evas_cache_image_shutdown(Evas_Cache_Image *cache)
 	evas_async_events_process();
 	LKL(wakeup);
         // the lazy bum who did eain threads and converted this code
-        // didnt bother to worry about Eina_Lock being a different type
+        // didn't bother to worry about Eina_Lock being a different type
         // to a pthread mutex.
 	if (cache->pending) eina_condition_wait(&cond_wakeup);
 	LKU(wakeup);

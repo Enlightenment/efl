@@ -1419,7 +1419,7 @@ EAPI int               evas_render_method_lookup         (const char *name) EINA
  *     fprintf(stderr, "ERROR: Evas supports no engines! Exit.\n");
  *     exit(-1);
  *   }
- * printf("Availible Evas Engines:\n");
+ * printf("Available Evas Engines:\n");
  * EINA_LIST_FOREACH(engine_list, l, engine_name)
  *     printf("%s\n", engine_name);
  * evas_render_method_list_free(engine_list);
@@ -1449,7 +1449,7 @@ EAPI Eina_List        *evas_render_method_list           (void) EINA_WARN_UNUSED
  *     fprintf(stderr, "ERROR: Evas supports no engines! Exit.\n");
  *     exit(-1);
  *   }
- * printf("Availible Evas Engines:\n");
+ * printf("Available Evas Engines:\n");
  * EINA_LIST_FOREACH(engine_list, l, engine_name)
  *     printf("%s\n", engine_name);
  * evas_render_method_list_free(engine_list);
@@ -4952,7 +4952,7 @@ EAPI Eina_Bool                evas_object_image_smooth_scale_get       (const Ev
  * background. The worked is queued before being processed.
  *
  * If image data is already loaded, it will callback
- * EVAS_CALLBACK_IMAGE_PRELOADED immediatelly and do nothing else.
+ * EVAS_CALLBACK_IMAGE_PRELOADED immediately and do nothing else.
  *
  * If cancel is set, it will remove the image from the workqueue.
  *
@@ -6727,7 +6727,7 @@ EAPI Eina_Bool                        evas_smart_class_inherit_full       (Evas_
  * @return The number of uses of the smart instance
  * 
  * This function tells you how many more uses of the smart instance are in
- * existance. This should be used before freeing/clearing any of the
+ * existence. This should be used before freeing/clearing any of the
  * Evas_Smart_Class that was used to create the smart instance. The smart
  * instance will refer to data in the Evas_Smart_Class used to create it and
  * thus you cannot remove the original data until all users of it are gone.

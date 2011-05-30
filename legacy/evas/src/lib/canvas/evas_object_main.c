@@ -1298,7 +1298,7 @@ evas_object_precise_is_inside_get(const Evas_Object *obj)
  * Set a hint flag on the object that this is used as a static "clipper".
  * 
  * This is a hint to evas that this object is used as a big static clipper
- * and shouldnt be moved with children and otherwise considered specially. The
+ * and shouldn't be moved with children and otherwise considered specially. The
  * Default is off.
  * 
  * @param obj The given object.

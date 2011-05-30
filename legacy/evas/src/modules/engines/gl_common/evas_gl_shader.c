@@ -1186,7 +1186,7 @@ evas_gl_common_shader_program_init(Evas_GL_Shared *shared)
        _evas_gl_common_shader_binary_init(shared)) return 1;
    /* compile all shader.*/
    if (!_evas_gl_common_shader_source_init(shared)) return 0;
-   /* sucess compile all shader. if gl support binary shader, we need to save */
+   /* success compile all shader. if gl support binary shader, we need to save */
    if (shared->info.bin_program) _evas_gl_common_shader_binary_save(shared);
    return 1;
 }

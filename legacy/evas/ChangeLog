@@ -72,7 +72,7 @@
 
 2011-02-12  Carsten Haitzler (The Rasterman)
 
-	* Fix "rediculous scaling size" bug, where scaling images to
+	* Fix "ridiculous scaling size" bug, where scaling images to
 	  sizes like 1 billion pixels high or wide caused evas to try
 	  allocate scaletables on the stack and the stack just couldn't
 	  handle it. Now it only allocates a table for the visible
@@ -128,7 +128,7 @@
 2011-02-22  Carsten Haitzler (The Rasterman)
 
 	* Fixed bug smart calc array where it'd nuke the array when nested
-	  process calls hapen and leave some objects uncalculated, but
+	  process calls happen and leave some objects uncalculated, but
 	  removed from the array and marked as needing a calc thus never
 	  getting back into the array.
 
@@ -279,7 +279,7 @@
         based on extension name of srouce file. This allows for evas to
         load image data from files where the loader may be prone to
         instability, or require use of libraries that are GPL or
-        otherwise undesireable in terms of the result to applications
+        otherwise undesirable in terms of the result to applications
         using evas. So basically, if you want a GPL loader or have a
         very unstable one, write a loader binary and call it
         evas_image_loader.extension e.g. evas_image_loader.pdf or
