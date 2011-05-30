@@ -2824,13 +2824,13 @@ skip:
         return;
      }
 
-   do
+   while (cur_len > 0)
      {
         Evas_Font_Instance *script_fi = NULL;
         int script_len, tmp_cut;
         Evas_Script_Type script;
 
-        script_len = off - (str - tbase);
+        script_len = cur_len;
 
         tmp_cut = evas_common_language_script_end_of_run_get(str,
               c->par->bidi_props, start + str - tbase, script_len);
@@ -2838,18 +2838,12 @@ skip:
           {
              script_len = tmp_cut;
           }
-
-        /* FIXME: This is a possible fix for an infinite loops that happens
-         * if script_len < 0. Should find the source of the issue,
-         * i.e why (off - (str - tbase)) is ever < 0. I can't reproduce the
-         * issue so I can't really do anything about it. */
-        if (script_len < 0)
-           break;
+        cur_len -= script_len;
 
         script = evas_common_language_script_type_get(str, script_len);
 
 
-        do
+        while (script_len > 0)
           {
              Evas_Font_Instance *cur_fi;
              int run_len = script_len;
@@ -2875,15 +2869,11 @@ skip:
                         ti->parent.text_pos, run_len);
                }
              str += run_len;
-             cur_len -= run_len;
              script_len -= run_len;
 
              _layout_text_add_logical_item(c, ti, NULL);
           }
-        while (script_len > 0);
      }
-   while (*str);
-
 }
 
 /**
