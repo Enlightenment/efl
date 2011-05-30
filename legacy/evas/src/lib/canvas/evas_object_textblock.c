@@ -266,7 +266,7 @@ struct _Evas_Object_Textblock_Paragraph
    Evas_Object_Textblock_Node_Text   *text_node;
    Eina_List                         *logical_items;
    Evas_BiDi_Paragraph_Props         *bidi_props;
-   int                                x, y, w, h;
+   Evas_Coord                         x, y, w, h;
    int                                line_no;
    Eina_Bool                          visible : 1;
    Eina_Bool                          indexed : 1;
@@ -278,7 +278,7 @@ struct _Evas_Object_Textblock_Line
    Evas_Object_Textblock_Item        *items;
    Evas_Object_Textblock_Paragraph   *par;
    Evas_Object_Textblock_Text_Item   *ellip_ti;
-   int                                x, y, w, h;
+   Evas_Coord                         x, y, w, h;
    int                                baseline;
    int                                line_no;
 };
