@@ -149,7 +149,7 @@ endif
 
 ## This is how to build a quicklanch capable app
 # build the shared lib version - libtool produces a .a and .la file as well
-# as a .so - these get put in libdir ($PREIFX/lib) as elementary_testql.so
+# as a .so - these get put in libdir ($PREFIX/lib) as elementary_testql.so
 # etc. - this is where elementary will expect to find the .so's for
 # quicklaunch apps.
 elementary_testqldir = $(libdir)
@@ -157,6 +157,11 @@ elementary_testql_LTLIBRARIES = elementary_testql.la
 elementary_testql_la_SOURCES = $(elementary_test_SOURCES)
 elementary_testql_la_LIBADD = $(top_builddir)/src/lib/libelementary.la \
 	@ELEMENTARY_EWEATHER_LIBS@
+
+if HAVE_EIO
+elementary_testql_la_LIBADD += @EIO_LIBS@
+endif
+
 elementary_testql_la_CFLAGS =
 elementary_testql_la_LDFLAGS = -module -avoid-version -no-undefined
 elementary_testql_SOURCES = $(elementary_test_SOURCES)
