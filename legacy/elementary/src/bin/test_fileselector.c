@@ -115,6 +115,8 @@ test_fileselector(void *data       __UNUSED__,
     */
    setlocale(LC_ALL, "");
 
+   elm_need_ethumb();
+
    win = elm_win_add(NULL, "fileselector", ELM_WIN_BASIC);
    elm_win_title_set(win, "File Selector");
    elm_win_autodel_set(win, 1);

@@ -87,6 +87,10 @@ Eina_Bool _elm_ethumb_connected = EINA_FALSE;
 #ifdef HAVE_ELEMENTARY_ETHUMB
 static Eina_List *retry = NULL;
 static int pending_request = 0;
+
+static void _thumb_exists(Ethumb_Client *client __UNUSED__, Ethumb_Exists *thread,
+                          Eina_Bool exists, void *data);
+
 #endif
 
 EAPI int ELM_ECORE_EVENT_ETHUMB_CONNECT = 0;
@@ -105,7 +109,7 @@ _del_hook(Evas_Object *obj)
      }
    if (wd->thumb.exists)
      {
-        ethumb_client_thumb_exists_cancel(wd->thumb.exists);
+        ethumb_client_thumb_exists_cancel(wd->thumb.exists, _thumb_exists, wd);
         wd->thumb.exists = NULL;
      }
    if (wd->thumb.retry)
@@ -441,7 +445,7 @@ _thumb_apply(Widget_Data *wd)
 
    if (wd->thumb.exists)
      {
-        ethumb_client_thumb_exists_cancel(wd->thumb.exists);
+        ethumb_client_thumb_exists_cancel(wd->thumb.exists, _thumb_exists, wd);
         wd->thumb.exists = NULL;
      }
 
@@ -508,7 +512,7 @@ _thumb_hide_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void
 
    if (wd->thumb.exists)
      {
-        ethumb_client_thumb_exists_cancel(wd->thumb.exists);
+        ethumb_client_thumb_exists_cancel(wd->thumb.exists, _thumb_exists, wd);
         wd->thumb.exists = NULL;
      }
 
