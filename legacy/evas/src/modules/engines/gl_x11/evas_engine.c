@@ -2560,22 +2560,18 @@ eng_gl_make_current(void *data, void *surface, void *context)
              ERR("xxxMakeCurrent() failed!");
              return 0;
           }
-
         return ret;
      }
 
    // Don't do a make current if it's already current
+   ret = 1;
 #if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
    if ((eglGetCurrentContext() != ctx->context))
-     {
-        ret = eglMakeCurrent(re->win->egl_disp, re->win->egl_surface[0], 
-                             re->win->egl_surface[0], ctx->context);
-     }
+      ret = eglMakeCurrent(re->win->egl_disp, re->win->egl_surface[0], 
+                           re->win->egl_surface[0], ctx->context);
 #else
    if (glXGetCurrentContext() != ctx->context)
-     {
-        ret = glXMakeCurrent(re->info->info.display, re->win->win, ctx->context);
-     }
+      ret = glXMakeCurrent(re->info->info.display, re->win->win, ctx->context);
 #endif
    if (!ret) 
      {
@@ -2591,7 +2587,7 @@ eng_gl_make_current(void *data, void *surface, void *context)
      }
 
    // Attach FBO if it hasn't been attached or if surface changed
-   if ( (!sfc->fbo_attached) || (ctx != sfc->current_ctx))
+   if ((!sfc->fbo_attached) || (ctx != sfc->current_ctx))
      {
         if (!_attach_fbo_surface(re, sfc, ctx)) 
           {
