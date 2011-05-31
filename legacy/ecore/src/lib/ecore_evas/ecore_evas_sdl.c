@@ -334,7 +334,7 @@ static Ecore_Evas_Engine_Func _ecore_sdl_engine_func =
    NULL, //transparent
 
    NULL, // render
-   NULL screen_geometry_get
+   NULL  // screen_geometry_get
 };
 
 static Ecore_Evas*
