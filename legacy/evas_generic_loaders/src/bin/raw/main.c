@@ -1,6 +1,7 @@
-#include "config.h"
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
 #include <fcntl.h>
-#include <netinet/in.h>
 #include <stdio.h>
 #include <sys/mman.h>
 #include <sys/stat.h>
@@ -8,6 +9,17 @@
 #include <unistd.h>
 #include <libraw.h>
 #include "shmfile.h"
+
+#ifdef HAVE_NETINET_IN_H
+# include <netinet/in.h>
+#endif
+
+#ifdef HAVE_UNISTD_H
+# include <unistd.h>
+#endif
+
+#include <Eina.h>
+
 
 #define DATA32 unsigned int
 #define DATA8 unsigned char
@@ -23,14 +35,58 @@
 #define D(fmt, args...)
 #endif
 
+static int fd = -1;
+static int seg_size = 0;
+static unsigned char *seg = MAP_FAILED;
+static libraw_data_t *raw_data = NULL;
+static void *data = NULL;
+static int width = 0;
+static int height = 0;
 
 static int
-read_raw_header(unsigned char *seg, int size, libraw_data_t *raw_data, int *w, int *h)
+_raw_init(const char *file)
+{
+   struct stat ss;
+   fd = open(file, O_RDONLY);
+   if (fd < 0) return EINA_FALSE;
+
+   if (stat(file, &ss)) goto close_file;
+   seg_size = ss.st_size;
+   seg = mmap(0, seg_size, PROT_READ, MAP_SHARED, fd, 0);
+   if (seg == MAP_FAILED) goto close_file;
+
+   D("raw_init\n");
+   raw_data = libraw_init(0);
+   raw_data->params.half_size = 0;
+   raw_data->params.user_qual = 2;
+
+   D("raw_open_buffer\n");
+   if (libraw_open_buffer(raw_data, seg, seg_size) != LIBRAW_SUCCESS)
+     return EINA_FALSE;
+   return EINA_TRUE;
+
+close_file:
+   close(fd);
+   return EINA_FALSE;
+}
+
+static void
+_raw_shutdown()
+{
+   D("raw_shutdown\n");
+   if (raw_data)
+     libraw_close(raw_data);
+   if (seg != MAP_FAILED) munmap(seg, seg_size);
+   close(fd);
+}
+
+static int
+read_raw_header()
 {
    int ret;
 
    D("raw_open_buffer\n");
-   if ((ret = libraw_open_buffer(raw_data, seg, size)) != LIBRAW_SUCCESS)
+   if ((ret = libraw_open_buffer(raw_data, seg, seg_size)) != LIBRAW_SUCCESS)
      return 0;
 
    D("raw_adjust_size\n");
@@ -43,8 +99,8 @@ read_raw_header(unsigned char *seg, int size, libraw_data_t *raw_data, int *w, i
    if ((raw_data->sizes.width < 1) || (raw_data->sizes.height < 1))
      return 0;
 
-   *w = raw_data->sizes.iwidth;
-   *h = raw_data->sizes.iheight;
+   width = raw_data->sizes.iwidth;
+   height = raw_data->sizes.iheight;
 
    return 1;
 
@@ -52,19 +108,13 @@ read_raw_header(unsigned char *seg, int size, libraw_data_t *raw_data, int *w, i
 
 
 static int
-read_raw_data(unsigned char* seg, int size, libraw_data_t *raw_data, int *w, int *h)
+read_raw_data()
 {
    int ret, count;
    libraw_processed_image_t *image = NULL;
    DATA8 *bufptr;
    DATA32 *dataptr;
 
-   raw_data->params.half_size = 0;
-   raw_data->params.user_qual = 2;
-
-   D("raw_open_buffer\n");
-   if ((ret = libraw_open_buffer(raw_data, seg, size)) != LIBRAW_SUCCESS)
-     return 0;
 
    D("raw_open_unpack\n");
    if ((ret = libraw_unpack(raw_data)) != LIBRAW_SUCCESS)
@@ -83,12 +133,8 @@ read_raw_data(unsigned char* seg, int size, libraw_data_t *raw_data, int *w, int
      {
         if ((image->width < 1) || (image->height < 1))
           goto clean_image;
-        *w = image->width;
-        *h = image->height;
-        shm_alloc(image->width * image->height * (sizeof(DATA32)));
-        if (!shm_addr)
-          goto clean_image;
-        memset(shm_addr, 0, image->width * image->height * (sizeof(DATA32)));
+        width = image->width;
+        height = image->height;
         if (image->type != LIBRAW_IMAGE_BITMAP)
           goto clean_image;
         if (image->colors != 3)
@@ -98,7 +144,12 @@ read_raw_data(unsigned char* seg, int size, libraw_data_t *raw_data, int *w, int
           for (count = 0; count < image->data_size; count +=2)
             SWAP(image->data[count], image->data[count + 1]);
 #undef SWAP
-        dataptr = shm_addr;
+        shm_alloc(image->width * image->height * (sizeof(DATA32)));
+        if (!shm_addr)
+          goto clean_image;
+        data = shm_addr;
+        memset(shm_addr, 0, image->width * image->height * (sizeof(DATA32)));
+        dataptr = data;
         bufptr = image->data;
         for (count = image->width * image->height; count > 0; --count)
           {
@@ -121,12 +172,7 @@ int main(int argc, char **argv)
 {
    char *file;
    int i;
-   int w = 0, h = 0;
    int head_only = 0;
-   int fd;
-   struct stat ss;
-   unsigned char *seg = MAP_FAILED;
-   libraw_data_t *raw_data = NULL;
 
    if (argc < 2) return -1;
    file = argv[1];
@@ -159,46 +205,33 @@ int main(int argc, char **argv)
           }
      }
 
-   fd = open(file, O_RDONLY);
-   if (fd < 0) return 0;
-   if (stat(file, &ss)) goto close_file;
-   seg = mmap(0, ss.st_size, PROT_READ, MAP_SHARED, fd, 0);
-   if (seg == MAP_FAILED) goto close_file;
-
-   D("raw_init\n");
-   raw_data = libraw_init(0);
-
+   if (!_raw_init(file)) return -1;
    if (head_only != 0)
      {
-        if (read_raw_header(seg, ss.st_size, raw_data,  &w, &h))
-          printf("size %d %d\n", w, h);
+        if (read_raw_header())
+          {
+             printf("size %d %d\n", width, height);
+             printf("alpha 1\n");
+          }
         printf("done\n");
      }
    else
      {
-        if (read_raw_data(seg, ss.st_size, raw_data, &w, &h))
+        if (read_raw_data())
           {
-             printf("size %d %d\n", w, h);
+             printf("size %d %d\n", width, height);
              printf("alpha 1\n");
-
              if (shm_fd >= 0) printf("shmfile %s\n", shmfile);
              else
                {
                   printf("data\n");
-                  fwrite(shm_addr, w * h * sizeof(DATA32), 1, stdout);
+                  fwrite(data, width * height * sizeof(DATA32), 1, stdout);
                }
              shm_free();
           }
      }
-   D("raw_shutdown\n");
-   if (raw_data)
-     libraw_close(raw_data);
-   if (seg != MAP_FAILED) munmap(seg, ss.st_size);
-   close(fd);
+   _raw_shutdown();
    return 0;
 
-close_file:
-   close(fd);
-   return -1;
 }
 
