@@ -615,25 +615,6 @@ _ethumb_client_exists_end(void *data, Ecore_Thread *thread)
    eina_hash_del(_exists_request, async->dup, async);
 }
 
-static void
-_ethumb_client_exists_cancel(void *data, Ecore_Thread *thread)
-{
-   Ethumb_Async_Exists_Cb *cb;
-   Ethumb_Async_Exists *async = data;
-   Ethumb *tmp = async->source->ethumb;
-
-   async->source->ethumb = async->dup;
-   async->source->ethumb_dirty = ethumb_cmp(tmp, async->dup);
-
-   EINA_LIST_FREE(async->callbacks, cb)
-     cb->exists_cb(async->source, (Ethumb_Exists*) async, EINA_FALSE, (void*) cb->data);
-
-   async->source->ethumb = tmp;
-   async->thread = NULL;
-
-   eina_hash_del(_exists_request, async->dup, async);
-}
-
 /**
  * @endcond
  */
@@ -2197,7 +2178,7 @@ ethumb_client_thumb_exists(Ethumb_Client *client, Ethumb_Client_Thumb_Exists_Cb 
    EINA_REFCOUNT_INIT(async);
    async->thread = ecore_thread_run(_ethumb_client_exists_heavy,
 				    _ethumb_client_exists_end,
-				    _ethumb_client_exists_cancel,
+				    _ethumb_client_exists_end,
 				    async);
 
    eina_hash_direct_add(_exists_request, async->dup, async);
@@ -2211,9 +2192,18 @@ ethumb_client_thumb_exists(Ethumb_Client *client, Ethumb_Client_Thumb_Exists_Cb 
  * @param exists the request to cancel.
  */
 EAPI void
-ethumb_client_thumb_exists_cancel(Ethumb_Exists *exists)
+ethumb_client_thumb_exists_cancel(Ethumb_Exists *exists, Ethumb_Client_Thumb_Exists_Cb exists_cb, const void *data)
 {
+   Ethumb_Async_Exists_Cb *cb;
    Ethumb_Async_Exists *async = (Ethumb_Async_Exists*) exists;
+   Eina_List *l;
+
+   EINA_LIST_FOREACH(async->callbacks, l, cb)
+     if (cb->exists_cb == exists_cb && cb->data == data)
+       {
+          async->callbacks = eina_list_remove_list(async->callbacks, l);
+          break;
+       }
 
    EINA_REFCOUNT_UNREF(async, _ethumb_async_cancel);
 }
@@ -2230,6 +2220,8 @@ ethumb_client_thumb_exists_check(Ethumb_Exists *exists)
    Ethumb_Async_Exists *async = (Ethumb_Async_Exists*) exists;
 
    if (!async) return EINA_TRUE;
+
+   if (async->callbacks) return EINA_FALSE;
 
    return ecore_thread_check(async->thread);
 }
