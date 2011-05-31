@@ -379,7 +379,7 @@ EAPI void *eina_hash_modify(Eina_Hash  *hash,
  */
 EAPI void *eina_hash_set(Eina_Hash  *hash,
                          const void *key,
-                         const void *data) EINA_ARG_NONNULL(1, 2, 3);
+                         const void *data) EINA_ARG_NONNULL(1, 2);
 
 /**
  * @brief Change the key associated with a data without triggering the

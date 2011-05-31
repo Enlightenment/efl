@@ -97,3 +97,7 @@
 2011-05-30  Cedric Bail
 
 	* Add eina_condition_timedwait.
+
+2011-05-31  Cedric Bail
+
+	* Fix eina_hash_set to handle data == NULL like eina_hash_del.

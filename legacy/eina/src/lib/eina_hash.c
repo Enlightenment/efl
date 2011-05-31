@@ -1103,7 +1103,6 @@ eina_hash_set(Eina_Hash *hash, const void *key, const void *data)
    EINA_SAFETY_ON_NULL_RETURN_VAL(hash,              NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(hash->key_hash_cb, NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(key,               NULL);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(data,              NULL);
    EINA_MAGIC_CHECK_HASH(hash);
 
    key_length = hash->key_length_cb ? hash->key_length_cb(key) : 0;
@@ -1119,9 +1118,20 @@ eina_hash_set(Eina_Hash *hash, const void *key, const void *data)
         void *old_data = NULL;
 
         old_data = hash_element->tuple.data;
-        hash_element->tuple.data = (void *)data;
+
+	if (data)
+	  {
+	    hash_element->tuple.data = (void *)data;
+	  }
+	else
+	  {
+	    _eina_hash_del_by_hash_el(hash, hash_element, hash_head, key_hash);
+	  }
+
         return old_data;
      }
+
+   if (!data) return NULL;
 
    eina_hash_add_alloc_by_hash(hash,
                                key,
