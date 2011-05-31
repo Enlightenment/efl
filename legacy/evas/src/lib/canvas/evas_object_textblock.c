@@ -1771,11 +1771,14 @@ static void _text_item_update_sizes(Ctxt *c, Evas_Object_Textblock_Text_Item *ti
  * @internal
  * Adjust the ascent/descent of the format and context.
  *
- * @param c The context to work on - Not NUL.
+ * @param maxascent The ascent to update - Not NUL.
+ * @param maxdescent The descent to update - Not NUL.
  * @param fmt The format to adjust - NOT NULL.
  */
 static void
-_layout_format_ascent_descent_adjust(Ctxt *c, Evas_Object_Textblock_Format *fmt)
+_layout_format_ascent_descent_adjust(const Evas_Object *obj,
+      Evas_Coord *maxascent, Evas_Coord *maxdescent,
+      Evas_Object_Textblock_Format *fmt)
 {
    int ascent, descent;
 
@@ -1783,8 +1786,8 @@ _layout_format_ascent_descent_adjust(Ctxt *c, Evas_Object_Textblock_Format *fmt)
      {
         //	ascent = c->ENFN->font_max_ascent_get(c->ENDT, fmt->font.font);
         //	descent = c->ENFN->font_max_descent_get(c->ENDT, fmt->font.font);
-        ascent = c->ENFN->font_ascent_get(c->ENDT, fmt->font.font);
-        descent = c->ENFN->font_descent_get(c->ENDT, fmt->font.font);
+        ascent = ENFN->font_ascent_get(ENDT, fmt->font.font);
+        descent = ENFN->font_descent_get(ENDT, fmt->font.font);
         if (fmt->linesize > 0)
           {
              if ((ascent + descent) < fmt->linesize)
@@ -1798,19 +1801,19 @@ _layout_format_ascent_descent_adjust(Ctxt *c, Evas_Object_Textblock_Format *fmt)
              descent = descent * fmt->linerelsize;
              ascent = ascent * fmt->linerelsize;
           }
-        c->maxdescent += fmt->linegap;
-        c->maxdescent += ((ascent + descent) * fmt->linerelgap);
-        if (c->maxascent < ascent) c->maxascent = ascent;
-        if (c->maxdescent < descent) c->maxdescent = descent;
+        *maxdescent += fmt->linegap;
+        *maxdescent += ((ascent + descent) * fmt->linerelgap);
+        if (*maxascent < ascent) *maxascent = ascent;
+        if (*maxdescent < descent) *maxdescent = descent;
         if (fmt->linefill > 0.0)
           {
              int dh;
 
-             dh = c->obj->cur.geometry.h - (c->maxascent + c->maxdescent);
+             dh = obj->cur.geometry.h - (*maxascent + *maxdescent);
              if (dh < 0) dh = 0;
              dh = fmt->linefill * dh;
-             c->maxdescent += dh / 2;
-             c->maxascent += dh - (dh / 2);
+             *maxdescent += dh / 2;
+             *maxascent += dh - (dh / 2);
              // FIXME: set flag that says "if heigh changes - reformat"
           }
      }
@@ -1837,7 +1840,8 @@ _layout_line_new(Ctxt *c, Evas_Object_Textblock_Format *fmt)
    c->maxascent = c->maxdescent = 0;
    c->ln->line_no = -1;
    c->ln->par = c->par;
-   _layout_format_ascent_descent_adjust(c, fmt);
+   _layout_format_ascent_descent_adjust(c->obj, &c->maxascent,
+         &c->maxdescent, fmt);
 }
 
 /* par index functions */
@@ -2283,6 +2287,108 @@ _layout_line_order(Ctxt *c __UNUSED__, Evas_Object_Textblock_Line *line)
 #endif
 }
 
+/* FIXME: doc */
+static void
+_layout_calculate_format_item_size(const Evas_Object *obj,
+      const Evas_Object_Textblock_Format_Item *fi,
+      Evas_Coord *maxascent, Evas_Coord *maxdescent,
+      Evas_Coord *_y, Evas_Coord *_w, Evas_Coord *_h)
+{
+   /* Adjust sizes according to current line height/scale */
+   Evas_Coord w, h;
+   const char *p, *s;
+
+   s = fi->item;
+   w = fi->parent.w;
+   h = fi->parent.h;
+   switch (fi->size)
+     {
+      case SIZE:
+         if (!strncmp(s, "item", 4))
+           {
+              p = strstr(s, " size=");
+              if (p)
+                {
+                   p += 6;
+                   if (sscanf(p, "%ix%i", &w, &h) == 2)
+                     {
+                        w = w * obj->cur.scale;
+                        h = h * obj->cur.scale;
+                     }
+                }
+           }
+         break;
+      case SIZE_REL:
+         p = strstr((char *) s, " relsize=");
+         p += 9;
+         if (sscanf(p, "%ix%i", &w, &h) == 2)
+           {
+              int sz = 1;
+              if (fi->vsize == VSIZE_FULL)
+                {
+                   sz = *maxdescent + *maxascent;
+                }
+              else if (fi->vsize == VSIZE_ASCENT)
+                {
+                   sz = *maxascent;
+                }
+              w = (w * sz) / h;
+              h = sz;
+           }
+         break;
+      case SIZE_ABS:
+         /* Nothing to do */
+      default:
+         break;
+     }
+
+   switch (fi->size)
+     {
+      case SIZE:
+      case SIZE_ABS:
+         switch (fi->vsize)
+           {
+            case VSIZE_FULL:
+               if (fi->parent.h > (*maxdescent + *maxascent))
+                 {
+                    *maxascent += fi->parent.h - (*maxdescent + *maxascent);
+                    *_y = -*maxascent;
+                 }
+               else
+                  *_y = -(fi->parent.h - *maxdescent);
+               break;
+            case VSIZE_ASCENT:
+               if (fi->parent.h > *maxascent)
+                 {
+                    *maxascent = fi->parent.h;
+                    *_y = -fi->parent.h;
+                 }
+               else
+                  *_y = -fi->parent.h;
+               break;
+            default:
+               break;
+           }
+         break;
+      case SIZE_REL:
+         switch (fi->vsize)
+           {
+            case VSIZE_FULL:
+            case VSIZE_ASCENT:
+               *_y = -*maxascent;
+               break;
+            default:
+               break;
+           }
+         break;
+      default:
+         break;
+     }
+
+   *_w = w;
+   *_h = h;
+}
+
 /**
  * @internal
  * Order the items in the line, update it's properties and update it's
@@ -2312,7 +2418,8 @@ _layout_line_finalize(Ctxt *c, Evas_Object_Textblock_Format *fmt)
      }
 
    if (no_text)
-     _layout_format_ascent_descent_adjust(c, fmt);
+      _layout_format_ascent_descent_adjust(c->obj, &c->maxascent,
+            &c->maxdescent, fmt);
 
    EINA_INLIST_FOREACH(c->ln->items, it)
      {
@@ -2321,106 +2428,16 @@ _layout_line_finalize(Ctxt *c, Evas_Object_Textblock_Format *fmt)
              Evas_Object_Textblock_Text_Item *ti = _ITEM_TEXT(it);
              if (ti->parent.format->font.font)
                ti->baseline = c->ENFN->font_max_ascent_get(c->ENDT, ti->parent.format->font.font);
-             _layout_format_ascent_descent_adjust(c, ti->parent.format);
+             _layout_format_ascent_descent_adjust(c->obj, &c->maxascent,
+                   &c->maxdescent, ti->parent.format);
           }
         else
           {
              Evas_Object_Textblock_Format_Item *fi = _ITEM_FORMAT(it);
              if (!fi->formatme) goto loop_advance;
-             /* Adjust sizes according to current line height/scale */
-               {
-                  Evas_Coord w, h;
-                  const char *p, *s;
-
-                  s = fi->item;
-                  w = fi->parent.w;
-                  h = fi->parent.h;
-                  switch (fi->size)
-                    {
-                     case SIZE:
-                        if (!strncmp(s, "item", 4))
-                          {
-                             p = strstr(s, " size=");
-                             if (p)
-                               {
-                                  p += 6;
-                                  if (sscanf(p, "%ix%i", &w, &h) == 2)
-                                    {
-                                       w = w * c->obj->cur.scale;
-                                       h = h * c->obj->cur.scale;
-                                    }
-                               }
-                          }
-                        break;
-                     case SIZE_REL:
-                        p = strstr((char *) s, " relsize=");
-                        p += 9;
-                        if (sscanf(p, "%ix%i", &w, &h) == 2)
-                          {
-                             int sz = 1;
-                             if (fi->vsize == VSIZE_FULL)
-                               {
-                                  sz = c->maxdescent + c->maxascent;
-                               }
-                             else if (fi->vsize == VSIZE_ASCENT)
-                               {
-                                  sz = c->maxascent;
-                               }
-                             w = (w * sz) / h;
-                             h = sz;
-                          }
-                        break;
-                     case SIZE_ABS:
-                        /* Nothing to do */
-                     default:
-                        break;
-                    }
-                  fi->parent.w = fi->parent.adv = w;
-                  fi->parent.h = h;
-               }
-
-             switch (fi->size)
-               {
-                case SIZE:
-                case SIZE_ABS:
-                   switch (fi->vsize)
-                     {
-                      case VSIZE_FULL:
-                         if (fi->parent.h > (c->maxdescent + c->maxascent))
-                           {
-                              c->maxascent += fi->parent.h - (c->maxdescent + c->maxascent);
-                              fi->y = -c->maxascent;
-                           }
-                         else
-                           fi->y = -(fi->parent.h - c->maxdescent);
-                         break;
-                      case VSIZE_ASCENT:
-                         if (fi->parent.h > c->maxascent)
-                           {
-                              c->maxascent = fi->parent.h;
-                              fi->y = -fi->parent.h;
-                           }
-                         else
-                           fi->y = -fi->parent.h;
-                         break;
-                      default:
-                         break;
-                     }
-                   break;
-                case SIZE_REL:
-                   switch (fi->vsize)
-                     {
-                      case VSIZE_FULL:
-                      case VSIZE_ASCENT:
-                         fi->y = -c->maxascent;
-                         break;
-                      default:
-                         break;
-                     }
-                   break;
-                default:
-                   break;
-               }
+             _layout_calculate_format_item_size(c->obj, fi, &c->maxascent,
+                   &c->maxdescent, &fi->y, &fi->parent.w, &fi->parent.h);
+             fi->parent.adv = fi->parent.w;
           }
 
 loop_advance:
@@ -8099,16 +8116,92 @@ evas_object_textblock_size_formatted_get(const Evas_Object *obj, Evas_Coord *w, 
    if (h) *h = o->formatted.h;
 }
 
+/* FIXME: doc */
+static void
+_size_native_calc_paragraph_size(const Evas_Object *obj,
+      const Evas_Object_Textblock *o,
+      const Evas_Object_Textblock_Paragraph *par,
+      Evas_Coord *_w, Evas_Coord *_h)
+{
+   Eina_List *i;
+   Evas_Object_Textblock_Item *it;
+   Evas_Coord x = 0, y = 0, wmax = 0, h = 0, ascent = 0, descent = 0;
+
+   EINA_LIST_FOREACH(par->logical_items, i, it)
+     {
+        if (it->type == EVAS_TEXTBLOCK_ITEM_FORMAT)
+          {
+             Evas_Object_Textblock_Format_Item *fi = _ITEM_FORMAT(it);
+             if (fi->item && (_IS_LINE_SEPARATOR(fi->item) ||
+                      _IS_PARAGRAPH_SEPARATOR(o, fi->item)))
+               {
+                  /* If there are no text items yet, calc ascent/descent
+                   * according to the current format. */
+                  if (ascent + descent == 0)
+                     _layout_format_ascent_descent_adjust(obj, &ascent,
+                           &descent, it->format);
+
+                  if (ascent + descent > h)
+                     h = ascent + descent;
+                  if (x + it->adv > wmax)
+                     wmax = x + it->adv;
+                  y += h;
+                  x = h = 0;
+                  ascent = descent = 0;
+               }
+             else
+               {
+                  Evas_Coord fw, fh, fy;
+
+                  _layout_calculate_format_item_size(obj, fi, &ascent,
+                        &descent, &fy, &fw, &fh);
+
+                  if (fh > h)
+                     h = fh;
+                  x += fw;
+               }
+          }
+        else
+          {
+             _layout_format_ascent_descent_adjust(obj, &ascent,
+                   &descent, it->format);
+             x += it->adv;
+          }
+     }
+
+   /* Do the last addition */
+   if (ascent + descent > h)
+      h = ascent + descent;
+   if (x > wmax)
+      wmax = x;
+
+   *_h = y + h;
+   *_w = wmax;
+}
+
 EAPI void
 evas_object_textblock_size_native_get(const Evas_Object *obj, Evas_Coord *w, Evas_Coord *h)
 {
    TB_HEAD();
    if (!o->native.valid)
      {
-	_layout(obj,
-		1,
-		-1, -1,
-		&o->native.w, &o->native.h);
+        Evas_Coord wmax = 0, hmax = 0;
+        Evas_Object_Textblock_Paragraph *par;
+        /* We just want the layout objects to update, should probably
+         * split that. */
+        if (!o->formatted.valid) _relayout(obj);
+        EINA_INLIST_FOREACH(o->paragraphs, par)
+          {
+             Evas_Coord tw, th;
+             _size_native_calc_paragraph_size(obj, o, par, &tw, &th);
+             if (tw > wmax)
+                wmax = tw;
+             hmax += th;
+          }
+
+        o->native.w = wmax;
+        o->native.h = hmax;
+
 	o->native.valid = 1;
         o->content_changed = 0;
         o->format_changed = EINA_FALSE;
