@@ -585,9 +585,9 @@ ecore_x_window_shape_rectangles_get(Ecore_X_Window win, int *num_ret)
 EAPI Ecore_X_Rectangle *
 ecore_x_window_shape_input_rectangles_get(Ecore_X_Window win, int *num_ret)
 {
+   Ecore_X_Rectangle *rects = NULL;
 #ifdef ShapeInput
    XRectangle *rect;
-   Ecore_X_Rectangle *rects = NULL;
    int i, num = 0, ord;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
@@ -627,8 +627,8 @@ ecore_x_window_shape_input_rectangles_get(Ecore_X_Window win, int *num_ret)
    rects = malloc(sizeof(Ecore_X_Rectangle));
    if (!rects) return NULL;
    if (!XGetGeometry(_ecore_x_disp, win, &dw,
-                     &(rects[i].x), &(rects[i].y),
-                     &(rects[i].width), &(rects[i].height),
+                     &(rects[0].x), &(rects[0].y),
+                     &(rects[0].width), &(rects[0].height),
                      &di, &di))
      {
         free(rects);
