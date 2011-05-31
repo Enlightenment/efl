@@ -208,5 +208,5 @@
 
 2011-05-30  Cedric Bail
 
-	* Add ecore_pipe_freeze/thraw to suspend and restart watching the pipe
+	* Add ecore_pipe_freeze/thaw to suspend and restart watching the pipe
 	inside the main loop.

@@ -368,7 +368,7 @@ ecore_pipe_read_close(Ecore_Pipe *p)
 }
 
 /**
- * Stop monitoring if necessary the pipe for reading. See ecore_pipe_thraw()
+ * Stop monitoring if necessary the pipe for reading. See ecore_pipe_thaw()
  * for monitoring it again.
  *
  * @param p The Ecore_Pipe object.
@@ -396,7 +396,7 @@ ecore_pipe_freeze(Ecore_Pipe *p)
  * @param p The Ecore_Pipe object.
  */
 EAPI void
-ecore_pipe_thraw(Ecore_Pipe *p)
+ecore_pipe_thaw(Ecore_Pipe *p)
 {
    if (!ECORE_MAGIC_CHECK(p, ECORE_MAGIC_PIPE))
      {

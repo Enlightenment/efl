@@ -786,7 +786,7 @@ extern "C" {
    EAPI Eina_Bool    ecore_pipe_write(Ecore_Pipe *p, const void *buffer, unsigned int nbytes);
    EAPI void         ecore_pipe_write_close(Ecore_Pipe *p);
    EAPI void         ecore_pipe_read_close(Ecore_Pipe *p);
-   EAPI void         ecore_pipe_thraw(Ecore_Pipe *p);
+   EAPI void         ecore_pipe_thaw(Ecore_Pipe *p);
    EAPI void         ecore_pipe_freeze(Ecore_Pipe *p);
 
   /**
