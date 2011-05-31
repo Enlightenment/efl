@@ -1761,7 +1761,6 @@ struct _Ctxt
    int have_underline, have_underline2;
    double align, valign;
    Eina_Bool align_auto : 1;
-   Eina_Bool calc_only : 1;
    Eina_Bool width_changed : 1;
 };
 
@@ -3144,7 +3143,7 @@ _layout_update_par(Ctxt *c)
    /* Insert it to the index now that we calculated it's y
     * We don't need to reinsert even if y (they key) changed, because the
     * order remains the same. */
-   if (!c->calc_only && !c->par->indexed)
+   if (!c->par->indexed)
      {
         c->o->par_index = eina_rbtree_inline_insert(c->o->par_index,
               EINA_RBTREE_GET(c->par), _par_index_node_cmp, NULL);
@@ -3452,7 +3451,7 @@ _layout_visualize_par(Ctxt *c)
    /* Check if we need to skip this paragraph because it's already layouted
     * correctly, and mark handled nodes as dirty. */
    c->par->line_no = c->line_no;
-   if (c->par->text_node && !c->calc_only)
+   if (c->par->text_node)
      {
         /* Skip this paragraph if width is the same, there is no ellipsis
          * and we aren't just calculating. */
@@ -3506,9 +3505,8 @@ _layout_visualize_par(Ctxt *c)
         int adv_line = 0;
         int redo_item = 0;
         it = _ITEM(eina_list_data_get(i));
-        /* Skip visually deleted items - only if it's a real calc.
-         * In the calc only case we want to take them into account */
-        if (!c->calc_only && it->visually_deleted)
+        /* Skip visually deleted items */
+        if (it->visually_deleted)
           {
              i = eina_list_next(i);
              continue;
@@ -3782,7 +3780,7 @@ _format_changes_invalidate_text_nodes(Ctxt *c)
  * @param h_ret the object's calculated h.
  */
 static void
-_layout(const Evas_Object *obj, int calc_only, int w, int h, int *w_ret, int *h_ret)
+_layout(const Evas_Object *obj, int w, int h, int *w_ret, int *h_ret)
 {
    Evas_Object_Textblock *o;
    Ctxt ctxt, *c;
@@ -3810,7 +3808,6 @@ _layout(const Evas_Object *obj, int calc_only, int w, int h, int *w_ret, int *h_
    c->align = 0.0;
    c->align_auto = EINA_TRUE;
    c->ln = NULL;
-   c->calc_only = !!calc_only;
    c->width_changed = (obj->cur.geometry.w != o->last_w);
 
    /* Mark text nodes as dirty if format have changed. */
@@ -3980,49 +3977,6 @@ _layout(const Evas_Object *obj, int calc_only, int w, int h, int *w_ret, int *h_
         _layout_text_append(c, fmt, NULL, 0, 0, NULL);
      }
 
-   /* In the case of calc only, we copy the items and the paragraphs,
-    * but because we don't change OT_DATA we can use it, just copy the item
-    * and ref */
-   if (calc_only)
-     {
-        Evas_Object_Textblock_Paragraph *orig_pars, *par;
-        Eina_List *itr;
-        orig_pars = c->paragraphs;
-        c->paragraphs = NULL;
-        EINA_INLIST_FOREACH(EINA_INLIST_GET(orig_pars), par)
-          {
-             Evas_Object_Textblock_Item *it;
-             c->par = malloc(sizeof(Evas_Object_Textblock_Paragraph));
-             memcpy(c->par, par, sizeof(Evas_Object_Textblock_Paragraph));
-             /* Both of these should not be copied */
-             c->par->lines = NULL;
-             c->par->logical_items = NULL;
-             c->paragraphs = (Evas_Object_Textblock_Paragraph *)
-                eina_inlist_append(EINA_INLIST_GET(c->paragraphs),
-                      EINA_INLIST_GET(c->par));
-
-             /* Copy all the items */
-             EINA_LIST_FOREACH(par->logical_items, itr, it)
-               {
-                  Evas_Object_Textblock_Item *new_it;
-                  if (it->type == EVAS_TEXTBLOCK_ITEM_TEXT)
-                    {
-                       new_it = malloc(sizeof(Evas_Object_Textblock_Text_Item));
-                       memcpy(new_it, it,
-                             sizeof(Evas_Object_Textblock_Text_Item));
-                    }
-                  else
-                    {
-                       new_it = malloc(
-                             sizeof(Evas_Object_Textblock_Format_Item));
-                       memcpy(new_it, it,
-                             sizeof(Evas_Object_Textblock_Format_Item));
-                    }
-                  c->par->logical_items =
-                     eina_list_append(c->par->logical_items, new_it);
-               }
-          }
-     }
    /* End of logical layout creation */
 
    /* Start of visual layout creation */
@@ -4092,34 +4046,8 @@ _layout(const Evas_Object *obj, int calc_only, int w, int h, int *w_ret, int *h_
         o->style_pad.r = style_pad_r;
         o->style_pad.t = style_pad_t;
         o->style_pad.b = style_pad_b;
-        if (!calc_only)
-          {
-             _paragraphs_clear(obj, c->paragraphs);
-          }
-        _layout(obj, calc_only, w, h, w_ret, h_ret);
-     }
-
-   if (calc_only)
-     {
-        Evas_Object_Textblock_Paragraph *par;
-        while (c->paragraphs)
-          {
-             Eina_List *itr, *itrn;
-             Evas_Object_Textblock_Item *it;
-             par = c->paragraphs;
-             /* free all the items */
-             EINA_LIST_FOREACH_SAFE(par->logical_items, itr, itrn, it)
-               {
-                  par->logical_items =
-                     eina_list_remove_list(par->logical_items, itr);
-                  free(it);
-               }
-             c->paragraphs = (Evas_Object_Textblock_Paragraph *)
-                eina_inlist_remove(EINA_INLIST_GET(c->paragraphs),
-                      EINA_INLIST_GET(c->paragraphs));
-             _paragraph_clear(obj, par);
-             free(par);
-          }
+        _paragraphs_clear(obj, c->paragraphs);
+        _layout(obj, w, h, w_ret, h_ret);
      }
 }
 
@@ -4136,9 +4064,7 @@ _relayout(const Evas_Object *obj)
 
    o = (Evas_Object_Textblock *)(obj->object_data);
    o->have_ellipsis = 0;
-   _layout(obj,
-         0,
-         obj->cur.geometry.w, obj->cur.geometry.h,
+   _layout(obj, obj->cur.geometry.w, obj->cur.geometry.h,
          &o->formatted.w, &o->formatted.h);
    o->formatted.valid = 1;
    o->last_w = obj->cur.geometry.w;
