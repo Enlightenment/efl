@@ -221,6 +221,8 @@ _edje_del(Edje *ed)
         eina_stringshare_del(cb->part);
         free(cb);
      }
+
+   eina_hash_free(ed->members);
    free(ed);
 }
 
