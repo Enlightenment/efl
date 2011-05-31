@@ -85,10 +85,9 @@ read_raw_data(unsigned char* seg, int size, libraw_data_t *raw_data, int *w, int
           goto clean_image;
         *w = image->width;
         *h = image->height;
-//        shm_alloc(image->width * image->height * (sizeof(DATA32)));
-//        if (!shm_addr)
-//          goto clean_image;
-        shm_addr = malloc(image->width * image->height * (sizeof(DATA32)));
+        shm_alloc(image->width * image->height * (sizeof(DATA32)));
+        if (!shm_addr)
+          goto clean_image;
         memset(shm_addr, 0, image->width * image->height * (sizeof(DATA32)));
         if (image->type != LIBRAW_IMAGE_BITMAP)
           goto clean_image;
@@ -182,7 +181,7 @@ int main(int argc, char **argv)
              printf("size %d %d\n", w, h);
              printf("alpha 1\n");
 
-             if (shm_fd >= 0) printf("shm file %s\n", shmfile);
+             if (shm_fd >= 0) printf("shmfile %s\n", shmfile);
              else
                {
                   printf("data\n");
