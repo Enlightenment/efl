@@ -414,20 +414,32 @@ _event_hook(Evas_Object *obj, Evas_Object *src __UNUSED__, Evas_Callback_Type ty
 }
 
 static int
+_count_letter(const char *str)
+{
+   int pos = 0;
+   int code = 0, chnum;
+   
+   for (chnum = 0; ; chnum++)
+     {
+        pos = evas_string_char_next_get(str, pos, &code);
+        if (code == 0) break;
+     }
+   return chnum;
+}
+
+static int
 _check_letter(const char *str, int length)
 {
-   int code = str[length];
-
-   if (code == '\0')
-     return length;		// null string
-   else if (((code >= 65) && (code <= 90)) || ((code >= 97) && (code <= 122)))
-     return length;		// alphabet
-   else if ((48 <= code) && (code < 58))
-     return length;		// number
-   else if (((33 <= code) && (code < 47)) || ((58 <= code) && (code < 64))
-            || ((91 <= code) && (code < 96)) || ((123 <= code) && (code < 126)))
-     return length;		// special letter
-   return length - 1;
+   int pos = 0;
+   int code = 0, chnum;
+   
+   for (chnum = 0; ; chnum++)
+     {
+        if (chnum == length) break;
+        pos = evas_string_char_next_get(str, pos, &code);
+        if (code == 0) break;
+     }
+   return pos;
 }
 
 static Eina_Bool
@@ -459,7 +471,9 @@ _check_string(void *data)
         if ((x + w <= ox) || (x >= ox + ow))
           continue;
 
-        len = eina_stringshare_strlen(it->label);
+        len = _count_letter(it->label);
+//        // FIXME: len should be # of ut8f letters. ie count using utf8 string walk, not stringshare len
+//        len = eina_stringshare_strlen(it->label);
 
         if (x <= ox + 5)
           edje_object_signal_emit(it->base.view, "elm,state,left_side",
@@ -477,6 +491,7 @@ _check_string(void *data)
                                        "elm");
           }
 
+        // if len is les that the limit len, skip anyway
         if (len <= wd->len_side)
           continue;
 
@@ -489,7 +504,9 @@ _check_string(void *data)
 
         length = len - (int)(diff * steps / (ow / 3));
         length = MAX(length, wd->len_side);
+        // limit string len to "length" ut8f chars
         length = _check_letter(it->label, length);
+        // cut it off at byte mark returned form _check_letter
         strncpy(buf, it->label, length);
         buf[length] = '\0';
         edje_object_part_text_set(it->base.view, "elm.text", buf);

@@ -133,6 +133,25 @@ test_diskselector(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *even
    evas_object_show(disk);
    evas_object_smart_callback_add(disk, "selected", _print_disk_info_cb, NULL);
 
+   disk = elm_diskselector_add(win);
+   ic = elm_icon_add(win);
+   snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
+   elm_icon_file_set(ic, buf, NULL);
+   elm_icon_scale_set(ic, 1, 1);
+   elm_diskselector_item_append(disk, "머리스타일", ic, NULL, NULL);
+   elm_diskselector_item_append(disk, "プロが伝授する", NULL, NULL, NULL);
+   elm_diskselector_item_append(disk, "生上访要求政府", NULL, NULL, NULL);
+   elm_diskselector_item_append(disk, "English", NULL, NULL, NULL);
+   elm_diskselector_item_append(disk, "والشريعة", NULL, NULL, NULL);
+   elm_diskselector_item_append(disk, "עִבְרִית", NULL, NULL, NULL);
+   elm_diskselector_item_append(disk, "Grüßen", NULL, NULL, NULL);
+   elm_diskselector_round_set(disk, EINA_TRUE);
+   evas_object_size_hint_weight_set(disk, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(disk, EVAS_HINT_FILL, 0.5);
+   elm_box_pack_end(bx, disk);
+   evas_object_show(disk);
+   evas_object_smart_callback_add(disk, "selected", _print_disk_info_cb, NULL);
+   
    // displayed item number setting example
    disk = elm_diskselector_add(win);
    elm_diskselector_display_item_num_set(disk, 5);
