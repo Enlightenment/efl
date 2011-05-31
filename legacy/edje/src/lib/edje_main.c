@@ -201,7 +201,7 @@ _edje_del(Edje *ed)
         free(cb);
      }
 
-   eina_hash_free(ed->members);
+   if (ed->members) eina_hash_free(ed->members);
    free(ed);
 }
 
