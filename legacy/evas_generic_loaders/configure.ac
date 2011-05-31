@@ -68,9 +68,11 @@ PKG_CHECK_MODULES([LIBRAW], [libraw], [have_raw="yes"], [have_raw="no"])
 
 AM_CONDITIONAL([HAVE_PDF], [test "x${have_poppler}" = "xyes"])
 AM_CONDITIONAL([HAVE_PS], [test "x${have_ps}" = "xyes"])
-AM_CONDITIONAL(HAVE_RAW, test "x${have_raw}" = "xyes")
+AM_CONDITIONAL(HAVE_RAW, [test "x${have_raw}" = "xyes"])
 
 ### Checks for header files
+
+AC_CHECK_HEADERS(netinet/in.h unistd.h)
 
 AC_CHECK_HEADER([zlib.h],
    [dummy="yes"],
