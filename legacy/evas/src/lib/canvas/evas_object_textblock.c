@@ -1750,6 +1750,7 @@ struct _Ctxt
    Evas_Object_Textblock_Line *ln;
 
    Eina_List *format_stack;
+   Evas_Object_Textblock_Format *fmt;
 
    int x, y;
    int w, h;
@@ -3768,70 +3769,23 @@ _format_changes_invalidate_text_nodes(Ctxt *c)
      }
 }
 
-/**
- * @internal
- * Create the layout from the nodes.
- *
- * @param obj the evas object - NOT NULL.
- * @param calc_only true if should only calc sizes false if should also create the layout.. It assumes native size is being calculated, doesn't support formatted size atm.
- * @param w the object's w, -1 means no wrapping (i.e infinite size)
- * @param h the object's h, -1 means inifinte size.
- * @param w_ret the object's calculated w.
- * @param h_ret the object's calculated h.
- */
+
+/** FIXME: Document */
 static void
-_layout(const Evas_Object *obj, int w, int h, int *w_ret, int *h_ret)
+_layout_pre(Ctxt *c, int *style_pad_l, int *style_pad_r, int *style_pad_t,
+      int *style_pad_b)
 {
-   Evas_Object_Textblock *o;
-   Ctxt ctxt, *c;
-   Evas_Object_Textblock_Node_Text *n;
-   Evas_Object_Textblock_Format *fmt = NULL;
-   int style_pad_l = 0, style_pad_r = 0, style_pad_t = 0, style_pad_b = 0;
-
-   /* setup context */
-   o = (Evas_Object_Textblock *)(obj->object_data);
-   c = &ctxt;
-   c->obj = (Evas_Object *)obj;
-   c->o = o;
-   c->paragraphs = c->par = NULL;
-   c->format_stack = NULL;
-   c->x = c->y = 0;
-   c->w = w;
-   c->h = h;
-   c->wmax = c->hmax = 0;
-   c->maxascent = c->maxdescent = 0;
-   c->marginl = c->marginr = 0;
-   c->have_underline = 0;
-   c->have_underline2 = 0;
-   c->underline_extend = 0;
-   c->line_no = 0;
-   c->align = 0.0;
-   c->align_auto = EINA_TRUE;
-   c->ln = NULL;
-   c->width_changed = (obj->cur.geometry.w != o->last_w);
-
+   Evas_Object *obj = c->obj;
+   Evas_Object_Textblock *o = c->o;
    /* Mark text nodes as dirty if format have changed. */
    if (c->o->format_changed)
      {
         _format_changes_invalidate_text_nodes(c);
      }
 
-   /* Start of logical layout creation */
-   /* setup default base style */
-   if ((c->o->style) && (c->o->style->default_tag))
-     {
-        fmt = _layout_format_push(c, NULL);
-        _format_fill(c->obj, fmt, c->o->style->default_tag);
-     }
-   if (!fmt)
-     {
-        if (w_ret) *w_ret = 0;
-        if (h_ret) *h_ret = 0;
-        return;
-     }
-
    if (o->content_changed)
      {
+        Evas_Object_Textblock_Node_Text *n;
         c->par = c->paragraphs = o->paragraphs;
         /* Go through all the text nodes to create the logical layout */
         EINA_INLIST_FOREACH(c->o->text_nodes, n)
@@ -3884,9 +3838,9 @@ _layout(const Evas_Object *obj, int w, int h, int *w_ret, int *h_ret)
                          {
                             /* Only do this if this actually changes format */
                             if (fnode->format_change)
-                               _layout_do_format(obj, c, &fmt, fnode,
-                                     &style_pad_l, &style_pad_r,
-                                     &style_pad_t, &style_pad_b, EINA_FALSE);
+                               _layout_do_format(obj, c, &c->fmt, fnode,
+                                     style_pad_l, style_pad_r,
+                                     style_pad_t, style_pad_b, EINA_FALSE);
                             fnode = _NODE_FORMAT(EINA_INLIST_GET(fnode)->next);
                          }
                        continue;
@@ -3914,13 +3868,13 @@ _layout(const Evas_Object *obj, int w, int h, int *w_ret, int *h_ret)
                {
                   off += fnode->offset;
                   /* No need to skip on the first run, or a non-visible one */
-                  _layout_text_append(c, fmt, n, start, off, o->repch);
-                  _layout_do_format(obj, c, &fmt, fnode, &style_pad_l,
-                        &style_pad_r, &style_pad_t, &style_pad_b, EINA_TRUE);
+                  _layout_text_append(c, c->fmt, n, start, off, o->repch);
+                  _layout_do_format(obj, c, &c->fmt, fnode, style_pad_l,
+                        style_pad_r, style_pad_t, style_pad_b, EINA_TRUE);
                   if ((c->have_underline2) || (c->have_underline))
                     {
-                       if (style_pad_b < c->underline_extend)
-                         style_pad_b = c->underline_extend;
+                       if (*style_pad_b < c->underline_extend)
+                         *style_pad_b = c->underline_extend;
                        c->have_underline = 0;
                        c->have_underline2 = 0;
                        c->underline_extend = 0;
@@ -3938,7 +3892,7 @@ _layout(const Evas_Object *obj, int w, int h, int *w_ret, int *h_ret)
                   fnode->new = EINA_FALSE;
                   fnode = _NODE_FORMAT(EINA_INLIST_GET(fnode)->next);
                }
-             _layout_text_append(c, fmt, n, start, -1, o->repch);
+             _layout_text_append(c, c->fmt, n, start, -1, o->repch);
              c->par = (Evas_Object_Textblock_Paragraph *)
                 EINA_INLIST_GET(c->par)->next;
           }
@@ -3961,6 +3915,64 @@ _layout(const Evas_Object *obj, int w, int h, int *w_ret, int *h_ret)
         c->par = NULL;
      }
 
+}
+
+/**
+ * @internal
+ * Create the layout from the nodes.
+ *
+ * @param obj the evas object - NOT NULL.
+ * @param calc_only true if should only calc sizes false if should also create the layout.. It assumes native size is being calculated, doesn't support formatted size atm.
+ * @param w the object's w, -1 means no wrapping (i.e infinite size)
+ * @param h the object's h, -1 means inifinte size.
+ * @param w_ret the object's calculated w.
+ * @param h_ret the object's calculated h.
+ */
+static void
+_layout(const Evas_Object *obj, int w, int h, int *w_ret, int *h_ret)
+{
+   Evas_Object_Textblock *o;
+   Ctxt ctxt, *c;
+   int style_pad_l = 0, style_pad_r = 0, style_pad_t = 0, style_pad_b = 0;
+
+   /* setup context */
+   o = (Evas_Object_Textblock *)(obj->object_data);
+   c = &ctxt;
+   c->obj = (Evas_Object *)obj;
+   c->o = o;
+   c->paragraphs = c->par = NULL;
+   c->format_stack = NULL;
+   c->fmt = NULL;
+   c->x = c->y = 0;
+   c->w = w;
+   c->h = h;
+   c->wmax = c->hmax = 0;
+   c->maxascent = c->maxdescent = 0;
+   c->marginl = c->marginr = 0;
+   c->have_underline = 0;
+   c->have_underline2 = 0;
+   c->underline_extend = 0;
+   c->line_no = 0;
+   c->align = 0.0;
+   c->align_auto = EINA_TRUE;
+   c->ln = NULL;
+   c->width_changed = (obj->cur.geometry.w != o->last_w);
+
+   /* Start of logical layout creation */
+   /* setup default base style */
+   if ((c->o->style) && (c->o->style->default_tag))
+     {
+        c->fmt = _layout_format_push(c, NULL);
+        _format_fill(c->obj, c->fmt, c->o->style->default_tag);
+     }
+   if (!c->fmt)
+     {
+        if (w_ret) *w_ret = 0;
+        if (h_ret) *h_ret = 0;
+        return;
+     }
+
+   _layout_pre(c, &style_pad_l, &style_pad_r, &style_pad_t, &style_pad_b);
    c->paragraphs = o->paragraphs;
 
    /* If there are no paragraphs, create the minimum needed,
@@ -3974,7 +3986,7 @@ _layout(const Evas_Object *obj, int w, int h, int *w_ret, int *h_ret)
       EINA_INLIST_GET(c->paragraphs)->last;
    if (!c->par->logical_items)
      {
-        _layout_text_append(c, fmt, NULL, 0, 0, NULL);
+        _layout_text_append(c, c->fmt, NULL, 0, 0, NULL);
      }
 
    /* End of logical layout creation */
@@ -4020,9 +4032,9 @@ _layout(const Evas_Object *obj, int w, int h, int *w_ret, int *h_ret)
    /* Clean the rest of the format stack */
    while (c->format_stack)
      {
-        fmt = c->format_stack->data;
+        c->fmt = c->format_stack->data;
         c->format_stack = eina_list_remove_list(c->format_stack, c->format_stack);
-        _format_unref_free(c->obj, fmt);
+        _format_unref_free(c->obj, c->fmt);
      }
 
    if (w_ret) *w_ret = c->wmax;
