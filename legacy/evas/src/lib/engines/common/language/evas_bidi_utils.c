@@ -539,12 +539,12 @@ evas_bidi_position_reverse(const Evas_BiDi_Props *props, int len, EvasBiDiStrInd
  * @return #EINA_TRUE if true, #EINA_FALSE otherwise.
  */
 Eina_Bool
-evas_bidi_is_rtl_char(const Evas_BiDi_Paragraph_Props *bidi_props, size_t start, EvasBiDiStrIndex index)
+evas_bidi_is_rtl_char(const Evas_BiDi_Paragraph_Props *bidi_props, size_t start, EvasBiDiStrIndex ind)
 {
-   if(!bidi_props || index < 0)
+   if(!bidi_props || ind < 0)
       return EINA_FALSE;
    return (FRIBIDI_IS_RTL(
-            bidi_props->embedding_levels[index + start]))
+            bidi_props->embedding_levels[ind + start]))
       ? EINA_TRUE : EINA_FALSE;
 }
 
