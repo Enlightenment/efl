@@ -257,6 +257,8 @@ EAPI Eina_Iterator *eina_file_direct_ls(const char *dir) EINA_WARN_UNUSED_RESULT
  * The file are only open in read only mode. Name should be an absolute path to
  * prevent cache mistake. A handler could be shared among multiple instance and
  * will be correctly refcounted. File are automatically closed on exec.
+ *
+ * @since 1.1
  */
 EAPI Eina_File *eina_file_open(const char *name, Eina_Bool shared) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_MALLOC;
 
@@ -266,6 +268,8 @@ EAPI Eina_File *eina_file_open(const char *name, Eina_Bool shared) EINA_WARN_UNU
  * @param file File handler to unref.
  *
  * This doesn't close the file, it will remain open until it leave the cache.
+ *
+ * @since 1.1
  */
 EAPI void eina_file_close(Eina_File *file);
 
@@ -274,6 +278,8 @@ EAPI void eina_file_close(Eina_File *file);
  *
  * @param file The file handler to request the size from.
  * @return The length of the file.
+ *
+ * @since 1.1
  */
 EAPI unsigned long int eina_file_size_get(Eina_File *file);
 
@@ -282,6 +288,8 @@ EAPI unsigned long int eina_file_size_get(Eina_File *file);
  *
  * @param file The file handler to request the modification time from.
  * @return The last modification time.
+ *
+ * @since 1.1
  */
 EAPI time_t eina_file_mtime_get(Eina_File *file);
 
@@ -290,6 +298,8 @@ EAPI time_t eina_file_mtime_get(Eina_File *file);
  *
  * @param file The file handler to request the name from.
  * @return Stringshared filename of the file.
+ *
+ * @since 1.1
  */
 EAPI const char *eina_file_filename_get(Eina_File *file);
 
@@ -299,6 +309,8 @@ EAPI const char *eina_file_filename_get(Eina_File *file);
  * @param file The file handler to map in memory
  * @param rule The rule to apply to the mapped memory
  * @return A pointer to a buffer that map all the file content. @c NULL if it fail.
+ *
+ * @since 1.1
  */
 EAPI void *eina_file_map_all(Eina_File *file, Eina_File_Populate rule);
 
@@ -312,6 +324,8 @@ EAPI void *eina_file_map_all(Eina_File *file, Eina_File_Populate rule);
  * @return A valid pointer to the system memory with @p length valid byte in it. And @c NULL if not inside the file or anything else goes wrong.
  *
  * This does handle refcounting so it will share map that target the same memory area.
+ *
+ * @since 1.1
  */
 EAPI void *eina_file_map_new(Eina_File *file, Eina_File_Populate rule,
                              unsigned long int offset, unsigned long int length);
@@ -321,6 +335,8 @@ EAPI void *eina_file_map_new(Eina_File *file, Eina_File_Populate rule,
  *
  * @param file The file handler to unmap memory from.
  * @param map Memory map to unref and unmap.
+ *
+ * @since 1.1
  */
 EAPI void eina_file_map_free(Eina_File *file, void *map);
 
