@@ -227,34 +227,15 @@ _itc_icon_get(void        *data,
           elm_icon_standard_set(ic, "folder");
         else
           {
-             static const char *extensions[][2] = {
-               { ".jpg", "image" },
-               { ".png", "image" },
-               { ".gif", "image" },
-               { ".jpeg", "image" },
-               { NULL, NULL }
-             };
-             int len, i;
-             Eina_Bool found = EINA_FALSE;
-
-             len = eina_stringshare_strlen(filename);
-
-             for (i = 0; extensions[i][0]; ++i)
+             if (evas_object_image_extension_can_load_fast_get(filename))
                {
-                  int lext;
-
-                  lext = strlen(extensions[i][0]);
-                  if (len < lext) continue;
-                  if (!strcasecmp(filename + len - lext, extensions[i][0]))
-                    {
-                       found = EINA_TRUE;
-                       elm_icon_standard_set(ic, extensions[i][1]);
-                       elm_icon_thumb_set(ic, filename, NULL);
-                    }
+                  elm_icon_standard_set(ic, "image");
+                  elm_icon_thumb_set(ic, filename, NULL);
                }
-
-             if (!found)
-               elm_icon_standard_set(ic, "file");
+             else
+               {
+                  elm_icon_standard_set(ic, "file");
+               }
           }
 
         evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_VERTICAL,
