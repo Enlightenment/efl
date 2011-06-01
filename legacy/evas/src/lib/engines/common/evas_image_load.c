@@ -8,61 +8,65 @@
 
 struct ext_loader_s
 {
+   unsigned int length;
    const char *extension;
    const char *loader;
 };
 
+#define MATCHING(Ext, Module)                   \
+  { sizeof (Ext), Ext, Module }
+
 static const struct ext_loader_s loaders[] =
 { /* map extensions to loaders to use for good first-guess tries */
-   { ".png", "png" },
-   { ".jpg", "jpeg" },
-   { ".jpeg", "jpeg" },
-   { ".jfif", "jpeg" },
-   { ".eet", "eet" },
-   { ".edj", "eet" },
-   { ".eap", "eet" },
-   { ".edb", "edb" },
-   { ".xpm", "xpm" },
-   { ".tiff", "tiff" },
-   { ".tif", "tiff" },
-   { ".svg", "svg" },
-   { ".svgz", "svg" },
-   { ".svg.gz", "svg" },
-   { ".gif", "gif" },
-   { ".pbm", "pmaps" },
-   { ".pgm", "pmaps" },
-   { ".ppm", "pmaps" },
-   { ".pnm", "pmaps" },
-   { ".bmp", "bmp" },
-   { ".tga", "tga" },
-   { ".wbmp", "wbmp" },
-   { ".ico", "ico" },
-   { ".cur", "ico" },
-   { ".psd", "psd" },
-   { ".pdf", "generic" },
-   { ".ps", "generic" },
-   { ".xcf", "generic" },
-   { ".xcf.gz", "generic" },
-   { ".arw", "generic" },
-   { ".cr2", "generic" },
-   { ".crw", "generic" },
-   { ".dcr", "generic" },
-   { ".dng", "generic" },
-   { ".k25", "generic" },
-   { ".kdc", "generic" },
-   { ".erf", "generic" },
-   { ".mrw", "generic" },
-   { ".nef", "generic" },
-   { ".nrf", "generic" },
-   { ".nrw", "generic" },
-   { ".orf", "generic" },
-   { ".raw", "generic" },
-   { ".rw2", "generic" },
-   { ".pef", "generic" },
-   { ".raf", "generic" },
-   { ".sr2", "generic" },
-   { ".srf", "generic" },
-   { ".x3f", "generic" }
+   MATCHING(".png", "png"),
+   MATCHING(".jpg", "jpeg"),
+   MATCHING(".jpeg", "jpeg"),
+   MATCHING(".jfif", "jpeg"),
+   MATCHING(".eet", "eet"),
+   MATCHING(".edj", "eet"),
+   MATCHING(".eap", "eet"),
+   MATCHING(".edb", "edb"),
+   MATCHING(".xpm", "xpm"),
+   MATCHING(".tiff", "tiff"),
+   MATCHING(".tif", "tiff"),
+   MATCHING(".svg", "svg"),
+   MATCHING(".svgz", "svg"),
+   MATCHING(".svg.gz", "svg"),
+   MATCHING(".gif", "gif"),
+   MATCHING(".pbm", "pmaps"),
+   MATCHING(".pgm", "pmaps"),
+   MATCHING(".ppm", "pmaps"),
+   MATCHING(".pnm", "pmaps"),
+   MATCHING(".bmp", "bmp"),
+   MATCHING(".tga", "tga"),
+   MATCHING(".wbmp", "wbmp"),
+   MATCHING(".ico", "ico"),
+   MATCHING(".cur", "ico"),
+   MATCHING(".psd", "psd"),
+   MATCHING(".pdf", "generic"),
+   MATCHING(".ps", "generic"),
+   MATCHING(".xcf", "generic"),
+   MATCHING(".xcf.gz", "generic"),
+   MATCHING(".arw", "generic"),
+   MATCHING(".cr2", "generic"),
+   MATCHING(".crw", "generic"),
+   MATCHING(".dcr", "generic"),
+   MATCHING(".dng", "generic"),
+   MATCHING(".k25", "generic"),
+   MATCHING(".kdc", "generic"),
+   MATCHING(".erf", "generic"),
+   MATCHING(".mrw", "generic"),
+   MATCHING(".nef", "generic"),
+   MATCHING(".nrf", "generic"),
+   MATCHING(".nrw", "generic"),
+   MATCHING(".orf", "generic"),
+   MATCHING(".raw", "generic"),
+   MATCHING(".rw2", "generic"),
+   MATCHING(".pef", "generic"),
+   MATCHING(".raf", "generic"),
+   MATCHING(".sr2", "generic"),
+   MATCHING(".srf", "generic"),
+   MATCHING(".x3f", "generic")
 };
 
 static const char *loaders_name[] =
@@ -291,4 +295,24 @@ evas_common_load_rgba_image_data_from_file(Image_Entry *ie)
 //   ie->info.module = NULL;
 
    return EVAS_LOAD_ERROR_NONE;
+}
+
+EAPI Eina_Bool
+evas_common_extension_can_load_get(const char *file)
+{
+   unsigned int length;
+   unsigned int i;
+
+   length = eina_stringshare_strlen(file) + 1;
+   if (length < 5) return EINA_FALSE;
+
+   for (i = 0; i < sizeof (loaders) / sizeof (struct ext_loader_s); ++i)
+     {
+        if (loaders[i].length > length) continue;
+
+        if (!strcasecmp(loaders[i].extension, file + length - loaders[i].length))
+          return EINA_TRUE;
+     }
+
+   return EINA_FALSE;
 }

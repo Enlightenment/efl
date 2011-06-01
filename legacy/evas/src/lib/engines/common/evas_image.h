@@ -57,4 +57,6 @@ EAPI int evas_common_load_rgba_image_data_from_file   (Image_Entry *im);
 
 void _evas_common_rgba_image_post_surface(Image_Entry *ie);
 
+EAPI Eina_Bool evas_common_extension_can_load_get(const char *file);
+
 #endif /* _EVAS_IMAGE_H */

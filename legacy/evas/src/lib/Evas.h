@@ -5237,6 +5237,28 @@ EAPI Evas_Object             *evas_object_image_source_get             (Evas_Obj
 EAPI Eina_Bool                evas_object_image_source_unset           (Evas_Object *obj) EINA_ARG_NONNULL(1);
 
 /**
+ * Check if a file extention may be supported by @ref Evas_Object_Image.
+ *
+ * @param file The file to check
+ * @return EINA_TRUE if we may be able to opeen it, EINA_FALSE if it's unlikely.
+ *
+ * If file is a Eina_Stringshare, use directly @ref evas_object_image_extension_can_load_fast_get.
+ *
+ * This functions is threadsafe.
+ */
+EAPI Eina_Bool evas_object_image_extension_can_load_get(const char *file);
+
+/**
+ * Check if a file extention may be supported by @ref Evas_Object_Image.
+ *
+ * @param file The file to check, it should be an Eina_Stringshare.
+ * @return EINA_TRUE if we may be able to opeen it, EINA_FALSE if it's unlikely.
+ *
+ * This functions is threadsafe.
+ */
+EAPI Eina_Bool evas_object_image_extension_can_load_fast_get(const char *file);
+
+/**
  * @defgroup Evas_Object_Text Text Object Functions
  *
  * Functions that operate on single line, single style text objects.

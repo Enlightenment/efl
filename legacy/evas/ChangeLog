@@ -387,3 +387,9 @@
 2011-05-29  Vincent Torri
 
 	* Fix compilation when --disable-async-preload is passed to configure.
+
+2011-06-01  Cedric Bail
+
+	* Add +evas_object_image_extension_can_load_get and
+	evas_object_image_extension_can_load_fast_get that check if a file
+	may be opened by Evas_Object_Image.

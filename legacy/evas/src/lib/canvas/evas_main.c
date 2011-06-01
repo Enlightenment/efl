@@ -510,6 +510,25 @@ evas_render_method_list_free(Eina_List *list)
    eina_list_free(list);
 }
 
+EAPI Eina_Bool
+evas_object_image_extension_can_load_get(const char *file)
+{
+   const char *tmp;
+   Eina_Bool result;
+
+   tmp = eina_stringshare_add(file);
+   result = evas_common_extension_can_load_get(tmp);
+   eina_stringshare_del(tmp);
+
+   return result;
+}
+
+EAPI Eina_Bool
+evas_object_image_extension_can_load_fast_get(const char *file)
+{
+   return evas_common_extension_can_load_get(file);
+}
+
 EAPI void
 evas_pointer_output_xy_get(const Evas *e, int *x, int *y)
 {
