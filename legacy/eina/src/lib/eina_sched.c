@@ -85,21 +85,8 @@ eina_sched_prio_drop(void)
      }
 # endif
 #elif defined EFL_HAVE_WIN32_THREADS
-   HANDLE thread;
-
-   thread = OpenThread(THREAD_SET_INFORMATION,
-		       FALSE,
-		       GetCurrentThreadId());
-   if (!thread)
-     {
-       EINA_LOG_ERR("Can not open current thread");
-       return;
-     }
-
-   if (!SetThreadPriority(thread, THREAD_PRIORITY_BELOW_NORMAL))
+   if (!SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_BELOW_NORMAL))
      EINA_LOG_ERR("Can not set thread priority");
-
-   CloseHandle(thread);
 #else
    EINA_LOG_ERR("Eina does not have support for threads enabled"
                 "or it doesn't support setting scheduler priorities");
