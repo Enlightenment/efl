@@ -147,7 +147,7 @@ static inline Eina_Bool
 _eina_condition_internal_timedwait(Eina_Condition *cond, DWORD t)
 {
 #if _WIN32_WINNT >= 0x0600
-   SleepConditionVariableCS(&cond->condition, cond->mutex, INFINITE);
+   SleepConditionVariableCS(&cond->condition, cond->mutex, t);
 #else
    DWORD ret;
    Eina_Bool last_waiter;
@@ -201,21 +201,21 @@ _eina_condition_internal_timedwait(Eina_Condition *cond, DWORD t)
        if (ret == WAIT_FAILED)
          return EINA_FALSE;
     }
+#endif
 
    return EINA_TRUE;
-#endif
 }
 
 static inline Eina_Bool
 eina_condition_timedwait(Eina_Condition *cond, double val)
 {
-   _eina_condition_internal_timedwait(cond, val * 1000);
+   return _eina_condition_internal_timedwait(cond, (DWORD)(val * 1000));
 }
 
 static inline Eina_Bool
 eina_condition_wait(Eina_Condition *cond)
 {
-   _eina_condition_internal_timedwait(cond, INFINITE);
+   return _eina_condition_internal_timedwait(cond, INFINITE);
 }
 
 static inline Eina_Bool
@@ -223,6 +223,7 @@ eina_condition_broadcast(Eina_Condition *cond)
 {
 #if _WIN32_WINNT >= 0x0600
    WakeAllConditionVariable(&cond->condition);
+   return EINA_TRUE;
 #else
    Eina_Bool have_waiters;
 
