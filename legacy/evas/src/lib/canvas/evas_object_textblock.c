@@ -265,7 +265,8 @@ struct _Evas_Object_Textblock_Paragraph
    Evas_Object_Textblock_Line        *lines;
    Evas_Object_Textblock_Node_Text   *text_node;
    Eina_List                         *logical_items;
-   Evas_BiDi_Paragraph_Props         *bidi_props;
+   Evas_BiDi_Paragraph_Props         *bidi_props; /* Only valid during layout */
+   Evas_BiDi_Direction                direction;
    Evas_Coord                         y, w, h;
    int                                line_no;
    Eina_Bool                          visible : 1;
@@ -1749,6 +1750,7 @@ struct _Ctxt
    Evas_Object_Textblock_Paragraph *par;
    Evas_Object_Textblock_Line *ln;
 
+
    Eina_List *format_stack;
    Evas_Object_Textblock_Format *fmt;
 
@@ -1947,9 +1949,6 @@ _layout_paragraph_new(Ctxt *c, Evas_Object_Textblock_Node_Text *n,
       n->par = c->par;
    c->par->line_no = -1;
    c->par->visible = 1;
-#ifdef BIDI_SUPPORT
-   c->par->bidi_props = evas_bidi_paragraph_props_new();
-#endif
 }
 
 #ifdef BIDI_SUPPORT
@@ -1976,6 +1975,8 @@ _layout_update_bidi_props(const Evas_Object_Textblock *o,
         par->bidi_props = evas_bidi_paragraph_props_get(text,
               eina_ustrbuf_length_get(par->text_node->unicode),
               segment_idxs);
+        par->direction = EVAS_BIDI_PARAGRAPH_DIRECTION_IS_RTL(par->bidi_props) ?
+           EVAS_BIDI_DIRECTION_RTL : EVAS_BIDI_DIRECTION_LTR;
         if (segment_idxs) free(segment_idxs);
      }
 }
@@ -2181,8 +2182,7 @@ _layout_line_align_get(Ctxt *c)
    if (c->align_auto && c->ln)
      {
         if (c->ln->items && c->ln->items->text_node &&
-              EVAS_BIDI_PARAGRAPH_DIRECTION_IS_RTL(
-                 c->ln->par->bidi_props))
+              (c->ln->par->direction == EVAS_BIDI_DIRECTION_RTL))
           {
              /* Align right*/
              return 1.0;
@@ -7239,15 +7239,23 @@ evas_textblock_cursor_geometry_get(const Evas_Textblock_Cursor *cur, Evas_Coord 
              /* Adjust if the char is an rtl char */
              if (ret >= 0)
                {
-                  if ((!before_char &&
-                           evas_bidi_is_rtl_char(
-                              dir_cur->node->par->bidi_props, 0,
-                              dir_cur->pos)) ||
-                        (before_char &&
-                         !evas_bidi_is_rtl_char(
-                            dir_cur->node->par->bidi_props, 0,
-                            dir_cur->pos)))
+                  /* FIXME: Can be avoided if we keep info about if information
+                   * is bidi or not. */
+                  Evas_Object_Textblock_Line *ln;
+                  Evas_Object_Textblock_Item *it;
+                  Eina_Bool is_rtl = EINA_FALSE;
+                  _find_layout_item_match(dir_cur, &ln, &it);
+                  if ((it->type == EVAS_TEXTBLOCK_ITEM_TEXT) &&
+                     (_ITEM_TEXT(it)->text_props.bidi.dir ==
+                        EVAS_BIDI_DIRECTION_RTL))
+                     is_rtl = EINA_TRUE;
+                  else if ((it->type == EVAS_TEXTBLOCK_ITEM_FORMAT) &&
+                     (_ITEM_FORMAT(it)->bidi_dir ==
+                        EVAS_BIDI_DIRECTION_RTL))
+                     is_rtl = EINA_TRUE;
 
+                  if ((!before_char && is_rtl) ||
+                        (before_char && !is_rtl))
                     {
                        /* Just don't advance the width */
                        w = 0;
@@ -7260,9 +7268,23 @@ evas_textblock_cursor_geometry_get(const Evas_Textblock_Cursor *cur, Evas_Coord 
              ret = evas_textblock_cursor_pen_geometry_get(
                    dir_cur, &x, &y, &w, &h);
 #ifdef BIDI_SUPPORT
+             /* FIXME: Can be avoided if we keep info about if information
+              * is bidi or not. */
+             Evas_Object_Textblock_Line *ln;
+             Evas_Object_Textblock_Item *it;
+             Eina_Bool is_rtl = EINA_FALSE;
+             _find_layout_item_match(dir_cur, &ln, &it);
+             if ((it->type == EVAS_TEXTBLOCK_ITEM_TEXT) &&
+                   (_ITEM_TEXT(it)->text_props.bidi.dir ==
+                    EVAS_BIDI_DIRECTION_RTL))
+                is_rtl = EINA_TRUE;
+             else if ((it->type == EVAS_TEXTBLOCK_ITEM_FORMAT) &&
+                   (_ITEM_FORMAT(it)->bidi_dir ==
+                    EVAS_BIDI_DIRECTION_RTL))
+                is_rtl = EINA_TRUE;
+
              /* Adjust if the char is an rtl char */
-             if ((ret >= 0) && (!evas_bidi_is_rtl_char(
-                         dir_cur->node->par->bidi_props, 0, dir_cur->pos)))
+             if ((ret >= 0) && (!is_rtl))
                {
                   /* Just don't advance the width */
                   w = 0;
@@ -7286,16 +7308,29 @@ evas_textblock_cursor_geometry_get(const Evas_Textblock_Cursor *cur, Evas_Coord 
    if (dir && dir_cur && dir_cur->node)
      {
 #ifdef BIDI_SUPPORT
+        /* FIXME: Can be avoided if we keep info about if information
+         * is bidi or not. */
+        Evas_Object_Textblock_Line *ln;
+        Evas_Object_Textblock_Item *it;
+        Eina_Bool is_rtl = EINA_FALSE;
+        _find_layout_item_match(dir_cur, &ln, &it);
+        if ((it->type == EVAS_TEXTBLOCK_ITEM_TEXT) &&
+              (_ITEM_TEXT(it)->text_props.bidi.dir ==
+               EVAS_BIDI_DIRECTION_RTL))
+           is_rtl = EINA_TRUE;
+        else if ((it->type == EVAS_TEXTBLOCK_ITEM_FORMAT) &&
+              (_ITEM_FORMAT(it)->bidi_dir ==
+               EVAS_BIDI_DIRECTION_RTL))
+           is_rtl = EINA_TRUE;
+
         if (_evas_textblock_cursor_is_at_the_end(dir_cur) && (dir_cur->pos > 0))
           {
-             *dir = (evas_bidi_is_rtl_char(dir_cur->node->par->bidi_props, 0,
-                      dir_cur->pos - 1)) ?
+             *dir = (is_rtl) ?
                 EVAS_BIDI_DIRECTION_RTL : EVAS_BIDI_DIRECTION_LTR;
           }
         else if (dir_cur->pos > 0)
           {
-             *dir = (evas_bidi_is_rtl_char(dir_cur->node->par->bidi_props, 0,
-                      dir_cur->pos)) ?
+             *dir = (is_rtl) ?
                 EVAS_BIDI_DIRECTION_RTL : EVAS_BIDI_DIRECTION_LTR;
           }
         else
@@ -7403,8 +7438,7 @@ _evas_textblock_cursor_char_pen_geometry_common_get(int (*query_func) (void *dat
              else
                {
 #ifdef BIDI_SUPPORT
-                  if (EVAS_BIDI_PARAGRAPH_DIRECTION_IS_RTL(
-                           ln->par->bidi_props))
+                  if (ln->par->direction == EVAS_BIDI_DIRECTION_RTL)
                     {
                        x = ln->x;
                     }
