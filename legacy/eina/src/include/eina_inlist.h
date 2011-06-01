@@ -368,6 +368,7 @@ EAPI Eina_Accessor *eina_inlist_accessor_new(const Eina_Inlist *in_list) EINA_MA
  * @param item list node to insert, must not be NULL.
  * @param func The function called for the sort.
  * @return A list pointer.
+ * @since 1.1.0
  *
  * This function inserts item into a linked list assuming it was
  * sorted and the result will be sorted. If @p list is @c NULLL, item
