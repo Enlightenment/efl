@@ -24847,7 +24847,6 @@ collections {
    }
 
    group { name: "elm/genlist/item/mode/default";
-      data.item: "stacking" "above";
       data.item: "selectraise" "on";
       data.item: "labels" "elm.text.mode";
       data.item: "icons" "elm.swallow.mode";
@@ -24858,6 +24857,7 @@ collections {
          image: "bt_sm_shine.png" COMP;
          image: "bt_sm_hilight.png" COMP;
          image: "ilist_1.png" COMP;
+         image: "ilist_2.png" COMP;
          image: "ilist_item_shadow.png" COMP;
       }
 
@@ -24894,6 +24894,11 @@ collections {
                }
                fill.smooth: 0;
             }
+            description {
+               state: "default" 1.0;
+               inherit: "default" 0.0;
+               visible: 0;
+            }
          }
          part {
             name: "base";
@@ -24905,6 +24910,11 @@ collections {
                   border: 2 2 2 2;
                }
                fill.smooth: 0;
+            }
+            description {
+               state: "default" 1.0;
+               inherit: "default" 0.0;
+               image.normal: "ilist_2.png";
             }
          }
          part { name: "bg";
@@ -24927,6 +24937,9 @@ collections {
                }
                image.middle: SOLID;
             }
+            description { state: "default" 0.1;
+               inherit: "default" 0.0;
+            }
             description { state: "selected" 0.0;
                inherit: "default" 0.0;
                visible: 1;
@@ -24939,6 +24952,10 @@ collections {
                   relative: 1.0 1.0;
                   offset: 1 1;
                }
+            }
+            description {
+               state: "selected" 1.0;
+               inherit: "selected" 0.0;
             }
          }
          part { name: "elm.text.mode";
@@ -24983,6 +25000,12 @@ collections {
                visible: 1;
                color: 255 255 255 255;
             }
+            description {
+               state: "selected" 1.0;
+               inherit: "default" 0.0;
+               visible: 1;
+               color: 255 255 255 255;
+            }
          }
          part { name: "fg2";
             clip_to: "disclip";
@@ -24998,6 +25021,12 @@ collections {
                }
             }
             description { state: "selected" 0.0;
+               inherit: "default" 0.0;
+               visible: 1;
+               color: 255 255 255 255;
+            }
+            description {
+               state: "selected" 1.0;
                inherit: "default" 0.0;
                visible: 1;
                color: 255 255 255 255;
@@ -25084,23 +25113,46 @@ collections {
       }
       programs {
          program {
+            name:    "odd";
+            signal:  "elm,state,odd";
+            source:  "elm";
+            action:  STATE_SET "default" 1.0;
+            target:  "base_sh";
+            target:  "base";
+         }
+         program {
+            name:    "even";
+            signal:  "elm,state,even";
+            source:  "elm";
+            action:  STATE_SET "default" 0.0;
+            target:  "base_sh";
+            target:  "base";
+         }
+         program {
             name:    "go_active";
             signal:  "elm,state,selected";
             source:  "elm";
-            action:  STATE_SET "selected" 0.0;
-            target:  "bg";
-            target:  "fg1";
-            target:  "fg2";
+            script {
+               new st[31];
+               new Float:vl;
+               get_state(PART:"base", st, 30, vl);
+               set_state(PART:"bg", "selected", vl);
+               set_state(PART:"fg1", "selected", vl);
+               set_state(PART:"fg2", "selected", vl);
+            }
          }
          program {
             name:    "go_passive";
             signal:  "elm,state,unselected";
             source:  "elm";
-            action:  STATE_SET "default" 0.0;
-            target:  "bg";
-            target:  "fg1";
-            target:  "fg2";
-            transition: LINEAR 0.1;
+            script {
+               new st[31];
+               new Float:vl;
+               get_state(PART:"base", st, 30, vl);
+               set_state(PART:"bg", "default", vl);
+               set_state(PART:"fg1", "default", vl);
+               set_state(PART:"fg2", "default", vl);
+            }
          }
          program {
             name:    "go_disabled";
