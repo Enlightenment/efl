@@ -15958,14 +15958,9 @@ collections {
                   size: 10;
                   min: 1 1;
 //                  min: 0 1;
-                  align: 0.0 0.5;
+                  align: -1.0 0.5;
                   text_class: "list_item";
                }
-            }
-            description {
-               state: "default" 1.0;
-               inherit: "default" 0.0;
-               text.align: -1.0 0.5;
             }
             description { state: "selected" 0.0;
                inherit: "default" 0.0;
@@ -16049,7 +16044,6 @@ collections {
             action:  STATE_SET "default" 1.0;
             target:  "base_sh";
             target:  "base";
-            target:  "elm.text";
          }
          program {
             name:    "even";
@@ -16058,7 +16052,6 @@ collections {
             action:  STATE_SET "default" 0.0;
             target:  "base_sh";
             target:  "base";
-            target:  "elm.text";
          }
          program {
             name:    "go_active";
@@ -24969,7 +24962,7 @@ collections {
                   font: "Sans";
                   size: 10;
                   min: 1 1;
-                  align: 0.5 0.5;
+                  align: -1.0 0.5;
                   text_class: "list_item";
                }
             }
