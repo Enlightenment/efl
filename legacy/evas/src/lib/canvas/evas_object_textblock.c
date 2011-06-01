@@ -2446,7 +2446,7 @@ loop_advance:
         it->x = x;
         x += it->adv;
 
-        if ((it->x + it->w) > c->ln->w) c->ln->w = it->x + it->w;
+        if ((it->x + it->adv) > c->ln->w) c->ln->w = it->x + it->adv;
      }
 
    c->ln->y = (c->y - c->par->y) + c->o->style_pad.t;
@@ -3519,7 +3519,7 @@ _layout_visualize_par(Ctxt *c)
         /* Check if we need to wrap, i.e the text is bigger than the width,
            or we already found a wrap point. */
         if ((c->w >= 0) &&
-              (((c->x + it->w) >
+              (((c->x + it->adv) >
                 (c->w - c->o->style_pad.l - c->o->style_pad.r -
                  c->marginl - c->marginr)) || (wrap > 0)))
           {
