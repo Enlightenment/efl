@@ -1554,13 +1554,13 @@ _mode_finished_signal_cb(void        *data,
    if ((it->delete_me) || (!it->realized) || (!it->mode_view)) return;
    char buf[1024];
 
-   evas_event_freeze(evas_object_evas_get(obj));
+//   evas_event_freeze(evas_object_evas_get(obj));
    it->nocache = EINA_FALSE;
    _mode_item_unrealize(it);
    snprintf(buf, sizeof(buf), "elm,state,%s,passive,finished", it->wd->mode_type);
    edje_object_signal_callback_del_full(obj, buf, "elm", _mode_finished_signal_cb, it);
-   evas_event_thaw(evas_object_evas_get(obj));
-   evas_event_thaw_eval(evas_object_evas_get(obj));
+//   evas_event_thaw(evas_object_evas_get(obj));
+//   evas_event_thaw_eval(evas_object_evas_get(obj));
 }
 
 static void
