@@ -778,17 +778,20 @@ eina_file_open(const char *filename, Eina_Bool shared)
    /* FIXME: always open absolute path (need to fix filename according to current
       directory) */
 
+   /* FIXME: how to emulate shm_open ? Just OpenFileMapping ? */
+#if 0
    if (shared)
-     /* FIXME: shm_open is maybe not really that */
      handle = CreateFile(filename, GENERIC_READ, FILE_SHARE_READ,
                          NULL, OPEN_EXISTING, FILE_ATTRIBUTE_READONLY,
                          NULL);
    else
-     handle = CreateFile(filename, GENERIC_READ, 0,
+#endif
+     handle = CreateFile(filename, GENERIC_READ, FILE_SHARE_READ,
                          NULL, OPEN_EXISTING, FILE_ATTRIBUTE_READONLY,
                          NULL);
 
-   if (handle == INVALID_HANDLE_VALUE) return NULL;
+   if (handle == INVALID_HANDLE_VALUE)
+     return NULL;
 
    fm = CreateFileMapping(handle, NULL, PAGE_READONLY, 0, 0, NULL);
    if (!fm)
