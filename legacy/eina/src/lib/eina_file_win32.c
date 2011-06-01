@@ -890,7 +890,7 @@ eina_file_close(Eina_File *file)
      }
 }
 
-EAPI unsigned long int
+EAPI size_t
 eina_file_size_get(Eina_File *file)
 {
    return file->length;

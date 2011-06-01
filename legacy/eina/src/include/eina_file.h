@@ -281,7 +281,7 @@ EAPI void eina_file_close(Eina_File *file);
  *
  * @since 1.1
  */
-EAPI unsigned long int eina_file_size_get(Eina_File *file);
+EAPI size_t eina_file_size_get(Eina_File *file);
 
 /**
  * @brief Get the last modification time of an open file.
