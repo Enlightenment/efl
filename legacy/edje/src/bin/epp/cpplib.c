@@ -983,7 +983,9 @@ cpp_skip_hspace(cpp_reader * pfile)
 	  }
 	else if (c == '@' && CPP_BUFFER(pfile)->has_escapes
 		 && is_hor_space[PEEKN(1)])
-	   FORWARD(1);
+          {
+             FORWARD(1);
+          }
 	else
 	   return;
      }
@@ -1102,8 +1104,7 @@ handle_directive(cpp_reader * pfile)
      {
 	/* Nonzero means do not delete comments within the directive.
 	 * #define needs this when -traditional.  */
-	int                 comments = CPP_TRADITIONAL(pfile)
-	   && kt->traditional_comments;
+	int                 comments = 0;
 	int                 save_put_out_comments =
 	   CPP_OPTIONS(pfile)->put_out_comments;
 
@@ -1267,116 +1268,68 @@ collect_expansion(cpp_reader * pfile, unsigned char *buf, unsigned char *limit,
 
 	*exp_p++ = c;
 
-	if (!CPP_TRADITIONAL(pfile))
-	  {
-	     switch (c)
-	       {
-	       case '\'':
-	       case '\"':
-		  if (expected_delimiter != '\0')
-		    {
-		       if (c == expected_delimiter)
-			  expected_delimiter = '\0';
-		    }
-		  else
-		     expected_delimiter = c;
-		  break;
-
-	       case '\\':
-		  if (p < limit && expected_delimiter)
-		    {
-		       /* In a string, backslash goes through
-		        * and makes next char ordinary.  */
-		       *exp_p++ = *p++;
-		    }
-		  break;
-
-	       case '@':
-		  /* An '@' in a string or character constant stands for itself,
-		   * and does not need to be escaped. */
-		  if (!expected_delimiter)
-		     *exp_p++ = c;
-		  break;
-
-	       case '#':
-		  /* # is ordinary inside a string.  */
-		  if (expected_delimiter)
-		     break;
-		  if (p < limit && *p == '#')
-		    {
-		       /* ##: concatenate preceding and following tokens.  */
-		       /* Take out the first #, discard preceding whitespace.  */
-		       exp_p--;
-		       while (exp_p > lastp && is_hor_space[exp_p[-1]])
-			  --exp_p;
-		       /* Skip the second #.  */
-		       p++;
-		       /* Discard following whitespace.  */
-		       SKIP_WHITE_SPACE(p);
-		       concat = p;
-		       if (p == limit)
-			  cpp_error(pfile, "`##' at end of macro definition");
-		    }
-		  else if (nargs >= 0)
-		    {
-		       /* Single #: stringify following argument ref.
-		        * Don't leave the # in the expansion.  */
-		       exp_p--;
-		       SKIP_WHITE_SPACE(p);
-		       if (p == limit || !is_idstart[*p])
-			  cpp_error(pfile,
-				    "`#' operator is not followed by a macro argument name");
-		       else
-			  stringify = p;
-		    }
-		  break;
-	       }
-	  }
-	else
-	  {
-	     /* In -traditional mode, recognize arguments inside strings and
-	      * and character constants, and ignore special properties of #.
-	      * Arguments inside strings are considered "stringified", but no
-	      * extra quote marks are supplied.  */
-	     switch (c)
-	       {
-	       case '\'':
-	       case '\"':
-		  if (expected_delimiter != '\0')
-		    {
-		       if (c == expected_delimiter)
-			  expected_delimiter = '\0';
-		    }
-		  else
-		     expected_delimiter = c;
-		  break;
-
-	       case '\\':
-		  /* Backslash quotes delimiters and itself, but not macro args.  */
-		  if (expected_delimiter != 0 && p < limit
-		      && (*p == expected_delimiter || *p == '\\'))
-		    {
-		       *exp_p++ = *p++;
-		       continue;
-		    }
-		  break;
-
-	       case '/':
-		  if (expected_delimiter != '\0')	/* No comments inside strings.  */
-		     break;
-		  if (*p == '*')
-		    {
-		       /* If we find a comment that wasn't removed by handle_directive,
-		        * this must be -traditional.  So replace the comment with
-		        * nothing at all.  */
-		       exp_p--;
-		       p += 1;
-		       while (p < limit && !(p[-2] == '*' && p[-1] == '/'))
-			  p++;
-		    }
-		  break;
-	       }
-	  }
+        switch (c)
+          {
+           case '\'':
+           case '\"':
+             if (expected_delimiter != '\0')
+               {
+                  if (c == expected_delimiter)
+                     expected_delimiter = '\0';
+               }
+             else
+                expected_delimiter = c;
+             break;
+             
+           case '\\':
+             if (p < limit && expected_delimiter)
+               {
+                  /* In a string, backslash goes through
+                   * and makes next char ordinary.  */
+                  *exp_p++ = *p++;
+               }
+             break;
+             
+           case '@':
+             /* An '@' in a string or character constant stands for itself,
+              * and does not need to be escaped. */
+             if (!expected_delimiter)
+                *exp_p++ = c;
+             break;
+             
+           case '#':
+             /* # is ordinary inside a string.  */
+             if (expected_delimiter)
+                break;
+             if (p < limit && *p == '#')
+               {
+                  /* ##: concatenate preceding and following tokens.  */
+                  /* Take out the first #, discard preceding whitespace.  */
+                  exp_p--;
+                  while (exp_p > lastp && is_hor_space[exp_p[-1]])
+                     --exp_p;
+                  /* Skip the second #.  */
+                  p++;
+                  /* Discard following whitespace.  */
+                  SKIP_WHITE_SPACE(p);
+                  concat = p;
+                  if (p == limit)
+                     cpp_error(pfile, "`##' at end of macro definition");
+               }
+             else if (nargs >= 0)
+               {
+                  /* Single #: stringify following argument ref.
+                   * Don't leave the # in the expansion.  */
+                  exp_p--;
+                  SKIP_WHITE_SPACE(p);
+                  if (p == limit || !is_idstart[*p])
+                     cpp_error(pfile,
+                               "`#' operator is not followed by a macro argument name");
+                  else
+                     stringify = p;
+               }
+             break;
+          }
 
 	/* Handle the start of a symbol.  */
 	if (is_idchar[c] && nargs > 0)
@@ -1405,21 +1358,12 @@ collect_expansion(cpp_reader * pfile, unsigned char *buf, unsigned char *limit,
 			    if (expected_delimiter
 				&& CPP_OPTIONS(pfile)->warn_stringify)
 			      {
-				 if (CPP_TRADITIONAL(pfile))
-				   {
-				      cpp_warning(pfile,
-						  "macro argument `%.*s' is stringified.",
-						  id_len, arg->name);
-				   }
-				 else
-				   {
-				      cpp_warning(pfile,
-						  "macro arg `%.*s' would be stringified with -traditional.",
-						  id_len, arg->name);
-				   }
+                                 cpp_warning(pfile,
+                                             "macro arg `%.*s' would be stringified with -traditional.",
+                                             id_len, arg->name);
 			      }
 			    /* If ANSI, don't actually substitute inside a string.  */
-			    if (!CPP_TRADITIONAL(pfile) && expected_delimiter)
+			    if (expected_delimiter)
 			       break;
 			    /* make a pat node for this arg and append it to the end of
 			     * the pat list */
@@ -1429,9 +1373,7 @@ collect_expansion(cpp_reader * pfile, unsigned char *buf, unsigned char *limit,
 			    tpat->raw_before = concat == id_beg;
 			    tpat->raw_after = 0;
 			    tpat->rest_args = arg->rest_args;
-			    tpat->stringify = (CPP_TRADITIONAL(pfile)
-					       ? expected_delimiter != '\0'
-					       : stringify == id_beg);
+			    tpat->stringify = (stringify == id_beg);
 
 			    if (!endpat)
 			       defn->pattern = tpat;
@@ -1470,7 +1412,7 @@ collect_expansion(cpp_reader * pfile, unsigned char *buf, unsigned char *limit,
 	  }
      }
 
-   if (!CPP_TRADITIONAL(pfile) && expected_delimiter == 0)
+   if (expected_delimiter == 0)
      {
 	/* If ANSI, put in a "@ " marker to prevent token pasting.
 	 * But not if "inside a string" (which in ANSI mode
@@ -2542,8 +2484,7 @@ initialize_builtins(cpp_reader * pfile)
    install("__USER_LABEL_PREFIX__", -1, T_USER_LABEL_PREFIX_TYPE, 0, 0, -1);
    install("__REGISTER_PREFIX__", -1, T_REGISTER_PREFIX_TYPE, 0, 0, -1);
    install("__TIME__", -1, T_TIME, 0, 0, -1);
-   if (!CPP_TRADITIONAL(pfile))
-      install("__STDC__", -1, T_CONST, STDC_VALUE, 0, -1);
+   install("__STDC__", -1, T_CONST, STDC_VALUE, 0, -1);
    if (CPP_OPTIONS(pfile)->objc)
       install("__OBJC__", -1, T_CONST, 1, 0, -1);
 /*  This is supplied using a -D by the compiler driver
@@ -2601,20 +2542,10 @@ initialize_builtins(cpp_reader * pfile)
 	pass_thru_directive(directive, &directive[strlen(directive)], pfile,
 			    dp);
 
-	if (!CPP_TRADITIONAL(pfile))
-	  {
-	     sprintf(directive, " __STDC__ 1");
-	     output_line_command(pfile, 0, same_file);
-	     pass_thru_directive(directive, &directive[strlen(directive)],
-				 pfile, dp);
-	  }
-	if (CPP_OPTIONS(pfile)->objc)
-	  {
-	     sprintf(directive, " __OBJC__ 1");
-	     output_line_command(pfile, 0, same_file);
-	     pass_thru_directive(directive, &directive[strlen(directive)],
-				 pfile, dp);
-	  }
+        sprintf(directive, " __STDC__ 1");
+        output_line_command(pfile, 0, same_file);
+        pass_thru_directive(directive, &directive[strlen(directive)],
+                            pfile, dp);
      }
 }
 
@@ -2624,14 +2555,14 @@ initialize_builtins(cpp_reader * pfile)
 static int
 unsafe_chars(int c1, int c2)
 {
+//   printf("unsafe %c %c ...", c1, c2);
    switch (c1)
      {
      case '+':
      case '-':
-	if (c2 == c1 || c2 == '=')
-	   return 1;
-	goto letter;
      case '.':
+//        printf(" no0\n");
+        return 0;
      case '0':
      case '1':
      case '2':
@@ -2645,11 +2576,17 @@ unsafe_chars(int c1, int c2)
      case 'e':
      case 'E':
 	if (c2 == '-' || c2 == '+')
-	   return 1;		/* could extend a pre-processing number */
+          {
+//             printf(" yes2\n");
+             return 1;		/* could extend a pre-processing number */
+          }
 	goto letter;
      case 'L':
 	if (c2 == '\'' || c2 == '\"')
-	   return 1;		/* Could turn into L"xxx" or L'xxx'. */
+          {
+//             printf(" yes3\n");
+             return 1;		/* Could turn into L"xxx" or L'xxx'. */
+          }
 	goto letter;
       letter:
      case '_':
@@ -2703,7 +2640,16 @@ unsafe_chars(int c1, int c2)
      case 'Y':
      case 'Z':
 	/* We're in the middle of either a name or a pre-processing number. */
-	return (is_idchar[c2] || c2 == '.');
+	if (is_idchar[c2] || c2 == '.')
+          {
+//             printf(" yes4 %i %i\n", is_idchar[c2], c2 == '.');
+             return 1;
+          }
+        else
+          {
+//             printf(" no5\n");
+             return 0;
+          }
      case '<':
      case '>':
      case '!':
@@ -2716,8 +2662,18 @@ unsafe_chars(int c1, int c2)
      case '*':
      case '/':
      case '=':
-	return (c2 == c1 || c2 == '=');
+	if (c2 == c1 || c2 == '=')
+          {
+//             printf(" yes6\n");
+             return 1;
+          }
+        else
+          {
+//             printf(" no7\n");
+             return 0;
+          }
      }
+//   printf(" no8\n");
    return 0;
 }
 
@@ -2838,10 +2794,7 @@ macroexpand(cpp_reader * pfile, HASHNODE * hp)
 	  }
 	else if (i < nargs)
 	  {
-	     /* traditional C allows foo() if foo wants one argument.  */
-	     if (nargs == 1 && i == 0 && CPP_TRADITIONAL(pfile));
-	     /* the rest args token is allowed to absorb 0 tokens */
-	     else if (i == nargs - 1 && defn->rest_args)
+	     if (i == nargs - 1 && defn->rest_args)
 		rest_zero = 1;
 	     else if (i == 0)
 		cpp_error(pfile, "macro `%s' used without args", hp->name);
@@ -2898,8 +2851,7 @@ macroexpand(cpp_reader * pfile, HASHNODE * hp)
 
 		       i = 0;
 		       arg->stringified = CPP_WRITTEN(pfile);
-		       if (!CPP_TRADITIONAL(pfile))
-			  CPP_PUTC(pfile, '\"');	/* insert beginning quote */
+                       CPP_PUTC(pfile, '\"');	/* insert beginning quote */
 		       for (; i < arglen; i++)
 			 {
 			    c = (ARG_BASE + arg->raw)[i];
@@ -2953,14 +2905,13 @@ macroexpand(cpp_reader * pfile, HASHNODE * hp)
 				 CPP_ADJUST_WRITTEN(pfile, 4);
 			      }
 			 }
-		       if (!CPP_TRADITIONAL(pfile))
-			  CPP_PUTC(pfile, '\"');	/* insert ending quote */
+                       CPP_PUTC(pfile, '\"');	/* insert ending quote */
 		       arg->stringified_length
 			  = CPP_WRITTEN(pfile) - arg->stringified;
 		    }
 		  xbuf_len += args[ap->argno].stringified_length;
 	       }
-	     else if (ap->raw_before || ap->raw_after || CPP_TRADITIONAL(pfile))
+	     else if (ap->raw_before || ap->raw_after)
                {
                   /* Add 4 for two newline-space markers to prevent
                    * token concatenation.  */
@@ -3026,7 +2977,7 @@ macroexpand(cpp_reader * pfile, HASHNODE * hp)
 			 arg->stringified_length);
 		  totlen += arg->stringified_length;
 	       }
-	     else if (ap->raw_before || ap->raw_after || CPP_TRADITIONAL(pfile))
+	     else if (ap->raw_before || ap->raw_after)
 	       {
 		  unsigned char      *p1 = ARG_BASE + arg->raw;
 		  unsigned char      *l1 = p1 + arg->raw_length;
@@ -3073,7 +3024,6 @@ macroexpand(cpp_reader * pfile, HASHNODE * hp)
 		  unsigned char      *expanded = ARG_BASE + arg->expanded;
 
 		  if (!ap->raw_before && totlen > 0 && arg->expand_length
-		      && !CPP_TRADITIONAL(pfile)
 		      && unsafe_chars(xbuf[totlen - 1], expanded[0]))
 		    {
 		       xbuf[totlen++] = '@';
@@ -3083,7 +3033,6 @@ macroexpand(cpp_reader * pfile, HASHNODE * hp)
 		  totlen += arg->expand_length;
 
 		  if (!ap->raw_after && totlen > 0 && offset < defn->length
-		      && !CPP_TRADITIONAL(pfile)
 		      && unsafe_chars(xbuf[totlen - 1], exp[offset]))
 		    {
 		       xbuf[totlen++] = '@';
@@ -3137,8 +3086,7 @@ macroexpand(cpp_reader * pfile, HASHNODE * hp)
     * #define foo(x,y) bar (x (y,0), y)
     * foo (foo, baz)  */
 
-   if (!CPP_TRADITIONAL(pfile))
-      hp->type = T_DISABLED;
+   hp->type = T_DISABLED;
 }
 
 static void
@@ -4177,6 +4125,7 @@ do_xifdef(cpp_reader * pfile, struct directive *keyword,
    int                 start_of_file = 0;
    unsigned char      *control_macro = 0;
    int                 old_written = CPP_WRITTEN(pfile);
+   int                 c;
 
    /* Detect a #ifndef at start of file (not counting comments).  */
    if (ip->fname != 0 && keyword->type == T_IFNDEF)
@@ -4193,8 +4142,7 @@ do_xifdef(cpp_reader * pfile, struct directive *keyword,
    if (token == CPP_VSPACE || token == CPP_POP || token == CPP_EOF)
      {
 	skip = (keyword->type == T_IFDEF);
-	if (!CPP_TRADITIONAL(pfile))
-	   cpp_pedwarn(pfile, "`#%s' with no argument", keyword->name);
+        cpp_pedwarn(pfile, "`#%s' with no argument", keyword->name);
      }
    else if (token == CPP_NAME)
      {
@@ -4210,20 +4158,14 @@ do_xifdef(cpp_reader * pfile, struct directive *keyword,
    else
      {
 	skip = (keyword->type == T_IFDEF);
-	if (!CPP_TRADITIONAL(pfile))
-	   cpp_error(pfile, "`#%s' with invalid argument", keyword->name);
+        cpp_error(pfile, "`#%s' with invalid argument", keyword->name);
      }
 
-   if (!CPP_TRADITIONAL(pfile))
-     {
-	int                 c;
-
-	cpp_skip_hspace(pfile);
-	c = PEEKC();
-	if (c != EOF && c != '\n')
-	   cpp_pedwarn(pfile, "garbage at end of `#%s' argument",
-		       keyword->name);
-     }
+   cpp_skip_hspace(pfile);
+   c = PEEKC();
+   if (c != EOF && c != '\n')
+      cpp_pedwarn(pfile, "garbage at end of `#%s' argument",
+                  keyword->name);
    skip_rest_of_line(pfile);
 
    conditional_skip(pfile, skip, T_IF, control_macro);
@@ -4297,8 +4239,7 @@ skip_if_group(cpp_reader * pfile, int any)
 	CPP_PUTS(pfile, start_line, pbuf->cur - start_line);
      }
    parse_move_mark(&line_start_mark, pfile);
-   if (!CPP_TRADITIONAL(pfile))
-      cpp_skip_hspace(pfile);
+   cpp_skip_hspace(pfile);
    c = GETC();
    if (c == '#')
      {
@@ -4643,18 +4584,6 @@ cpp_get_token(cpp_reader * pfile)
 		  parse_clear_mark(&start_mark);
 		  return CPP_COMMENT;
 	       }
-	     else if (CPP_TRADITIONAL(pfile))
-	       {
-		  if (newlines > 0)
-		     {
-			output_line_command(pfile, 0, same_file);
-			return CPP_VSPACE;
-		     }
-		  else
-		    {
-			return CPP_COMMENT;
-		    }
-	       }
 	     else if (newlines > 0)
 	       {
 		 output_line_command(pfile, 0, same_file);
@@ -4706,18 +4635,15 @@ cpp_get_token(cpp_reader * pfile)
 			    CPP_BUFFER(pfile) = next_buf;
 			    continue;
 			 }
-		       if (!CPP_TRADITIONAL(pfile))
-			 {
-			    cpp_error_with_line(pfile, start_line, start_column,
-						"unterminated string or character constant");
-			    if (pfile->multiline_string_line != start_line
-				&& pfile->multiline_string_line != 0)
-			       cpp_error_with_line(pfile,
-						   pfile->multiline_string_line,
-						   -1,
-						   "possible real start of unterminated constant");
-			    pfile->multiline_string_line = 0;
-			 }
+                       cpp_error_with_line(pfile, start_line, start_column,
+                                           "unterminated string or character constant");
+                       if (pfile->multiline_string_line != start_line
+                           && pfile->multiline_string_line != 0)
+                          cpp_error_with_line(pfile,
+                                              pfile->multiline_string_line,
+                                              -1,
+                                              "possible real start of unterminated constant");
+                       pfile->multiline_string_line = 0;
 		       break;
 		    }
 		  CPP_PUTC(pfile, cc);
@@ -4726,8 +4652,6 @@ cpp_get_token(cpp_reader * pfile)
 		    case '\n':
 		       /* Traditionally, end of line ends a string constant with
 		        * no error.  So exit the loop and record the new line.  */
-		       if (CPP_TRADITIONAL(pfile))
-			  goto while2end;
 		       if (c == '\'')
 			 {
 			    cpp_error_with_line(pfile, start_line, start_column,
@@ -4940,7 +4864,7 @@ cpp_get_token(cpp_reader * pfile)
 	  case 'L':
 	     NEWLINE_FIX;
 	     c2 = PEEKC();
-	     if ((c2 == '\'' || c2 == '\"') && !CPP_TRADITIONAL(pfile))
+	     if ((c2 == '\'' || c2 == '\"'))
 	       {
 		  CPP_PUTC(pfile, c);
 		  c = GETC();
@@ -6461,13 +6385,7 @@ cpp_handle_options(cpp_reader * pfile, int argc, char **argv)
 		  break;
 
 	       case 't':
-		  if (!strcmp(argv[i], "-traditional"))
-		    {
-		       opts->traditional = 1;
-		       if (opts->dollars_in_ident > 0)
-			  opts->dollars_in_ident = 1;
-		    }
-		  else if (!strcmp(argv[i], "-trigraphs"))
+		  if (!strcmp(argv[i], "-trigraphs"))
 		    {
 		       if (!opts->chill)
 			  opts->no_trigraphs = 0;
