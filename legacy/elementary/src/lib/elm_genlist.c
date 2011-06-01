@@ -3250,7 +3250,9 @@ _item_queue(Widget_Data      *wd,
    if (it->queued) return;
    it->queued = EINA_TRUE;
    wd->queue = eina_list_append(wd->queue, it);
-   evas_event_freeze(evas_object_evas_get(wd->obj));
+// FIXME: why does a freeze then thaw here cause some genlist
+// elm_genlist_item_append() to be much much slower?
+//   evas_event_freeze(evas_object_evas_get(wd->obj));
    while ((wd->queue) && ((!wd->blocks) || (!wd->blocks->next)))
      {
         if (wd->queue_idle_enterer)
@@ -3260,8 +3262,8 @@ _item_queue(Widget_Data      *wd,
           }
         _queue_process(wd);
      }
-   evas_event_thaw(evas_object_evas_get(wd->obj));
-   evas_event_thaw_eval(evas_object_evas_get(wd->obj));
+//   evas_event_thaw(evas_object_evas_get(wd->obj));
+//   evas_event_thaw_eval(evas_object_evas_get(wd->obj));
    if (!wd->queue_idle_enterer)
       wd->queue_idle_enterer = ecore_idle_enterer_add(_item_idle_enterer, wd);
 }
