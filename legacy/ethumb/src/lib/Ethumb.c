@@ -1239,6 +1239,8 @@ _ethumb_image_orient(Ethumb *e, int orientation)
    const char *file, *key;
 
    evas_object_image_size_get(img, &iw, &ih);
+   evas_object_image_load_size_get(img, &tw, &th);
+   evas_object_image_file_get(img, &file, &key);
    data = evas_object_image_data_get(img, 1);
 
    switch (orientation)
@@ -1295,8 +1297,6 @@ _ethumb_image_orient(Ethumb *e, int orientation)
 	 return;
      }
 
-   evas_object_image_load_size_get(img, &tw, &th);
-   evas_object_image_file_get(img, &file, &key);
    tmp = evas_object_image_add(evas_object_evas_get(img));
    evas_object_image_load_size_set(tmp, tw, th);
    evas_object_image_file_set(tmp, file, key);
