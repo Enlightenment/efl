@@ -272,6 +272,7 @@ struct _Evas_Object_Textblock_Paragraph
    Eina_Bool                          is_bidi : 1;
    Eina_Bool                          visible : 1;
    Eina_Bool                          indexed : 1;
+   Eina_Bool                          rendered : 1;
 };
 
 struct _Evas_Object_Textblock_Line
@@ -2199,6 +2200,7 @@ _layout_line_align_get(Ctxt *c)
    return c->align;
 }
 
+#ifdef BIDI_SUPPORT
 /**
  * @internal
  * Reorder the items in visual order
@@ -2206,12 +2208,12 @@ _layout_line_align_get(Ctxt *c)
  * @param line the line to reorder
  */
 static void
-_layout_line_order(Ctxt *c __UNUSED__, Evas_Object_Textblock_Line *line)
+_layout_line_reorder(Evas_Object_Textblock_Line *line)
 {
    /*FIXME: do it a bit more efficient - not very efficient ATM. */
-#ifdef BIDI_SUPPORT
    Evas_Object_Textblock_Item *it;
    EvasBiDiStrIndex *v_to_l = NULL;
+   Evas_Coord x;
    size_t start, end;
    size_t len;
 
@@ -2284,10 +2286,14 @@ _layout_line_order(Ctxt *c __UNUSED__, Evas_Object_Textblock_Line *line)
      }
 
    if (v_to_l) free(v_to_l);
-#else
-   line = NULL;
-#endif
+   x = 0;
+   EINA_INLIST_FOREACH(line->items, it)
+     {
+        it->x = x;
+        x += it->adv;
+     }
 }
+#endif
 
 /* FIXME: doc */
 static void
@@ -2406,8 +2412,6 @@ _layout_line_finalize(Ctxt *c, Evas_Object_Textblock_Format *fmt)
    Evas_Object_Textblock_Item *it;
    Eina_Bool no_text = EINA_TRUE;
    Evas_Coord x = 0;
-
-   _layout_line_order(c, c->ln);
 
    c->maxascent = c->maxdescent = 0;
    EINA_INLIST_FOREACH(c->ln->items, it)
@@ -3433,11 +3437,47 @@ _layout_handle_ellipsis(Ctxt *c, Evas_Object_Textblock_Item *it, Eina_List *i)
    _layout_line_finalize(c, ellip_ti->parent.format);
 }
 
+#ifdef BIDI_SUPPORT
+static void
+_layout_paragraph_reorder_lines(Evas_Object_Textblock_Paragraph *par)
+{
+   Evas_Object_Textblock_Line *ln;
+
+   EINA_INLIST_FOREACH(EINA_INLIST_GET(par->lines), ln)
+     {
+        _layout_line_reorder(ln);
+     }
+}
+#endif
+
+static void
+_layout_paragraph_render(Evas_Object_Textblock *o,
+      Evas_Object_Textblock_Paragraph *par)
+{
+   if (par->rendered)
+      return;
+   par->rendered = EINA_TRUE;
+
+#ifdef BIDI_SUPPORT
+   if (par->is_bidi)
+     {
+        _layout_update_bidi_props(o, par);
+        _layout_paragraph_reorder_lines(par);
+        /* Clear the bidi props because we don't need them anymore. */
+        if (par->bidi_props)
+          {
+             evas_bidi_paragraph_props_unref(par->bidi_props);
+             par->bidi_props = NULL;
+          }
+     }
+#endif
+}
+
 /* 0 means go ahead, 1 means break without an error, 2 means
  * break with an error, should probably clean this a bit (enum/macro)
  * FIXME ^ */
 static int
-_layout_visualize_par(Ctxt *c)
+_layout_par(Ctxt *c)
 {
    Evas_Object_Textblock_Item *it;
    Eina_List *i;
@@ -3472,6 +3512,7 @@ _layout_visualize_par(Ctxt *c)
           }
         c->par->text_node->dirty = EINA_FALSE;
         c->par->text_node->new = EINA_FALSE;
+        c->par->rendered = EINA_FALSE;
 
         /* Merge back and clear the paragraph */
           {
@@ -3895,6 +3936,14 @@ _layout_pre(Ctxt *c, int *style_pad_l, int *style_pad_r, int *style_pad_t,
                   fnode = _NODE_FORMAT(EINA_INLIST_GET(fnode)->next);
                }
              _layout_text_append(c, c->fmt, n, start, -1, o->repch);
+#ifdef BIDI_SUPPORT
+             /* Clear the bidi props because we don't need them anymore. */
+             if (c->par->bidi_props)
+               {
+                  evas_bidi_paragraph_props_unref(c->par->bidi_props);
+                  c->par->bidi_props = NULL;
+               }
+#endif
              c->par = (Evas_Object_Textblock_Paragraph *)
                 EINA_INLIST_GET(c->par)->next;
           }
@@ -4002,7 +4051,7 @@ _layout(const Evas_Object *obj, int w, int h, int *w_ret, int *h_ret)
            _layout_update_par(c);
 
            /* Break if we should stop here. */
-           if (_layout_visualize_par(c))
+           if (_layout_par(c))
              {
                 last_vis_par = c->par;
                 break;
@@ -4113,6 +4162,7 @@ _find_layout_item_line_match(Evas_Object *obj, Evas_Object_Textblock_Node_Text *
    found_par = n->par;
    if (found_par)
      {
+        _layout_paragraph_render(o, found_par);
         EINA_INLIST_FOREACH(found_par->lines, ln)
           {
              Evas_Object_Textblock_Item *it;
@@ -4172,6 +4222,7 @@ _find_layout_line_num(const Evas_Object *obj, int line)
    par = _layout_find_paragraph_by_line_no(o, line);
    if (par)
      {
+        _layout_paragraph_render(o, par);
         EINA_INLIST_FOREACH(par->lines, ln)
           {
              if (par->line_no + ln->line_no == line) return ln;
@@ -7538,6 +7589,7 @@ evas_textblock_cursor_char_coord_set(Evas_Textblock_Cursor *cur, Evas_Coord x, E
    found_par = _layout_find_paragraph_by_y(o, y);
    if (found_par)
      {
+        _layout_paragraph_render(o, found_par);
         EINA_INLIST_FOREACH(found_par->lines, ln)
           {
              if (ln->par->y + ln->y > y) break;
@@ -7621,6 +7673,7 @@ evas_textblock_cursor_line_coord_set(Evas_Textblock_Cursor *cur, Evas_Coord y)
 
    if (found_par)
      {
+        _layout_paragraph_render(o, found_par);
         EINA_INLIST_FOREACH(found_par->lines, ln)
           {
              if (ln->par->y + ln->y > y) break;
@@ -8322,6 +8375,7 @@ evas_object_textblock_render(Evas_Object *obj, void *output, void *context, void
              if ((obj->cur.geometry.y + y + par->y) > (cy + ch + 20)) \
              break; \
           } \
+        _layout_paragraph_render(o, par); \
         EINA_INLIST_FOREACH(par->lines, ln) \
           { \
              Evas_Object_Textblock_Item *itr; \
