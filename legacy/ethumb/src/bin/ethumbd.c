@@ -512,7 +512,14 @@ end:
    if (ed->slave.bufcmd)
      free(ed->slave.bufcmd);
 
-   return _ethumbd_slave_spawn(&ed->slave, ed);
+   if (!_ethumbd_slave_spawn(&ed->slave, ed))
+     return EINA_FALSE;
+
+   /* restart all queue */
+   for (i = 0; i < ed->queue.count; ++i)
+     _ethumbd_child_write_op_new(&ed->slave, ed->queue.list[i]);
+
+   return EINA_TRUE;
 }
 
 static void
