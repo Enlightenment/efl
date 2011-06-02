@@ -65,29 +65,81 @@ evas_common_text_props_content_unref(Evas_Text_Props *props)
      }
 }
 
-EAPI Eina_Bool
-evas_common_text_props_can_split(Evas_Text_Props *props, int _cutoff)
+/* Returns the index of the logical char in the props. */
+EAPI int
+evas_common_text_props_index_find(Evas_Text_Props *props, int _cutoff)
 {
 #ifdef OT_SUPPORT
-   Evas_Font_OT_Info *itr;
-   size_t i;
-   itr = props->info->ot + props->start;
+   Evas_Font_OT_Info *ot_info;
+   int min = 0;
+   int max = props->len - 1;
+   int mid;
+
    _cutoff += props->text_offset;
-   /* FIXME: can I binary search? I don't think this is always sorted */
-   for (i = 0 ; i < props->len ; i++, itr++)
+   ot_info = props->info->ot + props->start;
+   if (props->bidi.dir == EVAS_BIDI_DIRECTION_RTL)
      {
-        if (itr->source_cluster == (size_t) _cutoff)
+        /* Monotonic in a descending order */
+        do
           {
-             return EINA_TRUE;
+             mid = (min + max) / 2;
+
+             if (_cutoff > (int) ot_info[mid].source_cluster)
+                max = mid - 1;
+             else if (_cutoff < (int) ot_info[mid].source_cluster)
+                min = mid + 1;
+             else
+                break;
           }
+        while (min <= max);
+     }
+   else
+     {
+        /* Monotonic in an ascending order */
+        do
+          {
+             mid = (min + max) / 2;
+
+             if (_cutoff < (int) ot_info[mid].source_cluster)
+                max = mid - 1;
+             else if (_cutoff > (int) ot_info[mid].source_cluster)
+                min = mid + 1;
+             else
+                break;
+          }
+        while (min <= max);
      }
 
-   /* We didn't find the cutoff position. */
-   ERR("Couldn't find the cutoff position. Is it inside a cluster?");
-   return EINA_FALSE;
+   /* If we didn't find, abort */
+   if (min > max)
+      return -1;
+
+   ot_info += mid;
+   if (props->bidi.dir == EVAS_BIDI_DIRECTION_RTL)
+     {
+        /* Walk to the last one of the same cluster */
+        for ( ; mid < (int) props->len ; mid++, ot_info++)
+          {
+             if (ot_info->source_cluster != (size_t) _cutoff)
+                break;
+          }
+        mid = props->len - mid;
+     }
+   else
+     {
+        /* Walk to the last one of the same cluster */
+        for ( ; mid >= 0 ; mid--, ot_info--)
+          {
+             if (ot_info->source_cluster != (size_t) _cutoff)
+                break;
+          }
+        mid++;
+     }
+
+   return mid;
 #else
-   return EINA_TRUE;
-   props = 0; _cutoff = 0;
+   return _cutoff;
+   (void) props;
 #endif
 }
 
@@ -102,41 +154,15 @@ evas_common_text_props_split(Evas_Text_Props *base,
 
    /* Translate text cutoff pos to string object cutoff point */
 #ifdef OT_SUPPORT
-   cutoff = 0;
+   _cutoff = evas_common_text_props_index_find(base, _cutoff);
 
+   if (_cutoff > 0)
      {
-        Evas_Font_OT_Info *itr;
-        size_t i;
-        itr = base->info->ot + base->start;
-        _cutoff += base->text_offset;
-        /* Must do a linear search because this is not always sorted. */
-        for (i = 0 ; i < base->len ; i++, itr++)
-          {
-             if (itr->source_cluster == (size_t) _cutoff)
-               {
-                  if (base->bidi.dir == EVAS_BIDI_DIRECTION_RTL)
-                    {
-                       /* Walk to the last one of the same cluster */
-                       for ( ; i < base->len ; i++, itr++)
-                         {
-                            if (itr->source_cluster != (size_t) _cutoff)
-                              break;
-                         }
-                       cutoff = base->len - i;
-                    }
-                  else
-                    {
-                       cutoff = i;
-                    }
-                  break;
-               }
-          }
+        cutoff = (size_t) _cutoff;
      }
-
-   /* If we didn't find a reasonable cut location, return. */
-   if (cutoff == 0)
+   else
      {
-        ERR("Couldn't find the cutoff position (%d). Is it inside a cluster?", _cutoff);
+        ERR("Couldn't find the cutoff position. Is it inside a cluster?");
         return;
      }
 #else
