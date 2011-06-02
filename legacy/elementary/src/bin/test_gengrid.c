@@ -82,6 +82,12 @@ grid_longpress(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
 }
 
 static void
+grid_moved(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
+{
+   printf("moved %p\n", event_info);
+}
+
+static void
 grid_item_check_changed(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 {
    Testitem *ti = data;
@@ -162,9 +168,11 @@ test_gengrid(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_inf
    elm_gengrid_item_size_set(grid, 150, 150);
    elm_gengrid_horizontal_set(grid, EINA_FALSE);
    elm_gengrid_multi_select_set(grid, EINA_TRUE);
+   elm_gengrid_reorder_mode_set(grid, EINA_TRUE);
    evas_object_smart_callback_add(grid, "selected", grid_selected, NULL);
    evas_object_smart_callback_add(grid, "clicked,double", grid_double_clicked, NULL);
    evas_object_smart_callback_add(grid, "longpressed", grid_longpress, NULL);
+   evas_object_smart_callback_add(grid, "moved", grid_moved, NULL);
    evas_object_smart_callback_add(grid, "drag,start,up", grid_drag_up, NULL);
    evas_object_smart_callback_add(grid, "drag,start,right", grid_drag_right, NULL);
    evas_object_smart_callback_add(grid, "drag,start,down", grid_drag_down, NULL);

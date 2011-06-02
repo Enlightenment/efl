@@ -1029,6 +1029,8 @@ extern "C" {
    EAPI void               elm_gengrid_align_set(Evas_Object *obj, double align_x, double align_y) EINA_ARG_NONNULL(1);
    EAPI void               elm_gengrid_align_get(const Evas_Object *obj, double *align_x, double *align_y) EINA_ARG_NONNULL(1);
 
+   EAPI void               elm_gengrid_reorder_mode_set(Evas_Object *obj, Eina_Bool reorder_mode) EINA_ARG_NONNULL(1);
+   EAPI Eina_Bool          elm_gengrid_reorder_mode_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
    EAPI void               elm_gengrid_always_select_mode_set(Evas_Object *obj, Eina_Bool always_select) EINA_ARG_NONNULL(1);
    EAPI Eina_Bool          elm_gengrid_always_select_mode_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
    EAPI void               elm_gengrid_no_select_mode_set(Evas_Object *obj, Eina_Bool no_select) EINA_ARG_NONNULL(1);

@@ -194,12 +194,13 @@ struct _Widget_Data
    Eina_Inlist      *items;
    Ecore_Job        *calc_job;
    Eina_List        *selected;
-   Elm_Gengrid_Item *last_selected_item;
+   Elm_Gengrid_Item *last_selected_item, *reorder_item;
    double            align_x, align_y;
 
    Evas_Coord        pan_x, pan_y;
    Evas_Coord        item_width, item_height; /* Each item size */
    Evas_Coord        minw, minh; /* Total obj size */
+   Evas_Coord        reorder_item_x, reorder_item_y;
    unsigned int      nmax;
    long              count;
    int               walking;
@@ -212,6 +213,10 @@ struct _Widget_Data
    Eina_Bool         wasselected : 1;
    Eina_Bool         always_select : 1;
    Eina_Bool         clear_me : 1;
+   Eina_Bool         h_bounce : 1;
+   Eina_Bool         v_bounce : 1;
+   Eina_Bool         reorder_mode : 1;
+   Eina_Bool         reorder_item_changed : 1;
 };
 
 #define ELM_GENGRID_ITEM_FROM_INLIST(item) \
@@ -746,6 +751,7 @@ _mouse_move(void        *data,
    Elm_Gengrid_Item *item = data;
    Evas_Event_Mouse_Move *ev = event_info;
    Evas_Coord minw = 0, minh = 0, x, y, dx, dy, adx, ady;
+   Evas_Coord ox, oy, ow, oh, it_scrl_x, it_scrl_y;
 
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD)
      {
@@ -772,6 +778,26 @@ _mouse_move(void        *data,
           {
              ecore_timer_del(item->long_timer);
              item->long_timer = NULL;
+          }
+        if ((item->wd->reorder_mode) && (item->wd->reorder_item))
+          {
+             evas_object_geometry_get(item->wd->pan_smart, &ox, &oy, &ow, &oh);
+
+             it_scrl_x = ev->cur.canvas.x - item->wd->reorder_item->dx;
+             it_scrl_y = ev->cur.canvas.y - item->wd->reorder_item->dy;
+
+             if (it_scrl_x < ox) item->wd->reorder_item_x = ox;
+             else if (it_scrl_x + item->wd->item_width > ox + ow)
+               item->wd->reorder_item_x = ox + ow - item->wd->item_width;
+             else item->wd->reorder_item_x = it_scrl_x;
+
+             if (it_scrl_y < oy) item->wd->reorder_item_y = oy;
+             else if (it_scrl_y + item->wd->item_height > oy + oh)
+               item->wd->reorder_item_y = oy + oh - item->wd->item_height;
+             else item->wd->reorder_item_y = it_scrl_y;
+
+             if (item->wd->calc_job) ecore_job_del(item->wd->calc_job);
+             item->wd->calc_job = ecore_job_add(_calc_job, item->wd);
           }
         return;
      }
@@ -849,6 +875,14 @@ _long_press(void *data)
    if ((item->disabled) || (item->dragging)) return ECORE_CALLBACK_CANCEL;
    item->wd->longpressed = EINA_TRUE;
    evas_object_smart_callback_call(item->wd->self, "longpressed", item);
+   if (item->wd->reorder_mode)
+     {
+        item->wd->reorder_item = item;
+        evas_object_raise(item->base.view);
+        elm_smart_scroller_hold_set(item->wd->scr, EINA_TRUE);
+        elm_smart_scroller_bounce_allow_set(item->wd->scr, EINA_FALSE, EINA_FALSE);
+        edje_object_signal_emit(item->base.view, "elm,state,reorder_enabled", "elm");
+     }
    return ECORE_CALLBACK_CANCEL;
 }
 
@@ -916,6 +950,17 @@ _mouse_up(void            *data,
         item->wd->longpressed = EINA_FALSE;
         item->wd->on_hold = EINA_FALSE;
         return;
+     }
+   if ((item->wd->reorder_mode) && (item->wd->reorder_item))
+     {
+        if (item->wd->calc_job) ecore_job_del(item->wd->calc_job);
+          item->wd->calc_job = ecore_job_add(_calc_job, item->wd);
+
+        evas_object_smart_callback_call(item->wd->self, "moved", item->wd->reorder_item);
+        item->wd->reorder_item = NULL;
+        elm_smart_scroller_hold_set(item->wd->scr, EINA_FALSE);
+        elm_smart_scroller_bounce_allow_set(item->wd->scr, item->wd->h_bounce, item->wd->v_bounce);
+        edje_object_signal_emit(item->base.view, "elm,state,reorder_disabled", "elm");
      }
    if (item->wd->longpressed)
      {
@@ -1128,6 +1173,7 @@ _item_place(Elm_Gengrid_Item *item,
 {
    Evas_Coord x, y, ox, oy, cvx, cvy, cvw, cvh;
    Evas_Coord tch, tcw, alignw = 0, alignh = 0, vw, vh;
+   Eina_Bool reorder_item_move_forward = EINA_FALSE;
    item->x = cx;
    item->y = cy;
    evas_object_geometry_get(item->wd->pan_smart, &ox, &oy, &vw, &vh);
@@ -1203,6 +1249,56 @@ _item_place(Elm_Gengrid_Item *item,
         _item_realize(item);
         if (!was_realized)
           evas_object_smart_callback_call(item->wd->self, SIG_REALIZED, item);
+        if ((item->wd->reorder_mode) && (item->wd->reorder_item))
+          {
+             if (item->wd->reorder_item == item)
+               {
+                  evas_object_move(item->base.view,
+                                   item->wd->reorder_item_x, item->wd->reorder_item_y);
+                  evas_object_resize(item->base.view,
+                                     item->wd->item_width, item->wd->item_height);
+                  return;
+               }
+             else
+               {
+                  if (ELM_RECTS_INTERSECT(item->wd->reorder_item_x, item->wd->reorder_item_y,
+                                          item->wd->item_width, item->wd->item_height,
+                                          x+(item->wd->item_width/2), y+(item->wd->item_height/2),
+                                          1, 1))
+                    {
+                       if (item->wd->horizontal)
+                         {
+                            if ((item->wd->nmax * item->wd->reorder_item->x + item->wd->reorder_item->y) >
+                                (item->wd->nmax * item->x + item->y))
+                              reorder_item_move_forward = EINA_TRUE;
+                         }
+                       else
+                         {
+                            if ((item->wd->nmax * item->wd->reorder_item->y + item->wd->reorder_item->x) >
+                                (item->wd->nmax * item->y + item->x))
+                              reorder_item_move_forward = EINA_TRUE;
+                         }
+
+                       item->wd->items = eina_inlist_remove(item->wd->items,
+                                                            EINA_INLIST_GET(item->wd->reorder_item));
+                       if (reorder_item_move_forward)
+                         item->wd->items = eina_inlist_prepend_relative(item->wd->items,
+                                                                        EINA_INLIST_GET(item->wd->reorder_item),
+                                                                        EINA_INLIST_GET(item));
+                       else
+                         item->wd->items = eina_inlist_append_relative(item->wd->items,
+                                                                       EINA_INLIST_GET(item->wd->reorder_item),
+                                                                       EINA_INLIST_GET(item));
+
+                       item->wd->reorder_item_changed = EINA_TRUE;
+
+                       if (item->wd->calc_job) ecore_job_del(item->wd->calc_job);
+                         item->wd->calc_job = ecore_job_add(_calc_job, item->wd);
+
+                       return;
+                    }
+               }
+          }
         evas_object_move(item->base.view, x, y);
         evas_object_resize(item->base.view, item->wd->item_width,
                            item->wd->item_height);
@@ -1456,9 +1552,12 @@ _pan_calculate(Evas_Object *obj)
    if (!sd) return;
    if (!sd->wd->nmax) return;
 
+   sd->wd->reorder_item_changed = EINA_FALSE;
+
    EINA_INLIST_FOREACH(sd->wd->items, item)
      {
         _item_place(item, cx, cy);
+        if (sd->wd->reorder_item_changed) return;
         if (sd->wd->horizontal)
           {
              cy = (cy + 1) % sd->wd->nmax;
@@ -1600,6 +1699,8 @@ elm_gengrid_add(Evas_Object *parent)
    wd->self = obj;
    wd->align_x = 0.5;
    wd->align_y = 0.5;
+   wd->h_bounce = bounce;
+   wd->v_bounce = bounce;
    wd->no_select = EINA_FALSE;
 
    evas_object_smart_callback_add(obj, "scroll-hold-on", _hold_on, obj);
@@ -2633,6 +2734,43 @@ elm_gengrid_item_cursor_engine_only_get(const Elm_Gengrid_Item *item)
 }
 
 /**
+ * Set the reorder mode
+ *
+ * @param obj The Gengrid object
+ * @param reorder_mode The reorder mode
+ * (EINA_TRUE = on, EINA_FALSE = off)
+ *
+ * @ingroup Gengrid
+ */
+EAPI void
+elm_gengrid_reorder_mode_set(Evas_Object *obj,
+                             Eina_Bool    reorder_mode)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   wd->reorder_mode = reorder_mode;
+}
+
+/**
+ * Get the reorder mode
+ *
+ * @param obj The Gengrid object
+ * @return The reorder mode
+ * (EINA_TRUE = on, EINA_FALSE = off)
+ *
+ * @ingroup Gengrid
+ */
+EAPI Eina_Bool
+elm_gengrid_reorder_mode_get(const Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return EINA_FALSE;
+   return wd->reorder_mode;
+}
+
+/**
  * Set the always select mode.
  *
  * Cells will only call their selection func and callback when first
@@ -2733,6 +2871,8 @@ elm_gengrid_bounce_set(Evas_Object *obj,
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
    elm_smart_scroller_bounce_allow_set(wd->scr, h_bounce, v_bounce);
+   wd->h_bounce = h_bounce;
+   wd->v_bounce = v_bounce;
 }
 
 /**
@@ -2752,7 +2892,8 @@ elm_gengrid_bounce_get(const Evas_Object *obj,
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
-   elm_smart_scroller_bounce_allow_get(wd->scr, h_bounce, v_bounce);
+   *h_bounce = wd->h_bounce;
+   *v_bounce = wd->v_bounce;
 }
 
 /**
