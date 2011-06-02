@@ -680,7 +680,6 @@ Evas_Object *gl3_icon_get(void *data, Evas_Object *obj, const char *part)
         elm_label_line_wrap_set(lb, 1);
         elm_label_wrap_width_set(lb, 201);
         elm_label_label_set(lb, "ashj ascjscjh n asjkl hcjlh ls hzshnn zjh sh zxjcjsnd h dfw sdv edev efe fwefvv vsd cvs ws wf  fvwf wd fwe f  we wef we wfe rfwewef wfv wswf wefg sdfws w wsdcfwcf wsc vdv  sdsd sdcd cv wsc sdcv wsc d sdcdcsd sdcdsc wdvd sdcsd wscxcv wssvd sd");
-        evas_object_show(lb);
         return lb;
      }
    else if (!strcmp(part, "elm.swallow.end"))
@@ -690,7 +689,6 @@ Evas_Object *gl3_icon_get(void *data, Evas_Object *obj, const char *part)
         evas_object_propagate_events_set(ck, 0);
         elm_check_state_set(ck, tit->onoff);
         evas_object_smart_callback_add(ck, "changed", my_gl_item_check_changed, data);
-        evas_object_show(ck);
         return ck;
      }
    return NULL;
