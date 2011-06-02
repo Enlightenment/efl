@@ -200,8 +200,6 @@ _edje_del(Edje *ed)
         eina_stringshare_del(cb->part);
         free(cb);
      }
-
-   if (ed->members) eina_hash_free(ed->members);
    free(ed);
 }
 

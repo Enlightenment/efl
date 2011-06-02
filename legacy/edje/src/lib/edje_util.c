@@ -3674,38 +3674,33 @@ _edje_text_class_member_add(Edje *ed, const char *text_class)
    /* Get members list */
    members = eina_hash_find(_edje_text_class_member_hash, text_class);
 
+   /* Remove members list */
+   if (members)
+     eina_hash_del(_edje_text_class_member_hash, text_class, members);
+
    /* Update the member list */
    members = eina_list_prepend(members, ed);
 
-   /* Don't loose track of members list */
-   if (!ed->members)
-     ed->members = eina_hash_string_small_new(NULL);
-   eina_hash_set(ed->members, text_class, members);
-
-   /* Reset the member list to the right pointer */
+   /* Add the member list back */
    if (!_edje_text_class_member_hash)
      _edje_text_class_member_hash = eina_hash_string_superfast_new(NULL);
-   eina_hash_set(_edje_text_class_member_hash, text_class, members);
+   eina_hash_add(_edje_text_class_member_hash, text_class, members);
 }
 
 void
 _edje_text_class_member_del(Edje *ed, const char *text_class)
 {
    Eina_List *members;
-   Eina_List *lookup;
 
    if ((!ed) || (!text_class)) return;
    members = eina_hash_find(_edje_text_class_member_hash, text_class);
    if (!members) return;
 
-   lookup = eina_hash_find(ed->members, text_class);
+   eina_hash_del(_edje_text_class_member_hash, text_class, members);
 
-   if (!lookup) return ;
-
-   eina_hash_del(ed->members, text_class, lookup);
-   members = eina_list_remove_list(members, lookup);
-
-   eina_hash_set(_edje_text_class_member_hash, text_class, members);
+   members = eina_list_remove(members, ed);
+   if (members)
+     eina_hash_add(_edje_text_class_member_hash, text_class, members);
 }
 
 void

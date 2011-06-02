@@ -1004,8 +1004,6 @@ struct _Edje
    int                   table_programs_size;
    unsigned int          table_parts_size;
 
-   Eina_Hash            *members;
-
    Edje_Perspective     *persp;
 
    struct {

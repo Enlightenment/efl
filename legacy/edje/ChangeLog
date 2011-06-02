@@ -110,7 +110,3 @@
         evas freeze and thaw calls. May help in certain pathological
         situations.
 
-2011-05-27  Cedric Bail
-
-	* Improve performance by avoiding walking eina_list for nothing
-	when deleting member_class.
