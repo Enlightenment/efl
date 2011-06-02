@@ -104,11 +104,15 @@ struct _Ecore_Win32_Handler
 #endif
 
 
+#ifndef USE_G_MAIN_LOOP
 static int  _ecore_main_select(double timeout);
+#endif
 static void _ecore_main_prepare_handlers(void);
 static void _ecore_main_fd_handlers_cleanup(void);
 #ifndef _WIN32
+# ifndef USE_G_MAIN_LOOP
 static void _ecore_main_fd_handlers_bads_rem(void);
+# endif
 #endif
 static void _ecore_main_fd_handlers_call(void);
 static int  _ecore_main_fd_handlers_buf_call(void);
@@ -123,7 +127,9 @@ static void _ecore_main_win32_handlers_cleanup(void);
 #endif
 
 static int               in_main_loop = 0;
+#ifndef USE_G_MAIN_LOOP
 static int               do_quit = 0;
+#endif
 static Ecore_Fd_Handler *fd_handlers = NULL;
 static Ecore_Fd_Handler *fd_handler_current = NULL;
 static Eina_List        *fd_handlers_with_prep = NULL;
@@ -146,8 +152,10 @@ static Ecore_Select_Function main_loop_select = _ecore_main_win32_select;
 static Ecore_Select_Function main_loop_select = select;
 #endif
 
+#ifndef USE_G_MAIN_LOOP
 static double            t1 = 0.0;
 static double            t2 = 0.0;
+#endif
 
 #ifdef HAVE_EPOLL
 static int epoll_fd = -1;
@@ -424,7 +432,7 @@ static inline int _ecore_main_fdh_poll_mark_active(void)
 
 /* like we are about to enter main_loop_select in  _ecore_main_select */
 static gboolean
-_ecore_main_gsource_prepare(GSource *source, gint *next_time)
+_ecore_main_gsource_prepare(GSource *source __UNUSED__, gint *next_time)
 {
    double t = _ecore_timer_next_get();
    gboolean running;
@@ -471,14 +479,15 @@ _ecore_main_gsource_prepare(GSource *source, gint *next_time)
 }
 
 static gboolean
-_ecore_main_gsource_check(GSource *source)
+_ecore_main_gsource_check(GSource *source __UNUSED__)
 {
    INF("enter");
    in_main_loop++;
 
    ecore_fds_ready = (_ecore_main_fdh_poll_mark_active() > 0);
    _ecore_main_fd_handlers_cleanup();
-
+   
+   _ecore_time_loop_time = ecore_time_get();
    _ecore_timer_enable_new();
 
    in_main_loop--;
@@ -489,7 +498,7 @@ _ecore_main_gsource_check(GSource *source)
 
 /* like we just came out of main_loop_select in  _ecore_main_select */
 static gboolean
-_ecore_main_gsource_dispatch(GSource *source, GSourceFunc callback, gpointer user_data)
+_ecore_main_gsource_dispatch(GSource *source __UNUSED__, GSourceFunc callback __UNUSED__, gpointer user_data __UNUSED__)
 {
    gboolean events_ready, timers_ready, idlers_ready, signals_ready;
    double next_time = _ecore_timer_next_get();
@@ -553,7 +562,7 @@ _ecore_main_gsource_dispatch(GSource *source, GSourceFunc callback, gpointer use
 }
 
 static void
-_ecore_main_gsource_finalize(GSource *source)
+_ecore_main_gsource_finalize(GSource *source __UNUSED__)
 {
    INF("finalize");
 }
@@ -1076,6 +1085,7 @@ _ecore_main_prepare_handlers(void)
      }
 }
 
+#ifndef USE_G_MAIN_LOOP
 static int
 _ecore_main_select(double timeout)
 {
@@ -1187,8 +1197,10 @@ _ecore_main_select(double timeout)
      }
    return 0;
 }
+#endif
 
 #ifndef _WIN32
+# ifndef USE_G_MAIN_LOOP
 static void
 _ecore_main_fd_handlers_bads_rem(void)
 {
@@ -1237,14 +1249,15 @@ _ecore_main_fd_handlers_bads_rem(void)
     }
    if (found == 0)
      {
-# ifdef HAVE_GLIB
+#  ifdef HAVE_GLIB
         ERR("No bad fd found. Maybe a foreign fd from glib?");
-# else
+#  else
         ERR("No bad fd found. EEEK!");
-# endif
+#  endif
      }
    _ecore_main_fd_handlers_cleanup();
 }
+# endif
 #endif
 
 static void
