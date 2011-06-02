@@ -556,7 +556,7 @@ _event_hook(Evas_Object       *obj,
         else
           y += page_y;
      }
-   else if(((!strcmp(ev->keyname, "Return")) ||
+   else if (((!strcmp(ev->keyname, "Return")) ||
             (!strcmp(ev->keyname, "KP_Enter")) ||
             (!strcmp(ev->keyname, "space")))
            && (!wd->multi) && (wd->selected))
@@ -582,7 +582,7 @@ static Eina_Bool
 _deselect_all_items(Widget_Data *wd)
 {
    if (!wd->selected) return EINA_FALSE;
-   while(wd->selected)
+   while (wd->selected)
      elm_genlist_item_selected_set(wd->selected->data, EINA_FALSE);
 
    return EINA_TRUE;
@@ -2715,7 +2715,7 @@ _pan_set(Evas_Object *obj,
           }
      }
 done:
-   if(!sd->wd->item_moving_effect_timer) evas_object_smart_changed(obj);
+   if (!sd->wd->item_moving_effect_timer) evas_object_smart_changed(obj);
 }
 
 static void
