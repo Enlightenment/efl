@@ -2077,6 +2077,7 @@ _proxy_subrender(Evas *e, Evas_Object *source)
       (e->engine.data.output, source->proxy.surface, 0, 0, w, h);
 }
 
+#if 0 // filtering disabled
 /*
  *
  * Note that this is similar to proxy_subrender_recurse.  It should be
@@ -2226,6 +2227,7 @@ image_filter_update(Evas *e, Evas_Object *obj, void *src, int imagew, int imageh
                                               obj->filter->key,
                                               obj->filter->len);
 }
+#endif
 
 static void
 evas_object_image_unload(Evas_Object *obj, Eina_Bool dirty)
@@ -2530,6 +2532,7 @@ evas_object_image_render(Evas_Object *obj, void *output, void *context, void *su
         o->proxyrendering = 0;
      }
 
+#if 0 // filtering disabled
    /* Now check/update filter */
    if (obj->filter && obj->filter->filter)
      {
@@ -2578,7 +2581,8 @@ evas_object_image_render(Evas_Object *obj, void *output, void *context, void *su
              pixels = fi->image;
           }
      }
-
+#endif
+   
    if (pixels)
      {
 	Evas_Coord idw, idh, idx, idy;
@@ -3066,10 +3070,12 @@ evas_object_image_render_pre(Evas_Object *obj)
 	       }
 	  }
      }
+#if 0 // filtering disabled
    if (obj->filter && obj->filter->dirty)
      {
         evas_object_render_pre_prev_cur_add(&e->clip_changes, obj);
      }
+#endif   
    /* it obviously didn't change - add a NO obscure - this "unupdates"  this */
    /* area so if there were updates for it they get wiped. don't do it if we */
    /* aren't fully opaque and we are visible */

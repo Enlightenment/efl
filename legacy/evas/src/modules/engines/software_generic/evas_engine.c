@@ -871,6 +871,7 @@ eng_canvas_alpha_get(void *data __UNUSED__, void *info __UNUSED__)
 
 
 /* Filter API */
+#if 0 // filtering disabled
 static void
 eng_image_draw_filtered(void *data __UNUSED__, void *context __UNUSED__,
                         void *surface, void *image, Evas_Filter_Info *filter)
@@ -949,6 +950,7 @@ eng_image_filtered_free(void *image, Filtered_Image *fi)
 
    im->filtered = eina_list_remove(im->filtered, fi);
 }
+#endif
 
 static int
 eng_image_load_error_get(void *data __UNUSED__, void *image)
@@ -1080,10 +1082,12 @@ static Evas_Func func =
      eng_font_pen_coords_get,
      eng_font_text_props_info_create,
      eng_font_right_inset_get,
+#if 0 // filtering disabled
      eng_image_draw_filtered,
      eng_image_filtered_get,
      eng_image_filtered_save,
      eng_image_filtered_free,
+#endif   
      NULL, // FIXME: need software mesa for gl rendering <- gl_surface_create
      NULL, // FIXME: need software mesa for gl rendering <- gl_surface_destroy
      NULL, // FIXME: need software mesa for gl rendering <- gl_context_create

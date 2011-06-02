@@ -1574,6 +1574,7 @@ eng_image_native_get(void *data __UNUSED__, void *image)
    return &(n->ns);
 }
 
+#if 0 // filtering disabled
 static void
 eng_image_draw_filtered(void *data, void *context, void *surface,
                         void *image, Evas_Filter_Info *filter)
@@ -1605,7 +1606,7 @@ eng_image_filtered_free(void *im, Filtered_Image *fim)
 {
    evas_gl_common_image_filtered_free(im, fim);
 }
-
+#endif
 
 
 //
@@ -2978,10 +2979,12 @@ module_open(Evas_Module *em)
    ORD(image_mask_create);
    ORD(image_native_set);
    ORD(image_native_get);
+#if 0 // filtering disabled
    ORD(image_draw_filtered);
    ORD(image_filtered_get);
    ORD(image_filtered_save);
    ORD(image_filtered_free);
+#endif
    
    ORD(font_draw);
    

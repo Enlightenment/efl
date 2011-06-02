@@ -34,7 +34,9 @@ evas_object_free(Evas_Object *obj, int clean_layer)
 {
    int was_smart_child = 0;
 
+#if 0 // filtering disabled
    evas_filter_free(obj);
+#endif   
    evas_object_map_set(obj, NULL);
    evas_object_grabs_cleanup(obj);
    evas_object_intercept_cleanup(obj);

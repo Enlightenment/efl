@@ -1,5 +1,6 @@
 #include "evas_gl_private.h"
 
+#if 0 // filtering disabled
 void
 evas_gl_common_filter_draw(Evas_Engine_GL_Context *gc, Evas_GL_Image *im, Evas_Filter_Info *filter)
 {
@@ -174,7 +175,7 @@ evas_gl_common_image_filtered_free(Evas_GL_Image *image, Filtered_Image *fi)
 
    image->filtered = eina_list_remove(image->filtered, fi);
 }
-
+#endif
 
 
 /* vim:set ts=8 sw=3 sts=3 expandtab cino=>5n-2f0^-2{2(0W1st0 :*/

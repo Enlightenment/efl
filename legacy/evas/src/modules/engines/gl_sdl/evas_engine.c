@@ -934,10 +934,12 @@ module_open(Evas_Module *em)
    ORD(image_colorspace_get);
    ORD(image_native_set);
    ORD(image_native_get);
+#if 0 // filtering disabled
 //   ORD(image_draw_filtered);
 //   ORD(image_filtered_get);
 //   ORD(image_filtered_save);
 //   ORD(image_filtered_free);
+#endif
    ORD(font_draw);
    
    ORD(image_scale_hint_set);

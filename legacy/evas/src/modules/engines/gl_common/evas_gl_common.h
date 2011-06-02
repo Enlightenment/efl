@@ -211,16 +211,16 @@ struct _Evas_GL_Shared
       Evas_GL_Program  yuv,            yuv_nomul;
       Evas_GL_Program  tex,            tex_nomul;
 
-      Evas_GL_Program  filter_invert,      filter_invert_nomul;
-      Evas_GL_Program  filter_invert_bgra, filter_invert_bgra_nomul;
+      Evas_GL_Program  filter_invert,         filter_invert_nomul;
+      Evas_GL_Program  filter_invert_bgra,    filter_invert_bgra_nomul;
       Evas_GL_Program  filter_greyscale,      filter_greyscale_nomul;
       Evas_GL_Program  filter_greyscale_bgra, filter_greyscale_bgra_nomul;
-      Evas_GL_Program  filter_sepia,      filter_sepia_nomul;
-      Evas_GL_Program  filter_sepia_bgra, filter_sepia_bgra_nomul;
+      Evas_GL_Program  filter_sepia,          filter_sepia_nomul;
+      Evas_GL_Program  filter_sepia_bgra,     filter_sepia_bgra_nomul;
 #if 0
       Evas_GL_Program  filter_blur_vert;
-      Evas_GL_Program  filter_blur,      filter_blur_nomul;
-      Evas_GL_Program  filter_blur_bgra, filter_blur_bgra_nomul;
+      Evas_GL_Program  filter_blur,           filter_blur_nomul;
+      Evas_GL_Program  filter_blur_bgra,      filter_blur_bgra_nomul;
 #endif
    } shader;
    int references;
@@ -560,11 +560,12 @@ void              evas_gl_common_poly_draw(Evas_Engine_GL_Context *gc, Evas_GL_P
 
 void              evas_gl_common_line_draw(Evas_Engine_GL_Context *gc, int x1, int y1, int x2, int y2);
 
+#if 0 // filtering disabled
 void              evas_gl_common_filter_draw(Evas_Engine_GL_Context *context, Evas_GL_Image *im, Evas_Filter_Info *filter);
 Filtered_Image   *evas_gl_common_image_filtered_get(Evas_GL_Image *im, uint8_t *key, size_t keylen);
 Filtered_Image   *evas_gl_common_image_filtered_save(Evas_GL_Image *im, Evas_GL_Image *fimage, uint8_t *key, size_t keylen);
 void              evas_gl_common_image_filtered_free(Evas_GL_Image *im, Filtered_Image *);
-
+#endif
 
 extern void (*glsym_glGenFramebuffers)      (GLsizei a, GLuint *b);
 extern void (*glsym_glBindFramebuffer)      (GLenum a, GLuint b);

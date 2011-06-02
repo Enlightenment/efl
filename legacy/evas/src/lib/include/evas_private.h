@@ -389,6 +389,7 @@ struct _Evas_Map
    Evas_Map_Point        points[]; // actual points
 };
 
+#if 0 // filtering disabled
 /* nash: Split into two bits */
 typedef struct Evas_Filter_Info
 {
@@ -415,6 +416,7 @@ uint8_t *evas_filter_key_get(const Evas_Filter_Info *info, uint32_t *lenp);
 // expose for use in engines
 EAPI Evas_Software_Filter_Fn evas_filter_software_get(Evas_Filter_Info *info);
 void evas_filter_free(Evas_Object *o);
+#endif
 
 struct _Evas_Object
 {
@@ -484,8 +486,10 @@ struct _Evas_Object
       Eina_Bool                redraw;
    } proxy;
 
+#if 0 // filtering disabled
    Evas_Filter_Info           *filter;
-
+#endif
+   
    Evas_Size_Hints            *size_hints;
 
    int                         last_mouse_down_counter;
@@ -726,11 +730,13 @@ struct _Evas_Func
    Eina_Bool (*font_text_props_info_create) (void *data __UNUSED__, Evas_Font_Instance *fi, const Eina_Unicode *text, Evas_Text_Props *intl_props, const Evas_BiDi_Paragraph_Props *par_props, size_t pos, size_t len);
    int  (*font_right_inset_get)            (void *data, Evas_Font_Set *font, const Evas_Text_Props *text_props);
 
+#if 0 // filtering disabled
    void (*image_draw_filtered)             (void *data, void *context, void *surface, void *image, Evas_Filter_Info *filter);
    Filtered_Image *(*image_filtered_get)   (void *image, uint8_t *key, size_t len);
    Filtered_Image *(*image_filtered_save)  (void *image, void *filtered, uint8_t *key, size_t len);
    void (*image_filtered_free)             (void *image, Filtered_Image *);
-
+#endif
+   
    /* EFL-GL Glue Layer */
    void *(*gl_surface_create)            (void *data, void *config, int w, int h);
    int  (*gl_surface_destroy)            (void *data, void *surface);

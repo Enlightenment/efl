@@ -433,8 +433,10 @@ evas_gl_common_image_cache_flush(Evas_Engine_GL_Context *gc)
 void
 evas_gl_common_image_free(Evas_GL_Image *im)
 {
+#if 0 // filtering disabled
    Filtered_Image *fi;
-
+#endif
+   
    evas_gl_common_context_flush(im->gc);
    im->references--;
    if (im->references > 0) return;
@@ -453,13 +455,14 @@ evas_gl_common_image_free(Evas_GL_Image *im)
    if (im->im) evas_cache_image_drop(&im->im->cache_entry);
    if (im->tex) evas_gl_common_texture_free(im->tex);
 
+#if 0 // filtering disabled
    EINA_LIST_FREE(im->filtered, fi)
      {
 	free(fi->key);
 	evas_gl_common_image_free((Evas_GL_Image *)fi->image);
 	free(fi);
      }
-
+#endif
 
    free(im);
 }
