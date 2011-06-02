@@ -1782,4 +1782,120 @@ test_genlist10(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
    evas_object_resize(win, 520, 520);
    evas_object_show(win);
 }
+
+/*************/
+
+static Elm_Genlist_Item_Class itc11;
+
+char *gl11_label_get(void *data, Evas_Object *obj __UNUSED__, const char *part __UNUSED__)
+{
+   char buf[256];
+   snprintf(buf, sizeof(buf), "Item # %i", (int)(long)data);
+   return strdup(buf);
+}
+
+Evas_Object *gl11_icon_get(void *data __UNUSED__, Evas_Object *obj, const char *part)
+{
+   char buf[PATH_MAX];
+   Evas_Object *ic = elm_icon_add(obj);
+   if (!strcmp(part, "elm.swallow.end"))
+     snprintf(buf, sizeof(buf), "%s/images/bubble.png", PACKAGE_DATA_DIR);
+   else
+     snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
+   elm_icon_file_set(ic, buf, NULL);
+   evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
+   return ic;
+}
+
+static void
+_reorder_tg_changed(void *data, Evas_Object *obj, void *event_info __UNUSED__)
+{
+   elm_genlist_reorder_mode_set(data, elm_toggle_state_get(obj));
+}
+
+/**
+ * gl_moved is called after an item was reordered.
+ * This is only called when reorder mode is enabled.
+ *
+ * @param obj          :  the genlist object.
+ * @param item         :  the moved item.
+ * @param rel_item     :  the relative item.
+ * @param move_after   :  whether or not the rel_item is after item.
+ *
+ * If the move_after is true,
+ *  the item(*item) had been moved after the given relative item(*rel_item) in list.
+ * If the move_after is false,
+ *  the item(*item) had been moved before the given relative item(*rel_item) in list.
+ *
+ */
+static void _gl_moved(Evas_Object *obj, Elm_Genlist_Item *item, Elm_Genlist_Item *rel_item, Eina_Bool move_after)
+{
+   // if needed, add application logic.
+}
+
+void
+test_genlist11(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+   Evas_Object *win, *bg, *fr, *lb, *bx, *tg, *gl;
+   int i;
+
+   win = elm_win_add(NULL, "genlist11", ELM_WIN_BASIC);
+   elm_win_title_set(win, "Genlist Reorder Mode");
+   elm_win_autodel_set(win, 1);
+
+   bg = elm_bg_add(win);
+   elm_win_resize_object_add(win, bg);
+   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_show(bg);
+
+   bx = elm_box_add(win);
+   evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_win_resize_object_add(win, bx);
+   evas_object_show(bx);
+
+   fr = elm_frame_add(win);
+
+   elm_frame_label_set(fr, "Reorder Mode");
+   elm_box_pack_end(bx, fr);
+   evas_object_show(fr);
+
+   lb = elm_label_add(win);
+   elm_label_label_set(lb,
+                       "Enable reorder mode if you want to move item.<br>"
+                       "Then long press and drag item.");
+   elm_frame_content_set(fr, lb);
+   evas_object_show(lb);
+
+   gl = elm_genlist_add(win);
+   evas_object_size_hint_align_set(gl, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_size_hint_weight_set(gl, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_show(gl);
+
+   tg = elm_toggle_add(win);
+   elm_toggle_label_set(tg, "Reorder Mode:");
+   elm_toggle_state_set(tg, elm_mirrored_get());
+   evas_object_smart_callback_add(tg, "changed", _reorder_tg_changed, gl);
+   elm_box_pack_end(bx, tg);
+   evas_object_show(tg);
+
+   itc10.item_style     = "default";
+   itc10.func.label_get = gl11_label_get;
+   itc10.func.icon_get  = gl11_icon_get;
+   itc10.func.state_get = gl_state_get;
+   itc10.func.del       = gl_del;
+
+   for (i = 0; i < 50; i++)
+     elm_genlist_item_append(gl,
+                             &itc10,
+                             (void *)(1 + i)/* item data */,
+                             NULL/* parent */,
+                             ELM_GENLIST_ITEM_NONE/* flags */,
+                             NULL/* func */,
+                             NULL/* func data */);
+
+   elm_box_pack_end(bx, gl);
+
+   evas_object_resize(win, 400, 500);
+   evas_object_show(win);
+}
 #endif
