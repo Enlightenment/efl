@@ -1201,16 +1201,19 @@ _sample_theme_new(Evas_Object *win)
    evas_object_show(bg);
 
    bt = elm_button_add(win);
+   evas_object_size_hint_weight_set(bt, 1.0, 0.0);
    elm_button_label_set(bt, "Button");
    elm_table_pack(base, bt, 0, 0, 1, 1);
    evas_object_show(bt);
 
    ck = elm_check_add(win);
+   evas_object_size_hint_weight_set(ck, 1.0, 0.0);
    elm_check_label_set(ck, "Check");
    elm_table_pack(base, ck, 0, 1, 1, 1);
    evas_object_show(ck);
 
    rd = elm_radio_add(win);
+   evas_object_size_hint_weight_set(rd, 1.0, 0.0);
    elm_radio_state_value_set(rd, 0);
    elm_radio_label_set(rd, "Radio 1");
    elm_table_pack(base, rd, 1, 0, 1, 1);
@@ -1218,6 +1221,7 @@ _sample_theme_new(Evas_Object *win)
    rdg = rd;
 
    rd = elm_radio_add(win);
+   evas_object_size_hint_weight_set(rd, 1.0, 0.0);
    elm_radio_state_value_set(rd, 1);
    elm_radio_label_set(rd, "Radio 2");
    elm_radio_group_add(rd, rdg);
@@ -1260,6 +1264,7 @@ _sample_theme_new(Evas_Object *win)
    elm_list_go(li);
 
    rc = evas_object_rectangle_add(evas_object_evas_get(win));
+   evas_object_size_hint_weight_set(rc, 1.0, 1.0);
    evas_object_size_hint_min_set(rc, 160, 120);
    elm_table_pack(base, rc, 0, 4, 2, 1);
 
@@ -1279,10 +1284,12 @@ _status_config_themes(Evas_Object *win,
    evas_object_size_hint_align_set(tb, EVAS_HINT_FILL, EVAS_HINT_FILL);
 
    rc = evas_object_rectangle_add(evas_object_evas_get(win));
+   evas_object_size_hint_weight_set(rc, 1.0, 1.0);
    evas_object_size_hint_min_set(rc, 0, 130);
    elm_table_pack(tb, rc, 0, 0, 1, 1);
 
    rc = evas_object_rectangle_add(evas_object_evas_get(win));
+   evas_object_size_hint_weight_set(rc, 1.0, 1.0);
    evas_object_size_hint_min_set(rc, 0, 200);
    elm_table_pack(tb, rc, 0, 1, 1, 1);
 
@@ -1399,7 +1406,7 @@ _status_config_themes(Evas_Object *win,
 
    pd = elm_frame_add(win);
    elm_object_style_set(pd, "pad_medium");
-   evas_object_size_hint_weight_set(pd, 0.0, 0.0);
+   evas_object_size_hint_weight_set(pd, 1.0, 0.0);
    evas_object_size_hint_align_set(pd, 0.5, 0.5);
    elm_table_pack(tb, pd, 0, 3, 1, 1);
    evas_object_show(pd);
@@ -1407,7 +1414,7 @@ _status_config_themes(Evas_Object *win,
    bt = elm_button_add(win);
    evas_object_smart_callback_add(bt, "clicked", _theme_use, win);
    elm_button_label_set(bt, "Use Theme");
-   evas_object_size_hint_weight_set(bt, 0.0, 0.0);
+   evas_object_size_hint_weight_set(bt, 1.0, 0.0);
    evas_object_size_hint_align_set(bt, 0.5, 0.5);
    elm_frame_content_set(pd, bt);
    evas_object_show(bt);
