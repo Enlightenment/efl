@@ -1859,7 +1859,7 @@ extern "C" {
    typedef Evas_Object *(*GenlistItemIconGetFunc)  (void *data, Evas_Object *obj, const char *part);
    typedef Eina_Bool    (*GenlistItemStateGetFunc) (void *data, Evas_Object *obj, const char *part);
    typedef void         (*GenlistItemDelFunc)      (void *data, Evas_Object *obj);
-   typedef void         (*GenlistItemMovedFunc)    (void *data, Elm_Genlist_Item *item, Elm_Genlist_Item *rel_item, Eina_Bool move_after);
+   typedef void         (*GenlistItemMovedFunc)    (Evas_Object *obj, Elm_Genlist_Item *item, Elm_Genlist_Item *rel_item, Eina_Bool move_after);
 
    struct _Elm_Genlist_Item_Class
      {
@@ -1962,6 +1962,8 @@ EAPI Elm_Genlist_Item *elm_genlist_item_sorted_insert(Evas_Object *obj, const El
    EAPI void               elm_genlist_item_mode_set(Elm_Genlist_Item *it, const char *mode_type, Eina_Bool mode_set) EINA_ARG_NONNULL(1, 2);
    EAPI const char        *elm_genlist_mode_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
    EAPI const Elm_Genlist_Item *elm_genlist_mode_item_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+   EAPI void               elm_genlist_reorder_mode_set(Evas_Object *obj, Eina_Bool reorder_mode) EINA_ARG_NONNULL(1);
+   EAPI Eina_Bool          elm_genlist_reorder_mode_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
    /** Signals that you can add callbacks for are:
     * "clicked,double" - This is called when a user has double-clicked an item.
     *                    The event_info parameter is the genlist item that was

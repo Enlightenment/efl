@@ -1828,7 +1828,7 @@ _reorder_tg_changed(void *data, Evas_Object *obj, void *event_info __UNUSED__)
  *  the item(*item) had been moved before the given relative item(*rel_item) in list.
  *
  */
-static void _gl_moved(Evas_Object *obj, Elm_Genlist_Item *item, Elm_Genlist_Item *rel_item, Eina_Bool move_after)
+static void gl_moved(Evas_Object *obj __UNUSED__, Elm_Genlist_Item *item __UNUSED__, Elm_Genlist_Item *rel_item __UNUSED__, Eina_Bool move_after __UNUSED__)
 {
    // if needed, add application logic.
 }
@@ -1878,15 +1878,16 @@ test_genlist11(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
    elm_box_pack_end(bx, tg);
    evas_object_show(tg);
 
-   itc10.item_style     = "default";
-   itc10.func.label_get = gl11_label_get;
-   itc10.func.icon_get  = gl11_icon_get;
-   itc10.func.state_get = gl_state_get;
-   itc10.func.del       = gl_del;
+   itc11.item_style     = "default";
+   itc11.func.label_get = gl11_label_get;
+   itc11.func.icon_get  = gl11_icon_get;
+   itc11.func.state_get = gl_state_get;
+   itc11.func.del       = gl_del;
+   itc11.func.moved     = gl_moved;
 
    for (i = 0; i < 50; i++)
      elm_genlist_item_append(gl,
-                             &itc10,
+                             &itc11,
                              (void *)(1 + i)/* item data */,
                              NULL/* parent */,
                              ELM_GENLIST_ITEM_NONE/* flags */,
