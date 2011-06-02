@@ -439,9 +439,9 @@ evas_object_map_get(const Evas_Object *obj)
 EAPI Evas_Map *
 evas_map_new(int count)
 {
-   if (count < 4)
+   if (count != 4)
      {
-        ERR("num (%i) < 4 is unsupported!", count);
+        ERR("map point count (%i) != 4 is unsupported!", count);
         return NULL;
      }
    return _evas_map_new(count);
