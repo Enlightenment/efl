@@ -159,7 +159,7 @@ evas_object_mapped_clip_across_mark(Evas_Object *obj)
 }
 
 /* public functions */
-
+extern const char *o_rect_type;
 
 EAPI void
 evas_object_clip_set(Evas_Object *obj, Evas_Object *clip)
@@ -178,6 +178,8 @@ evas_object_clip_set(Evas_Object *obj, Evas_Object *clip)
    if (obj->cur.clipper == clip) return;
    if (obj == clip) return;
    if (evas_object_intercept_call_clip_set(obj, clip)) return;
+   // illegal to set anything but a rect as a clip
+   if (clip->type != o_rect_type) return;
    if (obj->smart.smart)
      {
        if (obj->smart.smart->smart_class->clip_set)

@@ -4,6 +4,8 @@
 /* private magic number for rectangle objects */
 static const char o_type[] = "rectangle";
 
+const char *o_rect_type = o_type;
+
 /* private struct for rectangle object internal data */
 typedef struct _Evas_Object_Rectangle      Evas_Object_Rectangle;
 
