@@ -2479,16 +2479,16 @@ loop_advance:
         c->ln->x = c->marginl + c->o->style_pad.l;
      }
 
+   c->par->h = c->ln->y + c->ln->h;
+   if (c->ln->w > c->par->w)
+     c->par->w = c->ln->w;
+
      {
-        Evas_Coord new_wmax = c->ln->x + c->ln->w +
+        Evas_Coord new_wmax = c->par->w +
            c->marginl + c->marginr - (c->o->style_pad.l + c->o->style_pad.r);
         if (new_wmax > c->wmax)
            c->wmax = new_wmax;
      }
-
-   c->par->h = c->ln->y + c->ln->h;
-   if (c->ln->w + c->ln->x > c->par->w)
-     c->par->w = c->ln->x + c->ln->w;
 }
 
 /**
