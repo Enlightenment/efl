@@ -535,7 +535,7 @@ test_flip4(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
    evas_object_size_hint_weight_set(fl, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_box_pack_end(bx, fl);
    evas_object_data_set(win, "fl", fl);
-   
+
    elm_flip_interaction_set(fl, ELM_FLIP_INTERACTION_NONE);
    elm_flip_interacton_direction_enabled_set(fl, ELM_FLIP_DIRECTION_UP, EINA_TRUE);
    elm_flip_interacton_direction_enabled_set(fl, ELM_FLIP_DIRECTION_DOWN, EINA_TRUE);
@@ -563,7 +563,7 @@ test_flip4(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
    evas_object_image_file_set(im, buf, NULL);
    elm_flip_content_back_set(fl, im);
    evas_object_show(im);
-#else   
+#else
    li = elm_list_add(win);
    evas_object_size_hint_weight_set(li, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_list_item_append(li, "Item 0", NULL, NULL, NULL, NULL);
@@ -585,7 +585,7 @@ test_flip4(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
    evas_object_smart_callback_add(rd, "changed", my_fl_ch, win);
    rdg = rd;
    evas_object_data_set(win, "rdg", rdg);
-   
+
    rd = elm_radio_add(win);
    evas_object_size_hint_align_set(rd, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(rd, EVAS_HINT_EXPAND, 0.0);
@@ -595,7 +595,7 @@ test_flip4(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
    elm_box_pack_end(bx, rd);
    evas_object_show(rd);
    evas_object_smart_callback_add(rd, "changed", my_fl_ch, win);
-   
+
    rd = elm_radio_add(win);
    evas_object_size_hint_align_set(rd, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(rd, EVAS_HINT_EXPAND, 0.0);
@@ -605,7 +605,7 @@ test_flip4(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
    elm_box_pack_end(bx, rd);
    evas_object_show(rd);
    evas_object_smart_callback_add(rd, "changed", my_fl_ch, win);
-   
+
    rd = elm_radio_add(win);
    evas_object_size_hint_align_set(rd, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(rd, EVAS_HINT_EXPAND, 0.0);
@@ -623,7 +623,7 @@ test_flip4(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
    elm_box_pack_end(bx, bt);
    evas_object_show(bt);
-   
+
    evas_object_resize(win, 320, 480);
    evas_object_show(win);
 }

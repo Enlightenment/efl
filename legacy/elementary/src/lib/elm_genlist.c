@@ -2264,27 +2264,27 @@ _get_space_for_reorder_item(Elm_Genlist_Item *it)
    Eina_Bool top = EINA_FALSE;
    Elm_Genlist_Item *reorder_it = it->wd->reorder_it;
    if (!reorder_it) return 0;
-   
+
    evas_object_geometry_get(it->wd->pan_smart, NULL, &oy, NULL, &oh);
    evas_object_geometry_get(it->wd->reorder_it->base.view, &rox, &roy, &row, &roh);
-   
-   if ((it->wd->reorder_start_y < it->block->y) && 
+
+   if ((it->wd->reorder_start_y < it->block->y) &&
        (roy - oy + (roh / 2) >= it->block->y - it->wd->pan_y))
      {
         it->block->reorder_offset = it->wd->reorder_it->h * -1;
         if (it->block->count == 1)
            it->wd->reorder_rel = it;
      }
-   else if ((it->wd->reorder_start_y >= it->block->y) && 
+   else if ((it->wd->reorder_start_y >= it->block->y) &&
             (roy - oy + (roh / 2) <= it->block->y - it->wd->pan_y))
      {
         it->block->reorder_offset = it->wd->reorder_it->h;
      }
    else
       it->block->reorder_offset = 0;
-   
+
    it->scrl_y += it->block->reorder_offset;
-   
+
    top = (ELM_RECTS_INTERSECT(it->scrl_x, it->scrl_y, it->w, it->h,
                               rox, roy + (roh / 2), row, 1));
    if (top)
@@ -2305,15 +2305,15 @@ _reorder_item_moving_effect_timer_cb(void *data)
    double time, t;
    int y, dy = it->h / 10 * _elm_config->scale, diff;
    time = REORDER_EFFECT_TIME;
-   
+
    t = ((0.0 > (t = ecore_loop_time_get()-it->wd->start_time)) ? 0.0 : t);
-   
+
    if (t <= time) y = (1 * sin((t / time) * (M_PI / 2)) * dy);
    else y = dy;
-   
+
    diff = abs(it->old_scrl_y - it->scrl_y);
    if (diff > it->h) y = diff / 2;
-   
+
    if (it->old_scrl_y < it->scrl_y)
      {
         it->old_scrl_y += y;
@@ -2326,9 +2326,9 @@ _reorder_item_moving_effect_timer_cb(void *data)
      }
    _item_position(it, it->base.view, it->scrl_x, it->old_scrl_y);
    _group_items_recalc(it->wd);
-   
+
    if ((it->wd->reorder_pan_move) ||
-       (down && it->old_scrl_y >= it->scrl_y) || 
+       (down && it->old_scrl_y >= it->scrl_y) ||
        (!down && it->old_scrl_y <= it->scrl_y))
      {
         it->old_scrl_y = it->scrl_y;

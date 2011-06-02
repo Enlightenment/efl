@@ -418,7 +418,7 @@ _count_letter(const char *str)
 {
    int pos = 0;
    int code = 0, chnum;
-   
+
    for (chnum = 0; ; chnum++)
      {
         pos = evas_string_char_next_get(str, pos, &code);
@@ -432,7 +432,7 @@ _check_letter(const char *str, int length)
 {
    int pos = 0;
    int code = 0, chnum;
-   
+
    for (chnum = 0; ; chnum++)
      {
         if (chnum == length) break;

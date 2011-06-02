@@ -66,7 +66,7 @@ struct _Widget_Data
    Eina_Bool dir_enabled[4];
    int slices_w, slices_h;
    Slice **slices, **slices2;
-   
+
    Eina_Bool state : 1;
    Eina_Bool down : 1;
    Eina_Bool finish : 1;
@@ -154,9 +154,9 @@ _sizing_eval(Evas_Object *obj)
    if (wd->dir_enabled[1]) fingy++;
    if (wd->dir_enabled[2]) fingx++;
    if (wd->dir_enabled[3]) fingx++;
-   
+
    elm_coords_finger_size_adjust(fingx, &minw, fingy, &minh);
-   
+
    evas_object_size_hint_min_set(obj, minw, minh);
    evas_object_size_hint_max_set(obj, maxw, maxh);
 }
@@ -197,7 +197,7 @@ static Slice *
 _slice_new(Widget_Data *st __UNUSED__, Evas_Object *obj)
 {
    Slice *sl;
-   
+
    sl = calloc(1, sizeof(Slice));
    if (!sl) return NULL;
    sl->obj = evas_object_image_add(evas_object_evas_get(obj));
@@ -224,7 +224,7 @@ _slice_apply(Widget_Data *st, Slice *sl,
 {
    Evas_Map *m;
    int i;
-   
+
    m = evas_map_new(4);
    if (!m) return;
    evas_map_smooth_set(m, 0);
@@ -267,7 +267,7 @@ _slice_3d(Widget_Data *st __UNUSED__, Slice *sl, Evas_Coord x, Evas_Coord y, Eva
 {
    Evas_Map *m = (Evas_Map *)evas_object_map_get(sl->obj);
    int i;
-   
+
    if (!m) return;
    // vanishing point is center of page, and focal dist is 1024
    evas_map_util_3d_perspective(m, x + (w / 2), y + (h / 2), 0, 1024);
@@ -287,7 +287,7 @@ _slice_light(Widget_Data *st __UNUSED__, Slice *sl, Evas_Coord x, Evas_Coord y, 
 {
    Evas_Map *m = (Evas_Map *)evas_object_map_get(sl->obj);
    int i;
-   
+
    if (!m) return;
    evas_map_util_3d_lighting(m,
                              // light position
@@ -300,7 +300,7 @@ _slice_light(Widget_Data *st __UNUSED__, Slice *sl, Evas_Coord x, Evas_Coord y, 
    for (i = 0; i < 4; i++)
      {
         int r, g, b, a;
-        
+
         evas_map_point_color_get(m, i, &r, &g, &b, &a);
         r = (double)r * 1.2; if (r > 255) r = 255;
         g = (double)g * 1.2; if (g > 255) g = 255;
@@ -348,15 +348,15 @@ _deform_point(Vertex2 *vi, Vertex3 *vo, double rho, double theta, double A)
    // rho   == angle of cone from vertical axis (...-PI/2 to PI/2...)
    Vertex3  v1;
    double d, r, b;
-   
+
    d = sqrt((vi->x * vi->x) + pow(vi->y - A, 2));
    r = d * sin(theta);
    b = asin(vi->x / d) / sin(theta);
-   
+
    v1.x = r * sin(b);
    v1.y = d + A - (r * (1 - cos(b)) * sin(theta));
    v1.z = r * (1 - cos(b)) * cos(theta);
-   
+
    vo->x = (v1.x * cos(rho)) - (v1.z * sin(rho));
    vo->y = v1.y;
    vo->z = (v1.x * sin(rho)) + (v1.z * cos(rho));
@@ -374,7 +374,7 @@ static void
 _state_slices_clear(Widget_Data *st)
 {
    int i, j, num;
-   
+
    if (st->slices)
      {
         num = 0;
@@ -401,7 +401,7 @@ _slice_obj_color_sum(Slice *s, int p, int *r, int *g, int *b, int *a)
 {
    Evas_Map *m;
    int rr = 0, gg = 0, bb = 0, aa = 0;
-   
+
    if (!s) return 0;
    m = (Evas_Map *)evas_object_map_get(s->obj);
    if (!m) return 0;
@@ -414,7 +414,7 @@ static void
 _slice_obj_color_set(Slice *s, int p, int r, int g, int b, int a)
 {
    Evas_Map *m;
-   
+
    if (!s) return;
    m = (Evas_Map *)evas_object_map_get(s->obj);
    if (!m) return;
@@ -427,15 +427,15 @@ _slice_obj_vert_color_merge(Slice *s1, int p1, Slice *s2, int p2,
                             Slice *s3, int p3, Slice *s4, int p4)
 {
    int r = 0, g = 0, b = 0, a = 0, n = 0;
-   
+
    n += _slice_obj_color_sum(s1, p1, &r, &g, &b, &a);
    n += _slice_obj_color_sum(s2, p2, &r, &g, &b, &a);
    n += _slice_obj_color_sum(s3, p3, &r, &g, &b, &a);
    n += _slice_obj_color_sum(s4, p4, &r, &g, &b, &a);
-   
+
    if (n < 1) return;
    r /= n; g /= n; b /= n; a /= n;
-   
+
    _slice_obj_color_set(s1, p1, r, g, b, a);
    _slice_obj_color_set(s2, p2, r, g, b, a);
    _slice_obj_color_set(s3, p3, r, g, b, a);
@@ -455,7 +455,7 @@ _state_update(Widget_Data *st)
    Vertex2 *tvi;
    Vertex3 *tvo, *tvol;
    Evas_Object *front, *back;
-   
+
    st->backflip = 1;
    if (st->state)
      {
@@ -467,14 +467,14 @@ _state_update(Widget_Data *st)
         front = st->back.content;
         back = st->back.content;
      }
-   
+
    evas_object_geometry_get(st->obj, &x, &y, &w, &h);
    ox = x; oy = y; ow = w; oh = h;
    x1 = st->down_x;
    y1 = st->down_y;
    x2 = st->x;
    y2 = st->y;
-   
+
    if (st->dir == 0)
      {
         // no nothing. left drag is standard
@@ -487,7 +487,7 @@ _state_update(Widget_Data *st)
    else if (st->dir == 2)
      {
         Evas_Coord tmp;
-        
+
         tmp = x1; x1 = y1; y1 = tmp;
         tmp = x2; x2 = y2; y2 = tmp;
         tmp = w; w = h; h = tmp;
@@ -495,27 +495,27 @@ _state_update(Widget_Data *st)
    else if (st->dir == 3)
      {
         Evas_Coord tmp;
-        
+
         tmp = x1; x1 = y1; y1 = tmp;
         tmp = x2; x2 = y2; y2 = tmp;
         tmp = w; w = h; h = tmp;
         x1 = (w - 1) - x1;
         x2 = (w - 1) - x2;
      }
-   
+
    if (x2 >= x1) x2 = x1 - 1;
    mx = (x1 + x2) / 2;
    my = (y1 + y2) / 2;
-   
+
    if (mx < 0) mx = 0;
    else if (mx >= w) mx = w - 1;
    if (my < 0) my = 0;
    else if (my >= h) my = h - 1;
-   
+
    mgrad = (double)(y1 - y2) / (double)(x1 - x2);
-   
+
    if (mx < 1) mx = 1; // quick hack to keep curl line visible
-   
+
    if (mgrad == 0.0) // special horizontal case
       mgrad = 0.001; // quick dirty hack for now
    // else
@@ -537,24 +537,24 @@ _state_update(Widget_Data *st)
              b = my + (minv * mx);
           }
      }
-   
+
    perc = (double)x2 / (double)x1;
    percm = (double)mx / (double)x1;
    if (perc < 0.0) perc = 0.0;
    else if (perc > 1.0) perc = 1.0;
    if (percm < 0.0) percm = 0.0;
    else if (percm > 1.0) percm = 1.0;
-   
+
    minva = atan(minv) / (M_PI / 2);
    if (minva < 0.0) minva = -minva;
-   
+
    // A = apex of cone
    if (b <= 0) A = b;
    else A = h - b;
    if (A < -(h * 20)) A = -h * 20;
    //--//
    Al = -5;
-   
+
    // rho = is how much the page is turned
    n = 1.0 - perc;
    n = 1.0 - cos(n * M_PI / 2.0);
@@ -562,7 +562,7 @@ _state_update(Widget_Data *st)
    rho = -(n * M_PI);
    //--//
    rhol = -(n * M_PI);
-   
+
    // theta == curliness (how much page culrs in on itself
    n = sin((1.0 - perc) * M_PI);
    n = n * 1.2;
@@ -573,7 +573,7 @@ _state_update(Widget_Data *st)
    n = n * n;
    n = 1.0 - n;
    thetal = 7.86 + n;
-   
+
    nw = 16;
    nh = 16;
    if (nw < 1) nw = 1;
@@ -582,7 +582,7 @@ _state_update(Widget_Data *st)
    gszh = h / nh;
    if (gszw < 4) gszw = 4;
    if (gszh < 4) gszh = 4;
-   
+
    nw = (w + gszw - 1) / gszw;
    nh = (h + gszh - 1) / gszh;
    if ((st->slices_w != nw) || (st->slices_h != nh)) _state_slices_clear(st);
@@ -600,25 +600,25 @@ _state_update(Widget_Data *st)
              return 0;
           }
      }
-   
+
    num = (st->slices_w + 1) * (st->slices_h + 1);
-   
+
    tvi = alloca(sizeof(Vertex2) * num);
    tvo = alloca(sizeof(Vertex3) * num);
    tvol = alloca(sizeof(Vertex3) * (st->slices_w + 1));
-   
+
    for (col = 0, gx = 0; gx <= (w + gszw - 1); gx += gszw, col++)
      {
         Vertex2 vil;
-        
+
         vil.x = gx;
         vil.y = h - ((gx * h) / (w + gszw - 1));
         _deform_point(&vil, &(tvol[col]), rhol, thetal, Al);
      }
-   
+
    n = minva * sin(perc * M_PI);
    n = n * n;
-   
+
    num = 0;
    for (col = 0, gx = 0; gx <= (w + gszw - 1); gx += gszw, col++)
      {
@@ -626,7 +626,7 @@ _state_update(Widget_Data *st)
           {
              Vertex2 vi;
              Vertex3 vo, tvo1;
-             
+
              if (gx > w) vi.x = w;
              else vi.x = gx;
              if (gy > h) vi.y = h;
@@ -639,26 +639,26 @@ _state_update(Widget_Data *st)
              num++;
           }
      }
-   
+
    jump = st->slices_h + 1;
    for (col = 0, gx = 0; gx < w; gx += gszw, col++)
      {
         num = st->slices_h * col;
         num2 = jump * col;
-        
+
         gw = gszw;
         if ((gx + gw) > w) gw = w - gx;
-        
+
         for (row = 0, gy = 0; gy < h; gy += gszh, row++)
           {
              Vertex3 vo[4];
-             
+
              if (b > 0) nn = num + st->slices_h - row - 1;
              else nn = num + row;
-             
+
              gh = gszh;
              if ((gy + gh) > h) gh = h - gy;
-             
+
              vo[0] = tvo[num2 + row];
              vo[1] = tvo[num2 + row + jump];
              vo[2] = tvo[num2 + row + jump + 1];
@@ -673,7 +673,7 @@ _state_update(Widget_Data *st)
                   vo[2].y = h - vo[2].y;
                   vo[3].y = h - vo[3].y;
                }
-             
+
              // FRONT
              sl = st->slices[nn];
              if (!sl)
@@ -694,7 +694,7 @@ _state_update(Widget_Data *st)
                 _slice_uv(st, sl,
                           gx,       h - (gy + gh), gx + gw,  h - (gy + gh),
                           gx + gw,  h - gy,        gx,       h - gy);
-             
+
                           // BACK
              sl = st->slices2[nn];
              if (!sl)
@@ -702,7 +702,7 @@ _state_update(Widget_Data *st)
                   sl = _slice_new(st, back);
                   st->slices2[nn] = sl;
                }
-             
+
              _slice_xyz(st, sl,
                         vo[1].x, vo[1].y, vo[1].z,
                         vo[0].x, vo[0].y, vo[0].z,
@@ -732,7 +732,7 @@ _state_update(Widget_Data *st)
                }
           }
      }
-   
+
    num = 0;
    for (j = 0; j < st->slices_h; j++)
      {
@@ -745,14 +745,14 @@ _state_update(Widget_Data *st)
              num++;
           }
      }
-   
+
    for (i = 0; i <= st->slices_w; i++)
      {
         num = i * st->slices_h;
         for (j = 0; j <= st->slices_h; j++)
           {
              Slice *s[4];
-             
+
              s[0] = s[1] = s[2] = s[3] = NULL;
              if ((i > 0)            && (j > 0))
                 s[0] = st->slices[num - 1 - st->slices_h];
@@ -798,7 +798,7 @@ _state_update(Widget_Data *st)
              num++;
           }
      }
-   
+
    num = 0;
    for (i = 0; i < st->slices_w; i++)
      {
@@ -809,7 +809,7 @@ _state_update(Widget_Data *st)
              num++;
           }
      }
-   
+
    return 1;
 }
 
@@ -891,18 +891,18 @@ _flip_do(Evas_Object *obj, double t, Elm_Flip_Mode mode, int lin, int rev)
    Evas_Coord cx, cy, px, py, foc;
    int lx, ly, lz, lr, lg, lb, lar, lag, lab;
    Widget_Data *wd = elm_widget_data_get(obj);
-   
+
    if (!wd) return;
-   
+
    mf = evas_map_new(4);
    evas_map_smooth_set(mf, 0);
    mb = evas_map_new(4);
    evas_map_smooth_set(mb, 0);
-   
+
    if (wd->front.content)
      {
         const char *type = evas_object_type_get(wd->front.content);
-        
+
         // FIXME: only handles filled obj
         if ((type) && (!strcmp(type, "image")))
           {
@@ -924,7 +924,7 @@ _flip_do(Evas_Object *obj, double t, Elm_Flip_Mode mode, int lin, int rev)
    if (wd->back.content)
      {
         const char *type = evas_object_type_get(wd->back.content);
-        
+
         if ((type) && (!strcmp(type, "image")))
           {
              int iw, ih;
@@ -1119,7 +1119,7 @@ _showhide(Evas_Object *obj)
    Widget_Data *wd = elm_widget_data_get(obj);
    Evas_Coord x, y, w, h;
    if (!wd) return;
-   
+
    evas_object_geometry_get(obj, &x, &y, &w, &h);
    if (wd->front.content)
      {
@@ -1147,7 +1147,7 @@ _showhide(Evas_Object *obj)
           }
         evas_object_resize(wd->back.content, w, h);
      }
-   
+
 }
 
 static Eina_Bool
@@ -1156,13 +1156,13 @@ _flip(Evas_Object *obj)
    Widget_Data *wd = elm_widget_data_get(obj);
    double t = ecore_loop_time_get() - wd->start;
    Evas_Coord w, h;
-   
+
    if (!wd) return ECORE_CALLBACK_CANCEL;
    if (!wd->animator) return ECORE_CALLBACK_CANCEL;
-   
+
    t = t / wd->len;
    if (t > 1.0) t = 1.0;
-   
+
    evas_object_geometry_get(obj, NULL, NULL, &w, &h);
    if (wd->mode == ELM_FLIP_PAGE_LEFT)
      {
@@ -1248,7 +1248,7 @@ _configure(Evas_Object *obj)
    evas_object_geometry_get(obj, &x, &y, &w, &h);
    // FIXME: manual flip wont get fixed
    if (wd->animator) _flip(obj);
-   
+
    if (wd->event[0])
      {
         fsize = (double)w * wd->dir_hitsize[0];
@@ -1302,7 +1302,7 @@ _pos_get(Widget_Data *wd, int *rev, Elm_Flip_Mode *m)
 {
    Evas_Coord x, y, w, h;
    double t = 1.0;
-   
+
    evas_object_geometry_get(wd->obj, &x, &y, &w, &h);
    switch (wd->intmode)
      {
@@ -1331,13 +1331,13 @@ _pos_get(Widget_Data *wd, int *rev, Elm_Flip_Mode *m)
                      t = 1.0 - ((double)(h - wd->y) / (double)(h - wd->down_y));
                   *rev = 1;
                }
-             
+
              if (t < 0.0) t = 0.0;
              else if (t > 1.0) t = 1.0;
-             
+
              if ((wd->dir == 0) || (wd->dir == 1))
                {
-                  if (wd->intmode == ELM_FLIP_INTERACTION_ROTATE) 
+                  if (wd->intmode == ELM_FLIP_INTERACTION_ROTATE)
                      *m = ELM_FLIP_ROTATE_Y_CENTER_AXIS;
                   else if (wd->intmode == ELM_FLIP_INTERACTION_CUBE)
                     {
@@ -1349,7 +1349,7 @@ _pos_get(Widget_Data *wd, int *rev, Elm_Flip_Mode *m)
                }
              else
                {
-                  if (wd->intmode == ELM_FLIP_INTERACTION_ROTATE) 
+                  if (wd->intmode == ELM_FLIP_INTERACTION_ROTATE)
                      *m = ELM_FLIP_ROTATE_X_CENTER_AXIS;
                   else if (wd->intmode == ELM_FLIP_INTERACTION_CUBE)
                     {
@@ -1371,7 +1371,7 @@ _event_anim(void *data, double pos)
 {
    Widget_Data *wd = data;
    double p;
-   
+
    p = ecore_animator_pos_map(pos, ECORE_POS_MAP_ACCELERATE, 0.0, 0.0);
    if (wd->finish)
      {
@@ -1433,7 +1433,7 @@ _event_anim(void *data, double pos)
    _configure(wd->obj);
    wd->animator = NULL;
    evas_object_smart_callback_call(wd->obj, SIG_ANIMATE_DONE, NULL);
-   
+
    return ECORE_CALLBACK_CANCEL;
 }
 
@@ -1444,7 +1444,7 @@ _update_job(void *data)
    double p;
    Elm_Flip_Mode m = ELM_FLIP_ROTATE_X_CENTER_AXIS;
    int rev = 0;
-   
+
    wd->job = NULL;
    switch (wd->intmode)
      {
@@ -1470,7 +1470,7 @@ _down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *even
    Widget_Data *wd = elm_widget_data_get(fl);
    Evas_Event_Mouse_Down *ev = event_info;
    Evas_Coord x, y, w, h;
-   
+
    if (!wd) return;
    if (ev->button != 1) return;
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return ;
@@ -1484,7 +1484,7 @@ _down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *even
    evas_object_geometry_get(data, &x, &y, &w, &h);
    wd->x = ev->canvas.x - x;
    wd->y = ev->canvas.y - y;
-   wd->w = w;                
+   wd->w = w;
    wd->h = h;
    wd->down_x = wd->x;
    wd->down_y = wd->y;
@@ -1498,7 +1498,7 @@ _up_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_
    Evas_Event_Mouse_Up *ev = event_info;
    Evas_Coord x, y, w, h;
    double tm = 0.5;
-   
+
    if (!wd) return;
    if (ev->button != 1) return;
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return ;
@@ -1552,19 +1552,19 @@ _move_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *even
    Widget_Data *wd = elm_widget_data_get(fl);
    Evas_Event_Mouse_Move *ev = event_info;
    Evas_Coord x, y, w, h;
-   
+
    if (!wd) return;
    if (!wd->down) return;
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return ;
    evas_object_geometry_get(data, &x, &y, &w, &h);
    wd->x = ev->cur.canvas.x - x;
    wd->y = ev->cur.canvas.y - y;
-   wd->w = w;                
+   wd->w = w;
    wd->h = h;
    if (!wd->started)
      {
         Evas_Coord dx, dy;
-        
+
         dx = wd->x - wd->down_x;
         dy = wd->y - wd->down_y;
         if (((dx * dx) + (dy * dy)) > (_elm_config->finger_size * _elm_config->finger_size / 4))
@@ -1583,7 +1583,7 @@ _move_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *even
              // FIXME: hack around evas rendering bug (only fix makes evas bitch-slow)
              evas_object_map_enable_set(wd->front.content, 0);
              evas_object_map_enable_set(wd->back.content, 0);
-// FIXME: XXX why does this bork interactive flip??             
+// FIXME: XXX why does this bork interactive flip??
 //             evas_object_resize(wd->front.content, 0, 0);
 //             evas_object_resize(wd->back.content, 0, 0);
              evas_smart_objects_calculate(evas_object_evas_get(data));
@@ -1612,7 +1612,7 @@ elm_flip_add(Evas_Object *parent)
    Evas_Object *obj;
    Evas *e;
    Widget_Data *wd;
-   
+
    ELM_WIDGET_STANDARD_SETUP(wd, Widget_Data, parent, e, obj, NULL);
 
    ELM_SET_WIDTYPE(widtype, "flip");
@@ -1625,7 +1625,7 @@ elm_flip_add(Evas_Object *parent)
    elm_widget_can_focus_set(obj, EINA_FALSE);
 
    wd->obj = obj;
-   
+
    wd->clip = evas_object_rectangle_add(e);
    evas_object_static_clip_set(wd->clip, 1);
    evas_object_color_set(wd->clip, 255, 255, 255, 255);
@@ -1663,7 +1663,7 @@ elm_flip_add(Evas_Object *parent)
 
    wd->state = 1;
    wd->intmode = ELM_FLIP_INTERACTION_NONE;
-   
+
    _sizing_eval(obj);
 
    return obj;
@@ -1919,17 +1919,17 @@ elm_flip_go(Evas_Object *obj, Elm_Flip_Mode mode)
 
 /**
  * Set the interactive flip mode
- * 
+ *
  * @param obj The flip object
  * @param mode The interactive flip mode to use
- * 
+ *
  * This sets if the flip should be interactive (allow user to click and
  * drag a side of the flip to reveal the back page and cause it to flip).
  * By default a flip is not interactive. You may also need to set which
  * sides of the flip are "active" for flipping and how much space they use
  * (a minimum of a finger size) with elm_flip_interacton_direction_enabled_set()
  * and elm_flip_interacton_direction_hitsize_set()
- * 
+ *
  * @ingroup Flip
  */
 EAPI void
@@ -1973,12 +1973,12 @@ elm_flip_interaction_set(Evas_Object *obj, Elm_Flip_Interaction mode)
 
 /**
  * Get the interactive flip mode
- * 
+ *
  * @param obj The flip object
  * @return The interactive flip mode
- * 
+ *
  * Returns the interactive flip mode set by elm_flip_interaction_set()
- * 
+ *
  * @ingroup Flip
  */
 EAPI Elm_Flip_Interaction
@@ -1992,14 +1992,14 @@ elm_flip_interaction_get(const Evas_Object *obj)
 
 /**
  * Set which directions of the flip respond to interactive flip
- * 
+ *
  * @param obj The flip object
  * @param dir The direction to change
  * @param enabled If that direction is enabled or not
- * 
+ *
  * By default all directions are disabled, so you may want to enable the
  * desired directions for flipping if you need interactive flipping.
- * 
+ *
  * @ingroup Flip
  */
 EAPI void
@@ -2041,13 +2041,13 @@ elm_flip_interacton_direction_enabled_set(Evas_Object *obj, Elm_Flip_Direction d
 
 /**
  * Get the enabled state of that flip direction
- * 
+ *
  * @param obj The flip object
  * @param dir The direction to check
  * @return If that direction is enabled or not
- * 
+ *
  * Gets the enabled state set by elm_flip_interacton_direction_enabled_set()
- * 
+ *
  * @ingroup Flip
  */
 EAPI Eina_Bool
@@ -2067,11 +2067,11 @@ elm_flip_interacton_direction_enabled_get(Evas_Object *obj, Elm_Flip_Direction d
 
 /**
  * Set the amount of the flip that is sensitive to interactive flip
- * 
+ *
  * @param obj The flip object
  * @param dir The direction to modify
  * @param hitsize The amount of that dimension (0.0 to 1.0) to use
- * 
+ *
  * @ingroup Flip
  */
 EAPI void
@@ -2096,13 +2096,13 @@ elm_flip_interacton_direction_hitsize_set(Evas_Object *obj, Elm_Flip_Direction d
 
 /**
  * Get the amount of the flip that is sensitive to interactive flip
- * 
+ *
  * @param obj The flip object
  * @param dir The direction to check
  * @return The size set for that direction
- * 
+ *
  * Returns the amount os sensitive area set by elm_flip_interacton_direction_hitsize_set().
- * 
+ *
  * @ingroup Flip
  */
 EAPI double

@@ -151,7 +151,7 @@ test_diskselector(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *even
    elm_box_pack_end(bx, disk);
    evas_object_show(disk);
    evas_object_smart_callback_add(disk, "selected", _print_disk_info_cb, NULL);
-   
+
    // displayed item number setting example
    disk = elm_diskselector_add(win);
    elm_diskselector_display_item_num_set(disk, 5);
