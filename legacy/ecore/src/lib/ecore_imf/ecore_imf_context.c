@@ -986,3 +986,90 @@ ecore_imf_context_delete_surrounding_event_add(Ecore_IMF_Context *ctx, int offse
    ecore_event_add(ECORE_IMF_EVENT_DELETE_SURROUNDING,
                    ev, _ecore_imf_event_free_delete_surrounding, NULL);
 }
+
+/**
+ * Ask the Input Method Context to show the control panel of using Input Method.
+ *
+ * @param ctx An #Ecore_IMF_Context.
+ * @ingroup Ecore_IMF_Context_IMControl_Group
+ * @since 1.1.0
+ */
+EAPI void
+ecore_imf_context_control_panel_show (Ecore_IMF_Context *ctx)
+{
+   if (!ECORE_MAGIC_CHECK(ctx, ECORE_MAGIC_CONTEXT))
+     {
+        ECORE_MAGIC_FAIL(ctx, ECORE_MAGIC_CONTEXT,
+                         "ecore_imf_context_control_panel_show");
+        return;
+     }
+
+   if (ctx->klass->control_panel_show) ctx->klass->control_panel_show(ctx);
+}
+
+/**
+ * Ask the Input Method Context to hide the control panel of using Input Method.
+ *
+ * @param ctx An #Ecore_IMF_Context.
+ * @ingroup Ecore_IMF_Context_IMControl_Group
+ * @since 1.1.0
+ */
+EAPI void
+ecore_imf_context_control_panel_hide (Ecore_IMF_Context *ctx)
+{
+   if (!ECORE_MAGIC_CHECK(ctx, ECORE_MAGIC_CONTEXT))
+     {
+        ECORE_MAGIC_FAIL(ctx, ECORE_MAGIC_CONTEXT,
+                         "ecore_imf_context_control_panel_hide");
+        return;
+     }
+
+   if (ctx->klass->control_panel_hide) ctx->klass->control_panel_hide(ctx);
+}
+
+/**
+ * Set the language of the input panel.
+ * This API can be used when you want to show the English keyboard.
+ *
+ * @param ctx An #Ecore_IMF_Context.
+ * @param lang the language to be set to the input panel.
+ * @ingroup Ecore_IMF_Context_IMControl_Group
+ * @since 1.1.0
+ */
+EAPI void
+ecore_imf_context_input_panel_language_set (Ecore_IMF_Context *ctx, Ecore_IMF_Input_Panel_Lang lang)
+{
+   if (!ECORE_MAGIC_CHECK(ctx, ECORE_MAGIC_CONTEXT))
+     {
+        ECORE_MAGIC_FAIL(ctx, ECORE_MAGIC_CONTEXT,
+                         "ecore_imf_context_input_panel_language_set");
+        return;
+     }
+
+   if (ctx->klass->input_panel_language_set) ctx->klass->input_panel_language_set(ctx, lang);
+   ctx->input_panel_lang = lang;
+}
+
+/**
+ * Get the language of the input panel.
+ *
+ * See @ref ecore_imf_context_input_panel_language_set for more details.
+ *
+ * @param ctx An #Ecore_IMF_Context.
+ * @return Ecore_IMF_Input_Panel_Lang
+ * @ingroup Ecore_IMF_Context_IMControl_Group
+ * @since 1.1.0
+ */
+EAPI Ecore_IMF_Input_Panel_Lang
+ecore_imf_context_input_panel_language_get (Ecore_IMF_Context *ctx)
+{
+   if (!ECORE_MAGIC_CHECK(ctx, ECORE_MAGIC_CONTEXT))
+     {
+        ECORE_MAGIC_FAIL(ctx, ECORE_MAGIC_CONTEXT,
+                         "ecore_imf_context_input_panel_language_get");
+        return ECORE_IMF_INPUT_PANEL_LANG_AUTOMATIC;
+     }
+
+   return ctx->input_panel_lang;
+}
+

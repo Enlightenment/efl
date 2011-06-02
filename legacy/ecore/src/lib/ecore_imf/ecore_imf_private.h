@@ -48,6 +48,8 @@ struct _Ecore_IMF_Context
    Eina_Bool                    (*retrieve_surrounding_func)(void *data, Ecore_IMF_Context *ctx, char **text, int *cursor_pos);
    void                          *retrieve_surrounding_data;
    Ecore_IMF_Autocapital_Type     autocapital_type;
+   Ecore_IMF_Input_Panel_Layout   input_panel_layout;
+   Ecore_IMF_Input_Panel_Lang     input_panel_lang;
    Eina_Bool                      allow_prediction : 1;
 };
 
