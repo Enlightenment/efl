@@ -70,6 +70,10 @@ evas_common_font_query_run_font_end_get(RGBA_Font *fn, RGBA_Font_Int **script_fi
         /* Itr will end up being the first of the next run  */
         for ( ; itr < run_end ; itr++)
           {
+             /* 0x1F is the last ASCII contral char, just a hack in
+              * the meanwhile. */
+             if (*itr <= 0x1F)
+                continue;
              /* Break if either it's not in the font, or if it is in the
               * script's font. */
              if (fi == *script_fi)
