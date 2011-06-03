@@ -273,7 +273,7 @@ elm_glview_add(Evas_Object *parent)
  * @ingroup GLView
  */
 EAPI Evas_GL_API *
-elm_glview_gl_api_get(Evas_Object *obj)
+elm_glview_gl_api_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -433,7 +433,7 @@ elm_glview_size_set(Evas_Object *obj, int width, int height)
  * @ingroup GLView
  */
 EAPI void
-elm_glview_size_get(Evas_Object *obj, int *width, int *height)
+elm_glview_size_get(const Evas_Object *obj, int *width, int *height)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
