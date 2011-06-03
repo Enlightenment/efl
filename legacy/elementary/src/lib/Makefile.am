@@ -67,6 +67,7 @@ elm_font.c \
 elm_frame.c \
 elm_gengrid.c \
 elm_genlist.c \
+elm_glview.c \
 elm_grid.c \
 elm_hover.c \
 elm_icon.c \
@@ -104,7 +105,6 @@ elm_transit.c \
 elm_util.c \
 elm_widget.c \
 elm_win.c \
-elm_glview.c \
 els_box.c \
 els_box.h \
 els_cursor.c \

@@ -57,6 +57,7 @@ test_fileselector_button.c \
 test_fileselector.c \
 test_fileselector_entry.c \
 test_flip.c \
+test_flip_page.c \
 test_flipselector.c \
 test_floating.c \
 test_focus2.c \
@@ -64,6 +65,8 @@ test_focus3.c \
 test_focus.c \
 test_gengrid.c \
 test_genlist.c \
+test_glview.c \
+test_grid.c \
 test_hover.c \
 test_hoversel.c \
 test_icon.c \
@@ -101,10 +104,7 @@ test_tooltip.c \
 test_transit.c \
 test_weather.c \
 test_win_inline.c \
-test_win_state.c \
-test_grid.c \
-test_flip_page.c \
-test_glview.c
+test_win_state.c
 
 if HAVE_EIO
 elementary_test_SOURCES += test_eio.c
