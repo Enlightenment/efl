@@ -54,6 +54,9 @@ evas_common_font_query_run_font_end_get(RGBA_Font *fn, RGBA_Font_Int **script_fi
         if (base_char == run_end)
            evas_common_font_glyph_search(fn, &fi, REPLACEMENT_CHAR);
 
+        if (!fi)
+           fi = fn->fonts->data;
+
         *script_fi = fi;
      }
    else
