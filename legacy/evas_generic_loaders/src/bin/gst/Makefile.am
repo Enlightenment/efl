@@ -22,7 +22,7 @@ evas_image_loader_gst_LDADD = @GSTREAMER_LIBS@ @EINA_LIBS@ @SHM_OPEN_LIBS@
 evas_image_loader_gst_LDFLAGS =
 
 install-data-hook:
-	ln -sf evas_image_loader.gst $(DESTDIR)$(bindir)/evas_image_loader.263
+	ln -sf evas_image_loader.gst $(DESTDIR)$(bindir)/evas_image_loader.264
 	ln -sf evas_image_loader.gst $(DESTDIR)$(bindir)/evas_image_loader.3g2
 	ln -sf evas_image_loader.gst $(DESTDIR)$(bindir)/evas_image_loader.3gp
 	ln -sf evas_image_loader.gst $(DESTDIR)$(bindir)/evas_image_loader.3gp2
