@@ -47,6 +47,7 @@ static const struct ext_loader_s loaders[] =
    MATCHING(".ps", "generic"),
    MATCHING(".xcf", "generic"),
    MATCHING(".xcf.gz", "generic"),
+   /* RAW */
    MATCHING(".arw", "generic"),
    MATCHING(".cr2", "generic"),
    MATCHING(".crw", "generic"),
@@ -66,7 +67,25 @@ static const struct ext_loader_s loaders[] =
    MATCHING(".raf", "generic"),
    MATCHING(".sr2", "generic"),
    MATCHING(".srf", "generic"),
-   MATCHING(".x3f", "generic")
+   MATCHING(".x3f", "generic"),
+   /* video */
+   MATCHING(".3g2", "generic"),
+   MATCHING(".3gp", "generic"),
+   MATCHING(".asf", "generic"),
+   MATCHING(".avi", "generic"),
+   MATCHING(".mkv", "generic"),
+   MATCHING(".mov", "generic"),
+   MATCHING(".mp4", "generic"),
+   MATCHING(".mpg", "generic"),
+   MATCHING(".mpeg", "generic"),
+   MATCHING(".mxf", "generic"),
+   MATCHING(".nut", "generic"),
+   MATCHING(".ogg", "generic"),
+   MATCHING(".ogm", "generic"),
+   MATCHING(".rm", "generic"),
+   MATCHING(".weba", "generic"),
+   MATCHING(".webm", "generic"),
+   MATCHING(".wmv", "generic")
 };
 
 static const char *loaders_name[] =
