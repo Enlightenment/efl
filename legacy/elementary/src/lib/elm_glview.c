@@ -45,7 +45,7 @@ _del_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
-   
+
    if (wd->render_idle_enterer) ecore_idle_enterer_del(wd->render_idle_enterer);
 
    if (wd->surface) evas_gl_surface_destroy(wd->evasgl, wd->surface);
@@ -85,14 +85,14 @@ _glview_update_surface(Evas_Object *obj)
         evas_gl_surface_destroy(wd->evasgl, wd->surface);
         wd->surface = NULL;
      }
-   
+
    evas_object_image_size_set(wd->glview_image, wd->w, wd->h);
-   
-   if (!wd->surface) 
+
+   if (!wd->surface)
      {
         Evas_Native_Surface ns;
-        
-        wd->surface = evas_gl_surface_create(wd->evasgl, &wd->config, 
+
+        wd->surface = evas_gl_surface_create(wd->evasgl, &wd->config,
                                              wd->w, wd->h);
         evas_gl_native_surface_get(wd->evasgl, wd->surface, &ns);
         evas_object_image_native_surface_set(wd->glview_image, &ns);
@@ -107,7 +107,7 @@ _glview_resize(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void
    Evas_Coord w, h;
 
    if (!wd) return;
-   if (wd->scale_policy == ELM_GLVIEW_RESIZE_POLICY_RECREATE) 
+   if (wd->scale_policy == ELM_GLVIEW_RESIZE_POLICY_RECREATE)
      {
         evas_object_geometry_get(wd->glview_image, NULL, NULL, &w, &h);
         if ((w == 0) || (h == 0))
@@ -128,7 +128,7 @@ _glview_resize(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void
 }
 
 
-static Eina_Bool 
+static Eina_Bool
 _render_cb(void *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -176,13 +176,13 @@ _set_render_policy_callback(Evas_Object *obj)
              ecore_idle_enterer_del(wd->render_idle_enterer);
              wd->render_idle_enterer = NULL;
           }
-        
+
         // Set pixel getter callback
         evas_object_image_pixels_get_callback_set
            (wd->glview_image, (Evas_Object_Image_Pixels_Get_Cb)_render_cb, obj);
         break;
       case ELM_GLVIEW_RENDER_POLICY_ALWAYS:
-        
+
         // Unset the pixel getter callback if set already
         evas_object_image_pixels_get_callback_set(wd->glview_image, NULL, NULL);
         break;
@@ -208,8 +208,8 @@ elm_glview_add(Evas_Object *parent)
    Evas_Object *obj;
    Evas *e;
    Widget_Data *wd;
-   Evas_GL_Config cfg = { EVAS_GL_RGB_8, 
-                          EVAS_GL_DEPTH_NONE, 
+   Evas_GL_Config cfg = { EVAS_GL_RGB_8,
+                          EVAS_GL_DEPTH_NONE,
                           EVAS_GL_STENCIL_NONE };
 
    ELM_WIDGET_STANDARD_SETUP(wd, Widget_Data, parent, e, obj, NULL);
@@ -249,7 +249,7 @@ elm_glview_add(Evas_Object *parent)
 
    wd->render_idle_enterer = NULL;
 
-   // Create Context 
+   // Create Context
    if (!wd->context)
      {
         wd->context = evas_gl_context_create(wd->evasgl, NULL);
@@ -285,10 +285,10 @@ elm_glview_gl_api_get(Evas_Object *obj)
 
 
 /**
- * Set the mode of the GLView. Supports Three simple modes. 
+ * Set the mode of the GLView. Supports Three simple modes.
  *
  * @param obj The glview object
- * @param mode The mode Options OR'ed enabling Alpha, Depth, Stencil. 
+ * @param mode The mode Options OR'ed enabling Alpha, Depth, Stencil.
  * @return True if set properly.
  *
  * @ingroup GLView
@@ -298,8 +298,8 @@ elm_glview_mode_set(Evas_Object *obj, Elm_GLView_Mode mode)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
    Widget_Data *wd = elm_widget_data_get(obj);
-   Evas_GL_Config cfg = { EVAS_GL_RGBA_8, 
-                          EVAS_GL_DEPTH_NONE, 
+   Evas_GL_Config cfg = { EVAS_GL_RGBA_8,
+                          EVAS_GL_DEPTH_NONE,
                           EVAS_GL_STENCIL_NONE };
    if (!wd) return EINA_FALSE;
 
@@ -316,12 +316,12 @@ elm_glview_mode_set(Evas_Object *obj, Elm_GLView_Mode mode)
    // Check for Alpha Channel and enable it
    if (mode & ELM_GLVIEW_ALPHA)
       evas_object_image_alpha_set(wd->glview_image, EINA_TRUE);
-   else 
+   else
       evas_object_image_alpha_set(wd->glview_image, EINA_FALSE);
-   
+
    wd->mode   = mode;
    wd->config = cfg;
-   
+
    elm_glview_changed_set(obj);
 
    return EINA_TRUE;
@@ -335,9 +335,9 @@ elm_glview_mode_set(Evas_Object *obj, Elm_GLView_Mode mode)
  *
  * By default, the scaling policy is set to ELM_GLVIEW_RESIZE_POLICY_RECREATE.
  * When resize is called it destroys the previous surface and recreates the newly
- * specified size. If the policy is set to ELM_GLVIEW_RESIZE_POLICY_SCALE, however, 
+ * specified size. If the policy is set to ELM_GLVIEW_RESIZE_POLICY_SCALE, however,
  * glview only scales the image object and not the underlying GL Surface.
- * 
+ *
  * @ingroup GLView
  */
 EAPI Eina_Bool
@@ -371,9 +371,9 @@ elm_glview_scale_policy_set(Evas_Object *obj, Elm_GLView_Resize_Policy policy)
  * By default, the render policy is set to ELM_GLVIEW_RENDER_POLICY_ON_DEMAND.
  * This policy is set such that during the render loop, glview is only redrawn
  * if it needs to be redrawn. (i.e. When it is visible) If the policy is set
- * to ELM_GLVIEWW_RENDER_POLICY_ALWAYS, it redraws regardless of whether it is 
+ * to ELM_GLVIEWW_RENDER_POLICY_ALWAYS, it redraws regardless of whether it is
  * visible/need redrawing or not.
- * 
+ *
  * @ingroup GLView
  */
 EAPI Eina_Bool
@@ -383,7 +383,7 @@ elm_glview_render_policy_set(Evas_Object *obj, Elm_GLView_Render_Policy policy)
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return EINA_FALSE;
 
-   if ((policy != ELM_GLVIEW_RENDER_POLICY_ON_DEMAND) && 
+   if ((policy != ELM_GLVIEW_RENDER_POLICY_ON_DEMAND) &&
        (policy != ELM_GLVIEW_RENDER_POLICY_ALWAYS))
      {
         ERR("Invalid Render Policy.\n");
@@ -411,7 +411,7 @@ elm_glview_size_set(Evas_Object *obj, int width, int height)
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
-   
+
    if ((width == wd->w) && (height == wd->h)) return;
    wd->w = width;
    wd->h = height;
@@ -438,7 +438,7 @@ elm_glview_size_get(Evas_Object *obj, int *width, int *height)
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
-   
+
    if (width) *width = wd->w;
    if (height) *height = wd->h;
 }

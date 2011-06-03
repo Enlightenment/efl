@@ -66,7 +66,7 @@ vert(GLfloat *p, GLfloat x, GLfloat y, GLfloat z, GLfloat *n)
 
 /*  Draw a gear wheel.  You'll probably want to call this function when
  *  building a display list since we do a lot of trig here.
- * 
+ *
  *  Input:  inner_radius - radius of hole at center
  *          outer_radius - radius at center of teeth
  *          width - width of gear
@@ -102,7 +102,7 @@ make_gear(GLData *gld, GLfloat inner_radius, GLfloat outer_radius, GLfloat width
    s[4] = 0;
    c[4] = 1;
    v = gear->vertices;
-   for (i = 0; i < teeth; i++) 
+   for (i = 0; i < teeth; i++)
      {
         s[0] = s[4];
         c[0] = c[4];
@@ -182,7 +182,7 @@ multiply(GLfloat *m, const GLfloat *n)
    div_t d;
    int i, j;
 
-   for (i = 0; i < 16; i++) 
+   for (i = 0; i < 16; i++)
      {
         tmp[i] = 0;
         d = div(i, 4);
@@ -201,10 +201,10 @@ rotate(GLfloat *m, GLfloat angle, GLfloat x, GLfloat y, GLfloat z)
 
    s = sin(angle);
    c = cos(angle);
-   GLfloat r[16] = 
+   GLfloat r[16] =
      {
         x * x * (1 - c) + c,     y * x * (1 - c) + z * s, x * z * (1 - c) - y * s, 0,
-        x * y * (1 - c) - z * s, y * y * (1 - c) + c,     y * z * (1 - c) + x * s, 0, 
+        x * y * (1 - c) - z * s, y * y * (1 - c) + c,     y * z * (1 - c) + x * s, 0,
         x * z * (1 - c) + y * s, y * z * (1 - c) - x * s, z * z * (1 - c) + c,     0,
         0, 0, 0, 1
      };
@@ -253,7 +253,7 @@ gears_draw(GLData *gld)
    static const GLfloat red[4] = { 0.8, 0.1, 0.0, 1.0 };
    static const GLfloat green[4] = { 0.0, 0.8, 0.2, 1.0 };
    static const GLfloat blue[4] = { 0.2, 0.2, 1.0, 1.0 };
-   GLfloat m[16]; 
+   GLfloat m[16];
 
    gl->glClearColor(0.8, 0.8, 0.1, 0.5);
    gl->glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -288,7 +288,7 @@ gears_reshape(GLData *gld, int width, int height)
       0.0, 0.0, 0.1, 0.0,
       0.0, 0.0, 0.0, 1.0,
    };
-      
+
    if (width < height)
       ar = width;
    else
@@ -387,9 +387,9 @@ gldata_init(GLData *gld)
    gld->view_rotz = 0.0;
    gld->angle = 0.0;
 
-   gld->light[0] = 1.0;  
-   gld->light[1] = 1.0;  
-   gld->light[2] = -5.0;  
+   gld->light[0] = 1.0;
+   gld->light[1] = 1.0;
+   gld->light[2] = -5.0;
 }
 
 
@@ -402,7 +402,7 @@ _draw_gl(Evas_Object *obj)
    Evas_GL_API *gl = elm_glview_gl_api_get(obj);
    GLData *gld = evas_object_data_get(obj, "gld");
    if (!gld) return;
-   
+
    elm_glview_size_get(obj, &w, &h);
 
    if (!gld->initialized)
@@ -437,7 +437,7 @@ static void
 _del(void *data, Evas *evas __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
    GLData *gld = evas_object_data_get(data, "gld");
-   if (!gld) 
+   if (!gld)
      {
         printf("Unable to get GLData. \n");
         return;
@@ -455,7 +455,7 @@ _del(void *data, Evas *evas __UNUSED__, Evas_Object *obj, void *event_info __UNU
 }
 
 
-static void 
+static void
 _key_down(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info)
 {
    Evas_Event_Key_Down *ev;
@@ -493,14 +493,14 @@ _key_down(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info)
      }
 }
 
-static void 
+static void
 _mouse_down(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
     GLData *gld = evas_object_data_get(obj, "gld");
     gld->mouse_down = 1;
 }
 
-static void 
+static void
 _mouse_move(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
     Evas_Event_Mouse_Move *ev;
@@ -518,21 +518,21 @@ _mouse_move(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj, void *e
       }
 }
 
-static void 
+static void
 _mouse_up(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
     GLData *gld = evas_object_data_get(obj, "gld");
     gld->mouse_down = 0;
 }
 
-     
+
 void
 test_glview(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *win, *bg, *bx, *bt, *gl;
    Ecore_Animator *ani;
    GLData *gld = NULL;
-   
+
    if (!(gld = calloc(1, sizeof(GLData)))) return;
    gldata_init(gld);
 
@@ -549,7 +549,7 @@ test_glview(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_win_resize_object_add(win, bx);
    evas_object_show(bx);
-   
+
    gl = elm_glview_add(win);
    evas_object_size_hint_align_set(gl, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(gl, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -573,7 +573,7 @@ test_glview(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    evas_object_data_set(gl, "ani", ani);
    evas_object_data_set(gl, "gld", gld);
    evas_object_event_callback_add(gl, EVAS_CALLBACK_DEL, _del, gl);
-   
+
    bt = elm_button_add(win);
    elm_button_label_set(bt, "OK");
    evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
