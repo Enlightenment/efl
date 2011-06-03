@@ -3,6 +3,10 @@ MAINTAINERCLEANFILES = Makefile.in
 SUBDIRS = common \
 xcf
 
+if HAVE_GST
+SUBDIRS += gst
+endif
+
 if HAVE_PDF
 SUBDIRS += pdf
 endif

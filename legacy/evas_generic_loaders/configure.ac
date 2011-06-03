@@ -66,6 +66,18 @@ PKG_CHECK_MODULES([SPECTRE], [libspectre], [have_ps="yes"], [have_ps="no"])
 
 PKG_CHECK_MODULES([LIBRAW], [libraw], [have_raw="yes"], [have_raw="no"])
 
+GST_REQS=0.10.2
+GSTPLUG_REQS=0.10.1
+GST_MAJORMINOR=0.10
+
+PKG_CHECK_MODULES([GSTREAMER],
+   [gstreamer-$GST_MAJORMINOR >= $GST_REQS
+    gstreamer-plugins-base-$GST_MAJORMINOR >= $GSTPLUG_REQS
+   ],
+   [have_gst="yes"],
+   [have_gst="no"])
+
+AM_CONDITIONAL(HAVE_GST, test "x${have_gst}" = "xyes")
 AM_CONDITIONAL([HAVE_PDF], [test "x${have_poppler}" = "xyes"])
 AM_CONDITIONAL([HAVE_PS], [test "x${have_ps}" = "xyes"])
 AM_CONDITIONAL(HAVE_RAW, [test "x${have_raw}" = "xyes"])
@@ -120,10 +132,11 @@ Makefile
 src/Makefile
 src/bin/Makefile
 src/bin/common/Makefile
-src/bin/xcf/Makefile
-src/bin/raw/Makefile
+src/bin/gst/Makefile
 src/bin/pdf/Makefile
 src/bin/ps/Makefile
+src/bin/raw/Makefile
+src/bin/xcf/Makefile
 ])
 
 AC_OUTPUT
@@ -143,6 +156,7 @@ echo "Configuration Options Summary:"
 echo
 echo "Loaders:"
 echo "  XCF..................: yes"
+echo "  Gstreamer............: ${have_gst}"
 echo "  PDF..................: ${have_poppler}"
 echo "  PS...................: ${have_ps}"
 echo "  RAW..................: ${have_raw}"
