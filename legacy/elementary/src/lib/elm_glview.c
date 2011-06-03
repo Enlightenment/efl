@@ -127,7 +127,6 @@ _glview_resize(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void
      }
 }
 
-
 static Eina_Bool
 _render_cb(void *obj)
 {
@@ -146,7 +145,7 @@ _render_cb(void *obj)
 
    // Depending on the policy return true or false
    if (wd->render_policy == ELM_GLVIEW_RENDER_POLICY_ON_DEMAND)
-      return EINA_TRUE;
+     return EINA_TRUE;
    else if (wd->render_policy == ELM_GLVIEW_RENDER_POLICY_ALWAYS)
      {
         // Return false so it only runs once
@@ -170,29 +169,26 @@ _set_render_policy_callback(Evas_Object *obj)
    switch (wd->render_policy)
      {
       case ELM_GLVIEW_RENDER_POLICY_ON_DEMAND:
-        // Delete idle_enterer if it for some reason is around
-        if (wd->render_idle_enterer)
-          {
-             ecore_idle_enterer_del(wd->render_idle_enterer);
-             wd->render_idle_enterer = NULL;
-          }
+         // Delete idle_enterer if it for some reason is around
+         if (wd->render_idle_enterer)
+           {
+              ecore_idle_enterer_del(wd->render_idle_enterer);
+              wd->render_idle_enterer = NULL;
+           }
 
-        // Set pixel getter callback
-        evas_object_image_pixels_get_callback_set
-           (wd->glview_image, (Evas_Object_Image_Pixels_Get_Cb)_render_cb, obj);
-        break;
+         // Set pixel getter callback
+         evas_object_image_pixels_get_callback_set
+            (wd->glview_image, (Evas_Object_Image_Pixels_Get_Cb)_render_cb, obj);
+         break;
       case ELM_GLVIEW_RENDER_POLICY_ALWAYS:
-
-        // Unset the pixel getter callback if set already
-        evas_object_image_pixels_get_callback_set(wd->glview_image, NULL, NULL);
-        break;
+         // Unset the pixel getter callback if set already
+         evas_object_image_pixels_get_callback_set(wd->glview_image, NULL, NULL);
+         break;
       default:
-        ERR("Invalid Render Policy.\n");
-        return;
+         ERR("Invalid Render Policy.\n");
+         return;
      }
 }
-
-
 
 /**
  * Add a new glview to the parent
@@ -259,9 +255,7 @@ elm_glview_add(Evas_Object *parent)
              return NULL;
           }
      }
-
    return obj;
-
 }
 
 /**
@@ -277,7 +271,6 @@ elm_glview_gl_api_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd = elm_widget_data_get(obj);
-
    if (!wd) return NULL;
 
    return evas_gl_api_get(wd->evasgl);
@@ -305,19 +298,19 @@ elm_glview_mode_set(Evas_Object *obj, Elm_GLView_Mode mode)
 
    // Set the configs
    if (mode & ELM_GLVIEW_ALPHA)
-      cfg.color_format = EVAS_GL_RGBA_8;
+     cfg.color_format = EVAS_GL_RGBA_8;
 
    if (mode & ELM_GLVIEW_DEPTH)
-      cfg.depth_bits = EVAS_GL_DEPTH_BIT_24;
+     cfg.depth_bits = EVAS_GL_DEPTH_BIT_24;
 
    if (mode & ELM_GLVIEW_STENCIL)
-      cfg.stencil_bits = EVAS_GL_STENCIL_BIT_8;
+     cfg.stencil_bits = EVAS_GL_STENCIL_BIT_8;
 
    // Check for Alpha Channel and enable it
    if (mode & ELM_GLVIEW_ALPHA)
-      evas_object_image_alpha_set(wd->glview_image, EINA_TRUE);
+     evas_object_image_alpha_set(wd->glview_image, EINA_TRUE);
    else
-      evas_object_image_alpha_set(wd->glview_image, EINA_FALSE);
+     evas_object_image_alpha_set(wd->glview_image, EINA_FALSE);
 
    wd->mode   = mode;
    wd->config = cfg;
@@ -352,11 +345,11 @@ elm_glview_scale_policy_set(Evas_Object *obj, Elm_GLView_Resize_Policy policy)
      {
       case ELM_GLVIEW_RESIZE_POLICY_RECREATE:
       case ELM_GLVIEW_RESIZE_POLICY_SCALE:
-        wd->scale_policy = policy;
-        return EINA_TRUE;
+         wd->scale_policy = policy;
+         return EINA_TRUE;
       default:
-        ERR("Invalid Scale Policy.\n");
-        return EINA_FALSE;
+         ERR("Invalid Scale Policy.\n");
+         return EINA_FALSE;
      }
    _glview_update_surface(obj);
    elm_glview_changed_set(obj);
@@ -459,10 +452,8 @@ elm_glview_render_func_set(Evas_Object *obj, Elm_GLView_Func func)
    if (!wd) return;
 
    wd->render_func = func;
-
    _set_render_policy_callback(obj);
 }
-
 
 /**
  * Notifies that there has been changes in the GLView.
@@ -476,18 +467,14 @@ elm_glview_changed_set(Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
-
    if (!wd) return;
 
    evas_object_image_pixels_dirty_set(wd->glview_image, EINA_TRUE);
-
    if (wd->render_policy == ELM_GLVIEW_RENDER_POLICY_ALWAYS)
      {
         if (!wd->render_idle_enterer)
-
-           wd->render_idle_enterer = ecore_idle_enterer_before_add((Ecore_Task_Cb)_render_cb, obj);
+          wd->render_idle_enterer = ecore_idle_enterer_before_add((Ecore_Task_Cb)_render_cb, obj);
      }
-
 }
 
 /* vim:set ts=8 sw=3 sts=3 expandtab cino=>5n-2f0^-2{2(0W1st0 :*/
