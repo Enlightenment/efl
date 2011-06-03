@@ -8,14 +8,17 @@
 #define M_PI 3.14159265
 #endif
 
-typedef struct _Gear {
+typedef struct _Gear Gear;
+typedef struct _GLData GLData;
+struct _Gear
+{
    GLfloat *vertices;
    GLuint vbo;
    int count;
-} Gear;
+};
 
 // GL related data here..
-typedef struct _GLData
+struct _GLData
 {
    Evas_GL_API *glapi;
    GLuint       program;
@@ -41,9 +44,7 @@ typedef struct _GLData
 
    GLfloat      proj[16];
    GLfloat      light[3];
-
-} GLData;
-
+};
 
 static void gears_init(GLData *gld);
 static void gears_reshape(GLData *gld, int width, int height);
@@ -75,7 +76,7 @@ vert(GLfloat *p, GLfloat x, GLfloat y, GLfloat z, GLfloat *n)
  */
 static Gear *
 make_gear(GLData *gld, GLfloat inner_radius, GLfloat outer_radius, GLfloat width,
-     GLint teeth, GLfloat tooth_depth)
+          GLint teeth, GLfloat tooth_depth)
 {
    GLint i;
    GLfloat r0, r1, r2;
@@ -89,7 +90,7 @@ make_gear(GLData *gld, GLfloat inner_radius, GLfloat outer_radius, GLfloat width
 
    gear = (Gear*)malloc(sizeof(Gear));
    if (gear == NULL)
-      return NULL;
+     return NULL;
 
    r0 = inner_radius;
    r1 = outer_radius - tooth_depth / 2.0;
@@ -189,7 +190,7 @@ multiply(GLfloat *m, const GLfloat *n)
         row = n + d.quot * 4;
         column = m + d.rem;
         for (j = 0; j < 4; j++)
-           tmp[i] += row[j] * column[j * 4];
+          tmp[i] += row[j] * column[j * 4];
      }
    memcpy(m, &tmp, sizeof tmp);
 }
@@ -268,7 +269,6 @@ gears_draw(GLData *gld)
    draw_gear(gld, gld->gear3, m, -3.1, 4.2, -2 * gld->angle - 25.0, blue);
 }
 
-
 static void render_gears(GLData *gld)
 {
    gears_draw(gld);
@@ -286,13 +286,13 @@ gears_reshape(GLData *gld, int width, int height)
       1.0, 0.0, 0.0, 0.0,
       0.0, 1.0, 0.0, 0.0,
       0.0, 0.0, 0.1, 0.0,
-      0.0, 0.0, 0.0, 1.0,
+      0.0, 0.0, 0.0, 1.0
    };
 
    if (width < height)
-      ar = width;
+     ar = width;
    else
-      ar = height;
+     ar = height;
 
    m[0] = 0.1 * ar / width;
    m[5] = 0.1 * ar / height;
@@ -315,7 +315,7 @@ static const char vertex_shader[] =
    "   rotated_normal = tmp.xyz;\n"
    "}\n";
 
- static const char fragment_shader[] =
+static const char fragment_shader[] =
    //"precision mediump float;\n"
    "uniform vec4 color;\n"
    "uniform vec3 light;\n"
@@ -496,33 +496,33 @@ _key_down(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info)
 static void
 _mouse_down(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
-    GLData *gld = evas_object_data_get(obj, "gld");
-    gld->mouse_down = 1;
+   GLData *gld = evas_object_data_get(obj, "gld");
+   gld->mouse_down = 1;
 }
 
 static void
 _mouse_move(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
-    Evas_Event_Mouse_Move *ev;
-    ev = (Evas_Event_Mouse_Move *)event_info;
-    GLData *gld = evas_object_data_get(obj, "gld");
-    float dx = 0, dy = 0;
+   Evas_Event_Mouse_Move *ev;
+   ev = (Evas_Event_Mouse_Move *)event_info;
+   GLData *gld = evas_object_data_get(obj, "gld");
+   float dx = 0, dy = 0;
 
-    if (gld->mouse_down)
-      {
-         dx = ev->cur.canvas.x - ev->prev.canvas.x;
-         dy = ev->cur.canvas.y - ev->prev.canvas.y;
+   if (gld->mouse_down)
+     {
+        dx = ev->cur.canvas.x - ev->prev.canvas.x;
+        dy = ev->cur.canvas.y - ev->prev.canvas.y;
 
-         gld->view_roty += -1.0 * dx;
-         gld->view_rotx += -1.0 * dy;
-      }
+        gld->view_roty += -1.0 * dx;
+        gld->view_rotx += -1.0 * dy;
+     }
 }
 
 static void
 _mouse_up(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
-    GLData *gld = evas_object_data_get(obj, "gld");
-    gld->mouse_down = 0;
+   GLData *gld = evas_object_data_get(obj, "gld");
+   gld->mouse_down = 0;
 }
 
 
