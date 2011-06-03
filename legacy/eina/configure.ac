@@ -482,6 +482,7 @@ AC_ARG_WITH([iconv-link],
    [
     LIBS="$withval $LIBS"
     have_iconv="yes"
+    iconv_libs=$withval
    ])
 
 AC_MSG_CHECKING(for explicit iconv link options)
@@ -529,7 +530,10 @@ iconv_t ic;
 size_t count;
 count = iconv(ic, NULL, NULL, NULL, NULL);
              ]])],
-         [have_iconv="yes"],
+         [
+          have_iconv="yes"
+          iconv_libs="-liconv"
+         ],
          [
           have_iconv="no"
           LIBS=${LIBS_save}
@@ -553,7 +557,10 @@ count = iconv(ic, NULL, NULL, NULL, NULL);
 iconv_t ic;
 size_t count = iconv(ic, NULL, NULL, NULL, NULL);
              ]])],
-         [have_iconv="yes"],
+         [
+          have_iconv="yes"
+          iconv_libs="-liconv_plug"
+         ],
          [
           have_iconv="no"
           LIBS=${LIBS_save}
@@ -562,6 +569,8 @@ size_t count = iconv(ic, NULL, NULL, NULL, NULL);
       AC_MSG_RESULT([${have_iconv}])
    fi
 fi
+
+AC_SUBST([iconv_libs])
 
 if test "x${have_iconv}" = "xyes" ; then
    AC_DEFINE([HAVE_ICONV], [1], [Set to 1 if iconv library is installed])

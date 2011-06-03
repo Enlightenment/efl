@@ -101,3 +101,8 @@
 2011-05-31  Cedric Bail
 
 	* Fix eina_hash_set to handle data == NULL like eina_hash_del.
+
+2011-06-3  Vincent Torri
+
+        * Fix static linking with eina (iconv could potentially not be
+	passed to the linker)
