@@ -4,23 +4,26 @@ evas may run from its generic loader module.
 Generic loaders currently provided:
 
   XCF (.xcf .xcf.gz)
-  PDF
-    (use -key option to specific what page to get and load options for size
-     and use poppler and/or mupdf - look at epdf)
-  PS
-    (use -key option to specific what page to get and load options for size
-     and use ghostscript (libgs) to render etc.)
 
-Wanted:
+  PDF (using poppler)
+    use -key option to specific what page to get and load options for size
+    Should we add mupdf ?
 
-  RAW
-    (libopenraw1 ??)
+  PS (using libspectre)
+    use -key option to specific what page to get and load options for size
+    Should we use directly libgs ?
+
+  RAW (using libraw)
+
+  MPG/AVI/OGV/MOV/MKV/WMV etc. (using Gstreamer)
+    Should we add libxine and vlc ?
 
 Possible fun ones:
 
-  MPG/AVI/OGV/MOV/MKV/WMV etc.
-    (use gstreamer and/or libxine or libvlc and snap one frame from the
-     middle somewhere)
+  DVI (using DVIlib, see edvi)
+
+  DJVU (using libdjvu)
+
   PPT/PPTX
     (beats me how u can render a page from these without a whole
      office impl - but worth a try? libopenoffice/libllibreoffice if
