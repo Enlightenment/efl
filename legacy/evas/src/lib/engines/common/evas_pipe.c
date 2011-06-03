@@ -585,7 +585,7 @@ evas_common_frameq_schedule_flush_time(int frameq_sz, int thread_no,
    long long current_time = 0LL;
    long long current_ready_interval = 0LL;
    long long theshold_time = SATISFACTION_THRESHOLD * 1000LL;	// ms -> usec
-   long long reset_time_interval;
+   long long reset_time_interval = 0LL;
    long long sleep_time = 0LL;
    long long saved_ready_time, saved_ready_interval;
    long long time_slept = 0LL;
