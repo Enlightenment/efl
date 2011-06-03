@@ -66,8 +66,8 @@ PKG_CHECK_MODULES([SPECTRE], [libspectre], [have_ps="yes"], [have_ps="no"])
 
 PKG_CHECK_MODULES([LIBRAW], [libraw], [have_raw="yes"], [have_raw="no"])
 
-GST_REQS=0.10.2
-GSTPLUG_REQS=0.10.1
+GST_REQS=0.10.13
+GSTPLUG_REQS=0.10.13
 GST_MAJORMINOR=0.10
 
 PKG_CHECK_MODULES([GSTREAMER],
