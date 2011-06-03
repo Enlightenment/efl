@@ -104,6 +104,7 @@ elm_transit.c \
 elm_util.c \
 elm_widget.c \
 elm_win.c \
+elm_glview.c \
 els_box.c \
 els_box.h \
 els_cursor.c \

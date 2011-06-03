@@ -143,6 +143,7 @@ Pants
 #include <Eina.h>
 #include <Eet.h>
 #include <Evas.h>
+#include <Evas_GL.h>
 #include <Ecore.h>
 #include <Ecore_Evas.h>
 #include <Ecore_File.h>
@@ -777,6 +778,44 @@ extern "C" {
    /* smart callbacks called:
     * "clicked" - the user clicked the image
     */
+
+   /* glview */
+   typedef void (*Elm_GLView_Func)(Evas_Object *obj);
+
+   typedef enum _Elm_GLView_Mode
+     {
+        ELM_GLVIEW_ALPHA   = 1,
+        ELM_GLVIEW_DEPTH   = 2,
+        ELM_GLVIEW_STENCIL = 4  
+     } Elm_GLView_Mode; 
+
+   /**
+    * Defines a policy for the glview resizing. 
+    * 
+    * @note Default is ELM_GLVIEW_RESIZE_POLICY_RECREATE
+    */
+   typedef enum _Elm_GLView_Resize_Policy
+     {
+        ELM_GLVIEW_RESIZE_POLICY_RECREATE = 1,      /**< Resize the internal surface along with the image */
+        ELM_GLVIEW_RESIZE_POLICY_SCALE    = 2       /**< Only reize the internal image and not the surface */
+     } Elm_GLView_Resize_Policy;
+
+   typedef enum _Elm_GLView_Render_Policy
+     {
+        ELM_GLVIEW_RENDER_POLICY_ON_DEMAND = 1,     /**< Render only when there is a need for redrawing */
+        ELM_GLVIEW_RENDER_POLICY_ALWAYS    = 2      /**< Render always even when it is not visible */
+     } Elm_GLView_Render_Policy;
+
+
+   EAPI Evas_Object     *elm_glview_add(Evas_Object *parent) EINA_ARG_NONNULL(1);
+   EAPI void             elm_glview_size_set(Evas_Object *obj, Evas_Coord width, Evas_Coord height) EINA_ARG_NONNULL(1);
+   EAPI void             elm_glview_size_get(Evas_Object *obj, Evas_Coord *width, Evas_Coord *height) EINA_ARG_NONNULL(1);
+   EAPI Evas_GL_API     *elm_glview_gl_api_get(Evas_Object *obj) EINA_ARG_NONNULL(1);
+   EAPI Eina_Bool        elm_glview_mode_set(Evas_Object *obj, Elm_GLView_Mode mode) EINA_ARG_NONNULL(1);
+   EAPI Eina_Bool        elm_glview_scale_policy_set(Evas_Object *obj, Elm_GLView_Resize_Policy policy) EINA_ARG_NONNULL(1);
+   EAPI Eina_Bool        elm_glview_render_policy_set(Evas_Object *obj, Elm_GLView_Render_Policy policy) EINA_ARG_NONNULL(1);
+   EAPI void             elm_glview_render_func_set(Evas_Object *obj, Elm_GLView_Func func);
+   EAPI void             elm_glview_changed_set(Evas_Object *obj) EINA_ARG_NONNULL(1);
 
    /* box */
    typedef struct _Elm_Box_Transition Elm_Box_Transition;

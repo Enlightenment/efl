@@ -103,7 +103,8 @@ test_weather.c \
 test_win_inline.c \
 test_win_state.c \
 test_grid.c \
-test_flip_page.c
+test_flip_page.c \
+test_glview.c
 
 if HAVE_EIO
 elementary_test_SOURCES += test_eio.c
