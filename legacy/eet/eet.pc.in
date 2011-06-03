@@ -8,6 +8,6 @@ Description: Library for speedy data storage, retrieval, and compression
 @pkgconfig_requires_private@: @requirement_eet@
 Version: @VERSION@
 Libs: -L${libdir} -leet
-Libs.private: @EET_LIBS@ @EFL_FNMATCH_LIBS@ @LIBGCRYPT_LIBS@ @EFL_PTHREAD_LIBS@ -ljpeg -lz -lm
+Libs.private: @EET_LIBS@ @EFL_FNMATCH_LIBS@ @LIBGCRYPT_LIBS@ -ljpeg -lz -lm
 Cflags: -I${includedir}/eet-@VMAJ@
 Cflags.private: @LIBGCRYPT_CFLAGS@
