@@ -47,6 +47,10 @@ ecore_file_init()
 {
    if (++_ecore_file_init_count != 1)
      return _ecore_file_init_count;
+
+   if (!ecore_init())
+     return --_ecore_file_init_count;
+
    _ecore_file_log_dom = eina_log_domain_register
      ("ecore_file", ECORE_FILE_DEFAULT_LOG_COLOR);
    if(_ecore_file_log_dom < 0)
@@ -99,8 +103,12 @@ ecore_file_shutdown()
    ecore_file_download_shutdown();
    ecore_file_monitor_shutdown();
    ecore_file_path_shutdown();
+
    eina_log_domain_unregister(_ecore_file_log_dom);
    _ecore_file_log_dom = -1;
+
+   ecore_shutdown();
+
    return _ecore_file_init_count;
 }
 
