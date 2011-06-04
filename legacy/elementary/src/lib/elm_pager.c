@@ -260,13 +260,19 @@ _signal_hide_finished(void *data, Evas_Object *obj __UNUSED__, const char *emiss
 {
    Item *it = data;
    Evas_Object *obj2 = it->obj;
-   evas_object_hide(it->base);
-   edje_object_signal_emit(it->base, "elm,action,reset", "elm");
-   evas_object_smart_callback_call(obj2, SIG_HIDE_FINISHED, it->content);
-   edje_object_message_signal_process(it->base);
-   evas_object_hide(it->content);
-   if (it->popme) evas_object_del(it->content);
-   _sizing_eval(obj2);
+   Evas_Object *content = it->content;
+
+   if (it->popme)
+     evas_object_del(content);
+   else
+     {
+        evas_object_hide(it->base);
+        edje_object_signal_emit(it->base, "elm,action,reset", "elm");
+        edje_object_message_signal_process(it->base);
+        evas_object_hide(content);
+     }
+    evas_object_smart_callback_call(obj2, SIG_HIDE_FINISHED, content);
+    _sizing_eval(obj2);
 }
 
 /**
