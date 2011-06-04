@@ -21,6 +21,9 @@ evas_image_loader_gst_CFLAGS =
 evas_image_loader_gst_LDADD = @GSTREAMER_LIBS@ @EINA_LIBS@ @SHM_OPEN_LIBS@
 evas_image_loader_gst_LDFLAGS =
 
+## good list of extensions:
+## http://www.fileinfo.com/filetypes/video
+## should check which ones gst does support and make sure they are here
 install-data-hook:
 	ln -sf evas_image_loader.gst $(DESTDIR)$(bindir)/evas_image_loader.264
 	ln -sf evas_image_loader.gst $(DESTDIR)$(bindir)/evas_image_loader.3g2
@@ -49,6 +52,7 @@ install-data-hook:
 	ln -sf evas_image_loader.gst $(DESTDIR)$(bindir)/evas_image_loader.ogv
 	ln -sf evas_image_loader.gst $(DESTDIR)$(bindir)/evas_image_loader.rm
 	ln -sf evas_image_loader.gst $(DESTDIR)$(bindir)/evas_image_loader.swf
+	ln -sf evas_image_loader.gst $(DESTDIR)$(bindir)/evas_image_loader.ts
 	ln -sf evas_image_loader.gst $(DESTDIR)$(bindir)/evas_image_loader.webm
 	ln -sf evas_image_loader.gst $(DESTDIR)$(bindir)/evas_image_loader.weba
 	ln -sf evas_image_loader.gst $(DESTDIR)$(bindir)/evas_image_loader.wmv
