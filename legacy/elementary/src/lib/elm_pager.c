@@ -49,7 +49,7 @@ static void _theme_hook(Evas_Object *obj);
 static void _sizing_eval(Evas_Object *obj);
 static void _changed_size_hints(void *data, Evas *e, Evas_Object *obj, void *event_info);
 static void _sub_del(void *data, Evas_Object *obj, void *event_info);
-static Item *_item_get(Evas_Object *obj, Evas_Object *content);
+static Eina_List *_item_get(Evas_Object *obj, Evas_Object *content);
 
 static const char SIG_HIDE_FINISHED[] = "hide,finished";
 
@@ -97,7 +97,7 @@ _theme_hook(Evas_Object *obj)
    _sizing_eval(obj);
 }
 
-static Item *
+static Eina_List *
 _item_get(Evas_Object *obj, Evas_Object *content)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -108,7 +108,7 @@ _item_get(Evas_Object *obj, Evas_Object *content)
    EINA_LIST_FOREACH(wd->stack, l, it)
      {
         if (it->content == content)
-          return it;
+          return l;
      }
 
    return NULL;
@@ -231,19 +231,16 @@ _sub_del(void *data, Evas_Object *obj __UNUSED__, void *event_info)
    Eina_List *l;
    Item *it;
    if (!wd) return;
-   EINA_LIST_FOREACH(wd->stack, l, it)
-     {
-        if (it->content == sub)
-          {
-             wd->stack = eina_list_remove_list(wd->stack, l);
-             evas_object_event_callback_del_full
-                (sub, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _changed_size_hints, it);
-             evas_object_del(it->base);
-             _eval_top(it->obj);
-             free(it);
-             return;
-          }
-     }
+   l = _item_get(obj, sub);
+   if (!l) return;
+   it = l->data;
+
+   wd->stack = eina_list_remove_list(wd->stack, l);
+   evas_object_event_callback_del_full
+      (sub, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _changed_size_hints, it);
+   evas_object_del(it->base);
+   _eval_top(it->obj);
+   free(it);
 }
 
 static void
@@ -438,16 +435,13 @@ elm_pager_content_promote(Evas_Object *obj, Evas_Object *content)
    Eina_List *l;
    Item *it;
    if (!wd) return;
-   EINA_LIST_FOREACH(wd->stack, l, it)
-     {
-        if (it->content == content)
-          {
-             wd->stack = eina_list_remove_list(wd->stack, l);
-             wd->stack = eina_list_append(wd->stack, it);
-             _eval_top(obj);
-             return;
-          }
-     }
+   l = _item_get(obj, content);
+   if (!l) return;
+
+   it = l->data;
+   wd->stack = eina_list_remove_list(wd->stack, l);
+   wd->stack = eina_list_append(wd->stack, it);
+   _eval_top(obj);
 }
 
 /**
