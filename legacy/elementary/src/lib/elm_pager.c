@@ -49,6 +49,7 @@ static void _theme_hook(Evas_Object *obj);
 static void _sizing_eval(Evas_Object *obj);
 static void _changed_size_hints(void *data, Evas *e, Evas_Object *obj, void *event_info);
 static void _sub_del(void *data, Evas_Object *obj, void *event_info);
+static Item *_item_get(Evas_Object *obj, Evas_Object *content);
 
 static const char SIG_HIDE_FINISHED[] = "hide,finished";
 
@@ -94,6 +95,23 @@ _theme_hook(Evas_Object *obj)
                               _elm_config->scale);
      }
    _sizing_eval(obj);
+}
+
+static Item *
+_item_get(Evas_Object *obj, Evas_Object *content)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   Item *it;
+   Eina_List *l;
+   if (!wd) return;
+
+   EINA_LIST_FOREACH(wd->stack, l, it)
+     {
+        if (it->content == content)
+          return it;
+     }
+
+   return NULL;
 }
 
 static Eina_Bool
@@ -311,6 +329,7 @@ elm_pager_add(Evas_Object *parent)
  * @param content The object to push
  *
  * @ingroup Pager
+ * @warning It will be failed if the content exists on the stack already. 
  */
 EAPI void
 elm_pager_content_push(Evas_Object *obj, Evas_Object *content)
@@ -320,6 +339,9 @@ elm_pager_content_push(Evas_Object *obj, Evas_Object *content)
    Item *it = ELM_NEW(Item);
    Evas_Coord x, y, w, h;
    if (!wd) return;
+
+   if (_item_get(obj, content)) return;
+
    if (!it) return;
    it->obj = obj;
    it->content = content;
