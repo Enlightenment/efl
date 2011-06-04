@@ -1543,6 +1543,43 @@ _edje_part_recalc_single(Edje *ed,
      _edje_part_recalc_single_textblock(sc, ed, ep, (Edje_Part_Description_Text*) chosen_desc, params, &minw, &minh, &maxw, &maxh);
    else if (ep->part->type == EDJE_PART_TYPE_TEXT)
      _edje_part_recalc_single_text(sc, ed, ep, (Edje_Part_Description_Text*) desc, (Edje_Part_Description_Text*) chosen_desc, params, &minw, &minh, &maxw, &maxh);
+   
+   if ((ep->part->type == EDJE_PART_TYPE_TABLE) &&
+       (((((Edje_Part_Description_Table *)chosen_desc)->table.min.h) || 
+         (((Edje_Part_Description_Table *)chosen_desc)->table.min.v))))
+     {
+        Evas_Coord lminw = 0, lminh = 0;
+        
+        evas_object_smart_need_recalculate_set(ep->object, 1);
+        evas_object_smart_calculate(ep->object);
+        evas_object_size_hint_min_get(ep->object, &lminw, &lminh);
+        if (((Edje_Part_Description_Table *)chosen_desc)->table.min.h)
+          {
+             if (lminw > minw) minw = lminw;
+          }
+        if (((Edje_Part_Description_Table *)chosen_desc)->table.min.v)
+          {
+             if (lminh > minh) minh = lminh;
+          }
+     }
+   else if ((ep->part->type == EDJE_PART_TYPE_BOX) &&
+            ((((Edje_Part_Description_Box *)chosen_desc)->box.min.h) || 
+                (((Edje_Part_Description_Box *)chosen_desc)->box.min.v)))
+     {
+        Evas_Coord lminw = 0, lminh = 0;
+        
+        evas_object_smart_need_recalculate_set(ep->object, 1);
+        evas_object_smart_calculate(ep->object);
+        evas_object_size_hint_min_get(ep->object, &lminw, &lminh);
+        if (((Edje_Part_Description_Box *)chosen_desc)->box.min.h)
+          {
+             if (lminw > minw) minw = lminw;
+          }
+        if (((Edje_Part_Description_Box *)chosen_desc)->box.min.v)
+          {
+             if (lminh > minh) minh = lminh;
+          }
+     }
 
    /* remember what our size is BEFORE we go limit it */
    params->req.x = params->x;

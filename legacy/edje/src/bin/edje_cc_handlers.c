@@ -214,6 +214,7 @@ static void st_collections_group_parts_part_description_box_min(void);
 static void st_collections_group_parts_part_description_table_homogeneous(void);
 static void st_collections_group_parts_part_description_table_align(void);
 static void st_collections_group_parts_part_description_table_padding(void);
+static void st_collections_group_parts_part_description_table_min(void);
 static void st_collections_group_parts_part_description_map_perspective(void);
 static void st_collections_group_parts_part_description_map_light(void);
 static void st_collections_group_parts_part_description_map_rotation_center(void);
@@ -470,6 +471,7 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.parts.part.description.table.homogeneous", st_collections_group_parts_part_description_table_homogeneous},
      {"collections.group.parts.part.description.table.align", st_collections_group_parts_part_description_table_align},
      {"collections.group.parts.part.description.table.padding", st_collections_group_parts_part_description_table_padding},
+     {"collections.group.parts.part.description.table.min", st_collections_group_parts_part_description_table_min},
      {"collections.group.parts.part.description.map.perspective", st_collections_group_parts_part_description_map_perspective},
      {"collections.group.parts.part.description.map.light", st_collections_group_parts_part_description_map_light},
      {"collections.group.parts.part.description.map.rotation.center", st_collections_group_parts_part_description_map_rotation_center},
@@ -6106,6 +6108,7 @@ st_collections_group_parts_part_description_box_min(void)
                     homogeneous: TABLE;
                     padding: 0 2;
                     align: 0.5 0.5;
+                    min: 0 0;
                 }
                 ..
             }
@@ -6142,6 +6145,16 @@ st_collections_group_parts_part_description_box_min(void)
         [horizontal] [vertical]
     @effect
         Sets the space between cells in pixels. Defaults to 0 0.
+    @endproperty
+
+    @property
+        min
+    @parameters
+        [horizontal] [vertical]
+    @effect
+        When any of the parameters is enabled (1) it forces the minimum size of
+        the table to be equal to the minimum size of the items. The default
+        value is "0 0".
     @endproperty
 */
 static void st_collections_group_parts_part_description_table_homogeneous(void)
@@ -6225,6 +6238,32 @@ static void st_collections_group_parts_part_description_table_padding(void)
    ed->table.padding.y = parse_int_range(1, 0, 0x7fffffff);
 }
 
+static void
+st_collections_group_parts_part_description_table_min(void)
+{
+   Edje_Part_Collection *pc;
+   Edje_Part *ep;
+   Edje_Part_Description_Table *ed;
+
+   check_arg_count(2);
+
+   pc = eina_list_data_get(eina_list_last(edje_collections));
+   ep = pc->parts[pc->parts_count - 1];
+
+   if (ep->type != EDJE_PART_TYPE_TABLE)
+     {
+	ERR("%s: Error. parse error %s:%i. "
+	    "box attributes in non-TABLE part.",
+	    progname, file_in, line - 1);
+	exit(-1);
+     }
+
+   ed = (Edje_Part_Description_Table*) ep->default_desc;
+   if (ep->other.desc_count) ed = (Edje_Part_Description_Table*)  ep->other.desc[ep->other.desc_count - 1];
+
+   ed->table.min.h = parse_bool(0);
+   ed->table.min.v = parse_bool(1);
+}
 
 /**
    @edcsection{description_map,Map state description sub blocks}

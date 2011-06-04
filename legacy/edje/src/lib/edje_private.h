@@ -887,7 +887,7 @@ struct _Edje_Part_Description_Spec_Box
       int x, y;
    } padding;
    struct {
-      Eina_Bool h, v;
+      unsigned char h, v;
    } min;
 };
 
@@ -898,6 +898,9 @@ struct _Edje_Part_Description_Spec_Table
    struct {
       int x, y;
    } padding;
+   struct {
+      unsigned char h, v;
+   } min;
 };
 
 struct _Edje_Part_Description_Image
