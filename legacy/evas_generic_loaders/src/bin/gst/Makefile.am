@@ -41,6 +41,7 @@ install-data-hook:
 	ln -sf evas_image_loader.gst $(DESTDIR)$(bindir)/evas_image_loader.mkv
 	ln -sf evas_image_loader.gst $(DESTDIR)$(bindir)/evas_image_loader.mov
 	ln -sf evas_image_loader.gst $(DESTDIR)$(bindir)/evas_image_loader.mp4
+	ln -sf evas_image_loader.gst $(DESTDIR)$(bindir)/evas_image_loader.m4v
 	ln -sf evas_image_loader.gst $(DESTDIR)$(bindir)/evas_image_loader.mpg
 	ln -sf evas_image_loader.gst $(DESTDIR)$(bindir)/evas_image_loader.mp2
 	ln -sf evas_image_loader.gst $(DESTDIR)$(bindir)/evas_image_loader.mpe
