@@ -241,9 +241,9 @@ _sub_del(void *data, Evas_Object *obj __UNUSED__, void *event_info)
    wd->stack = eina_list_remove_list(wd->stack, l);
    evas_object_event_callback_del_full
       (sub, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _changed_size_hints, it);
-   //TODO: Since the base and content is sub object of pager, 
+   //TODO: Since the base and content is sub object of pager,
    //this function (and _item_get) will be called unnecessary.
-   //consider use EVAS_CALLBACK_DEL instead of sub_del callback 
+   //consider use EVAS_CALLBACK_DEL instead of sub_del callback
    evas_object_del(it->base);
    _eval_top(data);
    free(it);
@@ -344,7 +344,7 @@ elm_pager_add(Evas_Object *parent)
  * @param content The object to push
  *
  * @ingroup Pager
- * @warning It will be failed if the content exists on the stack already. 
+ * @warning It will be failed if the content exists on the stack already.
  */
 EAPI void
 elm_pager_content_push(Evas_Object *obj, Evas_Object *content)
