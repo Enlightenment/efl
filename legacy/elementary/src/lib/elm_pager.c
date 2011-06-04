@@ -176,7 +176,10 @@ _eval_top(Evas_Object *obj)
           {
              o = wd->top->base;
              if (wd->top->popme)
-               edje_object_signal_emit(o, "elm,action,pop", "elm");
+               {
+                  edje_object_signal_emit(o, "elm,action,pop", "elm");
+                  wd->stack = eina_list_remove(wd->stack, wd->top);
+               }
              else
                edje_object_signal_emit(o, "elm,action,hide", "elm");
              onhide = edje_object_data_get(o, "onhide");
@@ -238,8 +241,11 @@ _sub_del(void *data, Evas_Object *obj __UNUSED__, void *event_info)
    wd->stack = eina_list_remove_list(wd->stack, l);
    evas_object_event_callback_del_full
       (sub, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _changed_size_hints, it);
+   //TODO: Since the base and content is sub object of pager, 
+   //this function (and _item_get) will be called unnecessary.
+   //consider use EVAS_CALLBACK_DEL instead of sub_del callback 
    evas_object_del(it->base);
-   _eval_top(it->obj);
+   _eval_top(data);
    free(it);
 }
 
@@ -263,7 +269,13 @@ _signal_hide_finished(void *data, Evas_Object *obj __UNUSED__, const char *emiss
    Evas_Object *content = it->content;
 
    if (it->popme)
-     evas_object_del(content);
+     {
+        evas_object_del(it->base);
+        evas_object_event_callback_del_full
+           (content, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _changed_size_hints, it);
+        evas_object_del(content);
+        free(it);
+     }
    else
      {
         evas_object_hide(it->base);
@@ -406,6 +418,7 @@ elm_pager_content_pop(Evas_Object *obj)
              wd->top = it;
              o = wd->top->base;
              edje_object_signal_emit(o, "elm,action,pop", "elm");
+             wd->stack = eina_list_remove(wd->stack, it);
              onhide = edje_object_data_get(o, "onhide");
              if (onhide)
                {
