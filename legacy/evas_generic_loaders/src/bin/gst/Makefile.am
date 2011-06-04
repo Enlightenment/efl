@@ -34,26 +34,24 @@ install-data-hook:
 	ln -sf evas_image_loader.gst $(DESTDIR)$(bindir)/evas_image_loader.3p2
 	ln -sf evas_image_loader.gst $(DESTDIR)$(bindir)/evas_image_loader.asf
 	ln -sf evas_image_loader.gst $(DESTDIR)$(bindir)/evas_image_loader.avi
-	ln -sf evas_image_loader.gst $(DESTDIR)$(bindir)/evas_image_loader.bdmv
 	ln -sf evas_image_loader.gst $(DESTDIR)$(bindir)/evas_image_loader.bdm
+	ln -sf evas_image_loader.gst $(DESTDIR)$(bindir)/evas_image_loader.bdmv
 	ln -sf evas_image_loader.gst $(DESTDIR)$(bindir)/evas_image_loader.clpi
 	ln -sf evas_image_loader.gst $(DESTDIR)$(bindir)/evas_image_loader.cpi
 	ln -sf evas_image_loader.gst $(DESTDIR)$(bindir)/evas_image_loader.fla
 	ln -sf evas_image_loader.gst $(DESTDIR)$(bindir)/evas_image_loader.flv
 	ln -sf evas_image_loader.gst $(DESTDIR)$(bindir)/evas_image_loader.m1v
+	ln -sf evas_image_loader.gst $(DESTDIR)$(bindir)/evas_image_loader.m2t
 	ln -sf evas_image_loader.gst $(DESTDIR)$(bindir)/evas_image_loader.m2v
 	ln -sf evas_image_loader.gst $(DESTDIR)$(bindir)/evas_image_loader.m4v
 	ln -sf evas_image_loader.gst $(DESTDIR)$(bindir)/evas_image_loader.mkv
 	ln -sf evas_image_loader.gst $(DESTDIR)$(bindir)/evas_image_loader.mov
-	ln -sf evas_image_loader.gst $(DESTDIR)$(bindir)/evas_image_loader.mp4
-	ln -sf evas_image_loader.gst $(DESTDIR)$(bindir)/evas_image_loader.m2t
-	ln -sf evas_image_loader.gst $(DESTDIR)$(bindir)/evas_image_loader.mpl
-	ln -sf evas_image_loader.gst $(DESTDIR)$(bindir)/evas_image_loader.mpg
 	ln -sf evas_image_loader.gst $(DESTDIR)$(bindir)/evas_image_loader.mp2
 	ln -sf evas_image_loader.gst $(DESTDIR)$(bindir)/evas_image_loader.mp2ts
+	ln -sf evas_image_loader.gst $(DESTDIR)$(bindir)/evas_image_loader.mp4
 	ln -sf evas_image_loader.gst $(DESTDIR)$(bindir)/evas_image_loader.mpe
 	ln -sf evas_image_loader.gst $(DESTDIR)$(bindir)/evas_image_loader.mpeg
-	ln -sf evas_image_loader.gst $(DESTDIR)$(bindir)/evas_image_loader.mpls
+	ln -sf evas_image_loader.gst $(DESTDIR)$(bindir)/evas_image_loader.mpg
 	ln -sf evas_image_loader.gst $(DESTDIR)$(bindir)/evas_image_loader.mpl
 	ln -sf evas_image_loader.gst $(DESTDIR)$(bindir)/evas_image_loader.mpls
 	ln -sf evas_image_loader.gst $(DESTDIR)$(bindir)/evas_image_loader.mts
