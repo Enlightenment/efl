@@ -110,6 +110,11 @@ SUBDIRS += ../modules/savers/eet ../modules/loaders/eet
 EVAS_STATIC_MODULE += ../modules/savers/eet/libevas_saver_eet.la ../modules/loaders/eet/libevas_loader_eet.la
 EVAS_STATIC_LIBADD += @evas_image_loader_eet_libs@
 endif
+if EVAS_STATIC_BUILD_GENERIC
+SUBDIRS += ../modules/loaders/generic
+EVAS_STATIC_MODULE += ../modules/loaders/generic/libevas_loader_generic.la
+EVAS_STATIC_LIBADD += @evas_image_loader_generic_libs@
+endif
 if EVAS_STATIC_BUILD_GIF
 SUBDIRS += ../modules/loaders/gif
 EVAS_STATIC_MODULE += ../modules/loaders/gif/libevas_loader_gif.la
@@ -139,6 +144,11 @@ SUBDIRS += ../modules/savers/png ../modules/loaders/png
 EVAS_STATIC_MODULE += ../modules/savers/png/libevas_saver_png.la ../modules/loaders/png/libevas_loader_png.la
 EVAS_STATIC_LIBADD += @evas_image_loader_png_libs@
 endif
+if EVAS_STATIC_BUILD_PSD
+SUBDIRS += ../modules/loaders/psd
+EVAS_STATIC_MODULE += ../modules/loaders/psd/libevas_loader_psd.la
+EVAS_STATIC_LIBADD += @evas_image_loader_psd_libs@
+endif
 if EVAS_STATIC_BUILD_SVG
 SUBDIRS += ../modules/loaders/svg
 EVAS_STATIC_MODULE += ../modules/loaders/svg/libevas_loader_svg.la
@@ -163,11 +173,6 @@ if EVAS_STATIC_BUILD_XPM
 SUBDIRS += ../modules/loaders/xpm
 EVAS_STATIC_MODULE += ../modules/loaders/xpm/libevas_loader_xpm.la
 EVAS_STATIC_LIBADD += @evas_image_loader_xpm_libs@
-endif
-if EVAS_STATIC_BUILD_PSD
-SUBDIRS += ../modules/loaders/psd
-EVAS_STATIC_MODULE += ../modules/loaders/psd/libevas_loader_psd.la
-EVAS_STATIC_LIBADD += @evas_image_loader_psd_libs@
 endif
 
 AM_CPPFLAGS = \
