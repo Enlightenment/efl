@@ -333,12 +333,13 @@ elm_pager_content_push(Evas_Object *obj, Evas_Object *content)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
-   Item *it = ELM_NEW(Item);
    Evas_Coord x, y, w, h;
-   if (!wd) return;
+   Item *it;
 
+   if ((!wd) || (!content)) return;
    if (_item_get(obj, content)) return;
 
+   it = ELM_NEW(Item);
    if (!it) return;
    it->obj = obj;
    it->content = content;
