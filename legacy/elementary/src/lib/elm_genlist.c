@@ -214,7 +214,7 @@ struct _Widget_Data
    Evas_Coord        anchor_y, reorder_start_y;
    Elm_List_Mode     mode;
    Ecore_Timer      *multi_timer, *scr_hold_timer;
-   Ecore_Animator   *item_moving_effect_timer;
+   Ecore_Animator   *reorder_move_animator;
    const char       *mode_type;
    unsigned int      start_time;
    Evas_Coord        prev_x, prev_y, prev_mx, prev_my;
@@ -372,7 +372,8 @@ static void      _theme_hook(Evas_Object *obj);
 static void      _show_region_hook(void        *data,
                                    Evas_Object *obj);
 static void      _sizing_eval(Evas_Object *obj);
-static void      _item_unrealize(Elm_Genlist_Item *it, Eina_Bool calc);
+static void      _item_unrealize(Elm_Genlist_Item *it,
+                                 Eina_Bool         calc);
 static void      _item_block_unrealize(Item_Block *itb);
 static void      _calc_job(void *data);
 static void      _on_focus_hook(void        *data,
@@ -390,14 +391,19 @@ static void      _signal_emit_hook(Evas_Object *obj,
                                    const char *source);
 static Eina_Bool _deselect_all_items(Widget_Data *wd);
 static void      _pan_calculate(Evas_Object *obj);
-static void      _item_position(Elm_Genlist_Item *it, Evas_Object *obj, Evas_Coord it_x, Evas_Coord it_y);
+static void      _item_position(Elm_Genlist_Item *it,
+                                Evas_Object      *obj,
+                                Evas_Coord        it_x,
+                                Evas_Coord        it_y);
 static void      _mode_item_realize(Elm_Genlist_Item *it);
 static void      _mode_item_unrealize(Elm_Genlist_Item *it);
 static void      _item_mode_set(Elm_Genlist_Item *it);
 static void      _item_mode_unset(Widget_Data *wd);
 static void      _group_items_recalc(void *data);
-static void      _item_move_after(Elm_Genlist_Item *it, Elm_Genlist_Item *after);
-static void      _item_move_before(Elm_Genlist_Item *it, Elm_Genlist_Item *before);
+static void      _item_move_after(Elm_Genlist_Item *it,
+                                  Elm_Genlist_Item *after);
+static void      _item_move_before(Elm_Genlist_Item *it,
+                                   Elm_Genlist_Item *before);
 
 static Evas_Smart_Class _pan_sc = EVAS_SMART_CLASS_INIT_VERSION;
 
@@ -2032,7 +2038,9 @@ _item_realize(Elm_Genlist_Item *it,
         _elm_genlist_item_state_update(it, itc);
      }
 
-   if ((calc) && (it->wd->homogeneous) && ((it->wd->item_width) || ((it->wd->item_width) && (it->wd->group_item_width))))
+   if ((calc) && (it->wd->homogeneous) &&
+       ((it->wd->item_width) ||
+        ((it->wd->item_width) && (it->wd->group_item_width))))
      {
         /* homogenous genlist shortcut */
         if (!it->mincalcd)
@@ -2106,18 +2114,21 @@ _item_realize(Elm_Genlist_Item *it,
    if (itc) _item_cache_free(itc);
    evas_event_thaw(evas_object_evas_get(it->wd->obj));
    evas_event_thaw_eval(evas_object_evas_get(it->wd->obj));
-   if (!calc) evas_object_smart_callback_call(it->base.widget, SIG_REALIZED, it);
+   if (!calc)
+     evas_object_smart_callback_call(it->base.widget, SIG_REALIZED, it);
 }
 
 static void
-_item_unrealize(Elm_Genlist_Item *it, Eina_Bool calc)
+_item_unrealize(Elm_Genlist_Item *it,
+                Eina_Bool         calc)
 {
    Evas_Object *icon;
 
    if (!it->realized) return;
    if (it->wd->reorder_it == it) return;
    evas_event_freeze(evas_object_evas_get(it->wd->obj));
-   if (!calc) evas_object_smart_callback_call(it->base.widget, SIG_UNREALIZED, it);
+   if (!calc)
+     evas_object_smart_callback_call(it->base.widget, SIG_UNREALIZED, it);
    if (it->long_timer)
      {
         ecore_timer_del(it->long_timer);
@@ -2132,8 +2143,11 @@ _item_unrealize(Elm_Genlist_Item *it, Eina_Bool calc)
      }
    else
      {
-        edje_object_mirrored_set(it->base.view, elm_widget_mirrored_get(it->base.widget));
-        edje_object_scale_set(it->base.view, elm_widget_scale_get(it->base.widget) * _elm_config->scale);
+        edje_object_mirrored_set(it->base.view,
+                                 elm_widget_mirrored_get(it->base.widget));
+        edje_object_scale_set(it->base.view,
+                              elm_widget_scale_get(it->base.widget)
+                              * _elm_config->scale);
         _item_cache_add(it);
      }
    elm_widget_stringlist_free(it->labels);
@@ -2300,7 +2314,7 @@ _get_space_for_reorder_item(Elm_Genlist_Item *it)
 }
 
 static Eina_Bool
-_reorder_item_moving_effect_timer_cb(void *data)
+_reorder_move_animator_cb(void *data)
 {
    Elm_Genlist_Item *it = data;
    Eina_Bool down = EINA_FALSE;
@@ -2335,14 +2349,17 @@ _reorder_item_moving_effect_timer_cb(void *data)
      {
         it->old_scrl_y = it->scrl_y;
         it->move_effect_enabled = EINA_FALSE;
-        it->wd->item_moving_effect_timer = NULL;
+        it->wd->reorder_move_animator = NULL;
         return ECORE_CALLBACK_CANCEL;
      }
    return ECORE_CALLBACK_RENEW;
 }
 
 static void
-_item_position(Elm_Genlist_Item *it, Evas_Object *view, Evas_Coord it_x, Evas_Coord it_y)
+_item_position(Elm_Genlist_Item *it,
+               Evas_Object      *view,
+               Evas_Coord        it_x,
+               Evas_Coord        it_y)
 {
    if (!it) return;
    if (!view) return;
@@ -2407,16 +2424,20 @@ _item_block_position(Item_Block *itb,
                             if (!it->move_effect_enabled)
                               {
                                  it->move_effect_enabled = EINA_TRUE;
-                                 it->wd->item_moving_effect_timer = ecore_animator_add(_reorder_item_moving_effect_timer_cb, it);
+                                 it->wd->reorder_move_animator =
+                                    ecore_animator_add(
+                                       _reorder_move_animator_cb, it);
                               }
                          }
                        if (!it->move_effect_enabled)
                           {
                              {
                                 if (it->mode_view)
-                                   _item_position(it, it->mode_view, it->scrl_x, it->scrl_y);
+                                  _item_position(it, it->mode_view, it->scrl_x,
+                                                 it->scrl_y);
                                 else
-                                   _item_position(it, it->base.view, it->scrl_x, it->scrl_y);
+                                  _item_position(it, it->base.view, it->scrl_x,
+                                                 it->scrl_y);
                              }
                            it->old_scrl_x = it->scrl_x;
                            it->old_scrl_y = it->scrl_y;
@@ -2482,12 +2503,11 @@ static void
 _calc_job(void *data)
 {
    Widget_Data *wd = data;
-   Item_Block *itb;
+   Item_Block *itb, *chb = NULL;
    Evas_Coord minw = -1, minh = 0, y = 0, ow;
-   Item_Block *chb = NULL;
-   int in = 0, minw_change = 0;
-   Eina_Bool changed = EINA_FALSE;
+   int in = 0;
    double t0, t;
+   Eina_Bool minw_change = EINA_FALSE, changed = EINA_FALSE;
    Eina_Bool did_must_recalc = EINA_FALSE;
    if (!wd) return;
 
@@ -2532,7 +2552,7 @@ _calc_job(void *data)
         else if ((!itb->must_recalc) && (minw < itb->minw))
           {
              minw = itb->minw;
-             minw_change = 1;
+             minw_change = EINA_TRUE;
           }
         itb->w = minw;
         itb->h = itb->minh;
@@ -2614,7 +2634,8 @@ _update_job(void *data)
    Widget_Data *wd = data;
    Eina_List *l2;
    Item_Block *itb;
-   int num, num0, position = 0, recalc = 0;
+   int num, num0;
+   Eina_Bool position = EINA_FALSE, recalc = EINA_FALSE;
    if (!wd) return;
    wd->update_job = NULL;
    num = 0;
@@ -2633,7 +2654,7 @@ _update_job(void *data)
              continue;
           }
         num0 = num;
-        recalc = 0;
+        recalc = EINA_FALSE;
         EINA_LIST_FOREACH(itb->items, l2, it)
           {
              if (it->updateme)
@@ -2646,7 +2667,7 @@ _update_job(void *data)
                     {
                        _item_unrealize(it, EINA_FALSE);
                        _item_realize(it, num, EINA_FALSE);
-                       position = 1;
+                       position = EINA_TRUE;
                     }
                   else
                     {
@@ -2654,14 +2675,14 @@ _update_job(void *data)
                        _item_unrealize(it, EINA_TRUE);
                     }
                   if ((it->minw != itminw) || (it->minh != itminh))
-                    recalc = 1;
+                    recalc = EINA_TRUE;
                }
              num++;
           }
         itb->updateme = EINA_FALSE;
         if (recalc)
           {
-             position = 1;
+             position = EINA_TRUE;
              itb->changed = EINA_TRUE;
              _item_block_recalc(itb, num0, 0);
              _item_block_position(itb, num0);
@@ -2717,7 +2738,7 @@ _pan_set(Evas_Object *obj,
           }
      }
 done:
-   if (!sd->wd->item_moving_effect_timer) evas_object_smart_changed(obj);
+   if (!sd->wd->reorder_move_animator) evas_object_smart_changed(obj);
 }
 
 static void
@@ -3857,10 +3878,10 @@ elm_genlist_clear(Evas_Object *obj)
         eina_list_free(wd->selected);
         wd->selected = NULL;
      }
-   if (wd->item_moving_effect_timer)
+   if (wd->reorder_move_animator)
      {
-        ecore_animator_del(wd->item_moving_effect_timer);
-        wd->item_moving_effect_timer = NULL;
+        ecore_animator_del(wd->reorder_move_animator);
+        wd->reorder_move_animator = NULL;
      }
    wd->show_item = NULL;
    wd->pan_x = 0;

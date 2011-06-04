@@ -1783,30 +1783,8 @@ test_genlist10(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
 
 /*************/
 
-static Elm_Genlist_Item_Class itc11;
-
-char *gl11_label_get(void *data, Evas_Object *obj __UNUSED__, const char *part __UNUSED__)
-{
-   char buf[256];
-   snprintf(buf, sizeof(buf), "Item # %i", (int)(long)data);
-   return strdup(buf);
-}
-
-Evas_Object *gl11_icon_get(void *data __UNUSED__, Evas_Object *obj, const char *part)
-{
-   char buf[PATH_MAX];
-   Evas_Object *ic = elm_icon_add(obj);
-   if (!strcmp(part, "elm.swallow.end"))
-     snprintf(buf, sizeof(buf), "%s/images/bubble.png", PACKAGE_DATA_DIR);
-   else
-     snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
-   elm_icon_file_set(ic, buf, NULL);
-   evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
-   return ic;
-}
-
 static void
-_reorder_tg_changed(void *data, Evas_Object *obj, void *event_info __UNUSED__)
+_reorder_tg_changed_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 {
    elm_genlist_reorder_mode_set(data, elm_toggle_state_get(obj));
 }
@@ -1837,7 +1815,7 @@ test_genlist11(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
    Evas_Object *win, *bg, *fr, *lb, *bx, *tg, *gl;
    int i;
 
-   win = elm_win_add(NULL, "genlist11", ELM_WIN_BASIC);
+   win = elm_win_add(NULL, "genlist-reorder-mode", ELM_WIN_BASIC);
    elm_win_title_set(win, "Genlist Reorder Mode");
    elm_win_autodel_set(win, 1);
 
@@ -1872,20 +1850,20 @@ test_genlist11(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
    tg = elm_toggle_add(win);
    elm_toggle_label_set(tg, "Reorder Mode:");
    elm_toggle_state_set(tg, elm_mirrored_get());
-   evas_object_smart_callback_add(tg, "changed", _reorder_tg_changed, gl);
+   evas_object_smart_callback_add(tg, "changed", _reorder_tg_changed_cb, gl);
    elm_box_pack_end(bx, tg);
    evas_object_show(tg);
 
-   itc11.item_style     = "default";
-   itc11.func.label_get = gl11_label_get;
-   itc11.func.icon_get  = gl11_icon_get;
-   itc11.func.state_get = gl_state_get;
-   itc11.func.del       = gl_del;
-   itc11.func.moved     = gl_moved;
+   itc1.item_style     = "default";
+   itc1.func.label_get = gl_label_get;
+   itc1.func.icon_get  = gl_icon_get;
+   itc1.func.state_get = gl_state_get;
+   itc1.func.del       = gl_del;
+   itc1.func.moved     = gl_moved;
 
    for (i = 0; i < 50; i++)
      elm_genlist_item_append(gl,
-                             &itc11,
+                             &itc1,
                              (void *)(1 + i)/* item data */,
                              NULL/* parent */,
                              ELM_GENLIST_ITEM_NONE/* flags */,
