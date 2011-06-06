@@ -2848,7 +2848,12 @@ EAPI void              evas_object_color_get             (const Evas_Object *obj
  */
 EAPI Evas             *evas_object_evas_get              (const Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
 
-   EAPI const char       *evas_object_type_get              (const Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
+/**
+ * Retrieves the object type of the given evas object.
+ * @param obj The given object.
+ * @return The type of the object.
+ */
+EAPI const char       *evas_object_type_get              (const Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
 
 
 /**
