@@ -1612,6 +1612,7 @@ evas-software-sdl.pc
 evas.pc
 doc/evas.dox
 doc/Makefile
+doc/Doxyfile
 src/Makefile
 src/bin/Makefile
 src/lib/Makefile
