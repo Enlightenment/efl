@@ -1467,8 +1467,6 @@ ecore.spec
 $po_makefile_in
 ])
 
-m4_ifdef([AM_GNU_GETTEXT], [AC_CONFIG_FILES([po/Makefile.in])])
-
 AC_OUTPUT
 
 echo
