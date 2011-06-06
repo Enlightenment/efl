@@ -1,7 +1,7 @@
 
 MAINTAINERCLEANFILES = Makefile.in
 
-EDJE_CC = edje_cc
+EDJE_CC = ${edje_cc}
 EDJE_FLAGS = -v
 
 pluginsdir = $(libdir)/ethumb/plugins
