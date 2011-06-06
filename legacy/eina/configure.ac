@@ -649,6 +649,7 @@ Makefile
 eina.pc
 eina.spec
 doc/Makefile
+doc/Doxyfile
 src/Makefile
 src/include/Makefile
 src/include/eina_config.h
