@@ -427,6 +427,7 @@ AC_OUTPUT([
 Makefile
 eet.pc
 doc/Makefile
+doc/Doxyfile
 doc/eet.dox
 src/Makefile
 src/lib/Makefile
