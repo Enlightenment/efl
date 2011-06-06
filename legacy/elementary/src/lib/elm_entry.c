@@ -1686,6 +1686,7 @@ elm_entry_add(Evas_Object *parent)
    wd->textonly     = EINA_FALSE;
 
    wd->ent = edje_object_add(e);
+   elm_widget_sub_object_add(obj, wd->ent);
    edje_object_item_provider_set(wd->ent, _get_item, obj);
    edje_object_text_insert_filter_callback_add(wd->ent,"elm.text", _text_filter, obj);
    evas_object_event_callback_add(wd->ent, EVAS_CALLBACK_MOVE, _move, obj);
