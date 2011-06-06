@@ -64,6 +64,7 @@ void *alloca (size_t);
 #include "eina_stringshare.h"
 #include "eina_hash.h"
 #include "eina_list.h"
+#include "eina_lock.h"
 
 /*============================================================================*
  *                                  Local                                     *
@@ -116,6 +117,8 @@ struct _Eina_File
    Eina_Hash *rmap;
    void *global_map;
 
+   Eina_Lock lock;
+
    unsigned long long length;
    time_t mtime;
    ino_t inode;
@@ -142,6 +145,7 @@ struct _Eina_File_Map
 static Eina_Hash *_eina_file_cache = NULL;
 static Eina_List *_eina_file_cache_lru = NULL;
 static Eina_List *_eina_file_cache_delete = NULL;
+static Eina_Lock _eina_file_lock_cache;
 
 static int _eina_file_log_dom = -1;
 
@@ -487,6 +491,8 @@ eina_file_init(void)
         return EINA_FALSE;
      }
 
+   eina_lock_new(&_eina_file_lock_cache);
+
    return EINA_TRUE;
 }
 
@@ -514,6 +520,8 @@ eina_file_shutdown(void)
      }
 
    eina_hash_free(_eina_file_cache);
+
+   eina_lock_free(&_eina_file_lock_cache);
 
    eina_log_domain_unregister(_eina_file_log_dom);
    _eina_file_log_dom = -1;
@@ -771,6 +779,8 @@ eina_file_open(const char *filename, Eina_Bool shared)
    if (fstat(fd, &file_stat))
      goto on_error;
 
+   eina_lock_take(&_eina_file_lock_cache);
+
    file = eina_hash_find(_eina_file_cache, filename);
    if (file && (file->mtime != file_stat.st_mtime
                 || file->length != (unsigned long long) file_stat.st_size
@@ -814,6 +824,7 @@ eina_file_open(const char *filename, Eina_Bool shared)
         n->fd = fd;
         n->shared = shared;
         n->delete_me = EINA_FALSE;
+        eina_lock_new(&n->lock);
 
         if (file) eina_hash_del(_eina_file_cache, filename, file);
         eina_hash_direct_add(_eina_file_cache, n->filename, n);
@@ -828,7 +839,11 @@ eina_file_open(const char *filename, Eina_Bool shared)
           _eina_file_cache_lru = eina_list_remove(_eina_file_cache_lru, n);
      }
 
+   eina_lock_take(&n->lock);
    n->refcount++;
+   eina_lock_release(&n->lock);
+
+   eina_lock_release(&_eina_file_lock_cache);
 
    return n;
 
@@ -840,13 +855,16 @@ eina_file_open(const char *filename, Eina_Bool shared)
 EAPI void
 eina_file_close(Eina_File *file)
 {
+   eina_lock_take(&file->lock);
    file->refcount--;
+   eina_lock_release(&file->lock);
 
    if (file->refcount != 0) return ;
 
    if (file->delete_me)
      {
-        _eina_file_cache_delete = eina_list_remove(_eina_file_cache_delete, file);
+        _eina_file_cache_delete = eina_list_remove(_eina_file_cache_delete,
+                                                   file);
         _eina_file_real_close(file);
      }
    else
@@ -877,6 +895,7 @@ EAPI void *
 eina_file_map_all(Eina_File *file, Eina_File_Populate rule)
 {
    int flags = MAP_SHARED;
+   void *ret = NULL;
 
 // bsd people will lack this feature
 #ifdef MAP_POPULATE
@@ -886,6 +905,7 @@ eina_file_map_all(Eina_File *file, Eina_File_Populate rule)
    if (file->length > EINA_HUGE_PAGE) flags |= MAP_HUGETLB;
 #endif
 
+   eina_lock_take(&file->lock);
    if (file->global_map == MAP_FAILED)
      file->global_map = mmap(NULL, file->length, PROT_READ, flags, file->fd, 0);
 
@@ -893,9 +913,11 @@ eina_file_map_all(Eina_File *file, Eina_File_Populate rule)
      {
         _eina_file_map_rule_apply(rule, file->global_map, file->length);
         file->global_refcount++;
-        return file->global_map;
+        ret = file->global_map;
      }
-   return NULL;
+
+   eina_lock_release(&file->lock);
+   return ret;
 }
 
 EAPI void *
@@ -916,6 +938,8 @@ eina_file_map_new(Eina_File *file, Eina_File_Populate rule,
    key[0] = offset;
    key[1] = length;
 
+   eina_lock_take(&file->lock);
+
    map = eina_hash_find(file->map, &key);
    if (!map)
      {
@@ -930,18 +954,14 @@ eina_file_map_new(Eina_File *file, Eina_File_Populate rule,
 #endif
 
         map = malloc(sizeof (Eina_File_Map));
-        if (!map) return NULL;
+        if (!map) goto on_error;
 
         map->map = mmap(NULL, length, PROT_READ, flags, file->fd, offset);
         map->offset = offset;
         map->length = length;
         map->refcount = 0;
 
-        if (map->map == MAP_FAILED)
-          {
-             free(map);
-             return NULL;
-          }
+        if (map->map == MAP_FAILED) goto on_error;
 
         eina_hash_add(file->map, &key, map);
         eina_hash_direct_add(file->rmap, map->map, map);
@@ -951,17 +971,27 @@ eina_file_map_new(Eina_File *file, Eina_File_Populate rule,
 
    _eina_file_map_rule_apply(rule, map->map, length);
 
+   eina_lock_release(&file->lock);
+
    return map->map;
+
+ on_error:
+   free(map);
+   eina_lock_release(&file->lock);
+
+   return NULL;
 }
 
 EAPI void
 eina_file_map_free(Eina_File *file, void *map)
 {
+   eina_lock_take(&file->lock);
+
    if (file->global_map == map)
      {
         file->global_refcount--;
 
-        if (file->global_refcount > 0) return ;
+        if (file->global_refcount > 0) goto on_exit;
 
         munmap(file->global_map, file->length);
         file->global_map = MAP_FAILED;
@@ -976,7 +1006,7 @@ eina_file_map_free(Eina_File *file, void *map)
 
         em->refcount--;
 
-        if (em->refcount > 0) return ;
+        if (em->refcount > 0) goto on_exit;
 
         key[0] = em->offset;
         key[1] = em->length;
@@ -984,6 +1014,9 @@ eina_file_map_free(Eina_File *file, void *map)
         eina_hash_del(file->rmap, &map, em);
         eina_hash_del(file->map, &key, em);
      }
+
+ on_exit:
+   eina_lock_release(&file->lock);
 }
 
 
