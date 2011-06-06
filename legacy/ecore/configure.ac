@@ -59,11 +59,12 @@ VMAJ=v_maj
 AC_SUBST(VMAJ)
 
 m4_ifdef([AM_GNU_GETTEXT_VERSION], [
-AM_GNU_GETTEXT_VERSION([0.12.1])
+AM_GNU_GETTEXT_VERSION([0.14])
 ])
 
 m4_ifdef([AM_GNU_GETTEXT], [
 AM_GNU_GETTEXT([external])
+po_makefile_in=po/Makefile.in
 AM_CONDITIONAL([HAVE_PO], [true])
 ],[
 AM_CONDITIONAL([HAVE_PO], [false])
@@ -1463,6 +1464,7 @@ src/lib/ecore_x/xcb/Makefile
 src/tests/Makefile
 README
 ecore.spec
+$po_makefile_in
 ])
 
 m4_ifdef([AM_GNU_GETTEXT], [AC_CONFIG_FILES([po/Makefile.in])])
