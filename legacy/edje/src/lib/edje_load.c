@@ -699,6 +699,11 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *g
 		       
 		       child_obj = edje_object_add(ed->base.evas);
 		       group_path = eina_list_append(group_path, group_path_entry);
+		       if (rp->part->type == EDJE_PART_TYPE_GROUP)
+			 {
+                            _edje_real_part_swallow(rp, child_obj);
+			 }
+
 		       if (!_edje_object_file_set_internal(child_obj, file, source, group_path))
 			 {
 			    _edje_thaw(ed);
@@ -728,7 +733,6 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *g
 		       edje_object_signal_callback_add(child_obj, "*", "*", _cb_signal_repeat, obj);
 		       if (rp->part->type == EDJE_PART_TYPE_GROUP)
 			 {
-			    _edje_real_part_swallow(rp, child_obj);
 			    source = NULL;
 			 }
 		       else
