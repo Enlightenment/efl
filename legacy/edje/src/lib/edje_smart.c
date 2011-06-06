@@ -290,5 +290,5 @@ _edje_smart_calculate(Evas_Object *obj)
 static Eina_Bool
 _edje_smart_file_set(Evas_Object *obj, const char *file, const char *group)
 {
-   return _edje_object_file_set_internal(obj, file, group, NULL);
+   return _edje_object_file_set_internal(obj, file, group, NULL, NULL);
 }

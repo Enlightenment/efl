@@ -255,7 +255,7 @@ _edje_programs_patterns_init(Edje *ed)
 }
 
 int
-_edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *group, Eina_List *group_path)
+_edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *group, const char *parent, Eina_List *group_path)
 {
    Edje *ed;
    unsigned int n;
@@ -283,6 +283,7 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *g
    if (ed->group) eina_stringshare_del(ed->group);
    ed->path = eina_stringshare_add(file);
    ed->group = eina_stringshare_add(group);
+   ed->parent = eina_stringshare_add(parent);
 
    ed->load_error = EDJE_LOAD_ERROR_NONE;
    _edje_file_add(ed);
@@ -666,7 +667,6 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *g
 		    {
 		       Eina_List *l;
 		       Evas_Object *child_obj;
-		       Edje *child_ed;
 		       const char *group_path_entry = eina_stringshare_add(source);
 		       const char *data;
 
@@ -704,7 +704,7 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *g
                             _edje_real_part_swallow(rp, child_obj);
 			 }
 
-		       if (!_edje_object_file_set_internal(child_obj, file, source, group_path))
+		       if (!_edje_object_file_set_internal(child_obj, file, source, rp->part->name, group_path))
 			 {
 			    _edje_thaw(ed);
 			    _edje_unblock(ed);
@@ -724,8 +724,6 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *g
                             evas_event_thaw_eval(tev);
 			    return 0;
 			 }
-		       child_ed = _edje_fetch(child_obj);
-                       child_ed->parent = eina_stringshare_add(rp->part->name);
 
 		       group_path = eina_list_remove(group_path, group_path_entry);
 		       eina_stringshare_del(group_path_entry);
