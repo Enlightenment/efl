@@ -31,12 +31,14 @@ tags
 cscope.out
 /config.cache
 /ABOUT-NLS
+/compile
 /config.cache-env
 doc/Doxyfile
+doc/eet.dox
+/eet.spec
 m4/libtool.m4
 m4/ltoptions.m4
 m4/ltsugar.m4
 m4/ltversion.m4
 m4/lt~obsolete.m4
-src/bin/evas_cserve
-src/bin/evas_cserve_tool
+src/bin/eet
