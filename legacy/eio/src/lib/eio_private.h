@@ -63,6 +63,32 @@ typedef struct _Eio_Monitor_Backend Eio_Monitor_Backend;
 
 typedef struct _Eio_Dir_Copy Eio_Dir_Copy;
 
+typedef struct _Eio_File_Direct_Info Eio_File_Direct_Info;
+typedef struct _Eio_File_Char Eio_File_Char;
+
+typedef struct _Eio_File_Associate Eio_File_Associate;
+
+struct _Eio_File_Associate
+{
+   void *data;
+
+   Eina_Free_Cb free_cb;
+};
+
+struct _Eio_File_Direct_Info
+{
+   Eina_File_Direct_Info info;
+
+   Eina_Hash *associated;
+};
+
+struct _Eio_File_Char
+{
+   const char *filename;
+
+   Eina_Hash *associated;
+};
+
 struct _Eio_File
 {
    Ecore_Thread *thread;
@@ -73,6 +99,10 @@ struct _Eio_File
 
    Eio_Error_Cb error_cb;
    Eio_Done_Cb done_cb;
+
+   struct {
+      Eina_Hash *associated;
+   } worker, main;
 };
 
 struct _Eio_File_Ls
@@ -198,8 +228,14 @@ void eio_file_container_set(Eio_File *common, void *container);
 void eio_file_error(Eio_File *common);
 void eio_file_thread_error(Eio_File *common, Ecore_Thread *thread);
 
-Eina_File_Direct_Info *eio_direct_info_malloc(void);
-void eio_direct_info_free(Eina_File_Direct_Info *data);
+Eio_File_Direct_Info *eio_direct_info_malloc(void);
+void eio_direct_info_free(Eio_File_Direct_Info *data);
+
+Eio_File_Char *eio_char_malloc(void);
+void eio_char_free(Eio_File_Char *data);
+
+Eio_File_Associate *eio_associate_malloc(void *data, Eina_Free_Cb free_cb);
+void eio_associate_free(void *data);
 
 Eio_Progress *eio_progress_malloc(void);
 void eio_progress_free(Eio_Progress *progress);

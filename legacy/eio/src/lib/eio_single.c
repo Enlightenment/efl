@@ -276,6 +276,8 @@ eio_long_file_set(Eio_File *common,
    common->error = 0;
    common->thread = NULL;
    common->container = NULL;
+   common->worker.associated = NULL;
+   common->main.associated = NULL;
 
    /* Be aware that ecore_thread_feedback_run could call cancel_cb if something goes wrong.
       This means that common would be destroyed if thread == NULL.

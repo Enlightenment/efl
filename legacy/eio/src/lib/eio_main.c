@@ -59,7 +59,9 @@ struct _Eio_Alloc_Pool
 static int _eio_count = 0;
 
 static Eio_Alloc_Pool progress_pool = { 0, NULL, EIO_MUTEX_INITIALIZER };
-static Eio_Alloc_Pool direct_info = { 0, NULL, EIO_MUTEX_INITIALIZER };
+static Eio_Alloc_Pool direct_info_pool = { 0, NULL, EIO_MUTEX_INITIALIZER };
+static Eio_Alloc_Pool char_pool = { 0, NULL, EIO_MUTEX_INITIALIZER };
+static Eio_Alloc_Pool associate_pool = { 0, NULL, EIO_MUTEX_INITIALIZER };
 
 static void *
 _eio_pool_malloc(Eio_Alloc_Pool *pool, size_t sz)
@@ -142,17 +144,56 @@ eio_progress_send(Ecore_Thread *thread, Eio_File_Progress *op, long long current
    ecore_thread_feedback(thread, progress);
 }
 
-Eina_File_Direct_Info *
+Eio_File_Direct_Info *
 eio_direct_info_malloc(void)
 {
-   return _eio_pool_malloc(&direct_info, sizeof (Eina_File_Direct_Info));
+   return _eio_pool_malloc(&direct_info_pool, sizeof (Eio_File_Direct_Info));
 }
 
 void
-eio_direct_info_free(Eina_File_Direct_Info *data)
+eio_direct_info_free(Eio_File_Direct_Info *data)
 {
-   _eio_pool_free(&direct_info, data);
+   _eio_pool_free(&direct_info_pool, data);
 }
+
+Eio_File_Char *
+eio_char_malloc(void)
+{
+  return _eio_pool_malloc(&char_pool, sizeof (Eio_File_Char));
+}
+
+void
+eio_char_free(Eio_File_Char *data)
+{
+  _eio_pool_free(&char_pool, data);
+}
+
+Eio_File_Associate *
+eio_associate_malloc(void *data, Eina_Free_Cb free_cb)
+{
+  Eio_File_Associate *tmp;
+
+  tmp = _eio_pool_malloc(&associate_pool, sizeof (Eio_File_Associate));
+  if (!tmp) return tmp;
+
+  tmp->data = data;
+  tmp->free_cb = free_cb ? free_cb : free;
+
+  return tmp;
+}
+
+void
+eio_associate_free(void *data)
+{
+  Eio_File_Associate *tmp;
+
+  if (!data) return ;
+
+  tmp = data;
+  tmp->free_cb(tmp->data);
+  _eio_pool_free(&associate_pool, tmp);
+}
+
 
 /**
  * @endcond
@@ -184,7 +225,9 @@ eio_init(void)
    ecore_init();
 
    EIO_MUTEX_INIT(progress_pool);
-   EIO_MUTEX_INIT(direct_info);
+   EIO_MUTEX_INIT(direct_info_pool);
+   EIO_MUTEX_INIT(char_pool);
+   EIO_MUTEX_INIT(associate_pool);
 
    eio_monitor_init();
 
@@ -198,8 +241,10 @@ eio_init(void)
 EAPI int
 eio_shutdown(void)
 {
-   Eina_File_Direct_Info *info;
+   Eio_File_Direct_Info *info;
+   Eio_File_Char *cin;
    Eio_Progress *pg;
+   Eio_File_Associate *asso;
 
    _eio_count--;
 
@@ -207,15 +252,25 @@ eio_shutdown(void)
 
    EIO_MUTEX_DESTROY(direct_info);
    EIO_MUTEX_DESTROY(progress_pool);
+   EIO_MUTEX_DESTROY(char_pool);
+   EIO_MUTEX_DESTROY(associate_pool);
 
    /* Cleanup pool */
    EINA_TRASH_CLEAN(&progress_pool.trash, pg)
      free(pg);
    progress_pool.count = 0;
 
-   EINA_TRASH_CLEAN(&direct_info.trash, info)
+   EINA_TRASH_CLEAN(&direct_info_pool.trash, info)
      free(info);
-   direct_info.count = 0;
+   direct_info_pool.count = 0;
+
+   EINA_TRASH_CLEAN(&char_pool.trash, cin)
+     free(cin);
+   char_pool.count = 0;
+
+   EINA_TRASH_CLEAN(&associate_pool.trash, asso)
+     free(asso);
+   associate_pool.count = 0;
 
    ecore_shutdown();
    eina_shutdown();

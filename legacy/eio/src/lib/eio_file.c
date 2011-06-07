@@ -142,8 +142,30 @@ _eio_file_heavy(void *data, Ecore_Thread *thread)
 	     filter = async->filter_cb((void*) async->ls.common.data, &async->ls.common, file);
 	  }
 
-	if (filter) ecore_thread_feedback(thread, file);
-	else eina_stringshare_del(file);
+	if (filter)
+          {
+             Eio_File_Char *send;
+
+             send = eio_char_malloc();
+             if (!send) goto on_error;
+
+             send->filename = file;
+	     send->associated = async->ls.common.worker.associated;
+	     async->ls.common.worker.associated = NULL;
+
+             ecore_thread_feedback(thread, send);
+          }
+	else
+          {
+          on_error:
+             eina_stringshare_del(file);
+
+             if (async->ls.common.worker.associated)
+               {
+                  eina_hash_free(async->ls.common.worker.associated);
+                  async->ls.common.worker.associated = NULL;
+               }
+          }
 
 	if (ecore_thread_check(thread))
 	  break;
@@ -158,11 +180,22 @@ static void
 _eio_file_notify(void *data, Ecore_Thread *thread __UNUSED__, void *msg_data)
 {
    Eio_File_Char_Ls *async = data;
-   const char *file = msg_data;
+   Eio_File_Char *info = msg_data;
 
-   async->main_cb((void*) async->ls.common.data, &async->ls.common, file);
+   async->ls.common.main.associated = info->associated;
 
-   eina_stringshare_del(file);
+   async->main_cb((void*) async->ls.common.data,
+                  &async->ls.common,
+                  info->filename);
+
+   if (async->ls.common.main.associated)
+     {
+        eina_hash_free(async->ls.common.main.associated);
+        async->ls.common.main.associated = NULL;
+     }
+
+   eina_stringshare_del(info->filename);
+   eio_char_free(info);
 }
 
 static void
@@ -189,14 +222,21 @@ _eio_file_eina_ls_heavy(Ecore_Thread *thread, Eio_File_Direct_Ls *async, Eina_It
 
 	if (filter)
 	  {
-	     Eina_File_Direct_Info *send;
+	     Eio_File_Direct_Info *send;
 
 	     send = eio_direct_info_malloc();
 	     if (!send) continue;
 
-	     memcpy(send, info, sizeof (Eina_File_Direct_Info));
+	     memcpy(&send->info, info, sizeof (Eina_File_Direct_Info));
+	     send->associated = async->ls.common.worker.associated;
+	     async->ls.common.worker.associated = NULL;
 
 	     ecore_thread_feedback(thread, send);
+	  }
+	else if (async->ls.common.worker.associated)
+	  {
+             eina_hash_free(async->ls.common.worker.associated);
+             async->ls.common.worker.associated = NULL;
 	  }
 
 	if (ecore_thread_check(thread))
@@ -234,16 +274,28 @@ static void
 _eio_file_direct_notify(void *data, Ecore_Thread *thread __UNUSED__, void *msg_data)
 {
    Eio_File_Direct_Ls *async = data;
-   Eina_File_Direct_Info *info = msg_data;
+   Eio_File_Direct_Info *info = msg_data;
 
-   async->main_cb((void*) async->ls.common.data, &async->ls.common, info);
+   async->ls.common.main.associated = info->associated;
+
+   async->main_cb((void*) async->ls.common.data,
+		  &async->ls.common,
+		  &info->info);
+
+   if (async->ls.common.main.associated)
+     {
+        eina_hash_free(async->ls.common.main.associated);
+        async->ls.common.main.associated = NULL;
+     }
 
    eio_direct_info_free(info);
 }
 
 #ifdef HAVE_XATTR
 static void
-_eio_file_copy_xattr(Ecore_Thread *thread, Eio_File_Progress *op, int in, int out)
+_eio_file_copy_xattr(Ecore_Thread *thread __UNUSED__,
+                     Eio_File_Progress *op __UNUSED__,
+                     int in, int out)
 {
    char *tmp;
    ssize_t length;
@@ -849,6 +901,75 @@ eio_file_container_get(Eio_File *ls)
    return ls->container;
 }
 
+/**
+ * @brief Associate data with the current filtered file.
+ * @param ls The Eio_File ls request currently calling the filter callback.
+ * @param key The key to associate data to.
+ * @param data The data to associate the data to.
+ * @param free_cb The function to call to free the associated data, @p free will be called if not specified.
+ * @return EINA_TRUE if insertion was fine.
+ *
+ * This function could only be safely called from within the filter callback.
+ * If you don't need to copy the key around you can use @ref eio_file_associate_direct_add
+ */
+EAPI Eina_Bool
+eio_file_associate_add(Eio_File *ls,
+                       const char *key,
+                       void *data, Eina_Free_Cb free_cb)
+{
+   /* FIXME: Check if we are in the right worker thred */
+   if (!ls->worker.associated)
+     ls->worker.associated = eina_hash_string_small_new(eio_associate_free);
+
+   return eina_hash_add(ls->worker.associated,
+                        key,
+                        eio_associate_malloc(data, free_cb));
+}
+
+/**
+ * @brief Associate data with the current filtered file.
+ * @param ls The Eio_File ls request currently calling the filter callback.
+ * @param key The key to associate data to (will not be copied, and the pointer will be used as long as the file is not notified).
+ * @param data The data to associate the data to.
+ * @param free_cb The function to call to free the associated data, @p free will be called if not specified.
+ * @return EINA_TRUE if insertion was fine.
+ *
+ * This function could only be safely called from within the filter callback.
+ * If you need eio to make a proper copy of the @p key to be safe use
+ * @ref eio_file_associate_add instead.
+ */
+EAPI Eina_Bool
+eio_file_associate_direct_add(Eio_File *ls,
+                              const char *key,
+                              void *data, Eina_Free_Cb free_cb)
+{
+   /* FIXME: Check if we are in the right worker thred */
+   if (!ls->worker.associated)
+     ls->worker.associated = eina_hash_string_small_new(eio_associate_free);
+
+   return eina_hash_direct_add(ls->worker.associated,
+                               key,
+                               eio_associate_malloc(data, free_cb));
+}
+
+/**
+ * @brief Get the data associated during the filter callback inside the main loop
+ * @param ls The Eio_File ls request currently calling the notify callback.
+ * @param key The key pointing to the data to retrieve.
+ * @return the data associated with the key or @p NULL if not found.
+ */
+EAPI void *
+eio_file_associate_find(Eio_File *ls, const char *key)
+{
+   Eio_File_Associate *search;
+
+   if (!ls->main.associated)
+     return NULL;
+
+   search = eina_hash_find(ls->main.associated, key);
+   if (!search) return NULL;
+   return search->data;
+}
 
 /**
  * @brief Copy a file asynchronously
