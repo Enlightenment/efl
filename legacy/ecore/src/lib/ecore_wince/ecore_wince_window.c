@@ -177,7 +177,7 @@ ecore_wince_window_free(Ecore_WinCE_Window *window)
 
    INF("destroying window");
 
-   DestroyWindow(((Ecore_WinCE_Window *)window)->window);
+   DestroyWindow(window->window);
    free(window);
 }
 
@@ -195,7 +195,7 @@ ecore_wince_window_hwnd_get(Ecore_WinCE_Window *window)
    if (!window)
      return NULL;
 
-   return ((Ecore_WinCE_Window *)window)->window;
+   return window->window;
 }
 
 /**
@@ -215,21 +215,19 @@ ecore_wince_window_move(Ecore_WinCE_Window *window,
                         int                 y)
 {
    RECT rect;
-   HWND w;
 
-   if (!window || ((Ecore_WinCE_Window *)window)->fullscreen)
+   if (!window || window->fullscreen)
      return;
 
    INF("moving window (%dx%d)", x, y);
 
-   w = ((Ecore_WinCE_Window *)window)->window;
-   if (!GetWindowRect(w, &rect))
+   if (!GetWindowRect(window->window, &rect))
      {
         ERR("GetWindowRect() failed");
         return;
      }
 
-   if (!MoveWindow(w, x, y,
+   if (!MoveWindow(window->window, x, y,
                    rect.right - rect.left,
                    rect.bottom - rect.top,
                    TRUE))
@@ -254,20 +252,18 @@ ecore_wince_window_resize(Ecore_WinCE_Window *window,
                           int                 width,
                           int                 height)
 {
-   RECT                rect;
-   Ecore_WinCE_Window *w;
-   DWORD               style;
-   DWORD               exstyle;
-   int                 x;
-   int                 y;
+   RECT  rect;
+   DWORD style;
+   DWORD exstyle;
+   int   x;
+   int   y;
 
-   if (!window || ((Ecore_WinCE_Window *)window)->fullscreen)
+   if (!window || window->fullscreen)
      return;
 
    INF("resizing window (%dx%d)", width, height);
 
-   w = (Ecore_WinCE_Window *)window;
-   if (!GetWindowRect(w->window, &rect))
+   if (!GetWindowRect(window->window, &rect))
      {
         ERR("GetWindowRect() failed");
         return;
@@ -279,12 +275,12 @@ ecore_wince_window_resize(Ecore_WinCE_Window *window,
    rect.top = 0;
    rect.right = width;
    rect.bottom = height;
-   if (!(style = GetWindowLong(w->window, GWL_STYLE)))
+   if (!(style = GetWindowLong(window->window, GWL_STYLE)))
      {
         ERR("GetWindowLong() failed");
         return;
      }
-   if (!(exstyle = GetWindowLong(w->window, GWL_EXSTYLE)))
+   if (!(exstyle = GetWindowLong(window->window, GWL_EXSTYLE)))
      {
         ERR("GetWindowLong() failed");
         return;
@@ -295,7 +291,7 @@ ecore_wince_window_resize(Ecore_WinCE_Window *window,
         return;
      }
 
-   if (!MoveWindow(w->window, x, y,
+   if (!MoveWindow(window->window, x, y,
                    rect.right - rect.left,
                    rect.bottom - rect.top,
                    FALSE))
@@ -325,26 +321,24 @@ ecore_wince_window_move_resize(Ecore_WinCE_Window *window,
                                int                 height)
 {
    RECT                rect;
-   Ecore_WinCE_Window *w;
    DWORD               style;
    DWORD               exstyle;
 
-   if (!window || ((Ecore_WinCE_Window *)window)->fullscreen)
+   if (!window || window->fullscreen)
      return;
 
    INF("moving and resizing window (%dx%d %dx%d)", x, y, width, height);
 
-   w = ((Ecore_WinCE_Window *)window);
    rect.left = 0;
    rect.top = 0;
    rect.right = width;
    rect.bottom = height;
-   if (!(style = GetWindowLong(w->window, GWL_STYLE)))
+   if (!(style = GetWindowLong(window->window, GWL_STYLE)))
      {
         ERR("GetWindowLong() failed");
         return;
      }
-   if (!(exstyle = GetWindowLong(w->window, GWL_EXSTYLE)))
+   if (!(exstyle = GetWindowLong(window->window, GWL_EXSTYLE)))
      {
         ERR("GetWindowLong() failed");
         return;
@@ -355,10 +349,10 @@ ecore_wince_window_move_resize(Ecore_WinCE_Window *window,
         return;
      }
 
-   if (!MoveWindow(w->window, x, y,
-              rect.right - rect.left,
-              rect.bottom - rect.top,
-              TRUE))
+   if (!MoveWindow(window->window, x, y,
+                   rect.right - rect.left,
+                   rect.bottom - rect.top,
+                   TRUE))
      {
         ERR("MoveWindow() failed");
      }
@@ -379,16 +373,16 @@ ecore_wince_window_show(Ecore_WinCE_Window *window)
 
    INF("showing window");
 
-   if (!ShowWindow(((Ecore_WinCE_Window *)window)->window, SW_SHOWNORMAL))
+   if (!ShowWindow(window->window, SW_SHOWNORMAL))
      {
         ERR("ShowWindow() failed");
         return;
      }
-   if (!UpdateWindow(((Ecore_WinCE_Window *)window)->window))
+   if (!UpdateWindow(window->window))
      {
         ERR("UpdateWindow() failed");
      }
-   if (!SendMessage(((Ecore_WinCE_Window *)window)->window, WM_SHOWWINDOW, 1, 0))
+   if (!SendMessage(window->window, WM_SHOWWINDOW, 1, 0))
      {
         ERR("SendMessage() failed");
      }
@@ -409,12 +403,12 @@ ecore_wince_window_hide(Ecore_WinCE_Window *window)
 
    INF("hiding window");
 
-   if (!ShowWindow(((Ecore_WinCE_Window *)window)->window, SW_HIDE))
+   if (!ShowWindow(window->window, SW_HIDE))
      {
         ERR("ShowWindow() failed");
         return;
      }
-   if (!SendMessage(((Ecore_WinCE_Window *)window)->window, WM_SHOWWINDOW, 0, 0))
+   if (!SendMessage(window->window, WM_SHOWWINDOW, 0, 0))
      {
         ERR("SendMessage() failed");
      }
@@ -445,7 +439,7 @@ ecore_wince_window_title_set(Ecore_WinCE_Window *window,
    wtitle = evil_char_to_wchar(title);
    if (!wtitle) return;
 
-   if (!SetWindowText(((Ecore_WinCE_Window *)window)->window, wtitle))
+   if (!SetWindowText(window->window, wtitle))
      {
         ERR("SetWindowText() failed");
      }
@@ -477,15 +471,12 @@ EAPI void
 ecore_wince_window_backend_set(Ecore_WinCE_Window *window,
                                int                 backend)
 {
-   Ecore_WinCE_Window *w;
-
    if (!window)
      return;
 
    INF("setting backend");
 
-   w = (Ecore_WinCE_Window *)window;
-   w->backend = backend;
+   window->backend = backend;
 }
 
 /**
@@ -503,15 +494,12 @@ ecore_wince_window_backend_set(Ecore_WinCE_Window *window,
 EAPI void
 ecore_wince_window_suspend_cb_set(Ecore_WinCE_Window *window, int (*suspend_cb)(int))
 {
-   Ecore_WinCE_Window *w;
-
    if (!window)
      return;
 
    INF("setting suspend callback");
 
-   w = (Ecore_WinCE_Window *)window;
-   w->suspend_cb = suspend_cb;
+   window->suspend_cb = suspend_cb;
 }
 
 /**
@@ -529,15 +517,12 @@ ecore_wince_window_suspend_cb_set(Ecore_WinCE_Window *window, int (*suspend_cb)(
 EAPI void
 ecore_wince_window_resume_cb_set(Ecore_WinCE_Window *window, int (*resume_cb)(int))
 {
-   Ecore_WinCE_Window *w;
-
    if (!window)
      return;
 
    INF("setting resume callback");
 
-   w = (Ecore_WinCE_Window *)window;
-   w->resume_cb = resume_cb;
+   window->resume_cb = resume_cb;
 }
 
 /**
@@ -579,8 +564,7 @@ ecore_wince_window_geometry_get(Ecore_WinCE_Window *window,
         return;
      }
 
-   if (!GetClientRect(((Ecore_WinCE_Window *)window)->window,
-                      &rect))
+   if (!GetClientRect(window->window, &rect))
      {
         ERR("GetClientRect() failed");
 
@@ -595,8 +579,7 @@ ecore_wince_window_geometry_get(Ecore_WinCE_Window *window,
    w = rect.right - rect.left;
    h = rect.bottom - rect.top;
 
-   if (!GetWindowRect(((Ecore_WinCE_Window *)window)->window,
-                      &rect))
+   if (!GetWindowRect(window->window, &rect))
      {
         ERR("GetWindowRect() failed");
 
@@ -645,8 +628,7 @@ ecore_wince_window_size_get(Ecore_WinCE_Window *window,
         return;
      }
 
-   if (!GetClientRect(((Ecore_WinCE_Window *)window)->window,
-                      &rect))
+   if (!GetClientRect(window->window, &rect))
      {
         ERR("GetClientRect() failed");
 
@@ -674,26 +656,22 @@ EAPI void
 ecore_wince_window_fullscreen_set(Ecore_WinCE_Window *window,
                                   Eina_Bool           on)
 {
-   Ecore_WinCE_Window *ew;
-   HWND                w;
-   HWND                task_bar;
+   HWND task_bar;
 
    if (!window) return;
 
-   ew = (Ecore_WinCE_Window *)window;
-   if (((ew->fullscreen) && (on)) ||
-       ((!ew->fullscreen) && (!on)))
+   if (((window->fullscreen) && (on)) ||
+       ((!window->fullscreen) && (!on)))
      return;
 
    INF("setting fullscreen: %s", on ? "yes" : "no");
 
-   ew->fullscreen = !!on;
-   w = ew->window;
+   window->fullscreen = !!on;
 
    if (on)
      {
         /* save the position and size of the window */
-        if (!GetWindowRect(w, &ew->rect))
+        if (!GetWindowRect(window->window, &window->rect))
           {
              ERR("GetWindowRect() failed");
              return;
@@ -715,15 +693,16 @@ ecore_wince_window_fullscreen_set(Ecore_WinCE_Window *window,
           }
 
         /* style: visible + popup */
-        if (!SetWindowLong(w, GWL_STYLE, WS_POPUP | WS_VISIBLE))
+        if (!SetWindowLong(window->window, GWL_STYLE, WS_POPUP | WS_VISIBLE))
           {
              INF("SetWindowLong() failed");
           }
 
         /* resize window to fit the entire screen */
-        if (!SetWindowPos(w, HWND_TOPMOST,
+        if (!SetWindowPos(window->window, HWND_TOPMOST,
                           0, 0,
-                          GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN),
+                          GetSystemMetrics(SM_CXSCREEN),
+                          GetSystemMetrics(SM_CYSCREEN),
                           SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED))
           {
              INF("SetWindowPos() failed");
@@ -733,9 +712,10 @@ ecore_wince_window_fullscreen_set(Ecore_WinCE_Window *window,
          * Call MoveWindow with the correct size and force painting.
          * Note that UpdateWindow (forcing repainting) is not sufficient
          */
-        if (!MoveWindow(w,
+        if (!MoveWindow(window->window,
                         0, 0,
-                        GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN),
+                        GetSystemMetrics(SM_CXSCREEN),
+                        GetSystemMetrics(SM_CYSCREEN),
                         TRUE))
           {
              INF("MoveWindow() failed");
@@ -759,16 +739,16 @@ ecore_wince_window_fullscreen_set(Ecore_WinCE_Window *window,
           }
 
         /* style: visible + caption + sysmenu */
-        if (!SetWindowLong(w, GWL_STYLE, WS_CAPTION | WS_SYSMENU | WS_VISIBLE))
+        if (!SetWindowLong(window->window, GWL_STYLE, WS_CAPTION | WS_SYSMENU | WS_VISIBLE))
           {
              INF("SetWindowLong() failed");
           }
         /* restaure the position and size of the window */
-        if (!SetWindowPos(w, HWND_TOPMOST,
-                          ew->rect.left,
-                          ew->rect.top,
-                          ew->rect.right - ew->rect.left,
-                          ew->rect.bottom - ew->rect.top,
+        if (!SetWindowPos(window->window, HWND_TOPMOST,
+                          window->rect.left,
+                          window->rect.top,
+                          window->rect.right - window->rect.left,
+                          window->rect.bottom - window->rect.top,
                           SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED))
           {
              INF("SetWindowLong() failed");
@@ -778,11 +758,11 @@ ecore_wince_window_fullscreen_set(Ecore_WinCE_Window *window,
          * Call MoveWindow with the correct size and force painting.
          * Note that UpdateWindow (forcing repainting) is not sufficient
          */
-        if (!MoveWindow(w,
-                        ew->rect.left,
-                        ew->rect.top,
-                        ew->rect.right - ew->rect.left,
-                        ew->rect.bottom - ew->rect.top,
+        if (!MoveWindow(window->window,
+                        window->rect.left,
+                        window->rect.top,
+                        window->rect.right - window->rect.left,
+                        window->rect.bottom - window->rect.top,
                         TRUE))
           {
              INF("MoveWindow() failed");
