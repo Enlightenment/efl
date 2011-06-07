@@ -84,7 +84,7 @@ ecore_win32_window_internal_new(Ecore_Win32_Window *parent,
                               x, y,
                               rect.right - rect.left,
                               rect.bottom - rect.top,
-                              parent ? ((Ecore_Win32_Window *)parent)->window : NULL,
+                              parent ? parent->window : NULL,
                               NULL, _ecore_win32_instance, NULL);
    if (!w->window)
      {
@@ -94,7 +94,8 @@ ecore_win32_window_internal_new(Ecore_Win32_Window *parent,
      }
 
    SetLastError(0);
-   if (!SetWindowLongPtr(w->window, GWLP_USERDATA, (LONG_PTR)w) && (GetLastError() != 0))
+   if (!SetWindowLongPtr(w->window, GWLP_USERDATA, (LONG_PTR)w) &&
+       (GetLastError() != 0))
      {
         ERR("SetWindowLongPtr() failed");
         DestroyWindow(w->window);
@@ -230,16 +231,14 @@ ecore_win32_window_override_new(Ecore_Win32_Window *parent,
 EAPI void
 ecore_win32_window_free(Ecore_Win32_Window *window)
 {
-   Ecore_Win32_Window *wnd = window;
-
    if (!window) return;
 
    INF("destroying window");
 
-   if (wnd->shape.mask)
-      free(wnd->shape.mask);
+   if (window->shape.mask)
+      free(window->shape.mask);
 
-   DestroyWindow(((Ecore_Win32_Window *)window)->window);
+   DestroyWindow(window->window);
    free(window);
 }
 
@@ -256,7 +255,7 @@ ecore_win32_window_hwnd_get(Ecore_Win32_Window *window)
 {
    if (!window) return NULL;
 
-   return ((Ecore_Win32_Window *)window)->window;
+   return window->window;
 }
 
 /*
@@ -308,21 +307,19 @@ ecore_win32_window_move(Ecore_Win32_Window *window,
                         int                 y)
 {
    RECT rect;
-   HWND w;
 
    /* FIXME: on fullscreen, should not move it */
    if (!window) return;
 
    INF("moving window (%dx%d)", x, y);
 
-   w = ((Ecore_Win32_Window *)window)->window;
-   if (!GetWindowRect(w, &rect))
+   if (!GetWindowRect(window->window, &rect))
      {
         ERR("GetWindowRect() failed");
         return;
      }
 
-   if (!MoveWindow(w, x, y,
+   if (!MoveWindow(window->window, x, y,
                    rect.right - rect.left,
                    rect.bottom - rect.top,
                    TRUE))
@@ -348,7 +345,6 @@ ecore_win32_window_resize(Ecore_Win32_Window *window,
                           int                 height)
 {
    RECT                rect;
-   Ecore_Win32_Window *w;
    DWORD               style;
    int                 x;
    int                 y;
@@ -360,12 +356,10 @@ ecore_win32_window_resize(Ecore_Win32_Window *window,
 
    INF("resizing window (%dx%d)", width, height);
 
-   w = (Ecore_Win32_Window *)window;
+   minimal_width = MAX(GetSystemMetrics(SM_CXMIN), (int)window->min_width);
+   minimal_height = MAX(GetSystemMetrics(SM_CYMIN), (int)window->min_height);
 
-   minimal_width = MAX(GetSystemMetrics(SM_CXMIN), (int)w->min_width);
-   minimal_height = MAX(GetSystemMetrics(SM_CYMIN), (int)w->min_height);
-
-   if (!GetWindowRect(w->window, &rect))
+   if (!GetWindowRect(window->window, &rect))
      {
         ERR("GetWindowRect() failed");
         return;
@@ -376,12 +370,12 @@ ecore_win32_window_resize(Ecore_Win32_Window *window,
    rect.left = 0;
    rect.top = 0;
    if (width < minimal_width) width = minimal_width;
-   if (width > (int)w->max_width) width = w->max_width;
+   if (width > (int)window->max_width) width = window->max_width;
    if (height < minimal_height) height = minimal_height;
-   if (height > (int)w->max_height) height = w->max_height;
+   if (height > (int)window->max_height) height = window->max_height;
    rect.right = width;
    rect.bottom = height;
-   if (!(style = GetWindowLong(w->window, GWL_STYLE)))
+   if (!(style = GetWindowLong(window->window, GWL_STYLE)))
      {
         ERR("GetWindowLong() failed");
         return;
@@ -392,7 +386,7 @@ ecore_win32_window_resize(Ecore_Win32_Window *window,
         return;
      }
 
-   if (!MoveWindow(w->window, x, y,
+   if (!MoveWindow(window->window, x, y,
                    rect.right - rect.left,
                    rect.bottom - rect.top,
                    TRUE))
@@ -422,7 +416,6 @@ ecore_win32_window_move_resize(Ecore_Win32_Window *window,
                                int                 height)
 {
    RECT                rect;
-   Ecore_Win32_Window *w;
    DWORD               style;
    int                 minimal_width;
    int                 minimal_height;
@@ -432,20 +425,18 @@ ecore_win32_window_move_resize(Ecore_Win32_Window *window,
 
    INF("moving and resizing window (%dx%d %dx%d)", x, y, width, height);
 
-   w = ((Ecore_Win32_Window *)window);
-
-   minimal_width = MAX(GetSystemMetrics(SM_CXMIN), (int)w->min_width);
-   minimal_height = MAX(GetSystemMetrics(SM_CYMIN), (int)w->min_height);
+   minimal_width = MAX(GetSystemMetrics(SM_CXMIN), (int)window->min_width);
+   minimal_height = MAX(GetSystemMetrics(SM_CYMIN), (int)window->min_height);
 
    rect.left = 0;
    rect.top = 0;
    if (width < minimal_width) width = minimal_width;
-   if (width > (int)w->max_width) width = w->max_width;
+   if (width > (int)window->max_width) width = window->max_width;
    if (height < minimal_height) height = minimal_height;
-   if (height > (int)w->max_height) height = w->max_height;
+   if (height > (int)window->max_height) height = window->max_height;
    rect.right = width;
    rect.bottom = height;
-   if (!(style = GetWindowLong(w->window, GWL_STYLE)))
+   if (!(style = GetWindowLong(window->window, GWL_STYLE)))
      {
         ERR("GetWindowLong() failed");
         return;
@@ -456,7 +447,7 @@ ecore_win32_window_move_resize(Ecore_Win32_Window *window,
         return;
      }
 
-   if (!MoveWindow(w->window, x, y,
+   if (!MoveWindow(window->window, x, y,
                    rect.right - rect.left,
                    rect.bottom - rect.top,
                    TRUE))
@@ -504,8 +495,7 @@ ecore_win32_window_geometry_get(Ecore_Win32_Window *window,
         return;
      }
 
-   if (!GetClientRect(((Ecore_Win32_Window *)window)->window,
-                      &rect))
+   if (!GetClientRect(window->window, &rect))
      {
         ERR("GetClientRect() failed");
 
@@ -520,8 +510,7 @@ ecore_win32_window_geometry_get(Ecore_Win32_Window *window,
    w = rect.right - rect.left;
    h = rect.bottom - rect.top;
 
-   if (!GetWindowRect(((Ecore_Win32_Window *)window)->window,
-                      &rect))
+   if (!GetWindowRect(window->window, &rect))
      {
         ERR("GetWindowRect() failed");
 
@@ -570,8 +559,7 @@ ecore_win32_window_size_get(Ecore_Win32_Window *window,
         return;
      }
 
-   if (!GetClientRect(((Ecore_Win32_Window *)window)->window,
-                      &rect))
+   if (!GetClientRect(window->window, &rect))
      {
         ERR("GetClientRect() failed");
 
@@ -599,14 +587,11 @@ ecore_win32_window_size_min_set(Ecore_Win32_Window *window,
                                 unsigned int        min_width,
                                 unsigned int        min_height)
 {
-   Ecore_Win32_Window *w;
-
    if (!window) return;
 
    printf ("ecore_win32_window_size_min_set : %p  %d %d\n", window, min_width, min_height);
-   w = (Ecore_Win32_Window *)window;
-   w->min_width = min_width;
-   w->min_height = min_height;
+   window->min_width = min_width;
+   window->min_height = min_height;
 }
 
 /**
@@ -625,14 +610,11 @@ ecore_win32_window_size_min_get(Ecore_Win32_Window *window,
                                 unsigned int       *min_width,
                                 unsigned int       *min_height)
 {
-   Ecore_Win32_Window *w;
-
    if (!window) return;
 
-   w = (Ecore_Win32_Window *)window;
-   printf ("ecore_win32_window_size_min_get : %p  %d %d\n", window, w->min_width, w->min_height);
-   if (min_width) *min_width = w->min_width;
-   if (min_height) *min_height = w->min_height;
+   printf ("ecore_win32_window_size_min_get : %p  %d %d\n", window, window->min_width, window->min_height);
+   if (min_width) *min_width = window->min_width;
+   if (min_height) *min_height = window->min_height;
 }
 
 /**
@@ -651,14 +633,11 @@ ecore_win32_window_size_max_set(Ecore_Win32_Window *window,
                                 unsigned int        max_width,
                                 unsigned int        max_height)
 {
-   Ecore_Win32_Window *w;
-
    if (!window) return;
 
    printf ("ecore_win32_window_size_max_set : %p  %d %d\n", window, max_width, max_height);
-   w = (Ecore_Win32_Window *)window;
-   w->max_width = max_width;
-   w->max_height = max_height;
+   window->max_width = max_width;
+   window->max_height = max_height;
 }
 
 /**
@@ -677,14 +656,11 @@ ecore_win32_window_size_max_get(Ecore_Win32_Window *window,
                                 unsigned int       *max_width,
                                 unsigned int       *max_height)
 {
-   Ecore_Win32_Window *w;
-
    if (!window) return;
 
-   w = (Ecore_Win32_Window *)window;
-   printf ("ecore_win32_window_size_max_get : %p  %d %d\n", window, w->max_width, w->max_height);
-   if (max_width) *max_width = w->max_width;
-   if (max_height) *max_height = w->max_height;
+   printf ("ecore_win32_window_size_max_get : %p  %d %d\n", window, window->max_width, window->max_height);
+   if (max_width) *max_width = window->max_width;
+   if (max_height) *max_height = window->max_height;
 }
 
 /**
@@ -703,14 +679,11 @@ ecore_win32_window_size_base_set(Ecore_Win32_Window *window,
                                  unsigned int        base_width,
                                  unsigned int        base_height)
 {
-   Ecore_Win32_Window *w;
-
    printf ("ecore_win32_window_size_base_set : %p  %d %d\n", window, base_width, base_height);
    if (!window) return;
 
-   w = (Ecore_Win32_Window *)window;
-   w->base_width = base_width;
-   w->base_height = base_height;
+   window->base_width = base_width;
+   window->base_height = base_height;
 }
 
 /**
@@ -729,14 +702,11 @@ ecore_win32_window_size_base_get(Ecore_Win32_Window *window,
                                  unsigned int       *base_width,
                                  unsigned int       *base_height)
 {
-   Ecore_Win32_Window *w;
-
    if (!window) return;
 
-   w = (Ecore_Win32_Window *)window;
-   printf ("ecore_win32_window_size_base_get : %p  %d %d\n", window, w->base_width, w->base_height);
-   if (base_width) *base_width = w->base_width;
-   if (base_height) *base_height = w->base_height;
+   printf ("ecore_win32_window_size_base_get : %p  %d %d\n", window, window->base_width, window->base_height);
+   if (base_width) *base_width = window->base_width;
+   if (base_height) *base_height = window->base_height;
 }
 
 /**
@@ -755,14 +725,11 @@ ecore_win32_window_size_step_set(Ecore_Win32_Window *window,
                                  unsigned int        step_width,
                                  unsigned int        step_height)
 {
-   Ecore_Win32_Window *w;
-
    printf ("ecore_win32_window_size_step_set : %p  %d %d\n", window, step_width, step_height);
    if (!window) return;
 
-   w = (Ecore_Win32_Window *)window;
-   w->step_width = step_width;
-   w->step_height = step_height;
+   window->step_width = step_width;
+   window->step_height = step_height;
 }
 
 /**
@@ -781,14 +748,11 @@ ecore_win32_window_size_step_get(Ecore_Win32_Window *window,
                                  unsigned int       *step_width,
                                  unsigned int       *step_height)
 {
-   Ecore_Win32_Window *w;
-
    if (!window) return;
 
-   w = (Ecore_Win32_Window *)window;
-   printf ("ecore_win32_window_size_step_get : %p  %d %d\n", window, w->step_width, w->step_height);
-   if (step_width) *step_width = w->step_width;
-   if (step_height) *step_height = w->step_height;
+   printf ("ecore_win32_window_size_step_get : %p  %d %d\n", window, window->step_width, window->step_height);
+   if (step_width) *step_width = window->step_width;
+   if (step_height) *step_height = window->step_height;
 }
 
 EAPI void
@@ -797,33 +761,30 @@ ecore_win32_window_shape_set(Ecore_Win32_Window *window,
                              unsigned short      height,
                              unsigned char      *mask)
 {
-   Ecore_Win32_Window *wnd;
-   HRGN                        rgn;
-   int                         x;
-   int                         y;
-   OSVERSIONINFO               version_info;
+   HRGN          rgn;
+   int           x;
+   int           y;
+   OSVERSIONINFO version_info;
 
    if (!window)
       return;
 
-   wnd = (Ecore_Win32_Window *)window;
-
    if (!mask)
      {
-        wnd->shape.enabled = 0;
-        if (wnd->shape.layered != 0)
+        window->shape.enabled = 0;
+        if (window->shape.layered != 0)
           {
-             wnd->shape.layered = 0;
+             window->shape.layered = 0;
 #if defined(WS_EX_LAYERED)
              SetLastError(0);
-             if (!SetWindowLongPtr(wnd->window, GWL_EXSTYLE,
-                                   GetWindowLong(wnd->window, GWL_EXSTYLE) & (~WS_EX_LAYERED)) &&
+             if (!SetWindowLongPtr(window->window, GWL_EXSTYLE,
+                                   GetWindowLong(window->window, GWL_EXSTYLE) & (~WS_EX_LAYERED)) &&
                  (GetLastError() != 0))
                {
                   ERR("SetWindowLongPtr() failed");
                   return;
                }
-             if (!RedrawWindow(wnd->window, NULL, NULL,
+             if (!RedrawWindow(window->window, NULL, NULL,
                                RDW_ERASE | RDW_INVALIDATE | RDW_FRAME | RDW_ALLCHILDREN))
                {
                   ERR("RedrawWindow() failed");
@@ -832,7 +793,7 @@ ecore_win32_window_shape_set(Ecore_Win32_Window *window,
 #endif
           }
         else
-          if (!SetWindowRgn(wnd->window, NULL, TRUE))
+          if (!SetWindowRgn(window->window, NULL, TRUE))
             {
                ERR("SetWindowRgn() failed");
             }
@@ -842,36 +803,36 @@ ecore_win32_window_shape_set(Ecore_Win32_Window *window,
    if (width == 0 || height == 0)
      return;
 
-   wnd->shape.enabled = 1;
+   window->shape.enabled = 1;
 
-   if (width != wnd->shape.width || height != wnd->shape.height)
+   if (width != window->shape.width || height != window->shape.height)
      {
-       wnd->shape.width = width;
-       wnd->shape.height = height;
-       if (wnd->shape.mask)
+       window->shape.width = width;
+       window->shape.height = height;
+       if (window->shape.mask)
          {
-           free(wnd->shape.mask);
-           wnd->shape.mask = NULL;
+           free(window->shape.mask);
+           window->shape.mask = NULL;
          }
-       wnd->shape.mask = malloc(width * height);
+       window->shape.mask = malloc(width * height);
      }
-   memcpy(wnd->shape.mask, mask, width * height);
+   memcpy(window->shape.mask, mask, width * height);
 
-   wnd->shape.layered = 0;
+   window->shape.layered = 0;
 
 #if defined(WS_EX_LAYERED)
    version_info.dwOSVersionInfoSize = sizeof(version_info);
    if (GetVersionEx(&version_info) == TRUE && version_info.dwMajorVersion == 5)
      {
        SetLastError(0);
-       if (!SetWindowLongPtr(wnd->window, GWL_EXSTYLE,
-                             GetWindowLong(wnd->window, GWL_EXSTYLE) | WS_EX_LAYERED) &&
+       if (!SetWindowLongPtr(window->window, GWL_EXSTYLE,
+                             GetWindowLong(window->window, GWL_EXSTYLE) | WS_EX_LAYERED) &&
            (GetLastError() != 0))
             {
                ERR("SetWindowLongPtr() failed");
                return;
             }
-       wnd->shape.layered = 1;
+       window->shape.layered = 1;
        return;
      }
 #endif
@@ -922,7 +883,7 @@ ecore_win32_window_shape_set(Ecore_Win32_Window *window,
              return;
           }
      }
-   if (!SetWindowRgn(wnd->window, rgn, TRUE))
+   if (!SetWindowRgn(window->window, rgn, TRUE))
      {
         ERR("SetWindowRgn() failed");
      }
@@ -943,8 +904,8 @@ ecore_win32_window_show(Ecore_Win32_Window *window)
 
    INF("showing window");
 
-   ShowWindow(((Ecore_Win32_Window *)window)->window, SW_SHOWNORMAL);
-   if (!UpdateWindow(((Ecore_Win32_Window *)window)->window))
+   ShowWindow(window->window, SW_SHOWNORMAL);
+   if (!UpdateWindow(window->window))
      {
         ERR("UpdateWindow() failed");
      }
@@ -966,7 +927,7 @@ ecore_win32_window_hide(Ecore_Win32_Window *window)
 
    INF("hiding window");
 
-   ShowWindow(((Ecore_Win32_Window *)window)->window, SW_HIDE);
+   ShowWindow(window->window, SW_HIDE);
 }
 
 /**
@@ -984,7 +945,7 @@ ecore_win32_window_raise(Ecore_Win32_Window *window)
 
    INF("raising window");
 
-   if (!SetWindowPos(((Ecore_Win32_Window *)window)->window,
+   if (!SetWindowPos(window->window,
                      HWND_TOP, 0, 0, 0, 0,
                      SWP_NOACTIVATE | SWP_NOMOVE | SWP_NOSIZE))
      {
@@ -1007,7 +968,7 @@ ecore_win32_window_lower(Ecore_Win32_Window *window)
 
    INF("lowering window");
 
-   if (!SetWindowPos(((Ecore_Win32_Window *)window)->window,
+   if (!SetWindowPos(window->window,
                      HWND_BOTTOM, 0, 0, 0, 0,
                      SWP_NOACTIVATE | SWP_NOMOVE | SWP_NOSIZE))
      {
@@ -1035,7 +996,7 @@ ecore_win32_window_title_set(Ecore_Win32_Window *window,
 
    INF("setting window title");
 
-   if (!SetWindowText(((Ecore_Win32_Window *)window)->window, title))
+   if (!SetWindowText(window->window, title))
      {
         ERR("SetWindowText() failed");
      }
@@ -1056,7 +1017,7 @@ ecore_win32_window_focus_set(Ecore_Win32_Window *window)
 
    INF("focusing window");
 
-   if (!SetFocus(((Ecore_Win32_Window *)window)->window))
+   if (!SetFocus(window->window))
      {
         ERR("SetFocus() failed");
      }
@@ -1078,19 +1039,16 @@ EAPI void
 ecore_win32_window_iconified_set(Ecore_Win32_Window *window,
                                  Eina_Bool           on)
 {
-   Ecore_Win32_Window *ew;
-
    if (!window) return;
 
-   ew = (Ecore_Win32_Window *)window;
-   if (((ew->iconified) && (on)) ||
-       ((!ew->iconified) && (!on)))
+   if (((window->iconified) && (on)) ||
+       ((!window->iconified) && (!on)))
      return;
 
    INF("iconifying window: %s", on ? "yes" : "no");
 
-   ShowWindow(ew->window, on ? SW_MINIMIZE : SW_RESTORE);
-   ew->iconified = on;
+   ShowWindow(window->window, on ? SW_MINIMIZE : SW_RESTORE);
+   window->iconified = on;
 }
 
 /**
@@ -1111,30 +1069,26 @@ ecore_win32_window_borderless_set(Ecore_Win32_Window *window,
 {
    RECT                rect;
    DWORD               style;
-   Ecore_Win32_Window *ew;
-   HWND                w;
 
    if (!window) return;
 
-   ew = (Ecore_Win32_Window *)window;
-   if (((ew->borderless) && (on)) ||
-       ((!ew->borderless) && (!on)))
+   if (((window->borderless) && (on)) ||
+       ((!window->borderless) && (!on)))
      return;
 
    INF("setting window without border: %s", on ? "yes" : "no");
 
-   w = ew->window;
-
-   style = GetWindowLong(w, GWL_STYLE);
+   style = GetWindowLong(window->window, GWL_STYLE);
    if (on)
      {
-        if (!GetClientRect(w, &rect))
+        if (!GetClientRect(window->window, &rect))
           {
              ERR("GetClientRect() failed");
              return;
           }
         SetLastError(0);
-        if (!SetWindowLongPtr(w, GWL_STYLE, style & ~(WS_CAPTION | WS_THICKFRAME)) && (GetLastError() != 0))
+        if (!SetWindowLongPtr(window->window, GWL_STYLE, style & ~(WS_CAPTION | WS_THICKFRAME)) &&
+            (GetLastError() != 0))
           {
              ERR("SetWindowLongPtr() failed");
              return;
@@ -1142,7 +1096,7 @@ ecore_win32_window_borderless_set(Ecore_Win32_Window *window,
      }
    else
      {
-        if (!GetWindowRect(w, &rect))
+        if (!GetWindowRect(window->window, &rect))
           {
              ERR("GetWindowRect() failed");
              return;
@@ -1154,13 +1108,14 @@ ecore_win32_window_borderless_set(Ecore_Win32_Window *window,
              return;
           }
         SetLastError(0);
-        if (!SetWindowLongPtr(w, GWL_STYLE, style) && (GetLastError() != 0))
+        if (!SetWindowLongPtr(window->window, GWL_STYLE, style) &&
+            (GetLastError() != 0))
           {
              ERR("SetWindowLongPtr() failed");
              return;
           }
      }
-   if (!SetWindowPos(w, HWND_TOPMOST,
+   if (!SetWindowPos(window->window, HWND_TOPMOST,
                      rect.left, rect.top,
                      rect.right - rect.left, rect.bottom - rect.top,
                      SWP_NOMOVE | SWP_FRAMECHANGED))
@@ -1168,7 +1123,8 @@ ecore_win32_window_borderless_set(Ecore_Win32_Window *window,
         ERR("SetWindowPos() failed");
         return;
      }
-   ew->borderless = on;
+
+   window->borderless = on;
 }
 
 /**
@@ -1187,51 +1143,49 @@ EAPI void
 ecore_win32_window_fullscreen_set(Ecore_Win32_Window *window,
                                   Eina_Bool           on)
 {
-   Ecore_Win32_Window *ew;
-   HWND                        w;
-
    if (!window) return;
 
-   ew = (Ecore_Win32_Window *)window;
-   if (((ew->fullscreen) && (on)) ||
-       ((!ew->fullscreen) && (!on)))
+   if (((window->fullscreen) && (on)) ||
+       ((!window->fullscreen) && (!on)))
      return;
 
    INF("setting fullscreen: %s", on ? "yes" : "no");
 
-   ew->fullscreen = !!on;
-   w = ew->window;
+   window->fullscreen = !!on;
 
    if (on)
      {
         DWORD style;
 
-        if (!GetWindowRect(w, &ew->rect))
+        if (!GetWindowRect(window->window, &window->rect))
           {
              ERR("GetWindowRect() failed");
              return;
           }
-        if (!(ew->style = GetWindowLong(w, GWL_STYLE)))
+        if (!(window->style = GetWindowLong(window->window, GWL_STYLE)))
           {
              ERR("GetWindowLong() failed");
              return;
           }
-        style = ew->style & ~WS_OVERLAPPEDWINDOW & ~WS_SIZEBOX;
+        style = window->style & ~WS_OVERLAPPEDWINDOW & ~WS_SIZEBOX;
         style |= WS_VISIBLE | WS_POPUP;
         SetLastError(0);
-        if (!SetWindowLongPtr(w, GWL_STYLE, style) && (GetLastError() != 0))
+        if (!SetWindowLongPtr(window->window, GWL_STYLE, style) &&
+            (GetLastError() != 0))
           {
              ERR("SetWindowLongPtr() failed");
              return;
           }
         SetLastError(0);
-        if (!SetWindowLongPtr(w, GWL_EXSTYLE, WS_EX_TOPMOST) && (GetLastError() != 0))
+        if (!SetWindowLongPtr(window->window, GWL_EXSTYLE, WS_EX_TOPMOST) &&
+            (GetLastError() != 0))
           {
              ERR("SetWindowLongPtr() failed");
              return;
           }
-        if (!SetWindowPos(w, HWND_TOPMOST, 0, 0,
-                          GetSystemMetrics (SM_CXSCREEN), GetSystemMetrics (SM_CYSCREEN),
+        if (!SetWindowPos(window->window, HWND_TOPMOST, 0, 0,
+                          GetSystemMetrics (SM_CXSCREEN),
+                          GetSystemMetrics (SM_CYSCREEN),
                           SWP_NOCOPYBITS | SWP_SHOWWINDOW))
           {
              ERR("SetWindowPos() failed");
@@ -1241,22 +1195,24 @@ ecore_win32_window_fullscreen_set(Ecore_Win32_Window *window,
    else
      {
         SetLastError(0);
-        if (!SetWindowLongPtr(w, GWL_STYLE, ew->style) && (GetLastError() != 0))
+        if (!SetWindowLongPtr(window->window, GWL_STYLE, window->style) &&
+            (GetLastError() != 0))
           {
              ERR("SetWindowLongPtr() failed");
              return;
           }
         SetLastError(0);
-        if (!SetWindowLongPtr(w, GWL_EXSTYLE, 0) && (GetLastError() != 0))
+        if (!SetWindowLongPtr(window->window, GWL_EXSTYLE, 0) &&
+            (GetLastError() != 0))
           {
              ERR("SetWindowLongPtr() failed");
              return;
           }
-        if (!SetWindowPos(w, HWND_NOTOPMOST,
-                          ew->rect.left,
-                          ew->rect.top,
-                          ew->rect.right - ew->rect.left,
-                          ew->rect.bottom - ew->rect.top,
+        if (!SetWindowPos(window->window, HWND_NOTOPMOST,
+                          window->rect.left,
+                          window->rect.top,
+                          window->rect.right - window->rect.left,
+                          window->rect.bottom - window->rect.top,
                           SWP_NOCOPYBITS | SWP_SHOWWINDOW))
           {
              ERR("SetWindowPos() failed");
@@ -1285,8 +1241,8 @@ ecore_win32_window_cursor_set(Ecore_Win32_Window *window,
    if (!window || !cursor)
      return;
 
-   if (!SetClassLongPtr(((Ecore_Win32_Window *)window)->window,
-                     GCLP_HCURSOR, (LONG_PTR)cursor))
+   if (!SetClassLongPtr(window->window,
+                        GCLP_HCURSOR, (LONG_PTR)cursor))
      {
         ERR("SetClassLong() failed");
      }
@@ -1320,41 +1276,41 @@ ecore_win32_window_state_set(Ecore_Win32_Window       *window,
         switch (state[i])
           {
           case ECORE_WIN32_WINDOW_STATE_ICONIFIED:
-            ((Ecore_Win32_Window *)window)->state.iconified = 1;
+            window->state.iconified = 1;
             break;
           case ECORE_WIN32_WINDOW_STATE_MODAL:
-            ((Ecore_Win32_Window *)window)->state.modal = 1;
+            window->state.modal = 1;
             break;
           case ECORE_WIN32_WINDOW_STATE_STICKY:
-            ((Ecore_Win32_Window *)window)->state.sticky = 1;
+            window->state.sticky = 1;
             break;
           case ECORE_WIN32_WINDOW_STATE_MAXIMIZED_VERT:
-            ((Ecore_Win32_Window *)window)->state.maximized_vert = 1;
+            window->state.maximized_vert = 1;
             break;
           case ECORE_WIN32_WINDOW_STATE_MAXIMIZED_HORZ:
-            ((Ecore_Win32_Window *)window)->state.maximized_horz = 1;
+            window->state.maximized_horz = 1;
             break;
           case ECORE_WIN32_WINDOW_STATE_MAXIMIZED:
-            ((Ecore_Win32_Window *)window)->state.maximized_horz = 1;
-            ((Ecore_Win32_Window *)window)->state.maximized_vert = 1;
+            window->state.maximized_horz = 1;
+            window->state.maximized_vert = 1;
             break;
           case ECORE_WIN32_WINDOW_STATE_SHADED:
-            ((Ecore_Win32_Window *)window)->state.shaded = 1;
+            window->state.shaded = 1;
             break;
           case ECORE_WIN32_WINDOW_STATE_HIDDEN:
-            ((Ecore_Win32_Window *)window)->state.hidden = 1;
+            window->state.hidden = 1;
             break;
           case ECORE_WIN32_WINDOW_STATE_FULLSCREEN:
-            ((Ecore_Win32_Window *)window)->state.fullscreen = 1;
+            window->state.fullscreen = 1;
             break;
           case ECORE_WIN32_WINDOW_STATE_ABOVE:
-            ((Ecore_Win32_Window *)window)->state.above = 1;
+            window->state.above = 1;
             break;
           case ECORE_WIN32_WINDOW_STATE_BELOW:
-            ((Ecore_Win32_Window *)window)->state.below = 1;
+            window->state.below = 1;
             break;
           case ECORE_WIN32_WINDOW_STATE_DEMANDS_ATTENTION:
-            ((Ecore_Win32_Window *)window)->state.demands_attention = 1;
+            window->state.demands_attention = 1;
             break;
           case ECORE_WIN32_WINDOW_STATE_UNKNOWN:
             /* nothing to be done */
@@ -1381,30 +1337,24 @@ ecore_win32_window_state_request_send(Ecore_Win32_Window      *window,
                                       Ecore_Win32_Window_State state,
                                       unsigned int             set)
 {
-   Ecore_Win32_Window *ew;
-   HWND                w;
-
    if (!window) return;
-
-   ew = (Ecore_Win32_Window *)window;
-   w = ew->window;
 
    INF("sending cursor state");
 
    switch (state)
      {
       case ECORE_WIN32_WINDOW_STATE_ICONIFIED:
-         if (ew->state.iconified)
+         if (window->state.iconified)
            ecore_win32_window_iconified_set(window, set);
          break;
       case ECORE_WIN32_WINDOW_STATE_MODAL:
-         ew->state.modal = 1;
+         window->state.modal = 1;
          break;
       case ECORE_WIN32_WINDOW_STATE_STICKY:
-         ew->state.sticky = 1;
+         window->state.sticky = 1;
          break;
       case ECORE_WIN32_WINDOW_STATE_MAXIMIZED_VERT:
-         if (ew->state.maximized_vert)
+         if (window->state.maximized_vert)
            {
               RECT rect;
               int  y;
@@ -1419,13 +1369,13 @@ ecore_win32_window_state_request_send(Ecore_Win32_Window      *window,
               y = rect.top;
               height = rect.bottom - rect.top;
 
-              if (!GetClientRect(w, &rect))
+              if (!GetClientRect(window->window, &rect))
                 {
                    ERR("GetClientRect() failed");
                    break;
                 }
 
-              if (!MoveWindow(w, rect.left, y,
+              if (!MoveWindow(window->window, rect.left, y,
                               rect.right - rect.left,
                               height,
                               TRUE))
@@ -1435,17 +1385,17 @@ ecore_win32_window_state_request_send(Ecore_Win32_Window      *window,
            }
          break;
       case ECORE_WIN32_WINDOW_STATE_MAXIMIZED_HORZ:
-         if (ew->state.maximized_horz)
+         if (window->state.maximized_horz)
            {
               RECT rect;
 
-              if (!GetClientRect(w, &rect))
+              if (!GetClientRect(window->window, &rect))
                 {
                    ERR("GetClientRect() failed");
                    break;
                 }
 
-              if (!MoveWindow(w, 0, rect.top,
+              if (!MoveWindow(window->window, 0, rect.top,
                               GetSystemMetrics(SM_CXSCREEN),
                               rect.bottom - rect.top,
                               TRUE))
@@ -1455,7 +1405,7 @@ ecore_win32_window_state_request_send(Ecore_Win32_Window      *window,
            }
          break;
       case ECORE_WIN32_WINDOW_STATE_MAXIMIZED:
-         if (ew->state.maximized_vert && ew->state.maximized_horz)
+         if (window->state.maximized_vert && window->state.maximized_horz)
            {
               RECT rect;
 
@@ -1466,28 +1416,28 @@ ecore_win32_window_state_request_send(Ecore_Win32_Window      *window,
                    break;
                 }
 
-              if (!MoveWindow(w, 0, 0,
+              if (!MoveWindow(window->window, 0, 0,
                               GetSystemMetrics(SM_CXSCREEN),
                               rect.bottom - rect.top,
                               TRUE))
                 {
-                   ERR("MoveWindow() failed");
+                   ERR("Movwindowindow() failed");
                 }
            }
          break;
       case ECORE_WIN32_WINDOW_STATE_SHADED:
-         ew->state.shaded = 1;
+         window->state.shaded = 1;
          break;
       case ECORE_WIN32_WINDOW_STATE_HIDDEN:
-         ew->state.hidden = 1;
+         window->state.hidden = 1;
          break;
       case ECORE_WIN32_WINDOW_STATE_FULLSCREEN:
-         if (ew->state.fullscreen)
+         if (window->state.fullscreen)
            ecore_win32_window_fullscreen_set(window, set);
          break;
       case ECORE_WIN32_WINDOW_STATE_ABOVE:
-         if (ew->state.above)
-           if (!SetWindowPos(w, HWND_TOP,
+         if (window->state.above)
+           if (!SetWindowPos(window->window, HWND_TOP,
                              0, 0,
                              0, 0,
                              SWP_NOMOVE | SWP_NOSIZE | SWP_SHOWWINDOW))
@@ -1496,8 +1446,8 @@ ecore_win32_window_state_request_send(Ecore_Win32_Window      *window,
              }
          break;
       case ECORE_WIN32_WINDOW_STATE_BELOW:
-         if (ew->state.below)
-           if (!SetWindowPos(w, HWND_BOTTOM,
+         if (window->state.below)
+           if (!SetWindowPos(window->window, HWND_BOTTOM,
                              0, 0,
                              0, 0,
                              SWP_NOMOVE | SWP_NOSIZE | SWP_SHOWWINDOW))
@@ -1506,7 +1456,7 @@ ecore_win32_window_state_request_send(Ecore_Win32_Window      *window,
              }
          break;
       case ECORE_WIN32_WINDOW_STATE_DEMANDS_ATTENTION:
-         ew->state.demands_attention = 1;
+         window->state.demands_attention = 1;
          break;
       case ECORE_WIN32_WINDOW_STATE_UNKNOWN:
          /* nothing to be done */
@@ -1518,7 +1468,7 @@ ecore_win32_window_state_request_send(Ecore_Win32_Window      *window,
  * @brief Set the type of the given window.
  *
  * @param window The window to modify the type.
- * @param type The new types.
+ * @param type The nwindow types.
  *
  * This function set the type of @p window to @p type. If
  * @p window is @c NULL, the function does nothing.
@@ -1535,31 +1485,31 @@ ecore_win32_window_type_set(Ecore_Win32_Window      *window,
    switch (type)
      {
      case ECORE_WIN32_WINDOW_TYPE_DESKTOP:
-       ((Ecore_Win32_Window *)window)->type.desktop = 1;
+       window->type.desktop = 1;
        break;
      case ECORE_WIN32_WINDOW_TYPE_DOCK:
-       ((Ecore_Win32_Window *)window)->type.dock = 1;
+       window->type.dock = 1;
        break;
      case ECORE_WIN32_WINDOW_TYPE_TOOLBAR:
-       ((Ecore_Win32_Window *)window)->type.toolbar = 1;
+       window->type.toolbar = 1;
        break;
      case ECORE_WIN32_WINDOW_TYPE_MENU:
-       ((Ecore_Win32_Window *)window)->type.menu = 1;
+       window->type.menu = 1;
        break;
      case ECORE_WIN32_WINDOW_TYPE_UTILITY:
-       ((Ecore_Win32_Window *)window)->type.utility = 1;
+       window->type.utility = 1;
        break;
      case ECORE_WIN32_WINDOW_TYPE_SPLASH:
-       ((Ecore_Win32_Window *)window)->type.splash = 1;
+       window->type.splash = 1;
        break;
      case ECORE_WIN32_WINDOW_TYPE_DIALOG:
-       ((Ecore_Win32_Window *)window)->type.dialog = 1;
+       window->type.dialog = 1;
        break;
      case ECORE_WIN32_WINDOW_TYPE_NORMAL:
-       ((Ecore_Win32_Window *)window)->type.normal = 1;
+       window->type.normal = 1;
        break;
      case ECORE_WIN32_WINDOW_TYPE_UNKNOWN:
-       ((Ecore_Win32_Window *)window)->type.normal = 1;
+       window->type.normal = 1;
        break;
      }
 }
