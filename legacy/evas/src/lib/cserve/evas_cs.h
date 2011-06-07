@@ -137,6 +137,7 @@ typedef struct
       struct {
          int x, y, w, h;
       } region;
+      Eina_Bool orientation;
    } lopt;
 } Op_Load; // +"file""key"
 typedef struct

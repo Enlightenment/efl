@@ -680,7 +680,7 @@ evas_cache_image_request(Evas_Cache_Image *cache, const char *file,
    const char           *ckey = "(null)";
    char                 *hkey;
    Image_Entry          *im;
-   Evas_Image_Load_Opts  prevent = { 0, 0, 0, 0, { 0, 0, 0, 0 } };
+   Evas_Image_Load_Opts  prevent = { 0, 0, 0, 0, { 0, 0, 0, 0 }, 0 };
    size_t                size;
    int                   stat_done = 0, stat_failed = 0;
    size_t                file_length;
@@ -697,7 +697,7 @@ evas_cache_image_request(Evas_Cache_Image *cache, const char *file,
    /* generate hkey from file+key+load opts */
    file_length = strlen(file);
    key_length = key ? strlen(key) : 6;
-   size = file_length + key_length + 128;
+   size = file_length + key_length + 132;
    hkey = alloca(sizeof (char) * size);
    memcpy(hkey, file, file_length);
    size = file_length;
@@ -711,7 +711,8 @@ evas_cache_image_request(Evas_Cache_Image *cache, const char *file,
         (lo->scale_down_by == 0) &&
         (lo->dpi == 0.0) &&
         ((lo->w == 0) || (lo->h == 0)) &&
-        ((lo->region.w == 0) || (lo->region.h == 0))
+        ((lo->region.w == 0) || (lo->region.h == 0)) &&
+	(lo->orientation == 0)
         ))
      {
         lo = &prevent;
@@ -742,6 +743,13 @@ evas_cache_image_request(Evas_Cache_Image *cache, const char *file,
 	hkey[size] = 'x';
 	size += 1;
 	size += eina_convert_xtoa(lo->region.h, hkey + size);
+
+	if (lo->orientation)
+	  {
+             hkey[size] = '/';
+             hkey[size] = 'o';
+             size += 2;
+	  }
      }
    hkey[size] = '\0';
 

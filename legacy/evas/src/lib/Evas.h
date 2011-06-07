@@ -5071,7 +5071,7 @@ EAPI void                     evas_object_image_load_size_set          (Evas_Obj
 /**
  * Get the size of a loaded image of the canvas.
  *
- * @param obj The given canvas object.
+ * @param obj The given image object.
  * @param w The width of the canvas image given.
  * @param h The height of the canvas image given.
  *
@@ -5083,7 +5083,7 @@ EAPI void                     evas_object_image_load_size_get          (const Ev
 /**
  * Set the scale down of a loaded image of the canvas.
  *
- * @param obj The given canvas pointer.
+ * @param obj The given image object pointer.
  * @param scale_down The scale to down value.
  *
  * This function sets the scale down of a given canvas image.
@@ -5102,6 +5102,23 @@ EAPI void                     evas_object_image_load_scale_down_set    (Evas_Obj
 EAPI int                      evas_object_image_load_scale_down_get    (const Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
    EAPI void                     evas_object_image_load_region_set        (Evas_Object *obj, int x, int y, int w, int h) EINA_ARG_NONNULL(1);
    EAPI void                     evas_object_image_load_region_get        (const Evas_Object *obj, int *x, int *y, int *w, int *h) EINA_ARG_NONNULL(1);
+
+/**
+ * Define if the orientation information in the image file should be honored.
+ *
+ * @param obj The given image object pointer.
+ * @param enable @p EINA_TRUE means that it should honor the orientation information
+ * @since 1.1
+ */
+EAPI void                     evas_object_image_load_orientation_set        (Evas_Object *obj, Eina_Bool enable) EINA_ARG_NONNULL(1);
+
+/**
+ * Get if the orientation information in the image file should be honored.
+ *
+ * @param obj The given image object pointer.
+ * @since 1.1
+ */
+EAPI Eina_Bool                evas_object_image_load_orientation_get        (const Evas_Object *obj) EINA_ARG_NONNULL(1);
 
 /**
  * Set the colorspace of a given image of the canvas.

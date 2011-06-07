@@ -56,6 +56,7 @@ struct _Evas_Object_Image
       struct {
          short       x, y, w, h;
       } region;
+      Eina_Bool  orientation : 1;
    } load_opts;
 
    struct {
@@ -315,6 +316,7 @@ evas_object_image_file_set(Evas_Object *obj, const char *file, const char *key)
    lo.region.y = o->load_opts.region.y;
    lo.region.w = o->load_opts.region.w;
    lo.region.h = o->load_opts.region.h;
+   lo.orientation = o->load_opts.orientation;
    o->engine_data = obj->layer->evas->engine.func->image_load(obj->layer->evas->engine.data.output,
 							      o->cur.file,
 							      o->cur.key,
@@ -1610,6 +1612,36 @@ evas_object_image_load_region_get(const Evas_Object *obj, int *x, int *y, int *w
 }
 
 EAPI void
+evas_object_image_load_orientation_set(Evas_Object *obj, Eina_Bool enable)
+{
+   Evas_Object_Image *o;
+
+   MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
+   return;
+   MAGIC_CHECK_END();
+   o = (Evas_Object_Image *)(obj->object_data);
+   MAGIC_CHECK(o, Evas_Object_Image, MAGIC_OBJ_IMAGE);
+   return;
+   MAGIC_CHECK_END();
+   o->load_opts.orientation = !!enable;
+}
+
+EAPI Eina_Bool
+evas_object_image_load_orientation_get(const Evas_Object *obj)
+{
+   Evas_Object_Image *o;
+
+   MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
+   return;
+   MAGIC_CHECK_END();
+   o = (Evas_Object_Image *)(obj->object_data);
+   MAGIC_CHECK(o, Evas_Object_Image, MAGIC_OBJ_IMAGE);
+   return;
+   MAGIC_CHECK_END();
+   return o->load_opts.orientation;
+}
+
+EAPI void
 evas_object_image_colorspace_set(Evas_Object *obj, Evas_Colorspace cspace)
 {
    Evas_Object_Image *o;
@@ -2285,6 +2317,7 @@ evas_object_image_load(Evas_Object *obj)
    lo.region.y = o->load_opts.region.y;
    lo.region.w = o->load_opts.region.w;
    lo.region.h = o->load_opts.region.h;
+   lo.orientation = o->load_opts.orientation;
    o->engine_data = obj->layer->evas->engine.func->image_load
       (obj->layer->evas->engine.data.output,
           o->cur.file,

@@ -302,6 +302,7 @@ evas_cserve_image_load(Image_Entry *ie, const char *file, const char *key, RGBA_
    msg.lopt.region.y = lopt->region.y;
    msg.lopt.region.w = lopt->region.w;
    msg.lopt.region.h = lopt->region.h;
+   msg.lopt.orientation = lopt->orientation;
    if (file[0] != '/')
      {
         if (getcwd(wdb, sizeof(wdb)))

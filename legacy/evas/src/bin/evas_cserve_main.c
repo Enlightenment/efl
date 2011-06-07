@@ -990,7 +990,7 @@ message(void *fdata __UNUSED__, Server *s __UNUSED__, Client *c, int opcode, int
              Op_Load *rep;
              Op_Load_Reply msg;
              Img *img;
-             RGBA_Image_Loadopts lopt = {0, 0.0, 0, 0, {0, 0, 0, 0}};
+             RGBA_Image_Loadopts lopt = {0, 0.0, 0, 0, {0, 0, 0, 0}, 0};
              char *file = NULL, *key = NULL;
              
              DBG("OP_LOAD %i", c->pid);

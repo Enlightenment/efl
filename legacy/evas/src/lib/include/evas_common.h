@@ -488,6 +488,8 @@ struct _RGBA_Image_Loadopts
    struct {
       unsigned int      x, y, w, h;
    } region;
+
+   Eina_Bool            orientation; // if EINA_TRUE => should honor orientation information provided by file (like jpeg exif info)
 };
 
 struct _Image_Entry_Flags
