@@ -1887,6 +1887,8 @@ _status_config_fonts(Evas_Object *win,
    /* yeah, dummy rectangles are ugly as hell, but no good way yet of
       fixing sizes */
    rc = evas_object_rectangle_add(evas_object_evas_get(win));
+   evas_object_size_hint_weight_set(rc, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(rc, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_min_set(rc, 70, 170);
    elm_table_pack(base, rc, 1, 0, 1, 1);
 
@@ -1925,6 +1927,8 @@ _status_config_fonts(Evas_Object *win,
    ELM_LIST_DISABLE(li);
 
    rc = evas_object_rectangle_add(evas_object_evas_get(win));
+   evas_object_size_hint_weight_set(rc, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(rc, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_min_set(rc, 70, 130);
    elm_table_pack(base, rc, 1, 2, 1, 1);
 
@@ -1974,8 +1978,7 @@ _status_config_fonts(Evas_Object *win,
    preview = elm_layout_add(win);
    elm_layout_file_set(preview, buf, "font_preview");
    elm_layout_text_set(preview, "elm.text", "Preview Text — 我真的会写中文");
-   evas_object_size_hint_weight_set(preview, EVAS_HINT_EXPAND,
-                                    EVAS_HINT_EXPAND);
+   evas_object_size_hint_weight_set(preview, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(preview, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_show(preview);
 
@@ -1992,7 +1995,7 @@ _status_config_fonts(Evas_Object *win,
 
    pd = elm_frame_add(win);
    elm_object_style_set(pd, "pad_medium");
-   evas_object_size_hint_weight_set(pd, 0.0, 0.0);
+   evas_object_size_hint_weight_set(pd, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(pd, 0.5, 0.5);
    elm_table_pack(base, pd, 0, 5, 2, 1);
    evas_object_show(pd);
