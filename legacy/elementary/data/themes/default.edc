@@ -16253,7 +16253,7 @@ collections {
          }
          program {
             name:    "go_reorder_disabled";
-            signal:  "elm,state,reorder,disable";
+            signal:  "elm,state,reorder,disabled";
             source:  "elm";
             action:  STATE_SET "default" 0.0;
             target:  "reorder_bg";
@@ -16261,7 +16261,7 @@ collections {
          }
          program {
             name:    "go_reorder_enabled";
-            signal:  "elm,state,reorder,enable";
+            signal:  "elm,state,reorder,enabled";
             source:  "elm";
             action:  STATE_SET "enabled" 0.0;
             target:  "reorder_bg";
@@ -29406,14 +29406,14 @@ collections {
             target:  "disclip";
          }
          program { name:    "go_reorder_disabled";
-            signal:  "elm,state,reorder_disabled";
+            signal:  "elm,state,reorder,disabled";
             source:  "elm";
             action:  STATE_SET "default" 0.0;
             target:  "reorder_bg";
             transition: DECELERATE 0.5;
          }
          program { name:    "go_reorder_enabled";
-            signal:  "elm,state,reorder_enabled";
+            signal:  "elm,state,reorder,enabled";
             source:  "elm";
             action:  STATE_SET "enabled" 0.0;
             target:  "reorder_bg";

@@ -881,7 +881,7 @@ _long_press(void *data)
         evas_object_raise(item->base.view);
         elm_smart_scroller_hold_set(item->wd->scr, EINA_TRUE);
         elm_smart_scroller_bounce_allow_set(item->wd->scr, EINA_FALSE, EINA_FALSE);
-        edje_object_signal_emit(item->base.view, "elm,state,reorder_enabled", "elm");
+        edje_object_signal_emit(item->base.view, "elm,state,reorder,enabled", "elm");
      }
    return ECORE_CALLBACK_CANCEL;
 }
@@ -960,7 +960,7 @@ _mouse_up(void            *data,
         item->wd->reorder_item = NULL;
         elm_smart_scroller_hold_set(item->wd->scr, EINA_FALSE);
         elm_smart_scroller_bounce_allow_set(item->wd->scr, item->wd->h_bounce, item->wd->v_bounce);
-        edje_object_signal_emit(item->base.view, "elm,state,reorder_disabled", "elm");
+        edje_object_signal_emit(item->base.view, "elm,state,reorder,disabled", "elm");
      }
    if (item->wd->longpressed)
      {

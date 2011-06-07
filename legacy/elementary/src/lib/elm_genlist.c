@@ -1195,7 +1195,7 @@ _long_press(void *data)
              elm_genlist_item_expanded_set(it, EINA_FALSE);
              return ECORE_CALLBACK_RENEW;
           }
-        edje_object_signal_emit(it->base.view, "elm,state,reorder,enable", "elm");
+        edje_object_signal_emit(it->base.view, "elm,state,reorder,enabled", "elm");
      }
    return ECORE_CALLBACK_CANCEL;
 }
@@ -1501,7 +1501,7 @@ _mouse_up(void        *data,
                   it->wd->calc_job = ecore_job_add(_calc_job, it->wd);
                }
           }
-        edje_object_signal_emit(it->base.view, "elm,state,reorder,disable", "elm");
+        edje_object_signal_emit(it->base.view, "elm,state,reorder,disabled", "elm");
         it->wd->reorder_it = it->wd->reorder_rel = NULL;
         elm_smart_scroller_hold_set(it->wd->scr, EINA_FALSE);
      }
