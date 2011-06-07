@@ -378,7 +378,7 @@ ecore_pipe_freeze(Ecore_Pipe *p)
 {
    if (!ECORE_MAGIC_CHECK(p, ECORE_MAGIC_PIPE))
      {
-        ECORE_MAGIC_FAIL(p, ECORE_MAGIC_PIPE, "ecore_pipe_read_close");
+        ECORE_MAGIC_FAIL(p, ECORE_MAGIC_PIPE, "ecore_pipe_read_freeze");
         return;
      }
    if (p->fd_handler)
@@ -400,7 +400,7 @@ ecore_pipe_thaw(Ecore_Pipe *p)
 {
    if (!ECORE_MAGIC_CHECK(p, ECORE_MAGIC_PIPE))
      {
-        ECORE_MAGIC_FAIL(p, ECORE_MAGIC_PIPE, "ecore_pipe_read_close");
+        ECORE_MAGIC_FAIL(p, ECORE_MAGIC_PIPE, "ecore_pipe_read_thaw");
         return;
      }
    if (!p->fd_handler && p->fd_read != PIPE_FD_INVALID)
