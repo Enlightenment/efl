@@ -652,7 +652,7 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *g
 								 external->external_params, rp->part->name);
 			     if (child_obj)
 			       {
-				  _edje_real_part_swallow(rp, child_obj);
+				  _edje_real_part_swallow(rp, child_obj, EINA_TRUE);
 				  rp->param1.external_params = _edje_external_params_parse(child_obj,
 											   external->external_params);
 				  _edje_external_recalc_apply(ed, rp, NULL, rp->chosen_description);
@@ -701,7 +701,7 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *g
 		       group_path = eina_list_append(group_path, group_path_entry);
 		       if (rp->part->type == EDJE_PART_TYPE_GROUP)
 			 {
-                            _edje_real_part_swallow(rp, child_obj);
+                            _edje_real_part_swallow(rp, child_obj, EINA_FALSE);
 			 }
 
 		       if (!_edje_object_file_set_internal(child_obj, file, source, rp->part->name, group_path))
@@ -731,6 +731,7 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *g
 		       edje_object_signal_callback_add(child_obj, "*", "*", _cb_signal_repeat, obj);
 		       if (rp->part->type == EDJE_PART_TYPE_GROUP)
 			 {
+                            _edje_real_part_swallow(rp, child_obj, EINA_TRUE);
 			    source = NULL;
 			 }
 		       else

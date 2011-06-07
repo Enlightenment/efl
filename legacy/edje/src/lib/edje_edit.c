@@ -2159,7 +2159,7 @@ _edje_edit_real_part_add(Evas_Object *obj, const char *name, Edje_Part_Type type
 	     Evas_Object *child;
 	     child = _edje_external_type_add(source, evas_object_evas_get(ed->obj), ed->obj, NULL, name);
 	     if (child)
-	       _edje_real_part_swallow(rp, child);
+	       _edje_real_part_swallow(rp, child, EINA_TRUE);
 	  }
 	evas_object_clip_set(rp->object, ed->base.clipper);
 	evas_object_show(ed->base.clipper);
@@ -2700,7 +2700,7 @@ edje_edit_part_source_set(Evas_Object *obj, const char *part, const char *source
 	rp->part->source = eina_stringshare_add(source);
 	child_obj = edje_object_add(ed->base.evas);
 	edje_object_file_set(child_obj, ed->file->path, source);
-	_edje_real_part_swallow(rp, child_obj);
+	_edje_real_part_swallow(rp, child_obj, EINA_TRUE);
      }
    else
      rp->part->source = NULL;

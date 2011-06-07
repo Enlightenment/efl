@@ -1675,7 +1675,7 @@ edje_object_part_swallow(Evas_Object *obj, const char *part, Evas_Object *obj_sw
 	ERR("cannot unswallow part %s: not swallow type!", rp->part->name);
 	return EINA_FALSE;
      }
-   _edje_real_part_swallow(rp, obj_swallow);
+   _edje_real_part_swallow(rp, obj_swallow, EINA_TRUE);
    return EINA_TRUE;
 }
 
@@ -3821,9 +3821,9 @@ _edje_object_part_swallow_free_cb(void *data, Evas *e __UNUSED__, Evas_Object *o
 static void
 _edje_real_part_swallow_hints_update(Edje_Real_Part *rp)
 {
-   char *type;
+   const char *type;
 
-   type = (char *)evas_object_type_get(rp->swallowed_object);
+   type = evas_object_type_get(rp->swallowed_object);
 
    rp->swallow_params.min.w = 0;
    rp->swallow_params.min.h = 0;
@@ -3905,7 +3905,9 @@ _edje_object_part_swallow_changed_hints_cb(void *data, __UNUSED__ Evas *e, __UNU
 }
 
 void
-_edje_real_part_swallow(Edje_Real_Part *rp, Evas_Object *obj_swallow)
+_edje_real_part_swallow(Edje_Real_Part *rp,
+			Evas_Object *obj_swallow,
+			Eina_Bool hints_update)
 {
    if (rp->swallowed_object)
      {
@@ -3916,7 +3918,8 @@ _edje_real_part_swallow(Edje_Real_Part *rp, Evas_Object *obj_swallow)
           }
         else
           {
-             _edje_real_part_swallow_hints_update(rp);
+             if (hints_update)
+               _edje_real_part_swallow_hints_update(rp);
              rp->edje->dirty = 1;
              _edje_recalc(rp->edje);
              return;
@@ -3941,7 +3944,8 @@ _edje_real_part_swallow(Edje_Real_Part *rp, Evas_Object *obj_swallow)
 				  _edje_object_part_swallow_changed_hints_cb,
 				  rp);
 
-   _edje_real_part_swallow_hints_update(rp);
+   if (hints_update)
+     _edje_real_part_swallow_hints_update(rp);
 
    if (rp->part->mouse_events)
      {

@@ -1557,7 +1557,7 @@ int               _edje_block_break(Edje *ed);
 void              _edje_block_violate(Edje *ed);
 void              _edje_object_part_swallow_free_cb(void *data, Evas *e, Evas_Object *obj, void *event_info);
 void              _edje_object_part_swallow_changed_hints_cb(void *data, Evas *e, Evas_Object *obj, void *event_info);
-void              _edje_real_part_swallow(Edje_Real_Part *rp, Evas_Object *obj_swallow);
+void              _edje_real_part_swallow(Edje_Real_Part *rp, Evas_Object *obj_swallow, Eina_Bool hints_update);
 void              _edje_real_part_swallow_clear(Edje_Real_Part *rp);
 void              _edje_box_init(void);
 void              _edje_box_shutdown(void);
