@@ -1421,7 +1421,7 @@ ecore_win32_window_state_request_send(Ecore_Win32_Window      *window,
                               rect.bottom - rect.top,
                               TRUE))
                 {
-                   ERR("Movwindowindow() failed");
+                   ERR("MoveWindow() failed");
                 }
            }
          break;
