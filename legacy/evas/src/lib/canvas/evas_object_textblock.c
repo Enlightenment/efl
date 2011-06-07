@@ -3562,10 +3562,13 @@ _layout_par(Ctxt *c)
                 (c->w - c->o->style_pad.l - c->o->style_pad.r -
                  c->marginl - c->marginr)) || (wrap > 0)))
           {
-             /* Handle ellipsis here */
+             /* Handle ellipsis here. If we don't have more width left
+              * and no height left, or no more width left and no wrapping. */
              if ((it->format->ellipsis == 1.0) && (c->h >= 0) &&
-                   (2 * it->h + c->y >
-                    c->h - c->o->style_pad.t - c->o->style_pad.b))
+                   ((2 * it->h + c->y >
+                     c->h - c->o->style_pad.t - c->o->style_pad.b) ||
+                    (!it->format->wrap_word && !it->format->wrap_char &&
+                     !it->format->wrap_mixed)))
                {
                   _layout_handle_ellipsis(c, it, i);
                   ret = 1;
@@ -3827,6 +3830,7 @@ _layout_pre(Ctxt *c, int *style_pad_l, int *style_pad_r, int *style_pad_t,
    if (o->content_changed)
      {
         Evas_Object_Textblock_Node_Text *n;
+        c->o->have_ellipsis = 0;
         c->par = c->paragraphs = o->paragraphs;
         /* Go through all the text nodes to create the logical layout */
         EINA_INLIST_FOREACH(c->o->text_nodes, n)
@@ -4124,7 +4128,6 @@ _relayout(const Evas_Object *obj)
    Evas_Object_Textblock *o;
 
    o = (Evas_Object_Textblock *)(obj->object_data);
-   o->have_ellipsis = 0;
    _layout(obj, obj->cur.geometry.w, obj->cur.geometry.h,
          &o->formatted.w, &o->formatted.h);
    o->formatted.valid = 1;
