@@ -268,6 +268,7 @@ static const char SIG_DRAG[] = "drag";
 static const char SIG_SCROLL[] = "scroll";
 static const char SIG_SCROLL_DRAG_START[] = "scroll,drag,start";
 static const char SIG_SCROLL_DRAG_STOP[] = "scroll,drag,stop";
+static const char SIG_MOVED[] = "moved";
 
 static const Evas_Smart_Cb_Description _signals[] = {
        {SIG_CLICKED_DOUBLE, ""},
@@ -285,6 +286,7 @@ static const Evas_Smart_Cb_Description _signals[] = {
        {SIG_SCROLL, ""},
        {SIG_SCROLL_DRAG_START, ""},
        {SIG_SCROLL_DRAG_STOP, ""},
+       {SIG_MOVED, ""},
        {NULL, NULL}
 };
 
@@ -956,7 +958,7 @@ _mouse_up(void            *data,
         if (item->wd->calc_job) ecore_job_del(item->wd->calc_job);
           item->wd->calc_job = ecore_job_add(_calc_job, item->wd);
 
-        evas_object_smart_callback_call(item->wd->self, "moved", item->wd->reorder_item);
+        evas_object_smart_callback_call(item->wd->self, SIG_MOVED, item->wd->reorder_item);
         item->wd->reorder_item = NULL;
         elm_smart_scroller_hold_set(item->wd->scr, EINA_FALSE);
         elm_smart_scroller_bounce_allow_set(item->wd->scr, item->wd->h_bounce, item->wd->v_bounce);
