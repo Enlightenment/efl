@@ -26,8 +26,14 @@ static void _JPEGFatalErrorHandler(j_common_ptr cinfo);
 static void _JPEGErrorHandler(j_common_ptr cinfo);
 static void _JPEGErrorHandler2(j_common_ptr cinfo, int msg_level);
 
-static Eina_Bool evas_image_load_file_head_jpeg_internal(Image_Entry *ie, FILE *f, int *error) EINA_ARG_NONNULL(1, 2, 3);
-static Eina_Bool evas_image_load_file_data_jpeg_internal(Image_Entry *ie, FILE *f, int *error) EINA_ARG_NONNULL(1, 2, 3);
+static Eina_Bool evas_image_load_file_head_jpeg_internal(Image_Entry *ie,
+                                                         void *map,
+                                                         size_t len,
+                                                         int *error) EINA_ARG_NONNULL(1, 2, 3);
+static Eina_Bool evas_image_load_file_data_jpeg_internal(Image_Entry *ie,
+                                                         void *map,
+                                                         size_t len,
+                                                         int *error) EINA_ARG_NONNULL(1, 2, 3);
 #if 0 /* not used at the moment */
 static int evas_image_load_file_data_jpeg_alpha_internal(Image_Entry *ie, FILE *f) EINA_ARG_NONNULL(1, 2);
 #endif
@@ -76,8 +82,81 @@ _JPEGErrorHandler2(j_common_ptr cinfo __UNUSED__, int msg_level __UNUSED__)
    return;
 }
 
+struct jpeg_membuf_src
+{
+   struct jpeg_source_mgr pub;
+
+   const unsigned char    *buf;
+   size_t                  len;
+   struct jpeg_membuf_src *self;
+};
+
+static void
+_evas_jpeg_membuf_src_init(j_decompress_ptr cinfo __UNUSED__)
+{
+}
+
+static boolean
+_evas_jpeg_membuf_src_fill(j_decompress_ptr cinfo)
+{
+   static const JOCTET jpeg_eoi[2] = { 0xFF, JPEG_EOI };
+   struct jpeg_membuf_src *src = (struct jpeg_membuf_src *)cinfo->src;
+
+   src->pub.bytes_in_buffer = sizeof(jpeg_eoi);
+   src->pub.next_input_byte = jpeg_eoi;
+
+   return TRUE;
+}
+
+static void
+_evas_jpeg_membuf_src_skip(j_decompress_ptr cinfo,
+                          long             num_bytes)
+{
+   struct jpeg_membuf_src *src = (struct jpeg_membuf_src *)cinfo->src;
+
+   src->pub.bytes_in_buffer -= num_bytes;
+   src->pub.next_input_byte += num_bytes;
+}
+
+static void
+_evas_jpeg_membuf_src_term(j_decompress_ptr cinfo)
+{
+   struct jpeg_membuf_src *src = ((struct jpeg_membuf_src *)cinfo->src)->self;
+
+   free(src);
+   cinfo->src = NULL;
+}
+
+static int
+_evas_jpeg_membuf_src(j_decompress_ptr cinfo,
+                      void *map, size_t length)
+{
+   struct jpeg_membuf_src *src;
+
+   src = calloc(1, sizeof(*src));
+   if (!src)
+      return -1;
+
+   src->self = src;
+
+   cinfo->src = &src->pub;
+   src->buf = map;
+   src->len = length;
+   src->pub.init_source = _evas_jpeg_membuf_src_init;
+   src->pub.fill_input_buffer = _evas_jpeg_membuf_src_fill;
+   src->pub.skip_input_data = _evas_jpeg_membuf_src_skip;
+   src->pub.resync_to_restart = jpeg_resync_to_restart;
+   src->pub.term_source = _evas_jpeg_membuf_src_term;
+   src->pub.bytes_in_buffer = src->len;
+   src->pub.next_input_byte = src->buf;
+
+   return 0;
+}
+
 static Eina_Bool
-evas_image_load_file_head_jpeg_internal(Image_Entry *ie, FILE *f, int *error)
+evas_image_load_file_head_jpeg_internal(Image_Entry *ie,
+                                        void *map, size_t length,
+                                        int *error)
 {
    unsigned int w, h, scalew, scaleh;
    struct jpeg_decompress_struct cinfo;
@@ -97,7 +176,14 @@ evas_image_load_file_head_jpeg_internal(Image_Entry *ie, FILE *f, int *error)
 	return EINA_FALSE;
      }
    jpeg_create_decompress(&cinfo);
-   jpeg_stdio_src(&cinfo, f);
+
+   if (_evas_jpeg_membuf_src(&cinfo, map, length))
+     {
+        jpeg_destroy_decompress(&cinfo);
+        *error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
+        return 0;
+     }
+
    jpeg_read_header(&cinfo, TRUE);
    cinfo.do_fancy_upsampling = FALSE;
    cinfo.do_block_smoothing = FALSE;
@@ -175,9 +261,15 @@ evas_image_load_file_head_jpeg_internal(Image_Entry *ie, FILE *f, int *error)
    if (ie->scale > 1)
      {
 	jpeg_destroy_decompress(&cinfo);
-	rewind(f);
 	jpeg_create_decompress(&cinfo);
-	jpeg_stdio_src(&cinfo, f);
+
+        if (_evas_jpeg_membuf_src(&cinfo, map, length))
+          {
+             jpeg_destroy_decompress(&cinfo);
+             *error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
+             return 0;
+          }
+
 	jpeg_read_header(&cinfo, TRUE);
 	cinfo.do_fancy_upsampling = FALSE;
 	cinfo.do_block_smoothing = FALSE;
@@ -224,7 +316,9 @@ get_time(void)
 */
 
 static Eina_Bool
-evas_image_load_file_data_jpeg_internal(Image_Entry *ie, FILE *f, int *error)
+evas_image_load_file_data_jpeg_internal(Image_Entry *ie,
+                                        void *map, size_t size,
+                                        int *error)
 {
    unsigned int w, h;
    struct jpeg_decompress_struct cinfo;
@@ -245,7 +339,14 @@ evas_image_load_file_data_jpeg_internal(Image_Entry *ie, FILE *f, int *error)
 	return EINA_FALSE;
      }
    jpeg_create_decompress(&cinfo);
-   jpeg_stdio_src(&cinfo, f);
+
+   if (_evas_jpeg_membuf_src(&cinfo, map, size))
+     {
+        jpeg_destroy_decompress(&cinfo);
+        *error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
+        return 0;
+     }
+
    jpeg_read_header(&cinfo, TRUE);
    cinfo.do_fancy_upsampling = FALSE;
    cinfo.do_block_smoothing = FALSE;
@@ -721,39 +822,69 @@ evas_image_load_file_data_jpeg_alpha_internal(Image_Entry *ie, FILE *f, int *err
 #endif
 
 static Eina_Bool
-evas_image_load_file_head_jpeg(Image_Entry *ie, const char *file, const char *key, int *error)
+evas_image_load_file_head_jpeg(Image_Entry *ie,
+                               const char *file, const char *key __UNUSED__,
+                               int *error)
 {
-   int val;
-   FILE *f;
+   Eina_File *f;
+   void *map;
+   Eina_Bool val = EINA_FALSE;
 
-   f = fopen(file, "rb");
+   f = eina_file_open(file, EINA_FALSE);
    if (!f)
      {
 	*error = EVAS_LOAD_ERROR_DOES_NOT_EXIST;
 	return EINA_FALSE;
      }
-   val = evas_image_load_file_head_jpeg_internal(ie, f, error);
-   fclose(f);
+   map = eina_file_map_all(f, EINA_FILE_WILLNEED);
+   if (!map)
+     {
+	*error = EVAS_LOAD_ERROR_DOES_NOT_EXIST;
+        goto on_error;
+     }
+
+   val = evas_image_load_file_head_jpeg_internal(ie,
+                                                 map, eina_file_size_get(f),
+                                                 error);
+
+   eina_file_map_free(f, map);
+
+ on_error:
+   eina_file_close(f);
    return val;
-   key = 0;
 }
 
 static Eina_Bool
-evas_image_load_file_data_jpeg(Image_Entry *ie, const char *file, const char *key, int *error)
+evas_image_load_file_data_jpeg(Image_Entry *ie,
+                               const char *file, const char *key __UNUSED__,
+                               int *error)
 {
-   int val;
-   FILE *f;
+   Eina_File *f;
+   void *map;
+   Eina_Bool val = EINA_FALSE;
 
-   f = fopen(file, "rb");
+   f = eina_file_open(file, EINA_FALSE);
    if (!f)
      {
 	*error = EVAS_LOAD_ERROR_DOES_NOT_EXIST;
 	return EINA_FALSE;
      }
-   val = evas_image_load_file_data_jpeg_internal(ie, f, error);
-   fclose(f);
+   map = eina_file_map_all(f, EINA_FILE_WILLNEED);
+   if (!map)
+     {
+        *error = EVAS_LOAD_ERROR_DOES_NOT_EXIST;
+        goto on_error;
+     }
+
+   val = evas_image_load_file_data_jpeg_internal(ie,
+                                                 map, eina_file_size_get(f),
+                                                 error);
+
+   eina_file_map_free(f, map);
+
+ on_error:
+   eina_file_close(f);
    return val;
-   key = 0;
 }
 
 static int

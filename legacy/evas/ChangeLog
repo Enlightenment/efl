@@ -393,3 +393,7 @@
 	* Add +evas_object_image_extension_can_load_get and
 	evas_object_image_extension_can_load_fast_get that check if a file
 	may be opened by Evas_Object_Image.
+
+2011-06-07  Cedric Bail
+
+	* Use Eina_File for JPEG loader.
