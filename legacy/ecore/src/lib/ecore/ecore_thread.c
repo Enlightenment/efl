@@ -93,6 +93,7 @@ int _ecore_thread_win32_join(win32_thread *x, void **res)
       CloseHandle(x->thread);
     }
   if (res) *res = x->val;
+  free(x);
 
   return 0;
 }
