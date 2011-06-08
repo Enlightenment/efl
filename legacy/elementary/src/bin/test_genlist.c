@@ -686,7 +686,7 @@ Evas_Object *gl3_icon_get(void *data, Evas_Object *obj, const char *part)
      {
         Evas_Object *ck;
         ck = elm_check_add(obj);
-        evas_object_propagate_events_set(ck, 0);
+        evas_object_propagate_events_set(ck, EINA_FALSE);
         elm_check_state_set(ck, tit->onoff);
         evas_object_smart_callback_add(ck, "changed", my_gl_item_check_changed, data);
         return ck;
@@ -839,7 +839,7 @@ Evas_Object *gl5_icon_get(void *data, Evas_Object *obj, const char *part)
      {
         Evas_Object *ck;
         ck = elm_check_add(obj);
-        evas_object_propagate_events_set(ck, 0);
+        evas_object_propagate_events_set(ck, EINA_FALSE);
         elm_check_state_set(ck, tit->onoff);
         evas_object_smart_callback_add(ck, "changed", my_gl_item_check_changed2, data);
         evas_object_show(ck);
@@ -1093,6 +1093,7 @@ Evas_Object *gl4_icon_get(void *data __UNUSED__, Evas_Object *obj, const char *p
      {
         Evas_Object *ck;
         ck = elm_check_add(obj);
+        evas_object_propagate_events_set(ck, EINA_FALSE);
         evas_object_show(ck);
         return ck;
      }
