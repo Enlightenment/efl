@@ -47,8 +47,14 @@ static void _del_hook(Evas_Object *obj);
 static void _mirrored_set(Evas_Object *obj, Eina_Bool rtl);
 static void _theme_hook(Evas_Object *obj);
 static void _sizing_eval(Evas_Object *obj);
-static void _changed_size_hints(void *data, Evas *e, Evas_Object *obj, void *event_info);
-static void _content_del(void *data, Evas *e, Evas_Object *obj, void *event_info);
+static void _changed_size_hints(void *data,
+                                Evas *e,
+                                Evas_Object *obj,
+                                void *event_info);
+static void _content_del(void *data,
+                         Evas *e,
+                         Evas_Object *obj,
+                         void *event_info);
 static Eina_List *_item_get(Evas_Object *obj, Evas_Object *content);
 
 static const char SIG_HIDE_FINISHED[] = "hide,finished";
@@ -57,7 +63,6 @@ static const Evas_Smart_Cb_Description _signals[] = {
    {SIG_HIDE_FINISHED, ""},
    {NULL, NULL}
 };
-
 
 static void
 _del_hook(Evas_Object *obj)
@@ -266,8 +271,10 @@ _signal_hide_finished(void *data, Evas_Object *obj __UNUSED__, const char *emiss
    if (it->popme)
      {
         evas_object_del(it->base);
-        evas_object_event_callback_del_full
-           (content, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _changed_size_hints, it);
+        evas_object_event_callback_del_full(content,
+                                            EVAS_CALLBACK_CHANGED_SIZE_HINTS,
+                                            _changed_size_hints,
+                                            it);
         evas_object_event_callback_del(content,
                                        EVAS_CALLBACK_DEL,
                                        _content_del);
@@ -365,12 +372,20 @@ elm_pager_content_push(Evas_Object *obj, Evas_Object *content)
    evas_object_clip_set(it->base, wd->clip);
    elm_widget_sub_object_add(obj, it->base);
    elm_widget_sub_object_add(obj, it->content);
-   _elm_theme_object_set(obj, it->base,  "pager", "base", elm_widget_style_get(obj));
-   edje_object_signal_callback_add(it->base, "elm,action,hide,finished", "",
-                                   _signal_hide_finished, it);
+   _elm_theme_object_set(obj,
+                         it->base,
+                         "pager",
+                         "base",
+                         elm_widget_style_get(obj));
+   edje_object_signal_callback_add(it->base,
+                                   "elm,action,hide,finished",
+                                   "",
+                                   _signal_hide_finished,
+                                   it);
    evas_object_event_callback_add(it->content,
                                   EVAS_CALLBACK_CHANGED_SIZE_HINTS,
-                                  _changed_size_hints, it);
+                                  _changed_size_hints,
+                                  it);
    evas_object_event_callback_add(it->content,
                                   EVAS_CALLBACK_DEL,
                                   _content_del,
