@@ -105,6 +105,7 @@ struct _Eina_Prefix
 
 #define STRDUP_REP(x, y) do { if (x) free(x); x = strdup(y); } while (0)
 #define IF_FREE_NULL(p) do { if (p) { free(p); p = NULL; } } while (0)
+#define DBG(fmt, args...) do { if (getenv("EINA_PREFIX_DEBUG")) fprintf(stderr, fmt, ##args); } while (0)
 
 static int
 _fallback(Eina_Prefix *pfx, const char *pkg_bin, const char *pkg_lib,
@@ -150,8 +151,10 @@ _try_proc(Eina_Prefix *pfx, void *symbol)
    FILE *f;
    char buf[4096];
 
+   DBG("Try /proc/self/maps\n");
    f = fopen("/proc/self/maps", "rb");
    if (!f) return 0;
+   DBG("Exists /proc/self/maps\n");
    while (fgets(buf, sizeof(buf), f))
      {
 	int len;
@@ -170,15 +173,18 @@ _try_proc(Eina_Prefix *pfx, void *symbol)
 	       {
 		  if (((void *)ptr1 <= symbol) && (symbol < (void *)ptr2))
 		    {
+                       DBG("Found in /proc/self/maps: %s\n", buf);
 		       p = strchr(buf, '/');
 		       if (p)
 			 {
+                            DBG("Found in /proc/self/maps: found last /\n", buf);
 			    if (len > 10)
 			      {
 				 if (!strcmp(buf + len - 10, " (deleted)"))
                                     buf[len - 10] = 0;
 			      }
                             STRDUP_REP(pfx->exe_path, p);
+                            DBG("Found in /proc/self/maps: guess exe path is %s\n", pfx->exe_path);
 			    fclose(f);
 			    return 1;
 			 }
@@ -188,6 +194,7 @@ _try_proc(Eina_Prefix *pfx, void *symbol)
 	  }
      }
    fclose(f);
+   DBG("Failed in /proc/self/maps\n");
    return 0;
 }
 #endif
@@ -199,6 +206,7 @@ _try_argv(Eina_Prefix *pfx, const char *argv0)
    int len, lenexe;
    char buf[PATH_MAX], buf2[PATH_MAX], buf3[PATH_MAX];
 
+   DBG("Try argv0 = %s\n", argv0);
    /* 1. is argv0 abs path? */
 #ifdef _WIN32
    if (argv0[0] && (argv0[1] == ':'))
@@ -206,26 +214,41 @@ _try_argv(Eina_Prefix *pfx, const char *argv0)
    if (argv0[0] == DSEP_C)
 #endif
      {
+        DBG("Match arvg0 is full path: %s\n", argv0);
         STRDUP_REP(pfx->exe_path, argv0);
-	if (access(pfx->exe_path, X_OK) == 0) return 1;
+	if (access(pfx->exe_path, X_OK) == 0)
+          {
+             DBG("Executable argv0 = %s\n", argv0);
+             return 1;
+          }
         IF_FREE_NULL(pfx->exe_path);
+        DBG("Non existant argv0: %s\n", argv0);
 	return 0;
      }
    /* 2. relative path */
    if (strchr(argv0, DSEP_C))
      {
+        DBG("Relative path argv0: %s\n", argv0);
 	if (getcwd(buf3, sizeof(buf3)))
 	  {
 	     snprintf(buf2, sizeof(buf2), "%s" DSEP_S "%s", buf3, argv0);
+             DBG("Relative to CWD: %s\n", buf2);
 	     if (realpath(buf2, buf))
 	       {
+                  DBG("Realpath is: %s\n", buf);
                   STRDUP_REP(pfx->exe_path, buf);
-		  if (access(pfx->exe_path, X_OK) == 0) return 1;
+		  if (access(pfx->exe_path, X_OK) == 0)
+                    {
+                       DBG("Path %s is executable\n", pfx->exe_path);
+                       return 1;
+                    }
+                  DBG("Fail check for executable: %s\n", pfx->exe_path);
                   IF_FREE_NULL(pfx->exe_path);
 	       }
 	  }
      }
    /* 3. argv0 no path - look in PATH */
+   DBG("Look for argv0=%s in $PATH\n", argv0);
    path = getenv("PATH");
    if (!path) return 0;
    p = path;
@@ -240,11 +263,14 @@ _try_argv(Eina_Prefix *pfx, const char *argv0)
 	     strncpy(s, cp, len);
 	     s[len] = DSEP_C;
 	     strcpy(s + len + 1, argv0);
+             DBG("Try path: %s\n", s);
 	     if (realpath(s, buf))
 	       {
+                  DBG("Realpath is: %s\n", buf);
 		  if (access(buf, X_OK) == 0)
 		    {
                        STRDUP_REP(pfx->exe_path, buf);
+                       DBG("Path %s is executable\n", pfx->exe_path);
 		       free(s);
 		       return 1;
 		    }
@@ -252,28 +278,6 @@ _try_argv(Eina_Prefix *pfx, const char *argv0)
 	     free(s);
 	  }
         cp = p + 1;
-     }
-   cp = getcwd(buf3, sizeof(buf3));
-   if (cp)
-     {
-        len = strlen(cp);
-        s = malloc(len + 1 + lenexe + 1);
-        if (s)
-          {
-             strncpy(s, cp, len);
-             s[len] = DSEP_C;
-             strcpy(s + len + 1, argv0);
-             if (realpath(s, buf))
-               {
-                  if (access(buf, X_OK) == 0)
-                    {
-                       STRDUP_REP(pfx->exe_path, buf);
-                       free(s);
-                       return 1;
-                    }
-               }
-             free(s);
-          }
      }
    /* 4. big problems. arg[0] != executable - weird execution */
    return 0;
@@ -285,14 +289,17 @@ _get_env_var(char **var, const char *env, const char *prefix, const char *dir)
    char buf[PATH_MAX];
    const char *s = getenv(env);
 
+   DBG("Try env var %s\n", env);
    if (s)
      {
+        DBG("Have env %s = %s\n", env, s);
         STRDUP_REP(*var, s);
         return 1;
      }
    else if (prefix)
      {
         snprintf(buf, sizeof(buf), "%s" DSEP_S "%s", prefix, dir);
+        DBG("Have prefix %s = %s\n", prefix, buf);
         STRDUP_REP(*var, buf);
         return 1;
      }
@@ -358,6 +365,7 @@ eina_prefix_new(const char *argv0, void *symbol, const char *envprefix,
    const char *datadir = "share";
    const char *localedir = "share";
 
+   DBG("EINA PREFIX: argv0=%s, symbol=%p, magicsharefile=%s, envprefix=%s\n", argv0, symbol, magicsharefile, envprefix);
    pfx = calloc(1, sizeof(Eina_Prefix));
    if (!pfx) return NULL;
 
@@ -474,20 +482,26 @@ eina_prefix_new(const char *argv0, void *symbol, const char *envprefix,
      }
 
 #ifdef HAVE_DLADDR
+   DBG("Try dladdr on %p\n", symbol);
    if (symbol)
      {
         Dl_info info_dl;
 
         if (dladdr(symbol, &info_dl))
           {
+             DBG("Dlinfo worked\n");
              if (info_dl.dli_fname)
                {
+                  DBG("Dlinfo dli_fname = %s\n", info_dl.dli_fname);
 # ifdef _WIN32
                   if (info_dl.dli_fname[0] && (info_dl.dli_fname[1] == ':'))
 # else
                   if (info_dl.dli_fname[0] == DSEP_C)
 # endif
-                     STRDUP_REP(pfx->exe_path, info_dl.dli_fname);
+                    {
+                       DBG("Dlsym gave full path.\n");
+                       STRDUP_REP(pfx->exe_path, info_dl.dli_fname);
+                    }
                }
           }
      }
@@ -511,6 +525,7 @@ eina_prefix_new(const char *argv0, void *symbol, const char *envprefix,
      }
    if (!pfx->exe_path)
      {
+        DBG("Fallback - nothing found\n");
         _fallback(pfx, pkg_bin, pkg_lib, pkg_data, pkg_locale, envprefix);
         return pfx;
      }
@@ -525,6 +540,7 @@ eina_prefix_new(const char *argv0, void *symbol, const char *envprefix,
     * data_dir   = /blah/whatever/share/enlightenment
     * lib_dir    = /blah/whatever/lib
     */
+   DBG("From exe %s figure out the rest\n", pfx->exe_path);
    p = strrchr(pfx->exe_path, DSEP_C);
    if (p)
      {
@@ -539,26 +555,38 @@ eina_prefix_new(const char *argv0, void *symbol, const char *envprefix,
 		       strncpy(pfx->prefix_path, pfx->exe_path,
                                p - pfx->exe_path);
 		       pfx->prefix_path[p - pfx->exe_path] = 0;
+                       DBG("Have prefix = %s\n", pfx->prefix_path);
 
 		       /* bin */
 		       snprintf(buf, sizeof(buf), "%s" DSEP_S "%s",
                                 pfx->prefix_path, bindir);
                        STRDUP_REP(pfx->prefix_path_bin, buf);
+                       DBG("Have bin = %s\n", pfx->prefix_path_bin);
 		       /* lib */
 		       snprintf(buf, sizeof(buf), "%s" DSEP_S "%s",
                                 pfx->prefix_path, libdir);
                        STRDUP_REP(pfx->prefix_path_lib, buf);
+                       DBG("Have lib = %s\n", pfx->prefix_path_lib);
 		       /* locale */
 		       snprintf(buf, sizeof(buf), "%s" DSEP_S "%s",
                                 pfx->prefix_path, localedir);
                        STRDUP_REP(pfx->prefix_path_locale, buf);
+                       DBG("Have locale = %s\n", pfx->prefix_path_locale);
 		       /* check if magic file is there - then our guess is right */
                        if (magic)
-                          snprintf(buf, sizeof(buf),
-                                   "%s" DSEP_S "%s" DSEP_S "%s",
-                                   pfx->prefix_path, datadir, magic);
+                         {
+                            DBG("Magic = %s\n", magic);
+                            snprintf(buf, sizeof(buf),
+                                     "%s" DSEP_S "%s" DSEP_S "%s",
+                                     pfx->prefix_path, datadir, magic);
+                            DBG("Checck in %s\n", buf);
+                         }
 		       if ((!magic) || (stat(buf, &st) == 0))
 			 {
+                            if (buf[0])
+                               DBG("Magic path %s stat passed\n", buf);
+                            else
+                               DBG("No magic file\n");
 			    snprintf(buf, sizeof(buf), "%s" DSEP_S "%s",
                                      pfx->prefix_path, datadir);
                             STRDUP_REP(pfx->prefix_path_data, buf);
@@ -566,12 +594,14 @@ eina_prefix_new(const char *argv0, void *symbol, const char *envprefix,
 		       /* magic file not there. time to start hunting! */
 		       else
                          {
+                            DBG("Magic faile\n");
                             _fallback(pfx, pkg_bin, pkg_lib, pkg_data,
                                       pkg_locale, envprefix);
                          }
 		    }
 		  else
                     {
+                       DBG("No Prefix path (alloc fail)\n");
                        _fallback(pfx, pkg_bin, pkg_lib, pkg_data, pkg_locale,
                                  envprefix);
                     }
@@ -580,6 +610,7 @@ eina_prefix_new(const char *argv0, void *symbol, const char *envprefix,
 	     p--;
 	  }
      }
+   DBG("Final fallback\n");
    _fallback(pfx, pkg_bin, pkg_lib, pkg_data, pkg_locale, envprefix);
    return pfx;
 }
