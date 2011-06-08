@@ -1935,7 +1935,7 @@ _item_realize(Elm_Genlist_Item *it,
    Item_Cache *itc = NULL;
 
    if (it->delete_me) return;
-   evas_event_freeze(evas_object_evas_get(it->wd->obj));
+   //evas_event_freeze(evas_object_evas_get(it->wd->obj));
    if (it->realized)
      {
         if (it->order_num_in != in)
@@ -1944,8 +1944,8 @@ _item_realize(Elm_Genlist_Item *it,
              _elm_genlist_item_odd_even_update(it);
              _elm_genlist_item_state_update(it, NULL);
           }
-        evas_event_thaw(evas_object_evas_get(it->wd->obj));
-        evas_event_thaw_eval(evas_object_evas_get(it->wd->obj));
+        //evas_event_thaw(evas_object_evas_get(it->wd->obj));
+        //evas_event_thaw_eval(evas_object_evas_get(it->wd->obj));
         return;
      }
    it->order_num_in = in;
@@ -2112,8 +2112,8 @@ _item_realize(Elm_Genlist_Item *it,
    it->want_unrealize = EINA_FALSE;
 
    if (itc) _item_cache_free(itc);
-   evas_event_thaw(evas_object_evas_get(it->wd->obj));
-   evas_event_thaw_eval(evas_object_evas_get(it->wd->obj));
+   //evas_event_thaw(evas_object_evas_get(it->wd->obj));
+   //evas_event_thaw_eval(evas_object_evas_get(it->wd->obj));
    if (!calc)
      evas_object_smart_callback_call(it->base.widget, SIG_REALIZED, it);
 }
@@ -2178,7 +2178,7 @@ _item_block_recalc(Item_Block *itb,
    Eina_Bool showme = EINA_FALSE, changed = EINA_FALSE;
    Evas_Coord y = 0;
 
-   evas_event_freeze(evas_object_evas_get(itb->wd->obj));
+   //evas_event_freeze(evas_object_evas_get(itb->wd->obj));
    itb->num = in;
    EINA_LIST_FOREACH(itb->items, l, it)
      {
@@ -2213,8 +2213,8 @@ _item_block_recalc(Item_Block *itb,
    itb->minw = minw;
    itb->minh = minh;
    itb->changed = EINA_FALSE;
-   evas_event_thaw(evas_object_evas_get(itb->wd->obj));
-   evas_event_thaw_eval(evas_object_evas_get(itb->wd->obj));
+   //evas_event_thaw(evas_object_evas_get(itb->wd->obj));
+   //evas_event_thaw_eval(evas_object_evas_get(itb->wd->obj));
    return showme;
 }
 
@@ -3371,7 +3371,7 @@ _queue_process(Widget_Data *wd)
    double t0, t;
 
    t0 = ecore_time_get();
-   evas_event_freeze(evas_object_evas_get(wd->obj));
+   //evas_event_freeze(evas_object_evas_get(wd->obj));
    for (n = 0; (wd->queue) && (n < 128); n++)
      {
         Elm_Genlist_Item *it;
@@ -3392,8 +3392,8 @@ _queue_process(Widget_Data *wd)
              if ((t - t0) > (ecore_animator_frametime_get())) break;
           }
      }
-   evas_event_thaw(evas_object_evas_get(wd->obj));
-   evas_event_thaw_eval(evas_object_evas_get(wd->obj));
+   //evas_event_thaw(evas_object_evas_get(wd->obj));
+   //evas_event_thaw_eval(evas_object_evas_get(wd->obj));
    return n;
 }
 
