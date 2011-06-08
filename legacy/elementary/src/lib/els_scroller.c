@@ -2099,7 +2099,6 @@ _smart_event_mouse_move(void *data, Evas *e, Evas_Object *obj __UNUSED__, void *
                                  else x = sd->down.locked_x;
                               }
                          }
-                       if (_elm_config->thumbscroll_border_friction > 0.0)
                          {
                             Evas_Coord minx, miny;
                             sd->pan_func.min_get(sd->pan_obj, &minx, &miny);

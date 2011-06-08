@@ -437,9 +437,8 @@ _prop_change(void *data  __UNUSED__,
                                                 event->atom,
                                                 &val, 1) > 0)
                {
-                  if (val > 0)
-                    _elm_config->thumbscroll_momentum_threshold =
-                      (double)val / 1000.0;
+                  _elm_config->thumbscroll_momentum_threshold =
+                     (double)val / 1000.0;
                }
           }
         else if (event->atom == _atom[ATOM_E_THUMBSCROLL_FRICTION])
@@ -450,8 +449,7 @@ _prop_change(void *data  __UNUSED__,
                                                 event->atom,
                                                 &val, 1) > 0)
                {
-                  if (val > 0)
-                    _elm_config->thumbscroll_friction = (double)val / 1000.0;
+                  _elm_config->thumbscroll_friction = (double)val / 1000.0;
                }
           }
         else if (event->atom == _atom[ATOM_E_THUMBSCROLL_BORDER_FRICTION])
@@ -462,9 +460,8 @@ _prop_change(void *data  __UNUSED__,
                                                 event->atom,
                                                 &val, 1) > 0)
                {
-                  if (val > 0)
-                    _elm_config->thumbscroll_border_friction =
-                      (double)val / 1000.0;
+                  _elm_config->thumbscroll_border_friction =
+                     (double)val / 1000.0;
                }
           }
         else if (event->atom == _atom[ATOM_E_THUMBSCROLL_PAGE_SCROLL_FRICTION])
@@ -475,9 +472,8 @@ _prop_change(void *data  __UNUSED__,
                                                 event->atom,
                                                 &val, 1) > 0)
                {
-                  if (val > 0)
-                    _elm_config->page_scroll_friction =
-                      (double)val / 1000.0;
+                  _elm_config->page_scroll_friction =
+                     (double)val / 1000.0;
                }
           }
         else if (event->atom ==
@@ -489,9 +485,8 @@ _prop_change(void *data  __UNUSED__,
                                                 event->atom,
                                                 &val, 1) > 0)
                {
-                  if (val > 0)
-                    _elm_config->bring_in_scroll_friction =
-                      (double)val / 1000.0;
+                  _elm_config->bring_in_scroll_friction =
+                     (double)val / 1000.0;
                }
           }
         else if (event->atom ==
@@ -503,8 +498,7 @@ _prop_change(void *data  __UNUSED__,
                                                 event->atom,
                                                 &val, 1) > 0)
                {
-                  if (val > 0)
-                    _elm_config->zoom_friction = (double)val / 1000.0;
+                  _elm_config->zoom_friction = (double)val / 1000.0;
                }
           }
         else if (((_atom_config > 0) && (event->atom == _atom_config)) ||
