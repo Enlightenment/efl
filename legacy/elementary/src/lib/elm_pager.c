@@ -238,12 +238,12 @@ _content_del(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *
    Eina_List *l;
    Item *it;
    if (!wd) return;
-   l = _item_get(obj, obj);
+   l = _item_get(data, obj);
    if (!l) return;
    it = l->data;
    wd->stack = eina_list_remove_list(wd->stack, l);
    evas_object_event_callback_del_full
-      (obj, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _changed_size_hints, it);
+      (data, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _changed_size_hints, it);
    evas_object_del(it->base);
    _eval_top(data);
    free(it);
@@ -389,7 +389,7 @@ elm_pager_content_push(Evas_Object *obj, Evas_Object *content)
    evas_object_event_callback_add(it->content,
                                   EVAS_CALLBACK_DEL,
                                   _content_del,
-                                  it);
+                                  obj);
    edje_object_part_swallow(it->base, "elm.swallow.content", it->content);
    edje_object_size_min_calc(it->base, &it->minw, &it->minh);
    evas_object_data_set(it->base, "_elm_leaveme", obj);
