@@ -2170,7 +2170,7 @@ _item_unrealize(Elm_Genlist_Item *it,
 static Eina_Bool
 _item_block_recalc(Item_Block *itb,
                    int         in,
-                   int         qadd)
+                   Eina_Bool   qadd)
 {
    const Eina_List *l;
    Elm_Genlist_Item *it;
@@ -2304,13 +2304,12 @@ _reorder_move_animator_cb(void *data)
 {
    Elm_Genlist_Item *it = data;
    Eina_Bool down = EINA_FALSE;
-   double time, t;
+   double t;
    int y, dy = it->h / 10 * _elm_config->scale, diff;
-   time = REORDER_EFFECT_TIME;
 
    t = ((0.0 > (t = ecore_loop_time_get()-it->wd->start_time)) ? 0.0 : t);
 
-   if (t <= time) y = (1 * sin((t / time) * (M_PI / 2)) * dy);
+   if (t <= REORDER_EFFECT_TIME) y = (1 * sin((t / REORDER_EFFECT_TIME) * (M_PI / 2)) * dy);
    else y = dy;
 
    diff = abs(it->old_scrl_y - it->scrl_y);
@@ -2528,7 +2527,7 @@ _calc_job(void *data)
                   itb->must_recalc = EINA_FALSE;
                }
              if (itb->realized) _item_block_unrealize(itb);
-             showme = _item_block_recalc(itb, in, 0);
+             showme = _item_block_recalc(itb, in, EINA_FALSE);
              chb = itb;
           }
         itb->y = y;
@@ -2670,7 +2669,7 @@ _update_job(void *data)
           {
              position = EINA_TRUE;
              itb->changed = EINA_TRUE;
-             _item_block_recalc(itb, num0, 0);
+             _item_block_recalc(itb, num0, EINA_FALSE);
              _item_block_position(itb, num0);
           }
      }
@@ -3384,7 +3383,7 @@ _queue_process(Widget_Data *wd)
         t = ecore_time_get();
         if (it->block->changed)
           {
-             showme = _item_block_recalc(it->block, it->block->num, 1);
+             showme = _item_block_recalc(it->block, it->block->num, EINA_TRUE);
              it->block->changed = 0;
           }
         if (showme) it->block->showme = EINA_TRUE;
@@ -3457,7 +3456,7 @@ _item_queue(Widget_Data      *wd,
 //   evas_event_thaw(evas_object_evas_get(wd->obj));
 //   evas_event_thaw_eval(evas_object_evas_get(wd->obj));
    if (!wd->queue_idle_enterer)
-      wd->queue_idle_enterer = ecore_idle_enterer_add(_item_idle_enterer, wd);
+     wd->queue_idle_enterer = ecore_idle_enterer_add(_item_idle_enterer, wd);
 }
 
 static int
