@@ -2219,25 +2219,11 @@ _item_block_recalc(Item_Block *itb,
 }
 
 static void
-_item_block_realize(Item_Block *itb,
-                    int         in,
-                    int         full)
+_item_block_realize(Item_Block *itb)
 {
-   const Eina_List *l;
-   Elm_Genlist_Item *it;
-
    if (itb->realized) return;
-   evas_event_freeze(evas_object_evas_get(itb->wd->obj));
-   EINA_LIST_FOREACH(itb->items, l, it)
-     {
-        if (it->delete_me) continue;
-        if (full) _item_realize(it, in, EINA_FALSE);
-        in++;
-     }
    itb->realized = EINA_TRUE;
    itb->want_unrealize = EINA_FALSE;
-   evas_event_thaw(evas_object_evas_get(itb->wd->obj));
-   evas_event_thaw_eval(evas_object_evas_get(itb->wd->obj));
 }
 
 static void
@@ -2871,7 +2857,7 @@ _pan_calculate(Evas_Object *obj)
                                 cvx, cvy, cvw, cvh))
           {
              if ((!itb->realized) || (itb->changed))
-               _item_block_realize(itb, in, 0);
+               _item_block_realize(itb);
              _item_block_position(itb, in);
           }
         else
