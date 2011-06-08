@@ -644,7 +644,7 @@ elm_quicklaunch_init(int    argc,
 
    if (argv) _elm_appname = strdup(ecore_file_file_get(argv[0]));
 
-   pfx = eina_prefix_new(NULL, elm_init,
+   pfx = eina_prefix_new(NULL, elm_quicklaunch_init,
                          "ELM", "elementary", "config/profile.cfg",
                          PACKAGE_LIB_DIR, /* don't have a bin dir currently */
                          PACKAGE_LIB_DIR,
