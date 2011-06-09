@@ -423,7 +423,7 @@ evas_object_del(Evas_Object *obj)
    obj->mouse_grabbed = 0;
    obj->mouse_in = 0;
    evas_object_grabs_cleanup(obj);
-   while (obj->clip.clipees) 
+   while (obj->clip.clipees)
      evas_object_clip_unset(obj->clip.clipees->data);
    while (obj->proxy.proxies)
      evas_object_image_source_unset(obj->proxy.proxies->data);
