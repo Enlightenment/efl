@@ -395,6 +395,7 @@ ecore_pipe_read_close(Ecore_Pipe *p)
  * for monitoring it again.
  *
  * @param p The Ecore_Pipe object.
+ * @since 1.1
  */
 EAPI void
 ecore_pipe_freeze(Ecore_Pipe *p)
@@ -417,6 +418,7 @@ ecore_pipe_freeze(Ecore_Pipe *p)
  * ecore_pipe_read_close() was previously called on the same pipe.
  *
  * @param p The Ecore_Pipe object.
+ * @since 1.1
  */
 EAPI void
 ecore_pipe_thaw(Ecore_Pipe *p)
@@ -443,6 +445,7 @@ ecore_pipe_thaw(Ecore_Pipe *p)
  * @param message_count The minimal number of message to wait before exiting.
  * @param wait The amount of time in second to wait before exiting.
  * @return the number of message catched during that wait call.
+ * @since 1.1
  *
  * Negative value for @p wait means infite wait.
  */
