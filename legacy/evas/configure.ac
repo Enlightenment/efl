@@ -1569,10 +1569,14 @@ AM_CONDITIONAL([INSTALL_EXAMPLES], [test "x${install_examples}" = "xyes"])
 build_examples="no"
 AC_ARG_ENABLE([build-examples],
    AC_HELP_STRING([--enable-build-examples],
-                  [enable building examples. @<:@default==disabled@:>@]),
+                  [enable building examples (this requires extra denpendencies. if you don't have them installed yet, don't build with this option or it will fail. build again when you have it, overriding the previous installation). @<:@default==disabled@:>@]),
    [
     if test "x${enableval}" = "xyes" ; then
        build_examples="yes"
+       # put in here the dependencies for Evas' examples. they are
+       # meant to be 'real world' usage examples, thus one will be
+       # using higher level libraries on these programs
+       PKG_CHECK_MODULES([ECORE_EVAS], [ecore-evas])
     else
        build_examples="no"
     fi

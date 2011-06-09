@@ -11,6 +11,7 @@ AM_CPPFLAGS = \
 -DPACKAGE_BIN_DIR=\"$(bindir)\" \
 -DPACKAGE_LIB_DIR=\"$(libdir)\" \
 -DPACKAGE_DATA_DIR=\"$(datadir)/$(PACKAGE)\" \
+-DPACKAGE_EXAMPLES_DIR=\"$(datadir)/$(PACKAGE)/examples\" \
 @EINA_CFLAGS@ \
 @FREETYPE_CFLAGS@ \
 @PIXMAN_CFLAGS@ \
@@ -31,14 +32,31 @@ evas_buffer_simple_SOURCES = evas-buffer-simple.c
 evas_buffer_simple_LDADD = $(top_builddir)/src/lib/libevas.la
 endif
 
+pkglib_PROGRAMS += evas_init_shutdown
+evas_init_shutdown_SOURCES = evas-init-shutdown.c
+evas_init_shutdown_LDADD = $(top_builddir)/src/lib/libevas.la
+
+# put in here the dependencies for Evas' examples. they are meant to
+# be 'real world' usage examples, thus one will be using higher level
+# libraries on these programs. also remember to link with these extra
+# libs only the example requiring them
+if BUILD_ENGINE_SOFTWARE_X11
+AM_CPPFLAGS += -I$(top_srcdir)/src/modules/engines/software_x11 \
+	@ECORE_EVAS_CFLAGS@
+
+pkglib_PROGRAMS += evas_load_error_str
+evas_load_error_str_SOURCES = evas-load-error-str.c
+evas_load_error_str_LDADD = $(top_builddir)/src/lib/libevas.la @ECORE_EVAS_LIBS@
 endif
 
-
+endif
 
 filesdir = $(datadir)/$(PACKAGE)/examples
-files_DATA =
+files_DATA = $(srcdir)/enlightenment.png
 
 if INSTALL_EXAMPLES
 files_DATA += \
-	evas-buffer-simple.c
+	$(srcdir)/evas-buffer-simple.c \
+	$(srcdir)/evas-init-shutdown.c \
+	$(srcdir)/evas-load-error-str.c
 endif

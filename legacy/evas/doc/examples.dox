@@ -1,0 +1,35 @@
+/**
+ * @page Examples Examples
+ *
+ * Here is a page with examples.
+ *
+ * @ref Example_Evas_Buffer_Simple
+ *
+ * @ref Example_Evas_Init_Shutdown
+ *
+ * @ref Example_Evas_Load_Error_Str
+ *
+ */
+
+/**
+ * @page Example_Evas_Buffer_Simple Simple Evas canvas example
+ *
+ * The canvas will here use the buffer engine.
+ *
+ * @include evas-buffer-simple.c
+ * @example evas-buffer-simple.c
+ */
+
+/**
+ * @page Example_Evas_Init_Shutdown Nested buffer example
+ *
+ * @include evas-init-shutdown.c
+ * @example evas-init-shutdown.c
+ */
+
+/**
+ * @page Example_Evas_Load_Error_Str File descriptor buffer example
+ *
+ * @include evas-load-error-str.c
+ * @example evas-load-error-str.c
+ */
