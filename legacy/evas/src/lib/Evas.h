@@ -585,7 +585,8 @@ typedef enum _Evas_Load_Error
    EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED = 4, /**< Allocation of resources failure prevented load */
    EVAS_LOAD_ERROR_CORRUPT_FILE = 5, /**< File corrupt (but was detected as a known format) */
    EVAS_LOAD_ERROR_UNKNOWN_FORMAT = 6 /**< File is not a known format */
-} Evas_Load_Error; /**< Load error you can get from loading of files - see evas_load_error_str() too */
+} Evas_Load_Error; /**< Evas image load error codes one can get - see evas_load_error_str() too. */
+
 
 typedef enum _Evas_Alloc_Error
 {
@@ -937,10 +938,32 @@ typedef void      (*Evas_Async_Events_Put_Cb)(void *target, Evas_Callback_Type t
  *
  * @return The init counter value.
  *
- * This function initialize evas, increments a counter of the number
- * of calls to this function and returns this value.
+ * This function initializes Evas and increments a counter of the
+ * number of calls to it. It returs the new counter's value.
  *
  * @see evas_shutdown().
+ *
+ * Most EFL users wouldn't be using this function directly, because
+ * they wouldn't access Evas directly by themselves. Instead, they
+ * would be using higher level helpers, like @c ecore_evas_init().
+ * See http://docs.enlightenment.org/auto/ecore/.
+ *
+ * You should be using this if your use is something like the
+ * following. The buffer engine is just one of the many ones Evas
+ * provides.
+ *
+ * @dontinclude evas-buffer-simple.c
+ * @skip int main
+ * @until return -1;
+ * And being the canvas creation something like:
+ * @skip static Evas *create_canvas
+ * @until    evas_output_viewport_set(canvas,
+ *
+ * Note that this is code creating an Evas canvas with no usage of
+ * Ecore helpers at all -- no linkage with Ecore on this scenario,
+ * thus. Again, this wouldn't be on Evas common usage for most
+ * developers. See the full example source code in @ref
+ * Example_Evas_Buffer_Simple.
  *
  * @ingroup Evas_Group
  */
@@ -949,12 +972,29 @@ EAPI int               evas_init                         (void);
 /**
  * Shutdown Evas
  *
- * @return The init counter value.
+ * @return Evas' init counter value.
  *
- * This function finalize evas, decrements the counter of the number
- * of calls to the function evas_init() and returns this value.
+ * This function finalizes Evas, decrementing the counter of the
+ * number of calls to the function evas_init(). This new value for the
+ * counter is returned.
  *
  * @see evas_init().
+ *
+ * If you were the sole user of Evas, by means of evas_init(), you can
+ * check if it's being properly shut down by expecting a return value
+ * of 0.
+ *
+ * Example code follows.
+ * @dontinclude evas-buffer-simple.c
+ * @skip // NOTE: use ecore_evas_buffer_new
+ * @until evas_shutdown
+ * Where that function would contain:
+ * @skip   evas_free(canvas)
+ * @until   evas_free(canvas)
+ *
+ * Most users would be using ecore_evas_shutdown() instead, like told
+ * in evas_init(). See the full example source code in @ref
+ * Example_Evas_Buffer_Simple.
  *
  * @ingroup Evas_Group
  */
@@ -8257,10 +8297,32 @@ EAPI void              evas_cserve_disconnect                 (void);
  */
 
 /**
- * Converts the given error code into a string describing it in english.
- * @param error the error code.
- * @return Always return a valid string. If given @p error is not
- *         supported "Unknown error" is returned.
+ * Converts the given Evas image load error code into a string
+ * describing it in english.
+ *
+ * @param error the error code, a value in ::Evas_Load_Error.
+ * @return Always returns a valid string. If the given @p error is not
+ *         supported, <code>"Unknown error"</code> is returned.
+ *
+ * Mostly evas_object_image_file_set() would be the function setting
+ * that error value afterwards, but also evas_object_image_load(),
+ * evas_object_image_save(), evas_object_image_data_get(),
+ * evas_object_image_data_convert(), evas_object_image_pixels_import()
+ * and evas_object_image_is_inside(). This function is meant to be
+ * used in conjunction with evas_object_image_load_error_get(), as in:
+ *
+ * Example code:
+ * @dontinclude evas-load-error-str.c
+ * @skip img1 =
+ * @until ecore_main_loop_begin(
+ *
+ * Here, being @c valid_path the path to a valid image and @c
+ * bogus_path a path to a file which does not exist, the two outputs
+ * of evas_load_error_str() would be (if no other errors occur):
+ * <code>"No error on load"</code> and <code>"File (or file path) does
+ * not exist"</code>, respectively. See the full example source code
+ * in @ref Example_Evas_Load_Error_Str.
+ *
  * @ingroup Evas_Utils
  */
 EAPI const char       *evas_load_error_str               (Evas_Load_Error error);
