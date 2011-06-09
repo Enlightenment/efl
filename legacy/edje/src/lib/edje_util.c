@@ -901,6 +901,40 @@ _edje_object_part_text_raw_set(Evas_Object *obj, Edje_Real_Part *rp, const char 
    return EINA_TRUE;
 }
 
+Eina_Bool
+_edje_object_part_text_raw_append(Evas_Object *obj, Edje_Real_Part *rp, const char *part, const char *text)
+{
+   if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
+     _edje_entry_text_markup_append(rp, text);
+   else if (text)
+     {
+        if (rp->text.text)
+          {
+             char *new = NULL;
+             int len_added = strlen(text);
+             int len_old = strlen(rp->text.text);
+             new = malloc(len_old + len_added + 1);
+             memcpy(new, rp->text.text, len_old);
+             memcpy(new + len_old, text, len_added);
+             new[len_old + len_added] = '\0';
+             eina_stringshare_replace(&rp->text.text, new);
+             free(new);
+          }
+        else
+          {
+             eina_stringshare_replace(&rp->text.text, text);
+          }
+     }
+   rp->edje->dirty = 1;
+#ifdef EDJE_CALC_CACHE
+   rp->invalidate = 1;
+#endif
+   _edje_recalc(rp->edje);
+   if (rp->edje->text_change.func)
+     rp->edje->text_change.func(rp->edje->text_change.data, obj, part);
+   return EINA_TRUE;
+}
+
 /** Sets the text for an object part
  * @param obj A valid Evas Object handle
  * @param part The part name
@@ -1184,8 +1218,7 @@ edje_object_part_text_append(Evas_Object *obj, const char *part, const char *tex
    rp = _edje_real_part_recursive_get(ed, (char *)part);
    if (!rp) return;
    if ((rp->part->type != EDJE_PART_TYPE_TEXTBLOCK)) return;
-   if (rp->part->entry_mode <= EDJE_ENTRY_EDIT_MODE_NONE) return;
-   _edje_entry_text_markup_append(rp, text);
+   _edje_object_part_text_raw_append(obj, rp, part, text);
    rp->edje->dirty = 1;
 #ifdef EDJE_CALC_CACHE
    rp->invalidate = 1;
