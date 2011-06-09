@@ -54,7 +54,7 @@ struct _Evas_GL_Config
 };
 
 /**
- * @defgroup Evas_GL group for rendering GL on Evas
+ * @defgroup Evas_GL Rendering GL on Evas
  *
  * Functions that are used to do OpenGL rendering on Evas. Evas allows you
  * to use OpenGL to render to specially set up image objects (which act as

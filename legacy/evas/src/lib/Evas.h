@@ -2096,6 +2096,10 @@ EAPI void              evas_event_feed_hold              (Evas *e, int hold, uns
  * @ingroup Evas_Canvas
  */
 
+/**
+ * @addtogroup Evas_Canvas_Events
+ * @{
+ */
 
 /**
  * Add a callback function to the canvas.
@@ -2154,11 +2158,6 @@ EAPI void              evas_event_feed_hold              (Evas *e, int hold, uns
  *     exit(-1);
  *   }
  * @endcode
- */
-
-/**
- * @addtogroup Evas_Canvas_Events
- * @{
  */
 EAPI void              evas_event_callback_add              (Evas *e, Evas_Callback_Type type, Evas_Event_Cb func, const void *data) EINA_ARG_NONNULL(1, 3);
 
@@ -2267,6 +2266,10 @@ EAPI void              evas_post_event_callback_remove      (Evas *e, Evas_Objec
  * unwound. Further instances may still be run on unwind.
  */
 EAPI void              evas_post_event_callback_remove_full (Evas *e, Evas_Object_Event_Post_Cb func, const void *data);
+
+/**
+ * @}
+ */
 
 /**
  * @defgroup Evas_Image_Group Image Functions
@@ -3228,6 +3231,10 @@ EAPI void              evas_object_propagate_events_set   (Evas_Object *obj, Ein
  * @return propagate events state
  */
 EAPI Eina_Bool         evas_object_propagate_events_get   (const Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
+
+/**
+ * @}
+ */
 
 /**
  * @defgroup Evas_Object_Group_Map UV Mapping (Rotation, Perspecitve, 3D...)
@@ -4192,6 +4199,10 @@ EAPI Evas_Render_Op            evas_object_render_op_get        (const Evas_Obje
 
    EAPI void                      evas_object_static_clip_set      (Evas_Object *obj, Eina_Bool is_static_clip) EINA_ARG_NONNULL(1);
    EAPI Eina_Bool                 evas_object_static_clip_get      (const Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
+
+/**
+ * @}
+ */
 
 /**
  * @defgroup Evas_Object_Group_Find Finding Objects
