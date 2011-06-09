@@ -124,8 +124,6 @@ if (it->deleted)                                                         \
    return __VA_ARGS__;                                                   \
 }
 
-
-
 static inline void
 _elm_list_item_free(Elm_List_Item *it)
 {
