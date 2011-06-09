@@ -1483,7 +1483,7 @@ collections {
         public message(Msg_Type:type, id, ...) {
            if ((type == MSG_FLOAT_SET) && (id == 0)) {
               new Float:duration;
-              duration = getarg(2);
+              duration = getfarg(2);
               set_float(g_duration, duration);
            }
         }
@@ -1609,7 +1609,7 @@ collections {
          public message(Msg_Type:type, id, ...) {
             if ((type == MSG_FLOAT_SET) && (id == 0)) {
                new Float:duration;
-               duration = getarg(2);
+               duration = getfarg(2);
                set_float(g_duration, duration);
             }
          }
@@ -1734,7 +1734,7 @@ collections {
          public message(Msg_Type:type, id, ...) {
             if ((type == MSG_FLOAT_SET) && (id == 0)) {
                new Float:duration;
-               duration = getarg(2);
+               duration = getfarg(2);
                set_float(g_duration, duration);
             }
          }
