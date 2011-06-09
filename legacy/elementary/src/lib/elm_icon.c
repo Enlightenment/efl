@@ -187,7 +187,7 @@ _icon_thumb_cleanup(Ethumb_Client *ethumbd)
 static void
 _icon_thumb_finish(Widget_Data *wd, Ethumb_Client *ethumbd)
 {
-   const char *file, *group;
+   const char *file = NULL, *group = NULL;
    Eina_Bool ret;
 
    _els_smart_icon_file_get(wd->img, &file, &group);
@@ -196,7 +196,7 @@ _icon_thumb_finish(Widget_Data *wd, Ethumb_Client *ethumbd)
 
    ret = _icon_thumb_display(wd);
 
-   if (!ret)
+   if (!ret && file)
      {
         const char *p;
 
