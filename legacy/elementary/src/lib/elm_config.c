@@ -568,6 +568,9 @@ _desc_init(void)
    ELM_CONFIG_VAL(D, T, bring_in_scroll_friction, T_DOUBLE);
    ELM_CONFIG_VAL(D, T, zoom_friction, T_DOUBLE);
    ELM_CONFIG_VAL(D, T, thumbscroll_bounce_enable, T_UCHAR);
+   ELM_CONFIG_VAL(D, T, scroll_smooth_amount, T_DOUBLE);
+   ELM_CONFIG_VAL(D, T, scroll_smooth_history_weight, T_DOUBLE);
+   ELM_CONFIG_VAL(D, T, scroll_smooth_future_time, T_DOUBLE);
    ELM_CONFIG_VAL(D, T, scale, T_DOUBLE);
    ELM_CONFIG_VAL(D, T, bgpixmap, T_INT);
    ELM_CONFIG_VAL(D, T, compositing, T_INT);
@@ -1118,6 +1121,9 @@ _config_load(void)
    _elm_config->bring_in_scroll_friction = 0.5;
    _elm_config->zoom_friction = 0.5;
    _elm_config->thumbscroll_border_friction = 0.5;
+   _elm_config->scroll_smooth_amount = 1.0;
+   _elm_config->scroll_smooth_history_weight = 0.3;
+   _elm_config->scroll_smooth_future_time = 2.0 / 60.0;
    _elm_config->scale = 1.0;
    _elm_config->bgpixmap = 0;
    _elm_config->compositing = 1;
@@ -1469,6 +1475,12 @@ _env_get(void)
 
         _elm_config->thumbscroll_border_friction = friction;
      }
+   s = getenv("ELM_SCROLL_SMOOTH_AMOUNT");
+   if (s) _elm_config->scroll_smooth_amount = atof(s);
+   s = getenv("ELM_SCROLL_SMOOTH_HISTORY_WEIGHT");
+   if (s) _elm_config->scroll_smooth_history_weight = atof(s);
+   s = getenv("ELM_SCROLL_SMOOTH_FUTURE_TIME");
+   if (s) _elm_config->scroll_smooth_future_time = atof(s);
    s = getenv("ELM_THEME");
    if (s) eina_stringshare_replace(&_elm_config->theme, s);
 

@@ -36,8 +36,12 @@ struct _Smart_Data
         Evas_Coord b2x, b2y;
         struct {
              Evas_Coord    x, y;
-             double        timestamp;
-        } history[20];
+             double        timestamp, localtimestamp;
+        } history[60];
+        struct {
+           double tadd, dxsum, dysum;
+           double est_timestamp_diff;
+        } hist;
       double anim_start;
       double anim_start2;
       double anim_start3;
@@ -1589,6 +1593,8 @@ _smart_event_mouse_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSE
           }
         if (ev->button == 1)
           {
+             sd->down.hist.est_timestamp_diff =
+                ecore_loop_time_get() - ((double)ev->timestamp / 1000.0);
              sd->down.now = 1;
              sd->down.dragged = 0;
              sd->down.dir_x = 0;
@@ -1599,9 +1605,10 @@ _smart_event_mouse_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSE
              sd->down.sx = x;
              sd->down.sy = y;
              sd->down.locked = 0;
-             memset(&(sd->down.history[0]), 0, sizeof(sd->down.history[0]) * 20);
+             memset(&(sd->down.history[0]), 0, sizeof(sd->down.history[0]) * 60);
 #ifdef EVTIME
              sd->down.history[0].timestamp = ev->timestamp / 1000.0;
+             sd->down.history[0].localtimestamp = ecore_loop_time_get();
 #else
              sd->down.history[0].timestamp = ecore_loop_time_get();
 #endif
@@ -1614,12 +1621,131 @@ _smart_event_mouse_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSE
      }
 }
 
+static void
+_down_coord_eval(Smart_Data *sd, Evas_Coord *x, Evas_Coord *y)
+{
+   Evas_Coord minx, miny;
+   
+   if (sd->down.dir_x) *x = sd->down.sx - (*x - sd->down.x);
+   else *x = sd->down.sx;
+   if (sd->down.dir_y) *y = sd->down.sy - (*y - sd->down.y);
+   else *y = sd->down.sy;
+   
+   if ((sd->down.dir_x) || (sd->down.dir_y))
+     {
+        if (!((sd->down.dir_x) && (sd->down.dir_y)))
+          {
+             if (sd->down.dir_x) *y = sd->down.locked_y;
+             else *x = sd->down.locked_x;
+          }
+     }
+
+   sd->pan_func.min_get(sd->pan_obj, &minx, &miny);
+   
+   if (*x < minx)
+      *x += (minx - *x) * _elm_config->thumbscroll_border_friction;
+   else if (sd->child.w <= sd->w)
+      *x += (sd->down.sx - *x) * _elm_config->thumbscroll_border_friction;
+   else if ((sd->child.w - sd->w + minx) < *x)
+      *x += (sd->child.w - sd->w + minx - *x) * 
+      _elm_config->thumbscroll_border_friction;
+   
+   if (*y < miny)
+      *y += (miny - *y) * _elm_config->thumbscroll_border_friction;
+   else if (sd->child.h <= sd->h)
+      *y += (sd->down.sy - *y) * _elm_config->thumbscroll_border_friction;
+   else if ((sd->child.h - sd->h + miny) < *y)
+      *y += (sd->child.h - sd->h + miny - *y) *
+      _elm_config->thumbscroll_border_friction;
+}
+
 static Eina_Bool
 _smart_hold_animator(void *data)
 {
    Smart_Data *sd = data;
-   Evas_Coord ox, oy;
+   Evas_Coord ox = 0, oy = 0, fx, fy;
 
+   fx = sd->down.hold_x;
+   fy = sd->down.hold_y;
+   if (_elm_config->scroll_smooth_amount > 0.0)
+     {
+        int i, count = 0;
+        Evas_Coord basex, basey, x, y;
+        double dt, t, tdiff, tnow;
+        struct {
+           Evas_Coord x, y, dx, dy;
+           double t, dt;
+        } pos[60];
+        
+        // FIXME: assume server and client have the same "timezone"
+        // (0 timepoint) for now. this needs to be figured out in advance
+        // though.
+        tdiff = sd->down.hist.est_timestamp_diff;
+        tnow = ecore_time_get() - tdiff;
+        t = tnow;
+        for (i = 0; i < 60; i++)
+          {
+             // oldest point is sd->down.history[i]
+             // newset is sd->down.history[0]
+             dt = t - sd->down.history[i].timestamp;
+             if (dt > 0.1)
+               {
+                  i--;
+                  break;
+               }
+             x = sd->down.history[i].x;
+             y = sd->down.history[i].y;
+             _down_coord_eval(sd, &x, &y);
+             if (i == 0)
+               {
+                  basex = x;
+                  basey = y;
+               }
+             pos[i].x = x - basex;
+             pos[i].y = y - basey;
+             pos[i].t = 
+                sd->down.history[i].timestamp - sd->down.history[0].timestamp;
+             count++;
+          }
+        count = i;
+        if (count >= 2)
+          {
+             double dtsum = 0.0, tadd, maxdt;
+             double dxsum = 0.0, dysum = 0.0, xsum = 0.0, ysum = 0.0;
+
+             for (i = 0; i < (count - 1); i++)
+               {
+                  pos[i].dx = pos[i].x - pos[i + 1].x;
+                  pos[i].dy = pos[i].y - pos[i + 1].y;
+                  pos[i].dt = pos[i].t - pos[i + 1].t;
+                  dxsum += pos[i].dx;
+                  dysum += pos[i].dy;
+                  dtsum += pos[i].dt;
+                  xsum += pos[i].x;
+                  ysum += pos[i].y;
+               }
+             maxdt = pos[i].t;
+             dxsum /= (double)i;
+             dysum /= (double)i;
+             dtsum /= (double)i;
+             xsum /= (double)i;
+             ysum /= (double)i;
+             tadd = tnow - sd->down.history[0].timestamp + _elm_config->scroll_smooth_future_time;
+             tadd = tadd - (maxdt / 2);
+#define WEIGHT(n, o, v) n = (o * (v - 1.0)) + (n * v)
+             WEIGHT(tadd, sd->down.hist.tadd, _elm_config->scroll_smooth_history_weight);
+             WEIGHT(dxsum, sd->down.hist.dxsum, _elm_config->scroll_smooth_history_weight);
+             WEIGHT(dysum, sd->down.hist.dysum, _elm_config->scroll_smooth_history_weight);
+             fx = basex + xsum + ((dxsum * tadd) / dtsum);
+             fy = basey + ysum + ((dysum * tadd) / dtsum);
+             sd->down.hist.tadd = tadd;
+             sd->down.hist.dxsum = dxsum;
+             sd->down.hist.dysum = dysum;
+             fx = WEIGHT(fx, sd->down.hold_x, _elm_config->scroll_smooth_amount);
+             fy = WEIGHT(fy, sd->down.hold_y, _elm_config->scroll_smooth_amount);
+          }
+     }
+   
    elm_smart_scroller_child_pos_get(sd->smart_obj, &ox, &oy);
    if (sd->down.dir_x)
      {
@@ -1627,6 +1753,7 @@ _smart_hold_animator(void *data)
             (!elm_widget_drag_child_locked_x_get(sd->widget)))
           {
              ox = sd->down.hold_x;
+             ox = fx;
           }
      }
    if (sd->down.dir_y)
@@ -1635,8 +1762,10 @@ _smart_hold_animator(void *data)
             (!elm_widget_drag_child_locked_y_get(sd->widget)))
           {
              oy = sd->down.hold_y;
+             oy = fy;
           }
      }
+   
    elm_smart_scroller_child_pos_set(sd->smart_obj, ox, oy);
    return ECORE_CALLBACK_RENEW;
 }
@@ -1701,7 +1830,7 @@ _smart_event_mouse_up(void *data, Evas *e, Evas_Object *obj __UNUSED__, void *ev
 #ifdef SCROLLDBG
                        printf("------ %i %i\n", ev->canvas.x, ev->canvas.y);
 #endif
-                       for (i = 0; i < 20; i++)
+                       for (i = 0; i < 60; i++)
                          {
                             dt = t - sd->down.history[i].timestamp;
                             if (dt > 0.2) break;
@@ -1994,9 +2123,10 @@ _smart_event_mouse_move(void *data, Evas *e, Evas_Object *obj __UNUSED__, void *
              printf("::: %i %i\n", ev->cur.canvas.x, ev->cur.canvas.y);
 #endif
              memmove(&(sd->down.history[1]), &(sd->down.history[0]),
-                     sizeof(sd->down.history[0]) * 19);
+                     sizeof(sd->down.history[0]) * (60 - 1));
 #ifdef EVTIME
              sd->down.history[0].timestamp = ev->timestamp / 1000.0;
+             sd->down.history[0].localtimestamp = ecore_loop_time_get();
 #else
              sd->down.history[0].timestamp = ecore_loop_time_get();
 #endif
@@ -2121,7 +2251,7 @@ _smart_event_mouse_move(void *data, Evas *e, Evas_Object *obj __UNUSED__, void *
                               x += (sd->child.w - sd->w + minx - x) *
                                  _elm_config->thumbscroll_border_friction;
                          }
-
+                       
                        sd->down.hold_x = x;
                        sd->down.hold_y = y;
                        if (!sd->down.hold_animator)
