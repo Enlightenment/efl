@@ -448,6 +448,20 @@ _elm_list_unwalk(Widget_Data *wd)
 }
 
 static void
+_del_pre_hook(Evas_Object *obj)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+
+   evas_object_event_callback_del(wd->scr,
+                                  EVAS_CALLBACK_CHANGED_SIZE_HINTS,
+                                  _changed_size_hints);
+   evas_object_event_callback_del(wd->box,
+                                  EVAS_CALLBACK_CHANGED_SIZE_HINTS,
+                                  _changed_size_hints);
+}
+
+static void
 _del_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -1313,6 +1327,7 @@ elm_list_add(Evas_Object *parent)
    elm_widget_sub_object_add(parent, obj);
    elm_widget_on_focus_hook_set(obj, _on_focus_hook, NULL);
    elm_widget_data_set(obj, wd);
+   elm_widget_del_pre_hook_set(obj, _del_pre_hook);
    elm_widget_del_hook_set(obj, _del_hook);
    elm_widget_theme_hook_set(obj, _theme_hook);
    elm_widget_disable_hook_set(obj, _disable_hook);
