@@ -417,11 +417,13 @@ struct _Widget_Data
    struct {
         Evas_Coord cx, cy;
         double level, diff;
+        Eina_Bool doing : 1;
    } pinch;
 
    struct {
         Evas_Coord cx, cy;
         double a, d;
+        Eina_Bool doing : 1;
    } rotate;
 
    struct {
@@ -1920,18 +1922,27 @@ _mouse_multi_move(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSED__
              tt = wd->pinch.diff;
              wd->pinch.diff = (double)(ev->pinch_dis - ev->pinch_start_dis);
              t = (wd->pinch.diff * 0.01) + 1.0;
-             if (((wd->zoom + (int)t - 1) < wd->src->zoom_min) ||
-                 ((wd->zoom + (int)t - 1) > wd->src->zoom_max) ||
-                 (t > PINCH_ZOOM_MAX) || (t < PINCH_ZOOM_MIN))
+             if ((t > 1.1) || (wd->rotate.doing))
                {
-                  wd->pinch.diff = tt;
-                  goto do_nothing;
+                  if (((wd->zoom + (int)t - 1) < wd->src->zoom_min) ||
+                      ((wd->zoom + (int)t - 1) > wd->src->zoom_max) ||
+                      (t > PINCH_ZOOM_MAX) || (t < PINCH_ZOOM_MIN))
+                    {
+                       wd->pinch.diff = tt;
+                       goto do_nothing;
+                    }
+                  else
+                    {
+                       wd->pinch.level = (wd->pinch.diff * 0.01) + 1.0;
+                       wd->pinch.cx = x + half_w;
+                       wd->pinch.cy = y + half_h;
+                       wd->pinch.doing = EINA_TRUE;
+                       if (!wd->rotate.doing) goto do_zoom_only;
+                    }
                }
              else
                {
-                  wd->pinch.level = (wd->pinch.diff * 0.01) + 1.0;
-                  wd->pinch.cx = x + half_w;
-                  wd->pinch.cy = y + half_h;
+                  if (wd->pinch.doing) goto do_nothing;
                }
 
              a = (double)(ev->prev.y - ev0->prev.y) / (double)(ev->prev.x - ev0->prev.x);
@@ -1944,8 +1955,9 @@ _mouse_multi_move(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSED__
                   wd->rotate.a = a;
                   wd->rotate.cx = x + half_w;
                   wd->rotate.cy = y + half_h;
+                  wd->rotate.doing = EINA_TRUE;
                }
-
+do_zoom_only:
              if (wd->calc_job) ecore_job_del(wd->calc_job);
              wd->calc_job = ecore_job_add(_calc_job, wd);
           }
@@ -1979,8 +1991,10 @@ _mouse_multi_up(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSED__, 
    else if (wd->pinch.diff < 0.0) zoom = (int)floor(-1.0 / ((wd->pinch.diff * 0.005) + 1.0));
    elm_map_zoom_set(data, wd->zoom + zoom);
    wd->pinch.level = 1.0;
+   wd->pinch.doing = EINA_FALSE;
    wd->paused = tp;
    wd->rotate.a = 0.0;
+   wd->rotate.doing = EINA_FALSE;
 
    ev = get_event_object(data, up->device);
    if (!ev)
