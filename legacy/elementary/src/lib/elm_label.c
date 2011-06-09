@@ -375,7 +375,7 @@ _is_width_over(Evas_Object *obj)
      {
         const Evas_Object *tb;
         char *_kvalue;
-        double ellipsis;
+        double ellipsis = 0.0;
         Eina_Bool found_key = EINA_FALSE;
         if (_get_value_in_key_string(wd->format, "ellipsis", &_kvalue) == 0)
           {
