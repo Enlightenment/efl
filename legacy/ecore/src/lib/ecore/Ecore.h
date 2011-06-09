@@ -788,6 +788,7 @@ extern "C" {
    EAPI void         ecore_pipe_read_close(Ecore_Pipe *p);
    EAPI void         ecore_pipe_thaw(Ecore_Pipe *p);
    EAPI void         ecore_pipe_freeze(Ecore_Pipe *p);
+   EAPI int          ecore_pipe_wait(Ecore_Pipe *p, int message_count, double wait);
 
   /**
    * @}

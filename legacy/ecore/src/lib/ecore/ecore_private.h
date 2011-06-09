@@ -198,5 +198,6 @@ void _ecore_main_loop_shutdown(void);
 extern int    _ecore_fps_debug;
 extern double _ecore_time_loop_time;
 extern Eina_Bool _ecore_glib_always_integrate;
+extern Ecore_Select_Function main_loop_select;
 
 #endif

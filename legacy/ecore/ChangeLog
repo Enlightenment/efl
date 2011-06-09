@@ -210,3 +210,7 @@
 
 	* Add ecore_pipe_freeze/thaw to suspend and restart watching the pipe
 	inside the main loop.
+
+2011-06-09  Cedric Bail
+
+	* Add ecore_pipe_wait (should only called from outside of the main loop).

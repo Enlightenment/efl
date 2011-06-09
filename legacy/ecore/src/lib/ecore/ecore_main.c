@@ -147,9 +147,9 @@ static Eina_Bool            win32_handlers_delete_me = EINA_FALSE;
 #endif
 
 #ifdef _WIN32
-static Ecore_Select_Function main_loop_select = _ecore_main_win32_select;
+Ecore_Select_Function main_loop_select = _ecore_main_win32_select;
 #else
-static Ecore_Select_Function main_loop_select = select;
+Ecore_Select_Function main_loop_select = select;
 #endif
 
 #ifndef USE_G_MAIN_LOOP
