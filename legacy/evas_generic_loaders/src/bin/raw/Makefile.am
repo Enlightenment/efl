@@ -16,7 +16,7 @@ bin_PROGRAMS = evas_image_loader.raw
 
 evas_image_loader_raw_SOURCES = main.c $(top_srcdir)/src/bin/common/shmfile.c
 evas_image_loader_raw_CFLAGS = @LIBRAW_CFLAGS@
-evas_image_loader_raw_LDADD = @SHM_OPEN_LIBS@ @LIBRAW_LIBS@
+evas_image_loader_raw_LDADD = @SHM_OPEN_LIBS@ @LIBRAW_LIBS@ -lm
 evas_image_loader_raw_LDFLAGS =
 endif
 
