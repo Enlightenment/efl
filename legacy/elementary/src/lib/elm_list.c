@@ -659,28 +659,25 @@ _sub_del(void *data __UNUSED__, Evas_Object *obj, void *event_info)
 
    if (!wd) return;
    if (!sub) abort();
-   if (sub == wd->scr)
-     wd->scr = NULL;
-   else
+   if ((sub == wd->box) || (sub == wd->scr)) return;
+
+   EINA_LIST_FOREACH(wd->items, l, it)
      {
-        EINA_LIST_FOREACH(wd->items, l, it)
+        if ((sub == it->icon) || (sub == it->end))
           {
-             if ((sub == it->icon) || (sub == it->end))
+             if (it->icon == sub) it->icon = NULL;
+             if (it->end == sub) it->end = NULL;
+             evas_object_event_callback_del_full
+             (sub, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _changed_size_hints,
+              obj);
+             if (!wd->walking)
                {
-                  if (it->icon == sub) it->icon = NULL;
-                  if (it->end == sub) it->end = NULL;
-                  evas_object_event_callback_del_full
-                     (sub, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _changed_size_hints,
-                      obj);
-                  if (!wd->walking)
-                    {
-                       _fix_items(obj);
-                       _sizing_eval(obj);
-                    }
-                  else
-                    wd->fix_pending = EINA_TRUE;
-                  break;
+                  _fix_items(obj);
+                  _sizing_eval(obj);
                }
+             else
+               wd->fix_pending = EINA_TRUE;
+             break;
           }
      }
 }
