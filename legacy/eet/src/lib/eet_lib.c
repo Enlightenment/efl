@@ -1403,11 +1403,13 @@ eet_internal_close(Eet_File *ef,
    if (ef->sha1)
      free(ef->sha1);
 
-   if (ef->data)
-     eina_file_map_free(ef->readfp, (void *) ef->data);
-
    if (ef->readfp)
-     eina_file_close(ef->readfp);
+     {
+        if (ef->data)
+          eina_file_map_free(ef->readfp, (void *) ef->data);
+
+        eina_file_close(ef->readfp);
+     }
 
    /* zero out ram for struct - caution tactic against stale memory use */
    memset(ef, 0, sizeof(Eet_File));
