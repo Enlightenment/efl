@@ -24,30 +24,168 @@
 #include "eina_iterator.h"
 
 /**
+ * @page hash_01_example_page Eina_Hash in action
+ * @dontinclude eina_hash_01.c
+ *
+ * We are going to store some tuples into our table, that will map each @a name
+ * to a @a number. The cost to access a given number from the name should be
+ * very small, even with many entries in our table. This is the initial data:
+ * @skip _Phone_Entry
+ * @until // _start_entries
+ *
+ * Before starting to play with the hash, let's write a callback that will be
+ * used to free the elements from it. Since we are just storing strduped
+ * strings, we just need to free them:
+ *
+ * @skip static
+ * @until }
+ *
+ * We also need a callback to iterate over the elements of the list later, so
+ * we are defining it now:
+ *
+ * @skip Eina_Bool
+ * @until }
+ *
+ * Now let's create our @ref Eina_Hash using @ref
+ * eina_hash_string_superfast_new :
+ *
+ * @skip eina_init
+ * @until phone_book
+ *
+ * Now we add the keys and data to the hash using @ref eina_hash_add . This
+ * means that the key is copied inside the table, together with the pointer to
+ * the data (phone numbers).
+ *
+ * @skip for
+ * @until }
+ *
+ * Some basic manipulations with the hash, like finding a value given a key,
+ * deleting an entry, modifying an entry are exemplified in the following lines.
+ * Notice that the @ref eina_hash_modify function returns the old value stored
+ * in that entry, and it needs to be freed, while the @ref eina_hash_del
+ * function already calls our free callback:
+ *
+ * @skip Look for
+ * @until free(
+ *
+ * The @ref eina_hash_set function can be used to set a key-value entry to the
+ * table if it doesn't exist, or to modify an existent entry. It returns the old
+ * entry if it was already set, and NULL otherwise. But since it will
+ * return NULL on error too, we need to check if an error has occurred:
+ *
+ * @skip Modify
+ * @until printf("\n");
+ *
+ * There are different ways of iterate over the entries of a hash. Here we show
+ * two of them: using @ref eina_hash_foreach and @ref Eina_Iterator .
+ *
+ * @skip List of phones
+ * @until eina_iterator_free(it);
+ *
+ * It's also possible to change the key for a specific entry, without having to
+ * remove the entry from the table and adding it again:
+ *
+ * @skipline eina_hash_move
+ *
+ * We can remove all the elements from the table without free the table itself:
+ *
+ * @skip Empty the phone book
+ * @until eina_hash_population
+ *
+ * Or free the the entire table with its content:
+ *
+ * @skipline eina_hash_free
+ *
+ *
+ * The full code for this example can be seen here: @ref eina_hash_01_c
+ */
+
+/**
+ * @page eina_hash_01_c Hash table in action
+ *
+ * @include eina_hash_01.c
+ * @example eina_hash_01.c
+ */
+
+/**
+ * @page hash_02_example_page Different types of tables
+ *
+ * This example shows two more types of hash tables that can be created using
+ * @ref Eina_Hash . For more types, consult the reference documentation of @ref
+ * eina_hash_new.
+ * @include eina_hash_02.c
+ * @example eina_hash_02.c
+ */
+
+/**
  * @addtogroup Eina_Hash_Group Hash Table
  *
- * @brief give a small description here : what it is for, what it does
- * , etc...
- * Different implementations exists depending on what to store: strings,
- * integers, pointers, stringshared or your own...
+ * @brief Hash table management. Useful for mapping keys to values.
+ *
+ * The hash table is useful for when one wants to implement a table that maps
+ * keys (usually strings) to data, and have relatively fast access time. The
+ * performance is proportional to the load factor of the table (number of
+ * elements / number of buckets). See @ref hashtable_algo for implementation
+ * details.
+ *
+ * Different implementations exists depending on what kind of key will be used
+ * to access the data: strings, integers, pointers, stringshared or your own.
+ *
  * Eina hash tables can copy the keys when using eina_hash_add() or not when
  * using eina_hash_direct_add().
  *
- * Hash API. Give some hints about the use (functions that must be
- * used like init / shutdown), general use, etc... Give also a link to
- * tutorial below.
- *
  * @section hashtable_algo Algorithm
  *
- * Give here the algorithm used in the implementation
+ * The Eina_Hash is implemented using an array of N "buckets", where each
+ * bucket is a pointer to a structure that is the head of a <a
+ * href="http://en.wikipedia.org/wiki/Red-black_tree">red-black tree</a>. The
+ * array can then be indexed by the [hash_of_element mod N]. The
+ * hash_of_element is calculated using the hashing function, passed as
+ * parameter to the @ref eina_hash_new function. N is the number of buckets
+ * (array positions), and is calculated based on the buckets_power_size
+ * (argument of @ref eina_hash_new too). The following picture ilustrates the
+ * basic idea:
+ *
+ * @image html 01_hash-table.jpg
+ *
+ * Adding an element to the hash table is made of:
+ * @li calculating the hash for that key (using the specified hash function);
+ * @li calculate the array position [hash mod N];
+ * @li add the element to the rbtree on that position.
+ *
+ * The two first steps have constant time, proportional to the hash function
+ * being used. Adding the key to the rbtree will be proportional on the number
+ * of keys on that bucket.
+ *
+ * The average cost of lookup depends on the number of keys per
+ * bucket (load factor) of the table, if the distribution of keys is
+ * sufficiently uniform.
  *
  * @section hashtable_perf Performance
  *
- * Give some hints about performance if it is possible, and an image !
+ * As said before, the performance depends on the load factor. So trying to keep
+ * it as small as possible will improve the hash table performance. But
+ * increasing the buckets_power_size will also increase the memory consumption.
+ * The default hash table creation functions already have a good number of
+ * buckets, enough for most cases. Particularly for strings, if just a few keys
+ * (less than 30) will be added to the hash table, @ref
+ * eina_hash_string_small_new should be used. If just stringshared keys are
+ * being added, use @ref eina_hash_stringshared_new. If a lot of keys will be
+ * added to the hash table (e.g. more than 1000), then it's better to increase
+ * the buckets_power_size. See @ref eina_hash_new for more details.
+ *
+ * When adding a new key to a hash table, use @ref eina_hash_add or @ref
+ * eina_hash_direct_add (the latter if this key is already stored elsewhere). If
+ * the key may be already inside the hash table, instead of checking with
+ * @ref eina_hash_find and then doing @ref eina_hash_add, one can use just @ref
+ * eina_hash_set (this will change the data pointed by this key if it was
+ * already present in the table).
  *
  * @section hashtable_tutorial Tutorial
  *
- * Here is a fantastic tutorial about our hash table
+ * These examples show many Eina_Hash functions in action:
+ * @li @ref hash_01_example_page
+ * @li @ref hash_02_example_page
  *
  * @{
  */
