@@ -8497,8 +8497,15 @@ EAPI int               evas_string_char_prev_get         (const char *str, int p
 EAPI int               evas_string_char_len_get          (const char *str) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
 
 /**
- * TO BE DOCUMENTED:
- * @todo document key modifiers.
+ * @defgroup Evas_Keys Key Input Functions
+ *
+ * @ingroup Evas_Canvas
+ * @todo Finish proper documentation of this group.
+ */
+
+/**
+ * @addtogroup Evas_Keys
+ * @{
  */
 
 /**
@@ -8768,6 +8775,10 @@ EAPI Eina_Bool            evas_object_key_grab           (Evas_Object *obj, cons
  * to trigger the event.
  */
 EAPI void                 evas_object_key_ungrab         (Evas_Object *obj, const char *keyname, Evas_Modifier_Mask modifiers, Evas_Modifier_Mask not_modifiers) EINA_ARG_NONNULL(1, 2);
+
+/**
+ * @}
+ */
 
 #ifdef __cplusplus
 }
