@@ -1931,7 +1931,7 @@ eng_image_scale_hint_get(void *data __UNUSED__, void *image)
 }
 
 static void
-eng_image_map_draw(void *data __UNUSED__, void *context, void *surface, void *image, int npoints, RGBA_Map_Point *p, int smooth, int level)
+eng_image_map_draw(void *data, void *context, void *surface, void *image, int npoints, RGBA_Map_Point *p, int smooth, int level)
 {
    Evas_GL_Image *gim = image;
    Render_Engine *re;
@@ -1982,7 +1982,7 @@ eng_image_map_draw(void *data __UNUSED__, void *context, void *surface, void *im
 }
 
 static void *
-eng_image_map_surface_new(void *data __UNUSED__, int w, int h, int alpha)
+eng_image_map_surface_new(void *data, int w, int h, int alpha)
 {
    Render_Engine *re;
    
@@ -2011,7 +2011,7 @@ eng_image_content_hint_get(void *data __UNUSED__, void *image)
 }
 
 static void
-eng_image_cache_flush(void *data __UNUSED__)
+eng_image_cache_flush(void *data)
 {
    Render_Engine *re;
    int tmp_size;
@@ -2026,7 +2026,7 @@ eng_image_cache_flush(void *data __UNUSED__)
 }
 
 static void
-eng_image_cache_set(void *data __UNUSED__, int bytes)
+eng_image_cache_set(void *data, int bytes)
 {
    Render_Engine *re;
    
@@ -2039,17 +2039,14 @@ eng_image_cache_set(void *data __UNUSED__, int bytes)
 static int
 eng_image_cache_get(void *data __UNUSED__)
 {
-   Render_Engine *re;
-   
-   re = (Render_Engine *)data;
    return evas_common_image_get_cache();
 }
-
 
 static void
 eng_image_stride_get(void *data __UNUSED__, void *image, int *stride)
 {
    Evas_GL_Image *im = image;
+
    *stride = im->w * 4;
    if ((im->tex) && (im->tex->pt->dyn.img))
      {
@@ -2325,7 +2322,6 @@ eng_gl_surface_create(void *data, void *config, int w, int h)
    return sfc;
 }
 
-
 static int
 eng_gl_surface_destroy(void *data, void *surface)
 {
@@ -2378,8 +2374,6 @@ eng_gl_surface_destroy(void *data, void *surface)
 
    return 1;
 }
-
-
 
 static void *
 eng_gl_context_create(void *data, void *share_context)
@@ -2457,7 +2451,6 @@ eng_gl_context_create(void *data, void *share_context)
    return ctx;
 }
 
-
 static int
 eng_gl_context_destroy(void *data, void *context)
 {
@@ -2512,8 +2505,6 @@ eng_gl_context_destroy(void *data, void *context)
 
    return 1;
 }
-
-
 
 static int
 eng_gl_make_current(void *data, void *surface, void *context)
