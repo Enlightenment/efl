@@ -1,4 +1,4 @@
-SUBDIRS = lib include modules tests
+SUBDIRS = lib include modules tests examples
 
 MAINTAINERCLEANFILES = Makefile.in
 

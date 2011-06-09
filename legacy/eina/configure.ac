@@ -628,6 +628,10 @@ AM_CONDITIONAL([CITYHASH_BENCH], [test -n "$CXX" && test "x$enable_benchmark" = 
 
 AC_SUBST(requirement_eina)
 
+### Build and install examples
+EFL_CHECK_BUILD_EXAMPLES([enable_build_examples="yes"], [enable_build_examples="no"])
+EFL_CHECK_INSTALL_EXAMPLES([enable_install_examples="yes"], [enable_install_examples="no"])
+
 ### Create the .pc.in file according to the major version
 #cat > ${srcdir}/eina-${VMAJ}.pc.in << EOF
 #prefix=@prefix@
@@ -664,6 +668,7 @@ src/modules/mp/fixed_bitmap/Makefile
 src/modules/mp/buddy/Makefile
 src/modules/mp/one_big/Makefile
 src/tests/Makefile
+src/examples/Makefile
 ])
 
 AC_OUTPUT
@@ -700,6 +705,8 @@ echo
 echo "  Documentation........: ${build_doc}"
 echo "  Tests................: ${enable_tests}"
 echo "  Coverage.............: ${enable_coverage}"
+echo "  Examples.............: ${enable_build_examples}"
+echo "  Examples installed...: ${enable_install_examples}"
 echo "  Benchmark............: ${enable_benchmark}"
 if test "x${enable_benchmark}" = "xyes" ; then
 echo "    Glib...............: ${enable_benchmark_glib}"
