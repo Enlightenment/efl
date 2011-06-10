@@ -68,7 +68,7 @@ EXCLUDE                =
 EXCLUDE_SYMLINKS       = NO
 EXCLUDE_PATTERNS       =
 EXAMPLE_PATH           = @top_srcdir@/src/examples
-EXAMPLE_PATTERNS       = = *.c,*.h
+EXAMPLE_PATTERNS       = *.c,*.h
 EXAMPLE_RECURSIVE      = YES
 INPUT_FILTER           =
 FILTER_SOURCE_FILES    = NO
