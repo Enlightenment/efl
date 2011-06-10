@@ -36,20 +36,13 @@ pkglib_PROGRAMS += evas_init_shutdown
 evas_init_shutdown_SOURCES = evas-init-shutdown.c
 evas_init_shutdown_LDADD = $(top_builddir)/src/lib/libevas.la
 
-# put in here the dependencies for Evas' examples. they are meant to
-# be 'real world' usage examples, thus one will be using higher level
-# libraries on these programs. also remember to link with these extra
-# libs only the example requiring them
-if BUILD_ENGINE_SOFTWARE_X11
-AM_CPPFLAGS += -I$(top_srcdir)/src/modules/engines/software_x11 \
-	@ECORE_EVAS_CFLAGS@
+AM_CPPFLAGS += @ECORE_EVAS_CFLAGS@
 
 pkglib_PROGRAMS += evas_load_error_str
 evas_load_error_str_SOURCES = evas-load-error-str.c
 evas_load_error_str_LDADD = $(top_builddir)/src/lib/libevas.la @ECORE_EVAS_LIBS@
-endif
 
-endif
+endif # if BUILD_EXAMPLES
 
 filesdir = $(datadir)/$(PACKAGE)/examples
 files_DATA = $(srcdir)/enlightenment.png
