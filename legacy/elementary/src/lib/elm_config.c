@@ -1124,8 +1124,8 @@ _config_load(void)
    _elm_config->thumbscroll_border_friction = 0.5;
    _elm_config->scroll_smooth_amount = 1.0;
    _elm_config->scroll_smooth_history_weight = 0.3;
-   _elm_config->scroll_smooth_future_time = 2.0 / 60.0;
-   _elm_config->scroll_smooth_time_window = 0.12;
+   _elm_config->scroll_smooth_future_time = 0.0;
+   _elm_config->scroll_smooth_time_window = 0.2;
    _elm_config->scale = 1.0;
    _elm_config->bgpixmap = 0;
    _elm_config->compositing = 1;
