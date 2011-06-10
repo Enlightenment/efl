@@ -3758,7 +3758,7 @@ EAPI Eina_Bool         evas_map_util_clockwise_get                   (Evas_Map *
  * with evas_map calls.
  *
  * @param count number of points in the map. *
- * @return a newly allocated map or NULL on errors.
+ * @return a newly allocated map or @c NULL on errors.
  *
  * @see evas_map_free()
  * @see evas_map_dup()
@@ -4232,7 +4232,7 @@ EAPI void                      evas_object_data_set             (Evas_Object *ob
  * Return an attached data pointer by its given string key.
  * @param obj The object to which the data was attached
  * @param key The string key the data was stored under
- * @return The data pointer stored, or NULL if none was stored
+ * @return The data pointer stored, or @c NULL if none was stored
  *
  * This function will return the data pointer attached to the object @p obj
  * stored using the string key @p key. If the object is valid and data was
@@ -4263,7 +4263,7 @@ EAPI void                     *evas_object_data_get             (const Evas_Obje
  * @return The original data pointer stored at @p key on @p obj
  *
  * This will remove the stored data pointer from @p obj stored under @p key,
- * and return the original pointer stored under @p key, if any, nor NULL if
+ * and return the original pointer stored under @p key, if any, nor @c NULL if
  * nothing was stored under that key.
  *
  * Example:
@@ -4386,7 +4386,7 @@ EAPI Evas_Render_Op            evas_object_render_op_get        (const Evas_Obje
  * Retrieve the object that currently has focus.
  *
  * @param e The Evas canvas to query for focused object on.
- * @return The object that has focus or NULL if there is not one.
+ * @return The object that has focus or @c NULL if there is not one.
  *
  * Evas can have (at most) one of its objects focused at a time.
  * Focused objects will be the ones having <b>key events</b> delivered
@@ -4790,8 +4790,8 @@ EAPI Evas_Object             *evas_object_image_filled_add             (Evas *e)
  * @param obj The given image object.
  * @param data The image file data address
  * @param size The size of the image file data in bytes
- * @param format The format of the file (optional), or NULL if not needed
- * @param key The image key in file, or NULL.
+ * @param format The format of the file (optional), or @c NULL if not needed
+ * @param key The image key in file, or @c NULL.
  */
 EAPI void                     evas_object_image_memfile_set            (Evas_Object *obj, void *data, int size, char *format, char *key) EINA_ARG_NONNULL(1, 2);
 
@@ -4803,7 +4803,7 @@ EAPI void                     evas_object_image_memfile_set            (Evas_Obj
  *
  * @param obj The given image object.
  * @param file The image filename.
- * @param key The image key in file, or NULL.
+ * @param key The image key in file, or @c NULL.
  */
 EAPI void                     evas_object_image_file_set               (Evas_Object *obj, const char *file, const char *key) EINA_ARG_NONNULL(1);
 
@@ -4811,8 +4811,8 @@ EAPI void                     evas_object_image_file_set               (Evas_Obj
  * Retrieves the filename and key of the given image object.
  *
  * @param obj The given image object.
- * @param file Location to store the image filename, or NULL.
- * @param key Location to store the image key, or NULL.
+ * @param file Location to store the image filename, or @c NULL.
+ * @param key Location to store the image key, or @c NULL.
  */
 EAPI void                     evas_object_image_file_get               (const Evas_Object *obj, const char **file, const char **key) EINA_ARG_NONNULL(1, 2);
 
@@ -4843,10 +4843,10 @@ EAPI void                     evas_object_image_border_set             (Evas_Obj
  * See @ref evas_object_image_border_set for more details.
  *
  * @param obj The given image object.
- * @param l Location to store the left border width in, or NULL.
- * @param r Location to store the right border width in, or NULL.
- * @param t Location to store the top border width in, or NULL.
- * @param b Location to store the bottom border width in, or NULL.
+ * @param l Location to store the left border width in, or @c NULL.
+ * @param r Location to store the right border width in, or @c NULL.
+ * @param t Location to store the top border width in, or @c NULL.
+ * @param b Location to store the bottom border width in, or @c NULL.
  */
 EAPI void                     evas_object_image_border_get             (const Evas_Object *obj, int *l, int *r, int *t, int *b) EINA_ARG_NONNULL(1);
 
@@ -4944,10 +4944,10 @@ EAPI void                     evas_object_image_fill_set               (Evas_Obj
  * See @ref evas_object_image_fill_set for more details.
  *
  * @param obj The given image object.
- * @param x Location to store the X coordinate for the top left corner of the image in, or NULL.
- * @param y Location to store the Y coordinate for the top left corner of the image in, or NULL.
- * @param w Location to store the width of the image in, or NULL.
- * @param h Location to store the height of the image in, or NULL.
+ * @param x Location to store the X coordinate for the top left corner of the image in, or @c NULL.
+ * @param y Location to store the Y coordinate for the top left corner of the image in, or @c NULL.
+ * @param w Location to store the width of the image in, or @c NULL.
+ * @param h Location to store the height of the image in, or @c NULL.
  */
 EAPI void                     evas_object_image_fill_get               (const Evas_Object *obj, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h) EINA_ARG_NONNULL(1);
 
@@ -4989,8 +4989,8 @@ EAPI void                     evas_object_image_size_set               (Evas_Obj
  * See @ref evas_object_image_size_set for more details.
  *
  * @param obj The given image object.
- * @param w Location to store the width of the image in, or NULL.
- * @param h Location to store the height of the image in, or NULL.
+ * @param w Location to store the width of the image in, or @c NULL.
+ * @param h Location to store the height of the image in, or @c NULL.
  */
 EAPI void                     evas_object_image_size_get               (const Evas_Object *obj, int *w, int *h) EINA_ARG_NONNULL(1);
 
@@ -5023,7 +5023,7 @@ EAPI Evas_Load_Error          evas_object_image_load_error_get         (const Ev
  * the image. If data is NULL the current image data will be freed.
  *
  * @param obj The given image object.
- * @param data The raw data, or NULL.
+ * @param data The raw data, or @c NULL.
  */
 EAPI void                     evas_object_image_data_set               (Evas_Object *obj, void *data) EINA_ARG_NONNULL(1);
 
@@ -5190,7 +5190,7 @@ EAPI void                     evas_object_image_reload                 (Evas_Obj
  *
  * @param obj The given image object.
  * @param file The filename to be used to save the image.
- * @param key The image key in file, or NULL.
+ * @param key The image key in file, or @c NULL.
  * @param flags String containing the flags to be used.
  */
 EAPI Eina_Bool                evas_object_image_save                   (const Evas_Object *obj, const char *file, const char *key, const char *flags)  EINA_ARG_NONNULL(1, 2);
@@ -5444,7 +5444,7 @@ EAPI Eina_Bool                evas_object_image_source_set             (Evas_Obj
  * Get the current source object of an image.
  *
  * @param obj Image object
- * @return Source object, or NULL on error.
+ * @return Source object, or @c NULL on error.
  */
 EAPI Evas_Object             *evas_object_image_source_get             (Evas_Object *obj) EINA_ARG_NONNULL(1);
 
@@ -5643,10 +5643,10 @@ EAPI int               evas_object_text_last_up_to_pos   (const Evas_Object *obj
  * Gets the text style pad of a text object.
  *
  * @param obj The given text object.
- * @param l The left pad (or NULL).
- * @param r The right pad (or NULL).
- * @param t The top pad (or NULL).
- * @param b The bottom pad (or NULL).
+ * @param l The left pad (or @c NULL).
+ * @param r The right pad (or @c NULL).
+ * @param t The top pad (or @c NULL).
+ * @param b The bottom pad (or @c NULL).
  *
  */
 EAPI void              evas_object_text_style_pad_get    (const Evas_Object *obj, int *l, int *r, int *t, int *b) EINA_ARG_NONNULL(1);
@@ -5855,7 +5855,7 @@ EAPI void                         evas_object_textblock_replace_char_set(Evas_Ob
  * NULL if no replacement character is in use.
  *
  * @param obj The given textblock object
- * @return replacement character or NULL
+ * @return replacement character or @c NULL
  */
 EAPI const char                  *evas_object_textblock_replace_char_get(Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
 
@@ -7057,7 +7057,7 @@ EAPI void              evas_object_smart_member_del      (Evas_Object *obj) EINA
 /**
  * Gets the smart parent of an Evas_Object
  * @param obj the Evas_Object you want to get the parent
- * @return Returns the smart parent of @a obj, or NULL if @a obj is not a smart member of another Evas_Object
+ * @return Returns the smart parent of @a obj, or @c NULL if @a obj is not a smart member of another Evas_Object
  * @ingroup Evas_Smart_Object_Group
  */
 EAPI Evas_Object      *evas_object_smart_parent_get      (const Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
