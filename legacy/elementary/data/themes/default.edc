@@ -1429,7 +1429,7 @@ collections {
                rel2.relative: 1.0 1.0;
                text {
                   style: "textblock_style";
-                  min: 1 1;
+                  min: 0 1;
                }
             }
          }
