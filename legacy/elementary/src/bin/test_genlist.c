@@ -722,6 +722,7 @@ test_genlist4(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    evas_object_show(bx);
 
    gl = elm_genlist_add(win);
+   elm_genlist_height_for_width_mode_set(gl, EINA_TRUE);
    elm_genlist_multi_select_set(gl, 1);
    evas_object_size_hint_align_set(gl, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(gl, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
