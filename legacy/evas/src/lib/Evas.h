@@ -962,8 +962,7 @@ typedef void      (*Evas_Async_Events_Put_Cb)(void *target, Evas_Callback_Type t
  * Note that this is code creating an Evas canvas with no usage of
  * Ecore helpers at all -- no linkage with Ecore on this scenario,
  * thus. Again, this wouldn't be on Evas common usage for most
- * developers. See the full example source code in @ref
- * Example_Evas_Buffer_Simple.
+ * developers. See the full @ref Example_Evas_Buffer_Simple "example".
  *
  * @ingroup Evas_Group
  */
@@ -993,8 +992,8 @@ EAPI int               evas_init                         (void);
  * @until   evas_free(canvas)
  *
  * Most users would be using ecore_evas_shutdown() instead, like told
- * in evas_init(). See the full example source code in @ref
- * Example_Evas_Buffer_Simple.
+ * in evas_init(). See the full @ref Example_Evas_Buffer_Simple
+ * "example".
  *
  * @ingroup Evas_Group
  */
@@ -8431,8 +8430,8 @@ EAPI void              evas_cserve_disconnect                 (void);
  * bogus_path a path to a file which does not exist, the two outputs
  * of evas_load_error_str() would be (if no other errors occur):
  * <code>"No error on load"</code> and <code>"File (or file path) does
- * not exist"</code>, respectively. See the full example source code
- * in @ref Example_Evas_Load_Error_Str.
+ * not exist"</code>, respectively. See the full @ref
+ * Example_Evas_Load_Error_Str "example".
  *
  * @ingroup Evas_Utils
  */
