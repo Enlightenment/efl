@@ -437,7 +437,7 @@ _ecore_event_exist(void)
 {
    Ecore_Event *e;
    EINA_INLIST_FOREACH(events, e)
-      if (!e->delete_me) return 1;
+     if (!e->delete_me) return 1;
    return 0;
 }
 
