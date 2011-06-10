@@ -1754,19 +1754,13 @@ _smart_hold_animator(void *data)
      {
         if ((!sd->widget) ||
             (!elm_widget_drag_child_locked_x_get(sd->widget)))
-          {
-             ox = sd->down.hold_x;
-             ox = fx;
-          }
+           ox = fx;
      }
    if (sd->down.dir_y)
      {
         if ((!sd->widget) ||
             (!elm_widget_drag_child_locked_y_get(sd->widget)))
-          {
-             oy = sd->down.hold_y;
-             oy = fy;
-          }
+           oy = fy;
      }
    
    elm_smart_scroller_child_pos_set(sd->smart_obj, ox, oy);
