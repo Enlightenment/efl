@@ -146,7 +146,8 @@
  * (argument of @ref eina_hash_new too). The following picture ilustrates the
  * basic idea:
  *
- * @image html 01_hash-table.jpg
+ * @image html 01_hash-table.png
+ * @image latex 01_hash-table.eps
  *
  * Adding an element to the hash table is made of:
  * @li calculating the hash for that key (using the specified hash function);
