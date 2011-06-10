@@ -32,7 +32,6 @@
 int
 main(void)
 {
-   Evas *canvas;
    Eina_List *engine_list, *l;
    char *engine_name;
 
@@ -52,5 +51,6 @@ main(void)
    evas_render_method_list_free(engine_list);
 
    evas_shutdown();
+   return 0;
  }
 
