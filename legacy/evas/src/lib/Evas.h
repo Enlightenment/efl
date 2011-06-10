@@ -490,7 +490,7 @@ typedef struct _Evas_Map            Evas_Map;
 
 /**
  * @typedef Evas
- * An Evas canvas handle.
+ * An opaque handle to an Evas canvas.
  * @see evas_new()
  * @see evas_free()
  * @ingroup Evas_Canvas
@@ -505,8 +505,8 @@ typedef struct _Evas                Evas;
 typedef struct _Evas_Object         Evas_Object;
 
 typedef void                        Evas_Performance; /**< An Evas Performance handle */
-typedef struct _Evas_Modifier       Evas_Modifier; /**< An Evas Modifier */
-typedef struct _Evas_Lock           Evas_Lock; /**< An Evas Lock */
+typedef struct _Evas_Modifier       Evas_Modifier; /**< An opaque type containing information on which modifier keys are registered in an Evas canvas */
+typedef struct _Evas_Lock           Evas_Lock; /**< An opaque type containing information on which lock keys are registered in an Evas canvas */
 typedef struct _Evas_Smart          Evas_Smart; /**< An Evas Smart Object handle */
 typedef struct _Evas_Native_Surface Evas_Native_Surface; /**< A generic datatype for engine specific native surface information */
 typedef unsigned long long          Evas_Modifier_Mask; /**< An Evas modifier mask type */
@@ -922,7 +922,7 @@ typedef enum _Evas_Object_Pointer_Mode
 } Evas_Object_Pointer_Mode; /**< How mouse pointer should be handled by Evas. */
 
 typedef void      (*Evas_Smart_Cb) (void *data, Evas_Object *obj, void *event_info);
-typedef void      (*Evas_Event_Cb) (void *data, Evas *e, void *event_info);
+typedef void      (*Evas_Event_Cb) (void *data, Evas *e, void *event_info); /**< Evas event callback function signature */
 typedef Eina_Bool (*Evas_Object_Event_Post_Cb) (void *data, Evas *e);
 typedef void      (*Evas_Object_Event_Cb) (void *data, Evas *e, Evas_Object *obj, void *event_info);
 typedef void      (*Evas_Async_Events_Put_Cb)(void *target, Evas_Callback_Type type, void *event_info);
@@ -1115,12 +1115,24 @@ EAPI Eina_Bool         evas_async_events_put             (const void *target, Ev
 /**
  * @defgroup Evas_Canvas Canvas Functions
  *
- * Functions that deal with the basic evas object.  They are the
- * functions you need to use at a minimum to get a working evas, and
- * to destroy it.
+ * Low level Evas canvas functions. Sub groups will present more high
+ * level ones, though.
  *
+ * Most of these functions deal with low level Evas actions, like:
+ * @li create/destroy raw canvases, not bound to any displaying engine
+ * @li tell a canvas i got focused (in a windowing context, for example)
+ * @li tell a canvas a region should not be calculated anymore in rendering
+ * @li tell a canvas to render its contents, immediately
+ *
+ * Most users will be using Evas by means of the @c Ecore_Evas
+ * wrapper, which deals with all the above mentioned issues
+ * automatically for them. Thus, you'll be looking at this section
+ * only if you're building low level stuff.
+ *
+ * The groups within present you functions that deal with the canvas
+ * directly, too, and not yet with its <b>objects</b>. They are the
+ * functions you need to use at a minimum to get a working canvas.
  */
-
 
 /**
  * Creates a new empty evas.
@@ -1244,47 +1256,81 @@ EAPI void             *evas_data_attach_get              (const Evas *e) EINA_WA
 EAPI void              evas_damage_rectangle_add         (Evas *e, int x, int y, int w, int h) EINA_ARG_NONNULL(1);
 
 /**
- * Add an obscured region.
+ * Add an "obscured region" to an Evas canvas.
  *
  * @param e The given canvas pointer.
- * @param x The rectangle's left position.
- * @param y The rectangle's top position
+ * @param x The rectangle's top left corner's horizontal coordinate.
+ * @param y The rectangle's top left corner's vertical coordinate
  * @param w The rectangle's width.
  * @param h The rectangle's height.
  *
- * This is the function by which one tells evas that a part of the
- * canvas has not to be repainted. To make this region one that have
- * to be repainted, call the function evas_obscured_clear().
+ * This is the function by which one tells an Evas canvas that a part
+ * of it <b>must not</b> be repainted. The region must be
+ * rectangular and its coordinates inside the canvas viewport are
+ * passed in the call. After this call, the region specified won't
+ * participate in any form in Evas' calculations and actions during
+ * its rendering updates, having its displaying content frozen as it
+ * was just after this function took place.
  *
- * @see evas_obscured_clear().
+ * We call it "obscured region" because the most common use case for
+ * this rendering (partial) freeze is something else (most problaby
+ * other canvas) being on top of the specified rectangular region,
+ * thus shading it completely from the user's final scene in a
+ * display. To avoid unecessary processing, one should indicate to the
+ * obscured canvas not to bother about the non-important area.
+ *
+ * The majority of users won't have to worry about this funcion, as
+ * they'll be using just one canvas in their applications, with
+ * nothing inset or on top of it in any form.
+ *
+ * To make this region one that <b>has</b> to be repainted
+ * again, call the function evas_obscured_clear().
+ *
+ * @note This is a <b>very low level function</b>, which most of
+ * Evas' users wouldn't care about.
+ *
+ * @see evas_obscured_clear()
+ * @see evas_render_updates()
  *
  * @ingroup Evas_Canvas
  */
 EAPI void              evas_obscured_rectangle_add       (Evas *e, int x, int y, int w, int h) EINA_ARG_NONNULL(1);
 
 /**
- * Remove all obscured region rectangles from the canvas.
+ * Remove all "obscured regions" from an Evas canvas.
  *
  * @param e The given canvas pointer.
  *
- * This function removes all the rectangles from the obscured list of
- * the canvas. It takes obscured areas added with
- * evas_obscured_rectangle_add() and makes it a region that have to be
- * repainted.
+ * This function removes all the rectangles from the obscured regions
+ * list of the canvas @p e. It takes obscured areas added with
+ * evas_obscured_rectangle_add() and make them again a regions that
+ * <b>have</b> to be repainted on rendering updates.
+ *
+ * @note This is a <b>very low level function</b>, which most of
+ * Evas' users wouldn't care about.
+ *
+ * @see evas_obscured_rectangle_add()
+ * @see evas_render_updates()
  *
  * @ingroup Evas_Canvas
  */
 EAPI void              evas_obscured_clear               (Evas *e) EINA_ARG_NONNULL(1);
 
 /**
- * Force immediate renderization of the given canvas.
+ * Force immediate renderization of the given Evas canvas.
  *
  * @param e The given canvas pointer.
- * @return A newly allocated list of updated rectangles of the canvas.
- *         Free this list with evas_render_updates_free().
+ * @return A newly allocated list of updated rectangles of the canvas
+ *        (@c Eina_Rectangle structs). Free this list with
+ *        evas_render_updates_free().
  *
  * This function forces an immediate renderization update of the given
- * given canvas.
+ * canvas @e.
+ *
+ * @note This is a <b>very low level function</b>, which most of
+ * Evas' users wouldn't care about. One would use it, for example, to
+ * grab an Evas' canvas update regions and paint them back, using the
+ * canvas' pixmap, on a displaying system working below Evas.
  *
  * @ingroup Evas_Canvas
  */
@@ -1505,11 +1551,12 @@ EAPI void              evas_render_method_list_free      (Eina_List *list);
  * will be ignored.  The value for @p render_method can be found using
  * @ref evas_render_method_lookup .
  *
+ * @param   e             The given evas.
+ * @param   render_method The numeric engine value to use.
+ *
  * @attention it is mandatory that one calls evas_init() before
  *       setting the output method.
  *
- * @param   e             The given evas.
- * @param   render_method The numeric engine value to use.
  * @ingroup Evas_Output_Method
  */
 EAPI void              evas_output_method_set            (Evas *e, int render_method) EINA_ARG_NONNULL(1);
@@ -1883,7 +1930,8 @@ EAPI Eina_Bool         evas_pointer_inside_get           (const Evas *e) EINA_WA
 /**
  * @defgroup Evas_Canvas_Events Canvas Events
  *
- * Canvas generates some events
+ * Functions relating to canvas events, be they input (mice,
+ * keyboards, etc) or output ones (internal states changing, etc).
  *
  * @ingroup Evas_Canvas
  */
@@ -1894,41 +1942,42 @@ EAPI Eina_Bool         evas_pointer_inside_get           (const Evas *e) EINA_WA
  */
 
 /**
- * Add a callback function to the canvas.
+ * Add (register) a callback function to a given canvas event.
  *
  * @param e Canvas to attach a callback to
  * @param type The type of event that will trigger the callback
- * @param func The function to be called when the event is triggered
+ * @param func The (callback) function to be called when the event is
+ *        triggered
  * @param data The data pointer to be passed to @p func
  *
- * This function adds a function callback to the canvas when the event
- * of type @p type occurs on canvas @p e. The function is @p func.
+ * This function adds a function callback to the canvas @p e when the
+ * event of type @p type occurs on it. The function pointer is @p
+ * func.
  *
- * In the event of a memory allocation error during addition of the
- * callback to the canvas, evas_alloc_error() should be used to
+ * In the event of a memory allocation error during the addition of
+ * the callback to the canvas, evas_alloc_error() should be used to
  * determine the nature of the error, if any, and the program should
  * sensibly try and recover.
  *
- * The function will be passed the pointer @p data when it is
- * called. A callback function must look like this:
- *
- * @code
- * void callback (void *data, Evas *e, void *event_info);
- * @endcode
- *
- * The first parameter @p data in this function will be the same value
- * passed to evas_event_callback_add() as the @p data parameter. The
- * second parameter @p e is the canvas handle on which the event
- * occurred. The third parameter @p event_info is a pointer to a data
- * structure that may or may not be passed to the callback, depending
- * on the event type that triggered the callback.
+ * A callback function must have the ::Evas_Event_Cb prototype
+ * definition. The first parameter (@p data) in this definition will
+ * have the same value passed to evas_event_callback_add() as the @p
+ * data parameter, at runtime. The second parameter @p e is the canvas
+ * pointer on which the event occurred. The third parameter @p
+ * event_info is a pointer to a data structure that may or may not be
+ * passed to the callback, depending on the event type that triggered
+ * the callback. This is so because some events don't carry extra
+ * context with them, but others do.
  *
  * The event type @p type to trigger the function may be one of
  * #EVAS_CALLBACK_RENDER_FLUSH_PRE, #EVAS_CALLBACK_RENDER_FLUSH_POST,
- * #EVAS_CALLBACK_CANVAS_FOCUS_IN, #EVAS_CALLBACK_CANVAS_FOCUS_OUT.
- * This determines the kind of event that will trigger the callback to
- * be called.  So far none of the event types provide useful data, so
- * in all of them @p event_info pointer is @c NULL.
+ * #EVAS_CALLBACK_CANVAS_FOCUS_IN, #EVAS_CALLBACK_CANVAS_FOCUS_OUT,
+ * #EVAS_CALLBACK_CANVAS_OBJECT_FOCUS_IN and
+ * #EVAS_CALLBACK_CANVAS_OBJECT_FOCUS_OUT. This determines the kind of
+ * event that will trigger the callback to be called. Only the last
+ * two of the event types listed here provide useful event information
+ * data -- a pointer to the recently focused Evas object. For the
+ * others the @p event_info pointer is going to be @c NULL.
  *
  * Example:
  * @code
@@ -1937,19 +1986,27 @@ EAPI Eina_Bool         evas_pointer_inside_get           (const Evas *e) EINA_WA
  * void focus_in_callback(void *data, Evas *e, void *event_info);
  * void focus_out_callback(void *data, Evas *e, void *event_info);
  *
- * evas_event_callback_add(e, EVAS_CALLBACK_CANVAS_FOCUS_IN, focus_in_callback, my_data);
+ * evas_event_callback_add(e, EVAS_CALLBACK_CANVAS_FOCUS_IN, focus_in_callback,
+ *                         my_data);
  * if (evas_alloc_error() != EVAS_ALLOC_ERROR_NONE)
  *   {
  *     fprintf(stderr, "ERROR: Callback registering failed! Abort!\n");
  *     exit(-1);
  *   }
- * evas_event_callback_add(e, EVAS_CALLBACK_CANVAS_FOCUS_OUT, focus_out_callback, my_data);
+ * evas_event_callback_add(e, EVAS_CALLBACK_CANVAS_FOCUS_OUT,
+ *                         focus_out_callback, my_data);
  * if (evas_alloc_error() != EVAS_ALLOC_ERROR_NONE)
  *   {
  *     fprintf(stderr, "ERROR: Callback registering failed! Abort!\n");
  *     exit(-1);
  *   }
  * @endcode
+ *
+ * @note Be careful not to add the same callback multiple times, if
+ * that's not what you want, because Evas won't check if a callback
+ * existed before exactly as the one being registered (and thus, call
+ * it more than once on the event, in this case). This would make
+ * sense if you passed different functions and/or callback data, only.
  */
 EAPI void              evas_event_callback_add              (Evas *e, Evas_Callback_Type type, Evas_Event_Cb func, const void *data) EINA_ARG_NONNULL(1, 3);
 
@@ -1980,21 +2037,24 @@ EAPI void              evas_event_callback_add              (Evas *e, Evas_Callb
 EAPI void             *evas_event_callback_del              (Evas *e, Evas_Callback_Type type, Evas_Event_Cb func) EINA_ARG_NONNULL(1, 3);
 
 /**
- * Delete a callback function from the canvas.
+ * Delete (unregister) a callback function registered to a given
+ * canvas event.
  *
- * @param e Canvas to remove a callback from
+ * @param e Canvas to remove an event callback from
  * @param type The type of event that was triggering the callback
- * @param func The function that was to be called when the event was triggered
+ * @param func The function that was to be called when the event was
+ *        triggered
  * @param data The data pointer that was to be passed to the callback
  * @return The data pointer that was to be passed to the callback
  *
- * This function removes the most recently added callback from the
- * canvas @p e which was triggered by the event type @p type and was
- * calling the function @p func with data @p data when triggered. If
+ * This function removes <b>the first</b> added callback from the
+ * canvas @p e matching the event type @p type, the registered
+ * function pointer @p func and the callback data pointer @p data. If
  * the removal is successful it will also return the data pointer that
  * was passed to evas_event_callback_add() (that will be the same as
- * the parameter) when the callback was added to the canvas. If not
- * successful NULL will be returned.
+ * the parameter) when the callback(s) was(were) added to the
+ * canvas. If not successful @c NULL will be returned. A common use
+ * would be to remove an exact match of a callback.
  *
  * Example:
  * @code
@@ -2002,8 +2062,12 @@ EAPI void             *evas_event_callback_del              (Evas *e, Evas_Callb
  * void *my_data;
  * void focus_in_callback(void *data, Evas *e, void *event_info);
  *
- * my_data = evas_event_callback_del_full(ebject, EVAS_CALLBACK_CANVAS_FOCUS_IN, focus_in_callback, my_data);
+ * my_data = evas_event_callback_del_full(object, EVAS_CALLBACK_CANVAS_FOCUS_IN,
+ *                                        focus_in_callback, my_data);
  * @endcode
+ *
+ * @note For deletion of canvas events callbacks filtering by just
+ * type and function pointer, user evas_event_callback_del().
  */
 EAPI void             *evas_event_callback_del_full         (Evas *e, Evas_Callback_Type type, Evas_Event_Cb func, const void *data) EINA_ARG_NONNULL(1, 3);
 
@@ -2060,10 +2124,19 @@ EAPI void              evas_post_event_callback_remove      (Evas *e, Evas_Objec
 EAPI void              evas_post_event_callback_remove_full (Evas *e, Evas_Object_Event_Post_Cb func, const void *data);
 
 /**
- * @defgroup Evas_Event_Freezing_Group Event Freezing Functions
+ * @defgroup Evas_Event_Freezing_Group Input Events Freezing Functions
  *
- * Functions that deal with the freezing of event processing of an
- * evas.
+ * Functions that deal with the freezing of input event processing of
+ * an Evas canvas.
+ *
+ * There might be scenarios during a graphical user interface
+ * program's use when the developer whishes the users wouldn't be able
+ * to deliver input events to this application. It may, for example,
+ * be the time for it to populate a view or to change some
+ * layout. Assuming proper behavior with user interaction during this
+ * exact time would be hard, as things are in a changing state. The
+ * programmer can then tell the canvas to ignore input events,
+ * bringing it back to normal behavior when he/she wants.
  *
  * @ingroup Evas_Canvas_Events
  */
@@ -2074,13 +2147,18 @@ EAPI void              evas_post_event_callback_remove_full (Evas *e, Evas_Objec
  */
 
 /**
- * Freeze all event processing.
- * @param e The canvas to freeze event processing on.
+ * Freeze all input events processing.
  *
- * This function will indicate to evas that the canvas @p e is to have
- * all event processing frozen until a matching evas_event_thaw()
- * function is called on the same canvas. Every freeze call must be
- * matched by a thaw call in order to completely thaw out a canvas.
+ * @param e The canvas to freeze input events processing on.
+ *
+ * This function will indicate to Evas that the canvas @p e is to have
+ * all input event processing frozen until a matching
+ * evas_event_thaw() function is called on the same canvas. All events
+ * of this kind during the freeze will get <b>discarded</b>. Every
+ * freeze call must be matched by a thaw call in order to completely
+ * thaw out a canvas (i.e. these calls may be nested). The most common
+ * use is when you don't want the user to interect with your user
+ * interface when you're populating a view or changing the layout.
  *
  * Example:
  * @code
@@ -2090,34 +2168,37 @@ EAPI void              evas_post_event_callback_remove_full (Evas *e, Evas_Objec
  * evas_event_freeze(evas);
  * evas_object_move(object, 50, 100);
  * evas_object_resize(object, 200, 200);
+ * // more realistic code would be a toolkit or Edje doing some UI changes here
  * evas_event_thaw(evas);
  * @endcode
  */
 EAPI void              evas_event_freeze                 (Evas *e) EINA_ARG_NONNULL(1);
 
 /**
- * Thaw a canvas out after freezing.
+ * Thaw a canvas out after freezing (for input events).
  *
  * @param e The canvas to thaw out.
  *
  * This will thaw out a canvas after a matching evas_event_freeze()
- * call. If this call completely thaws out a canvas, events will start
- * being processed again after this call, but this call will not
- * invole any "missed" events to be evaluated.
+ * call. If this call completely thaws out a canvas, i.e., there's no
+ * other unbalanced call to evas_event_freeze(), events will start to
+ * be processed again, but any "missed" events will <b>not</b> be
+ * evaluated.
  *
  * See evas_event_freeze() for an example.
  */
 EAPI void              evas_event_thaw                   (Evas *e) EINA_ARG_NONNULL(1);
 
 /**
- * Return the freeze count of a given canvas.
+ * Return the freeze count on input events of a given canvas.
+ *
  * @param e The canvas to fetch the freeze count from.
  *
  * This returns the number of times the canvas has been told to freeze
- * events.  It is possible to call evas_event_freeze() multiple times,
- * and these must be matched by evas_event_thaw() calls. This call
- * allows the program to discover just how many times things have been
- * frozen in case it may want to break out of a deep freeze state
+ * input events. It is possible to call evas_event_freeze() multiple
+ * times, and these must be matched by evas_event_thaw() calls. This
+ * call allows the program to discover just how many times things have
+ * been frozen in case it may want to break out of a deep freeze state
  * where the count is high.
  *
  * Example:
@@ -2146,15 +2227,16 @@ EAPI void              evas_event_thaw_eval              (Evas *e) EINA_ARG_NONN
  */
 
 /**
- * @defgroup Evas_Event_Feeding_Group Event Feeding Functions
+ * @defgroup Evas_Event_Feeding_Group Input Events Feeding Functions
  *
- * Functions to tell Evas that events happened and should be
+ * Functions to tell Evas that input events happened and should be
  * processed.
  *
  * As explained in @ref intro_not_evas, Evas does not know how to poll
- * for events, so the developer should do it and then feed such events
- * to the canvas to be processed. This is only required if operating
- * Evas directly as modules such as Ecore_Evas does that for you.
+ * for input events, so the developer should do it and then feed such
+ * events to the canvas to be processed. This is only required if
+ * operating Evas directly. Modules such as Ecore_Evas do that for
+ * you.
  *
  * @ingroup Evas_Canvas_Events
  */
@@ -4274,16 +4356,27 @@ EAPI Evas_Render_Op            evas_object_render_op_get        (const Evas_Obje
 /**
  * Retrieve the object that currently has focus.
  *
- * @param e The @c Evas canvas to query focus on.
+ * @param e The Evas canvas to query for focused object on.
  *
- * Returns the object that currently has focus, NULL otherwise.
+ * Evas can have (at most) one of its objects focused at a time.
+ * Focused objects will be the ones having <b>key events</b> delivered
+ * to, which the programmer can act upon by means of
+ * evas_object_event_callback_add() usage.
+ *
+ * @note Most users wouldn't be dealing directly with Evas' focused
+ * objects. Instead, they would be using a higher level library for
+ * that (like a toolkit, as Elementary) to handle focus and who's
+ * receiving input for them.
+ *
+ * This call returns the object that currently has focus on the canvas
+ * @p e or @c NULL, if none.
  *
  * @see evas_object_focus_set
  * @see evas_object_focus_get
  * @see evas_object_key_grab
  * @see evas_object_key_ungrab
  *
- * @return The object that has focus or NULL is there is not one.
+ * @return The object that has focus or NULL if there is not one.
  *
  * @ingroup Evas_Object_Group_Find
  */
@@ -8499,8 +8592,28 @@ EAPI int               evas_string_char_len_get          (const char *str) EINA_
 /**
  * @defgroup Evas_Keys Key Input Functions
  *
+ * Functions which feed key events to the canvas.
+ *
+ * As explained in @ref intro_not_evas, Evas is <b>not</b> aware of
+ * input systems at all. Then, the user, if using it crudely
+ * (evas_new()), will have to feed it with input events, so that it
+ * can react somehow. If, however, the user creates a canvas by means
+ * of the Ecore_Evas wrapper, it will automatically bind the chosen
+ * display engine's input events to the canvas, for you.
+ *
+ * This group presents the functions dealing with the feeding of key
+ * events to the canvas. On most of them, one has to reference a given
+ * key by a name (<code>keyname</code> argument). Those are
+ * <b>platform dependent</b> symbolic names for the keys. Sometimes
+ * you'll get the right <code>keyname</code> by simply using an ASCII
+ * value of the key name, but it won't be like that always.
+ *
+ * Typical platforms are Linux frame buffer (Ecore_FB) and X server
+ * (Ecore_X) when using Evas with Ecore and Ecore_Evas. Please refer
+ * to your display engine's documentation when using evas through an
+ * Ecore helper wrapper when you need the <code>keyname</code>s.
+ *
  * @ingroup Evas_Canvas
- * @todo Finish proper documentation of this group.
  */
 
 /**
@@ -8509,9 +8622,11 @@ EAPI int               evas_string_char_len_get          (const char *str) EINA_
  */
 
 /**
- * Returns a handle to the modifiers available in the system.  This is required to check
- * for modifiers with the evas_key_modifier_is_set function.
+ * Returns a handle to the list of modifier keys registered in the
+ * canvas @p e. This is required to check for which modifiers are set
+ * at a given time with the evas_key_modifier_is_set() function.
  *
+ * @param e The pointer to the Evas canvas
  *
  * @see evas_key_modifier_add
  * @see evas_key_modifier_del
@@ -8519,73 +8634,88 @@ EAPI int               evas_string_char_len_get          (const char *str) EINA_
  * @see evas_key_modifier_off
  * @see evas_key_modifier_is_set
  *
- * @param e The pointer to the Evas Canvas
- *
- * @return An Evas_Modifier handle to query the modifier subsystem with
- *	evas_key_modifier_is_set, or NULL on error.
+ * @return An ::Evas_Modifier handle to query Evas' keys subsystem
+ *	with evas_key_modifier_is_set(), or @c NULL on error.
  */
 EAPI const Evas_Modifier *evas_key_modifier_get          (const Evas *e) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
 
 /**
- * Returns a handle to the locks available in the system.  This is required to check for
- * locks with the evas_key_lock_is_set function.
+ * Returns a handle to the list of lock keys registered in the canvas
+ * @p e. This is required to check for which locks are set at a given
+ * time with the evas_key_lock_is_set() function.
+ *
+ * @param e The pointer to the Evas canvas
  *
  * @see evas_key_lock_add
  * @see evas_key_lock_del
  * @see evas_key_lock_on
  * @see evas_key_lock_off
- *
  * @see evas_key_lock_is_set
- * @param e The pointer to the Evas Canvas
  *
- * @return An Evas_Lock handle to query the lock subsystem with
- *	evas_key_lock_is_set, or NULL on error.
+ * @return An ::Evas_Lock handle to query Evas' keys subsystem with
+ *	evas_key_lock_is_set(), or @c NULL on error.
  */
 EAPI const Evas_Lock     *evas_key_lock_get              (const Evas *e) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
 
 
 /**
- * Checks the state of a given modifier.  If the modifier is set, such as shift being pressed
- * this function returns true.
+ * Checks the state of a given modifier key, at the time of the
+ * call. If the modifier is set, such as shift being pressed, this
+ * function returns @c Eina_True.
+ *
+ * @param m The current modifiers set, as returned by
+ *        evas_key_modifier_get().
+ * @param keyname The name of the modifier key to check status for.
+ *
+ * @return @c Eina_True if the modifier key named @p keyname is on, @c
+ *         Eina_False otherwise.
  *
  * @see evas_key_modifier_add
  * @see evas_key_modifier_del
  * @see evas_key_modifier_get
  * @see evas_key_modifier_on
  * @see evas_key_modifier_off
- *
- * @param m The current modifier set as returned by evas_key_modifier_get.
- * @param keyname The name of the key to check its status.
- *
- * @return 1 if the @p keyname is on, 0 otherwise.
  */
 EAPI Eina_Bool            evas_key_modifier_is_set       (const Evas_Modifier *m, const char *keyname) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1, 2) EINA_PURE;
 
 
 /**
- * Checks the state of a given lock.  If the lock is set, such as caps lock, this function
- * returns true.
+ * Checks the state of a given lock key, at the time of the call. If
+ * the lock is set, such as caps lock, this function returns @c
+ * Eina_True.
+ *
+ * @param l The current locks set, as returned by evas_key_lock_get().
+ * @param keyname The name of the lock key to check status for.
+ *
+ * @return @c Eina_True if the @p keyname lock key is set, @c
+ *        Eina_False otherwise.
  *
  * @see evas_key_lock_get
  * @see evas_key_lock_add
  * @see evas_key_lock_del
  * @see evas_key_lock_on
  * @see evas_key_lock_off
- *
- * @param l The current lock set as returned by evas_key_lock_get.
- * @param keyname The name of the lock to add the the list.
- *
- * @param 1 if the @p keyname kock is set, 0 otherwise.
  */
 EAPI Eina_Bool            evas_key_lock_is_set           (const Evas_Lock *l, const char *keyname) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1, 2) EINA_PURE;
 
 
 /**
- * Adds the @p keyname to the current list of modifiers.
+ * Adds the @p keyname key to the current list of modifier keys.
  *
- * Modifiers can be keys like shift, alt and ctrl, as well as user defined.  This allows
- * custom modifiers to be added to the evas system as run time.  It is then possible to set
- * and unset the modifier for other parts of the program to check and act on.
+ * @param e The pointer to the Evas canvas
+ * @param keyname The name of the modifier key to add to the list of
+ *        Evas modifiers.
+ *
+ * Modifiers are keys like shift, alt and ctrl, i.e., keys which are
+ * meant to be pressed together with others, altering the behavior of
+ * the secondly pressed keys somehow. Evas is so that these keys can
+ * be user defined.
+ *
+ * This call allows custom modifiers to be added to the Evas system at
+ * run time. It is then possible to set and unset modifier keys
+ * programmatically for other parts of the program to check and act
+ * on. Programmers using Evas would check for modifier keys on key
+ * event callbacks using evas_key_modifier_is_set().
  *
  * @see evas_key_modifier_del
  * @see evas_key_modifier_get
@@ -8593,122 +8723,162 @@ EAPI Eina_Bool            evas_key_lock_is_set           (const Evas_Lock *l, co
  * @see evas_key_modifier_off
  * @see evas_key_modifier_is_set
  *
- * @param e The pointer to the Evas Canvas
- * @param keyname The name of the modifier to add to the list.
+ * @note If the programmer instantiates the canvas by means of the
+ *       ecore_evas_new() family of helper functions, Ecore will take
+ *       care of registering on it all standard modifiers: "Shift",
+ *       "Control", "Alt", "Meta", "Hyper", "Super".
  */
 EAPI void                 evas_key_modifier_add          (Evas *e, const char *keyname) EINA_ARG_NONNULL(1, 2);
 
 /**
- * Removes the @p keyname from the current list of modifiers.
+ * Removes the @p keyname key from the current list of modifier keys
+ * on canvas @e.
+ *
+ * @param e The pointer to the Evas canvas
+ * @param keyname The name of the key to remove from the modifiers list.
  *
  * @see evas_key_modifier_add
  * @see evas_key_modifier_get
  * @see evas_key_modifier_on
  * @see evas_key_modifier_off
  * @see evas_key_modifier_is_set
- *
- * @param e The pointer to the Evas Canvas
- * @param keyname The name of the key to remove from the modifiers list.
  */
 EAPI void                 evas_key_modifier_del          (Evas *e, const char *keyname) EINA_ARG_NONNULL(1, 2);
 
 /**
- * Adds the @p keyname to the current list of locks.
+ * Adds the @p keyname key to the current list of lock keys.
  *
- * Locks can be keys like caps lock, num lock or scroll lock, as well as user defined.  This
- * allows custom locks to be added to the evas system at run time.  It is then possible to
- * set and unset the lock for other parts of the program to check and act on.
+ * @param e The pointer to the Evas canvas
+ * @param keyname The name of the key to add to the locks list.
+ *
+ * Locks are keys like caps lock, num lock or scroll lock, i.e., keys
+ * which are meant to be pressed once -- toggling a binary state which
+ * is bound to it -- and thus altering the behavior of all
+ * subsequently pressed keys somehow, depending on its state. Evas is
+ * so that these keys can be defined by the user.
+ *
+ * This allows custom locks to be added to the evas system at run
+ * time. It is then possible to set and unset lock keys
+ * programmatically for other parts of the program to check and act
+ * on. Programmers using Evas would check for lock keys on key event
+ * callbacks using evas_key_lock_is_set().
  *
  * @see evas_key_lock_get
  * @see evas_key_lock_del
  * @see evas_key_lock_on
  * @see evas_key_lock_off
+ * @see evas_key_lock_is_set
  *
- * @param e The pointer to the Evas Canvas
- * @param keyname The name of the key to remove from the modifier list.
+ * @note If the programmer instantiates the canvas by means of the
+ *       ecore_evas_new() family of helper functions, Ecore will take
+ *       care of registering on it all standard lock keys: "Caps_Lock",
+ *       "Num_Lock", "Scroll_Lock".
  */
 EAPI void                 evas_key_lock_add              (Evas *e, const char *keyname) EINA_ARG_NONNULL(1, 2);
 
 /**
- * Removes The @p keyname from the current list of locks.
+ * Removes the @p keyname key from the current list of lock keys on
+ * canvas @e.
+ *
+ * @param e The pointer to the Evas canvas
+ * @param keyname The name of the key to remove from the locks list.
  *
  * @see evas_key_lock_get
  * @see evas_key_lock_add
  * @see evas_key_lock_on
  * @see evas_key_lock_off
- *
- * @param e The pointer to the Evas Canvas
- * @param keyname The name of the key to remove from the lock list.
  */
 EAPI void                 evas_key_lock_del              (Evas *e, const char *keyname) EINA_ARG_NONNULL(1, 2);
 
 
 /**
- * Enables or turns on the modifier with name @p keyname.
+ * Enables or turns on programmatically the modifier key with name @p
+ * keyname.
+ *
+ * @param e The pointer to the Evas canvas
+ * @param keyname The name of the modifier to enable.
+ *
+ * The effect will be as if the key was pressed for the whole time
+ * between this call and a matching evas_key_modifier_off().
  *
  * @see evas_key_modifier_add
  * @see evas_key_modifier_get
  * @see evas_key_modifier_off
  * @see evas_key_modifier_is_set
- *
- * @param e The pointer to the Evas Canvas
- * @param keyname The name of the modifier to set.
  */
 EAPI void                 evas_key_modifier_on           (Evas *e, const char *keyname) EINA_ARG_NONNULL(1, 2);
 
 /**
- * Disables or turns off the modifier with name @p keyname.
+ * Disables or turns off programmatically the modifier key with name
+ * @p keyname.
+ *
+ * @param e The pointer to the Evas canvas
+ * @param keyname The name of the modifier to disable.
  *
  * @see evas_key_modifier_add
  * @see evas_key_modifier_get
  * @see evas_key_modifier_on
  * @see evas_key_modifier_is_set
- *
- * @param e The pointer to the Evas Canvas
- * @param keyname The name of the modifier to un-set.
  */
 EAPI void                 evas_key_modifier_off          (Evas *e, const char *keyname) EINA_ARG_NONNULL(1, 2);
 
 /**
- * Enables or turns on the lock with name @p keyname.
+ * Enables or turns on programmatically the lock key with name @p
+ * keyname.
+ *
+ * @param e The pointer to the Evas canvas
+ * @param keyname The name of the lock to enable.
+ *
+ * The effect will be as if the key was put on its active state after
+ * this call.
  *
  * @see evas_key_lock_get
  * @see evas_key_lock_add
  * @see evas_key_lock_del
  * @see evas_key_lock_off
- *
- * @param e The pointer to the Evas Canvas
- * @param keyname The name of the lock to set.
  */
 EAPI void                 evas_key_lock_on               (Evas *e, const char *keyname) EINA_ARG_NONNULL(1, 2);
 
 /**
- * Disables or turns off the lock with name @p keyname.
+ * Disables or turns off programmatically the lock key with name @p
+ * keyname.
+ *
+ * @param e The pointer to the Evas canvas
+ * @param keyname The name of the lock to disable.
+ *
+ * The effect will be as if the key was put on its inactive state
+ * after this call.
  *
  * @see evas_key_lock_get
  * @see evas_key_lock_add
  * @see evas_key_lock_del
  * @see evas_key_lock_on
- *
- * @param e The pointer to the Evas Canvas
- * @param keyname The name of the lock to un-set.
  */
 EAPI void                 evas_key_lock_off              (Evas *e, const char *keyname) EINA_ARG_NONNULL(1, 2);
 
 
 /**
- * Creates a bit mask from the @p keyname for use with events to check for the presence
- * of the @p keyname modifier.
+ * Creates a bit mask from the @p keyname <b>modifier</b> key.
+ * Values returned from different calls to it may be ORed together,
+ * naturally.
+ *
+ * @param e The canvas whom to query the bit mask from.
+ * @param keyname The name of the modifier key to create the mask for.
+ *
+ * @returns the bit mask or 0 if the @p keyname key wasn't registered as a
+ *          modifier for canvas @p e.
+ *
+ * This function is meant to be using in conjunction with
+ * evas_object_key_grab()/evas_object_key_ungrab(). Go check their
+ * documentation for more information.
  *
  * @see evas_key_modifier_add
  * @see evas_key_modifier_get
  * @see evas_key_modifier_on
  * @see evas_key_modifier_off
  * @see evas_key_modifier_is_set
- *
- * @param keyname The name of the modifier to create the mask for.
- *
- * @returns the bit mask or 0 if the @p keyname wasn't registered as a modifier.
+ * @see evas_object_key_grab
+ * @see evas_object_key_ungrab
  */
 EAPI Evas_Modifier_Mask   evas_key_modifier_mask_get     (const Evas *e, const char *keyname) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1, 2) EINA_PURE;
 
