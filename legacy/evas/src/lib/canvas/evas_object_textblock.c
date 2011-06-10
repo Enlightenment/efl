@@ -3179,6 +3179,8 @@ _layout_get_charwrap(Ctxt *c, Evas_Object_Textblock_Format *fmt,
      }
 
 
+   if (uwrap == line_start)
+      MOVE_NEXT_UNTIL(len, uwrap);
    if ((uwrap <= line_start) || (uwrap > len))
       return -1;
 
