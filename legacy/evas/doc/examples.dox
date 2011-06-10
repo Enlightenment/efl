@@ -21,14 +21,14 @@
  */
 
 /**
- * @page Example_Evas_Init_Shutdown Nested buffer example
+ * @page Example_Evas_Init_Shutdown Evas' init/shutdown routines example
  *
  * @include evas-init-shutdown.c
  * @example evas-init-shutdown.c
  */
 
 /**
- * @page Example_Evas_Load_Error_Str File descriptor buffer example
+ * @page Example_Evas_Load_Error_Str evas_load_error_str() example
  *
  * @include evas-load-error-str.c
  * @example evas-load-error-str.c
