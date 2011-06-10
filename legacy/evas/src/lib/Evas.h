@@ -1288,8 +1288,25 @@ EAPI void              evas_damage_rectangle_add         (Evas *e, int x, int y,
  * @note This is a <b>very low level function</b>, which most of
  * Evas' users wouldn't care about.
  *
+ * @note This function does <b>not</b> flag the canvas as having its
+ * state changed. If you want to re-render it afterwards expecting new
+ * contents, you have to add "damage" regions yourself (see
+ * evas_damage_rectangle_add()).
+ *
  * @see evas_obscured_clear()
  * @see evas_render_updates()
+ *
+ * Example code follows.
+ * @dontinclude evas-events.c
+ * @skip add an obscured
+ * @until evas_obscured_clear(evas);
+ *
+ * In that example, pressing the "Ctrl" and "o" keys will impose or
+ * remove an obscured region in the middle of the canvas. You'll get
+ * the same contents at the time the key was pressed, if toggling it
+ * on, until you toggle it off again (make sure the animation is
+ * running on to get the idea better). See the full @ref
+ * Example_Evas_Events "example".
  *
  * @ingroup Evas_Canvas
  */
@@ -1308,7 +1325,12 @@ EAPI void              evas_obscured_rectangle_add       (Evas *e, int x, int y,
  * @note This is a <b>very low level function</b>, which most of
  * Evas' users wouldn't care about.
  *
- * @see evas_obscured_rectangle_add()
+ * @note This function does <b>not</b> flag the canvas as having its
+ * state changed. If you want to re-render it afterwards expecting new
+ * contents, you have to add "damage" regions yourself (see
+ * evas_damage_rectangle_add()).
+ *
+ * @see evas_obscured_rectangle_add() for an example
  * @see evas_render_updates()
  *
  * @ingroup Evas_Canvas
@@ -1331,6 +1353,17 @@ EAPI void              evas_obscured_clear               (Evas *e) EINA_ARG_NONN
  * grab an Evas' canvas update regions and paint them back, using the
  * canvas' pixmap, on a displaying system working below Evas.
  *
+ * @note Evas is a stateful canvas. If no operations changing its
+ * state took place since the last rendering action, you won't see no
+ * changes and this call will be a no-op.
+ *
+ * Example code follows.
+ * @dontinclude evas-events.c
+ * @skip add an obscured
+ * @until d.obscured = !d.obscured;
+ *
+ * See the full @ref Example_Evas_Events "example".
+ *
  * @ingroup Evas_Canvas
  */
 EAPI Eina_List        *evas_render_updates               (Evas *e) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
@@ -1342,6 +1375,8 @@ EAPI Eina_List        *evas_render_updates               (Evas *e) EINA_WARN_UNU
  *
  * This function removes the region from the render updates list. It
  * makes the region doesn't be render updated anymore.
+ *
+ * @see evas_render_updates() for an example
  *
  * @ingroup Evas_Canvas
  */
@@ -1979,27 +2014,22 @@ EAPI Eina_Bool         evas_pointer_inside_get           (const Evas *e) EINA_WA
  * others the @p event_info pointer is going to be @c NULL.
  *
  * Example:
- * @code
- * extern Evas *e;
- * extern void *my_data;
- * void focus_in_callback(void *data, Evas *e, void *event_info);
- * void focus_out_callback(void *data, Evas *e, void *event_info);
+ * @dontinclude evas-events.c
+ * @skip evas_event_callback_add(d.canvas, EVAS_CALLBACK_RENDER_FLUSH_PRE
+ * @until two canvas event callbacks
  *
- * evas_event_callback_add(e, EVAS_CALLBACK_CANVAS_FOCUS_IN, focus_in_callback,
- *                         my_data);
- * if (evas_alloc_error() != EVAS_ALLOC_ERROR_NONE)
- *   {
- *     fprintf(stderr, "ERROR: Callback registering failed! Abort!\n");
- *     exit(-1);
- *   }
- * evas_event_callback_add(e, EVAS_CALLBACK_CANVAS_FOCUS_OUT,
- *                         focus_out_callback, my_data);
- * if (evas_alloc_error() != EVAS_ALLOC_ERROR_NONE)
- *   {
- *     fprintf(stderr, "ERROR: Callback registering failed! Abort!\n");
- *     exit(-1);
- *   }
- * @endcode
+ * Looking to the callbacks registered above,
+ * @dontinclude evas-events.c
+ * @skip called when our rectangle gets focus
+ * @until let's have our events back
+ *
+ * we see that the canvas flushes its rendering pipeline
+ * (#EVAS_CALLBACK_RENDER_FLUSH_PRE) whenever the @c _resize_cb
+ * routine takes place: it has to redraw that image at a different
+ * size. Also, the callback on an object being focused comes just
+ * after we focus it explicitly, on code.
+ *
+ * See the full @ref Example_Evas_Events "example".
  *
  * @note Be careful not to add the same callback multiple times, if
  * that's not what you want, because Evas won't check if a callback
@@ -2056,14 +2086,11 @@ EAPI void             *evas_event_callback_del              (Evas *e, Evas_Callb
  * would be to remove an exact match of a callback.
  *
  * Example:
- * @code
- * extern Evas *e;
- * void *my_data;
- * void focus_in_callback(void *data, Evas *e, void *event_info);
+ * @dontinclude evas-events.c
+ * @skip evas_event_callback_del_full(evas, EVAS_CALLBACK_RENDER_FLUSH_PRE,
+ * @until _object_focus_in_cb, NULL);
  *
- * my_data = evas_event_callback_del_full(object, EVAS_CALLBACK_CANVAS_FOCUS_IN,
- *                                        focus_in_callback, my_data);
- * @endcode
+ * See the full @ref Example_Evas_Events "example".
  *
  * @note For deletion of canvas events callbacks filtering by just
  * type and function pointer, user evas_event_callback_del().
@@ -2160,16 +2187,19 @@ EAPI void              evas_post_event_callback_remove_full (Evas *e, Evas_Objec
  * interface when you're populating a view or changing the layout.
  *
  * Example:
- * @code
- * extern Evas *evas;
- * extern Evas_Object *object;
+ * @dontinclude evas-events.c
+ * @skip freeze input for 3 seconds
+ * @until }
+ * @dontinclude evas-events.c
+ * @skip let's have our events back
+ * @until }
  *
- * evas_event_freeze(evas);
- * evas_object_move(object, 50, 100);
- * evas_object_resize(object, 200, 200);
- * // more realistic code would be a toolkit or Edje doing some UI changes here
- * evas_event_thaw(evas);
- * @endcode
+ * See the full @ref Example_Evas_Events "example".
+ *
+ * If you run that example, you'll see the canvas ignoring all input
+ * events for 3 seconds, when the "f" key is pressed. In a more
+ * realistic code we would be freezing while a toolkit or Edje was
+ * doing some UI changes, thawing it back afterwards.
  */
 EAPI void              evas_event_freeze                 (Evas *e) EINA_ARG_NONNULL(1);
 
@@ -4356,6 +4386,7 @@ EAPI Evas_Render_Op            evas_object_render_op_get        (const Evas_Obje
  * Retrieve the object that currently has focus.
  *
  * @param e The Evas canvas to query for focused object on.
+ * @return The object that has focus or NULL if there is not one.
  *
  * Evas can have (at most) one of its objects focused at a time.
  * Focused objects will be the ones having <b>key events</b> delivered
@@ -4375,7 +4406,16 @@ EAPI Evas_Render_Op            evas_object_render_op_get        (const Evas_Obje
  * @see evas_object_key_grab
  * @see evas_object_key_ungrab
  *
- * @return The object that has focus or NULL if there is not one.
+ * Example:
+ * @dontinclude evas-events.c
+ * @skip evas_event_callback_add(d.canvas, EVAS_CALLBACK_CANVAS_OBJECT_FOCUS_IN,
+ * @until evas_object_focus_set(d.bg, EINA_TRUE);
+ * @dontinclude evas-events.c
+ * @skip called when our rectangle gets focus
+ * @until }
+ *
+ * In this example the @c event_info is exactly a pointer to that
+ * focused rectangle. See the full @ref Example_Evas_Events "example".
  *
  * @ingroup Evas_Object_Group_Find
  */
@@ -8611,6 +8651,14 @@ EAPI int               evas_string_char_len_get          (const char *str) EINA_
  * (Ecore_X) when using Evas with Ecore and Ecore_Evas. Please refer
  * to your display engine's documentation when using evas through an
  * Ecore helper wrapper when you need the <code>keyname</code>s.
+ *
+ * Example:
+ * @dontinclude evas-events.c
+ * @skip mods = evas_key_modifier_get(evas);
+ * @until {
+ *
+ * All the other @c evas_key functions behave on the same manner. See
+ * the full @ref Example_Evas_Events "example".
  *
  * @ingroup Evas_Canvas
  */

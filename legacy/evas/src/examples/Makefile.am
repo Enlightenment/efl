@@ -42,6 +42,10 @@ pkglib_PROGRAMS += evas_load_error_str
 evas_load_error_str_SOURCES = evas-load-error-str.c
 evas_load_error_str_LDADD = $(top_builddir)/src/lib/libevas.la @ECORE_EVAS_LIBS@
 
+pkglib_PROGRAMS += evas_events
+evas_events_SOURCES = evas-events.c
+evas_events_LDADD = $(top_builddir)/src/lib/libevas.la @ECORE_EVAS_LIBS@
+
 endif # if BUILD_EXAMPLES
 
 filesdir = $(datadir)/$(PACKAGE)/examples

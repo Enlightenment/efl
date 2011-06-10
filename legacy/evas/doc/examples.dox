@@ -33,3 +33,10 @@
  * @include evas-load-error-str.c
  * @example evas-load-error-str.c
  */
+
+/**
+ * @page Example_Evas_Events Evas' canvas events example
+ *
+ * @include evas-events.c
+ * @example evas-events.c
+ */
