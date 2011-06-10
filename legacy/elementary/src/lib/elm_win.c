@@ -1580,7 +1580,8 @@ elm_win_add(Evas_Object *parent, const char *name, Elm_Win_Type type)
 }
 
 /**
- * Add @p subobj as a resize object of window @p obj.
+ * Add @p subobj as a resize object of window @p obj. Note, do not move and
+ * resize window and sub object at the same time. It will cause problem.
  *
  * @param obj The window object
  * @param subobj The resize object to add
