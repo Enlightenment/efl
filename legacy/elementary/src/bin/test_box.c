@@ -200,8 +200,10 @@ _win_del(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Transitions_Data *tdata = data;
    if (!data) return;
+#if 0
    elm_box_layout_set(tdata->box, evas_object_box_layout_horizontal, NULL, NULL);
    free(tdata);
+#endif
 }
 
 void
