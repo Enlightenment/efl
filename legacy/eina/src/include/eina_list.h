@@ -617,8 +617,8 @@ EAPI Eina_List            *eina_list_clone(const Eina_List *list) EINA_WARN_UNUS
  * int
  * sort_cb(const void *d1, const void *d2)
  * {
- *    const char *txt = *d1;
- *    const char *txt2 = *d2;
+ *    const char *txt = d1;
+ *    const char *txt2 = d2;
  *
  *    if(!txt) return(1);
  *    if(!txt2) return(-1);
