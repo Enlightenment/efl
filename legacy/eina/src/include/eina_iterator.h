@@ -24,6 +24,63 @@
 #include "eina_types.h"
 #include "eina_magic.h"
 
+/**
+ * @page eina_iterator_example Eina_Iterator usage
+ * @dontinclude eina_iterator_01.c
+ *
+ * As always when using eina we need to include it:
+ * @skip #include
+ * @until Eina.h
+ *
+ * Here we a declare an unimpressive @ref Eina_Each_Cb "function" that prints
+ * some data:
+ * @until }
+ * @note Returning EINA_TRUE is important so we don't stop iterating over the
+ * container.
+ *
+ * And here a more interesting function, it uses an iterator to print the
+ * contents of a container. What's interesting about it is that it doesn't care
+ * the type of container, it works for anything that can provide an iterator:
+ * @until }
+ *
+ * And on to our main function were we declare some variables and initialize
+ * eina, nothing too special:
+ * @until eina_init
+ *
+ * Next we populate both an array and a list with our strings, for more details
+ * see @ref eina_list_01_example and @ref eina_array_01_example:
+ * @until }
+ *
+ * And now we create an array and because the first element of the container
+ * doesn't interest us we skip it:
+ * @until iterator_next
+ *
+ * Having our iterator now pointing to interesting data we go ahead and print:
+ * @until print_eina_container
+ *
+ * As always once data with a structure we free it, but just because we can we
+ * do it by asking the iterator for it's container, and then of course free the
+ * iterator itself:
+ * @until eina_iterator_free
+ *
+ * But so far you're not impressed in @ref eina_array_01_example an array is
+ * also printed, so now we go to the cool stuff and use an iterator to do same
+ * stuff to a list:
+ * @until eina_iterator_free
+ * @note The only significant diference to the block above is in the
+ * function used to create the iterator.
+ *
+ * And now we free the list and shut eina down:
+ * @until }
+ */
+
+/**
+ * @page eina_iterator_01_c Eina_Iterator usage
+ * @page eina_iterator_01_c Eina_Iterator usage
+ *
+ * @include eina_iterator_01.c
+ * @example eina_iterator_01.c
+ */
 
 /**
  * @addtogroup Eina_Iterator_Group Iterator Functions
@@ -41,6 +98,8 @@
  * eina_iterator_free(). To get the data and iterate, use
  * eina_iterator_next(). To call a function on all the elements of a
  * container, use eina_iterator_foreach().
+ * 
+ * Here an @ref eina_iterator_example "example"
  *
  * @{
  */
