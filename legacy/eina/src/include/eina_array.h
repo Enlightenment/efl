@@ -31,92 +31,97 @@
 
 
 /**
- * @page tutorial_array_page Array Tutorial
+ * @page array_01_example_page Basic array usage
+ * @dontinclude eina_array_01.c
  *
- * The Array data type is allow the storage of data like a C array.
- * It is designed such that the access to its element is very fast.
- * But the addition or removal can be done only at the end of the
- * array. To add or remove an element at any location, the Eina
- * @ref Eina_List_Group is the correct container is the correct one.
+ * For this example we add stdlib.h, stdio.h and string.h for some
+ * convenience functions. The first thing to do to be able to use an
+ * @ref Eina_Array is to include Eina.h:
+ * @skip #include
+ * @until Eina.h
  *
- * @section tutorial_error_basic_usage Basic Usage
+ * Now we create our entry point and declare some variables, nothing especial:
+ * @until unsigned
  *
- * An array must created with eina_array_new(). That function
- * takes an integer as parameter, which is the count of pointers to
- * add when increasing the array size. Once the array is not used
- * anymore, it must be destroyed with eina_array_free().
+ * Before we can start using any array function we need to initialize eina:
+ * @until eina_init
  *
- * To append data at the end of the array, the function
- * eina_array_push() must be used. To remove the data at the end of
- * the array, eina_array_pop() must be used. Once the array is filled,
- * one can check its elements by iterating over it. A while loop and
- * eina_array_data_get() can be used, or else one can use the
- * predefined macro EINA_ARRAY_ITER_NEXT(). To free all the elements,
- * a while loop can be used with eina_array_count_get(). Here is an
- * example of use:
+ * So now to actually creating our array:
+ * @until array_new
+ * The only interesting thing here is the argument given to the
+ * @ref eina_array_new function, this argument sets how fast the array grows.
+ * If you know before hand how big the array will need to be you should set the
+ * step to that. In our case we can set it to the number of string we have.
  *
- * @code
- * #include <stdlib.h>
- * #include <stdio.h>
- * #include <string.h>
+ * Now let us populate our array with some strings:
+ * @until push
+ * @note Notice we use strdup, so we will have to free that memory later on.
  *
- * #include <eina_array.h>
+ * Now lets check the size of the array:
+ * @until printf
  *
- * int main(void)
- * {
- *     const char *strings[] = {
- *         "first string",
- *         "second string",
- *         "third string",
- *         "fourth string"
- *     };
- *     Eina_Array         *array;
- *     char               *item;
- *     Eina_Array_Iterator iterator;
- *     unsigned int        i;
+ * And now we iterate over the array printing the index and it's value:
+ * @until printf
  *
- *     if (!eina_init())
- *     {
- *         printf ("Error during the initialization of eina\n");
- *         return EXIT_FAILURE;
- *     }
+ * One of the strenghts of @ref Eina_Array over @ref Eina_List is that it has
+ * very fast random access to elements, so this is very efficient:
+ * @until printf
  *
- *     array = eina_array_new(16);
- *     if (!array)
- *         goto shutdown;
+ * And now we free up the memory allocated with the strdup()s:
+ * @until free
  *
- *     for (i = 0; i < 4; i++)
- *     {
- *         eina_array_push(array, strdup(strings[i]));
- *     }
+ * And the array memory itself:
+ * @until array_free
  *
- *     printf("array count: %d\n", eina_array_count_get(array));
- *     EINA_ARRAY_ITER_NEXT(array, i, item, iterator)
- *     {
- *         printf("item #%d: %s\n", i, item);
- *     }
+ * And finally shutdown eina and exit:
+ * @until }
  *
- *     while (eina_array_count_get(array))
- *     {
- *         void *data;
+ * The full source code can be found on the examples folder
+ * on the @ref eina_array_01_c "eina_array_01.c" file.
+ */
+
+/**
+ * @page eina_array_01_c Basic array usage example
  *
- *         data = eina_array_pop(array);
- *         free(data);
- *     }
+ * @include eina_array_01.c
+ * @example eina_array_01.c
+ */
+
+/**
+ * @page array_02_example_page Removing array elements
+ * @dontinclude eina_array_02.c
  *
- *     eina_array_free(array);
- *     eina_shutdown();
+ * Just the usual includes:
+ * @skip #include
+ * @until Eina.h
  *
- *     return EXIT_SUCCESS;
+ * This the callback we are going to use to decide which strings stay on the
+ * array and which will be removed, we use something simple, but this can be as
+ * complex as you like:
+ * @until }
  *
- *   shutdown:
- *     eina_shutdown();
+ * This is the same code we used before to populate the list with the slight
+ * difference of not using strdup:
+ * @until array_push
  *
- *     return EXIT_FAILURE;
- * }
- * @endcode
+ * Now that there is a populated array we can remove elements from it easily:
+ * @until array_remove
  *
- * To be continued
+ * And check that the elements were actually removed:
+ * @until printf
+ *
+ * Since this time we didn't use strdup we don't need to free each string:
+ * @until }
+ *
+ * The full source code can be found on the examples folder
+ * on the @ref eina_array_02_c "eina_array_02.c" file.
+ */
+
+/**
+ * @page eina_array_02_c Basic array usage example
+ *
+ * @include eina_array_02.c
+ * @example eina_array_02.c
  */
 
 /**
@@ -124,17 +129,17 @@
  *
  * @brief These functions provide array management.
  *
- * The Array data type in Eina is designed to have a very fast access to
+ * The Array data type in Eina is designed to have very fast access to
  * its data (compared to the Eina @ref Eina_List_Group). On the other hand,
  * data can be added or removed only at the end of the array. To insert
  * data at any place, the Eina @ref Eina_List_Group is the correct container
  * to use.
  *
  * To use the array data type, eina_init() must be called before any
- * other array functions. When eina is no more array function is used,
+ * other array functions. When no more eina array functions are used,
  * eina_shutdown() must be called to free all the resources.
  *
- * An array must be created with eina_array_new(). It allocated all
+ * An array must be created with eina_array_new(). It allocates all
  * the necessary data for an array. When not needed anymore, an array
  * is freed with eina_array_free(). This function does not free any
  * allocated memory used to store the data of each element. For that,
@@ -142,9 +147,9 @@
  * that is by using #EINA_ARRAY_ITER_NEXT. An example of code is given
  * in the description of this macro.
  *
- * @warning All the other functions do not check if the used array is
- * valid or not. It's up to the user to be sure of that. It is
- * designed like that for performance reasons.
+ * @warning Functions do not check if the used array is valid or not. It's up to
+ * the user to be sure of that. It is designed like that for performance
+ * reasons.
  *
  * The usual features of an array are classic ones: to append an
  * element, use eina_array_push() and to remove the last element, use
@@ -152,7 +157,9 @@
  * eina_array_data_get(). The number of elements can be retrieved with
  * eina_array_count_get().
  *
- * For more information, you can look at the @ref tutorial_array_page.
+ * See here some examples:
+ * @li @ref array_01_example_page
+ * @li @ref array_02_example_page
  *
  * @{
  */
@@ -270,14 +277,13 @@ EAPI void eina_array_flush(Eina_Array *array) EINA_ARG_NONNULL(1);
  * @param gdata The data to pass to the function keep.
  * @return #EINA_TRUE on success, #EINA_FALSE oterwise.
  *
- * This function rebuilds @p array be specifying the elements to keep
- * with the function @p keep. @p gdata is an additional data to pass
- * to @p keep. For performance reasons, there is no check of @p
- * array. If it is @c NULL or invalid, the program may crash.
+ * This function rebuilds @p array be specifying the elements to keep with the
+ * function @p keep. No empty/invalid fields are left in the array. @p gdata is
+ * an additional data to pass to @p keep. For performance reasons, there is no
+ * check of @p array. If it is @c NULL or invalid, the program may crash.
  *
- * This function always return a valid array. If it wasn't able to
- * remove items due to an allocation failure, it will return #EINA_FALSE
- * and the error is set to #EINA_ERROR_OUT_OF_MEMORY.
+ * If it wasn't able to remove items due to an allocation failure, it will
+ * return #EINA_FALSE and the error is set to #EINA_ERROR_OUT_OF_MEMORY.
  */
 EAPI Eina_Bool eina_array_remove(Eina_Array * array,
                                  Eina_Bool (*keep)(void *data, void *gdata),
