@@ -505,3 +505,7 @@
 2011-05-23  Vincent Torri
 
 	* Fix compilation with libjpeg 8 on Windows.
+
+2011-06-10  Cedric BAIL
+
+	* Add EET_DATA_DESCRIPTOR_ADD_LIST_STRING helper to define List of char *.
