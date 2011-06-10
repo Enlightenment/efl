@@ -257,7 +257,7 @@ ts_change(void *data       __UNUSED__,
           void *event_info __UNUSED__)
 {
    Eina_Bool val = elm_check_state_get(obj);
-   Eina_Bool sb = elm_scroll_bounce_enabled_get();
+   Eina_Bool sb = elm_scroll_thumbscroll_enabled_get();
 
    if (val == sb) return;
    elm_scroll_thumbscroll_enabled_all_set(val);
