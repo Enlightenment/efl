@@ -712,7 +712,7 @@ _edje_anchor_mouse_out_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNU
 static void
 _anchors_update(Evas_Textblock_Cursor *c __UNUSED__, Evas_Object *o, Entry *en)
 {
-   Eina_List *l, *ll, *range;
+   Eina_List *l, *ll, *range = NULL;
    Evas_Coord x, y, w, h;
    Evas_Object *smart, *clip;
    Sel *sel;
@@ -734,8 +734,10 @@ _anchors_update(Evas_Textblock_Cursor *c __UNUSED__, Evas_Object *o, Entry *en)
                   while (an->sel)
                     {
                        sel = an->sel->data;
-                       en->rp->edje->subobjs = eina_list_remove(en->rp->edje->subobjs, sel->obj_bg);
-                       en->rp->edje->subobjs = eina_list_remove(en->rp->edje->subobjs, sel->obj_fg);
+                       en->rp->edje->subobjs = 
+                         eina_list_remove(en->rp->edje->subobjs, sel->obj_bg);
+                       en->rp->edje->subobjs = 
+                         eina_list_remove(en->rp->edje->subobjs, sel->obj_fg);
                        if (sel->obj_bg) evas_object_del(sel->obj_bg);
                        if (sel->obj_fg) evas_object_del(sel->obj_fg);
                        if (sel->obj) evas_object_del(sel->obj);
@@ -749,8 +751,8 @@ _anchors_update(Evas_Textblock_Cursor *c __UNUSED__, Evas_Object *o, Entry *en)
                   if (en->rp->edje->item_provider.func)
                     {
                        ob = en->rp->edje->item_provider.func
-                          (en->rp->edje->item_provider.data, smart, 
-                              en->rp->part->name, an->name);
+                         (en->rp->edje->item_provider.data, smart, 
+                             en->rp->part->name, an->name);
                        evas_object_smart_member_add(ob, smart);
                        evas_object_stack_above(ob, o);
                        evas_object_clip_set(ob, clip);
@@ -763,7 +765,8 @@ _anchors_update(Evas_Textblock_Cursor *c __UNUSED__, Evas_Object *o, Entry *en)
         // for link anchors
         else
           {
-             range = evas_textblock_cursor_range_geometry_get(an->start, an->end);
+             range = 
+               evas_textblock_cursor_range_geometry_get(an->start, an->end);
              if (eina_list_count(range) != eina_list_count(an->sel))
                {
                   while (an->sel)
