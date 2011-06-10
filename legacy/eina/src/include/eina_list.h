@@ -29,11 +29,237 @@
 #include "eina_magic.h"
 
 /**
+ * @page list_01_example_page Adding elements to Eina_List
+ * @dontinclude eina_list_01.c
+ *
+ * Creating an @ref Eina_List and adding elements to it is very easy and can be
+ * understood from an example:
+ * First thing is always to include Eina.h, for this example we also
+ * include stdio.h so we can use printf.
+ * @skip #include
+ * @until Eina.h
+ * 
+ * Just some boilerplate code, declaring some variable and initializing eina.
+ * @until eina_init
+ * Here we add a sequence of elements to our list. By using append we add
+ * elements to the end of the list, so the list will look like this:@n
+ * <img src="eina_list_example_01_a.png" width="100%" />
+ * <a href="eina_list_example_01_a.png">Full-size</a>
+ * @image rtf eina_list_example_01_a.png
+ * @image latex eina_list_example_01_a.eps
+ * @until roslin
+ * There a couple of interesting things happening here, first is that we are
+ * passing a NULL pointer to the first @ref eina_list_append() call, when this
+ * is done a list is created. The other @b very important detail to notice is
+ * that the return value is attributed to the @a list variable, this needs to
+ * be done everytime we use a a function that alters the contents of the list.
+ * 
+ * Now that we have a list we some elements in it we can look at it's contents.
+ * @until printf
+ * 
+ * There are many ways of accessing elements in the list, including by it's
+ * index:
+ * @until nth
+ * @note It should be noted that the index starts at 0.
+ * 
+ * @ref eina_list_append() is not the only way to add elements to a a list. A
+ * common requirement is to add an element in a specific position this can be
+ * accomplished using @ref eina_list_append_relative() and
+ * @ref eina_list_append_relative_list():
+ * @until zarek
+ * First @a "cain" is added after the second element(remember that indexes are
+ * 0 based) and then we add @a "zarek" after @a "cain".
+ * 
+ * @ref Eina_List also has prepend analogs to append functions we have used so
+ * far:
+ * @until lampkin
+ * With this additions our list now looks like this:@n
+ * <img src="eina_list_example_01_b.png" width="100%" />
+ * <a href="eina_list_example_01_b.png">Full-size</a>
+ * @image rtf eina_list_example_01_b.png
+ * @image latex eina_list_example_01_b.eps
+ * 
+ * Once done using the list it needs to be freed, and since we are done with
+ * eina that also need to be shutdown:
+ * @until }
+ * 
+ * The full source code can be found on the examples folder
+ * on the @ref eina_list_01_c "eina_list_01.c" file.
+ */
+
+/**
+ * @page eina_list_01_c Adding elements to Eina_List example
+ *
+ * @include eina_list_01.c
+ * @example eina_list_01.c
+ */
+
+/**
+ * @page list_02_example_page Sorting Eina_List elements
+ * @dontinclude eina_list_02.c
+ * 
+ * If you don't know how to create lists see
+ * @ref list_01_example_page.
+ * 
+ * @skip #include
+ * @until boomer
+ * This is the code we have already seen to create a list. Now if we need to
+ * search the list we can do it like this:
+ * @until return
+ * 
+ * However if searching the list multiple times it probably is better to sort
+ * the list since the sorted_search functions are much faster:
+ * @until return
+ * 
+ * Once the list is sorted it's not a good idea to use append/prepend functions
+ * since that would add the element in the wrong place, instead elements should
+ * be added with @ref eina_list_sorted_insert():
+ * @until sorted_insert
+ * 
+ * A noteworthy use case is adding a element to a list only if doesn't exist
+ * already, this can accomplished by searching for the element that is closests
+ * to what is being added, and if that doesn't match add:
+ * @until append
+ * @note @ref eina_list_search_sorted_near_list() will tell you not only the
+ * nearest node to what was searched for but how it compares to your term, this
+ * way it is easy to know if you have to add before or after that node.
+ * 
+ * It is sometimes useful to get a portion of the list as another list, here we
+ * take every element that comes after "boomer" and split it into "other_list":
+ * @until split_list
+ * 
+ * It is also possible to add entire lists of elements using
+ * @ref eina_list_sorted_merge():
+ * @until sorted_merge
+ * 
+ * And as always release memory and shutdown eina before ending:
+ * @until }
+ * 
+ * The full source code can be found on the examples folder
+ * on the @ref eina_list_02_c "eina_list_02.c" file.
+ */
+
+/**
+ * @page eina_list_02_c Sorting Eina_List elements example
+ *
+ * @include eina_list_02.c
+ * @example eina_list_02.c
+ */
+
+/**
+ * @page list_03_example_page Reordering Eina_List elments
+ * @dontinclude eina_list_03.c
+ * 
+ * If you don't know how to create lists see
+ * @ref list_01_example_page.
+ * 
+ * We start out with code that should be familiar by now:
+ * @skip #include
+ * @until gemenon
+ * 
+ * You can move elements around in a list using @ref eina_list_move() or using
+ * @ref eina_list_promote_list() and @ref eina_list_demote_list() which move a
+ * list node to the head and end of the list respectevely:
+ * @until demote
+ * 
+ * Removing elements from a list can be done with ease:
+ * @until sagitarius
+ * 
+ * To replace a element in the list it is not nescessary to remove it and then
+ * add with the new value, it is possible to just change the value of a node:
+ * @until aquarius
+ * 
+ * Now that the list is in alphabetical order let's create a copy of it in
+ * reverse order and print every element to see if worked as expected:
+ * @until iterator_free
+ * @note Always remember to free your iterators when done using them.
+ * 
+ * And as always release memory and shutdown eina before ending:
+ * @until }
+ * 
+ * The full source code can be found on the examples folder
+ * on the @ref eina_list_03_c "eina_list_03.c" file.
+ */
+
+/**
+ * @page eina_list_03_c Reordering Eina_List elments example
+ *
+ * @include eina_list_03.c
+ * @example eina_list_03.c
+ */
+
+/**
+ * @page list_04_example_page Eina_List and memory allocation
+ * @dontinclude eina_list_04.c
+ *
+ * If you don't know how to create lists see
+ * @ref list_01_example_page. In this example we also use
+ * @ref eina_stringshare, however it should be possible to understand the code
+ * regardless of previous knowledge about it.
+ *
+ * Here we have the usual list creation code with a twist, now we are using as
+ * data for the list memory that has to be freed later on.
+ * @skip #include
+ * @until Sharon
+ *
+ * The most common way of iterating over a list:
+ * @until printf
+ *
+ * And now we need to free up the memory allocated during creation of the list:
+ * @until stringshare_del
+ *
+ * And shut everything down:
+ * @until }
+ * 
+ * The full source code can be found on the examples folder
+ * on the @ref eina_list_04_c "eina_list_04.c" file.
+ */
+
+/**
+ * @page eina_list_04_c Eina_List and memory allocation example
+ *
+ * @include eina_list_04.c
+ * @example eina_list_04.c
+ */
+
+/**
  * @addtogroup Eina_List_Group List
  *
  * @brief These functions provide double linked list management.
+ * 
+ * Eina_List is a doubly linked list. It can store data of any type in the
+ * form of void pointers. It has convenience functions to do all the common
+ * operations which means it should rarely if ever be nescessary to directly
+ * access the struct's fields. Nevertheless it can be useful to understand the
+ * inner workings of the data structure being used.
+ * 
+ * @ref Eina_List nodes keep references to the previous node, the next node, its
+ * data and to an accounting structure.
  *
- * For more information, you can look at the @ref tutorial_list_page.
+ * <img src="eina_list.png" width="100%" />
+ * <a href="eina_list.png">Full-size</a>
+ * @image rtf eina_list.png
+ * @image latex eina_list.eps
+ *
+ * @ref Eina_List_Accounting is used to improve the performance of some
+ * functions. It is private and <b>should not</b> be modified. It contains a
+ * reference to the end of the list and the number of elements in the list.
+ * 
+ * @note Every function that modifies the contents of the list returns a pointer
+ * to the head of the list and it is essential that this be pointer be used in
+ * any future references to the list.
+ * 
+ * Most functions have two versions that have the same effect but operate on
+ * different arguments, the @a plain functions operate over data(eg.: 
+ * @ref eina_list_append_relative, @ref eina_list_remove,
+ * @ref eina_list_data_find), the @a list versions of these functions operate
+ * on @ref Eina_List nodes.
+ *
+ * Here are some examples of @ref Eina_List usage:
+ * @li @ref list_01_example_page
+ * @li @ref list_02_example_page
+ * @li @ref list_03_example_page
+ * @li @ref list_04_example_page
  *
  * @{
  */
@@ -720,15 +946,31 @@ EAPI Eina_List            *eina_list_split_list(Eina_List *list, Eina_List *rela
  * than requested data, it is less than 0 and if it's bigger it's
  * greater than 0. It is the last value returned by func().
  * @return the nearest node, NULL if not found.
- *
- * This can be used to check if some value is inside the list and get
- * the nearest container node in this case. It should be used when list is
- * known to be sorted as it will do binary search for results.
- *
- * Example: imagine user gives a string, you check if it's in the list
- * before duplicating its contents, otherwise you want to insert it
- * sorted. In this case you get the result of this function and either
- * append or prepend the value.
+ * 
+ * This function is useful for inserting an element in the list only in case it
+ * isn't already present in the list, the naive way of doing this would be:
+ * @code
+ * void *ptr = eina_list_data_find(list, "my data");
+ * if (!ptr)
+ *   eina_list_sorted_insert(list, "my data");
+ * @endcode
+ * 
+ * However this has the downside of walking through the list twice, once to
+ * check if the data is already present and another to insert the element in the
+ * corret position. This can be done more eficiently:
+ * @code
+ * int cmp_result;
+ * l = eina_list_search_sorted_near_list(list, cmp_func, "my data",
+ *                                       &cmp_result);
+ * if (cmp_result > 0)
+ *   list = eina_list_prepend_relative_list(list, "my data", l);
+ * else if (cmp_result < 0)
+ *   list = eina_list_append_relative_list(list, "my data", l);
+ * @endcode
+ * 
+ * If @a cmp_result is 0 the element is already in the list and we need not
+ * insert it, if @a cmp_result is greater than zero @a "my @a data" needs to
+ * come after @a l(the nearest node present), if less than zero before.
  *
  * @note O(log2(n)) average/worst case performance, for 1,000,000
  * elements it will do a maximum of 20 comparisons. This is much

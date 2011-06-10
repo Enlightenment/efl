@@ -12,7 +12,11 @@ LDADD = \
 
 SRCS = \
 	eina_hash_01.c \
-	eina_hash_02.c
+	eina_hash_02.c \
+	eina_list_01.c \
+	eina_list_02.c \
+	eina_list_03.c \
+	eina_list_04.c
 
 pkglib_PROGRAMS =
 
@@ -24,6 +28,10 @@ endif
 if EFL_BUILD_EXAMPLES
 pkglib_PROGRAMS += \
 	eina_hash_01 \
-	eina_hash_02
+	eina_hash_02 \
+	eina_list_01 \
+	eina_list_02 \
+	eina_list_03 \
+	eina_list_04
 endif
 

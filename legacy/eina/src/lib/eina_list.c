@@ -53,13 +53,6 @@
  */
 
 
-/**
- * @page tutorial_list_page List Tutorial
- *
- * to be written...
- *
- */
-
 #ifdef HAVE_CONFIG_H
 # include "config.h"
 #endif
