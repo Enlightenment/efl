@@ -1674,24 +1674,22 @@ _smart_hold_animator(void *data)
      {
         int i, count = 0;
         Evas_Coord basex, basey, x, y;
-        double dt, t, tdiff, tnow;
+        double dt, t, tdiff, tnow, twin;
         struct {
            Evas_Coord x, y, dx, dy;
            double t, dt;
         } pos[60];
         
-        // FIXME: assume server and client have the same "timezone"
-        // (0 timepoint) for now. this needs to be figured out in advance
-        // though.
         tdiff = sd->down.hist.est_timestamp_diff;
         tnow = ecore_time_get() - tdiff;
         t = tnow;
+        twin = _elm_config->scroll_smooth_time_window;
         for (i = 0; i < 60; i++)
           {
              // oldest point is sd->down.history[i]
              // newset is sd->down.history[0]
              dt = t - sd->down.history[i].timestamp;
-             if (dt > _elm_config->scroll_smooth_time_window)
+             if (dt > twin)
                {
                   i--;
                   break;
@@ -1747,6 +1745,7 @@ _smart_hold_animator(void *data)
              WEIGHT(fx, sd->down.hold_x, _elm_config->scroll_smooth_amount);
              WEIGHT(fy, sd->down.hold_y, _elm_config->scroll_smooth_amount);
           }
+//        printf("%3.5f %i %i\n", ecore_time_get(), sd->down.hold_y, fy);
      }
    
    elm_smart_scroller_child_pos_get(sd->smart_obj, &ox, &oy);
