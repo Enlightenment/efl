@@ -620,11 +620,12 @@ _elm_win_delete_request(Ecore_Evas *ee)
    if (!win) return;
    int autodel = win->autodel;
    win->autodel_clear = &autodel;
-   evas_object_smart_callback_call(win->win_obj, SIG_DELETE_REQUEST, NULL); // FIXME: remove me.
+   evas_object_ref(win->win_obj);
    evas_object_smart_callback_call(win->win_obj, SIG_DELETE_REQUEST, NULL);
    // FIXME: if above callback deletes - then the below will be invalid
    if (autodel) evas_object_del(win->win_obj);
    else win->autodel_clear = NULL;
+   evas_object_unref(win->win_obj);
 }
 
 static void

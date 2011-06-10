@@ -201,7 +201,6 @@ _win_del(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
    Transitions_Data *tdata = data;
    if (!data) return;
    free(tdata);
-#endif
 }
 
 void
