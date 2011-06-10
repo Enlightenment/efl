@@ -4800,17 +4800,23 @@ cpp_get_token(cpp_reader * pfile)
 	     if (CPP_BUFFER(pfile)->has_escapes)
 	       {
 		  c = GETC();
-		  if (c == '-')
+                  // fix macro expansions starting with - losing the -
+ 		  if (c == '-')
 		    {
-#if 1 // fix macro expansions starting with - losing the -
                        CPP_PUTS(pfile, "-", 1);
 		       return CPP_OTHER;
-#else                       
-		       if (pfile->output_escapes)
-			  CPP_PUTS(pfile, "@-", 2);
-		       parse_name(pfile, GETC());
-		       return CPP_NAME;
-#endif                       
+		    }
+                  // fix macro expansions starting with - losing the +
+		  else if (c == '+')
+		    {
+                       CPP_PUTS(pfile, "+", 1);
+		       return CPP_OTHER;
+		    }
+                  // fix macro expansions starting with - losing the .
+		  else if (c == '.')
+		    {
+                       CPP_PUTS(pfile, ".", 1);
+		       return CPP_OTHER;
 		    }
 		  else if (is_space[c])
 		    {
