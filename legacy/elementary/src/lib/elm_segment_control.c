@@ -358,7 +358,7 @@ _update_list(Widget_Data *wd)
    Eina_List *l;
    Elm_Segment_Item *it;
    Eina_Bool rtl;
-   int index = 0;
+   int idx = 0;
 
    _position_items(wd);
 
@@ -389,10 +389,10 @@ _update_list(Widget_Data *wd)
    rtl = elm_widget_mirrored_get(wd->obj);
    EINA_LIST_FOREACH(wd->seg_items, l, it)
      {
-        it->seg_index = index;
+        it->seg_index = idx;
 
         //Set the segment type
-        if (index == 0)
+        if (idx == 0)
           {
              if (rtl)
                edje_object_signal_emit(it->base.view,
@@ -401,7 +401,7 @@ _update_list(Widget_Data *wd)
                edje_object_signal_emit(it->base.view,
                                        "elm,type,segment,left", "elm");
           }
-        else if (index == (wd->item_count - 1))
+        else if (idx == (wd->item_count - 1))
           {
              if (rtl)
                edje_object_signal_emit(it->base.view,
@@ -426,12 +426,12 @@ _update_list(Widget_Data *wd)
           edje_object_signal_emit(it->base.view, "elm,state,disabled", "elm");
 
         _swallow_item_objects(it);
-        index++;
+        idx++;
      }
 }
 
 static Elm_Segment_Item *
-_item_find(const Evas_Object *obj, int index)
+_item_find(const Evas_Object *obj, int idx)
 {
    Widget_Data *wd;
    Elm_Segment_Item *it;
@@ -439,7 +439,7 @@ _item_find(const Evas_Object *obj, int index)
    wd = elm_widget_data_get(obj);
    if (!wd) return NULL;
 
-   it = eina_list_nth(wd->seg_items, index);
+   it = eina_list_nth(wd->seg_items, idx);
    return it;
 }
 
@@ -577,7 +577,7 @@ elm_segment_control_item_add(Evas_Object *obj, Evas_Object *icon,
  */
 EAPI Elm_Segment_Item *
 elm_segment_control_item_insert_at(Evas_Object *obj, Evas_Object *icon,
-                                   const char *label, int index)
+                                   const char *label, int idx)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Elm_Segment_Item *it, *it_rel;
@@ -585,12 +585,12 @@ elm_segment_control_item_insert_at(Evas_Object *obj, Evas_Object *icon,
 
    wd = elm_widget_data_get(obj);
    if (!wd) return NULL;
-   if (index < 0) index = 0;
+   if (idx < 0) idx = 0;
 
    it = _item_new(obj, icon, label);
    if (!it) return NULL;
 
-   it_rel = _item_find(obj, index);
+   it_rel = _item_find(obj, idx);
    if (it_rel)
      wd->seg_items = eina_list_prepend_relative(wd->seg_items, it, it_rel);
    else
@@ -628,7 +628,7 @@ elm_segment_control_item_del(Elm_Segment_Item *it)
  * @ingroup SegmentControl
  */
 EAPI void
-elm_segment_control_item_del_at(Evas_Object *obj, int index)
+elm_segment_control_item_del_at(Evas_Object *obj, int idx)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Elm_Segment_Item *it;
@@ -637,7 +637,7 @@ elm_segment_control_item_del_at(Evas_Object *obj, int index)
    wd = elm_widget_data_get(obj);
    if (!wd) return;
 
-   it = _item_find(obj, index);
+   it = _item_find(obj, idx);
    if (!it) return;
    _item_free(it);
    _update_list(wd);
@@ -652,12 +652,12 @@ elm_segment_control_item_del_at(Evas_Object *obj, int index)
  * @ingroup SegmentControl
  */
 EAPI const char*
-elm_segment_control_item_label_get(const Evas_Object *obj, int index)
+elm_segment_control_item_label_get(const Evas_Object *obj, int idx)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Elm_Segment_Item *it;
 
-   it = _item_find(obj, index);
+   it = _item_find(obj, idx);
    if (it) return it->label;
 
    return NULL;
@@ -698,12 +698,12 @@ elm_segment_control_item_label_set(Elm_Segment_Item* it, const char* label)
  * @ingroup SegmentControl
  */
 EAPI Evas_Object *
-elm_segment_control_item_icon_get(const Evas_Object *obj, int index)
+elm_segment_control_item_icon_get(const Evas_Object *obj, int idx)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Elm_Segment_Item *it;
 
-   it = _item_find(obj, index);
+   it = _item_find(obj, idx);
    if (it) return it->icon;
 
    return NULL;
@@ -802,7 +802,7 @@ elm_segment_control_item_selected_get(const Evas_Object *obj)
  * @ingroup SegmentControl
  */
 EAPI void
-elm_segment_control_item_selected_set(Elm_Segment_Item *it, Eina_Bool select)
+elm_segment_control_item_selected_set(Elm_Segment_Item *it, Eina_Bool selected)
 {
    ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(it);
    Widget_Data *wd;
@@ -813,12 +813,12 @@ elm_segment_control_item_selected_set(Elm_Segment_Item *it, Eina_Bool select)
    if (it == wd->selected_item)
      {
         //already in selected state.
-        if (select) return;
+        if (selected) return;
 
         //unselect case
         _segment_off(it);
      }
-   else if (select)
+   else if (selected)
      _segment_on(it);
 
    return;
@@ -833,12 +833,12 @@ elm_segment_control_item_selected_set(Elm_Segment_Item *it, Eina_Bool select)
  * @ingroup SegmentControl
  */
 EAPI Elm_Segment_Item *
-elm_segment_control_item_get(const Evas_Object *obj, int index)
+elm_segment_control_item_get(const Evas_Object *obj, int idx)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Elm_Segment_Item *it;
 
-   it = _item_find(obj, index);
+   it = _item_find(obj, idx);
 
    return it;
 }
