@@ -454,9 +454,6 @@ elm_main(int argc, char **argv)
    elm_app_compile_bin_dir_set(PACKAGE_BIN_DIR);
    elm_app_compile_data_dir_set(PACKAGE_DATA_DIR);
 
-   printf("my prefix: %s\n", elm_app_prefix_dir_get());
-
-   printf("elm test data in %s\n", elm_app_data_dir_get());
    /* if called with a single argument try to autorun a test with
     * the same name as the given param
     * ex:  elementary_test "Box Vert 2" */

@@ -99,6 +99,7 @@ struct _Elm_Config
    double         scroll_smooth_amount;
    double         scroll_smooth_history_weight;
    double         scroll_smooth_future_time;
+   double         scroll_smooth_time_window;
    double         scale;
    int            bgpixmap;
    int            compositing;

@@ -1595,6 +1595,9 @@ _smart_event_mouse_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSE
           {
              sd->down.hist.est_timestamp_diff =
                 ecore_loop_time_get() - ((double)ev->timestamp / 1000.0);
+             sd->down.hist.tadd = 0.0;
+             sd->down.hist.dxsum = 0.0;
+             sd->down.hist.dysum = 0.0;
              sd->down.now = 1;
              sd->down.dragged = 0;
              sd->down.dir_x = 0;
@@ -1688,7 +1691,7 @@ _smart_hold_animator(void *data)
              // oldest point is sd->down.history[i]
              // newset is sd->down.history[0]
              dt = t - sd->down.history[i].timestamp;
-             if (dt > 0.1)
+             if (dt > _elm_config->scroll_smooth_time_window)
                {
                   i--;
                   break;
@@ -1732,7 +1735,7 @@ _smart_hold_animator(void *data)
              ysum /= (double)i;
              tadd = tnow - sd->down.history[0].timestamp + _elm_config->scroll_smooth_future_time;
              tadd = tadd - (maxdt / 2);
-#define WEIGHT(n, o, v) n = (o * (v - 1.0)) + (n * v)
+#define WEIGHT(n, o, v) n = (((double)o * (1.0 - v)) + ((double)n * v))
              WEIGHT(tadd, sd->down.hist.tadd, _elm_config->scroll_smooth_history_weight);
              WEIGHT(dxsum, sd->down.hist.dxsum, _elm_config->scroll_smooth_history_weight);
              WEIGHT(dysum, sd->down.hist.dysum, _elm_config->scroll_smooth_history_weight);
@@ -1741,8 +1744,8 @@ _smart_hold_animator(void *data)
              sd->down.hist.tadd = tadd;
              sd->down.hist.dxsum = dxsum;
              sd->down.hist.dysum = dysum;
-             fx = WEIGHT(fx, sd->down.hold_x, _elm_config->scroll_smooth_amount);
-             fy = WEIGHT(fy, sd->down.hold_y, _elm_config->scroll_smooth_amount);
+             WEIGHT(fx, sd->down.hold_x, _elm_config->scroll_smooth_amount);
+             WEIGHT(fy, sd->down.hold_y, _elm_config->scroll_smooth_amount);
           }
      }
    

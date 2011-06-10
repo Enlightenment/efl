@@ -571,6 +571,7 @@ _desc_init(void)
    ELM_CONFIG_VAL(D, T, scroll_smooth_amount, T_DOUBLE);
    ELM_CONFIG_VAL(D, T, scroll_smooth_history_weight, T_DOUBLE);
    ELM_CONFIG_VAL(D, T, scroll_smooth_future_time, T_DOUBLE);
+   ELM_CONFIG_VAL(D, T, scroll_smooth_time_window, T_DOUBLE);
    ELM_CONFIG_VAL(D, T, scale, T_DOUBLE);
    ELM_CONFIG_VAL(D, T, bgpixmap, T_INT);
    ELM_CONFIG_VAL(D, T, compositing, T_INT);
@@ -1124,6 +1125,7 @@ _config_load(void)
    _elm_config->scroll_smooth_amount = 1.0;
    _elm_config->scroll_smooth_history_weight = 0.3;
    _elm_config->scroll_smooth_future_time = 2.0 / 60.0;
+   _elm_config->scroll_smooth_time_window = 0.12;
    _elm_config->scale = 1.0;
    _elm_config->bgpixmap = 0;
    _elm_config->compositing = 1;
@@ -1481,6 +1483,8 @@ _env_get(void)
    if (s) _elm_config->scroll_smooth_history_weight = atof(s);
    s = getenv("ELM_SCROLL_SMOOTH_FUTURE_TIME");
    if (s) _elm_config->scroll_smooth_future_time = atof(s);
+   s = getenv("ELM_SCROLL_SMOOTH_TIME_WINDOW");
+   if (s) _elm_config->scroll_smooth_time_window = atof(s);
    s = getenv("ELM_THEME");
    if (s) eina_stringshare_replace(&_elm_config->theme, s);
 
