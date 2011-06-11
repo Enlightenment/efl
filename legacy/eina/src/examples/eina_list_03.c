@@ -18,15 +18,15 @@ main(int argc, char **argv)
    list = eina_list_append(list, "sagitarius");
    list = eina_list_append(list, "aerilon");
    list = eina_list_append(list, "gemenon");
-   
+
    list = eina_list_promote_list(list, eina_list_nth_list(list, 2));
    list = eina_list_demote_list(list, eina_list_nth_list(list, 2));
 
    list = eina_list_remove(list, "sagitarius");
-   
+
    l = eina_list_data_find_list(list, "aerilon");
    eina_list_data_set(l, "aquarius");
-   
+
    r_list = eina_list_reverse_clone(list);
 
    itr = eina_list_iterator_new(r_list);
@@ -36,7 +36,7 @@ main(int argc, char **argv)
 
    eina_list_free(list);
    eina_list_free(r_list);
-     
+
    eina_shutdown();
 
    return 0;

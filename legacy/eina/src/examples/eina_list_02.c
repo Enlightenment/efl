@@ -48,7 +48,7 @@ main(int argc, char **argv)
    list = eina_list_sorted_merge(list, other_list, cmp_func);
 
    eina_list_free(list);
-     
+
    eina_shutdown();
 
    return 0;

@@ -27,7 +27,7 @@ main(int argc, char **argv)
    list = eina_list_append_relative(list, "zarek", "cain");
 
    list = eina_list_prepend(list, "adama");
-     
+
    list = eina_list_prepend_relative(list, "gaeta", "cain");
 
    list = eina_list_prepend_relative_list(list, "lampkin", l);
@@ -36,7 +36,7 @@ main(int argc, char **argv)
      printf("%s\n", (char*)list_data);
 
    eina_list_free(list);
-     
+
    eina_shutdown();
 
    return 0;

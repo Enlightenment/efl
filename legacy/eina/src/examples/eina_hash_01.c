@@ -95,7 +95,7 @@ main(int argc, const char *argv[])
 	Eina_Error err = eina_error_get();
 	if (!err)
 	  {
-	     printf("No previous phone found for Raul Seixas. "); 
+	     printf("No previous phone found for Raul Seixas. ");
 	     printf("Creating new entry.\n");
 	  }
 	else
