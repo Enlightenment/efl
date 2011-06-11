@@ -177,7 +177,7 @@ _try_proc(Eina_Prefix *pfx, void *symbol)
 		       p = strchr(buf, '/');
 		       if (p)
 			 {
-                            DBG("Found in /proc/self/maps: found last /\n", buf);
+                            DBG("Found in /proc/self/maps: found last /\n");
 			    if (len > 10)
 			      {
 				 if (!strcmp(buf + len - 10, " (deleted)"))
