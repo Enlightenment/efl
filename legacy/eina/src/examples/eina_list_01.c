@@ -20,6 +20,7 @@ main(int argc, char **argv)
 
    EINA_LIST_FOREACH(list, l, list_data)
      printf("%s\n", (char*)list_data);
+   printf("\n");
 
    l = eina_list_nth_list(list, 1);
    list = eina_list_append_relative_list(list, "cain", l);
