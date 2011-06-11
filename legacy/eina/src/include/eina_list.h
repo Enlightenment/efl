@@ -48,7 +48,7 @@
  * @image rtf eina_list_example_01_a.png
  * @image latex eina_list_example_01_a.eps
  * @until roslin
- * There a couple of interesting things happening here, first is that we are
+ * There are a couple of interesting things happening here, first is that we are
  * passing a NULL pointer to the first @ref eina_list_append() call, when this
  * is done a list is created. The other @b very important detail to notice is
  * that the return value is attributed to the @a list variable, this needs to
@@ -116,8 +116,8 @@
  * be added with @ref eina_list_sorted_insert():
  * @until sorted_insert
  * 
- * A noteworthy use case is adding a element to a list only if doesn't exist
- * already, this can accomplished by searching for the element that is closests
+ * A noteworthy use case is adding an element to a list only if it doesn't exist
+ * already, this can accomplished by searching for the element that is closest
  * to what is being added, and if that doesn't match add:
  * @until append
  * @note @ref eina_list_search_sorted_near_list() will tell you not only the
@@ -165,7 +165,7 @@
  * Removing elements from a list can be done with ease:
  * @until sagitarius
  * 
- * To replace a element in the list it is not nescessary to remove it and then
+ * To replace an element in the list it is not nescessary to remove it and then
  * add with the new value, it is possible to just change the value of a node:
  * @until aquarius
  * 
@@ -798,7 +798,7 @@ EAPI Eina_List            *eina_list_reverse_clone(const Eina_List *list) EINA_W
 
 
 /**
- * @brief Clone (copy) all the elements in the list in exact order.
+ * @brief Clone (copy) all the elements in the list in exactly same order.
  *
  * @param list The list to clone.
  * @return The new list that has been cloned.
