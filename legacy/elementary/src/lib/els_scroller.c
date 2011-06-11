@@ -1673,7 +1673,7 @@ _smart_hold_animator(void *data)
    if (_elm_config->scroll_smooth_amount > 0.0)
      {
         int i, count = 0;
-        Evas_Coord basex, basey, x, y;
+        Evas_Coord basex = 0, basey = 0, x, y;
         double dt, t, tdiff, tnow, twin;
         struct {
            Evas_Coord x, y, dx, dy;
