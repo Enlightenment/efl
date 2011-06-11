@@ -1628,12 +1628,12 @@ static void
 _down_coord_eval(Smart_Data *sd, Evas_Coord *x, Evas_Coord *y)
 {
    Evas_Coord minx, miny;
-   
+
    if (sd->down.dir_x) *x = sd->down.sx - (*x - sd->down.x);
    else *x = sd->down.sx;
    if (sd->down.dir_y) *y = sd->down.sy - (*y - sd->down.y);
    else *y = sd->down.sy;
-   
+
    if ((sd->down.dir_x) || (sd->down.dir_y))
      {
         if (!((sd->down.dir_x) && (sd->down.dir_y)))
@@ -1644,15 +1644,15 @@ _down_coord_eval(Smart_Data *sd, Evas_Coord *x, Evas_Coord *y)
      }
 
    sd->pan_func.min_get(sd->pan_obj, &minx, &miny);
-   
+
    if (*x < minx)
       *x += (minx - *x) * _elm_config->thumbscroll_border_friction;
    else if (sd->child.w <= sd->w)
       *x += (sd->down.sx - *x) * _elm_config->thumbscroll_border_friction;
    else if ((sd->child.w - sd->w + minx) < *x)
-      *x += (sd->child.w - sd->w + minx - *x) * 
+      *x += (sd->child.w - sd->w + minx - *x) *
       _elm_config->thumbscroll_border_friction;
-   
+
    if (*y < miny)
       *y += (miny - *y) * _elm_config->thumbscroll_border_friction;
    else if (sd->child.h <= sd->h)
@@ -1679,7 +1679,7 @@ _smart_hold_animator(void *data)
            Evas_Coord x, y, dx, dy;
            double t, dt;
         } pos[60];
-        
+
         tdiff = sd->down.hist.est_timestamp_diff;
         tnow = ecore_time_get() - tdiff;
         t = tnow;
@@ -1704,7 +1704,7 @@ _smart_hold_animator(void *data)
                }
              pos[i].x = x - basex;
              pos[i].y = y - basey;
-             pos[i].t = 
+             pos[i].t =
                 sd->down.history[i].timestamp - sd->down.history[0].timestamp;
              count++;
           }
@@ -1747,7 +1747,7 @@ _smart_hold_animator(void *data)
           }
 //        printf("%3.5f %i %i\n", ecore_time_get(), sd->down.hold_y, fy);
      }
-   
+
    elm_smart_scroller_child_pos_get(sd->smart_obj, &ox, &oy);
    if (sd->down.dir_x)
      {
@@ -1761,7 +1761,7 @@ _smart_hold_animator(void *data)
             (!elm_widget_drag_child_locked_y_get(sd->widget)))
            oy = fy;
      }
-   
+
    elm_smart_scroller_child_pos_set(sd->smart_obj, ox, oy);
    return ECORE_CALLBACK_RENEW;
 }
@@ -2247,7 +2247,7 @@ _smart_event_mouse_move(void *data, Evas *e, Evas_Object *obj __UNUSED__, void *
                               x += (sd->child.w - sd->w + minx - x) *
                                  _elm_config->thumbscroll_border_friction;
                          }
-                       
+
                        sd->down.hold_x = x;
                        sd->down.hold_y = y;
                        if (!sd->down.hold_animator)

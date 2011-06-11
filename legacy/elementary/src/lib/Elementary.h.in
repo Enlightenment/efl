@@ -786,12 +786,12 @@ extern "C" {
      {
         ELM_GLVIEW_ALPHA   = 1,
         ELM_GLVIEW_DEPTH   = 2,
-        ELM_GLVIEW_STENCIL = 4  
-     } Elm_GLView_Mode; 
+        ELM_GLVIEW_STENCIL = 4
+     } Elm_GLView_Mode;
 
    /**
-    * Defines a policy for the glview resizing. 
-    * 
+    * Defines a policy for the glview resizing.
+    *
     * @note Default is ELM_GLVIEW_RESIZE_POLICY_RECREATE
     */
    typedef enum _Elm_GLView_Resize_Policy
@@ -3066,7 +3066,7 @@ EAPI Elm_Genlist_Item *elm_genlist_item_sorted_insert(Evas_Object *obj, const El
     *            selected and get selected. The event_info parameter is the
     *            segment item index.
     */
-   
+
    EAPI Evas_Object *elm_grid_add(Evas_Object *parent);
    EAPI void         elm_grid_size_set(Evas_Object *obj, int w, int h);
    EAPI void         elm_grid_size_get(Evas_Object *obj, int *w, int *h);
@@ -3075,7 +3075,7 @@ EAPI Elm_Genlist_Item *elm_genlist_item_sorted_insert(Evas_Object *obj, const El
    EAPI void         elm_grid_clear(Evas_Object *obj, Eina_Bool clear);
    EAPI void         elm_grid_pack_set(Evas_Object *subobj, int x, int y, int w, int h);
    EAPI void         elm_grid_pack_get(Evas_Object *subobj, int *x, int *y, int *w, int *h);
-         
+
 #ifdef __cplusplus
 }
 #endif

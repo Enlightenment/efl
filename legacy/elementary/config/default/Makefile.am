@@ -20,4 +20,4 @@ files_DATA = \
 
 clean-local:
 	rm -rf *.cfg *~
-	
+
