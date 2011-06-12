@@ -1,7 +1,0 @@
-Makefile.in
-Makefile
-.deps
-.libs
-libevas_file.la
-evas_path.lo
-evas_module.lo

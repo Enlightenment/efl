@@ -1,8 +1,0 @@
-.deps
-.libs
-Makefile
-Makefile.in
-compare_results
-ecore_alloc
-efreet_alloc
-efreet_menu_alloc
