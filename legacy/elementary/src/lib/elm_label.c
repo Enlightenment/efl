@@ -45,33 +45,30 @@ static void
 _elm_win_recalc_job(void *data)
 {
    Widget_Data *wd = elm_widget_data_get(data);
-   Evas_Coord minw = -1, minh = -1, maxh = -1;
-   Evas_Coord resw, resh, minminw;
+   Evas_Coord minw = -1, minh = -1;
+   Evas_Coord resw;
    if (!wd) return;
    wd->deferred_recalc_job = NULL;
-   evas_object_geometry_get(wd->lbl, NULL, NULL, &resw, &resh);
-   resh = 0;
-   edje_object_size_min_restricted_calc(wd->lbl, &minw, &minh, 0, 0);
-   minminw = minw;
-   if (wd->wrap_w >= resw)
+   evas_object_geometry_get(wd->lbl, NULL, NULL, &resw, NULL);
+   if (wd->wrap_w > resw)
+      resw = wd->wrap_w;
+
+   edje_object_size_min_restricted_calc(wd->lbl, &minw, &minh, resw, 0);
+   /* This is a hack to workaround the way min size hints are treated.
+    * If the minimum width is smaller than the restricted width, it means
+    * the mininmum doesn't matter. */
+   if ((minw <= resw) && (minw != wd->wrap_w))
      {
-        resw = wd->wrap_w;
-        edje_object_size_min_restricted_calc(wd->lbl, &minw, &minh, resw, 0);
-        evas_object_size_hint_min_set(data, minw, minh);
+        Evas_Coord ominw = -1;
+        evas_object_size_hint_min_get(data, &ominw, NULL);
+        minw = ominw;
      }
-   else
-     {
-        if (wd->wrap_w > minminw) minminw = wd->wrap_w;
-        edje_object_size_min_restricted_calc(wd->lbl, &minw, &minh, resw, 0);
-        evas_object_size_hint_min_set(data, minminw, minh);
-     }
+   evas_object_size_hint_min_set(data, minw, minh);
+   evas_object_size_hint_max_set(data, wd->wrap_w, wd->wrap_h);
 
    if ((wd->ellipsis) && (wd->linewrap) && (wd->wrap_h > 0) &&
        (_is_width_over(data) == 1))
      _ellipsis_label_to_width(data);
-
-   maxh = minh;
-   evas_object_size_hint_max_set(data, -1, maxh);
 }
 
 static void
@@ -123,20 +120,9 @@ static void
 _sizing_eval(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
-   Evas_Coord minw = -1, minh = -1, maxw = -1, maxh = -1;
+   Evas_Coord minw = -1, minh = -1;
    Evas_Coord resw, resh;
    if (!wd) return;
-
-     {
-        Evas_Coord ox, oy, ow, oh;
-        evas_object_geometry_get(obj, &ox, &oy, &ow, &oh);
-        if (wd->wrap_w > 0)
-           ow = wd->wrap_w;
-        if (wd->wrap_h > 0)
-           oh = wd->wrap_h;
-        evas_object_move(wd->lbl, ox, oy);
-        evas_object_resize(wd->lbl, ow, oh);
-     }
 
    if (wd->linewrap)
      {
@@ -156,8 +142,7 @@ _sizing_eval(Evas_Object *obj)
         if (wd->wrap_w > 0 && minw > wd->wrap_w) minw = wd->wrap_w;
         if (wd->wrap_h > 0 && minh > wd->wrap_h) minh = wd->wrap_h;
         evas_object_size_hint_min_set(obj, minw, minh);
-        maxh = minh;
-        evas_object_size_hint_max_set(obj, maxw, maxh);
+        evas_object_size_hint_max_set(obj, wd->wrap_w, wd->wrap_h);
         if ((wd->ellipsis) && (_is_width_over(obj) == 1))
           _ellipsis_label_to_width(obj);
      }
@@ -169,14 +154,6 @@ _lbl_resize(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *e
    Widget_Data *wd = elm_widget_data_get(data);
    if (!wd) return;
    if (wd->linewrap) _sizing_eval(data);
-}
-
-static void
-_move_resize(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
-{
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return;
-   _sizing_eval(obj);
 }
 
 static int
@@ -582,12 +559,9 @@ elm_label_add(Evas_Object *parent)
    edje_object_part_text_set(wd->lbl, "elm.text", wd->format);
    edje_object_part_text_append(wd->lbl, "elm.text", wd->label);
 
-   elm_widget_sub_object_add(obj, wd->lbl);
-   evas_object_show(wd->lbl);
+   elm_widget_resize_object_set(obj, wd->lbl);
 
    evas_object_event_callback_add(wd->lbl, EVAS_CALLBACK_RESIZE, _lbl_resize, obj);
-   evas_object_event_callback_add(obj, EVAS_CALLBACK_RESIZE, _move_resize, NULL);
-   evas_object_event_callback_add(obj, EVAS_CALLBACK_MOVE, _move_resize, NULL);
 
    _mirrored_set(obj, elm_widget_mirrored_get(obj));
    wd->changed = 1;
