@@ -305,18 +305,18 @@ EAPI Eina_Bool eina_ustrbuf_insert_char(Eina_UStrbuf *buf, Eina_Unicode c, size_
 #define eina_ustrbuf_prepend_length(buf, str, length) eina_ustrbuf_insert_length(buf, str, length, 0)
 
 /**
- * @def eina_ustrbuf_prepend_Eina_Unicode *(buf, str)
- * @brief Prepend the given Eina_Unicode *acter to the given buffer
+ * @def eina_ustrbuf_prepend_char(buf, c)
+ * @brief Prepend the given unicode character to the given buffer
  *
  * @param buf The string buffer to prepend to.
- * @param c The Eina_Unicode *acter to prepend.
+ * @param c The Eina_Unicode character to prepend.
  * @return #EINA_TRUE on success, #EINA_FALSE on failure.
  *
  * This macro is calling eina_ustrbuf_insert_Eina_Unicode *() at position 0. If
  * @p buf can't prepend it, #EINA_FALSE is returned, otherwise
  * #EINA_TRUE is returned.
  */
-#define eina_ustrbuf_prepend_Eina_Unicode *(buf, c)eina_ustrbuf_insert_Eina_Unicode * (buf, c, 0)
+#define eina_ustrbuf_prepend_char(buf, c) eina_ustrbuf_insert_char(buf, c, 0)
 
 /**
  * @def eina_ustrbuf_prepend_printf(buf, fmt, ...)
