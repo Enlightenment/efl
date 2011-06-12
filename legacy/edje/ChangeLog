@@ -119,3 +119,7 @@
 
 	* Fix external usage in sub group to have the proper parents.
 
+2011-06-11  Tom Hacohen (TAsn)
+
+	* Fix an issue with ellipsis not working properly with small
+	  text parts.

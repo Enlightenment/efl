@@ -148,9 +148,14 @@ _edje_text_fit_x(Edje *ed, Edje_Real_Part *ep,
           uc1 = evas_object_text_last_up_to_pos(ep->object,
                 -p + l, th / 2);
 	if (params->type.text.elipsis != 1.0)
-          /* should be the last in text! not the rightmost */
-          uc2 = evas_object_text_last_up_to_pos(ep->object,
-                -p + sw - r, th / 2);
+          {
+             /* should be the last in text! not the rightmost */
+             if ((-p + sw -r) < 0)
+                uc2 = evas_object_text_last_up_to_pos(ep->object, 0, th / 2);
+             else
+                uc2 = evas_object_text_last_up_to_pos(ep->object,
+                      -p + sw - r, th / 2);
+          }
 	if ((uc1 < 0) && (uc2 < 0))
 	  {
 	     uc1 = 0;
