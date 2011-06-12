@@ -2148,6 +2148,7 @@ ecore_x_randr_window_outputs_get(Ecore_X_Window window,
                   free(crtcs);
                   return NULL;
                }
+             ret = tret;
              memcpy(&ret[nret], outputs, (noutputs * sizeof(Ecore_X_Randr_Output)));
              nret += noutputs;
              free(outputs);
