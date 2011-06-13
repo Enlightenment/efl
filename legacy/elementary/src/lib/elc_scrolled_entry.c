@@ -744,6 +744,23 @@ elm_scrolled_entry_entry_set(Evas_Object *obj, const char *entry)
 }
 
 /**
+ * This appends @p entry to the scrolled entry
+ *
+ * @param obj The scrolled entry object
+ * @param entry The text to be displayed
+ *
+ * @ingroup Scrolled_Entry
+ */
+EAPI void
+elm_scrolled_entry_entry_append(Evas_Object *obj, const char *entry)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   elm_entry_entry_append(wd->entry, entry);
+}
+
+/**
  * This returns the text currently shown in object @p entry.
  * See also elm_scrolled_entry_entry_set().
  *

@@ -1907,6 +1907,45 @@ elm_entry_entry_set(Evas_Object *obj, const char *entry)
 }
 
 /**
+ * This appends @p entry to the text of the entry.
+ *
+ * @param obj The entry object
+ * @param entry The text to be displayed
+ *
+ * @ingroup Entry
+ */
+EAPI void
+elm_entry_entry_append(Evas_Object *obj, const char *entry)
+{
+   int len = 0;
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   if (!entry) entry = "";
+   wd->changed = EINA_TRUE;
+
+   len = strlen(entry);
+   if (wd->append_text_left)
+     {
+        char *tmpbuf;
+        tmpbuf = realloc(wd->append_text_left, wd->append_text_len + len + 1);
+        if (!tmpbuf)
+          {
+             /* Do something */
+             return;
+          }
+        wd->append_text_left = tmpbuf;
+        memcpy(wd->append_text_left + wd->append_text_len, entry, len + 1);
+        wd->append_text_len += len;
+     }
+   else
+     {
+        /* FIXME: Add chunked appending here (like in entry_set) */
+        edje_object_part_text_append(wd->ent, "elm.text", entry);
+     }
+}
+
+/**
  * This returns the text currently shown in object @p entry.
  * See also elm_entry_entry_set().
  *
