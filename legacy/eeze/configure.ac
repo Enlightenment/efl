@@ -169,6 +169,7 @@ AC_OUTPUT([
 Makefile
 doc/eeze.dox
 doc/Makefile
+doc/Doxyfile
 src/Makefile
 src/lib/Makefile
 src/bin/Makefile
