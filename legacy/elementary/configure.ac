@@ -509,6 +509,7 @@ elementary.spec
 elementary.pc
 doc/elementary.dox
 doc/Makefile
+doc/Doxyfile
 src/Makefile
 src/lib/Makefile
 src/lib/Elementary.h
