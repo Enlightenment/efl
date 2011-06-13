@@ -2536,6 +2536,8 @@ eng_gl_make_current(void *data, void *surface, void *context)
              evas_gl_common_context_flush(re->win->gl_context);
           }
 #endif   
+        eng_window_use(NULL);
+        evas_gl_common_context_use(NULL);
      }
 
    // Unset surface/context
