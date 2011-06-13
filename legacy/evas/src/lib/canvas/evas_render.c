@@ -1450,6 +1450,14 @@ evas_render_updates_internal(Evas *e,
       them from the pending list. */
    eina_array_remove(&e->pending_objects, pending_change, NULL);
 
+   for (i = 0; i < e->render_objects.count; ++i)
+     {
+        Evas_Object *obj;
+
+        obj = eina_array_data_get(&e->render_objects, i);
+        obj->pre_render_done = 0;
+     }
+
    /* delete all objects flagged for deletion now */
    for (i = 0; i < e->delete_objects.count; ++i)
      {
@@ -1464,14 +1472,6 @@ evas_render_updates_internal(Evas *e,
    e->viewport.changed = 0;
    e->output.changed = 0;
    e->invalidate = 0;
-
-   for (i = 0; i < e->render_objects.count; ++i)
-     {
-        Evas_Object *obj;
-
-        obj = eina_array_data_get(&e->render_objects, i);
-        obj->pre_render_done = 0;
-     }
 
    /* If their are some object to restack or some object to delete,
     * it's useless to keep the render object list around. */
