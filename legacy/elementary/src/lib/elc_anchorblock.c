@@ -4,7 +4,7 @@
 /**
  * @defgroup Anchorblock Anchorblock
  *
- * Anchorblock is for displaying tet that contains markup with anchors like:
+ * Anchorblock is for displaying text that contains markup with anchors like:
  * \<a href=1234\>something\</\> in it. These will be drawn differently and will
  * be able to be clicked on by the user to display a popup. This popup then
  * is intended to contain extra options such as "call", "add to contacts",
