@@ -27,8 +27,6 @@ main(int argc, char **argv)
    EINA_LIST_FREE(list, list_data)
      eina_stringshare_del(list_data);
 
-   eina_list_free(list);
-
    eina_shutdown();
 
    return 0;

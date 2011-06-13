@@ -207,6 +207,8 @@
  *
  * And now we need to free up the memory allocated during creation of the list:
  * @until stringshare_del
+ * @note We don't need to use eina_list_free() since @ref EINA_LIST_FREE takes
+ * care of that.
  *
  * And shut everything down:
  * @until }

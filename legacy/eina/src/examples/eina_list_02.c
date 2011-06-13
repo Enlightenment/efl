@@ -25,7 +25,7 @@ main(int argc, char **argv)
    if (l->data != data)
      return 1;
 
-   list = eina_list_sort(list, eina_list_count(list), cmp_func);
+   list = eina_list_sort(list, 0, cmp_func);
 
    data = eina_list_search_sorted(list, cmp_func, "starbuck");
    l = eina_list_search_sorted_list(list, cmp_func, "starbuck");
@@ -43,7 +43,7 @@ main(int argc, char **argv)
    l = eina_list_search_sorted_list(list, cmp_func, "boomer");
    list = eina_list_split_list(list, l, &other_list);
 
-   other_list = eina_list_sort(other_list,eina_list_count(other_list),cmp_func);
+   other_list = eina_list_sort(other_list, 0, cmp_func);
 
    list = eina_list_sorted_merge(list, other_list, cmp_func);
 
