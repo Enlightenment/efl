@@ -180,6 +180,7 @@ AC_SUBST(embryoincludedir)
 AC_OUTPUT([
 Makefile
 doc/Makefile
+doc/Doxyfile
 doc/embryo.dox
 embryo.pc
 include/Makefile
