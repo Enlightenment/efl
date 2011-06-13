@@ -2570,38 +2570,42 @@ _layout_item_text_split_strip_white(Ctxt *c,
 {
    const Eina_Unicode *ts;
    Evas_Object_Textblock_Text_Item *new_ti = NULL, *white_ti = NULL;
-   size_t cut2;
 
    ts = GET_ITEM_TEXT(ti);
 
-   cut2 = cut;
-   /* Also strip the previous white */
-   if ((cut > 1) && _is_white(ts[cut - 1]))
-      cut--;
-
-   if (!IS_AT_END(ti, cut2) && (ti->text_props.text_len > 0))
+   if (!IS_AT_END(ti, cut) && (ti->text_props.text_len > 0))
      {
         new_ti = _layout_text_item_new(c, ti->parent.format);
         new_ti->parent.text_node = ti->parent.text_node;
-        new_ti->parent.text_pos = ti->parent.text_pos + cut2;
+        new_ti->parent.text_pos = ti->parent.text_pos + cut;
         new_ti->parent.merge = EINA_TRUE;
 
         evas_common_text_props_split(&ti->text_props,
-                                     &new_ti->text_props, cut2);
+                                     &new_ti->text_props, cut);
         _layout_text_add_logical_item(c, new_ti, lti);
      }
 
-   if ((cut2 > cut) && (ti->text_props.text_len > 0))
+   /* Strip the previous white if needed */
+   if ((cut >= 1) && _is_white(ts[cut - 1]) && (ti->text_props.text_len > 0))
      {
-        white_ti = _layout_text_item_new(c, ti->parent.format);
-        white_ti->parent.text_node = ti->parent.text_node;
-        white_ti->parent.text_pos = ti->parent.text_pos + cut;
-        white_ti->parent.merge = EINA_TRUE;
-        white_ti->parent.visually_deleted = EINA_TRUE;
+        if (cut - 1 > 0)
+          {
+             size_t white_cut = cut - 1;
+             white_ti = _layout_text_item_new(c, ti->parent.format);
+             white_ti->parent.text_node = ti->parent.text_node;
+             white_ti->parent.text_pos = ti->parent.text_pos + white_cut;
+             white_ti->parent.merge = EINA_TRUE;
+             white_ti->parent.visually_deleted = EINA_TRUE;
 
-        evas_common_text_props_split(&ti->text_props,
-              &white_ti->text_props, cut);
-        _layout_text_add_logical_item(c, white_ti, lti);
+             evas_common_text_props_split(&ti->text_props,
+                   &white_ti->text_props, white_cut);
+             _layout_text_add_logical_item(c, white_ti, lti);
+          }
+        else
+          {
+             /* Mark this one as the visually deleted. */
+             ti->parent.visually_deleted = EINA_TRUE;
+          }
      }
 
    if (new_ti || white_ti)
@@ -3696,7 +3700,7 @@ _layout_par(Ctxt *c)
                }
           }
 
-        if (!redo_item)
+        if (!redo_item && !it->visually_deleted)
           {
              c->ln->items = (Evas_Object_Textblock_Item *)
                 eina_inlist_append(EINA_INLIST_GET(c->ln->items),
