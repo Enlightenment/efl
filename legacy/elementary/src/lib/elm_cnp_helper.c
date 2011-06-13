@@ -1198,7 +1198,7 @@ mark_up(const char *start, int inlen, int *lenp)
    q = ret = malloc(l + 1);
 
    /* Second pass: Change characters */
-   for (p = start; *p; )
+   for (p = start; ((!endp) || (p < endp)) && (*p); )
      {
         for (i = 0; i < N_ESCAPES; i++)
           {
