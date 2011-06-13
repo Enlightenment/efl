@@ -467,13 +467,13 @@ _spacer_cb(void *data, Evas *e, Evas_Object *obj __UNUSED__, void *event_info)
    edje_object_part_drag_value_get(wd->slider, "elm.dragable.slider", &button_x, &button_y);
    if (wd->horizontal)
      {
-        button_x = ((double)ev->output.x - (double)x) / (double)w;
+        button_x = ((double)ev->canvas.x - (double)x) / (double)w;
         if (button_x > 1) button_x = 1;
         if (button_x < 0) button_x = 0;
      }
    else
      {
-        button_y = ((double)ev->output.y - (double)y) / (double)h;
+        button_y = ((double)ev->canvas.y - (double)y) / (double)h;
         if (button_y > 1) button_y = 1;
         if (button_y < 0) button_y = 0;
      }

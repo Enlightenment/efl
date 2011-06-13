@@ -1373,7 +1373,7 @@ _signal_anchor_clicked(void *data, Evas_Object *obj __UNUSED__, const char *emis
              Evas_Coord px, py, x, y;
 
              evas_object_geometry_get(wd->ent, &x, &y, NULL, NULL);
-             evas_pointer_output_xy_get(evas_object_evas_get(wd->ent), &px, &py);
+             evas_pointer_canvas_xy_get(evas_object_evas_get(wd->ent), &px, &py);
              EINA_LIST_FOREACH(geoms, l, r)
                {
                   if (((r->x + x) <= px) && ((r->y + y) <= py) &&

@@ -305,8 +305,8 @@ _mouse_up(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__,
    ev = event_info;
    evas_object_geometry_get(it->base.view, &x, &y, &w, &h);
 
-   if ((ev->output.x >= x) && (ev->output.x <= (x + w)) && (ev->output.y >= y)
-       && (ev->output.y <= (y + h)))
+   if ((ev->canvas.x >= x) && (ev->output.x <= (x + w)) && (ev->canvas.y >= y)
+       && (ev->canvas.y <= (y + h)))
      _segment_on(it);
    else
      edje_object_signal_emit(it->base.view, "elm,state,segment,normal", "elm");

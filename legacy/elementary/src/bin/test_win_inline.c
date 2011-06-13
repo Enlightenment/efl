@@ -144,8 +144,8 @@ cb_mouse_move(void *data, Evas *evas __UNUSED__, Evas_Object *obj, void *event_i
    if (!ev->buttons) return;
    evas_object_geometry_get(obj, &x, &y, NULL, NULL);
    evas_object_move(obj,
-                    x + (ev->cur.output.x - ev->prev.output.x),
-                    y + (ev->cur.output.y - ev->prev.output.y));
+                    x + (ev->cur.canvas.x - ev->prev.output.x),
+                    y + (ev->cur.canvas.y - ev->prev.output.y));
    evas_object_image_size_get(orig, &w, &h);
    p = evas_map_new(4);
    evas_object_map_enable_set(orig, EINA_TRUE);

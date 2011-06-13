@@ -40,7 +40,7 @@ _list_item_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    ITEM_NEW(ctxpopup, "Set date and time", "clock");
    elm_ctxpopup_item_disabled_set(it, EINA_TRUE);
 
-   evas_pointer_output_xy_get(evas_object_evas_get(obj), &x, &y);
+   evas_pointer_canvas_xy_get(evas_object_evas_get(obj), &x, &y);
    evas_object_size_hint_max_set(ctxpopup, 240, 240);
    evas_object_move(ctxpopup, x, y);
    evas_object_show(ctxpopup);
@@ -63,7 +63,7 @@ _list_item_cb2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
    elm_ctxpopup_item_disabled_set(it, EINA_TRUE);
    ITEM_NEW(ctxpopup, NULL, "clock");
 
-   evas_pointer_output_xy_get(evas_object_evas_get(obj), &x, &y);
+   evas_pointer_canvas_xy_get(evas_object_evas_get(obj), &x, &y);
    evas_object_size_hint_max_set(ctxpopup, 240, 240);
    evas_object_move(ctxpopup, x, y);
    evas_object_show(ctxpopup);
@@ -86,7 +86,7 @@ _list_item_cb3(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
    ITEM_NEW(ctxpopup, "Embryo", NULL);
    ITEM_NEW(ctxpopup, "Edje", NULL);
 
-   evas_pointer_output_xy_get(evas_object_evas_get(obj), &x, &y);
+   evas_pointer_canvas_xy_get(evas_object_evas_get(obj), &x, &y);
    evas_object_move(ctxpopup, x, y);
    evas_object_show(ctxpopup);
 }
@@ -108,7 +108,7 @@ _list_item_cb4(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
    ITEM_NEW(ctxpopup, NULL, "edit");
    ITEM_NEW(ctxpopup, NULL, "clock");
 
-   evas_pointer_output_xy_get(evas_object_evas_get(obj), &x, &y);
+   evas_pointer_canvas_xy_get(evas_object_evas_get(obj), &x, &y);
    evas_object_size_hint_max_set(ctxpopup, 240, 240);
    evas_object_move(ctxpopup, x, y);
    evas_object_show(ctxpopup);
@@ -141,7 +141,7 @@ _list_item_cb5(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
    ctxpopup = elm_ctxpopup_add(obj);
    elm_ctxpopup_content_set(ctxpopup, bx);
 
-   evas_pointer_output_xy_get(evas_object_evas_get(obj), &x, &y);
+   evas_pointer_canvas_xy_get(evas_object_evas_get(obj), &x, &y);
    evas_object_move(ctxpopup, x, y);
    evas_object_show(ctxpopup);
 }

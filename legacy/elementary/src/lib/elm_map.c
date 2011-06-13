@@ -1775,8 +1775,8 @@ _mouse_down(void *data, Evas *evas __UNUSED__, Evas_Object *obj, void *event_inf
    if (!ev0) return;
 
    ev0->hold_timer = NULL;
-   ev0->prev.x = ev->output.x;
-   ev0->prev.y = ev->output.y;
+   ev0->prev.x = ev->canvas.x;
+   ev0->prev.y = ev->canvas.y;
 
    if (ev->button != 1) return;
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) wd->on_hold = EINA_TRUE;
@@ -1786,8 +1786,8 @@ _mouse_down(void *data, Evas *evas __UNUSED__, Evas_Object *obj, void *event_inf
    else
      evas_object_smart_callback_call(data, SIG_PRESS, ev);
    if (wd->long_timer) ecore_timer_del(wd->long_timer);
-   wd->ev.output.x = ev->output.x;
-   wd->ev.output.y = ev->output.y;
+   wd->ev.canvas.x = ev->output.x;
+   wd->ev.canvas.y = ev->output.y;
    wd->long_timer = ecore_timer_add(_elm_config->longpress_timeout, _long_press, data);
 }
 
@@ -1799,8 +1799,8 @@ _mouse_move(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSED__, void
 
    ev0 = get_event_object(data, 0);
    if (!ev0) return;
-   ev0->prev.x = move->cur.output.x;
-   ev0->prev.y = move->cur.output.y;
+   ev0->prev.x = move->cur.canvas.x;
+   ev0->prev.y = move->cur.canvas.y;
 }
 
 static void
@@ -1870,8 +1870,8 @@ _mouse_multi_down(void *data, Evas *evas __UNUSED__, Evas_Object *obj, void *eve
    wd->multi_count++;
 
    ev->hold_timer = NULL;
-   ev->start.x = ev->prev.x = down->output.x;
-   ev->start.y = ev->prev.y = down->output.y;
+   ev->start.x = ev->prev.x = down->canvas.x;
+   ev->start.y = ev->prev.y = down->canvas.y;
    ev->pinch_start_dis = 0;
    wd->pinch.level = 1.0;
    wd->pinch.diff = 1.0;
@@ -1963,8 +1963,8 @@ do_zoom_only:
           }
      }
 do_nothing:
-   ev->prev.x = move->cur.output.x;
-   ev->prev.y = move->cur.output.y;
+   ev->prev.x = move->cur.canvas.x;
+   ev->prev.y = move->cur.canvas.y;
 }
 
 static void

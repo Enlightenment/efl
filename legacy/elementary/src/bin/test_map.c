@@ -89,8 +89,8 @@ my_map_longpressed(void *data, Evas_Object *obj __UNUSED__, void *event_info)
    zoom = elm_map_zoom_get(data);
    elm_map_geo_region_get(obj, &lon, &lat);
    elm_map_utils_convert_geo_into_coord(obj, lon, lat, pow(2.0, zoom) * 256, &x, &y);
-   x += down->output.x - (w / 2) - ox;
-   y += down->output.y - (h / 2) - oy;
+   x += down->canvas.x - (w / 2) - ox;
+   y += down->canvas.y - (h / 2) - oy;
    elm_map_utils_convert_coord_into_geo(obj, x, y, pow(2.0, zoom) * 256, &lon, &lat);
 
    name = elm_map_utils_convert_coord_into_name(data, lon, lat);
@@ -117,8 +117,8 @@ my_map_clicked_double(void *data, Evas_Object *obj, void *event_info)
 
    rx = x;
    ry = y;
-   x += down->output.x - ((float)w * 0.5) - ox;
-   y += down->output.y - ((float)h * 0.5) - oy;
+   x += down->canvas.x - ((float)w * 0.5) - ox;
+   y += down->canvas.y - ((float)h * 0.5) - oy;
    elm_map_rotate_get(data, &d, NULL, NULL);
    elm_map_utils_rotate_coord(data, x, y, rx, ry, -d, &tx, &ty);
    elm_map_utils_convert_coord_into_geo(obj, tx, ty, size, &lon, &lat);
@@ -617,8 +617,8 @@ _map_mouse_down(void *data, Evas *evas __UNUSED__, Evas_Object *obj, void *event
 
    if (down->button == 2)
      {
-        old_x = down->output.x;
-        old_y = down->output.y;
+        old_x = down->canvas.x;
+        old_y = down->canvas.y;
         old_d = 0.0;
      }
    else if (down->button == 3)
@@ -665,7 +665,7 @@ _map_mouse_move(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSED__, 
         half_h = (float)h * 0.5;
         elm_map_rotate_get(data, &cur_d, NULL, NULL);
 
-        d = move->cur.output.x - old_x;
+        d = move->cur.canvas.x - old_x;
         if (!old_d) old_d = d;
         else
           {
