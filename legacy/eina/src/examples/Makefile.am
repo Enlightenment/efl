@@ -11,6 +11,7 @@ LDADD = \
 	$(top_builddir)/src/lib/libeina.la
 
 SRCS = \
+	eina_accessor_01.c \
 	eina_array_01.c \
 	eina_array_02.c \
 	eina_hash_01.c \
@@ -30,6 +31,7 @@ endif
 
 if EFL_BUILD_EXAMPLES
 pkglib_PROGRAMS += \
+	eina_accessor_01 \
     eina_array_01 \
 	eina_array_02 \
 	eina_hash_01 \

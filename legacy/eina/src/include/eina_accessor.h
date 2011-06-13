@@ -25,6 +25,57 @@
 #include "eina_magic.h"
 
 /**
+ * @page eina_accessor_example_01_page Eina_Accessor usage
+ * @dontinclude eina_accessor_01.c
+ *
+ * We start by including neccessary headers, declaring variables and
+ * initializing eina:
+ * @skip #include
+ * @until eina_init
+ *
+ * Next we populate our array and list:
+ * @until }
+ *
+ * Now that we have two containers populated we can actually start the example
+ * and create an accessor:
+ * @until accessor_new
+ *
+ * Once having the accessor we can use it to access certain elements in the
+ * container:
+ * @until }
+ * @note Unlike iterators accessors allow us non-linear access, which allows us
+ * to print only the odd elements in the container.
+ *
+ * As with every other resource we allocate we need to free the accessor(and the
+ * array):
+ * @until array_free
+ *
+ * Now we create another accessor, this time for the list:
+ * @until accessor_new
+ *
+ * And now the interesting bit, we use the same code we used above to print
+ * parts of the array to print parts of the list:
+ * @until }
+ *
+ * And to free the list we use a gimmick, instead of freeing @a list, we ask the
+ * accessor for it's container and free that:
+ * @until list_free
+ *
+ * Finally we shut eina down and leave:
+ * @until }
+ *
+ * The full source code can be found on the examples folder
+ * on the @ref eina_accessor_01_c "eina_accessor_01.c" file.
+ */
+
+/**
+ * @page eina_accessor_01_c Eina_Accessor usage example
+ *
+ * @include eina_accessor_01.c
+ * @example eina_accessor_01.c
+ */
+
+/**
  * @addtogroup Eina_Accessor_Group Accessor Functions
  *
  * @brief These functions manage accessor on containers.
