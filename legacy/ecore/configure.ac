@@ -1439,6 +1439,7 @@ ecore-wince.pc
 ecore.pc
 doc/ecore.dox
 doc/Makefile
+doc/Doxyfile
 src/Makefile
 src/bin/Makefile
 src/lib/Makefile
