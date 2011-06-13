@@ -2284,18 +2284,6 @@ edje_object_size_min_restricted_calc(Evas_Object *obj, Evas_Coord *minw, Evas_Co
 			     (!((Edje_Part_Description_Text *)ep->chosen_description)->text.min_x) &&
 			     (didw)))
 			 {
-                            if ((ep->part->type == EDJE_PART_TYPE_TEXTBLOCK))
-                              {
-                                 Evas_Coord tb_mh;
-                                 evas_object_textblock_size_formatted_get(
-                                    ep->object, NULL, &tb_mh);
-                                 tb_mh -= ep->req.h;
-                                 if (tb_mh > h)
-                                   {
-                                      h = tb_mh;
-                                   }
-                                 has_non_fixed_tb = EINA_TRUE;
-                              }
 			    if (h > maxh)
 			      {
 				 maxh = h;
@@ -2303,6 +2291,11 @@ edje_object_size_min_restricted_calc(Evas_Object *obj, Evas_Coord *minw, Evas_Co
 				 pep = ep;
 			      }
 			 }
+
+                       if (ep->part->type == EDJE_PART_TYPE_TEXTBLOCK)
+                         {
+                            has_non_fixed_tb = EINA_TRUE;
+                         }
 		    }
 	       }
 	  }
