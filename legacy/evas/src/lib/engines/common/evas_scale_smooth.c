@@ -22,7 +22,7 @@ static void
 scale_calc_y_points(DATA32** p, DATA32 *src, int sw, int sh, int dh, int cy, int ch)
 {
    int i, val, inc;
-
+   if (sh > SCALE_SIZE_MAX) return;
    val = 0;
    inc = (sh << 16) / dh;
    for (i = 0; i < dh; i++)
@@ -39,7 +39,7 @@ static void
 scale_calc_x_points(int *p, int sw, int dw, int cx, int cw)
 {
    int i, val, inc;
-
+   if (sw > SCALE_SIZE_MAX) return;
    val = 0;
    inc = (sw << 16) / dw;
    for (i = 0; i < dw; i++)
@@ -57,6 +57,7 @@ scale_calc_a_points(int *p, int s, int d, int c, int cc)
 {
    int i, val, inc;
 
+   if (s > SCALE_SIZE_MAX) return;
    if (d >= s)
      {
 	val = 0;

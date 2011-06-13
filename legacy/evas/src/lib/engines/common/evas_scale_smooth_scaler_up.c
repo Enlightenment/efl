@@ -12,6 +12,10 @@
    DATA32      *buf, *pbuf, *pbuf_end;
    RGBA_Gfx_Func  func = NULL;
 
+   /* check value  to make overflow(only check value related with overflow) */
+   if ((src_region_w > SCALE_SIZE_MAX) ||
+       (src_region_h > SCALE_SIZE_MAX)) return;
+
    /* a scanline buffer */
    pdst = dst_ptr;  // it's been set at (dst_clip_x, dst_clip_y)
    pdst_end = pdst + (dst_clip_h * dst_w);

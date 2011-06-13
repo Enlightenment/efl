@@ -10,7 +10,7 @@ evas_common_scale_rgba_span_(DATA32 *src, DATA8 *mask __UNUSED__, int src_len, D
 
    if (!src || !dst) return;
    if ((src_len < 1) || (dst_len < 1)) return;
-   if ((src_len > 65535) || (dst_len > 65535)) return;
+   if ((src_len > SCALE_SIZE_MAX) || (dst_len > SCALE_SIZE_MAX)) return;
    if (mul_col != 0xffffffff)
 	mul = 1;
    if (dir < 0)
@@ -114,7 +114,7 @@ evas_common_scale_rgba_a8_span_(DATA32 *src, DATA8 *mask, int src_len, DATA32 mu
 
    if (!src || !mask || !dst) return;
    if ((src_len < 1) || (dst_len < 1)) return;
-   if ((src_len > 65535) || (dst_len > 65535)) return;
+   if ((src_len > SCALE_SIZE_MAX) || (dst_len > SCALE_SIZE_MAX)) return;
    if (mul_col != 0xffffffff)
 	mul = 1;
    if (dir < 0)
@@ -241,7 +241,7 @@ evas_common_scale_a8_span_(DATA32 *src __UNUSED__, DATA8 *mask, int src_len, DAT
 
    if (!mask || !dst) return;
    if ((src_len < 1) || (dst_len < 1)) return;
-   if ((src_len > 65535) || (dst_len > 65535)) return;
+   if ((src_len > SCALE_SIZE_MAX) || (dst_len > SCALE_SIZE_MAX)) return;
    if (dir < 0)
      {
 	pdst += dst_len - 1;
@@ -316,7 +316,7 @@ evas_common_scale_clip_a8_span_(DATA32 *src __UNUSED__, DATA8 *mask, int src_len
 
    if (!mask || !dst) return;
    if ((src_len < 1) || (dst_len < 1)) return;
-   if ((src_len > 65535) || (dst_len > 65535)) return;
+   if ((src_len > SCALE_SIZE_MAX) || (dst_len > SCALE_SIZE_MAX)) return;
    if (mul_col != 0xffffffff)
 	mul = 1;
    if (dir < 0)
@@ -483,7 +483,7 @@ evas_common_scale_hsva_span(DATA32 *src, DATA8 *mask __UNUSED__, int src_len, DA
 
    if (!src || !dst) return;
    if ((src_len < 1) || (dst_len < 1)) return;
-   if ((src_len > 65535) || (dst_len > 65535)) return;
+   if ((src_len > SCALE_SIZE_MAX) || (dst_len > SCALE_SIZE_MAX)) return;
    if (mul_col != 0xffffffff)
 	mul = 1;
    if (dir < 0)
@@ -566,7 +566,7 @@ evas_common_scale_hsva_a8_span(DATA32 *src, DATA8 *mask, int src_len, DATA32 mul
 
    if (!src || !mask || !dst) return;
    if ((src_len < 1) || (dst_len < 1)) return;
-   if ((src_len > 65535) || (dst_len > 65535)) return;
+   if ((src_len > SCALE_SIZE_MAX) || (dst_len > SCALE_SIZE_MAX)) return;
    if (mul_col != 0xffffffff)
 	mul = 1;
    if (dir < 0)

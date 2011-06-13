@@ -1128,6 +1128,8 @@ struct _Convert_Pal
 
 /*****************************************************************************/
 
+#define SCALE_SIZE_MAX ((1 << 15) - 1)
+
 #ifdef __cplusplus
 extern "C" {
 #endif
