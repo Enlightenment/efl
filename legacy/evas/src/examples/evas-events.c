@@ -31,7 +31,7 @@ struct test_data
    Ecore_Evas  *ee;
    Evas        *canvas;
    Eina_Bool    obscured;
-   Evas_Object *img, *img2, *bg;
+   Evas_Object *img, *bg;
    Ecore_Timer *resize_timer, *freeze_timer;
 };
 
