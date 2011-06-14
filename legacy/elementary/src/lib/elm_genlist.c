@@ -209,7 +209,7 @@ struct _Widget_Data
    Ecore_Idle_Enterer *queue_idle_enterer;
    Ecore_Idler        *must_recalc_idler;
    Eina_List        *queue, *selected;
-   Elm_Genlist_Item *show_item, *last_selected_item, *anchor_item, *mode_item, *reorder_it, *reorder_rel;
+   Elm_Genlist_Item *show_item, *last_selected_item, *anchor_item, *mode_item, *reorder_it, *reorder_rel, *expanded_item;
    Eina_Inlist      *item_cache;
    Evas_Coord        anchor_y, reorder_start_y;
    Elm_List_Mode     mode;
@@ -237,6 +237,7 @@ struct _Widget_Data
    Eina_Bool         swipe : 1;
    Eina_Bool         reorder_mode : 1;
    Eina_Bool         reorder_pan_move : 1;
+   Eina_Bool         auto_scroll_enabled : 1;
    struct
    {
       Evas_Coord x, y;
@@ -404,6 +405,7 @@ static void      _item_move_after(Elm_Genlist_Item *it,
                                   Elm_Genlist_Item *after);
 static void      _item_move_before(Elm_Genlist_Item *it,
                                    Elm_Genlist_Item *before);
+static void      _item_auto_scroll(Widget_Data *wd);
 
 static Evas_Smart_Class _pan_sc = EVAS_SMART_CLASS_INIT_VERSION;
 
@@ -2588,7 +2590,7 @@ _calc_job(void *data)
         wd->minh = minh;
         evas_object_smart_callback_call(wd->pan_smart, "changed", NULL);
         _sizing_eval(wd->obj);
-        if ((wd->anchor_item) && (wd->anchor_item->block))
+        if ((wd->anchor_item) && (wd->anchor_item->block) && (!wd->auto_scroll_enabled))
           {
              Elm_Genlist_Item *it;
              Evas_Coord it_y;
@@ -2876,6 +2878,7 @@ _pan_calculate(Evas_Object *obj)
         sd->wd->old_pan_y = sd->wd->pan_y;
         sd->wd->start_time = ecore_loop_time_get();
      }
+   _item_auto_scroll(sd->wd);
    evas_event_thaw(evas_object_evas_get(obj));
    evas_event_thaw_eval(evas_object_evas_get(obj));
 }
@@ -3098,6 +3101,26 @@ _item_mode_unset(Widget_Data *wd)
    edje_object_signal_callback_add(it->mode_view, buf2, "elm", _mode_finished_signal_cb, it);
 
    wd->mode_item = NULL;
+}
+
+static void
+_item_auto_scroll(Widget_Data *wd)
+{
+   if (!wd) return;
+   Elm_Genlist_Item  *it;
+   Eina_List *l;
+   Evas_Coord ox, oy, ow, oh;
+
+   if ((wd->expanded_item) && (wd->auto_scroll_enabled))
+     {
+        evas_object_geometry_get(wd->obj, &ox, &oy, &ow, &oh);
+        if (wd->expanded_item->scrl_y > (oh + oy) / 2)
+          {
+             EINA_LIST_FOREACH(wd->expanded_item->items, l, it)
+                elm_genlist_item_bring_in(it);
+          }
+        wd->auto_scroll_enabled = EINA_FALSE;
+     }
 }
 
 /**
@@ -4312,17 +4335,20 @@ elm_genlist_item_expanded_set(Elm_Genlist_Item *it,
    ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(it);
    if (it->expanded == expanded) return;
    it->expanded = expanded;
+   it->wd->expanded_item = it;
    if (it->expanded)
      {
         if (it->realized)
           edje_object_signal_emit(it->base.view, "elm,state,expanded", "elm");
         evas_object_smart_callback_call(it->base.widget, SIG_EXPANDED, it);
+        it->wd->auto_scroll_enabled = EINA_TRUE;
      }
    else
      {
         if (it->realized)
           edje_object_signal_emit(it->base.view, "elm,state,contracted", "elm");
         evas_object_smart_callback_call(it->base.widget, SIG_CONTRACTED, it);
+        it->wd->auto_scroll_enabled = EINA_FALSE;
      }
 }
 
