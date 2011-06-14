@@ -367,11 +367,11 @@ evas_software_xlib_x_output_buffer_new(Display *d, Visual *v, int depth, int w, 
 }
 
 void
-evas_software_xlib_x_output_buffer_free(X_Output_Buffer *xob, int sync)
+evas_software_xlib_x_output_buffer_free(X_Output_Buffer *xob, int psync)
 {
    if (xob->shm_info)
      {
-	if (sync) XSync(xob->display, False);
+	if (psync) XSync(xob->display, False);
 	XShmDetach(xob->display, xob->shm_info);
 	XDestroyImage(xob->xim);
 	shmdt(xob->shm_info->shmaddr);
@@ -387,13 +387,13 @@ evas_software_xlib_x_output_buffer_free(X_Output_Buffer *xob, int sync)
 }
 
 void
-evas_software_xlib_x_output_buffer_paste(X_Output_Buffer *xob, Drawable d, GC gc, int x, int y, int sync)
+evas_software_xlib_x_output_buffer_paste(X_Output_Buffer *xob, Drawable d, GC gc, int x, int y, int psync)
 {
    if (xob->shm_info)
      {
 	XShmPutImage(xob->display, d, gc, xob->xim, 0, 0, x, y,
 		     xob->w, xob->h, False);
-	if (sync) XSync(xob->display, False);
+	if (psync) XSync(xob->display, False);
      }
    else
      {

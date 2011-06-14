@@ -208,7 +208,7 @@ fb_list_modes(unsigned int *num_return)
 }
 
 FB_Mode *
-fb_setmode(unsigned int width, unsigned int height, unsigned int depth, unsigned int refresh)
+fb_setmode(unsigned int width, unsigned int height, unsigned int pdepth, unsigned int refresh)
 {
    FB_Mode *modes, *mode = NULL;
    unsigned int i, num_modes;
@@ -220,10 +220,10 @@ fb_setmode(unsigned int width, unsigned int height, unsigned int depth, unsigned
           {
              if ((modes[i].width == width) &&
                  (modes[i].height == height) &&
-                 (!depth || modes[i].fb_var.bits_per_pixel == depth) &&
+                 (!pdepth || modes[i].fb_var.bits_per_pixel == pdepth) &&
                  (modes[i].refresh == refresh))
                {
-                  if (depth) modes[i].fb_var.bits_per_pixel = depth;
+                  if (pdepth) modes[i].fb_var.bits_per_pixel = pdepth;
                   
                   if (ioctl(fb, FBIOPUT_VSCREENINFO, &modes[i].fb_var) == -1)
                      perror("ioctl FBIOPUT_VSCREENINFO");
@@ -238,9 +238,9 @@ fb_setmode(unsigned int width, unsigned int height, unsigned int depth, unsigned
 }
 
 FB_Mode *
-fb_changedepth(FB_Mode *cur_mode, unsigned int depth)
+fb_changedepth(FB_Mode *cur_mode, unsigned int pdepth)
 {
-   cur_mode->fb_var.bits_per_pixel = depth;
+   cur_mode->fb_var.bits_per_pixel = pdepth;
    
    if (ioctl(fb, FBIOPUT_VSCREENINFO, &cur_mode->fb_var) == -1)
       perror("ioctl FBIOPUT_VSCREENINFO");
@@ -280,7 +280,7 @@ fb_changeres(FB_Mode *cur_mode, unsigned int width, unsigned int height, unsigne
 }
 
 FB_Mode *
-fb_changemode(FB_Mode *cur_mode, unsigned int width, unsigned int height, unsigned int depth, unsigned int refresh)
+fb_changemode(FB_Mode *cur_mode, unsigned int width, unsigned int height, unsigned int pdepth, unsigned int refresh)
 {
    FB_Mode *modes;
    unsigned int i, num_modes;
@@ -292,10 +292,10 @@ fb_changemode(FB_Mode *cur_mode, unsigned int width, unsigned int height, unsign
           {
              if ((modes[i].width == width) &&
                  (modes[i].height == height) &&
-                 (!depth || modes[i].fb_var.bits_per_pixel == depth) &&
+                 (!pdepth || modes[i].fb_var.bits_per_pixel == pdepth) &&
                  (modes[i].refresh == refresh))
                {
-                  if (depth) modes[i].fb_var.bits_per_pixel = depth;
+                  if (pdepth) modes[i].fb_var.bits_per_pixel = pdepth;
                   
                   if (ioctl(fb, FBIOPUT_VSCREENINFO, &modes[i].fb_var) == -1)
                      perror("ioctl FBIOPUT_VSCREENINFO");

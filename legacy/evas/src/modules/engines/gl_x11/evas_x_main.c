@@ -429,7 +429,7 @@ eng_window_new(Display *disp,
                {
                   XVisualInfo *vi;
                   int vd;
-                  int alph, val, dbuf, stencil, depth;
+                  int alph, val, dbuf, stencil, tdepth;
                   int rgba;
                   
                   vi = glXGetVisualFromFBConfig(gw->disp, fbc[j]);
@@ -474,10 +474,10 @@ eng_window_new(Display *disp,
                   if (val > stencil) continue;
                   stencil = val;
                   
-                  depth = 0x7fff;
+                  tdepth = 0x7fff;
                   glXGetFBConfigAttrib(gw->disp, fbc[j], GLX_DEPTH_SIZE, &val);
-                  if (val > depth) continue;
-                  depth = val;
+                  if (val > tdepth) continue;
+                  tdepth = val;
                   
                   glXGetFBConfigAttrib(gw->disp, fbc[j], GLX_BIND_TO_MIPMAP_TEXTURE_EXT, &val);
                   if (val < 0) continue;

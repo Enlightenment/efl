@@ -102,7 +102,7 @@ _find_xob(Display *d, Visual *v, int depth, int w, int h, int shm, void *data)
 }
 
 static void
-_unfind_xob(X_Output_Buffer *xob, int sync)
+_unfind_xob(X_Output_Buffer *xob, int psync)
 {
    if (xob->shm_info)
      {
@@ -123,16 +123,16 @@ _unfind_xob(X_Output_Buffer *xob, int sync)
 	     xob = xl->data;
              shmpool = eina_list_remove_list(shmpool, xl);
              shmsize -= xob->psize * xob->xim->depth / 8;
-	     evas_software_xlib_x_output_buffer_free(xob, sync);
+	     evas_software_xlib_x_output_buffer_free(xob, psync);
 	  }
         SHMPOOL_UNLOCK();
      }
    else
-     evas_software_xlib_x_output_buffer_free(xob, sync);
+     evas_software_xlib_x_output_buffer_free(xob, psync);
 }
 
 static void
-_clear_xob(int sync)
+_clear_xob(int psync)
 {
    SHMPOOL_LOCK();
    while (shmpool)
@@ -141,7 +141,7 @@ _clear_xob(int sync)
 
 	xob = shmpool->data;
 	shmpool = eina_list_remove_list(shmpool, shmpool);
-	evas_software_xlib_x_output_buffer_free(xob, sync);
+	evas_software_xlib_x_output_buffer_free(xob, psync);
      }
    shmsize = 0;
    SHMPOOL_UNLOCK();
