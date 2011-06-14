@@ -10,6 +10,8 @@
  * @ref Example_Evas_Load_Error_Str
  *
  * @ref Example_Evas_Events
+ *
+ * @ref Example_Evas_Object_Manipulation
  */
 
 /**
@@ -40,4 +42,11 @@
  *
  * @include evas-events.c
  * @example evas-events.c
+ */
+
+/**
+ * @page Example_Evas_Object_Manipulation Evas objects basic manipulation example
+ *
+ * @include evas-object-manipulation.c
+ * @example evas-object-manipulation.c
  */

@@ -46,10 +46,15 @@ pkglib_PROGRAMS += evas_events
 evas_events_SOURCES = evas-events.c
 evas_events_LDADD = $(top_builddir)/src/lib/libevas.la @ECORE_EVAS_LIBS@
 
+pkglib_PROGRAMS += evas_object_manipulation
+evas_object_manipulation_SOURCES = evas-object-manipulation.c
+evas_object_manipulation_LDADD = $(top_builddir)/src/lib/libevas.la @ECORE_EVAS_LIBS@
+
 endif # if BUILD_EXAMPLES
 
 filesdir = $(datadir)/$(PACKAGE)/examples
-files_DATA = $(srcdir)/enlightenment.png
+files_DATA = $(srcdir)/enlightenment.png \
+	$(srcdir)/red.png
 
 if INSTALL_EXAMPLES
 files_DATA += \

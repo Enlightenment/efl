@@ -2707,18 +2707,11 @@ EAPI const Eina_List  *evas_font_path_list               (const Evas *e) EINA_WA
  * calling evas_object_clip_unset() on the @p obj object.
  *
  * Example:
- * @code
- * extern Evas *evas;
- * extern Evas_Object *obj;
- * Evas_Object *clipper;
+ * @dontinclude evas-object-manipulation.c
+ * @skip solid white clipper (note that it's the default color for a
+ * @until evas_object_show(d.clipper);
  *
- * clipper = evas_object_rectangle_add(evas);
- * evas_object_color_set(clipper, 255, 255, 255, 255);
- * evas_object_move(clipper, 10, 10);
- * evas_object_resize(clipper, 20, 50);
- * evas_object_clip_set(obj, clipper);
- * evas_object_show(clipper);
- * @endcode
+ * See the full @ref Example_Evas_Object_Manipulation "example".
  */
 EAPI void              evas_object_clip_set              (Evas_Object *obj, Evas_Object *clip) EINA_ARG_NONNULL(1, 2);
 
@@ -2735,14 +2728,11 @@ EAPI void              evas_object_clip_set              (Evas_Object *obj, Evas
  * evas_object_clipees_get().
  *
  * Example:
- * @code
- * extern Evas_Object *obj;
- * Evas_Object *clipper;
+ * @dontinclude evas-object-manipulation.c
+ * @skip if (evas_object_clip_get(d.img) == d.clipper)
+ * @until return
  *
- * clipper = evas_object_clip_get(obj);
- * if (clipper) evas_object_show(clipper);
- * @endcode
- *
+ * See the full @ref Example_Evas_Object_Manipulation "example".
  */
 EAPI Evas_Object      *evas_object_clip_get              (const Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
 
@@ -2756,21 +2746,8 @@ EAPI Evas_Object      *evas_object_clip_get              (const Evas_Object *obj
  * the previous clipper. If it wasn't, this has no effect. The object
  * @p obj must be a valid ::Evas_Object.
  *
- * See also evas_object_clip_set(), evas_object_clipees_get() and
- * evas_object_clip_get().
- *
- * Example:
- * @code
- * extern Evas_Object *obj;
- * Evas_Object *clipper;
- *
- * clipper = evas_object_clip_get(obj);
- * if (clipper)
- *   {
- *     evas_object_clip_unset(obj);
- *     evas_object_hide(obj);
- *   }
- * @endcode
+ * See also evas_object_clip_set() (for an example),
+ * evas_object_clipees_get() and evas_object_clip_get().
  *
  */
 EAPI void              evas_object_clip_unset            (Evas_Object *obj);
@@ -2887,6 +2864,12 @@ EAPI short             evas_object_layer_get             (const Evas_Object *obj
  * There might be ocasions where one would like to name his/her
  * objects.
  *
+ * Example:
+ * @dontinclude evas-events.c
+ * @skip d.bg = evas_object_rectangle_add(d.canvas);
+ * @until evas_object_name_set(d.bg, "our dear rectangle");
+ *
+ * See the full @ref Example_Evas_Events "example".
  */
 EAPI void              evas_object_name_set              (Evas_Object *obj, const char *name) EINA_ARG_NONNULL(1);
 
@@ -2896,6 +2879,13 @@ EAPI void              evas_object_name_set              (Evas_Object *obj, cons
  * @param   obj The given object.
  * @return  The name of the object or @c NULL, if no name has been given
  *          to it.
+ *
+ * Example:
+ * @dontinclude evas-events.c
+ * @skip fprintf(stdout, "An object got focused: %s\n",
+ * @until evas_focus_get
+ *
+ * See the full @ref Example_Evas_Events "example".
  */
 EAPI const char       *evas_object_name_get              (const Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
 
@@ -2995,6 +2985,13 @@ EAPI void              evas_object_del                   (Evas_Object *obj) EINA
  * @note Naturally, newly created objects are placed at the canvas'
  * origin: <code>0, 0</code>.
  *
+ * Example:
+ * @dontinclude evas-object-manipulation.c
+ * @skip evas_object_image_border_set(d.clipper_border, 3, 3, 3, 3);
+ * @until evas_object_show
+ *
+ * See the full @ref Example_Evas_Object_Manipulation "example".
+ *
  * @ingroup Evas_Object_Group_Basic
  */
 EAPI void              evas_object_move                  (Evas_Object *obj, Evas_Coord x, Evas_Coord y) EINA_ARG_NONNULL(1);
@@ -3055,6 +3052,13 @@ EAPI void              evas_object_resize                (Evas_Object *obj, Evas
  * @note Use @c NULL pointers on the geometry components you're not
  * interested in: they'll be ignored by the function.
  *
+ * Example:
+ * @dontinclude evas-events.c
+ * @skip int w, h, cw, ch;
+ * @until return
+ *
+ * See the full @ref Example_Evas_Events "example".
+ *
  * @ingroup Evas_Object_Group_Basic
  */
 EAPI void              evas_object_geometry_get          (const Evas_Object *obj, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h) EINA_ARG_NONNULL(1);
@@ -3096,6 +3100,13 @@ EAPI void              evas_object_show                  (Evas_Object *obj) EINA
  * @see evas_object_show()
  * @see evas_object_visible_get()
  *
+ * Example:
+ * @dontinclude evas-object-manipulation.c
+ * @skip if (evas_object_visible_get(d.clipper))
+ * @until return
+ *
+ * See the full @ref Example_Evas_Object_Manipulation "example".
+ *
  * @ingroup Evas_Object_Group_Basic
  */
 EAPI void              evas_object_hide                  (Evas_Object *obj) EINA_ARG_NONNULL(1);
@@ -3115,7 +3126,7 @@ EAPI void              evas_object_hide                  (Evas_Object *obj) EINA
  * stacked below other object.
  *
  * @see evas_object_show()
- * @see evas_object_hide()
+ * @see evas_object_hide() (for an example)
  *
  * @ingroup Evas_Object_Group_Basic
  */
@@ -3132,7 +3143,7 @@ EAPI Eina_Bool         evas_object_visible_get           (const Evas_Object *obj
  * @param b   The blue component of the given color.
  * @param a   The alpha component of the given color.
  *
- * @see evas_object_color_get()
+ * @see evas_object_color_get() (for an example)
  *
  * @ingroup Evas_Object_Group_Basic
  */
@@ -3166,6 +3177,13 @@ EAPI void              evas_object_color_set             (Evas_Object *obj, int 
  *
  * @note Use @c NULL pointers on the components you're not interested
  * in: they'll be ignored by the function.
+ *
+ * Example:
+ * @dontinclude evas-object-manipulation.c
+ * @skip int alpha, r, g, b;
+ * @until return
+ *
+ * See the full @ref Example_Evas_Object_Manipulation "example".
  *
  * @ingroup Evas_Object_Group_Basic
  */
@@ -3202,6 +3220,13 @@ EAPI Evas             *evas_object_evas_get              (const Evas_Object *obj
  * For Evas smart objects (see @ref Evas_Smart_Group), the name of the
  * smart class itself is returned on this call. For the built-in
  * clipped smart object, it is <c>"EvasObjectSmartClipped"</c>.
+ *
+ * Example:
+ * @dontinclude evas-object-manipulation.c
+ * @skip d.img = evas_object_image_filled_add(d.canvas);
+ * @until border on the
+ *
+ * See the full @ref Example_Evas_Object_Manipulation "example".
  */
 EAPI const char       *evas_object_type_get              (const Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
 
