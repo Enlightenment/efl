@@ -1,7 +1,7 @@
 PROJECT_NAME           = Eet
 PROJECT_NUMBER         = @PACKAGE_VERSION@
 OUTPUT_DIRECTORY       = .
-INPUT                  = @srcdir@/eet.dox @srcdir@/examples.dox @srcdir@/src/lib
+INPUT                  = @srcdir@/eet.dox @srcdir@/examples.dox @top_srcdir@/src/lib
 IMAGE_PATH             = img
 OUTPUT_LANGUAGE        = English
 GENERATE_HTML          = YES

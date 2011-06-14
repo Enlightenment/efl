@@ -1,3 +1,6 @@
+/*
+ * build: gcc -o eet_data_file_descriptor eet-data-file_descriptor.c `pkg-config --cflags --libs eet eina`
+ */
 #include <Eina.h>
 #include <Eet.h>
 #include <stdio.h>
@@ -9,9 +12,9 @@
 // complex real-world structures based on elmdentica database
 typedef struct
 {
-   const char * screen_name;
-   const char * name;
-   const char * message;
+   const char  *screen_name;
+   const char  *name;
+   const char  *message;
    unsigned int id;
    unsigned int status_id;
    unsigned int date;
@@ -20,22 +23,23 @@ typedef struct
 
 typedef struct
 {
-   const char * dm_to;
-   const char * message;
+   const char *dm_to;
+   const char *message;
 } My_Post;
 
 typedef struct
 {
    unsigned int id;
-   const char * name;
-   Eina_List *  messages;
-   Eina_List *  posts;
+   const char  *name;
+   Eina_List   *messages;
+   My_Post     *posts;
+   int          posts_count;
 } My_Account;
 
 typedef struct
 {
    unsigned int version; // it is recommended to use versioned configuration!
-   Eina_List *  accounts;
+   Eina_Hash   *accounts;
 } My_Cache;
 
 // string that represents the entry in eet file, you might like to have
@@ -46,14 +50,14 @@ static const char MY_CACHE_FILE_ENTRY[] = "cache";
 // keep the descriptor static global, so it can be
 // shared by different functions (load/save) of this and only this
 // file.
-static Eet_Data_Descriptor * _my_cache_descriptor;
-static Eet_Data_Descriptor * _my_account_descriptor;
-static Eet_Data_Descriptor * _my_message_descriptor;
-static Eet_Data_Descriptor * _my_post_descriptor;
+static Eet_Data_Descriptor *_my_cache_descriptor;
+static Eet_Data_Descriptor *_my_account_descriptor;
+static Eet_Data_Descriptor *_my_message_descriptor;
+static Eet_Data_Descriptor *_my_post_descriptor;
 
 // keep file handle alive, so mmap()ed strings are all alive as well
-static Eet_File * _my_cache_file = NULL;
-static Eet_Dictionary * _my_cache_dict = NULL;
+static Eet_File *_my_cache_file = NULL;
+static Eet_Dictionary *_my_cache_dict = NULL;
 
 static void
 _my_cache_descriptor_init(void)
@@ -107,7 +111,7 @@ _my_cache_descriptor_init(void)
    EET_DATA_DESCRIPTOR_ADD_LIST
       (_my_account_descriptor, My_Account, "messages", messages,
       _my_message_descriptor);
-   EET_DATA_DESCRIPTOR_ADD_LIST
+   EET_DATA_DESCRIPTOR_ADD_VAR_ARRAY
       (_my_account_descriptor, My_Account, "posts",    posts,
       _my_post_descriptor);
 
@@ -117,7 +121,7 @@ _my_cache_descriptor_init(void)
    ADD_BASIC(version, EET_T_UINT);
 #undef ADD_BASIC
 
-   EET_DATA_DESCRIPTOR_ADD_LIST
+   EET_DATA_DESCRIPTOR_ADD_HASH
       (_my_cache_descriptor, My_Cache, "accounts", accounts,
       _my_account_descriptor);
 } /* _my_cache_descriptor_init */
@@ -168,18 +172,22 @@ _my_message_free(My_Message * msg)
    free(msg);
 } /* _my_message_free */
 
-static My_Post *
-_my_post_new(const char * message)
+static Eina_Bool
+_my_post_add(My_Account *acc, const char * message)
 {
-   My_Post * post = calloc(1, sizeof(My_Post));
+   int new_count = acc->posts_count + 1;
+   My_Post *post = realloc(acc->posts, new_count * sizeof(My_Post));
    if (!post)
      {
-        fprintf(stderr, "ERROR: could not calloc My_Post\n");
-        return NULL;
+        fprintf(stderr, "ERROR: could add My_Post\n");
+        return EINA_FALSE;
      }
 
-   post->message = eina_stringshare_add(message);
-   return post;
+   post[acc->posts_count].message = eina_stringshare_add(message);
+   post[acc->posts_count].dm_to = NULL;
+   acc->posts_count = new_count;
+   acc->posts = post;
+   return EINA_TRUE;;
 } /* _my_post_new */
 
 static void
@@ -187,7 +195,6 @@ _my_post_free(My_Post * post)
 {
    _eet_string_free(post->dm_to);
    _eet_string_free(post->message);
-   free(post);
 } /* _my_post_free */
 
 static My_Account *
@@ -208,15 +215,16 @@ static void
 _my_account_free(My_Account * acc)
 {
    My_Message * m;
-   My_Post * p;
+   int i;
 
    _eet_string_free(acc->name);
 
    EINA_LIST_FREE(acc->messages, m)
-   _my_message_free(m);
+      _my_message_free(m);
 
-   EINA_LIST_FREE(acc->posts, p)
-   _my_post_free(p);
+   for (i = 0; i < acc->posts_count; i++)
+     _my_post_free(&acc->posts[i]);
+   free(acc->posts);
 
    free(acc);
 } /* _my_account_free */
@@ -231,29 +239,32 @@ _my_cache_new(void)
         return NULL;
      }
 
+   my_cache->accounts = eina_hash_string_small_new(NULL);
+
    my_cache->version = 1;
    return my_cache;
 } /* _my_cache_new */
+
+static Eina_Bool
+_my_cache_account_free_cb(const Eina_Hash *hash, const void *key, void *data, void *fdata)
+{
+   _my_account_free(data);
+   return EINA_TRUE;
+}
 
 static void
 _my_cache_free(My_Cache * my_cache)
 {
    My_Account * acc;
-   EINA_LIST_FREE(my_cache->accounts, acc)
-   _my_account_free(acc);
+   eina_hash_foreach(my_cache->accounts, _my_cache_account_free_cb, NULL);
+   eina_hash_free(my_cache->accounts);
    free(my_cache);
 } /* _my_cache_free */
 
 static My_Account *
 _my_cache_account_find(My_Cache * my_cache, const char * name)
 {
-   My_Account * acc;
-   Eina_List * l;
-   EINA_LIST_FOREACH(my_cache->accounts, l, acc)
-   if (strcmp(acc->name, name) == 0)
-      return acc;
-
-   return NULL;
+   return eina_hash_find(my_cache->accounts, name);
 } /* _my_cache_account_find */
 
 static My_Cache *
@@ -349,6 +360,7 @@ int main(int argc, char * argv[])
 {
    My_Cache * my_cache;
    const Eina_List * l_acc;
+   Eina_Iterator *it;
    My_Account * acc;
    int ret = 0;
 
@@ -391,8 +403,7 @@ int main(int argc, char * argv[])
                   if (!acc)
                     {
                        acc = _my_account_new(argv[4]);
-                       my_cache->accounts = eina_list_append
-                             (my_cache->accounts, acc);
+                       eina_hash_direct_add(my_cache->accounts, acc->name, acc);
                     }
                   else
                      fprintf(stderr, "ERROR: account '%s' already exists.\n",
@@ -410,8 +421,7 @@ int main(int argc, char * argv[])
                   My_Account * acc = _my_cache_account_find(my_cache, argv[4]);
                   if (acc)
                     {
-                       My_Post * post = _my_post_new(argv[5]);
-                       acc->posts = eina_list_append(acc->posts, post);
+                       _my_post_add(acc, argv[5]);
                     }
                   else
                      fprintf(stderr, "ERROR: unknown account: '%s'\n", argv[4]);
@@ -447,15 +457,16 @@ int main(int argc, char * argv[])
           "\tversion.: %#x\n"
           "\taccounts: %u\n",
           my_cache->version,
-          eina_list_count(my_cache->accounts));
-   EINA_LIST_FOREACH(my_cache->accounts, l_acc, acc)
+          eina_hash_population(my_cache->accounts));
+   it = eina_hash_iterator_data_new(my_cache->accounts);
+   EINA_ITERATOR_FOREACH(it, acc)
    {
       const My_Post * post;
 
       printf("\t  > %-#8x '%.20s' stats: m=%u, p=%u\n",
              acc->id, acc->name ? acc->name : "",
              eina_list_count(acc->messages),
-             eina_list_count(acc->posts));
+             acc->posts_count);
 
       if (eina_list_count(acc->messages))
         {
@@ -473,14 +484,15 @@ int main(int argc, char * argv[])
            }
         }
 
-      if (eina_list_count(acc->posts))
+      if (acc->posts_count)
         {
-           const Eina_List * l;
            const My_Post * post;
+           int i;
            printf("\t  |posts:\n");
 
-           EINA_LIST_FOREACH(acc->posts, l, post)
+           for (i = 0; i < acc->posts_count; i++)
            {
+              post = &acc->posts[i];
               if (post->dm_to)
                  printf("\t  |  @%s: '%.20s'\n", post->dm_to, post->message);
               else
@@ -490,6 +502,7 @@ int main(int argc, char * argv[])
 
       printf("\n");
    }
+   eina_iterator_free(it);
 
    if (!_my_cache_save(my_cache, argv[2]))
       ret = -3;
@@ -497,6 +510,8 @@ int main(int argc, char * argv[])
    _my_cache_free(my_cache);
 
 end:
+   if (_my_cache_file)
+     eet_close(_my_cache_file);
    _my_cache_descriptor_shutdown();
    eet_shutdown();
    eina_shutdown();

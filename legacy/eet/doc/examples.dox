@@ -13,6 +13,20 @@
  */
 
 /**
+ * @page Example_Eet_Basic Very basic Eet example
+ *
+ * @includelineno eet-basic.c
+ * @example eet-basic.c
+ */
+
+/**
+ * @page Example_Eet_File Example of the various ways to interface with an Eet File
+ *
+ * @includelineno eet-file.c
+ * @example eet-file.c
+ */
+
+/**
  * @page Example_Eet_Data_Simple Simple data example
  *
  * @includelineno eet-data-simple.c

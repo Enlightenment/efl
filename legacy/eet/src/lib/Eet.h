@@ -63,46 +63,10 @@ image data, data structures containing integers, strings, other data
 structures, linked lists and much more, without the programmer having to
 worry about parsing, and best of all, Eet is very fast.
 
-@code
-#include <Eet.h>
+This is just a very simple example that doesn't show all of the capabilities
+of Eet, but it serves to illustrate its simplicity.
 
-int
-main(int argc, char **argv)
-{
-  Eet_File *ef;
-  int       i;
-  char      buf[32];
-  char     *ret;
-  int       size;
-  char     *entries[] =
-    {
-      "Entry 1",
-      "Big text string here compared to others",
-      "Eet is cool"
-    };
-
-  eet_init();
-
-  // blindly open an file for output and write strings with their NUL char
-  ef = eet_open("test.eet", EET_FILE_MODE_WRITE);
-  eet_write(ef, "Entry 1", entries[0], strlen(entries[0]) + 1, 0);
-  eet_write(ef, "Entry 2", entries[1], strlen(entries[1]) + 1, 1);
-  eet_write(ef, "Entry 3", entries[2], strlen(entries[2]) + 1, 0);
-  eet_close(ef);
-
-  // open the file again and blindly get the entries we wrote
-  ef = eet_open("test.eet", EET_FILE_MODE_READ);
-  ret = eet_read(ef, "Entry 1", &size);
-  printf("%s\n", ret);
-  ret = eet_read(ef, "Entry 2", &size);
-  printf("%s\n", ret);
-  ret = eet_read(ef, "Entry 3", &size);
-  printf("%s\n", ret);
-  eet_close(ef);
-
-  eet_shutdown();
-}
-@endcode
+@include eet-basic.c
 
 @section format What does an Eet file look like?
 
@@ -303,7 +267,7 @@ extern "C" {
  * @typedef Eet_Version
  *
  * This is the Eet version information structure that can be used at
- * runtiime to detect which version of eet is being used and adapt
+ * runtime to detect which version of eet is being used and adapt
  * appropriately as follows for example:
  *
  * @code
@@ -348,11 +312,11 @@ typedef enum _Eet_Error
    EET_ERROR_NONE, /**< No error, it's all fine! */
    EET_ERROR_BAD_OBJECT, /**< Given object or handle is NULL or invalid */
    EET_ERROR_EMPTY, /**< There was nothing to do */
-   EET_ERROR_NOT_WRITABLE, /**< Could not write to file or fine is #EET_FILE_MODE_READ */
+   EET_ERROR_NOT_WRITABLE, /**< Could not write to file or file is #EET_FILE_MODE_READ */
    EET_ERROR_OUT_OF_MEMORY, /**< Could not allocate memory */
    EET_ERROR_WRITE_ERROR, /**< Failed to write data to destination */
    EET_ERROR_WRITE_ERROR_FILE_TOO_BIG, /**< Failed to write file since it is too big */
-   EET_ERROR_WRITE_ERROR_IO_ERROR, /**< Failed to write since generic Input/Output error */
+   EET_ERROR_WRITE_ERROR_IO_ERROR, /**< Failed to write due a generic Input/Output error */
    EET_ERROR_WRITE_ERROR_OUT_OF_SPACE, /**< Failed to write due out of space */
    EET_ERROR_WRITE_ERROR_FILE_CLOSED, /**< Failed to write because file was closed */
    EET_ERROR_MMAP_FAILED, /**< Could not mmap file */
@@ -373,7 +337,12 @@ typedef enum _Eet_Error
 /**
  * Initialize the EET library.
  *
- * @return The new init count.
+ * The first time this function is called, it will perform all the internal
+ * initialization required for the library to function properly and incrememnt
+ * the initializiation counter. Any subsequent call only increment this counter
+ * and return its new value, so it's safe to call this function more than once.
+ *
+ * @return The new init count. Will be 0 if initialization failed.
  *
  * @since 1.0.0
  * @ingroup Eet_Group
@@ -383,6 +352,11 @@ eet_init(void);
 
 /**
  * Shut down the EET library.
+ *
+ * If eet_init() was called more than once for the running application,
+ * eet_shutdown() will decrement the initialization counter and return its
+ * new value, without doing anything else. When the counter reaches 0, all
+ * of the internal elements will be shutdown and any memory used freed.
  *
  * @return The new init count.
  *
@@ -395,10 +369,15 @@ eet_shutdown(void);
 /**
  * Clear eet cache
  *
- * Eet didn't free items by default. If you are under memory
- * presure, just call this function to recall all memory that are
- * not yet referenced anymore.  The cache take care of modification
- * on disk.
+ * For a faster access to previously accessed data, Eet keeps an internal
+ * cache of files. These files will be freed automatically only when
+ * they are unused and the cache gets full, in order based on the last time
+ * they were used.
+ * On systems with little memory this may present an unnecessary constraint,
+ * so eet_clearcache() is available for users to reclaim the memory used by
+ * files that are no longer needed. Those that were open using
+ * ::EET_FILE_MODE_WRITE or ::EET_FILE_MODE_READ_WRITE and have modifications,
+ * will be written down to disk before flushing them from memory.
  *
  * @since 1.0.0
  * @ingroup Eet_Group
@@ -412,6 +391,156 @@ eet_clearcache(void);
  * Functions to create, destroy and do basic manipulation of
  * #Eet_File handles.
  *
+ * This sections explains how to use the most basic Eet functions, which
+ * are used to work with eet files, read data from them, store it back in or
+ * take a look at what entries it contains, without making use of the
+ * serialization capabilities explained in @ref Eet_Data_Group.
+ *
+ * The following example will serve as an introduction to most, if not all,
+ * of these functions.
+ *
+ * @dontinclude eet-file.c
+ * If you are only using Eet, this is the only header you need to include.
+ * @line Eet.h
+ *
+ * Now let's create ourselves an eet file to play with. The following function
+ * shows step by step how to open a file and write some data in it.
+ * First, we define our file handler and some other things we'll put in it.
+ * @line static int
+ * @skip Eet_File
+ * @until ";
+ * @skip eet_open
+ *
+ * We open a new file in write mode, and if it fails, we just return, since
+ * there's not much more we can do about it..
+ * @until return
+ *
+ * Now, we need to write some data in our file. For now, strings will suffice,
+ * so let's just dump a bunch of them in there.
+ * @until }
+ *
+ * As you can see, we copied a string into our static buffer, which is a bit
+ * bigger than the full length of the string, and then told Eet to write it
+ * into the file, compressed, returning the size of the data written into the
+ * file.
+ * This is all to show that Eet treats data as just data. It doesn't matter
+ * what that data represents (for now), it's all just bytes for it. As running
+ * the following code will show, we took a string of around 30 bytes and put it
+ * in a buffer of 1024 bytes, but the returned size won't be any of those.
+ * @until printf
+ *
+ * Next, we copy into our buffer our set of strings, including their null
+ * terminators and write them into the file. No error checking for the sake
+ * of brevitiy. And a call to eet_sync() to make sure all out data is
+ * properly written down to disk, even though we haven't yet closed the file.
+ * @until eet_sync
+ *
+ * One more write, this time our large array of binary data and... well, I
+ * couldn't come up with a valid use of the last set of strings we stored,
+ * so let's take it out from the file with eet_delete().
+ * @until eet_delete
+ *
+ * Finally, we close the file, saving any changes back to disk and return.
+ * Notice how, if there's any error closing the file or saving its contents,
+ * the return value from the function will be a false one, which later on
+ * will make the program exit with an error code.
+ * @until return
+ *
+ * Moving onto our main function, we will open the same file and read it back.
+ * Trivial, but it'll show how we can do so in more than one way. We'll skip
+ * the variable declarations, as they aren't very different from what we've
+ * seen already.
+ *
+ * We start from the beginning by initializing Eet so things in general work.
+ * Forgetting to do so will result in weird results or crashes when calling
+ * any eet function, so if you experience something like that, the first thing
+ * to look at is whether eet_init() is missing.
+ * Then we call our @p create_eet_file function, described above, to make
+ * sure we have something to work with. If the function fails it will return
+ * 0 and we just exit, since nothing from here onwards will work anyway.
+ * @skip eet_init
+ * @until return
+ *
+ * Let's take a look now at what entries our file has. For this, we use
+ * eet_list(), which will return a list of strings, each being the name of
+ * one entry. Since we skipped before, it may be worth noting that @p list
+ * is declared as a @p char **.
+ * The @p num parameter will, of course, have the number of entries contained
+ * in our file.
+ * If everything's fine, we'll get our list and print it to the screen, and
+ * once done with it, we free the list. That's just the list, not its contents,
+ * as they are internal strings used by Eet and trying to free them will surely
+ * break things.
+ * @until }
+ *
+ * Reading back plain data is simple. Just a call to eet_read() with the file
+ * to read from, and the name of the entry we are interested in. We get back
+ * our data and the passed @p size parameter will contain the size of it. If
+ * the data was stored compressed, it will decompressed first.
+ * @until }
+ *
+ * Another simple read for the set of strings from before, except those were
+ * deleted, so we should get a NULL return and continue normally.
+ * @until }
+ *
+ * Finally, we'll get our binary data in the same way we got the strings. Once
+ * again, it makes no difference for Eet what the data is, it's up to us to
+ * know how to handle it.
+ * @until {
+ *
+ * Now some cheating, we know that this data is an Eet file because, well...
+ * we just know it. So we are going to open it and take a look at its insides.
+ * For this, eet_open() won't work, as it needs to have a file on disk to read
+ * from and all we have is some data in RAM.
+ *
+ * So how do we do? One way would be to create a normal file and write down
+ * our data, then open it with eet_open(). Another, faster and more efficient
+ * if all we want to do is read the file, is to use eet_memopen_read().
+ * @until memopen
+ *
+ * As you can see, the size we got from our previous read was put to good use
+ * this time. Unlike the first one where all we had were strings, the size
+ * of the data read only serves to demonstrate that we are reading back the
+ * entire size of our original @p buf variable.
+ *
+ * A little peeking to see how many entries the file has and to make an
+ * example of eet_num_entries() to get that number when we don't care about
+ * their names.
+ * @until printf
+ *
+ * More cheating follows. Just like we knew this was an Eet file, we also know
+ * what key to read from, and ontop of that we know that the data in it is not
+ * compressed.
+ * Knowing all this allows us to take some shortcuts.
+ * @until read_direct
+ *
+ * That's a direct print of our data, whatever that data is. We don't want
+ * to worry about having to free it later, so we just used eet_direct_read()
+ * to tell Eet to gives a pointer to the internal data in the file, without
+ * duplicating it. Since we said that data was not compressed, we shouldn't
+ * worry about printing garbage to the screen (and yes, we also know the data
+ * is yet another string).
+ * We also don't care about the size of the data as it was stored in the file,
+ * so we passed NULL as the size parameter.
+ * One very important note about this, however, is that we don't care about
+ * the size parameter because the data in the file contains the null
+ * terminator for the string. So when using Eet to store strings this way,
+ * it's very important to consider whether you will keep that final null
+ * byte, or to always get the size read and do the necessary checks and copies.
+ * It's up to the user and the particular use cases to decide how this will
+ * be done.
+ *
+ * With everything done, close this second file and free the data used to open
+ * it. And this is important, we can't free that data until we are done with
+ * the file, as Eet is using it. When opening with eet_memopen_read(), the data
+ * passed to it must be available for as long as the the file is open.
+ * @until }
+ *
+ * Finally, we close the first file, shutdown all internal resources used by
+ * Eet and leave our main function, thus terminating our program.
+ * @until return
+ *
+ * You can look at the full code of the example @ref eet-file.c "here".
  * @{
  */
 
@@ -430,6 +559,12 @@ typedef enum _Eet_File_Mode
 /**
  * @typedef Eet_File
  * Opaque handle that defines an Eet file (or memory).
+ *
+ * This handle will be returned by the functions eet_open() and
+ * eet_memopen_read() and is used by every other function that affects the
+ * file in any way. When you are done with it, call eet_close() to clsoe it
+ * and, if the file was open for writing, write down to disk any changes made
+ * to it.
  *
  * @see eet_open()
  * @see eet_memopen_read()
@@ -484,52 +619,6 @@ typedef struct _Eet_Dictionary   Eet_Dictionary;
  * referenced file handles will not be returned and a new handle will be
  * returned instead.
  *
- * Example:
- * @code
- * #include <Eet.h>
- * #include <stdio.h>
- * #include <string.h>
- *
- * int
- * main(int argc, char **argv)
- * {
- *   Eet_File *ef;
- *   char buf[1024], *ret, **list;
- *   int size, num, i;
- *
- *   eet_init();
- *
- *   strcpy(buf, "Here is a string of data to save!");
- *
- *   ef = eet_open("/tmp/my_file.eet", EET_FILE_MODE_WRITE);
- *   if (!ef) return -1;
- *   if (!eet_write(ef, "/key/to_store/at", buf, 1024, 1))
- *     fprintf(stderr, "Error writing data!\n");
- *   eet_close(ef);
- *
- *   ef = eet_open("/tmp/my_file.eet", EET_FILE_MODE_READ);
- *   if (!ef) return -1;
- *   list = eet_list(ef, "*", &num);
- *   if (list)
- *     {
- *       for (i = 0; i < num; i++)
- *         printf("Key stored: %s\n", list[i]);
- *       free(list);
- *     }
- *   ret = eet_read(ef, "/key/to_store/at", &size);
- *   if (ret)
- *     {
- *       printf("Data read (%i bytes):\n%s\n", size, ret);
- *       free(ret);
- *     }
- *   eet_close(ef);
- *
- *   eet_shutdown();
- *
- *   return 0;
- * }
- * @endcode
- *
  * @since 1.0.0
  */
 EAPI Eet_File *
@@ -541,6 +630,7 @@ eet_open(const char   *file,
  * so you must keep it around as long as the eet file is open. There is
  * currently no cache for this kind of Eet_File, so it's reopened every time
  * you use eet_memopen_read.
+ * Files opened this way will always be in read-only mode.
  *
  * @since 1.1.0
  * @ingroup Eet_File_Group
@@ -886,6 +976,23 @@ eet_write_cipher(Eet_File   *ef,
  *
  * Eet efficiently stores and loads images, including alpha
  * channels and lossy compressions.
+ *
+ * Eet can handle both lossy compression with different levels of quality and
+ * non-lossy compression with different compression levels. It's also possible,
+ * given an image data, to only read its header to get the image information
+ * without decoding the entire content for it.
+ *
+ * The encode family of functions will take an image raw buffer and its
+ * parameters and compress it in memory, returning the new buffer.
+ * Likewise, the decode functions will read from the given location in memory
+ * and return the uncompressed image.
+ *
+ * The read and write functions will, respectively, encode and decode to or
+ * from an Eet file, under the specified key.
+ *
+ * These functions are fairly low level and the same functionality can be
+ * achieved using Evas and Edje, making it much easier to work with images
+ * as well as not needing to worry about things like scaling them.
  */
 
 /**
@@ -900,25 +1007,20 @@ eet_write_cipher(Eet_File   *ef,
  * @param lossy A pointer to the int to hold the lossiness flag.
  * @return 1 on successful decode, 0 otherwise
  *
- * This function reads an image from an eet file stored under the named
- * key in the eet file and return a pointer to the decompressed pixel data.
+ * Reads and decodes the image header data stored under the given key and
+ * Eet file.
  *
- * The other parameters of the image (width, height etc.) are placed into
- * the values pointed to (they must be supplied). The pixel data is a linear
- * array of pixels starting from the top-left of the image scanning row by
- * row from left to right. Each pile is a 32bit value, with the high byte
- * being the alpha channel, the next being red, then green, and the low byte
- * being blue. The width and height are measured in pixels and will be
- * greater than 0 when returned. The alpha flag is either 0 or 1. 0 denotes
- * that the alpha channel is not used. 1 denotes that it is significant.
- * Compress is filled with the compression value/amount the image was
- * stored with. The quality value is filled with the quality encoding of
- * the image file (0 - 100). The lossy flags is either 0 or 1 as to if
- * the image was encoded lossily or not.
+ * The information decoded is placed in each of the parameters, which must be
+ * provided. The width and height, measured in pixels, will be stored under
+ * the variables pointed by @p w and @p h, respectively. If the read or
+ * decode of the header fails, this values will be 0. The @p alpha parameter
+ * will be 1 or 0, denoting if the alpha channel of the image is used or not.
+ * If the image was losslessly compressed, the @p compress parameter will hold
+ * the compression amount used, ranging from 0 to 9 and @p lossy will be 0.
+ * In the case of lossy compression, @p lossy will be 1, and the compreesion
+ * quality will be placed under @p quality, with a value ranging from 0 to 100.
  *
- * On success the function returns 1 indicating the header was read and
- * decoded properly, or 0 on failure.
- *
+ * @see eet_data_image_header_decode()
  * @see eet_data_image_header_read_cipher()
  *
  * @since 1.0.0
@@ -946,28 +1048,25 @@ eet_data_image_header_read(Eet_File     *ef,
  * @param lossy A pointer to the int to hold the lossiness flag.
  * @return The image pixel data decoded
  *
- * This function reads an image from an eet file stored under the named
- * key in the eet file and return a pointer to the decompressed pixel data.
+ * Reads and decodes the image stored in the given Eet file under the named
+ * key.
  *
- * The other parameters of the image (width, height etc.) are placed into
- * the values pointed to (they must be supplied). The pixel data is a linear
- * array of pixels starting from the top-left of the image scanning row by
- * row from left to right. Each pile is a 32bit value, with the high byte
- * being the alpha channel, the next being red, then green, and the low byte
- * being blue. The width and height are measured in pixels and will be
- * greater than 0 when returned. The alpha flag is either 0 or 1. 0 denotes
- * that the alpha channel is not used. 1 denotes that it is significant.
- * Compress is filled with the compression value/amount the image was
- * stored with. The quality value is filled with the quality encoding of
- * the image file (0 - 100). The lossy flags is either 0 or 1 as to if
- * the image was encoded lossily or not.
+ * The returned pixel data is a linear array of pixels starting from the
+ * top-left of the image, scanning row by row from left to right. Each pile
+ * is a 32bit value, with the high byte being the alpha channel, the next being
+ * red, then green, and the low byte being blue.
+ *
+ * The rest of the parameters are the same as in eet_data_image_header_read().
  *
  * On success the function returns a pointer to the image data decoded. The
  * calling application is responsible for calling free() on the image data
  * when it is done with it. On failure NULL is returned and the parameter
  * values may not contain any sensible data.
  *
+ * @see eet_data_image_header_read()
+ * @see eet_data_image_decode()
  * @see eet_data_image_read_cipher()
+ * @see eet_data_image_read_to_surface()
  *
  * @since 1.0.0
  * @ingroup Eet_File_Image_Group
@@ -983,7 +1082,7 @@ eet_data_image_read(Eet_File     *ef,
                     int          *lossy);
 
 /**
- * Read image data from the named key in the eet file.
+ * Read image data from the named key in the eet file and store it in the given buffer.
  * @param ef A valid eet file handle opened for reading.
  * @param name Name of the entry. eg: "/base/file_i_want".
  * @param src_x The starting x coordinate from where to dump the stream.
@@ -998,25 +1097,32 @@ eet_data_image_read(Eet_File     *ef,
  * @param lossy A pointer to the int to hold the lossiness flag.
  * @return 1 on success, 0 otherwise.
  *
- * This function reads an image from an eet file stored under the named
- * key in the eet file and return a pointer to the decompressed pixel data.
+ * Reads and decodes the image stored in the given Eet file, placing the
+ * resulting pixel data in the buffer pointed by the user.
  *
- * The other parameters of the image (width, height etc.) are placed into
- * the values pointed to (they must be supplied). The pixel data is a linear
- * array of pixels starting from the top-left of the image scanning row by
- * row from left to right. Each pile is a 32bit value, with the high byte
- * being the alpha channel, the next being red, then green, and the low byte
- * being blue. The width and height are measured in pixels and will be
- * greater than 0 when returned. The alpha flag is either 0 or 1. 0 denotes
- * that the alpha channel is not used. 1 denotes that it is significant.
- * Compress is filled with the compression value/amount the image was
- * stored with. The quality value is filled with the quality encoding of
- * the image file (0 - 100). The lossy flags is either 0 or 1 as to if
- * the image was encoded lossily or not.
+ * Like eet_data_image_read(), it takes the image data stored under the
+ * @p name key in the @p ef file, but instead of returning a new buffer with
+ * the pixel data, it places the result in the buffer pointed by @p d, which
+ * must be provided by the user and of sufficient size to hold the requested
+ * portion of the image.
+ *
+ * The @p src_x and @p src_y parameters indicate the top-left corner of the
+ * section of the image to decode. These have to be higher or equal than 0 and
+ * less than the respective total width and height of the image. The width
+ * and height of the section of the image to decode are given in @p w and @p h
+ * and also can't be higher than the total width and height of the image.
+ *
+ * The @p row_stride parameter indicates the length in bytes of each line in
+ * the destination buffer and it has to be at least @p w * 4.
+ *
+ * All the other parameters are the same as in eet_data_image_read().
  *
  * On success the function returns 1, and 0 on failure. On failure the
  * parameter values may not contain any sensible data.
  *
+ * @see eet_data_image_read()
+ * @see eet_data_image_decode()
+ * @see eet_data_image_decode_to_surface()
  * @see eet_data_image_read_to_surface_cipher()
  *
  * @since 1.0.2
@@ -1066,6 +1172,8 @@ eet_data_image_read_to_surface(Eet_File     *ef,
  * On success this function returns the number of bytes that were required
  * to encode the image data, or on failure it returns 0.
  *
+ * @see eet_data_image_read()
+ * @see eet_data_image_encode()
  * @see eet_data_image_write_cipher()
  *
  * @since 1.0.0
@@ -1094,25 +1202,14 @@ eet_data_image_write(Eet_File    *ef,
  * @param lossy A pointer to the int to hold the lossiness flag.
  * @return 1 on success, 0 on failure.
  *
- * This function takes encoded pixel data and decodes it into raw RGBA
- * pixels on success.
- *
- * The other parameters of the image (width, height etc.) are placed into
- * the values pointed to (they must be supplied). The pixel data is a linear
- * array of pixels starting from the top-left of the image scanning row by
- * row from left to right. Each pixel is a 32bit value, with the high byte
- * being the alpha channel, the next being red, then green, and the low byte
- * being blue. The width and height are measured in pixels and will be
- * greater than 0 when returned. The alpha flag is either 0 or 1. 0 denotes
- * that the alpha channel is not used. 1 denotes that it is significant.
- * Compress is filled with the compression value/amount the image was
- * stored with. The quality value is filled with the quality encoding of
- * the image file (0 - 100). The lossy flags is either 0 or 1 as to if
- * the image was encoded lossily or not.
+ * This function works exactly like eet_data_image_header_read(), but instead
+ * of reading from an Eet file, it takes the buffer of size @p size pointed
+ * by @p data, which must be a valid Eet encoded image.
  *
  * On success the function returns 1 indicating the header was read and
  * decoded properly, or 0 on failure.
  *
+ * @see eet_data_image_header_read()
  * @see eet_data_image_header_decode_cipher()
  *
  * @since 1.0.0
@@ -1143,24 +1240,16 @@ eet_data_image_header_decode(const void   *data,
  * This function takes encoded pixel data and decodes it into raw RGBA
  * pixels on success.
  *
- * The other parameters of the image (width, height etc.) are placed into
- * the values pointed to (they must be supplied). The pixel data is a linear
- * array of pixels starting from the top-left of the image scanning row by
- * row from left to right. Each pixel is a 32bit value, with the high byte
- * being the alpha channel, the next being red, then green, and the low byte
- * being blue. The width and height are measured in pixels and will be
- * greater than 0 when returned. The alpha flag is either 0 or 1. 0 denotes
- * that the alpha channel is not used. 1 denotes that it is significant.
- * Compress is filled with the compression value/amount the image was
- * stored with. The quality value is filled with the quality encoding of
- * the image file (0 - 100). The lossy flags is either 0 or 1 as to if
- * the image was encoded lossily or not.
+ * It works exactly like eet_data_image_read(), but it takes the encoded
+ * data in the @p data buffer of size @p size, instead of reading from a file.
+ * All the others parameters are also the same.
  *
  * On success the function returns a pointer to the image data decoded. The
  * calling application is responsible for calling free() on the image data
  * when it is done with it. On failure NULL is returned and the parameter
  * values may not contain any sensible data.
  *
+ * @see eet_data_image_read()
  * @see eet_data_image_decode_cipher()
  *
  * @since 1.0.0
@@ -1177,7 +1266,7 @@ eet_data_image_decode(const void   *data,
                       int          *lossy);
 
 /**
- * Decode Image data into pixel data.
+ * Decode Image data into pixel data and stores in the given buffer.
  * @param data The encoded pixel data.
  * @param size The size, in bytes, of the encoded pixel data.
  * @param src_x The starting x coordinate from where to dump the stream.
@@ -1192,25 +1281,13 @@ eet_data_image_decode(const void   *data,
  * @param lossy A pointer to the int to hold the lossiness flag.
  * @return 1 on success, 0 otherwise.
  *
- * This function takes encoded pixel data and decodes it into raw RGBA
- * pixels on success.
- *
- * The other parameters of the image (alpha, compress etc.) are placed into
- * the values pointed to (they must be supplied). The pixel data is a linear
- * array of pixels starting from the top-left of the image scanning row by
- * row from left to right. Each pixel is a 32bit value, with the high byte
- * being the alpha channel, the next being red, then green, and the low byte
- * being blue. The width and height are measured in pixels and will be
- * greater than 0 when returned. The alpha flag is either 0 or 1. 0 denotes
- * that the alpha channel is not used. 1 denotes that it is significant.
- * Compress is filled with the compression value/amount the image was
- * stored with. The quality value is filled with the quality encoding of
- * the image file (0 - 100). The lossy flags is either 0 or 1 as to if
- * the image was encoded lossily or not.
+ * Like eet_data_image_read_to_surface(), but reading the given @p data buffer
+ * instead of a file.
  *
  * On success the function returns 1, and 0 on failure. On failure the
  * parameter values may not contain any sensible data.
  *
+ * @see eet_data_image_read_to_surface()
  * @see eet_data_image_decode_to_surface_cipher()
  *
  * @since 1.0.2
@@ -1246,19 +1323,15 @@ eet_data_image_decode_to_surface(const void   *data,
  * possible loss of quality (as a trade off for size) for storage or
  * transmission to another system.
  *
- * The data expected is the same format as returned by eet_data_image_read.
- * If this is not the case weird things may happen. Width and height must
- * be between 1 and 8000 pixels. The alpha flags can be 0 or 1 (0 meaning
- * the alpha values are not useful and 1 meaning they are). Compress can
- * be from 0 to 9 (0 meaning no compression, 9 meaning full compression).
- * This is only used if the image is not lossily encoded. Quality is used on
- * lossy compression and should be a value from 0 to 100. The lossy flag
- * can be 0 or 1. 0 means encode losslessly and 1 means to encode with
- * image quality loss (but then have a much smaller encoding).
+ * It works like eet_data_image_write(), but instead of writing the encoded
+ * image into an Eet file, it allocates a new buffer of the size required and
+ * returns the encoded data in it.
  *
  * On success this function returns a pointer to the encoded data that you
  * can free with free() when no longer needed.
  *
+ * @see eet_data_image_write()
+ * @see eet_data_image_read()
  * @see eet_data_image_encode_cipher()
  *
  * @since 1.0.0
@@ -1304,7 +1377,7 @@ eet_data_image_encode(const void  *data,
  * The other parameters of the image (width, height etc.) are placed into
  * the values pointed to (they must be supplied). The pixel data is a linear
  * array of pixels starting from the top-left of the image scanning row by
- * row from left to right. Each pile is a 32bit value, with the high byte
+ * row from left to right. Each pixel is a 32bit value, with the high byte
  * being the alpha channel, the next being red, then green, and the low byte
  * being blue. The width and height are measured in pixels and will be
  * greater than 0 when returned. The alpha flag is either 0 or 1. 0 denotes
@@ -1352,7 +1425,7 @@ eet_data_image_header_read_cipher(Eet_File     *ef,
  * The other parameters of the image (width, height etc.) are placed into
  * the values pointed to (they must be supplied). The pixel data is a linear
  * array of pixels starting from the top-left of the image scanning row by
- * row from left to right. Each pile is a 32bit value, with the high byte
+ * row from left to right. Each pixel is a 32bit value, with the high byte
  * being the alpha channel, the next being red, then green, and the low byte
  * being blue. The width and height are measured in pixels and will be
  * greater than 0 when returned. The alpha flag is either 0 or 1. 0 denotes
@@ -1406,7 +1479,7 @@ eet_data_image_read_cipher(Eet_File     *ef,
  * The other parameters of the image (width, height etc.) are placed into
  * the values pointed to (they must be supplied). The pixel data is a linear
  * array of pixels starting from the top-left of the image scanning row by
- * row from left to right. Each pile is a 32bit value, with the high byte
+ * row from left to right. Each pixel is a 32bit value, with the high byte
  * being the alpha channel, the next being red, then green, and the low byte
  * being blue. The width and height are measured in pixels and will be
  * greater than 0 when returned. The alpha flag is either 0 or 1. 0 denotes
@@ -1875,124 +1948,394 @@ eet_identity_certificate_print(const unsigned char *certificate,
  * quite cumbersome, so we provide lots of macros and convenience
  * functions to aid creating the types.
  *
- * Example:
+ * We make now a quick overview of some of the most commonly used elements
+ * of this part of the library. A simple example of a configuration system
+ * will work as a somewhat real life example that is still simple enough to
+ * follow.
+ * Only the relevant sections will be shown here, but you can get the full
+ * code @ref eet-data-simple.c "here".
  *
+ * Ignoring the included headers, we'll begin by defining our configuration
+ * struct.
+ * @dontinclude eet-data-simple.c
+ * @skip typedef
+ * @until }
+ *
+ * When using Eet, you don't think in matters of what data the program needs
+ * to run and which you would like to store. It's all the same and if it makes
+ * more sense to keep them together, it's perfectly fine to do so. At the time
+ * of telling Eet how your data is comprised you can leave out the things
+ * that are runtime only and let Eet take care of the rest for you.
+ *
+ * The key used to store the config follows, as well as the variable used to
+ * store our data descriptor.
+ * This last one is very important. It's the one thing that Eet will use to
+ * identify your data, both at the time of writing it to the file and when
+ * loading from it.
+ * @skipline MY_CONF
+ * @skipline Eet_Data_Descriptor
+ *
+ * Now we'll see how to create this descriptor, so Eet knows how to handle
+ * our data later on.
+ * Begin our function by declaring an Eet_Data_Descriptor_Class, which is
+ * used to create the actual descriptor. This class contains the name of
+ * our data type, its size and several functions that dictate how Eet should
+ * handle memory to allocate the necessary bits to bring our data to life.
+ * You, as a user, will very hardly set this class' contents directly. The
+ * most common scenario is to use one of the provided macros that set it using
+ * the Eina data types, so that's what we'll be doing across all our examples.
+ * @skip static void
+ * @until eet_data_descriptor_stream_new
+ *
+ * Now that we have our descriptor, we need to make it describe something.
+ * We do so by telling it which members of our struct we want it to know about
+ * and their types.
+ * The eet_data_descriptor_element_add() function takes care of this, but it's
+ * too cumbersome for normal use, so several macros are provided that make
+ * it easier to handle. Even with them, however, code can get very repetitive
+ * and it's not uncommon to define custom macros using them to save on typing.
+ * @skip #define
+ * @until }
+ *
+ * Now our descriptor knows about the parts of our structure that we are
+ * interesting in saving. You can see that not all of them are there, yet Eet
+ * will find those that need saving and do the right thing. When loading our
+ * data, any non-described fields in the structure will be zeroed, so there's
+ * no need to worry about garbage memory in them.
+ * Refer to the documentation of #EET_DATA_DESCRIPTOR_ADD_BASIC to understand
+ * what our macro does.
+ *
+ * We are done with our descriptor init function and it's proper to have the
+ * relevant shutdown. Proper coding guidelines indiciate that all memory
+ * allocated should be freed when the program ends, and since you will most
+ * likely keep your descriptor around for the life or your application, it's
+ * only right to free it at the end.
+ * @skip static void
+ * @until }
+ *
+ * Not listed here, but included in the full example are functions to create
+ * a blank configuration and free it. The first one will only be used when
+ * no file exists to load from, or nothing is found in it, but the latter is
+ * used regardless of where our data comes from. Unless you are reading direct
+ * data from the Eet file, you will be in charge of freeing anything loaded
+ * from it.
+ *
+ * Now it's time to look at how we can load our config from some file.
+ * Begin by opening the Eet file normally.
+ * @skip static My_Conf_Type
+ * @until }
+ *
+ * And now we need to read the data from the file and decode it using our
+ * descriptor. Fortunately, that's all done in one single step.
+ * @until goto
+ *
+ * And that's it for all Eet cares about. But since we are dealing with a
+ * common case, as is save and load of user configurations, the next fragment
+ * of code shows why we have a version field in our struct, and how you can
+ * use it to load older configuration files and update them as needed.
+ * @until }
+ *
+ * Finally, clsoe the file and return the newly loaded config data.
+ * @until }
+ *
+ * Saving data is just as easy. The full version of the following function
+ * includes code to save to a temporary file first, so you can be sure not
+ * to lose all your data in the case of a failure mid-writing. You can look
+ * at it @ref eet-data-simple.c "here".
+ * @skip static Eina_Bool
+ * @until {
+ * @skipline Eina_Bool ret
+ * @skip eet_open
+ * @until eet_close
+ * @skip return
+ * @until }
+ *
+ * To close, our main function, which doesn't do much. Just take some arguments
+ * from the command line with the name of the file to load and another one
+ * where to save again. If input file doesn't exist, a new config structure
+ * will be created and saved to our output file.
+ * @skip int main
+ * @until return ret
+ * @until }
+ *
+ * The following is a list of more advanced and detailed examples.
+ * @li @ref eet_data_nested_example
+ * @li @ref eet_data_file_descriptor
+ */
+
+/**
+ * @page eet_data_nested_example Nested structures and Eet Data Descriptors
+ *
+ * We've seen already a simple example of how to use Eet Data Descriptors
+ * to handle our structures, but it didn't show how this works when you
+ * have structures inside other structures.
+ *
+ * Now, there's a very simple case of this, for when you have inline structs
+ * to keep your big structure more organized, you don't need anything else
+ * besides what @ref eet-data-simple.c "this simple example does".
+ * Just use something like @p some_struct.sub_struct.member when adding the
+ * member to the descriptor and it will work.
+ *
+ * For example:
  * @code
- * #include <Eina.h>
- * #include <Eet.h>
- *
- * typedef struct _blah2
+ * typedef struct
  * {
- *    char *string;
- * } Blah2;
+ *    int a_number;
+ *    char *a_string;
+ *    struct {
+ *       int other_num;
+ *       int one_more;
+ *    } sub;
+ * } some_struct;
  *
- * typedef struct _blah3
+ * void some_function()
  * {
- *    char *string;
- * } Blah3;
- *
- * typedef struct _blah
- * {
- *    char character;
- *    short sixteen;
- *    int integer;
- *    long long lots;
- *    float floating;
- *    double floating_lots;
- *    char *string;
- *    Blah2 *blah2;
- *    Eina_List *blah3;
- * } Blah;
- *
- * int
- * main(int argc, char **argv)
- * {
- *    Blah blah;
- *    Blah2 blah2;
- *    Blah3 blah3;
- *    Eet_Data_Descriptor *edd, *edd2, *edd3;
- *    Eet_Data_Descriptor_Class eddc, eddc2, eddc3;
- *    void *data;
- *    int size;
- *    FILE *f;
- *    Blah *blah_in;
- *
- *    eet_init();
- *
- *    EET_EINA_STREAM_DATA_DESCRIPTOR_CLASS_SET(&eddc3, Blah3);
- *    edd3 = eet_data_descriptor_stream_new(&eddc3);
- *    EET_DATA_DESCRIPTOR_ADD_BASIC(edd3, Blah3, "string3", string, EET_T_STRING);
- *
- *    EET_EINA_STREAM_DATA_DESCRIPTOR_CLASS_SET(&eddc2, Blah2);
- *    edd2 = eet_data_descriptor_stream_new(&eddc2);
- *    EET_DATA_DESCRIPTOR_ADD_BASIC(edd2, Blah2, "string2", string, EET_T_STRING);
- *
- *    EET_EINA_STREAM_DATA_DESCRIPTOR_CLASS_SET(&eddc, Blah);
- *    edd = eet_data_descriptor_stream_new(&eddc);
- *    EET_DATA_DESCRIPTOR_ADD_BASIC(edd, Blah, "character", character, EET_T_CHAR);
- *    EET_DATA_DESCRIPTOR_ADD_BASIC(edd, Blah, "sixteen", sixteen, EET_T_SHORT);
- *    EET_DATA_DESCRIPTOR_ADD_BASIC(edd, Blah, "integer", integer, EET_T_INT);
- *    EET_DATA_DESCRIPTOR_ADD_BASIC(edd, Blah, "lots", lots, EET_T_LONG_LONG);
- *    EET_DATA_DESCRIPTOR_ADD_BASIC(edd, Blah, "floating", floating, EET_T_FLOAT);
- *    EET_DATA_DESCRIPTOR_ADD_BASIC(edd, Blah, "floating_lots", floating_lots, EET_T_DOUBLE);
- *    EET_DATA_DESCRIPTOR_ADD_BASIC(edd, Blah, "string", string, EET_T_STRING);
- *    EET_DATA_DESCRIPTOR_ADD_SUB(edd, Blah, "blah2", blah2, edd2);
- *    EET_DATA_DESCRIPTOR_ADD_LIST(edd, Blah, "blah3", blah3, edd3);
- *
- *    blah3.string = "PANTS";
- *
- *    blah2.string = "subtype string here!";
- *
- *    blah.character = '7';
- *    blah.sixteen = 0x7777;
- *    blah.integer = 0xc0def00d;
- *    blah.lots = 0xdeadbeef31337777;
- *    blah.floating = 3.141592654;
- *    blah.floating_lots = 0.777777777777777;
- *    blah.string = "bite me like a turnip";
- *    blah.blah2 = &blah2;
- *    blah.blah3 = eina_list_append(NULL, &blah3);
- *    blah.blah3 = eina_list_append(blah.blah3, &blah3);
- *    blah.blah3 = eina_list_append(blah.blah3, &blah3);
- *    blah.blah3 = eina_list_append(blah.blah3, &blah3);
- *    blah.blah3 = eina_list_append(blah.blah3, &blah3);
- *    blah.blah3 = eina_list_append(blah.blah3, &blah3);
- *    blah.blah3 = eina_list_append(blah.blah3, &blah3);
- *
- *    data = eet_data_descriptor_encode(edd, &blah, &size);
- *    printf("-----DECODING\n");
- *    blah_in = eet_data_descriptor_decode(edd, data, size);
- *
- *    printf("-----DECODED!\n");
- *    printf("%c\n", blah_in->character);
- *    printf("%x\n", (int)blah_in->sixteen);
- *    printf("%x\n", blah_in->integer);
- *    printf("%lx\n", blah_in->lots);
- *    printf("%f\n", (double)blah_in->floating);
- *    printf("%f\n", (double)blah_in->floating_lots);
- *    printf("%s\n", blah_in->string);
- *    printf("%p\n", blah_in->blah2);
- *    printf("  %s\n", blah_in->blah2->string);
- *      {
- *         Eina_List *l;
- *         Blah3 *blah3_in;
- *
- *         EINA_LIST_FOREACH(blah_in->blah3, l, blah3_in)
- *           {
- *              printf("%p\n", blah3_in);
- *              printf("  %s\n", blah3_in->string);
- *           }
- *      }
- *    eet_data_descriptor_free(edd);
- *    eet_data_descriptor_free(edd2);
- *    eet_data_descriptor_free(edd3);
- *
- *    eet_shutdown();
- *
- *   return 0;
+ *    ...
+ *    my_desc = eet_data_descriptor_stream_new(&eddc);
+ *    EET_DATA_DESCRIPTOR_ADD_BASIC(my_desc, some_struct, "a_number",
+ *                                  a_number, EET_T_INT);
+ *    EET_DATA_DESCRIPTOR_ADD_BASIC(my_desc, some_struct, "a_string",
+ *                                  a_string, EET_T_STRING);
+ *    EET_DATA_DESCRIPTOR_ADD_BASIC(my_desc, some_struct, "sub.other_num",
+ *                                  sub.other_num, EET_T_INT);
+ *    EET_DATA_DESCRIPTOR_ADD_BASIC(my_desc, some_struct, "sub.one_more",
+ *                                  sub.one_more", EET_T_INT);
+ *    ...
  * }
  * @endcode
  *
+ * But this is not what we are here for today. When we talk about nested
+ * structures, what we really want are things like lists and hashes to be
+ * taken into consideration automatically, and all their contents saved and
+ * loaded just like ordinary integers and strings are.
+ *
+ * And of course, Eet can do that, and considering the work it saves you as a
+ * programmer, we could say it's even easier to do than handling just integers.
+ *
+ * Let's begin with our example then, which is not all too different from the
+ * simple one introduced earlier.
+ *
+ * We won't ignore the headers this time to show how easy it is to use Eina
+ * data types with Eet, but we'll still skip most of the code that is not
+ * pertinent to what we want to show now, but as usual, you can get it full
+ * by follwing @ref eet-data-nested.c "this link".
+ *
+ * @dontinclude eet-data-nested.c
+ * @skipline Eina.h
+ * @skipline Eet.h
+ * @skip typedef struct
+ * @until } My_Conf_Subtype
+ *
+ * Extremely similar to our previous example. Just a new struct in there, and
+ * a pointer to a list in the one we already had. Handling a list of subtypes
+ * is easy on our program, but now we'll see what Eet needs to work with them
+ * (Hint: it's easy too).
+ * @skip _my_conf_descriptor
+ * @until _my_conf_sub_descriptor
+ *
+ * Since we have two structures now, it's only natural that we'll need two
+ * descriptors. One for each, which will be defined exactly as before.
+ * @skip static void
+ * @until eddc
+ * @skip EET_EINA_STREAM_DATA_DESCRIPTOR_CLASS_SET
+ * @until _my_conf_sub_descriptor
+ *
+ * We create our descriptors, each for one type, and as before, we are going to
+ * use a simple macro to set their contents, to save on typing.
+ * @skip #define
+ * @until EET_T_UCHAR
+ *
+ * So far, nothing new. We have our descriptors and we know already how to
+ * save them separately. But what we want is to link them together, and even
+ * more so, we want our main type to hold a list of more than one of the new
+ * sub type. So how do we do that?
+ *
+ * Simple enough, we tell Eet that our main descriptor will hold a list, of
+ * which each node will point to some type described by our new descriptor.
+ * @skip EET_DATA_DESCRIPTOR_ADD_LIST
+ * @until _my_conf_sub_descriptor
+ *
+ * And that's all. We are closing the function now so as to not leave dangling
+ * curly braces, but there's nothing more to show in this example. Only other
+ * additions are the necessary code to free our new data, but you can see it
+ * in the full code listing.
+ * @until }
+ */
+
+/**
+ * @page eet_data_file_descriptor Advanced use of Eet Data Descriptors
+ *
+ * A real life example is usually the best way to see how things are used,
+ * but they also involve a lot more code than what needs to be shown, so
+ * instead of going that way, we'll be borrowing some pieces from one in
+ * the following example. It's been slightly modified from the original
+ * source to show more of the varied ways in which Eet can handle our data.
+ *
+ * @ref eet-data-file_descriptor.c "This example" shows a cache of user
+ * accounts and messages received, and it's a bit more interactive than
+ * previous examples.
+ *
+ * Let's begin by looking at the structures we'll be using. First we have
+ * one to define the messages the user receives and one for the one he posts.
+ * Straight forward and nothing new here.
+ * @dontinclude eet-data-file_descriptor.c
+ * @skip typedef
+ * @until My_Post
+ *
+ * One more to declare the account itself. This one will contain a list of
+ * all messages received, and the posts we make ourselves will be kept in an
+ * array. No special reason other than to show how to use arrays with Eet.
+ * @until My_Account
+ *
+ * Finally, the main structure to hold our cache of accounts. We'll be looking
+ * for these accounts by their names, so let's keep them in a hash, using
+ * that name as the key.
+ * @until My_Cache
+ *
+ * As explained before, we need one descriptor for each struct we want Eet
+ * to handle, but this time we also want to keep around our Eet file and its
+ * string dictionary. You will see why in a moment.
+ * @skip Eet_Data_Descriptor
+ * @until _my_post_descriptor
+ * @skip Eet_File
+ * @until Eet_Dictionary
+ *
+ * The differences begin now. They aren't much, but we'll be creating our
+ * descriptors differently. Things can be added to our cache, but we won't
+ * be modifying the current contents, so we can consider the data read from
+ * it to be read-only, and thus allow Eet to save time and memory by not
+ * duplicating thins unnecessary.
+ * @skip static void
+ * @until _my_post_descriptor
+ *
+ * As the comment in the code explains, we are asking Eet to give us strings
+ * directly from the mapped file, which avoids having to load it in memory
+ * and data duplication.
+ * Of course, there are things to take into account when doing things this
+ * way, and they will be mentioned as we encounter those special cases.
+ *
+ * Next comes the actual description of our data, just like we did in the
+ * previous examples.
+ * @skip #define
+ * @until #undef
+ * @until #define
+ * @until #undef
+ *
+ * And the account struct's description doesn't add much new, but it's worth
+ * commenting on it.
+ * @skip #define
+ * @until _my_post_descriptor
+ *
+ * How to add a list we've seen before, but now we are also adding an array.
+ * There's nothing really special about it, but it's important to note that
+ * the EET_DATA_DESCRIPTOR_ADD_VAR_ARRAY is used to add arrays of variable
+ * length to a descriptor. That is, arrays just like the one we defined.
+ * Since there's no way in C to know how long they are, we need to keep
+ * track of the count ourselves and Eet needs to know how to do so as well.
+ * That's what the @p posts_count member of our struct is for. When adding
+ * our array member, this macro will look for another variable in the struct
+ * named just like the array, but with @p _count attached to the end.
+ * When saving our data, Eet will know how many elements the array contains
+ * by looking into this count variable. When loading back from a file, this
+ * variable will be set to the right number of elements.
+ *
+ * Another option for arrays is to use EET_DATA_DESCRIPTOR_ADD_ARRAY, which
+ * takes care of fixed sized arrays.
+ * For example, let's suppose that we want to keep track of only the last
+ * ten posts the user sent, and we declare our account struct as follows
+ * @code
+ * typedef struct
+ * {
+ *    unsigned int id;
+ *    const char  *name;
+ *    Eina_List   *messages;
+ *    My_Post      posts[10];
+ * } My_Account;
+ * @endcode
+ * Then we would add the array to our descriptor with
+ * @code
+ * EET_DATA_DESCRIPTOR_ADD_ARRAY(_my_account_descriptor, My_Account, "posts",
+ *                               posts, _my_post_descriptor);
+ * @endcode
+ *
+ * Notice how this time we don't have a @p posts_count variable in our struct.
+ * We could have it for the program to keep track of how many posts the
+ * array actually contains, but Eet no longer needs it. Being defined that
+ * way the array is already taking up all the memory needed for the ten
+ * elements, and it is possible in C to determine how much it is in code.
+ * When saving our data, Eet will just dump the entire memory blob into the
+ * file, regardless of how much of it is really used. So it's important to
+ * take into consideration this kind of things when defining your data types.
+ * Each has its uses, its advantages and disadvantages and it's up to you
+ * to decide which to use.
+ *
+ * Now, going back to our example, we have to finish adding our data to the
+ * descriptors. We are only missing the main one for the cache, which
+ * contains our hash of accounts.
+ * Unless you are using your own hash functions when setting the descriptor
+ * class, always use hashes with string type keys.
+ * @skip #define
+ * @until }
+ *
+ * If you remember, we told Eet not to duplicate memory when possible at the
+ * time of loading back our data. But this doesn't mean everything will be
+ * loaded straight from disk and we don't have to worry about freeing it.
+ * Data in the Eet file is compressed and encoded, so it still needs to be
+ * decoded and memory will be allocated to convert it back into something we
+ * can use. We also need to take care of anything we add in the current
+ * instance of the program.
+ * To summarize, any string we get from Eet is likely to be a pointer to the
+ * internal dictionary, and trying to free it will, in the best case, crash
+ * our application right away.
+ *
+ * So how do we know if we have to free a string? We check if it's part of
+ * the dictionary, and if it's not there we can be sure it's safe to get
+ * rid of it.
+ * @skip static void
+ * @skip }
+ * @skip static void
+ * @until }
+ *
+ * See how this is used when adding a new message to our cache.
+ * @skip static My_Message
+ * @until return msg
+ * @until free(msg)
+ * @until }
+ *
+ * Skipping all the utility functions used by our program (remember you can
+ * look at the full example @ref eet-data-file_descriptor.c "here") we get to
+ * our cache loading code. Nothing out of the ordinary at first, just the
+ * same old open file, read data using our main descriptor to decode it
+ * into something we can use and check version of loaded data and if it doesn't
+ * match, do something accordingly.
+ * @skip static My_Cache
+ * @until }
+ * @until }
+ * @until }
+ *
+ * Then comes the interesting part. Remember how we kept two more global
+ * variables with our descriptors? One of them we already used to check if
+ * it was right to free a string or not, but we didn't know where it came from.
+ * Loading our data straight from the mmapped file means that we can't close
+ * it until we are done using it, so we need to keep its handler around until
+ * then. It also means that any changes done to the file can, and will,
+ * invalidate all our pointers to the file backed data, so if we add something
+ * and save the file, we need to reload our cache.
+ *
+ * Thus our load function checks if we had an open file, if there is it gets
+ * closed and our variable is updated to the new handler. Then we get the
+ * string dictionary we use to check if a string is part of it or not.
+ * Updating any references to the cache data is up you as a programmer to
+ * handle properly, there's nothing Eet can do in this situation.
+ * @until }
+ *
+ * The save function doesn't have anything new, and all that's left after it
+ * is the main program, which doesn't really have anything of interest within
+ * the scope of what we are learning.
+ */
+
+/**
+ * @addtogroup Eet_Data_Group
  * @{
  */
 #define EET_T_UNKNOW         0 /**< Unknown data encoding type */
@@ -2030,6 +2373,13 @@ eet_identity_certificate_print(const unsigned char *certificate,
  *
  * Opaque handle that have information on a type members.
  *
+ * Descriptors are created using an #Eet_Data_Descriptor_Class, and they
+ * describe the contents of the structure that will be serialized by Eet.
+ * Not all members need be described by it, just those that should be handled
+ * by Eet. This way it's possible to have one structure with both data to be
+ * saved to a file, like application configuration, and runtime information
+ * that would be meaningless to store, but is appropriate to keep together
+ * during the program execution.
  * The members are added by means of
  * EET_DATA_DESCRIPTOR_ADD_BASIC(), EET_DATA_DESCRIPTOR_ADD_SUB(),
  * EET_DATA_DESCRIPTOR_ADD_LIST(), EET_DATA_DESCRIPTOR_ADD_HASH()
@@ -2083,15 +2433,19 @@ typedef void        (*Eet_Descriptor_Array_Free_Callback)(void *mem);
  * Instructs Eet about memory management for different needs under
  * serialization and parse process.
  *
- * If using Eina data types, it is advised to use the helpers
- * EET_EINA_STREAM_DATA_DESCRIPTOR_CLASS_SET() and
- * EET_EINA_FILE_DATA_DESCRIPTOR_CLASS_SET().
+ * The list and hash methods match the Eina API, so for a more detalied
+ * reference on them, look at the Eina_List and Eina_Hash documentation,
+ * respectively.
+ * For the most part these will be used with the standard Eina functions,
+ * so using EET_EINA_STREAM_DATA_DESCRIPTOR_CLASS_SET() and
+ * EET_EINA_FILE_DATA_DESCRIPTOR_CLASS_SET() will set up everything
+ * accordingly.
  */
 struct _Eet_Data_Descriptor_Class
 {
-   int         version;  /**< ABI version as #EET_DATA_DESCRIPTOR_CLASS_VERSION */
-   const char *name;  /**< Name of data type to be serialized */
-   int         size;  /**< Size in bytes of data type to be serialized */
+   int         version;  /**< ABI version. Should always be set to #EET_DATA_DESCRIPTOR_CLASS_VERSION */
+   const char *name;  /**< Name of the user data type to be serialized */
+   int         size;  /**< Size in bytes of the user data type to be serialized */
    struct {
      Eet_Descriptor_Mem_Alloc_Callback mem_alloc; /**< how to allocate memory (usually malloc()) */
      Eet_Descriptor_Mem_Free_Callback mem_free; /**< how to free memory (usually free()) */
@@ -2102,12 +2456,12 @@ struct _Eet_Data_Descriptor_Class
      Eet_Descriptor_List_Data_Callback list_data; /**< retrieves the data from node @p l */
      Eet_Descriptor_List_Free_Callback list_free; /**< free all the nodes from the list which head node is @p l */
      Eet_Descriptor_Hash_Foreach_Callback hash_foreach; /**< iterates over all elements in the hash @p h in no specific order */
-     Eet_Descriptor_Hash_Add_Callback hash_add; /**< add a new data @p d as key @p k in hash @p h */
+     Eet_Descriptor_Hash_Add_Callback hash_add; /**< add a new data @p d with key @p k in hash @p h */
      Eet_Descriptor_Hash_Free_Callback hash_free; /**< free all entries from the hash @p h */
      Eet_Descriptor_Str_Direct_Alloc_Callback str_direct_alloc; /**< how to allocate a string directly from file backed/mmaped region pointed by @p str */
      Eet_Descriptor_Str_Direct_Free_Callback str_direct_free; /**< how to free a string returned by str_direct_alloc */
-     Eet_Descriptor_Type_Get_Callback type_get; /**< convert any kind of data type to a name that define an Eet_Data_Element. */
-     Eet_Descriptor_Type_Set_Callback type_set; /**< set the type at a particular address */
+     Eet_Descriptor_Type_Get_Callback type_get; /**< get the type, as used in the union or variant mapping, that should be used to store the given data into the eet file. */
+     Eet_Descriptor_Type_Set_Callback type_set; /**< called when loading a mapped type with the given @p type used to describe the type in the descriptor */
      Eet_Descriptor_Array_Alloc_Callback array_alloc; /**< how to allocate memory for array (usually malloc()) */
      Eet_Descriptor_Array_Free_Callback array_free; /**< how to free memory for array (usually free()) */
    } func;
@@ -2178,24 +2532,24 @@ EINA_DEPRECATED EAPI Eet_Data_Descriptor *
 eet_data_descriptor3_new(const Eet_Data_Descriptor_Class *eddc);
 
 /**
- * This function creates a new data descriptore and returns a handle to the
+ * This function creates a new data descriptor and returns a handle to the
  * new data descriptor. On creation it will be empty, containing no contents
  * describing anything other than the shell of the data structure.
- * @param eddc The data descriptor to free.
+ * @param eddc The class from where to create the data descriptor.
  *
  * You add structure members to the data descriptor using the macros
  * EET_DATA_DESCRIPTOR_ADD_BASIC(), EET_DATA_DESCRIPTOR_ADD_SUB() and
  * EET_DATA_DESCRIPTOR_ADD_LIST(), depending on what type of member you are
  * adding to the description.
  *
- * Once you have described all the members of a struct you want loaded, or
- * saved eet can load and save those members for you, encode them into
+ * Once you have described all the members of a struct you want loaded or
+ * savedi, eet can load and save those members for you, encode them into
  * endian-independent serialised data chunks for transmission across a
  * a network or more.
  *
- * This function specially ignore str_direct_alloc and str_direct_free. It
- * is useful when the eet_data you are reading don't have a dictionnary
- * like network stream or ipc. It also mean that all string will be allocated
+ * This function specially ignores str_direct_alloc and str_direct_free. It
+ * is useful when the eet_data you are reading doesn't have a dictionnary,
+ * like network stream or IPC. It also mean that all string will be allocated
  * and duplicated in memory.
  *
  * @since 1.2.3
@@ -2205,28 +2559,47 @@ EAPI Eet_Data_Descriptor *
 eet_data_descriptor_stream_new(const Eet_Data_Descriptor_Class *eddc);
 
 /**
- * This function creates a new data descriptore and returns a handle to the
+ * This function creates a new data descriptor and returns a handle to the
  * new data descriptor. On creation it will be empty, containing no contents
  * describing anything other than the shell of the data structure.
- * @param eddc The data descriptor to free.
+ * @param eddc The class from where to create the data descriptor.
  *
  * You add structure members to the data descriptor using the macros
  * EET_DATA_DESCRIPTOR_ADD_BASIC(), EET_DATA_DESCRIPTOR_ADD_SUB() and
  * EET_DATA_DESCRIPTOR_ADD_LIST(), depending on what type of member you are
  * adding to the description.
  *
- * Once you have described all the members of a struct you want loaded, or
- * saved eet can load and save those members for you, encode them into
+ * Once you have described all the members of a struct you want loaded or
+ * savedi, eet can load and save those members for you, encode them into
  * endian-independent serialised data chunks for transmission across a
  * a network or more.
  *
- * This function use str_direct_alloc and str_direct_free. It is
+ * This function uses str_direct_alloc and str_direct_free. It is
  * useful when the eet_data you are reading come from a file and
- * have a dictionnary. This will reduce memory use, improve the
- * possibility for the OS to page this string out. But be carrefull
- * all EET_T_STRING are pointer to a mmapped area and it will point
- * to nowhere if you close the file. So as long as you use this
- * strings, you need to have the Eet_File open.
+ * have a dictionary. This will reduce memory use and improve the
+ * possibility for the OS to page this string out.
+ * However, the load speed and memory saving comes with some drawbacks to keep
+ * in mind. If you never modify the contents of the structures loaded from
+ * the file, all you need to remember is that closing the eet file will make
+ * the strings go away. On the other hand, should you need to free a string,
+ * before doing so you have to verify that it's not part of the eet dictionary.
+ * You can do this in the following way, assuming @p ef is a valid Eet_File
+ * and @p str is a string loaded from said file.
+ *
+ * @code
+ * void eet_string_free(Eet_File *ef, const char *str)
+ * {
+ *    Eet_Dictionary *dict = eet_dictionary_get(ef);
+ *    if (dict && eet_dictionary_string_check(dict, str))
+ *      {
+ *         // The file contains a dictionary and the given string is a part of
+ *         // of it, so we can't free it, just return.
+ *         return;
+ *      }
+ *    // We assume eina_stringshare was used on the descriptor
+ *    eina_stringshare_del(str);
+ * }
+ * @endcode
  *
  * @since 1.2.3
  * @ingroup Eet_Data_Group
@@ -2235,16 +2608,19 @@ EAPI Eet_Data_Descriptor *
 eet_data_descriptor_file_new(const Eet_Data_Descriptor_Class *eddc);
 
 /**
- * This function is an helper that set all the parameter of an
+ * This function is an helper that set all the parameters of an
  * Eet_Data_Descriptor_Class correctly when you use Eina data type
  * with a stream.
  * @param eddc The Eet_Data_Descriptor_Class you want to set.
- * @param name The name of the structure described by this class.
  * @param eddc_size The size of the Eet_Data_Descriptor_Class at the compilation time.
+ * @param name The name of the structure described by this class.
  * @param size The size of the structure described by this class.
  * @return EINA_TRUE if the structure was correctly set (The only
  *         reason that could make it fail is if you did give wrong
  *         parameter).
+ *
+ * @note Unless there's a very specific reason to use this function directly,
+ * the EET_EINA_STREAM_DATA_DESCRIPTOR_CLASS_SET macro is recommended.
  *
  * @since 1.2.3
  * @ingroup Eet_Data_Group
@@ -2265,6 +2641,7 @@ eet_eina_stream_data_descriptor_class_set(Eet_Data_Descriptor_Class *eddc,
  *         reason that could make it fail is if you did give wrong
  *         parameter).
  *
+ * @see eet_data_descriptor_stream_new
  * @since 1.2.3
  * @ingroup Eet_Data_Group
  */
@@ -2282,6 +2659,9 @@ eet_eina_stream_data_descriptor_class_set(Eet_Data_Descriptor_Class *eddc,
  * @return EINA_TRUE if the structure was correctly set (The only
  *         reason that could make it fail is if you did give wrong
  *         parameter).
+ *
+ * @note Unless there's a very specific reason to use this function directly,
+ * the EET_EINA_FILE_DATA_DESCRIPTOR_CLASS_SET macro is recommended.
  *
  * @since 1.2.3
  * @ingroup Eet_Data_Group
@@ -2302,6 +2682,7 @@ eet_eina_file_data_descriptor_class_set(Eet_Data_Descriptor_Class *eddc,
  *         reason that could make it fail is if you did give wrong
  *         parameter).
  *
+ * @see eet_data_descriptor_file_new
  * @since 1.2.3
  * @ingroup Eet_Data_Group
  */
@@ -2401,7 +2782,9 @@ eet_data_read(Eet_File            *ef,
  * @return bytes written on successful write, 0 on failure.
  *
  * This function is the reverse of eet_data_read(), saving a data structure
- * to an eet file.
+ * to an eet file. The file must have been opening in write mode and the data
+ * will be kept in memory until the file is either closed or eet_sync() is
+ * called to flush any unwritten changes.
  *
  * @see eet_data_write_cipher()
  *
@@ -2633,10 +3016,9 @@ eet_data_descriptor_encode(Eet_Data_Descriptor *edd,
  * my_struct). The @p name parameter defines a string that will be
  * used to uniquely name that member of the struct (it is suggested
  * to use the struct member itself).  The @p member parameter is
- * the actual struct member itself (for eet_dictionary_string_check
- * example: values), and @p type is the basic data type of the
- * member which must be one of: EET_T_CHAR, EET_T_SHORT, EET_T_INT,
- * EET_T_LONG_LONG, EET_T_FLOAT, EET_T_DOUBLE, EET_T_UCHAR,
+ * the actual struct member itself (for example: values), and @p type is the
+ * basic data type of the member which must be one of: EET_T_CHAR, EET_T_SHORT,
+ * EET_T_INT, EET_T_LONG_LONG, EET_T_FLOAT, EET_T_DOUBLE, EET_T_UCHAR,
  * EET_T_USHORT, EET_T_UINT, EET_T_ULONG_LONG or EET_T_STRING.
  *
  * @since 1.0.0
@@ -2740,6 +3122,7 @@ eet_data_descriptor_encode(Eet_Data_Descriptor *edd,
  * parameters are the same as for EET_DATA_DESCRIPTOR_ADD_BASIC(), with the
  * @p subtype being the exception. This must be the data descriptor of the
  * element that is in each member of the hash to be stored.
+ * The hash keys must be strings.
  *
  * @since 1.0.0
  * @ingroup Eet_Data_Group
@@ -2761,8 +3144,8 @@ eet_data_descriptor_encode(Eet_Data_Descriptor *edd,
  *        (must be a constant global and never change).
  * @param member The struct member itself to be encoded.
  *
- * This macro lets you easily add a hash of string. All the
- * parameters are the same as for EET_DATA_DESCRIPTOR_ADD_BASIC().
+ * This macro lets you easily add a hash of string elements. All the
+ * parameters are the same as for EET_DATA_DESCRIPTOR_ADD_HASH().
  *
  * @since 1.3.4
  * @ingroup Eet_Data_Group
@@ -2789,7 +3172,9 @@ eet_data_descriptor_encode(Eet_Data_Descriptor *edd,
  * types. All the parameters are the same as for
  * EET_DATA_DESCRIPTOR_ADD_BASIC(), with the @p subtype being the
  * exception. This must be the data descriptor of the element that
- * is in each member of the hash to be stored.
+ * is in each member of the array to be stored.
+ * The array must be defined with a fixed size in the declaration of the
+ * struct containing it.
  *
  * @since 1.0.2
  * @ingroup Eet_Data_Group
@@ -2813,11 +3198,11 @@ eet_data_descriptor_encode(Eet_Data_Descriptor *edd,
  * @param member The struct member itself to be encoded.
  * @param subtype The type of hash member to add.
  *
- * This macro lets you easily add a fixed size array of other data
+ * This macro lets you easily add a variable size array of other data
  * types. All the parameters are the same as for
  * EET_DATA_DESCRIPTOR_ADD_BASIC(), with the @p subtype being the
  * exception. This must be the data descriptor of the element that
- * is in each member of the hash to be stored. This assumes you have
+ * is in each member of the array to be stored. This assumes you have
  * a struct member (of type EET_T_INT) called member_count (note the
  * _count appended to the member) that holds the number of items in
  * the array. This array will be allocated separately to the struct it
@@ -2849,7 +3234,7 @@ eet_data_descriptor_encode(Eet_Data_Descriptor *edd,
  *        (must be a constant global and never change).
  * @param member The struct member itself to be encoded.
  *
- * This macro lets you easily add a fixed size array of string. All
+ * This macro lets you easily add a variable size array of strings. All
  * the parameters are the same as for EET_DATA_DESCRIPTOR_ADD_BASIC().
  *
  * @since 1.4.0

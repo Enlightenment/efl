@@ -1,3 +1,6 @@
+/*
+ * build: gcc -o eet_data_simple eet-data-simple.c `pkg-config --cflags --libs eet eina`
+ */
 #include <Eina.h>
 #include <Eet.h>
 #include <stdio.h>
