@@ -2859,7 +2859,7 @@ EAPI Eina_Bool         evas_object_focus_get             (const Evas_Object *obj
  *
  * It is not possible to change the layer of a smart object's child.
  *
- * @param   obj The given evas object.
+ * @param   obj The given Evas object.
  * @param   l   The number of the layer to place the object on.
  *          Between #EVAS_LAYER_MIN and #EVAS_LAYER_MAX.
  */
@@ -3248,7 +3248,7 @@ EAPI void              evas_object_stack_above           (Evas_Object *obj, Evas
 EAPI void              evas_object_stack_below           (Evas_Object *obj, Evas_Object *below) EINA_ARG_NONNULL(1, 2);
 
 /**
- * Get the evas object above @p obj
+ * Get the Evas object above @p obj
  *
  * @param obj an Evas_Object
  * @return the Evas_Object directly above
@@ -3256,7 +3256,7 @@ EAPI void              evas_object_stack_below           (Evas_Object *obj, Evas
 EAPI Evas_Object      *evas_object_above_get             (const Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
 
 /**
- * Get the evas object below @p obj
+ * Get the Evas object below @p obj
  *
  * @param obj an Evas_Object
  * @return the Evas_Object directly below
@@ -3516,7 +3516,7 @@ EAPI void             *evas_object_event_callback_del_full(Evas_Object *obj, Eva
 
 /**
  * Set an object's pass events state.
- * @param obj the evas object
+ * @param obj the Evas object
  * @param pass whether to pass events or not
  *
  * If @p pass is true, this will cause events on @p obj to be ignored.
@@ -3932,7 +3932,7 @@ EAPI Eina_Bool         evas_map_util_clockwise_get                   (Evas_Map *
 
 
 /**
- * Create map of transformation points to be later used with an evas object.
+ * Create map of transformation points to be later used with an Evas object.
  *
  * This creates a set of points (currently only 4 is supported. no other
  * number for @p count will work). That is empty and ready to be modified
@@ -4162,7 +4162,7 @@ EAPI void              evas_map_point_color_get          (const Evas_Map *m, int
  * Note that if any of @p w or @p h are @c NULL, the @c NULL
  * parameters are ignored.
  *
- * @param obj The given evas object.
+ * @param obj The given Evas object.
  * @param   w Pointer to an integer in which to store the minimum width.
  * @param   h Pointer to an integer in which to store the minimum height.
  */
@@ -4176,7 +4176,7 @@ EAPI void              evas_object_size_hint_min_get     (const Evas_Object *obj
  *
  * Value 0 is considered unset.
  *
- * @param obj The given evas object.
+ * @param obj The given Evas object.
  * @param   w Integer to use as the minimum width hint.
  * @param   h Integer to use as the minimum height hint.
  */
@@ -4191,7 +4191,7 @@ EAPI void              evas_object_size_hint_min_set     (Evas_Object *obj, Evas
  * Note that if any of @p w or @p h are @c NULL, the @c NULL
  * parameters are ignored.
  *
- * @param obj The given evas object.
+ * @param obj The given Evas object.
  * @param   w Pointer to an integer in which to store the maximum width.
  * @param   h Pointer to an integer in which to store the maximum height.
  */
@@ -4205,7 +4205,7 @@ EAPI void              evas_object_size_hint_max_get     (const Evas_Object *obj
  *
  * Value -1 is considered unset.
  *
- * @param obj The given evas object.
+ * @param obj The given Evas object.
  * @param   w Integer to use as the maximum width hint.
  * @param   h Integer to use as the maximum height hint.
  */
@@ -4220,7 +4220,7 @@ EAPI void              evas_object_size_hint_max_set     (Evas_Object *obj, Evas
  * Note that if any of @p w or @p h are @c NULL, the @c NULL
  * parameters are ignored.
  *
- * @param obj The given evas object.
+ * @param obj The given Evas object.
  * @param   w Pointer to an integer in which to store the requested width.
  * @param   h Pointer to an integer in which to store the requested height.
  */
@@ -4234,7 +4234,7 @@ EAPI void              evas_object_size_hint_request_get (const Evas_Object *obj
  *
  * Value 0 is considered unset.
  *
- * @param obj The given evas object.
+ * @param obj The given Evas object.
  * @param   w Integer to use as the preferred width hint.
  * @param   h Integer to use as the preferred height hint.
  */
@@ -4249,7 +4249,7 @@ EAPI void              evas_object_size_hint_request_set (Evas_Object *obj, Evas
  * Note that if any of @p aspect, @p w or @p h are @c NULL, the @c NULL
  * parameters are ignored.
  *
- * @param    obj The given evas object.
+ * @param    obj The given Evas object.
  * @param aspect Returns the hint on how size should be calculated.
  * @param      w Pointer to an integer in which to store the aspect width.
  * @param      h Pointer to an integer in which to store the aspect height.
@@ -4262,7 +4262,7 @@ EAPI void              evas_object_size_hint_aspect_get  (const Evas_Object *obj
  * This is not a size enforcement in any way, it's just a hint that should
  * be used whenever appropriate.
  *
- * @param    obj The given evas object.
+ * @param    obj The given Evas object.
  * @param aspect Hint on how to calculate size.
  * @param      w Integer to use as aspect width hint.
  * @param      h Integer to use as aspect height hint.
@@ -4278,7 +4278,7 @@ EAPI void              evas_object_size_hint_aspect_set  (Evas_Object *obj, Evas
  * Note that if any of @p x or @p y are @c NULL, the @c NULL
  * parameters are ignored.
  *
- * @param    obj The given evas object.
+ * @param    obj The given Evas object.
  * @param      x Pointer to a double in which to store the align x.
  * @param      y Pointer to a double in which to store the align y.
  */
@@ -4294,7 +4294,7 @@ EAPI void              evas_object_size_hint_align_get   (const Evas_Object *obj
  * -1.0 used to specify "justify" or "fill" by some users. See
  * documentation of possible users.
  *
- * @param    obj The given evas object.
+ * @param    obj The given Evas object.
  * @param      x Double (0.0..1.0 or -1.0) to use as align x hint.
  * @param      y Double (0.0..1.0 or -1.0) to use as align y hint.
  */
@@ -4313,7 +4313,7 @@ EAPI void              evas_object_size_hint_align_set   (Evas_Object *obj, doub
  * this hint as a boolean, but some might consider it as a proportion,
  * see documentation of possible users.
  *
- * @param    obj The given evas object.
+ * @param    obj The given Evas object.
  * @param      x Pointer to a double in which to store the weight x.
  * @param      y Pointer to a double in which to store the weight y.
  */
@@ -4325,7 +4325,7 @@ EAPI void              evas_object_size_hint_weight_get  (const Evas_Object *obj
  * This is not a size enforcement in any way, it's just a hint that should
  * be used whenever appropriate.
  *
- * @param    obj The given evas object.
+ * @param    obj The given Evas object.
  * @param      x Double (0.0-1.0) to use as weight x hint.
  * @param      y Double (0.0-1.0) to use as weight y hint.
  */
@@ -4340,7 +4340,7 @@ EAPI void              evas_object_size_hint_weight_set  (Evas_Object *obj, doub
  * Note that if any of @p l, @p r, @p t or @p b are @c NULL, the @c
  * NULL parameters are ignored.
  *
- * @param    obj The given evas object.
+ * @param    obj The given Evas object.
  * @param      l Pointer to an integer in which to store left padding.
  * @param      r Pointer to an integer in which to store right padding.
  * @param      t Pointer to an integer in which to store top padding.
@@ -4354,7 +4354,7 @@ EAPI void              evas_object_size_hint_padding_get (const Evas_Object *obj
  * This is not a size enforcement in any way, it's just a hint that should
  * be used whenever appropriate.
  *
- * @param    obj The given evas object.
+ * @param    obj The given Evas object.
  * @param      l Integer to specify left padding.
  * @param      r Integer to specify right padding.
  * @param      t Integer to specify top padding.
@@ -4503,17 +4503,17 @@ EAPI Evas_Object_Pointer_Mode  evas_object_pointer_mode_get     (const Evas_Obje
 
 
 /**
- * Sets whether or not the given evas object is to be drawn anti-aliased.
+ * Sets whether or not the given Evas object is to be drawn anti-aliased.
  *
- * @param   obj The given evas object.
+ * @param   obj The given Evas object.
  * @param   anti_alias 1 if the object is to be anti_aliased, 0 otherwise.
  * @ingroup Evas_Object_Group_Extras
  */
 EAPI void                      evas_object_anti_alias_set       (Evas_Object *obj, Eina_Bool antialias) EINA_ARG_NONNULL(1);
 
 /**
- * Retrieves whether or not the given evas object is to be drawn anti_aliased.
- * @param   obj The given evas object.
+ * Retrieves whether or not the given Evas object is to be drawn anti_aliased.
+ * @param   obj The given Evas object.
  * @return  @c 1 if the object is to be anti_aliased.  @c 0 otherwise.
  * @ingroup Evas_Object_Group_Extras
  */
@@ -4550,16 +4550,16 @@ EAPI double                    evas_object_scale_get            (const Evas_Obje
 
 
 /**
- * Sets the render_op to be used for rendering the evas object.
- * @param   obj The given evas object.
+ * Sets the render_op to be used for rendering the Evas object.
+ * @param   obj The given Evas object.
  * @param   render_op one of the Evas_Render_Op values.
  * @ingroup Evas_Object_Group_Extras
  */
 EAPI void                      evas_object_render_op_set        (Evas_Object *obj, Evas_Render_Op op) EINA_ARG_NONNULL(1);
 
 /**
- * Retrieves the current value of the operation used for rendering the evas object.
- * @param   obj The given evas object.
+ * Retrieves the current value of the operation used for rendering the Evas object.
+ * @param   obj The given Evas object.
  * @return  one of the enumerated values in Evas_Render_Op.
  * @ingroup Evas_Object_Group_Extras
  */
@@ -4628,7 +4628,7 @@ EAPI Evas_Object      *evas_focus_get                    (const Evas *e) EINA_WA
  * Retrieves the object on the given evas with the given name.
  * @param   e    The given evas.
  * @param   name The given name.
- * @return  If successful, the evas object with the given name.  Otherwise,
+ * @return  If successful, the Evas object with the given name.  Otherwise,
  *          @c NULL.
  * @ingroup Evas_Object_Group_Find
  */
@@ -4637,34 +4637,34 @@ EAPI Evas_Object      *evas_object_name_find             (const Evas *e, const c
 
 /**
  * Retrieves the top object at the given position (x,y)
- * @param   e The given evas object.
+ * @param   e The given Evas object.
  * @param   x The horizontal coordinate
  * @param   y The vertical coordinate
  * @param   include_pass_events_objects Boolean Flag to include or not
  * pass events objects
  * @param   include_hidden_objects Boolean Flag to include or not hidden objects
- * @return  The evas object that is over all others objects at the given position.
+ * @return  The Evas object that is over all others objects at the given position.
  */
 EAPI Evas_Object      *evas_object_top_at_xy_get         (const Evas *e, Evas_Coord x, Evas_Coord y, Eina_Bool include_pass_events_objects, Eina_Bool include_hidden_objects) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
 
 /**
  * Retrieves the top object at mouse pointer position
- * @param   e The given evas object.
- * @return The evas object that is over all others objects at the
+ * @param   e The given Evas object.
+ * @return The Evas object that is over all others objects at the
  * pointer position.
  */
 EAPI Evas_Object      *evas_object_top_at_pointer_get    (const Evas *e) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
 
 /**
  * Retrieves the top object in the given rectangle region
- * @param   e The given evas object.
+ * @param   e The given Evas object.
  * @param   x The horizontal coordinate.
  * @param   y The vertical coordinate.
  * @param   w The width size.
  * @param   h The height size.
  * @param   include_pass_events_objects Boolean Flag to include or not pass events objects
  * @param   include_hidden_objects Boolean Flag to include or not hidden objects
- * @return  The evas object that is over all others objects at the pointer position.
+ * @return  The Evas object that is over all others objects at the pointer position.
  *
  */
 EAPI Evas_Object      *evas_object_top_in_rectangle_get  (const Evas *e, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h, Eina_Bool include_pass_events_objects, Eina_Bool include_hidden_objects) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
@@ -4672,13 +4672,13 @@ EAPI Evas_Object      *evas_object_top_in_rectangle_get  (const Evas *e, Evas_Co
 
 /**
  * Retrieves the objects at the given position
- * @param   e The given evas object.
+ * @param   e The given Evas object.
  * @param   x The horizontal coordinate.
  * @param   y The vertical coordinate.
  * @param include_pass_events_objects Boolean Flag to include or not
  * pass events objects
  * @param   include_hidden_objects Boolean Flag to include or not hidden objects
- * @return  The list of evas objects at the pointer position.
+ * @return  The list of Evas objects at the pointer position.
  *
  */
 EAPI Eina_List        *evas_objects_at_xy_get            (const Evas *e, Evas_Coord x, Evas_Coord y, Eina_Bool include_pass_events_objects, Eina_Bool include_hidden_objects) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
@@ -4686,7 +4686,7 @@ EAPI Eina_List        *evas_objects_at_xy_get            (const Evas *e, Evas_Co
 
 
 /**
- * Get the lowest evas object on the Evas @p e
+ * Get the lowest Evas object on the Evas @p e
  *
  * @param e an Evas
  * @return the lowest object
@@ -4694,7 +4694,7 @@ EAPI Eina_List        *evas_objects_at_xy_get            (const Evas *e, Evas_Co
 EAPI Evas_Object      *evas_object_bottom_get            (const Evas *e) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
 
 /**
- * Get the highest evas object on the Evas @p e
+ * Get the highest Evas object on the Evas @p e
  *
  * @param e an Evas
  * @return the highest object
@@ -6031,7 +6031,7 @@ EAPI const char                  *evas_textblock_style_get(const Evas_Textblock_
 
 /**
  * Set the objects style to ts.
- * @param obj the evas object to set the style to.
+ * @param obj the Evas object to set the style to.
  * @param ts  the style to set.
  * @return Returns no value.
  */
@@ -6156,7 +6156,7 @@ EAPI void                         evas_object_textblock_text_markup_prepend(Evas
 /**
  * Return the markup of the object.
  *
- * @param obj the evas object.
+ * @param obj the Evas object.
  * @return the markup text of the object.
  */
 EAPI const char                  *evas_object_textblock_text_markup_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
@@ -6271,7 +6271,7 @@ EAPI const Evas_Object_Textblock_Node_Format *evas_textblock_node_format_prev_ge
  * Assumes the node is the first part of <tag> i.e, this won't work if
  * n is a closing tag.
  *
- * @param obj the evas object of the textblock - not null.
+ * @param obj the Evas object of the textblock - not null.
  * @param n the current format node - not null.
  */
 EAPI void                         evas_textblock_node_format_remove_pair(Evas_Object *obj, Evas_Object_Textblock_Node_Format *n) EINA_ARG_NONNULL(1, 2);
@@ -6673,7 +6673,7 @@ EAPI Eina_Bool                    evas_object_textblock_line_number_geometry_get
 
 /**
  * Clear the textblock object.
- * @note Does *NOT* free the evas object itself.
+ * @note Does *NOT* free the Evas object itself.
  *
  * @param obj the object to clear.
  * @return nothing.
@@ -6695,7 +6695,7 @@ EAPI void                         evas_object_textblock_clear(Evas_Object *obj) 
  * and a formatted size of 5x4.
  *
  *
- * @param obj the evas object.
+ * @param obj the Evas object.
  * @param w[out] the width of the object.
  * @param h[out] the height of the object
  * @return Returns no value.
@@ -6717,7 +6717,7 @@ EAPI void                         evas_object_textblock_size_formatted_get(const
  * 7x10 char widths (for simplicity) has a native size of 19x1
  * and a formatted size of 5x4.
  *
- * @param obj the evas object of the textblock
+ * @param obj the Evas object of the textblock
  * @param w[out] the width returned
  * @param h[out] the height returned
  * @return Returns no value.
@@ -7208,7 +7208,7 @@ EAPI int                              evas_smart_usage_get(const Evas_Smart *s);
  *
  * Functions dealing with evas smart objects (instances).
  *
- * Smart objects are groupings of primitive evas objects that behave as a
+ * Smart objects are groupings of primitive Evas objects that behave as a
  * cohesive group. For instance, a file manager icon may be a smart object
  * composed of an image object, a text label and two rectangles that appear
  * behind the image and text when the icon is selected. As a smart object,
@@ -7228,7 +7228,7 @@ EAPI int                              evas_smart_usage_get(const Evas_Smart *s);
 EAPI Evas_Object      *evas_object_smart_add             (Evas *e, Evas_Smart *s) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1, 2) EINA_MALLOC;
 
 /**
- * Set an evas object as a member of a smart object.
+ * Set an Evas object as a member of a smart object.
  *
  * @param obj The member object
  * @param smart_obj The smart object
@@ -7592,7 +7592,7 @@ EAPI const Evas_Smart_Class *evas_object_smart_clipped_class_get     (void) EINA
 /**
  * Moves all children objects relative to given offset.
  *
- * @param obj the smart evas object to use.
+ * @param obj the smart Evas object to use.
  * @param dx horizontal offset.
  * @param dy vertical offset.
  */
