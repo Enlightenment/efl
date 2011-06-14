@@ -185,7 +185,11 @@ _button_animation(void *data)
    double cur_position = 0.0, new_position = 0.0;
    double move_amount = 0.05;
    Eina_Bool flag_finish_animation = EINA_FALSE;
-   if (!wd) return EINA_FALSE;
+   if (!wd)
+     {
+        wd->button_animator = NULL;
+        return ECORE_CALLBACK_CANCEL;
+     }
 
    edje_object_part_drag_value_get(wd->as,
                                    "elm.drag_button_base", &cur_position, NULL);
@@ -231,9 +235,10 @@ _button_animation(void *data)
                  (wd->enabled_position & ELM_ACTIONSLIDER_RIGHT))
           evas_object_smart_callback_call(data, SIG_SELECTED,
                                           (void *)wd->text_right);
-        return EINA_FALSE;
+        wd->button_animator = NULL;
+        return ECORE_CALLBACK_CANCEL;
      }
-   return EINA_TRUE;
+   return ECORE_CALLBACK_RENEW;
 }
 
 static void
@@ -264,6 +269,8 @@ _drag_button_up_cb(void *data, Evas_Object *o __UNUSED__, const char *emission _
         wd->final_position = 0.5;
         evas_object_smart_callback_call(data, SIG_SELECTED,
                                         (void *)wd->text_center);
+        if (wd->button_animator) ecore_animator_del(wd->button_animator);
+        wd->button_animator = ecore_animator_add(_button_animation, data);
         return;
      }
    if ((wd->enabled_position & ELM_ACTIONSLIDER_RIGHT) &&
@@ -322,6 +329,7 @@ _drag_button_up_cb(void *data, Evas_Object *o __UNUSED__, const char *emission _
         else
           wd->final_position = _FINAL_POS_BY_ORIENTATION(0);
      }
+   if (wd->button_animator) ecore_animator_del(wd->button_animator);
    wd->button_animator = ecore_animator_add(_button_animation, data);
 
 #undef _FINAL_POS_BY_ORIENTATION
