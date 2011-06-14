@@ -2720,7 +2720,7 @@ EAPI void              evas_object_clip_set              (Evas_Object *obj, Evas
  *
  * @param obj The object to get the clipper from
  *
- * This function returns the the object clipping @p obj. If @p obj is
+ * This function returns the object clipping @p obj. If @p obj is
  * not being clipped at all, @c NULL is returned. The object @p obj
  * must be a valid ::Evas_Object.
  *
@@ -6235,7 +6235,7 @@ EAPI void                         evas_textblock_cursor_paragraph_first(Evas_Tex
 EAPI void                         evas_textblock_cursor_paragraph_last(Evas_Textblock_Cursor *cur) EINA_ARG_NONNULL(1);
 
 /**
- * Advances to the the start of the next text node
+ * Advances to the start of the next text node
  *
  * @param cur the cursor to update
  * @return #EINA_TRUE if it managed to advance a paragraph, #EINA_FALSE otherwise.
@@ -6243,7 +6243,7 @@ EAPI void                         evas_textblock_cursor_paragraph_last(Evas_Text
 EAPI Eina_Bool                    evas_textblock_cursor_paragraph_next(Evas_Textblock_Cursor *cur) EINA_ARG_NONNULL(1);
 
 /**
- * Advances to the the end of the previous text node
+ * Advances to the end of the previous text node
  *
  * @param cur the cursor to update
  * @return #EINA_TRUE if it managed to advance a paragraph, #EINA_FALSE otherwise.
@@ -7869,7 +7869,7 @@ EAPI Evas_Object               *evas_object_box_add_to                          
  * element is resizable, gives a *weight* for the resizing process.
  * The parent box will try to distribute (or take off) widths
  * accordingly to the *normalized* list of weigths: most weighted
- * children remain/get larger in this process than the the least ones.
+ * children remain/get larger in this process than the least ones.
  * @c weight_y does not influence the layout.
  *
  * If one desires that, besides having weights, child elements must be
