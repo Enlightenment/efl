@@ -2626,49 +2626,85 @@ EAPI const Eina_List  *evas_font_path_list               (const Evas *e) EINA_WA
 /**
  * @defgroup Evas_Object_Group Generic Object Functions
  *
- * Functions that manipulate generic evas objects.
+ * Functions that manipulate generic Evas objects.
+ *
+ * All Evas displaying units are Evas objects. One handles them all by
+ * means of the handle ::Evas_Object. Besides Evas treats their
+ * objects equally, they have <b>types</b>, which define their
+ * specific behavior (and individual API).
+ *
+ * Evas comes with a set of built-in object types:
+ *   - rectangle,
+ *   - line,
+ *   - polygon,
+ *   - text,
+ *   - textblock and
+ *   - image.
+ *
+ * These functions apply to <b>any</b> Evas object, whichever type
+ * thay may have.
+ *
+ * @note The built-in types which are most used are rectangles, text
+ * and images. In fact, with these ones one can create 2D interfaces
+ * of arbitrary complexity and EFL makes it easy.
  */
 
 /**
  * @defgroup Evas_Object_Group_Basic Basic Object Manipulation
  *
- * Methods that are often used, like those that change the color,
- * clippers and geometry of the object.
+ * Methods that are broadly used, like those that change the color,
+ * clippers and geometry of an Evas object.
  *
  * @ingroup Evas_Object_Group
  */
 
 /**
+ * @addtogroup Evas_Object_Group_Basic
+ * @{
+ */
+
+/**
  * Clip one object to another.
+ *
  * @param obj The object to be clipped
  * @param clip The object to clip @p obj by
  *
- * This function will clip the object @p obj to the area occupied by the
- * object @p clipper. This means the object @p obj will only be visible within
- * the area occupied by the clipping object (@p clip). The color of the object
- * being clipped will be multiplied by the color of the clipping object, so
- * the resulting color for the clipped object is
- * RESULT = (OBJ * CLIP) / (255 * 255) per color element (red, green, blue and
- * alpha). Clipping is recursive, so clip objects may be clipped by other
- * objects, and their color will in tern be multiplied. You may NOT set up
- * circular clipping lists (i.e. object 1 clips object 2 which clips object 1).
- * The behavior of Evas is undefined in this case. Objects which do not clip
- * others are visible as normal, those that clip 1 or more objects become
- * invisible themselves, only affecting what they clip. If an object ceases to
- * have other objects being clipped by it, it will become visible again. The
- * visibility of an object affects the objects that are clipped by it, so if
- * the object clipping others is not shown, the objects clipped will not be
- * shown either. If the object was being clipped by another object when this
- * function is called, it is implicitly removed from the clipper it is being
- * clipped to, and now is made to clip its new clipper.
+ * This function will clip the object @p obj to the area occupied by
+ * the object @p clip. This means the object @p obj will only be
+ * visible within the area occupied by the clipping object (@p clip).
  *
- * At the moment the only objects that can validly be used to clip other
- * objects are rectangle objects. All other object types are invalid and the
- * result of using them is undefined.
+ * The color of the object being clipped will be multiplied by the
+ * color of the clipping one, so the resulting color for the former
+ * will be <code>RESULT = (OBJ * CLIP) / (255 * 255)</code>, per color
+ * element (red, green, blue and alpha).
  *
- * The clip object @p clip must be a valid object, but may also be NULL in
- * which case the effect of this function is the same as calling
- * evas_object_clip_unset() on the @p obj object.
+ * Clipping is recursive, so clipping objects may be clipped by
+ * others, and their color will in term be multiplied. You may
+ * <b>not</b> set up circular clipping lists (i.e. object 1 clips
+ * object 2, which clips object 1): the behavior of Evas is undefined
+ * in this case.
+ *
+ * Objects which do not clip others are visible in the canvas as
+ * normal; <b>those that clip one or more objects become invisible
+ * themselves</b>, only affecting what they clip. If an object ceases
+ * to have other objects being clipped by it, it will become visible
+ * again.
+ *
+ * The visibility of an object affects the objects that are clipped by
+ * it, so if the object clipping others is not shown (as in
+ * evas_object_show()), the objects clipped by it will not be shown
+ * either.
+ *
+ * If @p obj was being clipped by another object when this function is
+ * called, it gets implicitly removed from the old clipper's domain
+ * and is made now to be clipped by its new clipper.
+ *
+ * @note At the moment the <b>only objects that can validly be used to
+ * clip other objects are rectangle objects</b>. All other object
+ * types are invalid and the result of using them is undefined. The
+ * clip object @p clip must be a valid object, but can also be @c
+ * NULL, in which case the effect of this function is the same as
+ * calling evas_object_clip_unset() on the @p obj object.
  *
  * Example:
  * @code
@@ -2683,16 +2719,17 @@ EAPI const Eina_List  *evas_font_path_list               (const Evas *e) EINA_WA
  * evas_object_clip_set(obj, clipper);
  * evas_object_show(clipper);
  * @endcode
- *
  */
 EAPI void              evas_object_clip_set              (Evas_Object *obj, Evas_Object *clip) EINA_ARG_NONNULL(1, 2);
 
 /**
- * Get the object clipping this one (if any).
+ * Get the object clipping @p obj (if any).
+ *
  * @param obj The object to get the clipper from
  *
- * This function returns the the object clipping @p obj. If @p obj not being
- * clipped, NULL is returned. The object @p obj must be a valid object.
+ * This function returns the the object clipping @p obj. If @p obj is
+ * not being clipped at all, @c NULL is returned. The object @p obj
+ * must be a valid ::Evas_Object.
  *
  * See also evas_object_clip_set(), evas_object_clip_unset() and
  * evas_object_clipees_get().
@@ -2710,13 +2747,14 @@ EAPI void              evas_object_clip_set              (Evas_Object *obj, Evas
 EAPI Evas_Object      *evas_object_clip_get              (const Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
 
 /**
- * Disable clipping for an object.
+ * Disable/cease clipping on a clipped @p obj object.
  *
  * @param obj The object to cease clipping on
  *
- * This function disables clipping for the object @p obj, if it was already
- * clipped. If it wasn't, this has no effect. The object @p obj must be a
- * valid object.
+ * This function disables clipping for the object @p obj, if it was
+ * already clipped, i.e., its visibility and color get detached from
+ * the previous clipper. If it wasn't, this has no effect. The object
+ * @p obj must be a valid ::Evas_Object.
  *
  * See also evas_object_clip_set(), evas_object_clipees_get() and
  * evas_object_clip_get().
@@ -2738,20 +2776,22 @@ EAPI Evas_Object      *evas_object_clip_get              (const Evas_Object *obj
 EAPI void              evas_object_clip_unset            (Evas_Object *obj);
 
 /**
- * Return a list of objects currently clipped by a specific object.
+ * Return a list of objects currently clipped by @p obj.
  *
  * @param obj The object to get a list of clippees from
+ * @return a list of objects being clipped by @p obj
  *
- * This returns the inernal list handle that contains all objects clipped by
- * the object @p obj. If none are clipped, it returns NULL. This list is only
- * valid until the clip list is changed and should be fetched again with another
- * call to evas_object_clipees_get() if any objects being clipped by this object
- * are unclipped, clipped by a new object, are deleted or the clipper is
- * deleted.  These operations will invalidate the list returned so it should
- * not be used anymore after that point. Any use of the list after this may have
- * undefined results, not limited just to strange behavior but possible
- * segfaults and other strange memory errors. The object @p obj must be a valid
- * object.
+ * This returns the internal list handle that contains all objects
+ * clipped by the object @p obj. If none are clipped by it, the call
+ * returns @c NULL. This list is only valid until the clip list is
+ * changed and should be fetched again with another call to
+ * evas_object_clipees_get() if any objects being clipped by this
+ * object are unclipped, clipped by a new object, deleted or get the
+ * clipper deleted. These operations will invalidate the list
+ * returned, so it should not be used anymore after that point. Any
+ * use of the list after this may have undefined results, possibly
+ * leading to crashes. The object @p obj must be a valid
+ * ::Evas_Object.
  *
  * See also evas_object_clip_set(), evas_object_clip_unset() and
  * evas_object_clip_get().
@@ -2832,53 +2872,87 @@ EAPI void              evas_object_layer_set             (Evas_Object *obj, shor
  * child. So the returned value could be wrong in some case. Don't rely on
  * it's accuracy.
  *
- * @param   obj The given evas object.
+ * @param   obj The given Evas object.
  * @return  Number of the layer.
  */
 EAPI short             evas_object_layer_get             (const Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
 
 
 /**
- * Sets the name of the given evas object to the given name.
+ * Sets the name of the given Evas object to the given name.
+ *
  * @param   obj  The given object.
  * @param   name The given name.
+ *
+ * There might be ocasions where one would like to name his/her
+ * objects.
+ *
  */
 EAPI void              evas_object_name_set              (Evas_Object *obj, const char *name) EINA_ARG_NONNULL(1);
 
 /**
- * Retrieves the name of the given evas object.
+ * Retrieves the name of the given Evas object.
+ *
  * @param   obj The given object.
- * @return  The name of the object.  @c NULL if no name has been given
- *          to the object.
+ * @return  The name of the object or @c NULL, if no name has been given
+ *          to it.
  */
 EAPI const char       *evas_object_name_get              (const Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
 
 
 /**
- * Increments object reference count to defer deletion
+ * Increments object reference count to defer its deletion.
  *
- * This increments the reference count of an object, which if greater than
- * 0 will defer deletion by evas_object_del() until all references are
- * released back to 0. References cannot go below 0 and unreferencing more
- * times that referencing will result in the reference count being limited
- * to 0. References are limited to 2^32 - 1 for an object. Referencing it more
- * than this will result in it being limited to this value.
+ * @param obj The given Evas object to reference
  *
- * @param obj The given evas object to reference
+ * This increments the reference count of an object, which if greater
+ * than 0 will defer deletion by evas_object_del() until all
+ * references are released back (counter back to 0). References cannot
+ * go below 0 and unreferencing past that will result in the reference
+ * count being limited to 0. References are limited to <c>2^32 - 1</c>
+ * for an object. Referencing it more than this will result in it
+ * being limited to this value.
+ *
+ * @see evas_object_unref()
+ * @see evas_object_del()
+ *
+ * @note This is a <b>very simple<b> reference counting mechanism! For
+ * instance, Evas is not ready to check for pending references on a
+ * canvas deletion, or things like that. This is useful on scenarios
+ * where, inside a code block, callbacks exist which would possibly
+ * delete an object we are operating on afterwards. Then, one would
+ * evas_object_ref() it on the beginning of the block and
+ * evas_object_unref() it on the end. I would then be deleted at this
+ * point, if it should be.
+ *
+ * Example:
+ * @code
+ *  evas_object_ref(obj);
+ *
+ *  // action here...
+ *  evas_object_smart_callback_call(obj, SIG_SELECTED, NULL);
+ *  // more action here...
+ *  evas_object_unref(obj);
+ * @endcode
+ *
  * @ingroup Evas_Object_Group_Basic
  * @since 1.1.0
  */
 EAPI void              evas_object_ref                   (Evas_Object *obj);
 
 /**
- * Decrements object reference count to defer deletion
+ * Decrements object reference count.
  *
- * This decrements the reference count of an object. If the object has had
- * evas_object_del() called on it while references were more than 0, it will
- * be deleted at the time this function is called as it normally would have
- * been. See evas_object_ref() for more information.
+ * @param obj The given Evas object to unreference
  *
- * @param obj The given evas object to unreference
+ * This decrements the reference count of an object. If the object has
+ * had evas_object_del() called on it while references were more than
+ * 0, it will be deleted at the time this function is called and puts
+ * the counter back to 0. See evas_object_ref() for more information.
+ *
+ * @see evas_object_ref() (for an example)
+ * @see evas_object_del()
+ *
  * @ingroup Evas_Object_Group_Basic
  * @since 1.1.0
  */
@@ -2886,147 +2960,250 @@ EAPI void              evas_object_unref                 (Evas_Object *obj);
 
 
 /**
- * Deletes the given evas object and frees its memory.
+ * Marks the given Evas object for deletion (when Evas will free its
+ * memory).
  *
- * The object's 'free' callback is called when this function is called.
- * If the object currently has the focus, its 'focus out' callback is
- * also called.
+ * @param obj The given Evas object.
  *
- * @param   obj The given evas object.
+ * This call will mark @p obj for deletion, which will take place
+ * whenever it has no more references to it (see evas_object_ref() and
+ * evas_object_unref()).
+ *
+ * At actual deletion time, which may or may not be just after this
+ * call, ::EVAS_CALLBACK_DEL and ::EVAS_CALLBACK_FREE callbacks will
+ * be called. If the object currently had the focus, its
+ * ::EVAS_CALLBACK_FOCUS_OUT callback will also be called.
+ *
+ * @see evas_object_ref()
+ * @see evas_object_unref()
+ *
  * @ingroup Evas_Object_Group_Basic
  */
 EAPI void              evas_object_del                   (Evas_Object *obj) EINA_ARG_NONNULL(1);
 
 /**
- * Moves the given evas object to the given location.
- * @param   obj The given evas object.
- * @param   x   X position to move the object to, in canvas units.
- * @param   y   Y position to move the object to, in canvas units.
+ * Move the given Evas object to the given location inside its
+ * canvas' viewport.
+ *
+ * @param obj The given Evas object.
+ * @param x   X position to move the object to, in canvas units.
+ * @param y   Y position to move the object to, in canvas units.
+ *
+ * Besides being moved, the object's ::EVAS_CALLBACK_MOVE callback
+ * will be called.
+ *
+ * @note Naturally, newly created objects are placed at the canvas'
+ * origin: <code>0, 0</code>.
+ *
  * @ingroup Evas_Object_Group_Basic
  */
 EAPI void              evas_object_move                  (Evas_Object *obj, Evas_Coord x, Evas_Coord y) EINA_ARG_NONNULL(1);
 
 /**
- * Changes the size of the given evas object.
- * @param   obj The given evas object.
- * @param   w   The new width of the evas object.
- * @param   h   The new height of the evas object.
+ * Changes the size of the given Evas object.
+ *
+ * @param obj The given Evas object.
+ * @param w   The new width of the Evas object.
+ * @param h   The new height of the Evas object.
+ *
+ * Besides being resized, the object's ::EVAS_CALLBACK_RESIZE callback
+ * will be called.
+ *
+ * @note Newly created objects have zeroed dimensions. Then, you most
+ * probably want to use evas_object_resize() on them after they are
+ * created.
  *
  * @note Be aware that resizing an object changes its drawing area,
- *       but that does imply the object is rescaled! For instance,
- *       images are filled inside their drawing area using the
- *       specifications of evas_object_image_fill_set(), thus to scale
- *       the image to match exactly your drawing area, you need to
- *       change the evas_object_image_fill_set() as well. Consider the
- *       following example:
- *       @code
- *       // rescale image to fill exactly its area without tiling:
- *       evas_object_resize(img, w, h);
- *       evas_object_image_fill_set(img, 0, 0, w, h);
- *       @endcode
- *       This is more evident in images, but text, textblock, lines
- *       and polygons will behave similarly. Check their specific APIs
- *       to know how to achieve your desired behavior.
+ * but that does imply the object is rescaled! For instance, images
+ * are filled inside their drawing area using the specifications of
+ * evas_object_image_fill_set(). Thus to scale the image to match
+ * exactly your drawing area, you need to change the
+ * evas_object_image_fill_set() as well.
+ *
+ * @note This is more evident in images, but text, textblock, lines
+ * and polygons will behave similarly. Check their specific APIs to
+ * know how to achieve your desired behavior. Consider the following
+ * example:
+ *
+ * @code
+ * // rescale image to fill exactly its area without tiling:
+ * evas_object_resize(img, w, h);
+ * evas_object_image_fill_set(img, 0, 0, w, h);
+ * @endcode
  *
  * @ingroup Evas_Object_Group_Basic
  */
 EAPI void              evas_object_resize                (Evas_Object *obj, Evas_Coord w, Evas_Coord h) EINA_ARG_NONNULL(1);
 
 /**
- * Retrieves the position and rectangular size of the given evas object.
+ * Retrieves the position and (rectangular) size of the given Evas
+ * object.
  *
- * Note that if any of @p x, @p y, @p w or @p h are @c NULL, the @c NULL
- * parameters are ignored.
+ * @param obj The given Evas object.
+ * @param x Pointer to an integer in which to store the X coordinate
+ *          of the object.
+ * @param y Pointer to an integer in which to store the Y coordinate
+ *          of the object.
+ * @param w Pointer to an integer in which to store the width of the
+ *          object.
+ * @param h Pointer to an integer in which to store the height of the
+ *          object.
  *
- * @param obj The given evas object.
- * @param   x   Pointer to an integer in which to store the X coordinate of
- *              the object.
- * @param   y   Pointer to an integer in which to store the Y coordinate of
- *              the object.
- * @param   w   Pointer to an integer in which to store the width of the
- *              object.
- * @param   h   Pointer to an integer in which to store the height of the
- *              object.
+ * The position, naturally, will be relative to the top left corner of
+ * the canvas' viewport.
+ *
+ * @note Use @c NULL pointers on the geometry components you're not
+ * interested in: they'll be ignored by the function.
+ *
  * @ingroup Evas_Object_Group_Basic
  */
 EAPI void              evas_object_geometry_get          (const Evas_Object *obj, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h) EINA_ARG_NONNULL(1);
 
 
 /**
- * Makes the given evas object visible.
- * @param   obj The given evas object.
+ * Makes the given Evas object visible.
+ *
+ * @param obj The given Evas object.
+ *
+ * Besides becoming visible, the object's ::EVAS_CALLBACK_SHOW
+ * callback will be called.
+ *
+ * @see evas_object_hide() for more on object visibility.
+ * @see evas_object_visible_get()
+ *
  * @ingroup Evas_Object_Group_Basic
  */
 EAPI void              evas_object_show                  (Evas_Object *obj) EINA_ARG_NONNULL(1);
 
 /**
- * Makes the given evas object invisible.
- * @param   obj The given evas object.
+ * Makes the given Evas object invisible.
  *
- * @note the hidden objects will not be checked for changes and will
- *       not catch events. That is, they are much ligher than an
- *       object that is invisible due indirect effects, such as
- *       clipped or out-of-viewport.
+ * @param obj The given Evas object.
+ *
+ * Hidden objects, besides not being shown at all in your canvas,
+ * won't be checked for changes on the canvas rendering
+ * process. Furthermore, they will not catch input events. Thus, they
+ * are much ligher (in processing needs) than an object that is
+ * invisible due to indirect causes, such as being clipped or out of
+ * the canvas' viewport.
+ *
+ * Besides becoming hidden, @p obj object's ::EVAS_CALLBACK_SHOW
+ * callback will be called.
+ *
+ * @note All objects are created in the hidden state! If you want them
+ * shown, use evas_object_show() after their creation.
+ *
+ * @see evas_object_show()
+ * @see evas_object_visible_get()
  *
  * @ingroup Evas_Object_Group_Basic
  */
 EAPI void              evas_object_hide                  (Evas_Object *obj) EINA_ARG_NONNULL(1);
 
 /**
- * Retrieves whether or not the given evas object is visible.
- * @param   obj The given evas object.
- * @return  @c 1 if the object is visible.  @c 0 otherwise.
+ * Retrieves whether or not the given Evas object is visible.
+ *
+ * @param   obj The given Evas object.
+ * @return @c EINA_TRUE if the object is visible, @c EINA_FALSE
+ * otherwise.
+ *
+ * This retrieves an object's visibily as the one enforced by
+ * evas_object_show() and evas_object_hide().
+ *
+ * @note The value returned isn't, by any means, influenced by
+ * clippers covering @obj, it being out of its canvas' viewport or
+ * stacked below other object.
+ *
+ * @see evas_object_show()
+ * @see evas_object_hide()
+ *
  * @ingroup Evas_Object_Group_Basic
  */
 EAPI Eina_Bool         evas_object_visible_get           (const Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
 
 
 /**
- * Sets the general colour of the given evas object to the given colour.
- * @param obj The given evas object.
- * @param r   The red component of the given colour.
- * @param g   The green component of the given colour.
- * @param b   The blue component of the given colour.
- * @param a   The alpha component of the given colour.
+ * Sets the general/main color of the given Evas object to the given
+ * one.
+ *
+ * @param obj The given Evas object.
+ * @param r   The red component of the given color.
+ * @param g   The green component of the given color.
+ * @param b   The blue component of the given color.
+ * @param a   The alpha component of the given color.
+ *
+ * @see evas_object_color_get()
+ *
  * @ingroup Evas_Object_Group_Basic
  */
 EAPI void              evas_object_color_set             (Evas_Object *obj, int r, int g, int b, int a) EINA_ARG_NONNULL(1);
 
 /**
- * Retrieves the general colour of the given evas object.
+ * Retrieves the general/main color of the given Evas object.
  *
- * Note that if any of @p r, @p g, @p b or @p a are @c NULL, then the
- * @c NULL parameters are ignored.
+ * @param obj The given Evas object to retrieve color from.
+ * @param r Pointer to an integer in which to store the red component
+ *          of the color.
+ * @param g Pointer to an integer in which to store the green
+ *          component of the color.
+ * @param b Pointer to an integer in which to store the blue component
+ *          of the color.
+ * @param a Pointer to an integer in which to store the alpha
+ *          component of the color.
  *
- * @param   obj The given evas object.
- * @param   r   Pointer to an integer in which to store the red component of
- *              the colour.
- * @param   g   Pointer to an integer in which to store the green component of
- *              the colour.
- * @param   b   Pointer to an integer in which to store the blue component of
- *              the colour.
- * @param   a   Pointer to an integer in which to store the alpha component of
- *              the colour.
+ * Retrieves the “main” color's RGB component (and alpha channel)
+ * values, <b>which range from 0 to 255</b>. For the alpha channel,
+ * which defines the object's transparency level, the former value
+ * means totally trasparent, while the latter means opaque.
+ *
+ * Usually you’ll use this attribute for text and rectangle objects,
+ * where the “main” color is their unique one. If set for objects
+ * which themselves have colors, like the images one, those colors get
+ * modulated by this one.
+ *
+ * @note All newly created Evas rectangles get the default color
+ * values of <code>255 255 255 255</code> (opaque white).
+ *
+ * @note Use @c NULL pointers on the components you're not interested
+ * in: they'll be ignored by the function.
+ *
  * @ingroup Evas_Object_Group_Basic
  */
 EAPI void              evas_object_color_get             (const Evas_Object *obj, int *r, int *g, int *b, int *a) EINA_ARG_NONNULL(1);
 
 
 /**
- * Retrieves the evas that the given evas object is on.
- * @param   obj The given evas object.
- * @return  The evas that the object is on.
+ * Retrieves the Evas canvas that the given object lives on.
+ *
+ * @param   obj The given Evas object.
+ * @return  A pointer to the canvas where the object is on.
+ *
+ * This function is most useful at code contexts where you need to
+ * operate on the canvas but have only the object pointer.
+ *
  * @ingroup Evas_Object_Group_Basic
  */
 EAPI Evas             *evas_object_evas_get              (const Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
 
 /**
- * Retrieves the object type of the given evas object.
+ * Retrieves the type of the given Evas object.
+ *
  * @param obj The given object.
  * @return The type of the object.
+ *
+ * For Evas' builtin types, the return strings will be one of:
+ *   - <c>"rectangle"</c>,
+ *   - <c>"line"</c>,
+ *   - <c>"polygon"</c>,
+ *   - <c>"text"</c>,
+ *   - <c>"textblock"</c> and
+ *   - <c>"image"</c>.
+ *
+ * For Evas smart objects (see @ref Evas_Smart_Group), the name of the
+ * smart class itself is returned on this call. For the built-in
+ * clipped smart object, it is <c>"EvasObjectSmartClipped"</c>.
  */
 EAPI const char       *evas_object_type_get              (const Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
-
 
 /**
  * Raise @p obj to the top of its layer.
@@ -3085,6 +3262,10 @@ EAPI Evas_Object      *evas_object_above_get             (const Evas_Object *obj
  * @return the Evas_Object directly below
  */
 EAPI Evas_Object      *evas_object_below_get             (const Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
+
+/**
+ * @}
+ */
 
 /**
  * @defgroup Evas_Object_Group_Events Object Events
@@ -4197,23 +4378,30 @@ EAPI void              evas_object_size_hint_padding_set (Evas_Object *obj, Evas
 
 /**
  * Set an attached data pointer to an object with a given string key.
+ *
  * @param obj The object to attach the data pointer to
  * @param key The string key for the data to access it
  * @param data The ponter to the data to be attached
  *
- * This attaches the pointer @p data to the object @p obj given the string
- * @p key. This pointer will stay "hooked" to the object until a new pointer
- * with the same string key is attached with evas_object_data_set() or it is
- * deleted with evas_object_data_del(). On deletion of the object @p obj, the
+ * This attaches the pointer @p data to the object @p obj, given the
+ * access string @p key. This pointer will stay "hooked" to the object
+ * until a new pointer with the same string key is attached with
+ * evas_object_data_set() or it is deleted with
+ * evas_object_data_del(). On deletion of the object @p obj, the
  * pointers will not be accessible from the object anymore.
  *
  * You can find the pointer attached under a string key using
- * evas_object_data_get(). It is the job of the calling application to free
- * any data pointed to by @p data when it is no longer required.
+ * evas_object_data_get(). It is the job of the calling application to
+ * free any data pointed to by @p data when it is no longer required.
  *
- * If @p data is NULL, the old value stored at @p key will be removed but no
- * new value will be stored. This is synonymous with calling
- * evas_object_data_del() with @p obj and @p key.
+ * If @p data is @c NULL, the old value stored at @p key will be
+ * removed but no new value will be stored. This is synonymous with
+ * calling evas_object_data_del() with @p obj and @p key.
+ *
+ * @note This function is very handy when you have data associated
+ * specifically to an Evas object, being of use only when dealing with
+ * it. Than you don't have the burden to a pointer to it elsewhere,
+ * using this family of functions.
  *
  * Example:
  *
@@ -4229,19 +4417,22 @@ EAPI void              evas_object_size_hint_padding_set (Evas_Object *obj, Evas
 EAPI void                      evas_object_data_set             (Evas_Object *obj, const char *key, const void *data) EINA_ARG_NONNULL(1, 2);
 
 /**
- * Return an attached data pointer by its given string key.
+ * Return an attached data pointer on an Evas object by its given
+ * string key.
+ *
  * @param obj The object to which the data was attached
  * @param key The string key the data was stored under
  * @return The data pointer stored, or @c NULL if none was stored
  *
- * This function will return the data pointer attached to the object @p obj
- * stored using the string key @p key. If the object is valid and data was
- * stored under the given key, the pointer that was stored will be reuturned.
- * If this is not the case, NULL will be returned, signifying an invalid object
- * or non-existent key. It is possible a NULL pointer was stored given that
- * key, but this situation is non-sensical and thus can be considered an error
- * as well. NULL pointers are never stored as this is the return value if an
- * error occurs.
+ * This function will return the data pointer attached to the object
+ * @p obj, stored using the string key @p key. If the object is valid
+ * and a data pointer was stored under the given key, that pointer
+ * will be returned. If this is not the case, @c NULL will be
+ * returned, signifying an invalid object or a non-existent key. It is
+ * possible that a @c NULL pointer was stored given that key, but this
+ * situation is non-sensical and thus can be considered an error as
+ * well. @c NULL pointers are never stored as this is the return value
+ * if an error occurs.
  *
  * Example:
  *
@@ -4257,14 +4448,15 @@ EAPI void                      evas_object_data_set             (Evas_Object *ob
 EAPI void                     *evas_object_data_get             (const Evas_Object *obj, const char *key) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1, 2) EINA_PURE;
 
 /**
- * Delete at attached data pointer from an object.
+ * Delete an attached data pointer from an object.
+ *
  * @param obj The object to delete the data pointer from
  * @param key The string key the data was stored under
  * @return The original data pointer stored at @p key on @p obj
  *
- * This will remove the stored data pointer from @p obj stored under @p key,
- * and return the original pointer stored under @p key, if any, nor @c NULL if
- * nothing was stored under that key.
+ * This will remove the stored data pointer from @p obj stored under
+ * @p key and return this same pointer, if actually there was data
+ * there, or @c NULL, if nothing was stored under that key.
  *
  * Example:
  *
@@ -4329,17 +4521,27 @@ EAPI Eina_Bool                 evas_object_anti_alias_get       (const Evas_Obje
 
 
 /**
- * Sets the scaling factor for an evas object. Does not affect all objects.
+ * Sets the scaling factor for an Evas object. Does not affect all
+ * objects.
  *
- * @param   obj The given evas object.
- * @param   scale The scaling factor. 1.0 == none.
+ * @param obj The given Evas object.
+ * @param scale The scaling factor. <c>1.0</c> means no scaling,
+ *        default size.
+ *
+ * This will multiply the object's dimension by the given factor, thus
+ * altering its geometry (width and height). Useful when you want
+ * scalable UI elements, possibly at run time.
+ *
+ * @see evas_object_scale_get()
+ *
  * @ingroup Evas_Object_Group_Extras
  */
 EAPI void                      evas_object_scale_set            (Evas_Object *obj, double scale) EINA_ARG_NONNULL(1);
 
 /**
- * Retrieves the scaling factor for the given evas object.
- * @param   obj The given evas object.
+ * Retrieves the scaling factor for the given Evas object.
+ *
+ * @param   obj The given Evas object.
  * @return  The scaling factor.
  *
  * @ingroup Evas_Object_Group_Extras

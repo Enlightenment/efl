@@ -1249,12 +1249,6 @@ evas_objects_in_rectangle_get(const Evas *e, Evas_Coord x, Evas_Coord y, Evas_Co
    return in;
 }
 
-/**
- * Retrieves the name of the type of the given evas object.
- * @param   obj The given object.
- * @return  The name.
- * @ingroup Evas_Object_Group_Basic
- */
 EAPI const char *
 evas_object_type_get(const Evas_Object *obj)
 {
