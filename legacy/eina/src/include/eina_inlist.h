@@ -25,16 +25,274 @@
 #include <stddef.h>
 
 /**
+ * @page inlist_01_example_page Eina_Inlist basic usage
+ * @dontinclude eina_inlist_01.c
+ *
+ * To see the full source for this example, click here: @ref
+ * eina_inlist_01_c
+ *
+ * As explained before, inline lists mean its nodes pointers are part of same
+ * memory block/blob. This is done by using the macro @ref EINA_INLIST inside the
+ * data structure that will be used:
+ *
+ * @skip struct
+ * @until };
+ *
+ * The resulting node representing this struct can be exemplified by the
+ * following picture:
+ *
+ * @image html eina_inlist-node_eg1-my-struct.png
+ * @image rtf eina_inlist-node_eg1-my-struct.png
+ *
+ * Let's define a comparison function that will be used later during the
+ * sorting of the list:
+ *
+ * @skip int
+ * @until }
+ *
+ * The @ref Eina_Inlist can be used exactly the same way as @ref Eina_List when
+ * appending, prepend and removing items. But since we already have the node
+ * pointers inside the structure, they need to be retrieved with the macro @ref
+ * EINA_INLIST_GET :
+ *
+ * @skip malloc
+ * @until append
+ *
+ * Notice that @ref eina_inlist_append always receives the head of the list as
+ * first argument, and its return value should be used as the list pointer
+ * (head):
+ *
+ * @skip malloc
+ * @until append
+ *
+ * After appending 3 items, the list now should look similar to this:
+ *
+ * @image html eina_inlist-node_eg1-inlist.png
+ * @image rtf eina_inlist-node_eg1-inlist.png
+ *
+ * The macro @ref EINA_INLIST_FOREACH can be used to iterate over the list:
+ *
+ * @skip printf
+ * @until cur->a
+ *
+ * @ref eina_inlist_promote(), @ref eina_inlist_demote(), @ref
+ * eina_inlist_append_relative() and similar functions all work in the same way
+ * as the @ref Eina_List :
+ *
+ * @skip eina_inlist_promote
+ * @until eina_inlist_demote
+ *
+ * Now let's use the @c sort_cb function declared above to sort our list:
+ *
+ * @skipline eina_inlist_sort
+ *
+ * Removing an element from the inlist is also similar to @ref Eina_List :
+ *
+ * @skip inlist_remove
+ * @until free
+ *
+ * Another way of walking through the inlist.
+ *
+ * @skip for
+ * @until }
+ *
+ * Notice that in the previous piece of code, since we only have the pointers to
+ * the inlist nodes, we have to use the @ref EINA_INLIST_CONTAINER_GET macro
+ * that will return the pointer to the entire structure. Of course, in this case
+ * it is the same as the list pointer, since the @ref EINA_INLIST macro was used
+ * in the beginning of the structure.
+ *
+ * Now to finish this example, lets delete this list:
+ *
+ * @skip while
+ * @until }
+ */
+
+/**
+ * @page inlist_02_example_page Eina_Inlist advanced usage - lists and inlists
+ * @dontinclude eina_inlist_02.c
+ *
+ * This example describes the usage of @ref Eina_Inlist mixed with @ref
+ * Eina_List . We create and add elements to an inlist, and the even members
+ * are also added to a normal list. Later we remove the elements divisible by 3
+ * from this normal list.
+ *
+ * The struct that is going to be used is the same used in @ref
+ * inlist_01_example_page , since we still need the @ref EINA_INLIST macro to
+ * declare the inlist node info:
+ *
+ * @skip struct
+ * @until };
+ *
+ * The resulting node representing this struct can be exemplified by the
+ * following picture:
+ *
+ * @image html eina_inlist-node_eg2-my-struct.png
+ * @image rtf eina_inlist-node_eg2-my-struct.png
+ *
+ * Now we need some pointers and auxiliar variables that will help us iterate on
+ * the lists:
+ *
+ * @skip struct
+ * @until l_next;
+ *
+ * Allocating 100 elements and putting them into an inlist, and the even
+ * elements also go to the normal list:
+ *
+ * @skip for
+ * @until }
+ *
+ * After this point, what we have are two distinct lists that share some
+ * elements. The first list (inlist) is defined by the pointers inside the
+ * elements data structure, while the second list (normal list) has its own node
+ * data structure that is kept outside of the elements.
+ *
+ * The two lists, sharing some elements, can be represented by the following
+ * picture:
+ *
+ * <img src="eina_inlist-node_eg2-list-inlist.png" width="100%"/>
+ * @image rtf eina_inlist-node_eg2-list-inlist.png
+ *
+ * Accessing both lists is done normally, as if they didn't have any elements in
+ * common:
+ *
+ * @skip printf
+ * @until eina_list_count
+ *
+ * We can remove elements from the normal list, but we just don't free them
+ * because they are still stored in the inlist:
+ *
+ * @skip EINA_LIST_FOREACH_SAFE
+ * @until eina_list_count
+ *
+ * To finish this example, we want to free both lists, we can't just free all
+ * elements on the second list (normal list) because they are still being used
+ * in the inlist. So we first discard the normal list without freeing its
+ * elements, then we free all elements in the inlist (that contains all elements
+ * allocated until now):
+ *
+ * @skip eina_list_free
+ * @until }
+ *
+ * Here is the full source code for this example: @ref eina_inlist_02_c
+ */
+
+/**
+ * @page inlist_03_example_page Eina_Inlist advanced usage - multi-inlists
+ * @dontinclude eina_inlist_03.c
+ *
+ * This example describes the usage of multiple inlists storing the same data.
+ * It means that some data may appear in more than one inlist at the same time.
+ * We will demonstrate this by creating an inlist with 100 numbers, and adding
+ * the odd numbers to the second inlist, then remove the numbers divisible by 3
+ * from the second list.
+ *
+ * To accomplish this, it is necessary to have two inlist pointers in the struct
+ * that is going to be stored. We are using the default inlist member @ref
+ * EINA_INLIST, and adding another member @c even that is of type @ref
+ * Eina_Inlist too:
+ *
+ * @skip struct
+ * @until };
+ *
+ * The representation for this struct is:
+ *
+ * @image html eina_inlist-node_eg3-my-struct.png
+ * @image rtf eina_inlist-node_eg3-my-struct.png
+ *
+ * And we will define some convenience macros that are equivalent to @ref
+ * EINA_INLIST_GET and @ref EINA_INLIST_CONTAINER_GET :
+ *
+ * @skip define
+ * @until offsetof
+ *
+ * We need two pointers, one for each list, and a pointer that will be used as
+ * an iterator:
+ *
+ * @skipline Eina_Inlist
+ *
+ * Now we allocate and add to the first list every number from 0 to 99. These
+ * nodes data also have the @ref Eina_Inlist node info for the second list (@c
+ * even). We will use them to add just the even numbers to the second list, the
+ * @c list_even. Also notice that we are using our macro @c EVEN_INLIST_GET to
+ * get the pointer to the even list node info:
+ *
+ * @skip for
+ * @until }
+ *
+ * And the resulting lists will be as follow:
+ *
+ * <img src="eina_inlist-node_eg3-two-inlists.png" width="100%"/>
+ * @image rtf eina_inlist-node_eg3-two-inlists.png
+ *
+ * For the first list, we can use the macro @ref EINA_INLIST_FOREACH to iterate
+ * over its elements:
+ *
+ * @skip FOREACH
+ * @until printf
+ *
+ * But for the second list, we have to do it manually. Of course we could create
+ * a similar macro to @ref EINA_INLIST_FOREACH, but since this macro is more
+ * complex than the other two and we are using it only once, it's better to just
+ * do it manually:
+ *
+ * @skip for
+ * @until }
+ *
+ * Let's just check that the two lists have the expected number of elements:
+ *
+ * @skip list count
+ * @until list_even count
+ *
+ * And removing the numbers divisible by 3 only from the second list:
+ *
+ * @skip itr
+ * @until list_even count
+ *
+ * Now that we don't need the two lists anymore, we can just free all the items.
+ * Since all of the allocated data was put into the first list, and both lists
+ * are made of pointers to inside the data structures, we can free only the
+ * first list (that contains all the elements) and the second list will be gone
+ * with it:
+ *
+ * @skip while
+ * @until free
+ *
+ * To see the full source code for this example, click here: @ref
+ * eina_inlist_03_c
+ *
+ */
+
+/**
+ * @page eina_inlist_01_c eina_inlist_01.c
+ * @include eina_inlist_01.c
+ */
+
+/**
+ * @page eina_inlist_02_c eina_inlist_02.c
+ * @include eina_inlist_02.c
+ */
+
+/**
+ * @page eina_inlist_03_c eina_inlist_03.c
+ * @include eina_inlist_03.c
+ */
+
+/**
  * @addtogroup Eina_Inline_List_Group Inline List
  *
  * @brief These functions provide inline list management.
  *
  * Inline lists mean its nodes pointers are part of same memory as
  * data. This has the benefit of fragmenting memory less and avoiding
- * @c node->data indirection, but has the drawback of elements only
- * being able to be part of one single inlist at same time. But it is
- * possible to have inlist nodes to be part of regular lists created
- * with eina_list_append() or eina_list_prepend().
+ * @c node->data indirection, but has the drawback of higher cost for some
+ * common operations like count and sort.
+ *
+ * It is possible to have inlist nodes to be part of regular lists, created with
+ * @ref eina_list_append() or @ref eina_list_prepend(). It's also possible to
+ * have a structure with two inlist pointers, thus be part of two different
+ * inlists at the same time, but the current convenience macros provided won't
+ * work for both of them. Consult @ref inlist_advanced for more info.
  *
  * Inline lists have their purposes, but if you don't know what those purposes are, go with
  * regular lists instead.
@@ -46,61 +304,62 @@
  * This lets the compiler to do type checking and let the programmer know
  * exactly what type this list is.
  *
- * @code
- * #include <Eina.h>
- * #include <stdio.h>
+ * A simple example demonstrating the basic usage of an inlist can be found
+ * here: @ref inlist_01_example_page
  *
- * int
- * main(void)
- * {
- *    struct my_struct {
- *       EINA_INLIST;
- *       int a, b;
- *    } *d, *cur;
- *    Eina_Inlist *list, *itr;
+ * @section inlist_algo Algorithm
  *
- *    eina_init();
+ * The basic structure can be represented by the following picture:
  *
- *    d = malloc(sizeof(*d));
- *    d->a = 1;
- *    d->b = 10;
- *    list = eina_inlist_append(NULL, EINA_INLIST_GET(d));
+ * @image html eina_inlist-node.png
+ * @image rtf eina_inlist-node.png
  *
- *    d = malloc(sizeof(*d));
- *    d->a = 2;
- *    d->b = 20;
- *    list = eina_inlist_append(list, EINA_INLIST_GET(d));
+ * One data structure will also have the node information, with three pointers:
+ * @a prev, @a next and @a last. The @a last pointer is just valid for the first
+ * element (the list head), otherwise each insertion in the list would have to
+ * be done updating every node with the correct pointer. This means that it's
+ * always very important to keep a pointer to the first element of the list,
+ * since it is the only one that has the correct information to allow a proper
+ * O(1) append to the list.
  *
- *    d = malloc(sizeof(*d));
- *    d->a = 3;
- *    d->b = 30;
- *    list = eina_inlist_prepend(list, EINA_INLIST_GET(d));
+ * @section inlist_perf Performance
  *
- *    printf("list=%p\n", list);
- *    EINA_INLIST_FOREACH(list, cur)
- *      printf("\ta=%d, b=%d\n", cur->a, cur->b);
+ * Due to the nature of the inlist, there's no accounting information, and no
+ * easy access to the last element from each list node. This means that @ref
+ * eina_inlist_count() is order-N, while @ref eina_list_count() is order-1 (constant
+ * time).
  *
- *    list = eina_inlist_remove(list, EINA_INLIST_GET(d));
- *    free(d);
- *    printf("list=%p\n", list);
- *    for (itr = list; itr != NULL; itr = itr->next)
- *      {
- *         cur = EINA_INLIST_CONTAINER_GET(itr, struct my_struct);
- *         printf("\ta=%d, b=%d\n", cur->a, cur->b);
- *      }
+ * For the same reasons, @ref eina_inlist_sort() is slower than @ref
+ * eina_list_sort() . If the list is intended to have faster access, be
+ * sorted/merged frequently, or needs to have other complex operations, consider
+ * using @ref Eina_List instead.
  *
- *    while (list)
- *      {
- *         Eina_Inlist *aux = list;
- *         list = eina_inlist_remove(list, list);
- *         free(aux);
- *      }
+ * @section inlist_advanced Advanced Usage
  *
- *    eina_shutdown();
+ * The basic usage considers a struct that will have the user data, and also
+ * have an inlist node information (prev, next and last pointers) created with
+ * @ref EINA_INLIST during the struct declaration. This allows one to use the
+ * convenience macros @ref EINA_INLIST_GET(), @ref EINA_INLIST_CONTAINER_GET(),
+ * @ref EINA_INLIST_FOREACH() and so. This happens because the @ref EINA_INLIST
+ * macro declares a struct member with the name @a __inlist, and all the other
+ * macros assume that this struct member has this name.
  *
- *    return 0;
- * }
- * @endcode
+ * It may be the case that someone needs to have some inlist nodes added to a
+ * @ref Eina_List too. If this happens, the inlist nodes can be added to the
+ * @ref Eina_List without any problems. This example demonstrates this case:
+ * @ref inlist_02_example_page
+ *
+ * It's also possible to have some data that is part of two different inlists.
+ * If this is the case, then it won't be possible to use the convenience macros
+ * to both of the lists. It will be necessary to create a new set of macros that
+ * will allow access to the second list node info. An example for this usage can
+ * be found here:
+ * @ref inlist_03_example_page
+ *
+ * List of examples:
+ * @li @ref inlist_01_example_page
+ * @li @ref inlist_02_example_page
+ * @li @ref inlist_03_example_page
  *
  * @{
  */
