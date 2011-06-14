@@ -8,10 +8,6 @@
 extern "C" {
 #endif
 
-/**
- * @addtogroup Evas_GL
- * @{
- */
 typedef struct _Evas_GL               Evas_GL;
 typedef struct _Evas_GL_Surface       Evas_GL_Surface;
 typedef struct _Evas_GL_Context       Evas_GL_Context;
@@ -366,6 +362,11 @@ init_shaders(GLData *gld)
  * @endcode
  *
  * @ingroup Evas_Canvas
+ */
+
+/**
+ * @addtogroup Evas_GL
+ * @{
  */
    
 /**
