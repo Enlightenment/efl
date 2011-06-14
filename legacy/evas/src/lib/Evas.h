@@ -1129,7 +1129,7 @@ EAPI Eina_Bool         evas_async_events_put             (const void *target, Ev
  * only if you're building low level stuff.
  *
  * The groups within present you functions that deal with the canvas
- * directly, too, and not yet with its <b>objects</b>. They are the
+ * directly, too, and not yet with its @b objects. They are the
  * functions you need to use at a minimum to get a working canvas.
  */
 
@@ -1282,14 +1282,14 @@ EAPI void              evas_damage_rectangle_add         (Evas *e, int x, int y,
  * they'll be using just one canvas in their applications, with
  * nothing inset or on top of it in any form.
  *
- * To make this region one that <b>has</b> to be repainted
- * again, call the function evas_obscured_clear().
+ * To make this region one that @b has to be repainted again, call the
+ * function evas_obscured_clear().
  *
  * @note This is a <b>very low level function</b>, which most of
  * Evas' users wouldn't care about.
  *
- * @note This function does <b>not</b> flag the canvas as having its
- * state changed. If you want to re-render it afterwards expecting new
+ * @note This function does @b not flag the canvas as having its state
+ * changed. If you want to re-render it afterwards expecting new
  * contents, you have to add "damage" regions yourself (see
  * evas_damage_rectangle_add()).
  *
@@ -1319,14 +1319,14 @@ EAPI void              evas_obscured_rectangle_add       (Evas *e, int x, int y,
  *
  * This function removes all the rectangles from the obscured regions
  * list of the canvas @p e. It takes obscured areas added with
- * evas_obscured_rectangle_add() and make them again a regions that
- * <b>have</b> to be repainted on rendering updates.
+ * evas_obscured_rectangle_add() and make them again a regions that @b
+ * have to be repainted on rendering updates.
  *
  * @note This is a <b>very low level function</b>, which most of
  * Evas' users wouldn't care about.
  *
- * @note This function does <b>not</b> flag the canvas as having its
- * state changed. If you want to re-render it afterwards expecting new
+ * @note This function does @b not flag the canvas as having its state
+ * changed. If you want to re-render it afterwards expecting new
  * contents, you have to add "damage" regions yourself (see
  * evas_damage_rectangle_add()).
  *
@@ -2180,11 +2180,11 @@ EAPI void              evas_post_event_callback_remove_full (Evas *e, Evas_Objec
  * This function will indicate to Evas that the canvas @p e is to have
  * all input event processing frozen until a matching
  * evas_event_thaw() function is called on the same canvas. All events
- * of this kind during the freeze will get <b>discarded</b>. Every
- * freeze call must be matched by a thaw call in order to completely
- * thaw out a canvas (i.e. these calls may be nested). The most common
- * use is when you don't want the user to interect with your user
- * interface when you're populating a view or changing the layout.
+ * of this kind during the freeze will get @b discarded. Every freeze
+ * call must be matched by a thaw call in order to completely thaw out
+ * a canvas (i.e. these calls may be nested). The most common use is
+ * when you don't want the user to interect with your user interface
+ * when you're populating a view or changing the layout.
  *
  * Example:
  * @dontinclude evas-events.c
@@ -2211,7 +2211,7 @@ EAPI void              evas_event_freeze                 (Evas *e) EINA_ARG_NONN
  * This will thaw out a canvas after a matching evas_event_freeze()
  * call. If this call completely thaws out a canvas, i.e., there's no
  * other unbalanced call to evas_event_freeze(), events will start to
- * be processed again, but any "missed" events will <b>not</b> be
+ * be processed again, but any "missed" events will @b not be
  * evaluated.
  *
  * See evas_event_freeze() for an example.
@@ -2630,8 +2630,8 @@ EAPI const Eina_List  *evas_font_path_list               (const Evas *e) EINA_WA
  *
  * All Evas displaying units are Evas objects. One handles them all by
  * means of the handle ::Evas_Object. Besides Evas treats their
- * objects equally, they have <b>types</b>, which define their
- * specific behavior (and individual API).
+ * objects equally, they have @b types, which define their specific
+ * behavior (and individual API).
  *
  * Evas comes with a set of built-in object types:
  *   - rectangle,
@@ -2641,8 +2641,8 @@ EAPI const Eina_List  *evas_font_path_list               (const Evas *e) EINA_WA
  *   - textblock and
  *   - image.
  *
- * These functions apply to <b>any</b> Evas object, whichever type
- * thay may have.
+ * These functions apply to @b any Evas object, whichever type thay
+ * may have.
  *
  * @note The built-in types which are most used are rectangles, text
  * and images. In fact, with these ones one can create 2D interfaces
@@ -2679,10 +2679,9 @@ EAPI const Eina_List  *evas_font_path_list               (const Evas *e) EINA_WA
  * element (red, green, blue and alpha).
  *
  * Clipping is recursive, so clipping objects may be clipped by
- * others, and their color will in term be multiplied. You may
- * <b>not</b> set up circular clipping lists (i.e. object 1 clips
- * object 2, which clips object 1): the behavior of Evas is undefined
- * in this case.
+ * others, and their color will in term be multiplied. You may @b not
+ * set up circular clipping lists (i.e. object 1 clips object 2, which
+ * clips object 1): the behavior of Evas is undefined in this case.
  *
  * Objects which do not clip others are visible in the canvas as
  * normal; <b>those that clip one or more objects become invisible
@@ -8860,12 +8859,12 @@ EAPI int               evas_string_char_len_get          (const char *str) EINA_
  *
  * Functions which feed key events to the canvas.
  *
- * As explained in @ref intro_not_evas, Evas is <b>not</b> aware of
- * input systems at all. Then, the user, if using it crudely
- * (evas_new()), will have to feed it with input events, so that it
- * can react somehow. If, however, the user creates a canvas by means
- * of the Ecore_Evas wrapper, it will automatically bind the chosen
- * display engine's input events to the canvas, for you.
+ * As explained in @ref intro_not_evas, Evas is @b not aware of input
+ * systems at all. Then, the user, if using it crudely (evas_new()),
+ * will have to feed it with input events, so that it can react
+ * somehow. If, however, the user creates a canvas by means of the
+ * Ecore_Evas wrapper, it will automatically bind the chosen display
+ * engine's input events to the canvas, for you.
  *
  * This group presents the functions dealing with the feeding of key
  * events to the canvas. On most of them, one has to reference a given
@@ -9132,8 +9131,8 @@ EAPI void                 evas_key_lock_off              (Evas *e, const char *k
 
 
 /**
- * Creates a bit mask from the @p keyname <b>modifier</b> key.
- * Values returned from different calls to it may be ORed together,
+ * Creates a bit mask from the @p keyname @b modifier key. Values
+ * returned from different calls to it may be ORed together,
  * naturally.
  *
  * @param e The canvas whom to query the bit mask from.
