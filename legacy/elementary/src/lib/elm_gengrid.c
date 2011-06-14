@@ -145,6 +145,7 @@
  typedef struct _Pan         Pan;
 
 #define PRELOAD 1
+#define REORDER_EFFECT_TIME 0.5
 
  struct _Elm_Gengrid_Item
 {
@@ -153,6 +154,7 @@
    Evas_Object                  *spacer;
    const Elm_Gengrid_Item_Class *gic;
    Ecore_Timer                  *long_timer;
+   Ecore_Animator               *item_moving_effect_timer;
    Widget_Data                  *wd;
    Eina_List                    *labels, *icons, *states, *icon_objs;
    struct
@@ -161,9 +163,10 @@
         const void   *data;
      } func;
 
-   Evas_Coord x, y, dx, dy;
-   int        relcount;
-   int        walking;
+   Evas_Coord   x, y, dx, dy, ox, oy, tx, ty, rx, ry;
+   unsigned int moving_effect_start_time;
+   int          relcount;
+   int          walking;
 
    struct
      {
@@ -184,6 +187,7 @@
    Eina_Bool   disabled : 1;
    Eina_Bool   selected : 1;
    Eina_Bool   hilighted : 1;
+   Eina_Bool   moving : 1;
 };
 
 struct _Widget_Data
@@ -197,7 +201,7 @@ struct _Widget_Data
    Elm_Gengrid_Item *last_selected_item, *reorder_item;
    double            align_x, align_y;
 
-   Evas_Coord        pan_x, pan_y;
+   Evas_Coord        pan_x, pan_y, old_pan_x, old_pan_y;
    Evas_Coord        item_width, item_height; /* Each item size */
    Evas_Coord        minw, minh; /* Total obj size */
    Evas_Coord        reorder_item_x, reorder_item_y;
@@ -217,6 +221,7 @@ struct _Widget_Data
    Eina_Bool         v_bounce : 1;
    Eina_Bool         reorder_mode : 1;
    Eina_Bool         reorder_item_changed : 1;
+   Eina_Bool         move_effect_enabled : 1;
 };
 
 #define ELM_GENGRID_ITEM_FROM_INLIST(item) \
@@ -1168,6 +1173,45 @@ _item_unrealize(Elm_Gengrid_Item *item)
    item->want_unrealize = EINA_FALSE;
 }
 
+static Eina_Bool
+_reorder_item_moving_effect_timer_cb(void *data)
+{
+   Elm_Gengrid_Item *item = data;
+   double time, t;
+   Evas_Coord dx, dy;
+
+   time = REORDER_EFFECT_TIME;
+   t = ((0.0 > (t = ecore_loop_time_get()-item->moving_effect_start_time)) ? 0.0 : t);
+   dx = ((item->tx - item->ox) / 10) * _elm_config->scale;
+   dy = ((item->ty - item->oy) / 10) * _elm_config->scale;
+
+   if (t <= time)
+     {
+        item->rx += (1 * sin((t / time) * (M_PI / 2)) * dx);
+        item->ry += (1 * sin((t / time) * (M_PI / 2)) * dy);
+     }
+   else
+     {
+        item->rx += dx;
+        item->ry += dy;
+     }
+
+   if ((((dx > 0) && (item->rx >= item->tx)) || ((dx <= 0) && (item->rx <= item->tx))) &&
+       (((dy > 0) && (item->ry >= item->ty)) || ((dy <= 0) && (item->ry <= item->ty))))
+     {
+        evas_object_move(item->base.view, item->tx, item->ty);
+        evas_object_resize(item->base.view, item->wd->item_width, item->wd->item_height);
+        item->moving = EINA_FALSE;
+        item->item_moving_effect_timer = NULL;
+        return ECORE_CALLBACK_CANCEL;
+     }
+
+   evas_object_move(item->base.view, item->rx, item->ry);
+   evas_object_resize(item->base.view, item->wd->item_width, item->wd->item_height);
+
+   return ECORE_CALLBACK_RENEW;
+}
+
 static void
 _item_place(Elm_Gengrid_Item *item,
             Evas_Coord        cx,
@@ -1253,6 +1297,13 @@ _item_place(Elm_Gengrid_Item *item,
           evas_object_smart_callback_call(item->wd->self, SIG_REALIZED, item);
         if ((item->wd->reorder_mode) && (item->wd->reorder_item))
           {
+             if (item->moving) return;
+
+             if (!item->wd->move_effect_enabled)
+               {
+                  item->ox = x;
+                  item->oy = y;
+               }
              if (item->wd->reorder_item == item)
                {
                   evas_object_move(item->base.view,
@@ -1263,6 +1314,26 @@ _item_place(Elm_Gengrid_Item *item,
                }
              else
                {
+                  if (item->wd->move_effect_enabled)
+                    {
+                       if ((item->ox != x) || (item->oy != y))
+                         {
+                            if (((item->wd->old_pan_x == item->wd->pan_x) && (item->wd->old_pan_y == item->wd->pan_y)) ||
+                                ((item->wd->old_pan_x != item->wd->pan_x) && !(item->ox - item->wd->pan_x + item->wd->old_pan_x == x)) ||
+                                ((item->wd->old_pan_y != item->wd->pan_y) && !(item->oy - item->wd->pan_y + item->wd->old_pan_y == y)))
+                              {
+                                 item->tx = x;
+                                 item->ty = y;
+                                 item->rx = item->ox;
+                                 item->ry = item->oy;
+                                 item->moving = EINA_TRUE;
+                                 item->moving_effect_start_time = ecore_loop_time_get();
+                                 item->item_moving_effect_timer = ecore_animator_add(_reorder_item_moving_effect_timer_cb, item);
+                                 return;
+                              }
+                         }
+                    }
+
                   if (ELM_RECTS_INTERSECT(item->wd->reorder_item_x, item->wd->reorder_item_y,
                                           item->wd->item_width, item->wd->item_height,
                                           x+(item->wd->item_width/2), y+(item->wd->item_height/2),
@@ -1293,7 +1364,7 @@ _item_place(Elm_Gengrid_Item *item,
                                                                        EINA_INLIST_GET(item));
 
                        item->wd->reorder_item_changed = EINA_TRUE;
-
+                       item->wd->move_effect_enabled = EINA_TRUE;
                        if (item->wd->calc_job) ecore_job_del(item->wd->calc_job);
                          item->wd->calc_job = ecore_job_add(_calc_job, item->wd);
 
@@ -1570,6 +1641,16 @@ _pan_calculate(Evas_Object *obj)
              cx = (cx + 1) % sd->wd->nmax;
              if (!cx) cy++;
           }
+     }
+
+   if ((sd->wd->reorder_mode) && (sd->wd->reorder_item))
+     {
+        if (!sd->wd->reorder_item_changed)
+          {
+             sd->wd->old_pan_x = sd->wd->pan_x;
+             sd->wd->old_pan_y = sd->wd->pan_y;
+          }
+        sd->wd->move_effect_enabled = EINA_FALSE;
      }
    evas_object_smart_callback_call(sd->wd->self, SIG_CHANGED, NULL);
 }
