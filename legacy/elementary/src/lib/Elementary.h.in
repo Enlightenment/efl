@@ -1859,6 +1859,107 @@ extern "C" {
     */
 
    /**
+    * @page actionslider_example_page Actionslider usage
+    * @dontinclude actionslider_example_01.c
+    *
+    * For this example we are going to assume knowledge of evas smart callbacks
+    * and some basic evas object functions. Elementary is not meant to be used
+    * without evas, if you're not yet familiar with evas it probably is worth
+    * checking that out.
+    *
+    * And now to the example, when using Elementary we start by including
+    * Elementary.h:
+    * @skipline #include
+    *
+    * Next we define some callbacks, they all share the same signature because
+    * they are all to be used with evas_object_smart_callback_add().
+    * The first one just prints the selected label(in two different ways):
+    * @until }
+    *
+    * This next callback is a little more interesting, it makes the selected
+    * label magnetic(except if it's the center label):
+    * @until }
+    *
+    * This callback enables or disables the magnetic propertty of the center
+    * label:
+    * @until }
+    *
+    * And finally a callback to stop the main loop when the window is closed:
+    * @until }
+    *
+    * To be able to create our actionsliders we need to do some setup, but this
+    * isn't really relevant here, so if you want to know about that go @ref
+    * Win "here".
+    *
+    * With all that boring stuff out of the way we can proceed to creating some
+    * actionsliders.@n
+    * All actionsliders are created the same way:
+    * @skipline actionslider_add
+    * Next we must choose where the indicator starts, and for this one we choose
+    * the right, and set the right as magnetic:
+    * @skipline indicator_pos_set
+    * @until magnet_pos_set
+    *
+    * We then set the labels for the left and right, passing NULL as an argument
+    * to any of the labels makes that position have no label.
+    * @until Stop
+    *
+    * Furthermore we mark both left and right as enabled positions, if we didn't
+    * do this all three positions would be enabled:
+    * @until RIGHT
+    *
+    * Having the the enabled positions we now add a smart callback to change
+    * which position is magnetic, so that only the last selected position is
+    * magnetic:
+    * @until NULL
+    *
+    * And finally we set our printing callback and show the actionslider:
+    * @until object_show
+    * @skip pack_end
+    *
+    * For our next actionslider we are going to do much as we did for the
+    * previous except we are going to have the center as the magnet(and not
+    * change it):
+    * @skipline actionslider_add
+    * @skipline indicator_pos_set
+    * @until object_show
+    *
+    * And another actionslider, in this one the indicator starts on the left.
+    * It has labels only in the center and right, and both bositions are
+    * magnetic. Because the left doesn't have a label and is not magnetic once
+    * the indicator leaves it can't return:
+    * @skipline actionslider_add
+    * @skipline indicator_pos_set
+    * @until object_show
+    * @note The greyed out area is a @ref Styles "style".
+    *
+    * And now an actionslider with a label in the indicator, and whose magnet
+    * properties change based on what was last selected:
+    * @skipline actionslider_add
+    * @skipline indicator_pos_set
+    * @until object_show
+    * @note The greyed out area is a @ref Styles "style".
+    *
+    * We are almost done, this next one is just a actionslider with all
+    * positions magnetized and having every possible label:
+    * @skipline actionslider_add
+    * @skipline indicator_pos_set
+    * @until object_show
+    *
+    * And for our last actionslider we have one that turns the magnetic property
+    * on and off:
+    * @skipline actionslider_add
+    * @skipline indicator_pos_set
+    * @until object_show
+    *
+    * See the full source code @ref actionslider_example_01 "here"
+    */
+   /**
+    * @page actionslider_example_01 Actionslider example
+    * @include actionslider_example_01.c
+    * @example actionslider_example_01.c
+    */
+   /**
     * @addtogroup Actionslider Actionslider
     *
     * A actionslider is a switcher for 2 or 3 labels with customizable magnet
@@ -1876,6 +1977,7 @@ extern "C" {
     * "pos_changed" - when the indicator reaches any of the positions("left",
     *                 "right" or "center").
     *
+    * See an example of actionslider usage @ref actionslider_example_page "here"
     * @{
     */
    typedef enum _Elm_Actionslider_Pos

@@ -518,6 +518,7 @@ src/modules/Makefile
 src/modules/test_entry/Makefile
 src/modules/test_map/Makefile
 src/edje_externals/Makefile
+src/examples/Makefile
 data/Makefile
 data/themes/Makefile
 data/images/Makefile
@@ -530,6 +531,10 @@ config/standard/Makefile
 config/illume/Makefile
 $po_makefile_in
 ])
+
+### Build and install examples
+EFL_CHECK_BUILD_EXAMPLES([enable_build_examples="yes"], [enable_build_examples="no"])
+EFL_CHECK_INSTALL_EXAMPLES([enable_install_examples="yes"], [enable_install_examples="no"])
 
 #####################################################################
 ## Info
@@ -562,6 +567,8 @@ echo "  eet......................: ${eet_eet}"
 echo "  edje_cc..................: ${edje_cc}"
 echo
 echo "  Build elementary_test....: ${have_elementary_test}"
+echo "  Examples.............: ${enable_build_examples}"
+echo "  Examples installed...: ${enable_install_examples}"
 echo "  Build elementary_config..: ${have_elementary_config}"
 echo
 echo "Compilation................: make (or gmake)"

@@ -1,4 +1,4 @@
 AUTOMAKE_OPTIONS     = 1.4 foreign
 MAINTAINERCLEANFILES = Makefile.in
 
-SUBDIRS = lib bin modules edje_externals
+SUBDIRS = lib bin modules edje_externals examples
