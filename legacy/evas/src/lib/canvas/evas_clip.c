@@ -153,9 +153,9 @@ evas_object_mapped_clip_across_mark(Evas_Object *obj)
            evas_object_child_map_across_mark
            (obj, obj->smart.parent->cur.map_parent, 0);
         else
-           evas_object_child_map_across_mark(obj, NULL, 0); 
+           evas_object_child_map_across_mark(obj, NULL, 0);
     }
-#endif   
+#endif
 }
 
 /* public functions */
