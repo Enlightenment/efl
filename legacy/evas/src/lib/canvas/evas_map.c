@@ -338,12 +338,10 @@ evas_object_map_enable_set(Evas_Object *obj, Eina_Bool enabled)
              evas_object_mapped_clip_across_mark(obj);
           }
      }
-             _evas_map_calc_geom_change(obj);
    _evas_map_calc_map_geometry(obj);
    /* This is a bit heavy handed, but it fixes the case of same geometry, but
     * changed colour or UV settings. */
    evas_object_change(obj);
-evas_damage_rectangle_add(evas_object_evas_get(obj), 0, 0, 240, 400);
 }
 
 EAPI Eina_Bool
