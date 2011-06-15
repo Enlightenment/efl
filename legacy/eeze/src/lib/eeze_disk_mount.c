@@ -218,15 +218,11 @@ eeze_disk_mount_wrapper_set(Eeze_Disk *disk, const char *wrapper)
    else
      {
         eina_stringshare_del(disk->mount_wrapper);
+        disk->mount_wrapper = NULL;
         return EINA_TRUE;
      }
-   if ((!stat(wrapper, &s)) && S_ISREG(s.st_mode))
-     {
-        eina_stringshare_replace(&disk->mount_wrapper, wrapper);
-        return EINA_TRUE;
-     }
-   ERR("%s does not exist!", wrapper);
-   return EINA_FALSE;
+   eina_stringshare_replace(&disk->mount_wrapper, wrapper);
+   return EINA_TRUE;
 }
 
 EAPI const char *
