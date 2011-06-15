@@ -2266,12 +2266,12 @@ _on_focus_hook(void *data __UNUSED__, Evas_Object *obj)
    if (!wd) return;
    if (elm_widget_focus_get(obj))
      {
-        edje_object_signal_emit(wd->obj, "elm,action,focus", "elm");
+        edje_object_signal_emit(elm_smart_scroller_edje_object_get(wd->scr), "elm,action,focus", "elm");
         evas_object_focus_set(wd->obj, EINA_TRUE);
      }
    else
      {
-        edje_object_signal_emit(wd->obj, "elm,action,unfocus", "elm");
+        edje_object_signal_emit(elm_smart_scroller_edje_object_get(wd->scr), "elm,action,unfocus", "elm");
         evas_object_focus_set(wd->obj, EINA_FALSE);
      }
 }
