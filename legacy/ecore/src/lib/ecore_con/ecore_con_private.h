@@ -106,8 +106,9 @@ struct _Ecore_Con_Client
    SSL *ssl;
    int ssl_err;
 #endif
-   Eina_Bool handshaking : 1;
    Ecore_Con_Ssl_State ssl_state;
+   Eina_Bool handshaking : 1;
+   Eina_Bool upgrade : 1;
    Eina_Bool dead : 1;
    Eina_Bool delete_me : 1;
 };
@@ -152,6 +153,8 @@ struct _Ecore_Con_Server
    Eina_Bool created : 1; /* EINA_TRUE if server is our listening server */
    Eina_Bool connecting : 1; /* EINA_FALSE if just initialized or connected */
    Eina_Bool handshaking : 1; /* EINA_TRUE if server is ssl handshaking */
+   Eina_Bool upgrade : 1;
+   Eina_Bool ssl_prepared : 1;
    Eina_Bool use_cert : 1; /* EINA_TRUE if using certificate auth */
    Ecore_Con_Ssl_State ssl_state; /* current state of ssl handshake on the server */
    Eina_Bool verify : 1; /* EINA_TRUE if certificates will be verified */

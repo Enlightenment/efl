@@ -21,6 +21,9 @@
 #include <sys/mman.h>
 #include <errno.h>
 
+EAPI int ECORE_CON_EVENT_CLIENT_UPGRADE = 0;
+EAPI int ECORE_CON_EVENT_SERVER_UPGRADE = 0;
+
 static int _init_con_ssl_init_count = 0;
 
 #ifdef USE_GNUTLS
@@ -157,29 +160,16 @@ static Eina_Bool           SSL_SUFFIX(_ecore_con_ssl_server_cert_add) (Ecore_Con
 static Eina_Bool           SSL_SUFFIX(_ecore_con_ssl_server_privkey_add) (Ecore_Con_Server * svr, const char *key_file);
 
 static Ecore_Con_Ssl_Error SSL_SUFFIX(_ecore_con_ssl_server_prepare) (Ecore_Con_Server * svr, int ssl_type);
-static Ecore_Con_Ssl_Error
-                           SSL_SUFFIX(_ecore_con_ssl_server_init) (Ecore_Con_Server * svr);
-static Ecore_Con_Ssl_Error
-                           SSL_SUFFIX(_ecore_con_ssl_server_shutdown) (Ecore_Con_Server *
-                                            svr);
-static int
-SSL_SUFFIX(_ecore_con_ssl_server_read) (Ecore_Con_Server * svr,
-                                        unsigned char *buf, int size);
-static int
-SSL_SUFFIX(_ecore_con_ssl_server_write) (Ecore_Con_Server *
-                                         svr,
-                                         unsigned char *buf, int size);
+static Ecore_Con_Ssl_Error SSL_SUFFIX(_ecore_con_ssl_server_init) (Ecore_Con_Server * svr);
+static Ecore_Con_Ssl_Error SSL_SUFFIX(_ecore_con_ssl_server_shutdown) (Ecore_Con_Server *svr);
+static int SSL_SUFFIX(_ecore_con_ssl_server_read) (Ecore_Con_Server *svr, unsigned char *buf, int size);
+static int SSL_SUFFIX(_ecore_con_ssl_server_write) (Ecore_Con_Server *svr, unsigned char *buf, int size);
 
-static Ecore_Con_Ssl_Error
- SSL_SUFFIX(_ecore_con_ssl_client_init) (Ecore_Con_Client * cl);
-static Ecore_Con_Ssl_Error
- SSL_SUFFIX(_ecore_con_ssl_client_shutdown) (Ecore_Con_Client *
-                                            cl);
-static int
-SSL_SUFFIX(_ecore_con_ssl_client_read) (Ecore_Con_Client * cl,
+static Ecore_Con_Ssl_Error SSL_SUFFIX(_ecore_con_ssl_client_init) (Ecore_Con_Client * cl);
+static Ecore_Con_Ssl_Error SSL_SUFFIX(_ecore_con_ssl_client_shutdown) (Ecore_Con_Client *cl);
+static int SSL_SUFFIX(_ecore_con_ssl_client_read) (Ecore_Con_Client * cl,
                                         unsigned char *buf, int size);
-static int
-SSL_SUFFIX(_ecore_con_ssl_client_write) (Ecore_Con_Client * cl,
+static int SSL_SUFFIX(_ecore_con_ssl_client_write) (Ecore_Con_Client * cl,
                                          unsigned char *buf, int size);
 
 /*
@@ -190,7 +180,13 @@ Ecore_Con_Ssl_Error
 ecore_con_ssl_init(void)
 {
    if (!_init_con_ssl_init_count++)
-     SSL_SUFFIX(_ecore_con_ssl_init) ();
+     {
+        SSL_SUFFIX(_ecore_con_ssl_init) ();
+#if _ECORE_CON_SSL_AVAILABLE != 0
+        ECORE_CON_EVENT_CLIENT_UPGRADE = ecore_event_type_new();
+        ECORE_CON_EVENT_SERVER_UPGRADE = ecore_event_type_new();
+#endif
+     }
 
    return _init_con_ssl_init_count;
 }
@@ -410,6 +406,82 @@ ecore_con_ssl_server_crl_add(Ecore_Con_Server *svr,
 }
 
 /**
+ * @brief Upgrade a connection to a specified level of encryption
+ *
+ * Use this function to begin an SSL handshake on a connection (STARTTLS or similar).
+ * Once the upgrade has been completed, an ECORE_CON_EVENT_SERVER_UPGRADE event will be emitted.
+ * The connection should be treated as disconnected until the next event.
+ * @param svr The server object
+ * @param ssl_type The SSL connection type (ONLY).
+ * @return EINA_FALSE if the connection cannot be upgraded, otherwise EINA_TRUE.
+ * @note This function is NEVER to be used on a server object created with ecore_con_server_add
+ * @warning Setting a wrong value for @p compl_type WILL mess up your program.
+ * @since 1.1
+ */
+
+EAPI Eina_Bool
+ecore_con_ssl_server_upgrade(Ecore_Con_Server *svr, Ecore_Con_Type ssl_type)
+{
+   if (!ECORE_MAGIC_CHECK(svr, ECORE_MAGIC_CON_SERVER))
+     {
+        ECORE_MAGIC_FAIL(svr, ECORE_MAGIC_CON_SERVER, __func__);
+        return EINA_FALSE;
+     }
+#if _ECORE_CON_SSL_AVAILABLE == 0
+   return EINA_FALSE;
+#endif
+
+   if (!svr->ssl_prepared)
+     {
+        if (ecore_con_ssl_server_prepare(svr, ssl_type))
+          return EINA_FALSE;
+     }
+   svr->type |= ssl_type;
+   svr->upgrade = EINA_TRUE;
+   svr->handshaking = EINA_TRUE;
+   svr->ssl_state = ECORE_CON_SSL_STATE_INIT;
+   return !SSL_SUFFIX(_ecore_con_ssl_server_init) (svr);
+}
+
+/**
+ * @brief Upgrade a connection to a specified level of encryption
+ *
+ * Use this function to begin an SSL handshake on a connection (STARTTLS or similar).
+ * Once the upgrade has been completed, an ECORE_CON_EVENT_CLIENT_UPGRADE event will be emitted.
+ * The connection should be treated as disconnected until the next event.
+ * @param cl The client object
+ * @param compl_type The SSL connection type (ONLY).
+ * @return EINA_FALSE if the connection cannot be upgraded, otherwise EINA_TRUE.
+ * @warning Setting a wrong value for @p compl_type WILL mess up your program.
+ * @since 1.1
+ */
+
+EAPI Eina_Bool
+ecore_con_ssl_client_upgrade(Ecore_Con_Client *cl, Ecore_Con_Type ssl_type)
+{
+   if (!ECORE_MAGIC_CHECK(cl, ECORE_MAGIC_CON_CLIENT))
+     {
+        ECORE_MAGIC_FAIL(cl, ECORE_MAGIC_CON_CLIENT, __func__);
+        return EINA_FALSE;
+     }
+#if _ECORE_CON_SSL_AVAILABLE == 0
+   return EINA_FALSE;
+#endif
+
+   if (!cl->host_server->ssl_prepared)
+     {
+        if (ecore_con_ssl_server_prepare(cl->host_server, ssl_type))
+          return EINA_FALSE;
+     }
+   cl->host_server->type |= ssl_type;
+   cl->upgrade = EINA_TRUE;
+   cl->host_server->upgrade = EINA_TRUE;
+   cl->handshaking = EINA_TRUE;
+   cl->ssl_state = ECORE_CON_SSL_STATE_INIT;
+   return SSL_SUFFIX(_ecore_con_ssl_client_init) (cl);
+}
+
+/**
  * @}
  */
 
@@ -490,6 +562,7 @@ _ecore_con_ssl_server_prepare_gnutls(Ecore_Con_Server *svr,
           SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_anon_allocate_client_credentials(&svr->anoncred_c));
      }
 
+   svr->ssl_prepared = EINA_TRUE;
    return ECORE_CON_SSL_ERROR_NONE;
 
 error:
@@ -497,6 +570,7 @@ error:
    _ecore_con_ssl_server_shutdown_gnutls(svr);
    return ECORE_CON_SSL_ERROR_SERVER_INIT_FAILED;
 }
+
 
 static Ecore_Con_Ssl_Error
 _ecore_con_ssl_server_init_gnutls(Ecore_Con_Server *svr)
@@ -1539,6 +1613,12 @@ _ecore_con_ssl_server_prepare_none(Ecore_Con_Server *svr __UNUSED__,
 }
 
 static Ecore_Con_Ssl_Error
+_ecore_con_ssl_server_upgrade_none(Ecore_Con_Server *svr __UNUSED__)
+{
+   return ECORE_CON_SSL_ERROR_NOT_SUPPORTED;
+}
+
+static Ecore_Con_Ssl_Error
 _ecore_con_ssl_server_init_none(Ecore_Con_Server *svr __UNUSED__)
 {
    return ECORE_CON_SSL_ERROR_NOT_SUPPORTED;
@@ -1592,6 +1672,12 @@ _ecore_con_ssl_server_write_none(Ecore_Con_Server *svr __UNUSED__,
                                  int size              __UNUSED__)
 {
    return -1;
+}
+
+static Ecore_Con_Ssl_Error
+_ecore_con_ssl_client_upgrade_none(Ecore_Con_Client *cl __UNUSED__)
+{
+   return ECORE_CON_SSL_ERROR_NOT_SUPPORTED;
 }
 
 static Ecore_Con_Ssl_Error

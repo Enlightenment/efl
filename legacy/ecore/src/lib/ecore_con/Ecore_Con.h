@@ -146,6 +146,12 @@ typedef struct _Ecore_Con_Url Ecore_Con_Url;
 typedef struct _Ecore_Con_Event_Client_Add Ecore_Con_Event_Client_Add;
 
 /**
+ * @typedef Ecore_Con_Event_Client_Upgrade
+ * Used as the @p data param for the corresponding event
+ */
+typedef struct _Ecore_Con_Event_Client_Upgrade Ecore_Con_Event_Client_Upgrade;
+
+/**
  * @typedef Ecore_Con_Event_Client_Del
  * Used as the @p data param for the corresponding event
  */
@@ -162,6 +168,12 @@ typedef struct _Ecore_Con_Event_Client_Error Ecore_Con_Event_Client_Error;
  * Used as the @p data param for the corresponding event
  */
 typedef struct _Ecore_Con_Event_Server_Add Ecore_Con_Event_Server_Add;
+
+/**
+ * @typedef Ecore_Con_Event_Server_Upgrade
+ * Used as the @p data param for the corresponding event
+ */
+typedef struct _Ecore_Con_Event_Server_Upgrade Ecore_Con_Event_Server_Upgrade;
 
 /**
  * @typedef Ecore_Con_Event_Server_Del
@@ -215,6 +227,15 @@ struct _Ecore_Con_Event_Client_Add
 };
 
 /**
+ * @struct _Ecore_Con_Event_Client_Upgrade
+ * Used as the @p data param for the @ref ECORE_CON_EVENT_CLIENT_UPGRADE event
+ */
+struct _Ecore_Con_Event_Client_Upgrade
+{
+   Ecore_Con_Client *client; /** the client that completed handshake */
+};
+
+/**
  * @struct _Ecore_Con_Event_Client_Del
  * Used as the @p data param for the @ref ECORE_CON_EVENT_CLIENT_DEL event
  */
@@ -238,6 +259,15 @@ struct _Ecore_Con_Event_Client_Error
  * Used as the @p data param for the @ref ECORE_CON_EVENT_SERVER_ADD event
  */
 struct _Ecore_Con_Event_Server_Add
+{
+   Ecore_Con_Server *server; /** the server that was connected to */
+};
+
+/**
+ * @struct _Ecore_Con_Event_Server_Upgrade
+ * Used as the @p data param for the @ref ECORE_CON_EVENT_SERVER_UPGRADE event
+ */
+struct _Ecore_Con_Event_Server_Upgrade
 {
    Ecore_Con_Server *server; /** the server that was connected to */
 };
@@ -329,12 +359,16 @@ EAPI extern int ECORE_CON_EVENT_CLIENT_ADD;
 EAPI extern int ECORE_CON_EVENT_CLIENT_DEL;
 /** A client experienced an error */
 EAPI extern int ECORE_CON_EVENT_CLIENT_ERROR;
+/** A client connection has been upgraded to SSL */
+EAPI extern int ECORE_CON_EVENT_CLIENT_UPGRADE;
 /** A server was created */
 EAPI extern int ECORE_CON_EVENT_SERVER_ADD;
 /** A server connection was lost */
 EAPI extern int ECORE_CON_EVENT_SERVER_DEL;
 /** A server experienced an error */
 EAPI extern int ECORE_CON_EVENT_SERVER_ERROR;
+/** A server connection has been upgraded to SSL */
+EAPI extern int ECORE_CON_EVENT_SERVER_UPGRADE;
 /** A client connected to the server has sent data */
 EAPI extern int ECORE_CON_EVENT_CLIENT_DATA;
 /** A server connection object has data */
@@ -427,6 +461,8 @@ EAPI Eina_Bool         ecore_con_ssl_server_privkey_add(Ecore_Con_Server *svr, c
 EAPI Eina_Bool         ecore_con_ssl_server_crl_add(Ecore_Con_Server *svr, const char *crl_file);
 EAPI Eina_Bool         ecore_con_ssl_server_cafile_add(Ecore_Con_Server *svr, const char *ca_file);
 EAPI void              ecore_con_ssl_server_verify(Ecore_Con_Server *svr);
+EAPI Eina_Bool         ecore_con_ssl_server_upgrade(Ecore_Con_Server *svr, Ecore_Con_Type compl_type);
+EAPI Eina_Bool         ecore_con_ssl_client_upgrade(Ecore_Con_Client *cl, Ecore_Con_Type compl_type);
 
 /**
  * @}

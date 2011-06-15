@@ -1178,13 +1178,15 @@ ecore_con_event_server_add(Ecore_Con_Server *svr)
 {
     /* we got our server! */
     Ecore_Con_Event_Server_Add *e;
+    int ev = ECORE_CON_EVENT_SERVER_ADD;
 
     e = calloc(1, sizeof(Ecore_Con_Event_Server_Add));
     EINA_SAFETY_ON_NULL_RETURN(e);
 
     svr->event_count++;
     e->server = svr;
-    ecore_event_add(ECORE_CON_EVENT_SERVER_ADD, e,
+    if (svr->upgrade) ev = ECORE_CON_EVENT_SERVER_UPGRADE;
+    ecore_event_add(ev, e,
                     _ecore_con_event_server_add_free, NULL);
 }
 
@@ -1234,6 +1236,7 @@ void
 ecore_con_event_client_add(Ecore_Con_Client *cl)
 {
    Ecore_Con_Event_Client_Add *e;
+   int ev = ECORE_CON_EVENT_CLIENT_ADD;
 
    e = calloc(1, sizeof(Ecore_Con_Event_Client_Add));
    EINA_SAFETY_ON_NULL_RETURN(e);
@@ -1242,7 +1245,8 @@ ecore_con_event_client_add(Ecore_Con_Client *cl)
    cl->host_server->event_count++;
    _ecore_con_cl_timer_update(cl);
    e->client = cl;
-   ecore_event_add(ECORE_CON_EVENT_CLIENT_ADD, e,
+   if (cl->upgrade) ev = ECORE_CON_EVENT_CLIENT_UPGRADE;
+   ecore_event_add(ev, e,
                    (Ecore_End_Cb)_ecore_con_event_client_add_free, cl->host_server);
 
 }
@@ -2018,7 +2022,7 @@ _ecore_con_svr_tcp_handler(void                        *data,
 
    ECORE_MAGIC_SET(cl, ECORE_MAGIC_CON_CLIENT);
 
-   if (svr->type & ECORE_CON_SSL)
+   if ((!svr->upgrade) && (svr->type & ECORE_CON_SSL))
      {
         cl->handshaking = EINA_TRUE;
         cl->ssl_state = ECORE_CON_SSL_STATE_INIT;
@@ -2284,7 +2288,7 @@ _ecore_con_svr_cl_read(Ecore_Con_Client *cl)
         _ecore_con_cl_timer_update(cl);
      }
 
-   if (!(cl->host_server->type & ECORE_CON_SSL))
+   if (!(cl->host_server->type & ECORE_CON_SSL) || (!cl->upgrade))
      {
         num = read(cl->fd, buf, sizeof(buf));
         /* 0 is not a valid return value for a tcp socket */
@@ -2445,7 +2449,7 @@ _ecore_con_client_flush(Ecore_Con_Client *cl)
      {
         num = cl->buf_size - cl->buf_offset;
         if (num <= 0) return;
-        if (!(cl->host_server->type & ECORE_CON_SSL))
+        if (!(cl->host_server->type & ECORE_CON_SSL) || (!cl->upgrade))
           count = write(cl->fd, cl->buf + cl->buf_offset, num);
         else
           count = ecore_con_ssl_client_write(cl, cl->buf + cl->buf_offset, num);

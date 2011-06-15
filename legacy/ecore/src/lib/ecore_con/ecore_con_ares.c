@@ -314,7 +314,7 @@ void
 ecore_con_info_data_clear(void *info)
 {
    Ecore_Con_CAres *cares = info;
-   cares->data = NULL;
+   if (cares) cares->data = NULL;
 }
 
 static Eina_Bool
