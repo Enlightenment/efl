@@ -260,6 +260,17 @@ evas_image_load_file_data_gif(Image_Entry *ie, const char *file, const char *key
 
    bg = gif->SBackGroundColor;
    cmap = (gif->Image.ColorMap ? gif->Image.ColorMap : gif->SColorMap);
+   if (!cmap)
+     {
+        DGifCloseFile(gif);
+        for (i = 0; i < h; i++)
+          {
+             free(rows[i]);
+          }
+        free(rows);
+        *error = EVAS_LOAD_ERROR_CORRUPT_FILE;
+        return EINA_FALSE;
+     }
 
    ptr = evas_cache_image_pixels(ie);
    per_inc = 100.0 / (((double)w) * h);
