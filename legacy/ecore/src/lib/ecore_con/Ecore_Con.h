@@ -148,6 +148,7 @@ typedef struct _Ecore_Con_Event_Client_Add Ecore_Con_Event_Client_Add;
 /**
  * @typedef Ecore_Con_Event_Client_Upgrade
  * Used as the @p data param for the corresponding event
+ * @since 1.1
  */
 typedef struct _Ecore_Con_Event_Client_Upgrade Ecore_Con_Event_Client_Upgrade;
 
@@ -172,6 +173,7 @@ typedef struct _Ecore_Con_Event_Server_Add Ecore_Con_Event_Server_Add;
 /**
  * @typedef Ecore_Con_Event_Server_Upgrade
  * Used as the @p data param for the corresponding event
+ * @since 1.1
  */
 typedef struct _Ecore_Con_Event_Server_Upgrade Ecore_Con_Event_Server_Upgrade;
 
@@ -229,6 +231,7 @@ struct _Ecore_Con_Event_Client_Add
 /**
  * @struct _Ecore_Con_Event_Client_Upgrade
  * Used as the @p data param for the @ref ECORE_CON_EVENT_CLIENT_UPGRADE event
+ * @since 1.1
  */
 struct _Ecore_Con_Event_Client_Upgrade
 {
@@ -266,6 +269,7 @@ struct _Ecore_Con_Event_Server_Add
 /**
  * @struct _Ecore_Con_Event_Server_Upgrade
  * Used as the @p data param for the @ref ECORE_CON_EVENT_SERVER_UPGRADE event
+ * @since 1.1
  */
 struct _Ecore_Con_Event_Server_Upgrade
 {
@@ -359,7 +363,9 @@ EAPI extern int ECORE_CON_EVENT_CLIENT_ADD;
 EAPI extern int ECORE_CON_EVENT_CLIENT_DEL;
 /** A client experienced an error */
 EAPI extern int ECORE_CON_EVENT_CLIENT_ERROR;
-/** A client connection has been upgraded to SSL */
+/** A client connection has been upgraded to SSL
+ * @since 1.1
+ */
 EAPI extern int ECORE_CON_EVENT_CLIENT_UPGRADE;
 /** A server was created */
 EAPI extern int ECORE_CON_EVENT_SERVER_ADD;
@@ -367,7 +373,9 @@ EAPI extern int ECORE_CON_EVENT_SERVER_ADD;
 EAPI extern int ECORE_CON_EVENT_SERVER_DEL;
 /** A server experienced an error */
 EAPI extern int ECORE_CON_EVENT_SERVER_ERROR;
-/** A server connection has been upgraded to SSL */
+/** A server connection has been upgraded to SSL
+ * @since 1.1
+ */
 EAPI extern int ECORE_CON_EVENT_SERVER_UPGRADE;
 /** A client connected to the server has sent data */
 EAPI extern int ECORE_CON_EVENT_CLIENT_DATA;
