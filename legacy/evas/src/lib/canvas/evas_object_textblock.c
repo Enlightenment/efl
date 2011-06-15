@@ -8866,11 +8866,10 @@ static void
 evas_object_textblock_scale_update(Evas_Object *obj)
 {
    Evas_Object_Textblock *o;
-   
+
    o = (Evas_Object_Textblock *)(obj->object_data);
-   o->content_changed = 1;
-   o->formatted.valid = 0;
-   o->changed = 1;
+   _evas_textblock_invalidate_all(o);
+   _evas_textblock_changed(o, obj);
 }
 
 void
