@@ -338,10 +338,12 @@ evas_object_map_enable_set(Evas_Object *obj, Eina_Bool enabled)
              evas_object_mapped_clip_across_mark(obj);
           }
      }
+             _evas_map_calc_geom_change(obj);
    _evas_map_calc_map_geometry(obj);
    /* This is a bit heavy handed, but it fixes the case of same geometry, but
     * changed colour or UV settings. */
    evas_object_change(obj);
+evas_damage_rectangle_add(evas_object_evas_get(obj), 0, 0, 240, 400);
 }
 
 EAPI Eina_Bool
@@ -772,24 +774,24 @@ evas_map_util_3d_rotate(Evas_Map *m, double dx, double dy, double dz,
           {
              xx = x * cos(rz);
              yy = x * sin(rz);
-             x = xx + (y * cos(rz + M_PI_2));
-             y = yy + (y * sin(rz + M_PI_2));
+             x = xx - (y * sin(rz));
+             y = yy + (y * cos(rz));
           }
 
         if (ry != 0.0)
           {
              xx = x * cos(ry);
              zz = x * sin(ry);
-             x = xx + (z * cos(ry + M_PI_2));
-             z = zz + (z * sin(ry + M_PI_2));
+             x = xx - (z * sin(ry));
+             z = zz + (z * cos(ry));
           }
 
         if (rx != 0.0)
           {
              zz = z * cos(rx);
              yy = z * sin(rx);
-             z = zz + (y * cos(rx + M_PI_2));
-             y = yy + (y * sin(rx + M_PI_2));
+             z = zz - (y * sin(rx));
+             y = yy + (y * cos(rx));
           }
 
         p->px = p->x = x + cx;
