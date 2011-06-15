@@ -674,6 +674,15 @@ int main(int argc, char **argv)
    ecore_app_args_set(argc, (const char **)argv);
    edje_scale_set(opts.scale);
 
+   // check if the given edj file is there
+   if (access(argv[args], R_OK) == -1)
+     {
+       int e = errno;
+       fprintf(stderr, "ERROR: file '%s' not accessible, error %d (%s).\n",
+               argv[args], e, strerror(e));
+       goto end;
+     }
+
    opts.file = argv[args];
    if (opts.list_groups)
      {

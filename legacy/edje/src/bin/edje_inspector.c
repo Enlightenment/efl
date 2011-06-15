@@ -11,6 +11,7 @@
 #include <Ecore_Getopt.h>
 #include <locale.h>
 #include <fnmatch.h>
+#include <unistd.h>
 
 static int _log_dom;
 #define DBG(...) EINA_LOG_DOM_DBG(_log_dom, __VA_ARGS__)
@@ -1577,6 +1578,15 @@ main(int argc, char **argv)
 
    file = argv[arg_index];
 
+   // check if the file is accessible
+   if (access(file, R_OK) == -1)
+     {
+        int e = errno;
+        ERR("File '%s' not accessible, error %d (%s).\n",
+            file, e, strerror(e));
+        ret = 1;
+        goto error_getopt;
+     }
 
    DBG("mode=%s, detail=%d(%s), group=%s, part=%s, program=%s, api-only=" FMT_UCHAR
        ", api-fix=" FMT_UCHAR ", machine=" FMT_UCHAR ", file=%s",
