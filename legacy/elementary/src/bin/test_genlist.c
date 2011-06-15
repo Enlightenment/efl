@@ -33,9 +33,9 @@ Evas_Object *gl_icon_get(void *data __UNUSED__, Evas_Object *obj, const char *pa
    char buf[PATH_MAX];
    Evas_Object *ic = elm_icon_add(obj);
    if (!strcmp(part, "elm.swallow.end"))
-      snprintf(buf, sizeof(buf), "%s/images/bubble.png", PACKAGE_DATA_DIR);
+     snprintf(buf, sizeof(buf), "%s/images/bubble.png", PACKAGE_DATA_DIR);
    else
-      snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
+     snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
    elm_icon_file_set(ic, buf, NULL);
    evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
    return ic;
@@ -63,9 +63,9 @@ _move(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSED__, void *even
    Elm_Genlist_Item *gli;
    gli = elm_genlist_at_xy_item_get(gl, ev->cur.canvas.x, ev->cur.canvas.y, &where);
    if (gli)
-      printf("over %p, where %i\n", elm_genlist_item_data_get(gli), where);
+     printf("over %p, where %i\n", elm_genlist_item_data_get(gli), where);
    else
-      printf("over none, where %i\n", where);
+     printf("over none, where %i\n", where);
 }
 
 static void
@@ -165,9 +165,9 @@ test_genlist(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_inf
                                       gl_sel/* func */,
                                       (void *)(long)(i * 10)/* func data */);
         if (i == 50)
-           evas_object_smart_callback_add(bt_50, "clicked", _bt50_cb, gli);
+          evas_object_smart_callback_add(bt_50, "clicked", _bt50_cb, gli);
         else if (i == 1500)
-           evas_object_smart_callback_add(bt_1500, "clicked", _bt1500_cb, gli);
+          evas_object_smart_callback_add(bt_1500, "clicked", _bt1500_cb, gli);
      }
    evas_object_resize(win, 480, 800);
    evas_object_show(win);
@@ -527,25 +527,25 @@ Evas_Object *gl2_icon_get(void *data, Evas_Object *obj, const char *part)
    if (!strcmp(part, "elm.swallow.icon"))
      {
         if (!(tit->mode & 0x3))
-           snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
+          snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
         else if ((tit->mode & 0x3) == 1)
-           snprintf(buf, sizeof(buf), "%s/images/logo.png", PACKAGE_DATA_DIR);
+          snprintf(buf, sizeof(buf), "%s/images/logo.png", PACKAGE_DATA_DIR);
         else if ((tit->mode & 0x3) == 2)
-           snprintf(buf, sizeof(buf), "%s/images/panel_01.jpg", PACKAGE_DATA_DIR);
+          snprintf(buf, sizeof(buf), "%s/images/panel_01.jpg", PACKAGE_DATA_DIR);
         else if ((tit->mode & 0x3) == 3)
-           snprintf(buf, sizeof(buf), "%s/images/rock_01.jpg", PACKAGE_DATA_DIR);
+          snprintf(buf, sizeof(buf), "%s/images/rock_01.jpg", PACKAGE_DATA_DIR);
         elm_icon_file_set(ic, buf, NULL);
      }
    else if (!strcmp(part, "elm.swallow.end"))
      {
         if (!(tit->mode & 0x3))
-           snprintf(buf, sizeof(buf), "%s/images/sky_01.jpg", PACKAGE_DATA_DIR);
+          snprintf(buf, sizeof(buf), "%s/images/sky_01.jpg", PACKAGE_DATA_DIR);
         else if ((tit->mode & 0x3) == 1)
-           snprintf(buf, sizeof(buf), "%s/images/sky_02.jpg", PACKAGE_DATA_DIR);
+          snprintf(buf, sizeof(buf), "%s/images/sky_02.jpg", PACKAGE_DATA_DIR);
         else if ((tit->mode & 0x3) == 2)
-           snprintf(buf, sizeof(buf), "%s/images/sky_03.jpg", PACKAGE_DATA_DIR);
+          snprintf(buf, sizeof(buf), "%s/images/sky_03.jpg", PACKAGE_DATA_DIR);
         else if ((tit->mode & 0x3) == 3)
-           snprintf(buf, sizeof(buf), "%s/images/sky_04.jpg", PACKAGE_DATA_DIR);
+          snprintf(buf, sizeof(buf), "%s/images/sky_04.jpg", PACKAGE_DATA_DIR);
         elm_icon_file_set(ic, buf, NULL);
      }
    evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
