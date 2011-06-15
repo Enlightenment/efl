@@ -713,6 +713,15 @@ _eina_hash_iterator_free(Eina_Iterator_Hash *it)
  *                                   API                                      *
  *============================================================================*/
 
+EAPI void
+eina_hash_free_set(Eina_Hash *hash, Eina_Free_Cb data_free_cb)
+{
+   EINA_MAGIC_CHECK_HASH(hash);
+   EINA_SAFETY_ON_NULL_RETURN(hash);
+
+   hash->data_free_cb = data_free_cb;
+}
+
 EAPI Eina_Hash *
 eina_hash_new(Eina_Key_Length key_length_cb,
               Eina_Key_Cmp key_cmp_cb,

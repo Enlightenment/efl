@@ -264,6 +264,15 @@ EAPI Eina_Hash *eina_hash_new(Eina_Key_Length key_length_cb,
                               int             buckets_power_size) EINA_MALLOC EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(2, 3);
 
 /**
+ * @brief Redefine the callback that clean the data of a hash
+ *
+ * @param hash The given hash table
+ * @param data_free_cb The function called on each value when the hash
+ * table is freed. @c NULL can be passed as callback.
+ */
+EAPI void eina_hash_free_set(Eina_Hash *hash, Eina_Free_Cb data_free_cb) EINA_ARG_NONNULL(1);
+
+/**
  * @brief Create a new hash table using the djb2 algorithm.
  *
  * @param data_free_cb The function called on each value when the hash table

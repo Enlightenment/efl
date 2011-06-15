@@ -102,7 +102,12 @@
 
 	* Fix eina_hash_set to handle data == NULL like eina_hash_del.
 
-2011-06-3  Vincent Torri
+2011-06-03  Vincent Torri
 
         * Fix static linking with eina (iconv could potentially not be
 	passed to the linker)
+
+2011-06-15  Cedric Bail
+
+	* Add eina_hash_free_set to change the free callback during the
+	life of an Eina_Hash.
