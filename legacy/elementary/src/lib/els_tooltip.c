@@ -424,7 +424,7 @@ _elm_tooltip_obj_mouse_out_cb(void *data, Evas *e  __UNUSED__, Evas_Object *obj 
    _elm_tooltip_hide_anim_start(tt);
 }
 
-static void _elm_tooltip_obj_del_cb(void *data, Evas *e  __UNUSED__, Evas_Object *obj, void *event_info  __UNUSED__);
+static void _elm_tooltip_obj_free_cb(void *data, Evas *e  __UNUSED__, Evas_Object *obj, void *event_info  __UNUSED__);
 
 static void
 _elm_tooltip_unset(Elm_Tooltip *tt)
@@ -442,14 +442,14 @@ _elm_tooltip_unset(Elm_Tooltip *tt)
           (tt->eventarea, EVAS_CALLBACK_MOUSE_OUT,
            _elm_tooltip_obj_mouse_out_cb, tt);
         evas_object_event_callback_del_full
-          (tt->eventarea, EVAS_CALLBACK_DEL, _elm_tooltip_obj_del_cb, tt);
+          (tt->eventarea, EVAS_CALLBACK_FREE, _elm_tooltip_obj_free_cb, tt);
 
         evas_object_data_del(tt->eventarea, _tooltip_key);
      }
    if (tt->owner)
      {
         evas_object_event_callback_del_full
-          (tt->owner, EVAS_CALLBACK_DEL, _elm_tooltip_obj_del_cb, tt);
+          (tt->owner, EVAS_CALLBACK_FREE, _elm_tooltip_obj_free_cb, tt);
         elm_widget_tooltip_del(tt->owner, tt);
      }
 
@@ -458,7 +458,7 @@ _elm_tooltip_unset(Elm_Tooltip *tt)
 }
 
 static void
-_elm_tooltip_obj_del_cb(void *data, Evas *e  __UNUSED__, Evas_Object *obj, void *event_info  __UNUSED__)
+_elm_tooltip_obj_free_cb(void *data, Evas *e  __UNUSED__, Evas_Object *obj, void *event_info  __UNUSED__)
 {
    Elm_Tooltip *tt = data;
    if (tt->eventarea == obj) tt->eventarea = NULL;
@@ -561,13 +561,13 @@ elm_object_sub_tooltip_content_cb_set(Evas_Object *eventarea, Evas_Object *owner
           {
              if (tt->owner != eventarea)
                evas_object_event_callback_del_full
-                 (tt->owner, EVAS_CALLBACK_DEL, _elm_tooltip_obj_del_cb, tt);
+                 (tt->owner, EVAS_CALLBACK_FREE, _elm_tooltip_obj_free_cb, tt);
 
              elm_widget_tooltip_del(tt->owner, tt);
 
              if (owner != eventarea)
                evas_object_event_callback_add
-                 (owner, EVAS_CALLBACK_DEL, _elm_tooltip_obj_del_cb, tt);
+                 (owner, EVAS_CALLBACK_FREE, _elm_tooltip_obj_free_cb, tt);
 
              elm_widget_tooltip_add(tt->owner, tt);
           }
@@ -597,11 +597,11 @@ elm_object_sub_tooltip_content_cb_set(Evas_Object *eventarea, Evas_Object *owner
           (eventarea, EVAS_CALLBACK_MOUSE_OUT,
            _elm_tooltip_obj_mouse_out_cb, tt);
         evas_object_event_callback_add
-          (eventarea, EVAS_CALLBACK_DEL, _elm_tooltip_obj_del_cb, tt);
+          (eventarea, EVAS_CALLBACK_FREE, _elm_tooltip_obj_free_cb, tt);
 
         if (owner != eventarea)
           evas_object_event_callback_add
-            (owner, EVAS_CALLBACK_DEL, _elm_tooltip_obj_del_cb, tt);
+            (owner, EVAS_CALLBACK_FREE, _elm_tooltip_obj_free_cb, tt);
 
         elm_widget_tooltip_add(tt->owner, tt);
      }
