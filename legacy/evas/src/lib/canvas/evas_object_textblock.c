@@ -4291,8 +4291,8 @@ evas_textblock_style_set(Evas_Textblock_Style *ts, const char *text)
         Evas_Object_Textblock *o;
 
         o = (Evas_Object_Textblock *)(obj->object_data);
-        _evas_textblock_changed(o, obj);
         _evas_textblock_invalidate_all(o);
+        _evas_textblock_changed(o, obj);
      }
 
    _style_replace(ts, text);
@@ -4418,8 +4418,8 @@ evas_object_textblock_style_set(Evas_Object *obj, Evas_Textblock_Style *ts)
      }
    o->style = ts;
 
-   _evas_textblock_changed(o, obj);
    _evas_textblock_invalidate_all(o);
+   _evas_textblock_changed(o, obj);
 }
 
 EAPI const Evas_Textblock_Style *
@@ -4436,8 +4436,8 @@ evas_object_textblock_replace_char_set(Evas_Object *obj, const char *ch)
    if (o->repch) eina_stringshare_del(o->repch);
    if (ch) o->repch = eina_stringshare_add(ch);
    else o->repch = NULL;
-   _evas_textblock_changed(o, obj);
    _evas_textblock_invalidate_all(o);
+   _evas_textblock_changed(o, obj);
 }
 
 EAPI void
@@ -8904,8 +8904,8 @@ _evas_object_textblock_rehint(Evas_Object *obj)
                }
           }
      }
-   _evas_textblock_changed(o, obj);
    _evas_textblock_invalidate_all(o);
+   _evas_textblock_changed(o, obj);
 }
 
 /**
