@@ -18,8 +18,6 @@
 # define cnp_debug(x...)
 #endif
 
-#define PROVIDER_SET "__elm_cnp_provider_set"
-
 typedef struct _Paste_Image   Paste_Image;
 typedef struct _Cnp_Selection Cnp_Selection;
 typedef struct _Escape        Escape;
@@ -62,7 +60,6 @@ enum
 struct _Paste_Image
 {
    Evas_Object *entry;
-   const char  *tag;
    const char  *file;
    Evas_Object *img;
 };
@@ -138,10 +135,6 @@ static Eina_Bool selection_clear(void *udata __UNUSED__, int type, void *event);
 static Eina_Bool selection_notify(void *udata __UNUSED__, int type, void *event);
 static char *remove_tags(const char *p, int *len);
 static char *mark_up(const char *start, int inlen, int *lenp);
-
-static Evas_Object *image_provider(void *images, Evas_Object *entry, const char *item);
-static void entry_deleted(void *images, Evas *e, Evas_Object *entry, void *unused);
-
 
 static Eina_Bool targets_converter(char *target, void *data, int size, void **data_ret, int *size_ret, Ecore_X_Atom *ttype, int *typesize);
 static Eina_Bool text_converter(char *target, void *data, int size, void **data_ret, int *size_ret, Ecore_X_Atom *ttype, int *typesize);
@@ -993,59 +986,15 @@ uri_converter(char *target __UNUSED__, void *data, int size __UNUSED__, void **d
    return EINA_TRUE;
 }
 
-/*
- * Image paste provide
- */
-
-/* FIXME: Should add provider for each pasted item: Use data to store it
- * much easier */
-static Evas_Object *
-image_provider(void *images __UNUSED__, Evas_Object *entry, const char *item)
-{
-   Paste_Image *pi;
-   Eina_List *l;
-
-   cnp_debug("image provider for %s called\n", item);
-   EINA_LIST_FOREACH(pastedimages, l, pi)
-     {
-        cnp_debug("is it %s?\n",pi->tag);
-        if (!strcmp(pi->tag, item))
-          {
-             /* Found it */
-             Evas_Object *o;
-             o = evas_object_image_filled_add(evas_object_evas_get(entry));
-             /* FIXME: Handle eets */
-             cnp_debug("file is %s (object is %p)\n", pi->file, o);
-             evas_object_image_file_set(o, pi->file, NULL);
-             evas_object_show(o);
-             return o;
-          }
-     }
-   return NULL;
-}
-
-
 static Paste_Image *
 pasteimage_alloc(const char *file, int pathlen)
 {
    Paste_Image *pi;
-   int len;
-   char *buf, *filebuf;
+   char *filebuf;
    int prefixlen = strlen("file://");
 
    pi = calloc(1, sizeof(Paste_Image));
    if (!pi) return NULL;
-
-   len = snprintf(NULL, 0, "pasteimage-%p", pi);
-   len++;
-   buf = malloc(len);
-   if (!buf)
-     {
-        free(pi);
-        return NULL;
-     }
-   snprintf(buf, len, "pasteimage-%p", pi);
-   pi->tag = buf;
 
    if (file)
      {
@@ -1055,6 +1004,7 @@ pasteimage_alloc(const char *file, int pathlen)
         filebuf[pathlen] = 0;
         pi->file = strdup(filebuf);
      }
+   else file = NULL;
 
    return pi;
 }
@@ -1064,32 +1014,8 @@ pasteimage_free(Paste_Image *pi)
 {
    if (!pi) return;
    if (pi->file) free((void*)pi->file);
-   if (pi->tag) free((void*)pi->tag);
    free(pi);
 }
-
-static Eina_Bool
-pasteimage_provider_set(Evas_Object *entry)
-{
-   void *v;
-   const char *type;
-
-   if (!entry) return EINA_FALSE;
-   type = elm_widget_type_get(entry);
-   cnp_debug("type is %s\n", type);
-   if ((!type) || (strcmp(type, "entry"))) return EINA_FALSE;
-
-   v = evas_object_data_get(entry, PROVIDER_SET);
-   if (!v)
-     {
-        evas_object_data_set(entry, PROVIDER_SET, pasteimage_provider_set);
-        elm_entry_item_provider_append(entry, image_provider, NULL);
-        evas_object_event_callback_add(entry, EVAS_CALLBACK_FREE,
-                                       entry_deleted, NULL);
-     }
-   return EINA_TRUE;
-}
-
 
 static Eina_Bool
 pasteimage_append(Paste_Image *pi, Evas_Object *entry)
@@ -1101,8 +1027,6 @@ pasteimage_append(Paste_Image *pi, Evas_Object *entry)
    if (!pi) return EINA_FALSE;
    if (!entry) return EINA_FALSE;
 
-   pasteimage_provider_set(entry);
-
    len = strlen(tagstring)+strlen(pi->file);
 
    pastedimages = eina_list_append(pastedimages, pi);
@@ -1112,20 +1036,6 @@ pasteimage_append(Paste_Image *pi, Evas_Object *entry)
 
    return EINA_TRUE;
 }
-
-static void
-entry_deleted(void *images __UNUSED__, Evas *e __UNUSED__, Evas_Object *entry, void *unused __UNUSED__)
-{
-   Paste_Image *pi;
-   Eina_List *l,*next;
-
-   EINA_LIST_FOREACH_SAFE(pastedimages, l, next, pi)
-     {
-        if (pi->entry == entry)
-          pastedimages = eina_list_remove_list(pastedimages, l);
-     }
-}
-
 
 static char *
 remove_tags(const char *p, int *len)
@@ -1342,7 +1252,6 @@ found:
                {
                   int len;
                   ddata.format = ELM_SEL_FORMAT_MARKUP;
-                  pasteimage_provider_set(dropable->obj);
 
                   pastedimages = eina_list_append(pastedimages, savedtypes.pi);
                   len = strlen(tagstring) + strlen(savedtypes.pi->file);
