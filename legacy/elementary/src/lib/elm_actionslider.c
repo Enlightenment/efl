@@ -1,18 +1,3 @@
-/**
- * @addtogroup Actionslider Actionslider
- *
- * A actionslider is a switcher for 3 labels with customizable
- * magnet properties. When the position is set with magnet, the knob
- * will be moved to it if it's nearest the magnetized position.
- *
- * Signals that you can add callbacks for are:
- *
- * "selected" - when user selects a position (the label is passed as
- *              event info)".
- * "pos_changed" - when a button reaches to the special position like
- *                 "left", "right" and "center".
- */
-
 #include <Elementary.h>
 #include <math.h>
 #include "elm_priv.h"
@@ -335,14 +320,6 @@ _drag_button_up_cb(void *data, Evas_Object *o __UNUSED__, const char *emission _
 #undef _FINAL_POS_BY_ORIENTATION
 }
 
-/**
- * Add a new actionslider to the parent.
- *
- * @param parent The parent object
- * @return The new actionslider object or NULL if it cannot be created
- *
- * @ingroup Actionslider
- */
 EAPI Evas_Object *
 elm_actionslider_add(Evas_Object *parent)
 {
@@ -386,14 +363,6 @@ elm_actionslider_add(Evas_Object *parent)
    return obj;
 }
 
-/**
- * Set actionslider indicator position.
- *
- * @param obj The actionslider object.
- * @param pos The position of the indicator.
- *
- * @ingroup Actionslider
- */
 EAPI void
 elm_actionslider_indicator_pos_set(Evas_Object *obj, Elm_Actionslider_Pos pos)
 {
@@ -407,14 +376,6 @@ elm_actionslider_indicator_pos_set(Evas_Object *obj, Elm_Actionslider_Pos pos)
    edje_object_part_drag_value_set(wd->as, "elm.drag_button_base", position, 0.5);
 }
 
-/**
- * Get actionslider indicator position.
- *
- * @param obj The actionslider object.
- * @return The position of the indicator.
- *
- * @ingroup Actionslider
- */
 EAPI Elm_Actionslider_Pos
 elm_actionslider_indicator_pos_get(const Evas_Object *obj)
 {
@@ -432,16 +393,6 @@ elm_actionslider_indicator_pos_get(const Evas_Object *obj)
      return _get_pos_by_orientation(obj, ELM_ACTIONSLIDER_RIGHT);
 }
 
-/**
- * Set actionslider magnet position.
- *
- * @param obj The actionslider object.
- * @param pos Bit mask indicating the magnet positions.
- * Example: use (ELM_ACTIONSLIDER_LEFT | ELM_ACTIONSLIDER_RIGHT)
- * to put magnet property on both positions
- *
- * @ingroup Actionslider
- */
 EAPI void
 elm_actionslider_magnet_pos_set(Evas_Object *obj, Elm_Actionslider_Pos pos)
 {
@@ -451,14 +402,6 @@ elm_actionslider_magnet_pos_set(Evas_Object *obj, Elm_Actionslider_Pos pos)
    wd->magnet_position = pos;
 }
 
-/**
- * Get actionslider magnet position.
- *
- * @param obj The actionslider object.
- * @return The positions with magnet property.
- *
- * @ingroup Actionslider
- */
 EAPI Elm_Actionslider_Pos
 elm_actionslider_magnet_pos_get(const Evas_Object *obj)
 {
@@ -468,18 +411,6 @@ elm_actionslider_magnet_pos_get(const Evas_Object *obj)
    return wd->magnet_position;
 }
 
-/**
- * Set actionslider enabled position.
- *
- * All the positions are enabled by default.
- *
- * @param obj The actionslider object.
- * @param pos Bit mask indicating the enabled positions.
- * Example: use (ELM_ACTIONSLIDER_LEFT | ELM_ACTIONSLIDER_RIGHT)
- * to enable both positions, so the user can select it.
- *
- * @ingroup Actionslider
- */
 EAPI void
 elm_actionslider_enabled_pos_set(Evas_Object *obj, Elm_Actionslider_Pos pos)
 {
@@ -489,16 +420,6 @@ elm_actionslider_enabled_pos_set(Evas_Object *obj, Elm_Actionslider_Pos pos)
    wd->enabled_position = pos;
 }
 
-/**
- * Get actionslider enabled position.
- *
- * All the positions are enabled by default.
- *
- * @param obj The actionslider object.
- * @return The enabled positions.
- *
- * @ingroup Actionslider
- */
 EAPI Elm_Actionslider_Pos
 elm_actionslider_enabled_pos_get(const Evas_Object *obj)
 {
@@ -508,16 +429,6 @@ elm_actionslider_enabled_pos_get(const Evas_Object *obj)
    return wd->enabled_position;
 }
 
-/**
- * Set actionslider labels.
- *
- * @param obj The actionslider object
- * @param left_label The label which is going to be set.
- * @param center_label The label which is going to be set.
- * @param right_label The label which is going to be set.
- *
- * @ingroup Actionslider
- */
 EAPI void
 elm_actionslider_labels_set(Evas_Object *obj, const char *left_label, const char *center_label, const char *right_label)
 {
@@ -541,16 +452,6 @@ elm_actionslider_labels_set(Evas_Object *obj, const char *left_label, const char
    edje_object_part_text_set(wd->as, "elm.text.center", center_label);
 }
 
-/**
- * Get actionslider labels.
- *
- * @param obj The actionslider object
- * @param left_label A char** to place the left_label of @p obj into
- * @param center_label A char** to place the center_label of @p obj into
- * @param right_label A char** to place the right_label of @p obj into
- *
- * @ingroup Actionslider
- */
 EAPI void
 elm_actionslider_labels_get(const Evas_Object *obj, const char **left_label, const char **center_label, const char **right_label)
 {
@@ -565,14 +466,6 @@ elm_actionslider_labels_get(const Evas_Object *obj, const char **left_label, con
    if (right_label) *right_label = wd->text_right;
 }
 
-/**
- * Get actionslider selected label.
- *
- * @param obj The actionslider object
- * @return The selected label
- *
- * @ingroup Actionslider
- */
 EAPI const char *
 elm_actionslider_selected_label_get(const Evas_Object *obj)
 {
@@ -595,14 +488,6 @@ elm_actionslider_selected_label_get(const Evas_Object *obj)
    return NULL;
 }
 
-/**
- * Set the label used on the indicator object.
- *
- * @param obj The actionslider object
- * @param label The label which is going to be set.
- *
- * @ingroup Actionslider
- */
 EAPI void
 elm_actionslider_indicator_label_set(Evas_Object *obj, const char *label)
 {
@@ -614,14 +499,6 @@ elm_actionslider_indicator_label_set(Evas_Object *obj, const char *label)
    edje_object_part_text_set(wd->as, "elm.text.indicator", wd->indicator_label);
 }
 
-/**
- * Get the label used on the indicator object.
- *
- * @param obj The actionslider object
- * @return The indicator label
- *
- * @ingroup Actionslider
- */
 EAPI const char *
 elm_actionslider_indicator_label_get(Evas_Object *obj)
 {
