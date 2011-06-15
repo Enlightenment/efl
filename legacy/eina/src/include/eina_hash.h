@@ -269,6 +269,7 @@ EAPI Eina_Hash *eina_hash_new(Eina_Key_Length key_length_cb,
  * @param hash The given hash table
  * @param data_free_cb The function called on each value when the hash
  * table is freed. @c NULL can be passed as callback.
+ * @since 1.1
  */
 EAPI void eina_hash_free_set(Eina_Hash *hash, Eina_Free_Cb data_free_cb) EINA_ARG_NONNULL(1);
 
