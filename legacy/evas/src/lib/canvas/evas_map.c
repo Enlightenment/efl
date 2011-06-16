@@ -333,7 +333,7 @@ evas_map_coords_get(const Evas_Map *m, Evas_Coord x, Evas_Coord y,
                     *my = v[0] + (((x - xe[0]) * (v[1] - v[0])) /
                                   (xe[1] - xe[0]));
                }
-             return 1;
+             return EINA_TRUE;
           }
         if (grab)
           {
@@ -346,10 +346,10 @@ evas_map_coords_get(const Evas_Map *m, Evas_Coord x, Evas_Coord y,
                     *my = v[0] + (((x - xe[0]) * (v[1] - v[0])) /
                                   (xe[1] - xe[0]));
                }
-             return 1;
+             return EINA_TRUE;
           }
      }
-   return 0;
+   return EINA_FALSE;
 }
 
 Eina_Bool
@@ -392,7 +392,7 @@ EAPI Eina_Bool
 evas_object_map_enable_get(const Evas_Object *obj)
 {
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
-   return 0;
+   return EINA_FALSE;
    MAGIC_CHECK_END();
    return obj->cur.usemap;
 }
@@ -535,7 +535,7 @@ EAPI Evas_Map *
 evas_map_dup(const Evas_Map *m)
 {
    MAGIC_CHECK(m, Evas_Map, MAGIC_MAP);
-   return;
+   return NULL;
    MAGIC_CHECK_END();
 
    return _evas_map_dup(m);
@@ -979,7 +979,7 @@ evas_map_util_clockwise_get(Evas_Map *m)
    int i, j, k, count;
    long long c;
 
-   if (m->count < 3) return 0;
+   if (m->count < 3) return EINA_FALSE;
 
    count = 0;
    for (i = 0; i < m->count; i++)
@@ -995,6 +995,6 @@ evas_map_util_clockwise_get(Evas_Map *m)
         if (c < 0) count--;
         else if (c > 0) count++;
      }
-   if (count > 0) return 1;
-   return 0;
+   if (count > 0) return EINA_TRUE;
+   return EINA_FALSE;
 }
