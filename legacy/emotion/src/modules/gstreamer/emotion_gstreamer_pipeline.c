@@ -1,3 +1,9 @@
+#ifdef HAVE_CONFIG_H
+# include "config.h"
+#endif
+
+#define _GNU_SOURCE
+
 #include <unistd.h>
 #include <fcntl.h>
 
@@ -109,22 +115,27 @@ _emotion_pipeline_build(Emotion_Gstreamer_Video *ev, const char *file)
      }
    g_object_set(G_OBJECT(ev->pipeline), "audio-sink", sink, NULL);
 
-   if ((*file == '/') || (*file == '~'))
+   if (strstr(file, "://") == NULL)
      {
-       char *uri;
+       Eina_Strbuf *sbuf;
 
-       uri = g_filename_to_uri(file, NULL, NULL);
-       if (uri)
-         {
-           DBG("Setting file %s\n", uri);
-           g_object_set(G_OBJECT(ev->pipeline), "uri", uri, NULL);
-           free(uri);
-         }
-       else
-         {
-           ERR("could not create new uri from %s", file);
-           goto unref_pipeline;
-         }
+       sbuf = eina_strbuf_new();
+       eina_strbuf_append(sbuf, "file://");
+       if (*file != '.' && *file != '/')
+	 {
+	   char *tmp;
+
+	   tmp = get_current_dir_name();
+	   eina_strbuf_append(sbuf, tmp);
+	   eina_strbuf_append(sbuf, "/");
+	   free(tmp);
+	 }
+       eina_strbuf_append(sbuf, file);
+
+       DBG("Setting file %s\n", eina_strbuf_string_get(sbuf));
+       g_object_set(G_OBJECT(ev->pipeline), "uri", eina_strbuf_string_get(sbuf), NULL);
+
+       eina_strbuf_free(sbuf);
      }
    else
      {
