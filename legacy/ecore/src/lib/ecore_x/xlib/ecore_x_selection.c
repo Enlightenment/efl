@@ -600,8 +600,10 @@ _ecore_x_selection_converter_text(char         *target,
 #endif /* ifdef X_HAVE_UTF8_STRING */
    else
       return EINA_FALSE;
-   if (!(mystr = strdup(data)))
-      return EINA_FALSE;
+
+   mystr = alloca(size + 1);
+   memcpy(mystr, data, size);
+   mystr[size] = '\0';
 
 #ifdef X_HAVE_UTF8_STRING
    if (Xutf8TextListToTextProperty(_ecore_x_disp, &mystr, 1, style,
@@ -611,13 +613,11 @@ _ecore_x_selection_converter_text(char         *target,
         *data_ret = malloc(bufsize);
         if (!*data_ret)
           {
-             free(mystr);
              return EINA_FALSE;
           }
         memcpy(*data_ret, text_prop.value, bufsize);
         *size_ret = bufsize;
         XFree(text_prop.value);
-        free(mystr);
         return EINA_TRUE;
      }
 
@@ -631,14 +631,12 @@ _ecore_x_selection_converter_text(char         *target,
         memcpy(*data_ret, text_prop.value, bufsize);
         *size_ret = bufsize;
         XFree(text_prop.value);
-        free(mystr);
         return EINA_TRUE;
      }
 
 #endif /* ifdef X_HAVE_UTF8_STRING */
    else
      {
-        free(mystr);
         return EINA_TRUE;
      }
 } /* _ecore_x_selection_converter_text */

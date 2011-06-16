@@ -220,3 +220,7 @@
         * Add ecore_con_ssl_client/server_upgrade to begin asynchronously upgrading an
         existing connection to SSL/TLS, emitting ECORE_CON_CLIENT/SERVER_UPGRADE event
         upon completion.
+
+2011-06-16  Cedric Bail
+
+	* Fix ecore_x_selection_convert not taking selection length into account.
