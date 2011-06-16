@@ -785,7 +785,7 @@ elm_scrolled_entry_entry_get(const Evas_Object *obj)
  * @param obj The entry object
  * @return If the entry is empty or not.
  *
- * @ingroup Entry
+ * @ingroup Scrolled_Entry
  */
 EAPI Eina_Bool
 elm_scrolled_entry_is_empty(const Evas_Object *obj)
