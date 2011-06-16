@@ -1852,66 +1852,550 @@ extern "C" {
     * in convenient packages that do more than basic stuff */
 
    /* anchorview */
+   /**
+    * @defgroup Anchorview Anchorview
+    *
+    * Anchorview is for displaying text that contains markup with anchors
+    * like <c>\<a href=1234\>something\</\></c> in it.
+    *
+    * Besides being styled differently, the anchorview widget provides the
+    * necessary functionality so that clicking on these anchors brings up a
+    * popup with user defined content such as "call", "add to contacts" or
+    * "open web page". This popup is provided using the @ref Hover widget.
+    *
+    * This widget is very similar to @ref Anchorblock, so refer to that
+    * widget for an example. The only difference Anchorview has is that the
+    * widget is already provided with scrolling functionality, so if the
+    * text set to it is too large to fit in the given space, it will scroll,
+    * whereas the @ref Anchorblock widget will keep growing to ensure all the
+    * text can be displayed.
+    *
+    * This widget emits the following signals:
+    * @li "anchor,clicked": will be called when an anchor is clicked. The
+    * @p event_info parameter on the callback will be a pointer of type
+    * ::Elm_Entry_Anchorview_Info.
+    *
+    * See @ref Anchorblock for an example on how to use both of them.
+    *
+    * @see Anchorblock
+    * @see Entry
+    * @see Hover
+    *
+    * @{
+    */
+   /**
+    * @typedef Elm_Entry_Anchorview_Info
+    *
+    * The info sent in the callback for "anchor,clicked" signals emitted by
+    * the Anchorview widget.
+    */
    typedef struct _Elm_Entry_Anchorview_Info Elm_Entry_Anchorview_Info;
+   /**
+    * @struct _Elm_Entry_Anchorview_Info
+    *
+    * The info sent in the callback for "anchor,clicked" signals emitted by
+    * the Anchorview widget.
+    */
    struct _Elm_Entry_Anchorview_Info
      {
-        const char     *name;
-        int             button;
-        Evas_Object    *hover;
+        const char     *name; /**< Name of the anchor, as indicated in its href
+                                   attribute */
+        int             button; /**< The mouse button used to click on it */
+        Evas_Object    *hover; /**< The hover object to use for the popup */
         struct {
              Evas_Coord    x, y, w, h;
-        } anchor, hover_parent;
-        Eina_Bool       hover_left : 1;
-        Eina_Bool       hover_right : 1;
-        Eina_Bool       hover_top : 1;
-        Eina_Bool       hover_bottom : 1;
+        } anchor, /**< Geometry selection of text used as anchor */
+          hover_parent; /**< Geometry of the object used as parent by the
+                             hover */
+        Eina_Bool       hover_left : 1; /**< Hint indicating if there's space
+                                             for content on the left side of
+                                             the hover. Before calling the
+                                             callback, the widget will make the
+                                             necessary calculations to check
+                                             which sides are fit to be set with
+                                             content, based on the position the
+                                             hover is activated and its distance
+                                             to the edges of its parent object
+                                             */
+        Eina_Bool       hover_right : 1; /**< Hint indicating content fits on
+                                              the right side of the hover.
+                                              See @ref hover_left */
+        Eina_Bool       hover_top : 1; /**< Hint indicating content fits on top
+                                            of the hover. See @ref hover_left */
+        Eina_Bool       hover_bottom : 1; /**< Hint indicating content fits
+                                               below the hover. See @ref
+                                               hover_left */
      };
+   /**
+    * Add a new Anchorview object
+    *
+    * @param parent The parent object
+    * @return The new object or NULL if it cannot be created
+    */
    EAPI Evas_Object *elm_anchorview_add(Evas_Object *parent) EINA_ARG_NONNULL(1);
+   /**
+    * Set the text to show in the anchorview
+    *
+    * Sets the text of the anchorview to @p text. This text can include markup
+    * format tags, including <c>\<a href=anchorname\></c> to begin a segment of
+    * text that will be specially styled and react to click events, ended with
+    * either of \</a\> or \</\>. When clicked, the anchor will emit an
+    * "anchor,clicked" signal that you can attach a callback to with
+    * evas_object_smart_callback_add(). The name of the anchor given in the
+    * event info struct will be the one set in the href attribute, in this
+    * case, anchorname.
+    *
+    * Other markup can be used to style the text in different ways, but it's
+    * up to the style defined in the theme which tags do what.
+    */
    EAPI void         elm_anchorview_text_set(Evas_Object *obj, const char *text) EINA_ARG_NONNULL(1);
+   /**
+    * Get the markup text set for the anchorview
+    *
+    * Retrieves the text set on the anchorview, with markup tags included.
+    *
+    * @param obj The anchorview object
+    * @return The markup text set or @c NULL if nothing was set or an error
+    * occurred
+    */
    EAPI const char  *elm_anchorview_text_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
-
+   /**
+    * Set the parent of the hover popup
+    *
+    * Sets the parent object to use by the hover created by the anchorview
+    * when an anchor is clicked. See @ref Hover for more details on this.
+    * If no parent is set, the same anchorview object will be used.
+    *
+    * @param obj The anchorview object
+    * @param parent The object to use as parent for the hover
+    */
    EAPI void         elm_anchorview_hover_parent_set(Evas_Object *obj, Evas_Object *parent) EINA_ARG_NONNULL(1);
+   /**
+    * Get the parent of the hover popup
+    *
+    * Get the object used as parent for the hover created by the anchorview
+    * widget. See @ref Hover for more details on this.
+    *
+    * @param obj The anchorview object
+    * @return The object used as parent for the hover, NULL if none is set.
+    */
    EAPI Evas_Object *elm_anchorview_hover_parent_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+   /**
+    * Set the style that the hover should use
+    *
+    * When creating the popup hover, anchorview will request that it's
+    * themed according to @p style.
+    *
+    * @param obj The anchorview object
+    * @param style The style to use for the underlying hover
+    *
+    * @see elm_object_style_set()
+    */
    EAPI void         elm_anchorview_hover_style_set(Evas_Object *obj, const char *style) EINA_ARG_NONNULL(1);
+   /**
+    * Get the style that the hover should use
+    *
+    * Get the style the hover created by anchorview will use.
+    *
+    * @param obj The anchorview object
+    * @return The style to use by the hover. NULL means the default is used.
+    *
+    * @see elm_object_style_set()
+    */
    EAPI const char  *elm_anchorview_hover_style_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+   /**
+    * Ends the hover popup in the anchorview
+    *
+    * When an anchor is clicked, the anchorview widget will create a hover
+    * object to use as a popup with user provided content. This function
+    * terminates this popup, returning the anchorview to its normal state.
+    *
+    * @param obj The anchorview object
+    */
    EAPI void         elm_anchorview_hover_end(Evas_Object *obj) EINA_ARG_NONNULL(1);
+   /**
+    * Set bouncing behaviour when the scrolled content reaches an edge
+    *
+    * Tell the internal scroller object whether it should bounce or not
+    * when it reaches the respective edges for each axis.
+    *
+    * @param obj The anchorview object
+    * @param h_bounce Whether to bounce or not in the horizontal axis
+    * @param v_bounce Whether to bounce or not in the vertical axis
+    *
+    * @see elm_scroller_bounce_set()
+    */
    EAPI void         elm_anchorview_bounce_set(Evas_Object *obj, Eina_Bool h_bounce, Eina_Bool v_bounce) EINA_ARG_NONNULL(1);
+   /**
+    * Get the set bouncing behaviour of the internal scroller
+    *
+    * Get whether the internal scroller should bounce when the edge of each
+    * axis is reached scrolling.
+    *
+    * @param obj The anchorview object
+    * @param h_bounce Pointer where to store the bounce state of the horizontal
+    *                 axis
+    * @param v_bounce Pointer where to store the bounce state of the vertical
+    *                 axis
+    *
+    * @see elm_scroller_bounce_get()
+    */
    EAPI void         elm_anchorview_bounce_get(const Evas_Object *obj, Eina_Bool *h_bounce, Eina_Bool *v_bounce) EINA_ARG_NONNULL(1);
+   /**
+    * Appends a custom item provider to the given anchorview
+    *
+    * Appends the given function to the list of items providers. This list is
+    * called, one function at a time, with the given @p data pointer, the
+    * anchorview object and, in the @p item parameter, the item name as
+    * referenced in its href string. Following functions in the list will be
+    * called in order until one of them returns something different to NULL,
+    * which should be an Evas_Object which will be used in place of the item
+    * element.
+    *
+    * Items in the markup text take the form \<item relsize=16x16 vsize=full
+    * href=item/name\>\</item\>
+    *
+    * @param obj The anchorview object
+    * @param func The function to add to the list of providers
+    * @param data User data that will be passed to the callback function
+    *
+    * @see elm_entry_item_provider_append()
+    */
    EAPI void         elm_anchorview_item_provider_append(Evas_Object *obj, Evas_Object *(*func) (void *data, Evas_Object *anchorview, const char *item), void *data) EINA_ARG_NONNULL(1, 2);
+   /**
+    * Prepend a custom item provider to the given anchorview
+    *
+    * Like elm_anchorview_item_provider_append(), but it adds the function
+    * @p func to the beginning of the list, instead of the end.
+    *
+    * @param obj The anchorview object
+    * @param func The function to add to the list of providers
+    * @param data User data that will be passed to the callback function
+    */
    EAPI void         elm_anchorview_item_provider_prepend(Evas_Object *obj, Evas_Object *(*func) (void *data, Evas_Object *anchorview, const char *item), void *data) EINA_ARG_NONNULL(1, 2);
+   /**
+    * Remove a custom item provider from the list of the given anchorview
+    *
+    * Removes the function and data pairing that matches @p func and @p data.
+    * That is, unless the same function and same user data are given, the
+    * function will not be removed from the list. This allows us to add the
+    * same callback several times, with different @p data pointers and be
+    * able to remove them later without conflicts.
+    *
+    * @param obj The anchorview object
+    * @param func The function to remove from the list
+    * @param data The data matching the function to remove from the list
+    */
    EAPI void         elm_anchorview_item_provider_remove(Evas_Object *obj, Evas_Object *(*func) (void *data, Evas_Object *anchorview, const char *item), void *data) EINA_ARG_NONNULL(1, 2);
-   /* smart callbacks called:
-    * "anchor,clicked" - achor called was clicked | event_info = Elm_Entry_Anchorview_Info
+   /**
+    * @}
     */
 
    /* anchorblock */
+   /**
+    * @defgroup Anchorblock Anchorblock
+    *
+    * Anchorblock is for displaying text that contains markup with anchors
+    * like <c>\<a href=1234\>something\</\></c> in it.
+    *
+    * Besides being styled differently, the anchorblock widget provides the
+    * necessary functionality so that clicking on these anchors brings up a
+    * popup with user defined content such as "call", "add to contacts" or
+    * "open web page". This popup is provided using the @ref Hover widget.
+    *
+    * This widget emits the following signals:
+    * @li "anchor,clicked": will be called when an anchor is clicked. The
+    * @p event_info parameter on the callback will be a pointer of type
+    * ::Elm_Entry_Anchorblock_Info.
+    *
+    * @see Anchorview
+    * @see Entry
+    * @see Hover
+    *
+    * Since examples are usually better than plain words, we might as well
+    * try one. This exampel will show both Anchorblock and @ref Anchorview,
+    * since both are very similar and it's easier to show them once and side
+    * by side, so the difference is more clear.
+    *
+    * We'll show the relevant snippets of the code here, but the full example
+    * can be found here... sorry, @ref anchorblock_example_01.c "here".
+    *
+    * As for the actual example, it's just a simple window with an anchorblock
+    * and an anchorview, both containing the same text. After including
+    * Elementary.h and declaring some functions we'll need, we jump to our
+    * elm_main (see ELM_MAIN) and create our window.
+    * @dontinclude anchorblock_example_01.c
+    * @skip int
+    * @until const char
+    * @until ;
+    *
+    * With the needed variables declared, we'll create the window and a box to
+    * hold our widgets, but we don't need to go through that here.
+    *
+    * In order to make clear where the anchorblock ends and the anchorview
+    * begins, they'll be each inside a @ref Frame. After creating the frame,
+    * the anchorblock follows.
+    * @skip elm_frame_add
+    * @until elm_frame_content_set
+    *
+    * Nothing out of the ordinary there. What's worth mentioning is the call
+    * to elm_anchorblock_hover_parent_set(). We are telling our widget that
+    * when an anchor is clicked, the hover for the popup will cover the entire
+    * window. This affects the area that will be obscured by the hover and
+    * where clicking will dismiss it, as well as the calculations it does to
+    * inform the best locations where to insert the popups content.
+    * Other than that, the code is pretty standard. We also need to set our
+    * callback for when an anchor is clicked, since it's our task to populate
+    * the popup. There's no default for it.
+    *
+    * The anchorview is no different, we only change a few things so it looks
+    * different.
+    * @until elm_frame_content_set
+    *
+    * Then we run, so stuff works and close our main function in the usual way.
+    * @until ELM_MAIN
+    *
+    * Now, a little note. Normally you would use either one of anchorblock or
+    * anchorview, set your one callback to clicks and do your stuff in there.
+    * In this example, however, there are a few tricks to make it easier to
+    * show both widgets in one go (and to save me some typing). So we have
+    * two callbacks, one per widget, that will call a common function to do
+    * the rest. The trick is using ::Elm_Entry_Anchorblock_Info for the
+    * anchorview too, since both are equal, and passing a callback to use
+    * for our buttons to end the hover, because each widget has a different
+    * function for it.
+    * @until _anchorview_clicked_cb
+    * @until }
+    *
+    * The meat of our popup is in the following function. We check what kind
+    * of menu we need to show, based on the name set to the anchor in the
+    * markup text. If there's no type (something went wrong, no valid contact
+    * in the address list) we are just putting a button that does nothing, but
+    * it's perfectly reasonable to just end the hover and call it quits.
+    *
+    * Our popup will consist of one main button in the middle of our hover,
+    * and possibly a secondary button and a list of other options. We'll create
+    * first our main button and check what kind of popup we need afterwards.
+    * @skip static void
+    * @skip static void
+    * @until eina_stringshare_add
+    * @until }
+    *
+    * Each button has two callbacks, one is our hack to close the hover
+    * properly based on which widget it belongs to, the other a simple
+    * printf that will show the action with the anchors own data. This is
+    * not how you would usually do it. Instead, the common case is to have
+    * one callback for the button that will know which function to call to end
+    * things, but since we are doing it this way it's worth noting that
+    * smart callbacks will be called in reverse in respect to the order they
+    * were added, and since our @c btn_end_cb will close the hover, and thus
+    * delete our buttons, the other callback wouldn't be called if we had
+    * added it before.
+    *
+    * After our telephone popup, there are a few others that are practically
+    * the same, so they won't be shown here.
+    *
+    * Once we are done with that, it's time to place our actions into our
+    * hover. Main button goes in the middle without much questioning, and then
+    * we see if we have a secondary button and a box of extra options.
+    * Because I said so, secondary button goes on either side and box of
+    * options either on top or below the main one, but to choose which
+    * exactly, we use the hints our callback info has, which saves us from
+    * having to do the math and see which side has more space available, with
+    * a little special case where we delete our extra stuff if there's nowhere
+    * to place it.
+    * @skip url:
+    * @skip }
+    * @skip evas_object_smart
+    * @until evas_object_del(box)
+    * @until }
+    * @until }
+    */
+   /**
+    * @example anchorblock_example_01.c
+    */
+   /**
+    * @addtogroup Anchorblock
+    * @{
+    */
+   /**
+    * @typedef Elm_Entry_Anchorblock_Info
+    *
+    * The info sent in the callback for "anchor,clicked" signals emitted by
+    * the Anchorblock widget.
+    */
    typedef struct _Elm_Entry_Anchorblock_Info Elm_Entry_Anchorblock_Info;
+   /**
+    * @struct _Elm_Entry_Anchorblock_Info
+    *
+    * The info sent in the callback for "anchor,clicked" signals emitted by
+    * the Anchorblock widget.
+    */
    struct _Elm_Entry_Anchorblock_Info
      {
-        const char     *name;
-        int             button;
-        Evas_Object    *hover;
+        const char     *name; /**< Name of the anchor, as indicated in its href
+                                   attribute */
+        int             button; /**< The mouse button used to click on it */
+        Evas_Object    *hover; /**< The hover object to use for the popup */
         struct {
              Evas_Coord    x, y, w, h;
-        } anchor, hover_parent;
-        Eina_Bool       hover_left : 1;
-        Eina_Bool       hover_right : 1;
-        Eina_Bool       hover_top : 1;
-        Eina_Bool       hover_bottom : 1;
+        } anchor, /**< Geometry selection of text used as anchor */
+          hover_parent; /**< Geometry of the object used as parent by the
+                             hover */
+        Eina_Bool       hover_left : 1; /**< Hint indicating if there's space
+                                             for content on the left side of
+                                             the hover. Before calling the
+                                             callback, the widget will make the
+                                             necessary calculations to check
+                                             which sides are fit to be set with
+                                             content, based on the position the
+                                             hover is activated and its distance
+                                             to the edges of its parent object
+                                             */
+        Eina_Bool       hover_right : 1; /**< Hint indicating content fits on
+                                              the right side of the hover.
+                                              See @ref hover_left */
+        Eina_Bool       hover_top : 1; /**< Hint indicating content fits on top
+                                            of the hover. See @ref hover_left */
+        Eina_Bool       hover_bottom : 1; /**< Hint indicating content fits
+                                               below the hover. See @ref
+                                               hover_left */
      };
+   /**
+    * Add a new Anchorblock object
+    *
+    * @param parent The parent object
+    * @return The new object or NULL if it cannot be created
+    */
    EAPI Evas_Object *elm_anchorblock_add(Evas_Object *parent) EINA_ARG_NONNULL(1);
+   /**
+    * Set the text to show in the anchorblock
+    *
+    * Sets the text of the anchorblock to @p text. This text can include markup
+    * format tags, including <c>\<a href=anchorname\></a></c> to begin a segment
+    * of text that will be specially styled and react to click events, ended
+    * with either of \</a\> or \</\>. When clicked, the anchor will emit an
+    * "anchor,clicked" signal that you can attach a callback to with
+    * evas_object_smart_callback_add(). The name of the anchor given in the
+    * event info struct will be the one set in the href attribute, in this
+    * case, anchorname.
+    *
+    * Other markup can be used to style the text in different ways, but it's
+    * up to the style defined in the theme which tags do what.
+    */
    EAPI void         elm_anchorblock_text_set(Evas_Object *obj, const char *text) EINA_ARG_NONNULL(1);
+   /**
+    * Get the markup text set for the anchorblock
+    *
+    * Retrieves the text set on the anchorblock, with markup tags included.
+    *
+    * @param obj The anchorblock object
+    * @return The markup text set or @c NULL if nothing was set or an error
+    * occurred
+    */
    EAPI const char  *elm_anchorblock_text_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+   /**
+    * Set the parent of the hover popup
+    *
+    * Sets the parent object to use by the hover created by the anchorblock
+    * when an anchor is clicked. See @ref Hover for more details on this.
+    *
+    * @param obj The anchorblock object
+    * @param parent The object to use as parent for the hover
+    */
    EAPI void         elm_anchorblock_hover_parent_set(Evas_Object *obj, Evas_Object *parent) EINA_ARG_NONNULL(1);
+   /**
+    * Get the parent of the hover popup
+    *
+    * Get the object used as parent for the hover created by the anchorblock
+    * widget. See @ref Hover for more details on this.
+    * If no parent is set, the same anchorblock object will be used.
+    *
+    * @param obj The anchorblock object
+    * @return The object used as parent for the hover, NULL if none is set.
+    */
    EAPI Evas_Object *elm_anchorblock_hover_parent_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+   /**
+    * Set the style that the hover should use
+    *
+    * When creating the popup hover, anchorblock will request that it's
+    * themed according to @p style.
+    *
+    * @param obj The anchorblock object
+    * @param style The style to use for the underlying hover
+    *
+    * @see elm_object_style_set()
+    */
    EAPI void         elm_anchorblock_hover_style_set(Evas_Object *obj, const char *style) EINA_ARG_NONNULL(1);
+   /**
+    * Get the style that the hover should use
+    *
+    * Get the style the hover created by anchorblock will use.
+    *
+    * @param obj The anchorblock object
+    * @return The style to use by the hover. NULL means the default is used.
+    *
+    * @see elm_object_style_set()
+    */
    EAPI const char  *elm_anchorblock_hover_style_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+   /**
+    * Ends the hover popup in the anchorblock
+    *
+    * When an anchor is clicked, the anchorblock widget will create a hover
+    * object to use as a popup with user provided content. This function
+    * terminates this popup, returning the anchorblock to its normal state.
+    *
+    * @param obj The anchorblock object
+    */
    EAPI void         elm_anchorblock_hover_end(Evas_Object *obj) EINA_ARG_NONNULL(1);
+   /**
+    * Appends a custom item provider to the given anchorblock
+    *
+    * Appends the given function to the list of items providers. This list is
+    * called, one function at a time, with the given @p data pointer, the
+    * anchorblock object and, in the @p item parameter, the item name as
+    * referenced in its href string. Following functions in the list will be
+    * called in order until one of them returns something different to NULL,
+    * which should be an Evas_Object which will be used in place of the item
+    * element.
+    *
+    * Items in the markup text take the form \<item relsize=16x16 vsize=full
+    * href=item/name\>\</item\>
+    *
+    * @param obj The anchorblock object
+    * @param func The function to add to the list of providers
+    * @param data User data that will be passed to the callback function
+    *
+    * @see elm_entry_item_provider_append()
+    */
    EAPI void         elm_anchorblock_item_provider_append(Evas_Object *obj, Evas_Object *(*func) (void *data, Evas_Object *anchorblock, const char *item), void *data) EINA_ARG_NONNULL(1, 2);
+   /**
+    * Prepend a custom item provider to the given anchorblock
+    *
+    * Like elm_anchorblock_item_provider_append(), but it adds the function
+    * @p func to the beginning of the list, instead of the end.
+    *
+    * @param obj The anchorblock object
+    * @param func The function to add to the list of providers
+    * @param data User data that will be passed to the callback function
+    */
    EAPI void         elm_anchorblock_item_provider_prepend(Evas_Object *obj, Evas_Object *(*func) (void *data, Evas_Object *anchorblock, const char *item), void *data) EINA_ARG_NONNULL(1, 2);
+   /**
+    * Remove a custom item provider from the list of the given anchorblock
+    *
+    * Removes the function and data pairing that matches @p func and @p data.
+    * That is, unless the same function and same user data are given, the
+    * function will not be removed from the list. This allows us to add the
+    * same callback several times, with different @p data pointers and be
+    * able to remove them later without conflicts.
+    *
+    * @param obj The anchorblock object
+    * @param func The function to remove from the list
+    * @param data The data matching the function to remove from the list
+    */
    EAPI void         elm_anchorblock_item_provider_remove(Evas_Object *obj, Evas_Object *(*func) (void *data, Evas_Object *anchorblock, const char *item), void *data) EINA_ARG_NONNULL(1, 2);
-   /* smart callbacks called:
-    * "anchor,clicked" - achor called was clicked | event_info = Elm_Entry_Anchorblock_Info
+   /**
+    * @}
     */
 
    /* bubble */

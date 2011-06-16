@@ -20,6 +20,7 @@ LDADD = \
 
 SRCS = \
 	actionslider_example_01.c \
+        anchorblock_example_01.c \
 	bg_example_01.c \
 	bg_example_02.c \
 	bg_example_03.c
@@ -34,6 +35,7 @@ endif
 if EFL_BUILD_EXAMPLES
 pkglib_PROGRAMS += \
 	actionslider_example_01 \
+        anchorblock_example_01 \
 	bg_example_01 \
 	bg_example_02 \
 	bg_example_03

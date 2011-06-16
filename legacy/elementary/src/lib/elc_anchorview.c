@@ -1,17 +1,6 @@
 #include <Elementary.h>
 #include "elm_priv.h"
 
-/**
- * @defgroup Anchorview Anchorview
- *
- * This is just like the Anchorblock object, but provides a scroller to hold
- * the text automatically.
- *
- * Signals that you can add callbacks for are:
- *
- * "anchor,clicked" - achor called was clicked. event_info is anchor info -
- *                    Elm_Entry_Anchorview_Info
- */
 typedef struct _Widget_Data Widget_Data;
 typedef struct _Elm_Anchorview_Item_Provider Elm_Anchorview_Item_Provider;
 
@@ -186,14 +175,6 @@ _item_provider(void *data, Evas_Object *entry __UNUSED__, const char *item)
    return NULL;
 }
 
-/**
- * Add a new Anchorview object
- *
- * @param parent The parent object
- * @return The new object or NULL if it cannot be created
- *
- * @ingroup Anchorview
- */
 EAPI Evas_Object *
 elm_anchorview_add(Evas_Object *parent)
 {
@@ -239,19 +220,6 @@ elm_anchorview_add(Evas_Object *parent)
    return obj;
 }
 
-/**
- * Set the text markup of the anchorview
- *
- * This sets the text of the anchorview to be the text given as @p text. This
- * text is in markup format with \<a href=XXX\> beginning an achor with the
- * string link of 'XXX', and \</\> or \</a\> ending the link. Other markup can
- * be used dependign on the style support.
- *
- * @param obj The anchorview object
- * @param text The text to set, or NULL to clear
- *
- * @ingroup Anchorview
- */
 EAPI void
 elm_anchorview_text_set(Evas_Object *obj, const char *text)
 {
@@ -266,17 +234,6 @@ elm_anchorview_text_set(Evas_Object *obj, const char *text)
    _sizing_eval(obj);
 }
 
-/**
- * Get the markup text set for the anchorview
- *
- * This retrieves back the string set by @c elm_anchorview_text_set().
- *
- * @param obj The anchorview object
- * @return text The markup text set or @c NULL, either if it was not set
- * or an error occurred
- *
- * @ingroup Anchorview
- */
 EAPI const char*
 elm_anchorview_text_get(const Evas_Object *obj)
 {
@@ -286,17 +243,6 @@ elm_anchorview_text_get(const Evas_Object *obj)
    return elm_entry_entry_get(wd->entry);
 }
 
-/**
- * Set the parent of the hover popup
- *
- * This sets the parent of the hover that anchorview will create. See hover
- * objects for more information on this.
- *
- * @param obj The anchorview object
- * @param parent The parent the hover should use
- *
- * @ingroup Anchorview
- */
 EAPI void
 elm_anchorview_hover_parent_set(Evas_Object *obj, Evas_Object *parent)
 {
@@ -310,17 +256,6 @@ elm_anchorview_hover_parent_set(Evas_Object *obj, Evas_Object *parent)
      evas_object_event_callback_add(wd->hover_parent, EVAS_CALLBACK_DEL, _parent_del, obj);
 }
 
-/**
- * Get the parent of the hover popup
- *
- * This gets the parent of the hover that anchorview will created. See hover
- * objects for more information on this.
- *
- * @param obj The anchorview object
- * @return The parent used by hover
- *
- * @ingroup Anchorview
- */
 EAPI Evas_Object *
 elm_anchorview_hover_parent_get(const Evas_Object *obj)
 {
@@ -330,17 +265,6 @@ elm_anchorview_hover_parent_get(const Evas_Object *obj)
    return wd->hover_parent;
 }
 
-/**
- * Set the style that the hover should use
- *
- * This sets the style for the hover that anchorview will create. See hover
- * objects for more information
- *
- * @param obj The anchorview object
- * @param style The style to use
- *
- * @ingroup Anchorview
- */
 EAPI void
 elm_anchorview_hover_style_set(Evas_Object *obj, const char *style)
 {
@@ -350,17 +274,6 @@ elm_anchorview_hover_style_set(Evas_Object *obj, const char *style)
    eina_stringshare_replace(&wd->hover_style, style);
 }
 
-/**
- * Get the style that the hover should use
- *
- * This gets the style for the hover that anchorview will create. See hover
- * objects for more information
- *
- * @param obj The anchorview object
- * @return The style defined
- *
- * @ingroup Anchorview
- */
 EAPI const char *
 elm_anchorview_hover_style_get(const Evas_Object *obj)
 {
@@ -370,15 +283,6 @@ elm_anchorview_hover_style_get(const Evas_Object *obj)
    return wd->hover_style;
 }
 
-/**
- * Stop the hover popup in the anchorview
- *
- * This will stop the hover popup in the anchorview if it is currently active.
- *
- * @param obj The anchorview object
- *
- * @ingroup Anchorview
- */
 EAPI void
 elm_anchorview_hover_end(Evas_Object *obj)
 {
@@ -391,18 +295,6 @@ elm_anchorview_hover_end(Evas_Object *obj)
    wd->pop = NULL;
 }
 
-/**
- * Set bounce mode
- *
- * This will enable or disable the scroller bounce mode for the anchorview. See
- * elm_scroller_bounce_set() for details
- *
- * @param obj The anchorview anchorview
- * @param h_bounce Allow bounce horizontally
- * @param v_bounce Allow bounce vertically
- *
- * @ingroup Anchorview
- */
 EAPI void
 elm_anchorview_bounce_set(Evas_Object *obj, Eina_Bool h_bounce, Eina_Bool v_bounce)
 {
@@ -412,15 +304,6 @@ elm_anchorview_bounce_set(Evas_Object *obj, Eina_Bool h_bounce, Eina_Bool v_boun
    elm_scroller_bounce_set(wd->scroller, h_bounce, v_bounce);
 }
 
-/**
- * Get the bounce mode
- *
- * @param obj The Anchorview object
- * @param h_bounce Allow bounce horizontally
- * @param v_bounce Allow bounce vertically
- *
- * @ingroup Anchorview
- */
 EAPI void
 elm_anchorview_bounce_get(const Evas_Object *obj, Eina_Bool *h_bounce, Eina_Bool *v_bounce)
 {
@@ -430,22 +313,6 @@ elm_anchorview_bounce_get(const Evas_Object *obj, Eina_Bool *h_bounce, Eina_Bool
    elm_scroller_bounce_get(wd->scroller, h_bounce, v_bounce);
 }
 
-/**
- * This appends a custom item provider to the list for that anchorview
- *
- * This appends the given callback. The list is walked from beginning to end
- * with each function called given the item href string in the text. If the
- * function returns an object handle other than NULL (it should create an
- * and object to do this), then this object is used to replace that item. If
- * not the next provider is called until one provides an item object, or the
- * default provider in anchorview does.
- *
- * @param obj The anchorview object
- * @param func The function called to provide the item object
- * @param data The data passed to @p func
- *
- * @ingroup Anchorview
- */
 EAPI void
 elm_anchorview_item_provider_append(Evas_Object *obj, Evas_Object *(*func) (void *data, Evas_Object *anchorview, const char *item), void *data)
 {
@@ -460,18 +327,6 @@ elm_anchorview_item_provider_append(Evas_Object *obj, Evas_Object *(*func) (void
    wd->item_providers = eina_list_append(wd->item_providers, ip);
 }
 
-/**
- * This prepends a custom item provider to the list for that anchorview
- *
- * This prepends the given callback. See elm_anchorview_item_provider_append() for
- * more information
- *
- * @param obj The anchorview object
- * @param func The function called to provide the item object
- * @param data The data passed to @p func
- *
- * @ingroup Anchorview
- */
 EAPI void
 elm_anchorview_item_provider_prepend(Evas_Object *obj, Evas_Object *(*func) (void *data, Evas_Object *anchorview, const char *item), void *data)
 {
@@ -486,18 +341,6 @@ elm_anchorview_item_provider_prepend(Evas_Object *obj, Evas_Object *(*func) (voi
    wd->item_providers = eina_list_prepend(wd->item_providers, ip);
 }
 
-/**
- * This removes a custom item provider to the list for that anchorview
- *
- * This removes the given callback. See elm_anchorview_item_provider_append() for
- * more information
- *
- * @param obj The anchorview object
- * @param func The function called to provide the item object
- * @param data The data passed to @p func
- *
- * @ingroup Anchorview
- */
 EAPI void
 elm_anchorview_item_provider_remove(Evas_Object *obj, Evas_Object *(*func) (void *data, Evas_Object *anchorview, const char *item), void *data)
 {
