@@ -1035,7 +1035,7 @@ EAPI int               evas_shutdown                     (void);
  * evas_object_event_callback_add(object, EVAS_CALLBACK_MOUSE_DOWN, callback, NULL);
  * if (evas_alloc_error() == EVAS_ALLOC_ERROR_FATAL)
  *   {
- *     fprintf(stderr, "ERROR: Completely unable to attach callabck. Must\n");
+ *     fprintf(stderr, "ERROR: Completely unable to attach callback. Must\n");
  *     fprintf(stderr, "       destroy object now as it cannot be used.\n");
  *     evas_object_del(object);
  *     object = NULL;
