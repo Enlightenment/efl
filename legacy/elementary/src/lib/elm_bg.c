@@ -1,13 +1,6 @@
 #include <Elementary.h>
 #include "elm_priv.h"
 
-/**
- * @defgroup Bg Bg
- *
- * The bg object is used for setting a solid background to a window or packing
- * into any container object.
- */
-
 typedef struct _Widget_Data Widget_Data;
 
 struct _Widget_Data
@@ -120,14 +113,6 @@ _custom_resize(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void
    evas_object_size_hint_max_set(wd->img, mw, mh);
 }
 
-/**
- * Add a new background to the parent
- *
- * @param parent The parent object
- * @return The new object or NULL if it cannot be created
- *
- * @ingroup Bg
- */
 EAPI Evas_Object *
 elm_bg_add(Evas_Object *parent)
 {
@@ -156,22 +141,6 @@ elm_bg_add(Evas_Object *parent)
    return obj;
 }
 
-/**
- * Set the file (image or edje) used for the background
- *
- * @param obj The bg object
- * @param file The file path
- * @param group Optional key (group in Edje) within the file
- *
- * This sets the image file used in the background object. The image (or edje)
- * will be stretched (retaining aspect if its an image file) to completely fill
- * the bg object. This may mean some parts are not visible.
- *
- * @note  Once the image of @p obj is set, a previously set one will be deleted,
- * even if @p file is NULL.
- *
- * @ingroup Bg
- */
 EAPI void
 elm_bg_file_set(Evas_Object *obj, const char *file, const char *group)
 {
@@ -212,15 +181,6 @@ elm_bg_file_set(Evas_Object *obj, const char *file, const char *group)
    _custom_resize(wd, NULL, NULL, NULL);
 }
 
-/**
- * Get the file (image or edje) used for the background
- *
- * @param obj The bg object
- * @param file The file path
- * @param group Optional key (group in Edje) within the file
- *
- * @ingroup Bg
- */
 EAPI void
 elm_bg_file_get(const Evas_Object *obj, const char **file, const char **group)
 {
@@ -230,17 +190,6 @@ elm_bg_file_get(const Evas_Object *obj, const char **file, const char **group)
    if (group) *group = wd->group;
 }
 
-/**
- * Set the option used for the background image
- *
- * @param obj The bg object
- * @param option The desired background option (TILE, SCALE)
- *
- * This sets the option used for manipulating the display of the background
- * image. The image can be tiled or scaled.
- *
- * @ingroup Bg
- */
 EAPI void
 elm_bg_option_set(Evas_Object *obj, Elm_Bg_Option option)
 {
@@ -252,14 +201,6 @@ elm_bg_option_set(Evas_Object *obj, Elm_Bg_Option option)
    _custom_resize(wd, NULL, NULL, NULL);
 }
 
-/**
- * Get the option used for the background image
- *
- * @param obj The bg object
- * @return The desired background option (TILE, SCALE)
- *
- * @ingroup Bg
- */
 EAPI Elm_Bg_Option
 elm_bg_option_get(const Evas_Object *obj)
 {
@@ -270,18 +211,6 @@ elm_bg_option_get(const Evas_Object *obj)
    return wd->option;
 }
 
-/**
- * Set the option used for the background color
- *
- * @param obj The bg object
- * @param r
- * @param g
- * @param b
- *
- * This sets the color used for the background rectangle.
- *
- * @ingroup Bg
- */
 EAPI void
 elm_bg_color_set(Evas_Object *obj, int r, int g, int b)
 {
@@ -299,16 +228,6 @@ elm_bg_color_set(Evas_Object *obj, int r, int g, int b)
    evas_object_color_set(wd->rect, r, g, b, 255);
 }
 
-/**
- * Get the option used for the background color
- *
- * @param obj The bg object
- * @param r
- * @param g
- * @param b
- *
- * @ingroup Bg
- */
 EAPI void
 elm_bg_color_get(const Evas_Object *obj, int *r, int *g, int *b)
 {
@@ -319,19 +238,6 @@ elm_bg_color_get(const Evas_Object *obj, int *r, int *g, int *b)
    evas_object_color_get(wd->rect, r, g, b, NULL);
 }
 
-/**
- * Set the overlay object used for the background object.
- *
- * @param obj The bg object
- * @param overlay The overlay object
- *
- * This provides a way for elm_bg to have an 'overlay' (such as animated fog)
- * Once the over object is set, a previously set one will be deleted.
- * If you want to keep that old content object, use the
- * elm_bg_overlay_unset() function.
- *
- * @ingroup Bg
- */
 EAPI void
 elm_bg_overlay_set(Evas_Object *obj, Evas_Object *overlay)
 {
@@ -353,16 +259,6 @@ elm_bg_overlay_set(Evas_Object *obj, Evas_Object *overlay)
    _custom_resize(wd, NULL, NULL, NULL);
 }
 
-/**
- * Set the overlay object used for the background object.
- *
- * @param obj The bg object
- * @return The content that is being used
- *
- * Return the content object which is set for this widget
- *
- * @ingroup Bg
- */
 EAPI Evas_Object *
 elm_bg_overlay_get(const Evas_Object *obj)
 {
@@ -372,16 +268,6 @@ elm_bg_overlay_get(const Evas_Object *obj)
    return wd->overlay;
 }
 
-/**
- * Get the overlay object used for the background object.
- *
- * @param obj The bg object
- * @return The content that was being used
- *
- * Unparent and return the overlay object which was set for this widget
- *
- * @ingroup Bg
- */
 EAPI Evas_Object *
 elm_bg_overlay_unset(Evas_Object *obj)
 {
@@ -398,16 +284,6 @@ elm_bg_overlay_unset(Evas_Object *obj)
    return overlay;
 }
 
-/**
- * Set the size of a loaded image of the canvas of the bg.
- *
- * @param obj The bg object
- * @param w The new width of the canvas image given.
- * @param h The new height of the canvas image given.
- *
- * This function sets a new size for the canvas image of the given the bg.
- *
- */
 EAPI void
 elm_bg_load_size_set(Evas_Object *obj, Evas_Coord w, Evas_Coord h)
 {

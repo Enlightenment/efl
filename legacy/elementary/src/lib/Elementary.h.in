@@ -690,6 +690,276 @@ extern "C" {
     * "moved" - window that holds the canvas was moved
     */
 
+   /**
+    * @page bg_01_example_page elm_bg - Plain color background.
+    * @dontinclude bg_example_01.c
+    *
+    * The full code for this example can be found at @ref bg_example_01_c,
+    * in the function @c test_bg_plain. It's part of the @c elementar_test
+    * suite, and thus has the code for the three examples referenced by this
+    * documentation.
+    *
+    * This first example just sets a default background with a plain color. The
+    * first part consists of creating an Elementary window. It's the common
+    * piece of code that you'll see everywhere in Elementary: @skip elm_main
+    * @until autodel_set
+    *
+    * Now we really create our background object, using the window object as
+    * its parent:
+    *
+    * @skipline bg_add
+    *
+    * Then we set the size hints of the background object so that it will use
+    * all space available for it, and then add it as a resize object to the
+    * window, making it visible in the end:
+    *
+    * @skip size_hint_weight_set
+    * @until resize_object_add
+    *
+    * See @ref evas_object_size_hint_weight_set and elm_win_resize_object_add()
+    * for more detailed info about these functions.
+    *
+    * The end of the example is quite simple, just setting the minimum and
+    * maximum size of the background, so the Elementary window knows that it
+    * has to have at least the minimum size. The background also won't scale to
+    * a size above its maximum. Then we resize the window and show it in the
+    * end:
+    *
+    * @skip set size hints
+    * @until }
+    *
+    * And here we finish our very simple background object usage example.
+    */
+
+   /**
+    * @page bg_02_example_page elm_bg - Image background.
+    * @dontinclude bg_example_02.c
+    *
+    * The full code for this example can be found at @ref bg_example_02_c,
+    * in the function @c test_bg_image. It's part of the @c elementar_test
+    * suite, and thus has the code for the three examples referenced by this
+    * documentation.
+    *
+    * This is the second example, and shows how to use the Elementary
+    * background object to set an image as background of your application.
+    *
+    * We start this example exactly in the same way as the previous one, even
+    * when creating the background object:
+    *
+    * @skip elm_main
+    * @until bg_add
+    *
+    * Now it's the different part.
+    *
+    * Our background will have an image, that will be displayed over the
+    * background color. Before loading the image, we set the load size of the
+    * image. The load size is a hint about the size that we want the image
+    * displayed in the screen. It's not the exact size that the image will have,
+    * but usually a bit bigger. The background object can still be scaled to a
+    * size bigger than the one set here. Setting the image load size to
+    * something smaller than its real size will reduce the memory used to keep
+    * the pixmap representation of the image, and the time to load it. Here we
+    * set the load size to 20x20 pixels, but the image is loaded with a size
+    * bigger than that (since it's just a hint):
+    *
+    * @skipline load_size_set
+    *
+    * And set our background image to be centered, instead of stretched or
+    * scaled, so the effect of the elm_bg_load_size_set() can be easily
+    * understood:
+    *
+    * @skipline option_set
+    *
+    * We need a filename to set, so we get one from the previous installed
+    * images in the @c PACKAGE_DATA_DIR, and write its full path to a buffer.
+    * Then we use this buffer to set the filename in the background object:
+    *
+    * @skip snprintf
+    * @until bg_file_set
+    *
+    * Notice that the third argument of the elm_bg_file_set() function is @c
+    * NULL, since we are setting an image to this background. This function
+    * also supports setting an edje group as background, in which case the @c
+    * group parameter wouldn't be @c NULL, but be the name of the group
+    * instead.
+    *
+    * Finally, we can set the size hints, add the background as a resize
+    * object, and resize the window, exactly the same thing we do in the @ref
+    * bg_01_example_page example:
+    *
+    * @skip size_hint
+    * @until }
+    *
+    * And this is the end of this example.
+    */
+
+   /**
+    * @page bg_03_example_page elm_bg - Background properties.
+    * @dontinclude bg_example_03.c
+    *
+    * The full code for this example can be found at @ref bg_example_03_c, in the
+    * function @c test_bg_options, with the callbacks @c _cb_overlay_changed, @c
+    * _cb_color_changed and @c _cb_radio_changed defined in the beginning of the
+    * file. It's part of the @c elementar_test suite, and thus has the code for
+    * the three examples referenced by this documentation.
+    *
+    * This example will show the properties available for the background object,
+    * and will use of some more widgets to set them.
+    *
+    * In order to do this, we will set some callbacks for these widgets. The
+    * first is for the radio buttons that will be used to choose the option
+    * passed as argument to elm_bg_option_set():
+    *
+    * @skip _cb_radio_changed
+    * @until }
+    *
+    * The next callback will be used when setting the overlay (using
+    * elm_bg_overlay_set()):
+    *
+    * @skip _cb_overlay_changed
+    * @until }
+    * @until }
+    *
+    * And the last one, used to set the color (with elm_bg_color_set()):
+    *
+    * @skip _cb_color_changed
+    * @until }
+    *
+    * We will get back to what these functions do soon. If you want to know more
+    * about how to set these callbacks and what these widgets are, look for:
+    * @li elm_radio_add()
+    * @li elm_check_add()
+    * @li elm_spinner_add()
+    *
+    * Now going to the main function, @c test_bg_options, we have the common
+    * code with the other examples:
+    *
+    * @skip bg-options
+    * @until autodel_set
+    *
+    * We add a plain background to this window, so it will have the default
+    * background color behind everything:
+    *
+    * @skip bg = elm_bg_add
+    * @until evas_object_show(bg)
+    *
+    * Then we add a vertical box (elm_box_add()) that will hold the background
+    * object that we are going to play with, as well as a horizontal box that
+    * will hold widgets:
+    *
+    * @skip elm_box_add
+    * @until evas_object_show
+    *
+    * Now we add the background object that is going to be of use for our
+    * example. It is an image background, as used in @ref bg_02_example_page ,
+    * so the code should be familiar:
+    *
+    * @skip elm_bg_add
+    * @until evas_object_show
+    *
+    * Notice the call to elm_box_pack_end(): it will pack the background object
+    * in the end of the Elementary box declared above. Just refer to that
+    * documentation for more info.
+    *
+    * Since this Elementary background is already an image background, we are
+    * going to play with its other properties. We will change its option
+    * (CENTER, SCALE, STRETCH, TILE), its color (RGB), and add an overlay to it.
+    * For all of these properties, we are going to add widgets that will
+    * configure them.
+    *
+    * First, lets add the horizontal box that will hold these widgets:
+    * @skip hbox
+    * @until align_set
+    *
+    * For now, just consider this @c hbox as a rectangle that will contain the
+    * widgets, and will distribute them horizontally inside its content. Then we
+    * add radio buttons that will allow us to choose the property to use with
+    * this background:
+    *
+    * @skip radio_add
+    * @until evas_object_show
+    *
+    * Again, I won't give details about the use of these widgets, just look for
+    * their documentation if necessary. It's enough to know for now that we are
+    * packing them in the @c hbox, setting a label for them, and the most
+    * important parts: setting its value to @c ELM_BG_OPTION_CENTER and its
+    * callback to @c _cb_radio_changed (the function defined in the beginning of
+    * this example). We do this for the next 3 radio buttons added after this
+    * one, each of them with a different value.
+    *
+    * Now taking a look at the code of the callback @c _cb_radio_changed again,
+    * it will call elm_bg_option_set() with the value set from the checked radio
+    * button, thus setting the option for this background. The background is
+    * passed as argument to the @p data parameter of this callback, and is
+    * referenced here as @c o_bg.
+    *
+    * Later we set the default value for this radio button:
+    *
+    * @skipline elm_radio_value_set
+    *
+    * Then we add a checkbox for the elm_bg_overlay_set() function:
+    *
+    * @skip check_add
+    * @until evas_object_show
+    *
+    * Now look at the code of the @c _cb_overlay_changed again. If the checkbox
+    * state is checked, an overlay will be added to the background. It's done by
+    * creating an Edje object, and setting it with elm_bg_overlay_set() to the
+    * background object. For information about what are and how to set Edje
+    * object, look at the Edje documentation.
+    *
+    * Finally we add a spinner object (elm_spinner_add()) to be used to select
+    * the color of our background. In its callback it's possible to see the call
+    * to elm_bg_color_set(), which will change the color of this background.
+    * This color is used by the background to fill areas where the image doesn't
+    * cover (in this case, where we have an image background). The spinner is
+    * also packed into the @c hbox :
+    *
+    * @skip elm_spinner_add
+    * @until evas_object_show
+    *
+    * Then we just have to pack the @c hbox inside the @c box, set some size
+    * hints, and show our window:
+    *
+    * @skip pack_end
+    * @until }
+    *
+    * Now to see this code in action, open elementary_test, and go to the "Bg
+    * Options" test. It should demonstrate what was implemented here.
+    */
+
+   /**
+    * @page bg_example_01_c bg_example_01.c
+    * @include bg_example_01.c
+    */
+
+   /**
+    * @page bg_example_02_c bg_example_02.c
+    * @include bg_example_02.c
+    */
+
+   /**
+    * @page bg_example_03_c bg_example_03.c
+    * @include bg_example_03.c
+    */
+
+   /**
+    * @defgroup Bg Bg
+    *
+    * @brief Background object, used for setting a solid color, image or Edje
+    * group as background to a window or any container object.
+    *
+    * The bg object is used for setting a solid background to a window or
+    * packing into any container object. It works just like an image, but has
+    * some properties useful to a background, like setting it to tiled,
+    * centered, scaled or stretched.
+    *
+    * Here is some sample code using it:
+    * @li @ref bg_01_example_page
+    * @li @ref bg_02_example_page
+    * @li @ref bg_03_example_page
+    */
+
    /* bg */
    typedef enum _Elm_Bg_Option
      {
@@ -699,16 +969,152 @@ extern "C" {
         ELM_BG_OPTION_TILE     /**< tile background at its original size */
      } Elm_Bg_Option;
 
+   /**
+    * Add a new background to the parent
+    *
+    * @param parent The parent object
+    * @return The new object or NULL if it cannot be created
+    *
+    * @ingroup Bg
+    */
    EAPI Evas_Object  *elm_bg_add(Evas_Object *parent) EINA_ARG_NONNULL(1);
+
+   /**
+    * Set the file (image or edje) used for the background
+    *
+    * @param obj The bg object
+    * @param file The file path
+    * @param group Optional key (group in Edje) within the file
+    *
+    * This sets the image file used in the background object. The image (or edje)
+    * will be stretched (retaining aspect if its an image file) to completely fill
+    * the bg object. This may mean some parts are not visible.
+    *
+    * @note  Once the image of @p obj is set, a previously set one will be deleted,
+    * even if @p file is NULL.
+    *
+    * @ingroup Bg
+    */
    EAPI void          elm_bg_file_set(Evas_Object *obj, const char *file, const char *group) EINA_ARG_NONNULL(1);
+
+   /**
+    * Get the file (image or edje) used for the background
+    *
+    * @param obj The bg object
+    * @param file The file path
+    * @param group Optional key (group in Edje) within the file
+    *
+    * @ingroup Bg
+    */
    EAPI void          elm_bg_file_get(const Evas_Object *obj, const char **file, const char **group) EINA_ARG_NONNULL(1);
+
+   /**
+    * Set the option used for the background image
+    *
+    * @param obj The bg object
+    * @param option The desired background option (TILE, SCALE)
+    *
+    * This sets the option used for manipulating the display of the background
+    * image. The image can be tiled or scaled.
+    *
+    * @ingroup Bg
+    */
    EAPI void          elm_bg_option_set(Evas_Object *obj, Elm_Bg_Option option) EINA_ARG_NONNULL(1);
+
+   /**
+    * Get the option used for the background image
+    *
+    * @param obj The bg object
+    * @return The desired background option (CENTER, SCALE, STRETCH or TILE)
+    *
+    * @ingroup Bg
+    */
    EAPI Elm_Bg_Option elm_bg_option_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+   /**
+    * Set the option used for the background color
+    *
+    * @param obj The bg object
+    * @param r
+    * @param g
+    * @param b
+    *
+    * This sets the color used for the background rectangle. Its range goes
+    * from 0 to 255.
+    *
+    * @ingroup Bg
+    */
    EAPI void          elm_bg_color_set(Evas_Object *obj, int r, int g, int b) EINA_ARG_NONNULL(1);
+   /**
+    * Get the option used for the background color
+    *
+    * @param obj The bg object
+    * @param r
+    * @param g
+    * @param b
+    *
+    * @ingroup Bg
+    */
    EAPI void          elm_bg_color_get(const Evas_Object *obj, int *r, int *g, int *b) EINA_ARG_NONNULL(1);
+
+   /**
+    * Set the overlay object used for the background object.
+    *
+    * @param obj The bg object
+    * @param overlay The overlay object
+    *
+    * This provides a way for elm_bg to have an 'overlay' that will be on top
+    * of the bg. Once the over object is set, a previously set one will be
+    * deleted, even if you set the new one to NULL. If you want to keep that
+    * old content object, use the elm_bg_overlay_unset() function.
+    *
+    * @ingroup Bg
+    */
+
    EAPI void          elm_bg_overlay_set(Evas_Object *obj, Evas_Object *overlay) EINA_ARG_NONNULL(1);
+
+   /**
+    * Get the overlay object used for the background object.
+    *
+    * @param obj The bg object
+    * @return The content that is being used
+    *
+    * Return the content object which is set for this widget
+    *
+    * @ingroup Bg
+    */
    EAPI Evas_Object  *elm_bg_overlay_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+
+   /**
+    * Get the overlay object used for the background object.
+    *
+    * @param obj The bg object
+    * @return The content that was being used
+    *
+    * Unparent and return the overlay object which was set for this widget
+    *
+    * @ingroup Bg
+    */
    EAPI Evas_Object  *elm_bg_overlay_unset(Evas_Object *obj) EINA_ARG_NONNULL(1);
+
+   /**
+    * Set the size of the pixmap representation of the image.
+    *
+    * This option just makes sense if an image is going to be set in the bg.
+    *
+    * @param obj The bg object
+    * @param w The new width of the image pixmap representation.
+    * @param h The new height of the image pixmap representation.
+    *
+    * This function sets a new size for pixmap representation of the given bg
+    * image. It allows the image to be loaded already in the specified size,
+    * reducing the memory usage and load time when loading a big image with load
+    * size set to a smaller size.
+    *
+    * NOTE: this is just a hint, the real size of the pixmap may differ
+    * depending on the type of image being loaded, being bigger than requested.
+    *
+    * @ingroup Bg
+    */
    EAPI void          elm_bg_load_size_set(Evas_Object *obj, Evas_Coord w, Evas_Coord h) EINA_ARG_NONNULL(1);
    /* smart callbacks called:
     */
