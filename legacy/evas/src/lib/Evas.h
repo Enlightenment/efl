@@ -30,6 +30,7 @@
 @author Jiyoun Park <jy0703.park@@samsung.com>
 @author Myoungwoon Roy Kim(roy_kim) <myoungwoon.kim@@samsung.com> <myoungwoon@@gmail.com>
 @author Thierry el Borgi <thierry@@substantiel.fr>
+@author ChunEon Park <hermet@@naver.com>
 @date 2000-2011
 
 @section toc Table of Contents
