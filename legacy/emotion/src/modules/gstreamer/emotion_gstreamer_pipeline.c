@@ -17,7 +17,7 @@ emotion_pipeline_pause(GstElement *pipeline)
         GstBus  *bus;
         gboolean done;
 
-	ERR("could not pause");
+        ERR("could not pause");
 
         done = FALSE;
         bus = gst_element_get_bus(pipeline);
@@ -61,8 +61,8 @@ emotion_pipeline_pause(GstElement *pipeline)
    res = gst_element_get_state((pipeline), NULL, NULL, GST_CLOCK_TIME_NONE);
    if (res != GST_STATE_CHANGE_SUCCESS)
      {
-	ERR("could not complete pause");
-	return 0;
+        ERR("could not complete pause");
+        return 0;
      }
 
    return 1;
@@ -380,28 +380,28 @@ cb_handoff(GstElement *fakesrc __UNUSED__,
 
    if (!ev->video_mute)
      {
-	if (!ev->obj_data)
-	  ev->obj_data = malloc(GST_BUFFER_SIZE(buffer) * sizeof(void));
+        if (!ev->obj_data)
+          ev->obj_data = malloc(GST_BUFFER_SIZE(buffer) * sizeof(void));
 
-	memcpy(ev->obj_data, GST_BUFFER_DATA(buffer), GST_BUFFER_SIZE(buffer));
-	buf[0] = GST_BUFFER_DATA(buffer);
-	buf[1] = buffer;
-	ecore_pipe_write(ev->pipe, buf, sizeof(buf));
+        memcpy(ev->obj_data, GST_BUFFER_DATA(buffer), GST_BUFFER_SIZE(buffer));
+        buf[0] = GST_BUFFER_DATA(buffer);
+        buf[1] = buffer;
+        ecore_pipe_write(ev->pipe, buf, sizeof(buf));
      }
    else
      {
-	Emotion_Audio_Stream *astream;
-	astream = (Emotion_Audio_Stream *)eina_list_nth(ev->audio_streams, ev->audio_stream_nbr - 1);
-	_emotion_video_pos_update(ev->obj, ev->position, astream->length_time);
+        Emotion_Audio_Stream *astream;
+        astream = (Emotion_Audio_Stream *)eina_list_nth(ev->audio_streams, ev->audio_stream_nbr - 1);
+        _emotion_video_pos_update(ev->obj, ev->position, astream->length_time);
      }
 
    query = gst_query_new_position(GST_FORMAT_TIME);
    if (gst_pad_query(gst_pad_get_peer(pad), query))
      {
-	gint64 position;
+        gint64 position;
 
-	gst_query_parse_position(query, NULL, &position);
-	ev->position = (double)position / (double)GST_SECOND;
+        gst_query_parse_position(query, NULL, &position);
+        ev->position = (double)position / (double)GST_SECOND;
      }
    gst_query_unref(query);
 }
@@ -419,8 +419,8 @@ emotion_video_stream_new(Emotion_Gstreamer_Video *ev)
    ev->video_streams = eina_list_append(ev->video_streams, vstream);
    if (eina_error_get())
      {
-	free(vstream);
-	return NULL;
+        free(vstream);
+        return NULL;
      }
    return vstream;
 }
@@ -431,7 +431,7 @@ emotion_video_stream_free(Emotion_Gstreamer_Video *ev, Emotion_Video_Stream *vst
    if (!ev || !vstream) return;
 
    ev->video_streams = eina_list_remove(ev->video_streams, vstream);
-	free(vstream);
+        free(vstream);
 }
 
 int
@@ -451,30 +451,30 @@ emotion_pipeline_cdda_track_count_get(void *video)
 
    while (!done)
      {
-	GstMessage *message;
+        GstMessage *message;
 
-	message = gst_bus_pop(bus);
-	if (!message)
-	  /* All messages read, we're done */
-	  break;
+        message = gst_bus_pop(bus);
+        if (!message)
+          /* All messages read, we're done */
+          break;
 
-	switch (GST_MESSAGE_TYPE(message))
-	  {
-	   case GST_MESSAGE_TAG:
-		{
-		   GstTagList *tags;
+        switch (GST_MESSAGE_TYPE(message))
+          {
+           case GST_MESSAGE_TAG:
+                {
+                   GstTagList *tags;
 
-		   gst_message_parse_tag(message, &tags);
+                   gst_message_parse_tag(message, &tags);
 
-		   gst_tag_list_get_uint(tags, GST_TAG_TRACK_COUNT, &tracks_count);
-		   if (tracks_count) done = TRUE;
-		   break;
-		}
-	   case GST_MESSAGE_ERROR:
-	   default:
-	      break;
-	  }
-	gst_message_unref(message);
+                   gst_tag_list_get_uint(tags, GST_TAG_TRACK_COUNT, &tracks_count);
+                   if (tracks_count) done = TRUE;
+                   break;
+                }
+           case GST_MESSAGE_ERROR:
+           default:
+              break;
+          }
+        gst_message_unref(message);
      }
 
    gst_object_unref(GST_OBJECT(bus));
@@ -488,44 +488,44 @@ emotion_visualization_element_name_get(Emotion_Vis visualisation)
    switch (visualisation)
      {
       case EMOTION_VIS_NONE:
-	 return NULL;
+         return NULL;
       case EMOTION_VIS_GOOM:
-	 return "goom";
+         return "goom";
       case EMOTION_VIS_LIBVISUAL_BUMPSCOPE:
-	 return "libvisual_bumpscope";
+         return "libvisual_bumpscope";
       case EMOTION_VIS_LIBVISUAL_CORONA:
-	 return "libvisual_corona";
+         return "libvisual_corona";
       case EMOTION_VIS_LIBVISUAL_DANCING_PARTICLES:
-	 return "libvisual_dancingparticles";
+         return "libvisual_dancingparticles";
       case EMOTION_VIS_LIBVISUAL_GDKPIXBUF:
-	 return "libvisual_gdkpixbuf";
+         return "libvisual_gdkpixbuf";
       case EMOTION_VIS_LIBVISUAL_G_FORCE:
-	 return "libvisual_G-Force";
+         return "libvisual_G-Force";
       case EMOTION_VIS_LIBVISUAL_GOOM:
-	 return "libvisual_goom";
+         return "libvisual_goom";
       case EMOTION_VIS_LIBVISUAL_INFINITE:
-	 return "libvisual_infinite";
+         return "libvisual_infinite";
       case EMOTION_VIS_LIBVISUAL_JAKDAW:
-	 return "libvisual_jakdaw";
+         return "libvisual_jakdaw";
       case EMOTION_VIS_LIBVISUAL_JESS:
-	 return "libvisual_jess";
+         return "libvisual_jess";
       case EMOTION_VIS_LIBVISUAL_LV_ANALYSER:
-	 return "libvisual_lv_analyzer";
+         return "libvisual_lv_analyzer";
       case EMOTION_VIS_LIBVISUAL_LV_FLOWER:
-	 return "libvisual_lv_flower";
+         return "libvisual_lv_flower";
       case EMOTION_VIS_LIBVISUAL_LV_GLTEST:
-	 return "libvisual_lv_gltest";
+         return "libvisual_lv_gltest";
       case EMOTION_VIS_LIBVISUAL_LV_SCOPE:
-	 return "libvisual_lv_scope";
+         return "libvisual_lv_scope";
       case EMOTION_VIS_LIBVISUAL_MADSPIN:
-	 return "libvisual_madspin";
+         return "libvisual_madspin";
       case EMOTION_VIS_LIBVISUAL_NEBULUS:
-	 return "libvisual_nebulus";
+         return "libvisual_nebulus";
       case EMOTION_VIS_LIBVISUAL_OINKSIE:
-	 return "libvisual_oinksie";
+         return "libvisual_oinksie";
       case EMOTION_VIS_LIBVISUAL_PLASMA:
-	 return "libvisual_plazma";
+         return "libvisual_plazma";
       default:
-	 return "goom";
+         return "goom";
      }
 }
