@@ -1940,7 +1940,7 @@ extern "C" {
     * @until object_show
     * @note The greyed out area is a @ref Styles "style".
     *
-    * We are almost done, this next one is just a actionslider with all
+    * We are almost done, this next one is just an actionslider with all
     * positions magnetized and having every possible label:
     * @skipline actionslider_add
     * @skipline indicator_pos_set
