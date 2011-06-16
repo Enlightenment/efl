@@ -147,6 +147,8 @@ evas_debug_magic_string_get(DATA32 magic)
       case MAGIC_OBJ_SMART:
 	return "Evas_Object (Smart)";
 	break;
+      case MAGIC_MAP:
+	return "Evas_Map";
       default:
 	return "<UNKNOWN>";
      };

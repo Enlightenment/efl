@@ -119,6 +119,7 @@ _evas_map_new(int count)
    m->persp.foc = 0;
    m->alpha = 1;
    m->smooth = 1;
+   m->magic = MAGIC_MAP;
    for (i = 0; i < count; i++)
      {
         m->points[i].r = 255;
@@ -212,6 +213,10 @@ Eina_Bool
 evas_map_coords_get(const Evas_Map *m, Evas_Coord x, Evas_Coord y,
                     Evas_Coord *mx, Evas_Coord *my, int grab)
 {
+   MAGIC_CHECK(m, Evas_Map, MAGIC_MAP);
+   return EINA_FALSE;
+   MAGIC_CHECK_END();
+
    int i, j, edges, edge[m->count][2], douv;
    Evas_Coord xe[2];
    double u[2] = { 0.0, 0.0 };
@@ -489,57 +494,82 @@ evas_map_new(int count)
 EAPI void
 evas_map_smooth_set(Evas_Map *m, Eina_Bool enabled)
 {
-   if (!m) return;
+   MAGIC_CHECK(m, Evas_Map, MAGIC_MAP);
+   return;
+   MAGIC_CHECK_END();
+
    m->smooth = enabled;
 }
 
 EAPI Eina_Bool
 evas_map_smooth_get(const Evas_Map *m)
 {
-   if (!m) return 0;
+   MAGIC_CHECK(m, Evas_Map, MAGIC_MAP);
+   return EINA_FALSE;
+   MAGIC_CHECK_END();
+
    return m->smooth;
 }
 
 EAPI void
 evas_map_alpha_set(Evas_Map *m, Eina_Bool enabled)
 {
-   if (!m) return;
+   MAGIC_CHECK(m, Evas_Map, MAGIC_MAP);
+   return;
+   MAGIC_CHECK_END();
+
    m->alpha = enabled;
 }
 
 EAPI Eina_Bool
 evas_map_alpha_get(const Evas_Map *m)
 {
-   if (!m) return 0;
+   MAGIC_CHECK(m, Evas_Map, MAGIC_MAP);
+   return EINA_FALSE;
+   MAGIC_CHECK_END();
+
    return m->alpha;
 }
 
 EAPI Evas_Map *
 evas_map_dup(const Evas_Map *m)
 {
-   if (!m) return NULL;
+   MAGIC_CHECK(m, Evas_Map, MAGIC_MAP);
+   return;
+   MAGIC_CHECK_END();
+
    return _evas_map_dup(m);
 }
 
 EAPI void
 evas_map_free(Evas_Map *m)
 {
-   if (!m) return;
+   MAGIC_CHECK(m, Evas_Map, MAGIC_MAP);
+   return;
+   MAGIC_CHECK_END();
+
    _evas_map_free(NULL, m);
 }
 
 EAPI int
 evas_map_count_get(const Evas_Map *m)
 {
-   if (!m) return -1;
+   MAGIC_CHECK(m, Evas_Map, MAGIC_MAP);
+   return -1;
+   MAGIC_CHECK_END();
+
    return m->count;
 }
 
 EAPI void
 evas_map_point_coord_set(Evas_Map *m, int idx, Evas_Coord x, Evas_Coord y, Evas_Coord z)
 {
+   MAGIC_CHECK(m, Evas_Map, MAGIC_MAP);
+   return;
+   MAGIC_CHECK_END();
+
    Evas_Map_Point *p;
-   if (!m) return;
+
    if (idx >= m->count) return;
    p = m->points + idx;
    p->x = p->px = x;
@@ -550,9 +580,12 @@ evas_map_point_coord_set(Evas_Map *m, int idx, Evas_Coord x, Evas_Coord y, Evas_
 EAPI void
 evas_map_point_coord_get(const Evas_Map *m, int idx, Evas_Coord *x, Evas_Coord *y, Evas_Coord *z)
 {
+   MAGIC_CHECK(m, Evas_Map, MAGIC_MAP);
+   goto error;
+   MAGIC_CHECK_END();
+
    const Evas_Map_Point *p;
 
-   if (!m) goto error;
    if (idx >= m->count) goto error;
    p = m->points + idx;
    if (x) *x = p->x;
@@ -569,8 +602,12 @@ evas_map_point_coord_get(const Evas_Map *m, int idx, Evas_Coord *x, Evas_Coord *
 EAPI void
 evas_map_point_image_uv_set(Evas_Map *m, int idx, double u, double v)
 {
+   MAGIC_CHECK(m, Evas_Map, MAGIC_MAP);
+   return;
+   MAGIC_CHECK_END();
+
    Evas_Map_Point *p;
-   if (!m) return;
+
    if (idx >= m->count) return;
    p = m->points + idx;
    p->u = u;
@@ -580,8 +617,12 @@ evas_map_point_image_uv_set(Evas_Map *m, int idx, double u, double v)
 EAPI void
 evas_map_point_image_uv_get(const Evas_Map *m, int idx, double *u, double *v)
 {
+   MAGIC_CHECK(m, Evas_Map, MAGIC_MAP);
+   goto error;
+   MAGIC_CHECK_END();
+
    const Evas_Map_Point *p;
-   if (!m) goto error;
+
    if (idx >= m->count) goto error;
    p = m->points + idx;
    if (u) *u = p->u;
@@ -596,8 +637,12 @@ evas_map_point_image_uv_get(const Evas_Map *m, int idx, double *u, double *v)
 EAPI void
 evas_map_point_color_set(Evas_Map *m, int idx, int r, int g, int b, int a)
 {
+   MAGIC_CHECK(m, Evas_Map, MAGIC_MAP);
+   return;
+   MAGIC_CHECK_END();
+
    Evas_Map_Point *p;
-   if (!m) return;
+
    if (idx >= m->count) return;
    p = m->points + idx;
    p->r = r;
@@ -609,8 +654,12 @@ evas_map_point_color_set(Evas_Map *m, int idx, int r, int g, int b, int a)
 EAPI void
 evas_map_point_color_get(const Evas_Map *m, int idx, int *r, int *g, int *b, int *a)
 {
+   MAGIC_CHECK(m, Evas_Map, MAGIC_MAP);
+   return;
+   MAGIC_CHECK_END();
+
    const Evas_Map_Point *p;
-   if (!m) return;
+
    if (idx >= m->count) return;
    p = m->points + idx;
    if (r) *r = p->r;
@@ -625,11 +674,7 @@ evas_map_util_points_populate_from_object_full(Evas_Map *m, const Evas_Object *o
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return;
    MAGIC_CHECK_END();
-   if (!m)
-     {
-        ERR("map == NULL");
-        return;
-     }
+
    if (m->count != 4)
      {
         ERR("map has count=%d where 4 was expected.", m->count);
@@ -642,14 +687,14 @@ evas_map_util_points_populate_from_object_full(Evas_Map *m, const Evas_Object *o
 EAPI void
 evas_map_util_points_populate_from_object(Evas_Map *m, const Evas_Object *obj)
 {
+   MAGIC_CHECK(m, Evas_Map, MAGIC_MAP);
+   return;
+   MAGIC_CHECK_END();
+
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return;
    MAGIC_CHECK_END();
-   if (!m)
-     {
-        ERR("map == NULL");
-        return;
-     }
+
    if (m->count != 4)
      {
         ERR("map has count=%d where 4 was expected.", m->count);
@@ -662,11 +707,10 @@ evas_map_util_points_populate_from_object(Evas_Map *m, const Evas_Object *obj)
 EAPI void
 evas_map_util_points_populate_from_geometry(Evas_Map *m, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h, Evas_Coord z)
 {
-   if (!m)
-     {
-        ERR("map == NULL");
-        return;
-     }
+   MAGIC_CHECK(m, Evas_Map, MAGIC_MAP);
+   return;
+   MAGIC_CHECK_END();
+
    if (m->count != 4)
      {
         ERR("map has count=%d where 4 was expected.", m->count);
@@ -678,12 +722,12 @@ evas_map_util_points_populate_from_geometry(Evas_Map *m, Evas_Coord x, Evas_Coor
 EAPI void
 evas_map_util_points_color_set(Evas_Map *m, int r, int g, int b, int a)
 {
+   MAGIC_CHECK(m, Evas_Map, MAGIC_MAP);
+   return;
+   MAGIC_CHECK_END();
+
    Evas_Map_Point *p, *p_end;
-   if (!m)
-     {
-        ERR("map == NULL");
-        return;
-     }
+
    p = m->points;
    p_end = p + m->count;
    for (; p < p_end; p++)
@@ -698,10 +742,13 @@ evas_map_util_points_color_set(Evas_Map *m, int r, int g, int b, int a)
 EAPI void
 evas_map_util_rotate(Evas_Map *m, double degrees, Evas_Coord cx, Evas_Coord cy)
 {
+   MAGIC_CHECK(m, Evas_Map, MAGIC_MAP);
+   return;
+   MAGIC_CHECK_END();
+
    double r = (degrees * M_PI) / 180.0;
    Evas_Map_Point *p, *p_end;
 
-   if (!m) return;
    p = m->points;
    p_end = p + m->count;
 
@@ -725,9 +772,12 @@ evas_map_util_rotate(Evas_Map *m, double degrees, Evas_Coord cx, Evas_Coord cy)
 EAPI void
 evas_map_util_zoom(Evas_Map *m, double zoomx, double zoomy, Evas_Coord cx, Evas_Coord cy)
 {
+   MAGIC_CHECK(m, Evas_Map, MAGIC_MAP);
+   return;
+   MAGIC_CHECK_END();
+
    Evas_Map_Point *p, *p_end;
 
-   if (!m) return;
    p = m->points;
    p_end = p + m->count;
 
@@ -750,12 +800,15 @@ EAPI void
 evas_map_util_3d_rotate(Evas_Map *m, double dx, double dy, double dz,
                         Evas_Coord cx, Evas_Coord cy, Evas_Coord cz)
 {
+   MAGIC_CHECK(m, Evas_Map, MAGIC_MAP);
+   return;
+   MAGIC_CHECK_END();
+
    double rz = (dz * M_PI) / 180.0;
    double rx = (dx * M_PI) / 180.0;
    double ry = (dy * M_PI) / 180.0;
    Evas_Map_Point *p, *p_end;
 
-   if (!m) return;
    p = m->points;
    p_end = p + m->count;
 
@@ -802,9 +855,11 @@ evas_map_util_3d_lighting(Evas_Map *m,
                           Evas_Coord lx, Evas_Coord ly, Evas_Coord lz,
                           int lr, int lg, int lb, int ar, int ag, int ab)
 {
-   int i;
+   MAGIC_CHECK(m, Evas_Map, MAGIC_MAP);
+   return;
+   MAGIC_CHECK_END();
 
-   if (!m) return;
+   int i;
 
    for (i = 0; i < m->count; i++)
      {
@@ -879,9 +934,12 @@ evas_map_util_3d_perspective(Evas_Map *m,
                              Evas_Coord px, Evas_Coord py,
                              Evas_Coord z0, Evas_Coord foc)
 {
+   MAGIC_CHECK(m, Evas_Map, MAGIC_MAP);
+   return;
+   MAGIC_CHECK_END();
+
    Evas_Map_Point *p, *p_end;
 
-   if (!m) return;
    p = m->points;
    p_end = p + m->count;
 
@@ -915,10 +973,12 @@ evas_map_util_3d_perspective(Evas_Map *m,
 EAPI Eina_Bool
 evas_map_util_clockwise_get(Evas_Map *m)
 {
+   MAGIC_CHECK(m, Evas_Map, MAGIC_MAP);
+   return EINA_FALSE;
+   MAGIC_CHECK_END();
    int i, j, k, count;
    long long c;
 
-   if (!m) return 0;
    if (m->count < 3) return 0;
 
    count = 0;

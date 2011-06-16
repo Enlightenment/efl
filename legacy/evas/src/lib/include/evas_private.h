@@ -68,6 +68,7 @@ OPAQUE_TYPE(Evas_Font_Instance); /* General type for RGBA_Font_Int */
 #define MAGIC_OBJ_CONTAINER        0x72777774
 #define MAGIC_OBJ_CUSTOM           0x72777775
 #define MAGIC_EVAS_GL              0x72777776
+#define MAGIC_MAP                  0x72777777
 
 #ifdef MAGIC_DEBUG
 # define MAGIC_CHECK_FAILED(o, t, m) \
@@ -376,6 +377,7 @@ struct _Evas_Map_Point
 
 struct _Evas_Map
 {
+   DATA32                magic;
    int                   count; // num of points
    Evas_Coord_Rectangle  normal_geometry; // bounding box of map geom actually
    void                 *surface; // surface holding map if needed
