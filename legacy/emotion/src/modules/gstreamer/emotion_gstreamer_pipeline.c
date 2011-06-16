@@ -14,8 +14,48 @@ emotion_pipeline_pause(GstElement *pipeline)
    res = gst_element_set_state((pipeline), GST_STATE_PAUSED);
    if (res == GST_STATE_CHANGE_FAILURE)
      {
+        GstBus  *bus;
+        gboolean done;
+
 	ERR("could not pause");
-	return 0;
+
+        done = FALSE;
+        bus = gst_element_get_bus(pipeline);
+        if (!bus) return 0;
+
+        while (!done)
+          {
+             GstMessage *message;
+
+             message = gst_bus_pop(bus);
+             if (!message)
+               /* All messages read, we're done */
+               break;
+
+             switch (GST_MESSAGE_TYPE(message))
+               {
+               case GST_MESSAGE_ERROR:
+                 {
+                    GError *err = NULL;
+                    gchar *dbg_info = NULL;
+    
+                    gst_message_parse_error(message, &err, &dbg_info);
+                    ERR("[from element \"%s\"] %s",
+                        GST_OBJECT_NAME (message->src), err->message);
+                    if (dbg_info)
+                      ERR("%s\n", dbg_info);
+                    g_error_free (err);
+                    g_free (dbg_info);
+                    done = TRUE;
+                    break;
+                 }
+               default:
+                 break;
+               }
+             gst_message_unref(message);
+          }
+        gst_object_unref(GST_OBJECT(bus));
+        return 0;
      }
 
    res = gst_element_get_state((pipeline), NULL, NULL, GST_CLOCK_TIME_NONE);
@@ -309,7 +349,17 @@ _emotion_pipeline_build(Emotion_Gstreamer_Video *ev, const char *file)
    return EINA_TRUE;
 
  unref_pipeline:
+   g_object_get(G_OBJECT(ev->pipeline),
+                 "audio-sink", &sink,
+                 NULL);
+   gst_element_set_state(sink, GST_STATE_NULL);
+   g_object_get(G_OBJECT(ev->pipeline),
+                 "video-sink", &sink,
+                 NULL);
+   gst_element_set_state(sink, GST_STATE_NULL);
+   gst_element_set_state(ev->pipeline, GST_STATE_NULL);
    gst_object_unref(ev->pipeline);
+   ev->pipeline = NULL;
 
    return EINA_FALSE;
 }
