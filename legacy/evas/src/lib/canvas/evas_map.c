@@ -168,6 +168,46 @@ _evas_map_free(Evas_Object *obj, Evas_Map *m)
    free(m);
 }
 
+/****************************************************************************/
+/* util functions for manipulating maps, so you don't need to know the math */
+/****************************************************************************/
+static inline void
+_evas_map_util_points_populate(Evas_Map *m, const Evas_Coord x, const Evas_Coord y, const Evas_Coord w, const Evas_Coord h, const Evas_Coord z)
+{
+   Evas_Map_Point *p = m->points;
+   int i;
+
+   p[0].x = x;
+   p[0].y = y;
+   p[0].z = z;
+   p[0].u = 0.0;
+   p[0].v = 0.0;
+
+   p[1].x = x + w;
+   p[1].y = y;
+   p[1].z = z;
+   p[1].u = w;
+   p[1].v = 0.0;
+
+   p[2].x = x + w;
+   p[2].y = y + h;
+   p[2].z = z;
+   p[2].u = w;
+   p[2].v = h;
+
+   p[3].x = x;
+   p[3].y = y + h;
+   p[3].z = z;
+   p[3].u = 0.0;
+   p[3].v = h;
+
+   for (i = 0; i < 4; i++)
+     {
+        p[i].px = p[i].x;
+        p[i].py = p[i].y;
+     }
+}
+
 Eina_Bool
 evas_map_coords_get(const Evas_Map *m, Evas_Coord x, Evas_Coord y,
                     Evas_Coord *mx, Evas_Coord *my, int grab)
@@ -312,7 +352,6 @@ evas_map_inside_get(const Evas_Map *m, Evas_Coord x, Evas_Coord y)
 {
    return evas_map_coords_get(m, x, y, NULL, NULL, 0);
 }
-
 
 EAPI void
 evas_object_map_enable_set(Evas_Object *obj, Eina_Bool enabled)
@@ -578,46 +617,6 @@ evas_map_point_color_get(const Evas_Map *m, int idx, int *r, int *g, int *b, int
    if (g) *g = p->g;
    if (b) *b = p->b;
    if (a) *a = p->a;
-}
-
-/****************************************************************************/
-/* util functions for manipulating maps, so you don't need to know the math */
-/****************************************************************************/
-static inline void
-_evas_map_util_points_populate(Evas_Map *m, const Evas_Coord x, const Evas_Coord y, const Evas_Coord w, const Evas_Coord h, const Evas_Coord z)
-{
-   Evas_Map_Point *p = m->points;
-   int i;
-
-   p[0].x = x;
-   p[0].y = y;
-   p[0].z = z;
-   p[0].u = 0.0;
-   p[0].v = 0.0;
-
-   p[1].x = x + w;
-   p[1].y = y;
-   p[1].z = z;
-   p[1].u = w;
-   p[1].v = 0.0;
-
-   p[2].x = x + w;
-   p[2].y = y + h;
-   p[2].z = z;
-   p[2].u = w;
-   p[2].v = h;
-
-   p[3].x = x;
-   p[3].y = y + h;
-   p[3].z = z;
-   p[3].u = 0.0;
-   p[3].v = h;
-
-   for (i = 0; i < 4; i++)
-     {
-        p[i].px = p[i].x;
-        p[i].py = p[i].y;
-     }
 }
 
 EAPI void
