@@ -1014,8 +1014,8 @@ _inside_rects(Shadow *s, int x, int y, int bx, int by, Ecore_X_Rectangle *rects,
      {
         if ((x >= s->x + bx + rects[i].x) && 
             (y >= s->y + by + rects[i].y) && 
-            (x < (int)(s->x + bx + rects[i].width)) && 
-            (y < (int)(s->y + by + rects[i].height)))
+            (x < (int)(s->x + bx + rects[i].x + rects[i].width)) && 
+            (y < (int)(s->y + by + rects[i].y + rects[i].height)))
           {
              inside = 1;
              break;
