@@ -2,15 +2,18 @@
 //gcc -g `pkg-config --cflags --libs elementary` actionslider_example_01.c -o actionslider_example_01
 
 #include <Elementary.h>
+#ifdef HAVE_CONFIG_H
+# include "elementary_config.h"
+#endif
 
-static void _pos_selected_cb(void *data, Evas_Object *obj, void *event_info)
+static void _pos_selected_cb(void *data __UNUSED__, Evas_Object *obj, void *event_info)
 {
    printf("Selection: %s\n", (char *)event_info);
    printf("Label selected: %s\n", elm_actionslider_selected_label_get(obj));
 }
 
 static void
-_position_change_magnetic_cb(void *data, Evas_Object * obj, void *event_info)
+_position_change_magnetic_cb(void *data __UNUSED__, Evas_Object * obj, void *event_info)
 {
    if (!strcmp((char *)event_info, "left"))
      elm_actionslider_magnet_pos_set(obj, ELM_ACTIONSLIDER_LEFT);
@@ -19,7 +22,7 @@ _position_change_magnetic_cb(void *data, Evas_Object * obj, void *event_info)
 }
 
 static void
-_magnet_enable_disable_cb(void *data, Evas_Object *obj, void *event_info)
+_magnet_enable_disable_cb(void *data __UNUSED__, Evas_Object *obj, void *event_info)
 {
    if (!strcmp((char *)event_info, "left"))
       elm_actionslider_magnet_pos_set(obj, ELM_ACTIONSLIDER_CENTER);
@@ -28,13 +31,13 @@ _magnet_enable_disable_cb(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
-on_done(void *data, Evas_Object *obj, void *event_info)
+on_done(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    elm_exit();
 }
 
 EAPI int
-elm_main(int argc, char **argv)
+elm_main(int argc __UNUSED__, char **argv __UNUSED__)
 {
    Evas_Object *win, *bg, *bx, *as;
 

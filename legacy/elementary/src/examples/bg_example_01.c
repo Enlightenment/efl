@@ -2,16 +2,19 @@
 //gcc -g `pkg-config --cflags --libs elementary` bg_example_03.c -o bg_example_03
 
 #include <Elementary.h>
+#ifdef HAVE_CONFIG_H
+# include "elementary_config.h"
+#endif
 
 static void
-on_done(void *data, Evas_Object *obj, void *event_info)
+on_done(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    /* quit the mainloop (elm_run) */
    elm_exit();
 }
 
 int
-elm_main(int argc, char **argv)
+elm_main(int argc __UNUSED__, char **argv __UNUSED__)
 {
    Evas_Object *win, *bg;
 

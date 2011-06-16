@@ -3,16 +3,19 @@
 // where directory is the a path where images/plant_01.jpg can be found.
 
 #include <Elementary.h>
+#ifdef HAVE_CONFIG_H
+# include "elementary_config.h"
+#endif
 
 static void
-on_done(void *data, Evas_Object *obj, void *event_info)
+on_done(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    /* quit the mainloop (elm_run) */
    elm_exit();
 }
 
 static void
-_cb_radio_changed(void *data, Evas_Object *obj, void *event)
+_cb_radio_changed(void *data, Evas_Object *obj, void *event __UNUSED__)
 {
    Evas_Object *o_bg = data;
 
@@ -20,7 +23,7 @@ _cb_radio_changed(void *data, Evas_Object *obj, void *event)
 }
 
 static void
-_cb_overlay_changed(void *data, Evas_Object *obj, void *event)
+_cb_overlay_changed(void *data, Evas_Object *obj, void *event __UNUSED__)
 {
    Evas_Object *o_bg = data;
 
@@ -40,7 +43,7 @@ _cb_overlay_changed(void *data, Evas_Object *obj, void *event)
 }
 
 static void
-_cb_color_changed(void *data, Evas_Object *obj, void *event)
+_cb_color_changed(void *data, Evas_Object *obj, void *event __UNUSED__)
 {
    Evas_Object *o_bg = data;
    double val = 0.0;
@@ -57,7 +60,7 @@ _cb_color_changed(void *data, Evas_Object *obj, void *event)
 }
 
 int
-elm_main(int argc, char **argv)
+elm_main(int argc __UNUSED__, char **argv __UNUSED__)
 {
    Evas_Object *win, *bg;
    Evas_Object *box, *hbox, *o_bg;
