@@ -502,6 +502,10 @@ AM_CONDITIONAL([HAVE_PO], [false])
 ])
 AC_SUBST(LTLIBINTL)
 
+### Build and install examples
+EFL_CHECK_BUILD_EXAMPLES([enable_build_examples="yes"], [enable_build_examples="no"])
+EFL_CHECK_INSTALL_EXAMPLES([enable_install_examples="yes"], [enable_install_examples="no"])
+
 
 AC_OUTPUT([
 Makefile
@@ -531,10 +535,6 @@ config/standard/Makefile
 config/illume/Makefile
 $po_makefile_in
 ])
-
-### Build and install examples
-EFL_CHECK_BUILD_EXAMPLES([enable_build_examples="yes"], [enable_build_examples="no"])
-EFL_CHECK_INSTALL_EXAMPLES([enable_install_examples="yes"], [enable_install_examples="no"])
 
 #####################################################################
 ## Info
