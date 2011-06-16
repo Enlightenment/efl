@@ -713,10 +713,10 @@ evas_map_util_rotate(Evas_Map *m, double degrees, Evas_Coord cx, Evas_Coord cy)
         x = p->x - cx;
         y = p->y - cy;
 
-        xx = (x * cos(r));
-        yy = (x * sin(r));
-        x = xx - (y * sin(r));
-        y = yy + (y * cos(r));
+        xx = x * cos(r);
+        yy = x * sin(r);
+        x = xx + (y * cos(r + M_PI_2));
+        y = yy + (y * sin(r + M_PI_2));
 
         p->px = p->x = x + cx;
         p->py = p->y = y + cy;
@@ -772,24 +772,24 @@ evas_map_util_3d_rotate(Evas_Map *m, double dx, double dy, double dz,
           {
              xx = x * cos(rz);
              yy = x * sin(rz);
-             x = xx - (y * sin(rz));
-             y = yy + (y * cos(rz));
+             x = xx + (y * cos(rz + M_PI_2));
+             y = yy + (y * sin(rz + M_PI_2));
           }
 
         if (ry != 0.0)
           {
              xx = x * cos(ry);
              zz = x * sin(ry);
-             x = xx - (z * sin(ry));
-             z = zz + (z * cos(ry));
+             x = xx + (z * cos(ry + M_PI_2));
+             z = zz + (z * sin(ry + M_PI_2));
           }
 
         if (rx != 0.0)
           {
              zz = z * cos(rx);
              yy = z * sin(rx);
-             z = zz - (y * sin(rx));
-             y = yy + (y * cos(rx));
+             z = zz + (y * cos(rx + M_PI_2));
+             y = yy + (y * sin(rx + M_PI_2));
           }
 
         p->px = p->x = x + cx;
