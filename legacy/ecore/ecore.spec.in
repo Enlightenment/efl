@@ -35,7 +35,7 @@
 %define ac_with_lib_ecore_imf       --%{?with_lib_ecore_imf:en}%{!?with_lib_ecore_imf:dis}able-ecore-imf
 %define ac_with_lib_ecore_sdl       --%{?with_lib_ecore_sdl:en}%{!?with_lib_ecore_sdl:dis}able-ecore-sdl
 
-%{!?_rel:%{expand:%%global _rel 0.r%(svnversion | sed 's/[^0-9].*$//' || echo 0000)}}
+%{!?_rel:%{expand:%%global _rel 0.enl%{?dist}}}
 
 Summary: Enlightened Core X interface library
 Name: @PACKAGE@

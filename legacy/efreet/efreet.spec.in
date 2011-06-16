@@ -1,6 +1,6 @@
 %define _missing_doc_files_terminate_build 0
 
-%{!?_rel:%{expand:%%global _rel 0.r%(svnversion | sed 's/[^0-9].*$//' || echo 0000)}}
+%{!?_rel:%{expand:%%global _rel 0.enl%{?dist}}}
 
 Summary: FreeDesktop.Org Compatibility Library
 Name: @PACKAGE@

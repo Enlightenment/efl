@@ -75,7 +75,7 @@
 %define ac_with_module_engine_software_sdl --%{?with_module_engine_software_sdl:en}%{!?with_module_engine_software_sdl:dis}able-sdl
 %define ac_with_module_engine_software_xcb --%{?with_module_engine_software_xcb:en}%{!?with_module_engine_software_xcb:dis}able-software-xcb
 
-%{!?_rel:%{expand:%%global _rel 0.r%(svnversion | sed 's/[^0-9].*$//' || echo 0000)}}
+%{!?_rel:%{expand:%%global _rel 0.enl%{?dist}}}
 
 Summary: Multi-platform Canvas Library
 Name: @PACKAGE@
