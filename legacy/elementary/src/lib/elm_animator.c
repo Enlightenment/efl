@@ -14,18 +14,6 @@
    } while (0)
 
 
-/**
- * @addtogroup Animator Animator
- * @ingroup Elementary
- *
- * elm_animator is designed to provides animation frame.
- * It is somewhat different with any others widgets however elm_animator
- * might useful when your GUIs have animation.
- * Basically, it computes normalized frame value for animation,
- * provides additional functions to adjust this also.
- *
- */
-
 struct _Elm_Animator
 {
 #define ELM_ANIMATOR_MAGIC 0x40777770
@@ -164,14 +152,6 @@ _animator_parent_del(void *data, Evas *evas __UNUSED__,
    elm_animator_del(data);
 }
 
-/**
- * Get the value of reverse mode.
- *
- * @param[in] animator Animator object
- * @return EINA_TRUE is reverse mode
- *
- * @ingroup Animator
- */
 EAPI Eina_Bool
 elm_animator_auto_reverse_get(const Elm_Animator *animator)
 {
@@ -179,14 +159,6 @@ elm_animator_auto_reverse_get(const Elm_Animator *animator)
    return animator->auto_reverse;
 }
 
-/**
- * Get the value of repeat count.
- *
- * @param[in] animator Animator object
- * @return Repeat count
- *
- * @ingroup Animator
- */
 EAPI unsigned int
 elm_animator_repeat_get(const Elm_Animator *animator)
 {
@@ -194,14 +166,6 @@ elm_animator_repeat_get(const Elm_Animator *animator)
    return animator->repeat_cnt;
 }
 
-/**
- * Set the animation acceleration style.
- *
- * @param[in] animator Animator object
- * @param[in] cs Curve style. Default is ELM_ANIMATOR_CURVE_LINEAR
- *
- * @ingroup Animator
- */
 EAPI Elm_Animator_Curve_Style
 elm_animator_curve_style_get(const Elm_Animator *animator)
 {
@@ -209,14 +173,6 @@ elm_animator_curve_style_get(const Elm_Animator *animator)
    return animator->curve_style;
 }
 
-/**
- * Set auto reverse function.
- *
- * @param[in] animator Animator object
- * @param[in] reverse Reverse or not
- *
- * @ingroup Animator
- */
 EAPI void
 elm_animator_auto_reverse_set(Elm_Animator *animator, Eina_Bool reverse)
 {
@@ -231,14 +187,6 @@ elm_animator_auto_reverse_set(Elm_Animator *animator, Eina_Bool reverse)
         _animator_compute_no_reverse_repeat_count(animator->repeat_cnt);
 }
 
-/**
- * Set the animation acceleration style.
- *
- * @param[in] animator Animator object
- * @param[in] cs Curve style. Default is ELM_ANIMATOR_CURVE_LINEAR
- *
- * @ingroup Animator
- */
 EAPI void
 elm_animator_curve_style_set(Elm_Animator *animator,
                              Elm_Animator_Curve_Style cs)
@@ -246,15 +194,6 @@ elm_animator_curve_style_set(Elm_Animator *animator,
    ELM_ANIMATOR_CHECK_OR_RETURN(animator);
    animator->curve_style = cs;
 }
-
-/**
- * Set the operation duration.
- *
- * @param[in] animator Animator object
- * @param[in] duration Duration in second
- *
- * @ingroup Animator
- */
 EAPI void
 elm_animator_duration_set(Elm_Animator *animator, double duration)
 {
@@ -263,16 +202,6 @@ elm_animator_duration_set(Elm_Animator *animator, double duration)
    animator->duration = duration;
 }
 
-/**
- * Set the callback function for animator operation.
- * The range of callback function frame data is to 0 ~ 1
- * User can refer this frame value for one's animation frame data.
- * @param[in] animator Animator object
- * @param[in] func Callback function pointer
- * @param[in] data Callback function user argument
- *
- * @ingroup Animator
- */
 EAPI void
 elm_animator_operation_callback_set(Elm_Animator *animator,
                                     Elm_Animator_Operation_Cb func,
@@ -284,14 +213,6 @@ elm_animator_operation_callback_set(Elm_Animator *animator,
    animator->animator_arg = data;
 }
 
-/**
- * Add new animator.
- *
- * @param[in] parent Parent object
- * @return animator object
- *
- * @ingroup Animator
- */
 EAPI Elm_Animator *
 elm_animator_add(Evas_Object *parent)
 {
@@ -307,14 +228,6 @@ elm_animator_add(Evas_Object *parent)
    return animator;
 }
 
-/**
- * Get the status for the animator operation.
- *
- * @param[in] animator Animator object
- * @return EINA_TRUE is animator is operating.
- *
- * @ingroup Animator
- */
 EAPI Eina_Bool
 elm_animator_operating_get(const Elm_Animator *animator)
 {
@@ -322,13 +235,6 @@ elm_animator_operating_get(const Elm_Animator *animator)
    return animator->on_animating;
 }
 
-/**
- * Delete animator.
- *
- * @param[in] animator Animator object
- *
- * @ingroup Animator
- */
 EAPI void
 elm_animator_del(Elm_Animator *animator)
 {
@@ -342,15 +248,6 @@ elm_animator_del(Elm_Animator *animator)
    free(animator);
 }
 
-/**
- * Set the callback function for the animator end.
- *
- * @param[in]  animator Animator object
- * @param[in]  func   Callback function pointe
- * @param[in]  data Callback function user argument
- *
- * @ingroup Animator
- */
 EAPI void
 elm_animator_completion_callback_set(Elm_Animator *animator,
                                      Elm_Animator_Completion_Cb func,
@@ -362,13 +259,6 @@ elm_animator_completion_callback_set(Elm_Animator *animator,
    animator->completion_arg = data;
 }
 
-/**
- * Pause the animator.
- *
- * @param[in]  animator Animator object
- *
- * @ingroup Animator
- */
 EAPI void
 elm_animator_pause(Elm_Animator *animator)
 {
@@ -377,13 +267,6 @@ elm_animator_pause(Elm_Animator *animator)
    ecore_animator_freeze(animator->animator);
 }
 
-/**
- * Resume the animator.
- *
- * @param[in]  animator Animator object
- *
- * @ingroup Animator
- */
 EAPI void
 elm_animator_resume(Elm_Animator *animator)
 {
@@ -392,13 +275,6 @@ elm_animator_resume(Elm_Animator *animator)
    ecore_animator_thaw(animator->animator);
 }
 
-/**
- * Stop animator.
- *
- * @param[in] animator Animator object
- *
- * @ingroup Animator
- */
 EAPI void
 elm_animator_stop(Elm_Animator *animator)
 {
@@ -407,14 +283,6 @@ elm_animator_stop(Elm_Animator *animator)
    _delete_animator(animator);
 }
 
-/**
- * Set the animator repeat count.
- *
- * @param[in]  animator Animator object
- * @param[in]  repeat_cnt Repeat count
- *
- * @ingroup Animator
- */
 EAPI void
 elm_animator_repeat_set(Elm_Animator *animator, unsigned int repeat_cnt)
 {
@@ -424,13 +292,6 @@ elm_animator_repeat_set(Elm_Animator *animator, unsigned int repeat_cnt)
       animator->repeat_cnt = _animator_compute_reverse_repeat_count(repeat_cnt);
 }
 
-/**
- * Animate now.
- *
- * @param[in] animator Animator object
- *
- * @ingroup Animator
- */
 EAPI void
 elm_animator_animate(Elm_Animator *animator)
 {
