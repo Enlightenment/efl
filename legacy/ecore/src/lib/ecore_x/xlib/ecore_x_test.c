@@ -13,7 +13,11 @@
 #include <string.h>
 
 EAPI Eina_Bool
+#ifdef ECORE_XTEST
 ecore_x_test_fake_key_down(const char *key)
+#else
+ecore_x_test_fake_key_down(const char *key __UNUSED__)
+#endif
 {
 #ifdef ECORE_XTEST
    KeyCode keycode = 0;
@@ -41,7 +45,11 @@ ecore_x_test_fake_key_down(const char *key)
 } /* ecore_x_test_fake_key_down */
 
 EAPI Eina_Bool
+#ifdef ECORE_XTEST
 ecore_x_test_fake_key_up(const char *key)
+#else
+ecore_x_test_fake_key_up(const char *key __UNUSED__)
+#endif
 {
 #ifdef ECORE_XTEST
    KeyCode keycode = 0;
@@ -69,7 +77,11 @@ ecore_x_test_fake_key_up(const char *key)
 } /* ecore_x_test_fake_key_up */
 
 EAPI Eina_Bool
+#ifdef ECORE_XTEST
 ecore_x_test_fake_key_press(const char *key)
+#else
+ecore_x_test_fake_key_press(const char *key __UNUSED__)
+#endif
 {
 #ifdef ECORE_XTEST
    KeyCode keycode = 0;
