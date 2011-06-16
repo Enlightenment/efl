@@ -13,6 +13,7 @@ AM_CPPFLAGS = \
 @ELEMENTARY_CFLAGS@
 
 LDADD = \
+	@ELEMENTARY_LIBS@ \
 	$(top_builddir)/src/lib/libelementary.la
 
 SRCS = \
