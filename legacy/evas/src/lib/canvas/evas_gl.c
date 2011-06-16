@@ -5,7 +5,7 @@
 
 struct _Evas_GL
 {
-   int         magic;
+   DATA32      magic;
    Evas       *evas;
 
    Eina_List  *contexts;
@@ -56,8 +56,8 @@ evas_gl_free(Evas_GL *evas_gl)
    while (evas_gl->contexts)
      evas_gl_context_destroy(evas_gl, evas_gl->contexts->data);
 
+   evas_gl->magic = 0;
    free(evas_gl);
-   evas_gl = NULL;
 }
 
 EAPI Evas_GL_Surface *
