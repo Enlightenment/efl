@@ -270,8 +270,9 @@ test_flip2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
    elm_flip_content_front_set(fl, o);
    evas_object_show(o);
 
-   en = elm_scrolled_entry_add(win);
-   elm_scrolled_entry_line_wrap_set(en, EINA_FALSE);
+   en = elm_entry_add(win);
+   elm_entry_scrollable_set(en, EINA_TRUE);
+   elm_entry_line_wrap_set(en, EINA_FALSE);
    snprintf(buf, sizeof(buf),
             "This is an entry widget in this window that<br>"
             "uses markup <b>like this</> for styling and<br>"
@@ -303,7 +304,7 @@ test_flip2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
             " ... end."
             , PACKAGE_DATA_DIR
            );
-   elm_scrolled_entry_entry_set(en, buf);
+   elm_entry_entry_set(en, buf);
    evas_object_size_hint_align_set(en, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(en, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
 

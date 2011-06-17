@@ -26,21 +26,23 @@ fill(Evas_Object *win, Eina_Bool do_bg)
    evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(bx, EVAS_HINT_FILL, EVAS_HINT_FILL);
 
-   en = elm_scrolled_entry_add(win);
+   en = elm_entry_add(win);
+   elm_entry_scrollable_set(en, EINA_TRUE);
    evas_object_size_hint_weight_set(en, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(en, EVAS_HINT_FILL, 0.5);
-   elm_scrolled_entry_entry_set(en, "This is a single line");
-   elm_scrolled_entry_scrollbar_policy_set(en, ELM_SCROLLER_POLICY_OFF, ELM_SCROLLER_POLICY_OFF);
-   elm_scrolled_entry_single_line_set(en, 1);
+   elm_entry_entry_set(en, "This is a single line");
+   elm_entry_scrollbar_policy_set(en, ELM_SCROLLER_POLICY_OFF, ELM_SCROLLER_POLICY_OFF);
+   elm_entry_single_line_set(en, 1);
    evas_object_show(en);
    elm_box_pack_end(bx, en);
 
-   en = elm_scrolled_entry_add(win);
+   en = elm_entry_add(win);
+   elm_entry_scrollable_set(en, EINA_TRUE);
    evas_object_size_hint_weight_set(en, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(en, EVAS_HINT_FILL, 0.5);
-   elm_scrolled_entry_entry_set(en, "Entry 2");
-   elm_scrolled_entry_scrollbar_policy_set(en, ELM_SCROLLER_POLICY_OFF, ELM_SCROLLER_POLICY_OFF);
-   elm_scrolled_entry_single_line_set(en, 1);
+   elm_entry_entry_set(en, "Entry 2");
+   elm_entry_scrollbar_policy_set(en, ELM_SCROLLER_POLICY_OFF, ELM_SCROLLER_POLICY_OFF);
+   elm_entry_single_line_set(en, 1);
    evas_object_show(en);
    elm_box_pack_end(bx, en);
 

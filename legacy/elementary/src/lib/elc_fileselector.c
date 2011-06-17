@@ -316,7 +316,7 @@ _sel_do(void *data)
         if (wd->expand && wd->mode == ELM_FILESELECTOR_LIST)
           {
              _do_anchors(sd->fs, path);
-             elm_scrolled_entry_entry_set(wd->filename_entry, "");
+             elm_entry_entry_set(wd->filename_entry, "");
           }
         else
           {
@@ -338,7 +338,7 @@ _sel_do(void *data)
              _populate(sd->fs, p, NULL);
              eina_stringshare_del(p);
           }
-        elm_scrolled_entry_entry_set(wd->filename_entry,
+        elm_entry_entry_set(wd->filename_entry,
                                      ecore_file_file_get(path));
      }
 
@@ -484,7 +484,7 @@ _do_anchors(Evas_Object *obj,
    free(tok[0]);
    free(tok);
 
-   elm_scrolled_entry_entry_set(wd->path_entry, buf);
+   elm_entry_entry_set(wd->path_entry, buf);
 }
 
 static void
@@ -511,7 +511,7 @@ _populate(Evas_Object      *obj,
         _do_anchors(obj, path);
      }
 
-   if (wd->filename_entry) elm_scrolled_entry_entry_set(wd->filename_entry, "");
+   if (wd->filename_entry) elm_entry_entry_set(wd->filename_entry, "");
    while ((dp = readdir(dir)))
      {
         if (dp->d_name[0] == '.') continue;  // TODO make this configurable
@@ -663,11 +663,12 @@ elm_fileselector_add(Evas_Object *parent)
    wd->files_grid = grid;
 
    // path entry
-   en = elm_scrolled_entry_add(parent);
+   en = elm_entry_add(parent);
+   elm_entry_scrollable_set(en, EINA_TRUE);
    elm_widget_mirrored_automatic_set(en, EINA_FALSE);
-   elm_scrolled_entry_editable_set(en, EINA_FALSE);
-   elm_scrolled_entry_single_line_set(en, EINA_TRUE);
-   elm_scrolled_entry_line_wrap_set(en, ELM_WRAP_CHAR);
+   elm_entry_editable_set(en, EINA_FALSE);
+   elm_entry_single_line_set(en, EINA_TRUE);
+   elm_entry_line_wrap_set(en, ELM_WRAP_CHAR);
    evas_object_size_hint_weight_set(en, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(en, EVAS_HINT_FILL, EVAS_HINT_FILL);
 
@@ -677,11 +678,12 @@ elm_fileselector_add(Evas_Object *parent)
    wd->path_entry = en;
 
    // filename entry
-   en = elm_scrolled_entry_add(parent);
+   en = elm_entry_add(parent);
+   elm_entry_scrollable_set(en, EINA_TRUE);
    elm_widget_mirrored_automatic_set(en, EINA_FALSE);
-   elm_scrolled_entry_editable_set(en, EINA_TRUE);
-   elm_scrolled_entry_single_line_set(en, EINA_TRUE);
-   elm_scrolled_entry_line_wrap_set(en, ELM_WRAP_CHAR);
+   elm_entry_editable_set(en, EINA_TRUE);
+   elm_entry_single_line_set(en, EINA_TRUE);
+   elm_entry_line_wrap_set(en, ELM_WRAP_CHAR);
    evas_object_size_hint_weight_set(en, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(en, EVAS_HINT_FILL, EVAS_HINT_FILL);
 
@@ -1022,7 +1024,7 @@ elm_fileselector_selected_get(const Evas_Object *obj)
         const char *name;
         char buf[PATH_MAX];
 
-        name = elm_scrolled_entry_entry_get(wd->filename_entry);
+        name = elm_entry_entry_get(wd->filename_entry);
         snprintf(buf, sizeof(buf), "%s/%s",
                  wd->only_folder ? ecore_file_dir_get(wd->path) : wd->path,
                  name);
@@ -1075,7 +1077,7 @@ elm_fileselector_selected_set(Evas_Object *obj,
         _populate(obj, ecore_file_dir_get(path), NULL);
         if (wd->filename_entry)
           {
-             elm_scrolled_entry_entry_set(wd->filename_entry,
+             elm_entry_entry_set(wd->filename_entry,
                                           ecore_file_file_get(path));
              eina_stringshare_replace(&wd->selection, path);
           }

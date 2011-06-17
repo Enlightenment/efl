@@ -75,12 +75,13 @@ test_focus2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
 #define PARENT bx /* this is broken, but should work */
 //#define PARENT win
 
-   en = elm_scrolled_entry_add(PARENT);
+   en = elm_entry_add(PARENT);
+   elm_entry_scrollable_set(en, EINA_TRUE);
    evas_object_size_hint_weight_set(en, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(en, EVAS_HINT_FILL, 0.5);
-   elm_scrolled_entry_scrollbar_policy_set(en, ELM_SCROLLER_POLICY_OFF, ELM_SCROLLER_POLICY_OFF);
-   elm_scrolled_entry_entry_set(en, "Scrolled Entry that should get focus");
-   elm_scrolled_entry_single_line_set(en, 1);
+   elm_entry_scrollbar_policy_set(en, ELM_SCROLLER_POLICY_OFF, ELM_SCROLLER_POLICY_OFF);
+   elm_entry_entry_set(en, "Scrolled Entry that should get focus");
+   elm_entry_single_line_set(en, 1);
    evas_object_show(en);
    elm_box_pack_end(bx, en);
 
@@ -101,12 +102,13 @@ test_focus2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    elm_button_label_set(bt, "Button 1");
    elm_layout_content_set(ly, "element1", bt);
 
-   en = elm_scrolled_entry_add(ly);
+   en = elm_entry_add(ly);
+   elm_entry_scrollable_set(en, EINA_TRUE);
    evas_object_size_hint_weight_set(en, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(en, EVAS_HINT_FILL, 0.5);
-   elm_scrolled_entry_scrollbar_policy_set(en, ELM_SCROLLER_POLICY_OFF, ELM_SCROLLER_POLICY_OFF);
-   elm_scrolled_entry_entry_set(en, "Scrolled Entry that should get focus");
-   elm_scrolled_entry_single_line_set(en, 1);
+   elm_entry_scrollbar_policy_set(en, ELM_SCROLLER_POLICY_OFF, ELM_SCROLLER_POLICY_OFF);
+   elm_entry_entry_set(en, "Scrolled Entry that should get focus");
+   elm_entry_single_line_set(en, 1);
    elm_layout_content_set(ly, "element2", en);
 
    bt = elm_button_add(ly);

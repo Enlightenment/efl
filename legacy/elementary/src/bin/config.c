@@ -2112,10 +2112,10 @@ _profiles_list_selected_cb(void            *data,
 
    en = evas_object_data_get(obj, "prof_desc_entry");
 #ifdef ELM_EFREET
-   if (desk) elm_scrolled_entry_entry_set(en, desk->comment);
+   if (desk) elm_entry_entry_set(en, desk->comment);
    else
 #endif
-   elm_scrolled_entry_entry_set(en, "Unknown");
+   elm_entry_entry_set(en, "Unknown");
 
 #ifdef ELM_EFREET
    if (desk) efreet_desktop_free(desk);
@@ -2257,8 +2257,9 @@ _status_config_profiles(Evas_Object *win,
 
    evas_object_show(lb);
 
-   en = elm_scrolled_entry_add(win);
-   elm_scrolled_entry_editable_set(en, EINA_FALSE);
+   en = elm_entry_add(win);
+   elm_entry_scrollable_set(en, EINA_TRUE);
+   elm_entry_editable_set(en, EINA_FALSE);
    evas_object_size_hint_weight_set(en, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(en, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_show(en);

@@ -108,11 +108,12 @@ test_focus(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
           }
 
           {
-             Evas_Object *en = elm_scrolled_entry_add(win);
+             Evas_Object *en = elm_entry_add(win);
+             elm_entry_scrollable_set(en, EINA_TRUE);
              evas_object_size_hint_weight_set(en, EVAS_HINT_EXPAND, 0.0);
              evas_object_size_hint_align_set(en, EVAS_HINT_FILL, 0.5);
-             elm_scrolled_entry_entry_set(en, "This is a single line");
-             elm_scrolled_entry_single_line_set(en, 1);
+             elm_entry_entry_set(en, "This is a single line");
+             elm_entry_single_line_set(en, 1);
              elm_box_pack_end(bx, en);
              my_show(en);
           }

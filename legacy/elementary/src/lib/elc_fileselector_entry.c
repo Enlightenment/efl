@@ -81,7 +81,7 @@ _FILE_CHOSEN_fwd(void *data, Evas_Object *obj __UNUSED__, void *event_info)
 {
    Widget_Data *wd = elm_widget_data_get(data);
    const char *file = event_info;
-   elm_scrolled_entry_entry_set(wd->entry, file);
+   elm_entry_entry_set(wd->entry, file);
    evas_object_smart_callback_call(data, SIG_FILE_CHOSEN, event_info);
 }
 
@@ -89,7 +89,7 @@ static void
 _ACTIVATED_fwd(void *data, Evas_Object *obj __UNUSED__, void *event_info)
 {
    Widget_Data *wd = elm_widget_data_get(data);
-   const char *file = elm_scrolled_entry_entry_get(wd->entry);
+   const char *file = elm_entry_entry_get(wd->entry);
    elm_fileselector_button_path_set(wd->button, file);
    evas_object_smart_callback_call(data, SIG_ACTIVATED, event_info);
 }
@@ -261,11 +261,12 @@ elm_fileselector_entry_add(Evas_Object *parent)
    SIG_FWD(FILE_CHOSEN);
 #undef SIG_FWD
 
-   wd->entry = elm_scrolled_entry_add(obj);
+   wd->entry = elm_entry_add(obj);
+   elm_entry_scrollable_set(wd->entry, EINA_TRUE);
    elm_widget_mirrored_automatic_set(wd->entry, EINA_FALSE);
    elm_widget_style_set(wd->entry, "fileselector_entry/default");
-   elm_scrolled_entry_single_line_set(wd->entry, EINA_TRUE);
-   elm_scrolled_entry_editable_set(wd->entry, EINA_TRUE);
+   elm_entry_single_line_set(wd->entry, EINA_TRUE);
+   elm_entry_editable_set(wd->entry, EINA_TRUE);
    edje_object_part_swallow(wd->edje, "elm.swallow.entry", wd->entry);
    elm_widget_sub_object_add(obj, wd->entry);
    evas_object_event_callback_add
@@ -451,7 +452,7 @@ elm_fileselector_entry_path_set(Evas_Object *obj, const char *path)
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
    elm_fileselector_button_path_set(wd->button, path);
-   elm_scrolled_entry_entry_set(wd->entry, path);
+   elm_entry_entry_set(wd->entry, path);
 }
 
 /**
@@ -467,7 +468,7 @@ elm_fileselector_entry_path_get(const Evas_Object *obj)
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return NULL;
-   return elm_scrolled_entry_entry_get(wd->entry);
+   return elm_entry_entry_get(wd->entry);
 }
 
 /**

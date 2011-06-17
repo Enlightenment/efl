@@ -50,7 +50,6 @@ elm_panes.c \
 elm_photocam.c \
 elm_progressbar.c \
 elm_radio.c \
-elm_scrolled_entry.c \
 elm_scroller.c \
 elm_segment_control.c \
 elm_slider.c \

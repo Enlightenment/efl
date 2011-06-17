@@ -108,7 +108,7 @@ typedef struct _Elm_Entry_Text_Filter Elm_Entry_Text_Filter;
 
 struct _Widget_Data
 {
-   Evas_Object *ent;
+   Evas_Object *ent, *scroller, *end, *icon;
    Evas_Object *hoversel;
    Ecore_Job *deferred_recalc_job;
    Ecore_Event_Handler *sel_notify_handler;
@@ -125,7 +125,7 @@ struct _Widget_Data
    const char *text;
    const char *file;
    Elm_Text_Format format;
-   Evas_Coord lastw;
+   Evas_Coord lastw, entmw, entmh;
    Evas_Coord downx, downy;
    Eina_List *items;
    Eina_List *item_providers;
@@ -133,6 +133,7 @@ struct _Widget_Data
    Ecore_Job *hovdeljob;
    Mod_Api *api; // module api if supplied
    int cursor_pos;
+   Elm_Scroller_Policy policy_h, policy_v;
    Elm_Wrap_Type linewrap;
    Eina_Bool changed : 1;
    Eina_Bool single_line : 1;
@@ -150,6 +151,7 @@ struct _Widget_Data
    Eina_Bool autosave : 1;
    Eina_Bool textonly : 1;
    Eina_Bool usedown : 1;
+   Eina_Bool scroll : 1;
 };
 
 struct _Elm_Entry_Context_Menu_Item
@@ -583,6 +585,21 @@ _theme_hook(Evas_Object *obj)
      edje_object_signal_emit(wd->ent, "elm,action,focus", "elm");
    edje_object_message_signal_process(wd->ent);
    edje_object_scale_set(wd->ent, elm_widget_scale_get(obj) * _elm_config->scale);
+   elm_smart_scroller_mirrored_set(wd->scroller, elm_widget_mirrored_get(obj));
+   elm_smart_scroller_object_theme_set(obj, wd->scroller, "scroller", "entry",
+                                       elm_widget_style_get(obj));
+   if (wd->scroll)
+     {
+        const char *str;
+        Evas_Object *edj;
+        
+        edj = elm_smart_scroller_edje_object_get(wd->scroller);
+        str = edje_object_data_get(edj, "focus_highlight");
+        if ((str) && (!strcmp(str, "on")))
+           elm_widget_highlight_in_theme_set(obj, EINA_TRUE);
+        else
+           elm_widget_highlight_in_theme_set(obj, EINA_FALSE);
+     }
    _sizing_eval(obj);
 }
 
@@ -604,43 +621,6 @@ _disable_hook(Evas_Object *obj)
 }
 
 static void
-_elm_win_recalc_job(void *data)
-{
-   Widget_Data *wd = elm_widget_data_get(data);
-   Evas_Coord minh = -1, resw = -1, minw = -1;
-   if (!wd) return;
-   wd->deferred_recalc_job = NULL;
-
-   evas_object_geometry_get(wd->ent, NULL, NULL, &resw, NULL);
-   edje_object_size_min_restricted_calc(wd->ent, &minw, &minh, resw, 0);
-   elm_coords_finger_size_adjust(1, &minw, 1, &minh);
-   /* This is a hack to workaround the way min size hints are treated.
-    * If the minimum width is smaller than the restricted width, it means
-    * the mininmum doesn't matter. */
-   if (minw <= resw)
-     {
-        Evas_Coord ominw = -1;
-        evas_object_size_hint_min_get(data, &ominw, NULL);
-        minw = ominw;
-     }
-   evas_object_size_hint_min_set(data, minw, minh);
-   if (wd->single_line)
-     evas_object_size_hint_max_set(data, -1, minh);
-
-   if (wd->deferred_cur)
-     {
-        Evas_Coord cx, cy, cw, ch;
-        edje_object_part_text_cursor_geometry_get(wd->ent, "elm.text",
-              &cx, &cy, &cw, &ch);
-        if (wd->cur_changed)
-          {
-             elm_widget_show_region_set(data, cx, cy, cw, ch);
-             wd->cur_changed = EINA_FALSE;
-          }
-     }
-}
-
-static void
 _recalc_cursor_geometry(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -658,8 +638,47 @@ _recalc_cursor_geometry(Evas_Object *obj)
           }
      }
    else
+      wd->deferred_cur = EINA_TRUE;
+}
+
+static void
+_elm_win_recalc_job(void *data)
+{
+   Widget_Data *wd = elm_widget_data_get(data);
+   Evas_Coord minh = -1, resw = -1, minw = -1;
+   if (!wd) return;
+   wd->deferred_recalc_job = NULL;
+
+   evas_object_geometry_get(wd->ent, NULL, NULL, &resw, NULL);
+   edje_object_size_min_restricted_calc(wd->ent, &minw, &minh, resw, 0);
+   elm_coords_finger_size_adjust(1, &minw, 1, &minh);
+   wd->entmw = minw;
+   wd->entmh = minh;
+   /* This is a hack to workaround the way min size hints are treated.
+    * If the minimum width is smaller than the restricted width, it means
+    * the mininmum doesn't matter. */
+   if (minw <= resw)
      {
-        wd->deferred_cur = EINA_TRUE;
+        Evas_Coord ominw = -1;
+        evas_object_size_hint_min_get(data, &ominw, NULL);
+        minw = ominw;
+     }
+   evas_object_size_hint_min_set(data, minw, minh);
+   if (wd->single_line)
+      evas_object_size_hint_max_set(data, -1, minh);
+   else
+      evas_object_size_hint_max_set(data, -1, -1);
+
+   if (wd->deferred_cur)
+     {
+        Evas_Coord cx, cy, cw, ch;
+        edje_object_part_text_cursor_geometry_get(wd->ent, "elm.text",
+                                                  &cx, &cy, &cw, &ch);
+        if (wd->cur_changed)
+          {
+             elm_widget_show_region_set(data, cx, cy, cw, ch);
+             wd->cur_changed = EINA_FALSE;
+          }
      }
 }
 
@@ -670,22 +689,88 @@ _sizing_eval(Evas_Object *obj)
    Evas_Coord minw = -1, minh = -1;
    Evas_Coord resw, resh;
    if (!wd) return;
+
+   evas_object_geometry_get(obj, NULL, NULL, &resw, &resh);
    if (wd->linewrap)
      {
-        evas_object_geometry_get(wd->ent, NULL, NULL, &resw, &resh);
         if ((resw == wd->lastw) && (!wd->changed)) return;
         wd->changed = EINA_FALSE;
         wd->lastw = resw;
-        if (wd->deferred_recalc_job) ecore_job_del(wd->deferred_recalc_job);
-        wd->deferred_recalc_job = ecore_job_add(_elm_win_recalc_job, obj);
+        if (wd->scroll)
+          {
+             Evas_Coord vw = 0, vh = 0, vmw = 0, vmh = 0, w = -1, h = -1;
+
+             evas_object_resize(wd->scroller, resw, resh);
+             edje_object_size_min_calc
+                (elm_smart_scroller_edje_object_get(wd->scroller),
+                    &vmw, &vmh);
+             elm_smart_scroller_child_viewport_size_get(wd->scroller, &vw, &vh);
+             edje_object_size_min_restricted_calc(wd->ent, &minw, &minh, vw, 0);
+             wd->entmw = minw;
+             wd->entmh = minh;
+             elm_coords_finger_size_adjust(1, &minw, 1, &minh);
+             
+             if ((minw > 0) && (vw < minw)) vw = minw;
+             if (minh > vh) vh = minh;
+
+             if (wd->single_line) h = vmh + minh;
+             else h = vmh;
+             evas_object_resize(wd->ent, vw, vh);
+             evas_object_size_hint_min_set(obj, w, h);
+             if (wd->single_line)
+                evas_object_size_hint_max_set(obj, -1, h);
+             else
+                evas_object_size_hint_max_set(obj, -1, -1);
+          }
+        else
+          {
+             if (wd->deferred_recalc_job) ecore_job_del(wd->deferred_recalc_job);
+             wd->deferred_recalc_job = ecore_job_add(_elm_win_recalc_job, obj);
+          }
      }
    else
      {
-        edje_object_size_min_calc(wd->ent, &minw, &minh);
-        elm_coords_finger_size_adjust(1, &minw, 1, &minh);
-        evas_object_size_hint_min_set(obj, minw, minh);
-        if (wd->single_line)
-          evas_object_size_hint_max_set(obj, -1, minh);
+        if (!wd->changed) return;
+        wd->changed = EINA_FALSE;
+        wd->lastw = resw;
+        if (wd->scroll)
+          {
+             Evas_Coord vw = 0, vh = 0, vmw = 0, vmh = 0, w = -1, h = -1;
+             
+             edje_object_size_min_calc(wd->ent, &minw, &minh);
+             wd->entmw = minw;
+             wd->entmh = minh;
+             elm_coords_finger_size_adjust(1, &minw, 1, &minh);
+             
+             elm_smart_scroller_child_viewport_size_get(wd->scroller, &vw, &vh);
+
+             if ((minw > 0) && (vw < minw)) vw = minw;
+             if (minh > 0) vh = minh;
+
+             evas_object_resize(wd->ent, vw, vh);
+             edje_object_size_min_calc
+                (elm_smart_scroller_edje_object_get(wd->scroller),
+                    &vmw, &vmh);
+             if (wd->single_line) h = vmh + minh;
+             else h = vmh;
+             evas_object_size_hint_min_set(obj, w, h);
+             if (wd->single_line)
+                evas_object_size_hint_max_set(obj, -1, h);
+             else
+                evas_object_size_hint_max_set(obj, -1, -1);
+          }
+        else
+          {
+             edje_object_size_min_calc(wd->ent, &minw, &minh);
+             wd->entmw = minw;
+             wd->entmh = minh;
+             elm_coords_finger_size_adjust(1, &minw, 1, &minh);
+             evas_object_size_hint_min_set(obj, minw, minh);
+             if (wd->single_line)
+                evas_object_size_hint_max_set(obj, -1, minh);
+             else
+                evas_object_size_hint_max_set(obj, -1, -1);
+          }
      }
 
    _recalc_cursor_geometry(obj);
@@ -720,6 +805,9 @@ _signal_emit_hook(Evas_Object *obj, const char *emission, const char *source)
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
    edje_object_signal_emit(wd->ent, emission, source);
+   if (wd->scroller)
+      edje_object_signal_emit(elm_smart_scroller_edje_object_get(wd->scroller),
+                              emission, source);
 }
 
 static void
@@ -728,6 +816,9 @@ _signal_callback_add_hook(Evas_Object *obj, const char *emission, const char *so
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
    edje_object_signal_callback_add(wd->ent, emission, source, func_cb, data);
+   if (wd->scroller)
+      edje_object_signal_callback_add(elm_smart_scroller_edje_object_get(wd->scroller),
+                                      emission, source, func_cb, data);
 }
 
 static void
@@ -736,6 +827,9 @@ _signal_callback_del_hook(Evas_Object *obj, const char *emission, const char *so
    Widget_Data *wd = elm_widget_data_get(obj);
    edje_object_signal_callback_del_full(wd->ent, emission, source, func_cb,
                                         data);
+   if (wd->scroller)
+      edje_object_signal_callback_del_full(elm_smart_scroller_edje_object_get(wd->scroller),
+                                           emission, source, func_cb, data);
 }
 
 static void
@@ -743,6 +837,25 @@ _on_focus_region_hook(const Evas_Object *obj, Evas_Coord *x, Evas_Coord *y, Evas
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    edje_object_part_text_cursor_geometry_get(wd->ent, "elm.text", x, y, w, h);
+}
+
+static void
+_focus_region_hook(Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (wd->scroll)
+      elm_smart_scroller_child_region_show(wd->scroller, x, y, w, h);
+}
+
+static void
+_show_region_hook(void *data, Evas_Object *obj)
+{
+   Widget_Data *wd = elm_widget_data_get(data);
+   Evas_Coord x, y, w, h;
+   if (!wd) return;
+   elm_widget_show_region_get(obj, &x, &y, &w, &h);
+   if (wd->scroll)
+      elm_smart_scroller_child_region_show(wd->scroller, x, y, w, h);
 }
 
 static void
@@ -793,13 +906,21 @@ _resize(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event
 {
    Widget_Data *wd = elm_widget_data_get(data);
    if (!wd) return;
+   
    if (wd->linewrap)
      {
         _sizing_eval(data);
      }
+   else if (wd->scroll)
+     {
+        Evas_Coord vw = 0, vh = 0;
+        
+        elm_smart_scroller_child_viewport_size_get(wd->scroller, &vw, &vh);
+        if (vw < wd->entmw) vw = wd->entmw;
+        if (vh < wd->entmh) vh = wd->entmh;
+        evas_object_resize(wd->ent, vw, vh);
+     }
    if (wd->hoversel) _hoversel_position(data);
-   //   Evas_Coord ww, hh;
-   //   evas_object_geometry_get(wd->ent, NULL, NULL, &ww, &hh);
 }
 
 static void
@@ -1747,13 +1868,24 @@ elm_entry_add(Evas_Object *parent)
    elm_widget_theme_hook_set(obj, _theme_hook);
    elm_widget_disable_hook_set(obj, _disable_hook);
    elm_widget_signal_emit_hook_set(obj, _signal_emit_hook);
+   elm_widget_focus_region_hook_set(obj, _focus_region_hook);
    elm_widget_on_focus_region_hook_set(obj, _on_focus_region_hook);
    elm_widget_signal_callback_add_hook_set(obj, _signal_callback_add_hook);
    elm_widget_signal_callback_del_hook_set(obj, _signal_callback_del_hook);
    elm_object_cursor_set(obj, ELM_CURSOR_XTERM);
    elm_widget_can_focus_set(obj, EINA_TRUE);
    elm_widget_highlight_ignore_set(obj, EINA_TRUE);
-
+   
+   wd->scroller = elm_smart_scroller_add(e);
+   elm_widget_sub_object_add(obj, wd->scroller);
+   elm_smart_scroller_widget_set(wd->scroller, obj);
+   elm_smart_scroller_object_theme_set(obj, wd->scroller, "scroller", "entry",
+                                       elm_widget_style_get(obj));
+   evas_object_size_hint_weight_set(wd->scroller, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(wd->scroller, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_smart_scroller_bounce_allow_set(wd->scroller, EINA_FALSE, EINA_FALSE);
+   evas_object_propagate_events_set(wd->scroller, EINA_TRUE);
+   
    wd->linewrap     = ELM_WRAP_WORD;
    wd->editable     = EINA_TRUE;
    wd->disabled     = EINA_FALSE;
@@ -1766,14 +1898,14 @@ elm_entry_add(Evas_Object *parent)
    edje_object_item_provider_set(wd->ent, _get_item, obj);
    edje_object_text_insert_filter_callback_add(wd->ent,"elm.text", _text_filter, obj);
    evas_object_event_callback_add(wd->ent, EVAS_CALLBACK_MOVE, _move, obj);
-   evas_object_event_callback_add(wd->ent, EVAS_CALLBACK_RESIZE, _resize, obj);
    evas_object_event_callback_add(wd->ent, EVAS_CALLBACK_MOUSE_DOWN,
                                   _mouse_down, obj);
    evas_object_event_callback_add(wd->ent, EVAS_CALLBACK_MOUSE_UP,
                                   _mouse_up, obj);
    evas_object_event_callback_add(wd->ent, EVAS_CALLBACK_MOUSE_MOVE,
                                   _mouse_move, obj);
-
+   evas_object_event_callback_add(obj, EVAS_CALLBACK_RESIZE, _resize, obj);
+   
    _elm_theme_object_set(obj, wd->ent, "entry", "base", "default");
    edje_object_signal_callback_add(wd->ent, "entry,changed", "elm.text",
                                    _signal_entry_changed, obj);
@@ -1868,6 +2000,26 @@ elm_entry_single_line_set(Evas_Object *obj, Eina_Bool single_line)
    wd->linewrap = ELM_WRAP_NONE;
    elm_entry_cnp_textonly_set(obj, EINA_TRUE);
    _theme_hook(obj);
+   if (wd->scroller)
+     {
+        if (wd->single_line)
+           elm_smart_scroller_policy_set(wd->scroller, 
+                                         ELM_SMART_SCROLLER_POLICY_OFF, 
+                                         ELM_SMART_SCROLLER_POLICY_OFF);
+        else
+          {
+             const Elm_Scroller_Policy map[3] =
+               {
+                  ELM_SMART_SCROLLER_POLICY_AUTO,
+                  ELM_SMART_SCROLLER_POLICY_ON,
+                  ELM_SMART_SCROLLER_POLICY_OFF
+               };
+             elm_smart_scroller_policy_set(wd->scroller, 
+                                           map[wd->policy_h], 
+                                           map[wd->policy_v]);
+          }
+        _sizing_eval(obj);
+     }
 }
 
 /**
@@ -2144,7 +2296,7 @@ elm_entry_line_wrap_set(Evas_Object *obj, Elm_Wrap_Type wrap)
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
    if (wd->linewrap == wrap) return;
-
+   wd->lastw = -1;
    wd->linewrap = wrap;
    _theme_hook(obj);
 }
@@ -2366,7 +2518,13 @@ elm_entry_cursor_end_set(Evas_Object *obj)
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
+   int x, y, w, h;
    edje_object_part_text_cursor_end_set(wd->ent, "elm.text", EDJE_CURSOR_MAIN);
+   if (wd->scroll)
+     {
+        elm_widget_show_region_get(wd->ent, &x, &y, &w, &h);
+        elm_smart_scroller_child_region_show(wd->scroller, x, y, w, h);
+     }
 }
 
 /**
@@ -2918,8 +3076,6 @@ elm_entry_filter_limit_size(void *data, Evas_Object *entry, char **text)
    widget_type = elm_widget_type_get(entry);
    if (!strcmp(widget_type, "entry"))
      text_get = elm_entry_entry_get;
-   else if (!strcmp(widget_type, "scrolled_entry"))
-     text_get = elm_scrolled_entry_entry_get;
    else /* huh? */
      return;
 
@@ -3168,7 +3324,7 @@ elm_entry_cnp_textonly_set(Evas_Object *obj, Eina_Bool textonly)
  * @ingroup Entry
  */
 EAPI Eina_Bool
-elm_entry_cnp_textonly_get(Evas_Object *obj)
+elm_entry_cnp_textonly_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -3176,3 +3332,338 @@ elm_entry_cnp_textonly_get(Evas_Object *obj)
    return wd->textonly;
 }
 
+/**
+ * Enable or disable scrolling in entry
+ *
+ * Normally the entry is not scrollable unless you enable it with this call.
+ * 
+ * @param obj The entry object
+ * @param scroll EINA_TRUE if it is to be scrollable, EINA_FALSE otherwise
+ *
+ * @ingroup Entry
+ */
+EAPI void
+elm_entry_scrollable_set(Evas_Object *obj, Eina_Bool scroll)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   scroll = !!scroll;
+   if (wd->scroll == scroll) return;
+   wd->scroll = scroll;
+   if (wd->scroll)
+     {
+        elm_widget_sub_object_del(obj, wd->scroller);
+        elm_widget_resize_object_set(obj, wd->scroller);
+        elm_widget_sub_object_add(obj, wd->ent);
+        elm_smart_scroller_child_set(wd->scroller, wd->ent);
+        evas_object_show(wd->scroller);
+        elm_widget_on_show_region_hook_set(obj, _show_region_hook, obj);
+     }
+   else
+     {
+        elm_smart_scroller_child_set(wd->scroller, NULL);
+        elm_widget_sub_object_del(obj, wd->ent);
+        elm_widget_resize_object_set(obj, wd->ent);
+        evas_object_smart_member_add(wd->scroller, obj);
+        elm_widget_sub_object_add(obj, wd->scroller);
+        evas_object_hide(wd->scroller);
+        elm_widget_on_show_region_hook_set(obj, NULL, NULL);
+     }
+   wd->lastw = -1;
+   _theme_hook(obj);
+}
+
+/**
+ * Get the scrollable state of the entry
+ *
+ * Normally the entry is not scrollable. This gets the scrollable state
+ * of the entry. See elm_entry_scrollable_set() for more information.
+ * 
+ * @param obj The entry object
+ * @return The scrollable state
+ *
+ * @ingroup Entry
+ */
+EAPI Eina_Bool
+elm_entry_scrollable_get(const Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return EINA_FALSE;
+   return wd->scroll;
+}
+
+/**
+ * This sets a widget to be displayed to the left of a scrolled entry.
+ *
+ * @param obj The scrolled entry object
+ * @param icon The widget to display on the left side of the scrolled
+ * entry.
+ *
+ * @note A previously set widget will be destroyed.
+ * @note If the object being set does not have minimum size hints set,
+ * it won't get properly displayed.
+ *
+ * @ingroup Entry
+ * @see elm_entry_end_set
+ */
+EAPI void
+elm_entry_icon_set(Evas_Object *obj, Evas_Object *icon)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   Evas_Object *edje;
+   if (!wd) return;
+   EINA_SAFETY_ON_NULL_RETURN(icon);
+   if (wd->icon == icon) return;
+   if (wd->icon) evas_object_del(wd->icon);
+   wd->icon = icon;
+   edje = elm_smart_scroller_edje_object_get(wd->scroller);
+   if (!edje) return;
+   edje_object_part_swallow(edje, "elm.swallow.icon", wd->icon);
+   edje_object_signal_emit(edje, "elm,action,show,icon", "elm");
+   _sizing_eval(obj);
+}
+
+/**
+ * Gets the leftmost widget of the scrolled entry. This object is
+ * owned by the scrolled entry and should not be modified.
+ *
+ * @param obj The scrolled entry object
+ * @return the left widget inside the scroller
+ *
+ * @ingroup Entry
+ */
+EAPI Evas_Object *
+elm_entry_icon_get(const Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return NULL;
+   return wd->icon;
+}
+
+/**
+ * Unset the leftmost widget of the scrolled entry, unparenting and
+ * returning it.
+ *
+ * @param obj The scrolled entry object
+ * @return the previously set icon sub-object of this entry, on
+ * success.
+ *
+ * @see elm_entry_icon_set()
+ *
+ * @ingroup Entry
+ */
+EAPI Evas_Object *
+elm_entry_icon_unset(Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   Evas_Object *ret = NULL;
+   if (!wd) return NULL;
+   if (wd->icon)
+     {
+        Evas_Object *edje = elm_smart_scroller_edje_object_get(wd->scroller);
+        if (!edje) return NULL;
+        ret = wd->icon;
+        edje_object_part_unswallow(edje, wd->icon);
+        edje_object_signal_emit(edje, "elm,action,hide,icon", "elm");
+        wd->icon = NULL;
+        _sizing_eval(obj);
+     }
+   return ret;
+}
+
+/**
+ * Sets the visibility of the left-side widget of the scrolled entry,
+ * set by @elm_entry_icon_set().
+ *
+ * @param obj The scrolled entry object
+ * @param setting EINA_TRUE if the object should be displayed,
+ * EINA_FALSE if not.
+ *
+ * @ingroup Entry
+ */
+EAPI void
+elm_entry_icon_visible_set(Evas_Object *obj, Eina_Bool setting)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if ((!wd) || (!wd->icon)) return;
+   if (setting)
+      evas_object_hide(wd->icon);
+   else
+      evas_object_show(wd->icon);
+   _sizing_eval(obj);
+}
+
+/**
+ * This sets a widget to be displayed to the end of a scrolled entry.
+ *
+ * @param obj The scrolled entry object
+ * @param end The widget to display on the right side of the scrolled
+ * entry.
+ *
+ * @note A previously set widget will be destroyed.
+ * @note If the object being set does not have minimum size hints set,
+ * it won't get properly displayed.
+ *
+ * @ingroup Entry
+ * @see elm_entry_icon_set
+ */
+EAPI void
+elm_entry_end_set(Evas_Object *obj, Evas_Object *end)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   Evas_Object *edje;
+   if (!wd) return;
+   EINA_SAFETY_ON_NULL_RETURN(end);
+   if (wd->end == end) return;
+   if (wd->end) evas_object_del(wd->end);
+   wd->end = end;
+   edje = elm_smart_scroller_edje_object_get(wd->scroller);
+   if (!edje) return;
+   edje_object_part_swallow(edje, "elm.swallow.end", wd->end);
+   edje_object_signal_emit(edje, "elm,action,show,end", "elm");
+   _sizing_eval(obj);
+}
+
+/**
+ * Gets the endmost widget of the scrolled entry. This object is owned
+ * by the scrolled entry and should not be modified.
+ *
+ * @param obj The scrolled entry object
+ * @return the right widget inside the scroller
+ *
+ * @ingroup Entry
+ */
+EAPI Evas_Object *
+elm_entry_end_get(const Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return NULL;
+   return wd->end;
+}
+
+/**
+ * Unset the endmost widget of the scrolled entry, unparenting and
+ * returning it.
+ *
+ * @param obj The scrolled entry object
+ * @return the previously set icon sub-object of this entry, on
+ * success.
+ *
+ * @see elm_entry_icon_set()
+ *
+ * @ingroup Entry
+ */
+EAPI Evas_Object *
+elm_entry_end_unset(Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   Evas_Object *ret = NULL;
+   if (!wd) return NULL;
+   if (wd->end)
+     {
+        Evas_Object *edje = elm_smart_scroller_edje_object_get(wd->scroller);
+        if (!edje) return NULL;
+        ret = wd->end;
+        edje_object_part_unswallow(edje, wd->end);
+        edje_object_signal_emit(edje, "elm,action,hide,end", "elm");
+        wd->end = NULL;
+        _sizing_eval(obj);
+     }
+   return ret;
+}
+
+/**
+ * Sets the visibility of the end widget of the scrolled entry, set by
+ * @elm_entry_end_set().
+ *
+ * @param obj The scrolled entry object
+ * @param setting EINA_TRUE if the object should be displayed,
+ * EINA_FALSE if not.
+ *
+ * @ingroup Entry
+ */
+EAPI void
+elm_entry_end_visible_set(Evas_Object *obj, Eina_Bool setting)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if ((!wd) || (!wd->end)) return;
+   if (setting)
+      evas_object_hide(wd->end);
+   else
+      evas_object_show(wd->end);
+   _sizing_eval(obj);
+}
+
+/**
+ * This sets the scrolled entry's scrollbar policy (ie. enabling/disabling them).
+ *
+ * @param obj The scrolled entry object
+ * @param h The horizontal scrollbar policy to apply
+ * @param v The vertical scrollbar policy to apply
+ *
+ * @ingroup Entry
+ */
+EAPI void
+elm_entry_scrollbar_policy_set(Evas_Object *obj, Elm_Scroller_Policy h, Elm_Scroller_Policy v)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   const Elm_Scroller_Policy map[3] =
+     {
+        ELM_SMART_SCROLLER_POLICY_AUTO,
+        ELM_SMART_SCROLLER_POLICY_ON,
+        ELM_SMART_SCROLLER_POLICY_OFF
+     };
+   if (!wd) return;
+   wd->policy_h = h;
+   wd->policy_v = v;
+   elm_smart_scroller_policy_set(wd->scroller, 
+                                 map[wd->policy_h], 
+                                 map[wd->policy_v]);
+}
+
+/**
+ * This enables/disables bouncing within the entry.
+ *
+ * @param obj The scrolled entry object
+ * @param h The horizontal bounce state
+ * @param v The vertical bounce state
+ *
+ * @ingroup Entry
+ */
+EAPI void
+elm_entry_bounce_set(Evas_Object *obj, Eina_Bool h_bounce, Eina_Bool v_bounce)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   elm_smart_scroller_bounce_allow_set(wd->scroller, h_bounce, v_bounce);
+}
+
+/**
+ * Get the bounce mode
+ *
+ * @param obj The Entry object
+ * @param h_bounce Allow bounce horizontally
+ * @param v_bounce Allow bounce vertically
+ *
+ * @ingroup Entry
+ */
+EAPI void
+elm_entry_bounce_get(const Evas_Object *obj, Eina_Bool *h_bounce, Eina_Bool *v_bounce)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   elm_smart_scroller_bounce_allow_get(wd->scroller, h_bounce, v_bounce);
+}

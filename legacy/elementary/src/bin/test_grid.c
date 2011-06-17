@@ -32,15 +32,17 @@ test_grid(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info _
    evas_object_size_hint_weight_set(gd, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_show(gd);
 
-   en = elm_scrolled_entry_add(win);
-   elm_scrolled_entry_entry_set(en, "Entry text");
-   elm_scrolled_entry_single_line_set(en, 1);
+   en = elm_entry_add(win);
+   elm_entry_scrollable_set(en, EINA_TRUE);
+   elm_entry_entry_set(en, "Entry text");
+   elm_entry_single_line_set(en, 1);
    elm_grid_pack(gd, en, 50, 10, 40, 10);
    evas_object_show(en);
 
-   en = elm_scrolled_entry_add(win);
-   elm_scrolled_entry_entry_set(en, "Entry text 2");
-   elm_scrolled_entry_single_line_set(en, 1);
+   en = elm_entry_add(win);
+   elm_entry_scrollable_set(en, EINA_TRUE);
+   elm_entry_entry_set(en, "Entry text 2");
+   elm_entry_single_line_set(en, 1);
    elm_grid_pack(gd, en, 60, 20, 30, 10);
    evas_object_show(en);
 

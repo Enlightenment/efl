@@ -610,9 +610,10 @@ test_list4_swipe(void        *data,
    evas_object_size_hint_align_set(box, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_show(box);
 
-   entry = elm_scrolled_entry_add(info->win);
-   elm_scrolled_entry_editable_set(entry, EINA_FALSE);
-   elm_scrolled_entry_entry_set(entry, item_data);
+   entry = elm_entry_add(info->win);
+   elm_entry_scrollable_set(entry, EINA_TRUE);
+   elm_entry_editable_set(entry, EINA_FALSE);
+   elm_entry_entry_set(entry, item_data);
    evas_object_size_hint_weight_set(entry, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(entry, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_show(entry);
