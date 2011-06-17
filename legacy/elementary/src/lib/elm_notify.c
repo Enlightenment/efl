@@ -395,7 +395,6 @@ _parent_hide(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj, void *
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
-   wd->parent = NULL;
    evas_object_hide(obj);
 }
 
