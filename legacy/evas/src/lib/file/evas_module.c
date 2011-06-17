@@ -8,15 +8,6 @@
 #include <evas_private.h>
 #include <evas_module.h>
 
-#ifdef _WIN32
-# ifdef open
-#  undef open
-# endif
-# ifdef close
-#  undef close
-# endif
-#endif
-
 
 static Eina_Hash *evas_modules[4] = {
   NULL,
