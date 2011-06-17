@@ -60,8 +60,10 @@
 	  (with some other changes).  You can set most objects as a clip on
 	  other objects.  This will use the alpha channel of the object as a
 	  clip on the object.  This is still buggy.
+        * CLIPPING DISABLED AND REMOVED DUE TO BEING TOO BUGGY AND INCOMPLETE *
 	* Software support for arbitrary maps.  So you can use any size map
 	  (not just 4 points) for maps.  Once again this is a little buggy.
+        * ARBITRARY MAPS DISABLED AND REMOVED DUE TO BEING TOO BUGGY AND INCOMPLETE *
 
 2011-02-02  Carsten Haitzler (The Rasterman)
 
@@ -262,6 +264,7 @@
 	  Supports a filter object or filter under (the area where the object
 	  is filtered).  Various parameters to tweak, and potential for
 	  additional filters (but you get to write the shader ;-)
+        * FILTERS DISABLED AND REMOVED DUE TO BEING TOO BUGGY AND INCOMPLETE *
 
 2011-04-24 Thierry el Borgi
 
