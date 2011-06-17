@@ -951,26 +951,26 @@ evas_map_util_3d_perspective(Evas_Map *m,
    m->persp.py = py;
    m->persp.z0 = z0;
    m->persp.foc = foc;
+
+   if (foc <= 0) return;
+
    for (; p < p_end; p++)
      {
         double x, y, zz;
 
-        if (foc > 0)
+        x = p->x - px;
+        y = p->y - py;
+
+        zz = ((p->z - z0) + foc);
+
+        if (zz > 0)
           {
-             x = p->x - px;
-             y = p->y - py;
-
-             zz = ((p->z - z0) + foc);
-
-             if (zz > 0)
-               {
-                  x = (x * foc) / zz;
-                  y = (y * foc) / zz;
-               }
-
-             p->x = px + x;
-             p->y = py + y;
+             x = (x * foc) / zz;
+             y = (y * foc) / zz;
           }
+
+        p->x = px + x;
+        p->y = py + y;
      }
 }
 
@@ -980,6 +980,7 @@ evas_map_util_clockwise_get(Evas_Map *m)
    MAGIC_CHECK(m, Evas_Map, MAGIC_MAP);
    return EINA_FALSE;
    MAGIC_CHECK_END();
+
    int i, j, k, count;
    long long c;
 
