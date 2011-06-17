@@ -78,3 +78,4 @@ po/remove-potcdate.sed
 po/remove-potcdate.sin
 po/stamp-po
 /stamp-h1
+/doc/Doxyfile

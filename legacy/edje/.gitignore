@@ -44,3 +44,4 @@ tags
 /src/bin/edje_external_inspector
 /src/bin/edje_inspector
 /src/bin/epp/epp
+/doc/Doxyfile

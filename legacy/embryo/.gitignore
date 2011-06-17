@@ -33,5 +33,6 @@ m4/ltsugar.m4
 m4/ltversion.m4
 m4/lt~obsolete.m4
 /missing
-src/bin/embryo_cc
+/src/bin/embryo_cc
 /stamp-h1
+/doc/Doxyfile
