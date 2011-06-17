@@ -3218,8 +3218,11 @@ EAPI Evas             *evas_object_evas_get              (const Evas_Object *obj
  *   - <c>"image"</c>.
  *
  * For Evas smart objects (see @ref Evas_Smart_Group), the name of the
- * smart class itself is returned on this call. For the built-in
- * clipped smart object, it is <c>"EvasObjectSmartClipped"</c>.
+ * smart class itself is returned on this call. For the built-in smart
+ * objects, these names are:
+ *   - <c>"EvasObjectSmartClipped"</c>, for the clipped smart object
+ *   - <c>"Evas_Object_Box"</c>, for the box object and
+ *   - <c>"Evas_Object_Table"</c>, for the table object.
  *
  * Example:
  * @dontinclude evas-object-manipulation.c
