@@ -714,7 +714,7 @@ _eina_hash_iterator_free(Eina_Iterator_Hash *it)
  *============================================================================*/
 
 EAPI void
-eina_hash_free_set(Eina_Hash *hash, Eina_Free_Cb data_free_cb)
+eina_hash_free_cb_set(Eina_Hash *hash, Eina_Free_Cb data_free_cb)
 {
    EINA_MAGIC_CHECK_HASH(hash);
    EINA_SAFETY_ON_NULL_RETURN(hash);

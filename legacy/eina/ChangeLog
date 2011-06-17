@@ -108,5 +108,5 @@
 
 2011-06-15  Cedric Bail
 
-	* Add eina_hash_free_set to change the free callback during the
+	* Add eina_hash_free_cb_set to change the free callback during the
 	life of an Eina_Hash.
