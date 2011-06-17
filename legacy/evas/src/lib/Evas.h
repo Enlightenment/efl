@@ -4560,6 +4560,9 @@ EAPI Eina_Bool                 evas_object_anti_alias_get       (const Evas_Obje
  * altering its geometry (width and height). Useful when you want
  * scalable UI elements, possibly at run time.
  *
+ * @note Only text and textblock objects have scaling change
+ * handlers. Other objects won't change visually on this call.
+ *
  * @see evas_object_scale_get()
  *
  * @ingroup Evas_Object_Group_Extras
@@ -4573,6 +4576,8 @@ EAPI void                      evas_object_scale_set            (Evas_Object *ob
  * @return  The scaling factor.
  *
  * @ingroup Evas_Object_Group_Extras
+ *
+ * @see evas_object_scale_set()
  */
 EAPI double                    evas_object_scale_get            (const Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
 
