@@ -1446,7 +1446,9 @@ extern "C" {
    EAPI void         elm_table_pack(Evas_Object *obj, Evas_Object *subobj, int x, int y, int w, int h) EINA_ARG_NONNULL(1);
    EAPI void         elm_table_unpack(Evas_Object *obj, Evas_Object *subobj) EINA_ARG_NONNULL(1);
    EAPI void         elm_table_clear(Evas_Object *obj, Eina_Bool clear) EINA_ARG_NONNULL(1);
-
+   EAPI void         elm_table_pack_set(Evas_Object *subobj, int x, int y, int w, int h) EINA_ARG_NONNULL(1);
+   EAPI void         elm_table_pack_get(Evas_Object *subobj, int *x, int *y, int *w, int *h) EINA_ARG_NONNULL(1);
+         
    /* gengrid */
    typedef struct _Elm_Gengrid_Item_Class Elm_Gengrid_Item_Class;
    typedef struct _Elm_Gengrid_Item_Class_Func Elm_Gengrid_Item_Class_Func;

@@ -290,6 +290,53 @@ elm_table_unpack(Evas_Object *obj, Evas_Object *subobj)
 }
 
 /**
+ * Set the packing location of an existing child of the table
+ *
+ * @param subobj The subobject to be modified in the table
+ * @param x Coordinate to X axis
+ * @param y Coordinate to Y axis
+ * @param w Horizontal length
+ * @param h Vertical length
+ *
+ * @ingroup Table
+ */
+EAPI void
+elm_table_pack_set(Evas_Object *subobj, int x, int y, int w, int h)
+{
+   Evas_Object *obj = elm_widget_parent_widget_get(subobj);
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   evas_object_table_pack(wd->tbl, subobj, x, y, w, h);
+}
+
+/**
+ * Set the packing location of an existing child of the table
+ *
+ * @param subobj The subobject to be modified in the table
+ * @param x Coordinate to X axis
+ * @param y Coordinate to Y axis
+ * @param w Horizontal length
+ * @param h Vertical length
+ *
+ * @ingroup Table
+ */
+EAPI void
+elm_table_pack_get(Evas_Object *subobj, int *x, int *y, int *w, int *h)
+{
+   Evas_Object *obj = elm_widget_parent_widget_get(subobj);
+   unsigned short ix, iy, iw, ih;
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   evas_object_table_pack_get(wd->tbl, subobj, &ix, &iy, &iw, &ih);
+   if (x) *x = ix;
+   if (y) *y = iy;
+   if (w) *w = iw;
+   if (h) *h = ih;
+}
+
+/**
  * Faster way to remove all child objects from a table object.
  *
  * @param obj The table object
