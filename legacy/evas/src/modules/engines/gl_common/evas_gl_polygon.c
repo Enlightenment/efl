@@ -101,7 +101,7 @@ static int
 polygon_point_sorter(const void *a, const void *b)
 {
    RGBA_Vertex *p, *q;
-   
+
    p = (RGBA_Vertex *)a;
    q = (RGBA_Vertex *)b;
    if (p->y <= q->y) return -1;
@@ -112,7 +112,7 @@ static int
 polygon_edge_sorter(const void *a, const void *b)
 {
    RGBA_Edge *p, *q;
-   
+
    p = (RGBA_Edge *)a;
    q = (RGBA_Edge *)b;
    if (p->x <= q->x) return -1;
@@ -133,7 +133,7 @@ evas_gl_common_poly_draw(Evas_Engine_GL_Context *gc, Evas_GL_Polygon *poly, int 
    RGBA_Vertex *point;
    Evas_GL_Polygon_Point *pt;
    Eina_Inlist *spans;
-   
+
    /* save out clip info */
    c = gc->dc->clip.use; cx = gc->dc->clip.x; cy = gc->dc->clip.y; cw = gc->dc->clip.w; ch = gc->dc->clip.h;
 
@@ -142,7 +142,7 @@ evas_gl_common_poly_draw(Evas_Engine_GL_Context *gc, Evas_GL_Polygon *poly, int 
    cr = (gc->dc->col.col >> 16) & 0xff;
    cg = (gc->dc->col.col >> 8 ) & 0xff;
    cb = (gc->dc->col.col      ) & 0xff;
-   
+
    n = eina_list_count(poly->points);
    if (n < 3) return;
    edges = malloc(sizeof(RGBA_Edge) * n);
@@ -160,7 +160,7 @@ evas_gl_common_poly_draw(Evas_Engine_GL_Context *gc, Evas_GL_Polygon *poly, int 
         free(point);
         return;
      }
-   
+
    k = 0;
    EINA_LIST_FOREACH(poly->points, l, pt)
      {
@@ -180,20 +180,20 @@ evas_gl_common_poly_draw(Evas_Engine_GL_Context *gc, Evas_GL_Polygon *poly, int 
         point[k].i = k;
         k++;
      }
-   
+
    y0 = MAX(cy, ceil(point[sorted_index[0]].y - 0.5));
    y1 = MIN(cy + ch - 1, floor(point[sorted_index[n - 1]].y - 0.5));
-   
+
    k = 0;
    num_active_edges = 0;
    spans = NULL;
-   
+
    for (y = y0; y <= y1; y++)
      {
         for (; (k < n) && (point[sorted_index[k]].y <= ((double)y + 0.5)); k++)
           {
              i = sorted_index[k];
-             
+
              if (i > 0) j = i - 1;
              else j = n - 1;
              if (point[j].y <= ((double)y - 0.5))
@@ -215,13 +215,13 @@ evas_gl_common_poly_draw(Evas_Engine_GL_Context *gc, Evas_GL_Polygon *poly, int 
                   POLY_EDGE_ADD(i, y)
                }
           }
-        
+
         qsort(edges, num_active_edges, sizeof(RGBA_Edge), polygon_edge_sorter);
-        
+
         for (j = 0; j < num_active_edges; j += 2)
           {
              int x0, x1;
-             
+
              x0 = ceil(edges[j].x - 0.5);
              if (j < (num_active_edges - 1))
                x1 = floor(edges[j + 1].x - 0.5);
@@ -230,7 +230,7 @@ evas_gl_common_poly_draw(Evas_Engine_GL_Context *gc, Evas_GL_Polygon *poly, int 
              if ((x1 >= cx) && (x0 < (cx + cw)) && (x0 <= x1))
                {
                   RGBA_Span *span;
-                  
+
                   if (x0 < cx) x0 = cx;
                   if (x1 >= (cx + cw)) x1 = cx + cw - 1;
                   span = malloc(sizeof(RGBA_Span));
@@ -243,13 +243,13 @@ evas_gl_common_poly_draw(Evas_Engine_GL_Context *gc, Evas_GL_Polygon *poly, int 
              edges[j + 1].x += edges[j + 1].dx;
           }
      }
-   
+
    free(edges);
    free(point);
    free(sorted_index);
-   
+
    evas_common_draw_context_clip_clip(gc->dc, 0, 0, gc->w, gc->h);
-   
+
    if (spans)
      {
         RGBA_Span *span;
@@ -298,9 +298,9 @@ evas_gl_common_poly_draw(Evas_Engine_GL_Context *gc, Evas_GL_Polygon *poly, int 
              span = (RGBA_Span *)spans;
              spans = eina_inlist_remove(spans, spans);
              free(span);
-          }    
-     }       
-   
+          }
+     }
+
    /* restore clip info */
    gc->dc->clip.use = c; gc->dc->clip.x = cx; gc->dc->clip.y = cy; gc->dc->clip.w = cw; gc->dc->clip.h = ch;
 

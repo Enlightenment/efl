@@ -92,7 +92,7 @@ struct _Evas_GL_X11_Window
    EGLSurface       egl_surface[1];
    EGLConfig        egl_config;
    EGLDisplay       egl_disp;
-#else   
+#else
    GLXContext       context;
    GLXWindow        glxwin;
    struct {
@@ -102,7 +102,7 @@ struct _Evas_GL_X11_Window
       int           mipmap;
       unsigned char yinvert : 1;
    } depth_cfg[33]; // config for all 32 possible depths!
-   
+
    struct {
       unsigned int loose_binding : 1;
    } detected;

@@ -33,16 +33,14 @@ struct _Evas_Engine_Info_GL_X11
    struct {
       void      (*pre_swap)          (void *data, Evas *e);
       void      (*post_swap)         (void *data, Evas *e);
-      
+
       void       *data; // data for callback calls
    } callback;
 
    /* non-blocking or blocking mode */
    Evas_Engine_Render_Mode render_mode;
-   
+
    unsigned char vsync : 1; // does nothing right now
    unsigned char indirect : 1; // use indirect rendering
 };
 #endif
-
-

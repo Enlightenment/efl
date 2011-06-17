@@ -11,7 +11,7 @@ evas_gl_font_texture_new(void *context, RGBA_Font_Glyph *fg)
    int fh;
 
    if (fg->ext_dat) return fg->ext_dat; // FIXME: one engine at a time can do this :(
-   
+
    w = fg->glyph_out->bitmap.width;
    h = fg->glyph_out->bitmap.rows;
    if ((w == 0) || (h == 0)) return NULL;
@@ -45,13 +45,13 @@ evas_gl_font_texture_new(void *context, RGBA_Font_Glyph *fg)
 	DATA8 *tmpbuf = NULL, *dp, *tp, bits;
 	int bi, bj, end;
 	const DATA8 bitrepl[2] = {0x0, 0xff};
-	
+
 	tmpbuf = alloca(w);
 	if (tmpbuf)
 	  {
 	     int x, y;
 	     DATA8 *p1, *p2;
-	     
+
 	     for (y = 0; y < h; y++)
 	       {
 		  p1 = tmpbuf;
@@ -109,7 +109,7 @@ evas_gl_font_texture_draw(void *context, void *surface __UNUSED__, void *draw_co
    int c, cx, cy, cw, ch;
    int i;
    int sx, sy, sw, sh;
-   
+
    if (dc != gc->dc) return;
    tex = fg->ext_dat;
    if (!tex) return;
@@ -119,14 +119,14 @@ evas_gl_font_texture_draw(void *context, void *surface __UNUSED__, void *draw_co
    g = (dc->col.col >> 8 ) & 0xff;
    b = (dc->col.col      ) & 0xff;
    sx = 0; sy = 0; sw = tex->w, sh = tex->h;
-   if ((!gc->dc->cutout.rects) 
+   if ((!gc->dc->cutout.rects)
 //       || (gc->dc->cutout.active > 32)
        )
      {
         if (gc->dc->clip.use)
           {
              int nx, ny, nw, nh;
-             
+
              nx = x; ny = y; nw = tex->w; nh = tex->h;
              RECTS_CLIP_TO_RECT(nx, ny, nw, nh,
                                 gc->dc->clip.x, gc->dc->clip.y,
@@ -145,14 +145,14 @@ evas_gl_font_texture_draw(void *context, void *surface __UNUSED__, void *draw_co
              ssy = (double)sy + ((double)(sh * (ny - y)) / (double)(tex->h));
              ssw = ((double)sw * (double)(nw)) / (double)(tex->w);
              ssh = ((double)sh * (double)(nh)) / (double)(tex->h);
-             evas_gl_common_context_font_push(gc, tex, 
+             evas_gl_common_context_font_push(gc, tex,
                                               ssx, ssy, ssw, ssh,
                                               nx, ny, nw, nh,
                                               r, g, b, a);
           }
         else
           {
-             evas_gl_common_context_font_push(gc, tex, 
+             evas_gl_common_context_font_push(gc, tex,
                                               0.0, 0.0, 0.0, 0.0,
 //                                              sx, sy, sw, sh,
                                               x, y, tex->w, tex->h,
@@ -174,7 +174,7 @@ evas_gl_font_texture_draw(void *context, void *surface __UNUSED__, void *draw_co
    for (i = 0; i < rects->active; ++i)
      {
         int nx, ny, nw, nh;
-        
+
         rct = rects->rects + i;
         nx = x; ny = y; nw = tex->w; nh = tex->h;
         RECTS_CLIP_TO_RECT(nx, ny, nw, nh, rct->x, rct->y, rct->w, rct->h);
@@ -192,7 +192,7 @@ evas_gl_font_texture_draw(void *context, void *surface __UNUSED__, void *draw_co
         ssy = (double)sy + ((double)(sh * (ny - y)) / (double)(tex->h));
         ssw = ((double)sw * (double)(nw)) / (double)(tex->w);
         ssh = ((double)sh * (double)(nh)) / (double)(tex->h);
-        evas_gl_common_context_font_push(gc, tex, 
+        evas_gl_common_context_font_push(gc, tex,
                                          ssx, ssy, ssw, ssh,
                                          nx, ny, nw, nh,
                                          r, g, b, a);

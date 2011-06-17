@@ -16,9 +16,9 @@ Evas_GL_Program_Source shader_rect_frag_src =
    rect_frag_glsl,
 #if defined (GLES_VARIETY_S3C6410)
      rect_frag_bin, sizeof(rect_frag_bin)
-#else     
+#else
      NULL, 0
-#endif     
+#endif
 };
 
 #if defined (GLES_VARIETY_S3C6410)
@@ -35,9 +35,9 @@ Evas_GL_Program_Source shader_rect_vert_src =
    rect_vert_glsl,
 #if defined (GLES_VARIETY_S3C6410)
      rect_vert_bin, sizeof(rect_vert_bin)
-#else     
+#else
      NULL, 0
-#endif     
+#endif
 };
 
 /////////////////////////////////////////////
@@ -56,9 +56,9 @@ Evas_GL_Program_Source shader_font_frag_src =
    font_frag_glsl,
 #if defined (GLES_VARIETY_S3C6410)
      font_frag_bin, sizeof(font_frag_bin)
-#else     
+#else
      NULL, 0
-#endif     
+#endif
 };
 
 #if defined (GLES_VARIETY_S3C6410)
@@ -75,9 +75,9 @@ Evas_GL_Program_Source shader_font_vert_src =
    font_vert_glsl,
 #if defined (GLES_VARIETY_S3C6410)
      font_vert_bin, sizeof(font_vert_bin)
-#else     
+#else
      NULL, 0
-#endif     
+#endif
 };
 
 /////////////////////////////////////////////
@@ -96,9 +96,9 @@ Evas_GL_Program_Source shader_yuv_frag_src =
    yuv_frag_glsl,
 #if defined (GLES_VARIETY_S3C6410)
      yuv_frag_bin, sizeof(yuv_frag_bin)
-#else     
+#else
      NULL, 0
-#endif     
+#endif
 };
 
 #if defined (GLES_VARIETY_S3C6410)
@@ -115,9 +115,9 @@ Evas_GL_Program_Source shader_yuv_vert_src =
    yuv_vert_glsl,
 #if defined (GLES_VARIETY_S3C6410)
      yuv_vert_bin, sizeof(yuv_vert_bin)
-#else     
+#else
      NULL, 0
-#endif     
+#endif
 };
 
 /////////////////////////////////////////////
@@ -136,9 +136,9 @@ Evas_GL_Program_Source shader_yuv_nomul_frag_src =
    yuv_nomul_frag_glsl,
 #if defined (GLES_VARIETY_S3C6410)
      yuv_nomul_frag_bin, sizeof(yuv_nomul_frag_bin)
-#else     
+#else
      NULL, 0
-#endif     
+#endif
 };
 
 #if defined (GLES_VARIETY_S3C6410)
@@ -155,9 +155,9 @@ Evas_GL_Program_Source shader_yuv_nomul_vert_src =
    yuv_nomul_vert_glsl,
 #if defined (GLES_VARIETY_S3C6410)
      yuv_nomul_vert_bin, sizeof(yuv_nomul_vert_bin)
-#else     
+#else
      NULL, 0
-#endif     
+#endif
 };
 
 /////////////////////////////////////////////
@@ -176,9 +176,9 @@ Evas_GL_Program_Source shader_tex_frag_src =
    tex_frag_glsl,
 #if defined (GLES_VARIETY_S3C6410)
      tex_frag_bin, sizeof(tex_frag_bin)
-#else     
+#else
      NULL, 0
-#endif     
+#endif
 };
 
 #if defined (GLES_VARIETY_S3C6410)
@@ -195,9 +195,9 @@ Evas_GL_Program_Source shader_tex_vert_src =
    tex_vert_glsl,
 #if defined (GLES_VARIETY_S3C6410)
      tex_vert_bin, sizeof(tex_vert_bin)
-#else     
+#else
      NULL, 0
-#endif     
+#endif
 };
 
 /////////////////////////////////////////////
@@ -216,9 +216,9 @@ Evas_GL_Program_Source shader_tex_nomul_frag_src =
    tex_nomul_frag_glsl,
 #if defined (GLES_VARIETY_S3C6410)
      tex_nomul_frag_bin, sizeof(tex_nomul_frag_bin)
-#else     
+#else
      NULL, 0
-#endif     
+#endif
 };
 
 #if defined (GLES_VARIETY_S3C6410)
@@ -235,9 +235,9 @@ Evas_GL_Program_Source shader_tex_nomul_vert_src =
    tex_nomul_vert_glsl,
 #if defined (GLES_VARIETY_S3C6410)
      tex_nomul_vert_bin, sizeof(tex_nomul_vert_bin)
-#else     
+#else
      NULL, 0
-#endif     
+#endif
 };
 
 /////////////////////////////////////////////
@@ -256,9 +256,9 @@ Evas_GL_Program_Source shader_img_frag_src =
    img_frag_glsl,
 #if defined (GLES_VARIETY_S3C6410)
      img_frag_bin, sizeof(img_frag_bin)
-#else     
+#else
      NULL, 0
-#endif     
+#endif
 };
 
 #if defined (GLES_VARIETY_S3C6410)
@@ -275,9 +275,9 @@ Evas_GL_Program_Source shader_img_vert_src =
    img_vert_glsl,
 #if defined (GLES_VARIETY_S3C6410)
      img_vert_bin, sizeof(img_vert_bin)
-#else     
+#else
      NULL, 0
-#endif     
+#endif
 };
 
 /////////////////////////////////////////////
@@ -296,9 +296,9 @@ Evas_GL_Program_Source shader_img_nomul_frag_src =
    img_nomul_frag_glsl,
 #if defined (GLES_VARIETY_S3C6410)
      img_nomul_frag_bin, sizeof(img_nomul_frag_bin)
-#else     
+#else
      NULL, 0
-#endif     
+#endif
 };
 
 #if defined (GLES_VARIETY_S3C6410)
@@ -315,9 +315,9 @@ Evas_GL_Program_Source shader_img_nomul_vert_src =
    img_nomul_vert_glsl,
 #if defined (GLES_VARIETY_S3C6410)
      img_nomul_vert_bin, sizeof(img_nomul_vert_bin)
-#else     
+#else
      NULL, 0
-#endif     
+#endif
 };
 
 /////////////////////////////////////////////
@@ -336,9 +336,9 @@ Evas_GL_Program_Source shader_img_bgra_frag_src =
    img_bgra_frag_glsl,
 #if defined (GLES_VARIETY_S3C6410)
      img_bgra_frag_bin, sizeof(img_bgra_frag_bin)
-#else     
+#else
      NULL, 0
-#endif     
+#endif
 };
 
 #if defined (GLES_VARIETY_S3C6410)
@@ -355,9 +355,9 @@ Evas_GL_Program_Source shader_img_bgra_vert_src =
    img_bgra_vert_glsl,
 #if defined (GLES_VARIETY_S3C6410)
      img_bgra_vert_bin, sizeof(img_bgra_vert_bin)
-#else     
+#else
      NULL, 0
-#endif     
+#endif
 };
 
 
@@ -418,9 +418,9 @@ Evas_GL_Program_Source shader_img_bgra_nomul_frag_src =
    img_bgra_nomul_frag_glsl,
 #if defined (GLES_VARIETY_S3C6410)
      img_bgra_nomul_frag_bin, sizeof(img_bgra_nomul_frag_bin)
-#else     
+#else
      NULL, 0
-#endif     
+#endif
 };
 
 #if defined (GLES_VARIETY_S3C6410)
@@ -437,9 +437,9 @@ Evas_GL_Program_Source shader_img_bgra_nomul_vert_src =
    img_bgra_nomul_vert_glsl,
 #if defined (GLES_VARIETY_S3C6410)
      img_bgra_nomul_vert_bin, sizeof(img_bgra_nomul_vert_bin)
-#else     
+#else
      NULL, 0
-#endif     
+#endif
 };
 
 /////////////////////////////////////////////
@@ -622,7 +622,7 @@ gl_compile_link_error(GLuint target, const char *action)
              free(logtxt);
           }
      }
-   
+
    /* Program info log */
    glGetProgramiv(target, GL_INFO_LOG_LENGTH, &loglen);
    if (loglen > 0)
@@ -709,7 +709,7 @@ _evas_gl_shader_dir_check(char *bin_shader_dir, int num)
 
    home = getenv("HOME");
    if ((!home) || (!home[0])) return 0;
-   
+
    snprintf(bin_shader_dir, num, "%s/%s", home, subdir);
    return _evas_gl_shader_file_exists(bin_shader_dir);
 }
@@ -774,8 +774,8 @@ _evas_gl_common_shader_program_binary_init(Evas_GL_Program *p,
    p->prog = glCreateProgram();
 
 #if 0
-   // TODO: invalid rendering error occurs when attempting to use a 
-   // glProgramBinary. in order to render correctly we should create a dummy 
+   // TODO: invalid rendering error occurs when attempting to use a
+   // glProgramBinary. in order to render correctly we should create a dummy
    // vertex shader.
    p->vert = glCreateShader(GL_VERTEX_SHADER);
    glAttachShader(p->prog, p->vert);
@@ -840,7 +840,7 @@ _evas_gl_common_shader_program_source_init(Evas_GL_Program *p,
                                            const char *name)
 {
    GLint ok;
-   
+
    p->vert = glCreateShader(GL_VERTEX_SHADER);
    p->frag = glCreateShader(GL_FRAGMENT_SHADER);
 #if defined (GLES_VARIETY_S3C6410)
@@ -848,7 +848,7 @@ _evas_gl_common_shader_program_source_init(Evas_GL_Program *p,
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
    glShaderBinary(1, &(p->frag), 0, frag->bin, frag->bin_size);
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-#else 
+#else
    glShaderSource(p->vert, 1,
                   (const char **)&(vert->src), NULL);
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
@@ -882,14 +882,14 @@ _evas_gl_common_shader_program_source_init(Evas_GL_Program *p,
 #if defined(GLES_VARIETY_S3C6410) || defined(GLES_VARIETY_SGX)
 #else
    if ((glsym_glGetProgramBinary) && (glsym_glProgramParameteri))
-      glsym_glProgramParameteri(p->prog, GL_PROGRAM_BINARY_RETRIEVABLE_HINT, 
+      glsym_glProgramParameteri(p->prog, GL_PROGRAM_BINARY_RETRIEVABLE_HINT,
                                 GL_TRUE);
-#endif   
+#endif
    glAttachShader(p->prog, p->vert);
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
    glAttachShader(p->prog, p->frag);
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-   
+
    glBindAttribLocation(p->prog, SHAD_VERTEX, "vertex");
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
    glBindAttribLocation(p->prog, SHAD_COLOR,  "color");
@@ -902,7 +902,7 @@ _evas_gl_common_shader_program_source_init(Evas_GL_Program *p,
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
    glBindAttribLocation(p->prog, SHAD_TEXM, "tex_coordm");
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-   
+
    glLinkProgram(p->prog);
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
    ok = 0;
@@ -965,7 +965,7 @@ _evas_gl_common_shader_source_init(Evas_GL_Shared *shared)
                                                    &(shader_yuv_nomul_vert_src),
                                                    &(shader_yuv_nomul_frag_src),
                                                    "yuv_nomul")) return 0;
-   
+
    /* Most of the filters use the image fragment shader */
    if (!_evas_gl_common_shader_program_source_init(&(shared->shader.filter_invert),
                                                    &(shader_img_vert_src),
@@ -983,7 +983,7 @@ _evas_gl_common_shader_source_init(Evas_GL_Shared *shared)
                                                    &(shader_img_vert_src),
                                                    &(shader_filter_invert_bgra_nomul_frag_src),
                                                    "filter_invert_bgra_nomul")) return 0;
-   
+
    if (!_evas_gl_common_shader_program_source_init(&(shared->shader.filter_sepia),
                                                    &(shader_img_vert_src),
                                                    &(shader_filter_sepia_frag_src),
@@ -1000,7 +1000,7 @@ _evas_gl_common_shader_source_init(Evas_GL_Shared *shared)
                                                    &(shader_img_vert_src),
                                                    &(shader_filter_sepia_bgra_nomul_frag_src),
                                                    "filter_sepia_bgra_nomul")) return 0;
-   
+
    if (!_evas_gl_common_shader_program_source_init(&(shared->shader.filter_greyscale),
                                                    &(shader_img_vert_src),
                                                    &(shader_filter_greyscale_frag_src),
@@ -1035,7 +1035,7 @@ _evas_gl_common_shader_source_init(Evas_GL_Shared *shared)
                                                    &(shader_filter_blur_bgra_nomul_frag_src),
                                                    "filter_blur_bgra_nomul")) return 0;
 #endif
-   
+
    return 1;
 }
 
@@ -1049,11 +1049,11 @@ _evas_gl_common_shader_binary_init(Evas_GL_Shared *shared)
 
    if (!_evas_gl_shader_dir_check(bin_dir_path, sizeof(bin_dir_path)))
       return 0;
-   
+
    if (!_evas_gl_shader_file_check(bin_dir_path, bin_file_path,
-                                   sizeof(bin_dir_path))) 
+                                   sizeof(bin_dir_path)))
       return 0;
-   
+
    /* use eet */
    if (!eet_init()) return 0;
    et = eet_open(bin_file_path, EET_FILE_MODE_READ);
@@ -1117,10 +1117,10 @@ _evas_gl_common_shader_binary_save(Evas_GL_Shared *shared)
    if (!_evas_gl_shader_dir_check(bin_dir_path, sizeof(bin_dir_path)))
       res = _evas_gl_shader_file_mkpath(bin_dir_path);
    if (!res) return 0; /* we can't make directory */
-   
-   _evas_gl_shader_file_check(bin_dir_path, bin_file_path, 
+
+   _evas_gl_shader_file_check(bin_dir_path, bin_file_path,
                               sizeof(bin_dir_path));
-   
+
    /* use mkstemp for writing */
    snprintf(tmp_file, sizeof(tmp_file), "%s.XXXXXX", bin_file_path);
    tmpfd = mkstemp(tmp_file);
@@ -1182,7 +1182,7 @@ int
 evas_gl_common_shader_program_init(Evas_GL_Shared *shared)
 {
    // gl support binary shader and get env of binary shader path
-   if (shared->info.bin_program && 
+   if (shared->info.bin_program &&
        _evas_gl_common_shader_binary_init(shared)) return 1;
    /* compile all shader.*/
    if (!_evas_gl_common_shader_source_init(shared)) return 0;
@@ -1196,7 +1196,7 @@ evas_gl_common_shader_program_init_done(void)
 {
 #if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
    glReleaseShaderCompiler();
-#endif   
+#endif
 }
 
 void

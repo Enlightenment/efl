@@ -6,7 +6,6 @@
 #include "config.h"
 
 #include <stdio.h>
-#include <unistd.h>
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
@@ -134,9 +133,9 @@ struct _Evas_GL_Program_Source
 struct _Evas_GL_Shared
 {
    Eina_List          *images;
-   
+
    int                 images_size;
-   
+
    struct {
       GLint max_texture_units;
       GLint max_texture_size;
@@ -151,31 +150,31 @@ struct _Evas_GL_Shared
       // tuning params - per gpu/cpu combo?
 #define MAX_CUTOUT             512
 #define DEF_CUTOUT                  512
-      
-// FIXME bug with pipes > 1 right now, should default to 32      
+
+// FIXME bug with pipes > 1 right now, should default to 32
 #define MAX_PIPES              128
 #define DEF_PIPES                    32
 #define DEF_PIPES_SGX_540            32
 #define DEF_PIPES_TEGRA_2             1
-      
+
 #define MIN_ATLAS_ALLOC         16
 #define MAX_ATLAS_ALLOC       1024
 #define DEF_ATLAS_ALLOC            1024
-      
+
 #define MIN_ATLAS_ALLOC_ALPHA   16
 #define MAX_ATLAS_ALLOC_ALPHA 4096
 #define DEF_ATLAS_ALLOC_ALPHA      4096
-      
+
 #define MAX_ATLAS_W            512
 #define DEF_ATLAS_W                 512
-      
+
 #define MAX_ATLAS_H            512
 #define DEF_ATLAS_H                 512
-      
+
 #define MIN_ATLAS_SLOT          16
 #define MAX_ATLAS_SLOT         512
 #define DEF_ATLAS_SLOT               16
-      
+
       struct {
          struct {
             int max;
@@ -192,19 +191,19 @@ struct _Evas_GL_Shared
          } atlas;
       } tune;
    } info;
-   
+
    struct {
       Eina_List       *whole;
       Eina_List       *atlas[33][3];
    } tex;
-   
+
    Eina_Hash          *native_pm_hash;
    Eina_Hash          *native_tex_hash;
-   
+
    struct {
       Evas_GL_Program  rect;
       Evas_GL_Program  font;
-      
+
       Evas_GL_Program  img,            img_nomul;
       Evas_GL_Program  img_bgra,       img_bgra_nomul;
       Evas_GL_Program  img_mask;
@@ -236,7 +235,7 @@ struct _Evas_GL_Shared
 #define RTYPE_IMAGE 2
 #define RTYPE_FONT  3
 #define RTYPE_YUV   4
-#define RTYPE_MAP   5 /* need to merge with image */ 
+#define RTYPE_MAP   5 /* need to merge with image */
 #define RTYPE_IMASK 6
 
 
@@ -248,7 +247,7 @@ struct _Evas_Engine_GL_Context
    int                rot;
    int                foc, z0, px, py;
    RGBA_Draw_Context *dc;
-   
+
    Evas_GL_Shared     *shared;
 
    int flushnum;
@@ -265,7 +264,7 @@ struct _Evas_Engine_GL_Context
          int             clip;
       } current;
    } state;
-   
+
    struct {
       struct {
          int             x, y, w, h;
@@ -303,22 +302,22 @@ struct _Evas_Engine_GL_Context
          Evas_GL_Image *im;
       } array;
    } pipe[MAX_PIPES];
-   
+
    struct {
       Eina_Bool size : 1;
    } change;
-   
+
    Eina_Bool havestuff : 1;
-   
+
    Evas_GL_Image *def_surface;
 
    /* If this is set: Force drawing with a particular filter */
    GLuint	filter_prog;
-   
+
 #if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
-// FIXME: hack. expose egl display to gl core for egl image sec extn.   
+// FIXME: hack. expose egl display to gl core for egl image sec extn.
    void *egldisp;
-#endif   
+#endif
 };
 
 struct _Evas_GL_Texture_Pool
@@ -350,7 +349,7 @@ struct _Evas_GL_Texture
    int              x, y, w, h;
    double           sx1, sy1, sx2, sy2;
    int              references;
-   
+
    Eina_Bool        alpha : 1;
 };
 
@@ -368,7 +367,7 @@ struct _Evas_GL_Image
       void         *data;
       unsigned char no_free : 1;
    } cs;
-   
+
    struct {
       void         *data;
       struct {
@@ -385,7 +384,7 @@ struct _Evas_GL_Image
 
    int scale_hint, content_hint;
    int csize;
-   
+
    Eina_List       *filtered;
 
    unsigned char    dirty : 1;
@@ -458,7 +457,7 @@ extern Evas_GL_Program_Source shader_filter_blur_bgra_nomul_frag_src;
 #endif
 
 void glerr(int err, const char *file, const char *func, int line, const char *op);
- 
+
 Evas_Engine_GL_Context  *evas_gl_common_context_new(void);
 void              evas_gl_common_context_free(Evas_Engine_GL_Context *gc);
 void              evas_gl_common_context_use(Evas_Engine_GL_Context *gc);
@@ -506,7 +505,7 @@ void             evas_gl_common_context_image_map_push(Evas_Engine_GL_Context *g
                                                        RGBA_Map_Point *p,
                                                        int clip, int cx, int cy, int cw, int ch,
                                                        int r, int g, int b, int a,
-                                                       Eina_Bool smooth, 
+                                                       Eina_Bool smooth,
                                                        Eina_Bool tex_only,
                                                        Eina_Bool yuv);
 void              evas_gl_common_context_flush(Evas_Engine_GL_Context *gc);
@@ -514,7 +513,7 @@ void              evas_gl_common_context_flush(Evas_Engine_GL_Context *gc);
 int               evas_gl_common_shader_program_init(Evas_GL_Shared *shared);
 void              evas_gl_common_shader_program_init_done(void);
 void              evas_gl_common_shader_program_shutdown(Evas_GL_Program *p);
-    
+
 void              evas_gl_common_rect_draw(Evas_Engine_GL_Context *gc, int x, int y, int w, int h);
 
 void              evas_gl_texture_pool_empty(Evas_GL_Texture_Pool *pt);
