@@ -87,7 +87,6 @@
 ./src/edje_externals/elm_photocam.c
 ./src/edje_externals/elm_progressbar.c
 ./src/edje_externals/elm_radio.c
-./src/edje_externals/elm_scrolled_entry.c
 ./src/edje_externals/elm_scroller.c
 ./src/edje_externals/elm_slider.c
 ./src/edje_externals/elm_slideshow.c
@@ -102,7 +101,6 @@
 ./src/lib/elc_fileselector.c
 ./src/lib/elc_fileselector_entry.c
 ./src/lib/elc_hoversel.c
-./src/lib/elc_scrolled_entry.c
 ./src/lib/elm_actionslider.c
 ./src/lib/elm_animator.c
 ./src/lib/elm_bg.c
