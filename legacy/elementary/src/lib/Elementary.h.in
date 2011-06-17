@@ -3911,6 +3911,7 @@ EAPI Elm_Genlist_Item *elm_genlist_item_sorted_insert(Evas_Object *obj, const El
     * animations will look better if they're accelerating or decelerating, so
     * elm_animator provides four options in this regard:
     * @image html elm_animator_curve_style.png
+    * @image latex elm_animator_curve_style.eps width=\textwidth
     * As can be seen in the image the speed of the animation will be:
     * @li ELM_ANIMATOR_CURVE_LINEAR constant
     * @li ELM_ANIMATOR_CURVE_IN_OUT start slow, speed up and then slow down
