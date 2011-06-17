@@ -8,7 +8,7 @@
 # include <io.h>   /* for _get_osfhandle _lseek and _locking */
 #endif
 
-# include <sys/locking.h>
+#include <sys/locking.h>
 
 #include <winsock2.h> /* for ioctlsocket */
 
