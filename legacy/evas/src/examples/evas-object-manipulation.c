@@ -30,8 +30,6 @@ struct test_data
 {
    Ecore_Evas  *ee;
    Evas        *canvas;
-   Eina_Bool    obscured;
-   Ecore_Timer *resize_timer;
    Evas_Object *img, *bg, *clipper, *clipper_border, *text;
 };
 
@@ -226,6 +224,7 @@ error:
    fprintf(stderr, "you got to have at least one evas engine built and linked"
                    " up to ecore-evas for this example to run properly.\n");
 panic:
+   ecore_evas_free(d.ee);
    ecore_evas_shutdown();
    return -1;
 }
