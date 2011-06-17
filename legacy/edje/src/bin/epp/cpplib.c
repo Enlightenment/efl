@@ -56,6 +56,15 @@ void *alloca (size_t);
 #include "cpplib.h"
 #include "cpphash.h"
 
+/*
+ * On Windows, if the file is not opened in binary mode,
+ * read does not return the correct size, because of
+ * CR / LF translation.
+ */
+#ifndef O_BINARY
+# define O_BINARY 0
+#endif
+
 const char         *version_string = "0.0.0";
 
 #ifndef STDC_VALUE
@@ -5382,9 +5391,9 @@ read_name_map(cpp_reader * pfile, const char *dirname)
       strcat(name, "/");
    strcat(name, FILE_NAME_MAP_FILE);
 #ifndef __EMX__
-   f = fopen(name, "r");
+   f = fopen(name, "rb");
 #else
-   f = fopen(name, "rt");
+   f = fopen(name, "rtb");
 #endif
    if (!f)
       map_list_ptr->map_list_map = NULL;
@@ -5468,7 +5477,7 @@ open_include_file(cpp_reader * pfile, char *filename,
 	     if (!strcmp(map->map_from, from))
 	       {
 		  /* Found a match.  */
-		  return open(map->map_to, O_RDONLY, 0666);
+		  return open(map->map_to, O_RDONLY | O_BINARY, 0666);
 	       }
 	  }
      }
@@ -5485,7 +5494,7 @@ open_include_file(cpp_reader * pfile, char *filename,
        && !strncmp(searchptr->fname, filename, p - filename))
      {
 	/* FILENAME is in SEARCHPTR, which we've already checked.  */
-	return open(filename, O_RDONLY, 0666);
+	return open(filename, O_RDONLY | O_BINARY, 0666);
      }
    if (p == filename)
      {
@@ -5504,9 +5513,9 @@ open_include_file(cpp_reader * pfile, char *filename,
      }
    for (map = read_name_map(pfile, dir); map; map = map->map_next)
       if (!strcmp(map->map_from, from))
-	 return open(map->map_to, O_RDONLY, 0666);
+	 return open(map->map_to, O_RDONLY | O_BINARY, 0666);
 
-   return open(filename, O_RDONLY, 0666);
+   return open(filename, O_RDONLY | O_BINARY, 0666);
 }
 
 #else
@@ -5515,7 +5524,7 @@ static int
 open_include_file(cpp_reader * pfile __UNUSED__, char *filename,
 		  file_name_list * searchptr __UNUSED__)
 {
-   return open(filename, O_RDONLY, 0666);
+   return open(filename, O_RDONLY | O_BINARY, 0666);
 }
 
 #endif /* USE_FILE_NAME_MAPS */
@@ -5980,7 +5989,7 @@ push_parse_file(cpp_reader * pfile, const char *fname)
      {
 	if (pend->cmd && strcmp(pend->cmd, "-imacros") == 0)
 	  {
-	     int                 fd = open(pend->arg, O_RDONLY, 0666);
+	     int                 fd = open(pend->arg, O_RDONLY | O_BINARY, 0666);
 
 	     if (fd < 0)
 	       {
@@ -6002,7 +6011,7 @@ push_parse_file(cpp_reader * pfile, const char *fname)
 	fname = "";
 	f = 0;
      }
-   else if ((f = open(fname, O_RDONLY, 0666)) < 0)
+   else if ((f = open(fname, O_RDONLY | O_BINARY, 0666)) < 0)
       cpp_pfatal_with_name(pfile, fname);
 
    /* -MG doesn't select the form of output and must be specified with one of
@@ -6124,7 +6133,7 @@ push_parse_file(cpp_reader * pfile, const char *fname)
      {
 	if (pend->cmd && strcmp(pend->cmd, "-include") == 0)
 	  {
-	     int                 fd = open(pend->arg, O_RDONLY, 0666);
+	     int                 fd = open(pend->arg, O_RDONLY | O_BINARY, 0666);
 
 	     if (fd < 0)
 	       {
@@ -6705,7 +6714,7 @@ cpp_finish(cpp_reader * pfile)
 	if (pfile->errors == 0)
 	  {
 	     const char         *deps_mode =
-		opts->print_deps_append ? "a" : "w";
+		opts->print_deps_append ? "ab" : "wb";
 
 	     if (!opts->deps_file)
 		deps_stream = stdout;
