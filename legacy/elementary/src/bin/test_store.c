@@ -130,7 +130,7 @@ _st_store_fetch(void *data __UNUSED__, Elm_Store_Item *sti)
   // if we already have my item data - skip
   if (elm_store_item_data_get(sti)) return;
   // open the mail file and parse it
-  f = fopen(path, "r");
+  f = fopen(path, "rb");
   if (!f) return;
 
   // alloc my item in memory that holds data to show in the list

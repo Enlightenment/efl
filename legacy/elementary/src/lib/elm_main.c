@@ -3574,7 +3574,7 @@ elm_object_tree_dot_dump(const Evas_Object *top,
                          const char        *file)
 {
 #ifdef ELM_DEBUG
-   FILE *f = fopen(file, "w");
+   FILE *f = fopen(file, "wb");
    elm_widget_tree_dot_dump(top, f);
    fclose(f);
 #else
