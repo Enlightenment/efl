@@ -166,6 +166,7 @@ _evas_map_free(Evas_Object *obj, Evas_Map *m)
           obj->layer->evas->engine.func->image_map_surface_free
           (obj->layer->evas->engine.data.output, m->surface);
      }
+   m->magic = 0;
    free(m);
 }
 
@@ -364,6 +365,7 @@ evas_object_map_enable_set(Evas_Object *obj, Eina_Bool enabled)
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return;
    MAGIC_CHECK_END();
+
    enabled = !!enabled;
    if (obj->cur.usemap == enabled) return;
    obj->cur.usemap = enabled;
@@ -422,6 +424,7 @@ evas_object_map_set(Evas_Object *obj, const Evas_Map *map)
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return;
    MAGIC_CHECK_END();
+
    if (!map)
      {
         if (obj->cur.map)
@@ -451,7 +454,7 @@ evas_object_map_set(Evas_Object *obj, const Evas_Map *map)
         return;
      }
 
-   if (obj->cur.map && obj->cur.map->count == map->count)
+   if ((obj->cur.map) && (obj->cur.map->count == map->count))
      {
         Evas_Map *omap = obj->cur.map;
         obj->cur.map = _evas_map_new(map->count);
@@ -476,8 +479,8 @@ evas_object_map_get(const Evas_Object *obj)
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return NULL;
    MAGIC_CHECK_END();
-   if (obj->cur.map) return obj->cur.map;
-   return NULL;
+
+   return obj->cur.map;
 }
 
 EAPI Evas_Map *
@@ -488,6 +491,7 @@ evas_map_new(int count)
         ERR("map point count (%i) != 4 is unsupported!", count);
         return NULL;
      }
+
    return _evas_map_new(count);
 }
 
