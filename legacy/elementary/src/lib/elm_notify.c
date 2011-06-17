@@ -46,6 +46,7 @@ static void _parent_del(void *data,  Evas *e, Evas_Object *obj, void *event_info
 static void _parent_hide(void *data,  Evas *e, Evas_Object *obj, void *event_info);
 
 static void _resize(void *data, Evas *e, Evas_Object *obj, void *event_info);
+static void _restack(void *data, Evas *e, Evas_Object *obj, void *event_info);
 
 static const char SIG_BLOCK_CLICKED[] = "block,clicked";
 static const char SIG_TIMEOUT[] = "timeout";
@@ -62,6 +63,7 @@ _del_pre_hook(Evas_Object *obj)
    evas_object_event_callback_del_full(obj, EVAS_CALLBACK_MOVE, _resize, obj);
    evas_object_event_callback_del_full(obj, EVAS_CALLBACK_SHOW, _show, obj);
    evas_object_event_callback_del_full(obj, EVAS_CALLBACK_HIDE, _hide, obj);
+   evas_object_event_callback_del_full(obj, EVAS_CALLBACK_RESTACK, _restack, obj);
 }
 
 static void
@@ -302,6 +304,15 @@ _signal_block_clicked(void *data, Evas_Object *obj __UNUSED__, const char *emiss
 }
 
 static void
+_restack(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   evas_object_layer_set(wd->notify,
+                         evas_object_layer_get(obj));
+}
+
+static void
 _resize(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
    _calc(obj);
@@ -456,7 +467,7 @@ elm_notify_add(Evas_Object *parent)
    evas_object_event_callback_add(obj, EVAS_CALLBACK_MOVE, _resize, obj);
    evas_object_event_callback_add(obj, EVAS_CALLBACK_SHOW, _show, obj);
    evas_object_event_callback_add(obj, EVAS_CALLBACK_HIDE, _hide, obj);
-
+   evas_object_event_callback_add(obj, EVAS_CALLBACK_RESTACK, _restack, obj);
    _mirrored_set(obj, elm_widget_mirrored_get(obj));
    _sizing_eval(obj);
 
