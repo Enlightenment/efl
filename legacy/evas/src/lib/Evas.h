@@ -8502,6 +8502,7 @@ EAPI Eina_Bool                           evas_object_table_mirrored_get    (cons
  * @param rowspan pointer to store how many relative-vertical position to use for this child.
  *
  * @return 1 on success, 0 on failure.
+ * @since 1.1.0
  */
 EAPI Eina_Bool                           evas_object_table_pack_get(Evas_Object *o, Evas_Object *child, unsigned short *col, unsigned short *row, unsigned short *colspan, unsigned short *rowspan);
          
