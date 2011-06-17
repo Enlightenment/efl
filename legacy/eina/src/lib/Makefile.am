@@ -32,7 +32,6 @@ eina_main.c \
 eina_matrixsparse.c \
 eina_mempool.c \
 eina_module.c \
-eina_object.c \
 eina_prefix.c \
 eina_quadtree.c \
 eina_rbtree.c \
@@ -50,6 +49,9 @@ eina_unicode.c \
 eina_ustrbuf.c \
 eina_ustringshare.c \
 eina_value.c
+
+# Will be back for developper after 1.1
+# eina_object.c
 
 if EINA_HAVE_WIN32
 base_sources += eina_file_win32.c

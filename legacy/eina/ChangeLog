@@ -46,7 +46,6 @@
 
 	* Add eina_inlist_sort.
 	* Add eina_mempool_repack.
-	* Add Eina_Object API, an helper for providing memory allocation with a redirection.
 
 2011-04-13  Cedric Bail & Vincent Torri
 

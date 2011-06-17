@@ -55,10 +55,12 @@ eina_ustrbuf.h \
 eina_unicode.h \
 eina_quadtree.h \
 eina_simple_xml_parser.h \
-eina_object.h \
 eina_lock.h \
 eina_prefix.h \
 eina_refcount.h
+
+# Will be back for developper after 1.1.
+# eina_object.h
 
 if EINA_HAVE_THREADS
 if EINA_HAVE_WINCE
