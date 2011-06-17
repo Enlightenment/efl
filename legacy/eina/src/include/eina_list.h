@@ -46,7 +46,7 @@
  * <img src="eina_list_example_01_a.png" width="100%" />
  * <a href="eina_list_example_01_a.png">Full-size</a>
  * @image rtf eina_list_example_01_a.png
- * @image latex eina_list_example_01_a.eps
+ * @image latex eina_list_example_01_a.eps width=\textwidth
  * @until roslin
  * There are a couple of interesting things happening here, first is that we are
  * passing a NULL pointer to the first @ref eina_list_append() call, when this
@@ -77,7 +77,7 @@
  * <img src="eina_list_example_01_b.png" width="100%" />
  * <a href="eina_list_example_01_b.png">Full-size</a>
  * @image rtf eina_list_example_01_b.png
- * @image latex eina_list_example_01_b.eps
+ * @image latex eina_list_example_01_b.eps width=\textwidth
  * 
  * Once done using the list it needs to be freed, and since we are done with
  * eina that also need to be shutdown:
@@ -241,7 +241,7 @@
  * <img src="eina_list.png" width="100%" />
  * <a href="eina_list.png">Full-size</a>
  * @image rtf eina_list.png
- * @image latex eina_list.eps
+ * @image latex eina_list.eps width=5cm
  *
  * @ref Eina_List_Accounting is used to improve the performance of some
  * functions. It is private and <b>should not</b> be modified. It contains a

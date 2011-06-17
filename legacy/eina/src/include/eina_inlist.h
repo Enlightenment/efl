@@ -43,6 +43,7 @@
  *
  * @image html eina_inlist-node_eg1-my-struct.png
  * @image rtf eina_inlist-node_eg1-my-struct.png
+ * @image latex eina_inlist-node_eg1-my-struct.eps
  *
  * Let's define a comparison function that will be used later during the
  * sorting of the list:
@@ -69,6 +70,7 @@
  *
  * @image html eina_inlist-node_eg1-inlist.png
  * @image rtf eina_inlist-node_eg1-inlist.png
+ * @image latex eina_inlist-node_eg1-inlist.eps width=\textwidth
  *
  * The macro @ref EINA_INLIST_FOREACH can be used to iterate over the list:
  *
@@ -129,6 +131,7 @@
  *
  * @image html eina_inlist-node_eg2-my-struct.png
  * @image rtf eina_inlist-node_eg2-my-struct.png
+ * @image latex eina_inlist-node_eg2-my-struct.eps
  *
  * Now we need some pointers and auxiliar variables that will help us iterate on
  * the lists:
@@ -152,6 +155,7 @@
  *
  * <img src="eina_inlist-node_eg2-list-inlist.png" width="100%"/>
  * @image rtf eina_inlist-node_eg2-list-inlist.png
+ * @image latex eina_inlist-node_eg2-list-inlist.eps width=\textwidth
  *
  * Accessing both lists is done normally, as if they didn't have any elements in
  * common:
@@ -199,6 +203,7 @@
  *
  * @image html eina_inlist-node_eg3-my-struct.png
  * @image rtf eina_inlist-node_eg3-my-struct.png
+ * @image latex eina_inlist-node_eg3-my-struct.eps
  *
  * And we will define some convenience macros that are equivalent to @ref
  * EINA_INLIST_GET and @ref EINA_INLIST_CONTAINER_GET :
@@ -224,6 +229,7 @@
  *
  * <img src="eina_inlist-node_eg3-two-inlists.png" width="100%"/>
  * @image rtf eina_inlist-node_eg3-two-inlists.png
+ * @image latex eina_inlist-node_eg3-two-inlists.eps width=\textwidth
  *
  * For the first list, we can use the macro @ref EINA_INLIST_FOREACH to iterate
  * over its elements:
@@ -313,6 +319,7 @@
  *
  * @image html eina_inlist-node.png
  * @image rtf eina_inlist-node.png
+ * @image latex eina_inlist-node.eps
  *
  * One data structure will also have the node information, with three pointers:
  * @a prev, @a next and @a last. The @a last pointer is just valid for the first

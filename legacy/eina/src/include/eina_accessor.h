@@ -92,6 +92,8 @@
  * position, use eina_accessor_data_get(). To call a function on
  * chosen elements of a container, use eina_accessor_over().
  *
+ * See an example @ref eina_accessor_example_01_page "here".
+ *
  * @{
  */
 
