@@ -4,6 +4,8 @@
 #include <Elementary.h>
 #ifdef HAVE_CONFIG_H
 # include "elementary_config.h"
+#else
+# define __UNUSED__
 #endif
 
 static void _pos_selected_cb(void *data __UNUSED__, Evas_Object *obj, void *event_info)

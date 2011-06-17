@@ -2,12 +2,17 @@
  * gcc -o anchorblock_example_01 anchorblock_example_01.c `pkg-config --cflags --libs elementary`
  */
 #include <Elementary.h>
+#ifdef HAVE_CONFIG_H
+# include "elementary_config.h"
+#else
+# define __UNUSED__
+#endif
 
 static void _anchorblock_clicked_cb(void *data, Evas_Object *obj, void *ev);
 static void _anchorview_clicked_cb(void *data, Evas_Object *obj, void *ev);
 
 int
-elm_main(int argc, char *argv[])
+elm_main(int argc __UNUSED__, char *argv[] __UNUSED__)
 {
    Evas_Object *win, *box, *o, *frame;
    const char *anchortext =
@@ -83,26 +88,26 @@ ELM_MAIN();
 static void _anchor_buttons_create(Evas_Object *ao, Elm_Entry_Anchorblock_Info *info, Evas_Smart_Cb btn_end_cb);
 
 static void
-_btn_anchorblock_end_cb(void *data, Evas_Object *obj, void *event_info)
+_btn_anchorblock_end_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    elm_anchorblock_hover_end((Evas_Object *)data);
 }
 
 static void
-_anchorblock_clicked_cb(void *data, Evas_Object *obj, void *event_info)
+_anchorblock_clicked_cb(void *data __UNUSED__, Evas_Object *obj, void *event_info)
 {
    Elm_Entry_Anchorblock_Info *info = event_info;
    _anchor_buttons_create(obj, info, _btn_anchorblock_end_cb);
 }
 
 static void
-_btn_anchorview_end_cb(void *data, Evas_Object *obj, void *event_info)
+_btn_anchorview_end_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    elm_anchorview_hover_end((Evas_Object *)data);
 }
 
 static void
-_anchorview_clicked_cb(void *data, Evas_Object *obj, void *event_info)
+_anchorview_clicked_cb(void *data __UNUSED__, Evas_Object *obj, void *event_info)
 {
    /* should be an Elm_Entry_Anchorview_Info, but since both of them are
     * the same, it simplifies code in this example to use one only */
@@ -111,7 +116,7 @@ _anchorview_clicked_cb(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
-_btn_clicked_cb(void *data, Evas_Object *obj, void *event_info)
+_btn_clicked_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    const char *lbl = elm_button_label_get(obj);
    printf("%s: %s\n", lbl, (char *)data);
@@ -191,7 +196,6 @@ _anchor_buttons_create(Evas_Object *ao, Elm_Entry_Anchorblock_Info *info, Evas_S
      }
    else if (!strncmp(info->name, "mailto:", 7))
      {
-        Evas_Object *o;
         elm_button_label_set(btn, "Send E-Mail");
 
         secondary = elm_button_add(ao);

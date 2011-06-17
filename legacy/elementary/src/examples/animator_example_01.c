@@ -3,6 +3,11 @@
 
 #include <Elementary.h>
 #include <limits.h>
+#ifdef HAVE_CONFIG_H
+# include "elementary_config.h"
+#else
+# define __UNUSED__
+#endif
 
 static void
 on_done(void *data, Evas_Object *obj, void *event_info)
