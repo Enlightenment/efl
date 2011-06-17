@@ -1046,6 +1046,28 @@ evas_object_table_padding_get(const Evas_Object *o, Evas_Coord *horizontal, Evas
 }
 
 EAPI Eina_Bool
+evas_object_table_pack_get(Evas_Object *o, Evas_Object *child, unsigned short *col, unsigned short *row, unsigned short *colspan, unsigned short *rowspan)
+{
+   Evas_Object_Table_Option *opt;
+
+   EVAS_OBJECT_TABLE_DATA_GET_OR_RETURN_VAL(o, priv, 0);
+   opt = _evas_object_table_option_get(child);
+   if (!opt)
+     {
+        if (col) *col = 0;
+        if (row) *row = 0;
+        if (colspan) *colspan = 0;
+        if (rowspan) *rowspan = 0;
+        return EINA_FALSE;
+     }
+   if (col) *col = opt->col;
+   if (row) *row = opt->row;
+   if (colspan) *colspan = opt->colspan;
+   if (rowspan) *rowspan = opt->rowspan;
+   return EINA_TRUE;
+}
+
+EAPI Eina_Bool
 evas_object_table_pack(Evas_Object *o, Evas_Object *child, unsigned short col, unsigned short row, unsigned short colspan, unsigned short rowspan)
 {
    Evas_Object_Table_Option *opt;

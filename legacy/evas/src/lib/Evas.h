@@ -8328,6 +8328,20 @@ EAPI Eina_Bool                           evas_object_table_mirrored_get    (cons
 
 
 /**
+ * Get packgin location of a child of table
+ *
+ * @param o The given table object.
+ * @param child The child object to add.
+ * @param col pointer to store relative-horizontal position to place child.
+ * @param row pointer to store relative-vertical position to place child.
+ * @param colspan pointer to store how many relative-horizontal position to use for this child.
+ * @param rowspan pointer to store how many relative-vertical position to use for this child.
+ *
+ * @return 1 on success, 0 on failure.
+ */
+EAPI Eina_Bool                           evas_object_table_pack_get(Evas_Object *o, Evas_Object *child, unsigned short *col, unsigned short *row, unsigned short *colspan, unsigned short *rowspan);
+         
+/**
  * Add a new child to a table object.
  *
  * @param o The given table object.
