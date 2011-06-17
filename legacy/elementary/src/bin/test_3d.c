@@ -157,6 +157,7 @@ _cube_pos(Cube *c,
    evas_map_free(m);
 }
 
+/*
 static void
 _cube_free(Cube *c)
 {
@@ -165,6 +166,7 @@ _cube_free(Cube *c)
    for (i = 0; i < 6; i++) evas_object_del(c->side[i].o);
    free(c);
 }
+*/
 
 static void
 _cube_update(Evas_Object *win, Cube *c)
@@ -238,7 +240,6 @@ void
 test_3d(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *win, *bg, *bx, *sl;
-   char buf[PATH_MAX];
 
    win = elm_win_add(NULL, "3d", ELM_WIN_BASIC);
    elm_win_title_set(win, "3D");
