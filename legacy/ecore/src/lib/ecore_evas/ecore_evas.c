@@ -10,6 +10,10 @@
 # include <unistd.h>
 #endif
 
+#ifdef HAVE_EVIL
+# include <Evil.h>
+#endif
+
 #include "Ecore.h"
 #include "ecore_private.h"
 #include "Ecore_Input.h"
@@ -2715,10 +2719,17 @@ void
 _ecore_evas_fps_debug_init(void)
 {
    char buf[4096];
+   const char *tmp;
 
    _ecore_evas_fps_debug_init_count++;
    if (_ecore_evas_fps_debug_init_count > 1) return;
-   snprintf(buf, sizeof(buf), "/tmp/.ecore_evas_fps_debug-%i", (int)getpid());
+
+#ifndef HAVE_EVIL
+   tmp = "/tmp";
+#else
+   tmp = evil_tmpdir_get ();
+#endif /* HAVE_EVIL */
+   snprintf(buf, sizeof(buf), "%s/.ecore_evas_fps_debug-%i", tmp, (int)getpid());
    _ecore_evas_fps_debug_fd = open(buf, O_CREAT | O_TRUNC | O_RDWR, 0644);
    if (_ecore_evas_fps_debug_fd < 0)
      {
