@@ -46,6 +46,9 @@
 static Eina_Bool _ecore_con_client_timer(Ecore_Con_Client *cl);
 static void      _ecore_con_cl_timer_update(Ecore_Con_Client *cl);
 
+static Eina_Bool _ecore_con_server_timer(Ecore_Con_Server *svr);
+static void      _ecore_con_server_timer_update(Ecore_Con_Server *svr);
+
 static void      _ecore_con_cb_tcp_connect(void           *data,
                                            Ecore_Con_Info *info);
 static void      _ecore_con_cb_udp_connect(void           *data,
@@ -542,7 +545,10 @@ ecore_con_server_timeout_set(Ecore_Con_Server *svr,
         return;
      }
 
-   svr->client_disconnect_time = timeout;
+   if (svr->created)
+     svr->client_disconnect_time = timeout;
+   else
+     svr->disconnect_time = timeout;
 }
 
 /**
@@ -561,7 +567,7 @@ ecore_con_server_timeout_get(Ecore_Con_Server *svr)
         return 0;
      }
 
-   return svr->client_disconnect_time;
+   return svr->created ? svr->client_disconnect_time : svr->disconnect_time;
 }
 
 /**
@@ -1184,6 +1190,7 @@ ecore_con_event_server_add(Ecore_Con_Server *svr)
     EINA_SAFETY_ON_NULL_RETURN(e);
 
     svr->event_count++;
+    _ecore_con_server_timer_update(svr);
     e->server = svr;
     if (svr->upgrade) ev = ECORE_CON_EVENT_SERVER_UPGRADE;
     ecore_event_add(ev, e,
@@ -1199,6 +1206,7 @@ ecore_con_event_server_del(Ecore_Con_Server *svr)
     EINA_SAFETY_ON_NULL_RETURN(e);
 
     svr->event_count++;
+    _ecore_con_server_timer_update(svr);
     e->server = svr;
     ecore_event_add(ECORE_CON_EVENT_SERVER_DEL, e,
                     _ecore_con_event_server_del_free, NULL);
@@ -1213,6 +1221,7 @@ ecore_con_event_server_data(Ecore_Con_Server *svr, unsigned char *buf, int num, 
    EINA_SAFETY_ON_NULL_RETURN(e);
 
    svr->event_count++;
+   _ecore_con_server_timer_update(svr);
    e->server = svr;
    if (duplicate)
      {
@@ -1402,6 +1411,9 @@ _ecore_con_server_free(Ecore_Con_Server *svr)
    if (svr->fd > 0)
      close(svr->fd);
 
+   if (svr->until_deletion)
+     ecore_timer_del(svr->until_deletion);
+
    servers = eina_list_remove(servers, svr);
    svr->data = NULL;
    free(svr);
@@ -1460,6 +1472,9 @@ _ecore_con_client_free(Ecore_Con_Client *cl)
      free(cl->client_addr);
    cl->client_addr = NULL;
 
+   if (cl->until_deletion)
+     ecore_timer_del(cl->until_deletion);
+
    if (cl->ip)
      eina_stringshare_del(cl->ip);
    cl->data = NULL;
@@ -1478,6 +1493,42 @@ _ecore_con_server_kill(Ecore_Con_Server *svr)
      ecore_main_fd_handler_del(svr->fd_handler);
 
    svr->fd_handler = NULL;
+}
+
+static Eina_Bool
+_ecore_con_server_timer(Ecore_Con_Server *svr)
+{
+   ecore_con_server_del(svr);
+
+   return ECORE_CALLBACK_CANCEL;
+}
+
+static void
+_ecore_con_server_timer_update(Ecore_Con_Server *svr)
+{
+   if (svr->disconnect_time)
+     {
+        if (svr->disconnect_time > 0)
+          {
+             if (svr->until_deletion)
+               ecore_timer_interval_set(svr->until_deletion, svr->disconnect_time);
+             else
+               svr->until_deletion = ecore_timer_add(svr->disconnect_time, (Ecore_Task_Cb)_ecore_con_server_timer, svr);
+          }
+        else if (svr->until_deletion)
+          {
+             ecore_timer_del(svr->until_deletion);
+             svr->until_deletion = NULL;
+          }
+     }
+   else
+     {
+        if (svr->until_deletion)
+          {
+             ecore_timer_del(svr->until_deletion);
+             svr->until_deletion = NULL;
+          }
+     }
 }
 
 static Eina_Bool
@@ -2074,6 +2125,7 @@ _ecore_con_cl_read(Ecore_Con_Server *svr)
         DBG("Continuing ssl handshake");
         if (!ecore_con_ssl_server_init(svr))
            lost_server = EINA_FALSE;
+        _ecore_con_server_timer_update(svr);
      }
 
    if (!(svr->type & ECORE_CON_SSL))
@@ -2389,6 +2441,7 @@ _ecore_con_server_flush(Ecore_Con_Server *svr)
         DBG("Continuing ssl handshake");
         if (ecore_con_ssl_server_init(svr))
           _ecore_con_server_kill(svr);
+        _ecore_con_server_timer_update(svr);
         return;
      }
 

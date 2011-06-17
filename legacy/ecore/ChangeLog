@@ -224,3 +224,8 @@
 2011-06-16  Cedric Bail
 
 	* Fix ecore_x_selection_convert not taking selection length into account.
+
+2011-06-17  Mike Blumenkrantz
+
+        * ecore_con_server_timeout_get/set now applies to client-type servers
+

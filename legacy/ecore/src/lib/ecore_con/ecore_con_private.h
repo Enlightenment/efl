@@ -147,6 +147,8 @@ struct _Ecore_Con_Server
    int ssl_err;
 #endif
    double start_time;
+   Ecore_Timer *until_deletion;
+   double disconnect_time;
    double client_disconnect_time;
    const char *ip;
    Eina_Bool dead : 1;
