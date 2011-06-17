@@ -14,6 +14,8 @@
  * @ref Example_Evas_Object_Manipulation
  *
  * @ref Example_Evas_Aspect_Hints
+ *
+ * @ref Example_Evas_Size_Hints
  */
 
 /**
@@ -58,4 +60,11 @@
  *
  * @include evas-aspect-hints.c
  * @example evas-aspect-hints.c
+ */
+
+/**
+ * @page Example_Evas_Size_Hints Evas alignment, minimum size, maximum size, padding and weight hints example
+ *
+ * @include evas-hints.c
+ * @example evas-hints.c
  */

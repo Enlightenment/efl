@@ -57,6 +57,10 @@ pkglib_PROGRAMS += evas_object_manipulation
 evas_object_manipulation_SOURCES = evas-object-manipulation.c
 evas_object_manipulation_LDADD = $(top_builddir)/src/lib/libevas.la @ECORE_EVAS_LIBS@
 
+pkglib_PROGRAMS += evas_hints
+evas_hints_SOURCES = evas-hints.c
+evas_hints_LDADD = $(top_builddir)/src/lib/libevas.la @ECORE_EVAS_LIBS@
+
 #the ones using ecore_evas and edje follow
 AM_CPPFLAGS += @EDJE_CFLAGS@
 
@@ -89,5 +93,6 @@ files_DATA += \
 	$(srcdir)/evas-load-error-str.c \
 	$(srcdir)/evas-object-manipulation.c \
 	$(srcdir)/evas-events.c \
-	$(srcdir)/evas-aspect-hints.c
+	$(srcdir)/evas-aspect-hints.c \
+	$(srcdir)/evas-hints.c
 endif

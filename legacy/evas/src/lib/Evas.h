@@ -4205,7 +4205,7 @@ EAPI void              evas_map_point_color_get          (const Evas_Map *m, int
  * @note Use @c NULL pointers on the hint components you're not
  * interested in: they'll be ignored by the function.
  *
- * @see evas_object_size_hint_min_set()
+ * @see evas_object_size_hint_min_set() for an example
  */
 EAPI void              evas_object_size_hint_min_get     (const Evas_Object *obj, Evas_Coord *w, Evas_Coord *h) EINA_ARG_NONNULL(1);
 
@@ -4221,6 +4221,15 @@ EAPI void              evas_object_size_hint_min_get     (const Evas_Object *obj
  *
  * Values @c 0 will be treated as unset hint components, when queried
  * by managers.
+ *
+ * Example:
+ * @dontinclude evas-hints.c
+ * @skip evas_object_size_hint_min_set
+ * @until return
+ *
+ * In this example the minimum size hints change de behavior of an
+ * Evas box when layouting its children. See the full @ref
+ * Example_Evas_Size_Hints "example".
  *
  * @see evas_object_size_hint_min_get()
  */
@@ -4256,6 +4265,15 @@ EAPI void              evas_object_size_hint_max_get     (const Evas_Object *obj
  *
  * Values @c -1 will be treated as unset hint components, when queried
  * by managers.
+ *
+ * Example:
+ * @dontinclude evas-hints.c
+ * @skip evas_object_size_hint_max_set
+ * @until return
+ *
+ * In this example the maximum size hints change de behavior of an
+ * Evas box when layouting its children. See the full @ref
+ * Example_Evas_Size_Hints "example".
  *
  * @see evas_object_size_hint_max_get()
  */
@@ -4417,6 +4435,15 @@ EAPI void              evas_object_size_hint_align_get   (const Evas_Object *obj
  * This is not a size enforcement in any way, it's just a hint that
  * should be used whenever appropriate.
  *
+ * Example:
+ * @dontinclude evas-hints.c
+ * @skip evas_object_size_hint_align_set
+ * @until return
+ *
+ * In this example the alignment hints change de behavior of an Evas
+ * box when layouting its children. See the full @ref
+ * Example_Evas_Size_Hints "example".
+ *
  * @see evas_object_size_hint_align_get()
  */
 EAPI void              evas_object_size_hint_align_set   (Evas_Object *obj, double x, double y) EINA_ARG_NONNULL(1);
@@ -4440,7 +4467,7 @@ EAPI void              evas_object_size_hint_align_set   (Evas_Object *obj, doub
  * @note Use @c NULL pointers on the hint components you're not
  * interested in: they'll be ignored by the function.
  *
- * @see evas_object_size_hint_weight_set()
+ * @see evas_object_size_hint_weight_set() for an example
  */
 EAPI void              evas_object_size_hint_weight_get  (const Evas_Object *obj, double *x, double *y) EINA_ARG_NONNULL(1);
 
@@ -4453,6 +4480,15 @@ EAPI void              evas_object_size_hint_weight_get  (const Evas_Object *obj
  *
  * This is not a size enforcement in any way, it's just a hint that should
  * be used whenever appropriate.
+ *
+ * Example:
+ * @dontinclude evas-hints.c
+ * @skip evas_object_size_hint_weight_set
+ * @until return
+ *
+ * In this example the weight hints change de behavior of an Evas box
+ * when layouting its children. See the full @ref
+ * Example_Evas_Size_Hints "example".
  *
  * @see evas_object_size_hint_weight_get() for more information
  */
@@ -4476,6 +4512,15 @@ EAPI void              evas_object_size_hint_weight_set  (Evas_Object *obj, doub
  *
  * @note Use @c NULL pointers on the hint components you're not
  * interested in: they'll be ignored by the function.
+ *
+ * Example:
+ * @dontinclude evas-hints.c
+ * @skip evas_object_size_hint_padding_set
+ * @until return
+ *
+ * In this example the padding hints change de behavior of an Evas box
+ * when layouting its children. See the full @ref
+ * Example_Evas_Size_Hints "example".
  *
  * @see evas_object_size_hint_padding_set()
  */
