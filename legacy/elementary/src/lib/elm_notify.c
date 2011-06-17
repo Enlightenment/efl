@@ -42,6 +42,9 @@ static void _calc(Evas_Object *obj);
 static void _content_resize(void *data, Evas *e, Evas_Object *obj, void *event_info);
 static void _show(void *data, Evas *e, Evas_Object *obj, void *event_info);
 static void _hide(void *data, Evas *e, Evas_Object *obj, void *event_info);
+static void _parent_del(void *data,  Evas *e, Evas_Object *obj, void *event_info);
+static void _parent_hide(void *data,  Evas *e, Evas_Object *obj, void *event_info);
+
 static void _resize(void *data, Evas *e, Evas_Object *obj, void *event_info);
 
 static const char SIG_BLOCK_CLICKED[] = "block,clicked";
@@ -382,20 +385,20 @@ _hide(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj, void *event_i
 }
 
 static void
-_parent_del(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+_parent_del(void *data,  Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
-   Widget_Data *wd = elm_widget_data_get(obj);
+   Widget_Data *wd = elm_widget_data_get(data);
    if (!wd) return;
    wd->parent = NULL;
-   evas_object_hide(obj);
+   evas_object_hide(data);
 }
 
 static void
-_parent_hide(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+_parent_hide(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Widget_Data *wd = elm_widget_data_get(obj);
+   Widget_Data *wd = elm_widget_data_get(data);
    if (!wd) return;
-   evas_object_hide(obj);
+   evas_object_hide(data);
 }
 
 static Eina_Bool
