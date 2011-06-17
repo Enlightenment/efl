@@ -402,3 +402,9 @@
 	* Use Eina_File for JPEG loader.
 	* Add evas_object_image_load_orientation_get and evas_object_image_load_orientation_set,
 	that tell if we should honor the orientation information when loading image file.
+
+2011-06-17  Carsten Haitzler (The Rasterman)
+
+	* Allow evas table to re-pack the same object without error and just
+        update packing parameters
+

@@ -1064,17 +1064,14 @@ evas_object_table_pack(Evas_Object *o, Evas_Object *child, unsigned short col, u
      }
 
    opt = _evas_object_table_option_get(child);
-   if (opt)
-     {
-	ERR("cannot add object that is already part of a table!");
-	return EINA_FALSE;
-     }
-
-   opt = malloc(sizeof(*opt));
    if (!opt)
      {
-	ERR("could not allocate table option data.");
-	return EINA_FALSE;
+        opt = malloc(sizeof(*opt));
+        if (!opt)
+          {
+             ERR("could not allocate table option data.");
+             return EINA_FALSE;
+          }
      }
 
    opt->obj = child;
@@ -1084,32 +1081,65 @@ evas_object_table_pack(Evas_Object *o, Evas_Object *child, unsigned short col, u
    opt->rowspan = rowspan;
    opt->end_col = col + colspan;
    opt->end_row = row + rowspan;
-   opt->min.w = 0;
-   opt->min.h = 0;
-   opt->max.w = 0;
-   opt->max.h = 0;
-   opt->align.h = 0.5;
-   opt->align.v = 0.5;
-   opt->pad.l = 0;
-   opt->pad.r = 0;
-   opt->pad.t = 0;
-   opt->pad.b = 0;
-   opt->expand_h = 0;
-   opt->expand_v = 0;
+   
+   if (evas_object_smart_parent_get(child) == o)
+     {
+        Eina_Bool need_shrink = EINA_FALSE;
+        
+        if (priv->size.cols < opt->end_col)
+           priv->size.cols = opt->end_col;
+        else
+           need_shrink = EINA_TRUE;
+        if (priv->size.rows < opt->end_row)
+           priv->size.rows = opt->end_row;
+        else
+          need_shrink = EINA_TRUE;
 
-   priv->children = eina_list_append(priv->children, opt);
+        if (need_shrink)
+          {
+             Eina_List *l;
+             Evas_Object_Table_Option *opt2;
+             int max_row, max_col;
+             
+             max_row = 0;
+             max_col = 0;
+             EINA_LIST_FOREACH(priv->children, l, opt2)
+               {
+                  if (max_col < opt->end_col) max_col = opt->end_col;
+                  if (max_row < opt->end_row) max_row = opt->end_row;
+               }
+             priv->size.cols = max_col;
+             priv->size.rows = max_row;
+          }
+     }
+   else
+     {
+        opt->min.w = 0;
+        opt->min.h = 0;
+        opt->max.w = 0;
+        opt->max.h = 0;
+        opt->align.h = 0.5;
+        opt->align.v = 0.5;
+        opt->pad.l = 0;
+        opt->pad.r = 0;
+        opt->pad.t = 0;
+        opt->pad.b = 0;
+        opt->expand_h = 0;
+        opt->expand_v = 0;
 
-   if (priv->size.cols < opt->end_col)
-     priv->size.cols = opt->end_col;
-   if (priv->size.rows < opt->end_row)
-     priv->size.rows = opt->end_row;
-
-   _evas_object_table_option_set(child, opt);
-   evas_object_smart_member_add(child, o);
-   _evas_object_table_child_connect(o, child);
+        priv->children = eina_list_append(priv->children, opt);
+        
+        if (priv->size.cols < opt->end_col)
+           priv->size.cols = opt->end_col;
+        if (priv->size.rows < opt->end_row)
+           priv->size.rows = opt->end_row;
+        
+        _evas_object_table_option_set(child, opt);
+        evas_object_smart_member_add(child, o);
+        _evas_object_table_child_connect(o, child);
+     }
    _evas_object_table_cache_invalidate(priv);
    evas_object_smart_changed(o);
-
    return EINA_TRUE;
 }
 
