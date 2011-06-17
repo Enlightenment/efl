@@ -4340,6 +4340,13 @@ EAPI void              evas_object_size_hint_request_set (Evas_Object *obj, Evas
  * @note Use @c NULL pointers on the hint components you're not
  * interested in: they'll be ignored by the function.
  *
+ * Example:
+ * @dontinclude evas-aspect-hints.c
+ * @skip if (strcmp(ev->keyname, "c") == 0)
+ * @until }
+ *
+ * See the full @ref Example_Evas_Aspect_Hints "example".
+ *
  * @see evas_object_size_hint_aspect_set()
  */
 EAPI void              evas_object_size_hint_aspect_get  (const Evas_Object *obj, Evas_Aspect_Control *aspect, Evas_Coord *w, Evas_Coord *h) EINA_ARG_NONNULL(1);

@@ -12,6 +12,8 @@
  * @ref Example_Evas_Events
  *
  * @ref Example_Evas_Object_Manipulation
+ *
+ * @ref Example_Evas_Aspect_Hints
  */
 
 /**
@@ -49,4 +51,11 @@
  *
  * @include evas-object-manipulation.c
  * @example evas-object-manipulation.c
+ */
+
+/**
+ * @page Example_Evas_Aspect_Hints Evas aspect hints example
+ *
+ * @include evas-aspect-hints.c
+ * @example evas-aspect-hints.c
  */

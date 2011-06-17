@@ -2,6 +2,12 @@ MAINTAINERCLEANFILES = Makefile.in
 
 pkglibdir = $(datadir)/$(PACKAGE)/examples
 
+#put here all EDCs one needs to the tests
+EDCS = aspect.edc
+
+filesdir = $(datadir)/$(PACKAGE)/examples
+files_DATA =
+
 if BUILD_EXAMPLES
 
 AM_CPPFLAGS = \
@@ -36,6 +42,7 @@ pkglib_PROGRAMS += evas_init_shutdown
 evas_init_shutdown_SOURCES = evas-init-shutdown.c
 evas_init_shutdown_LDADD = $(top_builddir)/src/lib/libevas.la
 
+#the ones using ecore_evas follow
 AM_CPPFLAGS += @ECORE_EVAS_CFLAGS@
 
 pkglib_PROGRAMS += evas_load_error_str
@@ -50,15 +57,37 @@ pkglib_PROGRAMS += evas_object_manipulation
 evas_object_manipulation_SOURCES = evas-object-manipulation.c
 evas_object_manipulation_LDADD = $(top_builddir)/src/lib/libevas.la @ECORE_EVAS_LIBS@
 
+#the ones using ecore_evas and edje follow
+AM_CPPFLAGS += @EDJE_CFLAGS@
+
+pkglib_PROGRAMS += evas_aspect_hints
+evas_aspect_hints_DEPS = $(srcdir)/aspect.edc
+evas_aspect_hints_SOURCES = evas-aspect-hints.c
+evas_aspect_hints_LDADD = $(top_builddir)/src/lib/libevas.la @ECORE_EVAS_LIBS@ @EDJE_LIBS@
+
+aspect.edj: ${evas_aspect_hints_DEPS}
+
+.edc.edj:
+	$(edje_cc) -v -id $(srcdir) $< $(builddir)/$(@F)
+
+EDJS = $(EDCS:%.edc=%.edj)
+
+files_DATA += $(EDJS)
+
 endif # if BUILD_EXAMPLES
 
-filesdir = $(datadir)/$(PACKAGE)/examples
-files_DATA = $(srcdir)/enlightenment.png \
+if INSTALL_EXAMPLES
+
+#put here additional data when installing examples
+files_DATA += $(srcdir)/enlightenment.png \
 	$(srcdir)/red.png
 
-if INSTALL_EXAMPLES
 files_DATA += \
+	$(EDCS) \
 	$(srcdir)/evas-buffer-simple.c \
 	$(srcdir)/evas-init-shutdown.c \
-	$(srcdir)/evas-load-error-str.c
+	$(srcdir)/evas-load-error-str.c \
+	$(srcdir)/evas-object-manipulation.c \
+	$(srcdir)/evas-events.c \
+	$(srcdir)/evas-aspect-hints.c
 endif

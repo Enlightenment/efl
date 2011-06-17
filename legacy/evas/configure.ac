@@ -1577,6 +1577,9 @@ AC_ARG_ENABLE([build-examples],
        # meant to be 'real world' usage examples, thus one will be
        # using higher level libraries on these programs
        PKG_CHECK_MODULES([ECORE_EVAS], [ecore-evas ecore])
+       PKG_CHECK_MODULES([EDJE], [edje],
+        [edje_cc=$(pkg-config --variable=prefix edje)/bin/edje_cc])
+       AC_SUBST(edje_cc)
     else
        build_examples="no"
     fi
