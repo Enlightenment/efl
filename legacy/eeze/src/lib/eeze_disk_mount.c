@@ -212,7 +212,6 @@ eeze_disk_mountopts_get(Eeze_Disk *disk)
 EAPI Eina_Bool
 eeze_disk_mount_wrapper_set(Eeze_Disk *disk, const char *wrapper)
 {
-   struct stat s;
    EINA_SAFETY_ON_NULL_RETURN_VAL(disk, EINA_FALSE);
    if (wrapper) EINA_SAFETY_ON_TRUE_RETURN_VAL(!*wrapper, EINA_FALSE);
    else
