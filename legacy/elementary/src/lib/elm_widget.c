@@ -855,10 +855,6 @@ elm_widget_sub_object_del(Evas_Object *obj,
           }
         if (abort_on_warn == 1) abort();
      }
-   if (!sd->child_can_focus)
-     {
-        if (_is_focusable(sobj)) sd->child_can_focus = 0;
-     }
    if (_elm_widget_is(sobj))
      {
         Smart_Data *sd2 = evas_object_smart_data_get(sobj);
@@ -873,6 +869,20 @@ elm_widget_sub_object_del(Evas_Object *obj,
         else
           sd->subobjs = eina_list_remove(sd->subobjs, sobj);
         if (elm_widget_focus_get(sobj)) _unfocus_parents(obj);
+        if ((sd->child_can_focus) && (_is_focusable(sobj)))
+          {
+             Evas_Object *subobj;
+             const Eina_List *l;
+             sd->child_can_focus = EINA_FALSE;
+             EINA_LIST_FOREACH(sd->subobjs, l, subobj)
+               {
+                  if (_is_focusable(subobj))
+                    {
+                       sd->child_can_focus = EINA_TRUE;
+                       break;
+                    }
+               }
+          }
      }
    else
      sd->subobjs = eina_list_remove(sd->subobjs, sobj);
