@@ -52,7 +52,7 @@
  * passing a NULL pointer to the first @ref eina_list_append() call, when this
  * is done a list is created. The other @b very important detail to notice is
  * that the return value is attributed to the @a list variable, this needs to
- * be done everytime we use a a function that alters the contents of the list.
+ * be done every time we use a a function that alters the contents of the list.
  * 
  * Now that we have a list we some elements in it we can look at it's contents.
  * @until printf
@@ -165,7 +165,7 @@
  * Removing elements from a list can be done with ease:
  * @until sagitarius
  * 
- * To replace an element in the list it is not nescessary to remove it and then
+ * To replace an element in the list it is not necessary to remove it and then
  * add with the new value, it is possible to just change the value of a node:
  * @until aquarius
  * 
@@ -231,7 +231,7 @@
  * 
  * Eina_List is a doubly linked list. It can store data of any type in the
  * form of void pointers. It has convenience functions to do all the common
- * operations which means it should rarely if ever be nescessary to directly
+ * operations which means it should rarely if ever be necessary to directly
  * access the struct's fields. Nevertheless it can be useful to understand the
  * inner workings of the data structure being used.
  * 

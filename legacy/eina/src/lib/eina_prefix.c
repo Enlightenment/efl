@@ -222,7 +222,7 @@ _try_argv(Eina_Prefix *pfx, const char *argv0)
              return 1;
           }
         IF_FREE_NULL(pfx->exe_path);
-        DBG("Non existant argv0: %s\n", argv0);
+        DBG("Non existent argv0: %s\n", argv0);
 	return 0;
      }
    /* 2. relative path */

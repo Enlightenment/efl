@@ -151,7 +151,7 @@ typedef Eina_Bool (*Eina_Simple_XML_Attribute_Cb)(void *data, const char *key, c
  *        not a NULL terminated string!), the forth is where this
  *        content is located inside @a buf (does not include tag
  *        start, for instance "<!DOCTYPE value>" the offset points at
- *        "value"), the fifth is the size of the content. Whenver this
+ *        "value"), the fifth is the size of the content. Whenever this
  *        function return EINA_FALSE the parser will abort.  @param
  *        data what to give as context to @a func.
  *

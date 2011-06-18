@@ -28,7 +28,7 @@
  * @page eina_accessor_example_01_page Eina_Accessor usage
  * @dontinclude eina_accessor_01.c
  *
- * We start by including neccessary headers, declaring variables and
+ * We start by including necessary headers, declaring variables and
  * initializing eina:
  * @skip #include
  * @until eina_init
