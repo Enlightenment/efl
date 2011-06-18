@@ -143,6 +143,7 @@ evas_object_layer_set(Evas_Object *obj, short l)
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return;
    MAGIC_CHECK_END();
+   if (obj->delete_me) return;
    if (evas_object_intercept_call_layer_set(obj, l)) return;
    if (obj->smart.parent) return;
    if (obj->cur.layer == l)
@@ -150,6 +151,8 @@ evas_object_layer_set(Evas_Object *obj, short l)
 	evas_object_raise(obj);
 	return;
      }
+   if (l < EVAS_LAYER_MIN) l = EVAS_LAYER_MIN;
+   else if (l > EVAS_LAYER_MAX) l = EVAS_LAYER_MAX;
    e = obj->layer->evas;
    evas_object_release(obj, 1);
    obj->cur.layer = l;
