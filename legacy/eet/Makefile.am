@@ -38,7 +38,6 @@ m4/efl_coverage.m4 \
 m4/efl_doxygen.m4 \
 m4/efl_fnmatch.m4 \
 m4/efl_tests.m4 \
-m4/efl_threads.m4 \
 m4/efl_path_max.m4 \
 README.in \
 README
