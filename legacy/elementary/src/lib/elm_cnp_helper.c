@@ -18,7 +18,6 @@
 # define cnp_debug(x...)
 #endif
 
-typedef struct _Paste_Image   Paste_Image;
 typedef struct _Cnp_Selection Cnp_Selection;
 typedef struct _Escape        Escape;
 typedef struct _Tmp_Info      Tmp_Info;
@@ -55,13 +54,6 @@ enum
    CNP_ATOM_text_plain,
 
    CNP_N_ATOMS,
-};
-
-struct _Paste_Image
-{
-   Evas_Object *entry;
-   const char  *file;
-   Evas_Object *img;
 };
 
 struct _Cnp_Selection
@@ -112,7 +104,7 @@ struct _Cnp_Atom
 struct _Saved_Type
 {
    const char  **types;
-   Paste_Image  *pi;
+   char         *imgfile;
    int           ntypes;
    int           x, y;
    Eina_Bool     textreq: 1;
@@ -153,9 +145,7 @@ static int notify_handler_uri(Cnp_Selection *sel, Ecore_X_Event_Selection_Notify
 static int notify_handler_html(Cnp_Selection *sel, Ecore_X_Event_Selection_Notify *notify);
 static int vcard_receive(Cnp_Selection *sed, Ecore_X_Event_Selection_Notify *notify);
 
-static Paste_Image *pasteimage_alloc(const char *file, int pathlen);
-static Eina_Bool pasteimage_append(Paste_Image *pi, Evas_Object *entry);
-static void pasteimage_free(Paste_Image *pi);
+static Eina_Bool pasteimage_append(char *file, Evas_Object *entry);
 
 /* Optimisation: Turn this into a 256 byte table:
  *	then can lookup in one index, not N checks */
@@ -377,8 +367,6 @@ static void *dragdonedata = NULL;
 static int _elm_cnp_init_count = 0;
 /* FIXME: who left this out of XAtoms.h */
 static Ecore_X_Atom clipboard_atom;
-
-static Eina_List *pastedimages = NULL;
 
 /**
  * Drag & Drop functions
@@ -719,6 +707,19 @@ notify_handler_text(Cnp_Selection *sel, Ecore_X_Event_Selection_Notify *notify)
    char *str;
 
    data = notify->data;
+
+   if (sel->datacb)
+     {
+        Elm_Selection_Data ddata;
+
+        ddata.x = ddata.y = 0;
+        ddata.format = ELM_SEL_FORMAT_TEXT;
+        ddata.data = data->data;
+        ddata.len = data->length;
+        sel->datacb(sel->udata, sel->widget, &ddata);
+        return 0;
+     }
+
    cnp_debug("Notify handler text %d %d %p\n", data->format,data->length, data->data);
    str = mark_up((char *)data->data, data->length, NULL);
    cnp_debug("String is %s (from %s)\n", str, data->data);
@@ -736,7 +737,6 @@ notify_handler_uri(Cnp_Selection *sel, Ecore_X_Event_Selection_Notify *notify)
 {
    Ecore_X_Selection_Data *data;
    Ecore_X_Selection_Data_Files *files;
-   Paste_Image *pi;
    char *p;
 
    data = notify->data;
@@ -774,17 +774,15 @@ notify_handler_uri(Cnp_Selection *sel, Ecore_X_Event_Selection_Notify *notify)
         p += strlen("file://");
      }
 
-   if (savedtypes.pi) pasteimage_free(savedtypes.pi);
-   pi = pasteimage_alloc(p, strlen(p));
+   if (savedtypes.imgfile) free((void*)savedtypes.imgfile);
    if (savedtypes.textreq)
      {
         savedtypes.textreq = 0;
-        savedtypes.pi = pi;
+        savedtypes.imgfile = strdup(p);
      }
    else
      {
-        pasteimage_append(pi, sel->requestwidget);
-        savedtypes.pi = NULL;
+        pasteimage_append(p, sel->requestwidget);
      }
    return 0;
 }
@@ -851,7 +849,6 @@ notify_handler_image(Cnp_Selection *sel, Ecore_X_Event_Selection_Notify *notify)
 {
    Ecore_X_Selection_Data *data;
    Tmp_Info *tmp;
-   Paste_Image *pi;
 
    cnp_debug("got a png (or a jpeg)!\n");
    data = notify->data;
@@ -876,8 +873,7 @@ notify_handler_image(Cnp_Selection *sel, Ecore_X_Event_Selection_Notify *notify)
    munmap(tmp->map,data->length);
 
    /* FIXME: Add to paste image data to clean up */
-   pi = pasteimage_alloc(tmp->filename, strlen(tmp->filename));
-   pasteimage_append(pi, sel->requestwidget);
+   pasteimage_append(tmp->filename, sel->requestwidget);
 
    tmpinfo_free(tmp);
    return 0;
@@ -986,52 +982,20 @@ uri_converter(char *target __UNUSED__, void *data, int size __UNUSED__, void **d
    return EINA_TRUE;
 }
 
-static Paste_Image *
-pasteimage_alloc(const char *file, int pathlen)
-{
-   Paste_Image *pi;
-   char *filebuf;
-   int prefixlen = strlen("file://");
-
-   pi = calloc(1, sizeof(Paste_Image));
-   if (!pi) return NULL;
-
-   if (file)
-     {
-        if (strstr(file,"file://")) file += prefixlen;
-        filebuf = alloca(pathlen + 1);
-        strncpy(filebuf, file, pathlen);
-        filebuf[pathlen] = 0;
-        pi->file = strdup(filebuf);
-     }
-   else file = NULL;
-
-   return pi;
-}
-
-static void
-pasteimage_free(Paste_Image *pi)
-{
-   if (!pi) return;
-   if (pi->file) free((void*)pi->file);
-   free(pi);
-}
-
 static Eina_Bool
-pasteimage_append(Paste_Image *pi, Evas_Object *entry)
+pasteimage_append(char *file, Evas_Object *entry)
 {
    char *entrytag;
    int len;
    static const char *tagstring = "<item absize=240x180 href=file://%s></item>";
 
-   if (!pi) return EINA_FALSE;
+   if (!file) return EINA_FALSE;
    if (!entry) return EINA_FALSE;
 
-   len = strlen(tagstring)+strlen(pi->file);
+   len = strlen(tagstring)+strlen(file);
 
-   pastedimages = eina_list_append(pastedimages, pi);
    entrytag = alloca(len + 1);
-   snprintf(entrytag, len + 1, tagstring, pi->file);
+   snprintf(entrytag, len + 1, tagstring, file);
    elm_entry_entry_insert(entry, entrytag);
 
    return EINA_TRUE;
@@ -1154,7 +1118,8 @@ _dnd_enter(void *data __UNUSED__, int etype __UNUSED__, void *ev)
              /* Request it, so we know what it is */
              cnp_debug("Sending uri request\n");
              savedtypes.textreq = 1;
-             savedtypes.pi = NULL; /* FIXME: Free? */
+             if (savedtypes.imgfile) free((void*)savedtypes.imgfile);
+             savedtypes.imgfile = NULL;
              ecore_x_selection_xdnd_request(enter->win, text_uri);
           }
      }
@@ -1236,9 +1201,9 @@ found:
    if (i == CNP_ATOM_text_urilist)
      {
         cnp_debug("We found a URI... (%scached) %s\n",
-                  savedtypes.pi ? "" : "not ",
-                  savedtypes.pi->file);
-        if (savedtypes.pi)
+                  savedtypes.imgfile ? "" : "not ",
+                  savedtypes.imgfile);
+        if (savedtypes.imgfile)
           {
              char *entrytag;
              static const char *tagstring = "<item absize=240x180 href="
@@ -1253,33 +1218,33 @@ found:
                   int len;
                   ddata.format = ELM_SEL_FORMAT_MARKUP;
 
-                  pastedimages = eina_list_append(pastedimages, savedtypes.pi);
-                  len = strlen(tagstring) + strlen(savedtypes.pi->file);
+                  len = strlen(tagstring) + strlen(savedtypes.imgfile);
                   entrytag = alloca(len + 1);
-                  snprintf(entrytag, len + 1, tagstring, savedtypes.pi->file);
+                  snprintf(entrytag, len + 1, tagstring, savedtypes.imgfile);
                   ddata.data = entrytag;
                   cnp_debug("Insert %s\n", (char *)ddata.data);
                   dropable->dropcb(dropable->cbdata, dropable->obj, &ddata);
                   ecore_x_dnd_send_finished();
+                  if (savedtypes.imgfile) free((void*)savedtypes.imgfile);
+                  savedtypes.imgfile = NULL;
+                   
                   return EINA_TRUE;
                }
              else if (dropable->types & ELM_SEL_FORMAT_IMAGE)
                {
-                  cnp_debug("Doing image insert (%s)\n", savedtypes.pi->file);
+                  cnp_debug("Doing image insert (%s)\n", savedtypes.imgfile);
                   ddata.format = ELM_SEL_FORMAT_IMAGE;
-                  ddata.data = (char *)savedtypes.pi->file;
+                  ddata.data = (char *)savedtypes.imgfile;
                   dropable->dropcb(dropable->cbdata, dropable->obj, &ddata);
                   ecore_x_dnd_send_finished();
-
-                  pasteimage_free(savedtypes.pi);
-                  savedtypes.pi = NULL;
+                  if (savedtypes.imgfile) free((void*)savedtypes.imgfile);
+                  savedtypes.imgfile = NULL;
 
                   return EINA_TRUE;
                }
              else
                {
                   cnp_debug("Item doesn't support images... passing\n");
-                  pasteimage_free(savedtypes.pi);
                   return EINA_TRUE;
                }
           }
@@ -1450,11 +1415,8 @@ elm_drop_target_del(Evas_Object *obj)
    ecore_event_handler_del(handler_drop);
    ecore_event_handler_del(handler_enter);
 
-   if (savedtypes.pi)
-     {
-        pasteimage_free(savedtypes.pi);
-        savedtypes.pi = NULL;
-     }
+   if (savedtypes.imgfile) free((void*)savedtypes.imgfile);
+   savedtypes.imgfile = NULL;
 
    return EINA_TRUE;
 }
