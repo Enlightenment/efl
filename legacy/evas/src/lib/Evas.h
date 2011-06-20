@@ -4183,6 +4183,10 @@ EAPI void              evas_map_point_color_get          (const Evas_Map *m, int
  * lines/columns inside its container, padding hints to set the
  * padding between each individual child, etc.
  *
+ * Examples on their usage:
+ * - @ref Example_Evas_Size_Hints "evas-hints.c"
+ * - @ref Example_Evas_Aspect_Hints "evas-aspect-hints.c"
+ *
  * @ingroup Evas_Object_Group
  */
 
