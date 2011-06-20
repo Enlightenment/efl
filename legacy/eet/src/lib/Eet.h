@@ -317,9 +317,9 @@ eet_clearcache(void);
  * The following example will serve as an introduction to most, if not all,
  * of these functions.
  *
- * @dontinclude eet-file.c
  * If you are only using Eet, this is the only header you need to include.
- * @line Eet.h
+ * @dontinclude eet-file.c
+ * @skipline Eet.h
  *
  * Now let's create ourselves an eet file to play with. The following function
  * shows step by step how to open a file and write some data in it.
