@@ -807,6 +807,7 @@ _edje_embryo_fn_get_part_id(Embryo_Program *ep, Embryo_Cell *params)
    Edje_Part_Collection *col;
    Edje_Part **part;
    char *p;
+   unsigned int i;
 
    CHKPARAM(1);
    ed = embryo_program_data_get(ep);
@@ -814,7 +815,8 @@ _edje_embryo_fn_get_part_id(Embryo_Program *ep, Embryo_Cell *params)
    if (!p) return -1;
    col = ed->collection;
    if (!col) return -1;
-   for (part = col->parts; *part; part++)
+   part = col->parts;
+   for (i = 0; i < col->parts_count; i++, part++)
      {
         if (!(*part)->name) continue;
         if (!strcmp((*part)->name, p)) return (*part)->id;
