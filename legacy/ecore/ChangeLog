@@ -234,3 +234,6 @@
         * Removed support for evas xrender engine from ecore-evas as
         it is not a deprecated engine in evas and no longer needs support.
 
+2011-06-20  Jihoon Kim
+
+        * Ecore_IMF: Added ecore_imf_context_input_panel_enabled_set/get API

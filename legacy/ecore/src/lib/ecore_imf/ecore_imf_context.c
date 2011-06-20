@@ -184,6 +184,10 @@ ecore_imf_context_add(const char *id)
     * set on the immodule */
    ecore_imf_context_autocapital_type_set(ctx, ECORE_IMF_AUTOCAPITAL_TYPE_SENTENCE);
 
+   /* default input panel enabled status is EINA_TRUE, so let's make sure it's
+    * set on the immodule */
+   ecore_imf_context_input_panel_enabled_set(ctx, EINA_TRUE);
+
    /* default input_mode is ECORE_IMF_INPUT_MODE_FULL, so let's make sure it's
     * set on the immodule */
    ecore_imf_context_input_mode_set(ctx, ECORE_IMF_INPUT_MODE_FULL);
@@ -1071,5 +1075,49 @@ ecore_imf_context_input_panel_language_get (Ecore_IMF_Context *ctx)
      }
 
    return ctx->input_panel_lang;
+}
+
+/**
+ * Set whether the Input Method Context should request to show the input panel automatically
+ * when the widget has focus.
+ *
+ * @param ctx An #Ecore_IMF_Context.
+ * @param enabled If true, the input panel will be shown when the widget is clicked or has focus.
+ * @ingroup Ecore_IMF_Context_Group
+ * @since 1.1.0
+ */
+EAPI void
+ecore_imf_context_input_panel_enabled_set (Ecore_IMF_Context *ctx,
+                                           Eina_Bool enabled)
+{
+   if (!ECORE_MAGIC_CHECK(ctx, ECORE_MAGIC_CONTEXT))
+     {
+        ECORE_MAGIC_FAIL(ctx, ECORE_MAGIC_CONTEXT,
+                         "ecore_imf_context_input_panel_enabled_set");
+        return;
+     }
+
+   ctx->input_panel_enabled = enabled;
+}
+
+/**
+ * Get whether the Input Method Context requests to show the input panel automatically.
+ *
+ * @param ctx An #Ecore_IMF_Context.
+ * @return Return the attribute to show the input panel automatically
+ * @ingroup Ecore_IMF_Context_Group
+ * @since 1.1.0
+ */
+EAPI Eina_Bool
+ecore_imf_context_input_panel_enabled_get (Ecore_IMF_Context *ctx)
+{
+   if (!ECORE_MAGIC_CHECK(ctx, ECORE_MAGIC_CONTEXT))
+     {
+        ECORE_MAGIC_FAIL(ctx, ECORE_MAGIC_CONTEXT,
+                         "ecore_imf_context_input_panel_enabled_get");
+        return EINA_FALSE;
+     }
+
+   return ctx->input_panel_enabled;
 }
 
