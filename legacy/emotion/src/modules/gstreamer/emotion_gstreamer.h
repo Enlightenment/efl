@@ -8,6 +8,8 @@
 #define HTTP_STREAM 0
 #define RTSP_STREAM 1
 #include <gst/gst.h>
+#include <glib-object.h>
+#include <gst/video/gstvideosink.h>
 
 #include "emotion_private.h"
 
@@ -22,6 +24,7 @@ struct _Emotion_Video_Stream
    gint        fps_num;
    gint        fps_den;
    guint32     fourcc;
+   int         index;
 };
 
 typedef struct _Emotion_Audio_Stream Emotion_Audio_Stream;
@@ -68,7 +71,6 @@ struct _Emotion_Gstreamer_Video
 
    /* Evas object */
    Evas_Object      *obj;
-   unsigned char    *obj_data;
 
    /* Characteristics of stream */
    double            position;
@@ -77,8 +79,6 @@ struct _Emotion_Gstreamer_Video
 
    volatile int      seek_to;
    volatile int      get_poslen;
-
-   Ecore_Pipe       *pipe;
 
    Emotion_Gstreamer_Metadata *metadata;
 
@@ -96,5 +96,48 @@ extern int _emotion_gstreamer_log_domain;
 #define WRN(...) EINA_LOG_DOM_WARN(_emotion_gstreamer_log_domain, __VA_ARGS__)
 #define ERR(...) EINA_LOG_DOM_ERR(_emotion_gstreamer_log_domain, __VA_ARGS__)
 #define CRITICAL(...) EINA_LOG_DOM_CRIT(_emotion_gstreamer_log_domain, __VA_ARGS__)
+
+#define EVAS_TYPE_VIDEO_SINK evas_video_sink_get_type()
+
+#define EVAS_VIDEO_SINK(obj) \
+    (G_TYPE_CHECK_INSTANCE_CAST((obj), \
+    EVAS_TYPE_VIDEO_SINK, EvasVideoSink))
+
+#define EVAS_VIDEO_SINK_CLASS(klass) \
+    (G_TYPE_CHECK_CLASS_CAST((klass), \
+    EVAS_TYPE_VIDEO_SINK, EvasVideoSinkClass))
+
+#define EVAS_IS_VIDEO_SINK(obj) \
+    (G_TYPE_CHECK_INSTANCE_TYPE((obj), \
+    EVAS_TYPE_VIDEO_SINK))
+
+#define EVAS_IS_VIDEO_SINK_CLASS(klass) \
+    (G_TYPE_CHECK_CLASS_TYPE((klass), \
+    EVAS_TYPE_VIDEO_SINK))
+
+#define EVAS_VIDEO_SINK_GET_CLASS(obj) \
+    (G_TYPE_INSTANCE_GET_CLASS((obj), \
+    EVAS_TYPE_VIDEO_SINK, EvasVideoSinkClass))
+
+typedef struct _EvasVideoSink        EvasVideoSink;
+typedef struct _EvasVideoSinkClass   EvasVideoSinkClass;
+typedef struct _EvasVideoSinkPrivate EvasVideoSinkPrivate;
+
+struct _EvasVideoSink {
+    /*< private >*/
+    GstVideoSink parent;
+    EvasVideoSinkPrivate *priv;
+};
+
+struct _EvasVideoSinkClass {
+    /*< private >*/
+    GstVideoSinkClass parent_class;
+};
+
+GstElement *gstreamer_video_sink_new(Emotion_Gstreamer_Video *ev,
+                                     Evas_Object *obj,
+                                     const char *uri);
+
+gboolean    gstreamer_plugin_init(GstPlugin *plugin);
 
 #endif /* __EMOTION_GSTREAMER_H__ */

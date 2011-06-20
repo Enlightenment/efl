@@ -33,7 +33,7 @@ GST_MAJORMINOR=0.10
 
 requirement=""
 PKG_CHECK_MODULES([GSTREAMER],
-   [gstreamer-$GST_MAJORMINOR >= $GST_REQS gstreamer-plugins-base-$GST_MAJORMINOR >= $GSTPLUG_REQS evas >= 0.9.9],
+   [gstreamer-$GST_MAJORMINOR >= $GST_REQS gstreamer-plugins-base-$GST_MAJORMINOR >= $GSTPLUG_REQS gstreamer-video-$GST_MAJORMINOR >= $GSTPLUG_REQS evas >= 0.9.9],
    [
     have_dep="yes"
     requirement="gstreamer-$GST_MAJORMINOR gstreamer-plugins-base-$GST_MAJORMINOR"

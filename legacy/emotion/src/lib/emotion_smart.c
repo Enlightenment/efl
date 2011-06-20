@@ -1547,3 +1547,13 @@ _smart_clip_unset(Evas_Object * obj)
    if (!sd) return;
    evas_object_clip_unset(sd->obj);
 }
+
+EAPI Evas_Object *
+_emotion_image_get(const Evas_Object *obj)
+{
+   Smart_Data *sd;
+
+   sd = evas_object_smart_data_get(obj);
+   if (!sd) return NULL;
+   return sd->obj;
+}

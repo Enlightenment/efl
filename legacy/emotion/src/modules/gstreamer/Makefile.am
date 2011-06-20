@@ -19,8 +19,7 @@ pkgdir = $(libdir)/emotion
 pkg_LTLIBRARIES = gstreamer.la
 gstreamer_la_SOURCES = \
 emotion_gstreamer.c \
-emotion_gstreamer_pipeline.c \
-emotion_gstreamer_pipeline.h
+emotion_sink.c
 gstreamer_la_LIBADD  = @GSTREAMER_LIBS@ $(top_builddir)/src/lib/libemotion.la
 gstreamer_la_LDFLAGS = -no-undefined @lt_enable_auto_import@ -module -avoid-version
 gstreamer_la_LIBTOOLFLAGS = --tag=disable-static
