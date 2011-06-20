@@ -229,3 +229,8 @@
 
         * ecore_con_server_timeout_get/set now applies to client-type servers
 
+2011-06-20  Ulrich Eckhardt
+
+        * Removed support for evas xrender engine from ecore-evas as
+        it is not a deprecated engine in evas and no longer needs support.
+

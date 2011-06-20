@@ -146,12 +146,10 @@ want_ecore_x_input="yes"
 want_ecore_evas="yes"
 want_ecore_evas_software_buffer="yes"
 want_ecore_evas_software_x11="no"
-want_ecore_evas_xrender_x11="no"
 want_ecore_evas_opengl_x11="no"
 want_ecore_evas_software_16_x11="no"
 want_ecore_evas_software_8_x11="no"
 want_ecore_evas_software_xcb="no"
-want_ecore_evas_xrender_xcb="no"
 want_ecore_evas_software_gdi="no"
 want_ecore_evas_software_ddraw="no"
 want_ecore_evas_direct3d="no"
@@ -208,12 +206,10 @@ case "$host_os" in
       want_ecore_imf="yes"
       want_ecore_x="yes"
       want_ecore_evas_software_x11="yes"
-      want_ecore_evas_xrender_x11="yes"
       want_ecore_evas_opengl_x11="yes"
       want_ecore_evas_software_16_x11="yes"
       want_ecore_evas_software_8_x11="yes"
       want_ecore_evas_software_xcb="yes"
-      want_ecore_evas_xrender_xcb="yes"
       want_ecore_evas_software_sdl="yes"
       want_ecore_evas_gl_sdl="yes"
       want_ecore_evas_directfb="yes"
@@ -1277,13 +1273,6 @@ if test "x$have_ecore_evas_software_x11" = "xyes" ; then
    fi
 fi
 
-# ecore_evas_xrender_x11
-
-ECORE_EVAS_CHECK_MODULE([xrender-x11],
-   [${want_ecore_evas_xrender_x11}],
-   [XRender Xlib],
-   [${have_ecore_x_xlib}])
-
 # ecore_evas_opengl_x11
 
 ECORE_EVAS_CHECK_MODULE([opengl-x11],
@@ -1304,20 +1293,11 @@ ECORE_EVAS_CHECK_MODULE([software-8-x11],
     $have_ecore_x_xcb)
 
 
-# ecore_evas_xrender_xcb
-
-ECORE_EVAS_CHECK_MODULE([xrender-xcb],
-   [${want_ecore_evas_xrender_xcb}],
-   [XRender XCB],
-   [${ecore_evas_xcb_deps}])
-
 if test "x$have_ecore_evas_software_x11" = "xyes" -o \
-        "x$have_ecore_evas_xrender_x11" = "xyes" -o \
         "x$have_ecore_evas_opengl_x11" = "xyes" -o \
         "x$have_ecore_evas_software_8_x11" = "xyes" -o \
         "x$have_ecore_evas_software_16_x11" = "xyes" -o \
-        "x$have_ecore_evas_software_xcb" = "xyes" -o \
-        "x$have_ecore_evas_xrender_xcb" = "xyes"; then
+        "x$have_ecore_evas_software_xcb" = "xyes"; then
    AC_DEFINE(BUILD_ECORE_EVAS_X11, 1, [Support for X Window Engines in Ecore_Evas])
    requirements_ecore_evas="ecore-x >= 1.0.0 ${requirements_ecore_evas}"
 fi
@@ -1581,9 +1561,7 @@ if test "x${have_ecore_evas}" = "xyes" ; then
   else
     echo "    Software X11...............: $have_ecore_evas_software_x11"
   fi
-  echo "    XRender X11................: $have_ecore_evas_xrender_x11"
   echo "    OpenGL X11.................: $have_ecore_evas_opengl_x11"
-  echo "    XRender XCB................: $have_ecore_evas_xrender_xcb"
   echo "    Software GDI...............: $have_ecore_evas_software_gdi"
   echo "    Software DirectDraw........: $have_ecore_evas_software_ddraw"
   echo "    Direct3D...................: $have_ecore_evas_direct3d"

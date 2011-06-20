@@ -86,11 +86,7 @@ ecore_evas_engine_type_supported_get(Ecore_Evas_Engine_Type engine)
         return 0;
 #endif
       case ECORE_EVAS_ENGINE_XRENDER_X11:
-#ifdef BUILD_ECORE_EVAS_XRENDER_X11
-        return 1;
-#else
         return 0;
-#endif
       case ECORE_EVAS_ENGINE_OPENGL_X11:
 #ifdef BUILD_ECORE_EVAS_OPENGL_X11
         return 1;
@@ -104,11 +100,7 @@ ecore_evas_engine_type_supported_get(Ecore_Evas_Engine_Type engine)
         return 0;
 #endif
       case ECORE_EVAS_ENGINE_XRENDER_XCB:
-#ifdef BUILD_ECORE_EVAS_XRENDER_XCB
-        return 1;
-#else
         return 0;
-#endif
       case ECORE_EVAS_ENGINE_SOFTWARE_GDI:
 #ifdef BUILD_ECORE_EVAS_SOFTWARE_GDI
         return 1;
@@ -419,22 +411,6 @@ _ecore_evas_constructor_cocoa(int x, int y, int w, int h, const char *extra_opti
 }
 #endif
 
-#ifdef BUILD_ECORE_EVAS_XRENDER_X11
-static Ecore_Evas *
-_ecore_evas_constructor_xrender_x11(int x, int y, int w, int h, const char *extra_options)
-{
-   unsigned int parent = 0;
-   char *disp_name = NULL;
-   Ecore_Evas *ee;
-
-   _ecore_evas_parse_extra_options_x(extra_options, &disp_name, &parent);
-   ee = ecore_evas_xrender_x11_new(disp_name, parent, x, y, w, h);
-   free(disp_name);
-
-   return ee;
-}
-#endif
-
 #ifdef BUILD_ECORE_EVAS_OPENGL_X11
 static Ecore_Evas *
 _ecore_evas_constructor_opengl_x11(int x, int y, int w, int h, const char *extra_options)
@@ -661,12 +637,6 @@ static const struct ecore_evas_engine _engines[] = {
 #endif
 #ifdef BUILD_ECORE_EVAS_SOFTWARE_8_X11
   {"software_8_x11", _ecore_evas_constructor_software_8_x11},
-#endif
-#ifdef BUILD_ECORE_EVAS_XRENDER_X11
-  {"xrender_x11", _ecore_evas_constructor_xrender_x11},
-#endif
-#ifdef BUILD_ECORE_EVAS_XRENDER_XCB
-  {"xrender_xcb", _ecore_evas_constructor_xrender_x11},
 #endif
 #ifdef BUILD_ECORE_EVAS_SOFTWARE_16_X11
   {"software_16_x11", _ecore_evas_constructor_software_16_x11},

@@ -31,10 +31,6 @@
 #  ifdef BUILD_ECORE_EVAS_SOFTWARE_XCB
 #   include <Evas_Engine_Software_X11.h>
 #  endif
-#  ifdef BUILD_ECORE_EVAS_XRENDER_XCB
-#   include <xcb/render.h>
-#   include <Evas_Engine_XRender_X11.h>
-#  endif
 #  ifdef BUILD_ECORE_EVAS_SOFTWARE_8_X11
 #   include <Evas_Engine_Software_8_X11.h>
 #  endif
@@ -44,10 +40,6 @@
 #  include <X11/Xutil.h>
 #  ifdef BUILD_ECORE_EVAS_SOFTWARE_XLIB
 #   include <Evas_Engine_Software_X11.h>
-#  endif
-#  ifdef BUILD_ECORE_EVAS_XRENDER_X11
-#   include <X11/extensions/Xrender.h>
-#   include <Evas_Engine_XRender_X11.h>
 #  endif
 #  ifdef BUILD_ECORE_EVAS_OPENGL_X11
 #    include <Evas_Engine_GL_X11.h>
