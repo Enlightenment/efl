@@ -91,6 +91,10 @@ evas_common_font_query_run_font_end_get(RGBA_Font *fn, RGBA_Font_Int **script_fi
                }
           }
 
+        /* Abort if we reached the end */
+        if (itr == run_end)
+           break;
+
         /* If the script font doesn't fit even one char, find a new font. */
         if (itr == text)
           {
