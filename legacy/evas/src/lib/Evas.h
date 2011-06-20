@@ -1132,6 +1132,9 @@ EAPI Eina_Bool         evas_async_events_put             (const void *target, Ev
  * The groups within present you functions that deal with the canvas
  * directly, too, and not yet with its @b objects. They are the
  * functions you need to use at a minimum to get a working canvas.
+ *
+ * Some of the funcions in this group are exemplified @ref
+ * Example_Evas_Events "here".
  */
 
 /**
@@ -1968,6 +1971,9 @@ EAPI Eina_Bool         evas_pointer_inside_get           (const Evas *e) EINA_WA
  * Functions relating to canvas events, be they input (mice,
  * keyboards, etc) or output ones (internal states changing, etc).
  *
+ * Some of the funcions in this group are exemplified @ref
+ * Example_Evas_Events "here".
+ *
  * @ingroup Evas_Canvas
  */
 
@@ -2165,6 +2171,9 @@ EAPI void              evas_post_event_callback_remove_full (Evas *e, Evas_Objec
  * programmer can then tell the canvas to ignore input events,
  * bringing it back to normal behavior when he/she wants.
  *
+ * Some of the funcions in this group are exemplified @ref
+ * Example_Evas_Events "here".
+ *
  * @ingroup Evas_Canvas_Events
  */
 
@@ -2267,6 +2276,9 @@ EAPI void              evas_event_thaw_eval              (Evas *e) EINA_ARG_NONN
  * events to the canvas to be processed. This is only required if
  * operating Evas directly. Modules such as Ecore_Evas do that for
  * you.
+ *
+ * Some of the funcions in this group are exemplified @ref
+ * Example_Evas_Events "here".
  *
  * @ingroup Evas_Canvas_Events
  */
@@ -2655,6 +2667,9 @@ EAPI const Eina_List  *evas_font_path_list               (const Evas *e) EINA_WA
  *
  * Methods that are broadly used, like those that change the color,
  * clippers and geometry of an Evas object.
+ *
+ * A thorough example on this group of functions can be seen @ref
+ * Example_Evas_Object_Manipulation "here".
  *
  * @ingroup Evas_Object_Group
  */
