@@ -23,26 +23,170 @@
 #include "eina_types.h"
 
 /**
+ * @page eina_magic_example_01_page
+ * @dontinclude eina_magic_01.c
+ *
+ * Whenever using Eina we must include it:
+ * @skipline #include
+ *
+ * For this example we are going to define two classes, person and pilot, and
+ * since every pilot is a person we use inheritance. To be type safe we are
+ * going to add EINA_MAGIC to our classes:
+ * @until struct _pilot pilot
+ * @note The values of BASETYPE_MAGIC and SUBTYPE_MAGIC have no meaning, the
+ * only important thing about them is that they be unique.
+ *
+ * Here we have a function to create a perso given a name, nothing too fancy:
+ * @until }
+ *
+ * And now the counterpart, a function the free a person.
+ * @until {
+ * Before we start releasing resources we check that the pointer we were given
+ * actually points to a person, and if not we will print an error message and
+ * quit:
+ * @until }
+ * @note EINA_MAGIC_FAIL is a macro that make's it easy to print an appropriate
+ * (and consistent) error message.
+ * Now knowing that ptr is indeed of type person we prooced to set EINA_MAGIC to
+ * EINA_MAGIC_NONE and free alocated memory:
+ * @until }
+ * @note Setting EINA_MAGIC to EINA_MAGIC_NONE is important to prevent the
+ * struct from being used after freed.
+ *
+ * Now we have our function to create a pilot, this one is a little more complex
+ * because we need to set EINA_MAGIC for the pilot and pilot->base, this is very
+ * important so that checking the EINA_MAGIC of (person*)my_pilot will work:
+ * @until }
+ *
+ * The function to free a pilot is not too different from the one that frees a
+ * person:
+ * @until }
+ * @until }
+ *
+ * We also create functions to print a person or a pilot that check the type of
+ * the pointers they receive:
+ * @until }
+ * @until }
+ *
+ * And on to our main function where we declare some variables and initialize
+ * Eina:
+ * @until eina_init
+ *
+ * For Eina to be able to provide more informative error messages we are going
+ * to give names to our EINA_MAGIC types:
+ * @until string_set
+ *
+ * Since our types won't live longer than the scope of the current function we
+ * can set the name without eina making a copy of the string:
+ * @until static_set
+ *
+ * Now we create a person, a pilot and print both as persons:
+ * @until person *
+ *
+ * Now we try to print both as pilots, which will obvisouly not work since base
+ * is not a pilot:
+ * @until pilot(sub
+ *
+ * That's all folks:
+ * @until }
+ *
+ * See full source @ref eina_magic_example_01_c "here".
+ */
+/**
+ * @page eina_magic_example_01_c Eina_Magic
+ * @include eina_magic_01.c
+ * @example eina_magic_01.c
+ */
+/**
  * @addtogroup Eina_Tools_Group Tools
  *
  * @{
  */
-
 /**
  * @defgroup Eina_Magic_Group Magic
+ *
+ * @brief Eina_Magic provides run-time type-checking.
+ *
+ * C is a weak statically typed language, in other words, it will just check for
+ * types during compile time and any cast will make the compiler believe the 
+ * type is correct.
+ *
+ * In real world code we often need to deal with casts, either explicit or
+ * implicit by means of @c void*. We also need to resort to casts when doing
+ * inheritance in C.
+ *
+ * Eina_Magic give us a way to do casts and still be certain of the type we are
+ * opearting on.
+ *
+ * @note It should be noted that it is considered good practice to @b disable
+ * Eina_Magic for production code. The reasoning is that any Eina_Magic errors
+ * should have been caught during testing and therefore there is no reason to
+ * incur the performance downside of Eina_Magic.
+ *
+ * An @ref eina_magic_example_01_page "example" should elucidate matters.
  *
  * @{
  */
 
+/**
+ * An abstract type for a magic number.
+ */
 typedef unsigned int Eina_Magic;
 
 /**
- * @typedef Eina_Magic
- * An abstract type for a magic number.
+ * @brief Return the string associated to the given magic identifier.
+ *
+ * @param magic The magic identifier.
+ * @return The string associated to the identifier.
+ *
+ * This function returns the string associated to @p magic. Even if none are
+ * found this function still returns non @c NULL, in this case an identifier
+ * such as "(none)", "(undefined)" or "(unknown)".
+ *
+ * The following identifiers may be returned whenever magic is
+ * invalid, with their meanings:
+ *
+ *   - (none): no magic was registered exists at all.
+ *   - (undefined): magic was registered and found, but no string associated.
+ *   - (unknown): magic was not found in the registry.
+ *
+ * @warning The returned value must not be freed.
  */
 EAPI const char *eina_magic_string_get(Eina_Magic magic) EINA_WARN_UNUSED_RESULT;
+/**
+ * @brief Set the string associated to the given magic identifier.
+ *
+ * @param magic The magic identifier.
+ * @param magic_name The string associated to the identifier, must not
+ *        be @c NULL.
+ *
+ * @return #EINA_TRUE on success, #EINA_FALSE on failure.
+ *
+ * This function sets the string @p magic_name to @p magic. It is not
+ * checked if number or string are already set, in which case you will end with
+ * duplicates. Internally, eina will make a copy of @p magic_name.
+ *
+ * @see eina_magic_string_static_set()
+ */
 EAPI Eina_Bool   eina_magic_string_set(Eina_Magic  magic,
                                        const char *magic_name) EINA_ARG_NONNULL(2);
+
+/**
+ * @brief Set the string associated to the given magic identifier.
+ *
+ * @param magic The magic identifier.
+ * @param magic_name The string associated to the identifier, must not be
+ *        @c NULL.
+ *
+ * @return #EINA_TRUE on success, #EINA_FALSE on failure.
+ *
+ * This function sets the string @p magic_name to @p magic. It is not checked if
+ * number or string are already set, in which case you might end with
+ * duplicates. Eina will @b not make a copy of @p magic_name, this means that
+ * @p magic_name has to be a valid pointer for as long as @p magic is used.
+ *
+ * @see eina_magic_string_set()
+ */
 EAPI Eina_Bool   eina_magic_string_static_set(Eina_Magic  magic,
                                               const char *magic_name) EINA_ARG_NONNULL(2);
 
@@ -118,6 +262,32 @@ EAPI Eina_Bool   eina_magic_string_static_set(Eina_Magic  magic,
                   __FUNCTION__,           \
                   __LINE__);
 
+/**
+ * @brief Display a message or abort if a magic check failed.
+ *
+ * @param d The checked data pointer.
+ * @param m The magic identifer to check.
+ * @param req_m The requested magic identifier to check.
+ * @param file The file in which the magic check failed.
+ * @param fnc The function in which the magic check failed.
+ * @param line The line at which the magic check failed.
+ *
+ * @warning You should @b strongly consider using @ref EINA_MAGIC_FAIL(d, m)
+ * instead.
+ *
+ * This function displays an error message if a magic check has
+ * failed, using the following logic in the following order:
+ * @li If @p d is @c NULL, a message warns about a @c NULL pointer.
+ * @li Otherwise, if @p m is equal to #EINA_MAGIC_NONE, a message
+ * warns about a handle that was already freed.
+ * @li Otherwise, if @p m is equal to @p req_m, a message warns about
+ * a handle that is of wrong type.
+ * @li Otherwise, a message warns you about ab-using that function...
+ *
+ * If the environment variable EINA_LOG_ABORT is set, abort() is
+ * called and the program stops. It is useful for debugging programs
+ * with gdb.
+ */
 EAPI void eina_magic_fail(void *d, Eina_Magic m, Eina_Magic req_m,
                           const char *file, const char *fnc,
                           int line) EINA_ARG_NONNULL(4, 5);
