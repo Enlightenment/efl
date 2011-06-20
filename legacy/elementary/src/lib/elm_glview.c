@@ -8,29 +8,33 @@
  *
  * Signals that you can add callbacks for are:
  *
- * "clicked" - This is called when a user has clicked the image
  */
 typedef struct _Widget_Data Widget_Data;
 
 struct _Widget_Data
 {
-   Evas_Object	           *glview_image;
+   Evas_Object	            *glview_image;
 
-   Elm_GLView_Mode          mode;
+   Elm_GLView_Mode           mode;
    Elm_GLView_Resize_Policy  scale_policy;
-   Elm_GLView_Render_Policy render_policy;
+   Elm_GLView_Render_Policy  render_policy;
 
-   Evas_GL                 *evasgl;
-   Evas_GL_Config           config;
-   Evas_GL_Surface         *surface;
-   Evas_GL_Context         *context;
+   Evas_GL                  *evasgl;
+   Evas_GL_Config            config;
+   Evas_GL_Surface          *surface;
+   Evas_GL_Context          *context;
 
-   Evas_Coord               w, h;
+   Evas_Coord                w, h;
 
-   Elm_GLView_Func          render_func;
-   Ecore_Idle_Enterer      *render_idle_enterer;
+   Elm_GLView_Func           init_func;
+   Elm_GLView_Func           del_func;
+   Elm_GLView_Func           resize_func;
+   Elm_GLView_Func           render_func;
 
-   Eina_Bool                initialized;
+   Ecore_Idle_Enterer       *render_idle_enterer;
+
+   Eina_Bool                 initialized;
+   Eina_Bool                 resized;
 };
 
 static const char *widtype = NULL;
@@ -45,6 +49,13 @@ _del_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
+   
+   // Call delete func if it's registered
+   if (wd->del_func) 
+     {
+        evas_gl_make_current(wd->evasgl, wd->surface, wd->context);
+        wd->del_func(obj);
+     }
 
    if (wd->render_idle_enterer) ecore_idle_enterer_del(wd->render_idle_enterer);
 
@@ -107,6 +118,9 @@ _glview_resize(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void
    Evas_Coord w, h;
 
    if (!wd) return;
+
+   wd->resized = EINA_TRUE;
+
    if (wd->scale_policy == ELM_GLVIEW_RESIZE_POLICY_RECREATE)
      {
         evas_object_geometry_get(wd->glview_image, NULL, NULL, &w, &h);
@@ -119,11 +133,13 @@ _glview_resize(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void
         wd->w = w;
         wd->h = h;
         _glview_update_surface(data);
+        /*
         if (wd->render_func)
           {
              evas_gl_make_current(wd->evasgl, wd->surface, wd->context);
              wd->render_func(data);
           }
+          */
      }
 }
 
@@ -137,7 +153,21 @@ _render_cb(void *obj)
    if (!evas_gl_make_current(wd->evasgl, wd->surface, wd->context))
      {
         wd->render_idle_enterer = NULL;
+        ERR("Failed doing make current.\n");
         return EINA_FALSE;
+     }
+
+   // Call the init function if it hasn't been called already
+   if (!wd->initialized)
+     {
+        if (wd->init_func) wd->init_func(obj);
+        wd->initialized = EINA_TRUE;
+     }
+
+   if (wd->resized)
+     {
+        if (wd->resize_func) wd->resize_func(obj);
+        wd->resized = EINA_FALSE;
      }
 
    // Call the render function
@@ -183,6 +213,7 @@ _set_render_policy_callback(Evas_Object *obj)
       case ELM_GLVIEW_RENDER_POLICY_ALWAYS:
          // Unset the pixel getter callback if set already
          evas_object_image_pixels_get_callback_set(wd->glview_image, NULL, NULL);
+
          break;
       default:
          ERR("Invalid Render Policy.\n");
@@ -234,16 +265,23 @@ elm_glview_add(Evas_Object *parent)
    evas_object_show(wd->glview_image);
 
    // Initialize variables
-   wd->mode          = 0;
-   wd->scale_policy  = ELM_GLVIEW_RESIZE_POLICY_RECREATE;
-   wd->render_policy = ELM_GLVIEW_RENDER_POLICY_ON_DEMAND;
-   wd->config        = cfg;
-   wd->surface       = NULL;
+   wd->mode                = 0;
+   wd->scale_policy        = ELM_GLVIEW_RESIZE_POLICY_RECREATE;
+   wd->render_policy       = ELM_GLVIEW_RENDER_POLICY_ON_DEMAND;
+   wd->config              = cfg;
+   wd->surface             = NULL;
 
-   wd->w             = 64;
-   wd->h             = 64;
+   // Initialize it to (64,64)  (It's an arbitrary value)
+   wd->w                   = 64;
+   wd->h                   = 64;
 
+   // Initialize the rest of the values
+   wd->init_func           = NULL;
+   wd->del_func            = NULL;
+   wd->render_func         = NULL;
    wd->render_idle_enterer = NULL;
+   wd->initialized         = EINA_FALSE;
+   wd->resized             = EINA_FALSE;
 
    // Create Context
    if (!wd->context)
@@ -321,12 +359,12 @@ elm_glview_mode_set(Evas_Object *obj, Elm_GLView_Mode mode)
 }
 
 /**
- * Set the scaling policy for the glview object.
+ * Set the resize policy for the glview object.
  *
  * @param obj The glview object.
  * @param policy The scaling policy.
  *
- * By default, the scaling policy is set to ELM_GLVIEW_RESIZE_POLICY_RECREATE.
+ * By default, the resize policy is set to ELM_GLVIEW_RESIZE_POLICY_RECREATE.
  * When resize is called it destroys the previous surface and recreates the newly
  * specified size. If the policy is set to ELM_GLVIEW_RESIZE_POLICY_SCALE, however,
  * glview only scales the image object and not the underlying GL Surface.
@@ -334,7 +372,7 @@ elm_glview_mode_set(Evas_Object *obj, Elm_GLView_Mode mode)
  * @ingroup GLView
  */
 EAPI Eina_Bool
-elm_glview_scale_policy_set(Evas_Object *obj, Elm_GLView_Resize_Policy policy)
+elm_glview_resize_policy_set(Evas_Object *obj, Elm_GLView_Resize_Policy policy)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -435,6 +473,70 @@ elm_glview_size_get(const Evas_Object *obj, int *width, int *height)
    if (width) *width = wd->w;
    if (height) *height = wd->h;
 }
+
+/**
+ * Set the init function that runs once in the main loop.
+ *
+ * @param obj The glview object.
+ * @param func The init function to be registered.
+ *
+ * The registered init function gets called once during the render loop.
+ * 
+ * @ingroup GLView
+ */
+EAPI void
+elm_glview_init_func_set(Evas_Object *obj, Elm_GLView_Func func)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+
+   wd->initialized = EINA_FALSE;
+   wd->init_func = func;
+}
+
+/**
+ * Set the render function that runs in the main loop.
+ *
+ * @param obj The glview object.
+ * @param func The delete function to be registered.
+ *
+ * The registered del function gets called when GLView object is deleted.
+ * 
+ * @ingroup GLView
+ */
+EAPI void
+elm_glview_del_func_set(Evas_Object *obj, Elm_GLView_Func func)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+    if (!wd) return;
+
+   wd->del_func = func;
+}
+
+/**
+ * Set the resize function that gets called when resize happens.
+ *
+ * @param obj The glview object.
+ * @param func The resize function to be registered.
+ *
+ * @ingroup GLView
+ */
+EAPI void
+elm_glview_resize_func_set(Evas_Object *obj, Elm_GLView_Func func)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+    if (!wd) 
+     {
+        ERR("Invalid Widget Object.\n");
+        return;
+     }
+
+   wd->resize_func = func;
+}
+
 
 /**
  * Set the render function that runs in the main loop.

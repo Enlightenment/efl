@@ -134,6 +134,7 @@ void test_segment_control(void *data, Evas_Object *obj, void *event_info);
 void test_store(void *data, Evas_Object *obj, void *event_info);
 void test_win_inline(void *data, Evas_Object *obj, void *event_info);
 void test_grid(void *data, Evas_Object *obj, void *event_info);
+void test_glview_simple(void *data, Evas_Object *obj, void *event_info);
 void test_glview(void *data, Evas_Object *obj, void *event_info);
 void test_3d(void *data, Evas_Object *obj, void *event_info);
 #ifdef HAVE_EIO
@@ -408,6 +409,7 @@ my_win_main(char *autorun)
    ADD_TEST("Store", test_store);
    ADD_TEST("Window Inline", test_win_inline);
    ADD_TEST("Grid", test_grid);
+   ADD_TEST("GLViewSimple", test_glview_simple);
    ADD_TEST("GLView", test_glview);
    ADD_TEST("3D", test_3d);
 #undef ADD_TEST

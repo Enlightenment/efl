@@ -66,6 +66,7 @@ test_focus3.c \
 test_focus.c \
 test_gengrid.c \
 test_genlist.c \
+test_glview_simple.c \
 test_glview.c \
 test_grid.c \
 test_hover.c \

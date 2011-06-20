@@ -47,6 +47,7 @@ struct _GLData
 };
 
 static void gears_init(GLData *gld);
+static void free_gear(Gear *gear);
 static void gears_reshape(GLData *gld, int width, int height);
 static void render_gears(GLData *gld);
 
@@ -172,7 +173,16 @@ make_gear(GLData *gld, GLfloat inner_radius, GLfloat outer_radius, GLfloat width
    gl->glBufferData(GL_ARRAY_BUFFER, gear->count * 6 * 4,
                     gear->vertices, GL_STATIC_DRAW);
 
+
    return gear;
+}
+
+static void
+free_gear(Gear *gear)
+{
+    free(gear->vertices);
+    free(gear);
+    gear = NULL;
 }
 
 static void
@@ -315,19 +325,20 @@ static const char vertex_shader[] =
    "   rotated_normal = tmp.xyz;\n"
    "}\n";
 
-static const char fragment_shader[] =
-   //"precision mediump float;\n"
+ static const char fragment_shader[] =
+   "precision mediump float;\n"
    "uniform vec4 color;\n"
    "uniform vec3 light;\n"
    "varying vec3 rotated_normal;\n"
    "varying vec3 rotated_position;\n"
    "vec3 light_direction;\n"
-   "vec4 white = vec4(0.3, 0.3, 0.5, 1.0);\n"
+   "vec4 white = vec4(0.5, 0.5, 0.5, 1.0);\n"
    "void main()\n"
    "{\n"
    "   light_direction = normalize(light - rotated_position);\n"
    "   gl_FragColor = color + white * dot(light_direction, rotated_normal);\n"
    "}\n";
+
 
 static void
 gears_init(GLData *gld)
@@ -345,14 +356,14 @@ gears_init(GLData *gld)
    gl->glShaderSource(gld->vtx_shader, 1, &p, NULL);
    gl->glCompileShader(gld->vtx_shader);
    gl->glGetShaderInfoLog(gld->vtx_shader, sizeof msg, NULL, msg);
-   //printf("vertex shader info: %s\n", msg);
+   printf("vertex shader info: %s\n", msg);
 
    p = fragment_shader;
    gld->fgmt_shader = gl->glCreateShader(GL_FRAGMENT_SHADER);
    gl->glShaderSource(gld->fgmt_shader, 1, &p, NULL);
    gl->glCompileShader(gld->fgmt_shader);
    gl->glGetShaderInfoLog(gld->fgmt_shader, sizeof msg, NULL, msg);
-   //printf("fragment shader info: %s\n", msg);
+   printf("fragment shader info: %s\n", msg);
 
    gld->program = gl->glCreateProgram();
    gl->glAttachShader(gld->program, gld->vtx_shader);
@@ -362,7 +373,7 @@ gears_init(GLData *gld)
 
    gl->glLinkProgram(gld->program);
    gl->glGetProgramInfoLog(gld->program, sizeof msg, NULL, msg);
-   //printf("info: %s\n", msg);
+   printf("info: %s\n", msg);
 
    gl->glUseProgram(gld->program);
    gld->proj_location  = gl->glGetUniformLocation(gld->program, "proj");
@@ -396,24 +407,61 @@ gldata_init(GLData *gld)
 //-------------------------//
 
 static void
-_draw_gl(Evas_Object *obj)
+_init_gl(Evas_Object *obj)
+{
+   GLData *gld = evas_object_data_get(obj, "gld");
+
+   gears_init(gld);
+}
+
+static void
+_del_gl(Evas_Object *obj)
+{
+   GLData *gld = evas_object_data_get(obj, "gld");
+   if (!gld)
+     {
+        printf("Unable to get GLData. \n");
+        return;
+     }
+   Evas_GL_API *gl = gld->glapi;
+
+   gl->glDeleteShader(gld->vtx_shader);
+   gl->glDeleteShader(gld->fgmt_shader);
+   gl->glDeleteProgram(gld->program);
+   gl->glDeleteBuffers(1, &gld->gear1->vbo);
+   gl->glDeleteBuffers(1, &gld->gear2->vbo);
+   gl->glDeleteBuffers(1, &gld->gear3->vbo);
+
+   free_gear(gld->gear1);
+   free_gear(gld->gear2);
+   free_gear(gld->gear3);
+
+   evas_object_data_del((Evas_Object*)obj, "..gld");
+   free(gld);
+}
+
+
+static void
+_resize_gl(Evas_Object *obj)
 {
    int w, h;
-   Evas_GL_API *gl = elm_glview_gl_api_get(obj);
    GLData *gld = evas_object_data_get(obj, "gld");
-   if (!gld) return;
 
    elm_glview_size_get(obj, &w, &h);
-
-   if (!gld->initialized)
-     {
-        gears_init(gld);
-        gld->initialized = 1;
-     }
 
    // GL Viewport stuff. you can avoid doing this if viewport is all the
    // same as last frame if you want
    gears_reshape(gld, w,h);
+}
+
+
+
+static void
+_draw_gl(Evas_Object *obj)
+{
+   Evas_GL_API *gl = elm_glview_gl_api_get(obj);
+   GLData *gld = evas_object_data_get(obj, "gld");
+   if (!gld) return;
 
    render_gears(gld);
    gl->glFinish();
@@ -434,29 +482,15 @@ _on_done(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 
 
 static void
-_del(void *data, Evas *evas __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+_del(void *data __UNUSED__, Evas *evas __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
-   GLData *gld = evas_object_data_get(data, "gld");
-   if (!gld)
-     {
-        printf("Unable to get GLData. \n");
-        return;
-     }
-   Evas_GL_API *gl = gld->glapi;
-
-   gl->glDeleteShader(gld->vtx_shader);
-   gl->glDeleteShader(gld->fgmt_shader);
-   gl->glDeleteProgram(gld->program);
-   evas_object_data_del((Evas_Object*)data, "..gld");
-   free(gld);
-
    Ecore_Animator *ani = evas_object_data_get(obj, "ani");
    ecore_animator_del(ani);
 }
 
 
 static void
-_key_down(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info)
+_key_down(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj, void *event_info)
 {
    Evas_Event_Key_Down *ev;
    ev = (Evas_Event_Key_Down *)event_info;
@@ -488,7 +522,7 @@ _key_down(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info)
    if ((strcmp(ev->keyname, "Escape") == 0) ||
        (strcmp(ev->keyname, "Return") == 0))
      {
-        _on_done(data, obj, event_info);
+        //_on_done(data, obj, event_info);
         return;
      }
 }
@@ -533,16 +567,20 @@ test_glview(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    Ecore_Animator *ani;
    GLData *gld = NULL;
 
+   // alloc a data struct to hold our relevant gl info in
    if (!(gld = calloc(1, sizeof(GLData)))) return;
    gldata_init(gld);
 
+   // new window - do the usual and give it a name, title and delete handler 
    win = elm_win_add(NULL, "glview", ELM_WIN_BASIC);
    elm_win_title_set(win, "GLView");
    elm_win_autodel_set(win, 1);
 
+
+   // add a standard bg 
    bg = elm_bg_add(win);
-   elm_win_resize_object_add(win, bg);
    evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_win_resize_object_add(win, bg);
    evas_object_show(bg);
 
    bx = elm_box_add(win);
@@ -550,38 +588,45 @@ test_glview(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    elm_win_resize_object_add(win, bx);
    evas_object_show(bx);
 
+   // Add a GLView
    gl = elm_glview_add(win);
    evas_object_size_hint_align_set(gl, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(gl, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   elm_glview_mode_set(gl, ELM_GLVIEW_ALPHA | ELM_GLVIEW_DEPTH);
-//   elm_glview_scale_policy_set(gl, ELM_GLVIEW_RESIZE_POLICY_SCALE);
-//   elm_glview_size_set(gl, 256, 256);
-   elm_glview_scale_policy_set(gl, ELM_GLVIEW_RESIZE_POLICY_RECREATE);
+   elm_glview_mode_set(gl, ELM_GLVIEW_ALPHA|ELM_GLVIEW_DEPTH);
+   elm_glview_resize_policy_set(gl, ELM_GLVIEW_RESIZE_POLICY_RECREATE);
    elm_glview_render_policy_set(gl, ELM_GLVIEW_RENDER_POLICY_ALWAYS);
-   elm_glview_render_func_set(gl, _draw_gl);
+   elm_glview_init_func_set(gl, _init_gl);
+   elm_glview_del_func_set(gl, _del_gl);
+   elm_glview_resize_func_set(gl, _resize_gl);
+   elm_glview_render_func_set(gl, (Elm_GLView_Func)_draw_gl);
    elm_box_pack_end(bx, gl);
    evas_object_show(gl);
 
+   // Add Mouse/Key Event Callbacks
    elm_object_focus(gl);
    evas_object_event_callback_add(gl, EVAS_CALLBACK_KEY_DOWN, _key_down, gl);
    evas_object_event_callback_add(gl, EVAS_CALLBACK_MOUSE_DOWN, _mouse_down, gl);
    evas_object_event_callback_add(gl, EVAS_CALLBACK_MOUSE_UP, _mouse_up, gl);
    evas_object_event_callback_add(gl, EVAS_CALLBACK_MOUSE_MOVE, _mouse_move, gl);
 
+
+   // Animator and other vars
    ani = ecore_animator_add(_anim, gl);
    gld->glapi = elm_glview_gl_api_get(gl);
    evas_object_data_set(gl, "ani", ani);
    evas_object_data_set(gl, "gld", gld);
    evas_object_event_callback_add(gl, EVAS_CALLBACK_DEL, _del, gl);
 
+
+   /* add an ok button */
    bt = elm_button_add(win);
    elm_button_label_set(bt, "OK");
    evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0); 
    elm_box_pack_end(bx, bt);
    evas_object_show(bt);
    evas_object_smart_callback_add(bt, "clicked", _on_done, win);
-
+ 
    evas_object_resize(win, 320, 480);
    evas_object_show(win);
 }
