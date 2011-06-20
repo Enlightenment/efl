@@ -8492,7 +8492,7 @@ EAPI Eina_Bool                           evas_object_table_mirrored_get    (cons
 
 
 /**
- * Get packgin location of a child of table
+ * Get packing location of a child of table
  *
  * @param o The given table object.
  * @param child The child object to add.
@@ -8507,7 +8507,7 @@ EAPI Eina_Bool                           evas_object_table_mirrored_get    (cons
 EAPI Eina_Bool                           evas_object_table_pack_get(Evas_Object *o, Evas_Object *child, unsigned short *col, unsigned short *row, unsigned short *colspan, unsigned short *rowspan);
          
 /**
- * Add a new child to a table object.
+ * Add a new child to a table object or set its current packing.
  *
  * @param o The given table object.
  * @param child The child object to add.

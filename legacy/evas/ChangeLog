@@ -407,4 +407,4 @@
 
 	* Allow evas table to re-pack the same object without error and just
         update packing parameters
-        * Allow to get packign location of table child
+        * Allow to get packing location of table child
