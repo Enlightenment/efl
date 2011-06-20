@@ -28,10 +28,10 @@ elm_main(int argc __UNUSED__, char **argv __UNUSED__)
    elm_win_autodel_set(win, 1);
 
    bg = elm_bg_add(win);
+   elm_bg_load_size_set(bg, 20, 20);
    elm_bg_option_set(bg, ELM_BG_OPTION_CENTER);
    snprintf(buf, sizeof(buf), "%s/images/plant_01.jpg", PACKAGE_DATA_DIR);
    elm_bg_file_set(bg, buf, NULL);
-   elm_bg_load_size_set(bg, 20, 20);
    evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_win_resize_object_add(win, bg);
    evas_object_show(bg);
