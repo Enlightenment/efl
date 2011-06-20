@@ -729,6 +729,7 @@ extern "C" {
     * @until }
     *
     * And here we finish our very simple background object usage example.
+    *
     */
 
    /**
@@ -791,6 +792,10 @@ extern "C" {
     * @until }
     *
     * And this is the end of this example.
+    *
+    * This example will look like this:
+    * @image html screenshots/bg_01.png
+    * @image latex screenshots/bg_01.eps
     */
 
    /**
@@ -2860,6 +2865,10 @@ extern "C" {
     * @skipline indicator_pos_set
     * @until object_show
     *
+    * The example will look like this:
+    * @image html screenshots/actionslider_01.png
+    * @image latex screenshots/actionslider_01.eps
+    *
     * See the full source code @ref actionslider_example_01 "here"
     */
    /**
@@ -3876,6 +3885,16 @@ EAPI Elm_Genlist_Item *elm_genlist_item_sorted_insert(Evas_Object *obj, const El
     * @skipline animator_del
     * @note Because we created our animator with no parent we need to delete it
     * ourselves.
+    *
+    * The example should look like this:
+    * @image html screenshots/animator_example_01.png
+    * @image latex screenshots/animator_example_01.eps
+    * @n
+    * @image html screenshots/animator_example_02.png
+    * @image latex screenshots/animator_example_02.eps
+    * @n
+    * @image html screenshots/animator_example_03.png
+    * @image latex screenshots/animator_example_03.eps
     *
     * The full source code for this example can be found @ref
     * animator_example_01_c "here"

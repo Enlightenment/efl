@@ -12,6 +12,7 @@ doc-clean:
 doc: all doc-clean
 	$(efl_doxygen)
 	cp -r $(srcdir)/img/* html/
+	cp -r $(srcdir)/img/* latex/
 	rm -rf $(PACKAGE_DOCNAME).tar*
 	mkdir -p $(PACKAGE_DOCNAME)/doc
 	cp -R html/ latex/ man/ $(PACKAGE_DOCNAME)/doc
