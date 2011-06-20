@@ -53,8 +53,8 @@ _evas_preload_thread_end(void *data)
    Evas_Preload_Pthread_Data *pth = data;
    Evas_Preload_Pthread_Data *p = NULL;
 
-   if (pthread_join(pth->thread, (void **)&p) != 0) free(p);
-
+   if (pthread_join(pth->thread, (void **)&p) == 0) free(p);
+   else return;
    eina_threads_shutdown();
 }
 
