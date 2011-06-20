@@ -498,9 +498,9 @@ _smart_scrollto_x(Smart_Data *sd, double t_in, Evas_Coord pos_x)
    sd->scrollto.x.t_end = t + t_in;
    if (!sd->scrollto.x.animator)
      {
+        sd->scrollto.x.animator = ecore_animator_add(_smart_scrollto_x_animator, sd);
         if (!sd->scrollto.y.animator)
           _smart_anim_start(sd->smart_obj);
-        sd->scrollto.x.animator = ecore_animator_add(_smart_scrollto_x_animator, sd);
      }
    if (sd->down.bounce_x_animator)
      {
@@ -562,9 +562,9 @@ _smart_scrollto_y(Smart_Data *sd, double t_in, Evas_Coord pos_y)
    sd->scrollto.y.t_end = t + t_in;
    if (!sd->scrollto.y.animator)
      {
+        sd->scrollto.y.animator = ecore_animator_add(_smart_scrollto_y_animator, sd);
         if (!sd->scrollto.x.animator)
           _smart_anim_start(sd->smart_obj);
-        sd->scrollto.y.animator = ecore_animator_add(_smart_scrollto_y_animator, sd);
      }
    if (sd->down.bounce_y_animator)
      {
