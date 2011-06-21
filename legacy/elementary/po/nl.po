@@ -1,0 +1,59 @@
+# German translations for elementary package
+# German messages for elementary.
+# Copyright (C) 2011 Enlightenment development team
+# This file is distributed under the same license as the elementary package.
+# Fabian Nowak <timystery@arcor.de>, 2011.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: elementary 0.7.0.57309\n"
+"Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
+"POT-Creation-Date: 2011-04-29 19:58-0700\n"
+"PO-Revision-Date: 2011-06-19 16:41+0100\n"
+"Last-Translator: Heimen Stoffels <vistausss@gmail.com>\n"
+"Language-Team: Dutch <vistausss@gmail.com>\n"
+"Language: de\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Poedit-Language: Dutch\n"
+"X-Poedit-Country: NETHERLANDS\n"
+
+#: src/lib/elc_fileselector.c:595
+msgid "Up"
+msgstr "Omhoog"
+
+#: src/lib/elc_fileselector.c:610
+msgid "Home"
+msgstr "Persoonlijke map"
+
+#: src/lib/elc_fileselector.c:791
+#: src/lib/elm_entry.c:930
+msgid "Cancel"
+msgstr "Annuleren"
+
+#: src/lib/elc_fileselector.c:801
+msgid "OK"
+msgstr "OK"
+
+#: src/lib/elm_config.c:1544
+msgid "default:LTR"
+msgstr "Standaard: LTR"
+
+#: src/lib/elm_entry.c:924
+msgid "Copy"
+msgstr "Kopiëren"
+
+#: src/lib/elm_entry.c:927
+msgid "Cut"
+msgstr "Knippen"
+
+#: src/lib/elm_entry.c:941
+msgid "Select"
+msgstr "Selecteren"
+
+#: src/lib/elm_entry.c:947
+msgid "Paste"
+msgstr "Plakken"
+
