@@ -4239,77 +4239,986 @@ EAPI Elm_Genlist_Item *elm_genlist_item_sorted_insert(Evas_Object *obj, const El
     * "dismissed" - the ctxpopup was dismissed
     */
 
+
+   /**
+    * @page transit_example_01_c
+    * @include transit_example_01.c
+    */
+
+   /**
+    * @page transit_example_02_c
+    * @include transit_example_02.c
+    */
+
+   /**
+    * @page transit_example_03_c elm_transit - Combined effects and options.
+    *
+    * This example shows how to apply the following transition effects:
+    * @li translation
+    * @li color
+    * @li rotation
+    * @li wipe
+    * @li zoom
+    * @li resizing
+    *
+    * It allows you to apply more than one effect at once, and also allows to
+    * set properties like event_enabled, auto_reverse, repeat_times and
+    * tween_mode.
+    *
+    * @include transit_example_03.c
+    */
+
+   /**
+    * @page transit_example_04_c elm_transit - Combined effects over two objects.
+    *
+    * This example shows how to apply the transition effects:
+    * @li flip
+    * @li resizable_flip
+    * @li fade
+    * @li blend
+    * over two objects. This kind of transition effect is used to make one
+    * object disappear and another one appear on its place.
+    *
+    * You can mix more than one effect of this type on the same objects, and the
+    * transition will apply both.
+    *
+    * @include transit_example_04.c
+    */
+
+   /**
+    * @page transit_example_01_explained elm_transit - Basic transit usage.
+    * @dontinclude transit_example_01.c
+    *
+    * The full code for this example can be found at @ref transit_example_01_c.
+    *
+    * This example shows the simplest way of creating a transition and applying
+    * it to an object. Similarly to every other elementary example, we create a
+    * window, set its title, size, autodel property, and setup a callback to
+    * exit the program when finished:
+    *
+    * @skip on_done
+    * @until evas_object_resize
+    *
+    * We also add a resizeable white background to use behind our animation:
+    *
+    * @skip bg_add
+    * @until evas_object_show
+    *
+    * And then we add a button that we will use to demonstrate the effects of
+    * our animation:
+    *
+    * @skip button_add
+    * @until evas_object_show(win)
+    *
+    * Notice that we are not adding the button with elm_win_resize_object_add()
+    * because we don't want the window to control the size of the button. We
+    * will use the transition to change the button size, so it could conflict
+    * with something else trying to control that size.
+    *
+    * Now, the simplest code possible to create the resize animation:
+    *
+    * @skip transit_add
+    * @until transit_go
+    *
+    * As you can see, this code is very easy to understand. First, we create the
+    * transition itself with elm_transit_add(). Then we add the button to this
+    * transition with elm_transit_object_add(), which means that the transition
+    * will operate over this button. The effect that we want now is changing the
+    * object size from 100x50 to 300x150, and can be achieved by adding the
+    * resize effect with elm_transit_effect_resizing_add().
+    *
+    * Finally, we set the transition time to 5 seconds and start the transition
+    * with elm_transit_go(). If we wanted more effects applied to this
+    * button, we could add them to the same transition. See the
+    * @ref transit_example_03_c to watch many transitions being applied to an
+    * object.
+    */
+
+   /**
+    * @page transit_example_02_explained elm_transit - Chained transitions.
+    * @dontinclude transit_example_02.c
+    *
+    * The full code for this example can be found at @ref transit_example_02_c.
+    *
+    * This example shows how to implement a chain of transitions. This chain is
+    * used to start a transition just after another transition ended. Similarly
+    * to every other elementary example, we create a window, set its title,
+    * size, autodel property, and setup a callback to exit the program when
+    * finished:
+    *
+    * @skip on_done
+    * @until evas_object_resize
+    *
+    * We also add a resizeable white background to use behind our animation:
+    *
+    * @skip bg_add
+    * @until evas_object_show
+    *
+    * This example will have a chain of 4 transitions, each of them applied to
+    * one button. Thus we create 4 different buttons:
+    *
+    * @skip button_add
+    * @until evas_object_show(bt4)
+    *
+    * Now we create a simple translation transition that will be started as soon
+    * as the program loads. It will be our first transition, and the other
+    * transitions will be started just after this transition ends:
+    *
+    * @skip transit_add
+    * @until transit_go
+    *
+    * The code displayed until now has nothing different from what you have
+    * already seen in @ref transit_example_01_explained, but now comes the new
+    * part: instead of creating a second transition that will start later using
+    * a timer, we create the it normally, and use
+    * elm_transit_chain_transit_add() instead of elm_transit_go. Since we are
+    * adding it in a chain after the first transition, it will start as soon as
+    * the first transition ends:
+    *
+    * @skip transit_add
+    * @until transit_chain_transit_add
+    *
+    * Finally we add the 2 other transitions to the chain, and run our program.
+    * It will make one transition start after the other finish, and there is the
+    * transition chain.
+    */
+
    /* transit */
+   /**
+    *
+    * @defgroup Transit Transit
+    * @ingroup Elementary
+    *
+    * Transit is designed to apply various animated transition effects to @c
+    * Evas_Object, such like translation, rotation, etc. For using these
+    * effects, create an @ref Elm_Transit and add the desired transition effects.
+    *
+    * Once the effects are added into transit, they will be automatically
+    * managed (their callback will be called until the duration is ended, and
+    * they will be deleted on completion).
+    *
+    * Example:
+    * @code
+    * Elm_Transit *trans = elm_transit_add();
+    * elm_transit_object_add(trans, obj);
+    * elm_transit_effect_translation_add(trans, 0, 0, 280, 280
+    * elm_transit_duration_set(transit, 1);
+    * elm_transit_auto_reverse_set(transit, EINA_TRUE);
+    * elm_transit_tween_mode_set(transit, ELM_TRANSIT_TWEEN_MODE_DECELERATE);
+    * elm_transit_repeat_times_set(transit, 3);
+    * @endcode
+    *
+    * Some transition effects are used to change the properties of objects. They
+    * are:
+    * @li @ref elm_transit_effect_translation_add
+    * @li @ref elm_transit_effect_color_add
+    * @li @ref elm_transit_effect_rotation_add
+    * @li @ref elm_transit_effect_wipe_add
+    * @li @ref elm_transit_effect_zoom_add
+    * @li @ref elm_transit_effect_resizing_add
+    *
+    * Other transition effects are used to make one object disappear and another
+    * object appear on its old place. These effects are:
+    *
+    * @li @ref elm_transit_effect_flip_add
+    * @li @ref elm_transit_effect_resizable_flip_add
+    * @li @ref elm_transit_effect_fade_add
+    * @li @ref elm_transit_effect_blend_add
+    *
+    * It's also possible to make a transition chain with @ref
+    * elm_transit_chain_transit_add.
+    *
+    * @warning We strongly recomend to use elm_transit just when edje can not do
+    * the trick. Edje has more advantage than Elm_Transit, it has more flexibility and
+    * animations can be manipulated inside the theme.
+    *
+    * List of examples:
+    * @li @ref transit_example_01_explained
+    * @li @ref transit_example_02_explained
+    * @li @ref transit_example_03_c
+    * @li @ref transit_example_04_c
+    *
+    * @{
+    */
+
+   /**
+    * @enum Elm_Transit_Tween_Mode
+    *
+    * The type of acceleration used in the transition.
+    */
    typedef enum
      {
-        ELM_TRANSIT_TWEEN_MODE_LINEAR,
-        ELM_TRANSIT_TWEEN_MODE_SINUSOIDAL,
-        ELM_TRANSIT_TWEEN_MODE_DECELERATE,
-        ELM_TRANSIT_TWEEN_MODE_ACCELERATE
+        ELM_TRANSIT_TWEEN_MODE_LINEAR, /**< Constant speed */
+        ELM_TRANSIT_TWEEN_MODE_SINUSOIDAL, /**< Starts slow, increase speed
+                                             over time, then decrease again
+                                             and stop slowly */
+        ELM_TRANSIT_TWEEN_MODE_DECELERATE, /**< Starts fast and decrease
+                                             speed over time */
+        ELM_TRANSIT_TWEEN_MODE_ACCELERATE /**< Starts slow and increase speed
+                                            over time */
      } Elm_Transit_Tween_Mode;
+
+   /**
+    * @enum Elm_Transit_Effect_Flip_Axis
+    *
+    * The axis where flip effect should be applied.
+    */
    typedef enum
      {
-        ELM_TRANSIT_EFFECT_FLIP_AXIS_X,
-        ELM_TRANSIT_EFFECT_FLIP_AXIS_Y
+        ELM_TRANSIT_EFFECT_FLIP_AXIS_X, /**< Flip on X axis */
+        ELM_TRANSIT_EFFECT_FLIP_AXIS_Y /**< Flip on Y axis */
      } Elm_Transit_Effect_Flip_Axis;
+   /**
+    * @enum Elm_Transit_Effect_Wipe_Dir
+    *
+    * The direction where the wipe effect should occur.
+    */
    typedef enum
      {
-        ELM_TRANSIT_EFFECT_WIPE_DIR_LEFT,
-        ELM_TRANSIT_EFFECT_WIPE_DIR_RIGHT,
-        ELM_TRANSIT_EFFECT_WIPE_DIR_UP,
-        ELM_TRANSIT_EFFECT_WIPE_DIR_DOWN
+        ELM_TRANSIT_EFFECT_WIPE_DIR_LEFT, /**< Wipe to the left */
+        ELM_TRANSIT_EFFECT_WIPE_DIR_RIGHT, /**< Wipe to the right */
+        ELM_TRANSIT_EFFECT_WIPE_DIR_UP, /**< Wipe up */
+        ELM_TRANSIT_EFFECT_WIPE_DIR_DOWN /**< Wipe down */
      } Elm_Transit_Effect_Wipe_Dir;
+   /** @enum Elm_Transit_Effect_Wipe_Type
+    *
+    * Whether the wipe effect should show or hide the object.
+    */
    typedef enum
      {
-        ELM_TRANSIT_EFFECT_WIPE_TYPE_HIDE,
-        ELM_TRANSIT_EFFECT_WIPE_TYPE_SHOW
+        ELM_TRANSIT_EFFECT_WIPE_TYPE_HIDE, /**< Hide the object during the
+                                             animation */
+        ELM_TRANSIT_EFFECT_WIPE_TYPE_SHOW /**< Show the object during the
+                                            animation */
      } Elm_Transit_Effect_Wipe_Type;
 
+   /**
+    * @typedef Elm_Transit
+    *
+    * The Transit created with elm_transit_add(). This type has the information
+    * about the objects which the transition will be applied, and the
+    * transition effects that will be used. It also contains info about
+    * duration, number of repetitions, auto-reverse, etc.
+    */
    typedef struct _Elm_Transit Elm_Transit;
    typedef void Elm_Transit_Effect;
+   /**
+    * @typedef Elm_Transit_Effect_Transition_Cb
+    *
+    * Transition callback called for this effect on each transition iteration.
+    */
    typedef void (*Elm_Transit_Effect_Transition_Cb) (Elm_Transit_Effect *effect, Elm_Transit *transit, double progress);
+   /**
+    * Elm_Transit_Effect_End_Cb
+    *
+    * Transition callback called for this effect when the transition is over.
+    */
    typedef void (*Elm_Transit_Effect_End_Cb) (Elm_Transit_Effect *effect, Elm_Transit *transit);
 
+   /**
+    * Add new transit.
+    *
+    * @note Is not necessary to delete the transit object, it will be deleted at
+    * the end of its operation.
+    * @note The transit will start playing when the program enter in the main loop, is not
+    * necessary to give a start to the transit.
+    *
+    * @return The transit object.
+    *
+    * @ingroup Transit
+    */
    EAPI Elm_Transit                *elm_transit_add(void);
+
+   /**
+    * Stops the animation and delete the @p transit object.
+    *
+    * Call this function if you wants to stop the animation before the duration
+    * time. Make sure the @p transit object is still alive with
+    * elm_transit_del_cb_set() function.
+    * All added effects will be deleted, calling its repective data_free_cb
+    * functions. The function setted by elm_transit_del_cb_set() will be called.
+    *
+    * @see elm_transit_del_cb_set()
+    *
+    * @param transit The transit object to be deleted.
+    *
+    * @ingroup Transit
+    * @warning Just call this function if you are sure the transit is alive.
+    */
    EAPI void                        elm_transit_del(Elm_Transit *transit) EINA_ARG_NONNULL(1);
+
+   /**
+    * Add a new effect to the transit.
+    *
+    * @note The cb function and the data are the key to the effect. If you try to
+    * add an already added effect, nothing is done.
+    * @note After the first addition of an effect in @p transit, if its
+    * effect list become empty again, the @p transit will be killed by
+    * elm_transit_del(transit) function.
+    *
+    * Exemple:
+    * @code
+    * Elm_Transit *transit = elm_transit_add();
+    * elm_transit_effect_add(transit,
+    *                        elm_transit_effect_blend_op,
+    *                        elm_transit_effect_blend_context_new(),
+    *                        elm_transit_effect_blend_context_free);
+    * @endcode
+    *
+    * @param transit The transit object.
+    * @param transition_cb The operation function. It is called when the
+    * animation begins, it is the function that actually performs the animation.
+    * It is called with the @p data, @p transit and the time progression of the
+    * animation (a double value between 0.0 and 1.0).
+    * @param effect The context data of the effect.
+    * @param end_cb The function to free the context data, it will be called
+    * at the end of the effect, it must finalize the animation and free the
+    * @p data.
+    *
+    * @ingroup Transit
+    * @warning The transit free the context data at the and of the transition with
+    * the data_free_cb function, do not use the context data in another transit.
+    */
    EAPI void                        elm_transit_effect_add(Elm_Transit *transit, Elm_Transit_Effect_Transition_Cb transition_cb, Elm_Transit_Effect *effect, Elm_Transit_Effect_End_Cb end_cb) EINA_ARG_NONNULL(1, 2);
+
+   /**
+    * Delete an added effect.
+    *
+    * This function will remove the effect from the @p transit, calling the
+    * data_free_cb to free the @p data.
+    *
+    * @see elm_transit_effect_add()
+    *
+    * @note If the effect is not found, nothing is done.
+    * @note If the effect list become empty, this function will call
+    * elm_transit_del(transit), that is, it will kill the @p transit.
+    *
+    * @param transit The transit object.
+    * @param transition_cb The operation function.
+    * @param effect The context data of the effect.
+    *
+    * @ingroup Transit
+    */
    EAPI void                        elm_transit_effect_del(Elm_Transit *transit, Elm_Transit_Effect_Transition_Cb transition_cb, Elm_Transit_Effect *effect) EINA_ARG_NONNULL(1, 2);
+
+   /**
+    * Add new object to apply the effects.
+    *
+    * @note After the first addition of an object in @p transit, if its
+    * object list become empty again, the @p transit will be killed by
+    * elm_transit_del(transit) function.
+    * @note If the @p obj belongs to another transit, the @p obj will be
+    * removed from it and it will only belong to the @p transit. If the old
+    * transit stays without objects, it will die.
+    * @note When you add an object into the @p transit, its state from
+    * evas_object_pass_events_get(obj) is saved, and it is applied when the
+    * transit ends, if you change this state whith evas_object_pass_events_set()
+    * after add the object, this state will change again when @p transit stops to
+    * run.
+    *
+    * @param transit The transit object.
+    * @param obj Object to be animated.
+    *
+    * @ingroup Transit
+    * @warning It is not allowed to add a new object after transit begins to go.
+    */
    EAPI void                        elm_transit_object_add(Elm_Transit *transit, Evas_Object *obj) EINA_ARG_NONNULL(1, 2);
+
+   /**
+    * Removes an added object from the transit.
+    *
+    * @note If the @p obj is not in the @p transit, nothing is done.
+    * @note If the list become empty, this function will call
+    * elm_transit_del(transit), that is, it will kill the @p transit.
+    *
+    * @param transit The transit object.
+    * @param obj Object to be removed from @p transit.
+    *
+    * @ingroup Transit
+    * @warning It is not allowed to remove objects after transit begins to go.
+    */
    EAPI void                        elm_transit_object_remove(Elm_Transit *transit, Evas_Object *obj) EINA_ARG_NONNULL(1, 2);
+
+   /**
+    * Get the objects of the transit.
+    *
+    * @param transit The transit object.
+    * @return a Eina_List with the objects from the transit.
+    *
+    * @ingroup Transit
+    */
    EAPI const Eina_List            *elm_transit_objects_get(const Elm_Transit *transit) EINA_ARG_NONNULL(1);
+
+   /**
+    * Enable/disable keeping up the objects states.
+    * If it is not kept, the objects states will be reset when transition ends.
+    *
+    * @note @p transit can not be NULL.
+    * @note One state includes geometry, color, map data.
+    *
+    * @param transit The transit object.
+    * @param state_keep Keeping or Non Keeping.
+    *
+    * @ingroup Transit
+    */
    EAPI void                        elm_transit_objects_final_state_keep_set(Elm_Transit *transit, Eina_Bool state_keep) EINA_ARG_NONNULL(1);
+
+   /**
+    * Get a value whether the objects states will be reset or not.
+    *
+    * @note @p transit can not be NULL
+    *
+    * @see elm_transit_objects_final_state_keep_set()
+    *
+    * @param transit The transit object.
+    * @return EINA_TRUE means the states of the objects will be reset.
+    * If @p transit is NULL, EINA_FALSE is returned
+    *
+    * @ingroup Transit
+    */
    EAPI Eina_Bool                   elm_transit_objects_final_state_keep_get(const Elm_Transit *transit) EINA_ARG_NONNULL(1);
+
+   /**
+    * Set the event block when transit is operating.
+    *
+    * If @p disabled is EINA_TRUE, the objects of the transit will receives
+    * events from mouse and keyboard during the animation.
+    * @note When you add an object with elm_transit_object_add(), its state from
+    * evas_object_pass_events_get(obj) is saved, and it is applied when the
+    * transit ends, if you change this state with evas_object_pass_events_set()
+    * after add the object, this state will change again when @p transit stops to
+    * run.
+    *
+    * @see elm_transit_event_enabled_set()
+    *
+    * @param transit The transit object.
+    * @param disabled events are blocked if disabled is @c EINA_TRUE, and
+    * are received otherwise.
+    *
+    * @ingroup Transit
+    */
    EINA_DEPRECATED EAPI void                elm_transit_event_block_set(Elm_Transit *transit, Eina_Bool disabled) EINA_ARG_NONNULL(1);
+
+   /**
+    * Get the value of event block enabled status.
+    *
+    * @see elm_transit_event_enabled_set(), elm_transit_event_enabled_get()
+    *
+    * @param transit The Transit object
+    * @return EINA_TRUE, when event block is enabled. If @p transit is NULL
+    * EINA_FALSE is returned
+    *
+    * @ingroup Transit
+    */
    EINA_DEPRECATED EAPI Eina_Bool           elm_transit_event_block_get(const Elm_Transit *transit) EINA_ARG_NONNULL(1);
+
+   /**
+    * Set the event enabled when transit is operating.
+    *
+    * If @p enabled is EINA_TRUE, the objects of the transit will receives
+    * events from mouse and keyboard during the animation.
+    * @note When you add an object with elm_transit_object_add(), its state from
+    * evas_object_pass_events_get(obj) is saved, and it is applied when the
+    * transit ends, if you change this state with evas_object_pass_events_set()
+    * after adding the object, this state will change again when @p transit stops
+    * to run.
+    *
+    * @param transit The transit object.
+    * @param enabled Events are received when enabled is @c EINA_TRUE, and
+    * ignored otherwise.
+    *
+    * @ingroup Transit
+    */
    EAPI void                        elm_transit_event_enabled_set(Elm_Transit *transit, Eina_Bool enabled) EINA_ARG_NONNULL(1);
+
+   /**
+    * Get the value of event enabled status.
+    *
+    * @see elm_transit_event_enabled_set()
+    *
+    * @param transit The Transit object
+    * @return EINA_TRUE, when event is enabled. If @p transit is NULL
+    * EINA_FALSE is returned
+    *
+    * @ingroup Transit
+    */
    EAPI Eina_Bool                   elm_transit_event_enabled_get(const Elm_Transit *transit) EINA_ARG_NONNULL(1);
+
+   /**
+    * Set the user-callback function when the transit is deleted.
+    *
+    * @note Using this function twice will overwrite the first function setted.
+    * @note the @p transit object will be deleted after call @p cb function.
+    *
+    * @param transit The transit object.
+    * @param cb Callback function pointer. This function will be called before
+    * the deletion of the transit.
+    * @param data Callback funtion user data. It is the @p op parameter.
+    *
+    * @ingroup Transit
+    */
    EAPI void                        elm_transit_del_cb_set(Elm_Transit *transit, void (*cb)(void *data, Elm_Transit* transit), void *data) EINA_ARG_NONNULL(1);
+
+   /**
+    * Set reverse effect automatically.
+    *
+    * If auto reverse is setted, after running the effects with the progress
+    * parameter from 0 to 1, it will call the effecs again with the progress
+    * from 1 to 0. The transit will last for a time iqual to (2 * duration * repeat),
+    * where the duration was setted with the function elm_transit_add and
+    * the repeat with the function elm_transit_repeat_times_set().
+    *
+    * @param transit The transit object.
+    * @param reverse EINA_TRUE means the auto_reverse is on.
+    *
+    * @ingroup Transit
+    */
    EAPI void                        elm_transit_auto_reverse_set(Elm_Transit *transit, Eina_Bool reverse) EINA_ARG_NONNULL(1);
+
+   /**
+    * Get if the auto reverse is on.
+    *
+    * @see elm_transit_auto_reverse_set()
+    *
+    * @param transit The transit object.
+    * @return EINA_TRUE means auto reverse is on. If @p transit is NULL
+    * EINA_FALSE is returned
+    *
+    * @ingroup Transit
+    */
    EAPI Eina_Bool                   elm_transit_auto_reverse_get(const Elm_Transit *transit) EINA_ARG_NONNULL(1);
+
+   /**
+    * Set the transit repeat count. Effect will be repeated by repeat count.
+    *
+    * This function sets the number of repetition the transit will run after
+    * the first one, that is, if @p repeat is 1, the transit will run 2 times.
+    * If the @p repeat is a negative number, it will repeat infinite times.
+    *
+    * @note If this function is called during the transit execution, the transit
+    * will run @p repeat times, ignoring the times it already performed.
+    *
+    * @param transit The transit object
+    * @param repeat Repeat count
+    *
+    * @ingroup Transit
+    */
    EAPI void                        elm_transit_repeat_times_set(Elm_Transit *transit, int repeat) EINA_ARG_NONNULL(1);
+
+   /**
+    * Get the transit repeat count.
+    *
+    * @see elm_transit_repeat_times_set()
+    *
+    * @param transit The Transit object.
+    * @return The repeat count. If @p transit is NULL
+    * 0 is returned
+    *
+    * @ingroup Transit
+    */
    EAPI int                         elm_transit_repeat_times_get(const Elm_Transit *transit) EINA_ARG_NONNULL(1);
+
+   /**
+    * Set the transit animation acceleration type.
+    *
+    * This function sets the tween mode of the transit that can be:
+    * ELM_TRANSIT_TWEEN_MODE_LINEAR - The default mode.
+    * ELM_TRANSIT_TWEEN_MODE_SINUSOIDAL - Starts in accelerate mode and ends decelerating.
+    * ELM_TRANSIT_TWEEN_MODE_DECELERATE - The animation will be slowed over time.
+    * ELM_TRANSIT_TWEEN_MODE_ACCELERATE - The animation will accelerate over time.
+    *
+    * @param transit The transit object.
+    * @param tween_mode The tween type.
+    *
+    * @ingroup Transit
+    */
    EAPI void                        elm_transit_tween_mode_set(Elm_Transit *transit, Elm_Transit_Tween_Mode tween_mode) EINA_ARG_NONNULL(1);
+
+   /**
+    * Get the transit animation acceleration type.
+    *
+    * @note @p transit can not be NULL
+    *
+    * @param transit The transit object.
+    * @return The tween type. If @p transit is NULL
+    * ELM_TRANSIT_TWEEN_MODE_LINEAR is returned.
+    *
+    * @ingroup Transit
+    */
    EAPI Elm_Transit_Tween_Mode      elm_transit_tween_mode_get(const Elm_Transit *transit) EINA_ARG_NONNULL(1);
+
+   /**
+    * Set the transit animation time
+    *
+    * @note @p transit can not be NULL
+    *
+    * @param transit The transit object.
+    * @param duration The animation time.
+    *
+    * @ingroup Transit
+    */
    EAPI void                        elm_transit_duration_set(Elm_Transit *transit, double duration) EINA_ARG_NONNULL(1);
+
+   /**
+    * Get the transit animation time
+    *
+    * @note @p transit can not be NULL
+    *
+    * @param transit The transit object.
+    *
+    * @return The transit animation time.
+    *
+    * @ingroup Transit
+    */
    EAPI double                      elm_transit_duration_get(const Elm_Transit *transit) EINA_ARG_NONNULL(1);
+
+   /**
+    * Starts the transition.
+    * Once this API is called, the transit begins to measure the time.
+    *
+    * @note @p transit can not be NULL
+    *
+    * @param transit The transit object.
+    *
+    * @ingroup Transit
+    */
    EAPI void                        elm_transit_go(Elm_Transit *transit) EINA_ARG_NONNULL(1);
+
+   /**
+    * Pause/Resume the transition.
+    *
+    * If you call elm_transit_go again, the transit will be started from the
+    * beginning, and will be unpaused.
+    *
+    * @note @p transit can not be NULL
+    *
+    * @param transit The transit object.
+    * @param paused Whether the transition should be paused or not.
+    *
+    * @ingroup Transit
+    */
    EAPI void                        elm_transit_paused_set(Elm_Transit *transit, Eina_Bool paused) EINA_ARG_NONNULL(1);
+
+   /**
+    * Get the value of paused status.
+    *
+    * @see elm_transit_paused_set()
+    *
+    * @note @p transit can not be NULL
+    *
+    * @param transit The transit object.
+    * @return EINA_TRUE means transition is paused. If @p transit is NULL
+    * EINA_FALSE is returned
+    *
+    * @ingroup Transit
+    */
    EAPI Eina_Bool                   elm_transit_paused_get(const Elm_Transit *transit) EINA_ARG_NONNULL(1);
+
+   /**
+    * Get the time progression of the animation (a double value between 0.0 and 1.0).
+    *
+    * The value returned is a fraction (current time / total time). It
+    * represents the progression position relative to the total.
+    *
+    * @note @p transit can not be NULL
+    *
+    * @param transit The transit object.
+    *
+    * @return The time progression value. If @p transit is NULL
+    * 0 is returned
+    *
+    * @ingroup Transit
+    */
    EAPI double                      elm_transit_progress_value_get(const Elm_Transit *transit) EINA_ARG_NONNULL(1);
+
+   /**
+    * Makes the chain relationship between two transits.
+    *
+    * @note @p transit can not be NULL. Transit would have multiple chain transits.
+    * @note @p chain_transit can not be NULL. Chain transits could be chained to the only one transit.
+    *
+    * @param transit The transit object.
+    * @param chain_transit The chain transit object. This transit will be operated
+    *        after transit is done.
+    *
+    * This function adds @p chain_transit transition to a chain after the @p
+    * transit, and will be started as soon as @p transit ends. See @ref
+    * transit_example_02_explained for a full example.
+    *
+    * @ingroup Transit
+    */
    EAPI void                        elm_transit_chain_transit_add(Elm_Transit *transit, Elm_Transit *chain_transit) EINA_ARG_NONNULL(1, 2);
+
+   /**
+    * Get the current chain transit list.
+    *
+    * @note @p transit can not be NULL.
+    *
+    * @param transit The transit object.
+    * @return chain transit list.
+    *
+    * @ingroup Transit
+    */
    EAPI Eina_List                  *elm_transit_chain_transits_get(const Elm_Transit *transit);
 
+   /**
+    * Add the Resizing Effect to Elm_Transit.
+    *
+    * @note This API is one of the facades. It creates resizing effect context
+    * and add it's required APIs to elm_transit_effect_add.
+    *
+    * @see elm_transit_effect_add()
+    *
+    * @param transit Transit object.
+    * @param from_w Object width size when effect begins.
+    * @param from_h Object height size when effect begins.
+    * @param to_w Object width size when effect ends.
+    * @param to_h Object height size when effect ends.
+    * @return Resizing effect context data.
+    *
+    * @ingroup Transit
+    */
    EAPI Elm_Transit_Effect *elm_transit_effect_resizing_add(Elm_Transit* transit, Evas_Coord from_w, Evas_Coord from_h, Evas_Coord to_w, Evas_Coord to_h);
-   EAPI Elm_Transit_Effect *elm_transit_effect_translation_add(Elm_Transit* transit, Evas_Coord from_dx, Evas_Coord dy, Evas_Coord to_dx, Evas_Coord to_dy);
+
+   /**
+    * Add the Translation Effect to Elm_Transit.
+    *
+    * @note This API is one of the facades. It creates translation effect context
+    * and add it's required APIs to elm_transit_effect_add.
+    *
+    * @see elm_transit_effect_add()
+    *
+    * @param transit Transit object.
+    * @param from_dx X Position variation when effect begins.
+    * @param from_dy Y Position variation when effect begins.
+    * @param to_dx X Position variation when effect ends.
+    * @param to_dy Y Position variation when effect ends.
+    * @return Translation effect context data.
+    *
+    * @ingroup Transit
+    * @warning It is highly recommended just create a transit with this effect when
+    * the window that the objects of the transit belongs has already been created.
+    * This is because this effect needs the geometry information about the objects,
+    * and if the window was not created yet, it can get a wrong information.
+    */
+   EAPI Elm_Transit_Effect *elm_transit_effect_translation_add(Elm_Transit* transit, Evas_Coord from_dx, Evas_Coord from_dy, Evas_Coord to_dx, Evas_Coord to_dy);
+
+   /**
+    * Add the Zoom Effect to Elm_Transit.
+    *
+    * @note This API is one of the facades. It creates zoom effect context
+    * and add it's required APIs to elm_transit_effect_add.
+    *
+    * @see elm_transit_effect_add()
+    *
+    * @param transit Transit object.
+    * @param from_rate Scale rate when effect begins (1 is current rate).
+    * @param to_rate Scale rate when effect ends.
+    * @return Zoom effect context data.
+    *
+    * @ingroup Transit
+    * @warning It is highly recommended just create a transit with this effect when
+    * the window that the objects of the transit belongs has already been created.
+    * This is because this effect needs the geometry information about the objects,
+    * and if the window was not created yet, it can get a wrong information.
+    */
    EAPI Elm_Transit_Effect *elm_transit_effect_zoom_add(Elm_Transit *transit, float from_rate, float to_rate);
+
+   /**
+    * Add the Flip Effect to Elm_Transit.
+    *
+    * @note This API is one of the facades. It creates flip effect context
+    * and add it's required APIs to elm_transit_effect_add.
+    * @note This effect is applied to each pair of objects in the order they are listed
+    * in the transit list of objects. The first object in the pair will be the
+    * "front" object and the second will be the "back" object.
+    *
+    * @see elm_transit_effect_add()
+    *
+    * @param transit Transit object.
+    * @param axis Flipping Axis(X or Y).
+    * @param cw Flipping Direction. EINA_TRUE is clock-wise.
+    * @return Flip effect context data.
+    *
+    * @ingroup Transit
+    * @warning It is highly recommended just create a transit with this effect when
+    * the window that the objects of the transit belongs has already been created.
+    * This is because this effect needs the geometry information about the objects,
+    * and if the window was not created yet, it can get a wrong information.
+    */
    EAPI Elm_Transit_Effect *elm_transit_effect_flip_add(Elm_Transit *transit, Elm_Transit_Effect_Flip_Axis axis, Eina_Bool cw);
+
+   /**
+    * Add the Resizable Flip Effect to Elm_Transit.
+    *
+    * @note This API is one of the facades. It creates resizable flip effect context
+    * and add it's required APIs to elm_transit_effect_add.
+    * @note This effect is applied to each pair of objects in the order they are listed
+    * in the transit list of objects. The first object in the pair will be the
+    * "front" object and the second will be the "back" object.
+    *
+    * @see elm_transit_effect_add()
+    *
+    * @param transit Transit object.
+    * @param axis Flipping Axis(X or Y).
+    * @param cw Flipping Direction. EINA_TRUE is clock-wise.
+    * @return Resizable flip effect context data.
+    *
+    * @ingroup Transit
+    * @warning It is highly recommended just create a transit with this effect when
+    * the window that the objects of the transit belongs has already been created.
+    * This is because this effect needs the geometry information about the objects,
+    * and if the window was not created yet, it can get a wrong information.
+    */
    EAPI Elm_Transit_Effect *elm_transit_effect_resizable_flip_add(Elm_Transit *transit, Elm_Transit_Effect_Flip_Axis axis, Eina_Bool cw);
+
+   /**
+    * Add the Wipe Effect to Elm_Transit.
+    *
+    * @note This API is one of the facades. It creates wipe effect context
+    * and add it's required APIs to elm_transit_effect_add.
+    *
+    * @see elm_transit_effect_add()
+    *
+    * @param transit Transit object.
+    * @param type Wipe type. Hide or show.
+    * @param dir Wipe Direction.
+    * @return Wipe effect context data.
+    *
+    * @ingroup Transit
+    * @warning It is highly recommended just create a transit with this effect when
+    * the window that the objects of the transit belongs has already been created.
+    * This is because this effect needs the geometry information about the objects,
+    * and if the window was not created yet, it can get a wrong information.
+    */
    EAPI Elm_Transit_Effect *elm_transit_effect_wipe_add(Elm_Transit *transit, Elm_Transit_Effect_Wipe_Type type, Elm_Transit_Effect_Wipe_Dir dir);
+
+   /**
+    * Add the Color Effect to Elm_Transit.
+    *
+    * @note This API is one of the facades. It creates color effect context
+    * and add it's required APIs to elm_transit_effect_add.
+    *
+    * @see elm_transit_effect_add()
+    *
+    * @param transit        Transit object.
+    * @param  from_r        RGB R when effect begins.
+    * @param  from_g        RGB G when effect begins.
+    * @param  from_b        RGB B when effect begins.
+    * @param  from_a        RGB A when effect begins.
+    * @param  to_r          RGB R when effect ends.
+    * @param  to_g          RGB G when effect ends.
+    * @param  to_b          RGB B when effect ends.
+    * @param  to_a          RGB A when effect ends.
+    * @return               Color effect context data.
+    *
+    * @ingroup Transit
+    */
    EAPI Elm_Transit_Effect *elm_transit_effect_color_add(Elm_Transit *transit, unsigned int from_r, unsigned int from_g, unsigned int from_b, unsigned int from_a, unsigned int to_r, unsigned int to_g, unsigned int to_b, unsigned int to_a);
+
+   /**
+    * Add the Fade Effect to Elm_Transit.
+    *
+    * @note This API is one of the facades. It creates fade effect context
+    * and add it's required APIs to elm_transit_effect_add.
+    * @note This effect is applied to each pair of objects in the order they are listed
+    * in the transit list of objects. The first object in the pair will be the
+    * "before" object and the second will be the "after" object.
+    *
+    * @see elm_transit_effect_add()
+    *
+    * @param transit Transit object.
+    * @return Fade effect context data.
+    *
+    * @ingroup Transit
+    * @warning It is highly recommended just create a transit with this effect when
+    * the window that the objects of the transit belongs has already been created.
+    * This is because this effect needs the color information about the objects,
+    * and if the window was not created yet, it can get a wrong information.
+    */
    EAPI Elm_Transit_Effect *elm_transit_effect_fade_add(Elm_Transit *transit);
+
+   /**
+    * Add the Blend Effect to Elm_Transit.
+    *
+    * @note This API is one of the facades. It creates blend effect context
+    * and add it's required APIs to elm_transit_effect_add.
+    * @note This effect is applied to each pair of objects in the order they are listed
+    * in the transit list of objects. The first object in the pair will be the
+    * "before" object and the second will be the "after" object.
+    *
+    * @see elm_transit_effect_add()
+    *
+    * @param transit Transit object.
+    * @return Blend effect context data.
+    *
+    * @ingroup Transit
+    * @warning It is highly recommended just create a transit with this effect when
+    * the window that the objects of the transit belongs has already been created.
+    * This is because this effect needs the color information about the objects,
+    * and if the window was not created yet, it can get a wrong information.
+    */
    EAPI Elm_Transit_Effect *elm_transit_effect_blend_add(Elm_Transit *transit);
+
+   /**
+    * Add the Rotation Effect to Elm_Transit.
+    *
+    * @note This API is one of the facades. It creates rotation effect context
+    * and add it's required APIs to elm_transit_effect_add.
+    *
+    * @see elm_transit_effect_add()
+    *
+    * @param transit Transit object.
+    * @param from_degree Degree when effect begins.
+    * @param to_degree Degree when effect is ends.
+    * @return Rotation effect context data.
+    *
+    * @ingroup Transit
+    * @warning It is highly recommended just create a transit with this effect when
+    * the window that the objects of the transit belongs has already been created.
+    * This is because this effect needs the geometry information about the objects,
+    * and if the window was not created yet, it can get a wrong information.
+    */
    EAPI Elm_Transit_Effect *elm_transit_effect_rotation_add(Elm_Transit *transit, float from_degree, float to_degree);
+
+   /**
+    * Add the ImageAnimation Effect to Elm_Transit.
+    *
+    * @note This API is one of the facades. It creates image animation effect context
+    * and add it's required APIs to elm_transit_effect_add.
+    * The @p images parameter is a list images paths. This list and
+    * its contents will be deleted at the end of the effect by
+    * elm_transit_effect_image_animation_context_free() function.
+    *
+    * Example:
+    * @code
+    * char buf[PATH_MAX];
+    * Eina_List *images = NULL;
+    * Elm_Transit *transi = elm_transit_add();
+    *
+    * snprintf(buf, sizeof(buf), "%s/images/icon_11.png", PACKAGE_DATA_DIR);
+    * images = eina_list_append(images, eina_stringshare_add(buf));
+    *
+    * snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
+    * images = eina_list_append(images, eina_stringshare_add(buf));
+    * elm_transit_effect_image_animation_add(transi, images);
+    *
+    * @endcode
+    *
+    * @see elm_transit_effect_add()
+    *
+    * @param transit Transit object.
+    * @param images Eina_List of images file paths. This list and
+    * its contents will be deleted at the end of the effect by
+    * elm_transit_effect_image_animation_context_free() function.
+    * @return Image Animation effect context data.
+    *
+    * @ingroup Transit
+    */
    EAPI Elm_Transit_Effect *elm_transit_effect_image_animation_add(Elm_Transit *transit, Eina_List *images);
+   /**
+    * @}
+    */
 
   typedef struct _Elm_Store                      Elm_Store;
   typedef struct _Elm_Store_Filesystem           Elm_Store_Filesystem;
