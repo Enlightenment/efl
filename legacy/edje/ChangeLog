@@ -123,3 +123,7 @@
 
 	* Fix an issue with ellipsis not working properly with small
 	  text parts.
+
+2011-06-21  Cedric Bail
+
+	* Make it possible to define part.description.max only on one axis.
