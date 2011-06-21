@@ -56,10 +56,62 @@
 #include "eina_types.h"
 
 /**
+ * @page eina_stringshare_example_01_page
+ * @dontinclude eina_stringshare_01.c
+ *
+ * Like all examples we start by including Eina:
+ * @skip #include
+ * @line #include
+ *
+ * Here we declare some variables and initialize eina:
+ * @until eina_init
+ *
+ * We start the substantive part of the example by showing how to make a part
+ * of a string shared and how to get the length of a shared string:
+ * @until stringshare_strlen
+ * As we add shared strings we also need to delete them when done using them:
+ * @line del
+ *
+ * There are many ways of creating shared strings including an equivalent to
+ * sprintf:
+ * @until del
+ *
+ * An equivalent to snprintf:
+ * @until printf
+ *
+ * But the simplest way of creating a shared string is through
+ * eina_stringshare_add():
+ * @until printf
+ *
+ * Sometimes you already have a pointer to a shared string and want to use it,
+ * so to make sure the provider of the pointer won't free it while you're using
+ * it you can increase the shared string's ref count:
+ * @until printf
+ *
+ * Whenever you have a pointer to a shared string and would like to change it's
+ * value you should use eina_stringshare_replace():
+ * @until printf
+ * @warning @b Don't use eina_stringshare_del() followed by
+ * eina_share_common_add(), under some circunstances you might end up deleting
+ * a shared string some other piece of code is using.
+ *
+ * We created str but haven't deleted it yet, and while we called
+ * eina_stringshare_del() on str2, we created it and then increased the ref
+ * count so it's still alive:
+ * @until str2
+ *
+ * You can see the full source code @ref eina_stringshare_example_01 "here".
+ */
+/**
+ * @page eina_stringshare_example_01
+ * @include eina_stringshare_01.c
+ * @example eina_stringshare_01.c
+ */
+/**
  * @addtogroup Eina_Stringshare_Group Stringshare
  *
- * These functions allow you to store one copy of a string, and use it
- * throughout your program.
+ * These functions allow you to store a single copy of a string, and use in
+ * multiple places throughout your program.
  *
  * This is a method to reduce the number of duplicated strings kept in
  * memory. It's pretty common for the same strings to be dynamically
@@ -74,7 +126,8 @@
  * string creation/destruction speed, reduces memory use and decreases
  * memory fragmentation, so a win all-around.
  *
- * For more information, you can look at the @ref tutorial_stringshare_page.
+ * For more information, see @ref eina_stringshare_example_01_page
+ * "this example".
  *
  * @{
  */
@@ -103,8 +156,7 @@
  * This function retrieves an instance of @p str. If @p str is
  * @c NULL, then @c NULL is returned. If @p str is already stored, it
  * is just returned and its reference counter is increased. Otherwise
- * it is added to the strings to be searched and a duplicated string
- * of @p str is returned.
+ * a duplicated string of @p str is returned.
  *
  * This function does not check string size, but uses the
  * exact given size. This can be used to share_common part of a larger
@@ -124,8 +176,7 @@ EAPI const char        *eina_stringshare_add_length(const char *str, unsigned in
  * This function retrieves an instance of @p str. If @p str is
  * @c NULL, then @c NULL is returned. If @p str is already stored, it
  * is just returned and its reference counter is increased. Otherwise
- * it is added to the strings to be searched and a duplicated string
- * of @p str is returned.
+ * a duplicated string of @p str is returned.
  *
  * The string @p str must be NULL terminated ('@\0') and its full
  * length will be used. To use part of the string or non-null
@@ -146,8 +197,7 @@ EAPI const char        *eina_stringshare_add(const char *str) EINA_WARN_UNUSED_R
  * This function retrieves an instance of @p fmt. If @p fmt is
  * @c NULL, then @c NULL is returned. If @p fmt is already stored, it
  * is just returned and its reference counter is increased. Otherwise
- * it is added to the strings to be searched and a duplicated string
- * is returned.
+ * a duplicated string is returned.
  *
  * The format string @p fmt must be NULL terminated ('@\0') and its full
  * length will be used. To use part of the format string or non-null
@@ -169,8 +219,7 @@ EAPI const char        *eina_stringshare_printf(const char *fmt, ...) EINA_WARN_
  * This function retrieves an instance of @p fmt with @p args. If @p fmt is
  * @c NULL, then @c NULL is returned. If @p fmt with @p args is already stored, it
  * is just returned and its reference counter is increased. Otherwise
- * it is added to the strings to be searched and a duplicated string
- * is returned.
+ * a duplicated string is returned.
  *
  * The format string @p fmt must be NULL terminated ('@\0') and its full
  * length will be used. To use part of the format string or non-null
@@ -190,9 +239,8 @@ EAPI const char        *eina_stringshare_vprintf(const char *fmt, va_list args) 
  *
  * This function retrieves an instance of @p fmt limited by @p len. If @p fmt is
  * @c NULL or @p len is < 1, then @c NULL is returned. If the resulting string
- * is already stored, it is returned and its reference counter is increased. Otherwise
- * it is added to the strings to be searched and a duplicated string
- * is returned.
+ * is already stored, it is returned and its reference counter is increased.
+ * Otherwise a duplicated string is returned.
  *
  * @p len length of the format string will be used. To use the
  * entire format string, use eina_stringshare_printf() instead.
@@ -210,8 +258,8 @@ EAPI const char        *eina_stringshare_nprintf(unsigned int len, const char *f
  *
  * This is similar to eina_share_common_add(), but it's faster since it will
  * avoid lookups if possible, but on the down side it requires the parameter
- * to be shared before, in other words, it must be the return of a previous
- * eina_share_common_add().
+ * to be shared string. In other words, it must be the return of a previous
+ * call to one of the stringshare functions.
  *
  * There is no unref since this is the work of eina_share_common_del().
  */
