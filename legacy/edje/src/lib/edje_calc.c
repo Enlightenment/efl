@@ -997,7 +997,6 @@ _edje_part_recalc_single_text(FLOAT_T sc,
      {
 	const char	*text;
 	const char	*font;
-	int		 size;
 	Evas_Coord	 tw, th;
 	int		 inlined_font = 0;
 
