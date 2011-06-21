@@ -572,6 +572,7 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.parts.programs.program.name", st_collections_group_programs_program_name}, /* dup */
      {"collections.group.parts.programs.program.signal", st_collections_group_programs_program_signal}, /* dup */
      {"collections.group.parts.programs.program.source", st_collections_group_programs_program_source}, /* dup */
+     {"collections.group.parts.programs.program.filter", st_collections_group_programs_program_filter}, /* dup */
      {"collections.group.parts.programs.program.in", st_collections_group_programs_program_in}, /* dup */
      {"collections.group.parts.programs.program.action", st_collections_group_programs_program_action}, /* dup */
      {"collections.group.parts.programs.program.transition", st_collections_group_programs_program_transition}, /* dup */
