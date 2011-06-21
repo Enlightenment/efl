@@ -1,0 +1,622 @@
+/**
+ * @page Examples Examples
+ *
+ * Here is a page with Elementary examples.
+ *
+ * @ref bg_01_example_page
+ *
+ * @ref bg_02_example_page
+ *
+ * @ref bg_03_example_page
+ *
+ * @ref actionslider_example_page
+ *
+ * @ref elm_animator_example_page_01
+ *
+ * @ref transit_example_01_explained
+ *
+ * @ref transit_example_02_explained
+ */
+
+/**
+ * @page bg_01_example_page elm_bg - Plain color background.
+ * @dontinclude bg_example_01.c
+ *
+ * The full code for this example can be found at @ref bg_example_01_c,
+ * in the function @c test_bg_plain. It's part of the @c elementar_test
+ * suite, and thus has the code for the three examples referenced by this
+ * documentation.
+ *
+ * This first example just sets a default background with a plain color. The
+ * first part consists of creating an Elementary window. It's the common
+ * piece of code that you'll see everywhere in Elementary: @skip elm_main
+ * @until autodel_set
+ *
+ * Now we really create our background object, using the window object as
+ * its parent:
+ *
+ * @skipline bg_add
+ *
+ * Then we set the size hints of the background object so that it will use
+ * all space available for it, and then add it as a resize object to the
+ * window, making it visible in the end:
+ *
+ * @skip size_hint_weight_set
+ * @until resize_object_add
+ *
+ * See @ref evas_object_size_hint_weight_set and elm_win_resize_object_add()
+ * for more detailed info about these functions.
+ *
+ * The end of the example is quite simple, just setting the minimum and
+ * maximum size of the background, so the Elementary window knows that it
+ * has to have at least the minimum size. The background also won't scale to
+ * a size above its maximum. Then we resize the window and show it in the
+ * end:
+ *
+ * @skip set size hints
+ * @until }
+ *
+ * And here we finish our very simple background object usage example.
+ */
+
+/**
+ * @page bg_02_example_page elm_bg - Image background.
+ * @dontinclude bg_example_02.c
+ *
+ * The full code for this example can be found at @ref bg_example_02_c,
+ * in the function @c test_bg_image. It's part of the @c elementar_test
+ * suite, and thus has the code for the three examples referenced by this
+ * documentation.
+ *
+ * This is the second example, and shows how to use the Elementary
+ * background object to set an image as background of your application.
+ *
+ * We start this example exactly in the same way as the previous one, even
+ * when creating the background object:
+ *
+ * @skip elm_main
+ * @until bg_add
+ *
+ * Now it's the different part.
+ *
+ * Our background will have an image, that will be displayed over the
+ * background color. Before loading the image, we set the load size of the
+ * image. The load size is a hint about the size that we want the image
+ * displayed in the screen. It's not the exact size that the image will have,
+ * but usually a bit bigger. The background object can still be scaled to a
+ * size bigger than the one set here. Setting the image load size to
+ * something smaller than its real size will reduce the memory used to keep
+ * the pixmap representation of the image, and the time to load it. Here we
+ * set the load size to 20x20 pixels, but the image is loaded with a size
+ * bigger than that (since it's just a hint):
+ *
+ * @skipline load_size_set
+ *
+ * And set our background image to be centered, instead of stretched or
+ * scaled, so the effect of the elm_bg_load_size_set() can be easily
+ * understood:
+ *
+ * @skipline option_set
+ *
+ * We need a filename to set, so we get one from the previous installed
+ * images in the @c PACKAGE_DATA_DIR, and write its full path to a buffer.
+ * Then we use this buffer to set the filename in the background object:
+ *
+ * @skip snprintf
+ * @until bg_file_set
+ *
+ * Notice that the third argument of the elm_bg_file_set() function is @c
+ * NULL, since we are setting an image to this background. This function
+ * also supports setting an edje group as background, in which case the @c
+ * group parameter wouldn't be @c NULL, but be the name of the group
+ * instead.
+ *
+ * Finally, we can set the size hints, add the background as a resize
+ * object, and resize the window, exactly the same thing we do in the @ref
+ * bg_01_example_page example:
+ *
+ * @skip size_hint
+ * @until }
+ *
+ * And this is the end of this example.
+ *
+ * This example will look like this:
+ * @image html screenshots/bg_01.png
+ * @image latex screenshots/bg_01.eps
+ */
+
+/**
+ * @page bg_03_example_page elm_bg - Background properties.
+ * @dontinclude bg_example_03.c
+ *
+ * The full code for this example can be found at @ref bg_example_03_c, in the
+ * function @c test_bg_options, with the callbacks @c _cb_overlay_changed, @c
+ * _cb_color_changed and @c _cb_radio_changed defined in the beginning of the
+ * file. It's part of the @c elementar_test suite, and thus has the code for
+ * the three examples referenced by this documentation.
+ *
+ * This example will show the properties available for the background object,
+ * and will use of some more widgets to set them.
+ *
+ * In order to do this, we will set some callbacks for these widgets. The
+ * first is for the radio buttons that will be used to choose the option
+ * passed as argument to elm_bg_option_set():
+ *
+ * @skip _cb_radio_changed
+ * @until }
+ *
+ * The next callback will be used when setting the overlay (using
+ * elm_bg_overlay_set()):
+ *
+ * @skip _cb_overlay_changed
+ * @until }
+ * @until }
+ *
+ * And the last one, used to set the color (with elm_bg_color_set()):
+ *
+ * @skip _cb_color_changed
+ * @until }
+ *
+ * We will get back to what these functions do soon. If you want to know more
+ * about how to set these callbacks and what these widgets are, look for:
+ * @li elm_radio_add()
+ * @li elm_check_add()
+ * @li elm_spinner_add()
+ *
+ * Now going to the main function, @c test_bg_options, we have the common
+ * code with the other examples:
+ *
+ * @skip bg-options
+ * @until autodel_set
+ *
+ * We add a plain background to this window, so it will have the default
+ * background color behind everything:
+ *
+ * @skip bg = elm_bg_add
+ * @until evas_object_show(bg)
+ *
+ * Then we add a vertical box (elm_box_add()) that will hold the background
+ * object that we are going to play with, as well as a horizontal box that
+ * will hold widgets:
+ *
+ * @skip elm_box_add
+ * @until evas_object_show
+ *
+ * Now we add the background object that is going to be of use for our
+ * example. It is an image background, as used in @ref bg_02_example_page ,
+ * so the code should be familiar:
+ *
+ * @skip elm_bg_add
+ * @until evas_object_show
+ *
+ * Notice the call to elm_box_pack_end(): it will pack the background object
+ * in the end of the Elementary box declared above. Just refer to that
+ * documentation for more info.
+ *
+ * Since this Elementary background is already an image background, we are
+ * going to play with its other properties. We will change its option
+ * (CENTER, SCALE, STRETCH, TILE), its color (RGB), and add an overlay to it.
+ * For all of these properties, we are going to add widgets that will
+ * configure them.
+ *
+ * First, lets add the horizontal box that will hold these widgets:
+ * @skip hbox
+ * @until align_set
+ *
+ * For now, just consider this @c hbox as a rectangle that will contain the
+ * widgets, and will distribute them horizontally inside its content. Then we
+ * add radio buttons that will allow us to choose the property to use with
+ * this background:
+ *
+ * @skip radio_add
+ * @until evas_object_show
+ *
+ * Again, I won't give details about the use of these widgets, just look for
+ * their documentation if necessary. It's enough to know for now that we are
+ * packing them in the @c hbox, setting a label for them, and the most
+ * important parts: setting its value to @c ELM_BG_OPTION_CENTER and its
+ * callback to @c _cb_radio_changed (the function defined in the beginning of
+ * this example). We do this for the next 3 radio buttons added after this
+ * one, each of them with a different value.
+ *
+ * Now taking a look at the code of the callback @c _cb_radio_changed again,
+ * it will call elm_bg_option_set() with the value set from the checked radio
+ * button, thus setting the option for this background. The background is
+ * passed as argument to the @p data parameter of this callback, and is
+ * referenced here as @c o_bg.
+ *
+ * Later we set the default value for this radio button:
+ *
+ * @skipline elm_radio_value_set
+ *
+ * Then we add a checkbox for the elm_bg_overlay_set() function:
+ *
+ * @skip check_add
+ * @until evas_object_show
+ *
+ * Now look at the code of the @c _cb_overlay_changed again. If the checkbox
+ * state is checked, an overlay will be added to the background. It's done by
+ * creating an Edje object, and setting it with elm_bg_overlay_set() to the
+ * background object. For information about what are and how to set Edje
+ * object, look at the Edje documentation.
+ *
+ * Finally we add a spinner object (elm_spinner_add()) to be used to select
+ * the color of our background. In its callback it's possible to see the call
+ * to elm_bg_color_set(), which will change the color of this background.
+ * This color is used by the background to fill areas where the image doesn't
+ * cover (in this case, where we have an image background). The spinner is
+ * also packed into the @c hbox :
+ *
+ * @skip elm_spinner_add
+ * @until evas_object_show
+ *
+ * Then we just have to pack the @c hbox inside the @c box, set some size
+ * hints, and show our window:
+ *
+ * @skip pack_end
+ * @until }
+ *
+ * Now to see this code in action, open elementary_test, and go to the "Bg
+ * Options" test. It should demonstrate what was implemented here.
+ */
+
+/**
+ * @page actionslider_example_page Actionslider usage
+ * @dontinclude actionslider_example_01.c
+ *
+ * For this example we are going to assume knowledge of evas smart callbacks
+ * and some basic evas object functions. Elementary is not meant to be used
+ * without evas, if you're not yet familiar with evas it probably is worth
+ * checking that out.
+ *
+ * And now to the example, when using Elementary we start by including
+ * Elementary.h:
+ * @skipline #include
+ *
+ * Next we define some callbacks, they all share the same signature because
+ * they are all to be used with evas_object_smart_callback_add().
+ * The first one just prints the selected label(in two different ways):
+ * @until }
+ *
+ * This next callback is a little more interesting, it makes the selected
+ * label magnetic(except if it's the center label):
+ * @until }
+ *
+ * This callback enables or disables the magnetic propertty of the center
+ * label:
+ * @until }
+ *
+ * And finally a callback to stop the main loop when the window is closed:
+ * @until }
+ *
+ * To be able to create our actionsliders we need to do some setup, but this
+ * isn't really relevant here, so if you want to know about that go @ref
+ * Win "here".
+ *
+ * With all that boring stuff out of the way we can proceed to creating some
+ * actionsliders.@n
+ * All actionsliders are created the same way:
+ * @skipline actionslider_add
+ * Next we must choose where the indicator starts, and for this one we choose
+ * the right, and set the right as magnetic:
+ * @skipline indicator_pos_set
+ * @until magnet_pos_set
+ *
+ * We then set the labels for the left and right, passing NULL as an argument
+ * to any of the labels makes that position have no label.
+ * @until Stop
+ *
+ * Furthermore we mark both left and right as enabled positions, if we didn't
+ * do this all three positions would be enabled:
+ * @until RIGHT
+ *
+ * Having the the enabled positions we now add a smart callback to change
+ * which position is magnetic, so that only the last selected position is
+ * magnetic:
+ * @until NULL
+ *
+ * And finally we set our printing callback and show the actionslider:
+ * @until object_show
+ * @skip pack_end
+ *
+ * For our next actionslider we are going to do much as we did for the
+ * previous except we are going to have the center as the magnet(and not
+ * change it):
+ * @skipline actionslider_add
+ * @skipline indicator_pos_set
+ * @until object_show
+ *
+ * And another actionslider, in this one the indicator starts on the left.
+ * It has labels only in the center and right, and both bositions are
+ * magnetic. Because the left doesn't have a label and is not magnetic once
+ * the indicator leaves it can't return:
+ * @skipline actionslider_add
+ * @skipline indicator_pos_set
+ * @until object_show
+ * @note The greyed out area is a @ref Styles "style".
+ *
+ * And now an actionslider with a label in the indicator, and whose magnet
+ * properties change based on what was last selected:
+ * @skipline actionslider_add
+ * @skipline indicator_pos_set
+ * @until object_show
+ * @note The greyed out area is a @ref Styles "style".
+ *
+ * We are almost done, this next one is just an actionslider with all
+ * positions magnetized and having every possible label:
+ * @skipline actionslider_add
+ * @skipline indicator_pos_set
+ * @until object_show
+ *
+ * And for our last actionslider we have one that turns the magnetic property
+ * on and off:
+ * @skipline actionslider_add
+ * @skipline indicator_pos_set
+ * @until object_show
+ *
+ * The example will look like this:
+ * @image html screenshots/actionslider_01.png
+ * @image latex screenshots/actionslider_01.eps
+ *
+ * See the full source code @ref actionslider_example_01 "here"
+ */
+
+/**
+ * @page elm_animator_example_page_01 Animator usage
+ * @dontinclude animator_example_01.c
+ *
+ * For this example we will be using a bit of evas, you could animate a
+ * elementary widget in much the same way, but to keep things simple we use
+ * an evas_object_rectangle.
+ *
+ * As every other example we start with our include and a simple callback to
+ * exit the app when the window is closed:
+ * @skipline #include
+ * @until }
+ *
+ * This next callback is the one that actually creates our animation, it
+ * changes the size, position and color of a rectangle given to it in @a
+ * data:
+ * @until }
+ *
+ * Next we have a callback that prints a string, nothing special:
+ * @until }
+ *
+ * This next callback is a little more interesting, it has a state variable
+ * to know if the animation is currently paused or running, and it toogles
+ * the state of the animation accordingly:
+ * @until }
+ * @until }
+ * @until }
+ *
+ * Finally we have a callback to stop the animation:
+ * @until }
+ *
+ * As with every example we need to do a bit of setup before we can actually
+ * use an animation, but for the purposes of this example that's not relevant
+ * so let's just skip to the good stuff, creating an animator:
+ * @skipline animator_add
+ * @note Since elm_animator is not a widget we can give it a NULL parent.
+ *
+ * Now that we have an elm_animator we set it's duration to 1 second:
+ * @line duration_set
+ *
+ * We would also like our animation to be reversible, so:
+ * @line reverse_set
+ *
+ * We also set our animation to repeat as many times as possible, which will
+ * mean that _end_cb will only be called after UINT_MAX * 2 seconds(UINT_MAX
+ * for the animation running forward and UNIT_MAX for the animation running
+ * backwards):
+ * @line repeat_set
+ *
+ * To add some fun to our animation we will use the IN_OUT curve style:
+ * @line curve_style
+ *
+ * To actually animate anything we need an operation callback:
+ * @line operation_callback
+ *
+ * Even though we set our animation to repeat for a very long time we are
+ * going to set a end callback to it:
+ * @line completion_callback
+ * @note Notice that stoping the animation with the stop button will not make
+ * _end_cb be called.
+ *
+ * Now that we have fully set up our animator we can tell it to start
+ * animating:
+ * @line animate
+ *
+ * There's a bit more of code that doesn't really matter to use so we skip
+ * right down to our last interesting point:
+ * @skipline animator_del
+ * @note Because we created our animator with no parent we need to delete it
+ * ourselves.
+ *
+ * The example should look like this:
+ * @image html screenshots/animator_example_01.png
+ * @image latex screenshots/animator_example_01.eps
+ * @n
+ * @image html screenshots/animator_example_02.png
+ * @image latex screenshots/animator_example_02.eps
+ * @n
+ * @image html screenshots/animator_example_03.png
+ * @image latex screenshots/animator_example_03.eps
+ *
+ * The full source code for this example can be found @ref
+ * animator_example_01_c "here"
+ */
+
+/**
+ * @page transit_example_03_c elm_transit - Combined effects and options.
+ *
+ * This example shows how to apply the following transition effects:
+ * @li translation
+ * @li color
+ * @li rotation
+ * @li wipe
+ * @li zoom
+ * @li resizing
+ *
+ * It allows you to apply more than one effect at once, and also allows to
+ * set properties like event_enabled, auto_reverse, repeat_times and
+ * tween_mode.
+ *
+ * @include transit_example_03.c
+ */
+
+/**
+ * @page transit_example_04_c elm_transit - Combined effects over two objects.
+ *
+ * This example shows how to apply the transition effects:
+ * @li flip
+ * @li resizable_flip
+ * @li fade
+ * @li blend
+ * over two objects. This kind of transition effect is used to make one
+ * object disappear and another one appear on its place.
+ *
+ * You can mix more than one effect of this type on the same objects, and the
+ * transition will apply both.
+ *
+ * @include transit_example_04.c
+ */
+
+/**
+ * @page transit_example_01_explained elm_transit - Basic transit usage.
+ * @dontinclude transit_example_01.c
+ *
+ * The full code for this example can be found at @ref transit_example_01_c.
+ *
+ * This example shows the simplest way of creating a transition and applying
+ * it to an object. Similarly to every other elementary example, we create a
+ * window, set its title, size, autodel property, and setup a callback to
+ * exit the program when finished:
+ *
+ * @skip on_done
+ * @until evas_object_resize
+ *
+ * We also add a resizeable white background to use behind our animation:
+ *
+ * @skip bg_add
+ * @until evas_object_show
+ *
+ * And then we add a button that we will use to demonstrate the effects of
+ * our animation:
+ *
+ * @skip button_add
+ * @until evas_object_show(win)
+ *
+ * Notice that we are not adding the button with elm_win_resize_object_add()
+ * because we don't want the window to control the size of the button. We
+ * will use the transition to change the button size, so it could conflict
+ * with something else trying to control that size.
+ *
+ * Now, the simplest code possible to create the resize animation:
+ *
+ * @skip transit_add
+ * @until transit_go
+ *
+ * As you can see, this code is very easy to understand. First, we create the
+ * transition itself with elm_transit_add(). Then we add the button to this
+ * transition with elm_transit_object_add(), which means that the transition
+ * will operate over this button. The effect that we want now is changing the
+ * object size from 100x50 to 300x150, and can be achieved by adding the
+ * resize effect with elm_transit_effect_resizing_add().
+ *
+ * Finally, we set the transition time to 5 seconds and start the transition
+ * with elm_transit_go(). If we wanted more effects applied to this
+ * button, we could add them to the same transition. See the
+ * @ref transit_example_03_c to watch many transitions being applied to an
+ * object.
+ */
+
+/**
+ * @page transit_example_02_explained elm_transit - Chained transitions.
+ * @dontinclude transit_example_02.c
+ *
+ * The full code for this example can be found at @ref transit_example_02_c.
+ *
+ * This example shows how to implement a chain of transitions. This chain is
+ * used to start a transition just after another transition ended. Similarly
+ * to every other elementary example, we create a window, set its title,
+ * size, autodel property, and setup a callback to exit the program when
+ * finished:
+ *
+ * @skip on_done
+ * @until evas_object_resize
+ *
+ * We also add a resizeable white background to use behind our animation:
+ *
+ * @skip bg_add
+ * @until evas_object_show
+ *
+ * This example will have a chain of 4 transitions, each of them applied to
+ * one button. Thus we create 4 different buttons:
+ *
+ * @skip button_add
+ * @until evas_object_show(bt4)
+ *
+ * Now we create a simple translation transition that will be started as soon
+ * as the program loads. It will be our first transition, and the other
+ * transitions will be started just after this transition ends:
+ *
+ * @skip transit_add
+ * @until transit_go
+ *
+ * The code displayed until now has nothing different from what you have
+ * already seen in @ref transit_example_01_explained, but now comes the new
+ * part: instead of creating a second transition that will start later using
+ * a timer, we create the it normally, and use
+ * elm_transit_chain_transit_add() instead of elm_transit_go. Since we are
+ * adding it in a chain after the first transition, it will start as soon as
+ * the first transition ends:
+ *
+ * @skip transit_add
+ * @until transit_chain_transit_add
+ *
+ * Finally we add the 2 other transitions to the chain, and run our program.
+ * It will make one transition start after the other finish, and there is the
+ * transition chain.
+ */
+
+/**
+ * @page bg_example_01_c bg_example_01.c
+ * @include bg_example_01.c
+ * @example bg_example_01.c
+ */
+
+/**
+ * @page bg_example_02_c bg_example_02.c
+ * @include bg_example_02.c
+ * @example bg_example_02.c
+ */
+
+/**
+ * @page bg_example_03_c bg_example_03.c
+ * @include bg_example_03.c
+ * @example bg_example_03.c
+ */
+
+/**
+ * @page actionslider_example_01 Actionslider example
+ * @include actionslider_example_01.c
+ * @example actionslider_example_01.c
+ */
+
+/**
+ * @page animator_example_01_c Animator example 01
+ * @include animator_example_01.c
+ * @example animator_example_01.c
+ */
+
+/**
+ * @page transit_example_01_c Transit example 1
+ * @include transit_example_01.c
+ * @example transit_example_01.c
+ */
+
+/**
+ * @page transit_example_02_c Transit example 2
+ * @include transit_example_02.c
+ * @example transit_example_02.c
+ */
