@@ -12,6 +12,7 @@ LDADD = \
 	@dlopen_libs@ @EINA_LIBS@ @EVIL_LIBS@ @GLIB_LIBS@ @WIN32_LIBS@ @LTLIBINTL@ @EFL_PTHREAD_LIBS@ @rt_libs@ -lm
 
 SRCS = \
+	ecore_time_example.c \
 	client_bench.c \
 	server_bench.c \
 	ecore_con_client_example.c \
@@ -29,6 +30,7 @@ files_DATA = $(SRCS)
 endif
 
 if EFL_BUILD_EXAMPLES
-pkglib_PROGRAMS +=
+pkglib_PROGRAMS += \
+	ecore_time_example
 endif
 

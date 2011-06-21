@@ -62,6 +62,9 @@ static double       precision = 10.0 / 1000000.0;
  *
  * The timer allows callbacks to be called at specific intervals.
  *
+ * Examples with functions that deal with time:
+ * @li @ref ecore_time_example_c
+ *
  * @{
  */
 

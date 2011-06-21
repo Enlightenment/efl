@@ -838,6 +838,30 @@ extern "C" {
    */
 
   /**
+   * @page ecore_time_example_c ecore_time - Differences between time functions
+   *
+   * This example shows the difference between calling ecore_time_get(),
+   * ecore_loop_time_get() and ecore_time_unix_get().
+   *
+   * It initializes ecore, then sets a timer with a callback that, when called,
+   * will retrieve the system time using these 3 different functions. After
+   * displaying the time, it sleeps for 1 second, then call display the time
+   * again using the 3 functions.
+   *
+   * Since everything occurs inside the same mainloop iteration, the internal
+   * ecore time variable will not be updated, and calling ecore_loop_time_get()
+   * before and after the sleep() call will return the same result.
+   *
+   * The two other functions will return a difference of 1 second, as expected.
+   *
+   * @note The usage of ecore_loop_time_get() should be preferred against the
+   * two other functions, since it won't produce a system call to get the
+   * current time.
+   *
+   * @include ecore_time_example.c
+   */
+
+  /**
    * @defgroup Ecore_Time_Group Ecore Time functions
    *
    * @{
