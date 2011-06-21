@@ -316,6 +316,7 @@ _elm_transit_del(Elm_Transit *transit)
      {
         effect_module = EINA_INLIST_CONTAINER_GET(transit->effect_list, Elm_Transit_Effect_Module);
         transit->effect_list = eina_inlist_remove(transit->effect_list, transit->effect_list);
+        _elm_transit_effect_del(transit, effect_module);
      }
 
    while (transit->objs)
