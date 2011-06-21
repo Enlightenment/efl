@@ -1378,6 +1378,11 @@ ECORE_EVAS_CHECK_MODULE([software-16-wince],
    [${have_ecore_wince}],
    [requirements_ecore_evas="ecore-wince >= 1.0.0 ${requirements_ecore_evas}"])
 
+### install and build examples
+
+EFL_CHECK_BUILD_EXAMPLES([enable_build_examples="yes"], [enable_build_examples="no"])
+EFL_CHECK_INSTALL_EXAMPLES([enable_install_examples="yes"], [enable_install_examples="no"])
+
 ### requirements
 
 AC_SUBST(requirements_ecore)
@@ -1442,6 +1447,7 @@ src/lib/ecore_wince/Makefile
 src/lib/ecore_x/Makefile
 src/lib/ecore_x/xlib/Makefile
 src/lib/ecore_x/xcb/Makefile
+src/examples/Makefile
 src/tests/Makefile
 README
 ecore.spec

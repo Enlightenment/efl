@@ -93,8 +93,6 @@ ecore-input.pc.in \
 ecore-wince.pc.in \
 ecore.spec.in \
 ecore.spec \
-examples/ecore_con_server_example.c \
-examples/ecore_con_client_example.c \
 m4/ac_abstract_socket.m4 \
 m4/ac_attribute.m4 \
 m4/check_x_extension.m4 \
