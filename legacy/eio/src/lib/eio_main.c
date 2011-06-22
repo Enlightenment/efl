@@ -177,7 +177,7 @@ eio_associate_malloc(void *data, Eina_Free_Cb free_cb)
   if (!tmp) return tmp;
 
   tmp->data = data;
-  tmp->free_cb = free_cb ? free_cb : free;
+  tmp->free_cb = free_cb;
 
   return tmp;
 }
@@ -190,7 +190,8 @@ eio_associate_free(void *data)
   if (!data) return ;
 
   tmp = data;
-  tmp->free_cb(tmp->data);
+  if (tmp->free_cb)
+    tmp->free_cb(tmp->data);
   _eio_pool_free(&associate_pool, tmp);
 }
 
