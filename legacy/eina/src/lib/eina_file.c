@@ -143,8 +143,6 @@ struct _Eina_File_Map
 };
 
 static Eina_Hash *_eina_file_cache = NULL;
-static Eina_List *_eina_file_cache_lru = NULL;
-static Eina_List *_eina_file_cache_delete = NULL;
 static Eina_Lock _eina_file_lock_cache;
 
 static int _eina_file_log_dom = -1;
@@ -383,7 +381,7 @@ _eina_file_stat_ls_iterator_next(Eina_File_Direct_Iterator *it, void **data)
 static void
 _eina_file_real_close(Eina_File *file)
 {
-   if (file->refcount != 0) return ;
+   if (file->refcount != 0) return;
 
    eina_hash_free(file->rmap);
    eina_hash_free(file->map);
@@ -499,15 +497,6 @@ eina_file_init(void)
 Eina_Bool
 eina_file_shutdown(void)
 {
-   Eina_File *f;
-   Eina_List *l;
-
-   EINA_LIST_FREE(_eina_file_cache_delete, f)
-     _eina_file_real_close(f);
-
-   EINA_LIST_FOREACH(_eina_file_cache_lru, l, f)
-     eina_hash_del(_eina_file_cache, f->filename, f);
-
    if (eina_hash_population(_eina_file_cache) > 0)
      {
         Eina_Iterator *it;
@@ -754,7 +743,6 @@ eina_file_open(const char *filename, Eina_Bool shared)
    struct stat file_stat;
    int fd;
    int flags;
-   Eina_Bool create = EINA_FALSE;
 
    /*
      FIXME: always open absolute path
@@ -782,27 +770,18 @@ eina_file_open(const char *filename, Eina_Bool shared)
    eina_lock_take(&_eina_file_lock_cache);
 
    file = eina_hash_find(_eina_file_cache, filename);
-   if (file && (file->mtime != file_stat.st_mtime
-                || file->length != (unsigned long long) file_stat.st_size
-                || file->inode != file_stat.st_ino))
+   if ((file) && 
+       ((file->mtime != file_stat.st_mtime) ||
+        (file->length != (unsigned long long) file_stat.st_size) ||
+        (file->inode != file_stat.st_ino)))
+      // FIXME: handle sub-second resolution correctness
      {
-        create = EINA_TRUE;
-
-        if (file->refcount == 0)
-          {
-             _eina_file_cache_lru = eina_list_remove(_eina_file_cache_lru, file);
-             eina_hash_del(_eina_file_cache, file->filename, file);
-
-             file = NULL;
-          }
-        else if (!file->delete_me)
-          {
-             file->delete_me = EINA_TRUE;
-             _eina_file_cache_delete = eina_list_prepend(_eina_file_cache_delete, file);
-          }
+        file->delete_me = EINA_TRUE;
+        eina_hash_del(_eina_file_cache, file->filename, file);
+        file = NULL;
      }
 
-   if (!file || create)
+   if (!file)
      {
         n = malloc(sizeof (Eina_File) + strlen(filename) + 1);
         if (!n) goto on_error;
@@ -825,20 +804,13 @@ eina_file_open(const char *filename, Eina_Bool shared)
         n->shared = shared;
         n->delete_me = EINA_FALSE;
         eina_lock_new(&n->lock);
-
-        if (file) eina_hash_del(_eina_file_cache, filename, file);
         eina_hash_direct_add(_eina_file_cache, n->filename, n);
      }
    else
      {
         close(fd);
-
         n = file;
-
-        if (n->refcount == 0)
-          _eina_file_cache_lru = eina_list_remove(_eina_file_cache_lru, n);
      }
-
    eina_lock_take(&n->lock);
    n->refcount++;
    eina_lock_release(&n->lock);
@@ -859,18 +831,8 @@ eina_file_close(Eina_File *file)
    file->refcount--;
    eina_lock_release(&file->lock);
 
-   if (file->refcount != 0) return ;
-
-   if (file->delete_me)
-     {
-        _eina_file_cache_delete = eina_list_remove(_eina_file_cache_delete,
-                                                   file);
-        _eina_file_real_close(file);
-     }
-   else
-     {
-        _eina_file_cache_lru = eina_list_prepend(_eina_file_cache_lru, file);
-     }
+   if (file->refcount != 0) return;
+   eina_hash_del(_eina_file_cache, file->filename, file);
 }
 
 EAPI size_t
