@@ -68,10 +68,9 @@ _event_handler_cb(void *data, int type, void *event) // event callback
 	  }
 
 	ecore_main_loop_quit();
-	return ECORE_CALLBACK_CANCEL; // same as EINA_FALSE
      }
 
-   return ECORE_CALLBACK_RENEW; // same as EINA_TRUE
+   return ECORE_CALLBACK_DONE; // same as EINA_FALSE
 }
 
 static Eina_Bool

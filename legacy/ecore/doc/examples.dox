@@ -75,10 +75,8 @@
  * will check if the idler was called more than 100 times already @c
  * (ctxt->count > 100), and will delete the idler, idle enterer and exiter, the
  * timer (if it still exists), and request that the main loop stop running. Then
- * it returns @ref ECORE_CALLBACK_CANCEL to indicate that the event handler
- * shouldn't be called anymore (this will delete it). If the @c count is still
- * smaller than 100, the event callback just returns @ref ECORE_CALLBACK_RENEW
- * and will keep being called every time that this event type is called.
+ * it returns @ref ECORE_CALLBACK_DONE to indicate that the event shouldn't be
+ * handled by any other callback.
  *
  * Finally, we add a callback to the timer, that will just print a message when
  * it is called, and this will happen only once (@ref ECORE_CALLBACK_CANCEL is
