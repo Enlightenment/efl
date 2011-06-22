@@ -526,20 +526,6 @@ elm_transit_event_enabled_get(const Elm_Transit *transit)
    return transit->event_enabled;
 }
 
-
-EINA_DEPRECATED EAPI void
-elm_transit_event_block_set(Elm_Transit *transit, Eina_Bool disabled)
-{
-   elm_transit_event_enabled_set(transit, disabled);
-}
-
-
-EINA_DEPRECATED EAPI Eina_Bool
-elm_transit_event_block_get(const Elm_Transit *transit)
-{
-   return !elm_transit_event_enabled_get(transit);
-}
-
 EAPI void
 elm_transit_del_cb_set(Elm_Transit *transit, void (*cb) (void *data, Elm_Transit *transit), void *data)
 {

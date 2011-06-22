@@ -4085,40 +4085,6 @@ EAPI Elm_Genlist_Item *elm_genlist_item_sorted_insert(Evas_Object *obj, const El
    EAPI Eina_Bool                   elm_transit_objects_final_state_keep_get(const Elm_Transit *transit) EINA_ARG_NONNULL(1);
 
    /**
-    * Set the event block when transit is operating.
-    *
-    * If @p disabled is EINA_TRUE, the objects of the transit will receives
-    * events from mouse and keyboard during the animation.
-    * @note When you add an object with elm_transit_object_add(), its state from
-    * evas_object_pass_events_get(obj) is saved, and it is applied when the
-    * transit ends, if you change this state with evas_object_pass_events_set()
-    * after add the object, this state will change again when @p transit stops to
-    * run.
-    *
-    * @see elm_transit_event_enabled_set()
-    *
-    * @param transit The transit object.
-    * @param disabled events are blocked if disabled is @c EINA_TRUE, and
-    * are received otherwise.
-    *
-    * @ingroup Transit
-    */
-   EINA_DEPRECATED EAPI void                elm_transit_event_block_set(Elm_Transit *transit, Eina_Bool disabled) EINA_ARG_NONNULL(1);
-
-   /**
-    * Get the value of event block enabled status.
-    *
-    * @see elm_transit_event_enabled_set(), elm_transit_event_enabled_get()
-    *
-    * @param transit The Transit object
-    * @return EINA_TRUE, when event block is enabled. If @p transit is NULL
-    * EINA_FALSE is returned
-    *
-    * @ingroup Transit
-    */
-   EINA_DEPRECATED EAPI Eina_Bool           elm_transit_event_block_get(const Elm_Transit *transit) EINA_ARG_NONNULL(1);
-
-   /**
     * Set the event enabled when transit is operating.
     *
     * If @p enabled is EINA_TRUE, the objects of the transit will receives
