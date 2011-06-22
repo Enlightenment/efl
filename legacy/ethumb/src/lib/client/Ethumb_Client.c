@@ -345,7 +345,8 @@ _ethumb_async_delete(void *data)
 
    ethumb_free(async->dup);
 
-   EINA_REFCOUNT_UNREF(async->source, _ethumb_client_free);
+   EINA_REFCOUNT_UNREF(async->source)
+     _ethumb_client_free(async->source);
 
    free(async);
 }
@@ -812,7 +813,8 @@ ethumb_client_disconnect(Ethumb_Client *client)
 {
    EINA_SAFETY_ON_NULL_RETURN(client);
 
-   EINA_REFCOUNT_UNREF(client, _ethumb_client_free);
+   EINA_REFCOUNT_UNREF(client)
+     _ethumb_client_free(client);
 }
 
 /**
@@ -2205,7 +2207,8 @@ ethumb_client_thumb_exists_cancel(Ethumb_Exists *exists, Ethumb_Client_Thumb_Exi
           break;
        }
 
-   EINA_REFCOUNT_UNREF(async, _ethumb_async_cancel);
+   EINA_REFCOUNT_UNREF(async)
+     _ethumb_async_cancel(async);
 }
 
 /**
