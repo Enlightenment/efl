@@ -173,6 +173,9 @@ edje_file_group_exists(const char *file, const char *glob)
         if (eina_hash_find(edf->collection, glob)) succeed = EINA_TRUE;
      }
    _edje_cache_file_unref(edf);
+
+   INF("edje_file_group_exists: '%s', '%s': %i\n", file, glob, succeed);
+
    return succeed;
 }
 
