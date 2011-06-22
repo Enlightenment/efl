@@ -150,7 +150,7 @@ static Eina_Bool
 _text_class_member_free(const Eina_Hash *hash __UNUSED__,
 			const void *key,
 			void *data,
-			void *fdata)
+			void *fdata __UNUSED__)
 {
    _edje_text_class_member_direct_del(key, data);
    return EINA_TRUE;
