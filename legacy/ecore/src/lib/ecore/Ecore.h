@@ -56,7 +56,8 @@ These routines are used for Ecore Library interaction
 
 @section intro Introduction
 
-Ecore is a library of convenience functions.
+Ecore is a library of convenience functions. A brief explanation of how to use
+it can be found in @ref Ecore_Main_Loop_Page.
 
 The Ecore library provides the following modules:
 @li @ref Ecore_Group
@@ -859,6 +860,7 @@ extern "C" {
    * current time.
    *
    * @include ecore_time_example.c
+   * @example ecore_time_example.c
    */
 
   /**

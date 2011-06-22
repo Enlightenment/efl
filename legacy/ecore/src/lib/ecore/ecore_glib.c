@@ -256,7 +256,28 @@ _ecore_glib_shutdown(void)
  * Once initialized/integrated, it will be valid until Ecore is
  * completely shut down.
  *
- * @note this is only available if Ecore was compiled with GLib support.
+ * Example of use:
+ * @code
+ *
+ * int main(void)
+ * {
+ *    ecore_init();
+ *    ecore_main_loop_glib_integrate();
+ *
+ *    // some code here
+ *
+ *    ecore_main_loop_begin();
+ *
+ *    ecore_shutdown();
+ *
+ *    return 0;
+ * }
+ *
+ * @endcode
+ *
+ * @note This is only available if Ecore was compiled with GLib support.
+ * @note You don't need to call this function if Ecore was compiled with
+ * --enable-glib-integration-always.
  *
  * @return @c EINA_TRUE on success of @c EINA_FALSE if it failed,
  *         likely no GLib support in Ecore.

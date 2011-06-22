@@ -664,8 +664,8 @@ _ecore_main_loop_shutdown(void)
  * Here is an example of simple program and its basic event loop flow:
  * @image html prog_flow.png
  *
- * For examples of setting up and using a main loop, see
- * @ref event_handler_example.c and @ref timer_example.c.
+ * For examples of setting up and using a main loop, see @ref
+ * Ecore_Main_Loop_Page.
  *
  * @{
  */
@@ -673,6 +673,10 @@ _ecore_main_loop_shutdown(void)
 /**
  * Runs a single iteration of the main loop to process everything on the
  * queue.
+ *
+ * It does everything that is already done inside an @c Ecore main loop, like
+ * checking for expired timers, idlers, etc. But it will do it only once and
+ * return, instead of keep watching for new events.
  */
 EAPI void
 ecore_main_loop_iterate(void)
@@ -687,8 +691,20 @@ ecore_main_loop_iterate(void)
 /**
  * Runs the application main loop.
  *
- * This function will not return until @ref ecore_main_loop_quit is called.
+ * This function will not return until @ref ecore_main_loop_quit is called. It
+ * will check for expired timers, idlers, file descriptors being watched by fd
+ * handlers, etc. Once everything is done, before entering again on idle state,
+ * any callback set as @c Idle_Enterer will be called.
  *
+ * Each main loop iteration is done by calling ecore_main_loop_iterate()
+ * internally.
+ *
+ * The polling (select) function used can be changed with
+ * ecore_main_loop_select_func_set().
+ *
+ * The function used to check for file descriptors, events, and that has a
+ * timeout for the timers can be changed using
+ * ecore_main_loop_select_func_set().
  */
 EAPI void
 ecore_main_loop_begin(void)
@@ -707,6 +723,9 @@ ecore_main_loop_begin(void)
 /**
  * Quits the main loop once all the events currently on the queue have
  * been processed.
+ *
+ * This function returns immediately, but will mark the ecore_main_loop_begin()
+ * function to return at the end of the current main loop iteration.
  */
 EAPI void
 ecore_main_loop_quit(void)
