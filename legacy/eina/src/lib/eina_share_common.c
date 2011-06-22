@@ -555,8 +555,6 @@ eina_iterator_array_check(const Eina_Rbtree *rbtree __UNUSED__,
 {
    Eina_Share_Common_Node *node;
 
-   eina_lock_take(&_mutex_big);
-
    fdata->used += sizeof(Eina_Share_Common_Head);
    for (node = head->head; node; node = node->next)
      {
@@ -568,8 +566,6 @@ eina_iterator_array_check(const Eina_Rbtree *rbtree __UNUSED__,
         fdata->dups += node->references - 1;
         fdata->unique++;
      }
-
-   eina_lock_release(&_mutex_big);
 
    return EINA_TRUE;
 }
