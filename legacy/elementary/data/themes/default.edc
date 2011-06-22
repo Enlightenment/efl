@@ -22453,7 +22453,7 @@ collections {
                   font: "Sans,Edje-Vera";
                   size: 10;
                   min: 0 1;
-                  align: 0.0 0.5;
+                  align: -1.0 0.5;
                }
             }
             description { state: "visible" 0.0;
@@ -22681,7 +22681,7 @@ collections {
                   font: "Sans,Edje-Vera";
                   size: 10;
                   min: 0 0;
-                  align: 0.0 0.5;
+                  align: -1.0 0.5;
                }
             }
             description { state: "visible" 0.0;
