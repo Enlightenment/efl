@@ -3696,6 +3696,17 @@ _edje_text_class_find(Edje *ed, const char *text_class)
 }
 
 void
+_edje_text_class_member_direct_del(const char *text_class,
+                                   Eina_List *lookup)
+{
+   Eina_List *members;
+
+   members = eina_hash_find(_edje_text_class_member_hash, text_class);
+   members = eina_list_remove_list(members, lookup);
+   eina_hash_set(_edje_text_class_member_hash, text_class, members);
+}
+
+void
 _edje_text_class_member_add(Edje *ed, const char *text_class)
 {
    Eina_List *members;

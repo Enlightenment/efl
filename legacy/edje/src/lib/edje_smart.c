@@ -114,6 +114,7 @@ _edje_smart_add(Evas_Object *obj)
    evas_object_geometry_get(obj, &(ed->x), &(ed->y), &(ed->w), &(ed->h));
    ed->obj = obj;
    _edje_edjes = eina_list_append(_edje_edjes, obj);
+   fprintf(stderr, "living edje object: %i\n", eina_list_count(_edje_edjes));
    /*
      {
         Eina_List *l;

@@ -146,6 +146,15 @@ edje_shutdown(void)
 }
 
 /* Private Routines */
+static Eina_Bool
+_text_class_member_free(const Eina_Hash *hash __UNUSED__,
+			const void *key,
+			void *data,
+			void *fdata)
+{
+   _edje_text_class_member_direct_del(key, data);
+   return EINA_TRUE;
+}
 
 void
 _edje_del(Edje *ed)
@@ -201,7 +210,11 @@ _edje_del(Edje *ed)
         free(cb);
      }
 
-   if (ed->members) eina_hash_free(ed->members);
+   if (ed->members)
+     {
+        eina_hash_foreach(ed->members, _text_class_member_free, NULL);
+        eina_hash_free(ed->members);
+     }
    free(ed);
 }
 
