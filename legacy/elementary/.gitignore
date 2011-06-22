@@ -34,7 +34,7 @@ elementary_testql
 /missing
 /stamp-h1
 core
-cscope.out
+cscope.*
 doc/elementary.dox
 elementary.spec
 m4/libtool.m4
