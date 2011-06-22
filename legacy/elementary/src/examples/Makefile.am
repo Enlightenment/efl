@@ -9,6 +9,8 @@ AM_CPPFLAGS = \
 -I$(top_srcdir)/src/lib \
 -I$(top_builddir)/src/lib \
 -DPACKAGE_DATA_DIR="\"$(datadir)/elementary\"" \
+-DPACKAGE_BIN_DIR=\"$(bindir)\" \
+-DPACKAGE_LIB_DIR=\"$(libdir)\" \
 @ELEMENTARY_EDBUS_CFLAGS@ \
 @ELEMENTARY_EFREET_CFLAGS@ \
 @ELEMENTARY_ETHUMB_CFLAGS@ \
@@ -28,7 +30,8 @@ SRCS = \
 	transit_example_04.c \
 	bg_example_01.c \
 	bg_example_02.c \
-	bg_example_03.c
+	bg_example_03.c \
+	general_funcs_example.c
 
 pkglib_PROGRAMS =
 
@@ -48,7 +51,8 @@ pkglib_PROGRAMS += \
 	transit_example_04 \
 	bg_example_01 \
 	bg_example_02 \
-	bg_example_03
+	bg_example_03 \
+	general_funcs_example
 
 # This variable will hold the list of screenshots that will be made
 # by "make screenshots". Each item in the list is of the form:

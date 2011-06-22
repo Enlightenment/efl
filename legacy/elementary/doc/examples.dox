@@ -16,6 +16,8 @@
  * @ref transit_example_01_explained
  *
  * @ref transit_example_02_explained
+ *
+ * @ref general_functions_example_page
  */
 
 /**
@@ -580,6 +582,123 @@
  */
 
 /**
+ * @page general_functions_example_page General (top-level) functions example
+ * @dontinclude general_funcs_example.c
+ *
+ * As told in their documentation blocks, the
+ * elm_app_compile_*_dir_set() family of functions have to be called
+ * before elm_app_info_set():
+ * @skip tell elm about
+ * @until elm_app_info_set
+ *
+ * We are here setting the fallback paths to the compiling time target
+ * paths, naturally. If you're building the example out of the
+ * project's build system, we're assuming they are the canonical ones.
+ *
+ * After the program starts, elm_app_info_set() will actually run and
+ * then you'll see an intrincasy: Elementary does the prefix lookup @b
+ * twice. This is so because of the quicklaunch infrastructure in
+ * Elementary (@ref Start), which will register a predefined prefix
+ * for possible users of the launch schema. We're not hooking into a
+ * quick launch, so this first call can't be avoided.
+ *
+ * If you ran this example from your "bindir" installation
+ * directiory, no output will emerge from these both attempts -- it
+ * will find the "magic" file there registered and set the prefixes
+ * silently. Otherwise, you could get something like:
+ @verbatim
+ WARNING: Could not determine its installed prefix for 'ELM'
+       so am falling back on the compiled in default:
+         usr
+       implied by the following:
+         bindir    = usr/lib
+         libdir    = usr/lib
+         datadir   = usr/share/elementary
+         localedir = usr/share/locale
+       Try setting the following environment variables:
+         ELM_PREFIX     - points to the base prefix of install
+       or the next 4 variables
+         ELM_BIN_DIR    - provide a specific binary directory
+         ELM_LIB_DIR    - provide a specific library directory
+         ELM_DATA_DIR   - provide a specific data directory
+         ELM_LOCALE_DIR - provide a specific locale directory
+ @endverbatim
+ * if you also didn't change those environment variables (remember
+ * they are also a valid way of communicating your prefix to the
+ * binary) - this is the scenario where it fallbacks to the paths set
+ * for compile time.
+ *
+ * Then, you can check the prefixes set on the standard output:
+ * @skip prefix was set to
+ * @until locale directory is
+ *
+ * In the fragment
+ * @skip by using this policy
+ * @until elm_win_autodel_set
+ * we demonstrate the use of Elementary policies. The policy defining
+ * under which circunstances our application should quit automatically
+ * is set to when its last window is closed (this one has just one
+ * window, though). This will save us from having to set a callback
+ * ourselves on the window, like done in @ref bg_example_01_c "this"
+ * example. Note that we need to tell the window to delete itself's
+ * object on a request to destroy the canvas coming, with
+ * elm_win_autodel_set().
+ *
+ * What follows is some boilerplate code, creating a frame with a @b
+ * button, our object of interest, and, below, widgets to change the
+ * button's behavior and exemplify the group of functions in question.
+ *
+ * @dontinclude general_funcs_example.c
+ * We enabled the focus highlight object for this window, so that you
+ * can keep track of the current focused object better:
+ * @skip elm_win_focus_highlight_enabled_set
+ * @until evas_object_show
+ * Use the tab key to navigate through the focus chain.
+ *
+ * @dontinclude general_funcs_example.c
+ * While creating the button, we exemplify how to use Elementary's
+ * finger size information to scale our UI:
+ * @skip fprintf(stdout, "Elementary
+ * @until evas_object_show
+ *
+ * @dontinclude general_funcs_example.c
+ * The first checkbox's callback is:
+ * @skip static void
+ * @until }
+ * When unsetting the checkbox, we disable the button, which will get a new
+ * decoration (greyed out) and stop receiving events. The focus chain
+ * will also ignore it.
+ *
+ * Following, there are 2 more buttons whose actions are focus/unfocus
+ * the top button, respectively:
+ * @skip focus callback
+ * @until }
+ * and
+ * @skip unfocus callback
+ * @until }
+ * Note the situations in which they won't take effect:
+ * - the button is not allowed to get focus or
+ * - the button is disabled
+ *
+ * The first restriction above you'll get by a second checkbox, whose
+ * callback is:
+ * @skip focus allow callback
+ * @until }
+ * Note that the button will still get mouse events, though.
+ *
+ * Next, there's a slider controlling the button's scale:
+ * @skip scaling callback
+ * @until }
+ *
+ * Experiment with it, so you understand the effect better. If you
+ * change its value, it will mess with the button's original size,
+ * naturally.
+ *
+ * The full code for this example can be found
+ * @ref general_functions_example_c "here".
+ */
+
+/**
  * @page bg_example_01_c bg_example_01.c
  * @include bg_example_01.c
  * @example bg_example_01.c
@@ -619,4 +738,10 @@
  * @page transit_example_02_c Transit example 2
  * @include transit_example_02.c
  * @example transit_example_02.c
+ */
+
+/**
+ * @page general_functions_example_c General (top-level) functions example
+ * @include general_funcs_example.c
+ * @example general_funcs_example.c
  */
