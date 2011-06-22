@@ -45,8 +45,11 @@ elm_main(int argc __UNUSED__, char **argv __UNUSED__)
    /* and show the window */
    evas_object_show(win);
 
-   elm_run();
+   elm_run(); /* and run the program now, starting to handle all
+               * events, etc. */
+   elm_shutdown(); /* clean up and shut down */
 
+   /* exit code */
    return 0;
 }
 

@@ -213,6 +213,22 @@ extern "C" {
 #define ELM_RECTS_INTERSECT(x, y, w, h, xx, yy, ww, hh) (((x) < ((xx) + (ww))) && ((y) < ((yy) + (hh))) && (((x) + (w)) > (xx)) && (((y) + (h)) > (yy)))
 #define ELM_PI 3.14159265358979323846
 
+   /**
+    * @defgroup General General
+    *
+    * @brief General Elementary API. Functions that don't relate to
+    * Elementary objects specifically.
+    *
+    * Here are documented functions which init/shutdown the library,
+    * that apply to generic Elementary objects, that deal with
+    * configuration, et cetera.
+    */
+
+   /**
+    * @addtogroup General
+    * @{
+    */
+
   /**
    * Defines couple of standard Evas_Object layers to be used
    * with evas_object_layer_set().
@@ -233,36 +249,51 @@ extern "C" {
 /**************************************************************************/
    EAPI extern int ELM_ECORE_EVENT_ETHUMB_CONNECT;
 
-   /* Objects */
    /**
-    * Emitted when policy value changed.
+    * Emitted when any Elementary's policy value is changed.
     */
    EAPI extern int ELM_EVENT_POLICY_CHANGED;
-   typedef struct _Elm_Event_Policy_Changed
+
+   /**
+    * @typedef Elm_Event_Policy_Changed
+    *
+    * Data on the event when an Elementary policy has changed
+    */
+    typedef struct _Elm_Event_Policy_Changed Elm_Event_Policy_Changed;
+
+   /**
+    * @struct _Elm_Event_Policy_Changed
+    *
+    * Data on the event when an Elementary policy has changed
+    */
+    struct _Elm_Event_Policy_Changed
      {
-        unsigned int policy;
-        int          new_value;
-        int          old_value;
-     } Elm_Event_Policy_Changed;
+        unsigned int policy; /**< the policy identifier */
+        int          new_value; /**< value the policy had before the change */
+        int          old_value; /**< new value the policy got */
+    };
 
    /**
     * Policy identifiers.
-    *
-    * @see elm_policy_set()
     */
-   typedef enum _Elm_Policy
-     {
-        ELM_POLICY_QUIT, /**< when should quit application automatically.
-                          * @see Elm_Policy_Quit.
+    typedef enum _Elm_Policy
+    {
+        ELM_POLICY_QUIT, /**< under which circunstances the application
+                          * should quit automatically. @see
+                          * Elm_Policy_Quit.
                           */
         ELM_POLICY_LAST
-     } Elm_Policy;
+    } Elm_Policy; /**< Elementary policy identifiers/groups enumeration.  @see elm_policy_set()
+ */
 
    typedef enum _Elm_Policy_Quit
      {
-        ELM_POLICY_QUIT_NONE = 0, /**< never quit application automatically */
-        ELM_POLICY_QUIT_LAST_WINDOW_CLOSED /**< quit when last window is closed */
-     } Elm_Policy_Quit;
+        ELM_POLICY_QUIT_NONE = 0, /**< never quit the application
+                                   * automatically */
+        ELM_POLICY_QUIT_LAST_WINDOW_CLOSED /**< quit when the
+                                            * application's last
+                                            * window is closed */
+     } Elm_Policy_Quit; /**< Possible values for the #ELM_POLICY_QUIT policy */
 
    typedef enum _Elm_Focus_Direction
      {
@@ -308,27 +339,280 @@ extern "C" {
    typedef Eina_Bool (*Elm_Event_Cb) (void *data, Evas_Object *obj, Evas_Object *src, Evas_Callback_Type type, void *event_info);
 
 #ifndef ELM_LIB_QUICKLAUNCH
-#define ELM_MAIN() int main(int argc, char **argv) {elm_init(argc, argv); return elm_main(argc, argv);}
+#define ELM_MAIN() int main(int argc, char **argv) {elm_init(argc, argv); return elm_main(argc, argv);} /**< macro to be used after the elm_main() function */
 #else
-#define ELM_MAIN() int main(int argc, char **argv) {return elm_quicklaunch_fallback(argc, argv);}
+#define ELM_MAIN() int main(int argc, char **argv) {return elm_quicklaunch_fallback(argc, argv);} /**< macro to be used after the elm_main() function */
 #endif
 
 /**************************************************************************/
    /* General calls */
+
+   /**
+    * Initialize Elementary
+    *
+    * @param[in] argc System's argument count value
+    * @param[in] argv System's pointer to array of argument strings
+    * @return The init counter value.
+    *
+    * This function initializes Elementary and increments a counter of
+    * the number of calls to it. It returs the new counter's value.
+    *
+    * @warning This call is exported only for use by the @c ELM_MAIN()
+    * macro. There is no need to use this if you use this macro (which
+    * is highly advisable). An elm_main() should contain the entry
+    * point code for your application, having the same prototype as
+    * elm_init(), and @b not being static (putting the @c EAPI symbol
+    * in front of its type declaration is advisable). The @c
+    * ELM_MAIN() call should be placed just after it.
+    *
+    * Example:
+    * @dontinclude bg_example_01.c
+    * @skip static void
+    * @until ELM_MAIN
+    *
+    * See the full @ref bg_example_01_c "example".
+    *
+    * @see elm_shutdown().
+    * @ingroup General
+    */
    EAPI int          elm_init(int argc, char **argv);
+
+   /**
+    * Shut down Elementary
+    *
+    * @return The init counter value.
+    *
+    * This should be called at the end of your application, just
+    * before it ceases to do any more processing. This will clean up
+    * any permanent resources your application may have allocated via
+    * Elementary that would otherwise persist.
+    *
+    * @see elm_init() for an example
+    *
+    * @ingroup General
+    */
    EAPI int          elm_shutdown(void);
+
+   /**
+    * Run Elementary's main loop
+    *
+    * This call should be issued just after all initialization is
+    * completed. This function will not return until elm_exit() is
+    * called. It will keep looping, running the main
+    * (event/processing) loop for Elementary.
+    *
+    * @see elm_init() for an example
+    *
+    * @ingroup General
+    */
    EAPI void         elm_run(void);
+
+   /**
+    * Exit Elementary's main loop
+    *
+    * If this call is issued, it will flag the main loop to cease
+    * processing and return back to its parent function (usually your
+    * elm_main() function).
+    *
+    * @see elm_init() for an example. There, just after a request to
+    * close the window comes, the main loop will be left.
+    *
+    * @ingroup General
+    */
    EAPI void         elm_exit(void);
 
+   /**
+    * Provide information in order to make Elementary determine the @b
+    * run time location of the software in question, so other data files
+    * such as images, sound files, executable utilities, libraries,
+    * modules and locale files can be found.
+    *
+    * @param mainfunc This is your application's main function name,
+    *        whose binary's location is to be found. Providing @c NULL
+    *        will make Elementary not to use it
+    * @param dom This will be used as the application's "domain", in the
+    *        form of a prefix to any environment variables that may
+    *        override prefix detection and the directory name, inside the
+    *        standard share or data directories, where the software's
+    *        data files will be looked for.
+    * @param checkfile This is an (optional) magic file's path to check
+    *        for existence (and it must be located in the data directory,
+    *        under the share directory provided above). Its presence will
+    *        help determine the prefix found was correct. Pass @c NULL if
+    *        the check is not to be done.
+    *
+    * This function allows one to re-locate the application somewhere
+    * else after compilation, if the developer wishes for easier
+    * distribution of pre-compiled binaries.
+    *
+    * The prefix system is designed to locate where the given software is
+    * installed (under a common path prefix) at run time and then report
+    * specific locations of this prefix and common directories inside
+    * this prefix like the binary, library, data and locale directories,
+    * through the @c elm_app_*_get() family of functions.
+    *
+    * Call elm_app_info_set() early on before you change working
+    * directory or anything about @c argv[0], so it gets accurate
+    * information.
+    *
+    * It will then try and trace back which file @p mainfunc comes from,
+    * if provided, to determine the application's prefix directory.
+    *
+    * The @p dom parameter provides a string prefix to prepend before
+    * environment variables, allowing a fallback to @b specific
+    * environment variables to locate the software. You would most
+    * probably provide a lowercase string there, because it will also
+    * serve as directory domain, explained next. For environment
+    * variables purposes, this string is made uppercase. For example if
+    * @c "myapp" is provided as the prefix, then the program would expect
+    * @c "MYAPP_PREFIX" as a master environment variable to specify the
+    * exact install prefix for the software, or more specific environment
+    * variables like @c "MYAPP_BIN_DIR", @c "MYAPP_LIB_DIR", @c
+    * "MYAPP_DATA_DIR" and @c "MYAPP_LOCALE_DIR", which could be set by
+    * the user or scripts before launching. If not provided (@c NULL),
+    * environment variables will not be used to override compiled-in
+    * defaults or auto detections.
+    *
+    * The @p dom string also provides a subdirectory inside the system
+    * shared data directory for data files. For example, if the system
+    * directory is @c /usr/local/share, then this directory name is
+    * appended, creating @c /usr/local/share/myapp, if it @p was @c
+    * "myapp". It is expected the application installs data files in
+    * this directory.
+    *
+    * The @p checkfile is a file name or path of something inside the
+    * share or data directory to be used to test that the prefix
+    * detection worked. For example, your app will install a wallpaper
+    * image as @c /usr/local/share/myapp/images/wallpaper.jpg and so to
+    * check that this worked, provide @c "images/wallpaper.jpg" as the @p
+    * checkfile string.
+    *
+    * @see elm_app_compile_bin_dir_set()
+    * @see elm_app_compile_lib_dir_set()
+    * @see elm_app_compile_data_dir_set()
+    * @see elm_app_compile_locale_set()
+    * @see elm_app_prefix_dir_get()
+    * @see elm_app_bin_dir_get()
+    * @see elm_app_lib_dir_get()
+    * @see elm_app_data_dir_get()
+    * @see elm_app_locale_dir_get()
+    */
    EAPI void         elm_app_info_set(void *mainfunc, const char *dom, const char *checkfile);
+
+   /**
+    * Provide information on the @b fallback application's binaries
+    * directory, on scenarios where they get overriden by
+    * elm_app_info_set().
+    *
+    * @param dir The path to the default binaries directory (compile time
+    * one)
+    *
+    * @note Elementary will as well use this path to determine actual
+    * names of binaries' directory paths, maybe changing it to be @c
+    * something/local/bin instead of @c something/bin, only, for
+    * example.
+    *
+    * @warning You should call this function @b before
+    * elm_app_info_set().
+    */
    EAPI void         elm_app_compile_bin_dir_set(const char *dir);
+
+   /**
+    * Provide information on the @b fallback application's libraries
+    * directory, on scenarios where they get overriden by
+    * elm_app_info_set().
+    *
+    * @param dir The path to the default libraries directory (compile
+    * time one)
+    *
+    * @note Elementary will as well use this path to determine actual
+    * names of libraries' directory paths, maybe changing it to be @c
+    * something/lib32 or @c something/lib64 instead of @c something/lib,
+    * only, for example.
+    *
+    * @warning You should call this function @b before
+    * elm_app_info_set().
+    */
    EAPI void         elm_app_compile_lib_dir_set(const char *dir);
+
+   /**
+    * Provide information on the @b fallback application's data
+    * directory, on scenarios where they get overriden by
+    * elm_app_info_set().
+    *
+    * @param dir The path to the default data directory (compile time
+    * one)
+    *
+    * @note Elementary will as well use this path to determine actual
+    * names of data directory paths, maybe changing it to be @c
+    * something/local/share instead of @c something/share, only, for
+    * example.
+    *
+    * @warning You should call this function @b before
+    * elm_app_info_set().
+    */
    EAPI void         elm_app_compile_data_dir_set(const char *dir);
+
+   /**
+    * Provide information on the @b fallback application's locale
+    * directory, on scenarios where they get overriden by
+    * elm_app_info_set().
+    *
+    * @param dir The path to the default locale directory (compile time
+    * one)
+    *
+    * @warning You should call this function @b before
+    * elm_app_info_set().
+    */
    EAPI void         elm_app_compile_locale_set(const char *dir);
+
+   /**
+    * Retrieve the application's run time prefix directory, as set by
+    * elm_app_info_set() and the way (environment) the application was
+    * run from.
+    *
+    * @return The directory prefix the application is actually using
+    */
    EAPI const char  *elm_app_prefix_dir_get(void);
+
+   /**
+    * Retrieve the application's run time binaries prefix directory, as
+    * set by elm_app_info_set() and the way (environment) the application
+    * was run from.
+    *
+    * @return The binaries directory prefix the application is actually
+    * using
+    */
    EAPI const char  *elm_app_bin_dir_get(void);
+
+   /**
+    * Retrieve the application's run time libraries prefix directory, as
+    * set by elm_app_info_set() and the way (environment) the application
+    * was run from.
+    *
+    * @return The libraries directory prefix the application is actually
+    * using
+    */
    EAPI const char  *elm_app_lib_dir_get(void);
+
+   /**
+    * Retrieve the application's run time data prefix directory, as
+    * set by elm_app_info_set() and the way (environment) the application
+    * was run from.
+    *
+    * @return The data directory prefix the application is actually
+    * using
+    */
    EAPI const char  *elm_app_data_dir_get(void);
+
+   /**
+    * Retrieve the application's run time locale prefix directory, as
+    * set by elm_app_info_set() and the way (environment) the application
+    * was run from.
+    *
+    * @return The locale directory prefix the application is actually
+    * using
+    */
    EAPI const char  *elm_app_locale_dir_get(void);
 
    EAPI void         elm_quicklaunch_mode_set(Eina_Bool ql_on);
@@ -348,8 +632,42 @@ extern "C" {
    EAPI Eina_Bool    elm_need_e_dbus(void);
    EAPI Eina_Bool    elm_need_ethumb(void);
 
+   /**
+    * Set a new policy's value (for a given policy group/identifier).
+    *
+    * @param policy policy identifier, as in @ref Elm_Policy.
+    * @param value policy value, which depends on the identifier
+    *
+    * @return @c EINA_TRUE on success or @c EINA_FALSE, on error.
+    *
+    * Elementary policies define applications' behavior,
+    * somehow. These behaviors are divided in policy groups (see
+    * #Elm_Policy enumeration). This call will emit the Ecore event
+    * #ELM_EVENT_POLICY_CHANGED, which can be hooked at with
+    * handlers. An #Elm_Event_Policy_Changed struct will be passed,
+    * then.
+    *
+    * @note Currently, we have only one policy identifier/group
+    * (#ELM_POLICY_QUIT), which has two possible values.
+    *
+    * @ingroup General
+    */
    EAPI Eina_Bool    elm_policy_set(unsigned int policy, int value);
+
+   /**
+    * Gets the policy value set for given policy identifier.
+    *
+    * @param policy policy identifier, as in #Elm_Policy.
+    * @return The currently set policy value, for that
+    * identifier. Will be @c 0 if @p policy passed is invalid.
+    *
+    * @ingroup General
+    */
    EAPI int          elm_policy_get(unsigned int policy);
+
+   /**
+    * @}
+    */
 
    EAPI void         elm_all_flush(void);
    EAPI int          elm_cache_flush_interval_get(void);
@@ -371,7 +689,37 @@ extern "C" {
    EAPI void         elm_edje_collection_cache_set(int size);
    EAPI void         elm_edje_collection_cache_all_set(int size);
 
+   /**
+    * @defgroup Scaling Selective Widget Scaling
+    *
+    * Different widgets can be scaled independently. These functions
+    * allow you to manipulate this scaling on a per-widget basis. The
+    * object and all its children get their scaling factors multiplied
+    * by the scale factor set. This is multiplicative, in that if a
+    * child also has a scale size set it is in turn multiplied by its
+    * parent's scale size. @c 1.0 means “don't scale”, @c 2.0 is
+    * double size, @c 0.5 is half, etc.
+    */
+
+   /**
+    * Set the scaling factor for a given Elementary object
+    *
+    * @param obj The Elementary to operate on
+    * @param scale Scale factor (from @c 0.0 up, with @c 1.0 meaning
+    * no scaling)
+    *
+    * @ingroup Scaling
+    */
    EAPI void         elm_object_scale_set(Evas_Object *obj, double scale) EINA_ARG_NONNULL(1);
+
+   /**
+    * Get the scaling factor for a given Elementary object
+    *
+    * @param obj The object
+    * @return The scaling factor set by elm_object_scale_set()
+    *
+    * @ingroup Scaling
+    */
    EAPI double       elm_object_scale_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
    EAPI Eina_Bool    elm_object_mirrored_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
    EAPI void         elm_object_mirrored_set(Evas_Object *obj, Eina_Bool mirrored) EINA_ARG_NONNULL(1);
@@ -379,10 +727,76 @@ extern "C" {
    EAPI void         elm_object_mirrored_automatic_set(Evas_Object *obj, Eina_Bool automatic) EINA_ARG_NONNULL(1);
    EAPI void         elm_object_style_set(Evas_Object *obj, const char *style) EINA_ARG_NONNULL(1);
    EAPI const char  *elm_object_style_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+
+   /**
+    * @defgroup Styles Styles
+    *
+    * Widgets can have different styles of look. These generic API's
+    * set styles of widgets, if they support them (and if the theme(s)
+    * do).
+    */
+
+   /**
+    * Set the disabled state of an Elementary object.
+    *
+    * @param obj The Elementary object to operate on
+    * @param disabled The state to put in in: @c EINA_TRUE for
+    *        disabled, @c EINA_FALSE for enabled
+    *
+    * Elementary objects can be @b disabled, in which state they won't
+    * receive input and, in general, will be themed differently from
+    * their normal state, usually greyed out. Useful for contexts
+    * where you don't want your users to interact with some of the
+    * parts of you interface.
+    *
+    * This sets the state for the widget, either disabling it or
+    * enabling it back.
+    *
+    * @ingroup Styles
+    */
    EAPI void         elm_object_disabled_set(Evas_Object *obj, Eina_Bool disabled) EINA_ARG_NONNULL(1);
+
+   /**
+    * Get the disabled state of an Elementary object.
+    *
+    * @param obj The Elementary object to operate on
+    * @return @c EINA_TRUE, if the widget is disabled, @c EINA_FALSE
+    *            if it's enabled (or on errors)
+    *
+    * This gets the state of the widget, which might be enabled or disabled.
+    *
+    * @ingroup Styles
+    */
    EAPI Eina_Bool    elm_object_disabled_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
 
+   /**
+    * @defgroup WidgetNavigation Widget Tree Navigation.
+    *
+    * How to check if an Evas Object is an Elementary widget? How to
+    * get the first elementary widget that is parent of the given
+    * object?  These are all covered in widget tree navigation.
+    */
+
    EAPI Eina_Bool    elm_object_widget_check(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+
+   /**
+    * Get the first parent of the given object that is an Elementary
+    * widget.
+    *
+    * @param obj the Elementary object to query parent from.
+    * @return the parent object that is an Elementary widget, or @c
+    *         NULL, if it was not found.
+    *
+    * Use this to query for an object's parent widget.
+    *
+    * @note Most of Elementary users wouldn't be mixing non-Elementary
+    * smart objects in the objects tree of an application, as this is
+    * an advanced usage of Elementary with Evas. So, except for the
+    * application's window, which is the root of that tree, all other
+    * objects would have valid Elementary widget parents.
+    *
+    * @ingroup WidgetNavigation
+    */
    EAPI Evas_Object *elm_object_parent_widget_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
    EAPI Evas_Object *elm_object_top_widget_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
    EAPI const char  *elm_object_widget_type_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
@@ -443,19 +857,140 @@ extern "C" {
    EAPI Eina_Hash           *elm_font_available_hash_add(Eina_List *list);
    EAPI void                 elm_font_available_hash_del(Eina_Hash *hash);
 
+   /**
+    * @defgroup Fingers Fingers
+    *
+    * Elementary is designed to be finger-friendly for touchscreens,
+    * and so in addition to scaling for display resolution, it can
+    * also scale based on finger "resolution" (or size). You can then
+    * customize the granularity of the areas meant to receive clicks
+    * on touchscreens.
+    *
+    * Different profiles may have pre-set values for finger sizes.
+    */
+
+   /**
+    * Get the configured "finger size"
+    *
+    * @return The finger size
+    *
+    * This gets the globally configured finger size, <b>in pixels</b>
+    *
+    * @ingroup Fingers
+    */
    EAPI Evas_Coord       elm_finger_size_get(void);
    EAPI void             elm_finger_size_set(Evas_Coord size);
    EAPI void             elm_finger_size_all_set(Evas_Coord size);
+
+   /**
+    * @defgroup Focus Focus
+    *
+    * An Elementary application has, at all times, one (and only one)
+    * @b focused object. This is what determines where the input
+    * events go to within the application's window. Also, focused
+    * objects can be decorated differently, in order to signal to the
+    * user where the input is, at a given moment.
+    *
+    * Elementary applications also have the concept of <b>focus
+    * chain</b>: one can cycle through all the windows' focusable
+    * objects by input (tab key) or programmatically. The default
+    * focus chain for an application is the one define by the order in
+    * which the widgets where added in code. One will cycle through
+    * top level widgets, and, for each one containg sub-objects, cycle
+    * through them all, before returning to the level
+    * above. Elementary also allows one to set @b custom focus chains
+    * for their applications.
+    *
+    * Besides the focused decoration a widget may exhibit, when it
+    * gets focus, Elementary has a @b global focus highlight object
+    * that can be enabled for a window. If one chooses to do so, this
+    * extra highlight effect will surround the current focused object,
+    * too.
+    *
+    * @note Some Elementary widgets are @b unfocusable, after
+    * creation, by their very nature: they are not meant to be
+    * interacted with input events, but are there just for visual
+    * purposes.
+    */
 
    EAPI Eina_Bool        elm_focus_highlight_enabled_get(void);
    EAPI void             elm_focus_highlight_enabled_set(Eina_Bool enable);
    EAPI Eina_Bool        elm_focus_highlight_animate_get(void);
    EAPI void             elm_focus_highlight_animate_set(Eina_Bool animate);
 
+   /**
+    * Get the whether an Elementary object has the focus or not.
+    *
+    * @param obj The Elementary object to get the information from
+    * @return @c EINA_TRUE, if the object is focused, @c EINA_FALSE if
+    *            not (and on errors).
+    *
+    * @see elm_object_focus()
+    *
+    * @ingroup Focus
+    */
    EAPI Eina_Bool        elm_object_focus_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+
+   /**
+    * Make a given Elementary object the focused one.
+    *
+    * @param obj The Elementary object to make focused.
+    *
+    * @note This object, if it can handle focus, will take the focus
+    * away from the one who had it previously and will, for now on, be
+    * the one receiving input events.
+    *
+    * @see elm_object_focus_get()
+    *
+    * @ingroup Focus
+    */
    EAPI void             elm_object_focus(Evas_Object *obj) EINA_ARG_NONNULL(1);
+
+   /**
+    * Remove the focus from an Elementary object
+    *
+    * @param obj The Elementary to take focus from
+    *
+    * This removes the focus from @p obj, passing it back to the
+    * previous element in the focus chain list.
+    *
+    * @see elm_object_focus() and elm_object_focus_custom_chain_get()
+    *
+    * @ingroup Focus
+    */
    EAPI void             elm_object_unfocus(Evas_Object *obj) EINA_ARG_NONNULL(1);
+
+   /**
+    * Set the ability for an Element object to be focused
+    *
+    * @param obj The Elementary object to operate on
+    * @param enable @c EINA_TRUE if the object can be focused, @c
+    *        EINA_FALSE if not (and on errors)
+    *
+    * This sets whether the object @p obj is able to take focus or
+    * not. Unfocusable objects do nothing when programmatically
+    * focused, being the nearest focusable parent object the one
+    * really getting focus. Also, when they receive mouse input, they
+    * will get the event, but not take away the focus from where it
+    * was previously.
+    *
+    * @ingroup Focus
+    */
    EAPI void             elm_object_focus_allow_set(Evas_Object *obj, Eina_Bool enable) EINA_ARG_NONNULL(1);
+
+   /**
+    * Get whether an Elementary object is focusable or not
+    *
+    * @param obj The Elementary object to operate on
+    * @return @c EINA_TRUE if the object is allowed to be focused, @c
+    *             EINA_FALSE if not (and on errors)
+    *
+    * @note Objects which are meant to be interacted with by input
+    * events are created able to be focused, by default. All the
+    * others are not.
+    *
+    * @ingroup Focus
+    */
    EAPI Eina_Bool        elm_object_focus_allow_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
 
    EAPI void             elm_object_focus_custom_chain_set(Evas_Object *obj, Eina_List *objs) EINA_ARG_NONNULL(1);
@@ -513,6 +1048,28 @@ extern "C" {
    EAPI void             elm_object_event_callback_add(Evas_Object *obj, Elm_Event_Cb func, const void *data) EINA_ARG_NONNULL(1, 2);
    EAPI void            *elm_object_event_callback_del(Evas_Object *obj, Elm_Event_Cb func, const void *data) EINA_ARG_NONNULL(1, 2);
 
+   /**
+    * Adjust size of an element for finger usage.
+    *
+    * @param times_w How many fingers should fit horizontally
+    * @param w Pointer to the width size to adjust
+    * @param times_h How many fingers should fit vertically
+    * @param h Pointer to the height size to adjust
+    *
+    * This takes width and height sizes (in pixels) as input and a
+    * size multiple (which is how many fingers you want to place
+    * within the area, being "finger" the size set by
+    * elm_finger_size_set()), and adjusts the size to be large enough
+    * to accommodate the resulting size -- if it doesn't already
+    * accommodate it. On return the @p w and @p h sizes pointed to by
+    * these parameters will be modified, on those conditions.
+    *
+    * @note This is kind of a low level Elementary call, most useful
+    * on size evaluation times for widgets. An external user wouldn't
+    * be calling, most of the time.
+    *
+    * @ingroup Fingers
+    */
    EAPI void             elm_coords_finger_size_adjust(int times_w, Evas_Coord *w, int times_h, Evas_Coord *h);
 
    EAPI double           elm_longpress_timeout_get(void);

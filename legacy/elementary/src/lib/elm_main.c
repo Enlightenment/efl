@@ -402,19 +402,6 @@ _prefix_shutdown(void)
    app_pfx = NULL;
 }
 
-/**
- * @defgroup General General
- */
-
-/**
- * Inititalise Elementary
- *
- * @return The init counter value.
- *
- * This call is exported only for use by the ELM_MAIN() macro. There is no
- * need to use this if you use this macro (which is highly advisable).
- * @ingroup General
- */
 EAPI int
 elm_init(int    argc,
          char **argv)
@@ -427,17 +414,6 @@ elm_init(int    argc,
    return _elm_init_count;
 }
 
-/**
- * Shut down Elementary
- *
- * @return The init counter value.
- *
- * This should be called at the end of your application just before it ceases
- * to do any more processing. This will clean up any permanent resources your
- * application may have allocated via Elementary that would otherwise persist
- * on an exit without this call.
- * @ingroup General
- */
 EAPI int
 elm_shutdown(void)
 {
@@ -1084,51 +1060,18 @@ elm_quicklaunch_exe_path_get(const char *exe)
    return NULL;
 }
 
-/**
- * Run the main loop
- *
- * This call should be called just after all initialization is complete. This
- * function will not return until elm_exit() is called. It will keep looping
- * running the main event/processing loop for Elementary.
- * @ingroup General
- */
 EAPI void
 elm_run(void)
 {
    ecore_main_loop_begin();
 }
 
-/**
- * Exit the main loop
- *
- * If this call is called, it will flag the main loop to cease processing and
- * return back to its parent function.
- * @ingroup General
- */
 EAPI void
 elm_exit(void)
 {
    ecore_main_loop_quit();
 }
 
-/**
- * Set new policy value.
- *
- * This will emit the ecore event ELM_EVENT_POLICY_CHANGED in the main
- * loop giving the event information Elm_Event_Policy_Changed with
- * policy identifier, new and old values.
- *
- * @param policy policy identifier as in Elm_Policy.
- * @param value policy value, depends on identifiers, usually there is
- *        an enumeration with the same prefix as the policy name, for
- *        example: ELM_POLICY_QUIT and Elm_Policy_Quit
- *        (ELM_POLICY_QUIT_NONE, ELM_POLICY_QUIT_LAST_WINDOW_CLOSED).
- * @ingroup General
- *
- * @return @c EINA_TRUE on success or @c EINA_FALSE on error (right
- *         now just invalid policy identifier, but in future policy
- *         value might be enforced).
- */
 EAPI Eina_Bool
 elm_policy_set(unsigned int policy,
                int          value)
@@ -1155,14 +1098,6 @@ elm_policy_set(unsigned int policy,
    return EINA_TRUE;
 }
 
-/**
- * Gets the policy value set for given identifier.
- *
- * @param policy policy identifier as in Elm_Policy.
- * @ingroup General
- *
- * @return policy value. Will be 0 if policy identifier is invalid.
- */
 EAPI int
 elm_policy_get(unsigned int policy)
 {
@@ -1237,24 +1172,6 @@ elm_object_mirrored_automatic_set(Evas_Object *obj, Eina_Bool automatic)
    elm_widget_mirrored_automatic_set(obj, automatic);
 }
 
-/**
- * @defgroup Scaling Selective Widget Scaling
- *
- * Different widgets can be scaled independently. These functions allow you to
- * manipulate this scaling on a per-widget basis. The object and all its
- * children get their scaling factors multiplied by the scale factor set.
- * This is multiplicative, in that if a child also has a scale size set it is
- * in turn multiplied by its parent's scale size. 1.0 means “don't scale”,
- * 2.0 is double size, 0.5 is half etc.
- */
-
-/**
- * Set the scaling factor
- *
- * @param obj The object
- * @param scale Scale factor (from 0.0 up, with 1.0 == no scaling)
- * @ingroup Scaling
- */
 EAPI void
 elm_object_scale_set(Evas_Object *obj,
                      double       scale)
@@ -1263,13 +1180,6 @@ elm_object_scale_set(Evas_Object *obj,
    elm_widget_scale_set(obj, scale);
 }
 
-/**
- * Get the scaling factor
- *
- * @param obj The object
- * @return The scaling factor set by elm_object_scale_set()
- * @ingroup Scaling
- */
 EAPI double
 elm_object_scale_get(const Evas_Object *obj)
 {
@@ -1331,13 +1241,6 @@ elm_scale_all_set(double scale)
 }
 
 /**
- * @defgroup Styles Styles
- *
- * Widgets can have different styles of look. These generic API's set
- * styles of widgets, if they support them (and if the theme(s) do).
- */
-
-/**
  * Set the style
  *
  * This sets the name of the style
@@ -1371,15 +1274,6 @@ elm_object_style_get(const Evas_Object *obj)
    return elm_widget_style_get(obj);
 }
 
-/**
- * Set the disable state
- *
- * This sets the disable state for the widget.
- *
- * @param obj The object
- * @param disabled The state
- * @ingroup Styles
- */
 EAPI void
 elm_object_disabled_set(Evas_Object *obj,
                         Eina_Bool    disabled)
@@ -1388,15 +1282,6 @@ elm_object_disabled_set(Evas_Object *obj,
    elm_widget_disabled_set(obj, disabled);
 }
 
-/**
- * Get the disable state
- *
- * This gets the disable state for the widget.
- *
- * @param obj The object
- * @return True, if the widget is disabled
- * @ingroup Styles
- */
 EAPI Eina_Bool
 elm_object_disabled_get(const Evas_Object *obj)
 {
@@ -1903,22 +1788,6 @@ elm_font_available_hash_del(Eina_Hash *hash)
    _elm_font_available_hash_del(hash);
 }
 
-/**
- * @defgroup Fingers Fingers
- *
- * Elementary is designed to be finger-friendly for touchscreens, and so in
- * addition to scaling for display resolution, it can also scale based on
- * finger "resolution" (or size).
- */
-
-/**
- * Get the configured finger size
- *
- * This gets the globally configured finger size in pixels
- *
- * @return The finger size
- * @ingroup Fingers
- */
 EAPI Evas_Coord
 elm_finger_size_get(void)
 {
@@ -1963,20 +1832,6 @@ elm_finger_size_all_set(Evas_Coord size)
 #endif
 }
 
-/**
- * Adjust size of an element for finger usage
- *
- * This takes width and height sizes (in pixels) as input and a size multiple
- * (which is how many fingers you want to place within the area), and adjusts
- * the size tobe large enough to accommodate finger. On return the w and h
- * sizes poiner do by these parameters will be modified.
- *
- * @param times_w How many fingers should fit horizontally
- * @param w Pointer to the width size to adjust
- * @param times_h How many fingers should fit vertically
- * @param h Pointer to the height size to adjust
- * @ingroup Fingers
- */
 EAPI void
 elm_coords_finger_size_adjust(int         times_w,
                               Evas_Coord *w,
@@ -2364,22 +2219,6 @@ elm_edje_collection_cache_all_set(int size)
 #endif
 }
 
-/**
- * @defgroup Focus Focus
- *
- * Objects have focus. This is what determines where the keyboard input goes to
- * within the application window.
- */
-
-/**
- * Get the focus of the object
- *
- * This gets the focused property of the object.
- *
- * @param obj The object
- * @return 1 if the object is focused, 0 if not.
- * @ingroup Focus
- */
 EAPI Eina_Bool
 elm_object_focus_get(const Evas_Object *obj)
 {
@@ -2387,14 +2226,6 @@ elm_object_focus_get(const Evas_Object *obj)
    return elm_widget_focus_get(obj);
 }
 
-/**
- * Set the focus to the object
- *
- * This sets the focus target for keyboard input to be the object indicated.
- *
- * @param obj The object
- * @ingroup Focus
- */
 EAPI void
 elm_object_focus(Evas_Object *obj)
 {
@@ -2405,15 +2236,6 @@ elm_object_focus(Evas_Object *obj)
    elm_widget_focus_cycle(obj, ELM_FOCUS_NEXT);
 }
 
-/**
- * Remove the focus from the object
- *
- * This removes the focus target for keyboard input from be the object
- * indicated.
- *
- * @param obj The object
- * @ingroup Focus
- */
 EAPI void
 elm_object_unfocus(Evas_Object *obj)
 {
@@ -2422,16 +2244,6 @@ elm_object_unfocus(Evas_Object *obj)
    elm_widget_focused_object_clear(obj);
 }
 
-/**
- * Set the ability for the object to focus
- *
- * This sets the ability for the object to be able to get keyboard focus or
- * not. By default all objects are able to be focused.
- *
- * @param obj The object
- * @param enable 1 if the object can be focused, 0 if not
- * @ingroup Focus
- */
 EAPI void
 elm_object_focus_allow_set(Evas_Object *obj,
                            Eina_Bool    enable)
@@ -2440,16 +2252,6 @@ elm_object_focus_allow_set(Evas_Object *obj,
    elm_widget_can_focus_set(obj, enable);
 }
 
-/**
- * Get the ability for the object to focus
- *
- * This gets the ability for the object to be able to get keyboard focus or
- * not. By default all objects are able to be focused.
- *
- * @param obj The object
- * @return 1 if the object is allowed to be focused, 0 if not.
- * @ingroup Focus
- */
 EAPI Eina_Bool
 elm_object_focus_allow_get(const Evas_Object *obj)
 {
@@ -3349,14 +3151,6 @@ elm_object_scroll_freeze_pop(Evas_Object *obj)
 }
 
 /**
- * @defgroup WidgetNavigation Widget Tree Navigation.
- *
- * How to check if an Evas Object is an Elementary widget? How to get
- * the first elementary widget that is parent of the given object?
- * These are all covered in widget tree navigation.
- */
-
-/**
  * Check if the given Evas Object is an Elementary widget.
  *
  * @param obj the object to query.
@@ -3371,14 +3165,6 @@ elm_object_widget_check(const Evas_Object *obj)
    return elm_widget_is(obj);
 }
 
-/**
- * Get the first parent of the given object that is an Elementary widget.
- *
- * @param obj the object to query.
- * @return the parent object that is an Elementary widget, or @c NULL
- *         if no parent is, or no parents at all.
- * @ingroup WidgetNavigation
- */
 EAPI Evas_Object *
 elm_object_parent_widget_get(const Evas_Object *obj)
 {
