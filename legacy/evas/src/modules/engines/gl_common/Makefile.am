@@ -49,6 +49,8 @@ shader/img_bgra_nomul_frag.h \
 shader/img_bgra_nomul_frag_bin_s3c6410.h \
 shader/img_bgra_nomul_vert.h \
 shader/img_bgra_nomul_vert_bin_s3c6410.h \
+shader/img_mask_frag.h \
+shader/img_mask_vert.h \
 shader/yuv_frag.h \
 shader/yuv_frag_bin_s3c6410.h \
 shader/yuv_vert.h \
@@ -106,6 +108,8 @@ shader/img_bgra_frag.shd \
 shader/img_bgra_vert.shd \
 shader/img_bgra_nomul_frag.shd \
 shader/img_bgra_nomul_vert.shd \
+shader/img_mask_frag.h \
+shader/img_mask_vert.h \
 shader/yuv_frag.shd \
 shader/yuv_frag_s3c6410.asm \
 shader/yuv_vert.shd \
