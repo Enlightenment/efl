@@ -836,12 +836,12 @@ _eio_dir_stat_find_forward(Eio_File_Direct_Ls *async,
 
    if (filter)
      {
-        Eina_File_Direct_Info *send;
+        Eio_File_Direct_Info *send;
 
         send = eio_direct_info_malloc();
         if (!send) return EINA_FALSE;
 
-        memcpy(send, info, sizeof (Eina_File_Direct_Info));
+        memcpy(&send->info, info, sizeof (Eina_File_Direct_Info));
 
         ecore_thread_feedback(handler->thread, send);
      }
@@ -865,9 +865,17 @@ static void
 _eio_dir_stat_find_notify(void *data, Ecore_Thread *thread __UNUSED__, void *msg_data)
 {
    Eio_File_Direct_Ls *async = data;
-   Eina_File_Direct_Info *info = msg_data;
+   Eio_File_Direct_Info *info = msg_data;
 
-   async->main_cb((void*) async->ls.common.data, &async->ls.common, info);
+   async->ls.common.main.associated = info->associated;
+
+   async->main_cb((void*) async->ls.common.data, &async->ls.common, &info->info);
+
+   if (async->ls.common.main.associated)
+     {
+        eina_hash_free(async->ls.common.main.associated);
+        async->ls.common.main.associated = NULL;
+     }
 
    eio_direct_info_free(info);
 }

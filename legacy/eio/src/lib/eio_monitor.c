@@ -59,7 +59,8 @@ _eio_monitor_error_cleanup_cb(void *user_data, __UNUSED__ void *func_data)
 {
    Eio_Monitor_Error *ev = user_data;
 
-   EINA_REFCOUNT_UNREF(ev->monitor, _eio_monitor_free);
+   EINA_REFCOUNT_UNREF(ev->monitor)
+     _eio_monitor_free(ev->monitor);
    free(ev);
 }
 
@@ -68,7 +69,8 @@ _eio_monitor_event_cleanup_cb(void *user_data, __UNUSED__ void *func_data)
 {
    Eio_Monitor_Event *ev = user_data;
 
-   EINA_REFCOUNT_UNREF(ev->monitor, _eio_monitor_free);
+   EINA_REFCOUNT_UNREF(ev->monitor)
+     _eio_monitor_free(ev->monitor);
    eina_stringshare_del(ev->filename);
    free(ev);
 }
@@ -83,7 +85,8 @@ _eio_monitor_stat_cb(void *data, __UNUSED__ Eio_File *handler, __UNUSED__ const 
    if (EINA_REFCOUNT_GET(monitor) > 1)
      eio_monitor_backend_add(monitor);
 
-   EINA_REFCOUNT_UNREF(monitor, _eio_monitor_free);
+   EINA_REFCOUNT_UNREF(monitor)
+     _eio_monitor_free(monitor);
 }
 
 static void
@@ -112,7 +115,8 @@ _eio_monitor_error_cb(void *data, Eio_File *handler, int error)
    if (EINA_REFCOUNT_GET(monitor) > 1)
      _eio_monitor_error(monitor, error);
 
-   EINA_REFCOUNT_UNREF(monitor, _eio_monitor_free);
+   EINA_REFCOUNT_UNREF(monitor)
+     _eio_monitor_free(monitor);
 
    return ;
 }
@@ -205,7 +209,8 @@ eio_monitor_stringshared_add(const char *path)
 EAPI void
 eio_monitor_del(Eio_Monitor *monitor)
 {
-   EINA_REFCOUNT_UNREF(monitor, _eio_monitor_free);
+   EINA_REFCOUNT_UNREF(monitor)
+     _eio_monitor_free(monitor);
 }
 
 EAPI const char *
