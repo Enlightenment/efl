@@ -74,7 +74,8 @@ WARN_NO_PARAMDOC       = YES
 WARN_FORMAT            = "$file:$line: $text"
 WARN_LOGFILE           =
 INPUT                  = @srcdir@/ecore.dox \
-                         @top_srcdir@/src/lib
+                         @top_srcdir@/src/lib \
+                         @srcdir@/examples.dox
 INPUT_ENCODING         = UTF-8
 FILE_PATTERNS          =
 RECURSIVE              = YES

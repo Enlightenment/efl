@@ -1,0 +1,50 @@
+/**
+ * @page Examples Examples
+ *
+ * Here is a page with some Ecore examples explained:
+ *
+ * @li @ref ecore_time_example_c
+ *
+ */
+
+/**
+ * @page ecore_time_example_c ecore_time - Differences between time functions
+ *
+ * This example shows the difference between calling ecore_time_get(),
+ * ecore_loop_time_get() and ecore_time_unix_get().
+ *
+ * It initializes ecore, then sets a timer with a callback that, when called,
+ * will retrieve the system time using these 3 different functions. After
+ * displaying the time, it sleeps for 1 second, then call display the time
+ * again using the 3 functions.
+ *
+ * Since everything occurs inside the same mainloop iteration, the internal
+ * ecore time variable will not be updated, and calling ecore_loop_time_get()
+ * before and after the sleep() call will return the same result.
+ *
+ * The two other functions will return a difference of 1 second, as expected.
+ * But ecore_time_unix_get() returns the number of seconds since 00:00:00 1st
+ * January 1970, while ecore_time_get() will return the time since a
+ * unspecified point, but that never goes back in time, even when the timezone
+ * of the machine changes.
+ *
+ * @note The usage of ecore_loop_time_get() should be preferred against the
+ * two other functions, for most time calculations, since it won't produce a
+ * system call to get the current time. Use ecore_time_unix_get() when you need
+ * to know the current time and date, and ecore_time_get() when you need a
+ * monotonic and more precise time than ecore_loop_time_get().
+ *
+ * @include ecore_time_example.c
+ */
+
+/**
+ * @example ecore_time_example.c
+ * Shows the difference between the three time functions. See @ref
+ * ecore_time_example_c "the example explained".
+ */
+
+/**
+ * @example ecore_fd_handler_example.c
+ * Shows how to use fd handlers.
+*/
+

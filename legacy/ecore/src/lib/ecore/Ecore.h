@@ -70,6 +70,8 @@ The Ecore library provides the following modules:
 @li @ref Ecore_Win32_Group
 @li @ref Ecore_WinCE_Group
 
+For more info on Ecore usage, there are these @ref Examples.
+
 @section compiling How to compile using Ecore?
 pkgconfig (.pc) files are installed for every ecore module.
 Thus, to compile using any of them, you can use something like the following:
@@ -244,44 +246,6 @@ The following examples show how to use the Enlightened Property Library:
 The Ecore library includes a wrapper for handling the X window system.
 This page briefly explains what the X window system is and various terms
 that are used.
-*/
-
-// EXAMPLES
-
-/**
-@example ecore_args_example.c
-Shows how to set and retrieve the program arguments.
-*/
-
-/**
-@example ecore_event_handler_example.c
-Shows how to use event handlers.
-*/
-
-/**
-@example ecore_fd_handler_example.c
-Shows how to use fd handlers.
-*/
-
-/**
-@example ecore_timer_example.c
-Demonstrates use of the ecore_timer.
-*/
-
-/*
-@example ecore_config_basic_example.c
-Provides an example of how to use the basic configuration functions.
-See the file Ecore_Config.h for the full list of available functions.
-*/
-
-/*
-@example ecore_config_listener_example.c
-Shows how to set up a listener to listen for configuration changes.
-*/
-
-/**
-@example ecore_x_window_example.c
-Shows the basics of using the X Windows system through Ecore functions.
 */
 
 #ifndef _ECORE_H
@@ -836,31 +800,6 @@ extern "C" {
 
   /**
    * @}
-   */
-
-  /**
-   * @page ecore_time_example_c ecore_time - Differences between time functions
-   *
-   * This example shows the difference between calling ecore_time_get(),
-   * ecore_loop_time_get() and ecore_time_unix_get().
-   *
-   * It initializes ecore, then sets a timer with a callback that, when called,
-   * will retrieve the system time using these 3 different functions. After
-   * displaying the time, it sleeps for 1 second, then call display the time
-   * again using the 3 functions.
-   *
-   * Since everything occurs inside the same mainloop iteration, the internal
-   * ecore time variable will not be updated, and calling ecore_loop_time_get()
-   * before and after the sleep() call will return the same result.
-   *
-   * The two other functions will return a difference of 1 second, as expected.
-   *
-   * @note The usage of ecore_loop_time_get() should be preferred against the
-   * two other functions, since it won't produce a system call to get the
-   * current time.
-   *
-   * @include ecore_time_example.c
-   * @example ecore_time_example.c
    */
 
   /**

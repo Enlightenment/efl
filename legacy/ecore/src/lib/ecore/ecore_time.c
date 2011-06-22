@@ -54,8 +54,6 @@ double _ecore_time_loop_time = -1.0;
  *         when the machine was booted, unix time, etc), all it is
  *         defined is that it never goes backwards (unless you got big critical
  *         messages when the application started).
- *
- * @see @ref ecore_time_example_c
  */
 EAPI double
 ecore_time_get(void)
@@ -90,8 +88,6 @@ ecore_time_get(void)
  * @see ecore_loop_time_get().
  *
  * @return  The number of seconds since 12.00AM 1st January 1970.
- *
- * @see @ref ecore_time_example_c
  */
 EAPI double
 ecore_time_unix_get(void)
@@ -126,8 +122,6 @@ ecore_time_unix_get(void)
  *         when the machine was booted, unix time, etc), all it is
  *         defined is that it never goes backwards (unless you got big critical
  *         messages when the application started).
- *
- * @see @ref ecore_time_example_c
  */
 EAPI double
 ecore_loop_time_get(void)
