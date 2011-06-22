@@ -28,27 +28,57 @@
 
 
 /**
- * @addtogroup Eina_File_Group File
+ * @page eina_file_example_01_page
+ * @dontinclude eina_file_01.c
  *
- * @brief Functions to traverse directories and split paths.
+ * For brevity includes, variable declarations and initialization was ommited
+ * from this page, however the full source code can be seen @ref
+ * eina_file_example_01 "here".
  *
- * @li eina_file_dir_list() list the content of a directory,
- * recusrsively or not, and can call a callback function for eachfound
- * file.
- * @li eina_file_split() split a path into all the subdirectories that
- * compose it, according to the separator of the file system.
+ * Here we have a simple callback to print the name of a file and the path that
+ * contains it:
+ * @skip static
+ * @until }
  *
- * @{
+ * We can use this callback in the following call:
+ * @skipline eina_file_dir_list
+ *
+ * The above was a way to print the files in a directory, but it is not the only
+ * one:
+ * @until iterator_free
+ *
+ * And now two ways to get more information than just file names:
+ * @until iterator_free
+ * @until iterator_free
+ *
+ * The above ways of getting files on a list may produce the same output, but
+ * they have an important difference, eina_file_direct_ls() will @b not call
+ * stat, this means that on some systems it might not have file type
+ * information. On the other hand it might be faster than eina_file_stat_ls().
  */
-
+/**
+ * @page eina_file_example_01
+ * @include eina_file_01.c
+ * @example eina_file_01.c
+ */
 /**
  * @addtogroup Eina_Tools_Group Tools
  *
  * @{
  */
-
 /**
- * @defgroup Eina_File_Group File
+ * @addtogroup Eina_File_Group File
+ *
+ * @brief Functions to handle files and directories.
+ *
+ * This functions make it easier to do a number o file and directory operations
+ * such as getting the list of files in a directory, spliting paths and finding
+ * out file size and type.
+ *
+ * @warning All functions in this group are @b blocking which means they make
+ * take a long time to return, use them carefully.
+ *
+ * See an example @ref eina_file_example_01_page "here".
  *
  * @{
  */
@@ -134,10 +164,11 @@ struct _Eina_File_Direct_Info
  * @param data The data to pass to the callback.
  * @return #EINA_TRUE on success, #EINA_FALSE otherwise.
  *
- * This function lists all the files in @p dir. To list also all the
- * sub directoris recursively, @p recursive must be set to #EINA_TRUE,
- * otherwise it must be set to #EINA_FALSE. For each found file, @p cb
- * is called and @p data is passed to it.
+ * This function calls @p cb for each file that is in @p dir. To have @p cb
+ * called on files that are in subdirectories of @p dir @p recursive should be
+ * EINA_TRUE. In other words if @p recursive is EINA_FALSE, only direct children
+ * of @p dir will be operated on, if @p recursive is EINA_TRUE the entire tree
+ * of files that is below @p dir will be operated on.
  *
  * If @p cb or @p dir are @c NULL, or if @p dir is a string of size 0,
  * or if @p dir can not be opened, this function returns #EINA_FALSE
@@ -156,93 +187,87 @@ EAPI Eina_Bool eina_file_dir_list(const char           *dir,
  *
  * This function splits @p path according to the delimiter of the used
  * filesystem. If  @p path is @c NULL or if the array can not be
- * created, @c NULL is returned, otherwise, an array with the
- * different parts of @p path is returned.
+ * created, @c NULL is returned, otherwise, an array with each part of @p path
+ * is returned.
  */
 EAPI Eina_Array    *eina_file_split(char *path) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_MALLOC;
 
 /**
- * Get an iterator to list the content of a directory.
- *
- * Iterators are cheap to be created and allow interruption at any
- * iteration. At each iteration, only the next directory entry is read
- * from the filesystem with readdir_r().
- *
- * The iterator will handle the user a stringshared value with the
- * full path. One must call eina_stringshare_del() on it after usage
- * to not leak!
- *
- * The eina_file_direct_ls() function will provide a possibly faster
- * alternative if you need to filter the results somehow, like
- * checking extension.
- *
- * The iterator will walk over '.' and '..' without returning them.
- *
- * The iterator container is the DIR* corresponding to the current walk.
+ * @brief Get an iterator to list the content of a directory.
  *
  * @param  dir The name of the directory to list
- * @return Return an Eina_Iterator that will walk over the files and
- *         directory in the pointed directory. On failure it will
- *         return NULL. The iterator emits stringshared value with the
- *         full path and must be freed with eina_stringshare_del().
+ * @return Return an Eina_Iterator that will walk over the files and directories
+ *         in @p dir. On failure it will return NULL.
+ *
+ * Returns an iterator for shared strings, the name of each file in @p dir will
+ * only be fetched when advancing the iterator, which means there is very little
+ * cost associated with creating the list and stopping halfway through it.
+ *
+ * @warning The iterator will hand the user a stringshared value with the full
+ * path. The user must free the string using eina_stringshare_del() on it.
+ *
+ * @note The container for the iterator is of type DIR*.
+ * @note The iterator will walk over '.' and '..' without returning them.
  *
  * @see eina_file_direct_ls()
  */
 EAPI Eina_Iterator *eina_file_ls(const char *dir) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_MALLOC;
 
 /**
- * Get an iterator to list the content of a directory, with direct information.
- *
- * Iterators are cheap to be created and allow interruption at any
- * iteration. At each iteration, only the next directory entry is read
- * from the filesystem with readdir_r().
- *
- * The iterator returns the direct pointer to couple of useful information in
- * #Eina_File_Direct_Info and that pointer should not be modified anyhow!
- *
- * The iterator will walk over '.' and '..' without returning them.
- *
- * The iterator container is the DIR* corresponding to the current walk.
+ * @brief Get an iterator to list the content of a directory, with direct
+ * information.
  *
  * @param  dir The name of the directory to list
- * 
+ *
  * @return Return an Eina_Iterator that will walk over the files and
  *         directory in the pointed directory. On failure it will
- *         return NULL. The iterator emits #Eina_File_Direct_Info
- *         pointers that could be used but not modified. The lifetime
- *         of the returned pointer is until the next iteration and
- *         while the iterator is live, deleting the iterator
- *         invalidates the pointer. It will call stat() when filesystem
- *         doesn't provide information to fill type from readdir_r().
+ *         return NULL.
+ *
+ * Returns an iterator for Eina_File_Direct_Info, the name of each file in @p
+ * dir will only be fetched when advancing the iterator, which means there is
+ * cost associated with creating the list and stopping halfway through it.
+ *
+ * @warning The Eina_File_Direct_Info returned by the iterator <b>must not</b>
+ * be modified in any way.
+ * @warning When the iterator is advanced or deleted the Eina_File_Direct_Info
+ * returned is no longer valid.
+ *
+ * @note The container for the iterator is of type DIR*.
+ * @note The iterator will walk over '.' and '..' without returning them.
+ * @note The difference between this function ahd eina_file_direct_ls() is that
+ *       it guarantees the file type information will be correct incurring a
+ *       possible performance penalty.
  *
  * @see eina_file_direct_ls()
  */
 EAPI Eina_Iterator *eina_file_stat_ls(const char *dir) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_MALLOC;
 
 /**
- * Get an iterator to list the content of a directory, with direct information.
- *
- * Iterators are cheap to be created and allow interruption at any
- * iteration. At each iteration, only the next directory entry is read
- * from the filesystem with readdir_r().
- *
- * The iterator returns the direct pointer to couple of useful information in
- * #Eina_File_Direct_Info and that pointer should not be modified anyhow!
- *
- * The iterator will walk over '.' and '..' without returning them.
- *
- * The iterator container is the DIR* corresponding to the current walk.
+ * @brief Get an iterator to list the content of a directory, with direct
+ * information.
  *
  * @param  dir The name of the directory to list
- * 
+ *
  * @return Return an Eina_Iterator that will walk over the files and
  *         directory in the pointed directory. On failure it will
- *         return NULL. The iterator emits #Eina_File_Direct_Info
- *         pointers that could be used but not modified. The lifetime
- *         of the returned pointer is until the next iteration and
- *         while the iterator is live, deleting the iterator
- *         invalidates the pointer. It will not call stat() when filesystem
- *         doesn't provide information to fill type from readdir_r().
+ *         return NULL.
+ *
+ * Returns an iterator for Eina_File_Direct_Info, the name of each file in @p
+ * dir will only be fetched when advancing the iterator, which means there is
+ * cost associated with creating the list and stopping halfway through it.
+ *
+ * @warning If readdir_r doesn't contain file type information file type will
+ * be DT_UNKNOW.
+ * @warning The Eina_File_Direct_Info returned by the iterator <b>must not</b>
+ * be modified in any way.
+ * @warning When the iterator is advanced or deleted the Eina_File_Direct_Info
+ * returned is no longer valid.
+ *
+ * @note The container for the iterator is of type DIR*.
+ * @note The iterator will walk over '.' and '..' without returning them.
+ * @note The difference between this function ahd eina_file_stat_ls() is that
+ *       it may not get the file type information however it is likely to be
+ *       faster.
  *
  * @see eina_file_ls()
  */
@@ -254,9 +279,9 @@ EAPI Eina_Iterator *eina_file_direct_ls(const char *dir) EINA_WARN_UNUSED_RESULT
  * @param name Filename to open
  * @param shared Requested a shm
  *
- * The file are only open in read only mode. Name should be an absolute path to
- * prevent cache mistake. A handler could be shared among multiple instance and
- * will be correctly refcounted. File are automatically closed on exec.
+ * Opens a file in read-only mode. @p name should be an absolute path. An
+ * Eina_File handle can be shared among multiple instances if @p shared is
+ * EINA_TRUE.
  *
  * @since 1.1
  */
@@ -267,7 +292,7 @@ EAPI Eina_File *eina_file_open(const char *name, Eina_Bool shared) EINA_WARN_UNU
  *
  * @param file File handler to unref.
  *
- * This doesn't close the file, it will remain open until it leave the cache.
+ * Decremente file's refcount and if it reaches zero close it.
  *
  * @since 1.1
  */
