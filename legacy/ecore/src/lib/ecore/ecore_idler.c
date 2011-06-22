@@ -55,6 +55,13 @@ process.
 
 Exiter callbacks are called when the main loop wakes up from an idle
 state.
+
+@note Idle state doesn't mean that the @b program is idle, but that the <b>main
+loop</b> is idle. It doesn't have any timers, events, fd handlers or anything
+else to process (which in most <em>event driven</em> programs also means that the @b
+program is idle too, but it's not a rule). The program itself may be doing a lot of
+processing in the idler, or in another thread, for example.
+
  * @{
  */
 

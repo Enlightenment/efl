@@ -4,6 +4,7 @@
  * Here is a page with some Ecore examples explained:
  *
  * @li @ref ecore_time_example_c
+ * @li @ref ecore_idler_example_c
  *
  */
 
@@ -35,6 +36,72 @@
  * monotonic and more precise time than ecore_loop_time_get().
  *
  * @include ecore_time_example.c
+ */
+
+/**
+ * @page ecore_idler_example_c ecore idle state - Idlers, enterers and exiters
+ *
+ * This example demonstrates how to manage the idle state of the main loop. Once
+ * a program knows that the main loop is going to enter in idle state, it could
+ * start doing some processing until getting out of this state.
+ *
+ * To exemplify this, we also add events and a timer to this program, so we can
+ * see the idle exiter callback being called before processing the event and/or
+ * timer, the event/timer callback being called (processed), then the idle
+ * enterer being called before entering in idle state again. Once in idle, the
+ * main loop keeps calling the idler callback continuously until a new event or
+ * timer is received.
+ *
+ * First, we declare a struct that will be used as context to be passed to
+ * every callback. It's not useful everywhere, since this example is very
+ * simple and doesn't do anything other than printing messages, but using this
+ * context will make it a little bit more real. Our context will be used to
+ * delete the timer, idler, idle enterer and exiter, and the event handler, and
+ * also to count how many times the idler was called.
+ *
+ * Then we start declaring callbacks for the idle enterer, idle exiter and the
+ * idler itself. Idle enterer and exiter callbacks just print a message saying
+ * that they were called, while the idler, in addition to printing a message
+ * too, also sends an event every 10 times that it is called, incrementing the
+ * context count variable. This event will be used to make the main loop exit
+ * the idle state and call the event callback.
+ *
+ * These callbacks return @ref ECORE_CALLBACK_RENEW, since we want them to keep
+ * being called every time the main loop changes to/from idle state. Otherwise,
+ * if we didn't want them to be called again, they should return @ref
+ * ECORE_CALLBACK_CANCEL.
+ *
+ * The next function declared is the event callback @c _event_handler_cb. It
+ * will check if the idler was called more than 100 times already @c
+ * (ctxt->count > 100), and will delete the idler, idle enterer and exiter, the
+ * timer (if it still exists), and request that the main loop stop running. Then
+ * it returns @ref ECORE_CALLBACK_CANCEL to indicate that the event handler
+ * shouldn't be called anymore (this will delete it). If the @c count is still
+ * smaller than 100, the event callback just returns @ref ECORE_CALLBACK_RENEW
+ * and will keep being called every time that this event type is called.
+ *
+ * Finally, we add a callback to the timer, that will just print a message when
+ * it is called, and this will happen only once (@ref ECORE_CALLBACK_CANCEL is
+ * being returned). This timer callback is just here to show that the main loop
+ * gets out of idle state when processing timers too.
+ *
+ * The @b main function is simple, just creates a new type of event that we will
+ * use to demonstrate the event handling together with the idle state, adds the
+ * callbacks that we declared so far, fill the context struct, and starts
+ * running the main loop.
+ *
+ * @note We use timer and event callbacks to demonstrate the idle state
+ * changing, but it also happens for file descriptor handlers, pipe handlers,
+ * etc.
+ *
+ * @include ecore_idler_example.c
+ */
+
+/**
+ * @example ecore_idler_example.c
+ * This example shows when @ref Ecore_Idler, @ref Ecore_Idle_Enterer and @ref
+ * Ecore_Idle_Exiter are called. See
+ * @ref ecore_idler_example_c "the explanation here".
  */
 
 /**

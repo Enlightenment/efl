@@ -41,6 +41,9 @@ static int                 idle_enterers_delete_me = 0;
  * @param   data The data to be passed to the @p func call
  * @return  A handle to the idle enterer callback if successful.  Otherwise,
  *          NULL is returned.
+ * @note The function func will be called every time the main loop is entering
+ * idle state, as long as it returns 1 (or ECORE_CALLBACK_RENEW). A return of 0
+ * (or ECORE_CALLBACK_CANCEL) deletes the idle enterer.
  */
 EAPI Ecore_Idle_Enterer *
 ecore_idle_enterer_add(Ecore_Task_Cb func, const void *data)
@@ -63,6 +66,9 @@ ecore_idle_enterer_add(Ecore_Task_Cb func, const void *data)
  * @param   data The data to be passed to the @p func call
  * @return  A handle to the idle enterer callback if successful.  Otherwise,
  *          NULL is returned.
+ * @note The function func will be called every time the main loop is entering
+ * idle state, as long as it returns 1 (or ECORE_CALLBACK_RENEW). A return of 0
+ * (or ECORE_CALLBACK_CANCEL) deletes the idle enterer.
  */
 EAPI Ecore_Idle_Enterer *
 ecore_idle_enterer_before_add(Ecore_Task_Cb func, const void *data)
