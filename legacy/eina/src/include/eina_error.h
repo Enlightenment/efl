@@ -27,16 +27,9 @@
 /**
  * @page tutorial_error_page Error Tutorial
  *
- * @section tutorial_error_introduction Introduction
- *
- * The Eina error module provides a way to manage errors in a simple
- * but powerful way in libraries and modules. It is also used in Eina
- * itself. Similar to libC's @c errno and strerror() facilities, this
- * is extensible and recommended for other libraries and applications.
- *
  * @section tutorial_error_registering_msg Registering messages
  *
- * The error module can provide a system that mimic the errno system
+ * The error module can provide a system that mimics the errno system
  * of the C standard library. It consists in 2 parts:
  *
  * @li a way of registering new messages with
@@ -53,85 +46,7 @@
  *
  * Here is an example of use:
  *
- * @code
- * #include <stdlib.h>
- * #include <stdio.h>
- *
- * #include <eina_error.h>
- *
- * Eina_Error MY_ERROR_NEGATIVE;
- * Eina_Error MY_ERROR_NULL;
- *
- * voi *data_new()
- * {
- *    eina_error_set(0);
- *
- *    eina_error_set(MY_ERROR_NULL);
- *    return NULL;
- * }
- *
- * int test(int n)
- * {
- *    eina_error_set(0);
- *
- *    if (n < 0)
- *    {
- *       eina_error_set(MY_ERROR_NEGATIVE);
- *       return 0;
- *    }
- *
- *    return 1;
- * }
- *
- * int main(void)
- * {
- *    void *data;
- *
- *    if (!eina_init())
- *    {
- *       printf ("Error during the initialization of eina_error module\n");
- *       return EXIT_FAILURE;
- *    }
- *
- *    MY_ERROR_NEGATIVE = eina_error_msg_register("Negative number");
- *    MY_ERROR_NULL = eina_error_msg_register("NULL pointer");
-
- *    data = data_new();
- *    if (!data)
- *    {
- *       Eina_Error err;
- *
- *       err = eina_error_get();
- *       if (err)
- *          printf("Error during memory allocation: %s\n",
- *                 eina_error_msg_get(err));
- *    }
- *
- *    if (!test(0))
- *    {
- *       Eina_Error err;
- *
- *       err = eina_error_get();
- *       if (err)
- *          printf("Error during test function: %s\n",
- *                 eina_error_msg_get(err));
- *    }
- *
- *    if (!test(-1))
- *    {
- *       Eina_Error err;
- *
- *       err = eina_error_get();
- *       if (err)
- *          printf("Error during test function: %s\n",
- *                 eina_error_msg_get(err));
- *    }
- *
- *    eina_shutdown();
- *
- *    return EXIT_SUCCESS;
- * }
- * @endcode
+ * @include eina_error_01.c
  *
  * Of course, instead of printf(), eina_log_print() can be used to
  * have beautiful error messages.
@@ -142,13 +57,13 @@
  *
  * @brief These functions provide error management for projects.
  *
- * To use the error system Eina must be initialized with eina_init()
- * and later shut down with eina_shutdown(). Error codes are
- * registered with eina_error_msg_register() and converted from
- * identifier to original message string with eina_error_msg_get().
+ * The Eina error module provides a way to manage errors in a simple but
+ * powerful way in libraries and modules. It is also used in Eina itself.
+ * Similar to libC's @c errno and strerror() facilities, this is extensible and
+ * recommended for other libraries and applications.
  *
- * Logging functions are not in eina_error anymore, see
- * eina_log_print() instead.
+ * A simple example of how to use this can be seen @ref tutorial_error_page
+ * "here".
  *
  * @{
  */
@@ -217,7 +132,7 @@ EAPI Eina_Error  eina_error_msg_static_register(const char *msg) EINA_ARG_NONNUL
  * @param error The Eina_Error to change the message of
  * @param msg The description of the error. This string will be
  * duplicated only if the error was registered with @ref eina_error_msg_register
- * otherwise it must remain intact for the duration
+ * otherwise it must remain intact for the duration.
  * @return EINA_TRUE if successful, EINA_FALSE on error
  *
  * This function modifies the message associated with @p error and changes
@@ -247,6 +162,9 @@ EAPI Eina_Error  eina_error_get(void);
  *
  * This function sets the last error identifier. The last error can be
  * retrieved with eina_error_get().
+ *
+ * @note This is also used to clear previous errors, in that case @p err should
+ * be @c 0.
  */
 EAPI void        eina_error_set(Eina_Error err);
 
