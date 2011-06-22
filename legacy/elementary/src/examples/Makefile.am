@@ -20,6 +20,12 @@ LDADD = \
 	@ELEMENTARY_LIBS@ \
 	$(top_builddir)/src/lib/libelementary.la
 
+EDJE_CC = @edje_cc@
+EDJE_FLAGS_VERBOSE_ =
+EDJE_FLAGS_VERBOSE_0 =
+EDJE_FLAGS_VERBOSE_1 = -v
+EDJE_FLAGS = $(EDJE_FLAGS_$(V))
+
 SRCS = \
 	actionslider_example_01.c \
 	anchorblock_example_01.c \
@@ -31,7 +37,10 @@ SRCS = \
 	bg_example_01.c \
 	bg_example_02.c \
 	bg_example_03.c \
-	general_funcs_example.c
+	general_funcs_example.c \
+	theme_example_01.c \
+	theme_example_02.c \
+	theme_example.edc
 
 pkglib_PROGRAMS =
 
@@ -41,6 +50,14 @@ files_DATA = $(SRCS)
 endif
 
 if EFL_BUILD_EXAMPLES
+theme_example.edj: Makefile theme_example.edc
+	$(EDJE_CC) $(EDJE_FLAGS) \
+	$(top_srcdir)/src/examples/theme_example.edc \
+	$(top_builddir)/src/examples/theme_example.edj
+
+clean-local:
+	rm -f *.edj
+
 pkglib_PROGRAMS += \
 	actionslider_example_01 \
 	anchorblock_example_01 \
@@ -52,7 +69,10 @@ pkglib_PROGRAMS += \
 	bg_example_01 \
 	bg_example_02 \
 	bg_example_03 \
-	general_funcs_example
+	general_funcs_example \
+	theme_example_01 \
+	theme_example_02 \
+	theme_example.edj
 
 # This variable will hold the list of screenshots that will be made
 # by "make screenshots". Each item in the list is of the form:
@@ -62,7 +82,8 @@ SCREENSHOTS = \
 	bg_example_02:bg_01.png:0.0 \
 	animator_example_01:animator_example_01.png:0.2 \
 	animator_example_01:animator_example_02.png:0.5 \
-	animator_example_01:animator_example_03.png:0.9
+	animator_example_01:animator_example_03.png:0.9 \
+	theme_example_01:theme_example_01.png:0.0
 
 screenshots: all
 	@mkdir -p $(top_srcdir)/doc/img/screenshots

@@ -699,6 +699,109 @@
  */
 
 /**
+ * @page theme_example_01 Theme - Using extensions
+ *
+ * @dontinclude theme_example_01.c
+ *
+ * Using extensions is extremely easy, discarding the part where you have to
+ * write the theme for them.
+ *
+ * In the following example we'll be creating two buttons, one to load or
+ * unload our extension theme and one to cycle around three possible styles,
+ * one of which we created.
+ *
+ * After including our one and only header we'll jump to the callback for
+ * the buttons. First one takes care of loading or unloading our extension
+ * file, relative to the default theme set (thus the @c NULL in the
+ * functions first parameter).
+ * @skipline Elementary.h
+ * @skip static void
+ * @until }
+ * @until }
+ * @until }
+ *
+ * The second button, as we said before, will just switch around different
+ * styles. In this case we have three of them. The first one is our custom
+ * style, named after something very unlikely to find in the default theme.
+ * The other two styles are the standard and one more, anchor, which exists
+ * in the default and is similar to the default, except the button vanishes
+ * when the mouse is not over it.
+ * @skip static void
+ * @until }
+ * @until }
+ *
+ * So what happens if the style switches to our custom one when the
+ * extension is loaded? Elementary falls back to the default for the
+ * widget.
+ *
+ * And the main function, simply enough, will create the window, set the
+ * buttons and their callbacks, and just to begin with our button styled
+ * we're also loading our extension at the beginning.
+ * @skip int
+ * @until ELM_MAIN
+ *
+ * In this case we wanted to easily remove extensions, but all adding an
+ * extension does is tell Elementary where else it should look for themes
+ * when it can't find them in the default theme. Another way to do this
+ * is to set the theme search order using elm_theme_set(), but this requires
+ * that the developer is careful not to override any user configuration.
+ * That can be helped by adding our theme to the end of whatver is already
+ * set, like in the following snippet.
+ * @code
+ * char buf[4096];
+ * snprintf(buf, sizeof(buf), "%s:./theme_example.edj", elme_theme_get(NULL);
+ * elm_theme_set(NULL, buf);
+ * @endcode
+ *
+ * If we were using overlays instead of extensions, the same thing applies,
+ * but the custom theme must be added to the front of the search path.
+ *
+ * In the end, we should be looking at something like this:
+ * @image html screenshots/theme_example_01.png
+ * @image latex screenhots/theme_example_01.eps
+ *
+ * That's all. Boringly simple, and the full code in one piece can be found
+ * @ref theme_example_01.c "here".
+ *
+ * And the code for our extension is @ref theme_example.edc "here".
+ *
+ * @example theme_example_01.c
+ * @example theme_example.edc
+ */
+
+/**
+ * @page theme_example_02 Theme - Using overlays
+ *
+ * @dontinclude theme_example_02.c
+ *
+ * Overlays are like extensions in that you tell Elementary that some other
+ * theme contains the styles you need for your program. The difference is that
+ * they will be look in first, so they can override the default style of any
+ * widget.
+ *
+ * There's not much to say about them that hasn't been said in our previous
+ * example about @ref theme_example_01 "extensions", so going quickly through
+ * the code we have a function to load or unload the theme, which will be
+ * called when we click any button.
+ * @skipline Elementary.h
+ * @skip static void
+ * @until }
+ *
+ * And the main function, creating the window and adding some buttons to it.
+ * We load our theme as an overlay and nothing else. Notice there's no style
+ * set for any button there, which means they should be using the default
+ * that we override.
+ * @skip int
+ * @until ELM_MAIN
+ *
+ * That's pretty much it. The full code is @ref theme_example_02.c "here" and
+ * the definition of the theme is the same as before, and can be found in
+ * @ref theme_example.edc "here".
+ *
+ * @example theme_example_02.c
+ */
+
+/**
  * @page bg_example_01_c bg_example_01.c
  * @include bg_example_01.c
  * @example bg_example_01.c

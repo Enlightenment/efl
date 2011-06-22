@@ -1240,14 +1240,6 @@ elm_scale_all_set(double scale)
 #endif
 }
 
-/**
- * Set the style
- *
- * This sets the name of the style
- * @param obj The object
- * @param style The style name to use
- * @ingroup Styles
- */
 EAPI void
 elm_object_style_set(Evas_Object *obj,
                      const char  *style)
@@ -1256,17 +1248,6 @@ elm_object_style_set(Evas_Object *obj,
    elm_widget_style_set(obj, style);
 }
 
-/**
- * Get the style
- *
- * This gets the style being used for that widget. Note that the string
- * pointer is only valid as longas the object is valid and the style doesn't
- * change.
- *
- * @param obj The object
- * @return The style name
- * @ingroup Styles
- */
 EAPI const char *
 elm_object_style_get(const Evas_Object *obj)
 {
