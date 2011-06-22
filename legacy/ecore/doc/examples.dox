@@ -98,10 +98,34 @@
  */
 
 /**
+ * @page ecore_job_example_c ecore_job - Queuing tasks
+ *
+ * This example shows how an @ref Ecore_Job can be added, how it can be
+ * deleted, and that they always execute in the added order.
+ *
+ * First, 2 callback functions are declared, one that prints strings passed to
+ * it in the @c data pointer, and another one that quits the main loop. In the
+ * @c main function, 3 jobs are added using the first callback, and another one
+ * is added using the second one.
+ *
+ * Then the second added job is deleted just to demonstrate the usage of
+ * ecore_job_del(), and the main loop is finally started. Run this example to
+ * see that @c job1, @c job3 and @c job_quit are ran, in this order.
+ *
+ * @include ecore_job_example.c
+ */
+
+/**
  * @example ecore_idler_example.c
  * This example shows when @ref Ecore_Idler, @ref Ecore_Idle_Enterer and @ref
  * Ecore_Idle_Exiter are called. See
  * @ref ecore_idler_example_c "the explanation here".
+ */
+
+/**
+ * @example ecore_job_example.c
+ * This example shows how to use an @ref Ecore_Job. See
+ * @ref ecore_job_example_c "the explanation here".
  */
 
 /**

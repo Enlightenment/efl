@@ -47,6 +47,15 @@ _ecore_job_shutdown(void)
  * You can queue jobs that are to be done by the main loop when the current
  * event is dealt with.
  *
+ * Jobs are processed by the main loop similarly to events. They also will be
+ * executed in the order which they were added.
+ *
+ * A good use for them is when you don't want to execute an action immeditately,
+ * but want to give the control back to the main loop so that it will call your
+ * job callback when jobs start being processed (and if there are other jobs
+ * added before yours, they will be processed first). This also gives the chance
+ * to other actions in your program to cancel the job before it is started.
+ *
  * @{
  */
 

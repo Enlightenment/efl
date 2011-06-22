@@ -14,6 +14,7 @@ LDADD = \
 SRCS = \
 	ecore_idler_example.c \
 	ecore_time_example.c \
+	ecore_job_example.c \
 	client_bench.c \
 	server_bench.c \
 	ecore_con_client_example.c \
@@ -33,6 +34,7 @@ endif
 if EFL_BUILD_EXAMPLES
 pkglib_PROGRAMS += \
 	ecore_idler_example \
+	ecore_job_example \
 	ecore_time_example
 endif
 
