@@ -15,6 +15,7 @@ SRCS = \
 	eina_array_01.c \
 	eina_array_02.c \
 	eina_error_01.c \
+	eina_file_01.c \
 	eina_hash_01.c \
 	eina_hash_02.c \
 	eina_iterator_01.c \
@@ -39,6 +40,7 @@ pkglib_PROGRAMS += \
     eina_array_01 \
 	eina_array_02 \
 	eina_error_01 \
+	eina_file_01 \
 	eina_hash_01 \
 	eina_hash_02 \
 	eina_iterator_01 \
