@@ -3610,6 +3610,8 @@ _edje_color_class_member_add(Edje *ed, const char *color_class)
    if ((!ed) || (!color_class)) return;
    if (!_edje_color_class_member_hash) _edje_color_class_member_hash = eina_hash_string_superfast_new(NULL);
    members = eina_hash_find(_edje_color_class_member_hash, color_class);
+   if (eina_list_count(members) > 50000)
+      printf("ERRRRRRRRRROR. CEDRIC BROKE ME! I NOW LEAK COLORCLASSES\n");
 
    members = eina_list_prepend(members, ed);
    eina_hash_set(_edje_color_class_member_hash, color_class, members);
@@ -3718,6 +3720,8 @@ _edje_text_class_member_add(Edje *ed, const char *text_class)
 
    /* Update the member list */
    members = eina_list_prepend(members, ed);
+   if (eina_list_count(members) > 50000)
+      printf("ERRRRRRRRRROR. CEDRIC BROKE ME! I NOW LEAK TEXTCLASSES\n");
 
    /* Don't loose track of members list */
    if (!ed->members)
