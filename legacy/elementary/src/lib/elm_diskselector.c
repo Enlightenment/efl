@@ -6,7 +6,7 @@
  * with the selected on the middle.
  *
  * It can act like a circular list with round mode and labels can be
- * reduced for a defined lenght for side items.
+ * reduced for a defined length for side items.
  *
  * Signals that you can add callbacks for are:
  *
@@ -948,16 +948,16 @@ elm_diskselector_round_set(Evas_Object * obj, Eina_Bool round)
 }
 
 /**
- * Get the side labels max lenght
+ * Get the side labels max length
  *
  * @param obj The diskselector object
- * @return The max lenght defined for side labels, or 0 if not a valid
+ * @return The max length defined for side labels, or 0 if not a valid
  * diskselector
  *
  * @ingroup Diskselector
  */
 EAPI int
-elm_diskselector_side_label_lenght_get(const Evas_Object *obj)
+elm_diskselector_side_label_length_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) 0;
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -966,20 +966,32 @@ elm_diskselector_side_label_lenght_get(const Evas_Object *obj)
 }
 
 /**
- * Set the side labels max lenght
+ * Set the side labels max length
  *
  * @param obj The diskselector object
- * @param len The max lenght defined for side labels
+ * @param len The max length defined for side labels
  *
  * @ingroup Diskselector
  */
 EAPI void
-elm_diskselector_side_label_lenght_set(Evas_Object *obj, int len)
+elm_diskselector_side_label_length_set(Evas_Object *obj, int len)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
    wd->len_side = len;
+}
+
+EAPI void
+elm_diskselector_side_label_lenght_set(Evas_Object *obj, int len)
+{
+   return elm_diskselector_side_label_length_set(obj, len);
+}
+
+EAPI int
+elm_diskselector_side_label_lenght_get(const Evas_Object *obj)
+{
+   return elm_diskselector_side_label_length_get(obj);
 }
 
 /**

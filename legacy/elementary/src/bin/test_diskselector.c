@@ -112,7 +112,7 @@ test_diskselector(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *even
    elm_box_pack_end(bx, disk);
    evas_object_show(disk);
    evas_object_smart_callback_add(disk, "selected", _print_disk_info_cb, NULL);
-   elm_diskselector_side_label_lenght_set(disk, 4);
+   elm_diskselector_side_label_length_set(disk, 4);
 
    disk = elm_diskselector_add(win);
    ic = elm_icon_add(win);

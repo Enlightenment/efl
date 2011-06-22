@@ -3706,8 +3706,10 @@ EAPI Elm_Genlist_Item *elm_genlist_item_sorted_insert(Evas_Object *obj, const El
    EAPI Evas_Object           *elm_diskselector_add(Evas_Object *parent) EINA_ARG_NONNULL(1);
    EAPI Eina_Bool              elm_diskselector_round_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
    EAPI void                   elm_diskselector_round_set(Evas_Object *obj, Eina_Bool round) EINA_ARG_NONNULL(1);
-   EAPI int                    elm_diskselector_side_label_lenght_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
-   EAPI void                   elm_diskselector_side_label_lenght_set(Evas_Object *obj, int len) EINA_ARG_NONNULL(1);
+   EINA_DEPRECATED EAPI int    elm_diskselector_side_label_lenght_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+   EINA_DEPRECATED EAPI void   elm_diskselector_side_label_lenght_set(Evas_Object *obj, int len) EINA_ARG_NONNULL(1);
+   EAPI int                    elm_diskselector_side_label_length_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+   EAPI void                   elm_diskselector_side_label_length_set(Evas_Object *obj, int len) EINA_ARG_NONNULL(1);
    EAPI void                   elm_diskselector_bounce_set(Evas_Object *obj, Eina_Bool h_bounce, Eina_Bool v_bounce) EINA_ARG_NONNULL(1);
    EAPI void                   elm_diskselector_bounce_get(const Evas_Object *obj, Eina_Bool *h_bounce, Eina_Bool *v_bounce) EINA_ARG_NONNULL(1);
    EAPI void                   elm_diskselector_scroller_policy_get(const Evas_Object *obj, Elm_Scroller_Policy *policy_h, Elm_Scroller_Policy *policy_v) EINA_ARG_NONNULL(1);
