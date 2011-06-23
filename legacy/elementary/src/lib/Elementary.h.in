@@ -5672,6 +5672,9 @@ EAPI Elm_Genlist_Item *elm_genlist_item_sorted_insert(Evas_Object *obj, const El
    EAPI void         elm_grid_pack_set(Evas_Object *subobj, int x, int y, int w, int h);
    EAPI void         elm_grid_pack_get(Evas_Object *subobj, int *x, int *y, int *w, int *h);
 
+   EAPI Evas_Object *elm_genscroller_add(Evas_Object *parent);
+   EAPI void         elm_genscroller_world_size_set(Evas_Object *obj, Evas_Coord w, Evas_Coord h);
+  
 #ifdef __cplusplus
 }
 #endif

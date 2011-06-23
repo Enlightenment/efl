@@ -66,6 +66,7 @@ test_focus3.c \
 test_focus.c \
 test_gengrid.c \
 test_genlist.c \
+test_genscroller.c \
 test_glview_simple.c \
 test_glview.c \
 test_grid.c \
@@ -106,7 +107,7 @@ test_tooltip.c \
 test_transit.c \
 test_weather.c \
 test_win_inline.c \
-test_win_state.c
+test_win_state.c 
 
 if HAVE_EIO
 elementary_test_SOURCES += test_eio.c
