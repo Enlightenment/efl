@@ -47,6 +47,93 @@ static void _edje_object_signal_preload_cb(void *data, Evas_Object *obj, const c
 
 Edje_Real_Part *_edje_real_part_recursive_get_helper(const Edje *ed, char **path);
 
+
+static void
+_edje_class_member_direct_del(const char *class, Edje_List_Refcount *lookup, Eina_Hash *hash)
+{
+   Eina_List *members;
+
+   members = eina_hash_find(hash, class);
+   members = eina_list_remove_list(members, lookup->lookup);
+   eina_hash_set(hash, class, members);
+   free(lookup);
+}
+
+static void
+_edje_class_member_add(Edje *ed, Eina_Hash **ehash, Eina_Hash **ghash, const char *class)
+{
+   Edje_List_Refcount *lookup;
+   Eina_List *members;
+
+   if ((!ed) || (!ehash) || (!ghash) || (!class)) return;
+
+   lookup = eina_hash_find(*ehash, class);
+   if (lookup)
+     {
+        EINA_REFCOUNT_REF(lookup);
+        return;
+     }
+
+   lookup = malloc(sizeof (Edje_List_Refcount));
+   if (!lookup) return ;
+   EINA_REFCOUNT_INIT(lookup);
+
+   /* Get members list */
+   members = eina_hash_find(*ghash, class);
+
+   /* Update the member list */
+   lookup->lookup = members = eina_list_prepend(members, ed);
+
+   /* Don't loose track of members list */
+   if (!*ehash)
+     *ehash = eina_hash_string_small_new(NULL);
+   eina_hash_add(*ehash, class, lookup);
+
+   /* Reset the member list to the right pointer */
+   if (!*ghash)
+     *ghash = eina_hash_string_superfast_new(NULL);
+   eina_hash_set(*ghash, class, members);
+}
+
+static void
+_edje_class_member_del(Eina_Hash **ehash, Eina_Hash **ghash, const char *class)
+{
+   Edje_List_Refcount *lookup;
+   Eina_List *members;
+
+   if ((!ehash) || (!ghash) || (!class)) return;
+   members = eina_hash_find(*ghash, class);
+   if (!members) return;
+
+   lookup = eina_hash_find(*ehash, class);
+   if (!lookup) return ;
+
+   EINA_REFCOUNT_UNREF(lookup)
+   {
+      members = eina_list_remove_list(members, lookup->lookup);
+      eina_hash_set(*ghash, class, members);
+
+      eina_hash_del(*ehash, class, lookup);
+      free(lookup);
+   }
+}
+
+static Eina_Bool
+member_list_free(const Eina_Hash *hash __UNUSED__, const void *key __UNUSED__, void *data, void *fdata __UNUSED__)
+{
+   eina_list_free(data);
+   return EINA_TRUE;
+}
+
+static void
+_edje_class_members_free(Eina_Hash **ghash)
+{
+   if (!ghash || !*ghash) return;
+   eina_hash_foreach(*ghash, member_list_free, NULL);
+   eina_hash_free(*ghash);
+   *ghash = NULL;
+}
+
 /************************** API Routines **************************/
 
 #define FASTFREEZE 1
@@ -1679,12 +1766,12 @@ edje_object_text_insert_filter_callback_del_full(Evas_Object *obj, const char *p
         if ((!strcmp(cb->part, part)) && (cb->func == func) &&
             (cb->data == data))
           {
-             void *data = cb->data;
+             void *tmp = cb->data;
              ed->text_insert_filter_callbacks =
                 eina_list_remove_list(ed->text_insert_filter_callbacks, l);
              eina_stringshare_del(cb->part);
              free(cb);
-             return data;
+             return tmp;
           }
      }
    return NULL;
@@ -3613,54 +3700,21 @@ _edje_color_class_find(Edje *ed, const char *color_class)
 void
 _edje_color_class_member_add(Edje *ed, const char *color_class)
 {
-   Eina_List *members;
+   _edje_class_member_add(ed, &ed->members.color_class, &_edje_color_class_member_hash, color_class);
+}
 
-   if ((!ed) || (!color_class)) return;
-   if (!_edje_color_class_member_hash) _edje_color_class_member_hash = eina_hash_string_superfast_new(NULL);
-   members = eina_hash_find(_edje_color_class_member_hash, color_class);
-   if (eina_list_count(members) > 50000)
-      ERR(EINA_COLOR_RED"E"EINA_COLOR_LIGHTRED"R"EINA_COLOR_ORANGE"R"
-          EINA_COLOR_YELLOW"R"EINA_COLOR_GREEN"R"EINA_COLOR_CYAN"R"
-          EINA_COLOR_LIGHTCYAN"R"EINA_COLOR_LIGHTBLUE"R"EINA_COLOR_BLUE"R"
-          EINA_COLOR_HIGH EINA_COLOR_BLUE"R"EINA_COLOR_RED"R"EINA_COLOR_LIGHTRED"O"
-          EINA_COLOR_ORANGE"R"EINA_COLOR_YELLOW". "EINA_COLOR_GREEN"C"
-          EINA_COLOR_CYAN"E"EINA_COLOR_LIGHTCYAN"D"EINA_COLOR_LIGHTBLUE"R"EINA_COLOR_BLUE"I"
-          EINA_COLOR_RESET"C"EINA_COLOR_RED" B"EINA_COLOR_LIGHTRED"R"EINA_COLOR_ORANGE"O"EINA_COLOR_YELLOW"K"
-          EINA_COLOR_GREEN"E "EINA_COLOR_CYAN"M"EINA_COLOR_LIGHTCYAN"E"EINA_COLOR_LIGHTBLUE"! "
-          EINA_COLOR_BLUE"I "EINA_COLOR_HIGH EINA_COLOR_BLUE"N"EINA_COLOR_RED"O"EINA_COLOR_LIGHTRED"W "
-          EINA_COLOR_ORANGE"L"EINA_COLOR_YELLOW"E"EINA_COLOR_GREEN"A"EINA_COLOR_CYAN"K "EINA_COLOR_LIGHTCYAN"C"
-          EINA_COLOR_LIGHTBLUE"O"EINA_COLOR_BLUE"L"EINA_COLOR_RESET"O"EINA_COLOR_RED"R"EINA_COLOR_LIGHTRED"C"
-          EINA_COLOR_ORANGE"L"EINA_COLOR_YELLOW"A"EINA_COLOR_GREEN"S"EINA_COLOR_CYAN"S"EINA_COLOR_LIGHTCYAN"E"
-          EINA_COLOR_LIGHTBLUE"S");
-
-   members = eina_list_prepend(members, ed);
-   eina_hash_set(_edje_color_class_member_hash, color_class, members);
+void
+_edje_color_class_member_direct_del(const char *color_class, void *l)
+{
+   _edje_class_member_direct_del(color_class, l, _edje_color_class_member_hash);
 }
 
 void
 _edje_color_class_member_del(Edje *ed, const char *color_class)
 {
-   Eina_List *members;
-
    if ((!ed) || (!color_class)) return;
-   if (!_edje_color_class_member_hash) return;
 
-   members = eina_hash_find(_edje_color_class_member_hash, color_class);
-   if (!members) return;
-
-   members = eina_list_remove(members, ed);
-   eina_hash_set(_edje_color_class_member_hash, color_class, members);
-}
-
-/**
- * Used to free the member lists that are stored in the text_class and
- * color_class hashtables.
- */
-static Eina_Bool
-member_list_free(const Eina_Hash *hash __UNUSED__, const void *key __UNUSED__, void *data, void *fdata __UNUSED__)
-{
-   eina_list_free(data);
-   return EINA_TRUE;
+   _edje_class_member_del(&ed->members.color_class, &_edje_color_class_member_hash, color_class);
 }
 
 void
@@ -3721,81 +3775,27 @@ void
 _edje_text_class_member_direct_del(const char *text_class,
                                    void *l)
 {
-   Edje_List_Refcount *lookup = l;
-   Eina_List *members;
-
-   members = eina_hash_find(_edje_text_class_member_hash, text_class);
-   members = eina_list_remove_list(members, lookup->lookup);
-   eina_hash_set(_edje_text_class_member_hash, text_class, members);
-   free(lookup);
+   _edje_class_member_direct_del(text_class, l, _edje_text_class_member_hash);
 }
 
 void
 _edje_text_class_member_add(Edje *ed, const char *text_class)
 {
-   Edje_List_Refcount *lookup;
-   Eina_List *members;
-
-   if ((!ed) || (!text_class)) return;
-
-   lookup = eina_hash_find(ed->members, text_class);
-   if (lookup)
-     {
-        EINA_REFCOUNT_REF(lookup);
-        return;
-     }
-
-   lookup = malloc(sizeof (Edje_List_Refcount));
-   if (!lookup) return ;
-   EINA_REFCOUNT_INIT(lookup);
-
-   /* Get members list */
-   members = eina_hash_find(_edje_text_class_member_hash, text_class);
-
-   /* Update the member list */
-   lookup->lookup = members = eina_list_prepend(members, ed);
-
-   /* Don't loose track of members list */
-   if (!ed->members)
-     ed->members = eina_hash_string_small_new(NULL);
-   eina_hash_add(ed->members, text_class, lookup);
-
-   /* Reset the member list to the right pointer */
-   if (!_edje_text_class_member_hash)
-     _edje_text_class_member_hash = eina_hash_string_superfast_new(NULL);
-   eina_hash_set(_edje_text_class_member_hash, text_class, members);
+   _edje_class_member_add(ed, &ed->members.text_class, &_edje_text_class_member_hash, text_class);
 }
 
 void
 _edje_text_class_member_del(Edje *ed, const char *text_class)
 {
-   Edje_List_Refcount *lookup;
-   Eina_List *members;
-
    if ((!ed) || (!text_class)) return;
-   members = eina_hash_find(_edje_text_class_member_hash, text_class);
-   if (!members) return;
 
-   lookup = eina_hash_find(ed->members, text_class);
-   if (!lookup) return ;
-
-   EINA_REFCOUNT_UNREF(lookup)
-   {
-      members = eina_list_remove_list(members, lookup->lookup);
-      eina_hash_set(_edje_text_class_member_hash, text_class, members);
-
-      eina_hash_del(ed->members, text_class, lookup);
-      free(lookup);
-   }
+   _edje_class_member_del(&ed->members.text_class, &_edje_text_class_member_hash, text_class);
 }
 
 void
 _edje_text_class_members_free(void)
 {
-   if (!_edje_text_class_member_hash) return;
-   eina_hash_foreach(_edje_text_class_member_hash, member_list_free, NULL);
-   eina_hash_free(_edje_text_class_member_hash);
-   _edje_text_class_member_hash = NULL;
+   _edje_class_members_free(&_edje_text_class_member_hash);
 }
 
 static Eina_Bool

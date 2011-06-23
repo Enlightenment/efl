@@ -1007,7 +1007,10 @@ struct _Edje
    int                   table_programs_size;
    unsigned int          table_parts_size;
 
-   Eina_Hash            *members;
+   struct {
+      Eina_Hash         *text_class;
+      Eina_Hash         *color_class;
+   } members;
 
    Edje_Perspective     *persp;
 
@@ -1536,6 +1539,7 @@ const char *   _edje_text_class_font_get(Edje *ed,
 Edje_Real_Part   *_edje_real_part_get(const Edje *ed, const char *part);
 Edje_Real_Part   *_edje_real_part_recursive_get(const Edje *ed, const char *part);
 Edje_Color_Class *_edje_color_class_find(Edje *ed, const char *color_class);
+void              _edje_color_class_member_direct_del(const char *color_class, void *lookup);
 void              _edje_color_class_member_add(Edje *ed, const char *color_class);
 void              _edje_color_class_member_del(Edje *ed, const char *color_class);
 void              _edje_color_class_on_del(Edje *ed, Edje_Part *ep);

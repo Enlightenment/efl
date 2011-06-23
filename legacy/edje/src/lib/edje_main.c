@@ -147,12 +147,14 @@ edje_shutdown(void)
 
 /* Private Routines */
 static Eina_Bool
-_text_class_member_free(const Eina_Hash *hash __UNUSED__,
-			const void *key,
-			void *data,
-			void *fdata __UNUSED__)
+_class_member_free(const Eina_Hash *hash __UNUSED__,
+                   const void *key,
+                   void *data,
+                   void *fdata)
 {
-   _edje_text_class_member_direct_del(key, data);
+   void (*_edje_class_member_direct_del)(const char *class, void *l) = fdata;
+
+   _edje_class_member_direct_del(key, data);
    return EINA_TRUE;
 }
 
@@ -210,10 +212,15 @@ _edje_del(Edje *ed)
         free(cb);
      }
 
-   if (ed->members)
+   if (ed->members.text_class)
      {
-        eina_hash_foreach(ed->members, _text_class_member_free, NULL);
-        eina_hash_free(ed->members);
+        eina_hash_foreach(ed->members.text_class, _class_member_free, _edje_text_class_member_direct_del);
+        eina_hash_free(ed->members.text_class);
+     }
+   if (ed->members.color_class)
+     {
+        eina_hash_foreach(ed->members.color_class, _class_member_free, _edje_color_class_member_direct_del);
+        eina_hash_free(ed->members.color_class);
      }
    free(ed);
 }
