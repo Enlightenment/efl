@@ -67,6 +67,12 @@ static inline Eina_Bool eina_condition_timedwait(Eina_Condition *cond, double t)
 static inline Eina_Bool eina_condition_broadcast(Eina_Condition *cond);
 static inline Eina_Bool eina_condition_signal(Eina_Condition *cond);
 
+static inline Eina_Bool eina_rwlock_new(Eina_RWLock *mutex);
+static inline void eina_rwlock_free(Eina_RWLock *mutex);
+static inline Eina_Lock_Result eina_rwlock_take_read(Eina_RWLock *mutex);
+static inline Eina_Lock_Result eina_rwlock_take_write(Eina_RWLock *mutex);
+static inline Eina_Lock_Result eina_rwlock_release(Eina_RWLock *mutex);
+
 /**
  * @}
  */

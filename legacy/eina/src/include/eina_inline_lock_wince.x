@@ -24,6 +24,7 @@
 EAPI extern Eina_Bool _threads_activated;
 
 typedef HANDLE Eina_Lock;
+typedef Eina_Lock Eina_RWLock;
 
 static inline Eina_Bool
 eina_lock_new(Eina_Lock *mutex)
@@ -113,5 +114,34 @@ eina_condition_signal(Eina_Condition *cond)
    return EINA_FALSE;
 }
 
+static inline Eina_Bool
+eina_rwlock_new(Eina_RWLock *mutex)
+{
+   return eina_lock_new(mutex);
+}
+
+static inline void
+eina_rwlock_free(Eina_RWLock *mutex)
+{
+   return eina_lock_free(mutex);
+}
+
+static inline Eina_Lock_Result
+eina_rwlock_take_read(Eina_RWLock *mutex)
+{
+   return eina_lock_take(mutex);
+}
+
+static inline Eina_Lock_Result
+eina_rwlock_take_write(Eina_RWLock *mutex)
+{
+   return eina_lock_take(mutex);
+}
+
+static inline Eina_Lock_Result
+eina_rwlock_release(Eina_RWLock *mutex)
+{
+   return eina_lock_release(mutex);
+}
 
 #endif

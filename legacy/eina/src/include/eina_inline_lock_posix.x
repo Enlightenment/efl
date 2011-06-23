@@ -40,6 +40,7 @@ typedef void (*Eina_Lock_Bt_Func) ();
 #endif
 
 typedef struct _Eina_Lock Eina_Lock;
+typedef struct _Eina_RWLock Eina_RWLock;
 typedef struct _Eina_Condition Eina_Condition;
 
 struct _Eina_Lock
@@ -60,6 +61,14 @@ struct _Eina_Condition
 {
    Eina_Lock      *lock;
    pthread_cond_t  condition;
+};
+
+struct _Eina_RWLock
+{
+   pthread_rwlock_t mutex;
+#ifdef EINA_HAVE_DEBUG_THREADS
+   pthread_t        lock_thread_wid;
+#endif
 };
 
 EAPI extern Eina_Bool _eina_threads_activated;
@@ -353,5 +362,80 @@ eina_condition_signal(Eina_Condition *cond)
    return pthread_cond_signal(&(cond->condition)) == 0 ? EINA_TRUE : EINA_FALSE;
 }
 
+static inline Eina_Bool
+eina_rwlock_new(Eina_RWLock *mutex)
+{
+#ifdef EINA_HAVE_DEBUG_THREADS
+   assert(pthread_equal(_eina_main_loop, pthread_self()));
+#endif
+
+   if (pthread_rwlock_init(&(mutex->mutex), NULL) != 0)
+     return EINA_FALSE;
+   return EINA_TRUE;
+}
+
+static inline void
+eina_rwlock_free(Eina_RWLock *mutex)
+{
+#ifdef EINA_HAVE_DEBUG_THREADS
+   assert(pthread_equal(_eina_main_loop, pthread_self()));
+#endif
+
+   pthread_rwlock_destroy(&(mutex->mutex));
+}
+
+static inline Eina_Lock_Result
+eina_rwlock_take_read(Eina_RWLock *mutex)
+{
+#ifdef EINA_HAVE_ON_OFF_THREADS
+   if (!_eina_threads_activated)
+     {
+#ifdef EINA_HAVE_DEBUG_THREADS
+        assert(pthread_equal(_eina_main_loop, pthread_self()));
+#endif
+        return EINA_LOCK_SUCCEED;
+     }
+#endif
+
+   if (pthread_rwlock_rdlock(&(mutex->mutex)) != 0)
+     return EINA_LOCK_FAIL;
+   return EINA_LOCK_SUCCEED;
+}
+
+static inline Eina_Lock_Result
+eina_rwlock_take_write(Eina_RWLock *mutex)
+{
+#ifdef EINA_HAVE_ON_OFF_THREADS
+   if (!_eina_threads_activated)
+     {
+#ifdef EINA_HAVE_DEBUG_THREADS
+        assert(pthread_equal(_eina_main_loop, pthread_self()));
+#endif
+        return EINA_LOCK_SUCCEED;
+     }
+#endif
+
+   if (pthread_rwlock_wrlock(&(mutex->mutex)) != 0)
+     return EINA_LOCK_FAIL;
+   return EINA_LOCK_SUCCEED;
+}
+
+static inline Eina_Lock_Result
+eina_rwlock_release(Eina_RWLock *mutex)
+{
+#ifdef EINA_HAVE_ON_OFF_THREADS
+   if (!_eina_threads_activated)
+     {
+#ifdef EINA_HAVE_DEBUG_THREADS
+        assert(pthread_equal(_eina_main_loop, pthread_self()));
+#endif
+        return EINA_LOCK_SUCCEED;
+     }
+#endif
+
+   if (pthread_rwlock_unlock(&(mutex->mutex)) != 0)
+     return EINA_LOCK_FAIL;
+   return EINA_LOCK_SUCCEED;
+}
 
 #endif

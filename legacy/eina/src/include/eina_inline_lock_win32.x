@@ -42,6 +42,19 @@ struct _Eina_Condition
 };
 #endif
 
+typedef struct _Eina_Win32_RWLock Eina_RWLock;
+
+struct _Eina_Win32_RWLock
+{
+   LONG readers_count;
+   LONG writers_count;
+   int readers;
+   int writers;
+
+   Eina_Lock      mutex;
+   Eina_Condition cond_read;
+   Eina_Condition cond_write;
+};
 
 EAPI extern Eina_Bool _eina_threads_activated;
 
@@ -295,6 +308,118 @@ eina_condition_signal(Eina_Condition *cond)
 
    return EINA_TRUE;
 #endif
+}
+
+static inline Eina_Bool
+eina_rwlock_new(Eina_RWLock *mutex)
+{
+   if (!eina_lock_new(&(mutex->mutex))) return EINA_FALSE;
+   if (!eina_condition_new(&(mutex->cond_read), &(mutex->mutex)))
+     goto on_error1;
+   if (!eina_condition_new(&(mutex->cond_write), &(mutex->mutex)))
+     goto on_error2;
+
+   return EINA_TRUE;
+
+ on_error2:
+   eina_condition_free(&(mutex->cond_read));
+ on_error1:
+   eina_lock_free(&(mutex->mutex));
+   return EINA_FALSE;
+}
+
+static inline void
+eina_rwlock_free(Eina_RWLock *mutex)
+{
+   eina_condition_free(&(mutex->cond_read));
+   eina_condition_free(&(mutex->cond_write));
+   eina_lock_free(&(mutex->mutex));
+}
+
+static inline Eina_Lock_Result
+eina_rwlock_take_read(Eina_RWLock *mutex)
+{
+   DWORD res;
+
+   eina_lock_take(&(x->mutex));
+   if (mutex->writers)
+     {
+        mutex->readers_count++;
+        while (mutex->writers)
+          {
+             EnterCriticalSection(&mutex->cond_write->waiters_count_lock);
+             mutex->cond_read->waiters_count++;
+             LeaveCriticalSection(&mutex->cond_write->waiters_count_lock);
+             res = WaitForSingleObject(mutex->cond_write->semaphore, INFINITE);
+             if (res != WAIT_OBJECT_0) break;
+          }
+        mutex->readers_count--;
+     }
+   if (res == 0)
+     mutex->readers++;
+   eina_lock_release(&(mutex->mutex));
+}
+
+static inline Eina_Lock_Result
+eina_rwlock_take_write(Eina_RWLock *mutex)
+{
+   DWORD res;
+
+   eina_lock_take(&(mutex->mutex));
+   if (mutex->writers || mutex->readers > 0)
+     {
+        mutex->writers_count++;
+        while (mutex->writers || mutex->readers > 0)
+          {
+             EnterCriticalSection(&mutex->cond_write->waiters_count_lock);
+             mutex->cond_read->waiters_count++;
+             LeaveCriticalSection(&mutex->cond_write->waiters_count_lock);
+             res = WaitForSingleObject(mutex->cond_write->semaphore, INFINITE);
+             if (res != WAIT_OBJECT_0) break;
+          }
+        mutex->writers_count--;
+     }
+   if (res == 0) x->writers_count = 1;
+   eina_lock_release(&(mutex->mutex));
+}
+
+static inline Eina_Lock_Result
+eina_rwlock_release(Eina_RWLock *mutex)
+{
+   eina_lock_take(&(mutex->mutex));
+
+   if (mutex->writers)
+     {
+        mutex->writers = 0;
+        if (mutex->readers_count == 1)
+          {
+             EnterCriticalSection(&mutex->cond_read->waiters_count_lock);
+             if (mutex->cond_read->waiters_count > 0)
+               ReleaseSemaphore(x->cond_read->semaphore, 1, 0);
+             LeaveCriticalSection(&mutex->cond_read->threads_count_lock);
+          }
+        else if (mutex->readers_count > 0)
+          eina_condition_broadast(&(mutex->cond_read));
+        else if (mutex->writers_count > 0)
+          {
+             EnterCriticalSection (&mutex->cond_write->waiters_count_lock);
+             if (mutex->cond_write->waiters_count > 0)
+               ReleaseSemaphore(mutex->cond_write->semaphore, 1, 0);
+             LeaveCriticalSection (&mutex->cond_write->waiters_count_lock);
+          }
+     }
+   else if (mutex->readers > 0)
+     {
+        mutex->readers--;
+        if (mutex->readers == 0 && mutex->writers_count > 0)
+          {
+             EnterCriticalSection (&mutex->cond_write->waiters_count_lock);
+             if (mutex->cond_write->waiters_count > 0)
+               ReleaseSemaphore(mutex->cond_write->semaphore, 1, 0);
+             LeaveCriticalSection (&mutex->cond_write->waiters_count_lock);
+          }
+     }
+   eina_lock_release(&(mutex->mutex));
 }
 
 #endif

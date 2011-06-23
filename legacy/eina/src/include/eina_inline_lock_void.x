@@ -44,6 +44,7 @@
  * Abtract type for a mutual exclusive object.
  */
 typedef void *Eina_Lock;
+typedef void *Eina_RWLock;
 typedef void *Eina_Condition;
 
 /**
@@ -171,6 +172,35 @@ static inline Eina_Bool
 eina_condition_signal(Eina_Condition *cond EINA_UNUSED)
 {
    return EINA_FALSE;
+}
+
+static inline Eina_Bool
+eina_rwlock_new(Eina_RWLock *mutex EINA_UNUSED)
+{
+   return EINA_FALSE;
+}
+
+static inline void
+ eina_rwlock_free(Eina_RWLock *mutex EINA_UNUSED)
+{
+}
+
+static inline Eina_Lock_Result
+eina_rwlock_read_take(Eina_RWLock *mutex EINA_UNUSED)
+{
+   return EINA_LOCK_FAIL;
+}
+
+static inline Eina_Lock_Result
+eina_rwlock_write_take(Eina_RWLock *mutex EINA_UNUSED)
+{
+   return EINA_LOCK_FAIL;
+}
+
+static inline Eina_Lock_Result
+eina_rwlock_release(Eina_RWLock *mutex)
+{
+   return EINA_LOCK_FAIL;
 }
 
 /**

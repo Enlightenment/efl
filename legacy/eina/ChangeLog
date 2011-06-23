@@ -110,3 +110,7 @@
 
 	* Add eina_hash_free_cb_set to change the free callback during the
 	life of an Eina_Hash.
+
+2011-06-23  Cedric Bail
+
+	* Add Eina_LockRW.
