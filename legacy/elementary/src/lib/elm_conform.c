@@ -51,7 +51,6 @@ static char *sub_type[SUB_TYPE_COUNT] = { "scroller", "genlist" };
 
 /* local function prototypes */
 static const char *widtype = NULL;
-static void _del_pre_hook(Evas_Object *obj);
 static void _del_hook(Evas_Object *obj);
 static void _mirrored_set(Evas_Object *obj, Eina_Bool rtl);
 static void _theme_hook(Evas_Object *obj);
@@ -73,18 +72,6 @@ static void _sizing_eval(Evas_Object *obj);
 static Eina_Bool _prop_change(void *data, int type, void *event);
 
 /* local functions */
-static void
-_del_pre_hook(Evas_Object *obj)
-{
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return;
-#ifdef HAVE_ELEMENTARY_X
-   if (wd->prop_hdl) ecore_event_handler_del(wd->prop_hdl);
-#endif
-   evas_object_event_callback_del_full(obj, EVAS_CALLBACK_RESIZE, _conformant_move_resize_event_cb, obj);
-   evas_object_event_callback_del_full(obj, EVAS_CALLBACK_MOVE, _conformant_move_resize_event_cb, obj);
-}
-
 static void
 _del_hook(Evas_Object *obj)
 {
