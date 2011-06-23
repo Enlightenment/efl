@@ -2285,7 +2285,7 @@ _get_space_for_reorder_item(Elm_Genlist_Item *it)
         it->block->reorder_offset = it->wd->reorder_it->h;
      }
    else
-      it->block->reorder_offset = 0;
+     it->block->reorder_offset = 0;
 
    it->scrl_y += it->block->reorder_offset;
 
@@ -2298,7 +2298,7 @@ _get_space_for_reorder_item(Elm_Genlist_Item *it)
         return it->wd->reorder_it->h;
      }
    else
-      return 0;
+     return 0;
 }
 
 static Eina_Bool
@@ -3577,8 +3577,8 @@ elm_genlist_item_append(Evas_Object                  *obj,
         it->parent->items = eina_list_append(it->parent->items, it);
         if (!it2) it2 = it->parent;
         wd->items =
-           eina_inlist_append_relative(wd->items, EINA_INLIST_GET(it),
-                                       EINA_INLIST_GET(it2));
+          eina_inlist_append_relative(wd->items, EINA_INLIST_GET(it),
+                                      EINA_INLIST_GET(it2));
         it->rel = it2;
         it->rel->relcount++;
 
