@@ -654,15 +654,11 @@ _icon_size_min_get(Evas_Object *icon)
  *
  * @ingroup Icon
  */
-EAPI Eina_Bool
-elm_icon_standard_set(Evas_Object *obj, const char *name)
+static Eina_Bool
+_elm_icon_standard_set(Widget_Data *wd, Evas_Object *obj, const char *name)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
-   Widget_Data *wd = elm_widget_data_get(obj);
    char *tmp;
    Eina_Bool ret;
-
-   if ((!wd) || (!name)) return EINA_FALSE;
 
    /* try locating the icon using the specified lookup order */
    switch (wd->lookup_order)
@@ -699,9 +695,37 @@ elm_icon_standard_set(Evas_Object *obj, const char *name)
    if (!(tmp = strchr(name, '/'))) return EINA_FALSE;
    ++tmp;
    if (*tmp) return elm_icon_standard_set(obj, tmp);
-
    /* give up */
    return EINA_FALSE;
+}
+
+static void
+_elm_icon_standard_resize(void *data,
+                          Evas *e __UNUSED__,
+                          Evas_Object *obj,
+                          void *event_info __UNUSED__)
+{
+   Widget_Data *wd = data;
+
+   if (!_elm_icon_standard_set(wd, obj, wd->stdicon))
+     evas_object_event_callback_del_full(obj, EVAS_CALLBACK_RESIZE,
+                                         _elm_icon_standard_resize, wd);
+}
+
+EAPI Eina_Bool
+elm_icon_standard_set(Evas_Object *obj, const char *name)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
+   Widget_Data *wd = elm_widget_data_get(obj);
+
+   if ((!wd) || (!name)) return EINA_FALSE;
+
+   evas_object_event_callback_del_full(obj, EVAS_CALLBACK_RESIZE,
+                                       _elm_icon_standard_resize, wd);
+   evas_object_event_callback_add(obj, EVAS_CALLBACK_RESIZE,
+                                  _elm_icon_standard_resize, wd);
+
+   return _elm_icon_standard_set(wd, obj, name);
 }
 
 /**

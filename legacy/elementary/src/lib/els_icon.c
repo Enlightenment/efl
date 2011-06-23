@@ -161,6 +161,7 @@ _els_smart_icon_size_get(const Evas_Object *obj, int *w, int *h)
 {
    Smart_Data *sd;
    int tw, th;
+   int cw, ch;
 
    sd = evas_object_smart_data_get(obj);
    if (!sd) return;
@@ -168,6 +169,9 @@ _els_smart_icon_size_get(const Evas_Object *obj, int *w, int *h)
      edje_object_size_min_get(sd->obj, &tw, &th);
    else
      evas_object_image_size_get(sd->obj, &tw, &th);
+   evas_object_geometry_get(sd->obj, NULL, NULL, &cw, &ch);
+   tw = tw > cw ? tw : cw;
+   th = th > ch ? th : ch;
    tw = ((double)tw) * sd->scale;
    th = ((double)th) * sd->scale;
    if (w) *w = tw;
