@@ -219,7 +219,10 @@ _elm_cursor_mouse_in(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSE
    else
      {
 #ifdef HAVE_ELEMENTARY_X
-        ecore_x_window_cursor_set(cur->win, cur->cursor);
+        if (cur->win)
+          {
+             ecore_x_window_cursor_set(cur->win, cur->cursor);
+          }
 #endif
      }
    evas_event_thaw(cur->evas);
@@ -260,7 +263,10 @@ _elm_cursor_mouse_out(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUS
    else
      {
 #ifdef HAVE_ELEMENTARY_X
-        ecore_x_window_cursor_set(cur->win, ECORE_X_CURSOR_X);
+        if (cur->win)
+          {
+             ecore_x_window_cursor_set(cur->win, ECORE_X_CURSOR_X);
+          }
 #endif
      }
    evas_event_thaw(cur->evas);
@@ -310,14 +316,17 @@ _elm_cursor_cur_set(Elm_Cursor *cur)
                          sizeof(struct _Cursor_Id), _elm_cursor_strcmp);
 
         cur->win = elm_win_xwindow_get(cur->eventarea);
-        if (!cur_id)
+        if (cur->win)
           {
-             INF("X cursor couldn't be found: %s. Using default.",
-                 cur->cursor_name);
-             cur->cursor = ecore_x_cursor_shape_get(ECORE_X_CURSOR_X);
+             if (!cur_id)
+               {
+                  INF("X cursor couldn't be found: %s. Using default.",
+                      cur->cursor_name);
+                  cur->cursor = ecore_x_cursor_shape_get(ECORE_X_CURSOR_X);
+               }
+             else
+                cur->cursor = ecore_x_cursor_shape_get(cur_id->id);
           }
-        else
-           cur->cursor = ecore_x_cursor_shape_get(cur_id->id);
 #endif
      }
 }
