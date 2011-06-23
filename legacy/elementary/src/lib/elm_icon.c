@@ -642,18 +642,6 @@ _icon_size_min_get(Evas_Object *icon)
    return (size < 32) ? 32 : size;
 }
 
-/**
- * Set the theme, as standard, for an icon.
- * If theme was not found and it is the absolute path of an image file, this
- * image will be used.
- *
- * @param obj The icon object
- * @param name The theme name
- *
- * @return (1 = success, 0 = error)
- *
- * @ingroup Icon
- */
 static Eina_Bool
 _elm_icon_standard_set(Widget_Data *wd, Evas_Object *obj, const char *name)
 {
@@ -706,12 +694,27 @@ _elm_icon_standard_resize(void *data,
                           void *event_info __UNUSED__)
 {
    Widget_Data *wd = data;
+   const char *refup = eina_stringshare_ref(wd->stdicon);
 
    if (!_elm_icon_standard_set(wd, obj, wd->stdicon))
      evas_object_event_callback_del_full(obj, EVAS_CALLBACK_RESIZE,
                                          _elm_icon_standard_resize, wd);
+
+   eina_stringshare_del(refup);
 }
 
+/**
+ * Set the theme, as standard, for an icon.
+ * If theme was not found and it is the absolute path of an image file, this
+ * image will be used.
+ *
+ * @param obj The icon object
+ * @param name The theme name
+ *
+ * @return (1 = success, 0 = error)
+ *
+ * @ingroup Icon
+ */
 EAPI Eina_Bool
 elm_icon_standard_set(Evas_Object *obj, const char *name)
 {
