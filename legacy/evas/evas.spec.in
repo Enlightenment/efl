@@ -42,6 +42,9 @@
 %bcond_without module_loader_bmp
 %bcond_without module_loader_wbmp
 %bcond_without module_loader_tga
+%bcond_without module_loader_ico
+%bcond_without module_loader_psd
+%bcond_without module_loader_generic
 
 # This just keeps a missing doxygen from killing the build.
 %define _missing_doc_files_terminate_build 0
@@ -59,6 +62,9 @@
 %define ac_with_module_loader_bmp --%{?with_module_loader_bmp:en}%{!?with_module_loader_bmp:dis}able-image-loader-bmp
 %define ac_with_module_loader_wbmp --%{?with_module_loader_wbmp:en}%{!?with_module_loader_wbmp:dis}able-image-loader-wbmp
 %define ac_with_module_loader_tga --%{?with_module_loader_tga:en}%{!?with_module_loader_tga:dis}able-image-loader-tga
+%define ac_with_module_loader_ico --%{?with_module_loader_ico:en}%{!?with_module_loader_ico:dis}able-image-loader-ico
+%define ac_with_module_loader_psd --%{?with_module_loader_psd:en}%{!?with_module_loader_psd:dis}able-image-loader-psd
+%define ac_with_module_loader_generic --%{?with_module_loader_generic:en}%{!?with_module_loader_generic:dis}able-image-loader-generic
 %define ac_with_module_saver_eet --%{?with_module_saver_eet:en}%{!?with_module_saver_eet:dis}able-image-saver-eet
 %define ac_with_module_saver_jpeg --%{?with_module_saver_jpeg:en}%{!?with_module_saver_jpeg:dis}able-image-saver-jpeg
 %define ac_with_module_saver_png --%{?with_module_saver_png:en}%{!?with_module_saver_png:dis}able-image-saver-png
@@ -259,6 +265,33 @@ BuildRequires: libjpeg-devel
 TGA Image loader module for Evas
 %endif
 
+%if %{with module_loader_ico}
+%package module_loader_ico
+Summary: ICO Image loader module for Evas
+Group: System Environment/Libraries
+BuildRequires: libjpeg-devel
+%description module_loader_ico
+ICO Image loader module for Evas
+%endif
+
+%if %{with module_loader_psd}
+%package module_loader_psd
+Summary: PSD Image loader module for Evas
+Group: System Environment/Libraries
+BuildRequires: libjpeg-devel
+%description module_loader_psd
+PSD Image loader module for Evas
+%endif
+
+%if %{with module_loader_generic}
+%package module_loader_generic
+Summary: Generic Image loader module for Evas
+Group: System Environment/Libraries
+BuildRequires: libjpeg-devel
+%description module_loader_generic
+Generic Image loader module for Evas
+%endif
+
 %package module_engine_software_generic
 Summary: Software X11 rendering engine module for Evas
 Group: System Environment/Libraries
@@ -355,6 +388,7 @@ Software XCB X11 rendering engine module for Evas
 
 %build
 %{configure} --prefix=%{_prefix} --x-libraries=%{_prefix}/X11R6/%{_lib} \
+    --disable-install-examples \
     %{?ac_with_module_loader_eet} \
     %{?ac_with_module_saver_eet} \
     %{?ac_with_module_loader_jpeg} \
@@ -369,6 +403,12 @@ Software XCB X11 rendering engine module for Evas
     %{?ac_with_module_saver_edb} \
     %{?ac_with_module_loader_xpm} \
     %{?ac_with_module_loader_svg} \
+    %{?ac_with_module_loader_bmp} \
+    %{?ac_with_module_loader_wbmp} \
+    %{?ac_with_module_loader_tga} \
+    %{?ac_with_module_loader_ico} \
+    %{?ac_with_module_loader_psd} \
+    %{?ac_with_module_loader_generic} \
     %{?ac_with_module_engine_software_x11} \
     %{?ac_with_module_engine_buffer} \
     %{?ac_with_module_engine_fb} \
@@ -396,18 +436,18 @@ test "x$RPM_BUILD_ROOT" != "x/" && rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(-, root, root)
-%doc AUTHORS COPYING COPYING-PLAIN README
+%doc AUTHORS COPYING ChangeLog INSTALL README
 %{_bindir}/%{name}*
 %{_libdir}/*.so.*
 
 %files devel
 %defattr(-, root, root)
+%doc src/examples/*.edc src/examples/*.png src/examples/*.c
 %{_libdir}/*.so
 %{_libdir}/*.la
 %{_libdir}/*.a
 %{_libdir}/pkgconfig/*
 %{_includedir}/evas-1/*.h
-%{_datadir}/evas/examples/*.c
 %files module_engine_software_generic
 %defattr(-, root, root)
 %{_libdir}/evas/modules/engines/software_generic/*/module.so
@@ -512,6 +552,24 @@ test "x$RPM_BUILD_ROOT" != "x/" && rm -rf $RPM_BUILD_ROOT
 %files module_loader_tga
 %defattr(-, root, root)
 %{_libdir}/evas/modules/loaders/tga/*/module.so
+%endif
+
+%if %{with module_loader_ico}
+%files module_loader_ico
+%defattr(-, root, root)
+%{_libdir}/evas/modules/loaders/ico/*/module.so
+%endif
+
+%if %{with module_loader_psd}
+%files module_loader_psd
+%defattr(-, root, root)
+%{_libdir}/evas/modules/loaders/psd/*/module.so
+%endif
+
+%if %{with module_loader_generic}
+%files module_loader_generic
+%defattr(-, root, root)
+%{_libdir}/evas/modules/loaders/generic/*/module.so
 %endif
 
 %if %{with module_engine_software_x11}

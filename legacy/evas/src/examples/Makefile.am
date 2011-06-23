@@ -98,12 +98,12 @@ files_DATA += \
 endif
 
 EXTRA_DIST = $(EDCS) \
-       $(srcdir)/evas-buffer-simple.c \
-       $(srcdir)/evas-init-shutdown.c \
-       $(srcdir)/evas-load-error-str.c \
-       $(srcdir)/evas-object-manipulation.c \
-       $(srcdir)/evas-events.c \
-       $(srcdir)/evas-aspect-hints.c \
-       $(srcdir)/evas-hints.c \
-       $(srcdir)/enlightenment.png \
-       $(srcdir)/red.png
+	$(srcdir)/evas-buffer-simple.c \
+	$(srcdir)/evas-init-shutdown.c \
+	$(srcdir)/evas-load-error-str.c \
+	$(srcdir)/evas-object-manipulation.c \
+	$(srcdir)/evas-events.c \
+	$(srcdir)/evas-aspect-hints.c \
+	$(srcdir)/evas-hints.c \
+	$(srcdir)/enlightenment.png \
+	$(srcdir)/red.png

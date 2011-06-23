@@ -1,29 +1,29 @@
 %{!?_rel:%{expand:%%global _rel 0.enl%{?dist}}}
 %define _missing_doc_files_terminate_build 0
 
-Summary: Data Type Library
+Summary: Enlightenment Input/Output Library
 Name: @PACKAGE@
 Version: @VERSION@
 Release: %{_rel}
 License: LGPLv2.1
 Group: System Environment/Libraries
 Source: http://download.enlightenment.org/releases/%{name}-%{version}.tar.gz
-Packager: %{?_packager:%{_packager}}%{!?_packager:Rui Miguel Silva Seabra <rms@1407.org>}
+Packager: %{?_packager:%{_packager}}%{!?_packager:Michael Jennings <mej@eterm.org>}
 Vendor: %{?_vendorinfo:%{_vendorinfo}}%{!?_vendorinfo:The Enlightenment Project (http://www.enlightenment.org/)}
 Distribution: %{?_distribution:%{_distribution}}%{!?_distribution:%{_vendor}}
 URL: http://www.enlightenment.org/
 BuildRoot: %{_tmppath}/%{name}-%{version}-root
 
 %description
-Enlightenment Input Output Library
+Enlightenment input/output library
 
 %package devel
-Summary: Eio headers, static libraries, documentation and test programs
+Summary: EIO headers, static libraries, documentation and test programs
 Group: System Environment/Libraries
 Requires: %{name} = %{version}
 
 %description devel
-Headers, static libraries, test programs and documentation for Eio
+Headers, static libraries, test programs and documentation for EIO
 
 %prep
 %setup -q

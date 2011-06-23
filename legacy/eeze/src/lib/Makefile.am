@@ -24,6 +24,7 @@ includesdir = $(includedir)/eeze-@VMAJ@
 libeeze_la_SOURCES = \
 eeze_main.c \
 eeze_udev_find.c \
+eeze_udev_private.h \
 eeze_udev_private.c \
 eeze_udev_syspath.c \
 eeze_udev_walk.c \
@@ -37,4 +38,8 @@ else
 endif
 libeeze_la_LDFLAGS = -no-undefined -version-info @version_info@ @release_info@
 
-EXTRA_DIST = eeze_udev_private.h
+EXTRA_DIST = eeze_disk.c eeze_disk_udev.c eeze_disk_mount.c \
+	eeze_disk_libmount_old.c \
+	eeze_disk_libmount.c \
+	Eeze_Disk.h \
+	eeze_disk_private.h

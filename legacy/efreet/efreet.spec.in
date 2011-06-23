@@ -55,7 +55,7 @@ test "x$RPM_BUILD_ROOT" != "x/" && rm -rf $RPM_BUILD_ROOT
 %doc AUTHORS COPYING* README
 %{_bindir}/%{name}*
 %{_libdir}/*.so.*
-%{_libdir}/efreet/efreet_desktop_cache_create
+%{_libdir}/efreet/
 
 %files devel
 %defattr(-, root, root)
