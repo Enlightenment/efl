@@ -1193,6 +1193,7 @@ static Emotion_Video_Module em_module =
 	em_speed_get, /* speed_get */
 	em_eject, /* eject */
 	em_meta_get, /* meta_get */
+       _emotion_object_extension_can_play_generic_get, /* can_play_get */
 
 	NULL /* handle */
 };

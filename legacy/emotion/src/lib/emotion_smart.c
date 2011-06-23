@@ -184,7 +184,7 @@ _emotion_module_open(const char *name, Evas_Object *obj, Emotion_Video_Module **
 {
    Eina_Emotion_Plugins *plugin;
    Smart_Data *sd;
-   unsigned int index = 0;
+   unsigned int i = 0;
 
    E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, 0);
    if (!_backends)
@@ -198,13 +198,13 @@ _emotion_module_open(const char *name, Evas_Object *obj, Emotion_Video_Module **
 
    /* FIXME: Always look for a working backend. */
  retry:
-   if (!name || index > 0)
-     name = _backend_priority[index++];
+   if (!name || i > 0)
+     name = _backend_priority[i++];
 
    plugin = eina_hash_find(_backends, name);
    if (!plugin)
      {
-	if (index != 0 && index < (sizeof (_backend_priority) / sizeof (char*)))
+	if (i != 0 && i < (sizeof (_backend_priority) / sizeof (char*)))
 	  goto retry;
 
 	ERR("No backend loaded");
@@ -220,7 +220,7 @@ _emotion_module_open(const char *name, Evas_Object *obj, Emotion_Video_Module **
 	  }
      }
 
-   if (index != 0 && index < (sizeof (_backend_priority) / sizeof (char*)))
+   if (i != 0 && i < (sizeof (_backend_priority) / sizeof (char*)))
      goto retry;
 
    ERR("Unable to load module: %s", name);
@@ -991,11 +991,136 @@ emotion_object_vis_supported(const Evas_Object *obj, Emotion_Vis visualization)
    return sd->module->vis_supported(sd->video, visualization);
 }
 
+EAPI Eina_Bool
+emotion_object_extension_can_play_fast_get(const Evas_Object *obj, const char *file)
+{
+   const Smart_Data *sd;
 
+   E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, 0);
+   if (!sd->module) return EINA_FALSE;
+   if (!sd->video) return EINA_FALSE;
+   if (!sd->module->can_play_get) return EINA_FALSE;
+   return sd->module->can_play_get(sd->video, file);
+}
+
+EAPI Eina_Bool
+emotion_object_extension_can_play_get(const Evas_Object *obj, const char *file)
+{
+   const char *tmp;
+   Eina_Bool result;
+
+   tmp = eina_stringshare_add(file);
+   result = emotion_object_extension_can_play_fast_get(obj, tmp);
+   eina_stringshare_del(tmp);
+
+   return result;
+}
+
+EAPI Eina_Bool
+emotion_object_extension_may_play_fast_get(const char *file)
+{
+   if (!file) return EINA_FALSE;
+   return _emotion_object_extension_can_play_generic_get(NULL, file);
+}
+
+EAPI Eina_Bool
+emotion_object_extension_may_play_get(const char *file)
+{
+   const char *tmp;
+   Eina_Bool result;
+
+   if (!file) return EINA_FALSE;
+   tmp = eina_stringshare_add(file);
+   result = emotion_object_extension_may_play_fast_get(tmp);
+   eina_stringshare_del(tmp);
+
+   return result;
+}
 
 /*****************************/
 /* Utility calls for modules */
 /*****************************/
+
+struct ext_match_s
+{
+   unsigned int length;
+   const char *extension;
+};
+
+#define MATCHING(Ext)                           \
+  { sizeof (Ext), Ext }
+
+static const struct ext_match_s matchs[] =
+{ /* map extensions to know if it's a emotion playable content for good first-guess tries */
+   MATCHING(".264"),
+   MATCHING(".3g2"),
+   MATCHING(".3gp"),
+   MATCHING(".3gp2"),
+   MATCHING(".3gpp"),
+   MATCHING(".3gpp2"),
+   MATCHING(".3p2"),
+   MATCHING(".asf"),
+   MATCHING(".avi"),
+   MATCHING(".bdm"),
+   MATCHING(".bdmv"),
+   MATCHING(".clpi"),
+   MATCHING(".clp"),
+   MATCHING(".fla"),
+   MATCHING(".flv"),
+   MATCHING(".m1v"),
+   MATCHING(".m2v"),
+   MATCHING(".m2t"),
+   MATCHING(".m4v"),
+   MATCHING(".mkv"),
+   MATCHING(".mov"),
+   MATCHING(".mp2"),
+   MATCHING(".mp2ts"),
+   MATCHING(".mp4"),
+   MATCHING(".mpe"),
+   MATCHING(".mpeg"),
+   MATCHING(".mpg"),
+   MATCHING(".mpl"),
+   MATCHING(".mpls"),
+   MATCHING(".mts"),
+   MATCHING(".mxf"),
+   MATCHING(".nut"),
+   MATCHING(".nuv"),
+   MATCHING(".ogg"),
+   MATCHING(".ogm"),
+   MATCHING(".ogv"),
+   MATCHING(".rm"),
+   MATCHING(".rmj"),
+   MATCHING(".rmm"),
+   MATCHING(".rms"),
+   MATCHING(".rmx"),
+   MATCHING(".rmvb"),
+   MATCHING(".swf"),
+   MATCHING(".ts"),
+   MATCHING(".weba"),
+   MATCHING(".webm"),
+   MATCHING(".wmv")
+};
+
+EAPI Eina_Bool
+_emotion_object_extension_can_play_generic_get(const void *data __UNUSED__, const char *file)
+{
+   unsigned int length;
+   unsigned int i;
+
+   length = eina_stringshare_strlen(file) + 1;
+   if (length < 5) return EINA_FALSE;
+
+   for (i = 0; i < sizeof (matchs) / sizeof (struct ext_match_s); ++i)
+     {
+        if (matchs[i].length > length) continue;
+
+        if (!strcasecmp(matchs[i].extension,
+                        file + length - matchs[i].length))
+          return EINA_TRUE;
+     }
+
+   return EINA_FALSE;
+}
 
 EAPI void *
 _emotion_video_get(const Evas_Object *obj)

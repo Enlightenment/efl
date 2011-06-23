@@ -109,6 +109,7 @@ struct _Emotion_Video_Module
    double         (*speed_get) (void *ef);
    int            (*eject) (void *ef);
    const char *   (*meta_get) (void *ef, int meta);
+   Eina_Bool      (*can_play_get) (const void *ef, const char *file);
 
    Eina_Emotion_Plugins *plugin;
 };
@@ -130,6 +131,8 @@ EAPI void  _emotion_file_ref_set(Evas_Object *obj, const char *file, int num);
 EAPI void  _emotion_spu_button_num_set(Evas_Object *obj, int num);
 EAPI void  _emotion_spu_button_set(Evas_Object *obj, int button);
 EAPI void  _emotion_seek_done(Evas_Object *obj);
+
+EAPI Eina_Bool _emotion_object_extension_can_play_generic_get(const void *data __UNUSED__, const char *file);
 
 EAPI Eina_Bool _emotion_module_register(const char *name, Emotion_Module_Open open, Emotion_Module_Close close);
 EAPI Eina_Bool _emotion_module_unregister(const char *name);
