@@ -620,6 +620,28 @@ vcard_send(char *target __UNUSED__, void *data __UNUSED__, int size __UNUSED__, 
 
    return EINA_TRUE;
 }
+
+static Eina_Bool
+is_uri_type_data(Cnp_Selection *sel __UNUSED__, Ecore_X_Event_Selection_Notify *notify)
+{
+   Ecore_X_Selection_Data *data;
+   char *p;
+
+   data = notify->data;
+   cnp_debug("data->format is %d %p %p\n", data->format, notify, data);
+   if (data->content == ECORE_X_SELECTION_CONTENT_FILES) return EINA_TRUE;
+   else p = (char *)data->data;
+
+   if (!p) return EINA_TRUE;
+   cnp_debug("Got %s\n", p);
+   if (strncmp(p, "file://", 7))
+     {
+        if (*p != '/') return EINA_FALSE;
+     }
+
+   return EINA_TRUE;
+}
+
 /*
  * Callback to handle a targets response on a selection request:
  * So pick the format we'd like; and then request it.
@@ -643,6 +665,11 @@ notify_handler_targets(Cnp_Selection *sel, Ecore_X_Event_Selection_Notify *notif
           {
              if ((atoms[j].atom == atomlist[i]) && (atoms[j].notify))
                {
+                  if ((j == CNP_ATOM_text_uri) ||
+                      (j == CNP_ATOM_text_urilist))
+                    {
+                      if(!is_uri_type_data(sel, notify)) continue;
+                    }
                   cnp_debug("Atom %s matches\n",atoms[j].name);
                   goto done;
                }
