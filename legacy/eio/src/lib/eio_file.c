@@ -915,7 +915,7 @@ eio_file_container_get(Eio_File *ls)
 EAPI Eina_Bool
 eio_file_associate_add(Eio_File *ls,
                        const char *key,
-                       void *data, Eina_Free_Cb free_cb)
+                       const void *data, Eina_Free_Cb free_cb)
 {
    /* FIXME: Check if we are in the right worker thred */
    if (!ls->worker.associated)
@@ -941,7 +941,7 @@ eio_file_associate_add(Eio_File *ls,
 EAPI Eina_Bool
 eio_file_associate_direct_add(Eio_File *ls,
                               const char *key,
-                              void *data, Eina_Free_Cb free_cb)
+                              const void *data, Eina_Free_Cb free_cb)
 {
    /* FIXME: Check if we are in the right worker thred */
    if (!ls->worker.associated)

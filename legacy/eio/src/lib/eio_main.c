@@ -169,14 +169,14 @@ eio_char_free(Eio_File_Char *data)
 }
 
 Eio_File_Associate *
-eio_associate_malloc(void *data, Eina_Free_Cb free_cb)
+eio_associate_malloc(const void *data, Eina_Free_Cb free_cb)
 {
   Eio_File_Associate *tmp;
 
   tmp = _eio_pool_malloc(&associate_pool, sizeof (Eio_File_Associate));
   if (!tmp) return tmp;
 
-  tmp->data = data;
+  tmp->data = (void*) data;
   tmp->free_cb = free_cb;
 
   return tmp;

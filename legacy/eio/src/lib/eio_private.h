@@ -234,7 +234,7 @@ void eio_direct_info_free(Eio_File_Direct_Info *data);
 Eio_File_Char *eio_char_malloc(void);
 void eio_char_free(Eio_File_Char *data);
 
-Eio_File_Associate *eio_associate_malloc(void *data, Eina_Free_Cb free_cb);
+Eio_File_Associate *eio_associate_malloc(const void *data, Eina_Free_Cb free_cb);
 void eio_associate_free(void *data);
 
 Eio_Progress *eio_progress_malloc(void);

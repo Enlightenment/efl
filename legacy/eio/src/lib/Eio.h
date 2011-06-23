@@ -235,10 +235,10 @@ EAPI Eina_Bool eio_file_cancel(Eio_File *ls);
 
 EAPI Eina_Bool eio_file_associate_add(Eio_File *ls,
 				      const char *key,
-				      void *data, Eina_Free_Cb free_cb);
+				      const void *data, Eina_Free_Cb free_cb);
 EAPI Eina_Bool eio_file_associate_direct_add(Eio_File *ls,
 					     const char *key,
-					     void *data, Eina_Free_Cb free_cb);
+					     const void *data, Eina_Free_Cb free_cb);
 EAPI void *eio_file_associate_find(Eio_File *ls, const char *key);
 
 /**
