@@ -1446,6 +1446,7 @@ call:
      evas_object_smart_callback_call(item->wd->self, SIG_SELECTED, item);
    item->walking--;
    item->wd->walking--;
+   item->wd->last_selected_item = item;
    if ((item->wd->clear_me) && (!item->wd->walking))
      elm_gengrid_clear(item->base.widget);
    else
@@ -1453,7 +1454,6 @@ call:
         if ((!item->walking) && (item->delete_me))
           if (!item->relcount) _item_del(item);
      }
-   item->wd->last_selected_item = item;
 }
 
 static void
