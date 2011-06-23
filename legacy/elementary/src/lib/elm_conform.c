@@ -24,8 +24,8 @@ struct _Widget_Data
    Evas_Object *shelf, *panel, *virtualkeypad;
    Evas_Object *content;
    Evas_Object *scroller;
-   Ecore_Event_Handler *prop_hdl;
 #ifdef HAVE_ELEMENTARY_X
+   Ecore_Event_Handler *prop_hdl;
    Ecore_X_Virtual_Keyboard_State vkb_state;
 #endif
    struct
@@ -51,6 +51,7 @@ static char *sub_type[SUB_TYPE_COUNT] = { "scroller", "genlist" };
 
 /* local function prototypes */
 static const char *widtype = NULL;
+static void _del_pre_hook(Evas_Object *obj);
 static void _del_hook(Evas_Object *obj);
 static void _mirrored_set(Evas_Object *obj, Eina_Bool rtl);
 static void _theme_hook(Evas_Object *obj);
@@ -65,17 +66,31 @@ static void _conformant_part_size_set(Evas_Object *obj,
 static void _conformant_part_sizing_eval(Evas_Object *obj,
                                          Conformant_Part_Type part_type);
 #endif
+static void
+_conformant_move_resize_event_cb(void *data, Evas *e, Evas_Object *obj,
+                                 void *event_info);
 static void _sizing_eval(Evas_Object *obj);
 static Eina_Bool _prop_change(void *data, int type, void *event);
 
 /* local functions */
+static void
+_del_pre_hook(Evas_Object *obj)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+#ifdef HAVE_ELEMENTARY_X
+   if (wd->prop_hdl) ecore_event_handler_del(wd->prop_hdl);
+#endif
+   evas_object_event_callback_del_full(obj, EVAS_CALLBACK_RESIZE, _conformant_move_resize_event_cb, obj);
+   evas_object_event_callback_del_full(obj, EVAS_CALLBACK_MOVE, _conformant_move_resize_event_cb, obj);
+}
+
 static void
 _del_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
 
    if (!wd) return;
-   if (wd->prop_hdl) ecore_event_handler_del(wd->prop_hdl);
    free(wd);
 }
 
@@ -404,10 +419,6 @@ _prop_change(void *data, int type __UNUSED__, void *event)
                       ELM_CONFORM_SOFTKEY_PART |
                       ELM_CONFORM_VIRTUAL_KEYPAD_PART);
         _conformant_part_sizing_eval(data, part_type);
-        evas_object_event_callback_add(data, EVAS_CALLBACK_RESIZE,
-                                       _conformant_move_resize_event_cb, data);
-        evas_object_event_callback_add(data, EVAS_CALLBACK_MOVE,
-                                       _conformant_move_resize_event_cb, data);
      }
    else if (ev->atom == ECORE_X_ATOM_E_ILLUME_INDICATOR_GEOMETRY)
      _conformant_part_sizing_eval(data, ELM_CONFORM_INDICATOR_PART);
@@ -479,6 +490,10 @@ elm_conformant_add(Evas_Object *parent)
 #endif
 
    evas_object_smart_callback_add(obj, "sub-object-del", _sub_del, obj);
+   evas_object_event_callback_add(obj, EVAS_CALLBACK_RESIZE,
+                                       _conformant_move_resize_event_cb, obj);
+   evas_object_event_callback_add(obj, EVAS_CALLBACK_MOVE,
+                                       _conformant_move_resize_event_cb, obj);
 
    _mirrored_set(obj, elm_widget_mirrored_get(obj));
    _sizing_eval(obj);
