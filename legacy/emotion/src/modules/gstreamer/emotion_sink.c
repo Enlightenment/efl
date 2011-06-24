@@ -41,6 +41,8 @@ struct _EvasVideoSinkPrivate {
    GMutex* buffer_mutex;
    GCond* data_cond;
 
+   GstBuffer *last_buffer; /* We need to keep a copy of the last inserted buffer as evas doesn't copy YUV data around */
+
    // If this is TRUE all processing should finish ASAP
    // This is necessary because there could be a race between
    // unlock() and render(), where unlock() wins, signals the
@@ -91,6 +93,7 @@ evas_video_sink_init(EvasVideoSink* sink, EvasVideoSinkClass* klass __UNUSED__)
    sink->priv = priv = G_TYPE_INSTANCE_GET_PRIVATE(sink, EVAS_TYPE_VIDEO_SINK, EvasVideoSinkPrivate);
    priv->o = NULL;
    priv->p = ecore_pipe_add(evas_video_sink_render_handler, sink);
+   priv->last_buffer = NULL;
    priv->width = 0;
    priv->height = 0;
    priv->format = GST_VIDEO_FORMAT_UNKNOWN;
@@ -180,6 +183,11 @@ evas_video_sink_dispose(GObject* object)
    if (priv->p) {
       ecore_pipe_del(priv->p);
       priv->p = NULL;
+   }
+
+   if (priv->last_buffer) {
+      gst_buffer_unref(priv->last_buffer);
+      priv->last_buffer = NULL;
    }
 
    G_OBJECT_CLASS(parent_class)->dispose(object);
@@ -511,7 +519,8 @@ static void evas_video_sink_render_handler(void *data,
    _emotion_frame_resize(ev->obj, priv->width, priv->height, ev->ratio);
 
  exit_point:
-   gst_buffer_unref(buffer);
+   if (priv->last_buffer) gst_buffer_unref(priv->last_buffer);
+   priv->last_buffer = buffer;
 
    if (priv->preroll) return ;
 
