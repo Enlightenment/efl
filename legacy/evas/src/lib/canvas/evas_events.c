@@ -427,12 +427,15 @@ evas_event_feed_mouse_up(Evas *e, int b, Evas_Button_Flags flags, unsigned int t
         ERR("BUG? e->pointer.mouse_grabbed (=%d) < 0!",
 	      e->pointer.mouse_grabbed);
      }
-
+/* don't need this anymore - havent actually triggered this for a long
+ * time and this also doesnt account for multitouch, so leave here if we
+ * ever find bugs again so we can turn it on, but otherwise.. dont use this
    if ((e->pointer.button == 0) && (e->pointer.mouse_grabbed != 0))
      {
         INF("restore to 0 grabs (from %i)", e->pointer.mouse_grabbed);
 	e->pointer.mouse_grabbed = 0;
      }
+ */
    _evas_unwalk(e);
 }
 
