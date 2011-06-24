@@ -620,6 +620,7 @@ em_file_open(const char   *file,
 
        vstream = eina_list_data_get(ev->video_streams);
        ev->ratio = (double)vstream->width / (double)vstream->height;
+       _emotion_frame_resize(ev->obj, vstream->width, vstream->height, ev->ratio);
      }
 
    {
@@ -650,7 +651,7 @@ em_file_open(const char   *file,
      _free_metadata(ev->metadata);
    ev->metadata = calloc(1, sizeof(Emotion_Gstreamer_Metadata));
 
-  em_audio_channel_volume_set(ev, ev->volume);
+   em_audio_channel_volume_set(ev, ev->volume);
 
    _eos_timer_fct(ev);
    _emotion_open_done(ev->obj);

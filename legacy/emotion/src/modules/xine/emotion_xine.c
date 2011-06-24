@@ -1268,6 +1268,7 @@ _em_fd_ev_active(void *data __UNUSED__, Ecore_Fd_Handler *fdh)
                             ev->anim = NULL;
                          }
                        _emotion_open_done(ev->obj);
+		       _emotion_frame_resize(ev->obj, ev->w, ev->h, ev->ratio);
 		       break;
 		     case 3: /* shutdown done */
                        if (ev->anim)

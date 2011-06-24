@@ -508,11 +508,8 @@ static void evas_video_sink_render_handler(void *data,
    vstream->height = priv->height;
    ev->ratio = (double) priv->width / (double) priv->height;
 
-   if (vstream)
-     {
-        _emotion_video_pos_update(ev->obj, ev->position, vstream->length_time);
-        _emotion_frame_resize(ev->obj, vstream->width, vstream->height, ev->ratio);
-     }
+   _emotion_video_pos_update(ev->obj, ev->position, vstream->length_time);
+   _emotion_frame_resize(ev->obj, priv->width, priv->height, ev->ratio);
 
  exit_point:
    gst_buffer_unref(buffer);

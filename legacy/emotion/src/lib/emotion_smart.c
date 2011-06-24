@@ -1180,6 +1180,7 @@ _emotion_frame_resize(Evas_Object *obj, int w, int h, double ratio)
 	changed = 1;
      }
    if (changed) evas_object_smart_callback_call(obj, SIG_FRAME_RESIZE, NULL);
+   evas_object_size_hint_request_set(obj, w, h);
 }
 
 EAPI void
