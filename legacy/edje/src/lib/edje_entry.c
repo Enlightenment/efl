@@ -2868,7 +2868,7 @@ _edje_entry_imf_event_preedit_changed_cb(void *data, int type __UNUSED__, void *
      }
 
    _anchors_get(en->cursor, rp->object, en);
-   _edje_emit(rp->edje, "entry,changed", rp->part->name);
+   _edje_emit(rp->edje, "preedit,changed", rp->part->name);
    _edje_emit(ed, "cursor,changed", rp->part->name);
 
    free(preedit_string);
