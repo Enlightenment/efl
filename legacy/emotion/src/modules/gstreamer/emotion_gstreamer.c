@@ -353,12 +353,17 @@ em_shutdown(void *video)
    if (!ev)
      return 0;
 
+   if (ev->pipeline)
+     {
+       gst_element_set_state(ev->pipeline, GST_STATE_NULL);
+       gst_object_unref(ev->pipeline);
+       ev->pipeline = NULL;
+     }
+
    EINA_LIST_FREE(ev->audio_streams, astream)
      free(astream);
    EINA_LIST_FREE(ev->video_streams, vstream)
      free(vstream);
-
-   gst_deinit();
 
    free(ev);
 
@@ -670,6 +675,12 @@ em_file_close(void *video)
    if (!ev)
      return;
 
+   if (ev->eos_bus)
+     {
+        gst_object_unref(GST_OBJECT(ev->eos_bus));
+        ev->eos_bus = NULL;
+     }
+
    /* we clear the stream lists */
    EINA_LIST_FREE(ev->audio_streams, astream)
      free(astream);
@@ -683,23 +694,10 @@ em_file_close(void *video)
         ev->eos_timer = NULL;
      }
 
-   if (ev->eos_bus)
-     {
-        gst_object_unref(GST_OBJECT(ev->eos_bus));
-        ev->eos_bus = NULL;
-     }
-
    if (ev->metadata)
      {
         _free_metadata(ev->metadata);
         ev->metadata = NULL;
-     }
-
-   if (ev->pipeline)
-     {
-        gst_element_set_state(ev->pipeline, GST_STATE_NULL);
-        gst_object_unref(ev->pipeline);
-        ev->pipeline = NULL;
      }
 }
 
@@ -1415,6 +1413,8 @@ void
 gstreamer_module_shutdown(void)
 {
    _emotion_module_unregister("gstreamer");
+
+   gst_deinit();
 }
 
 #ifndef EMOTION_STATIC_BUILD_GSTREAMER
