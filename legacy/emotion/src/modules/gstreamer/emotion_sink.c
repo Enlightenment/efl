@@ -50,14 +50,15 @@ struct _EvasVideoSinkPrivate {
    // to deadlocks because render() holds the stream lock.
    //
    // Protected by the buffer mutex
-   gboolean unlocked;
+   Eina_Bool unlocked : 1;
+   Eina_Bool preroll : 1;
 };
 
 #define _do_init(bla)                                   \
   GST_DEBUG_CATEGORY_INIT(evas_video_sink_debug,        \
-                          "evassink",                   \
+                          "emotion-sink",		\
                           0,                            \
-                          "evas video sink")
+                          "emotion video sink")
 
 GST_BOILERPLATE_FULL(EvasVideoSink,
                      evas_video_sink,
@@ -96,6 +97,8 @@ evas_video_sink_init(EvasVideoSink* sink, EvasVideoSinkClass* klass __UNUSED__)
    priv->format = GST_VIDEO_FORMAT_UNKNOWN;
    priv->data_cond = g_cond_new();
    priv->buffer_mutex = g_mutex_new();
+   priv->preroll = EINA_FALSE;
+   priv->unlocked = EINA_FALSE;
 }
 
 
@@ -256,7 +259,7 @@ evas_video_sink_start(GstBaseSink* base_sink)
           res = FALSE;
         else
           {
-             priv->unlocked = FALSE;
+             priv->unlocked = EINA_FALSE;
           }
      }
    g_mutex_unlock(priv->buffer_mutex);
@@ -305,6 +308,18 @@ evas_video_sink_unlock_stop(GstBaseSink* object)
 static GstFlowReturn
 evas_video_sink_preroll(GstBaseSink* bsink, GstBuffer* buffer)
 {
+   GstBuffer *send;
+   EvasVideoSink* sink;
+   EvasVideoSinkPrivate* priv;
+
+   sink = EVAS_VIDEO_SINK(bsink);
+   priv = sink->priv;
+
+   send = gst_buffer_ref(buffer);
+
+   priv->preroll = EINA_TRUE;
+
+   ecore_pipe_write(priv->p, &send, sizeof(buffer));
    return GST_FLOW_OK;
 }
 
@@ -325,6 +340,8 @@ evas_video_sink_render(GstBaseSink* bsink, GstBuffer* buffer)
       g_mutex_unlock(priv->buffer_mutex);
       return GST_FLOW_OK;
    }
+
+   priv->preroll = EINA_FALSE;
 
    send = gst_buffer_ref(buffer);
    ret = ecore_pipe_write(priv->p, &send, sizeof(buffer));
@@ -500,6 +517,8 @@ static void evas_video_sink_render_handler(void *data,
  exit_point:
    gst_buffer_unref(buffer);
 
+   if (priv->preroll) return ;
+
    g_mutex_lock(priv->buffer_mutex);
 
    if (priv->unlocked) {
@@ -516,7 +535,7 @@ unlock_buffer_mutex(EvasVideoSinkPrivate* priv)
 {
    g_mutex_lock(priv->buffer_mutex);
 
-   priv->unlocked = TRUE;
+   priv->unlocked = EINA_TRUE;
    g_cond_signal(priv->data_cond);
    g_mutex_unlock(priv->buffer_mutex);
 }

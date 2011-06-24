@@ -1163,11 +1163,14 @@ em_audio_channel_name_get(void *video __UNUSED__,
    return NULL;
 }
 
+#define GST_PLAY_FLAG_AUDIO (1 << 1)
+
 static void
 em_audio_channel_mute_set(void *video,
                           int   mute)
 {
    Emotion_Gstreamer_Video *ev;
+   int flags;
 
    ev = (Emotion_Gstreamer_Video *)video;
 
@@ -1176,10 +1179,16 @@ em_audio_channel_mute_set(void *video,
 
    ev->audio_mute = mute;
 
-   if (mute)
-     g_object_set(G_OBJECT(ev->pipeline), "mute", 1, NULL);
-   else
-     g_object_set(G_OBJECT(ev->pipeline), "mute", 0, NULL);
+   g_object_set(G_OBJECT(ev->pipeline), "mute", !!mute, NULL);
+   /* This code should stop the decoding of only the audio stream, but everything stop :"( */
+   /* g_object_get(G_OBJECT(ev->pipeline), "flags", &flags, NULL); */
+   /* if (mute) */
+   /*   flags &= ~GST_PLAY_FLAG_AUDIO; */
+   /* else */
+   /*   flags |= GST_PLAY_FLAG_AUDIO; */
+   /* g_object_set(G_OBJECT(ev->pipeline), "flags", flags, NULL); */
+   /* g_object_get(G_OBJECT(ev->pipeline), "flags", &flags, NULL); */
+   /* fprintf(stderr, "flags-n: %x\n", flags); */
 }
 
 static int
