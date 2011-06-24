@@ -417,7 +417,7 @@ evas_event_feed_mouse_up(Evas *e, int b, Evas_Button_Flags flags, unsigned int t
         _evas_post_event_callback_call(e);
      }
 
-   if (!e->pointer.button)
+   if (e->pointer.mouse_grabbed == 0)
      {
         _post_up_handle(e, timestamp, data);
      }
@@ -998,7 +998,7 @@ evas_event_feed_multi_up(Evas *e,
         if (e->delete_me) break;
      }
    if (copy) copy = eina_list_free(copy);
-   if (!_post_up_handle(e, timestamp, data))
+   if ((e->pointer.mouse_grabbed == 0) && !_post_up_handle(e, timestamp, data))
       _evas_post_event_callback_call(e);
    _evas_unwalk(e);
 }
