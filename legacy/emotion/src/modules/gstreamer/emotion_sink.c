@@ -36,7 +36,6 @@ struct _EvasVideoSinkPrivate {
 
    int width;
    int height;
-   gboolean update_size;
    GstVideoFormat format;
 
    GMutex* buffer_mutex;
@@ -52,6 +51,7 @@ struct _EvasVideoSinkPrivate {
    // Protected by the buffer mutex
    Eina_Bool unlocked : 1;
    Eina_Bool preroll : 1;
+   Eina_Bool update_size : 1;
 };
 
 #define _do_init(bla)                                   \
@@ -93,12 +93,12 @@ evas_video_sink_init(EvasVideoSink* sink, EvasVideoSinkClass* klass __UNUSED__)
    priv->p = ecore_pipe_add(evas_video_sink_render_handler, sink);
    priv->width = 0;
    priv->height = 0;
-   priv->update_size = TRUE;
    priv->format = GST_VIDEO_FORMAT_UNKNOWN;
    priv->data_cond = g_cond_new();
    priv->buffer_mutex = g_mutex_new();
    priv->preroll = EINA_FALSE;
    priv->unlocked = EINA_FALSE;
+   priv->update_size = EINA_TRUE;
 }
 
 
@@ -206,7 +206,7 @@ gboolean evas_video_sink_set_caps(GstBaseSink *bsink, GstCaps *caps)
      {
         priv->width = width;
         priv->height = height;
-        priv->update_size = TRUE;
+        priv->update_size = EINA_TRUE;
      }
 
    printf("format :");
@@ -382,8 +382,7 @@ static void evas_video_sink_render_handler(void *data,
    if (priv->update_size)
      {
         evas_object_image_size_set(priv->o, priv->width, priv->height);
-        evas_object_image_fill_set(priv->o, 0, 0, priv->width, priv->height);
-        priv->update_size = FALSE;
+        if (!priv->preroll) priv->update_size = FALSE;
      }
 
    evas_data = (unsigned char *)evas_object_image_data_get(priv->o, 1);

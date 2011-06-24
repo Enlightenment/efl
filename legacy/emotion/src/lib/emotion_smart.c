@@ -1162,25 +1162,30 @@ _emotion_frame_resize(Evas_Object *obj, int w, int h, double ratio)
 {
    Smart_Data *sd;
    int iw, ih;
+   double tmp;
    int changed = 0;
 
    E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
    evas_object_image_size_get(sd->obj, &iw, &ih);
    if ((w != iw) || (h != ih))
      {
-	if (h > 0) sd->ratio  = (double)w / (double)h;
-	else sd->ratio = 1.0;
 	evas_object_image_size_set(sd->obj, w, h);
         _emotion_image_data_zero(sd->obj);
 	changed = 1;
      }
-   if (ratio != sd->ratio)
+   if (h > 0) tmp  = (double)w / (double)h;
+   else tmp = 1.0;
+   if (ratio != tmp) tmp = ratio;
+   if (tmp != sd->ratio)
      {
-	sd->ratio = ratio;
+	sd->ratio = tmp;
 	changed = 1;
      }
-   if (changed) evas_object_smart_callback_call(obj, SIG_FRAME_RESIZE, NULL);
-   evas_object_size_hint_request_set(obj, w, h);
+   if (changed)
+     {
+	evas_object_size_hint_request_set(obj, w, h);
+	evas_object_smart_callback_call(obj, SIG_FRAME_RESIZE, NULL);
+     }
 }
 
 EAPI void
