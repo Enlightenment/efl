@@ -91,6 +91,7 @@
  * "selection,cleared" - The selection has been cleared
  * "cursor,changed" - The cursor has changed
  * "anchor,clicked" - The anchor has been clicked
+ * "preedit,changed" - The preedit string has changed
  */
 
 /* Maximum chunk size to be inserted to the entry at once
@@ -223,6 +224,7 @@ static const char SIG_SELECTION_CHANGED[] = "selection,changed";
 static const char SIG_SELECTION_CLEARED[] = "selection,cleared";
 static const char SIG_CURSOR_CHANGED[] = "cursor,changed";
 static const char SIG_ANCHOR_CLICKED[] = "anchor,clicked";
+static const char SIG_PREEDIT_CHANGED[] = "preedit,changed";
 static const Evas_Smart_Cb_Description _signals[] = {
        {SIG_CHANGED, ""},
        {SIG_ACTIVATED, ""},
@@ -240,6 +242,7 @@ static const Evas_Smart_Cb_Description _signals[] = {
        {SIG_SELECTION_CLEARED, ""},
        {SIG_CURSOR_CHANGED, ""},
        {SIG_ANCHOR_CLICKED, ""},
+       {SIG_PREEDIT_CHANGED, ""},
        {NULL, NULL}
 };
 
@@ -1301,7 +1304,7 @@ _getbase(Evas_Object *obj)
 }
 
 static void
-_signal_entry_changed(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
+_entry_changed_common_handling(void *data, const char *event)
 {
    Widget_Data *wd = elm_widget_data_get(data);
    Evas_Coord minh;
@@ -1323,6 +1326,18 @@ _signal_entry_changed(void *data, Evas_Object *obj __UNUSED__, const char *emiss
      }
    if ((!wd->autosave) || (!wd->file)) return;
    wd->delay_write = ecore_timer_add(2.0, _delay_write, data);
+}
+
+static void
+_signal_entry_changed(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
+{
+   _entry_changed_common_handling(data, SIG_CHANGED);
+}
+
+static void
+_signal_preedit_changed(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
+{
+   _entry_changed_common_handling(data, SIG_PREEDIT_CHANGED);
 }
 
 static void
@@ -1909,6 +1924,8 @@ elm_entry_add(Evas_Object *parent)
    _elm_theme_object_set(obj, wd->ent, "entry", "base", "default");
    edje_object_signal_callback_add(wd->ent, "entry,changed", "elm.text",
                                    _signal_entry_changed, obj);
+   edje_object_signal_callback_add(wd->ent, "preedit,changed", "elm.text",
+                                   _signal_preedit_changed, obj);
    edje_object_signal_callback_add(wd->ent, "selection,start", "elm.text",
                                    _signal_selection_start, obj);
    edje_object_signal_callback_add(wd->ent, "selection,changed", "elm.text",
