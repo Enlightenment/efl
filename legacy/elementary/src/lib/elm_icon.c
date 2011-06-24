@@ -283,6 +283,14 @@ _icon_thumb_exists(Ethumb_Client *client __UNUSED__, Ethumb_Exists *thread, Eina
      }
 }
 
+static inline int
+_icon_size_min_get(Evas_Object *icon)
+{
+   int size;
+   _els_smart_icon_size_get(icon, &size, NULL);
+   return (size < 32) ? 32 : size;
+}
+
 static void
 _icon_thumb_apply(Widget_Data *wd)
 {
@@ -293,10 +301,11 @@ _icon_thumb_apply(Widget_Data *wd)
    _icon_thumb_stop(wd, ethumbd);
 
    if (!wd->thumb.file.path) return ;
+   fprintf(stderr, "thumb\n");
 
    _icon_pending_request++;
    ethumb_client_file_set(ethumbd, wd->thumb.file.path, wd->thumb.file.key);
-   ethumb_client_size_set(ethumbd, 32, 32);
+   ethumb_client_size_set(ethumbd, _icon_size_min_get(wd->img), _icon_size_min_get(wd->img));
    wd->thumb.exists = ethumb_client_thumb_exists(ethumbd, _icon_thumb_exists, wd);
 }
 
@@ -634,16 +643,8 @@ _icon_freedesktop_set(Widget_Data *wd, Evas_Object *obj, const char *name, int s
    return EINA_FALSE;
 }
 
-static inline int
-_icon_size_min_get(Evas_Object *icon)
-{
-   int size;
-   _els_smart_icon_size_get(icon, &size, NULL);
-   return (size < 32) ? 32 : size;
-}
-
 static Eina_Bool
-_elm_icon_standard_set(Widget_Data *wd, Evas_Object *obj, const char *name)
+_elm_icon_standard_set(Widget_Data *wd, Evas_Object *obj, const char *name, Eina_Bool *fdo)
 {
    char *tmp;
    Eina_Bool ret;
@@ -653,18 +654,26 @@ _elm_icon_standard_set(Widget_Data *wd, Evas_Object *obj, const char *name)
      {
       case ELM_ICON_LOOKUP_FDO:
          ret = _icon_freedesktop_set(wd, obj, name, _icon_size_min_get(wd->img));
+	 if (ret && fdo) *fdo = EINA_TRUE;
          break;
       case ELM_ICON_LOOKUP_THEME:
          ret = _icon_standard_set(wd, obj, name);
          break;
       case ELM_ICON_LOOKUP_THEME_FDO:
-         ret = _icon_standard_set(wd, obj, name) ||
-            _icon_freedesktop_set(wd, obj, name, _icon_size_min_get(wd->img));
+         ret = _icon_standard_set(wd, obj, name);
+         if (!ret)
+           {
+              ret = _icon_freedesktop_set(wd, obj, name, _icon_size_min_get(wd->img));
+              if (ret && fdo) *fdo = EINA_TRUE;
+           }
          break;
       case ELM_ICON_LOOKUP_FDO_THEME:
       default:
-         ret = _icon_freedesktop_set(wd, obj, name, _icon_size_min_get(wd->img)) ||
-            _icon_standard_set(wd, obj, name);
+         ret = _icon_freedesktop_set(wd, obj, name, _icon_size_min_get(wd->img));
+         if (!ret)
+           ret = _icon_standard_set(wd, obj, name);
+         else if (fdo)
+           *fdo = EINA_TRUE;
          break;
      }
 
@@ -695,10 +704,13 @@ _elm_icon_standard_resize(void *data,
 {
    Widget_Data *wd = data;
    const char *refup = eina_stringshare_ref(wd->stdicon);
+   Eina_Bool fdo = EINA_FALSE;
 
-   if (!_elm_icon_standard_set(wd, obj, wd->stdicon))
+   if (!_elm_icon_standard_set(wd, obj, wd->stdicon, &fdo) || (!fdo))
      evas_object_event_callback_del_full(obj, EVAS_CALLBACK_RESIZE,
                                          _elm_icon_standard_resize, wd);
+   if (wd->thumb.file.path)
+     elm_icon_thumb_set(obj, wd->thumb.file.path, wd->thumb.file.key);
 
    eina_stringshare_del(refup);
 }
@@ -720,15 +732,21 @@ elm_icon_standard_set(Evas_Object *obj, const char *name)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
    Widget_Data *wd = elm_widget_data_get(obj);
+   Eina_Bool fdo = EINA_FALSE;
+   Eina_Bool ret;
 
    if ((!wd) || (!name)) return EINA_FALSE;
 
    evas_object_event_callback_del_full(obj, EVAS_CALLBACK_RESIZE,
                                        _elm_icon_standard_resize, wd);
-   evas_object_event_callback_add(obj, EVAS_CALLBACK_RESIZE,
-                                  _elm_icon_standard_resize, wd);
 
-   return _elm_icon_standard_set(wd, obj, name);
+   ret = _elm_icon_standard_set(wd, obj, name, &fdo);
+
+   if (fdo)
+     evas_object_event_callback_add(obj, EVAS_CALLBACK_RESIZE,
+                                    _elm_icon_standard_resize, wd);
+
+   return ret;
 }
 
 /**
