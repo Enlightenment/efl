@@ -493,15 +493,14 @@ _populate(Evas_Object      *obj,
           Elm_Genlist_Item *parent)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
-   DIR *dir;
-   struct dirent *dp;
-   char buf[PATH_MAX];
-   char *real;
-   Eina_List *files = NULL, *dirs = NULL, *l;
+   Eina_File_Direct_Info *file;
+   Eina_Iterator *it;
+   const char *real;
+   Eina_List *files = NULL, *dirs = NULL;
 
    if ((!wd) || (!ecore_file_is_dir(path))) return;
-   dir = opendir(path);
-   if (!dir) return;
+   it = eina_file_stat_ls(path);
+   if (!it) return ;
    evas_object_smart_callback_call(obj, SIG_DIRECTORY_OPEN, (void *)path);
    if (!parent)
      {
@@ -512,56 +511,51 @@ _populate(Evas_Object      *obj,
      }
 
    if (wd->filename_entry) elm_entry_entry_set(wd->filename_entry, "");
-   while ((dp = readdir(dir)))
+   EINA_ITERATOR_FOREACH(it, file)
      {
-        if (dp->d_name[0] == '.') continue;  // TODO make this configurable
+        const char *filename;
 
-        snprintf(buf, sizeof(buf), "%s/%s", path, dp->d_name);
-        real = ecore_file_realpath(buf); /* TODO: this will resolv
-                                          * symlinks...I dont like
-                                          * it*/
-        if (ecore_file_is_dir(real))
-          dirs = eina_list_append(dirs, real);
+        if (file->path[file->name_start] == '.')
+          continue ;
+
+        filename = eina_stringshare_add(file->path);
+        if (file->type == EINA_FILE_DIR)
+          dirs = eina_list_append(dirs, filename);
         else if (!wd->only_folder)
-          files = eina_list_append(files, real);
+          files = eina_list_append(files, filename);
      }
-   closedir(dir);
+   eina_iterator_free(it);
 
    files = eina_list_sort(files, eina_list_count(files),
                           EINA_COMPARE_CB(strcoll));
    dirs = eina_list_sort(dirs, eina_list_count(dirs), EINA_COMPARE_CB(strcoll));
-   EINA_LIST_FOREACH(dirs, l, real)
+   EINA_LIST_FREE(dirs, real)
      {
         if (wd->mode == ELM_FILESELECTOR_LIST)
           elm_genlist_item_append(wd->files_list, &list_itc,
-                                  eina_stringshare_add(real), /* item data */
+                                  real, /* item data */
                                   parent,
                                   wd->expand ? ELM_GENLIST_ITEM_SUBITEMS :
                                   ELM_GENLIST_ITEM_NONE,
                                   NULL, NULL);
         else if (wd->mode == ELM_FILESELECTOR_GRID)
           elm_gengrid_item_append(wd->files_grid, &grid_itc,
-                                  eina_stringshare_add(real), /* item data */
+                                  real, /* item data */
                                   NULL, NULL);
-
-        free(real);
      }
-   eina_list_free(dirs);
 
-   EINA_LIST_FOREACH(files, l, real)
+   EINA_LIST_FREE(files, real)
      {
         if (wd->mode == ELM_FILESELECTOR_LIST)
           elm_genlist_item_append(wd->files_list, &list_itc,
-                                  eina_stringshare_add(real), /* item data */
+                                  real, /* item data */
                                   parent, ELM_GENLIST_ITEM_NONE,
                                   NULL, NULL);
         else if (wd->mode == ELM_FILESELECTOR_GRID)
           elm_gengrid_item_append(wd->files_grid, &grid_itc,
-                                  eina_stringshare_add(real), /* item data */
+                                  real, /* item data */
                                   NULL, NULL);
-        free(real);
      }
-   eina_list_free(files);
 }
 
 /***  API  ***/
