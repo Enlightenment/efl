@@ -469,6 +469,7 @@ static const Evas_Smart_Cb_Description _signals[] = {
 };
 
 static Eina_Compare_Cb _elm_genlist_item_compare_cb;
+static Eina_Compare_Cb _elm_genlist_item_compare_data_cb;
 
 static Eina_Bool
 _event_hook(Evas_Object       *obj,
@@ -3483,12 +3484,21 @@ _item_queue(Widget_Data      *wd,
 }
 
 static int
+_elm_genlist_item_compare_data(const void *data, const void *data1)
+{
+   const Elm_Genlist_Item *item = data;
+   const Elm_Genlist_Item *item1 = data1;
+
+   return _elm_genlist_item_compare_data_cb(item->base.data, item1->base.data);
+}
+
+static int
 _elm_genlist_item_compare(const void *data, const void *data1)
 {
    Elm_Genlist_Item *item, *item1;
    item = ELM_GENLIST_ITEM_FROM_INLIST(data);
    item1 = ELM_GENLIST_ITEM_FROM_INLIST(data1);
-   return _elm_genlist_item_compare_cb(item->base.data, item1->base.data);
+   return _elm_genlist_item_compare_cb(item, item1);
 }
 
 static void
@@ -3697,6 +3707,49 @@ elm_genlist_item_insert_before(Evas_Object                  *obj,
    return it;
 }
 
+EAPI Elm_Genlist_Item *
+elm_genlist_item_direct_sorted_insert(Evas_Object                  *obj,
+                                      const Elm_Genlist_Item_Class *itc,
+                                      const void                   *data,
+                                      Elm_Genlist_Item             *parent,
+                                      Elm_Genlist_Item_Flags        flags,
+                                      Eina_Compare_Cb               comp,
+                                      Evas_Smart_Cb                 func,
+                                      const void                   *func_data)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return NULL;
+   Elm_Genlist_Item *it = _item_new(wd, itc, data, parent, flags, func,
+                                    func_data);
+   if (!it) return NULL;
+
+   _elm_genlist_item_compare_cb = comp;
+
+   if (it->parent)
+     {
+        it->parent->items =
+          eina_list_sorted_insert(it->parent->items, _elm_genlist_item_compare, it);
+     }
+   wd->items = eina_inlist_sorted_insert(wd->items, EINA_INLIST_GET(it),
+                                         _elm_genlist_item_compare);
+   if (EINA_INLIST_GET(it)->next)
+     {
+        it->rel = ELM_GENLIST_ITEM_FROM_INLIST(EINA_INLIST_GET(it)->next);
+        it->rel->relcount++;
+        it->before = EINA_TRUE;
+     }
+   else if (EINA_INLIST_GET(it)->prev)
+     {
+        it->rel = ELM_GENLIST_ITEM_FROM_INLIST(EINA_INLIST_GET(it)->prev);
+        it->rel->relcount++;
+        it->before = EINA_FALSE;
+     }
+   _item_queue(wd, it);
+
+   return it;
+}
+
 /**
  * Insert a new item into the sorted genlist object
  *
@@ -3722,36 +3775,10 @@ elm_genlist_item_sorted_insert(Evas_Object                  *obj,
                                Evas_Smart_Cb                 func,
                                const void                   *func_data)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return NULL;
-   Elm_Genlist_Item *it = _item_new(wd, itc, data, parent, flags, func,
-                                    func_data);
-   if (!it) return NULL;
+   _elm_genlist_item_compare_data_cb = comp;
 
-   _elm_genlist_item_compare_cb = comp;
-   if (it->parent)
-     {
-        it->parent->items =
-           eina_list_sorted_insert(it->parent->items, comp, it);
-     }
-   wd->items = eina_inlist_sorted_insert(wd->items, EINA_INLIST_GET(it),
-                                         _elm_genlist_item_compare);
-   if (EINA_INLIST_GET(it)->next)
-     {
-        it->rel = ELM_GENLIST_ITEM_FROM_INLIST(EINA_INLIST_GET(it)->next);
-        it->rel->relcount++;
-        it->before = EINA_TRUE;
-     }
-   else if (EINA_INLIST_GET(it)->prev)
-     {
-        it->rel = ELM_GENLIST_ITEM_FROM_INLIST(EINA_INLIST_GET(it)->prev);
-        it->rel->relcount++;
-        it->before = EINA_FALSE;
-     }
-   _item_queue(wd, it);
-
-   return it;
+   return elm_genlist_item_direct_sorted_insert(obj, itc, data, parent, flags,
+                                                _elm_genlist_item_compare_data, func, func_data);
 }
 
 /**
@@ -4874,6 +4901,14 @@ elm_genlist_item_item_class_update(Elm_Genlist_Item             *it,
    it->itc = itc;
    it->nocache = EINA_TRUE;
    elm_genlist_item_update(it);
+}
+
+EAPI const Elm_Genlist_Item_Class *
+elm_genlist_item_item_class_get(const Elm_Genlist_Item *it)
+{
+   ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(it, NULL);
+   if (it->delete_me) return NULL;
+   return it->itc;
 }
 
 static Evas_Object *

@@ -296,6 +296,7 @@ static const Evas_Smart_Cb_Description _signals[] = {
 };
 
 static Eina_Compare_Cb _elm_gengrid_item_compare_cb;
+static Eina_Compare_Cb _elm_gengrid_item_compare_data_cb;
 
 static Eina_Bool
 _event_hook(Evas_Object       *obj,
@@ -1731,12 +1732,21 @@ _scr_scroll(void            *data,
 }
 
 static int
+_elm_gengrid_item_compare_data(const void *data, const void *data1)
+{
+   const Elm_Gengrid_Item *item = data;
+   const Elm_Gengrid_Item *item1 = data1;
+
+   return _elm_gengrid_item_compare_data_cb(item->base.data, item1->base.data);
+}
+
+static int
 _elm_gengrid_item_compare(const void *data, const void *data1)
 {
    Elm_Gengrid_Item *item, *item1;
    item = ELM_GENGRID_ITEM_FROM_INLIST(data);
    item1 = ELM_GENGRID_ITEM_FROM_INLIST(data1);
-   return _elm_gengrid_item_compare_cb(item->base.data, item1->base.data);
+   return _elm_gengrid_item_compare_cb(item, item1);
 }
 
 /**
@@ -2106,12 +2116,12 @@ elm_gengrid_item_insert_after(Evas_Object                  *obj,
 }
 
 EAPI Elm_Gengrid_Item *
-elm_gengrid_item_sorted_insert(Evas_Object                  *obj,
-                               const Elm_Gengrid_Item_Class *gic,
-                               const void                   *data,
-                               Eina_Compare_Cb               comp,
-                               Evas_Smart_Cb                 func,
-                               const void                   *func_data)
+elm_gengrid_item_direct_sorted_insert(Evas_Object                  *obj,
+				      const Elm_Gengrid_Item_Class *gic,
+				      const void                   *data,
+				      Eina_Compare_Cb               comp,
+				      Evas_Smart_Cb                 func,
+				      const void                   *func_data)
 {
    Elm_Gengrid_Item *item;
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
@@ -2120,14 +2130,27 @@ elm_gengrid_item_sorted_insert(Evas_Object                  *obj,
 
    item = _item_create(wd, gic, data, func, func_data);
    if (!item) return NULL;
-   _elm_gengrid_item_compare_cb = comp;
 
+   _elm_gengrid_item_compare_cb = comp;
    wd->items = eina_inlist_sorted_insert(wd->items, EINA_INLIST_GET(item),
                                          _elm_gengrid_item_compare);
    if (wd->calc_job) ecore_job_del(wd->calc_job);
    wd->calc_job = ecore_job_add(_calc_job, wd);
 
    return item;
+}
+
+EAPI Elm_Gengrid_Item *
+elm_gengrid_item_sorted_insert(Evas_Object                  *obj,
+                               const Elm_Gengrid_Item_Class *gic,
+                               const void                   *data,
+                               Eina_Compare_Cb               comp,
+                               Evas_Smart_Cb                 func,
+                               const void                   *func_data)
+{
+   _elm_gengrid_item_compare_data_cb = comp;
+
+   return elm_gengrid_item_direct_sorted_insert(obj, gic, data, _elm_gengrid_item_compare_data, func, func_data);
 }
 
 /**
@@ -2348,6 +2371,25 @@ elm_gengrid_item_data_set(Elm_Gengrid_Item *item,
 {
    ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(item);
    elm_widget_item_data_set(item, data);
+   elm_gengrid_item_update(item);
+}
+
+EAPI const Elm_Gengrid_Item_Class *
+elm_gengrid_item_item_class_get(const Elm_Gengrid_Item *item)
+{
+   ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(item, NULL);
+   if (item->delete_me) return NULL;
+   return item->gic;
+}
+
+EAPI void
+elm_gengrid_item_item_class_set(Elm_Gengrid_Item *item,
+                                const Elm_Gengrid_Item_Class *gic)
+{
+   ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(item);
+   EINA_SAFETY_ON_NULL_RETURN(gic);
+   if (item->delete_me) return;
+   item->gic = gic;
    elm_gengrid_item_update(item);
 }
 
