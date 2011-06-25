@@ -295,7 +295,7 @@ static const Evas_Smart_Cb_Description _signals[] = {
        {NULL, NULL}
 };
 
-
+static Eina_Compare_Cb _elm_gengrid_item_compare_cb;
 
 static Eina_Bool
 _event_hook(Evas_Object       *obj,
@@ -1730,6 +1730,15 @@ _scr_scroll(void            *data,
    evas_object_smart_callback_call(data, SIG_SCROLL, NULL);
 }
 
+static int
+_elm_gengrid_item_compare(const void *data, const void *data1)
+{
+   Elm_Gengrid_Item *item, *item1;
+   item = ELM_GENGRID_ITEM_FROM_INLIST(data);
+   item1 = ELM_GENGRID_ITEM_FROM_INLIST(data1);
+   return _elm_gengrid_item_compare_cb(item->base.data, item1->base.data);
+}
+
 /**
  * Add a new Gengrid object.
  *
@@ -2090,6 +2099,31 @@ elm_gengrid_item_insert_after(Evas_Object                  *obj,
    wd->items = eina_inlist_append_relative
       (wd->items, EINA_INLIST_GET(item), EINA_INLIST_GET(relative));
 
+   if (wd->calc_job) ecore_job_del(wd->calc_job);
+   wd->calc_job = ecore_job_add(_calc_job, wd);
+
+   return item;
+}
+
+EAPI Elm_Gengrid_Item *
+elm_gengrid_item_sorted_insert(Evas_Object                  *obj,
+                               const Elm_Gengrid_Item_Class *gic,
+                               const void                   *data,
+                               Eina_Compare_Cb               comp,
+                               Evas_Smart_Cb                 func,
+                               const void                   *func_data)
+{
+   Elm_Gengrid_Item *item;
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return NULL;
+
+   item = _item_create(wd, gic, data, func, func_data);
+   if (!item) return NULL;
+   _elm_gengrid_item_compare_cb = comp;
+
+   wd->items = eina_inlist_sorted_insert(wd->items, EINA_INLIST_GET(item),
+                                         _elm_gengrid_item_compare);
    if (wd->calc_job) ecore_job_del(wd->calc_job);
    wd->calc_job = ecore_job_add(_calc_job, wd);
 

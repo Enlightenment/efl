@@ -2226,6 +2226,7 @@ extern "C" {
    EAPI Elm_Gengrid_Item  *elm_gengrid_item_prepend(Evas_Object *obj, const Elm_Gengrid_Item_Class *gic, const void *data, Evas_Smart_Cb func, const void *func_data) EINA_ARG_NONNULL(1);
    EAPI Elm_Gengrid_Item  *elm_gengrid_item_insert_before(Evas_Object *obj, const Elm_Gengrid_Item_Class *gic, const void *data, Elm_Gengrid_Item *relative, Evas_Smart_Cb func, const void *func_data) EINA_ARG_NONNULL(1);
    EAPI Elm_Gengrid_Item  *elm_gengrid_item_insert_after(Evas_Object *obj, const Elm_Gengrid_Item_Class *gic, const void *data, Elm_Gengrid_Item *relative, Evas_Smart_Cb func, const void *func_data) EINA_ARG_NONNULL(1);
+   EAPI Elm_Gengrid_Item  *elm_gengrid_item_sorted_insert(Evas_Object *obj, const Elm_Gengrid_Item_Class *gic, const void *data, Eina_Compare_Cb comp, Evas_Smart_Cb func, const void *func_data) EINA_ARG_NONNULL(1);
    /* smart callbacks called:
     *
     * selected - User has selected an item.
