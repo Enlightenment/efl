@@ -887,6 +887,20 @@ eio_file_cancel(Eio_File *ls)
 }
 
 /**
+ * @brief Check if an Eio_File operation has been cancelled.
+ * @param ls The asynchronous IO operation to check.
+ * @return EINA_TRUE if it was canceled, EINA_FALSE other wise.
+ *
+ * In case of an error it also return EINA_TRUE.
+ */
+EAPI Eina_Bool
+eio_file_check(Eio_File *ls)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(ls, EINA_TRUE);
+   return ecore_thread_check(ls->thread);
+}
+
+/**
  * @brief Return the container during EIO operation
  * @param ls The asynchronous IO operation to retrieve container from.
  * @return NULL if not available, a DIRP if it is.
