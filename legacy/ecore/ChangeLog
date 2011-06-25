@@ -237,3 +237,11 @@
 2011-06-20  Jihoon Kim
 
         * Ecore_IMF: Added ecore_imf_context_input_panel_enabled_set/get API
+
+2011-06-25  Mike Blumenkrantz
+
+        * Fix security hole in openssl certificate verification
+        * Fix gnutls server-client certificate verification
+        * New function: ecore_con_ssl_server_verify_basic for only verifying
+            certificates against a server's Common Name (CN) or its
+            Subject Alternative Name (if available)

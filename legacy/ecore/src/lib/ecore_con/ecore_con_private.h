@@ -160,6 +160,7 @@ struct _Ecore_Con_Server
    Eina_Bool use_cert : 1; /* EINA_TRUE if using certificate auth */
    Ecore_Con_Ssl_State ssl_state; /* current state of ssl handshake on the server */
    Eina_Bool verify : 1; /* EINA_TRUE if certificates will be verified */
+   Eina_Bool verify_basic : 1; /* EINA_TRUE if certificates will be verified only against the hostname */
    Eina_Bool reject_excess_clients : 1;
    Eina_Bool delete_me : 1;
 #ifdef _WIN32

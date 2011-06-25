@@ -136,6 +136,31 @@ _openssl_print_errors(void *conn, int type)
      } while (1);
 }
 
+static Eina_Bool
+_openssl_name_verify(const char *name, const char *svrname)
+{
+   if (name[0] == '*')
+     {
+        /* we allow *.domain.TLD with a wildcard, but nothing else */
+        const char *p, *s;
+
+        EINA_SAFETY_ON_TRUE_RETURN_VAL((name[1] != '.') || (!name[2]), EINA_FALSE);
+        p = strchr(name + 1, '*');
+        EINA_SAFETY_ON_TRUE_RETURN_VAL(!!p, EINA_FALSE);
+        /* verify that we have a domain of at least *.X.TLD and not *.TLD */
+        p = strchr(name + 2, '.');
+        EINA_SAFETY_ON_TRUE_RETURN_VAL(!p, EINA_FALSE);
+        s = strchr(svrname, '.');
+        EINA_SAFETY_ON_TRUE_RETURN_VAL(!s, EINA_FALSE);
+        /* same as above for the stored name */
+        EINA_SAFETY_ON_TRUE_RETURN_VAL(!strchr(s + 1, '.'), EINA_FALSE);
+        EINA_SAFETY_ON_TRUE_RETURN_VAL(strcasecmp(s, name + 1), EINA_FALSE);
+     }
+   else
+     EINA_SAFETY_ON_TRUE_RETURN_VAL(strcasecmp(name, svrname), EINA_FALSE);
+   return EINA_TRUE;
+}
+
 #endif
 
 #define SSL_ERROR_CHECK_GOTO_ERROR(X)                                           \
@@ -309,6 +334,27 @@ ecore_con_ssl_server_verify(Ecore_Con_Server *svr)
         return;
      }
    svr->verify = EINA_TRUE;
+}
+
+/**
+ * @brief Enable hostname-based certificate verification on a server object
+ *
+ * Call this function on a server object before main loop has started
+ * to enable verification of certificates using ONLY their hostnames.
+ * @param svr The server object
+ * @note This function has no effect when used on a listening server created by
+ * ecore_con_server_add
+ * @since 1.1
+ */
+EAPI void
+ecore_con_ssl_server_verify_basic(Ecore_Con_Server *svr)
+{
+   if (!ECORE_MAGIC_CHECK(svr, ECORE_MAGIC_CON_SERVER))
+     {
+        ECORE_MAGIC_FAIL(svr, ECORE_MAGIC_CON_SERVER, __func__);
+        return;
+     }
+   svr->verify_basic = EINA_TRUE;
 }
 
 /**
@@ -651,26 +697,28 @@ _ecore_con_ssl_server_init_gnutls(Ecore_Con_Server *svr)
         break;
      }
 
-   if (!svr->verify)
+   if ((!svr->verify) && (!svr->verify_basic))
      /* not verifying certificates, so we're done! */
      return ECORE_CON_SSL_ERROR_NONE;
-   ret = 0;
-   /* use CRL/CA lists to verify */
-   SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_certificate_verify_peers2(svr->session, &iter));
-   if (iter & GNUTLS_CERT_INVALID)
-     ERR("The certificate is not trusted.");
-   else if (iter & GNUTLS_CERT_SIGNER_NOT_FOUND)
-     ERR("The certificate hasn't got a known issuer.");
-   else if (iter & GNUTLS_CERT_REVOKED)
-     ERR("The certificate has been revoked.");
-   else if (iter & GNUTLS_CERT_EXPIRED)
-     ERR("The certificate has expired");
-   else if (iter & GNUTLS_CERT_NOT_ACTIVATED)
-     ERR("The certificate is not yet activated");
+   if (svr->verify)
+     {
+        ret = 0;
+        /* use CRL/CA lists to verify */
+        SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_certificate_verify_peers2(svr->session, &iter));
+        if (iter & GNUTLS_CERT_INVALID)
+          ERR("The certificate is not trusted.");
+        else if (iter & GNUTLS_CERT_SIGNER_NOT_FOUND)
+          ERR("The certificate hasn't got a known issuer.");
+        else if (iter & GNUTLS_CERT_REVOKED)
+          ERR("The certificate has been revoked.");
+        else if (iter & GNUTLS_CERT_EXPIRED)
+          ERR("The certificate has expired");
+        else if (iter & GNUTLS_CERT_NOT_ACTIVATED)
+          ERR("The certificate is not yet activated");
 
-   if (iter)
-     goto error;
-
+        if (iter)
+          goto error;
+     }
    if (gnutls_certificate_type_get(svr->session) != GNUTLS_CRT_X509)
      {
         ERR("Warning: PGP certificates are not yet supported!");
@@ -874,7 +922,6 @@ _ecore_con_ssl_client_init_gnutls(Ecore_Con_Client *cl)
 {
    const gnutls_datum_t *cert_list;
    unsigned int iter, cert_list_size;
-   gnutls_x509_crt_t cert = NULL;
    const char *priority = "NONE:%VERIFY_ALLOW_X509_V1_CA_CRT:+RSA:+DHE-RSA:+DHE-DSS:+ANON-DH:+COMP-DEFLATE:+COMP-NULL:+CTYPE-X509:+SHA1:+SHA256:+SHA384:+SHA512:+AES-256-CBC:+AES-128-CBC:+3DES-CBC:+VERS-TLS1.2:+VERS-TLS1.1:+VERS-TLS1.0:+VERS-SSL3.0";
    int ret = 0;
 
@@ -972,7 +1019,6 @@ _ecore_con_ssl_client_init_gnutls(Ecore_Con_Client *cl)
 
    if (iter)
      goto error;
-
    if (gnutls_certificate_type_get(cl->session) != GNUTLS_CRT_X509)
      {
         ERR("Warning: PGP certificates are not yet supported!");
@@ -982,11 +1028,14 @@ _ecore_con_ssl_client_init_gnutls(Ecore_Con_Client *cl)
    SSL_ERROR_CHECK_GOTO_ERROR(!(cert_list = gnutls_certificate_get_peers(cl->session, &cert_list_size)));
    SSL_ERROR_CHECK_GOTO_ERROR(!cert_list_size);
 
+/*
+   gnutls_x509_crt_t cert = NULL;
    SSL_ERROR_CHECK_GOTO_ERROR(gnutls_x509_crt_init(&cert));
    SSL_ERROR_CHECK_GOTO_ERROR(gnutls_x509_crt_import(cert, &cert_list[0], GNUTLS_X509_FMT_DER));
 
    SSL_ERROR_CHECK_GOTO_ERROR(!gnutls_x509_crt_check_hostname(cert, cl->host_server->name));
    gnutls_x509_crt_deinit(cert);
+*/
    DBG("SSL certificate verification succeeded!");
    return ECORE_CON_SSL_ERROR_NONE;
 
@@ -999,8 +1048,10 @@ error:
         ERR("last out: %s", SSL_GNUTLS_PRINT_HANDSHAKE_STATUS(gnutls_handshake_get_last_out(cl->session)));
         ERR("last in: %s", SSL_GNUTLS_PRINT_HANDSHAKE_STATUS(gnutls_handshake_get_last_in(cl->session)));
      }
+/*
    if (cert)
      gnutls_x509_crt_deinit(cert);
+*/
    _ecore_con_ssl_client_shutdown_gnutls(cl);
    return ECORE_CON_SSL_ERROR_SERVER_INIT_FAILED;
 }
@@ -1250,14 +1301,31 @@ _ecore_con_ssl_server_init_openssl(Ecore_Con_Server *svr)
        BIO_free(b);
    }
 #endif
-   if (!svr->verify)
+   if ((!svr->verify) && (!svr->verify_basic))
      /* not verifying certificates, so we're done! */
      return ECORE_CON_SSL_ERROR_NONE;
 
-   SSL_set_verify(svr->ssl, SSL_VERIFY_PEER, NULL);
-   /* use CRL/CA lists to verify */
-   if (SSL_get_peer_certificate(svr->ssl))
-     SSL_ERROR_CHECK_GOTO_ERROR(SSL_get_verify_result(svr->ssl));
+   {
+      X509 *cert;
+      SSL_set_verify(svr->ssl, SSL_VERIFY_PEER, NULL);
+      /* use CRL/CA lists to verify */
+      cert = SSL_get_peer_certificate(svr->ssl);
+      if (cert)
+        {
+           char buf[256] = {0};
+           if (svr->verify)
+             SSL_ERROR_CHECK_GOTO_ERROR(SSL_get_verify_result(svr->ssl));
+           X509_NAME_get_text_by_NID(X509_get_subject_name(cert), NID_subject_alt_name, buf, sizeof(buf));
+           if (buf[0])
+             SSL_ERROR_CHECK_GOTO_ERROR(!_openssl_name_verify(buf, svr->name));
+           else
+             {
+                X509_NAME_get_text_by_NID(X509_get_subject_name(cert), NID_commonName, buf, sizeof(buf));
+                SSL_ERROR_CHECK_GOTO_ERROR(!_openssl_name_verify(buf, svr->name));
+             }
+        }
+   }
+
    DBG("SSL certificate verification succeeded!");
 
    return ECORE_CON_SSL_ERROR_NONE;
