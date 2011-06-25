@@ -291,7 +291,7 @@ struct _Elm_Map_Track
 {
    Widget_Data *wd;
 
-#ifdef HAVE_ELEMENTARY_EMAP
+#ifdef ELM_EMAP
    EMap_Route *emap;
 #endif
 
@@ -831,7 +831,7 @@ obj_rotate_zoom(void *data, Evas_Object *obj)
 static void
 track_place(Evas_Object *obj, Grid *g __UNUSED__, Evas_Coord px, Evas_Coord py, Evas_Coord ox __UNUSED__, Evas_Coord oy __UNUSED__, Evas_Coord ow, Evas_Coord oh)
 {
-#ifdef HAVE_ELEMENTARY_EMAP
+#ifdef ELM_EMAP
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    Eina_List *lr, *lp, *ln;
@@ -5257,7 +5257,7 @@ elm_map_wheel_disabled_get(const Evas_Object *obj)
    return wd->wheel_disabled;
 }
 
-#ifdef HAVE_ELEMENTARY_EMAP
+#ifdef ELM_EMAP
 /**
  * Add a track on the map
  *
@@ -5290,6 +5290,13 @@ elm_map_track_add(Evas_Object *obj, EMap_Route *emap)
    wd->track = eina_list_append(wd->track, track);
 
    return track;
+}
+
+
+EMap_Route
+*elm_map_track_emap_get(Elm_Map_Track *track)
+{
+   return track->emap;
 }
 #endif
 

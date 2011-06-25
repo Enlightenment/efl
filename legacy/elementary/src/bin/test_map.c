@@ -59,7 +59,7 @@ my_map_gpx_fileselector_done(void *data, Evas_Object *obj __UNUSED__, void *even
    if (selected)
      {
         printf("Selected file: %s\n", selected);
-#ifdef HAVE_ELEMENTARY_EMAP
+#ifdef ELM_EMAP
         EMap_Route *emap = emap_route_gpx_new(selected);
         track = elm_map_track_add(data, emap);
 #else
