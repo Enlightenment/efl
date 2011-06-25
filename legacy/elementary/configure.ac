@@ -212,7 +212,14 @@ PKG_CHECK_MODULES([ELEMENTARY],
    ]
 )
 
-PKG_CHECK_MODULES([EIO],[eio], [have_eio="yes"], [have_eio="no"])
+PKG_CHECK_MODULES([EIO],
+	[eio],
+	[
+	 have_eio="yes"
+	 AC_DEFINE(HAVE_EIO, 1, [Use EIO for asynchronous file access])
+	 requirement_elm="eio ${requirement_elm}"
+	],
+	[have_eio="no"])
 
 AM_CONDITIONAL([HAVE_EIO], [test "x${have_eio}" = "xyes"])
 

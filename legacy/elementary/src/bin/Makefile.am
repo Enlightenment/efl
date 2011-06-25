@@ -17,11 +17,8 @@ AM_CPPFLAGS = \
 @ELEMENTARY_EDBUS_CFLAGS@ \
 @ELEMENTARY_EFREET_CFLAGS@ \
 @ELEMENTARY_EWEATHER_CFLAGS@ \
-@ELEMENTARY_ETHUMB_CFLAGS@
-
-if HAVE_EIO
-AM_CPPFLAGS += -DHAVE_EIO @EIO_CFLAGS@
-endif
+@ELEMENTARY_ETHUMB_CFLAGS@ \
+@EIO_CFLAGS@
 
 if ELEMENTARY_WINDOWS_BUILD
 AM_CPPFLAGS += -DELEMENTARY_BUILD
@@ -118,10 +115,8 @@ elementary_test_LDADD = $(top_builddir)/src/lib/libelementary.la \
 	@ELEMENTARY_EDBUS_LIBS@ \
 	@ELEMENTARY_EFREET_LIBS@ \
 	@ELEMENTARY_LIBS@ \
+	@EIO_LIBS@ \
 	@my_libs@
-if HAVE_EIO
-elementary_test_LDADD += @EIO_LIBS@
-endif
 elementary_test_LDFLAGS =
 
 elementary_config_SOURCES = \
@@ -160,11 +155,8 @@ elementary_testqldir = $(libdir)
 elementary_testql_LTLIBRARIES = elementary_testql.la
 elementary_testql_la_SOURCES = $(elementary_test_SOURCES)
 elementary_testql_la_LIBADD = $(top_builddir)/src/lib/libelementary.la \
-	@ELEMENTARY_EWEATHER_LIBS@
-
-if HAVE_EIO
-elementary_testql_la_LIBADD += @EIO_LIBS@
-endif
+	@ELEMENTARY_EWEATHER_LIBS@ \
+	@EIO_LIBS@
 
 elementary_testql_la_CFLAGS =
 elementary_testql_la_LDFLAGS = -module -avoid-version -no-undefined
@@ -174,11 +166,8 @@ elementary_testql_LDADD = $(top_builddir)/src/lib/libelementary.la \
 	@ELEMENTARY_EDBUS_LIBS@ \
 	@ELEMENTARY_EFREET_LIBS@ \
 	@ELEMENTARY_LIBS@ \
+	@EIO_LIBS@
 	@my_libs@
-
-if HAVE_EIO
-elementary_testql_LDADD += @EIO_LIBS@
-endif
 
 elementary_testql_CFLAGS = -DELM_LIB_QUICKLAUNCH=1
 elementary_testql_LDFLAGS =
