@@ -608,6 +608,10 @@ elm_quicklaunch_init(int    argc,
 
    eet_init();
    ecore_init();
+
+#ifdef HAVE_ELEMENTARY_EMAP
+   emap_init();
+#endif
    ecore_app_args_set(argc, (const char **)argv);
 
    memset(_elm_policies, 0, sizeof(_elm_policies));
@@ -745,6 +749,11 @@ elm_quicklaunch_shutdown(void)
    _elm_unneed_e_dbus();
    _elm_unneed_ethumb();
    ecore_file_shutdown();
+
+#ifdef HAVE_ELEMENTARY_EMAP
+   emap_shutdown();
+#endif
+
    ecore_shutdown();
    eet_shutdown();
 

@@ -98,6 +98,10 @@ Pants
 @ELM_ALLOCA_H_DEF@ ELM_ALLOCA_H
 @ELM_LIBINTL_H_DEF@ ELM_LIBINTL_H
 
+#ifdef HAVE_CONFIG_H
+# include "elementary_config.h"
+#endif
+
 /* Standard headers for standard system calls etc. */
 #include <stdio.h>
 #include <stdlib.h>
@@ -162,6 +166,10 @@ Pants
 
 #ifdef ELM_ETHUMB
 # include <Ethumb_Client.h>
+#endif
+
+#ifdef HAVE_ELEMENTARY_EMAP
+# include <EMap.h>
 #endif
 
 #ifdef EAPI
@@ -4161,7 +4169,9 @@ EAPI Elm_Genlist_Item *elm_genlist_item_sorted_insert(Evas_Object *obj, const El
    EAPI void                  elm_map_rotate_get(const Evas_Object *obj, double *degree, Evas_Coord *cx, Evas_Coord *cy) EINA_ARG_NONNULL(1, 2, 3, 4);
    EAPI void                  elm_map_wheel_disabled_set(Evas_Object *obj, Eina_Bool disabled) EINA_ARG_NONNULL(1);
    EAPI Eina_Bool             elm_map_wheel_disabled_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
-   EAPI Elm_Map_Track        *elm_map_track_add(Evas_Object *obj, const char *gpx_file) EINA_ARG_NONNULL(1);
+#ifdef HAVE_ELEMENTARY_EMAP
+   EAPI Elm_Map_Track        *elm_map_track_add(Evas_Object *obj, EMap_Route *emap) EINA_ARG_NONNULL(1);
+#endif
    EAPI void                  elm_map_track_remove(Elm_Map_Track *track) EINA_ARG_NONNULL(1);
    EAPI void                  elm_map_track_color_set(Elm_Map_Track *track, int r, int g , int b, int a) EINA_ARG_NONNULL(1);
    EAPI void                  elm_map_track_color_get(const Elm_Map_Track *track, int *r, int *g , int *b, int *a) EINA_ARG_NONNULL(1);

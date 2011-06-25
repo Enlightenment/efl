@@ -420,6 +420,36 @@ if test "x$want_elementary_eweather" = "xyes" -a "x$have_elementary_eweather" = 
 fi
 AC_SUBST(ELM_EWEATHER_DEF)
 
+ELM_EMAP_DEF="#undef"
+have_elementary_emap="no"
+want_elementary_emap="auto"
+AC_ARG_ENABLE([emap],
+   [AC_HELP_STRING([--disable-emap], [disable emap support. @<:@default=detect@:>@])],
+   [want_elementary_emap=$enableval], [])
+
+if test "x$want_elementary_emap" != "xno"; then
+    PKG_CHECK_MODULES([ELEMENTARY_EMAP],
+       [
+        emap
+       ],
+       [
+        AC_DEFINE(HAVE_ELEMENTARY_EMAP, 1, [EMap support for Elementary])
+        have_elementary_emap="yes"
+        ELM_EMAP_DEF="#define"
+        requirement_elm="emap ${requirement_elm}"
+       ],
+       [have_elementary_emap="no"]
+    )
+else
+    have_elementary_emap="no"
+fi
+if test "x$want_elementary_emap" = "xyes" -a "x$have_elementary_emap" = "xno"; then
+    AC_MSG_ERROR([Emap support requested, but no emap found by pkg-config.])
+fi
+AC_SUBST(ELM_EMAP_DEF)
+
+
+
 ELM_ETHUMB_DEF="#undef"
 have_elementary_ethumb="no"
 want_elementary_ethumb="auto"
@@ -559,6 +589,7 @@ echo "  Features:"
 echo "    EDBus..................: ${have_elementary_edbus}"
 echo "    EFreet.................: ${have_elementary_efreet}"
 echo "    EWeather...............: ${have_elementary_eweather}"
+echo "    EMap...................: ${have_elementary_emap}"
 echo "    Ethumb.................: ${have_elementary_ethumb}"
 echo "    Quick Launch...........: ${have_fork}"
 echo "    eio....................: ${have_eio}"
