@@ -136,18 +136,30 @@ efreet_cache_init(void)
         snprintf(buf, sizeof(buf), "%s/efreet", efreet_cache_home_get());
         if (!ecore_file_exists(buf))
         {
-            if (!ecore_file_mkpath(buf)) goto error;
+            if (!ecore_file_mkpath(buf))
+            {
+                ERR("Failed to create directory '%s'", buf);
+                goto error;
+            }
             efreet_setowner(buf);
         }
 
         cache_exe_handler = ecore_event_handler_add(ECORE_EXE_EVENT_DEL,
                                                     cache_exe_cb, NULL);
-        if (!cache_exe_handler) goto error;
+        if (!cache_exe_handler)
+        {
+            ERR("Failed to add exe del handler");
+            goto error;
+        }
 
         cache_monitor = ecore_file_monitor_add(buf,
                                                cache_update_cb,
                                                NULL);
-        if (!cache_monitor) goto error;
+        if (!cache_monitor)
+        {
+            ERR("Failed to set up ecore file monitor for '%s'", buf);
+            goto error;
+        }
 
         efreet_cache_icon_update();
         efreet_cache_desktop_update();
