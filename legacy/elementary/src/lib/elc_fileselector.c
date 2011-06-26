@@ -141,7 +141,9 @@ _del_hook(Evas_Object *obj)
    wd = elm_widget_data_get(obj);
    if (!wd) return;
 
+#ifdef HAVE_EIO
    eio_file_cancel(wd->current);
+#endif
 
    wd->files_list = NULL;
    wd->files_grid = NULL;
@@ -678,7 +680,9 @@ _done_cb(void *data, Eio_File *handler __UNUSED__)
 
    _signal_first(wr);
 
+#ifdef HAVE_EIO
    wr->wd->current = NULL;
+#endif
    _widget_request_cleanup(wr);
 }
 
@@ -687,8 +691,10 @@ _error_cb(void *data, Eio_File *handler, int error __UNUSED__)
 {
    Widget_Request *wr = data;
 
+#ifdef HAVE_EIO
    if (wr->wd->current == handler)
      wr->wd->current = NULL;
+#endif
    _widget_request_cleanup(wr);
 }
 
