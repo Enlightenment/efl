@@ -99,6 +99,14 @@ _path_is_absolute(const char *path)
 }
 #endif
 
+static inline int
+_icon_size_min_get(Evas_Object *icon)
+{
+   int size;
+   _els_smart_icon_size_get(icon, &size, NULL);
+   return (size < 32) ? 32 : size;
+}
+
 #ifdef HAVE_ELEMENTARY_ETHUMB
 static void
 _icon_thumb_stop(Widget_Data *wd, void *ethumbd)
@@ -281,14 +289,6 @@ _icon_thumb_exists(Ethumb_Client *client __UNUSED__, Ethumb_Exists *thread, Eina
         /* Failed to generate thumbnail */
         _icon_pending_request--;
      }
-}
-
-static inline int
-_icon_size_min_get(Evas_Object *icon)
-{
-   int size;
-   _els_smart_icon_size_get(icon, &size, NULL);
-   return (size < 32) ? 32 : size;
 }
 
 static void
@@ -709,8 +709,10 @@ _elm_icon_standard_resize(void *data,
    if (!_elm_icon_standard_set(wd, obj, wd->stdicon, &fdo) || (!fdo))
      evas_object_event_callback_del_full(obj, EVAS_CALLBACK_RESIZE,
                                          _elm_icon_standard_resize, wd);
+#ifdef HAVE_ELEMENTARY_ETHUMB
    if (wd->thumb.file.path)
      elm_icon_thumb_set(obj, wd->thumb.file.path, wd->thumb.file.key);
+#endif
 
    eina_stringshare_del(refup);
 }
