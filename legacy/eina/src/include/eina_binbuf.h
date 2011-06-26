@@ -89,7 +89,7 @@ EAPI void eina_binbuf_reset(Eina_Binbuf *buf) EINA_ARG_NONNULL(1);
  * @see eina_binbuf_append()
  * @see eina_binbuf_append_n()
  */
-EAPI Eina_Bool eina_binbuf_append_length(Eina_Binbuf *buf, const char *str, size_t length) EINA_ARG_NONNULL(1, 2);
+EAPI Eina_Bool eina_binbuf_append_length(Eina_Binbuf *buf, const unsigned char *str, size_t length) EINA_ARG_NONNULL(1, 2);
 
 /**
  * @brief Append a character to a string buffer, reallocating as
@@ -102,7 +102,7 @@ EAPI Eina_Bool eina_binbuf_append_length(Eina_Binbuf *buf, const char *str, size
  * This function inserts @p c to @p buf. If it can not insert it,
  * #EINA_FALSE is returned, otherwise #EINA_TRUE is returned.
  */
-EAPI Eina_Bool eina_binbuf_append_char(Eina_Binbuf *buf, char c) EINA_ARG_NONNULL(1);
+EAPI Eina_Bool eina_binbuf_append_char(Eina_Binbuf *buf, unsigned char c) EINA_ARG_NONNULL(1);
 
 /**
  * @brief Insert a string of exact length to a buffer, reallocating as necessary.
@@ -124,7 +124,7 @@ EAPI Eina_Bool eina_binbuf_append_char(Eina_Binbuf *buf, char c) EINA_ARG_NONNUL
  * @see eina_binbuf_insert()
  * @see eina_binbuf_insert_n()
  */
-EAPI Eina_Bool eina_binbuf_insert_length(Eina_Binbuf *buf, const char *str, size_t length, size_t pos) EINA_ARG_NONNULL(1, 2);
+EAPI Eina_Bool eina_binbuf_insert_length(Eina_Binbuf *buf, const unsigned char *str, size_t length, size_t pos) EINA_ARG_NONNULL(1, 2);
 
 /**
  * @brief Insert a character to a string buffer, reallocating as
@@ -139,7 +139,7 @@ EAPI Eina_Bool eina_binbuf_insert_length(Eina_Binbuf *buf, const char *str, size
  * can't append it, #EINA_FALSE is returned, otherwise #EINA_TRUE is
  * returned.
  */
-EAPI Eina_Bool eina_binbuf_insert_char(Eina_Binbuf *buf, char c, size_t pos) EINA_ARG_NONNULL(1);
+EAPI Eina_Bool eina_binbuf_insert_char(Eina_Binbuf *buf, unsigned char c, size_t pos) EINA_ARG_NONNULL(1);
 
 /**
  * @brief Remove a slice of the given string buffer.
@@ -171,7 +171,7 @@ EAPI Eina_Bool eina_binbuf_remove(Eina_Binbuf *buf, size_t start, size_t end) EI
  *
  * @see eina_binbuf_string_steal()
  */
-EAPI const char *eina_binbuf_string_get(const Eina_Binbuf *buf) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
+EAPI const unsigned char *eina_binbuf_string_get(const Eina_Binbuf *buf) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
 
 /**
  * @brief Steal the contents of a string buffer.
@@ -186,7 +186,7 @@ EAPI const char *eina_binbuf_string_get(const Eina_Binbuf *buf) EINA_ARG_NONNULL
  *
  * @see eina_binbuf_string_get()
  */
-EAPI char *eina_binbuf_string_steal(Eina_Binbuf *buf) EINA_MALLOC EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
+EAPI unsigned char *eina_binbuf_string_steal(Eina_Binbuf *buf) EINA_MALLOC EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
 
 /**
  * @brief Free the contents of a string buffer but not the buffer.

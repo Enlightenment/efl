@@ -46,7 +46,7 @@
 #endif
 
 
-#define _STRBUF_DATA_TYPE         char
+#define _STRBUF_DATA_TYPE         unsigned char
 #define _STRBUF_CSIZE             sizeof(_STRBUF_DATA_TYPE)
 #define _STRBUF_STRUCT_NAME       Eina_Binbuf
 #define _STRBUF_MAGIC             EINA_MAGIC_BINBUF
