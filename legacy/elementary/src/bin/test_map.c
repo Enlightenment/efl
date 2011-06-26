@@ -28,7 +28,7 @@ static int nb_elts;
 static Elm_Map_Marker *route_from, *route_to;
 static Elm_Map_Route *route;
 static Elm_Map_Name *name;
-static Elm_Map_Track *track;
+static Evas_Object *track;
 static const char **source_names = NULL;
 static Evas_Coord old_x, old_y;
 static Evas_Coord old_d;
@@ -280,13 +280,13 @@ my_map_name_loaded(void *data, Evas_Object *obj __UNUSED__, void *event_info __U
 }
 
 static void
-map_show_seoul(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+map_show_urmatt(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Eina_Bool b = elm_map_paused_get(data);
    elm_map_paused_set(data, EINA_TRUE);
    elm_map_zoom_mode_set(data, ELM_MAP_ZOOM_MODE_MANUAL);
-   elm_map_geo_region_show(data, 126.977969, 37.566535);
-   elm_map_zoom_set(data, 18);
+   elm_map_geo_region_show(data,7.325201, 48.526813);
+   elm_map_zoom_set(data, 12);
    elm_map_paused_set(data, b);
 }
 
@@ -388,7 +388,7 @@ map_track_add(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED
 static void
 map_track_remove(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   elm_map_track_remove(track);
+   elm_map_track_remove(data, track);
 }
 
 static void
@@ -631,7 +631,7 @@ _map_mouse_down(void *data, Evas *evas __UNUSED__, Evas_Object *obj, void *event
         menu = elm_menu_add(obj);
         item = elm_menu_item_add(menu, NULL, NULL, "Source", NULL, NULL);
         _populate(data, item);
-        elm_menu_item_add(menu, NULL, NULL, "Show Seoul", map_show_seoul, data);
+        elm_menu_item_add(menu, NULL, NULL, "Show Urmatt", map_show_urmatt, data);
         elm_menu_item_add(menu, NULL, NULL, "Bring Seoul", map_bring_seoul, data);
         elm_menu_item_add(menu, NULL, NULL, "Paused Set", map_paused_set, data);
         elm_menu_item_add(menu, NULL, NULL, "Paused Unset", map_paused_unset, data);

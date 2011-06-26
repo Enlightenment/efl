@@ -287,28 +287,6 @@ struct _Elm_Map_Name
    Ecore_Event_Handler *handler;
 };
 
-struct _Elm_Map_Track
-{
-   Widget_Data *wd;
-
-#ifdef ELM_EMAP
-   EMap_Route *emap;
-#endif
-
-   int x, y;
-
-   Eina_List *nodes, *path;
-
-   struct {
-      int r;
-      int g;
-      int b;
-      int a;
-   } color;
-
-   Eina_Bool inbound : 1;
-};
-
 struct _Grid_Item
 {
    Widget_Data *wd;
@@ -504,14 +482,6 @@ enum _Zoom_Method
    ZOOM_METHOD_OUT,
    ZOOM_METHOD_LAST
 } Zoom_Mode;
-
-struct _Track_Dump
-{
-   Elm_Map_Track *track;
-   int idx;
-   double lon;
-   double lat;
-};
 
 enum _Track_Xml_Attribute
 {
@@ -834,72 +804,35 @@ track_place(Evas_Object *obj, Grid *g __UNUSED__, Evas_Coord px, Evas_Coord py, 
 #ifdef ELM_EMAP
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
-   Eina_List *lr, *lp, *ln;
-   EMap_Route_Node *n;
-   Evas_Object *p;
-   Elm_Map_Track *t;
-   int nodes;
-   int x, y, rx, ry;
+   Eina_List *l;
+   Evas_Object *route;
+   int xmin, xmax, ymin, ymax;
 
    if (!wd) return;
    Evas_Coord size = pow(2.0, wd->zoom)*wd->tsize;
 
-   EINA_LIST_FOREACH(wd->track, lr, t)
+   EINA_LIST_FOREACH(wd->track, l, route)
      {
-        EINA_LIST_FOREACH(t->path, lp, p)
-          {
-             evas_object_polygon_points_clear(p);
-          }
+        elm_map_utils_convert_geo_into_coord(wd->obj, elm_route_lon_min_get(route), elm_route_lat_max_get(route), size, &xmin, &ymin);
+        elm_map_utils_convert_geo_into_coord(wd->obj, elm_route_lon_max_get(route), elm_route_lat_min_get(route), size, &xmax, &ymax);
 
-        evas_object_geometry_get(wd->rect, &rx, &ry, NULL, NULL);
-        nodes = eina_list_count(emap_route_nodes_get(t->emap));
+        if( !(xmin < px && xmax < px) && !(xmin > px+ow && xmax > px+ow))
+        {
+           if( !(ymin < py && ymax < py) && !(ymin > py+oh && ymax > py+oh))
+           {
+              //display the route
+              evas_object_move(route, xmin - px + ox, ymin - py + oy);
+              evas_object_resize(route, xmax - xmin, ymax - ymin);
 
-        int i = 0;
-        EINA_LIST_FOREACH(emap_route_nodes_get(t->emap), ln, n)
-          {
-             if (t->inbound)
-               {
-                  elm_map_utils_convert_geo_into_coord(wd->obj, emap_route_node_lon_get(n), emap_route_node_lat_get(n), size, &x, &y);
-                  if ((x >= px - ow) && (x <= (px + ow*2)) &&
-                      (y >= py - oh) && (y <= (py + oh*2)))
-                    {
-                       x = x - px + rx;
-                       y = y - py + ry;
+              evas_object_raise(route);
+              obj_rotate_zoom(obj, route);
+              evas_object_show(route);
 
-                       p = eina_list_nth(t->path, i);
-                       if(!p)
-                       {
-                          p = evas_object_line_add(evas_object_evas_get(t->wd->obj));
-                          evas_object_smart_member_add(p, t->wd->pan_smart);
-                          t->path = eina_list_append(t->path, p);
-                       }
-
-                       evas_object_line_xy_set(p, t->x, t->y, x, y);
-
-                       evas_object_color_set(p, t->color.r, t->color.g, t->color.b, t->color.a);
-                       evas_object_raise(p);
-                       obj_rotate_zoom(obj, p);
-                       evas_object_show(p);
-                       t->x = x;
-                       t->y = y;
-                    }
-                  else t->inbound = EINA_FALSE;
-               }
-             else
-               {
-                  elm_map_utils_convert_geo_into_coord(wd->obj, emap_route_node_lon_get(n), emap_route_node_lat_get(n), size, &x, &y);
-                  if ((x >= px - ow) && (x <= (px + ow*2)) &&
-                      (y >= py - oh) && (y <= (py + oh*2)))
-                    {
-                       t->x = x - px + rx;
-                       t->y = y - py + ry;
-                       t->inbound = EINA_TRUE;
-                    }
-                  else t->inbound = EINA_FALSE;
-               }
-             i++;
-          }
-          t->inbound = EINA_FALSE;
+              continue;
+           }
+        }
+        //the route is not display
+        evas_object_hide(route);
      }
 #endif
 }
@@ -2111,7 +2044,7 @@ _del_hook(Evas_Object *obj)
    Ecore_Event_Handler *h;
    Elm_Map_Route *r;
    Elm_Map_Name *na;
-   Elm_Map_Track *t;
+   Evas_Object *route;
 
    if (!wd) return;
    EINA_LIST_FREE(wd->groups_clas, group_clas)
@@ -2174,18 +2107,9 @@ _del_hook(Evas_Object *obj)
           }
      }
 
-   EINA_LIST_FOREACH(wd->track, l, t)
+   EINA_LIST_FREE(wd->track, route)
      {
-        EINA_LIST_FREE(t->path, p)
-          {
-             evas_object_del(p);
-          }
-
-        EINA_LIST_FREE(t->nodes, n)
-          {
-             if (n->pos.address) eina_stringshare_del(n->pos.address);
-             free(n);
-          }
+        evas_object_del(route);
      }
 
    if (wd->map) evas_map_free(wd->map);
@@ -3363,7 +3287,7 @@ elm_map_zoom_set(Evas_Object *obj, int zoom)
    Evas_Coord rx, ry, rw, rh;
    Evas_Object *p;
    Elm_Map_Route *r;
-   Elm_Map_Track *t;
+   Evas_Object *route;
    int z = 0, zoom_changed = 0, started = 0;
 
    if ((!wd) || (!wd->src) || (wd->zoom_animator)) return;
@@ -3392,15 +3316,9 @@ elm_map_zoom_set(Evas_Object *obj, int zoom)
           }
      }
 
-   EINA_LIST_FOREACH(wd->track, l, t)
+   EINA_LIST_FOREACH(wd->track, l, route)
      {
-        if (t)
-          {
-             EINA_LIST_FOREACH(t->path, l, p)
-               {
-                  evas_object_polygon_points_clear(p);
-               }
-          }
+       evas_object_hide(route);
      }
 
    if (wd->mode != ELM_MAP_ZOOM_MODE_MANUAL)
@@ -5264,40 +5182,25 @@ elm_map_wheel_disabled_get(const Evas_Object *obj)
  * @param obj The map object
  * @param emap the emap object
  *
- * @return The Track object
+ * @return The Route object. This is a elm object of type Elm_Route
  *
  * @ingroup Map
  */
-EAPI Elm_Map_Track *
+EAPI Evas_Object *
 elm_map_track_add(Evas_Object *obj, EMap_Route *emap)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd = elm_widget_data_get(obj);
-   FILE *f;
 
    if (!wd) return EINA_FALSE;
 
-   Elm_Map_Track *track = ELM_NEW(Elm_Map_Track);
-   if (!track) return NULL;
-   track->wd = wd;
-   track->inbound = EINA_FALSE;
-   track->color.r = 0;
-   track->color.g = 0;
-   track->color.b = 255;
-   track->color.a = 255;
-   track->emap = emap;
+   Evas_Object *route = elm_route_add(obj);
+   elm_route_emap_set(route, emap);
+   wd->track = eina_list_append(wd->track, route);
 
-   wd->track = eina_list_append(wd->track, track);
-
-   return track;
+   return route;
 }
 
-
-EMap_Route
-*elm_map_track_emap_get(Elm_Map_Track *track)
-{
-   return track->emap;
-}
 #endif
 
 /**
@@ -5309,67 +5212,15 @@ EMap_Route
  */
 
 EAPI void
-elm_map_track_remove(Elm_Map_Track *track)
+elm_map_track_remove(Evas_Object *obj, Evas_Object *route)
 {
-   EINA_SAFETY_ON_NULL_RETURN(track);
+   ELM_CHECK_WIDTYPE(obj, widtype) ;
+   Widget_Data *wd = elm_widget_data_get(obj);
 
-   Path_Node *n;
-   Evas_Object *p;
+   if (!wd) return ;
 
-   EINA_LIST_FREE(track->path, p)
-     {
-        evas_object_del(p);
-     }
-
-   EINA_LIST_FREE(track->nodes, n)
-     {
-        if (n->pos.address) eina_stringshare_del(n->pos.address);
-        free(n);
-     }
-}
-
-/**
- * Set the option used for the background color
- *
- * @param track The track object
- * @param r
- * @param g
- * @param b
- * @param a
- *
- * This sets the color used for the track
- *
- * @ingroup Map
- */
-EAPI void
-elm_map_track_color_set(Elm_Map_Track *track, int r, int g , int b, int a)
-{
-   EINA_SAFETY_ON_NULL_RETURN(track);
-   track->color.r = r;
-   track->color.g = g;
-   track->color.b = b;
-   track->color.a = a;
-}
-
-/**
- * Get the option used for the background color
- *
- * @param track The track object
- * @param r
- * @param g
- * @param b
- * @param a
- *
- * @ingroup Map
- */
-EAPI void
-elm_map_track_color_get(const Elm_Map_Track *track, int *r, int *g , int *b, int *a)
-{
-   EINA_SAFETY_ON_NULL_RETURN(track);
-   if (r) *r = track->color.r;
-   if (g) *g = track->color.g;
-   if (b) *b = track->color.b;
-   if (a) *a = track->color.a;
+   wd->track = eina_list_remove(wd->track, route);
+   evas_object_del(route);
 }
 
 static char *
@@ -5377,7 +5228,7 @@ _mapnik_url_cb(Evas_Object *obj __UNUSED__, int x, int y, int zoom)
 {
    char buf[PATH_MAX];
    snprintf(buf, sizeof(buf), "http://tile.openstreetmap.org/%d/%d/%d.png",
-            zoom, x, y);
+          zoom, x, y);
    return strdup(buf);
 }
 

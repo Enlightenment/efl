@@ -82,6 +82,7 @@ elm_list.c \
 elm_main.c \
 elm_mapbuf.c \
 elm_map.c \
+elm_route.c \
 elm_menu.c \
 elm_module.c \
 elm_notify.c \
