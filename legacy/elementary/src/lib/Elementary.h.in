@@ -3609,7 +3609,7 @@ extern "C" {
              GenlistItemIconGetFunc   icon_get;
              GenlistItemStateGetFunc  state_get;
              GenlistItemDelFunc       del;
-             GenlistItemMovedFunc     moved;
+             GenlistItemMovedFunc     moved; // TODO: do not use this. change this to smart callback.
           } func;
         const char                *mode_item_style;
      };

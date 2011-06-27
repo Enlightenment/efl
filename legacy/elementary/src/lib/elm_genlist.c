@@ -3517,6 +3517,7 @@ _item_move_after(Elm_Genlist_Item *it, Elm_Genlist_Item *after)
    if (after->group_item) it->group_item = after->group_item;
    _item_queue(it->wd, it);
 
+   // TODO: change this to smart callback
    if (it->itc->func.moved)
      it->itc->func.moved(it->base.widget, it, after, EINA_TRUE);
 }
@@ -3536,6 +3537,7 @@ _item_move_before(Elm_Genlist_Item *it, Elm_Genlist_Item *before)
    if (before->group_item) it->group_item = before->group_item;
    _item_queue(it->wd, it);
 
+   // TODO: change this to smart callback
    if (it->itc->func.moved)
      it->itc->func.moved(it->base.widget, it, before, EINA_FALSE);
 }
