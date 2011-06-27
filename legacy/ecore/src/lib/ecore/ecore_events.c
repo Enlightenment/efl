@@ -204,7 +204,7 @@ ecore_event_handler_data_get(Ecore_Event_Handler *eh)
  * which was previously associated with @p eh by ecore_event_handler_add().
  */
 EAPI void *
-ecore_event_handler_data_set(Ecore_Event_Handler *eh, void *data)
+ecore_event_handler_data_set(Ecore_Event_Handler *eh, const void *data)
 {
    void *old;
    if (!ECORE_MAGIC_CHECK(eh, ECORE_MAGIC_EVENT_HANDLER))
@@ -213,7 +213,7 @@ ecore_event_handler_data_set(Ecore_Event_Handler *eh, void *data)
         return NULL;
      }
    old = eh->data;
-   eh->data = data;
+   eh->data = (void *)data;
    return old;
 }
 

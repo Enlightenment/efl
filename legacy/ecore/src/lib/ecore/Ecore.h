@@ -641,7 +641,7 @@ extern "C" {
    EAPI Ecore_Event         *ecore_event_add(int type, void *ev, Ecore_End_Cb func_free, void *data);
    EAPI void                *ecore_event_del(Ecore_Event *event);
    EAPI void                *ecore_event_handler_data_get(Ecore_Event_Handler *eh);
-   EAPI void                *ecore_event_handler_data_set(Ecore_Event_Handler *eh, void *data);
+   EAPI void                *ecore_event_handler_data_set(Ecore_Event_Handler *eh, const void *data);
    EAPI int                  ecore_event_type_new(void);
    EAPI Ecore_Event_Filter  *ecore_event_filter_add(Ecore_Data_Cb func_start, Ecore_Filter_Cb func_filter, Ecore_End_Cb func_end, const void *data);
    EAPI void                *ecore_event_filter_del(Ecore_Event_Filter *ef);
