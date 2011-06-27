@@ -47,12 +47,13 @@ static void _mirrored_set(Evas_Object *obj, Eina_Bool rtl);
 static void _theme_hook(Evas_Object *obj);
 static void _sizing_eval(Evas_Object *obj);
 static void _clear_route(Evas_Object *obj);
+#ifdef ELM_EMAP
 static void _update_lon_lat_min_max(Evas_Object *obj, double lon, double lat);
+#endif
 
 static void
 _del_hook(Evas_Object *obj)
 {
-   Evas_Object *segment;
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
 
@@ -68,7 +69,7 @@ _resize_cb(void *data __UNUSED__ , Evas *e __UNUSED__, Evas_Object *obj, void *e
 }
 
 static void
-_mirrored_set(Evas_Object *obj, Eina_Bool rtl)
+_mirrored_set(Evas_Object *obj, Eina_Bool rtl __UNUSED__)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
@@ -139,6 +140,7 @@ _clear_route(Evas_Object *obj)
      }
 }
 
+#ifdef ELM_EMAP
 static void
 _update_lon_lat_min_max(Evas_Object *obj, double lon, double lat)
 {
@@ -166,6 +168,7 @@ _update_lon_lat_min_max(Evas_Object *obj, double lon, double lat)
         wd->must_calc_segments = EINA_TRUE;
      }
 }
+#endif
 
 /**
  * Add a new route to the parent
@@ -181,7 +184,6 @@ elm_route_add(Evas_Object *parent)
    Evas_Object *obj;
    Evas *e;
    Widget_Data *wd;
-   Evas_Object *icon;
 
    ELM_WIDGET_STANDARD_SETUP(wd, Widget_Data, parent, e, obj, NULL);
 
