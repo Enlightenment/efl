@@ -28,7 +28,8 @@ SRCS = \
 	eina_log_03.c \
 	eina_inlist_01.c \
 	eina_inlist_02.c \
-	eina_inlist_03.c
+	eina_inlist_03.c \
+	eina_str_01.c
 
 pkglib_PROGRAMS =
 
@@ -56,6 +57,7 @@ pkglib_PROGRAMS += \
 	eina_log_03 \
 	eina_inlist_01 \
 	eina_inlist_02 \
-	eina_inlist_03
+	eina_inlist_03 \
+	eina_str_01
 endif
 

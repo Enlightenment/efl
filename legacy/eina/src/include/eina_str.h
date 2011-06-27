@@ -7,6 +7,52 @@
 #include "eina_types.h"
 
 /**
+ * @page tutorial_eina_string Eina String example
+ * @dontinclude eina_str_01.c
+ *
+ * Whenever using eina we need to include it:
+ * @skipline #include
+ * @line #include
+ *
+ * In our main function we declare(and initialize) some variables and initialize
+ * eina:
+ * @until eina_init
+ *
+ * It's frequentely nescessary to split a string into it's constituent parts,
+ * eina_str_split() make's it easy to do so:
+ * @until printf
+ *
+ * Another common need is to make a string uppercase or lowercase, so let's
+ * create a string and make it uppercase and then make it lowercase again:
+ * @until printf
+ * @until printf
+ *
+ * Next we use eina to check if our @p names string starts or ends with some
+ * values:
+ * @until Has
+ *
+ * When strings will be used in a terminal(or a number of other places) it
+ * nescessary to escape certain characters that appear in them:
+ * @until printf
+ *
+ * Much as we previously split a string we will now join two strings:
+ * @until printf
+ *
+ * With strlcpy() we can copy what portion of the @p prologue fits in @p str and
+ * be sure that it's still NULL terminated:
+ * @until printf
+ *
+ * Since we are done with @p prologue and @p str we should free them:
+ * @until free(str
+ *
+ * Finally we see strlcat in action:
+ * @until printf("
+ *
+ * And then shut eina down and exit:
+ * @until }
+ * @example eina_str_01.c
+ */
+/**
  * @addtogroup Eina_String_Group String
  *
  * @brief These functions provide useful C string management.
@@ -16,6 +62,8 @@
 
 /**
  * @addtogroup Eina_Tools_Group Tools
+ *
+ * For more information refer to the @ref tutorial_eina_string "string example".
  *
  * @{
  */
