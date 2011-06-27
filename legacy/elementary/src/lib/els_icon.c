@@ -446,10 +446,11 @@ _smart_reconfigure(Smart_Data *sd)
         if (iw < 1) iw = 1;
         if (ih < 1) ih = 1;
 
+        w = sd->w;
+        h = ((double)ih * w) / (double)iw;
+
         if (sd->fill_inside)
           {
-             w = sd->w;
-             h = ((double)ih * w) / (double)iw;
              if (h > sd->h)
                {
                   h = sd->h;
@@ -458,8 +459,6 @@ _smart_reconfigure(Smart_Data *sd)
           }
         else
           {
-             w = sd->w;
-             h = ((double)ih * w) / (double)iw;
              if (h < sd->h)
                {
                   h = sd->h;
