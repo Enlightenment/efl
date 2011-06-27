@@ -485,13 +485,57 @@ evas_object_polygon_was_opaque(Evas_Object *obj __UNUSED__)
    return 0;
 }
 
+/* We count the number of edges a "ray" 90 degs upwards from our point
+ * intersects with. If it's even, we are outside of the polygon, if it's odd,
+ * we are inside of it. */
 static int
-evas_object_polygon_is_inside(Evas_Object *obj __UNUSED__, Evas_Coord x __UNUSED__, Evas_Coord y __UNUSED__)
+evas_object_polygon_is_inside(Evas_Object *obj, Evas_Coord x, Evas_Coord y)
 {
-   /* this returns 1 if the canvas co-ordinates are inside the object based */
-   /* on object private data. not much use for rects, but for polys, images */
-   /* and other complex objects it might be */
-   return 1;
+   Evas_Object_Polygon *o;
+   int num_edges = 0; /* Number of edges we crossed */
+   Eina_List *itr;
+   Evas_Polygon_Point *p;
+
+   o = (Evas_Object_Polygon *)(obj->object_data);
+   if (!o) return 0;
+   if (!o->points) return 0;
+
+   /* Adjust X and Y according to current geometry */
+   x -= obj->cur.geometry.x;
+   y -= obj->cur.geometry.y;
+
+   if (eina_list_count(o->points) == 1)
+     {
+        p = eina_list_data_get(o->points);
+        return ((p->x == x) && (p->y == y));
+     }
+
+   EINA_LIST_FOREACH(o->points, itr, p)
+     {
+        Evas_Coord line_y;
+        Eina_List *next = eina_list_next(itr);
+        Evas_Polygon_Point *p_next;
+        /* Get the next, or if there's no next, take the first */
+        if (next)
+          {
+             p_next = eina_list_data_get(next);
+          }
+        else
+          {
+             p_next = eina_list_data_get(o->points);
+          }
+
+        line_y = ((double) (p->y - p_next->y) / (double) (p->x - p_next->x)) *
+           (x - p_next->x) + p_next->y;
+        /* We crossed that edge if the line is directly above us */
+        if ((line_y < y) &&
+              (((p->x < p_next->x) && (p->x <= x) && (x <= p_next->x)) ||
+               ((p->x > p_next->x) && (p_next->x <= x) && (x <= p->x))))
+           num_edges++;
+     }
+
+   /* Return true if num_edges is odd */
+   return ((num_edges % 2) == 1);
 }
 
 static int
