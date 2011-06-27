@@ -101,9 +101,9 @@ static void *_ecore_event_del(Ecore_Event *event);
  * provided in this call as the @p data parameter.
  *
  * When the callback @p func is called, it must return 1 or 0. If it returns
- * 1 (or ECORE_CALLBACK_RENEW), It will keep being called as per normal, for
+ * 1 (or ECORE_CALLBACK_PASS_ON), It will keep being called as per normal, for
  * each handler set up for that event type. If it returns 0 (or
- * ECORE_CALLBACK_CANCEL), it will cease processing handlers for that particular
+ * ECORE_CALLBACK_DONE), it will cease processing handlers for that particular
  * event, so all handler set to handle that event type that have not already
  * been called, will not be.
  */
@@ -179,7 +179,9 @@ ecore_event_handler_del(Ecore_Event_Handler *event_handler)
  * @brief Get the data associated with an #Ecore_Event_Handler
  * @param eh The event handler
  * @return The data
- * This function returns the data previously associated with @p eh.
+ *
+ * This function returns the data previously associated with @p eh by
+ * ecore_event_handler_add().
  */
 EAPI void *
 ecore_event_handler_data_get(Ecore_Event_Handler *eh)
@@ -197,8 +199,9 @@ ecore_event_handler_data_get(Ecore_Event_Handler *eh)
  * @param eh The event handler
  * @param data The data to associate
  * @return The previous data
+ *
  * This function sets @p data to @p eh and returns the old data pointer
- * which was previously associated with @p eh.
+ * which was previously associated with @p eh by ecore_event_handler_add().
  */
 EAPI void *
 ecore_event_handler_data_set(Ecore_Event_Handler *eh, void *data)

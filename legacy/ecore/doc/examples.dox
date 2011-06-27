@@ -5,6 +5,8 @@
  *
  * @li @ref ecore_time_example_c
  * @li @ref ecore_idler_example_c
+ * @li @ref ecore_job_example_c
+ * @li @ref ecore_event_example_c
  *
  */
 
@@ -114,6 +116,108 @@
  */
 
 /**
+ * @page ecore_event_example_c ecore events and handlers - Setup and use
+ * This example shows how to create a new type of event, setup some event
+ * handlers to it, fire the event and have the callbacks called. After
+ * finishing, we delete the event handlers so no memory will leak.
+ *
+ * See the full source code for this example @ref ecore_event_example.c "here".
+ *
+ * Let's start the example from the beginning:
+ *
+ * @dontinclude ecore_event_example.c
+ * @until _event_type
+ *
+ * First thing is to declare a struct that will be passed as context to the
+ * event handlers. In this structure we will store the event handler pointers,
+ * and two strings that will be used by the first event handler. We also will
+ * use a global integer to store the event type used for our event. It is
+ * initialized with 0 in the beginning because the event wasn't created yet.
+ * Later, in the main function we will use ecore_event_type_new() to associate
+ * another value to it. Now the event handler callbacks:
+ *
+ * @until }
+ *
+ * This is the first event handler callback. It prints the event data received
+ * by the event, and the data passed to this handler when it was added.  Notice
+ * that this callback already knows that the event data is an integer pointer,
+ * and that the handler data is a string. It knows about the first one because
+ * this is based on the type of event that is going to be handled, and the
+ * second because it was passed to the ecore_event_handler_add() function when
+ * registering the event handler.
+ *
+ * Another interesting point about this callback is that it returns @ref
+ * ECORE_CALLBACK_DONE (0) if the event data is even, swallowing the event and
+ * don't allowing any other callback to be called after this one for this event.
+ * Otherwise it returns @ref ECORE_CALLBACK_PASS_ON, allowing the event to be
+ * handled by other event handlers registered for this event. This makes the
+ * second event handler be called just for "odd" events.
+ *
+ * @until ECORE_CALLBACK_DONE
+ * @until }
+ *
+ * The second event handler will check if the event data is equal to 5, and if
+ * that's the case, it will change the event handler data of the first event
+ * handler to another string. Then it checks if the event data is higher than
+ * 10, and if so, it will request the main loop to quit.
+ *
+ * An interesting point of this example is that although the second event
+ * handler requests the main loop to finish after the 11th event being received,
+ * it will process all the events that were already fired, and call their
+ * respective event handlers, before the main loop stops. If we didn't want
+ * these event handlers to be called after the 11th event, we would need to
+ * unregister them with ecore_event_handler_del() at this point.
+ *
+ * Now some basic initialization of the context, and the Ecore library itself:
+ *
+ * @until type_new
+ *
+ * This last line is interesting. It creates a new type of event and returns a
+ * unique ID for this event inside Ecore. This ID can be used anywhere else in
+ * your program to reference this specific type of event, and to add callbacks
+ * to it.
+ *
+ * It's common if you are implementing a library that declares new types of
+ * events to export their respective types as extern in the header files. This
+ * way, when the library is initialized and the new type is created, it will be
+ * available through the header file to an application using it add some
+ * callbacks to it. Since our example is self-contained, we are just putting it
+ * as a global variable.
+ *
+ * Now we add some callbacks:
+ *
+ * @until ctxt);
+ *
+ * This is very simple. Just need to call ecore_event_handler_add() with the
+ * respective event type, the callback function to be called, and a data pointer
+ * that will be passed to the callback when it is called by the event.
+ *
+ * Then we start firing events:
+ *
+ * @until }
+ *
+ * This @c for will fire 16 events of this type. Notice that the events will be
+ * fired consecutively, but any callback will be called yet. They are just
+ * called by the main loop, and since it wasn't even started, nothing happens
+ * yet. For each event fired, we allocate an integer that will hold the number
+ * of the event (we are arbitrarily creating these numbers just for
+ * demonstration purposes). It's up to the event creator to decide which type of
+ * information it wants to give to the event handler, and the event handler must
+ * know what is the event info structure for that type of event.
+ *
+ * Since we are not allocating any complex structure, just a simple integer, we
+ * don't need to pass any special free function to ecore_event_add(), and it
+ * will use a simple @c free on our data. That's the default behavior.
+ *
+ * Now finishing our example:
+ *
+ * @until }
+ *
+ * We just start the main loop and watch things happen, waiting to shutdown
+ * Ecore when the main loop exits and return.
+ */
+
+/**
  * @example ecore_idler_example.c
  * This example shows when @ref Ecore_Idler, @ref Ecore_Idle_Enterer and @ref
  * Ecore_Idle_Exiter are called. See
@@ -130,6 +234,12 @@
  * @example ecore_time_example.c
  * Shows the difference between the three time functions. See @ref
  * ecore_time_example_c "the example explained".
+ */
+
+/**
+ * @example ecore_event_example.c
+ * This example shows how to setup, change, and delete event handlers. See
+ * @ref ecore_event_example_c "the explanation here".
  */
 
 /**
