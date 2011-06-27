@@ -22,5 +22,5 @@ void         _els_smart_icon_edit_set         (Evas_Object *obj, Eina_Bool, Evas
 Eina_Bool    _els_smart_icon_edit_get         (const Evas_Object *obj);
 Evas_Object *_els_smart_icon_edje_get(Evas_Object *obj);
 void         _els_smart_icon_aspect_ratio_retained_set(Evas_Object *obj, Eina_Bool retained);
-Eina_Bool _els_smart_icon_aspect_ratio_retained_get(const Evas_Object *obj);
+Eina_Bool    _els_smart_icon_aspect_ratio_retained_get(const Evas_Object *obj);
 
