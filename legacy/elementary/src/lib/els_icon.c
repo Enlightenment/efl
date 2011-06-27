@@ -16,6 +16,7 @@ struct _Smart_Data
    Eina_Bool show : 1;
    Eina_Bool edit : 1;
    Eina_Bool edje : 1;
+   Eina_Bool aspect_ratio_retained: 1;
    Elm_Image_Orient orient;
 };
 
@@ -418,6 +419,30 @@ _els_smart_icon_edje_get(Evas_Object *obj)
    return sd->obj;
 }
 
+void
+_els_smart_icon_aspect_ratio_retained_set(Evas_Object *obj, Eina_Bool retained)
+{
+   Smart_Data *sd;
+
+   sd = evas_object_smart_data_get(obj);
+   if (!sd) return;
+
+   retained = !!retained;
+   if (sd->aspect_ratio_retained == retained) return;
+   sd->aspect_ratio_retained = retained;
+   _smart_reconfigure(sd);
+}
+
+Eina_Bool
+_els_smart_icon_aspect_ratio_retained_get(const Evas_Object *obj)
+{
+   Smart_Data *sd;
+
+   sd = evas_object_smart_data_get(obj);
+   if (!sd) return EINA_FALSE;
+   return sd->aspect_ratio_retained;
+}
+
 /* local subsystem globals */
 static void
 _smart_reconfigure(Smart_Data *sd)
@@ -425,10 +450,12 @@ _smart_reconfigure(Smart_Data *sd)
    Evas_Coord x, y, w, h;
 
    if (!sd->obj) return;
+
+   w = sd->w;
+   h = sd->h;
+
    if (!strcmp(evas_object_type_get(sd->obj), "edje"))
      {
-        w = sd->w;
-        h = sd->h;
         x = sd->x;
         y = sd->y;
         evas_object_move(sd->obj, x, y);
@@ -446,40 +473,35 @@ _smart_reconfigure(Smart_Data *sd)
         if (iw < 1) iw = 1;
         if (ih < 1) ih = 1;
 
-        w = sd->w;
-        h = ((double)ih * w) / (double)iw;
-
-        if (sd->fill_inside)
+        if (sd->aspect_ratio_retained)
           {
-             if (h > sd->h)
+             h = ((double)ih * w) / (double)iw;
+             if (sd->fill_inside)
                {
-                  h = sd->h;
-                  w = ((double)iw * h) / (double)ih;
+                  if (h > sd->h)
+                    {
+                       h = sd->h;
+                       w = ((double)iw * h) / (double)ih;
+                    }
                }
-          }
-        else
-          {
-             if (h < sd->h)
+             else
                {
-                  h = sd->h;
-                  w = ((double)iw * h) / (double)ih;
+                  if (h < sd->h)
+                    {
+                       h = sd->h;
+                       w = ((double)iw * h) / (double)ih;
+                    }
                }
           }
         if (!sd->scale_up)
           {
-             if ((w > iw) || (h > ih))
-               {
-                  w = iw;
-                  h = ih;
-               }
+             if (w > iw) w = iw;
+             if (h > ih) h = ih;
           }
         if (!sd->scale_down)
           {
-             if ((w < iw) || (h < ih))
-               {
-                  w = iw;
-                  h = ih;
-               }
+             if (w < iw) w = iw;
+             if (h < ih) h = ih;
           }
         x = sd->x + ((sd->w - w) / 2);
         y = sd->y + ((sd->h - h) / 2);
@@ -535,6 +557,7 @@ _smart_add(Evas_Object *obj)
    sd->fill_inside = EINA_TRUE;
    sd->scale_up = EINA_TRUE;
    sd->scale_down = EINA_TRUE;
+   sd->aspect_ratio_retained = EINA_TRUE;
    sd->size = 64;
    sd->scale = 1.0;
    evas_object_smart_member_add(sd->obj, obj);
