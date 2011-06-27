@@ -142,7 +142,8 @@ _del_hook(Evas_Object *obj)
    if (!wd) return;
 
 #ifdef HAVE_EIO
-   eio_file_cancel(wd->current);
+   if (wd->current)
+     eio_file_cancel(wd->current);
 #endif
 
    wd->files_list = NULL;
@@ -649,7 +650,11 @@ _main_cb(void *data, Eio_File *handler, const Eina_File_Direct_Info *info __UNUS
 
    if (eio_file_check(handler))
      return ;
-   if (!wr->wd->files_list || !wr->wd->files_grid) return ;
+   if (!wr->wd->files_list || !wr->wd->files_grid || wr->wd->current != handler)
+     {
+        eio_file_cancel(handler);
+        return ;
+     }
 
    _signal_first(wr);
 
