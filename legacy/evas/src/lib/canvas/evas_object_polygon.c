@@ -525,13 +525,18 @@ evas_object_polygon_is_inside(Evas_Object *obj, Evas_Coord x, Evas_Coord y)
              p_next = eina_list_data_get(o->points);
           }
 
-        line_y = ((double) (p->y - p_next->y) / (double) (p->x - p_next->x)) *
-           (x - p_next->x) + p_next->y;
-        /* We crossed that edge if the line is directly above us */
-        if ((line_y < y) &&
-              (((p->x < p_next->x) && (p->x <= x) && (x <= p_next->x)) ||
-               ((p->x > p_next->x) && (p_next->x <= x) && (x <= p->x))))
-           num_edges++;
+        /* This only works if this condition is true */
+        if ((x != p_next->x) && (p->x != p_next->x))
+          {
+             line_y = ((double) (p->y - p_next->y) /
+                   (double) (p->x - p_next->x)) *
+                (x - p_next->x) + p_next->y;
+             /* We crossed that edge if the line is directly above us */
+             if ((line_y < y) &&
+                   (((p->x < p_next->x) && (p->x <= x) && (x <= p_next->x)) ||
+                    ((p->x > p_next->x) && (p_next->x <= x) && (x <= p->x))))
+                num_edges++;
+          }
      }
 
    /* Return true if num_edges is odd */
