@@ -603,6 +603,13 @@ eng_output_redraws_next_update_get(void *data, int *x, int *y, int *w, int *h, i
    if (cy) *cy = re->win->draw.y1;
    if (cw) *cw = re->win->draw.x2 - re->win->draw.x1 + 1;
    if (ch) *ch = re->win->draw.y2 - re->win->draw.y1 + 1;
+
+   if (re->win->alpha)
+     {
+        glClearColor(0.0, 0.0, 0.0, 0.0);
+        glClear(GL_COLOR_BUFFER_BIT);
+     }
+   
    return re->win->gl_context->def_surface;
 }
 
@@ -798,12 +805,6 @@ eng_output_flush(void *data)
         re->info->callback.post_swap(re->info->callback.data, re->evas);
      }
 #endif
-
-   if (re->win->alpha)
-     {
-        glClearColor(0.0, 0.0, 0.0, 0.0);
-        glClear(GL_COLOR_BUFFER_BIT);
-     }
 }
 
 static void
