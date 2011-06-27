@@ -509,4 +509,4 @@ elm_image_object_get(const Evas_Object *obj)
    return _els_smart_icon_object_get(wd->img);
 }
 
-/* vim:set ts=8 sw=3 sts=3 expandtab cino=>5n-2f0^-2{2(0W1st0 :*/
+/* vim:set ts=8 sw=3 sts=3 expandtab cino=>5n-3f0^-2{2(0W1st0 :*/

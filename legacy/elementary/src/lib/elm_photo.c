@@ -361,4 +361,4 @@ elm_photo_editable_set(Evas_Object *obj, Eina_Bool set)
    _els_smart_icon_edit_set(wd->img, set, obj);
 }
 
-/* vim:set ts=8 sw=3 sts=3 expandtab cino=>5n-2f0^-2{2(0W1st0 :*/
+/* vim:set ts=8 sw=3 sts=3 expandtab cino=>5n-3f0^-2{2(0W1st0 :*/

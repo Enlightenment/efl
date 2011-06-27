@@ -726,4 +726,4 @@ _els_smart_icon_dropcb(void *elmobj,Evas_Object *obj, Elm_Selection_Data *drop)
 
    return EINA_TRUE;
 }
-/* vim:set ts=8 sw=3 sts=3 expandtab cino=>5n-2f0^-2{2(0W1st0 :*/
+/* vim:set ts=8 sw=3 sts=3 expandtab cino=>5n-3f0^-2{2(0W1st0 :*/

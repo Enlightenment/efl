@@ -295,4 +295,4 @@ elm_route_lat_max_get(Evas_Object *obj)
    return wd->lat_max;
 }
 
-/* vim:set ts=8 sw=3 sts=3 expandtab cino=>5n-2f0^-2{2(0W1st0 :*/
+/* vim:set ts=8 sw=3 sts=3 expandtab cino=>5n-3f0^-2{2(0W1st0 :*/
