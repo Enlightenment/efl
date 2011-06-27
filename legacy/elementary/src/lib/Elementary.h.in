@@ -1858,6 +1858,9 @@ extern "C" {
    EAPI void             elm_image_editable_set(Evas_Object *obj, Eina_Bool set) EINA_ARG_NONNULL(1);
    EAPI Eina_Bool        elm_image_editable_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
    EAPI Evas_Object     *elm_image_object_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+   EAPI void             elm_image_aspect_ratio_retained_set(Evas_Object *obj, Eina_Bool retained) EINA_ARG_NONNULL(1);
+   EAPI Eina_Bool        elm_image_aspect_ratio_retained_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+
    /* smart callbacks called:
     * "clicked" - the user clicked the image
     */
