@@ -801,6 +801,81 @@
  * @example theme_example_02.c
  */
 
+ /**
+  * @page button_example_01 Button - Complete example
+  *
+  * @dontinclude button_example_01.c
+  *
+  * A button is simple, you click on it and something happens. That said,
+  * we'll go through an example to show in detail the button API less
+  * commonly used.
+  *
+  * In the end, we'll be presented with something that looks like this:
+  * @image html screenshots/button_01.png
+  * @image latex screenshots/button_01.eps
+  *
+  * The full code of the example is @ref button_example_01.c "here" and we
+  * will follow here with a rundown of it.
+  *
+  * @skip Elementary.h
+  * @until Elementary.h
+  * @skip struct
+  * @until App_Data
+  *
+  * We have several buttons to set different times for the autorepeat timeouts
+  * of the buttons that use it and a few more that we keep track of in our
+  * data struct. The mid button doesn't do much, just moves around according
+  * to what other buttons the user presses. Then four more buttons to move the
+  * central one, and we're also keeping track of the icon set in the middle
+  * button, since when this one moves, we change the icon, and when movement
+  * is finished (by releasing one of the four arrow buttons), we set back the
+  * normal icon.
+  * @skip static void
+  * @until }
+  *
+  * Keeping any of those four buttons pressed will trigger their autorepeat
+  * callback, where we move the button doing some size hint magic. To
+  * understand how that works better, refer to the @ref Box documentation.
+  * Also, the first time the function is called, we change the icon in the
+  * middle button, using elm_button_icon_unset() first to keep the reference
+  * to the previous one, so we don't need to recreate it when we are done
+  * moving it.
+  * @skip static void
+  * @until }
+  * @until size_hint_align_set
+  * @until }
+  *
+  * One more callback for the option buttons, that just sets the timeouts for
+  * the different autorepeat options.
+  *
+  * @skip static void
+  * @until }
+  * @until }
+  * @until }
+  *
+  * And the main function, which does some setting up of the buttons in boxes
+  * to make things work. Here we'll go through some snippets only.
+  *
+  * For the option buttons, it's just the button with its label and callback.
+  * @skip elm_button_add
+  * @until smart_callback_add
+  *
+  * For the ones that move the central button, we have no labels. There are
+  * icons instead, and the autorepeat option is toggled.
+  * @skip Gap: 1.0
+  * @skip elm_button_add
+  * @until data.cursors.up
+  *
+  * And just to show the mid button, which doesn't have anything special.
+  * @skip data.cursors.left
+  * @skip elm_button_add
+  * @until data.mid
+  *
+  * And we are done.
+  *
+  * @example button_example_01.c
+  */
+
 /**
  * @page bg_example_01_c bg_example_01.c
  * @include bg_example_01.c

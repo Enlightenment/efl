@@ -1,19 +1,6 @@
 #include <Elementary.h>
 #include "elm_priv.h"
 
-/**
- * @defgroup Button Button
- *
- * This is a push-button. Press it and run some function. It can contain
- * a simple label and icon object.
- *
- * Signals that you can add callbacks for are:
- *
- * "clicked" - the user clicked the button
- * "repeated" - the user pressed the button without releasing it
- * "unpressed" - when the button is unpressed (released)
- */
-
 typedef struct _Widget_Data Widget_Data;
 
 struct _Widget_Data
@@ -298,13 +285,6 @@ _signal_unpressed(void *data, Evas_Object *obj __UNUSED__, const char *emission 
    evas_object_smart_callback_call(data, SIG_UNPRESSED, NULL);
 }
 
-/**
- * Add a new button to the parent
- * @param parent The parent object
- * @return The new object or NULL if it cannot be created
- *
- * @ingroup Button
- */
 EAPI Evas_Object *
 elm_button_add(Evas_Object *parent)
 {
@@ -349,14 +329,6 @@ elm_button_add(Evas_Object *parent)
    return obj;
 }
 
-/**
- * Set the label used in the button
- *
- * @param obj The button object
- * @param label The text will be written on the button
- *
- * @ingroup Button
- */
 EAPI void
 elm_button_label_set(Evas_Object *obj, const char *label)
 {
@@ -382,18 +354,6 @@ elm_button_label_get(const Evas_Object *obj)
    return wd->label;
 }
 
-/**
- * Set the icon used for the button
- *
- * Once the icon object is set, a previously set one will be deleted
- * If you want to keep that old content object, use the
- * elm_button_icon_unset() function.
- *
- * @param obj The button object
- * @param icon The icon object for the button
- *
- * @ingroup Button
- */
 EAPI void
 elm_button_icon_set(Evas_Object *obj, Evas_Object *icon)
 {
@@ -415,16 +375,6 @@ elm_button_icon_set(Evas_Object *obj, Evas_Object *icon)
    _sizing_eval(obj);
 }
 
-/**
- * Get the icon used for the button
- *
- * Return the icon object which is set for this widget.
- *
- * @param obj The button object
- * @return The icon object that is being used
- *
- * @ingroup Button
- */
 EAPI Evas_Object *
 elm_button_icon_get(const Evas_Object *obj)
 {
@@ -434,16 +384,6 @@ elm_button_icon_get(const Evas_Object *obj)
    return wd->icon;
 }
 
-/**
- * Unset the icon used for the button
- *
- * Unparent and return the icon object which was set for this widget.
- *
- * @param obj The button object
- * @return The icon object that was being used
- *
- * @ingroup Button
- */
 EAPI Evas_Object *
 elm_button_icon_unset(Evas_Object *obj)
 {
@@ -458,14 +398,6 @@ elm_button_icon_unset(Evas_Object *obj)
    return icon;
 }
 
-/**
- * Turn on/off the autorepeat event generated when the user keeps pressing on the button
- *
- * @param obj The button object
- * @param on  A bool to turn on/off the event
- *
- * @ingroup Button
- */
 EAPI void
 elm_button_autorepeat_set(Evas_Object *obj, Eina_Bool on)
 {
@@ -481,14 +413,6 @@ elm_button_autorepeat_set(Evas_Object *obj, Eina_Bool on)
    wd->repeating = EINA_FALSE;
 }
 
-/**
- * Get if autorepeat event is on
- *
- * @param obj The button object
- * @return If autorepeat is on
- *
- * @ingroup Button
- */
 EAPI Eina_Bool
 elm_button_autorepeat_get(const Evas_Object *obj)
 {
@@ -498,14 +422,6 @@ elm_button_autorepeat_get(const Evas_Object *obj)
    return wd->autorepeat;
 }
 
-/**
- * Set the initial timeout before the autorepeat event is generated
- *
- * @param obj The button object
- * @param t   Timeout
- *
- * @ingroup Button
- */
 EAPI void
 elm_button_autorepeat_initial_timeout_set(Evas_Object *obj, double t)
 {
@@ -521,14 +437,6 @@ elm_button_autorepeat_initial_timeout_set(Evas_Object *obj, double t)
    wd->ar_threshold = t;
 }
 
-/**
- * Get the initial timeout before the autorepeat event is generated
- *
- * @param obj The button object
- * @return Timeout
- *
- * @ingroup Button
- */
 EAPI double
 elm_button_autorepeat_initial_timeout_get(const Evas_Object *obj)
 {
@@ -538,14 +446,6 @@ elm_button_autorepeat_initial_timeout_get(const Evas_Object *obj)
    return wd->ar_threshold;
 }
 
-/**
- * Set the interval between each generated autorepeat event
- *
- * @param obj The button object
- * @param t   Interval
- *
- * @ingroup Button
- */
 EAPI void
 elm_button_autorepeat_gap_timeout_set(Evas_Object *obj, double t)
 {
@@ -558,14 +458,6 @@ elm_button_autorepeat_gap_timeout_set(Evas_Object *obj, double t)
    if ((wd->repeating) && (wd->timer)) ecore_timer_interval_set(wd->timer, t);
 }
 
-/**
- * Get the interval between each generated autorepeat event
- *
- * @param obj The button object
- * @return Interval
- *
- * @ingroup Button
- */
 EAPI double
 elm_button_autorepeat_gap_timeout_get(const Evas_Object *obj)
 {
