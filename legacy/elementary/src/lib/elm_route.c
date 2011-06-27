@@ -79,7 +79,7 @@ _theme_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
-  //TODO
+   //TODO
    _sizing_eval(obj);
 }
 
@@ -95,25 +95,25 @@ _sizing_eval(Evas_Object *obj)
    evas_object_geometry_get(obj, &x, &y, &w, &h);
 
    EINA_LIST_FOREACH(wd->segments, l, segment)
-   {
-      if(wd->must_calc_segments || segment->must_calc)
-      {
+     {
+        if(wd->must_calc_segments || segment->must_calc)
+          {
 
 #ifdef ELM_EMAP
-         segment->start_x = (emap_route_node_lon_get(segment->node_start)- wd->lon_min) / (float)(wd->lon_max - wd->lon_min);
-         segment->start_y = 1 - (emap_route_node_lat_get(segment->node_start) - wd->lat_min) / (float)(wd->lat_max - wd->lat_min);
-         segment->end_x = (emap_route_node_lon_get(segment->node_end) - wd->lon_min) / (float)(wd->lon_max - wd->lon_min);
-         segment->end_y = 1 - (emap_route_node_lat_get(segment->node_end) - wd->lat_min) / (float)(wd->lat_max - wd->lat_min);
+             segment->start_x = (emap_route_node_lon_get(segment->node_start)- wd->lon_min) / (float)(wd->lon_max - wd->lon_min);
+             segment->start_y = 1 - (emap_route_node_lat_get(segment->node_start) - wd->lat_min) / (float)(wd->lat_max - wd->lat_min);
+             segment->end_x = (emap_route_node_lon_get(segment->node_end) - wd->lon_min) / (float)(wd->lon_max - wd->lon_min);
+             segment->end_y = 1 - (emap_route_node_lat_get(segment->node_end) - wd->lat_min) / (float)(wd->lat_max - wd->lat_min);
 #endif
-         segment->must_calc = EINA_FALSE;
-      }
+             segment->must_calc = EINA_FALSE;
+          }
 
-      start_x = x+(int)(segment->start_x*w);
-      start_y = y+(int)(segment->start_y*h);
-      end_x = x+(int)(segment->end_x*w);
-      end_y = y+(int)(segment->end_y*h);
-      evas_object_line_xy_set(segment->obj, start_x, start_y, end_x, end_y);
-   }
+        start_x = x+(int)(segment->start_x*w);
+        start_y = y+(int)(segment->start_y*h);
+        end_x = x+(int)(segment->end_x*w);
+        end_y = y+(int)(segment->end_y*h);
+        evas_object_line_xy_set(segment->obj, start_x, start_y, end_x, end_y);
+     }
 
    wd->must_calc_segments = EINA_FALSE;
 }
@@ -133,10 +133,10 @@ _clear_route(Evas_Object *obj)
 #endif
 
    EINA_LIST_FREE(wd->segments, segment)
-   {
-      evas_object_del(segment->obj);
-      free(segment);
-   }
+     {
+        evas_object_del(segment->obj);
+        free(segment);
+     }
 }
 
 static void
@@ -145,26 +145,26 @@ _update_lon_lat_min_max(Evas_Object *obj, double lon, double lat)
    Widget_Data *wd = elm_widget_data_get(obj);
 
    if(wd->lon_min > lon)
-   {
-      wd->lon_min = lon;
-      wd->must_calc_segments = EINA_TRUE;
-   }
+     {
+        wd->lon_min = lon;
+        wd->must_calc_segments = EINA_TRUE;
+     }
    if(wd->lat_min > lat)
-   {
-      wd->lat_min = lat;
-      wd->must_calc_segments = EINA_TRUE;
-   }
+     {
+        wd->lat_min = lat;
+        wd->must_calc_segments = EINA_TRUE;
+     }
 
    if(wd->lon_max < lon)
-   {
-      wd->lon_max = lon;
-      wd->must_calc_segments = EINA_TRUE;
-   }
+     {
+        wd->lon_max = lon;
+        wd->must_calc_segments = EINA_TRUE;
+     }
    if(wd->lat_max < lat)
-   {
-      wd->lat_max = lat;
-      wd->must_calc_segments = EINA_TRUE;
-   }
+     {
+        wd->lat_max = lat;
+        wd->must_calc_segments = EINA_TRUE;
+     }
 }
 
 /**
@@ -237,27 +237,27 @@ elm_route_emap_set(Evas_Object *obj, EMap_Route *emap)
    _clear_route(obj);
 
    EINA_LIST_FOREACH(emap_route_nodes_get(wd->emap), l, node)
-   {
-      if(node_prev)
-      {
-         Segment *segment = calloc(1, sizeof(Segment));
-         segment->node_start = node_prev;
-         segment->node_end = node;
+     {
+        if(node_prev)
+          {
+             Segment *segment = calloc(1, sizeof(Segment));
+             segment->node_start = node_prev;
+             segment->node_end = node;
 
-         o = evas_object_line_add(evas_object_evas_get(obj));
-         segment->obj = o;
-         evas_object_smart_member_add(o, obj);
-         evas_object_show(o);
+             o = evas_object_line_add(evas_object_evas_get(obj));
+             segment->obj = o;
+             evas_object_smart_member_add(o, obj);
+             evas_object_show(o);
 
-         segment->must_calc = EINA_TRUE;
+             segment->must_calc = EINA_TRUE;
 
-         _update_lon_lat_min_max(obj, emap_route_node_lon_get(node_prev), emap_route_node_lat_get(node_prev));
-         _update_lon_lat_min_max(obj, emap_route_node_lon_get(node), emap_route_node_lat_get(node));
+             _update_lon_lat_min_max(obj, emap_route_node_lon_get(node_prev), emap_route_node_lat_get(node_prev));
+             _update_lon_lat_min_max(obj, emap_route_node_lon_get(node), emap_route_node_lat_get(node));
 
-         wd->segments = eina_list_append(wd->segments, segment);
-      }
-      node_prev = node;
-   }
+             wd->segments = eina_list_append(wd->segments, segment);
+          }
+        node_prev = node;
+     }
 
    _sizing_eval(obj);
 }
