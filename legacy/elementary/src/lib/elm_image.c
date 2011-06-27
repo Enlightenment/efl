@@ -514,7 +514,7 @@ elm_image_object_get(const Evas_Object *obj)
 }
 
 /**
- * Enable/disable retaining up the aspect ratio of the image. 
+ * Enable/disable retaining up the aspect ratio of the image.
  *
  * @param obj The image object.
  * @param retained Retaining or Non retaining.
