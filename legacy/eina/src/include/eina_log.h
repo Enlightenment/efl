@@ -59,43 +59,7 @@
  *
  * Here is an example:
  *
- * @code
- * #include <stdlib.h>
- * #include <stdio.h>
- *
- * #include <Eina.h>
- *
- * void test(int i)
- * {
- *    EINA_LOG_DBG("Entering test");
- *
- *    if (i < 0)
- *    {
- *        EINA_LOG_ERR("Argument is negative");
- *        return;
- *    }
- *
- *    EINA_LOG_INFO("argument non negative");
- *
- *    EINA_LOG_DBG("Exiting test");
- * }
- *
- * int main(void)
- * {
- *    if (!eina_init())
- *    {
- *        printf("log during the initialization of Eina_Log module\n");
- *        return EXIT_FAILURE;
- *    }
- *
- *    test(-1);
- *    test(0);
- *
- *    eina_shutdown();
- *
- *    return EXIT_SUCCESS;
- * }
- * @endcode
+ * @include eina_log_02.c
  *
  * If you compiled Eina without debug mode, execution will yield only one log
  * message, which is "argument is negative".
@@ -124,15 +88,10 @@
  * expects a list in the form domain_name1:level1,domain_name2:level2,... . For
  * example:
  *
- * @code
- *
- * EINA_LOG_LEVELS=mymodule1:5,mymodule2:2,mymodule3:0 ./myapp
- *
- * @endcode
+ * @verbatim EINA_LOG_LEVELS=mymodule1:5,mymodule2:2,mymodule3:0 ./myapp@endverbatim
  *
  * This line would set mymodule1 level to 5, mymodule2 level to 2 and mymodule3
  * level to 0.
- *
  *
  * There's also a global logger to which EINA_LOG_(ERR, DBG, INFO, CRIT, WARN)
  * macros do log on. It is a logger that is created internally by Eina Log with
@@ -146,11 +105,7 @@
  * This variable specifies the level of the global logging domain and the level
  * of domains that haven't been set through EINA_LOG_LEVELS. Here's an example:
  *
- * @code
- *
- * EINA_LOG_LEVEL=3 EINA_LOG_LEVELS=module1:10,module3:2 ./myapp
- *
- * @endcode
+ * @verbatim EINA_LOG_LEVEL=3 EINA_LOG_LEVELS=module1:10,module3:2 ./myapp@endverbatim
  *
  * Supposing you have modules named "module1", "module2" and "module3", this
  * line would result in module1 with level 10, module2 with level 3 and module3
@@ -160,7 +115,6 @@
  *
  * The global level (EINA_LOG_LEVEL) can also be set through code, using
  * eina_log_level_set() function.
- *
  *
  * While developing your libraries or applications, you may notice that
  * EINA_LOG_DOM_(ERR, DBG, INFO, CRIT, WARN) macros also print out
@@ -172,11 +126,7 @@
  * see your own domain's messages easier without having to sift through a lot of
  * internal eina debug messages. Here's an example:
  *
- * @code
- *
- * EINA_LOG_LEVEL=3 EINA_LOG_LEVELS_GLOB=eina_*:0 ./myapp
- *
- * @endcode
+ * @verbatim EINA_LOG_LEVEL=3 EINA_LOG_LEVELS_GLOB=eina_*:0 ./myapp@endverbatim
  *
  * This will disable eina_log output from all internal eina code thus allowing
  * you to see your own domain messages easier.
@@ -197,84 +147,9 @@
  * Here is an example of custom callback, whose behavior can be
  * changed at runtime:
  *
- * @code
- * #include <stdlib.h>
- * #include <stdio.h>
- *
- * #include <eina_log.h>
- *
- * #define log(fmt, ...)                                    \
- *    eina_log_print(EINA_LOG_LEVEL_ERR, __FILE__, __FUNCTION__, __LINE__, fmt, ##__VA_ARGS__)
- *
- * typedef struct _Data Data;
- *
- * struct _Data
- * {
- *    int to_stderr;
- * };
- *
- * void print_cb(const Eina_Log_Domain *domain,
- *               Eina_Log_Level level,
- *               const char *file,
- *               const char *fnc,
- *               int line,
- *               const char *fmt,
- *               void *data,
- *               va_list args)
- * {
- *    Data *d;
- *    FILE *output;
- *    char *str;
- *
- *    d = (Data *)data;
- *    if (d->to_stderr)
- *    {
- *       output = stderr;
- *       str = "stderr";
- *    }
- *    else
- *    {
- *       output = stdout;
- *       str = "stdout";
- *    }
- *
- *    fprintf(output, "%s:%s:%s (%d) %s: ",
- *            domain->domain_str, file, fnc, line, str);
- *    vfprintf(output, fmt, args);
- *    putc('\n', output);
- * }
- *
- * void test(Data *data, int i)
- * {
- *    if (i < 0)
- *       data->to_stderr = 0;
- *    else
- *       data->to_stderr = 1;
- *
- *    log("log message...");
- * }
- *
- * int main(void)
- * {
- *    Data data;
- *
- *    if (!eina_init())
- *    {
- *       printf("log during the initialization of Eina_Log module\n");
- *       return EXIT_FAILURE;
- *    }
- *
- *    eina_log_print_cb_set(print_cb, &data);
- *
- *    test(&data, -1);
- *    test(&data, 0);
- *
- *    eina_shutdown();
- *
- *    return EXIT_SUCCESS;
- * }
- * @endcode
- *
+ * @include eina_log_03.c
+ * @example eina_log_02.c
+ * @example eina_log_03.c
  */
 
 /**
@@ -320,49 +195,21 @@
  * later shut down with eina_shutdown(). Here is a straightforward
  * example:
  *
- * @code
- * #include <stdlib.h>
- * #include <stdio.h>
- *
- * #include <eina_log.h>
- *
- * void test_warn(void)
- * {
- *    EINA_LOG_WARN("Here is a warning message");
- * }
- *
- * int main(void)
- * {
- *    if (!eina_init())
- *    {
- *        printf("log during the initialization of Eina_Log module\n");
- *        return EXIT_FAILURE;
- *    }
- *
- *    test_warn();
- *
- *    eina_shutdown();
- *
- *    return EXIT_SUCCESS;
- * }
- * @endcode
+ * @include eina_log_01.c
  *
  * Compile this code with the following command:
  *
- * @code
- * gcc -Wall -o test_Eina_Log test_eina.c `pkg-config --cflags --libs eina`
- * @endcode
+ * @verbatim gcc -Wall -o eina_log_01 eina_log_01.c `pkg-config --cflags --libs eina`@endverbatim
  *
  * Now execute the program with:
  *
- * @code
- * EINA_LOG_LEVEL=2 ./test_eina_log
- * @endcode
+ * @verbatim EINA_LOG_LEVEL=2 ./eina_log_01@endverbatim
  *
  * You should see a message displayed in the terminal.
  *
  * For more information, you can look at the @ref tutorial_log_page.
  *
+ * @example eina_log_01.c
  * @{
  */
 
