@@ -16,6 +16,8 @@
  * @ref Example_Evas_Aspect_Hints
  *
  * @ref Example_Evas_Size_Hints
+ *
+ * @ref Example_Evas_Stacking
  */
 
 /**
@@ -67,4 +69,52 @@
  *
  * @include evas-hints.c
  * @example evas-hints.c
+ */
+
+/**
+ * @page Example_Evas_Stacking Evas object stacking functions
+ * @dontinclude evas-stacking.c
+ *
+ * In this example, we illustrate how to stack objects in a custom
+ * manner and how to deal with layers.
+ *
+ * We have three objects of interest in it -- white background, red
+ * rectangle, green rectangle and blue rectangle.
+ * @skip d.bg = evas_object_rectangle_add(d.canvas);
+ * @until evas_object_resize(d.bg, WIDTH, HEIGHT);
+ * @skip d.rects[2] = evas_object_rectangle_add(d.canvas);
+ * @until evas_object_show(d.rects[0]);
+ * @dontinclude evas-stacking.c
+ * Like in other Evas examples, one interacts with it be means of key commands:
+ * @skip "commands are:\n"
+ * @until "\th - print help\n");
+ * At any given point, like seem above, you'll be operating one rectangle only.
+ * Try stacking it below an adjacent object with "b":
+ * @skip evas_object_stack_below(d.rects[d.cur_rect], neighbour);
+ * @until evas_object_stack_below(d.rects[d.cur_rect], neighbour);
+ * @dontinclude evas-stacking.c
+ * "a" will do the opposite:
+ * @skip evas_object_stack_above(d.rects[d.cur_rect], neighbour);
+ * @until evas_object_stack_above(d.rects[d.cur_rect], neighbour);
+ * To bring it directly to the top/bottom, use "t"/"m", respectively:
+ * @dontinclude evas-stacking.c
+ * @skip evas_object_raise(d.rects[d.cur_rect]);
+ * @until evas_object_raise(d.rects[d.cur_rect]);
+ * @skip evas_object_lower(d.rects[d.cur_rect]);
+ * @until evas_object_lower(d.rects[d.cur_rect]);
+ * At any time, use the "s" command to see the status of the
+ * ordering. It will show the background's ordering too. Note that it
+ * also shows the @b layer for this object. It starts at a @b
+ * different layer than the others. Use "l" to change its layer
+ * (higher layer numbers mean higher layers). If the background is on
+ * the same layer as the others (0), you'll see it interact with them
+ * on the ordering. If it's in the layer above, no matter what you do,
+ * you'll see nothing but the white rectangle: it covers the other
+ * layers. For the initial layer (-1), it will never mess nor occlude
+ * the others.
+ *
+ * The full example follows.
+ *
+ * @include evas-stacking.c
+ * @example evas-stacking.c
  */

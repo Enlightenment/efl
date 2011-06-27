@@ -2668,8 +2668,11 @@ EAPI const Eina_List  *evas_font_path_list               (const Evas *e) EINA_WA
  * Methods that are broadly used, like those that change the color,
  * clippers and geometry of an Evas object.
  *
- * A thorough example on this group of functions can be seen @ref
+ * An example on the most used functions in this group can be seen @ref
  * Example_Evas_Object_Manipulation "here".
+ *
+ * For function dealing with stacking, the examples are gathered  @ref
+ * Example_Evas_Stacking "here".
  *
  * @ingroup Evas_Object_Group
  */
@@ -2847,25 +2850,37 @@ EAPI Eina_Bool         evas_object_focus_get             (const Evas_Object *obj
 
 
 /**
- * Sets the layer of the evas that the given object will be part of.
- *
- * It is not possible to change the layer of a smart object's child.
+ * Sets the layer of the its canvas that the given object will be part
+ * of.
  *
  * @param   obj The given Evas object.
  * @param   l   The number of the layer to place the object on.
- *          Between #EVAS_LAYER_MIN and #EVAS_LAYER_MAX.
+ *          Must be between #EVAS_LAYER_MIN and #EVAS_LAYER_MAX.
+ *
+ * If you don't use this function, you'll be dealing with an @b unique
+ * layer of objects, the default one. Additional layers are handy when
+ * you don't want a set of objects to interfere with another set with
+ * regard to @b stacking. Two layers are completely disjoint in that
+ * matter.
+ *
+ * This is a low-level function, which you'd be using when something
+ * should be always on top, for example.
+ *
+ * @warning Be careful, it doesn't make sense to change the layer of
+ * smart objects' children. Smart objects have a layer of their own,
+ * which should contain all their children objects.
+ *
+ * @see evas_object_layer_get()
  */
 EAPI void              evas_object_layer_set             (Evas_Object *obj, short l) EINA_ARG_NONNULL(1);
 
 /**
- * Retrieves the layer of the evas that the given object is part of.
+ * Retrieves the layer of its canvas that the given object is part of.
  *
- * Be careful, it doesn't make sense to change the layer of smart object's
- * child. So the returned value could be wrong in some case. Don't rely on
- * it's accuracy.
+ * @param   obj The given Evas object to query layer from
+ * @return  Number of the its layer
  *
- * @param   obj The given Evas object.
- * @return  Number of the layer.
+ * @see evas_object_layer_set()
  */
 EAPI short             evas_object_layer_get             (const Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
 
@@ -3249,9 +3264,16 @@ EAPI Evas             *evas_object_evas_get              (const Evas_Object *obj
 EAPI const char       *evas_object_type_get              (const Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
 
 /**
- * Raise @p obj to the top of its layer.
+ * Raise @p obj to the bottom of its layer.
  *
  * @param obj the object to raise
+ *
+ * @p obj will, then, be the highest one in the layer it belongs
+ * to. Object on other layers won't get touched.
+ *
+ * @see evas_object_stack_above()
+ * @see evas_object_stack_below()
+ * @see evas_object_lower()
  */
 EAPI void              evas_object_raise                 (Evas_Object *obj) EINA_ARG_NONNULL(1);
 
@@ -3259,50 +3281,102 @@ EAPI void              evas_object_raise                 (Evas_Object *obj) EINA
  * Lower @p obj to the bottom of its layer.
  *
  * @param obj the object to lower
+ *
+ * @p obj will, then, be the lowest one in the layer it belongs
+ * to. Objects on other layers won't get touched.
+ *
+ * @see evas_object_stack_above()
+ * @see evas_object_stack_below()
+ * @see evas_object_raise()
  */
 EAPI void              evas_object_lower                 (Evas_Object *obj) EINA_ARG_NONNULL(1);
 
 /**
  * Stack @p obj immediately above @p above
  *
- * If @p obj is a member of a smart object, then @p above must also be
- * a member of the same smart object.
- *
- * Similarly, if @p obj is not a member of smart object, @p above may
- * not either.
- *
  * @param obj the object to stack
  * @param above the object above which to stack
+ *
+ * Objects, in a given canvas, are stacked in the order they get added
+ * to it.  This means that, if they overlap, the highest ones will
+ * cover the lowest ones, in that order. This function is a way to
+ * change the stacking order for the objects.
+ *
+ * This function is intended to be used with <b>objects belonging to
+ * the same layer</b> in a given canvas, otherwise it will fail (and
+ * accomplish nothing).
+ *
+ * If you have smart objects on your canvas and @p obj is a member of
+ * one of them, then @p above must also be a member of the same
+ * smart object.
+ *
+ * Similarly, if @p obj is not a member of a smart object, @p above
+ * must not be either.
+ *
+ * @see evas_object_layer_get()
+ * @see evas_object_layer_set()
+ * @see evas_object_stack_below()
  */
 EAPI void              evas_object_stack_above           (Evas_Object *obj, Evas_Object *above) EINA_ARG_NONNULL(1, 2);
 
 /**
  * Stack @p obj immediately below @p below
  *
- * If @p obj is a member of a smart object, then @p below must also be
- * a member of the same smart object.
- *
- * Similarly, if @p obj is not a member of smart object, @p below may
- * not either.
- *
  * @param obj the object to stack
  * @param below the object below which to stack
+ *
+ * Objects, in a given canvas, are stacked in the order they get added
+ * to it.  This means that, if they overlap, the highest ones will
+ * cover the lowest ones, in that order. This function is a way to
+ * change the stacking order for the objects.
+ *
+ * This function is intended to be used with <b>objects belonging to
+ * the same layer</b> in a given canvas, otherwise it will fail (and
+ * accomplish nothing).
+ *
+ * If you have smart objects on your canvas and @p obj is a member of
+ * one of them, then @p below must also be a member of the same
+ * smart object.
+ *
+ * Similarly, if @p obj is not a member of a smart object, @p below
+ * must not be either.
+ *
+ * @see evas_object_layer_get()
+ * @see evas_object_layer_set()
+ * @see evas_object_stack_below()
  */
 EAPI void              evas_object_stack_below           (Evas_Object *obj, Evas_Object *below) EINA_ARG_NONNULL(1, 2);
 
 /**
- * Get the Evas object above @p obj
+ * Get the Evas object stacked right above @p obj
  *
- * @param obj an Evas_Object
- * @return the Evas_Object directly above
+ * @param obj an #Evas_Object
+ * @return the #Evas_Object directly above @p obj, if any, or @c NULL,
+ * if none
+ *
+ * This function will traverse layers in its search, if there are
+ * objects on layers above the one @p obj is placed at.
+ *
+ * @see evas_object_layer_get()
+ * @see evas_object_layer_set()
+ * @see evas_object_below_get()
+ *
  */
 EAPI Evas_Object      *evas_object_above_get             (const Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
 
 /**
- * Get the Evas object below @p obj
+ * Get the Evas object stacked right below @p obj
  *
- * @param obj an Evas_Object
- * @return the Evas_Object directly below
+ * @param obj an #Evas_Object
+ * @return the #Evas_Object directly below @p obj, if any, or @c NULL,
+ * if none
+ *
+ * This function will traverse layers in its search, if there are
+ * objects on layers below the one @p obj is placed at.
+ *
+ * @see evas_object_layer_get()
+ * @see evas_object_layer_set()
+ * @see evas_object_below_set()
  */
 EAPI Evas_Object      *evas_object_below_get             (const Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
 
@@ -4793,6 +4867,11 @@ EAPI Evas_Render_Op            evas_object_render_op_get        (const Evas_Obje
  */
 
 /**
+ * @addtogroup Evas_Object_Group_Find
+ * @{
+ */
+
+/**
  * Retrieve the object that currently has focus.
  *
  * @param e The Evas canvas to query for focused object on.
@@ -4892,22 +4971,44 @@ EAPI Evas_Object      *evas_object_top_in_rectangle_get  (const Evas *e, Evas_Co
 EAPI Eina_List        *evas_objects_at_xy_get            (const Evas *e, Evas_Coord x, Evas_Coord y, Eina_Bool include_pass_events_objects, Eina_Bool include_hidden_objects) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
    EAPI Eina_List        *evas_objects_in_rectangle_get     (const Evas *e, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h, Eina_Bool include_pass_events_objects, Eina_Bool include_hidden_objects) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
 
-
 /**
- * Get the lowest Evas object on the Evas @p e
+ * Get the lowest (stacked) Evas object on the canvas @p
  *
- * @param e an Evas
- * @return the lowest object
+ * @param e a valid canvas pointer
+ * @return a pointer to the lowest object on it, if any, or @c NULL,
+ * otherwise
+ *
+ * This function will take all populated layers in the canvas into
+ * account, getting the lowest object for the lowest layer, naturally.
+ *
+ * @see evas_object_layer_get()
+ * @see evas_object_layer_set()
+ * @see evas_object_below_set()
+ * @see evas_object_above_set()
  */
 EAPI Evas_Object      *evas_object_bottom_get            (const Evas *e) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
 
 /**
- * Get the highest Evas object on the Evas @p e
+ * Get the highest (stacked) Evas object on the canvas @p
  *
- * @param e an Evas
- * @return the highest object
+ * @param e a valid canvas pointer
+ * @return a pointer to the highest object on it, if any, or @c NULL,
+ * otherwise
+ *
+ * This function will take all populated layers in the canvas into
+ * account, getting the highest object for the highest layer,
+ * naturally.
+ *
+ * @see evas_object_layer_get()
+ * @see evas_object_layer_set()
+ * @see evas_object_below_set()
+ * @see evas_object_above_set()
  */
 EAPI Evas_Object      *evas_object_top_get               (const Evas *e) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
+
+/**
+ * @}
+ */
 
 /**
  * @defgroup Evas_Object_Group_Interceptors Object Method Interceptors

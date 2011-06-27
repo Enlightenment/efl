@@ -61,6 +61,10 @@ pkglib_PROGRAMS += evas_hints
 evas_hints_SOURCES = evas-hints.c
 evas_hints_LDADD = $(top_builddir)/src/lib/libevas.la @ECORE_EVAS_LIBS@
 
+pkglib_PROGRAMS += evas_stacking
+evas_stacking_SOURCES = evas-stacking.c
+evas_stacking_LDADD = $(top_builddir)/src/lib/libevas.la @ECORE_EVAS_LIBS@
+
 #the ones using ecore_evas and edje follow
 AM_CPPFLAGS += @EDJE_CFLAGS@
 
@@ -94,7 +98,8 @@ files_DATA += \
 	$(srcdir)/evas-object-manipulation.c \
 	$(srcdir)/evas-events.c \
 	$(srcdir)/evas-aspect-hints.c \
-	$(srcdir)/evas-hints.c
+	$(srcdir)/evas-hints.c \
+	$(srcdir)/evas-stacking.c
 endif
 
 EXTRA_DIST = $(EDCS) \
