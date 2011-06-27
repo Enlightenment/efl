@@ -23,7 +23,7 @@ SRCS = \
 	eina_list_02.c \
 	eina_list_03.c \
 	eina_list_04.c \
-	eina_log.01.c \
+	eina_log_01.c \
 	eina_log_02.c \
 	eina_log_03.c \
 	eina_inlist_01.c \
