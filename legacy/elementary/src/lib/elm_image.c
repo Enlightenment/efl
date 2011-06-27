@@ -245,6 +245,8 @@ elm_image_smooth_get(const Evas_Object *obj)
  * @param obj The image object.
  * @param w Pointer to store width, or NULL.
  * @param h Pointer to store height, or NULL.
+ *
+ * @ingroup Image
  */
 EAPI void
 elm_image_object_size_get(const Evas_Object *obj, int *w, int *h)
@@ -459,6 +461,8 @@ elm_image_orient_get(const Evas_Object *obj)
  *
  * @param obj Image object.
  * @param set Turn on or off editability.
+ *
+ * @ingroup Image
  */
 EAPI void
 elm_image_editable_set(Evas_Object *obj, Eina_Bool set)
@@ -498,7 +502,7 @@ elm_image_editable_get(const Evas_Object *obj)
  * @param obj The image object to get the inlined image from
  * @return The inlined image object, or NULL if none exists
  *
- * @ingroup Win
+ * @ingroup Image
  */
 EAPI Evas_Object *
 elm_image_object_get(const Evas_Object *obj)
