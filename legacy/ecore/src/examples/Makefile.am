@@ -20,7 +20,7 @@ SRCS = \
 	server_bench.c \
 	ecore_con_client_example.c \
 	ecore_con_server_example.c \
-	ecore_fd_handler_example.c \
+	ecore_fd_handler_gnutls_example.c \
 	ecore_file_download_example.c
 
 EXTRA_DIST = $(SRCS)
