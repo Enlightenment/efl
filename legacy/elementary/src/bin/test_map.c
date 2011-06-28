@@ -52,7 +52,11 @@ static Evas_Object * _marker_get(Evas_Object *obj, Elm_Map_Marker *marker __UNUS
 static Evas_Object * _group_icon_get(Evas_Object *obj, void *data);
 
 static void
+#ifdef ELM_EMAP
 my_map_gpx_fileselector_done(void *data, Evas_Object *obj __UNUSED__, void *event_info)
+#else
+my_map_gpx_fileselector_done(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
+#endif
 {
    const char *selected = event_info;
 
