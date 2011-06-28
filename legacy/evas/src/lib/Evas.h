@@ -5289,7 +5289,15 @@ EAPI void             *evas_object_intercept_move_callback_del        (Evas_Obje
 /**
  * @defgroup Evas_Object_Rectangle Rectangle Object Functions
  *
- * Functions that operate on evas rectangle objects.
+ * @brief Function to create evas rectangle objects.
+ *
+ * This function may seem useless given there are no functions to manipulate
+ * the created rectangle, however the rectangle is actually very useful and can
+ * be manipulate using the generic @ref Evas_Object_Group
+ * "evas object functions".
+ *
+ * For an example of use of an evas_object_rectangle see @ref
+ * Example_Evas_Object_Manipulation "here".
  *
  * @ingroup Evas_Object_Specific
  */
@@ -5298,6 +5306,8 @@ EAPI void             *evas_object_intercept_move_callback_del        (Evas_Obje
  * Adds a rectangle to the given evas.
  * @param   e The given evas.
  * @return  The new rectangle object.
+ *
+ * @ingroup Evas_Object_Rectangle
  */
 EAPI Evas_Object      *evas_object_rectangle_add         (Evas *e) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_MALLOC;
 
