@@ -4,23 +4,6 @@
 #define SIG_CHILD_ADDED "child,added"
 #define SIG_CHILD_REMOVED "child,removed"
 
-/**
- * @defgroup Box Box
- *
- * A box object arranges objects in a single row within a box. Sub objects can
- * be added at the start, end or before or after any existing object in the
- * box already. It can have its orientation changed too. How a child object is
- * sized and otherwise arranged within the box depends on evas hints.
- * evas_object_size_hint_align_set() will set either the alignment within its
- * region if the region allocated is bigger than the object size. If you want
- * the sub object sized up to fill the allocated region, use -1.0 for the
- * apporpriate horizontal or vertical axes. evas_object_size_hint_weight_set()
- * will set the packing weight. The weights of all items being packed are added
- * up and if items are to be sized up to fit, those with the higher weights get
- * proportionally more space.
- *
- * NOTE: Objects should not be added to box objects using _add() calls.
- */
 typedef struct _Widget_Data Widget_Data;
 typedef struct _Transition_Animation_Data Transition_Animation_Data;
 
@@ -336,14 +319,6 @@ _transition_layout_animation_exec(Evas_Object *obj, Evas_Object_Box_Data *priv _
      }
 }
 
-/**
- * Add a new box to the parent
- *
- * @param parent The parent object
- * @return The new object or NULL if it cannot be created
- *
- * @ingroup Box
- */
 EAPI Evas_Object *
 elm_box_add(Evas_Object *parent)
 {
@@ -378,18 +353,6 @@ elm_box_add(Evas_Object *parent)
    return obj;
 }
 
-/**
- * Set the horizontal orientation
- *
- * By default box object arrange their contents vertically from top to bottom.
- * By calling this and providing @p horizontal as true, the box will become
- * horizontal arranging contents left to right.
- *
- * @param obj The box object
- * @param horizontal The horizontal flag (1 = horizontal, 0 = vertical)
- *
- * @ingroup Box
- */
 EAPI void
 elm_box_horizontal_set(Evas_Object *obj, Eina_Bool horizontal)
 {
@@ -418,14 +381,6 @@ elm_box_horizontal_set(Evas_Object *obj, Eina_Bool horizontal)
      } */
 }
 
-/**
- * Get the horizontal orientation
- *
- * @param obj The box object
- * @return If is horizontal
- *
- * @ingroup Box
- */
 EAPI Eina_Bool
 elm_box_horizontal_get(const Evas_Object *obj)
 {
@@ -435,17 +390,6 @@ elm_box_horizontal_get(const Evas_Object *obj)
    return wd->horizontal;
 }
 
-/**
- * Set homogeneous layout
- *
- * If enabled, homogeneous layout makes all items the same size. This size is
- * of course governed by the size of the largest item in the box.
- *
- * @param obj The box object
- * @param homogeneous The homogeneous flag (1 = on, 2 = off)
- *
- * @ingroup Box
- */
 EAPI void
 elm_box_homogeneous_set(Evas_Object *obj, Eina_Bool homogeneous)
 {
@@ -480,14 +424,6 @@ elm_box_homogenous_set(Evas_Object *obj, Eina_Bool homogenous)
    elm_box_homogeneous_set(obj, homogenous);
 }
 
-/**
- * Get homogeneous layout
- *
- * @param obj The box object
- * @return If is homogeneous
- *
- * @ingroup Box
- */
 EAPI Eina_Bool
 elm_box_homogeneous_get(const Evas_Object *obj)
 {
@@ -503,17 +439,6 @@ elm_box_homogenous_get(const Evas_Object *obj)
    return elm_box_homogeneous_get(obj);
 }
 
-/**
- * This adds a box at the start of the box (top or left based on orientation)
- *
- * This will add the @p subobj to the box object indicated at the beginning
- * of the box (the left or top end).
- *
- * @param obj The box object
- * @param subobj The object to add to the box
- *
- * @ingroup Box
- */
 EAPI void
 elm_box_pack_start(Evas_Object *obj, Evas_Object *subobj)
 {
@@ -524,17 +449,6 @@ elm_box_pack_start(Evas_Object *obj, Evas_Object *subobj)
    evas_object_box_prepend(wd->box, subobj);
 }
 
-/**
- * This adds a box at the end of the box (bottom or right based on orientation)
- *
- * This will add the @p subobj to the box object indicated at the end
- * of the box (the right or bottom end).
- *
- * @param obj The box object
- * @param subobj The object to add to the box
- *
- * @ingroup Box
- */
 EAPI void
 elm_box_pack_end(Evas_Object *obj, Evas_Object *subobj)
 {
@@ -545,20 +459,6 @@ elm_box_pack_end(Evas_Object *obj, Evas_Object *subobj)
    evas_object_box_append(wd->box, subobj);
 }
 
-/**
- * This adds adds an object to the box before the indicated object
- *
- * This will add the @p subobj to the box indicated before the object
- * indicated with @p before. If @p before is not already in the box, results
- * are undefined. Before means either to the left of the indicated object or
- * above it depending on orientation.
- *
- * @param obj The box object
- * @param subobj The object to add to the box
- * @param before The object before which to add it
- *
- * @ingroup Box
- */
 EAPI void
 elm_box_pack_before(Evas_Object *obj, Evas_Object *subobj, Evas_Object *before)
 {
@@ -569,20 +469,6 @@ elm_box_pack_before(Evas_Object *obj, Evas_Object *subobj, Evas_Object *before)
    evas_object_box_insert_before(wd->box, subobj, before);
 }
 
-/**
- * This adds adds an object to the box after the indicated object
- *
- * This will add the @p subobj to the box indicated after the object
- * indicated with @p after. If @p after is not already in the box, results
- * are undefined. After means either to the right of the indicated object or
- * below it depending on orientation.
- *
- * @param obj The box object
- * @param subobj The object to add to the box
- * @param after The object after which to add it
- *
- * @ingroup Box
- */
 EAPI void
 elm_box_pack_after(Evas_Object *obj, Evas_Object *subobj, Evas_Object *after)
 {
@@ -593,15 +479,6 @@ elm_box_pack_after(Evas_Object *obj, Evas_Object *subobj, Evas_Object *after)
    evas_object_box_insert_after(wd->box, subobj, after);
 }
 
-/**
- * This clears the box items
- *
- * This delete all members of the box object, but not the box itself.
- *
- * @param obj The box object
- *
- * @ingroup Box
- */
 EAPI void
 elm_box_clear(Evas_Object *obj)
 {
@@ -611,16 +488,6 @@ elm_box_clear(Evas_Object *obj)
    evas_object_box_remove_all(wd->box, EINA_TRUE);
 }
 
-/**
- * This unpack a box item
- *
- * This unpack the selected member from the box object, but does not delete
- * the box itself or the packed items.
- *
- * @param obj The box object
- *
- * @ingroup Box
- */
 EAPI void
 elm_box_unpack(Evas_Object *obj, Evas_Object *subobj)
 {
@@ -630,16 +497,6 @@ elm_box_unpack(Evas_Object *obj, Evas_Object *subobj)
    evas_object_box_remove(wd->box, subobj);
 }
 
-/**
- * This unpack the box items
- *
- * This unpack all members from the box object, but does not delete
- * the box itself or the packed items.
- *
- * @param obj The box object
- *
- * @ingroup Box
- */
 EAPI void
 elm_box_unpack_all(Evas_Object *obj)
 {
@@ -649,28 +506,6 @@ elm_box_unpack_all(Evas_Object *obj)
    evas_object_box_remove_all(wd->box, EINA_FALSE);
 }
 
-/**
- * Set the callback layout function (@p cb) to the @p obj elm_box class.
- *
- * This function will use evas_object_box_layout_set() to set @p cb as the
- * layout callback function for this box object.
- * All layout funtions from evas_object_box can be used as @p cb. Some examples
- * are evas_object_box_layout_horizontal, evas_object_box_layout_vertical and
- * evas_object_box_layout_stack. elm_box_layout_transition can also be used.
- * If @p cb is NULL, the default layout function from elm_box will be used.
- *
- * @note Changing the layout function will make horizontal/homogeneous fields
- * from Widget_Data have NO further usage as they are controlled by default
- * layout function. So calling elm_box_horizontal_set() or
- * elm_box_homogeneous_set() won't affect layout behavior.
- *
- * @param obj The box object
- * @param cb The callback function used for layout
- * @param data Data that will be passed to layout function
- * @param free_data Function called to free @p data
- *
- * @ingroup Box
- */
 EAPI void
 elm_box_layout_set(Evas_Object *obj, Evas_Object_Box_Layout cb, const void *data, void (*free_data)(void *data))
 {
@@ -684,29 +519,6 @@ elm_box_layout_set(Evas_Object *obj, Evas_Object_Box_Layout cb, const void *data
      evas_object_box_layout_set(wd->box, _layout, obj, NULL);
 }
 
-/**
- * Layout function which display a transition animation from start layout to end layout.
- *
- * This function should no be called directly. It may be used by elm_box_layout_set() or
- * evas_object_box_layout_set() as a layout function.
- * The @p data passed to this function must be a Elm_Box_Transition*, that can be created
- * using elm_box_transition_new() and freed with elm_box_transition_free().
- *
- * Usage Example:
- * @code
- * Evas_Object *box = elm_box_add(parent);
- * Elm_Box_Transition *t = elm_box_transition_new(...add params here...);
- * elm_box_layout_set(box, elm_box_layout_transition, t, elm_box_transition_free);
- * @endcode
- *
- * @see elm_box_transition_new
- * @see elm_box_transition_free
- * @see elm_box_layout_set
- *
- * @ingroup Box
- * @warning Do not call this function directly because the @p obj is not the Widget Box
- * from elm_box_add(), it is the internal Evas_Object of the Widget Box.
- */
 EAPI void
 elm_box_layout_transition(Evas_Object *obj, Evas_Object_Box_Data *priv, void *data)
 {
@@ -740,27 +552,6 @@ elm_box_layout_transition(Evas_Object *obj, Evas_Object_Box_Data *priv, void *da
      _transition_layout_animation_exec(obj, priv, box_data, curtime);
 }
 
-/**
- * Create a new Elm_Box_Transition setted with informed parameters.
- *
- * The returned instance may be used as data parameter to elm_box_layout_transition()
- * and should be freed with elm_box_transition_free().
- *
- * @param start_layout The layout function that will be used to start the animation
- * @param start_layout_data The data to be passed the @p start_layout function
- * @param start_layout_free_data Function to free @p start_layout_data
- * @param end_layout The layout function that will be used to end the animation
- * @param end_layout_free_data The data to be passed the @p end_layout function
- * @param end_layout_free_data Function to free @p end_layout_data
- * @param transition_end_cb Callback function called when animation ends
- * @param transition_end_data Data to be passed to @p transition_end_cb
- * @return An instance of Elm_Box_Transition setted with informed parameters
- *
- * @see elm_box_transition_new
- * @see elm_box_layout_transition
- *
- * @ingroup Box
- */
 EAPI Elm_Box_Transition *
 elm_box_transition_new(const double duration,
                        Evas_Object_Box_Layout start_layout, void *start_layout_data,
@@ -791,16 +582,6 @@ elm_box_transition_new(const double duration,
    return box_data;
 }
 
-/**
- * Free a Elm_Box_Transition instance created with elm_box_transition_new().
- *
- * @param data The Elm_Box_Transition instance to be freed.
- *
- * @see elm_box_transition_new
- * @see elm_box_layout_transition
- *
- * @ingroup Box
- */
 EAPI void
 elm_box_transition_free(void *data)
 {
@@ -825,13 +606,6 @@ elm_box_transition_free(void *data)
    free(data);
 }
 
-/**
- * Retrieve the list of children packed into an elm_box
- *
- * @param obj The Elm_Box
- *
- * @ingroup Box
- */
 EAPI const Eina_List *
 elm_box_children_get(const Evas_Object *obj)
 {
@@ -841,15 +615,6 @@ elm_box_children_get(const Evas_Object *obj)
    return evas_object_box_children_get(wd->box);
 }
 
-/**
- * Set the space (padding) between the box's elements.
- *
- * @param obj The Elm_Box
- * @param horizontal The horizontal space between elements
- * @param vertical The vertical space between elements
- *
- * @ingroup Box
- */
 EAPI void
 elm_box_padding_set(Evas_Object *obj, Evas_Coord horizontal, Evas_Coord vertical)
 {
@@ -859,15 +624,6 @@ elm_box_padding_set(Evas_Object *obj, Evas_Coord horizontal, Evas_Coord vertical
    evas_object_box_padding_set(wd->box, horizontal, vertical);
 }
 
-/**
- * Get the space (padding) between the box's elements.
- *
- * @param obj The Elm_Box
- * @param horizontal The horizontal space between elements
- * @param vertical The vertical space between elements
- *
- * @ingroup Box
- */
 EAPI void
 elm_box_padding_get(const Evas_Object *obj, Evas_Coord *horizontal, Evas_Coord *vertical)
 {
@@ -877,15 +633,6 @@ elm_box_padding_get(const Evas_Object *obj, Evas_Coord *horizontal, Evas_Coord *
    evas_object_box_padding_get(wd->box, horizontal, vertical);
 }
 
-/**
- * Set the alignment of the whole bouding box of contents.
- *
- * @param obj The Elm_Box
- * @param horizontal The horizontal alignment of elements
- * @param vertical The vertical alignment of elements
- *
- * @ingroup Box
- */
 EAPI void
 elm_box_align_set(Evas_Object *obj, double horizontal, double vertical)
 {
@@ -895,15 +642,6 @@ elm_box_align_set(Evas_Object *obj, double horizontal, double vertical)
    evas_object_box_align_set(wd->box, horizontal, vertical);
 }
 
-/**
- * Get the alignment of the whole bouding box of contents.
- *
- * @param obj The Elm_Box
- * @param horizontal The horizontal alignment of elements
- * @param vertical The vertical alignment of elements
- *
- * @ingroup Box
- */
 EAPI void
 elm_box_align_get(const Evas_Object *obj, double *horizontal, double *vertical)
 {
