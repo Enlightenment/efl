@@ -296,7 +296,7 @@ struct _Elm_Genlist_Item
    Ecore_Timer                  *long_timer;
    Ecore_Timer                  *swipe_timer;
    Evas_Coord                    dx, dy;
-   Evas_Coord                    scrl_x, scrl_y, old_scrl_x, old_scrl_y;
+   Evas_Coord                    scrl_x, scrl_y, old_scrl_y;
 
    Elm_Genlist_Item             *rel;
    Evas_Object                  *mode_view;
@@ -2427,7 +2427,6 @@ _item_block_position(Item_Block *itb,
                                    _item_position(it, it->base.view, it->scrl_x,
                                                   it->scrl_y);
                               }
-                            it->old_scrl_x = it->scrl_x;
                             it->old_scrl_y = it->scrl_y;
                          }
                     }
