@@ -420,7 +420,10 @@ _ecore_thread_pipe_free(void *data __UNUSED__, void *event)
 {
    Ecore_Pipe *p = event;
 
-   eina_array_push(_ecore_thread_pipe, p);
+   if (eina_array_count_get(_ecore_thread_pipe) < 50)
+     eina_array_push(_ecore_thread_pipe, p);
+   else
+     ecore_pipe_del(p);
    eina_threads_shutdown();
 }
 
