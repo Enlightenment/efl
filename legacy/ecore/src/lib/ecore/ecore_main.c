@@ -937,10 +937,21 @@ ecore_main_win32_handler_del(Ecore_Win32_Handler *win32_handler __UNUSED__)
 
 /**
  * @brief Set the prepare callback with data for a given #Ecore_Fd_Handler
+ *
  * @param fd_handler The fd handler
  * @param func The prep function
  * @param data The data to pass to the prep function
- * This function will be called prior to the the fd handler's callback function.
+ *
+ * This function will be called prior to any fd handler's callback function
+ * (even the other fd handlers), before entering the main loop select function.
+ *
+ * @note Once a prepare callback is set for a fd handler, it cannot be changed.
+ * You need to delete the fd handler and create a new one, to set another
+ * callback.
+ * @note You probably don't need this function. It is only necessary for very
+ * uncommon cases that need special behavior.
+ *
+ * @ingroup Ecore_FD_Handler_Group
  */
 EAPI void
 ecore_main_fd_handler_prepare_callback_set(Ecore_Fd_Handler *fd_handler, Ecore_Fd_Prep_Cb func, const void *data)
@@ -953,7 +964,8 @@ ecore_main_fd_handler_prepare_callback_set(Ecore_Fd_Handler *fd_handler, Ecore_F
      }
    fd_handler->prep_func = func;
    fd_handler->prep_data = (void *)data;
-   if (fd_handlers_with_prep && (!eina_list_data_find(fd_handlers_with_prep, fd_handler)))
+   if ((!fd_handlers_with_prep) ||
+      (fd_handlers_with_prep && (!eina_list_data_find(fd_handlers_with_prep, fd_handler))))
      /* FIXME: THIS WILL NOT SCALE WITH LOTS OF PREP FUNCTIONS!!! */
      fd_handlers_with_prep = eina_list_append(fd_handlers_with_prep, fd_handler);
 }
