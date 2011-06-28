@@ -218,6 +218,103 @@
  */
 
 /**
+ * @page ecore_event_example_c ecore fd handlers - Monitoring file descriptors
+ * @dontinclude ecore_fd_handler_example.c
+ *
+ * This is a very simple example where we will start monitoring the stdin of the
+ * program and, whenever there's something to be read, we call our callback that
+ * will read it.
+ *
+ * This seems to be stupid, since a similar result could be achieved by the
+ * following code:
+ *
+ * @code
+ * while (nbytes = read(STDIN_FILENO, buf, sizeof(buf)))
+ *   {
+ *      buf[nbytes - 1] = '\0';
+ *      printf("Read %zd bytes from input: \"%s\"\n", nbytes - 1, buf);
+ *   }
+ * @endcode
+ *
+ * However, the above code is blocking, and won't allow you to do anything else
+ * other than reading the input. Of course there are other methods to do a
+ * non-blocking reading, like setting the file descriptor to non-blocking and
+ * keep looping always checking if there's something to be read, and do other
+ * things otherwise. Or use a @c select call to watch for more than one file
+ * descriptor at the same time.
+ *
+ * The advantage of using an @ref Ecore_Fd_Handler is that you can monitor a
+ * file descriptor, while still iterating on the Ecore main loop. It will allow
+ * you to have timers working and expiring, events still being processed when
+ * received, idlers doing its work when there's nothing happening, and whenever
+ * there's something to be read from the file descriptor, your callback will be
+ * called. And it's everything monitored in the same main loop, no threads are
+ * needed, thus reducing the complexity of the program and any overhead caused
+ * by the use of threads.
+ *
+ * Now let's start our program. First we just declare a context structure that
+ * will be passed to our callback, with pointers to our handler and to a timer
+ * that will be used later:
+ *
+ * @until };
+ *
+ * Then we will declare a prepare_callback that is called before any fd_handler
+ * set in the program, and before the main loop select function is called. Just
+ * use one if you really know that you need it. We are just putting it here to
+ * exemplify its usage:
+ *
+ * @until }
+ *
+ * Now, our fd handler. In its arguments, the @c data pointer will have any data
+ * passed to it when it was registered, and the @c handler pointer will contain
+ * the fd handler returned by the ecore_main_fd_handler_add() call. It can be
+ * used, for example, to retrieve which file descriptor triggered this callback,
+ * since it could be added to more than one file descriptor, or to check what
+ * tipe of activity there's in the file descriptor.
+ *
+ * The code is very simple: we first check if the type of activity was an error.
+ * It probably won't happen with the default input, but could be the case of a
+ * network socket detecting a disconnection. Next, we get the file descriptor
+ * from this handler (as said before, the callback could be added to more than
+ * one file descriptor), and read it since we know that it shouldn't block,
+ * because our fd handler told us that there's some activity on it. If the
+ * result of the read was 0 bytes, we know that it's an end of file (EOF), so we
+ * can finish reading the input. Otherwise we just print the content read from
+ * it:
+ *
+ * @until }
+ *
+ * Also notice that this callback returns @ref ECORE_CALLBACK_RENEW to keep
+ * being called, as almost all other Ecore callbacks, otherwise if it returns
+ * @ref ECORE_CALLBACK_CANCEL then the file handler would be deleted.
+ *
+ * Just to demonstrate that our program isn't blocking in the input read but
+ * still can process other Ecore events, we are going to setup an @ref
+ * Ecore_Timer. This is its callback:
+ *
+ * @until }
+ *
+ * Now in the main code we are going to initialize the library, and setup
+ * callbacks for the file descriptor, the prepare callback, and the timer:
+ *
+ * @until timer_add
+ *
+ * Notice that the use of ecore_main_fd_handler_add() specifies what kind of
+ * activity we are monitoring. In this case, we want to monitor for read (since
+ * it's the standard input) and for errors. This is done by the flags @ref
+ * ECORE_FD_READ and @ref ECORE_FD_ERROR. For the three callbacks we are also
+ * giving a pointer to our context structure, which has pointers to the handlers
+ * added.
+ *
+ * Then we can start the main loop and see everything happening:
+ *
+ * @until }
+ *
+ * In the end we are just deleting the fd handler and the timer to demonstrate
+ * the API usage, since Ecore would already do it for us on its shutdown.
+ */
+
+/**
  * @example ecore_idler_example.c
  * This example shows when @ref Ecore_Idler, @ref Ecore_Idle_Enterer and @ref
  * Ecore_Idle_Exiter are called. See
@@ -234,6 +331,12 @@
  * @example ecore_time_example.c
  * Shows the difference between the three time functions. See @ref
  * ecore_time_example_c "the example explained".
+ */
+
+/**
+ * @example ecore_fd_handler_example.c
+ * This example shows how to setup and use an fd_handler. See
+ * @ref ecore_fd_handler_example_c "the explanation here".
  */
 
 /**

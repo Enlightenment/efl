@@ -12,6 +12,7 @@ LDADD = \
 	@dlopen_libs@ @EINA_LIBS@ @EVIL_LIBS@ @GLIB_LIBS@ @WIN32_LIBS@ @LTLIBINTL@ @EFL_PTHREAD_LIBS@ @rt_libs@ -lm
 
 SRCS = \
+	ecore_fd_handler_example.c \
 	ecore_event_example.c \
 	ecore_idler_example.c \
 	ecore_time_example.c \
@@ -34,6 +35,7 @@ endif
 
 if EFL_BUILD_EXAMPLES
 pkglib_PROGRAMS += \
+	ecore_fd_handler_example \
 	ecore_event_example \
 	ecore_idler_example \
 	ecore_job_example \
