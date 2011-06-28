@@ -345,6 +345,7 @@ struct _Ecore_Pthread_Worker
    Eina_Bool feedback_run : 1;
    Eina_Bool kill : 1;
    Eina_Bool reschedule : 1;
+   Eina_Bool no_queue : 1;
 };
 
 #ifdef EFL_HAVE_THREADS
@@ -394,6 +395,9 @@ static Eina_Bool have_main_loop_thread = 0;
 static Eina_Trash *_ecore_thread_worker_trash = NULL;
 static int _ecore_thread_worker_count = 0;
 
+static void *_ecore_thread_worker(Ecore_Pthread_Data *pth);
+static Ecore_Pthread_Worker *_ecore_thread_worker_new(void);
+
 static void
 _ecore_thread_worker_free(Ecore_Pthread_Worker *worker)
 {
@@ -435,12 +439,40 @@ _ecore_thread_pipe_del(void *data __UNUSED__, int type __UNUSED__, void *event _
 }
 
 static void
-_ecore_thread_end(Ecore_Pthread_Data *pth, __UNUSED__ Ecore_Thread *work)
+_ecore_thread_end(Ecore_Pthread_Data *pth, Ecore_Thread *work)
 {
+   Ecore_Pthread_Worker *worker = (Ecore_Pthread_Worker *) work;
    Ecore_Pipe *p;
+
+   if (!worker->message_run || !worker->feedback_run || (worker->feedback_run && !worker->no_queue))
+     _ecore_thread_count--;
 
    if (PHJ(pth->thread, p) != 0)
      return ;
+
+   if (eina_list_count(_ecore_pending_job_threads) > 0
+       && (unsigned int) _ecore_thread_count < eina_list_count(_ecore_pending_job_threads)
+       && _ecore_thread_count < _ecore_thread_count_max)
+     {
+        /* One more thread should be created. */
+        INF("spawning threads because of still pending jobs.");
+
+        pth->death_job = _ecore_thread_worker_new();
+        if (!pth->p || !pth->death_job) goto end;
+
+        eina_threads_init();
+
+        if (PHC(pth->thread, _ecore_thread_worker, pth) == 0)
+          {
+             _ecore_thread_count++;
+             return ;
+          }
+
+        eina_threads_shutdown();
+
+     end:
+        if (pth->death_job) _ecore_thread_worker_free(pth->death_job);
+     }
 
    _ecore_active_job_threads = eina_list_remove(_ecore_active_job_threads, pth);
 
@@ -662,10 +694,6 @@ _ecore_thread_worker(Ecore_Pthread_Data *pth)
 
    eina_sched_prio_drop();
 
-   LKL(_ecore_pending_job_threads_mutex);
-   _ecore_thread_count++;
-   LKU(_ecore_pending_job_threads_mutex);
-
  restart:
    if (_ecore_pending_job_threads) _ecore_short_job(pth->p);
    if (_ecore_pending_job_threads_feedback) _ecore_feedback_job(pth->p, pth->thread);
@@ -693,7 +721,6 @@ _ecore_thread_worker(Ecore_Pthread_Data *pth)
         LKU(_ecore_pending_job_threads_mutex);
         goto restart;
      }
-   _ecore_thread_count--;
    LKU(_ecore_pending_job_threads_mutex);
 
    work = pth->death_job;
@@ -906,7 +933,10 @@ ecore_thread_run(Ecore_Thread_Cb func_blocking,
    eina_threads_init();
 
    if (PHC(pth->thread, _ecore_thread_worker, pth) == 0)
-      return (Ecore_Thread *) work;
+     {
+        _ecore_thread_count++;
+        return (Ecore_Thread *) work;
+     }
 
    eina_threads_shutdown();
 
@@ -1129,10 +1159,13 @@ EAPI Ecore_Thread *ecore_thread_feedback_run(Ecore_Thread_Cb func_heavy,
 
         worker->u.feedback_run.direct_pipe = _ecore_thread_pipe_get();
         worker->u.feedback_run.direct_worker = _ecore_thread_worker_new();
+        worker->no_queue = EINA_TRUE;
 
         if (PHC(t, _ecore_direct_worker, worker) == 0)
            return (Ecore_Thread *) worker;
      }
+
+   worker->no_queue = EINA_FALSE;
 
    LKL(_ecore_pending_job_threads_mutex);
    _ecore_pending_job_threads_feedback = eina_list_append(_ecore_pending_job_threads_feedback, worker);
@@ -1156,7 +1189,10 @@ EAPI Ecore_Thread *ecore_thread_feedback_run(Ecore_Thread_Cb func_heavy,
    eina_threads_init();
 
    if (PHC(pth->thread, _ecore_thread_worker, pth) == 0)
-      return (Ecore_Thread *) worker;
+     {
+        _ecore_thread_count++;
+        return (Ecore_Thread *) worker;
+     }
 
    eina_threads_shutdown();
 
