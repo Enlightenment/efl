@@ -4923,7 +4923,7 @@ extern "C" {
     * It's also possible to make a transition chain with @ref
     * elm_transit_chain_transit_add.
     *
-    * @warning We strongly recomend to use elm_transit just when edje can not do
+    * @warning We strongly recommend to use elm_transit just when edje can not do
     * the trick. Edje has more advantage than Elm_Transit, it has more flexibility and
     * animations can be manipulated inside the theme.
     *
