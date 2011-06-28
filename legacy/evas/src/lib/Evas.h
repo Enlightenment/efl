@@ -345,7 +345,8 @@ typedef enum _Evas_BiDi_Direction
 } Evas_BiDi_Direction;
 
 /**
- * Identifier of callbacks to be used with object or canvas.
+ * Identifier of callbacks to be set for Evas canvases or Evas
+ * objects.
  *
  * @see evas_object_event_callback_add()
  * @see evas_event_callback_add()
@@ -353,7 +354,7 @@ typedef enum _Evas_BiDi_Direction
 typedef enum _Evas_Callback_Type
 {
    /*
-    * The following events are only for use with objects
+    * The following events are only for use with Evas objects, with
     * evas_object_event_callback_add():
     */
    EVAS_CALLBACK_MOUSE_IN, /**< Mouse In Event */
@@ -378,10 +379,10 @@ typedef enum _Evas_Callback_Type
    EVAS_CALLBACK_DEL, /**< Object Being Deleted (called before Free) */
    EVAS_CALLBACK_HOLD, /**< Events go on/off hold */
    EVAS_CALLBACK_CHANGED_SIZE_HINTS, /**< Size hints changed event */
-   EVAS_CALLBACK_IMAGE_PRELOADED, /**< Image as been preloaded */
+   EVAS_CALLBACK_IMAGE_PRELOADED, /**< Image has been preloaded */
 
    /*
-    * The following events are only for use with canvas
+    * The following events are only for use with Evas canvases, with
     * evas_event_callback_add():
     */
    EVAS_CALLBACK_CANVAS_FOCUS_IN, /**< Canvas got focus as a whole */
@@ -392,13 +393,12 @@ typedef enum _Evas_Callback_Type
    EVAS_CALLBACK_CANVAS_OBJECT_FOCUS_OUT, /**< Canvas object lost focus */
 
    /*
-    * More object event types - see evas_object_event_callback_add():
+    * More Evas object event types - see evas_object_event_callback_add():
     */
-   EVAS_CALLBACK_IMAGE_UNLOADED, /**< Image data has been unloaded (by some mechanims in evas that throws out original image data) */
+   EVAS_CALLBACK_IMAGE_UNLOADED, /**< Image data has been unloaded (by some mechanims in Evas that throw out original image data) */
 
-   /* the following id no event number, but a sentinel: */
-   EVAS_CALLBACK_LAST /**< keep as last element/sentinel -- not really an event */
-} Evas_Callback_Type; /**< The type of event to trigger the callback */
+   EVAS_CALLBACK_LAST /**< kept as last element/sentinel -- not really an event */
+} Evas_Callback_Type; /**< The types of events triggering a callback */
 
 /**
  * Flags for Mouse Button events
@@ -906,26 +906,30 @@ struct _Evas_Event_Hold /** Hold change event */
 };
 
 /**
- * How mouse pointer should be handled by Evas.
+ * How the mouse pointer should be handled by Evas.
  *
- * If #EVAS_OBJECT_POINTER_MODE_AUTOGRAB, then when mouse is down an
- * object, then moves outside of it, the pointer still behaves as
- * being bound to the object, albeit out of its drawing region. On
- * mouse up, the event will be feed to the object, that may check if
- * the final position is over or not and do something about it.
+ * In the mode #EVAS_OBJECT_POINTER_MODE_AUTOGRAB, when a mouse button
+ * is pressed down over an object and held, with the mouse pointer
+ * being moved outside of it, the pointer still behaves as being bound
+ * to that object, albeit out of its drawing region. When the button
+ * is released, the event will be fed to the object, that may check if
+ * the final position is over it or not and do something about it.
+ *
+ * In the mode #EVAS_OBJECT_POINTER_MODE_NOGRAB, the pointer will
+ * always be bound to the object right below it.
  *
  * @ingroup Evas_Object_Group_Extras
  */
 typedef enum _Evas_Object_Pointer_Mode
 {
    EVAS_OBJECT_POINTER_MODE_AUTOGRAB, /**< default, X11-like */
-   EVAS_OBJECT_POINTER_MODE_NOGRAB
-} Evas_Object_Pointer_Mode; /**< How mouse pointer should be handled by Evas. */
+   EVAS_OBJECT_POINTER_MODE_NOGRAB /**< pointer always bound to the object right below it */
+} Evas_Object_Pointer_Mode; /**< How the mouse pointer should be handled by Evas. */
 
 typedef void      (*Evas_Smart_Cb) (void *data, Evas_Object *obj, void *event_info);
 typedef void      (*Evas_Event_Cb) (void *data, Evas *e, void *event_info); /**< Evas event callback function signature */
 typedef Eina_Bool (*Evas_Object_Event_Post_Cb) (void *data, Evas *e);
-typedef void      (*Evas_Object_Event_Cb) (void *data, Evas *e, Evas_Object *obj, void *event_info);
+typedef void      (*Evas_Object_Event_Cb) (void *data, Evas *e, Evas_Object *obj, void *event_info); /**< Evas object event callback function signature */
 typedef void      (*Evas_Async_Events_Put_Cb)(void *target, Evas_Callback_Type type, void *event_info);
 
 /**
@@ -1968,8 +1972,9 @@ EAPI Eina_Bool         evas_pointer_inside_get           (const Evas *e) EINA_WA
 /**
  * @defgroup Evas_Canvas_Events Canvas Events
  *
- * Functions relating to canvas events, be they input (mice,
- * keyboards, etc) or output ones (internal states changing, etc).
+ * Functions relating to canvas events, which are mainly reports on
+ * its internal states changing (an object got focused, the rendering
+ * is updated, etc).
  *
  * Some of the funcions in this group are exemplified @ref
  * Example_Evas_Events "here".
@@ -2813,16 +2818,25 @@ EAPI const Eina_List  *evas_object_clipees_get           (const Evas_Object *obj
 
 
 /**
- * Sets focus to the given object.
+ * Sets or unsets a given object as the currently focused one on its
+ * canvas.
  *
  * @param obj The object to be focused or unfocused.
- * @param focus set or remove focus to the object.
+ * @param focus @c EINA_TRUE, to set it as focused or @c EINA_FALSE,
+ * to take away the focus from it.
  *
- * Changing focus only affects where key events go.  There can be only
- * one object focused at any time.  <p> If the parameter (@p focus) is
- * set, the passed object will be set as the currently focused object.
- * It will receive all keyboard events that are not exclusive key
+ * Changing focus only affects where (key) input events go. There can
+ * be only one object focused at any time. If @p focus is @c
+ * EINA_TRUE, @p obj will be set as the currently focused object and
+ * it will receive all keyboard events that are not exclusive key
  * grabs on other objects.
+ *
+ * Example:
+ * @dontinclude evas-events.c
+ * @skip evas_object_focus_set
+ * @until evas_object_focus_set
+ *
+ * See the full example @ref Example_Evas_Events "here".
  *
  * @see evas_object_focus_get
  * @see evas_focus_get
@@ -2832,19 +2846,26 @@ EAPI const Eina_List  *evas_object_clipees_get           (const Evas_Object *obj
 EAPI void              evas_object_focus_set             (Evas_Object *obj, Eina_Bool focus) EINA_ARG_NONNULL(1);
 
 /**
- * Test if the object has focus.
+ * Retrieve whether an object has the focus.
  *
- * @param obj The object to be tested.
+ * @param obj The object to retrieve focus information from.
+ * @return @c EINA_TRUE if the object has the focus, @c EINA_FALSE
+ * otherwise.
  *
- * If the passed object is the currently focused object 1 is returned,
- * 0 otherwise.
+ * If the passed object is the currently focused one, @c EINA_TRUE is
+ * returned. @c EINA_FALSE is returned, otherwise.
+ *
+ * Example:
+ * @dontinclude evas-events.c
+ * @skip And again
+ * @until something is bad
+ *
+ * See the full example @ref Example_Evas_Events "here".
  *
  * @see evas_object_focus_set
  * @see evas_focus_get
  * @see evas_object_key_grab
  * @see evas_object_key_ungrab
- *
- * @return 1 if the object has the focus, 0 otherwise.
  */
 EAPI Eina_Bool         evas_object_focus_get             (const Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
 
@@ -3387,12 +3408,15 @@ EAPI Evas_Object      *evas_object_below_get             (const Evas_Object *obj
 /**
  * @defgroup Evas_Object_Group_Events Object Events
  *
- * Objects generates events when they are moved, resized, when their
+ * Objects generate events when they are moved, resized, when their
  * visibility change, when they are deleted and so on. These methods
- * will allow one to handle such events.
+ * allow one to be notified about and to handle such events.
  *
- * The events can be those from keyboard and mouse, if the object
- * accepts these events.
+ * Objects also generate events on input (keyboard and mouse), if they
+ * accept them (are visible, focused, etc).
+ *
+ * Examples on this group of functions can be found @ref
+ * Example_Evas_Stacking "here" and @ref Example_Evas_Events "here".
  *
  * @ingroup Evas_Object_Group
  */
@@ -3403,7 +3427,7 @@ EAPI Evas_Object      *evas_object_below_get             (const Evas_Object *obj
  */
 
 /**
- * Add a callback function to an object
+ * Add (register) a callback function to a given Evas object event.
  *
  * @param obj Object to attach a callback to
  * @param type The type of event that will trigger the callback
@@ -3418,161 +3442,174 @@ EAPI Evas_Object      *evas_object_below_get             (const Evas_Object *obj
  * determine the nature of the error, if any, and the program should
  * sensibly try and recover.
  *
- * The function will be passed the pointer @p data when it is
- * called. A callback function must look like this:
- *
- * @code
- * void callback (void *data, Evas *e, Evas_Object *obj, void *event_info);
- * @endcode
- *
- * The first parameter @p data in this function will be the same value
- * passed to evas_object_event_callback_add() as the @p data
- * parameter. The second parameter is a convenience for the programmer
- * to know what evas canvas the event occurred on. The third parameter
- * @p obj is the Object handle on which the event occurred. The foruth
- * parameter @p event_info is a pointer to a data structure that may
- * or may not be passed to the callback, depending on the event type
- * that triggered the callback.
+ * A callback function must have the ::Evas_Object_Event_Cb prototype
+ * definition. The first parameter (@p data) in this definition will
+ * have the same value passed to evas_object_event_callback_add() as
+ * the @p data parameter, at runtime. The second parameter @p e is the
+ * canvas pointer on which the event occurred. The third parameter is
+ * a pointer to the object on which event occurred. Finally, the
+ * fourth parameter @p event_info is a pointer to a data structure
+ * that may or may not be passed to the callback, depending on the
+ * event type that triggered the callback. This is so because some
+ * events don't carry extra context with them, but others do.
  *
  * The event type @p type to trigger the function may be one of
  * #EVAS_CALLBACK_MOUSE_IN, #EVAS_CALLBACK_MOUSE_OUT,
  * #EVAS_CALLBACK_MOUSE_DOWN, #EVAS_CALLBACK_MOUSE_UP,
  * #EVAS_CALLBACK_MOUSE_MOVE, #EVAS_CALLBACK_MOUSE_WHEEL,
- * #EVAS_CALLBACK_FREE, #EVAS_CALLBACK_KEY_DOWN, #EVAS_CALLBACK_KEY_UP,
+ * #EVAS_CALLBACK_MULTI_DOWN, #EVAS_CALLBACK_MULTI_UP,
+ * #EVAS_CALLBACK_MULTI_MOVE, #EVAS_CALLBACK_FREE,
+ * #EVAS_CALLBACK_KEY_DOWN, #EVAS_CALLBACK_KEY_UP,
  * #EVAS_CALLBACK_FOCUS_IN, #EVAS_CALLBACK_FOCUS_OUT,
  * #EVAS_CALLBACK_SHOW, #EVAS_CALLBACK_HIDE, #EVAS_CALLBACK_MOVE,
- * #EVAS_CALLBACK_RESIZE or #EVAS_CALLBACK_RESTACK.
- * This determines the kind of event that will trigger the callback to
- * be called.  The @p event_info pointer passed to the callback will
- * be one of the following, depending on the event triggering it:
+ * #EVAS_CALLBACK_RESIZE, #EVAS_CALLBACK_RESTACK, #EVAS_CALLBACK_DEL,
+ * #EVAS_CALLBACK_HOLD, #EVAS_CALLBACK_CHANGED_SIZE_HINTS,
+ * #EVAS_CALLBACK_IMAGE_PRELOADED or #EVAS_CALLBACK_IMAGE_UNLOADED.
  *
- * #EVAS_CALLBACK_MOUSE_IN: event_info = pointer to Evas_Event_Mouse_In
+ * This determines the kind of event that will trigger the callback.
+ * What follows is a list explaining better the nature of each type of
+ * event, along with their associated @p event_info pointers:
  *
- * This event is triggered when the mouse pointer enters the region of
- * the object @p obj. This may occur by the mouse pointer being moved
- * by evas_event_feed_mouse_move() or
- * evas_event_feed_mouse_move_data() calls, or by the object being
- * shown, raised, moved, resized, or other objects being moved out of
- * the way, hidden, lowered or moved out of the way.
+ * - #EVAS_CALLBACK_MOUSE_IN: @p event_info is a pointer to an
+ *   #Evas_Event_Mouse_In struct\n\n
+ *   This event is triggered when the mouse pointer enters the area
+ *   (not shaded by other objects) of the object @p obj. This may
+ *   occur by the mouse pointer being moved by
+ *   evas_event_feed_mouse_move() calls, or by the object being shown,
+ *   raised, moved, resized, or other objects being moved out of the
+ *   way, hidden or lowered, whatever may cause the mouse pointer to
+ *   get on top of @p obj, having been on top of another object
+ *   previously.
  *
- * #EVAS_CALLBACK_MOUSE_OUT: event_info = pointer to Evas_Event_Mouse_Out
+ * - #EVAS_CALLBACK_MOUSE_OUT: @p event_info is a pointer to an
+ *   #Evas_Event_Mouse_Out struct\n\n
+ *   This event is triggered exactly like #EVAS_CALLBACK_MOUSE_IN is,
+ *   but it occurs when the mouse pointer exits an object's area. Note
+ *   that no mouse out events will be reported if the mouse pointer is
+ *   implicitly grabbed to an object (mouse buttons are down, having
+ *   been pressed while the pointer was over that object). In these
+ *   cases, mouse out events will be reported once all buttons are
+ *   released, if the mouse pointer has left the object's area. The
+ *   indirect ways of taking off the mouse pointer from an object,
+ *   like cited above, for #EVAS_CALLBACK_MOUSE_IN, also apply here,
+ *   naturally.
  *
- * This event is triggered exactly like #EVAS_CALLBACK_MOUSE_IN is, but
- * occurs when the mouse pointer exits an object. Note that no out
- * events will be reported if the mouse pointer is implicitly grabbed
- * to an object (the mouse buttons are down at all and any were
- * pressed on that object). An out event will be reported as soon as
- * the mouse is no longer grabbed (no mouse buttons are
- * depressed). Out events will be reported once all buttons are
- * released, if the mouse has left the object.
+ * - #EVAS_CALLBACK_MOUSE_DOWN: @p event_info is a pointer to an
+ *   #Evas_Event_Mouse_Down struct\n\n
+ *   This event is triggered by a mouse button being pressed while the
+ *   mouse pointer is over an object. If the pointer mode for Evas is
+ *   #EVAS_OBJECT_POINTER_MODE_AUTOGRAB (default), this causes this
+ *   object to <b>passively grab the mouse</b> until all mouse buttons
+ *   have been released: all future mouse events will be reported to
+ *   only this object until no buttons are down. That includes mouse
+ *   move events, mouse in and mouse out events, and further button
+ *   presses. When all buttons are released, event propagation will
+ *   occur as normal (see #Evas_Object_Pointer_Mode).
  *
- * #EVAS_CALLBACK_MOUSE_DOWN: event_info = pointer to
- * Evas_Event_Mouse_Down
+ * - #EVAS_CALLBACK_MOUSE_UP: @p event_info is a pointer to an
+ *   #Evas_Event_Mouse_Up struct\n\n
+ *   This event is triggered by a mouse button being released while
+ *   the mouse pointer is over an object's area (or when passively
+ *   grabbed to an object).
  *
- * This event is triggered by a mouse button being depressed while
- * over an object. If pointermode is EVAS_OBJECT_POINTER_MODE_AUTOGRAB
- * (default) this causes this object to passively grab the mouse until
- * all mouse buttons have been released.  That means if this mouse
- * button is the first to be pressed, all future mouse events will be
- * reported to only this object until no buttons are down. That
- * includes mouse move events, in and out events, and further button
- * presses. When all buttons are released, event propagation occurs as
- * normal.
+ * - #EVAS_CALLBACK_MOUSE_MOVE: @p event_info is a pointer to an
+ *   #Evas_Event_Mouse_Move struct\n\n
+ *   This event is triggered by the mouse pointer being moved while
+ *   over an object's area (or while passively grabbed to an object).
  *
- * #EVAS_CALLBACK_MOUSE_UP: event_info = pointer to Evas_Event_Mouse_Up
+ * - #EVAS_CALLBACK_MOUSE_WHEEL: @p event_info is a pointer to an
+ *   #Evas_Event_Mouse_Wheel struct\n\n
+ *   This event is triggered by the mouse wheel being rolled while the
+ *   mouse pointer is over an object (or passively grabbed to an
+ *   object).
  *
- * This event is triggered by a mouse button being released while over
- * an object or when passively grabbed to an object. If this is the
- * last mouse button to be raised on an object then the passive grab
- * is released and event processing will continue as normal.
+ * - #EVAS_CALLBACK_MULTI_DOWN: @p event_info is a pointer to an
+ *   #Evas_Event_Multi_Down struct
  *
- * #EVAS_CALLBACK_MOUSE_MOVE: event_info = pointer to Evas_Event_Mouse_Move
+ * - #EVAS_CALLBACK_MULTI_UP: @p event_info is a pointer to an
+ *   #Evas_Event_Multi_Up struct
  *
- * This event is triggered by the mouse pointer moving while over an
- * object or passively grabbed to an object.
+ * - #EVAS_CALLBACK_MULTI_MOVE: @p event_info is a pointer to an
+ *   #Evas_Event_Multi_Move struct
  *
- * #EVAS_CALLBACK_MOUSE_WHEEL: event_info = pointer to
- * Evas_Event_Mouse_Wheel
+ * - #EVAS_CALLBACK_FREE: @p event_info is @c NULL \n\n
+ *   This event is triggered just before Evas is about to free all
+ *   memory used by an object and remove all references to it. This is
+ *   useful for programs to use if they attached data to an object and
+ *   want to free it when the object is deleted. The object is still
+ *   valid when this callback is called, but after it returns, there
+ *   is no guarantee on the object's validity.
  *
- * This event is triggered by the mouse wheel being rolled while over
- * an object or passively grabbed to an object.
+ * - #EVAS_CALLBACK_KEY_DOWN: @p event_info is a pointer to an
+ *   #Evas_Event_Key_Down struct\n\n
+ *   This callback is called when a key is pressed and the focus is on
+ *   the object, or a key has been grabbed to a particular object
+ *   which wants to intercept the key press regardless of what object
+ *   has the focus.
  *
- * #EVAS_CALLBACK_FREE: event_info = NULL
+ * - #EVAS_CALLBACK_KEY_UP: @p event_info is a pointer to an
+ *   #Evas_Event_Key_Up struct \n\n
+ *   This callback is called when a key is released and the focus is
+ *   on the object, or a key has been grabbed to a particular object
+ *   which wants to intercept the key release regardless of what
+ *   object has the focus.
  *
- * This event is triggered just before Evas is about to free all
- * memory used by an object and remove all references to it. This is
- * useful for programs to use if they attached data to an object and
- * want to free it when the object is deleted. The object is still
- * valid when this callback is called, but after this callback
- * returns, there is no guarantee on the object's validity.
+ * - #EVAS_CALLBACK_FOCUS_IN: @p event_info is @c NULL \n\n
+ *   This event is called when an object gains the focus. When it is
+ *   called the object has already gained the focus.
  *
- * #EVAS_CALLBACK_KEY_DOWN: event_info = pointer to Evas_Event_Key_Down
+ * - #EVAS_CALLBACK_FOCUS_OUT: @p event_info is @c NULL \n\n
+ *   This event is triggered when an object loses the focus. When it
+ *   is called the object has already lost the focus.
  *
- * This callback is called when a key is pressed and the focus is on
- * the object, or a key has been grabbed to a particular object which
- * wants to intercept the key press regardless of what object has the
- * focus.
+ * - #EVAS_CALLBACK_SHOW: @p event_info is @c NULL \n\n
+ *   This event is triggered by the object being shown by
+ *   evas_object_show().
  *
- * #EVAS_CALLBACK_KEY_UP: event_info = pointer to Evas_Event_Key_Up
+ * - #EVAS_CALLBACK_HIDE: @p event_info is @c NULL \n\n
+ *   This event is triggered by an object being hidden by
+ *   evas_object_hide().
  *
- * This callback is called when a key is released and the focus is on
- * the object, or a key has been grabbed to a particular object which
- * wants to intercept the key release regardless of what object has
- * the focus.
+ * - #EVAS_CALLBACK_MOVE: @p event_info is @c NULL \n\n
+ *   This event is triggered by an object being
+ *   moved. evas_object_move() can trigger this, as can any
+ *   object-specific manipulations that would mean the object's origin
+ *   could move.
  *
- * #EVAS_CALLBACK_FOCUS_IN: event_info = NULL
+ * - #EVAS_CALLBACK_RESIZE: @p event_info is @c NULL \n\n
+ *   This event is triggered by an object being resized. Resizes can
+ *   be triggered by evas_object_resize() or by any object-specific
+ *   calls that may cause the object to resize.
  *
- * This event is called when an object gains the focus. When the
- * callback is called the object has already gained the focus.
+ * - #EVAS_CALLBACK_RESTACK: @p event_info is @c NULL \n\n
+ *   This event is triggered by an object being re-stacked. Stacking
+ *   changes can be triggered by
+ *   evas_object_stack_below()/evas_object_stack_above() and others.
  *
- * #EVAS_CALLBACK_FOCUS_OUT: event_info = NULL
+ * - #EVAS_CALLBACK_DEL: @p event_info is @c NULL.
  *
- * This event is triggered by an object losing the focus. When the
- * callback is called the object has already lost the focus.
+ * - #EVAS_CALLBACK_HOLD: @p event_info is a pointer to an
+ *   #Evas_Event_Hold struct
  *
- * #EVAS_CALLBACK_SHOW: event_info = NULL
+ * - #EVAS_CALLBACK_CHANGED_SIZE_HINTS: @p event_info is @c NULL.
  *
- * This event is triggered by the object being shown by
- * evas_object_show().
+ * - #EVAS_CALLBACK_IMAGE_PRELOADED: @p event_info is @c NULL.
  *
- * #EVAS_CALLBACK_HIDE: event_info = NULL
+ * - #EVAS_CALLBACK_IMAGE_UNLOADED: @p event_info is @c NULL.
  *
- * This event is triggered by an object being hidden by
- * evas_object_hide().
- *
- * #EVAS_CALLBACK_MOVE: event_info = NULL
- *
- * This event is triggered by an object being
- * moved. evas_object_move() can trigger this, as can any
- * object-specific manipulations that would mean the object's origin
- * could move.
- *
- * #EVAS_CALLBACK_RESIZE: event_info = NULL
- *
- * This event is triggered by an object being resized. Resizes can be
- * triggered by evas_object_resize() or by any object-specific calls
- * that may cause the object to resize.
+ * @note Be careful not to add the same callback multiple times, if
+ * that's not what you want, because Evas won't check if a callback
+ * existed before exactly as the one being registered (and thus, call
+ * it more than once on the event, in this case). This would make
+ * sense if you passed different functions and/or callback data, only.
  *
  * Example:
- * @code
- * extern Evas_Object *object;
- * extern void *my_data;
- * void down_callback(void *data, Evas *e, Evas_Object *obj, void *event_info);
- * void up_callback(void *data, Evas *e, Evas_Object *obj, void *event_info);
+ * @dontinclude evas-events.c
+ * @skip evas_object_event_callback_add(
+ * @until }
  *
- * evas_object_event_callback_add(object, EVAS_CALLBACK_MOUSE_UP, up_callback, my_data);
- * if (evas_alloc_error() != EVAS_ALLOC_ERROR_NONE)
- *   {
- *     fprintf(stderr, "ERROR: Callback registering failed! Abort!\n");
- *     exit(-1);
- *   }
- * evas_object_event_callback_add(object, EVAS_CALLBACK_MOUSE_DOWN, down_callback, my_data);
- * if (evas_alloc_error() != EVAS_ALLOC_ERROR_NONE)
- *   {
- *     fprintf(stderr, "ERROR: Callback registering failed! Abort!\n");
- *     exit(-1);
- *   }
- * @endcode
+ * See the full example @ref Example_Evas_Events "here".
+ *
  */
    EAPI void              evas_object_event_callback_add     (Evas_Object *obj, Evas_Callback_Type type, Evas_Object_Event_Cb func, const void *data) EINA_ARG_NONNULL(1, 3);
 
@@ -3603,21 +3640,27 @@ EAPI Evas_Object      *evas_object_below_get             (const Evas_Object *obj
 EAPI void             *evas_object_event_callback_del     (Evas_Object *obj, Evas_Callback_Type type, Evas_Object_Event_Cb func) EINA_ARG_NONNULL(1, 3);
 
 /**
- * Delete a callback function from an object
+ * Delete (unregister) a callback function registered to a given
+ * Evas object event.
  *
  * @param obj Object to remove a callback from
  * @param type The type of event that was triggering the callback
- * @param func The function that was to be called when the event was triggered
+ * @param func The function that was to be called when the event was
+ * triggered
  * @param data The data pointer that was to be passed to the callback
  * @return The data pointer that was to be passed to the callback
  *
  * This function removes the most recently added callback from the
- * object @p obj which was triggered by the event type @p type and was
- * calling the function @p func with data @p data when triggered. If
+ * object @p obj, which was triggered by the event type @p type and was
+ * calling the function @p func with data @p data, when triggered. If
  * the removal is successful it will also return the data pointer that
  * was passed to evas_object_event_callback_add() (that will be the
  * same as the parameter) when the callback was added to the
- * object. If not successful NULL will be returned.
+ * object. In errors, @c NULL will be returned.
+ *
+ * @note For deletion of Evas object events callbacks filtering by
+ * just type and function pointer, user
+ * evas_object_event_callback_del().
  *
  * Example:
  * @code
@@ -3632,70 +3675,120 @@ EAPI void             *evas_object_event_callback_del_full(Evas_Object *obj, Eva
 
 
 /**
- * Set an object's pass events state.
- * @param obj the Evas object
- * @param pass whether to pass events or not
+ * Set whether an Evas object is to pass (ignore) events.
  *
- * If @p pass is true, this will cause events on @p obj to be ignored.
- * They will be triggered on the next lower object (that is not set to
- * pass events) instead.
+ * @param obj the Evas object to operate on
+ * @param pass whether @p obj is to pass events (@c EINA_TRUE) or not
+ * (@c EINA_FALSE)
  *
- * If @p pass is false, events will be processed as normal.
+ * If @p pass is @c EINA_TRUE, it will make events on @p obj to be @b
+ * ignored. They will be triggered on the @b next lower object (that
+ * is not set to pass events), instead (see evas_object_below_get()).
+ *
+ * If @p pass is @c EINA_FALSE, events will be processed on that
+ * object as normal.
+ *
+ * @see evas_object_pass_events_get() for an example
+ * @see evas_object_repeat_events_set()
+ * @see evas_object_propagate_events_set()
  */
 EAPI void              evas_object_pass_events_set        (Evas_Object *obj, Eina_Bool pass) EINA_ARG_NONNULL(1);
 
 /**
- * Determine whether an object is set to pass events.
- * @param obj
- * @return pass events state
+ * Determine whether an object is set to pass (ignore) events.
+ *
+ * @param obj the Evas object to get information from.
+ * @return pass whether @p obj is set to pass events (@c EINA_TRUE) or not
+ * (@c EINA_FALSE)
+ *
+ * Example:
+ * @dontinclude evas-stacking.c
+ * @skip if (strcmp(ev->keyname, "p") == 0)
+ * @until }
+ *
+ * See the full @ref Example_Evas_Stacking "example".
+ *
+ * @see evas_object_pass_events_set()
+ * @see evas_object_repeat_events_get()
+ * @see evas_object_propagate_events_get()
  */
 EAPI Eina_Bool         evas_object_pass_events_get        (const Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
 
 /**
- * Set an object's repeat events state.
- * @param obj the object
- * @param repeat wheter to repeat events or not
+ * Set whether an Evas object is to repeat events.
  *
- * If @p repeat is true, this will cause events on @p obj to trigger
- * callbacks, but also to be repeated on the next lower object in the
- * stack.
+ * @param obj the Evas object to operate on
+ * @param repeat whether @p obj is to repeat events (@c EINA_TRUE) or not
+ * (@c EINA_FALSE)
  *
- * If @p repeat is false, events occurring on @p obj will be processed
- * normally.
+ * If @p repeat is @c EINA_TRUE, it will make events on @p obj to also
+ * be repeated for the @b next lower object in the objects' stack (see
+ * see evas_object_below_get()).
+ *
+ * If @p repeat is @c EINA_FALSE, events occurring on @p obj will be
+ * processed only on it.
+ *
+ * Example:
+ * @dontinclude evas-stacking.c
+ * @skip if (strcmp(ev->keyname, "r") == 0)
+ * @until }
+ *
+ * See the full @ref Example_Evas_Stacking "example".
+ *
+ * @see evas_object_repeat_events_get()
+ * @see evas_object_pass_events_get()
+ * @see evas_object_propagate_events_get()
  */
 EAPI void              evas_object_repeat_events_set      (Evas_Object *obj, Eina_Bool repeat) EINA_ARG_NONNULL(1);
 
 /**
  * Determine whether an object is set to repeat events.
- * @param obj
- * @return repeat events state
+ *
+ * @param obj the given Evas object pointer
+ * @retrieve whether @p obj is set to repeat events (@c EINA_TRUE)
+ * or not (@c EINA_FALSE)
+ *
+ * @see evas_object_repeat_events_set() for an example
+ * @see evas_object_pass_events_set()
+ * @see evas_object_propagate_events_set()
  */
 EAPI Eina_Bool         evas_object_repeat_events_get      (const Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
 
 /**
- * Set whether events on a smart member object should propagate to its
- * parent.
+ * Set whether events on a smart object's member should get propagated
+ * up to its parent.
  *
- * @param obj the smart member object
- * @param prop wheter to propagate events or not
+ * @param obj the smart object's child to operate on
+ * @param prop whether to propagate events (@c EINA_TRUE) or not (@c
+ * EINA_FALSE)
  *
- * This function has no effect if @p obj is not a member of a smart
+ * This function has @b no effect if @p obj is not a member of a smart
  * object.
  *
- * If @p prop is true, events occurring on this object will propagate on
- * to the smart object of which @p obj is a member.
+ * If @p prop is @c EINA_TRUE, events occurring on this object will be
+ * propagated on to the smart object of which @p obj is a member.  If
+ * @p prop is @c EINA_FALSE, events occurring on this object will @b
+ * not be propagated on to the smart object of which @p obj is a
+ * member.  The default value is @c EINA_TRUE.
  *
- * If @p prop is false, events for which callbacks are set on the member
- * object, @p obj, will not be passed on to the parent smart object.
- *
- * The default value is true.
+ * @see evas_object_event_callback_add()
+ * @see evas_object_propagate_events_get()
+ * @see evas_object_repeat_events_get()
+ * @see evas_object_pass_events_get()
  */
 EAPI void              evas_object_propagate_events_set   (Evas_Object *obj, Eina_Bool prop) EINA_ARG_NONNULL(1);
 
 /**
- * Determine whether an object is set to propagate events.
- * @param obj
- * @return propagate events state
+ * Retrieve whether an Evas object is set to propagate events.
+ *
+ * @param obj the given Evas object pointer
+ * @return whether @p obj is set to propagate events (@c EINA_TRUE)
+ * or not (@c EINA_FALSE)
+ *
+ * @see evas_object_event_callback_add()
+ * @see evas_object_propagate_events_set()
+ * @see evas_object_repeat_events_set()
+ * @see evas_object_pass_events_set()
  */
 EAPI Eina_Bool         evas_object_propagate_events_get   (const Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
 
@@ -4645,6 +4738,9 @@ EAPI void              evas_object_size_hint_padding_set (Evas_Object *obj, Evas
  * Miscellaneous functions that also apply to any object, but are less
  * used or not implemented by all objects.
  *
+ * Examples on this group of functions can be found @ref
+ * Example_Evas_Stacking "here" and @ref Example_Evas_Events "here".
+ *
  * @ingroup Evas_Object_Group
  */
 
@@ -4847,7 +4943,46 @@ EAPI void                      evas_object_render_op_set        (Evas_Object *ob
  */
 EAPI Evas_Render_Op            evas_object_render_op_get        (const Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
 
+/**
+ * Set whether to use precise (usually expensive) point collision
+ * detection for a given Evas object.
+ *
+ * @param obj The given object.
+ * @param precise whether to use precise point collision detection or
+ * not The default value is false.
+ *
+ * Use this function to make Evas treat objects' transparent areas as
+ * @b not belonging to it with regard to mouse pointer events. By
+ * default, all of the object's boundary rectangle will be taken in
+ * account for them.
+ *
+ * @warning By using precise point collision detection you'll be
+ * making Evas more resource intensive.
+ *
+ * Example code follows.
+ * @dontinclude evas-events.c
+ * @skip if (strcmp(ev->keyname, "p") == 0)
+ * @until }
+ *
+ * See the full example @ref Example_Evas_Events "here".
+ *
+ * @see evas_object_precise_is_inside_get()
+ * @ingroup Evas_Object_Group_Extras
+ */
    EAPI void                      evas_object_precise_is_inside_set(Evas_Object *obj, Eina_Bool precise) EINA_ARG_NONNULL(1);
+
+/**
+ * Determine whether an object is set to use precise point collision
+ * detection.
+ *
+ * @param obj The given object.
+ * @return whether @p obj is set to use precise point collision
+ * detection or not The default value is false.
+ *
+ * @see evas_object_precise_is_inside_set() for an example
+ *
+ * @ingroup Evas_Object_Group_Extras
+ */
    EAPI Eina_Bool                 evas_object_precise_is_inside_get(const Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
 
    EAPI void                      evas_object_static_clip_set      (Evas_Object *obj, Eina_Bool is_static_clip) EINA_ARG_NONNULL(1);
@@ -9459,63 +9594,75 @@ EAPI Evas_Modifier_Mask   evas_key_modifier_mask_get     (const Evas *e, const c
 /**
  * Requests @p keyname key events be directed to @p obj.
  *
- * Key grabs allow an object to receive key events for specific key
- * strokes even if another object has focus.  If the grab is
- * non-exclusive then all objects that have grabs on the key will get
- * the event, however if the grab is exclusive, no other object can
- * get a grab on the key and only that object will get the event.
+ * @param obj the object to direct @p keyname events to.
+ * @param keyname the key to request events for.
+ * @param modifiers a mask of modifiers that must be present to
+ * trigger the event.
+ * @param not_modifiers a mask of modifiers that must @b not be present
+ * to trigger the event.
+ * @param exclusive request that the @p obj is the only object
+ * receiving the @p keyname events.
+ * @return @c EINA_TRUE, if the call succeeded, @c EINA_FALSE otherwise.
+ *
+ * Key grabs allow one or more objects to receive key events for
+ * specific key strokes even if other objects have focus. Whenever a
+ * key is grabbed, only the objects grabbing it will get the events
+ * for the given keys.
  *
  * @p keyname is a platform dependent symbolic name for the key
- * pressed.  It is sometimes possible to convert the string to an
- * ASCII value of the key, but not always for example the enter key
- * may be returned as the string 'Enter'.
- *
- * Typical platforms are Linux frame buffer (Ecore_FB) and X server
- * (Ecore_X) when using Evas with Ecore and Ecore_Evas.
- *
- * For a list of keynames for the Linux frame buffer, please refer to
- * the Ecore_FB documentation.
+ * pressed (see @ref Evas_Keys for more information).
  *
  * @p modifiers and @p not_modifiers are bit masks of all the
- * modifiers that are required and not required respectively for the
- * new grab.  Modifiers can be things such as shift and ctrl as well
- * as user defigned types via evas_key_modifier_add.
+ * modifiers that must and mustn't, respectively, be pressed along
+ * with @p keyname key in order to trigger this new key
+ * grab. Modifiers can be things such as Shift and Ctrl as well as
+ * user defigned types via evas_key_modifier_add(). Retrieve them with
+ * evas_key_modifier_mask_get() or use @c 0 for empty masks.
+ *
+ * @p exclusive will make the given object the only one permitted to
+ * grab the given key. If given @c EINA_TRUE, subsequent calls on this
+ * function with different @p obj arguments will fail, unless the key
+ * is ungrabbed again.
+ *
+ * Example code follows.
+ * @dontinclude evas-events.c
+ * @skip if (d.focus)
+ * @until else
+ *
+ * See the full example @ref Example_Evas_Events "here".
  *
  * @see evas_object_key_ungrab
  * @see evas_object_focus_set
  * @see evas_object_focus_get
  * @see evas_focus_get
  * @see evas_key_modifier_add
- *
- * @param obj the object to direct @p keyname events to.
- * @param keyname the key to request events for.
- * @param modifiers a mask of modifiers that should be present to
- * trigger the event.
- * @param not_modifiers a mask of modifiers that should not be present
- * to trigger the event.
- * @param exclusive request that the @p obj is the only object
- * receiving the @p keyname events.
- * @return Boolean indicating whether the grab succeeded
  */
 EAPI Eina_Bool            evas_object_key_grab           (Evas_Object *obj, const char *keyname, Evas_Modifier_Mask modifiers, Evas_Modifier_Mask not_modifiers, Eina_Bool exclusive) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1, 2);
 
 /**
- * Request that the grab on @p obj be removed.
+ * Removes the grab on @p keyname key events by @p obj.
  *
- * Removes the grab on @p obj if @p keyname, @p modifiers, and @p not_modifiers
- * match.
+ * @param obj the object that has an existing key grab.
+ * @param keyname the key the grab is set for.
+ * @param modifiers a mask of modifiers that must be present to
+ * trigger the event.
+ * @param not_modifiers a mask of modifiers that must not not be
+ * present to trigger the event.
+ *
+ * Removes a key grab on @p obj if @p keyname, @p modifiers, and @p
+ * not_modifiers match.
+ *
+ * Example code follows.
+ * @dontinclude evas-events.c
+ * @skip got here by key grabs
+ * @until }
+ *
+ * See the full example @ref Example_Evas_Events "here".
  *
  * @see evas_object_key_grab
  * @see evas_object_focus_set
  * @see evas_object_focus_get
  * @see evas_focus_get
- *
- * @param obj the object that has an existing grab.
- * @param keyname the key the grab is for.
- * @param modifiers a mask of modifiers that should be present to
- * trigger the event.
- * @param not_modifiers a mask of modifiers that should not be present
- * to trigger the event.
  */
 EAPI void                 evas_object_key_ungrab         (Evas_Object *obj, const char *keyname, Evas_Modifier_Mask modifiers, Evas_Modifier_Mask not_modifiers) EINA_ARG_NONNULL(1, 2);
 

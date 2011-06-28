@@ -1259,13 +1259,6 @@ evas_object_type_get(const Evas_Object *obj)
    return obj->type;
 }
 
-/**
- * Set whether to use a precise (usually expensive) point collision detection.
- * @param obj The given object.
- * @param precise wheter to use a precise point collision detection or not
- * The default value is false.
- * @ingroup Evas_Object_Group_Extras
- */
 EAPI void
 evas_object_precise_is_inside_set(Evas_Object *obj, Eina_Bool precise)
 {
@@ -1275,12 +1268,6 @@ evas_object_precise_is_inside_set(Evas_Object *obj, Eina_Bool precise)
    obj->precise_is_inside = precise;
 }
 
-/**
- * Determine whether an object is set to use a precise point collision
- * detection.
- * @param obj The given object.
- * @ingroup Evas_Object_Group_Extras
- */
 EAPI Eina_Bool
 evas_object_precise_is_inside_get(const Evas_Object *obj)
 {

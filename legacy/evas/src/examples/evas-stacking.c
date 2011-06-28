@@ -37,6 +37,15 @@ struct test_data
 
 static struct test_data d = {0};
 
+static void
+_on_mouse_down(void        *data __UNUSED__,
+               Evas        *evas __UNUSED__,
+               Evas_Object *o,
+               void        *einfo __UNUSED__)
+{
+   fprintf(stdout, "Mouse down on rectangle %s!\n", evas_object_name_get(o));
+}
+
 /* here just to keep our example's window size and background image's
  * size in synchrony */
 static void
@@ -68,6 +77,8 @@ _on_keydown(void        *data __UNUSED__,
                 "\tb - stack target rectangle one level below\n"
                 "\tt - stack target rectangle up to the top of its layer\n"
                 "\tm - stack target rectangle down to the bottom of its layer\n"
+                "\tp - toggle target rectangle's 'pass events' property\n"
+                "\tr - toggle target rectangle's 'repeat events' property\n"
                 "\ts - print current stacking information\n"
                 "\tl - change background rectangle's layer\n"
                 "\th - print help\n");
@@ -150,6 +161,30 @@ _on_keydown(void        *data __UNUSED__,
         neighbour = evas_object_below_get(d.rects[d.cur_rect]);
         fprintf(stdout, "Below of %s rect is %s\n", name,
                 neighbour ? evas_object_name_get(neighbour) : "no object");
+        return;
+     }
+
+   if (strcmp(ev->keyname, "p") == 0)  /* toggle pass events */
+     {
+        Eina_Bool pass = evas_object_pass_events_get(d.rects[d.cur_rect]);
+
+        evas_object_pass_events_set(d.rects[d.cur_rect], !pass);
+
+        fprintf(stdout, "%s rectangle is now set to%s pass (ignore) events\n",
+                name, pass ? " NOT" : "");
+
+        return;
+     }
+
+   if (strcmp(ev->keyname, "r") == 0)  /* toggle repeat events */
+     {
+        Eina_Bool repeat = evas_object_repeat_events_get(d.rects[d.cur_rect]);
+
+        evas_object_repeat_events_set(d.rects[d.cur_rect], !repeat);
+
+        fprintf(stdout, "%s rectangle is now set to%s repeat events\n",
+                name, repeat ? " NOT" : "");
+
         return;
      }
 
@@ -252,6 +287,8 @@ main(void)
    evas_object_resize(d.rects[2], WIDTH / 2.2, WIDTH / 2.2);
    evas_object_move(d.rects[2], WIDTH / 6, WIDTH / 4.5);
    evas_object_show(d.rects[2]);
+   evas_object_event_callback_add(
+     d.rects[2], EVAS_CALLBACK_MOUSE_DOWN, _on_mouse_down, NULL);
 
    d.rects[1] = evas_object_rectangle_add(d.canvas);
    evas_object_name_set(d.rects[1], "green");
@@ -260,6 +297,8 @@ main(void)
    evas_object_resize(d.rects[1], WIDTH / 2.2, WIDTH / 2.2);
    evas_object_move(d.rects[1], WIDTH / 2.5, WIDTH / 7);
    evas_object_show(d.rects[1]);
+   evas_object_event_callback_add(
+     d.rects[1], EVAS_CALLBACK_MOUSE_DOWN, _on_mouse_down, NULL);
 
    d.rects[0] = evas_object_rectangle_add(d.canvas);
    evas_object_name_set(d.rects[0], "red");
@@ -268,6 +307,8 @@ main(void)
    evas_object_resize(d.rects[0], WIDTH / 2.2, WIDTH / 2.2);
    evas_object_move(d.rects[0], WIDTH / 3, WIDTH / 2.5);
    evas_object_show(d.rects[0]);
+   evas_object_event_callback_add(
+     d.rects[0], EVAS_CALLBACK_MOUSE_DOWN, _on_mouse_down, NULL);
 
    ecore_main_loop_begin();
 

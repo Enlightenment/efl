@@ -44,7 +44,127 @@
  */
 
 /**
- * @page Example_Evas_Events Evas' canvas events example
+ * @page Example_Evas_Events Evas events (canvas and object ones) and some canvas operations example
+ * @dontinclude evas-events.c
+ *
+ * In this example we illustrate how to interact with canvas' (and
+ * its objects') events and other canvas operations.
+ *
+ * After we grab our canvas pointer, we registrate two event callbacks on it:
+ * @skip evas_event_callback_add(d.canvas, EVAS_CALLBACK_RENDER_FLUSH_PRE,
+ * @until two canvas event callbacks
+ * The first of them, whose code is
+ * @dontinclude evas-events.c
+ * @skip render flush callback
+ * @until }
+ * will be called whenever our canvas has to flush its rendering pipeline.
+ * In this example, two ways of observing that message which is printed in
+ * the cited callback are:
+ * - to resize the example's window (thus resizing the canvas' viewport)
+ * - let the animation run
+ *
+ * When one resizes the canvas, there's at least one operation it has
+ * to do which will require new calculation for rendering: the
+ * resizing of the background rectangle:
+ * @dontinclude evas-events.c
+ * @skip here just to keep
+ * @until }
+ * The animation we talked about comes from a timer we register just before
+ * we start the example's main loop:
+ * @dontinclude evas-events.c
+ * @skip d.resize_timer = ecore
+ * @until d.resize_timer = ecore
+ * being the timer's callback what follows:
+ * @dontinclude evas-events.c
+ * @skip put some action
+ * @until }
+ * As you see, the resizing of the image will also force the canvas to
+ * repaint itself, thus flushing the rendering pipeline whenever the
+ * timer ticks. When you start this example, this animation will be
+ * running, by default. To interact with the program, there's a
+ * command line interface, whose help string can be asked for with the
+ * 'h' key:
+ * @dontinclude evas-events.c
+ * @skip if (strcmp(ev->keyname, "h") == 0)
+ * @until }
+ * These are the commands the example will accept at any time, except
+ * when one triggers the 'f' one:
+ * @skip if (strcmp(ev->keyname, "f") == 0)
+ * @until }
+ * This command will exemplify evas_event_freeze(), which interrupts
+ * @b all input events processing for the canvas (in the example, just
+ * for 3 seconds). Try to issue events for it during that freeze time.
+ * The 'd' command will unregister those two canvas callbacks for you,
+ * so you won't see the messages about the focused object and the
+ * rendering process anymore:
+ * @dontinclude evas-events.c
+ * @skip if (strcmp(ev->keyname, "d") == 0)
+ * @until }
+ * The second of those callbacks has the following code:
+ * @dontinclude evas-events.c
+ * @skip called when our rectangle gets focus
+ * @until }
+ * It will take place whenever an object in the canvas receives
+ * focus. In this example, we use the focus to handle the input
+ * events:
+ * @skip so we get input events
+ * @until }
+ * The background rectangle is the chosen object to receive the
+ * focus. This also illustrates the use of
+ * evas_object_event_callback_add(), which registers an event callback
+ * on an Evas @b object (in this case, the event of a key being
+ * pressed down). On this callback, we examine each key pressed and,
+ * if they match one between the expected, we take some actions:
+ * @dontinclude evas-events.c
+ * @skip examine the keys pressed
+ * @until key grab
+ * We do so by examining the @c ev->keyname string (remember the event
+ * information struct for key down events is the #Evas_Event_Key_Down
+ * one).  There's one more trick for grabbing input events on this
+ * example -- evas_object_key_grab(). The 'c' command will, when
+ * firstly used, @b unfocus the background rectangle. Unfocused
+ * objects on an Evas canvas will @b never receive key events. We
+ * grab, then, the keys we're interested at, to the object forcefully:
+ * @skip if (d.focus)
+ * @until got here by key grabs
+ * This shows how one can handle input not depending on focus issues
+ * -- you can grab them globally. Switch back and forth focus and
+ * forced key grabbing with the 'c' key, and observe the messages
+ * printed about the focused object.  Observe, also, that we register
+ * two more @b object callbacks, this time on the image object
+ * (Enlightenment logo):
+ * @skip evas_object_show(d.img);
+ * @until mouse_out, NULL
+ * whose code blocks are
+ * @dontinclude evas-events.c
+ * @skip mouse enters the object's area
+ * @until mouse exits the object's area
+ * Experiment with moving the mouse pointer over the image, letting it
+ * enter and exit its area (stop the animation with 'a', for a better
+ * experience). When you start the example, Evas will consider this
+ * area by being the whole boundary rectangle around the picture. If
+ * you issue the 'p' command, though, you get a demonstration of Evas'
+ * precise point collision detection on objects:
+ * @dontinclude evas-events.c
+ * @skip if (strcmp(ev->keyname, "p") == 0)
+ * @until }
+ * With evas_object_precise_is_inside_get(), one can make Evas
+ * consider the transparent areas of an object (the middle of the
+ * logo's E letter, in the case) as not belonging to it when
+ * calculating mouse in/out/up/down events. To finish the example, try
+ * the command bound to Cotrol + 'o':
+ * @skip mods = evas_key_modifier_get(evas);
+ * @until end of obscured region command
+ * It exemplifies Evas' <b>obscured regions</b>. When firstly pressed,
+ * you'll get the same contents, in a region in the middle of the
+ * canvas, at the time the key was pressed, until you toggle the
+ * effect off again (make sure the animation is running on to get the
+ * idea better). When you toggle this effect off, we also demonstrate
+ * the use of evas_render_updates(), which will force immediate
+ * updates on the canvas rendering, bringing back the obscured
+ * region's contents to normal.
+ *
+ * What follows is the complete code for this example.
  *
  * @include evas-events.c
  * @example evas-events.c
@@ -72,7 +192,7 @@
  */
 
 /**
- * @page Example_Evas_Stacking Evas object stacking functions
+ * @page Example_Evas_Stacking Evas object stacking functions (and some event handling)
  * @dontinclude evas-stacking.c
  *
  * In this example, we illustrate how to stack objects in a custom
@@ -112,6 +232,18 @@
  * you'll see nothing but the white rectangle: it covers the other
  * layers. For the initial layer (-1), it will never mess nor occlude
  * the others.
+ *
+ * The last two commands available are "p" and "r", which will make
+ * the target rectangle to @b pass (ignore) and @b repeat the mouse
+ * events occurring on it (the commands will cycle through on and off
+ * states). This is demonstrated with the following
+ * #EVAS_CALLBACK_MOUSE_DOWN callback, registered on each of the
+ * colored rectangles:
+ * @dontinclude evas-stacking.c
+ * @skip static void
+ * @until }
+ * Try to change these properties on the three rectangles while
+ * experimenting with mouse clicks on their intersection region.
  *
  * The full example follows.
  *
