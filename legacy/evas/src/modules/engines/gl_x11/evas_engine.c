@@ -471,12 +471,13 @@ eng_setup(Evas *e, void *in)
    eng_window_use(re->win);
 
    re->vsync = 0;
+/* we don't need this actually as evas_render does it  
    if (re->win->alpha)
      {
         glClearColor(0.0, 0.0, 0.0, 0.0);
         glClear(GL_COLOR_BUFFER_BIT);
      }
-
+ */
    _sym_init();
 
    return 1;
@@ -604,12 +605,13 @@ eng_output_redraws_next_update_get(void *data, int *x, int *y, int *w, int *h, i
    if (cw) *cw = re->win->draw.x2 - re->win->draw.x1 + 1;
    if (ch) *ch = re->win->draw.y2 - re->win->draw.y1 + 1;
 
+/* we don't need this actually as evas_render does it  
    if (re->win->alpha)
      {
         glClearColor(0.0, 0.0, 0.0, 0.0);
         glClear(GL_COLOR_BUFFER_BIT);
      }
-   
+ */
    return re->win->gl_context->def_surface;
 }
 
@@ -2089,10 +2091,10 @@ eng_font_draw(void *data, void *context, void *surface, Evas_Font_Set *font, int
 }
 
 static Eina_Bool
-eng_canvas_alpha_get(void *data __UNUSED__, void *info __UNUSED__)
+eng_canvas_alpha_get(void *data, void *info __UNUSED__)
 {
-   // FIXME: support ARGB gl targets!!!
-   return EINA_FALSE;
+   Render_Engine *re = (Render_Engine *)data;
+   return re->win->alpha;
 }
 
 static int
