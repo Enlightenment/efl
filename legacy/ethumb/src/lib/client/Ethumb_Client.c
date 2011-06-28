@@ -181,6 +181,7 @@ struct _Ethumb_Async_Exists
    EINA_REFCOUNT;
 
    Eina_Bool exists : 1;
+   Eina_Bool cancel : 1;
 };
 
 struct _Ethumb_Async_Exists_Cb
@@ -354,6 +355,7 @@ _ethumb_async_delete(void *data)
 static void
 _ethumb_async_cancel(Ethumb_Async_Exists *async)
 {
+   async->cancel = EINA_TRUE;
    ecore_thread_cancel(async->thread);
 }
 
@@ -1133,10 +1135,11 @@ _ethumb_client_generated_cb(void *data, DBusMessage *msg)
    if (found)
      {
 	client->pending_gen = eina_list_remove_list(client->pending_gen, l);
-	pending->generated_cb(pending->data, client, id,
-			      pending->file, pending->key,
-                              pending->thumb, pending->thumb_key,
-			      success);
+        if (pending->generated_cb)
+          pending->generated_cb(pending->data, client, id,
+                                pending->file, pending->key,
+                                pending->thumb, pending->thumb_key,
+                                success);
         if (pending->free_data)
 	  pending->free_data(pending->data);
 	eina_stringshare_del(pending->file);
@@ -2174,6 +2177,7 @@ ethumb_client_thumb_exists(Ethumb_Client *client, Ethumb_Client_Thumb_Exists_Cb 
    async->source = client;
    EINA_REFCOUNT_REF(async->source);
    async->exists = EINA_FALSE;
+   async->cancel = EINA_FALSE;
 
    async->callbacks = eina_list_append(NULL, cb);
 
@@ -2224,7 +2228,7 @@ ethumb_client_thumb_exists_check(Ethumb_Exists *exists)
 
    if (!async) return EINA_TRUE;
 
-   if (async->callbacks) return EINA_FALSE;
+   if (async->callbacks || async->cancel) return EINA_FALSE;
 
    return ecore_thread_check(async->thread);
 }

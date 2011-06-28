@@ -775,6 +775,9 @@ ethumb_file_set(Ethumb *e, const char *path, const char *key)
    char buf[PATH_MAX];
    EINA_SAFETY_ON_NULL_RETURN_VAL(e, 0);
 
+   eina_stringshare_replace(&e->thumb_path, NULL);
+   eina_stringshare_replace(&e->thumb_key, NULL);
+
    DBG("ethumb=%p, path=%s, key=%s", e, path ? path : "", key ? key : "");
    if (path && access(path, R_OK))
      {
@@ -785,8 +788,6 @@ ethumb_file_set(Ethumb *e, const char *path, const char *key)
    path = _ethumb_build_absolute_path(path, buf);
    eina_stringshare_replace(&e->src_path, path);
    eina_stringshare_replace(&e->src_key, key);
-   eina_stringshare_replace(&e->thumb_path, NULL);
-   eina_stringshare_replace(&e->thumb_key, NULL);
 
    return EINA_TRUE;
 }
@@ -1513,18 +1514,21 @@ ethumb_generate(Ethumb *e, Ethumb_Generate_Cb finished_cb, const void *data, Ein
      {
 	ERR("no file set.");
 	ethumb_finished_callback_call(e, 0);
-	return EINA_TRUE;
+	return EINA_FALSE;
      }
 
    r = _ethumb_plugin_generate(e);
    if (r)
-     return EINA_TRUE;
+     {
+        ethumb_finished_callback_call(e, r);
+        return EINA_TRUE;
+     }
 
    if (!_ethumb_image_load(e))
      {
 	ERR("could not load input image.");
 	ethumb_finished_callback_call(e, 0);
-	return EINA_TRUE;
+	return EINA_FALSE;
      }
 
    r = ethumb_image_save(e);
