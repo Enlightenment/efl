@@ -294,7 +294,7 @@ _finished_thumb(Widget_Data *wd,
              elm_widget_sub_object_add(wd->self, wd->view);
           }
 
-        if (!edje_object_file_set(wd->view, thumb_path, "movie/thumb"))
+        if (!edje_object_file_set(wd->view, thumb_path, thumb_key))
           {
              wd->thumb.thumb_path = eina_stringshare_ref(thumb_path);
              wd->thumb.thumb_key = eina_stringshare_ref(thumb_key);
