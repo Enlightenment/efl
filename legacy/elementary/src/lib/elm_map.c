@@ -799,7 +799,11 @@ obj_rotate_zoom(void *data, Evas_Object *obj)
 }
 
 static void
+#ifdef ELM_EMAP
 track_place(Evas_Object *obj, Grid *g __UNUSED__, Evas_Coord px, Evas_Coord py, Evas_Coord ox __UNUSED__, Evas_Coord oy __UNUSED__, Evas_Coord ow, Evas_Coord oh)
+#else
+track_place(Evas_Object *obj __UNUSED__, Grid *g __UNUSED__, Evas_Coord px __UNUSED__, Evas_Coord py __UNUSED__, Evas_Coord ox __UNUSED__, Evas_Coord oy __UNUSED__, Evas_Coord ow __UNUSED__, Evas_Coord oh __UNUSED__)
+#endif
 {
 #ifdef ELM_EMAP
    ELM_CHECK_WIDTYPE(obj, widtype);
