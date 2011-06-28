@@ -7602,6 +7602,20 @@ evas_textblock_cursor_char_coord_set(Evas_Textblock_Cursor *cur, Evas_Coord x, E
              if (ln->par->y + ln->y > y) break;
              if ((ln->par->y + ln->y <= y) && ((ln->par->y + ln->y + ln->h) > y))
                {
+                  if (x < ln->x)
+                    {
+                       cur->pos = ln->items->text_pos;
+                       cur->node = found_par->text_node;
+                       return EINA_TRUE;
+                    }
+                  else if (x > ln->x + ln->w)
+                    {
+                       cur->pos =
+                          _ITEM(EINA_INLIST_GET(ln->items)->last)->text_pos;
+                       cur->node = found_par->text_node;
+                       return EINA_TRUE;
+                    }
+
                   EINA_INLIST_FOREACH(ln->items, it)
                     {
                        if ((it->x + ln->x) > x)
@@ -7661,6 +7675,14 @@ evas_textblock_cursor_char_coord_set(Evas_Textblock_Cursor *cur, Evas_Coord x, E
                }
           }
      }
+   else if (y > o->formatted.h)
+     {
+        /* If we are after the last paragraph, use the last position in the
+         * text. */
+        evas_textblock_cursor_paragraph_last(cur);
+        evas_textblock_cursor_char_next(cur);
+        return EINA_TRUE;
+     }
    return EINA_FALSE;
 }
 
@@ -7691,6 +7713,24 @@ evas_textblock_cursor_line_coord_set(Evas_Textblock_Cursor *cur, Evas_Coord y)
                   return ln->par->line_no + ln->line_no;
                }
           }
+     }
+   else if (y > o->formatted.h)
+     {
+        int line_no = 0;
+        /* If we are after the last paragraph, use the last position in the
+         * text. */
+        evas_textblock_cursor_paragraph_last(cur);
+        evas_textblock_cursor_char_next(cur);
+        if (cur->node && cur->node->par)
+          {
+             line_no = cur->node->par->line_no;
+             if (cur->node->par->lines)
+               {
+                  line_no += ((Evas_Object_Textblock_Line *)
+                        EINA_INLIST_GET(cur->node->par->lines)->last)->line_no;
+               }
+          }
+        return line_no;
      }
    return -1;
 }
