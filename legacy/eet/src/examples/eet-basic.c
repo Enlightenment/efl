@@ -26,10 +26,13 @@ main(void)
   ef = eet_open("test.eet", EET_FILE_MODE_READ);
   ret = eet_read(ef, "Entry 1", &size);
   printf("%s\n", ret);
+  free(ret);
   ret = eet_read(ef, "Entry 2", &size);
   printf("%s\n", ret);
+  free(ret);
   ret = eet_read(ef, "Entry 3", &size);
   printf("%s\n", ret);
+  free(ret);
   eet_close(ef);
 
   eet_shutdown();
