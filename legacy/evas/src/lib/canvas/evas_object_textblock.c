@@ -7608,7 +7608,7 @@ evas_textblock_cursor_char_coord_set(Evas_Textblock_Cursor *cur, Evas_Coord x, E
                        cur->node = found_par->text_node;
                        return EINA_TRUE;
                     }
-                  else if (x > ln->x + ln->w)
+                  else if (x >= ln->x + ln->w)
                     {
                        cur->pos =
                           _ITEM(EINA_INLIST_GET(ln->items)->last)->text_pos;
