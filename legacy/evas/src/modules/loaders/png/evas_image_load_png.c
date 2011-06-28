@@ -52,6 +52,7 @@ evas_image_load_file_head_png(Image_Entry *ie, const char *file, const char *key
    f = E_FOPEN(file, "rb");
    if (!f)
      {
+        ERR("File: '%s' does not exist\n", file);
 	*error = EVAS_LOAD_ERROR_DOES_NOT_EXIST;
 	return EINA_FALSE;
      }

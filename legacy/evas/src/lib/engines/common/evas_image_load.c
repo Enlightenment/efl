@@ -218,7 +218,7 @@ evas_common_load_rgba_image_module_from_file(Image_Entry *ie)
 		       goto end;
 		    }
 		  evas_module_unload(em);
-		  DBG("failed to load file head using module '%s' (%p): "
+		  INF("failed to load file head using module '%s' (%p): "
 		      "%s (%s)",
 		      loader, em, ie->file, evas_load_error_str(ret));
 	       }
@@ -226,7 +226,7 @@ evas_common_load_rgba_image_module_from_file(Image_Entry *ie)
 	       WRN("failed to load module '%s' (%p)", loader, em);
 	  }
 	else
-	  DBG("image loader '%s' is not enabled or missing!", loader);
+	  INF("image loader '%s' is not enabled or missing!", loader);
      }
 
    fdata.ie = ie;
@@ -252,25 +252,25 @@ evas_common_load_rgba_image_module_from_file(Image_Entry *ie)
 		  ret = EVAS_LOAD_ERROR_NONE;
 		  if (evas_image_load_func->file_head(ie, ie->file, ie->key, &ret))
 		    {
-		       DBG("brute force loader '%s' (%p) worked on %s",
+                       DBG("brute force loader '%s' (%p) worked on %s",
 			   loaders_name[i], em, ie->file);
 		       goto end;
 		    }
 		  else
-		    DBG("brute force loader '%s' (%p) failed on %s (%s)",
+		    INF("brute force loader '%s' (%p) failed on %s (%s)",
 			loaders_name[i], em, ie->file,
 			evas_load_error_str(ret));
 
 		  evas_module_unload(em);
 	       }
 	     else
-	       WRN("failed to load module '%s' (%p)", loaders_name[i], em);
+	       INF("failed to load module '%s' (%p)", loaders_name[i], em);
 	  }
 	else
 	  DBG("could not find module '%s'", loaders_name[i]);
      }
 
-   DBG("exhausted all means to load image '%s'", ie->file);
+   INF("exhausted all means to load image '%s'", ie->file);
    return EVAS_LOAD_ERROR_UNKNOWN_FORMAT;
 
    end:
