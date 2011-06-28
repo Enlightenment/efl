@@ -408,3 +408,8 @@
 	* Allow evas table to re-pack the same object without error and just
         update packing parameters
         * Allow to get packing location of table child
+
+2011-06-28  Tom Hacohen (TAsn)
+
+	* Polygon: Implemented "is_inside".
+
