@@ -501,8 +501,8 @@ evas_object_polygon_is_inside(Evas_Object *obj, Evas_Coord x, Evas_Coord y)
    if (!o->points) return 0;
 
    /* Adjust X and Y according to current geometry */
-   x -= obj->cur.geometry.x;
-   y -= obj->cur.geometry.y;
+   x -= o->offset.x;
+   y -= o->offset.y;
 
    if (eina_list_count(o->points) == 1)
      {
@@ -525,16 +525,16 @@ evas_object_polygon_is_inside(Evas_Object *obj, Evas_Coord x, Evas_Coord y)
              p_next = eina_list_data_get(o->points);
           }
 
-        /* This only works if this condition is true */
-        if ((x != p_next->x) && (p->x != p_next->x))
+        /* Make sure that we are directly below the edge,
+         * and that p->x != p_next->x */
+        if (((p->x < p_next->x) && (p->x <= x) && (x < p_next->x)) ||
+              ((p->x > p_next->x) && (p_next->x < x) && (x <= p->x)))
           {
              line_y = ((double) (p->y - p_next->y) /
                    (double) (p->x - p_next->x)) *
                 (x - p_next->x) + p_next->y;
              /* We crossed that edge if the line is directly above us */
-             if ((line_y < y) &&
-                   (((p->x < p_next->x) && (p->x <= x) && (x <= p_next->x)) ||
-                    ((p->x > p_next->x) && (p_next->x <= x) && (x <= p->x))))
+             if (line_y < y)
                 num_edges++;
           }
      }
