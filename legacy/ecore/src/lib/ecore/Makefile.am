@@ -25,7 +25,8 @@ ecore_poll.c \
 ecore_time.c \
 ecore_timer.c \
 ecore_thread.c \
-ecore_glib.c
+ecore_glib.c \
+ecore_throttle.c
 
 if ECORE_HAVE_WIN32
 

@@ -195,6 +195,8 @@ void _ecore_job_shutdown(void);
 void _ecore_main_loop_init(void);
 void _ecore_main_loop_shutdown(void);
 
+void _ecore_throttle(void);
+
 extern int    _ecore_fps_debug;
 extern double _ecore_time_loop_time;
 extern Eina_Bool _ecore_glib_always_integrate;

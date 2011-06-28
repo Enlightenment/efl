@@ -446,7 +446,11 @@ _ecore_main_gsource_prepare(GSource *source __UNUSED__, gint *next_time)
          _ecore_timer_cleanup();
 
          /* when idling, busy loop checking the fds only */
-         if (!ecore_idling) _ecore_idle_enterer_call();
+         if (!ecore_idling)
+           {
+              _ecore_idle_enterer_call();
+              _ecore_throttle();
+           }
      }
 
    /* don't check fds if somebody quit */
@@ -1443,13 +1447,18 @@ _ecore_main_loop_iterate_internal(int once_only)
    if (_ecore_event_exist())
      {
         _ecore_idle_enterer_call();
+        _ecore_throttle();
         have_event = 1;
         _ecore_main_select(0.0);
         _ecore_timer_enable_new();
         goto process_events;
      }
    /* call idle enterers ... */
-   if (!once_only) _ecore_idle_enterer_call();
+   if (!once_only)
+     {
+        _ecore_idle_enterer_call();
+        _ecore_throttle();
+     }
    else
      {
         have_event = have_signal = 0;
@@ -1478,6 +1487,7 @@ _ecore_main_loop_iterate_internal(int once_only)
    if (once_only)
      {
         _ecore_idle_enterer_call();
+        _ecore_throttle();
         in_main_loop--;
         _ecore_timer_enable_new();
         return;
@@ -1568,7 +1578,11 @@ _ecore_main_loop_iterate_internal(int once_only)
    _ecore_event_call();
    _ecore_main_fd_handlers_cleanup();
 
-   if (once_only) _ecore_idle_enterer_call();
+   if (once_only)
+     {
+        _ecore_idle_enterer_call();
+        _ecore_throttle();
+     }
    in_main_loop--;
 }
 #endif

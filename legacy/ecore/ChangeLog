@@ -245,3 +245,10 @@
         * New function: ecore_con_ssl_server_verify_basic for only verifying
             certificates against a server's Common Name (CN) or its
             Subject Alternative Name (if available)
+
+2011-06-28  Carsten Haitzler (The Rasterman)
+
+        * Add ecore_throttle mechanism to voluntarily do powersaving to
+        avoid wakeups and excess animation etc. when in the background
+        or another "powersave" state.
+

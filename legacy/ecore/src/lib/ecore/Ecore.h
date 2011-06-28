@@ -887,6 +887,24 @@ extern "C" {
    * @}
    */
 
+  /**
+   * @defgroup Ecore_Throttle_Group Ecore Throttle functions
+   *
+   * @{
+   */
+
+   EAPI void       ecore_throttle_adjust(double amount );
+   EAPI double     ecore_throttle_get(void);
+         
+   
+  /**
+   * @}
+   */
+
+  /**
+   * @}
+   */
+
 #ifdef __cplusplus
 }
 #endif
