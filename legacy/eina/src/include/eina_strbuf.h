@@ -6,6 +6,35 @@
 
 #include "eina_types.h"
 
+
+/**
+ * @page tutorial_strbuf Eina_Strbuf example
+ * @dontinclude eina_strbuf_01.c
+ *
+ * First thing always is including Eina:
+ * @skipline #include
+ * @until #include
+ *
+ * Next we initialize eina and create a string buffer to play with:
+ * @until strbuf_new
+ *
+ * Here you can see two different ways of creating a buffer with the same
+ * contents. We could create them in simpler ways, but this gives us an
+ * oportunity to demonstrate several functions in action:
+ * @until strbuf_reset
+ * @until strbuf_reset
+ *
+ * Next we use the printf family of functions to create a formated string,
+ * add, remove and replace some content:
+ * @until strbuf_string_get
+ * @until strbuf_string_get
+ * @until strbuf_string_get
+ *
+ * Once done we free our string buffer, shut down Eina and end the application:
+ * @until }
+ *
+ * @example eina_strbuf_01.c
+ */
 /**
  * @addtogroup Eina_String_Buffer_Group String Buffer
  *
@@ -13,6 +42,8 @@
  *
  * The String Buffer data type is designed to be a mutable string,
  * allowing to append, prepend or insert a string to a buffer.
+ *
+ * For more information see @ref tutorial_strbuf "this example".
  *
  * @{
  */
