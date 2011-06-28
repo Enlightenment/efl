@@ -111,7 +111,7 @@ _icon_size_min_get(Evas_Object *icon)
 static void
 _icon_thumb_stop(Widget_Data *wd, void *ethumbd)
 {
-   if (wd->thumb.id > 0)
+   if (wd->thumb.id >= 0)
      {
         ethumb_client_generate_cancel(ethumbd, wd->thumb.id, NULL, NULL, NULL);
         wd->thumb.id = -1;
@@ -159,7 +159,7 @@ _icon_thumb_display(Widget_Data *wd)
           }
 
         if (video)
-          ret = _els_smart_icon_file_edje_set(wd->img, wd->thumb.thumb.path, "movie/thumb");
+          ret = _els_smart_icon_file_edje_set(wd->img, wd->thumb.thumb.path, wd->thumb.thumb.key);
      }
 
    if (!ret)
@@ -286,6 +286,7 @@ _icon_thumb_exists(Ethumb_Client *client __UNUSED__, Ethumb_Exists *thread, Eina
      }
    else if ((wd->thumb.id = ethumb_client_generate(ethumbd, _icon_thumb_cb, wd, NULL)) == -1)
      {
+        ERR("Generate was unable to start !");
         /* Failed to generate thumbnail */
         _icon_pending_request--;
      }
@@ -301,10 +302,9 @@ _icon_thumb_apply(Widget_Data *wd)
    _icon_thumb_stop(wd, ethumbd);
 
    if (!wd->thumb.file.path) return ;
-   fprintf(stderr, "thumb\n");
 
    _icon_pending_request++;
-   ethumb_client_file_set(ethumbd, wd->thumb.file.path, wd->thumb.file.key);
+   if (!ethumb_client_file_set(ethumbd, wd->thumb.file.path, wd->thumb.file.key)) return ;
    ethumb_client_size_set(ethumbd, _icon_size_min_get(wd->img), _icon_size_min_get(wd->img));
    wd->thumb.exists = ethumb_client_thumb_exists(ethumbd, _icon_thumb_exists, wd);
 }
