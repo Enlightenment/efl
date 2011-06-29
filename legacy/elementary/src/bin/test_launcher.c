@@ -273,7 +273,7 @@ test_launcher(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
 
                   lb = elm_label_add(win);
                   elm_object_style_set(lb, "marker");
-                  elm_label_label_set(lb, names[m]);
+                  elm_object_text_set(lb, names[m]);
                   evas_object_size_hint_weight_set(lb, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
                   evas_object_size_hint_align_set(lb, 0.5, 0.5);
                   elm_table_pack(tb, lb, 1 + i, 1 + (j * 2) + 1, 1, 1);

@@ -80,7 +80,7 @@ struct _Fonts_Data
        lb = elm_label_add(win);                                     \
        evas_object_size_hint_weight_set(lb, EVAS_HINT_EXPAND, 0.0); \
        evas_object_size_hint_align_set(lb, EVAS_HINT_FILL, 0.5);    \
-       elm_label_label_set(lb, label);                              \
+       elm_object_text_set(lb, label);                              \
        elm_frame_content_set(pd, lb);                               \
        evas_object_show(lb);                                        \
     }                                                               \
@@ -555,7 +555,7 @@ _status_basic(Evas_Object *win,
    evas_object_show(fr);
 
    lb = elm_label_add(win);
-   elm_label_label_set(lb,
+   elm_object_text_set(lb,
                        "Applying configuration change"
                        );
    elm_frame_content_set(fr, lb);
@@ -2108,7 +2108,7 @@ _profiles_list_selected_cb(void            *data,
 
    snprintf(buf, sizeof(buf), "<hilight>Selected profile: %s</><br>",
             prof_name);
-   elm_label_label_set(evas_object_data_get(obj, "prof_name_lbl"), buf);
+   elm_object_text_set(evas_object_data_get(obj, "prof_name_lbl"), buf);
 
    en = evas_object_data_get(obj, "prof_desc_entry");
 #ifdef ELM_EFREET

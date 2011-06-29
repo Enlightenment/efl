@@ -2466,7 +2466,7 @@ _elm_widget_item_tooltip_label_create(void        *data,
    if (!label)
      return NULL;
    elm_object_style_set(label, "tooltip");
-   elm_label_label_set(label, data);
+   elm_object_text_set(label, data);
    return label;
 }
 

@@ -679,7 +679,7 @@ Evas_Object *gl3_icon_get(void *data, Evas_Object *obj, const char *part)
         lb = elm_label_add(obj);
         elm_label_line_wrap_set(lb, 1);
         elm_label_wrap_width_set(lb, 201);
-        elm_label_label_set(lb, "ashj ascjscjh n asjkl hcjlh ls hzshnn zjh sh zxjcjsnd h dfw sdv edev efe fwefvv vsd cvs ws wf  fvwf wd fwe f  we wef we wfe rfwewef wfv wswf wefg sdfws w wsdcfwcf wsc vdv  sdsd sdcd cv wsc sdcv wsc d sdcdcsd sdcdsc wdvd sdcsd wscxcv wssvd sd");
+        elm_object_text_set(lb, "ashj ascjscjh n asjkl hcjlh ls hzshnn zjh sh zxjcjsnd h dfw sdv edev efe fwefvv vsd cvs ws wf  fvwf wd fwe f  we wef we wfe rfwewef wfv wswf wefg sdfws w wsdcfwcf wsc vdv  sdsd sdcd cv wsc sdcv wsc d sdcdcsd sdcdsc wdvd sdcsd wscxcv wssvd sd");
         return lb;
      }
    else if (!strcmp(part, "elm.swallow.end"))
@@ -1726,7 +1726,7 @@ test_genlist10(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
    evas_object_show(bx2);
 
    lb = elm_label_add(win);
-   elm_label_label_set(lb,
+   elm_object_text_set(lb,
                        "Sweep genlist items to the right.<br>"
                        "Test this by changing Mode Type to Slide or Rotate.");
    elm_box_pack_end(bx2, lb);
@@ -1839,7 +1839,7 @@ test_genlist11(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
    evas_object_show(fr);
 
    lb = elm_label_add(win);
-   elm_label_label_set(lb,
+   elm_object_text_set(lb,
                        "Enable reorder mode if you want to move item.<br>"
                        "Then long press and drag item.");
    elm_frame_content_set(fr, lb);

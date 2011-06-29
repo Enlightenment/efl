@@ -560,7 +560,7 @@ _marker_get(Evas_Object *obj, Elm_Map_Marker *marker __UNUSED__, void *data)
         elm_box_pack_end(bx, o);
 
         Evas_Object *lbl = elm_label_add(obj);
-        elm_label_label_set(lbl, "Wolves Go !");
+        elm_object_text_set(lbl, "Wolves Go !");
         evas_object_show(lbl);
         elm_box_pack_end(bx, lbl);
      }

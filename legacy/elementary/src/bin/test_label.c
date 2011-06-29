@@ -23,7 +23,7 @@ test_label(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
    evas_object_size_hint_align_set(bx, EVAS_HINT_FILL, EVAS_HINT_FILL);
 
    lb = elm_label_add(win);
-   elm_label_label_set(lb,
+   elm_object_text_set(lb,
                        "<b>This is a small label</b>"
                        );
    evas_object_size_hint_weight_set(lb, 0.0, 0.0);
@@ -32,7 +32,7 @@ test_label(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
    evas_object_show(lb);
 
    lb = elm_label_add(win);
-   elm_label_label_set(lb,
+   elm_object_text_set(lb,
                        "This is a larger label with newlines<br>"
                        "to make it bigger, bit it won't expand or wrap<br>"
                        "just be a block of text that can't change its<br>"
@@ -45,7 +45,7 @@ test_label(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
 
    lb = elm_label_add(win);
    elm_label_line_wrap_set(lb, 1);
-   elm_label_label_set(lb,
+   elm_object_text_set(lb,
                        "<b>"
                        "This is more text designed to line-wrap here as "
                        "This object is resized horizontally. As it is "
@@ -60,7 +60,7 @@ test_label(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
    evas_object_show(lb);
 
    lb = elm_label_add(win);
-   elm_label_label_set(lb,
+   elm_object_text_set(lb,
                        "This small label set to wrap"
                        );
    evas_object_size_hint_weight_set(lb, EVAS_HINT_EXPAND, 0.0);

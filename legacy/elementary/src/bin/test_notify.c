@@ -65,7 +65,7 @@ test_notify(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    evas_object_show(bx);
 
    lb = elm_label_add(win);
-   elm_label_label_set(lb, "This position is the default.");
+   elm_object_text_set(lb, "This position is the default.");
    elm_box_pack_end(bx, lb);
    evas_object_show(lb);
 
@@ -95,7 +95,7 @@ test_notify(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    evas_object_show(bx);
 
    lb = elm_label_add(win);
-   elm_label_label_set(lb, "Bottom position. This notify use a timeout of 5 sec.<br>"
+   elm_object_text_set(lb, "Bottom position. This notify use a timeout of 5 sec.<br>"
 	 "<b>The events outside the window are blocked.</b>");
    elm_box_pack_end(bx, lb);
    evas_object_show(lb);
@@ -124,7 +124,7 @@ test_notify(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    evas_object_show(bx);
 
    lb = elm_label_add(win);
-   elm_label_label_set(lb, "Left position. This notify use a timeout of 10 sec.");
+   elm_object_text_set(lb, "Left position. This notify use a timeout of 10 sec.");
    elm_box_pack_end(bx, lb);
    evas_object_show(lb);
 
@@ -152,7 +152,7 @@ test_notify(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    evas_object_show(bx);
 
    lb = elm_label_add(win);
-   elm_label_label_set(lb, "Center position. This notify use a timeout of 10 sec.");
+   elm_object_text_set(lb, "Center position. This notify use a timeout of 10 sec.");
    elm_box_pack_end(bx, lb);
    evas_object_show(lb);
 
@@ -178,7 +178,7 @@ test_notify(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    evas_object_show(bx);
 
    lb = elm_label_add(win);
-   elm_label_label_set(lb, "Right position.");
+   elm_object_text_set(lb, "Right position.");
    elm_box_pack_end(bx, lb);
    evas_object_show(lb);
 
@@ -204,7 +204,7 @@ test_notify(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    evas_object_show(bx);
 
    lb = elm_label_add(win);
-   elm_label_label_set(lb, "Top Left position.");
+   elm_object_text_set(lb, "Top Left position.");
    elm_box_pack_end(bx, lb);
    evas_object_show(lb);
 
@@ -230,7 +230,7 @@ test_notify(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    evas_object_show(bx);
 
    lb = elm_label_add(win);
-   elm_label_label_set(lb, "Top Right position.");
+   elm_object_text_set(lb, "Top Right position.");
    elm_box_pack_end(bx, lb);
    evas_object_show(lb);
 
@@ -256,7 +256,7 @@ test_notify(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    evas_object_show(bx);
 
    lb = elm_label_add(win);
-   elm_label_label_set(lb, "Bottom Left position.");
+   elm_object_text_set(lb, "Bottom Left position.");
    elm_box_pack_end(bx, lb);
    evas_object_show(lb);
 
@@ -282,7 +282,7 @@ test_notify(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    evas_object_show(bx);
 
    lb = elm_label_add(win);
-   elm_label_label_set(lb, "Bottom Right position.");
+   elm_object_text_set(lb, "Bottom Right position.");
    elm_box_pack_end(bx, lb);
    evas_object_show(lb);
 

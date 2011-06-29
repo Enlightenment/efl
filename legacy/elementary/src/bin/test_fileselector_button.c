@@ -129,7 +129,7 @@ test_fileselector_button(void *data       __UNUSED__,
    evas_object_show(bt);
 
    lb = elm_label_add(win);
-   elm_label_label_set(lb, "Last selection:");
+   elm_object_text_set(lb, "Last selection:");
    elm_box_pack_end(vbox, lb);
    evas_object_show(lb);
 

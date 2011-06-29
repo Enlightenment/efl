@@ -21,7 +21,7 @@ test_inwin(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
    evas_object_show(inwin);
 
    lb = elm_label_add(win);
-   elm_label_label_set(lb,
+   elm_object_text_set(lb,
 		       "This is an \"inwin\" - a window in a<br>"
 		       "window. This is handy for quick popups<br>"
 		       "you want centered, taking over the window<br>"
@@ -53,7 +53,7 @@ test_inwin2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    evas_object_show(inwin);
 
    lb = elm_label_add(win);
-   elm_label_label_set(lb,
+   elm_object_text_set(lb,
 		       "This is an \"inwin\" - a window in a<br>"
 		       "window. This is handy for quick popups<br>"
 		       "you want centered, taking over the window<br>"

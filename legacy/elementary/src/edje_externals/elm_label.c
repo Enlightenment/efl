@@ -15,7 +15,7 @@ external_label_state_set(void *data __UNUSED__, Evas_Object *obj __UNUSED__, con
    else if (from_params) p = from_params;
    else return;
 
-   if (p->label) elm_label_label_set(obj, p->label);
+   if (p->label) elm_object_text_set(obj, p->label);
 }
 
 static Eina_Bool
@@ -25,7 +25,7 @@ external_label_param_set(void *data __UNUSED__, Evas_Object *obj, const Edje_Ext
      {
 	if (param->type == EDJE_EXTERNAL_PARAM_TYPE_STRING)
 	  {
-	     elm_label_label_set(obj, param->s);
+	     elm_object_text_set(obj, param->s);
 	     return EINA_TRUE;
 	  }
      }
@@ -43,7 +43,7 @@ external_label_param_get(void *data __UNUSED__, const Evas_Object *obj, Edje_Ext
      {
 	if (param->type == EDJE_EXTERNAL_PARAM_TYPE_STRING)
 	  {
-	     param->s = elm_label_label_get(obj);
+	     param->s = elm_object_text_get(obj);
 	     return EINA_TRUE;
 	  }
      }

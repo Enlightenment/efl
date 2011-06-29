@@ -97,7 +97,7 @@ test_pager(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
    evas_object_show(bx);
 
    lb = elm_label_add(win);
-   elm_label_label_set(lb,
+   elm_object_text_set(lb,
 		       "This is page 1 in a pager stack.<br>"
 		       "<br>"
 		       "So what is a pager stack? It is a stack<br>"
@@ -149,7 +149,7 @@ test_pager(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
    evas_object_show(bx);
 
    lb = elm_label_add(win);
-   elm_label_label_set(lb,
+   elm_object_text_set(lb,
 		       "This is page 2 in a pager stack.<br>"
 		       "<br>"
 		       "This is just like the previous page in<br>"
@@ -177,7 +177,7 @@ test_pager(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
    evas_object_show(bx);
 
    lb = elm_label_add(win);
-   elm_label_label_set(lb,
+   elm_object_text_set(lb,
 		       "This is page 3 in a pager stack.<br>"
 		       "<br>"
 		       "This is just like the previous page in<br>"
@@ -254,7 +254,7 @@ my_pager_push(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED
 
    lb = elm_label_add(info->win);
    snprintf(buf, sizeof(buf), "This is page %d in the slide pager<br><br>", count++);
-   elm_label_label_set(lb, buf);
+   elm_object_text_set(lb, buf);
    elm_box_pack_end(bx, lb);
    evas_object_show(lb);
 
@@ -300,7 +300,7 @@ test_pager_slide(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event
    evas_object_show(bx);
 
    lb = elm_label_add(win);
-   elm_label_label_set(lb,
+   elm_object_text_set(lb,
 		       "This is page 1 in a slide pager.<br>"
 		       "<br>"
 		       "The slide pager style is useful for browsing<br>"

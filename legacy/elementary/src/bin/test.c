@@ -249,7 +249,7 @@ my_win_main(char *autorun)
    evas_object_show(fr);
 
    lb = elm_label_add(win);
-   elm_label_label_set(lb,
+   elm_object_text_set(lb,
                        "Please select a test from the list below<br>"
                        "by clicking the test button to show the<br>"
                        "test window.");
