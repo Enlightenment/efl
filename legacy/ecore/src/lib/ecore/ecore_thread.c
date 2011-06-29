@@ -1161,8 +1161,12 @@ EAPI Ecore_Thread *ecore_thread_feedback_run(Ecore_Thread_Cb func_heavy,
         worker->u.feedback_run.direct_worker = _ecore_thread_worker_new();
         worker->no_queue = EINA_TRUE;
 
+	eina_threads_init();
+
         if (PHC(t, _ecore_direct_worker, worker) == 0)
            return (Ecore_Thread *) worker;
+
+	eina_threads_shutdown();
      }
 
    worker->no_queue = EINA_FALSE;
