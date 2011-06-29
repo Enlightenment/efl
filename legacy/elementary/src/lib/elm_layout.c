@@ -306,6 +306,57 @@ _parts_text_fix(Widget_Data *wd)
      }
 }
 
+static void
+_elm_layout_label_set(Evas_Object *obj, const char *part, const char *text)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   Subinfo *si = NULL;
+   Eina_List *l;
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   if (!part) part = "elm.text";
+
+   EINA_LIST_FOREACH(wd->subs, l, si)
+     {
+        if ((si->type == TEXT) && (!strcmp(part, si->part)))
+          {
+             if (!text)
+               {
+                  eina_stringshare_del(si->part);
+                  eina_stringshare_del(si->p.text.text);
+                  free(si);
+                  edje_object_part_text_set(wd->lay, part, NULL);
+                  wd->subs = eina_list_remove_list(wd->subs, l);
+                  return;
+               }
+             else
+               break;
+          }
+        si = NULL;
+     }
+
+   if (!si)
+     {
+        si = ELM_NEW(Subinfo);
+        if (!si) return;
+        si->type = TEXT;
+        si->part = eina_stringshare_add(part);
+        wd->subs = eina_list_append(wd->subs, si);
+     }
+
+   eina_stringshare_replace(&si->p.text.text, text);
+   edje_object_part_text_set(wd->lay, part, text);
+   _request_sizing_eval(wd);
+}
+
+static const char *
+_elm_layout_label_get(const Evas_Object *obj, const char *part)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!part) part = "elm.text";
+   return edje_object_part_text_get(wd->lay, part);
+}
+
 /**
  * Add a new layout to the parent
  *
@@ -335,6 +386,8 @@ elm_layout_add(Evas_Object *parent)
    elm_widget_signal_emit_hook_set(obj, _signal_emit_hook);
    elm_widget_signal_callback_add_hook_set(obj, _signal_callback_add_hook);
    elm_widget_signal_callback_del_hook_set(obj, _signal_callback_del_hook);
+   elm_widget_label_set_hook_set(obj, _elm_layout_label_set);
+   elm_widget_label_get_hook_set(obj, _elm_layout_label_get);
 
    wd->obj = obj;
    wd->lay = edje_object_add(e);
@@ -522,46 +575,12 @@ elm_layout_content_unset(Evas_Object *obj, const char *swallow)
  * @param text The text to set
  *
  * @ingroup Layout
+ * @deprecate use elm_object_text_* instead.
  */
 EAPI void
 elm_layout_text_set(Evas_Object *obj, const char *part, const char *text)
 {
-   Widget_Data *wd = elm_widget_data_get(obj);
-   Subinfo *si = NULL;
-   Eina_List *l;
-   ELM_CHECK_WIDTYPE(obj, widtype);
-
-   EINA_LIST_FOREACH(wd->subs, l, si)
-     {
-        if ((si->type == TEXT) && (!strcmp(part, si->part)))
-          {
-             if (!text)
-               {
-                  eina_stringshare_del(si->part);
-                  eina_stringshare_del(si->p.text.text);
-                  free(si);
-                  edje_object_part_text_set(wd->lay, part, NULL);
-                  wd->subs = eina_list_remove_list(wd->subs, l);
-                  return;
-               }
-             else
-               break;
-          }
-        si = NULL;
-     }
-
-   if (!si)
-     {
-        si = ELM_NEW(Subinfo);
-        if (!si) return;
-        si->type = TEXT;
-        si->part = eina_stringshare_add(part);
-        wd->subs = eina_list_append(wd->subs, si);
-     }
-
-   eina_stringshare_replace(&si->p.text.text, text);
-   edje_object_part_text_set(wd->lay, part, text);
-   _request_sizing_eval(wd);
+   _elm_layout_label_set(obj, part, text);
 }
 
 /**
@@ -573,13 +592,12 @@ elm_layout_text_set(Evas_Object *obj, const char *part, const char *text)
  * @return The text set in @p part
  *
  * @ingroup Layout
+ * @deprecate use elm_object_text_* instead.
  */
 EAPI const char *
 elm_layout_text_get(const Evas_Object *obj, const char *part)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
-   Widget_Data *wd = elm_widget_data_get(obj);
-   return edje_object_part_text_get(wd->lay, part);
+   return _elm_layout_label_get(obj, part);
 }
 
 /**

@@ -2831,8 +2831,8 @@ extern "C" {
    EAPI void               elm_layout_content_set(Evas_Object *obj, const char *swallow, Evas_Object *content) EINA_ARG_NONNULL(1);
    EAPI Evas_Object       *elm_layout_content_get(const Evas_Object *obj, const char *swallow) EINA_ARG_NONNULL(1);
    EAPI Evas_Object       *elm_layout_content_unset(Evas_Object *obj, const char *swallow) EINA_ARG_NONNULL(1);
-   EAPI void               elm_layout_text_set(Evas_Object *obj, const char *part, const char *text) EINA_ARG_NONNULL(1);
-   EAPI const char        *elm_layout_text_get(const Evas_Object *obj, const char *part) EINA_ARG_NONNULL(1);
+   EINA_DEPRECATED EAPI void               elm_layout_text_set(Evas_Object *obj, const char *part, const char *text) EINA_ARG_NONNULL(1);
+   EINA_DEPRECATED EAPI const char        *elm_layout_text_get(const Evas_Object *obj, const char *part) EINA_ARG_NONNULL(1);
    EAPI void               elm_layout_box_append(Evas_Object *obj, const char *part, Evas_Object *child) EINA_ARG_NONNULL(1);
    EAPI void               elm_layout_box_prepend(Evas_Object *obj, const char *part, Evas_Object *child) EINA_ARG_NONNULL(1);
    EAPI void               elm_layout_box_insert_before(Evas_Object *obj, const char *part, Evas_Object *child, const Evas_Object *reference) EINA_ARG_NONNULL(1);
@@ -2910,6 +2910,7 @@ extern "C" {
  * Elementary naming convention for its parts.
  *
  * @ingroup Layout
+ * @deprecate use elm_object_text_* instead.
  */
 #define elm_layout_label_set(_ly, _txt) \
   elm_layout_text_set((_ly), "elm.text", (_txt))
@@ -2920,6 +2921,7 @@ extern "C" {
  * Elementary naming convention for its parts.
  *
  * @ingroup Layout
+ * @deprecate use elm_object_text_* instead.
  */
 #define elm_layout_label_get(_ly) \
   elm_layout_text_get((_ly), "elm.text")
