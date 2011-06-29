@@ -8,7 +8,7 @@
 static void
 _clicked_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 {
-   elm_layout_text_set(data, "text", elm_object_text_get(obj));
+   elm_object_label_set(data, "text", elm_object_text_get(obj));
 }
 
 void
@@ -34,7 +34,7 @@ test_layout(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
 
    ly = elm_layout_add(win);
    elm_layout_theme_set(ly, "layout", "application", "titlebar");
-   elm_layout_label_set(ly, "Some title");
+   elm_object_text_set(ly, "Some title");
    evas_object_size_hint_weight_set(ly, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(ly, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_box_pack_end(box, ly);
