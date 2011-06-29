@@ -877,6 +877,55 @@
   */
 
 /**
+ * @page bubble_01_example_page elm_bubble - Simple use.
+ * @dontinclude bubble_example_01.c
+ *
+ * This example shows a bubble with all fields set(label, info, content and
+ * icon) and the selected corner changing when the bubble is clicked. To be
+ * able use a bubble we need to do some setup and create a window, for this
+ * example we are going to ignore that part of the code since it isn't
+ * relevant to the bubble.
+ *
+ * To have the selected corner change in a clockwise motion we are going to
+ * use the following callback:
+ * @skip static
+ * @until }
+ * @until }
+ *
+ * Here we are creating an elm_label that is going to be used as the content
+ * for our bubble:
+ * @skipline elm_label
+ * @until show
+ * @note You could use any evas_object for this, we are using an elm_label
+ * for simplicity.
+ *
+ * Despite it's name the bubble's icon doesn't have to be an icon, it can be
+ * any evas_object. For this example we are going to make the icon a simple
+ * blue rectangle:
+ * @until show
+ *
+ * And finally we have the actual bubble creation and the setting of it's
+ * label, info and content:
+ * @until content
+ * @skipline show
+ * @note Because we didn't set a corner, the default("top_left") will be
+ * used.
+ *
+ * Now that we have our bubble all that is left is connecting the "clicked"
+ * signals to our callback:
+ * @line smart_callback
+ *
+ * This last bubble we created was very complete, so it's pertinent to show
+ * that most of that stuff is optional a bubble can be created with nothing
+ * but content:
+ * @until content
+ * @skipline show
+ *
+ * See the full source code @ref bubble_example_01.c here.
+ * @example bubble_example_01.c
+ */
+
+/**
  * @page bg_example_01_c bg_example_01.c
  * @include bg_example_01.c
  * @example bg_example_01.c

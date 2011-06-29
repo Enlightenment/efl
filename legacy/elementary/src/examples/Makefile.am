@@ -30,6 +30,7 @@ SRCS = \
 	actionslider_example_01.c \
 	anchorblock_example_01.c \
 	animator_example_01.c \
+	bubble_example_01.c \
 	button_example_01.c \
 	transit_example_01.c \
 	transit_example_02.c \
@@ -63,6 +64,7 @@ pkglib_PROGRAMS += \
 	actionslider_example_01 \
 	anchorblock_example_01 \
 	animator_example_01 \
+	bubble_example_01 \
 	button_example_01 \
 	transit_example_01 \
 	transit_example_02 \
