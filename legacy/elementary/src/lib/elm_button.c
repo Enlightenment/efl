@@ -285,6 +285,33 @@ _signal_unpressed(void *data, Evas_Object *obj __UNUSED__, const char *emission 
    evas_object_smart_callback_call(data, SIG_UNPRESSED, NULL);
 }
 
+static void
+_elm_button_label_set(Evas_Object *obj, const char *item, const char *label)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (item) return;
+   if (!wd) return;
+   eina_stringshare_replace(&wd->label, label);
+   if (label)
+     edje_object_signal_emit(wd->btn, "elm,state,text,visible", "elm");
+   else
+     edje_object_signal_emit(wd->btn, "elm,state,text,hidden", "elm");
+   edje_object_message_signal_process(wd->btn);
+   edje_object_part_text_set(wd->btn, "elm.text", label);
+   _sizing_eval(obj);
+}
+
+static const char *
+_elm_button_label_get(const Evas_Object *obj, const char *item)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (item) return NULL;
+   if (!wd) return NULL;
+   return wd->label;
+}
+
 EAPI Evas_Object *
 elm_button_add(Evas_Object *parent)
 {
@@ -308,6 +335,8 @@ elm_button_add(Evas_Object *parent)
    elm_widget_signal_emit_hook_set(obj, _signal_emit_hook);
    elm_widget_signal_callback_add_hook_set(obj, _signal_callback_add_hook);
    elm_widget_signal_callback_del_hook_set(obj, _signal_callback_del_hook);
+   elm_widget_label_set_hook_set(obj, _elm_button_label_set);
+   elm_widget_label_get_hook_set(obj, _elm_button_label_get);
 
    wd->btn = edje_object_add(e);
    _elm_theme_object_set(obj, wd->btn, "button", "base", "default");
@@ -332,26 +361,13 @@ elm_button_add(Evas_Object *parent)
 EAPI void
 elm_button_label_set(Evas_Object *obj, const char *label)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype);
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return;
-   eina_stringshare_replace(&wd->label, label);
-   if (label)
-     edje_object_signal_emit(wd->btn, "elm,state,text,visible", "elm");
-   else
-     edje_object_signal_emit(wd->btn, "elm,state,text,hidden", "elm");
-   edje_object_message_signal_process(wd->btn);
-   edje_object_part_text_set(wd->btn, "elm.text", label);
-   _sizing_eval(obj);
+   _elm_button_label_set(obj, NULL, label);
 }
 
 EAPI const char *
 elm_button_label_get(const Evas_Object *obj)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return NULL;
-   return wd->label;
+   return _elm_button_label_get(obj, NULL);
 }
 
 EAPI void

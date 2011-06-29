@@ -2391,8 +2391,9 @@ extern "C" {
     *
     * @param obj The button object
     * @param label The text will be written on the button
+    * @deprecated use elm_object_text_set() instead.
     */
-   EAPI void         elm_button_label_set(Evas_Object *obj, const char *label) EINA_ARG_NONNULL(1);
+   EINA_DEPRECATED EAPI void         elm_button_label_set(Evas_Object *obj, const char *label) EINA_ARG_NONNULL(1);
    /**
     * Get the label set for the button
     *
@@ -2404,8 +2405,9 @@ extern "C" {
     *
     * @param obj The button object
     * @return The text set to the label, or NULL if nothing is set
+    * @deprecated use elm_object_text_set() instead.
     */
-   EAPI const char  *elm_button_label_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+   EINA_DEPRECATED EAPI const char  *elm_button_label_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
    /**
     * Set the icon used for the button
     *
