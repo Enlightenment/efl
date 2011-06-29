@@ -2638,8 +2638,8 @@ extern "C" {
 
    /* toggle */
    EAPI Evas_Object *elm_toggle_add(Evas_Object *parent) EINA_ARG_NONNULL(1);
-   EAPI void         elm_toggle_label_set(Evas_Object *obj, const char *label) EINA_ARG_NONNULL(1);
-   EAPI const char  *elm_toggle_label_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+   EINA_DEPRECATED EAPI void         elm_toggle_label_set(Evas_Object *obj, const char *label) EINA_ARG_NONNULL(1);
+   EINA_DEPRECATED EAPI const char  *elm_toggle_label_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
    EAPI void         elm_toggle_icon_set(Evas_Object *obj, Evas_Object *icon) EINA_ARG_NONNULL(1);
    EAPI Evas_Object *elm_toggle_icon_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
    EAPI Evas_Object *elm_toggle_icon_unset(Evas_Object *obj) EINA_ARG_NONNULL(1);
