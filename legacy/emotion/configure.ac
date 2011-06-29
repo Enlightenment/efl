@@ -177,6 +177,28 @@ case "$host_os" in
 esac
 AC_SUBST(lt_enable_auto_import)
 
+### Check for extended attribute
+
+AC_COMPILE_IFELSE(
+   [AC_LANG_PROGRAM(
+       [[
+#include <stdlib.h>
+#include <sys/types.h>
+#include <sys/xattr.h>
+       ]],
+       [[
+size_t tmp = listxattr("/", NULL, 0);
+tmp = getxattr("/", "user.ethumb.md5", NULL, 0);
+setxattr("/", "user.ethumb.md5", NULL, 0, 0);
+       ]])],
+    [
+      AC_DEFINE(HAVE_XATTR, 1, [Define to 1 if you have 'listxattr', 'setxattr' and 'getxattr'])
+      have_xattr="yes"
+    ],
+    [have_xattr="no"])
+
+AC_MSG_CHECKING([for Xattr])
+AC_MSG_RESULT([${have_xattr}])
 
 ### Modules
 
@@ -191,6 +213,18 @@ if test "x${enable_xine}" = "xno" && test "x${enable_gstreamer}" = "xno"; then
 #   AC_MSG_ERROR([Xine, Gstreamer or VLC backends must be selected to build Emotion])
    AC_MSG_ERROR([Xine or Gstreamer backends must be selected to build Emotion])
 fi
+
+PKG_CHECK_MODULES([EIO],
+	[eio],
+	[
+	 have_eio="yes"
+	 AC_DEFINE(HAVE_EIO, 1, [Use EIO for asynchronous file access])
+	 requirement_emotion="eio ${requirement_emotion}"
+	],
+	[have_eio="no"])
+
+AM_CONDITIONAL([HAVE_EIO], [test "x${have_eio}" = "xyes"])
+
 
 AC_SUBST(requirement_emotion)
 
@@ -233,6 +267,9 @@ echo "  Build emotion_test...: $have_emotion_test"
 echo "  edje_cc..............: ${edje_cc}"
 echo
 echo "  Edje EXTERNAL support: ${have_edje_external}"
+echo
+echo "  Xattr................: ${have_xattr}"
+echo "  Eio..................: ${have_eio}"
 echo
 echo "Compilation............: make (or gmake)"
 echo "  CPPFLAGS.............: $CPPFLAGS"

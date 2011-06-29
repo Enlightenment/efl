@@ -174,6 +174,9 @@ EAPI void         emotion_object_vis_set               (Evas_Object *obj, Emotio
 EAPI Emotion_Vis  emotion_object_vis_get               (const Evas_Object *obj);
 EAPI Eina_Bool    emotion_object_vis_supported         (const Evas_Object *obj, Emotion_Vis visualization);
 
+EAPI void         emotion_object_last_position_load    (Evas_Object *obj);
+EAPI void         emotion_object_last_position_save    (Evas_Object *obj);
+
 EAPI Eina_Bool    emotion_object_extension_can_play_get(const Evas_Object *obj, const char *file);
 EAPI Eina_Bool    emotion_object_extension_can_play_fast_get(const Evas_Object *obj, const char *file);
 

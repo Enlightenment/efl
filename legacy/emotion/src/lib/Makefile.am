@@ -9,6 +9,7 @@ AM_CPPFLAGS = \
 -DPACKAGE_DATA_DIR=\"$(datadir)/$(PACKAGE)\" \
 @EMOTION_CPPFLAGS@ \
 @EMOTION_CFLAGS@ \
+@EIO_CFLAGS@ \
 @EFL_EMOTION_BUILD@
 
 if EMOTION_STATIC_BUILD_XINE
@@ -46,7 +47,7 @@ libemotion_la_SOURCES += \
 $(top_srcdir)/src/modules/vlc/emotion_vlc.c
 endif
 
-libemotion_la_LIBADD = @EMOTION_LIBS@
+libemotion_la_LIBADD = @EMOTION_LIBS@ @EIO_LIBS@
 
 if EMOTION_STATIC_BUILD_XINE
 libemotion_la_LIBADD += @XINE_LIBS@

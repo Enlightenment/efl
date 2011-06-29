@@ -77,13 +77,13 @@ main_resize(Ecore_Evas *ee)
 static Eina_Bool
 main_signal_exit(void *data __UNUSED__, int ev_type __UNUSED__, void *ev __UNUSED__)
 {
+   Evas_Object *o;
+
    ecore_main_loop_quit();
-   while (video_objs)
+   EINA_LIST_FREE(video_objs, o)
      {
-	printf("del obj!\n");
-	evas_object_del(video_objs->data);
-	video_objs = eina_list_remove_list(video_objs, video_objs);
-	printf("done\n");
+	emotion_object_last_position_save(o);
+	evas_object_del(o);
      }
    return EINA_TRUE;
 }
@@ -564,6 +564,7 @@ init_video_object(const char *module_filename, const char *filename)
      {
        return;
      }
+   emotion_object_last_position_load(o);
    emotion_object_play_set(o, 1);
    evas_object_move(o, 0, 0);
    evas_object_resize(o, 320, 240);

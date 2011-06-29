@@ -2,9 +2,11 @@
 #include "Emotion.h"
 
 #ifdef HAVE_EIO
+# include <math.h>
 # include <Eio.h>
 #else
 # ifdef HAVE_XATTR
+#  include <math.h>
 #  include <sys/xattr.h>
 # endif
 #endif
@@ -45,6 +47,7 @@ typedef struct _Smart_Data Smart_Data;
 
 struct _Smart_Data
 {
+   EINA_REFCOUNT;
    Emotion_Video_Module  *module;
    void                  *video;
 
@@ -80,6 +83,8 @@ struct _Smart_Data
 #ifdef HAVE_EIO
    Eio_File *load_xattr;
    Eio_File *save_xattr;
+
+   const char *time_seek;
 #endif
 
    Emotion_Module_Options module_options;
@@ -172,16 +177,45 @@ _emotion_image_data_zero(Evas_Object *img)
    evas_object_image_data_set(img, data);
 }
 
+static void
+_emotion_module_close(Emotion_Video_Module *mod, void *video)
+{
+   if (!mod) return;
+   if (mod->plugin->close && video)
+     mod->plugin->close(mod, video);
+   /* FIXME: we can't go dlclosing here as a thread still may be running from
+    * the module - this in theory will leak- but it shouldnt be too bad and
+    * mean that once a module is dlopened() it cant be closed - its refcount
+    * will just keep going up
+    */
+}
+
+static void
+_smart_data_free(Smart_Data *sd)
+{
+   if (sd->video) sd->module->file_close(sd->video);
+   _emotion_module_close(sd->module, sd->video);
+   evas_object_del(sd->obj);
+   eina_stringshare_del(sd->file);
+   free(sd->module_name);
+   if (sd->job) ecore_job_del(sd->job);
+   free(sd->progress.info);
+   free(sd->ref.file);
+   free(sd);
+
+   ecore_shutdown();
+}
+
 EAPI Eina_Bool
-_emotion_module_register(const char *name, Emotion_Module_Open open, Emotion_Module_Close close)
+_emotion_module_register(const char *name, Emotion_Module_Open mod_open, Emotion_Module_Close mod_close)
 {
    Eina_Emotion_Plugins *plugin;
 
    plugin = malloc(sizeof (Eina_Emotion_Plugins));
    if (!plugin) return EINA_FALSE;
 
-   plugin->open = open;
-   plugin->close = close;
+   plugin->open = mod_open;
+   plugin->close = mod_close;
 
    return eina_hash_add(_backends, name, plugin);
 }
@@ -239,19 +273,6 @@ _emotion_module_open(const char *name, Evas_Object *obj, Emotion_Video_Module **
    ERR("Unable to load module: %s", name);
 
    return NULL;
-}
-
-static void
-_emotion_module_close(Emotion_Video_Module *mod, void *video)
-{
-   if (!mod) return;
-   if (mod->plugin->close && video)
-     mod->plugin->close(mod, video);
-   /* FIXME: we can't go dlclosing here as a thread still may be running from
-    * the module - this in theory will leak- but it shouldnt be too bad and
-    * mean that once a module is dlopened() it cant be closed - its refcount
-    * will just keep going up
-    */
 }
 
 /*******************************/
@@ -314,8 +335,6 @@ emotion_object_init(Evas_Object *obj, const char *module_filename)
    sd->pos = 0;
    sd->seek_pos = 0;
    sd->len = 0;
-
-   ecore_init();
 
    _emotion_module_close(sd->module, sd->video);
    sd->module = NULL;
@@ -1002,6 +1021,147 @@ emotion_object_vis_supported(const Evas_Object *obj, Emotion_Vis visualization)
    return sd->module->vis_supported(sd->video, visualization);
 }
 
+#ifdef HAVE_EIO
+static void
+_eio_load_xattr_cleanup(Smart_Data *sd)
+{
+   sd->load_xattr = NULL;
+
+   EINA_REFCOUNT_UNREF(sd)
+     _smart_data_free(sd);
+}
+
+static void
+_eio_load_xattr_done(void *data, Eio_File *handler __UNUSED__, const char *xattr_data, unsigned int xattr_size)
+{
+   Smart_Data *sd = data;
+
+   if (xattr_size < 128 && xattr_data[xattr_size] == '\0')
+     {
+        long long int m = 0;
+        long int e = 0;
+
+        eina_convert_atod(xattr_data, xattr_size, &m, &e);
+        emotion_object_position_set(evas_object_smart_parent_get(sd->obj), ldexp((double)m, e));
+     }
+
+   _eio_load_xattr_cleanup(sd);
+}
+
+static void
+_eio_load_xattr_error(void *data, Eio_File *handler __UNUSED__, int err __UNUSED__)
+{
+   Smart_Data *sd = data;
+
+   _eio_load_xattr_cleanup(sd);
+}
+#endif
+
+EAPI void
+emotion_object_last_position_load(Evas_Object *obj)
+{
+   Smart_Data *sd;
+   const char *tmp;
+
+   E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
+   if (!sd->file) return ;
+
+   if (!strncmp(sd->file, "file://", 7))
+     tmp = sd->file + 7;
+   else if (!strstr(sd->file, "://"))
+     tmp = sd->file;
+   else
+     return ;
+
+#ifdef HAVE_EIO
+   if (sd->load_xattr) return ;
+
+   EINA_REFCOUNT_REF(sd);
+
+   sd->load_xattr = eio_file_xattr_get(tmp, "user.e.time_seek", _eio_load_xattr_done, _eio_load_xattr_error, sd);
+#else
+# ifdef HAVE_XATTR
+   {
+      char double_to_string[128];
+      ssize_t sz;
+      long long int m = 0;
+      long int e = 0;
+
+      sz = getxattr(tmp, "user.e.time_seek", double_to_string, 128);
+      if (sz <= 0 || sz > 128 || double_to_string[sz] != '\0')
+        return ;
+
+      eina_convert_atod(double_to_string, 128, &m, &e);
+      emotion_object_position_set(obj, ldexp((double)m, e));
+   }
+# endif
+#endif
+}
+
+#ifdef HAVE_EIO
+static void
+_eio_save_xattr_cleanup(Smart_Data *sd)
+{
+   sd->save_xattr = NULL;
+   eina_stringshare_del(sd->time_seek);
+   sd->time_seek = NULL;
+
+   EINA_REFCOUNT_UNREF(sd)
+     _smart_data_free(sd);
+}
+
+static void
+_eio_save_xattr_done(void *data, Eio_File *handler __UNUSED__)
+{
+   Smart_Data *sd = data;
+
+   _eio_save_xattr_cleanup(sd);
+}
+
+static void
+_eio_save_xattr_error(void *data, Eio_File *handler __UNUSED__, int err __UNUSED__)
+{
+   Smart_Data *sd = data;
+
+   _eio_save_xattr_cleanup(sd);
+}
+#endif
+
+EAPI void
+emotion_object_last_position_save(Evas_Object *obj)
+{
+   Smart_Data *sd;
+   const char *tmp;
+   char double_to_string[128];
+
+   E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
+   if (!sd->file) return ;
+
+   if (!strncmp(sd->file, "file://", 7))
+     tmp = sd->file + 7;
+   else if (!strstr(sd->file, "://"))
+     tmp = sd->file;
+   else
+     return ;
+
+   eina_convert_dtoa(emotion_object_position_get(obj), double_to_string);
+
+#ifdef HAVE_EIO
+   if (sd->save_xattr) return ;
+
+   EINA_REFCOUNT_REF(sd);
+
+   sd->time_seek = eina_stringshare_add(double_to_string);
+   sd->save_xattr = eio_file_xattr_set(tmp, "user.e.time_seek",
+                                       sd->time_seek, eina_stringshare_strlen(sd->time_seek) + 1, 0,
+                                       _eio_save_xattr_done, _eio_save_xattr_error, sd);
+#else
+# ifdef HAVE_XATTR
+   setxattr(tmp, "user.e.time_seek", double_to_string, strlen(double_to_string), 0);
+# endif
+#endif
+}
+
 EAPI Eina_Bool
 emotion_object_extension_can_play_fast_get(const Evas_Object *obj, const char *file)
 {
@@ -1257,14 +1417,14 @@ _emotion_title_set(Evas_Object *obj, char *title)
 }
 
 EAPI void
-_emotion_progress_set(Evas_Object *obj, char *info, double stat)
+_emotion_progress_set(Evas_Object *obj, char *info, double st)
 {
    Smart_Data *sd;
 
    E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
    free(sd->progress.info);
    sd->progress.info = strdup(info);
-   sd->progress.stat = stat;
+   sd->progress.stat = st;
    evas_object_smart_callback_call(obj, SIG_PROGRESS_CHANGE, NULL);
 }
 
@@ -1581,6 +1741,7 @@ _smart_add(Evas_Object * obj)
 
    sd = calloc(1, sizeof(Smart_Data));
    if (!sd) return;
+   EINA_REFCOUNT_INIT(sd);
    sd->obj = evas_object_image_add(evas_object_evas_get(obj));
    evas_object_event_callback_add(sd->obj, EVAS_CALLBACK_MOUSE_MOVE, _mouse_move, sd);
    evas_object_event_callback_add(sd->obj, EVAS_CALLBACK_MOUSE_DOWN, _mouse_down, sd);
@@ -1596,6 +1757,8 @@ _smart_add(Evas_Object * obj)
 	evas_object_image_data_set(obj, pixel);
      }
    evas_object_smart_data_set(obj, sd);
+
+   ecore_init();
 }
 
 static void
@@ -1605,17 +1768,8 @@ _smart_del(Evas_Object * obj)
 
    sd = evas_object_smart_data_get(obj);
    if (!sd) return;
-   if (sd->video) sd->module->file_close(sd->video);
-   _emotion_module_close(sd->module, sd->video);
-   evas_object_del(sd->obj);
-   eina_stringshare_del(sd->file);
-   free(sd->module_name);
-   if (sd->job) ecore_job_del(sd->job);
-   free(sd->progress.info);
-   free(sd->ref.file);
-   free(sd);
-
-   ecore_shutdown();
+   EINA_REFCOUNT_UNREF(sd)
+     _smart_data_free(sd);
 }
 
 static void
