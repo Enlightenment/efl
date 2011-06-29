@@ -4,9 +4,11 @@
  * Here is a page with some Ecore examples explained:
  *
  * @li @ref ecore_time_example_c
+ * @li @ref ecore_timer_example_c
  * @li @ref ecore_idler_example_c
  * @li @ref ecore_job_example_c
  * @li @ref ecore_event_example_c
+ * @li @ref ecore_fd_handler_example_c
  *
  */
 
@@ -38,6 +40,79 @@
  * monotonic and more precise time than ecore_loop_time_get().
  *
  * @include ecore_time_example.c
+ */
+
+/**
+ * @page ecore_timer_example_c ecore timers - Timed events
+ * @dontinclude ecore_timer_example.c
+ *
+ * This example shows how to setup timer callbacks. It starts a timer that will
+ * tick (expire) every 1 second, and then setup other timers that will expire
+ * only once, but each of them will affect the firts timer still executing with
+ * a different API, to demonstrate its usage. To see the full code for this
+ * example, click @ref ecore_timer_example.c "here".
+ *
+ * To demonstrate this, let's define some constants that will determine at which
+ * time each timer will expire:
+ *
+ * @until INTERVAL1
+ *
+ * These constants should tell by themselves what will be the behavior of the
+ * program, but I'll explain it anyway. The first timer is set to tick every 1
+ * second, but all the other timers until the 6th one will be started
+ * concurrently at the beginning of the program. Each of them will expire at the
+ * specified time in these constants:
+ *
+ * @li The timer2, after 3 seconds of the program being executed, will add a delay
+ * of 3 seconds to timer1;
+ * @li The timer3 will pause timer1 at 8.2 seconds;
+ * @li timer4 will resume timer1 at 11.0 seconds;
+ * @li timer5 will will change the interval of timer1 to 2 seconds;
+ * @li timer6 will stop timer1 and start timer7 and timer8, with 1.1 and 1.2
+ * seconds of interval, respectively; it also sets the precision to 0.2 seconds;
+ * @li timer7 and timer8 will just print their expiration time.
+ *
+ * @until ecore_time_get
+ * @until }
+ *
+ * As almost all the other examples, we create a context structure to pass to
+ * our callbacks, so they can have access to the other timers. We also store the
+ * time of the program start in @c _initial_time, and use the function
+ * @c _get_current_time to retrieve the current time relative to that time. This
+ * will help demonstrate what is going on.
+ *
+ * Now, the behavior and relationship between the timers that was described
+ * above is dictated by the following timer callbacks:
+ *
+ * @until _timer6_cb
+ * @until }
+ *
+ * It's possible to see the same behavior as other Ecore callbacks here,
+ * returning @ref ECORE_CALLBACK_RENEW when the timer needs to continue ticking,
+ * and @ref ECORE_CALLBACK_CANCEL when it needs to stop its execution. Also
+ * notice that later on our program we are checking for the timers pointers in
+ * the context to see if they are still executing before deleting them, so we
+ * need to set these timer pointers to @c NULL when we are returning @ref
+ * ECORE_CALLBACK_CANCEL. Otherwise the pointer would still be not @c NULL, but
+ * pointing to something that is invalid, since the timer would have already
+ * expired without renewing.
+ *
+ * Now the main code, which will start the timers:
+ *
+ * @until ecore_shutdown
+ * @until }
+ *
+ * This code is very simple. Just after starting the library, it will save the
+ * current time to @c _initial_time, start all timers from 1 to 6, and begin the
+ * main loop. Everything should be running right now, displaying the time which
+ * each timer is expiring, and what it is doing to affect the other timers.
+ *
+ * After returning from the main loop, every timer is checked to see if it's
+ * still alive and, in that case, deleted, before finalizing the library. This
+ * is not really necessary, since ecore_shutdown() will already delete them for
+ * you, but it's good practice if you have other things going on after this
+ * point that could restart the main loop.
+ *
  */
 
 /**
@@ -218,12 +293,14 @@
  */
 
 /**
- * @page ecore_event_example_c ecore fd handlers - Monitoring file descriptors
+ * @page ecore_fd_handler_example_c ecore fd handlers - Monitoring file descriptors
  * @dontinclude ecore_fd_handler_example.c
  *
  * This is a very simple example where we will start monitoring the stdin of the
  * program and, whenever there's something to be read, we call our callback that
  * will read it.
+ *
+ * Check the full code for this example @ref ecore_fd_handler_example.c "here".
  *
  * This seems to be stupid, since a similar result could be achieved by the
  * following code:
@@ -331,6 +408,12 @@
  * @example ecore_time_example.c
  * Shows the difference between the three time functions. See @ref
  * ecore_time_example_c "the example explained".
+ */
+
+/**
+ * @example ecore_timer_example.c
+ * This example show how to use timers to have timed events inside ecore.
+ * See @ref ecore_timer_example_c "the example explained".
  */
 
 /**
