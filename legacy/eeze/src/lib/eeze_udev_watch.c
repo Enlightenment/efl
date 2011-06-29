@@ -66,39 +66,40 @@ _get_syspath_from_watch(void             *data,
      {
         if (!strcmp(test, "add"))
           {
-             if ((store->event & EEZE_UDEV_EVENT_ADD) != EEZE_UDEV_EVENT_ADD)
+             if ((store->event != EEZE_UDEV_EVENT_NONE) &&
+                 ((store->event & EEZE_UDEV_EVENT_ADD) != EEZE_UDEV_EVENT_ADD))
                goto error;
 
              event |= EEZE_UDEV_EVENT_ADD;
           }
         else if (!strcmp(test, "remove"))
           {
-             if ((store->event & EEZE_UDEV_EVENT_REMOVE) !=
-                 EEZE_UDEV_EVENT_REMOVE)
+             if ((store->event != EEZE_UDEV_EVENT_NONE) &&
+                 ((store->event & EEZE_UDEV_EVENT_REMOVE) != EEZE_UDEV_EVENT_REMOVE))
                goto error;
 
              event |= EEZE_UDEV_EVENT_REMOVE;
           }
         else if (!strcmp(test, "change"))
           {
-             if ((store->event & EEZE_UDEV_EVENT_CHANGE) !=
-                 EEZE_UDEV_EVENT_CHANGE)
+             if ((store->event != EEZE_UDEV_EVENT_NONE) &&
+                 ((store->event & EEZE_UDEV_EVENT_CHANGE) != EEZE_UDEV_EVENT_CHANGE))
                goto error;
 
              event |= EEZE_UDEV_EVENT_CHANGE;
           }
         else if (!strcmp(test, "online"))
           {
-             if ((store->event & EEZE_UDEV_EVENT_ONLINE) !=
-                 EEZE_UDEV_EVENT_ONLINE)
+             if ((store->event != EEZE_UDEV_EVENT_NONE) &&
+                 ((store->event & EEZE_UDEV_EVENT_ONLINE) != EEZE_UDEV_EVENT_ONLINE))
                goto error;
 
              event |= EEZE_UDEV_EVENT_ONLINE;
           }
         else
           {
-             if ((store->event & EEZE_UDEV_EVENT_OFFLINE) !=
-                 EEZE_UDEV_EVENT_OFFLINE)
+             if ((store->event != EEZE_UDEV_EVENT_NONE) &&
+                 ((store->event & EEZE_UDEV_EVENT_OFFLINE) != EEZE_UDEV_EVENT_OFFLINE))
                goto error;
 
              event |= EEZE_UDEV_EVENT_OFFLINE;
@@ -187,14 +188,14 @@ _get_syspath_from_watch(void             *data,
       case EEZE_UDEV_TYPE_DRIVE_INTERNAL:
         if (udev_device_get_property_value(device, "ID_FS_USAGE")) goto error;
         test = udev_device_get_sysattr_value(device, "removable");
-        if (test[0] == '1') goto error;
+        if (test && test[0] == '1') goto error;
 
         break;
 
       case EEZE_UDEV_TYPE_DRIVE_REMOVABLE:
         if (udev_device_get_property_value(device, "ID_FS_USAGE")) goto error;
         test = udev_device_get_sysattr_value(device, "removable");
-        if (test[0] == '0') goto error;
+        if ((!test) || (test[0] == '0')) goto error;
 
         break;
 
