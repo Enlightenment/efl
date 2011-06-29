@@ -229,6 +229,13 @@ EAPI Eio_File *eio_dir_unlink(const char *path,
 			      Eio_Error_Cb error_cb,
 			      const void *data);
 
+EAPI Eio_File *eio_file_xattr(const char *path,
+			      Eio_Filter_Cb filter_cb,
+			      Eio_Main_Cb main_cb,
+			      Eio_Done_Cb done_cb,
+			      Eio_Error_Cb error_cb,
+			      const void *data);
+
 EAPI void *eio_file_container_get(Eio_File *ls);
 
 EAPI Eina_Bool eio_file_cancel(Eio_File *ls);
