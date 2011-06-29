@@ -5317,87 +5317,92 @@ EAPI Evas_Object      *evas_object_rectangle_add         (Evas *e) EINA_WARN_UNU
  * Functions used to create and manipulate image objects.
  *
  * Note - Image objects may return or accept "image data" in multiple
- * formats.  This is based on the colorspace of an object. Here is a
+ * formats. This is based on the colorspace of an object. Here is a
  * rundown on formats:
  *
- * EVAS_COLORSPACE_ARGB8888:
+ * - #EVAS_COLORSPACE_ARGB8888:
+ *   .
+ *   This pixel format is a linear block of pixels, starting at the
+ *   top-left row by row until the bottom right of the image or pixel
+ *   region. All pixels are 32-bit unsigned int's with the high-byte
+ *   being alpha and the low byte being blue in the format ARGB. Alpha
+ *   may or may not be used by evas depending on the alpha flag of the
+ *   image, but if not used, should be set to 0xff anyway.
+ *   \n\n
+ *   This colorspace uses premultiplied alpha. That means that R, G
+ *   and B cannot exceed A in value. The conversion from
+ *   non-premultiplied colorspace is:
+ *   \n\n
+ *   R = (r * a) / 255; G = (g * a) / 255; B = (b * a) / 255;
+ *   \n\n
+ *   So 50% transparent blue will be: 0x80000080. This will not be
+ *   "dark" - just 50% transparent. Values are 0 == black, 255 ==
+ *   solid or full red, green or blue.
  *
- * This pixel format is a linear block of pixels, starting at the
- * top-left row by row until the bottom right of the image or pixel
- * region. All pixels are 32-bit unsigned int's with the high-byte
- * being alpha and the low byte being blue in the format ARGB. Alpha
- * may or may not be used by evas depending on the alpha flag of the
- * image, but if not used, should be set to 0xff anyway.
+ * - #EVAS_COLORSPACE_YCBCR422P601_PL:
+ *   .
+ *   This is a pointer-list indirected set of YUV (YCbCr) pixel
+ *   data. This means that the data returned or set is not actual
+ *   pixel data, but pointers TO lines of pixel data. The list of
+ *   pointers will first be N rows of pointers to the Y plane -
+ *   pointing to the first pixel at the start of each row in the Y
+ *   plane. N is the height of the image data in pixels. Each pixel in
+ *   the Y, U and V planes is 1 byte exactly, packed. The next N / 2
+ *   pointers will point to rows in the U plane, and the next N / 2
+ *   pointers will point to the V plane rows. U and V planes are half
+ *   the horizontal and vertical resolution of the Y plane.
+ *   \n\n
+ *   Row order is top to bottom and row pixels are stored left to
+ *   right.
+ *   \n\n
+ *   There is a limitation that these images MUST be a multiple of 2
+ *   pixels in size horizontally or vertically. This is due to the U
+ *   and V planes being half resolution. Also note that this assumes
+ *   the itu601 YUV colorspace specification. This is defined for
+ *   standard television and mpeg streams. HDTV may use the itu709
+ *   specification.
+ *   \n\n
+ *   Values are 0 to 255, indicating full or no signal in that plane
+ *   respectively.
  *
- * This colorspace uses premultiplied alpha. That means that R, G and
- * B cannot exceed A in value. The conversion from non-premultiplied
- * colorspace is:
+ * - #EVAS_COLORSPACE_YCBCR422P709_PL:
+ *   .
+ *   Not implemented yet.
  *
- * R = (r * a) / 255; G = (g * a) / 255; B = (b * a) / 255;
+ * - #EVAS_COLORSPACE_RGB565_A5P:
+ *   .
+ *   In the process of being implemented in 1 engine only. This may
+ *   change.
+ *   \n\n
+ *   This is a pointer to image data for 16-bit half-word pixel data
+ *   in 16bpp RGB 565 format (5 bits red, 6 bits green, 5 bits blue),
+ *   with the high-byte containing red and the low byte containing
+ *   blue, per pixel. This data is packed row by row from the top-left
+ *   to the bottom right.
+ *   \n\n
+ *   If the image has an alpha channel enabled there will be an extra
+ *   alpha plane after the color pixel plane. If not, then this data
+ *   will not exist and should not be accessed in any way. This plane
+ *   is a set of pixels with 1 byte per pixel defining the alpha
+ *   values of all pixels in the image from the top-left to the bottom
+ *   right of the image, row by row. Even though the values of the
+ *   alpha pixels can be 0 to 255, only values 0 through to 32 are
+ *   used, 32 being solid and 0 being transparent.
+ *   \n\n
+ *   RGB values can be 0 to 31 for red and blue and 0 to 63 for green,
+ *   with 0 being black and 31 or 63 being full red, green or blue
+ *   respectively. This colorspace is also pre-multiplied like
+ *   EVAS_COLORSPACE_ARGB8888 so:
+ *   \n\n
+ *   R = (r * a) / 32; G = (g * a) / 32; B = (b * a) / 32;
  *
- * So 50% transparent blue will be: 0x80000080. This will not be
- * "dark" - just 50% transparent. Values are 0 == black, 255 == solid
- * or full red, green or blue.
+ * - #EVAS_COLORSPACE_GRY8:
+ *   .
+ *   The image is just a alpha mask (8 bit's per pixel). This is used
+ *   for alpha masking.
  *
- * EVAS_COLORSPACE_YCBCR422P601_PL:
- *
- * This is a pointer-list indirected set of YUV (YCbCr) pixel
- * data. This means that the data returned or set is not actual pixel
- * data, but pointers TO lines of pixel data. The list of pointers
- * will first be N rows of pointers to the Y plane - pointing to the
- * first pixel at the start of each row in the Y plane. N is the
- * height of the image data in pixels. Each pixel in the Y, U and V
- * planes is 1 byte exactly, packed. The next N / 2 pointers will
- * point to rows in the U plane, and the next N / 2 pointers will
- * point to the V plane rows. U and V planes are half the horizontal
- * and vertical resolution of the Y plane.
- *
- * Row order is top to bottom and row pixels are stored left to right.
- *
- * There is a limitation that these images MUST be a multiple of 2
- * pixels in size horizontally or vertically. This is due to the U and
- * V planes being half resolution. Also note that this assumes the
- * itu601 YUV colorspace specification. This is defined for standard
- * television and mpeg streams.  HDTV may use the itu709
- * specification.
- *
- * Values are 0 to 255, indicating full or no signal in that plane
- * respectively.
- *
- * EVAS_COLORSPACE_YCBCR422P709_PL:
- *
- * Not implemented yet.
- *
- * EVAS_COLORSPACE_RGB565_A5P:
- *
- * In the process of being implemented in 1 engine only. This may change.
- *
- * This is a pointer to image data for 16-bit half-word pixel data in
- * 16bpp RGB 565 format (5 bits red, 6 bits green, 5 bits blue), with
- * the high-byte containing red and the low byte containing blue, per
- * pixel. This data is packed row by row from the top-left to the
- * bottom right.
- *
- * If the image has an alpha channel enabled there will be an extra
- * alpha plane after the color pixel plane. If not, then this data
- * will not exist and should not be accessed in any way. This plane is
- * a set of pixels with 1 byte per pixel defining the alpha values of
- * all pixels in the image from the top-left to the bottom right of
- * the image, row by row. Even though the values of the alpha pixels
- * can be 0 to 255, only values 0 through to 32 are used, 32 being
- * solid and 0 being transparent.
- *
- * RGB values can be 0 to 31 for red and blue and 0 to 63 for green,
- * with 0 being black and 31 or 63 being full red, green or blue
- * respectively. This colorspace is also pre-multiplied like
- * EVAS_COLORSPACE_ARGB8888 so:
- *
- * R = (r * a) / 32; G = (g * a) / 32; B = (b * a) / 32;
- *
- * EVAS_COLORSPACE_A8:
- *
- * The image is just a alpha mask (8 bit's per pixel).  This is used for alpha
- * masking.
+ * Some examples on this group of functions can be found @ref
+ * Example_Evas_Load_Error_Str "here".
  *
  * @ingroup Evas_Object_Specific
  */
@@ -5405,19 +5410,44 @@ typedef void (*Evas_Object_Image_Pixels_Get_Cb) (void *data, Evas_Object *o);
 
 
 /**
- * Creates a new image object on the given evas.
+ * Creates a new image object on the given Evas @p e canvas.
  *
- * @param e The given evas.
- * @return The created image object.
+ * @param e The given canvas.
+ * @return The created image object handle.
+ *
+ * Image objects are available to whichever occasion one needs complex
+ * imagery on a GUI, which cannot be achieved by the other Evas'
+ * primitive object types, or to make image manipulations.
+ *
+ * Evas will support whichever image file types it was compiled with
+ * support to (its image loaders) -- check your software packager for
+ * that information.
+ *
+ * @note If you intend to @b display an image somehow in a GUI,
+ * besides binding it to a real image file/source (with
+ * evas_object_image_file_set(), for example), you'll have to tell
+ * this image object how to fill its space with the pixels it can get
+ * from the source. See evas_object_image_filled_add(), for a helper
+ * on the common case of scaling up an image source to the whole area
+ * of the image object.
+ *
+ * @see evas_object_image_fill_set()
  */
 EAPI Evas_Object             *evas_object_image_add                    (Evas *e) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_MALLOC;
 
 /**
- * Creates a new image object that automatically scales on the given evas.
+ * Creates a new image object that @b automatically scales its bound
+ * image to the object's area, on both axis.
  *
- * This is a helper around evas_object_image_add() and
- * evas_object_image_filled_set(), it will track object resizes and apply
- * evas_object_image_fill_set() with the new geometry.
+ * @param e The given canvas.
+ * @return The created image object handle.
+ *
+ * This is a helper function around evas_object_image_add() and
+ * evas_object_image_filled_set(). It has the same effect of applying
+ * those functions in sequence, which is a very common use case.
+ *
+ * @note Whenever this object gets resized, the bound image will be
+ * rescaled, too.
  *
  * @see evas_object_image_add()
  * @see evas_object_image_filled_set()
@@ -5452,23 +5482,33 @@ EAPI Evas_Object             *evas_object_image_filled_add             (Evas *e)
 EAPI void                     evas_object_image_memfile_set            (Evas_Object *obj, void *data, int size, char *format, char *key) EINA_ARG_NONNULL(1, 2);
 
 /**
- * Sets the filename and key of the given image object.
- *
- * If the file supports multiple data stored in it as eet, you can
- * specify the key to be used as the index of the image in this file.
+ * Set the source file from where an image object must fetch the real
+ * image data (it may be an Eet file, besides pure image ones).
  *
  * @param obj The given image object.
- * @param file The image filename.
- * @param key The image key in file, or @c NULL.
+ * @param file The image file path.
+ * @param key The image key in @p file (if its an Eet one), or @c
+ * NULL, otherwise.
+ *
+ * If the file supports multiple data stored in it (as Eet files do),
+ * you can specify the key to be used as the index of the image in
+ * this file.
  */
 EAPI void                     evas_object_image_file_set               (Evas_Object *obj, const char *file, const char *key) EINA_ARG_NONNULL(1);
 
 /**
- * Retrieves the filename and key of the given image object.
+ * Retrieve the source file from where an image object is to fetch the
+ * real image data (it may be an Eet file, besides pure image ones).
  *
  * @param obj The given image object.
- * @param file Location to store the image filename, or @c NULL.
- * @param key Location to store the image key, or @c NULL.
+ * @param file Location to store the image file path.
+ * @param key Location to store the image key (if @p file is an Eet
+ * one).
+ *
+ * You must @b not modify the strings on the returned pointers.
+ *
+ * @note Use @c NULL pointers on the file components you're not
+ * interested in: they'll be ignored by the function.
  */
 EAPI void                     evas_object_image_file_get               (const Evas_Object *obj, const char **file, const char **key) EINA_ARG_NONNULL(1, 2);
 
@@ -5532,14 +5572,17 @@ EAPI void                     evas_object_image_border_center_fill_set (Evas_Obj
 EAPI Evas_Border_Fill_Mode    evas_object_image_border_center_fill_get (const Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
 
 /**
- * Sets if image fill property should track object size.
- *
- * If set to true, then every evas_object_resize() will automatically
- * trigger call to evas_object_image_fill_set() with the new size so
- * image will fill the whole object area.
+ * Set whether the image object's fill property should track the
+ * object's size.
  *
  * @param obj The given image object.
- * @param setting whether to follow object size.
+ * @param setting @c EINA_TRUE, to make the fill property follow
+ *        object size or @c EINA_FALSE, otherwise
+ *
+ * If @p setting is @c EINA_TRUE, then every evas_object_resize() will
+ * @b automatically trigger a call to evas_object_image_fill_set()
+ * with the that new size (and @c 0, @c 0 as source image's origin),
+ * so the bound image will fill the whole object's area.
  *
  * @see evas_object_image_filled_add()
  * @see evas_object_image_fill_set()
@@ -5547,11 +5590,14 @@ EAPI Evas_Border_Fill_Mode    evas_object_image_border_center_fill_get (const Ev
 EAPI void                     evas_object_image_filled_set             (Evas_Object *obj, Eina_Bool setting) EINA_ARG_NONNULL(1);
 
 /**
- * Retrieves if image fill property is tracking object size.
+ * Retrieve whether the image object's fill property should track the
+ * object's size.
  *
  * @param obj The given image object.
- * @return 1 if it is tracking, 0 if not and evas_object_fill_set()
- * must be called manually.
+ * @return @c EINA_TRUE if it is tracking, @c EINA_FALSE, if not (and
+ *         evas_object_fill_set() must be called manually).
+ *
+ * @see evas_object_image_filled_set() for more information
  */
 EAPI Eina_Bool                evas_object_image_filled_get             (const Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
 
@@ -5574,36 +5620,53 @@ EAPI void                     evas_object_image_border_scale_set       (Evas_Obj
 EAPI double                   evas_object_image_border_scale_get       (const Evas_Object *obj);
 
 /**
- * Sets the rectangle of the given image object that the image will be
- * drawn to.
+ * Set how to fill an image object's drawing rectangle given the
+ * (real) image bound to it.
  *
- * Note that the image will be tiled around this one rectangle. To
- * have only one copy of the image drawn, @p x and @p y must be 0 and
- * @p w and @p h need to be the width and height of the image object
- * respectively.
+ * @param obj The given image object to operate on.
+ * @param x The x coordinate (from the top left corner of the bound
+ *          image) to start drawing from.
+ * @param y The y coordinate (from the top left corner of the bound
+ *          image) to start drawing from.
+ * @param w The width the bound image will be displayed at.
+ * @param h The height the bound image will be displayed at.
  *
- * The default values for the fill parameters is @p x = 0, @p y = 0,
- * @p w = 32 and @p h = 32.
+ * Note that if @p w or @h are smaller the same dimensions @p obj, the
+ * displayed image will be @b tiled around the object's area. To have
+ * only one copy of the bound image drawn, @p x and @p y must be 0 and
+ * @p w and @p h need to be the exact width and height of the image
+ * object itself, respectively.
  *
- * @param obj The given image object.
- * @param x The X coordinate for the top left corner of the image.
- * @param y The Y coordinate for the top left corner of the image.
- * @param w The width of the image.
- * @param h The height of the image.
+ * @warning The default values for the fill parameters are @p x = 0,
+ * @p y = 0, @p w = 0 and @p h = 0. Thus, if you're not using the
+ * evas_object_image_filled_add() helper and want your image
+ * displayed, you'll have to set valid values with this fuction on
+ * your object.
+ *
+ * @note evas_object_image_filled_set() is helper function which will
+ * @b override the values set here automatically, for you, in a given
+ * way.
  */
 EAPI void                     evas_object_image_fill_set               (Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h) EINA_ARG_NONNULL(1);
 
 /**
- * Retrieves the dimensions of the rectangle of the given image object
- * that the image will be drawn to.
- *
- * See @ref evas_object_image_fill_set for more details.
+ * Retrieve how an image object is to fill its drawing rectangle,
+ * given the (real) image bound to it.
  *
  * @param obj The given image object.
- * @param x Location to store the X coordinate for the top left corner of the image in, or @c NULL.
- * @param y Location to store the Y coordinate for the top left corner of the image in, or @c NULL.
- * @param w Location to store the width of the image in, or @c NULL.
- * @param h Location to store the height of the image in, or @c NULL.
+ * @param x Location to store the x coordinate (from the top left
+ *          corner of the bound image) to start drawing from.
+ * @param y Location to store the y coordinate (from the top left
+ *          corner of the bound image) to start drawing from.
+ * @param w Location to store the width the bound image is to be
+ *          displayed at.
+ * @param h Location to store the height the bound image is to be
+ *          displayed at.
+ *
+ * @note Use @c NULL pointers on the fill components you're not
+ * interested in: they'll be ignored by the function.
+ *
+ * See @ref evas_object_image_fill_set() for more details.
  */
 EAPI void                     evas_object_image_fill_get               (const Evas_Object *obj, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h) EINA_ARG_NONNULL(1);
 

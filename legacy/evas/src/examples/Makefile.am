@@ -65,6 +65,10 @@ pkglib_PROGRAMS += evas_stacking
 evas_stacking_SOURCES = evas-stacking.c
 evas_stacking_LDADD = $(top_builddir)/src/lib/libevas.la @ECORE_EVAS_LIBS@
 
+pkglib_PROGRAMS += evas_images
+evas_images_SOURCES = evas-images.c
+evas_images_LDADD = $(top_builddir)/src/lib/libevas.la @ECORE_EVAS_LIBS@
+
 #the ones using ecore_evas and edje follow
 AM_CPPFLAGS += @EDJE_CFLAGS@
 
@@ -110,5 +114,6 @@ EXTRA_DIST = $(EDCS) \
 	$(srcdir)/evas-events.c \
 	$(srcdir)/evas-aspect-hints.c \
 	$(srcdir)/evas-hints.c \
+	$(srcdir)/evas-stacking.c \
 	$(srcdir)/enlightenment.png \
 	$(srcdir)/red.png

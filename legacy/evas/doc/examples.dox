@@ -37,7 +37,44 @@
  */
 
 /**
- * @page Example_Evas_Load_Error_Str evas_load_error_str() example
+ * @page Example_Evas_Load_Error_Str Some image object functions and evas_load_error_str() example
+ * @dontinclude evas-load-error-str.c
+ *
+ * In this example, we add two images to a canvas, each one having a
+ * quarter of the canvas' size, positioned on the top left and bottom
+ * right corners, respectively:
+ * @skip img1 = evas_object_image_add(evas);
+ * @until ecore_main_loop_begin
+ * See there is a border image around the top left one, <b>which is
+ * the one that should be displayed</b>. The other one will (on
+ * purpose) fail to load, because we set a wrong file path as image
+ * source on it:
+ * @dontinclude evas-load-error-str.c
+ * @skip valid_path
+ * @until bogus_path
+ * This is how one is supposed to test for success when binding source
+ * images to image objects: evas_object_image_load_error_get(),
+ * followed by evas_load_error_str(), if one wants to pretty print/log
+ * the error.
+ *
+ * To interact with the program, there's a command line interface,
+ * whose help string can be asked for with the 'h' key:
+ * @dontinclude evas-events.c
+ * @skip if (strcmp(ev->keyname, "h") == 0)
+ * @until }
+ * The first four commands will change the top left images's @b fill property
+ * values, which dictate how the source image (Enlightenment's logo)
+ * is to be displayed through the image object's area. Experiment with
+ * those switches until you get the idea of evas_object_fill_set().
+ *
+ * The 'f' command will toggle that image's "filled" property, which
+ * is wheter it should track its size and set the fill one to fit the
+ * object's boundaries perfectly (stretching). Note that this command
+ * and the four above it will conflict: in real usage one would use
+ * one or other ways of setting an image object's viewport with regard
+ * to its image source.
+ *
+ * The full example follows.
  *
  * @include evas-load-error-str.c
  * @example evas-load-error-str.c
