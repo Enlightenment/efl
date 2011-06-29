@@ -563,7 +563,7 @@ ecore_x_dnd_source_action_set(Ecore_X_Atom action)
       _ecore_x_dnd_drag(_source->prev.window, _source->prev.x, _source->prev.y);
 } /* ecore_x_dnd_source_action_set */
 
-Ecore_X_Atom
+EAPI Ecore_X_Atom
 ecore_x_dnd_source_action_get(void)
 {
    return _source->action;
