@@ -1,15 +1,17 @@
 PROJECT_NAME           = Emotion
-PROJECT_NUMBER         =
-OUTPUT_DIRECTORY       = doc
-INPUT                  = emotion.c
-IMAGE_PATH             = doc/img
+PROJECT_NUMBER         = @PACKAGE_VERSION@
+OUTPUT_DIRECTORY       = .
+INPUT                  = emotion.dox \
+                         @top_srcdir@/src/lib \
+                         @srcdir@/examples.dox
+IMAGE_PATH             = img
 OUTPUT_LANGUAGE        = English
 GENERATE_HTML          = YES
 HTML_OUTPUT            = html
 HTML_FILE_EXTENSION    = .html
-HTML_HEADER            = doc/head.html
-HTML_FOOTER            = doc/foot.html
-HTML_STYLESHEET        = doc/e.css
+HTML_HEADER            = @srcdir@/head.html
+HTML_FOOTER            = @srcdir@/foot.html
+HTML_STYLESHEET        = @srcdir@/e.css
 HTML_ALIGN_MEMBERS     = YES
 ENUM_VALUES_PER_LINE   = 1
 GENERATE_HTMLHELP      = NO
@@ -67,7 +69,7 @@ RECURSIVE              = NO
 EXCLUDE                = 
 EXCLUDE_SYMLINKS       = NO
 EXCLUDE_PATTERNS       = 
-EXAMPLE_PATH           = 
+EXAMPLE_PATH           = @top_srcdir@/src/examples
 EXAMPLE_PATTERNS       = 
 EXAMPLE_RECURSIVE      = NO
 INPUT_FILTER           = 

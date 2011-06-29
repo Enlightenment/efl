@@ -1,0 +1,24 @@
+/**
+ * @file
+ * @brief Emotion Media Library
+ *
+ * These routines are used for Emotion.
+ */
+
+/**
+ *
+ * @mainpage Emotion Library Documentation
+ * @version @PACKAGE_VERSION@
+ * @author Carsten Haitzler <raster@rasterman.com>
+ * @author vtorri (Vincent Torri) <torri@maths.univ-evry.fr>
+ * @author Sebastian Dransfeld <sd@tango.flipp.net>
+ * @author captainigloo
+ * @date 2003-2011
+ *
+ * @section intro What is Emotion?
+ *
+ * A media object library for Evas and Ecore.
+ *
+ * @todo Complete documentation of API
+ *
+ */

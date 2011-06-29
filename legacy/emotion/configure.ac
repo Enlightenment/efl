@@ -242,6 +242,9 @@ src/modules/xine/Makefile
 src/modules/gstreamer/Makefile
 src/edje_external/Makefile
 src/bin/Makefile
+doc/Makefile
+doc/Doxyfile
+doc/emotion.dox
 data/Makefile
 ])
 
@@ -270,6 +273,8 @@ echo "  Edje EXTERNAL support: ${have_edje_external}"
 echo
 echo "  Xattr................: ${have_xattr}"
 echo "  Eio..................: ${have_eio}"
+echo
+echo "Documentation..........: ${build_doc}"
 echo
 echo "Compilation............: make (or gmake)"
 echo "  CPPFLAGS.............: $CPPFLAGS"
