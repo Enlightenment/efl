@@ -290,6 +290,7 @@ elm_toggle_add(Evas_Object *parent)
  * @param label The label to be displayed
  *
  * @ingroup Toggle
+ * @deprecate use elm_object_text_* instead.
  */
 EAPI void
 elm_toggle_label_set(Evas_Object *obj, const char *label)
@@ -304,6 +305,7 @@ elm_toggle_label_set(Evas_Object *obj, const char *label)
  * @return The label of the toggle
  *
  * @ingroup Toggle
+ * @deprecate use elm_object_text_* instead.
  */
 EAPI const char *
 elm_toggle_label_get(const Evas_Object *obj)
