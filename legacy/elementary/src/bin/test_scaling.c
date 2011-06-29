@@ -83,7 +83,7 @@ test_scaling2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
 
    fr = elm_frame_add(win);
    elm_object_scale_set(fr, 0.5);
-   elm_frame_label_set(fr, "Scale: 0.5");
+   elm_object_text_set(fr, "Scale: 0.5");
    lb = elm_label_add(win);
    elm_object_text_set(lb,
 		       "Parent frame scale<br>"
@@ -95,7 +95,7 @@ test_scaling2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    evas_object_show(fr);
 
    fr = elm_frame_add(win);
-   elm_frame_label_set(fr, "Scale: 1.0");
+   elm_object_text_set(fr, "Scale: 1.0");
    lb = elm_label_add(win);
    elm_object_text_set(lb,
 		       "Parent frame scale<br>"
@@ -108,7 +108,7 @@ test_scaling2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    evas_object_show(fr);
 
    fr = elm_frame_add(win);
-   elm_frame_label_set(fr, "Scale: 2.0");
+   elm_object_text_set(fr, "Scale: 2.0");
    lb = elm_label_add(win);
    elm_object_text_set(lb,
 		       "Parent frame scale<br>"

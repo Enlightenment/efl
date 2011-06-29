@@ -550,7 +550,7 @@ _status_basic(Evas_Object *win,
 
    fr = elm_frame_add(win);
    evas_object_size_hint_weight_set(fr, 1.0, 1.0);
-   elm_frame_label_set(fr, "Information");
+   elm_object_text_set(fr, "Information");
    elm_box_pack_end(bx0, fr);
    evas_object_show(fr);
 
@@ -571,7 +571,7 @@ _status_config(Evas_Object *win,
    fr = elm_frame_add(win);
    evas_object_size_hint_weight_set(fr, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(fr, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   elm_frame_label_set(fr, "Sizing");
+   elm_object_text_set(fr, "Sizing");
    elm_box_pack_end(bx0, fr);
    evas_object_show(fr);
 
@@ -1246,7 +1246,7 @@ _sample_theme_new(Evas_Object *win)
    evas_object_show(sl);
 
    fr = elm_frame_add(win);
-   elm_frame_label_set(fr, "Frame");
+   elm_object_text_set(fr, "Frame");
    elm_table_pack(base, fr, 0, 4, 2, 1);
    evas_object_size_hint_weight_set(fr, 1.0, 1.0);
    evas_object_size_hint_align_set(fr, EVAS_HINT_FILL, EVAS_HINT_FILL);
@@ -1378,7 +1378,7 @@ _status_config_themes(Evas_Object *win,
    evas_object_show(pd);
 
    fr = elm_frame_add(win);
-   elm_frame_label_set(fr, "Preview");
+   elm_object_text_set(fr, "Preview");
    evas_object_size_hint_weight_set(fr, 1.0, 1.0);
    evas_object_size_hint_align_set(fr, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_frame_content_set(pd, fr);
@@ -1893,7 +1893,7 @@ _status_config_fonts(Evas_Object *win,
    elm_table_pack(base, rc, 1, 0, 1, 1);
 
    fr = elm_frame_add(win);
-   elm_frame_label_set(fr, "Font Class");
+   elm_object_text_set(fr, "Font Class");
    elm_table_pack(base, fr, 0, 0, 1, 2);
    evas_object_size_hint_weight_set(fr, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(fr, EVAS_HINT_FILL, EVAS_HINT_FILL);
@@ -1910,7 +1910,7 @@ _status_config_fonts(Evas_Object *win,
    _font_classes_list_load(li);
 
    fr = elm_frame_add(win);
-   elm_frame_label_set(fr, "Font");
+   elm_object_text_set(fr, "Font");
    elm_table_pack(base, fr, 1, 0, 1, 2);
    evas_object_size_hint_weight_set(fr, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(fr, EVAS_HINT_FILL, EVAS_HINT_FILL);
@@ -1933,7 +1933,7 @@ _status_config_fonts(Evas_Object *win,
    elm_table_pack(base, rc, 1, 2, 1, 1);
 
    fr = elm_frame_add(win);
-   elm_frame_label_set(fr, "Style");
+   elm_object_text_set(fr, "Style");
    elm_table_pack(base, fr, 0, 2, 1, 1);
    evas_object_size_hint_weight_set(fr, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(fr, EVAS_HINT_FILL, EVAS_HINT_FILL);
@@ -1951,7 +1951,7 @@ _status_config_fonts(Evas_Object *win,
                                   NULL);
 
    fr = elm_frame_add(win);
-   elm_frame_label_set(fr, "Size");
+   elm_object_text_set(fr, "Size");
    elm_table_pack(base, fr, 1, 2, 1, 1);
    evas_object_size_hint_weight_set(fr, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(fr, EVAS_HINT_FILL, EVAS_HINT_FILL);
@@ -2233,7 +2233,7 @@ _status_config_profiles(Evas_Object *win,
    evas_object_show(fr_bx2);
 
    fr = elm_frame_add(win);
-   elm_frame_label_set(fr, "Available Profiles");
+   elm_object_text_set(fr, "Available Profiles");
    evas_object_size_hint_weight_set(fr, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(fr, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_frame_content_set(fr, fr_bx1);
@@ -2673,7 +2673,7 @@ _status_config_rendering(Evas_Object *win,
    evas_object_size_hint_align_set(bx, EVAS_HINT_FILL, EVAS_HINT_FILL);
 
    fr = elm_frame_add(win);
-   elm_frame_label_set(fr, "Available Engines");
+   elm_object_text_set(fr, "Available Engines");
    evas_object_size_hint_weight_set(fr, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(fr, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_box_pack_end(bx, fr);

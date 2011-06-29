@@ -320,7 +320,7 @@ test_focus(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
 
           {
              Evas_Object *fr = elm_frame_add(win);
-             elm_frame_label_set(fr, "Frame");
+             elm_object_text_set(fr, "Frame");
              elm_box_pack_end(bx, fr);
              evas_object_show(fr);
 

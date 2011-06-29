@@ -244,7 +244,7 @@ my_win_main(char *autorun)
    evas_object_show(bx0);
 
    fr = elm_frame_add(win);
-   elm_frame_label_set(fr, "Information");
+   elm_object_text_set(fr, "Information");
    elm_box_pack_end(bx0, fr);
    evas_object_show(fr);
 

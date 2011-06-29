@@ -1717,7 +1717,7 @@ test_genlist10(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
    evas_object_show(bx);
 
    fr = elm_frame_add(win);
-   elm_frame_label_set(fr, "Mode Type");
+   elm_object_text_set(fr, "Mode Type");
    elm_box_pack_end(bx, fr);
    evas_object_show(fr);
 
@@ -1834,7 +1834,7 @@ test_genlist11(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
 
    fr = elm_frame_add(win);
 
-   elm_frame_label_set(fr, "Reorder Mode");
+   elm_object_text_set(fr, "Reorder Mode");
    elm_box_pack_end(bx, fr);
    evas_object_show(fr);
 

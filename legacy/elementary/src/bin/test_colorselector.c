@@ -46,7 +46,7 @@ test_colorselector(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *eve
    fr = elm_frame_add(win);
    evas_object_size_hint_weight_set(fr, 1.0, 0.5);
    evas_object_size_hint_align_set(fr, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   elm_frame_label_set(fr, "Color View");
+   elm_object_text_set(fr, "Color View");
    elm_box_pack_end(bx, fr);
    evas_object_show(fr);
 
@@ -65,7 +65,7 @@ test_colorselector(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *eve
    fr = elm_frame_add(win);
    evas_object_size_hint_weight_set(fr, 1.0, 0);
    evas_object_size_hint_align_set(fr, EVAS_HINT_FILL, 0);
-   elm_frame_label_set(fr, "Color Selector");
+   elm_object_text_set(fr, "Color Selector");
    elm_box_pack_end(bx, fr);
    evas_object_show(fr);
 
