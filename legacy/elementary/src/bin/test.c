@@ -257,7 +257,7 @@ my_win_main(char *autorun)
    evas_object_show(lb);
 
    tg = elm_toggle_add(win);
-   elm_toggle_label_set(tg, "UI-Mirroring:");
+   elm_object_text_set(tg, "UI-Mirroring:");
    elm_toggle_state_set(tg, elm_mirrored_get());
    evas_object_smart_callback_add(tg, "changed", _ui_tg_changed, NULL);
    elm_box_pack_end(bx0, tg);

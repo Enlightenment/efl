@@ -1851,7 +1851,7 @@ test_genlist11(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
    evas_object_show(gl);
 
    tg = elm_toggle_add(win);
-   elm_toggle_label_set(tg, "Reorder Mode:");
+   elm_object_text_set(tg, "Reorder Mode:");
    elm_toggle_state_set(tg, elm_mirrored_get());
    evas_object_smart_callback_add(tg, "changed", _reorder_tg_changed_cb, gl);
    elm_box_pack_end(bx, tg);
