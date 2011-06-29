@@ -73,7 +73,7 @@ struct _Smart_Data
    void       (*on_label_set_func)(Evas_Object *obj,
                                    const char  *item,
                                    const char  *text);
-   const char *(*on_label_get_func)(Evas_Object *obj,
+   const char *(*on_label_get_func)(const Evas_Object *obj,
                                     const char  *item);
    void        *data;
    Evas_Coord   rx, ry, rw, rh;
@@ -480,6 +480,25 @@ elm_widget_event_hook_set(Evas_Object *obj,
 {
    API_ENTRY return;
    sd->event_func = func;
+}
+
+EAPI void
+elm_widget_label_set_hook_set(Evas_Object *obj,
+                              void       (*func)(Evas_Object *obj,
+                                                 const char  *item,
+                                                 const char  *text))
+{
+   API_ENTRY return;
+   sd->on_label_set_func = func;
+}
+
+EAPI void
+elm_widget_label_get_hook_set(Evas_Object *obj,
+                              const char *(*func)(const Evas_Object *obj,
+                                                  const char  *item))
+{
+   API_ENTRY return;
+   sd->on_label_get_func = func;
 }
 
 EAPI void
