@@ -318,8 +318,18 @@ ecore_timer_pending_get(Ecore_Timer *timer)
 }
 
 /**
+ * Pauses a running timer.
  *
+ * @param timer The timer to be paused.
  *
+ * The timer callback won't be called while the timer is paused. The remaining
+ * time until the timer expires will be saved, so the timer can be resumed with
+ * that same remaining time to expire, instead of expiring instantly.  Use
+ * ecore_timer_thaw() to resume it.
+ *
+ * @note Nothing happens if the timer was already paused.
+ *
+ * @see ecore_timer_thaw()
  */
 EAPI void
 ecore_timer_freeze(Ecore_Timer *timer)
@@ -347,6 +357,19 @@ ecore_timer_freeze(Ecore_Timer *timer)
    timer->frozen = 1;
 }
 
+/**
+ * Resumes a frozen (paused) timer.
+ *
+ * @param timer The timer to be resumed.
+ *
+ * The timer will be resumed from its previous relative position in time. That
+ * means, if it had X seconds remaining until expire when it was paused, it will
+ * be started now with those same X seconds remaining to expire again. But
+ * notice that the interval time won't be touched by this call or by
+ * ecore_timer_freeze().
+ *
+ * @see ecore_timer_freeze()
+ */
 EAPI void
 ecore_timer_thaw(Ecore_Timer *timer)
 {
