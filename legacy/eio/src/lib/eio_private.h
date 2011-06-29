@@ -61,6 +61,8 @@ typedef struct _Eio_File_Move Eio_File_Move;
 typedef struct _Eio_File_Chown Eio_File_Chown;
 typedef struct _Eio_Monitor_Backend Eio_Monitor_Backend;
 
+typedef struct _Eio_File_Xattr Eio_File_Xattr;
+
 typedef struct _Eio_Dir_Copy Eio_Dir_Copy;
 
 typedef struct _Eio_File_Direct_Info Eio_File_Direct_Info;
@@ -150,6 +152,20 @@ struct _Eio_File_Stat
 
    struct stat buffer;
    const char *path;
+};
+
+struct _Eio_File_Xattr
+{
+   Eio_File common;
+
+   Eio_Done_Length_Cb done_cb;
+
+   const char *path;
+   const char *attribute;
+   int flags;
+
+   char *xattr_data;
+   unsigned int xattr_size;
 };
 
 struct _Eio_File_Progress

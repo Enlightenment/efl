@@ -91,6 +91,17 @@ enum _Eio_File_Op
 };
 
 /**
+ * @enum Eio_Xattr_Flags
+ * Xattr creation flags
+ */
+typedef enum
+{
+  EIO_XATTR_INSERT = 0, /**< Xattr will always be set */
+  EIO_XATTR_CREATED, /**< Xattr will be created, but will fail if already exists */
+  EIO_XATTR_REPLACE /**< Xattr will replace the existing value or fail if no value exist before */
+} Eio_Xattr_Flags;
+
+/**
  * @typedef Eio_File_Op
  * Input/Output operations on files.
  */
@@ -116,6 +127,8 @@ typedef void (*Eio_Main_Direct_Cb)(void *data, Eio_File *handler, const Eina_Fil
 
 typedef void (*Eio_Stat_Cb)(void *data, Eio_File *handler, const struct stat *stat);
 typedef void (*Eio_Progress_Cb)(void *data, Eio_File *handler, const Eio_Progress *info);
+
+typedef void (*Eio_Done_Length_Cb)(void *data, Eio_File *handler, const char *xattr_data, unsigned int xattr_size);
 
 typedef void (*Eio_Done_Cb)(void *data, Eio_File *handler);
 typedef void (*Eio_Error_Cb)(void *data, Eio_File *handler, int error);
@@ -235,6 +248,21 @@ EAPI Eio_File *eio_file_xattr(const char *path,
 			      Eio_Done_Cb done_cb,
 			      Eio_Error_Cb error_cb,
 			      const void *data);
+
+EAPI Eio_File *eio_file_xattr_set(const char *path,
+				  const char *attribute,
+				  const char *xattr_data,
+				  unsigned int xattr_size,
+				  Eio_Xattr_Flags flags,
+				  Eio_Done_Cb done_cb,
+				  Eio_Error_Cb error_cb,
+				  const void *data);
+
+EAPI Eio_File *eio_file_xattr_get(const char *path,
+				  const char *attribute,
+				  Eio_Done_Length_Cb done_cb,
+				  Eio_Error_Cb error_cb,
+				  const void *data);
 
 EAPI void *eio_file_container_get(Eio_File *ls);
 
