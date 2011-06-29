@@ -13,6 +13,7 @@ LDADD = \
 
 SRCS = \
 	ecore_fd_handler_example.c \
+	ecore_poller_example.c \
 	ecore_event_example.c \
 	ecore_idler_example.c \
 	ecore_timer_example.c \
@@ -37,6 +38,7 @@ endif
 if EFL_BUILD_EXAMPLES
 pkglib_PROGRAMS += \
 	ecore_fd_handler_example \
+	ecore_poller_example \
 	ecore_event_example \
 	ecore_idler_example \
 	ecore_job_example \

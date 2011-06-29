@@ -9,6 +9,7 @@
  * @li @ref ecore_job_example_c
  * @li @ref ecore_event_example_c
  * @li @ref ecore_fd_handler_example_c
+ * @li @ref ecore_poller_example_c
  *
  */
 
@@ -392,6 +393,74 @@
  */
 
 /**
+ * @page ecore_poller_example_c ecore poller - Repetitive polling tasks
+ * @dontinclude ecore_poller_example.c
+ *
+ * This example show how to setup, and explains how an @ref Ecore_Poller is
+ * called. You can @ref ecore_poller_example.c "see the full source code here".
+ *
+ * In this example we store the initial time of the program just to use as
+ * comparison to the time when the poller callbacks are called. It will be
+ * stored in @c _initial_time :
+ *
+ * @until initial_time
+ *
+ * Then next step is to define the poller callback. This callback assumes that a
+ * @c data pointer is passed to it on creation, and is a string just used to
+ * identify the poller. The callback prints this string and the time since the
+ * program started, and returns @ref ECORE_CALLBACK_RENEW to keep being called.
+ *
+ * @until }
+ *
+ * Now in the main function we initialize Ecore, and save the initial time of
+ * the program, so we can compare it later with the time that the pollers are
+ * being called:
+ *
+ * @until initial_time
+ *
+ * Then we change the poll interval to 0.3 seconds (the default is 0.125
+ * seconds) just to show the API usage.
+ *
+ * Finally, we create two pollers, one that will be called every 4 ticks, and
+ * another one that will be called every 8 ticks. This means the the first
+ * poller interval will be around 1.2 seconds, and the second one will be
+ * around 2.4 seconds. But the most important point is: since the second poller
+ * interval is a multiple of the first one, they will be always synchronized.
+ * Ecore calls pollers that are in the "same tick" together. It doesn't go back
+ * to the main loop and check if there's another poller to execute at this
+ * time, but instead it calls all the pollers registered to this "tick" at the
+ * same time.  See the description of ecore_poller_add() for more details. This
+ * is easy to see in the time printed by both of them.
+ *
+ * If instead of two synchronized pollers, we were using two different timers,
+ * one with interval of 1.2 seconds and another one with an interval of 2.4
+ * seconds, there would be no guarantee that they would be totally in sync. Some
+ * delay in the execution of another task, or even in the task called in the
+ * callback, could make them get out of sync, forcing Ecore's main loop to wake
+ * up more than necessary.
+ *
+ * Well, this is the code that create these two pollers and set the poll
+ * interval, then starts the main loop:
+ *
+ * @until ecore_main_loop_begin
+ *
+ * If you hit CTRL-C during the execution of the program, the main loop will
+ * quit, since there are some signal handlers already set by default to do this.
+ * So after the main loop begin call, we change the second poller's interval to
+ * 16 ticks, so it will happen each 4.8 seconds (or each 4 times that the first
+ * poller is called).
+ *
+ * This means: the program is started, the first poller is called each 4 ticks
+ * and the second is called each 8 ticks. After CTRL-C is used, the second
+ * poller will be called each 16 ticks.
+ *
+ * @until }
+ *
+ * The rest of the program is just deleting the pollers and shutting down the
+ * library.
+ */
+
+/**
  * @example ecore_idler_example.c
  * This example shows when @ref Ecore_Idler, @ref Ecore_Idle_Enterer and @ref
  * Ecore_Idle_Exiter are called. See
@@ -420,6 +489,12 @@
  * @example ecore_fd_handler_example.c
  * This example shows how to setup and use an fd_handler. See
  * @ref ecore_fd_handler_example_c "the explanation here".
+ */
+
+/**
+ * @example ecore_poller_example.c
+ * This example shows how to setup and use a poller. See
+ * @ref ecore_poller_example_c "the explanation here".
  */
 
 /**
