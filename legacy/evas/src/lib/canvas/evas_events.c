@@ -354,8 +354,19 @@ _post_up_handle(Evas *e, unsigned int timestamp, const void *data)
      {
         ins = eina_list_free(ins);
      }
-   /* free our cur ins */
-   eina_list_free(ins);
+
+   if (e->pointer.mouse_grabbed == 0)
+     {
+        /* free our old list of ins */
+        eina_list_free(e->pointer.object.in);
+        /* and set up the new one */
+        e->pointer.object.in = ins;
+     }
+   else
+     {
+        /* free our cur ins */
+        eina_list_free(ins);
+     }
    if (e->pointer.inside)
       evas_event_feed_mouse_move(e, e->pointer.x, e->pointer.y, timestamp, data);
    return post_called;
@@ -741,8 +752,18 @@ evas_event_feed_mouse_move(Evas *e, int x, int y, unsigned int timestamp, const 
 	       }
 	     if (e->delete_me) break;
 	  }
-	/* free our current ins */
-	eina_list_free(ins);
+        if (e->pointer.mouse_grabbed == 0)
+          {
+             /* free our old list of ins */
+             eina_list_free(e->pointer.object.in);
+             /* and set up the new one */
+             e->pointer.object.in = ins;
+          }
+        else
+          {
+             /* free our cur ins */
+             eina_list_free(ins);
+          }
         _evas_post_event_callback_call(e);
      }
    _evas_unwalk(e);
@@ -1135,8 +1156,18 @@ evas_event_feed_multi_move(Evas *e,
 	     if (e->delete_me) break;
 	  }
 	if (copy) copy = eina_list_free(copy);
-	/* free our current ins */
-	eina_list_free(ins);
+        if (e->pointer.mouse_grabbed == 0)
+          {
+             /* free our old list of ins */
+             eina_list_free(e->pointer.object.in);
+             /* and set up the new one */
+             e->pointer.object.in = ins;
+          }
+        else
+          {
+             /* free our cur ins */
+             eina_list_free(ins);
+          }
         _evas_post_event_callback_call(e);
      }
    _evas_unwalk(e);
