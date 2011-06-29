@@ -45,9 +45,9 @@ evas_init_shutdown_LDADD = $(top_builddir)/src/lib/libevas.la
 #the ones using ecore_evas follow
 AM_CPPFLAGS += @ECORE_EVAS_CFLAGS@
 
-pkglib_PROGRAMS += evas_load_error_str
-evas_load_error_str_SOURCES = evas-load-error-str.c
-evas_load_error_str_LDADD = $(top_builddir)/src/lib/libevas.la @ECORE_EVAS_LIBS@
+pkglib_PROGRAMS += evas_images
+evas_images_SOURCES = evas-images.c
+evas_images_LDADD = $(top_builddir)/src/lib/libevas.la @ECORE_EVAS_LIBS@
 
 pkglib_PROGRAMS += evas_events
 evas_events_SOURCES = evas-events.c
@@ -94,7 +94,7 @@ files_DATA += \
 	$(EDCS) \
 	$(srcdir)/evas-buffer-simple.c \
 	$(srcdir)/evas-init-shutdown.c \
-	$(srcdir)/evas-load-error-str.c \
+	$(srcdir)/evas-images.c \
 	$(srcdir)/evas-object-manipulation.c \
 	$(srcdir)/evas-events.c \
 	$(srcdir)/evas-aspect-hints.c \
@@ -105,7 +105,7 @@ endif
 EXTRA_DIST = $(EDCS) \
 	$(srcdir)/evas-buffer-simple.c \
 	$(srcdir)/evas-init-shutdown.c \
-	$(srcdir)/evas-load-error-str.c \
+	$(srcdir)/evas-images.c \
 	$(srcdir)/evas-object-manipulation.c \
 	$(srcdir)/evas-events.c \
 	$(srcdir)/evas-aspect-hints.c \

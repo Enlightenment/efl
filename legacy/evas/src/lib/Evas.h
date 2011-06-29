@@ -686,10 +686,10 @@ typedef enum _Evas_Render_Op
 
 typedef enum _Evas_Border_Fill_Mode
 {
-   EVAS_BORDER_FILL_NONE = 0,
-   EVAS_BORDER_FILL_DEFAULT = 1,
-   EVAS_BORDER_FILL_SOLID = 2
-} Evas_Border_Fill_Mode;
+   EVAS_BORDER_FILL_NONE = 0, /**< Image's center region is @b not to be rendered */
+   EVAS_BORDER_FILL_DEFAULT = 1, /**< Image's center region is to be @b blended with objects underneath it, if it has transparency. This is the default behavior for image objects */
+   EVAS_BORDER_FILL_SOLID = 2 /**< Image's center region is to be made solid, even if it has transparency on it */
+} Evas_Border_Fill_Mode; /**< How a image's center region (the complement to the border region) should be rendered by Evas */
 
 typedef enum _Evas_Image_Scale_Hint
 {
@@ -5402,10 +5402,16 @@ EAPI Evas_Object      *evas_object_rectangle_add         (Evas *e) EINA_WARN_UNU
  *   for alpha masking.
  *
  * Some examples on this group of functions can be found @ref
- * Example_Evas_Load_Error_Str "here".
+ * Example_Evas_Images "here".
  *
  * @ingroup Evas_Object_Specific
  */
+
+/**
+ * @addtogroup Evas_Object_Image
+ * @{
+ */
+
 typedef void (*Evas_Object_Image_Pixels_Get_Cb) (void *data, Evas_Object *o);
 
 
@@ -5513,61 +5519,81 @@ EAPI void                     evas_object_image_file_set               (Evas_Obj
 EAPI void                     evas_object_image_file_get               (const Evas_Object *obj, const char **file, const char **key) EINA_ARG_NONNULL(1, 2);
 
 /**
- * Sets how much of each border of the given image object is not
- * to be scaled.
- *
- * When rendering, the image may be scaled to fit the size of the
- * image object. This function sets what area around the border of the
- * image is not to be scaled. This sort of function is useful for
- * widget theming, where, for example, buttons may be of varying
- * sizes, but the border size must remain constant.
- *
- * The units used for @p l, @p r, @p t and @p b are output units.
+ * Set the dimensions for an image object's border, a region which @b
+ * won't ever be scaled together with its center.
  *
  * @param obj The given image object.
- * @param l Distance of the left border that is not to be stretched.
- * @param r Distance of the right border that is not to be stretched.
- * @param t Distance of the top border that is not to be stretched.
- * @param b Distance of the bottom border that is not to be stretched.
+ * @param l The border's left width.
+ * @param r The border's right width.
+ * @param t The border's top width.
+ * @param b The border's bottom width.
+ *
+ * When Evas is rendering, an image source may be scaled to fit the
+ * size of its image object. This function sets an area from the
+ * borders of the image inwards which is @b not to be scaled. This
+ * function is useful for making frames and for widget theming, where,
+ * for example, buttons may be of varying sizes, but their border size
+ * must remain constant.
+ *
+ * The units used for @p l, @p r, @p t and @p b are canvas units.
+ *
+ * @note The border region itself @b may be scaled by the
+ * evas_object_image_border_scale_set() function.
+ *
+ * @note By default, image objects have no borders set, i. e. @c l, @c
+ * r, @c t and @c b start as @c 0.
+ *
+ * @see evas_object_image_border_get()
+ * @see evas_object_image_border_center_fill_set()
  */
 EAPI void                     evas_object_image_border_set             (Evas_Object *obj, int l, int r, int t, int b) EINA_ARG_NONNULL(1);
 
 /**
- * Retrieves how much of each border of the given image object is not
- * to be scaled.
- *
- * See @ref evas_object_image_border_set for more details.
+ * Retrieve the dimensions for an image object's border, a region
+ * which @b won't ever be scaled together with its center.
  *
  * @param obj The given image object.
- * @param l Location to store the left border width in, or @c NULL.
- * @param r Location to store the right border width in, or @c NULL.
- * @param t Location to store the top border width in, or @c NULL.
- * @param b Location to store the bottom border width in, or @c NULL.
+ * @param l Location to store the border's left width in.
+ * @param r Location to store the border's right width in.
+ * @param t Location to store the border's top width in.
+ * @param b Location to store the border's bottom width in.
+ *
+ * @note Use @c NULL pointers on the border components you're not
+ * interested in: they'll be ignored by the function.
+ *
+ * See @ref evas_object_image_border_set() for more details.
  */
 EAPI void                     evas_object_image_border_get             (const Evas_Object *obj, int *l, int *r, int *t, int *b) EINA_ARG_NONNULL(1);
 
 /**
- * Sets if the center part of the given image object (not the border)
- * should be drawn.
- *
- * When rendering, the image may be scaled to fit the size of the
- * image object. This function sets if the center part of the scaled
- * image is to be drawn or left completely blank, or forced to be
- * solid. Very useful for frames and decorations.
+ * Sets @b how the center part of the given image object (not the
+ * borders) should be drawn when Evas is rendering it.
  *
  * @param obj The given image object.
- * @param fill Fill mode of the middle.
+ * @param fill Fill mode of the center region of @p obj (a value in
+ * #Evas_Border_Fill_Mode).
+ *
+ * This function sets how the center part of the image object's source
+ * image is to be drawn, which must be one of the values in
+ * #Evas_Border_Fill_Mode. By center we mean the complementary part of
+ * that defined by evas_object_image_border_set(). This one is very
+ * useful for making frames and decorations. You would most probably
+ * also be using a filled image (as in evas_object_image_filled_set())
+ * to use as a frame.
+ *
+ * @see evas_object_image_border_center_fill_get()
  */
 EAPI void                     evas_object_image_border_center_fill_set (Evas_Object *obj, Evas_Border_Fill_Mode fill) EINA_ARG_NONNULL(1);
 
 /**
- * Retrieves if the center of the given image object is to be drawn or
- * not.
- *
- * See @ref evas_object_image_fill_set for more details.
+ * Retrieves @b how the center part of the given image object (not the
+ * borders) is to be drawn when Evas is rendering it.
  *
  * @param obj The given image object.
- * @return Fill mode of the  center.
+ * @return fill Fill mode of the center region of @p obj (a value in
+ * #Evas_Border_Fill_Mode).
+ *
+ * See @ref evas_object_image_fill_set() for more details.
  */
 EAPI Evas_Border_Fill_Mode    evas_object_image_border_center_fill_get (const Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
 
@@ -5585,7 +5611,7 @@ EAPI Evas_Border_Fill_Mode    evas_object_image_border_center_fill_get (const Ev
  * so the bound image will fill the whole object's area.
  *
  * @see evas_object_image_filled_add()
- * @see evas_object_image_fill_set()
+ * @see evas_object_image_fill_get()
  */
 EAPI void                     evas_object_image_filled_set             (Evas_Object *obj, Eina_Bool setting) EINA_ARG_NONNULL(1);
 
@@ -5602,20 +5628,26 @@ EAPI void                     evas_object_image_filled_set             (Evas_Obj
 EAPI Eina_Bool                evas_object_image_filled_get             (const Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
 
 /**
- * Sets a scale factor (multiplier) for the borders of an image
+ * Sets the scaling factor (multiplier) for the borders of an image
+ * object.
  *
  * @param obj The given image object.
- * @param scale The scale factor (default is 1.0 - i.e. no scale)
+ * @param scale The scale factor (default is @c 1.0 - i.e. no scaling)
+ *
+ * @see evas_object_image_border_set()
+ * @see evas_object_image_border_scale_get()
  */
 EAPI void                     evas_object_image_border_scale_set       (Evas_Object *obj, double scale);
 
 /**
- * Retrieves the border scale factor
- *
- * See evas_object_image_border_scale_set()
+ * Retrieves the scaling factor (multiplier) for the borders of an
+ * image object.
  *
  * @param obj The given image object.
- * @return The scale factor
+ * @return The scale factor set for its borders
+ *
+ * @see evas_object_image_border_set()
+ * @see evas_object_image_border_scale_set()
  */
 EAPI double                   evas_object_image_border_scale_get       (const Evas_Object *obj);
 
@@ -5820,29 +5852,34 @@ EAPI void                     evas_object_image_data_copy_set          (Evas_Obj
 EAPI void                     evas_object_image_data_update_add        (Evas_Object *obj, int x, int y, int w, int h) EINA_ARG_NONNULL(1);
 
 /**
- * Enable or disable alpha channel of the given image object.
+ * Enable or disable alpha channel usage on the given image object.
+ *
+ * @param obj The given image object.
+ * @param has_alpha Whether to use alpha channel (@c EINA_TRUE) data
+ * or not (@c EINA_FALSE).
  *
  * This function sets a flag on an image object indicating whether or
- * not to use alpha channel data. A value of 1 indicates to use alpha
- * channel data, and 0 indicates to ignore any alpha channel
+ * not to use alpha channel data. A value of @c EINA_TRUE makes it use
+ * alpha channel data, and @c EINA_FALSE makes it ignore that
  * data. Note that this has nothing to do with an object's color as
  * manipulated by evas_object_color_set().
  *
- * @param obj The given image object.
- * @param has_alpha Whether to use alpha channel data or not.
+ * @see evas_object_image_alpha_get()
  */
 EAPI void                     evas_object_image_alpha_set              (Evas_Object *obj, Eina_Bool has_alpha) EINA_ARG_NONNULL(1);
 
 /**
- * @brief Retrieves the alpha channel setting of the given image object.
+ * Retrieve whether alpha channel data is being used on the given
+ * image object.
  *
  * @param obj The given image object.
- * @return Whether the alpha channel data is being used.
+ * @return Whether the alpha channel data is being used (@c EINA_TRUE)
+ * or not (@c EINA_FALSE).
  *
- * This function returns 1 if the image object's alpha channel is
- * being used, or 0 otherwise.
+ * This function returns @c EINA_TRUE if the image object's alpha
+ * channel is being used, or @c EINA_FALSE otherwise.
  *
- * See @ref evas_object_image_alpha_set for more details.
+ * See @ref evas_object_image_alpha_set() for more details.
  */
 EAPI Eina_Bool                evas_object_image_alpha_get              (const Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
 
@@ -6201,6 +6238,10 @@ EAPI Eina_Bool evas_object_image_extension_can_load_get(const char *file);
  * This functions is threadsafe.
  */
 EAPI Eina_Bool evas_object_image_extension_can_load_fast_get(const char *file);
+
+/**
+ * @}
+ */
 
 /**
  * @defgroup Evas_Object_Text Text Object Functions
@@ -9205,7 +9246,7 @@ EAPI void              evas_cserve_disconnect                 (void);
  * of evas_load_error_str() would be (if no other errors occur):
  * <code>"No error on load"</code> and <code>"File (or file path) does
  * not exist"</code>, respectively. See the full @ref
- * Example_Evas_Load_Error_Str "example".
+ * Example_Evas_Images "example".
  *
  * @ingroup Evas_Utils
  */

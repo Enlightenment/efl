@@ -7,7 +7,7 @@
  *
  * @ref Example_Evas_Init_Shutdown
  *
- * @ref Example_Evas_Load_Error_Str
+ * @ref Example_Evas_Images
  *
  * @ref Example_Evas_Events
  *
@@ -37,31 +37,31 @@
  */
 
 /**
- * @page Example_Evas_Load_Error_Str Some image object functions and evas_load_error_str() example
- * @dontinclude evas-load-error-str.c
+ * @page Example_Evas_Images Some image object functions examples
+ * @dontinclude evas-images.c
  *
  * In this example, we add two images to a canvas, each one having a
  * quarter of the canvas' size, positioned on the top left and bottom
  * right corners, respectively:
- * @skip img1 = evas_object_image_add(evas);
+ * @skip img1 = evas_object_image_add(d.evas);
  * @until ecore_main_loop_begin
  * See there is a border image around the top left one, <b>which is
  * the one that should be displayed</b>. The other one will (on
  * purpose) fail to load, because we set a wrong file path as image
  * source on it:
- * @dontinclude evas-load-error-str.c
+ * @dontinclude evas-images.c
  * @skip valid_path
  * @until bogus_path
  * This is how one is supposed to test for success when binding source
  * images to image objects: evas_object_image_load_error_get(),
  * followed by evas_load_error_str(), if one wants to pretty print/log
- * the error.
+ * the error. We'll talk about the border image further.
  *
  * To interact with the program, there's a command line interface,
  * whose help string can be asked for with the 'h' key:
- * @dontinclude evas-events.c
- * @skip if (strcmp(ev->keyname, "h") == 0)
- * @until }
+ * @dontinclude evas-images.c
+ * @skip commands
+ * @until ;
  * The first four commands will change the top left images's @b fill property
  * values, which dictate how the source image (Enlightenment's logo)
  * is to be displayed through the image object's area. Experiment with
@@ -74,10 +74,25 @@
  * one or other ways of setting an image object's viewport with regard
  * to its image source.
  *
+ * There are three commands which deal with the border image. This red
+ * frame is there to illustrate <b>image borders</b>. The image source
+ * for the border is a solid red rectangle, with a transparent area in
+ * its middle. See how we use it to get a 3 pixel wide frame with
+ * <code>evas_object_image_border_set(d.border, 3, 3, 3, 3)</code>. To
+ * finish the effect of showing it as a border, we issue
+ * <code>evas_object_image_border_center_fill_set(d.border,
+ * EVAS_BORDER_FILL_NONE)</code>.
+ *
+ * Use 't' to change the border's thickness. 'b' will change the
+ * border image's center region rendering schema: either a hole (no
+ * rendering), blending (see the original transparent area, in this
+ * case) or solid (the transparent area gets filled). Finally, 'c'
+ * will change the border's scaling factor.
+ *
  * The full example follows.
  *
- * @include evas-load-error-str.c
- * @example evas-load-error-str.c
+ * @include evas-images.c
+ * @example evas-images.c
  */
 
 /**
