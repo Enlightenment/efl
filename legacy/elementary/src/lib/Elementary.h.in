@@ -1995,6 +1995,10 @@ extern "C" {
     *
     * @note Objects should not be added to box objects using _add() calls.
     *
+    * Some examples on how to use boxes follow:
+    * @li @ref box_example_01
+    * @li @ref box_example_02
+    *
     * @{
     */
    /**

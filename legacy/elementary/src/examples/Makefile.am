@@ -39,6 +39,7 @@ SRCS = \
 	bg_example_01.c \
 	bg_example_02.c \
 	bg_example_03.c \
+	box_example_02.c \
 	general_funcs_example.c \
 	theme_example_01.c \
 	theme_example_02.c \
@@ -73,6 +74,7 @@ pkglib_PROGRAMS += \
 	bg_example_01 \
 	bg_example_02 \
 	bg_example_03 \
+	box_example_02 \
 	general_funcs_example \
 	theme_example_01 \
 	theme_example_02 \
@@ -84,6 +86,7 @@ pkglib_PROGRAMS += \
 SCREENSHOTS = \
 	actionslider_example_01:actionslider_01.png:0.0 \
 	bg_example_02:bg_01.png:0.0 \
+	box_example_02:box_example_02.png:1.3 \
 	button_example_01:button_01.png:0.0 \
 	animator_example_01:animator_example_01.png:0.2 \
 	animator_example_01:animator_example_02.png:0.5 \

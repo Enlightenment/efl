@@ -926,6 +926,170 @@
  */
 
 /**
+ * @page box_example_01 Box - Basic API
+ *
+ * @dontinclude button_example_01.c
+ *
+ * As a special guest tonight, we have the @ref button_example_01 "simple
+ * button example". There are plenty of boxes in it, and to make the cursor
+ * buttons that moved a central one around when pressed, we had to use a
+ * variety of values for their hints.
+ *
+ * To start, let's take a look at the handling of the central button when
+ * we were moving it around. To achieve this effect without falling back to
+ * a complete manual positioning of the @c Evas_Object in our canvas, we just
+ * put it in a box and played with its alignment within it, as seen in the
+ * following snippet of the callback for the pressed buttons.
+ * @skip evas_object_size_hint_align_get
+ * @until evas_object_size_hint_align_set
+ *
+ * Not much to it. We get the current alignment of the object and change it
+ * by just a little, depending on which button was pressed, then set it
+ * again, making sure we stay within the 0.0-1.0 range so the button moves
+ * inside the space it has, instead of disappearing under the other objects.
+ *
+ * But as useful as an example as that may have been, the usual case with boxes
+ * is to set everything at the moment they are created, like we did for
+ * everything else in our main function.
+ *
+ * The entire layout of our program is made with boxes. We have one set as the
+ * resize object for the window, which means it will always be resized with
+ * the window. The weight hints set to @c EVAS_HINT_EXPAND will tell the
+ * window that the box can grow past it's minimum size, which allows resizing
+ * of it.
+ * @skip elm_main
+ * @skip elm_box_add
+ * @until evas_object_show
+ *
+ * Two more boxes, set to horizontal, hold the buttons to change the autorepeat
+ * configuration used by the buttons. We create each to take over all the
+ * available space horizontally, but we don't want them to grow vertically,
+ * so we keep that axis of the weight with 0.0. Then it gets packed in the
+ * main box.
+ * @skip box2
+ * @until evas_object_show
+ *
+ * The buttons in each of those boxes have nothing special, they are just packed
+ * in with their default values and the box will use their minimum size, as set
+ * by Elementary itself based on the label, icon, finger size and theme.
+ *
+ * But the buttons used to move the central one have a special disposition.
+ * The top one first, is placed right into the main box like our other smaller
+ * boxes. Set to expand horizontally and not vertically, and in this case we
+ * also tell it to fill that space, so it gets resized to take the entire
+ * width of the window.
+ * @skip Gap: 1.0
+ * @skip elm_button_add
+ * @until evas_object_show
+ *
+ * The bottom one will be the same, but for the other two we need to use a
+ * second box set to take as much space as we have, so we can place our side
+ * buttons in place and have the big empty space where the central button will
+ * move.
+ * @skip elm_box_add
+ * @until evas_object_show
+ *
+ * Then the buttons will have their hints inverted to the other top and bottom
+ * ones, to expand and fill vertically and keep their minimum size horizontally.
+ * @skip elm_button_add
+ * @until evas_object_show
+ *
+ * The central button takes every thing else. It will ask to be expanded in
+ * both directions, but without filling its cell. Changing its alignment by
+ * pressing the buttons will make it move around.
+ * @skip elm_button_add
+ * @until evas_object_show
+ *
+ * To end, the rightmost button is packed in the smaller box after the central
+ * one, and back to the main box we have the bottom button at the end.
+ */
+
+/**
+ * @page box_example_02 Box - Layout transitions
+ *
+ * @dontinclude box_example_02.c
+ *
+ * Setting a customized layout for a box is simple once you have the layout
+ * function, which is just like the layout function for @c Evas_Box. The new
+ * and fancier thing we can do with Elementary is animate the transition from
+ * one layout to the next. We'll see now how to do that through a simple
+ * example, while also taking a look at some of the API that was left
+ * untouched in our @ref box_example_01 "previous example".
+ *
+ * @image html screenshots/box_example_02.png
+ * @image latex screenshots/box_example_02.eps
+ *
+ * @skipline Elementary.h
+ *
+ * Our application data consists of a list of layout functions, given by
+ * @c transitions. We'll be animating through them throughout the entire run.
+ * The box with the stuff to move around and the last layout that was set to
+ * make things easier in the code.
+ * @skip typedef
+ * @until Transitions_Data
+ *
+ * The box starts with three buttons, clicking on any of them will take it
+ * out of the box without deleting the object. There are also two more buttons
+ * outside, one to add an object to the box and the other to clear it.
+ * This is all to show how you can interact with the items in the box, add
+ * things and even remove them, while the transitions occur.
+ *
+ * One of the callback we'll be using creates a new button, asks the box for
+ * the list of its children and if it's not empty, we add the new object after
+ * the first one, otherwise just place at the end as it will not make any
+ * difference.
+ * @skip static void
+ * @until }
+ * @until }
+ *
+ * The clear button is even simpler. Everything in the box will be deleted,
+ * leaving it empty and ready to fill it up with more stuff.
+ * @skip static void
+ * @until }
+ *
+ * And a little function to remove buttons from the box without deleting them.
+ * This one is set for the @c clicked callback of the original buttons,
+ * unpacking them when clicked and placing it somewhere in the screen where
+ * they will not disturb. Once we do this, the box no longer has any control
+ * of it, so it will be left untouched until the program ends.
+ * @skip static void
+ * @until }
+ *
+ * If we wanted, we could just call @c evas_object_del() on the object to
+ * destroy it. In this case, no unpack is really necessary, as the box would
+ * be notified of a child being deleted and adjust its calculations accordingly.
+ *
+ * The core of the program is the following function. It takes whatever
+ * function is first on our list of layouts and together with the
+ * @c last_layout, it creates an ::Elm_Box_Transition to use with
+ * elm_box_layout_transition(). In here, we tell it to start from whatever
+ * layout we last set, end with the one that was at the top of the list and
+ * when everything is finished, call us back so we can create another
+ * transition. Finally, move the new layout to the end of the list so we
+ * can continue running through them until the program ends.
+ * @skip static void
+ * @until }
+ *
+ * The main function doesn't have antyhing special. Creation of box, initial
+ * buttons and some callback setting. The only part worth mentioning is the
+ * initialization of our application data.
+ * @skip tdata.box
+ * @until evas_object_box_layout_stack
+ *
+ * We have a simple static variable, set the box, the first layout we are
+ * using as last and create the list with the different functions to go
+ * through.
+ *
+ * And in the end, we set the first layout and call the same function we went
+ * through before to start the run of transitions.
+ * @until _test_box_transition_change
+ *
+ * For the full code, follow @ref box_example_02.c "here".
+ *
+ * @example box_example_02.c
+ */
+
+/**
  * @page bg_example_01_c bg_example_01.c
  * @include bg_example_01.c
  * @example bg_example_01.c
