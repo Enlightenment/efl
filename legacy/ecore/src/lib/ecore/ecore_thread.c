@@ -444,7 +444,7 @@ _ecore_thread_end(Ecore_Pthread_Data *pth, Ecore_Thread *work)
    Ecore_Pthread_Worker *worker = (Ecore_Pthread_Worker *) work;
    Ecore_Pipe *p;
 
-   if (!worker->message_run || !worker->feedback_run || (worker->feedback_run && !worker->no_queue))
+   if (!worker->feedback_run || (worker->feedback_run && !worker->no_queue))
      _ecore_thread_count--;
 
    if (PHJ(pth->thread, p) != 0)
