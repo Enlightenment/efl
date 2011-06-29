@@ -158,11 +158,10 @@ _elm_transit_object_remove_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj, 
    obj_data = eina_hash_find(transit->objs_data_hash, list);
    if (!obj_data) return;
    eina_hash_del_by_key(transit->objs_data_hash, list);
-   evas_object_pass_events_set(obj, obj_data->pass_events);
    if (obj_data->state)
      free(obj_data->state);
    free(obj_data);
-   transit->objs = eina_list_remove(transit->objs, obj);
+   _remove_obj_from_list(transit, obj);
    if (!transit->objs) elm_transit_del(transit);
 }
 
