@@ -758,7 +758,7 @@
  *
  * In the end, we should be looking at something like this:
  * @image html screenshots/theme_example_01.png
- * @image latex screenhots/theme_example_01.eps
+ * @image latex screenshots/theme_example_01.eps
  *
  * That's all. Boringly simple, and the full code in one piece can be found
  * @ref theme_example_01.c "here".
