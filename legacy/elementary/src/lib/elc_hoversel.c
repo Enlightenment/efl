@@ -210,7 +210,7 @@ _activate(Evas_Object *obj)
         elm_widget_mirrored_automatic_set(bt, EINA_FALSE);
         elm_widget_mirrored_set(bt, elm_widget_mirrored_get(obj));
         elm_object_style_set(bt, buf);
-        elm_button_label_set(bt, item->label);
+        elm_object_text_set(bt, item->label);
         if (item->icon_file)
           {
              ic = elm_icon_add(obj);
@@ -363,7 +363,7 @@ elm_hoversel_hover_parent_get(const Evas_Object *obj)
  * Set the hoversel button label
  *
  * This sets the label of the button that is always visible (before it is
- * clicked and expanded). Also see elm_button_label_set().
+ * clicked and expanded). Also see elm_object_text_set().
  *
  * @param obj The hoversel object
  * @param label The label text.
@@ -376,7 +376,7 @@ elm_hoversel_label_set(Evas_Object *obj, const char *label)
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
-   elm_button_label_set(wd->btn, label);
+   elm_object_text_set(wd->btn, label);
 }
 
 /**
@@ -393,7 +393,7 @@ elm_hoversel_label_get(const Evas_Object *obj)
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd = elm_widget_data_get(obj);
    if ((!wd) || (!wd->btn)) return NULL;
-   return elm_button_label_get(wd->btn);
+   return elm_object_text_get(wd->btn);
 }
 
 /**
