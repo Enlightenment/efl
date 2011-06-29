@@ -1196,6 +1196,20 @@ elm_object_scale_get(const Evas_Object *obj)
    return elm_widget_scale_get(obj);
 }
 
+EAPI void
+elm_object_label_set(Evas_Object *obj, const char *item, const char *label)
+{
+   EINA_SAFETY_ON_NULL_RETURN(obj);
+   elm_widget_label_set(obj, item, label);
+}
+
+EAPI const char *
+elm_object_label_get(const Evas_Object *obj, const char *item)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(obj, NULL);
+   return elm_widget_label_get(obj, item);
+}
+
 /**
  * Get the global scaling factor
  *

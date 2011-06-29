@@ -677,6 +677,37 @@ extern "C" {
    EAPI int          elm_policy_get(unsigned int policy);
 
    /**
+    * Set a label of an object
+    *
+    * @param obj The Elementary object
+    * @param item The label id to set (NULL for the default label)
+    * @param label The new text of the label
+    *
+    * @note Elementary objects may have many labels (e.g. Action Slider)
+    *
+    * @ingroup General
+    */
+   EAPI void         elm_object_label_set(Evas_Object *obj, const char *item, const char *label);
+
+#define elm_object_text_set(obj, label) elm_object_label_set((obj), NULL, (label))
+
+   /**
+    * Get a label of an object
+    *
+    * @param obj The Elementary object
+    * @param item The label id to get (NULL for the default label)
+    * @return text of the label or
+    *         NULL for any error
+    *
+    * @note Elementary objects may have many labels (e.g. Action Slider)
+    *
+    * @ingroup General
+    */
+   EAPI const char  *elm_object_label_get(const Evas_Object *obj, const char *item);
+
+#define elm_object_text_get(obj) elm_object_label_get((obj), NULL)
+
+   /**
     * @}
     */
 
@@ -2579,8 +2610,8 @@ extern "C" {
 
    /* label */
    EAPI Evas_Object *elm_label_add(Evas_Object *parent) EINA_ARG_NONNULL(1);
-   EAPI void         elm_label_label_set(Evas_Object *obj, const char *label) EINA_ARG_NONNULL(1);
-   EAPI const char  *elm_label_label_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+   EINA_DEPRECATED EAPI void elm_label_label_set(Evas_Object *obj, const char *label) EINA_ARG_NONNULL(1); /* deprecated, use elm_object_text_set instead */
+   EINA_DEPRECATED EAPI const char *elm_label_label_get(const Evas_Object *obj) EINA_ARG_NONNULL(1); /* deprecated, use elm_object_text_get instead */
    EAPI void         elm_label_line_wrap_set(Evas_Object *obj, Elm_Wrap_Type wrap) EINA_ARG_NONNULL(1);
    EAPI Elm_Wrap_Type elm_label_line_wrap_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
    EAPI void         elm_label_wrap_width_set(Evas_Object *obj, Evas_Coord w) EINA_ARG_NONNULL(1);

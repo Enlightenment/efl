@@ -308,6 +308,8 @@ EAPI Eina_List       *elm_widget_stringlist_get(const char *str);
 EAPI void             elm_widget_stringlist_free(Eina_List *list);
 EAPI void             elm_widget_focus_hide_handle(Evas_Object *obj);
 EAPI void             elm_widget_focus_mouse_down_handle(Evas_Object *obj);
+EAPI void             elm_widget_label_set(Evas_Object *obj, const char *item, const char *label);
+EAPI const char      *elm_widget_label_get(const Evas_Object *obj, const char *item);
 
 EAPI Elm_Widget_Item *_elm_widget_item_new(Evas_Object *parent, size_t alloc_size);
 EAPI void             _elm_widget_item_del(Elm_Widget_Item *item);
