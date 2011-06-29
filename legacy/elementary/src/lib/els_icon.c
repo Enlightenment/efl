@@ -51,14 +51,17 @@ _els_smart_icon_add(Evas *evas)
 }
 
 static void
-_preloaded(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
+_preloaded(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event __UNUSED__)
 {
    Smart_Data *sd = data;
 
    sd->preloading = EINA_FALSE;
-   if (sd->show)
-     evas_object_show(sd->obj);
-   evas_object_del(sd->prev);
+   if (obj == sd->obj)
+     {
+        if (sd->show)
+          evas_object_show(sd->obj);
+     }
+   if (sd->prev) evas_object_del(sd->prev);
    sd->prev = NULL;
 }
 
@@ -72,26 +75,24 @@ _els_smart_icon_file_key_set(Evas_Object *obj, const char *file, const char *key
    if (!sd) return EINA_FALSE;
    /* smart code here */
    if (sd->prev) evas_object_del(sd->prev);
+   pclip = evas_object_clip_get(sd->obj);
    if (sd->obj) sd->prev = sd->obj;
    sd->obj = evas_object_image_add(evas_object_evas_get(obj));
    evas_object_event_callback_add(sd->obj, EVAS_CALLBACK_IMAGE_PRELOADED,
                                   _preloaded, sd);
    evas_object_smart_member_add(sd->obj, obj);
+   if (sd->prev) evas_object_smart_member_add(sd->prev, obj);
    evas_object_image_scale_hint_set(sd->obj, EVAS_IMAGE_SCALE_HINT_STATIC);
+   evas_object_clip_set(sd->obj, pclip);
 
-   if (sd->edje)
-     {
-        pclip = evas_object_clip_get(sd->obj);
-        evas_object_clip_set(sd->obj, pclip);
-        sd->edje = EINA_FALSE;
-     }
+   sd->edje = EINA_FALSE;
+
    if (!sd->size)
      evas_object_image_load_size_set(sd->obj, sd->size, sd->size);
    evas_object_image_file_set(sd->obj, file, key);
    sd->preloading = EINA_TRUE;
    sd->show = EINA_TRUE;
    evas_object_hide(sd->obj);
-   evas_object_show(sd->obj);
    evas_object_image_preload(sd->obj, EINA_FALSE);
    if (evas_object_image_load_error_get(sd->obj) != EVAS_LOAD_ERROR_NONE)
      {
@@ -111,6 +112,9 @@ _els_smart_icon_file_edje_set(Evas_Object *obj, const char *file, const char *pa
    sd = evas_object_smart_data_get(obj);
    if (!sd) return EINA_FALSE;
    /* smart code here */
+   if (sd->prev) evas_object_del(sd->prev);
+   sd->prev = NULL;
+
    if (!sd->edje)
      {
         pclip = evas_object_clip_get(sd->obj);
@@ -623,9 +627,11 @@ _smart_show(Evas_Object *obj)
    if (!sd) return;
    sd->show = EINA_TRUE;
    if (!sd->preloading)
-     evas_object_show(sd->obj);
-   else if (sd->prev)
-     evas_object_show(sd->prev);
+     {
+        evas_object_show(sd->obj);
+        if (sd->prev) evas_object_del(sd->prev);
+        sd->prev = NULL;
+     }
 }
 
 static void
@@ -637,7 +643,8 @@ _smart_hide(Evas_Object *obj)
    if (!sd) return;
    sd->show = EINA_FALSE;
    evas_object_hide(sd->obj);
-   if (sd->prev) evas_object_hide(sd->prev);
+   if (sd->prev) evas_object_del(sd->prev);
+   sd->prev = NULL;
 }
 
 static void
