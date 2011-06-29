@@ -109,6 +109,28 @@ _sub_del(void *data __UNUSED__, Evas_Object *obj, void *event_info)
      }
 }
 
+static void
+_elm_frame_label_set(Evas_Object *obj, const char *item, const char *label)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (item) return;
+   if (!wd) return;
+   eina_stringshare_replace(&(wd->label), label);
+   edje_object_part_text_set(wd->frm, "elm.text", wd->label);
+   _sizing_eval(obj);
+}
+
+static const char *
+_elm_frame_label_get(const Evas_Object *obj, const char *item)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (item) return NULL;
+   if (!wd) return NULL;
+   return wd->label;
+}
+
 /**
  * Add a new frame to the parent
  *
@@ -134,6 +156,8 @@ elm_frame_add(Evas_Object *parent)
    elm_widget_theme_hook_set(obj, _theme_hook);
    elm_widget_focus_next_hook_set(obj, _elm_frame_focus_next_hook);
    elm_widget_can_focus_set(obj, EINA_FALSE);
+   elm_widget_label_set_hook_set(obj, _elm_frame_label_set);
+   elm_widget_label_get_hook_set(obj, _elm_frame_label_get);
 
    wd->frm = edje_object_add(e);
    _elm_theme_object_set(obj, wd->frm, "frame", "base", "default");
@@ -153,16 +177,12 @@ elm_frame_add(Evas_Object *parent)
  * @param label The label of this frame object
  *
  * @ingroup Frame
+ * @deprecate use elm_object_text_* instead.
  */
 EAPI void
 elm_frame_label_set(Evas_Object *obj, const char *label)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype);
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return;
-   eina_stringshare_replace(&(wd->label), label);
-   edje_object_part_text_set(wd->frm, "elm.text", wd->label);
-   _sizing_eval(obj);
+   _elm_frame_label_set(obj, NULL, label);
 }
 
 /**
@@ -173,14 +193,12 @@ elm_frame_label_set(Evas_Object *obj, const char *label)
  * @return The label of this frame objet or NULL if unable to get frame
  *
  * @ingroup Frame
+ * @deprecate use elm_object_text_* instead.
  */
 EAPI const char *
 elm_frame_label_get(const Evas_Object *obj)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return NULL;
-   return wd->label;
+   return _elm_frame_label_get(obj, NULL);
 }
 
 /**
