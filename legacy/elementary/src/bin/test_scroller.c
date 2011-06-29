@@ -93,7 +93,7 @@ test_scroller(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    elm_win_resize_object_add(win, tb2);
 
    bt = elm_button_add(win);
-   elm_button_label_set(bt, "to 300 300");
+   elm_object_text_set(bt, "to 300 300");
    evas_object_smart_callback_add(bt, "clicked", my_bt_go_300_300, sc);
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(bt, 0.1, 0.1);
@@ -101,7 +101,7 @@ test_scroller(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    evas_object_show(bt);
 
    bt = elm_button_add(win);
-   elm_button_label_set(bt, "to 900 300");
+   elm_object_text_set(bt, "to 900 300");
    evas_object_smart_callback_add(bt, "clicked", my_bt_go_900_300, sc);
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(bt, 0.9, 0.1);
@@ -109,7 +109,7 @@ test_scroller(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    evas_object_show(bt);
 
    bt = elm_button_add(win);
-   elm_button_label_set(bt, "to 300 900");
+   elm_object_text_set(bt, "to 300 900");
    evas_object_smart_callback_add(bt, "clicked", my_bt_go_300_900, sc);
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(bt, 0.1, 0.9);
@@ -117,7 +117,7 @@ test_scroller(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    evas_object_show(bt);
 
    bt = elm_button_add(win);
-   elm_button_label_set(bt, "to 900 900");
+   elm_object_text_set(bt, "to 900 900");
    evas_object_smart_callback_add(bt, "clicked", my_bt_go_900_900, sc);
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(bt, 0.9, 0.9);
@@ -159,7 +159,7 @@ test_scroller2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
    for (i = 0; i < 3; i++)
      {
         bt = elm_button_add(win);
-        elm_button_label_set(bt, "Vertical");
+        elm_object_text_set(bt, "Vertical");
         evas_object_smart_callback_add(bt, "clicked", click_through, NULL);
         evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
         evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, 0.5);
@@ -183,7 +183,7 @@ test_scroller2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
    for (i = 0; i < 10; i++)
      {
         bt = elm_button_add(win);
-        elm_button_label_set(bt, "... Horizontal scrolling ...");
+        elm_object_text_set(bt, "... Horizontal scrolling ...");
         evas_object_smart_callback_add(bt, "clicked", click_through, NULL);
         elm_box_pack_end(bx2, bt);
         evas_object_show(bt);
@@ -197,7 +197,7 @@ test_scroller2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
    for (i = 0; i < 3; i++)
      {
         bt = elm_button_add(win);
-        elm_button_label_set(bt, "Vertical");
+        elm_object_text_set(bt, "Vertical");
         evas_object_smart_callback_add(bt, "clicked", click_through, NULL);
         evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
         evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, 0.5);
@@ -230,7 +230,7 @@ test_scroller2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
         for (i = 0; i < 16; i++)
           {
              bt = elm_button_add(win);
-             elm_button_label_set(bt, "Both");
+             elm_object_text_set(bt, "Both");
              evas_object_smart_callback_add(bt, "clicked", click_through, NULL);
              elm_table_pack(tb2, bt, i, j, 1, 1);
              evas_object_show(bt);
@@ -244,7 +244,7 @@ test_scroller2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
    for (i = 0; i < 24; i++)
      {
         bt = elm_button_add(win);
-        elm_button_label_set(bt, "Vertical");
+        elm_object_text_set(bt, "Vertical");
         evas_object_smart_callback_add(bt, "clicked", click_through, NULL);
         evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
         evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, 0.5);

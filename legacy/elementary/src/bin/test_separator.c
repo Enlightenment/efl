@@ -29,7 +29,7 @@ test_separator(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
    evas_object_show(bx);
 
    bt = elm_button_add(win);
-   elm_button_label_set(bt, "Left upper corner");
+   elm_object_text_set(bt, "Left upper corner");
    elm_box_pack_end(bx, bt);
    evas_object_show(bt);
 
@@ -39,7 +39,7 @@ test_separator(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
    evas_object_show(sp);
 
    bt = elm_button_add(win);
-   elm_button_label_set(bt, "Left lower corner");
+   elm_object_text_set(bt, "Left lower corner");
    elm_object_disabled_set(bt, 1);
    elm_box_pack_end(bx, bt);
    evas_object_show(bt);
@@ -54,7 +54,7 @@ test_separator(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
    evas_object_show(bx);
 
    bt = elm_button_add(win);
-   elm_button_label_set(bt, "Right upper corner");
+   elm_object_text_set(bt, "Right upper corner");
    elm_object_disabled_set(bt, 1);
    elm_box_pack_end(bx, bt);
    evas_object_show(bt);
@@ -65,7 +65,7 @@ test_separator(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
    evas_object_show(sp);
 
    bt = elm_button_add(win);
-   elm_button_label_set(bt, "Right lower corner");
+   elm_object_text_set(bt, "Right lower corner");
    elm_box_pack_end(bx, bt);
    evas_object_show(bt);
 

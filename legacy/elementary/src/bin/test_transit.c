@@ -254,7 +254,7 @@ test_transit(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_inf
    evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
 
    bt = elm_button_add(win);
-   elm_button_label_set(bt, "ImageAnimation Effect");
+   elm_object_text_set(bt, "ImageAnimation Effect");
    elm_button_icon_set(bt, ic);
    elm_box_pack_end(bx, bt);
    evas_object_show(bt);
@@ -262,14 +262,14 @@ test_transit(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_inf
    evas_object_smart_callback_add(bt, "clicked", _transit_image_animation, ic);
 
    bt = elm_button_add(win);
-   elm_button_label_set(bt, "Color, Rotation and Translation");
+   elm_object_text_set(bt, "Color, Rotation and Translation");
    elm_box_pack_end(bx, bt);
    evas_object_show(bt);
    evas_object_smart_callback_add(bt, "clicked",
                                   _transit_rotation_translation_color, NULL);
 
    bt = elm_button_add(win);
-   elm_button_label_set(bt, "Wipe Effect");
+   elm_object_text_set(bt, "Wipe Effect");
    elm_box_pack_end(bx, bt);
    evas_object_show(bt);
    evas_object_smart_callback_add(bt, "clicked", _transit_wipe, NULL);
@@ -294,7 +294,7 @@ test_transit2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    evas_object_show(bg);
 
    bt = elm_button_add(win);
-   elm_button_label_set(bt, "Resizing Effect");
+   elm_object_text_set(bt, "Resizing Effect");
    evas_object_show(bt);
    evas_object_move(bt, 50, 100);
    evas_object_resize(bt, 100, 50);
@@ -320,13 +320,13 @@ test_transit3(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    evas_object_show(bg);
 
    bt = elm_button_add(win);
-   elm_button_label_set(bt, "Front Button - Flip Effect");
+   elm_object_text_set(bt, "Front Button - Flip Effect");
    evas_object_show(bt);
    evas_object_move(bt, 50, 50);
    evas_object_resize(bt, 200, 200);
 
    bt2 = elm_button_add(win);
-   elm_button_label_set(bt2, "Back Button - Flip Effect");
+   elm_object_text_set(bt2, "Back Button - Flip Effect");
    evas_object_move(bt2, 50, 50);
    evas_object_resize(bt2, 200, 200);
 
@@ -353,7 +353,7 @@ test_transit4(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    evas_object_show(bg);
 
    bt = elm_button_add(win);
-   elm_button_label_set(bt, "Zoom Effect");
+   elm_object_text_set(bt, "Zoom Effect");
    evas_object_resize(bt, 100, 50);
    evas_object_move(bt, 100, 125);
    evas_object_show(bt);
@@ -385,7 +385,7 @@ test_transit5(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
 
    bt = elm_button_add(win);
    elm_button_icon_set(bt, ic);
-   elm_button_label_set(bt, "Before Button - Blend Effect");
+   elm_object_text_set(bt, "Before Button - Blend Effect");
    evas_object_move(bt, 25, 125);
    evas_object_resize(bt, 250, 50);
    evas_object_show(bt);
@@ -396,7 +396,7 @@ test_transit5(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
 
    bt2 = elm_button_add(win);
    elm_button_icon_set(bt2, ic);
-   elm_button_label_set(bt2, "After Button - Blend Effect");
+   elm_object_text_set(bt2, "After Button - Blend Effect");
    evas_object_move(bt2, 25, 125);
    evas_object_resize(bt2, 250, 50);
 
@@ -428,7 +428,7 @@ test_transit6(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
 
    bt = elm_button_add(win);
    elm_button_icon_set(bt, ic);
-   elm_button_label_set(bt, "Before Button - Fade Effect");
+   elm_object_text_set(bt, "Before Button - Fade Effect");
    evas_object_move(bt, 25, 125);
    evas_object_resize(bt, 250, 50);
    evas_object_show(bt);
@@ -439,7 +439,7 @@ test_transit6(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
 
    bt2 = elm_button_add(win);
    elm_button_icon_set(bt2, ic);
-   elm_button_label_set(bt2, "After Button - Fade Effect");
+   elm_object_text_set(bt2, "After Button - Fade Effect");
    evas_object_move(bt2, 25, 125);
    evas_object_resize(bt2, 250, 50);
 
@@ -466,13 +466,13 @@ test_transit7(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    evas_object_show(bg);
 
    bt = elm_button_add(win);
-   elm_button_label_set(bt, "Front Button - Resizable Flip Effect");
+   elm_object_text_set(bt, "Front Button - Resizable Flip Effect");
    evas_object_show(bt);
    evas_object_move(bt, 50, 100);
    evas_object_resize(bt, 250, 30);
 
    bt2 = elm_button_add(win);
-   elm_button_label_set(bt2, "Back Button - Resizable Flip Effect");
+   elm_object_text_set(bt2, "Back Button - Resizable Flip Effect");
    evas_object_move(bt2, 50, 100);
    evas_object_resize(bt2, 300, 200);
 
@@ -502,7 +502,7 @@ test_transit8(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    evas_object_show(bg);
 
    bt = elm_button_add(win);
-   elm_button_label_set(bt, "Button - Custom Effect");
+   elm_object_text_set(bt, "Button - Custom Effect");
    evas_object_show(bt);
    evas_object_move(bt, 50, 50);
    evas_object_resize(bt, 150, 150);
@@ -540,25 +540,25 @@ test_transit9(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    evas_object_show(bg);
 
    bt = elm_button_add(win);
-   elm_button_label_set(bt, "Chain 1");
+   elm_object_text_set(bt, "Chain 1");
    evas_object_resize(bt, 100, 100);
    evas_object_move(bt, 0, 0);
    evas_object_show(bt);
 
    bt2 = elm_button_add(win);
-   elm_button_label_set(bt2, "Chain 2");
+   elm_object_text_set(bt2, "Chain 2");
    evas_object_resize(bt2, 100, 100);
    evas_object_move(bt2, 300, 0);
    evas_object_show(bt2);
 
    bt3 = elm_button_add(win);
-   elm_button_label_set(bt3, "Chain 3");
+   elm_object_text_set(bt3, "Chain 3");
    evas_object_resize(bt3, 100, 100);
    evas_object_move(bt3, 300, 300);
    evas_object_show(bt3);
 
    bt4 = elm_button_add(win);
-   elm_button_label_set(bt4, "Chain 4");
+   elm_object_text_set(bt4, "Chain 4");
    evas_object_resize(bt4, 100, 100);
    evas_object_move(bt4, 0, 300);
    evas_object_show(bt4);

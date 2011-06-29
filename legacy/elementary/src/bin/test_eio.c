@@ -164,7 +164,7 @@ test_eio(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __
 
    /* attribute setting buttons */
    bt = elm_button_add(win);
-   elm_button_label_set(bt, "clear");
+   elm_object_text_set(bt, "clear");
    evas_object_smart_callback_add(bt, "clicked", _test_eio_clear, gl);
    elm_box_pack_end(hbox, bt);
    evas_object_show(bt);

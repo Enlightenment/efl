@@ -12,7 +12,7 @@ _bt_repeated(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED_
    snprintf(buf, sizeof(buf), "count=%d", count++);
    if (count >= 10000)
      count = 0;
-   elm_button_label_set(obj, buf);
+   elm_object_text_set(obj, buf);
 }
 
 static void
@@ -63,7 +63,7 @@ test_button(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    elm_icon_file_set(ic, buf, NULL);
    evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
    bt = elm_button_add(win);
-   elm_button_label_set(bt, "Icon sized to button");
+   elm_object_text_set(bt, "Icon sized to button");
    elm_button_icon_set(bt, ic);
    evas_object_smart_callback_add(bt, "clicked", _bt_clicked, (void *)1);
    evas_object_smart_callback_add(bt, "unpressed", _bt_unpressed, (void *)1);
@@ -76,7 +76,7 @@ test_button(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    elm_icon_file_set(ic, buf, NULL);
    elm_icon_scale_set(ic, 0, 0);
    bt = elm_button_add(win);
-   elm_button_label_set(bt, "Icon no scale");
+   elm_object_text_set(bt, "Icon no scale");
    elm_button_icon_set(bt, ic);
    evas_object_smart_callback_add(bt, "clicked", _bt_clicked, (void *)2);
    evas_object_smart_callback_add(bt, "unpressed", _bt_unpressed, (void *)2);
@@ -89,7 +89,7 @@ test_button(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    elm_icon_file_set(ic, buf, NULL);
    evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
    bt = elm_button_add(win);
-   elm_button_label_set(bt, "Disabled Button");
+   elm_object_text_set(bt, "Disabled Button");
    elm_button_icon_set(bt, ic);
    elm_object_disabled_set(bt, 1);
    evas_object_smart_callback_add(bt, "clicked", _bt_clicked, (void *)3);
@@ -112,7 +112,7 @@ test_button(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    evas_object_show(ic);
 
    bt = elm_button_add(win);
-   elm_button_label_set(bt, "Label Only");
+   elm_object_text_set(bt, "Label Only");
    evas_object_smart_callback_add(bt, "clicked", _bt_clicked, (void *)5);
    evas_object_smart_callback_add(bt, "unpressed", _bt_unpressed, (void *)5);
    elm_box_pack_end(bx, bt);
@@ -136,7 +136,7 @@ test_button(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
 
    bt = elm_button_add(win);
    elm_object_style_set(bt, "anchor");
-   elm_button_label_set(bt, "Anchor style");
+   elm_object_text_set(bt, "Anchor style");
    evas_object_smart_callback_add(bt, "clicked", _bt_clicked, (void *)7);
    evas_object_smart_callback_add(bt, "unpressed", _bt_unpressed, (void *)7);
    elm_box_pack_end(bx, bt);

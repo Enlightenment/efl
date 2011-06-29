@@ -271,7 +271,7 @@ test_photocam(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    elm_win_resize_object_add(win, tb2);
 
    bt = elm_button_add(win);
-   elm_button_label_set(bt, "Z -");
+   elm_object_text_set(bt, "Z -");
    evas_object_smart_callback_add(bt, "clicked", my_bt_zoom_out, ph);
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(bt, 0.1, 0.1);
@@ -287,7 +287,7 @@ test_photocam(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    evas_object_show(bt);
 
    bt = elm_button_add(win);
-   elm_button_label_set(bt, "Z +");
+   elm_object_text_set(bt, "Z +");
    evas_object_smart_callback_add(bt, "clicked", my_bt_zoom_in, ph);
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(bt, 0.9, 0.1);
@@ -295,7 +295,7 @@ test_photocam(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    evas_object_show(bt);
 
    bt = elm_button_add(win);
-   elm_button_label_set(bt, "Show 30,50 500x300");
+   elm_object_text_set(bt, "Show 30,50 500x300");
    evas_object_smart_callback_add(bt, "clicked", my_bt_show_reg, ph);
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(bt, 0.1, 0.5);
@@ -303,7 +303,7 @@ test_photocam(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    evas_object_show(bt);
 
    bt = elm_button_add(win);
-   elm_button_label_set(bt, "Bring 800,300 500x300");
+   elm_object_text_set(bt, "Bring 800,300 500x300");
    evas_object_smart_callback_add(bt, "clicked", my_bt_bring_reg, ph);
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(bt, 0.9, 0.5);
@@ -311,7 +311,7 @@ test_photocam(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    evas_object_show(bt);
 
    bt = elm_button_add(win);
-   elm_button_label_set(bt, "Pause On/Off");
+   elm_object_text_set(bt, "Pause On/Off");
    evas_object_smart_callback_add(bt, "clicked", my_bt_pause, ph);
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(bt, 0.1, 0.9);
@@ -319,7 +319,7 @@ test_photocam(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    evas_object_show(bt);
 
    bt = elm_button_add(win);
-   elm_button_label_set(bt, "Fit");
+   elm_object_text_set(bt, "Fit");
    evas_object_smart_callback_add(bt, "clicked", my_bt_zoom_fit, ph);
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(bt, 0.5, 0.9);
@@ -327,7 +327,7 @@ test_photocam(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    evas_object_show(bt);
 
    bt = elm_button_add(win);
-   elm_button_label_set(bt, "Fill");
+   elm_object_text_set(bt, "Fill");
    evas_object_smart_callback_add(bt, "clicked", my_bt_zoom_fill, ph);
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(bt, 0.9, 0.9);

@@ -171,14 +171,14 @@ _tt_text_replace_timed(void *data       __UNUSED__,
      {
         ecore_timer_del(timer);
         evas_object_data_del(obj, "test-timer");
-        elm_button_label_set(obj, "Simple text tooltip, click to start"
+        elm_object_text_set(obj, "Simple text tooltip, click to start"
                                   " changed timed");
         return;
      }
 
    timer = ecore_timer_add(1.5, _tt_text_replace_timer_cb, obj);
    evas_object_data_set(obj, "test-timer", timer);
-   elm_button_label_set(obj, "Simple text tooltip, click to stop changed"
+   elm_object_text_set(obj, "Simple text tooltip, click to stop changed"
                              " timed");
 }
 
@@ -241,14 +241,14 @@ _tt_icon_replace_timed(void *data       __UNUSED__,
      {
         ecore_timer_del(timer);
         evas_object_data_del(obj, "test-timer");
-        elm_button_label_set(obj, "Icon tooltip, click to start changed"
+        elm_object_text_set(obj, "Icon tooltip, click to start changed"
                                   " timed");
         return;
      }
 
    timer = ecore_timer_add(1.5, _tt_icon_replace_timer_cb, obj);
    evas_object_data_set(obj, "test-timer", timer);
-   elm_button_label_set(obj, "Icon tooltip, click to stop changed timed");
+   elm_object_text_set(obj, "Icon tooltip, click to stop changed timed");
 }
 
 static Eina_Bool
@@ -270,14 +270,14 @@ _tt_style_replace_timed(void *data       __UNUSED__,
      {
         ecore_timer_del(timer);
         evas_object_data_del(obj, "test-timer");
-        elm_button_label_set(obj, "Icon tooltip style, click to start"
+        elm_object_text_set(obj, "Icon tooltip style, click to start"
                                   " changed timed");
         return;
      }
 
    timer = ecore_timer_add(1.5, _tt_style_replace_timer_cb, obj);
    evas_object_data_set(obj, "test-timer", timer);
-   elm_button_label_set(obj, "Icon tooltip style, click to stop changed"
+   elm_object_text_set(obj, "Icon tooltip style, click to stop changed"
                              " timed");
 }
 
@@ -291,7 +291,7 @@ _tt_visible_lock_toggle(void *data       __UNUSED__,
    locked = !locked;
    if (locked)
      {
-        elm_button_label_set(obj, "Locked tooltip visibility");
+        elm_object_text_set(obj, "Locked tooltip visibility");
         elm_object_tooltip_text_set(obj, "This tooltip is locked"
                                          " visible,<br> click the button"
                                          " to unlock!");
@@ -299,7 +299,7 @@ _tt_visible_lock_toggle(void *data       __UNUSED__,
      }
    else
      {
-        elm_button_label_set(obj, "Unlocked tooltip visibility");
+        elm_object_text_set(obj, "Unlocked tooltip visibility");
         elm_object_tooltip_text_set(obj, "This tooltip is unlocked"
                                          " visible,<br> click the button"
                                          " to lock!");
@@ -348,20 +348,20 @@ test_tooltip(void *data       __UNUSED__,
    elm_toolbar_item_tooltip_style_set(ti, "transparent");
 
    bt = elm_button_add(win);
-   elm_button_label_set(bt, "Simple text tooltip");
+   elm_object_text_set(bt, "Simple text tooltip");
    elm_object_tooltip_text_set(bt, "Simple text tooltip");
    elm_box_pack_end(bx, bt);
    evas_object_show(bt);
 
    bt = elm_button_add(win);
-   elm_button_label_set(bt, "Simple text tooltip, click to change");
+   elm_object_text_set(bt, "Simple text tooltip, click to change");
    elm_object_tooltip_text_set(bt, "Initial");
    evas_object_smart_callback_add(bt, "clicked", _tt_text_replace, NULL);
    elm_box_pack_end(bx, bt);
    evas_object_show(bt);
 
    bt = elm_button_add(win);
-   elm_button_label_set(bt, "Simple text tooltip, click to start"
+   elm_object_text_set(bt, "Simple text tooltip, click to start"
                             " changed timed");
    elm_object_tooltip_text_set(bt, "Initial");
    evas_object_smart_callback_add(bt, "clicked", _tt_text_replace_timed,
@@ -372,14 +372,14 @@ test_tooltip(void *data       __UNUSED__,
                                   NULL);
 
    bt = elm_button_add(win);
-   elm_button_label_set(bt, "Icon tooltip");
+   elm_object_text_set(bt, "Icon tooltip");
    elm_object_tooltip_content_cb_set(bt, _tt_icon, (void *)123L,
                                      _tt_icon_del);
    elm_box_pack_end(bx, bt);
    evas_object_show(bt);
 
    bt = elm_button_add(win);
-   elm_button_label_set(bt, "Icon tooltip, click to start changed timed");
+   elm_object_text_set(bt, "Icon tooltip, click to start changed timed");
    elm_object_tooltip_content_cb_set(bt, _tt_icon, NULL, NULL);
    evas_object_smart_callback_add(bt, "clicked", _tt_icon_replace_timed,
                                   NULL);
@@ -389,14 +389,14 @@ test_tooltip(void *data       __UNUSED__,
                                   NULL);
 
    bt = elm_button_add(win);
-   elm_button_label_set(bt, "Transparent Icon tooltip");
+   elm_object_text_set(bt, "Transparent Icon tooltip");
    elm_object_tooltip_content_cb_set(bt, _tt_icon, NULL, NULL);
    elm_object_tooltip_style_set(bt, "transparent");
    elm_box_pack_end(bx, bt);
    evas_object_show(bt);
 
    bt = elm_button_add(win);
-   elm_button_label_set(bt, "Icon tooltip style, click to start changed"
+   elm_object_text_set(bt, "Icon tooltip style, click to start changed"
                             " timed");
    elm_object_tooltip_content_cb_set(bt, _tt_icon, NULL, NULL);
    evas_object_smart_callback_add(bt, "clicked", _tt_style_replace_timed,
@@ -407,7 +407,7 @@ test_tooltip(void *data       __UNUSED__,
                                   NULL);
 
    bt = elm_button_add(win);
-   elm_button_label_set(bt, "Unlocked tooltip visibility");
+   elm_object_text_set(bt, "Unlocked tooltip visibility");
    elm_object_tooltip_text_set(bt, "This tooltip is unlocked visible,<br>"
                                    " click the button to lock!");
    evas_object_smart_callback_add(bt, "clicked", _tt_visible_lock_toggle,

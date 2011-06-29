@@ -233,7 +233,7 @@ test_index2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    evas_object_show(gui->entry);
 
    bt = elm_button_add(win);
-   elm_button_label_set(bt, "Add");
+   elm_object_text_set(bt, "Add");
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0);
    evas_object_size_hint_fill_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_box_pack_end(box, bt);

@@ -189,13 +189,13 @@ test_progressbar(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event
    evas_object_show(bt_bx);
 
    bt = elm_button_add(win);
-   elm_button_label_set(bt, "Start");
+   elm_object_text_set(bt, "Start");
    evas_object_smart_callback_add(bt, "clicked", my_progressbar_test_start, NULL);
    elm_box_pack_end(bt_bx, bt);
    evas_object_show(bt);
 
    bt = elm_button_add(win);
-   elm_button_label_set(bt, "Stop");
+   elm_object_text_set(bt, "Stop");
    evas_object_smart_callback_add(bt, "clicked", my_progressbar_test_stop, NULL);
    elm_box_pack_end(bt_bx, bt);
    evas_object_show(bt);

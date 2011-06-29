@@ -112,19 +112,19 @@ test_fileselector_entry(void *data       __UNUSED__,
    evas_object_show(hbox);
 
    bt = elm_button_add(win);
-   elm_button_label_set(bt, "Toggle inwin mode");
+   elm_object_text_set(bt, "Toggle inwin mode");
    evas_object_smart_callback_add(bt, "clicked", _inwin_mode_toggle, fs_en);
    elm_box_pack_end(hbox, bt);
    evas_object_show(bt);
 
    bt = elm_button_add(win);
-   elm_button_label_set(bt, "Toggle folder only mode");
+   elm_object_text_set(bt, "Toggle folder only mode");
    evas_object_smart_callback_add(bt, "clicked", _folder_only_toggle, fs_en);
    elm_box_pack_end(hbox, bt);
    evas_object_show(bt);
 
    bt = elm_button_add(win);
-   elm_button_label_set(bt, "Toggle expandable mode");
+   elm_object_text_set(bt, "Toggle expandable mode");
    evas_object_smart_callback_add(bt, "clicked", _expandable_toggle, fs_en);
    elm_box_pack_end(hbox, bt);
    evas_object_show(bt);
@@ -140,7 +140,7 @@ test_fileselector_entry(void *data       __UNUSED__,
    evas_object_show(hbox);
 
    bt = elm_button_add(win);
-   elm_button_label_set(bt, "Toggle disabled");
+   elm_object_text_set(bt, "Toggle disabled");
    evas_object_smart_callback_add(bt, "clicked", _disabled_toggle, fs_en);
    elm_box_pack_end(hbox, bt);
    evas_object_show(bt);

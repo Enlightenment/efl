@@ -363,7 +363,7 @@ test_launcher(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    evas_object_show(ck);
 
    bt = elm_button_add(win);
-   elm_button_label_set(bt, "Close");
+   elm_object_text_set(bt, "Close");
    evas_object_smart_callback_add(bt, "clicked", close_cb, win);
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(bt, 0.95, 0.99);
@@ -407,17 +407,17 @@ test_launcher2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
         evas_object_size_hint_weight_set(ly, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
 
         bt = elm_button_add(win);
-        elm_button_label_set(bt, "Button 1");
+        elm_object_text_set(bt, "Button 1");
         elm_layout_content_set(ly, "element1", bt);
         evas_object_show(bt);
 
         bt = elm_button_add(win);
-        elm_button_label_set(bt, "Button 2");
+        elm_object_text_set(bt, "Button 2");
         elm_layout_content_set(ly, "element2", bt);
         evas_object_show(bt);
 
         bt = elm_button_add(win);
-        elm_button_label_set(bt, "Button 3");
+        elm_object_text_set(bt, "Button 3");
         elm_layout_content_set(ly, "element3", bt);
         evas_object_show(bt);
 
@@ -487,7 +487,7 @@ test_launcher2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
    evas_object_show(ck);
 
    bt = elm_button_add(win);
-   elm_button_label_set(bt, "Close");
+   elm_object_text_set(bt, "Close");
    evas_object_smart_callback_add(bt, "clicked", close_cb, win);
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(bt, 0.95, 0.99);
@@ -907,7 +907,7 @@ test_launcher3(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
    evas_object_show(ck);
 
    bt = elm_button_add(win);
-   elm_button_label_set(bt, "Close");
+   elm_object_text_set(bt, "Close");
    evas_object_smart_callback_add(bt, "clicked", l3_close_cb, win);
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(bt, 0.95, 0.99);

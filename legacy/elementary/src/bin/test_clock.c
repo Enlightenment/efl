@@ -75,11 +75,11 @@ _edit_bt_clicked(void *data, Evas_Object *obj, void *event_info __UNUSED__)
    Evas_Object *ck = data;
 
    if (!elm_clock_edit_get(ck)) {
-	elm_button_label_set(obj, "Done");
+	elm_object_text_set(obj, "Done");
 	elm_clock_edit_set(ck, 1);
 	return;
    }
-   elm_button_label_set(obj, "Edit");
+   elm_object_text_set(obj, "Edit");
    elm_clock_edit_set(ck, 0);
 }
 
@@ -89,11 +89,11 @@ _hmode_bt_clicked(void *data, Evas_Object *obj, void *event_info __UNUSED__)
    Evas_Object *ck = data;
 
    if (!elm_clock_show_am_pm_get(ck)) {
-	elm_button_label_set(obj, "24h");
+	elm_object_text_set(obj, "24h");
 	elm_clock_show_am_pm_set(ck, 1);
 	return;
    }
-   elm_button_label_set(obj, "12h");
+   elm_object_text_set(obj, "12h");
    elm_clock_show_am_pm_set(ck, 0);
 }
 
@@ -129,13 +129,13 @@ test_clock2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    evas_object_show(hbx);
 
    bt = elm_button_add(win);
-   elm_button_label_set(bt, "Edit");
+   elm_object_text_set(bt, "Edit");
    evas_object_smart_callback_add(bt, "clicked", _edit_bt_clicked, ck);
    elm_box_pack_end(hbx, bt);
    evas_object_show(bt);
 
    bt = elm_button_add(win);
-   elm_button_label_set(bt, "24h");
+   elm_object_text_set(bt, "24h");
    evas_object_smart_callback_add(bt, "clicked", _hmode_bt_clicked, ck);
    elm_box_pack_end(hbx, bt);
    evas_object_show(bt);

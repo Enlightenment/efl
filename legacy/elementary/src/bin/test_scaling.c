@@ -23,37 +23,37 @@ test_scaling(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_inf
    evas_object_show(bx);
 
    bt = elm_button_add(win);
-   elm_button_label_set(bt, "Scale: 0.5");
+   elm_object_text_set(bt, "Scale: 0.5");
    elm_object_scale_set(bt, 0.5);
    elm_box_pack_end(bx, bt);
    evas_object_show(bt);
 
    bt = elm_button_add(win);
-   elm_button_label_set(bt, "Scale: 0.75");
+   elm_object_text_set(bt, "Scale: 0.75");
    elm_object_scale_set(bt, 0.75);
    elm_box_pack_end(bx, bt);
    evas_object_show(bt);
 
    bt = elm_button_add(win);
-   elm_button_label_set(bt, "Scale: 1.0");
+   elm_object_text_set(bt, "Scale: 1.0");
    elm_object_scale_set(bt, 1.0);
    elm_box_pack_end(bx, bt);
    evas_object_show(bt);
 
    bt = elm_button_add(win);
-   elm_button_label_set(bt, "Scale: 1.5");
+   elm_object_text_set(bt, "Scale: 1.5");
    elm_object_scale_set(bt, 1.5);
    elm_box_pack_end(bx, bt);
    evas_object_show(bt);
 
    bt = elm_button_add(win);
-   elm_button_label_set(bt, "Scale: 2.0");
+   elm_object_text_set(bt, "Scale: 2.0");
    elm_object_scale_set(bt, 2.0);
    elm_box_pack_end(bx, bt);
    evas_object_show(bt);
 
    bt = elm_button_add(win);
-   elm_button_label_set(bt, "Scale: 3.0");
+   elm_object_text_set(bt, "Scale: 3.0");
    elm_object_scale_set(bt, 3.0);
    elm_box_pack_end(bx, bt);
    evas_object_show(bt);

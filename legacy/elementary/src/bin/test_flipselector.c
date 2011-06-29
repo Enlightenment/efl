@@ -99,13 +99,13 @@ test_flipselector(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *even
    evas_object_show(fp);
 
    bt = elm_button_add(win);
-   elm_button_label_set(bt, "Select 2097");
+   elm_object_text_set(bt, "Select 2097");
    evas_object_smart_callback_add(bt, "clicked", _third_cb, fp);
    elm_box_pack_end(bx, bt);
    evas_object_show(bt);
 
    bt = elm_button_add(win);
-   elm_button_label_set(bt, "Unselect year");
+   elm_object_text_set(bt, "Unselect year");
    evas_object_smart_callback_add(bt, "clicked", _unsel_cb, fp);
    elm_box_pack_end(bx, bt);
    evas_object_show(bt);

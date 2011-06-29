@@ -47,27 +47,27 @@ test_grid(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info _
    evas_object_show(en);
 
    bt = elm_button_add(win);
-   elm_button_label_set(bt, "Button");
+   elm_object_text_set(bt, "Button");
    elm_grid_pack(gd, bt,  0,  0, 20, 20);
    evas_object_show(bt);
 
    bt = elm_button_add(win);
-   elm_button_label_set(bt, "Button");
+   elm_object_text_set(bt, "Button");
    elm_grid_pack(gd, bt, 10, 10, 40, 20);
    evas_object_show(bt);
 
    bt = elm_button_add(win);
-   elm_button_label_set(bt, "Button");
+   elm_object_text_set(bt, "Button");
    elm_grid_pack(gd, bt, 10, 30, 20, 50);
    evas_object_show(bt);
 
    bt = elm_button_add(win);
-   elm_button_label_set(bt, "Button");
+   elm_object_text_set(bt, "Button");
    elm_grid_pack(gd, bt, 80, 80, 20, 20);
    evas_object_show(bt);
 
    bt = elm_button_add(win);
-   elm_button_label_set(bt, "Change");
+   elm_object_text_set(bt, "Change");
    elm_grid_pack(gd, bt, 40, 40, 20, 20);
    evas_object_smart_callback_add(bt, "clicked", _ch_grid, gd);
    evas_object_show(bt);

@@ -152,13 +152,13 @@ test_slideshow(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
                                   notify);
 
    bt = elm_button_add(win);
-   elm_button_label_set(bt, "Previous");
+   elm_object_text_set(bt, "Previous");
    evas_object_smart_callback_add(bt, "clicked", _previous, slideshow);
    elm_box_pack_end(bx, bt);
    evas_object_show(bt);
 
    bt = elm_button_add(win);
-   elm_button_label_set(bt, "Next");
+   elm_object_text_set(bt, "Next");
    evas_object_smart_callback_add(bt, "clicked", _next, slideshow);
    elm_box_pack_end(bx, bt);
    evas_object_show(bt);
@@ -190,14 +190,14 @@ test_slideshow(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
 
    bt = elm_button_add(win);
    bt_start = bt;
-   elm_button_label_set(bt, "Start");
+   elm_object_text_set(bt, "Start");
    evas_object_smart_callback_add(bt, "clicked", _start, spin);
    elm_box_pack_end(bx, bt);
    evas_object_show(bt);
 
    bt = elm_button_add(win);
    bt_stop = bt;
-   elm_button_label_set(bt, "Stop");
+   elm_object_text_set(bt, "Stop");
    evas_object_smart_callback_add(bt, "clicked", _stop, spin);
    elm_box_pack_end(bx, bt);
    elm_object_disabled_set(bt, EINA_TRUE);

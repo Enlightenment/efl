@@ -105,25 +105,25 @@ test_fileselector_button(void *data       __UNUSED__,
    evas_object_show(hbox);
 
    bt = elm_button_add(win);
-   elm_button_label_set(bt, "Toggle current selection text entry");
+   elm_object_text_set(bt, "Toggle current selection text entry");
    evas_object_smart_callback_add(bt, "clicked", _current_sel_toggle, fs_bt);
    elm_box_pack_end(hbox, bt);
    evas_object_show(bt);
 
    bt = elm_button_add(win);
-   elm_button_label_set(bt, "Toggle inwin mode");
+   elm_object_text_set(bt, "Toggle inwin mode");
    evas_object_smart_callback_add(bt, "clicked", _inwin_mode_toggle, fs_bt);
    elm_box_pack_end(hbox, bt);
    evas_object_show(bt);
 
    bt = elm_button_add(win);
-   elm_button_label_set(bt, "Toggle folder only mode");
+   elm_object_text_set(bt, "Toggle folder only mode");
    evas_object_smart_callback_add(bt, "clicked", _folder_only_toggle, fs_bt);
    elm_box_pack_end(hbox, bt);
    evas_object_show(bt);
 
    bt = elm_button_add(win);
-   elm_button_label_set(bt, "Toggle expandable mode");
+   elm_object_text_set(bt, "Toggle expandable mode");
    evas_object_smart_callback_add(bt, "clicked", _expandable_toggle, fs_bt);
    elm_box_pack_end(hbox, bt);
    evas_object_show(bt);

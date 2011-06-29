@@ -112,13 +112,13 @@ test_weather(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_inf
    evas_object_show(bx0);
 
    bt = elm_button_add(win);
-   elm_button_label_set(bt, "First city");
+   elm_object_text_set(bt, "First city");
    evas_object_show(bt);
    elm_box_pack_end(bx0, bt);
    evas_object_smart_callback_add(bt, "clicked", _first_city_cb, NULL);
 
    bt = elm_button_add(win);
-   elm_button_label_set(bt, "Second city");
+   elm_object_text_set(bt, "Second city");
    evas_object_show(bt);
    elm_box_pack_end(bx0, bt);
    evas_object_smart_callback_add(bt, "clicked", _second_city_cb, NULL);
@@ -154,7 +154,7 @@ test_weather(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_inf
    evas_object_show(en);
 
    bt = elm_button_add(win);
-   elm_button_label_set(bt, "Apply");
+   elm_object_text_set(bt, "Apply");
    evas_object_show(bt);
    elm_box_pack_end(bx0, bt);
    evas_object_smart_callback_add(bt, "clicked", _apply_cb, NULL);

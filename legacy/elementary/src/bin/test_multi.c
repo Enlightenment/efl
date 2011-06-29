@@ -119,7 +119,7 @@ test_multi(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
    evas_object_show(bx);
 
    bt = elm_button_add(win);
-   elm_button_label_set(bt, "Rotate");
+   elm_object_text_set(bt, "Rotate");
    evas_object_smart_callback_add(bt, "clicked", my_bt_rot, win);
    evas_object_size_hint_align_set(bt, 0.0, 0.0);
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);

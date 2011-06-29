@@ -275,7 +275,7 @@ test_glview_simple(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *eve
    evas_object_event_callback_add(gl, EVAS_CALLBACK_DEL, _del, gl);
 
    bt = elm_button_add(win);
-   elm_button_label_set(bt, "OK");
+   elm_object_text_set(bt, "OK");
    evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
    elm_box_pack_end(bx, bt);

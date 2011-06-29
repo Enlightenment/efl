@@ -23,42 +23,42 @@ test_table(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
    evas_object_show(tb);
 
    bt = elm_button_add(win);
-   elm_button_label_set(bt, "Button 1");
+   elm_object_text_set(bt, "Button 1");
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_table_pack(tb, bt, 0, 0, 1, 1);
    evas_object_show(bt);
 
    bt = elm_button_add(win);
-   elm_button_label_set(bt, "Button 2");
+   elm_object_text_set(bt, "Button 2");
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_table_pack(tb, bt, 1, 0, 1, 1);
    evas_object_show(bt);
 
    bt = elm_button_add(win);
-   elm_button_label_set(bt, "Button 3");
+   elm_object_text_set(bt, "Button 3");
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_table_pack(tb, bt, 2, 0, 1, 1);
    evas_object_show(bt);
 
    bt = elm_button_add(win);
-   elm_button_label_set(bt, "Button 4");
+   elm_object_text_set(bt, "Button 4");
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_table_pack(tb, bt, 0, 1, 2, 1);
    evas_object_show(bt);
 
    bt = elm_button_add(win);
-   elm_button_label_set(bt, "Button 5");
+   elm_object_text_set(bt, "Button 5");
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_table_pack(tb, bt, 2, 1, 1, 3);
    evas_object_show(bt);
 
    bt = elm_button_add(win);
-   elm_button_label_set(bt, "Button 6");
+   elm_object_text_set(bt, "Button 6");
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_table_pack(tb, bt, 0, 2, 2, 2);
@@ -88,42 +88,42 @@ test_table2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    evas_object_show(tb);
 
    bt = elm_button_add(win);
-   elm_button_label_set(bt, "A");
+   elm_object_text_set(bt, "A");
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_table_pack(tb, bt, 1, 1, 2, 2);
    evas_object_show(bt);
 
    bt = elm_button_add(win);
-   elm_button_label_set(bt, "Blah blah blah");
+   elm_object_text_set(bt, "Blah blah blah");
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_table_pack(tb, bt, 3, 0, 2, 3);
    evas_object_show(bt);
 
    bt = elm_button_add(win);
-   elm_button_label_set(bt, "Hallow");
+   elm_object_text_set(bt, "Hallow");
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_table_pack(tb, bt, 0, 3, 10, 1);
    evas_object_show(bt);
 
    bt = elm_button_add(win);
-   elm_button_label_set(bt, "B");
+   elm_object_text_set(bt, "B");
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_table_pack(tb, bt, 2, 5, 2, 1);
    evas_object_show(bt);
 
    bt = elm_button_add(win);
-   elm_button_label_set(bt, "C");
+   elm_object_text_set(bt, "C");
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_table_pack(tb, bt, 8, 8, 1, 1);
    evas_object_show(bt);
 
    bt = elm_button_add(win);
-   elm_button_label_set(bt, "Wide");
+   elm_object_text_set(bt, "Wide");
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_table_pack(tb, bt, 1, 7, 7, 2);
@@ -164,7 +164,7 @@ test_table3(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    evas_object_show(tb);
 
    bt = elm_button_add(win);
-   elm_button_label_set(bt, "Button 1");
+   elm_object_text_set(bt, "Button 1");
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_table_pack(tb, bt, 0, 0, 1, 1);
@@ -173,7 +173,7 @@ test_table3(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    evas_object_show(bt);
 
    bt = elm_button_add(win);
-   elm_button_label_set(bt, "Button 2");
+   elm_object_text_set(bt, "Button 2");
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_table_pack(tb, bt, 1, 0, 1, 1);
@@ -182,7 +182,7 @@ test_table3(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    evas_object_show(bt);
 
    bt = elm_button_add(win);
-   elm_button_label_set(bt, "Button 3");
+   elm_object_text_set(bt, "Button 3");
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_table_pack(tb, bt, 0, 1, 1, 1);
@@ -214,7 +214,7 @@ test_table4(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    evas_object_show(tb);
 
    bt = elm_button_add(win);
-   elm_button_label_set(bt, "Button 1");
+   elm_object_text_set(bt, "Button 1");
    evas_object_size_hint_weight_set(bt, 0.25, 0.25);
    evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_table_pack(tb, bt, 0, 0, 1, 1);
@@ -223,7 +223,7 @@ test_table4(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    evas_object_show(bt);
 
    bt = elm_button_add(win);
-   elm_button_label_set(bt, "Button 2");
+   elm_object_text_set(bt, "Button 2");
    evas_object_size_hint_weight_set(bt, 0.75, 0.25);
    evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_table_pack(tb, bt, 1, 0, 1, 1);
@@ -232,7 +232,7 @@ test_table4(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    evas_object_show(bt);
 
    bt = elm_button_add(win);
-   elm_button_label_set(bt, "Button 3");
+   elm_object_text_set(bt, "Button 3");
    evas_object_size_hint_weight_set(bt, 0.25, 0.75);
    evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_table_pack(tb, bt, 0, 1, 1, 1);
@@ -264,35 +264,35 @@ test_table5(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    evas_object_show(tb);
 
    bt = elm_button_add(win);
-   elm_button_label_set(bt, "A");
+   elm_object_text_set(bt, "A");
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_table_pack(tb, bt, 33, 0, 34, 33);
    evas_object_show(bt);
 
    bt = elm_button_add(win);
-   elm_button_label_set(bt, "B");
+   elm_object_text_set(bt, "B");
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_table_pack(tb, bt, 67, 33, 33, 34);
    evas_object_show(bt);
 
    bt = elm_button_add(win);
-   elm_button_label_set(bt, "C");
+   elm_object_text_set(bt, "C");
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_table_pack(tb, bt, 33, 67, 34, 33);
    evas_object_show(bt);
 
    bt = elm_button_add(win);
-   elm_button_label_set(bt, "D");
+   elm_object_text_set(bt, "D");
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_table_pack(tb, bt, 0, 33, 33, 34);
    evas_object_show(bt);
 
    bt = elm_button_add(win);
-   elm_button_label_set(bt, "X");
+   elm_object_text_set(bt, "X");
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_table_pack(tb, bt, 33, 33, 34, 34);
@@ -322,42 +322,42 @@ test_table6(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    evas_object_show(tb);
 
    bt = elm_button_add(win);
-   elm_button_label_set(bt, "C");
+   elm_object_text_set(bt, "C");
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_table_pack(tb, bt, 1, 1, 2, 2);
    evas_object_show(bt);
 
    bt = elm_button_add(win);
-   elm_button_label_set(bt, "A");
+   elm_object_text_set(bt, "A");
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_table_pack(tb, bt, 1, 1, 2, 2);
    evas_object_show(bt);
 
    bt = elm_button_add(win);
-   elm_button_label_set(bt, "Blah blah blah");
+   elm_object_text_set(bt, "Blah blah blah");
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_table_pack(tb, bt, 3, 0, 2, 3);
    evas_object_show(bt);
 
    bt = elm_button_add(win);
-   elm_button_label_set(bt, "Hallow");
+   elm_object_text_set(bt, "Hallow");
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_table_pack(tb, bt, 0, 3, 10, 1);
    evas_object_show(bt);
 
    bt = elm_button_add(win);
-   elm_button_label_set(bt, "B");
+   elm_object_text_set(bt, "B");
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_table_pack(tb, bt, 1, 1, 1, 1);
    evas_object_show(bt);
 
    bt = elm_button_add(win);
-   elm_button_label_set(bt, "Wide");
+   elm_object_text_set(bt, "Wide");
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_table_pack(tb, bt, 1, 7, 7, 2);

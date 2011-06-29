@@ -620,7 +620,7 @@ test_glview(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
 
    /* add an ok button */
    bt = elm_button_add(win);
-   elm_button_label_set(bt, "OK");
+   elm_object_text_set(bt, "OK");
    evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0); 
    elm_box_pack_end(bx, bt);

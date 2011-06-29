@@ -25,7 +25,7 @@ my_anchorblock_anchor(void *data, Evas_Object *obj, void *event_info)
    Evas_Object *bt, *bx;
 
    bt = elm_button_add(obj);
-   elm_button_label_set(bt, ei->name);
+   elm_object_text_set(bt, ei->name);
    elm_hover_content_set(ei->hover, "middle", bt);
    evas_object_show(bt);
 
@@ -34,17 +34,17 @@ my_anchorblock_anchor(void *data, Evas_Object *obj, void *event_info)
      {
 	bx = elm_box_add(obj);
 	bt = elm_button_add(obj);
-	elm_button_label_set(bt, "Top 1");
+	elm_object_text_set(bt, "Top 1");
 	elm_box_pack_end(bx, bt);
 	evas_object_smart_callback_add(bt, "clicked", my_anchorblock_bt, av);
 	evas_object_show(bt);
 	bt = elm_button_add(obj);
-	elm_button_label_set(bt, "Top 2");
+	elm_object_text_set(bt, "Top 2");
 	elm_box_pack_end(bx, bt);
 	evas_object_smart_callback_add(bt, "clicked", my_anchorblock_bt, av);
 	evas_object_show(bt);
 	bt = elm_button_add(obj);
-	elm_button_label_set(bt, "Top 3");
+	elm_object_text_set(bt, "Top 3");
 	elm_box_pack_end(bx, bt);
 	evas_object_smart_callback_add(bt, "clicked", my_anchorblock_bt, av);
 	evas_object_show(bt);
@@ -54,7 +54,7 @@ my_anchorblock_anchor(void *data, Evas_Object *obj, void *event_info)
    if (ei->hover_bottom)
      {
 	bt = elm_button_add(obj);
-	elm_button_label_set(bt, "Bot");
+	elm_object_text_set(bt, "Bot");
 	elm_hover_content_set(ei->hover, "bottom", bt);
 	evas_object_smart_callback_add(bt, "clicked", my_anchorblock_bt, av);
 	evas_object_show(bt);
@@ -62,7 +62,7 @@ my_anchorblock_anchor(void *data, Evas_Object *obj, void *event_info)
    if (ei->hover_left)
      {
 	bt = elm_button_add(obj);
-	elm_button_label_set(bt, "Left");
+	elm_object_text_set(bt, "Left");
 	elm_hover_content_set(ei->hover, "left", bt);
 	evas_object_smart_callback_add(bt, "clicked", my_anchorblock_bt, av);
 	evas_object_show(bt);
@@ -70,7 +70,7 @@ my_anchorblock_anchor(void *data, Evas_Object *obj, void *event_info)
    if (ei->hover_right)
      {
 	bt = elm_button_add(obj);
-	elm_button_label_set(bt, "Right");
+	elm_object_text_set(bt, "Right");
 	elm_hover_content_set(ei->hover, "right", bt);
 	evas_object_smart_callback_add(bt, "clicked", my_anchorblock_bt, av);
 	evas_object_show(bt);

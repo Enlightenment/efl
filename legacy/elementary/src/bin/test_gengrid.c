@@ -315,25 +315,25 @@ test_gengrid2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    evas_object_show(hbx);
 
    bt = elm_button_add(win);
-   elm_button_label_set(bt, "Append");
+   elm_object_text_set(bt, "Append");
    evas_object_smart_callback_add(bt, "clicked", _append_bt_clicked, grid);
    elm_box_pack_end(hbx, bt);
    evas_object_show(bt);
 
    bt = elm_button_add(win);
-   elm_button_label_set(bt, "Prepend");
+   elm_object_text_set(bt, "Prepend");
    evas_object_smart_callback_add(bt, "clicked", _prepend_bt_clicked, grid);
    elm_box_pack_end(hbx, bt);
    evas_object_show(bt);
 
    bt = elm_button_add(win);
-   elm_button_label_set(bt, "Insert before");
+   elm_object_text_set(bt, "Insert before");
    evas_object_smart_callback_add(bt, "clicked", _before_bt_clicked, grid);
    elm_box_pack_end(hbx, bt);
    evas_object_show(bt);
 
    bt = elm_button_add(win);
-   elm_button_label_set(bt, "Insert after");
+   elm_object_text_set(bt, "Insert after");
    evas_object_smart_callback_add(bt, "clicked", _after_bt_clicked, grid);
    elm_box_pack_end(hbx, bt);
    evas_object_show(bt);

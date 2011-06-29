@@ -1202,7 +1202,7 @@ _sample_theme_new(Evas_Object *win)
 
    bt = elm_button_add(win);
    evas_object_size_hint_weight_set(bt, 1.0, 0.0);
-   elm_button_label_set(bt, "Button");
+   elm_object_text_set(bt, "Button");
    elm_table_pack(base, bt, 0, 0, 1, 1);
    evas_object_show(bt);
 
@@ -1364,7 +1364,7 @@ _status_config_themes(Evas_Object *win,
    /* FIXME: not implemented yet
       bt = elm_button_add(win);
       evas_object_smart_callback_add(bt, "clicked", _theme_browse, win);
-      elm_button_label_set(bt, "Browse...");
+      elm_object_text_set(bt, "Browse...");
       evas_object_size_hint_weight_set(bt, 1.0, 1.0);
       evas_object_size_hint_align_set(bt, 0.9, 0.9);
       elm_frame_content_set(pd, bt);
@@ -1413,7 +1413,7 @@ _status_config_themes(Evas_Object *win,
 
    bt = elm_button_add(win);
    evas_object_smart_callback_add(bt, "clicked", _theme_use, win);
-   elm_button_label_set(bt, "Use Theme");
+   elm_object_text_set(bt, "Use Theme");
    evas_object_size_hint_weight_set(bt, 1.0, 0.0);
    evas_object_size_hint_align_set(bt, 0.5, 0.5);
    elm_frame_content_set(pd, bt);
@@ -2008,7 +2008,7 @@ _status_config_fonts(Evas_Object *win,
 
    bt = elm_button_add(win);
    evas_object_smart_callback_add(bt, "clicked", _font_overlay_set_all, win);
-   elm_button_label_set(bt, "Set to All");
+   elm_object_text_set(bt, "Set to All");
    evas_object_size_hint_weight_set(bt, 0.0, 0.0);
    evas_object_size_hint_align_set(bt, 0.5, 0.5);
    elm_box_pack_end(bx, bt);
@@ -2016,7 +2016,7 @@ _status_config_fonts(Evas_Object *win,
 
    bt = elm_button_add(win);
    evas_object_smart_callback_add(bt, "clicked", _font_overlay_reset, win);
-   elm_button_label_set(bt, "Reset");
+   elm_object_text_set(bt, "Reset");
    evas_object_size_hint_weight_set(bt, 0.0, 0.0);
    evas_object_size_hint_align_set(bt, 0.5, 0.5);
    elm_box_pack_end(bx, bt);
@@ -2024,7 +2024,7 @@ _status_config_fonts(Evas_Object *win,
 
    bt = elm_button_add(win);
    evas_object_smart_callback_add(bt, "clicked", _font_overlay_reset_all, win);
-   elm_button_label_set(bt, "Reset All");
+   elm_object_text_set(bt, "Reset All");
    evas_object_size_hint_weight_set(bt, 0.0, 0.0);
    evas_object_size_hint_align_set(bt, 0.5, 0.5);
    elm_box_pack_end(bx, bt);
@@ -2032,7 +2032,7 @@ _status_config_fonts(Evas_Object *win,
 
    bt = elm_button_add(win);
    evas_object_smart_callback_add(bt, "clicked", _font_overlay_change, win);
-   elm_button_label_set(bt, "Apply");
+   elm_object_text_set(bt, "Apply");
    evas_object_size_hint_weight_set(bt, 0.0, 0.0);
    evas_object_size_hint_align_set(bt, 0.5, 0.5);
    elm_box_pack_end(bx, bt);
@@ -2295,7 +2295,7 @@ _status_config_profiles(Evas_Object *win,
 
    bt = elm_button_add(win);
    evas_object_smart_callback_add(bt, "clicked", _profile_use, li);
-   elm_button_label_set(bt, "Use");
+   elm_object_text_set(bt, "Use");
    evas_object_size_hint_weight_set(bt, 0.0, 0.0);
    evas_object_size_hint_align_set(bt, 0.5, 0.5);
    elm_box_pack_end(btn_bx, bt);
@@ -2305,7 +2305,7 @@ _status_config_profiles(Evas_Object *win,
 
    bt = elm_button_add(win);
    evas_object_smart_callback_add(bt, "clicked", _btn_todo, NULL); /* TODO */
-   elm_button_label_set(bt, "Delete");
+   elm_object_text_set(bt, "Delete");
    evas_object_size_hint_weight_set(bt, 0.0, 0.0);
    evas_object_size_hint_align_set(bt, 0.5, 0.5);
    elm_box_pack_end(btn_bx, bt);
@@ -2315,7 +2315,7 @@ _status_config_profiles(Evas_Object *win,
 
    bt = elm_button_add(win);
    evas_object_smart_callback_add(bt, "clicked", _profile_reset, li);
-   elm_button_label_set(bt, "Reset");
+   elm_object_text_set(bt, "Reset");
    evas_object_size_hint_weight_set(bt, 0.0, 0.0);
    evas_object_size_hint_align_set(bt, 0.5, 0.5);
    elm_box_pack_end(btn_bx, bt);
@@ -2325,7 +2325,7 @@ _status_config_profiles(Evas_Object *win,
 
    bt = elm_button_add(win);
    evas_object_smart_callback_add(bt, "clicked", _btn_todo, NULL); /* TODO */
-   elm_button_label_set(bt, "Add new");
+   elm_object_text_set(bt, "Add new");
    evas_object_size_hint_weight_set(bt, 0.0, 0.0);
    evas_object_size_hint_align_set(bt, 0.5, 0.5);
    elm_box_pack_end(btn_bx, bt);
@@ -2708,7 +2708,7 @@ _status_config_rendering(Evas_Object *win,
 
    bt = elm_button_add(win);
    evas_object_smart_callback_add(bt, "clicked", _engine_use, li);
-   elm_button_label_set(bt, "Use Engine");
+   elm_object_text_set(bt, "Use Engine");
    evas_object_size_hint_weight_set(bt, 0.0, 0.0);
    evas_object_size_hint_align_set(bt, 0.5, 0.5);
    elm_frame_content_set(pd, bt);

@@ -39,7 +39,7 @@ test_conformant(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event 
    elm_box_pack_end(bx, en);
 
    btn = elm_button_add(win);
-   elm_button_label_set(btn, "Test Conformant");
+   elm_object_text_set(btn, "Test Conformant");
    evas_object_size_hint_weight_set(btn, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(btn, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_box_pack_end(bx, btn);
@@ -56,7 +56,7 @@ test_conformant(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event 
    elm_box_pack_end(bx, en);
 
    btn = elm_button_add(win);
-   elm_button_label_set(btn, "Test Conformant");
+   elm_object_text_set(btn, "Test Conformant");
    evas_object_size_hint_weight_set(btn, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(btn, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_box_pack_end(bx, btn);
@@ -126,7 +126,7 @@ test_conformant2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event
 
    btn = elm_button_add(win);
    elm_object_focus_allow_set(btn, 0);
-   elm_button_label_set(btn, "Delete Below");
+   elm_object_text_set(btn, "Delete Below");
    evas_object_size_hint_weight_set(btn, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(btn, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_box_pack_end(bx, btn);
@@ -161,7 +161,7 @@ test_conformant2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event
 
    btn = elm_button_add(win);
    elm_object_focus_allow_set(btn, 0);
-   elm_button_label_set(btn, "Delete this bottom bit 1");
+   elm_object_text_set(btn, "Delete this bottom bit 1");
    evas_object_size_hint_weight_set(btn, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(btn, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_box_pack_end(bx, btn);
@@ -193,7 +193,7 @@ test_conformant2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event
 
    btn = elm_button_add(win);
    elm_object_focus_allow_set(btn, 0);
-   elm_button_label_set(btn, "Delete this bottom bit 2");
+   elm_object_text_set(btn, "Delete this bottom bit 2");
    evas_object_size_hint_weight_set(btn, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(btn, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_box_pack_end(bx, btn);

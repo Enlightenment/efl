@@ -8,7 +8,7 @@
 static void
 _clicked_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 {
-   elm_layout_text_set(data, "text", elm_button_label_get(obj));
+   elm_layout_text_set(data, "text", elm_object_text_get(obj));
 }
 
 void
@@ -59,19 +59,19 @@ test_layout(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    evas_object_show(ly);
 
    bt = elm_button_add(win);
-   elm_button_label_set(bt, "Button 1");
+   elm_object_text_set(bt, "Button 1");
    elm_layout_content_set(ly, "element1", bt);
    evas_object_smart_callback_add(bt, "clicked", _clicked_cb, ly);
    evas_object_show(bt);
 
    bt = elm_button_add(win);
-   elm_button_label_set(bt, "Button 2");
+   elm_object_text_set(bt, "Button 2");
    elm_layout_content_set(ly, "element2", bt);
    evas_object_smart_callback_add(bt, "clicked", _clicked_cb, ly);
    evas_object_show(bt);
 
    bt = elm_button_add(win);
-   elm_button_label_set(bt, "Button 3");
+   elm_object_text_set(bt, "Button 3");
    elm_layout_content_set(ly, "element3", bt);
    evas_object_smart_callback_add(bt, "clicked", _clicked_cb, ly);
    evas_object_show(bt);

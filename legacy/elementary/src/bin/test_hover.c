@@ -32,7 +32,7 @@ test_hover(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
    hv = elm_hover_add(win);
 
    bt = elm_button_add(win);
-   elm_button_label_set(bt, "Button");
+   elm_object_text_set(bt, "Button");
    evas_object_smart_callback_add(bt, "clicked", my_hover_bt, hv);
    elm_box_pack_end(bx, bt);
    evas_object_show(bt);
@@ -40,7 +40,7 @@ test_hover(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
    elm_hover_target_set(hv, bt);
 
    bt = elm_button_add(win);
-   elm_button_label_set(bt, "Popup");
+   elm_object_text_set(bt, "Popup");
    elm_hover_content_set(hv, "middle", bt);
    evas_object_show(bt);
 
@@ -54,15 +54,15 @@ test_hover(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
    evas_object_show(ic);
 
    bt = elm_button_add(win);
-   elm_button_label_set(bt, "Top 1");
+   elm_object_text_set(bt, "Top 1");
    elm_box_pack_end(bx, bt);
    evas_object_show(bt);
    bt = elm_button_add(win);
-   elm_button_label_set(bt, "Top 2");
+   elm_object_text_set(bt, "Top 2");
    elm_box_pack_end(bx, bt);
    evas_object_show(bt);
    bt = elm_button_add(win);
-   elm_button_label_set(bt, "Top 3");
+   elm_object_text_set(bt, "Top 3");
    elm_box_pack_end(bx, bt);
    evas_object_show(bt);
 
@@ -70,17 +70,17 @@ test_hover(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
    elm_hover_content_set(hv, "top", bx);
 
    bt = elm_button_add(win);
-   elm_button_label_set(bt, "Bottom");
+   elm_object_text_set(bt, "Bottom");
    elm_hover_content_set(hv, "bottom", bt);
    evas_object_show(bt);
 
    bt = elm_button_add(win);
-   elm_button_label_set(bt, "Left");
+   elm_object_text_set(bt, "Left");
    elm_hover_content_set(hv, "left", bt);
    evas_object_show(bt);
 
    bt = elm_button_add(win);
-   elm_button_label_set(bt, "Right");
+   elm_object_text_set(bt, "Right");
    elm_hover_content_set(hv, "right", bt);
    evas_object_show(bt);
 
@@ -114,7 +114,7 @@ test_hover2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    elm_object_style_set(hv, "popout");
 
    bt = elm_button_add(win);
-   elm_button_label_set(bt, "Button");
+   elm_object_text_set(bt, "Button");
    evas_object_smart_callback_add(bt, "clicked", my_hover_bt, hv);
    elm_box_pack_end(bx, bt);
    evas_object_show(bt);
@@ -122,7 +122,7 @@ test_hover2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    elm_hover_target_set(hv, bt);
 
    bt = elm_button_add(win);
-   elm_button_label_set(bt, "Popup");
+   elm_object_text_set(bt, "Popup");
    elm_hover_content_set(hv, "middle", bt);
    evas_object_show(bt);
 
@@ -135,32 +135,32 @@ test_hover2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    elm_box_pack_end(bx, ic);
    evas_object_show(ic);
    bt = elm_button_add(win);
-   elm_button_label_set(bt, "Top 1");
+   elm_object_text_set(bt, "Top 1");
    elm_box_pack_end(bx, bt);
    evas_object_show(bt);
    bt = elm_button_add(win);
-   elm_button_label_set(bt, "Top 2");
+   elm_object_text_set(bt, "Top 2");
    elm_box_pack_end(bx, bt);
    evas_object_show(bt);
    bt = elm_button_add(win);
-   elm_button_label_set(bt, "Top 3");
+   elm_object_text_set(bt, "Top 3");
    elm_box_pack_end(bx, bt);
    evas_object_show(bt);
    evas_object_show(bx);
    elm_hover_content_set(hv, "top", bx);
 
    bt = elm_button_add(win);
-   elm_button_label_set(bt, "Bot");
+   elm_object_text_set(bt, "Bot");
    elm_hover_content_set(hv, "bottom", bt);
    evas_object_show(bt);
 
    bt = elm_button_add(win);
-   elm_button_label_set(bt, "Left");
+   elm_object_text_set(bt, "Left");
    elm_hover_content_set(hv, "left", bt);
    evas_object_show(bt);
 
    bt = elm_button_add(win);
-   elm_button_label_set(bt, "Right");
+   elm_object_text_set(bt, "Right");
    elm_hover_content_set(hv, "right", bt);
    evas_object_show(bt);
 

@@ -188,19 +188,19 @@ test_fileselector(void *data       __UNUSED__,
    evas_object_show(hbox);
 
    bt = elm_button_add(win);
-   elm_button_label_set(bt, "selected get");
+   elm_object_text_set(bt, "selected get");
    evas_object_smart_callback_add(bt, "clicked", _sel_get_clicked, fs);
    elm_box_pack_end(hbox, bt);
    evas_object_show(bt);
 
    bt = elm_button_add(win);
-   elm_button_label_set(bt, "path get");
+   elm_object_text_set(bt, "path get");
    evas_object_smart_callback_add(bt, "clicked", _path_get_clicked, fs);
    elm_box_pack_end(hbox, bt);
    evas_object_show(bt);
 
    bt = elm_button_add(win);
-   elm_button_label_set(bt, "mode cycle");
+   elm_object_text_set(bt, "mode cycle");
    evas_object_smart_callback_add(bt, "clicked", _mode_cycle_clicked, fs);
    elm_box_pack_end(hbox, bt);
    evas_object_show(bt);
