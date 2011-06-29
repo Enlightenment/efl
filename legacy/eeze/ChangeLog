@@ -46,3 +46,4 @@
         * fixed bug where EEZE_UDEV_EVENT_NONE would not match all events for watches
         * fixed segv when detecting removable drives
         * added eeze_scanner utility daemon
+        * fixed bug where watches would not properly detect disk events

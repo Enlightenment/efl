@@ -189,13 +189,18 @@ _get_syspath_from_watch(void             *data,
         if (udev_device_get_property_value(device, "ID_FS_USAGE")) goto error;
         test = udev_device_get_sysattr_value(device, "removable");
         if (test && test[0] == '1') goto error;
-
+        test = udev_device_get_property_value(device, "ID_BUS");
+        if ((!test) || strcmp(test, "ata")) goto error;
+        test = udev_device_get_property_value(device, "ID_TYPE");
+        if ((!test) || strcmp(test, "disk")) goto error;
         break;
 
       case EEZE_UDEV_TYPE_DRIVE_REMOVABLE:
-        if (udev_device_get_property_value(device, "ID_FS_USAGE")) goto error;
+        if (udev_device_get_sysattr_value(device, "partition")) goto error;
         test = udev_device_get_sysattr_value(device, "removable");
         if ((!test) || (test[0] == '0')) goto error;
+        test = udev_device_get_property_value(device, "ID_TYPE");
+        if ((!test) || strcmp(test, "disk")) goto error;
 
         break;
 
@@ -311,19 +316,12 @@ eeze_udev_watch_add(Eeze_Udev_Type     type,
         break;
 
       case EEZE_UDEV_TYPE_DRIVE_MOUNTABLE:
-        udev_monitor_filter_add_match_subsystem_devtype(mon, "block", NULL);
-        break;
-
       case EEZE_UDEV_TYPE_DRIVE_INTERNAL:
-        udev_monitor_filter_add_match_subsystem_devtype(mon, NULL, "disk");
+        udev_monitor_filter_add_match_subsystem_devtype(mon, "block", NULL);
         break;
 
       case EEZE_UDEV_TYPE_DRIVE_REMOVABLE:
-        udev_monitor_filter_add_match_subsystem_devtype(mon, NULL, "disk");
-        break;
-
       case EEZE_UDEV_TYPE_DRIVE_CDROM:
-        udev_monitor_filter_add_match_subsystem_devtype(mon, "block", NULL);
         break;
 
       case EEZE_UDEV_TYPE_POWER_AC:
