@@ -87,6 +87,7 @@ SCREENSHOTS = \
 	actionslider_example_01:actionslider_01.png:0.0 \
 	bg_example_02:bg_01.png:0.0 \
 	box_example_02:box_example_02.png:1.3 \
+	bubble_example_01:bubble_example_01.png:0.0 \
 	button_example_01:button_01.png:0.0 \
 	animator_example_01:animator_example_01.png:0.2 \
 	animator_example_01:animator_example_02.png:0.5 \

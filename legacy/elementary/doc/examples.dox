@@ -921,6 +921,10 @@
  * @until content
  * @skipline show
  *
+ * Our example will look like this:
+ * @image html screenshots/bubble_example_01.png
+ * @image latex screenshots/bubble_example_01.eps
+ *
  * See the full source code @ref bubble_example_01.c here.
  * @example bubble_example_01.c
  */
