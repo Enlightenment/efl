@@ -1,6 +1,14 @@
 #include "emotion_private.h"
 #include "Emotion.h"
 
+#ifdef HAVE_EIO
+# include <Eio.h>
+#else
+# ifdef HAVE_XATTR
+#  include <sys/xattr.h>
+# endif
+#endif
+
 #define E_SMART_OBJ_GET(smart, o, type) \
      { \
 	char *_e_smart_str; \
@@ -42,7 +50,7 @@ struct _Smart_Data
 
    char                  *module_name;
 
-   char          *file;
+   const char    *file;
    Evas_Object   *obj;
    double         ratio;
    double         pos;
@@ -68,6 +76,11 @@ struct _Smart_Data
       int button_num;
       int button;
    } spu;
+
+#ifdef HAVE_EIO
+   Eio_File *load_xattr;
+   Eio_File *save_xattr;
+#endif
 
    Emotion_Module_Options module_options;
 };
@@ -275,7 +288,7 @@ EAPI Eina_Bool
 emotion_object_init(Evas_Object *obj, const char *module_filename)
 {
    Smart_Data *sd;
-   char *file;
+   const char *file;
 
    E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, 0);
 
@@ -317,7 +330,7 @@ emotion_object_init(Evas_Object *obj, const char *module_filename)
    if (file)
      {
 	emotion_object_file_set(obj, file);
-	free(file);
+	eina_stringshare_del(file);
      }
 
    return EINA_TRUE;
@@ -333,13 +346,12 @@ emotion_object_file_set(Evas_Object *obj, const char *file)
    DBG("file=%s", file);
    if (!sd->module) return EINA_FALSE;
 
-   if ((file) && (sd->file) && (!strcmp(file, sd->file))) return EINA_FALSE;
+   if ((file) && (sd->file) && (file == sd->file || !strcmp(file, sd->file))) return EINA_FALSE;
    if ((file) && (file[0] != 0))
      {
         int w, h;
 
-	free(sd->file);
-	sd->file = strdup(file);
+	eina_stringshare_replace(&sd->file, file);
 	sd->module->file_close(sd->video);
         evas_object_image_data_set(sd->obj, NULL);
 	evas_object_image_size_set(sd->obj, 1, 1);
@@ -361,8 +373,7 @@ emotion_object_file_set(Evas_Object *obj, const char *file)
 	     evas_object_image_size_set(sd->obj, 1, 1);
              _emotion_image_data_zero(sd->obj);
 	  }
-        free(sd->file);
-        sd->file = NULL;
+        eina_stringshare_replace(&sd->file, NULL);
      }
 
    return EINA_TRUE;
@@ -1597,7 +1608,7 @@ _smart_del(Evas_Object * obj)
    if (sd->video) sd->module->file_close(sd->video);
    _emotion_module_close(sd->module, sd->video);
    evas_object_del(sd->obj);
-   free(sd->file);
+   eina_stringshare_del(sd->file);
    free(sd->module_name);
    if (sd->job) ecore_job_del(sd->job);
    free(sd->progress.info);
