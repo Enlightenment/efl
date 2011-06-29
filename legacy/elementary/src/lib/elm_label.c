@@ -515,6 +515,31 @@ _label_sliding_change(Evas_Object *obj)
      }
 }
 
+static void
+_elm_label_label_set(Evas_Object *obj, const char *item, const char *label)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   if (item) return;
+   if (!label) label = "";
+   eina_stringshare_replace(&wd->label, label);
+   edje_object_part_text_set(wd->lbl, "elm.text", wd->format);
+   edje_object_part_text_append(wd->lbl, "elm.text", wd->label);
+   wd->changed = 1;
+   _sizing_eval(obj);
+}
+
+static const char *
+_elm_label_label_get(const Evas_Object *obj, const char *item)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (item) return NULL;
+   if (!wd) return NULL;
+   return wd->label;
+}
+
 /**
  * Add a new label to the parent
  *
@@ -539,6 +564,8 @@ elm_label_add(Evas_Object *parent)
    elm_widget_del_hook_set(obj, _del_hook);
    elm_widget_theme_hook_set(obj, _theme_hook);
    elm_widget_can_focus_set(obj, EINA_FALSE);
+   elm_widget_label_set_hook_set(obj, _elm_label_label_set);
+   elm_widget_label_get_hook_set(obj, _elm_label_label_get);
 
    wd->bgcolor = EINA_FALSE;
    wd->bg = evas_object_rectangle_add(e);
@@ -580,15 +607,7 @@ elm_label_add(Evas_Object *parent)
 EAPI void
 elm_label_label_set(Evas_Object *obj, const char *label)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype);
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return;
-   if (!label) label = "";
-   eina_stringshare_replace(&wd->label, label);
-   edje_object_part_text_set(wd->lbl, "elm.text", wd->format);
-   edje_object_part_text_append(wd->lbl, "elm.text", wd->label);
-   wd->changed = 1;
-   _sizing_eval(obj);
+  _elm_label_label_set(obj, NULL, label);
 }
 
 /**
@@ -597,14 +616,12 @@ elm_label_label_set(Evas_Object *obj, const char *label)
  * @param obj The label object
  * @return The string inside the label
  * @ingroup Label
+ * @deprecated
  */
 EAPI const char *
 elm_label_label_get(const Evas_Object *obj)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return NULL;
-   return wd->label;
+  return _elm_label_label_get(obj, NULL);
 }
 
 /**
@@ -613,6 +630,7 @@ elm_label_label_get(const Evas_Object *obj)
  * @param obj The label object
  * @param wrap To wrap text or not
  * @ingroup Label
+ * @deprecated
  */
 EAPI void
 elm_label_line_wrap_set(Evas_Object *obj, Elm_Wrap_Type wrap)
