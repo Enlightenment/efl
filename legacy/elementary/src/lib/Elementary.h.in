@@ -3687,7 +3687,7 @@ extern "C" {
     * Signals that you can add callbacks for are:
     * @li "clicked" - This is called when a user has clicked the bubble.
     *
-    * For an example of using a buble see @ref bubble_01_example_page this.
+    * For an example of using a buble see @ref bubble_01_example_page "this".
     *
     * @{
     */
