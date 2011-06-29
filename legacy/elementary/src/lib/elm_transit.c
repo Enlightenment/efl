@@ -85,6 +85,19 @@ typedef struct _Elm_Transit_Effect_Module Elm_Transit_Effect_Module;
 typedef struct _Elm_Obj_Data Elm_Obj_Data;
 typedef struct _Elm_Obj_State Elm_Obj_State;
 
+static void _elm_transit_obj_states_save(Evas_Object *obj, Elm_Obj_Data *obj_data);
+static Eina_Bool _hash_foreach_pass_events_set(const Eina_Hash *hash __UNUSED__, const void *key, void *data __UNUSED__, void *fdata);
+static Eina_Bool _hash_foreach_obj_states_save(const Eina_Hash *hash __UNUSED__, const void *key, void *data, void *fdata __UNUSED__);
+static void _elm_transit_object_remove_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__);
+static void _obj_damage_area_set(Evas_Object *obj);
+static void _elm_transit_object_remove(Elm_Transit *transit, Evas_Object *obj);
+static void _elm_transit_effect_del(Elm_Transit *transit, Elm_Transit_Effect_Module *effect_module);
+static void _remove_dead_effects(Elm_Transit *transit);
+static void _elm_transit_del(Elm_Transit *transit);
+static void _chain_transits_go(Elm_Transit *transit);
+static void _transit_animate_op(Elm_Transit *transit, double progress);
+static Eina_Bool _animator_animate_cb(void *data);
+
 static void
 _elm_transit_obj_states_save(Evas_Object *obj, Elm_Obj_Data *obj_data)
 {
@@ -115,6 +128,22 @@ _hash_foreach_obj_states_save(const Eina_Hash *hash __UNUSED__, const void *key,
 {
    _elm_transit_obj_states_save((Evas_Object *) key, (Elm_Obj_Data *) data);
    return EINA_TRUE;
+}
+
+static void
+_remove_obj_from_list(Elm_Transit *transit, Evas_Object *obj)
+{
+   //Remove duplicated objects
+   //TODO: Need to consider about optimizing here
+   while(1)
+     {
+        if (!eina_list_data_find_list(transit->objs, obj))
+          break;
+        transit->objs = eina_list_remove(transit->objs, obj);
+        evas_object_event_callback_del_full(obj, EVAS_CALLBACK_DEL,
+                                       _elm_transit_object_remove_cb,
+                                       transit);
+     }
 }
 
 static void
@@ -173,23 +202,6 @@ _obj_damage_area_set(Evas_Object *obj)
    evas_damage_rectangle_add(evas_object_evas_get(obj),
                              min.x, min.y,
                              max.x - min.x, max.y - min.y);
-}
-
-static void
-_remove_obj_from_list(Elm_Transit *transit, Evas_Object *obj)
-{
-   evas_object_event_callback_del_full(obj, EVAS_CALLBACK_DEL,
-                                       _elm_transit_object_remove_cb,
-                                       transit);
-
-   //Remove duplicated objects
-   //TODO: Need to consider about optimizing here
-   while(1)
-     {
-        if (!eina_list_data_find_list(transit->objs, obj))
-          break;
-        transit->objs = eina_list_remove(transit->objs, obj);
-     }
 }
 
 static void
