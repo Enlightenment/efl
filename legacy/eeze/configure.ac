@@ -104,6 +104,7 @@ PKG_CHECK_EXISTS([mount >= 2.18.0],
   ],
   AM_CONDITIONAL([HAVE_EEZE_MOUNT], [false])
 )
+
 if test "x$eeze_mount" = "xyes";then
   with_mount="/bin/mount"
   with_umount="/bin/umount"
@@ -113,6 +114,8 @@ if test "x$eeze_mount" = "xyes";then
   PKG_CHECK_MODULES([LIBMOUNT], [mount >= 2.18.0])
   mount_v=$(pkg-config --modversion mount)
   PKG_CHECK_MODULES([ECORE_FILE], [ecore-file >= 1.0.0])
+  PKG_CHECK_MODULES([EET], [eet >= 1.4.0])
+  PKG_CHECK_MODULES([ECORE_CON], [ecore-con >= 1.0.0])
 
   if test "x$with_mount" = "xdetect";then
     AC_PATH_PROG([with_mount], [mount], AC_MSG_ERROR([mount could not be found in PATH]))

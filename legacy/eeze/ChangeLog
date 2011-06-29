@@ -45,3 +45,4 @@
 2011-06-29  Mike Blumenkrantz (discomfitor/zmike)
         * fixed bug where EEZE_UDEV_EVENT_NONE would not match all events for watches
         * fixed segv when detecting removable drives
+        * added eeze_scanner utility daemon
