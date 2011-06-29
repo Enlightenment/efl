@@ -16,7 +16,7 @@ SRCS = \
 	ecore_event_example.c \
 	ecore_idler_example.c \
 	ecore_timer_example.c \
-	ecore_time_example.c \
+	ecore_time_functions_example.c \
 	ecore_job_example.c \
 	client_bench.c \
 	server_bench.c \
@@ -41,6 +41,6 @@ pkglib_PROGRAMS += \
 	ecore_idler_example \
 	ecore_job_example \
 	ecore_timer_example \
-	ecore_time_example
+	ecore_time_functions_example
 endif
 

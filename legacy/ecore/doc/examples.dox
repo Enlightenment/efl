@@ -3,7 +3,7 @@
  *
  * Here is a page with some Ecore examples explained:
  *
- * @li @ref ecore_time_example_c
+ * @li @ref ecore_time_functions_example_c
  * @li @ref ecore_timer_example_c
  * @li @ref ecore_idler_example_c
  * @li @ref ecore_job_example_c
@@ -13,7 +13,7 @@
  */
 
 /**
- * @page ecore_time_example_c ecore_time - Differences between time functions
+ * @page ecore_time_functions_example_c ecore_time - Differences between time functions
  *
  * This example shows the difference between calling ecore_time_get(),
  * ecore_loop_time_get() and ecore_time_unix_get().
@@ -39,7 +39,7 @@
  * to know the current time and date, and ecore_time_get() when you need a
  * monotonic and more precise time than ecore_loop_time_get().
  *
- * @include ecore_time_example.c
+ * @include ecore_time_functions_example.c
  */
 
 /**
@@ -405,9 +405,9 @@
  */
 
 /**
- * @example ecore_time_example.c
+ * @example ecore_time_functions_example.c
  * Shows the difference between the three time functions. See @ref
- * ecore_time_example_c "the example explained".
+ * ecore_time_functions_example_c "the example explained".
  */
 
 /**
