@@ -2364,6 +2364,7 @@ extern "C" {
     * This widgets emits the following signals:
     * @li "clicked": the user clicked the button (press/release).
     * @li "repeated": the user pressed the button without releasing it.
+    * @li "pressed": button was pressed. 
     * @li "unpressed": button was released after being pressed.
     * In all three cases, the @c event parameter of the callback will be
     * @c NULL.
