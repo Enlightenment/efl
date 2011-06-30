@@ -282,9 +282,73 @@ EAPI void         emotion_object_smooth_scale_set      (Evas_Object *obj, Eina_B
 EAPI Eina_Bool    emotion_object_smooth_scale_get      (const Evas_Object *obj);
 EAPI double       emotion_object_ratio_get             (const Evas_Object *obj);
 EAPI void         emotion_object_event_simple_send     (Evas_Object *obj, Emotion_Event ev);
+
+/**
+ * @brief Set the audio volume.
+ *
+ * @param obj The object where the volume is being set.
+ * @param vol The new volume parameter. Range is from 0.0 to 1.0.
+ *
+ * Sets the audio volume of the stream being played. This has nothing to do with
+ * the system volume. This volume will be multiplied by the system volume. e.g.:
+ * if the current volume level is 0.5, and the system volume is 50%, it will be
+ * 0.5 * 0.5 = 0.25.
+ *
+ * The default value depends on the module used. This value doesn't get changed
+ * when another file is loaded.
+ *
+ * @see emotion_object_audio_volume_get()
+ *
+ * @ingroup Emotion_Audio
+ */
 EAPI void         emotion_object_audio_volume_set      (Evas_Object *obj, double vol);
+
+/**
+ * @brief Get the audio volume.
+ *
+ * @param obj The object from which we are retrieving the volume.
+ * @return The current audio volume level for this object.
+ *
+ * Get the current value for the audio volume level. Range is from 0.0 to 1.0.
+ * This volume is set with emotion_object_audio_volume_set().
+ *
+ * @see emotion_object_audio_volume_set()
+ *
+ * @ingroup Emotion_Audio
+ */
 EAPI double       emotion_object_audio_volume_get      (const Evas_Object *obj);
+
+/**
+ * @brief Set the mute audio option for this object.
+ *
+ * @param obj The object which we are setting the mute audio option.
+ * @param mute Whether the audio should be muted (@c EINA_TRUE) or not (@c
+ * EINA_FALSE).
+ *
+ * This function sets the mute audio option for this emotion object. The current
+ * module used for this object can use this to avoid decoding the audio portion
+ * of the loaded media file.
+ *
+ * @see emotion_object_audio_mute_get()
+ * @see emotion_object_video_mute_set()
+ *
+ * @ingroup Emotion_Audio
+ */
 EAPI void         emotion_object_audio_mute_set        (Evas_Object *obj, Eina_Bool mute);
+
+/**
+ * @brief Get the mute audio option of this object.
+ *
+ * @param obj The object which we are retrieving the mute audio option from.
+ * @return Whether the audio is muted (@c EINA_TRUE) or not (@c EINA_FALSE).
+ *
+ * This function return the mute audio option from this emotion object. It can
+ * be set with emotion_object_audio_mute_set().
+ *
+ * @see emotion_object_audio_mute_set()
+ *
+ * @ingroup Emotion_Audio
+ */
 EAPI Eina_Bool    emotion_object_audio_mute_get        (const Evas_Object *obj);
 EAPI int          emotion_object_audio_channel_count   (const Evas_Object *obj);
 EAPI const char  *emotion_object_audio_channel_name_get(const Evas_Object *obj, int channel);
