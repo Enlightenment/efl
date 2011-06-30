@@ -24,7 +24,9 @@ SRCS = \
 	ecore_con_client_example.c \
 	ecore_con_server_example.c \
 	ecore_fd_handler_gnutls_example.c \
-	ecore_file_download_example.c
+	ecore_file_download_example.c \
+	ecore_pipe_simple_example.c \
+	ecore_pipe_gstreamer_example.c
 
 EXTRA_DIST = $(SRCS)
 
@@ -43,6 +45,7 @@ pkglib_PROGRAMS += \
 	ecore_idler_example \
 	ecore_job_example \
 	ecore_timer_example \
-	ecore_time_functions_example
+	ecore_time_functions_example \
+	ecore_pipe_simple_example
 endif
 

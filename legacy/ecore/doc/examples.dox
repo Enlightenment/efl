@@ -508,3 +508,68 @@
  * Shows how to use fd handlers.
 */
 
+/**
+ * @page tutorial_ecore_pipe_gstreamer_example
+ *
+ * Here is an example that uses the pipe wrapper with a Gstreamer
+ * pipeline. For each decoded frame in the Gstreamer thread, a handle
+ * is called in the ecore thread.
+ *
+ * @include ecore_pipe_gstreamer_example.c
+ * @example ecore_pipe_gstreamer_example.c
+ */
+
+/**
+ * @page tutorial_ecore_pipe_simple_example
+ * @dontinclude ecore_pipe_simple_example.c
+ *
+ * This example shows some simple usage of ecore_pipe. We are going to create a
+ * pipe, fork our process, and then the child is going to comunicate to the
+ * parent the result of its processing through the pipe.
+ *
+ * As always we start with our includes, nothing especial:
+ * @skip #include
+ * @until Ecore.h
+ *
+ * The first thing we are going to define in our example is the function we are
+ * going to run on the child process, which, as mentioned, will do some
+ * processing and then will write the result to the pipe:
+ * @until }
+ * @until }
+ * @note The sleep was added so the parent process would think the child process
+ * was doing something interesting...
+ *
+ * Next up is our function for handling data arriving in the pipe. It copies the
+ * data to another buffer, adds a terminating NULL and prints it. Also if it
+ * receives a certain string it stops the main loop(efectvely ending the
+ * program):
+ * @until }
+ * @until }
+ *
+ * And now on to our main function, we start by declaring some variables and
+ * initializing ecore:
+ * @until ecore_init
+ *
+ * And since we are talking about pipes let's create one:
+ * @until pipe_add
+ *
+ * Now we are going to fork:
+ * @until fork
+ * @note duh...
+ *
+ * The child process is going to do the our fancy processing:
+ * @until }
+ * @note It's very important to call ecore_pipe_read_close() here so that the
+ * child process won't read what it is writing to the pipe itself.
+ *
+ * And the parent is going to run ecore's main loop waiting for some data:
+ * @until }
+ * @note Calling ecore_pipe_write_close() here isn't important but since we
+ * aren't going to write in the pipe it is good practice.
+ *
+ * And finally when done processing(the child) or done receiving(the parent) we
+ * delete the pipe and shutdown ecore:
+ * @until }
+ *
+ * @example ecore_pipe_simple_example.c
+ */
