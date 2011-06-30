@@ -24,6 +24,7 @@ AM_CPPFLAGS = \
 @ELEMENTARY_EMAP_CFLAGS@ \
 @EVIL_CFLAGS@ \
 @EIO_CFLAGS@ \
+@EMOTION_CFLAGS@ \
 @EFL_PTHREAD_CFLAGS@
 
 if ELEMENTARY_WINDOWS_BUILD
@@ -107,6 +108,7 @@ elm_toggle.c \
 elm_toolbar.c \
 elm_transit.c \
 elm_util.c \
+elm_video.c \
 elm_widget.c \
 elm_win.c \
 els_box.c \
@@ -136,6 +138,7 @@ libelementary_la_LIBADD = \
 @ELEMENTARY_EMAP_LIBS@ \
 @EVIL_LIBS@ \
 @EIO_LIBS@ \
+@EMOTION_LIBS@ \
 @EFL_PTHREAD_LIBS@
 libelementary_la_LDFLAGS = \
 -no-undefined @lt_enable_auto_import@ \

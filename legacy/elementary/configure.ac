@@ -229,6 +229,17 @@ PKG_CHECK_MODULES([EIO],
 
 AM_CONDITIONAL([HAVE_EIO], [test "x${have_eio}" = "xyes"])
 
+PKG_CHECK_MODULES([EMOTION],
+	[emotion],
+	[
+	 have_emotion="yes"
+	 AC_DEFINE(HAVE_EMOTION, 1, [Use Emotion for asynchronous file access])
+	 requirement_elm="emotion ${requirement_elm}"
+	],
+	[have_emotion="no"])
+
+AM_CONDITIONAL([HAVE_EMOTION], [test "x${have_emotion}" = "xyes"])
+
 requirement_elm="edje >= 1.0.0 ecore-file >= 1.0.0 ecore-evas >= 1.0.0 ecore >= 1.0.0 evas >= 1.0.0 eet >= 1.4.0 eina >= 1.0.0 ${requirement_elm}"
 
 have_elementary_x="no"
@@ -605,7 +616,8 @@ echo "    EWeather...............: ${have_elementary_eweather}"
 echo "    EMap...................: ${have_elementary_emap}"
 echo "    Ethumb.................: ${have_elementary_ethumb}"
 echo "    Quick Launch...........: ${have_fork}"
-echo "    eio....................: ${have_eio}"
+echo "    EIO....................: ${have_eio}"
+echo "    Emotion................: ${have_emotion}"
 echo
 echo "  eet......................: ${eet_eet}"
 echo "  edje_cc..................: ${edje_cc}"
