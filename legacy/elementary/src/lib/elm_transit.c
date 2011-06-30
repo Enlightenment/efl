@@ -84,23 +84,23 @@ typedef struct _Elm_Transit_Effect_Module Elm_Transit_Effect_Module;
 typedef struct _Elm_Transit_Obj_Data Elm_Transit_Obj_Data;
 typedef struct _Elm_Transit_Obj_State Elm_Transit_Obj_State;
 
-static void _elm_transit_obj_data_update(Elm_Transit *transit, Evas_Object *obj);
-static void _elm_transit_obj_data_recover(Elm_Transit *transit, Evas_Object *obj);
-static void _elm_transit_obj_states_save(Evas_Object *obj, Elm_Transit_Obj_Data *obj_data);
-static void _elm_transit_obj_remove_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__);
-static void _obj_damage_area_set(Evas_Object *obj);
-static void _elm_transit_obj_remove(Elm_Transit *transit, Evas_Object *obj);
-static void _elm_transit_effect_del(Elm_Transit *transit, Elm_Transit_Effect_Module *effect_module);
-static void _remove_dead_effects(Elm_Transit *transit);
-static void _elm_transit_del(Elm_Transit *transit);
-static void _chain_transits_go(Elm_Transit *transit);
+static void _transit_obj_data_update(Elm_Transit *transit, Evas_Object *obj);
+static void _transit_obj_data_recover(Elm_Transit *transit, Evas_Object *obj);
+static void _transit_obj_states_save(Evas_Object *obj, Elm_Transit_Obj_Data *obj_data);
+static void _transit_obj_remove_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__);
+static void _transit_obj_damage_area_set(Evas_Object *obj);
+static void _transit_obj_remove(Elm_Transit *transit, Evas_Object *obj);
+static void _transit_effect_del(Elm_Transit *transit, Elm_Transit_Effect_Module *effect_module);
+static void _transit_remove_dead_effects(Elm_Transit *transit);
+static void _transit_del(Elm_Transit *transit);
+static void _transit_chain_transits_go(Elm_Transit *transit);
 static void _transit_animate_op(Elm_Transit *transit, double progress);
-static Eina_Bool _animator_animate_cb(void *data);
+static Eina_Bool _transit_animate_cb(void *data);
 
 static char *_transit_key= "_elm_transit_key";
 
 static void
-_elm_transit_obj_data_update(Elm_Transit *transit, Evas_Object *obj)
+_transit_obj_data_update(Elm_Transit *transit, Evas_Object *obj)
 {
    Elm_Transit_Obj_Data *obj_data = evas_object_data_get(obj, _transit_key);
 
@@ -116,14 +116,14 @@ _elm_transit_obj_data_update(Elm_Transit *transit, Evas_Object *obj)
      }
    else
      {
-       _elm_transit_obj_states_save(obj, obj_data);
+       _transit_obj_states_save(obj, obj_data);
      }
 
    evas_object_data_set(obj, _transit_key, obj_data);
 }
 
 static void
-_elm_transit_obj_states_save(Evas_Object *obj, Elm_Transit_Obj_Data *obj_data)
+_transit_obj_states_save(Evas_Object *obj, Elm_Transit_Obj_Data *obj_data)
 {
    Elm_Transit_Obj_State *state = obj_data->state;
 
@@ -151,13 +151,13 @@ _remove_obj_from_list(Elm_Transit *transit, Evas_Object *obj)
           break;
         transit->objs = eina_list_remove(transit->objs, obj);
         evas_object_event_callback_del_full(obj, EVAS_CALLBACK_DEL,
-                                       _elm_transit_obj_remove_cb,
+                                       _transit_obj_remove_cb,
                                        transit);
      }
 }
 
 static void
-_elm_transit_obj_remove_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+_transit_obj_remove_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
    Elm_Transit *transit = data;
    Elm_Transit_Obj_Data *obj_data = evas_object_data_get(obj, _transit_key);
@@ -175,7 +175,7 @@ _elm_transit_obj_remove_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj, voi
 //Since evas map have a afterimage bug for this time.
 //This function is added temporary.
 static void
-_obj_damage_area_set(Evas_Object *obj)
+_transit_obj_damage_area_set(Evas_Object *obj)
 {
    const Evas_Map *map;
    Evas_Coord_Point coords;
@@ -210,7 +210,7 @@ _obj_damage_area_set(Evas_Object *obj)
 }
 
 static void
-_elm_transit_obj_data_recover(Elm_Transit *transit, Evas_Object *obj)
+_transit_obj_data_recover(Elm_Transit *transit, Evas_Object *obj)
 {
    Elm_Transit_Obj_Data *obj_data;
    Elm_Transit_Obj_State *state;
@@ -240,7 +240,7 @@ _elm_transit_obj_data_recover(Elm_Transit *transit, Evas_Object *obj)
              //TODO: Remove!
              //Since evas map have a afterimage bug for this time.
              //This line is added temporary.
-             _obj_damage_area_set(obj);
+             _transit_obj_damage_area_set(obj);
 
           }
         free(state);
@@ -249,14 +249,14 @@ _elm_transit_obj_data_recover(Elm_Transit *transit, Evas_Object *obj)
 }
 
 static void
-_elm_transit_obj_remove(Elm_Transit *transit, Evas_Object *obj)
+_transit_obj_remove(Elm_Transit *transit, Evas_Object *obj)
 {
    _remove_obj_from_list(transit, obj);
-   _elm_transit_obj_data_recover(transit, obj);
+   _transit_obj_data_recover(transit, obj);
 }
 
 static void
-_elm_transit_effect_del(Elm_Transit *transit, Elm_Transit_Effect_Module *effect_module)
+_transit_effect_del(Elm_Transit *transit, Elm_Transit_Effect_Module *effect_module)
 {
    if (effect_module->end_cb)
      effect_module->end_cb(effect_module->effect, transit);
@@ -264,7 +264,7 @@ _elm_transit_effect_del(Elm_Transit *transit, Elm_Transit_Effect_Module *effect_
 }
 
 static void
-_remove_dead_effects(Elm_Transit *transit)
+_transit_remove_dead_effects(Elm_Transit *transit)
 {
    Elm_Transit_Effect_Module *effect_module;
 
@@ -272,7 +272,7 @@ _remove_dead_effects(Elm_Transit *transit)
      {
         if (effect_module->deleted)
           {
-             _elm_transit_effect_del(transit, effect_module);
+             _transit_effect_del(transit, effect_module);
              transit->effects_pending_del--;
              if (!transit->effects_pending_del) return;
           }
@@ -280,7 +280,7 @@ _remove_dead_effects(Elm_Transit *transit)
 }
 
 static void
-_elm_transit_del(Elm_Transit *transit)
+_transit_del(Elm_Transit *transit)
 {
    Elm_Transit_Effect_Module *effect_module;
    Elm_Transit *chain_transit;
@@ -302,11 +302,11 @@ _elm_transit_del(Elm_Transit *transit)
      {
         effect_module = EINA_INLIST_CONTAINER_GET(transit->effect_list, Elm_Transit_Effect_Module);
         transit->effect_list = eina_inlist_remove(transit->effect_list, transit->effect_list);
-        _elm_transit_effect_del(transit, effect_module);
+        _transit_effect_del(transit, effect_module);
      }
 
    while (transit->objs)
-     _elm_transit_obj_remove(transit, eina_list_data_get(transit->objs));
+     _transit_obj_remove(transit, eina_list_data_get(transit->objs));
 
    transit->deleted = EINA_TRUE;
 
@@ -318,14 +318,14 @@ _elm_transit_del(Elm_Transit *transit)
 }
 
 static void
-_chain_transits_go(Elm_Transit *transit)
+_transit_chain_transits_go(Elm_Transit *transit)
 {
    Eina_List *elist, *elist_next;
    Elm_Transit *chain_transit;
    Evas_Object *obj;
 
    EINA_LIST_FOREACH(transit->objs, elist, obj)
-    _elm_transit_obj_data_recover(transit, obj);
+    _transit_obj_data_recover(transit, obj);
 
    EINA_LIST_FOREACH_SAFE(transit->next_chain_transits, elist, elist_next, chain_transit)
      elm_transit_go(chain_transit);
@@ -347,12 +347,12 @@ _transit_animate_op(Elm_Transit *transit, double progress)
 
    if (transit->walking) return;
 
-   if (transit->deleted) _elm_transit_del(transit);
-   else if (transit->effects_pending_del) _remove_dead_effects(transit);
+   if (transit->deleted) _transit_del(transit);
+   else if (transit->effects_pending_del) _transit_remove_dead_effects(transit);
 }
 
 static Eina_Bool
-_animator_animate_cb(void *data)
+_transit_animate_cb(void *data)
 {
    Elm_Transit *transit = data;
    double elapsed_time, duration;
@@ -395,7 +395,7 @@ _animator_animate_cb(void *data)
      {
         /* run chain transit */
         if (transit->next_chain_transits)
-          _chain_transits_go(transit);
+          _transit_chain_transits_go(transit);
 
         elm_transit_del(transit);
         return ECORE_CALLBACK_CANCEL;
@@ -433,7 +433,7 @@ elm_transit_del(Elm_Transit *transit)
    ELM_TRANSIT_CHECK_OR_RETURN(transit);
 
    if (transit->walking) transit->deleted = EINA_TRUE;
-   else _elm_transit_del(transit);
+   else _transit_del(transit);
 }
 
 EAPI void
@@ -474,7 +474,7 @@ elm_transit_effect_del(Elm_Transit *transit, Elm_Transit_Effect_Transition_Cb tr
                }
              else
                {
-                  _elm_transit_effect_del(transit, effect_module);
+                  _transit_effect_del(transit, effect_module);
                   if (!transit->effect_list) elm_transit_del(transit);
                }
              return;
@@ -492,13 +492,13 @@ elm_transit_object_add(Elm_Transit *transit, Evas_Object *obj)
      {
         if (!evas_object_data_get(obj, _transit_key))
           {
-             _elm_transit_obj_data_update(transit, obj);
+             _transit_obj_data_update(transit, obj);
              evas_object_pass_events_set(obj, EINA_TRUE);
           }
      }
 
    evas_object_event_callback_add(obj, EVAS_CALLBACK_DEL,
-                                  _elm_transit_obj_remove_cb,
+                                  _transit_obj_remove_cb,
                                   transit);
 
    transit->objs = eina_list_append(transit->objs, obj);
@@ -510,7 +510,7 @@ elm_transit_object_remove(Elm_Transit *transit, Evas_Object *obj)
    ELM_TRANSIT_CHECK_OR_RETURN(transit);
    EINA_SAFETY_ON_NULL_RETURN(obj);
 
-   _elm_transit_obj_remove(transit, obj);
+   _transit_obj_remove(transit, obj);
    if (!transit->objs) elm_transit_del(transit);
 }
 
@@ -622,7 +622,7 @@ elm_transit_go(Elm_Transit *transit)
      ecore_animator_del(transit->animator);
 
    EINA_LIST_FOREACH(transit->objs, elist, obj)
-     _elm_transit_obj_data_update(transit, obj);
+     _transit_obj_data_update(transit, obj);
 
    if (!transit->event_enabled)
      {
@@ -633,7 +633,7 @@ elm_transit_go(Elm_Transit *transit)
    transit->time.paused = 0;
    transit->time.delayed = 0;
    transit->time.begin = ecore_loop_time_get();
-   transit->animator = ecore_animator_add(_animator_animate_cb, transit);
+   transit->animator = ecore_animator_add(_transit_animate_cb, transit);
 }
 
 EAPI void
