@@ -599,6 +599,8 @@ _desc_init(void)
    ELM_CONFIG_VAL(D, T, longpress_timeout, T_DOUBLE);
    ELM_CONFIG_VAL(D, T, effect_enable, T_UCHAR);
    ELM_CONFIG_VAL(D, T, desktop_entry, T_UCHAR);
+   ELM_CONFIG_VAL(D, T, password_show_last, T_UCHAR);
+   ELM_CONFIG_VAL(D, T, password_show_last_timeout, T_DOUBLE);
 #undef T
 #undef D
 #undef T_INT
@@ -1001,6 +1003,8 @@ _config_sub_apply(void)
 {
    edje_frametime_set(1.0 / _elm_config->fps);
    edje_scale_set(_elm_config->scale);
+   edje_password_show_last_set(_elm_config->password_show_last);
+   edje_password_show_last_timeout_set(_elm_config->password_show_last_timeout);
    if (_elm_config->modules) _elm_module_parse(_elm_config->modules);
 }
 
@@ -1152,8 +1156,9 @@ _config_load(void)
    _elm_config->longpress_timeout = 1.0;
    _elm_config->effect_enable = EINA_TRUE;
    _elm_config->desktop_entry = EINA_FALSE;
-
    _elm_config->is_mirrored = EINA_FALSE; /* Read sys value in env_get() */
+   _elm_config->password_show_last = EINA_FALSE;
+   _elm_config->password_show_last_timeout = 2.0;
 }
 
 static const char *
@@ -1549,6 +1554,17 @@ _env_get(void)
      (double)_elm_config->finger_size * _elm_config->scale;
    s = getenv("ELM_FINGER_SIZE");
    if (s) _elm_config->finger_size = atoi(s);
+
+   s = getenv("ELM_PASSWORD_SHOW_LAST");
+   if (s) _elm_config->password_show_last = !!atoi(s);
+
+   s = getenv("ELM_PASSWORD_SHOW_LAST_TIMEOUT");
+   if (s)
+     {
+        double pw_show_last_timeout = atof(s);
+        if (pw_show_last_timeout >= 0.0)
+          _elm_config->password_show_last_timeout = pw_show_last_timeout;
+     }
 
    s = getenv("ELM_FPS");
    if (s) _elm_config->fps = atof(s);

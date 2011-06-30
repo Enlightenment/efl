@@ -127,8 +127,9 @@ struct _Elm_Config
    double         longpress_timeout;
    unsigned char  effect_enable;
    unsigned char  desktop_entry;
-
    Eina_Bool      is_mirrored : 1;
+   Eina_Bool      password_show_last;
+   double         password_show_last_timeout;
 };
 
 struct _Elm_Module
