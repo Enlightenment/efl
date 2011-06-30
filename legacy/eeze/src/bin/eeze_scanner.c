@@ -397,7 +397,7 @@ es_exit(int sig)
 }
 
 static void
-sigs_setup(void *d __UNUSED__)
+sigs_setup(void)
 {
    sigset_t sigs = {{0}};
    struct sigaction s;
@@ -419,7 +419,7 @@ int
 main(void)
 {
    const char *tmp;
-   char buf[1024];
+   char buf[128], buf2[128];
    struct stat st;
 
    eina_init();
@@ -429,6 +429,7 @@ main(void)
    eeze_disk_function();
    eeze_mount_tabs_watch();
 
+   sigs_setup();
    es_log_dom = eina_log_domain_register("eeze_scanner", EINA_COLOR_CYAN);
    eina_log_domain_level_set("eeze_scanner", EINA_LOG_LEVEL_DBG);
    eina_log_domain_level_set("eeze", EINA_LOG_LEVEL_DBG);
@@ -437,7 +438,8 @@ main(void)
    if (!tmp) tmp = "/tmp";
 
    snprintf(buf, sizeof(buf), "%s/.ecore_service|eeze_scanner", tmp);
-   if (!stat(buf, &st))
+   snprintf(buf2, sizeof(buf), "%s/.ecore_service|eeze_scanner|0", tmp);
+   if (!stat(buf2, &st))
      {
         ERR("Socket file '%s' for scanner already exists! Refusing to start up!", buf);
         exit(1);
@@ -458,16 +460,13 @@ main(void)
 
    svr = ecore_con_server_add(ECORE_CON_LOCAL_SYSTEM, buf, 0, NULL);
    EINA_SAFETY_ON_NULL_GOTO(svr, error);
-   snprintf(buf, sizeof(buf), "%s/.ecore_service|eeze_scanner|0", tmp);
-   if (chmod(buf, S_IROTH))
+   if (chmod(buf2, S_IROTH))
      {
         ERR("Could not chmod socket (%s)! \"%s\"", buf, strerror(errno));
         goto error;
      }
 
    storage_setup();
-   /* have to override ecore's signal handlers to ensure that socket file is removed */
-   ecore_job_add(sigs_setup, NULL);
    ecore_main_loop_begin();
 
    ecore_con_server_del(svr);
