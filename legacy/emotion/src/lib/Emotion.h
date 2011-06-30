@@ -29,6 +29,12 @@
 # endif
 #endif /* ! _WIN32 */
 
+/**
+ * @file Emotion.h
+ * @brief The file that provides Emotion the API, with functions available for
+ *        play, seek, change volume, etc.
+ */
+
 enum _Emotion_Module
 {
   EMOTION_MODULE_XINE,
@@ -116,10 +122,152 @@ extern "C" {
 #endif
    
 /* api calls available */
+
+/**
+ * @brief How to create, initialize, manipulate and connect to signals of an
+ * Emotion object.
+ * @defgroup Emotion_API API available for manipulating Emotion object.
+ *
+ * @{
+ *
+ * @li Add the description of modules here.
+ * @li Basic emotion example
+ * @li Signals available
+ */
+
+/**
+ * @defgroup Emotion_Init Creation and initialization functions
+ */
+
+/**
+ * @defgroup Emotion_Audio Audio control functions
+ */
+
+/**
+ * @defgroup Emotion_Video Video control functions
+ */
+
+/**
+ * @brief Add an emotion object to the canvas.
+ *
+ * @param evas The canvas where the object will be added to.
+ * @return The emotion object just created.
+ *
+ * This function creates an emotion object and adds it to the specified @p evas.
+ * The returned object can be manipulated as any other Evas object, using the
+ * default object manipulation functions - evas_object_*.
+ *
+ * After creating the object with this function, it's still necessary to
+ * initialize it with emotion_object_init(), and if an audio file is going to be
+ * played with this object instead of a video, use
+ * emotion_object_video_mute_set().
+ *
+ * The next step is to open the desired file with emotion_object_file_set(), and
+ * start playing it with emotion_object_play_set().
+ *
+ * @see emotion_object_init()
+ * @see emotion_object_video_mute_set()
+ * @see emotion_object_file_set()
+ * @see emotion_object_play_set()
+ *
+ * @ingroup Emotion_Init
+ */
 EAPI Evas_Object *emotion_object_add                   (Evas *evas);
+
+/**
+ * @brief Set the specified option for the current module.
+ *
+ * @param obj The emotion object which the option is being set to.
+ * @param opt The option that is being set. Currently supported optiosn: "video"
+ * and "audio".
+ * @param val The value of the option. Currently only supports "off" (?!?!?!)
+ *
+ * This function allows one to mute the video or audio of the emotion object.
+ *
+ * @note Please don't use this function, consider using
+ * emotion_object_audio_mute_set() and emotion_object_video_mute_set() instead.
+ *
+ * @see emotion_object_audio_mute_set()
+ * @see emotion_object_video_mute_set()
+ *
+ * @ingroup Emotion_Audio
+ * @ingroup Emotion_Video
+ */
 EAPI void         emotion_object_module_option_set     (Evas_Object *obj, const char *opt, const char *val);
+
+/**
+ * @brief Initializes an emotion object with the specified module.
+ *
+ * @param obj The emotion object to be initialized.
+ * @param module_filename The name of the module to be used (gstreamer or xine).
+ * @return @c EINA_TRUE if the specified module was successfully initialized for
+ * this object, @c EINA_FALSE otherwise.
+ *
+ * This function is required after creating the emotion object, in order to
+ * specify which module will be used with this object. Different objects can
+ * use different modules to play a media file. The current supported modules are
+ * @b gstreamer and @b xine.
+ *
+ * To use any of them, you need to make sure that support for them was compiled
+ * correctly.
+ *
+ * @note It's possible to disable the build of a module with
+ * --disable-module_name.
+ *
+ * @see emotion_object_add()
+ * @see emotion_object_file_set()
+ *
+ * @ingroup Emotion_Init
+ */
 EAPI Eina_Bool    emotion_object_init                  (Evas_Object *obj, const char *module_filename);
+
+/**
+ * @brief Set the file to be played in the Emotion object.
+ *
+ * @param obj The emotion object where the file is being loaded.
+ * @param filename Path to the file to be loaded. It can be absolute or relative
+ * path.
+ * @return EINA_TRUE if the new file could be loaded successfully, and
+ * EINA_FALSE if the file could not be loaded. This happens when the filename is
+ * could not be found, when the module couldn't open the file, when no module is
+ * initialized in this object, or when the @p filename is the same as the
+ * one previously set.
+ *
+ * This function sets the file to be used with this emotion object. If the
+ * object already has another file set, this file will be unset and unloaded,
+ * and the new file will be loaded to this emotion object. The seek position
+ * will be set to 0, and the emotion object will be paused, instead of playing.
+ *
+ * If there was already a filename set, and it's the same as the one being set
+ * now, this function does nothing and returns EINA_FALSE.
+ *
+ * Use @c NULL as argument to @p filename if you want to unload the current file
+ * but don't want to load anything else.
+ *
+ * @see emotion_object_init()
+ * @see emotion_object_play_set()
+ * @see emotion_object_file_get()
+ *
+ * @ingroup Emotion_Init
+ */
 EAPI Eina_Bool    emotion_object_file_set              (Evas_Object *obj, const char *filename);
+
+/**
+ * @brief Get the filename of the file associated with the emotion object.
+ *
+ * @param obj The emotion object from which the filename will be retrieved.
+ * @return The path to the file loaded into this emotion object.
+ *
+ * This function returns the path of the file loaded in this emotion object. If
+ * no object is loaded, it will return @c NULL.
+ *
+ * @note Don't free or change the string returned by this function in any way.
+ * If you want to unset it, use @c emotion_object_file_set(obj, NULL).
+ *
+ * @see emotion_object_file_set()
+ *
+ * @ingroup Emotion_Init
+ */
 EAPI const char  *emotion_object_file_get              (const Evas_Object *obj);
 EAPI void         emotion_object_play_set              (Evas_Object *obj, Eina_Bool play);
 EAPI Eina_Bool    emotion_object_play_get              (const Evas_Object *obj);
@@ -182,6 +330,10 @@ EAPI Eina_Bool    emotion_object_extension_can_play_fast_get(const Evas_Object *
 
 EAPI Eina_Bool    emotion_object_extension_may_play_fast_get(const char *file);
 EAPI Eina_Bool    emotion_object_extension_may_play_get(const char *file);
+
+/**
+ * @}
+ */
 
 #ifdef __cplusplus
 }
