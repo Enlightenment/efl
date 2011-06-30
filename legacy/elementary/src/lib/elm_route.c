@@ -223,17 +223,17 @@ elm_route_add(Evas_Object *parent)
  *
  * @ingroup Route
  */
-EAPI Eina_Bool
+EAPI void
 elm_route_emap_set(Evas_Object *obj, EMap_Route *emap)
 {
    EMap_Route_Node *node, *node_prev = NULL;
    Evas_Object *o;
    Eina_List *l;
 
-   ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
 
-   if (!wd) return EINA_FALSE;
+   if (!wd) return;
    wd->emap = emap;
 
    _clear_route(obj);
