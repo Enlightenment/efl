@@ -1181,6 +1181,35 @@ EAPI void         edje_scale_set                  (double scale);
 EAPI double       edje_scale_get                  (void);
 
 /**
+ * @brief Show last character in password mode.
+ *
+ * @param password_show_last If TRUE enable last character show in password mode.
+ *
+ * This function enables last input to be visible when in password mode for few seconds
+ * or until the next input is entered.
+ *
+ * The time out value is obtained by edje_password_show_last_timeout_set function.
+ *
+ * @see edje_password_show_last_timeout_set().
+ */
+EAPI void edje_password_show_last_set(Eina_Bool password_show_last);
+
+/**
+ * @brief Set's the timeout value in last show password mode.
+ *
+ * @param password_show_last_timeout The timeout value.
+ *
+ * This functions sets the time out value for which the last input entered in password
+ * mode will be visible.
+ *
+ * This value can be used only when last show mode is set in password mode.
+ *
+ * @see edje_password_show_last_set().
+ *
+ */
+EAPI void edje_password_show_last_timeout_set(double password_show_last_timeout);
+
+/**
  * @brief Set the edje object's scaling factor.
  *
  * @param obj The edje object's reference.

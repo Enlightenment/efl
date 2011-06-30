@@ -20,6 +20,7 @@ struct _Entry
    Evas_Textblock_Cursor *sel_start, *sel_end;
    Evas_Textblock_Cursor *cursor_user, *cursor_user_extra;
    Evas_Textblock_Cursor *preedit_start, *preedit_end;
+   Ecore_Timer *pw_timer;
    Eina_List *sel;
    Eina_List *anchors;
    Eina_List *anchorlist;
@@ -1009,6 +1010,37 @@ _delete(Evas_Textblock_Cursor *c, Evas_Object *o __UNUSED__, Entry *en __UNUSED_
 }
 
 static void
+_edje_entry_hide_visible_password(Edje_Real_Part *rp)
+{
+   const Evas_Object_Textblock_Node_Format *node;
+   node = evas_textblock_node_format_first_get(rp->object);
+   for (; node; node = evas_textblock_node_format_next_get(node))
+     {
+        const char *text = evas_textblock_node_format_text_get(node);
+        if (text)
+          {
+             if (!strcmp(text, "+ password=off"))
+               {
+                  evas_textblock_node_format_remove_pair(rp->object,
+                                                        (Evas_Object_Textblock_Node_Format *) node);
+                  break;
+               }
+          }
+     }
+   _edje_entry_real_part_configure(rp);
+   _edje_emit(rp->edje, "entry,changed", rp->part->name);
+}
+
+static Eina_Bool
+_password_timer_cb(void *data)
+{
+   Entry *en = (Entry *)data;
+   _edje_entry_hide_visible_password(en->rp);
+   en->pw_timer = NULL;
+   return ECORE_CALLBACK_CANCEL;
+}
+
+static void
 _edje_key_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
 {
    Edje *ed = data;
@@ -1332,9 +1364,24 @@ _edje_key_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, v
              if (en->have_selection)
                _range_del(en->cursor, rp->object, en);
              _sel_clear(en->cursor, rp->object, en);
-             //zz
-//             evas_textblock_cursor_text_prepend(en->cursor, ev->string);
-             _text_filter_text_prepend(en, en->cursor, ev->string);
+             // if PASSWORD_SHOW_LAST mode, appending text with password=off tag
+             if ((rp->part->entry_mode == EDJE_ENTRY_EDIT_MODE_PASSWORD) &&
+                 _edje_password_show_last)
+               {
+                  _edje_entry_hide_visible_password(en->rp);
+                  _text_filter_format_prepend(en, en->cursor, "+ password=off");
+                  _text_filter_markup_prepend(en, en->cursor, ev->string);
+                  _text_filter_format_prepend(en, en->cursor, "- password");
+                  if (en->pw_timer)
+                    {
+                       ecore_timer_del(en->pw_timer);
+                       en->pw_timer = NULL;
+                    }
+                  en->pw_timer = ecore_timer_add(_edje_password_show_last_timeout,
+                                                 _password_timer_cb, en);
+               }
+             else
+               _text_filter_text_prepend(en, en->cursor, ev->string);
              _anchors_get(en->cursor, rp->object, en);
              _edje_emit(ed, "entry,changed", rp->part->name);
              _edje_emit(ed, "cursor,changed", rp->part->name);
@@ -1933,6 +1980,12 @@ _edje_entry_real_part_shutdown(Edje_Real_Part *rp)
    rp->edje->subobjs = eina_list_remove(rp->edje->subobjs, en->cursor_fg);
    evas_object_del(en->cursor_bg);
    evas_object_del(en->cursor_fg);
+
+   if (en->pw_timer)
+     {
+        ecore_timer_del(en->pw_timer);
+        en->pw_timer = NULL;
+     }
 
 #ifdef HAVE_ECORE_IMF
    if (rp->part->entry_mode >= EDJE_ENTRY_EDIT_MODE_EDITABLE)
@@ -2773,10 +2826,25 @@ _edje_entry_imf_event_commit_cb(void *data, int type __UNUSED__, void *event)
 
    if (evas_textblock_cursor_compare(en->cursor, tc))
      cursor_move = EINA_TRUE;
-
-   //yy
-//   evas_textblock_cursor_text_prepend(en->cursor, ev->str);
-   _text_filter_text_prepend(en, tc, ev->str);
+   if ((rp->part->entry_mode == EDJE_ENTRY_EDIT_MODE_PASSWORD) &&
+       _edje_password_show_last)
+     _edje_entry_hide_visible_password(en->rp);
+   if ((rp->part->entry_mode == EDJE_ENTRY_EDIT_MODE_PASSWORD) &&
+       _edje_password_show_last && (!en->preedit_start))
+     {
+        _text_filter_format_prepend(en, tc, "+ password=off");
+        _text_filter_markup_prepend(en, tc, ev->str);
+        _text_filter_format_prepend(en, tc, "- password");
+        if (en->pw_timer)
+          {
+             ecore_timer_del(en->pw_timer);
+             en->pw_timer = NULL;
+          }
+        en->pw_timer = ecore_timer_add(_edje_password_show_last_timeout,
+                                       _password_timer_cb, en);
+     }
+   else
+     _text_filter_text_prepend(en, tc, ev->str);
 
    if (!cursor_move)
      {
@@ -2835,10 +2903,24 @@ _edje_entry_imf_event_preedit_changed_cb(void *data, int type __UNUSED__, void *
    preedit_start_pos = evas_textblock_cursor_pos_get(en->cursor);
 
    /* insert preedit character(s) */
-   //xx
-//   evas_object_textblock_text_markup_prepend(en->cursor, preedit_string);
-   _text_filter_markup_prepend(en, en->cursor, preedit_string);
-
+   if ((rp->part->entry_mode == EDJE_ENTRY_EDIT_MODE_PASSWORD) &&
+       _edje_password_show_last)
+     {
+        _text_filter_format_prepend(en, en->cursor, "+ password=off");
+        _text_filter_markup_prepend(en, en->cursor, preedit_string);
+        _text_filter_format_prepend(en, en->cursor, "- password");
+        if (en->pw_timer)
+          {
+             ecore_timer_del(en->pw_timer);
+             en->pw_timer = NULL;
+          }
+        en->pw_timer = ecore_timer_add(_edje_password_show_last_timeout,
+                                       _password_timer_cb, en);
+     }
+   else
+     {
+        _text_filter_markup_prepend(en, en->cursor, preedit_string);
+     }
    if (!preedit_end_state)
      {
         /* set preedit start cursor */

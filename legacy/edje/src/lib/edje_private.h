@@ -1450,6 +1450,9 @@ extern int              _edje_freeze_val;
 extern int              _edje_freeze_calc_count;
 extern Eina_List       *_edje_freeze_calc_list;
 
+extern Eina_Bool        _edje_password_show_last;
+extern FLOAT_T          _edje_password_show_last_timeout;
+
 extern Eina_Mempool *_edje_real_part_mp;
 extern Eina_Mempool *_edje_real_part_state_mp;
 
