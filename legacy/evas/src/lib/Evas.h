@@ -5722,26 +5722,26 @@ EAPI Evas_Fill_Spread         evas_object_image_fill_spread_get        (const Ev
 /**
  * Sets the size of the given image object.
  *
+ * @param obj The given image object.
+ * @param w The new width of the image.
+ * @param h The new height of the image.
+ *
  * This function will scale down or crop the image so that it is
  * treated as if it were at the given size. If the size given is
  * smaller than the image, it will be cropped. If the size given is
  * larger, then the image will be treated as if it were in the upper
  * left hand corner of a larger image that is otherwise transparent.
- *
- * @param obj The given image object.
- * @param w The new width of the image.
- * @param h The new height of the image.
  */
 EAPI void                     evas_object_image_size_set               (Evas_Object *obj, int w, int h) EINA_ARG_NONNULL(1);
 
 /**
  * Retrieves the size of the given image object.
  *
- * See @ref evas_object_image_size_set for more details.
- *
  * @param obj The given image object.
  * @param w Location to store the width of the image in, or @c NULL.
  * @param h Location to store the height of the image in, or @c NULL.
+ *
+ * See @ref evas_object_image_size_set() for more details.
  */
 EAPI void                     evas_object_image_size_get               (const Evas_Object *obj, int *w, int *h) EINA_ARG_NONNULL(1);
 
@@ -5914,46 +5914,53 @@ EAPI void                     evas_object_image_smooth_scale_set       (Evas_Obj
 EAPI Eina_Bool                evas_object_image_smooth_scale_get       (const Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
 
 /**
- * Preload image in the background
- *
- * This function request the preload of the data image in the
- * background. The worked is queued before being processed.
- *
- * If image data is already loaded, it will callback
- * EVAS_CALLBACK_IMAGE_PRELOADED immediately and do nothing else.
- *
- * If cancel is set, it will remove the image from the workqueue.
+ * Preload an image object's image data in the background
  *
  * @param obj The given image object.
- * @param cancel 0 means add to the workqueue, 1 remove it.
+ * @param cancel @c EINA_FALSE will add it the preloading work queue,
+ *               @c EINA_TRUE will remove it (if it was issued before).
+ *
+ * This function requests the preload of the data image in the
+ * background. The work is queued before being processed (because
+ * there might be other pending requests of this type).
+ *
+ * Whenever the image data gets loaded, Evas will call
+ * #EVAS_CALLBACK_IMAGE_PRELOADED registered callbacks on @p obj (what
+ * may be immediately, if the data was already preloaded before).
+ *
+ * Use @c EINA_TRUE for @p cancel on scenarios where you don't need
+ * the image data preloaded anymore.
  */
 EAPI void                     evas_object_image_preload                (Evas_Object *obj, Eina_Bool cancel) EINA_ARG_NONNULL(1);
 
 /**
- * Reload a image of the canvas.
+ * Reload an image object's image data.
  *
  * @param obj The given image object pointer.
  *
- * This function reloads a image of the given canvas.
- *
+ * This function reloads the image data bound to image object @p obj.
  */
 EAPI void                     evas_object_image_reload                 (Evas_Object *obj) EINA_ARG_NONNULL(1);
 
 /**
- * Save the given image object to a file.
- *
- * Note that you should pass the filename extension when saving.  If
- * the file supports multiple data stored in it as eet, you can
- * specify the key to be used as the index of the image in this file.
- *
- * You can specify some flags when saving the image.  Currently
- * acceptable flags are quality and compress.  Eg.: "quality=100
- * compress=9"
+ * Save the given image object's contents to an (image) file.
  *
  * @param obj The given image object.
- * @param file The filename to be used to save the image.
- * @param key The image key in file, or @c NULL.
- * @param flags String containing the flags to be used.
+ * @param file The filename to be used to save the image (extension
+ *        obligatory).
+ * @param key The image key in the file (if an Eet one), or @c NULL,
+ *        otherwise.
+ * @param flags String containing the flags to be used (@c NULL for
+ *        none).
+ *
+ * The extension suffix on @p file will determine which <b>saver
+ * module</b> Evas is to use when saving, thus the final file's
+ * format. If the file supports multiple data stored in it (Eet ones),
+ * you can specify the key to be used as the index of the image in it.
+ *
+ * You can specify some flags when saving the image.  Currently
+ * acceptable flags are @c quality and @c compress. Eg.: @c
+ * "quality=100 compress=9"
  */
 EAPI Eina_Bool                evas_object_image_save                   (const Evas_Object *obj, const char *file, const char *key, const char *flags)  EINA_ARG_NONNULL(1, 2);
 
@@ -6133,8 +6140,10 @@ EAPI Evas_Native_Surface     *evas_object_image_native_surface_get     (const Ev
  * @param obj The given canvas pointer.
  * @param hint The scale hint value.
  *
- * This function sets the scale hint value of the given image of the canvas.
+ * This function sets the scale hint value of the given image of the
+ * canvas, which will affect how Evas is to scale it.
  *
+ * @see evas_object_image_scale_hint_get()
  */
 EAPI void                     evas_object_image_scale_hint_set         (Evas_Object *obj, Evas_Image_Scale_Hint hint) EINA_ARG_NONNULL(1);
 
@@ -6143,8 +6152,10 @@ EAPI void                     evas_object_image_scale_hint_set         (Evas_Obj
  *
  * @param obj The given canvas pointer.
  *
- * This function returns the scale hint value of the given image of the canvas.
+ * This function returns the scale hint value of the given image of
+ * the canvas.
  *
+ * @see evas_object_image_scale_hint_set()
  */
 EAPI Evas_Image_Scale_Hint    evas_object_image_scale_hint_get         (const Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
 

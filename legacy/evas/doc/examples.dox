@@ -127,12 +127,31 @@
  * @dontinclude evas-images2.c
  * @skip noise_img =
  * @until show
- * There's a last command to print it's @b stride value. Since its
- * created with one quarter of the canvas's original width
+ * Since we are creating the data for its pixel buffer ourselves, we
+ * have to set its size with @c evas_object_image_size_set. There's a
+ * last command to print it's @b stride value. Since its created with
+ * one quarter of the canvas's original width
  * @dontinclude evas-images2.c
  * @skip define WIDTH
  * @until define HEIGHT
  * you can check this value.
+ *
+ * The image on the top left also has a subtlety: it is @b pre-loaded
+ * on this example.
+ * @dontinclude evas-images2.c
+ * @skip d.logo =
+ * @until show
+ * On real use cases we wouldn't be just printing something like this
+ * @dontinclude evas-images2.c
+ * @skip static void
+ * @until }
+ * naturally.
+ *
+ * The 's' command will save one of the images on the disk, in the png
+ * format:
+ * @dontinclude evas-images2.c
+ * @skip if (strcmp(ev->keyname, "a") == 0)
+ * @until }
  *
  * The full example follows.
  *

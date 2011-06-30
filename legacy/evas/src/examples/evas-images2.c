@@ -2,8 +2,8 @@
  * Simple Evas example illustrating some image objects functions
  *
  * You'll need at least one engine built for it (excluding the buffer
- * one) and the png image loader also built. See stdout/stderr for
- * output.
+ * one) and the png image loader/saver also built. See stdout/stderr
+ * for output.
  *
  * @verbatim
  * gcc -o evas-images3 evas-images3.c `pkg-config --libs --cflags ecore-evas`
@@ -28,7 +28,11 @@ static const char *commands = \
   "commands are:\n"
   "\tp - change proxy image's source\n"
   "\ts - print noise image's stride value\n"
+  "\ta - save noise image to disk (/tmp dir)\n"
   "\th - print help\n";
+
+const char *file_path = "/tmp/evas-images2-example.png";
+const char *quality_str = "quality=100";
 
 struct test_data
 {
@@ -38,6 +42,15 @@ struct test_data
 };
 
 static struct test_data d = {0};
+
+static void
+_on_preloaded(void        *data __UNUSED__,
+              Evas        *e __UNUSED__,
+              Evas_Object *obj __UNUSED__,
+              void        *event_info __UNUSED__)
+{
+    fprintf(stdout, "Image has been pre-loaded!\n");
+}
 
 static void
 _on_destroy(Ecore_Evas *ee __UNUSED__)
@@ -74,8 +87,8 @@ _on_keydown(void        *data __UNUSED__,
      {
         int stride = evas_object_image_stride_get(d.noise_img);
 
-        fprintf(stdout,"Image has row stride value of %d, which accounts"
-                " for %d pixels\n", stride, stride / 4);
+        fprintf(stdout, "Image has row stride value of %d, which accounts"
+                        " for %d pixels\n", stride, stride / 4);
 
         return;
      }
@@ -90,6 +103,18 @@ _on_keydown(void        *data __UNUSED__,
         evas_object_image_source_set(d.proxy_img, source);
 
         fprintf(stdout, "Proxy image's source changed\n");
+
+        return;
+     }
+
+   if (strcmp(ev->keyname, "a") == 0) /* save noise image to disk */
+     {
+        if (!evas_object_image_save(d.noise_img, file_path, NULL, quality_str))
+          fprintf(stderr, "Cannot save image to '%s' (flags '%s')\n",
+                  file_path, quality_str);
+        else
+          fprintf(stdout, "Image saved to '%s' (flags '%s'), check it out with "
+                          "an image viewer\n", file_path, quality_str);
 
         return;
      }
@@ -130,6 +155,11 @@ main(void)
      d.bg, EVAS_CALLBACK_KEY_DOWN, _on_keydown, NULL);
 
    d.logo = evas_object_image_filled_add(d.evas);
+
+   evas_object_event_callback_add(
+       d.logo, EVAS_CALLBACK_IMAGE_PRELOADED, _on_preloaded, NULL);
+   evas_object_image_preload(d.logo, EINA_TRUE);
+
    evas_object_image_file_set(d.logo, img_path, NULL);
    evas_object_image_fill_set(d.logo, 0, 0, WIDTH / 2, HEIGHT / 2);
    evas_object_resize(d.logo, WIDTH / 2, HEIGHT / 2);
@@ -143,13 +173,11 @@ main(void)
    evas_object_image_size_set(d.noise_img, WIDTH / 4, HEIGHT / 4);
    evas_object_image_data_set(d.noise_img, pixels);
    evas_object_image_filled_set(d.noise_img, EINA_TRUE);
-   evas_object_move(d.noise_img, (WIDTH * 3)/ 4, 0);
+   evas_object_move(d.noise_img, (WIDTH * 3) / 4, 0);
    evas_object_resize(d.noise_img, WIDTH / 4, HEIGHT / 4);
    evas_object_show(d.noise_img);
    fprintf(stdout, "Creating noise image with size %d, %d\n",
            WIDTH / 4, HEIGHT / 4);
-
-   /* todo: option to save noise image to /tmp dir */
 
    d.proxy_img = evas_object_image_filled_add(d.evas);
    evas_object_image_source_set(d.proxy_img, d.logo);
