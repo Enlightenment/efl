@@ -133,7 +133,7 @@ test_weather(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_inf
 
    hv = elm_hoversel_add(win);
    elm_hoversel_hover_parent_set(hv, win);
-   elm_hoversel_label_set(hv, "data source");
+   elm_object_text_set(hv, "data source");
    evas_object_size_hint_weight_set(hv, 0.0, 0.0);
    evas_object_size_hint_align_set(hv, 0.5, 0.5);
    elm_box_pack_end(bx0, hv);

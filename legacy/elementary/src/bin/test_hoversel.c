@@ -25,7 +25,7 @@ test_hoversel(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
 
    bt = elm_hoversel_add(win);
    elm_hoversel_hover_parent_set(bt, win);
-   elm_hoversel_label_set(bt, "Labels");
+   elm_object_text_set(bt, "Labels");
    elm_hoversel_item_add(bt, "Item 1", NULL, ELM_ICON_NONE, NULL, NULL);
    elm_hoversel_item_add(bt, "Item 2", NULL, ELM_ICON_NONE, NULL, NULL);
    elm_hoversel_item_add(bt, "Item 3", NULL, ELM_ICON_NONE, NULL, NULL);
@@ -37,7 +37,7 @@ test_hoversel(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
 
    bt = elm_hoversel_add(win);
    elm_hoversel_hover_parent_set(bt, win);
-   elm_hoversel_label_set(bt, "Some Icons");
+   elm_object_text_set(bt, "Some Icons");
    elm_hoversel_item_add(bt, "Item 1", NULL, ELM_ICON_NONE, NULL, NULL);
    elm_hoversel_item_add(bt, "Item 2", NULL, ELM_ICON_NONE, NULL, NULL);
    elm_hoversel_item_add(bt, "Item 3", "home", ELM_ICON_STANDARD, NULL, NULL);
@@ -49,7 +49,7 @@ test_hoversel(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
 
    bt = elm_hoversel_add(win);
    elm_hoversel_hover_parent_set(bt, win);
-   elm_hoversel_label_set(bt, "All Icons");
+   elm_object_text_set(bt, "All Icons");
    elm_hoversel_item_add(bt, "Item 1", "apps", ELM_ICON_STANDARD, NULL, NULL);
    elm_hoversel_item_add(bt, "Item 2", "arrow_down", ELM_ICON_STANDARD, NULL, NULL);
    elm_hoversel_item_add(bt, "Item 3", "home", ELM_ICON_STANDARD, NULL, NULL);
@@ -61,7 +61,7 @@ test_hoversel(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
 
    bt = elm_hoversel_add(win);
    elm_hoversel_hover_parent_set(bt, win);
-   elm_hoversel_label_set(bt, "All Icons");
+   elm_object_text_set(bt, "All Icons");
    elm_hoversel_item_add(bt, "Item 1", "apps", ELM_ICON_STANDARD, NULL, NULL);
    snprintf(buf, sizeof(buf), "%s/images/sky_02.jpg", PACKAGE_DATA_DIR);
    elm_hoversel_item_add(bt, "Item 2", buf, ELM_ICON_FILE, NULL, NULL);
@@ -74,7 +74,7 @@ test_hoversel(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
 
    bt = elm_hoversel_add(win);
    elm_hoversel_hover_parent_set(bt, win);
-   elm_hoversel_label_set(bt, "Disabled Hoversel");
+   elm_object_text_set(bt, "Disabled Hoversel");
    elm_hoversel_item_add(bt, "Item 1", "apps", ELM_ICON_STANDARD, NULL, NULL);
    elm_hoversel_item_add(bt, "Item 2", "close", ELM_ICON_STANDARD, NULL, NULL);
    elm_object_disabled_set(bt, 1);
@@ -85,7 +85,7 @@ test_hoversel(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
 
    bt = elm_hoversel_add(win);
    elm_hoversel_hover_parent_set(bt, win);
-   elm_hoversel_label_set(bt, "Icon + Label");
+   elm_object_text_set(bt, "Icon + Label");
 
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/sky_03.jpg", PACKAGE_DATA_DIR);

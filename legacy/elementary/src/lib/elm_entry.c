@@ -1090,7 +1090,7 @@ _menu_press(Evas_Object *obj)
           elm_hoversel_horizontal_set(wd->hoversel, EINA_TRUE);
         elm_object_style_set(wd->hoversel, "entry");
         elm_widget_sub_object_add(obj, wd->hoversel);
-        elm_hoversel_label_set(wd->hoversel, "Text");
+        elm_object_text_set(wd->hoversel, "Text");
         top = elm_widget_top_get(obj);
         if (top) elm_hoversel_hover_parent_set(wd->hoversel, top);
         evas_object_smart_callback_add(wd->hoversel, "dismissed", _dismissed, obj);
