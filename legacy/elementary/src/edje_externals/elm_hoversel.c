@@ -19,7 +19,7 @@ external_hoversel_state_set(void *data __UNUSED__, Evas_Object *obj, const void 
    else return;
 
    if (p->label)
-     elm_hoversel_label_set(obj, p->label);
+     elm_object_text_set(obj, p->label);
    if (p->icon)
      elm_hoversel_icon_set(obj, p->icon);
    if (p->horizontal_exists)
@@ -33,7 +33,7 @@ external_hoversel_param_set(void *data __UNUSED__, Evas_Object *obj, const Edje_
      {
 	if (param->type == EDJE_EXTERNAL_PARAM_TYPE_STRING)
 	  {
-	     elm_hoversel_label_set(obj, param->s);
+	     elm_object_text_set(obj, param->s);
 	     return EINA_TRUE;
 	  }
      }
@@ -69,7 +69,7 @@ external_hoversel_param_get(void *data __UNUSED__, const Evas_Object *obj, Edje_
      {
 	if (param->type == EDJE_EXTERNAL_PARAM_TYPE_STRING)
 	  {
-	     param->s = elm_hoversel_label_get(obj);
+	     param->s = elm_object_text_get(obj);
 	     return EINA_TRUE;
 	  }
      }
