@@ -65,6 +65,10 @@ pkglib_PROGRAMS += evas_stacking
 evas_stacking_SOURCES = evas-stacking.c
 evas_stacking_LDADD = $(top_builddir)/src/lib/libevas.la @ECORE_EVAS_LIBS@
 
+pkglib_PROGRAMS += evas_images2
+evas_images2_SOURCES = evas-images2.c
+evas_images2_LDADD = $(top_builddir)/src/lib/libevas.la @ECORE_EVAS_LIBS@
+
 #the ones using ecore_evas and edje follow
 AM_CPPFLAGS += @EDJE_CFLAGS@
 

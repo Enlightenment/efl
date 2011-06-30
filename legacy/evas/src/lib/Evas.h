@@ -5746,13 +5746,13 @@ EAPI void                     evas_object_image_size_set               (Evas_Obj
 EAPI void                     evas_object_image_size_get               (const Evas_Object *obj, int *w, int *h) EINA_ARG_NONNULL(1);
 
 /**
- * Retrieves the row stride of the given image object,
- *
- * The row stride is the number of units between the start of a
- * row and the start of the next row.
+ * Retrieves the row stride of the given image object.
  *
  * @param obj The given image object.
- * @return The stride of the image.
+ * @return The stride of the image (<b>in bytes</b>).
+ *
+ * The row stride is the number of bytes between the start of a row
+ * and the start of the next row for image data.
  */
 EAPI int                      evas_object_image_stride_get             (const Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
 
@@ -5884,26 +5884,32 @@ EAPI void                     evas_object_image_alpha_set              (Evas_Obj
 EAPI Eina_Bool                evas_object_image_alpha_get              (const Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
 
 /**
- * Sets whether to use of high-quality image scaling algorithm
- * of the given image object.
- *
- * When enabled, a higher quality image scaling algorithm is used when
- * scaling images to sizes other than the source image. This gives
- * better results but is more computationally expensive.
+ * Sets whether to use high-quality image scaling algorithm on the
+ * given image object.
  *
  * @param obj The given image object.
  * @param smooth_scale Whether to use smooth scale or not.
+ *
+ * When enabled, a higher quality image scaling algorithm is used when
+ * scaling images to sizes other than the source image's original
+ * one. This gives better results but is more computationally
+ * expensive.
+ *
+ * @note Image objects get created originally with smooth scaling @b
+ * on.
+ *
+ * @see evas_object_image_smooth_scale_get()
  */
 EAPI void                     evas_object_image_smooth_scale_set       (Evas_Object *obj, Eina_Bool smooth_scale) EINA_ARG_NONNULL(1);
 
 /**
- * Retrieves whether the given image object is using use a
- * high-quality image scaling algorithm.
- *
- * See @ref evas_object_image_smooth_scale_set for more details.
+ * Retrieves whether the given image object is using high-quality
+ * image scaling algorithm.
  *
  * @param obj The given image object.
  * @return Whether smooth scale is being used.
+ *
+ * See @ref evas_object_image_smooth_scale_set() for more details.
  */
 EAPI Eina_Bool                evas_object_image_smooth_scale_get       (const Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
 
@@ -6179,39 +6185,49 @@ EAPI Evas_Image_Content_Hint  evas_object_image_content_hint_get       (const Ev
 EAPI void                     evas_object_image_alpha_mask_set         (Evas_Object *obj, Eina_Bool ismask) EINA_ARG_NONNULL(1);
 
 /**
- * Set the source object on a proxy object.
+ * Set the source object on an image object to used as a @b proxy.
  *
- * The source must be another object.  The proxy will have the same base
- * appearance of the source object.  Obviously other effects may be applied to
- * the proxy, such as a map to create a reflection of the original object.
+ * @param obj Proxy (image) object.
+ * @param src Source object to use for the proxy.
+ * @return @c EINA_TRUE on success, @c EINA_FALSE on error.
  *
- * Any existing source object will be removed.  Setting the src to NULL clears
- * the proxy object.
+ * If an image object is set to behave as a @b proxy, it will mirror
+ * the rendering contents of a given @b source object in its drawing
+ * region, without affecting that source in any way. The source must
+ * be another valid Evas object. Other effects may be applied to the
+ * proxy, such as a map (see evas_object_map_set()) to create a
+ * reflection of the original object (for example).
  *
- * You cannot set a proxy on a proxy.
+ * Any existing source object on @p obj will be removed after this
+ * call. Setting @p src to @c NULL clears the proxy object (not in
+ * "proxy state" anymore).
  *
- * @param obj Proxy object.
- * @param src Source of the proxy.
- * @return EINA_TRUE on success, EINA_FALSE on error.
+ * @warning You cannot set a proxy as another proxy's source.
+ *
+ * @see evas_object_image_source_get()
+ * @see evas_object_image_source_unset()
  */
 EAPI Eina_Bool                evas_object_image_source_set             (Evas_Object *obj, Evas_Object *src) EINA_ARG_NONNULL(1);
 
 /**
- * Get the current source object of an image.
+ * Get the current source object of an image object.
  *
  * @param obj Image object
- * @return Source object, or @c NULL on error.
+ * @return Source object (if any), or @c NULL, if not in "proxy mode"
+ * (or on errors).
+ *
+ * @see evas_object_image_source_set() for more details
  */
 EAPI Evas_Object             *evas_object_image_source_get             (Evas_Object *obj) EINA_ARG_NONNULL(1);
 
 /**
- * Clear the source on a proxy image.
- *
- * This is equivalent to calling evas_object_image_source_set with a NULL
- * source.
+ * Clear the source object on a proxy image object.
  *
  * @param obj Image object to clear source of.
- * @return EINA_TRUE on success, EINA_FALSE on error.
+ * @return @c EINA_TRUE on success, @c EINA_FALSE on error.
+ *
+ * This is equivalent to calling evas_object_image_source_set() with a
+ * @c NULL source.
  */
 EAPI Eina_Bool                evas_object_image_source_unset           (Evas_Object *obj) EINA_ARG_NONNULL(1);
 

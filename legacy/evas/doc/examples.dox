@@ -9,6 +9,8 @@
  *
  * @ref Example_Evas_Images
  *
+ * @ref Example_Evas_Images_2
+ *
  * @ref Example_Evas_Events
  *
  * @ref Example_Evas_Object_Manipulation
@@ -74,13 +76,13 @@
  * one or other ways of setting an image object's viewport with regard
  * to its image source.
  *
- * There are three commands which deal with the border image. This red
+ * There are four commands which deal with the border image. This red
  * frame is there to illustrate <b>image borders</b>. The image source
- * for the border is a solid red rectangle, with a transparent area in
- * its middle. See how we use it to get a 3 pixel wide frame with
- * <code>evas_object_image_border_set(d.border, 3, 3, 3, 3)</code>. To
- * finish the effect of showing it as a border, we issue
- * <code>evas_object_image_border_center_fill_set(d.border,
+ * for the border is a solid red rectangle, with a transparent @b
+ * rectangular area in its middle. See how we use it to get a 3 pixel
+ * wide frame with <code>evas_object_image_border_set(d.border, 3, 3,
+ * 3, 3)</code>. To finish the effect of showing it as a border, we
+ * issue <code>evas_object_image_border_center_fill_set(d.border,
  * EVAS_BORDER_FILL_NONE)</code>.
  *
  * Use 't' to change the border's thickness. 'b' will change the
@@ -89,10 +91,53 @@
  * case) or solid (the transparent area gets filled). Finally, 'c'
  * will change the border's scaling factor.
  *
+ * While you have the border in 'blending mode', test the command 'm':
+ * it will set whether to use or not smooth scaling on the border's
+ * source image. Since the image is small originallly (30 x 30), we're
+ * obviously up-scaling it (except the border pixels, do you
+ * remember?). With this last switch, you'll either see the
+ * transparent shape in the middle flat (no smoothing) or blurry
+ * (smoothed).
+ *
  * The full example follows.
  *
  * @include evas-images.c
  * @example evas-images.c
+ */
+
+/**
+ * @page Example_Evas_Images_2 Some more image object functions examples (2nd block)
+ * @dontinclude evas-images2.c
+ *
+ * In this example, we have three images on the canvas, but one of
+ * them is special -- we're using it as a <b>proxy image
+ * object</b>. It will mirror the contents of the other two images
+ * (which are the ones on the top of the canvas), one at a time:
+ * @skip d.proxy_img = evas_object_image_filled_add(d.evas);
+ * @until evas_object_show(d.proxy_img);
+ * As in other examples, we have a command line interface on it.
+ * @dontinclude evas-images2.c
+ * @skip commands
+ * @until ;
+ * The 'p' one will change the source of the proxy image to one of the
+ * other two, as seem above.
+ * @skip if (strcmp(ev->keyname, "p") == 0)
+ * @until }
+ * Note the top right image, the smaller one:
+ * @dontinclude evas-images2.c
+ * @skip noise_img =
+ * @until show
+ * There's a last command to print it's @b stride value. Since its
+ * created with one quarter of the canvas's original width
+ * @dontinclude evas-images2.c
+ * @skip define WIDTH
+ * @until define HEIGHT
+ * you can check this value.
+ *
+ * The full example follows.
+ *
+ * @include evas-images2.c
+ * @example evas-images2.c
  */
 
 /**

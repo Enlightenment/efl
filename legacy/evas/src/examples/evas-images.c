@@ -1,15 +1,13 @@
 /**
- * Simple Evas example illustrating some image objects functions and  evas_load_error_str()'s usage.
+ * Simple Evas example illustrating some image objects functions
  *
  * You'll need at least one engine built for it (excluding the buffer
  * one) and the png image loader also built. See stdout/stderr for
  * output.
  *
  * @verbatim
- * gcc -o evas-load-error-str evas-load-error-str.c `pkg-config --libs \
- * --cflags ecore-evas`
+ * gcc -o evas-images evas-images.c `pkg-config --libs --cflags ecore-evas`
  * @endverbatim
- *
  */
 
 #ifdef HAVE_CONFIG_H
@@ -29,42 +27,63 @@ static const char *border_img_path = PACKAGE_EXAMPLES_DIR "/red.png";
 static const char *valid_path = PACKAGE_EXAMPLES_DIR "/enlightenment.png";
 static const char *bogus_path = "/tmp/non-existent-220986.png";
 static const char *commands = \
-    "commands are:\n"
-    "\tx - change image's x fill coordinate\n"
-    "\ty - change image's y fill coordinate\n"
-    "\tw - change image's w fill size\n"
-    "\te - change image's h fill size\n"
-    "\tf - toggle image filled property (overrides fill)\n"
-    "\ta - toggle image's alpha channel usage\n"
-    "\tt - change border's thickness\n"
-    "\tb - change border's center region aspect\n"
-    "\tc - change border's scaling factor\n"
-    "\ts - print image's fill property status\n"
-    "\th - print help\n";
+  "commands are:\n"
+  "\tx - change image's x fill coordinate\n"
+  "\ty - change image's y fill coordinate\n"
+  "\tw - change image's w fill size\n"
+  "\te - change image's h fill size\n"
+  "\tf - toggle image filled property (overrides fill)\n"
+  "\ta - toggle image's alpha channel usage\n"
+  "\tm - toggle border's smooth scaling\n"
+  "\tt - change border's thickness\n"
+  "\tb - change border's center region aspect\n"
+  "\tc - change border's scaling factor\n"
+  "\ts - print image's fill property status\n"
+  "\th - print help\n";
 
 struct test_data
 {
-   Evas *evas;
-   Ecore_Evas *ee;
+   Ecore_Evas  *ee;
+   Evas        *evas;
    Evas_Object *img1, *img2, *bg, *border;
 };
 
 static struct test_data d = {0};
 
-static const char*
+static void
+_on_destroy(Ecore_Evas *ee __UNUSED__)
+{
+   ecore_main_loop_quit();
+}
+
+/* here just to keep our example's window size and background image's
+ * size in synchrony */
+static void
+_canvas_resize_cb(Ecore_Evas *ee)
+{
+   int w, h;
+
+   ecore_evas_geometry_get(ee, NULL, NULL, &w, &h);
+   evas_object_resize(d.bg, w, h);
+}
+
+static const char *
 _border_fill_mode_to_str(Evas_Border_Fill_Mode mode)
 {
-    switch (mode)
-        {
-        case EVAS_BORDER_FILL_NONE:
-            return "none";
-        case EVAS_BORDER_FILL_DEFAULT:
-            return "default";
-        case EVAS_BORDER_FILL_SOLID:
-            return "solid";
-        default:
-            return "invalid";
-        }
+   switch (mode)
+     {
+      case EVAS_BORDER_FILL_NONE:
+        return "none";
+
+      case EVAS_BORDER_FILL_DEFAULT:
+        return "default";
+
+      case EVAS_BORDER_FILL_SOLID:
+        return "solid";
+
+      default:
+        return "invalid";
+     }
 }
 
 static void
@@ -81,18 +100,30 @@ _on_keydown(void        *data __UNUSED__,
         return;
      }
 
+   if (strcmp(ev->keyname, "m") == 0) /* toggle border image's smooth scaling */
+     {
+        Eina_Bool smooth_scale = evas_object_image_smooth_scale_get(d.border);
+
+        evas_object_image_smooth_scale_set(d.border, !smooth_scale);
+
+        fprintf(stdout, "Image's border is now %s smooth scaling\n",
+                smooth_scale ? "without" : "with");
+
+        return;
+     }
+
    if (strcmp(ev->keyname, "t") == 0) /* change border's thickness */
      {
-         int l, r, t, b;
+        int l, r, t, b;
 
-         evas_object_image_border_get(d.border, &l, &r, &t, &b);
+        evas_object_image_border_get(d.border, &l, &r, &t, &b);
 
-         l = (l + 3) % 9;
-         r = (r + 3) % 9;
-         t = (t + 3) % 9;
-         b = (b + 3) % 9;
+        l = (l + 3) % 9;
+        r = (r + 3) % 9;
+        t = (t + 3) % 9;
+        b = (b + 3) % 9;
 
-         evas_object_image_border_set(d.border, l, r, t, b);
+        evas_object_image_border_set(d.border, l, r, t, b);
 
         fprintf(stdout, "Image's border thickness is now %d\n", l);
 
@@ -117,7 +148,7 @@ _on_keydown(void        *data __UNUSED__,
                                        * region's aspect */
      {
         Eina_Bool fill = \
-            evas_object_image_border_center_fill_get(d.border);
+          evas_object_image_border_center_fill_get(d.border);
 
         fill = (fill + 1) % 3;
 
@@ -234,6 +265,8 @@ main(void)
    if (!d.ee)
      goto error;
 
+   ecore_evas_callback_destroy_set(d.ee, _on_destroy);
+   ecore_evas_callback_resize_set(d.ee, _canvas_resize_cb);
    ecore_evas_show(d.ee);
 
    /* the canvas pointer, de facto */
