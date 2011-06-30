@@ -28,7 +28,6 @@ struct _Elm_Transit
    Ecore_Animator *animator;
    Eina_Inlist *effect_list;
    Eina_List *objs;
-   Eina_Hash *objs_data_hash;
    Elm_Transit *prev_chain_transit;
    Eina_List *next_chain_transits;
    Elm_Transit_Tween_Mode tween_mode;
@@ -85,9 +84,9 @@ typedef struct _Elm_Transit_Effect_Module Elm_Transit_Effect_Module;
 typedef struct _Elm_Obj_Data Elm_Obj_Data;
 typedef struct _Elm_Obj_State Elm_Obj_State;
 
+static void _elm_transit_obj_data_update(Elm_Transit *transit, Evas_Object *obj);
+static void _elm_transit_obj_data_recover(Elm_Transit *transit, Evas_Object *obj);
 static void _elm_transit_obj_states_save(Evas_Object *obj, Elm_Obj_Data *obj_data);
-static Eina_Bool _hash_foreach_pass_events_set(const Eina_Hash *hash __UNUSED__, const void *key, void *data __UNUSED__, void *fdata);
-static Eina_Bool _hash_foreach_obj_states_save(const Eina_Hash *hash __UNUSED__, const void *key, void *data, void *fdata __UNUSED__);
 static void _elm_transit_object_remove_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__);
 static void _obj_damage_area_set(Evas_Object *obj);
 static void _elm_transit_object_remove(Elm_Transit *transit, Evas_Object *obj);
@@ -98,14 +97,40 @@ static void _chain_transits_go(Elm_Transit *transit);
 static void _transit_animate_op(Elm_Transit *transit, double progress);
 static Eina_Bool _animator_animate_cb(void *data);
 
+static char *_transit_key= "_elm_transit_key";
+
+static void
+_elm_transit_obj_data_update(Elm_Transit *transit, Evas_Object *obj)
+{
+   Elm_Obj_Data *obj_data = evas_object_data_get(obj, _transit_key);
+
+   if (!obj_data)
+     obj_data = ELM_NEW(Elm_Obj_Data);
+
+   obj_data->pass_events = evas_object_pass_events_get(obj);
+
+   if ((!transit->state_keep) && (obj_data->state))
+     {
+        free(obj_data->state);
+        obj_data->state = NULL;
+     }
+   else
+     {
+       _elm_transit_obj_states_save(obj, obj_data);
+     }
+
+   evas_object_data_set(obj, _transit_key, obj_data);
+}
+
 static void
 _elm_transit_obj_states_save(Evas_Object *obj, Elm_Obj_Data *obj_data)
 {
-   Elm_Obj_State *state;
+   Elm_Obj_State *state = obj_data->state;
 
-   if (obj_data->state) return;
-   state = calloc(1, sizeof(Elm_Obj_State));
+   if (!state)
+     state = calloc(1, sizeof(Elm_Obj_State));
    if (!state) return;
+
    evas_object_geometry_get(obj, &state->x, &state->y, &state->w, &state->h);
    evas_object_color_get(obj, &state->r, &state->g, &state->b, &state->a);
    state->visible = evas_object_visible_get(obj);
@@ -113,21 +138,6 @@ _elm_transit_obj_states_save(Evas_Object *obj, Elm_Obj_Data *obj_data)
    if (evas_object_map_get(obj))
      state->map = evas_map_dup(evas_object_map_get(obj));
    obj_data->state = state;
-}
-
-static Eina_Bool
-_hash_foreach_pass_events_set(const Eina_Hash *hash __UNUSED__, const void *key, void *data __UNUSED__, void *fdata)
-{
-   Elm_Transit *transit = fdata;
-   evas_object_pass_events_set((Evas_Object*) key, transit->event_enabled);
-   return EINA_TRUE;
-}
-
-static Eina_Bool
-_hash_foreach_obj_states_save(const Eina_Hash *hash __UNUSED__, const void *key, void *data, void *fdata __UNUSED__)
-{
-   _elm_transit_obj_states_save((Evas_Object *) key, (Elm_Obj_Data *) data);
-   return EINA_TRUE;
 }
 
 static void
@@ -149,18 +159,14 @@ _remove_obj_from_list(Elm_Transit *transit, Evas_Object *obj)
 static void
 _elm_transit_object_remove_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
-   Elm_Transit *transit;
-   Elm_Obj_Data *obj_data;
-   Eina_List *list;
-
-   transit = data;
-   list = eina_list_data_find_list(transit->objs, obj);
-   obj_data = eina_hash_find(transit->objs_data_hash, list);
-   if (!obj_data) return;
-   eina_hash_del_by_key(transit->objs_data_hash, list);
-   if (obj_data->state)
-     free(obj_data->state);
-   free(obj_data);
+   Elm_Transit *transit = data;
+   Elm_Obj_Data *obj_data = evas_object_data_get(obj, _transit_key);
+   if (obj_data)
+     {
+        if (obj_data->state)
+          free(obj_data->state);
+        free(obj_data);
+     }
    _remove_obj_from_list(transit, obj);
    if (!transit->objs) elm_transit_del(transit);
 }
@@ -204,21 +210,14 @@ _obj_damage_area_set(Evas_Object *obj)
 }
 
 static void
-_elm_transit_object_remove(Elm_Transit *transit, Evas_Object *obj)
+_elm_transit_obj_data_recover(Elm_Transit *transit, Evas_Object *obj)
 {
    Elm_Obj_Data *obj_data;
    Elm_Obj_State *state;
-   Eina_List *list;
 
-   list = eina_list_data_find_list(transit->objs, obj);
-   obj_data = eina_hash_find(transit->objs_data_hash, list);
-   if (!obj_data)
-     {
-        _remove_obj_from_list(transit, obj);
-        return;
-     }
-   eina_hash_del_by_key(transit->objs_data_hash, list);
-   _remove_obj_from_list(transit, obj);
+   obj_data = evas_object_data_get(obj, _transit_key);
+   if (!obj_data) return;
+   evas_object_data_del(obj, _transit_key);
    evas_object_pass_events_set(obj, obj_data->pass_events);
    state = obj_data->state;
    if (state)
@@ -247,7 +246,13 @@ _elm_transit_object_remove(Elm_Transit *transit, Evas_Object *obj)
         free(state);
      }
    free(obj_data);
+}
 
+static void
+_elm_transit_object_remove(Elm_Transit *transit, Evas_Object *obj)
+{
+   _remove_obj_from_list(transit, obj);
+   _elm_transit_obj_data_recover(transit, obj);
 }
 
 static void
@@ -308,8 +313,6 @@ _elm_transit_del(Elm_Transit *transit)
    if (transit->del_data.func)
      transit->del_data.func(transit->del_data.arg, transit);
 
-   eina_hash_free(transit->objs_data_hash);
-
    EINA_MAGIC_SET(transit, EINA_MAGIC_NONE);
    free(transit);
 }
@@ -319,6 +322,10 @@ _chain_transits_go(Elm_Transit *transit)
 {
    Eina_List *elist, *elist_next;
    Elm_Transit *chain_transit;
+   Evas_Object *obj;
+
+   EINA_LIST_FOREACH(transit->objs, elist, obj)
+    _elm_transit_obj_data_recover(transit, obj);
 
    EINA_LIST_FOREACH_SAFE(transit->next_chain_transits, elist, elist_next, chain_transit)
      elm_transit_go(chain_transit);
@@ -417,8 +424,6 @@ elm_transit_add(void)
 
    elm_transit_tween_mode_set(transit, ELM_TRANSIT_TWEEN_MODE_LINEAR);
 
-   transit->objs_data_hash = eina_hash_int32_new(NULL);
-
    return transit;
 }
 
@@ -482,25 +487,21 @@ elm_transit_object_add(Elm_Transit *transit, Evas_Object *obj)
 {
    ELM_TRANSIT_CHECK_OR_RETURN(transit);
    EINA_SAFETY_ON_NULL_RETURN(obj);
-   Elm_Obj_Data *obj_data;
-   Eina_List * list;
 
-//TODO: Check the remove case of the same objects in this transit.
-   obj_data = ELM_NEW(Elm_Obj_Data);
-   obj_data->pass_events = evas_object_pass_events_get(obj);
-   if (!transit->event_enabled)
-     evas_object_pass_events_set(obj, EINA_TRUE);
+   if (transit->animator)
+     {
+        if (!evas_object_data_get(obj, _transit_key))
+          {
+             _elm_transit_obj_data_update(transit, obj);
+             evas_object_pass_events_set(obj, EINA_TRUE);
+          }
+     }
 
    evas_object_event_callback_add(obj, EVAS_CALLBACK_DEL,
                                   _elm_transit_object_remove_cb,
                                   transit);
 
    transit->objs = eina_list_append(transit->objs, obj);
-   list = eina_list_last(transit->objs);
-   eina_hash_add(transit->objs_data_hash, list, obj_data);
-
-   if (!transit->state_keep)
-     _elm_transit_obj_states_save(obj, obj_data);
 }
 
 EAPI void
@@ -525,9 +526,15 @@ elm_transit_event_enabled_set(Elm_Transit *transit, Eina_Bool enabled)
 {
    ELM_TRANSIT_CHECK_OR_RETURN(transit);
 
+   Eina_List *list;
+   Evas_Object *obj;
+
    if (transit->event_enabled == enabled) return;
    transit->event_enabled = !!enabled;
-   eina_hash_foreach(transit->objs_data_hash, _hash_foreach_pass_events_set, transit);
+   if (!transit->animator) return;
+
+   EINA_LIST_FOREACH(transit->objs, list, obj)
+     evas_object_pass_events_set(obj, enabled);
 }
 
 EAPI Eina_Bool
@@ -608,8 +615,20 @@ elm_transit_go(Elm_Transit *transit)
 {
    ELM_TRANSIT_CHECK_OR_RETURN(transit);
 
+   Eina_List *elist;
+   Evas_Object *obj;
+
    if (transit->animator)
      ecore_animator_del(transit->animator);
+
+   EINA_LIST_FOREACH(transit->objs, elist, obj)
+     _elm_transit_obj_data_update(transit, obj);
+
+   if (!transit->event_enabled)
+     {
+        EINA_LIST_FOREACH(transit->objs, elist, obj)
+          evas_object_pass_events_set(obj, EINA_TRUE);
+     }
 
    transit->time.paused = 0;
    transit->time.delayed = 0;
@@ -656,6 +675,7 @@ EAPI double
 elm_transit_progress_value_get(const Elm_Transit *transit)
 {
    ELM_TRANSIT_CHECK_OR_RETURN(transit, 0);
+
    return transit->progress;
 }
 
@@ -663,11 +683,10 @@ EAPI void
 elm_transit_objects_final_state_keep_set(Elm_Transit *transit, Eina_Bool state_keep)
 {
    ELM_TRANSIT_CHECK_OR_RETURN(transit);
+
    if (transit->state_keep == state_keep) return;
    if (transit->animator) return;
    transit->state_keep = !!state_keep;
-   if (state_keep) return;
-   eina_hash_foreach(transit->objs_data_hash, _hash_foreach_obj_states_save, NULL);
 }
 
 EAPI Eina_Bool
