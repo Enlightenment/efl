@@ -379,6 +379,42 @@ cb_stor_chg(const char *device, Eeze_Udev_Event ev, void *data __UNUSED__, Eeze_
      }
 }
 
+static void
+es_exit(int sig)
+{
+   const char *tmp;
+   char buf[1024];
+   struct stat st;
+   ecore_con_server_del(svr);
+
+   tmp = getenv("TMPDIR");
+   if (!tmp) tmp = "/tmp";
+
+   snprintf(buf, sizeof(buf), "%s/.ecore_service|eeze_scanner|0", tmp);
+   if (!stat(buf, &st))
+     unlink(buf);
+   exit(sig);   
+}
+
+static void
+sigs_setup(void *d __UNUSED__)
+{
+   sigset_t sigs = {{0}};
+   struct sigaction s;
+
+   sigfillset(&sigs);
+   sigdelset(&sigs, SIGSEGV);
+   sigdelset(&sigs, SIGTERM);
+   sigdelset(&sigs, SIGINT);
+   sigdelset(&sigs, SIGQUIT);
+
+   s.sa_handler = es_exit;
+   s.sa_flags = 0;
+   sigaction(SIGTERM, &s, NULL);
+   sigaction(SIGSEGV, &s, NULL);
+   sigaction(SIGINT, &s, NULL);
+}
+
 int
 main(void)
 {
@@ -430,7 +466,11 @@ main(void)
      }
 
    storage_setup();
+   /* have to override ecore's signal handlers to ensure that socket file is removed */
+   ecore_job_add(sigs_setup, NULL);
    ecore_main_loop_begin();
+
+   ecore_con_server_del(svr);
    return 0;
 error:
    ERR("Could not start up!");
