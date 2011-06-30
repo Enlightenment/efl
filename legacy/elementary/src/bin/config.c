@@ -1236,7 +1236,7 @@ _sample_theme_new(Evas_Object *win)
    evas_object_show(sp);
 
    sl = elm_slider_add(win);
-   elm_slider_label_set(sl, "Slider");
+   elm_object_text_set(sl, "Slider");
    elm_slider_span_size_set(sl, 120);
    elm_slider_min_max_set(sl, 1, 10);
    elm_slider_value_set(sl, 4);

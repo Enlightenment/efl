@@ -259,7 +259,7 @@ test_3d(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __U
    evas_object_show(bx);
 
    sl = elm_slider_add(win);
-   elm_slider_label_set(sl, "Rot X");
+   elm_object_text_set(sl, "Rot X");
    elm_slider_unit_format_set(sl, "%1.0f units");
    elm_slider_span_size_set(sl, 360);
    elm_slider_min_max_set(sl, 0, 360);
@@ -270,7 +270,7 @@ test_3d(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __U
    evas_object_show(sl);
 
    sl = elm_slider_add(win);
-   elm_slider_label_set(sl, "Rot Y");
+   elm_object_text_set(sl, "Rot Y");
    elm_slider_unit_format_set(sl, "%1.0f units");
    elm_slider_span_size_set(sl, 360);
    elm_slider_min_max_set(sl, 0, 360);
@@ -281,7 +281,7 @@ test_3d(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __U
    evas_object_show(sl);
 
    sl = elm_slider_add(win);
-   elm_slider_label_set(sl, "Rot Z");
+   elm_object_text_set(sl, "Rot Z");
    elm_slider_unit_format_set(sl, "%1.0f units");
    elm_slider_span_size_set(sl, 360);
    elm_slider_min_max_set(sl, 0, 360);
@@ -292,7 +292,7 @@ test_3d(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __U
    evas_object_show(sl);
 
    sl = elm_slider_add(win);
-   elm_slider_label_set(sl, "CX Off");
+   elm_object_text_set(sl, "CX Off");
    elm_slider_unit_format_set(sl, "%1.0f units");
    elm_slider_span_size_set(sl, 360);
    elm_slider_min_max_set(sl, -320, 320);
@@ -304,7 +304,7 @@ test_3d(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __U
    evas_object_show(sl);
 
    sl = elm_slider_add(win);
-   elm_slider_label_set(sl, "CY Off");
+   elm_object_text_set(sl, "CY Off");
    elm_slider_unit_format_set(sl, "%1.0f units");
    elm_slider_span_size_set(sl, 360);
    elm_slider_min_max_set(sl, -320, 320);
@@ -316,7 +316,7 @@ test_3d(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __U
    evas_object_show(sl);
 
    sl = elm_slider_add(win);
-   elm_slider_label_set(sl, "Foc");
+   elm_object_text_set(sl, "Foc");
    elm_slider_unit_format_set(sl, "%1.0f units");
    elm_slider_span_size_set(sl, 360);
    elm_slider_min_max_set(sl, 1, 2000);
@@ -328,7 +328,7 @@ test_3d(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __U
    evas_object_show(sl);
 
    sl = elm_slider_add(win);
-   elm_slider_label_set(sl, "Z0");
+   elm_object_text_set(sl, "Z0");
    elm_slider_unit_format_set(sl, "%1.0f units");
    elm_slider_span_size_set(sl, 360);
    elm_slider_min_max_set(sl, -2000, 2000);

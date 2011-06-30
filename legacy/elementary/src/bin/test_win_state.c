@@ -166,7 +166,7 @@ test_win_state(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
    evas_object_size_hint_fill_set(bx2, EVAS_HINT_FILL, EVAS_HINT_FILL);
 
    sl = elm_slider_add(win);
-   elm_slider_label_set(sl, "Test");
+   elm_object_text_set(sl, "Test");
    elm_slider_span_size_set(sl, 100);
    evas_object_size_hint_align_set(sl, 0.5, 0.5);
    evas_object_size_hint_weight_set(sl, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -299,7 +299,7 @@ test_win_state2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_
    evas_object_size_hint_fill_set(bx2, EVAS_HINT_FILL, EVAS_HINT_FILL);
 
    sl = elm_slider_add(win);
-   elm_slider_label_set(sl, "Override Redirect");
+   elm_object_text_set(sl, "Override Redirect");
    elm_slider_span_size_set(sl, 100);
    evas_object_size_hint_align_set(sl, 0.5, 0.5);
    evas_object_size_hint_weight_set(sl, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
