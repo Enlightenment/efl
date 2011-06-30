@@ -17,7 +17,7 @@ external_button_state_set(void *data __UNUSED__, Evas_Object *obj, const void *f
    else return;
 
    if (p->label)
-     elm_button_label_set(obj, p->label);
+     elm_object_text_set(obj, p->label);
    if (p->icon)
      elm_button_icon_set(obj, p->icon);
 }
@@ -29,7 +29,7 @@ external_button_param_set(void *data __UNUSED__, Evas_Object *obj, const Edje_Ex
      {
 	if (param->type == EDJE_EXTERNAL_PARAM_TYPE_STRING)
 	  {
-	     elm_button_label_set(obj, param->s);
+	     elm_object_text_set(obj, param->s);
 	     return EINA_TRUE;
 	  }
      }
@@ -57,7 +57,7 @@ external_button_param_get(void *data __UNUSED__, const Evas_Object *obj, Edje_Ex
      {
 	if (param->type == EDJE_EXTERNAL_PARAM_TYPE_STRING)
 	  {
-	     param->s = elm_button_label_get(obj);
+	     param->s = elm_object_text_get(obj);
 	     return EINA_TRUE;
 	  }
      }
