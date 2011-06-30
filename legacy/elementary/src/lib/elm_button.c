@@ -32,10 +32,12 @@ static Eina_Bool _event_hook(Evas_Object *obj, Evas_Object *src,
 
 static const char SIG_CLICKED[] = "clicked";
 static const char SIG_REPEATED[] = "repeated";
+static const char SIG_PRESSED[] = "pressed";
 static const char SIG_UNPRESSED[] = "unpressed";
 static const Evas_Smart_Cb_Description _signals[] = {
        {SIG_CLICKED, ""},
        {SIG_REPEATED, ""},
+       {SIG_PRESSED, ""},
        {SIG_UNPRESSED, ""},
        {NULL, NULL}
 };
@@ -268,6 +270,8 @@ _signal_pressed(void *data, Evas_Object *obj __UNUSED__, const char *emission __
         else
           wd->timer = ecore_timer_add(wd->ar_threshold, _autorepeat_initial_send, data);
      }
+
+   evas_object_smart_callback_call(data, SIG_PRESSED, NULL);
 }
 
 static void
