@@ -395,6 +395,12 @@ emotion_object_file_set(Evas_Object *obj, const char *file)
         eina_stringshare_replace(&sd->file, NULL);
      }
 
+#ifdef HAVE_EIO
+   /* Only cancel the load_xattr or we will loose ref to time_seek stringshare */
+   if (sd->load_xattr) eio_file_cancel(sd->load_xattr);
+   sd->load_xattr = NULL;
+#endif
+
    return EINA_TRUE;
 }
 
@@ -1023,16 +1029,16 @@ emotion_object_vis_supported(const Evas_Object *obj, Emotion_Vis visualization)
 
 #ifdef HAVE_EIO
 static void
-_eio_load_xattr_cleanup(Smart_Data *sd)
+_eio_load_xattr_cleanup(Smart_Data *sd, Eio_File *handler)
 {
-   sd->load_xattr = NULL;
+   if (handler == sd->load_xattr) sd->load_xattr = NULL;
 
    EINA_REFCOUNT_UNREF(sd)
      _smart_data_free(sd);
 }
 
 static void
-_eio_load_xattr_done(void *data, Eio_File *handler __UNUSED__, const char *xattr_data, unsigned int xattr_size)
+_eio_load_xattr_done(void *data, Eio_File *handler, const char *xattr_data, unsigned int xattr_size)
 {
    Smart_Data *sd = data;
 
@@ -1045,15 +1051,15 @@ _eio_load_xattr_done(void *data, Eio_File *handler __UNUSED__, const char *xattr
         emotion_object_position_set(evas_object_smart_parent_get(sd->obj), ldexp((double)m, e));
      }
 
-   _eio_load_xattr_cleanup(sd);
+   _eio_load_xattr_cleanup(sd, handler);
 }
 
 static void
-_eio_load_xattr_error(void *data, Eio_File *handler __UNUSED__, int err __UNUSED__)
+_eio_load_xattr_error(void *data, Eio_File *handler, int err __UNUSED__)
 {
    Smart_Data *sd = data;
 
-   _eio_load_xattr_cleanup(sd);
+   _eio_load_xattr_cleanup(sd, handler);
 }
 #endif
 
