@@ -267,6 +267,26 @@ _parent_del(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *e
    wd->hover_parent = NULL;
 }
 
+static void
+_elm_hoversel_label_set(Evas_Object *obj, const char *item, const char *label)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (item) return;
+   if (!wd) return;
+   elm_object_text_set(wd->btn, label);
+}
+
+static const char *
+_elm_hoversel_label_get(const Evas_Object *obj, const char *item)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (item) return NULL;
+   if ((!wd) || (!wd->btn)) return NULL;
+   return elm_object_text_get(wd->btn);
+}
+
 /**
  * Add a new Hoversel object
  *
@@ -295,6 +315,8 @@ elm_hoversel_add(Evas_Object *parent)
    elm_widget_activate_hook_set(obj, _activate_hook);
    elm_widget_on_focus_hook_set(obj, _on_focus_hook, NULL);
    elm_widget_can_focus_set(obj, EINA_TRUE);
+   elm_widget_label_set_hook_set(obj, _elm_hoversel_label_set);
+   elm_widget_label_get_hook_set(obj, _elm_hoversel_label_get);
 
    wd->btn = elm_button_add(parent);
    elm_widget_mirrored_automatic_set(wd->btn, EINA_FALSE);
@@ -373,10 +395,7 @@ elm_hoversel_hover_parent_get(const Evas_Object *obj)
 EAPI void
 elm_hoversel_label_set(Evas_Object *obj, const char *label)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype);
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return;
-   elm_object_text_set(wd->btn, label);
+   _elm_hoversel_label_set(obj, NULL, label);
 }
 
 /**
@@ -390,10 +409,7 @@ elm_hoversel_label_set(Evas_Object *obj, const char *label)
 EAPI const char *
 elm_hoversel_label_get(const Evas_Object *obj)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if ((!wd) || (!wd->btn)) return NULL;
-   return elm_object_text_get(wd->btn);
+   return _elm_hoversel_label_get(obj, NULL);
 }
 
 /**
