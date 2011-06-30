@@ -269,18 +269,134 @@ EAPI Eina_Bool    emotion_object_file_set              (Evas_Object *obj, const 
  * @ingroup Emotion_Init
  */
 EAPI const char  *emotion_object_file_get              (const Evas_Object *obj);
+/**
+ * @defgroup Emotion_Play Play control functions
+ *
+ * @{
+ *
+ * @brief Set play/pause state of the media file.
+ *
+ * @param obj The emotion object whose state will be changed.
+ * @param play EINA_TRUE to play, EINA_FALSE to pause.
+ *
+ * This functions sets the currently playing status of the video. Using this
+ * function to play or pause the video doesn't alter it's current position.
+ */
 EAPI void         emotion_object_play_set              (Evas_Object *obj, Eina_Bool play);
+/**
+ * @brief Get play/pause state of the media file.
+ *
+ * @param obj The emotion object from which the state will be retrieved.
+ * @return EINA_TRUE if playing. EINA_FALSE if not playing.
+ */
 EAPI Eina_Bool    emotion_object_play_get              (const Evas_Object *obj);
+/**
+ * @brief Set the position in the media file.
+ *
+ * @param obj The emotion object whose position will be changed.
+ * @param sec The position(in seconds) to which the media file will be set.
+ *
+ * This functions sets the current position of the media file to @p sec, this
+ * only works on seekable streams. Setting the position doesn't change the
+ * playing state of the media file.
+ *
+ * @see emotion_object_seekable_get
+ */
 EAPI void         emotion_object_position_set          (Evas_Object *obj, double sec);
+/**
+ * @brief Get the position in the media file.
+ *
+ * @param obj The emotion object from which the position will be retrieved.
+ * @return The position of the media file.
+ *
+ * The position is returned as the number of seconds since the beggining of the
+ * media file.
+ */
 EAPI double       emotion_object_position_get          (const Evas_Object *obj);
+/**
+ * @brief Get whether the media file is seekable.
+ *
+ * @param obj The emotion object from which the seekable status will be
+ * retrieved.
+ * @return EINA_TRUE if the media file is seekable, EINA_FALSE otherwise.
+ */
+EAPI Eina_Bool    emotion_object_seekable_get          (const Evas_Object *obj);
+/**
+ * @brief Get the length of play for the media file.
+ *
+ * @param obj The emotion object from which the length will be retrieved.
+ * @return The length of the media file in seconds.
+ *
+ * This function returns the length of the media file in seconds.
+ *
+ * @warning This will return 0 if called before the "length_change" signal has,
+ * been emitted.
+ */
+EAPI double       emotion_object_play_length_get       (const Evas_Object *obj);
+/**
+ * @brief Gets the native aspect ratio of the media file.
+ *
+ * @param obj The emotion object from which the ratio will be retrieved.
+ * @return The aspect ration of the video.
+ *
+ * This function returns the aspect ratio of the video file being played. The
+ * aspect is width divided by height.
+ *
+ * @warning For audio files this function returns 0.
+ */
+EAPI double       emotion_object_ratio_get             (const Evas_Object *obj);
+/**
+ * @brief Set the play speed of the media file.
+ *
+ * @param obj The emotion object whose speed will be set.
+ * @param speed The speed to be set in the range [0,infinity)
+ *
+ * This function sets the speed with which the media file will be played. 1.0
+ * represents the normal speed, 2 double speed, 0.5 half speed and so on.
+ *
+ * @warning The only backend that implements this is the experimental VLC
+ * backend.
+ */
+EAPI void         emotion_object_play_speed_set        (Evas_Object *obj, double speed);
+/**
+ * @brief Get  the play speed of the media file.
+ *
+ * @param obj The emotion object from which the filename will be retrieved.
+ * @return The current speed of the media file.
+ *
+ * @see emotion_object_play_speed_set
+ */
+EAPI double       emotion_object_play_speed_get        (const Evas_Object *obj);
+/**
+ * @brief Get how much of the file has been played.
+ *
+ * @param obj The emotion object from which the filename will be retrieved.
+ * @return The progress of the media file.
+ *
+ * @warning Don't change of free the returned string.
+ * @warning gstreamer xine backends don't implement this(will return NULL).
+ */
+EAPI const char  *emotion_object_progress_info_get     (const Evas_Object *obj);
+/**
+ * @brief Get how much of the file has been played.
+ *
+ * @param obj The emotion object from which the filename will be retrieved
+ * @return The progress of the media file.
+ *
+ * This function gets the progress in playing the file, the return value is in
+ * the [0, 1] range.
+ *
+ * @warning gstreamer xine backends don't implement this(will return 0).
+ */
+EAPI double       emotion_object_progress_status_get   (const Evas_Object *obj);
+/**
+ * @}
+ */
 EAPI Eina_Bool    emotion_object_video_handled_get     (const Evas_Object *obj);
 EAPI Eina_Bool    emotion_object_audio_handled_get     (const Evas_Object *obj);
-EAPI Eina_Bool    emotion_object_seekable_get          (const Evas_Object *obj);
-EAPI double       emotion_object_play_length_get       (const Evas_Object *obj);
 EAPI void         emotion_object_size_get              (const Evas_Object *obj, int *iw, int *ih);
 EAPI void         emotion_object_smooth_scale_set      (Evas_Object *obj, Eina_Bool smooth);
 EAPI Eina_Bool    emotion_object_smooth_scale_get      (const Evas_Object *obj);
-EAPI double       emotion_object_ratio_get             (const Evas_Object *obj);
 EAPI void         emotion_object_event_simple_send     (Evas_Object *obj, Emotion_Event ev);
 
 /**
@@ -370,12 +486,8 @@ EAPI int          emotion_object_chapter_count         (const Evas_Object *obj);
 EAPI void         emotion_object_chapter_set           (Evas_Object *obj, int chapter);
 EAPI int          emotion_object_chapter_get           (const Evas_Object *obj);
 EAPI const char  *emotion_object_chapter_name_get      (const Evas_Object *obj, int chapter);
-EAPI void         emotion_object_play_speed_set        (Evas_Object *obj, double speed);
-EAPI double       emotion_object_play_speed_get        (const Evas_Object *obj);
 EAPI void         emotion_object_eject                 (Evas_Object *obj);
 EAPI const char  *emotion_object_title_get             (const Evas_Object *obj);
-EAPI const char  *emotion_object_progress_info_get     (const Evas_Object *obj);
-EAPI double       emotion_object_progress_status_get   (const Evas_Object *obj);
 EAPI const char  *emotion_object_ref_file_get          (const Evas_Object *obj);
 EAPI int          emotion_object_ref_num_get           (const Evas_Object *obj);
 EAPI int          emotion_object_spu_button_count_get  (const Evas_Object *obj);
