@@ -3,6 +3,9 @@
 #endif
 
 #include <unistd.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <errno.h>
 
 #include <Ecore.h>
 #include <Eeze.h>
@@ -234,6 +237,7 @@ eeze_disk_mount_wrapper_get(Eeze_Disk *disk)
 EAPI Eina_Bool
 eeze_disk_mount(Eeze_Disk *disk)
 {
+   struct stat st;
    EINA_SAFETY_ON_NULL_RETURN_VAL(disk, EINA_FALSE);
 
    if ((!disk->mount_point) && eeze_disk_libmount_mounted_get(disk))
@@ -314,6 +318,20 @@ eeze_disk_mount(Eeze_Disk *disk)
         disk->mount_cmd_changed = EINA_FALSE;
      }
 
+   if (stat(disk->mount_point, &st))
+     {
+        INF("Creating not-existing mount point directory '%s'", disk->mount_point);
+        if (mkdir(disk->mount_point, S_IROTH | S_IWOTH | S_IXOTH))
+          {
+             ERR("Could not create directory: %s", strerror(errno));
+             return EINA_FALSE;
+          }
+     }
+   else if (!S_ISDIR(st.st_mode))
+     {
+        ERR("%s is not a directory!", disk->mount_point);
+        return EINA_FALSE;
+     }
    INF("Mounting: %s", eina_strbuf_string_get(disk->mount_cmd));
    disk->mounter = ecore_exe_run(eina_strbuf_string_get(disk->mount_cmd), disk);
    if (!disk->mounter)
