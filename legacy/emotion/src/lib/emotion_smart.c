@@ -55,18 +55,18 @@ struct _Smart_Data
 
    const char    *file;
    Evas_Object   *obj;
-   double         ratio;
-   double         pos;
-   double         seek_pos;
-   double         len;
 
    Ecore_Job     *job;
 
-   unsigned char  play : 1;
-   unsigned char  seek : 1;
-   unsigned char  seeking : 1;
-
    char *title;
+
+#ifdef HAVE_EIO
+   Eio_File *load_xattr;
+   Eio_File *save_xattr;
+
+   const char *time_seek;
+#endif
+
    struct {
       char   *info;
       double  stat;
@@ -80,14 +80,18 @@ struct _Smart_Data
       int button;
    } spu;
 
-#ifdef HAVE_EIO
-   Eio_File *load_xattr;
-   Eio_File *save_xattr;
-
-   const char *time_seek;
-#endif
+   double         ratio;
+   double         pos;
+   double         seek_pos;
+   double         len;
 
    Emotion_Module_Options module_options;
+
+   Emotion_Suspend state;
+
+   Eina_Bool play : 1;
+   Eina_Bool seek : 1;
+   Eina_Bool seeking : 1;
 };
 
 static void _mouse_move(void *data, Evas *ev, Evas_Object *obj, void *event_info);
@@ -424,6 +428,7 @@ emotion_object_play_set(Evas_Object *obj, Eina_Bool play)
    if (!sd->module) return;
    if (!sd->video) return;
    sd->play = play;
+   if (sd->state != EMOTION_WAKEUP) emotion_object_suspend_set(obj, EMOTION_WAKEUP);
    if (sd->play) sd->module->play(sd->video, sd->pos);
    else sd->module->stop(sd->video);
 }
@@ -1214,6 +1219,38 @@ emotion_object_extension_may_play_get(const char *file)
    return result;
 }
 
+EAPI void
+emotion_object_suspend_set(Evas_Object *obj, Emotion_Suspend state)
+{
+   Smart_Data *sd;
+
+   E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
+   switch (state)
+     {
+      case EMOTION_WAKEUP:
+         /* Restore the rendering pipeline, offset and everything back to play again (this will be called automatically by play_set) */
+      case EMOTION_SLEEP:
+         /* This destroy some part of the rendering pipeline */
+      case EMOTION_DEEP_SLEEP:
+         /* This destroy all the rendering pipeline and just keep the last rendered image (fullscreen) */
+      case EMOTION_HIBERNATE:
+         /* This destroy all the rendering pipeline and keep 1/4 of the last rendered image */
+      default:
+         break;
+     }
+
+   sd->state = state;
+}
+
+EAPI Emotion_Suspend
+motion_object_suspend_get(Evas_Object *obj)
+{
+   Smart_Data *sd;
+
+   E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, EMOTION_WAKEUP);
+   return sd->state;
+}
+
 /*****************************/
 /* Utility calls for modules */
 /*****************************/
@@ -1748,6 +1785,7 @@ _smart_add(Evas_Object * obj)
    sd = calloc(1, sizeof(Smart_Data));
    if (!sd) return;
    EINA_REFCOUNT_INIT(sd);
+   sd->state = EMOTION_WAKEUP;
    sd->obj = evas_object_image_add(evas_object_evas_get(obj));
    evas_object_event_callback_add(sd->obj, EVAS_CALLBACK_MOUSE_MOVE, _mouse_move, sd);
    evas_object_event_callback_add(sd->obj, EVAS_CALLBACK_MOUSE_DOWN, _mouse_down, sd);

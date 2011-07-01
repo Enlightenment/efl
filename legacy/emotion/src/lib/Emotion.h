@@ -109,6 +109,14 @@ enum _Emotion_Vis
   EMOTION_VIS_LAST /* sentinel */
 };
 
+typedef enum
+{
+  EMOTION_WAKEUP,
+  EMOTION_SLEEP,
+  EMOTION_DEEP_SLEEP,
+  EMOTION_HIBERNATE
+} Emotion_Suspend;
+
 typedef enum _Emotion_Module    Emotion_Module;
 typedef enum _Emotion_Event     Emotion_Event;
 typedef enum _Emotion_Meta_Info Emotion_Meta_Info;
@@ -120,7 +128,7 @@ typedef enum _Emotion_Vis       Emotion_Vis;
 #ifdef __cplusplus
 extern "C" {
 #endif
-   
+
 /* api calls available */
 
 /**
@@ -500,6 +508,9 @@ EAPI Eina_Bool    emotion_object_vis_supported         (const Evas_Object *obj, 
 
 EAPI void         emotion_object_last_position_load    (Evas_Object *obj);
 EAPI void         emotion_object_last_position_save    (Evas_Object *obj);
+
+EAPI void         emotion_object_suspend_set           (Evas_Object *obj, Emotion_Suspend state);
+EAPI Emotion_Suspend emotion_object_suspend_get        (Evas_Object *obj);
 
 EAPI Eina_Bool    emotion_object_extension_can_play_get(const Evas_Object *obj, const char *file);
 EAPI Eina_Bool    emotion_object_extension_can_play_fast_get(const Evas_Object *obj, const char *file);
