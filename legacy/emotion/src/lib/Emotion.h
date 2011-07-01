@@ -140,7 +140,16 @@ extern "C" {
  *
  * @li Add the description of modules here.
  * @li Basic emotion example
- * @li Signals available
+ * @section signals Available signals
+ * The Evas_Object returned by emotion_object_add() has a number of signals that
+ * can be listened to using evas' smart callbacks mechanism. All signals have
+ * NULL as event info. The following is a list of interesting signals:
+ * @li "playback_started" - Emitted when the playback starts
+ * @li "playback_finished" - Emitted when the playback finishes
+ * @li "frame_decode" - Emitted every time a frame is decoded
+ * @li "open_done" - Emitted when the media file is opened
+ * @li "position_update" - Emitted when emotion_object_position_set is called
+ * @li "decode_stop" - Emitted after the last frame is decoded
  */
 
 /**
