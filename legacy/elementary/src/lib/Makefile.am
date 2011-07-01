@@ -108,6 +108,7 @@ elm_toggle.c \
 elm_toolbar.c \
 elm_transit.c \
 elm_util.c \
+elm_video.c \
 elm_widget.c \
 elm_win.c \
 els_box.c \
