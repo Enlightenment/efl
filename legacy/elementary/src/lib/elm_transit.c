@@ -88,7 +88,6 @@ static void _transit_obj_data_update(Elm_Transit *transit, Evas_Object *obj);
 static void _transit_obj_data_recover(Elm_Transit *transit, Evas_Object *obj);
 static void _transit_obj_states_save(Evas_Object *obj, Elm_Transit_Obj_Data *obj_data);
 static void _transit_obj_remove_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__);
-static void _transit_obj_damage_area_set(Evas_Object *obj);
 static void _transit_obj_remove(Elm_Transit *transit, Evas_Object *obj);
 static void _transit_effect_del(Elm_Transit *transit, Elm_Transit_Effect_Module *effect_module);
 static void _transit_remove_dead_effects(Elm_Transit *transit);
@@ -171,44 +170,6 @@ _transit_obj_remove_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *e
    if (!transit->objs) elm_transit_del(transit);
 }
 
-//TODO: Remove!
-//Since evas map have a afterimage bug for this time.
-//This function is added temporary.
-static void
-_transit_obj_damage_area_set(Evas_Object *obj)
-{
-   const Evas_Map *map;
-   Evas_Coord_Point coords;
-   Evas_Coord_Point min, max;
-   int i;
-
-   map  = evas_object_map_get(obj);
-   if (!map) return;
-
-   evas_map_point_coord_get(map, 0, &coords.x, &coords.y, NULL);
-
-   max = min = coords;
-
-   for (i = 1; i < 4; ++i)
-     {
-        evas_map_point_coord_get(map, i, &coords.x, &coords.y, NULL);
-
-        if (coords.x < min.x)
-          min.x = coords.x;
-        else if (coords.x > max.x)
-          max.x = coords.x;
-
-        if (coords.y < min.y)
-          min.y = coords.y;
-        else if (coords.y > max.y)
-          max.y = coords.y;
-     }
-
-   evas_damage_rectangle_add(evas_object_evas_get(obj),
-                             min.x, min.y,
-                             max.x - min.x, max.y - min.y);
-}
-
 static void
 _transit_obj_data_recover(Elm_Transit *transit, Evas_Object *obj)
 {
@@ -236,12 +197,6 @@ _transit_obj_data_recover(Elm_Transit *transit, Evas_Object *obj)
                evas_object_map_enable_set(obj, EINA_FALSE);
              if (state->map)
                evas_object_map_set(obj, state->map);
-
-             //TODO: Remove!
-             //Since evas map have a afterimage bug for this time.
-             //This line is added temporary.
-             _transit_obj_damage_area_set(obj);
-
           }
         free(state);
      }
