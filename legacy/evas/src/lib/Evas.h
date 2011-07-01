@@ -707,8 +707,8 @@ typedef enum _Evas_Engine_Render_Mode
 typedef enum _Evas_Image_Content_Hint
 {
    EVAS_IMAGE_CONTENT_HINT_NONE = 0, /**< No hint at all */
-   EVAS_IMAGE_CONTENT_HINT_DYNAMIC = 1, /**< The contents will change on time */
-   EVAS_IMAGE_CONTENT_HINT_STATIC = 2 /**< The contents won't change on time */
+   EVAS_IMAGE_CONTENT_HINT_DYNAMIC = 1, /**< The contents will change over time */
+   EVAS_IMAGE_CONTENT_HINT_STATIC = 2 /**< The contents won't change over time */
 } Evas_Image_Content_Hint; /**< How an image's data is to be treated by Evas, for optimization */
 
 struct _Evas_Engine_Info /** Generic engine information. Generic info is useless */
@@ -5774,13 +5774,47 @@ EAPI Evas_Load_Error          evas_object_image_load_error_get         (const Ev
  * @param data The raw data, or @c NULL.
  *
  * Note that the raw data must be of the same size (see
- * evas_object_image_size_set()) and colorspace (see
- * evas_object_image_colorspace_set()) of the image. If data is @c
- * NULL, the current image data will be freed.
+ * evas_object_image_size_set(), which has to be called @b before this
+ * one) and colorspace (see evas_object_image_colorspace_set()) of the
+ * image. If data is @c NULL, the current image data will be
+ * freed. Naturally, if one does not set an image object's data
+ * manually, it will still have one, allocated by Evas.
  *
  * @see evas_object_image_data_get()
  */
 EAPI void                     evas_object_image_data_set               (Evas_Object *obj, void *data) EINA_ARG_NONNULL(1);
+
+/**
+ * Get a pointer to the raw image data of the given image object.
+ *
+ * @param obj The given image object.
+ * @param for_writing Whether the data being retrieved will be
+ *        modified (@c EINA_TRUE) or not (@c EINA_FALSE).
+ * @return The raw image data.
+ *
+ * This function returns a pointer to an image object's internal pixel
+ * buffer, for reading only or read/write. If you request it for
+ * writing, the image will be marked dirty so that it gets redrawn at
+ * the next update.
+ *
+ * Each time you call this function on an image object, its data
+ * buffer will have an internal reference counter
+ * incremented. Decrement it back by using
+ * evas_object_image_data_set(). This is specially important for the
+ * directfb Evas engine.
+ *
+ * This is best suited for when you want to modify an existing image,
+ * without changing its dimensions.
+ *
+ * @note The contents' formart returned by it depend on the color
+ * space of the given image object.
+ *
+ * @note You may want to use evas_object_image_data_update_add() to
+ * inform data changes, if you did any.
+ *
+ * @see evas_object_image_data_set()
+ */
+EAPI void                    *evas_object_image_data_get               (const Evas_Object *obj, Eina_Bool for_writing) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
 
 /**
  * Converts the raw image data of the given image object to the
@@ -5799,26 +5833,6 @@ EAPI void                     evas_object_image_data_set               (Evas_Obj
  * @return data A newly allocated data in the format specified by to_cspace.
  */
 EAPI void                    *evas_object_image_data_convert           (Evas_Object *obj, Evas_Colorspace to_cspace) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
-
-/**
- * Get a pointer to the raw image data of the given image object.
- *
- * @param obj The given image object.
- * @param for_writing Whether the data being retrieved will be
- *        modified (@c EINA_TRUE) or not (@c EINA_FALSE).
- * @return The raw image data.
- *
- * This function returns a pointer to an image object's internal pixel
- * buffer, for reading only or read/write. If you request it for
- * writing, the image will be marked dirty so that it gets redrawn at
- * the next update.
- *
- * This is best suited for when you want to modify an existing image,
- * without changing its dimensions.
- *
- * @see evas_object_image_data_set()
- */
-EAPI void                    *evas_object_image_data_get               (const Evas_Object *obj, Eina_Bool for_writing) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
 
 /**
  * Replaces the raw image data of the given image object.
@@ -6223,7 +6237,10 @@ EAPI Evas_Image_Scale_Hint    evas_object_image_scale_hint_get         (const Ev
  * #Evas_Image_Content_Hint ones.
  *
  * This function sets the content hint value of the given image of the
- * canvas.
+ * canvas. For example, if you're on the GL engine and your driver
+ * implementation supports it, setting this hint to
+ * #EVAS_IMAGE_CONTENT_HINT_DYNAMIC will make it need @b zero copies
+ * at texture upload time, which is an "expensive" operation.
  *
  * @see evas_object_image_content_hint_get()
  */
