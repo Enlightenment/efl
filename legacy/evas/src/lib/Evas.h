@@ -5757,13 +5757,13 @@ EAPI void                     evas_object_image_size_get               (const Ev
 EAPI int                      evas_object_image_stride_get             (const Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
 
 /**
- * Retrieves a number representing any error that occurred during the last
- * load of the given image object.
+ * Retrieves a number representing any error that occurred during the
+ * last loading of the given image object's source image.
  *
  * @param obj The given image object.
- * @return A value giving the last error that occurred. It should be one of
- *         the @c EVAS_LOAD_ERROR_* values.  @c EVAS_LOAD_ERROR_NONE is
- *         returned if there was no error.
+ * @return A value giving the last error that occurred. It should be
+ *         one of the #Evas_Load_Error values. #EVAS_LOAD_ERROR_NONE
+ *         is returned if there was no error.
  */
 EAPI Evas_Load_Error          evas_object_image_load_error_get         (const Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
 
@@ -6013,73 +6013,121 @@ EAPI void                     evas_object_image_pixels_dirty_set       (Evas_Obj
 EAPI Eina_Bool                evas_object_image_pixels_dirty_get       (const Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
 
 /**
- * Set the dpi resolution of a loaded image of the  canvas.
+ * Set the DPI resolution of an image object's source image.
  *
  * @param obj The given canvas pointer.
- * @param dpi The new dpi resolution.
+ * @param dpi The new DPI resolution.
  *
- * This function set the dpi resolution of a given loaded canvas image.
+ * This function sets the DPI resolution of a given loaded canvas
+ * image. Most useful for the SVG image loader.
  *
+ * @see evas_object_image_load_dpi_get()
  */
 EAPI void                     evas_object_image_load_dpi_set           (Evas_Object *obj, double dpi) EINA_ARG_NONNULL(1);
 
 /**
- * Get the dpi resolution of a loaded image of the canvas.
+ * Get the DPI resolution of a loaded image object in the canvas.
  *
  * @param obj The given canvas pointer.
- * @return The dpi resolution of the given canvas image.
+ * @return The DPI resolution of the given canvas image.
  *
- * This function returns the dpi resolution of given canvas image.
+ * This function returns the DPI resolution of the given canvas image.
  *
+ * @see evas_object_image_load_dpi_set() for more details
  */
 EAPI double                   evas_object_image_load_dpi_get           (const Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
 
 /**
- * Set the size of a loaded image of the canvas.
+ * Set the size of a given image object's source image, when loading
+ * it.
  *
  * @param obj The given canvas object.
- * @param w The new width of the canvas image given.
- * @param h The new height of the canvas image given.
+ * @param w The new width of the image's load size.
+ * @param h The new height of the image's load size.
  *
- * This function sets a new size for the given canvas image.
+ * This function sets a new (loading) size for the given canvas
+ * image.
  *
+ * @see evas_object_image_load_size_get()
  */
 EAPI void                     evas_object_image_load_size_set          (Evas_Object *obj, int w, int h) EINA_ARG_NONNULL(1);
 
 /**
- * Get the size of a loaded image of the canvas.
+ * Get the size of a given image object's source image, when loading
+ * it.
  *
  * @param obj The given image object.
- * @param w The width of the canvas image given.
- * @param h The height of the canvas image given.
+ * @param w Where to store the new width of the image's load size.
+ * @param h Where to store the new height of the image's load size.
  *
- * This function get the size of the given canvas image.
+ * @note Use @c NULL pointers on the size components you're not
+ * interested in: they'll be ignored by the function.
  *
+ * @see evas_object_image_load_size_set() for more details
  */
 EAPI void                     evas_object_image_load_size_get          (const Evas_Object *obj, int *w, int *h) EINA_ARG_NONNULL(1);
 
 /**
- * Set the scale down of a loaded image of the canvas.
+ * Set the scale down factor of a given image object's source image,
+ * when loading it.
  *
  * @param obj The given image object pointer.
- * @param scale_down The scale to down value.
+ * @param scale_down The scale down factor.
  *
- * This function sets the scale down of a given canvas image.
+ * This function sets the scale down factor of a given canvas
+ * image. Most useful for the SVG image loader.
  *
+ * @see evas_object_image_load_scale_down_get()
  */
 EAPI void                     evas_object_image_load_scale_down_set    (Evas_Object *obj, int scale_down) EINA_ARG_NONNULL(1);
 
 /**
- * Get the scale down value of given image of the canvas.
+ * get the scale down factor of a given image object's source image,
+ * when loading it.
  *
  * @param obj The given image object pointer.
  *
- * This function returns the scale down value of a given canvas image.
- *
+ * @see evas_object_image_load_scale_down_set() for more details
  */
 EAPI int                      evas_object_image_load_scale_down_get    (const Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
-   EAPI void                     evas_object_image_load_region_set        (Evas_Object *obj, int x, int y, int w, int h) EINA_ARG_NONNULL(1);
-   EAPI void                     evas_object_image_load_region_get        (const Evas_Object *obj, int *x, int *y, int *w, int *h) EINA_ARG_NONNULL(1);
+
+/**
+ * Inform a given image object to load a selective region of its
+ * source image.
+ *
+ * @param obj The given image object pointer.
+ * @param x X-offset of the region to be loaded.
+ * @param y Y-offset of the region to be loaded.
+ * @param w Width of the region to be loaded.
+ * @param h Height of the region to be loaded.
+ *
+ * This function is useful when one is not showing all of an image's
+ * area on its image object.
+ *
+ * @note The image loader for the image format in question has to
+ * support selective region loading in order to this function to take
+ * effect.
+ *
+ * @see evas_object_image_load_region_get()
+ */
+EAPI void                     evas_object_image_load_region_set        (Evas_Object *obj, int x, int y, int w, int h) EINA_ARG_NONNULL(1);
+
+/**
+ * Retrieve the coordinates of a given image object's selective
+ * (source image) load region.
+ *
+ * @param obj The given image object pointer.
+ * @param x Where to store the X-offset of the region to be loaded.
+ * @param y Where to store the Y-offset of the region to be loaded.
+ * @param w Where to store the width of the region to be loaded.
+ * @param h Where to store the height of the region to be loaded.
+ *
+ * @note Use @c NULL pointers on the coordinates you're not interested
+ * in: they'll be ignored by the function.
+ *
+ * @see evas_object_image_load_region_get()
+ */
+EAPI void                     evas_object_image_load_region_get        (const Evas_Object *obj, int *x, int *y, int *w, int *h) EINA_ARG_NONNULL(1);
 
 /**
  * Define if the orientation information in the image file should be honored.
