@@ -388,12 +388,8 @@ evas_object_map_enable_set(Evas_Object *obj, Eina_Bool enabled)
        //Need to find out the reason in the rendering engine then fix it. 
        //However, it's hard to fix the problem now, added a just workarond code.
        //This problem will be fixed later or be removed when the rendering engine is refactored completely. 
-       Evas *e = evas_object_evas_get(obj);
-       evas_damage_rectangle_add(e,
-                                 e->viewport.x,
-                                 e->viewport.y,
-                                 e->viewport.w,
-                                 e->viewport.h);
+       Evas *e = obj->layer->evas;
+       evas_damage_rectangle_add(e, 0, 0, e->output.w, e->output.h);
      }
    _evas_map_calc_map_geometry(obj);
    /* This is a bit heavy handed, but it fixes the case of same geometry, but
