@@ -689,7 +689,7 @@ typedef enum _Evas_Border_Fill_Mode
    EVAS_BORDER_FILL_NONE = 0, /**< Image's center region is @b not to be rendered */
    EVAS_BORDER_FILL_DEFAULT = 1, /**< Image's center region is to be @b blended with objects underneath it, if it has transparency. This is the default behavior for image objects */
    EVAS_BORDER_FILL_SOLID = 2 /**< Image's center region is to be made solid, even if it has transparency on it */
-} Evas_Border_Fill_Mode; /**< How a image's center region (the complement to the border region) should be rendered by Evas */
+} Evas_Border_Fill_Mode; /**< How an image's center region (the complement to the border region) should be rendered by Evas */
 
 typedef enum _Evas_Image_Scale_Hint
 {
@@ -706,10 +706,10 @@ typedef enum _Evas_Engine_Render_Mode
 
 typedef enum _Evas_Image_Content_Hint
 {
-   EVAS_IMAGE_CONTENT_HINT_NONE = 0,
-   EVAS_IMAGE_CONTENT_HINT_DYNAMIC = 1,
-   EVAS_IMAGE_CONTENT_HINT_STATIC = 2
-} Evas_Image_Content_Hint;
+   EVAS_IMAGE_CONTENT_HINT_NONE = 0, /**< No hint at all */
+   EVAS_IMAGE_CONTENT_HINT_DYNAMIC = 1, /**< The contents will change on time */
+   EVAS_IMAGE_CONTENT_HINT_STATIC = 2 /**< The contents won't change on time */
+} Evas_Image_Content_Hint; /**< How an image's data is to be treated by Evas, for optimization */
 
 struct _Evas_Engine_Info /** Generic engine information. Generic info is useless */
 {
@@ -5770,11 +5770,15 @@ EAPI Evas_Load_Error          evas_object_image_load_error_get         (const Ev
 /**
  * Sets the raw image data of the given image object.
  *
- * Note that the raw data must be of the same size and colorspace of
- * the image. If data is NULL the current image data will be freed.
- *
  * @param obj The given image object.
  * @param data The raw data, or @c NULL.
+ *
+ * Note that the raw data must be of the same size (see
+ * evas_object_image_size_set()) and colorspace (see
+ * evas_object_image_colorspace_set()) of the image. If data is @c
+ * NULL, the current image data will be freed.
+ *
+ * @see evas_object_image_data_get()
  */
 EAPI void                     evas_object_image_data_set               (Evas_Object *obj, void *data) EINA_ARG_NONNULL(1);
 
@@ -5799,25 +5803,31 @@ EAPI void                    *evas_object_image_data_convert           (Evas_Obj
 /**
  * Get a pointer to the raw image data of the given image object.
  *
+ * @param obj The given image object.
+ * @param for_writing Whether the data being retrieved will be
+ *        modified (@c EINA_TRUE) or not (@c EINA_FALSE).
+ * @return The raw image data.
+ *
  * This function returns a pointer to an image object's internal pixel
  * buffer, for reading only or read/write. If you request it for
  * writing, the image will be marked dirty so that it gets redrawn at
  * the next update.
  *
- * This is best suited when you want to modify an existing image,
+ * This is best suited for when you want to modify an existing image,
  * without changing its dimensions.
  *
- * @param obj The given image object.
- * @param for_writing Whether the data being retrieved will be modified.
- * @return The raw image data.
+ * @see evas_object_image_data_set()
  */
 EAPI void                    *evas_object_image_data_get               (const Evas_Object *obj, Eina_Bool for_writing) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
 
 /**
  * Replaces the raw image data of the given image object.
  *
+ * @param obj The given image object.
+ * @param data The raw data to replace.
+ *
  * This function lets the application replace an image object's
- * internal pixel buffer with a user-allocated one. For best results,
+ * internal pixel buffer with an user-allocated one. For best results,
  * you should generally first call evas_object_image_size_set() with
  * the width and height for the new buffer.
  *
@@ -5830,24 +5840,22 @@ EAPI void                    *evas_object_image_data_get               (const Ev
  * finished with it, as user-set image data will not be automatically
  * freed when the image object is deleted.
  *
- * See @ref evas_object_image_data_get for more details.
+ * See @ref evas_object_image_data_get() for more details.
  *
- * @param obj The given image object.
- * @param data The raw data.
  */
 EAPI void                     evas_object_image_data_copy_set          (Evas_Object *obj, void *data) EINA_ARG_NONNULL(1);
 
 /**
  * Mark a sub-region of the given image object to be redrawn.
  *
- * This function schedules a particular rectangular region of an image
- * object to be updated (redrawn) at the next render.
- *
  * @param obj The given image object.
  * @param x X-offset of the region to be updated.
  * @param y Y-offset of the region to be updated.
  * @param w Width of the region to be updated.
  * @param h Height of the region to be updated.
+ *
+ * This function schedules a particular rectangular region of an image
+ * object to be updated (redrawn) at the next rendering cycle.
  */
 EAPI void                     evas_object_image_data_update_add        (Evas_Object *obj, int x, int y, int w, int h) EINA_ARG_NONNULL(1);
 
@@ -6160,23 +6168,31 @@ EAPI void                     evas_object_image_scale_hint_set         (Evas_Obj
 EAPI Evas_Image_Scale_Hint    evas_object_image_scale_hint_get         (const Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
 
 /**
- * Set the content hint of a given image of the canvas.
+ * Set the content hint setting of a given image object of the canvas.
  *
  * @param obj The given canvas pointer.
- * @param hint The content hint value.
+ * @param hint The content hint value, one of the
+ * #Evas_Image_Content_Hint ones.
  *
- * This function sets the content hint value of the given image of the canvas.
+ * This function sets the content hint value of the given image of the
+ * canvas.
  *
+ * @see evas_object_image_content_hint_get()
  */
 EAPI void                     evas_object_image_content_hint_set       (Evas_Object *obj, Evas_Image_Content_Hint hint) EINA_ARG_NONNULL(1);
 
 /**
- * Get the content hint of a given image of the canvas.
+ * Get the content hint setting of a given image object of the canvas.
  *
  * @param obj The given canvas pointer.
+ * @return hint The content hint value set on it, one of the
+ * #Evas_Image_Content_Hint ones (#EVAS_IMAGE_CONTENT_HINT_NONE means
+ * an error).
  *
- * This function returns the content hint value of the given image of the canvas.
+ * This function returns the content hint value of the given image of
+ * the canvas.
  *
+ * @see evas_object_image_content_hint_set()
  */
 EAPI Evas_Image_Content_Hint  evas_object_image_content_hint_get       (const Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
 

@@ -128,9 +128,11 @@
  * @skip noise_img =
  * @until show
  * Since we are creating the data for its pixel buffer ourselves, we
- * have to set its size with @c evas_object_image_size_set. There's a
- * last command to print it's @b stride value. Since its created with
- * one quarter of the canvas's original width
+ * have to set its size with evas_object_image_size_set(), first. We
+ * set our data with the function evas_object_image_data_set(),
+ * whose second argument is a buffer with random data. There's a last
+ * command to print it's @b stride value. Since its created with one
+ * quarter of the canvas's original width
  * @dontinclude evas-images2.c
  * @skip define WIDTH
  * @until define HEIGHT

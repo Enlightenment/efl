@@ -99,6 +99,7 @@ files_DATA += \
 	$(srcdir)/evas-buffer-simple.c \
 	$(srcdir)/evas-init-shutdown.c \
 	$(srcdir)/evas-images.c \
+	$(srcdir)/evas-images2.c \
 	$(srcdir)/evas-object-manipulation.c \
 	$(srcdir)/evas-events.c \
 	$(srcdir)/evas-aspect-hints.c \
@@ -110,6 +111,7 @@ EXTRA_DIST = $(EDCS) \
 	$(srcdir)/evas-buffer-simple.c \
 	$(srcdir)/evas-init-shutdown.c \
 	$(srcdir)/evas-images.c \
+	$(srcdir)/evas-images2.c \
 	$(srcdir)/evas-object-manipulation.c \
 	$(srcdir)/evas-events.c \
 	$(srcdir)/evas-aspect-hints.c \

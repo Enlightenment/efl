@@ -6,13 +6,18 @@
  * for output.
  *
  * @verbatim
- * gcc -o evas-images3 evas-images3.c `pkg-config --libs --cflags ecore-evas`
+ * gcc -o evas-images2 evas-images2.c `pkg-config --libs --cflags evas ecore ecore-evas`
  * @endverbatim
  */
 
 #ifdef HAVE_CONFIG_H
 
 #include "config.h"
+#else
+
+#define PACKAGE_EXAMPLES_DIR "."
+#define __UNUSED__
+
 #endif
 
 #include <Ecore.h>
@@ -161,7 +166,6 @@ main(void)
    evas_object_image_preload(d.logo, EINA_TRUE);
 
    evas_object_image_file_set(d.logo, img_path, NULL);
-   evas_object_image_fill_set(d.logo, 0, 0, WIDTH / 2, HEIGHT / 2);
    evas_object_resize(d.logo, WIDTH / 2, HEIGHT / 2);
    evas_object_show(d.logo);
 
