@@ -73,39 +73,57 @@ enum _Emotion_Event
    EMOTION_EVENT_10
 };
 
+/**
+ * @enum _Emotion_Meta_Info
+ *
+ * Used for retrieving information about the media file being played.
+ *
+ * @see emotion_object_meta_info_get()
+ *
+ * @ingroup Emotion_Info
+ */
 enum _Emotion_Meta_Info
 {
-   EMOTION_META_INFO_TRACK_TITLE,
-   EMOTION_META_INFO_TRACK_ARTIST,
-   EMOTION_META_INFO_TRACK_ALBUM,
-   EMOTION_META_INFO_TRACK_YEAR,
-   EMOTION_META_INFO_TRACK_GENRE,
-   EMOTION_META_INFO_TRACK_COMMENT,
-   EMOTION_META_INFO_TRACK_DISC_ID,
-   EMOTION_META_INFO_TRACK_COUNT
+   EMOTION_META_INFO_TRACK_TITLE, /**< track title */
+   EMOTION_META_INFO_TRACK_ARTIST, /**< artist name */
+   EMOTION_META_INFO_TRACK_ALBUM, /**< album name */
+   EMOTION_META_INFO_TRACK_YEAR, /**< track year */
+   EMOTION_META_INFO_TRACK_GENRE, /**< track genre */
+   EMOTION_META_INFO_TRACK_COMMENT, /**< track comments */
+   EMOTION_META_INFO_TRACK_DISC_ID, /**< track disc ID */
+   EMOTION_META_INFO_TRACK_COUNT /**< track count - number of the track in the album */
 };
 
+/**
+ * @enum _Emotion_Vis
+ *
+ * Used for displaying a visualization on the emotion object.
+ *
+ * @see emotion_object_vis_set()
+ *
+ * @ingroup Emotion_Visualization
+ */
 enum _Emotion_Vis
 {
-  EMOTION_VIS_NONE,
-  EMOTION_VIS_GOOM,
-  EMOTION_VIS_LIBVISUAL_BUMPSCOPE,
-  EMOTION_VIS_LIBVISUAL_CORONA,
-  EMOTION_VIS_LIBVISUAL_DANCING_PARTICLES,
-  EMOTION_VIS_LIBVISUAL_GDKPIXBUF,
-  EMOTION_VIS_LIBVISUAL_G_FORCE,
-  EMOTION_VIS_LIBVISUAL_GOOM,
-  EMOTION_VIS_LIBVISUAL_INFINITE,
-  EMOTION_VIS_LIBVISUAL_JAKDAW,
-  EMOTION_VIS_LIBVISUAL_JESS,
-  EMOTION_VIS_LIBVISUAL_LV_ANALYSER,
-  EMOTION_VIS_LIBVISUAL_LV_FLOWER,
-  EMOTION_VIS_LIBVISUAL_LV_GLTEST,
-  EMOTION_VIS_LIBVISUAL_LV_SCOPE,
-  EMOTION_VIS_LIBVISUAL_MADSPIN,
-  EMOTION_VIS_LIBVISUAL_NEBULUS,
-  EMOTION_VIS_LIBVISUAL_OINKSIE,
-  EMOTION_VIS_LIBVISUAL_PLASMA,
+  EMOTION_VIS_NONE, /**< no visualization set */
+  EMOTION_VIS_GOOM, /**< goom */
+  EMOTION_VIS_LIBVISUAL_BUMPSCOPE, /**< bumpscope */
+  EMOTION_VIS_LIBVISUAL_CORONA, /**< corona */
+  EMOTION_VIS_LIBVISUAL_DANCING_PARTICLES, /**< dancing particles */
+  EMOTION_VIS_LIBVISUAL_GDKPIXBUF, /**< gdkpixbuf */
+  EMOTION_VIS_LIBVISUAL_G_FORCE, /**< G force */
+  EMOTION_VIS_LIBVISUAL_GOOM, /**< goom */
+  EMOTION_VIS_LIBVISUAL_INFINITE, /**< infinite */
+  EMOTION_VIS_LIBVISUAL_JAKDAW, /**< jakdaw */
+  EMOTION_VIS_LIBVISUAL_JESS, /**< jess */
+  EMOTION_VIS_LIBVISUAL_LV_ANALYSER, /**< lv analyser */
+  EMOTION_VIS_LIBVISUAL_LV_FLOWER, /**< lv flower */
+  EMOTION_VIS_LIBVISUAL_LV_GLTEST, /**< lv gltest */
+  EMOTION_VIS_LIBVISUAL_LV_SCOPE, /**< lv scope */
+  EMOTION_VIS_LIBVISUAL_MADSPIN, /**< madspin */
+  EMOTION_VIS_LIBVISUAL_NEBULUS, /**< nebulus */
+  EMOTION_VIS_LIBVISUAL_OINKSIE, /**< oinksie */
+  EMOTION_VIS_LIBVISUAL_PLASMA, /**< plasma */
   EMOTION_VIS_LAST /* sentinel */
 };
 
@@ -119,8 +137,8 @@ typedef enum
 
 typedef enum _Emotion_Module    Emotion_Module;
 typedef enum _Emotion_Event     Emotion_Event;
-typedef enum _Emotion_Meta_Info Emotion_Meta_Info;
-typedef enum _Emotion_Vis       Emotion_Vis;
+typedef enum _Emotion_Meta_Info Emotion_Meta_Info; /**< Meta info type to be retrieved. */
+typedef enum _Emotion_Vis       Emotion_Vis; /**< Type of visualization. */
 
 #define EMOTION_CHANNEL_AUTO -1
 #define EMOTION_CHANNEL_DEFAULT 0
@@ -162,6 +180,14 @@ extern "C" {
 
 /**
  * @defgroup Emotion_Video Video control functions
+ */
+
+/**
+ * @defgroup Emotion_Visualization Visualization control functions
+ */
+
+/**
+ * @defgroup Emotion_Info Miscellaneous information retrieval functions
  */
 
 /**
@@ -350,18 +376,7 @@ EAPI Eina_Bool    emotion_object_seekable_get          (const Evas_Object *obj);
  * been emitted.
  */
 EAPI double       emotion_object_play_length_get       (const Evas_Object *obj);
-/**
- * @brief Gets the native aspect ratio of the media file.
- *
- * @param obj The emotion object from which the ratio will be retrieved.
- * @return The aspect ration of the video.
- *
- * This function returns the aspect ratio of the video file being played. The
- * aspect is width divided by height.
- *
- * @warning For audio files this function returns 0.
- */
-EAPI double       emotion_object_ratio_get             (const Evas_Object *obj);
+
 /**
  * @brief Set the play speed of the media file.
  *
@@ -411,8 +426,78 @@ EAPI double       emotion_object_progress_status_get   (const Evas_Object *obj);
  */
 EAPI Eina_Bool    emotion_object_video_handled_get     (const Evas_Object *obj);
 EAPI Eina_Bool    emotion_object_audio_handled_get     (const Evas_Object *obj);
+
+/**
+ * @brief Retrieve the video aspect ratio of the media file loaded.
+ *
+ * @param obj The emotion object which the video aspect ratio will be retrieved
+ * from.
+ * @return The video aspect ratio of the file loaded.
+ *
+ * This function returns the video aspect ratio (width / height) of the file
+ * loaded. It can be used to adapt the size of the emotion object in the canvas,
+ * so the aspect won't be changed (by wrongly resizing the object). Or to crop
+ * the video correctly, if necessary.
+ *
+ * @note This function returns the aspect ratio that the video @b should be, but
+ * sometimes the reported size from emotion_object_size_get() represents a
+ * different aspect ratio. You can safely resize the video to respect the aspect
+ * ratio returned by @b this function.
+ *
+ * @see emotion_object_size_get()
+ *
+ * @ingroup Emotion_Video
+ */
+EAPI double       emotion_object_ratio_get             (const Evas_Object *obj);
+
+/**
+ * @brief Retrieve the video size of the loaded file.
+ *
+ * @param obj The object from which we are retrieving the video size.
+ * @param iw A pointer to a variable where the width will be stored.
+ * @param iw A pointer to a variable where the height will be stored.
+ *
+ * This function returns the reported size of the loaded video file. If a file
+ * that doesn't contain a video channel is loaded, then this size can be
+ * ignored.
+ *
+ * The value reported by this function should be consistent with the aspect
+ * ratio returned by emotion_object_ratio_get(), but sometimes the information
+ * stored in the file is wrong. So use the ratio size reported by
+ * emotion_object_ratio_get(), since it is more likely going to be accurate.
+ *
+ * @note Use @c NULL for @p iw or @p ih if you don't need one of these values.
+ *
+ * @see emotion_object_ratio_get()
+ *
+ * @ingroup Emotion_Video
+ */
 EAPI void         emotion_object_size_get              (const Evas_Object *obj, int *iw, int *ih);
+
+/**
+ * @brief Sets whether to use of high-quality image scaling algorithm
+ * of the given video object.
+ *
+ * When enabled, a higher quality video scaling algorithm is used when
+ * scaling videos to sizes other than the source video. This gives
+ * better results but is more computationally expensive.
+ *
+ * @param obj The given video object.
+ * @param smooth Whether to use smooth scale or not.
+ *
+ * @see emotion_object_smooth_scale_get()
+ */
 EAPI void         emotion_object_smooth_scale_set      (Evas_Object *obj, Eina_Bool smooth);
+
+/**
+ * @brief Gets whether the high-quality image scaling algorithm
+ * of the given video object is used.
+ *
+ * @param obj The given video object.
+ * @return Whether the smooth scale is used or not.
+ *
+ * @see emotion_object_smooth_scale_set()
+ */
 EAPI Eina_Bool    emotion_object_smooth_scale_get      (const Evas_Object *obj);
 EAPI void         emotion_object_event_simple_send     (Evas_Object *obj, Emotion_Event ev);
 
@@ -487,7 +572,38 @@ EAPI int          emotion_object_audio_channel_count   (const Evas_Object *obj);
 EAPI const char  *emotion_object_audio_channel_name_get(const Evas_Object *obj, int channel);
 EAPI void         emotion_object_audio_channel_set     (Evas_Object *obj, int channel);
 EAPI int          emotion_object_audio_channel_get     (const Evas_Object *obj);
+
+/**
+ * @brief Set the mute video option for this object.
+ *
+ * @param obj The object which we are setting the mute video option.
+ * @param mute Whether the video should be muted (@c EINA_TRUE) or not (@c
+ * EINA_FALSE).
+ *
+ * This function sets the mute video option for this emotion object. The
+ * current module used for this object can use this information to avoid
+ * decoding the video portion of the loaded media file.
+ *
+ * @see emotion_object_video_mute_get()
+ * @see emotion_object_audio_mute_set()
+ *
+ * @ingroup Emotion_Video
+ */
 EAPI void         emotion_object_video_mute_set        (Evas_Object *obj, Eina_Bool mute);
+
+/**
+ * @brief Get the mute video option of this object.
+ *
+ * @param obj The object which we are retrieving the mute video option from.
+ * @return Whether the video is muted (@c EINA_TRUE) or not (@c EINA_FALSE).
+ *
+ * This function returns the mute video option from this emotion object. It can
+ * be set with emotion_object_video_mute_set().
+ *
+ * @see emotion_object_video_mute_set()
+ *
+ * @ingroup Emotion_Video
+ */
 EAPI Eina_Bool    emotion_object_video_mute_get        (const Evas_Object *obj);
 EAPI int          emotion_object_video_channel_count   (const Evas_Object *obj);
 EAPI const char  *emotion_object_video_channel_name_get(const Evas_Object *obj, int channel);
@@ -504,15 +620,99 @@ EAPI void         emotion_object_chapter_set           (Evas_Object *obj, int ch
 EAPI int          emotion_object_chapter_get           (const Evas_Object *obj);
 EAPI const char  *emotion_object_chapter_name_get      (const Evas_Object *obj, int chapter);
 EAPI void         emotion_object_eject                 (Evas_Object *obj);
+
+/**
+ * @brief Get the dvd title from this emotion object.
+ *
+ * @param obj The object which the title will be retrieved from.
+ * @return A string containing the title.
+ *
+ * This function is only useful when playing a DVD.
+ *
+ * @note Don't change or free the string returned by this function.
+ *
+ * @ingroup Emotion_Info
+ */
 EAPI const char  *emotion_object_title_get             (const Evas_Object *obj);
 EAPI const char  *emotion_object_ref_file_get          (const Evas_Object *obj);
 EAPI int          emotion_object_ref_num_get           (const Evas_Object *obj);
 EAPI int          emotion_object_spu_button_count_get  (const Evas_Object *obj);
 EAPI int          emotion_object_spu_button_get        (const Evas_Object *obj);
+
+/**
+ * @brief Retrieve meta information from this file being played.
+ *
+ * @param obj The object which the meta info will be extracted from.
+ * @param meta The type of meta information that will be extracted.
+ *
+ * This function retrieves information about the file loaded. It can retrieve
+ * the track title, artist name, album name, etc. See @ref Emotion_Meta_Info
+ * for all the possibilities.
+ *
+ * The meta info may be not available on all types of files. It will return @c
+ * NULL if the the file doesn't have meta info, or if this specific field is
+ * empty.
+ *
+ * @note Don't change or free the string returned by this function.
+ *
+ * @see Emotion_Meta_Info
+ *
+ * @ingroup Emotion_Info
+ */
 EAPI const char  *emotion_object_meta_info_get         (const Evas_Object *obj, Emotion_Meta_Info meta);
 
+/**
+ * @brief Set the visualization to be used with this object.
+ *
+ * @param obj The object where the visualization will be set on.
+ * @param visualization The type of visualization to be used.
+ *
+ * The @p visualization specified will be played instead of a video. This is
+ * commonly used to display a visualization for audio only files (musics).
+ *
+ * The available visualizations are @ref Emotion_Vis.
+ *
+ * @see Emotion_Vis
+ * @see emotion_object_vis_get()
+ * @see emotion_object_vis_supported()
+ *
+ * @ingroup Emotion_Visualization
+ */
 EAPI void         emotion_object_vis_set               (Evas_Object *obj, Emotion_Vis visualization);
+
+/**
+ * @brief Get the type of visualization in use by this emotion object.
+ *
+ * @param obj The emotion object which the visualization is being retrieved
+ * from.
+ * @return The type of visualization in use by this object.
+ *
+ * The type of visualization can be set by emotion_object_vis_set().
+ *
+ * @see Emotion_Vis
+ * @see emotion_object_vis_set()
+ * @see emotion_object_vis_supported()
+ *
+ * @ingroup Emotion_Visualization
+ */
 EAPI Emotion_Vis  emotion_object_vis_get               (const Evas_Object *obj);
+
+/**
+ * @brief Query whether a type of visualization is supported by this object.
+ *
+ * @param obj The object which the query is being ran on.
+ * @param visualization The type of visualization that is being queried.
+ * @return EINA_TRUE if the visualization is supported, EINA_FALSE otherwise.
+ *
+ * This can be used to check if a visualization is supported. e.g.: one wants to
+ * display a list of available visualizations for a specific object.
+ *
+ * @see Emotion_Vis
+ * @see emotion_object_vis_set()
+ * @see emotion_object_vis_get()
+ *
+ * @ingroup Emotion_Visualization
+ */
 EAPI Eina_Bool    emotion_object_vis_supported         (const Evas_Object *obj, Emotion_Vis visualization);
 
 EAPI void         emotion_object_last_position_load    (Evas_Object *obj);
