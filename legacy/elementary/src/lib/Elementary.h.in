@@ -3377,7 +3377,11 @@ extern "C" {
     * @see Hover
     *
     * Since examples are usually better than plain words, we might as well
-    * try one. This exampel will show both Anchorblock and @ref Anchorview,
+    * try @ref tutorial_anchorblock_example "one".
+    */
+   /**
+    * @page tutorial_anchorblock_example Anchorblock/Anchorview example
+    * This exampel will show both Anchorblock and @ref Anchorview,
     * since both are very similar and it's easier to show them once and side
     * by side, so the difference is more clear.
     *
@@ -3474,8 +3478,11 @@ extern "C" {
     * @until evas_object_del(box)
     * @until }
     * @until }
-    */
-   /**
+    *
+    * The example will look like this:
+    * @image html screenshots/anchorblock_01.png
+    * @image latex screenshots/anchorblock_01.eps
+    *
     * @example anchorblock_example_01.c
     */
    /**
