@@ -22,6 +22,8 @@ struct _Widget_Data
    Evas_Object *layout;
    Evas_Object *emotion;
 
+   Ecore_Timer *timer;
+
    Eina_Bool stop : 1;
    Eina_Bool remember : 1;
 };
@@ -224,6 +226,28 @@ _audio_level_change(void *data, Evas_Object *obj __UNUSED__, void *event_info __
 {
    (void) data;
 }
+
+static Eina_Bool
+_suspend_cb(void *data)
+{
+   Widget_Data *wd = elm_widget_data_get(data);
+   double interval;
+
+   interval = ecore_timer_interval_get(wd->timer);
+   if (interval <= 20)
+     emotion_object_suspend_set(wd->emotion, EMOTION_SLEEP);
+   else if (interval <= 30)
+     emotion_object_suspend_set(wd->emotion, EMOTION_DEEP_SLEEP);
+   else
+     {
+        emotion_object_suspend_set(wd->emotion, EMOTION_HIBERNATE);
+        wd->timer = NULL;
+        return ECORE_CALLBACK_CANCEL;
+     }
+
+   ecore_timer_interval_set(wd->timer, interval + 10);
+   return ECORE_CALLBACK_RENEW;
+}
 #endif
 
 EAPI Evas_Object *
@@ -273,6 +297,9 @@ elm_video_add(Evas_Object *parent)
 
    _mirrored_set(obj, elm_widget_mirrored_get(obj));
    _sizing_eval(obj);
+
+   wd->timer = ecore_timer_add(20.0, _suspend_cb, obj);
+
    return obj;
 #else
    (void) parent;
@@ -338,6 +365,8 @@ elm_video_play(Evas_Object *video)
 
    if (emotion_object_play_get(wd->emotion)) return ;
 
+   ecore_timer_del(wd->timer);
+   wd->timer = NULL;
    wd->stop = EINA_FALSE;
    emotion_object_play_set(wd->emotion, EINA_TRUE);
 #else
@@ -358,6 +387,7 @@ elm_video_pause(Evas_Object *video)
 
    if (!emotion_object_play_get(wd->emotion)) return ;
 
+   if (!wd->timer) wd->timer = ecore_timer_add(20.0, _suspend_cb, video);
    emotion_object_play_set(wd->emotion, EINA_FALSE);
    edje_object_signal_emit(wd->layout, "elm,video,pause", "elm");
 #else
@@ -376,9 +406,12 @@ elm_video_stop(Evas_Object *video)
 
    if (!emotion_object_play_get(wd->emotion) && wd->stop) return ;
 
+   ecore_timer_del(wd->timer);
+   wd->timer = NULL;
    wd->stop = EINA_TRUE;
    emotion_object_play_set(wd->emotion, EINA_FALSE);
    edje_object_signal_emit(wd->layout, "elm,video,stop", "elm");
+   emotion_object_suspend_set(wd->emotion, EMOTION_HIBERNATE);
 #else
    (void) video;
 #endif
