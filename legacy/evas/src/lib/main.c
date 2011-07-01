@@ -125,28 +125,20 @@ evas_debug_magic_string_get(DATA32 magic)
      {
       case MAGIC_EVAS:
 	return "Evas";
-	break;
       case MAGIC_OBJ:
 	return "Evas_Object";
-	break;
       case MAGIC_OBJ_RECTANGLE:
 	return "Evas_Object (Rectangle)";
-	break;
       case MAGIC_OBJ_LINE:
 	return "Evas_Object (Line)";
-	break;
       case MAGIC_OBJ_POLYGON:
 	return "Evas_Object (Polygon)";
-	break;
       case MAGIC_OBJ_IMAGE:
 	return "Evas_Object (Image)";
-	break;
       case MAGIC_OBJ_TEXT:
 	return "Evas_Object (Text)";
-	break;
       case MAGIC_OBJ_SMART:
 	return "Evas_Object (Smart)";
-	break;
       case MAGIC_EVAS_GL:
 	return "Evas_GL";
       case MAGIC_MAP:
