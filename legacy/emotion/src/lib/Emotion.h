@@ -316,6 +316,8 @@ EAPI const char  *emotion_object_file_get              (const Evas_Object *obj);
  * @defgroup Emotion_Play Play control functions
  *
  * @{
+ */
+/**
  *
  * @brief Set play/pause state of the media file.
  *
