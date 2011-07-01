@@ -1816,7 +1816,7 @@ elm_widget_disabled_set(Evas_Object *obj,
              if (!o) break;
              parent = o;
           }
-		elm_widget_focus_cycle(parent, ELM_FOCUS_NEXT);
+        elm_widget_focus_cycle(parent, ELM_FOCUS_NEXT);
      }
    if (sd->disable_func) sd->disable_func(obj);
 }
