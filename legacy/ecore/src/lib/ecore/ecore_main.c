@@ -903,8 +903,8 @@ ecore_main_fd_handler_del(Ecore_Fd_Handler *fd_handler)
         return NULL;
      }
 
-   fd_handler->delete_me = EINA_TRUE;
    _ecore_main_fdh_poll_del(fd_handler);
+   fd_handler->delete_me = EINA_TRUE;
    fd_handlers_to_delete = eina_list_append(fd_handlers_to_delete, fd_handler);
    if (fd_handler->prep_func && fd_handlers_with_prep)
      fd_handlers_with_prep = eina_list_remove(fd_handlers_with_prep, fd_handler);

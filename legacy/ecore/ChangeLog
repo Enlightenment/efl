@@ -252,3 +252,7 @@
         avoid wakeups and excess animation etc. when in the background
         or another "powersave" state.
 
+2011-07-01  Carsten Haitzler (The Rasterman)
+
+        * Fix epoll delete fd handling in child process - #796
+
