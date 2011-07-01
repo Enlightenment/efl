@@ -382,7 +382,7 @@ evas_object_map_enable_set(Evas_Object *obj, Eina_Bool enabled)
           {
              _evas_map_calc_geom_change(obj);
              evas_object_mapped_clip_across_mark(obj);
-             //FIXME: Since the last frame is not updated when map is 
+             //FIXME: Since the last frame is not updated when map is
              //disabled, afterimage problem is happened in s/w rendering.
              //Need to find out the fundamental reason then fix it.
              evas_damage_rectangle_add(obj->layer->evas,
@@ -459,9 +459,9 @@ evas_object_map_set(Evas_Object *obj, const Evas_Map *map)
              if (obj->cur.usemap)
                {
                   evas_object_mapped_clip_across_mark(obj);
-                  //FIXME: Since the last frame is not updated when map is 
-                  //disabled, afterimage problem is happened in s/w 
-                  //rendering. Need to find out the fundamental reason 
+                  //FIXME: Since the last frame is not updated when map is
+                  //disabled, afterimage problem is happened in s/w
+                  //rendering. Need to find out the fundamental reason
                   //then fix it.
                   evas_damage_rectangle_add(obj->layer->evas,
                                             0,
