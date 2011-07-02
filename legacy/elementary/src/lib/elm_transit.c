@@ -373,7 +373,11 @@ EAPI Elm_Transit *
 elm_transit_add(void)
 {
    Elm_Transit *transit = ELM_NEW(Elm_Transit);
-   if (!transit) return NULL;
+   if (!transit)
+     {
+        ERR("Failed to allocate a elm_transit object!");
+        return NULL;
+     }
 
    EINA_MAGIC_SET(transit, ELM_TRANSIT_MAGIC);
 
@@ -399,10 +403,18 @@ elm_transit_effect_add(Elm_Transit *transit, Elm_Transit_Effect_Transition_Cb tr
    Elm_Transit_Effect_Module *effect_module;
 
    EINA_INLIST_FOREACH(transit->effect_list, effect_module)
-     if ((effect_module->transition_cb == transition_cb) && (effect_module->effect == effect)) return;
+     if ((effect_module->transition_cb == transition_cb) && (effect_module->effect == effect))
+       {
+          WRN("elm_transit does not allow to add the duplicated effect! : transit=%p", transit);
+          return;
+       }
 
    effect_module = ELM_NEW(Elm_Transit_Effect_Module);
-   if (!effect_module) return;
+   if (!effect_module)
+     {
+        ERR("Failed to allocate a new effect!: transit=%p", transit);
+        return;
+     }
 
    effect_module->end_cb = end_cb;
    effect_module->transition_cb = transition_cb;
@@ -554,7 +566,11 @@ EAPI void
 elm_transit_duration_set(Elm_Transit *transit, double duration)
 {
    ELM_TRANSIT_CHECK_OR_RETURN(transit);
-   if (transit->animator) return;
+   if (transit->animator)
+     {
+        WRN("elm_transit does not allow to set the duration time in operating! : transit=%p", transit);
+        return;
+     }
    transit->time.duration = duration;
 }
 
@@ -640,7 +656,11 @@ elm_transit_objects_final_state_keep_set(Elm_Transit *transit, Eina_Bool state_k
    ELM_TRANSIT_CHECK_OR_RETURN(transit);
 
    if (transit->state_keep == state_keep) return;
-   if (transit->animator) return;
+   if (transit->animator)
+     {
+        WRN("elm_transit does not allow to change final state keep mode in operating! : transit=%p", transit);
+        return;
+     }
    transit->state_keep = !!state_keep;
 }
 
@@ -657,8 +677,13 @@ elm_transit_chain_transit_add(Elm_Transit *transit, Elm_Transit *chain_transit)
    ELM_TRANSIT_CHECK_OR_RETURN(transit);
    ELM_TRANSIT_CHECK_OR_RETURN(chain_transit);
 
-   if (transit == chain_transit) return;
-   if (transit == chain_transit->prev_chain_transit) return;
+   if (transit == chain_transit)
+     {
+        WRN("You add a same transit as a chain transit! : transit=%p, chain_transit=%p", transit, chain_transit);
+        return;
+     }
+   if (transit == chain_transit->prev_chain_transit)
+     return;
 
    if (chain_transit->prev_chain_transit)
      chain_transit->prev_chain_transit->next_chain_transits = eina_list_remove(chain_transit->prev_chain_transit->next_chain_transits, chain_transit);
@@ -732,7 +757,11 @@ elm_transit_effect_resizing_add(Elm_Transit *transit, Evas_Coord from_w, Evas_Co
    ELM_TRANSIT_CHECK_OR_RETURN(transit, NULL);
    Elm_Transit_Effect *effect = _transit_effect_resizing_context_new(from_w, from_h, to_w, to_h);
 
-   if (!effect) return NULL;
+   if (!effect)
+     {
+        ERR("Failed to allocate resizing effect! : transit=%p", transit);
+        return NULL;
+     }
    elm_transit_effect_add(transit,
                           _transit_effect_resizing_op, effect,
                           _transit_effect_resizing_context_free);
@@ -866,7 +895,11 @@ elm_transit_effect_translation_add(Elm_Transit *transit, Evas_Coord from_dx, Eva
    ELM_TRANSIT_CHECK_OR_RETURN(transit, NULL);
    Elm_Transit_Effect *effect_context = _transit_effect_translation_context_new(from_dx, from_dy, to_dx, to_dy);
 
-   if (!effect_context) return NULL;
+   if (!effect_context)
+     {
+        ERR("Failed to allocate translation effect! : transit=%p", transit);
+        return NULL;
+     }
    elm_transit_effect_add(transit,
                           _transit_effect_translation_op, effect_context,
                           _transit_effect_translation_context_free);
@@ -937,7 +970,11 @@ elm_transit_effect_zoom_add(Elm_Transit *transit, float from_rate, float to_rate
    ELM_TRANSIT_CHECK_OR_RETURN(transit, NULL);
    Elm_Transit_Effect *effect_context = _transit_effect_zoom_context_new(from_rate, to_rate);
 
-   if (!effect_context) return NULL;
+   if (!effect_context)
+     {
+        ERR("Failed to allocate zoom effect! : transit=%p", transit);
+        return NULL;
+     }
    elm_transit_effect_add(transit,
                           _transit_effect_zoom_op, effect_context,
                           _transit_effect_zoom_context_free);
@@ -1079,7 +1116,11 @@ elm_transit_effect_flip_add(Elm_Transit *transit, Elm_Transit_Effect_Flip_Axis a
    ELM_TRANSIT_CHECK_OR_RETURN(transit, NULL);
    Elm_Transit_Effect *effect_context = _transit_effect_flip_context_new(axis, cw);
 
-   if (!effect_context) return NULL;
+   if (!effect_context)
+     {
+        ERR("Failed to allocate flip effect! : transit=%p", transit);
+        return NULL;
+     }
    elm_transit_effect_add(transit,
                           _transit_effect_flip_op, effect_context,
                           _transit_effect_flip_context_free);
@@ -1358,7 +1399,11 @@ elm_transit_effect_resizable_flip_add(Elm_Transit *transit, Elm_Transit_Effect_F
    ELM_TRANSIT_CHECK_OR_RETURN(transit, NULL);
    Elm_Transit_Effect *effect_context = _transit_effect_resizable_flip_context_new(axis, cw);
 
-   if (!effect_context) return NULL;
+   if (!effect_context)
+     {
+        ERR("Failed to allocate resizable_flip effect! : transit=%p", transit);
+        return NULL;
+     }
    elm_transit_effect_add(transit,
                           _transit_effect_resizable_flip_op, effect_context,
                           _transit_effect_resizable_flip_context_free);
@@ -1570,7 +1615,11 @@ elm_transit_effect_wipe_add(Elm_Transit *transit, Elm_Transit_Effect_Wipe_Type t
    ELM_TRANSIT_CHECK_OR_RETURN(transit, NULL);
    void *effect_context = _transit_effect_wipe_context_new(type, dir);
 
-   if (!effect_context) return NULL;
+   if (!effect_context)
+     {
+        ERR("Failed to allocate wipe effect! : transit=%p", transit);
+        return NULL;
+     }
    elm_transit_effect_add(transit,
                           _transit_effect_wipe_op, effect_context,
                           _transit_effect_wipe_context_free);
@@ -1645,7 +1694,11 @@ elm_transit_effect_color_add(Elm_Transit *transit, unsigned int from_r, unsigned
    ELM_TRANSIT_CHECK_OR_RETURN(transit, NULL);
    Elm_Transit_Effect *effect_context = _transit_effect_color_context_new(from_r, from_g, from_b, from_a, to_r, to_g, to_b, to_a);
 
-   if (!effect_context) return NULL;
+   if (!effect_context)
+     {
+        ERR("Failed to allocate color effect! : transit=%p", transit);
+        return NULL;
+     }
    elm_transit_effect_add(transit,
                           _transit_effect_color_op, effect_context,
                           _transit_effect_color_context_free);
@@ -1834,7 +1887,12 @@ elm_transit_effect_fade_add(Elm_Transit *transit)
    ELM_TRANSIT_CHECK_OR_RETURN(transit, NULL);
 
    Elm_Transit_Effect *effect_context = _transit_effect_fade_context_new();
-   if (!effect_context) return NULL;
+
+   if (!effect_context)
+     {
+        ERR("Failed to allocate fade effect! : transit=%p", transit);
+        return NULL;
+     }
    elm_transit_effect_add(transit,
                           _transit_effect_fade_op, effect_context,
                           _transit_effect_fade_context_free);
@@ -2157,7 +2215,11 @@ elm_transit_effect_image_animation_add(Elm_Transit *transit, Eina_List *images)
    ELM_TRANSIT_CHECK_OR_RETURN(transit, NULL);
    Elm_Transit_Effect *effect = _transit_effect_image_animation_context_new(images);
 
-   if (!effect) return NULL;
+   if (!effect)
+     {
+        ERR("Failed to allocate image_animation effect! : transit=%p", transit);
+        return NULL;
+     }
    elm_transit_effect_add(transit,
                           _transit_effect_image_animation_op, effect,
                           _transit_effect_image_animation_context_free);
