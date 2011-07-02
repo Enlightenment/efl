@@ -109,6 +109,8 @@
 # include <sys/xattr.h>
 #endif
 
+# define EIO_PACKED_TIME 0.001
+
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
@@ -123,6 +125,8 @@ _eio_file_heavy(void *data, Ecore_Thread *thread)
    Eio_File_Char_Ls *async = data;
    Eina_Iterator *ls;
    const char *file;
+   Eina_List *pack = NULL;
+   double start, current;
 
    ls = eina_file_ls(async->ls.directory);
    if (!ls)
@@ -132,6 +136,8 @@ _eio_file_heavy(void *data, Ecore_Thread *thread)
      }
 
    eio_file_container_set(&async->ls.common, eina_iterator_container_get(ls));
+
+   start = ecore_time_get();
 
    EINA_ITERATOR_FOREACH(ls, file)
      {
@@ -153,7 +159,7 @@ _eio_file_heavy(void *data, Ecore_Thread *thread)
 	     send->associated = async->ls.common.worker.associated;
 	     async->ls.common.worker.associated = NULL;
 
-             ecore_thread_feedback(thread, send);
+	     pack = eina_list_append(pack, send);
           }
 	else
           {
@@ -167,9 +173,19 @@ _eio_file_heavy(void *data, Ecore_Thread *thread)
                }
           }
 
+	current = ecore_time_get();
+	if (current - start > EIO_PACKED_TIME)
+	  {
+             start = current;
+             ecore_thread_feedback(thread, pack);
+             pack = NULL;
+          }
+
 	if (ecore_thread_check(thread))
 	  break;
      }
+
+   if (pack) ecore_thread_feedback(thread, pack);
 
    eio_file_container_set(&async->ls.common, NULL);
 
@@ -180,28 +196,34 @@ static void
 _eio_file_notify(void *data, Ecore_Thread *thread __UNUSED__, void *msg_data)
 {
    Eio_File_Char_Ls *async = data;
-   Eio_File_Char *info = msg_data;
+   Eina_List *pack = msg_data;
+   Eio_File_Char *info;
 
-   async->ls.common.main.associated = info->associated;
-
-   async->main_cb((void*) async->ls.common.data,
-                  &async->ls.common,
-                  info->filename);
-
-   if (async->ls.common.main.associated)
+   EINA_LIST_FREE(pack, info)
      {
-        eina_hash_free(async->ls.common.main.associated);
-        async->ls.common.main.associated = NULL;
-     }
+        async->ls.common.main.associated = info->associated;
 
-   eina_stringshare_del(info->filename);
-   eio_char_free(info);
+        async->main_cb((void*) async->ls.common.data,
+                       &async->ls.common,
+                       info->filename);
+
+        if (async->ls.common.main.associated)
+          {
+             eina_hash_free(async->ls.common.main.associated);
+             async->ls.common.main.associated = NULL;
+          }
+
+        eina_stringshare_del(info->filename);
+        eio_char_free(info);
+     }
 }
 
 static void
 _eio_file_eina_ls_heavy(Ecore_Thread *thread, Eio_File_Direct_Ls *async, Eina_Iterator *ls)
 {
    const Eina_File_Direct_Info *info;
+   Eina_List *pack = NULL;
+   double start, current;
 
    if (!ls)
      {
@@ -210,6 +232,8 @@ _eio_file_eina_ls_heavy(Ecore_Thread *thread, Eio_File_Direct_Ls *async, Eina_It
      }
 
    eio_file_container_set(&async->ls.common, eina_iterator_container_get(ls));
+
+   start = ecore_time_get();
 
    EINA_ITERATOR_FOREACH(ls, info)
      {
@@ -231,7 +255,7 @@ _eio_file_eina_ls_heavy(Ecore_Thread *thread, Eio_File_Direct_Ls *async, Eina_It
 	     send->associated = async->ls.common.worker.associated;
 	     async->ls.common.worker.associated = NULL;
 
-	     ecore_thread_feedback(thread, send);
+             pack = eina_list_append(pack, send);
 	  }
 	else if (async->ls.common.worker.associated)
 	  {
@@ -239,9 +263,19 @@ _eio_file_eina_ls_heavy(Ecore_Thread *thread, Eio_File_Direct_Ls *async, Eina_It
              async->ls.common.worker.associated = NULL;
 	  }
 
+        current = ecore_time_get();
+        if (current - start > EIO_PACKED_TIME)
+          {
+             start = current;
+             ecore_thread_feedback(thread, pack);
+             pack = NULL;
+          }
+
 	if (ecore_thread_check(thread))
 	  break;
      }
+
+   if (pack) ecore_thread_feedback(thread, pack);
 
    eio_file_container_set(&async->ls.common, NULL);
 
@@ -274,21 +308,25 @@ static void
 _eio_file_direct_notify(void *data, Ecore_Thread *thread __UNUSED__, void *msg_data)
 {
    Eio_File_Direct_Ls *async = data;
-   Eio_File_Direct_Info *info = msg_data;
+   Eina_List *pack = msg_data;
+   Eio_File_Direct_Info *info;
 
-   async->ls.common.main.associated = info->associated;
-
-   async->main_cb((void*) async->ls.common.data,
-		  &async->ls.common,
-		  &info->info);
-
-   if (async->ls.common.main.associated)
+   EINA_LIST_FREE(pack, info)
      {
-        eina_hash_free(async->ls.common.main.associated);
-        async->ls.common.main.associated = NULL;
-     }
+        async->ls.common.main.associated = info->associated;
 
-   eio_direct_info_free(info);
+        async->main_cb((void*) async->ls.common.data,
+                       &async->ls.common,
+                       &info->info);
+
+        if (async->ls.common.main.associated)
+          {
+             eina_hash_free(async->ls.common.main.associated);
+             async->ls.common.main.associated = NULL;
+          }
+
+        eio_direct_info_free(info);
+     }
 }
 
 #ifdef HAVE_XATTR
