@@ -893,17 +893,17 @@ EAPI Elm_Transit_Effect *
 elm_transit_effect_translation_add(Elm_Transit *transit, Evas_Coord from_dx, Evas_Coord from_dy, Evas_Coord to_dx, Evas_Coord to_dy)
 {
    ELM_TRANSIT_CHECK_OR_RETURN(transit, NULL);
-   Elm_Transit_Effect *effect_context = _transit_effect_translation_context_new(from_dx, from_dy, to_dx, to_dy);
+   Elm_Transit_Effect *effect = _transit_effect_translation_context_new(from_dx, from_dy, to_dx, to_dy);
 
-   if (!effect_context)
+   if (!effect)
      {
         ERR("Failed to allocate translation effect! : transit=%p", transit);
         return NULL;
      }
    elm_transit_effect_add(transit,
-                          _transit_effect_translation_op, effect_context,
+                          _transit_effect_translation_op, effect,
                           _transit_effect_translation_context_free);
-   return effect_context;
+   return effect;
 }
 
 
@@ -968,17 +968,17 @@ EAPI Elm_Transit_Effect *
 elm_transit_effect_zoom_add(Elm_Transit *transit, float from_rate, float to_rate)
 {
    ELM_TRANSIT_CHECK_OR_RETURN(transit, NULL);
-   Elm_Transit_Effect *effect_context = _transit_effect_zoom_context_new(from_rate, to_rate);
+   Elm_Transit_Effect *effect = _transit_effect_zoom_context_new(from_rate, to_rate);
 
-   if (!effect_context)
+   if (!effect)
      {
         ERR("Failed to allocate zoom effect! : transit=%p", transit);
         return NULL;
      }
    elm_transit_effect_add(transit,
-                          _transit_effect_zoom_op, effect_context,
+                          _transit_effect_zoom_op, effect,
                           _transit_effect_zoom_context_free);
-   return effect_context;
+   return effect;
 }
 
 
@@ -1114,17 +1114,17 @@ EAPI Elm_Transit_Effect *
 elm_transit_effect_flip_add(Elm_Transit *transit, Elm_Transit_Effect_Flip_Axis axis, Eina_Bool cw)
 {
    ELM_TRANSIT_CHECK_OR_RETURN(transit, NULL);
-   Elm_Transit_Effect *effect_context = _transit_effect_flip_context_new(axis, cw);
+   Elm_Transit_Effect *effect = _transit_effect_flip_context_new(axis, cw);
 
-   if (!effect_context)
+   if (!effect)
      {
         ERR("Failed to allocate flip effect! : transit=%p", transit);
         return NULL;
      }
    elm_transit_effect_add(transit,
-                          _transit_effect_flip_op, effect_context,
+                          _transit_effect_flip_op, effect,
                           _transit_effect_flip_context_free);
-   return effect_context;
+   return effect;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -1397,17 +1397,17 @@ EAPI Elm_Transit_Effect *
 elm_transit_effect_resizable_flip_add(Elm_Transit *transit, Elm_Transit_Effect_Flip_Axis axis, Eina_Bool cw)
 {
    ELM_TRANSIT_CHECK_OR_RETURN(transit, NULL);
-   Elm_Transit_Effect *effect_context = _transit_effect_resizable_flip_context_new(axis, cw);
+   Elm_Transit_Effect *effect = _transit_effect_resizable_flip_context_new(axis, cw);
 
-   if (!effect_context)
+   if (!effect)
      {
         ERR("Failed to allocate resizable_flip effect! : transit=%p", transit);
         return NULL;
      }
    elm_transit_effect_add(transit,
-                          _transit_effect_resizable_flip_op, effect_context,
+                          _transit_effect_resizable_flip_op, effect,
                           _transit_effect_resizable_flip_context_free);
-   return effect_context;
+   return effect;
 }
 
 
@@ -1613,17 +1613,17 @@ EAPI void *
 elm_transit_effect_wipe_add(Elm_Transit *transit, Elm_Transit_Effect_Wipe_Type type, Elm_Transit_Effect_Wipe_Dir dir)
 {
    ELM_TRANSIT_CHECK_OR_RETURN(transit, NULL);
-   void *effect_context = _transit_effect_wipe_context_new(type, dir);
+   void *effect = _transit_effect_wipe_context_new(type, dir);
 
-   if (!effect_context)
+   if (!effect)
      {
         ERR("Failed to allocate wipe effect! : transit=%p", transit);
         return NULL;
      }
    elm_transit_effect_add(transit,
-                          _transit_effect_wipe_op, effect_context,
+                          _transit_effect_wipe_op, effect,
                           _transit_effect_wipe_context_free);
-   return effect_context;
+   return effect;
 }
 
 
@@ -1692,17 +1692,17 @@ EAPI Elm_Transit_Effect *
 elm_transit_effect_color_add(Elm_Transit *transit, unsigned int from_r, unsigned int from_g, unsigned int from_b, unsigned int from_a, unsigned int to_r, unsigned int to_g, unsigned int to_b, unsigned int to_a)
 {
    ELM_TRANSIT_CHECK_OR_RETURN(transit, NULL);
-   Elm_Transit_Effect *effect_context = _transit_effect_color_context_new(from_r, from_g, from_b, from_a, to_r, to_g, to_b, to_a);
+   Elm_Transit_Effect *effect = _transit_effect_color_context_new(from_r, from_g, from_b, from_a, to_r, to_g, to_b, to_a);
 
-   if (!effect_context)
+   if (!effect)
      {
         ERR("Failed to allocate color effect! : transit=%p", transit);
         return NULL;
      }
    elm_transit_effect_add(transit,
-                          _transit_effect_color_op, effect_context,
+                          _transit_effect_color_op, effect,
                           _transit_effect_color_context_free);
-   return effect_context;
+   return effect;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -1886,17 +1886,17 @@ elm_transit_effect_fade_add(Elm_Transit *transit)
 {
    ELM_TRANSIT_CHECK_OR_RETURN(transit, NULL);
 
-   Elm_Transit_Effect *effect_context = _transit_effect_fade_context_new();
+   Elm_Transit_Effect *effect = _transit_effect_fade_context_new();
 
-   if (!effect_context)
+   if (!effect)
      {
         ERR("Failed to allocate fade effect! : transit=%p", transit);
         return NULL;
      }
    elm_transit_effect_add(transit,
-                          _transit_effect_fade_op, effect_context,
+                          _transit_effect_fade_op, effect,
                           _transit_effect_fade_context_free);
-   return effect_context;
+   return effect;
 }
 
 
@@ -2053,13 +2053,13 @@ EAPI Elm_Transit_Effect *
 elm_transit_effect_blend_add(Elm_Transit *transit)
 {
    ELM_TRANSIT_CHECK_OR_RETURN(transit, NULL);
-   Elm_Transit_Effect *effect_context = _transit_effect_blend_context_new();
+   Elm_Transit_Effect *effect = _transit_effect_blend_context_new();
 
-   if (!effect_context) return NULL;
+   if (!effect) return NULL;
    elm_transit_effect_add(transit,
-                          _transit_effect_blend_op, effect_context,
+                          _transit_effect_blend_op, effect,
                           _transit_effect_blend_context_free);
-   return effect_context;
+   return effect;
 }
 
 
@@ -2132,13 +2132,13 @@ EAPI Elm_Transit_Effect *
 elm_transit_effect_rotation_add(Elm_Transit *transit, float from_degree, float to_degree)
 {
    ELM_TRANSIT_CHECK_OR_RETURN(transit, NULL);
-   Elm_Transit_Effect *effect_context = _transit_effect_rotation_context_new(from_degree, to_degree);
+   Elm_Transit_Effect *effect = _transit_effect_rotation_context_new(from_degree, to_degree);
 
-   if (!effect_context) return NULL;
+   if (!effect) return NULL;
    elm_transit_effect_add(transit,
-                          _transit_effect_rotation_op, effect_context,
+                          _transit_effect_rotation_op, effect,
                           _transit_effect_rotation_context_free);
-   return effect_context;
+   return effect;
 }
 
 
