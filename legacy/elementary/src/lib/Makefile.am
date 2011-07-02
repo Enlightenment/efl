@@ -83,7 +83,6 @@ elm_list.c \
 elm_main.c \
 elm_mapbuf.c \
 elm_map.c \
-elm_route.c \
 elm_menu.c \
 elm_module.c \
 elm_notify.c \
@@ -94,6 +93,7 @@ elm_photo.c \
 elm_photocam.c \
 elm_progressbar.c \
 elm_radio.c \
+elm_route.c \
 elm_scroller.c \
 elm_segment_control.c \
 elm_separator.c \
