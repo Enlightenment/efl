@@ -104,7 +104,7 @@ test_tooltip.c \
 test_transit.c \
 test_weather.c \
 test_win_inline.c \
-test_win_state.c 
+test_win_state.c
 
 if HAVE_EIO
 elementary_test_SOURCES += test_eio.c
