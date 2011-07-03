@@ -49,9 +49,9 @@ _del_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
-   
+
    // Call delete func if it's registered
-   if (wd->del_func) 
+   if (wd->del_func)
      {
         evas_gl_make_current(wd->evasgl, wd->surface, wd->context);
         wd->del_func(obj);
@@ -481,7 +481,7 @@ elm_glview_size_get(const Evas_Object *obj, int *width, int *height)
  * @param func The init function to be registered.
  *
  * The registered init function gets called once during the render loop.
- * 
+ *
  * @ingroup GLView
  */
 EAPI void
@@ -502,7 +502,7 @@ elm_glview_init_func_set(Evas_Object *obj, Elm_GLView_Func func)
  * @param func The delete function to be registered.
  *
  * The registered del function gets called when GLView object is deleted.
- * 
+ *
  * @ingroup GLView
  */
 EAPI void
@@ -528,7 +528,7 @@ elm_glview_resize_func_set(Evas_Object *obj, Elm_GLView_Func func)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
-    if (!wd) 
+    if (!wd)
      {
         ERR("Invalid Widget Object.\n");
         return;

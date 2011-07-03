@@ -595,7 +595,7 @@ _theme_hook(Evas_Object *obj)
      {
         const char *str;
         Evas_Object *edj;
-        
+
         edj = elm_smart_scroller_edje_object_get(wd->scroller);
         str = edje_object_data_get(edj, "focus_highlight");
         if ((str) && (!strcmp(str, "on")))
@@ -712,7 +712,7 @@ _sizing_eval(Evas_Object *obj)
              wd->entmw = minw;
              wd->entmh = minh;
              elm_coords_finger_size_adjust(1, &minw, 1, &minh);
-             
+
              if ((minw > 0) && (vw < minw)) vw = minw;
              if (minh > vh) vh = minh;
 
@@ -739,12 +739,12 @@ _sizing_eval(Evas_Object *obj)
         if (wd->scroll)
           {
              Evas_Coord vw = 0, vh = 0, vmw = 0, vmh = 0, w = -1, h = -1;
-             
+
              edje_object_size_min_calc(wd->ent, &minw, &minh);
              wd->entmw = minw;
              wd->entmh = minh;
              elm_coords_finger_size_adjust(1, &minw, 1, &minh);
-             
+
              elm_smart_scroller_child_viewport_size_get(wd->scroller, &vw, &vh);
 
              if ((minw > 0) && (vw < minw)) vw = minw;
@@ -909,7 +909,7 @@ _resize(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event
 {
    Widget_Data *wd = elm_widget_data_get(data);
    if (!wd) return;
-   
+
    if (wd->linewrap)
      {
         _sizing_eval(data);
@@ -917,7 +917,7 @@ _resize(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event
    else if (wd->scroll)
      {
         Evas_Coord vw = 0, vh = 0;
-        
+
         elm_smart_scroller_child_viewport_size_get(wd->scroller, &vw, &vh);
         if (vw < wd->entmw) vw = wd->entmw;
         if (vh < wd->entmh) vh = wd->entmh;
@@ -1890,7 +1890,7 @@ elm_entry_add(Evas_Object *parent)
    elm_object_cursor_set(obj, ELM_CURSOR_XTERM);
    elm_widget_can_focus_set(obj, EINA_TRUE);
    elm_widget_highlight_ignore_set(obj, EINA_TRUE);
-   
+
    wd->scroller = elm_smart_scroller_add(e);
    elm_widget_sub_object_add(obj, wd->scroller);
    elm_smart_scroller_widget_set(wd->scroller, obj);
@@ -1900,7 +1900,7 @@ elm_entry_add(Evas_Object *parent)
    evas_object_size_hint_align_set(wd->scroller, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_smart_scroller_bounce_allow_set(wd->scroller, EINA_FALSE, EINA_FALSE);
    evas_object_propagate_events_set(wd->scroller, EINA_TRUE);
-   
+
    wd->linewrap     = ELM_WRAP_WORD;
    wd->editable     = EINA_TRUE;
    wd->disabled     = EINA_FALSE;
@@ -1920,7 +1920,7 @@ elm_entry_add(Evas_Object *parent)
    evas_object_event_callback_add(wd->ent, EVAS_CALLBACK_MOUSE_MOVE,
                                   _mouse_move, obj);
    evas_object_event_callback_add(obj, EVAS_CALLBACK_RESIZE, _resize, obj);
-   
+
    _elm_theme_object_set(obj, wd->ent, "entry", "base", "default");
    edje_object_signal_callback_add(wd->ent, "entry,changed", "elm.text",
                                    _signal_entry_changed, obj);
@@ -2020,8 +2020,8 @@ elm_entry_single_line_set(Evas_Object *obj, Eina_Bool single_line)
    if (wd->scroller)
      {
         if (wd->single_line)
-           elm_smart_scroller_policy_set(wd->scroller, 
-                                         ELM_SMART_SCROLLER_POLICY_OFF, 
+           elm_smart_scroller_policy_set(wd->scroller,
+                                         ELM_SMART_SCROLLER_POLICY_OFF,
                                          ELM_SMART_SCROLLER_POLICY_OFF);
         else
           {
@@ -2031,8 +2031,8 @@ elm_entry_single_line_set(Evas_Object *obj, Eina_Bool single_line)
                   ELM_SMART_SCROLLER_POLICY_ON,
                   ELM_SMART_SCROLLER_POLICY_OFF
                };
-             elm_smart_scroller_policy_set(wd->scroller, 
-                                           map[wd->policy_h], 
+             elm_smart_scroller_policy_set(wd->scroller,
+                                           map[wd->policy_h],
                                            map[wd->policy_v]);
           }
         _sizing_eval(obj);
@@ -3353,7 +3353,7 @@ elm_entry_cnp_textonly_get(const Evas_Object *obj)
  * Enable or disable scrolling in entry
  *
  * Normally the entry is not scrollable unless you enable it with this call.
- * 
+ *
  * @param obj The entry object
  * @param scroll EINA_TRUE if it is to be scrollable, EINA_FALSE otherwise
  *
@@ -3396,7 +3396,7 @@ elm_entry_scrollable_set(Evas_Object *obj, Eina_Bool scroll)
  *
  * Normally the entry is not scrollable. This gets the scrollable state
  * of the entry. See elm_entry_scrollable_set() for more information.
- * 
+ *
  * @param obj The entry object
  * @return The scrollable state
  *
@@ -3644,8 +3644,8 @@ elm_entry_scrollbar_policy_set(Evas_Object *obj, Elm_Scroller_Policy h, Elm_Scro
    if (!wd) return;
    wd->policy_h = h;
    wd->policy_v = v;
-   elm_smart_scroller_policy_set(wd->scroller, 
-                                 map[wd->policy_h], 
+   elm_smart_scroller_policy_set(wd->scroller,
+                                 map[wd->policy_h],
                                  map[wd->policy_v]);
 }
 

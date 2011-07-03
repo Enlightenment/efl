@@ -67,7 +67,7 @@ my_entry_bt_6(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED
 {
    Evas_Object *en = data;
    static Elm_Wrap_Type wr = ELM_WRAP_NONE;
-   
+
    wr++;
    if (wr == ELM_WRAP_LAST) wr = ELM_WRAP_NONE;
    printf("wr: %i\n", wr);

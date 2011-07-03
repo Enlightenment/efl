@@ -1254,7 +1254,7 @@ found:
                   ecore_x_dnd_send_finished();
                   if (savedtypes.imgfile) free((void*)savedtypes.imgfile);
                   savedtypes.imgfile = NULL;
-                   
+
                   return EINA_TRUE;
                }
              else if (dropable->types & ELM_SEL_FORMAT_IMAGE)

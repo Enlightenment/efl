@@ -38,7 +38,7 @@ load_shader( GLData *gld, GLenum type, const char *shader_src )
    gl->glCompileShader(shader);
    gl->glGetShaderiv(shader, GL_COMPILE_STATUS, &compiled);
 
-   if (!compiled) 
+   if (!compiled)
      {
         GLint info_len = 0;
         gl->glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &info_len);
@@ -47,7 +47,7 @@ load_shader( GLData *gld, GLenum type, const char *shader_src )
              char* info_log = malloc(sizeof(char) * info_len);
 
              gl->glGetShaderInfoLog(shader, info_len, NULL, info_log);
-             printf("Error compiling shader:\n%s\n", info_log );            
+             printf("Error compiling shader:\n%s\n", info_log );
              free(info_log);
           }
         gl->glDeleteShader(shader);
@@ -58,18 +58,18 @@ load_shader( GLData *gld, GLenum type, const char *shader_src )
 }
 
 // Initialize the shader and program object
-static int 
+static int
 init_shaders(GLData *gld)
 {
    Evas_GL_API *gl = gld->glapi;
-   GLbyte vShaderStr[] =  
+   GLbyte vShaderStr[] =
       "attribute vec4 vPosition;    \n"
       "void main()                  \n"
       "{                            \n"
       "   gl_Position = vPosition;  \n"
       "}                            \n";
 
-   GLbyte fShaderStr[] =  
+   GLbyte fShaderStr[] =
       "precision mediump float;\n"\
       "void main()                                  \n"
       "{                                            \n"
@@ -94,7 +94,7 @@ init_shaders(GLData *gld)
    gl->glLinkProgram(gld->program);
    gl->glGetProgramiv(gld->program, GL_LINK_STATUS, &linked);
 
-   if (!linked) 
+   if (!linked)
      {
         GLint info_len = 0;
         gl->glGetProgramiv(gld->program, GL_INFO_LOG_LENGTH, &info_len);
@@ -103,7 +103,7 @@ init_shaders(GLData *gld)
              char* info_log = malloc(sizeof(char) * info_len);
 
              gl->glGetProgramInfoLog(gld->program, info_len, NULL, info_log);
-             printf("Error linking program:\n%s\n", info_log);            
+             printf("Error linking program:\n%s\n", info_log);
              free(info_log);
           }
         gl->glDeleteProgram(gld->program);
@@ -120,7 +120,7 @@ _init_gl(Evas_Object *obj)
 {
    GLData *gld = evas_object_data_get(obj, "gld");
    Evas_GL_API *gl = gld->glapi;
-   GLfloat vVertices[] = {  0.0f,  0.5f, 0.0f, 
+   GLfloat vVertices[] = {  0.0f,  0.5f, 0.0f,
                            -0.5f, -0.5f, 0.0f,
                             0.5f, -0.5f, 0.0f };
 
@@ -149,7 +149,7 @@ _del_gl(Evas_Object *obj)
    gl->glDeleteShader(gld->vtx_shader);
    gl->glDeleteShader(gld->fgmt_shader);
    gl->glDeleteProgram(gld->program);
-   gl->glDeleteBuffers(1, &gld->vbo); 
+   gl->glDeleteBuffers(1, &gld->vbo);
 
    evas_object_data_del((Evas_Object*)obj, "..gld");
    free(gld);

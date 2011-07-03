@@ -35,7 +35,7 @@ _cube_new(Evas *evas, Evas_Coord w, Evas_Coord h, Evas_Coord d)
 {
    Cube *c;
    int i;
-   
+
    w -= (w / 2);
    h -= (h / 2);
    d -= (d / 2);
@@ -58,32 +58,32 @@ _cube_new(Evas *evas, Evas_Coord w, Evas_Coord h, Evas_Coord d)
    POINT(0, 1,  w, -h, -d, 256,   0);
    POINT(0, 2,  w,  h, -d, 256, 256);
    POINT(0, 3, -w,  h, -d,   0, 256);
-   
+
    POINT(1, 0,  w, -h, -d,   0,   0);
    POINT(1, 1,  w, -h,  d, 256,   0);
    POINT(1, 2,  w,  h,  d, 256, 256);
    POINT(1, 3,  w,  h, -d,   0, 256);
-   
+
    POINT(2, 0,  w, -h,  d,   0,   0);
    POINT(2, 1, -w, -h,  d, 256,   0);
    POINT(2, 2, -w,  h,  d, 256, 256);
    POINT(2, 3,  w,  h,  d,   0, 256);
-   
+
    POINT(3, 0, -w, -h,  d,   0,   0);
    POINT(3, 1, -w, -h, -d, 256,   0);
    POINT(3, 2, -w,  h, -d, 256, 256);
    POINT(3, 3, -w,  h,  d,   0, 256);
-   
+
    POINT(4, 0, -w, -h,  d,   0,   0);
    POINT(4, 1,  w, -h,  d, 256,   0);
    POINT(4, 2,  w, -h, -d, 256, 256);
    POINT(4, 3, -w, -h, -d,   0, 256);
-   
+
    POINT(5, 0, -w,  h, -d,   0,   0);
    POINT(5, 1,  w,  h, -d, 256,   0);
    POINT(5, 2,  w,  h,  d, 256, 256);
    POINT(5, 3, -w,  h,  d,   0, 256);
-   
+
    return c;
 }
 
@@ -96,14 +96,14 @@ _cube_pos(Cube *c,
    Evas_Map *m;
    int i, j, order[6], sorted;
    Evas_Coord mz[6];
-   
+
    m = evas_map_new(4);
    evas_map_smooth_set(m, 0);
-   
+
    for (i = 0; i < 6; i++)
      {
         Evas_Coord tz[4];
-        
+
         for (j = 0; j < 4; j++)
           {
              evas_map_point_coord_set(m, j,
@@ -128,7 +128,7 @@ _cube_pos(Cube *c,
           }
         else
            evas_object_hide(c->side[i].o);
-        
+
         order[i] = i;
         for (j = 0; j < 4; j++)
            evas_map_point_coord_get(m, j, NULL, NULL, &(tz[j]));
@@ -150,7 +150,7 @@ _cube_pos(Cube *c,
           }
      }
    while (!sorted);
-   
+
    evas_object_raise(c->side[order[0]].o);
    for (i = 1; i < 6; i++)
       evas_object_stack_below(c->side[order[i]].o, c->side[order[i - 1]].o);
@@ -162,7 +162,7 @@ static void
 _cube_free(Cube *c)
 {
    int i;
-   
+
    for (i = 0; i < 6; i++) evas_object_del(c->side[i].o);
    free(c);
 }
@@ -172,7 +172,7 @@ static void
 _cube_update(Evas_Object *win, Cube *c)
 {
    Evas_Coord w, h;
-   
+
    evas_object_geometry_get(win, NULL, NULL, &w, &h);
    _cube_pos(c,
              (w / 2), (h / 2), 512,
@@ -251,7 +251,7 @@ test_3d(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __U
    evas_object_show(bg);
 
    cube = _cube_new(evas_object_evas_get(win), 240, 240, 240);
-   
+
    bx = elm_box_add(win);
    evas_object_layer_set(bx, 10);
    evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);

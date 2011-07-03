@@ -571,13 +571,13 @@ test_glview(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    if (!(gld = calloc(1, sizeof(GLData)))) return;
    gldata_init(gld);
 
-   // new window - do the usual and give it a name, title and delete handler 
+   // new window - do the usual and give it a name, title and delete handler
    win = elm_win_add(NULL, "glview", ELM_WIN_BASIC);
    elm_win_title_set(win, "GLView");
    elm_win_autodel_set(win, 1);
 
 
-   // add a standard bg 
+   // add a standard bg
    bg = elm_bg_add(win);
    evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_win_resize_object_add(win, bg);
@@ -622,11 +622,11 @@ test_glview(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    bt = elm_button_add(win);
    elm_object_text_set(bt, "OK");
    evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0); 
+   evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
    elm_box_pack_end(bx, bt);
    evas_object_show(bt);
    evas_object_smart_callback_add(bt, "clicked", _on_done, win);
- 
+
    evas_object_resize(win, 320, 480);
    evas_object_show(win);
 }
