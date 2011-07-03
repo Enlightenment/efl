@@ -307,6 +307,7 @@ eio_file_xattr_set(const char *path,
                    Eio_Error_Cb error_cb,
                    const void *data)
 {
+#ifdef HAVE_XATTR
    Eio_File_Xattr *async;
    int iflags;
 
@@ -342,6 +343,9 @@ eio_file_xattr_set(const char *path,
      return NULL;
 
    return &async->common;
+#else
+   return NULL;
+#endif
 }
 
 /**
