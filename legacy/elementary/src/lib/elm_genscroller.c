@@ -15,6 +15,11 @@ struct _Widget_Data
    Evas_Object      *obj, *scr, *pan_smart;
    Pan              *pan;
    Evas_Coord        pan_x, pan_y, minw, minh;
+   
+   struct {
+      int w, h;
+      Evas_Coord total_w, total_h;
+   } cells;
 };
 
 struct _Pan
@@ -410,6 +415,409 @@ _scroll_edge_bottom(void        *data,
    evas_object_smart_callback_call(obj, SIG_SCROLL_EDGE_BOTTOM, NULL);
 }
 
+/****************************************************************************/
+
+typedef struct _Cell Cell;
+typedef struct _Span Span;
+
+struct _Span
+{
+   Span       *parent;
+   Evas_Coord  pos; // position RELATIVE to parent (geom)
+   Evas_Coord  size; // size of whole set of children (geom)
+   int         total_child_count; // total number of children in all sub trees
+   int         child_count; // number of children in children array
+   Span      **child; // child array (ordered)
+};
+
+/*
+ *       ^ PARENT SPAN
+ *       |
+ *     SPAN
+ *     / | \
+ *    /  |  \
+ *   /   |   \
+ *  /    |    \
+ * SPAN SPAN SPAN ... N SPAN CHILDREN
+
+ *
+ * +-SPAN-SPAN-SPAN-SPAN-SPAN-SPAN
+ * |
+ * S +--+ +--+ +--+ +--+ +--+ +--+
+ * P |  | |  | |  | |  | |  | |  |<- Cell
+ * A |  | |  | |  | |  | |  | |  |
+ * N +--+ +--+ +--+ +--+ +--+ +--+
+ * |
+ * S +--+ +--+ +--+ +--+ +--+ +--+
+ * P |  | |  | |  | |  | |  | |  |
+ * A |  | |  | |  | |  | |  | |  |
+ * N +--+ +--+ +--+ +--+ +--+ +--+
+ * |
+ * S +--+ +--+ +--+ +--+ +--+ +--+
+ * P |  | |  | |  | |  | |  | |  |
+ * A |  | |  | |  | |  | |  | |  |
+ * N +--+ +--+ +--+ +--+ +--+ +--+
+ * 
+ */
+
+static Span *
+__span_build(int total, Evas_Coord size, int levels, Evas_Coord pos, int bucketsize)
+{
+   Span *sp;
+   int i, num, bucket;
+   Evas_Coord p;
+   
+   static int lv = 0;
+   
+   sp = calloc(1, sizeof(Span));
+   for (i = 0; i < lv; i++) printf(" ");
+   printf("SP: %i tot\n", total);
+   // FIXME: alloc fail handle
+   sp->size = size * total;
+   sp->total_child_count = total;
+   sp->pos = pos;
+   if (bucketsize == 1) return sp;
+   
+   // get max number of children per bucket
+   num = bucket = (bucketsize + (levels - 1)) / levels;
+   sp->child = calloc(levels, sizeof(Span *));
+   // FIXME: alloc fail handle
+   p = pos;
+   for (i = 0; i < levels; i++)
+     {
+        if (total < num) num = total;
+        total -= num;
+        if (num <= 0) break;
+        lv++;
+        sp->child[i] = __span_build(num, size, levels, p - pos, bucket);
+        lv--;
+        // FIXME: alloc fail handle
+        sp->child[i]->parent = sp;
+        p += sp->child[i]->size;
+        sp->child_count++;
+     }
+   return sp;
+}
+
+static Span *
+_span_build(int total, Evas_Coord size, int levels)
+{
+   // total == total # of leaf nodes (# of cells)
+   // size == size of each leaf node (geom)
+   // levels == number of children per node (preferred), eg 2, 3, 4, 5 etc.
+   int bucketsize = ((total + (levels - 1)) / levels) * levels;
+   return __span_build(total, size, levels, 0, bucketsize);
+}
+
+static Span *
+_span_first(Span *sp)
+{
+   Span *sp2;
+   
+   if (!sp->child) return sp;
+   sp2 = _span_first(sp->child[0]);
+   return sp2;
+}
+
+static Span *
+_span_last(Span *sp)
+{
+   Span *sp2;
+   
+   if (!sp->child) return sp;
+   sp2 = _span_last(sp->child[sp->child_count - 1]);
+   return sp2;
+}
+
+static Span *
+_span_next(Span *sp)
+{
+   Span *spp, *spn;
+   int i;
+
+   spp = sp->parent;
+   if (!spp) return NULL;
+   for (i = 0; i < spp->child_count; i++)
+     {
+        if (spp->child[i] == sp)
+          {
+             if (i < (spp->child_count - 1)) return spp->child[i + 1];
+             else
+               {
+                  spn = _span_next(spp);
+                  if (!spn) return NULL;
+                  return _span_first(spn);
+               }
+          }
+     }
+   return NULL;
+}
+
+static Span *
+_span_prev(Span *sp)
+{
+   Span *spp, *spn;
+   int i;
+
+   spp = sp->parent;
+   if (!spp) return NULL;
+   for (i = 0; i < spp->child_count; i++)
+     {
+        if (spp->child[i] == sp)
+          {
+             if (i > 0) return spp->child[i - 1];
+             else
+               {
+                  spn = _span_prev(spp);
+                  if (!spn) return NULL;
+                  return _span_last(spn);
+               }
+          }
+     }
+   return NULL;
+}
+
+static Evas_Coord
+_span_real_pos_get(Span *sp)
+{
+   Span *spp;
+   Evas_Coord pos = sp->pos;
+   
+   for (spp = sp->parent; spp; spp = spp->parent)
+      pos += spp->pos;
+   return pos;
+}
+
+static int
+_span_real_num_get(Span *sp)
+{
+   Span *spp, *spp_prev;
+   int i, num = 0;
+   
+   for (spp_prev = sp, spp = sp->parent; spp; 
+        spp_prev = spp, spp = spp->parent)
+     {
+        if (spp->child)
+          {
+             for (i = 0; i < spp->child_count; i++)
+               {
+                  if (spp->child[i] == spp_prev) break;
+                  num += spp->child[i]->total_child_count;
+               }
+          }
+     }
+   return num;
+}
+
+static Span *
+_span_num_get(Span *sp, int num)
+{
+   int i, n, cnt;
+
+   if (num < 0) return NULL;
+   if (!sp->child) return sp;
+   for (n = 0, i = 0; i < sp->child_count; i++)
+     {
+        cnt = sp->child[i]->total_child_count;
+        n += cnt;
+        if (n > num) return _span_num_get(sp->child[i], num - (n - cnt));
+     }
+   return NULL;
+}
+
+static Span *
+_span_pos_get(Span *sp, Evas_Coord pos)
+{
+   int i;
+   Evas_Coord p, sz;
+
+   if (pos < 0) return NULL;
+   if (!sp->child) return sp;
+   for (p = 0, i = 0; i < sp->child_count; i++)
+     {
+        sz = sp->child[i]->size;
+        p += sz;
+        if (p > pos) return _span_pos_get(sp->child[i], pos - (p - sz));
+     }
+   return NULL;
+}
+
+static int
+__span_del(Span *sp, int num, int count, Evas_Coord *delsize)
+{
+   int i, n, cnt, reduce = 0, deleted = 0, delstart = -1, num2, done;
+   Evas_Coord deleted_size = 0, size;
+   
+   if (!sp->child)
+     {
+        *delsize = sp->size;
+        free(sp);
+        return 1;
+     }
+   for (n = 0, i = 0; i < sp->child_count; i++)
+     {
+        cnt = sp->child[i]->total_child_count;
+        n += cnt;
+        if (n > num)
+          {
+             num2 = num - (n - cnt);
+             if (num2 < 0) num2 = 0;
+             size = 0;
+             done = 0;
+             if (count > 0)
+                done = __span_del(sp->child[i], num2, count, &size);
+             deleted_size += size;
+             if (i < (sp->child_count - 1))
+                sp->child[i + 1]->pos -= deleted_size;
+             count -= done;
+             if (done == cnt)
+               {
+                  deleted++;
+                  if (delstart == -1) delstart = i;
+               }
+             reduce += done;
+          }
+     }
+   if (delstart >= 0)
+     {
+        for (i = delstart; i < sp->child_count; i++)
+          {
+             if ((i + deleted) < sp->child_count)
+                sp->child[i] = sp->child[i + deleted];
+          }
+     }
+   sp->size -= deleted_size;
+   sp->child_count -= deleted;
+   sp->total_child_count -= reduce;
+   if (sp->child_count == 0)
+     {
+        free(sp->child);
+        free(sp);
+     }
+   *delsize = deleted_size;
+   return reduce;
+}
+
+static int
+_span_del(Span *sp, int num, int count)
+{
+   Evas_Coord deleted;
+   return __span_del(sp, num, count, &deleted);
+}
+
+static void
+__span_insert(Span *sp, int num, int count, Evas_Coord size, Evas_Coord pos)
+{
+   Span *sp2;
+   int i, j, n, src;
+   
+   if (num < 0) return;
+next:
+   // total child count and size go up by what we are inserting
+   sp->total_child_count += count;
+   sp->size += size * count;
+   // if we have more than 1 child we have to find out which branch to go down
+   // or if we have only 1 child AND that child has another child
+   if ((sp->child_count > 1) ||
+       ((sp->child_count == 1) && (sp->child[0]->child_count >= 1)))
+     {
+        for (n = 0, i = 0; i < sp->child_count; i++)
+          {
+             sp2 = sp->child[i];
+             n += sp2->total_child_count;
+             // if num is within the child we are looking at
+             if (n > num)
+               {
+                  // advance all children along by size * count
+                  for (j = (i + 1); j < sp->child_count; j++)
+                     sp->child[j]->pos += (size * count);
+                  // now adjust num for new span in child
+                  num -= (n - sp2->total_child_count);
+                  // and check in new child span and try next child down
+                  sp = sp2;
+                  goto next;
+               }
+          }
+     }
+   // now that we are just up from a leaf node... do this
+   if (!sp->child)
+     {
+        // no child at all... just fill it in
+        sp->child_count = count;
+        sp->child = calloc(count, sizeof(Span *));
+        sp->size = size * count;
+        sp->pos = pos;
+        for (i = 0; i < count; i++)
+          {
+             sp->child[i] = calloc(1, sizeof(Span));
+             sp->child[i]->size = size;
+             sp->child[i]->pos = sp->pos + (i * size);
+             sp->child[i]->total_child_count = 1;
+             sp->child[i]->child_count = 0;
+             sp->child[i]->child = NULL;
+          }
+        return;
+     }
+   else
+     {
+        // we have some children - find a spot and plug 'er in
+        Span **child;
+        
+        src = 0;
+        // alloc a new child array and copy in old child ptrs from old array
+        // up until the insertion point (num)
+        child = calloc(count + sp->child_count, sizeof(Span *));
+        for (i = 0; i < num; i++)
+          {
+             child[i] = sp->child[src];
+             pos = child[i]->pos + child[i]->size;
+             src++;
+          }
+        // now alloc new children of the right size and stick them in
+        for (i = 0; i < count; i++)
+          {
+             child[num + i] = calloc(1, sizeof(Span));
+             sp->child[num + i]->size = size;
+             sp->child[num + i]->pos = pos;
+             sp->child[num + i]->total_child_count = 1;
+             sp->child[num + i]->child_count = 0;
+             sp->child[num + i]->child = NULL;
+             pos += size;
+          }
+        // append rest of old children and adjust their pos values
+        for (i = num; i < (count + sp->child_count); i++)
+          {
+             child[count + i] = sp->child[src];
+             sp->child[count + i]->pos = pos;
+             pos += sp->child[num + count + i]->size;
+             src++;
+          }
+        sp->child_count += count;
+        free(sp->child);
+        sp->child = child;
+     }
+}
+
+static void
+_span_insert(Span *sp, int num, int count, Evas_Coord size)
+{
+   __span_insert(sp, num, count, size, 0);
+}
+
+static Span *
+_span_rebalance(Span *sp, int levels)
+{
+   // FIXME: do
+}
+
+static void
+_span_resize(Span *sp, int num, Evas_Coord size)
+{
+   // FIXME: do
+}
+
+/****************************************************************************/
+
 /**
  * Add a new Genscroller object
  *
@@ -497,6 +905,70 @@ elm_genscroller_add(Evas_Object *parent)
 
    _mirrored_set(obj, elm_widget_mirrored_get(obj));
    _sizing_eval(obj);
+
+     {
+        Span *sp0, *sp;
+        
+        sp0 = _span_build(46, 10, 4);
+        sp = _span_first(sp0);
+        if (sp) printf("first @ %i [%i], size %i\n", sp->pos, _span_real_pos_get(sp), sp->size);
+        sp = _span_last(sp0);
+        if (sp) printf("last @ %i [%i], size %i\n", sp->pos, _span_real_pos_get(sp), sp->size);
+        for (sp = _span_first(sp0); sp; sp = _span_next(sp))
+          {
+             if (sp) printf("  @ %i [%i], size %i t: %i %i\n",
+                            sp->pos, 
+                            _span_real_pos_get(sp), 
+                            sp->size,
+                            sp->child_count,
+                            sp->total_child_count);
+          }
+        for (sp = _span_last(sp0); sp; sp = _span_prev(sp))
+          {
+             if (sp) printf("  @ %i [%i], size %i\n", sp->pos, _span_real_pos_get(sp), sp->size);
+          }
+        sp = _span_num_get(sp0, 0);
+        if (sp) printf("sp 0 @ %i [%i]\n", _span_real_pos_get(sp), _span_real_num_get(sp));
+        sp = _span_num_get(sp0, 1);
+        if (sp) printf("sp 1 @ %i [%i]\n", _span_real_pos_get(sp), _span_real_num_get(sp));
+        sp = _span_num_get(sp0, 7);
+        if (sp) printf("sp 7 @ %i [%i]\n", _span_real_pos_get(sp), _span_real_num_get(sp));
+        sp = _span_num_get(sp0, 39);
+        if (sp) printf("sp 39 @ %i [%i]\n", _span_real_pos_get(sp), _span_real_num_get(sp));
+        sp = _span_num_get(sp0, 44);
+        if (sp) printf("sp 44 @ %i [%i]\n", _span_real_pos_get(sp), _span_real_num_get(sp));
+
+        sp = _span_pos_get(sp0, -1);
+        if (sp) printf("sp pos -1 @ %i [%i]\n", _span_real_pos_get(sp), _span_real_num_get(sp));
+        sp = _span_pos_get(sp0, 0);
+        if (sp) printf("sp pos 0 @ %i [%i]\n", _span_real_pos_get(sp), _span_real_num_get(sp));
+        sp = _span_pos_get(sp0, 1);
+        if (sp) printf("sp pos 1 @ %i [%i]\n", _span_real_pos_get(sp), _span_real_num_get(sp));
+        sp = _span_pos_get(sp0, 13);
+        if (sp) printf("sp pos 13 @ %i [%i]\n", _span_real_pos_get(sp), _span_real_num_get(sp));
+        sp = _span_pos_get(sp0, 159);
+        if (sp) printf("sp pos 159 @ %i [%i]\n", _span_real_pos_get(sp), _span_real_num_get(sp));
+        sp = _span_pos_get(sp0, 371);
+        if (sp) printf("sp pos 371 @ %i [%i]\n", _span_real_pos_get(sp), _span_real_num_get(sp));
+        sp = _span_pos_get(sp0, 455);
+        if (sp) printf("sp pos 455 @ %i [%i]\n", _span_real_pos_get(sp), _span_real_num_get(sp));
+        sp = _span_pos_get(sp0, 461);
+        if (sp) printf("sp pos 461 @ %i [%i]\n", _span_real_pos_get(sp), _span_real_num_get(sp));
+        
+        printf("del @13, 11 spans\n");
+        _span_del(sp0, 13, 11);
+        for (sp = _span_first(sp0); sp; sp = _span_next(sp))
+          {
+             if (sp) printf("  @ %i [%i], size %i\n", sp->pos, _span_real_pos_get(sp), sp->size);
+          }
+
+        printf("add @23, 29 spans, size 20\n");
+        _span_insert(sp0, 23, 19, 20);
+        for (sp = _span_first(sp0); sp; sp = _span_next(sp))
+          {
+             if (sp) printf("  @ %i [%i], size %i\n", sp->pos, _span_real_pos_get(sp), sp->size);
+          }
+     }
    return obj;
 }
 
@@ -520,4 +992,59 @@ elm_genscroller_world_size_set(Evas_Object *obj, Evas_Coord w, Evas_Coord h)
    evas_object_smart_callback_call(wd->pan_smart, "changed", NULL);
    _sizing_eval(wd->obj);
    evas_object_smart_changed(wd->pan_smart);
+}
+
+EAPI void
+elm_genscroller_world_size_get(Evas_Object *obj, Evas_Coord *w, Evas_Coord *h)
+{
+}
+
+EAPI void
+elm_genscroller_cell_size_set(Evas_Object *obj, int w, int h)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   wd->cells.w = w;
+   wd->cells.h = h;
+}
+
+EAPI void
+elm_genscroller_cell_size_get(Evas_Object *obj, int *w, int *h)
+{
+}
+
+EAPI void
+elm_genscroller_cell_all_size_set(Evas_Object *obj, Evas_Coord w, Evas_Coord h)
+{
+}
+
+EAPI void
+elm_genscroller_cell_row_size_set(Evas_Object *obj, int y, Evas_Coord h)
+{
+}
+
+EAPI void
+elm_genscroller_cell_col_size_set(Evas_Object *obj, int x, Evas_Coord w)
+{
+}
+
+EAPI void
+elm_genscroller_cell_rows_insert(Evas_Object *obj, int y, int rows)
+{
+}
+
+EAPI void
+elm_genscroller_cell_rows_del(Evas_Object *obj, int y, int rows)
+{
+}
+
+EAPI void
+elm_genscroller_cell_cols_insert(Evas_Object *obj, int x, int cols)
+{
+}
+
+EAPI void
+elm_genscroller_cell_cols_del(Evas_Object *obj, int x, int cols)
+{
 }
