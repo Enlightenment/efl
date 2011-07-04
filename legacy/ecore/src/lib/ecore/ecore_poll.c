@@ -204,6 +204,9 @@ _ecore_poller_cb_timer(void *data __UNUSED__)
  * polling happens in as few spots as possible areound a core poll interval.
  * For now only 1 core poller type is supprted: ECORE_POLLER_CORE
  *
+ * Example of @ref Ecore_Poller:
+ * @li @ref ecore_poller_example_c
+ *
  * @{
  */
 

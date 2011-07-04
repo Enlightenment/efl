@@ -62,6 +62,10 @@ else to process (which in most <em>event driven</em> programs also means that th
 program is idle too, but it's not a rule). The program itself may be doing a lot of
 processing in the idler, or in another thread, for example.
 
+Example with functions that deal with idle state:
+
+@li @ref ecore_idler_example_c
+
  * @{
  */
 

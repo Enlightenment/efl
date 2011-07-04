@@ -44,7 +44,7 @@
  */
 
 /**
- * @page ecore_timer_example_c ecore timers - Timed events
+ * @page ecore_timer_example_c ecore timers - Scheduled events
  * @dontinclude ecore_timer_example.c
  *
  * This example shows how to setup timer callbacks. It starts a timer that will

@@ -56,6 +56,9 @@ _ecore_job_shutdown(void)
  * added before yours, they will be processed first). This also gives the chance
  * to other actions in your program to cancel the job before it is started.
  *
+ * Examples of using @ref Ecore_Job:
+ * @li @ref ecore_job_example_c
+ *
  * @{
  */
 

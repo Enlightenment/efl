@@ -776,6 +776,9 @@ ecore_main_loop_select_func_get(void)
  * @defgroup Ecore_FD_Handler_Group File Event Handling Functions
  *
  * Functions that deal with file descriptor handlers.
+ *
+ * Examples with functions that deal with file descriptor handlers:
+ * @li @ref ecore_fd_handler_example_c
  */
 
 /**

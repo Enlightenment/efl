@@ -315,7 +315,7 @@ extern "C" {
    * Time functions are covered in @ref Ecore_Time_Group.
    *
    * There is also provision for callbacks for when the loop enters or
-   * exits an idle state. See @ref Idle_Group for more information.
+   * exits an idle state. See @ref Ecore_Idle_Group for more information.
    *
    * Functions are also provided for spawning child processes using fork.
    * See @ref Ecore_Exe_Group for more details.
