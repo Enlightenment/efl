@@ -4212,8 +4212,9 @@ extern "C" {
     * @param left_label The label to be set on the left.
     * @param center_label The label to be set on the center.
     * @param right_label The label to be set on the right.
+    * @deprecated use elm_object_text_set() instead.
     */
-   EAPI void                  elm_actionslider_labels_set(Evas_Object *obj, const char *left_label, const char *center_label, const char *right_label) EINA_ARG_NONNULL(1);
+   EINA_DEPRECATED EAPI void                  elm_actionslider_labels_set(Evas_Object *obj, const char *left_label, const char *center_label, const char *right_label) EINA_ARG_NONNULL(1);
    /**
     * Get actionslider labels.
     *
@@ -4221,8 +4222,9 @@ extern "C" {
     * @param left_label A char** to place the left_label of @p obj into.
     * @param center_label A char** to place the center_label of @p obj into.
     * @param right_label A char** to place the right_label of @p obj into.
+    * @deprecated use elm_object_text_set() instead.
     */
-   EAPI void                  elm_actionslider_labels_get(const Evas_Object *obj, const char **left_label, const char **center_label, const char **right_label) EINA_ARG_NONNULL(1);
+   EINA_DEPRECATED EAPI void                  elm_actionslider_labels_get(const Evas_Object *obj, const char **left_label, const char **center_label, const char **right_label) EINA_ARG_NONNULL(1);
    /**
     * Get actionslider selected label.
     *
@@ -4281,15 +4283,17 @@ extern "C" {
     *
     * @param obj The actionslider object
     * @param label The label to be set on the indicator.
+    * @deprecated use elm_object_text_set() instead.
     */
-   EAPI void                  elm_actionslider_indicator_label_set(Evas_Object *obj, const char *label) EINA_ARG_NONNULL(1);
+   EINA_DEPRECATED EAPI void                  elm_actionslider_indicator_label_set(Evas_Object *obj, const char *label) EINA_ARG_NONNULL(1);
    /**
     * Get the label used on the indicator object.
     *
     * @param obj The actionslider object
     * @return The indicator label
+    * @deprecated use elm_object_text_set() instead.
     */
-   EAPI const char           *elm_actionslider_indicator_label_get(Evas_Object *obj) EINA_ARG_NONNULL(1);
+   EINA_DEPRECATED EAPI const char           *elm_actionslider_indicator_label_get(Evas_Object *obj) EINA_ARG_NONNULL(1);
    /**
     * @}
     */

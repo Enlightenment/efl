@@ -320,6 +320,77 @@ _drag_button_up_cb(void *data, Evas_Object *o __UNUSED__, const char *emission _
 #undef _FINAL_POS_BY_ORIENTATION
 }
 
+static void
+_elm_actionslider_label_set(Evas_Object *obj, const char *item, const char *label)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+
+   if (!item)
+     {
+        eina_stringshare_replace(&wd->indicator_label, label);
+        edje_object_part_text_set(wd->as, "elm.text.indicator",
+              wd->indicator_label);
+     }
+   else if (!strcmp(item, "left"))
+     {
+        eina_stringshare_replace(&wd->text_left, label);
+        if (!elm_widget_mirrored_get(obj))
+          {
+             edje_object_part_text_set(wd->as, "elm.text.left", wd->text_left);
+          }
+        else
+          {
+             edje_object_part_text_set(wd->as, "elm.text.right", wd->text_left);
+          }
+     }
+   else if (!strcmp(item, "center"))
+     {
+        eina_stringshare_replace(&wd->text_center, label);
+        edje_object_part_text_set(wd->as, "elm.text.center", wd->text_center);
+     }
+   else if (!strcmp(item, "right"))
+     {
+        eina_stringshare_replace(&wd->text_right, label);
+        if (!elm_widget_mirrored_get(obj))
+          {
+             edje_object_part_text_set(wd->as, "elm.text.right", wd->text_right);
+          }
+        else
+          {
+             edje_object_part_text_set(wd->as, "elm.text.left", wd->text_right);
+          }
+     }
+}
+
+static const char *
+_elm_actionslider_label_get(const Evas_Object *obj, const char *item)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return NULL;
+
+   if (!item)
+     {
+        return wd->indicator_label;
+     }
+   else if (!strcmp(item, "left"))
+     {
+        return wd->text_left;
+     }
+   else if (!strcmp(item, "center"))
+     {
+        return wd->text_center;
+     }
+   else if (!strcmp(item, "right"))
+     {
+        return wd->text_right;
+     }
+
+   return NULL;
+}
+
 EAPI Evas_Object *
 elm_actionslider_add(Evas_Object *parent)
 {
@@ -335,6 +406,8 @@ elm_actionslider_add(Evas_Object *parent)
    elm_widget_data_set(obj, wd);
    elm_widget_del_hook_set(obj, _del_hook);
    elm_widget_theme_hook_set(obj, _theme_hook);
+   elm_widget_label_set_hook_set(obj, _elm_actionslider_label_set);
+   elm_widget_label_get_hook_set(obj, _elm_actionslider_label_get);
 
    wd->mouse_down = EINA_FALSE;
    wd->enabled_position = ELM_ACTIONSLIDER_ALL;
@@ -436,20 +509,9 @@ elm_actionslider_labels_set(Evas_Object *obj, const char *left_label, const char
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
 
-   eina_stringshare_replace(&wd->text_left, left_label);
-   eina_stringshare_replace(&wd->text_center, center_label);
-   eina_stringshare_replace(&wd->text_right, right_label);
-   if (!elm_widget_mirrored_get(obj))
-     {
-        edje_object_part_text_set(wd->as, "elm.text.left", wd->text_left);
-        edje_object_part_text_set(wd->as, "elm.text.right", wd->text_right);
-     }
-   else
-     {
-        edje_object_part_text_set(wd->as, "elm.text.left", wd->text_right);
-        edje_object_part_text_set(wd->as, "elm.text.right", wd->text_left);
-     }
-   edje_object_part_text_set(wd->as, "elm.text.center", center_label);
+   _elm_actionslider_label_set(obj, "left", left_label);
+   _elm_actionslider_label_set(obj, "center", center_label);
+   _elm_actionslider_label_set(obj, "right", right_label);
 }
 
 EAPI void
@@ -461,9 +523,11 @@ elm_actionslider_labels_get(const Evas_Object *obj, const char **left_label, con
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
-   if (left_label) *left_label = wd->text_left;
-   if (center_label) *center_label = wd->text_center;
-   if (right_label) *right_label = wd->text_right;
+   if (left_label) *left_label = _elm_actionslider_label_get(obj, "left");
+   if (center_label) *center_label = _elm_actionslider_label_get(obj, "center");
+
+   if (right_label) *right_label = _elm_actionslider_label_get(obj, "right");
+
 }
 
 EAPI const char *
@@ -491,19 +555,11 @@ elm_actionslider_selected_label_get(const Evas_Object *obj)
 EAPI void
 elm_actionslider_indicator_label_set(Evas_Object *obj, const char *label)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype);
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return;
-
-   eina_stringshare_replace(&wd->indicator_label, label);
-   edje_object_part_text_set(wd->as, "elm.text.indicator", wd->indicator_label);
+   _elm_actionslider_label_set(obj, NULL, label);
 }
 
 EAPI const char *
 elm_actionslider_indicator_label_get(Evas_Object *obj)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return NULL;
-   return wd->indicator_label;
+   return _elm_actionslider_label_get(obj, NULL);
 }
