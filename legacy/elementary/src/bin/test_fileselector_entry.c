@@ -39,12 +39,12 @@ _folder_only_toggle(void            *data,
    if (!value)
      {
         elm_icon_standard_set(ic, "folder");
-        elm_fileselector_entry_button_label_set(fs_en, "Select a folder");
+        elm_object_text_set(fs_en, "Select a folder");
      }
    else
      {
         elm_icon_standard_set(ic, "file");
-        elm_fileselector_entry_button_label_set(fs_en, "Select a file");
+        elm_object_text_set(fs_en, "Select a file");
      }
 }
 
@@ -96,7 +96,7 @@ test_fileselector_entry(void *data       __UNUSED__,
    elm_icon_standard_set(ic, "file");
    evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
    fs_en = elm_fileselector_entry_add(win);
-   elm_fileselector_entry_button_label_set(fs_en, "Select a file");
+   elm_object_text_set(fs_en, "Select a file");
    elm_fileselector_entry_button_icon_set(fs_en, ic);
    evas_object_size_hint_weight_set(fs_en, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(fs_en, EVAS_HINT_FILL, EVAS_HINT_FILL);
