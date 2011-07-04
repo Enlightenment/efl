@@ -580,7 +580,7 @@ test_flip4(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
    evas_object_size_hint_align_set(rd, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(rd, EVAS_HINT_EXPAND, 0.0);
    elm_radio_state_value_set(rd, ELM_FLIP_INTERACTION_NONE);
-   elm_radio_label_set(rd, "None");
+   elm_object_text_set(rd, "None");
    elm_box_pack_end(bx, rd);
    evas_object_show(rd);
    evas_object_smart_callback_add(rd, "changed", my_fl_ch, win);
@@ -591,7 +591,7 @@ test_flip4(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
    evas_object_size_hint_align_set(rd, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(rd, EVAS_HINT_EXPAND, 0.0);
    elm_radio_state_value_set(rd, ELM_FLIP_INTERACTION_ROTATE);
-   elm_radio_label_set(rd, "Rotate");
+   elm_object_text_set(rd, "Rotate");
    elm_radio_group_add(rd, rdg);
    elm_box_pack_end(bx, rd);
    evas_object_show(rd);
@@ -601,7 +601,7 @@ test_flip4(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
    evas_object_size_hint_align_set(rd, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(rd, EVAS_HINT_EXPAND, 0.0);
    elm_radio_state_value_set(rd, ELM_FLIP_INTERACTION_CUBE);
-   elm_radio_label_set(rd, "Cube");
+   elm_object_text_set(rd, "Cube");
    elm_radio_group_add(rd, rdg);
    elm_box_pack_end(bx, rd);
    evas_object_show(rd);
@@ -611,7 +611,7 @@ test_flip4(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
    evas_object_size_hint_align_set(rd, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(rd, EVAS_HINT_EXPAND, 0.0);
    elm_radio_state_value_set(rd, ELM_FLIP_INTERACTION_PAGE);
-   elm_radio_label_set(rd, "Page");
+   elm_object_text_set(rd, "Page");
    elm_radio_group_add(rd, rdg);
    elm_box_pack_end(bx, rd);
    evas_object_show(rd);

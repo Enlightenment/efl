@@ -118,7 +118,7 @@ test_pager(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
    for (i = 0; i < (sizeof(styles) / sizeof(struct style_tuple)); i++)
      {
         rd = elm_radio_add(win);
-        elm_radio_label_set(rd, styles[i].label);
+        elm_object_text_set(rd, styles[i].label);
         elm_radio_state_value_set(rd, i);
         if (rdg)
           elm_radio_group_add(rd, rdg);

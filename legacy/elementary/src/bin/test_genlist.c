@@ -1740,7 +1740,7 @@ test_genlist10(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
    rd = elm_radio_add(win);
    evas_object_size_hint_weight_set(rd, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_radio_state_value_set(rd, 0);
-   elm_radio_label_set(rd, "Slide  ");
+   elm_object_text_set(rd, "Slide  ");
    evas_object_show(rd);
    elm_box_pack_end(bx3, rd);
    rdg = rd;
@@ -1748,7 +1748,7 @@ test_genlist10(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
    rd = elm_radio_add(win);
    evas_object_size_hint_weight_set(rd, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_radio_state_value_set(rd, 1);
-   elm_radio_label_set(rd, "Rotate");
+   elm_object_text_set(rd, "Rotate");
    elm_radio_group_add(rd, rdg);
    evas_object_show(rd);
    elm_box_pack_end(bx3, rd);

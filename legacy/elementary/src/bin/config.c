@@ -1215,7 +1215,7 @@ _sample_theme_new(Evas_Object *win)
    rd = elm_radio_add(win);
    evas_object_size_hint_weight_set(rd, 1.0, 0.0);
    elm_radio_state_value_set(rd, 0);
-   elm_radio_label_set(rd, "Radio 1");
+   elm_object_text_set(rd, "Radio 1");
    elm_table_pack(base, rd, 1, 0, 1, 1);
    evas_object_show(rd);
    rdg = rd;
@@ -1223,7 +1223,7 @@ _sample_theme_new(Evas_Object *win)
    rd = elm_radio_add(win);
    evas_object_size_hint_weight_set(rd, 1.0, 0.0);
    elm_radio_state_value_set(rd, 1);
-   elm_radio_label_set(rd, "Radio 2");
+   elm_object_text_set(rd, "Radio 2");
    elm_radio_group_add(rd, rdg);
    elm_table_pack(base, rd, 1, 1, 1, 1);
    evas_object_show(rd);
