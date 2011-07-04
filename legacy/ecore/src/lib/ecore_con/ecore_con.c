@@ -253,7 +253,7 @@ ecore_con_lookup(const char      *name,
    svr->ppid = getpid();
 
    memset(&hints, 0, sizeof(struct addrinfo));
-   hints.ai_family = AF_INET6;
+   hints.ai_family = AF_UNSPEC;
    hints.ai_socktype = SOCK_STREAM;
    hints.ai_flags = AI_CANONNAME;
    hints.ai_protocol = IPPROTO_TCP;
