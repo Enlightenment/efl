@@ -136,6 +136,52 @@ _mouse_up(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *eve
    evas_object_smart_callback_call(data, SIG_CLICKED, NULL);
 }
 
+static void
+_elm_bubble_label_set(Evas_Object *obj, const char *item, const char *label)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+
+   if (!item)
+     {
+        eina_stringshare_replace(&wd->label, label);
+        edje_object_part_text_set(wd->bbl, "elm.text", label);
+        if (label) edje_object_signal_emit(wd->bbl, "elm,state,text,visible",
+              "elm");
+        else edje_object_signal_emit(wd->bbl, "elm,state,text,hidden", "elm");
+        _sizing_eval(obj);
+     }
+   else if (!strcmp(item, "info"))
+     {
+        eina_stringshare_replace(&wd->info, label);
+        edje_object_part_text_set(wd->bbl, "elm.info", label);
+        if (label) edje_object_signal_emit(wd->bbl, "elm,state,info,visible",
+              "elm");
+        else edje_object_signal_emit(wd->bbl, "elm,state,info,hidden", "elm");
+        _sizing_eval(obj);
+     }
+}
+
+static const char*
+_elm_bubble_label_get(const Evas_Object *obj, const char *item)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return NULL;
+
+   if (!item)
+     {
+        return wd->label;
+     }
+   else if (!strcmp(item, "info"))
+     {
+        return wd->info;
+     }
+
+   return NULL;
+}
+
 EAPI Evas_Object *
 elm_bubble_add(Evas_Object *parent)
 {
@@ -153,6 +199,8 @@ elm_bubble_add(Evas_Object *parent)
    elm_widget_theme_hook_set(obj, _theme_hook);
    elm_widget_focus_next_hook_set(obj, _elm_bubble_focus_next_hook);
    elm_widget_can_focus_set(obj, EINA_FALSE);
+   elm_widget_text_set_hook_set(obj, _elm_bubble_label_set);
+   elm_widget_text_get_hook_set(obj, _elm_bubble_label_get);
 
    wd->corner = eina_stringshare_add("base");
 
@@ -174,45 +222,25 @@ elm_bubble_add(Evas_Object *parent)
 EAPI void
 elm_bubble_label_set(Evas_Object *obj, const char *label)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype);
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return;
-   eina_stringshare_replace(&wd->label, label);
-   edje_object_part_text_set(wd->bbl, "elm.text", label);
-   if (label) edje_object_signal_emit(wd->bbl, "elm,state,text,visible", "elm");
-   else edje_object_signal_emit(wd->bbl, "elm,state,text,hidden", "elm");
-   _sizing_eval(obj);
+   _elm_bubble_label_set(obj, NULL, label);
 }
 
 EAPI const char*
 elm_bubble_label_get(const Evas_Object *obj)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return NULL;
-   return wd->label;
+   return _elm_bubble_label_get(obj, NULL);
 }
 
 EAPI void
 elm_bubble_info_set(Evas_Object *obj, const char *info)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype);
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return;
-   eina_stringshare_replace(&wd->info, info);
-   edje_object_part_text_set(wd->bbl, "elm.info", info);
-   if (info) edje_object_signal_emit(wd->bbl, "elm,state,info,visible", "elm");
-   else edje_object_signal_emit(wd->bbl, "elm,state,info,hidden", "elm");
-   _sizing_eval(obj);
+   _elm_bubble_label_set(obj, "info", info);
 }
 
 EAPI const char *
 elm_bubble_info_get(const Evas_Object *obj)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return NULL;
-   return wd->info;
+   return _elm_bubble_label_get(obj, "info");
 }
 
 EAPI void
