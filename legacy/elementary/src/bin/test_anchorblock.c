@@ -157,7 +157,7 @@ test_anchorblock(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event
    av = elm_anchorblock_add(win);
    elm_anchorblock_hover_style_set(av, "popout");
    elm_anchorblock_hover_parent_set(av, win);
-   elm_anchorblock_text_set(av,
+   elm_object_text_set(av,
 			   "Hi there. This is the most recent message in the "
 			   "list of messages. It has one <a href=tel:+614321234>+61 432 1234</a> "
 			   "(phone number) to click on.");
@@ -184,7 +184,7 @@ test_anchorblock(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event
    av = elm_anchorblock_add(win);
    elm_anchorblock_hover_style_set(av, "popout");
    elm_anchorblock_hover_parent_set(av, win);
-   elm_anchorblock_text_set(av,
+   elm_object_text_set(av,
 			   "Hey what are you doing? This is the second last message "
 			   "Hi there. This is the most recent message in the "
 			   "list. It's a longer one so it can wrap more and "
@@ -222,7 +222,7 @@ test_anchorblock(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event
    av = elm_anchorblock_add(win);
    elm_anchorblock_hover_style_set(av, "popout");
    elm_anchorblock_hover_parent_set(av, win);
-   elm_anchorblock_text_set(av, "This is a short message. <item relsize=16x16 vsize=full href=emoticon/haha></item>");
+   elm_object_text_set(av, "This is a short message. <item relsize=16x16 vsize=full href=emoticon/haha></item>");
    evas_object_smart_callback_add(av, "anchor,clicked",
                                   my_anchorblock_anchor, av);
    elm_bubble_content_set(bb, av);
