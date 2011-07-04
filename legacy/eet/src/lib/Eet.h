@@ -3745,6 +3745,35 @@ eet_node_struct_child_new(const char *parent,
                           Eet_Node   *child);
 
 /**
+ * @brief Get a node's child nodes
+ * @param node The node
+ * @return The first child node which contains a pointer to the
+ * next child node and the parent.
+ * @since 1.5
+ */
+EAPI Eet_Node *
+eet_node_children_get(Eet_Node *node);
+
+/**
+ * @brief Get the next node in a list of nodes
+ * @param node The node
+ * @return A node which contains a pointer to the
+ * next child node and the parent.
+ * @since 1.5
+ */
+EAPI Eet_Node *
+eet_node_next_get(Eet_Node *node);
+
+/**
+ * @brief Get the parent node of a node
+ * @param node The node
+ * @return The parent node of @p node
+ * @since 1.5
+ */
+EAPI Eet_Node *
+eet_node_parent_get(Eet_Node *node);
+
+/**
  * TODO FIX ME
  * @ingroup Eet_Node_Group
  */
@@ -3781,6 +3810,24 @@ eet_node_dump(Eet_Node  *n,
               int        dumplevel,
               Eet_Dump_Callback dumpfunc,
               void      *dumpdata);
+
+/**
+ * @brief Return the type of a node
+ * @param node The node
+ * @return The node's type (EET_T_$TYPE)
+ * @since 1.5
+ */
+EAPI int
+eet_node_type_get(Eet_Node *node);
+
+/**
+ * @brief Return the node's data
+ * @param node The node
+ * @return The data contained in the node
+ * @since 1.5
+ */
+EAPI Eet_Node_Data *
+eet_node_value_get(Eet_Node *node);
 
 /**
  * TODO FIX ME

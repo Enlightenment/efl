@@ -225,6 +225,27 @@ eet_node_struct_child_new(const char *parent,
    return n;
 } /* eet_node_struct_child_new */
 
+Eet_Node *
+eet_node_children_get(Eet_Node *node)
+{
+   if (!node) return NULL;
+   return node->values;
+}
+
+Eet_Node *
+eet_node_next_get(Eet_Node *node)
+{
+   if (!node) return NULL;
+   return node->next;
+}
+
+Eet_Node *
+eet_node_parent_get(Eet_Node *node)
+{
+   if (!node) return NULL;
+   return node->parent;
+}
+
 void
 eet_node_list_append(Eet_Node   *parent,
                      const char *name,
@@ -329,6 +350,28 @@ eet_node_hash_add(Eet_Node   *parent,
    nn->next = parent->values;
    parent->values = nn;
 } /* eet_node_hash_add */
+
+
+int
+eet_node_type_get(Eet_Node *node)
+{
+   if (!node) return EET_T_UNKNOW;
+   return node->type;
+}
+
+Eet_Node_Data *
+eet_node_value_get(Eet_Node *node)
+{
+   if (!node) return NULL;
+   return &node->data;
+}
+
+const char *
+eet_node_name_get(Eet_Node *node)
+{
+   if (!node) return NULL;
+   return node->name;
+}
 
 void
 eet_node_del(Eet_Node *n)

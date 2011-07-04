@@ -509,3 +509,9 @@
 2011-06-10  Cedric BAIL
 
 	* Add EET_DATA_DESCRIPTOR_ADD_LIST_STRING helper to define List of char *.
+
+2011-07-04  Mike Blumenkrantz
+
+        * Add functions to manipulate nodes:
+            eet_node_children_get, eet_node_next_get, eet_node_parent_get,
+            eet_node_type_get, eet_node_value_get, eet_node_name_get
