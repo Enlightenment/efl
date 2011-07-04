@@ -541,8 +541,8 @@ elm_slider_add(Evas_Object *parent)
    elm_widget_disable_hook_set(obj, _disable_hook);
    elm_widget_can_focus_set(obj, EINA_TRUE);
    elm_widget_event_hook_set(obj, _event_hook);
-   elm_widget_label_set_hook_set(obj, _elm_slider_label_set);
-   elm_widget_label_get_hook_set(obj, _elm_slider_label_get);
+   elm_widget_text_set_hook_set(obj, _elm_slider_label_set);
+   elm_widget_text_get_hook_set(obj, _elm_slider_label_get);
 
    wd->horizontal = EINA_TRUE;
    wd->indicator_show = EINA_TRUE;

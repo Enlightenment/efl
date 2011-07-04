@@ -1977,7 +1977,7 @@ _status_config_fonts(Evas_Object *win,
    snprintf(buf, sizeof(buf), "%s/objects/font_preview.edj", PACKAGE_DATA_DIR);
    preview = elm_layout_add(win);
    elm_layout_file_set(preview, buf, "font_preview");
-   elm_object_label_set(preview, "elm.text", "Preview Text — 我真的会写中文");
+   elm_object_text_part_set(preview, "elm.text", "Preview Text — 我真的会写中文");
    evas_object_size_hint_weight_set(preview, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(preview, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_show(preview);

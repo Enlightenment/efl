@@ -315,8 +315,8 @@ elm_hoversel_add(Evas_Object *parent)
    elm_widget_activate_hook_set(obj, _activate_hook);
    elm_widget_on_focus_hook_set(obj, _on_focus_hook, NULL);
    elm_widget_can_focus_set(obj, EINA_TRUE);
-   elm_widget_label_set_hook_set(obj, _elm_hoversel_label_set);
-   elm_widget_label_get_hook_set(obj, _elm_hoversel_label_get);
+   elm_widget_text_set_hook_set(obj, _elm_hoversel_label_set);
+   elm_widget_text_get_hook_set(obj, _elm_hoversel_label_get);
 
    wd->btn = elm_button_add(parent);
    elm_widget_mirrored_automatic_set(wd->btn, EINA_FALSE);

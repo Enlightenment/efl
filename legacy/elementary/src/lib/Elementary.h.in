@@ -687,9 +687,9 @@ extern "C" {
     *
     * @ingroup General
     */
-   EAPI void         elm_object_label_set(Evas_Object *obj, const char *item, const char *label);
+   EAPI void         elm_object_text_part_set(Evas_Object *obj, const char *item, const char *label);
 
-#define elm_object_text_set(obj, label) elm_object_label_set((obj), NULL, (label))
+#define elm_object_text_set(obj, label) elm_object_text_part_set((obj), NULL, (label))
 
    /**
     * Get a label of an object
@@ -703,9 +703,9 @@ extern "C" {
     *
     * @ingroup General
     */
-   EAPI const char  *elm_object_label_get(const Evas_Object *obj, const char *item);
+   EAPI const char  *elm_object_text_part_get(const Evas_Object *obj, const char *item);
 
-#define elm_object_text_get(obj) elm_object_label_get((obj), NULL)
+#define elm_object_text_get(obj) elm_object_text_part_get((obj), NULL)
 
    /**
     * @}

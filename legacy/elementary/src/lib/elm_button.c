@@ -339,8 +339,8 @@ elm_button_add(Evas_Object *parent)
    elm_widget_signal_emit_hook_set(obj, _signal_emit_hook);
    elm_widget_signal_callback_add_hook_set(obj, _signal_callback_add_hook);
    elm_widget_signal_callback_del_hook_set(obj, _signal_callback_del_hook);
-   elm_widget_label_set_hook_set(obj, _elm_button_label_set);
-   elm_widget_label_get_hook_set(obj, _elm_button_label_get);
+   elm_widget_text_set_hook_set(obj, _elm_button_label_set);
+   elm_widget_text_get_hook_set(obj, _elm_button_label_get);
 
    wd->btn = edje_object_add(e);
    _elm_theme_object_set(obj, wd->btn, "button", "base", "default");

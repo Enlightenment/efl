@@ -70,10 +70,10 @@ struct _Smart_Data
                                       Evas_Coord        *y,
                                       Evas_Coord        *w,
                                       Evas_Coord        *h);
-   void       (*on_label_set_func)(Evas_Object *obj,
+   void       (*on_text_set_func)(Evas_Object *obj,
                                    const char  *item,
                                    const char  *text);
-   const char *(*on_label_get_func)(const Evas_Object *obj,
+   const char *(*on_text_get_func)(const Evas_Object *obj,
                                     const char  *item);
    void        *data;
    Evas_Coord   rx, ry, rw, rh;
@@ -483,22 +483,22 @@ elm_widget_event_hook_set(Evas_Object *obj,
 }
 
 EAPI void
-elm_widget_label_set_hook_set(Evas_Object *obj,
+elm_widget_text_set_hook_set(Evas_Object *obj,
                               void       (*func)(Evas_Object *obj,
                                                  const char  *item,
                                                  const char  *text))
 {
    API_ENTRY return;
-   sd->on_label_set_func = func;
+   sd->on_text_set_func = func;
 }
 
 EAPI void
-elm_widget_label_get_hook_set(Evas_Object *obj,
+elm_widget_text_get_hook_set(Evas_Object *obj,
                               const char *(*func)(const Evas_Object *obj,
                                                   const char  *item))
 {
    API_ENTRY return;
-   sd->on_label_get_func = func;
+   sd->on_text_get_func = func;
 }
 
 EAPI void
@@ -2030,25 +2030,25 @@ elm_widget_theme_set(Evas_Object *obj,
 }
 
 EAPI void
-elm_widget_label_set(Evas_Object *obj, const char *item, const char *label)
+elm_widget_text_part_set(Evas_Object *obj, const char *item, const char *label)
 {
    API_ENTRY return;
 
-   if (!sd->on_label_set_func)
+   if (!sd->on_text_set_func)
      return;
 
-   sd->on_label_set_func(obj, item, label);
+   sd->on_text_set_func(obj, item, label);
 }
 
 EAPI const char *
-elm_widget_label_get(const Evas_Object *obj, const char *item)
+elm_widget_text_part_get(const Evas_Object *obj, const char *item)
 {
    API_ENTRY return NULL;
 
-   if (!sd->on_label_get_func)
+   if (!sd->on_text_get_func)
      return NULL;
 
-   return sd->on_label_get_func(obj, item);
+   return sd->on_text_get_func(obj, item);
 }
 
 EAPI Elm_Theme *

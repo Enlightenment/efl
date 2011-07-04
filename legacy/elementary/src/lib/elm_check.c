@@ -286,8 +286,8 @@ elm_check_add(Evas_Object *parent)
    elm_widget_can_focus_set(obj, EINA_TRUE);
    elm_widget_activate_hook_set(obj, _activate_hook);
    elm_widget_event_hook_set(obj, _event_hook);
-   elm_widget_label_set_hook_set(obj, _elm_check_label_set);
-   elm_widget_label_get_hook_set(obj, _elm_check_label_get);
+   elm_widget_text_set_hook_set(obj, _elm_check_label_set);
+   elm_widget_text_get_hook_set(obj, _elm_check_label_get);
 
    wd->chk = edje_object_add(e);
    _elm_theme_object_set(obj, wd->chk, "check", "base", "default");

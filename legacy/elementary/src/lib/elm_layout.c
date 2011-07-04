@@ -386,8 +386,8 @@ elm_layout_add(Evas_Object *parent)
    elm_widget_signal_emit_hook_set(obj, _signal_emit_hook);
    elm_widget_signal_callback_add_hook_set(obj, _signal_callback_add_hook);
    elm_widget_signal_callback_del_hook_set(obj, _signal_callback_del_hook);
-   elm_widget_label_set_hook_set(obj, _elm_layout_label_set);
-   elm_widget_label_get_hook_set(obj, _elm_layout_label_get);
+   elm_widget_text_set_hook_set(obj, _elm_layout_label_set);
+   elm_widget_text_get_hook_set(obj, _elm_layout_label_get);
 
    wd->obj = obj;
    wd->lay = edje_object_add(e);

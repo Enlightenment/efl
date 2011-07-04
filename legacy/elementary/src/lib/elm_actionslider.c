@@ -406,8 +406,8 @@ elm_actionslider_add(Evas_Object *parent)
    elm_widget_data_set(obj, wd);
    elm_widget_del_hook_set(obj, _del_hook);
    elm_widget_theme_hook_set(obj, _theme_hook);
-   elm_widget_label_set_hook_set(obj, _elm_actionslider_label_set);
-   elm_widget_label_get_hook_set(obj, _elm_actionslider_label_get);
+   elm_widget_text_set_hook_set(obj, _elm_actionslider_label_set);
+   elm_widget_text_get_hook_set(obj, _elm_actionslider_label_get);
 
    wd->mouse_down = EINA_FALSE;
    wd->enabled_position = ELM_ACTIONSLIDER_ALL;

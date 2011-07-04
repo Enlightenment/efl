@@ -228,8 +228,8 @@ EAPI void             elm_widget_on_focus_hook_set(Evas_Object *obj, void (*func
 EAPI void             elm_widget_on_change_hook_set(Evas_Object *obj, void (*func) (void *data, Evas_Object *obj), void *data);
 EAPI void             elm_widget_on_show_region_hook_set(Evas_Object *obj, void (*func) (void *data, Evas_Object *obj), void *data);
 EAPI void             elm_widget_focus_region_hook_set(Evas_Object *obj, void (*func) (Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h));
-EAPI void             elm_widget_label_set_hook_set(Evas_Object *obj, void (*func)(Evas_Object *obj, const char *item, const char *text));
-EAPI void             elm_widget_label_get_hook_set(Evas_Object *obj, const char *(*func)(const Evas_Object *obj, const char *item));
+EAPI void             elm_widget_text_set_hook_set(Evas_Object *obj, void (*func)(Evas_Object *obj, const char *item, const char *text));
+EAPI void             elm_widget_text_get_hook_set(Evas_Object *obj, const char *(*func)(const Evas_Object *obj, const char *item));
 EAPI void             elm_widget_on_focus_region_hook_set(Evas_Object *obj, void (*func) (const Evas_Object *obj, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h));
 EAPI void             elm_widget_data_set(Evas_Object *obj, void *data);
 EAPI void            *elm_widget_data_get(const Evas_Object *obj);
@@ -310,8 +310,8 @@ EAPI Eina_List       *elm_widget_stringlist_get(const char *str);
 EAPI void             elm_widget_stringlist_free(Eina_List *list);
 EAPI void             elm_widget_focus_hide_handle(Evas_Object *obj);
 EAPI void             elm_widget_focus_mouse_down_handle(Evas_Object *obj);
-EAPI void             elm_widget_label_set(Evas_Object *obj, const char *item, const char *label);
-EAPI const char      *elm_widget_label_get(const Evas_Object *obj, const char *item);
+EAPI void             elm_widget_text_part_set(Evas_Object *obj, const char *item, const char *label);
+EAPI const char      *elm_widget_text_part_get(const Evas_Object *obj, const char *item);
 
 EAPI Elm_Widget_Item *_elm_widget_item_new(Evas_Object *parent, size_t alloc_size);
 EAPI void             _elm_widget_item_del(Elm_Widget_Item *item);

@@ -8,7 +8,7 @@
 static void
 _clicked_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 {
-   elm_object_label_set(data, "text", elm_object_text_get(obj));
+   elm_object_text_part_set(data, "text", elm_object_text_get(obj));
 }
 
 void
