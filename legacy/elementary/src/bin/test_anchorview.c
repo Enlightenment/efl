@@ -87,7 +87,7 @@ test_anchorview(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_
    av = elm_anchorview_add(win);
    elm_anchorview_hover_style_set(av, "popout");
    elm_anchorview_hover_parent_set(av, win);
-   elm_anchorview_text_set(av,
+   elm_object_text_set(av,
 		       "This is an entry widget in this window that<br>"
 		       "uses markup <b>like this</> for styling and<br>"
 		       "formatting <em>like this</>, as well as<br>"
