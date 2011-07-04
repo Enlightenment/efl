@@ -558,7 +558,7 @@ emotion_object_ratio_get(const Evas_Object *obj)
    return sd->ratio;
 }
 
-/**
+/*
  * Send a control event to the DVD.
  */
 EAPI void

@@ -12,10 +12,10 @@
  * @image html e.png
  *
  * Emotion is a library that allows playing audio and video files, using one of
- * its backends (gstreamer and xine).
+ * its backends (gstreamer or xine).
  *
  * It is integrated into Ecore through its mainloop, and is transparent to the
- * user of the library how the decoding of audio and video is happening. Once
+ * user of the library how the decoding of audio and video is being done. Once
  * the objects are created, the user can set callbacks to the specific events
  * and set options to this object, all in the main loop (no threads are needed).
  *
@@ -38,8 +38,8 @@
  * @section work How does Emotion work?
  *
  * The Emotion library uses Evas smart objects to allow you to manipulate the
- * created object as any other Evas object, and to connect to its signals and
- * process them when needed. It's also possible to swallow Emotion objects
+ * created object as any other Evas object, and to connect to its signals,
+ * handling them when needed. It's also possible to swallow Emotion objects
  * inside Edje themes, and expect it to behave as a normal image or rectangle
  * when regarding to its dimensions.
  *

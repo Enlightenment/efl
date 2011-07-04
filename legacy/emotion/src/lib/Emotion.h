@@ -156,8 +156,29 @@ extern "C" {
  *
  * @{
  *
- * @li Add the description of modules here.
- * @li Basic emotion example
+ * Emotion provides an Evas smart object that allows to play, control and
+ * display a video or audio file. The API is synchronous but not everything
+ * happens immediately. There are also some signals to report changed states.
+ *
+ * Basically, once the object is created and initialized, a file will be set to
+ * it, and then it can be resized, moved, and controled by other Evas object
+ * functions.
+ *
+ * However, the decoding of the music and video occurs not in the Ecore main
+ * loop, but usually in another thread (this depends on the module being used).
+ * The synchronization between this other thread and the main loop not visible
+ * to the end user of the library. The user can just register callbacks to the
+ * available signals to receive information about the changed states, and can
+ * call other functions from the API to request more changes on the current
+ * loaded file.
+ *
+ * There will be a delay between an API being called and it being really
+ * executed, since this request will be done in the main thread, and it needs to
+ * be sent to the decoding thread. For this reason, always call functions like
+ * emotion_object_size_get() or emotion_object_length_get() after some signal
+ * being sent, like "playback_started" or "open_done". @ref
+ * emotion_signals_example.c "This example demonstrates this behavior".
+ *
  * @section signals Available signals
  * The Evas_Object returned by emotion_object_add() has a number of signals that
  * can be listened to using evas' smart callbacks mechanism. All signals have
@@ -168,6 +189,18 @@ extern "C" {
  * @li "open_done" - Emitted when the media file is opened
  * @li "position_update" - Emitted when emotion_object_position_set is called
  * @li "decode_stop" - Emitted after the last frame is decoded
+ *
+ * @section Examples
+ *
+ * The following examples exemplify the emotion usage. There's also the
+ * emotion_test binary that is distributed with this library and cover the
+ * entire API, but since it is too long and repetitive to be explained, its code
+ * is just displayed as another example.
+ *
+ * @li @ref emotion_basic_example_c
+ * @li @ref emotion_signals_example.c "Emotion signals"
+ * @li @ref emotion_test_main.c "emotion_test - full API usage"
+ *
  */
 
 /**
@@ -488,6 +521,8 @@ EAPI void         emotion_object_size_get              (const Evas_Object *obj, 
  * @param smooth Whether to use smooth scale or not.
  *
  * @see emotion_object_smooth_scale_get()
+ *
+ * @ingroup Emotion_Video
  */
 EAPI void         emotion_object_smooth_scale_set      (Evas_Object *obj, Eina_Bool smooth);
 
@@ -499,6 +534,8 @@ EAPI void         emotion_object_smooth_scale_set      (Evas_Object *obj, Eina_B
  * @return Whether the smooth scale is used or not.
  *
  * @see emotion_object_smooth_scale_set()
+ *
+ * @ingroup Emotion_Video
  */
 EAPI Eina_Bool    emotion_object_smooth_scale_get      (const Evas_Object *obj);
 EAPI void         emotion_object_event_simple_send     (Evas_Object *obj, Emotion_Event ev);

@@ -5,6 +5,7 @@
  *
  * @li @ref emotion_basic_example_c
  * @li @ref emotion_signals_example.c "Emotion signals"
+ * @li @ref emotion_test_main.c "emotion_test - full API usage"
  *
  */
 
@@ -95,4 +96,9 @@
  * info about the file is displayed. Also notice that the order that these
  * signals are emitted can change depending on the module being used. Following
  * is the full source code of this example:
+ */
+
+/**
+ * @example emotion_test_main.c
+ * This example covers the entire emotion API. Use it as a reference.
  */
