@@ -53,8 +53,8 @@ fill(Evas_Object *win, Eina_Bool do_bg)
    evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_HORIZONTAL, 1, 1);
 
    bb = elm_bubble_add(win);
-   elm_bubble_label_set(bb, "Message 3");
-   elm_bubble_info_set(bb, "10:32 4/11/2008");
+   elm_object_text_set(bb, "Message 3");
+   elm_object_text_part_set(bb, "info", "10:32 4/11/2008");
    elm_bubble_icon_set(bb, ic);
    evas_object_show(ic);
    evas_object_size_hint_weight_set(bb, EVAS_HINT_EXPAND, 0.0);
@@ -77,8 +77,8 @@ fill(Evas_Object *win, Eina_Bool do_bg)
    evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
 
    bb = elm_bubble_add(win);
-   elm_bubble_label_set(bb, "Message 2");
-   elm_bubble_info_set(bb, "7:16 27/10/2008");
+   elm_object_text_set(bb, "Message 2");
+   elm_object_text_part_set(bb, "info", "7:16 27/10/2008");
    elm_bubble_icon_set(bb, ic);
    evas_object_show(ic);
    evas_object_size_hint_weight_set(bb, EVAS_HINT_EXPAND, 0.0);
@@ -112,8 +112,8 @@ fill(Evas_Object *win, Eina_Bool do_bg)
    evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_HORIZONTAL, 1, 1);
 
    bb = elm_bubble_add(win);
-   elm_bubble_label_set(bb, "Message 1");
-   elm_bubble_info_set(bb, "20:47 18/6/2008");
+   elm_object_text_set(bb, "Message 1");
+   elm_object_text_part_set(bb, "info", "20:47 18/6/2008");
    elm_bubble_icon_set(bb, ic);
    evas_object_show(ic);
    evas_object_size_hint_weight_set(bb, EVAS_HINT_EXPAND, 0.0);

@@ -37,8 +37,8 @@ test_bubble(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_HORIZONTAL, 1, 1);
 
    bb = elm_bubble_add(win);
-   elm_bubble_label_set(bb, "Message 1");
-   elm_bubble_info_set(bb, "Corner: bottom_right");
+   elm_object_text_set(bb, "Message 1");
+   elm_object_text_part_set(bb, "info", "Corner: bottom_right");
    elm_bubble_icon_set(bb, ic);
    elm_bubble_corner_set(bb, "bottom_right");
    evas_object_smart_callback_add(bb, "clicked", _print_clicked, NULL);
@@ -55,8 +55,8 @@ test_bubble(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    evas_object_show(bb);
 
    bb = elm_bubble_add(win);
-   elm_bubble_label_set(bb, "Message 2");
-   elm_bubble_info_set(bb, "10:32 4/11/2008");
+   elm_object_text_set(bb, "Message 2");
+   elm_object_text_part_set(bb, "info", "10:32 4/11/2008");
    evas_object_smart_callback_add(bb, "clicked", _print_clicked, NULL);
    evas_object_size_hint_weight_set(bb, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(bb, EVAS_HINT_FILL, EVAS_HINT_FILL);

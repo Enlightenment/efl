@@ -346,7 +346,7 @@ test_focus(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
 
           {
              Evas_Object *fr = elm_bubble_add(win);
-             elm_bubble_label_set(fr, "Bubble");
+             elm_object_text_set(fr, "Bubble");
              evas_object_size_hint_weight_set(fr, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
              evas_object_size_hint_align_set(fr, EVAS_HINT_FILL,
                                              EVAS_HINT_FILL);
