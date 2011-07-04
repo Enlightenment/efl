@@ -279,7 +279,7 @@ test_photocam(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    evas_object_show(bt);
 
    bt = elm_fileselector_button_add(win);
-   elm_fileselector_button_label_set(bt, "Select Photo");
+   elm_object_text_set(bt, "Select Photo");
    evas_object_smart_callback_add(bt, "file,chosen", my_bt_open, ph);
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(bt, 0.5, 0.1);

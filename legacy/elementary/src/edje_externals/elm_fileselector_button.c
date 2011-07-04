@@ -29,7 +29,7 @@ external_fileselector_button_state_set(void *data __UNUSED__, Evas_Object *obj, 
    else return;
 
    if (p->label)
-     elm_fileselector_button_label_set(obj, p->label);
+     elm_object_text_set(obj, p->label);
    if (p->icon) elm_fileselector_button_icon_set(obj, p->icon);
    if (p->fs.path) elm_fileselector_button_path_set(obj, p->fs.path);
    if (p->fs.is_save_set)
@@ -49,7 +49,7 @@ external_fileselector_button_param_set(void *data __UNUSED__, Evas_Object *obj, 
      {
 	if (param->type == EDJE_EXTERNAL_PARAM_TYPE_STRING)
 	  {
-	     elm_fileselector_button_label_set(obj, param->s);
+	     elm_object_text_set(obj, param->s);
 	     return EINA_TRUE;
 	  }
      }
@@ -117,7 +117,7 @@ external_fileselector_button_param_get(void *data __UNUSED__, const Evas_Object 
      {
 	if (param->type == EDJE_EXTERNAL_PARAM_TYPE_STRING)
 	  {
-	     param->s = elm_fileselector_button_label_get(obj);
+	     param->s = elm_object_text_get(obj);
 	     return EINA_TRUE;
 	  }
      }

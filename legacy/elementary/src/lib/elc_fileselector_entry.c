@@ -310,7 +310,7 @@ elm_fileselector_entry_button_label_set(Evas_Object *obj, const char *label)
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
-   elm_fileselector_button_label_set(wd->button, label);
+   elm_object_text_set(wd->button, label);
 }
 
 EAPI const char *
@@ -319,7 +319,7 @@ elm_fileselector_entry_button_label_get(const Evas_Object *obj)
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return NULL;
-   return elm_fileselector_button_label_get(wd->button);
+   return elm_object_text_get(wd->button);
 }
 
 /**
