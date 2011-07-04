@@ -65,10 +65,10 @@ static void _conformant_part_size_set(Evas_Object *obj,
                                       Evas_Coord sh);
 static void _conformant_part_sizing_eval(Evas_Object *obj,
                                          Conformant_Part_Type part_type);
-#endif
 static void
 _conformant_move_resize_event_cb(void *data, Evas *e, Evas_Object *obj,
                                  void *event_info);
+#endif
 static void _sizing_eval(Evas_Object *obj);
 static Eina_Bool _prop_change(void *data, int type, void *event);
 
@@ -486,13 +486,13 @@ elm_conformant_add(Evas_Object *parent)
         wd->vkb_state = ECORE_X_VIRTUAL_KEYBOARD_STATE_OFF;
      }
    // FIXME: get kbd region prop
-#endif
 
-   evas_object_smart_callback_add(obj, "sub-object-del", _sub_del, obj);
    evas_object_event_callback_add(obj, EVAS_CALLBACK_RESIZE,
                                        _conformant_move_resize_event_cb, obj);
    evas_object_event_callback_add(obj, EVAS_CALLBACK_MOVE,
                                        _conformant_move_resize_event_cb, obj);
+#endif
+   evas_object_smart_callback_add(obj, "sub-object-del", _sub_del, obj);
 
    _mirrored_set(obj, elm_widget_mirrored_get(obj));
    _sizing_eval(obj);
