@@ -3820,19 +3820,24 @@ EAPI Eina_Bool         evas_object_propagate_events_get   (const Evas_Object *ob
  *       care. The impact on performance depends on engine in
  *       use. Software is quite optimized, but not as fast as OpenGL.
  *
+ * Examples:
+ * @li @ref Example_Evas_Map_Overview
+ *
  * @ingroup Evas_Object_Group
+ *
+ * @{
  */
 
 /**
  * Enable or disable the map that is set.
  *
- * This enables the map that is set or disables it. On enable, the object
- * geometry will be saved, and the new geometry will change (position and
- * size) to reflect the map geometry set. If none is set yet, this may be
- * an undefined geometry, unless you have already set the map with
- * evas_object_map_set(). It is suggested you first set a map with
- * evas_object_map_set() with valid useful coordinates then enable and
- * disable the map with evas_object_map_enable_set() as needed.
+ * Enable or disable the use of map for the object @p obj.
+ * On enable, the object geometry will be saved, and the new geometry will
+ * change (position and size) to reflect the map geometry set.
+ *
+ * If the object doesn't have a map set (with evas_object_map_set()), the
+ * initial geometry will be undefined. It is adviced to always set a map
+ * to the object first, and then call this function to enable its use.
  *
  * @param obj object to enable the map on
  * @param enabled enabled state
@@ -3867,10 +3872,10 @@ EAPI void              evas_object_map_source_set        (Evas_Object *obj, Evas
 /**
  * Get the map source object
  *
- * See evas_object_map_source_set()
- *
  * @param obj object to set the map source of
  * @return the object set as the source
+ *
+ * @see evas_object_map_source_set()
  */
 EAPI Evas_Object      *evas_object_map_source_get        (const Evas_Object *obj);
 
@@ -4044,7 +4049,7 @@ EAPI void              evas_map_util_rotate                          (Evas_Map *
  *
  * Like evas_map_util_rotate(), this zooms the points of the map from a center
  * point. That center is defined by @p cx and @p cy. The @p zoomx and @p zoomy
- * parameters specific how much to zoom in the X and Y direction respectively.
+ * parameters specify how much to zoom in the X and Y direction respectively.
  * A value of 1.0 means "don't zoom". 2.0 means "dobule the size". 0.5 is
  * "half the size" etc. All coordinates are canvas global coordinates.
  *
@@ -4067,7 +4072,7 @@ EAPI void              evas_map_util_zoom                            (Evas_Map *
  * around the X, Y and Z axes. The Z axis points "into" the screen with low
  * values at the screen and higher values further away. The X axis runs from
  * left to right on the screen and the Y axis from top to bottom. Like with
- * evas_map_util_rotate(0 you provide a center point to rotate around (in 3D).
+ * evas_map_util_rotate() you provide a center point to rotate around (in 3D).
  *
  * @param m map to change.
  * @param dx amount of degrees from 0.0 to 360.0 to rotate arount X axis.
@@ -4148,7 +4153,7 @@ EAPI Eina_Bool         evas_map_util_clockwise_get                   (Evas_Map *
  * number for @p count will work). That is empty and ready to be modified
  * with evas_map calls.
  *
- * @param count number of points in the map. *
+ * @param count number of points in the map.
  * @return a newly allocated map or @c NULL on errors.
  *
  * @see evas_map_free()
@@ -4188,7 +4193,8 @@ EAPI Eina_Bool         evas_map_smooth_get               (const Evas_Map *m);
  *
  * This sets alpha flag for map rendering. If the object is a type that has
  * its own alpha settings, then this will take precedence. Only image objects
- * have this currently. Fits stops alpha blending of the map area, and is
+ * have this currently.
+ * Setting this off stops alpha blending of the map area, and is
  * useful if you know the object and/or all sub-objects is 100% solid.
  *
  * @param m map to modify. Must not be NULL.
@@ -4238,7 +4244,7 @@ EAPI int               evas_map_count_get               (const Evas_Map *m) EINA
 /**
  * Change the map point's coordinate.
  *
- * This sets the fixen point's coordinate in the map. Note that points
+ * This sets the fixed point's coordinate in the map. Note that points
  * describe the outline of a quadrangle and are ordered either clockwise
  * or anit-clock-wise. It is suggested to keep your quadrangles concave and
  * non-complex, though these polygon modes may work, they may not render
@@ -4351,6 +4357,9 @@ EAPI void              evas_map_point_color_set          (Evas_Map *m, int idx, 
  * @see evas_object_map_set()
  */
 EAPI void              evas_map_point_color_get          (const Evas_Map *m, int idx, int *r, int *g, int *b, int *a);
+/**
+ * @}
+ */
 
 /**
  * @defgroup Evas_Object_Group_Size_Hints Size Hints

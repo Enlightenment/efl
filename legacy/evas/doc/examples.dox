@@ -368,3 +368,121 @@
  * @include evas-stacking.c
  * @example evas-stacking.c
  */
+
+/**
+ * @page Example_Evas_Map_Overview Evas Map - Overview
+ * @dontinclude evas-map-utils.c
+ *
+ * Down to the very bottom, Map is simple: it takes an object and transforms
+ * the way it will be shown on screen. But using it properly can be a bit
+ * troublesome.
+ *
+ * For the most common operations there are utility functions that help in
+ * setting up the map to achieve the desired effects. Now we'll go through
+ * an overview of the map API and some of the things that can be done with
+ * it.
+ *
+ * The full code can be found @ref evas-map-utils.c "here".
+ *
+ * To show how some funtions work, this example listens to keys pressed to
+ * toggle several options.
+ * @skip typedef
+ * @until App_Data
+ * @until ;
+ *
+ * In this program, we divide the window in four quadrants, each holding an
+ * object that will have different map configurations applied to them in each
+ * call to an animator function.
+ * @skip static Eina_Bool
+ * @until evas_output_size_get
+ *
+ * Let's first create a map and set some of our options to it. Only four
+ * points maps are supported, so we'll stick to that magic number. We can
+ * set a color for each vertex or apply one for all of them at once
+ * @until evas_map_util_points_color_set
+ *
+ * For the first object, we'll have a plain rectangle. At its cration, this
+ * rectangle was set to be semi-transparent, but whether its own alpha is
+ * used will be defined by the map's alpha setting. If the map's alpha is
+ * disabled, then the object will be completely opaque. The map's own color,
+ * however, will use any alpha set to it.
+ *
+ * So we get our object, initialize our map geometry to match the rectangle
+ * and make it rotate around its own center, then apply the map to the
+ * object so it takes effect.
+ * @until evas_object_map_enable_set
+ *
+ * The second object is an image. Here we don't have any color set for the
+ * object, but the image itself contains an alpha channel that will not be
+ * affected by the map settings, so even with alpha set to be off, the image
+ * will still be transparent. Color applied to the map will tint it though.
+ * Since setting a map copies it into the object, we can reuse the same one
+ * we created before. We initialize it to the new object while all other
+ * options are kept the same. Notice that no rotation will be done here, as
+ * that's just an utility function that takes the coordinates set for each
+ * point of the map and transforms it accordingly.
+ * @until evas_map_util_points_populate_from_object_full
+ *
+ * This time the object is a bit farther into the screen, by using a @c z
+ * value higher than 0 to init the map. We also need to map the image used
+ * by the object, so Evas knows how to transform it properly. For this we
+ * use the evas_map_point_image_uv_set() to tell the map what coordinate
+ * within the image corresponds to each point of the map.
+ * @until evas_map_point_image_uv_set(m, 3
+ *
+ * This object will also be rotated, but in all three axis and around some
+ * other point, not its center, chosen mostly at random. If enabled, lighting
+ * will be applied to, from a light source at the center of the window.
+ * @until evas_object_map_enable_set
+ *
+ * For the third object we are doing, once more, a 3D rotation, but this time
+ * perspective will be applied to our map to make it look more realistic.
+ * The lighting source also follows the mouse cursor and it's possible to
+ * toggle backface culling, so that the object is hidden whenever we are
+ * not seeing its front face.
+ * @until evas_object_map_enable_set
+ *
+ * And we free this map, since since we messed too much with it and for the
+ * last object we want something cleaner.
+ * @until evas_map_free
+ *
+ * The last object is actually two. One image, with an image set to it, and
+ * one image proxying the first one with evas_object_image_source_set(). This
+ * way, the second object will show whatever content its source has.
+ * This time we'll be using a map more manually to simulate a simple reflection
+ * of the original image.
+ *
+ * We know that the reflection object is placed just like the original, so
+ * we take a shortcut by just getting the geometry of our to-be-mapped object.
+ * We also need to get the image size of the source.
+ * @until evas_object_image_size_get
+ *
+ * For this we'll create a map shaped so that it begins at the base of our
+ * image and it expands horizontally as it grows (downwards) in height.
+ * @until evas_map_point_coord_set(m, 3
+ *
+ * Since the reflection should show the image inverted, we need to map it
+ * this way. The first point of the map (top-left) will be mapped to the
+ * mapped to the first pixel of the last row. There's no horizontal reflection
+ * and we want the full width of the image, but as we map its upper side ww
+ * will only take two thirds of the image.
+ * @until evas_map_point_image_uv_set(m, 3
+ *
+ * Finally, to fade out our reflection we set the colors for each point in
+ * the map. The two at the top need to be visible, but we'll tone them down
+ * a bit and make them a bit translucent. The other two will go straight to
+ * full transparency. Evas interpolates the colors from one point to the next,
+ * so this will make them fade out.
+ * @until evas_object_map_enable_set
+ *
+ * Close up by freeing the map and do some other things needed to keep stuff
+ * moving in our animations and we are done.
+ * @until }
+ *
+ * The rest of the program is setup and listening to key events. Nothing that
+ * matters within the scope of this example, so we are going to skip it.
+ * Refer to it @ref evas-map-utils.c "here" however to see how everything
+ * fits together.
+ *
+ * @example evas-map-utils.c
+ */

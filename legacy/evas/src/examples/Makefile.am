@@ -77,6 +77,10 @@ evas_aspect_hints_DEPS = $(srcdir)/aspect.edc
 evas_aspect_hints_SOURCES = evas-aspect-hints.c
 evas_aspect_hints_LDADD = $(top_builddir)/src/lib/libevas.la @ECORE_EVAS_LIBS@ @EDJE_LIBS@
 
+pkglib_PROGRAMS += evas_map_utils
+evas_map_utils_SOURCES = evas-map-utils.c
+evas_map_utils_LDADD = $(top_builddir)/src/lib/libevas.la @ECORE_EVAS_LIBS@
+
 aspect.edj: ${evas_aspect_hints_DEPS}
 
 .edc.edj:
@@ -92,7 +96,9 @@ if INSTALL_EXAMPLES
 
 #put here additional data when installing examples
 files_DATA += $(srcdir)/enlightenment.png \
-	$(srcdir)/red.png
+	$(srcdir)/red.png \
+	$(srcdir)/im1.png \
+	$(srcdir)/cube1.png
 
 files_DATA += \
 	$(EDCS) \
@@ -104,7 +110,8 @@ files_DATA += \
 	$(srcdir)/evas-events.c \
 	$(srcdir)/evas-aspect-hints.c \
 	$(srcdir)/evas-hints.c \
-	$(srcdir)/evas-stacking.c
+	$(srcdir)/evas-stacking.c \
+	$(srcdir)/evas-map-utils.c
 endif
 
 EXTRA_DIST = $(EDCS) \
@@ -118,4 +125,6 @@ EXTRA_DIST = $(EDCS) \
 	$(srcdir)/evas-hints.c \
 	$(srcdir)/evas-stacking.c \
 	$(srcdir)/enlightenment.png \
-	$(srcdir)/red.png
+	$(srcdir)/red.png \
+	$(srcdir)/im1.png \
+	$(srcdir)/cube1.png
