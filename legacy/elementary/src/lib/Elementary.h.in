@@ -4155,7 +4155,8 @@ extern "C" {
    EAPI const char        *elm_slider_unit_format_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
    EAPI void               elm_slider_indicator_format_set(Evas_Object *obj, const char *indicator) EINA_ARG_NONNULL(1);
    EAPI const char        *elm_slider_indicator_format_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
-   EAPI void               elm_slider_indicator_format_function_set(Evas_Object *obj, const char *(*func)(double val)) EINA_ARG_NONNULL(1);
+  EAPI void                elm_slider_indicator_format_function_set(Evas_Object *obj, const char *(*func)(double val), void (*free_func)(const char *str)) EINA_ARG_NONNULL(1);
+  EAPI void                elm_slider_units_format_function_set(Evas_Object *obj, const char *(*func)(double val), void (*free_func)(const char *str)) EINA_ARG_NONNULL(1);
    EAPI void               elm_slider_horizontal_set(Evas_Object *obj, Eina_Bool horizontal) EINA_ARG_NONNULL(1);
    EAPI Eina_Bool          elm_slider_horizontal_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
    EAPI void               elm_slider_min_max_set(Evas_Object *obj, double min, double max) EINA_ARG_NONNULL(1);
