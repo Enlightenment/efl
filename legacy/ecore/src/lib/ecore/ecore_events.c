@@ -81,6 +81,36 @@ static void *_ecore_event_del(Ecore_Event *event);
 /**
  * @addtogroup Ecore_Event_Group Ecore Event functions
  *
+ * Ecore events are used to wake up the Ecore main loop to warn about state
+ * changes, tasks completed, data available for reading or writing, etc. They
+ * are the base of the event oriented programming.
+ *
+ * The idea is to write many functions (callbacks) that will be registered to
+ * specific events, and called when these events happen. This way, when the
+ * system state changes (a mouse click is detected, a key is pressed, or the
+ * content of a file changes, for example), the respective callbacks will be
+ * called with some information about that event. Usually the function/callback
+ * will have a data pointer to the event info (the position in the screen where
+ * the mouse was clicked, the name of the key that was pressed, or the name of
+ * the file that has changed).
+ *
+ * The basic usage, when one needs to watch for an existing event, is to
+ * register a callback to it using ecore_event_add(). Of course it's necessary
+ * to know beforehand what are the types of events that the system/library will
+ * emmit.  This should be available with the documentation from that
+ * system/library.
+ *
+ * When writing a library or group of functions that need to inform about
+ * something, and you already are running on top of a main loop, it is usually a
+ * good approach to use events. This way you allow others to register as many
+ * callbacks as necessary to this event, and don't have to care about who is
+ * registering to it. The functions ecore_event_type_new() and ecore_event_add()
+ * are available for this purpose.
+ *
+ * Example that deals with events:
+ *
+ * @li @ref ecore_event_example_c
+ *
  * @{
  */
 
