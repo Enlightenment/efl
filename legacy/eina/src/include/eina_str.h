@@ -63,6 +63,8 @@
  * @warning Since these functions modify the strings they can't be used with
  * shared strings(eina_stringshare).
  *
+ * See an example @ref tutorial_eina_string "here".
+ *
  * @{
  */
 
