@@ -36517,7 +36517,7 @@ collections {
                color: 255 255 255 255;
             }
             description {
-               state: darker 0.0;
+               state: "darker" 0.0;
                color: 128 128 128 255;
             }
          }
@@ -36540,30 +36540,30 @@ collections {
             signal: "elm,video,load";
             source: "elm";
 
-            action: STATE_SET darker 0.0;
-            target: clipper;
+            action: STATE_SET "darker" 0.0;
+            target: "clipper";
          }
          program {
             signal: "elm,video,play";
             source: "elm";
 
-            action: STATE_SET default 0.0;
-            target: clipper;
+            action: STATE_SET "default" 0.0;
+            target: "clipper";
          }
          program {
             signal: "elm,video,end";
             source: "elm";
 
-            action: STATE_SET darker 0.0;
-            target: clipper;
+            action: STATE_SET "darker" 0.0;
+            target: "clipper";
             transition: LINEAR 0.5;
          }
          program {
             signal: "elm,video,pause";
             source: "elm";
 
-            action: STATE_SET darker 0.0;
-            target: clipper;
+            action: STATE_SET "darker" 0.0;
+            target: "clipper";
          }
       }
    }
