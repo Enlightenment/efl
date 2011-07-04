@@ -187,6 +187,38 @@ _units_set(Evas_Object *obj)
      edje_object_part_text_set(wd->progressbar, "elm.text.status", NULL);
 }
 
+static void
+_elm_progressbar_label_set(Evas_Object *obj, const char *item, const char *label)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (item) return;
+   if (!wd) return;
+   eina_stringshare_replace(&wd->label, label);
+   if (label)
+     {
+        edje_object_signal_emit(wd->progressbar, "elm,state,text,visible", "elm");
+        edje_object_message_signal_process(wd->progressbar);
+     }
+   else
+     {
+        edje_object_signal_emit(wd->progressbar, "elm,state,text,hidden", "elm");
+        edje_object_message_signal_process(wd->progressbar);
+     }
+   edje_object_part_text_set(wd->progressbar, "elm.text", label);
+   _sizing_eval(obj);
+}
+
+static const char *
+_elm_progressbar_label_get(const Evas_Object *obj, const char *item)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (item) return NULL;
+   if (!wd) return NULL;
+   return wd->label;
+}
+
 /**
  * Add a new progressbar to the parent
  *
@@ -211,6 +243,8 @@ elm_progressbar_add(Evas_Object *parent)
    elm_widget_del_hook_set(obj, _del_hook);
    elm_widget_theme_hook_set(obj, _theme_hook);
    elm_widget_can_focus_set(obj, EINA_FALSE);
+   elm_widget_text_set_hook_set(obj, _elm_progressbar_label_set);
+   elm_widget_text_get_hook_set(obj, _elm_progressbar_label_get);
 
    wd->horizontal = EINA_TRUE;
    wd->inverted = EINA_FALSE;
@@ -349,26 +383,12 @@ elm_progressbar_value_get(const Evas_Object *obj)
  * @param label The text label string in UTF-8
  *
  * @ingroup Progressbar
+ * @deprecated use elm_object_text_set() instead.
  */
 EAPI void
 elm_progressbar_label_set(Evas_Object *obj, const char *label)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype);
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return;
-   eina_stringshare_replace(&wd->label, label);
-   if (label)
-     {
-        edje_object_signal_emit(wd->progressbar, "elm,state,text,visible", "elm");
-        edje_object_message_signal_process(wd->progressbar);
-     }
-   else
-     {
-        edje_object_signal_emit(wd->progressbar, "elm,state,text,hidden", "elm");
-        edje_object_message_signal_process(wd->progressbar);
-     }
-   edje_object_part_text_set(wd->progressbar, "elm.text", label);
-   _sizing_eval(obj);
+   _elm_progressbar_label_set(obj, NULL, label);
 }
 
 /**
@@ -378,14 +398,12 @@ elm_progressbar_label_set(Evas_Object *obj, const char *label)
  * @return The text label string in UTF-8
  *
  * @ingroup Progressbar
+ * @deprecated use elm_object_text_set() instead.
  */
 EAPI const char *
 elm_progressbar_label_get(const Evas_Object *obj)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return NULL;
-   return wd->label;
+   return _elm_progressbar_label_get(obj, NULL);
 }
 
 /**
