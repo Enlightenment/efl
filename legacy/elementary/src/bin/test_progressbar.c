@@ -94,7 +94,7 @@ test_progressbar(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event
    evas_object_size_hint_align_set(pb, EVAS_HINT_FILL, 0.5);
    elm_box_pack_end(bx, pb);
 //   elm_progressbar_horizontal_set(pb, EINA_TRUE);
-//   elm_progressbar_label_set(pb, "Progression %");
+//   elm_object_text_set(pb, "Progression %");
 //   elm_progressbar_unit_format_set(pb, NULL);
    evas_object_show(pb);
    _test_progressbar.pb1 = pb;
@@ -102,7 +102,7 @@ test_progressbar(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event
    pb = elm_progressbar_add(win);
    evas_object_size_hint_align_set(pb, EVAS_HINT_FILL, 0.5);
    evas_object_size_hint_weight_set(pb, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   elm_progressbar_label_set(pb, "Infinite bounce");
+   elm_object_text_set(pb, "Infinite bounce");
    elm_progressbar_pulse_set(pb, EINA_TRUE);
    elm_box_pack_end(bx, pb);
    evas_object_show(pb);
@@ -114,7 +114,7 @@ test_progressbar(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event
    evas_object_size_hint_aspect_set(ic1, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
 
    pb = elm_progressbar_add(win);
-   elm_progressbar_label_set(pb, "Label");
+   elm_object_text_set(pb, "Label");
    elm_progressbar_icon_set(pb, ic1);
    elm_progressbar_inverted_set(pb, 1);
    elm_progressbar_unit_format_set(pb, "%1.1f units");
@@ -139,7 +139,7 @@ test_progressbar(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event
    evas_object_size_hint_weight_set(pb, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_box_pack_end(hbx, pb);
    elm_progressbar_span_size_set(pb, 60);
-   elm_progressbar_label_set(pb, "percent");
+   elm_object_text_set(pb, "percent");
    evas_object_show(pb);
    _test_progressbar.pb4 = pb;
 
@@ -150,7 +150,7 @@ test_progressbar(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event
    elm_progressbar_span_size_set(pb, 80);
    elm_progressbar_pulse_set(pb, EINA_TRUE);
    elm_progressbar_unit_format_set(pb, NULL);
-   elm_progressbar_label_set(pb, "Infinite bounce");
+   elm_object_text_set(pb, "Infinite bounce");
    elm_box_pack_end(hbx, pb);
    evas_object_show(pb);
    _test_progressbar.pb5 = pb;
@@ -161,7 +161,7 @@ test_progressbar(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event
 
    pb = elm_progressbar_add(win);
    elm_progressbar_horizontal_set(pb, EINA_FALSE);
-   elm_progressbar_label_set(pb, "Label");
+   elm_object_text_set(pb, "Label");
    elm_progressbar_icon_set(pb, ic2);
    elm_progressbar_inverted_set(pb, 1);
    elm_progressbar_unit_format_set(pb, "%1.2f%%");
@@ -175,7 +175,7 @@ test_progressbar(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event
 
    pb = elm_progressbar_add(win);
    elm_object_style_set(pb, "wheel");
-   elm_progressbar_label_set(pb, "Style: wheel");
+   elm_object_text_set(pb, "Style: wheel");
    evas_object_size_hint_align_set(pb, EVAS_HINT_FILL, 0.5);
    evas_object_size_hint_weight_set(pb, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_box_pack_end(bx, pb);
