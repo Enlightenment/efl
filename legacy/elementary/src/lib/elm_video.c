@@ -366,7 +366,7 @@ elm_video_play(Evas_Object *video)
 
    if (emotion_object_play_get(wd->emotion)) return ;
 
-   ecore_timer_del(wd->timer);
+   if (wd->timer) ecore_timer_del(wd->timer);
    wd->timer = NULL;
    wd->stop = EINA_FALSE;
    emotion_object_play_set(wd->emotion, EINA_TRUE);
@@ -407,7 +407,7 @@ elm_video_stop(Evas_Object *video)
 
    if (!emotion_object_play_get(wd->emotion) && wd->stop) return ;
 
-   ecore_timer_del(wd->timer);
+   if (wd->timer) ecore_timer_del(wd->timer);
    wd->timer = NULL;
    wd->stop = EINA_TRUE;
    emotion_object_play_set(wd->emotion, EINA_FALSE);
