@@ -99,6 +99,9 @@ efreet_xml_new(const char *file)
     fd = open(file, O_RDONLY);
     if (fd == -1) goto efreet_error;
 
+    /* let's make mmap safe and just get 0 pages for IO erro */
+    eina_mmap_safety_enabled_set(EINA_TRUE);
+   
     data = mmap(NULL, size, PROT_READ, MAP_SHARED, fd, 0);
     if (data == MAP_FAILED) goto efreet_error;
 

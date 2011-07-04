@@ -123,6 +123,9 @@ efreet_ini_parse(const char *file)
     }
 
     left = file_stat.st_size;
+    /* let's make mmap safe and just get 0 pages for IO erro */
+    eina_mmap_safety_enabled_set(EINA_TRUE);
+   
     buffer = mmap(NULL, left, PROT_READ, MAP_SHARED, fileno(f), 0);
     if (buffer == MAP_FAILED)
     {
