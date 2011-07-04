@@ -31,6 +31,7 @@ eina_magic.c \
 eina_main.c \
 eina_matrixsparse.c \
 eina_mempool.c \
+eina_mmap.c \
 eina_module.c \
 eina_prefix.c \
 eina_quadtree.c \

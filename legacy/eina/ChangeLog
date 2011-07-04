@@ -114,3 +114,7 @@
 2011-06-23  Cedric Bail
 
 	* Add Eina_LockRW.
+
+2011-07-04  Carsten Haitzler (The Rasterman)
+
+	* Add eina_mmap safety handling.

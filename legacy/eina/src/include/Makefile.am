@@ -57,7 +57,8 @@ eina_quadtree.h \
 eina_simple_xml_parser.h \
 eina_lock.h \
 eina_prefix.h \
-eina_refcount.h
+eina_refcount.h \
+eina_mmap.h
 
 # Will be back for developper after 1.1.
 # eina_object.h

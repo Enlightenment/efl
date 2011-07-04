@@ -65,6 +65,7 @@ void *alloca (size_t);
 #include "eina_hash.h"
 #include "eina_list.h"
 #include "eina_lock.h"
+#include "eina_mmap.h"
 
 /*============================================================================*
  *                                  Local                                     *
@@ -867,6 +868,7 @@ eina_file_map_all(Eina_File *file, Eina_File_Populate rule)
    if (file->length > EINA_HUGE_PAGE) flags |= MAP_HUGETLB;
 #endif
 
+   eina_mmap_safety_enabled_set(EINA_TRUE);
    eina_lock_take(&file->lock);
    if (file->global_map == MAP_FAILED)
      file->global_map = mmap(NULL, file->length, PROT_READ, flags, file->fd, 0);
@@ -900,6 +902,7 @@ eina_file_map_new(Eina_File *file, Eina_File_Populate rule,
    key[0] = offset;
    key[1] = length;
 
+   eina_mmap_safety_enabled_set(EINA_TRUE);
    eina_lock_take(&file->lock);
 
    map = eina_hash_find(file->map, &key);
