@@ -6369,74 +6369,153 @@ EAPI Eina_Bool evas_object_image_extension_can_load_fast_get(const char *file);
  *
  * @ingroup Evas_Object_Specific
  */
-   typedef enum _Evas_Text_Style_Type
-     {
-        /* basic styles (4 bits allocatedm use 0->10 now, 5 left) */
-#define EVAS_TEXT_STYLE_MASK_BASIC 0xf
-#define EVAS_TEXT_STYLE_BASIC_SET(x, s) \
-   do { x = ((x) & ~EVAS_TEXT_STYLE_MASK_BASIC) | (s); } while (0)
-	EVAS_TEXT_STYLE_PLAIN,
-	EVAS_TEXT_STYLE_SHADOW,
-	EVAS_TEXT_STYLE_OUTLINE,
-	EVAS_TEXT_STYLE_SOFT_OUTLINE,
-	EVAS_TEXT_STYLE_GLOW,
-	EVAS_TEXT_STYLE_OUTLINE_SHADOW,
-	EVAS_TEXT_STYLE_FAR_SHADOW,
-	EVAS_TEXT_STYLE_OUTLINE_SOFT_SHADOW,
-	EVAS_TEXT_STYLE_SOFT_SHADOW,
-	EVAS_TEXT_STYLE_FAR_SOFT_SHADOW,
-
-#define EVAS_TEXT_STYLE_MASK_SHADOW_DIRECTION (0x7 << 4)
-#define EVAS_TEXT_STYLE_SHADOW_DIRECTION_SET(x, s) \
-   do { x = ((x) & ~EVAS_TEXT_STYLE_MASK_SHADOW_DIRECTION) | (s); } while (0)
-        /* OR these to modify shadow direction (3 bits needed) */
-	EVAS_TEXT_STYLE_SHADOW_DIRECTION_BOTTOM_RIGHT = (0x0 << 4),
-	EVAS_TEXT_STYLE_SHADOW_DIRECTION_BOTTOM       = (0x1 << 4),
-	EVAS_TEXT_STYLE_SHADOW_DIRECTION_BOTTOM_LEFT  = (0x2 << 4),
-	EVAS_TEXT_STYLE_SHADOW_DIRECTION_LEFT         = (0x3 << 4),
-	EVAS_TEXT_STYLE_SHADOW_DIRECTION_TOP_LEFT     = (0x4 << 4),
-	EVAS_TEXT_STYLE_SHADOW_DIRECTION_TOP          = (0x5 << 4),
-	EVAS_TEXT_STYLE_SHADOW_DIRECTION_TOP_RIGHT    = (0x6 << 4),
-	EVAS_TEXT_STYLE_SHADOW_DIRECTION_RIGHT        = (0x7 << 4)
-     } Evas_Text_Style_Type;
 
 /**
- * Creates a new text @c Evas_Object on the provided @c Evas canvas.
+ * @addtogroup Evas_Object_Text
+ * @{
+ */
+
+/* basic styles (4 bits allocated use 0->10 now, 5 left) */
+#define EVAS_TEXT_STYLE_MASK_BASIC 0xf
+
+/**
+ * Text style type creation macro. Use style types on the 's'
+ * arguments, being 'x' your style variable.
+ */
+#define EVAS_TEXT_STYLE_BASIC_SET(x, s) \
+   do { x = ((x) & ~EVAS_TEXT_STYLE_MASK_BASIC) | (s); } while (0)
+
+#define EVAS_TEXT_STYLE_MASK_SHADOW_DIRECTION (0x7 << 4)
+
+/**
+ * Text style type creation macro. This one will impose shadow
+ * directions on the style type variable -- use the @c
+ * EVAS_TEXT_STYLE_SHADOW_DIRECTION_* values on 's', incremmentally.
+ */
+#define EVAS_TEXT_STYLE_SHADOW_DIRECTION_SET(x, s) \
+   do { x = ((x) & ~EVAS_TEXT_STYLE_MASK_SHADOW_DIRECTION) | (s); } while (0)
+
+   typedef enum _Evas_Text_Style_Type
+     {
+	EVAS_TEXT_STYLE_PLAIN, /**< plain, standard text */
+	EVAS_TEXT_STYLE_SHADOW, /**< text with shadow underneath */
+	EVAS_TEXT_STYLE_OUTLINE, /**< text with an outline */
+	EVAS_TEXT_STYLE_SOFT_OUTLINE, /**< text with a soft outline */
+	EVAS_TEXT_STYLE_GLOW, /**< text with a glow effect */
+	EVAS_TEXT_STYLE_OUTLINE_SHADOW, /**< text with both outline and shadow effects */
+	EVAS_TEXT_STYLE_FAR_SHADOW, /**< text with (far) shadow underneath */
+	EVAS_TEXT_STYLE_OUTLINE_SOFT_SHADOW, /**< text with outline and soft shadow effects combined */
+	EVAS_TEXT_STYLE_SOFT_SHADOW, /**< text with (soft) shadow underneath */
+	EVAS_TEXT_STYLE_FAR_SOFT_SHADOW, /**< text with (far soft) shadow underneath */
+
+        /* OR these to modify shadow direction (3 bits needed) */
+	EVAS_TEXT_STYLE_SHADOW_DIRECTION_BOTTOM_RIGHT = (0x0 << 4), /**< shadow growing to bottom right */
+	EVAS_TEXT_STYLE_SHADOW_DIRECTION_BOTTOM       = (0x1 << 4), /**< shadow growing to the bottom */
+	EVAS_TEXT_STYLE_SHADOW_DIRECTION_BOTTOM_LEFT  = (0x2 << 4), /**< shadow growing to bottom left */
+	EVAS_TEXT_STYLE_SHADOW_DIRECTION_LEFT         = (0x3 << 4), /**< shadow growing to the left */
+	EVAS_TEXT_STYLE_SHADOW_DIRECTION_TOP_LEFT     = (0x4 << 4), /**< shadow growing to top left */
+	EVAS_TEXT_STYLE_SHADOW_DIRECTION_TOP          = (0x5 << 4), /**< shadow growing to the top */
+	EVAS_TEXT_STYLE_SHADOW_DIRECTION_TOP_RIGHT    = (0x6 << 4), /**< shadow growing to top right */
+	EVAS_TEXT_STYLE_SHADOW_DIRECTION_RIGHT        = (0x7 << 4) /**< shadow growing to the right */
+     } Evas_Text_Style_Type; /**< Types of styles to be applied on text objects. The @c EVAS_TEXT_STYLE_SHADOW_DIRECTION_* ones are to be ORed together with others imposing shadow, to change shadow's direction */
+
+/**
+ * Creates a new text object on the provided canvas.
  *
- * @param e The @c Evas canvas to create the text object upon.
+ * @param e The canvas to create the text object on.
+ * @return @c NULL on error, a pointer to a new text object on
+ * success.
  *
- * @see evas_object_text_font_source_set
- * @see evas_object_text_font_set
- * @see evas_object_text_text_set
+ * Text objects are for simple, single line text elements. If you want
+ * more elaborated text blocks, see @ref Evas_Object_Textblock.
  *
- * @returns NULL on error, A pointer to a new @c Evas_Object on success.
+ * @see evas_object_text_font_source_set()
+ * @see evas_object_text_font_set()
+ * @see evas_object_text_text_set()
  */
 EAPI Evas_Object      *evas_object_text_add              (Evas *e) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_MALLOC;
 
-   EAPI void              evas_object_text_font_source_set  (Evas_Object *obj, const char *font) EINA_ARG_NONNULL(1);
-   EAPI const char       *evas_object_text_font_source_get  (const Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
+/**
+ * Set the font (source) file to be used on a given text object.
+ *
+ * @param obj The text object to set font for.
+ * @param font The font file's path.
+ *
+ * This function allows the font file to be explicitly set for a given
+ * text object, overriding system lookup, which will first occur in
+ * the given file's contents.
+ *
+ * @see evas_object_text_font_get()
+ */
+EAPI void              evas_object_text_font_source_set  (Evas_Object *obj, const char *font) EINA_ARG_NONNULL(1);
+
+/**
+ * Get the font file's path which is being used on a given text
+ * object.
+ *
+ * @param obj The text object to set font for.
+ * @param font The font file's path.
+ *
+ * @see evas_object_text_font_get() for more details
+ */
+EAPI const char       *evas_object_text_font_source_get  (const Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
+
+/**
+ * Set the font family and size on a given text object.
+ *
+ * @param obj The text object to set font for.
+ * @param font The font (family) name.
+ * @param size The font size, in points.
+ *
+ * This function allows the font name and size of a text object to be
+ * set. The @p font string has to follow fontconfig's convention on
+ * naming fonts, as it's the underlying lybrary used to query system
+ * fonts by Evas (see the @c fc-list command's output, on your system,
+ * to get an idea).
+ *
+ * @see evas_object_text_font_get()
+ * @see evas_object_text_font_source_set()
+ */
    EAPI void              evas_object_text_font_set         (Evas_Object *obj, const char *font, Evas_Font_Size size) EINA_ARG_NONNULL(1);
 
 /**
- * Query evas for font information of a text @c Evas_Object.
+ * Retrieve the font family and size in use on a given text object.
  *
- * This function allows the font name and size of a text @c Evas_Object as
- * created with evas_object_text_add() to be queried. Be aware that the font
- * name string is still owned by Evas and should NOT have free() called on
- * it by the caller of the function.
+ * @param obj The evas text object to query for font information.
+ * @param font A pointer to the location to store the font name in.
+ * @param size A pointer to the location to store the font size in.
  *
- * @param obj	The evas text object to query for font information.
- * @param font	A pointer to the location to store the font name in (may be NULL).
- * @param size	A pointer to the location to store the font size in (may be NULL).
+ * This function allows the font name and size of a text object to be
+ * queried. Be aware that the font name string is still owned by Evas
+ * and should @b not have free() called on it by the caller of the
+ * function.
+ *
+ * @see evas_object_text_font_set()
  */
 EAPI void              evas_object_text_font_get         (const Evas_Object *obj, const char **font, Evas_Font_Size *size) EINA_ARG_NONNULL(1, 2);
 
 /**
- * Sets the text to be displayed by the given evas text object.
- * @param obj  Evas text object.
- * @param text Text to display.
+ * Sets the text string to be displayed by the given text object.
+ *
+ * @param obj The text object to set text string on.
+ * @param text Text string to display on it.
+ *
+ * @see evas_object_text_text_get()
  */
 EAPI void              evas_object_text_text_set         (Evas_Object *obj, const char *text) EINA_ARG_NONNULL(1);
+
+/**
+ * Retrieves the text string currently being displayed by the given
+ * text object.
+ *
+ * @param  obj The given text object.
+ * @return The text string currently being displayed on it.
+ *
+ * @note Do not free() the return value.
+ *
+ * @see evas_object_text_text_set()
+ */
+EAPI const char       *evas_object_text_text_get         (const Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
 
 /**
  * @brief Sets the BiDi delimiters used in the textblock.
@@ -6464,12 +6543,6 @@ EAPI void              evas_object_text_bidi_delimiters_set(Evas_Object *obj, co
  */
 EAPI const char       *evas_object_text_bidi_delimiters_get(const Evas_Object *obj);
 
-/**
- * Retrieves the text currently being displayed by the given evas text object.
- * @param  obj The given evas text object.
- * @return The text currently being displayed.  Do not free it.
- */
-EAPI const char       *evas_object_text_text_get         (const Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
    EAPI Evas_Coord        evas_object_text_ascent_get       (const Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
    EAPI Evas_Coord        evas_object_text_descent_get      (const Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
    EAPI Evas_Coord        evas_object_text_max_ascent_get   (const Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
@@ -6505,16 +6578,205 @@ EAPI Eina_Bool         evas_object_text_char_pos_get     (const Evas_Object *obj
  * because of the possibility of RTL in the text.
  */
 EAPI int               evas_object_text_last_up_to_pos   (const Evas_Object *obj, Evas_Coord x, Evas_Coord y) EINA_ARG_NONNULL(1);
-   EAPI Evas_Text_Style_Type evas_object_text_style_get     (const Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
-   EAPI void              evas_object_text_style_set        (Evas_Object *obj, Evas_Text_Style_Type type) EINA_ARG_NONNULL(1);
-   EAPI void              evas_object_text_shadow_color_set (Evas_Object *obj, int r, int g, int b, int a) EINA_ARG_NONNULL(1);
-   EAPI void              evas_object_text_shadow_color_get (const Evas_Object *obj, int *r, int *g, int *b, int *a) EINA_ARG_NONNULL(1);
-   EAPI void              evas_object_text_glow_color_set   (Evas_Object *obj, int r, int g, int b, int a) EINA_ARG_NONNULL(1);
-   EAPI void              evas_object_text_glow_color_get   (const Evas_Object *obj, int *r, int *g, int *b, int *a) EINA_ARG_NONNULL(1);
-   EAPI void              evas_object_text_glow2_color_set  (Evas_Object *obj, int r, int g, int b, int a) EINA_ARG_NONNULL(1);
-   EAPI void              evas_object_text_glow2_color_get  (const Evas_Object *obj, int *r, int *g, int *b, int *a) EINA_ARG_NONNULL(1);
-   EAPI void              evas_object_text_outline_color_set(Evas_Object *obj, int r, int g, int b, int a) EINA_ARG_NONNULL(1);
-   EAPI void              evas_object_text_outline_color_get(const Evas_Object *obj, int *r, int *g, int *b, int *a) EINA_ARG_NONNULL(1);
+
+/**
+ * Retrieves the style on use on the given text object.
+ *
+ * @param obj the given text object to set style on.
+ * @return the style type in use.
+ *
+ * @see evas_object_text_style_set() for more details.
+ */
+EAPI Evas_Text_Style_Type evas_object_text_style_get     (const Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
+
+/**
+ * Sets the style to apply on the given text object.
+ *
+ * @param obj the given text object to set style on.
+ * @param type a style type.
+ *
+ * Text object styles are one of the values in
+ * #Evas_Text_Style_Type. Some of those values are combinations of
+ * more than one style, and some account for the direction of the
+ * rendering of shadow effects.
+ *
+ * @note One may use the helper macros #EVAS_TEXT_STYLE_BASIC_SET and
+ * #EVAS_TEXT_STYLE_SHADOW_DIRECTION_SET to assemble a style value.
+ *
+ * @see evas_object_text_style_get()
+ * @see evas_object_text_shadow_color_set()
+ * @see evas_object_text_outline_color_set()
+ * @see evas_object_text_glow_color_set()
+ * @see evas_object_text_glow2_color_set()
+ */
+EAPI void              evas_object_text_style_set        (Evas_Object *obj, Evas_Text_Style_Type type) EINA_ARG_NONNULL(1);
+
+/**
+ * Sets the shadow color for the given text object.
+ *
+ * @param obj The given Evas text object.
+ * @param r The red component of the given color.
+ * @param g The green component of the given color.
+ * @param b The blue component of the given color.
+ * @param a The alpha component of the given color.
+ *
+ * Shadow effects, which are fading colors decorating the text
+ * underneath it, will just be shown if the object is set to one of
+ * the following styles:
+ *
+ * - #EVAS_TEXT_STYLE_SHADOW
+ * - #EVAS_TEXT_STYLE_OUTLINE_SHADOW
+ * - #EVAS_TEXT_STYLE_FAR_SHADOW
+ * - #EVAS_TEXT_STYLE_OUTLINE_SOFT_SHADOW
+ * - #EVAS_TEXT_STYLE_SOFT_SHADOW
+ * - #EVAS_TEXT_STYLE_FAR_SOFT_SHADOW
+ *
+ * One can also change de direction the shadow grows to, with
+ * evas_object_text_style_set().
+ *
+ * @see evas_object_text_shadow_color_get()
+ */
+EAPI void              evas_object_text_shadow_color_set (Evas_Object *obj, int r, int g, int b, int a) EINA_ARG_NONNULL(1);
+
+/**
+ * Retrieves the shadow color for the given text object.
+ *
+ * @param obj The given Evas text object.
+ * @param r Pointer to variable to hold the red component of the given
+ * color.
+ * @param g Pointer to variable to hold the green component of the
+ * given color.
+ * @param b Pointer to variable to hold the blue component of the
+ * given color.
+ * @param a Pointer to variable to hold the alpha component of the
+ * given color.
+ *
+ * @note Use @c NULL pointers on the color components you're not
+ * interested in: they'll be ignored by the function.
+ *
+ * @see evas_object_text_shadow_color_set() for more details.
+ */
+EAPI void              evas_object_text_shadow_color_get (const Evas_Object *obj, int *r, int *g, int *b, int *a) EINA_ARG_NONNULL(1);
+
+/**
+ * Sets the glow color for the given text object.
+ *
+ * @param obj The given Evas text object.
+ * @param r The red component of the given color.
+ * @param g The green component of the given color.
+ * @param b The blue component of the given color.
+ * @param a The alpha component of the given color.
+ *
+ * Glow effects, which are glowing colors decorating the text's
+ * surroundings, will just be shown if the object is set to the
+ * #EVAS_TEXT_STYLE_GLOW style.
+ *
+ * @note Glow effects are placed from a short distance of the text
+ * itself, but no touching it. For glowing effects right on the
+ * borders of the glyphs, see 'glow 2' effects
+ * (evas_object_text_glow2_color_set()).
+ *
+ * @see evas_object_text_glow_color_get()
+ */
+EAPI void              evas_object_text_glow_color_set   (Evas_Object *obj, int r, int g, int b, int a) EINA_ARG_NONNULL(1);
+
+/**
+ * Retrieves the glow color for the given text object.
+ *
+ * @param obj The given Evas text object.
+ * @param r Pointer to variable to hold the red component of the given
+ * color.
+ * @param g Pointer to variable to hold the green component of the
+ * given color.
+ * @param b Pointer to variable to hold the blue component of the
+ * given color.
+ * @param a Pointer to variable to hold the alpha component of the
+ * given color.
+ *
+ * @note Use @c NULL pointers on the color components you're not
+ * interested in: they'll be ignored by the function.
+ *
+ * @see evas_object_text_glow_color_set() for more details.
+ */
+EAPI void              evas_object_text_glow_color_get   (const Evas_Object *obj, int *r, int *g, int *b, int *a) EINA_ARG_NONNULL(1);
+
+/**
+ * Sets the 'glow 2' color for the given text object.
+ *
+ * @param obj The given Evas text object.
+ * @param r The red component of the given color.
+ * @param g The green component of the given color.
+ * @param b The blue component of the given color.
+ * @param a The alpha component of the given color.
+ *
+ * 'Glow 2' effects, which are glowing colors decorating the text's
+ * (immediate) surroundings, will just be shown if the object is set
+ * to the #EVAS_TEXT_STYLE_GLOW style. See also
+ * evas_object_text_glow_color_set().
+ *
+ * @see evas_object_text_glow2_color_get()
+ */
+EAPI void              evas_object_text_glow2_color_set  (Evas_Object *obj, int r, int g, int b, int a) EINA_ARG_NONNULL(1);
+
+/**
+ * Retrieves the 'glow 2' color for the given text object.
+ *
+ * @param obj The given Evas text object.
+ * @param r Pointer to variable to hold the red component of the given
+ * color.
+ * @param g Pointer to variable to hold the green component of the
+ * given color.
+ * @param b Pointer to variable to hold the blue component of the
+ * given color.
+ * @param a Pointer to variable to hold the alpha component of the
+ * given color.
+ *
+ * @note Use @c NULL pointers on the color components you're not
+ * interested in: they'll be ignored by the function.
+ *
+ * @see evas_object_text_glow2_color_set() for more details.
+ */
+EAPI void              evas_object_text_glow2_color_get  (const Evas_Object *obj, int *r, int *g, int *b, int *a) EINA_ARG_NONNULL(1);
+
+/**
+ * Sets the outline color for the given text object.
+ *
+ * @param obj The given Evas text object.
+ * @param r The red component of the given color.
+ * @param g The green component of the given color.
+ * @param b The blue component of the given color.
+ * @param a The alpha component of the given color.
+ *
+ * Outline effects (colored lines around text glyphs) will just be
+ * shown if the object is set to one of the following styles:
+ * - #EVAS_TEXT_STYLE_OUTLINE
+ * - #EVAS_TEXT_STYLE_SOFT_OUTLINE
+ * - #EVAS_TEXT_STYLE_OUTLINE_SHADOW
+ * - #EVAS_TEXT_STYLE_OUTLINE_SOFT_SHADOW
+ *
+ * @see evas_object_text_outline_color_get()
+ */
+EAPI void              evas_object_text_outline_color_set(Evas_Object *obj, int r, int g, int b, int a) EINA_ARG_NONNULL(1);
+
+/**
+ * Retrieves the outline color for the given text object.
+ *
+ * @param obj The given Evas text object.
+ * @param r Pointer to variable to hold the red component of the given
+ * color.
+ * @param g Pointer to variable to hold the green component of the
+ * given color.
+ * @param b Pointer to variable to hold the blue component of the
+ * given color.
+ * @param a Pointer to variable to hold the alpha component of the
+ * given color.
+ *
+ * @note Use @c NULL pointers on the color components you're not
+ * interested in: they'll be ignored by the function.
+ *
+ * @see evas_object_text_outline_color_set() for more details.
+ */
+EAPI void              evas_object_text_outline_color_get(const Evas_Object *obj, int *r, int *g, int *b, int *a) EINA_ARG_NONNULL(1);
 
 /**
  * Gets the text style pad of a text object.
@@ -6535,6 +6797,10 @@ EAPI void              evas_object_text_style_pad_get    (const Evas_Object *obj
  * @return the direction of the text
  */
 EAPI Evas_BiDi_Direction evas_object_text_direction_get  (const Evas_Object *obj) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
+
+/**
+ * @}
+ */
 
 /**
  * @defgroup Evas_Object_Textblock Textblock Object Functions

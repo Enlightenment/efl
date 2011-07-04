@@ -69,6 +69,10 @@ pkglib_PROGRAMS += evas_images2
 evas_images2_SOURCES = evas-images2.c
 evas_images2_LDADD = $(top_builddir)/src/lib/libevas.la @ECORE_EVAS_LIBS@
 
+pkglib_PROGRAMS += evas_text
+evas_text_SOURCES = evas-text.c
+evas_text_LDADD = $(top_builddir)/src/lib/libevas.la @ECORE_EVAS_LIBS@
+
 #the ones using ecore_evas and edje follow
 AM_CPPFLAGS += @EDJE_CFLAGS@
 
@@ -111,7 +115,8 @@ files_DATA += \
 	$(srcdir)/evas-aspect-hints.c \
 	$(srcdir)/evas-hints.c \
 	$(srcdir)/evas-stacking.c \
-	$(srcdir)/evas-map-utils.c
+	$(srcdir)/evas-map-utils.c \
+	$(srcdir)/evas-text.c
 endif
 
 EXTRA_DIST = $(EDCS) \
@@ -124,6 +129,8 @@ EXTRA_DIST = $(EDCS) \
 	$(srcdir)/evas-aspect-hints.c \
 	$(srcdir)/evas-hints.c \
 	$(srcdir)/evas-stacking.c \
+	$(srcdir)/evas-map-utils.c \
+	$(srcdir)/evas-text.c \
 	$(srcdir)/enlightenment.png \
 	$(srcdir)/red.png \
 	$(srcdir)/im1.png \
