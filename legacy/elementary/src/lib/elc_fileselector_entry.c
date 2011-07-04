@@ -212,6 +212,26 @@ _changed_size_hints(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__,
    _sizing_eval(data);
 }
 
+static void
+_elm_fileselector_entry_button_label_set(Evas_Object *obj, const char *item, const char *label)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (item) return;
+   if (!wd) return;
+   elm_object_text_set(wd->button, label);
+}
+
+static const char *
+_elm_fileselector_entry_button_label_get(const Evas_Object *obj, const char *item)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (item) return NULL;
+   if (!wd) return NULL;
+   return elm_object_text_get(wd->button);
+}
+
 /**
  * Add a new file selector entry into the parent object.
  *
@@ -238,6 +258,8 @@ elm_fileselector_entry_add(Evas_Object *parent)
    elm_widget_focus_next_hook_set(obj, _elm_fileselector_entry_focus_next_hook);
    elm_widget_can_focus_set(obj, EINA_FALSE);
    elm_widget_theme_hook_set(obj, _theme_hook);
+   elm_widget_text_set_hook_set(obj, _elm_fileselector_entry_button_label_set);
+   elm_widget_text_get_hook_set(obj, _elm_fileselector_entry_button_label_get);
 
    wd->edje = edje_object_add(e);
    _elm_theme_object_set(obj, wd->edje, "fileselector_entry", "base", "default");
@@ -303,23 +325,18 @@ elm_fileselector_entry_add(Evas_Object *parent)
  * @param label The text label text to be displayed on the entry
  *
  * @ingroup File_Selector_Entry
+ * @deprecated use elm_object_text_set() instead.
  */
 EAPI void
 elm_fileselector_entry_button_label_set(Evas_Object *obj, const char *label)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype);
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return;
-   elm_object_text_set(wd->button, label);
+   _elm_fileselector_entry_button_label_set(obj, NULL, label);
 }
 
 EAPI const char *
 elm_fileselector_entry_button_label_get(const Evas_Object *obj)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return NULL;
-   return elm_object_text_get(wd->button);
+   return _elm_fileselector_entry_button_label_get(obj, NULL);
 }
 
 /**
