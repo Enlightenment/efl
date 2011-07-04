@@ -1208,7 +1208,7 @@ _sample_theme_new(Evas_Object *win)
 
    ck = elm_check_add(win);
    evas_object_size_hint_weight_set(ck, 1.0, 0.0);
-   elm_check_label_set(ck, "Check");
+   elm_object_text_set(ck, "Check");
    elm_table_pack(base, ck, 0, 1, 1, 1);
    evas_object_show(ck);
 
@@ -2369,7 +2369,7 @@ _status_config_scrolling(Evas_Object *win,
    elm_object_tooltip_text_set(ck, "Set whether scrollers should bounce<br>"
                                    "when they reach their viewport's edge<br>"
                                    "during a scroll");
-   elm_check_label_set(ck, "Enable scroll bounce");
+   elm_object_text_set(ck, "Enable scroll bounce");
    evas_object_data_set(win, "scroll_bounce_check", ck);
    evas_object_size_hint_weight_set(ck, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(ck, EVAS_HINT_FILL, 0.5);
@@ -2408,7 +2408,7 @@ _status_config_scrolling(Evas_Object *win,
    ck = elm_check_add(win);
    elm_object_tooltip_text_set(ck, "Set whether scrollers should be<br>"
                                    "draggable from any point in their views");
-   elm_check_label_set(ck, "Enable thumb scroll");
+   elm_object_text_set(ck, "Enable thumb scroll");
    evas_object_data_set(win, "thumbscroll_check", ck);
    evas_object_size_hint_weight_set(ck, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(ck, EVAS_HINT_FILL, 0.5);
@@ -2744,7 +2744,7 @@ _status_config_caches(Evas_Object *win,
    ck = elm_check_add(win);
    evas_object_size_hint_weight_set(ck, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(ck, EVAS_HINT_FILL, 0.5);
-   elm_check_label_set(ck, "Enable Flushing");
+   elm_object_text_set(ck, "Enable Flushing");
    elm_check_state_set(ck, elm_cache_flush_enabled_get());
    evas_object_smart_callback_add(ck, "changed", cf_enable, sl);
    elm_box_pack_end(bx, ck);

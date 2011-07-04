@@ -327,7 +327,7 @@ test_launcher(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    elm_box_pack_end(bx2, sc);
 
    ck = elm_check_add(win);
-   elm_check_label_set(ck, "Map");
+   elm_object_text_set(ck, "Map");
    elm_check_state_set(ck, 0);
    evas_object_smart_callback_add(ck, "changed", mode_cb, win);
    evas_object_size_hint_weight_set(ck, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -336,7 +336,7 @@ test_launcher(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    evas_object_show(ck);
 
    ck = elm_check_add(win);
-   elm_check_label_set(ck, "A");
+   elm_object_text_set(ck, "A");
    elm_check_state_set(ck, 1);
    evas_object_smart_callback_add(ck, "changed", alpha_cb, win);
    evas_object_size_hint_weight_set(ck, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -345,7 +345,7 @@ test_launcher(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    evas_object_show(ck);
 
    ck = elm_check_add(win);
-   elm_check_label_set(ck, "Smo");
+   elm_object_text_set(ck, "Smo");
    elm_check_state_set(ck, 1);
    evas_object_smart_callback_add(ck, "changed", smooth_cb, win);
    evas_object_size_hint_weight_set(ck, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -354,7 +354,7 @@ test_launcher(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    evas_object_show(ck);
 
    ck = elm_check_add(win);
-   elm_check_label_set(ck, "FS");
+   elm_object_text_set(ck, "FS");
    elm_check_state_set(ck, 0);
    evas_object_smart_callback_add(ck, "changed", full_cb, win);
    evas_object_size_hint_weight_set(ck, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -451,7 +451,7 @@ test_launcher2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
    elm_win_resize_object_add(win, tb2);
 
    ck = elm_check_add(win);
-   elm_check_label_set(ck, "Map");
+   elm_object_text_set(ck, "Map");
    elm_check_state_set(ck, 0);
    evas_object_smart_callback_add(ck, "changed", mode_cb, win);
    evas_object_size_hint_weight_set(ck, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -460,7 +460,7 @@ test_launcher2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
    evas_object_show(ck);
 
    ck = elm_check_add(win);
-   elm_check_label_set(ck, "A");
+   elm_object_text_set(ck, "A");
    elm_check_state_set(ck, 1);
    evas_object_smart_callback_add(ck, "changed", alpha_cb, win);
    evas_object_size_hint_weight_set(ck, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -469,7 +469,7 @@ test_launcher2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
    evas_object_show(ck);
 
    ck = elm_check_add(win);
-   elm_check_label_set(ck, "Smo");
+   elm_object_text_set(ck, "Smo");
    elm_check_state_set(ck, 1);
    evas_object_smart_callback_add(ck, "changed", smooth_cb, win);
    evas_object_size_hint_weight_set(ck, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -478,7 +478,7 @@ test_launcher2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
    evas_object_show(ck);
 
    ck = elm_check_add(win);
-   elm_check_label_set(ck, "FS");
+   elm_object_text_set(ck, "FS");
    elm_check_state_set(ck, 0);
    evas_object_smart_callback_add(ck, "changed", full_cb, win);
    evas_object_size_hint_weight_set(ck, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -862,7 +862,7 @@ test_launcher3(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
    elm_box_pack_end(bx2, sc);
 
    ck = elm_check_add(win);
-   elm_check_label_set(ck, "Map");
+   elm_object_text_set(ck, "Map");
    elm_check_state_set(ck, 0);
    evas_object_smart_callback_add(ck, "changed", l3_mode_cb, win);
    evas_object_size_hint_weight_set(ck, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -871,7 +871,7 @@ test_launcher3(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
    evas_object_show(ck);
 
    ck = elm_check_add(win);
-   elm_check_label_set(ck, "A");
+   elm_object_text_set(ck, "A");
    elm_check_state_set(ck, 1);
    evas_object_smart_callback_add(ck, "changed", l3_alpha_cb, win);
    evas_object_size_hint_weight_set(ck, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -880,7 +880,7 @@ test_launcher3(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
    evas_object_show(ck);
 
    ck = elm_check_add(win);
-   elm_check_label_set(ck, "Smo");
+   elm_object_text_set(ck, "Smo");
    elm_check_state_set(ck, 1);
    evas_object_smart_callback_add(ck, "changed", l3_smooth_cb, win);
    evas_object_size_hint_weight_set(ck, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -889,7 +889,7 @@ test_launcher3(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
    evas_object_show(ck);
 
    ck = elm_check_add(win);
-   elm_check_label_set(ck, "FS");
+   elm_object_text_set(ck, "FS");
    elm_check_state_set(ck, 0);
    evas_object_smart_callback_add(ck, "changed", l3_full_cb, win);
    evas_object_size_hint_weight_set(ck, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -898,7 +898,7 @@ test_launcher3(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
    evas_object_show(ck);
 
    ck = elm_check_add(win);
-   elm_check_label_set(ck, "Hid");
+   elm_object_text_set(ck, "Hid");
    elm_check_state_set(ck, 0);
    evas_object_smart_callback_add(ck, "changed", l3_hidden_cb, win);
    evas_object_size_hint_weight_set(ck, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);

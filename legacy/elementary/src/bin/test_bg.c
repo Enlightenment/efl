@@ -176,7 +176,7 @@ test_bg_options(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_
    elm_radio_value_set(rdg, ELM_BG_OPTION_SCALE);
 
    rd = elm_check_add(win);
-   elm_check_label_set(rd, "Show Overlay");
+   elm_object_text_set(rd, "Show Overlay");
    evas_object_size_hint_weight_set(rd, EVAS_HINT_EXPAND, EVAS_HINT_FILL);
    evas_object_smart_callback_add(rd, "changed", _cb_overlay_changed, o_bg);
    elm_box_pack_end(hbox, rd);

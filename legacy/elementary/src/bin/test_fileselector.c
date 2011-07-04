@@ -162,21 +162,21 @@ test_fileselector(void *data       __UNUSED__,
    evas_object_show(hbox);
 
    bt = elm_check_add(win);
-   elm_check_label_set(bt, "is save");
+   elm_object_text_set(bt, "is save");
    elm_check_state_set(bt, elm_fileselector_is_save_get(fs));
    evas_object_smart_callback_add(bt, "changed", _is_save_clicked, fs);
    elm_box_pack_end(hbox, bt);
    evas_object_show(bt);
 
    bt = elm_check_add(win);
-   elm_check_label_set(bt, "folder only");
+   elm_object_text_set(bt, "folder only");
    elm_check_state_set(bt, elm_fileselector_folder_only_get(fs));
    evas_object_smart_callback_add(bt, "changed", _folder_only_clicked, fs);
    elm_box_pack_end(hbox, bt);
    evas_object_show(bt);
 
    bt = elm_check_add(win);
-   elm_check_label_set(bt, "expandable");
+   elm_object_text_set(bt, "expandable");
    elm_check_state_set(bt, elm_fileselector_expandable_get(fs));
    evas_object_smart_callback_add(bt, "changed", _expandable_clicked, fs);
    elm_box_pack_end(hbox, bt);

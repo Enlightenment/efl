@@ -181,7 +181,7 @@ test_win_state(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
    evas_object_show(bx2);
 
    ck = elm_check_add(win);
-   elm_check_label_set(ck, "resize");
+   elm_object_text_set(ck, "resize");
    elm_check_state_set(ck, rotate_with_resize);
    evas_object_smart_callback_add(ck, "changed", my_ck_38_resize, win);
    evas_object_size_hint_weight_set(ck, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -314,7 +314,7 @@ test_win_state2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_
    evas_object_show(bx2);
 
    ck = elm_check_add(win);
-   elm_check_label_set(ck, "resize");
+   elm_object_text_set(ck, "resize");
    elm_check_state_set(ck, rotate_with_resize);
    evas_object_smart_callback_add(ck, "changed", my_ck_38_resize, win);
    evas_object_size_hint_weight_set(ck, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);

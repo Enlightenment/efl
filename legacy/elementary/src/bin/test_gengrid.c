@@ -348,7 +348,7 @@ test_gengrid2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    evas_object_show(bt);
 
    ck = elm_check_add(win);
-   elm_check_label_set(ck, "Horizontal Mode");
+   elm_object_text_set(ck, "Horizontal Mode");
    evas_object_smart_callback_add(ck, "changed", _horizontal_grid, grid);
    elm_box_pack_end(hbx, ck);
    evas_object_show(ck);
