@@ -752,7 +752,7 @@ EAPI void                 *eina_list_nth(const Eina_List *list, unsigned int n) 
  * @return The list node stored in the numbered element.
  *
  * This function returns the list node of element number @p n, in
- * @ list. The first element in the array is element number 0. If the
+ * @p list. The first element in the array is element number 0. If the
  * element number @p n does not exist or @p list is @c NULL or @p n is
  * greater than the count of elements in @p list minus 1, @c NULL is
  * returned. Otherwise the list node stored in the numbered element is
@@ -868,7 +868,7 @@ EAPI Eina_List            *eina_list_sort(Eina_List *list, unsigned int size, Ei
  * @param right Tail list to merge.
  * @return A new merged list.
  *
- * This function put right at the end of left and return the head.
+ * This function puts right at the end of left and return the head.
  *
  * Both left and right does not exist anymore after the merge.
  *
@@ -888,7 +888,7 @@ EAPI Eina_List            *eina_list_merge(Eina_List *left, Eina_List *right) EI
  * nodes.
  * @return A new sorted list.
  *
- * This function compare the head of @p left and @p right, and choose the
+ * This function compares the head of @p left and @p right, and choose the
  * smallest one to be head of the returned list. It will continue this process
  * for all entry of both list.
  *
@@ -925,7 +925,7 @@ EAPI Eina_List            *eina_list_sorted_merge(Eina_List *left, Eina_List *ri
  * @param right The head of the new right list.
  * @return The new left list
  *
- * This function split @p list into two lists ( left and right ) after the node @p relative. @p Relative
+ * This function splits @p list into two lists ( left and right ) after the node @p relative. @p Relative
  * will become the last node of the left list. If @p list or @p right are NULL list is returns.
  * If @p relative is NULL right is set to @p list and NULL is returns.
  * If @p relative is the last node of @p list list is returns and @p right is set to NULL.

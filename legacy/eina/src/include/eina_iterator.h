@@ -252,7 +252,7 @@ EAPI void eina_iterator_foreach(Eina_Iterator *iterator,
  * @param iterator The iterator.
  * @return #EINA_TRUE on success, #EINA_FALSE otherwise.
  *
- * If the container of the @p iterator permit it, it will be locked.
+ * If the container of the @p iterator permits it, it will be locked.
  * If @p iterator is @c NULL or if a problem occurred, #EINA_FALSE is
  * returned, otherwise #EINA_TRUE is returned. If the container
  * is not lockable, it will return EINA_TRUE.
@@ -265,7 +265,7 @@ EAPI Eina_Bool eina_iterator_lock(Eina_Iterator *iterator) EINA_ARG_NONNULL(1);
  * @param iterator The iterator.
  * @return #EINA_TRUE on success, #EINA_FALSE otherwise.
  *
- * If the container of the @p iterator permit it and was previously
+ * If the container of the @p iterator permits it and was previously
  * locked, it will be unlocked. If @p iterator is @c NULL or if a
  * problem occurred, #EINA_FALSE is returned, otherwise #EINA_TRUE
  * is returned. If the container is not lockable, it will return

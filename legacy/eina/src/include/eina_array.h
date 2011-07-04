@@ -153,7 +153,7 @@
  *
  * The usual features of an array are classic ones: to append an
  * element, use eina_array_push() and to remove the last element, use
- * eina_array_pop(). To retrieve the element at a given positin, use
+ * eina_array_pop(). To retrieve the element at a given position, use
  * eina_array_data_get(). The number of elements can be retrieved with
  * eina_array_count_get().
  *
