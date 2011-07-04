@@ -3555,8 +3555,9 @@ extern "C" {
     *
     * Other markup can be used to style the text in different ways, but it's
     * up to the style defined in the theme which tags do what.
+    * @deprecated use elm_object_text_set() instead.
     */
-   EAPI void         elm_anchorblock_text_set(Evas_Object *obj, const char *text) EINA_ARG_NONNULL(1);
+   EINA_DEPRECATED EAPI void         elm_anchorblock_text_set(Evas_Object *obj, const char *text) EINA_ARG_NONNULL(1);
    /**
     * Get the markup text set for the anchorblock
     *
@@ -3565,8 +3566,9 @@ extern "C" {
     * @param obj The anchorblock object
     * @return The markup text set or @c NULL if nothing was set or an error
     * occurred
+    * @deprecated use elm_object_text_set() instead.
     */
-   EAPI const char  *elm_anchorblock_text_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+   EINA_DEPRECATED EAPI const char  *elm_anchorblock_text_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
    /**
     * Set the parent of the hover popup
     *

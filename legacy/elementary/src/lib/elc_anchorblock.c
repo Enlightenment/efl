@@ -181,6 +181,31 @@ _item_provider(void *data, Evas_Object *entry __UNUSED__, const char *item)
    return NULL;
 }
 
+static void
+_elm_anchorblock_text_set(Evas_Object *obj, const char *item, const char *text)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (item) return;
+   if (!wd) return;
+   elm_entry_entry_set(wd->entry, text);
+   if (wd->hover) evas_object_del(wd->hover);
+   if (wd->pop) evas_object_del(wd->pop);
+   wd->hover = NULL;
+   wd->pop = NULL;
+   _sizing_eval(obj);
+}
+
+static const char*
+_elm_anchorblock_text_get(const Evas_Object *obj, const char *item)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (item) return NULL;
+   if (!wd) return NULL;
+   return elm_entry_entry_get(wd->entry);
+}
+
 EAPI Evas_Object *
 elm_anchorblock_add(Evas_Object *parent)
 {
@@ -198,6 +223,8 @@ elm_anchorblock_add(Evas_Object *parent)
    elm_widget_del_hook_set(obj, _del_hook);
    elm_widget_theme_hook_set(obj, _theme_hook);
    elm_widget_can_focus_set(obj, EINA_TRUE);
+   elm_widget_text_set_hook_set(obj, _elm_anchorblock_text_set);
+   elm_widget_text_get_hook_set(obj, _elm_anchorblock_text_get);
 
    wd->entry = elm_entry_add(parent);
    elm_entry_item_provider_prepend(wd->entry, _item_provider, obj);
@@ -226,24 +253,13 @@ elm_anchorblock_add(Evas_Object *parent)
 EAPI void
 elm_anchorblock_text_set(Evas_Object *obj, const char *text)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype);
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return;
-   elm_entry_entry_set(wd->entry, text);
-   if (wd->hover) evas_object_del(wd->hover);
-   if (wd->pop) evas_object_del(wd->pop);
-   wd->hover = NULL;
-   wd->pop = NULL;
-   _sizing_eval(obj);
+   _elm_anchorblock_text_set(obj, NULL, text);
 }
 
 EAPI const char*
 elm_anchorblock_text_get(const Evas_Object *obj)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return NULL;
-   return elm_entry_entry_get(wd->entry);
+   return _elm_anchorblock_text_get(obj, NULL);
 }
 
 EAPI void
