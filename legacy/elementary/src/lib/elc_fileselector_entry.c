@@ -217,7 +217,7 @@ _elm_fileselector_entry_button_label_set(Evas_Object *obj, const char *item, con
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
-   if (item) return;
+   if (item && strcmp(item, "default")) return;
    if (!wd) return;
    elm_object_text_set(wd->button, label);
 }
@@ -227,7 +227,7 @@ _elm_fileselector_entry_button_label_get(const Evas_Object *obj, const char *ite
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd = elm_widget_data_get(obj);
-   if (item) return NULL;
+   if (item && strcmp(item, "default")) return NULL;
    if (!wd) return NULL;
    return elm_object_text_get(wd->button);
 }

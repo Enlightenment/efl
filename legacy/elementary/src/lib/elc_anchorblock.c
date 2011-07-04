@@ -186,7 +186,7 @@ _elm_anchorblock_text_set(Evas_Object *obj, const char *item, const char *text)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
-   if (item) return;
+   if (item && strcmp(item, "default")) return;
    if (!wd) return;
    elm_entry_entry_set(wd->entry, text);
    if (wd->hover) evas_object_del(wd->hover);
@@ -201,7 +201,7 @@ _elm_anchorblock_text_get(const Evas_Object *obj, const char *item)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd = elm_widget_data_get(obj);
-   if (item) return NULL;
+   if (item && strcmp(item, "default")) return NULL;
    if (!wd) return NULL;
    return elm_entry_entry_get(wd->entry);
 }

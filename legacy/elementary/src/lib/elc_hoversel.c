@@ -272,7 +272,7 @@ _elm_hoversel_label_set(Evas_Object *obj, const char *item, const char *label)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
-   if (item) return;
+   if (item && strcmp(item, "default")) return;
    if (!wd) return;
    elm_object_text_set(wd->btn, label);
 }
@@ -282,7 +282,7 @@ _elm_hoversel_label_get(const Evas_Object *obj, const char *item)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd = elm_widget_data_get(obj);
-   if (item) return NULL;
+   if (item && strcmp(item, "default")) return NULL;
    if ((!wd) || (!wd->btn)) return NULL;
    return elm_object_text_get(wd->btn);
 }

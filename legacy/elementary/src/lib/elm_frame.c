@@ -114,7 +114,7 @@ _elm_frame_label_set(Evas_Object *obj, const char *item, const char *label)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
-   if (item) return;
+   if (item && strcmp(item, "default")) return;
    if (!wd) return;
    eina_stringshare_replace(&(wd->label), label);
    edje_object_part_text_set(wd->frm, "elm.text", wd->label);
@@ -126,7 +126,7 @@ _elm_frame_label_get(const Evas_Object *obj, const char *item)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd = elm_widget_data_get(obj);
-   if (item) return NULL;
+   if (item && strcmp(item, "default")) return NULL;
    if (!wd) return NULL;
    return wd->label;
 }

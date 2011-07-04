@@ -327,7 +327,7 @@ _elm_actionslider_label_set(Evas_Object *obj, const char *item, const char *labe
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
 
-   if (!item)
+   if (!item || !strcmp(item, "default"))
      {
         eina_stringshare_replace(&wd->indicator_label, label);
         edje_object_part_text_set(wd->as, "elm.text.indicator",
@@ -371,7 +371,7 @@ _elm_actionslider_label_get(const Evas_Object *obj, const char *item)
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return NULL;
 
-   if (!item)
+   if (!item || !strcmp(item, "default"))
      {
         return wd->indicator_label;
      }

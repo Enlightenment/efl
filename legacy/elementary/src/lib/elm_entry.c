@@ -1861,7 +1861,7 @@ _elm_entry_text_set(Evas_Object *obj, const char *item, const char *entry)
 {
    int len = 0;
    ELM_CHECK_WIDTYPE(obj, widtype);
-   if (item) return;
+   if (item && strcmp(item, "default")) return;
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
    if (!entry) entry = "";
@@ -1906,7 +1906,7 @@ _elm_entry_text_get(const Evas_Object *obj, const char *item)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd = elm_widget_data_get(obj);
-   if (item) return NULL;
+   if (item && strcmp(item, "default")) return NULL;
    const char *text;
    if (!wd) return NULL;
    if (wd->text) return wd->text;
