@@ -317,6 +317,7 @@ elm_check_add(Evas_Object *parent)
  * @param label The text label string in UTF-8
  *
  * @ingroup Check
+ * @deprecated use elm_object_text_set() instead.
  */
 EAPI void
 elm_check_label_set(Evas_Object *obj, const char *label)
@@ -331,6 +332,7 @@ elm_check_label_set(Evas_Object *obj, const char *label)
  * @return The text label string in UTF-8
  *
  * @ingroup Check
+ * @deprecated use elm_object_text_set() instead.
  */
 EAPI const char *
 elm_check_label_get(const Evas_Object *obj)
