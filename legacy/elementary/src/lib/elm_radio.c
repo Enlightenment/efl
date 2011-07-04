@@ -273,6 +273,38 @@ _signal_radio_on(void *data, Evas_Object *obj __UNUSED__, const char *emission _
    _activate(data);
 }
 
+static void
+_elm_radio_label_set(Evas_Object *obj, const char *item, const char *label)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (item) return;
+   if (!wd) return;
+   eina_stringshare_replace(&wd->label, label);
+   if (label)
+     {
+        edje_object_signal_emit(wd->radio, "elm,state,text,visible", "elm");
+        edje_object_message_signal_process(wd->radio);
+     }
+   else
+     {
+        edje_object_signal_emit(wd->radio, "elm,state,text,hidden", "elm");
+        edje_object_message_signal_process(wd->radio);
+     }
+   edje_object_part_text_set(wd->radio, "elm.text", label);
+   _sizing_eval(obj);
+}
+
+static const char *
+_elm_radio_label_get(const Evas_Object *obj, const char *item)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (item) return NULL;
+   if (!wd) return NULL;
+   return wd->label;
+}
+
 /**
  * Add a new radio to the parent
  *
@@ -301,6 +333,8 @@ elm_radio_add(Evas_Object *parent)
    elm_widget_can_focus_set(obj, EINA_TRUE);
    elm_widget_activate_hook_set(obj, _activate_hook);
    elm_widget_event_hook_set(obj, _event_hook);
+   elm_widget_text_set_hook_set(obj, _elm_radio_label_set);
+   elm_widget_text_get_hook_set(obj, _elm_radio_label_get);
 
    wd->radio = edje_object_add(e);
    _elm_theme_object_set(obj, wd->radio, "radio", "base", "default");
@@ -330,26 +364,12 @@ elm_radio_add(Evas_Object *parent)
  * @param label The text label string in UTF-8
  *
  * @ingroup Radio
+ * @deprecated use elm_object_text_set() instead.
  */
 EAPI void
 elm_radio_label_set(Evas_Object *obj, const char *label)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype);
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return;
-   eina_stringshare_replace(&wd->label, label);
-   if (label)
-     {
-        edje_object_signal_emit(wd->radio, "elm,state,text,visible", "elm");
-        edje_object_message_signal_process(wd->radio);
-     }
-   else
-     {
-        edje_object_signal_emit(wd->radio, "elm,state,text,hidden", "elm");
-        edje_object_message_signal_process(wd->radio);
-     }
-   edje_object_part_text_set(wd->radio, "elm.text", label);
-   _sizing_eval(obj);
+   _elm_radio_label_set(obj, NULL, label);
 }
 
 /**
@@ -359,14 +379,12 @@ elm_radio_label_set(Evas_Object *obj, const char *label)
  * @return The text label string in UTF-8
  *
  * @ingroup Radio
+ * @deprecated use elm_object_text_set() instead.
  */
 EAPI const char *
 elm_radio_label_get(const Evas_Object *obj)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return NULL;
-   return wd->label;
+   return _elm_radio_label_get(obj, NULL);
 }
 
 /**
