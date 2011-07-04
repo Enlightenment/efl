@@ -326,6 +326,8 @@ getdata:
                {
                   void *addr;
 
+                  eina_mmap_safety_enabled_set(EINA_TRUE);
+                  
                   // mmap
                   addr = mmap(NULL, w * h * sizeof(DATA32),
                               PROT_READ, MAP_SHARED, fd, 0);

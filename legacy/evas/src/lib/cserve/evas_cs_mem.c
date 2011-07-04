@@ -46,6 +46,9 @@ evas_cserve_mem_new(int size, const char *name)
         free(m);
         return NULL;
      }
+
+   eina_mmap_safety_enabled_set(EINA_TRUE);
+   
    m->data = mmap(NULL, m->size, PROT_READ | PROT_WRITE, MAP_SHARED, m->fd, 0);
    if (m->data == MAP_FAILED)
      {
