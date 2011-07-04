@@ -213,6 +213,8 @@ eet_node_struct_child_new(const char *parent,
 {
    Eet_Node *n;
 
+   if (!child) return NULL;
+
    if (child->type != EET_G_UNKNOWN)
       return child;
 
@@ -254,6 +256,7 @@ eet_node_list_append(Eet_Node   *parent,
    const char *tmp;
    Eet_Node *nn;
 
+   if ((!parent) || (!child)) return;
    tmp = eina_stringshare_add(name);
 
    for (nn = parent->values; nn; nn = nn->next)
@@ -296,6 +299,7 @@ eet_node_struct_append(Eet_Node   *parent,
    Eet_Node *prev;
    Eet_Node *nn;
 
+   if ((!parent) || (!child)) return;
    if (parent->type != EET_G_UNKNOWN)
      {
         ERR("[%s] is not a structure. Will not insert [%s] in it",
@@ -342,6 +346,8 @@ eet_node_hash_add(Eet_Node   *parent,
                   Eet_Node   *child)
 {
    Eet_Node *nn;
+
+   if ((!parent) || (!child)) return;
 
    /* No list found, so create it. */
    nn = eet_node_hash_new(name, key, child);
