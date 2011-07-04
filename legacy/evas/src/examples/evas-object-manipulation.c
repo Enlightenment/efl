@@ -6,13 +6,18 @@
  * output.
  *
  * @verbatim
- * gcc -o evas-events evas-events.c `pkg-config --libs --cflags ecore-evas`
+ * gcc -o evas-object-manipulation evas-object-manipulation.c `pkg-config --libs --cflags ecore evas ecore-evas`
  * @endverbatim
  */
 
 #ifdef HAVE_CONFIG_H
 
 #include "config.h"
+#else
+
+#define PACKAGE_EXAMPLES_DIR "."
+#define __UNUSED__
+
 #endif
 
 #include <Ecore.h>

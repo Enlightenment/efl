@@ -6,13 +6,18 @@
  * output.
  *
  * @verbatim
- * gcc -o evas-images evas-images.c `pkg-config --libs --cflags ecore-evas`
+ * gcc -o evas-images evas-images.c `pkg-config --libs --cflags evas ecore ecore-evas`
  * @endverbatim
  */
 
 #ifdef HAVE_CONFIG_H
 
 #include "config.h"
+#else
+
+#define PACKAGE_EXAMPLES_DIR "."
+#define __UNUSED__
+
 #endif
 
 #include <Ecore.h>

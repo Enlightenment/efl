@@ -7,12 +7,16 @@
  * output.
  *
  * @verbatim
- * gcc -o evas-stacking evas-stacking.c `pkg-config --libs --cflags ecore-evas edje`
+ * gcc -o evas-stacking evas-stacking.c `pkg-config --libs --cflags evas ecore ecore-evas edje`
  * @endverbatim
  */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
+#else
+
+#define __UNUSED__
+
 #endif
 
 #include <Ecore.h>
