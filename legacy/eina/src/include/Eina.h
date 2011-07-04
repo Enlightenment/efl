@@ -163,6 +163,7 @@ extern "C" {
 #include "eina_lock.h"
 #include "eina_prefix.h"
 #include "eina_refcount.h"
+#include "eina_mmap.h"
 
 #ifdef __cplusplus
 }
