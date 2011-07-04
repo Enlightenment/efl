@@ -777,7 +777,21 @@ ecore_main_loop_select_func_get(void)
  *
  * Functions that deal with file descriptor handlers.
  *
- * Examples with functions that deal with file descriptor handlers:
+ * The @ref Ecore_Fd_Handler can be used to watch a file descriptor for data
+ * available for reading, for the availability to write without blocking, and
+ * for errors on the file descriptor.
+ *
+ * ecore_main_fd_handler_add() is used to setup a handler for a given file
+ * descriptor. This file descriptor can be the standard input, a network socket,
+ * a stream received through some driver of a hardware decoder, etc. Thus it can
+ * contain errors, like a disconnection, a broken pipe, and so, and that's why
+ * it's possible to check for these errors with the @ref ECORE_FD_ERROR flag.
+ *
+ * An @ref Ecore_Fd_Handler can be used to watch on a file descriptor without
+ * blocking, still being able to receive events, expire timers, and other watch
+ * for other things that happen in the Ecore main loop.
+ *
+ * Example of use of a file descriptor handler:
  * @li @ref ecore_fd_handler_example_c
  */
 
