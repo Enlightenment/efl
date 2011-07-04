@@ -1856,6 +1856,70 @@ _add_chars_till_limit(Evas_Object *obj, char **text, int can_add, Length_Unit un
    evas_object_smart_callback_call(obj, "maxlength,reached", NULL);
 }
 
+static void
+_elm_entry_text_set(Evas_Object *obj, const char *item, const char *entry)
+{
+   int len = 0;
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   if (item) return;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   if (!entry) entry = "";
+   if (wd->text) eina_stringshare_del(wd->text);
+   wd->text = NULL;
+   wd->changed = EINA_TRUE;
+
+   /* Clear currently pending job if there is one */
+   if (wd->append_text_idler)
+     {
+        ecore_idler_del(wd->append_text_idler);
+        free(wd->append_text_left);
+        wd->append_text_left = NULL;
+        wd->append_text_idler = NULL;
+     }
+
+   len = strlen(entry);
+   /* Split to ~_CHUNK_SIZE chunks */
+   if (len > _CHUNK_SIZE)
+     {
+        wd->append_text_left = (char *) malloc(len + 1);
+     }
+
+   /* If we decided to use the idler */
+   if (wd->append_text_left)
+     {
+        /* Need to clear the entry first */
+        edje_object_part_text_set(wd->ent, "elm.text", "");
+        memcpy(wd->append_text_left, entry, len + 1);
+        wd->append_text_position = 0;
+        wd->append_text_len = len;
+        wd->append_text_idler = ecore_idler_add(_text_append_idler, obj);
+     }
+   else
+     {
+        edje_object_part_text_set(wd->ent, "elm.text", entry);
+     }
+}
+
+static const char *
+_elm_entry_text_get(const Evas_Object *obj, const char *item)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (item) return NULL;
+   const char *text;
+   if (!wd) return NULL;
+   if (wd->text) return wd->text;
+   text = edje_object_part_text_get(wd->ent, "elm.text");
+   if (!text)
+     {
+        ERR("text=NULL for edje %p, part 'elm.text'", wd->ent);
+        return NULL;
+     }
+   eina_stringshare_replace(&wd->text, text);
+   return wd->text;
+}
+
 /**
  * This adds an entry to @p parent object.
  *
@@ -1890,6 +1954,8 @@ elm_entry_add(Evas_Object *parent)
    elm_object_cursor_set(obj, ELM_CURSOR_XTERM);
    elm_widget_can_focus_set(obj, EINA_TRUE);
    elm_widget_highlight_ignore_set(obj, EINA_TRUE);
+   elm_widget_text_set_hook_set(obj, _elm_entry_text_set);
+   elm_widget_text_get_hook_set(obj, _elm_entry_text_get);
 
    wd->scroller = elm_smart_scroller_add(e);
    elm_widget_sub_object_add(obj, wd->scroller);
@@ -2110,45 +2176,7 @@ elm_entry_password_get(const Evas_Object *obj)
 EAPI void
 elm_entry_entry_set(Evas_Object *obj, const char *entry)
 {
-   int len = 0;
-   ELM_CHECK_WIDTYPE(obj, widtype);
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return;
-   if (!entry) entry = "";
-   if (wd->text) eina_stringshare_del(wd->text);
-   wd->text = NULL;
-   wd->changed = EINA_TRUE;
-
-   /* Clear currently pending job if there is one */
-   if (wd->append_text_idler)
-     {
-        ecore_idler_del(wd->append_text_idler);
-        free(wd->append_text_left);
-        wd->append_text_left = NULL;
-        wd->append_text_idler = NULL;
-     }
-
-   len = strlen(entry);
-   /* Split to ~_CHUNK_SIZE chunks */
-   if (len > _CHUNK_SIZE)
-     {
-        wd->append_text_left = (char *) malloc(len + 1);
-     }
-
-   /* If we decided to use the idler */
-   if (wd->append_text_left)
-     {
-        /* Need to clear the entry first */
-        edje_object_part_text_set(wd->ent, "elm.text", "");
-        memcpy(wd->append_text_left, entry, len + 1);
-        wd->append_text_position = 0;
-        wd->append_text_len = len;
-        wd->append_text_idler = ecore_idler_add(_text_append_idler, obj);
-     }
-   else
-     {
-        edje_object_part_text_set(wd->ent, "elm.text", entry);
-     }
+   _elm_entry_text_set(obj, NULL, entry);
 }
 
 /**
@@ -2202,19 +2230,7 @@ elm_entry_entry_append(Evas_Object *obj, const char *entry)
 EAPI const char *
 elm_entry_entry_get(const Evas_Object *obj)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
-   Widget_Data *wd = elm_widget_data_get(obj);
-   const char *text;
-   if (!wd) return NULL;
-   if (wd->text) return wd->text;
-   text = edje_object_part_text_get(wd->ent, "elm.text");
-   if (!text)
-     {
-        ERR("text=NULL for edje %p, part 'elm.text'", wd->ent);
-        return NULL;
-     }
-   eina_stringshare_replace(&wd->text, text);
-   return wd->text;
+   return _elm_entry_text_get(obj, NULL);
 }
 
 /**
