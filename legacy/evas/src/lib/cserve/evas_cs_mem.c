@@ -103,6 +103,9 @@ evas_cserve_mem_open(int pid, int id, const char *name, int size, int do_write)
         return NULL;
      }
    m->write = do_write;
+   
+   eina_mmap_safety_enabled_set(EINA_TRUE);
+   
    if (do_write)
      m->data = mmap(NULL, m->size, PROT_READ | PROT_WRITE, MAP_SHARED, m->fd, 0);
    else
@@ -135,11 +138,13 @@ evas_cserve_mem_resize(Mem *m, int size)
      {
         if (ftruncate(m->fd, size) < 0) return 0;
         munmap(m->data, m->size);
+        eina_mmap_safety_enabled_set(EINA_TRUE);
         m->data = mmap(NULL, size, PROT_READ | PROT_WRITE, MAP_SHARED, m->fd, 0);
      }
    else
      {
         munmap(m->data, m->size);
+        eina_mmap_safety_enabled_set(EINA_TRUE);
         m->data = mmap(NULL, size, PROT_READ, MAP_SHARED, m->fd, 0);
      }
    if (m->data == MAP_FAILED)
