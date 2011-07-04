@@ -1,0 +1,98 @@
+/**
+ * @page Examples Examples
+ *
+ * Here is a page with some Emotion examples explained:
+ *
+ * @li @ref emotion_basic_example_c
+ * @li @ref emotion_signals_example.c "Emotion signals"
+ *
+ */
+
+/**
+ * @page emotion_basic_example_c Emotion - Basic library usage
+ *
+ * This example shows how to setup a simple Emotion object, make it start
+ * playing and register a callback that tells when the playback started. See @ref
+ * emotion_basic_example.c "the full code here".
+ *
+ * @dontinclude emotion_basic_example.c
+ *
+ * We start this example by including some header files that will be necessary
+ * to work with Emotion, and to display some debug messages:
+ *
+ * @until stdio.h
+ *
+ * Then a callback will be declared, to be called when the object starts its
+ * playback:
+ *
+ * @until }
+ *
+ * Some basic setup of our canvas, window and background is necessary before
+ * displaying our object on it. This setup also includes reading the file to be
+ * opened from the program's argument list. Since this is not directly related
+ * to Emotion itself, we are just displaying the code for this without an
+ * explanation for it:
+ *
+ * @until evas_object_show(bg);
+ *
+ * Finally, we start the Emotion part. First we have to create the object in
+ * this canvas, and initialize it:
+ *
+ * @until emotion_object_init
+ *
+ * Notice that we didn't specify which module will be used, so emotion will use
+ * the first module found. There's no guarantee of the order that the modules
+ * will be found, so if you need to use one of them specifically, please be
+ * explicit in the second argument of the function emotion_object_init().
+ *
+ * Now the callback can be registered to this object. It's a normal Evas smart
+ * object callback, so we add it with evas_object_smart_callback_add():
+ *
+ * @until NULL
+ *
+ * The object itself is ready for use, but we need to load a file to it. This is
+ * done by the following function:
+ *
+ * @until file_set
+ *
+ * This object can play audio or video files. For the latter, the image must be
+ * displayed in our canvas, and that's why we need to add the object to the
+ * canvas. So, like any other Evas object in the canvas, we have to specify its
+ * position and size, and explicitly set its visibility. These are the position
+ * and dimension where the video will be displayed:
+ *
+ * @until evas_object_show
+ *
+ * Since the basic steps were done, we can now start playing our file. For this,
+ * we can just call the basic playback control function, and then we can go to
+ * the main loop and watch the audio/video playing:
+ *
+ * @until main_loop_begin
+ *
+ * The rest of the code doesn't contain anything special:
+ *
+ * @until }
+ *
+ * This code just free the canvas, shutdown the library, and has an entry point
+ * for exiting on error.
+ */
+
+
+/**
+ * @example emotion_basic_example.c
+ * This example show how to create and play an Emotion object. See @ref
+ * emotion_basic_example_c "the explanation here".
+ */
+
+/**
+ * @example emotion_signals_example.c
+ *
+ * This example shows that some of the information available from the emotion
+ * object, like the media file play length, aspect ratio, etc. can be not
+ * available just after setting the file to the emotion object.
+ *
+ * One callback is declared for each of the following signals, and some of the
+ * info about the file is displayed. Also notice that the order that these
+ * signals are emitted can change depending on the module being used. Following
+ * is the full source code of this example:
+ */

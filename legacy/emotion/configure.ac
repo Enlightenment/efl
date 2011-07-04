@@ -225,6 +225,10 @@ PKG_CHECK_MODULES([EIO],
 
 AM_CONDITIONAL([HAVE_EIO], [test "x${have_eio}" = "xyes"])
 
+### install and build examples
+
+EFL_CHECK_BUILD_EXAMPLES([enable_build_examples="yes"], [enable_build_examples="no"])
+EFL_CHECK_INSTALL_EXAMPLES([enable_install_examples="yes"], [enable_install_examples="no"])
 
 AC_SUBST(requirement_emotion)
 
@@ -242,6 +246,7 @@ src/modules/xine/Makefile
 src/modules/gstreamer/Makefile
 src/edje_external/Makefile
 src/bin/Makefile
+src/examples/Makefile
 doc/Makefile
 doc/Doxyfile
 doc/emotion.dox
@@ -275,6 +280,8 @@ echo "  Xattr................: ${have_xattr}"
 echo "  Eio..................: ${have_eio}"
 echo
 echo "Documentation..........: ${build_doc}"
+echo "Examples.............: ${enable_build_examples}"
+echo "Examples installed...: ${enable_install_examples}"
 echo
 echo "Compilation............: make (or gmake)"
 echo "  CPPFLAGS.............: $CPPFLAGS"
