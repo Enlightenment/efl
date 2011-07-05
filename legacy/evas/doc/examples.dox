@@ -20,6 +20,8 @@
  * @ref Example_Evas_Size_Hints
  *
  * @ref Example_Evas_Stacking
+ *
+ * @ref Example_Evas_Smart_Objects
  */
 
 /**
@@ -485,4 +487,150 @@
  * fits together.
  *
  * @example evas-map-utils.c
+ */
+
+/**
+ * @page Example_Evas_Smart_Objects Evas object smart objects
+ * @dontinclude evas-smart-object.c
+ *
+ * In this example, we illustrate how to create and handle Evas smart objects.
+ *
+ * A smart object is one that provides custom functions to handle
+ * clipping, hiding, moving, resizing, color setting and more on @b
+ * child elements, automatically, for the smart object's user. They
+ * could be as simple as a group of objects that move together (see
+ * @ref Evas_Smart_Object_Clipped) or implementations of whole complex
+ * UI widgets, providing some intelligence (thus the name) and
+ * extension to simple Evas objects.
+ *
+ * Here, we create one as an example. What it does is to control (at
+ * maximum) 2 child objects, with regard to their geometries and
+ * colors. There can be a "left" child and a "right" one. The former
+ * will always occupy the top left quadrant of the smart object's
+ * area, while the latter will occupy the bottom right. The smart
+ * object will also contain an @b internal decorative border object,
+ * which will also be controlled by it, naturally.
+ *
+ * Here is where we add it to the canvas:
+ * @skip d.smt = evas_smart_example_add(d.evas);
+ * @until show
+ *
+ * The magic starts to happen in the @c evas_smart_example_add()
+ * function, which is one in the example smart object's defined @b
+ * interface. These should be the functions you would export to the
+ * users of your smart object. We made three for this one:
+ * - @c evas_smart_example_add(): add a new instance of the example
+ *   smart object to a canvas
+ * - @c evas_smart_example_remove(): remove a given child of the smart
+ *   object from it
+ * - @c evas_smart_example_set_left(): set the left child of the smart
+ *   object
+ * - @c evas_smart_example_set_right(): set the right child of the
+ *   smart object
+ *
+ * The object's creation takes place as:
+ * @dontinclude evas-smart-object.c
+ * @skip add a new example smart object to a canvas
+ * @until }
+ *
+ * Smart objects are define by <b>smart classes</b>, which are structs
+ * defining their interfaces, or <b>smart functions</b> (see
+ * #Evas_Smart_Class, the base class for any smart object).  As you
+ * see, one has to use the evas_object_smart_add() function to
+ * instantiate smart objects. Its second parameter is what matters --
+ * an #Evas_Smart struct, which contains all the smart class
+ * definitions (smart functions, smart callbacks, and the like). Note,
+ * however, that @c _evas_smart_example_smart_class_new() seems not to
+ * be defined in our example's code. That's because it came from a very
+ * handy <b>helper macro</b>:
+ * @dontinclude evas-smart-object.c
+ * @skip EVAS_SMART_SUBCLASS_NEW
+ * @until _signals
+ * What it does is to @b subclass a given existing smart class, thus
+ * specializing it. This is very common and useful in Evas. There is a
+ * built-in smart object, the "clipped smart object", whose behavior is
+ * mostly desired by many other smart object implementors: it will clip
+ * its children to its area and move them along with it, on
+ * evas_object_resize() calls. Then, our example smart object will get
+ * that behavior for free.
+ *
+ * The first argument to the macro,
+ * @dontinclude evas-smart-object.c
+ * @skip _evas_smart_example_type
+ * @until _evas_smart_example_type
+ * will define the new smart class' name. The second tells the macro
+ * what is the @b prefix of the function it will be declaring with a @c
+ * _smart_set_user() suffix. On this function, we may override/extend
+ * any desired method from our parent smart class:
+ * @dontinclude evas-smart-object.c
+ * @skip setting our smart interface
+ * @until }
+ *
+ * The first function pointer's code will take place at an example
+ * smart object's @b creation time:
+ * @dontinclude evas-smart-object.c
+ * @skip create and setup
+ * @until }
+ *
+ * The #EVAS_SMART_DATA_ALLOC macro will take care of allocating our
+ * smart object data, which will be available on other contexts for us
+ * (mainly in our interface functions):
+ * @dontinclude evas-smart-object.c
+ * @skip typedef struct _Evas_Smart_Example_Data
+ * @until };
+ *
+ *
+ * See that, as we're inheriting from the clipped smart object's
+ * class, we @b must have their data struct as our first member. Other
+ * data of interest for us is a child members array and the border
+ * object's handle. The latter is what is created in the last
+ * mentioned function. Note how to tell Evas the border will be
+ * managed by our smart object from that time on:
+ * <code>evas_object_smart_member_add(priv->border, o);</code>.
+ *
+ * At the end of that function we make use of an constant defined by
+ * the #EVAS_SMART_SUBCLASS_NEW: @c _evas_smart_example_parent_sc. It
+ * has the same prefix we passed to the macro, as you can see, and it
+ * holds a pointer to our @b parent smart class. Then, we can call the
+ * specialized method, itself, after our code. The @c del, @c hide, @c
+ * show and @c resize specializations are straightforward, we let the
+ * reader take a look at them below to check their behavior. What's
+ * interesting is the @c calculate one:
+ * @dontinclude evas-smart-object.c
+ * @skip act on child objects' properties
+ * @until setting
+ *
+ * This code will take place whenever the smart object itself is
+ * flagged "dirty", i.e., must be recalculated for rendering (that
+ * could come from changes on its clipper, resizing, moving,
+ * etc). There, we make sure the decorative border lies on the edges of
+ * the smart object and the children, if any, lie on their respective
+ * quadrants.
+ *
+ * As in other examples, to interact with this one there's a command
+ * line interface, whose help string can be asked for with the 'h' key:
+ *
+ * @dontinclude evas-smart-object.c
+ * @skip static const char *commands =
+ * @until ;
+ * Use 'l' and 'r' keys, to create new rectangles and place them on the
+ * left (@c evas_smart_example_set_left()) or right
+ * (@c evas_smart_example_set_right()) spots of our smart object,
+ * respectively. The keyboard arrows will move the smart object along
+ * the canvas. See how it takes any child objects with it during its
+ * movement. The 'd' and 'i' keys will increase or decrease the smart
+ * object's size -- see how it affects the children's sizes,
+ * too. Finally, 'c' will change the color of the smart object's
+ * clipper (which is the exact internal clipper coming from a clipped
+ * smart object):
+ * @dontinclude evas-smart-object.c
+ * @skip d.clipper =
+ * @until .a);
+ *
+ * "Real life" examples of smart objects are Edje and Emotion objects:
+ * they both have independent libraries implementing their
+ * behavior. The full example follows.
+ *
+ * @include evas-smart-object.c
+ * @example evas-smart-object.c
  */

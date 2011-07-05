@@ -467,7 +467,9 @@ typedef struct _Evas_Precision_Position      Evas_Precision_Position; /**< assoc
 
 /**
  * @typedef Evas_Smart_Class
- * A smart object base class
+ *
+ * A smart object's @b base class definition
+ *
  * @ingroup Evas_Smart_Group
  */
 typedef struct _Evas_Smart_Class             Evas_Smart_Class;
@@ -7755,35 +7757,40 @@ EAPI void              evas_object_polygon_points_clear  (Evas_Object *obj) EINA
 
 /**
  * @def EVAS_SMART_CLASS_VERSION
- * The version you have to put into the version field in the smart
- * class struct
+ *
+ * The version you have to put into the version field in the
+ * #Evas_Smart_Class struct. Used to safeguard from binaries with old
+ * smart object intefaces running with newer ones.
+ *
  * @ingroup Evas_Smart_Group
  */
 #define EVAS_SMART_CLASS_VERSION 4
 /**
  * @struct _Evas_Smart_Class
- * a smart object class
+ *
+ * A smart object's @b base class definition
+ *
  * @ingroup Evas_Smart_Group
  */
 struct _Evas_Smart_Class
 {
-   const char *name; /**< the string name of the class */
+   const char *name; /**< the name string of the class */
    int         version;
-   void  (*add)         (Evas_Object *o);
-   void  (*del)         (Evas_Object *o);
-   void  (*move)        (Evas_Object *o, Evas_Coord x, Evas_Coord y);
-   void  (*resize)      (Evas_Object *o, Evas_Coord w, Evas_Coord h);
-   void  (*show)        (Evas_Object *o);
-   void  (*hide)        (Evas_Object *o);
-   void  (*color_set)   (Evas_Object *o, int r, int g, int b, int a);
-   void  (*clip_set)    (Evas_Object *o, Evas_Object *clip);
-   void  (*clip_unset)  (Evas_Object *o);
-   void  (*calculate)   (Evas_Object *o);
-   void  (*member_add)  (Evas_Object *o, Evas_Object *child);
-   void  (*member_del)  (Evas_Object *o, Evas_Object *child);
+   void  (*add)         (Evas_Object *o); /**< code to be run when adding object to a canvas */
+   void  (*del)         (Evas_Object *o); /**< code to be run when removing object to a canvas */
+   void  (*move)        (Evas_Object *o, Evas_Coord x, Evas_Coord y); /**< code to be run when moving object on a canvas */
+   void  (*resize)      (Evas_Object *o, Evas_Coord w, Evas_Coord h); /**< code to be run when resizing object on a canvas */
+   void  (*show)        (Evas_Object *o); /**< code to be run when showing object on a canvas */
+   void  (*hide)        (Evas_Object *o); /**< code to be run when hiding object on a canvas */
+   void  (*color_set)   (Evas_Object *o, int r, int g, int b, int a); /**< code to be run when setting color of object on a canvas */
+   void  (*clip_set)    (Evas_Object *o, Evas_Object *clip); /**< code to be run when setting clipper of object on a canvas */
+   void  (*clip_unset)  (Evas_Object *o); /**< code to be run when unsetting clipper of object on a canvas */
+   void  (*calculate)   (Evas_Object *o); /**< code to be run when object has rendering updates on a canvas */
+   void  (*member_add)  (Evas_Object *o, Evas_Object *child); /**< code to be run when child member is added to object */
+   void  (*member_del)  (Evas_Object *o, Evas_Object *child); /**< code to be run when child member is removed from object */
 
    const Evas_Smart_Class          *parent; /**< this class inherits from this parent */
-   const Evas_Smart_Cb_Description *callbacks; /**< callbacks at this level, NULL terminated */
+   const Evas_Smart_Cb_Description *callbacks; /**< callbacks at this level, @c NULL terminated */
    void                            *interfaces; /**< to be used in a future near you */
    const void                      *data;
 };
@@ -7925,31 +7932,40 @@ struct _Evas_Smart_Cb_Description
 /**
  * @def EVAS_SMART_SUBCLASS_NEW
  *
- * Convenience macro to subclass a Smart Class.
+ * Convenience macro to subclass a given Evas smart class.
  *
- * This macro saves some typing when writing a Smart Class derived from
- * another one. In order to work, the user needs to provide some functions
- * adhering to the following guidelines.
- *  - @<prefix@>_smart_set_user(): the internal _smart_set function will call
- *    this one provided by the user after inheriting everything from the
- *    parent, which should take care of setting the right member functions
- *    for the class.
- *  - @<prefix@>_parent_sc: pointer to the smart class of the parent. When calling
- *    parent functions from overloaded ones, use this global variable.
- *  - @<prefix@>_smart_class_new(): this function returns the Evas_Smart needed
- *    to create smart objects with this class, should be called by the public
- *    _add() function.
- *  - If this new class should be subclassable as well, a public _smart_set()
- *    function is desirable to fill the class used as parent by the children.
- *    It's up to the user to provide this interface, which will most likely
- *    call @<prefix@>_smart_set() to get the job done.
- *
- * @param smart_name The name used for the Smart Class. e.g: "Evas_Object_Box".
- * @param prefix Prefix used for all variables and functions defined.
- * @param api_type Type of the structure used as API for the Smart Class. Either Evas_Smart_Class or something derived from it.
+ * @param smart_name The name used for the smart class. e.g:
+ * @c "Evas_Object_Box".
+ * @param prefix Prefix used for all variables and functions defined
+ * and referenced by this macro.
+ * @param api_type Type of the structure used as API for the smart
+ * class. Either #Evas_Smart_Class or something derived from it.
  * @param parent_type Type of the parent class API.
- * @param parent_func Function that gets the parent class. e.g: evas_object_box_smart_class_get().
- * @param cb_desc Array of callback descriptions for this Smart Class.
+ * @param parent_func Function that gets the parent class. e.g:
+ * evas_object_box_smart_class_get().
+ * @param cb_desc Array of callback descriptions for this smart class.
+ *
+ * This macro saves some typing when writing a smart class derived
+ * from another one. In order to work, the user @b must provide some
+ * functions adhering to the following guidelines:
+ *  - @<prefix@>_smart_set_user(): the @b internal @c _smart_set
+ *    function (defined by this macro) will call this one, provided by
+ *    the user, after inheriting everything from the parent, which
+ *    should <b>take care of setting the right member functions for
+ *    the class</b>, both overrides and extensions, if any.
+ *  - If this new class should be subclassable as well, a @b public @c
+ *    _smart_set() function is desirable to fill in the class used as
+ *    parent by the children. It's up to the user to provide this
+ *    interface, which will most likely call @<prefix@>_smart_set() to
+ *    get the job done.
+ *
+ * After the macro's usage, the following will be defined for use:
+ *  - @<prefix@>_parent_sc: A pointer to the @b parent smart
+ *    class. When calling parent functions from overloaded ones, use
+ *    this global variable.
+ *  - @<prefix@>_smart_class_new(): this function returns the
+ *    #Evas_Smart needed to create smart objects with this class,
+ *    which should be passed to evas_object_smart_add().
  *
  * @ingroup Evas_Smart_Group
  */
@@ -7985,14 +8001,21 @@ struct _Evas_Smart_Cb_Description
 
 /**
  * @def EVAS_SMART_DATA_ALLOC
+ *
  * Convenience macro to allocate smart data only if needed.
  *
- * When writing a subclassable smart object, the .add function will need
- * to check if the smart private data was already allocated by some child
- * object or not. This macro makes it easier to do it.
+ * When writing a subclassable smart object, the @c .add() function
+ * will need to check if the smart private data was already allocated
+ * by some child object or not. This macro makes it easier to do it.
  *
- * @param o Evas object passed to the .add function
+ * @note This is an idiom used when one calls the parent's @c. add()
+ * after the specialized code. Naturally, the parent's base smart data
+ * has to be contemplated as the specialized one's first member, for
+ * things to work.
+ *
+ * @param o Evas object passed to the @c .add() function
  * @param priv_type The type of the data to allocate
+ *
  * @ingroup Evas_Smart_Group
  */
 #define EVAS_SMART_DATA_ALLOC(o, priv_type) \
@@ -8147,23 +8170,39 @@ EAPI int                              evas_smart_usage_get(const Evas_Smart *s);
 /**
  * @defgroup Evas_Smart_Object_Group Smart Object Functions
  *
- * Functions dealing with evas smart objects (instances).
+ * Functions dealing with Evas smart objects (instances).
  *
- * Smart objects are groupings of primitive Evas objects that behave as a
- * cohesive group. For instance, a file manager icon may be a smart object
- * composed of an image object, a text label and two rectangles that appear
- * behind the image and text when the icon is selected. As a smart object,
- * the normal evas api could be used on the icon object.
+ * Smart objects are groupings of primitive Evas objects that behave
+ * as a cohesive group. For instance, a file manager icon may be a
+ * smart object composed of an image object, a text label and two
+ * rectangles that appear behind the image and text when the icon is
+ * selected. As a smart object, the normal Evas object API could be
+ * used on the icon object.
+ *
+ * See some @ref Example_Evas_Smart_Objects "examples" of this group
+ * of functions.
  *
  * @see @ref Evas_Smart_Group for class definitions.
  */
 
 /**
+ * @addtogroup Evas_Smart_Object_Group
+ * @{
+ */
+
+/**
  * Instantiates a new smart object described by @p s.
  *
- * @param e the evas on which to add the object
- * @param s the Evas_Smart describing the smart object
- * @return a new Evas_Object
+ * @param e the canvas on which to add the object
+ * @param s the #Evas_Smart describing the smart object
+ * @return a new #Evas_Object handle
+ *
+ * This is the function one should use when defining the public
+ * function @b adding an instance of the new smart object to a given
+ * canvas. It will take care of setting all of its internals to work
+ * as they should, if the user set things properly, as seem on the
+ * #EVAS_SMART_SUBCLASS_NEW, for example.
+ *
  * @ingroup Evas_Smart_Object_Group
  */
 EAPI Evas_Object      *evas_object_smart_add             (Evas *e, Evas_Smart *s) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1, 2) EINA_MALLOC;
@@ -8241,20 +8280,30 @@ EAPI Eina_List        *evas_object_smart_members_get     (const Evas_Object *obj
 EAPI Evas_Smart       *evas_object_smart_smart_get       (const Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
 
 /**
- * Retrieve user data stored on a smart object.
+ * Retrieve user data stored on a given smart object.
  *
- * @param obj The smart object
- * @return A pointer to data stored using evas_object_smart_data_set(), or
- *         NULL if none has been set.
+ * @param obj The smart object's handle
+ * @return A pointer to data stored using
+ *         evas_object_smart_data_set(), or @c NULL, if none has been
+ *         set.
+ *
+ * @see evas_object_smart_data_set()
+ *
  * @ingroup Evas_Smart_Object_Group
  */
 EAPI void             *evas_object_smart_data_get        (const Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
 
 /**
- * Store a pointer to user data for a smart object.
+ * Store a pointer to user data for a given smart object.
  *
- * @param obj The smart object
+ * @param obj The smart object's handle
  * @param data A pointer to user data
+ *
+ * This data is stored @b independently of the one set by
+ * evas_object_data_set(), naturally.
+ *
+ * @see evas_object_smart_data_get()
+ *
  * @ingroup Evas_Smart_Object_Group
  */
 EAPI void              evas_object_smart_data_set        (Evas_Object *obj, void *data) EINA_ARG_NONNULL(1);
@@ -8378,10 +8427,14 @@ EAPI void              evas_object_smart_callback_description_find(const Evas_Ob
 /**
  * Mark smart object as changed, dirty.
  *
- * This will inform the scene that it changed and needs to be redraw, also
- * setting need_recalculate on the given object.
+ * @param obj The given Evas smart object
+ *
+ * This will flag the given object as needing recalculation,
+ * forcefully. As an effect, on the next rendering cycle it's @b
+ * calculate() (see #Evas_Smart_Class) smart function will be called.
  *
  * @see evas_object_smart_need_recalculate_set().
+ * @see evas_object_smart_calculate().
  *
  * @ingroup Evas_Smart_Object_Group
  */
@@ -8423,14 +8476,19 @@ EAPI void              evas_object_smart_need_recalculate_set(Evas_Object *obj, 
 EAPI Eina_Bool         evas_object_smart_need_recalculate_get(const Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
 
 /**
- * Call user provided calculate() and unset need_calculate.
+ * Call the @b calculate() smart function immediataly on a given smart
+ * object.
  *
- * @param obj the smart object
+ * @param obj the smart object's handle
+ *
+ * This will force immediate calculations (see #Evas_Smart_Class)
+ * needed for renderization of this object and, besides, unset the
+ * flag on it telling it needs recalculation for the next rendering
+ * phase.
  *
  * @ingroup Evas_Smart_Object_Group
  */
 EAPI void              evas_object_smart_calculate       (Evas_Object *obj) EINA_ARG_NONNULL(1);
-
 
 /**
  * Call user provided calculate() and unset need_calculate on all objects.
@@ -8441,21 +8499,43 @@ EAPI void              evas_object_smart_calculate       (Evas_Object *obj) EINA
  */
 EAPI void              evas_smart_objects_calculate      (Evas *e);
 
+
+/**
+ * Moves all children objects relative to given offset.
+ *
+ * @param obj the smart Evas object to use.
+ * @param dx horizontal offset.
+ * @param dy vertical offset.
+ */
+EAPI void                    evas_object_smart_move_children_relative(Evas_Object *obj, Evas_Coord dx, Evas_Coord dy) EINA_ARG_NONNULL(1);
+
+/**
+ * @}
+ */
+
 /**
  * @defgroup Evas_Smart_Object_Clipped Clipped Smart Object
  *
  * Clipped smart object is a base to construct other smart objects
- * that based on the concept of having an internal clipper that is
- * applied to all its other children. This clipper will control the
- * visibility, clipping and color of sibling objects (remember that
- * the clipping is recursive, and clipper color modulates the color of
- * its clippees). By default, this base will also move children
- * relatively to the parent, and delete them when parent is
- * deleted. In other words, it is the base for simple object grouping.
+ * based on the concept of having an internal clipper that is applied
+ * to all children objects. This clipper will control the visibility,
+ * clipping and color of sibling objects (remember that the clipping
+ * is recursive, and clipper color modulates the color of its
+ * clippees). By default, this base will also move children relatively
+ * to the parent, and delete them when parent is deleted. In other
+ * words, it is the base for simple object grouping.
+ *
+ * See some @ref Example_Evas_Smart_Objects "examples" of this group
+ * of functions.
  *
  * @see evas_object_smart_clipped_smart_set()
  *
  * @ingroup Evas_Smart_Object_Group
+ */
+
+/**
+ * @addtogroup Evas_Smart_Object_Clipped
+ * @{
  */
 
 /**
@@ -8473,20 +8553,28 @@ EAPI void              evas_smart_objects_calculate      (Evas *e);
 /**
  * Get the clipper object for the given clipped smart object.
  *
- * @param obj the clipped smart object to retrieve the associated clipper.
+ * @param obj the clipped smart object to retrieve associated clipper
+ * from.
  * @return the clipper object.
+ *
+ * Use this function if you want to change any of this clipper's
+ * properties, like colors.
  *
  * @see evas_object_smart_clipped_smart_add()
  */
 EAPI Evas_Object            *evas_object_smart_clipped_clipper_get   (Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
 
 /**
- * Set smart class callbacks so it implements the "Clipped Smart Object".
+ * Set a given smart class' callbacks so it implements the <b>clipped smart
+ * object"</b>'s interface.
  *
- * This call will assign all the required methods of Evas_Smart_Class,
- * if one wants to "subclass" it, call this function and later
- * override values, if one wants to call the original method, save it
- * somewhere, example:
+ * @param sc The smart class handle to operate on
+ *
+ * This call will assign all the required methods of the @p sc
+ * #Evas_Smart_Class instance to the implementations set for clipped
+ * smart objects. If one wants to "subclass" it, call this function
+ * and then override desired values. If one wants to call any original
+ * method, save it somewhere. Example:
  *
  * @code
  * static Evas_Smart_Class parent_sc = EVAS_SMART_CLASS_INIT_NULL;
@@ -8511,33 +8599,37 @@ EAPI Evas_Object            *evas_object_smart_clipped_clipper_get   (Evas_Objec
  * }
  * @endcode
  *
- * Default behavior is:
- *  - add: creates a hidden clipper with "infinite" size;
- *  - del: delete all children objects;
- *  - move: move all objects relative relatively;
- *  - resize: not defined;
- *  - show: if there are children objects, show clipper;
- *  - hide: hides clipper;
- *  - color_set: set the color of clipper;
- *  - clip_set: set clipper of clipper;
- *  - clip_unset: unset the clipper of clipper;
+ * Default behavior for each of #Evas_Smart_Class functions on a
+ * clipped smart object are:
+ * - @c add: creates a hidden clipper with "infinite" size, to clip
+ *    any incoming members;
+ *  - @c del: delete all children objects;
+ *  - @c move: move all objects relative relatively;
+ *  - @c resize: <b>not defined</b>;
+ *  - @c show: if there are children objects, show clipper;
+ *  - @c hide: hides clipper;
+ *  - @c color_set: set the color of clipper;
+ *  - @c clip_set: set clipper of clipper;
+ *  - @c clip_unset: unset the clipper of clipper;
+ *
+ * @note There are other means of assigning parent smart classes to
+ * child ones, like the #EVAS_SMART_SUBCLASS_NEW macro or the
+ * evas_smart_class_inherit_full() function.
  */
 EAPI void                    evas_object_smart_clipped_smart_set     (Evas_Smart_Class *sc) EINA_ARG_NONNULL(1);
 
 /**
- * Get a pointer to the Clipped Smart Class to use for proper inheritance
+ * Get a pointer to the <b>clipped smart object's</b> class, to use
+ * for proper inheritance
+ *
+ * @see #Evas_Smart_Object_Clipped for more information on this smart
+ * class
  */
 EAPI const Evas_Smart_Class *evas_object_smart_clipped_class_get     (void) EINA_CONST;
 
-
 /**
- * Moves all children objects relative to given offset.
- *
- * @param obj the smart Evas object to use.
- * @param dx horizontal offset.
- * @param dy vertical offset.
+ * @}
  */
-EAPI void                    evas_object_smart_move_children_relative(Evas_Object *obj, Evas_Coord dx, Evas_Coord dy) EINA_ARG_NONNULL(1);
 
 /**
  * @defgroup Evas_Object_Box Box (Sequence) Smart Object.
