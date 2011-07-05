@@ -2335,6 +2335,24 @@ elm_entry_line_wrap_set(Evas_Object *obj, Elm_Wrap_Type wrap)
 }
 
 /**
+ * Get the wrapping behavior of the entry.
+ * See also elm_entry_line_wrap_set().
+ *
+ * @param obj The entry object
+ * @return Wrap type
+ *
+ * @ingroup Entry
+ */
+EAPI Elm_Wrap_Type
+elm_entry_line_wrap_get(const Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return EINA_FALSE;
+   return wd->linewrap;
+}
+
+/**
  * This sets the editable attribute of the entry.
  *
  * @param obj The entry object

@@ -3022,6 +3022,7 @@ extern "C" {
    EAPI const char  *elm_entry_selection_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
    EAPI void         elm_entry_entry_insert(Evas_Object *obj, const char *entry) EINA_ARG_NONNULL(1);
    EAPI void         elm_entry_line_wrap_set(Evas_Object *obj, Elm_Wrap_Type wrap) EINA_ARG_NONNULL(1);
+   EAPI Elm_Wrap_Type elm_entry_line_wrap_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
    EAPI void         elm_entry_editable_set(Evas_Object *obj, Eina_Bool editable) EINA_ARG_NONNULL(1);
    EAPI Eina_Bool    elm_entry_editable_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
    EAPI void         elm_entry_select_none(Evas_Object *obj) EINA_ARG_NONNULL(1);
