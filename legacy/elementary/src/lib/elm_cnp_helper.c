@@ -1609,7 +1609,7 @@ elm_cnp_tempfile_create(int size)
      }
 
    eina_mmap_safety_enabled_set(EINA_TRUE);
-   
+
    info->map = mmap(NULL, size, PROT_READ|PROT_WRITE, MAP_SHARED, info->fd, 0);
    if (info->map == MAP_FAILED)
      {

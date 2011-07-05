@@ -51,7 +51,7 @@
  * output to the file specified by the file option (and then exit). If no
  * delay is given, the default is 0.5 seconds. If no file is given the
  * default output file is "out.png". Repeat option is for continous
- * capturing screenshots. Repeat range is from 1 to 999 and 
+ * capturing screenshots. Repeat range is from 1 to 999 and
  * filename is fixed to "out001.png"
  * Some examples of using the shot engine:
  *
@@ -211,7 +211,7 @@ _shot_file_get(Elm_Win *win)
                     {
                        repname = malloc(sizeof(char)*(strlen(tmp) + 16));
                        strncpy(repname, tmp, dotptr - tmp);
-                       sprintf(repname + (dotptr - tmp), "%03i", 
+                       sprintf(repname + (dotptr - tmp), "%03i",
                                win->shot.shot_counter + 1);
                        strcat(repname, dotptr);
                        return repname;
@@ -221,7 +221,7 @@ _shot_file_get(Elm_Win *win)
      }
    free(tmp);
    if (!win->shot.repeat_count) return strdup("out.png");
-   else 
+   else
      {
         repname = malloc(sizeof(char) * 24);
         sprintf(repname, "out%03i.png", win->shot.shot_counter + 1);
@@ -315,7 +315,7 @@ _shot_delay(void *data)
      {
         int remainshot = (win->shot.repeat_count - win->shot.shot_counter);
         if (remainshot > 0) return EINA_TRUE;
-     } 
+     }
    win->shot.timer = NULL;
    elm_exit();
    return EINA_FALSE;
