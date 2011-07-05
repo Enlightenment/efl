@@ -691,9 +691,9 @@ ecore_con_url_time(Ecore_Con_Url     *url_con,
 }
 
 /**
- * Setup a file for receiving request data.
+ * Setup a file for receiving response data.
  *
- * Setups a file to have response data written into. Note that
+ * Sets up a file to have response data written into. Note that
  * ECORE_CON_EVENT_URL_DATA events will not be emitted if a file has been set to
  * receive the response data.
  *
