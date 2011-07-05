@@ -463,7 +463,7 @@ _ecore_main_gsource_prepare(GSource *source __UNUSED__, gint *next_time)
              if (_ecore_timers_exists())
                {
                   double t = _ecore_timer_next_get();
-                  *next_time = (t * 1000.0);
+                  *next_time = ceil(t * 1000.0);
                }
              else
                *next_time = -1;
