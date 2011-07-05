@@ -485,17 +485,15 @@ _ecore_main_gsource_prepare(GSource *source __UNUSED__, gint *next_time)
 static gboolean
 _ecore_main_gsource_check(GSource *source __UNUSED__)
 {
-   INF("enter");
    in_main_loop++;
 
    ecore_fds_ready = (_ecore_main_fdh_poll_mark_active() > 0);
    _ecore_main_fd_handlers_cleanup();
-   
+
    _ecore_time_loop_time = ecore_time_get();
    _ecore_timer_enable_new();
 
    in_main_loop--;
-   INF("leave");
 
    return TRUE; /* always dispatch */
 }
@@ -519,19 +517,16 @@ _ecore_main_gsource_dispatch(GSource *source __UNUSED__, GSourceFunc callback __
 
    if (ecore_idling && events_ready)
      {
-        INF("calling idle exiters");
         _ecore_idle_exiter_call();
         ecore_idling = 0;
      }
    else if (!ecore_idling && !events_ready)
      {
-        INF("start idling");
         ecore_idling = 1;
      }
 
    if (ecore_idling)
      {
-        INF("calling idler");
         _ecore_idler_call();
 
         events_ready = _ecore_event_exist();
@@ -540,7 +535,6 @@ _ecore_main_gsource_dispatch(GSource *source __UNUSED__, GSourceFunc callback __
 
         if ((ecore_fds_ready || events_ready || timers_ready || idlers_ready || signals_ready))
           {
-             INF("calling idle exiters");
              _ecore_idle_exiter_call();
              ecore_idling = 0;
           }
@@ -549,7 +543,6 @@ _ecore_main_gsource_dispatch(GSource *source __UNUSED__, GSourceFunc callback __
    /* process events */
    if (!ecore_idling)
      {
-        INF("work");
         _ecore_main_fd_handlers_call();
         if (fd_handlers_with_buffer)
           _ecore_main_fd_handlers_buf_call();
@@ -560,15 +553,12 @@ _ecore_main_gsource_dispatch(GSource *source __UNUSED__, GSourceFunc callback __
 
    in_main_loop--;
 
-   INF("leave");
-
    return TRUE; /* what should be returned here? */
 }
 
 static void
 _ecore_main_gsource_finalize(GSource *source __UNUSED__)
 {
-   INF("finalize");
 }
 
 static GSourceFuncs ecore_gsource_funcs =
@@ -621,7 +611,6 @@ _ecore_main_loop_init(void)
            CRIT("Failed to attach glib source to default context");
      }
 #endif
-   INF("leave");
 }
 
 void
@@ -737,9 +726,7 @@ ecore_main_loop_quit(void)
 #ifndef USE_G_MAIN_LOOP
    do_quit = 1;
 #else
-   INF("enter");
    g_main_loop_quit(ecore_main_loop);
-   INF("leave");
 #endif
 }
 
