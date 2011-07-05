@@ -10,6 +10,7 @@
  * @li @ref ecore_event_example_c
  * @li @ref ecore_fd_handler_example_c
  * @li @ref ecore_poller_example_c
+ * @li @ref ecore_con_lookup_example_c
  *
  */
 
@@ -461,6 +462,39 @@
  */
 
 /**
+ * @page ecore_con_lookup_example_c Ecore_Con - DNS lookup
+ *
+ * This is a very simple example that shows how to make a simple DNS lookup
+ * using ecore_con_lookup().
+ *
+ * It's possible to see in the beginning of the main function that we are using
+ * the arguments passed via command line. This is the address that we are going
+ * to make the DNS lookup on.
+ *
+ * The next step is to initialize the libraries, and just call
+ * ecore_con_lookup(). This function will get the string that contains the
+ * address to be resolved as first parameter, then a callback that will be
+ * called when the resolve stage is done, and finally a data pointer that will
+ * be passed to the callback.
+ *
+ * This function is asynchronous, and the callback will be called only on
+ * success. If there was an error during the resolve stage, there's no way to
+ * know about that. It's only possible to know about errors when setting up the
+ * lookup, by looking at the return code of the ecore_con_lookup() function.
+ *
+ * The callback @c _lookup_done_cb passed as argument to ecore_con_lookup() just
+ * prints the resolved canonical name, ip, address of the sockaddr structure,
+ * and the length of the socket address (in bytes).
+ *
+ * Finally, we start the main loop, and after that we finalize the libraries and
+ * exit.
+ *
+ * This is the code for this simple example:
+ *
+ * @include ecore_con_lookup_example.c
+ */
+
+/**
  * @example ecore_idler_example.c
  * This example shows when @ref Ecore_Idler, @ref Ecore_Idle_Enterer and @ref
  * Ecore_Idle_Exiter are called. See
@@ -506,7 +540,13 @@
 /**
  * @example ecore_fd_handler_gnutls_example.c
  * Shows how to use fd handlers.
-*/
+ */
+
+/**
+ * @example ecore_con_lookup_example.c
+ * Shows how to make a simple DNS lookup. See the complete example description
+ * at @ref @ecore_con_lookup_example_c
+ */
 
 /**
  * @page tutorial_ecore_pipe_gstreamer_example

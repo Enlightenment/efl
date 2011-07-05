@@ -395,6 +395,15 @@ EAPI extern int ECORE_CON_EVENT_URL_PROGRESS;
 /**
  * @defgroup Ecore_Con_Lib_Group Ecore Connection Library Functions
  *
+ * Utility functions that set up and shut down the Ecore Connection
+ * library.
+ *
+ * There's also ecore_con_lookup() that can be used to make simple asynchronous
+ * DNS lookups.
+ *
+ * A simple example of how to use these functions:
+ * @li @ref ecore_con_lookup_example_c
+ *
  * @{
  */
 
@@ -447,9 +456,38 @@ typedef enum _Ecore_Con_Type
    ECORE_CON_LOAD_CERT = (1 << 7)
 } Ecore_Con_Type;
 
+/**
+ * Initialises the Ecore_Con library.
+ * @return  Number of times the library has been initialised without being
+ *          shut down.
+ */
 EAPI int               ecore_con_init(void);
+
+/**
+ * Shuts down the Ecore_Con library.
+ * @return  Number of times the library has been initialised without being
+ *          shut down.
+ */
 EAPI int               ecore_con_shutdown(void);
 
+/**
+ * Do an asynchronous DNS lookup.
+ *
+ * @param name IP address or server name to translate.
+ * @param done_cb Callback to notify when done.
+ * @param data User data to be given to done_cb.
+ * @return EINA_TRUE if the request did not fail to be set up, EINA_FALSE if it
+ * failed.
+ *
+ * This function performs a DNS lookup on the hostname specified by @p name,
+ * then calls @p done_cb with the result and the @p data given as parameter.
+ * The result will be given to the @p done_cb as follows:
+ * @li @c canonname - the canonical name of the address
+ * @li @c ip - the resolved ip address
+ * @li @c addr - a pointer to the socket address
+ * @li @c addrlen - the length of the socket address, in bytes
+ * @li @c data - the data pointer given as parameter to ecore_con_lookup()
+ */
 EAPI Eina_Bool         ecore_con_lookup(const char *name,
                                             Ecore_Con_Dns_Cb done_cb,
                                             const void *data);
