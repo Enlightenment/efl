@@ -294,7 +294,7 @@ evas_software_xlib_x_output_buffer_new(Display *d, Visual *v, int depth, int w, 
 		       xob->shm_info->readOnly = False;
 		       xob->shm_info->shmaddr = xob->xim->data =
 			 shmat(xob->shm_info->shmid, 0, 0);
-		       if (xob->shm_info->shmaddr)
+		       if (xob->shm_info->shmaddr != ((void *)-1))
 			 {
 			    XErrorHandler ph;
                             
