@@ -42,7 +42,7 @@
  * screenshot and how long to delay in the engine string. The engine string
  * is encoded in the following way:
  *
- *   "shot:[delay=XX][:][file=XX]"
+ *   "shot:[delay=XX][:][repeat=DDD][:][file=XX]"
  *
  * Where options are separated by a ":" char if more than one option is given,
  * with delay, if provided being the first option and file the last (order
@@ -50,8 +50,12 @@
  * shown before doing the virtual "in memory" rendering and then save the
  * output to the file specified by the file option (and then exit). If no
  * delay is given, the default is 0.5 seconds. If no file is given the
- * default output file is "out.png". Some examples of using the shot engine:
+ * default output file is "out.png". Repeat option is for continous
+ * capturing screenshots. Repeat range is from 1 to 999 and 
+ * filename is fixed to "out001.png"
+ * Some examples of using the shot engine:
  *
+ *   ELM_ENGINE="shot:delay=1.0:repeat=5:file=elm_test.png" elementary_test
  *   ELM_ENGINE="shot:delay=1.0:file=elm_test.png" elementary_test
  *   ELM_ENGINE="shot:file=elm_test2.png" elementary_test
  *   ELM_ENGINE="shot:delay=2.0" elementary_test
@@ -85,6 +89,8 @@ struct _Elm_Win
    struct {
       const char *info;
       Ecore_Timer *timer;
+      int repeat_count;
+      int shot_counter;
    } shot;
    Eina_Bool autodel : 1;
    int *autodel_clear, rot;
@@ -188,18 +194,69 @@ _shot_file_get(Elm_Win *win)
 {
    char *p;
    char *tmp = strdup(win->shot.info);
+   char *repname = NULL;
 
    if (!tmp) return NULL;
+
    for (p = (char *)win->shot.info; *p; p++)
      {
         if (!strncmp(p, "file=", 5))
           {
              strcpy(tmp, p + 5);
-             return tmp;
+             if (!win->shot.repeat_count) return tmp;
+             else
+               {
+                  char *dotptr = rindex(tmp, '.');
+                  if (dotptr)
+                    {
+                       repname = malloc(sizeof(char)*(strlen(tmp) + 16));
+                       strncpy(repname, tmp, dotptr - tmp);
+                       sprintf(repname + (dotptr - tmp), "%03i", 
+                               win->shot.shot_counter + 1);
+                       strcat(repname, dotptr);
+                       return repname;
+                    }
+               }
           }
      }
    free(tmp);
-   return strdup("out.png");
+   if (!win->shot.repeat_count) return strdup("out.png");
+   else 
+     {
+        repname = malloc(sizeof(char) * 24);
+        sprintf(repname, "out%03i.png", win->shot.shot_counter + 1);
+        return repname;
+     }
+}
+
+static int
+_shot_repeat_count_get(Elm_Win *win)
+{
+
+   char *p, *pd;
+   char *d = strdup(win->shot.info);
+
+   if (!d) return 0;
+   for (p = (char *)win->shot.info; *p; p++)
+     {
+        if (!strncmp(p, "repeat=", 7))
+          {
+             int v;
+
+             for (pd = d, p += 7; (*p) && (*p != ':'); p++, pd++)
+               {
+                  *pd = *p;
+               }
+             *pd = 0;
+             v = atoi(d);
+             if (v < 0) v = 0;
+             if (v > 1000) v = 999;
+             free(d);
+             return v;
+          }
+     }
+   free(d);
+   return 0;
 }
 
 static char *
@@ -246,6 +303,7 @@ _shot_do(Elm_Win *win)
    if (key) free(key);
    if (flags) free(flags);
    ecore_evas_free(ee);
+   if (win->shot.repeat_count) win->shot.shot_counter++;
 }
 
 static Eina_Bool
@@ -253,9 +311,22 @@ _shot_delay(void *data)
 {
    Elm_Win *win = data;
    _shot_do(win);
+   if (win->shot.repeat_count)
+     {
+        int remainshot = (win->shot.repeat_count - win->shot.shot_counter);
+        if (remainshot > 0) return EINA_TRUE;
+     } 
    win->shot.timer = NULL;
    elm_exit();
    return EINA_FALSE;
+}
+
+static void
+_shot_init(Elm_Win *win)
+{
+   if (!win->shot.info) return;
+   win->shot.repeat_count = _shot_repeat_count_get(win);
+   win->shot.shot_counter = 0;
 }
 
 static void
@@ -1470,6 +1541,7 @@ elm_win_add(Evas_Object *parent, const char *name, Elm_Win_Type type)
              win->ee = ecore_evas_buffer_new(1, 1);
              ecore_evas_manual_render_set(win->ee, EINA_TRUE);
              win->shot.info = eina_stringshare_add(_elm_config->engine + 5);
+             _shot_init(win);
           }
 #undef FALLBACK_TRY
         break;
