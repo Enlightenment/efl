@@ -32,6 +32,7 @@ endif
 EXTRA_PROGRAMS = elementary_test elementary_config
 
 elementary_test_SOURCES = \
+test.c \
 test_3d.c \
 test_actionslider.c \
 test_anchorblock.c \
@@ -41,7 +42,6 @@ test_bg.c \
 test_box.c \
 test_bubble.c \
 test_button.c \
-test.c \
 test_calendar.c \
 test_check.c \
 test_clock.c \
