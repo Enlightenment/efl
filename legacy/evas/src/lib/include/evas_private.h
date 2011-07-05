@@ -499,6 +499,7 @@ struct _Evas_Object
    int                         mouse_grabbed;
 
    int                         last_event;
+   Evas_Callback_Type          last_event_type;
 
    struct {
         int                      in_move, in_resize;

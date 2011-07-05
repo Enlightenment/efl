@@ -413,3 +413,8 @@
 
 	* Polygon: Implemented "is_inside".
 
+2011-07-05  Hyoyoung Chang
+
+	* Fix bug where event causes event in callback on same object, but
+        with same event counter, so also filter out same event types.
+

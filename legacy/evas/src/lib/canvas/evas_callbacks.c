@@ -170,8 +170,10 @@ evas_object_event_callback_call(Evas_Object *obj, Evas_Callback_Type type, void 
    Evas *e;
 
    if ((obj->delete_me) || (!obj->layer)) return;
-   if (obj->last_event == _evas_event_counter) return;
+   if ((obj->last_event == _evas_event_counter) &&
+       (obj->last_event_type == type)) return;
    obj->last_event = _evas_event_counter;
+   obj->last_event_type = type;
    if (!(e = obj->layer->evas)) return;
 
    _evas_walk(e);
