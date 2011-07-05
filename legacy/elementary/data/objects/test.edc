@@ -802,10 +802,10 @@ collections {
          }
       }
    }
-group {
+   group {
       name: "test/layout";
       images {
-	 image: "sky.jpg" LOSSY 80;
+         image: "sky.jpg" LOSSY 80;
       }
       parts {
             part {
@@ -826,6 +826,5 @@ group {
                  }
             }
       }
+   }
 }
-}
-	 
