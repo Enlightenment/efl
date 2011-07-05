@@ -50,6 +50,8 @@ ecore_idle_enterer_add(Ecore_Task_Cb func, const void *data)
 {
    Ecore_Idle_Enterer *ie;
 
+   ECORE_MAIN_LOOP_ASSERT();
+
    if (!func) return NULL;
    ie = calloc(1, sizeof(Ecore_Idle_Enterer));
    if (!ie) return NULL;
@@ -75,6 +77,8 @@ ecore_idle_enterer_before_add(Ecore_Task_Cb func, const void *data)
 {
    Ecore_Idle_Enterer *ie;
 
+   ECORE_MAIN_LOOP_ASSERT();
+
    if (!func) return NULL;
    ie = calloc(1, sizeof(Ecore_Idle_Enterer));
    if (!ie) return NULL;
@@ -94,6 +98,8 @@ ecore_idle_enterer_before_add(Ecore_Task_Cb func, const void *data)
 EAPI void *
 ecore_idle_enterer_del(Ecore_Idle_Enterer *idle_enterer)
 {
+   ECORE_MAIN_LOOP_ASSERT();
+
    if (!ECORE_MAGIC_CHECK(idle_enterer, ECORE_MAGIC_IDLE_ENTERER))
      {
         ECORE_MAGIC_FAIL(idle_enterer, ECORE_MAGIC_IDLE_ENTERER,

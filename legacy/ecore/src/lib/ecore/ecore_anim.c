@@ -166,6 +166,8 @@ ecore_animator_add(Ecore_Task_Cb func, const void *data)
 {
    Ecore_Animator *animator;
 
+   ECORE_MAIN_LOOP_ASSERT();
+
    if (!func) return NULL;
    animator = calloc(1, sizeof(Ecore_Animator));
    if (!animator) return NULL;
@@ -203,6 +205,8 @@ EAPI Ecore_Animator *
 ecore_animator_timeline_add(double runtime, Ecore_Timeline_Cb func, const void *data)
 {
    Ecore_Animator *animator;
+
+   ECORE_MAIN_LOOP_ASSERT();
 
    if (runtime <= 0.0) runtime = 0.0;
    animator = ecore_animator_add(_ecore_animator_run, NULL);
@@ -358,6 +362,8 @@ ecore_animator_pos_map(double pos, Ecore_Pos_Map map, double v1, double v2)
 EAPI void *
 ecore_animator_del(Ecore_Animator *animator)
 {
+   ECORE_MAIN_LOOP_ASSERT();
+
    if (!ECORE_MAGIC_CHECK(animator, ECORE_MAGIC_ANIMATOR))
      {
         ECORE_MAGIC_FAIL(animator, ECORE_MAGIC_ANIMATOR,
@@ -380,6 +386,8 @@ ecore_animator_del(Ecore_Animator *animator)
 EAPI void
 ecore_animator_frametime_set(double frametime)
 {
+   ECORE_MAIN_LOOP_ASSERT();
+
    if (frametime < 0.0) frametime = 0.0;
    if (animators_frametime == frametime) return;
    animators_frametime = frametime;
@@ -409,6 +417,8 @@ ecore_animator_frametime_get(void)
 EAPI void
 ecore_animator_freeze(Ecore_Animator *animator)
 {
+   ECORE_MAIN_LOOP_ASSERT();
+
    if (!ECORE_MAGIC_CHECK(animator, ECORE_MAGIC_ANIMATOR))
      {
         ECORE_MAGIC_FAIL(animator, ECORE_MAGIC_ANIMATOR,
@@ -429,6 +439,8 @@ ecore_animator_freeze(Ecore_Animator *animator)
 EAPI void
 ecore_animator_thaw(Ecore_Animator *animator)
 {
+   ECORE_MAIN_LOOP_ASSERT();
+
    if (!ECORE_MAGIC_CHECK(animator, ECORE_MAGIC_ANIMATOR))
      {
         ECORE_MAGIC_FAIL(animator, ECORE_MAGIC_ANIMATOR,
@@ -463,6 +475,8 @@ ecore_animator_thaw(Ecore_Animator *animator)
 EAPI void
 ecore_animator_source_set(Ecore_Animator_Source source)
 {
+   ECORE_MAIN_LOOP_ASSERT();
+
    src = source;
    _end_tick();
    if (animators) _begin_tick();
@@ -478,6 +492,8 @@ ecore_animator_source_set(Ecore_Animator_Source source)
 EAPI Ecore_Animator_Source
 ecore_animator_source_get(void)
 {
+   ECORE_MAIN_LOOP_ASSERT();
+
    return src;
 }
 
@@ -499,6 +515,8 @@ ecore_animator_source_get(void)
 EAPI void
 ecore_animator_custom_source_tick_begin_callback_set(Ecore_Cb func, const void *data)
 {
+   ECORE_MAIN_LOOP_ASSERT();
+
    begin_tick_cb = func;
    begin_tick_data = data;
    _end_tick();
@@ -519,6 +537,8 @@ ecore_animator_custom_source_tick_begin_callback_set(Ecore_Cb func, const void *
 EAPI void
 ecore_animator_custom_source_tick_end_callback_set(Ecore_Cb func, const void *data)
 {
+   ECORE_MAIN_LOOP_ASSERT();
+
    end_tick_cb = func;
    end_tick_data = data;
    _end_tick();
@@ -537,6 +557,8 @@ ecore_animator_custom_source_tick_end_callback_set(Ecore_Cb func, const void *da
 EAPI void
 ecore_animator_custom_tick(void)
 {
+   ECORE_MAIN_LOOP_ASSERT();
+
    if (src == ECORE_ANIMATOR_SOURCE_CUSTOM) _do_tick();
 }
 

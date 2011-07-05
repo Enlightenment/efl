@@ -142,6 +142,8 @@ ecore_event_handler_add(int type, Ecore_Event_Handler_Cb func, const void *data)
 {
    Ecore_Event_Handler *eh;
 
+   ECORE_MAIN_LOOP_ASSERT();
+
    if (!func) return NULL;
    if ((type <= ECORE_EVENT_NONE) || (type >= event_id_max)) return NULL;
    eh = calloc(1, sizeof(Ecore_Event_Handler));
@@ -193,6 +195,8 @@ ecore_event_handler_add(int type, Ecore_Event_Handler_Cb func, const void *data)
 EAPI void *
 ecore_event_handler_del(Ecore_Event_Handler *event_handler)
 {
+   ECORE_MAIN_LOOP_ASSERT();
+
    if (!ECORE_MAGIC_CHECK(event_handler, ECORE_MAGIC_EVENT_HANDLER))
      {
         ECORE_MAGIC_FAIL(event_handler, ECORE_MAGIC_EVENT_HANDLER,
@@ -216,6 +220,8 @@ ecore_event_handler_del(Ecore_Event_Handler *event_handler)
 EAPI void *
 ecore_event_handler_data_get(Ecore_Event_Handler *eh)
 {
+   ECORE_MAIN_LOOP_ASSERT();
+
    if (!ECORE_MAGIC_CHECK(eh, ECORE_MAGIC_EVENT_HANDLER))
      {
         ECORE_MAGIC_FAIL(eh, ECORE_MAGIC_EVENT_HANDLER, "ecore_event_handler_data_get");
@@ -237,6 +243,9 @@ EAPI void *
 ecore_event_handler_data_set(Ecore_Event_Handler *eh, const void *data)
 {
    void *old;
+
+   ECORE_MAIN_LOOP_ASSERT();
+
    if (!ECORE_MAGIC_CHECK(eh, ECORE_MAGIC_EVENT_HANDLER))
      {
         ECORE_MAGIC_FAIL(eh, ECORE_MAGIC_EVENT_HANDLER, "ecore_event_handler_data_set");
@@ -274,6 +283,8 @@ _ecore_event_generic_free (void *data __UNUSED__, void *event)
 EAPI Ecore_Event *
 ecore_event_add(int type, void *ev, Ecore_End_Cb func_free, void *data)
 {
+   ECORE_MAIN_LOOP_ASSERT();
+
 /*   if (!ev) return NULL;*/
    if (type <= ECORE_EVENT_NONE) return NULL;
    if (type >= event_id_max) return NULL;
@@ -295,6 +306,8 @@ ecore_event_add(int type, void *ev, Ecore_End_Cb func_free, void *data)
 EAPI void *
 ecore_event_del(Ecore_Event *event)
 {
+   ECORE_MAIN_LOOP_ASSERT();
+
    if (!ECORE_MAGIC_CHECK(event, ECORE_MAGIC_EVENT))
      {
         ECORE_MAGIC_FAIL(event, ECORE_MAGIC_EVENT, "ecore_event_del");
@@ -318,6 +331,8 @@ ecore_event_del(Ecore_Event *event)
 EAPI int
 ecore_event_type_new(void)
 {
+   ECORE_MAIN_LOOP_ASSERT();
+
    event_id_max++;
    return event_id_max - 1;
 }
@@ -347,6 +362,8 @@ ecore_event_filter_add(Ecore_Data_Cb func_start, Ecore_Filter_Cb func_filter, Ec
 {
    Ecore_Event_Filter *ef;
 
+   ECORE_MAIN_LOOP_ASSERT();
+
    if (!func_filter) return NULL;
    ef = calloc(1, sizeof(Ecore_Event_Filter));
    if (!ef) return NULL;
@@ -371,6 +388,8 @@ ecore_event_filter_add(Ecore_Data_Cb func_start, Ecore_Filter_Cb func_filter, Ec
 EAPI void *
 ecore_event_filter_del(Ecore_Event_Filter *ef)
 {
+   ECORE_MAIN_LOOP_ASSERT();
+
    if (!ECORE_MAGIC_CHECK(ef, ECORE_MAGIC_EVENT_FILTER))
      {
         ECORE_MAGIC_FAIL(ef, ECORE_MAGIC_EVENT_FILTER, "ecore_event_filter_del");

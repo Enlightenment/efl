@@ -674,10 +674,11 @@ _ecore_main_loop_shutdown(void)
 EAPI void
 ecore_main_loop_iterate(void)
 {
+   ECORE_MAIN_LOOP_ASSERT();
 #ifndef USE_G_MAIN_LOOP
    _ecore_main_loop_iterate_internal(1);
 #else
-    g_main_context_iteration(NULL, 1);
+   g_main_context_iteration(NULL, 1);
 #endif
 }
 
@@ -702,6 +703,7 @@ ecore_main_loop_iterate(void)
 EAPI void
 ecore_main_loop_begin(void)
 {
+   ECORE_MAIN_LOOP_ASSERT();
 #ifndef USE_G_MAIN_LOOP
    in_main_loop++;
    while (do_quit == 0) _ecore_main_loop_iterate_internal(0);
@@ -820,6 +822,8 @@ ecore_main_fd_handler_add(int fd, Ecore_Fd_Handler_Flags flags, Ecore_Fd_Cb func
 {
    Ecore_Fd_Handler *fdh;
 
+   ECORE_MAIN_LOOP_ASSERT();
+
    if ((fd < 0) || (flags == 0) || (!func)) return NULL;
 
    fdh = calloc(1, sizeof(Ecore_Fd_Handler));
@@ -895,6 +899,8 @@ ecore_main_win32_handler_add(void *h __UNUSED__, Ecore_Win32_Handle_Cb func __UN
 EAPI void *
 ecore_main_fd_handler_del(Ecore_Fd_Handler *fd_handler)
 {
+   ECORE_MAIN_LOOP_ASSERT();
+
    if (!ECORE_MAGIC_CHECK(fd_handler, ECORE_MAGIC_FD_HANDLER))
      {
         ECORE_MAGIC_FAIL(fd_handler, ECORE_MAGIC_FD_HANDLER,
@@ -960,6 +966,8 @@ ecore_main_win32_handler_del(Ecore_Win32_Handler *win32_handler __UNUSED__)
 EAPI void
 ecore_main_fd_handler_prepare_callback_set(Ecore_Fd_Handler *fd_handler, Ecore_Fd_Prep_Cb func, const void *data)
 {
+   ECORE_MAIN_LOOP_ASSERT();
+
    if (!ECORE_MAGIC_CHECK(fd_handler, ECORE_MAGIC_FD_HANDLER))
      {
         ECORE_MAGIC_FAIL(fd_handler, ECORE_MAGIC_FD_HANDLER,
@@ -1006,6 +1014,8 @@ ecore_main_fd_handler_active_get(Ecore_Fd_Handler *fd_handler, Ecore_Fd_Handler_
 {
    int ret = EINA_FALSE;
 
+   ECORE_MAIN_LOOP_ASSERT();
+
    if (!ECORE_MAGIC_CHECK(fd_handler, ECORE_MAGIC_FD_HANDLER))
      {
         ECORE_MAGIC_FAIL(fd_handler, ECORE_MAGIC_FD_HANDLER,
@@ -1028,6 +1038,8 @@ EAPI void
 ecore_main_fd_handler_active_set(Ecore_Fd_Handler *fd_handler, Ecore_Fd_Handler_Flags flags)
 {
    int ret;
+
+   ECORE_MAIN_LOOP_ASSERT();
 
    if (!ECORE_MAGIC_CHECK(fd_handler, ECORE_MAGIC_FD_HANDLER))
      {
