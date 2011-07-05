@@ -332,6 +332,8 @@ _calc(Evas_Object *obj)
    Evas_Coord x, y, w, h;
 
    if (!wd) return;
+   _sizing_eval(obj);
+
    evas_object_geometry_get(obj, &x, &y, &w, &h);
    edje_object_size_min_get(wd->notify, &minw, &minh);
    edje_object_size_min_restricted_calc(wd->notify, &minw, &minh, minw, minh);
@@ -341,7 +343,6 @@ _calc(Evas_Object *obj)
         _notify_move_to_orientation(obj);
         evas_object_resize(wd->notify, minw, minh);
      }
-   _sizing_eval(obj);
 }
 
 static Eina_Bool
