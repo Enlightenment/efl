@@ -6429,6 +6429,7 @@ extern "C" {
    EAPI void elm_video_pause(Evas_Object *video);
    EAPI void elm_video_stop(Evas_Object *video);
    EAPI Eina_Bool elm_video_is_playing(Evas_Object *video);
+   EAPI Eina_Bool elm_video_is_seekable(Evas_Object *video);
    EAPI Eina_Bool elm_video_audio_mute_get(Evas_Object *video);
    EAPI void elm_video_audio_mute_set(Evas_Object *video, Eina_Bool mute);
    EAPI double elm_video_audio_level_get(Evas_Object *video);
@@ -6439,6 +6440,9 @@ extern "C" {
    EAPI void elm_video_remember_position_set(Evas_Object *video, Eina_Bool remember);
    EAPI Eina_Bool elm_video_remember_position_get(Evas_Object *video);
    EAPI const char *elm_video_title_get(Evas_Object *video);
+
+   EAPI Evas_Object *elm_player_add(Evas_Object *parent);
+   EAPI void elm_player_video_set(Evas_Object *player, Evas_Object *video);
 
 #ifdef __cplusplus
 }

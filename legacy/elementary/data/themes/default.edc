@@ -10285,121 +10285,63 @@ collections {
 
 
 ///////////////////////////////////////////////////////////////////////////////
-   group { name: "elm/icon/home/default"; alias: "elm/icon/toolbar/home/default"; min: 32 32;
-      images.image: "icon_home.png" COMP; parts { part { name: "base";
-         description { state: "default" 0.0; aspect: 1.0 1.0; aspect_preference: BOTH;
-            image.normal: "icon_home.png"; } } } }
-   group { name: "elm/icon/close/default"; alias: "elm/icon/toolbar/close/default"; min: 32 32;
-      images.image: "icon_close.png" COMP; parts { part { name: "base";
-         description { state: "default" 0.0; aspect: 1.0 1.0; aspect_preference: BOTH;
-            image.normal: "icon_close.png"; } } } }
-   group { name: "elm/icon/apps/default"; alias: "elm/icon/toolbar/apps/default"; min: 32 32;
-      images.image: "icon_apps.png" COMP; parts { part { name: "base";
-         description { state: "default" 0.0; aspect: 1.0 1.0; aspect_preference: BOTH;
-            image.normal: "icon_apps.png"; } } } }
-   group { name: "elm/icon/arrow_up/default"; alias: "elm/icon/toolbar/arrow_up/default"; min: 32 32;
-      images.image: "icon_arrow_up.png" COMP; parts { part { name: "base";
-         description { state: "default" 0.0; aspect: 1.0 1.0; aspect_preference: BOTH;
-            image.normal: "icon_arrow_up.png"; } } } }
+#define GROUP_ALIAS_ICON(Name, Alias, File, Min, Max)                   \
+   group { name: "elm/icon/"##Name##"/default"; min: Min Min; max: Max Max; \
+      alias: "elm/icon/"##Alias##"/default";                            \
+      images.image: File COMP; parts { part { name: "base";             \
+            description { aspect: 1.0 1.0; aspect_preference: BOTH;     \
+               image.normal: File; } } } }
+
+#define GROUP_ICON(Name, File, Min, Max)                      \
+   group { name: "elm/icon/"##Name##"/default"; min: Min Min; max: Max Max; \
+      images.image: File COMP; parts { part { name: "base";             \
+            description { aspect: 1.0 1.0; aspect_preference: BOTH;     \
+               image.normal: File; } } } }
+
    group { name: "elm/icon/arrow_down/default";
            alias: "elm/icon/toolbar/arrow_down/default";
            alias: "elm/icon/toolbar/more_menu/default"; min: 32 32;
       images.image: "icon_arrow_down.png" COMP; parts { part { name: "base";
          description { state: "default" 0.0; aspect: 1.0 1.0; aspect_preference: BOTH;
             image.normal: "icon_arrow_down.png"; } } } }
-   group { name: "elm/icon/arrow_left/default"; alias: "elm/icon/toolbar/arrow_left/default"; min: 32 32;
-      images.image: "icon_arrow_left.png" COMP; parts { part { name: "base";
-         description { state: "default" 0.0; aspect: 1.0 1.0; aspect_preference: BOTH;
-            image.normal: "icon_arrow_left.png"; } } } }
-   group { name: "elm/icon/arrow_right/default"; alias: "elm/icon/toolbar/arrow_right/default"; min: 32 32;
-      images.image: "icon_arrow_right.png" COMP; parts { part { name: "base";
-         description { state: "default" 0.0; aspect: 1.0 1.0; aspect_preference: BOTH;
-            image.normal: "icon_arrow_right.png"; } } } }
-   group { name: "elm/icon/chat/default"; alias: "elm/icon/toolbar/chat/default"; min: 32 32;
-      images.image: "icon_chat.png" COMP; parts { part { name: "base";
-         description { state: "default" 0.0; aspect: 1.0 1.0; aspect_preference: BOTH;
-            image.normal: "icon_chat.png"; } } } }
-   group { name: "elm/icon/clock/default"; alias: "elm/icon/toolbar/clock/default"; min: 32 32;
-      images.image: "icon_clock.png" COMP; parts { part { name: "base";
-         description { state: "default" 0.0; aspect: 1.0 1.0; aspect_preference: BOTH;
-            image.normal: "icon_clock.png"; } } } }
-   group { name: "elm/icon/delete/default"; alias: "elm/icon/toolbar/delete/default"; min: 32 32;
-      images.image: "icon_delete.png" COMP; parts { part { name: "base";
-         description { state: "default" 0.0; aspect: 1.0 1.0; aspect_preference: BOTH;
-            image.normal: "icon_delete.png"; } } } }
-   group { name: "elm/icon/edit/default"; alias: "elm/icon/toolbar/edit/default"; min: 32 32;
-      images.image: "icon_edit.png" COMP; parts { part { name: "base";
-         description { state: "default" 0.0; aspect: 1.0 1.0; aspect_preference: BOTH;
-            image.normal: "icon_edit.png"; } } } }
-   group { name: "elm/icon/refresh/default"; alias: "elm/icon/toolbar/refresh/default"; min: 32 32;
-      images.image: "icon_refresh.png" COMP; parts { part { name: "base";
-         description { state: "default" 0.0; aspect: 1.0 1.0; aspect_preference: BOTH;
-            image.normal: "icon_refresh.png"; } } } }
-   group { name: "elm/icon/folder/default"; alias: "elm/icon/toolbar/folder/default"; min: 32 32;
-      images.image: "icon_folder.png" COMP; parts { part { name: "base";
-         description { state: "default" 0.0; aspect: 1.0 1.0; aspect_preference: BOTH;
-            image.normal: "icon_folder.png"; } } } }
-   group { name: "elm/icon/file/default"; alias: "elm/icon/toolbar/file/default"; min: 32 32;
-      images.image: "icon_file.png" COMP; parts { part { name: "base";
-         description { state: "default" 0.0; aspect: 1.0 1.0; aspect_preference: BOTH;
-            image.normal: "icon_file.png"; } } } }
+
+   GROUP_ALIAS_ICON("home", "toolbar/home", "icon_home.png", 32, 0);
+   GROUP_ALIAS_ICON("close", "toolbar/close", "icon_close.png", 32, 0);
+   GROUP_ALIAS_ICON("apps", "toolbar/apps", "icon_apps.png", 32, 0);
+   GROUP_ALIAS_ICON("arrow_up", "toolbar/arrow_up", "icon_arrow_up.png", 32, 0);
+   GROUP_ALIAS_ICON("arrow_left", "toolbar/arrow_left", "icon_arrow_left.png", 32, 0);
+   GROUP_ALIAS_ICON("arrow_right", "toolbar/arrow_right", "icon_arrow_right.png", 32, 0);
+   GROUP_ALIAS_ICON("chat", "toolbar/chat", "icon_chat.png", 32, 0);
+   GROUP_ALIAS_ICON("clock", "toolbar/clock", "icon_clock.png", 32, 0);
+   GROUP_ALIAS_ICON("delete", "toolbar/delete", "icon_delete.png", 32, 0);
+   GROUP_ALIAS_ICON("edit", "toolbar/edit", "icon_edit.png", 32, 0);
+   GROUP_ALIAS_ICON("refresh", "toolbar/refresh", "icon_refresh.png", 32, 0);
+   GROUP_ALIAS_ICON("folder", "toolbar/folder", "icon_folder.png", 32, 0);
+   GROUP_ALIAS_ICON("file", "toolbar/file", "icon_file.png", 32, 0);
 ///////////////////////////////////////////////////////////////////////////////
-   group { name: "elm/icon/menu/home/default"; min: 24 24; max: 24 24;
-      images.image: "icon_home.png" COMP; parts { part { name: "base";
-         description { state: "default" 0.0; aspect: 1.0 1.0; aspect_preference: BOTH;
-            image.normal: "icon_home.png"; } } } }
-   group { name: "elm/icon/menu/close/default"; min: 24 24; max: 24 24;
-      images.image: "icon_close.png" COMP; parts { part { name: "base";
-         description { state: "default" 0.0; aspect: 1.0 1.0; aspect_preference: BOTH;
-            image.normal: "icon_close.png"; } } } }
-   group { name: "elm/icon/menu/apps/default"; min: 24 24; max: 24 24;
-      images.image: "icon_apps.png" COMP; parts { part { name: "base";
-         description { state: "default" 0.0; aspect: 1.0 1.0; aspect_preference: BOTH;
-            image.normal: "icon_apps.png"; } } } }
-   group { name: "elm/icon/menu/arrow_up/default"; min: 24 24; max: 24 24;
-      images.image: "icon_arrow_up.png" COMP; parts { part { name: "base";
-         description { state: "default" 0.0; aspect: 1.0 1.0; aspect_preference: BOTH;
-            image.normal: "icon_arrow_up.png"; } } } }
-   group { name: "elm/icon/menu/arrow_down/default"; min: 24 24; max: 24 24;
-      images.image: "icon_arrow_down.png" COMP; parts { part { name: "base";
-         description { state: "default" 0.0; aspect: 1.0 1.0; aspect_preference: BOTH;
-            image.normal: "icon_arrow_down.png"; } } } }
-   group { name: "elm/icon/menu/arrow_left/default"; min: 24 24; max: 24 24;
-      images.image: "icon_arrow_left.png" COMP; parts { part { name: "base";
-         description { state: "default" 0.0; aspect: 1.0 1.0; aspect_preference: BOTH;
-            image.normal: "icon_arrow_left.png"; } } } }
-   group { name: "elm/icon/menu/arrow_right/default"; min: 24 24; max: 24 24;
-      images.image: "icon_arrow_right.png" COMP; parts { part { name: "base";
-         description { state: "default" 0.0; aspect: 1.0 1.0; aspect_preference: BOTH;
-            image.normal: "icon_arrow_right.png"; } } } }
-   group { name: "elm/icon/menu/chat/default"; min: 24 24; max: 24 24;
-      images.image: "icon_chat.png" COMP; parts { part { name: "base";
-         description { state: "default" 0.0; aspect: 1.0 1.0; aspect_preference: BOTH;
-            image.normal: "icon_chat.png"; } } } }
-   group { name: "elm/icon/menu/clock/default"; min: 24 24; max: 24 24;
-      images.image: "icon_clock.png" COMP; parts { part { name: "base";
-         description { state: "default" 0.0; aspect: 1.0 1.0; aspect_preference: BOTH;
-            image.normal: "icon_clock.png"; } } } }
-   group { name: "elm/icon/menu/delete/default"; min: 24 24; max: 24 24;
-      images.image: "icon_delete.png" COMP; parts { part { name: "base";
-         description { state: "default" 0.0; aspect: 1.0 1.0; aspect_preference: BOTH;
-            image.normal: "icon_delete.png"; } } } }
-   group { name: "elm/icon/menu/edit/default"; min: 24 24; max: 24 24;
-      images.image: "icon_edit.png" COMP; parts { part { name: "base";
-         description { state: "default" 0.0; aspect: 1.0 1.0; aspect_preference: BOTH;
-            image.normal: "icon_edit.png"; } } } }
-   group { name: "elm/icon/menu/refresh/default"; min: 24 24; max: 24 24;
-      images.image: "icon_refresh.png" COMP; parts { part { name: "base";
-         description { state: "default" 0.0; aspect: 1.0 1.0; aspect_preference: BOTH;
-            image.normal: "icon_refresh.png"; } } } }
-   group { name: "elm/icon/menu/folder/default"; min: 24 24; max: 24 24;
-      images.image: "icon_folder.png" COMP; parts { part { name: "base";
-         description { state: "default" 0.0; aspect: 1.0 1.0; aspect_preference: BOTH;
-            image.normal: "icon_folder.png"; } } } }
-   group { name: "elm/icon/menu/file/default"; min: 24 24; max: 24 24;
-      images.image: "icon_file.png" COMP; parts { part { name: "base";
-         description { state: "default" 0.0; aspect: 1.0 1.0; aspect_preference: BOTH;
-            image.normal: "icon_file.png"; } } } }
+   GROUP_ICON("menu/home", "icon_home.png", 24, 24);
+   GROUP_ICON("menu/close", "icon_close.png", 24, 24);
+   GROUP_ICON("menu/apps", "icon_apps.png", 24, 24);
+   GROUP_ICON("menu/arrow_up", "icon_arrow_up.png", 24, 24);
+   GROUP_ICON("menu/arrow_down", "icon_arrow_down.png", 24, 24);
+   GROUP_ICON("menu/arrow_left", "icon_arrow_left.png", 24, 24);
+   GROUP_ICON("menu/arrow_right", "icon_arrow_right.png", 24, 24);
+   GROUP_ICON("menu/chat", "icon_chat.png", 24, 24);
+   GROUP_ICON("menu/clock", "icon_clock.png", 24, 24);
+   GROUP_ICON("menu/delete", "icon_delete.png", 24, 24);
+   GROUP_ICON("menu/edit", "icon_edit.png", 24, 24);
+   GROUP_ICON("menu/refresh", "icon_refresh.png", 24, 24);
+   GROUP_ICON("menu/folder", "icon_folder.png", 24, 24);
+   GROUP_ICON("menu/file", "icon_file.png", 24, 24);
+
+   GROUP_ICON("media_player/forward", "mp_forward.png", 16, 0);
+   GROUP_ICON("media_player/info", "mp_info.png", 16, 0);
+   GROUP_ICON("media_player/next", "mp_next.png", 16, 0);
+   GROUP_ICON("media_player/pause", "mp_pause.png", 16, 0);
+   GROUP_ICON("media_player/play", "mp_play.png", 16, 0);
+   GROUP_ICON("media_player/prev", "mp_prev.png", 16, 0);
+   GROUP_ICON("media_player/rewind", "mp_rewind.png", 16, 0);
+   GROUP_ICON("media_player/stop", "mp_stop.png", 16, 0);
 
 ///////////////////////////////////////////////////////////////////////////////
    group { name: "elm/toolbar/base/default";
@@ -36506,6 +36448,191 @@ collections {
    }
 
    group {
+      name: "elm/player/base/default";
+      min: 290 26;
+
+      parts {
+         part {
+            type: SWALLOW;
+            name: "media_player/slider";
+
+            description {
+               rel2 {
+                  relative: 1.0 0.0;
+                  to_x: "media_player/forward";
+               }
+            }
+         }
+         part {
+            type: SWALLOW;
+            name: "media_player/rewind";
+
+            description {
+               rel1 {
+                  to_y: "media_player/slider";
+                  offset: 42 0;
+                  relative: 0.0 1.0;
+               }
+               rel2 {
+                  relative: 0.0 1.0;
+               }
+            }
+         }
+         part {
+            type: SWALLOW;
+            name: "media_player/prev";
+
+            description {
+               rel1 {
+                  to: "media_player/rewind";
+                  relative: 1.0 0.0;
+               }
+               rel2 {
+                  to: "media_player/rewind";
+                  relative: 2.0 1.0;
+               }
+            }
+         }
+         part {
+            type: SWALLOW;
+            name: "media_player/play";
+
+            description {
+               rel1 {
+                  to: "media_player/prev";
+                  relative: 1.0 0.0;
+               }
+               rel2 {
+                  to: "media_player/prev";
+                  relative: 2.0 1.0;
+               }
+            }
+            description {
+               state: hidden 0.0;
+               inherit: default 0.0;
+               visible: 0;
+            }
+         }
+         part {
+            type: SWALLOW;
+            name: "media_player/pause";
+
+            description {
+               rel1.to: "media_player/play";
+               rel2.to: "media_player/play";
+            }
+            description {
+               state: hidden 0.0;
+               inherit: default 0.0;
+               visible: 0;
+            }
+         }
+         part {
+            type: SWALLOW;
+            name: "media_player/info";
+            description {
+               rel1 {
+                  to: "media_player/play";
+                  relative: 1.0 0.0;
+               }
+               rel2 {
+                  to: "media_player/play";
+                  relative: 2.0 1.0;
+               }
+            }
+         }
+
+         part {
+            type: SWALLOW;
+            name: "media_player/stop";
+            description {
+               rel1 {
+                  to: "media_player/info";
+                  relative: 3.0 0.0;
+               }
+               rel2 {
+                  to: "media_player/info";
+                  relative: 4.0 1.0;
+               }
+            }
+         }
+         part {
+            type: SWALLOW;
+            name: "media_player/next";
+            description {
+               rel1 {
+                  to: "media_player/stop";
+                  relative: 1.0 0.0;
+               }
+               rel2 {
+                  to: "media_player/stop";
+                  relative: 2.0 1.0;
+               }
+            }
+         }
+         part {
+            type: SWALLOW;
+            name: "media_player/forward";
+            description {
+               rel1 {
+                  to: "media_player/next";
+                  relative: 1.0 0.0;
+               }
+               rel2 {
+                  to: "media_player/next";
+                  relative: 2.0 1.0;
+               }
+            }
+         }
+      }
+      programs {
+         program {
+            signal: "show";
+            source: "";
+            after: "pause/0";
+         }
+         program {
+            signal: "elm,player,play";
+            source: "elm";
+            after: "play/0";
+         }
+         program {
+            signal: "elm,player,pause";
+            source: "elm";
+            after: "pause/0";
+         }
+         program {
+            name: "play/0";
+
+            action: STATE_SET "hidden" 0.0;
+            target: "media_player/play";
+
+            after: "play/1";
+         }
+         program {
+            name: "play/1";
+
+            action: STATE_SET "default" 0.0;
+            target: "media_player/pause";
+         }
+         program {
+            name: "pause/0";
+
+            action: STATE_SET "hidden" 0.0;
+            target: "media_player/pause";
+
+            after: "pause/1";
+         }
+         program {
+            name: "pause/1";
+
+            action: STATE_SET "default" 0.0;
+            target: "media_player/play";
+         }
+      }
+   }
+
+   group {
       name: "elm/video/base/default";
 
       parts {
@@ -36526,7 +36653,8 @@ collections {
             type: SWALLOW;
 
             clip_to: "clipper";
-            mouse_events: 0;
+            mouse_events: 1;
+            repeat_events: 1;
 
             description {
                aspect_preference: BOTH;

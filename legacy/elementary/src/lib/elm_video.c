@@ -251,6 +251,13 @@ _suspend_cb(void *data)
 }
 #endif
 
+Eina_Bool
+_elm_video_check(Evas_Object *video)
+{
+  ELM_CHECK_WIDTYPE(video, widtype) EINA_FALSE;
+  return EINA_TRUE;
+}
+
 EAPI Evas_Object *
 elm_video_add(Evas_Object *parent)
 {
@@ -426,6 +433,20 @@ elm_video_is_playing(Evas_Object *video)
    Widget_Data *wd = elm_widget_data_get(video);
 
    return emotion_object_play_get(wd->emotion);
+#else
+   (void) video;
+   return EINA_FALSE;
+#endif
+}
+
+EAPI Eina_Bool
+elm_video_is_seekable(Evas_Object *video)
+{
+#ifdef HAVE_EMOTION
+   ELM_CHECK_WIDTYPE(video, widtype) EINA_FALSE;
+   Widget_Data *wd = elm_widget_data_get(video);
+
+   return emotion_object_seekable_get(wd->emotion);
 #else
    (void) video;
    return EINA_FALSE;

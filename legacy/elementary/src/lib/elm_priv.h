@@ -216,6 +216,9 @@ Evas_Object        *_elm_scroller_edje_object_get(Evas_Object *obj);
 char               *_elm_util_mkup_to_text(const char *mkup);
 char               *_elm_util_text_to_mkup(const char *text);
 
+Eina_Bool           _elm_video_check(Evas_Object *video);
+
+
 extern char        *_elm_appname;
 extern Elm_Config  *_elm_config;
 extern const char  *_elm_data_dir;
