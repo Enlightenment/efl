@@ -2784,7 +2784,10 @@ _newest_focus_order_get(Evas_Object  *obj,
    Evas_Object *child, *ret, *best;
 
    API_ENTRY return NULL;
-   if (!evas_object_visible_get(obj)) return NULL;
+
+   if ((!evas_object_visible_get(obj)) || (elm_widget_disabled_get(obj)))
+     return NULL;
+
    best = NULL;
    if (*newest_focus_order < sd->focus_order)
      {
