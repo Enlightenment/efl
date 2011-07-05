@@ -61,6 +61,63 @@ body {
 	background-repeat: repeat-x;
 }
 
+/****************************/
+/* Top main menu            */
+/****************************/
+#header_logo {
+   background-image        : url(logo.png);
+   width                   : 61px;
+}
+
+#header_logo a {
+   position                : absolute;
+   border                  : 0px;
+   background-color        : transparent;
+   top                     : 0px;
+   width                   : 60px;
+   height                  : 60px;
+}
+
+#header_menu {
+   background-image        : url(header_menu_background.png);
+   font                    : normal 10pt verdana,'Bitstream Vera Sans',helvetica,arial,sans-serif;
+   text-align              : right;
+}
+
+#header_last {
+   background-image        : url(header_menu_background_last.png);
+   width                   : 15px;
+}
+
+td.nav_passive {
+   background              : url(header_menu_unselected_background.png) 0 0 no-repeat;
+   height                  : 63px;
+   font-family             : "Bitstream Vera","Vera","Trebuchet MS",Trebuchet,Tahoma,sans-serif;
+   font-size               : 11px;
+   padding                 : 20px 10px 20px 10px;
+   vertical-align          : middle;
+}
+
+td.nav_active {
+   background              : url(header_menu_current_background.png) 0 0 no-repeat;
+   height                  : 63px;
+   color                   : #646464;
+   font-family             : "Bitstream Vera","Vera","Trebuchet MS",Trebuchet,Tahoma,sans-serif;
+   font-size               : 11px;
+   font-weight             : bold;
+   padding                 : 20px 10px 20px 10px;
+   vertical-align          : middle;
+}
+
+#header_menu a {
+   display                 : block;
+   text-decoration         : none;
+   cursor                  : pointer;
+   color                   : #cdcdcd;
+}
+
+
+
 #header {
 	width: 100%;
 	height: 102px;
@@ -69,8 +126,6 @@ body {
 #header h1 {
 	width: 63px;
 	height: 63px;
-	background-image: url(e.png);
-	background-repeat: no-repeat;
 	position: absolute;
 	margin: 0px;
 }
