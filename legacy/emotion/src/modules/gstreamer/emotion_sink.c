@@ -222,14 +222,12 @@ gboolean evas_video_sink_set_caps(GstBaseSink *bsink, GstCaps *caps)
      {
       case GST_VIDEO_FORMAT_I420:
          evas_object_image_size_set(priv->o, priv->width, priv->height);
-         evas_object_image_fill_set(priv->o, 0, 0, priv->width, priv->height);
          evas_object_image_colorspace_set(priv->o, EVAS_COLORSPACE_YCBCR422P601_PL);
          evas_object_image_alpha_set(priv->o, 0);
          printf ("I420\n");
          break;
       case GST_VIDEO_FORMAT_YV12:
          evas_object_image_size_set(priv->o, priv->width, priv->height);
-         evas_object_image_fill_set(priv->o, 0, 0, priv->width, priv->height);
          evas_object_image_colorspace_set(priv->o, EVAS_COLORSPACE_YCBCR422P601_PL);
          evas_object_image_alpha_set(priv->o, 0);
          printf ("YV12\n");
@@ -375,6 +373,7 @@ static void evas_video_sink_render_handler(void *data,
    const guint8 *gst_data;
    GstQuery *query;
    GstFormat fmt = GST_FORMAT_TIME;
+   Evas_Coord w, h;
    gint64 pos;
 
    sink = (EvasVideoSink *)data;
@@ -392,6 +391,13 @@ static void evas_video_sink_render_handler(void *data,
         evas_object_image_size_set(priv->o, priv->width, priv->height);
         if (!priv->preroll) priv->update_size = FALSE;
      }
+
+   // This prevent a race condition when data are still in the pipe
+   // but the buffer size as changed because of a request from
+   // emotion smart (like on a file set).
+   evas_object_image_size_get(priv->o, &w, &h);
+   if (w != priv->width || h != priv->height)
+     return ;
 
    evas_data = (unsigned char *)evas_object_image_data_get(priv->o, 1);
 
