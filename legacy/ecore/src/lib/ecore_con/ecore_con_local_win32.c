@@ -551,8 +551,7 @@ ecore_con_local_win32_client_del(Ecore_Con_Client *cl)
 Eina_Bool
 ecore_con_local_connect(Ecore_Con_Server *svr,
                         Eina_Bool (*cb_done)(void *data,
-                                             Ecore_Fd_Handler *fd_handler),
-                        void (*cb_free)(void *data, void *ev))
+                                             Ecore_Fd_Handler *fd_handler))
 {
    char buf[256];
    Ecore_Win32_Handler *handler_read;
@@ -647,19 +646,7 @@ ecore_con_local_connect(Ecore_Con_Server *svr,
         goto del_handler_peek;
      }
 
-   if (!svr->delete_me)
-     {
-        Ecore_Con_Event_Server_Add *e;
-
-        e = calloc(1, sizeof(Ecore_Con_Event_Server_Add));
-        if (e)
-          {
-             svr->event_count++;
-             e->server = svr;
-             ecore_event_add(ECORE_CON_EVENT_SERVER_ADD, e,
-                             cb_free, NULL);
-          }
-     }
+   if (!svr->delete_me) ecore_con_event_server_add(svr);
 
    ResumeThread(svr->thread_read);
 

@@ -479,15 +479,11 @@ ecore_con_server_connect(Ecore_Con_Type compl_type,
        (type == ECORE_CON_LOCAL_ABSTRACT))
      /* Local */
 #ifdef _WIN32
-     if (!ecore_con_local_connect(svr, _ecore_con_cl_handler,
-                                  _ecore_con_event_server_add_free))
-       goto
-       error;
+     if (!ecore_con_local_connect(svr, _ecore_con_cl_handler))
+       goto error;
 #else
-     if (!ecore_con_local_connect(svr, _ecore_con_cl_handler, svr,
-                                  _ecore_con_event_server_add_free))
-       goto
-       error;
+     if (!ecore_con_local_connect(svr, _ecore_con_cl_handler, svr))
+       goto error;
 #endif
 
    if ((type == ECORE_CON_REMOTE_TCP) ||

@@ -55,12 +55,9 @@ ecore_con_local_shutdown(void)
 }
 
 int
-ecore_con_local_connect(Ecore_Con_Server                                                   *svr,
-                        Eina_Bool                                                           (*cb_done)(void *data,
-                                                                          Ecore_Fd_Handler *fd_handler),
-                        void *data                                                          __UNUSED__,
-                        void                                                                (*cb_free)(void *data,
-                                                                          void             *ev))
+ecore_con_local_connect(Ecore_Con_Server *svr,
+                        Eina_Bool (*cb_done)(void *data, Ecore_Fd_Handler *fd_handler),
+                        void *data __UNUSED__)
 {
    char buf[4096];
    struct sockaddr_un socket_unix;
@@ -158,20 +155,7 @@ ecore_con_local_connect(Ecore_Con_Server                                        
    if (!svr->fd_handler)
      return 0;
 
-   if (!svr->delete_me)
-     {
-        /* we got our server! */
-         Ecore_Con_Event_Server_Add *e;
-
-         e = calloc(1, sizeof(Ecore_Con_Event_Server_Add));
-         if (e)
-           {
-              svr->event_count++;
-              e->server = svr;
-              ecore_event_add(ECORE_CON_EVENT_SERVER_ADD, e,
-                              cb_free, NULL);
-           }
-     }
+   if (!svr->delete_me) ecore_con_event_server_add(svr);
 
    return 1;
 }
