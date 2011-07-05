@@ -40,7 +40,7 @@
 # endif
 #endif
 
-#define FIX_HZ 1
+//#define FIX_HZ 1
 
 #ifdef FIX_HZ
 # ifndef _MSC_VER
