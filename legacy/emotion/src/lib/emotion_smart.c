@@ -1030,7 +1030,7 @@ _eio_load_xattr_done(void *data, Eio_File *handler, const char *xattr_data, unsi
 {
    Smart_Data *sd = data;
 
-   if (xattr_size < 128 && xattr_data[xattr_size] == '\0')
+   if (xattr_size < 128 && xattr_data[xattr_size - 1] == '\0')
      {
         long long int m = 0;
         long int e = 0;
