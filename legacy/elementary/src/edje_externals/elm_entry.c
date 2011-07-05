@@ -1,3 +1,5 @@
+#include <assert.h>
+
 #include "private.h"
 
 typedef struct _Elm_Params_Entry
@@ -18,13 +20,34 @@ typedef struct _Elm_Params_Entry
    Eina_Bool vertical_bounce_exists:1;
    Eina_Bool editable:1;
    Eina_Bool editable_exists:1;
+   const char *line_wrap;
 } Elm_Params_Entry;
+
+#define CHOICE_GET(CHOICES, STR)                \
+  unsigned int i;                               \
+  for (i = 0; i < sizeof(CHOICES); i++)         \
+    if (strcmp(STR, CHOICES[i]) == 0)           \
+      return i
+
+
+static const char *entry_line_wrap_choices[] = {"none", "char", "word",
+                                          "mixed", NULL};
+
+static Elm_Wrap_Type
+_entry_line_wrap_choices_setting_get(const char *line_wrap_str)
+{
+   assert(sizeof(entry_line_wrap_choices)/
+          sizeof(entry_line_wrap_choices[0]) == ELM_WRAP_LAST + 1);
+   CHOICE_GET(entry_line_wrap_choices, line_wrap_str);
+   return ELM_WRAP_LAST;
+}
 
 static void
 external_entry_state_set(void *data __UNUSED__, Evas_Object *obj, const void *from_params, const void *to_params, float pos __UNUSED__)
 {
    const Elm_Params_Entry *p;
    Eina_Bool hbounce, vbounce;
+   Elm_Wrap_Type line_wrap;
 
    if (to_params) p = to_params;
    else if (from_params) p = from_params;
@@ -54,6 +77,11 @@ external_entry_state_set(void *data __UNUSED__, Evas_Object *obj, const void *fr
      }
    if (p->editable_exists)
      elm_entry_editable_set(obj, p->editable);
+   if (p->line_wrap)
+     {
+        line_wrap = _entry_line_wrap_choices_setting_get(p->line_wrap);
+        elm_entry_line_wrap_set(obj, line_wrap);
+     }
 }
 
 static Eina_Bool
@@ -135,6 +163,17 @@ external_entry_param_set(void *data __UNUSED__, Evas_Object *obj, const Edje_Ext
         if (param->type == EDJE_EXTERNAL_PARAM_TYPE_BOOL)
           {
              elm_entry_editable_set(obj, param->i);
+             return EINA_TRUE;
+          }
+     }
+   else if (!strcmp(param->name, "line wrap"))
+     {
+        if (param->type == EDJE_EXTERNAL_PARAM_TYPE_STRING)
+          {
+             Elm_Wrap_Type line_wrap;
+             line_wrap = _entry_line_wrap_choices_setting_get(param->s);
+             if (line_wrap == ELM_WRAP_LAST) return EINA_FALSE;
+             elm_entry_line_wrap_set(obj, line_wrap);
              return EINA_TRUE;
           }
      }
@@ -221,6 +260,16 @@ external_entry_param_get(void *data __UNUSED__, const Evas_Object *obj, Edje_Ext
              return EINA_TRUE;
           }
      }
+   else if (!strcmp(param->name, "line wrap"))
+     {
+        if (param->type == EDJE_EXTERNAL_PARAM_TYPE_STRING)
+          {
+             Elm_Wrap_Type line_wrap;
+             line_wrap = elm_entry_line_wrap_get(obj);
+             param->s = entry_line_wrap_choices[line_wrap];
+             return EINA_TRUE;
+          }
+     }
 
    ERR("unknown parameter '%s' of type '%s'",
        param->name, edje_external_param_type_str(param->type));
@@ -281,6 +330,8 @@ external_entry_params_parse(void *data __UNUSED__, Evas_Object *obj, const Eina_
              mem->editable = !!param->i;
              mem->editable_exists = EINA_TRUE;
           }
+        else if (!strcmp(param->name, "line wrap"))
+          mem->line_wrap = eina_stringshare_add(param->s);
      }
 
    return mem;
@@ -301,6 +352,8 @@ external_entry_params_free(void *params)
      eina_stringshare_del(mem->label);
    if (mem->entry)
      eina_stringshare_del(mem->entry);
+   if (mem->line_wrap)
+     eina_stringshare_del(mem->line_wrap);
    free(params);
 }
 
@@ -315,6 +368,7 @@ static Edje_External_Param_Info external_entry_params[] = {
    EDJE_EXTERNAL_PARAM_INFO_BOOL("horizontal bounce"),
    EDJE_EXTERNAL_PARAM_INFO_BOOL("vertical bounce"),
    EDJE_EXTERNAL_PARAM_INFO_BOOL("editable"),
+   EDJE_EXTERNAL_PARAM_INFO_STRING("line_wrap"),
    EDJE_EXTERNAL_PARAM_INFO_SENTINEL
 };
 
