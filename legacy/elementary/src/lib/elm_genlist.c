@@ -2119,6 +2119,7 @@ _item_realize(Elm_Genlist_Item *it,
    //evas_event_thaw_eval(evas_object_evas_get(it->wd->obj));
    if (!calc)
      evas_object_smart_callback_call(it->base.widget, SIG_REALIZED, it);
+   edje_object_message_signal_process(it->base.view);
 }
 
 static void
