@@ -485,8 +485,23 @@ _ecore_main_gsource_prepare(GSource *source __UNUSED__, gint *next_time)
 static gboolean
 _ecore_main_gsource_check(GSource *source __UNUSED__)
 {
+   gboolean ret = FALSE;
+
    in_main_loop++;
 
+   /* check if old timers expired */
+   if (ecore_idling && !_ecore_idler_exist())
+     {
+        if (_ecore_timers_exists())
+          {
+             double next_time = _ecore_timer_next_get();
+             ret = _ecore_timers_exists() && (0.0 >= next_time);
+          }
+     }
+   else
+        ret = TRUE;
+
+   /* check if fds are ready */
    ecore_fds_ready = (_ecore_main_fdh_poll_mark_active() > 0);
    _ecore_main_fd_handlers_cleanup();
 
@@ -495,7 +510,7 @@ _ecore_main_gsource_check(GSource *source __UNUSED__)
 
    in_main_loop--;
 
-   return TRUE; /* always dispatch */
+   return ret || ecore_fds_ready;
 }
 
 /* like we just came out of main_loop_select in  _ecore_main_select */
