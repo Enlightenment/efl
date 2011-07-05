@@ -764,6 +764,11 @@ _ecore_thread_worker_new(void)
 void
 _ecore_thread_init(void)
 {
+#ifdef EFL_HAVE_THREADS
+   main_loop_thread = PHS();
+   have_main_loop_thread = 1;
+#endif
+
    _ecore_thread_count_max = eina_cpu_count();
    if (_ecore_thread_count_max <= 0)
      _ecore_thread_count_max = 1;
@@ -773,8 +778,6 @@ _ecore_thread_init(void)
 
 #ifdef EFL_HAVE_THREADS
    del_handler = ecore_event_handler_add(ECORE_THREAD_PIPE_DEL, _ecore_thread_pipe_del, NULL);
-   main_loop_thread = PHS();
-   have_main_loop_thread = 1;
 
    LKI(_ecore_pending_job_threads_mutex);
    LRWKI(_ecore_thread_global_hash_lock);
@@ -840,6 +843,22 @@ _ecore_thread_shutdown(void)
 
    eina_array_free(_ecore_thread_pipe);
    _ecore_thread_pipe = NULL;
+}
+
+void
+_ecore_thread_assert_main_loop_thread(const char *function)
+{
+   Eina_Bool good;
+#ifdef EFL_HAVE_THREADS
+   good = (main_loop_thread == PHS());
+#else
+   good = Eina_True;
+#endif
+   if (!good)
+     {
+        EINA_LOG_CRIT("Call to %s from wrong thread!", function);
+        abort();
+     }
 }
 
 /**

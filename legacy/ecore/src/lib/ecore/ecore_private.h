@@ -185,6 +185,9 @@ void          _ecore_fps_debug_runtime_add(double t);
 
 void _ecore_thread_init(void);
 void _ecore_thread_shutdown(void);
+void _ecore_thread_assert_main_loop_thread(const char *function);
+
+#define ECORE_MAIN_LOOP_ASSERT() _ecore_thread_assert_main_loop_thread(__FUNCTION__)
 
 void _ecore_glib_init(void);
 void _ecore_glib_shutdown(void);

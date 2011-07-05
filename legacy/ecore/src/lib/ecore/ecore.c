@@ -120,8 +120,8 @@ ecore_init(void)
    if (_ecore_fps_debug) _ecore_fps_debug_init();
    _ecore_main_loop_init();
    _ecore_signal_init();
-   _ecore_exe_init();
    _ecore_thread_init();
+   _ecore_exe_init();
    _ecore_glib_init();
    _ecore_job_init();
    _ecore_time_init();
