@@ -58,7 +58,7 @@ main(int argc, const char *argv[])
 
    eina_init();
 
-   phone_book = eina_hash_string_superfast_new(_phone_entry_free_cb);
+   phone_book = eina_hash_string_djb2_new(_phone_entry_free_cb);
 
    // Add initial entries to our hash
    for (i = 0; _start_entries[i].name != NULL; i++)

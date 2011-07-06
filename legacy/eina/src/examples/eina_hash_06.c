@@ -13,18 +13,18 @@
  */
 
 struct _Phone_Entry {
-     const char *name; // Full name.
+     int64_t id; // Full name.
      const char *number; // Phone number.
 };
 
 typedef struct _Phone_Entry Phone_Entry;
 
 static Phone_Entry _start_entries[] = {
-       { "Wolfgang Amadeus Mozart", "+01 23 456-78910" },
-       { "Ludwig van Beethoven", "+12 34 567-89101" },
-       { "Richard Georg Strauss", "+23 45 678-91012" },
-       { "Heitor Villa-Lobos", "+34 56 789-10123" },
-       { NULL, NULL }
+       { 1, "+01 23 456-78910" },
+       { 2, "+12 34 567-89101" },
+       { 3, "+23 45 678-91012" },
+       { 4, "+34 56 789-10123" },
+       { -1, NULL }
 }; // _start_entries
 
 static void
@@ -37,9 +37,9 @@ static Eina_Bool
 _phone_book_foreach_cb(const Eina_Hash *phone_book, const void *key,
 		       void *data, void *fdata)
 {
-   const char *name = key;
+   const int64_t *id = key;
    const char *number = data;
-   printf("%s: %s\n", name, number);
+   printf("%ld: %s\n", *id, number);
 
    // Return EINA_FALSE to stop this callback from being called
    return EINA_TRUE;
@@ -50,7 +50,7 @@ main(int argc, const char *argv[])
 {
    Eina_Hash *phone_book = NULL;
    int i;
-   const char *entry_name = "Heitor Villa-Lobos";
+   int64_t entry_id = 4;
    char *phone = NULL;
    Eina_Bool r;
    Eina_Iterator *it;
@@ -58,44 +58,46 @@ main(int argc, const char *argv[])
 
    eina_init();
 
-   phone_book = eina_hash_string_superfast_new(_phone_entry_free_cb);
+   phone_book = eina_hash_int64_new(_phone_entry_free_cb);
 
    // Add initial entries to our hash
-   for (i = 0; _start_entries[i].name != NULL; i++)
+   for (i = 0; _start_entries[i].id != -1; i++)
      {
-	eina_hash_add(phone_book, _start_entries[i].name,
+	eina_hash_add(phone_book, &_start_entries[i].id,
 		      strdup(_start_entries[i].number));
      }
 
    // Look for a specific entry and get its phone number
-   phone = eina_hash_find(phone_book, entry_name);
+   phone = eina_hash_find(phone_book, &entry_id);
    if (phone)
      {
 	printf("Printing entry.\n");
-	printf("Name: %s\n", entry_name);
+	printf("Id: %ld\n", entry_id);
 	printf("Number: %s\n\n", phone);
      }
 
    // Delete this entry
-   r = eina_hash_del(phone_book, entry_name, NULL);
+   r = eina_hash_del(phone_book, &entry_id, NULL);
    printf("Hash entry successfully deleted? %d\n\n", r);
 
    // Modify the pointer data of an entry and free the old one
-   phone = eina_hash_modify(phone_book, "Richard Georg Strauss",
+   int64_t id3 = 3;
+   phone = eina_hash_modify(phone_book, &id3,
 			    strdup("+23 45 111-11111"));
    free(phone);
 
    // Modify or add an entry to the hash with eina_hash_set
    // Let's first add a new entry
+   int64_t id5 = 5;
    eina_error_set(0);
-   phone = eina_hash_set(phone_book, "Raul Seixas",
+   phone = eina_hash_set(phone_book, &id5,
 			 strdup("+55 01 234-56789"));
    if (!phone)
      {
 	Eina_Error err = eina_error_get();
 	if (!err)
 	  {
-	     printf("No previous phone found for Raul Seixas. ");
+	     printf("No previous phone found for id5. ");
 	     printf("Creating new entry.\n");
 	  }
 	else
@@ -103,7 +105,7 @@ main(int argc, const char *argv[])
      }
    else
      {
-	printf("Old phone for Raul Seixas was %s\n", phone);
+	printf("Old phone for id5 was %s\n", phone);
 	free(phone);
      }
 
@@ -111,11 +113,11 @@ main(int argc, const char *argv[])
 
    // Now change the phone number
    eina_error_set(0);
-   phone = eina_hash_set(phone_book, "Raul Seixas",
+   phone = eina_hash_set(phone_book, &id5,
 			 strdup("+55 02 222-22222"));
    if (phone)
      {
-	printf("Changing phone for Raul Seixas to +55 02 222-22222. ");
+	printf("Changing phone for id5 to +55 02 222-22222. ");
 	printf("Old phone was %s\n", phone);
 	free(phone);
      }
@@ -123,10 +125,10 @@ main(int argc, const char *argv[])
      {
 	Eina_Error err = eina_error_get();
 	if (err)
-	  printf("Error when changing phone for Raul Seixas\n");
+	  printf("Error when changing phone for id5\n");
 	else
 	  {
-	     printf("No previous phone found for Raul Seixas. ");
+	     printf("No previous phone found for id5. ");
 	     printf("Creating new entry.\n");
 	  }
      }
@@ -143,20 +145,20 @@ main(int argc, const char *argv[])
    while (eina_iterator_next(it, &data))
      {
 	Eina_Hash_Tuple *t = data;
-	const char *name = t->key;
+	const int64_t *id = t->key;
 	const char *number = t->data;
-	printf("%s: %s\n", name, number);
+	printf("%ld: %s\n", *id, number);
      }
    eina_iterator_free(it); // Always free the iterator after its use
    printf("\n");
 
    // Just iterate over the keys (names)
-   printf("List of names in the phone book:\n");
+   printf("List of ids in the phone book:\n");
    it = eina_hash_iterator_key_new(phone_book);
    while (eina_iterator_next(it, &data))
      {
-	const char *name = data;
-	printf("%s\n", name);
+	const int64_t *id = data;
+	printf("%ld\n", *id);
      }
    eina_iterator_free(it);
    printf("\n");
@@ -177,7 +179,8 @@ main(int argc, const char *argv[])
 	  eina_hash_population(phone_book));
 
    // Change the name (key) on an entry
-   eina_hash_move(phone_book, "Raul Seixas", "Alceu Valenca");
+   int64_t id6 = 6;
+   eina_hash_move(phone_book, &id5, &id6);
    printf("List of phones after change:\n");
    eina_hash_foreach(phone_book, _phone_book_foreach_cb, NULL);
    printf("\n");
