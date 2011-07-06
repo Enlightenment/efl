@@ -63,9 +63,15 @@
 # include <sys/epoll.h>
 #endif
 
+#ifdef HAVE_SYS_TIMERFD_H
+#include <sys/timerfd.h>
+#endif
+
 #ifdef USE_G_MAIN_LOOP
 # include <glib.h>
 #endif
+
+#define NS_PER_SEC (1000.0 * 1000.0 * 1000.0)
 
 struct _Ecore_Fd_Handler
 {
@@ -157,6 +163,9 @@ static double            t1 = 0.0;
 static double            t2 = 0.0;
 #endif
 
+#ifdef HAVE_TIMERFD_CREATE
+static int timer_fd = -1;
+#endif
 #ifdef HAVE_EPOLL
 static int epoll_fd = -1;
 static pid_t epoll_pid;
@@ -165,6 +174,9 @@ static pid_t epoll_pid;
 #ifdef USE_G_MAIN_LOOP
 #ifdef HAVE_EPOLL
 static GPollFD ecore_epoll_fd;
+#endif
+#ifdef HAVE_TIMERFD_CREATE
+static GPollFD ecore_timer_fd;
 #endif
 static GSource *ecore_glib_source;
 static guint ecore_glib_source_id;
@@ -462,8 +474,37 @@ _ecore_main_gsource_prepare(GSource *source __UNUSED__, gint *next_time)
           {
              if (_ecore_timers_exists())
                {
+                  int r = -1;
                   double t = _ecore_timer_next_get();
-                  *next_time = ceil(t * 1000.0);
+#ifdef HAVE_TIMERFD_CREATE
+                  if (timer_fd >= 0)
+                    {
+                       struct itimerspec ts;
+
+                       ts.it_interval.tv_sec = 0;
+                       ts.it_interval.tv_nsec = 0;
+                       ts.it_value.tv_sec = t;
+                       ts.it_value.tv_nsec = fmod(t*NS_PER_SEC, NS_PER_SEC);
+
+                       /* timerfd cannot sleep for 0 time */
+                       if (ts.it_value.tv_sec && ts.it_value.tv_nsec)
+                         {
+                            r = timerfd_settime(timer_fd, 0, &ts, NULL);
+                            if (r < 0)
+                              {
+                                 ERR("timer set returned %d (errno=%d)", r, errno);
+                                 close(timer_fd);
+                                 timer_fd = -1;
+                              }
+                            else
+                              INF("sleeping for %ld s %06ldus",
+                                  ts.it_value.tv_sec,
+                                  ts.it_value.tv_nsec/1000);
+                         }
+                    }
+#endif
+                  if (r == -1)
+                    *next_time = ceil(t * 1000.0);
                }
              else
                *next_time = -1;
@@ -492,11 +533,27 @@ _ecore_main_gsource_check(GSource *source __UNUSED__)
    /* check if old timers expired */
    if (ecore_idling && !_ecore_idler_exist())
      {
-        if (_ecore_timers_exists())
+#ifdef HAVE_TIMERFD_CREATE
+        if (timer_fd >= 0)
           {
-             double next_time = _ecore_timer_next_get();
-             ret = _ecore_timers_exists() && (0.0 >= next_time);
+             uint64_t count = 0;
+             int r = read(timer_fd, &count, sizeof count);
+             if (r == -1 && errno == EAGAIN)
+               INF("timer not ready");
+             else if (r == sizeof count)
+               {
+                  INF("woke %d times", (int)count);
+                  ret = TRUE;
+               }
+             else
+               {
+                  /* unexpected things happened... fail back to old way */
+                  ERR("timer read returned %d (errno=%d)", r, errno);
+                  close(timer_fd);
+                  timer_fd = -1;
+               }
           }
+#endif
      }
    else
         ret = TRUE;
@@ -505,10 +562,19 @@ _ecore_main_gsource_check(GSource *source __UNUSED__)
    ecore_fds_ready = (_ecore_main_fdh_poll_mark_active() > 0);
    _ecore_main_fd_handlers_cleanup();
 
+   /* check timers after updating loop time */
    _ecore_time_loop_time = ecore_time_get();
+   if (!ret && _ecore_timers_exists())
+     {
+        double next_time = _ecore_timer_next_get();
+        ret = _ecore_timers_exists() && (0.0 >= next_time);
+     }
    _ecore_timer_enable_new();
 
    in_main_loop--;
+
+   if (!(ret || ecore_fds_ready))
+     INF("nothing was ready");
 
    return ret || ecore_fds_ready;
 }
@@ -609,18 +675,35 @@ _ecore_main_loop_init(void)
 
 #endif
 
+   /* setup for the g_main_loop only integration */
 #ifdef USE_G_MAIN_LOOP
    ecore_glib_source = g_source_new(&ecore_gsource_funcs, sizeof (GSource));
    if (!ecore_glib_source)
       CRIT("Failed to create glib source for epoll!");
    else
      {
+        /* epoll multiplexes fds into the g_main_loop */
 #ifdef HAVE_EPOLL
         ecore_epoll_fd.fd = epoll_fd;
         ecore_epoll_fd.events = G_IO_IN;
         ecore_epoll_fd.revents = 0;
         g_source_add_poll(ecore_glib_source, &ecore_epoll_fd);
 #endif
+
+       /* timerfd gives us better than millisecond accuracy in g_main_loop */
+#ifdef HAVE_TIMERFD_CREATE
+       timer_fd = timerfd_create(CLOCK_MONOTONIC, TFD_NONBLOCK);
+       if (timer_fd < 0)
+          ERR("failed to create timer fd!");
+       else
+         {
+            ecore_timer_fd.fd = timer_fd;
+            ecore_timer_fd.events = G_IO_IN;
+            ecore_timer_fd.revents = 0;
+            g_source_add_poll(ecore_glib_source, &ecore_timer_fd);
+         }
+#endif
+
         ecore_glib_source_id = g_source_attach(ecore_glib_source, NULL);
         if (ecore_glib_source_id <= 0)
            CRIT("Failed to attach glib source to default context");
@@ -647,6 +730,14 @@ _ecore_main_loop_shutdown(void)
      }
 
     epoll_pid = 0;
+#endif
+
+#ifdef HAVE_TIMERFD_CREATE
+   if (timer_fd >= 0)
+     {
+        close(timer_fd);
+        timer_fd = -1;
+     }
 #endif
 }
 

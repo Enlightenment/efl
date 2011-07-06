@@ -946,6 +946,9 @@ if test "x${want_epoll}" = "xyes" ; then
   AC_CHECK_HEADERS([sys/epoll.h])
 fi
 
+# timerfd_create
+AC_CHECK_HEADERS([sys/timerfd.h])
+AC_CHECK_FUNCS(timerfd_create)
 
 # thread support
 
