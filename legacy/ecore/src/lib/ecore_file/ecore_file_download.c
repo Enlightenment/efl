@@ -286,7 +286,7 @@ _ecore_file_download_url_complete_cb(void *data __UNUSED__, int type __UNUSED__,
    if (!ECORE_MAGIC_CHECK(job, ECORE_MAGIC_FILE_DOWNLOAD_JOB)) return ECORE_CALLBACK_PASS_ON;
 
    if (job->completion_cb)
-     job->completion_cb(ecore_con_url_data_get(job->url_con), job->dst, !ev->status);
+     job->completion_cb(ecore_con_url_data_get(job->url_con), job->dst, ev->status);
 
    _job_list = eina_list_remove(_job_list, job);
    fclose(job->file);
