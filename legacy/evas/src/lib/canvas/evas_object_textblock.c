@@ -4045,7 +4045,11 @@ _layout(const Evas_Object *obj, int w, int h, int *w_ret, int *h_ret)
       EINA_INLIST_GET(c->paragraphs)->last;
    if (!c->par->logical_items)
      {
-        _layout_text_append(c, c->fmt, NULL, 0, 0, NULL);
+        Evas_Object_Textblock_Text_Item *ti;
+        ti = _layout_text_item_new(c, c->fmt);
+        ti->parent.text_node = o->text_nodes;
+        ti->parent.text_pos = 0;
+        _layout_text_add_logical_item(c, ti, NULL);
      }
 
    /* End of logical layout creation */
