@@ -563,6 +563,8 @@ _on_keydown(void        *data __UNUSED__,
 int
 main(void)
 {
+   Eina_Bool ret;
+
    srand(time(NULL));
 
    if (!ecore_evas_init())
@@ -592,7 +594,15 @@ main(void)
    evas_object_resize(d.smt, WIDTH / 2, HEIGHT / 2);
    evas_object_show(d.smt);
 
+   ret = evas_object_smart_type_check(d.smt, _evas_smart_example_type);
+   fprintf(stdout, "Adding smart object of type \"%s\" to the canvas: %s.\n",
+           _evas_smart_example_type, ret ? "success" : "failure");
+
    d.clipper = evas_object_smart_clipped_clipper_get(d.smt);
+   fprintf(stdout, "Checking if clipped smart object's clipper is a "
+           "\"static\" one: %s\n", evas_object_static_clip_get(d.clipper) ?
+           "yes" : "no");
+
    evas_object_color_set(
      d.clipper, clipper_colors[cur_color].r, clipper_colors[cur_color].g,
      clipper_colors[cur_color].b, clipper_colors[cur_color].a);

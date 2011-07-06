@@ -4996,7 +4996,36 @@ EAPI Evas_Render_Op            evas_object_render_op_get        (const Evas_Obje
  */
    EAPI Eina_Bool                 evas_object_precise_is_inside_get(const Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
 
+/**
+ * Set a hint flag on the given Evas object that it's used as a "static
+ * clipper".
+ *
+ * @param obj The given object.
+ * @param is_static_clip @c EINA_TRUE if it's to be used as a static
+ * clipper, @c EINA_FALSE otherwise
+ *
+ * This is a hint to Evas that this object is used as a big static
+ * clipper and shouldn't be moved with children and otherwise
+ * considered specially. The default value for new objects is @c
+ * EINA_FALSE.
+ *
+ * @see evas_object_static_clip_get()
+ *
+ * @ingroup Evas_Object_Group_Extras
+ */
    EAPI void                      evas_object_static_clip_set      (Evas_Object *obj, Eina_Bool is_static_clip) EINA_ARG_NONNULL(1);
+
+/**
+ * Get the "static clipper" hint flag for a given Evas object.
+ *
+ * @param obj The given object.
+ * @returrn @c EINA_TRUE if it's set as a static clipper, @c
+ * EINA_FALSE otherwise
+ *
+ * @see evas_object_static_clip_set() for more details
+ *
+ * @ingroup Evas_Object_Group_Extras
+ */
    EAPI Eina_Bool                 evas_object_static_clip_get      (const Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
 
 /**
@@ -7743,16 +7772,24 @@ EAPI void              evas_object_polygon_points_clear  (Evas_Object *obj) EINA
 /**
  * @defgroup Evas_Smart_Group Smart Functions
  *
- * Functions that deal with Evas_Smart's, creating definition
+ * Functions that deal with #Evas_Smart structs, creating definition
  * (classes) of objects that will have customized behavior for methods
  * like evas_object_move(), evas_object_resize(),
  * evas_object_clip_set() and others.
  *
  * These objects will accept the generic methods defined in @ref
  * Evas_Object_Group and the extensions defined in @ref
- * Evas_Smart_Object_Group. There are couple of existent smart objects
- * in Evas itself, see @ref Evas_Object_Box, @ref Evas_Object_Table
- * and @ref Evas_Smart_Object_Clipped.
+ * Evas_Smart_Object_Group. There are a couple of existent smart
+ * objects in Evas itself (see @ref Evas_Object_Box, @ref
+ * Evas_Object_Table and @ref Evas_Smart_Object_Clipped).
+ *
+ * See also some @ref Example_Evas_Smart_Objects "examples" of this
+ * group of functions.
+ */
+
+/**
+ * @addtogroup Evas_Smart_Group
+ * @{
  */
 
 /**
@@ -7967,6 +8004,11 @@ struct _Evas_Smart_Cb_Description
  *    #Evas_Smart needed to create smart objects with this class,
  *    which should be passed to evas_object_smart_add().
  *
+ * @warning @p smart_name has to be a pointer to a globally available
+ * string! The smart class created here will just have a pointer set
+ * to that, and all object instances will depend on it for smart class
+ * name lookup.
+ *
  * @ingroup Evas_Smart_Group
  */
 #define EVAS_SMART_SUBCLASS_NEW(smart_name, prefix, api_type, parent_type, parent_func, cb_desc) \
@@ -8029,41 +8071,56 @@ struct _Evas_Smart_Cb_Description
 
 
 /**
- * Free an Evas_Smart
+ * Free an #Evas_Smart struct
  *
- * If this smart was created using evas_smart_class_new(), the associated
- * Evas_Smart_Class will not be freed.
+ * @param s the #Evas_Smart struct to free
  *
- * @param s the Evas_Smart to free
+ * @warning If this smart handle was created using
+ * evas_smart_class_new(), the associated #Evas_Smart_Class will not
+ * be freed.
  *
+ * @note If you're using the #EVAS_SMART_SUBCLASS_NEW schema to create your
+ * smart object, note that an #Evas_Smart handle will be shared amongst all
+ * instances of the given smart class, through a static variable.
+ * Evas will internally count references on #Evas_Smart handles and free them
+ * when they are not referenced anymore. Thus, this function is of no use
+ * for Evas users, most probably.
  */
 EAPI void                             evas_smart_free                     (Evas_Smart *s) EINA_ARG_NONNULL(1);
 
 /**
- * Creates an Evas_Smart from an Evas_Smart_Class.
+ * Creates a new #Evas_Smart from a given #Evas_Smart_Class struct
  *
  * @param sc the smart class definition
- * @return an Evas_Smart
+ * @return a new #Evas_Smart pointer
+ *
+ * #Evas_Smart handles are necessary to create new @b instances of
+ * smart objects belonging to the class described by @p sc. That
+ * handle will contain, besides the smart class interface definition,
+ * all its smart callbacks infrastructure set, too.
+ *
+ * @note If you are willing to subclass a given smart class to
+ * construct yours, consider using the #EVAS_SMART_SUBCLASS_NEW macro,
+ * which will make use of this function automatically for you.
  */
 EAPI Evas_Smart                      *evas_smart_class_new                (const Evas_Smart_Class *sc) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_MALLOC;
 
 /**
- * Get the Evas_Smart_Class of an Evas_Smart
+ * Get the #Evas_Smart_Class handle of an #Evas_Smart struct
  *
- * @param s the Evas_Smart
- * @return the Evas_Smart_Class
+ * @param s a valid #Evas_Smart pointer
+ * @return the #Evas_Smart_Class in it
  */
 EAPI const Evas_Smart_Class          *evas_smart_class_get                (const Evas_Smart *s) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
 
 
 /**
- * @brief Get the data pointer set on an Evas_Smart.
+ * @brief Get the data pointer set on an #Evas_Smart struct
  *
- * @param s Evas_Smart
+ * @param s a valid #Evas_Smart handle
  *
- * This data pointer is set either as the final parameter to
- * evas_smart_new or as the data field in the Evas_Smart_Class passed
- * in to evas_smart_class_new
+ * This data pointer is set as the data field in the #Evas_Smart_Class
+ * passed in to evas_smart_class_new().
  */
 EAPI void                            *evas_smart_data_get                 (const Evas_Smart *s) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
 
@@ -8166,6 +8223,10 @@ EAPI int                              evas_smart_usage_get(const Evas_Smart *s);
    * @ingroup Evas_Smart_Group
    */
 #define evas_smart_class_inherit(sc, parent_sc) evas_smart_class_inherit_full(sc, parent_sc, sizeof(*parent_sc))
+
+/**
+ * @}
+ */
 
 /**
  * @defgroup Evas_Smart_Object_Group Smart Object Functions
@@ -8272,19 +8333,43 @@ EAPI Eina_List        *evas_object_smart_members_get     (const Evas_Object *obj
 EAPI Evas_Object      *evas_object_smart_parent_get      (const Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
 
 /**
- * Checks the Smart type of the object and its parents
- * @param obj the Evas_Object to check the type of
- * @param type the type to check for
- * @return EINA_TRUE if @a obj or any of its parents if of type @a type, EINA_FALSE otherwise
+ * Checks whether a given smart object or any of its smart object
+ * parents is of a given smart class.
+ *
+ * @param obj An Evas smart object to check the type of
+ * @param type The @b name (type) of the smart class to check for
+ * @return @c EINA_TRUE, if @a obj or any of its parents is of type @a
+ * type, @c EINA_FALSE otherwise
+ *
+ * If @p obj is not a smart object, this call will fail
+ * immediately. Otherwise, make sure evas_smart_class_inherit() or its
+ * sibling functions were used correctly when creating the smart
+ * object's class, so it has a valid @b parent smart class pointer
+ * set.
+ *
+ * The checks use smart classes names and <b>string
+ * comparison</b>. There is a version of this same check using
+ * <b>pointer comparison</b>, since a smart class' name is a single
+ * string in Evas.
+ *
+ * @see evas_object_smart_type_check_ptr()
+ * @see #EVAS_SMART_SUBCLASS_NEW
+ *
  * @ingroup Evas_Smart_Object_Group
  */
 EAPI Eina_Bool         evas_object_smart_type_check      (const Evas_Object *obj, const char *type) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1, 2) EINA_PURE;
 
 /**
- * Checks the Smart type of the object and its parents using pointer comparison
- * @param obj the Evas_Object to check the type of
- * @param type the type to check for. Must be the name pointer in the smart class used to create the object
- * @return EINA_TRUE if @a obj or any of its parents if of type @a type, EINA_FALSE otherwise
+ * Checks whether a given smart object or any of its smart object
+ * parents is of a given smart class, <b>using pointer comparison</b>.
+ *
+ * @param obj An Evas smart object to check the type of
+ * @param type The type (name string) to check for. Must be the name
+ * @return @c EINA_TRUE, if @a obj or any of its parents is of type @a
+ * type, @c EINA_FALSE otherwise
+ *
+ * @see evas_object_smart_type_check() for more details
+ *
  * @ingroup Evas_Smart_Object_Group
  */
 EAPI Eina_Bool         evas_object_smart_type_check_ptr  (const Evas_Object *obj, const char *type) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1, 2) EINA_PURE;
@@ -8482,6 +8567,10 @@ EAPI void              evas_object_smart_changed         (Evas_Object *obj) EINA
  *       automatically call this function automatically, with @c
  *       EINA_TRUE as parameter.
  *
+ * @see evas_object_smart_need_recalculate_get()
+ * @see evas_object_smart_calculate()
+ * @see evas_smart_objects_calculate()
+ *
  * @ingroup Evas_Smart_Object_Group
  */
 EAPI void              evas_object_smart_need_recalculate_set(Evas_Object *obj, Eina_Bool value) EINA_ARG_NONNULL(1);
@@ -8498,6 +8587,8 @@ EAPI void              evas_object_smart_need_recalculate_set(Evas_Object *obj, 
  *       If it's not provided, then the flag will be left unchanged
  *       after the rendering phase.
  *
+ * @see evas_object_smart_need_recalculate_set(), for more details
+ *
  * @ingroup Evas_Smart_Object_Group
  */
 EAPI Eina_Bool         evas_object_smart_need_recalculate_get(const Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
@@ -8513,19 +8604,24 @@ EAPI Eina_Bool         evas_object_smart_need_recalculate_get(const Evas_Object 
  * flag on it telling it needs recalculation for the next rendering
  * phase.
  *
+ * @see evas_object_smart_need_recalculate_set()
+ *
  * @ingroup Evas_Smart_Object_Group
  */
 EAPI void              evas_object_smart_calculate       (Evas_Object *obj) EINA_ARG_NONNULL(1);
 
 /**
- * Call user provided calculate() and unset need_calculate on all objects.
+ * Call user-provided @c calculate() smart functions and unset the
+ * flag signalling that the object needs to get recalculated to @b all
+ * smart objects in the canvas.
  *
- * @param e The canvas to calculate all objects in
+ * @param e The canvas to calculate all smart objects in
+ *
+ * @see evas_object_smart_need_recalculate_set()
  *
  * @ingroup Evas_Smart_Object_Group
  */
 EAPI void              evas_smart_objects_calculate      (Evas *e);
-
 
 /**
  * Moves all children objects of a given smart object relative to a

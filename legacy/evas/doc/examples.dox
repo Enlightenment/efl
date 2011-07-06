@@ -610,6 +610,17 @@
  * the smart object and the children, if any, lie on their respective
  * quadrants.
  *
+ * After instantiating our smart object, we do some checks to exemplify
+ * some of the API on smart objects:
+ * @dontinclude evas-smart-object.c
+ * @skip ret = evas_object_smart_type_check
+ * @until "no"
+ * The evas_object_smart_type_check() one will assure we have the
+ * string naming our smart class really set to the live object. The
+ * evas_object_smart_clipped_clipper_get() exemplifyes usage of
+ * "static clippers" -- clipped smart objects have their global
+ * clippers flagged static.
+ *
  * As in other examples, to interact with this one there's a command
  * line interface, whose help string can be asked for with the 'h' key:
  *

@@ -1282,17 +1282,6 @@ evas_object_precise_is_inside_get(const Evas_Object *obj)
    return obj->precise_is_inside;
 }
 
-/**
- * Set a hint flag on the object that this is used as a static "clipper".
- * 
- * This is a hint to evas that this object is used as a big static clipper
- * and shouldn't be moved with children and otherwise considered specially. The
- * Default is off.
- * 
- * @param obj The given object.
- * @param is_static_clip The static clip flag (on or off)
- * @ingroup Evas_Object_Group_Extras
- */
 EAPI void
 evas_object_static_clip_set(Evas_Object *obj, Eina_Bool is_static_clip)
 {
@@ -1302,15 +1291,6 @@ evas_object_static_clip_set(Evas_Object *obj, Eina_Bool is_static_clip)
    obj->is_static_clip = is_static_clip;
 }
 
-/**
- * Get static "clipper" hint flag.
- * 
- * @see evas_object_static_clip_set()
- * 
- * @param obj The given object.
- * @return The static clip flag (on or off)
- * @ingroup Evas_Object_Group_Extras
- */
 EAPI Eina_Bool
 evas_object_static_clip_get(const Evas_Object *obj)
 {
