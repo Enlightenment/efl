@@ -136,7 +136,7 @@ EXTRA_DIST = $(EDCS) \
 	$(srcdir)/evas-stacking.c \
 	$(srcdir)/evas-map-utils.c \
 	$(srcdir)/evas-text.c \
-	$(srcdir)/evas-smart-object.c
+	$(srcdir)/evas-smart-object.c \
 	$(srcdir)/enlightenment.png \
 	$(srcdir)/red.png \
 	$(srcdir)/im1.png \

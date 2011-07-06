@@ -869,7 +869,7 @@ struct _Evas_Event_Multi_Move /** Multi button down event */
 
 struct _Evas_Event_Key_Down /** Key press event */
 {
-   char          *keyname; /**< The string name of the key pressed */
+   char          *keyname; /**< the name string of the key pressed */
    void          *data;
    Evas_Modifier *modifiers;
    Evas_Lock     *locks;
@@ -884,7 +884,7 @@ struct _Evas_Event_Key_Down /** Key press event */
 
 struct _Evas_Event_Key_Up /** Key release event */
 {
-   char          *keyname; /**< The string name of the key released */
+   char          *keyname; /**< the name string of the key released */
    void          *data;
    Evas_Modifier *modifiers;
    Evas_Lock     *locks;
@@ -1481,7 +1481,7 @@ EAPI void              evas_render_dump                  (Evas *e) EINA_ARG_NONN
 /**
  * Look up a numeric ID from a string name of a rendering engine.
  *
- * @param name The string name of an engine
+ * @param name the name string of an engine
  * @return A numeric (opaque) ID for the rendering engine
  * @ingroup Evas_Output_Method
  *
@@ -1532,7 +1532,7 @@ EAPI int               evas_render_method_lookup         (const char *name) EINA
  *
  * Calling this will return a handle (pointer) to an Evas linked
  * list. Each node in the linked list will have the data pointer be a
- * (char *) pointer to the string name of the rendering engine
+ * (char *) pointer to the name string of the rendering engine
  * available. The strings should never be modified, neither should the
  * list be modified. This list should be cleaned up as soon as the
  * program no longer needs it using evas_render_method_list_free(). If
