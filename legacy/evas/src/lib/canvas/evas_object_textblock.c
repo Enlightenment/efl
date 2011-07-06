@@ -7617,6 +7617,7 @@ evas_textblock_cursor_char_coord_set(Evas_Textblock_Cursor *cur, Evas_Coord x, E
                        cur->pos =
                           _ITEM(EINA_INLIST_GET(ln->items)->last)->text_pos;
                        cur->node = found_par->text_node;
+                       evas_textblock_cursor_line_char_last(cur);
                        return EINA_TRUE;
                     }
 
