@@ -165,15 +165,37 @@
  * @section hashtable_perf Performance
  *
  * As said before, the performance depends on the load factor. So trying to keep
- * it as small as possible will improve the hash table performance. But
+ * the load factor as small as possible will improve the hash table performance. But
  * increasing the buckets_power_size will also increase the memory consumption.
  * The default hash table creation functions already have a good number of
  * buckets, enough for most cases. Particularly for strings, if just a few keys
  * (less than 30) will be added to the hash table, @ref
- * eina_hash_string_small_new should be used. If just stringshared keys are
- * being added, use @ref eina_hash_stringshared_new. If a lot of keys will be
- * added to the hash table (e.g. more than 1000), then it's better to increase
- * the buckets_power_size. See @ref eina_hash_new for more details.
+ * eina_hash_string_small_new should be used, since it will reduce the memory
+ * consumption for the buckets, and you still won't have many collisions.
+ * However, @ref eina_hash_string_small_new still uses the same hash calculation
+ * function that @ref eina_hash_string_superfast_new, which is more complex than
+ * @ref eina_hash_string_djb2_new. The latter has a faster hash computation
+ * function, but that will imply on a not so good distribution. But if just a
+ * few keys are being added, this is not a problem, it will still have not many
+ * collisions and be faster to calculate the hash than in a hash created with
+ * @ref eina_hash_string_small_new and @ref eina_hash_string_superfast_new.
+ *
+ * A simple comparison between them would be:
+ *
+ * @li @c djb2 - faster hash function - 256 buckets (higher memory consumption)
+ * @li @c string_small - slower hash function but less collisions - 32 buckets
+ * (lower memory consumption)
+ * @li @c string_superfast - slower hash function but less collisions - 256 buckets
+ * (higher memory consumption)
+ *
+ * Basically for a very small number of keys (10 or less), @c djb2 should be
+ * used, or @c string_small if you have a restriction on memory usage. And for a
+ * higher number of keys, @c string_superfast should be always prefered.
+ *
+ * If just stringshared keys are being added, use @ref
+ * eina_hash_stringshared_new. If a lot of keys will be added to the hash table
+ * (e.g. more than 1000), then it's better to increase the buckets_power_size.
+ * See @ref eina_hash_new for more details.
  *
  * When adding a new key to a hash table, use @ref eina_hash_add or @ref
  * eina_hash_direct_add (the latter if this key is already stored elsewhere). If
@@ -239,8 +261,9 @@ typedef Eina_Bool    (*Eina_Hash_Foreach)(const Eina_Hash *hash, const void *key
  * @param key_length_cb The function called when getting the size of the key.
  * @param key_cmp_cb The function called when comparing the keys.
  * @param key_hash_cb The function called when getting the values.
- * @param data_free_cb The function called on each value when the hash
- * table is freed. @c NULL can be passed as callback.
+ * @param data_free_cb The function called on each value when the hash table is
+ * freed, or when an item is deleted from it. @c NULL can be passed as
+ * callback.
  * @param buckets_power_size The size of the buckets.
  * @return The new hash table.
  *
@@ -250,6 +273,10 @@ typedef Eina_Bool    (*Eina_Hash_Foreach)(const Eina_Hash *hash, const void *key
  * are @c NULL, @c NULL is returned. If @p buckets_power_size is
  * smaller or equal than 2, or if it is greater or equal than 17,
  * @c NULL is returned.
+ *
+ * The number of buckets created will be 2 ^ @p buckets_power_size. This means
+ * that if @p buckets_power_size is 5, there will be created 32 buckets. for a
+ * @p buckets_power_size of 8, there will be 256 buckets.
  *
  * Pre-defined functions are available to create a hash table. See
  * eina_hash_string_djb2_new(), eina_hash_string_superfast_new(),
@@ -268,7 +295,8 @@ EAPI Eina_Hash *eina_hash_new(Eina_Key_Length key_length_cb,
  *
  * @param hash The given hash table
  * @param data_free_cb The function called on each value when the hash
- * table is freed. @c NULL can be passed as callback.
+ * table is freed, or when an item is deleted from it. @c NULL can be passed as
+ * callback.
  * @since 1.1
  * See @ref eina_hash_new.
  */
@@ -278,7 +306,8 @@ EAPI void eina_hash_free_cb_set(Eina_Hash *hash, Eina_Free_Cb data_free_cb) EINA
  * @brief Create a new hash table using the djb2 algorithm.
  *
  * @param data_free_cb The function called on each value when the hash table
- * is freed. @c NULL can be passed as callback.
+ * is freed, or when an item is deleted from it. @c NULL can be passed as
+ * callback.
  * @return The new hash table.
  *
  * This function creates a new hash table using the djb2 algorithm for
@@ -292,7 +321,8 @@ EAPI Eina_Hash *eina_hash_string_djb2_new(Eina_Free_Cb data_free_cb);
  * @brief Create a new hash table for use with strings.
  *
  * @param data_free_cb The function called on each value when the hash table
- * is freed. @c NULL can be passed as callback.
+ * is freed, or when an item is deleted from it. @c NULL can be passed as
+ * callback.
  * @return The new hash table.
  *
  * This function creates a new hash table using the superfast algorithm
@@ -307,7 +337,8 @@ EAPI Eina_Hash *eina_hash_string_superfast_new(Eina_Free_Cb data_free_cb);
  * @brief Create a new hash table for use with strings with small bucket size.
  *
  * @param data_free_cb  The function called on each value when the hash table
- * is freed. @c NULL can be passed as callback.
+ * is freed, or when an item is deleted from it. @c NULL can be passed as
+ * callback.
  * @return  The new hash table.
  *
  * This function creates a new hash table using the superfast algorithm
@@ -324,7 +355,8 @@ EAPI Eina_Hash *eina_hash_string_small_new(Eina_Free_Cb data_free_cb);
  * @brief Create a new hash table for use with 32bit integers.
  *
  * @param data_free_cb  The function called on each value when the hash table
- * is freed. @c NULL can be passed as callback.
+ * is freed, or when an item is deleted from it. @c NULL can be passed as
+ * callback.
  * @return  The new hash table.
  *
  * This function creates a new hash table where keys are 32bit integers.
@@ -342,7 +374,8 @@ EAPI Eina_Hash *eina_hash_int32_new(Eina_Free_Cb data_free_cb);
  * @brief Create a new hash table for use with 64bit integers.
  *
  * @param data_free_cb  The function called on each value when the hash table
- * is freed. @c NULL can be passed as callback.
+ * is freed, or when an item is deleted from it. @c NULL can be passed as
+ * callback.
  * @return  The new hash table.
  *
  * This function creates a new hash table where keys are 64bit integers.
@@ -359,7 +392,8 @@ EAPI Eina_Hash *eina_hash_int64_new(Eina_Free_Cb data_free_cb);
  * @brief Create a new hash table for use with pointers.
  *
  * @param data_free_cb  The function called on each value when the hash table
- * is freed. @c NULL can be passed as callback.
+ * is freed, or when an item is deleted from it. @c NULL can be passed as
+ * callback.
  * @return  The new hash table.
  *
  * This function creates a new hash table using the int64/int32 algorithm for
@@ -375,7 +409,8 @@ EAPI Eina_Hash *eina_hash_pointer_new(Eina_Free_Cb data_free_cb);
  * @brief Create a new hash table optimized for stringshared values.
  *
  * @param data_free_cb  The function called on each value when the hash table
- * is freed. @c NULL can be passed as callback.
+ * is freed, or when an item is deleted from it. @c NULL can be passed as
+ * callback.
  * @return  The new hash table.
  *
  * This function creates a new hash table optimized for stringshared
