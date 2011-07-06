@@ -40,6 +40,9 @@ _evas_map_calc_map_geometry(Evas_Object *obj)
    Eina_Bool ch = EINA_FALSE;
 
    if (!obj->cur.map) return;
+
+   // WARN: Do not merge below code to SLP until it is fixed.
+   // It has an infinite loop bug.
    if (obj->prev.map)
      {
         // FIXME: this causes an infinite loop somewhere... hard to debug
