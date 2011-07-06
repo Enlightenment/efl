@@ -418,3 +418,7 @@
 	* Fix bug where event causes event in callback on same object, but
         with same event counter, so also filter out same event types.
 
+2011-07-06  Carsten Haitzler (The Rasterman)
+
+	* Fix bug in grab counting on object hide while events are frozen
+

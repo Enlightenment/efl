@@ -947,6 +947,11 @@ evas_object_hide(Evas_Object *obj)
      }
    else
      {
+        if (obj->mouse_grabbed > 0)
+          {
+//             if (obj->layer->evas->pointer.mouse_grabbed >= obj->mouse_grabbed)
+             obj->layer->evas->pointer.mouse_grabbed -= obj->mouse_grabbed;
+          }
         if ((obj->mouse_in) || (obj->mouse_grabbed > 0))
           obj->layer->evas->pointer.object.in = eina_list_remove(obj->layer->evas->pointer.object.in, obj);
         obj->mouse_grabbed = 0;
