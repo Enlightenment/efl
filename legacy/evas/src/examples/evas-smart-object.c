@@ -439,6 +439,9 @@ _on_keydown(void        *data __UNUSED__,
         prev = evas_smart_example_set_left(d.smt, rect);
         fprintf(stdout, "Setting smart object's left spot with a new"
                         " rectangle.\n");
+        fprintf(stdout, "Checking its new smart object parent: %s\n",
+                evas_object_smart_parent_get(rect) == d.smt ? "OK!" :
+                "Failure!");
         if (prev)
           {
              int r, g, b;
@@ -463,6 +466,9 @@ _on_keydown(void        *data __UNUSED__,
         prev = evas_smart_example_set_right(d.smt, rect);
         fprintf(stdout, "Setting smart object's right spot with a new"
                         " rectangle.\n");
+        fprintf(stdout, "Checking its new smart object parent: %s\n",
+                evas_object_smart_parent_get(rect) == d.smt ? "OK!" :
+                "Failure!");
         if (prev)
           {
              int r, g, b;

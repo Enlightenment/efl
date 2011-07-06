@@ -579,7 +579,6 @@
  * @skip typedef struct _Evas_Smart_Example_Data
  * @until };
  *
- *
  * See that, as we're inheriting from the clipped smart object's
  * class, we @b must have their data struct as our first member. Other
  * data of interest for us is a child members array and the border
@@ -587,6 +586,10 @@
  * mentioned function. Note how to tell Evas the border will be
  * managed by our smart object from that time on:
  * <code>evas_object_smart_member_add(priv->border, o);</code>.
+ * The counterpart of this function is exemplifyed on the smart
+ * object's interface function to remove children:
+ * @skip remove a child element
+ * @until set to
  *
  * At the end of that function we make use of an constant defined by
  * the #EVAS_SMART_SUBCLASS_NEW: @c _evas_smart_example_parent_sc. It

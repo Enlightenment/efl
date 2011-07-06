@@ -8208,38 +8208,65 @@ EAPI int                              evas_smart_usage_get(const Evas_Smart *s);
 EAPI Evas_Object      *evas_object_smart_add             (Evas *e, Evas_Smart *s) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1, 2) EINA_MALLOC;
 
 /**
- * Set an Evas object as a member of a smart object.
+ * Set an Evas object as a member of a given smart object.
  *
  * @param obj The member object
  * @param smart_obj The smart object
  *
- * Members will automatically be stacked and layered with the smart object.
- * The various stacking function will operate on members relative to the
- * other members instead of the entire canvas.
+ * Members will automatically be stacked and layered together with the
+ * smart object. The various stacking functions will operate on
+ * members relative to the other members instead of the entire canvas,
+ * since they now live on an exclusive layer (see
+ * evas_object_stack_above(), for more details).
  *
- * Non-member objects can not interleave a smart object's members.
+ * Any @p smart_obj object's specific implementation of the @c
+ * member_add() smart function will take place too, naturally.
+ *
+ * @see evas_object_smart_member_del()
+ * @see evas_object_smart_members_get()
  *
  * @ingroup Evas_Smart_Object_Group
  */
 EAPI void              evas_object_smart_member_add      (Evas_Object *obj, Evas_Object *smart_obj) EINA_ARG_NONNULL(1, 2);
 
 /**
- * Removes a member object from a smart object.
+ * Removes a member object from a given smart object.
  *
  * @param obj the member object
  * @ingroup Evas_Smart_Object_Group
  *
- * This removes a member object from a smart object. The object will still
- * be on the canvas, but no longer associated with whichever smart object
- * it was associated with.
+ * This removes a member object from a smart object, if it was added
+ * to any. The object will still be on the canvas, but no longer
+ * associated with whichever smart object it was associated with.
  *
+ * @see evas_object_smart_member_add() for more details
+ * @see evas_object_smart_members_get()
  */
 EAPI void              evas_object_smart_member_del      (Evas_Object *obj) EINA_ARG_NONNULL(1);
 
 /**
- * Gets the smart parent of an Evas_Object
- * @param obj the Evas_Object you want to get the parent
- * @return Returns the smart parent of @a obj, or @c NULL if @a obj is not a smart member of another Evas_Object
+ * Retrieves the list of the member objects of a given Evas smart
+ * object
+ *
+ * @param obj the smart object to get members from
+ * @return Returns the list of the member objects of @p obj.
+ *
+ * The returned list should be freed with @c eina_list_free() when you
+ * no longer need it.
+ *
+ * @see evas_object_smart_member_add()
+ * @see evas_object_smart_member_del()
+*/
+EAPI Eina_List        *evas_object_smart_members_get     (const Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
+
+/**
+ * Gets the parent smart object of a given Evas object, if it has one.
+ *
+ * @param obj the Evas object you want to get the parent smart object
+ * from
+ * @return Returns the parent smart object of @a obj or @c NULL, if @a
+ * obj is not a smart member of any
+ *
  * @ingroup Evas_Smart_Object_Group
  */
 EAPI Evas_Object      *evas_object_smart_parent_get      (const Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
@@ -8263,18 +8290,11 @@ EAPI Eina_Bool         evas_object_smart_type_check      (const Evas_Object *obj
 EAPI Eina_Bool         evas_object_smart_type_check_ptr  (const Evas_Object *obj, const char *type) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1, 2) EINA_PURE;
 
 /**
- * Gets the list of the member objects of an Evas_Object
- * @param obj the Evas_Object you want to get the list of member objects
- * @return Returns the list of the member objects of @a obj.
- * The returned list should be freed with eina_list_free() when you no longer need it
- */
-EAPI Eina_List        *evas_object_smart_members_get     (const Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
-
-/**
- * Get the Evas_Smart from which @p obj was created.
+ * Get the #Evas_Smart from which @p obj smart object was created.
  *
  * @param obj a smart object
- * @return the Evas_Smart
+ * @return the #Evas_Smart handle or @c NULL, on errors
+ *
  * @ingroup Evas_Smart_Object_Group
  */
 EAPI Evas_Smart       *evas_object_smart_smart_get       (const Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
@@ -8441,35 +8461,42 @@ EAPI void              evas_object_smart_callback_description_find(const Evas_Ob
 EAPI void              evas_object_smart_changed         (Evas_Object *obj) EINA_ARG_NONNULL(1);
 
 /**
- * Set the need_recalculate flag of given smart object.
- *
- * If this flag is set then calculate() callback (method) of the given
- * smart object will be called, if one is provided, during render phase
- * usually evas_render(). After this step, this flag will be automatically
- * unset.
- *
- * If no calculate() is provided, this flag will be left unchanged.
- *
- * @note just setting this flag will not make scene dirty and evas_render()
- *       will have no effect. To do that, use evas_object_smart_changed(),
- *       that will automatically call this function with 1 as parameter.
+ * Set or unset the flag signalling that a given smart object needs to
+ * get recalculated.
  *
  * @param obj the smart object
- * @param value if one want to set or unset the need_recalculate flag.
+ * @param value whether one wants to set (@c EINA_TRUE) or to unset
+ * (@c EINA_FALSE) the flag.
+ *
+ * If this flag is set, then the @c calculate() smart function of @p
+ * obj will be called, if one is provided, during rendering phase of
+ * Evas (see evas_render()), after which this flag will be
+ * automatically unset.
+ *
+ * If that smart function is not provided for the given object, this
+ * flag will be left unchanged.
+ *
+ * @note just setting this flag will not make the canvas' whole scene
+ *       dirty, by itself, and evas_render() will have no effect. To
+ *       force that, use evas_object_smart_changed(), that will also
+ *       automatically call this function automatically, with @c
+ *       EINA_TRUE as parameter.
  *
  * @ingroup Evas_Smart_Object_Group
  */
 EAPI void              evas_object_smart_need_recalculate_set(Evas_Object *obj, Eina_Bool value) EINA_ARG_NONNULL(1);
 
 /**
- * Get the current value of need_recalculate flag.
- *
- * @note this flag will be unset during the render phase, after calculate()
- *       is called if one is provided.  If no calculate() is provided, then
- *       the flag will be left unchanged after render phase.
+ * Get the value of the flag signalling that a given smart object needs to
+ * get recalculated.
  *
  * @param obj the smart object
  * @return if flag is set or not.
+ *
+ * @note this flag will be unset during the rendering phase, when the
+ *       @c calculate() smart function is called, if one is provided.
+ *       If it's not provided, then the flag will be left unchanged
+ *       after the rendering phase.
  *
  * @ingroup Evas_Smart_Object_Group
  */
@@ -8501,11 +8528,20 @@ EAPI void              evas_smart_objects_calculate      (Evas *e);
 
 
 /**
- * Moves all children objects relative to given offset.
+ * Moves all children objects of a given smart object relative to a
+ * given offset.
  *
- * @param obj the smart Evas object to use.
- * @param dx horizontal offset.
- * @param dy vertical offset.
+ * @param obj the smart object.
+ * @param dx horizontal offset (delta).
+ * @param dy vertical offset (delta).
+ *
+ * This will make each of @p obj object's children to move, from where
+ * they before, with those delta values (offsets) on both directions.
+ *
+ * @note This is most useful on custom smart @c move() functions.
+ *
+ * @note Clipped smart objects already make use of this function on
+ * their @c move() smart function definition.
  */
 EAPI void                    evas_object_smart_move_children_relative(Evas_Object *obj, Evas_Coord dx, Evas_Coord dy) EINA_ARG_NONNULL(1);
 
