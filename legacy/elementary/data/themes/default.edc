@@ -10334,14 +10334,14 @@ collections {
    GROUP_ICON("menu/folder", "icon_folder.png", 24, 24);
    GROUP_ICON("menu/file", "icon_file.png", 24, 24);
 
-   GROUP_ICON("media_player/forward", "mp_forward.png", 16, 0);
-   GROUP_ICON("media_player/info", "mp_info.png", 16, 0);
-   GROUP_ICON("media_player/next", "mp_next.png", 16, 0);
-   GROUP_ICON("media_player/pause", "mp_pause.png", 16, 0);
-   GROUP_ICON("media_player/play", "mp_play.png", 16, 0);
-   GROUP_ICON("media_player/prev", "mp_prev.png", 16, 0);
-   GROUP_ICON("media_player/rewind", "mp_rewind.png", 16, 0);
-   GROUP_ICON("media_player/stop", "mp_stop.png", 16, 0);
+//   GROUP_ICON("media_player/forward", "mp_forward.png", 16, 0);
+//   GROUP_ICON("media_player/info", "mp_info.png", 16, 0);
+//   GROUP_ICON("media_player/next", "mp_next.png", 16, 0);
+//   GROUP_ICON("media_player/pause", "mp_pause.png", 16, 0);
+//   GROUP_ICON("media_player/play", "mp_play.png", 16, 0);
+//   GROUP_ICON("media_player/prev", "mp_prev.png", 16, 0);
+//   GROUP_ICON("media_player/rewind", "mp_rewind.png", 16, 0);
+//   GROUP_ICON("media_player/stop", "mp_stop.png", 16, 0);
 
 ///////////////////////////////////////////////////////////////////////////////
    group { name: "elm/toolbar/base/default";
