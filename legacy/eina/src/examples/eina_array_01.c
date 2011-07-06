@@ -6,6 +6,13 @@
 
 #include <Eina.h>
 
+static Eina_Bool
+_print(const void *container, void *data, void *fdata)
+{
+   printf("%s\n", data);
+   return EINA_TRUE;
+}
+
 int
 main(int argc, char **argv)
 {
@@ -22,14 +29,14 @@ main(int argc, char **argv)
 
    eina_init();
 
-   array = eina_array_new(20);
+   array = eina_array_new(10);
+   eina_array_step_set(array, sizeof(*array), 20);
 
    for (i = 0; i < 20; i++)
      eina_array_push(array, strdup(strings[i]));
 
    printf("array count: %d\n", eina_array_count_get(array));
-   EINA_ARRAY_ITER_NEXT(array, i, item, iterator)
-     printf("item #%d: %s\n", i, item);
+   eina_array_foreach(array, _print, NULL);
 
    printf("Top gun: %s\n", (char*)eina_array_data_get(array, 2));
 

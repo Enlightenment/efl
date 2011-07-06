@@ -16,6 +16,11 @@ Eina_Bool keep(void *data, void *gdata)
 int
 main(int argc, char **argv)
 {
+   const char* strs[] = {
+      "one", "two", "three", "four", "five", "six", "seven", "eight", "nine",
+      "ten", "eleven", "twelve", "thirteen", "fourtenn", "fifteen", "sixteen",
+      "seventeen", "eighteen", "nineteen", "twenty"
+   };
    const char* strings[] = {
       "helo", "hera", "starbuck", "kat", "boomer",
       "hotdog", "longshot", "jammer", "crashdown", "hardball",
@@ -29,10 +34,16 @@ main(int argc, char **argv)
 
    eina_init();
 
-   array = eina_array_new(20);
+   array = eina_array_new(10);
 
    for (i = 0; i < 20; i++)
+     eina_array_push(array, strs[i]);
+
+   eina_array_clean(array);
+   for (i = 0; i < 20; i++)
      eina_array_push(array, strings[i]);
+
+   eina_array_data_set(array, 17, "flattop");
 
    eina_array_remove(array, keep, NULL);
    EINA_ARRAY_ITER_NEXT(array, i, item, iterator)

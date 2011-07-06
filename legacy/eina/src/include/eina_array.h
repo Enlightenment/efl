@@ -40,18 +40,24 @@
  * @skip #include
  * @until Eina.h
  *
+ * Here we have a callback that prints the element given to it:
+ * @until }
+ *
  * Now we create our entry point and declare some variables, nothing especial:
  * @until unsigned
  *
  * Before we can start using any array function we need to initialize eina:
  * @until eina_init
  *
- * So now to actually creating our array:
+ * So now to actually creating our array. The only interesting thing here is the
+ * argument given to the eina_array_new() function, this argument sets how fast
+ * the array grows.
  * @until array_new
- * The only interesting thing here is the argument given to the
- * @ref eina_array_new function, this argument sets how fast the array grows.
+ *
  * If you know before hand how big the array will need to be you should set the
- * step to that. In our case we can set it to the number of string we have.
+ * step to that. In our case we can set it to the number of string we have and
+ * since we didn't do that in the eina_array_new() we can do it now:
+ * @until array_step_set
  *
  * Now let us populate our array with some strings:
  * @until push
@@ -60,8 +66,8 @@
  * Now lets check the size of the array:
  * @until printf
  *
- * And now we iterate over the array printing the index and it's value:
- * @until printf
+ * And now we call a function on every member of our array to print it:
+ * @until foreach
  *
  * One of the strenghts of @ref Eina_Array over @ref Eina_List is that it has
  * very fast random access to elements, so this is very efficient:
@@ -103,6 +109,14 @@
  * This is the same code we used before to populate the list with the slight
  * difference of not using strdup:
  * @until array_push
+ *
+ * So we have added all our elements to the array, but it turns out that is not
+ * the elements we wanted, so let's empty the array and add the correct strings:
+ * @until array_push
+ *
+ * It seems we made a little mistake in one of our strings so we need to replace
+ * it, here is how:
+ * @until data_set
  *
  * Now that there is a populated array we can remove elements from it easily:
  * @until array_remove
@@ -156,6 +170,20 @@
  * eina_array_pop(). To retrieve the element at a given position, use
  * eina_array_data_get(). The number of elements can be retrieved with
  * eina_array_count_get().
+ *
+ * Eina_Array is different from a conventional C array in a number of ways, most
+ * importantly they grow and shrink dynamically, this means that if you add an
+ * element to a full array it grows and that when you remove an element from an
+ * array it @b may shrink.
+ *
+ * When the array needs to grow it allocates memory not just for the element
+ * currently being added since that would mean allocating memory(which is
+ * computationally expensive) often, instead it grows to be able to hold @p step
+ * more elements. Similarly if you remove elements in such a way that that the
+ * array is left holding its capacity - @p step elements it will shrink.
+ *
+ * Eina_Array only stores pointers but it can store data of any type in the form
+ * of void pointers.
  *
  * See here some examples:
  * @li @ref array_01_example_page
@@ -219,7 +247,7 @@ struct _Eina_Array
  *
  * This function creates a new array. When adding an element, the array
  * allocates @p step elements. When that buffer is full, then adding
- * another element will increase the buffer of @p step elements again.
+ * another element will increase the buffer by @p step elements again.
  *
  * This function return a valid array on success, or @c NULL if memory
  * allocation fails. In that case, the error is set to
@@ -249,12 +277,23 @@ EAPI void        eina_array_free(Eina_Array *array) EINA_ARG_NONNULL(1);
  *
  * This function sets the step of @p array to @p step. For performance
  * reasons, there is no check of @p array. If it is @c NULL or
- * invalid, the program may crash. This function should be called when
- * the array is not initialized.
+ * invalid, the program may crash.
+ *
+ * @warning This function can @b only be called on uninitialized arrays.
  */
 EAPI void        eina_array_step_set(Eina_Array  *array,
                                      unsigned int sizeof_eina_array,
                                      unsigned int step) EINA_ARG_NONNULL(1);
+/**
+ * @brief Clean an array.
+ *
+ * @param array The array to clean.
+ *
+ * This function sets the count member of @p array to 0, however it doesn't free
+ * any space. This is particularly usefull if you need to empty the array and
+ * add lots of elements quickly. For performance reasons, there is no check of
+ * @p array. If it is @c NULL or invalid, the program may crash.
+ */
 static inline void eina_array_clean(Eina_Array *array) EINA_ARG_NONNULL(1);
 
 /**
@@ -293,6 +332,19 @@ static inline Eina_Bool eina_array_push(Eina_Array *array,
 static inline void     *eina_array_pop(Eina_Array *array) EINA_ARG_NONNULL(1);
 static inline void     *eina_array_data_get(const Eina_Array *array,
                                             unsigned int      idx) EINA_ARG_NONNULL(1);
+/**
+ * @brief Set the data at a given position in an array.
+ *
+ * @param array The array.
+ * @param idx The potition of the data to set.
+ * @param data The data to set.
+ *
+ * This function sets the data at the position @p idx in @p
+ * array to @p data, this effectively replaces the previously held data, you
+ * must therefore get a pointer to it first if you need to free it. For
+ * performance reasons, there is no check of @p array or @p idx. If it is @c
+ * NULL or invalid, the program may crash.
+*/
 static inline void      eina_array_data_set(const Eina_Array *array,
                                             unsigned int      idx,
                                             const void       *data) EINA_ARG_NONNULL(1);
@@ -325,6 +377,18 @@ EAPI Eina_Iterator        *eina_array_iterator_new(const Eina_Array *array) EINA
  * set. Otherwise, a valid accessor is returned.
  */
 EAPI Eina_Accessor        *eina_array_accessor_new(const Eina_Array *array) EINA_MALLOC EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
+/**
+ * @brief Provide a safe way to iterate over an array
+ *
+ * @param array The array to iterate over.
+ * @param cb The callback to call for each item.
+ * @param fdata The user data to pass to the callback.
+ * @return EINA_TRUE if it successfully iterate all items of the array.
+ *
+ * This function provide a safe way to iterate over an array. @p cb should
+ * return EINA_TRUE as long as you want the function to continue iterating,
+ * by returning EINA_FALSE it will stop and return EINA_FALSE as a result.
+ */
 static inline Eina_Bool    eina_array_foreach(Eina_Array  *array,
                                               Eina_Each_Cb cb,
                                               void        *data);

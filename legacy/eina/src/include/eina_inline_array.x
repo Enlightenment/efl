@@ -111,17 +111,6 @@ eina_array_data_get(const Eina_Array *array, unsigned int idx)
    return array->data[idx];
 }
 
-/**
- * @brief Set the data at a given position in an array.
- *
- * @param array The array.
- * @param idx The potition of the data to set.
- * @param data The data to set.
- *
- * This function sets the data at the position @p idx in @p
- * array. For performance reasons, there is no check of @p array or @p
- * idx. If it is @c NULL or invalid, the program may crash.
- */
 static inline void
 eina_array_data_set(const Eina_Array *array, unsigned int idx, const void *data)
 {
@@ -144,18 +133,6 @@ eina_array_count_get(const Eina_Array *array)
    return array->count;
 }
 
-/**
- * @brief Provide a safe way to iterate over an array
- *
- * @param array The array to iterate over.
- * @param cb The callback to call for each item.
- * @param fdata The user data to pass to the callback.
- * @return EINA_TRUE if it successfully iterate all items of the array.
- *
- * This function provide a safe way to iterate over an array. @p cb should
- * return EINA_TRUE as long as you want the function to continue iterating,
- * by returning EINA_FALSE it will stop and return EINA_FALSE as a result.
- */
 static inline Eina_Bool
 eina_array_foreach(Eina_Array *array, Eina_Each_Cb cb, void *fdata)
 {
@@ -174,15 +151,6 @@ eina_array_foreach(Eina_Array *array, Eina_Each_Cb cb, void *fdata)
    return ret;
 }
 
-/**
- * @brief Clean an array.
- *
- * @param array The array to clean.
- *
- * This function sets the count member of @p array to 0. For
- * performance reasons, there is no check of @p array. If it is
- * @c NULL or invalid, the program may crash.
- */
 static inline void
 eina_array_clean(Eina_Array *array)
 {
