@@ -18,13 +18,13 @@ external_icon_state_set(void *data __UNUSED__, Evas_Object *obj, const void *fro
    else return;
 
    if (p->icon)
-   {
-	   edje = evas_object_smart_parent_get(obj);
-	   edje_object_file_get(edje, &file, NULL);
+     {
+        edje = evas_object_smart_parent_get(obj);
+        edje_object_file_get(edje, &file, NULL);
 
-	   if (!elm_icon_file_set(obj, file, p->icon))
-		   elm_icon_standard_set(obj, p->icon);
-   }
+        if (!elm_icon_file_set(obj, file, p->icon))
+          elm_icon_standard_set(obj, p->icon);
+     }
 }
 
 static Eina_Bool
@@ -35,15 +35,15 @@ external_icon_param_set(void *data __UNUSED__, Evas_Object *obj, const Edje_Exte
 
    if (!strcmp(param->name, "icon"))
      {
-	   if (param->type == EDJE_EXTERNAL_PARAM_TYPE_STRING)
-	   {
-		   edje = evas_object_smart_parent_get(obj);
-		   edje_object_file_get(edje, &file, NULL);
+        if (param->type == EDJE_EXTERNAL_PARAM_TYPE_STRING)
+          {
+             edje = evas_object_smart_parent_get(obj);
+             edje_object_file_get(edje, &file, NULL);
 
-		   if (!elm_icon_file_set(obj, file, param->s))
-			   elm_icon_standard_set(obj, param->s);
-		   return EINA_TRUE;
-	  }
+             if (!elm_icon_file_set(obj, file, param->s))
+               elm_icon_standard_set(obj, param->s);
+             return EINA_TRUE;
+          }
      }
 
    ERR("unknown parameter '%s' of type '%s'",
@@ -57,8 +57,8 @@ external_icon_param_get(void *data __UNUSED__, const Evas_Object *obj __UNUSED__
 {
    if (!strcmp(param->name, "icon"))
      {
-	/* not easy to get icon name back from live object */
-	return EINA_FALSE;
+        /* not easy to get icon name back from live object */
+        return EINA_FALSE;
      }
 
    ERR("unknown parameter '%s' of type '%s'",
@@ -79,21 +79,21 @@ external_icon_params_parse(void *data __UNUSED__, Evas_Object *obj __UNUSED__, c
      return NULL;
 
    EINA_LIST_FOREACH(params, l, param)
-   {
-	   if (!strcmp(param->name, "icon"))
-	   {
-		   mem->icon = eina_stringshare_add(param->s);
-	   }
-   }
+     {
+        if (!strcmp(param->name, "icon"))
+          {
+             mem->icon = eina_stringshare_add(param->s);
+          }
+     }
 
    return mem;
 }
 
 static Evas_Object *external_icon_content_get(void *data __UNUSED__,
-		const Evas_Object *obj __UNUSED__, const char *content __UNUSED__)
+                                              const Evas_Object *obj __UNUSED__, const char *content __UNUSED__)
 {
-	ERR("no content");
-	return NULL;
+   ERR("no content");
+   return NULL;
 }
 
 static void
@@ -102,7 +102,7 @@ external_icon_params_free(void *params)
    Elm_Params_Icon *mem = params;
 
    if (mem->icon)
-        eina_stringshare_del(mem->icon);
+     eina_stringshare_del(mem->icon);
    external_common_params_free(params);
 }
 
