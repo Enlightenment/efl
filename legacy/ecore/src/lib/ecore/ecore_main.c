@@ -65,7 +65,27 @@
 
 #ifdef HAVE_SYS_TIMERFD_H
 #include <sys/timerfd.h>
+#else
+/* fallback code if we don't have real timerfd - reduces number of ifdefs  */
+#ifndef CLOCK_MONOTONIC
+#define CLOCK_MONOTONIC 0 /* bogus value */
 #endif
+#ifndef TFD_NONBLOCK
+#define TFD_NONBLOCK 0 /* bogus value */
+#endif
+static inline int
+timerfd_create(int clockid __UNUSED__, int flags __UNUSED__)
+{
+  return -1;
+}
+static inline int
+timerfd_settime(int fd __UNUSED__, int flags __UNUSED__,
+                const struct itimerspec *new_value __UNUSED__,
+                struct itimerspec *old_value __UNUSED__)
+{
+  return -1;
+}
+#endif /* HAVE_SYS_TIMERFD_H */
 
 #ifdef USE_G_MAIN_LOOP
 # include <glib.h>
@@ -163,9 +183,7 @@ static double            t1 = 0.0;
 static double            t2 = 0.0;
 #endif
 
-#ifdef HAVE_TIMERFD_CREATE
 static int timer_fd = -1;
-#endif
 #ifdef HAVE_EPOLL
 static int epoll_fd = -1;
 static pid_t epoll_pid;
@@ -175,9 +193,7 @@ static pid_t epoll_pid;
 #ifdef HAVE_EPOLL
 static GPollFD ecore_epoll_fd;
 #endif
-#ifdef HAVE_TIMERFD_CREATE
 static GPollFD ecore_timer_fd;
-#endif
 static GSource *ecore_glib_source;
 static guint ecore_glib_source_id;
 static GMainLoop* ecore_main_loop;
@@ -476,7 +492,6 @@ _ecore_main_gsource_prepare(GSource *source __UNUSED__, gint *next_time)
                {
                   int r = -1;
                   double t = _ecore_timer_next_get();
-#ifdef HAVE_TIMERFD_CREATE
                   if (timer_fd >= 0)
                     {
                        struct itimerspec ts;
@@ -502,7 +517,6 @@ _ecore_main_gsource_prepare(GSource *source __UNUSED__, gint *next_time)
                                   ts.it_value.tv_nsec/1000);
                          }
                     }
-#endif
                   if (r == -1)
                     *next_time = ceil(t * 1000.0);
                }
@@ -533,7 +547,6 @@ _ecore_main_gsource_check(GSource *source __UNUSED__)
    /* check if old timers expired */
    if (ecore_idling && !_ecore_idler_exist())
      {
-#ifdef HAVE_TIMERFD_CREATE
         if (timer_fd >= 0)
           {
              uint64_t count = 0;
@@ -553,7 +566,6 @@ _ecore_main_gsource_check(GSource *source __UNUSED__)
                   timer_fd = -1;
                }
           }
-#endif
      }
    else
         ret = TRUE;
@@ -691,10 +703,9 @@ _ecore_main_loop_init(void)
 #endif
 
        /* timerfd gives us better than millisecond accuracy in g_main_loop */
-#ifdef HAVE_TIMERFD_CREATE
        timer_fd = timerfd_create(CLOCK_MONOTONIC, TFD_NONBLOCK);
        if (timer_fd < 0)
-          ERR("failed to create timer fd!");
+          WRN("failed to create timer fd!");
        else
          {
             ecore_timer_fd.fd = timer_fd;
@@ -702,7 +713,6 @@ _ecore_main_loop_init(void)
             ecore_timer_fd.revents = 0;
             g_source_add_poll(ecore_glib_source, &ecore_timer_fd);
          }
-#endif
 
         ecore_glib_source_id = g_source_attach(ecore_glib_source, NULL);
         if (ecore_glib_source_id <= 0)
@@ -732,13 +742,11 @@ _ecore_main_loop_shutdown(void)
     epoll_pid = 0;
 #endif
 
-#ifdef HAVE_TIMERFD_CREATE
    if (timer_fd >= 0)
      {
         close(timer_fd);
         timer_fd = -1;
      }
-#endif
 }
 
 /**
