@@ -2358,6 +2358,10 @@ extern "C" {
    /**
     * @defgroup Button Button
     *
+    * @image html  widget/button/preview-00.png
+    * @image html  widget/button/preview-01.png
+    * @image html  widget/button/preview-02.png
+    * 
     * This is a push-button. Press it and run some function. It can contain
     * a simple label and icon object and it also has an autorepeat feature.
     *
