@@ -442,6 +442,13 @@ _ecore_evas_buffer_cb_hide(void *data, Evas *e __UNUSED__, Evas_Object *obj __UN
    if (ee->func.fn_hide) ee->func.fn_hide(ee);
 }
 
+static void
+_ecore_evas_buffer_alpha_set(Ecore_Evas *ee, int alpha)
+{
+   if (((ee->alpha) && (alpha)) || ((!ee->alpha) && (!alpha))) return;
+   ee->alpha = alpha;
+}
+
 static Ecore_Evas_Engine_Func _ecore_buffer_engine_func =
 {
    _ecore_evas_buffer_free,
@@ -488,7 +495,7 @@ static Ecore_Evas_Engine_Func _ecore_buffer_engine_func =
      NULL,
      NULL,
      NULL,
-     NULL,
+     _ecore_evas_buffer_alpha_set,
      NULL, //transparent
 
      NULL, // render
