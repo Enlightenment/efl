@@ -254,8 +254,13 @@ _suspend_cb(void *data)
 Eina_Bool
 _elm_video_check(Evas_Object *video)
 {
+#ifdef HAVE_EMOTION
   ELM_CHECK_WIDTYPE(video, widtype) EINA_FALSE;
   return EINA_TRUE;
+#else
+  (void) video;
+  return EINA_FALSE;
+#endif
 }
 
 EAPI Evas_Object *
