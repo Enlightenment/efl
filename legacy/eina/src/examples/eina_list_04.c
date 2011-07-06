@@ -21,8 +21,11 @@ main(int argc, char **argv)
    list = eina_list_append(list, eina_stringshare_add("Six"));
    list = eina_list_append(list, eina_stringshare_add("Sharon"));
 
-   EINA_LIST_FOREACH(list, l, list_data)
-     printf("%s\n", (const char*)list_data);
+   for(l = list; l; l = eina_list_next(l))
+     printf("%s\n", (char*)l->data);
+
+   for(l = eina_list_last(list); l; l = eina_list_prev(l))
+      printf("%s\n", (char*)eina_list_data_get(l));
 
    EINA_LIST_FREE(list, list_data)
      eina_stringshare_del(list_data);

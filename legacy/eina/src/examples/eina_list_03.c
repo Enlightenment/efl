@@ -27,6 +27,8 @@ main(int argc, char **argv)
    l = eina_list_data_find_list(list, "aerilon");
    eina_list_data_set(l, "aquarius");
 
+   printf("size: %d\n", eina_list_count(list));
+
    r_list = eina_list_reverse_clone(list);
 
    itr = eina_list_iterator_new(r_list);
