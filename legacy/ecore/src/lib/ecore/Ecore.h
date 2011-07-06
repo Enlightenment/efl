@@ -441,7 +441,7 @@ extern "C" {
    typedef struct _Ecore_Exe_Event_Del         Ecore_Exe_Event_Del; /**< Spawned Exe exit event */
    typedef struct _Ecore_Exe_Event_Data_Line   Ecore_Exe_Event_Data_Line; /**< Lines from a child process */
    typedef struct _Ecore_Exe_Event_Data        Ecore_Exe_Event_Data; /**< Data from a child process */
-   typedef struct _Ecore_Thread                Ecore_Thread;
+   typedef struct _Ecore_Thread                Ecore_Thread; /**< A handle for threaded jobs */
 
    /**
     * @typedef Ecore_Data_Cb Ecore_Data_Cb
@@ -762,45 +762,669 @@ extern "C" {
   /**
    * @defgroup Ecore_Thread_Group Ecore Thread functions
    *
+   * Facilities to run heavy tasks in different threads to avoid blocking
+   * the main loop.
+   *
+   * The EFL is, for the most part, not thread safe. This means that if you
+   * have some task running in another thread and you have, for example, an
+   * Evas object to show the status progress of this task, you cannot update
+   * the object from within the thread. This can only be done from the main
+   * thread, the one running the main loop. This problem can be solved
+   * by running a thread that sends messages to the main one using an
+   * @ref Ecore_Pipe_Group "Ecore_Pipe", but when you need to handle other
+   * things like cancelling the thread, your code grows in coplexity and gets
+   * much harder to maintain.
+   *
+   * Ecore Thread is here to solve that problem. It is @b not a simple wrapper
+   * around standard POSIX threads (or the equivalent in other systems) and
+   * it's not meant to be used to run parallel tasks throughout the entire
+   * duration of the program, especially when these tasks are performance
+   * critical, as Ecore manages these tasks using a pool of threads based on
+   * system configuration.
+   *
+   * What Ecore Thread does, is make it a lot easier to dispatch a worker
+   * function to perform some heavy task and then get the result once it
+   * completes, without blocking the application's UI. In addition, cancelling
+   * and rescheduling comes practically for free and the developer needs not
+   * worry about how many threads are launched, since Ecore will schedule
+   * them according to the number of processors the system has and maximum
+   * amount of concurrent threads set for the application.
+   *
+   * At the system level, Ecore will start a new thread on an as-needed basis
+   * until the maximum set is reached. When no more threads can be launched,
+   * new worker functions will be queued in a waiting list until a thread
+   * becomes available. This way, system threads will be shared throughout
+   * different worker functions, but running only one at a time. At the same
+   * time, a worker function that is rescheduled may be run on a different
+   * thread the next time.
+   *
+   * The ::Ecore_Thread handler has two meanings, depending on what context
+   * it is on. The one returned when starting a worker with any of the
+   * functions ecore_thread_run() or ecore_thread_feedback_run() is an
+   * identifier of that specific instance of the function and can be used from
+   * the main loop with the ecore_thread_cancel() and ecore_thread_check()
+   * functions. This handler must not be shared with the worker function
+   * function running in the thread. This same handler will be the one received
+   * on the @c end, @c cancel and @c feedback callbacks.
+   *
+   * The worker function, that's the one running in the thread, also receives
+   * an ::Ecore_Thread handler that can be used with ecore_thread_cancel() and
+   * ecore_thread_check(), sharing the flag with the main loop. But this
+   * handler is also associated with the thread where the function is running.
+   * This has strong implications when working with thread local data.
+
+   * There are two kinds of worker threads Ecore handles: simple, or short,
+   * workers and feedback workers.
+   *
+   * The first kind is for simple functions that perform a
+   * usually small but time consuming task. Ecore will run this function in
+   * a thread as soon as one becomes available and notify the calling user of
+   * its completion once the task is done.
+   *
+   * For larger tasks that may require continuous communication with the main
+   * program, the feedback workers provide the same functionality plus a way
+   * for the function running in the thread to send messages to the main
+   * thread.
+   *
+   * @ingroup Ecore_Group
+   *
    * @{
    */
 
+  /**
+   * Schedule a task to run in a parallel thread to avoid locking the main loop
+   *
+   * @param func_blocking The function that should run in another thread.
+   * @param func_end Function to call from main loop when @p func_blocking
+   * completes its task successfully (may be NULL)
+   * @param func_cancel Function to call from main loop if the thread running
+   * @p func_blocking is cancelled or fails to start (may be NULL)
+   * @param data User context data to pass to all callbacks.
+   * @return A new thread handler, or NULL on failure
+   *
+   * This function will try to create a new thread to run @p func_blocking in,
+   * or if the maximum number of concurrent threads has been reached, will
+   * add it to the pending list, where it will wait until a thread becomes
+   * available. The return value will be an ::Ecore_Thread handle that can
+   * be used to cancel the thread before its completion.
+   *
+   * @note This function should always return immediately, but in the rare
+   * case that Ecore is built with no thread support, @p func_blocking will
+   * be called here, actually blocking the main loop.
+   *
+   * Once a thread becomes available, @p func_blocking will be run in it until
+   * it finishes, then @p func_end is called from the thread containing the
+   * main loop to inform the user of its completion. While in @p func_blocking,
+   * no functions from the EFL can be used, except for those from Eina that are
+   * marked to be thread-safe. Even for the latter, caution needs to be taken
+   * if the data is shared across several threads.
+   *
+   * @p func_end will be called from the main thread when @p func_blocking ends,
+   * so here it's safe to use anything from the EFL freely.
+   *
+   * The thread can also be cancelled before its completion calling
+   * ecore_thread_cancel(), either from the main thread or @p func_blocking.
+   * In this case, @p func_cancel will be called, also from the main thread
+   * to inform of this happening. If the thread could not be created, this
+   * function will be called and it's @c thread parameter will be NULL. It's
+   * also safe to call any EFL function here, as it will be running in the
+   * main thread.
+   *
+   * Inside @p func_blocking, it's possible to call ecore_thread_reschedule()
+   * to tell Ecore that this function should be called again.
+   *
+   * Be aware that no assumptions can be made about the order in which the
+   * @p func_end callbacks for each task will be called. Once the function is
+   * running in a different thread, it's the OS that will handle its running
+   * schedule, and different functions may take longer to finish than others.
+   * Also remember that just starting several tasks together doesn't mean they
+   * will be running at the same time. Ecore will schedule them based on the
+   * number of threads available for the particular system it's running in,
+   * so some of the jobs started may be waiting until another one finishes
+   * before it can execute its own @p func_blocking.
+   *
+   * @see ecore_thread_feedback_run()
+   * @see ecore_thread_cancel()
+   * @see ecore_thread_reschedule()
+   * @see ecore_thread_max_set()
+   */
    EAPI Ecore_Thread *ecore_thread_run(Ecore_Thread_Cb func_blocking,
                                        Ecore_Thread_Cb func_end,
                                        Ecore_Thread_Cb func_cancel,
                                        const void *data);
+  /**
+   * Launch a thread to run a task than can talk back to the main thread
+   *
+   * @param func_heavy The function that should run in another thread.
+   * @param func_notify Function that receives the data sent from the thread
+   * @param func_end Function to call from main loop when @p func_heavy
+   * completes its task successfully
+   * @param func_cancel Function to call from main loop if the thread running
+   * @p func_heavy is cancelled or fails to start
+   * @param data User context data to pass to all callback.
+   * @param try_no_queue If you want to run outside of the thread pool.
+   * @return A new thread handler, or NULL on failure
+   *
+   * See ecore_thread_run() for a general description of this function.
+   *
+   * The difference with the above is that ecore_thread_run() is meant for
+   * tasks that don't need to communicate anything until they finish, while
+   * this function is provided with a new callback, @p func_notify, that will
+   * be called from the main thread for every message sent from @p func_heavy
+   * with ecore_thread_feedback().
+   *
+   * Like with ecore_thread_run(), a new thread will be launched to run
+   * @p func_heavy unless the maximum number of simultaneous threadas has been
+   * reached, in which case the function will be scheduled to run whenever a
+   * running task ends and a thread becomes free. But if @p try_no_queue is
+   * set, Ecore will first try to launch a thread outside of the pool to run
+   * the task. If it fails, it will revert to the normal behaviour of using a
+   * thread from the pool as if @p try_no_queue had not been set.
+   *
+   * Keep in mind that Ecore handles the thread pool based on the number of
+   * CPUs available, but running a thread outside of the pool doesn't count for
+   * this, so having too many of them may have drastic effects over the
+   * program's performance.
+   *
+   * @see ecore_thread_feedback()
+   * @see ecore_thread_run()
+   * @see ecore_thread_cancel()
+   * @see ecore_thread_reschedule()
+   * @see ecore_thread_max_set()
+   */
    EAPI Ecore_Thread *ecore_thread_feedback_run(Ecore_Thread_Cb func_heavy,
                                                 Ecore_Thread_Notify_Cb func_notify,
                                                 Ecore_Thread_Cb func_end,
                                                 Ecore_Thread_Cb func_cancel,
                                                 const void *data,
                                                 Eina_Bool try_no_queue);
+  /**
+   * Cancel a running thread.
+   *
+   * @param thread The thread to cancel.
+   * @return Will return EINA_TRUE if the thread has been cancelled,
+   *         EINA_FALSE if it is pending.
+   *
+   * This function can be called both in the main loop or in the running thread.
+   *
+   * This function cancels a running thread. If @p thread can be immediately
+   * cancelled (it's still pending execution after creation or rescheduling),
+   * then the @c cancel callback will be called, @p thread will be freed and
+   * the function will return EINA_TRUE.
+   *
+   * If the thread is already running, then this function returns EINA_FALSE
+   * after marking the @p thread as pending cancellation. For the thread to
+   * actually be terminated, it needs to return from the user function back
+   * into Ecore control. This can happen in several ways:
+   * @li The function ends and returns normally. If it hadn't been cancelled,
+   * @c func_end would be called here, but instead @c func_cancel will happen.
+   * @li The function returns after requesting to be rescheduled with
+   * ecore_thread_reschedule().
+   * @li The function is prepared to leave early by checking if
+   * ecore_thread_check() returns EINA_TRUE.
+   *
+   * The user function can cancel itself by calling ecore_thread_cancel(), but
+   * it should always use the ::Ecore_Thread handle passed to it and never
+   * share it with the main loop thread by means of shared user data or any
+   * other way.
+   *
+   * @p thread will be freed and should not be used again if this function
+   * returns EINA_TRUE or after the @c func_cancel callback returns.
+   *
+   * @see ecore_thread_check()
+   */
    EAPI Eina_Bool     ecore_thread_cancel(Ecore_Thread *thread);
+  /**
+   * Checks if a thread is pending cancellation
+   *
+   * @param thread The thread to test.
+   * @return EINA_TRUE if the thread is pending cancellation,
+   *         EINA_FALSE if it is not.
+   *
+   * This function can be called both in the main loop or in the running thread.
+   *
+   * When ecore_thread_cancel() is called on an already running task, the
+   * thread is marked as pending cancellation. This function returns EINA_TRUE
+   * if this mark is set for the given @p thread and can be used from the
+   * main loop thread to check if a still active thread has been cancelled,
+   * or from the user function running in the thread to check if it should
+   * stop doing what it's doing and return early, effectively cancelling the
+   * task.
+   *
+   * @see ecore_thread_cancel()
+   */
    EAPI Eina_Bool     ecore_thread_check(Ecore_Thread *thread);
+  /**
+   * Sends data from the worker thread to the main loop
+   *
+   * @param thread The current ::Ecore_Thread context to send data from
+   * @param msg_data Data to be transmitted to the main loop
+   * @return EINA_TRUE if @p msg_data was successfully sent to main loop,
+   *         EINA_FALSE if anything goes wrong.
+   *
+   * You should use this function only in the @c func_heavy call.
+   *
+   * Only the address to @p msg_data will be sent and once this function
+   * returns EINA_TRUE, the job running in the thread should never touch the
+   * contents of it again. The data sent should be malloc()'ed or something
+   * similar, as long as it's not memory local to the thread that risks being
+   * overwritten or deleted once it goes out of scope or the thread finishes.
+   *
+   * Care must be taken that @p msg_data is properly freed in the @c func_notify
+   * callback set when creating the thread.
+   *
+   * @see ecore_thread_feedback_run()
+   */
    EAPI Eina_Bool     ecore_thread_feedback(Ecore_Thread *thread, const void *msg_data);
+  /**
+   * Asks for the function in the thread to be called again at a later time
+   *
+   * @param thread The current ::Ecore_Thread context to rescheduled
+   * @return EINA_TRUE if the task was successfully rescheduled,
+   *         EINA_FALSE if anything goes wrong.
+   *
+   * This function should be called only from the same function represented
+   * by @pthread.
+   *
+   * Calling this function will mark the thread for a reschedule, so as soon
+   * as it returns, it will be added to the end of the list of pending tasks.
+   * If no other tasks are waiting or there are sufficient threads available,
+   * the rescheduled task will be launched again immediately.
+   *
+   * This should never return EINA_FALSE, unless it was called from the wrong
+   * thread or with the wrong arguments.
+   *
+   * The @c func_end callback set when the thread is created will not be
+   * called until the function in the thread returns without being rescheduled.
+   * Similarly, if the @p thread is cancelled, the reschedule will not take
+   * effect.
+   */
    EAPI Eina_Bool     ecore_thread_reschedule(Ecore_Thread *thread);
+  /**
+   * Gets the number of active threads running jobs
+   *
+   * @return Number of active threads running jobs
+   *
+   * This returns the number of threads currently running jobs of any type
+   * through the Ecore_Thread API.
+   *
+   * @note Jobs started through the ecore_thread_feedback_run() function with
+   * the @c try_no_queue parameter set to EINA_TRUE will not be accounted for
+   * in the return of this function unless the thread creation fails and it
+   * falls back to using one from the pool.
+   */
    EAPI int           ecore_thread_active_get(void);
+  /**
+   * Gets the number of short jobs waiting for a thread to run
+   *
+   * @return Number of pending threads running "short" jobs
+   *
+   * This returns the number of tasks started with ecore_thread_run() that are
+   * pending, waiting for a thread to become available to run them.
+   */
    EAPI int           ecore_thread_pending_get(void);
+  /**
+   * Gets the number of feedback jobs waiting for a thread to run
+   *
+   * @return Number of pending threads running "feedback" jobs
+   *
+   * This returns the number of tasks started with ecore_thread_feedback_run()
+   * that are pending, waiting for a thread to become available to run them.
+   */
    EAPI int           ecore_thread_pending_feedback_get(void);
+  /**
+   * Gets the total number of pending jobs
+   *
+   * @return Number of pending threads running jobs
+   *
+   * Same as the sum of ecore_thread_pending_get() and
+   * ecore_thread_pending_feedback_get().
+   */
    EAPI int           ecore_thread_pending_total_get(void);
+  /**
+   * Gets the maximum number of threads that can run simultaneously
+   *
+   * @return Max possible number of Ecore_Thread's running concurrently
+   *
+   * This returns the maximum number of Ecore_Thread's that may be running at
+   * the same time. If this number is reached, new jobs started by either
+   * ecore_thread_run() or ecore_thread_feedback_run() will be added to the
+   * respective pending queue until one of the running threads finishes its
+   * task and becomes available to run a new one.
+   *
+   * By default, this will be the number of available CPUs for the
+   * running program (as returned by eina_cpu_count()), or 1 if this value
+   * could not be fetched.
+   *
+   * @see ecore_thread_max_set()
+   * @see ecore_thread_max_reset()
+   */
    EAPI int           ecore_thread_max_get(void);
+  /**
+   * Sets the maximum number of threads allowed to run simultaneously
+   *
+   * @param num The new maximum
+   *
+   * This sets a new value for the maximum number of concurrently running
+   * Ecore_Thread's. It @b must an integer between 1 and (2 * @c x), where @c x
+   * is the number for CPUs available.
+   *
+   * @see ecore_thread_max_get()
+   * @see ecore_thread_max_reset()
+   */
    EAPI void          ecore_thread_max_set(int num);
+  /**
+   * Resets the maximum number of concurrently running threads to the default
+   *
+   * This resets the value returned by ecore_thread_max_get() back to its
+   * default.
+   *
+   * @see ecore_thread_max_get()
+   * @see ecore_thread_max_set()
+   */
    EAPI void          ecore_thread_max_reset(void);
+  /**
+   * Gets the number of threads available for running tasks
+   *
+   * @return The number of available threads
+   *
+   * Same as doing ecore_thread_max_get() - ecore_thread_active_get().
+   *
+   * This function may return a negative number only in the case the user
+   * changed the maximum number of running threads while other tasks are
+   * running.
+   */
    EAPI int           ecore_thread_available_get(void);
+  /**
+   * Adds some data to a hash local to the thread
+   *
+   * @param thread The thread context the data belongs to
+   * @param key The name under which the data will be stored
+   * @param value The data to add
+   * @param cb Function to free the data when removed from the hash
+   * @param direct If true, this will not copy the key string (like
+   * eina_hash_direct_add())
+   * @return EINA_TRUE on success, EINA_FALSE on failure
+   *
+   * Ecore Thread has a mechanism to share data across several worker functions
+   * that run on the same system thread. That is, the data is stored per
+   * thread and for a worker function to have access to it, it must be run
+   * by the same thread that stored the data.
+   *
+   * When there are no more workers pending, the thread will be destroyed
+   * along with the internal hash and any data left in it will be freed with
+   * the @p cb function given.
+   *
+   * This set of functions is useful to share things around several instances
+   * of a function when that thing is costly to create and can be reused, but
+   * may only be used by one function at a time.
+   *
+   * For example, if you have a program doing requisitions to a database,
+   * these requisitions can be done in threads so that waiting for the
+   * database to respond doesn't block the UI. Each of these threads will
+   * run a function, and each function will be dependant on a connection to
+   * the database, which may not be able to handle more than one request at
+   * a time so for each running function you will need one connection handle.
+   * The options then are:
+   * @li Each function opens a connection when it's called, does the work and
+   * closes the connection when it finishes. This may be costly, wasting a lot
+   * of time on resolving hostnames, negotiating permissions and allocating
+   * memory.
+   * @li Open the connections in the main loop and pass it to the threads
+   * using the data pointer. Even worse, it's just as costly as before and now
+   * it may even be kept with connections open doing nothing until a thread
+   * becomes available to run the function.
+   * @li Have a way to share connection handles, so that each instance of the
+   * function can check if an available connection exists, and if it doesn't,
+   * create one and add it to the pool. When no more connections are needed,
+   * they are all closed.
+   *
+   * The last option is the most efficient, but it requires a lot of work to
+   * implement properly. Using thread local data helps to achieve the same
+   * result while avoiding doing all the tracking work on your code. The way
+   * to use it would be, at the worker function, to ask for the connection
+   * with ecore_thread_local_data_find() and if it doesn't exist, then open
+   * a new one and save it with ecore_thread_local_data_add(). Do the work and
+   * forget about the connection handle, when everything is done the function
+   * just ends. The next worker to run on that thread will check if a
+   * connection exists and find that it does, so the process of opening a
+   * new one has been spared. When no more workers exist, the thread is
+   * destroyed and the callback used when saving the connection will be called
+   * to close it.
+   *
+   * This function adds the data @p value to the thread data under the given
+   * @p key.
+   * No other value in the hash may have the same @p key. If you need to
+   * change the value under a @p key, or you don't know if one exists already,
+   * you can use ecore_thread_local_data_set().
+   *
+   * Neither @p key nor @p value may be NULL and @p key will be copied in the
+   * hash, unless @p direct is set, in which case the string used should not
+   * be freed until the data is removed from the hash.
+   *
+   * The @p cb function will be called when the data in the hash needs to be
+   * freed, be it because it got deleted with ecore_thread_local_data_del() or
+   * because @p thread was terminated and the hash destroyed. This parameter
+   * may be NULL, in which case @p value needs to be manually freed after
+   * removing it from the hash with either ecore_thread_local_data_del() or
+   * ecore_thread_local_data_set(), but it's very unlikely that this is what
+   * you want.
+   *
+   * This function, and all of the others in the @c ecore_thread_local_data
+   * family of functions, can only be called within the worker function running
+   * in the thread. Do not call them from the main loop or from a thread
+   * other than the one represented by @p thread.
+   *
+   * @see ecore_thread_local_data_set()
+   * @see ecore_thread_local_data_find()
+   * @see ecore_thread_local_data_del()
+   */
    EAPI Eina_Bool     ecore_thread_local_data_add(Ecore_Thread *thread, const char *key, void *value, Eina_Free_Cb cb, Eina_Bool direct);
+  /**
+   * Sets some data in the hash local to the given thread
+   *
+   * @param thread The thread context the data belongs to
+   * @param key The name under which the data will be stored
+   * @param value The data to add
+   * @param cb Function to free the data when removed from the hash
+   *
+   * If no data exists in the hash under the @p key, this function adds
+   * @p value in the hash under the given @p key and returns NULL.
+   * The key itself is copied.
+   *
+   * If the hash already contains something under @p key, the data will be
+   * replaced by @p value and the old value will be returned.
+   *
+   * NULL will also be returned if either @p key or @p value are NULL, or if
+   * an error occurred.
+   *
+   * This function, and all of the others in the @c ecore_thread_local_data
+   * family of functions, can only be called within the worker function running
+   * in the thread. Do not call them from the main loop or from a thread
+   * other than the one represented by @p thread.
+   *
+   * @see ecore_thread_local_data_add()
+   * @see ecore_thread_local_data_del()
+   * @see ecore_thread_local_data_find()
+   */
    EAPI void         *ecore_thread_local_data_set(Ecore_Thread *thread, const char *key, void *value, Eina_Free_Cb cb);
+  /**
+   * Gets data stored in the hash local to the given thread
+   *
+   * @param thread The thread context the data belongs to
+   * @param key The name under which the data is stored
+   * @return The value under the given key, or NULL on error
+   *
+   * Finds and return the data stored in the shared hash under the key @p key.
+   *
+   * This function, and all of the others in the @c ecore_thread_local_data
+   * family of functions, can only be called within the worker function running
+   * in the thread. Do not call them from the main loop or from a thread
+   * other than the one represented by @p thread.
+   *
+   * @see ecore_thread_local_data_add()
+   * @see ecore_thread_local_data_wait()
+   */
    EAPI void         *ecore_thread_local_data_find(Ecore_Thread *thread, const char *key);
+  /**
+   * Deletes from the thread's hash the data corresponding to the given key
+   *
+   * @param thread The thread context the data belongs to
+   * @param key The name under which the data is stored
+   * @return EINA_TRUE on success, EINA_FALSE on failure
+   *
+   * If there's any data stored associated with @p key in the global hash,
+   * this function will remove it from it and return EINA_TRUE. If no data
+   * exists or an error occurs, it returns EINA_FALSE.
+   *
+   * If the data was added to the hash with a free function, then it will
+   * also be freed after removing it from the hash, otherwise it requires
+   * to be manually freed by the user, which means that if no other reference
+   * to it exists before calling this function, it will result in a memory
+   * leak.
+   *
+   * This function, and all of the others in the @c ecore_thread_local_data
+   * family of functions, can only be called within the worker function running
+   * in the thread. Do not call them from the main loop or from a thread
+   * other than the one represented by @p thread.
+   *
+   * @see ecore_thread_local_data_add()
+   */
    EAPI Eina_Bool     ecore_thread_local_data_del(Ecore_Thread *thread, const char *key);
 
+  /**
+   * Adds some data to a hash shared by all threads
+   *
+   * @param key The name under which the data will be stored
+   * @param value The data to add
+   * @param cb Function to free the data when removed from the hash
+   * @param direct If true, this will not copy the key string (like
+   * eina_hash_direct_add())
+   * @return EINA_TRUE on success, EINA_FALSE on failure
+   *
+   * Ecore Thread keeps a hash that can be used to share data across several
+   * threads, including the main loop one, without having to manually handle
+   * mutexes to do so safely.
+   *
+   * This function adds the data @p value to this hash under the given @p key.
+   * No other value in the hash may have the same @p key. If you need to
+   * change the value under a @p key, or you don't know if one exists already,
+   * you can use ecore_thread_global_data_set().
+   *
+   * Neither @p key nor @p value may be NULL and @p key will be copied in the
+   * hash, unless @p direct is set, in which case the string used should not
+   * be freed until the data is removed from the hash.
+   *
+   * The @p cb function will be called when the data in the hash needs to be
+   * freed, be it because it got deleted with ecore_thread_global_data_del() or
+   * because Ecore Thread was shut down and the hash destroyed. This parameter
+   * may be NULL, in which case @p value needs to be manually freed after
+   * removing it from the hash with either ecore_thread_global_data_del() or
+   * ecore_thread_global_data_set().
+   *
+   * Manually freeing any data that was added to the hash with a @p cb function
+   * is likely to produce a segmentation fault, or any other strange
+   * happenings, later on in the program.
+   *
+   * @see ecore_thread_global_data_del()
+   * @see ecore_thread_global_data_set()
+   * @see ecore_thread_global_data_find()
+   */
    EAPI Eina_Bool     ecore_thread_global_data_add(const char *key, void *value, Eina_Free_Cb cb, Eina_Bool direct);
+  /**
+   * Sets some data in the hash shared by all threads
+   *
+   * @param key The name under which the data will be stored
+   * @param value The data to add
+   * @param cb Function to free the data when removed from the hash
+   *
+   * If no data exists in the hash under the @p key, this function adds
+   * @p value in the hash under the given @p key and returns NULL.
+   * The key itself is copied.
+   *
+   * If the hash already contains something under @p key, the data will be
+   * replaced by @p value and the old value will be returned.
+   *
+   * NULL will also be returned if either @p key or @p value are NULL, or if
+   * an error occurred.
+   *
+   * @see ecore_thread_global_data_add()
+   * @see ecore_thread_global_data_del()
+   * @see ecore_thread_global_data_find()
+   */
    EAPI void         *ecore_thread_global_data_set(const char *key, void *value, Eina_Free_Cb cb);
+  /**
+   * Gets data stored in the hash shared by all threads
+   *
+   * @param key The name under which the data is stored
+   * @return The value under the given key, or NULL on error
+   *
+   * Finds and return the data stored in the shared hash under the key @p key.
+   *
+   * Keep in mind that the data returned may be used by more than one thread
+   * at the same time and no reference counting is done on it by Ecore.
+   * Freeing the data or modifying its contents may require additional
+   * precautions to be considered, depending on the application's design.
+   *
+   * @see ecore_thread_global_data_add()
+   * @see ecore_thread_global_data_wait()
+   */
    EAPI void         *ecore_thread_global_data_find(const char *key);
+  /**
+   * Deletes from the shared hash the data corresponding to the given key
+   *
+   * @param key The name under which the data is stored
+   * @return EINA_TRUE on success, EINA_FALSE on failure
+   *
+   * If there's any data stored associated with @p key in the global hash,
+   * this function will remove it from it and return EINA_TRUE. If no data
+   * exists or an error occurs, it returns EINA_FALSE.
+   *
+   * If the data was added to the hash with a free function, then it will
+   * also be freed after removing it from the hash, otherwise it requires
+   * to be manually freed by the user, which means that if no other reference
+   * to it exists before calling this function, it will result in a memory
+   * leak.
+   *
+   * Note, also, that freeing data that other threads may be using will result
+   * in a crash, so appropriate care must be taken by the application when
+   * that possibility exists.
+   *
+   * @see ecore_thread_global_data_add()
+   */
    EAPI Eina_Bool     ecore_thread_global_data_del(const char *key);
+  /**
+   * Gets data stored in the shared hash, or wait for it if it doesn't exist
+   *
+   * @param key The name under which the data is stored
+   * @param seconds The amount of time in seconds to wait for the data.
+   * @return The value under the given key, or NULL on error
+   *
+   * Finds and return the data stored in the shared hash under the key @p key.
+   *
+   * If there's nothing in the hash under the given @p key, the function
+   * will block and wait up to @p seconds seconds for some other thread to
+   * add it with either ecore_thread_global_data_add() or
+   * ecore_thread_global_data_set(). If after waiting there's still no data
+   * to get, NULL will be returned.
+   *
+   * If @p seconds is 0, then no waiting will happen and this function works
+   * like ecore_thread_global_data_find(). If @p seconds is less than 0, then
+   * the function will wait indefinitely.
+   *
+   * Keep in mind that the data returned may be used by more than one thread
+   * at the same time and no reference counting is done on it by Ecore.
+   * Freeing the data or modifying its contents may require additional
+   * precautions to be considered, depending on the application's design.
+   *
+   * @see ecore_thread_global_data_add()
+   * @see ecore_thread_global_data_find()
+   */
    EAPI void         *ecore_thread_global_data_wait(const char *key, double seconds);
 
-  /**
-   * @}
-   */
+   /**
+    * @}
+    */
 
   /**
    * @defgroup Ecore_Time_Group Ecore Time functions
