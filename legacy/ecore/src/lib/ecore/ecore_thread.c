@@ -969,7 +969,7 @@ ecore_thread_run(Ecore_Thread_Cb func_blocking,
 
       func_blocking((void *)data, (Ecore_Thread *) work);
       if (work->cancel == EINA_FALSE) func_end((void *)data, (Ecore_Thread *) work);
-      else func_end((void *)data, (Ecore_Thread *) work);
+      else func_cancel((void *)data, (Ecore_Thread *) work);
 
    } while (work->reschedule == EINA_TRUE);
 
@@ -1196,7 +1196,7 @@ EAPI Ecore_Thread *ecore_thread_feedback_run(Ecore_Thread_Cb func_heavy,
 
       if (worker.cancel) func_cancel((void *)data, (Ecore_Thread *) &worker);
       else func_end((void *)data, (Ecore_Thread *) &worker);
-   } while (worker.reschedule == EINA_FALSE);
+   } while (worker.reschedule == EINA_TRUE);
 
    return NULL;
 #endif
