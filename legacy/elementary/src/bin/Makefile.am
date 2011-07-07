@@ -64,6 +64,7 @@ test_focus.c \
 test_gengrid.c \
 test_genlist.c \
 test_genscroller.c \
+test_gesture_layer.c \
 test_glview_simple.c \
 test_glview.c \
 test_grid.c \

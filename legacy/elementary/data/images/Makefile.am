@@ -5,6 +5,9 @@ filesdir = $(datadir)/elementary/images
 files_DATA = \
 panel_01.jpg \
 plant_01.jpg \
+pol_shadow.png \
+pol_sky.png \
+pol_twofish.png \
 rock_01.jpg \
 rock_02.jpg \
 sky_01.jpg \

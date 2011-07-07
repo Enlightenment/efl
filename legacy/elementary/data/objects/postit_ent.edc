@@ -1,0 +1,26 @@
+collections {
+   group {
+      name: "main";
+      images {
+//         image: "1.png" COMP;
+      }
+      parts {
+         part {
+            name: "bg";
+            type: RECT;
+            description {
+               state: "default" 0.0;
+               color: 247 239 132 255;
+            }
+         }
+         part {
+            name: "ent";
+            type: SWALLOW;
+            description {
+               state: "default" 0.0;
+            }
+         }
+      }
+   }
+}
+
