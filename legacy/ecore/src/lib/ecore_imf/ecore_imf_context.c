@@ -520,7 +520,7 @@ ecore_imf_context_cursor_location_set(Ecore_IMF_Context *ctx, int x, int y, int 
    if (!ECORE_MAGIC_CHECK(ctx, ECORE_MAGIC_CONTEXT))
      {
         ECORE_MAGIC_FAIL(ctx, ECORE_MAGIC_CONTEXT,
-                         "ecore_imf_context_cursor_position_set");
+                         "ecore_imf_context_cursor_location_set");
         return;
      }
    if (ctx->klass->cursor_location_set) ctx->klass->cursor_location_set(ctx, x, y, w, h);
