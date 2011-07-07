@@ -7,168 +7,168 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: ecore 1.0\n"
-"Report-Msgid-Bugs-To: http://trac.enlightenment.org/e/\n"
-"POT-Creation-Date: 2011-02-22 20:00-0800\n"
+"Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
+"POT-Creation-Date: 2011-07-07 17:03+0900\n"
 "PO-Revision-Date: 2011-02-24 16:54+0100\n"
 "Last-Translator: r1to <renato.rener@gmail.com>\n"
 "Language-Team: Slovenian <sl@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: 8bit"
+"Content-Transfer-Encoding: 8bit\n"
 
-#: ../src/lib/ecore/ecore_getopt.c:87
+#: src/lib/ecore/ecore_getopt.c:87
 msgid "Version:"
 msgstr "Različica"
 
-#: ../src/lib/ecore/ecore_getopt.c:95
+#: src/lib/ecore/ecore_getopt.c:95
 msgid "Usage:"
 msgstr "Uporaba:"
 
-#: ../src/lib/ecore/ecore_getopt.c:100
+#: src/lib/ecore/ecore_getopt.c:100
 #, c-format
 msgid "%s [options]\n"
 msgstr "%s·[možnosti]\n"
 
-#: ../src/lib/ecore/ecore_getopt.c:248
+#: src/lib/ecore/ecore_getopt.c:248
 msgid "Copyright:"
 msgstr "Avtorstvo:"
 
-#: ../src/lib/ecore/ecore_getopt.c:259
+#: src/lib/ecore/ecore_getopt.c:259
 msgid "License:"
 msgstr "Licenca:"
 
-#: ../src/lib/ecore/ecore_getopt.c:411
+#: src/lib/ecore/ecore_getopt.c:411
 msgid "Type: "
 msgstr "Vrsta:·"
 
-#: ../src/lib/ecore/ecore_getopt.c:478
+#: src/lib/ecore/ecore_getopt.c:478
 msgid "Default: "
 msgstr "Privzeto:·"
 
-#: ../src/lib/ecore/ecore_getopt.c:501
+#: src/lib/ecore/ecore_getopt.c:501
 msgid "Choices: "
 msgstr "Izbire:·"
 
-#: ../src/lib/ecore/ecore_getopt.c:598
+#: src/lib/ecore/ecore_getopt.c:598
 msgid "Options:\n"
 msgstr "Možnosti:\n"
 
-#: ../src/lib/ecore/ecore_getopt.c:718
+#: src/lib/ecore/ecore_getopt.c:718
 #, c-format
 msgid "ERROR: unknown option --%s.\n"
 msgstr "NAPAKA:·Neznana možnost·--%s.\n"
 
-#: ../src/lib/ecore/ecore_getopt.c:720
+#: src/lib/ecore/ecore_getopt.c:720
 #, c-format
 msgid "ERROR: unknown option -%c.\n"
 msgstr "NAPAKA:·neznana možnost·-%c.\n"
 
-#: ../src/lib/ecore/ecore_getopt.c:776
+#: src/lib/ecore/ecore_getopt.c:776
 msgid "ERROR: "
 msgstr "NAPAKA:"
 
-#: ../src/lib/ecore/ecore_getopt.c:853 ../src/lib/ecore/ecore_getopt.c:969
-#: ../src/lib/ecore/ecore_getopt.c:982 ../src/lib/ecore/ecore_getopt.c:994
-#: ../src/lib/ecore/ecore_getopt.c:1008 ../src/lib/ecore/ecore_getopt.c:1052
-#: ../src/lib/ecore/ecore_getopt.c:1160 ../src/lib/ecore/ecore_getopt.c:1196
+#: src/lib/ecore/ecore_getopt.c:853 src/lib/ecore/ecore_getopt.c:969
+#: src/lib/ecore/ecore_getopt.c:982 src/lib/ecore/ecore_getopt.c:994
+#: src/lib/ecore/ecore_getopt.c:1008 src/lib/ecore/ecore_getopt.c:1052
+#: src/lib/ecore/ecore_getopt.c:1160 src/lib/ecore/ecore_getopt.c:1196
 msgid "value has no pointer set.\n"
 msgstr "vrednost nima nastavljenega kazalnika.\n"
 
-#: ../src/lib/ecore/ecore_getopt.c:882 ../src/lib/ecore/ecore_getopt.c:1071
+#: src/lib/ecore/ecore_getopt.c:882 src/lib/ecore/ecore_getopt.c:1071
 #, c-format
 msgid "unknown boolean value %s.\n"
 msgstr "neznana Boolova vrednost·%s.\n"
 
-#: ../src/lib/ecore/ecore_getopt.c:926 ../src/lib/ecore/ecore_getopt.c:1151
+#: src/lib/ecore/ecore_getopt.c:926 src/lib/ecore/ecore_getopt.c:1151
 #, c-format
 msgid "invalid number format %s\n"
 msgstr "napačen·format števila·%s\n"
 
-#: ../src/lib/ecore/ecore_getopt.c:1021
+#: src/lib/ecore/ecore_getopt.c:1021
 #, c-format
 msgid "invalid choice \"%s\". Valid values are: "
 msgstr "napačna izbira·\"%s\".·Pravilne izbire so:·"
 
-#: ../src/lib/ecore/ecore_getopt.c:1046
+#: src/lib/ecore/ecore_getopt.c:1046
 msgid "missing parameter to append.\n"
 msgstr "manjka·parameter·za dodajo.\n"
 
-#: ../src/lib/ecore/ecore_getopt.c:1141
+#: src/lib/ecore/ecore_getopt.c:1141
 msgid "could not parse value.\n"
 msgstr "vrednosti ni bilo možno razčleniti.\n"
 
-#: ../src/lib/ecore/ecore_getopt.c:1190
+#: src/lib/ecore/ecore_getopt.c:1190
 msgid "missing parameter.\n"
 msgstr "manjkajoči·parameter.\n"
 
-#: ../src/lib/ecore/ecore_getopt.c:1203
+#: src/lib/ecore/ecore_getopt.c:1203
 msgid "missing callback function!\n"
 msgstr "manjkajoča povratno-zasilna funkcija !\n"
 
-#: ../src/lib/ecore/ecore_getopt.c:1226
+#: src/lib/ecore/ecore_getopt.c:1226
 msgid "no version was defined.\n"
 msgstr "definirana ni bila nobena različica.\n"
 
-#: ../src/lib/ecore/ecore_getopt.c:1240
+#: src/lib/ecore/ecore_getopt.c:1240
 msgid "no copyright was defined.\n"
 msgstr "definirano ni bilo nobeno avtorstvo.\n"
 
-#: ../src/lib/ecore/ecore_getopt.c:1254
+#: src/lib/ecore/ecore_getopt.c:1254
 msgid "no license was defined.\n"
 msgstr "definirana ni bila nobena licenca.\n"
 
-#: ../src/lib/ecore/ecore_getopt.c:1308
+#: src/lib/ecore/ecore_getopt.c:1308
 #, c-format
 msgid "ERROR: unknown option --%s, ignored.\n"
 msgstr "NAPAKA:·neznana možnost·--%s,·prezrto.\n"
 
-#: ../src/lib/ecore/ecore_getopt.c:1341
+#: src/lib/ecore/ecore_getopt.c:1341
 #, c-format
 msgid "ERROR: option --%s requires an argument!\n"
 msgstr "NAPAKA:·možnost·--%s·zahteva argument!\n"
 
-#: ../src/lib/ecore/ecore_getopt.c:1377
+#: src/lib/ecore/ecore_getopt.c:1377
 #, c-format
 msgid "ERROR: unknown option -%c, ignored.\n"
 msgstr "NAPAKA:·neznana možnost·-%c,·prezrto.\n"
 
-#: ../src/lib/ecore/ecore_getopt.c:1415
+#: src/lib/ecore/ecore_getopt.c:1415
 #, c-format
 msgid "ERROR: option -%c requires an argument!\n"
 msgstr "NAPAKA:·možnost·-%c zahteva argument!\n"
 
-#: ../src/lib/ecore/ecore_getopt.c:1614
+#: src/lib/ecore/ecore_getopt.c:1614
 msgid "ERROR: no parser provided.\n"
 msgstr "NAPAKA:·ni podan razčlenjevalnik.\n"
 
-#: ../src/lib/ecore/ecore_getopt.c:1619
+#: src/lib/ecore/ecore_getopt.c:1619
 msgid "ERROR: no values provided.\n"
 msgstr "NAPAKA::·ni podanih vrednosti.\n"
 
-#: ../src/lib/ecore/ecore_getopt.c:1628
+#: src/lib/ecore/ecore_getopt.c:1628
 msgid "ERROR: no arguments provided.\n"
 msgstr "NAPAKA::·ni podanih argumentov.\n"
 
-#: ../src/lib/ecore/ecore_getopt.c:1654
+#: src/lib/ecore/ecore_getopt.c:1654
 msgid "ERROR: invalid options found."
 msgstr "NAPAKA::·najdene nepravilne možnosti"
 
-#: ../src/lib/ecore/ecore_getopt.c:1660
+#: src/lib/ecore/ecore_getopt.c:1660
 #, c-format
 msgid " See --%s.\n"
 msgstr "·Glej·--%s.\n"
 
-#: ../src/lib/ecore/ecore_getopt.c:1662
+#: src/lib/ecore/ecore_getopt.c:1662
 #, c-format
 msgid " See -%c.\n"
 msgstr "·Glej·-%c.\n"
 
-#: ../src/lib/ecore/ecore_getopt.c:1699
+#: src/lib/ecore/ecore_getopt.c:1699
 #, c-format
 msgid "ERROR: incorrect geometry value '%s'\n"
 msgstr "NAPAKA::·nepravilna geometrijska vrednost·'%s'\n"
 
-#: ../src/lib/ecore/ecore_getopt.c:1722
+#: src/lib/ecore/ecore_getopt.c:1722
 #, c-format
 msgid "ERROR: incorrect size value '%s'\n"
 msgstr "NAPAKA::·nepravilna vrednost velikosti·'%s'\n"
