@@ -600,6 +600,10 @@ _ecore_main_gsource_check(GSource *source __UNUSED__)
      ecore_fds_ready = (_ecore_main_fdh_glib_mark_active() > 0);
    _ecore_main_fd_handlers_cleanup();
 
+   /* ^C perhaps? */
+   if (!ret && _ecore_signal_count_get() > 0)
+     ret = TRUE;
+
    /* check timers after updating loop time */
    _ecore_time_loop_time = ecore_time_get();
    if (!ret && _ecore_timers_exists())
