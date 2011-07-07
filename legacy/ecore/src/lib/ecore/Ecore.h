@@ -1582,6 +1582,9 @@ extern "C" {
    * This function sets the time interval (in seconds) between animator ticks.
    * At every tick the callback of every existing animator will be called.
    *
+   * @warning Too small a value may cause performance issues and too high a
+   * value may cause your animation to seem "jerky".
+   *
    * @note The default @p frametime value is 1/30th of a second.
    */
    EAPI void            ecore_animator_frametime_set(double frametime);

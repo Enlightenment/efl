@@ -5,8 +5,10 @@ pkglibdir = $(datadir)/$(PACKAGE)/examples
 AM_CPPFLAGS = \
 -I. \
 -I$(top_srcdir)/src/lib/ecore \
+-I$(top_srcdir)/src/lib/ecore_evas \
+-I$(top_srcdir)/src/lib/ecore_input \
 -I$(top_srcdir)/src/lib/ecore_con \
-@GLIB_CFLAGS@ @EVIL_CFLAGS@ @EINA_CFLAGS@ @WIN32_CPPFLAGS@ @EFL_ECORE_BUILD@
+@GLIB_CFLAGS@ @EVIL_CFLAGS@ @EVAS_CFLAGS@ @EINA_CFLAGS@ @WIN32_CPPFLAGS@ @EFL_ECORE_BUILD@
 
 ECOREBASELDADD = \
 	$(top_builddir)/src/lib/ecore/libecore.la \
@@ -17,6 +19,7 @@ LDADD = \
 	$(ECOREBASELDADD)
 
 SRCS = \
+	ecore_animator_example.c \
 	ecore_fd_handler_example.c \
 	ecore_poller_example.c \
 	ecore_event_example.c \
@@ -45,6 +48,7 @@ endif
 
 if EFL_BUILD_EXAMPLES
 pkglib_PROGRAMS += \
+	ecore_animator_example \
 	ecore_fd_handler_example \
 	ecore_poller_example \
 	ecore_event_example \
@@ -56,5 +60,6 @@ pkglib_PROGRAMS += \
 	ecore_con_lookup_example
 
 ecore_con_lookup_example_LDADD = $(ECOREBASELDADD) $(top_builddir)/src/lib/ecore_con/libecore_con.la
+ecore_animator_example_LDADD = $(ECOREBASELDADD) $(top_builddir)/src/lib/ecore_evas/libecore_evas.la
 endif
 

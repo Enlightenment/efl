@@ -613,3 +613,77 @@
  *
  * @example ecore_pipe_simple_example.c
  */
+
+/**
+ * @page tutorial_ecore_animator Ecore animator example
+ * @dontinclude ecore_animator_example.c
+ *
+ * For this example we are going to animate a rectangle growing, moving and
+ * changing color, and then move it back to it's initial state with a
+ * different animation. We are also going to have a second rectangle moving
+ * along the bootom of the screen. To do this we are going to use ecore_evas,
+ * but since that is not the focus here we won't going into detail about it.
+ *
+ * @skip #include
+ * @until evas_object_show
+ * @until evas_object_show
+ * All of this is just setup, not what we're interested in right now.
+ *
+ * Now we are going to set the frametime for our animation to one fiftieth of
+ * a second, this will make our program consume more resources but should make
+ * our animation extra smooth:
+ * @until frametime
+ *
+ * And now we get right to the business of creating our ecore_animator:
+ * @until timeline
+ * @note We are telling our animation to last 10 second and to call
+ * _advance_frame with rect as data.
+ *
+ * So far we setup the first and second animations, the third one however is a
+ * bit different, this time we won't use a timeline animation, that's because we
+ * don't want our animation to stop:
+ * @until animator_add
+ *
+ * Next we set a few timers to execute _start_second_anim, _freeze_third_anim
+ * and _thaw_thir_anim in 10, 5 and 10 seconds respectively:
+ * @until thaw
+ *
+ * And now we tell ecore to begin the main loop and free some resources once
+ * it leaves the main loop:
+ * @until }
+ *
+ * Here we have the callback function for our first animation, which first
+ * takes @p pos(where in the timeline we are), maps it to a SPRING curve that
+ * which will wooble 15 times and will decay by a factor of 1.2:
+ * @until pos_map
+ *
+ * Now that we have the frame we can adjust the rectangle to its apropriate
+ * state:
+ * @until }
+ *
+ * And now the callback that will run 10 seconds after the program starts(5
+ * seconds after the first animation finishes) and starts our second
+ * animation:
+ * @until }
+ * @note For this animation we made the frametime much larger which means our
+ * animation might get "jerky".
+ *
+ * The callback for our second animation, our savy reader no doubt noted that
+ * it's very similar to the callback for the first animation. What we change for
+ * this one is the type of animation to BOUNCE and the number of times it will
+ * bounce to 50:
+ * @until }
+ *
+ * And for our last animation callback something simpler, we just move our
+ * rectangle right by one pixel until it reaches the end of the screen and then
+ * start at the beggining again:
+ * @until }
+ *
+ * Our next two functions respectively freezes and thaw our third animation, so
+ * that it won't happen for the 5 seconds after the first animation ends and the
+ * second animation begins:
+ * @until }
+ * @until }
+ *
+ * @example ecore_animator_example.c
+ */
