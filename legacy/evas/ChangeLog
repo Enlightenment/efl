@@ -422,3 +422,6 @@
 
 	* Fix bug in grab counting on object hide while events are frozen
 
+2011-07-07  Cedric Bail
+
+	* Fix infite loop when reinserting object during recalc stage.
