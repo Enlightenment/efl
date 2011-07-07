@@ -408,7 +408,7 @@ extern "C" {
         ECORE_POS_MAP_SINUSOIDAL_FACTOR, /**< Start slow, speed up then slow down at end, v1 being a power factor, 0.0 being linear, 1.0 being normal sinusoidal, 2.0 being much more pronounced sinusoidal (squared), 3.0 being cubed, etc. */
         ECORE_POS_MAP_DIVISOR_INTERP, /**< Start at gradient * v1, interpolated via power of v2 curve */
         ECORE_POS_MAP_BOUNCE, /**< Start at 0.0 then "drop" like a ball bouncing to the ground at 1.0, and bounce v2 times, with decay factor of v1 */
-        ECORE_POS_MAP_SPRING  /**< Start at 0.0 then "wobble" like a sping rest position 1.0, and wobble v2 times, with decay factor of v1 */
+        ECORE_POS_MAP_SPRING  /**< Start at 0.0 then "wobble" like a spring rest position 1.0, and wobble v2 times, with decay factor of v1 */
      };
    typedef enum _Ecore_Pos_Map Ecore_Pos_Map;
 
@@ -1456,21 +1456,286 @@ extern "C" {
   /**
    * @defgroup Ecore_Animator_Group Ecore Animator functions
    *
+   * @brief Ecore animators are a helper to simplify creating animations.
+   *
+   * Creating an animation is as simple as saying for how long it should be run
+   * and having a callback that does the animation, something like this:
+   * @code
+   * static Eina_Bool
+   * _do_animation(void *data, double pos)
+   * {
+   *    evas_object_move(data, 100 * pos, 100 * pos);
+   *    ... do some more animating ...
+   * }
+   * ...
+   * ecore_animator_timeline_add(2, _do_animation, my_evas_object);
+   * @endcode
+   * In the sample above we create an animation to move @p my_evas_object from
+   * position (0,0) to (100,100) in 2 seconds.
+   *
+   * If your animation will run for an unspecified amount of time you can use
+   * ecore_animator_add(), which is like using ecore_timer_add() with the
+   * interval being the @ref ecore_animator_frametime_set "framerate". Note that
+   * this has tangible benefits to creating a timer for each animation in terms
+   * of performance.
+   *
+   * For a more detailed example that show several animation see @ref
+   * tutorial_ecore_animator.
    * @{
    */
 
+  /**
+   * @brief Add an animator to call @p func at every animaton tick during main
+   * loop execution.
+   *
+   * @param func The function to call when it ticks off
+   * @param data The data to pass to the function
+   * @return A handle to the new animator
+   *
+   * This function adds a animator and returns its handle on success and NULL on
+   * failure. The function @p func will be called every N seconds where N is the
+   * @p frametime interval set by ecore_animator_frametime_set(). The function
+   * will be passed the @p data pointer as its parameter.
+   *
+   * When the animator @p func is called, it must return a value of either 1 or
+   * 0. If it returns 1 (or ECORE_CALLBACK_RENEW), it will be called again at
+   * the next tick, or if it returns 0 (or ECORE_CALLBACK_CANCEL) it will be
+   * deleted automatically making any references/handles for it invalid.
+   *
+   * @note The default @p frametime value is 1/30th of a second.
+   *
+   * @see ecore_animator_timeline_add()
+   * @see ecore_animator_frametime_set()
+   */
    EAPI Ecore_Animator *ecore_animator_add(Ecore_Task_Cb func, const void *data);
+  /**
+   * @brief Add a animator that runs for a limited time
+   *
+   * @param runtime The time to run in seconds
+   * @param func The function to call when it ticks off
+   * @param data The data to pass to the function
+   * @return A handle to the new animator
+   *
+   * This function is just like ecore_animator_add() except the animator only
+   * runs for a limited time specified in seconds by @p runtime. Once the
+   * runtime the animator has elapsed (animator finished) it will automatically
+   * be deleted. The callback function @p func can return ECORE_CALLBACK_RENEW
+   * to keep the animator running or ECORE_CALLBACK_CANCEL ro stop it and have
+   * it be deleted automatically at any time.
+   *
+   * The @p func will ALSO be passed a position parameter that will be in value
+   * from 0.0 to 1.0 to indicate where along the timeline (0.0 start, 1.0 end)
+   * the animator run is at. If the callback wishes not to have a linear
+   * transition it can "map" this value to one of several curves and mappings
+   * via ecore_animator_pos_map().
+   *
+   * @note The default @p frametime value is 1/30th of a second.
+   *
+   * @see ecore_animator_add()
+   * @see ecore_animator_pos_map()
+   * @since 1.1.0
+   */
    EAPI Ecore_Animator *ecore_animator_timeline_add(double runtime, Ecore_Timeline_Cb func, const void *data);
+  /**
+   * @brief Delete the specified animator from the animator list.
+   *
+   * @param animator The animator to delete
+   * @return The data pointer set for the animator on add
+   *
+   * Delete the specified @p animator from the set of animators that are
+   * executed during main loop execution. This function returns the data
+   * parameter that was being passed to the callback on success, or NULL on
+   * failure. After this call returns the specified animator object @p animator
+   * is invalid and should not be used again. It will not get called again after
+   * deletion.
+   */
    EAPI void           *ecore_animator_del(Ecore_Animator *animator);
+  /**
+   * @brief Suspend the specified animator.
+   *
+   * @param animator The animator to delete
+   *
+   * The specified @p animator will be temporarly removed from the set of
+   * animators that are executed during main loop.
+   *
+   * @warning Freezing an animator doesn't freeze accounting of how long that
+   * animator has been running. Therefore if the animator was created with
+   * ecore_animator_timeline_add() the @p pos argument given to the callback
+   * will increase as if the animator hadn't been frozen and the animator may
+   * have it's execution halted if @p runtime elapsed.
+   */
    EAPI void            ecore_animator_freeze(Ecore_Animator *animator);
+  /**
+   * @brief Restore execution of the specified animator.
+   *
+   * @param animator The animator to delete
+   *
+   * The specified @p animator will be put back in the set of animators that are
+   * executed during main loop.
+   */
    EAPI void            ecore_animator_thaw(Ecore_Animator *animator);
+  /**
+   * @brief Set the animator call interval in seconds.
+   *
+   * @param frametime The time in seconds in between animator ticks.
+   *
+   * This function sets the time interval (in seconds) between animator ticks.
+   * At every tick the callback of every existing animator will be called.
+   *
+   * @note The default @p frametime value is 1/30th of a second.
+   */
    EAPI void            ecore_animator_frametime_set(double frametime);
+  /**
+   * @brief Get the animator call interval in seconds.
+   *
+   * @return The time in second in between animator ticks.
+   *
+   * This function retrieves the time in seconds between animator ticks.
+   *
+   * @see ecore_animator_frametime_set()
+   */
    EAPI double          ecore_animator_frametime_get(void);
+  /**
+   * @brief Maps an input position from 0.0 to 1.0 along a timeline to a
+   * position in a different curve.
+   *
+   * @param pos The input position to map
+   * @param map The mapping to use
+   * @param v1 A parameter use by the mapping (pass 0.0 if not used)
+   * @param v2 A parameter use by the mapping (pass 0.0 if not used)
+   * @return The mapped value
+   *
+   * Takes an input position (0.0 to 1.0) and maps to a new position (normally
+   * between 0.0 and 1.0, but it may go above/below 0.0 or 1.0 to show that it
+   * has "overshot" the mark) using some interpolation (mapping) algorithm.
+   *
+   * This function useful to create non-linear animations. It offers a variety
+   * of possible animaton curves to be used:
+   * @li ECORE_POS_MAP_LINEAR - Linear, returns @p pos
+   * @li ECORE_POS_MAP_ACCELERATE - Start slow then speed up
+   * @li ECORE_POS_MAP_DECELERATE - Start fast then slow down
+   * @li ECORE_POS_MAP_SINUSOIDAL - Start slow, speed up then slow down at end
+   * @li ECORE_POS_MAP_ACCELERATE_FACTOR - Start slow then speed up, v1 being a
+   * power factor, 0.0 being linear, 1.0 being ECORE_POS_MAP_ACCELERATE, 2.0
+   * being much more pronounced accelerate (squared), 3.0 being cubed, etc.
+   * @li ECORE_POS_MAP_DECELERATE_FACTOR - Start fast then slow down, v1 being a
+   * power factor, 0.0 being linear, 1.0 being ECORE_POS_MAP_DECELERATE, 2.0
+   * being much more pronounced decelerate (squared), 3.0 being cubed, etc.
+   * @li ECORE_POS_MAP_SINUSOIDAL_FACTOR - Start slow, speed up then slow down
+   * at end, v1 being a power factor, 0.0 being linear, 1.0 being
+   * ECORE_POS_MAP_SINUSOIDAL, 2.0 being much more pronounced sinusoidal
+   * (squared), 3.0 being cubed, etc.
+   * @li ECORE_POS_MAP_DIVISOR_INTERP - Start at gradient * v1, interpolated via
+   * power of v2 curve
+   * @li ECORE_POS_MAP_BOUNCE - Start at 0.0 then "drop" like a ball bouncing to
+   * the ground at 1.0, and bounce v2 times, with decay factor of v1
+   * @li ECORE_POS_MAP_SPRING - Start at 0.0 then "wobble" like a spring rest
+   * position 1.0, and wobble v2 times, with decay factor of v1
+   * @note When not listed v1 and v2 have no effect.
+   *
+   * One way to use this would be:
+   * @code
+   * double pos; // input position in a timeline from 0.0 to 1.0
+   * double out; // output position after mapping
+   * int x1, y1, x2, y2; // x1 & y1 are start position, x2 & y2 are end position
+   * int x, y; // x & y are the calculated position
+   *
+   * out = ecore_animator_pos_map(pos, ECORE_POS_MAP_BOUNCE, 1.8, 7);
+   * x = (x1 * out) + (x2 * (1.0 - out));
+   * y = (y1 * out) + (y2 * (1.0 - out));
+   * move_my_object_to(myobject, x, y);
+   * @endcode
+   * This will make an animaton that bounces 7 each times diminishing by a
+   * factor of 1.8.
+   *
+   * @see _Ecore_Pos_Map
+   *
+   * @since 1.1.0
+   */
    EAPI double          ecore_animator_pos_map(double pos, Ecore_Pos_Map map, double v1, double v2);
+  /**
+   * @brief Set the source of animator ticks for the mainloop
+   *
+   * @param source The source of animator ticks to use
+   *
+   * This sets the source of animator ticks. When an animator is active the
+   * mainloop will "tick" over frame by frame calling all animators that are
+   * registered until none are. The mainloop will tick at a given rate based
+   * on the animator source. The default source is the system clock timer
+   * source - ECORE_ANIMATOR_SOURCE_TIMER. This source uses the system clock
+   * to tick over every N seconds (specified by ecore_animator_frametime_set(),
+   * with the default being 1/30th of a second unless set otherwise). You can
+   * set a custom tick source by setting the source to
+   * ECORE_ANIMATOR_SOURCE_CUSTOM and then drive it yourself based on some input
+   * tick source (like another application via ipc, some vertical blanking
+   * interrupt interrupt etc.) using
+   * ecore_animator_custom_source_tick_begin_callback_set() and
+   * ecore_animator_custom_source_tick_end_callback_set() to set the functions
+   * that will be called to start and stop the ticking source, which when it
+   * gets a "tick" should call ecore_animator_custom_tick() to make the "tick" over 1
+   * frame.
+   */
    EAPI void            ecore_animator_source_set(Ecore_Animator_Source source);
+  /**
+   * @brief Get the animator source currently set.
+   *
+   * @return The current animator source
+   *
+   * This gets the current animator source.
+   *
+   * @see ecore_animator_source_set()
+   */
    EAPI Ecore_Animator_Source ecore_animator_source_get(void);
+  /**
+   * @brief Set the function that begins a custom animator tick source
+   *
+   * @param func The function to call when ticking is to begin
+   * @param data The data passed to the tick begin function as its parameter
+   *
+   * The Ecore Animator infrastructure handles tracking if animators are needed
+   * or not and which ones need to be called and when, but when the tick source
+   * is custom, you have to provide a tick source by calling
+   * ecore_animator_custom_tick() to indicate a frame tick happened. In order
+   * to allow the source of ticks to be dynamically enabled or disabled as
+   * needed, the @p func when set is called to enable the tick source to
+   * produce tick events that call ecore_animator_custom_tick(). If @p func
+   * is NULL then no function is called to begin custom ticking.
+   *
+   * @see ecore_animator_source_set()
+   * @see ecore_animator_custom_source_tick_end_callback_set()
+   * @see ecore_animator_custom_tick()
+   */
    EAPI void            ecore_animator_custom_source_tick_begin_callback_set(Ecore_Cb func, const void *data);
+  /**
+   * @brief Set the function that ends a custom animator tick source
+   *
+   * @param func The function to call when ticking is to end
+   * @param data The data passed to the tick end function as its parameter
+   *
+   * This function is a matching pair to the function set by
+   * ecore_animator_custom_source_tick_begin_callback_set() and is called
+   * when ticking is to stop. If @p func is NULL then no function will be
+   * called to stop ticking. For more information please see
+   * ecore_animator_custom_source_tick_begin_callback_set().
+   *
+   * @see ecore_animator_source_set()
+   * @see ecore_animator_custom_source_tick_begin_callback_set()
+   * @see ecore_animator_custom_tick()
+   */
    EAPI void            ecore_animator_custom_source_tick_end_callback_set(Ecore_Cb func, const void *data);
+  /**
+   * @brief Trigger a custom animator tick
+   *
+   * When animator source is set to ECORE_ANIMATOR_SOURCE_CUSTOM, then calling
+   * this function triggers a run of all animators currently registered with
+   * Ecore as this indicates a "frame tick" happened. This will do nothing if
+   * the animator source(set by ecore_animator_source_set()) is not set to
+   * ECORE_ANIMATOR_SOURCE_CUSTOM.
+   *
+   * @see ecore_animator_source_set()
+   * @see ecore_animator_custom_source_tick_begin_callback_set
+   * @see ecore_animator_custom_source_tick_end_callback_set()()
+   */
    EAPI void            ecore_animator_custom_tick(void);
          
   /**
