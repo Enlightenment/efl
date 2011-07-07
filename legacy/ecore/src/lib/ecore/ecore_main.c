@@ -476,8 +476,6 @@ static inline int _ecore_main_fdh_glib_mark_active(void)
         if (fdh->gfd.revents & (G_IO_IN|G_IO_OUT|G_IO_ERR)) ret++;
      }
 
-   INF("found %d active fds", ret);
-
    return ret;
 }
 
@@ -485,10 +483,8 @@ static inline int _ecore_main_fdh_glib_mark_active(void)
 static gboolean
 _ecore_main_gsource_prepare(GSource *source __UNUSED__, gint *next_time)
 {
-   double t = _ecore_timer_next_get();
    gboolean running;
 
-   INF("enter, next timeout in %.1f", t);
    in_main_loop++;
 
    if (!ecore_idling)
@@ -575,12 +571,9 @@ _ecore_main_gsource_check(GSource *source __UNUSED__)
              uint64_t count = 0;
              int r = read(timer_fd, &count, sizeof count);
              if (r == -1 && errno == EAGAIN)
-               INF("timer not ready");
+               ;
              else if (r == sizeof count)
-               {
-                  INF("woke %d times", (int)count);
-                  ret = TRUE;
-               }
+               ret = TRUE;
              else
                {
                   /* unexpected things happened... fail back to old way */
@@ -591,7 +584,7 @@ _ecore_main_gsource_check(GSource *source __UNUSED__)
           }
      }
    else
-        ret = TRUE;
+     ret = TRUE;
 
    /* check if fds are ready */
    if (HAVE_EPOLL && epoll_fd >= 0)
@@ -615,9 +608,6 @@ _ecore_main_gsource_check(GSource *source __UNUSED__)
    _ecore_timer_enable_new();
 
    in_main_loop--;
-
-   if (!(ret || ecore_fds_ready))
-     INF("nothing was ready");
 
    return ret || ecore_fds_ready;
 }
@@ -698,8 +688,6 @@ static GSourceFuncs ecore_gsource_funcs =
 void
 _ecore_main_loop_init(void)
 {
-   INF("enter");
-
    epoll_fd = epoll_create(1);
    if (epoll_fd < 0)
       WRN("Failed to create epoll fd!");
