@@ -1605,8 +1605,8 @@ extern "C" {
    EAPI int          elm_win_quickpanel_priority_minor_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
    EAPI void         elm_win_quickpanel_zone_set(Evas_Object *obj, int zone) EINA_ARG_NONNULL(1);
    EAPI int          elm_win_quickpanel_zone_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
-   EAPI void         elm_win_prop_focus_skip_set(Evas_Object *obj, Eina_Bool skip); EINA_ARG_NONNULL(1);
-   EAPI void         elm_win_illume_command_send(Evas_Object *obj, Elm_Illume_Command command, void *params); EINA_ARG_NONNULL(1);
+   EAPI void         elm_win_prop_focus_skip_set(Evas_Object *obj, Eina_Bool skip) EINA_ARG_NONNULL(1);
+   EAPI void         elm_win_illume_command_send(Evas_Object *obj, Elm_Illume_Command command, void *params) EINA_ARG_NONNULL(1);
    EAPI Evas_Object *elm_win_inlined_image_object_get(Evas_Object *obj);
    EAPI void         elm_win_focus_highlight_enabled_set(Evas_Object *obj, Eina_Bool enabled) EINA_ARG_NONNULL(1);
    EAPI Eina_Bool    elm_win_focus_highlight_enabled_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
@@ -2665,11 +2665,11 @@ extern "C" {
 
    /* frame */
    EAPI Evas_Object *elm_frame_add(Evas_Object *parent) EINA_ARG_NONNULL(1);
-   EINA_DEPRECATED EAPI void         elm_frame_label_set(Evas_Object *obj, const char *label); EINA_ARG_NONNULL(1)
-   EINA_DEPRECATED EAPI const char  *elm_frame_label_get(const Evas_Object *obj); EINA_ARG_NONNULL(1)
-   EAPI void         elm_frame_content_set(Evas_Object *obj, Evas_Object *content); EINA_ARG_NONNULL(1)
-   EAPI Evas_Object *elm_frame_content_get(const Evas_Object *obj); EINA_ARG_NONNULL(1)
-   EAPI Evas_Object *elm_frame_content_unset(Evas_Object *obj); EINA_ARG_NONNULL(1)
+   EINA_DEPRECATED EAPI void         elm_frame_label_set(Evas_Object *obj, const char *label) EINA_ARG_NONNULL(1);
+   EINA_DEPRECATED EAPI const char  *elm_frame_label_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+   EAPI void         elm_frame_content_set(Evas_Object *obj, Evas_Object *content) EINA_ARG_NONNULL(1);
+   EAPI Evas_Object *elm_frame_content_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+   EAPI Evas_Object *elm_frame_content_unset(Evas_Object *obj) EINA_ARG_NONNULL(1);
    /* available styles:
     * default
     * pad_small
@@ -4512,14 +4512,14 @@ extern "C" {
 
    /* check */
    EAPI Evas_Object *elm_check_add(Evas_Object *parent) EINA_ARG_NONNULL(1);
-   EINA_DEPRECATED EAPI void         elm_check_label_set(Evas_Object *obj, const char *label); EINA_ARG_NONNULL(1)
-   EINA_DEPRECATED EAPI const char  *elm_check_label_get(const Evas_Object *obj); EINA_ARG_NONNULL(1)
-   EAPI void         elm_check_icon_set(Evas_Object *obj, Evas_Object *icon); EINA_ARG_NONNULL(1)
-   EAPI Evas_Object *elm_check_icon_get(const Evas_Object *obj); EINA_ARG_NONNULL(1)
-   EAPI Evas_Object *elm_check_icon_unset(Evas_Object *obj); EINA_ARG_NONNULL(1)
-   EAPI void         elm_check_state_set(Evas_Object *obj, Eina_Bool state); EINA_ARG_NONNULL(1)
-   EAPI Eina_Bool    elm_check_state_get(const Evas_Object *obj); EINA_ARG_NONNULL(1)
-   EAPI void         elm_check_state_pointer_set(Evas_Object *obj, Eina_Bool *statep); EINA_ARG_NONNULL(1)
+   EINA_DEPRECATED EAPI void         elm_check_label_set(Evas_Object *obj, const char *label) EINA_ARG_NONNULL(1);
+   EINA_DEPRECATED EAPI const char  *elm_check_label_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+   EAPI void         elm_check_icon_set(Evas_Object *obj, Evas_Object *icon) EINA_ARG_NONNULL(1);
+   EAPI Evas_Object *elm_check_icon_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+   EAPI Evas_Object *elm_check_icon_unset(Evas_Object *obj) EINA_ARG_NONNULL(1);
+   EAPI void         elm_check_state_set(Evas_Object *obj, Eina_Bool state) EINA_ARG_NONNULL(1);
+   EAPI Eina_Bool    elm_check_state_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+   EAPI void         elm_check_state_pointer_set(Evas_Object *obj, Eina_Bool *statep) EINA_ARG_NONNULL(1);
    /* smart callbacks called:
     * "changed" - This is called whenever the user changes the state of one of the check object.
     */
@@ -5293,7 +5293,7 @@ extern "C" {
     * @param[in] cs Curve style. Default is ELM_ANIMATOR_CURVE_LINEAR
     * @deprecated Use @ref Transit instead.
     */
-   EINA_DEPRECATED EAPI Elm_Animator_Curve_Style elm_animator_curve_style_get(const Elm_Animator *animator); EINA_ARG_NONNULL(1);
+   EINA_DEPRECATED EAPI Elm_Animator_Curve_Style elm_animator_curve_style_get(const Elm_Animator *animator) EINA_ARG_NONNULL(1);
    /**
     * @brief Sets wether the animation should be automatically reversed.
     *
