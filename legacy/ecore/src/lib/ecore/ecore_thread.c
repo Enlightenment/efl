@@ -389,7 +389,6 @@ static LRWK(_ecore_thread_global_hash_lock);
 static LK(_ecore_thread_global_hash_mutex);
 static CD(_ecore_thread_global_hash_cond);
 
-static PH(main_loop_thread);
 static Eina_Bool have_main_loop_thread = 0;
 
 static Eina_Trash *_ecore_thread_worker_trash = NULL;
@@ -397,6 +396,22 @@ static int _ecore_thread_worker_count = 0;
 
 static void *_ecore_thread_worker(Ecore_Pthread_Data *pth);
 static Ecore_Pthread_Worker *_ecore_thread_worker_new(void);
+
+static PH(get_main_loop_thread)(void)
+{
+  static PH(main_loop_thread);
+  static pid_t main_loop_pid;
+  pid_t pid = getpid();
+
+  if (pid != main_loop_pid)
+    {
+       main_loop_pid = pid;
+       main_loop_thread = PHS();
+       have_main_loop_thread = 1;
+    }
+
+  return main_loop_thread;
+}
 
 static void
 _ecore_thread_worker_free(Ecore_Pthread_Worker *worker)
@@ -764,11 +779,6 @@ _ecore_thread_worker_new(void)
 void
 _ecore_thread_init(void)
 {
-#ifdef EFL_HAVE_THREADS
-   main_loop_thread = PHS();
-   have_main_loop_thread = 1;
-#endif
-
    _ecore_thread_count_max = eina_cpu_count();
    if (_ecore_thread_count_max <= 0)
      _ecore_thread_count_max = 1;
@@ -850,9 +860,9 @@ _ecore_thread_assert_main_loop_thread(const char *function)
 {
    Eina_Bool good;
 #ifdef EFL_HAVE_THREADS
-   good = (main_loop_thread == PHS());
+   good = PHE(get_main_loop_thread(), PHS());
 #else
-   good = Eina_True;
+   good = EINA_TRUE;
 #endif
    if (!good)
      {
@@ -992,7 +1002,7 @@ ecore_thread_cancel(Ecore_Thread *thread)
    LKL(_ecore_pending_job_threads_mutex);
 
    if ((have_main_loop_thread) &&
-       (PHE(main_loop_thread, PHS())))
+       (PHE(get_main_loop_thread(), PHS())))
      {
         if (!work->feedback_run)
           EINA_LIST_FOREACH(_ecore_pending_job_threads, l, work)
