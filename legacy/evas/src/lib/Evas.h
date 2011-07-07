@@ -1193,7 +1193,6 @@ EAPI Evas             *evas_new                          (void) EINA_WARN_UNUSED
  */
 EAPI void              evas_free                         (Evas *e)  EINA_ARG_NONNULL(1);
 
-
 /**
  * Inform to the evas that it got the focus.
  *
@@ -2463,6 +2462,21 @@ EAPI void              evas_event_feed_key_up            (Evas *e, const char *k
  *
  */
 EAPI void              evas_event_feed_hold              (Evas *e, int hold, unsigned int timestamp, const void *data) EINA_ARG_NONNULL(1);
+
+/**
+ * Re feed event.
+ *
+ * @param e The given canvas pointer.
+ * @param event_copy the event to refeed
+ * @param event_type Event type
+ *
+ * This function re-feeds the event pointed by event_copy
+ *
+ * This function call evas_event_feed_* functions, so it can
+ * cause havoc if not used wisely. Please use it responsibly.
+ */
+EAPI void              evas_event_refeed_event           (Evas *e, void *event_copy, Evas_Callback_Type event_type);  EINA_ARG_NONNULL(1);
+
 
 /**
  * @}

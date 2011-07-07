@@ -196,6 +196,7 @@ evas_event_thaw_eval(Evas *e)
    return;
    MAGIC_CHECK_END();
    if (e->events_frozen != 0) return;
+
    evas_event_feed_mouse_move(e, e->pointer.x, e->pointer.y, 
                               e->last_timestamp, NULL);
 }
@@ -1465,4 +1466,80 @@ evas_object_pointer_mode_get(const Evas_Object *obj)
    return 0;
    MAGIC_CHECK_END();
    return obj->pointer_mode;
+}
+
+EAPI void
+evas_event_refeed_event(Evas *e, void *event_copy, Evas_Callback_Type event_type)
+{
+   switch(event_type)
+     {
+      case EVAS_CALLBACK_MOUSE_IN:
+           {
+              Evas_Event_Mouse_In *ev = event_copy;
+              evas_event_feed_mouse_in(e, ev->timestamp, ev->data);
+              break;
+           }
+      case EVAS_CALLBACK_MOUSE_OUT:
+           {
+              Evas_Event_Mouse_Out *ev = event_copy;
+              evas_event_feed_mouse_out(e, ev->timestamp, ev->data);
+              break;
+           }
+      case EVAS_CALLBACK_MOUSE_DOWN:
+           {
+              Evas_Event_Mouse_Down *ev = event_copy;
+              evas_event_feed_mouse_down(e, ev->button, ev->flags, ev-> timestamp, ev->data);
+              break;
+           }
+      case EVAS_CALLBACK_MOUSE_UP:
+           {
+              Evas_Event_Mouse_Up *ev = event_copy;
+              evas_event_feed_mouse_up(e, ev->button, ev->flags, ev-> timestamp, ev->data);
+              break;
+           }
+      case EVAS_CALLBACK_MOUSE_MOVE:
+           {
+              Evas_Event_Mouse_Move *ev = event_copy;
+              evas_event_feed_mouse_move(e, ev->cur.canvas.x, ev->cur.canvas.y, ev->timestamp, ev->data);
+              break;
+           }
+      case EVAS_CALLBACK_MOUSE_WHEEL:
+           {
+              Evas_Event_Mouse_Wheel *ev = event_copy;
+              evas_event_feed_mouse_wheel(e, ev->direction, ev-> z, ev->timestamp, ev->data);
+              break;
+           }
+      case EVAS_CALLBACK_MULTI_DOWN:
+           {
+              Evas_Event_Multi_Down *ev = event_copy;
+              evas_event_feed_multi_down(e, ev->device, ev->canvas.x, ev->canvas.y, ev->radius, ev->radius_x, ev->radius_y, ev->pressure, ev->angle, ev->canvas.xsub, ev->canvas.ysub, ev->flags, ev->timestamp, ev->data);
+                 break;
+           }
+      case EVAS_CALLBACK_MULTI_UP:
+           {
+              Evas_Event_Multi_Up *ev = event_copy;
+              evas_event_feed_multi_up(e, ev->device, ev->canvas.x, ev->canvas.y, ev->radius, ev->radius_x, ev->radius_y, ev->pressure, ev->angle, ev->canvas.xsub, ev->canvas.ysub, ev->flags, ev->timestamp, ev->data);
+              break;
+           }
+      case EVAS_CALLBACK_MULTI_MOVE:
+           {
+              Evas_Event_Multi_Move *ev = event_copy;
+              evas_event_feed_multi_move(e, ev->device, ev->cur.canvas.x, ev->cur.canvas.y, ev->radius, ev->radius_x, ev->radius_y, ev->pressure, ev->angle, ev->cur.canvas.xsub, ev->cur.canvas.ysub, ev->timestamp, ev->data);
+              break;
+           }
+      case EVAS_CALLBACK_KEY_DOWN:
+           {
+              Evas_Event_Key_Down *ev = event_copy;
+              evas_event_feed_key_down(e, ev->keyname, ev->key, ev->string, ev->compose, ev->timestamp, ev->data);
+              break;
+           }
+      case EVAS_CALLBACK_KEY_UP:
+           {
+              Evas_Event_Key_Up *ev = event_copy;
+              evas_event_feed_key_up(e, ev->keyname, ev->key, ev->string, ev->compose, ev->timestamp, ev->data);
+              break;
+           }
+      default: /* All non-input events are not handeled */
+         break;
+     }
 }
