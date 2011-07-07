@@ -2361,14 +2361,14 @@ extern "C" {
     * @image html  widget/button/preview-00.png
     * @image html  widget/button/preview-01.png
     * @image html  widget/button/preview-02.png
-    * 
+    *
     * This is a push-button. Press it and run some function. It can contain
     * a simple label and icon object and it also has an autorepeat feature.
     *
     * This widgets emits the following signals:
     * @li "clicked": the user clicked the button (press/release).
     * @li "repeated": the user pressed the button without releasing it.
-    * @li "pressed": button was pressed. 
+    * @li "pressed": button was pressed.
     * @li "unpressed": button was released after being pressed.
     * In all three cases, the @c event parameter of the callback will be
     * @c NULL.
@@ -2695,7 +2695,7 @@ extern "C" {
    EAPI void         elm_table_clear(Evas_Object *obj, Eina_Bool clear) EINA_ARG_NONNULL(1);
    EAPI void         elm_table_pack_set(Evas_Object *subobj, int x, int y, int w, int h) EINA_ARG_NONNULL(1);
    EAPI void         elm_table_pack_get(Evas_Object *subobj, int *x, int *y, int *w, int *h) EINA_ARG_NONNULL(1);
-         
+
    /* gengrid */
    typedef struct _Elm_Gengrid_Item_Class Elm_Gengrid_Item_Class;
    typedef struct _Elm_Gengrid_Item_Class_Func Elm_Gengrid_Item_Class_Func;
@@ -3082,7 +3082,7 @@ extern "C" {
    EAPI void         elm_entry_scrollbar_policy_set(Evas_Object *obj, Elm_Scroller_Policy h, Elm_Scroller_Policy v);
    EAPI void         elm_entry_bounce_set(Evas_Object *obj, Eina_Bool h_bounce, Eina_Bool v_bounce);
    EAPI void         elm_entry_bounce_get(const Evas_Object *obj, Eina_Bool *h_bounce, Eina_Bool *v_bounce);
-         
+
    /* pre-made filters for entries */
    typedef struct _Elm_Entry_Filter_Limit_Size Elm_Entry_Filter_Limit_Size;
    struct _Elm_Entry_Filter_Limit_Size
