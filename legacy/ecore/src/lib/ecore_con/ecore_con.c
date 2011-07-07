@@ -1463,6 +1463,7 @@ _ecore_con_server_timer(Ecore_Con_Server *svr)
 {
    ecore_con_server_del(svr);
 
+   svr->until_deletion = NULL;
    return ECORE_CALLBACK_CANCEL;
 }
 
@@ -1499,6 +1500,7 @@ _ecore_con_client_timer(Ecore_Con_Client *cl)
 {
    ecore_con_client_del(cl);
 
+   cl->until_deletion = NULL;
    return ECORE_CALLBACK_CANCEL;
 }
 
