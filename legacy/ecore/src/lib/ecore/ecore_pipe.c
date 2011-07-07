@@ -482,12 +482,8 @@ _ecore_pipe_unhandle(Ecore_Pipe *p)
 static Eina_Bool
 _ecore_pipe_read(void *data, Ecore_Fd_Handler *fd_handler __UNUSED__)
 {
-   Ecore_Pipe  *p;
-   double       start_time;
+   Ecore_Pipe  *p = (Ecore_Pipe *)data;
    int          i;
-
-   p = (Ecore_Pipe *)data;
-   start_time = ecore_time_get();
 
    p->handling++;
    for (i = 0; i < 16; i++)
@@ -503,20 +499,28 @@ _ecore_pipe_read(void *data, Ecore_Fd_Handler *fd_handler __UNUSED__)
              ret = pipe_read(p->fd_read, &p->len, sizeof(p->len));
 
              /* catch the non error case first */
+             /* read amount ok - nothing more to do */
              if (ret == sizeof(p->len))
                ;
              else if (ret > 0)
                {
-                  /* XXX What should we do here? */
-                  ERR("Only read %zd bytes from the pipe, although"
-                      " we need to read %zd bytes.", ret, sizeof(p->len));
+                  /* we got more data than we asked for - definite error */
+                  ERR("Only read %i bytes from the pipe, although"
+                      " we need to read %i bytes.", 
+                      (int)ret, (int)sizeof(p->len));
                   _ecore_pipe_unhandle(p);
                   return ECORE_CALLBACK_CANCEL;
                }
              else if (ret == 0)
                {
+                  /* we got no data even though we had data to read */
                   if (!p->delete_me)
-                      p->handler((void *)p->data, NULL, 0);
+                     p->handler((void *)p->data, NULL, 0);
+                  if (p->passed_data) free(p->passed_data);
+                  p->passed_data = NULL;
+                  p->already_read = 0;
+                  p->len = 0;
+                  p->message++;
                   pipe_close(p->fd_read);
                   p->fd_read = PIPE_FD_INVALID;
                   p->fd_handler = NULL;
@@ -532,9 +536,9 @@ _ecore_pipe_read(void *data, Ecore_Fd_Handler *fd_handler __UNUSED__)
                }
              else
                {
-                  ERR("An unhandled error (ret: %zd errno: %d [%s])"
+                  ERR("An unhandled error (ret: %i errno: %i [%s])"
                       "occurred while reading from the pipe the length",
-                      ret, errno, strerror(errno));
+                      (int)ret, errno, strerror(errno));
                   _ecore_pipe_unhandle(p);
                   return ECORE_CALLBACK_RENEW;
                }
@@ -545,6 +549,11 @@ _ecore_pipe_read(void *data, Ecore_Fd_Handler *fd_handler __UNUSED__)
                     {
                        if (!p->delete_me)
                           p->handler((void *)p->data, NULL, 0);
+                       if (p->passed_data) free(p->passed_data);
+                       p->passed_data = NULL;
+                       p->already_read = 0;
+                       p->len = 0;
+                       p->message++;
                        pipe_close(p->fd_read);
                        p->fd_read = PIPE_FD_INVALID;
                        p->fd_handler = NULL;
@@ -555,8 +564,42 @@ _ecore_pipe_read(void *data, Ecore_Fd_Handler *fd_handler __UNUSED__)
 #endif
           }
 
+        /* if somehow we got less than or equal to 0 we got an errnoneous
+         * messages so call callback with null and len we got */
+        if (p->len <= 0)
+          {
+             if (!p->delete_me)
+                p->handler((void *)p->data, NULL, p->len);
+             /* reset all values to 0 */
+             if (p->passed_data) free(p->passed_data);
+             p->passed_data = NULL;
+             p->already_read = 0;
+             p->len = 0;
+             p->message++;
+             _ecore_pipe_unhandle(p);
+             return ECORE_CALLBACK_RENEW;
+          }
+
+        /* we dont have a buffer to hold the data, so alloc it */
         if (!p->passed_data)
-          p->passed_data = malloc(p->len);
+          {
+             p->passed_data = malloc(p->len);
+             /* alloc failed - error case */
+             if (!p->passed_data)
+               {
+                  if (!p->delete_me)
+                     p->handler((void *)p->data, NULL, 0);
+                  /* close the pipe */
+                  p->already_read = 0;
+                  p->len = 0;
+                  p->message++;
+                  pipe_close(p->fd_read);
+                  p->fd_read = PIPE_FD_INVALID;
+                  p->fd_handler = NULL;
+                  _ecore_pipe_unhandle(p);
+                  return ECORE_CALLBACK_CANCEL;
+               }
+          }
 
         /* and read the passed data */
         ret = pipe_read(p->fd_read,
@@ -564,6 +607,7 @@ _ecore_pipe_read(void *data, Ecore_Fd_Handler *fd_handler __UNUSED__)
                         p->len - p->already_read);
 
         /* catch the non error case first */
+        /* if we read enough data to finish the message/buffer */
         if (ret == (ssize_t)(p->len - p->already_read))
           {
              if (!p->delete_me)
@@ -575,16 +619,23 @@ _ecore_pipe_read(void *data, Ecore_Fd_Handler *fd_handler __UNUSED__)
              p->len = 0;
              p->message++;
           }
-        else if (ret >= 0)
+        else if (ret > 0)
           {
+             /* more data left to read */
              p->already_read += ret;
              _ecore_pipe_unhandle(p);
              return ECORE_CALLBACK_RENEW;
           }
         else if (ret == 0)
           {
+             /* 0 bytes available when woken up to handle read - error */
              if (!p->delete_me)
                 p->handler((void *)p->data, NULL, 0);
+             if (p->passed_data) free(p->passed_data);
+             p->passed_data = NULL;
+             p->already_read = 0;
+             p->len = 0;
+             p->message++;
              pipe_close(p->fd_read);
              p->fd_read = PIPE_FD_INVALID;
              p->fd_handler = NULL;
@@ -594,7 +645,10 @@ _ecore_pipe_read(void *data, Ecore_Fd_Handler *fd_handler __UNUSED__)
 #ifndef _WIN32
         else if ((ret == PIPE_FD_ERROR) &&
                  ((errno == EINTR) || (errno == EAGAIN)))
-           return ECORE_CALLBACK_RENEW;
+          {
+             _ecore_pipe_unhandle(p);
+             return ECORE_CALLBACK_RENEW;
+          }
         else
           {
              ERR("An unhandled error (ret: %zd errno: %d)"
@@ -610,6 +664,11 @@ _ecore_pipe_read(void *data, Ecore_Fd_Handler *fd_handler __UNUSED__)
                {
                   if (!p->delete_me)
                      p->handler((void *)p->data, NULL, 0);
+                  if (p->passed_data) free(p->passed_data);
+                  p->passed_data = NULL;
+                  p->already_read = 0;
+                  p->len = 0;
+                  p->message++;
                   pipe_close(p->fd_read);
                   p->fd_read = PIPE_FD_INVALID;
                   p->fd_handler = NULL;

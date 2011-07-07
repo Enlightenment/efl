@@ -330,6 +330,7 @@ struct _Ecore_IMF_Context_Class
    Ecore_IMF_Input_Panel_Layout (*input_panel_layout_get) (Ecore_IMF_Context *ctx);
    void (*input_panel_language_set) (Ecore_IMF_Context *ctx, Ecore_IMF_Input_Panel_Lang lang);
    Ecore_IMF_Input_Panel_Lang (*input_panel_language_get) (Ecore_IMF_Context *ctx);
+   void (*cursor_location_set) (Ecore_IMF_Context *ctx, int x, int y, int w, int h);
 };
 
 struct _Ecore_IMF_Context_Info
@@ -367,6 +368,7 @@ EAPI void                          ecore_imf_context_focus_in(Ecore_IMF_Context 
 EAPI void                          ecore_imf_context_focus_out(Ecore_IMF_Context *ctx);
 EAPI void                          ecore_imf_context_reset(Ecore_IMF_Context *ctx);
 EAPI void                          ecore_imf_context_cursor_position_set(Ecore_IMF_Context *ctx, int cursor_pos);
+EAPI void                          ecore_imf_context_cursor_location_set(Ecore_IMF_Context *ctx, int x, int y, int w, int h);
 EAPI void                          ecore_imf_context_use_preedit_set(Ecore_IMF_Context *ctx, Eina_Bool use_preedit);
 EAPI void                          ecore_imf_context_retrieve_surrounding_callback_set(Ecore_IMF_Context *ctx, Eina_Bool (*func)(void *data, Ecore_IMF_Context *ctx, char **text, int *cursor_pos), const void *data);
 EAPI void                          ecore_imf_context_input_mode_set(Ecore_IMF_Context *ctx, Ecore_IMF_Input_Mode input_mode);

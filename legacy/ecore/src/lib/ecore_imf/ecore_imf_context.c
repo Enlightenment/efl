@@ -504,6 +504,29 @@ ecore_imf_context_cursor_position_set(Ecore_IMF_Context *ctx, int cursor_pos)
 }
 
 /**
+ * Notify the Input Method Context that a change in the cursor
+ * location has been made. The location is relative to the canvas.
+ *
+ * @param ctx An #Ecore_IMF_Context.
+ * @param x cursor x position.
+ * @param x cursor y position.
+ * @param w cursor width.
+ * @param h cursor height.
+ * @ingroup Ecore_IMF_Context_Group
+ */
+EAPI void
+ecore_imf_context_cursor_location_set(Ecore_IMF_Context *ctx, int x, int y, int w, int h)
+{
+   if (!ECORE_MAGIC_CHECK(ctx, ECORE_MAGIC_CONTEXT))
+     {
+        ECORE_MAGIC_FAIL(ctx, ECORE_MAGIC_CONTEXT,
+                         "ecore_imf_context_cursor_position_set");
+        return;
+     }
+   if (ctx->klass->cursor_location_set) ctx->klass->cursor_location_set(ctx, x, y, w, h);
+}
+
+/**
  * Set whether the IM context should use the preedit string
  * to display feedback. If @use_preedit is EINA_FALSE (default
  * is EINA_TRUE), then the IM context may use some other method to display

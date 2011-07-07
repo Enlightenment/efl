@@ -256,3 +256,7 @@
 
         * Fix epoll delete fd handling in child process - #796
 
+2011-07-07  Jihoon Kim
+
+        * Ecore_IMF: Added ecore_imf_context_cursor_location_set API
+
