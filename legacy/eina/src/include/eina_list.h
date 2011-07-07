@@ -43,7 +43,7 @@
  * @until eina_init
  * Here we add a sequence of elements to our list. By using append we add
  * elements to the end of the list, so the list will look like this:@n
- * <img src="eina_list_example_01_a.png" width="100%" />
+ * <img src="eina_list_example_01_a.png" style="max-width: 100%;" />
  * <a href="eina_list_example_01_a.png">Full-size</a>
  * @image rtf eina_list_example_01_a.png
  * @image latex eina_list_example_01_a.eps width=\textwidth
@@ -74,7 +74,7 @@
  * far:
  * @until lampkin
  * With this additions our list now looks like this:@n
- * <img src="eina_list_example_01_b.png" width="100%" />
+ * <img src="eina_list_example_01_b.png" style="max-width: 100%;" />
  * <a href="eina_list_example_01_b.png">Full-size</a>
  * @image rtf eina_list_example_01_b.png
  * @image latex eina_list_example_01_b.eps width=\textwidth
@@ -245,7 +245,7 @@
  * @ref Eina_List nodes keep references to the previous node, the next node, its
  * data and to an accounting structure.
  *
- * <img src="eina_list.png" width="100%" />
+ * <img src="eina_list.png" style="max-width: 100%;" />
  * <a href="eina_list.png">Full-size</a>
  * @image rtf eina_list.png
  * @image latex eina_list.eps width=5cm
@@ -1356,6 +1356,12 @@ EAPI Eina_Accessor        *eina_list_accessor_new(const Eina_List *list) EINA_MA
  * the last. @p data is the data related to the current element.
  * @p l is an #Eina_List used as the list iterator.
  *
+ * The following diagram ilustrates this macro iterating over a list of four
+ * elements("one", "two", "three" and "four"):
+ * <img src="eina-list-foreach.png" style="max-width: 100%;" />
+ * <a href="eina-list-foreach.png">Full-size</a>
+ * @image latex eina-list-foreach.eps width=\textwidth
+ *
  * It can be used to free list data, as in the following example:
  *
  * @code
@@ -1405,6 +1411,12 @@ EAPI Eina_Accessor        *eina_list_accessor_new(const Eina_List *list) EINA_MA
  * last element of a list to the first.
  * @p data is the data related to the current element, while @p l
  * is an #Eina_List that is used as the list iterator.
+ *
+ * The following diagram ilustrates this macro iterating over a list of four
+ * elements("one", "two", "three" and "four"):
+ * <img src="eina-list-reverse-foreach.png" style="max-width: 100%;" />
+ * <a href="eina-list-reverse-foreach.png">Full-size</a>
+ * @image latex eina-list-reverse-foreach.eps width=\textwidth
  *
  * It can be used to free list data, as in the following example:
  *
@@ -1459,6 +1471,12 @@ EAPI Eina_Accessor        *eina_list_accessor_new(const Eina_List *list) EINA_MA
  * Since this macro stores a pointer to the next list node in @p l_next,
  * deleting the current node and continuing looping is safe.
  *
+ * The following diagram ilustrates this macro iterating over a list of four
+ * elements("one", "two", "three" and "four"):
+ * <img src="eina-list-foreach-safe.png" style="max-width: 100%;" />
+ * <a href="eina-list-foreach-safe.png">Full-size</a>
+ * @image latex eina-list-foreach-safe.eps width=\textwidth
+ *
  * This macro can be used to free list nodes, as in the following example:
  *
  * @code
@@ -1507,6 +1525,12 @@ EAPI Eina_Accessor        *eina_list_accessor_new(const Eina_List *list) EINA_MA
  * Since this macro stores a pointer to the previous list node in @p l_prev,
  * deleting the current node and continuing looping is safe.
  *
+ * The following diagram ilustrates this macro iterating over a list of four
+ * elements("one", "two", "three" and "four"):
+ * <img src="eina-list-reverse-foreach-safe.png" style="max-width: 100%;" />
+ * <a href="eina-list-reverse-foreach-safe.png">Full-size</a>
+ * @image latex eina-list-reverse-foreach-safe.eps width=\textwidth
+ *
  * This macro can be used to free list nodes, as in the following example:
  *
  * @code
@@ -1546,6 +1570,12 @@ EAPI Eina_Accessor        *eina_list_accessor_new(const Eina_List *list) EINA_MA
  *
  * This macro will call #eina_list_remove_list for each list node, and store
  * the data contained in the current node in @p data.
+ *
+ * The following diagram ilustrates this macro iterating over a list of four
+ * elements("one", "two", "three" and "four"):
+ * <img src="eina-list-free.png" style="max-width: 100%;" />
+ * <a href="eina-list-free.png">Full-size</a>
+ * @image latex eina-list-free.eps width=\textwidth
  *
  * If you do not need to release node data, it is easier to call #eina_list_free().
  *
