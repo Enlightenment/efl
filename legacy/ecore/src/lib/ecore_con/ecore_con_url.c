@@ -253,7 +253,7 @@ ecore_con_url_pipeline_set(Eina_Bool enable)
   if (enable)
     curl_multi_setopt(_curlm, CURLMOPT_PIPELINING, 1);
   else
-    curl_multi_setopt(_curlm, CURLMOPT_PIPELINING, 1);
+    curl_multi_setopt(_curlm, CURLMOPT_PIPELINING, 0);
   pipelining = enable;
 #endif
 }
