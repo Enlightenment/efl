@@ -133,8 +133,11 @@ _elm_module_load(Elm_Module *m)
                }
              else
                {
-                  dlclose(m->handle);
-                  m->handle = NULL;
+                  if (m->handle)
+                    {
+                       dlclose(m->handle);
+                       m->handle = NULL;
+                    }
                   return EINA_FALSE;
                }
           }
@@ -158,8 +161,11 @@ _elm_module_load(Elm_Module *m)
                }
              else
                {
-                  dlclose(m->handle);
-                  m->handle = NULL;
+                  if (m->handle)
+                    {
+                       dlclose(m->handle);
+                       m->handle = NULL;
+                    }
                   return EINA_FALSE;
                }
           }
