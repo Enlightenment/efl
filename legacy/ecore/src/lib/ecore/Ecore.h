@@ -10,7 +10,7 @@ These routines are used for Ecore Library interaction
 
 @image html  e.png
 
-@version @PACKAGE_VERSION@
+@version 1.1
 @author Carsten Haitzler <raster@rasterman.com>
 @author Tom Gilbert <tom@linuxbrit.co.uk>
 @author Burra <burra@colorado.edu>

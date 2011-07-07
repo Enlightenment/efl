@@ -5,7 +5,7 @@ These routines are used for Edje.
 
 @mainpage Edje Library Documentation
 @image html  e.png
-@version 1.0.0
+@version 1.1
 @author Carsten Haitzler <raster@@rasterman.com>
 @author Tilman Sauerbeck (tilman at code-monkey de)
 @author ZigsMcKenzie <zigsmckenzie@@gmail.com>

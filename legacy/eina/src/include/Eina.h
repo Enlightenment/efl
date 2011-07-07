@@ -38,6 +38,7 @@
 /**
  * @mainpage Eina
  *
+ * @version 1.1
  * @author Albin "Lutin" Tonnerre <albin.tonnerre@@gmail.com>
  * @author Alexandre "diaxen" Becoulet <diaxen@@free.fr>
  * @author Andre Dieb <andre.dieb@@gmail.com>
