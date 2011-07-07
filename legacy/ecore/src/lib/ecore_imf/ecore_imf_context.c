@@ -1055,6 +1055,96 @@ ecore_imf_context_control_panel_hide (Ecore_IMF_Context *ctx)
 }
 
 /**
+ * Ask the Input Method Context to show the input panel (virtual keyboard).
+ *
+ * @param ctx An #Ecore_IMF_Context.
+ * @ingroup Ecore_IMF_Context_IMControl_Group
+ * @since 1.1.0
+ */
+EAPI void
+ecore_imf_context_input_panel_show(Ecore_IMF_Context *ctx)
+{
+   if (!ECORE_MAGIC_CHECK(ctx, ECORE_MAGIC_CONTEXT))
+     {
+        ECORE_MAGIC_FAIL(ctx, ECORE_MAGIC_CONTEXT,
+                         "ecore_imf_context_input_panel_show");
+        return;
+     }
+
+   if (ctx->klass->show) ctx->klass->show(ctx);
+}
+
+/**
+ * Ask the Input Method Context to hide the input panel.
+ *
+ * @param ctx An #Ecore_IMF_Context.
+ * @ingroup Ecore_IMF_Context_IMControl_Group
+ * @since 1.1.0
+ */
+EAPI void
+ecore_imf_context_input_panel_hide(Ecore_IMF_Context *ctx)
+{
+   if (!ECORE_MAGIC_CHECK(ctx, ECORE_MAGIC_CONTEXT))
+     {
+        ECORE_MAGIC_FAIL(ctx, ECORE_MAGIC_CONTEXT,
+                         "ecore_imf_context_input_panel_hide");
+        return;
+     }
+
+   if (ctx->klass->hide) ctx->klass->hide(ctx);
+}
+
+/**
+ * Set the layout of the input panel.
+ *
+ * @param ctx An #Ecore_IMF_Context.
+ * @param layout see #ECORE_IMF_INPUT_PANEL_LAYOUT
+ * @ingroup Ecore_IMF_Context_IMControl_Group
+ * @since 1.1.0
+ */
+EAPI void
+ecore_imf_context_input_panel_layout_set (Ecore_IMF_Context *ctx, Ecore_IMF_Input_Panel_Layout layout)
+{
+   if (!ECORE_MAGIC_CHECK(ctx, ECORE_MAGIC_CONTEXT))
+     {
+        ECORE_MAGIC_FAIL(ctx, ECORE_MAGIC_CONTEXT,
+                         "ecore_imf_context_input_panel_layout_set");
+        return;
+     }
+
+   if (ctx->klass->input_panel_layout_set)
+     ctx->klass->input_panel_layout_set(ctx, layout);
+
+   ctx->input_panel_layout = layout;
+}
+
+/**
+ * Get the layout of the current active input panel.
+ *
+ * @param ctx An #Ecore_IMF_Context.
+ * @return layout see #Ecore_IMF_Input_Panel_Layout
+ * @ingroup Ecore_IMF_Context_IMControl_Group
+ * @since 1.1.0
+ */
+EAPI Ecore_IMF_Input_Panel_Layout
+ecore_imf_context_input_panel_layout_get (Ecore_IMF_Context *ctx)
+{
+   if (!ECORE_MAGIC_CHECK(ctx, ECORE_MAGIC_CONTEXT))
+     {
+        ECORE_MAGIC_FAIL(ctx, ECORE_MAGIC_CONTEXT,
+                         "ecore_imf_context_input_panel_layout_get");
+        return ECORE_IMF_INPUT_PANEL_LAYOUT_INVALID;
+     }
+
+   if (ctx->klass->input_panel_layout_get)
+     {
+        return ctx->input_panel_layout;
+     }
+   else
+     return ECORE_IMF_INPUT_PANEL_LAYOUT_INVALID;
+}
+
+/**
  * Set the language of the input panel.
  * This API can be used when you want to show the English keyboard.
  *
