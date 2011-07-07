@@ -360,6 +360,11 @@ typedef enum _Evas_BiDi_Direction
  * Identifier of callbacks to be set for Evas canvases or Evas
  * objects.
  *
+ * The following figure illustrates some Evas callbacks:
+ * @image html evas-callbacks.png
+ * @image rtf evas-callbacks.png
+ * @image latex evas-callbacks.eps
+ *
  * @see evas_object_event_callback_add()
  * @see evas_event_callback_add()
  */
@@ -710,7 +715,7 @@ typedef enum _Evas_Image_Scale_Hint
    EVAS_IMAGE_SCALE_HINT_NONE = 0,
    EVAS_IMAGE_SCALE_HINT_DYNAMIC = 1,
    EVAS_IMAGE_SCALE_HINT_STATIC = 2
-} Evas_Image_Scale_Hint;
+} Evas_Image_Scale_Hint; /**< How an image's data is to be treated by Evas, with regard to scaling cache */
 
 typedef enum _Evas_Engine_Render_Mode
 {
@@ -4549,7 +4554,7 @@ EAPI void              evas_object_size_hint_request_set (Evas_Object *obj, Evas
  *
  * The different aspect ratio policies are documented in the
  * #Evas_Aspect_Control type. A container respecting these size hints
- * would @b scale its children accordingly to those policies.
+ * would @b resize its children accordingly to those policies.
  *
  * For any policy, if any of the given aspect ratio terms are @c 0,
  * the object's container should ignore the aspect and scale @p obj to
@@ -4642,9 +4647,14 @@ EAPI void              evas_object_size_hint_align_get   (const Evas_Object *obj
  * These are hints on how to align an object <b>inside the boundaries
  * of a container/manager</b>. Accepted values are in the @c 0.0 to @c
  * 1.0 range, with the special value #EVAS_HINT_FILL used to specify
- * "justify" or "fill" by some users. See documentation of possible
- * users: in Evas, they are the @ref Evas_Object_Box "box" and @ref
- * Evas_Object_Table "table" smart objects.
+ * "justify" or "fill" by some users. In this case, maximum size hints
+ * should be enforced with higher priority, if they are set. Also, any
+ * padding hint set on objects should add up to the alignment space on
+ * the final scene composition.
+ *
+ * See documentation of possible users: in Evas, they are the @ref
+ * Evas_Object_Box "box" and @ref Evas_Object_Table "table" smart
+ * objects.
  *
  * For the horizontal component, @c 0.0 means to the left, @c 1.0
  * means to the right. Analogously, for the vertical component, @c 0.0
@@ -4668,6 +4678,8 @@ EAPI void              evas_object_size_hint_align_get   (const Evas_Object *obj
  * Example_Evas_Size_Hints "example".
  *
  * @see evas_object_size_hint_align_get()
+ * @see evas_object_size_hint_max_set()
+ * @see evas_object_size_hint_padding_set()
  */
 EAPI void              evas_object_size_hint_align_set   (Evas_Object *obj, double x, double y) EINA_ARG_NONNULL(1);
 
@@ -4728,7 +4740,10 @@ EAPI void              evas_object_size_hint_weight_set  (Evas_Object *obj, doub
  *
  * Padding is extra space an object takes on each of its delimiting
  * rectangle sides, in canvas units. This space will be rendered
- * transparent, naturally.
+ * transparent, naturally, as in the following figure:
+ * @image html padding-hints.png
+ * @image rtf padding-hints.png
+ * @image latex padding-hints.eps
  *
  * This is not a size enforcement in any way, it's just a hint that
  * should be used whenever appropriate.
@@ -5380,10 +5395,119 @@ EAPI Evas_Object      *evas_object_rectangle_add         (Evas *e) EINA_WARN_UNU
 /**
  * @defgroup Evas_Object_Image Image Object Functions
  *
- * Functions used to create and manipulate image objects.
+ * Here are grouped together functions used to create and manipulate
+ * image objects. They are available to whichever occasion one needs
+ * complex imagery on a GUI that could not be achieved by the other
+ * Evas' primitive object types, or to make image manipulations.
  *
- * Note - Image objects may return or accept "image data" in multiple
- * formats. This is based on the colorspace of an object. Here is a
+ * Evas will support whichever image file types it was compiled with
+ * support to (its image loaders) -- check your software packager for
+ * that information and see
+ * evas_object_image_extension_can_load_get().
+ *
+ * @section Evas_Object_Image_Basics Image object basics
+ *
+ * The most common use of image objects -- to display an image on the
+ * canvas -- is achieved by a common function triplet:
+ * @code
+ * img = evas_object_image_add(canvas);
+ * evas_object_image_file_set(img, "path/to/img", NULL);
+ * evas_object_image_fill_set(img, 0, 0, w, h);
+ * @endcode
+ * The first function, naturally, is creating the image object. Then,
+ * one must set an source file on it, so that it knows where to fetch
+ * image data from. Next, one must set <b>how to fill the image
+ * object's area</b> with that given pixel data. One could use just a
+ * sub-region of the original image or even have it tiled repeatedly
+ * on the image object. For the common case of having the whole source
+ * image to be displayed on the image object, streched to the
+ * destination's size, there's also a function helper, to be used
+ * instead of evas_object_image_fill_set():
+ * @code
+ * evas_object_image_filled_set(img, EINA_TRUE);
+ * @endcode
+ * See those functions' documentation for more details.
+ *
+ * @section Evas_Object_Image_Scale Scale and resizing
+ *
+ * Resizing of image objects will scale their respective source images
+ * to their areas. If the user wants any control on the aspect ratio
+ * of an image for different sizes, he/she has to take care of that
+ * themselves. There are functions to make images to get loaded scaled
+ * (up or down) in memory, already, if the user is going to use them
+ * at pre-determined sizes and wants to save computations.
+ *
+ * Evas has even a scale cache, which will take care of caching scaled
+ * versions of images with more often usage/hits. Finally, one can
+ * have images being rescaled @b smoothly by Evas (more
+ * computationally expensive) or not.
+ *
+ * @section Evas_Object_Image_Performance Performance hints
+ *
+ * When dealing with image objects, there are some tricks to boost the
+ * performance of your application, if it does intense image loading
+ * and/or manipulations, as in animations on a UI.
+ *
+ * @subsection Evas_Object_Image_Load Load hints
+ *
+ * In image viewer applications, for example, the user will be looking
+ * at a given image, at full size, and will desire that the navigation
+ * to the adjacent images on his/her album be fluid and fast. Thus,
+ * while displaying a given image, the program can be on the
+ * background loading the next and previous imagens already, so that
+ * displaying them on the sequence is just a matter of repainting the
+ * screen (and not decoding image data).
+ *
+ * Evas addresses this issue with <b>image pre-loading</b>. The code
+ * for the situation above would be something like the following:
+ * @code
+ * prev = evas_object_image_filled_add(canvas);
+ * evas_object_image_file_set(prev, "/path/to/prev", NULL);
+ * evas_object_image_preload(prev, EINA_TRUE);
+ *
+ * next = evas_object_image_filled_add(canvas);
+ * evas_object_image_file_set(next, "/path/to/next", NULL);
+ * evas_object_image_preload(next, EINA_TRUE);
+ * @endcode
+ *
+ * If you're loading images which are too big, consider setting
+ * previously it's loading size to something smaller, in case you
+ * won't expose them in real size. It may speed up the loading
+ * considerably.
+ *
+ * @subsection Evas_Object_Image_Animation Animation hints
+ *
+ * If you want to animate image objects on a UI (what you'd get by
+ * concomitant usage of other libraries, like Ecore and Edje), there
+ * are also some tips on how to boost the performance of your
+ * application. If the animation involves resizing of an image (thus,
+ * re-scaling), you'd better turn off smooth scaling on it @b during
+ * the animation, turning it back on aftrwads, for less
+ * computations. Also, movement of opaque images through the canvas is
+ * less expensive than of translucid ones, because of blending
+ * computations.
+ *
+ * @section Evas_Object_Image_Borders Borders
+ *
+ * Evas provides facilities for one to specify an image's region to be
+ * treated specially -- as "borders". This will make those regions be
+ * treated specially on resizing scales, by keeping their aspect. This
+ * makes setting frames around other objects on UIs easy.
+ *
+ * @section Evas_Object_Image_Manipulation Manipulating pixels
+ *
+ * Evas image objects can be used to manipulate raw pixels in many
+ * ways.  The meaning of the data in the pixel arrays will depend on
+ * the image's color space, be warned (see next section). You can set
+ * your own data as an image's pixel data, fetch an image's pixel data
+ * for saving/altering, convert images between different color spaces
+ * and even advanced operations like setting a native surface as image
+ * objecs' data.
+ *
+ * @section Evas_Object_Image_Color_Spaces Color spaces
+ *
+ * Image objects may return or accept "image data" in multiple
+ * formats. This is based on the color space of an object. Here is a
  * rundown on formats:
  *
  * - #EVAS_COLORSPACE_ARGB8888:
@@ -5487,14 +5611,6 @@ typedef void (*Evas_Object_Image_Pixels_Get_Cb) (void *data, Evas_Object *o);
  * @param e The given canvas.
  * @return The created image object handle.
  *
- * Image objects are available to whichever occasion one needs complex
- * imagery on a GUI, which cannot be achieved by the other Evas'
- * primitive object types, or to make image manipulations.
- *
- * Evas will support whichever image file types it was compiled with
- * support to (its image loaders) -- check your software packager for
- * that information.
- *
  * @note If you intend to @b display an image somehow in a GUI,
  * besides binding it to a real image file/source (with
  * evas_object_image_file_set(), for example), you'll have to tell
@@ -5504,6 +5620,12 @@ typedef void (*Evas_Object_Image_Pixels_Get_Cb) (void *data, Evas_Object *o);
  * of the image object.
  *
  * @see evas_object_image_fill_set()
+ *
+ * Example:
+ * @code
+ * img = evas_object_image_add(canvas);
+ * evas_object_image_file_set(img, "/path/to/img", NULL);
+ * @endcode
  */
 EAPI Evas_Object             *evas_object_image_add                    (Evas *e) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_MALLOC;
 
@@ -5565,6 +5687,24 @@ EAPI void                     evas_object_image_memfile_set            (Evas_Obj
  * If the file supports multiple data stored in it (as Eet files do),
  * you can specify the key to be used as the index of the image in
  * this file.
+ *
+ * Example:
+ * @code
+ * img = evas_object_image_add(canvas);
+ * evas_object_image_file_set(img, "/path/to/img", NULL);
+ * err = evas_object_image_load_error_get(img);
+ * if (err != EVAS_LOAD_ERROR_NONE)
+ *   {
+ *      fprintf(stderr, "could not load image '%s'. error string is \"%s\"\n",
+ *              valid_path, evas_load_error_str(err));
+ *   }
+ * else
+ *   {
+ *      evas_object_image_fill_set(img, 0, 0, w, h);
+ *      evas_object_resize(img, w, h);
+ *      evas_object_show(img);
+ *   }
+ * @endcode
  */
 EAPI void                     evas_object_image_file_set               (Evas_Object *obj, const char *file, const char *key) EINA_ARG_NONNULL(1);
 
@@ -5608,6 +5748,14 @@ EAPI void                     evas_object_image_file_get               (const Ev
  *
  * @note By default, image objects have no borders set, i. e. @c l, @c
  * r, @c t and @c b start as @c 0.
+ *
+ * See the following figures for visual explanation:
+ * @image html image-borders.png
+ * @image rtf image-borders.png
+ * @image latex image-borders.eps
+ * @image html border-effect.png
+ * @image rtf border-effect.png
+ * @image latex border-effect.eps
  *
  * @see evas_object_image_border_get()
  * @see evas_object_image_border_center_fill_set()
@@ -6273,11 +6421,13 @@ EAPI Evas_Native_Surface     *evas_object_image_native_surface_get     (const Ev
 /**
  * Set the scale hint of a given image of the canvas.
  *
- * @param obj The given canvas pointer.
- * @param hint The scale hint value.
+ * @param obj The given image object pointer.
+ * @param hint The scale hint, a value in
+ * #Evas_Image_Scale_Hint.
  *
- * This function sets the scale hint value of the given image of the
- * canvas, which will affect how Evas is to scale it.
+ * This function sets the scale hint value of the given image object
+ * in the canvas, which will affect how Evas is to cache scaled
+ * versions of it's original source image..
  *
  * @see evas_object_image_scale_hint_get()
  */
@@ -6286,12 +6436,14 @@ EAPI void                     evas_object_image_scale_hint_set         (Evas_Obj
 /**
  * Get the scale hint of a given image of the canvas.
  *
- * @param obj The given canvas pointer.
+ * @param obj The given image object pointer.
+ * @return The scale hint value set on @p obj, a value in
+ * #Evas_Image_Scale_Hint.
  *
- * This function returns the scale hint value of the given image of
- * the canvas.
+ * This function returns the scale hint value of the given image
+ * object of the canvas.
  *
- * @see evas_object_image_scale_hint_set()
+ * @see evas_object_image_scale_hint_set() for more details.
  */
 EAPI Evas_Image_Scale_Hint    evas_object_image_scale_hint_get         (const Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
 
