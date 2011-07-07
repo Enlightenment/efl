@@ -578,8 +578,8 @@ evas_object_smart_calculate(Evas_Object *obj)
    if (!obj->smart.smart->smart_class->calculate)
      return;
 
-   o->need_recalculate = 0;
    obj->smart.smart->smart_class->calculate(obj);
+   o->need_recalculate = 0;
 }
 
 EAPI void
@@ -619,8 +619,8 @@ evas_call_smarts_calculate(Evas *e)
         o = obj->object_data;
         if (o->need_recalculate)
           {
-             o->need_recalculate = 0;
              obj->smart.smart->smart_class->calculate(obj);
+             o->need_recalculate = 0;
           }
      }
    in_smart_calc--;
