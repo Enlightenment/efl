@@ -21,6 +21,7 @@ struct _Widget_Data
    Eina_List *subs;
    Eina_List *parts_cursors;
    Eina_Bool needs_size_calc:1;
+   const char *clas, *group, *style;
 };
 
 struct _Subinfo
@@ -102,6 +103,7 @@ _theme_hook(Evas_Object *obj)
    if (!wd) return;
    _elm_widget_mirrored_reload(obj);
    _mirrored_set(obj, elm_widget_mirrored_get(obj));
+   _elm_theme_object_set(obj, wd->lay, wd->clas, wd->group, wd->style);
    edje_object_scale_set(wd->lay, elm_widget_scale_get(obj) *
                          _elm_config->scale);
    _sizing_eval(wd);
@@ -451,6 +453,9 @@ elm_layout_theme_set(Evas_Object *obj, const char *clas, const char *group, cons
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return EINA_FALSE;
    Eina_Bool ret = _elm_theme_object_set(obj, wd->lay, clas, group, style);
+   wd->clas = clas;
+   wd->group = group;
+   wd->style = style;
    if (ret)
      {
         _parts_text_fix(wd);
