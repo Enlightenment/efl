@@ -35445,7 +35445,7 @@ collections {
          part { name: "elm.text.title";
             type: TEXT;
             effect: SOFT_SHADOW;
-            scale: 1; 
+            scale: 1;
             description { state: "default" 0.0;
                rel1 {
                   to_x: "back";
