@@ -472,7 +472,6 @@ _event_hook(Evas_Object       *obj,
      {
         item = elm_gengrid_selected_item_get(obj);
         evas_object_smart_callback_call(item->wd->self, SIG_CLICKED_DOUBLE, item);
-        evas_object_smart_callback_call(item->wd->self, "clicked", item); // will be removed
      }
    else return EINA_FALSE;
 
