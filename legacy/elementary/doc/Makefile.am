@@ -24,7 +24,7 @@ AM_CPPFLAGS = \
 @ELEMENTARY_ETHUMB_CFLAGS@ \
 @EIO_CFLAGS@
 
-bin_PROGRAMS = \
+noinst_PROGRAMS = \
 widget_preview_button1 \
 widget_preview_button2 \
 widget_preview_button3
