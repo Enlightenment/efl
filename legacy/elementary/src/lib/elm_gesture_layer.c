@@ -20,7 +20,7 @@
 #define RAD_270DEG (M_PI_2 * 3)
 #define RAD_360DEG (M_PI * 2)
 
-#define COPY_EVENT_INFO(P,EV) do { \
+#define COPY_EVENT_INFO(P, EV) do { \
    P = malloc(sizeof(*EV)); \
    memcpy(P, EV, sizeof(*EV)); \
 } while (0)
@@ -343,7 +343,7 @@ static Evas_Event_Flags
 _report_state(Gesture_Info *gesture, void *info)
 {  /* We report current state (START, MOVE, END, ABORT), once */
 #if defined(DEBUG_GESTURE_LAYER)
-   printf("%s reporting gesture=<%d> state=<%d>\n" ,__func__, g_type,
+   printf("%s reporting gesture=<%d> state=<%d>\n" , __func__, g_type,
          gesture->state);
 #endif
    if ((gesture->state != ELM_GESTURE_STATE_UNDEFINED) &&
@@ -873,7 +873,6 @@ _record_pointer_event(Taps_Type *st, Eina_List *pe_list, Pointer_Event *pe, Widg
 {  /* Keep copy of pe and record it in list */
    Pointer_Event *p = malloc(sizeof(Pointer_Event));
    memcpy(p, pe, sizeof(Pointer_Event));
-   /* SPANK SPANK, EINA_FALSE?! FIXME */
    consume_event(wd, event_info, event_type, EVAS_EVENT_FLAG_NONE);
 
    st->sum_x += pe->x;
@@ -1047,8 +1046,8 @@ _dbl_click_test(Evas_Object *obj, Pointer_Event *pe,
  * @ingroup Elm_Gesture_Layer
  */
 static void
-_set_momentum(Elm_Gesture_Momentum_Info *momentum, Evas_Coord x1,Evas_Coord y1,
-      Evas_Coord x2,Evas_Coord y2, unsigned int t1x, unsigned int t1y,
+_set_momentum(Elm_Gesture_Momentum_Info *momentum, Evas_Coord x1, Evas_Coord y1,
+      Evas_Coord x2, Evas_Coord y2, unsigned int t1x, unsigned int t1y,
       unsigned int t2)
 {
    Evas_Coord velx = 0, vely = 0, vel;
@@ -1728,7 +1727,7 @@ rotation_broke_tolerance(Rotate_Type *st)
  * @ingroup Elm_Gesture_Layer
  */
 static Evas_Coord
-get_finger_gap_length(Evas_Coord x1,Evas_Coord y1,Evas_Coord x2,
+get_finger_gap_length(Evas_Coord x1, Evas_Coord y1, Evas_Coord x2,
       Evas_Coord y2, Evas_Coord *x, Evas_Coord *y)
 {
    double a, b, xx, yy, gap;
@@ -1801,7 +1800,7 @@ get_finger_gap_length(Evas_Coord x1,Evas_Coord y1,Evas_Coord x2,
  */
 /* FIXME change float to double */
 static float
-compute_zoom(Zoom_Type *st, Evas_Coord x1 ,Evas_Coord y1, unsigned int tm1,
+compute_zoom(Zoom_Type *st, Evas_Coord x1, Evas_Coord y1, unsigned int tm1,
       Evas_Coord x2, Evas_Coord y2, unsigned int tm2, float factor)
 {
    float rt = 1.0;
@@ -2207,7 +2206,7 @@ _get_rotate_properties(Rotate_Type *st,
  * @ingroup Elm_Gesture_Layer
  */
 static void
-_rotate_test(Evas_Object *obj, Pointer_Event *pe,void *event_info,
+_rotate_test(Evas_Object *obj, Pointer_Event *pe, void *event_info,
       Evas_Callback_Type event_type, Elm_Gesture_Types g_type)
 {
    if(!pe)
@@ -2252,7 +2251,7 @@ _rotate_test(Evas_Object *obj, Pointer_Event *pe,void *event_info,
              {  /* Compute rotation angle and report to user */
                 _get_rotate_properties(st,
                       st->rotate_mv.x, st->rotate_mv.y, st->rotate_mv.timestamp,
-                      st->rotate_mv1.x,st->rotate_mv1.y, st->rotate_mv1.timestamp,
+                      st->rotate_mv1.x, st->rotate_mv1.y, st->rotate_mv1.timestamp,
                       &st->info.angle);
                 break;
              }
