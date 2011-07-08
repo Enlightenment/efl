@@ -293,7 +293,7 @@ x_color_alloc_mono(xcb_connection_t *conn,
 }
 
 void
-evas_software_xcb_x_color_init(void)
+evas_software_xcb_color_init(void)
 {
    static int initialised = 0;
 
@@ -343,7 +343,7 @@ evas_software_xcb_x_color_init(void)
 }
 
 Convert_Pal *
-evas_software_xcb_x_color_allocate(xcb_connection_t   *conn,
+evas_software_xcb_color_allocate(xcb_connection_t   *conn,
 				   xcb_colormap_t      cmap,
 				   xcb_visualtype_t   *vis,
 				   Convert_Pal_Mode    colors)
@@ -401,7 +401,7 @@ evas_software_xcb_x_color_allocate(xcb_connection_t   *conn,
 }
 
 void
-evas_software_xcb_x_color_deallocate(xcb_connection_t *conn,
+evas_software_xcb_color_deallocate(xcb_connection_t *conn,
 				     xcb_colormap_t    cmap,
 				     xcb_visualtype_t *vis __UNUSED__,
 				     Convert_Pal      *pal)
