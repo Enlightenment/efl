@@ -2663,23 +2663,137 @@ extern "C" {
     *             by the cursor in the first place).
     */
 
-   /* frame */
-   EAPI Evas_Object *elm_frame_add(Evas_Object *parent) EINA_ARG_NONNULL(1);
-   EINA_DEPRECATED EAPI void         elm_frame_label_set(Evas_Object *obj, const char *label) EINA_ARG_NONNULL(1);
-   EINA_DEPRECATED EAPI const char  *elm_frame_label_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
-   EAPI void         elm_frame_content_set(Evas_Object *obj, Evas_Object *content) EINA_ARG_NONNULL(1);
-   EAPI Evas_Object *elm_frame_content_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
-   EAPI Evas_Object *elm_frame_content_unset(Evas_Object *obj) EINA_ARG_NONNULL(1);
-   /* available styles:
-    * default
-    * pad_small
-    * pad_medium
-    * pad_large
-    * pad_huge
-    * outdent_top
-    * outdent_bottom
+   /**
+    * @page tutorial_frame Frame example
+    * @dontinclude frame_example_01.c
+    *
+    * In this example we are going to create 4 Frames with different styles and
+    * add a rectangle of different color in each.
+    *
+    * We start we the usual setup code:
+    * @until show(bg)
+    *
+    * And then create one rectangle:
+    * @until show
+    *
+    * To add it in our first frame, which since it doesn't have it's style
+    * specifically set uses the default style:
+    * @until show
+    *
+    * And then create another rectangle:
+    * @until show
+    *
+    * To add it in our second frame, which uses the "pad_small" style, note that
+    * even tough we are setting a text for this frame it won't be show, only the
+    * default style shows the Frame's title:
+    * @until show
+    * @note The "pad_small", "pad_medium", "pad_large" and "pad_huge" styles are
+    * very similar, their only difference is the size of the empty area around
+    * the content of the frame.
+    *
+    * And then create yet another rectangle:
+    * @until show
+    *
+    * To add it in our third frame, which uses the "outdent_top" style, note
+    * that even tough we are setting a text for this frame it won't be show,
+    * only the default style shows the Frame's title:
+    * @until show
+    *
+    * And then create one last rectangle:
+    * @until show
+    *
+    * To add it in our fourth and final frame, which uses the "outdent_bottom"
+    * style, note that even tough we are setting a text for this frame it won't
+    * be show, only the default style shows the Frame's title:
+    * @until show
+    *
+    * And now we are left with just some more setup code:
+    * @until ELM_MAIN()
+    *
+    * Our example will look like this:
+    * @image html screenshots/frame_example_01.png
+    * @image latex screenshots/frame_example_01.eps
+    *
+    * @example frame_example_01.c
     */
-   /* smart callbacks called:
+   /**
+    * @defgroup Frame Frame
+    *
+    * @brief Frame is a widget that holds some content and has a title.
+    *
+    * The default look is a frame with a title, but Frame supports multple
+    * styles:
+    * @li default
+    * @li pad_small
+    * @li pad_medium
+    * @li pad_large
+    * @li pad_huge
+    * @li outdent_top
+    * @li outdent_bottom
+    *
+    * Of all this styles only default shows the title. Frame emits no signals.
+    *
+    * For a detailed example see the @ref tutorial_frame.
+    *
+    * @{
+    */
+   /**
+    * @brief Add a new frame to the parent
+    *
+    * @param parent The parent object
+    * @return The new object or NULL if it cannot be created
+    */
+   EAPI Evas_Object *elm_frame_add(Evas_Object *parent) EINA_ARG_NONNULL(1);
+   /**
+    * @brief Set the frame label
+    *
+    * @param obj The frame object
+    * @param label The label of this frame object
+    *
+    * @deprecated use elm_object_text_set() instead.
+    */
+   EINA_DEPRECATED EAPI void         elm_frame_label_set(Evas_Object *obj, const char *label) EINA_ARG_NONNULL(1);
+   /**
+    * @brief Get the frame label
+    *
+    * @param obj The frame object
+    *
+    * @return The label of this frame objet or NULL if unable to get frame
+    *
+    * @deprecated use elm_object_text_get() instead.
+    */
+   EINA_DEPRECATED EAPI const char  *elm_frame_label_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+   /**
+    * @brief Set the content of the frame widget
+    *
+    * Once the content object is set, a previously set one will be deleted.
+    * If you want to keep that old content object, use the
+    * elm_frame_content_unset() function.
+    *
+    * @param obj The frame object
+    * @param content The content will be filled in this frame object
+    */
+   EAPI void         elm_frame_content_set(Evas_Object *obj, Evas_Object *content) EINA_ARG_NONNULL(1);
+   /**
+    * @brief Get the content of the frame widget
+    *
+    * Return the content object which is set for this widget
+    *
+    * @param obj The frame object
+    * @return The content that is being used
+    */
+   EAPI Evas_Object *elm_frame_content_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+   /**
+    * @brief Unset the content of the frame widget
+    *
+    * Unparent and return the content object which was set for this widget
+    *
+    * @param obj The frame object
+    * @return The content that was being used
+    */
+   EAPI Evas_Object *elm_frame_content_unset(Evas_Object *obj) EINA_ARG_NONNULL(1);
+   /**
+    * @}
     */
 
    /* table */

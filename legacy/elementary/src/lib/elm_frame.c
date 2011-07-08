@@ -1,13 +1,6 @@
 #include <Elementary.h>
 #include "elm_priv.h"
 
-/**
- * @defgroup Frame Frame
- *
- * This holds some content and has a title. Looks like a frame, but
- * supports styles so multple frames are avaible
- */
-
 typedef struct _Widget_Data Widget_Data;
 
 struct _Widget_Data
@@ -131,14 +124,6 @@ _elm_frame_label_get(const Evas_Object *obj, const char *item)
    return wd->label;
 }
 
-/**
- * Add a new frame to the parent
- *
- * @param parent The parent object
- * @return The new object or NULL if it cannot be created
- *
- * @ingroup Frame
- */
 EAPI Evas_Object *
 elm_frame_add(Evas_Object *parent)
 {
@@ -170,49 +155,18 @@ elm_frame_add(Evas_Object *parent)
    return obj;
 }
 
-/**
- * Set the frame label
- *
- * @param obj The frame object
- * @param label The label of this frame object
- *
- * @ingroup Frame
- * @deprecate use elm_object_text_* instead.
- */
 EAPI void
 elm_frame_label_set(Evas_Object *obj, const char *label)
 {
    _elm_frame_label_set(obj, NULL, label);
 }
 
-/**
- * Get the frame label
- *
- * @param obj The frame object
- *
- * @return The label of this frame objet or NULL if unable to get frame
- *
- * @ingroup Frame
- * @deprecate use elm_object_text_* instead.
- */
 EAPI const char *
 elm_frame_label_get(const Evas_Object *obj)
 {
    return _elm_frame_label_get(obj, NULL);
 }
 
-/**
- * Set the content of the frame widget
- *
- * Once the content object is set, a previously set one will be deleted.
- * If you want to keep that old content object, use the
- * elm_frame_content_unset() function.
- *
- * @param obj The frame object
- * @param content The content will be filled in this frame object
- *
- * @ingroup Frame
- */
 EAPI void
 elm_frame_content_set(Evas_Object *obj, Evas_Object *content)
 {
@@ -232,16 +186,6 @@ elm_frame_content_set(Evas_Object *obj, Evas_Object *content)
    _sizing_eval(obj);
 }
 
-/**
- * Get the content of the frame widget
- *
- * Return the content object which is set for this widget
- *
- * @param obj The frame object
- * @return The content that is being used
- *
- * @ingroup Frame
- */
 EAPI Evas_Object *
 elm_frame_content_get(const Evas_Object *obj)
 {
@@ -251,16 +195,6 @@ elm_frame_content_get(const Evas_Object *obj)
    return wd->content;
 }
 
-/**
- * Unset the content of the frame widget
- *
- * Unparent and return the content object which was set for this widget
- *
- * @param obj The frame object
- * @return The content that was being used
- *
- * @ingroup Frame
- */
 EAPI Evas_Object *
 elm_frame_content_unset(Evas_Object *obj)
 {
