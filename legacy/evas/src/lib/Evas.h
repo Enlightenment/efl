@@ -493,26 +493,34 @@ typedef struct _Evas_Smart_Class             Evas_Smart_Class;
 
 /**
  * @typedef Evas_Smart_Cb_Description
+ *
  * A smart object callback description, used to provide introspection
+ *
  * @ingroup Evas_Smart_Group
  */
 typedef struct _Evas_Smart_Cb_Description    Evas_Smart_Cb_Description;
 
 /**
  * @typedef Evas_Map
+ *
  * An opaque handle to map points
+ *
  * @see evas_map_new()
  * @see evas_map_free()
  * @see evas_map_dup()
+ *
  * @ingroup Evas_Object_Group_Map
  */
 typedef struct _Evas_Map            Evas_Map;
 
 /**
  * @typedef Evas
+ *
  * An opaque handle to an Evas canvas.
+ *
  * @see evas_new()
  * @see evas_free()
+ *
  * @ingroup Evas_Canvas
  */
 typedef struct _Evas                Evas;
@@ -945,7 +953,7 @@ typedef enum _Evas_Object_Pointer_Mode
    EVAS_OBJECT_POINTER_MODE_NOGRAB /**< pointer always bound to the object right below it */
 } Evas_Object_Pointer_Mode; /**< How the mouse pointer should be handled by Evas. */
 
-typedef void      (*Evas_Smart_Cb) (void *data, Evas_Object *obj, void *event_info);
+typedef void      (*Evas_Smart_Cb) (void *data, Evas_Object *obj, void *event_info); /**< Evas smart objects' "smart callback" function signature */
 typedef void      (*Evas_Event_Cb) (void *data, Evas *e, void *event_info); /**< Evas event callback function signature */
 typedef Eina_Bool (*Evas_Object_Event_Post_Cb) (void *data, Evas *e);
 typedef void      (*Evas_Object_Event_Cb) (void *data, Evas *e, Evas_Object *obj, void *event_info); /**< Evas object event callback function signature */
@@ -8013,24 +8021,24 @@ struct _Evas_Smart_Class
 /**
  * @struct _Evas_Smart_Cb_Description
  *
- * Describes a callback used by a smart class
- * evas_object_smart_callback_call(), particularly useful to explain
- * to user and its code (ie: introspection) what the parameter @c
- * event_info will contain.
+ * Describes a callback issued by a smart object
+ * (evas_object_smart_callback_call()), as defined in its smart object
+ * class. This is particularly useful to explain to end users and
+ * their code (i.e., introspection) what the parameter @c event_info
+ * will point to.
  *
  * @ingroup Evas_Smart_Group
  */
 struct _Evas_Smart_Cb_Description
 {
-   const char *name; /**< callback name, ie: "changed" */
+   const char *name; /**< callback name ("changed", for example) */
 
    /**
-    * @brief Hint type of @c event_info parameter of Evas_Smart_Cb.
+    * @brief Hint on the type of @c event_info parameter's contents on
+    * a #Evas_Smart_Cb callback.
     *
     * The type string uses the pattern similar to
-    *
-    * http://dbus.freedesktop.org/doc/dbus-specification.html#message-protocol-signatures
-    *
+    * http://dbus.freedesktop.org/doc/dbus-specification.html#message-protocol-signatures,
     * but extended to optionally include variable names within
     * brackets preceding types. Example:
     *
@@ -8047,9 +8055,9 @@ struct _Evas_Smart_Cb_Description
     *     @c "[x]a(ii)"
     *
     * @note This type string is used as a hint and is @b not validated
-    *       or enforced anyhow. Implementors should make the best use
-    *       of it to help bindings, documentation and other users of
-    *       introspection features.
+    *       or enforced in any way. Implementors should make the best
+    *       use of it to help bindings, documentation and other users
+    *       of introspection features.
     */
    const char *type;
 };
@@ -8303,30 +8311,35 @@ EAPI const Evas_Smart_Class          *evas_smart_class_get                (const
 EAPI void                            *evas_smart_data_get                 (const Evas_Smart *s) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
 
 /**
- * Get the callbacks known by this Evas_Smart.
+ * Get the smart callbacks known by this #Evas_Smart handle's smart
+ * class hierarchy.
  *
- * This is likely different from Evas_Smart_Class::callbacks as it
- * will contain the callbacks of all class hierarchy sorted, while the
+ * @param s A valid #Evas_Smart handle.
+ * @param[out] count Returns the number of elements in the returned
+ * array.
+ * @return The array with callback descriptions known by this smart
+ *         class, with its size returned in @a count parameter. It
+ *         should not be modified in any way. If no callbacks are
+ *         known, @c NULL is returned. The array is sorted by event
+ *         names and elements refer to the original values given to
+ *         evas_smart_class_new()'s #Evas_Smart_Class::callbacks
+ *         (pointer to them).
+ *
+ * This is likely different from
+ * evas_object_smart_callbacks_descriptions_get() as it will contain
+ * the callbacks of @b all this class hierarchy sorted, while the
  * direct smart class member refers only to that specific class and
  * should not include parent's.
  *
  * If no callbacks are known, this function returns @c NULL.
  *
- * The array elements and thus their contents will be reference to
- * original values given to evas_smart_new() as
+ * The array elements and thus their contents will be @b references to
+ * original values given to evas_smart_class_new() as
  * Evas_Smart_Class::callbacks.
  *
- * The array is sorted by name. The last array element is the @c NULL
- * pointer and is not counted in @a count. Loop iterations can check
- * any of these cases.
- *
- * @param s the Evas_Smart.
- * @param count returns the number of elements in returned array.
- * @return the array with callback descriptions known by this class,
- *         its size is returned in @a count parameter. It should not
- *         be modified anyhow. If no callbacks are known, @c NULL is
- *         returned. The array is sorted by name and elements refer to
- *         the original value given to evas_smart_new().
+ * The array is sorted by Evas_Smart_Cb_Description::name. The last
+ * array element is a @c NULL pointer and is not accounted for in @a
+ * count. Loop iterations can check any of these size indicators.
  *
  * @note objects may provide per-instance callbacks, use
  *       evas_object_smart_callbacks_descriptions_get() to get those
@@ -8337,14 +8350,17 @@ EAPI const Evas_Smart_Cb_Description **evas_smart_callbacks_descriptions_get(con
 
 
 /**
- * Find callback description for callback called @a name.
+ * Find a callback description for the callback named @a name.
  *
- * @param s the Evas_Smart.
- * @param name name of desired callback, must @b not be @c NULL.  The
- *        search have a special case for @a name being the same
- *        pointer as registered with Evas_Smart_Cb_Description, one
- *        can use it to avoid excessive use of strcmp().
- * @return reference to description if found, @c NULL if not found.
+ * @param s The #Evas_Smart where to search for class registered smart
+ * event callbacks.
+ * @param name Name of the desired callback, which must @b not be @c
+ *        NULL. The search has a special case for @a name being the
+ *        same pointer as registered with #Evas_Smart_Cb_Description.
+ *        One can use it to avoid excessive use of strcmp().
+ * @return A reference to the description if found, or @c NULL, otherwise
+ *
+ * @see evas_smart_callbacks_descriptions_get()
  */
 EAPI const Evas_Smart_Cb_Description *evas_smart_callback_description_find(const Evas_Smart *s, const char *name) EINA_ARG_NONNULL(1, 2) EINA_PURE;
 
@@ -8417,6 +8433,25 @@ EAPI int                              evas_smart_usage_get(const Evas_Smart *s);
  * rectangles that appear behind the image and text when the icon is
  * selected. As a smart object, the normal Evas object API could be
  * used on the icon object.
+ *
+ * Besides that, generally smart objects implement a <b>specific
+ * API</b>, so that users interect with its own custom features. The
+ * API takes form of explicit exported functions one may call and
+ * <b>smart callbacks</b>.
+ *
+ * @section Evas_Smart_Object_Group_Callbacks Smart events and callbacks
+ *
+ * Smart objects can elect events (smart events, from now on) ocurring
+ * inside of them to be reported back to their users via callback
+ * functions (smart callbacks). This way, you can extend Evas' own
+ * object events. They are defined by an <b>event string</b>, which
+ * identifies them uniquely. There's also a function prototype
+ * definition for the callback functions: #Evas_Smart_Cb.
+ *
+ * When defining an #Evas_Smart_Class, smart object implementors are
+ * strongly encorauged to properly set the Evas_Smart_Class::callbacks
+ * callbacks description array, so that the users of the smart object
+ * can have introspection on its events API <b>at run time</b>.
  *
  * See some @ref Example_Evas_Smart_Objects "examples" of this group
  * of functions.
@@ -8592,39 +8627,86 @@ EAPI void             *evas_object_smart_data_get        (const Evas_Object *obj
 EAPI void              evas_object_smart_data_set        (Evas_Object *obj, void *data) EINA_ARG_NONNULL(1);
 
 /**
- * Add a callback for the smart event specified by @p event.
+ * Add (register) a callback function to the smart event specified by
+ * @p event on the smart object @p obj.
  *
  * @param obj a smart object
- * @param event the event name
+ * @param event the event's name string
  * @param func the callback function
  * @param data user data to be passed to the callback function
+ *
+ * Smart callbacks look very similar to Evas callbacks, but are
+ * implemented as smart object's custom ones.
+ *
+ * This function adds a function callback to an smart object when the
+ * event named @p event occurs in it. The function is @p func.
+ *
+ * In the event of a memory allocation error during addition of the
+ * callback to the object, evas_alloc_error() should be used to
+ * determine the nature of the error, if any, and the program should
+ * sensibly try and recover.
+ *
+ * A smart callback function must have the ::Evas_Smart_Cb prototype
+ * definition. The first parameter (@p data) in this definition will
+ * have the same value passed to evas_object_smart_callback_add() as
+ * the @p data parameter, at runtime. The second parameter @p obj is a
+ * handle to the object on which the event occurred. The third
+ * parameter, @p event_info, is a pointer to data which is totally
+ * dependent on the smart object's implementation and semantic for the
+ * given event.
+ *
+ * There is an infrastructure for introspection on smart objects'
+ * events (see evas_smart_callbacks_descriptions_get()), but no
+ * internal smart objects on Evas implement them yet.
+ *
+ * @see @ref Evas_Smart_Object_Group_Callbacks for more details.
+ *
+ * @see evas_object_smart_callback_del()
  * @ingroup Evas_Smart_Object_Group
  */
 EAPI void              evas_object_smart_callback_add    (Evas_Object *obj, const char *event, Evas_Smart_Cb func, const void *data) EINA_ARG_NONNULL(1, 2, 3);
 
 /**
- * Remove a smart callback
- *
- * Removes a callback that was added by evas_object_smart_callback_add()
+ * Delete (unregister) a callback function from the smart event
+ * specified by @p event on the smart object @p obj.
  *
  * @param obj a smart object
- * @param event the event name
+ * @param event the event's name string
  * @param func the callback function
  * @return the data pointer
+ *
+ * This function removes <b>the first</b> added smart callback on the
+ * object @p obj matching the event name @p event and the registered
+ * function pointer @p func. If the removal is successful it will also
+ * return the data pointer that was passed to
+ * evas_object_smart_callback_add() (that will be the same as the
+ * parameter) when the callback(s) was(were) added to the canvas. If
+ * not successful @c NULL will be returned.
+ *
+ * @see evas_object_smart_callback_add() for more details.
+ *
  * @ingroup Evas_Smart_Object_Group
  */
 EAPI void             *evas_object_smart_callback_del    (Evas_Object *obj, const char *event, Evas_Smart_Cb func) EINA_ARG_NONNULL(1, 2, 3);
 
 /**
- * Call any smart callbacks on @p obj for @p event.
+ * Call a given smart callback on the smart object @p obj.
  *
  * @param obj the smart object
- * @param event the event name
- * @param event_info an event specific struct of info to pass to the callback
+ * @param event the event's name string
+ * @param event_info pointer to an event specific struct or information to
+ * pass to the callback functions registered on this smart event
  *
- * This should be called internally in the smart object when some specific
- * event has occurred. The documentation for the smart object should include
- * a list of possible events and what type of @p event_info to expect.
+ * This should be called @b internally, from the smart object's own
+ * code, when some specific event has occurred and the implementor
+ * wants is to pertain to the object's events API (see @ref
+ * Evas_Smart_Object_Group_Callbacks). The documentation for the smart
+ * object should include a list of possible events and what type of @p
+ * event_info to expect for each of them. Also, when defining an
+ * #Evas_Smart_Class, smart object implementors are strongly
+ * encorauged to properly set the Evas_Smart_Class::callbacks
+ * callbacks description array, so that the users of the smart object
+ * can have introspection on its events API <b>at run time</b>.
  *
  * @ingroup Evas_Smart_Object_Group
  */
@@ -8632,58 +8714,70 @@ EAPI void              evas_object_smart_callback_call   (Evas_Object *obj, cons
 
 
 /**
- * Set smart object instance callbacks descriptions.
+ * Set an smart object @b instance's smart callbacks descriptions.
+ *
+ * @param obj A smart object
+ * @param descriptions @c NULL terminated array with
+ * #Evas_Smart_Cb_Description descriptions. Array elements won't be
+ * modified at run time, but references to them and their contents
+ * will be made, so this array should be kept alive during the whole
+ * object's lifetime.
+ * @return @c EINA_TRUE on success, @c EINA_FALSE on failure.
  *
  * These descriptions are hints to be used by introspection and are
  * not enforced in any way.
  *
  * It will not be checked if instance callbacks descriptions have the
- * same name as another in class. Both are kept in different arrays
- * and users of evas_object_smart_callbacks_descriptions_get() should
- * handle this case as they wish.
+ * same name as respective possibly registered in the smart object
+ * @b class. Both are kept in different arrays and users of
+ * evas_object_smart_callbacks_descriptions_get() should handle this
+ * case as they wish.
  *
- * @param obj The smart object
- * @param descriptions NULL terminated (name != NULL) array with
- *        descriptions.  Array elements will not be modified, but
- *        reference to them and their contents will be made, so this
- *        array should be kept alive during object lifetime.
- * @return 1 on success, 0 on failure.
+ * @note Becase @p descriptions must be @c NULL terminated, and
+ *        because a @c NULL name makes little sense, too,
+ *        Evas_Smart_Cb_Description::name must @b not be @c NULL.
+ *
+ * @note While instance callbacks descriptions are possible, they are
+ *       @b not recommended. Use @b class callbacks descriptions
+ *       instead as they make you smart object user's life simpler and
+ *       will use less memory, as descriptions and arrays will be
+ *       shared among all instances.
+ *
  * @ingroup Evas_Smart_Object_Group
- *
- * @note while instance callbacks descriptions are possible, they are
- *       not recommended. Use class callbacks descriptions instead as they
- *       make user's life simpler and will use less memory as descriptions
- *       and arrays will be shared among all instances.
  */
 EAPI Eina_Bool         evas_object_smart_callbacks_descriptions_set(Evas_Object *obj, const Evas_Smart_Cb_Description *descriptions) EINA_ARG_NONNULL(1);
 
 /**
- * Get the callbacks descriptions known by this smart object.
+ * Retrieve an smart object's know smart callback descriptions (both
+ * instance and class ones).
  *
- * This call retrieves processed callbacks descriptions for both
- * instance and class. These arrays are sorted by description's name
- * and are @c NULL terminated, so both @a class_count and
- * @a instance_count can be ignored, the terminator @c NULL is not
- * counted in these values.
- *
- * @param obj the smart object.
- * @param class_descriptions where to store class callbacks
+ * @param obj The smart object to get callback descriptions from.
+ * @param class_descriptions Where to store class callbacks
  *        descriptions array, if any is known. If no descriptions are
- *        known, @c NULL is returned. This parameter may be @c NULL if
- *        it is not of interest.
- * @param class_count returns how many class callbacks descriptions
+ *        known, @c NULL is returned
+ * @param class_count Returns how many class callbacks descriptions
  *        are known.
- * @param instance_descriptions where to store instance callbacks
+ * @param instance_descriptions Where to store instance callbacks
  *        descriptions array, if any is known. If no descriptions are
- *        known, @c NULL is returned. This parameter may be @c NULL if
- *        it is not of interest.
- * @param instance_count returns how many instance callbacks
+ *        known, @c NULL is returned.
+ * @param instance_count Returns how many instance callbacks
  *        descriptions are known.
  *
- * @note if just class descriptions are of interest, try
+ * This call searchs for registered callback descriptions for both
+ * instance and class of the given smart object. These arrays will be
+ * sorted by Evas_Smart_Cb_Description::name and also @c NULL
+ * terminated, so both @a class_count and @a instance_count can be
+ * ignored, if the caller wishes so. The terminator @c NULL is not
+ * counted in these values.
+ *
+ * @note If just class descriptions are of interest, try
  *       evas_smart_callbacks_descriptions_get() instead.
  *
+ * @note Use @c NULL pointers on the descriptions/counters you're not
+ * interested in: they'll be ignored by the function.
+ *
  * @see evas_smart_callbacks_descriptions_get()
+ *
  * @ingroup Evas_Smart_Object_Group
  */
 EAPI void              evas_object_smart_callbacks_descriptions_get(const Evas_Object *obj, const Evas_Smart_Cb_Description ***class_descriptions, unsigned int *class_count, const Evas_Smart_Cb_Description ***instance_descriptions, unsigned int *instance_count) EINA_ARG_NONNULL(1);

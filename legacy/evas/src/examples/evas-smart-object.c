@@ -31,6 +31,7 @@ static const char *commands = \
   "commands are:\n"
   "\tl - insert child rectangle on the left\n"
   "\tr - insert child rectangle on the right\n"
+  "\tw - remove and delete all members from the smart object\n"
   "\tright arrow - move smart object to the right\n"
   "\tleft arrow - move smart object to the left\n"
   "\tup arrow - move smart object up\n"
@@ -49,7 +50,7 @@ struct test_data
 {
    Ecore_Evas  *ee;
    Evas        *evas;
-   Evas_Object *smt, *bg, *clipper;
+   Evas_Object *smt, *bg, *clipper, *rects[2];
 };
 
 struct color_tuple
@@ -83,14 +84,12 @@ _index_to_color(int i)
 static struct test_data d = {0};
 static const char *border_img_path = PACKAGE_EXAMPLES_DIR "/red.png";
 
-#define _evas_smart_example_type "Evas_Smart_Example"
-#define SIG_CHILD_ADDED          "child,added"
-#define SIG_CHILD_REMOVED        "child,removed"
+#define _evas_smart_example_type    "Evas_Smart_Example"
+#define EVT_CHILDREN_NUMBER_CHANGED "children,changed"
 
-static const Evas_Smart_Cb_Description _signals[] =
+static const Evas_Smart_Cb_Description _smart_callbacks[] =
 {
-   {SIG_CHILD_ADDED, ""},
-   {SIG_CHILD_REMOVED, ""},
+   {EVT_CHILDREN_NUMBER_CHANGED, "i"},
    {NULL, NULL}
 };
 
@@ -104,6 +103,7 @@ struct _Evas_Smart_Example_Data
 {
    Evas_Object_Smart_Clipped_Data base;
    Evas_Object                   *children[2], *border;
+   int                            child_count;
 };
 
 #define EVAS_SMART_EXAMPLE_DATA_GET(o, ptr) \
@@ -133,7 +133,7 @@ struct _Evas_Smart_Example_Data
 
 EVAS_SMART_SUBCLASS_NEW(_evas_smart_example_type, _evas_smart_example,
                         Evas_Smart_Class, Evas_Smart_Class,
-                        evas_object_smart_clipped_class_get, _signals);
+                        evas_object_smart_clipped_class_get, _smart_callbacks);
 
 static void
 _on_destroy(Ecore_Evas *ee __UNUSED__)
@@ -311,6 +311,17 @@ evas_smart_example_add(Evas *evas)
    return evas_object_smart_add(evas, _evas_smart_example_smart_class_new());
 }
 
+static void
+_evas_smart_example_remove_do(Evas_Smart_Example_Data *priv,
+                              Evas_Object             *child,
+                              int                      index)
+{
+   priv->children[index] = NULL;
+   priv->child_count--;
+   _evas_smart_example_child_callbacks_unregister(child);
+   evas_object_smart_member_del(child);
+}
+
 /* remove a child element, return its pointer (or NULL on errors) */
 Evas_Object *
 evas_smart_example_remove(Evas_Object *o,
@@ -330,11 +341,10 @@ evas_smart_example_remove(Evas_Object *o,
    index = (int)evas_object_data_get(child, "index");
    index--;
 
-   priv->children[index] = NULL;
+   _evas_smart_example_remove_do(priv, child, index);
 
-   evas_object_smart_callback_call(o, SIG_CHILD_REMOVED, child);
-   _evas_smart_example_child_callbacks_unregister(child);
-   evas_object_smart_member_del(child);
+   evas_object_smart_callback_call(
+     o, EVT_CHILDREN_NUMBER_CHANGED, (void *)priv->child_count);
    evas_object_smart_changed(o);
 
    return child;
@@ -362,16 +372,24 @@ evas_smart_example_set_left(Evas_Object *o,
    if (priv->children[0])
      {
         if (priv->children[0] != child)
-          ret = evas_smart_example_remove(o, priv->children[0]);
+          {
+             ret = priv->children[0];
+             _evas_smart_example_remove_do(priv, priv->children[0], 0);
+          }
         else return child;
      }
 
    priv->children[0] = child;
-   evas_object_smart_callback_call(o, SIG_CHILD_ADDED, child);
-
    _evas_smart_example_child_callbacks_register(o, child, 0);
    evas_object_smart_member_add(child, o);
    evas_object_smart_changed(o);
+
+   priv->child_count++;
+   if (!ret)
+     {
+        evas_object_smart_callback_call(
+          o, EVT_CHILDREN_NUMBER_CHANGED, (void *)priv->child_count);
+     }
 
    return ret;
 }
@@ -398,16 +416,24 @@ evas_smart_example_set_right(Evas_Object *o,
    if (priv->children[1])
      {
         if (priv->children[1] != child)
-          ret = evas_smart_example_remove(o, priv->children[1]);
+          {
+             ret = priv->children[1];
+             _evas_smart_example_remove_do(priv, priv->children[1], 1);
+          }
         else return child;
      }
 
    priv->children[1] = child;
-   evas_object_smart_callback_call(o, SIG_CHILD_ADDED, child);
-
    _evas_smart_example_child_callbacks_register(o, child, 1);
    evas_object_smart_member_add(child, o);
    evas_object_smart_changed(o);
+
+   priv->child_count++;
+   if (!ret)
+     {
+        evas_object_smart_callback_call(
+          o, EVT_CHILDREN_NUMBER_CHANGED, (void *)priv->child_count);
+     }
 
    return ret;
 }
@@ -428,6 +454,26 @@ _on_keydown(void        *data __UNUSED__,
         return;
      }
 
+   if (strcmp(ev->keyname, "w") == 0) /* clear out smart object (WRT members) */
+     {
+        if (d.rects[0])
+          {
+             evas_smart_example_remove(d.smt, d.rects[0]);
+             evas_object_del(d.rects[0]);
+          }
+        if (d.rects[1])
+          {
+             evas_smart_example_remove(d.smt, d.rects[1]);
+             evas_object_del(d.rects[1]);
+          }
+
+        memset(d.rects, 0, sizeof(d.rects));
+
+        fprintf(stdout, "Deleting all members of the smart object.\n");
+
+        return;
+     }
+
    if (strcmp(ev->keyname, "l") == 0) /* insert random colored
                                        * rectangle on the left */
      {
@@ -437,6 +483,8 @@ _on_keydown(void        *data __UNUSED__,
         evas_object_show(rect);
 
         prev = evas_smart_example_set_left(d.smt, rect);
+        d.rects[0] = rect;
+
         fprintf(stdout, "Setting smart object's left spot with a new"
                         " rectangle.\n");
         fprintf(stdout, "Checking its new smart object parent: %s\n",
@@ -464,6 +512,8 @@ _on_keydown(void        *data __UNUSED__,
         evas_object_show(rect);
 
         prev = evas_smart_example_set_right(d.smt, rect);
+        d.rects[1] = rect;
+
         fprintf(stdout, "Setting smart object's right spot with a new"
                         " rectangle.\n");
         fprintf(stdout, "Checking its new smart object parent: %s\n",
@@ -560,9 +610,20 @@ _on_keydown(void        *data __UNUSED__,
      }
 }
 
+static void /* callback on number of member objects changed */
+_on_example_smart_object_child_num_change(void        *data __UNUSED__,
+                                          Evas_Object *obj __UNUSED__,
+                                          void        *event_info)
+{
+   fprintf(stdout, "Number of child members on our example smart"
+                   " object changed to %d\n", (int)event_info);
+}
+
 int
 main(void)
 {
+   const Evas_Smart_Cb_Description **descriptions;
+   unsigned int count;
    Eina_Bool ret;
 
    srand(time(NULL));
@@ -600,12 +661,33 @@ main(void)
 
    d.clipper = evas_object_smart_clipped_clipper_get(d.smt);
    fprintf(stdout, "Checking if clipped smart object's clipper is a "
-           "\"static\" one: %s\n", evas_object_static_clip_get(d.clipper) ?
-           "yes" : "no");
+                   "\"static\" one: %s\n", evas_object_static_clip_get(
+             d.clipper) ? "yes" : "no");
 
    evas_object_color_set(
      d.clipper, clipper_colors[cur_color].r, clipper_colors[cur_color].g,
      clipper_colors[cur_color].b, clipper_colors[cur_color].a);
+
+   evas_object_smart_callbacks_descriptions_get(
+     d.smt, &descriptions, &count, NULL, NULL);
+
+   for (; *descriptions; descriptions++)
+     {
+        fprintf(stdout, "We've found a smart callback on the smart object!"
+                        "\n\tname: %s\n\ttype: %s\n", (*descriptions)->name,
+                (*descriptions)->type);
+
+        if (strcmp((*descriptions)->type, "i")) continue;
+        /* we know we don't have other types of smart callbacks
+         * here, just playing with it */
+
+        /* for now, we know the only one callback is the one
+         * reporting number of member objects changed on the
+         * example smart object */
+        evas_object_smart_callback_add(
+          d.smt, (*descriptions)->name,
+          _on_example_smart_object_child_num_change, NULL);
+     }
 
    evas_object_focus_set(d.bg, EINA_TRUE);
    evas_object_event_callback_add(

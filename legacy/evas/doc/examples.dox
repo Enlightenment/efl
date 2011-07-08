@@ -545,7 +545,7 @@
  * handy <b>helper macro</b>:
  * @dontinclude evas-smart-object.c
  * @skip EVAS_SMART_SUBCLASS_NEW
- * @until _signals
+ * @until _smart_callbacks
  * What it does is to @b subclass a given existing smart class, thus
  * specializing it. This is very common and useful in Evas. There is a
  * built-in smart object, the "clipped smart object", whose behavior is
@@ -621,22 +621,51 @@
  * "static clippers" -- clipped smart objects have their global
  * clippers flagged static.
  *
+ * Other important things we also exemplify here are <b>smart
+ * callbacks</b> and smart callback @b introspection:
+ * @dontinclude evas-smart-object.c
+ * @skip EVT_CHILDREN_NUMBER_CHANGED
+ * @until ;
+ *
+ * Here we declare our array of smart callback descriptions, which has
+ * one element only, in this case. That callback will take place, as
+ * the name indicates, whenever the number of member objects in our
+ * smart object example instance changes. That global array variable
+ * must be the last argument to #EVAS_SMART_SUBCLASS_NEW, so that it's
+ * registered as the <b>smart class</b>'s callbacks description.
+ *
+ * After we instantiate the smart object, we take a look on those
+ * descriptions and register a callback on that unique smart event:
+ * @dontinclude evas-smart-object.c
+ * @skip for (;
+ * @until focus_set
+ *
+ * The code of the callback will just print how many member objects we
+ * have, which is an integer argument of the callback itself, as
+ * flagged by its description:
+ * @dontinclude evas-smart-object.c
+ * @skip callback on number of member objects changed
+ * @until }
+ *
+ * One of the points at which we issue that callback is inside the @c
+ * evas_smart_example_remove(), whose code was already shown.
+ *
  * As in other examples, to interact with this one there's a command
  * line interface, whose help string can be asked for with the 'h' key:
- *
  * @dontinclude evas-smart-object.c
  * @skip static const char *commands =
  * @until ;
- * Use 'l' and 'r' keys, to create new rectangles and place them on the
- * left (@c evas_smart_example_set_left()) or right
- * (@c evas_smart_example_set_right()) spots of our smart object,
- * respectively. The keyboard arrows will move the smart object along
- * the canvas. See how it takes any child objects with it during its
- * movement. The 'd' and 'i' keys will increase or decrease the smart
- * object's size -- see how it affects the children's sizes,
- * too. Finally, 'c' will change the color of the smart object's
- * clipper (which is the exact internal clipper coming from a clipped
- * smart object):
+ * Use 'l' and 'r' keys, to create new rectangles and place them on
+ * the left (@c evas_smart_example_set_left()) or right (@c
+ * evas_smart_example_set_right()) spots of our smart object,
+ * respectively. The 'w' command will remove all member objects from
+ * the smart object and delete them. The keyboard arrows will move the
+ * smart object along the canvas. See how it takes any child objects
+ * with it during its movement. The 'd' and 'i' keys will increase or
+ * decrease the smart object's size -- see how it affects the
+ * children's sizes, too. Finally, 'c' will change the color of the
+ * smart object's clipper (which is the exact internal clipper coming
+ * from a clipped smart object):
  * @dontinclude evas-smart-object.c
  * @skip d.clipper =
  * @until .a);
