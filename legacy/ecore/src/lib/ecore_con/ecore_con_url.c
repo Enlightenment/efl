@@ -4,40 +4,7 @@
  */
 
 /*
- * Brief usage:
- * 1. Create an Ecore_Con_Url object
- * 2. Register to receive the ECORE_CON_EVENT_URL_COMPLETE event
- *    (and optionally the ECORE_CON_EVENT_URL_DATA event to receive
- *    the response, e.g. for HTTP/FTP downloads)
- * 3. Set the URL with ecore_con_url_url_set(...);
- * 4. Perform the operation with ecore_con_url_get(...);
- *
- * Note that it is good to reuse Ecore_Con_Url objects wherever possible, but
- * bear in mind that each one can only perform one operation at a time.
- * You need to wait for the ECORE_CON_EVENT_URL_COMPLETE event before re-using
- * or destroying the object.
- *
- * Example Usage 1 (HTTP GET):
- *   ecore_con_url_url_set(url_con, "http://www.google.com");
- *   ecore_con_url_get(url_con);
- *
- * Example usage 2 (HTTP POST):
- *   ecore_con_url_url_set(url_con, "http://www.example.com/post_handler.cgi");
- *   ecore_con_url_post(url_con, data, data_length, "multipart/form-data");
- *
- * Example Usage 3 (FTP download):
- *   ecore_con_url_url_set(url_con, "ftp://ftp.example.com/pub/myfile");
- *   ecore_con_url_get(url_con);
- *
- * Example Usage 4 (FTP upload as ftp://ftp.example.com/file):
- *   ecore_con_url_url_set(url_con, "ftp://ftp.example.com");
- *   ecore_con_url_ftp_upload(url_con, "/tmp/file", "user", "pass", NULL);
- *
- * Example Usage 5 (FTP upload as ftp://ftp.example.com/dir/file):
- *   ecore_con_url_url_set(url_con, "ftp://ftp.example.com");
- *   ecore_con_url_ftp_upload(url_con, "/tmp/file", "user", "pass","dir");
- *
- * FIXME: Support more CURL features: Progress callbacks and more...
+ * FIXME: Support more CURL features...
  */
 
 #ifdef HAVE_CONFIG_H

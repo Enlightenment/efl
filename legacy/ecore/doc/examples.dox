@@ -495,6 +495,104 @@
  */
 
 /**
+ * @page ecore_con_url_download_example_c Ecore_Con_Url - downloading a file
+ *
+ * This is a simple example that shows how to download a file using @ref
+ * Ecore_Con_Url. The full source code for this example can be found at @ref
+ * ecore_con_url_download_example.c.
+ *
+ * First we are setting some callbacks for events that will be sent when data
+ * arrives in our connection (the data is the content of the file being
+ * downloaded), and when the download is completed. The @c _url_progress_cb and
+ * @c _url_complete_cb are these callbacks:
+ *
+ * @dontinclude ecore_con_url_download_example.c
+ * @skip struct
+ * @until main_loop_quit
+ * @until }
+ *
+ * Notice that we also declared a struct that will hold how many bytes were
+ * downloaded through this object. It will be set in the @c main function using
+ * ecore_con_url_data_set().
+ *
+ * In the next step, on the @c main function, we open a file where we are going
+ * to save the content being downloaded:
+ *
+ * @until open(
+ * @until }
+ *
+ * With the file successfully open, let's create our @ref Ecore_Con_Url object.
+ * For this, we initialize the libraries and create the object:
+ *
+ * @until }
+ *
+ * Then we allocate and set the data struct to the connection object, and set a
+ * file descriptor from our previously open file to it. We also add the event
+ * handlers (callbacks) to the events that will be emitted on data being
+ * received and download complete:
+ *
+ * @until complete_cb
+ *
+ * Finally we start our request, and run the main loop:
+ *
+ * @until return 0
+ * @until }
+ *
+ * The rest of this code was just freeing resources, with some labels to be used
+ * for error handling.
+ */
+
+/**
+ * @page ecore_con_url_headers_example_c Ecore_Con_Url - customizing a request
+ *
+ * This is a simple example that shows how to make a custom request using @ref
+ * Ecore_Con_Url. The full source code for this example can be found at @ref
+ * ecore_con_url_headers_example.c.
+ *
+ * The first part of the example is setting the callbacks to be called when an
+ * #ECORE_CON_EVENT_URL_DATA or #ECORE_CON_EVENT_URL_COMPLETE event is received.
+ * These are the callbacks that are going to be used with this:
+ *
+ * @dontinclude ecore_con_url_headers_example.c
+ * @skip static
+ * @until main_loop_quit
+ * @until }
+ *
+ * The @c main code is as simple as the @ref Ecore_Con_Url example. It contains
+ * some checks for the arguments to see if a GET or POST request is required:
+ *
+ * @until GET
+ * @until }
+ *
+ * Then we start our required libraries and configure a global option to use
+ * pipelined requests:
+ *
+ * @until pipeline_set
+ *
+ * Now we create our request object, but using ecore_con_url_custom_new() to use
+ * a POST or GET method depending on the command line arguments. And we also add
+ * the event handlers for our callbacks:
+ *
+ * @until complete_cb
+ *
+ * In order to demonstrate our API, some options are set to this request before
+ * actually performing it:
+ *
+ * @until url_time
+ *
+ * Depending on what kind of request was asked (GET or POST), we use one of the
+ * specific functions to perform it:
+ *
+ * @until url_post
+ *
+ * After that, we just check for errors, start the main loop, free resources and
+ * finally exit:
+ *
+ * @until return
+ * @until }
+ */
+
+/**
  * @example ecore_idler_example.c
  * This example shows when @ref Ecore_Idler, @ref Ecore_Idle_Enterer and @ref
  * Ecore_Idle_Exiter are called. See
@@ -546,6 +644,19 @@
  * @example ecore_con_lookup_example.c
  * Shows how to make a simple DNS lookup. See the complete example description
  * at @ref ecore_con_lookup_example_c
+ */
+
+/**
+ * @example ecore_con_url_download_example.c
+ * Shows how to download a file using an @ref Ecore_Con_Url object. See the
+ * complete example description at @ref ecore_con_url_download_example_c
+ */
+
+/**
+ * @example ecore_con_url_headers_example.c
+ * Shows how to make GET or POST requests using an @ref Ecore_Con_Url object,
+ * and make use of most of its API.  See the complete example description at
+ * @ref ecore_con_headers_example_c
  */
 
 /**

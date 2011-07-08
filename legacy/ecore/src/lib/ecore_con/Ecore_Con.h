@@ -466,6 +466,9 @@ typedef enum _Ecore_Con_Type
  * Initialises the Ecore_Con library.
  * @return  Number of times the library has been initialised without being
  *          shut down.
+ *
+ * @note This function already calls ecore_init() internally, so you don't need
+ * to call it explicitly.
  */
 EAPI int               ecore_con_init(void);
 
@@ -473,6 +476,8 @@ EAPI int               ecore_con_init(void);
  * Shuts down the Ecore_Con library.
  * @return  Number of times the library has been initialised without being
  *          shut down.
+ * @note This function already calls ecore_shutdown() internally, so you don't
+ * need to call it explicitly unless you called ecore_init() explicitly too.
  */
 EAPI int               ecore_con_shutdown(void);
 
@@ -590,7 +595,61 @@ EAPI int               ecore_con_client_port_get(Ecore_Con_Client *cl);
  * Utility functions that set up, use and shut down the Ecore URL
  * Connection library.
  *
- * @todo write detailed description of Ecore_Con_Url
+ * These functions are a shortcut to make it easy to perform http requests
+ * (POST, GET, etc).
+ *
+ * Brief usage:
+ * 1. Create an Ecore_Con_Url object with ecore_con_url_new(url);
+ * 2. Register to receive the #ECORE_CON_EVENT_URL_COMPLETE event
+ *    (and optionally the #ECORE_CON_EVENT_URL_DATA and
+ *    #ECORE_CON_EVENT_URL_PROGRESS event to receive
+ *    the response, e.g. for HTTP/FTP downloads)
+ * 3. Perform the operation with ecore_con_url_get(...);
+ *
+ * Note that it is good to reuse @ref Ecore_Con_Url objects wherever possible,
+ * but bear in mind that each one can only perform one operation at a time.  You
+ * need to wait for the #ECORE_CON_EVENT_URL_COMPLETE event before re-using or
+ * destroying the object.
+ *
+ * If it's necessary to change the @ref Ecore_Con_Url object url, use
+ * ecore_con_url_url_set().
+ *
+ * Simple Usage 1 (HTTP GET):
+ * @code
+ *   ecore_con_url_url_set(url_con, "http://www.google.com");
+ *   ecore_con_url_get(url_con);
+ * @endcode
+ *
+ * Simple usage 2 (HTTP POST):
+ * @code
+ *   ecore_con_url_url_set(url_con, "http://www.example.com/post_handler.cgi");
+ *   ecore_con_url_post(url_con, data, data_length, "multipart/form-data");
+ * @endcode
+ *
+ * Simple Usage 3 (FTP download):
+ * @code
+ *   fd = creat(filename, 0644)
+ *   ecore_con_url_url_set(url_con, "ftp://ftp.example.com/pub/myfile");
+ *   ecore_con_url_fd_set(url_con, fd);
+ *   ecore_con_url_get(url_con);
+ * @endcode
+ *
+ * Simple Usage 4 (FTP upload as ftp://ftp.example.com/file):
+ * @code
+ *   ecore_con_url_url_set(url_con, "ftp://ftp.example.com");
+ *   ecore_con_url_ftp_upload(url_con, "/tmp/file", "user", "pass", NULL);
+ * @endcode
+ *
+ * Simple Usage 5 (FTP upload as ftp://ftp.example.com/dir/file):
+ * @code
+ *   ecore_con_url_url_set(url_con, "ftp://ftp.example.com");
+ *   ecore_con_url_ftp_upload(url_con, "/tmp/file", "user", "pass","dir");
+ * @endcode
+ *
+ * These are complete examples for the API:
+ * @li @ref ecore_con_url_download_example.c "Downloading a file"
+ * @li @ref ecore_con_url_headers_example.c "Setting many options for the
+ * connection"
  *
  * @{
  */
@@ -643,25 +702,37 @@ EAPI int               ecore_con_url_shutdown(void);
 /**
  * Enable or disable HTTP 1.1 pipelining.
  * @param enable EINA_TRUE will turn it on, EINA_FALSE will disable it.
+ *
+ * Pipelining allows to send one request after another one, without having to
+ * wait for the reply of the first request. The respective replies are received
+ * in the order that the requests were sent.
+ *
+ * Enabling this feature will be valid for all requests done using @c
+ * ecore_con_url.
+ *
+ * See http://en.wikipedia.org/wiki/HTTP_pipelining for more info.
+ *
+ * @see ecore_con_url_pipeline_get()
  */
 EAPI void              ecore_con_url_pipeline_set(Eina_Bool enable);
 /**
  * Is HTTP 1.1 pipelining enable ?
  * @return EINA_TRUE if it is enable.
+ *
+ * @see ecore_con_url_pipeline_set()
  */
 EAPI Eina_Bool         ecore_con_url_pipeline_get(void);
 
 /**
  * Creates and initializes a new Ecore_Con_Url connection object.
  *
- * Creates and initializes a new Ecore_Con_Url connection object that can be
- * uesd for sending requests.
- *
  * @param url URL that will receive requests. Can be changed using
  *            ecore_con_url_url_set.
  *
  * @return NULL on error, a new Ecore_Con_Url on success.
  *
+ * Creates and initializes a new Ecore_Con_Url connection object that can be
+ * used for sending requests.
  *
  * @see ecore_con_url_custom_new()
  * @see ecore_con_url_url_set()
@@ -670,15 +741,14 @@ EAPI Ecore_Con_Url *   ecore_con_url_new(const char *url);
 /**
  * Creates a custom connection object.
  *
- * Creates and initializes a new Ecore_Con_Url for a custom request (e.g. HEAD,
- * SUBSCRIBE and other obscure HTTP requests). This object should be used like
- * one created with ecore_con_url_new().
- *
  * @param url URL that will receive requests
  * @param custom_request Custom request (e.g. GET, POST, HEAD, PUT, etc)
  *
  * @return NULL on error, a new Ecore_Con_Url on success.
  *
+ * Creates and initializes a new Ecore_Con_Url for a custom request (e.g. HEAD,
+ * SUBSCRIBE and other obscure HTTP requests). This object should be used like
+ * one created with ecore_con_url_new().
  *
  * @see ecore_con_url_new()
  * @see ecore_con_url_url_set()
@@ -707,12 +777,11 @@ EAPI Eina_Bool         ecore_con_url_url_set(Ecore_Con_Url *url_con,
 /**
  * Associates data with a connection object.
  *
- * Associates data with a connection object, which can be retrieved later with
- * ecore_con_url_data_get()).
- *
  * @param url_con Connection object to associate data.
  * @param data Data to be set.
  *
+ * Associates data with a connection object, which can be retrieved later with
+ * ecore_con_url_data_get()).
  *
  * @see ecore_con_url_data_get()
  */
@@ -721,13 +790,12 @@ EAPI void              ecore_con_url_data_set(Ecore_Con_Url *url_con,
 /**
  * Retrieves data associated with a Ecore_Con_Url connection object.
  *
- * Retrieves data associated with a Ecore_Con_Url connection object (previously
- * set with ecore_con_url_data_set()).
- *
  * @param url_con Connection object to retrieve data from.
  *
  * @return Data associated with the given object.
  *
+ * Retrieves data associated with a Ecore_Con_Url connection object (previously
+ * set with ecore_con_url_data_set()).
  *
  * @see ecore_con_url_data_set()
  */
@@ -735,13 +803,15 @@ EAPI void *            ecore_con_url_data_get(Ecore_Con_Url *url_con);
 /**
  * Adds an additional header to the request connection object.
  *
- * Adds an additional header to the request connection object. This addition
- * will be valid for only one ecore_con_url_get() or ecore_con_url_post() call.
- *
  * @param url_con Connection object
  * @param key Header key
  * @param value Header value
  *
+ * Adds an additional header (User-Agent, Content-Type, etc.) to the request
+ * connection object. This addition will be valid for only one
+ * ecore_con_url_get() or ecore_con_url_post() call.
+ *
+ * Some functions like ecore_con_url_time() also add headers to the request.
  *
  * @see ecore_con_url_get()
  * @see ecore_con_url_post()
@@ -753,11 +823,10 @@ EAPI void              ecore_con_url_additional_header_add(Ecore_Con_Url *url_co
 /**
  * Cleans additional headers.
  *
- * Cleans additional headers associated with a connection object (previously
- * added with ecore_con_url_additional_header_add()).
- *
  * @param url_con Connection object to clean additional headers.
  *
+ * Cleans additional headers associated with a connection object (previously
+ * added with ecore_con_url_additional_header_add()).
  *
  * @see ecore_con_url_additional_header_add()
  * @see ecore_con_url_get()
@@ -767,27 +836,28 @@ EAPI void              ecore_con_url_additional_headers_clear(Ecore_Con_Url *url
 /**
  * Retrieves headers from last request sent.
  *
+ * @param url_con Connection object to retrieve response headers from.
+ *
  * Retrieves a list containing the response headers. This function should be
  * used after an ECORE_CON_EVENT_URL_COMPLETE event (headers should normally be
  * ready at that time).
  *
- * @param url_con Connection object to retrieve response headers from.
- *
  * @return List of response headers. This list must not be modified by the user.
- *
  */
 EAPI const Eina_List * ecore_con_url_response_headers_get(Ecore_Con_Url *url_con);
 /**
  * Setup a file for receiving response data.
  *
- * Sets up a file to have response data written into. Note that
- * ECORE_CON_EVENT_URL_DATA events will not be emitted if a file has been set to
- * receive the response data.
- *
  * @param url_con Connection object to set file
  * @param fd File descriptor associated with the file. A negative value will
  * unset any previously set fd.
  *
+ * Sets up a file to have response data written into. Note that
+ * ECORE_CON_EVENT_URL_DATA events will not be emitted if a file has been set to
+ * receive the response data.
+ *
+ * This call can be used to easily setup a file where the downloaded data will
+ * be saved.
  */
 EAPI void              ecore_con_url_fd_set(Ecore_Con_Url *url_con, int fd);
 /**
@@ -800,14 +870,12 @@ EAPI void              ecore_con_url_fd_set(Ecore_Con_Url *url_con, int fd);
  *
  * @return Number of bytes received on request.
  *
- *
  * @see ecore_con_url_get()
  * @see ecore_con_url_post()
  */
 EAPI int               ecore_con_url_received_bytes_get(Ecore_Con_Url *url_con);
 /**
  * Sets url_con to use http auth, with given username and password, "safely" or not.
- * ATTENTION: requires libcurl >= 7.19.1 to work, otherwise will always return 0.
  *
  * @param url_con Connection object to perform a request on, previously created
  *    with ecore_con_url_new() or ecore_con_url_custom_new().
@@ -817,6 +885,7 @@ EAPI int               ecore_con_url_received_bytes_get(Ecore_Con_Url *url_con);
  *
  * @return #EINA_TRUE on success, #EINA_FALSE on error.
  *
+ * ATTENTION: requires libcurl >= 7.19.1 to work, otherwise will always return 0.
  */
 EAPI Eina_Bool         ecore_con_url_httpauth_set(Ecore_Con_Url *url_con,
                                                   const char *username,
@@ -856,6 +925,10 @@ EINA_DEPRECATED EAPI Eina_Bool         ecore_con_url_send(Ecore_Con_Url *url_con
  *
  * @return #EINA_TRUE on success, #EINA_FALSE on error.
  *
+ * The request is performed immediately, but you need to setup event handlers
+ * for #ECORE_CON_EVENT_URL_DATA, #ECORE_CON_EVENT_URL_COMPLETE or
+ * #ECORE_CON_EVENT_URL_PROGRESS to get more information about its result.
+ *
  * @see ecore_con_url_custom_new()
  * @see ecore_con_url_additional_headers_clear()
  * @see ecore_con_url_additional_header_add()
@@ -871,12 +944,19 @@ EAPI Eina_Bool         ecore_con_url_get(Ecore_Con_Url *url_con);
  *
  * @param url_con Connection object to perform a request on, previously created
  *                with ecore_con_url_new() or ecore_con_url_custom_new().
- * @param data    Payload (data sent on the request)
+ * @param data    Payload (data sent on the request). Can be @c NULL.
  * @param length  Payload length. If @c -1, rely on automatic length
  *                calculation via @c strlen() on @p data.
- * @param content_type Content type of the payload (e.g. text/xml)
+ * @param content_type Content type of the payload (e.g. text/xml). Can be @c
+ * NULL.
  *
  * @return #EINA_TRUE on success, #EINA_FALSE on error.
+ *
+ * The request starts immediately, but you need to setup event handlers
+ * for #ECORE_CON_EVENT_URL_DATA, #ECORE_CON_EVENT_URL_COMPLETE or
+ * #ECORE_CON_EVENT_URL_PROGRESS to get more information about its result.
+ *
+ * This call won't block your main loop.
  *
  * @see ecore_con_url_custom_new()
  * @see ecore_con_url_additional_headers_clear()
@@ -897,6 +977,10 @@ EAPI Eina_Bool         ecore_con_url_post(Ecore_Con_Url *url_con,
  * @param url_con   Ecore_Con_Url to act upon.
  * @param condition Condition to use for HTTP requests.
  * @param timestamp Time since 1 Jan 1970 to use in the condition.
+ *
+ * This function may set the header "If-Modified-Since" or
+ * "If-Unmodified-Since", depending on the value of @p time_condition, with the
+ * value @p timestamp.
  *
  * @sa ecore_con_url_get()
  * @sa ecore_con_url_post()
@@ -924,12 +1008,12 @@ EAPI Eina_Bool         ecore_con_url_ftp_upload(Ecore_Con_Url *url_con,
 /**
  * Toggle libcurl's verbose output.
  *
+ * @param url_con Ecore_Con_Url instance which will be acted upon.
+ * @param verbose Whether or not to enable libcurl's verbose output.
+ *
  * If @p verbose is @c EINA_TRUE, libcurl will output a lot of verbose
  * information about its operations, which is useful for
  * debugging. The verbose information will be sent to stderr.
- *
- * @param url_con Ecore_Con_Url instance which will be acted upon.
- * @param verbose Whether or not to enable libcurl's verbose output.
  */
 EAPI void              ecore_con_url_verbose_set(Ecore_Con_Url *url_con,
                                                  Eina_Bool verbose);
