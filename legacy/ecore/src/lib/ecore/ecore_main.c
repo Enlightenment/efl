@@ -638,9 +638,8 @@ _ecore_main_gsource_dispatch(GSource *source __UNUSED__, GSourceFunc callback __
         _ecore_idler_call();
 
         events_ready = _ecore_event_exist();
-        idlers_ready = _ecore_idler_exist();
 
-        if (ecore_fds_ready || events_ready || timers_ready || idlers_ready)
+        if (ecore_fds_ready || events_ready || timers_ready)
           {
              _ecore_idle_exiter_call();
              ecore_idling = 0;
