@@ -1833,13 +1833,15 @@ elm_widget_show_region_set(Evas_Object *obj,
                            Evas_Coord   x,
                            Evas_Coord   y,
                            Evas_Coord   w,
-                           Evas_Coord   h)
+                           Evas_Coord   h,
+                           Eina_Bool    forceshow)
 {
    Evas_Object *parent_obj, *child_obj;
    Evas_Coord px, py, cx, cy;
 
    API_ENTRY return;
-   if ((x == sd->rx) && (y == sd->ry) && (w == sd->rw) && (h == sd->rh)) return;
+   if (!forceshow && (x == sd->rx) && (y == sd->ry)
+            && (w == sd->rw) && (h == sd->rh)) return;
    sd->rx = x;
    sd->ry = y;
    sd->rw = w;

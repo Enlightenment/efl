@@ -636,7 +636,7 @@ _recalc_cursor_geometry(Evas_Object *obj)
               &cx, &cy, &cw, &ch);
         if (wd->cur_changed)
           {
-             elm_widget_show_region_set(obj, cx, cy, cw, ch);
+             elm_widget_show_region_set(obj, cx, cy, cw, ch, EINA_FALSE);
              wd->cur_changed = EINA_FALSE;
           }
      }
@@ -679,7 +679,7 @@ _elm_win_recalc_job(void *data)
                                                   &cx, &cy, &cw, &ch);
         if (wd->cur_changed)
           {
-             elm_widget_show_region_set(data, cx, cy, cw, ch);
+             elm_widget_show_region_set(data, cx, cy, cw, ch, EINA_FALSE);
              wd->cur_changed = EINA_FALSE;
           }
      }
