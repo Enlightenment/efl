@@ -10,7 +10,7 @@ AM_CPPFLAGS = \
 @PIXMAN_CFLAGS@ \
 @EINA_CFLAGS@ \
 @GL_EET_CFLAGS@ \
-@evas_engine_gl_x11_cflags@
+@evas_engine_gl_xlib_cflags@
 
 if BUILD_ENGINE_GL_X11
 
@@ -18,7 +18,7 @@ GL_X11_SOURCES = \
 evas_engine.c \
 evas_x_main.c
 
-GL_X11_LIBADD = @evas_engine_gl_x11_libs@ $(top_builddir)/src/modules/engines/gl_common/libevas_engine_gl_common.la 
+GL_X11_LIBADD = @evas_engine_gl_xlib_libs@ $(top_builddir)/src/modules/engines/gl_common/libevas_engine_gl_common.la 
 
 
 includes_HEADERS = Evas_Engine_GL_X11.h
