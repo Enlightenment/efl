@@ -599,7 +599,7 @@ _ecore_main_gsource_check(GSource *source __UNUSED__)
    if (!ret && _ecore_timers_exists())
      {
         double next_time = _ecore_timer_next_get();
-        ret = _ecore_timers_exists() && (0.0 >= next_time);
+        ret = _ecore_timers_exists() && (0.0 == next_time);
      }
 
    _ecore_timer_enable_new();
@@ -617,7 +617,7 @@ _ecore_main_gsource_dispatch(GSource *source __UNUSED__, GSourceFunc callback __
    double next_time = _ecore_timer_next_get();
 
    events_ready = _ecore_event_exist();
-   timers_ready = _ecore_timers_exists() && (0.0 >= next_time);
+   timers_ready = _ecore_timers_exists() && (0.0 == next_time);
    idlers_ready = _ecore_idler_exist();
    signals_ready = (_ecore_signal_count_get() > 0);
 
@@ -641,7 +641,6 @@ _ecore_main_gsource_dispatch(GSource *source __UNUSED__, GSourceFunc callback __
         _ecore_idler_call();
 
         events_ready = _ecore_event_exist();
-        timers_ready = _ecore_timers_exists() && (0.0 >= next_time);
         idlers_ready = _ecore_idler_exist();
 
         if ((ecore_fds_ready || events_ready || timers_ready || idlers_ready || signals_ready))
