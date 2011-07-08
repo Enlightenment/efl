@@ -64,9 +64,9 @@ fi
 
 ])
 
-dnl use: EVAS_CHECK_ENGINE_DEP_GL_X11(engine, simple, want_static[, ACTION-IF-FOUND[, ACTION-IF-NOT-FOUND]])
+dnl use: EVAS_CHECK_ENGINE_DEP_GL_XLIB(engine, simple, want_static[, ACTION-IF-FOUND[, ACTION-IF-NOT-FOUND]])
 
-AC_DEFUN([EVAS_CHECK_ENGINE_DEP_GL_X11],
+AC_DEFUN([EVAS_CHECK_ENGINE_DEP_GL_XLIB],
 [
 
 evas_engine_[]$1[]_cflags=""
@@ -187,10 +187,10 @@ evas_engine_[]$1[]_cflags=""
 evas_engine_[]$1[]_libs=""
 
 PKG_CHECK_MODULES([XCB],
-   [xcb xcb-shm xcb-image >= 0.2.1 pixman-1],
+   [xcb xcb-shm xcb-image >= 0.2.1 xcb-aux pixman-1],
    [
     have_dep="yes"
-    requirement="xcb xcb-shm xcb-image pixman-1"
+    requirement="xcb xcb-shm xcb-image xcb-aux pixman-1"
     evas_engine_[]$1[]_cflags="${XCB_CFLAGS}"
     evas_engine_[]$1[]_libs="${XCB_LIBS}"
    ],[
@@ -212,6 +212,123 @@ else
 fi
 
 ])
+
+
+dnl use: EVAS_CHECK_ENGINE_DEP_GL_XCB(engine, simple, want_static[, ACTION-IF-FOUND[, ACTION-IF-NOT-FOUND]])
+
+AC_DEFUN([EVAS_CHECK_ENGINE_DEP_GL_XCB],
+[
+
+evas_engine_[]$1[]_cflags=""
+evas_engine_[]$1[]_libs=""
+
+AC_PATH_X
+AC_PATH_XTRA
+
+AC_CHECK_HEADER([GL/gl.h],
+   [have_dep="yes"],
+   [have_dep="no"],
+   [
+#include <GL/gl.h>
+#include <GL/glext.h>
+#include <GL/glx.h>
+   ])
+
+gl_pt_lib="";
+have_gl_pt="no"
+AC_CHECK_LIB([pthread], [pthread_create], [have_gl_pt="yes"], [have_gl_pt="no"])
+if test "x$have_gl_pt" = "xyes" ; then
+   gl_pt_lib=" -lpthread"
+fi
+
+if test "x${have_dep}" = "xyes" ; then
+   AC_CHECK_LIB([X11], [XCreateColormap], [have_dep="yes"], [have_dep="no"])
+fi
+
+if test "x${have_dep}" = "xyes" ; then
+   AC_CHECK_LIB([Xrender], [XRenderCreatePicture], [have_dep="yes"], [have_dep="no"])
+fi
+
+if test "x${have_dep}" = "xyes" ; then
+   AC_CHECK_LIB([GL], [glXCreateContext], [have_dep="yes"], [have_dep="no"], -lX11 -lXext -lXrender -lm $gl_pt_lib)
+fi
+
+PKG_CHECK_MODULES([XCB_GL],
+   [x11-xcb xcb xcb-aux xcb-glx xcb-render xcb-renderutil],
+   [
+    have_dep="yes"
+    requirement="x11-xcb xcb xcb-aux xcb-glx xcb-render xcb-renderutil"
+    evas_engine_[]$1[]_cflags="${XCB_GL_CFLAGS}"
+    evas_engine_[]$1[]_libs="${XCB_GL_LIBS}"
+   ],[
+    have_dep="no"
+   ]
+)
+
+if test "x$gl_flavor_gles" = "xyes" ; then
+  have_dep=no
+fi
+
+if test "x${have_dep}" = "xyes" ; then
+   PKG_CHECK_MODULES([GL_EET], [eet >= 1.4.0], [have_dep="yes"], [have_dep="no"])
+   if test "x${have_dep}" = "xyes" ; then
+      if test "x$2" = "xyes" ; then
+         x_libs="${x_libs} -lX11 -lXext -lXrender"
+      else
+         x_dir=${x_dir:-/usr/X11R6}
+         x_cflags=${x_cflags:--I${x_includes:-$x_dir/include}}
+         x_libs="${x_libs:--L${x_libraries:-$x_dir/lib}} -lX11 -lXext -lXrender"
+      fi
+   evas_engine_[]$1[]_cflags="-I/usr/include ${XCB_GL_CFLAGS} ${x_cflags}"
+   evas_engine_[]$1[]_libs="${XCB_GL_LIBS} ${x_libs} -lGL $gl_pt_lib"
+   evas_engine_gl_common_libs="-lGL $gl_pt_lib"
+   fi
+else
+   if test "x$2" = "xyes" ; then
+      x_libs="${x_libs} -lX11 -lXext -lXrender"
+   else
+      x_dir=${x_dir:-/usr/X11R6}
+      x_cflags=${x_cflags:--I${x_includes:-$x_dir/include}}
+      x_libs="${x_libs:--L${x_libraries:-$x_dir/lib}} -lX11 -lXext -lXrender"
+   fi
+   AC_CHECK_HEADER([GLES2/gl2.h],
+      [have_egl="yes"],
+      [have_egl="no"],
+      [
+#include <GLES2/gl2.h>
+#include <GLES2/gl2ext.h>
+#include <EGL/egl.h>
+      ])
+   if test "x${have_egl}" = "xyes" ; then
+      AC_CHECK_LIB(GLESv2, glTexImage2D, [have_glesv2="yes"], , -lEGL ${x_libs} -lm $gl_pt_lib)
+      if test "x${have_glesv2}" = "xyes" ; then
+         PKG_CHECK_MODULES([GL_EET], [eet >= 1.4.0], [have_dep="yes"], [have_dep="no"])
+         if test "x${have_dep}" = "xyes" ; then
+            evas_engine_[]$1[]_cflags="${XCB_GL_CFLAGS} ${x_cflags}"
+            evas_engine_[]$1[]_libs="${XCB_GL_LIBS} ${x_libs} -lGLESv2 -lEGL -lm $gl_pt_lib"
+            evas_engine_gl_common_libs="-lGLESv2 -lm $gl_pt_lib"
+            have_dep="yes"
+            gl_flavor_gles="no"
+            AC_DEFINE(GLES_VARIETY_SGX, 1, [Imagination SGX GLES2 support])
+            gles_variety_sgx="yes"
+         fi
+      fi
+   fi
+fi
+
+AC_SUBST([evas_engine_$1_cflags])
+AC_SUBST([evas_engine_$1_libs])
+
+if test "x${have_dep}" = "xyes" ; then
+  m4_default([$4], [:])
+else
+  m4_default([$5], [:])
+fi
+
+])
+
+
+
 
 dnl use: EVAS_CHECK_ENGINE_DEP_SOFTWARE_GDI(engine, simple, want_static[, ACTION-IF-FOUND[, ACTION-IF-NOT-FOUND]])
 
