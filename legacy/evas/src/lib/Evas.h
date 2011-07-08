@@ -3,7 +3,7 @@
 
 @image html  e_big.png
 
-@version 1.0.0
+@version 1.1
 @author Carsten Haitzler <raster@@rasterman.com>
 @author Till Adam <till@@adam-lilienthal.de>
 @author Steve Ireland <sireland@@pobox.com>
@@ -8370,10 +8370,10 @@ EAPI Eina_Bool                        evas_smart_class_inherit_full       (Evas_
 
 /**
  * Get the number of users of the smart instance
- * 
+ *
  * @param s The Evas_Smart to get the usage count of
  * @return The number of uses of the smart instance
- * 
+ *
  * This function tells you how many more uses of the smart instance are in
  * existence. This should be used before freeing/clearing any of the
  * Evas_Smart_Class that was used to create the smart instance. The smart
@@ -8383,12 +8383,12 @@ EAPI Eina_Bool                        evas_smart_class_inherit_full       (Evas_
  * instance @p s and remove from memory any of the Evas_Smart_Class that
  * was used to create the smart instance, if you desire. Removing it from
  * memory without doing this will cause problems (crashes, undefined
- * behavior etc. etc.), so either never remove the original 
+ * behavior etc. etc.), so either never remove the original
  * Evas_Smart_Class data from memory (have it be a constant structure and
  * data), or use this API call and be very careful.
  */
 EAPI int                              evas_smart_usage_get(const Evas_Smart *s);
-         
+
   /**
    * @def evas_smart_class_inherit
    * Easy to use version of evas_smart_class_inherit_full().
@@ -9659,7 +9659,7 @@ EAPI Eina_Bool                           evas_object_table_mirrored_get    (cons
  * @since 1.1.0
  */
 EAPI Eina_Bool                           evas_object_table_pack_get(Evas_Object *o, Evas_Object *child, unsigned short *col, unsigned short *row, unsigned short *colspan, unsigned short *rowspan);
-         
+
 /**
  * Add a new child to a table object or set its current packing.
  *
@@ -9728,7 +9728,7 @@ EAPI Eina_Accessor                      *evas_object_table_accessor_new    (cons
  */
 EAPI Eina_List                          *evas_object_table_children_get    (const Evas_Object *o) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_MALLOC;
    EAPI Evas_Object                        *evas_object_table_child_get       (const Evas_Object *o, unsigned short col, unsigned short row) EINA_ARG_NONNULL(1);
-   
+
 /**
  * @defgroup Evas_Object_Grid Grid Smart Object.
  *
@@ -9836,7 +9836,7 @@ EAPI void                                evas_object_grid_clear           (Evas_
 
 /**
  * Get the pack options for a grid child
- * 
+ *
  * Get the pack x, y, width and height in virtual coordinates set by
  * evas_object_grid_pack()
  * @param o The grid object
@@ -9849,7 +9849,7 @@ EAPI void                                evas_object_grid_clear           (Evas_
  * @since 1.1.0
  */
 EAPI Eina_Bool                           evas_object_grid_pack_get        (Evas_Object *o, Evas_Object *child, int *x, int *y, int *w, int *h);
-         
+
 /**
  * Get an iterator to walk the list of children for the grid.
  *
@@ -9876,7 +9876,7 @@ EAPI Eina_Accessor                      *evas_object_grid_accessor_new    (const
  * @since 1.1.0
  */
 EAPI Eina_List                          *evas_object_grid_children_get    (const Evas_Object *o) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_MALLOC;
-         
+
 /**
  * @defgroup Evas_Cserve Shared Image Cache Server
  *

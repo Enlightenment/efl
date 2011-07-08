@@ -55,10 +55,10 @@ struct _Evas_GL_Config
  * Functions that are used to do OpenGL rendering on Evas. Evas allows you
  * to use OpenGL to render to specially set up image objects (which act as
  * render target surfaces).
- * 
+ *
  * Below is an illlustrative example of how to use OpenGL to render to an
  * object in Evas.
- * 
+ *
  * @code
 // Simple Evas_GL example
 #include <Ecore_Evas.h>
@@ -92,10 +92,10 @@ int
 main(int argc, char **argv)
 {
    // config for the surface for evas_gl
-   Evas_GL_Config config = 
+   Evas_GL_Config config =
      {
-        EVAS_GL_RGBA_8, 
-        EVAS_GL_DEPTH_NONE, 
+        EVAS_GL_RGBA_8,
+        EVAS_GL_DEPTH_NONE,
         EVAS_GL_STENCIL_NONE
      };
    // a size by default
@@ -116,13 +116,13 @@ main(int argc, char **argv)
 
    // alloc a data struct to hold our relevant gl info in
    if (!(gld = calloc(1, sizeof(GLData)))) return 0;
-   
+
    //-//-//-// THIS IS WHERE GL INIT STUFF HAPPENS (ALA EGL)
    //-//
    // get the evas gl handle for doing gl things
    gld->evasgl = evas_gl_new(canvas);
    gld->glapi = evas_gl_api_get(gld->evasgl);
-   // create a surface and context 
+   // create a surface and context
    gld->sfc = evas_gl_surface_create(gld->evasgl, &config, w, h);
    gld->ctx = evas_gl_context_create(gld->evasgl, NULL);
    //-//
@@ -162,7 +162,7 @@ main(int argc, char **argv)
    // object via evas_object_image_pixels_dirty_set(). any display system,
    // mainloop siztem etc. will have something of this kind unless it's making
    // you spin infinitely yourself and invent your own animation mechanism
-   // 
+   //
    // NOTE: if you delete r1, this animator will keep running trying to access
    // r1 so you'd better delete this animator with ecore_animator_del() or
    // structure how you do animation differently. you can also attach it like
@@ -172,7 +172,7 @@ main(int argc, char **argv)
 
    // finally show the window for the world to see. windowing system generic
    ecore_evas_show(ee);
-   
+
    // begin the mainloop and tick over the animator, handle events etc.
    // also windowing system generic
    ecore_main_loop_begin();
@@ -194,7 +194,7 @@ on_del(void *data, Evas *e, Evas_Object *obj, void *event_info)
    GLData *gld = evas_object_data_get(obj, "..gld");
    if (!gld) return;
    Evas_GL_API *gl = gld->glapi;
-   
+
    evas_object_data_del(obj, "..gld");
 
    // Do a make_current before deleting all the GL stuff.
@@ -216,9 +216,9 @@ on_pixels(void *data, Evas_Object *obj)
    GLData *gld = evas_object_data_get(obj, "..gld");
    if (!gld) return;
    Evas_GL_API *gl = gld->glapi;
-   GLfloat vVertices[] = 
+   GLfloat vVertices[] =
      {
-         0.0f,  0.5f, 0.0f, 
+         0.0f,  0.5f, 0.0f,
         -0.5f, -0.5f, 0.0f,
          0.5f, -0.5f, 0.0f
      };
@@ -242,7 +242,7 @@ on_pixels(void *data, Evas_Object *obj)
    // Clear the buffer
    gl->glClearColor(1.0, 0.0, 0.0, 1);
    gl->glClear(GL_COLOR_BUFFER_BIT);
-   
+
    // Draw a Triangle
    gl->glEnable(GL_BLEND);
 
@@ -250,7 +250,7 @@ on_pixels(void *data, Evas_Object *obj)
    gl->glEnableVertexAttribArray(0);
 
    gl->glDrawArrays(GL_TRIANGLES, 0, 3);
-   
+
    // Optional - Flush the GL pipeline
    gl->glFlush();
 }
@@ -279,15 +279,15 @@ load_shader(GLData *gld, GLenum type, const char *shader_src)
    gl->glCompileShader(shader);
    gl->glGetShaderiv(shader, GL_COMPILE_STATUS, &compiled);
 
-   if (!compiled) 
+   if (!compiled)
      {
         GLint len = 0;
-        
+
         gl->glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &len);
         if (len > 1)
           {
              char *info = malloc(sizeof(char) * len);
-             
+
              if (info)
                {
                   gl->glGetShaderInfoLog(shader, len, NULL, info);
@@ -303,11 +303,11 @@ load_shader(GLData *gld, GLenum type, const char *shader_src)
 }
 
 // Initialize the shader and program object
-static int 
+static int
 init_shaders(GLData *gld)
 {
    Evas_GL_API *gl = gld->glapi;
-   const char vShaderStr[] =  
+   const char vShaderStr[] =
       "attribute vec4 vPosition;    \n"
       "void main()                  \n"
       "{                            \n"
@@ -331,21 +331,21 @@ init_shaders(GLData *gld)
    gl->glAttachShader(gld->program, gld->vtx_shader);
    gl->glAttachShader(gld->program, gld->fgmt_shader);
 
-   // Bind vPosition to attribute 0   
+   // Bind vPosition to attribute 0
    gl->glBindAttribLocation(gld->program, 0, "vPosition");
    // Link the program
    gl->glLinkProgram(gld->program);
    gl->glGetProgramiv(gld->program, GL_LINK_STATUS, &linked);
 
-   if (!linked) 
+   if (!linked)
      {
         GLint len = 0;
-        
+
         gl->glGetProgramiv(gld->program, GL_INFO_LOG_LENGTH, &len);
         if (len > 1)
           {
              char *info = malloc(sizeof(char) * len);
-             
+
              if (info)
                {
                   gl->glGetProgramInfoLog(gld->program, len, NULL, info);
@@ -368,7 +368,7 @@ init_shaders(GLData *gld)
  * @addtogroup Evas_GL
  * @{
  */
-   
+
 /**
  * Creates a new Evas_GL object and returns a handle for gl rendering on efl.
  *
@@ -376,14 +376,14 @@ init_shaders(GLData *gld)
  * @return The created evas_gl object, or NULl on fasilure.
  */
 EAPI Evas_GL                 *evas_gl_new                (Evas *e) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
-   
+
 /**
  * Frees the created Evas_GL object.
  *
  * @param evas_gl The given Evas_GL object.
  */
 EAPI void                     evas_gl_free               (Evas_GL *evas_gl) EINA_ARG_NONNULL(1, 2);;
-   
+
 /**
  * Creates and returns new Evas_GL_Surface object for GL Rendering.
  *
@@ -394,31 +394,31 @@ EAPI void                     evas_gl_free               (Evas_GL *evas_gl) EINA
  * @return The created GL surface object, or NULL on failure.
  */
 EAPI Evas_GL_Surface         *evas_gl_surface_create     (Evas_GL *evas_gl, Evas_GL_Config *cfg, int w, int h) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1,2);
-   
+
 /**
  * Destroys the created Evas GL Surface.
  *
  * @param evas_gl The given Evas_GL object.
  * @param surf The given GL surface object.
  */
-EAPI void                     evas_gl_surface_destroy    (Evas_GL *evas_gl, Evas_GL_Surface *surf) EINA_ARG_NONNULL(1,2); 
-   
+EAPI void                     evas_gl_surface_destroy    (Evas_GL *evas_gl, Evas_GL_Surface *surf) EINA_ARG_NONNULL(1,2);
+
 /**
  * Creates and returns a new Evas GL context object
  *
  * @param evas_gl The given Evas_GL object.
  * @return The created context, or NULL on failure.
  */
-EAPI Evas_GL_Context         *evas_gl_context_create     (Evas_GL *evas_gl, Evas_GL_Context *share_ctx) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1); 
-   
+EAPI Evas_GL_Context         *evas_gl_context_create     (Evas_GL *evas_gl, Evas_GL_Context *share_ctx) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
+
 /**
  * Destroys the given Evas GL context object
  *
  * @param evas_gl The given Evas_GL object.
  * @param ctx The given Evas GL context.
  */
-EAPI void                     evas_gl_context_destroy    (Evas_GL *evas_gl, Evas_GL_Context *ctx) EINA_ARG_NONNULL(1,2); 
-   
+EAPI void                     evas_gl_context_destroy    (Evas_GL *evas_gl, Evas_GL_Context *ctx) EINA_ARG_NONNULL(1,2);
+
 /**
  * Sets the given context as a current context for the given surface
  *
@@ -428,7 +428,7 @@ EAPI void                     evas_gl_context_destroy    (Evas_GL *evas_gl, Evas
  * @return EINA_TRUE if successful, EINA_FALSE if not.
  */
 EAPI Eina_Bool                evas_gl_make_current       (Evas_GL *evas_gl, Evas_GL_Surface *surf, Evas_GL_Context *ctx) EINA_ARG_NONNULL(1,2);
-   
+
 /**
  * Returns a GL or the Glue Layer's extension function.
  *
@@ -437,7 +437,7 @@ EAPI Eina_Bool                evas_gl_make_current       (Evas_GL *evas_gl, Evas
  */
 EAPI Evas_GL_Func             evas_gl_proc_address_get   (Evas_GL *evas_gl, const char *name) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1,2) EINA_PURE;
 
-   
+
 /**
  * Fills in the Native Surface information from the given Evas GL surface.
  *
@@ -450,23 +450,23 @@ EAPI Eina_Bool                evas_gl_native_surface_get (Evas_GL *evas_gl, Evas
 
 /**
  * Get the API for rendering using OpenGL
- * 
+ *
  * @param evas_gl The given Eva_GL object.
  * @return The API to use.
- * 
+ *
  * This returns a structure that contains all the OpenGL functions you can
  * use to render in Evas. These functions consist of all the standard
  * OpenGL-ES2.0 functions and any extra ones Evas has decided to provide in
  * addition. This means that if you have your code ported to OpenGL-ES2.0,
  * it will be easy to render to Evas.
- * 
+ *
  */
 EAPI Evas_GL_API             *evas_gl_api_get            (Evas_GL *evas_gl) EINA_ARG_NONNULL(1);
 
 #if !defined(__gl_h_) && !defined(__gl2_h_)
 # define __gl_h_
 # define __gl2_h_
-   
+
 /*
  * This document is licensed under the SGI Free Software B License Version
  * 2.0. For details, see http://oss.sgi.com/projects/FreeB/ .
@@ -927,16 +927,16 @@ typedef signed long int  GLsizeiptr;   // Changed khronos_ssize_t
 #define GL_INVALID_FRAMEBUFFER_OPERATION  0x0506
 
 #else
-# ifndef EVAS_GL_NO_GL_H_CHECK   
+# ifndef EVAS_GL_NO_GL_H_CHECK
 #  error "You may only include either Evas_GL.h OR use your native OpenGL's headers. If you use Evas to do GL, then you cannot use the native gl headers."
 # endif
 #endif
 
-#define EVAS_GL_API_VERSION 1   
+#define EVAS_GL_API_VERSION 1
 struct _Evas_GL_API
 {
    int            version;
-   
+
    /* version 1: */
    void         (*glActiveTexture) (GLenum texture);
    void         (*glAttachShader) (GLuint program, GLuint shader);
