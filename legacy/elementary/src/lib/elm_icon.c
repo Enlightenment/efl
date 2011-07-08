@@ -654,7 +654,7 @@ _elm_icon_standard_set(Widget_Data *wd, Evas_Object *obj, const char *name, Eina
      {
       case ELM_ICON_LOOKUP_FDO:
          ret = _icon_freedesktop_set(wd, obj, name, _icon_size_min_get(wd->img));
-	 if (ret && fdo) *fdo = EINA_TRUE;
+         if (ret && fdo) *fdo = EINA_TRUE;
          break;
       case ELM_ICON_LOOKUP_THEME:
          ret = _icon_standard_set(wd, obj, name);
