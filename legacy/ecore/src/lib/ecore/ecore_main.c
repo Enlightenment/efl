@@ -493,11 +493,8 @@ _ecore_main_gsource_prepare(GSource *source __UNUSED__, gint *next_time)
          _ecore_timer_cleanup();
 
          /* when idling, busy loop checking the fds only */
-         if (!ecore_idling)
-           {
-              _ecore_idle_enterer_call();
-              _ecore_throttle();
-           }
+         _ecore_idle_enterer_call();
+         _ecore_throttle();
      }
 
    /* don't check fds if somebody quit */
