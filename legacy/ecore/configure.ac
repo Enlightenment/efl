@@ -329,6 +329,12 @@ have_gnu_objc=${ac_cv_objc_compiler_gnu}
 
 EFL_CHECK_DOXYGEN([build_doc="yes"], [build_doc="no"])
 
+m4_ifdef([v_mic],
+   [
+    EFL_COMPILER_FLAG([-Wall])
+    EFL_COMPILER_FLAG([-W])
+   ])
+
 # The first call to PKG_CHECK_MODULES is done conditionally,
 # so we should include this here:
 PKG_PROG_PKG_CONFIG
