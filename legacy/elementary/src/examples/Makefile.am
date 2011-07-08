@@ -32,6 +32,7 @@ SRCS = \
 	animator_example_01.c \
 	bubble_example_01.c \
 	button_example_01.c \
+	colorselector_example_01.c
 	transit_example_01.c \
 	transit_example_02.c \
 	transit_example_03.c \
@@ -67,6 +68,7 @@ pkglib_PROGRAMS += \
 	animator_example_01 \
 	bubble_example_01 \
 	button_example_01 \
+	colorselector_example_01 \
 	transit_example_01 \
 	transit_example_02 \
 	transit_example_03 \
@@ -89,6 +91,7 @@ SCREENSHOTS = \
 	box_example_02:box_example_02.png:1.3 \
 	bubble_example_01:bubble_example_01.png:0.0 \
 	button_example_01:button_01.png:0.0 \
+	colorselector_example_01:colorselector_example_01.png:0.0 \
 	animator_example_01:animator_example_01.png:0.2 \
 	animator_example_01:animator_example_02.png:0.5 \
 	animator_example_01:animator_example_03.png:0.9 \
