@@ -611,17 +611,16 @@ _ecore_main_gsource_check(GSource *source __UNUSED__)
 static gboolean
 _ecore_main_gsource_dispatch(GSource *source __UNUSED__, GSourceFunc callback __UNUSED__, gpointer user_data __UNUSED__)
 {
-   gboolean events_ready, timers_ready, idlers_ready, signals_ready;
+   gboolean events_ready, timers_ready, idlers_ready;
    double next_time = _ecore_timer_next_get();
 
    events_ready = _ecore_event_exist();
    timers_ready = _ecore_timers_exists() && (0.0 == next_time);
    idlers_ready = _ecore_idler_exist();
-   signals_ready = (_ecore_signal_count_get() > 0);
 
    in_main_loop++;
-   INF("enter idling=%d fds=%d events=%d signals=%d timers=%d (next=%.2f) idlers=%d",
-       ecore_idling, ecore_fds_ready, events_ready, signals_ready,
+   INF("enter idling=%d fds=%d events=%d timers=%d (next=%.2f) idlers=%d",
+       ecore_idling, ecore_fds_ready, events_ready,
        timers_ready, next_time, idlers_ready);
 
    if (ecore_idling && events_ready)
@@ -641,7 +640,7 @@ _ecore_main_gsource_dispatch(GSource *source __UNUSED__, GSourceFunc callback __
         events_ready = _ecore_event_exist();
         idlers_ready = _ecore_idler_exist();
 
-        if ((ecore_fds_ready || events_ready || timers_ready || idlers_ready || signals_ready))
+        if (ecore_fds_ready || events_ready || timers_ready || idlers_ready)
           {
              _ecore_idle_exiter_call();
              ecore_idling = 0;
