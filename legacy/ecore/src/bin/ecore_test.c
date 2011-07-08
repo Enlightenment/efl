@@ -2,6 +2,8 @@
 #include <assert.h>
 #include <unistd.h>
 
+#include "config.h"
+
 const char *called = NULL;
 
 static const char *idler_str = "idler";
@@ -13,7 +15,7 @@ static const char *pipe_read_str = "pipe read";
 
 int count;
 
-Eina_Bool timer_one(void *data)
+Eina_Bool timer_one(void *data __UNUSED__)
 {
    fprintf(stderr, "timer 1\n");
    assert(called == pipe_read_str);
@@ -29,7 +31,7 @@ Eina_Bool timer_one(void *data)
    return EINA_TRUE;
 }
 
-Eina_Bool timer_two(void *data)
+Eina_Bool timer_two(void *data __UNUSED__)
 {
    fprintf(stderr, "timer 2\n");
    assert(called == timer1_str);
@@ -38,7 +40,7 @@ Eina_Bool timer_two(void *data)
    return EINA_TRUE;
 }
 
-Eina_Bool idle_enterer_one(void *data)
+Eina_Bool idle_enterer_one(void *data __UNUSED__)
 {
    fprintf(stderr, "idle enterer!\n");
    switch (count)
@@ -56,7 +58,7 @@ Eina_Bool idle_enterer_one(void *data)
    return EINA_TRUE;
 }
 
-Eina_Bool idler_one(void *data)
+Eina_Bool idler_one(void *data __UNUSED__)
 {
    fprintf(stderr, "idler!\n");
    assert(called == idle_enterer_str);
@@ -66,7 +68,7 @@ Eina_Bool idler_one(void *data)
    return EINA_TRUE;
 }
 
-Eina_Bool idle_exiter_one(void *data)
+Eina_Bool idle_exiter_one(void *data __UNUSED__)
 {
    fprintf(stderr, "idle exiter!\n");
    assert(called == idler_str);
@@ -74,7 +76,7 @@ Eina_Bool idle_exiter_one(void *data)
    return EINA_TRUE;
 }
 
-Eina_Bool pipe_read(void *data, Ecore_Fd_Handler *fd_handler)
+Eina_Bool pipe_read(void *data __UNUSED__, Ecore_Fd_Handler *fd_handler __UNUSED__)
 {
    fprintf(stderr, "pipe read\n");
    assert(called == idle_exiter_str);
@@ -83,7 +85,7 @@ Eina_Bool pipe_read(void *data, Ecore_Fd_Handler *fd_handler)
    return EINA_TRUE;
 }
 
-int main(int argc, char **argv)
+int main(int argc __UNUSED__, char **argv __UNUSED__)
 {
    int fds[2];
 
