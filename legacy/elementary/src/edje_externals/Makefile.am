@@ -35,8 +35,8 @@ elm_button.c \
 elm_check.c \
 elm_clock.c \
 elm_entry.c \
-elm_fileselector_button.c \
 elm_fileselector.c \
+elm_fileselector_button.c \
 elm_fileselector_entry.c \
 elm_gengrid.c \
 elm_genlist.c \
