@@ -722,12 +722,12 @@ have_evas_engine_software_xlib="no"
 build_software_xcb=
 
 ## XCB Checks ##
-want_xcb=
+want_xcb="no"
 AC_MSG_CHECKING(whether to build Software XCB Engine)
 AC_ARG_ENABLE(software-xcb,
   AC_HELP_STRING([--enable-software-xcb], [enable Software XCB Engine. @<:@default=disabled@:>@]), [want_xcb=$enableval]
 )
-if test "x$want_xcb" = "xyes" ; then
+if test "x$want_xcb" != "xno" ; then
   EVAS_CHECK_ENGINE([software-xcb], [${want_evas_engine_software_xcb}], [no], [Software XCB])
   if test "x$have_evas_engine_software_xcb" != "xno" ; then
     build_software_xcb="yes"
