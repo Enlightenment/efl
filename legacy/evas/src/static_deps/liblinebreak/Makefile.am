@@ -1,3 +1,5 @@
+MAINTAINERCLEANFILES = Makefile.in
+
 #noinst_PROGRAMS = filter_dup
 noinst_HEADERS = linebreak.h linebreakdef.h
 noinst_LTLIBRARIES = liblinebreak.la
