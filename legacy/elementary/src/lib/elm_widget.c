@@ -1809,15 +1809,21 @@ elm_widget_disabled_set(Evas_Object *obj,
    if (sd->focused)
      {
         Evas_Object *o, *parent;
-
         parent = obj;
-        for (;;)
+        o = elm_widget_parent_get(parent);
+        if (!o)
+          elm_widget_focused_object_clear(parent);
+        else
           {
-             o = elm_widget_parent_get(parent);
-             if (!o) break;
              parent = o;
+             for (;;)
+               {
+                  o = elm_widget_parent_get(parent);
+                  if (!o) break;
+                  parent = o;
+               }
+             elm_widget_focus_cycle(parent, ELM_FOCUS_NEXT);
           }
-        elm_widget_focus_cycle(parent, ELM_FOCUS_NEXT);
      }
    if (sd->disable_func) sd->disable_func(obj);
 }
