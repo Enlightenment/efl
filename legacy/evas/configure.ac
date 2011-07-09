@@ -1658,7 +1658,7 @@ AC_ARG_ENABLE([build-examples],
        # using higher level libraries on these programs
        PKG_CHECK_MODULES([ECORE_EVAS], [ecore-evas ecore], [], [build_examples="no"])
        PKG_CHECK_MODULES([EDJE], [edje],
-        [edje_cc=$(pkg-config --variable=prefix edje)/bin/edje_cc],
+        [edje_cc=$($PKG_CONFIG --variable=prefix edje)/bin/edje_cc],
         [build_examples="no"])
        AC_SUBST(edje_cc)
     else
