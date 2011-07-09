@@ -738,7 +738,6 @@ if test "x$want_xcb" = "xyes" ; then
       AC_DEFINE_UNQUOTED(EVAS_STATIC_BUILD_SOFTWARE_XCB, [1], [Build software X11 engine as part of libevas])
     fi
   fi
-  AC_SUBST(have_evas_engine_software_xcb)
 else
   AC_MSG_RESULT(no)
   build_software_xcb="no"
@@ -760,6 +759,16 @@ if test "x$build_software_xcb" = "xno" ; then
 else
   have_evas_engine_software_xlib="no"
 fi
+
+if test "x$have_evas_engine_software_xlib" = "xstatic" ; then
+   have_evas_engine_software_xlib="yes"
+fi
+
+if test "x$have_evas_engine_software_xcb" = "xstatic" ; then
+   have_evas_engine_software_xcb="yes"
+fi
+
+AC_SUBST(have_evas_engine_software_xcb)
 AC_SUBST(have_evas_engine_software_xlib)
 
 AM_CONDITIONAL([BUILD_ENGINE_SOFTWARE_XLIB], [test "x${have_evas_engine_software_xlib}" != "xno"])
