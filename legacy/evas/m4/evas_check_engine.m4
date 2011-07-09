@@ -187,10 +187,10 @@ evas_engine_[]$1[]_cflags=""
 evas_engine_[]$1[]_libs=""
 
 PKG_CHECK_MODULES([XCB],
-   [xcb xcb-shm xcb-image >= 0.2.1 xcb-aux pixman-1],
+   [xcb xcb-shm xcb-image >= 0.2.1 pixman-1],
    [
     have_dep="yes"
-    requirement="xcb xcb-shm xcb-image xcb-aux pixman-1"
+    requirement="xcb xcb-shm xcb-image pixman-1"
     evas_engine_[]$1[]_cflags="${XCB_CFLAGS}"
     evas_engine_[]$1[]_libs="${XCB_LIBS}"
    ],[
@@ -254,10 +254,10 @@ if test "x${have_dep}" = "xyes" ; then
 fi
 
 PKG_CHECK_MODULES([XCB_GL],
-   [x11-xcb xcb xcb-aux xcb-glx xcb-render xcb-renderutil],
+   [x11-xcb xcb xcb-glx xcb-render xcb-renderutil],
    [
     have_dep="yes"
-    requirement="x11-xcb xcb xcb-aux xcb-glx xcb-render xcb-renderutil"
+    requirement="x11-xcb xcb xcb-glx xcb-render xcb-renderutil"
     evas_engine_[]$1[]_cflags="${XCB_GL_CFLAGS}"
     evas_engine_[]$1[]_libs="${XCB_GL_LIBS}"
    ],[

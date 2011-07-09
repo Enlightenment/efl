@@ -1,11 +1,11 @@
 #include "evas_common.h"
 #include "evas_xcb_buffer.h"
-#include <xcb/xcb_aux.h>
 
 /* local function prototypes */
 static void _xcbob_sync(xcb_connection_t *conn);
 static xcb_image_t *_xcbob_create_native(xcb_connection_t *conn, int w, int h, xcb_image_format_t format, uint8_t depth, void *base, uint32_t bytes, uint8_t *data);
 static xcb_format_t *_xcbob_find_format(const xcb_setup_t *setup, uint8_t depth);
+static xcb_visualtype_t *_xcbob_find_visual_by_id(xcb_screen_t *screen, xcb_visualid_t id);
 
 void 
 evas_software_xcb_write_mask_line(Outbuf *buf, Xcb_Output_Buffer *xcbob, DATA32 *src, int w, int y) 
@@ -230,7 +230,7 @@ evas_software_xcb_can_do_shm(xcb_connection_t *conn, xcb_screen_t *screen)
    if (conn == cached_conn) return cached_result;
    cached_conn = conn;
 
-   visual = xcb_aux_find_visual_by_id(screen, screen->root_visual);
+   visual = _xcbob_find_visual_by_id(screen, screen->root_visual);
 
    xcbob = 
      evas_software_xcb_output_buffer_new(conn, visual, screen->root_depth,
@@ -465,6 +465,26 @@ _xcbob_find_format(const xcb_setup_t *setup, uint8_t depth)
    for (; fmt != fmtend; ++fmt)
      if (fmt->depth == depth) 
        return fmt;
+
+   return 0;
+}
+
+static xcb_visualtype_t *
+_xcbob_find_visual_by_id(xcb_screen_t *screen, xcb_visualid_t id) 
+{
+   xcb_depth_iterator_t diter;
+   xcb_visualtype_iterator_t viter;
+
+   diter = xcb_screen_allowed_depths_iterator(screen);
+   for (; diter.rem; xcb_depth_next(&diter)) 
+     {
+        viter = xcb_depth_visuals_iterator(diter.data);
+        for (; viter.rem; xcb_visualtype_next(&viter)) 
+          {
+             if (viter.data->visual_id == id)
+               return viter.data;
+          }
+     }
 
    return 0;
 }
