@@ -1752,6 +1752,7 @@ elm_widget_focus_steal(Evas_Object *obj)
         o = elm_widget_parent_get(parent);
         if (!o) break;
         sd = evas_object_smart_data_get(o);
+        if (sd->disabled) return;
         if (sd->focused) break;
         parent = o;
      }
