@@ -12,6 +12,7 @@ AM_CPPFLAGS = \
 @FREETYPE_CFLAGS@ \
 @EET_CFLAGS@ \
 @FONTCONFIG_CFLAGS@ \
+@EVAS_CFLAGS@ \
 @EINA_CFLAGS@ \
 @EVIL_CFLAGS@ \
 @PIXMAN_CFLAGS@
@@ -53,9 +54,14 @@ evas_stats.c \
 evas_map.c \
 evas_gl.c
 
-libevas_canvas_la_LIBADD = @EVIL_LIBS@
+#evas_object_textgrid.c
+
+libevas_canvas_la_LIBADD = @EVAS_LIBS@ @EVIL_LIBS@
 
 if EVAS_USE_LINEBREAK
 AM_CPPFLAGS += @LINEBREAK_CFLAGS@
 libevas_canvas_la_LIBADD += @LINEBREAK_LIBS@
 endif
+
+clean-local:
+	rm -rf *.gcno

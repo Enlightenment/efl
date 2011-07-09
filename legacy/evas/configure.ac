@@ -1668,6 +1668,19 @@ AC_ARG_ENABLE([build-examples],
    [build_examples="no"])
 AM_CONDITIONAL([BUILD_EXAMPLES], [test "x${build_examples}" = "xyes"])
 
+## Unit tests, coverage
+
+EFL_CHECK_TESTS([enable_tests="yes"], [enable_tests="no"])
+
+EFL_CHECK_COVERAGE([${enable_tests}], [enable_coverage="yes"], [enable_coverage="no"])
+EVAS_CFLAGS="${EVAS_CFLAGS} ${EFL_COVERAGE_CFLAGS}"
+EVAS_LIBS="${EVAS_LIBS} ${EFL_COVERAGE_LIBS}"
+if test "x$enable_coverage" = "xyes" ; then
+   EVAS_CFLAGS="${EVAS_CFLAGS} ${EFL_DEBUG_CFLAGS}"
+fi
+
+AC_SUBST(EVAS_CFLAGS)
+AC_SUBST(EVAS_LIBS)
 
 #####################################################################
 ## Fill in flags
@@ -1765,6 +1778,7 @@ src/static_deps/Makefile
 src/static_deps/liblinebreak/Makefile
 src/lib/include/Makefile
 src/examples/Makefile
+src/tests/Makefile
 README
 evas.spec
 ])
@@ -1940,6 +1954,16 @@ echo "  32bpp Rotation 270......: $conv_32_rgb_rot_270"
 echo
 echo "Documentation.............: ${build_doc}"
 echo "Examples..................: install:${install_examples} build:${build_examples}"
+if test "x${enable_tests}" = "xyes" ; then
+   echo "Tests.....................: ${enable_tests} (make check)"
+else
+   echo "Tests.....................: ${enable_tests}"
+fi
+if test "x${enable_coverage}" = "xyes" ; then
+   echo "Coverage..................: ${enable_coverage} (make coverage)"
+else
+   echo "Coverage..................: ${enable_coverage}"
+fi
 echo
 echo "Compilation............: make (or gmake)"
 echo "  CPPFLAGS.............: $CPPFLAGS"
