@@ -1,3 +1,6 @@
 Name: evas-opengl-x11
 Description: Evas OpenGL X11 engine
 Version: @VERSION@
+
+Xlib=@have_evas_engine_gl_xlib@
+XCB=@have_evas_engine_gl_xcb@
