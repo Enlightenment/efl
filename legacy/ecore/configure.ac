@@ -1269,8 +1269,8 @@ ECORE_EVAS_CHECK_MODULE([software-x11],
    [Software X11],
    [${have_ecore_x}])
 
-have_ecore_evas_software_xlib=no"
-have_ecore_evas_software_xcb=no"
+have_ecore_evas_software_xlib="no"
+have_ecore_evas_software_xcb="no"
 if test "x$have_ecore_evas_software_x11" = "xyes" ; then
    have_ecore_evas_software_xlib=`${PKG_CONFIG} --variable=Xlib evas-software-x11`
    if test "x${have_ecore_evas_software_xlib}" = "xyes" -a "x${have_ecore_x_xlib}" = "xyes" ; then
