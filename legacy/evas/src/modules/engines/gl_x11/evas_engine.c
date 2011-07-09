@@ -3043,7 +3043,7 @@ static Evas_Module_Api evas_modapi =
 
 EVAS_MODULE_DEFINE(EVAS_MODULE_TYPE_ENGINE, engine, gl_x11);
 
-#ifndef EVAS_STATIC_BUILD_GL_X11
+#ifndef EVAS_STATIC_BUILD_GL_XLIB
 EVAS_EINA_MODULE_DEFINE(engine, gl_x11);
 #endif
 

@@ -33,7 +33,7 @@ SUBDIRS += \
 	../modules/engines/gl_x11
 EVAS_STATIC_MODULE += \
 	../modules/engines/gl_x11/libevas_engine_gl_x11.la
-EVAS_STATIC_LIBADD += @evas_engine_gl_common_libs@ @evas_engine_gl_x11_libs@
+EVAS_STATIC_LIBADD += @evas_engine_gl_common_libs@ @evas_engine_gl_xlib_libs@
 endif
 if EVAS_STATIC_BUILD_GL_SDL
 SUBDIRS += \
