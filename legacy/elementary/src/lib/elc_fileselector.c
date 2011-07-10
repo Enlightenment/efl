@@ -24,16 +24,16 @@
  * "done" - the user clicks on the ok or cancel button
  */
 
-#ifdef HAVE_CONFIG
+#ifdef HAVE_CONFIG_H
 # include <elementary_config.h>
 #endif
-
-#include <Elementary.h>
-#include "elm_priv.h"
 
 #ifdef HAVE_EIO
 # include <Eio.h>
 #endif
+
+#include <Elementary.h>
+#include "elm_priv.h"
 
 typedef struct _Widget_Data Widget_Data;
 
