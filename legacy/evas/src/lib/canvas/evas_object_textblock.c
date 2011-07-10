@@ -5667,7 +5667,12 @@ evas_textblock_cursor_paragraph_char_last(Evas_Textblock_Cursor *cur)
 
    if (!cur) return;
    if (!cur->node) return;
-   ind = eina_ustrbuf_length_get(cur->node->unicode) - 1;
+   ind = eina_ustrbuf_length_get(cur->node->unicode);
+   /* If it's not the last paragraph, go back one, because we want to point
+    * to the PS, not the NULL */
+   if (EINA_INLIST_GET(cur->node)->next)
+      ind--;
+
    if (ind >= 0)
       cur->pos = ind;
    else
