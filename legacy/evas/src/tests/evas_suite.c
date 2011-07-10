@@ -19,6 +19,7 @@ struct _Evas_Test_Case
 
 static const Evas_Test_Case etc[] = {
   { "Evas", evas_test_init },
+  { "Textblock", evas_test_textblock },
   { NULL, NULL }
 };
 
