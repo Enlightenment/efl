@@ -28,12 +28,12 @@
 # include <elementary_config.h>
 #endif
 
+#include <Elementary.h>
+#include "elm_priv.h"
+
 #ifdef HAVE_EIO
 # include <Eio.h>
 #endif
-
-#include <Elementary.h>
-#include "elm_priv.h"
 
 typedef struct _Widget_Data Widget_Data;
 
