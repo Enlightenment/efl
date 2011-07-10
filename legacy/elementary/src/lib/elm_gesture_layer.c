@@ -20,10 +20,15 @@
 #define RAD_270DEG (M_PI_2 * 3)
 #define RAD_360DEG (M_PI * 2)
 
-#define COPY_EVENT_INFO(P, EV) do { \
-   P = malloc(sizeof(*EV)); \
-   memcpy(P, EV, sizeof(*EV)); \
-} while (0)
+static void *
+_glayer_bufdup(void *buf, size_t size)
+{
+   void *p;
+   p = malloc(size);
+   memcpy(p, buf, size);
+   return p;
+}
+#define COPY_EVENT_INFO(EV) _glayer_bufdup(EV, sizeof(*EV))
 
 
 #define SET_TEST_BIT(P) do { \
@@ -227,7 +232,8 @@ struct _Widget_Data
 
    Gesture_Info *gesture[ELM_GESTURE_LAST];
    Ecore_Timer *dbl_timeout; /* When this expires, dbl click/taps ABORTed  */
-   Eina_List *touched;       /* List of devices with currently touched     */
+   Eina_List *pending; /* List of devices need to refeed *UP event */
+   int touched;              /* Int containing number of touched devices   */
 
    Eina_Bool repeat_events : 1;
 };
@@ -238,8 +244,7 @@ static void _del_hook(Evas_Object *obj);
 
 static void _event_history_clear(Evas_Object *obj);
 static void _reset_states(Widget_Data *wd);
-static void _mouse_in(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info);
-static void _mouse_out(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info);
+static void _key_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info);
 static void _key_up_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info);
 static void _zoom_with_wheel_test(Evas_Object *obj, void *event_info, Evas_Callback_Type event_type, Elm_Gesture_Types g_type);
 static void _mouse_wheel(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info);
@@ -276,6 +281,46 @@ _dbl_click_test_reset(Gesture_Info *gesture)
 /**
  * @internal
  *
+ * Get event flag
+ * @param event_info pointer to event.
+ *
+ * @ingroup Elm_Gesture_Layer
+ */
+static Evas_Event_Flags
+_get_event_flag(void *event_info, Evas_Callback_Type event_type)
+{
+   switch(event_type)
+     {
+      case EVAS_CALLBACK_MOUSE_IN:
+         return ((Evas_Event_Mouse_In *) event_info)->event_flags;
+      case EVAS_CALLBACK_MOUSE_OUT:
+         return ((Evas_Event_Mouse_Out *) event_info)->event_flags;
+      case EVAS_CALLBACK_MOUSE_DOWN:
+         return ((Evas_Event_Mouse_Down *) event_info)->event_flags;
+      case EVAS_CALLBACK_MOUSE_MOVE:
+         return ((Evas_Event_Mouse_Move *) event_info)->event_flags;
+      case EVAS_CALLBACK_MOUSE_UP:
+         return ((Evas_Event_Mouse_Up *) event_info)->event_flags;
+      case EVAS_CALLBACK_MOUSE_WHEEL:
+         return ((Evas_Event_Mouse_Wheel *) event_info)->event_flags;
+      case EVAS_CALLBACK_MULTI_DOWN:
+         return ((Evas_Event_Multi_Down *) event_info)->event_flags;
+      case EVAS_CALLBACK_MULTI_MOVE:
+         return ((Evas_Event_Multi_Move *) event_info)->event_flags;
+      case EVAS_CALLBACK_MULTI_UP:
+         return ((Evas_Event_Multi_Up *) event_info)->event_flags;
+      case EVAS_CALLBACK_KEY_DOWN:
+         return ((Evas_Event_Key_Down *) event_info)->event_flags;
+      case EVAS_CALLBACK_KEY_UP:
+         return ((Evas_Event_Key_Up *) event_info)->event_flags;
+      default:
+         return EVAS_EVENT_FLAG_NONE;
+     }
+}
+
+/**
+ * @internal
+ *
  * Sets event flag to value returned from user callback
  * @param wd Widget Data
  * @param event_info pointer to event.
@@ -294,12 +339,6 @@ consume_event(Widget_Data *wd, void *event_info,
      {
         switch(event_type)
           {
-           case EVAS_CALLBACK_MOUSE_IN:
-              ((Evas_Event_Mouse_In *) event_info)->event_flags |= ev_flags;
-              break;
-           case EVAS_CALLBACK_MOUSE_OUT:
-              ((Evas_Event_Mouse_Out *) event_info)->event_flags |= ev_flags;
-              break;
            case EVAS_CALLBACK_MOUSE_DOWN:
               ((Evas_Event_Mouse_Down *) event_info)->event_flags |= ev_flags;
               break;
@@ -320,6 +359,9 @@ consume_event(Widget_Data *wd, void *event_info,
               break;
            case EVAS_CALLBACK_MULTI_UP:
               ((Evas_Event_Multi_Up *) event_info)->event_flags |= ev_flags;
+              break;
+           case EVAS_CALLBACK_KEY_DOWN:
+              ((Evas_Event_Key_Down *) event_info)->event_flags |= ev_flags;
               break;
            case EVAS_CALLBACK_KEY_UP:
               ((Evas_Event_Key_Up *) event_info)->event_flags |= ev_flags;
@@ -460,7 +502,9 @@ _clear_if_finished(Evas_Object *obj)
           }
      }
 
-   if (reset_s && !all_undefined)
+//   if ((!wd->touched) || (reset_s && !all_undefined))
+   /* (!wd->touched && reset_s) - don't stop zoom with mouse-wheel */
+   if ((!wd->touched && reset_s) || (reset_s && !all_undefined))
      _event_history_clear(obj);
 }
 
@@ -583,6 +627,7 @@ _zoom_test_reset(Gesture_Info *gesture)
 
    if(pe1.timestamp && (!pe.timestamp))
      memcpy(&st->zoom_st1, &pe1, sizeof(Pointer_Event));
+
    st->zoom_tolerance = wd->zoom_tolerance;
    st->info.zoom = 1.0;
 }
@@ -641,11 +686,6 @@ _register_callbacks(Evas_Object *obj)
 
    if (wd->target)
      {
-        evas_object_event_callback_add(wd->target, EVAS_CALLBACK_MOUSE_IN,
-              _mouse_in, obj);
-        evas_object_event_callback_add(wd->target, EVAS_CALLBACK_MOUSE_OUT,
-              _mouse_out, obj);
-
         evas_object_event_callback_add(wd->target, EVAS_CALLBACK_MOUSE_DOWN,
               _mouse_down, obj);
         evas_object_event_callback_add(wd->target, EVAS_CALLBACK_MOUSE_MOVE,
@@ -663,6 +703,7 @@ _register_callbacks(Evas_Object *obj)
         evas_object_event_callback_add(wd->target, EVAS_CALLBACK_MULTI_UP,
               _multi_up, obj);
 
+        evas_object_event_callback_add(wd->target, EVAS_CALLBACK_KEY_DOWN, _key_down_cb, obj);
         evas_object_event_callback_add(wd->target, EVAS_CALLBACK_KEY_UP, _key_up_cb, obj);
      }
 }
@@ -684,11 +725,6 @@ _unregister_callbacks(Evas_Object *obj)
 
    if (wd->target)
      {
-        evas_object_event_callback_del(wd->target, EVAS_CALLBACK_MOUSE_IN,
-              _mouse_in);
-        evas_object_event_callback_del(wd->target, EVAS_CALLBACK_MOUSE_OUT,
-              _mouse_out);
-
         evas_object_event_callback_del(wd->target, EVAS_CALLBACK_MOUSE_DOWN,
               _mouse_down);
         evas_object_event_callback_del(wd->target, EVAS_CALLBACK_MOUSE_MOVE,
@@ -708,11 +744,80 @@ _unregister_callbacks(Evas_Object *obj)
         evas_object_event_callback_del(wd->target, EVAS_CALLBACK_MULTI_UP,
               _multi_up);
 
+        evas_object_event_callback_del(wd->target, EVAS_CALLBACK_KEY_DOWN, _key_down_cb);
         evas_object_event_callback_del(wd->target, EVAS_CALLBACK_KEY_UP, _key_up_cb);
      }
 }
 
 /* START - Event history list handling functions */
+/**
+ * @internal
+ * This function is used to find if device number
+ * is found in a list of devices.
+ * The list contains devices for refeeding *UP event
+ *
+ * @ingroup Elm_Gesture_Layer
+ */
+static int
+device_in_list(const void *data1, const void *data2)
+{  /* Compare the two device numbers */
+   return (((int) data1) - ((int) data2));
+}
+
+/**
+ * @internal
+ *
+ * This functions adds device to refeed-pending device list
+ * @ingroup Elm_Gesture_Layer
+ */
+static Eina_List *
+_add_device_pending(Eina_List *list, void *event, Evas_Callback_Type event_type)
+{
+   int device = ELM_MOUSE_DEVICE;
+   switch(event_type)
+     {
+      case EVAS_CALLBACK_MOUSE_DOWN:
+         break;
+      case EVAS_CALLBACK_MULTI_DOWN:
+         device = ((Evas_Event_Multi_Down *) event)->device;
+         break;
+      default:
+         return list;
+     }
+
+   if (!eina_list_search_unsorted_list(list, device_in_list, (void *) device))
+     {
+        printf("%s ======> Added <%d>\n", __func__, device);
+        return eina_list_append(list, (void *) device);
+     }
+
+   return list;
+}
+
+/**
+ * @internal
+ *
+ * This functions returns pending-device node
+ * @ingroup Elm_Gesture_Layer
+ */
+static Eina_List *
+_device_is_pending(Eina_List *list, void *event, Evas_Callback_Type event_type)
+{
+   int device = ELM_MOUSE_DEVICE;
+   switch(event_type)
+     {
+      case EVAS_CALLBACK_MOUSE_UP:
+         break;
+      case EVAS_CALLBACK_MULTI_UP:
+         device = ((Evas_Event_Multi_Up *) event)->device;
+         break;
+      default:
+        return NULL;
+     }
+
+   return eina_list_search_unsorted_list(list, device_in_list, (void *) device);
+}
+
 /**
  * @internal
  *
@@ -770,11 +875,24 @@ _event_history_clear(Evas_Object *obj)
      {
         Event_History *t;
         t = wd->event_history_list;
+        Eina_List *pending = _device_is_pending(wd->pending, wd->event_history_list->event, wd->event_history_list->event_type);
 
         /* Refeed events if no gesture matched input */
-        if ((!gesture_found) && (!wd->repeat_events))
-          evas_event_refeed_event(e, wd->event_history_list->event,
-                wd->event_history_list->event_type);
+        if (pending || ((!gesture_found) && (!wd->repeat_events)))
+          {
+             evas_event_refeed_event(e, wd->event_history_list->event, wd->event_history_list->event_type);
+
+             if(pending)
+               {
+               wd->pending = eina_list_remove_list(wd->pending, pending);
+               int device = ELM_MOUSE_DEVICE;
+               if(wd->event_history_list->event_type == EVAS_CALLBACK_MULTI_UP)
+                 device = ((Evas_Event_Multi_Up *) (wd->event_history_list->event))->device;
+              printf("%s ======> Removed <%d>\n", __func__, device);
+               }
+             else
+               wd->pending = _add_device_pending(wd->pending, wd->event_history_list->event, wd->event_history_list->event_type);
+          }
 
         free(wd->event_history_list->event);
         wd->event_history_list = (Event_History *) eina_inlist_remove(
@@ -785,6 +903,55 @@ _event_history_clear(Evas_Object *obj)
    _register_callbacks(obj);
 }
 
+/**
+ * @internal
+ *
+ * This function copies input events.
+ * We copy event info before adding it to history.
+ * The memory is freed when we clear history.
+ *
+ * @param event the event to copy
+ * @param event_type event type to copy
+ *
+ * @ingroup Elm_Gesture_Layer
+ */
+static void *
+_copy_event_info(void *event, Evas_Callback_Type event_type)
+{
+   switch(event_type)
+     {
+      case EVAS_CALLBACK_MOUSE_DOWN:
+         return COPY_EVENT_INFO((Evas_Event_Mouse_Down *) event);
+         break;
+      case EVAS_CALLBACK_MOUSE_MOVE:
+         return COPY_EVENT_INFO((Evas_Event_Mouse_Move *) event);
+         break;
+      case EVAS_CALLBACK_MOUSE_UP:
+         return COPY_EVENT_INFO((Evas_Event_Mouse_Up *) event);
+         break;
+      case EVAS_CALLBACK_MOUSE_WHEEL:
+         return COPY_EVENT_INFO((Evas_Event_Mouse_Wheel *) event);
+         break;
+      case EVAS_CALLBACK_MULTI_DOWN:
+         return COPY_EVENT_INFO((Evas_Event_Multi_Down *) event);
+         break;
+      case EVAS_CALLBACK_MULTI_MOVE:
+         return COPY_EVENT_INFO((Evas_Event_Multi_Move *) event);
+         break;
+      case EVAS_CALLBACK_MULTI_UP:
+         return COPY_EVENT_INFO((Evas_Event_Multi_Up *) event);
+         break;
+      case EVAS_CALLBACK_KEY_DOWN:
+         return COPY_EVENT_INFO((Evas_Event_Key_Down *) event);
+         break;
+      case EVAS_CALLBACK_KEY_UP:
+         return COPY_EVENT_INFO((Evas_Event_Key_Up *) event);
+         break;
+      default:
+         return NULL;
+     }
+}
+
 static Eina_Bool
 _event_history_add(Evas_Object *obj, void *event, Evas_Callback_Type event_type)
 {
@@ -793,7 +960,7 @@ _event_history_add(Evas_Object *obj, void *event, Evas_Callback_Type event_type)
    if (!wd) return EINA_FALSE;
 
    ev = malloc(sizeof(Event_History));
-   ev->event = event;
+   ev->event = _copy_event_info(event, event_type);  /* Freed on event_history_clear */
    ev->event_type = event_type;
    wd->event_history_list = (Event_History *) eina_inlist_append(
          EINA_INLIST_GET(wd->event_history_list), EINA_INLIST_GET(ev));
@@ -808,8 +975,8 @@ _del_hook(Evas_Object *obj)
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
 
-   eina_list_free(wd->touched);
    _event_history_clear(obj);
+   eina_list_free(wd->pending);
 
    if (!elm_widget_disabled_get(obj))
      _unregister_callbacks(obj);
@@ -924,7 +1091,7 @@ _dbl_click_test(Evas_Object *obj, Pointer_Event *pe,
    if (!gesture ) return;
 
    if((gesture->state == ELM_GESTURE_STATE_UNDEFINED) &&
-         eina_list_count(wd->touched))
+         wd->touched)
      return; /* user left a finger on device, do NOT start */
 
    Taps_Type *st = gesture->data;
@@ -1207,7 +1374,7 @@ _momentum_test(Evas_Object *obj, Pointer_Event *pe,
    if (!gesture ) return;
 
    if((gesture->state == ELM_GESTURE_STATE_UNDEFINED) &&
-         eina_list_count(wd->touched))
+         wd->touched)
      return; /* user left a finger on device, do NOT start */
 
    Momentum_Type *st = gesture->data;
@@ -1427,7 +1594,7 @@ _n_line_test(Evas_Object *obj, Pointer_Event *pe, void *event_info,
    if (!gesture ) return;
 
    if((gesture->state == ELM_GESTURE_STATE_UNDEFINED) &&
-         eina_list_count(wd->touched))
+         wd->touched)
      return; /* user left a finger on device, do NOT start */
 
    Line_Type *st = gesture->data;
@@ -2398,38 +2565,6 @@ _rotate_test(Evas_Object *obj, Pointer_Event *pe, void *event_info,
 /**
  * @internal
  *
- * This function manges a list of devices that are currently touched
- * when a *DOWN event for a device comes, we add it to the list
- * When a *UP event for a device comes, we remove it from list
- *
- * @param list   Pointer to device list.
- * @param device What device to add or remove from list
- * @param add    When TRUE means - add to list, otherwise remove
- *
- * @return The new pointer to list head
- * @ingroup Elm_Gesture_Layer
- */
-static Eina_List *
-_manage_device_list(Eina_List *list, int device, Eina_Bool add)
-{
-   Eina_List *l;
-   void *data;
-
-   if (add)
-     return eina_list_append(list, (void *) device);
-   else
-     EINA_LIST_FOREACH(list, l, data)
-       {  /* Remove device from list if found */
-          if(device == (int) data)
-            return eina_list_remove_list(list, l);
-       }
-
-   return list;
-}
-
-/**
- * @internal
- *
  * This function is used to save input events in an abstract struct
  * to be used later by getsure-testing functions.
  *
@@ -2531,7 +2666,6 @@ _event_process(void *data, Evas_Object *obj __UNUSED__,
    Widget_Data *wd = elm_widget_data_get(data);
    if (!wd) return;
 
-   _event_history_add(data, event_info, event_type);
    /* Start testing candidate gesture from here */
    if (_make_pointer_event(data, event_info, event_type, &_pe))
      pe = &_pe;
@@ -2567,25 +2701,41 @@ _event_process(void *data, Evas_Object *obj __UNUSED__,
    if (IS_TESTED(ELM_GESTURE_ROTATE))
      _rotate_test(data, pe, event_info, event_type, ELM_GESTURE_ROTATE);
 
-   /* Report current states and clear history if needed */
-   _clear_if_finished(data);
+   if (_get_event_flag(event_info, event_type) & EVAS_EVENT_FLAG_ON_HOLD)
+     _event_history_add(data, event_info, event_type);
+   else if ((event_type == EVAS_CALLBACK_MOUSE_UP) ||
+         (event_type == EVAS_CALLBACK_MULTI_UP))
+     {
+        Eina_List *pending = _device_is_pending(wd->pending, event_info, event_type);
+        if (pending)
+          {
+             consume_event(wd, event_info, event_type, EVAS_EVENT_FLAG_ON_HOLD);
+             _event_history_add(data, event_info, event_type);
+          }
+     }
 
    /* we maintain list of touched devices*/
    if ((event_type == EVAS_CALLBACK_MOUSE_DOWN) ||
          (event_type == EVAS_CALLBACK_MULTI_DOWN))
-     wd->touched = _manage_device_list(wd->touched, pe->device, EINA_TRUE);
-   else
-     if ((event_type == EVAS_CALLBACK_MOUSE_UP) ||
-           (event_type == EVAS_CALLBACK_MULTI_UP))
-       wd->touched = _manage_device_list(wd->touched, pe->device, EINA_FALSE);
+     {
+        wd->touched++;
+        printf("%s touched=<%d>\n", __func__, wd->touched);
+     }
+   else if ((event_type == EVAS_CALLBACK_MOUSE_UP) ||
+         (event_type == EVAS_CALLBACK_MULTI_UP))
+     {
+        wd->touched--;
+        printf("%s touched=<%d>\n", __func__, wd->touched);
+     }
+
+   /* Report current states and clear history if needed */
+   _clear_if_finished(data);
 }
 
+
 /**
- * For all _mouse_* / multi_* functions we copy event information
- * to newly allocated memory space with COPY_EVENT_INFO macro.
- * then send this event to _event_process function where
- * it is saved in events-history list and processes.
- * The allocated memeory is cleared in event_history_clear()
+ * For all _mouse_* / multi_* functions wethen send this event to
+ * _event_process function.
  *
  * @param data The gesture-layer object.
  * @param event_info Pointer to recent input event.
@@ -2593,52 +2743,16 @@ _event_process(void *data, Evas_Object *obj __UNUSED__,
  * @ingroup Elm_Gesture_Layer
  */
 static void
-_mouse_in(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__,
-      void *event_info)
-{
-   Widget_Data *wd = elm_widget_data_get(data);
-   if (!wd) return;
-
-   Evas_Event_Mouse_In *p, *ev = event_info;
-   COPY_EVENT_INFO(p, ev);
-   _event_process(data, obj, (void *) p, EVAS_CALLBACK_MOUSE_IN);
-
-#if defined(DEBUG_GESTURE_LAYER)
-   printf("%s %d %d\n", __func__, p->canvas.x, p->canvas.y);
-#endif
-}
-
-static void
-_mouse_out(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__,
-      void *event_info)
-{
-   Widget_Data *wd = elm_widget_data_get(data);
-   if (!wd) return;
-
-   Evas_Event_Mouse_Out *p, *ev = event_info;
-   COPY_EVENT_INFO(p, ev);
-   _event_process(data, obj, (void *) p, EVAS_CALLBACK_MOUSE_OUT);
-#if defined(DEBUG_GESTURE_LAYER)
-   printf("%s %d %d\n", __func__, p->canvas.x, p->canvas.y);
-#endif
-}
-
-static void
 _mouse_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__,
       void *event_info)
 {
    Widget_Data *wd = elm_widget_data_get(data);
    if (!wd) return;
-
-   Evas_Event_Mouse_Down *p, *ev = event_info;
-   if (ev->button != 1) /* We only process left-click at the moment */
+printf("---- %s ----\n", __func__);
+   if (((Evas_Event_Mouse_Down *) event_info)->button != 1) /* We only process left-click at the moment */
      return;
 
-   COPY_EVENT_INFO(p, ev);
-   _event_process(data, obj, (void *) p, EVAS_CALLBACK_MOUSE_DOWN);
-#if defined(DEBUG_GESTURE_LAYER)
-   printf("%s %d %d\n", __func__, p->canvas.x, p->canvas.y);
-#endif
+   _event_process(data, obj, event_info, EVAS_CALLBACK_MOUSE_DOWN);
 }
 
 static void
@@ -2648,13 +2762,17 @@ _mouse_move(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__,
    Widget_Data *wd = elm_widget_data_get(data);
    if (!wd) return;
 
-   Evas_Event_Mouse_Move *p, *ev = event_info;
+   _event_process(data, obj, event_info, EVAS_CALLBACK_MOUSE_MOVE);
+}
 
-   COPY_EVENT_INFO(p, ev);
-   _event_process(data, obj, (void *) p, EVAS_CALLBACK_MOUSE_MOVE);
-#if defined(DEBUG_GESTURE_LAYER)
-   printf("%s %d %d\n", __func__, p->cur.canvas.x, p->cur.canvas.y);
-#endif
+static void
+_key_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__,
+      void *event_info)
+{
+   Widget_Data *wd = elm_widget_data_get(data);
+   if (!wd) return;
+
+   _event_process(data, obj, event_info, EVAS_CALLBACK_KEY_DOWN);
 }
 
 static void
@@ -2664,14 +2782,7 @@ _key_up_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__,
    Widget_Data *wd = elm_widget_data_get(data);
    if (!wd) return;
 
-   Evas_Event_Key_Up *p, *ev = event_info;
-
-   COPY_EVENT_INFO(p, ev);
-   _event_process(data, obj, (void *) p, EVAS_CALLBACK_KEY_UP);
-
-#if defined(DEBUG_GESTURE_LAYER)
-   printf("%s %s\n", __func__, p->keyname);
-#endif
+   _event_process(data, obj, event_info, EVAS_CALLBACK_KEY_UP);
 }
 
 static void
@@ -2681,15 +2792,11 @@ _mouse_up(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__,
    Widget_Data *wd = elm_widget_data_get(data);
    if (!wd) return;
 
-   Evas_Event_Mouse_Up *p, *ev = event_info;
-   if (ev->button != 1) /* We only process left-click at the moment */
+printf("---- %s ----\n", __func__);
+   if (((Evas_Event_Mouse_Up *) event_info)->button != 1) /* We only process left-click at the moment */
      return;
 
-   COPY_EVENT_INFO(p, ev);
-   _event_process(data, obj, (void *) p, EVAS_CALLBACK_MOUSE_UP);
-#if defined(DEBUG_GESTURE_LAYER)
-   printf("%s %d %d\n", __func__, p->canvas.x, p->canvas.y);
-#endif
+   _event_process(data, obj, event_info, EVAS_CALLBACK_MOUSE_UP);
 }
 
 static void
@@ -2699,12 +2806,7 @@ _mouse_wheel(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__,
    Widget_Data *wd = elm_widget_data_get(data);
    if (!wd) return;
 
-   Evas_Event_Mouse_Wheel *p, *ev = event_info;
-   COPY_EVENT_INFO(p, ev);
-   _event_process(data, obj, (void *) p, EVAS_CALLBACK_MOUSE_WHEEL);
-#if defined(DEBUG_GESTURE_LAYER)
-   printf("%s %d %d %d\n", __func__, p->canvas.x, p->canvas.y, p->z);
-#endif
+   _event_process(data, obj, event_info, EVAS_CALLBACK_MOUSE_WHEEL);
 }
 
 static void
@@ -2713,18 +2815,9 @@ _multi_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__,
 {
    Widget_Data *wd = elm_widget_data_get(data);
    if (!wd) return;
+printf("---- %s ----\n", __func__);
 
-   Evas_Event_Multi_Down *p, *ev = event_info;
-   COPY_EVENT_INFO(p, ev);
-   _event_process(data, obj, (void *) p, EVAS_CALLBACK_MULTI_DOWN);
-#if defined(DEBUG_GESTURE_LAYER)
-   printf("%s %d\n", __func__, __LINE__);
-   printf("radius=<%3.2f> radius_x=<%3.2f>  radius_y=<%3.2f> device: <%d>\n",
-         p->radius, p->radius_x, p->radius_y, p->device);
-   printf("pressure<%3.2f> angle<%3.2f>\n", p->pressure, p->angle);
-   printf("output.x=<%d> output.y=<%d>\n", p->output.x, p->output.y);
-   printf("canvas.x=<%d> canvas.y=<%d> canvas.xsub=<%3.2f> canvas.ysub=<%3.2f>\n\n\n", p->canvas.x, p->canvas.y, p->canvas.xsub, p->canvas.ysub);
-#endif
+   _event_process(data, obj, event_info, EVAS_CALLBACK_MULTI_DOWN);
 }
 
 static void
@@ -2734,16 +2827,7 @@ _multi_move(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__,
    Widget_Data *wd = elm_widget_data_get(data);
    if (!wd) return;
 
-   Evas_Event_Multi_Move *p, *ev = event_info;
-   COPY_EVENT_INFO(p, ev);
-   _event_process(data, obj, (void *) p, EVAS_CALLBACK_MULTI_MOVE);
-#if defined(DEBUG_GESTURE_LAYER)
-   printf("%s %d\n", __func__, __LINE__);
-   printf("radius=<%3.2f> radius_x=<%3.2f>  radius_y=<%3.2f> device: <%d>\n", p->radius, p->radius_x, p->radius_y, p->device);
-   printf("pressure<%3.2f> angle<%3.2f>\n", p->pressure, p->angle);
-   printf("output.x=<%d> output.y=<%d>\n", p->cur.output.x, p->cur.output.y);
-   printf("canvas.x=<%d> canvas.y=<%d> canvas.xsub=<%3.2f> canvas.ysub=<%3.2f>\n\n\n", p->cur.canvas.x, p->cur.canvas.y, p->cur.canvas.xsub, p->cur.canvas.ysub);
-#endif
+   _event_process(data, obj, event_info, EVAS_CALLBACK_MULTI_MOVE);
 }
 
 static void
@@ -2752,17 +2836,9 @@ _multi_up(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__,
 {
    Widget_Data *wd = elm_widget_data_get(data);
    if (!wd) return;
+printf("---- %s ----\n", __func__);
 
-   Evas_Event_Multi_Up *p, *ev = event_info;
-   COPY_EVENT_INFO(p, ev);
-   _event_process(data, obj, (void *) p, EVAS_CALLBACK_MULTI_UP);
-#if defined(DEBUG_GESTURE_LAYER)
-   printf("%s %d\n", __func__, __LINE__);
-   printf("radius=<%3.2f> radius_x=<%3.2f>  radius_y=<%3.2f> device: <%d>\n", p->radius, p->radius_x, p->radius_y, p->device);
-   printf("pressure<%3.2f> angle<%3.2f>\n", p->pressure, p->angle);
-   printf("output.x=<%d> output.y=<%d>\n", p->output.x, p->output.y);
-   printf("canvas.x=<%d> canvas.y=<%d> canvas.xsub=<%3.2f> canvas.ysub=<%3.2f>\n\n\n", p->canvas.x, p->canvas.y, p->canvas.xsub, p->canvas.ysub);
-#endif
+   _event_process(data, obj, event_info, EVAS_CALLBACK_MULTI_UP);
 }
 
 EAPI Eina_Bool
