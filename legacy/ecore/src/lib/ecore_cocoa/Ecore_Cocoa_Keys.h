@@ -31,7 +31,7 @@ static const struct _ecore_cocoa_keys_s keystable[] =
 { 39,                        "apostrophe",   "'" },
 { 40,                        "parenleft",    "(" },
 { 41,                        "parenright",   ")" },
-{ 42,                        "asterik",      "*" },
+{ 42,                        "asterisk",     "*" },
 { 43,                        "plus",         "+" },
 { 44,                        "comma",        "," },
 { 45,                        "minus",        "-" },

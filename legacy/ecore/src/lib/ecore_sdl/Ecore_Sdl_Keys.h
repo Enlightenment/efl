@@ -27,7 +27,7 @@ static const struct _ecore_sdl_keys_s  keystable[] =
    { SDLK_QUOTE,        "apostrophe",   "'" },
    { SDLK_LEFTPAREN,    "parenleft",    "(" },
    { SDLK_RIGHTPAREN,   "parenright",   ")" },
-   { SDLK_ASTERISK,     "asterik",      "*" },
+   { SDLK_ASTERISK,     "asterisk",     "*" },
    { SDLK_PLUS,         "plus",         "+" },
    { SDLK_COMMA,        "comma",        "," },
    { SDLK_MINUS,        "minus",        "-" },
