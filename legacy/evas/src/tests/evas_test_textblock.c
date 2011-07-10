@@ -70,6 +70,8 @@ do \
         fail_if(ret == -1); \
         ret = evas_textblock_cursor_pen_geometry_get(cur, &x, &y, &w, &h); \
         fail_if(ret == -1); \
+        ret = evas_textblock_cursor_line_geometry_get(cur, &x, &y, &w, &h); \
+        fail_if(ret == -1); \
 } \
 while (0)
 START_TEST(evas_textblock_cursor)
@@ -124,8 +126,206 @@ START_TEST(evas_textblock_cursor)
    fail_if(evas_textblock_cursor_pos_get(cur) ==
          evas_textblock_cursor_pos_get(main_cur));
 
+   /* Insert text to a non-empty textblock */
+   evas_object_textblock_clear(tb);
+   evas_object_textblock_text_markup_set(tb, buf);
+   evas_textblock_cursor_copy(main_cur, cur);
+   fail_if(evas_textblock_cursor_pos_get(cur) !=
+         evas_textblock_cursor_pos_get(main_cur));
+
+   evas_textblock_cursor_text_prepend(main_cur, "a");
+   fail_if(evas_textblock_cursor_pos_get(cur) ==
+         evas_textblock_cursor_pos_get(main_cur));
+   evas_textblock_cursor_text_prepend(main_cur, "a");
+   fail_if(evas_textblock_cursor_pos_get(cur) ==
+         evas_textblock_cursor_pos_get(main_cur));
+
+   /* Make sure append works */
+   evas_textblock_cursor_copy(main_cur, cur);
+   fail_if(evas_textblock_cursor_pos_get(cur) !=
+         evas_textblock_cursor_pos_get(main_cur));
+   evas_textblock_cursor_text_append(main_cur, "a");
+   fail_if(evas_textblock_cursor_pos_get(cur) !=
+         evas_textblock_cursor_pos_get(main_cur));
+
+   /* Cursor comparison */
+   evas_textblock_cursor_pos_set(cur, 1);
+   evas_textblock_cursor_pos_set(main_cur, 2);
+   fail_if(evas_textblock_cursor_compare(cur, main_cur) != -1);
+
+   evas_textblock_cursor_pos_set(cur, 2);
+   evas_textblock_cursor_pos_set(main_cur, 2);
+   fail_if(evas_textblock_cursor_compare(cur, main_cur) != 0);
+
+   evas_textblock_cursor_pos_set(cur, 3);
+   evas_textblock_cursor_pos_set(main_cur, 2);
+   fail_if(evas_textblock_cursor_compare(cur, main_cur) != 1);
+
+   /* Paragraph first */
+   evas_object_textblock_text_markup_set(tb, buf);
+   for (i = 0 ; i < len ; i++)
+     {
+        evas_textblock_cursor_pos_set(cur, i);
+
+        evas_textblock_cursor_paragraph_first(cur);
+        fail_if(evas_textblock_cursor_pos_get(cur) != 0);
+     }
+
+   /* Paragraph last */
+   for (i = 0 ; i < len ; i++)
+     {
+        evas_textblock_cursor_pos_set(cur, i);
+
+        evas_textblock_cursor_paragraph_last(cur);
+        fail_if(evas_textblock_cursor_pos_get(cur) != (int) len);
+     }
+
+   /* Paragraph next */
+   evas_textblock_cursor_paragraph_last(cur);
+   fail_if(evas_textblock_cursor_paragraph_next(cur));
+
+   evas_textblock_cursor_paragraph_first(cur);
+   fail_if(!evas_textblock_cursor_paragraph_next(cur));
+   fail_if(!evas_textblock_cursor_paragraph_next(cur));
+
+   /* Paragraph prev */
+   evas_textblock_cursor_paragraph_first(cur);
+   fail_if(evas_textblock_cursor_paragraph_prev(cur));
+
+   evas_textblock_cursor_paragraph_last(cur);
+   fail_if(!evas_textblock_cursor_paragraph_prev(cur));
+   fail_if(!evas_textblock_cursor_paragraph_prev(cur));
+
+   /* Cher next */
+   evas_textblock_cursor_paragraph_last(cur);
+   fail_if(evas_textblock_cursor_char_next(cur));
+
+   evas_textblock_cursor_paragraph_first(cur);
+   fail_if(!evas_textblock_cursor_char_next(cur));
+   fail_if(!evas_textblock_cursor_paragraph_next(cur));
+   fail_if(!evas_textblock_cursor_char_next(cur));
+   fail_if(!evas_textblock_cursor_paragraph_next(cur));
+   fail_if(!evas_textblock_cursor_char_next(cur));
+
+   /* Cher prev */
+   evas_textblock_cursor_paragraph_first(cur);
+   fail_if(evas_textblock_cursor_char_prev(cur));
+
+   evas_textblock_cursor_paragraph_last(cur);
+   fail_if(!evas_textblock_cursor_char_prev(cur));
+   fail_if(!evas_textblock_cursor_paragraph_prev(cur));
+   fail_if(!evas_textblock_cursor_char_prev(cur));
+
+   /* Paragraph char first */
+   evas_textblock_cursor_paragraph_first(main_cur);
+   evas_textblock_cursor_paragraph_first(cur);
+   fail_if(!evas_textblock_cursor_char_next(cur));
+   evas_textblock_cursor_paragraph_char_first(cur);
+   fail_if(evas_textblock_cursor_compare(cur, main_cur));
+
+   /* Paragraph char last */
+   evas_textblock_cursor_paragraph_last(main_cur);
+   evas_textblock_cursor_paragraph_last(cur);
+   fail_if(!evas_textblock_cursor_char_prev(cur));
+   evas_textblock_cursor_paragraph_char_last(cur);
+   fail_if(evas_textblock_cursor_compare(cur, main_cur));
+
+   /* Line char first */
+   evas_textblock_cursor_paragraph_first(main_cur);
+   evas_textblock_cursor_paragraph_first(cur);
+   fail_if(!evas_textblock_cursor_char_next(cur));
+   evas_textblock_cursor_line_char_first(cur);
+   fail_if(evas_textblock_cursor_compare(cur, main_cur));
+
+   evas_textblock_cursor_pos_set(cur, 12);
+   evas_textblock_cursor_line_char_first(cur);
+   fail_if(evas_textblock_cursor_pos_get(cur) != 10);
+
+   /* Line char first */
+   evas_textblock_cursor_paragraph_last(main_cur);
+   evas_textblock_cursor_paragraph_last(cur);
+   fail_if(!evas_textblock_cursor_char_prev(cur));
+   evas_textblock_cursor_line_char_last(cur);
+   fail_if(evas_textblock_cursor_compare(cur, main_cur));
+
+   evas_textblock_cursor_pos_set(cur, 12);
+   evas_textblock_cursor_line_char_last(cur);
+   fail_if(evas_textblock_cursor_pos_get(cur) != 16);
+
+   /* Line set */
+   evas_textblock_cursor_paragraph_first(main_cur);
+   evas_textblock_cursor_paragraph_last(cur);
+
+   fail_if(!evas_textblock_cursor_line_set(cur, 0));
+   fail_if(evas_textblock_cursor_compare(cur, main_cur));
+   fail_if(!evas_textblock_cursor_line_set(cur, 1));
+   fail_if(!evas_textblock_cursor_line_set(cur, 2));
+   fail_if(!evas_textblock_cursor_line_set(cur, 3));
+
+   fail_if(evas_textblock_cursor_line_set(cur, -1));
+   fail_if(evas_textblock_cursor_line_set(cur, 99));
+
+   /* Paragraph text get */
+   evas_textblock_cursor_paragraph_first(cur);
+   fail_if(strcmp(evas_textblock_cursor_paragraph_text_get(cur),
+            "This is a<br> test."));
+   evas_textblock_cursor_paragraph_next(cur);
+   fail_if(strcmp(evas_textblock_cursor_paragraph_text_get(cur),
+            "Lets see if this works."));
+   evas_textblock_cursor_paragraph_next(cur);
+   fail_if(strcmp(evas_textblock_cursor_paragraph_text_get(cur),
+            "עוד פסקה."));
+
+   /* Paragraph length get */
+   evas_textblock_cursor_paragraph_first(cur);
+   /* -3 because len(<br>) == 1 */
+   fail_if(evas_textblock_cursor_paragraph_text_length_get(cur) !=
+            eina_unicode_utf8_get_len("This is a<br> test.") - 3);
+   evas_textblock_cursor_paragraph_next(cur);
+   fail_if(evas_textblock_cursor_paragraph_text_length_get(cur) !=
+            eina_unicode_utf8_get_len("Lets see if this works."));
+   evas_textblock_cursor_paragraph_next(cur);
+   fail_if(evas_textblock_cursor_paragraph_text_length_get(cur) !=
+            eina_unicode_utf8_get_len("עוד פסקה."));
+
+   /* Cursor content get */
+   evas_textblock_cursor_pos_set(cur, 0);
+   fail_if(strcmp(evas_textblock_cursor_content_get(cur), "T"));
+   evas_textblock_cursor_pos_set(cur, 9);
+   fail_if(strcmp(evas_textblock_cursor_content_get(cur), "\n"));
+   evas_textblock_cursor_pos_set(cur, 43);
+   fail_if(strcmp(evas_textblock_cursor_content_get(cur), "ד"));
+
+   /* Eol get */
+   for (i = 0 ; i < len ; i++)
+     {
+        evas_textblock_cursor_pos_set(cur, i);
+        evas_textblock_cursor_copy(cur, main_cur);
+        evas_textblock_cursor_line_char_last(main_cur);
+
+        if (!evas_textblock_cursor_compare(cur, main_cur))
+          {
+             fail_if(!evas_textblock_cursor_eol_get(cur));
+          }
+        else
+          {
+             fail_if(evas_textblock_cursor_eol_get(cur));
+          }
+     }
+
 
    /* FIXME: There is a lot more to be done. */
+   END_TB_TEST();
+}
+END_TEST
+
+/* Should handle all the text editing. */
+START_TEST(evas_textblock_editing)
+{
+   START_TB_TEST();
+   const char *buf = "This is a <br> test.";
+   evas_object_textblock_text_markup_set(tb, buf);
+   fail_if(strcmp(evas_object_textblock_text_markup_get(tb), buf));
    END_TB_TEST();
 }
 END_TEST
@@ -168,5 +368,6 @@ void evas_test_textblock(TCase *tc)
    tcase_add_test(tc, evas_textblock_simple);
    tcase_add_test(tc, evas_textblock_cursor);
    tcase_add_test(tc, evas_textblock_size);
+   tcase_add_test(tc, evas_textblock_editing);
 }
 
