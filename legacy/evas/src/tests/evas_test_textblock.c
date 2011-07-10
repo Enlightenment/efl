@@ -109,6 +109,22 @@ START_TEST(evas_textblock_cursor)
         fail_if(evas_textblock_cursor_pos_get(cur) != (int) i);
      }
 
+   /* Create another cursor and insert text, making sure everything
+    * is in sync. */
+   evas_object_textblock_clear(tb);
+   Evas_Textblock_Cursor *main_cur = evas_object_textblock_cursor_get(tb);
+   evas_textblock_cursor_copy(main_cur, cur);
+   fail_if(evas_textblock_cursor_pos_get(cur) !=
+         evas_textblock_cursor_pos_get(main_cur));
+
+   evas_textblock_cursor_text_prepend(main_cur, "a");
+   fail_if(evas_textblock_cursor_pos_get(cur) ==
+         evas_textblock_cursor_pos_get(main_cur));
+   evas_textblock_cursor_text_prepend(main_cur, "a");
+   fail_if(evas_textblock_cursor_pos_get(cur) ==
+         evas_textblock_cursor_pos_get(main_cur));
+
+
    /* FIXME: There is a lot more to be done. */
    END_TB_TEST();
 }
