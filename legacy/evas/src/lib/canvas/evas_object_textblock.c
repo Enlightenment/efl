@@ -7222,9 +7222,15 @@ evas_textblock_cursor_paragraph_text_get(const Evas_Textblock_Cursor *cur)
 EAPI int
 evas_textblock_cursor_paragraph_text_length_get(const Evas_Textblock_Cursor *cur)
 {
+   int len;
    if (!cur) return -1;
    if (!cur->node) return -1;
-   return eina_ustrbuf_length_get(cur->node->unicode);
+   len = eina_ustrbuf_length_get(cur->node->unicode);
+
+   if (EINA_INLIST_GET(cur->node)->next)
+      return len - 1; /* Remove the paragraph separator */
+   else
+      return len;
 }
 
 EAPI const Evas_Object_Textblock_Node_Format *
