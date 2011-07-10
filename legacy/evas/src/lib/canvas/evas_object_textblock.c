@@ -6237,6 +6237,7 @@ evas_textblock_cursor_pos_get(const Evas_Textblock_Cursor *cur)
    size_t npos = 0;
 
    if (!cur) return -1;
+   if (!cur->node) return 0;
    o = (Evas_Object_Textblock *)(cur->obj->object_data);
    n = o->text_nodes;
    while (n != cur->node)
