@@ -330,6 +330,37 @@ START_TEST(evas_textblock_editing)
 }
 END_TEST
 
+/* Different text styles, for example, shadow. */
+START_TEST(evas_textblock_style)
+{
+   START_TB_TEST();
+   const char *buf = "";
+   evas_object_textblock_text_markup_set(tb, buf);
+   fail_if(strcmp(evas_object_textblock_text_markup_get(tb), buf));
+   END_TB_TEST();
+}
+END_TEST
+
+/* Aux evas stuff, such as scale. */
+START_TEST(evas_textblock_aux)
+{
+   Evas_Coord w, h, sw, sh;
+   START_TB_TEST();
+   const char *buf = "Test";
+   evas_object_textblock_text_markup_set(tb, buf);
+   evas_object_textblock_size_formatted_get(tb, &w, &h);
+   evas_object_scale_set(tb, 3.0);
+   evas_object_textblock_size_formatted_get(tb, &sw, &sh);
+   fail_if((sw <= w) || (sh <= h));
+
+   evas_object_scale_set(tb, 0.5);
+   evas_object_textblock_size_formatted_get(tb, &sw, &sh);
+   fail_if((sw >= w) || (sh >= h));
+
+   END_TB_TEST();
+}
+END_TEST
+
 START_TEST(evas_textblock_size)
 {
    START_TB_TEST();
@@ -369,5 +400,7 @@ void evas_test_textblock(TCase *tc)
    tcase_add_test(tc, evas_textblock_cursor);
    tcase_add_test(tc, evas_textblock_size);
    tcase_add_test(tc, evas_textblock_editing);
+   tcase_add_test(tc, evas_textblock_style);
+   tcase_add_test(tc, evas_textblock_aux);
 }
 
