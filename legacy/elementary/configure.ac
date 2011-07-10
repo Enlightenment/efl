@@ -218,6 +218,15 @@ PKG_CHECK_MODULES([ELEMENTARY],
    ]
 )
 
+PKG_CHECK_MODULES([ECORE_CON],
+	[ecore-con],
+	[
+	 have_ecore_con="yes"
+	 AC_DEFINE(HAVE_ECORE_CON, 1, [Use Ecore_Con for downloding files])
+	 requirement_elm="ecore-con ${requirement_elm}"
+	],
+	[have_ecore_con="no"])
+
 PKG_CHECK_MODULES([EIO],
 	[eio],
 	[
