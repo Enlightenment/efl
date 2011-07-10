@@ -1,4 +1,11 @@
-#include <Ecore_Con.h>
+#ifdef HAVE_CONFIG
+# include <elementary_config.h>
+#endif
+
+#ifdef HAVE_ECORE_CON
+# include <Ecore_Con.h>
+#endif
+
 #include "Elementary.h"
 #include "elm_priv.h"
 
