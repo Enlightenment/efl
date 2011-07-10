@@ -8151,6 +8151,7 @@ evas_textblock_cursor_eol_get(const Evas_Textblock_Cursor *cur)
    Evas_Textblock_Cursor cur2;
    if (!cur) return EINA_FALSE;
 
+   cur2.obj = cur->obj;
    evas_textblock_cursor_copy(cur, &cur2);
    evas_textblock_cursor_line_char_last(&cur2);
    if (cur2.pos == cur->pos)
