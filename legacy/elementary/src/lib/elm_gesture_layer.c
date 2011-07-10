@@ -256,28 +256,6 @@ static void _multi_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSE
 static void _multi_move(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info);
 static void _multi_up(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info);
 
-static void
-_dbl_click_test_reset(Gesture_Info *gesture)
-{
-   if (!gesture)
-     return;
-
-   Widget_Data *wd = elm_widget_data_get(gesture->obj);
-   if (wd->dbl_timeout) ecore_timer_del(wd->dbl_timeout);
-   wd->dbl_timeout = NULL;
-   Eina_List *data;
-   Pointer_Event *pe;
-
-   if (!gesture->data)
-     return;
-
-   EINA_LIST_FREE(((Taps_Type *) gesture->data)->l, data)
-      EINA_LIST_FREE(data, pe)
-         free(pe);
-
-  memset(gesture->data, 0, sizeof(Taps_Type));
-}
-
 /* START - Functions to manage touched-device list */
 /**
  * @internal
@@ -585,35 +563,32 @@ _inside(Evas_Coord x1, Evas_Coord y1, Evas_Coord x2, Evas_Coord y2)
    return EINA_TRUE;
 }
 
-/**
- * @internal
- *
- * when this timer expires we ABORT double click gesture.
- *
- * @param data The gesture-layer object.
- * @return cancles callback for this timer.
- *
- * @ingroup Elm_Gesture_Layer
- */
-static Eina_Bool
-_dbl_click_timeout(void *data)
-{
-   Gesture_Info *gesture = data;
-   Widget_Data *wd = elm_widget_data_get(gesture->obj);
-
-   wd->dbl_timeout = NULL;
-   _set_state(gesture, ELM_GESTURE_STATE_ABORT,
-         gesture->info, EINA_FALSE);
-
-   _dbl_click_test_reset(gesture);
-   _clear_if_finished(gesture->obj);
-   return ECORE_CALLBACK_CANCEL;
-}
-
 /* All *test_reset() funcs are called to clear
  * gesture intermediate data.
  * This happens when we need to reset our tests.
  * for example when gesture is detected or all ABORTed. */
+static void
+_dbl_click_test_reset(Gesture_Info *gesture)
+{
+   if (!gesture)
+     return;
+
+   Widget_Data *wd = elm_widget_data_get(gesture->obj);
+   if (wd->dbl_timeout) ecore_timer_del(wd->dbl_timeout);
+   wd->dbl_timeout = NULL;
+   Eina_List *data;
+   Pointer_Event *pe;
+
+   if (!gesture->data)
+     return;
+
+   EINA_LIST_FREE(((Taps_Type *) gesture->data)->l, data)
+      EINA_LIST_FREE(data, pe)
+         free(pe);
+
+  memset(gesture->data, 0, sizeof(Taps_Type));
+}
+
 static void
 _momentum_test_reset(Gesture_Info *gesture)
 {
@@ -1136,6 +1111,31 @@ _record_pointer_event(Taps_Type *st, Eina_List *pe_list, Pointer_Event *pe,
      pe_list = eina_list_append(pe_list, p);
 
    return pe_list;
+}
+
+/**
+ * @internal
+ *
+ * when this timer expires we ABORT double click gesture.
+ *
+ * @param data The gesture-layer object.
+ * @return cancles callback for this timer.
+ *
+ * @ingroup Elm_Gesture_Layer
+ */
+static Eina_Bool
+_dbl_click_timeout(void *data)
+{
+   Gesture_Info *gesture = data;
+   Widget_Data *wd = elm_widget_data_get(gesture->obj);
+
+   wd->dbl_timeout = NULL;
+   _set_state(gesture, ELM_GESTURE_STATE_ABORT,
+         gesture->info, EINA_FALSE);
+
+   _dbl_click_test_reset(gesture);
+   _clear_if_finished(gesture->obj);
+   return ECORE_CALLBACK_CANCEL;
 }
 
 /**
