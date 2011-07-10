@@ -233,7 +233,7 @@ struct _Widget_Data
    Gesture_Info *gesture[ELM_GESTURE_LAST];
    Ecore_Timer *dbl_timeout; /* When this expires, dbl click/taps ABORTed  */
    Eina_List *pending; /* List of devices need to refeed *UP event */
-   int touched;              /* Int containing number of touched devices   */
+   Eina_List *touched;  /* Information  of touched devices   */
 
    Eina_Bool repeat_events : 1;
 };
@@ -277,6 +277,64 @@ _dbl_click_test_reset(Gesture_Info *gesture)
 
   memset(gesture->data, 0, sizeof(Taps_Type));
 }
+
+/* START - Functions to manage touched-device list */
+/**
+ * @internal
+ * This function is used to find if device is touched
+ *
+ * @ingroup Elm_Gesture_Layer
+ */
+static int
+device_is_touched(const void *data1, const void *data2)
+{  /* Compare the two device numbers */
+   return (((Pointer_Event *) data1)->device -((Pointer_Event *) data2)->device);
+}
+
+/**
+ * @internal
+ *
+ * Recoed Pointer Event in touched device list
+ * Note: This fuction allocates memory for PE event
+ * This memory is released in _remove_touched_device()
+ * @param list Pointer to touched device list.
+ * @param Pointer_Event Pointer to PE.
+ *
+ * @ingroup Elm_Gesture_Layer
+ */
+static Eina_List *
+_add_touched_device(Eina_List *list, Pointer_Event *pe)
+{
+   if (eina_list_search_unsorted_list(list, device_is_touched, pe))
+     return list;
+
+   Pointer_Event *p = malloc(sizeof(Pointer_Event ));
+   memcpy(p, pe, sizeof(Pointer_Event)); /* Freed in _remove_touched_device() */
+   return eina_list_append(list, p);
+}
+
+/**
+ * @internal
+ *
+ * Remove Pointer Event from touched device list
+ * @param list Pointer to touched device list.
+ * @param Pointer_Event Pointer to PE.
+ *
+ * @ingroup Elm_Gesture_Layer
+ */
+static Eina_List *
+_remove_touched_device(Eina_List *list, Pointer_Event *pe)
+{
+   Pointer_Event *p = eina_list_search_unsorted(list, device_is_touched, pe);
+   if (p)
+     {
+        free(p);
+        return eina_list_remove(list, p);
+     }
+
+   return list;
+}
+/* END   - Functions to manage touched-device list */
 
 /**
  * @internal
@@ -333,7 +391,7 @@ static void
 consume_event(Widget_Data *wd, void *event_info,
       Evas_Callback_Type event_type, Evas_Event_Flags ev_flags)
 {  /* Mark EVAS_EVENT_FLAG_ON_HOLD on events that are used by gesture layer */
-   /* ev_flags != EVAS_EVENT_FLAG_NONE means target used the event and g-layer */
+   /* ev_flags != EVAS_EVENT_FLAG_NONE means target used event and g-layer  */
    /* should not refeed this event.                                         */
    if ((ev_flags) || (!wd->repeat_events))
      {
@@ -504,7 +562,7 @@ _clear_if_finished(Evas_Object *obj)
 
 //   if ((!wd->touched) || (reset_s && !all_undefined))
    /* (!wd->touched && reset_s) - don't stop zoom with mouse-wheel */
-   if ((!wd->touched && reset_s) || (reset_s && !all_undefined))
+   if (reset_s && (!eina_list_count(wd->touched) || !all_undefined))
      _event_history_clear(obj);
 }
 
@@ -613,19 +671,21 @@ _zoom_test_reset(Gesture_Info *gesture)
 
    pe.timestamp = pe1.timestamp = 0;
 
-   if(st->zoom_st.timestamp)
+   if (eina_list_search_unsorted_list(wd->touched, device_is_touched,
+            &st->zoom_st))
      memcpy(&pe, &st->zoom_st, sizeof(Pointer_Event));
 
-   if(st->zoom_st1.timestamp)
+   if (eina_list_search_unsorted_list(wd->touched, device_is_touched,
+            &st->zoom_st1))
      memcpy(&pe1, &st->zoom_st1, sizeof(Pointer_Event));
 
    memset(st, 0, sizeof(Zoom_Type));
 
    /* If user released one finger only, restore down-info */
-   if(pe.timestamp && (!pe1.timestamp))
+   if (pe.timestamp && (!pe1.timestamp))
      memcpy(&st->zoom_st, &pe, sizeof(Pointer_Event));
 
-   if(pe1.timestamp && (!pe.timestamp))
+   if (pe1.timestamp && (!pe.timestamp))
      memcpy(&st->zoom_st1, &pe1, sizeof(Pointer_Event));
 
    st->zoom_tolerance = wd->zoom_tolerance;
@@ -647,19 +707,21 @@ _rotate_test_reset(Gesture_Info *gesture)
 
    pe.timestamp = pe1.timestamp = 0;
 
-   if(st->rotate_st.timestamp)
+   if (eina_list_search_unsorted_list(wd->touched, device_is_touched,
+            &st->rotate_st))
      memcpy(&pe, &st->rotate_st, sizeof(Pointer_Event));
 
-   if(st->rotate_st1.timestamp)
+   if (eina_list_search_unsorted_list(wd->touched, device_is_touched,
+            &st->rotate_st1))
      memcpy(&pe1, &st->rotate_st1, sizeof(Pointer_Event));
 
    memset(st, 0, sizeof(Rotate_Type));
 
    /* If user released one finger only, restore down-info */
-   if(pe.timestamp && (!pe1.timestamp))
+   if (pe.timestamp && (!pe1.timestamp))
      memcpy(&st->rotate_st, &pe, sizeof(Pointer_Event));
 
-   if(pe1.timestamp && (!pe.timestamp))
+   if (pe1.timestamp && (!pe.timestamp))
      memcpy(&st->rotate_st1, &pe1, sizeof(Pointer_Event));
 
 
@@ -703,8 +765,10 @@ _register_callbacks(Evas_Object *obj)
         evas_object_event_callback_add(wd->target, EVAS_CALLBACK_MULTI_UP,
               _multi_up, obj);
 
-        evas_object_event_callback_add(wd->target, EVAS_CALLBACK_KEY_DOWN, _key_down_cb, obj);
-        evas_object_event_callback_add(wd->target, EVAS_CALLBACK_KEY_UP, _key_up_cb, obj);
+        evas_object_event_callback_add(wd->target, EVAS_CALLBACK_KEY_DOWN,
+              _key_down_cb, obj);
+        evas_object_event_callback_add(wd->target, EVAS_CALLBACK_KEY_UP,
+              _key_up_cb, obj);
      }
 }
 
@@ -744,8 +808,10 @@ _unregister_callbacks(Evas_Object *obj)
         evas_object_event_callback_del(wd->target, EVAS_CALLBACK_MULTI_UP,
               _multi_up);
 
-        evas_object_event_callback_del(wd->target, EVAS_CALLBACK_KEY_DOWN, _key_down_cb);
-        evas_object_event_callback_del(wd->target, EVAS_CALLBACK_KEY_UP, _key_up_cb);
+        evas_object_event_callback_del(wd->target, EVAS_CALLBACK_KEY_DOWN,
+              _key_down_cb);
+        evas_object_event_callback_del(wd->target, EVAS_CALLBACK_KEY_UP,
+              _key_up_cb);
      }
 }
 
@@ -759,7 +825,7 @@ _unregister_callbacks(Evas_Object *obj)
  * @ingroup Elm_Gesture_Layer
  */
 static int
-device_in_list(const void *data1, const void *data2)
+device_in_pending_list(const void *data1, const void *data2)
 {  /* Compare the two device numbers */
    return (((int) data1) - ((int) data2));
 }
@@ -785,9 +851,9 @@ _add_device_pending(Eina_List *list, void *event, Evas_Callback_Type event_type)
          return list;
      }
 
-   if (!eina_list_search_unsorted_list(list, device_in_list, (void *) device))
+   if (!eina_list_search_unsorted_list(list, device_in_pending_list,
+            (void *) device))
      {
-        printf("%s ======> Added <%d>\n", __func__, device);
         return eina_list_append(list, (void *) device);
      }
 
@@ -815,7 +881,8 @@ _device_is_pending(Eina_List *list, void *event, Evas_Callback_Type event_type)
         return NULL;
      }
 
-   return eina_list_search_unsorted_list(list, device_in_list, (void *) device);
+   return eina_list_search_unsorted_list(list, device_in_pending_list,
+         (void *) device);
 }
 
 /**
@@ -875,23 +942,28 @@ _event_history_clear(Evas_Object *obj)
      {
         Event_History *t;
         t = wd->event_history_list;
-        Eina_List *pending = _device_is_pending(wd->pending, wd->event_history_list->event, wd->event_history_list->event_type);
+        Eina_List *pending = _device_is_pending(wd->pending,
+              wd->event_history_list->event,
+              wd->event_history_list->event_type);
 
         /* Refeed events if no gesture matched input */
         if (pending || ((!gesture_found) && (!wd->repeat_events)))
           {
-             evas_event_refeed_event(e, wd->event_history_list->event, wd->event_history_list->event_type);
+             evas_event_refeed_event(e, wd->event_history_list->event,
+                   wd->event_history_list->event_type);
 
-             if(pending)
+             if (pending)
                {
                wd->pending = eina_list_remove_list(wd->pending, pending);
                int device = ELM_MOUSE_DEVICE;
-               if(wd->event_history_list->event_type == EVAS_CALLBACK_MULTI_UP)
-                 device = ((Evas_Event_Multi_Up *) (wd->event_history_list->event))->device;
-              printf("%s ======> Removed <%d>\n", __func__, device);
+               if (wd->event_history_list->event_type == EVAS_CALLBACK_MULTI_UP)
+                 device = ((Evas_Event_Multi_Up *)
+                       (wd->event_history_list->event))->device;
                }
              else
-               wd->pending = _add_device_pending(wd->pending, wd->event_history_list->event, wd->event_history_list->event_type);
+               wd->pending = _add_device_pending(wd->pending,
+                     wd->event_history_list->event,
+                     wd->event_history_list->event_type);
           }
 
         free(wd->event_history_list->event);
@@ -978,6 +1050,10 @@ _del_hook(Evas_Object *obj)
    _event_history_clear(obj);
    eina_list_free(wd->pending);
 
+   Pointer_Event *data;
+   EINA_LIST_FREE(wd->touched, data)
+      free(data);
+
    if (!elm_widget_disabled_get(obj))
      _unregister_callbacks(obj);
 
@@ -1035,8 +1111,8 @@ compare_pe_device(const void *data1, const void *data2)
 }
 
 static Eina_List*
-_record_pointer_event(Taps_Type *st, Eina_List *pe_list, Pointer_Event *pe, Widget_Data *wd, void *event_info,
-      Evas_Callback_Type event_type)
+_record_pointer_event(Taps_Type *st, Eina_List *pe_list, Pointer_Event *pe,
+      Widget_Data *wd, void *event_info, Evas_Callback_Type event_type)
 {  /* Keep copy of pe and record it in list */
    Pointer_Event *p = malloc(sizeof(Pointer_Event));
    memcpy(p, pe, sizeof(Pointer_Event));
@@ -1090,8 +1166,8 @@ _dbl_click_test(Evas_Object *obj, Pointer_Event *pe,
    Gesture_Info *gesture = wd->gesture[g_type];
    if (!gesture ) return;
 
-   if((gesture->state == ELM_GESTURE_STATE_UNDEFINED) &&
-         wd->touched)
+   if ((gesture->state == ELM_GESTURE_STATE_UNDEFINED) &&
+         eina_list_count(wd->touched))
      return; /* user left a finger on device, do NOT start */
 
    Taps_Type *st = gesture->data;
@@ -1373,8 +1449,8 @@ _momentum_test(Evas_Object *obj, Pointer_Event *pe,
    Gesture_Info *gesture = wd->gesture[g_type];
    if (!gesture ) return;
 
-   if((gesture->state == ELM_GESTURE_STATE_UNDEFINED) &&
-         wd->touched)
+   if ((gesture->state == ELM_GESTURE_STATE_UNDEFINED) &&
+         eina_list_count(wd->touched))
      return; /* user left a finger on device, do NOT start */
 
    Momentum_Type *st = gesture->data;
@@ -1593,8 +1669,8 @@ _n_line_test(Evas_Object *obj, Pointer_Event *pe, void *event_info,
    Gesture_Info *gesture = wd->gesture[g_type];
    if (!gesture ) return;
 
-   if((gesture->state == ELM_GESTURE_STATE_UNDEFINED) &&
-         wd->touched)
+   if ((gesture->state == ELM_GESTURE_STATE_UNDEFINED) &&
+         eina_list_count(wd->touched))
      return; /* user left a finger on device, do NOT start */
 
    Line_Type *st = gesture->data;
@@ -1666,7 +1742,7 @@ _n_line_test(Evas_Object *obj, Pointer_Event *pe, void *event_info,
 #if defined(DEBUG_GESTURE_LAYER)
              printf("%s a=<%f> d=<%f>\n", __func__, (a * 57.295779513), d);
 #endif
-             if((d > wd->line_tolerance) || (a > ELM_GESTURE_LINE_ANGLE_TOLERANCE))
+             if ((d > wd->line_tolerance) || (a > ELM_GESTURE_LINE_ANGLE_TOLERANCE))
 //             if (a > ELM_GESTURE_LINE_ANGLE_TOLERANCE)
                {  /* Broke tolerance: abort line and start a new one */
                   ev_flag = _set_state(gesture, ELM_GESTURE_STATE_ABORT,
@@ -1846,7 +1922,7 @@ rotation_broke_tolerance(Rotate_Type *st)
         low += RAD_180DEG;
         high += RAD_180DEG;
 
-        if(t < RAD_180DEG)
+        if (t < RAD_180DEG)
           t += RAD_180DEG;
         else
           t -= RAD_180DEG;
@@ -1857,7 +1933,7 @@ rotation_broke_tolerance(Rotate_Type *st)
         low -= RAD_180DEG;
         high -= RAD_180DEG;
 
-        if(t < RAD_180DEG)
+        if (t < RAD_180DEG)
           t += RAD_180DEG;
         else
           t -= RAD_180DEG;
@@ -2141,10 +2217,10 @@ _zoom_with_wheel_test(Evas_Object *obj, void *event_info,
  * @ingroup Elm_Gesture_Layer
  */
 static void
-_zoom_test(Evas_Object *obj, Pointer_Event *pe, void *event_info, Evas_Callback_Type event_type,
-      Elm_Gesture_Types g_type)
+_zoom_test(Evas_Object *obj, Pointer_Event *pe, void *event_info,
+      Evas_Callback_Type event_type, Elm_Gesture_Types g_type)
 {
-   if(!pe)
+   if (!pe)
      return;
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
@@ -2249,14 +2325,6 @@ _zoom_test(Evas_Object *obj, Pointer_Event *pe, void *event_info, Evas_Callback_
            /* Reset timestamp of finger-up.This is used later
               by _zoom_test_reset() to retain finger-down data */
            consume_event(wd, event_info, event_type, ev_flag);
-           if(event_type == EVAS_CALLBACK_MOUSE_UP)
-             st->zoom_st.timestamp = 0;
-
-           if((event_type == EVAS_CALLBACK_MULTI_UP) &&
-                 (st->zoom_st1.device ==
-                  ((Evas_Event_Multi_Up *) event_info)->device))
-             st->zoom_st1.timestamp = 0;
-
            if (((st->zoom_wheel) || (st->zoom_base)) &&
                  (st->zoom_tolerance == 0))
              {
@@ -2290,10 +2358,10 @@ _zoom_test(Evas_Object *obj, Pointer_Event *pe, void *event_info, Evas_Callback_
        {
             {  /* Zoom broke tolerance, report move */
                double d = st->info.zoom - st->next_step;
-               if(d < 0.0)
+               if (d < 0.0)
                  d = (-d);
 
-               if(d >= wd->zoom_step)
+               if (d >= wd->zoom_step)
                  {  /* Report move in steps */
                     st->next_step = st->info.zoom;
 
@@ -2306,11 +2374,11 @@ _zoom_test(Evas_Object *obj, Pointer_Event *pe, void *event_info, Evas_Callback_
           return;
        }
 
-   if((event_type == EVAS_CALLBACK_MOUSE_DOWN) ||
+   if ((event_type == EVAS_CALLBACK_MOUSE_DOWN) ||
          (event_type == EVAS_CALLBACK_MULTI_DOWN))
      {  /* report zoom start finger location is zoom-center temporarly */
         /* Zoom may have started with mouse-wheel, don't report START  */
-        if((st->zoom_st.timestamp) && (st->zoom_st1.timestamp))
+        if ((st->zoom_st.timestamp) && (st->zoom_st1.timestamp))
           {  /* Set zoom-base after BOTH down events were recorded   */
              /* Compute length of line between fingers on zoom start */
              st->info.zoom = 1.0;
@@ -2344,7 +2412,7 @@ _get_rotate_properties(Rotate_Type *st,
 
    *angle = get_angle(x1, y1, x2, y2);
 #if 0 /* (NOT YET SUPPORTED) */
-   if(angle == &st->info.angle)
+   if (angle == &st->info.angle)
      {  /* Compute momentum: TODO: bug when breaking 0, 360 values */
         st->info.momentum = (((*angle) - st->info.base_angle) /
            (fabs(tm2 - tm1))) * 1000;
@@ -2376,7 +2444,7 @@ static void
 _rotate_test(Evas_Object *obj, Pointer_Event *pe, void *event_info,
       Evas_Callback_Type event_type, Elm_Gesture_Types g_type)
 {
-   if(!pe)
+   if (!pe)
      return;
 
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -2489,14 +2557,6 @@ _rotate_test(Evas_Object *obj, Pointer_Event *pe, void *event_info,
            consume_event(wd, event_info, event_type, ev_flag);
            /* Reset timestamp of finger-up.This is used later
               by rotate_test_reset() to retain finger-down data */
-           if(event_type == EVAS_CALLBACK_MOUSE_UP)
-                 st->rotate_st.timestamp = 0;
-
-           if((event_type == EVAS_CALLBACK_MULTI_UP) &&
-                 (st->rotate_st1.device ==
-                  ((Evas_Event_Multi_Up *) event_info)->device))
-             st->rotate_st1.timestamp = 0;
-
            if (st->rotate_tolerance < 0)
              {
                 ev_flag = _set_state(gesture, ELM_GESTURE_STATE_END,
@@ -2526,10 +2586,10 @@ _rotate_test(Evas_Object *obj, Pointer_Event *pe, void *event_info,
         if (rotation_broke_tolerance(st))
           {  /* Rotation broke tolerance, report move */
              double d = st->info.angle - st->next_step;
-             if(d < 0.0)
+             if (d < 0.0)
                d = (-d);
 
-             if(d >= wd->rotate_step)
+             if (d >= wd->rotate_step)
                {  /* Report move in steps */
                   st->next_step = st->info.angle;
 
@@ -2542,10 +2602,10 @@ _rotate_test(Evas_Object *obj, Pointer_Event *pe, void *event_info,
         return;
      }
 
-   if((event_type == EVAS_CALLBACK_MOUSE_DOWN) ||
+   if ((event_type == EVAS_CALLBACK_MOUSE_DOWN) ||
          (event_type == EVAS_CALLBACK_MULTI_DOWN))
      {
-        if((st->rotate_st.timestamp) && (st->rotate_st1.timestamp))
+        if ((st->rotate_st.timestamp) && (st->rotate_st1.timestamp))
           {  /* two-fingers on touch screen - report rotate start */
              /* Set base angle, then report start.                */
              _get_rotate_properties(st,
@@ -2718,14 +2778,12 @@ _event_process(void *data, Evas_Object *obj __UNUSED__,
    if ((event_type == EVAS_CALLBACK_MOUSE_DOWN) ||
          (event_type == EVAS_CALLBACK_MULTI_DOWN))
      {
-        wd->touched++;
-        printf("%s touched=<%d>\n", __func__, wd->touched);
+        wd->touched = _add_touched_device(wd->touched, pe);
      }
    else if ((event_type == EVAS_CALLBACK_MOUSE_UP) ||
          (event_type == EVAS_CALLBACK_MULTI_UP))
      {
-        wd->touched--;
-        printf("%s touched=<%d>\n", __func__, wd->touched);
+        wd->touched = _remove_touched_device(wd->touched, pe);
      }
 
    /* Report current states and clear history if needed */
@@ -2748,9 +2806,8 @@ _mouse_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__,
 {
    Widget_Data *wd = elm_widget_data_get(data);
    if (!wd) return;
-printf("---- %s ----\n", __func__);
-   if (((Evas_Event_Mouse_Down *) event_info)->button != 1) /* We only process left-click at the moment */
-     return;
+   if (((Evas_Event_Mouse_Down *) event_info)->button != 1)
+     return; /* We only process left-click at the moment */
 
    _event_process(data, obj, event_info, EVAS_CALLBACK_MOUSE_DOWN);
 }
@@ -2792,9 +2849,8 @@ _mouse_up(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__,
    Widget_Data *wd = elm_widget_data_get(data);
    if (!wd) return;
 
-printf("---- %s ----\n", __func__);
-   if (((Evas_Event_Mouse_Up *) event_info)->button != 1) /* We only process left-click at the moment */
-     return;
+   if (((Evas_Event_Mouse_Up *) event_info)->button != 1)
+     return; /* We only process left-click at the moment */
 
    _event_process(data, obj, event_info, EVAS_CALLBACK_MOUSE_UP);
 }
@@ -2815,7 +2871,6 @@ _multi_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__,
 {
    Widget_Data *wd = elm_widget_data_get(data);
    if (!wd) return;
-printf("---- %s ----\n", __func__);
 
    _event_process(data, obj, event_info, EVAS_CALLBACK_MULTI_DOWN);
 }
@@ -2836,7 +2891,6 @@ _multi_up(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__,
 {
    Widget_Data *wd = elm_widget_data_get(data);
    if (!wd) return;
-printf("---- %s ----\n", __func__);
 
    _event_process(data, obj, event_info, EVAS_CALLBACK_MULTI_UP);
 }
@@ -2865,7 +2919,7 @@ elm_gesture_layer_zoom_step_set(Evas_Object *obj, double s)
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
 
-   if(s < 0.0)
+   if (s < 0.0)
      return;
 
    wd->zoom_step = s;
@@ -2877,7 +2931,7 @@ elm_gesture_layer_rotate_step_set(Evas_Object *obj, double s)
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
 
-   if(s < 0.0)
+   if (s < 0.0)
      return;
 
    wd->rotate_step = s;
