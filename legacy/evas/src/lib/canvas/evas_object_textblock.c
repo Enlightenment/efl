@@ -5276,7 +5276,7 @@ _find_layout_item_match(const Evas_Textblock_Cursor *cur, Evas_Object_Textblock_
    return previous_format;
 }
 
-EAPI const Evas_Textblock_Cursor *
+EAPI Evas_Textblock_Cursor *
 evas_object_textblock_cursor_get(const Evas_Object *obj)
 {
    TB_HEAD_RETURN(NULL);

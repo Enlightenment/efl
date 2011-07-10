@@ -7326,7 +7326,7 @@ EAPI const char                  *evas_object_textblock_text_markup_get(const Ev
  * @param obj the object.
  * @return the obj's main cursor.
  */
-EAPI const Evas_Textblock_Cursor *evas_object_textblock_cursor_get(const Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
+EAPI Evas_Textblock_Cursor *evas_object_textblock_cursor_get(const Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
 
 /**
  * Create a new cursor, associate it to the obj and init it to point
