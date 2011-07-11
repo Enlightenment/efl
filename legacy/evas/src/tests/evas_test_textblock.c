@@ -346,6 +346,73 @@ START_TEST(evas_textblock_cursor)
 }
 END_TEST
 
+/* Various geometries. e.g. range geometry. */
+START_TEST(evas_textblock_geometries)
+{
+   START_TB_TEST();
+   const char *buf = "This is a <br> test.";
+   evas_object_textblock_text_markup_set(tb, buf);
+
+   /* Single line range */
+   Evas_Textblock_Cursor *main_cur = evas_object_textblock_cursor_get(tb);
+   evas_textblock_cursor_pos_set(cur, 0);
+   evas_textblock_cursor_pos_set(main_cur, 6);
+
+   Eina_List *rects, *rects2;
+   Evas_Textblock_Rectangle *tr, *tr2;
+   rects = evas_textblock_cursor_range_geometry_get(cur, main_cur);
+   fail_if(!rects);
+   rects2 = evas_textblock_cursor_range_geometry_get(main_cur, cur);
+   fail_if(!rects2);
+
+   fail_if(eina_list_count(rects) != 1);
+   fail_if(eina_list_count(rects2) != 1);
+
+   tr = eina_list_data_get(rects);
+   fail_if((tr->h <= 0) || (tr->w <= 0));
+   tr2 = eina_list_data_get(rects2);
+   fail_if((tr2->h <= 0) || (tr2->w <= 0));
+
+   fail_if((tr->x != tr2->x) || (tr->y != tr2->y) || (tr->w != tr2->w) ||
+         (tr->h != tr2->h));
+
+   /* Multiline range */
+   evas_textblock_cursor_pos_set(cur, 0);
+   evas_textblock_cursor_pos_set(main_cur, 14);
+
+   rects = evas_textblock_cursor_range_geometry_get(cur, main_cur);
+   fail_if(!rects);
+   rects2 = evas_textblock_cursor_range_geometry_get(main_cur, cur);
+   fail_if(!rects2);
+
+   fail_if(eina_list_count(rects) != 2);
+   fail_if(eina_list_count(rects2) != 2);
+
+   tr = eina_list_data_get(rects);
+   fail_if((tr->h <= 0) || (tr->w <= 0));
+   tr2 = eina_list_data_get(rects2);
+   fail_if((tr2->h <= 0) || (tr2->w <= 0));
+
+   fail_if((tr->x != tr2->x) || (tr->y != tr2->y) || (tr->w != tr2->w) ||
+         (tr->h != tr2->h));
+
+   tr = eina_list_data_get(eina_list_next(rects));
+   fail_if((tr->h <= 0) || (tr->w <= 0));
+   tr2 = eina_list_data_get(eina_list_next(rects2));
+   fail_if((tr2->h <= 0) || (tr2->w <= 0));
+
+   fail_if((tr->x != tr2->x) || (tr->y != tr2->y) || (tr->w != tr2->w) ||
+         (tr->h != tr2->h));
+
+   /* Check that the second line is positioned below the first */
+   tr = eina_list_data_get(rects);
+   tr2 = eina_list_data_get(eina_list_next(rects));
+   fail_if(tr->y >= tr2->y);
+
+   END_TB_TEST();
+}
+END_TEST
+
 /* Should handle all the text editing. */
 START_TEST(evas_textblock_editing)
 {
@@ -897,5 +964,6 @@ void evas_test_textblock(TCase *tc)
    tcase_add_test(tc, evas_textblock_formats);
    tcase_add_test(tc, evas_textblock_escaping);
    tcase_add_test(tc, evas_textblock_set_get);
+   tcase_add_test(tc, evas_textblock_geometries);
 }
 
