@@ -187,7 +187,7 @@ _ui_tg_changed(void *data, Evas_Object *obj, void *event_info)
 
 
 static void
-my_win_main(char *autorun)
+my_win_main(char *autorun, Eina_Bool test_win_only)
 {
    Evas_Object *win, *bg, *bx0, *lb, *li, *idx, *fr, *tg;
    Eina_List *tests, *l;
@@ -448,7 +448,8 @@ my_win_main(char *autorun)
    /* set an initial window size */
    evas_object_resize(win, 320, 480);
    /* show the window */
-   evas_object_show(win);
+   if (!test_win_only)
+      evas_object_show(win);
 }
 
 /* this is your elementary main function - it MUST be called IMMEDIATELY
@@ -457,6 +458,7 @@ my_win_main(char *autorun)
 EAPI int
 elm_main(int argc, char **argv)
 {
+   Eina_Bool test_win_only = EINA_FALSE;
    char *autorun = NULL;
 
    /* tell elm about our app so it can figure out where to get files */
@@ -469,9 +471,19 @@ elm_main(int argc, char **argv)
     * ex:  elementary_test "Box Vert 2" */
    if (argc == 2)
      autorun = argv[1];
+   else if (argc == 3)
+     {
+        /* Just a workaround to make the shot module more
+         * useful with elementary test. */
+        if (!strcmp(argv[1], "--test-win-only"))
+          {
+             test_win_only = EINA_TRUE;
+             autorun = argv[2];
+          }
+     }
 
    /* put here any init specific to this app like parsing args etc. */
-   my_win_main(autorun); /* create main window */
+   my_win_main(autorun, test_win_only); /* create main window */
    elm_run(); /* and run the program now  and handle all events etc. */
    /* if the mainloop that elm_run() runs exist - we exit the app */
    elm_shutdown(); /* clean up and shut down */
