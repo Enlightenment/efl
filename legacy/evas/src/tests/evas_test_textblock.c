@@ -26,6 +26,7 @@ static const char *style_buf =
    evas_font_hinting_set(evas, EVAS_FONT_HINTING_AUTO); \
    tb = evas_object_textblock_add(evas); \
    fail_if(!tb); \
+   evas_object_textblock_newline_mode_set(tb, EINA_FALSE); \
    st = evas_textblock_style_new(); \
    fail_if(!st); \
    evas_textblock_style_set(st, style_buf); \
@@ -78,7 +79,6 @@ START_TEST(evas_textblock_cursor)
 {
    START_TB_TEST();
    size_t i, len;
-   evas_object_textblock_newline_mode_set(tb, EINA_FALSE);
    const char *buf = "This is a<br> test.<ps>Lets see if this works.<ps>עוד פסקה.";
 
    /* Walk the textblock using cursor_char_next */
@@ -330,6 +330,90 @@ START_TEST(evas_textblock_editing)
 }
 END_TEST
 
+/* Text getters */
+START_TEST(evas_textblock_text_getters)
+{
+   START_TB_TEST();
+   const char *buf = "This is a <br> test.<ps>"
+      "טקסט בעברית<ps>and now in english.";
+   evas_object_textblock_text_markup_set(tb, buf);
+   evas_textblock_cursor_paragraph_first(cur);
+
+   fail_if(strcmp(evas_textblock_cursor_paragraph_text_get(cur),
+            "This is a <br> test."));
+
+   evas_textblock_cursor_paragraph_next(cur);
+   fail_if(strcmp(evas_textblock_cursor_paragraph_text_get(cur),
+            "טקסט בעברית"));
+
+   evas_textblock_cursor_paragraph_next(cur);
+   fail_if(strcmp(evas_textblock_cursor_paragraph_text_get(cur),
+            "and now in english."));
+
+   /* Range get */
+   Evas_Textblock_Cursor *main_cur = evas_object_textblock_cursor_get(tb);
+   evas_textblock_cursor_pos_set(main_cur, 2);
+   evas_textblock_cursor_pos_set(cur, 2);
+   fail_if(*evas_textblock_cursor_range_text_get(main_cur, cur,
+            EVAS_TEXTBLOCK_TEXT_MARKUP));
+
+   evas_textblock_cursor_pos_set(main_cur, 2);
+   evas_textblock_cursor_pos_set(cur, 6);
+   fail_if(strcmp(evas_textblock_cursor_range_text_get(main_cur, cur,
+            EVAS_TEXTBLOCK_TEXT_MARKUP), "is i"));
+
+   evas_textblock_cursor_pos_set(main_cur, 5);
+   evas_textblock_cursor_pos_set(cur, 14);
+   fail_if(strcmp(evas_textblock_cursor_range_text_get(main_cur, cur,
+            EVAS_TEXTBLOCK_TEXT_MARKUP), "is a <br> te"));
+
+   evas_textblock_cursor_pos_set(main_cur, 14);
+   evas_textblock_cursor_pos_set(cur, 20);
+   fail_if(strcmp(evas_textblock_cursor_range_text_get(main_cur, cur,
+            EVAS_TEXTBLOCK_TEXT_MARKUP), "st.<ps>טק"));
+
+   evas_textblock_cursor_pos_set(main_cur, 14);
+   evas_textblock_cursor_pos_set(cur, 32);
+   fail_if(strcmp(evas_textblock_cursor_range_text_get(main_cur, cur,
+            EVAS_TEXTBLOCK_TEXT_MARKUP), "st.<ps>טקסט בעברית<ps>an"));
+
+   /* Backward range get */
+   evas_textblock_cursor_pos_set(main_cur, 2);
+   evas_textblock_cursor_pos_set(cur, 2);
+   fail_if(*evas_textblock_cursor_range_text_get(cur, main_cur,
+            EVAS_TEXTBLOCK_TEXT_MARKUP));
+
+   evas_textblock_cursor_pos_set(main_cur, 2);
+   evas_textblock_cursor_pos_set(cur, 6);
+   fail_if(strcmp(evas_textblock_cursor_range_text_get(cur, main_cur,
+            EVAS_TEXTBLOCK_TEXT_MARKUP), "is i"));
+
+   evas_textblock_cursor_pos_set(main_cur, 5);
+   evas_textblock_cursor_pos_set(cur, 14);
+   fail_if(strcmp(evas_textblock_cursor_range_text_get(cur, main_cur,
+            EVAS_TEXTBLOCK_TEXT_MARKUP), "is a <br> te"));
+
+   evas_textblock_cursor_pos_set(main_cur, 14);
+   evas_textblock_cursor_pos_set(cur, 20);
+   fail_if(strcmp(evas_textblock_cursor_range_text_get(cur, main_cur,
+            EVAS_TEXTBLOCK_TEXT_MARKUP), "st.<ps>טק"));
+
+   evas_textblock_cursor_pos_set(main_cur, 14);
+   evas_textblock_cursor_pos_set(cur, 32);
+   fail_if(strcmp(evas_textblock_cursor_range_text_get(cur, main_cur,
+            EVAS_TEXTBLOCK_TEXT_MARKUP), "st.<ps>טקסט בעברית<ps>an"));
+
+   /* Uninit cursors and other weird cases */
+   evas_object_textblock_clear(tb);
+   evas_textblock_cursor_copy(main_cur, cur);
+   evas_textblock_cursor_text_prepend(main_cur, "aaa");
+   fail_if(strcmp(evas_textblock_cursor_range_text_get(cur, main_cur,
+            EVAS_TEXTBLOCK_TEXT_MARKUP), "aaa"));
+
+   END_TB_TEST();
+}
+END_TEST
+
 /* Different text styles, for example, shadow. */
 START_TEST(evas_textblock_style)
 {
@@ -374,13 +458,13 @@ START_TEST(evas_textblock_size)
    fail_if((w != nw) || (h != nh));
    fail_if(w != 0);
 
-   evas_object_textblock_text_markup_set(tb, "<br>");
+   evas_object_textblock_text_markup_set(tb, "a<br>a");
    evas_object_textblock_size_formatted_get(tb, &w, &h2);
    evas_object_textblock_size_native_get(tb, &nw, &nh);
    fail_if((w != nw) || (h2 != nh));
 
    /* Two lines == double the height */
-   fail_if((w != 0) || (h * 2 != h2));
+   fail_if(h * 2 != h2);
 
    evas_object_textblock_text_markup_set(tb, buf);
 
@@ -402,5 +486,6 @@ void evas_test_textblock(TCase *tc)
    tcase_add_test(tc, evas_textblock_editing);
    tcase_add_test(tc, evas_textblock_style);
    tcase_add_test(tc, evas_textblock_aux);
+   tcase_add_test(tc, evas_textblock_text_getters);
 }
 
