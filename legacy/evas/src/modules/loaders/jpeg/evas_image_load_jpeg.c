@@ -114,8 +114,18 @@ _evas_jpeg_membuf_src_skip(j_decompress_ptr cinfo,
 {
    struct jpeg_membuf_src *src = (struct jpeg_membuf_src *)cinfo->src;
 
-   src->pub.bytes_in_buffer -= num_bytes;
-   src->pub.next_input_byte += num_bytes;
+   long rec = 0;
+   rec = src->pub.bytes_in_buffer - num_bytes;
+
+   if (rec <0)
+     {
+        (*(cinfo)->err->error_exit) ((j_common_ptr) (cinfo));
+     }
+   else
+     {
+        src->pub.bytes_in_buffer -= num_bytes;
+        src->pub.next_input_byte += num_bytes;
+     }
 }
 
 static void
