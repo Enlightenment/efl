@@ -697,7 +697,7 @@ START_TEST(evas_textblock_formats)
    evas_object_textblock_size_formatted_get(tb, NULL, NULL);
 
    /* Removing paired formats. */
-   evas_object_textblock_text_markup_set(tb,"<a>aa<b>bb</b>cc</a>");
+   evas_object_textblock_text_markup_set(tb, "<a>aa<b>bb</b>cc</a>");
    fnode = evas_textblock_node_format_first_get(tb);
    evas_textblock_node_format_remove_pair(tb, (Evas_Object_Textblock_Node_Format *) fnode);
    fnode = evas_textblock_node_format_first_get(tb);
@@ -707,7 +707,7 @@ START_TEST(evas_textblock_formats)
    fail_if(!fnode);
    fail_if(strcmp(evas_textblock_node_format_text_get(fnode), "- b"));
 
-   evas_object_textblock_text_markup_set(tb,"<a>aa<b>bb</b>cc</a>");
+   evas_object_textblock_text_markup_set(tb, "<a>aa<b>bb</b>cc</a>");
    fnode = evas_textblock_node_format_first_get(tb);
    fnode = evas_textblock_node_format_next_get(fnode);
    evas_textblock_node_format_remove_pair(tb, (Evas_Object_Textblock_Node_Format *) fnode);
@@ -717,6 +717,22 @@ START_TEST(evas_textblock_formats)
    fnode = evas_textblock_node_format_next_get(fnode);
    fail_if(!fnode);
    fail_if(strcmp(evas_textblock_node_format_text_get(fnode), "- a"));
+
+   /* Format list get */
+   evas_object_textblock_text_markup_set(tb, "<a>a</>a<item>b</>"
+         "b<item>b</>c<a>c</>");
+   const Eina_List *flist = evas_textblock_node_format_list_get(tb, "a");
+   const Eina_List *itr;
+   EINA_LIST_FOREACH(flist, itr, fnode)
+     {
+        fail_if(strcmp(evas_textblock_node_format_text_get(fnode), "+ a"));
+     }
+
+   flist = evas_textblock_node_format_list_get(tb, "item");
+   EINA_LIST_FOREACH(flist, itr, fnode)
+     {
+        fail_if(strcmp(evas_textblock_node_format_text_get(fnode), "+ item"));
+     }
 
    END_TB_TEST();
 }
