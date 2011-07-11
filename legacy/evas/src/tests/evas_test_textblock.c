@@ -385,6 +385,21 @@ START_TEST(evas_textblock_editing)
    evas_textblock_cursor_range_delete(cur, main_cur);
    fail_if(strcmp(evas_object_textblock_text_markup_get(tb),
             "ir.<ps>Second par."));
+   evas_textblock_cursor_paragraph_char_first(main_cur);
+   evas_textblock_cursor_paragraph_char_last(cur);
+   evas_textblock_cursor_char_next(cur);
+   evas_textblock_cursor_range_delete(cur, main_cur);
+   fail_if(strcmp(evas_object_textblock_text_markup_get(tb),
+            "Second par."));
+
+   evas_object_textblock_text_markup_set(tb, buf);
+   evas_textblock_cursor_paragraph_last(main_cur);
+   evas_object_textblock_text_markup_prepend(main_cur, "Test<b>bla</b>bla.");
+   evas_textblock_cursor_paragraph_last(cur);
+   evas_textblock_cursor_paragraph_char_first(main_cur);
+   evas_textblock_cursor_range_delete(cur, main_cur);
+   fail_if(strcmp(evas_object_textblock_text_markup_get(tb),
+            "First par.<ps>"));
 
    /* Merging paragraphs */
    evas_object_textblock_text_markup_set(tb, buf);
@@ -414,7 +429,7 @@ START_TEST(evas_textblock_editing)
    evas_textblock_cursor_paragraph_first(cur);
    fail_if(evas_textblock_cursor_paragraph_next(cur));
 
-   /* Also add text appending/prepending */
+   /* FIXME: Also add text appending/prepending */
 
    END_TB_TEST();
 }
@@ -644,6 +659,17 @@ START_TEST(evas_textblock_formats)
      }
    while (evas_textblock_cursor_char_next(cur));
 
+   /* Format text nodes invalidation */
+     {
+        Evas_Coord w, h, nw, nh;
+        evas_object_textblock_text_markup_set(tb, "Test");
+        evas_object_textblock_size_formatted_get(tb, &w, &h);
+        evas_textblock_cursor_paragraph_first(cur);
+        evas_textblock_cursor_format_prepend(cur, "+ font_size=40");
+        evas_object_textblock_size_formatted_get(tb, &nw, &nh);
+        fail_if((w >= nw) || (h >= nh));
+     }
+
    END_TB_TEST();
 }
 END_TEST
@@ -651,10 +677,25 @@ END_TEST
 /* Different text styles, for example, shadow. */
 START_TEST(evas_textblock_style)
 {
+   Evas_Coord w, h, nw, nh;
    START_TB_TEST();
-   const char *buf = "";
+   Evas_Textblock_Style *newst;
+   const char *buf = "Test<ps>Test2<ps>נסיון";
    evas_object_textblock_text_markup_set(tb, buf);
    fail_if(strcmp(evas_object_textblock_text_markup_get(tb), buf));
+
+   evas_object_textblock_size_formatted_get(tb, &w, &h);
+   newst = evas_textblock_style_new();
+   fail_if(!newst);
+   evas_textblock_style_set(newst,
+         "DEFAULT='font=Sans font_size=20 color=#000 text_class=entry'"
+         "br='\n'"
+         "ps='ps'"
+         "tab='\t'");
+   evas_object_textblock_style_set(tb, newst);
+   evas_object_textblock_size_formatted_get(tb, &nw, &nh);
+   fail_if((w >= nw) || (h >= nh));
+
    END_TB_TEST();
 }
 END_TEST
