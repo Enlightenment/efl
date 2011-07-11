@@ -4791,7 +4791,7 @@ evas_object_textblock_text_markup_prepend(Evas_Textblock_Cursor *cur, const char
                     }
                   else if (esc_end)
                     {
-                       _prepend_escaped_char(cur, esc_start, esc_end);
+                       _prepend_escaped_char(cur, esc_start, esc_end + 1);
                        esc_start = esc_end = NULL;
                     }
                   else if (*p == 0)
