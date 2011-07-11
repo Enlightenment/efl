@@ -313,6 +313,34 @@ START_TEST(evas_textblock_cursor)
           }
      }
 
+   /* Format positions */
+   const Evas_Object_Textblock_Node_Format *fnode;
+   fnode = evas_textblock_node_format_first_get(tb);
+   fail_if(!fnode);
+   evas_textblock_cursor_at_format_set(cur, fnode);
+   evas_textblock_cursor_copy(cur, main_cur);
+   fail_if(evas_textblock_cursor_pos_get(cur) != 9);
+   fail_if(evas_textblock_cursor_format_get(cur) != fnode);
+
+   fnode = evas_textblock_node_format_next_get(fnode);
+   fail_if(!fnode);
+   evas_textblock_cursor_at_format_set(cur, fnode);
+   fail_if(evas_textblock_cursor_pos_get(cur) != 16);
+   fail_if(evas_textblock_cursor_format_get(cur) != fnode);
+   evas_textblock_cursor_format_next(main_cur);
+   fail_if(evas_textblock_cursor_compare(main_cur, cur));
+
+   fnode = evas_textblock_node_format_prev_get(fnode);
+   fail_if(!fnode);
+   evas_textblock_cursor_at_format_set(cur, fnode);
+   fail_if(evas_textblock_cursor_pos_get(cur) != 9);
+   fail_if(evas_textblock_cursor_format_get(cur) != fnode);
+   evas_textblock_cursor_format_prev(main_cur);
+   fail_if(evas_textblock_cursor_compare(main_cur, cur));
+
+   evas_textblock_cursor_char_next(main_cur);
+   evas_textblock_cursor_format_prev(main_cur);
+   fail_if(evas_textblock_cursor_compare(main_cur, cur));
 
    /* FIXME: There is a lot more to be done. */
    END_TB_TEST();
@@ -414,6 +442,150 @@ START_TEST(evas_textblock_text_getters)
 }
 END_TEST
 
+/* Formats */
+START_TEST(evas_textblock_formats)
+{
+   START_TB_TEST();
+   const char *buf = "Th<b>i<font_size=15 wrap=none>s i</font_size=13>s</> a <br> te<ps>st<item></>.";
+   const Evas_Object_Textblock_Node_Format *fnode;
+   evas_object_textblock_text_markup_set(tb, buf);
+
+   /* Walk from the start */
+   fnode = evas_textblock_node_format_first_get(tb);
+   fail_if(!fnode);
+   fail_if(strcmp(evas_textblock_node_format_text_get(fnode), "+ b"));
+
+   fnode = evas_textblock_node_format_next_get(fnode);
+   fail_if(!fnode);
+   fail_if(strcmp(evas_textblock_node_format_text_get(fnode),
+            "+ font_size=15 wrap=none"));
+
+   fnode = evas_textblock_node_format_next_get(fnode);
+   fail_if(!fnode);
+   fail_if(strcmp(evas_textblock_node_format_text_get(fnode),
+            "- font_size=13"));
+
+   fnode = evas_textblock_node_format_next_get(fnode);
+   fail_if(!fnode);
+   fail_if(strcmp(evas_textblock_node_format_text_get(fnode), "- "));
+
+   fnode = evas_textblock_node_format_next_get(fnode);
+   fail_if(!fnode);
+   fail_if(strcmp(evas_textblock_node_format_text_get(fnode), "\n"));
+
+   fnode = evas_textblock_node_format_next_get(fnode);
+   fail_if(!fnode);
+   fail_if(strcmp(evas_textblock_node_format_text_get(fnode), "ps"));
+
+   fnode = evas_textblock_node_format_next_get(fnode);
+   fail_if(!fnode);
+   fail_if(strcmp(evas_textblock_node_format_text_get(fnode), "+ item"));
+
+   fnode = evas_textblock_node_format_next_get(fnode);
+   fail_if(!fnode);
+   fail_if(strcmp(evas_textblock_node_format_text_get(fnode), "- "));
+
+   fnode = evas_textblock_node_format_next_get(fnode);
+   fail_if(fnode);
+
+   /* Walk backwards */
+   fnode = evas_textblock_node_format_last_get(tb);
+   fail_if(!fnode);
+   fail_if(strcmp(evas_textblock_node_format_text_get(fnode), "- "));
+
+   fnode = evas_textblock_node_format_prev_get(fnode);
+   fail_if(!fnode);
+   fail_if(strcmp(evas_textblock_node_format_text_get(fnode), "+ item"));
+
+   fnode = evas_textblock_node_format_prev_get(fnode);
+   fail_if(!fnode);
+   fail_if(strcmp(evas_textblock_node_format_text_get(fnode), "ps"));
+
+   fnode = evas_textblock_node_format_prev_get(fnode);
+   fail_if(!fnode);
+   fail_if(strcmp(evas_textblock_node_format_text_get(fnode), "\n"));
+
+   fnode = evas_textblock_node_format_prev_get(fnode);
+   fail_if(!fnode);
+   fail_if(strcmp(evas_textblock_node_format_text_get(fnode), "- "));
+
+   fnode = evas_textblock_node_format_prev_get(fnode);
+   fail_if(!fnode);
+   fail_if(strcmp(evas_textblock_node_format_text_get(fnode),
+            "- font_size=13"));
+
+   fnode = evas_textblock_node_format_prev_get(fnode);
+   fail_if(!fnode);
+   fail_if(strcmp(evas_textblock_node_format_text_get(fnode),
+            "+ font_size=15 wrap=none"));
+
+   fnode = evas_textblock_node_format_prev_get(fnode);
+   fail_if(!fnode);
+   fail_if(strcmp(evas_textblock_node_format_text_get(fnode), "+ b"));
+
+   fnode = evas_textblock_node_format_prev_get(fnode);
+   fail_if(fnode);
+
+   /* Cursor and format detection */
+   fnode = evas_textblock_node_format_first_get(tb);
+   fail_if(!fnode);
+   evas_textblock_cursor_at_format_set(cur, fnode);
+   fail_if(evas_textblock_cursor_format_is_visible_get(cur));
+
+   fnode = evas_textblock_node_format_next_get(fnode);
+   fail_if(!fnode);
+   evas_textblock_cursor_at_format_set(cur, fnode);
+   fail_if(evas_textblock_cursor_format_is_visible_get(cur));
+
+   fnode = evas_textblock_node_format_next_get(fnode);
+   fail_if(!fnode);
+   evas_textblock_cursor_at_format_set(cur, fnode);
+   fail_if(evas_textblock_cursor_format_is_visible_get(cur));
+
+   fnode = evas_textblock_node_format_next_get(fnode);
+   fail_if(!fnode);
+   evas_textblock_cursor_at_format_set(cur, fnode);
+   fail_if(evas_textblock_cursor_format_is_visible_get(cur));
+
+   fnode = evas_textblock_node_format_next_get(fnode);
+   fail_if(!fnode);
+   evas_textblock_cursor_at_format_set(cur, fnode);
+   fail_if(!evas_textblock_cursor_format_is_visible_get(cur));
+
+   fnode = evas_textblock_node_format_next_get(fnode);
+   fail_if(!fnode);
+   evas_textblock_cursor_at_format_set(cur, fnode);
+   fail_if(!evas_textblock_cursor_format_is_visible_get(cur));
+
+   size_t i = 0;
+   evas_textblock_cursor_paragraph_first(cur);
+   do
+     {
+        switch (i)
+          {
+           case 2:
+           case 3:
+           case 6:
+           case 7:
+           case 10:
+           case 14:
+           case 17:
+           case 18:
+              fail_if(!evas_textblock_cursor_is_format(cur));
+              break;
+           default:
+              fail_if(evas_textblock_cursor_is_format(cur));
+              fail_if(evas_textblock_cursor_format_is_visible_get(cur));
+              break;
+          }
+        i++;
+     }
+   while (evas_textblock_cursor_char_next(cur));
+
+   END_TB_TEST();
+}
+END_TEST
+
 /* Different text styles, for example, shadow. */
 START_TEST(evas_textblock_style)
 {
@@ -487,5 +659,6 @@ void evas_test_textblock(TCase *tc)
    tcase_add_test(tc, evas_textblock_style);
    tcase_add_test(tc, evas_textblock_aux);
    tcase_add_test(tc, evas_textblock_text_getters);
+   tcase_add_test(tc, evas_textblock_formats);
 }
 
