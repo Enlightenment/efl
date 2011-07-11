@@ -87,10 +87,14 @@ START_TEST(evas_text_set_get)
    fail_if(strcmp(font, "/usr/share/fonts/Sans.ttf"));
 
    /* BiDi Delimiters */
-   const char *delim;
    evas_object_text_bidi_delimiters_set(to, ",.|");
-   delim = evas_object_text_bidi_delimiters_get(to);
-   fail_if(strcmp(delim, ",.|"));
+   fail_if(strcmp(evas_object_text_bidi_delimiters_get(to), ",.|"));
+   evas_object_text_bidi_delimiters_set(to, ",|");
+   fail_if(strcmp(evas_object_text_bidi_delimiters_get(to), ",|"));
+   evas_object_text_bidi_delimiters_set(to, NULL);
+   fail_if(evas_object_text_bidi_delimiters_get(to));
+   evas_object_text_bidi_delimiters_set(to, ",|");
+   fail_if(strcmp(evas_object_text_bidi_delimiters_get(to), ",|"));
    END_TEXT_TEST();
 }
 END_TEST

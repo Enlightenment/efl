@@ -659,6 +659,42 @@ START_TEST(evas_textblock_style)
 }
 END_TEST
 
+/* Various setters and getters */
+START_TEST(evas_textblock_set_get)
+{
+   START_TB_TEST();
+   const char *buf = "";
+   evas_object_textblock_text_markup_set(tb, buf);
+   fail_if(strcmp(evas_textblock_style_get(st), style_buf));
+   fail_if(evas_object_textblock_style_get(tb) != st);
+   evas_object_textblock_replace_char_set(tb, "|");
+   fail_if(strcmp(evas_object_textblock_replace_char_get(tb), "|"));
+   evas_object_textblock_replace_char_set(tb, "ש");
+   fail_if(strcmp(evas_object_textblock_replace_char_get(tb), "ש"));
+
+   evas_object_textblock_valign_set(tb, -1.0);
+   fail_if(evas_object_textblock_valign_get(tb) != 0.0);
+   evas_object_textblock_valign_set(tb, 0.0);
+   fail_if(evas_object_textblock_valign_get(tb) != 0.0);
+   evas_object_textblock_valign_set(tb, 0.432);
+   fail_if(evas_object_textblock_valign_get(tb) != 0.432);
+   evas_object_textblock_valign_set(tb, 1.0);
+   fail_if(evas_object_textblock_valign_get(tb) != 1.0);
+   evas_object_textblock_valign_set(tb, 1.5);
+   fail_if(evas_object_textblock_valign_get(tb) != 1.0);
+
+   evas_object_textblock_bidi_delimiters_set(tb, ",.|");
+   fail_if(strcmp(evas_object_textblock_bidi_delimiters_get(tb), ",.|"));
+   evas_object_textblock_bidi_delimiters_set(tb, ",|");
+   fail_if(strcmp(evas_object_textblock_bidi_delimiters_get(tb), ",|"));
+   evas_object_textblock_bidi_delimiters_set(tb, NULL);
+   fail_if(evas_object_textblock_bidi_delimiters_get(tb));
+   evas_object_textblock_bidi_delimiters_set(tb, ",|");
+   fail_if(strcmp(evas_object_textblock_bidi_delimiters_get(tb), ",|"));
+   END_TB_TEST();
+}
+END_TEST
+
 /* Aux evas stuff, such as scale. */
 START_TEST(evas_textblock_aux)
 {
@@ -755,5 +791,6 @@ void evas_test_textblock(TCase *tc)
    tcase_add_test(tc, evas_textblock_text_getters);
    tcase_add_test(tc, evas_textblock_formats);
    tcase_add_test(tc, evas_textblock_escaping);
+   tcase_add_test(tc, evas_textblock_set_get);
 }
 
