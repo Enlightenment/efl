@@ -1,5 +1,5 @@
 #include <Elementary.h>
-#include <elementary_config.h>
+#include "elementary_config.h"
 #ifndef ELM_LIB_QUICKLAUNCH
 static void
 my_hover_bt(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)

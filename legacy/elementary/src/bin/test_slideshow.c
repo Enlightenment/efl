@@ -1,5 +1,5 @@
 #include <Elementary.h>
-#include <elementary_config.h>
+#include "elementary_config.h"
 #ifndef ELM_LIB_QUICKLAUNCH
 
 static Evas_Object *slideshow, *bt_start, *bt_stop;
