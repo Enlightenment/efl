@@ -5404,7 +5404,7 @@ evas_textblock_node_format_remove_pair(Evas_Object *obj,
         eina_ustrbuf_remove(n->text_node->unicode, ind, ind + 1);
         if (format && _IS_PARAGRAPH_SEPARATOR(o, format))
           {
-             evas_textblock_cursor_set_at_format(&cur, n);
+             evas_textblock_cursor_at_format_set(&cur, n);
              _evas_textblock_cursor_nodes_merge(&cur);
           }
         _evas_textblock_cursors_update_offset(&cur, n->text_node, ind, -1);
@@ -5522,9 +5522,7 @@ evas_textblock_cursor_paragraph_prev(Evas_Textblock_Cursor *cur)
 EAPI void
 evas_textblock_cursor_set_at_format(Evas_Textblock_Cursor *cur, const Evas_Object_Textblock_Node_Format *n)
 {
-   if (!cur || !n) return;
-   cur->node = n->text_node;
-   cur->pos = _evas_textblock_node_format_pos_get(n);
+   evas_textblock_cursor_at_format_set(cur, n);
 }
 
 EAPI Eina_Bool
