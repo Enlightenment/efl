@@ -3105,7 +3105,15 @@ _layout_do_format(const Evas_Object *obj __UNUSED__, Ctxt *c,
           }
      }
 
-   evas_text_style_pad_get(fmt->style, style_pad_l, style_pad_r, style_pad_t, style_pad_b);
+     {
+        Evas_Coord pad_l, pad_r, pad_t, pad_b;
+        pad_l = pad_r = pad_t = pad_b = 0;
+        evas_text_style_pad_get(fmt->style, &pad_l, &pad_r, &pad_t, &pad_b);
+        if (pad_l > *style_pad_l) *style_pad_l = pad_l;
+        if (pad_r > *style_pad_r) *style_pad_r = pad_r;
+        if (pad_t > *style_pad_t) *style_pad_t = pad_t;
+        if (pad_b > *style_pad_b) *style_pad_b = pad_b;
+     }
 
    if (fmt->underline2)
      c->have_underline2 = 1;
