@@ -18,6 +18,8 @@
  * @ref transit_example_02_explained
  *
  * @ref general_functions_example_page
+ *
+ * @ref clock_example
  */
 
 /**
@@ -1091,6 +1093,56 @@
  * For the full code, follow @ref box_example_02.c "here".
  *
  * @example box_example_02.c
+ */
+
+/**
+ * @page clock_example Clock widget example
+ *
+ * This code places five Elementary clock widgets on a window, each of
+ * them exemplifying a part of the widget's API.
+ *
+ * The first of them is the pristine clock:
+ * @dontinclude clock_example.c
+ * @skip pristine
+ * @until evas_object_show
+ * As you see, the defaults for a clock are:
+ * - military time
+ * - no seconds shown
+ *
+ * For am/pm time, see the second clock:
+ * @dontinclude clock_example.c
+ * @skip am/pm
+ * @until evas_object_show
+ *
+ * The third one will show the seconds digits, which will flip in
+ * synchrony with system time. Note, besides, that the time itself is
+ * @b different from the system's -- it was customly set with
+ * elm_clock_time_set():
+ * @dontinclude clock_example.c
+ * @skip with seconds
+ * @until evas_object_show
+ *
+ * In both fourth and fifth ones, we turn on the <b>edition
+ * mode</b>. See how you can change each of the sheets on it, and be
+ * sure to try holding the mouse pressed over one of the sheet
+ * arrows. The forth one also starts with a custom time set:
+ * @dontinclude clock_example.c
+ * @skip in edition
+ * @until evas_object_show
+ *
+ * The fifth, besides editable, has only the time @b units editable,
+ * for hours, minutes and seconds. This exemplifies
+ * elm_clock_digit_edit_set():
+ * @dontinclude clock_example.c
+ * @skip but only
+ * @until evas_object_show
+ *
+ * See the full @ref clock_example.c "example", whose window should
+ * look like this picture:
+ * @image html screenshots/clock_example.png
+ * @image latex screenshots/clock_example.eps
+ *
+ * @example clock_example.c
  */
 
 /**
