@@ -1680,6 +1680,9 @@ AM_CONDITIONAL([BUILD_EXAMPLES], [test "x${build_examples}" = "xyes"])
 ## Unit tests, coverage
 
 EFL_CHECK_TESTS([enable_tests="yes"], [enable_tests="no"])
+if test "x$enable_tests" = "xyes" ; then
+   AC_DEFINE(HAVE_TESTS, 1, [Set to 1 if we enabled unit testing.])
+fi
 
 EFL_CHECK_COVERAGE([${enable_tests}], [enable_coverage="yes"], [enable_coverage="no"])
 EVAS_CFLAGS="${EVAS_CFLAGS} ${EFL_COVERAGE_CFLAGS}"
