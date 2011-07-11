@@ -655,7 +655,8 @@ eng_output_redraws_next_update_push(void *data, void *surface __UNUSED__, int x 
              s = (const char *)glGetString(GL_RENDERER);
              if (s)
                {
-                  if (strstr(s, "PowerVR SGX 540"))
+                  if (strstr(s, "PowerVR SGX 540") ||
+		      strstr(s, "Mali-400 MP"))
                      safe_native = 1;
                }
           }
