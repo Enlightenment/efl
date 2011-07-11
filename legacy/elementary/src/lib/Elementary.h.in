@@ -5085,7 +5085,7 @@ extern "C" {
    EAPI const Elm_Genlist_Item *elm_genlist_mode_item_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
    EAPI void               elm_genlist_reorder_mode_set(Evas_Object *obj, Eina_Bool reorder_mode) EINA_ARG_NONNULL(1);
    EAPI Eina_Bool          elm_genlist_reorder_mode_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
-   /** Signals that you can add callbacks for are:
+   /* Signals that you can add callbacks for are:
     * "clicked,double" - This is called when a user has double-clicked an item.
     *                    The event_info parameter is the genlist item that was
     *                    double-clicked.
@@ -5162,18 +5162,155 @@ extern "C" {
     * "swipe" - This is called when the genlist is swiped.
     */
 
-   /* check */
+   /**
+    * @page tutorial_check Check example
+    * @dontinclude check_example_01.c
+    *
+    * This example will show 2 checkboxes, one with just a label and the second
+    * one with both a label and an icon. This example also ilustrates how to
+    * have the checkbox change the value of a variable and how to react to those
+    * changes.
+    *
+    * We will start with the usual setup code:
+    * @until show(bg)
+    *
+    * And now we create our first checkbox, set its label, tell it to change
+    * the value of @p value when the checkbox stats is changed and ask to be
+    * notified of state changes:
+    * @until show
+    *
+    * For our second checkbox we are going to set an icon so we need to create
+    * and icon:
+    * @until show
+    * @note For simplicity we are using a rectangle as icon, but any evas object
+    * can be used.
+    *
+    * And for our second checkbox we set the label, icon and state to true:
+    * @until show
+    *
+    * We now do some more setup:
+    * @until ELM_MAIN
+    *
+    * And finally implement the callback that will be called when the first
+    * checkbox's state changes. This callback will use @p data to print a
+    * message:
+    * @until }
+    * @note This work because @p data is @p value(from the main function) and @p
+    * value is changed when the checkbox is changed.
+    *
+    * Our example will look like this:
+    * @image html screenshots/check_example_01.png
+    * @image latex screenshots/check_example_01.eps
+    *
+    * @example check_example_01.c
+    */
+   /**
+    * @defgroup Check Check
+    *
+    * @brief The check widget allows for toggling a value between true and
+    * false.
+    *
+    * Check objects are a lot like radio objects in layout and functionality
+    * except they do not work as a group, but independently and only toggle the
+    * value of a boolean from false to true (0 or 1). elm_check_state_set() sets
+    * the boolean state (1 for true, 0 for false), and elm_check_state_get()
+    * returns the current state. For convenience, like the radio objects, you
+    * can set a pointer to a boolean directly with elm_check_state_pointer_set()
+    * for it to modify.
+    *
+    * Signals that you can add callbacks for are:
+    * "changed" - This is called whenever the user changes the state of one of
+    *             the check object(event_info is NULL).
+    *
+    * @ref tutorial_check should give you a firm grasp of how to use this widget.
+    * @{
+    */
+   /**
+    * @brief Add a new Check object
+    *
+    * @param parent The parent object
+    * @return The new object or NULL if it cannot be created
+    */
    EAPI Evas_Object *elm_check_add(Evas_Object *parent) EINA_ARG_NONNULL(1);
+   /**
+    * @brief Set the text label of the check object
+    *
+    * @param obj The check object
+    * @param label The text label string in UTF-8
+    *
+    * @deprecated use elm_object_text_set() instead.
+    */
    EINA_DEPRECATED EAPI void         elm_check_label_set(Evas_Object *obj, const char *label) EINA_ARG_NONNULL(1);
+   /**
+    * @brief Get the text label of the check object
+    *
+    * @param obj The check object
+    * @return The text label string in UTF-8
+    *
+    * @deprecated use elm_object_text_get() instead.
+    */
    EINA_DEPRECATED EAPI const char  *elm_check_label_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+   /**
+    * @brief Set the icon object of the check object
+    *
+    * @param obj The check object
+    * @param icon The icon object
+    *
+    * Once the icon object is set, a previously set one will be deleted.
+    * If you want to keep that old content object, use the
+    * elm_check_icon_unset() function.
+    */
    EAPI void         elm_check_icon_set(Evas_Object *obj, Evas_Object *icon) EINA_ARG_NONNULL(1);
+   /**
+    * @brief Get the icon object of the check object
+    *
+    * @param obj The check object
+    * @return The icon object
+    */
    EAPI Evas_Object *elm_check_icon_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+   /**
+    * @brief Unset the icon used for the check object
+    *
+    * @param obj The check object
+    * @return The icon object that was being used
+    *
+    * Unparent and return the icon object which was set for this widget.
+    */
    EAPI Evas_Object *elm_check_icon_unset(Evas_Object *obj) EINA_ARG_NONNULL(1);
+   /**
+    * @brief Set the on/off state of the check object
+    *
+    * @param obj The check object
+    * @param state The state to use (1 == on, 0 == off)
+    *
+    * This sets the state of the check and, if set, the state of the pointed to
+    * Eina_Bool, calling this @b doesn't cause the "changed" signal to be
+    * emited.
+    */
    EAPI void         elm_check_state_set(Evas_Object *obj, Eina_Bool state) EINA_ARG_NONNULL(1);
+   /**
+    * @brief Get the state of the check object
+    *
+    * @param obj The check object
+    * @return The boolean state
+    */
    EAPI Eina_Bool    elm_check_state_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+   /**
+    * @brief Set a convenience pointer to a boolean to change
+    *
+    * @param obj The check object
+    * @param statep Pointer to the boolean to modify
+    *
+    * This sets a pointer to a boolean, that, in addition to the check objects
+    * state will also be modified directly. To stop setting the object pointed
+    * to simply use NULL as the @p statep parameter. If @p statep is not NULL,
+    * then when this is called, the check objects state will also be modified to
+    * reflect the value of the boolean @p statep points to, just like calling
+    * elm_check_state_set().
+    */
    EAPI void         elm_check_state_pointer_set(Evas_Object *obj, Eina_Bool *statep) EINA_ARG_NONNULL(1);
-   /* smart callbacks called:
-    * "changed" - This is called whenever the user changes the state of one of the check object.
+   /**
+    * @}
     */
 
    /* radio */
