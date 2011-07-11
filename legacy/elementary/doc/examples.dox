@@ -20,6 +20,8 @@
  * @ref general_functions_example_page
  *
  * @ref clock_example
+ *
+ * @ref flipselector_example
  */
 
 /**
@@ -1143,6 +1145,63 @@
  * @image latex screenshots/clock_example.eps
  *
  * @example clock_example.c
+ */
+
+/**
+ * @page flipselector_example Flip selector widget example
+ *
+ * This code places an Elementary flip selector widget on a window,
+ * along with two buttons trigerring actions on it (though its API).
+ *
+ * The selector is being populated with the following items:
+ * @dontinclude flipselector_example.c
+ * @skip lbl[]
+ * @until ;
+ *
+ * Next, we create it, populating it with those items and registering
+ * two (smart) callbacks on it:
+ * @dontinclude flipselector_example.c
+ * @skip fp = elm_flipselector_add
+ * @until object_show
+ *
+ * Those two callbacks will take place whenever one of those smart
+ * events occur, and they will just print something to @c stdout:
+ * @dontinclude flipselector_example.c
+ * @skip underflow callback
+ * @until static void
+ * Flip the sheets on the widget while looking at the items list, in
+ * the source code, and you'll get the idea of those events.
+ *
+ * The two buttons below the flip selector will take the actions
+ * described in their labels:
+ * @dontinclude flipselector_example.c
+ * @skip bt = elm_button_add
+ * @until callback_add(win
+ *
+ * @dontinclude flipselector_example.c
+ * @skip unselect the item
+ * @until underflow
+ *
+ * Click on them to exercise those flip selector API calls. To
+ * interact with the other parts of this API, there's a command line
+ * interface, whose help string can be asked for with the 'h' key:
+ * @dontinclude flipselector_example.c
+ * @skip commands
+ * @until ;
+ *
+ * The 'n' and 'p' keys will exemplify elm_flipselector_flip_next()
+ * and elm_flipselector_flip_prev(), respectively. 'f' and 'l' account
+ * for elm_flipselector_first_item_get() and
+ * elm_flipselector_last_item_get(), respectively. Finally, 's' will
+ * issue elm_flipselector_selected_item_get() on our example flip
+ * selector widget.
+ *
+ * See the full @ref flipselector_example.c "example", whose window should
+ * look like this picture:
+ * @image html screenshots/flipselector_example.png
+ * @image latex screenshots/flipselector_example.eps
+ *
+ * @example flipselector_example.c
  */
 
 /**

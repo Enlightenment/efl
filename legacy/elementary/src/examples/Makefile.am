@@ -86,6 +86,7 @@ pkglib_PROGRAMS += \
 	theme_example_01 \
 	theme_example_02 \
 	clock_example \
+	flipselector_example \
 	theme_example.edj
 
 # This variable will hold the list of screenshots that will be made
@@ -104,7 +105,8 @@ SCREENSHOTS = \
 	animator_example_01:animator_example_03.png:0.9 \
 	frame_example_01:frame_example_01.png:0.0 \
 	theme_example_01:theme_example_01.png:0.0 \
-	clock_example:clock_example.png:0.5
+	clock_example:clock_example.png:0.5 \
+	flipselector_example:flipselector_example.png:0.0
 
 screenshots: all
 	@mkdir -p $(top_srcdir)/doc/img/screenshots

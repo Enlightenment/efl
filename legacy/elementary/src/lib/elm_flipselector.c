@@ -1,22 +1,6 @@
 #include <Elementary.h>
 #include "elm_priv.h"
 
-/**
- * @addtogroup Flipselector Flipselector
- *
- * A flip selector is a widget to show a set of label items, one at a
- * time, with an animation when one changes the current selection
- * (like the flip of calendar sheets, in the default theme).
- *
- * Signals that you can add callbacks for are:
- *
- * "selected" - when flipselector selected item is changed
- * "overflowed" - when flipselector item is changed to first item
- *                from last item
- * "underflowed" - when flipselector item is changed to last item
- *                 from first item.
- */
-
 /* TODO: ideally, the default theme would use map{} blocks on the TEXT
    parts to implement their fading in/out propertly (as in the clock
    widget) */
@@ -563,14 +547,6 @@ _callbacks_set(Evas_Object *obj)
                                    "", _signal_val_change_stop, obj);
 }
 
-/**
- * Add a new flipselector to the parent.
- *
- * @param parent The parent object
- * @return The new object or NULL, if it cannot be created
- *
- * @ingroup Flipselector
- */
 EAPI Evas_Object *
 elm_flipselector_add(Evas_Object *parent)
 {
@@ -585,6 +561,7 @@ elm_flipselector_add(Evas_Object *parent)
    elm_widget_sub_object_add(parent, obj);
    elm_widget_data_set(obj, wd);
 
+   wd->self = obj;
    elm_widget_del_hook_set(obj, _del_hook);
    elm_widget_theme_hook_set(obj, _theme_hook);
    /* TODO: elm_widget_disable_hook_set(obj, _disable_hook); */
@@ -606,13 +583,6 @@ elm_flipselector_add(Evas_Object *parent)
    return obj;
 }
 
-/**
- * Select next item of a flipselector.
- *
- * @param obj The flipselector object
- *
- * @ingroup Flipselector
- */
 EAPI void
 elm_flipselector_flip_next(Evas_Object *obj)
 {
@@ -629,13 +599,6 @@ elm_flipselector_flip_next(Evas_Object *obj)
    _flipselector_unwalk(wd);
 }
 
-/**
- * Select previous item of a flipselector.
- *
- * @param obj The flipselector object
- *
- * @ingroup Flipselector
- */
 EAPI void
 elm_flipselector_flip_prev(Evas_Object *obj)
 {
@@ -652,21 +615,6 @@ elm_flipselector_flip_prev(Evas_Object *obj)
    _flipselector_unwalk(wd);
 }
 
-/**
- * Append item to a flipselector.
- *
- * @param obj The flipselector object
- * @param label The label of new item
- * @param func Convenience function called when item selected
- * @param data Data passed to @p func above
- * @return A handle to the item added or NULL, on errors
- *
- * @note The maximum length of the label is going to be determined by
- * the widget's theme. Strings larger than that value are going to be
- * truncated.
- *
- * @ingroup Flipselector
- */
 EAPI Elm_Flipselector_Item *
 elm_flipselector_item_append(Evas_Object *obj, const char *label, void (*func)(void *data, Evas_Object *obj, void *event_info), void *data)
 {
@@ -703,21 +651,6 @@ elm_flipselector_item_append(Evas_Object *obj, const char *label, void (*func)(v
    return item;
 }
 
-/**
- * Prepend item to a flipselector.
- *
- * @param obj The flipselector object
- * @param label The label of new item
- * @param func Convenience function called when item selected
- * @param data Data passed to @p func above
- * @return A handle to the item added or NULL, on errors
- *
- * @note The maximum length of the label is going to be determined by
- * the widget's theme. Strings larger than that value are going to be
- * truncated.
- *
- * @ingroup Flipselector
- */
 EAPI Elm_Flipselector_Item *
 elm_flipselector_item_prepend(Evas_Object *obj, const char *label, void (*func)(void *data, Evas_Object *obj, void *event_info), void *data)
 {
@@ -755,14 +688,6 @@ elm_flipselector_item_prepend(Evas_Object *obj, const char *label, void (*func)(
 }
 
 /* TODO: account for deleted items?  */
-/**
- * Get a list of items in the flipselector.
- *
- * @param obj The flipselector object
- * @return The list of items, or NULL on errors.
- *
- * @ingroup Flipselector
- */
 EAPI const Eina_List *
 elm_flipselector_items_get(const Evas_Object *obj)
 {
@@ -775,14 +700,6 @@ elm_flipselector_items_get(const Evas_Object *obj)
    return wd->items;
 }
 
-/**
- * Get the first item in the flipselector
- *
- * @param obj The flipselector object
- * @return The first item, or NULL if none
- *
- * @ingroup Flipselector
- */
 EAPI Elm_Flipselector_Item *
 elm_flipselector_first_item_get(const Evas_Object *obj)
 {
@@ -807,14 +724,6 @@ elm_flipselector_first_item_get(const Evas_Object *obj)
    return NULL;
 }
 
-/**
- * Get the last item in the flipselector
- *
- * @param obj The flipselector object
- * @return The last item, or NULL if none
- *
- * @ingroup Flipselector
- */
 EAPI Elm_Flipselector_Item *
 elm_flipselector_last_item_get(const Evas_Object *obj)
 {
@@ -839,14 +748,6 @@ elm_flipselector_last_item_get(const Evas_Object *obj)
    return NULL;
 }
 
-/**
- * Get the selected item in a flipselector.
- *
- * @param obj The flipselector object
- * @return The selected item, or NULL if none
- *
- * @ingroup Flipselector
- */
 EAPI Elm_Flipselector_Item *
 elm_flipselector_selected_item_get(const Evas_Object *obj)
 {
@@ -859,19 +760,6 @@ elm_flipselector_selected_item_get(const Evas_Object *obj)
    return DATA_GET(wd->current);
 }
 
-/**
- * Set the selected state of an item
- *
- * This sets the selected state (EINA_TRUE selected, EINA_FALSE not selected)
- * of the given item @p item.
- * If a new item is selected the previosly selected will be unselected.
- * If the item @p item is unselected, the first item will be selected.
- *
- * @param item The item
- * @param selected The selected state
- *
- * @ingroup Flipselector
- */
 EAPI void
 elm_flipselector_item_selected_set(Elm_Flipselector_Item *item, Eina_Bool selected)
 {
@@ -923,14 +811,6 @@ elm_flipselector_item_selected_set(Elm_Flipselector_Item *item, Eina_Bool select
    _flipselector_unwalk(wd);
 }
 
-/*
- * Get the selected state of @p item.
- *
- * @param item The flipselector item
- * @return If true, the item is selected
- *
- * @ingroup Flipselector
- */
 EAPI Eina_Bool
 elm_flipselector_item_selected_get(const Elm_Flipselector_Item *item)
 {
@@ -942,13 +822,6 @@ elm_flipselector_item_selected_get(const Elm_Flipselector_Item *item)
    return (eina_list_data_get(wd->current) == item);
 }
 
-/**
- * Delete a given item from a flipselector.
- *
- * @param item The item
- *
- * @ingroup Flipselector
- */
 EAPI void
 elm_flipselector_item_del(Elm_Flipselector_Item *item)
 {
@@ -975,14 +848,6 @@ elm_flipselector_item_del(Elm_Flipselector_Item *item)
    _flipselector_unwalk(wd);
 }
 
-/**
- * Get the label of a given flipselector item.
- *
- * @param item The item
- * @return The label of a given item, or NULL if none
- *
- * @ingroup Flipselector
- */
 EAPI const char *
 elm_flipselector_item_label_get(const Elm_Flipselector_Item *item)
 {
@@ -1003,14 +868,6 @@ elm_flipselector_item_label_get(const Elm_Flipselector_Item *item)
    return NULL;
 }
 
-/**
- * Set the label of a given flipselector item.
- *
- * @param item The item
- * @param label The text label string in UTF-8
- *
- * @ingroup Flipselector
- */
 EAPI void
 elm_flipselector_item_label_set(Elm_Flipselector_Item *item, const char *label)
 {
@@ -1046,14 +903,6 @@ elm_flipselector_item_label_set(Elm_Flipselector_Item *item, const char *label)
    return;
 }
 
-/**
- * Gets the item before @p item in a flipselector.
- *
- * @param item The item
- * @return The item before the item @p item
- *
- * @ingroup Flipselector
- */
 EAPI Elm_Flipselector_Item *
 elm_flipselector_item_prev_get(Elm_Flipselector_Item *item)
 {
@@ -1079,14 +928,6 @@ elm_flipselector_item_prev_get(Elm_Flipselector_Item *item)
    return NULL;
 }
 
-/**
- * Gets the item after @p item in a flipselector.
- *
- * @param item The item
- * @return The item after the item @p item
- *
- * @ingroup Flipselector
- */
 EAPI Elm_Flipselector_Item *
 elm_flipselector_item_next_get(Elm_Flipselector_Item *item)
 {
@@ -1112,19 +953,6 @@ elm_flipselector_item_next_get(Elm_Flipselector_Item *item)
    return NULL;
 }
 
-/**
- * Set the flipping interval for the flipselector.
- *
- * @param obj The flipselector object
- * @param interval The interval value in seconds
- *
- * The interval value is decreased while the user flips the widget up
- * or down repeatedly. The next interval value is the previous
- * interval / 1.05, so it speeds up a bit. Default value is 0.85
- * seconds.
- *
- * @ingroup Flipselector
- */
 EAPI void
 elm_flipselector_interval_set(Evas_Object *obj, double interval)
 {
@@ -1137,19 +965,6 @@ elm_flipselector_interval_set(Evas_Object *obj, double interval)
    wd->first_interval = interval;
 }
 
-/**
- * Get the flipping interval of the flipselector.
- *
- * @param obj The flipselector object
- * @return The value of the first interval in seconds
- *
- * The interval value is decreased while the user flips the widget up
- * or down repeatedly. The next interval value is the previous
- * interval / 1.05, so it speeds up a bit. Default value is 0.85
- * seconds.
- *
- * @ingroup Flipselector
- */
 EAPI double
 elm_flipselector_interval_get(const Evas_Object *obj)
 {
