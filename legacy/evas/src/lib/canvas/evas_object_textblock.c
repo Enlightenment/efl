@@ -6563,6 +6563,11 @@ _evas_textblock_cursors_update_offset(const Evas_Textblock_Cursor *cur,
                        data->pos += offset;
                     }
                }
+             else if (!data->node)
+               {
+                  data->node = o->text_nodes;
+                  data->pos = 0;
+               }
           }
      }
 }
@@ -6612,8 +6617,6 @@ evas_textblock_cursor_text_append(Evas_Textblock_Cursor *cur, const char *_text)
    if (!cur) return 0;
    text = eina_unicode_utf8_to_unicode(_text, &len);
    o = (Evas_Object_Textblock *)(cur->obj->object_data);
-   /* Update all the cursors after our position. */
-   _evas_textblock_cursors_update_offset(cur, cur->node, cur->pos, len);
 
    n = cur->node;
    if (n)
@@ -6644,6 +6647,11 @@ evas_textblock_cursor_text_append(Evas_Textblock_Cursor *cur, const char *_text)
              fnode = n->format_node;
           }
      }
+   else if (o->text_nodes)
+     {
+        cur->node = o->text_nodes;
+        cur->pos = 0;
+     }
    else
      {
         n = _evas_textblock_node_text_new();
@@ -6657,6 +6665,9 @@ evas_textblock_cursor_text_append(Evas_Textblock_Cursor *cur, const char *_text)
    /* Advance the formats */
    if (fnode && (fnode->text_node == cur->node))
      fnode->offset += len;
+
+   /* Update all the cursors after our position. */
+   _evas_textblock_cursors_update_offset(cur, cur->node, cur->pos, len);
 
    _evas_textblock_changed(o, cur->obj);
    n->dirty = EINA_TRUE;
