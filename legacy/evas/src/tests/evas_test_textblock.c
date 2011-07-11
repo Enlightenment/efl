@@ -929,6 +929,9 @@ START_TEST(evas_textblock_escaping)
    fail_if(evas_textblock_escape_string_range_get(tmp, tmp + 7));
    fail_if(evas_textblock_escape_string_range_get(tmp, tmp + 5));
 
+   const char *buf = "This &middot; is";
+   evas_object_textblock_text_markup_set(tb, buf);
+   fail_if(strcmp(evas_object_textblock_text_markup_get(tb), buf));
 
    END_TB_TEST();
 }
