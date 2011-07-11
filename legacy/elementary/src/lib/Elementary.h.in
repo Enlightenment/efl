@@ -5283,9 +5283,9 @@ extern "C" {
     * @param obj The check object
     * @param state The state to use (1 == on, 0 == off)
     *
-    * This sets the state of the check and, if set, the state of the pointed to
-    * Eina_Bool, calling this @b doesn't cause the "changed" signal to be
-    * emited.
+    * This sets the state of the check. If set
+    * with elm_check_state_pointer_set() the state of that variable is also
+    * changed. Calling this @b doesn't cause the "changed" signal to be emited.
     */
    EAPI void         elm_check_state_set(Evas_Object *obj, Eina_Bool state) EINA_ARG_NONNULL(1);
    /**
