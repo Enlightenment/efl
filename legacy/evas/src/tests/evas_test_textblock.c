@@ -824,6 +824,7 @@ END_TEST
 START_TEST(evas_textblock_style)
 {
    Evas_Coord w, h, nw, nh;
+   Evas_Coord l, r, t, b;
    START_TB_TEST();
    Evas_Textblock_Style *newst;
    const char *buf = "Test<ps>Test2<ps>נסיון";
@@ -842,6 +843,45 @@ START_TEST(evas_textblock_style)
    evas_object_textblock_size_formatted_get(tb, &nw, &nh);
    fail_if((w >= nw) || (h >= nh));
 
+   evas_object_textblock_text_markup_set(tb, "Test");
+   evas_object_textblock_style_insets_get(tb, &l, &r, &t, &b);
+//   fail_if((l != 0) || (r != 0) || (t != 0) || (b != 0));
+
+   evas_object_textblock_text_markup_set(tb, "<style=shadow>Test</>");
+   evas_object_textblock_style_insets_get(tb, &l, &r, &t, &b);
+   fail_if((l != 0) || (r != 1) || (t != 0) || (b != 1));
+
+   evas_object_textblock_text_markup_set(tb, "<style=outline>Test</>");
+   evas_object_textblock_style_insets_get(tb, &l, &r, &t, &b);
+   fail_if((l != 1) || (r != 1) || (t != 1) || (b != 1));
+
+   evas_object_textblock_text_markup_set(tb, "<style=soft_outline>Test</>");
+   evas_object_textblock_style_insets_get(tb, &l, &r, &t, &b);
+   fail_if((l != 2) || (r != 2) || (t != 2) || (b != 2));
+
+   evas_object_textblock_text_markup_set(tb, "<style=glow>Test</>");
+   evas_object_textblock_style_insets_get(tb, &l, &r, &t, &b);
+   fail_if((l != 2) || (r != 2) || (t != 2) || (b != 2));
+
+   evas_object_textblock_text_markup_set(tb, "<style=outline_shadow>Test</>");
+   evas_object_textblock_style_insets_get(tb, &l, &r, &t, &b);
+   fail_if((l != 1) || (r != 2) || (t != 1) || (b != 2));
+
+   evas_object_textblock_text_markup_set(tb, "<style=far_shadow>Test</>");
+   evas_object_textblock_style_insets_get(tb, &l, &r, &t, &b);
+   fail_if((l != 1) || (r != 2) || (t != 1) || (b != 2));
+
+   evas_object_textblock_text_markup_set(tb, "<style=outline_soft_shadow>Test</>");
+   evas_object_textblock_style_insets_get(tb, &l, &r, &t, &b);
+   fail_if((l != 1) || (r != 3) || (t != 1) || (b != 3));
+
+   evas_object_textblock_text_markup_set(tb, "<style=soft_shadow>Test</>");
+   evas_object_textblock_style_insets_get(tb, &l, &r, &t, &b);
+   fail_if((l != 1) || (r != 3) || (t != 1) || (b != 3));
+
+   evas_object_textblock_text_markup_set(tb, "<style=far_soft_shadow>Test</>");
+   evas_object_textblock_style_insets_get(tb, &l, &r, &t, &b);
+   fail_if((l != 0) || (r != 4) || (t != 0) || (b != 4));
    END_TB_TEST();
 }
 END_TEST
