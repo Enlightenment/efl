@@ -7457,7 +7457,7 @@ EAPI const Evas_Object_Textblock_Node_Format *evas_textblock_cursor_format_get(c
  * @param fmt the format node.
  * @return the textual format of the format node.
  */
-EAPI const char                  *evas_textblock_node_format_text_get(const Evas_Object_Textblock_Node_Format *cur) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
+EAPI const char                  *evas_textblock_node_format_text_get(const Evas_Object_Textblock_Node_Format *fnode) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
 
 /**
  * Set the cursor to point to the position of fmt.
