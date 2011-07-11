@@ -34,6 +34,9 @@ if test "x${_efl_enable_tests}" = "xyes" ; then
       [dummy="yes"],
       [_efl_enable_tests="no"])
 fi
+if test "x${_efl_enable_tests}" = "xyes" ; then
+   AC_DEFINE(HAVE_TESTS, 1, [Set to 1 if we enabled unit testing.])
+fi
 
 AM_CONDITIONAL(EFL_ENABLE_TESTS, test "x${_efl_enable_tests}" = "xyes")
 
