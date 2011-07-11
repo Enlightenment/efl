@@ -670,6 +670,32 @@ START_TEST(evas_textblock_formats)
         fail_if((w >= nw) || (h >= nh));
      }
 
+   /* Various formats, just verify there's no seg, we can't really
+    * verify them visually, well, we can some of them. Possibly in the
+    * future we will */
+   evas_object_textblock_text_markup_set(tb,
+         "<font_size=40>font_size=40</><ps>"
+         "<color=#F210B3FF>color=#F210B3FF</><ps>"
+         "<underline=single underline_color=#A2B3C4>underline=single underline_color=#A2B3C4</><ps>"
+         "<underline=double underline_color=#F00 underline2_color=#00F>underline=double underline_color=#F00 underline2_color=#00F</><ps>"
+         "<style=outline outline_color=#F0FA>style=outline outline_color=#F0FA</><ps>"
+         "<style=shadow shadow_color=#F0F>style=shadow shadow_color=#F0F</><ps>"
+         "<style=glow glow_color=#BBB>style=glow glow_color=#BBB</><ps>"
+         "<style=glow glow2_color=#0F0>style=glow glow2_color=#0F0</><ps>"
+         "<style=glow color=#fff glow2_color=#fe87 glow_color=#f214>style=glow color=#fff glow2_color=#fe87 glow_color=#f214</><ps>"
+         "<backing=on backing_color=#00F>backing=on backing_color=#00F</><ps>"
+         "<strikethrough=on strikethrough_color=#FF0>strikethrough=on strikethrough_color=#FF0</><ps>"
+         "<align=right>align=right</><ps>"
+         "<backing=on backing_color=#F008 valign=0.0>valign=0.0</><ps>"
+         "<backing=on backing_color=#0F08 tabstops=50>tabstops=<\\t></>50</><ps>"
+         "<backing=on backing_color=#00F8 linesize=40>linesize=40</><ps>"
+         "<backing=on backing_color=#F0F8 linerelsize=200%>linerelsize=200%</><ps>"
+         "<backing=on backing_color=#0FF8 linegap=20>linegap=20</><ps>"
+         "<backing=on backing_color=#FF08 linerelgap=100%>linerelgap=100%</><ps>");
+
+   /* Force a relayout */
+   evas_object_textblock_size_formatted_get(tb, NULL, NULL);
+
    END_TB_TEST();
 }
 END_TEST
