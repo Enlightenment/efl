@@ -1332,6 +1332,7 @@ elm_list_add(Evas_Object *parent)
    elm_widget_signal_callback_del_hook_set(obj, _signal_callback_del_hook);
    elm_widget_event_hook_set(obj, _event_hook);
 
+   wd->self = obj;
    wd->scr = elm_smart_scroller_add(e);
    elm_smart_scroller_widget_set(wd->scr, obj);
    elm_widget_resize_object_set(obj, wd->scr);
