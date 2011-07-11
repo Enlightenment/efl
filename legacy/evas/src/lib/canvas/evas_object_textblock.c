@@ -5565,17 +5565,16 @@ evas_textblock_cursor_format_next(Evas_Textblock_Cursor *cur)
 EAPI Eina_Bool
 evas_textblock_cursor_format_prev(Evas_Textblock_Cursor *cur)
 {
-   Evas_Object_Textblock_Node_Format *node;
+   const Evas_Object_Textblock_Node_Format *node;
    if (!cur) return EINA_FALSE;
    if (!cur->node) return EINA_FALSE;
-   /* If the current node is a format node, just get the next if any,
-    * if it's a text, get the current format node out of the text and return
-    * the next format node if any. */
-   node = _evas_textblock_cursor_node_format_before_or_at_pos_get(cur);
-   if (evas_textblock_cursor_is_format(cur))
+   node = evas_textblock_cursor_format_get(cur);
+   if (!node)
      {
+        node = _evas_textblock_cursor_node_format_before_or_at_pos_get(cur);
         if (node)
           {
+             cur->node = node->text_node;
              cur->pos = _evas_textblock_node_format_pos_get(node);
 
              return EINA_TRUE;
@@ -5590,7 +5589,7 @@ evas_textblock_cursor_format_prev(Evas_Textblock_Cursor *cur)
         if (pnode)
           {
              cur->node = pnode->text_node;
-             cur->pos = _evas_textblock_node_format_pos_get(node);
+             cur->pos = _evas_textblock_node_format_pos_get(pnode);
 
              return EINA_TRUE;
           }
