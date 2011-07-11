@@ -67,7 +67,7 @@ ecore_animator_example_LDADD = $(ECOREBASELDADD) $(top_builddir)/src/lib/ecore_e
 ecore_con_lookup_example_LDADD = $(ECOREBASELDADD) $(top_builddir)/src/lib/ecore_con/libecore_con.la
 ecore_con_url_headers_example_LDADD = $(ECOREBASELDADD) $(top_builddir)/src/lib/ecore_con/libecore_con.la
 ecore_con_url_download_example_LDADD = $(ECOREBASELDADD) $(top_builddir)/src/lib/ecore_con/libecore_con.la
-ecore_con_server_simple_example_LDADD = $(ECOREBASELDADD) $(top_builddir)/src/lib/ecore_con/libecore_con.la
+#ecore_con_server_simple_example_LDADD = $(ECOREBASELDADD) $(top_builddir)/src/lib/ecore_con/libecore_con.la
 
 endif
 
