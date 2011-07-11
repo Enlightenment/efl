@@ -7142,7 +7142,7 @@ EAPI const char                  *evas_textblock_escape_string_get(const char *e
 /**
  * Returns the escaped version of the string.
  * @param string to escape
- * @param len_ret the len of the new escape
+ * @param len_ret the len of the part of the string that was used.
  * @return the escaped string.
  */
 EAPI const char                  *evas_textblock_string_escape_get(const char *string, int *len_ret) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
