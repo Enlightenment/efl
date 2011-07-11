@@ -696,6 +696,28 @@ START_TEST(evas_textblock_formats)
    /* Force a relayout */
    evas_object_textblock_size_formatted_get(tb, NULL, NULL);
 
+   /* Removing paired formats. */
+   evas_object_textblock_text_markup_set(tb,"<a>aa<b>bb</b>cc</a>");
+   fnode = evas_textblock_node_format_first_get(tb);
+   evas_textblock_node_format_remove_pair(tb, (Evas_Object_Textblock_Node_Format *) fnode);
+   fnode = evas_textblock_node_format_first_get(tb);
+   fail_if(!fnode);
+   fail_if(strcmp(evas_textblock_node_format_text_get(fnode), "+ b"));
+   fnode = evas_textblock_node_format_next_get(fnode);
+   fail_if(!fnode);
+   fail_if(strcmp(evas_textblock_node_format_text_get(fnode), "- b"));
+
+   evas_object_textblock_text_markup_set(tb,"<a>aa<b>bb</b>cc</a>");
+   fnode = evas_textblock_node_format_first_get(tb);
+   fnode = evas_textblock_node_format_next_get(fnode);
+   evas_textblock_node_format_remove_pair(tb, (Evas_Object_Textblock_Node_Format *) fnode);
+   fnode = evas_textblock_node_format_first_get(tb);
+   fail_if(!fnode);
+   fail_if(strcmp(evas_textblock_node_format_text_get(fnode), "+ a"));
+   fnode = evas_textblock_node_format_next_get(fnode);
+   fail_if(!fnode);
+   fail_if(strcmp(evas_textblock_node_format_text_get(fnode), "- a"));
+
    END_TB_TEST();
 }
 END_TEST
