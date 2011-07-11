@@ -342,7 +342,6 @@ START_TEST(evas_textblock_cursor)
    evas_textblock_cursor_format_prev(main_cur);
    fail_if(evas_textblock_cursor_compare(main_cur, cur));
 
-   /* FIXME: There is a lot more to be done. */
    END_TB_TEST();
 }
 END_TEST
@@ -351,9 +350,72 @@ END_TEST
 START_TEST(evas_textblock_editing)
 {
    START_TB_TEST();
-   const char *buf = "This is a <br> test.";
+   const char *buf = "First par.<ps>Second par.";
    evas_object_textblock_text_markup_set(tb, buf);
-   fail_if(strcmp(evas_object_textblock_text_markup_get(tb), buf));
+   Evas_Textblock_Cursor *main_cur = evas_object_textblock_cursor_get(tb);
+
+   /* Check deletion works */
+   /* Try deleting after the end of the textblock */
+     {
+        char *content;
+        evas_textblock_cursor_paragraph_last(cur);
+        content = strdup(evas_object_textblock_text_markup_get(tb));
+        evas_textblock_cursor_char_delete(cur);
+        fail_if(strcmp(content, evas_object_textblock_text_markup_get(tb)));
+        free(content);
+     }
+
+   /* Delete the first char */
+   evas_textblock_cursor_paragraph_first(cur);
+   evas_textblock_cursor_char_delete(cur);
+   fail_if(strcmp(evas_object_textblock_text_markup_get(tb),
+            "irst par.<ps>Second par."));
+
+   /* Delete some arbitrary char */
+   evas_textblock_cursor_char_next(cur);
+   evas_textblock_cursor_char_next(cur);
+   evas_textblock_cursor_char_next(cur);
+   evas_textblock_cursor_char_delete(cur);
+   fail_if(strcmp(evas_object_textblock_text_markup_get(tb),
+            "irs par.<ps>Second par."));
+
+   /* Delete a range */
+   evas_textblock_cursor_pos_set(main_cur, 1);
+   evas_textblock_cursor_pos_set(cur, 6);
+   evas_textblock_cursor_range_delete(cur, main_cur);
+   fail_if(strcmp(evas_object_textblock_text_markup_get(tb),
+            "ir.<ps>Second par."));
+
+   /* Merging paragraphs */
+   evas_object_textblock_text_markup_set(tb, buf);
+   evas_textblock_cursor_paragraph_char_last(cur);
+   evas_textblock_cursor_copy(cur, main_cur);
+   evas_textblock_cursor_char_delete(cur);
+
+   evas_textblock_cursor_paragraph_first(cur);
+   fail_if(evas_textblock_cursor_paragraph_next(cur));
+
+   /* Split paragraphs */
+   evas_textblock_cursor_format_prepend(cur, "ps");
+
+   evas_textblock_cursor_paragraph_first(cur);
+   fail_if(!evas_textblock_cursor_paragraph_next(cur));
+   fail_if(evas_textblock_cursor_paragraph_next(cur));
+
+   /* Merge paragraphs using range deletion */
+   evas_object_textblock_text_markup_set(tb, buf);
+   evas_textblock_cursor_paragraph_first(cur);
+   evas_textblock_cursor_paragraph_char_last(cur);
+   evas_textblock_cursor_copy(cur, main_cur);
+   evas_textblock_cursor_char_prev(cur);
+   evas_textblock_cursor_char_next(main_cur);
+
+   evas_textblock_cursor_range_delete(cur, main_cur);
+   evas_textblock_cursor_paragraph_first(cur);
+   fail_if(evas_textblock_cursor_paragraph_next(cur));
+
+   /* Also add text appending/prepending */
+
    END_TB_TEST();
 }
 END_TEST
@@ -617,6 +679,38 @@ START_TEST(evas_textblock_aux)
 }
 END_TEST
 
+/* All the string escaping stuff */
+START_TEST(evas_textblock_escaping)
+{
+   int len;
+   START_TB_TEST();
+   fail_if(strcmp(evas_textblock_escape_string_get("&amp;"), "&"));
+   fail_if(strcmp(evas_textblock_string_escape_get("&", &len), "&amp;"));
+   fail_if(len != 1);
+
+   fail_if(strcmp(evas_textblock_escape_string_get("&middot;"), "\xc2\xb7"));
+   fail_if(strcmp(evas_textblock_string_escape_get("\xc2\xb7", &len),
+            "&middot;"));
+   fail_if(len != 2);
+
+   fail_if(strcmp(evas_textblock_escape_string_get("&#x1f459;"),
+            "\xF0\x9F\x91\x99"));
+   fail_if(strcmp(evas_textblock_escape_string_get("&#128089;"),
+            "\xF0\x9F\x91\x99"));
+
+   fail_if(evas_textblock_escape_string_get("&middot;aa"));
+   const char *tmp = "&middot;aa";
+   fail_if(strcmp(evas_textblock_escape_string_range_get(tmp, tmp + 8),
+            "\xc2\xb7"));
+   fail_if(evas_textblock_escape_string_range_get(tmp, tmp + 9));
+   fail_if(evas_textblock_escape_string_range_get(tmp, tmp + 7));
+   fail_if(evas_textblock_escape_string_range_get(tmp, tmp + 5));
+
+
+   END_TB_TEST();
+}
+END_TEST
+
 START_TEST(evas_textblock_size)
 {
    START_TB_TEST();
@@ -660,5 +754,6 @@ void evas_test_textblock(TCase *tc)
    tcase_add_test(tc, evas_textblock_aux);
    tcase_add_test(tc, evas_textblock_text_getters);
    tcase_add_test(tc, evas_textblock_formats);
+   tcase_add_test(tc, evas_textblock_escaping);
 }
 
