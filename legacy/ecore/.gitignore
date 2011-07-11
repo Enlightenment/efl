@@ -79,3 +79,4 @@ po/remove-potcdate.sin
 po/stamp-po
 /stamp-h1
 /doc/Doxyfile
+/src/bin/ecore_test
