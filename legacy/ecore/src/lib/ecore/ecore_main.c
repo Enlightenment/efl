@@ -520,7 +520,7 @@ _ecore_main_gsource_prepare(GSource *source __UNUSED__, gint *next_time)
                        ts.it_value.tv_nsec = fmod(t*NS_PER_SEC, NS_PER_SEC);
 
                        /* timerfd cannot sleep for 0 time */
-                       if (ts.it_value.tv_sec && ts.it_value.tv_nsec)
+                       if (ts.it_value.tv_sec || ts.it_value.tv_nsec)
                          {
                             r = timerfd_settime(timer_fd, 0, &ts, NULL);
                             if (r < 0)
