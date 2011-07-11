@@ -346,6 +346,21 @@ START_TEST(evas_textblock_cursor)
 }
 END_TEST
 
+/* Various textblock stuff */
+START_TEST(evas_textblock_various)
+{
+   Evas_Coord w, h;
+   START_TB_TEST();
+   const char *buf = "This<ps>textblock<ps>has<ps>a<ps>lot<ps>of<ps>lines<ps>.";
+   evas_object_textblock_text_markup_set(tb, buf);
+   evas_object_textblock_size_formatted_get(tb, &w, &h);
+   /* Move outside of the screen so it'll have to search for the correct
+    * paragraph and etc. */
+   evas_object_move(tb, -(w / 2), -(h / 2));
+   END_TB_TEST();
+}
+END_TEST
+
 /* Various geometries. e.g. range geometry. */
 START_TEST(evas_textblock_geometries)
 {
@@ -868,7 +883,7 @@ START_TEST(evas_textblock_set_get)
 END_TEST
 
 /* Aux evas stuff, such as scale. */
-START_TEST(evas_textblock_aux)
+START_TEST(evas_textblock_evas)
 {
    Evas_Coord w, h, sw, sh;
    START_TB_TEST();
@@ -959,11 +974,12 @@ void evas_test_textblock(TCase *tc)
    tcase_add_test(tc, evas_textblock_size);
    tcase_add_test(tc, evas_textblock_editing);
    tcase_add_test(tc, evas_textblock_style);
-   tcase_add_test(tc, evas_textblock_aux);
+   tcase_add_test(tc, evas_textblock_evas);
    tcase_add_test(tc, evas_textblock_text_getters);
    tcase_add_test(tc, evas_textblock_formats);
    tcase_add_test(tc, evas_textblock_escaping);
    tcase_add_test(tc, evas_textblock_set_get);
    tcase_add_test(tc, evas_textblock_geometries);
+   tcase_add_test(tc, evas_textblock_various);
 }
 
