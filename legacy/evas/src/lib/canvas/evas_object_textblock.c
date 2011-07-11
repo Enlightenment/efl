@@ -898,28 +898,6 @@ _is_white(Eina_Unicode c)
 
 /**
  * @internal
- * Appends the text between s and p to the main cursor of the object.
- *
- * @param cur the cursor to append to.
- * @param[in] s start of the string
- * @param[in] p end of the string
- */
-static void __UNUSED__
-_append_text_run(Evas_Textblock_Cursor *cur, const char *s, const char *p)
-{
-   if ((s) && (p > s))
-     {
-        char *ts;
-
-        ts = alloca(p - s + 1);
-        strncpy(ts, s, p - s);
-        ts[p - s] = 0;
-        evas_textblock_cursor_text_append(cur, ts);
-     }
-}
-
-/**
- * @internal
  * Prepends the text between s and p to the main cursor of the object.
  *
  * @param cur the cursor to prepend to.
