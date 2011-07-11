@@ -206,7 +206,7 @@ _shot_file_get(Elm_Win *win)
              if (!win->shot.repeat_count) return tmp;
              else
                {
-                  char *dotptr = rindex(tmp, '.');
+                  char *dotptr = strrchr(tmp, '.');
                   if (dotptr)
                     {
                        repname = malloc(sizeof(char)*(strlen(tmp) + 16));
