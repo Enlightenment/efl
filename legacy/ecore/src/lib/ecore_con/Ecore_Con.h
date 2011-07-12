@@ -532,31 +532,214 @@ EAPI Eina_Bool         ecore_con_ssl_client_upgrade(Ecore_Con_Client *cl, Ecore_
  * @{
  */
 
+/**
+ * Creates a server to listen for connections.
+ *
+ * The socket on which the server listens depends on the connection
+ * type:
+ * @li If @a compl_type is @c ECORE_CON_LOCAL_USER, the server will listen on
+ *     the Unix socket "~/.ecore/[name]/[port]".
+ * @li If @a compl_type is @c ECORE_CON_LOCAL_SYSTEM, the server will listen
+ *     on Unix socket "/tmp/.ecore_service|[name]|[port]".
+ * @li If @a compl_type is @c ECORE_CON_REMOTE_TCP, the server will listen
+ *     on TCP port @c port.
+ *
+ * @param  compl_type The connection type.
+ * @param  name       Name to associate with the socket.  It is used when
+ *                    generating the socket name of a Unix socket, or for
+ *                    determining what host to listen on for TCP sockets.
+ *                    @c NULL will not be accepted.
+ * @param  port       Number to identify socket.  When a Unix socket is used,
+ *                    it becomes part of the socket name.  When a TCP socket
+ *                    is used, it is used as the TCP port.
+ * @param  data       Data to associate with the created Ecore_Con_Server
+ *                    object.
+ * @return A new Ecore_Con_Server.
+ */
 EAPI Ecore_Con_Server *ecore_con_server_add(Ecore_Con_Type type,
                                             const char *name, int port,
                                             const void *data);
 
+/**
+ * Creates a connection to the specified server and returns an associated object.
+ *
+ * The socket to which the connection is made depends on the connection type:
+ * @li If @a compl_type is @c ECORE_CON_LOCAL_USER, the function will
+ *     connect to the server at the Unix socket
+ *     "~/.ecore/[name]/[port]".
+ * @li If @a compl_type is @c ECORE_CON_LOCAL_SYSTEM, the function will
+ *     connect to the server at the Unix socket
+ *     "/tmp/.ecore_service|[name]|[port]".
+ * @li If @a compl_type is @c ECORE_CON_REMOTE_TCP, the function will
+ *     connect to the server at the TCP port "[name]:[port]".
+ *
+ * @param  compl_type The connection type.
+ * @param  name       Name used when determining what socket to connect to.
+ *                    It is used to generate the socket name when the socket
+ *                    is a Unix socket.  It is used as the hostname when
+ *                    connecting with a TCP socket.
+ * @param  port       Number to identify the socket to connect to.  Used when
+ *                    generating the socket name for a Unix socket, or as the
+ *                    TCP port when connecting to a TCP socket.
+ * @param  data       Data to associate with the created Ecore_Con_Server
+ *                    object.
+ * @return A new Ecore_Con_Server.
+ */
 EAPI Ecore_Con_Server *ecore_con_server_connect(Ecore_Con_Type type,
                                                 const char *name, int port,
                                                 const void *data);
+/**
+ * Closes the connection and frees the given server.
+ *
+ * @param   svr The given server.
+ * @return  Data associated with the server when it was created.
+ *
+ * All the clients connected to this server will be disconnected.
+ *
+ * @see ecore_con_server_add, ecore_con_server_connect
+ */
 EAPI void *            ecore_con_server_del(Ecore_Con_Server *svr);
+
+/**
+ * Retrieves the data associated with the given server.
+ *
+ * @param   svr The given server.
+ * @return  The associated data.
+ */
 EAPI void *            ecore_con_server_data_get(Ecore_Con_Server *svr);
+/**
+ * Sets the data associated with the given server.
+ *
+ * @param svr The given server.
+ * @param data The data to associate with @p svr
+ * @return  The previously associated data, if any.
+ */
 EAPI void *            ecore_con_server_data_set(Ecore_Con_Server *svr,
                                                  void *data);
+/**
+ * Retrieves whether the given server is currently connected.
+ *
+ * @param   svr The given server.
+ * @return  #EINA_TRUE if the server is connected.  #EINA_FALSE otherwise.
+ */
 EAPI Eina_Bool         ecore_con_server_connected_get(Ecore_Con_Server *svr);
+/**
+ * Retrieves the current list of clients.
+ *
+ * @param   svr The given server.
+ * @return  The list of clients on this server.
+ *
+ * Each node in the returned list points to an @ref Ecore_Con_Client.
+ */
 EAPI Eina_List *       ecore_con_server_clients_get(Ecore_Con_Server *svr);
+
+/**
+ * Retrieves the name of server.
+ *
+ * @param   svr The given server.
+ * @return  The name of the server.
+ */
 EAPI const char *      ecore_con_server_name_get(Ecore_Con_Server *svr);
+
+/**
+ * Retrieves the server port in use.
+ *
+ * @param   svr The given server.
+ * @return  The server port in use.
+ *
+ * The port where the server is listening for connections.
+ */
 EAPI int               ecore_con_server_port_get(Ecore_Con_Server *svr);
+/**
+ * @brief Check how long a server has been connected
+ *
+ * @param svr The server to check
+ * @return The total time, in seconds, that the server has been
+ * connected/running
+ *
+ * This function is used to find out how long a server has been
+ * connected/running for.
+ */
 EAPI double            ecore_con_server_uptime_get(Ecore_Con_Server *svr);
+/**
+ * Sends the given data to the given server.
+ *
+ * @param   svr  The given server.
+ * @param   data The given data.
+ * @param   size Length of the data, in bytes, to send.
+ * @return  The number of bytes sent.  @c 0 will be returned if there is an
+ *          error.
+ */
 EAPI int               ecore_con_server_send(Ecore_Con_Server *svr,
                                              const void *data,
                                              int size);
+/**
+ * Sets a limit on the number of clients that can be handled concurrently
+ * by the given server, and a policy on what to do if excess clients try to
+ * connect.
+ *
+ * @param   svr           The given server.
+ * @param   client_limit  The maximum number of clients to handle
+ *                        concurrently.  -1 means unlimited (default).  0
+ *                        effectively disables the server.
+ * @param   reject_excess_clients  Set to 1 to automatically disconnect
+ *                        excess clients as soon as they connect if you are
+ *                        already handling client_limit clients.  Set to 0
+ *                        (default) to just hold off on the "accept()"
+ *                        system call until the number of active clients
+ *                        drops. This causes the kernel to queue up to 4096
+ *                        connections (or your kernel's limit, whichever is
+ *                        lower).
+ *
+ * Beware that if you set this once ecore is already running, you may
+ * already have pending CLIENT_ADD events in your event queue.  Those
+ * clients have already connected and will not be affected by this call.
+ * Only clients subsequently trying to connect will be affected.
+ */
 EAPI void              ecore_con_server_client_limit_set(Ecore_Con_Server *svr,
                                                          int client_limit,
                                                          char reject_excess_clients);
+/**
+ * Gets the IP address of a server that has been connected to.
+ *
+ * @param   svr           The given server.
+ * @return  A pointer to an internal string that contains the IP address of
+ *          the connected server in the form "XXX.YYY.ZZZ.AAA" IP notation.
+ *          This string should not be modified or trusted to stay valid after
+ *          deletion for the @p svr object. If no IP is known NULL is returned.
+ */
 EAPI const char *      ecore_con_server_ip_get(Ecore_Con_Server *svr);
+/**
+ * Flushes all pending data to the given server. Will return when done.
+ *
+ * @param   svr           The given server.
+ */
 EAPI void              ecore_con_server_flush(Ecore_Con_Server *svr);
+/**
+ * Set the default time after which an inactive client will be disconnected
+ *
+ * @param svr The server object
+ * @param timeout The timeout, in seconds, to disconnect after
+ *
+ * This function is used to set the idle timeout on clients.  A value of < 1
+ * disables the idle timeout.
+ *
+ * @see ecore_con_server_timeout_get()
+ * @see ecore_con_client_timeout_set()
+ */
 EAPI void              ecore_con_server_timeout_set(Ecore_Con_Server *svr, double timeout);
+/**
+ * Get the default time after which an inactive client will be disconnected
+ *
+ * @param svr The server object
+ * @return The timeout, in seconds, to disconnect after
+ *
+ * This function is used to get the idle timeout for clients.  A value of < 1
+ * means the idle timeout is disabled.
+ *
+ * @see ecore_con_server_timeout_set()
+ * @see ecore_con_client_timeout_get()
+ */
 EAPI double            ecore_con_server_timeout_get(Ecore_Con_Server *svr);
 
 /**
@@ -569,20 +752,111 @@ EAPI double            ecore_con_server_timeout_get(Ecore_Con_Server *svr);
  * @{
  */
 
+/**
+ * Sends the given data to the given client.
+ *
+ * @param   cl   The given client.
+ * @param   data The given data.
+ * @param   size Length of the data, in bytes, to send.
+ * @return  The number of bytes sent.  @c 0 will be returned if there is an
+ *          error.
+ */
 EAPI int               ecore_con_client_send(Ecore_Con_Client *cl,
                                              const void *data,
                                              int size);
+/**
+ * Retrieves the server representing the socket the client has
+ * connected to.
+ *
+ * @param   cl The given client.
+ * @return  The server that the client connected to.
+ */
 EAPI Ecore_Con_Server *ecore_con_client_server_get(Ecore_Con_Client *cl);
+/**
+ * Closes the connection and frees memory allocated to the given client.
+ *
+ * @param   cl The given client.
+ * @return  Data associated with the client.
+ */
 EAPI void *            ecore_con_client_del(Ecore_Con_Client *cl);
+/**
+ * Sets the data associated with the given client to @p data.
+ *
+ * @param   cl   The given client.
+ * @param   data What to set the data to.
+ */
 EAPI void              ecore_con_client_data_set(Ecore_Con_Client *cl,
-                                                 const void *data);
+                                                 const void       *data);
+/**
+ * Retrieves the data associated with the given client.
+ *
+ * @param   cl The given client.
+ * @return  The data associated with @p cl.
+ */
 EAPI void *            ecore_con_client_data_get(Ecore_Con_Client *cl);
+
+/**
+ * Gets the IP address of a client that has connected.
+ *
+ * @param   cl            The given client.
+ * @return  A pointer to an internal string that contains the IP address of
+ *          the connected client in the form "XXX.YYY.ZZZ.AAA" IP notation.
+ *
+ * The returned string should not be modified, freed or trusted to stay valid
+ * after deletion for the @p cl object. If no IP is known NULL is returned.
+ */
 EAPI const char *      ecore_con_client_ip_get(Ecore_Con_Client *cl);
+/**
+ * Flushes all pending data to the given client. Will return when done.
+ *
+ * @param   cl            The given client.
+ */
 EAPI void              ecore_con_client_flush(Ecore_Con_Client *cl);
+/**
+ * @brief Check how long a client has been connected
+ *
+ * @param cl The client to check
+ * @return The total time, in seconds, that the client has been connected to
+ * the server
+ *
+ * This function is used to find out how long a client has been connected for.
+ */
 EAPI double            ecore_con_client_uptime_get(Ecore_Con_Client *cl);
+/**
+ * Get the default time after which the client will be disconnected when
+ * inactive
+ *
+ * @param cl The client object
+ * @return The timeout, in seconds, to disconnect after
+ *
+ * This function is used to get the idle timeout for a client.  A value of < 1
+ * means the idle timeout is disabled.
+ */
 EAPI double            ecore_con_client_timeout_get(Ecore_Con_Client *cl);
+/**
+ * Set the time after which the client will be disconnected when inactive
+ *
+ * @param cl The client object
+ * @param timeout The timeout, in seconds, to disconnect after
+ *
+ * This function is used to set the idle timeout on a client.  A value of < 1
+ * disables the idle timeout.
+ */
 EAPI void              ecore_con_client_timeout_set(Ecore_Con_Client *cl, double timeout);
+/**
+ * Returns whether the client is still connected
+ *
+ * @param   cl The given client.
+ * @return  #EINA_TRUE if connected, else EINA_FALSE
+ */
 EAPI Eina_Bool         ecore_con_client_connected_get(Ecore_Con_Client *cl);
+/**
+ * @brief Return the port that the client has connected to
+ *
+ * @param cl The client
+ * @return The port that @p cl has connected to, or -1 on error
+ * Use this function to return the port on which a given client has connected.
+ */
 EAPI int               ecore_con_client_port_get(Ecore_Con_Client *cl);
 
 /**
