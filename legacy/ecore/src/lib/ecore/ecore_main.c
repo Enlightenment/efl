@@ -600,6 +600,8 @@ _ecore_main_gsource_check(GSource *source __UNUSED__)
    else
      ecore_fds_ready = (_ecore_main_fdh_glib_mark_active() > 0);
    _ecore_main_fd_handlers_cleanup();
+   if (ecore_fds_ready)
+     ret = TRUE;
 
    /* check timers after updating loop time */
    _ecore_time_loop_time = ecore_time_get();
@@ -610,7 +612,7 @@ _ecore_main_gsource_check(GSource *source __UNUSED__)
 
    in_main_loop--;
 
-   return ret || ecore_fds_ready;
+   return ret;
 }
 
 /* like we just came out of main_loop_select in  _ecore_main_select */
