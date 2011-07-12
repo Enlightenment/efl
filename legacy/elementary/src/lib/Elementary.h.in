@@ -2908,7 +2908,7 @@ extern "C" {
     * or gengrid has been resized or horizontal property has been changed.
     * scroll - the content has been scrolled (moved).
     * "scroll,drag,start" - dragging the contents around has started.
-    * "scroll,drat,stop" - dragging the contents around has stopped.
+    * "scroll,drag,stop" - dragging the contents around has stopped.
     * drag - Gengrid is being dragged.
     * "drag,start,up" - Gengrid has been dragged (not scrolled) up.
     * "drag,start,down" - Gengrid has been dragged (not scrolled) down.
