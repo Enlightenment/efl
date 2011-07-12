@@ -605,12 +605,14 @@ ecore_imf_xim_init(void) {
 
 void
 ecore_imf_xim_shutdown(void) {
+#ifdef ENABLE_XIM
    while (open_ims) {
         XIM_Im_Info *info = open_ims->data;
         Ecore_X_Display *display = ecore_x_display_get();
 
         xim_info_display_closed(display, EINA_FALSE, info);
      }
+#endif
 
    ecore_x_shutdown();
    eina_shutdown();
