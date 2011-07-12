@@ -608,8 +608,6 @@ _ecore_main_gsource_check(GSource *source __UNUSED__)
    if (!ret && _ecore_timers_exists())
      ret = (0.0 == _ecore_timer_next_get());
 
-   _ecore_timer_enable_new();
-
    in_main_loop--;
 
    return ret;
@@ -623,6 +621,7 @@ _ecore_main_gsource_dispatch(GSource *source __UNUSED__, GSourceFunc callback __
    double next_time;
 
    _ecore_time_loop_time = ecore_time_get();
+   _ecore_timer_enable_new();
    next_time = _ecore_timer_next_get();
 
    events_ready = _ecore_event_exist();
