@@ -721,9 +721,9 @@ typedef enum _Evas_Border_Fill_Mode
 
 typedef enum _Evas_Image_Scale_Hint
 {
-   EVAS_IMAGE_SCALE_HINT_NONE = 0,
-   EVAS_IMAGE_SCALE_HINT_DYNAMIC = 1,
-   EVAS_IMAGE_SCALE_HINT_STATIC = 2
+   EVAS_IMAGE_SCALE_HINT_NONE = 0, /**< No scale hint at all */
+   EVAS_IMAGE_SCALE_HINT_DYNAMIC = 1, /**< Image is being re-scaled over time, thus turning scaling cache @b off for its data */
+   EVAS_IMAGE_SCALE_HINT_STATIC = 2 /**< Image is not being re-scaled over time, thus turning scaling cache @b on for its data */
 } Evas_Image_Scale_Hint; /**< How an image's data is to be treated by Evas, with regard to scaling cache */
 
 typedef enum _Evas_Engine_Render_Mode
@@ -5440,11 +5440,13 @@ EAPI Evas_Object      *evas_object_rectangle_add         (Evas *e) EINA_WARN_UNU
  * @section Evas_Object_Image_Scale Scale and resizing
  *
  * Resizing of image objects will scale their respective source images
- * to their areas. If the user wants any control on the aspect ratio
- * of an image for different sizes, he/she has to take care of that
- * themselves. There are functions to make images to get loaded scaled
- * (up or down) in memory, already, if the user is going to use them
- * at pre-determined sizes and wants to save computations.
+ * to their areas, if they are set to "fill" the object's area
+ * (evas_object_image_filled_set()). If the user wants any control on
+ * the aspect ratio of an image for different sizes, he/she has to
+ * take care of that themselves. There are functions to make images to
+ * get loaded scaled (up or down) in memory, already, if the user is
+ * going to use them at pre-determined sizes and wants to save
+ * computations.
  *
  * Evas has even a scale cache, which will take care of caching scaled
  * versions of images with more often usage/hits. Finally, one can
@@ -5482,7 +5484,18 @@ EAPI Evas_Object      *evas_object_rectangle_add         (Evas *e) EINA_WARN_UNU
  * If you're loading images which are too big, consider setting
  * previously it's loading size to something smaller, in case you
  * won't expose them in real size. It may speed up the loading
- * considerably.
+ * considerably:
+ * @code
+ * //to load a scaled down version of the image in memory, if that's
+ * //the size you'll be displaying it anyway
+ * evas_object_image_load_scale_down_set(img, zoom);
+ *
+ * //optional: if you know you'll be showing a sub-set of the image's
+ * //pixels, you can avoid loading the complementary data
+ * evas_object_image_load_region_set(img, x, y, w, h);
+ * @endcode
+ * Refer to Elementary's Photocam widget for a high level (smart)
+ * object which does lots of loading speed-ups for you.
  *
  * @subsection Evas_Object_Image_Animation Animation hints
  *
@@ -5491,9 +5504,19 @@ EAPI Evas_Object      *evas_object_rectangle_add         (Evas *e) EINA_WARN_UNU
  * are also some tips on how to boost the performance of your
  * application. If the animation involves resizing of an image (thus,
  * re-scaling), you'd better turn off smooth scaling on it @b during
- * the animation, turning it back on aftrwads, for less
- * computations. Also, movement of opaque images through the canvas is
- * less expensive than of translucid ones, because of blending
+ * the animation, turning it back on afterwrads, for less
+ * computations. Also, in this case you'd better flag the image object
+ * in question not to cache scaled versions of it:
+ * @code
+ * evas_object_image_scale_hint_set(wd->img, EVAS_IMAGE_SCALE_HINT_DYNAMIC);
+ *
+ * // resizing takes place in between
+ *
+ * evas_object_image_scale_hint_set(wd->img, EVAS_IMAGE_SCALE_HINT_STATIC);
+ * @endcode
+ *
+ * Finally, movement of opaque images through the canvas is less
+ * expensive than of translucid ones, because of blending
  * computations.
  *
  * @section Evas_Object_Image_Borders Borders
@@ -5502,6 +5525,13 @@ EAPI Evas_Object      *evas_object_rectangle_add         (Evas *e) EINA_WARN_UNU
  * treated specially -- as "borders". This will make those regions be
  * treated specially on resizing scales, by keeping their aspect. This
  * makes setting frames around other objects on UIs easy.
+ * See the following figures for a visual explanation:
+ * @image html image-borders.png
+ * @image rtf image-borders.png
+ * @image latex image-borders.eps
+ * @image html border-effect.png
+ * @image rtf border-effect.png
+ * @image latex border-effect.eps
  *
  * @section Evas_Object_Image_Manipulation Manipulating pixels
  *
@@ -6175,6 +6205,13 @@ EAPI Eina_Bool                evas_object_image_smooth_scale_get       (const Ev
  *
  * Use @c EINA_TRUE for @p cancel on scenarios where you don't need
  * the image data preloaded anymore.
+ *
+ * @note Any evas_object_show() call after evas_object_image_preload()
+ * will make the latter to be @b cancelled, with the loading process
+ * now taking place @b synchronously (and, thus, blocking the return
+ * of the former until the image is loaded). It is highly advisable,
+ * then, that the user preload an image with it being @b hidden, just
+ * to be shown on the #EVAS_CALLBACK_IMAGE_PRELOADED event's callback.
  */
 EAPI void                     evas_object_image_preload                (Evas_Object *obj, Eina_Bool cancel) EINA_ARG_NONNULL(1);
 
@@ -6436,7 +6473,7 @@ EAPI Evas_Native_Surface     *evas_object_image_native_surface_get     (const Ev
  *
  * This function sets the scale hint value of the given image object
  * in the canvas, which will affect how Evas is to cache scaled
- * versions of it's original source image..
+ * versions of its original source image.
  *
  * @see evas_object_image_scale_hint_get()
  */
@@ -6820,6 +6857,11 @@ EAPI Evas_Text_Style_Type evas_object_text_style_get     (const Evas_Object *obj
  *
  * @note One may use the helper macros #EVAS_TEXT_STYLE_BASIC_SET and
  * #EVAS_TEXT_STYLE_SHADOW_DIRECTION_SET to assemble a style value.
+ *
+ * The following figure illustrates the text styles:
+ * @image html text-styles.png
+ * @image rtf text-styles.png
+ * @image latex text-styles.eps
  *
  * @see evas_object_text_style_get()
  * @see evas_object_text_shadow_color_set()
