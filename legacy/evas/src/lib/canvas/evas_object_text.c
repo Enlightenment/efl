@@ -110,8 +110,11 @@ _evas_object_text_char_coords_get(const Evas_Object *obj,
         if ((it->text_pos <= pos) &&
               (pos < (it->text_pos + it->text_props.text_len)))
           {
-             return ENFN->font_char_coords_get(ENDT, o->font,
+             int ret;
+             ret = ENFN->font_char_coords_get(ENDT, o->font,
                    &it->text_props, pos - it->text_pos, x, y, w, h);
+             if (x) *x += it->x;
+             return ret;
           }
      }
    return 0;
