@@ -352,6 +352,7 @@ EAPI extern Evas_Version *evas_version;
 typedef enum _Evas_BiDi_Direction
 {
    EVAS_BIDI_DIRECTION_NATURAL,
+   EVAS_BIDI_DIRECTION_NEUTRAL = EVAS_BIDI_DIRECTION_NATURAL,
    EVAS_BIDI_DIRECTION_LTR,
    EVAS_BIDI_DIRECTION_RTL
 } Evas_BiDi_Direction;
