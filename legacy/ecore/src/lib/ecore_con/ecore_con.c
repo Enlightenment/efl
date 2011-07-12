@@ -549,7 +549,7 @@ ecore_con_server_connected_get(Ecore_Con_Server *svr)
    return EINA_TRUE;
 }
 
-EAPI Eina_List *
+EAPI const Eina_List *
 ecore_con_server_clients_get(Ecore_Con_Server *svr)
 {
    if (!ECORE_MAGIC_CHECK(svr, ECORE_MAGIC_CON_SERVER))

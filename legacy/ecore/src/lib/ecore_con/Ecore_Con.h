@@ -629,9 +629,11 @@ EAPI Eina_Bool         ecore_con_server_connected_get(Ecore_Con_Server *svr);
  * @param   svr The given server.
  * @return  The list of clients on this server.
  *
- * Each node in the returned list points to an @ref Ecore_Con_Client.
+ * Each node in the returned list points to an @ref Ecore_Con_Client. This list
+ * cannot be modified or freed. It can also change if new clients are connected
+ * or disconnected, and will become invalid when the server is deleted/freed.
  */
-EAPI Eina_List *       ecore_con_server_clients_get(Ecore_Con_Server *svr);
+EAPI const Eina_List * ecore_con_server_clients_get(Ecore_Con_Server *svr);
 
 /**
  * Retrieves the name of server.
