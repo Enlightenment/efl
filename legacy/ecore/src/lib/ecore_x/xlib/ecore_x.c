@@ -59,8 +59,6 @@ Window _ecore_x_event_last_win = 0;
 int _ecore_x_event_last_root_x = 0;
 int _ecore_x_event_last_root_y = 0;
 Eina_Bool _ecore_x_xcursor = EINA_FALSE;
-XIC _ecore_x_ic = NULL; /* Input context for composed characters */
-XIM _ecore_x_im = NULL;
 
 Ecore_X_Window _ecore_x_private_win = 0;
 
@@ -558,56 +556,6 @@ ecore_x_init(const char *name)
 
    _ecore_x_private_win = ecore_x_window_override_new(0, -77, -777, 123, 456);
 
-#ifdef ENABLE_XIM
-   /* Setup XIM */
-   if (!_ecore_x_ic && XSupportsLocale())
-     {
-        XIM im;
-        XIC ic;
-        XIMStyles *supported_styles;
-        XIMStyle chosen_style = 0;
-        Ecore_X_Window client_window = ecore_x_window_root_get(
-              _ecore_x_private_win);
-        char *ret;
-        int i;
-
-        XSetLocaleModifiers("@im=none");
-        if (!(im = XOpenIM(_ecore_x_disp, NULL, NULL, NULL)))
-           goto _im_create_end;
-
-        ret = XGetIMValues(im, XNQueryInputStyle, &supported_styles, NULL);
-        if (ret || !supported_styles)
-           goto _im_create_error;
-
-        for (i = 0; i < supported_styles->count_styles; i++)
-          {
-             if (supported_styles->supported_styles[i] ==
-                 (XIMPreeditNothing | XIMStatusNothing))
-                chosen_style = supported_styles->supported_styles[i];
-          }
-        XFree(supported_styles);
-        if (!chosen_style)
-           goto _im_create_error;
-
-        ic = XCreateIC(im,
-                       XNInputStyle,
-                       chosen_style,
-                       XNClientWindow,
-                       client_window,
-                       NULL);
-        if (ic)
-          {
-             _ecore_x_ic = ic;
-             _ecore_x_im = im;
-             goto _im_create_end;
-          }
-
-_im_create_error:
-        XCloseIM(im);
-     }
-
-_im_create_end:
-#endif /* ifdef ENABLE_XIM */
    return _ecore_x_init_count;
 
 free_event_handlers:
@@ -640,20 +588,6 @@ _ecore_x_shutdown(int close_display)
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
-#ifdef ENABLE_XIM
-   if (_ecore_x_ic)
-     {
-        XDestroyIC(_ecore_x_ic);
-        _ecore_x_ic = NULL;
-     }
-
-   if (_ecore_x_im)
-     {
-        XCloseIM(_ecore_x_im);
-        _ecore_x_im = NULL;
-     }
-
-#endif /* ifdef ENABLE_XIM */
    ecore_main_fd_handler_del(_ecore_x_fd_handler_handle);
    if (close_display)
       XCloseDisplay(_ecore_x_disp);

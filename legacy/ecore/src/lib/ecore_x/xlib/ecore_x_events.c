@@ -231,88 +231,18 @@ _ecore_key_press(int event, XKeyEvent *xevent)
    sym = 0;
    key = NULL;
    compose = NULL;
-   if ((_ecore_x_ic) && (event == ECORE_EVENT_KEY_DOWN))
-     {
-        Status mbstatus;
-#ifdef X_HAVE_UTF8_STRING
-        val = Xutf8LookupString(_ecore_x_ic,
-                                (XKeyEvent *)xevent,
-                                compose_buffer,
-                                sizeof(compose_buffer) - 1,
-                                &sym,
-                                &mbstatus);
-#else /* ifdef X_HAVE_UTF8_STRING */
-        val = XmbLookupString(_ecore_x_ic,
-                              (XKeyEvent *)xevent,
-                              compose_buffer,
-                              sizeof(compose_buffer) - 1,
-                              &sym,
-                              &mbstatus);
-#endif /* ifdef X_HAVE_UTF8_STRING */
-        if (mbstatus == XBufferOverflow)
-          {
-             tmp = malloc(sizeof (char) * (val + 1));
-             if (!tmp)
-                return;
-
-             compose = tmp;
-
-#ifdef X_HAVE_UTF8_STRING
-             val = Xutf8LookupString(_ecore_x_ic,
-                                     (XKeyEvent *)xevent,
-                                     tmp,
-                                     val,
-                                     &sym,
-                                     &mbstatus);
-#else /* ifdef X_HAVE_UTF8_STRING */
-             val = XmbLookupString(_ecore_x_ic,
-                                   (XKeyEvent *)xevent,
-                                   tmp,
-                                   val,
-                                   &sym,
-                                   &mbstatus);
-#endif /* ifdef X_HAVE_UTF8_STRING */
-             if (val > 0)
-               {
-                  tmp[val] = 0;
-
-#ifndef X_HAVE_UTF8_STRING
-                  compose = eina_str_convert(nl_langinfo(CODESET), "UTF-8", tmp);
-                  free(tmp);
-                  tmp = compose;
-#endif /* ifndef X_HAVE_UTF8_STRING */
-               }
-             else
-                compose = NULL;
-          }
-        else
-        if (val > 0)
-          {
-             compose_buffer[val] = 0;
-#ifdef X_HAVE_UTF8_STRING
-             compose = compose_buffer;
-#else /* ifdef X_HAVE_UTF8_STRING */
-             compose = eina_str_convert(nl_langinfo(
-                                           CODESET), "UTF-8", compose_buffer);
-             tmp = compose;
-#endif /* ifdef X_HAVE_UTF8_STRING */
-          }
-     }
-   else
-     {
-        val = XLookupString(xevent,
-                            compose_buffer,
-                            sizeof(compose_buffer),
-                            &sym,
-                            &status);
-        if (val > 0)
-          {
-             compose_buffer[val] = 0;
-             compose = eina_str_convert(nl_langinfo(
-                                           CODESET), "UTF-8", compose_buffer);
-             tmp = compose;
-          }
-     }
+   val = XLookupString(xevent,
+                       compose_buffer,
+                       sizeof(compose_buffer),
+                       &sym,
+                       &status);
+   if (val > 0)
+       {
+          compose_buffer[val] = 0;
+          compose = eina_str_convert(nl_langinfo(CODESET), "UTF-8",
+                                     compose_buffer);
+          tmp = compose;
+       }
 
    key = XKeysymToString(sym);
    if (!key)
@@ -881,16 +811,6 @@ _ecore_x_event_handle_focus_in(XEvent *xevent)
    Ecore_X_Event_Window_Focus_In *e;
 
    _ecore_x_last_event_mouse_move = 0;
-   if (_ecore_x_ic)
-     {
-        char *str;
-
-        XSetICValues(_ecore_x_ic, XNFocusWindow, xevent->xfocus.window, NULL);
-        if ((str = XmbResetIC(_ecore_x_ic)))
-           XFree(str);
-
-        XSetICFocus(_ecore_x_ic);
-     }
 
    e = calloc(1, sizeof(Ecore_X_Event_Window_Focus_In));
    if (!e)
@@ -935,8 +855,6 @@ _ecore_x_event_handle_focus_out(XEvent *xevent)
    Ecore_X_Event_Window_Focus_Out *e;
 
    _ecore_x_last_event_mouse_move = 0;
-   if (_ecore_x_ic)
-      XUnsetICFocus(_ecore_x_ic);
 
    e = calloc(1, sizeof(Ecore_X_Event_Window_Focus_Out));
    if (!e)
