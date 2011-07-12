@@ -104,8 +104,8 @@ int main(int argc __UNUSED__, char **argv __UNUSED__)
 
    ecore_main_loop_begin();
 
-   /* FIXME?: glib main loop exits on an idle enterer */
-   //assert(called == idle_enterer_str);
+   /* glib main loop exits on an idle enterer */
+   assert(called == idle_enterer_str);
 
    ecore_shutdown();
    return 0;

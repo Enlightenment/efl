@@ -237,6 +237,7 @@ static GSource *ecore_glib_source;
 static guint ecore_glib_source_id;
 static GMainLoop* ecore_main_loop;
 static gboolean ecore_idling;
+static gboolean _ecore_glib_idle_enterer_called;
 static gboolean ecore_fds_ready;
 #endif
 
@@ -489,11 +490,11 @@ _ecore_main_gsource_prepare(GSource *source __UNUSED__, gint *next_time)
 
    in_main_loop++;
 
-   if (!ecore_idling)
+   if (!ecore_idling && !_ecore_glib_idle_enterer_called)
      {
-         /* when idling, busy loop checking the fds only */
-         _ecore_idle_enterer_call();
-         _ecore_throttle();
+        _ecore_idle_enterer_call();
+        _ecore_throttle();
+        _ecore_glib_idle_enterer_called = FALSE;
      }
 
    while (_ecore_signal_count_get()) _ecore_signal_call();
@@ -668,6 +669,10 @@ _ecore_main_gsource_dispatch(GSource *source __UNUSED__, GSourceFunc callback __
 
         while (_ecore_timer_call(_ecore_time_loop_time));
         _ecore_timer_cleanup();
+
+        _ecore_idle_enterer_call();
+        _ecore_throttle();
+        _ecore_glib_idle_enterer_called = TRUE;
      }
 
    in_main_loop--;
