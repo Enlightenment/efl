@@ -491,7 +491,7 @@ END_TEST
 /* Various textblock stuff */
 START_TEST(evas_textblock_various)
 {
-   Evas_Coord w, h;
+   Evas_Coord w, h, bw, bh;
    START_TB_TEST();
    const char *buf = "This<ps>textblock<ps>has<ps>a<ps>lot<ps>of<ps>lines<ps>.";
    evas_object_textblock_text_markup_set(tb, buf);
@@ -499,6 +499,14 @@ START_TEST(evas_textblock_various)
    /* Move outside of the screen so it'll have to search for the correct
     * paragraph and etc. */
    evas_object_move(tb, -(w / 2), -(h / 2));
+
+   /* Replacement char */
+   evas_object_textblock_text_markup_set(tb, "*");
+   evas_object_textblock_size_formatted_get(tb, &bw, &bh);
+   evas_object_textblock_replace_char_set(tb, "*");
+   evas_object_textblock_text_markup_set(tb, "|");
+   evas_object_textblock_size_formatted_get(tb, &w, &h);
+   fail_if((w != bw) || (h != bh));
    END_TB_TEST();
 }
 END_TEST
