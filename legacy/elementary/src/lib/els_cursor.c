@@ -464,7 +464,7 @@ elm_object_cursor_unset(Evas_Object *obj)
           ecore_evas_object_cursor_set(cur->ee, NULL, ELM_OBJECT_LAYER_CURSOR,
                                        cur->hot_x, cur->hot_y);
 #ifdef HAVE_ELEMENTARY_X
-        else
+        else if (cur->win)
           ecore_x_window_cursor_set(cur->win, ECORE_X_CURSOR_X);
 #endif
      }
