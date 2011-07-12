@@ -224,7 +224,7 @@ _evas_object_text_char_at_coords(const Evas_Object *obj,
              return it->text_pos + ENFN->font_char_at_coords_get(ENDT,
                    o->font,
                    &it->text_props,
-                   cx,
+                   cx - it->x,
                    cy,
                    rx, ry,
                    rw, rh);
