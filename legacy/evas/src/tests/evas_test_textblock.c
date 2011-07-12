@@ -346,6 +346,145 @@ START_TEST(evas_textblock_cursor)
 }
 END_TEST
 
+/* Wrapping tests */
+START_TEST(evas_textblock_wrapping)
+{
+   Evas_Coord bw, bh, w, h, nw, nh;
+   START_TB_TEST();
+   evas_object_textblock_text_markup_set(tb, "a");
+   evas_object_textblock_size_formatted_get(tb, &bw, &bh);
+
+   /* Char wrap */
+   evas_object_textblock_text_markup_set(tb, "aaaaaaa");
+   evas_textblock_cursor_format_prepend(cur, "+ wrap=char");
+   evas_object_resize(tb, bw, bh);
+   evas_object_textblock_size_formatted_get(tb, &w, &h);
+   /* Wrap to minimum */
+   fail_if(w != bw);
+   fail_if(h <= bh);
+
+   /* Mixed - fallback to char wrap */
+#if 0
+   evas_object_textblock_text_markup_set(tb, "aaaaaaa");
+   evas_textblock_cursor_format_prepend(cur, "+ wrap=mixed");
+   evas_object_resize(tb, bw, bh);
+   evas_object_textblock_size_formatted_get(tb, &w, &h);
+   /* Wrap to minimum */
+   fail_if(w != bw);
+   fail_if(h <= bh);
+#endif
+
+   /* Basic Word wrap */
+   evas_object_textblock_text_markup_set(tb, "aaaa");
+   evas_object_textblock_size_formatted_get(tb, &bw, &bh);
+
+   evas_object_textblock_text_markup_set(tb, "aaaa aa");
+   evas_textblock_cursor_format_prepend(cur, "+ wrap=word");
+   evas_object_resize(tb, bw, bh);
+   evas_object_textblock_size_formatted_get(tb, &w, &h);
+   /* Wrap to minimum */
+   fail_if(w != bw);
+   fail_if(h <= bh);
+
+   /* Mixed - fallback to word wrap */
+   evas_object_textblock_text_markup_set(tb, "aaaa aa");
+   evas_textblock_cursor_format_prepend(cur, "+ wrap=mixed");
+   evas_object_resize(tb, bw + 1, bh);
+   evas_object_textblock_size_formatted_get(tb, &w, &h);
+   /* Wrap to minimum */
+   fail_if(w != bw);
+   fail_if(h <= bh);
+
+   /* Wrap and then expand again. */
+   evas_object_textblock_text_markup_set(tb, "aaaa aa");
+   evas_textblock_cursor_format_prepend(cur, "+ wrap=word");
+   evas_object_resize(tb, bw, bh);
+   evas_object_textblock_size_formatted_get(tb, &w, &h);
+   evas_object_textblock_size_native_get(tb, &nw, &nh);
+   evas_object_resize(tb, nw, nh);
+   evas_object_textblock_size_formatted_get(tb, &w, &h);
+   fail_if((w != nw) || (h != nh));
+
+   /* Reduce size until reaching the minimum, making sure we don't
+    * get something wrong along the way */
+   /* Char wrap */
+   evas_object_textblock_text_markup_set(tb, "a");
+   evas_object_textblock_size_formatted_get(tb, &bw, &bh);
+   evas_object_textblock_text_markup_set(tb,
+         "aaaa aaaa aaa aa aaa<ps>"
+         "aaaa aaa aaa aaa aaa<ps>"
+         "a aaaaa aaaaaaaaaaaaaa<br>aaaaa<ps>"
+         "aaaaaa"
+         );
+   evas_textblock_cursor_format_prepend(cur, "+ wrap=char");
+   evas_object_textblock_size_native_get(tb, &nw, &nh);
+
+   Evas_Coord iw;
+   for (iw = nw ; iw >= bw ; iw--)
+     {
+        evas_object_resize(tb, iw, 1000);
+        evas_object_textblock_size_formatted_get(tb, &w, &h);
+        fail_if((w < bw) || (h < bh));
+        fail_if(w > iw);
+     }
+   fail_if(w != bw);
+
+   /* Word wrap */
+   evas_object_textblock_text_markup_set(tb, "aaaaaa");
+   evas_object_textblock_size_formatted_get(tb, &bw, &bh);
+   evas_object_textblock_text_markup_set(tb,
+         "aaaa aaaa aaa aa aaa<ps>"
+         "aaaa aaa aaa aaa aaa<ps>"
+         "a aaaaa aaaaaa<br>aaaaa<ps>"
+         "aaaaa"
+         );
+   evas_textblock_cursor_format_prepend(cur, "+ wrap=word");
+   evas_object_textblock_size_native_get(tb, &nw, &nh);
+
+   for (iw = nw ; iw >= bw ; iw--)
+     {
+        evas_object_resize(tb, iw, 1000);
+        evas_object_textblock_size_formatted_get(tb, &w, &h);
+        fail_if((w < bw) || (h < bh));
+        fail_if(w > iw);
+     }
+   fail_if(w != bw);
+
+   /* Mixed wrap */
+#if 0
+   evas_object_textblock_text_markup_set(tb, "a");
+   evas_object_textblock_size_formatted_get(tb, &bw, &bh);
+   evas_object_textblock_text_markup_set(tb,
+         "aaaa aaaa aaa aa aaa<ps>"
+         "aaaa aaa aaa aaa aaa<ps>"
+         "a aaaaa aaaaaa<br>aaaaa<ps>"
+         "aaaaa"
+         );
+   evas_textblock_cursor_format_prepend(cur, "+ wrap=mixed");
+   evas_object_textblock_size_native_get(tb, &nw, &nh);
+
+   for (iw = nw ; iw >= bw ; iw--)
+     {
+        evas_object_resize(tb, iw, 1000);
+        evas_object_textblock_size_formatted_get(tb, &w, &h);
+        fail_if((w < bw) || (h < bh));
+        fail_if(w > iw);
+     }
+   fail_if(w != bw);
+#endif
+
+   /* Ellipsis */
+   evas_object_textblock_text_markup_set(tb, "aaaaaaaaaa");
+   evas_textblock_cursor_format_prepend(cur, "+ ellipsis=1.0");
+   evas_object_textblock_size_native_get(tb, &nw, &nh);
+   evas_object_resize(tb, nw / 2, nh);
+   evas_object_textblock_size_formatted_get(tb, &w, &h);
+   fail_if((w > (nw / 2)) || (h != nh));
+
+   END_TB_TEST();
+}
+END_TEST
+
 /* Various textblock stuff */
 START_TEST(evas_textblock_various)
 {
@@ -1032,5 +1171,6 @@ void evas_test_textblock(TCase *tc)
    tcase_add_test(tc, evas_textblock_set_get);
    tcase_add_test(tc, evas_textblock_geometries);
    tcase_add_test(tc, evas_textblock_various);
+   tcase_add_test(tc, evas_textblock_wrapping);
 }
 
