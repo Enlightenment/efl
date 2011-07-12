@@ -1065,6 +1065,14 @@ START_TEST(evas_textblock_set_get)
    fail_if(evas_object_textblock_bidi_delimiters_get(tb));
    evas_object_textblock_bidi_delimiters_set(tb, ",|");
    fail_if(strcmp(evas_object_textblock_bidi_delimiters_get(tb), ",|"));
+
+   /* Hinting */
+   evas_object_textblock_text_markup_set(tb, "This is<ps>a test<br>bla");
+   /* Force relayout */
+   evas_object_textblock_size_formatted_get(tb, NULL, NULL);
+   evas_font_hinting_set(evas, EVAS_FONT_HINTING_NONE);
+   evas_font_hinting_set(evas, EVAS_FONT_HINTING_AUTO);
+   evas_font_hinting_set(evas, EVAS_FONT_HINTING_BYTECODE);
    END_TB_TEST();
 }
 END_TEST
