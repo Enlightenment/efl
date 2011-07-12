@@ -826,6 +826,8 @@ extern "C" {
    * for the function running in the thread to send messages to the main
    * thread.
    *
+   * See an overview example in @ref ecore_thread_example_c.
+   *
    * @ingroup Ecore_Group
    *
    * @{

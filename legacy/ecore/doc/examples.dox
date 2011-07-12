@@ -798,3 +798,125 @@
  *
  * @example ecore_animator_example.c
  */
+
+/**
+ * @page ecore_thread_example_c Ecore_Thread - API overview
+ *
+ * Working with threads is hard. Ecore helps to do so a bit easier, but as
+ * the example in @ref ecore_thread_example.c "ecore_thread_example.c" shows,
+ * there's a lot to consider even when doing the most simple things.
+ *
+ * We'll be going through this thorough example now, showing how the differents
+ * aspects of @ref Ecore_Thread are used, but users are encourage to avoid
+ * threads unless it's really the only option, as they always add more
+ * complexity than the program usually requires.
+ *
+ * Ecore Threads come in two flavors, short jobs and feedback jobs. Short jobs
+ * just run the given function and are more commonly used for small tasks
+ * where the main loop does not need to know how the work is going in between.
+ * The short job in our example is so short we had to artifically enlarge it
+ * with @c sleep(). Other than that, it also uses threads local data to keep
+ * the data we are working with persistent across different jobs ran by the
+ * same system thread. This data will be freed when the no more jobs are
+ * pending and the thread is terminated. If the data doesn't exist in the
+ * thread's storage, we create it and save it there for future jobs to find
+ * it. If creation fails, we cancel ourselves, so the main loop knows that
+ * we didn't just exit normally, meaning the job could not be done. The main
+ * part of the function checks in each iteration if it was cancelled by the
+ * main loop, and if it was, it stops processing and clears the data from the
+ * storage (we assume @c cancel means no one else will need this, but this is
+ * really application dependant).
+ * @dontinclude ecore_thread_example.c
+ * @skip static void
+ * @until sleep(1)
+ * @until }
+ * @until }
+ *
+ * Feedback jobs, on the other hand, run tasks that will inform back to the
+ * main loop its progress, send partial data as is processed, just ping saying
+ * it's still alive and processing, or anything that needs the thread to talk
+ * back to the main loop.
+ * @skip static void
+ * @until the_end
+ * @until }
+ *
+ * Finally, one more feedback job, but this one will be running outside of
+ * Ecore's pool, so we can use the pool for real work and keep this very
+ * light function unchecked. All it does is check if some condition is met
+ * and send a message to the main loop telling it it's time to close.
+ * @skip static void
+ * @until }
+ * @until }
+ * @until }
+ *
+ * Every now and then the program prints its status, counting threads running
+ * and pending jobs.
+ * @skip static void
+ * @until }
+ *
+ * In our main loop, we'll be receiving messages from our feedback jobs using
+ * the same callback for both of them.
+ * @skip static void
+ * @until char *str
+ *
+ * The light job running out of the pool will let us know when we can exit our
+ * program.
+ * @until }
+ *
+ * Next comes the handling of data sent from the actual worker threads, always
+ * remembering that the data belongs to us now, and not the thread, so it's
+ * our responsibility to free it.
+ * @until }
+ * @until }
+ *
+ * Last, the condition to exit is given by how many messages we want to handle,
+ * so we need to count them and inform the condition checking thread that the
+ * value changed.
+ * @until }
+ *
+ * When a thread finishes its job or gets cancelled, the main loop is notified
+ * through the callbacks set when creating the task. In this case, we just
+ * print what happen and keep track of one of them used to exemplify cancelling.
+ * Here we are pretending one of our short jobs has a timeout, so if it doesn't
+ * finish before a timer is triggered, it will be cancelled.
+ * @skip static void
+ * @until _cancel_timer_cb
+ * @until }
+ *
+ * The main function does some setup that includes reading parameters from
+ * the command line to change its behaviour and test different results.
+ * These are:
+ * @li -t <some_num> maximum number of threads to run at the same time.
+ * @li -p <some_path> adds @c some_path to the list used by the feedback jobs.
+ * This parameter can be used multiple times.
+ * @li -m <some_num> the number of messages to process before the program is
+ * signalled to exit.
+ *
+ * Skipping some bits, we init Ecore and our application data.
+ * @skip ecore_init
+ * @until appdata.max_msgs
+ *
+ * If any paths for the feedback jobs were given, we use them, otherwise we
+ * fallback to some defaults. Always initting the proper mutexes used by the
+ * threaded job.
+ * @skip path_list
+ * @until EINA_LIST_FREE
+ * @until }
+ * @until }
+ *
+ * Initialize the mutex needed for the condition checking thread
+ * @skip appdata.mutex
+ * @until appdata.condition
+ *
+ * And start our tasks.
+ * @until appdata.thread_3
+ * @until EINA_FALSE
+ *
+ * To finalize, set a timer to cancel one of the tasks if it doesn't end
+ * before the timeout, one more timer for status report and get into the main
+ * loop. Once we are out, destroy our mutexes and finish the program.
+ * @until _status_timer_cb
+ * @until }
+ *
+ * @example ecore_thread_example.c
+ */
