@@ -11,6 +11,9 @@
  * @li @ref ecore_fd_handler_example_c
  * @li @ref ecore_poller_example_c
  * @li @ref ecore_con_lookup_example_c
+ * @li @ref ecore_con_url_download_example_c
+ * @li @ref ecore_con_server_simple_example_c
+ * @li @ref ecore_con_client_simple_example_c
  *
  */
 
@@ -593,6 +596,172 @@
  */
 
 /**
+ * @page ecore_con_server_simple_example_c Ecore_Con - Creating a server
+ *
+ * In this example we are going to create a server that listens for connections
+ * from clients through a TCP port. You can get the full source code at @ref
+ * ecore_con_server_simple_example.c.
+ *
+ * We begin our example in the main function, to demonstrate how to setup
+ * things, and then go to the callbacks that are needed for it to run properly.
+ *
+ * In the @c main function, after initializing the libraries, we use
+ * ecore_con_server_add() to startup the server. Look at the reference
+ * documentation of this function: it supports many types of server, and we are
+ * going to use #ECORE_CON_REMOTE_TCP (a TCP based server). Other arguments to
+ * this function are the address where we are listening on, the port, and a data
+ * pointer that will associate that data with the server:
+ *
+ * @dontinclude ecore_con_server_simple_example.c
+ * @skip main(void)
+ * @until exit
+ *
+ * Notice that we are listening only on 127.0.0.1, which is the internal
+ * loopback interface. If the server needs to listening on all of its ips, use
+ * 0.0.0.0 instead.
+ *
+ * We also need to set event handlers to be called when we receive any data from
+ * the clients, when a new client connects to our server, or when a client
+ * disconnects. These callbacks are:
+ *
+ * @until CLIENT_DATA
+ *
+ * More details about what these callbacks do will be given later.
+ *
+ * Now, before running the main loop, we also want to set some limits to our
+ * server. To avoid it to be overloaded with too many connections to handle, we
+ * are going to set a maximum of 3 clients connected at the same time. This
+ * number is used just to demonstrate the API. A good number to be used here
+ * would need to be determined by tests done on the server, to check the load
+ * supported by it.
+ *
+ * Any other client trying to connect to this server, after the limit is
+ * reached, will wait until one of the connected clients disconnect and the
+ * server accepts the new connection.
+ *
+ * Another important thing to do is setting a timeout, to avoid that a client
+ * hold a connection for too long without doing anything. This timeout will
+ * disconnect the idle client, allowing that other clients that may be waiting
+ * to connect finally can do it.
+ *
+ * Then we just start the main loop:
+ *
+ * @until main_loop_begin
+ *
+ * After exiting the main loop, we print the list of connected clients, and also
+ * free the data associated with each respective client. This data was
+ * previously associated using ecore_con_client_data_set():
+ *
+ * @until }
+ *
+ * Then before exiting we show the total uptime of the server:
+ *
+ * @until uptime
+ *
+ * Now let's go back to the used callbacks.
+ *
+ * The first callback, @c _add, is registered to the event
+ * #ECORE_CON_EVENT_CLIENT_ADD, which will be called whenever a client connects
+ * to the server.
+ *
+ * This callback will associate a data structure to this client, that will be
+ * used to count how many bytes were received from it. It also prints some info
+ * about the client, and send a welcome string to it. ecore_con_client_flush()
+ * is used to ensure that the string is sent immediately, instead of be
+ * bufferized.
+ *
+ * A timeout for idle specific for this client is also set, to demonstrate that
+ * it is independent of the general timeout of the server.
+ *
+ * Before exiting, the callback will display a list of all clients still
+ * connected to this server. The code for this callback follows:
+ *
+ * @dontinclude ecore_con_server_simple_example.c
+ * @skip Eina_Bool
+ * @until CALLBACK_RENEW
+ * @until }
+ *
+ * The second callback is @c _del. It is associated with
+ * #ECORE_CON_EVENT_CLIENT_DEL, and is called whenever a client disconnects from
+ * this server.
+ *
+ * It will just print some information about the client, free the associated
+ * data structure, and call ecore_con_client_del() on it before exiting the
+ * callback. Here's its code:
+ *
+ * @until CALLBACK_RENEW
+ * @until }
+ *
+ * The last callback will print any data received by this server from its
+ * clients. It also increments the "bytes received" counter, sdata, in the
+ * data structure associated with this client. The callback code follows:
+ *
+ * @until CALLBACK_RENEW
+ * @until }
+ *
+ * The important parts of this example were described above. If you need to see
+ * the full source code for it, there's a link to the code in the beginning of
+ * this page.
+ *
+ * @note This example contains a serious security flaw: it doesn't check for the
+ * size of data being received, thus allowing to the string to be exploited in
+ * some way. However, it is left like this to make the code simpler and just
+ * demonstrate the API usage.
+ */
+
+/**
+ * @page ecore_con_client_simple_example_c Ecore_Con - Creating a client
+ *
+ * Following the same idea as the @ref ecore_con_server_simple_example_c , this
+ * example will demonstrate how to create a client that connects to a specified
+ * server through a TCP port. You can see the full source code at @ref
+ * ecore_con_client_simple_example.c.
+ *
+ * Starting from the @c main function, after reading the command line argument
+ * list and initializing the libraries, we try to connect to the server:
+ *
+ * @dontinclude ecore_con_client_simple_example.c
+ * @skip main(
+ * @until exit(2)
+ * @until }
+ *
+ * After doing this, everything else in @c main is setting up callbacks for the
+ * client events, starting the main loop and shutting down the libraries after
+ * it.
+ *
+ * Now let's go to the callbacks. These callbacks are very similar to the server
+ * callbacks (our implementation for this example is very simple). On the
+ * @c _add callback, we just set a data structure to the server, print some
+ * information about the server, and send a welcome message to it:
+ *
+ * @dontinclude ecore_con_client_simple_example.c
+ * @skip Eina_Bool
+ * @until CALLBACK_RENEW
+ * @until }
+ *
+ * The @c _del callback is as simple as the previous one. We free the data
+ * associated with the server, print the uptime of this client, and quit the
+ * main loop (since there's nothing to do once we disconnect):
+ *
+ * @until CALLBACK_RENEW
+ * @until }
+ *
+ * The @c _data callback is also similar to the server data callback. it will
+ * print any received data, and increase the data counter in the structure
+ * associated with this server:
+ *
+ * @until CALLBACK_RENEW
+ *
+ * You can see the server counterpart functions of the ones used in this example
+ * in the @ref ecore_con_server_simple_example_c.
+ *
+ * @note This example contains a serious security flaw: it doesn't check for the
+ * size of data being received, thus allowing to the string to be exploited in
+ * some way. However, it is left like this to make the code simpler and just
+ * demonstrate the API usage.
+ */
+
+/**
  * @example ecore_idler_example.c
  * This example shows when @ref Ecore_Idler, @ref Ecore_Idle_Enterer and @ref
  * Ecore_Idle_Exiter are called. See
@@ -650,6 +819,20 @@
  * @example ecore_con_url_download_example.c
  * Shows how to download a file using an @ref Ecore_Con_Url object. See the
  * complete example description at @ref ecore_con_url_download_example_c
+ */
+
+/**
+ * @example ecore_con_server_simple_example.c
+ * Shows how to setup a simple server that accepts client connections and sends
+ * a "hello" string to them. See the complete example description at @ref
+ * ecore_con_server_simple_example_c
+ */
+
+/**
+ * @example ecore_con_client_simple_example.c
+ * Shows how to setup a simple client that connects to a server and sends a
+ * "hello" string to it. See the complete example description at @ref
+ * ecore_con_client_simple_example_c
  */
 
 /**

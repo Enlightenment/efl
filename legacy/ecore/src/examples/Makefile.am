@@ -30,6 +30,8 @@ SRCS = \
 	ecore_con_lookup_example.c \
 	ecore_con_url_headers_example.c \
 	ecore_con_url_download_example.c \
+	ecore_con_server_simple_example.c \
+	ecore_con_client_simple_example.c \
 	client_bench.c \
 	server_bench.c \
 	ecore_con_client_example.c \
@@ -63,13 +65,16 @@ pkglib_PROGRAMS += \
 	ecore_con_lookup_example \
 	ecore_con_url_headers_example \
 	ecore_con_url_download_example \
+	ecore_con_server_simple_example \
+	ecore_con_client_simple_example \
 	ecore_thread_example
 
 ecore_animator_example_LDADD = $(ECOREBASELDADD) @EVAS_LIBS@ $(top_builddir)/src/lib/ecore_evas/libecore_evas.la
 ecore_con_lookup_example_LDADD = $(ECOREBASELDADD) $(top_builddir)/src/lib/ecore_con/libecore_con.la
 ecore_con_url_headers_example_LDADD = $(ECOREBASELDADD) $(top_builddir)/src/lib/ecore_con/libecore_con.la
 ecore_con_url_download_example_LDADD = $(ECOREBASELDADD) $(top_builddir)/src/lib/ecore_con/libecore_con.la
-#ecore_con_server_simple_example_LDADD = $(ECOREBASELDADD) $(top_builddir)/src/lib/ecore_con/libecore_con.la
+ecore_con_server_simple_example_LDADD = $(ECOREBASELDADD) $(top_builddir)/src/lib/ecore_con/libecore_con.la
+ecore_con_client_simple_example_LDADD = $(ECOREBASELDADD) $(top_builddir)/src/lib/ecore_con/libecore_con.la
 
 endif
 
