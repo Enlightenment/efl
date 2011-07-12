@@ -483,7 +483,7 @@ static inline int _ecore_main_fdh_glib_mark_active(void)
 static gboolean
 _ecore_main_gsource_prepare(GSource *source __UNUSED__, gint *next_time)
 {
-   gboolean running;
+   gboolean ready = FALSE;
 
    in_main_loop++;
 
@@ -500,8 +500,7 @@ _ecore_main_gsource_prepare(GSource *source __UNUSED__, gint *next_time)
    while (_ecore_signal_count_get()) _ecore_signal_call();
 
    /* don't check fds if somebody quit */
-   running = g_main_loop_is_running(ecore_main_loop);
-   if (running)
+   if (g_main_loop_is_running(ecore_main_loop))
      {
         /* only set idling state in dispatch */
         if (ecore_idling && !_ecore_idler_exist() && !_ecore_event_exist())
@@ -510,7 +509,7 @@ _ecore_main_gsource_prepare(GSource *source __UNUSED__, gint *next_time)
                {
                   int r = -1;
                   double t = _ecore_timer_next_get();
-                  if (timer_fd >= 0)
+                  if (timer_fd >= 0 && t > 0.0)
                     {
                        struct itimerspec ts;
 
@@ -536,23 +535,33 @@ _ecore_main_gsource_prepare(GSource *source __UNUSED__, gint *next_time)
                          }
                     }
                   if (r == -1)
-                    *next_time = ceil(t * 1000.0);
+                    {
+                       *next_time = ceil(t * 1000.0);
+                       if (t == 0.0)
+                         ready = TRUE;
+                    }
                }
              else
                *next_time = -1;
           }
         else
-          *next_time = 0;
+          {
+            *next_time = 0;
+            if (_ecore_event_exist())
+              ready = TRUE;
+          }
 
         if (fd_handlers_with_prep)
           _ecore_main_prepare_handlers();
      }
+   else
+     ready = TRUE;
 
    in_main_loop--;
    INF("leave, timeout = %d", *next_time);
 
    /* ready if we're not running (about to quit) */
-   return !running;
+   return ready;
 }
 
 static gboolean
