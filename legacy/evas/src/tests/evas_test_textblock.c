@@ -67,6 +67,9 @@ do \
         ret = evas_textblock_cursor_geometry_get(cur, &x, &y, &w, &h, NULL, \
               EVAS_TEXTBLOCK_CURSOR_UNDER); \
         fail_if(ret == -1); \
+        ret = evas_textblock_cursor_geometry_get(cur, &x, &y, &w, &h, NULL, \
+              EVAS_TEXTBLOCK_CURSOR_BEFORE); \
+        fail_if(ret == -1); \
         ret = evas_textblock_cursor_char_geometry_get(cur, &x, &y, &w, &h); \
         fail_if(ret == -1); \
         ret = evas_textblock_cursor_pen_geometry_get(cur, &x, &y, &w, &h); \
