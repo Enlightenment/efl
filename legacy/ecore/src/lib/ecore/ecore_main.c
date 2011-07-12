@@ -604,10 +604,7 @@ _ecore_main_gsource_check(GSource *source __UNUSED__)
    /* check timers after updating loop time */
    _ecore_time_loop_time = ecore_time_get();
    if (!ret && _ecore_timers_exists())
-     {
-        double next_time = _ecore_timer_next_get();
-        ret = _ecore_timers_exists() && (0.0 == next_time);
-     }
+     ret = (0.0 == _ecore_timer_next_get());
 
    _ecore_timer_enable_new();
 
