@@ -1411,7 +1411,9 @@ ecore_thread_local_data_find(Ecore_Thread *thread, const char *key)
      return NULL;
 
    d = eina_hash_find(worker->hash, key);
-   return d->data;
+   if (d)
+     return d->data;
+   return NULL;
 #else
    return NULL;
 #endif
@@ -1421,7 +1423,6 @@ EAPI Eina_Bool
 ecore_thread_local_data_del(Ecore_Thread *thread, const char *key)
 {
    Ecore_Pthread_Worker *worker = (Ecore_Pthread_Worker *) thread;
-   Ecore_Thread_Data *d;
    if ((!thread) || (!key))
      return EINA_FALSE;
 #ifdef EFL_HAVE_THREADS
@@ -1429,8 +1430,6 @@ ecore_thread_local_data_del(Ecore_Thread *thread, const char *key)
 
    if (!worker->hash)
      return EINA_FALSE;
-   if ((d = eina_hash_find(worker->hash, key)))
-     _ecore_thread_data_free(d);
    return eina_hash_del_by_key(worker->hash, key);
 #else
    return EINA_TRUE;
@@ -1521,7 +1520,9 @@ ecore_thread_global_data_find(const char *key)
    LRWKRL(_ecore_thread_global_hash_lock);
    ret = eina_hash_find(_ecore_thread_global_hash, key);
    LRWKU(_ecore_thread_global_hash_lock);
-   return ret->data;
+   if (ret)
+     return ret->data;
+   return NULL;
 #else
    return NULL;
 #endif
@@ -1531,7 +1532,6 @@ EAPI Eina_Bool
 ecore_thread_global_data_del(const char *key)
 {
    Eina_Bool ret;
-   Ecore_Thread_Data *d;
 
    if (!key)
      return EINA_FALSE;
@@ -1540,8 +1540,6 @@ ecore_thread_global_data_del(const char *key)
      return EINA_FALSE;
 
    LRWKWL(_ecore_thread_global_hash_lock);
-   if ((d = eina_hash_find(_ecore_thread_global_hash, key)))
-     _ecore_thread_data_free(d);
    ret = eina_hash_del_by_key(_ecore_thread_global_hash, key);
    LRWKU(_ecore_thread_global_hash_lock);
    return ret;
