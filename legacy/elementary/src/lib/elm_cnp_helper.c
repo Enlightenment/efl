@@ -1348,8 +1348,11 @@ elm_drop_target_add(Evas_Object *obj, Elm_Sel_Type format, Elm_Drop_Cb dropcb, v
    Ecore_X_Window xwin;
    Eina_List *item;
    int first;
+   Evas_Object *top;
 
    if (!obj) return EINA_FALSE;
+   top = elm_widget_top_get(obj);
+   if (!top || !elm_win_xwindow_get(top)) return EINA_FALSE;
    if (!_elm_cnp_init_count) _elm_cnp_init();
 
    /* Is this the first? */
