@@ -47,6 +47,8 @@ START_TEST(evas_text_geometries)
    const char *font = "Sans";
    Evas_Font_Size size = 14;
    Evas_Coord prev;
+   int i;
+   Evas_Coord x, y, w, h, px;
 
    evas_object_text_font_set(to, font, size);
    evas_object_text_text_set(to, buf);
@@ -89,6 +91,22 @@ START_TEST(evas_text_geometries)
    prev = evas_object_text_vert_advance_get(to);
    evas_object_text_text_set(to, "Testing");
    fail_if(evas_object_text_vert_advance_get(to) != prev);
+
+   /* Go through all the characters, making sure the geometries we get
+    * are in a monotonically increasing order and that all sizes are
+    * bigger than 0. */
+   evas_object_text_text_set(to, "Testing...");
+   x = 0;
+   px = -100;
+   for (i = 0 ; i < eina_unicode_utf8_get_len("Testing...") ; i++)
+     {
+        fail_if(!evas_object_text_char_pos_get(to, i, &x, &y, &w, &h));
+        fail_if(x <= px);
+        px = x;
+        /* Get back the coords */
+        fail_if(i != evas_object_text_char_coords_get(to, x + (w / 2),
+                 y + (h / 2), &x, &y, &w, &h));
+     }
 
    END_TEXT_TEST();
 }
@@ -275,10 +293,76 @@ START_TEST(evas_text_bidi)
 {
    START_TEXT_TEST();
    const char *buf = "Test - בדיקה";
+   int i;
+   Evas_Coord x, y, w, h, px;
+   const char *font = "Sans";
+   Evas_Font_Size size = 14;
+
+   evas_object_text_font_set(to, font, size);
+
    evas_object_text_text_set(to, buf);
    fail_if(evas_object_text_direction_get(to) != EVAS_BIDI_DIRECTION_LTR);
    evas_object_text_text_set(to, "בדיקה");
    fail_if(evas_object_text_direction_get(to) != EVAS_BIDI_DIRECTION_RTL);
+
+   /* With RTL text coords should be monotontically decreasing. */
+   evas_object_text_text_set(to, "נסיון...");
+   x = 0;
+   px = 200;
+   for (i = 0 ; i < eina_unicode_utf8_get_len("נסיון...") ; i++)
+     {
+        fail_if(!evas_object_text_char_pos_get(to, i, &x, &y, &w, &h));
+        fail_if(x >= px);
+        px = x;
+        /* Get back the coords */
+        fail_if(i != evas_object_text_char_coords_get(to, x + (w / 2),
+                 y + (h / 2), &x, &y, &w, &h));
+     }
+
+   /* Bidi text is a bit more complex */
+   evas_object_text_text_set(to, "Test - נסיון...");
+   x = 0;
+   px = -100;
+   for (i = 0 ; i < eina_unicode_utf8_get_len("Test - ") ; i++)
+     {
+        fail_if(!evas_object_text_char_pos_get(to, i, &x, &y, &w, &h));
+        fail_if(x <= px);
+        px = x;
+        /* Get back the coords */
+        fail_if(i != evas_object_text_char_coords_get(to, x + (w / 2),
+                 y + (h / 2), &x, &y, &w, &h));
+     }
+
+   /* First rtl char requires more specific handling */
+   fail_if(!evas_object_text_char_pos_get(to, i, &x, &y, &w, &h));
+   fail_if(x <= px);
+   px = x;
+   fail_if(i != evas_object_text_char_coords_get(to, x + (w / 2),
+            y + (h / 2), &x, &y, &w, &h));
+   i++;
+   for ( ; i < eina_unicode_utf8_get_len("Test - נסיון") ; i++)
+     {
+        fail_if(!evas_object_text_char_pos_get(to, i, &x, &y, &w, &h));
+        fail_if(x >= px);
+        px = x;
+        /* Get back the coords */
+        fail_if(i != evas_object_text_char_coords_get(to, x + (w / 2),
+                 y + (h / 2), &x, &y, &w, &h));
+     }
+   /* First ltr char requires more specific handling */
+   fail_if(!evas_object_text_char_pos_get(to, i, &x, &y, &w, &h));
+   fail_if(x <= px);
+   px = x;
+   i++;
+   for ( ; i < eina_unicode_utf8_get_len("Test - נסיון...") ; i++)
+     {
+        fail_if(!evas_object_text_char_pos_get(to, i, &x, &y, &w, &h));
+        fail_if(x <= px);
+        px = x;
+        /* Get back the coords */
+        fail_if(i != evas_object_text_char_coords_get(to, x + (w / 2),
+                 y + (h / 2), &x, &y, &w, &h));
+     }
 
    /* FIXME: Add tests that check visual position */
 
