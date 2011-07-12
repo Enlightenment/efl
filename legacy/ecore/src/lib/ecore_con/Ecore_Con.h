@@ -726,6 +726,10 @@ EAPI void              ecore_con_server_flush(Ecore_Con_Server *svr);
  * This function is used to set the idle timeout on clients.  A value of < 1
  * disables the idle timeout.
  *
+ * This timeout is not affected by the one set by
+ * ecore_con_client_timeout_set(). A client will be disconnected whenever the
+ * client or the server timeout is reached.
+ *
  * @see ecore_con_server_timeout_get()
  * @see ecore_con_client_timeout_set()
  */
@@ -833,6 +837,8 @@ EAPI double            ecore_con_client_uptime_get(Ecore_Con_Client *cl);
  *
  * This function is used to get the idle timeout for a client.  A value of < 1
  * means the idle timeout is disabled.
+ *
+ * @see ecore_con_client_timeout_set()
  */
 EAPI double            ecore_con_client_timeout_get(Ecore_Con_Client *cl);
 /**
@@ -843,6 +849,12 @@ EAPI double            ecore_con_client_timeout_get(Ecore_Con_Client *cl);
  *
  * This function is used to set the idle timeout on a client.  A value of < 1
  * disables the idle timeout.
+ *
+ * This timeout is not affected by the one set by
+ * ecore_con_server_timeout_set(). A client will be disconnected whenever the
+ * client or the server timeout is reached.
+ * @see ecore_con_client_timeout_get()
+ * @see ecore_con_server_timeout_set()
  */
 EAPI void              ecore_con_client_timeout_set(Ecore_Con_Client *cl, double timeout);
 /**
