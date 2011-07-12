@@ -712,6 +712,7 @@ _ecore_main_loop_init(void)
       CRIT("Failed to create glib source for epoll!");
    else
      {
+        g_source_set_priority(ecore_glib_source, G_PRIORITY_HIGH_IDLE + 20);
         if (HAVE_EPOLL && epoll_fd >= 0)
           {
              /* epoll multiplexes fds into the g_main_loop */
