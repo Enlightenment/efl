@@ -1,13 +1,6 @@
 #include <Elementary.h>
 #include "elm_priv.h"
 
-/**
- * @defgroup Label Label
- *
- * Display text, with simple html-like markup. The theme of course
- * can invent new markup tags and style them any way it likes
- */
-
 typedef struct _Widget_Data Widget_Data;
 
 struct _Widget_Data
@@ -540,14 +533,6 @@ _elm_label_label_get(const Evas_Object *obj, const char *item)
    return wd->label;
 }
 
-/**
- * Add a new label to the parent
- *
- * @param parent The parent object
- * @return The new object or NULL if it cannot be created
- *
- * @ingroup Label
- */
 EAPI Evas_Object *
 elm_label_add(Evas_Object *parent)
 {
@@ -596,42 +581,18 @@ elm_label_add(Evas_Object *parent)
    return obj;
 }
 
-/**
- * Set the label on the label object
- *
- * @param obj The label object
- * @param label The label will be used on the label object
- *
- * @ingroup Label
- */
 EAPI void
 elm_label_label_set(Evas_Object *obj, const char *label)
 {
   _elm_label_label_set(obj, NULL, label);
 }
 
-/**
- * Get the label used on the label object
- *
- * @param obj The label object
- * @return The string inside the label
- * @ingroup Label
- * @deprecated
- */
 EAPI const char *
 elm_label_label_get(const Evas_Object *obj)
 {
   return _elm_label_label_get(obj, NULL);
 }
 
-/**
- * Set the wrapping behavior of the label
- *
- * @param obj The label object
- * @param wrap To wrap text or not
- * @ingroup Label
- * @deprecated
- */
 EAPI void
 elm_label_line_wrap_set(Evas_Object *obj, Elm_Wrap_Type wrap)
 {
@@ -672,13 +633,6 @@ elm_label_line_wrap_set(Evas_Object *obj, Elm_Wrap_Type wrap)
      }
 }
 
-/**
- * Get the wrapping behavior of the label
- *
- * @param obj The label object
- * @return Wrap type
- * @ingroup Label
- */
 EAPI Elm_Wrap_Type
 elm_label_line_wrap_get(const Evas_Object *obj)
 {
@@ -688,13 +642,6 @@ elm_label_line_wrap_get(const Evas_Object *obj)
    return wd->linewrap;
 }
 
-/**
- * Set wrap width of the label
- *
- * @param obj The label object
- * @param w The wrap width in pixels at a minimum where words need to wrap
- * @ingroup Label
- */
 EAPI void
 elm_label_wrap_width_set(Evas_Object *obj, Evas_Coord w)
 {
@@ -712,13 +659,6 @@ elm_label_wrap_width_set(Evas_Object *obj, Evas_Coord w)
    _sizing_eval(obj);
 }
 
-/**
- * get wrap width of the label
- *
- * @param obj The label object
- * @return The wrap width in pixels at a minimum where words need to wrap
- * @ingroup Label
- */
 EAPI Evas_Coord
 elm_label_wrap_width_get(const Evas_Object *obj)
 {
@@ -728,13 +668,6 @@ elm_label_wrap_width_get(const Evas_Object *obj)
    return wd->wrap_w;
 }
 
-/**
- * Set wrap height of the label
- *
- * @param obj The label object
- * @param w The wrap width in pixels at a minimum where words need to wrap
- * @ingroup Label
- */
 EAPI void
 elm_label_wrap_height_set(Evas_Object *obj,
                           Evas_Coord   h)
@@ -753,13 +686,6 @@ elm_label_wrap_height_set(Evas_Object *obj,
    _sizing_eval(obj);
 }
 
-/**
- * get wrap width of the label
- *
- * @param obj The label object
- * @return The wrap height in pixels at a minimum where words need to wrap
- * @ingroup Label
- */
 EAPI Evas_Coord
 elm_label_wrap_height_get(const Evas_Object *obj)
 {
@@ -769,18 +695,6 @@ elm_label_wrap_height_get(const Evas_Object *obj)
    return wd->wrap_h;
 }
 
-/**
- * Set the font size on the label object.
- *
- * NEVER use this. It is for hyper-special cases only. use styles instead. e.g.
- * "big", "medium", "small" - or better name them by use:
- * "title", "footnote", "quote" etc.
- *
- * @param obj The label object
- * @param size font size
- *
- * @ingroup Label
- */
 EAPI void
 elm_label_fontsize_set(Evas_Object *obj, int fontsize)
 {
@@ -808,18 +722,6 @@ elm_label_fontsize_set(Evas_Object *obj, int fontsize)
    eina_strbuf_free(fontbuf);
 }
 
-/**
- * Set the text align on the label object
- *
- * NEVER use this. It is for hyper-special cases only. use styles instead. e.g.
- * "big", "medium", "small" - or better name them by use:
- * "title", "footnote", "quote" etc.
- *
- * @param obj The label object
- * @param align align mode ("left", "center", "right")
- *
- * @ingroup Label
- */
 EAPI void
 elm_label_text_align_set(Evas_Object *obj, const char *alignmode)
 {
@@ -842,17 +744,6 @@ elm_label_text_align_set(Evas_Object *obj, const char *alignmode)
    _sizing_eval(obj);
 }
 
-/**
- * Set the text color on the label object
- *
- * @param obj The label object
- * @param r Red property background color of The label object
- * @param g Green property background color of The label object
- * @param b Blue property background color of The label object
- * @param a Alpha property background color of The label object
- *
- * @ingroup Label
- */
 EAPI void
 elm_label_text_color_set(Evas_Object *obj,
                          unsigned int r,
@@ -882,21 +773,6 @@ elm_label_text_color_set(Evas_Object *obj,
    eina_strbuf_free(colorbuf);
 }
 
-/**
- * Set background color of the label
- *
- * NEVER use this. It is for hyper-special cases only. use styles instead. e.g.
- * "big", "medium", "small" - or better name them by use:
- * "title", "footnote", "quote" etc.
- *
- * @param obj The label object
- * @param r Red property background color of The label object
- * @param g Green property background color of The label object
- * @param b Blue property background color of The label object
- * @param a Alpha property background alpha of The label object
- *
- * @ingroup Label
- */
 EAPI void
 elm_label_background_color_set(Evas_Object *obj,
                                unsigned int r,
@@ -918,13 +794,6 @@ elm_label_background_color_set(Evas_Object *obj,
      }
 }
 
-/**
- * Set the ellipsis behavior of the label
- *
- * @param obj The label object
- * @param ellipsis To ellipsis text or not
- * @ingroup Label
- */
 EAPI void
 elm_label_ellipsis_set(Evas_Object *obj, Eina_Bool ellipsis)
 {
@@ -956,13 +825,6 @@ elm_label_ellipsis_set(Evas_Object *obj, Eina_Bool ellipsis)
 
 }
 
-/**
- * Set the text slide of the label
- *
- * @param obj The label object
- * @param slide To start slide or stop
- * @ingroup Label
- */
 EAPI void
 elm_label_slide_set(Evas_Object *obj,
                     Eina_Bool    slide)
@@ -978,13 +840,6 @@ elm_label_slide_set(Evas_Object *obj,
    _sizing_eval(obj);
 }
 
-/**
- * get the text slide mode of the label
- *
- * @param obj The label object
- * @return slide slide mode value
- * @ingroup Label
- */
 EAPI Eina_Bool
 elm_label_slide_get(Evas_Object *obj)
 {
@@ -994,13 +849,6 @@ elm_label_slide_get(Evas_Object *obj)
    return wd->slidingmode;
 }
 
-/**
- * set the slide duration(speed) of the label
- *
- * @param obj The label object
- * @return The duration time in moving text from slide begin position to slide end position
- * @ingroup Label
- */
 EAPI void
 elm_label_slide_duration_set(Evas_Object *obj, double duration)
 {
@@ -1015,13 +863,6 @@ elm_label_slide_duration_set(Evas_Object *obj, double duration)
    edje_object_message_send(wd->lbl, EDJE_MESSAGE_FLOAT_SET, 0, msg);
 }
 
-/**
- * get the slide duration(speed) of the label
- *
- * @param obj The label object
- * @return The duration time in moving text from slide begin position to slide end position
- * @ingroup Label
- */
 EAPI double
 elm_label_slide_duration_get(Evas_Object *obj)
 {

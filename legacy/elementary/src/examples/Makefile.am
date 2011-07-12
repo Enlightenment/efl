@@ -44,6 +44,7 @@ SRCS = \
 	bg_example_03.c \
 	box_example_02.c \
 	general_funcs_example.c \
+	label_example_01.c \
 	theme_example_01.c \
 	theme_example_02.c \
 	clock_example.c \
@@ -83,6 +84,7 @@ pkglib_PROGRAMS += \
 	bg_example_03 \
 	box_example_02 \
 	general_funcs_example \
+	label_example_01 \
 	theme_example_01 \
 	theme_example_02 \
 	clock_example \
@@ -104,6 +106,7 @@ SCREENSHOTS = \
 	animator_example_01:animator_example_02.png:0.5 \
 	animator_example_01:animator_example_03.png:0.9 \
 	frame_example_01:frame_example_01.png:0.0 \
+	label_example_01:label_example_01.png:0.0 \
 	theme_example_01:theme_example_01.png:0.0 \
 	clock_example:clock_example.png:0.5 \
 	flipselector_example:flipselector_example.png:0.0
