@@ -15,7 +15,7 @@ struct _Widget_Data
    Evas_Object      *obj, *scr, *pan_smart;
    Pan              *pan;
    Evas_Coord        pan_x, pan_y, minw, minh;
-   
+
    struct {
       int w, h;
       Evas_Coord total_w, total_h;
@@ -457,7 +457,7 @@ struct _Span
  * P |  | |  | |  | |  | |  | |  |
  * A |  | |  | |  | |  | |  | |  |
  * N +--+ +--+ +--+ +--+ +--+ +--+
- * 
+ *
  */
 
 static Span *
@@ -466,9 +466,9 @@ __span_build(int total, Evas_Coord size, int levels, Evas_Coord pos, int buckets
    Span *sp;
    int i, num, bucket;
    Evas_Coord p;
-   
+
    static int lv = 0;
-   
+
    sp = calloc(1, sizeof(Span));
    for (i = 0; i < lv; i++) printf(" ");
    printf("SP: %i tot\n", total);
@@ -477,7 +477,7 @@ __span_build(int total, Evas_Coord size, int levels, Evas_Coord pos, int buckets
    sp->total_child_count = total;
    sp->pos = pos;
    if (bucketsize == 1) return sp;
-   
+
    // get max number of children per bucket
    num = bucket = (bucketsize + (levels - 1)) / levels;
    sp->child = calloc(levels, sizeof(Span *));
@@ -513,7 +513,7 @@ static Span *
 _span_first(Span *sp)
 {
    Span *sp2;
-   
+
    if (!sp->child) return sp;
    sp2 = _span_first(sp->child[0]);
    return sp2;
@@ -523,7 +523,7 @@ static Span *
 _span_last(Span *sp)
 {
    Span *sp2;
-   
+
    if (!sp->child) return sp;
    sp2 = _span_last(sp->child[sp->child_count - 1]);
    return sp2;
@@ -582,7 +582,7 @@ _span_real_pos_get(Span *sp)
 {
    Span *spp;
    Evas_Coord pos = sp->pos;
-   
+
    for (spp = sp->parent; spp; spp = spp->parent)
       pos += spp->pos;
    return pos;
@@ -593,8 +593,8 @@ _span_real_num_get(Span *sp)
 {
    Span *spp, *spp_prev;
    int i, num = 0;
-   
-   for (spp_prev = sp, spp = sp->parent; spp; 
+
+   for (spp_prev = sp, spp = sp->parent; spp;
         spp_prev = spp, spp = spp->parent)
      {
         if (spp->child)
@@ -647,7 +647,7 @@ __span_del(Span *sp, int num, int count, Evas_Coord *delsize)
 {
    int i, n, cnt, reduce = 0, deleted = 0, delstart = -1, num2, done;
    Evas_Coord deleted_size = 0, size;
-   
+
    if (!sp->child)
      {
         *delsize = sp->size;
@@ -710,7 +710,7 @@ __span_insert(Span *sp, int num, int count, Evas_Coord size, Evas_Coord pos)
 {
    Span *sp2;
    int i, j, n, src;
-   
+
    if (num < 0) return;
 next:
    // total child count and size go up by what we are inserting
@@ -762,7 +762,7 @@ next:
      {
         // we have some children - find a spot and plug 'er in
         Span **child;
-        
+
         src = 0;
         // alloc a new child array and copy in old child ptrs from old array
         // up until the insertion point (num)
@@ -908,7 +908,7 @@ elm_genscroller_add(Evas_Object *parent)
 
      {
         Span *sp0, *sp;
-        
+
         sp0 = _span_build(46, 10, 4);
         sp = _span_first(sp0);
         if (sp) printf("first @ %i [%i], size %i\n", sp->pos, _span_real_pos_get(sp), sp->size);
@@ -917,8 +917,8 @@ elm_genscroller_add(Evas_Object *parent)
         for (sp = _span_first(sp0); sp; sp = _span_next(sp))
           {
              if (sp) printf("  @ %i [%i], size %i t: %i %i\n",
-                            sp->pos, 
-                            _span_real_pos_get(sp), 
+                            sp->pos,
+                            _span_real_pos_get(sp),
                             sp->size,
                             sp->child_count,
                             sp->total_child_count);
@@ -954,7 +954,7 @@ elm_genscroller_add(Evas_Object *parent)
         if (sp) printf("sp pos 455 @ %i [%i]\n", _span_real_pos_get(sp), _span_real_num_get(sp));
         sp = _span_pos_get(sp0, 461);
         if (sp) printf("sp pos 461 @ %i [%i]\n", _span_real_pos_get(sp), _span_real_num_get(sp));
-        
+
         printf("del @13, 11 spans\n");
         _span_del(sp0, 13, 11);
         for (sp = _span_first(sp0); sp; sp = _span_next(sp))
