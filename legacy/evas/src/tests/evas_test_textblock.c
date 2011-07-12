@@ -843,9 +843,10 @@ START_TEST(evas_textblock_style)
    evas_object_textblock_size_formatted_get(tb, &nw, &nh);
    fail_if((w >= nw) || (h >= nh));
 
+   /* Style padding. */
    evas_object_textblock_text_markup_set(tb, "Test");
    evas_object_textblock_style_insets_get(tb, &l, &r, &t, &b);
-//   fail_if((l != 0) || (r != 0) || (t != 0) || (b != 0));
+   fail_if((l != 0) || (r != 0) || (t != 0) || (b != 0));
 
    evas_object_textblock_text_markup_set(tb, "<style=shadow>Test</>");
    evas_object_textblock_style_insets_get(tb, &l, &r, &t, &b);
@@ -882,6 +883,13 @@ START_TEST(evas_textblock_style)
    evas_object_textblock_text_markup_set(tb, "<style=far_soft_shadow>Test</>");
    evas_object_textblock_style_insets_get(tb, &l, &r, &t, &b);
    fail_if((l != 0) || (r != 4) || (t != 0) || (b != 4));
+
+   /* Mixed style padding */
+   evas_object_textblock_text_markup_set(tb,
+         "<style=far_shadow>Test</><style=far_soft_shadow>Test</>");
+   evas_object_textblock_style_insets_get(tb, &l, &r, &t, &b);
+   fail_if((l != 1) || (r != 4) || (t != 1) || (b != 4));
+
    END_TB_TEST();
 }
 END_TEST
