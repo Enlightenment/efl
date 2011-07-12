@@ -221,7 +221,8 @@ _ecore_imf_context_xim_focus_in(Ecore_IMF_Context *ctx)
 }
 
 static void
-_ecore_imf_context_xim_focus_out(Ecore_IMF_Context *ctx) {
+_ecore_imf_context_xim_focus_out(Ecore_IMF_Context *ctx)
+{
    EINA_LOG_DBG("%s in", __FUNCTION__);
 #ifdef ENABLE_XIM
    XIC ic;
@@ -238,7 +239,8 @@ _ecore_imf_context_xim_focus_out(Ecore_IMF_Context *ctx) {
 }
 
 static void
-_ecore_imf_context_xim_reset(Ecore_IMF_Context *ctx) {
+_ecore_imf_context_xim_reset(Ecore_IMF_Context *ctx)
+{
    EINA_LOG_DBG("%s in", __FUNCTION__);
 #ifdef ENABLE_XIM
    XIC ic;
@@ -345,7 +347,8 @@ _ecore_x_event_reverse_modifiers(unsigned int state)
 }
 
 static unsigned int
-_ecore_x_event_reverse_locks(unsigned int state) {
+_ecore_x_event_reverse_locks(unsigned int state)
+{
    unsigned int locks = 0;
 
    /**< "Num" lock is active */
@@ -363,7 +366,8 @@ _ecore_x_event_reverse_locks(unsigned int state) {
 
 static KeyCode
 _keycode_get(Ecore_X_Display *dsp,
-             const char      *keyname) {
+             const char      *keyname)
+{
    KeyCode keycode;
 
    // EINA_LOG_DBG("keyname:%s keysym:%lu", keyname, XStringToKeysym(keyname));
@@ -383,7 +387,8 @@ _keycode_get(Ecore_X_Display *dsp,
 static Eina_Bool
 _ecore_imf_context_xim_filter_event(Ecore_IMF_Context   *ctx,
                                     Ecore_IMF_Event_Type type,
-                                    Ecore_IMF_Event     *event) {
+                                    Ecore_IMF_Event     *event)
+{
    EINA_LOG_DBG("%s in", __FUNCTION__);
 #ifdef ENABLE_XIM
    Ecore_IMF_Context_Data *imf_context_data;
@@ -571,7 +576,8 @@ static Ecore_IMF_Context_Class xim_class = {
 };
 
 static Ecore_IMF_Context *
-xim_imf_module_create(void) {
+xim_imf_module_create(void)
+{
    EINA_LOG_DBG("%s in", __FUNCTION__);
    Ecore_IMF_Context *ctx = NULL;
 
@@ -587,12 +593,14 @@ error:
 }
 
 static Ecore_IMF_Context *
-xim_imf_module_exit(void) {
+xim_imf_module_exit(void)
+{
    return NULL;
 }
 
 Eina_Bool
-ecore_imf_xim_init(void) {
+ecore_imf_xim_init(void)
+{
    EINA_LOG_DBG("%s in", __FUNCTION__);
    eina_init();
    ecore_x_init(NULL);
@@ -604,7 +612,8 @@ ecore_imf_xim_init(void) {
 }
 
 void
-ecore_imf_xim_shutdown(void) {
+ecore_imf_xim_shutdown(void)
+{
 #ifdef ENABLE_XIM
    while (open_ims) {
         XIM_Im_Info *info = open_ims->data;
@@ -649,7 +658,8 @@ error:
 }
 
 void
-imf_context_data_destroy(Ecore_IMF_Context_Data *imf_context_data) {
+imf_context_data_destroy(Ecore_IMF_Context_Data *imf_context_data)
+{
    if(!imf_context_data)
      return;
 
