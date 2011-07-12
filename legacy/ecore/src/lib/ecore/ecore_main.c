@@ -491,9 +491,6 @@ _ecore_main_gsource_prepare(GSource *source __UNUSED__, gint *next_time)
 
    if (!ecore_idling)
      {
-         while (_ecore_timer_call(_ecore_time_loop_time));
-         _ecore_timer_cleanup();
-
          /* when idling, busy loop checking the fds only */
          _ecore_idle_enterer_call();
          _ecore_throttle();
@@ -622,7 +619,10 @@ static gboolean
 _ecore_main_gsource_dispatch(GSource *source __UNUSED__, GSourceFunc callback __UNUSED__, gpointer user_data __UNUSED__)
 {
    gboolean events_ready, timers_ready, idlers_ready;
-   double next_time = _ecore_timer_next_get();
+   double next_time;
+
+   _ecore_time_loop_time = ecore_time_get();
+   next_time = _ecore_timer_next_get();
 
    events_ready = _ecore_event_exist();
    timers_ready = _ecore_timers_exists() && (0.0 == next_time);
@@ -665,6 +665,9 @@ _ecore_main_gsource_dispatch(GSource *source __UNUSED__, GSourceFunc callback __
         while (_ecore_signal_count_get()) _ecore_signal_call();
         _ecore_event_call();
         _ecore_main_fd_handlers_cleanup();
+
+        while (_ecore_timer_call(_ecore_time_loop_time));
+        _ecore_timer_cleanup();
      }
 
    in_main_loop--;
