@@ -6785,7 +6785,7 @@ EAPI const char       *evas_object_text_bidi_delimiters_get(const Evas_Object *o
  * @param cw	A pointer to an @c Evas_Coord to store the Width value in (can be NULL).
  * @param ch	A pointer to an @c Evas_Coord to store the Height value in (can be NULL).
  *
- * @returns EINA_FALSE on error, EINA_TRUE on success.
+ * @returns EINA_FALSE on sucess, EINA_TRUE on error.
  */
 EAPI Eina_Bool         evas_object_text_char_pos_get     (const Evas_Object *obj, int pos, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch) EINA_ARG_NONNULL(1);
    EAPI int               evas_object_text_char_coords_get  (const Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch) EINA_ARG_NONNULL(1);
