@@ -85,19 +85,21 @@ struct epoll_event {
 };
 
 static inline int
-epoll_create(int size)
+epoll_create(int size __UNUSED__)
 {
   return -1;
 }
 
 static inline int
-epoll_wait(int epfd, struct epoll_event *events, int maxevents, int timeout)
+epoll_wait(int epfd __UNUSED__, struct epoll_event *events __UNUSED__,
+           int maxevents __UNUSED__, int timeout __UNUSED__)
 {
   return -1;
 }
 
 static inline int
-epoll_ctl(int epfd, int op, int fd, struct epoll_event *event)
+epoll_ctl(int epfd __UNUSED__, int op __UNUSED__, int fd __UNUSED__,
+          struct epoll_event *event __UNUSED__)
 {
   return -1;
 }
