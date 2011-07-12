@@ -1,0 +1,7 @@
+MAINTAINERCLEANFILES = Makefile.in
+
+SUBDIRS =
+
+if BUILD_ECORE_IMF_XIM
+SUBDIRS += xim
+endif
