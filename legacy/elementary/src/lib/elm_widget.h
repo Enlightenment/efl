@@ -310,6 +310,7 @@ EAPI Eina_List       *elm_widget_stringlist_get(const char *str);
 EAPI void             elm_widget_stringlist_free(Eina_List *list);
 EAPI void             elm_widget_focus_hide_handle(Evas_Object *obj);
 EAPI void             elm_widget_focus_mouse_down_handle(Evas_Object *obj);
+EAPI void             elm_widget_focus_disabled_handle(Evas_Object *obj);
 EAPI void             elm_widget_text_part_set(Evas_Object *obj, const char *item, const char *label);
 EAPI const char      *elm_widget_text_part_get(const Evas_Object *obj, const char *item);
 

@@ -1806,25 +1806,7 @@ elm_widget_disabled_set(Evas_Object *obj,
 
    if (sd->disabled == disabled) return;
    sd->disabled = !!disabled;
-   if (sd->focused)
-     {
-        Evas_Object *o, *parent;
-        parent = obj;
-        o = elm_widget_parent_get(parent);
-        if (!o)
-          elm_widget_focused_object_clear(parent);
-        else
-          {
-             parent = o;
-             for (;;)
-               {
-                  o = elm_widget_parent_get(parent);
-                  if (!o) break;
-                  parent = o;
-               }
-             elm_widget_focus_cycle(parent, ELM_FOCUS_NEXT);
-          }
-     }
+   elm_widget_focus_disabled_handle(obj);
    if (sd->disable_func) sd->disable_func(obj);
 }
 
@@ -2288,6 +2270,17 @@ elm_widget_focus_mouse_down_handle(Evas_Object *obj)
    if (!o) return;
    if (!_is_focusable(o)) return;
    elm_widget_focus_steal(o);
+}
+
+EAPI void
+elm_widget_focus_disabled_handle(Evas_Object *obj)
+{
+   API_ENTRY return;
+
+   if (!elm_widget_parent_get(obj))
+     elm_widget_focused_object_clear(obj);
+   else
+     _if_focused_revert(obj, EINA_TRUE);
 }
 
 /**
