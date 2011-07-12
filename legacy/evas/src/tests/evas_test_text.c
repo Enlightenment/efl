@@ -39,10 +39,116 @@ START_TEST(evas_text_simple)
 }
 END_TEST
 
+/* Various text related geometries */
+START_TEST(evas_text_geometries)
+{
+   START_TEXT_TEST();
+   const char *buf = "Tests";
+   const char *font = "Sans";
+   Evas_Font_Size size = 14;
+   Evas_Coord prev;
+
+   evas_object_text_font_set(to, font, size);
+   evas_object_text_text_set(to, buf);
+
+   /* Check that they are bigger than 0. */
+   fail_if(evas_object_text_ascent_get(to) <= 0);
+   fail_if(evas_object_text_descent_get(to) <= 0);
+   fail_if(evas_object_text_max_ascent_get(to) <= 0);
+   fail_if(evas_object_text_max_descent_get(to) <= 0);
+   fail_if(evas_object_text_horiz_advance_get(to) <= 0);
+   fail_if(evas_object_text_vert_advance_get(to) <= 0);
+
+   /* Check that expanding the text does what we expect it */
+   evas_object_text_text_set(to, "Test");
+   prev = evas_object_text_ascent_get(to);
+   evas_object_text_text_set(to, "Testing");
+   fail_if(evas_object_text_ascent_get(to) != prev);
+
+   evas_object_text_text_set(to, "Test");
+   prev = evas_object_text_descent_get(to);
+   evas_object_text_text_set(to, "Testing");
+   fail_if(evas_object_text_descent_get(to) != prev);
+
+   evas_object_text_text_set(to, "Test");
+   prev = evas_object_text_max_ascent_get(to);
+   evas_object_text_text_set(to, "Testing");
+   fail_if(evas_object_text_max_ascent_get(to) != prev);
+
+   evas_object_text_text_set(to, "Test");
+   prev = evas_object_text_max_descent_get(to);
+   evas_object_text_text_set(to, "Testing");
+   fail_if(evas_object_text_max_descent_get(to) != prev);
+
+   evas_object_text_text_set(to, "Test");
+   prev = evas_object_text_horiz_advance_get(to);
+   evas_object_text_text_set(to, "Testing");
+   fail_if(evas_object_text_horiz_advance_get(to) <= prev);
+
+   evas_object_text_text_set(to, "Test");
+   prev = evas_object_text_vert_advance_get(to);
+   evas_object_text_text_set(to, "Testing");
+   fail_if(evas_object_text_vert_advance_get(to) != prev);
+
+   END_TEXT_TEST();
+}
+END_TEST
+
+/* Various evas stuff, such as scale */
+START_TEST(evas_text_evas)
+{
+   Evas_Coord w, h, bw, bh;
+   START_TEXT_TEST();
+   const char *buf = "Test - בדיקה";
+   const char *font = "Sans";
+   Evas_Font_Size size = 14;
+
+   evas_object_text_font_set(to, font, size);
+   evas_object_text_text_set(to, buf);
+   evas_object_geometry_get(to, NULL, NULL, &bw, &bh);
+   evas_object_scale_set(to, 3.0);
+   evas_object_geometry_get(to, NULL, NULL, &w, &h);
+   fail_if((w <= bw) || (h <= bh));
+
+   evas_object_scale_set(to, 0.5);
+   evas_object_geometry_get(to, NULL, NULL, &w, &h);
+   fail_if((w >= bw) || (h >= bh));
+
+   END_TEXT_TEST();
+}
+END_TEST
+
+/* Tests for functions that are in evas_object_text.c but
+ * don't really have anything to do with it. */
+START_TEST(evas_text_unrelated)
+{
+   START_TEXT_TEST();
+   const char *buf = "נסיון";
+   int pos;
+   Eina_Unicode value;
+   /* Actually, they are tested in eina, just doing it for completeness. */
+   fail_if(evas_string_char_len_get(buf) != 5);
+
+   pos = 0;
+   fail_if(2 != evas_string_char_next_get(buf, pos, &value));
+   fail_if(value != L'נ');
+
+   pos = 2;
+   fail_if(0 != evas_string_char_prev_get(buf, pos, &value));
+   fail_if(value != L'ס');
+
+   END_TEXT_TEST();
+}
+END_TEST
+
 #define _CHECK_SET_GET(x) \
 do \
 { \
    Evas_Coord r, g, b, a; \
+   evas_object_text_##x##_set(to, 100, 150, 125, 12); \
+   evas_object_text_##x##_get(to, &r, &g, &b, &a); \
+   fail_if((r != 100) || (g != 150) || (b != 125) || (a != 12)); \
+   /* Set to the same value */ \
    evas_object_text_##x##_set(to, 100, 150, 125, 12); \
    evas_object_text_##x##_get(to, &r, &g, &b, &a); \
    fail_if((r != 100) || (g != 150) || (b != 125) || (a != 12)); \
@@ -95,6 +201,20 @@ START_TEST(evas_text_set_get)
    fail_if(evas_object_text_bidi_delimiters_get(to));
    evas_object_text_bidi_delimiters_set(to, ",|");
    fail_if(strcmp(evas_object_text_bidi_delimiters_get(to), ",|"));
+
+   /* Style */
+   evas_object_text_text_set(to, "");
+   evas_object_text_style_set(to, EVAS_TEXT_STYLE_SHADOW);
+   fail_if(evas_object_text_style_get(to) != EVAS_TEXT_STYLE_SHADOW);
+   evas_object_text_style_set(to, EVAS_TEXT_STYLE_OUTLINE);
+   fail_if(evas_object_text_style_get(to) != EVAS_TEXT_STYLE_OUTLINE);
+
+   /* Rehinting */
+   evas_object_text_text_set(to, "Bla");
+   evas_font_hinting_set(evas, EVAS_FONT_HINTING_NONE);
+   evas_font_hinting_set(evas, EVAS_FONT_HINTING_AUTO);
+   evas_font_hinting_set(evas, EVAS_FONT_HINTING_BYTECODE);
+
    END_TEXT_TEST();
 }
 END_TEST
@@ -159,6 +279,9 @@ START_TEST(evas_text_bidi)
    fail_if(evas_object_text_direction_get(to) != EVAS_BIDI_DIRECTION_LTR);
    evas_object_text_text_set(to, "בדיקה");
    fail_if(evas_object_text_direction_get(to) != EVAS_BIDI_DIRECTION_RTL);
+
+   /* FIXME: Add tests that check visual position */
+
    END_TEXT_TEST();
 }
 END_TEST
@@ -169,7 +292,11 @@ void evas_test_text(TCase *tc)
    tcase_add_test(tc, evas_text_simple);
    tcase_add_test(tc, evas_text_style);
    tcase_add_test(tc, evas_text_set_get);
+   tcase_add_test(tc, evas_text_geometries);
+   tcase_add_test(tc, evas_text_evas);
 #ifdef HAVE_FRIBIDI
    tcase_add_test(tc, evas_text_bidi);
 #endif
+
+   tcase_add_test(tc, evas_text_unrelated);
 }
