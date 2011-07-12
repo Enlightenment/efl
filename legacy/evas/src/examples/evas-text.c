@@ -27,6 +27,13 @@
 #define WIDTH  (320)
 #define HEIGHT (240)
 
+#define GREY {190, 190, 190, 255}
+#define BLACK {0, 0, 0, 255}
+#define WHITE {255, 255, 255, 255}
+#define RED   {255, 0, 0, 255}
+#define GREEN {0, 255, 0, 255}
+#define BLUE  {0, 0, 255, 255}
+
 #define POINTER_CYCLE(_ptr, _array)                             \
   do                                                            \
     {                                                           \
@@ -41,6 +48,7 @@ static const char *commands = \
   "\tt - change text's current style\n"
   "\tz - change text's font size\n"
   "\tf - change text's font family\n"
+  "\tb - change text's base color\n"
   "\ts - change text's \'shadow\' color\n"
   "\to - change text's \'outline\' color\n"
   "\tw - change text's \'glow\' color\n"
@@ -59,17 +67,20 @@ struct text_preset_data
    const char        **font_ptr;
    const char         *font[3];
 
+   struct color_tuple *text_ptr;
+   struct color_tuple  text[6];
+
    struct color_tuple *shadow_ptr;
-   struct color_tuple  shadow[3];
+   struct color_tuple  shadow[4];
 
    struct color_tuple *outline_ptr;
-   struct color_tuple  outline[3];
+   struct color_tuple  outline[4];
 
    struct color_tuple *glow_ptr;
-   struct color_tuple  glow[3];
+   struct color_tuple  glow[4];
 
    struct color_tuple *glow2_ptr;
-   struct color_tuple  glow2[3];
+   struct color_tuple  glow2[4];
 };
 
 struct test_data
@@ -184,6 +195,23 @@ _on_keydown(void        *data __UNUSED__,
         return;
      }
 
+   if (strcmp(ev->keyname, "b") == 0) /* change text's base color */
+     {
+        (d.t_data.text_ptr)++;
+
+        POINTER_CYCLE(d.t_data.text_ptr, d.t_data.text);
+
+        evas_object_color_set(
+          d.text, d.t_data.text_ptr->r, d.t_data.text_ptr->g,
+          d.t_data.text_ptr->b, d.t_data.text_ptr->a);
+
+        fprintf(stdout, "Changing base color for text to (%d, %d, %d, %d)\n",
+                d.t_data.text_ptr->r, d.t_data.text_ptr->g,
+                d.t_data.text_ptr->b, d.t_data.text_ptr->a);
+
+        return;
+     }
+
    if (strcmp(ev->keyname, "g") == 0) /* change text's glow 2 color */
      {
         (d.t_data.glow2_ptr)++;
@@ -284,15 +312,18 @@ main(void)
    struct text_preset_data init_data =
    {
       .font = {"DejaVu", "Courier", "Utopia"},
-      .shadow = {{255, 255, 255, 255}, {0, 0, 255, 255}, {255, 0, 100, 255}},
-      .outline = {{255, 255, 255, 255}, {255, 0, 0, 255}, {0, 255, 0, 255}},
-      .glow = {{255, 255, 255, 255}, {0, 0, 255, 255}, {255, 0, 255, 255}},
-      .glow2 = {{255, 255, 255, 255}, {255, 0, 0, 255}, {255, 255, 0, 255}}
+      .text = {BLACK, WHITE, GREY, RED, GREEN, BLUE},
+      .shadow = {WHITE, BLUE, GREEN, RED},
+      .outline = {WHITE, RED, GREEN, BLUE},
+      .glow = {WHITE, BLUE, GREEN, RED},
+      .glow2 = {WHITE, RED, BLUE, GREEN}
    };
 
    d.t_data = init_data;
 
    d.t_data.font_ptr = d.t_data.font;
+
+   d.t_data.text_ptr = d.t_data.text;
    d.t_data.glow_ptr = d.t_data.glow;
    d.t_data.glow2_ptr = d.t_data.glow2;
    d.t_data.outline_ptr = d.t_data.outline;
@@ -325,6 +356,10 @@ main(void)
    evas_object_text_style_set(d.text, EVAS_TEXT_STYLE_PLAIN);
 
    /* let the pre-set thingies be enforced */
+   evas_object_color_set(
+     d.text, d.t_data.text_ptr->r, d.t_data.text_ptr->g,
+     d.t_data.text_ptr->b, d.t_data.text_ptr->a);
+
    evas_object_text_glow_color_set(
      d.text, d.t_data.glow_ptr->r, d.t_data.glow_ptr->g,
      d.t_data.glow_ptr->b, d.t_data.glow_ptr->a);
@@ -342,10 +377,8 @@ main(void)
      d.t_data.shadow_ptr->b, d.t_data.shadow_ptr->a);
 
    evas_object_text_font_set(d.text, *d.t_data.font_ptr, 30);
-   evas_object_text_font_source_set(d.text, NULL);
-   evas_object_text_text_set(d.text, "problem?");
+   evas_object_text_text_set(d.text, "sample text");
 
-   evas_object_color_set(d.text, 0, 0, 0, 255);
    evas_object_resize(d.text, (3 * WIDTH) / 4, HEIGHT / 4);
    evas_object_move(d.text, WIDTH / 8, (3 * HEIGHT) / 8);
    evas_object_show(d.text);
