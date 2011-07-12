@@ -76,7 +76,7 @@
  *
  * "changed" - The text within the entry was changed
  * "activated" - The entry has had editing finished and changes are to be committed
-                 (generally when enter key is pressed)
+ *               (generally when enter key is pressed)
  * "press" - The entry has been clicked
  * "longpressed" - The entry has been clicked for a couple seconds
  * "clicked" - The entry has been clicked
@@ -599,9 +599,9 @@ _theme_hook(Evas_Object *obj)
         edj = elm_smart_scroller_edje_object_get(wd->scroller);
         str = edje_object_data_get(edj, "focus_highlight");
         if ((str) && (!strcmp(str, "on")))
-           elm_widget_highlight_in_theme_set(obj, EINA_TRUE);
+          elm_widget_highlight_in_theme_set(obj, EINA_TRUE);
         else
-           elm_widget_highlight_in_theme_set(obj, EINA_FALSE);
+          elm_widget_highlight_in_theme_set(obj, EINA_FALSE);
      }
    _sizing_eval(obj);
 }
@@ -633,7 +633,7 @@ _recalc_cursor_geometry(Evas_Object *obj)
      {
         Evas_Coord cx, cy, cw, ch;
         edje_object_part_text_cursor_geometry_get(wd->ent, "elm.text",
-              &cx, &cy, &cw, &ch);
+                                                  &cx, &cy, &cw, &ch);
         if (wd->cur_changed)
           {
              elm_widget_show_region_set(obj, cx, cy, cw, ch, EINA_FALSE);
@@ -641,7 +641,7 @@ _recalc_cursor_geometry(Evas_Object *obj)
           }
      }
    else
-      wd->deferred_cur = EINA_TRUE;
+     wd->deferred_cur = EINA_TRUE;
 }
 
 static void
@@ -668,9 +668,9 @@ _elm_win_recalc_job(void *data)
      }
    evas_object_size_hint_min_set(data, minw, minh);
    if (wd->single_line)
-      evas_object_size_hint_max_set(data, -1, minh);
+     evas_object_size_hint_max_set(data, -1, minh);
    else
-      evas_object_size_hint_max_set(data, -1, -1);
+     evas_object_size_hint_max_set(data, -1, -1);
 
    if (wd->deferred_cur)
      {
@@ -706,7 +706,7 @@ _sizing_eval(Evas_Object *obj)
              evas_object_resize(wd->scroller, resw, resh);
              edje_object_size_min_calc
                 (elm_smart_scroller_edje_object_get(wd->scroller),
-                    &vmw, &vmh);
+                 &vmw, &vmh);
              elm_smart_scroller_child_viewport_size_get(wd->scroller, &vw, &vh);
              edje_object_size_min_restricted_calc(wd->ent, &minw, &minh, vw, 0);
              wd->entmw = minw;
@@ -721,9 +721,9 @@ _sizing_eval(Evas_Object *obj)
              evas_object_resize(wd->ent, vw, vh);
              evas_object_size_hint_min_set(obj, w, h);
              if (wd->single_line)
-                evas_object_size_hint_max_set(obj, -1, h);
+               evas_object_size_hint_max_set(obj, -1, h);
              else
-                evas_object_size_hint_max_set(obj, -1, -1);
+               evas_object_size_hint_max_set(obj, -1, -1);
           }
         else
           {
@@ -753,14 +753,14 @@ _sizing_eval(Evas_Object *obj)
              evas_object_resize(wd->ent, vw, vh);
              edje_object_size_min_calc
                 (elm_smart_scroller_edje_object_get(wd->scroller),
-                    &vmw, &vmh);
+                 &vmw, &vmh);
              if (wd->single_line) h = vmh + minh;
              else h = vmh;
              evas_object_size_hint_min_set(obj, w, h);
              if (wd->single_line)
-                evas_object_size_hint_max_set(obj, -1, h);
+               evas_object_size_hint_max_set(obj, -1, h);
              else
-                evas_object_size_hint_max_set(obj, -1, -1);
+               evas_object_size_hint_max_set(obj, -1, -1);
           }
         else
           {
@@ -770,9 +770,9 @@ _sizing_eval(Evas_Object *obj)
              elm_coords_finger_size_adjust(1, &minw, 1, &minh);
              evas_object_size_hint_min_set(obj, minw, minh);
              if (wd->single_line)
-                evas_object_size_hint_max_set(obj, -1, minh);
+               evas_object_size_hint_max_set(obj, -1, minh);
              else
-                evas_object_size_hint_max_set(obj, -1, -1);
+               evas_object_size_hint_max_set(obj, -1, -1);
           }
      }
 
@@ -809,8 +809,8 @@ _signal_emit_hook(Evas_Object *obj, const char *emission, const char *source)
    if (!wd) return;
    edje_object_signal_emit(wd->ent, emission, source);
    if (wd->scroller)
-      edje_object_signal_emit(elm_smart_scroller_edje_object_get(wd->scroller),
-                              emission, source);
+     edje_object_signal_emit(elm_smart_scroller_edje_object_get(wd->scroller),
+                             emission, source);
 }
 
 static void
@@ -820,8 +820,8 @@ _signal_callback_add_hook(Evas_Object *obj, const char *emission, const char *so
    if (!wd) return;
    edje_object_signal_callback_add(wd->ent, emission, source, func_cb, data);
    if (wd->scroller)
-      edje_object_signal_callback_add(elm_smart_scroller_edje_object_get(wd->scroller),
-                                      emission, source, func_cb, data);
+     edje_object_signal_callback_add(elm_smart_scroller_edje_object_get(wd->scroller),
+                                     emission, source, func_cb, data);
 }
 
 static void
@@ -831,8 +831,8 @@ _signal_callback_del_hook(Evas_Object *obj, const char *emission, const char *so
    edje_object_signal_callback_del_full(wd->ent, emission, source, func_cb,
                                         data);
    if (wd->scroller)
-      edje_object_signal_callback_del_full(elm_smart_scroller_edje_object_get(wd->scroller),
-                                           emission, source, func_cb, data);
+     edje_object_signal_callback_del_full(elm_smart_scroller_edje_object_get(wd->scroller),
+                                          emission, source, func_cb, data);
 }
 
 static void
@@ -847,7 +847,7 @@ _focus_region_hook(Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Coord w, E
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    if (wd->scroll)
-      elm_smart_scroller_child_region_show(wd->scroller, x, y, w, h);
+     elm_smart_scroller_child_region_show(wd->scroller, x, y, w, h);
 }
 
 static void
@@ -858,7 +858,7 @@ _show_region_hook(void *data, Evas_Object *obj)
    if (!wd) return;
    elm_widget_show_region_get(obj, &x, &y, &w, &h);
    if (wd->scroll)
-      elm_smart_scroller_child_region_show(wd->scroller, x, y, w, h);
+     elm_smart_scroller_child_region_show(wd->scroller, x, y, w, h);
 }
 
 static void
@@ -1759,7 +1759,7 @@ _text_append_idler(void *data)
         /* Go to the start of the nearest codepoint, because we don't want
          * to cut it in the middle */
         eina_unicode_utf8_get_prev(wd->append_text_left,
-              &wd->append_text_position);
+                                   &wd->append_text_position);
      }
    else
      {
@@ -1770,7 +1770,7 @@ _text_append_idler(void *data)
    wd->append_text_left[wd->append_text_position] = '\0';
 
    edje_object_part_text_append(wd->ent, "elm.text",
-         wd->append_text_left + start);
+                                wd->append_text_left + start);
 
    wd->append_text_left[wd->append_text_position] = backup;
 
@@ -2086,9 +2086,9 @@ elm_entry_single_line_set(Evas_Object *obj, Eina_Bool single_line)
    if (wd->scroller)
      {
         if (wd->single_line)
-           elm_smart_scroller_policy_set(wd->scroller,
-                                         ELM_SMART_SCROLLER_POLICY_OFF,
-                                         ELM_SMART_SCROLLER_POLICY_OFF);
+          elm_smart_scroller_policy_set(wd->scroller,
+                                        ELM_SMART_SCROLLER_POLICY_OFF,
+                                        ELM_SMART_SCROLLER_POLICY_OFF);
         else
           {
              const Elm_Scroller_Policy map[3] =
@@ -3544,9 +3544,9 @@ elm_entry_icon_visible_set(Evas_Object *obj, Eina_Bool setting)
    Widget_Data *wd = elm_widget_data_get(obj);
    if ((!wd) || (!wd->icon)) return;
    if (setting)
-      evas_object_hide(wd->icon);
+     evas_object_hide(wd->icon);
    else
-      evas_object_show(wd->icon);
+     evas_object_show(wd->icon);
    _sizing_eval(obj);
 }
 
@@ -3649,9 +3649,9 @@ elm_entry_end_visible_set(Evas_Object *obj, Eina_Bool setting)
    Widget_Data *wd = elm_widget_data_get(obj);
    if ((!wd) || (!wd->end)) return;
    if (setting)
-      evas_object_hide(wd->end);
+     evas_object_hide(wd->end);
    else
-      evas_object_show(wd->end);
+     evas_object_show(wd->end);
    _sizing_eval(obj);
 }
 
