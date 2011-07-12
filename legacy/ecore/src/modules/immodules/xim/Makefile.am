@@ -12,6 +12,7 @@ AM_CPPFLAGS = \
 -I$(top_builddir)/src/lib/ecore_imf \
 -DPACKAGE_LIB_DIR=\"$(libdir)\" \
 -DPACKAGE_DATA_DIR=\"$(datadir)/$(PACKAGE)\" \
+@EVAS_CFLAGS@ \
 @EINA_CFLAGS@
 
 pkgdir = $(libdir)/ecore/immodules
