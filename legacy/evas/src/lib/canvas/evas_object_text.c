@@ -731,17 +731,17 @@ evas_object_text_direction_get(const Evas_Object *obj)
    Evas_Object_Text *o;
 
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
-   return EVAS_BIDI_DIRECTION_NATURAL;
+   return EVAS_BIDI_DIRECTION_NEUTRAL;
    MAGIC_CHECK_END();
    o = (Evas_Object_Text *)(obj->object_data);
    MAGIC_CHECK(o, Evas_Object_Text, MAGIC_OBJ_TEXT);
-   return EVAS_BIDI_DIRECTION_NATURAL;
+   return EVAS_BIDI_DIRECTION_NEUTRAL;
    MAGIC_CHECK_END();
    if (o->items)
      {
         return o->items->text_props.bidi.dir;
      }
-   return EVAS_BIDI_DIRECTION_NATURAL;
+   return EVAS_BIDI_DIRECTION_NEUTRAL;
 }
 
 EAPI Evas_Coord

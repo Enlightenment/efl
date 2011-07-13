@@ -617,7 +617,7 @@ void
 evas_bidi_props_clean(Evas_BiDi_Props *bidi_props)
 {
    if (!bidi_props) return;
-   bidi_props->dir = EVAS_BIDI_DIRECTION_NATURAL;
+   bidi_props->dir = EVAS_BIDI_DIRECTION_NEUTRAL;
 }
 /**
  * @}
