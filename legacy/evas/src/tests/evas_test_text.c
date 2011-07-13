@@ -50,8 +50,17 @@ START_TEST(evas_text_geometries)
    int i;
    Evas_Coord x, y, w, h, px;
 
-   evas_object_text_font_set(to, font, size);
    evas_object_text_text_set(to, buf);
+
+   /* All should be 0 without a font set */
+   fail_if(evas_object_text_ascent_get(to) != 0);
+   fail_if(evas_object_text_descent_get(to) != 0);
+   fail_if(evas_object_text_max_ascent_get(to) != 0);
+   fail_if(evas_object_text_max_descent_get(to) != 0);
+   fail_if(evas_object_text_horiz_advance_get(to) != 0);
+   fail_if(evas_object_text_vert_advance_get(to) != 0);
+
+   evas_object_text_font_set(to, font, size);
 
    /* Check that they are bigger than 0. */
    fail_if(evas_object_text_ascent_get(to) <= 0);
@@ -107,6 +116,23 @@ START_TEST(evas_text_geometries)
         fail_if(i != evas_object_text_char_coords_get(to, x + (w / 2),
                  y + (h / 2), &x, &y, &w, &h));
      }
+
+   /* Last up to pos */
+   Evas_Coord adv;
+   int pos, prev_pos;
+   evas_object_text_text_set(to, "Test - 유니코드");
+   adv = evas_object_text_horiz_advance_get(to);
+   pos = prev_pos = 0;
+   for (x = 0 ; x <= (adv - 1) ; x++)
+     {
+        pos = evas_object_text_last_up_to_pos(to, x, 0);
+        fail_if(pos < prev_pos);
+        prev_pos = pos;
+     }
+   pos = evas_object_text_last_up_to_pos(to, x, 0);
+   fail_if(pos != -1);
+   pos = evas_object_text_last_up_to_pos(to, -50, 0);
+   fail_if(pos != -1);
 
    END_TEXT_TEST();
 }
@@ -196,6 +222,20 @@ START_TEST(evas_text_set_get)
    evas_object_text_font_get(to, &font, &size);
    fail_if(strcmp(font, "Sans"));
    fail_if(size != 14);
+   evas_object_text_font_set(to, font, size);
+   font = NULL;
+   size = 0;
+   evas_object_text_font_get(to, &font, &size);
+   fail_if(strcmp(font, "Sans"));
+   fail_if(size != 14);
+
+   font = "NON-EXISTING-FONT";
+   size = 14;
+   evas_object_text_font_set(to, font, size);
+   font = NULL;
+   size = 0;
+   evas_object_text_font_get(to, &font, &size);
+   fail_if(strcmp(font, "NON-EXISTING-FONT"));
 
    font = "Serif";
    size = 2;
@@ -206,6 +246,9 @@ START_TEST(evas_text_set_get)
    fail_if(strcmp(font, "Serif"));
    fail_if(size != 2);
 
+   evas_object_text_font_source_set(to, "/usr/share/fonts/Sans.ttf");
+   font = evas_object_text_font_source_get(to);
+   fail_if(strcmp(font, "/usr/share/fonts/Sans.ttf"));
    evas_object_text_font_source_set(to, "/usr/share/fonts/Sans.ttf");
    font = evas_object_text_font_source_get(to);
    fail_if(strcmp(font, "/usr/share/fonts/Sans.ttf"));
@@ -364,11 +407,56 @@ START_TEST(evas_text_bidi)
                  y + (h / 2), &x, &y, &w, &h));
      }
 
+   /* And with an rtl text */
+   evas_object_text_text_set(to, "נסיון - test...");
+   x = 0;
+   px = 100;
+   for (i = 0 ; i < eina_unicode_utf8_get_len("נסיון - ") ; i++)
+     {
+        fail_if(!evas_object_text_char_pos_get(to, i, &x, &y, &w, &h));
+        fail_if(x >= px);
+        px = x;
+        /* Get back the coords */
+        fail_if(i != evas_object_text_char_coords_get(to, x + (w / 2),
+                 y + (h / 2), &x, &y, &w, &h));
+     }
+
+   /* First ltr char requires more specific handling */
+   fail_if(!evas_object_text_char_pos_get(to, i, &x, &y, &w, &h));
+   fail_if(x >= px);
+   px = x;
+   fail_if(i != evas_object_text_char_coords_get(to, x + (w / 2),
+            y + (h / 2), &x, &y, &w, &h));
+   i++;
+   for ( ; i < eina_unicode_utf8_get_len("נסיון - test") ; i++)
+     {
+        fail_if(!evas_object_text_char_pos_get(to, i, &x, &y, &w, &h));
+        fail_if(x <= px);
+        px = x;
+        /* Get back the coords */
+        fail_if(i != evas_object_text_char_coords_get(to, x + (w / 2),
+                 y + (h / 2), &x, &y, &w, &h));
+     }
+   /* First rtl char requires more specific handling */
+   fail_if(!evas_object_text_char_pos_get(to, i, &x, &y, &w, &h));
+   fail_if(x >= px);
+   px = x;
+   i++;
+   for ( ; i < eina_unicode_utf8_get_len("נסיון - test...") ; i++)
+     {
+        fail_if(!evas_object_text_char_pos_get(to, i, &x, &y, &w, &h));
+        fail_if(x >= px);
+        px = x;
+        /* Get back the coords */
+        fail_if(i != evas_object_text_char_coords_get(to, x + (w / 2),
+                 y + (h / 2), &x, &y, &w, &h));
+     }
+
    /* And some last up to pos tests */
    Evas_Coord adv;
    int pos, prev_pos;
-   adv = evas_object_text_horiz_advance_get(to);
    evas_object_text_text_set(to, "Test - נסיון...");
+   adv = evas_object_text_horiz_advance_get(to);
    pos = prev_pos = 0;
    for (x = 0 ; x <= (adv - 1) ; x++)
      {
