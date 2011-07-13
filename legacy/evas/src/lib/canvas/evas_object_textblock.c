@@ -7735,7 +7735,6 @@ evas_textblock_cursor_line_coord_set(Evas_Textblock_Cursor *cur, Evas_Coord y)
         /* If we are after the last paragraph, use the last position in the
          * text. */
         evas_textblock_cursor_paragraph_last(cur);
-        evas_textblock_cursor_char_next(cur);
         if (cur->node && cur->node->par)
           {
              line_no = cur->node->par->line_no;
@@ -7744,6 +7743,16 @@ evas_textblock_cursor_line_coord_set(Evas_Textblock_Cursor *cur, Evas_Coord y)
                   line_no += ((Evas_Object_Textblock_Line *)
                         EINA_INLIST_GET(cur->node->par->lines)->last)->line_no;
                }
+          }
+        return line_no;
+     }
+   else if (y < 0)
+     {
+        int line_no = 0;
+        evas_textblock_cursor_paragraph_first(cur);
+        if (cur->node && cur->node->par)
+          {
+             line_no = cur->node->par->line_no;
           }
         return line_no;
      }
