@@ -2290,17 +2290,14 @@ _layout_calculate_format_item_size(const Evas_Object *obj,
    switch (fi->size)
      {
       case SIZE:
-         if (!strncmp(s, "item", 4))
+         p = strstr(s, " size=");
+         if (p)
            {
-              p = strstr(s, " size=");
-              if (p)
+              p += 6;
+              if (sscanf(p, "%ix%i", &w, &h) == 2)
                 {
-                   p += 6;
-                   if (sscanf(p, "%ix%i", &w, &h) == 2)
-                     {
-                        w = w * obj->cur.scale;
-                        h = h * obj->cur.scale;
-                     }
+                   w = w * obj->cur.scale;
+                   h = h * obj->cur.scale;
                 }
            }
          break;
@@ -2335,22 +2332,22 @@ _layout_calculate_format_item_size(const Evas_Object *obj,
          switch (fi->vsize)
            {
             case VSIZE_FULL:
-               if (fi->parent.h > (*maxdescent + *maxascent))
+               if (h > (*maxdescent + *maxascent))
                  {
-                    *maxascent += fi->parent.h - (*maxdescent + *maxascent);
+                    *maxascent += h - (*maxdescent + *maxascent);
                     *_y = -*maxascent;
                  }
                else
-                  *_y = -(fi->parent.h - *maxdescent);
+                  *_y = -(h - *maxdescent);
                break;
             case VSIZE_ASCENT:
-               if (fi->parent.h > *maxascent)
+               if (h > *maxascent)
                  {
-                    *maxascent = fi->parent.h;
-                    *_y = -fi->parent.h;
+                    *maxascent = h;
+                    *_y = -h;
                  }
                else
-                  *_y = -fi->parent.h;
+                  *_y = -h;
                break;
             default:
                break;
