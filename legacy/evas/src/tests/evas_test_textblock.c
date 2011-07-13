@@ -455,7 +455,27 @@ START_TEST(evas_textblock_cursor)
              plh = lh;
              evas_textblock_cursor_char_next(cur);
           }
+
+        evas_textblock_cursor_paragraph_last(cur);
+        evas_textblock_cursor_line_set(cur, 0);
+        evas_textblock_cursor_line_geometry_get(cur, &plx, &ply, &plw, &plh);
+        evas_object_textblock_line_number_geometry_get(tb, 0,
+              &lx, &ly, &lw, &lh);
+        fail_if((lx != plx) || (ly != ply) || (lw != plw) || (lh != plh));
+        fail_if(0 != evas_textblock_cursor_line_coord_set(cur, ly + (lh / 2)));
+
+        evas_textblock_cursor_line_set(cur, 1);
+        evas_textblock_cursor_line_geometry_get(cur, &plx, &ply, &plw, &plh);
+        evas_object_textblock_line_number_geometry_get(tb, 1,
+              &lx, &ly, &lw, &lh);
+        fail_if((lx != plx) || (ly != ply) || (lw != plw) || (lh != plh));
+        fail_if(1 != evas_textblock_cursor_line_coord_set(cur, ly + (lh / 2)));
+
+        /* Before the start of the textblock */
+        fail_if(0 != evas_textblock_cursor_line_coord_set(cur, -50));
+        fail_if(3 != evas_textblock_cursor_line_coord_set(cur, 100000));
      }
+
 
    /* FIXME: Add tests that check positions left of/right of rtl lines. */
 
