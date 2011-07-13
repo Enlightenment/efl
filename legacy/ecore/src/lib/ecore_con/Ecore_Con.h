@@ -567,6 +567,18 @@ EAPI Eina_Bool         ecore_con_ssl_client_upgrade(Ecore_Con_Client *cl, Ecore_
  * ecore_main_loop_begin();
  * @endcode
  *
+ * After these two pieces of code are executed, respectively, in the server and
+ * client code, the server will be up and running and the client will try to
+ * connect to it. The connection, with its subsequent messages being sent from
+ * server to client and client to server, can be represented in the following
+ * sequence diagram:
+ *
+ * <img src="ecore_con-client-server.png" style="max-width: 400px"/>
+ * <a href="ecore_con-client-server.png">Full size</a>
+ *
+ * @image rtf ecore_con-client-server.png
+ * @image latex ecore_con-client-server.eps width=\textwidth
+ *
  * Please notice the important difference between these two codes: the first is
  * used for writing a @b server, while the second should be used for writing a
  * @b client.
