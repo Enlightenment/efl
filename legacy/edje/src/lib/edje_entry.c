@@ -2109,7 +2109,6 @@ _edje_entry_text_markup_append(Edje_Real_Part *rp, const char *text)
    if (!en) return;
    end_cur = evas_object_textblock_cursor_new(rp->object);
    evas_textblock_cursor_paragraph_last(end_cur);
-   evas_textblock_cursor_char_next(end_cur);
 
    _text_filter_markup_prepend(en, end_cur, text);
    evas_textblock_cursor_free(end_cur);
