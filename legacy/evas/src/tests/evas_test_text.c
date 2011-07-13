@@ -276,6 +276,10 @@ START_TEST(evas_text_set_get)
    evas_font_hinting_set(evas, EVAS_FONT_HINTING_AUTO);
    evas_font_hinting_set(evas, EVAS_FONT_HINTING_BYTECODE);
 
+   /* Direction of an empty text should be NEUTRAL */
+   evas_object_text_text_set(to, "");
+   fail_if(evas_object_text_direction_get(to) != EVAS_BIDI_DIRECTION_NEUTRAL);
+
    END_TEXT_TEST();
 }
 END_TEST
