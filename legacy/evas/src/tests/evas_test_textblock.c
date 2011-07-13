@@ -82,6 +82,7 @@ START_TEST(evas_textblock_cursor)
 {
    START_TB_TEST();
    size_t i, len;
+   Evas_Coord nw, nh;
    const char *buf = "This is a<br> test.<ps>Lets see if this works.<ps>עוד פסקה.";
 
    /* Walk the textblock using cursor_char_next */
@@ -344,6 +345,49 @@ START_TEST(evas_textblock_cursor)
    evas_textblock_cursor_char_next(main_cur);
    evas_textblock_cursor_format_prev(main_cur);
    fail_if(evas_textblock_cursor_compare(main_cur, cur));
+
+
+   evas_object_textblock_text_markup_set(tb, buf);
+
+   /* Check that pen geometry and getting char at coord are in sync. */
+   do
+     {
+        Evas_Coord x, y, w, h;
+        int cur_pos;
+
+        /* Check if it's the last char, if it is, break, otherwise, go back
+         * to the current char because our test advanced the cursor. */
+        if (!evas_textblock_cursor_char_next(cur))
+           break;
+        else
+           evas_textblock_cursor_char_prev(cur);
+
+        cur_pos = evas_textblock_cursor_pos_get(cur);
+        evas_textblock_cursor_pen_geometry_get(cur, &x, &y, &w, &h);
+        evas_textblock_cursor_char_coord_set(cur, x + (w / 2),
+              y + (h / 2));
+        fail_if(cur_pos != evas_textblock_cursor_pos_get(cur));
+     }
+   while (evas_textblock_cursor_char_next(cur));
+
+   /* Try positions before the first paragraph, and after the last paragraph */
+   evas_object_textblock_text_markup_set(tb, buf);
+   evas_object_textblock_size_native_get(tb, &nw, &nh);
+   evas_object_resize(tb, nw, nh);
+   evas_textblock_cursor_pos_set(cur, 5);
+   evas_textblock_cursor_char_coord_set(cur, nw / 2,
+         -50);
+   evas_textblock_cursor_paragraph_first(main_cur);
+   fail_if(evas_textblock_cursor_compare(cur, main_cur));
+
+   evas_textblock_cursor_pos_set(cur, 5);
+   evas_textblock_cursor_char_coord_set(cur, nw / 2,
+         nh + 50);
+   evas_textblock_cursor_paragraph_last(main_cur);
+   fail_if(evas_textblock_cursor_compare(cur, main_cur));
+
+   /* FIXME: Add tests that check positions left of/right of right/left
+    * aligned paragraphs + with rtl strings. */
 
    END_TB_TEST();
 }
