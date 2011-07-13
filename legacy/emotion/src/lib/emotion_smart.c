@@ -119,8 +119,8 @@ static Eina_Array *_modules = NULL;
 static int _log_domain = -1;
 
 static const char *_backend_priority[] = {
-  "xine",
   "gstreamer",
+  "xine",
   "vlc"
 };
 
