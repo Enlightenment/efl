@@ -349,6 +349,94 @@ START_TEST(evas_textblock_cursor)
 }
 END_TEST
 
+/* Testing items */
+START_TEST(evas_textblock_items)
+{
+   Evas_Coord w, h, ih;
+   START_TB_TEST();
+   const char *buf = "This is an <item absize=93x152></>.";
+
+   /* Absolute item size */
+   buf = "This is an <item absize=93x152 vsize=full></>.";
+   evas_object_textblock_text_markup_set(tb, buf);
+   evas_object_textblock_size_formatted_get(tb, &w, &h);
+   fail_if((w < 93) || (h != 152));
+   evas_textblock_cursor_pos_set(cur, 11);
+   evas_textblock_cursor_format_item_geometry_get(cur, NULL, NULL, &w, &h);
+   fail_if((w != 93) || (h != 152));
+
+   buf = "This is an <item absize=93x152 vsize=ascent></>.";
+   evas_object_textblock_text_markup_set(tb, buf);
+   evas_object_textblock_size_formatted_get(tb, &w, &h);
+   fail_if((w < 93) || (h <= 152));
+   evas_textblock_cursor_pos_set(cur, 11);
+   evas_textblock_cursor_format_item_geometry_get(cur, NULL, NULL, &w, &h);
+   fail_if((w != 93) || (h != 152));
+
+   /* Size is the same as abssize, unless there's scaling applied. */
+   buf = "This is an <item size=93x152 vsize=full></>.";
+   evas_object_textblock_text_markup_set(tb, buf);
+   evas_object_textblock_size_formatted_get(tb, &w, &h);
+   fail_if((w < 93) || (h != 152));
+   evas_textblock_cursor_pos_set(cur, 11);
+   evas_textblock_cursor_format_item_geometry_get(cur, NULL, NULL, &w, &h);
+   fail_if((w != 93) || (h != 152));
+
+   buf = "This is an <item size=93x152 vsize=ascent></>.";
+   evas_object_textblock_text_markup_set(tb, buf);
+   evas_object_textblock_size_formatted_get(tb, &w, &h);
+   fail_if((w < 93) || (h <= 152));
+   evas_textblock_cursor_pos_set(cur, 11);
+   evas_textblock_cursor_format_item_geometry_get(cur, NULL, NULL, &w, &h);
+   fail_if((w != 93) || (h != 152));
+
+   evas_object_scale_set(tb, 2.0);
+   buf = "This is an <item size=93x152 vsize=full></>.";
+   evas_object_textblock_text_markup_set(tb, buf);
+   evas_object_textblock_size_formatted_get(tb, &w, &h);
+   fail_if((w < (2 * 93)) || (h != (2 * 152)));
+   evas_textblock_cursor_pos_set(cur, 11);
+   evas_textblock_cursor_format_item_geometry_get(cur, NULL, NULL, &w, &h);
+   fail_if((w != (2 * 93)) || (h != (2 * 152)));
+   evas_textblock_cursor_pos_set(cur, 11);
+
+   buf = "This is an <item size=93x152 vsize=ascent></>.";
+   evas_object_textblock_text_markup_set(tb, buf);
+   evas_object_textblock_size_formatted_get(tb, &w, &h);
+   fail_if((w < (2 * 93)) || (h <= (2 * 152)));
+   evas_textblock_cursor_pos_set(cur, 11);
+   evas_textblock_cursor_format_item_geometry_get(cur, NULL, NULL, &w, &h);
+   fail_if((w != (2 * 93)) || (h != (2 * 152)));
+
+   evas_object_scale_set(tb, 1.0);
+
+   /* Relsize */
+   /* relsize means it should adjust itself to the size of the line */
+   buf = "This is an <item relsize=93x152 vsize=full></>.";
+   evas_object_textblock_text_markup_set(tb, buf);
+   evas_object_textblock_size_formatted_get(tb, &w, &h);
+   fail_if((w >= 93) || (h >= 152));
+   evas_textblock_cursor_pos_set(cur, 11);
+   evas_textblock_cursor_format_item_geometry_get(cur, NULL, NULL, &w, &ih);
+   fail_if((w > 90) || (h != ih));
+
+   buf = "This is an <item relize=93x152 vsize=ascent></>.";
+   evas_object_textblock_text_markup_set(tb, buf);
+   evas_object_textblock_size_formatted_get(tb, &w, &h);
+   fail_if((w >= 93) || (h >= 152));
+   evas_textblock_cursor_pos_set(cur, 11);
+   evas_textblock_cursor_format_item_geometry_get(cur, NULL, NULL, &w, &ih);
+   fail_if((w > 90) || (h <= ih));
+
+   /* FIXME: Also verify x,y positions of the item. */
+
+   /* FIXME We need some item tests that involve line wrapping that make the
+    * items move between lines that are in different sizes. */
+
+   END_TB_TEST();
+}
+END_TEST
+
 /* Wrapping tests */
 START_TEST(evas_textblock_wrapping)
 {
@@ -1191,5 +1279,6 @@ void evas_test_textblock(TCase *tc)
    tcase_add_test(tc, evas_textblock_geometries);
    tcase_add_test(tc, evas_textblock_various);
    tcase_add_test(tc, evas_textblock_wrapping);
+   tcase_add_test(tc, evas_textblock_items);
 }
 
