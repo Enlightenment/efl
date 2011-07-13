@@ -81,6 +81,7 @@ test_list.c \
 test_map.c \
 test_menu.c \
 test_multi.c \
+test_naviframe.c \
 test_notify.c \
 test_pager.c \
 test_panel.c \

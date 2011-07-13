@@ -49,6 +49,7 @@ elc_fileselector_button.c \
 elc_fileselector.c \
 elc_fileselector_entry.c \
 elc_hoversel.c \
+elc_naviframe.c \
 elc_player.c \
 elc_scrolled_entry.c \
 elm_actionslider.c \
