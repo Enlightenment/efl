@@ -364,7 +364,22 @@ START_TEST(evas_text_bidi)
                  y + (h / 2), &x, &y, &w, &h));
      }
 
-   /* FIXME: Add tests that check visual position */
+   /* And some last up to pos tests */
+   Evas_Coord adv;
+   int pos, prev_pos;
+   adv = evas_object_text_horiz_advance_get(to);
+   evas_object_text_text_set(to, "Test - נסיון...");
+   pos = prev_pos = 0;
+   for (x = 0 ; x <= (adv - 1) ; x++)
+     {
+        pos = evas_object_text_last_up_to_pos(to, x, 0);
+        fail_if(pos < prev_pos);
+        prev_pos = pos;
+     }
+   pos = evas_object_text_last_up_to_pos(to, x, 0);
+   fail_if(pos != -1);
+   pos = evas_object_text_last_up_to_pos(to, -50, 0);
+   fail_if(pos != -1);
 
    END_TEXT_TEST();
 }
