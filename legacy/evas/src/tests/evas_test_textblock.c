@@ -399,6 +399,8 @@ START_TEST(evas_textblock_items)
    evas_textblock_cursor_format_item_geometry_get(cur, NULL, NULL, &w, &h);
    fail_if((w != (2 * 93)) || (h != (2 * 152)));
    evas_textblock_cursor_pos_set(cur, 11);
+   evas_textblock_cursor_format_item_geometry_get(cur, NULL, NULL, &w, &h);
+   fail_if((w != (2 * 93)) || (h != (2 * 152)));
 
    buf = "This is an <item size=93x152 vsize=ascent></>.";
    evas_object_textblock_text_markup_set(tb, buf);
