@@ -37046,7 +37046,7 @@ collections {
          }
       }
    }
-   group { name:"elm/naviframe/item/no_transit/default";
+   group { name:"elm/naviframe/item/instant/default";
       parts {
          part { name: "title_clip";
             type: RECT;
