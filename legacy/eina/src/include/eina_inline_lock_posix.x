@@ -28,6 +28,8 @@
 # include <pthread.h>
 #endif
 
+#include <sys/time.h>
+
 #ifdef EINA_HAVE_DEBUG_THREADS
 #include <stdlib.h>
 #include <string.h>

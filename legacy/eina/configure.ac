@@ -586,6 +586,8 @@ AC_CHECK_FUNCS([openat], [AC_DEFINE(HAVE_OPENAT)], [])
 AC_CHECK_FUNCS([statat], [AC_DEFINE(HAVE_STATAT)], [])
 AC_CHECK_FUNCS([fpathconf], [AC_DEFINE(HAVE_FPATHCONF)], [])
 
+AC_CHECK_FUNCS([shm_open], [AC_DEFINE(HAVE_SHMOPEN)], [])
+
 ### Modules
 
 if test "x${have_default_mempool}" = "xyes" ; then

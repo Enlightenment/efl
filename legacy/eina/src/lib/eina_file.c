@@ -751,7 +751,11 @@ eina_file_open(const char *filename, Eina_Bool shared)
    */
 
    if (shared)
+#ifdef HAVE_SHMOPEN
      fd = shm_open(filename, O_RDONLY, S_IRWXU | S_IRWXG | S_IRWXO);
+#else
+     return NULL;
+#endif
    else
      fd = open(filename, O_RDONLY, S_IRWXU | S_IRWXG | S_IRWXO);
 
