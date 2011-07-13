@@ -20,7 +20,7 @@ struct _Photo_Object {
      Evas_Object *ic, *shadow;
      Evas_Object *hit;
      Evas_Object *gl;
-     Elm_Animator *zoom_out;
+     Elm_Transit *zoom_out;
      /* bx, by - current wanted coordinates of the photo object.
       * bw, bh - original size of the "ic" object.
       * dx, dy - Used to indicate the distance between the center point
