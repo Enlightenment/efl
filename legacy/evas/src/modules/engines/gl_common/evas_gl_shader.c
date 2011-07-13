@@ -756,6 +756,7 @@ _evas_gl_common_shader_program_binary_init(Evas_GL_Program *p,
    int res = 0, num = 0, length = 0;
    int *formats = NULL;
    void *data = NULL;
+   GLint ok = 0;
 
    if (!ef) return res;
 
@@ -773,15 +774,6 @@ _evas_gl_common_shader_program_binary_init(Evas_GL_Program *p,
 
    p->prog = glCreateProgram();
 
-#if 0
-   // TODO: invalid rendering error occurs when attempting to use a
-   // glProgramBinary. in order to render correctly we should create a dummy
-   // vertex shader.
-   p->vert = glCreateShader(GL_VERTEX_SHADER);
-   glAttachShader(p->prog, p->vert);
-   p->frag = glCreateShader(GL_FRAGMENT_SHADER);
-   glAttachShader(p->prog, p->frag);
-#endif
    glsym_glProgramBinary(p->prog, formats[0], data, length);
 
    glBindAttribLocation(p->prog, SHAD_VERTEX, "vertex");
@@ -790,6 +782,16 @@ _evas_gl_common_shader_program_binary_init(Evas_GL_Program *p,
    glBindAttribLocation(p->prog, SHAD_TEXUV2, "tex_coord2");
    glBindAttribLocation(p->prog, SHAD_TEXUV3, "tex_coord3");
    glBindAttribLocation(p->prog, SHAD_TEXM,   "tex_coordm");
+
+   glGetProgramiv(p->prog, GL_LINK_STATUS, &ok);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+   if (!ok)
+     {
+        gl_compile_link_error(p->prog, "load a program object");
+        ERR("Abort load of program (%s)", pname);
+        goto finish;
+     }
+
    res = 1;
 
 finish:
@@ -810,7 +812,7 @@ _evas_gl_common_shader_program_binary_save(Evas_GL_Program *p,
 {
    void* data = NULL;
    GLenum format;
-   int length = 0;
+   int length = 0, size = 0;
 
    if (!glsym_glGetProgramBinary) return 0;
 
@@ -821,8 +823,14 @@ _evas_gl_common_shader_program_binary_save(Evas_GL_Program *p,
    data = malloc(length);
    if (!data) return 0;
 
-   glsym_glGetProgramBinary(p->prog, length, NULL, &format, data);
+   glsym_glGetProgramBinary(p->prog, length, &size, &format, data);
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+
+   if (length != size)
+     {
+        free(data);
+        return 0;
+     }
 
    if (eet_write(ef, pname, data, length, 0) < 0)
      {
