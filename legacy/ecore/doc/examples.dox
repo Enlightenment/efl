@@ -546,6 +546,74 @@
  */
 
 /**
+ * @page ecore_con_url_cookies_example_c Ecore_Con_Url - Managing cookies
+ *
+ * This example shows how to use an @ref Ecore_Con_Url and enable it to
+ * receive/send cookies. These cookies can be set by the server, saved to a
+ * file, loaded later from this file and sent again to the server. The complete
+ * example can be found at @ref ecore_con_url_cookies_example.c
+ * "ecore_con_url_cookies_example.c"
+ *
+ * First we are setting some callbacks for events that will be sent when data
+ * arrives in our connection (the data is the content of the file being
+ * downloaded), and when the download is completed. The @c _url_data_cb and
+ * @c _url_complete_cb are these callbacks:
+ *
+ * @dontinclude ecore_con_url_download_example.c
+ * @skip Eina_Bool
+ * @until main_loop_quit
+ * @until }
+ *
+ * In the @c main function we parse some parameter from the command line. These
+ * parameters are the url that we are connecting to, and cookie use policy.
+ *
+ * After that we initialize the libraries and create a handler to our request
+ * using the given url:
+ *
+ * @until goto end
+ * @until }
+ *
+ * We also set the event handlers for this request and add a header to it, that
+ * will inform our custom user agent:
+ *
+ * @until User-Agent
+ *
+ * Now we start playing with cookies. First, let's call
+ * ecore_con_url_cookies_init() to inform that we want cookies enabled. We also
+ * set a file from which we are loading previously set (old) cookies, in case
+ * that we don't want to clear old cookies or old session cookies.
+ *
+ * After that we set the file where we are going to save all valid cookies in
+ * the @ref Ecore_Con_Url object. This includes previously loaded cookies (that
+ * weren't cleared) and new cookies set by the response header "Set-Cookie" that
+ * comes with the response to our request:
+ *
+ * @until jar_file_set
+ *
+ * And finally, before performing the request, we check the command passed as
+ * argument in the command line and use it to choose between clearing old
+ * cookies, clearing just old session cookies, or ignoring old session cookies.
+ *
+ * After that we just finish our code as expected:
+ *
+ * @until return
+ * @until }
+ *
+ * Notice that in this code, if we want to clear old cookies, we also don't load
+ * them from the file. This is a bit confusing and the API isn't clear, but
+ * ecore_con_url_cookies_file_add() will load cookies from the specified files
+ * just when the operation is really performed (i.e. ecore_con_url_get() is
+ * called). So if ecore_con_url_cookies_clear() is called before
+ * ecore_con_url_get(), the old cookies may not have been loaded yet, so they
+ * are not cleared. To avoid having old cookies loaded, don't add any cookie
+ * file with ecore_con_url_cookies_file_add().
+ *
+ * The function ecore_con_url_cookies_clear() is just useful to clear cookies
+ * that are already loaded/valid in the @ref Ecore_Con_Url object (from a
+ * previous request, for example).
+ */
+
+/**
  * @page ecore_con_url_headers_example_c Ecore_Con_Url - customizing a request
  *
  * This is a simple example that shows how to make a custom request using @ref
@@ -819,6 +887,12 @@
  * @example ecore_con_url_download_example.c
  * Shows how to download a file using an @ref Ecore_Con_Url object. See the
  * complete example description at @ref ecore_con_url_download_example_c
+ */
+
+/**
+ * @example ecore_con_url_cookies_example.c
+ * Shows how to manage cookies on a @ref Ecore_Con_Url object. See the complete
+ * example description at @ref ecore_con_url_cookies_example_c.
  */
 
 /**
