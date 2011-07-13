@@ -7690,9 +7690,14 @@ evas_textblock_cursor_char_coord_set(Evas_Textblock_Cursor *cur, Evas_Coord x, E
         /* If we are after the last paragraph, use the last position in the
          * text. */
         evas_textblock_cursor_paragraph_last(cur);
-        evas_textblock_cursor_char_next(cur);
         return EINA_TRUE;
      }
+   else if (y < 0)
+     {
+        evas_textblock_cursor_paragraph_first(cur);
+        return EINA_TRUE;
+     }
+
    return EINA_FALSE;
 }
 
