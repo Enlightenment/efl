@@ -115,23 +115,22 @@ apply_changes(Photo_Object *po)
 
 /* Zoom out animation */
 static void
-zoom_out_animation_operation(void *_po, Elm_Animator *animator __UNUSED__,
-      double frame)
+zoom_out_animation_operation(void *_po, Elm_Transit *transit __UNUSED__,
+      double progress)
 {
    Photo_Object *po = (Photo_Object *) _po;
-   po->zoom = BASE_ZOOM + ((po->base_zoom - BASE_ZOOM) * (1.0 - frame));
+   po->zoom = BASE_ZOOM + ((po->base_zoom - BASE_ZOOM) * (1.0 - progress));
    apply_changes(po);
 }
 
 static void
-zoom_out_animation_end(void *_po)
+zoom_out_animation_end(void *_po, Elm_Transit *transit)
 {
    Photo_Object *po = (Photo_Object *) _po;
 
    po->base_zoom = po->zoom = BASE_ZOOM;
    apply_changes(po);
 
-   elm_animator_del(po->zoom_out);
    po->zoom_out = NULL;
 }
 
@@ -170,7 +169,7 @@ zoom_start(void *_po, void *event_info)
    /* If there's an active animator, stop it */
    if (po->zoom_out)
      {
-        elm_animator_del(po->zoom_out);
+        elm_transit_del(po->zoom_out);
         po->zoom_out = NULL;
      }
 
@@ -227,14 +226,10 @@ zoom_end(void *_po, void *event_info)
    /* Apply the zoom out animator */
    po->shadow_zoom = 1.3;
    po->base_zoom = po->zoom;
-   po->zoom_out = elm_animator_add(po->ic);
-   elm_animator_duration_set(po->zoom_out, zoom_out_animation_duration);
-   elm_animator_curve_style_set(po->zoom_out, ELM_ANIMATOR_CURVE_LINEAR);
-   elm_animator_operation_callback_set(po->zoom_out,
-         zoom_out_animation_operation, po);
-   elm_animator_completion_callback_set(po->zoom_out,
-         zoom_out_animation_end, po);
-   elm_animator_animate(po->zoom_out);
+   po->zoom_out = elm_transit_add();
+   elm_transit_duration_set(po->zoom_out, zoom_out_animation_duration);
+   elm_transit_effect_add(po->zoom_out, zoom_out_animation_operation, po, zoom_out_animation_end);
+   elm_transit_go(po->zoom_out);
    return EVAS_EVENT_FLAG_NONE;
 }
 
