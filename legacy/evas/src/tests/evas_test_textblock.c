@@ -62,25 +62,28 @@ END_TEST
 #define _CHECK_CURSOR_COORDS() \
 do \
 { \
-        Evas_Coord x, y, w, h; \
+        Evas_Coord cx, cy, cw, ch; \
         int ret; \
-        ret = evas_textblock_cursor_geometry_get(cur, &x, &y, &w, &h, NULL, \
-              EVAS_TEXTBLOCK_CURSOR_UNDER); \
+        ret = evas_textblock_cursor_geometry_get(cur, &cx, &cy, &cw, &ch, \
+              NULL, EVAS_TEXTBLOCK_CURSOR_UNDER); \
         fail_if(ret == -1); \
-        ret = evas_textblock_cursor_geometry_get(cur, &x, &y, &w, &h, NULL, \
-              EVAS_TEXTBLOCK_CURSOR_BEFORE); \
+        ret = evas_textblock_cursor_geometry_get(cur, &cx, &cy, &cw, &ch, \
+              NULL, EVAS_TEXTBLOCK_CURSOR_BEFORE); \
         fail_if(ret == -1); \
-        ret = evas_textblock_cursor_char_geometry_get(cur, &x, &y, &w, &h); \
+        ret = evas_textblock_cursor_char_geometry_get(cur, \
+              &cx, &cy, &cw, &ch); \
         fail_if(ret == -1); \
-        ret = evas_textblock_cursor_pen_geometry_get(cur, &x, &y, &w, &h); \
+        ret = evas_textblock_cursor_pen_geometry_get(cur, &cx, &cy, &cw, &ch); \
         fail_if(ret == -1); \
-        ret = evas_textblock_cursor_line_geometry_get(cur, &x, &y, &w, &h); \
+        ret = evas_textblock_cursor_line_geometry_get(cur, \
+              &cx, &cy, &cw, &ch); \
         fail_if(ret == -1); \
 } \
 while (0)
 START_TEST(evas_textblock_cursor)
 {
    START_TB_TEST();
+   Evas_Coord x, y, w, h;
    size_t i, len;
    Evas_Coord nw, nh;
    const char *buf = "This is a<br> test.<ps>Lets see if this works.<ps>עוד פסקה.";
@@ -352,7 +355,6 @@ START_TEST(evas_textblock_cursor)
    /* Check that pen geometry and getting char at coord are in sync. */
    do
      {
-        Evas_Coord x, y, w, h;
         int cur_pos;
 
         /* Check if it's the last char, if it is, break, otherwise, go back
@@ -364,8 +366,7 @@ START_TEST(evas_textblock_cursor)
 
         cur_pos = evas_textblock_cursor_pos_get(cur);
         evas_textblock_cursor_pen_geometry_get(cur, &x, &y, &w, &h);
-        evas_textblock_cursor_char_coord_set(cur, x + (w / 2),
-              y + (h / 2));
+        evas_textblock_cursor_char_coord_set(cur, x + (w / 2), y + (h / 2));
         fail_if(cur_pos != evas_textblock_cursor_pos_get(cur));
      }
    while (evas_textblock_cursor_char_next(cur));
@@ -386,8 +387,77 @@ START_TEST(evas_textblock_cursor)
    evas_textblock_cursor_paragraph_last(main_cur);
    fail_if(evas_textblock_cursor_compare(cur, main_cur));
 
-   /* FIXME: Add tests that check positions left of/right of right/left
-    * aligned paragraphs + with rtl strings. */
+   /* Try positions beyond the left/right limits of lines. */
+   evas_textblock_cursor_line_set(cur, 0);
+   evas_textblock_cursor_pen_geometry_get(cur, &x, &y, &w, &h);
+   evas_textblock_cursor_char_coord_set(main_cur, x - 50, y);
+   fail_if(evas_textblock_cursor_compare(main_cur, cur));
+
+   evas_textblock_cursor_line_char_last(cur);
+   evas_textblock_cursor_pen_geometry_get(cur, &x, &y, &w, &h);
+   evas_textblock_cursor_char_coord_set(main_cur, x + 50, y);
+   fail_if(evas_textblock_cursor_compare(main_cur, cur));
+
+   evas_textblock_cursor_line_set(cur, 1);
+   evas_textblock_cursor_pen_geometry_get(cur, &x, &y, &w, &h);
+   evas_textblock_cursor_char_coord_set(main_cur, x - 50, y);
+   fail_if(evas_textblock_cursor_compare(main_cur, cur));
+
+   evas_textblock_cursor_line_char_last(cur);
+   evas_textblock_cursor_pen_geometry_get(cur, &x, &y, &w, &h);
+   evas_textblock_cursor_char_coord_set(main_cur, x + 50, y);
+   fail_if(evas_textblock_cursor_compare(main_cur, cur));
+
+   /* Testing line geometry.*/
+     {
+        Evas_Coord lx, ly, lw, lh;
+        Evas_Coord plx, ply, plw, plh;
+        evas_textblock_cursor_line_set(cur, 0);
+        evas_textblock_cursor_copy(cur, main_cur);
+        evas_textblock_cursor_line_char_last(main_cur);
+        evas_textblock_cursor_line_geometry_get(cur, &plx, &ply, &plw, &plh);
+
+        while (evas_textblock_cursor_compare(cur, main_cur) <= 0)
+          {
+             evas_textblock_cursor_pen_geometry_get(cur, &x, &y, &w, &h);
+             fail_if(0 !=
+                   evas_textblock_cursor_line_geometry_get(
+                      cur, &lx, &ly, &lw, &lh));
+             fail_if((x < lx) || (x + w > lx + lw) ||
+                   (y < ly) || (y + h > ly + lh));
+             fail_if((lx != plx) || (ly != ply) || (lw != plw) || (lh != plh));
+
+             plx = lx;
+             ply = ly;
+             plw = lw;
+             plh = lh;
+             evas_textblock_cursor_char_next(cur);
+          }
+
+        evas_textblock_cursor_line_set(cur, 1);
+        evas_textblock_cursor_copy(cur, main_cur);
+        evas_textblock_cursor_line_char_last(main_cur);
+        evas_textblock_cursor_line_geometry_get(cur, &plx, &ply, &plw, &plh);
+
+        while (evas_textblock_cursor_compare(cur, main_cur) <= 0)
+          {
+             evas_textblock_cursor_pen_geometry_get(cur, &x, &y, &w, &h);
+             fail_if(1 !=
+                   evas_textblock_cursor_line_geometry_get(
+                      cur, &lx, &ly, &lw, &lh));
+             fail_if((x < lx) || (x + w > lx + lw) ||
+                   (y < ly) || (y + h > ly + lh));
+             fail_if((lx != plx) || (ly != ply) || (lw != plw) || (lh != plh));
+
+             plx = lx;
+             ply = ly;
+             plw = lw;
+             plh = lh;
+             evas_textblock_cursor_char_next(cur);
+          }
+     }
+
+   /* FIXME: Add tests that check positions left of/right of rtl lines. */
 
    END_TB_TEST();
 }
