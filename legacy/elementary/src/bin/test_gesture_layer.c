@@ -124,7 +124,7 @@ zoom_out_animation_operation(void *_po, Elm_Transit *transit __UNUSED__,
 }
 
 static void
-zoom_out_animation_end(void *_po, Elm_Transit *transit)
+zoom_out_animation_end(void *_po, Elm_Transit *transit __UNUSED__)
 {
    Photo_Object *po = (Photo_Object *) _po;
 
