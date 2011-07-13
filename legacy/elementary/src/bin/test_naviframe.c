@@ -20,7 +20,7 @@ void
 _title_visible(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    elm_naviframe_item_title_visible_set(data,
-			!elm_naviframe_item_title_visible_get(data));
+                               !elm_naviframe_item_title_visible_get(data));
 }
 
 void
