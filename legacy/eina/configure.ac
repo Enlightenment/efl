@@ -583,7 +583,7 @@ if test "x${dirfd}" = "xyes"; then
    AC_DEFINE(HAVE_DIRFD)
 fi
 AC_CHECK_FUNCS([openat], [AC_DEFINE(HAVE_OPENAT)], [])
-AC_CHECK_FUNCS([statat], [AC_DEFINE(HAVE_STATAT)], [])
+AC_CHECK_FUNCS([fstatat], [AC_DEFINE(HAVE_FSTATAT)], [])
 AC_CHECK_FUNCS([fpathconf], [AC_DEFINE(HAVE_FPATHCONF)], [])
 
 have_shmopen=no
