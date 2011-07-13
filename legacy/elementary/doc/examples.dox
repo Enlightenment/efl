@@ -1205,6 +1205,55 @@
  */
 
 /**
+  * @page tutorial_flip Flip example
+  * @dontinclude flip_example_01.c
+  *
+  * This example will show a flip with two rectangles on it(one blue, one
+  * green). Our example will allow the user to choose the animation the flip
+  * uses and to interact with it. To allow the user to choose the interaction
+  * mode we use radio buttons, we will however not explain them, if you would
+  * like to know more about radio buttons see @ref radio.
+  *
+  * We start our example with the usual setup and then create the 2 rectangles
+  * we will use in our flip:
+  * @until show(rect2)
+  *
+  * The next thing to do is to create our flip and set it's front and back
+  * content:
+  * @until show
+  *
+  * The next thing we do is set the interaction mode(which the user can later
+  * change) to the page animation:
+  * @until PAGE
+  *
+  * Setting a interaction mode however is not sufficient, we also need to
+  * choose which directions we allow interaction from, for this example we
+  * will use all of them:
+  * @until RIGHT
+  *
+  * We are also going to set the hitsize to the entire flip(in all directions)
+  * to make our flip very easy to interact with:
+  * @until RIGHT
+  *
+  * After that we create our radio buttons and start the main loop:
+  * @until ELM_MAIN()
+  *
+  * When the user clicks a radio button a function that changes the
+  * interaction mode and animates the flip is called:
+  * @until }
+  * @note The elm_flip_go() call here serves no purpose other than to
+  * ilustrate that it's possible to animate the flip programmatically.
+  *
+  * Our example will look like this:
+  * @image html screenshots/flip_example_01.png
+  * @image latex screenshots/flip_example_01.eps
+  * @note Since this is an animated example the screenshot doesn't do it
+  * justice, it is a good idea to compile it and see the animations.
+  *
+  * @example flip_example_01.c
+  */
+
+/**
  * @page bg_example_01_c bg_example_01.c
  * @include bg_example_01.c
  * @example bg_example_01.c

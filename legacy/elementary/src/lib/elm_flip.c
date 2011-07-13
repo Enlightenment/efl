@@ -1,31 +1,6 @@
 #include <Elementary.h>
 #include "elm_priv.h"
 
-/**
- * @defgroup Flip Flip
- *
- * This holds 2 content objects: one on the front and one on the back. It
- * allows you to flip from front to back and vice-versa using various effects.
- *
- * Supported flip types:
- * ELM_FLIP_ROTATE_Y_CENTER_AXIS
- * ELM_FLIP_ROTATE_X_CENTER_AXIS
- * ELM_FLIP_ROTATE_XZ_CENTER_AXIS
- * ELM_FLIP_ROTATE_YZ_CENTER_AXIS
- * ELM_FLIP_CUBE_LEFT
- * ELM_FLIP_CUBE_RIGHT
- * ELM_FLIP_CUBE_UP
- * ELM_FLIP_CUBE_DOWN
- * ELM_FLIP_PAGE_LEFT
- * ELM_FLIP_PAGE_RIGHT
- * ELM_FLIP_PAGE_UP
- * ELM_FLIP_PAGE_DOWN
- *
- * Signals that you can add callbacks for are:
- *
- * "animate,done" - when a flip animation is finished
- */
-
 typedef struct _Widget_Data Widget_Data;
 typedef struct _Slice Slice;
 typedef struct _Vertex2 Vertex2;
@@ -1598,14 +1573,6 @@ _move_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *even
    wd->job = ecore_job_add(_update_job, wd);
 }
 
-/**
- * Add a new flip to the parent
- *
- * @param parent The parent object
- * @return The new object or NULL if it cannot be created
- *
- * @ingroup Flip
- */
 EAPI Evas_Object *
 elm_flip_add(Evas_Object *parent)
 {
@@ -1669,18 +1636,6 @@ elm_flip_add(Evas_Object *parent)
    return obj;
 }
 
-/**
- * Set the front content of the flip widget.
- *
- * Once the content object is set, a previously set one will be deleted.
- * If you want to keep that old content object, use the
- * elm_flip_content_front_unset() function.
- *
- * @param obj The flip object
- * @param content The new front content object
- *
- * @ingroup Flip
- */
 EAPI void
 elm_flip_content_front_set(Evas_Object *obj, Evas_Object *content)
 {
@@ -1711,18 +1666,6 @@ elm_flip_content_front_set(Evas_Object *obj, Evas_Object *content)
      }
 }
 
-/**
- * Set the back content of the flip widget.
- *
- * Once the content object is set, a previously set one will be deleted.
- * If you want to keep that old content object, use the
- * elm_flip_content_back_unset() function.
- *
- * @param obj The flip object
- * @param content The new back content object
- *
- * @ingroup Flip
- */
 EAPI void
 elm_flip_content_back_set(Evas_Object *obj, Evas_Object *content)
 {
@@ -1753,16 +1696,6 @@ elm_flip_content_back_set(Evas_Object *obj, Evas_Object *content)
      }
 }
 
-/**
- * Get the front content used for the flip
- *
- * Return the front content object which is set for this widget.
- *
- * @param obj The flip object
- * @return The front content object that is being used
- *
- * @ingroup Flip
- */
 EAPI Evas_Object *
 elm_flip_content_front_get(const Evas_Object *obj)
 {
@@ -1772,16 +1705,6 @@ elm_flip_content_front_get(const Evas_Object *obj)
 }
 
 
-/**
- * Get the back content used for the flip
- *
- * Return the back content object which is set for this widget.
- *
- * @param obj The flip object
- * @return The back content object that is being used
- *
- * @ingroup Flip
- */
 EAPI Evas_Object *
 elm_flip_content_back_get(const Evas_Object *obj)
 {
@@ -1790,16 +1713,6 @@ elm_flip_content_back_get(const Evas_Object *obj)
    return wd->back.content;
 }
 
-/**
- * Unset the front content used for the flip
- *
- * Unparent and return the front content object which was set for this widget.
- *
- * @param obj The flip object
- * @return The front content object that was being used
- *
- * @ingroup Flip
- */
 EAPI Evas_Object *
 elm_flip_content_front_unset(Evas_Object *obj)
 {
@@ -1815,16 +1728,6 @@ elm_flip_content_front_unset(Evas_Object *obj)
    return content;
 }
 
-/**
- * Unset the back content used for the flip
- *
- * Unparent and return the back content object which was set for this widget.
- *
- * @param obj The flip object
- * @return The back content object that was being used
- *
- * @ingroup Flip
- */
 EAPI Evas_Object *
 elm_flip_content_back_unset(Evas_Object *obj)
 {
@@ -1840,14 +1743,6 @@ elm_flip_content_back_unset(Evas_Object *obj)
    return content;
 }
 
-/**
- * Get flip front visibility state
- *
- * @param obj The flip object
- * @return If front front is showing or not currently
- *
- * @ingroup Flip
- */
 EAPI Eina_Bool
 elm_flip_front_get(const Evas_Object *obj)
 {
@@ -1857,18 +1752,6 @@ elm_flip_front_get(const Evas_Object *obj)
    return wd->state;
 }
 
-/**
- * Set flip perspective
- *
- * @param obj The flip object
- * @param foc The coordinate to set the focus on
- * @param x The X coordinate
- * @param y The Y coordinate
- *
- * NOTE: This function currently does nothing.
- *
- * @ingroup Flip
- */
 EAPI void
 elm_flip_perspective_set(Evas_Object *obj, Evas_Coord foc __UNUSED__, Evas_Coord x __UNUSED__, Evas_Coord y __UNUSED__)
 {
@@ -1879,14 +1762,6 @@ elm_flip_perspective_set(Evas_Object *obj, Evas_Coord foc __UNUSED__, Evas_Coord
 
 // FIXME: add ambient and lighting control
 
-/**
- * Runs the flip animation
- *
- * @param obj The flip object
- * @param mode The mode type
- *
- * @ingroup Flip
- */
 EAPI void
 elm_flip_go(Evas_Object *obj, Elm_Flip_Mode mode)
 {
@@ -1917,21 +1792,6 @@ elm_flip_go(Evas_Object *obj, Elm_Flip_Mode mode)
    evas_object_smart_callback_call(obj, SIG_ANIMATE_BEGIN, NULL);
 }
 
-/**
- * Set the interactive flip mode
- *
- * @param obj The flip object
- * @param mode The interactive flip mode to use
- *
- * This sets if the flip should be interactive (allow user to click and
- * drag a side of the flip to reveal the back page and cause it to flip).
- * By default a flip is not interactive. You may also need to set which
- * sides of the flip are "active" for flipping and how much space they use
- * (a minimum of a finger size) with elm_flip_interacton_direction_enabled_set()
- * and elm_flip_interacton_direction_hitsize_set()
- *
- * @ingroup Flip
- */
 EAPI void
 elm_flip_interaction_set(Evas_Object *obj, Elm_Flip_Interaction mode)
 {
@@ -1971,16 +1831,6 @@ elm_flip_interaction_set(Evas_Object *obj, Elm_Flip_Interaction mode)
    _configure(obj);
 }
 
-/**
- * Get the interactive flip mode
- *
- * @param obj The flip object
- * @return The interactive flip mode
- *
- * Returns the interactive flip mode set by elm_flip_interaction_set()
- *
- * @ingroup Flip
- */
 EAPI Elm_Flip_Interaction
 elm_flip_interaction_get(const Evas_Object *obj)
 {
@@ -1990,18 +1840,6 @@ elm_flip_interaction_get(const Evas_Object *obj)
    return wd->intmode;
 }
 
-/**
- * Set which directions of the flip respond to interactive flip
- *
- * @param obj The flip object
- * @param dir The direction to change
- * @param enabled If that direction is enabled or not
- *
- * By default all directions are disabled, so you may want to enable the
- * desired directions for flipping if you need interactive flipping.
- *
- * @ingroup Flip
- */
 EAPI void
 elm_flip_interacton_direction_enabled_set(Evas_Object *obj, Elm_Flip_Direction dir, Eina_Bool enabled)
 {
@@ -2039,17 +1877,6 @@ elm_flip_interacton_direction_enabled_set(Evas_Object *obj, Elm_Flip_Direction d
    _configure(obj);
 }
 
-/**
- * Get the enabled state of that flip direction
- *
- * @param obj The flip object
- * @param dir The direction to check
- * @return If that direction is enabled or not
- *
- * Gets the enabled state set by elm_flip_interacton_direction_enabled_set()
- *
- * @ingroup Flip
- */
 EAPI Eina_Bool
 elm_flip_interacton_direction_enabled_get(Evas_Object *obj, Elm_Flip_Direction dir)
 {
@@ -2065,15 +1892,6 @@ elm_flip_interacton_direction_enabled_get(Evas_Object *obj, Elm_Flip_Direction d
    return wd->dir_enabled[i];
 }
 
-/**
- * Set the amount of the flip that is sensitive to interactive flip
- *
- * @param obj The flip object
- * @param dir The direction to modify
- * @param hitsize The amount of that dimension (0.0 to 1.0) to use
- *
- * @ingroup Flip
- */
 EAPI void
 elm_flip_interacton_direction_hitsize_set(Evas_Object *obj, Elm_Flip_Direction dir, double hitsize)
 {
@@ -2094,17 +1912,6 @@ elm_flip_interacton_direction_hitsize_set(Evas_Object *obj, Elm_Flip_Direction d
    _configure(obj);
 }
 
-/**
- * Get the amount of the flip that is sensitive to interactive flip
- *
- * @param obj The flip object
- * @param dir The direction to check
- * @return The size set for that direction
- *
- * Returns the amount os sensitive area set by elm_flip_interacton_direction_hitsize_set().
- *
- * @ingroup Flip
- */
 EAPI double
 elm_flip_interacton_direction_hitsize_get(Evas_Object *obj, Elm_Flip_Direction dir)
 {
