@@ -586,7 +586,34 @@ AC_CHECK_FUNCS([openat], [AC_DEFINE(HAVE_OPENAT)], [])
 AC_CHECK_FUNCS([statat], [AC_DEFINE(HAVE_STATAT)], [])
 AC_CHECK_FUNCS([fpathconf], [AC_DEFINE(HAVE_FPATHCONF)], [])
 
-AC_CHECK_FUNCS([shm_open], [AC_DEFINE(HAVE_SHMOPEN)], [])
+have_shmopen=no
+AC_MSG_CHECKING(for shm_open availability)
+
+LIBS_save = "${LIBS}"
+LIBS="${LIBS} -lrt"
+AC_LINK_IFELSE(
+  [AC_LANG_PROGRAM(
+      [[
+#include <sys/mman.h>
+#include <sys/stat.h>        /* For mode constants */
+#include <fcntl.h>           /* For O_* constants */
+      ]],
+      [[
+int fd;
+
+fd = shm_open("/dev/null", O_RDONLY, S_IRWXU | S_IRWXG | S_IRWXO);
+      ]])],
+  [have_shmopen="yes"],
+  [have_shmopen="no"])
+
+LIBS="${LIBS_save}"
+
+AC_MSG_RESULT([${have_shmopen}])
+
+if test "x${have_shmopen}" = "xyes"; then
+   AC_DEFINE(HAVE_SHMOPEN, 1, [Does your system provide shm_open])
+   LIBS="${LIBS} -lrt"
+fi
 
 ### Modules
 
