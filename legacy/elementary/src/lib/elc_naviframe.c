@@ -125,13 +125,15 @@ _sizing_eval(Evas_Object *obj)
 {
    Widget_Data *wd;
    Eina_List *list;
+   Elm_Naviframe_Item *it;
    wd  = elm_widget_data_get(obj);
    if (!wd) return;
 
    list = eina_list_last(wd->stack);
    if (!list) return;
 
-   _item_sizing_eval(list->data);
+   EINA_LIST_FOREACH(wd->stack, list, it)
+     _item_sizing_eval(it);
 }
 
 static void
