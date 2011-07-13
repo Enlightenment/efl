@@ -9,7 +9,7 @@
 EAPI int
 elm_main(int argc, char **argv)
 {
-   Evas_Object *win, *bg, *label, *label2, *label3, *label4, *label5;
+   Evas_Object *win, *bg, *label, *label2, *label3, *label4, *label5, *label6;
 
    win = elm_win_add(NULL, "label", ELM_WIN_BASIC);
    elm_win_title_set(win, "Label");
@@ -59,11 +59,19 @@ elm_main(int argc, char **argv)
    elm_object_text_set(label5, "And for this label we choose a different text, "
                                "for no reason other than that we can.");
    elm_label_line_wrap_set(label5, ELM_WRAP_WORD);
-   evas_object_resize(label5, 200, 25);
+   evas_object_resize(label5, 200, 30);
    evas_object_move(label5, 0, 75);
    evas_object_show(label5);
 
-   evas_object_resize(win, 200, 105);
+   label6 = elm_label_add(win);
+   elm_object_text_set(label6, "Short text");
+   elm_object_style_set(label6, "marker");
+   evas_object_color_set(label6, 255, 0, 0, 255);
+   evas_object_resize(label6, 200, 15);
+   evas_object_move(label6, 0, 105);
+   evas_object_show(label6);
+
+   evas_object_resize(win, 200, 125);
    evas_object_show(win);
 
    elm_run();

@@ -1253,6 +1253,55 @@
   * @example flip_example_01.c
   */
 
+ /**
+  * @page tutorial_label Label example
+  * @dontinclude label_example_01.c
+  *
+  * In this example we are going to create 6 labels, set some properties on
+  * them and see what changes in appearance those properties cause.
+  *
+  * We start with the setup code that by now you should be familiar with:
+  * @until show(bg)
+  *
+  * For our first label we have a moderately long text(that doesn't fit in the
+  * label's width) so we will make it a sliding label. Since the text isn't
+  * too long we don't need the animation to be very long, 3 seconds should
+  * give us a nice speed:
+  * @until show(label
+  *
+  * For our second label we have the same text, but this time we aren't going
+  * to have it slide, we're going to ellipsize it. Because we ask our label
+  * widget to ellipsize the text it will first diminsh the fontsize so that it
+  * can show as much of the text as possible:
+  * @until show(label
+  *
+  * For the third label we are going to ellipsize the text again, however this
+  * time to make sure the fontsize isn't diminshed we will set a line wrap.
+  * The wrap won't actually cause a line break because we set the label to
+  * ellipsize:
+  * @until show(label
+  *
+  * For our fourth label we will set line wrapping but won't set ellipsis, so
+  * that our text will indeed be wrapped instead of ellipsized. For this label
+  * we choose character wrap:
+  * @until show(label
+  *
+  * Just two more, for our fifth label we do the same as for the fourth
+  * except we set the wrap to word:
+  * @until show(label
+  *
+  * And last but not least for our sixth label we set the style to "marker" and
+  * the color to red(the default color is white which would be hard to see on
+  * our white background):
+  * @until show(label
+  *
+  * Our example will look like this:
+  * @image html screenshots/label_example_01.png
+  * @image latex screenshots/label_example_01.eps
+  *
+  * @example label_example_01.c
+  */
+
 /**
  * @page bg_example_01_c bg_example_01.c
  * @include bg_example_01.c
