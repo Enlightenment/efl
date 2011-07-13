@@ -42,6 +42,7 @@ icon_20.png \
 icon_21.png \
 icon_22.png \
 icon_23.png \
+icon_right_arrow.png \
 bubble.png \
 bubble_sh.png \
 mystrale.jpg \
