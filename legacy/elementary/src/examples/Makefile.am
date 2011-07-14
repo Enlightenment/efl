@@ -49,6 +49,12 @@ SRCS = \
 	label_example_01.c \
 	theme_example_01.c \
 	theme_example_02.c \
+	calendar_example_01.c \
+	calendar_example_02.c \
+	calendar_example_03.c \
+	calendar_example_04.c \
+	calendar_example_05.c \
+	calendar_example_06.c \
 	clock_example.c \
 	theme_example.edc
 
@@ -91,6 +97,12 @@ pkglib_PROGRAMS += \
 	label_example_01 \
 	theme_example_01 \
 	theme_example_02 \
+	calendar_example_01 \
+	calendar_example_02 \
+	calendar_example_03 \
+	calendar_example_04 \
+	calendar_example_05 \
+	calendar_example_06 \
 	clock_example \
 	flipselector_example \
 	theme_example.edj
@@ -114,6 +126,12 @@ SCREENSHOTS = \
 	hover_example_01:hover_example_01.png:0.0 \
 	label_example_01:label_example_01.png:0.0 \
 	theme_example_01:theme_example_01.png:0.0 \
+	calendar_example_01:calendar_example_01.png:0.0 \
+	calendar_example_02:calendar_example_02.png:0.0 \
+	calendar_example_03:calendar_example_03.png:0.0 \
+	calendar_example_04:calendar_example_04.png:0.0 \
+	calendar_example_05:calendar_example_05.png:0.0 \
+	calendar_example_06:calendar_example_06.png:0.0 \
 	clock_example:clock_example.png:0.5 \
 	flipselector_example:flipselector_example.png:0.0
 

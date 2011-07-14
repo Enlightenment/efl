@@ -19,6 +19,18 @@
  *
  * @ref general_functions_example_page
  *
+ * @ref calendar_example_01
+ *
+ * @ref calendar_example_02
+ *
+ * @ref calendar_example_03
+ *
+ * @ref calendar_example_04
+ *
+ * @ref calendar_example_05
+ *
+ * @ref calendar_example_06
+ *
  * @ref clock_example
  *
  * @ref flipselector_example
@@ -1095,6 +1107,262 @@
  * For the full code, follow @ref box_example_02.c "here".
  *
  * @example box_example_02.c
+ */
+
+/**
+ * @page calendar_example_01 Calendar - Simple creation.
+ * @dontinclude calendar_example_01.c
+ *
+ * As a first example, let's just display a calendar in our window,
+ * explaining all steps required to do so.
+ *
+ * First you should declare objects we intend to use:
+ * @skipline Evas_Object
+ *
+ * Then a window is created, a title is set and its set to be autodeleted.
+ * More details can be found on windows examples:
+ * @until elm_win_autodel
+ *
+ * Next a simple background is placed on our windows. More details on
+ * @ref bg_01_example_page:
+ * @until evas_object_show(bg)
+ *
+ * Now, the exciting part, let's add the calendar with elm_calendar_add(),
+ * passing our window object as parent.
+ * @until evas_object_show(cal);
+ *
+ * To conclude our example, we should show the window and run elm mainloop:
+ * @until ELM_MAIN
+ *
+ * Our example will look like this:
+ * @image html screenshots/calendar_example_01.png
+ * @image latex screenshots/calendar_example_01.eps
+ *
+ * See the full source code @ref calendar_example_01.c here.
+ * @example calendar_example_01.c
+ */
+
+/**
+ * @page calendar_example_02 Calendar - Layout strings formatting.
+ * @dontinclude calendar_example_02.c
+ *
+ * In this simple example, we'll explain how to format the label displaying
+ * month and year, and also set weekday names.
+ *
+ * To format month and year label, we need to create a callback function
+ * to create a string given the selected time, declared under a
+ * <tt> struct tm </tt>.
+ *
+ * <tt> struct tm </tt>, declared on @c time.h, is a structure composed by
+ * nine integers:
+ * @li tm_sec   seconds [0,59]
+ * @li tm_min   minutes [0,59]
+ * @li tm_hour  hour [0,23]
+ * @li tm_mday  day of month [1,31]
+ * @li tm_mon   month of year [0,11]
+ * @li tm_year  years since 1900
+ * @li tm_wday  day of week [0,6] (Sunday = 0)
+ * @li tm_yday  day of year [0,365]
+ * @li tm_isdst daylight savings flag
+ * @note glib version has 2 additional fields.
+ *
+ * For our function, only stuff that matters are tm_mon and tm_year.
+ * But we don't need to access it directly, since there are nice functions
+ * to format date and time, as @c strftime.
+ * We will get abbreviated month (%b) and year (%y) (check strftime manpage
+ * for more) in our example:
+ * @skipline static char
+ * @until }
+ *
+ * We need to alloc the string to be returned, and calendar widget will
+ * free it when it's not needed, what is done by @c strdup.
+ * So let's register our callback to calendar object:
+ * @skipline elm_calendar_format_function_set
+ *
+ * To set weekday names, we should declare them as an array of strings:
+ * @dontinclude calendar_example_02.c
+ * @skipline weekdays
+ * @until }
+ *
+ * And finally set them to calendar:
+ * skipline weekdays_names_set
+ *
+ * Our example will look like this:
+ * @image html screenshots/calendar_example_02.png
+ * @image latex screenshots/calendar_example_02.eps
+ *
+ * See the full source code @ref calendar_example_02.c here.
+ * @example calendar_example_02.c
+ */
+
+/**
+ * @page calendar_example_03 Calendar - Years restrictions.
+ * @dontinclude calendar_example_03.c
+ *
+ * This example explains how to set max and min year to be displayed
+ * by a calendar object. This means that user won't be able to
+ * see or select a date before and after selected years.
+ * By default, limits are 1902 and maximun value will depends
+ * on platform architecture (year 2037 for 32 bits); You can
+ * read more about time functions on @c ctime manpage.
+ *
+ * Straigh to the point, to set it is enough to call
+ * elm_calendar_min_max_year_set(). First value is minimun year, second
+ * is maximum. If first value is negative, it won't apply limit for min
+ * year, if the second one is negative, won't apply for max year.
+ * Setting both to negative value will clear limits (default state):
+ * @skipline elm_calendar_min_max_year_set
+ *
+ * Our example will look like this:
+ * @image html screenshots/calendar_example_03.png
+ * @image latex screenshots/calendar_example_03.eps
+ *
+ * See the full source code @ref calendar_example_03.c here.
+ * @example calendar_example_03.c
+ */
+
+/**
+ * @page calendar_example_04 Calendar - Days selection.
+ * @dontinclude calendar_example_04.c
+ *
+ * It's possible to disable date selection and to select a date
+ * from your program, and that's what we'll see on this example.
+ *
+ * If isn't required that users could select a day on calendar,
+ * only interacting going through months, disabling days selection
+ * could be a good idea to avoid confusion. For that:
+ * @skipline elm_calendar_day_selection_enabled_set
+ *
+ * Also, regarding days selection, you could be interested to set a
+ * date to be highlighted on calendar from your code, maybe when
+ * a specific event happens, or after calendar creation. Let's select
+ * two days from current day:
+ * @dontinclude calendar_example_04.c
+ * @skipline SECS_DAY
+ * @skipline current_time
+ * @until elm_calendar_selected_time_set
+ *
+ * Our example will look like this:
+ * @image html screenshots/calendar_example_04.png
+ * @image latex screenshots/calendar_example_04.eps
+ *
+ * See the full source code @ref calendar_example_04.c here.
+ * @example calendar_example_04.c
+ */
+
+/**
+ * @page calendar_example_05 Calendar - Signal callback and getters.
+ * @dontinclude calendar_example_05.c
+ *
+ * Most of setters explained on previous examples have associated getters.
+ * That's the subject of this example. We'll add a callback to display
+ * all calendar information every time user interacts with the calendar.
+ *
+ * Let's check our callback function:
+ * @skipline static void
+ * @until double interval;
+ *
+ * To get selected day, we need to call elm_calendar_selected_time_get(),
+ * but to assure nothing wrong happened, we must check for function return.
+ * It'll return @c EINA_FALSE if fail. Otherwise we can use time set to
+ * our structure @p stime.
+ * @skipline elm_calendar_selected_time_get
+ * @until return
+ *
+ * Next we'll get information from calendar and place on declared vars:
+ * @skipline interval
+ * @until elm_calendar_weekdays_names_get
+ *
+ * The only tricky part is that last line gets an array of strings
+ * (char arrays), one for each weekday.
+ *
+ * Then we can simple print that to stdin:
+ * @skipline printf
+ * @until }
+ *
+ * <tt> struct tm </tt> is declared on @c time.h. You can check @c ctime
+ * manpage to read about it.
+ *
+ * To register this callback, that will be called every time user selects
+ * a day or goes to next or previous month, just add a callback for signal
+ * @b changed.
+ * @skipline evas_object_smart_callback_add
+ *
+ * Our example will look like this:
+ * @image html screenshots/calendar_example_05.png
+ * @image latex screenshots/calendar_example_05.eps
+ *
+ * See the full source code @ref calendar_example_05.c here.
+ * @example calendar_example_05.c
+ */
+
+/**
+ * @page calendar_example_06 Calendar - Calendar marks.
+ * @dontinclude calendar_example_06.c
+ *
+ * On this example marks management will be explained. Functions
+ * elm_calendar_mark_add(), elm_calendar_mark_del() and
+ * elm_calendar_marks_clear() will be covered.
+ *
+ * To add a mark, will be required to choose three things:
+ * @li mark style
+ * @li mark date, or start date if it will be repeated
+ * @li mark periodicity
+ *
+ * Style defines the kind of mark will be displayed over marked day,
+ * on caledar. Default theme supports @b holiday and @b checked.
+ * If more is required, is possible to set a new theme to calendar
+ * widget using elm_object_style_set(), and use
+ * the signal that will be used by such marks.
+ *
+ * Date is a <tt> struct tm </tt>, as defined by @c time.h. More can
+ * be read on @c ctime manpage.
+ * If a date relative from current is required, this struct can be set
+ * as:
+ * @skipline current_time
+ * @until localtime_r
+ *
+ * Or if it's an absolute date, you can just declare the struct like:
+ * @dontinclude calendar_example_06.c
+ * @skipline sunday
+ * @until christmas.tm_mon
+ *
+ * Periodicity is how frequently the mark will be displayed over the
+ * calendar.  Can be a unique mark (that don't repeat), or it can repeat
+ * daily, weekly, monthly or annually. It's enumerated by
+ * @c Elm_Calendar_Mark_Repeat.
+ *
+ * So let's add some marks to our calendar. We will add christmas holiday,
+ * set Sundays as holidays, and check current day and day after that.
+ * @dontinclude calendar_example_06.c
+ * @skipline sunday
+ * @until christmas.tm_mon
+ * @skipline current_time
+ * @until ELM_CALENDAR_WEEKLY
+ *
+ * We kept the return of first mark add, because we don't really won't it
+ * to be checked, so let's remove it:
+ * @skipline elm_calendar_mark_del
+ *
+ * After all marks are added and removed, is required to draw them:
+ * @skipline elm_calendar_marks_draw
+ *
+ * Finally, to clear all marks, let's set a callback for our button:
+ * @skipline elm_button_add
+ * @until evas_object_show(bt);
+ *
+ * This callback will receive our calendar object, and should clear it:
+ * @dontinclude calendar_example_06.c
+ * @skipline static
+ * @until }
+ * @note Remember to draw marks after clear the calendar.
+ *
+ * Our example will look like this:
+ * @image html screenshots/calendar_example_06.png
+ * @image latex screenshots/calendar_example_06.eps
+ *
+ * See the full source code @ref calendar_example_06.c here.
+ * @example calendar_example_06.c
  */
 
 /**

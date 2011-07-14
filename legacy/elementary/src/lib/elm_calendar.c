@@ -9,22 +9,6 @@
 #include <Elementary.h>
 #include "elm_priv.h"
 
-/**
- * @defgroup Calendar
- *
- * A calendar is a widget that allows the user to select a date. It has
- * support to adding check marks (holidays and checks by default). The calendar
- * is displayed one month at a time.
- *
- * Weekday names and the function used to format month and year to
- * be displayed can be set, giving more flexibility to this widget.
- *
- * Signals that you can add callbacks for are:
- *
- * "changed" - emitted when the user selects a day or changes the displayed
- *             month, what actually changes the selected day as well.
- */
-
 typedef enum _Day_Color // EINA_DEPRECATED
 {
    DAY_WEEKDAY = 0,
@@ -718,14 +702,6 @@ _event_hook(Evas_Object *obj, Evas_Object *src __UNUSED__, Evas_Callback_Type ty
    return EINA_TRUE;
 }
 
-/**
- * Add a new calendar to the parent
- *
- * @param parent The parent object
- * @return The new object or NULL if it cannot be created
- *
- * @ingroup Calendar
- */
 EAPI Evas_Object *
 elm_calendar_add(Evas_Object *parent)
 {
@@ -809,30 +785,6 @@ elm_calendar_add(Evas_Object *parent)
    return obj;
 }
 
-/**
- * Set weekdays names to display in the calendar.
- *
- * By default, the following abbreviations are displayed:
- * "Sun, Mon, Tue, Wed, Thu, Fri, Sat"
- * The first string should be related to Sunday, the second to Monday...
- *
- * The usage should be like this:
- * @code
- *   const char *weekdays[] =
- *   {
- *      "Sunday", "Monday", "Tuesday", "Wednesday",
- *      "Thursday", "Friday", "Saturday"
- *   };
- *   elm_calendar_weekdays_names_set(calendar, weekdays);
- * @endcode
- *
- * @param obj The calendar object
- * @param weedays Array of seven strings to be used as weekday names.
- * Warning: it must have 7 elements, or it will access invalid memory.
- * The strings must be NULL terminated ('@\0').
- *
- * @ingroup Calendar
- */
 EAPI void
 elm_calendar_weekdays_names_set(Evas_Object *obj, const char *weekdays[])
 {
@@ -850,18 +802,6 @@ elm_calendar_weekdays_names_set(Evas_Object *obj, const char *weekdays[])
    _set_headers(obj);
 }
 
-/**
- * Get weekdays names displayed in the calendar.
- *
- * By default, the following abbreviations are displayed:
- * "Sun, Mon, Tue, Wed, Thu, Fri, Sat"
- * The first string is related to Sunday, the second to Monday...
- *
- * @param obj The calendar object
- * @return Array of seven strings to used as weekday names.
- *
- * @ingroup Calendar
- */
 EAPI const char **
 elm_calendar_weekdays_names_get(const Evas_Object *obj)
 {
@@ -871,18 +811,6 @@ elm_calendar_weekdays_names_get(const Evas_Object *obj)
    return wd->weekdays;
 }
 
-/**
- * Set the interval for the calendar
- *
- * The interval value is decreased while the user increments or decrements
- * the calendar value. The next interval value is the previous interval / 1.05,
- * so it speed up a bit. Default value is 0.85 seconds.
- *
- * @param obj The calendar object
- * @param interval The interval value in seconds
- *
- * @ingroup Calendar
- */
 EAPI void
 elm_calendar_interval_set(Evas_Object *obj, double interval)
 {
@@ -892,18 +820,6 @@ elm_calendar_interval_set(Evas_Object *obj, double interval)
    wd->first_interval = interval;
 }
 
-/**
- * Get the interval of the calendar
- *
- * The interval value is decreased while the user increments or decrements
- * the calendar value. The next interval value is the previous interval / 1.05,
- * so it speed up a bit. Default value is 0.85 seconds.
- *
- * @param obj The calendar object
- * @return The value of the first interval in seconds
- *
- * @ingroup Calendar
- */
 EAPI double
 elm_calendar_interval_get(const Evas_Object *obj)
 {
@@ -913,22 +829,6 @@ elm_calendar_interval_get(const Evas_Object *obj)
    return wd->first_interval;
 }
 
-/**
- * Set the minimum and maximum values for the year
- *
- * Maximum must be greater than minimum, except if you don't wan't to set
- * maximum year.
- * Default values are 1902 and -1.
- *
- * If the maximum year is a negative value, it will be limited depending of the
- * platform architecture (2037 for 32 bits);
- *
- * @param obj The calendar object
- * @param min The minimum year, greater than 1901;
- * @param max The maximum year;
- *
- * @ingroup Calendar
- */
 EAPI void
 elm_calendar_min_max_year_set(Evas_Object *obj, int min, int max)
 {
@@ -948,20 +848,6 @@ elm_calendar_min_max_year_set(Evas_Object *obj, int min, int max)
    _populate(obj);
 }
 
-/**
- * Get the minimum and maximum values for the year
- *
- * Default values are 1902 and -1.
- *
- * If the maximum year is a negative value, it will be limited depending of the
- * platform architecture (2037 for 32 bits);
- *
- * @param obj The calendar object
- * @param min The minimum year
- * @param max The maximum year
- *
- * @ingroup Calendar
- */
 EAPI void
 elm_calendar_min_max_year_get(const Evas_Object *obj, int *min, int *max)
 {
@@ -972,17 +858,6 @@ elm_calendar_min_max_year_get(const Evas_Object *obj, int *min, int *max)
    if (max) *max = wd->year_max + 1900;
 }
 
-/**
- * Enable or disable day selection
- *
- * Enabled by default. If disabled, the user can select months, but not days.
- * It should be used if you won't need such selection for the widget usage.
- *
- * @param obj The calendar object
- * @param enabled Boolean to enable (true) or disable (false) day selection
- *
- * @ingroup Calendar
- */
 EAPI void
 elm_calendar_day_selection_enabled_set(Evas_Object *obj, Eina_Bool enabled)
 {
@@ -996,18 +871,6 @@ elm_calendar_day_selection_enabled_set(Evas_Object *obj, Eina_Bool enabled)
      _unselect(wd, wd->selected_it);
 }
 
-/**
- * Get day selection state
- *
- * Enabled by default. If disabled, the user can select months, but not days.
- * It should be used if you won't need such selection for the widget usage.
- *
- * @param obj The calendar object
- * @return True if day selection is enabled, or false otherwise. It will
- * return false if it can't get widget data.
- *
- * @ingroup Calendar
- */
 EAPI Eina_Bool
 elm_calendar_day_selection_enabled_get(const Evas_Object *obj)
 {
@@ -1017,17 +880,6 @@ elm_calendar_day_selection_enabled_get(const Evas_Object *obj)
    return wd->selection_enabled;
 }
 
-/**
- * Set selected time
- *
- * Set the time selected, changing the displayed month if needed.
- * Selected time changes when the user changes the month or select a day.
- *
- * @param obj The calendar object
- * @param selected_time A tm struct to represent the selected date
- *
- * @ingroup Calendar
- */
 EAPI void
 elm_calendar_selected_time_set(Evas_Object *obj, struct tm *selected_time)
 {
@@ -1041,18 +893,6 @@ elm_calendar_selected_time_set(Evas_Object *obj, struct tm *selected_time)
    return;
 }
 
-/**
- * Get selected time
- *
- * Get the time selected by the user.
- * Selected time changes when the user changes the month or select a day.
- *
- * @param obj The calendar object
- * @param selected_time A tm struct to represent the selected date
- * @return It will return false if it can't get widget data, or true otherwise
- *
- * @ingroup Calendar
- */
 EAPI Eina_Bool
 elm_calendar_selected_time_get(const Evas_Object *obj, struct tm *selected_time)
 {
@@ -1064,33 +904,6 @@ elm_calendar_selected_time_get(const Evas_Object *obj, struct tm *selected_time)
    return EINA_TRUE;
 }
 
-/**
- * Set a function to format the string that will be used to display
- * month - year
- *
- * By default it uses strftime with "%B %Y" format string.
- * It should allocate the memory that will be used by the string,
- * that will be freed by the widget after usage.
- * A pointer to the string and a pointer to the time struct will be provided.
- *
- * Example:
- * @code
- * static char *
- * _format_month_year(struct tm *selected_time)
- * {
- *    char buf[32];
- *    if (!strftime(buf, sizeof(buf), "%B %Y", selected_time)) return NULL;
- *    return strdup(buf);
- * }
- * elm_calendar_format_function_set(calendar, _format_month_year);
- * @endcode
- *
- * @param obj The calendar object
- * @param format_function Function to set the month-year string given
- * the selected date
- *
- * @ingroup Calendar
- */
 EAPI void
 elm_calendar_format_function_set(Evas_Object *obj, char * (*format_function) (struct tm *selected_time))
 {
@@ -1100,46 +913,6 @@ elm_calendar_format_function_set(Evas_Object *obj, char * (*format_function) (st
    wd->format_func = format_function;
 }
 
-/**
- * Add a new mark to the calendar
- *
- * Add a mark that will be drawn in the calendar respecting the insertion time
- * and periodicity. It will emit the type as signal to the widget theme.
- * By default, it supports "holiday" and "checked", but it can be extended.
- *
- * It won't immediately update the calendar, drawing the marks. For this, call
- * elm_calendar_marks_draw().
- *
- * Example
- * @code
- * struct tm selected_time;
- * time_t current_time;
- *
- * current_time = time(NULL) + 5 * 84600;
- * localtime_r(&current_time, &selected_time);
- * elm_calendar_mark_add(cal, "holiday", selected_time, ELM_CALENDAR_ANNUALLY);
- *
- * current_time = time(NULL) + 1 * 84600;
- * localtime_r(&current_time, &selected_time);
- * elm_calendar_mark_add(cal, "checked", selected_time, ELM_CALENDAR_UNIQUE);
- *
- * elm_calendar_marks_draw(cal);
- * @endcode
- *
- * @param obj The calendar object
- * @param mark_type A string used to define the type of mark. It will be
- * emitted to the theme, that should display a related modification on these
- * days representation.
- * @param mark_time A time struct to represent the date of inclusion of the
- * mark. For marks that repeats it will just be displayed after the inclusion
- * date in the calendar.
- * @param repeat Repeat the event following this periodicity. Can be a unique
- * mark (that don't repeat), daily, weekly, monthly or annually.
- *
- * @return The created mark or NULL upon failure
- *
- * @ingroup Calendar
- */
 EAPI Elm_Calendar_Mark *
 elm_calendar_mark_add(Evas_Object *obj, const char *mark_type, struct tm *mark_time, Elm_Calendar_Mark_Repeat repeat)
 {
@@ -1154,13 +927,6 @@ elm_calendar_mark_add(Evas_Object *obj, const char *mark_type, struct tm *mark_t
    return mark;
 }
 
-/**
- * Delete mark from the calendar.
- *
- * @param mark The mark to delete
- *
- * @ingroup Calendar
- */
 EAPI void
 elm_calendar_mark_del(Elm_Calendar_Mark *mark)
 {
@@ -1177,13 +943,6 @@ elm_calendar_mark_del(Elm_Calendar_Mark *mark)
    _mark_free(mark);
 }
 
-/**
- * Remove all the marks from the calendar
- *
- * @param obj The calendar object
- *
- * @ingroup Calendar
- */
 EAPI void
 elm_calendar_marks_clear(Evas_Object *obj)
 {
@@ -1196,14 +955,6 @@ elm_calendar_marks_clear(Evas_Object *obj)
       _mark_free(mark);
 }
 
-/**
- * Returns a list of all the calendar marks.
- *
- * @param obj The calendar object
- * @return An Eina_List* of the calendar marks, or NULL on failure
- *
- * @ingroup Calendar
- */
 EAPI const Eina_List *
 elm_calendar_marks_get(const Evas_Object *obj)
 {
@@ -1213,20 +964,6 @@ elm_calendar_marks_get(const Evas_Object *obj)
    return wd->marks;
 }
 
-/**
- * Draw calendar marks.
- *
- * Should be used after adding, removing or clearing marks.
- * It will go through the entire marks list updating the calendar
- * (not a cheap function). So if lots of marks will be added,
- * add all the marks and then call this function.
- *
- * When the month is changed marks will be drawed.
- *
- * @param obj The calendar object
- *
- * @ingroup Calendar
- */
 EAPI void
 elm_calendar_marks_draw(Evas_Object *obj)
 {
@@ -1236,21 +973,6 @@ elm_calendar_marks_draw(Evas_Object *obj)
    _populate(obj);
 }
 
-/**
- * Set a text color to the saturday color.
- *
- * Deprecated. use elm_calendar_mark_add() instead like:
- *
- * @code
- * struct tm t = { 0, 0, 12, 6, 0, 0, 5, 5, -1 };
- * elm_calendar_mark_add(obj, "sat", &t, ELM_CALENDAR_WEEKLY);
- * @endcode
- *
- * @param obj The calendar object
- * @param pos The text position
- *
- * @ingroup Calendar
- */
 EINA_DEPRECATED EAPI void
 elm_calendar_text_saturday_color_set(Evas_Object *obj, int pos)
 {
@@ -1260,21 +982,6 @@ elm_calendar_text_saturday_color_set(Evas_Object *obj, int pos)
    _text_day_color_set(wd, DAY_SATURDAY, pos);
 }
 
-/**
- * Set a text color to the sunday color.
- *
- * Deprecated. use elm_calendar_mark_add() instead like:
- *
- * @code
- * struct tm t = { 0, 0, 12, 7, 0, 0, 6, 6, -1 };
- * elm_calendar_mark_add(obj, "sun", &t, ELM_CALENDAR_WEEKLY);
- * @endcode
- *
- * @param obj The calendar object
- * @param pos The text position
- *
- * @ingroup Calendar
- */
 EINA_DEPRECATED EAPI void
 elm_calendar_text_sunday_color_set(Evas_Object *obj, int pos)
 {
@@ -1284,30 +991,6 @@ elm_calendar_text_sunday_color_set(Evas_Object *obj, int pos)
    _text_day_color_set(wd, DAY_SUNDAY, pos);
 }
 
-/**
- * Set a text color to the weekday color.
- *
- * Deprecated. use elm_calendar_mark_add() instead like:
- *
- * @code
- * struct tm t = { 0, 0, 12, 1, 0, 0, 0, 0, -1 };
- *
- * elm_calendar_mark_add(obj, "week", &t, ELM_CALENDAR_WEEKLY); // monday
- * t.tm_tm_mday++; t.tm_wday++; t.tm_yday++;
- * elm_calendar_mark_add(obj, "week", &t, ELM_CALENDAR_WEEKLY); // tuesday
- * t.tm_tm_mday++; t.tm_wday++; t.tm_yday++;
- * elm_calendar_mark_add(obj, "week", &t, ELM_CALENDAR_WEEKLY); // wednesday
- * t.tm_tm_mday++; t.tm_wday++; t.tm_yday++;
- * elm_calendar_mark_add(obj, "week", &t, ELM_CALENDAR_WEEKLY); // thursday
- * t.tm_tm_mday++; t.tm_wday++; t.tm_yday++;
- * elm_calendar_mark_add(obj, "week", &t, ELM_CALENDAR_WEEKLY); // friday
- * @endcode
- *
- * @param obj The calendar object
- * @param pos The text position
- *
- * @ingroup Calendar
- */
 EINA_DEPRECATED EAPI void
 elm_calendar_text_weekday_color_set(Evas_Object *obj, int pos)
 {
