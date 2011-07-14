@@ -493,13 +493,25 @@ START_TEST(evas_textblock_cursor)
 
         /* Fail if they are equal, i.e if it for some reason thinks it should
          * go to the end. */
-        evas_textblock_cursor_paragraph_last(main_cur);
+        evas_textblock_cursor_paragraph_first(main_cur);
+        evas_textblock_cursor_paragraph_last(cur);
         evas_textblock_cursor_char_coord_set(main_cur, x + w, nh + 1);
         fail_if(!evas_textblock_cursor_compare(main_cur, cur));
 
-        evas_textblock_cursor_paragraph_last(main_cur);
+        evas_textblock_cursor_paragraph_first(main_cur);
+        evas_textblock_cursor_paragraph_last(cur);
         evas_textblock_cursor_line_coord_set(main_cur, nh + 1);
         fail_if(!evas_textblock_cursor_compare(main_cur, cur));
+
+        /* Fail if it doesn't go to the end. */
+        evas_textblock_cursor_paragraph_last(cur);
+        evas_textblock_cursor_paragraph_first(main_cur);
+        evas_textblock_cursor_char_coord_set(main_cur, x + w, (2 * nh) - 1);
+        fail_if(evas_textblock_cursor_compare(main_cur, cur));
+
+        evas_textblock_cursor_paragraph_first(main_cur);
+        evas_textblock_cursor_line_coord_set(main_cur, (2 * nh) - 1);
+        fail_if(evas_textblock_cursor_compare(main_cur, cur));
      }
 
 
