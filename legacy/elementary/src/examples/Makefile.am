@@ -56,6 +56,7 @@ SRCS = \
 	calendar_example_05.c \
 	calendar_example_06.c \
 	clock_example.c \
+	image_example_01.c \
 	theme_example.edc
 
 pkglib_PROGRAMS =
@@ -104,6 +105,7 @@ pkglib_PROGRAMS += \
 	calendar_example_05 \
 	calendar_example_06 \
 	clock_example \
+	image_example_01 \
 	flipselector_example \
 	theme_example.edj
 
@@ -133,6 +135,7 @@ SCREENSHOTS = \
 	calendar_example_05:calendar_example_05.png:0.0 \
 	calendar_example_06:calendar_example_06.png:0.0 \
 	clock_example:clock_example.png:0.5 \
+	image_example_01:image_example_01.png:0.0 \
 	flipselector_example:flipselector_example.png:0.0
 
 screenshots: all

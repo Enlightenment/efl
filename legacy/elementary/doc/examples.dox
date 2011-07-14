@@ -1624,6 +1624,69 @@
   * @example label_example_01.c
   */
 
+ /**
+  * @page tutorial_image Image example
+  * @dontinclude image_example_01.c
+  *
+  * This example is as simple as possible. An image object will be added to the
+  * window over a white background, and set to be resizeable together with the
+  * window. All the options set through the example will affect the behavior of
+  * this image.
+  *
+  * We start with the code for creating a window and its background, and also
+  * add the code to write the path to the image that will be loaded:
+  *
+  * @skip int
+  * @until snprintf
+  *
+  * Now we create the image object, and set that file to be loaded:
+  *
+  * @until }
+  *
+  * We can now go setting our options.
+  *
+  * elm_image_no_scale_set() is used just to set this value to true (we
+  * don't want to scale our image anyway, just resize it).
+  *
+  * elm_image_scale_set() is used to allow the image to be resized to a size
+  * smaller than the original one, but not to a size bigger than it.
+  *
+  * elm_elm_image_smooth_set() will disable the smooth scaling, so the scale
+  * algorithm used to scale the image to the new object size is going to be
+  * faster, but with a lower quality.
+  *
+  * elm_image_orient_set() is used to flip the image around the (1, 0) (0, 1)
+  * diagonal.
+  *
+  * elm_image_aspect_ratio_retained_set() is used to keep the original aspect
+  * ratio of the image, even when the window is resized to another aspect ratio.
+  *
+  * elm_image_fill_outside_set() is used to ensure that the image will fill the
+  * entire area available to it, even if keeping the aspect ratio. The image
+  * will overflow its width or height (any of them that is necessary) to the
+  * object area, instead of resizing the image down until it can fit entirely in
+  * this area.
+  *
+  * elm_image_editable_set() is used just to cover the API, but won't affect
+  * this example since we are not using any copy & paste property.
+  *
+  * This is the code for setting these options:
+  *
+  * @until editable
+  *
+  * Now some last touches in our object size hints, window and background, to
+  * display this image properly:
+  *
+  * @until ELM_MAIN
+  *
+  * This example will look like this:
+  *
+  * @image html screenshots/image_example_01.png
+  * @image latex screenshots/image_example_01.eps
+  *
+  * @example image_example_01.c
+  */
+
 /**
  * @page bg_example_01_c bg_example_01.c
  * @include bg_example_01.c

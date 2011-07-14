@@ -1,19 +1,6 @@
 #include <Elementary.h>
 #include "elm_priv.h"
 
-/**
- * @defgroup Image Image
- *
- * A standard image that may be provided by the theme (delete, edit,
- * arrows etc.) or a custom file (PNG, JPG, EDJE etc.) used for an
- * icon. The Icon may scale or not and of course... support alpha
- * channels.
- *
- * Signals that you can add callbacks for are:
- *
- * "clicked" - This is called when a user has clicked the image
- */
-
 typedef struct _Widget_Data Widget_Data;
 
 struct _Widget_Data
@@ -106,14 +93,6 @@ _mouse_up(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *eve
    evas_object_smart_callback_call(data, SIG_CLICKED, NULL);
 }
 
-/**
- * Add a new image to the parent
- *
- * @param parent The parent object
- * @return The new object or NULL if it cannot be created
- *
- * @ingroup Image
- */
 EAPI Evas_Object *
 elm_image_add(Evas_Object *parent)
 {
@@ -150,17 +129,6 @@ elm_image_add(Evas_Object *parent)
    return obj;
 }
 
-/**
- * Set the file that will be used as image
- *
- * @param obj The image object
- * @param file The path to file that will be used as image
- * @param group The group that the image belongs in edje file
- *
- * @return (1 = success, 0 = error)
- *
- * @ingroup Image
- */
 EAPI Eina_Bool
 elm_image_file_set(Evas_Object *obj, const char *file, const char *group)
 {
@@ -179,15 +147,6 @@ elm_image_file_set(Evas_Object *obj, const char *file, const char *group)
    return ret;
 }
 
-/**
- * Get the file that will be used as image
- *
- * @param obj The image object
- * @param file The path to file
- * @param group The group that the image belongs in edje file
- *
- * @ingroup Image
- */
 EAPI void
 elm_image_file_get(const Evas_Object *obj, const char **file, const char **group)
 {
@@ -197,15 +156,6 @@ elm_image_file_get(const Evas_Object *obj, const char **file, const char **group
    _els_smart_icon_file_get(wd->img, file, group);
 }
 
-/**
- * Set the smooth effect for a image
- *
- * @param obj The image object
- * @param smooth A bool to set (or no) smooth effect
- * (1 = smooth, 0 = not smooth)
- *
- * @ingroup Image
- */
 EAPI void
 elm_image_smooth_set(Evas_Object *obj, Eina_Bool smooth)
 {
@@ -217,14 +167,6 @@ elm_image_smooth_set(Evas_Object *obj, Eina_Bool smooth)
    _sizing_eval(obj);
 }
 
-/**
- * Get the smooth effect for a image
- *
- * @param obj The image object
- * @return If setted smooth effect
- *
- * @ingroup Image
- */
 EAPI Eina_Bool
 elm_image_smooth_get(const Evas_Object *obj)
 {
@@ -235,19 +177,6 @@ elm_image_smooth_get(const Evas_Object *obj)
    return wd->smooth;
 }
 
-/**
- * Gets the current size of the image.
- *
- * Either width or height (or both) may be NULL.
- *
- * On error, neither w or h will be written too.
- *
- * @param obj The image object.
- * @param w Pointer to store width, or NULL.
- * @param h Pointer to store height, or NULL.
- *
- * @ingroup Image
- */
 EAPI void
 elm_image_object_size_get(const Evas_Object *obj, int *w, int *h)
 {
@@ -258,15 +187,6 @@ elm_image_object_size_get(const Evas_Object *obj, int *w, int *h)
    _els_smart_icon_size_get(wd->img, w, h);
 }
 
-/**
- * Set if the object are scalable
- *
- * @param obj The image object.
- * @param no_scale A bool to set scale (or no).
- * (1 = no_scale, 0 = scale)
- *
- * @ingroup Image
- */
 EAPI void
 elm_image_no_scale_set(Evas_Object *obj, Eina_Bool no_scale)
 {
@@ -279,14 +199,6 @@ elm_image_no_scale_set(Evas_Object *obj, Eina_Bool no_scale)
 
 }
 
-/**
- * Get if the object isn't scalable
- *
- * @param obj The image object
- * @return If isn't scalable
- *
- * @ingroup Image
- */
 EAPI Eina_Bool
 elm_image_no_scale_get(const Evas_Object *obj)
 {
@@ -296,15 +208,6 @@ elm_image_no_scale_get(const Evas_Object *obj)
    return wd->no_scale;
 }
 
-/**
- * Set if the object is (up/down) scalable
- *
- * @param obj The image object
- * @param scale_up A bool to set if the object is scalable up
- * @param scale_down A bool to set if the object is scalable down
- *
- * @ingroup Image
- */
 EAPI void
 elm_image_scale_set(Evas_Object *obj, Eina_Bool scale_up, Eina_Bool scale_down)
 {
@@ -317,15 +220,6 @@ elm_image_scale_set(Evas_Object *obj, Eina_Bool scale_up, Eina_Bool scale_down)
    _sizing_eval(obj);
 }
 
-/**
- * Get if the object is (up/down) scalable
- *
- * @param obj The image object
- * @param scale_up A bool to set if the object is scalable up
- * @param scale_down A bool to set if the object is scalable down
- *
- * @ingroup Image
- */
 EAPI void
 elm_image_scale_get(const Evas_Object *obj, Eina_Bool *scale_up, Eina_Bool *scale_down)
 {
@@ -336,15 +230,6 @@ elm_image_scale_get(const Evas_Object *obj, Eina_Bool *scale_up, Eina_Bool *scal
    if (scale_down) *scale_down = wd->scale_down;
 }
 
-/**
- * Set if the object is filled outside
- *
- * @param obj The image object
- * @param fill_outside A bool to set if the object is filled outside
- * (1 = filled, 0 = no filled)
- *
- * @ingroup Image
- */
 EAPI void
 elm_image_fill_outside_set(Evas_Object *obj, Eina_Bool fill_outside)
 {
@@ -356,14 +241,6 @@ elm_image_fill_outside_set(Evas_Object *obj, Eina_Bool fill_outside)
    _sizing_eval(obj);
 }
 
-/**
- * Get if the object is filled outside
- *
- * @param obj The image object
- * @return If the object is filled outside
- *
- * @ingroup Image
- */
 EAPI Eina_Bool
 elm_image_fill_outside_get(const Evas_Object *obj)
 {
@@ -374,14 +251,6 @@ elm_image_fill_outside_get(const Evas_Object *obj)
    return wd->fill_outside;
 }
 
-/**
- * Set the prescale size for the image
- *
- * @param obj The image object
- * @param size The prescale size
- *
- * @ingroup Image
- */
 EAPI void
 elm_image_prescale_set(Evas_Object *obj, int size)
 {
@@ -392,14 +261,6 @@ elm_image_prescale_set(Evas_Object *obj, int size)
    _els_smart_icon_scale_size_set(wd->img, size);
 }
 
-/**
- * Get the prescale size for the image
- *
- * @param obj The image object
- * @return The prescale size
- *
- * @ingroup Image
- */
 EAPI int
 elm_image_prescale_get(const Evas_Object *obj)
 {
@@ -410,18 +271,6 @@ elm_image_prescale_get(const Evas_Object *obj)
    return _els_smart_icon_scale_size_get(wd->img);
 }
 
-/**
- * Set the image orient
- *
- * @param obj The image object
- * @param orient The image orient
- * (ELM_IMAGE_ORIENT_NONE, ELM_IMAGE_ROTATE_90_CW,
- *  ELM_IMAGE_ROTATE_180_CW, ELM_IMAGE_ROTATE_90_CCW,
- *  ELM_IMAGE_FLIP_HORIZONTAL,ELM_IMAGE_FLIP_VERTICAL,
- *  ELM_IMAGE_FLIP_TRANSPOSE, ELM_IMAGE_FLIP_TRANSVERSE)
- *
- * @ingroup Image
- */
 EAPI void
 elm_image_orient_set(Evas_Object *obj, Elm_Image_Orient orient)
 {
@@ -432,18 +281,6 @@ elm_image_orient_set(Evas_Object *obj, Elm_Image_Orient orient)
    _els_smart_icon_orient_set(wd->img, orient);
 }
 
-/**
- * Get the image orient
- *
- * @param obj The image object
- * @return The image orient
- * (ELM_IMAGE_ORIENT_NONE, ELM_IMAGE_ROTATE_90_CW,
- *  ELM_IMAGE_ROTATE_180_CW, ELM_IMAGE_ROTATE_90_CCW,
- *  ELM_IMAGE_FLIP_HORIZONTAL,ELM_IMAGE_FLIP_VERTICAL,
- *  ELM_IMAGE_FLIP_TRANSPOSE, ELM_IMAGE_FLIP_TRANSVERSE)
- *
- * @ingroup Image
- */
 EAPI Elm_Image_Orient
 elm_image_orient_get(const Evas_Object *obj)
 {
@@ -453,17 +290,6 @@ elm_image_orient_get(const Evas_Object *obj)
    return _els_smart_icon_orient_get(wd->img);
 }
 
-/**
- * Make the image 'editable'.
- *
- * This means the image is a valid drag target for drag and drop, and can be
- * cut or pasted too.
- *
- * @param obj Image object.
- * @param set Turn on or off editability.
- *
- * @ingroup Image
- */
 EAPI void
 elm_image_editable_set(Evas_Object *obj, Eina_Bool set)
 {
@@ -474,15 +300,6 @@ elm_image_editable_set(Evas_Object *obj, Eina_Bool set)
    _els_smart_icon_edit_set(wd->img, set, obj);
 }
 
-/**
- * Make the image 'editable'.
- *
- * This means the image is a valid drag target for drag and drop, and can be
- * cut or pasted too.
- *
- * @param obj Image object.
- * @return Editability.
- */
 EAPI Eina_Bool
 elm_image_editable_get(const Evas_Object *obj)
 {
@@ -492,18 +309,6 @@ elm_image_editable_get(const Evas_Object *obj)
    return _els_smart_icon_edit_get(wd->img);
 }
 
-/**
- * Get the image object
- *
- * When you create a image with elm_image_add(). You can get this object (be
- * careful to not manipulate it as it is under control of elementary), and use
- * it to do things like get pixel data, save the image to a file, etc.
- *
- * @param obj The image object to get the inlined image from
- * @return The inlined image object, or NULL if none exists
- *
- * @ingroup Image
- */
 EAPI Evas_Object *
 elm_image_object_get(const Evas_Object *obj)
 {
@@ -513,14 +318,6 @@ elm_image_object_get(const Evas_Object *obj)
    return _els_smart_icon_object_get(wd->img);
 }
 
-/**
- * Enable/disable retaining up the aspect ratio of the image.
- *
- * @param obj The image object.
- * @param retained Retaining or Non retaining.
- *
- * @ingroup Image
- */
 EAPI void
 elm_image_aspect_ratio_retained_set(Evas_Object *obj, Eina_Bool retained)
 {
@@ -530,14 +327,6 @@ elm_image_aspect_ratio_retained_set(Evas_Object *obj, Eina_Bool retained)
    return _els_smart_icon_aspect_ratio_retained_set(wd->img, retained);
 }
 
-/**
- * Get if the object retains the aspect ratio.
- *
- * @param obj The image object.
- * @return If the object retains the aspect ratio.
- *
- * @ingroup Image
- */
 EAPI Eina_Bool
 elm_image_aspect_ratio_retained_get(const Evas_Object *obj)
 {
