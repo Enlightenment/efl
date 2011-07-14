@@ -7594,7 +7594,7 @@ evas_textblock_cursor_char_coord_set(Evas_Textblock_Cursor *cur, Evas_Coord x, E
    Evas_Object_Textblock *o;
    Evas_Object_Textblock_Paragraph *found_par;
    Evas_Object_Textblock_Line *ln;
-   Evas_Object_Textblock_Item *it = NULL, *it_break = NULL;
+   Evas_Object_Textblock_Item *it = NULL;
 
    if (!cur) return EINA_FALSE;
    o = (Evas_Object_Textblock *)(cur->obj->object_data);
@@ -7644,11 +7644,6 @@ evas_textblock_cursor_char_coord_set(Evas_Textblock_Cursor *cur, Evas_Coord x, E
 
                   EINA_INLIST_FOREACH(ln->items, it)
                     {
-                       if ((it->x + ln->x) > x)
-                         {
-                            it_break = it;
-                            break;
-                         }
                        if (((it->x + ln->x) <= x) && (((it->x + ln->x) + it->adv) > x))
                          {
                             if (it->type == EVAS_TEXTBLOCK_ITEM_TEXT)
@@ -7681,23 +7676,6 @@ evas_textblock_cursor_char_coord_set(Evas_Textblock_Cursor *cur, Evas_Coord x, E
                                  return EINA_TRUE;
                               }
                          }
-                    }
-                  if (it_break)
-                    {
-                       it = it_break;
-                       cur->node = it->text_node;
-                       cur->pos = it->text_pos;
-
-                       /*FIXME: NOTE: Not sure what it's good for.
-                        * needs smarter handling, ATM just check, if it's
-                        * the first item, then go to the end of the line, helps
-                        * with rtl langs, doesn't affect ltr langs that much. */
-                       if (!EINA_INLIST_GET(it)->prev)
-                         {
-                            evas_textblock_cursor_line_char_last(cur);
-                         }
-
-                       return EINA_TRUE;
                     }
                }
           }
