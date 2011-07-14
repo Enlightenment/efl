@@ -693,7 +693,7 @@ elm_transit_chain_transit_del(Elm_Transit *transit, Elm_Transit *chain_transit)
 
    if (chain_transit->prev_chain_transit != transit)
      {
-        WRN("These two transit does not have the chain relationship! : transit=%p, chain_transit=%p", transit, chain_transit);
+        WRN("A pair of transits does not have the chain relationship! : transit=%p, chain_transit=%p", transit, chain_transit);
         return;
      }
 
