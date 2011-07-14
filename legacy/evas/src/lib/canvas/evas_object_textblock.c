@@ -8467,7 +8467,12 @@ evas_object_textblock_render(Evas_Object *obj, void *output, void *context, void
                    * yoff = (itr->type == EVAS_TEXTBLOCK_ITEM_TEXT) ? \
                      _ITEM_TEXT(itr)->baseline : ln->baseline; */ \
                   if (itr->format->valign != -1.0) \
-                     yoff += itr->format->valign * (ln->h - itr->h); \
+                    { \
+                       /* Until I fix the FIXME above. */ \
+                       yoff = (itr->type == EVAS_TEXTBLOCK_ITEM_TEXT) ? \
+                          _ITEM_TEXT(itr)->baseline : ln->baseline; \
+                       yoff += itr->format->valign * (ln->h - itr->h); \
+                    } \
                   if (clip) \
                     { \
                        if ((obj->cur.geometry.x + x + ln->x + itr->x + itr->w) < (cx - 20)) \
