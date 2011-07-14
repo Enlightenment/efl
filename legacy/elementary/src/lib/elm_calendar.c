@@ -208,6 +208,22 @@ _text_day_color_set(Widget_Data *wd, Day_Color col, int pos)
 }
 
 static void
+_set_month_year(Widget_Data *wd)
+{
+   char *buf;
+
+   /* Set selected month */
+   buf = wd->format_func(&wd->selected_time);
+   if (buf)
+     {
+        edje_object_part_text_set(wd->calendar, "month_text", buf);
+        free(buf);
+     }
+   else
+     edje_object_part_text_set(wd->calendar, "month_text", "");
+}
+
+static void
 _populate(Evas_Object *obj)
 {
    int maxdays, day, mon, year, i;
@@ -215,7 +231,6 @@ _populate(Evas_Object *obj)
    char part[12], day_s[3];
    struct tm first_day;
    Eina_List *l;
-   char *buf;
    Eina_Bool last_row = EINA_TRUE;
    Widget_Data *wd = elm_widget_data_get(obj);
 
@@ -227,15 +242,7 @@ _populate(Evas_Object *obj)
    mon = wd->selected_time.tm_mon;
    year = wd->selected_time.tm_year;
 
-   /* Set selected month */
-   buf = wd->format_func(&wd->selected_time);
-   if (buf)
-     {
-        edje_object_part_text_set(wd->calendar, "month_text", buf);
-        free(buf);
-     }
-   else
-     edje_object_part_text_set(wd->calendar, "month_text", "");
+   _set_month_year(wd);
 
    /* Set days */
    day = 0;
@@ -911,6 +918,7 @@ elm_calendar_format_function_set(Evas_Object *obj, char * (*format_function) (st
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
    wd->format_func = format_function;
+   _set_month_year(wd);
 }
 
 EAPI Elm_Calendar_Mark *
