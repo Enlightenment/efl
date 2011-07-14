@@ -188,6 +188,7 @@ extern int ECORE_X_MODIFIER_WIN;
 extern int ECORE_X_LOCK_SCROLL;
 extern int ECORE_X_LOCK_NUM;
 extern int ECORE_X_LOCK_CAPS;
+extern int ECORE_X_LOCK_SHIFT;
 
 extern Display *_ecore_x_disp;
 extern double _ecore_x_double_click_time;
@@ -196,7 +197,6 @@ extern Window _ecore_x_event_last_win;
 extern int _ecore_x_event_last_root_x;
 extern int _ecore_x_event_last_root_y;
 extern Eina_Bool _ecore_x_xcursor;
-extern XIC _ecore_x_ic;
 
 extern Ecore_X_Atom _ecore_x_atoms_wm_protocols[ECORE_X_WM_PROTOCOL_NUM];
 

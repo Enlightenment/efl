@@ -16,6 +16,7 @@ EAPI extern Ecore_X_Atom ECORE_X_ATOM_TEXT;
 EAPI extern Ecore_X_Atom ECORE_X_ATOM_UTF8_STRING;
 EAPI extern Ecore_X_Atom ECORE_X_ATOM_WINDOW;
 EAPI extern Ecore_X_Atom ECORE_X_ATOM_PIXMAP;
+EAPI extern Ecore_X_Atom ECORE_X_ATOM_VISUALID;
 
 /* dnd atoms */
 EAPI extern Ecore_X_Atom ECORE_X_ATOM_SELECTION_XDND;

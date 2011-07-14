@@ -135,6 +135,9 @@ _ecore_x_event_modifiers(unsigned int state)
    if (state & ECORE_X_LOCK_CAPS)
       modifiers |= ECORE_EVENT_LOCK_CAPS;
 
+   if (state & ECORE_X_LOCK_SHIFT)
+      modifiers |= ECORE_EVENT_LOCK_SHIFT;
+
    return modifiers;
 } /* _ecore_x_event_modifiers */
 

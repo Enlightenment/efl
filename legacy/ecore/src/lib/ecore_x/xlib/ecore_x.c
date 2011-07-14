@@ -122,6 +122,7 @@ int ECORE_X_MODIFIER_WIN = 0;
 EAPI int ECORE_X_LOCK_SCROLL = 0;
 EAPI int ECORE_X_LOCK_NUM = 0;
 EAPI int ECORE_X_LOCK_CAPS = 0;
+EAPI int ECORE_X_LOCK_SHIFT = 0;
 
 #ifdef LOGRT
 static double t0 = 0.0;
@@ -514,6 +515,7 @@ ecore_x_init(const char *name)
    ECORE_X_LOCK_SCROLL = _ecore_x_key_mask_get(XK_Scroll_Lock);
    ECORE_X_LOCK_NUM = _ecore_x_key_mask_get(XK_Num_Lock);
    ECORE_X_LOCK_CAPS = _ecore_x_key_mask_get(XK_Caps_Lock);
+   ECORE_X_LOCK_SHIFT = _ecore_x_key_mask_get(XK_Shift_Lock);
 
    _ecore_x_fd_handler_handle =
       ecore_main_fd_handler_add(ConnectionNumber(_ecore_x_disp),
@@ -1883,6 +1885,9 @@ _ecore_x_event_modifier(unsigned int state)
 
    if (state & ECORE_EVENT_LOCK_CAPS)
       xmodifiers |= ECORE_X_LOCK_CAPS;
+
+   if (state & ECORE_EVENT_LOCK_SHIFT)
+      xmodifiers |= ECORE_X_LOCK_SHIFT;
 
    return xmodifiers;
 } /* _ecore_x_event_modifier */
