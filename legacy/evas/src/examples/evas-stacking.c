@@ -41,6 +41,19 @@ struct test_data
 
 static struct test_data d = {0};
 
+static const char *commands = \
+  "commands are:\n"
+  "\tc - change the target rectangle to operate on\n"
+  "\ta - stack target rectangle one level above\n"
+  "\tb - stack target rectangle one level below\n"
+  "\tt - stack target rectangle up to the top of its layer\n"
+  "\tm - stack target rectangle down to the bottom of its layer\n"
+  "\tp - toggle target rectangle's 'pass events' property\n"
+  "\tr - toggle target rectangle's 'repeat events' property\n"
+  "\ts - print current stacking information\n"
+  "\tl - change background rectangle's layer\n"
+  "\th - print help\n";
+
 static void
 _on_mouse_down(void        *data __UNUSED__,
                Evas        *evas __UNUSED__,
@@ -74,18 +87,7 @@ _on_keydown(void        *data __UNUSED__,
 
    if (strcmp(ev->keyname, "h") == 0)  /* print help */
      {
-        fprintf(stdout,
-                "commands are:\n"
-                "\tc - change the target rectangle to operate on\n"
-                "\ta - stack target rectangle one level above\n"
-                "\tb - stack target rectangle one level below\n"
-                "\tt - stack target rectangle up to the top of its layer\n"
-                "\tm - stack target rectangle down to the bottom of its layer\n"
-                "\tp - toggle target rectangle's 'pass events' property\n"
-                "\tr - toggle target rectangle's 'repeat events' property\n"
-                "\ts - print current stacking information\n"
-                "\tl - change background rectangle's layer\n"
-                "\th - print help\n");
+        fprintf(stdout, commands);
         return;
      }
 
@@ -314,6 +316,7 @@ main(void)
    evas_object_event_callback_add(
      d.rects[0], EVAS_CALLBACK_MOUSE_DOWN, _on_mouse_down, NULL);
 
+   fprintf(stdout, commands);
    ecore_main_loop_begin();
 
    ecore_evas_shutdown();

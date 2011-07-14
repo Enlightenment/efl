@@ -2764,6 +2764,11 @@ EAPI const Eina_List  *evas_font_path_list               (const Evas *e) EINA_WA
  * called, it gets implicitly removed from the old clipper's domain
  * and is made now to be clipped by its new clipper.
  *
+ * The following figure illustrates some clipping in Evas:
+ * @image html clipping.png
+ * @image rtf clipping.png
+ * @image latex clipping.eps
+ *
  * @note At the moment the <b>only objects that can validly be used to
  * clip other objects are rectangle objects</b>. All other object
  * types are invalid and the result of using them is undefined. The
@@ -3456,6 +3461,18 @@ EAPI Evas_Object      *evas_object_below_get             (const Evas_Object *obj
  *
  * Objects also generate events on input (keyboard and mouse), if they
  * accept them (are visible, focused, etc).
+ *
+ * For each of those events, Evas provides a way for one to register
+ * callback functions to be issued just after they happen.
+ *
+ * The following figure illustrates some Evas (event) callbacks:
+ * @image html evas-callbacks.png
+ * @image rtf evas-callbacks.png
+ * @image latex evas-callbacks.eps
+ *
+ * Thees events have their values in the #Evas_Callback_Type
+ * enumeration, which has also ones happening on the canvas level (se
+ * #Evas_Canvas_Events).
  *
  * Examples on this group of functions can be found @ref
  * Example_Evas_Stacking "here" and @ref Example_Evas_Events "here".
@@ -4719,11 +4736,22 @@ EAPI void              evas_object_size_hint_weight_get  (const Evas_Object *obj
  * Sets the hints for an object's weight.
  *
  * @param obj The given Evas object to query hints from.
- * @param x Double (@c 0.0-1.0) to use as horizontal weight hint.
- * @param y Double (@c 0.0-1.0) to use as vertical weight hint.
+ * @param x Nonnegative double value to use as horizontal weight hint.
+ * @param y Nonnegative double value to use as vertical weight hint.
  *
- * This is not a size enforcement in any way, it's just a hint that should
- * be used whenever appropriate.
+ * This is not a size enforcement in any way, it's just a hint that
+ * should be used whenever appropriate.
+ *
+ * This is a hint on how a container object should @b resize a given
+ * child within its area. Containers may adhere to the simpler logic
+ * of just expanding the child object's dimensions to fit its own (see
+ * the #EVAS_HINT_EXPAND helper weight macro) or the complete one of
+ * taking each child's weight hint as real @b weights to how much of
+ * its size to allocate for them in each axis. A container is supposed
+ * to, after @b normalizing the weights of its children (with weight
+ * hints), distribute the space it has to layout them by those factors
+ * -- most weighted children get larger in this process than the least
+ * ones.
  *
  * Example:
  * @dontinclude evas-hints.c

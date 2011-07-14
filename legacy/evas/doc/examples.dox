@@ -326,10 +326,10 @@
  * @until evas_object_show(d.rects[0]);
  * @dontinclude evas-stacking.c
  * Like in other Evas examples, one interacts with it be means of key commands:
- * @skip "commands are:\n"
- * @until "\th - print help\n");
+ * @skip static const char *commands
+ * @until ;
  * At any given point, like seem above, you'll be operating one rectangle only.
- * Try stacking it below an adjacent object with "b":
+ * You may stacking it below an adjacent object with "b":
  * @skip evas_object_stack_below(d.rects[d.cur_rect], neighbour);
  * @until evas_object_stack_below(d.rects[d.cur_rect], neighbour);
  * @dontinclude evas-stacking.c
@@ -352,6 +352,54 @@
  * you'll see nothing but the white rectangle: it covers the other
  * layers. For the initial layer (-1), it will never mess nor occlude
  * the others.
+ *
+ * Let's make some tests with those commands. The rectangle which starts
+ * selected and which will receive our commands is the @b red one. It
+ * starts stacked above all the others, like seem above:
+ * @image html evas-stacking-example-00.png
+ * @image rtf evas-stacking-example-00.png
+ * @image latex evas-stacking-example-00.eps
+ *
+ * Stack it one level below, with 'b', and you'll get:
+ * @image html evas-stacking-example-01.png
+ * @image rtf evas-stacking-example-01.png
+ * @image latex evas-stacking-example-01.eps
+ * Note how the rectangle which laid above it, the green one, is now
+ * on top of it. Now change the rectangle to operate on to the blue
+ * one, with two consecutive 'c' commands. Note that it's the lowest
+ * one on the stack of rectangles. Issue the 'a' command for it, thus
+ * re-stacking it one level above:
+ * @image html evas-stacking-example-02.png
+ * @image rtf evas-stacking-example-02.png
+ * @image latex evas-stacking-example-02.eps
+ * You can send it to the top of its layer directly with the 't' command:
+ * @image html evas-stacking-example-03.png
+ * @image rtf evas-stacking-example-03.png
+ * @image latex evas-stacking-example-03.eps
+ * Now put it back to the bottom of that layer with 'm':
+ * @image html evas-stacking-example-04.png
+ * @image rtf evas-stacking-example-04.png
+ * @image latex evas-stacking-example-04.eps
+ * Like said above, we have two layers used at the beginning of the
+ * example: the default one (0) and the one imeddiately below it (-1),
+ * for the white background. Let's change this setup by issuing the
+ * 'l' command, which will change the background's layer to 1, i.e., a
+ * layer @b above the one holding the other rectangles:
+ * @image html evas-stacking-example-05.png
+ * @image rtf evas-stacking-example-05.png
+ * @image latex evas-stacking-example-05.eps
+ * See how it now covers everything else. Press 'l' again, taking it
+ * now to layer 0. It's still covering everything because it lands the
+ * layer as the highest one on the objects stack. As we have the blue
+ * rectangle as the one receiving stacking commands, hit 't' and
+ * you'll see it again:
+ * @image html evas-stacking-example-06.png
+ * @image rtf evas-stacking-example-06.png
+ * @image latex evas-stacking-example-06.eps
+ * By bringing the background back to layer -1 ('l'), you'll get:
+ * @image html evas-stacking-example-07.png
+ * @image rtf evas-stacking-example-07.png
+ * @image latex evas-stacking-example-07.eps
  *
  * The last two commands available are "p" and "r", which will make
  * the target rectangle to @b pass (ignore) and @b repeat the mouse
