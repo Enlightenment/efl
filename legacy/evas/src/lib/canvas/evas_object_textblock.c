@@ -7692,7 +7692,7 @@ evas_textblock_cursor_char_coord_set(Evas_Textblock_Cursor *cur, Evas_Coord x, E
         evas_textblock_cursor_paragraph_last(cur);
         return EINA_TRUE;
      }
-   else if (y < 0)
+   else if ((y < 0) || (o->paragraphs && (y < o->paragraphs->y)))
      {
         evas_textblock_cursor_paragraph_first(cur);
         return EINA_TRUE;
@@ -7746,7 +7746,7 @@ evas_textblock_cursor_line_coord_set(Evas_Textblock_Cursor *cur, Evas_Coord y)
           }
         return line_no;
      }
-   else if (y < 0)
+   else if ((y < 0) || (o->paragraphs && (y < o->paragraphs->y)))
      {
         int line_no = 0;
         evas_textblock_cursor_paragraph_first(cur);
