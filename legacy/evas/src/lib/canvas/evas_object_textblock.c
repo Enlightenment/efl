@@ -7611,18 +7611,34 @@ evas_textblock_cursor_char_coord_set(Evas_Textblock_Cursor *cur, Evas_Coord x, E
              if (ln->par->y + ln->y > y) break;
              if ((ln->par->y + ln->y <= y) && ((ln->par->y + ln->y + ln->h) > y))
                {
+                  /* If before or after the line, go to start/end according
+                   * to paragraph direction. */
                   if (x < ln->x)
                     {
                        cur->pos = ln->items->text_pos;
                        cur->node = found_par->text_node;
+                       if (found_par->direction == EVAS_BIDI_DIRECTION_RTL)
+                         {
+                            evas_textblock_cursor_line_char_last(cur);
+                         }
+                       else
+                         {
+                            evas_textblock_cursor_line_char_first(cur);
+                         }
                        return EINA_TRUE;
                     }
                   else if (x >= ln->x + ln->w)
                     {
-                       cur->pos =
-                          _ITEM(EINA_INLIST_GET(ln->items)->last)->text_pos;
+                       cur->pos = ln->items->text_pos;
                        cur->node = found_par->text_node;
-                       evas_textblock_cursor_line_char_last(cur);
+                       if (found_par->direction == EVAS_BIDI_DIRECTION_RTL)
+                         {
+                            evas_textblock_cursor_line_char_first(cur);
+                         }
+                       else
+                         {
+                            evas_textblock_cursor_line_char_last(cur);
+                         }
                        return EINA_TRUE;
                     }
 
@@ -7672,7 +7688,8 @@ evas_textblock_cursor_char_coord_set(Evas_Textblock_Cursor *cur, Evas_Coord x, E
                        cur->node = it->text_node;
                        cur->pos = it->text_pos;
 
-                       /*FIXME: needs smarter handling, ATM just check, if it's
+                       /*FIXME: NOTE: Not sure what it's good for.
+                        * needs smarter handling, ATM just check, if it's
                         * the first item, then go to the end of the line, helps
                         * with rtl langs, doesn't affect ltr langs that much. */
                        if (!EINA_INLIST_GET(it)->prev)
