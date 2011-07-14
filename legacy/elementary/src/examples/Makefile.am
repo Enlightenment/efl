@@ -45,6 +45,7 @@ SRCS = \
 	box_example_02.c \
 	flip_example_01.c \
 	general_funcs_example.c \
+	hover_example_01.c \
 	label_example_01.c \
 	theme_example_01.c \
 	theme_example_02.c \
@@ -86,6 +87,7 @@ pkglib_PROGRAMS += \
 	box_example_02 \
 	flip_example_01 \
 	general_funcs_example \
+	hover_example_01 \
 	label_example_01 \
 	theme_example_01 \
 	theme_example_02 \
@@ -109,6 +111,7 @@ SCREENSHOTS = \
 	animator_example_01:animator_example_03.png:0.9 \
 	flip_example_01:flip_example_01.png:0.0 \
 	frame_example_01:frame_example_01.png:0.0 \
+	hover_example_01:hover_example_01.png:0.0 \
 	label_example_01:label_example_01.png:0.0 \
 	theme_example_01:theme_example_01.png:0.0 \
 	clock_example:clock_example.png:0.5 \

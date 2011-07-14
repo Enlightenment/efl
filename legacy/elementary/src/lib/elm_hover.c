@@ -1,24 +1,6 @@
 #include <Elementary.h>
 #include "elm_priv.h"
 
-/**
- * @defgroup Hover Hover
- *
- * A Hover object will over its @p parent object at the @p target
- * location. Anything in the background will be given a darker
- * coloring to indicate that the hover object is on top (at the
- * default theme).
- *
- * @note The hover object will take up the entire space of @p target
- * object.
- *
- * Signals that you can add callbacks for are:
- *
- * "clicked" - the user clicked the empty space in the hover to dismiss
- * "smart,changed" - a content object placed under the "smart"
- *                   policy was replaced to a new slot direction.
- */
-
 typedef struct _Widget_Data Widget_Data;
 typedef struct _Content_Info Content_Info;
 
@@ -484,14 +466,6 @@ _parent_del(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *e
    _sizing_eval(data);
 }
 
-/**
- * Adds a hover object to @p parent
- *
- * @param parent The parent object
- * @return The hover object or NULL if one could not be created
- *
- * @ingroup Hover
- */
 EAPI Evas_Object *
 elm_hover_add(Evas_Object *parent)
 {
@@ -555,15 +529,6 @@ elm_hover_add(Evas_Object *parent)
    return obj;
 }
 
-/**
- * Sets the target object for the hover.
- *
- * @param obj The hover object
- * @param target The object to center the hover onto. The hover
- * will take up the entire space that the target object fills.
- *
- * @ingroup Hover
- */
 EAPI void
 elm_hover_target_set(Evas_Object *obj, Evas_Object *target)
 {
@@ -590,14 +555,6 @@ elm_hover_target_set(Evas_Object *obj, Evas_Object *target)
 }
 
 
-/**
- * Sets the parent object for the hover.
- *
- * @param obj The hover object
- * @param parent The object to locate the hover over.
- *
- * @ingroup Hover
- */
 EAPI void
 elm_hover_parent_set(Evas_Object *obj, Evas_Object *parent)
 {
@@ -635,14 +592,6 @@ elm_hover_parent_set(Evas_Object *obj, Evas_Object *parent)
    _sizing_eval(obj);
 }
 
-/**
- * Gets the target object for the hover.
- *
- * @param obj The hover object
- * @return The target object of the hover.
- *
- * @ingroup Hover
- */
 EAPI Evas_Object *
 elm_hover_target_get(const Evas_Object *obj)
 {
@@ -653,14 +602,6 @@ elm_hover_target_get(const Evas_Object *obj)
    return wd->target;
 }
 
-/**
- * Gets the parent object for the hover.
- *
- * @param obj The hover object
- * @return The parent object to locate the hover over.
- *
- * @ingroup Hover
- */
 EAPI Evas_Object *
 elm_hover_parent_get(const Evas_Object *obj)
 {
@@ -730,37 +671,6 @@ _elm_hover_sub_obj_placement_eval_cb(void *data, Evas *e __UNUSED__, Evas_Object
    _elm_hover_sub_obj_placement_eval(data);
 }
 
-/**
- * Sets the content of the hover object and the direction in which
- * it will pop out.
- *
- * Once the content object is set for a given direction, a previously
- * set one (on the same direction) will be deleted. If you want to
- * keep that old content object, use the elm_hover_content_unset()
- * function.
- *
- * @param obj The hover object
- * @param swallow The direction that the object will be displayed
- * at. Accepted values are "left", "top-left", "top", "top-right",
- * "right", "bottom-right", "bottom", "bottom-left", "middle" and
- * "smart".
- * @param content The content to place at @p swallow
- *
- * All directions may have contents at the same time, except for
- * "smart". This is a special placement hint and its use case
- * independs of the calculations coming from
- * elm_hover_best_content_location_get(). Its use is for cases when
- * one desires only one hover content, but with a dinamic special
- * placement within the hover area. The content's geometry, whenever
- * it changes, will be used to decide on a best location not
- * extrapolating the hover's parent object view to show it in (still
- * being the hover's target determinant of its medium part -- move and
- * resize it to simulate finger sizes, for example). If one of the
- * directions other than "smart" are used, a previously content set
- * using it will be deleted, and vice-versa.
- *
- * @ingroup Hover
- */
 EAPI void
 elm_hover_content_set(Evas_Object *obj, const char *swallow, Evas_Object *content)
 {
@@ -826,20 +736,6 @@ end:
    _sizing_eval(obj);
 }
 
-/**
- * Get the content of the hover object, in a given direction.
- *
- * Return the content object which was set for this widget in the
- * given direction.
- *
- * @param obj The hover object
- * @param swallow The direction that the object was display at.
- * @return The content that was being used
- *
- * @note See elm_hover_content_set() for more information.
- *
- * @ingroup Hover
- */
 EAPI Evas_Object *
 elm_hover_content_get(const Evas_Object *obj, const char *swallow)
 {
@@ -877,19 +773,6 @@ _elm_hover_sub_obj_unparent(Evas_Object *obj)
    wd->smt_sub = NULL;
 }
 
-/**
- * Unset the content of the hover object, in a given direction.
- *
- * Unparent and return the content object set at that direction.
- *
- * @param obj The hover object
- * @param swallow The direction that the object was display at.
- * @return The content that was being used.
- *
- * @note See elm_hover_content_set() for more information.
- *
- * @ingroup Hover
- */
 EAPI Evas_Object *
 elm_hover_content_unset(Evas_Object *obj, const char *swallow)
 {
@@ -934,24 +817,6 @@ elm_hover_content_unset(Evas_Object *obj, const char *swallow)
    return NULL;
 }
 
-/**
- * Returns the best swallow location for content in the hover.
- *
- * @param obj The hover object
- * @param pref_axis The preferred orientation axis for the hover object to use
- * @return The edje location to place content into the hover or @c
- *         NULL, on errors.
- *
- * @p pref_axis may be one of
- * - @c ELM_HOVER_AXIS_NONE -- no prefered orientation
- * - @c ELM_HOVER_AXIS_HORIZONTAL -- horizontal
- * - @c ELM_HOVER_AXIS_VERTICAL -- vertical
- * - @c ELM_HOVER_AXIS_BOTH -- both
- *
- * See also elm_hover_content_set().
- *
- * @ingroup Hover
- */
 EAPI const char *
 elm_hover_best_content_location_get(const Evas_Object *obj, Elm_Hover_Axis pref_axis)
 {

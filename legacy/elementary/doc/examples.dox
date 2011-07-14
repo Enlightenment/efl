@@ -1205,6 +1205,60 @@
  */
 
 /**
+ * @page tutorial_hover Hover example
+ * @dontinclude hover_example_01.c
+ *
+ * On this example we are going to have a button that when clicked will show our
+ * hover widget, this hover will have content set on it's left, top, right and
+ * middle positions. In the middle position we are placing a button that when
+ * clicked will hide the hover. We are also going to use a non-default theme
+ * for our hover. We won't explain the functioning of button for that see @ref
+ * Button.
+ *
+ * We start our example with a couple of callbacks that show and hide the data
+ * they're given(which we'll see later on is the hover widget):
+ * @skip static
+ * @until }
+ * @until }
+ *
+ * In our main function we'll do some initialization and then create 3
+ * rectangles, one red, one green and one blue to use in our hover. We'll also
+ * create the 2 buttons that will show and hide the hover:
+ * @until show(bt2)
+ *
+ * With all of that squared away we can now get to the heart of the matter,
+ * creating our hover widget, which is easy as pie:
+ * @until hover
+ *
+ * Having created our hover we now need to set the parent and target. Which if
+ * you recall from the function documentations are going to tell the hover which
+ * area it should cover and where it should be centered:
+ * @until bt
+ *
+ * Now we set the theme for our hover. We're using the popout theme which gives
+ * our contents a white background and causes their appearance to be animated:
+ * @until popout
+ *
+ * And finally we set the content for our positions:
+ * @until bt2
+ *
+ * So far so good? Great 'cause that's all there is too it, what is left now is
+ * just connecting our buttons to the callbacks we defined at the beginning of
+ * the example and run the main loop:
+ * @until ELM_MAIN
+ *
+ * Our example will initially look like this:
+ * @image html screenshots/hover_example_01.png
+ * @image latex screenshots/hover_example_01.eps
+ *
+ * And after you click the "Show hover" button it will look like this:
+ * @image html screenshots/hover_example_01_a.png
+ * @image latex screenshots/hover_example_01_a.eps
+ *
+ * @example hover_example_01.c
+ */
+
+/**
   * @page tutorial_flip Flip example
   * @dontinclude flip_example_01.c
   *
