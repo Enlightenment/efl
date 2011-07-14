@@ -65,6 +65,10 @@ ecore_event_evas_modifier_lock_update(Evas *e, unsigned int modifiers)
    if (modifiers & ECORE_EVENT_LOCK_CAPS)
      evas_key_lock_on(e, "Caps_Lock");
    else evas_key_lock_off(e, "Caps_Lock");
+
+   if (modifiers & ECORE_EVENT_LOCK_SHIFT)
+     evas_key_lock_on(e, "Shift_Lock");
+   else evas_key_lock_off(e, "Shift_Lock");
 }
 
 EAPI void
