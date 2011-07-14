@@ -391,15 +391,15 @@ START_TEST(evas_textblock_cursor)
    for (i = 0 ; i < 2 ; i++)
      {
         evas_textblock_cursor_line_set(cur, i);
-        evas_textblock_cursor_pen_geometry_get(cur, &x, &y, &w, &h);
+        evas_textblock_cursor_line_geometry_get(cur, &x, &y, &w, &h);
+
         evas_textblock_cursor_pos_set(main_cur, 5);
         evas_textblock_cursor_char_coord_set(main_cur, x - 50, y);
         fail_if(evas_textblock_cursor_compare(main_cur, cur));
 
         evas_textblock_cursor_line_char_last(cur);
-        evas_textblock_cursor_pen_geometry_get(cur, &x, &y, &w, &h);
         evas_textblock_cursor_pos_set(main_cur, 5);
-        evas_textblock_cursor_char_coord_set(main_cur, x + 50, y);
+        evas_textblock_cursor_char_coord_set(main_cur, x + w + 50, y);
         fail_if(evas_textblock_cursor_compare(main_cur, cur));
      }
 
