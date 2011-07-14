@@ -61,8 +61,8 @@
  * followed by evas_load_error_str(), if one wants to pretty print/log
  * the error. We'll talk about the border image further.
  *
- * To interact with the program, there's a command line interface,
- * whose help string can be asked for with the 'h' key:
+ * To interact with the program, there's a command line interface.
+ * A help string can be asked for with the 'h' key:
  * @dontinclude evas-images.c
  * @skip commands
  * @until ;
@@ -131,8 +131,8 @@
  * @until show
  * Since we are creating the data for its pixel buffer ourselves, we
  * have to set its size with evas_object_image_size_set(), first. We
- * set our data with the function evas_object_image_data_set(),
- * whose second argument is a buffer with random data. There's a last
+ * set our data with the function evas_object_image_data_set(), where
+ * the second argument is a buffer with random data. There's a last
  * command to print it's @b stride value. Since its created with one
  * quarter of the canvas's original width
  * @dontinclude evas-images2.c
@@ -173,7 +173,7 @@
  * After we grab our canvas pointer, we registrate two event callbacks on it:
  * @skip evas_event_callback_add(d.canvas, EVAS_CALLBACK_RENDER_FLUSH_PRE,
  * @until two canvas event callbacks
- * The first of them, whose code is
+ * The first of them, which has the following code,
  * @dontinclude evas-events.c
  * @skip render flush callback
  * @until }
@@ -202,7 +202,7 @@
  * repaint itself, thus flushing the rendering pipeline whenever the
  * timer ticks. When you start this example, this animation will be
  * running, by default. To interact with the program, there's a
- * command line interface, whose help string can be asked for with the
+ * command line interface. A help string can be asked for with the
  * 'h' key:
  * @dontinclude evas-events.c
  * @skip if (strcmp(ev->keyname, "h") == 0)
@@ -250,12 +250,12 @@
  * This shows how one can handle input not depending on focus issues
  * -- you can grab them globally. Switch back and forth focus and
  * forced key grabbing with the 'c' key, and observe the messages
- * printed about the focused object.  Observe, also, that we register
+ * printed about the focused object. Observe, also, that we register
  * two more @b object callbacks, this time on the image object
  * (Enlightenment logo):
  * @skip evas_object_show(d.img);
  * @until mouse_out, NULL
- * whose code blocks are
+ * The code code blocks for those callbacks are
  * @dontinclude evas-events.c
  * @skip mouse enters the object's area
  * @until mouse exits the object's area
@@ -548,11 +548,11 @@
  * @until _smart_callbacks
  * What it does is to @b subclass a given existing smart class, thus
  * specializing it. This is very common and useful in Evas. There is a
- * built-in smart object, the "clipped smart object", whose behavior is
- * mostly desired by many other smart object implementors: it will clip
- * its children to its area and move them along with it, on
- * evas_object_resize() calls. Then, our example smart object will get
- * that behavior for free.
+ * built-in smart object, the "clipped smart object", which implements
+ * a behavior mostly desired by many other smart object implementors:
+ * it will clip its children to its area and move them along with it,
+ * on evas_object_resize() calls. Then, our example smart object will
+ * get that behavior for free.
  *
  * The first argument to the macro,
  * @dontinclude evas-smart-object.c
@@ -648,10 +648,10 @@
  * @until }
  *
  * One of the points at which we issue that callback is inside the @c
- * evas_smart_example_remove(), whose code was already shown.
+ * evas_smart_example_remove(), code that was already shown.
  *
  * As in other examples, to interact with this one there's a command
- * line interface, whose help string can be asked for with the 'h' key:
+ * line interface. A help string can be asked for with the 'h' key:
  * @dontinclude evas-smart-object.c
  * @skip static const char *commands =
  * @until ;
