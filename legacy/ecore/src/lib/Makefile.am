@@ -7,7 +7,6 @@ SUBDIRS += ecore_input
 endif
 
 if BUILD_ECORE_INPUT_EVAS
-
 SUBDIRS += ecore_input_evas
 endif
 
