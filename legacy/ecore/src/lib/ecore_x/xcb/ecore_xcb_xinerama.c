@@ -1,212 +1,132 @@
 #include "ecore_xcb_private.h"
+#ifdef ECORE_XCB_XINERAMA
+# include <xcb/xinerama.h>
+#endif
 
-/**
- * @defgroup Ecore_X_Xinerama_Group X Xinerama Extension Functions
- *
- * Functions related to the X Xinerama extension.
- */
+/* local variables */
+static Eina_Bool _xinerama_avail = EINA_FALSE;
+static Eina_Bool _xinerama_active = EINA_FALSE;
+
+void 
+_ecore_xcb_xinerama_init(void) 
+{
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
 #ifdef ECORE_XCB_XINERAMA
-static int _xinerama_available = 0;
-static xcb_xinerama_query_version_cookie_t _ecore_xcb_xinerama_init_cookie;
-#endif /* ECORE_XCB_XINERAMA */
+   xcb_prefetch_extension_data(_ecore_xcb_conn, &xcb_xinerama_id);
+#endif
+}
 
-/* To avoid round trips, the initialization is separated in 2
-   functions: _ecore_xcb_xinerama_init and
-   _ecore_xcb_xinerama_init_finalize. The first one gets the cookies and
-   the second one gets the replies. */
-
-void
-_ecore_x_xinerama_init(const xcb_query_extension_reply_t *reply)
+void 
+_ecore_xcb_xinerama_finalize(void) 
 {
 #ifdef ECORE_XCB_XINERAMA
-   if (reply && (reply->present))
-      _ecore_xcb_xinerama_init_cookie = xcb_xinerama_query_version_unchecked(_ecore_xcb_conn, 1, 2);
+   const xcb_query_extension_reply_t *ext_reply;
+#endif
 
-#endif /* ECORE_XCB_XINERAMA */
-} /* _ecore_x_xinerama_init */
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
-void
-_ecore_x_xinerama_init_finalize(void)
-{
 #ifdef ECORE_XCB_XINERAMA
-   xcb_xinerama_query_version_reply_t *reply;
-
-   reply = xcb_xinerama_query_version_reply(_ecore_xcb_conn,
-                                            _ecore_xcb_xinerama_init_cookie, NULL);
-
-   if (reply)
+   ext_reply = xcb_get_extension_data(_ecore_xcb_conn, &xcb_xinerama_id);
+   if ((ext_reply) && (ext_reply->present)) 
      {
-        if ((reply->major >= 1) &&
-            (reply->minor >= 1))
-           _xinerama_available = 1;
+        xcb_xinerama_query_version_cookie_t cookie;
+        xcb_xinerama_query_version_reply_t *reply;
 
-        free(reply);
-     }
-
-#endif /* ECORE_XCB_XINERAMA */
-} /* _ecore_x_xinerama_init_finalize */
-
-/**
- * Return whether the X server supports the Xinerama Extension.
- * @return 1 if the X Xinerama Extension is available, 0 otherwise.
- *
- * Return 1 if the X server supports the Fixes Xinerama version 1.1,
- * 0 otherwise.
- * @ingroup Ecore_X_Xinerama_Group
- */
-EAPI Eina_Bool
-ecore_x_xinerama_query(void)
-{
-#ifdef ECORE_XCB_XINERAMA
-   return _xinerama_available;
-#else /* ifdef ECORE_XCB_XINERAMA */
-   return 0;
-#endif /* ECORE_XCB_XINERAMA */
-} /* ecore_x_xinerama_query */
-
-/**
- * Sends the XineramaQueryScreens request.
- * @ingroup Ecore_X_Xinerama_Group
- */
-EAPI void
-ecore_x_xinerama_query_screens_prefetch(void)
-{
-#ifdef ECORE_XCB_XINERAMA
-   xcb_xinerama_query_screens_cookie_t cookie;
-
-   cookie = xcb_xinerama_query_screens_unchecked(_ecore_xcb_conn);
-   _ecore_xcb_cookie_cache(cookie.sequence);
-#endif /* ECORE_XCB_XINERAMA */
-} /* ecore_x_xinerama_query_screens_prefetch */
-
-/**
- * Gets the reply of the XineramaQueryScreens request sent by ecore_x_xinerama_query_screens_prefetch().
- * @ingroup Ecore_X_Xinerama_Group
- */
-EAPI void
-ecore_x_xinerama_query_screens_fetch(void)
-{
-#ifdef ECORE_XCB_XINERAMA
-   xcb_xinerama_query_screens_cookie_t cookie;
-   xcb_xinerama_query_screens_reply_t *reply;
-
-   cookie.sequence = _ecore_xcb_cookie_get();
-   reply = xcb_xinerama_query_screens_reply(_ecore_xcb_conn, cookie, NULL);
-   _ecore_xcb_reply_cache(reply);
-#endif /* ECORE_XCB_XINERAMA */
-} /* ecore_x_xinerama_query_screens_fetch */
-
-/**
- * Return the number of screens.
- * @return The screen count.
- *
- * Return the number of screens.
- *
- * To use this function, you must call before, and in order,
- * ecore_x_xinerama_query_screens_prefetch(), which sends the XineramaQueryScreens request,
- * then ecore_x_xinerama_query_screens_fetch(), which gets the reply.
- * @ingroup Ecore_X_Xinerama_Group
- */
-EAPI int
-ecore_x_xinerama_screen_count_get(void)
-{
-   int screen_count = 0;
-#ifdef ECORE_XCB_XINERAMA
-   xcb_xinerama_screen_info_iterator_t iter;
-   xcb_xinerama_query_screens_reply_t *reply;
-
-   reply = _ecore_xcb_reply_get();
-   if (!reply)
-      return 0;
-
-   iter = xcb_xinerama_query_screens_screen_info_iterator(reply);
-   screen_count = iter.rem;
-#endif /* ECORE_XCB_XINERAMA */
-
-   return screen_count;
-} /* ecore_x_xinerama_screen_count_get */
-
-/**
- * Get the geometry of the screen.
- * @param screen The screen (Unused).
- * @param x      The X coordinate of the screen.
- * @param y      The Y coordinate of the screen
- * @param width  The width of the screen
- * @param height The height of the screen
- * @return       1 on success, 0 otherwise.
- *
- * Get the geometry of the screen whose number is @p screen. The
- * returned values are stored in @p x, @p y, @p width and @p height.
- *
- * To use this function, you must call before, and in order,
- * ecore_x_xinerama_query_screens_prefetch(), which sends the XineramaQueryScreens request,
- * then ecore_x_xinerama_query_screens_fetch(), which gets the reply.
- * @ingroup Ecore_X_Xinerama_Group
- */
-EAPI Eina_Bool
-ecore_x_xinerama_screen_geometry_get(int  screen,
-                                     int *x,
-                                     int *y,
-                                     int *width,
-                                     int *height)
-{
-#ifdef ECORE_XCB_XINERAMA
-   xcb_xinerama_screen_info_iterator_t iter;
-   xcb_xinerama_query_screens_reply_t *reply;
-
-   reply = _ecore_xcb_reply_get();
-   if (!reply)
-     {
-        if (x)
-           *x = 0;
-
-        if (y)
-           *y = 0;
-
-        if (width)
-           *width = ((xcb_screen_t *)_ecore_xcb_screen)->width_in_pixels;
-
-        if (height)
-           *height = ((xcb_screen_t *)_ecore_xcb_screen)->height_in_pixels;
-
-        return 0;
-     }
-
-   iter = xcb_xinerama_query_screens_screen_info_iterator(reply);
-   for (; iter.rem; screen--, xcb_xinerama_screen_info_next(&iter))
-     {
-        if (screen == 0)
+        cookie = 
+          xcb_xinerama_query_version_unchecked(_ecore_xcb_conn, 
+                                               XCB_XINERAMA_MAJOR_VERSION, 
+                                               XCB_XINERAMA_MINOR_VERSION);
+        reply = 
+          xcb_xinerama_query_version_reply(_ecore_xcb_conn, cookie, NULL);
+        if (reply) 
           {
-             if (x)
-                *x = iter.data->x_org;
+             _xinerama_avail = EINA_TRUE;
+             // NB: Do we need to compare version numbers here ?
+             free(reply);
+          }
 
-             if (y)
-                *y = iter.data->y_org;
+        if (_xinerama_avail) 
+          {
+             xcb_xinerama_is_active_cookie_t acookie;
+             xcb_xinerama_is_active_reply_t *areply;
 
-             if (width)
-                *width = iter.data->width;
-
-             if (height)
-                *height = iter.data->height;
-
-             return 1;
+             acookie = xcb_xinerama_is_active_unchecked(_ecore_xcb_conn);
+             areply = 
+               xcb_xinerama_is_active_reply(_ecore_xcb_conn, acookie, NULL);
+             if (areply) 
+               {
+                  _xinerama_active = areply->state;
+                  free(areply);
+               }
           }
      }
-#endif /* ECORE_XCB_XINERAMA */
+#endif
+}
 
-   if (x)
-      *x = 0;
+EAPI int 
+ecore_x_xinerama_screen_count_get(void) 
+{
+   int count = 0;
+#ifdef ECORE_XCB_XINERAMA
+   xcb_xinerama_query_screens_cookie_t cookie;
+   xcb_xinerama_query_screens_reply_t *reply;
+#endif
 
-   if (y)
-      *y = 0;
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
-   if (width)
-      *width = ((xcb_screen_t *)_ecore_xcb_screen)->width_in_pixels;
+   if (!_xinerama_avail) return 0;
 
-   if (height)
-      *height = ((xcb_screen_t *)_ecore_xcb_screen)->height_in_pixels;
+#ifdef ECORE_XCB_XINERAMA
+   cookie = xcb_xinerama_query_screens_unchecked(_ecore_xcb_conn);
+   reply = 
+     xcb_xinerama_query_screens_reply(_ecore_xcb_conn, cookie, NULL);
+   if (!reply) return 0;
+   count = reply->number;
+#endif
 
-   return 0;
-} /* ecore_x_xinerama_screen_geometry_get */
+   return count;
+}
 
+EAPI Eina_Bool 
+ecore_x_xinerama_screen_geometry_get(int screen, int *x, int *y, int *w, int *h) 
+{
+#ifdef ECORE_XCB_XINERAMA
+   xcb_xinerama_query_screens_cookie_t cookie;
+   xcb_xinerama_query_screens_reply_t *reply;
+   xcb_xinerama_screen_info_t *info;
+#endif
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   if (x) *x = 0;
+   if (y) *y = 0;
+   if (w) *w = ((xcb_screen_t *)_ecore_xcb_screen)->width_in_pixels;
+   if (h) *h = ((xcb_screen_t *)_ecore_xcb_screen)->height_in_pixels;
+
+   if (!_xinerama_avail) return EINA_FALSE;
+
+#ifdef ECORE_XCB_XINERAMA
+   cookie = xcb_xinerama_query_screens_unchecked(_ecore_xcb_conn);
+   reply = 
+     xcb_xinerama_query_screens_reply(_ecore_xcb_conn, cookie, NULL);
+   if (!reply) return EINA_FALSE;
+
+   info = xcb_xinerama_query_screens_screen_info(reply);
+   if (!info) 
+     {
+        free(reply);
+        return EINA_FALSE;
+     }
+
+   if (x) *x = info[screen].x_org;
+   if (y) *y = info[screen].y_org;
+   if (w) *w = info[screen].width;
+   if (h) *h = info[screen].height;
+
+   free(reply);
+   return EINA_TRUE;
+#endif
+
+   return EINA_FALSE;
+}

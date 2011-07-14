@@ -1,352 +1,337 @@
 #ifndef __ECORE_XCB_PRIVATE_H__
-#define __ECORE_XCB_PRIVATE_H__
+# define __ECORE_XCB_PRIVATE_H__
 
-#include "config.h"
+//# define LOGFNS 1
 
-#include <sys/param.h>
+# ifdef HAVE_CONFIG_H
+#  include "config.h"
+# endif
 
-#ifndef MAXHOSTNAMELEN
-# define MAXHOSTNAMELEN 256
-#endif /* ifndef MAXHOSTNAMELEN */
+# include <unistd.h> // included for close & gethostname functions
 
-#ifndef XK_MISCELLANY
-# define XK_MISCELLANY  1
-#endif /* XK_MISCELLANY */
+/* generic xcb includes */
+# include <xcb/xcb.h>
+# include <xcb/bigreq.h>
+# include <xcb/shm.h>
 
-#include <xcb/xcb.h>
-#include <xcb/xcb_icccm.h>
-#include <xcb/xcb_keysyms.h>
-#include <xcb/bigreq.h>
-#ifdef ECORE_XCB_CURSOR
-# include <xcb/cursor.h>
-#endif /* ECORE_XCB_CURSOR */
-#ifdef ECORE_XCB_DAMAGE
-# include <xcb/damage.h>
-#endif /* ECORE_XCB_DAMAGE */
-#ifdef ECORE_XCB_COMPOSITE
-# include <xcb/composite.h>
-#endif /* ECORE_XCB_COMPOSITE */
-#ifdef ECORE_XCB_DPMS
-# include <xcb/dpms.h>
-#endif /* ECORE_XCB_DPMS */
-#ifdef ECORE_XCB_RANDR
-# include <xcb/randr.h>
-#endif /* ECORE_XCB_RANDR */
-#ifdef ECORE_XCB_RENDER
-# include <xcb/render.h>
-#endif /* ECORE_XCB_RENDER */
-#ifdef ECORE_XCB_SCREENSAVER
-# include <xcb/screensaver.h>
-#endif /* ECORE_XCB_SCREENSAVER */
-#ifdef ECORE_XCB_SHAPE
-# include <xcb/shape.h>
-#endif /* ECORE_XCB_SHAPE */
-#ifdef ECORE_XCB_SYNC
-# include <xcb/sync.h>
-#endif /* ECORE_XCB_SYNC */
-#ifdef ECORE_XCB_XFIXES
-# include <xcb/xfixes.h>
-#endif /* ECORE_XCB_XFIXES */
-#ifdef ECORE_XCB_XINERAMA
-# include <xcb/xinerama.h>
-#endif /* ECORE_XCB_XINERAMA */
-#ifdef ECORE_XCB_XPRINT
-# include <xcb/xprint.h>
-#endif /* ECORE_XCB_XPRINT */
+/* EFL includes */
+# include "Ecore.h"
+# include "Ecore_Input.h"
+# include "Ecore_X.h"
 
-#include "Ecore.h"
-#include "ecore_private.h"
-#include "Ecore_X.h"
+/* logging */
+extern int _ecore_xcb_log_dom;
 
-extern int _ecore_x11xcb_log_dom;
+# ifdef ECORE_XCB_DEFAULT_LOG_COLOR
+#  undef ECORE_XCB_DEFAULT_LOG_COLOR
+# endif
+# define ECORE_XCB_DEFAULT_LOG_COLOR EINA_COLOR_BLUE
 
-#ifdef ECORE_XLIB_XCB_DEFAULT_LOG_COLOR
-# undef ECORE_XLIB_XCB_DEFAULT_LOG_COLOR
-#endif /* ifdef ECORE_XLIB_XCB_DEFAULT_LOG_COLOR */
-#define ECORE_XLIB_XCB_DEFAULT_LOG_COLOR EINA_COLOR_BLUE
+# ifdef ERR
+#  undef ERR
+# endif
+# define ERR(...) EINA_LOG_DOM_ERR(_ecore_xcb_log_dom, __VA_ARGS__)
 
-#ifdef ERR
-# undef ERR
-#endif /* ifdef ERR */
-#define ERR(...) EINA_LOG_DOM_ERR(_ecore_x11xcb_log_dom, __VA_ARGS__)
+# ifdef DBG
+#  undef DBG
+# endif
+# define DBG(...) EINA_LOG_DOM_DBG(_ecore_xcb_log_dom, __VA_ARGS__)
 
-#ifdef DBG
-# undef DBG
-#endif /* ifdef DBG */
-#define DBG(...) EINA_LOG_DOM_DBG(_ecore_x11xcb_log_dom, __VA_ARGS__)
+# ifdef INF
+#  undef INF
+# endif
+# define INF(...) EINA_LOG_DOM_INFO(_ecore_xcb_log_dom, __VA_ARGS__)
 
-#ifdef INF
-# undef INF
-#endif /* ifdef INF */
-#define INF(...) EINA_LOG_DOM_INFO(_ecore_x11xcb_log_dom, __VA_ARGS__)
+# ifdef WRN
+#  undef WRN
+# endif
+# define WRN(...) EINA_LOG_DOM_WARN(_ecore_xcb_log_dom, __VA_ARGS__)
 
-#ifdef WRN
-# undef WRN
-#endif /* ifdef WRN */
-#define WRN(...) EINA_LOG_DOM_WARN(_ecore_x11xcb_log_dom, __VA_ARGS__)
+# ifdef CRIT
+#  undef CRIT
+# endif
+# define CRIT(...) EINA_LOG_DOM_CRIT(_ecore_xcb_log_dom, __VA_ARGS__)
 
-#ifdef CRIT
-# undef CRIT
-#endif /* ifdef CRIT */
-#define CRIT(...) EINA_LOG_DOM_CRIT(_ecore_x11xcb_log_dom, __VA_ARGS__)
+# ifdef LOGFNS
+#  include <stdio.h>
+#  define LOGFN(fl, ln, fn) printf("-ECORE-XCB: %25s: %5i - %s\n", fl, ln, fn);
+# else
+#  define LOGFN(fl, ln, fn)
+# endif
 
-typedef struct _Ecore_X_Selection_Intern   Ecore_X_Selection_Intern;
+# ifndef MAXHOSTNAMELEN
+#  define MAXHOSTNAMELEN 256
+# endif
 
-struct _Ecore_X_Selection_Intern
+# ifndef MIN
+#  define MIN(x, y) (((x) > (y)) ? (y) : (x))
+# endif
+
+# ifndef MAX
+#  define MAX(a, b) ((a < b) ? b : a)
+# endif
+
+/* enums */
+typedef enum _Ecore_Xcb_Encoding_Style Ecore_Xcb_Encoding_Style;
+
+enum _Ecore_Xcb_Encoding_Style 
 {
-   Ecore_X_Window win;
-   Ecore_X_Atom   selection;
-   unsigned char *data;
-   int            length;
-   Ecore_X_Time   time;
+   XcbStringStyle, 
+   XcbCompoundTextStyle, 
+   XcbTextStyle,
+   XcbStdICCTextStyle, 
+   XcbUTF8StringStyle
 };
 
-typedef struct _Ecore_X_Selection_Converter   Ecore_X_Selection_Converter;
+/* structures */
+typedef struct _Ecore_X_DND_Source Ecore_X_DND_Source;
+typedef struct _Ecore_X_DND_Target Ecore_X_DND_Target;
+typedef struct _Ecore_X_Selection_Intern Ecore_X_Selection_Intern;
+typedef struct _Ecore_X_Selection_Converter Ecore_X_Selection_Converter;
+typedef struct _Ecore_X_Selection_Parser Ecore_X_Selection_Parser;
+typedef struct _Ecore_Xcb_Textproperty Ecore_Xcb_Textproperty;
 
-struct _Ecore_X_Selection_Converter
+struct _Ecore_X_DND_Source 
 {
-   Ecore_X_Atom                 target;
-   int                          (*convert)(char *target, void *data, int size,
-                                           void **data_ret, int *size_ret,
-                                           Ecore_X_Atom *type, int *typeseize);
+   int version;
+   Ecore_X_Window win, dest;
+
+   enum 
+     {
+        ECORE_X_DND_SOURCE_IDLE, 
+        ECORE_X_DND_SOURCE_DRAGGING, 
+        ECORE_X_DND_SOURCE_DROPPED, 
+        ECORE_X_DND_SOURCE_CONVERTING
+     } state;
+
+   struct 
+     {
+        short x, y;
+        unsigned short width, height;
+     } rectangle;
+
+   struct 
+     {
+        Ecore_X_Window window;
+        int x, y;
+     } prev;
+
+   Ecore_X_Time time;
+
+   Ecore_X_Atom action, accepted_action;
+
+   int will_accept, suppress;
+   int await_status;
+};
+
+struct _Ecore_X_DND_Target 
+{
+   int version;
+   Ecore_X_Window win, source;
+
+   enum 
+     {
+        ECORE_X_DND_TARGET_IDLE, 
+        ECORE_X_DND_TARGET_ENTERED
+     } state;
+
+   struct 
+     {
+        int x, y;
+     } pos;
+
+   Ecore_X_Time time;
+
+   Ecore_X_Atom action, accepted_action;
+   int will_accept;
+};
+
+struct _Ecore_X_Selection_Intern 
+{
+   Ecore_X_Window win;
+   Ecore_X_Atom selection;
+   unsigned char *data;
+   int length;
+   Ecore_X_Time time;
+};
+
+struct _Ecore_X_Selection_Converter 
+{
+   Ecore_X_Atom target;
+   Eina_Bool (*convert) (char *target, void *data, int size, void **data_ret, 
+                         int *size_ret, Ecore_X_Atom *type, int *size_type);
    Ecore_X_Selection_Converter *next;
 };
 
-typedef struct _Ecore_X_Selection_Parser   Ecore_X_Selection_Parser;
-
-struct _Ecore_X_Selection_Parser
+struct _Ecore_X_Selection_Parser 
 {
-   char                     *target;
-   void                     *(*parse)(const char *target, void *data, int size, int format);
+   char *target;
+   void *(*parse) (const char *target, void *data, int size, int format);
    Ecore_X_Selection_Parser *next;
 };
 
-typedef struct _Ecore_X_DND_Source
+struct _Ecore_Xcb_Textproperty 
 {
-   int            version;
-   Ecore_X_Window win, dest;
+   char *value;
+   Ecore_X_Atom encoding;
+   unsigned int format, nitems;
+};
 
-   enum {
-      ECORE_X_DND_SOURCE_IDLE,
-      ECORE_X_DND_SOURCE_DRAGGING,
-      ECORE_X_DND_SOURCE_DROPPED,
-      ECORE_X_DND_SOURCE_CONVERTING
-   } state;
+/* external variables */
+extern Ecore_X_Connection *_ecore_xcb_conn;
+extern Ecore_X_Screen *_ecore_xcb_screen;
+extern double _ecore_xcb_double_click_time;
+extern int16_t _ecore_xcb_event_last_root_x;
+extern int16_t _ecore_xcb_event_last_root_y;
 
-   struct
-   {
-      short          x, y;
-      unsigned short width, height;
-   } rectangle;
-
-   struct
-   {
-      Ecore_X_Window window;
-      int            x, y;
-   } prev;
-
-   Ecore_X_Time time;
-
-   Ecore_X_Atom action, accepted_action;
-
-   int          will_accept;
-   int          suppress;
-
-   int          await_status;
-} Ecore_X_DND_Source;
-
-typedef struct _Ecore_X_DND_Target
-{
-   int            version;
-   Ecore_X_Window win, source;
-
-   enum {
-      ECORE_X_DND_TARGET_IDLE,
-      ECORE_X_DND_TARGET_ENTERED
-   } state;
-
-   struct
-   {
-      int x, y;
-   } pos;
-
-   Ecore_X_Time time;
-
-   Ecore_X_Atom action, accepted_action;
-
-   int          will_accept;
-} Ecore_X_DND_Target;
+/* external variables for extension events */
+extern int _ecore_xcb_event_damage;
+extern int _ecore_xcb_event_randr;
+extern int _ecore_xcb_event_screensaver;
+extern int _ecore_xcb_event_shape;
+extern int _ecore_xcb_event_sync;
+extern int _ecore_xcb_event_xfixes;
+extern int _ecore_xcb_event_input;
 
 extern int ECORE_X_MODIFIER_SHIFT;
 extern int ECORE_X_MODIFIER_CTRL;
 extern int ECORE_X_MODIFIER_ALT;
 extern int ECORE_X_MODIFIER_WIN;
-
 extern int ECORE_X_LOCK_SCROLL;
 extern int ECORE_X_LOCK_NUM;
 extern int ECORE_X_LOCK_CAPS;
+extern int ECORE_X_LOCK_SHIFT;
 
-extern Ecore_X_Connection *_ecore_xcb_conn;
-extern Ecore_X_Screen *_ecore_xcb_screen;
-extern double _ecore_xcb_double_click_time;
-extern Ecore_X_Time _ecore_xcb_event_last_time;
-extern Ecore_X_Window _ecore_xcb_event_last_window;
-extern int16_t _ecore_xcb_event_last_root_x;
-extern int16_t _ecore_xcb_event_last_root_y;
-extern int _ecore_xcb_xcursor;
+extern Ecore_X_Atom _ecore_xcb_atoms_wm_protocol[ECORE_X_WM_PROTOCOL_NUM];
 
-extern Ecore_X_Atom _ecore_xcb_atoms_wm_protocols[ECORE_X_WM_PROTOCOL_NUM];
+extern int _ecore_xcb_button_grabs_num;
+extern int _ecore_xcb_key_grabs_num;
+extern Ecore_X_Window *_ecore_xcb_button_grabs;
+extern Ecore_X_Window *_ecore_xcb_key_grabs;
+extern Eina_Bool (*_ecore_xcb_window_grab_replay_func)(void *data, int type, void *event);
+extern void *_ecore_xcb_window_grab_replay_data;
 
-extern int _ecore_window_grabs_num;
-extern Ecore_X_Window *_ecore_window_grabs;
-extern Eina_Bool (*_ecore_window_grab_replay_func)(void *data, int event_type, void *event);
-extern void *_ecore_window_grab_replay_data;
+/* private function prototypes */
+void _ecore_xcb_error_handler_init(void);
+void _ecore_xcb_error_handler_shutdown(void);
 
-extern Ecore_X_Window _ecore_xcb_private_window;
+void _ecore_xcb_atoms_init(void);
+void _ecore_xcb_atoms_finalize(void);
 
-void              _ecore_x_error_handler_init(void);
+void _ecore_xcb_extensions_init(void);
+void _ecore_xcb_extensions_finalize(void);
 
-void              _ecore_x_event_handle_any_event          (xcb_generic_event_t *event);
-void              _ecore_x_event_handle_key_press          (xcb_generic_event_t *event);
-void              _ecore_x_event_handle_key_release        (xcb_generic_event_t *event);
-void              _ecore_x_event_handle_button_press       (xcb_generic_event_t *event);
-void              _ecore_x_event_handle_button_release     (xcb_generic_event_t *event);
-void              _ecore_x_event_handle_motion_notify      (xcb_generic_event_t *event);
-void              _ecore_x_event_handle_enter_notify       (xcb_generic_event_t *event);
-void              _ecore_x_event_handle_leave_notify       (xcb_generic_event_t *event);
-void              _ecore_x_event_handle_focus_in           (xcb_generic_event_t *event);
-void              _ecore_x_event_handle_focus_out          (xcb_generic_event_t *event);
-void              _ecore_x_event_handle_keymap_notify      (xcb_generic_event_t *event);
-void              _ecore_x_event_handle_expose             (xcb_generic_event_t *event);
-void              _ecore_x_event_handle_graphics_expose    (xcb_generic_event_t *event);
-void              _ecore_x_event_handle_visibility_notify  (xcb_generic_event_t *event);
-void              _ecore_x_event_handle_create_notify      (xcb_generic_event_t *event);
-void              _ecore_x_event_handle_destroy_notify     (xcb_generic_event_t *event);
-void              _ecore_x_event_handle_unmap_notify       (xcb_generic_event_t *event);
-void              _ecore_x_event_handle_map_notify         (xcb_generic_event_t *event);
-void              _ecore_x_event_handle_map_request        (xcb_generic_event_t *event);
-void              _ecore_x_event_handle_reparent_notify    (xcb_generic_event_t *event);
-void              _ecore_x_event_handle_configure_notify   (xcb_generic_event_t *event);
-void              _ecore_x_event_handle_configure_request  (xcb_generic_event_t *event);
-void              _ecore_x_event_handle_gravity_notify     (xcb_generic_event_t *event);
-void              _ecore_x_event_handle_resize_request     (xcb_generic_event_t *event);
-void              _ecore_x_event_handle_circulate_notify   (xcb_generic_event_t *event);
-void              _ecore_x_event_handle_circulate_request  (xcb_generic_event_t *event);
-void              _ecore_x_event_handle_property_notify    (xcb_generic_event_t *event);
-void              _ecore_x_event_handle_selection_clear    (xcb_generic_event_t *event);
-void              _ecore_x_event_handle_selection_request  (xcb_generic_event_t *event);
-void              _ecore_x_event_handle_selection_notify   (xcb_generic_event_t *event);
-void              _ecore_x_event_handle_colormap_notify    (xcb_generic_event_t *event);
-void              _ecore_x_event_handle_client_message     (xcb_generic_event_t *event);
-void              _ecore_x_event_handle_mapping_notify     (xcb_generic_event_t *event);
-#ifdef ECORE_XCB_DAMAGE
-void              _ecore_x_event_handle_damage_notify      (xcb_generic_event_t *event);
-#endif /* ECORE_XCB_DAMAGE */
-#ifdef ECORE_XCB_RANDR
-void              _ecore_x_event_handle_randr_change       (xcb_generic_event_t *event);
-#endif /* ECORE_XCB_RANDR */
-#ifdef ECORE_XCB_SCREENSAVER
-void              _ecore_x_event_handle_screensaver_notify (xcb_generic_event_t *event);
-#endif /* ECORE_XCB_SCREENSAVER */
-#ifdef ECORE_XCB_SHAPE
-void              _ecore_x_event_handle_shape_change       (xcb_generic_event_t *event);
-#endif /* ECORE_XCB_SHAPE */
-#ifdef ECORE_XCB_SYNC
-void              _ecore_x_event_handle_sync_counter       (xcb_generic_event_t *event);
-void              _ecore_x_event_handle_sync_alarm         (xcb_generic_event_t *event);
-#endif /* ECORE_XCB_SYNC */
-#ifdef ECORE_XCB_FIXES
-void              _ecore_x_event_handle_fixes_selection_notify(xcb_generic_event_t *event);
-#endif /* ECORE_XCB_FIXES */
+void _ecore_xcb_shape_init(void);
+void _ecore_xcb_shape_finalize(void);
 
-/* requests / replies */
-int               _ecore_x_reply_init ();
-void              _ecore_x_reply_shutdown ();
-void              _ecore_xcb_cookie_cache (unsigned int cookie);
-unsigned int      _ecore_xcb_cookie_get (void);
-void              _ecore_xcb_reply_cache (void *reply);
-void *            _ecore_xcb_reply_get (void);
+void _ecore_xcb_screensaver_init(void);
+void _ecore_xcb_screensaver_finalize(void);
 
-/* atoms */
-extern Ecore_X_Atom ECORE_X_ATOM_ATOM;
-extern Ecore_X_Atom ECORE_X_ATOM_CARDINAL;
-extern Ecore_X_Atom ECORE_X_ATOM_STRING;
-extern Ecore_X_Atom ECORE_X_ATOM_WINDOW;
-extern Ecore_X_Atom ECORE_X_ATOM_E_FRAME_SIZE;
-extern Ecore_X_Atom ECORE_X_ATOM_WM_SIZE_HINTS;
+void _ecore_xcb_sync_init(void);
+void _ecore_xcb_sync_finalize(void);
+void _ecore_xcb_sync_magic_send(int val, Ecore_X_Window win);
 
-#define ECORE_X_ATOMS_COUNT 117
+void _ecore_xcb_render_init(void);
+void _ecore_xcb_render_finalize(void);
+Eina_Bool _ecore_xcb_render_argb_get(void);
+Eina_Bool _ecore_xcb_render_anim_get(void);
+Eina_Bool _ecore_xcb_render_avail_get(void);
 
-void                          _ecore_x_atom_init          (xcb_intern_atom_cookie_t *);
-void                          _ecore_x_atom_init_finalize (xcb_intern_atom_cookie_t *);
+Eina_Bool _ecore_xcb_render_visual_supports_alpha(Ecore_X_Visual visual);
+uint32_t _ecore_xcb_render_find_visual_id(int type, Eina_Bool check_alpha);
+Ecore_X_Visual *_ecore_xcb_render_visual_get(int visual_id);
 
-/* damage */
-void                          _ecore_x_damage_init          (const xcb_query_extension_reply_t *reply);
-void                          _ecore_x_damage_init_finalize (void);
+void _ecore_xcb_randr_init(void);
+void _ecore_xcb_randr_finalize(void);
 
-/* composite */
-void                          _ecore_x_composite_init       (const xcb_query_extension_reply_t *reply);
-void                          _ecore_x_composite_init_finalize (void);
+void _ecore_xcb_xfixes_init(void);
+void _ecore_xcb_xfixes_finalize(void);
+Eina_Bool _ecore_xcb_xfixes_avail_get(void);
 
-/* from dnd */
-void                          _ecore_x_dnd_init       (void);
-void                          _ecore_x_dnd_shutdown   (void);
-Ecore_X_DND_Source *          _ecore_x_dnd_source_get (void);
-Ecore_X_DND_Target *          _ecore_x_dnd_target_get (void);
-void                          _ecore_x_dnd_drag       (Ecore_X_Window root,
-                                                       int            x,
-                                                       int            y);
+void _ecore_xcb_damage_init(void);
+void _ecore_xcb_damage_finalize(void);
 
-/* dpms */
-void                          _ecore_x_dpms_init          (const xcb_query_extension_reply_t *reply);
-void                          _ecore_x_dpms_init_finalize (void);
+void _ecore_xcb_composite_init(void);
+void _ecore_xcb_composite_finalize(void);
 
-/* netwm */
-Ecore_X_Window_State          _ecore_x_netwm_state_get(Ecore_X_Atom a);
-int                           _ecore_x_netwm_startup_info_begin(Ecore_X_Window win, char *data);
-int                           _ecore_x_netwm_startup_info(Ecore_X_Window win, char *data);
+void _ecore_xcb_dpms_init(void);
+void _ecore_xcb_dpms_finalize(void);
 
-/* randr */
-void                          _ecore_x_randr_init          (const xcb_query_extension_reply_t *reply);
-void                          _ecore_x_randr_init_finalize (void);
+void _ecore_xcb_cursor_init(void);
+void _ecore_xcb_cursor_finalize(void);
 
-/* selection */
-void                          _ecore_x_selection_init(void);
-void                          _ecore_x_selection_shutdown(void);
-Ecore_X_Atom                  _ecore_x_selection_target_atom_get(const char *target);
-char *                        _ecore_x_selection_target_get(Ecore_X_Atom target);
-Ecore_X_Selection_Intern *    _ecore_x_selection_get(Ecore_X_Atom selection);
-int                           _ecore_x_selection_set(Ecore_X_Window w, const void *data, int len, Ecore_X_Atom selection);
-int                           _ecore_x_selection_convert(Ecore_X_Atom selection, Ecore_X_Atom target, void **data_ret);
-void *                        _ecore_x_selection_parse(const char *target, void *data, int size, int format);
+void _ecore_xcb_xinerama_init(void);
+void _ecore_xcb_xinerama_finalize(void);
 
-/* screensaver */
-void                          _ecore_x_screensaver_init          (const xcb_query_extension_reply_t *reply);
-void                          _ecore_x_screensaver_init_finalize (void);
+void _ecore_xcb_dnd_init(void);
+void _ecore_xcb_dnd_shutdown(void);
+Ecore_X_DND_Source *_ecore_xcb_dnd_source_get(void);
+Ecore_X_DND_Target *_ecore_xcb_dnd_target_get(void);
+void _ecore_xcb_dnd_drag(Ecore_X_Window root, int x, int y);
 
-/* shape */
-void                          _ecore_x_shape_init          (const xcb_query_extension_reply_t *reply);
-void                          _ecore_x_shape_init_finalize (void);
+void _ecore_xcb_selection_init(void);
+void _ecore_xcb_selection_shutdown(void);
+void *_ecore_xcb_selection_parse(const char *target, void *data, int size, int format);
+char *_ecore_xcb_selection_target_get(Ecore_X_Atom target);
+Ecore_X_Selection_Intern *_ecore_xcb_selection_get(Ecore_X_Atom selection);
 
-/* sync */
-void                          _ecore_x_sync_init          (const xcb_query_extension_reply_t *reply);
-void                          _ecore_x_sync_init_finalize (void);
+# ifdef HAVE_ICONV
+Eina_Bool _ecore_xcb_utf8_textlist_to_textproperty(char **list, int count, Ecore_Xcb_Encoding_Style style, Ecore_Xcb_Textproperty *ret);
+# endif
+Eina_Bool _ecore_xcb_mb_textlist_to_textproperty(char **list, int count, Ecore_Xcb_Encoding_Style style, Ecore_Xcb_Textproperty *ret);
+Eina_Bool _ecore_xcb_textlist_to_textproperty(const char *type, char **list, int count, Ecore_Xcb_Encoding_Style style, Ecore_Xcb_Textproperty *ret);
 
-/* xfixes */
-void                          _ecore_x_xfixes_init          (const xcb_query_extension_reply_t *reply);
-void                          _ecore_x_xfixes_init_finalize (void);
+# ifdef HAVE_ICONV
+Eina_Bool _ecore_xcb_utf8_textproperty_to_textlist(const Ecore_Xcb_Textproperty *text_prop, char ***list_ret, int *count_ret);
+# endif
+Eina_Bool _ecore_xcb_mb_textproperty_to_textlist(const Ecore_Xcb_Textproperty *text_prop, char ***list_ret, int *count_ret);
+Eina_Bool _ecore_xcb_textproperty_to_textlist(const Ecore_Xcb_Textproperty *text_prop, const char *type, char ***list_ret, int *count_ret);
 
-/* xinerama */
-void                          _ecore_x_xinerama_init          (const xcb_query_extension_reply_t *reply);
-void                          _ecore_x_xinerama_init_finalize (void);
+void _ecore_xcb_events_init(void);
+void _ecore_xcb_events_shutdown(void);
+void _ecore_xcb_events_handle(xcb_generic_event_t *ev);
+Ecore_X_Time _ecore_xcb_events_last_time_get(void);
+unsigned int _ecore_xcb_events_modifiers_get(unsigned int state);
+void _ecore_xcb_event_mouse_move(uint16_t timestamp, uint16_t modifiers, int16_t x, int16_t y, int16_t root_x, int16_t root_y, xcb_window_t event_win, xcb_window_t win, xcb_window_t root_win, uint8_t same_screen, int dev, double radx, double rady, double pressure, double angle, int16_t mx, int16_t my, int16_t mrx, int16_t mry);
+Ecore_Event_Mouse_Button *_ecore_xcb_event_mouse_button(int event, uint16_t timestamp, uint16_t modifiers, xcb_button_t buttons, int16_t x, int16_t y, int16_t root_x, int16_t root_y, xcb_window_t event_win, xcb_window_t win, xcb_window_t root_win, uint8_t same_screen, int dev, double radx, double rady, double pressure, double angle, int16_t mx, int16_t my, int16_t mrx, int16_t mry);
 
-/* xprint */
-void                          _ecore_x_xprint_init          (const xcb_query_extension_reply_t *reply);
-void                          _ecore_x_xprint_init_finalize (void);
+void _ecore_xcb_keymap_init(void);
+void _ecore_xcb_keymap_finalize(void);
+void _ecore_xcb_keymap_shutdown(void);
+void _ecore_xcb_keymap_refresh(xcb_mapping_notify_event_t *event);
+xcb_keysym_t _ecore_xcb_keymap_keycode_to_keysym(xcb_keycode_t keycode, int col);
+xcb_keycode_t *_ecore_xcb_keymap_keysym_to_keycode(xcb_keysym_t keysym);
+char *_ecore_xcb_keymap_keysym_to_string(xcb_keysym_t keysym);
+xcb_keycode_t _ecore_xcb_keymap_string_to_keycode(const char *key);
+int _ecore_xcb_keymap_lookup_string(xcb_keycode_t keycode, int state, char *buffer, int bytes, xcb_keysym_t *sym);
 
-/* to categorize */
-void                          _ecore_x_sync_magic_send(int val, Ecore_X_Window swin);
-void                          _ecore_x_window_grab_remove(Ecore_X_Window win);
-void                          _ecore_x_key_grab_remove(Ecore_X_Window win);
+void _ecore_xcb_input_init(void);
+void _ecore_xcb_input_finalize(void);
+void _ecore_xcb_input_shutdown(void);
+# ifdef ECORE_XCB_XINPUT
+void _ecore_xcb_input_handle_event(xcb_generic_event_t *event);
+# else
+void _ecore_xcb_input_handle_event(xcb_generic_event_t *event __UNUSED__);
+# endif
 
-#endif /* __ECORE_XCB_PRIVATE_H__*/
+void _ecore_xcb_dri_init(void);
+void _ecore_xcb_dri_finalize(void);
+
+void _ecore_xcb_xtest_init(void);
+void _ecore_xcb_xtest_finalize(void);
+
+Ecore_X_Window _ecore_xcb_window_root_of_screen_get(int screen);
+void _ecore_xcb_window_prop_string_utf8_set(Ecore_X_Window win, Ecore_X_Atom atom, const char *str);
+Ecore_X_Visual _ecore_xcb_window_visual_get(Ecore_X_Window win);
+void _ecore_xcb_window_button_grab_remove(Ecore_X_Window win);
+void _ecore_xcb_window_key_grab_remove(Ecore_X_Window win);
+void _ecore_xcb_window_grab_allow_events(Ecore_X_Window event_win, Ecore_X_Window child_win, int type, void *event, Ecore_X_Time timestamp);
+
+int _ecore_xcb_netwm_startup_info_begin(Ecore_X_Window win __UNUSED__, uint8_t data __UNUSED__);
+int _ecore_xcb_netwm_startup_info(Ecore_X_Window win __UNUSED__, uint8_t data __UNUSED__);
+Ecore_X_Window_State _ecore_xcb_netwm_window_state_get(Ecore_X_Atom atom);
+
+int _ecore_xcb_error_handle(xcb_generic_error_t *err);
+int _ecore_xcb_io_error_handle(xcb_generic_error_t *err);
+
+#endif

@@ -18,25 +18,21 @@
  * @return  New pixmap.
  * @ingroup Ecore_X_Pixmap_Group
  */
-EAPI Ecore_X_Pixmap
-ecore_x_pixmap_new(Ecore_X_Window win,
-                   int            w,
-                   int            h,
-                   int            dep)
+EAPI Ecore_X_Pixmap 
+ecore_x_pixmap_new(Ecore_X_Window win, int w, int h, int dep) 
 {
    Ecore_X_Pixmap pmap;
 
-   if (win == 0)
-      win = ((xcb_screen_t *)_ecore_xcb_screen)->root;
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
-   if (dep == 0)
-      dep = ((xcb_screen_t *)_ecore_xcb_screen)->root_depth;
+   if (win == 0) win = ((xcb_screen_t *)_ecore_xcb_screen)->root;
+   if (dep == 0) dep = ((xcb_screen_t *)_ecore_xcb_screen)->root_depth;
 
    pmap = xcb_generate_id(_ecore_xcb_conn);
    xcb_create_pixmap(_ecore_xcb_conn, dep, pmap, win, w, h);
 
    return pmap;
-} /* ecore_x_pixmap_new */
+}
 
 /**
  * Deletes the reference to the given pixmap.
@@ -47,11 +43,13 @@ ecore_x_pixmap_new(Ecore_X_Window win,
  * @param   pmap The given pixmap.
  * @ingroup Ecore_X_Pixmap_Group
  */
-EAPI void
-ecore_x_pixmap_free(Ecore_X_Pixmap pmap)
+EAPI void 
+ecore_x_pixmap_free(Ecore_X_Pixmap pmap) 
 {
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
    xcb_free_pixmap(_ecore_xcb_conn, pmap);
-} /* ecore_x_pixmap_free */
+}
 
 /**
  * Pastes a rectangular area of the given pixmap onto the given drawable.
@@ -67,19 +65,13 @@ ecore_x_pixmap_free(Ecore_X_Pixmap pmap)
  * @param   dy   The Y position at which to paste the area on @p dest.
  * @ingroup Ecore_X_Pixmap_Group
  */
-EAPI void
-ecore_x_pixmap_paste(Ecore_X_Pixmap   pmap,
-                     Ecore_X_Drawable dest,
-                     Ecore_X_GC       gc,
-                     int              sx,
-                     int              sy,
-                     int              w,
-                     int              h,
-                     int              dx,
-                     int              dy)
+EAPI void 
+ecore_x_pixmap_paste(Ecore_X_Pixmap pmap, Ecore_X_Drawable dest, Ecore_X_GC gc, int sx, int sy, int w, int h, int dx, int dy) 
 {
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
    xcb_copy_area(_ecore_xcb_conn, pmap, dest, gc, sx, sy, dx, dy, w, h);
-} /* ecore_x_pixmap_paste */
+}
 
 /**
  * Retrieves the size of the given pixmap.
@@ -90,12 +82,14 @@ ecore_x_pixmap_paste(Ecore_X_Pixmap   pmap,
  * @param   h    Pointer to an integer in which to store the height.
  * @ingroup Ecore_X_Pixmap_Group
  */
-EAPI void
-ecore_x_pixmap_geometry_get(Ecore_X_Pixmap pmap, int *x, int *y, int *w, int *h)
+EAPI void 
+ecore_x_pixmap_geometry_get(Ecore_X_Pixmap pmap, int *x, int *y, int *w, int *h) 
 {
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
    if (pmap)
-      ecore_x_drawable_geometry_get(pmap, x, y, w, h);
-} /* ecore_x_pixmap_geometry_get */
+     ecore_x_drawable_geometry_get(pmap, x, y, w, h);
+}
 
 /**
  * Retrieves the depth of the given pixmap.
@@ -103,9 +97,10 @@ ecore_x_pixmap_geometry_get(Ecore_X_Pixmap pmap, int *x, int *y, int *w, int *h)
  * @return  The depth of the pixmap.
  * @ingroup Ecore_X_Pixmap_Group
  */
-EAPI int
-ecore_x_pixmap_depth_get(Ecore_X_Pixmap pmap)
+EAPI int 
+ecore_x_pixmap_depth_get(Ecore_X_Pixmap pmap) 
 {
-   return ecore_x_drawable_depth_get(pmap);
-} /* ecore_x_pixmap_depth_get */
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
+   return ecore_x_drawable_depth_get(pmap);
+}
