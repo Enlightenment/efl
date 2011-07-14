@@ -14,40 +14,39 @@
 #endif
 
 #include <Evas.h>
+#include <Ecore.h>
 #include <ecore_private.h>
 #include <Ecore_Input.h>
 #include <Ecore_Input_Evas.h>
 
 #define ECORE_MAGIC_EVAS 0x76543211
 
-#ifndef BUILD_ECORE_DIRECTFB
-# undef BUILD_ECORE_EVAS_DIRECTFB
-#endif
-
 #ifdef BUILD_ECORE_EVAS_X11
-# include "Ecore_X.h"
+# include <Ecore_X.h>
+# include <Ecore_X_Atoms.h>
 # ifdef HAVE_ECORE_X_XCB
 #  include <xcb/xcb.h>
-#  ifdef BUILD_ECORE_EVAS_SOFTWARE_XCB
-#   include <Evas_Engine_Software_X11.h>
-#  endif
-#  ifdef BUILD_ECORE_EVAS_SOFTWARE_8_X11
-#   include <Evas_Engine_Software_8_X11.h>
-#  endif
 # endif
 # ifdef HAVE_ECORE_X_XLIB
 #  include <X11/Xlib.h>
 #  include <X11/Xutil.h>
-#  ifdef BUILD_ECORE_EVAS_SOFTWARE_XLIB
-#   include <Evas_Engine_Software_X11.h>
-#  endif
-#  ifdef BUILD_ECORE_EVAS_OPENGL_X11
-#    include <Evas_Engine_GL_X11.h>
-#  endif
-#  ifdef BUILD_ECORE_EVAS_SOFTWARE_16_X11
-#   include <Evas_Engine_Software_16_X11.h>
-#  endif
 # endif
+#endif
+
+#ifdef BUILD_ECORE_EVAS_SOFTWARE_X11
+# include <Evas_Engine_Software_X11.h>
+#endif
+
+#ifdef BUILD_ECORE_EVAS_OPENGL_X11
+# include <Evas_Engine_GL_X11.h>
+#endif
+
+#ifdef BUILD_ECORE_EVAS_SOFTWARE_8_X11
+# include <Evas_Engine_Software_8_X11.h>
+#endif
+
+#ifdef BUILD_ECORE_EVAS_SOFTWARE_16_X11
+# include <Evas_Engine_Software_16_X11.h>
 #endif
 
 #ifdef BUILD_ECORE_EVAS_FB
@@ -125,60 +124,60 @@ extern int _ecore_evas_log_dom;
 typedef struct _Ecore_Evas Ecore_Evas;
 #endif
 
-typedef struct _Ecore_Evas_Engine      Ecore_Evas_Engine;
+typedef struct _Ecore_Evas_Engine Ecore_Evas_Engine;
 typedef struct _Ecore_Evas_Engine_Func Ecore_Evas_Engine_Func;
 
 struct _Ecore_Evas_Engine_Func
 {
-   void        (*fn_free) (Ecore_Evas *ee);
-   void        (*fn_callback_resize_set) (Ecore_Evas *ee, void (*func) (Ecore_Evas *ee));
-   void        (*fn_callback_move_set) (Ecore_Evas *ee, void (*func) (Ecore_Evas *ee));
-   void        (*fn_callback_show_set) (Ecore_Evas *ee, void (*func) (Ecore_Evas *ee));
-   void        (*fn_callback_hide_set) (Ecore_Evas *ee, void (*func) (Ecore_Evas *ee));
-   void        (*fn_callback_delete_request_set) (Ecore_Evas *ee, void (*func) (Ecore_Evas *ee));
-   void        (*fn_callback_destroy_set) (Ecore_Evas *ee, void (*func) (Ecore_Evas *ee));
-   void        (*fn_callback_focus_in_set) (Ecore_Evas *ee, void (*func) (Ecore_Evas *ee));
-   void        (*fn_callback_focus_out_set) (Ecore_Evas *ee, void (*func) (Ecore_Evas *ee));
-   void        (*fn_callback_mouse_in_set) (Ecore_Evas *ee, void (*func) (Ecore_Evas *ee));
-   void        (*fn_callback_mouse_out_set) (Ecore_Evas *ee, void (*func) (Ecore_Evas *ee));
-   void        (*fn_callback_sticky_set) (Ecore_Evas *ee, void (*func) (Ecore_Evas *ee));
-   void        (*fn_callback_unsticky_set) (Ecore_Evas *ee, void (*func) (Ecore_Evas *ee));
-   void        (*fn_callback_pre_render_set) (Ecore_Evas *ee, void (*func) (Ecore_Evas *ee));
-   void        (*fn_callback_post_render_set) (Ecore_Evas *ee, void (*func) (Ecore_Evas *ee));
-   void        (*fn_move) (Ecore_Evas *ee, int x, int y);
-   void        (*fn_managed_move) (Ecore_Evas *ee, int x, int y);
-   void        (*fn_resize) (Ecore_Evas *ee, int w, int h);
-   void        (*fn_move_resize) (Ecore_Evas *ee, int x, int y, int w, int h);
-   void        (*fn_rotation_set) (Ecore_Evas *ee, int rot, int resize);
-   void        (*fn_shaped_set) (Ecore_Evas *ee, int shaped);
-   void        (*fn_show) (Ecore_Evas *ee);
-   void        (*fn_hide) (Ecore_Evas *ee);
-   void        (*fn_raise) (Ecore_Evas *ee);
-   void        (*fn_lower) (Ecore_Evas *ee);
-   void        (*fn_activate) (Ecore_Evas *ee);
-   void        (*fn_title_set) (Ecore_Evas *ee, const char *t);
-   void        (*fn_name_class_set) (Ecore_Evas *ee, const char *n, const char *c);
-   void        (*fn_size_min_set) (Ecore_Evas *ee, int w, int h);
-   void        (*fn_size_max_set) (Ecore_Evas *ee, int w, int h);
-   void        (*fn_size_base_set) (Ecore_Evas *ee, int w, int h);
-   void        (*fn_size_step_set) (Ecore_Evas *ee, int w, int h);
-   void        (*fn_object_cursor_set) (Ecore_Evas *ee, Evas_Object *obj, int layer, int hot_x, int hot_y);
-   void        (*fn_layer_set) (Ecore_Evas *ee, int layer);
-   void        (*fn_focus_set) (Ecore_Evas *ee, int on);
-   void        (*fn_iconified_set) (Ecore_Evas *ee, int on);
-   void        (*fn_borderless_set) (Ecore_Evas *ee, int on);
-   void        (*fn_override_set) (Ecore_Evas *ee, int on);
-   void        (*fn_maximized_set) (Ecore_Evas *ee, int on);
-   void        (*fn_fullscreen_set) (Ecore_Evas *ee, int on);
-   void        (*fn_avoid_damage_set) (Ecore_Evas *ee, int on);
-   void        (*fn_withdrawn_set) (Ecore_Evas *ee, int withdrawn);
-   void        (*fn_sticky_set) (Ecore_Evas *ee, int sticky);
-   void        (*fn_ignore_events_set) (Ecore_Evas *ee, int ignore);
-   void        (*fn_alpha_set) (Ecore_Evas *ee, int alpha);
-   void        (*fn_transparent_set) (Ecore_Evas *ee, int transparent);
+   void (*fn_free) (Ecore_Evas *ee);
+   void (*fn_callback_resize_set) (Ecore_Evas *ee, void (*func) (Ecore_Evas *ee));
+   void (*fn_callback_move_set) (Ecore_Evas *ee, void (*func) (Ecore_Evas *ee));
+   void (*fn_callback_show_set) (Ecore_Evas *ee, void (*func) (Ecore_Evas *ee));
+   void (*fn_callback_hide_set) (Ecore_Evas *ee, void (*func) (Ecore_Evas *ee));
+   void (*fn_callback_delete_request_set) (Ecore_Evas *ee, void (*func) (Ecore_Evas *ee));
+   void (*fn_callback_destroy_set) (Ecore_Evas *ee, void (*func) (Ecore_Evas *ee));
+   void (*fn_callback_focus_in_set) (Ecore_Evas *ee, void (*func) (Ecore_Evas *ee));
+   void (*fn_callback_focus_out_set) (Ecore_Evas *ee, void (*func) (Ecore_Evas *ee));
+   void (*fn_callback_mouse_in_set) (Ecore_Evas *ee, void (*func) (Ecore_Evas *ee));
+   void (*fn_callback_mouse_out_set) (Ecore_Evas *ee, void (*func) (Ecore_Evas *ee));
+   void (*fn_callback_sticky_set) (Ecore_Evas *ee, void (*func) (Ecore_Evas *ee));
+   void (*fn_callback_unsticky_set) (Ecore_Evas *ee, void (*func) (Ecore_Evas *ee));
+   void (*fn_callback_pre_render_set) (Ecore_Evas *ee, void (*func) (Ecore_Evas *ee));
+   void (*fn_callback_post_render_set) (Ecore_Evas *ee, void (*func) (Ecore_Evas *ee));
+   void (*fn_move) (Ecore_Evas *ee, int x, int y);
+   void (*fn_managed_move) (Ecore_Evas *ee, int x, int y);
+   void (*fn_resize) (Ecore_Evas *ee, int w, int h);
+   void (*fn_move_resize) (Ecore_Evas *ee, int x, int y, int w, int h);
+   void (*fn_rotation_set) (Ecore_Evas *ee, int rot, int resize);
+   void (*fn_shaped_set) (Ecore_Evas *ee, int shaped);
+   void (*fn_show) (Ecore_Evas *ee);
+   void (*fn_hide) (Ecore_Evas *ee);
+   void (*fn_raise) (Ecore_Evas *ee);
+   void (*fn_lower) (Ecore_Evas *ee);
+   void (*fn_activate) (Ecore_Evas *ee);
+   void (*fn_title_set) (Ecore_Evas *ee, const char *t);
+   void (*fn_name_class_set) (Ecore_Evas *ee, const char *n, const char *c);
+   void (*fn_size_min_set) (Ecore_Evas *ee, int w, int h);
+   void (*fn_size_max_set) (Ecore_Evas *ee, int w, int h);
+   void (*fn_size_base_set) (Ecore_Evas *ee, int w, int h);
+   void (*fn_size_step_set) (Ecore_Evas *ee, int w, int h);
+   void (*fn_object_cursor_set) (Ecore_Evas *ee, Evas_Object *obj, int layer, int hot_x, int hot_y);
+   void (*fn_layer_set) (Ecore_Evas *ee, int layer);
+   void (*fn_focus_set) (Ecore_Evas *ee, int on);
+   void (*fn_iconified_set) (Ecore_Evas *ee, int on);
+   void (*fn_borderless_set) (Ecore_Evas *ee, int on);
+   void (*fn_override_set) (Ecore_Evas *ee, int on);
+   void (*fn_maximized_set) (Ecore_Evas *ee, int on);
+   void (*fn_fullscreen_set) (Ecore_Evas *ee, int on);
+   void (*fn_avoid_damage_set) (Ecore_Evas *ee, int on);
+   void (*fn_withdrawn_set) (Ecore_Evas *ee, int withdrawn);
+   void (*fn_sticky_set) (Ecore_Evas *ee, int sticky);
+   void (*fn_ignore_events_set) (Ecore_Evas *ee, int ignore);
+   void (*fn_alpha_set) (Ecore_Evas *ee, int alpha);
+   void (*fn_transparent_set) (Ecore_Evas *ee, int transparent);
 
-   int         (*fn_render) (Ecore_Evas *ee);
-   void        (*fn_screen_geometry_get) (const Ecore_Evas *ee, int *x, int *y, int *w, int *h);
+   int (*fn_render) (Ecore_Evas *ee);
+   void (*fn_screen_geometry_get) (const Ecore_Evas *ee, int *x, int *y, int *w, int *h);
 };
 
 struct _Ecore_Evas_Engine
@@ -186,7 +185,8 @@ struct _Ecore_Evas_Engine
    Ecore_Evas_Engine_Func *func;
 
 #ifdef BUILD_ECORE_EVAS_X11
-   struct {
+   struct 
+     {
       Ecore_X_Window win_root;
       Eina_List     *win_extra;
       Ecore_X_Pixmap pmap;

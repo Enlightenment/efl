@@ -1,24 +1,4 @@
-#ifdef HAVE_CONFIG_H
-# include <config.h>
-#endif
-
 #include <string.h>
-
-#include <Ecore.h>
-#include <Ecore_Input.h>
-#include <Ecore_Input_Evas.h>
-#ifdef BUILD_ECORE_EVAS_X11
-# include <Ecore_X.h>
-# include <Ecore_X_Atoms.h>
-#else
-# undef BUILD_ECORE_EVAS_OPENGL_X11
-# undef BUILD_ECORE_EVAS_SOFTWARE_X11
-#endif
-
-#ifndef HAVE_ECORE_X_XCB
-# undef BUILD_ECORE_EVAS_SOFTWARE_XCB
-#endif
-
 #include "ecore_evas_private.h"
 #include "Ecore_Evas.h"
 
@@ -124,17 +104,17 @@ _ecore_evas_x_sync_clear(Ecore_Evas *ee)
 static xcb_visualtype_t *
 xcb_visualtype_get(xcb_screen_t *screen, xcb_visualid_t visual)
 {
-   xcb_depth_iterator_t  iter_depth;
+   xcb_depth_iterator_t iter_depth;
 
    if (!screen) return NULL;
 
    iter_depth = xcb_screen_allowed_depths_iterator(screen);
-   for (; iter_depth.rem; xcb_depth_next (&iter_depth))
+   for (; iter_depth.rem; xcb_depth_next(&iter_depth))
      {
         xcb_visualtype_iterator_t iter_vis;
 
         iter_vis = xcb_depth_visuals_iterator(iter_depth.data);
-        for (; iter_vis.rem; --screen, xcb_visualtype_next (&iter_vis))
+        for (; iter_vis.rem; --screen, xcb_visualtype_next(&iter_vis))
           {
             if (visual == iter_vis.data->visual_id)
               return iter_vis.data;
@@ -146,9 +126,6 @@ xcb_visualtype_get(xcb_screen_t *screen, xcb_visualid_t visual)
 #endif /* HAVE_ECORE_X_XCB */
 
 #ifdef BUILD_ECORE_EVAS_OPENGL_X11
-# ifdef HAVE_ECORE_X_XCB
-/* noop */
-# else
 static Ecore_X_Window
 _ecore_evas_x_gl_window_new(Ecore_Evas *ee, Ecore_X_Window parent, int x, int y, int w, int h, int override, int argb, const int *opt)
 {
@@ -264,7 +241,6 @@ _ecore_evas_x_gl_window_new(Ecore_Evas *ee, Ecore_X_Window parent, int x, int y,
      }
    return win;
 }
-#endif /* HAVE_ECORE_X_XCB */
 #endif
 
 static int
@@ -573,12 +549,7 @@ _ecore_evas_x_event_property_change(void *data __UNUSED__, int type __UNUSED__, 
      {
         unsigned int i, num;
         Ecore_X_Window_State *state;
-        int sticky;
-
-#ifdef HAVE_ECORE_X_XCB
-        ecore_x_netwm_window_state_get_prefetch(e->win);
-#endif /* HAVE_ECORE_X_XCB */
-        sticky = 0;
+        int sticky = 0;
 
         /* TODO: we need to move those to the end, with if statements */
         ee->engine.x.state.modal = 0;
@@ -592,9 +563,6 @@ _ecore_evas_x_event_property_change(void *data __UNUSED__, int type __UNUSED__, 
         ee->engine.x.state.above = 0;
         ee->engine.x.state.below = 0;
 
-#ifdef HAVE_ECORE_X_XCB
-        ecore_x_netwm_window_state_get_fetch();
-#endif /* HAVE_ECORE_X_XCB */
         ecore_x_netwm_window_state_get(e->win, &state, &num);
         if (state)
           {
@@ -645,9 +613,6 @@ _ecore_evas_x_event_property_change(void *data __UNUSED__, int type __UNUSED__, 
                }
              free(state);
           }
-#ifdef HAVE_ECORE_X_XCB
-        ecore_xcb_reply_free();
-#endif /* HAVE_ECORE_X_XCB */
 
         if (ee->prop.sticky && !sticky)
           {
@@ -1084,10 +1049,6 @@ _ecore_evas_x_event_window_hide(void *data __UNUSED__, int type __UNUSED__, void
 static void
 _ecore_evas_x_size_pos_hints_update(Ecore_Evas *ee)
 {
-# ifdef HAVE_ECORE_X_XCB
-   ecore_x_icccm_size_pos_hints_get_prefetch(ee->prop.window);
-   ecore_x_icccm_size_pos_hints_get_fetch();
-# endif /* HAVE_ECORE_X_XCB */
    ecore_x_icccm_size_pos_hints_set(ee->prop.window,
                                     ee->prop.request_pos /*request_pos */,
                                     ECORE_X_GRAVITY_NW /* gravity */,
@@ -1101,9 +1062,6 @@ _ecore_evas_x_size_pos_hints_update(Ecore_Evas *ee)
                                     ee->prop.step.h /* step_y */,
                                     0 /* min_aspect */,
                                     0 /* max_aspect */);
-# ifdef HAVE_ECORE_X_XCB
-   ecore_xcb_reply_free();
-# endif /* HAVE_ECORE_X_XCB */
 }
 
 /* FIXME, should be in idler */
@@ -1758,13 +1716,13 @@ static void
 _ecore_evas_x_alpha_set(Ecore_Evas *ee, int alpha)
 {
 # ifdef HAVE_ECORE_X_XCB
-   xcb_get_geometry_cookie_t          cookie_geom;
+   xcb_get_geometry_cookie_t cookie_geom;
    xcb_get_window_attributes_cookie_t cookie_attr;
-   xcb_get_geometry_reply_t          *reply_geom;
+   xcb_get_geometry_reply_t *reply_geom;
    xcb_get_window_attributes_reply_t *reply_attr;
 #else
    XWindowAttributes att;
-#endif /* ! HAVE_ECORE_X_XCB */
+#endif
 
    if (((ee->alpha) && (alpha)) || ((!ee->alpha) && (!alpha)))
      return;
@@ -1896,14 +1854,14 @@ _ecore_evas_x_alpha_set(Ecore_Evas *ee, int alpha)
                {
                   ee->prop.window = _ecore_evas_x_gl_window_new
                     (ee, ee->engine.x.win_root,
-                     ee->req.x, ee->req.y, ee->req.w, ee->req.h,
-                     ee->prop.override, 1, NULL);
+                        ee->req.x, ee->req.y, ee->req.w, ee->req.h,
+                        ee->prop.override, 1, NULL);
                }
              else
                ee->prop.window = _ecore_evas_x_gl_window_new
                (ee, ee->engine.x.win_root,
-                ee->req.x, ee->req.y, ee->req.w, ee->req.h,
-                ee->prop.override, ee->alpha, NULL);
+                   ee->req.x, ee->req.y, ee->req.w, ee->req.h,
+                   ee->prop.override, ee->alpha, NULL);
           }
         else
           ee->prop.window = _ecore_evas_x_gl_window_new
@@ -4186,7 +4144,7 @@ ecore_evas_x11_leader_default_set(Ecore_Evas *ee)
 static Eina_Bool
 _ecore_evas_x11_convert_rectangle_with_angle(Ecore_Evas *ee, Ecore_X_Rectangle *dst_rect, Ecore_X_Rectangle *src_rect)
 {
-   if (!src_rect || !dst_rect) return 0;
+   if ((!src_rect) || (!dst_rect)) return 0;
 
    if (ee->rotation == 0)
      {
@@ -4245,13 +4203,21 @@ ecore_evas_x11_shape_input_rectangle_set(Ecore_Evas *ee, int x, int y, int w, in
    src_rect.width = w;
    src_rect.height = h;
 
+   dst_rect.x = 0;
+   dst_rect.y = 0;
+   dst_rect.width = 0;
+   dst_rect.height = 0;
+
    ret = _ecore_evas_x11_convert_rectangle_with_angle(ee, &dst_rect, &src_rect);
 
    if (!ee->engine.x.win_shaped_input)
-      ee->engine.x.win_shaped_input = ecore_x_window_override_new(ee->engine.x.win_root, 0, 0, 1, 1);
+      ee->engine.x.win_shaped_input = ecore_x_window_override_new(ee->engine.x.win_root, 
+                                                                  0, 0, 1, 1);
 
    if (ret)
-      ecore_x_window_shape_input_rectangle_set(ee->engine.x.win_shaped_input, dst_rect.x, dst_rect.y, dst_rect.width, dst_rect.height);
+      ecore_x_window_shape_input_rectangle_set(ee->engine.x.win_shaped_input, 
+                                               dst_rect.x, dst_rect.y, 
+                                               dst_rect.width, dst_rect.height);
 #else
    return;
    ee = NULL;
@@ -4282,13 +4248,21 @@ ecore_evas_x11_shape_input_rectangle_add(Ecore_Evas *ee, int x, int y, int w, in
    src_rect.width = w;
    src_rect.height = h;
 
+   dst_rect.x = 0;
+   dst_rect.y = 0;
+   dst_rect.width = 0;
+   dst_rect.height = 0;
+
    ret = _ecore_evas_x11_convert_rectangle_with_angle(ee, &dst_rect, &src_rect);
 
    if (!ee->engine.x.win_shaped_input)
-      ee->engine.x.win_shaped_input = ecore_x_window_override_new(ee->engine.x.win_root, 0, 0, 1, 1);
+      ee->engine.x.win_shaped_input = ecore_x_window_override_new(ee->engine.x.win_root, 
+                                                                  0, 0, 1, 1);
 
    if (ret)
-      ecore_x_window_shape_input_rectangle_add(ee->engine.x.win_shaped_input, dst_rect.x, dst_rect.y, dst_rect.width, dst_rect.height);
+      ecore_x_window_shape_input_rectangle_add(ee->engine.x.win_shaped_input, 
+                                               dst_rect.x, dst_rect.y, 
+                                               dst_rect.width, dst_rect.height);
 #else
    return;
    ee = NULL;
@@ -4319,13 +4293,21 @@ ecore_evas_x11_shape_input_rectangle_subtract(Ecore_Evas *ee, int x, int y, int 
    src_rect.width = w;
    src_rect.height = h;
 
+   dst_rect.x = 0;
+   dst_rect.y = 0;
+   dst_rect.width = 0;
+   dst_rect.height = 0;
+
    ret = _ecore_evas_x11_convert_rectangle_with_angle(ee, &dst_rect, &src_rect);
 
    if (!ee->engine.x.win_shaped_input)
-      ee->engine.x.win_shaped_input = ecore_x_window_override_new(ee->engine.x.win_root, 0, 0, 1, 1);
+      ee->engine.x.win_shaped_input = ecore_x_window_override_new(ee->engine.x.win_root, 
+                                                                  0, 0, 1, 1);
 
    if (ret)
-      ecore_x_window_shape_input_rectangle_subtract(ee->engine.x.win_shaped_input, dst_rect.x, dst_rect.y, dst_rect.width, dst_rect.height);
+      ecore_x_window_shape_input_rectangle_subtract(ee->engine.x.win_shaped_input, 
+                                                    dst_rect.x, dst_rect.y, 
+                                                    dst_rect.width, dst_rect.height);
 #else
    return;
    ee = NULL;
