@@ -373,6 +373,9 @@ static void      _theme_hook(Evas_Object *obj);
 static void      _show_region_hook(void        *data,
                                    Evas_Object *obj);
 static void      _sizing_eval(Evas_Object *obj);
+static void      _item_realize(Elm_Genlist_Item *it,
+                               int               in,
+                               Eina_Bool         calc);
 static void      _item_unrealize(Elm_Genlist_Item *it,
                                  Eina_Bool         calc);
 static void      _item_block_unrealize(Item_Block *itb);
