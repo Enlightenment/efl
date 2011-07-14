@@ -692,6 +692,22 @@ elm_transit_chain_transit_add(Elm_Transit *transit, Elm_Transit *chain_transit)
    transit->next_chain_transits = eina_list_append(transit->next_chain_transits, chain_transit);
 }
 
+EAPI void
+elm_transit_chain_transit_del(Elm_Transit *transit, Elm_Transit *chain_transit)
+{
+   ELM_TRANSIT_CHECK_OR_RETURN(transit);
+   ELM_TRANSIT_CHECK_OR_RETURN(chain_transit);
+
+   if (chain_transit->prev_chain_transit != transit)
+     {
+        WRN("These two transit does not have the chain relationship! : transit=%p, chain_transit=%p", transit, chain_transit);
+        return;
+     }
+
+   chain_transit->prev_chain_transit = NULL;
+   transit->next_chain_transits = eina_list_remove(transit->next_chain_transits, chain_transit);
+}
+
 EAPI Eina_List *
 elm_transit_chain_transits_get(const Elm_Transit * transit)
 {
