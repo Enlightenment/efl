@@ -54,6 +54,7 @@ struct _Elm_Transit
    Eina_Bool event_enabled : 1;
    Eina_Bool deleted : 1;
    Eina_Bool state_keep : 1;
+   Eina_Bool finished : 1;
 };
 
 struct _Elm_Transit_Effect_Module
@@ -92,7 +93,6 @@ static void _transit_obj_remove(Elm_Transit *transit, Evas_Object *obj);
 static void _transit_effect_del(Elm_Transit *transit, Elm_Transit_Effect_Module *effect_module);
 static void _transit_remove_dead_effects(Elm_Transit *transit);
 static void _transit_del(Elm_Transit *transit);
-static void _transit_chain_transits_go(Elm_Transit *transit);
 static void _transit_animate_op(Elm_Transit *transit, double progress);
 static Eina_Bool _transit_animate_cb(void *data);
 
@@ -241,18 +241,10 @@ _transit_del(Elm_Transit *transit)
    Elm_Transit *chain_transit;
    Eina_List *elist, *elist_next;
 
-   EINA_LIST_FOREACH_SAFE(transit->next_chain_transits, elist, elist_next, chain_transit)
-     {
-        if (transit->prev_chain_transit)
-          transit->prev_chain_transit->next_chain_transits = eina_list_remove(transit->prev_chain_transit->next_chain_transits, transit);
-        chain_transit->prev_chain_transit = NULL;
-     }
-
-   eina_list_free(transit->next_chain_transits);
-
    if (transit->animator)
      ecore_animator_del(transit->animator);
 
+   //remove effects 
    while (transit->effect_list)
      {
         effect_module = EINA_INLIST_CONTAINER_GET(transit->effect_list, Elm_Transit_Effect_Module);
@@ -260,6 +252,7 @@ _transit_del(Elm_Transit *transit)
         _transit_effect_del(transit, effect_module);
      }
 
+   //remove objects. 
    while (transit->objs)
      _transit_obj_remove(transit, eina_list_data_get(transit->objs));
 
@@ -268,22 +261,25 @@ _transit_del(Elm_Transit *transit)
    if (transit->del_data.func)
      transit->del_data.func(transit->del_data.arg, transit);
 
+   //cut off the chain transit relationship
+   EINA_LIST_FOREACH_SAFE(transit->next_chain_transits, elist, elist_next, chain_transit)
+     chain_transit->prev_chain_transit = NULL;
+
+   if (transit->prev_chain_transit)
+     transit->prev_chain_transit->next_chain_transits =
+        eina_list_remove(transit->prev_chain_transit->next_chain_transits, transit);
+
+   // run chain transits
+   if (transit->finished && transit->next_chain_transits)
+     {
+        EINA_LIST_FOREACH_SAFE(transit->next_chain_transits, elist, elist_next, chain_transit)
+          elm_transit_go(chain_transit);
+     }
+
+   eina_list_free(transit->next_chain_transits);
+
    EINA_MAGIC_SET(transit, EINA_MAGIC_NONE);
    free(transit);
-}
-
-static void
-_transit_chain_transits_go(Elm_Transit *transit)
-{
-   Eina_List *elist, *elist_next;
-   Elm_Transit *chain_transit;
-   Evas_Object *obj;
-
-   EINA_LIST_FOREACH(transit->objs, elist, obj)
-    _transit_obj_data_recover(transit, obj);
-
-   EINA_LIST_FOREACH_SAFE(transit->next_chain_transits, elist, elist_next, chain_transit)
-     elm_transit_go(chain_transit);
 }
 
 static void
@@ -348,10 +344,7 @@ _transit_animate_cb(void *data)
        (transit->repeat.current == transit->repeat.count) &&
        ((!transit->auto_reverse) || transit->repeat.reverse))
      {
-        /* run chain transit */
-        if (transit->next_chain_transits)
-          _transit_chain_transits_go(transit);
-
+        transit->finished = EINA_TRUE;
         elm_transit_del(transit);
         return ECORE_CALLBACK_CANCEL;
      }
