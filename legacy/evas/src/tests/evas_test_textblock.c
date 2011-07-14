@@ -420,8 +420,7 @@ START_TEST(evas_textblock_cursor)
         while (evas_textblock_cursor_compare(cur, main_cur) <= 0)
           {
              evas_textblock_cursor_pen_geometry_get(cur, &x, &y, &w, &h);
-             fail_if(0 !=
-                   evas_textblock_cursor_line_geometry_get(
+             fail_if(0 != evas_textblock_cursor_line_geometry_get(
                       cur, &lx, &ly, &lw, &lh));
              fail_if((x < lx) || (x + w > lx + lw) ||
                    (y < ly) || (y + h > ly + lh));
@@ -442,8 +441,7 @@ START_TEST(evas_textblock_cursor)
         while (evas_textblock_cursor_compare(cur, main_cur) <= 0)
           {
              evas_textblock_cursor_pen_geometry_get(cur, &x, &y, &w, &h);
-             fail_if(1 !=
-                   evas_textblock_cursor_line_geometry_get(
+             fail_if(1 != evas_textblock_cursor_line_geometry_get(
                       cur, &lx, &ly, &lw, &lh));
              fail_if((x < lx) || (x + w > lx + lw) ||
                    (y < ly) || (y + h > ly + lh));
@@ -474,6 +472,34 @@ START_TEST(evas_textblock_cursor)
         /* Before the start of the textblock */
         fail_if(0 != evas_textblock_cursor_line_coord_set(cur, -50));
         fail_if(3 != evas_textblock_cursor_line_coord_set(cur, 100000));
+
+        /* And now with a valigned textblock. */
+        evas_object_textblock_text_markup_set(tb, buf);
+        evas_object_textblock_size_native_get(tb, &nw, &nh);
+        evas_object_resize(tb, 2 * nw, 2 * nh);
+
+        evas_object_textblock_valign_set(tb, 0.5);
+        evas_textblock_cursor_paragraph_first(cur);
+        evas_textblock_cursor_pen_geometry_get(cur, &x, &y, &w, &h);
+        fail_if(y <= 0);
+
+        evas_textblock_cursor_paragraph_last(main_cur);
+        evas_textblock_cursor_char_coord_set(main_cur, x + w, y / 2);
+        fail_if(evas_textblock_cursor_compare(main_cur, cur));
+
+        evas_textblock_cursor_paragraph_last(main_cur);
+        evas_textblock_cursor_line_coord_set(main_cur, y / 2);
+        fail_if(evas_textblock_cursor_compare(main_cur, cur));
+
+        /* Fail if they are equal, i.e if it for some reason thinks it should
+         * go to the end. */
+        evas_textblock_cursor_paragraph_last(main_cur);
+        evas_textblock_cursor_char_coord_set(main_cur, x + w, nh + 1);
+        fail_if(!evas_textblock_cursor_compare(main_cur, cur));
+
+        evas_textblock_cursor_paragraph_last(main_cur);
+        evas_textblock_cursor_line_coord_set(main_cur, nh + 1);
+        fail_if(!evas_textblock_cursor_compare(main_cur, cur));
      }
 
 
