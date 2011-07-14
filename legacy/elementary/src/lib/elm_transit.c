@@ -32,7 +32,7 @@ struct _Elm_Transit
    Eina_List *next_chain_transits;
    Elm_Transit_Tween_Mode tween_mode;
    struct {
-      Elm_Transit_Effect_End_Cb func;
+      Elm_Transit_Del_Cb func;
       void *arg;
    } del_data;
    struct {

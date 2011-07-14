@@ -7187,6 +7187,13 @@ extern "C" {
    typedef void (*Elm_Transit_Effect_End_Cb) (Elm_Transit_Effect *effect, Elm_Transit *transit);
 
    /**
+    * Elm_Transit_Del_Cb
+    *
+    * A callback called when the transit is deleted.
+    */
+   typedef void (*Elm_Transit_Del_Cb) (void *data, Elm_Transit *transit);
+
+   /**
     * Add new transit.
     *
     * @note Is not necessary to delete the transit object, it will be deleted at
@@ -7394,7 +7401,7 @@ extern "C" {
     *
     * @ingroup Transit
     */
-   EAPI void                        elm_transit_del_cb_set(Elm_Transit *transit, void (*cb)(void *data, Elm_Transit* transit), void *data) EINA_ARG_NONNULL(1);
+   EAPI void                        elm_transit_del_cb_set(Elm_Transit *transit, Elm_Transit_Del_Cb cb, void *data) EINA_ARG_NONNULL(1);
 
    /**
     * Set reverse effect automatically.
