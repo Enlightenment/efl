@@ -612,8 +612,10 @@ AC_MSG_RESULT([${have_shmopen}])
 
 if test "x${have_shmopen}" = "xyes"; then
    AC_DEFINE(HAVE_SHMOPEN, 1, [Does your system provide shm_open])
-   EINA_LIBS="${EINA_LIBS} -lrt"
+   rt_libs="-lrt"
 fi
+
+AC_SUBST([rt_libs])
 
 ### Modules
 
