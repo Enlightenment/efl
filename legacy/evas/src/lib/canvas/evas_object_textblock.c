@@ -8461,12 +8461,13 @@ evas_object_textblock_render(Evas_Object *obj, void *output, void *context, void
                } \
              EINA_INLIST_FOREACH(ln->items, itr) \
                { \
-                  int yoff; \
+                  Evas_Coord yoff; \
                   yoff = ln->baseline; \
+                  /* FIXME: This looks correct, but it breaks stuff....
+                   * yoff = (itr->type == EVAS_TEXTBLOCK_ITEM_TEXT) ? \
+                     _ITEM_TEXT(itr)->baseline : ln->baseline; */ \
                   if (itr->format->valign != -1.0) \
-                     yoff = (itr->format->valign * (double)(ln->h - itr->h)) + \
-                     (itr->type == EVAS_TEXTBLOCK_ITEM_TEXT) ? \
-                     _ITEM_TEXT(itr)->baseline : ln->baseline; \
+                     yoff += itr->format->valign * (ln->h - itr->h); \
                   if (clip) \
                     { \
                        if ((obj->cur.geometry.x + x + ln->x + itr->x + itr->w) < (cx - 20)) \
