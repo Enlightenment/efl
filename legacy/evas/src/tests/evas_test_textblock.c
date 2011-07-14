@@ -388,26 +388,71 @@ START_TEST(evas_textblock_cursor)
    fail_if(evas_textblock_cursor_compare(cur, main_cur));
 
    /* Try positions beyond the left/right limits of lines. */
-   evas_textblock_cursor_line_set(cur, 0);
-   evas_textblock_cursor_pen_geometry_get(cur, &x, &y, &w, &h);
-   evas_textblock_cursor_char_coord_set(main_cur, x - 50, y);
-   fail_if(evas_textblock_cursor_compare(main_cur, cur));
+   for (i = 0 ; i < 2 ; i++)
+     {
+        evas_textblock_cursor_line_set(cur, i);
+        evas_textblock_cursor_pen_geometry_get(cur, &x, &y, &w, &h);
+        evas_textblock_cursor_pos_set(main_cur, 5);
+        evas_textblock_cursor_char_coord_set(main_cur, x - 50, y);
+        fail_if(evas_textblock_cursor_compare(main_cur, cur));
 
-   evas_textblock_cursor_line_char_last(cur);
-   evas_textblock_cursor_pen_geometry_get(cur, &x, &y, &w, &h);
-   evas_textblock_cursor_char_coord_set(main_cur, x + 50, y);
-   fail_if(evas_textblock_cursor_compare(main_cur, cur));
+        evas_textblock_cursor_line_char_last(cur);
+        evas_textblock_cursor_pen_geometry_get(cur, &x, &y, &w, &h);
+        evas_textblock_cursor_pos_set(main_cur, 5);
+        evas_textblock_cursor_char_coord_set(main_cur, x + 50, y);
+        fail_if(evas_textblock_cursor_compare(main_cur, cur));
+     }
 
-   evas_textblock_cursor_line_set(cur, 1);
-   evas_textblock_cursor_pen_geometry_get(cur, &x, &y, &w, &h);
-   evas_textblock_cursor_char_coord_set(main_cur, x - 50, y);
-   fail_if(evas_textblock_cursor_compare(main_cur, cur));
+#ifdef HAVE_FRIBIDI
+   evas_object_textblock_text_markup_set(tb,
+         "testנסיוןtestנסיון<ps>"
+         "נסיוןtestנסיוןtest<ps>"
+         "testנסיוןtest<ps>"
+         "נסיוןtestנסיון<ps>"
+         "testנסיון<br>נסיון<ps>"
+         "נסיוןtest<br>test"
+         );
 
-   evas_textblock_cursor_line_char_last(cur);
-   evas_textblock_cursor_pen_geometry_get(cur, &x, &y, &w, &h);
-   evas_textblock_cursor_char_coord_set(main_cur, x + 50, y);
-   fail_if(evas_textblock_cursor_compare(main_cur, cur));
+   for (i = 0 ; i < 8 ; i++)
+     {
+        evas_textblock_cursor_line_set(cur, i);
+        evas_textblock_cursor_line_geometry_get(cur, &x, &y, &w, &h);
+        switch (i)
+          {
+           case 0:
+           case 2:
+           case 4:
+           case 5:
+              /* Ltr paragraph */
+              evas_textblock_cursor_pos_set(main_cur, 7);
+              evas_textblock_cursor_char_coord_set(main_cur, x - 50, y);
+              fail_if(evas_textblock_cursor_compare(main_cur, cur));
 
+              evas_textblock_cursor_line_char_last(cur);
+              evas_textblock_cursor_pos_set(main_cur, 7);
+              evas_textblock_cursor_char_coord_set(main_cur, x + w + 50, y);
+              fail_if(evas_textblock_cursor_compare(main_cur, cur));
+              break;
+           case 1:
+           case 3:
+           case 6:
+           case 7:
+              /* Rtl paragraph */
+              evas_textblock_cursor_line_char_last(cur);
+              evas_textblock_cursor_pos_set(main_cur, 7);
+              evas_textblock_cursor_char_coord_set(main_cur, x - 50, y);
+              fail_if(evas_textblock_cursor_compare(main_cur, cur));
+
+              evas_textblock_cursor_line_char_first(cur);
+              evas_textblock_cursor_pos_set(main_cur, 7);
+              evas_textblock_cursor_char_coord_set(main_cur, x + w + 50, y);
+              fail_if(evas_textblock_cursor_compare(main_cur, cur));
+              break;
+          }
+     }
+#endif
+
+   evas_object_textblock_text_markup_set(tb, buf);
    /* Testing line geometry.*/
      {
         Evas_Coord lx, ly, lw, lh;
@@ -513,9 +558,6 @@ START_TEST(evas_textblock_cursor)
         evas_textblock_cursor_line_coord_set(main_cur, (2 * nh) - 1);
         fail_if(evas_textblock_cursor_compare(main_cur, cur));
      }
-
-
-   /* FIXME: Add tests that check positions left of/right of rtl lines. */
 
    END_TB_TEST();
 }
