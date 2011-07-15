@@ -391,7 +391,7 @@ em_file_open(const char   *file,
         if (strncmp(file, "./", 2) == 0)
           file += 2;
 	if (strstr(file, ":/") != NULL)
-	  { /* We absolutly need file:///C:/ under Windows, so adding it here */
+	  { /* We absolutely need file:///C:/ under Windows, so adding it here */
              eina_strbuf_append(sbuf, "/");
 	  }
 	else if (*file != '/')

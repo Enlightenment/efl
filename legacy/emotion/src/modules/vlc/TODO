@@ -3,7 +3,7 @@
 #
 
 # Known bug
-When changing video size at begining, there is sometimes SEGV in evas.
+When changing video size at beginning, there is sometimes SEGV in evas.
 The plugin first load the movie with default geometry, wait for it inputThread from VLC to be launched
 and read the movie geometry. Then it stops vlc and start it again with known geometry and realloc frames.
 Plugin warn emotion that size changed using API func "_emotion_frame_resize" thru fd_write/fd_read socket.

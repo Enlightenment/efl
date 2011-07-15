@@ -188,8 +188,8 @@ _emotion_module_close(Emotion_Video_Module *mod, void *video)
    if (mod->plugin->close && video)
      mod->plugin->close(mod, video);
    /* FIXME: we can't go dlclosing here as a thread still may be running from
-    * the module - this in theory will leak- but it shouldnt be too bad and
-    * mean that once a module is dlopened() it cant be closed - its refcount
+    * the module - this in theory will leak- but it shouldn't be too bad and
+    * mean that once a module is dlopened() it can't be closed - its refcount
     * will just keep going up
     */
 }

@@ -161,7 +161,7 @@ extern "C" {
  * happens immediately. There are also some signals to report changed states.
  *
  * Basically, once the object is created and initialized, a file will be set to
- * it, and then it can be resized, moved, and controled by other Evas object
+ * it, and then it can be resized, moved, and controlled by other Evas object
  * functions.
  *
  * However, the decoding of the music and video occurs not in the Ecore main
@@ -387,7 +387,7 @@ EAPI void         emotion_object_position_set          (Evas_Object *obj, double
  * @param obj The emotion object from which the position will be retrieved.
  * @return The position of the media file.
  *
- * The position is returned as the number of seconds since the beggining of the
+ * The position is returned as the number of seconds since the beginning of the
  * media file.
  */
 EAPI double       emotion_object_position_get          (const Evas_Object *obj);
