@@ -1043,7 +1043,7 @@
  * which will wooble 15 times and will decay by a factor of 1.2:
  * @until pos_map
  *
- * Now that we have the frame we can adjust the rectangle to its apropriate
+ * Now that we have the frame we can adjust the rectangle to its appropriate
  * state:
  * @until }
  *
@@ -1062,7 +1062,7 @@
  *
  * And for our last animation callback something simpler, we just move our
  * rectangle right by one pixel until it reaches the end of the screen and then
- * start at the beggining again:
+ * start at the beginning again:
  * @until }
  *
  * Our next two functions respectively freezes and thaw our third animation, so
@@ -1089,7 +1089,7 @@
  * Ecore Threads come in two flavors, short jobs and feedback jobs. Short jobs
  * just run the given function and are more commonly used for small tasks
  * where the main loop does not need to know how the work is going in between.
- * The short job in our example is so short we had to artifically enlarge it
+ * The short job in our example is so short we had to artificially enlarge it
  * with @c sleep(). Other than that, it also uses threads local data to keep
  * the data we are working with persistent across different jobs ran by the
  * same system thread. This data will be freed when the no more jobs are
@@ -1100,7 +1100,7 @@
  * part of the function checks in each iteration if it was cancelled by the
  * main loop, and if it was, it stops processing and clears the data from the
  * storage (we assume @c cancel means no one else will need this, but this is
- * really application dependant).
+ * really application dependent).
  * @dontinclude ecore_thread_example.c
  * @skip static void
  * @until sleep(1)

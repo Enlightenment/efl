@@ -22,7 +22,7 @@ _fd_handler_cb(void *data, Ecore_Fd_Handler *handler)
 
    if (ecore_main_fd_handler_active_get(handler, ECORE_FD_ERROR))
      {
-	printf("An error has occured. Stop watching this fd and quit.\n");
+	printf("An error has occurred. Stop watching this fd and quit.\n");
 	ecore_main_loop_quit();
 	ctxt->handler = NULL;
 	return ECORE_CALLBACK_CANCEL;

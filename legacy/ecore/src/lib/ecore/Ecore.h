@@ -1164,7 +1164,7 @@ extern "C" {
    * For example, if you have a program doing requisitions to a database,
    * these requisitions can be done in threads so that waiting for the
    * database to respond doesn't block the UI. Each of these threads will
-   * run a function, and each function will be dependant on a connection to
+   * run a function, and each function will be dependent on a connection to
    * the database, which may not be able to handle more than one request at
    * a time so for each running function you will need one connection handle.
    * The options then are:
