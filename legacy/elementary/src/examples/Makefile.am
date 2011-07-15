@@ -62,6 +62,8 @@ SRCS = \
 	fileselector_example.c \
 	fileselector_button_example.c \
 	fileselector_entry_example.c \
+	diskselector_example_01.c \
+	diskselector_example_02.c \
 	theme_example.edc
 
 pkglib_PROGRAMS =
@@ -112,6 +114,8 @@ pkglib_PROGRAMS += \
 	calendar_example_06 \
 	clock_example \
 	image_example_01 \
+	diskselector_example_01 \
+	diskselector_example_02 \
 	flipselector_example \
 	fileselector_example \
 	fileselector_button_example \
@@ -146,6 +150,8 @@ SCREENSHOTS = \
 	calendar_example_06:calendar_example_06.png:0.0 \
 	clock_example:clock_example.png:0.5 \
 	image_example_01:image_example_01.png:0.0 \
+	diskselector_example_01:diskselector_example_01.png:0.2 \
+	diskselector_example_02:diskselector_example_02.png:0.2 \
 	flipselector_example:flipselector_example.png:0.0 \
 	fileselector_example:fileselector_example.png:0.0
 

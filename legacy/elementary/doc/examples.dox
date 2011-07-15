@@ -32,6 +32,10 @@
  * @ref calendar_example_06
  *
  * @ref clock_example
+
+ * @ref diskselector_example_01
+ *
+ * @ref diskselector_example_02
  *
  * @ref flipselector_example
  *
@@ -1421,6 +1425,212 @@
  * See the full @ref clock_example_c "source code" for this example.
  *
  * @example clock_example.c
+ */
+
+/**
+ * @page diskselector_example_01 Diskselector widget example
+ *
+ * This code places 4 Elementary diskselector widgets on a window, each of
+ * them exemplifying a part of the widget's API.
+ *
+ * All of them will have weekdays as items, since we won't focus
+ * on items management on this example. For an example about this subject,
+ * check @ref diskselector_example_02.
+ *
+ * The first of them is a default diskselector.
+ * @dontinclude diskselector_example_01.c
+ * @skipline lbl
+ * @until }
+ * @skipline elm_diskselector_add
+ * @until evas_object_show
+ *
+ * We are just adding the diskselector, so as you can see, defaults for it are:
+ * @li Only 3 items visible each time.
+ * @li Only 3 characters are displayed for labels on side positions.
+ * @li The first added item remains centeres, i.e., it's the selected item.
+ *
+ * To add items, we are just appending it on a loop, using function
+ * elm_diskselector_item_append(), that will be better exaplained on
+ * items management example.
+ *
+ * For a circular diskselector, check the second widget. A circular
+ * diskselector will display first item after last, and last previous to
+ * the first one. So, as you can see, @b Sa will appears on left side
+ * of selected @b Sunday. This property is set with
+ * elm_diskselector_round_set().
+ *
+ * Also, we decide to display only 2 character for side labels, instead of 3.
+ * For this we call elm_diskselector_side_label_length_set(). As result,
+ * we'll see @b Mo displayed instead of @b Mon, when @b Monday is on a
+ * side position.
+ *
+ * @skipline elm_diskselector_add
+ * @until evas_object_show
+ *
+ * But so far, we are only displaying 3 items at once. If more are wanted,
+ * is enough to call elm_diskselector_display_item_num_set(), as you can
+ * see here:
+ * @skipline elm_diskselector_add
+ * @until evas_object_show
+ *
+ * @note You can't set less than 3 items to be displayed.
+ *
+ * Finally, if a bounce effect is required, or you would like to see
+ * scrollbars, it is possible. But, for default theme, diskselector
+ * scrollbars will be invisible anyway.
+ * @skipline elm_diskselector_add
+ * @until evas_object_show
+ *
+ * See the full @ref diskselector_example_01.c "diskselector_example_01.c"
+ * code, whose window should look like this picture:
+ * @image html screenshots/diskselector_example_01.png
+ * @image latex screenshots/diskselector_example_01.eps
+ *
+ * @example diskselector_example_01.c
+ */
+
+/**
+ * @page diskselector_example_02 Diskselector - Items management
+ *
+ * This code places a Elementary diskselector widgets on a window,
+ * along with some buttons trigerring actions on it (though its API).
+ * It covers most of Elm_Diskselector_Item functions.
+ *
+ * On our @c main function, we are adding a default diskselector with
+ * 3 items. We are only setting their labels (second parameter of function
+ * elm_diskselector_item_append):
+ * @dontinclude diskselector_example_02.c
+ * @skipline elm_diskselector_add
+ * @until Item 2
+ *
+ * Next we are adding lots of buttons, each one for a callback function
+ * that will realize a task covering part of diskselector items API.
+ * Lets check the first one:
+ * @skipline elm_button_add
+ * @until evas_object_show
+ *
+ * We are labeling the button with a task description with
+ * elm_object_text_set() and setting a callback
+ * function evas_object_smart_callback_add().
+ * Each callback function will have the signature:
+ * <tt> static void _task_cb(void *data, Evas_Object *obj,
+ * void *event_info)</tt> with the function name varying for each task.
+ *
+ * Now let's cover all of them.
+ *
+ * <b> Appending an item: </b>
+ * @dontinclude diskselector_example_02.c
+ * @skipline _add_cb
+ * @until }
+ *
+ * All items are included on diskselector after last one. You @b can't
+ * preprend items.
+ *
+ * The first parameter of elm_diskselector_item_append() is the diskselector
+ * object, that we are receiving as data on our callback function.
+ * The second one is a label, the string that will be placed in the center
+ * of our item. As we don't wan't icons or callback functions, we can
+ * send NULL as third, fourth and fifth parameters.
+ *
+ * <b> Appending an item with icon: </b>
+ * @dontinclude diskselector_example_02.c
+ * @skipline _add_ic_cb
+ * @until }
+ *
+ * If an icon is required, you can pass it as third paramenter on our
+ * elm_diskselector_item_append() function. It will be place on the
+ * left side of item's label, that will be shifted to right a bit.
+ *
+ * For more details about how to create icons, look for elm_icon examples.
+ *
+ * <b> Appending an item with callback function for selected: </b>
+ * @dontinclude diskselector_example_02.c
+ * @skipline _sel_cb
+ * @until }
+ * @until }
+ *
+ * To set a callback function that will be called every time an item is
+ * selected, i.e., everytime the diskselector stops with this item in
+ * center position, just pass the function as fourth paramenter.
+ *
+ * <b> Appending an item with callback function for selected with data: </b>
+ * @dontinclude diskselector_example_02.c
+ * @skipline _sel_data_cb
+ * @until }
+ * @until }
+ * @until }
+ * @until }
+ *
+ * If the callback function request an extra data, it can be attached to our
+ * item passing a pointer for data as fifth parameter.
+ * Our function _sel_data_cb will receive it as <tt> void *data </tt>.
+ *
+ * If you want to free this data, or handle that the way you need when the
+ * item is deleted, set a callback function for that, with
+ * elm_diskselector_item_del_cb_set().
+ *
+ * As you can see we check if @c it is not @c NULL after appending it.
+ * If an error happens, we won't try to set a function for it.
+ *
+ * <b> Deleting an item: </b>
+ * @dontinclude diskselector_example_02.c
+ * @skip _del_cb
+ * @skipline _del_cb
+ * @until }
+ *
+ * To delete an item we simple need to call elm_diskselector_item_del() with
+ * a pointer for such item.
+ *
+ * If you need, you can get selected item with
+ * elm_diskselector_selected_item_get(), that will return a pointer for it.
+ *
+ * <b> Unselecting an item: </b>
+ * @dontinclude diskselector_example_02.c
+ * @skipline _unselect_cb
+ * @until }
+ *
+ * To select an item, you should call elm_diskselector_item_selected_set()
+ * passing @c EINA_TRUE, and to unselect it, @c EINA_FALSE.
+ *
+ * If you unselect the selected item, diskselector will automatically select
+ * the first item.
+ *
+ * <b> Printing all items: </b>
+ * @dontinclude diskselector_example_02.c
+ * @skipline _print_cb
+ * @until }
+ *
+ * <b> Clearing the diskselector: </b>
+ * @dontinclude diskselector_example_02.c
+ * @skipline _clear_cb
+ * @until }
+ *
+ * <b> Selecting the first item: </b>
+ * @dontinclude diskselector_example_02.c
+ * @skipline _select_first_cb
+ * @until }
+ *
+ * <b> Selecting the last item: </b>
+ * @dontinclude diskselector_example_02.c
+ * @skipline _select_last_cb
+ * @until }
+ *
+ * <b> Selecting the next item: </b>
+ * @dontinclude diskselector_example_02.c
+ * @skipline _select_next_cb
+ * @until }
+ *
+ * <b> Selecting the previous item: </b>
+ * @dontinclude diskselector_example_02.c
+ * @skipline _select_prev_cb
+ * @until }
+ *
+ * See the full @ref diskselector_example_02.c "diskselector_example_02.c"
+ * code, whose window should look like this picture:
+ * @image html screenshots/diskselector_example_02.png
+ * @image latex screenshots/diskselector_example_02.eps
+ *
+ * @example diskselector_example_02.c
  */
 
 /**

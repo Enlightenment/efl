@@ -1,18 +1,3 @@
-/**
- * @defgroup Diskselector
- *
- * A diskselector is a kind of list widget. It scrolls horizontally,
- * and can contain label and icon objects. Three items are displayed
- * with the selected on the middle.
- *
- * It can act like a circular list with round mode and labels can be
- * reduced for a defined length for side items.
- *
- * Signals that you can add callbacks for are:
- *
- * "selected" - when item is selected (scroller stops)
- */
-
 #include <Elementary.h>
 #include "elm_priv.h"
 
@@ -767,14 +752,6 @@ _round_items_add(Widget_Data *wd)
      }
 }
 
-/**
- * Add a new diskselector object
- *
- * @param parent The parent object
- * @return The new object or NULL if it cannot be created
- *
- * @ingroup Diskselector
- */
 EAPI Evas_Object *
 elm_diskselector_add(Evas_Object *parent)
 {
@@ -859,17 +836,6 @@ elm_diskselector_add(Evas_Object *parent)
    return obj;
 }
 
-/**
- * Get round mode
- *
- * If round mode is activated the items list will work like a circle list,
- * so when the user reaches the last item, the first one will popup.
- *
- * @param obj The diskselector object
- * @return if or not set round mode or false if not a valid diskselector
- *
- * @ingroup Diskselector
- */
 EAPI Eina_Bool
 elm_diskselector_round_get(const Evas_Object *obj)
 {
@@ -879,17 +845,6 @@ elm_diskselector_round_get(const Evas_Object *obj)
    return wd->round;
 }
 
-/**
- * Set round mode
- *
- * If round mode is activated the items list will work like a circle list,
- * so when the user reaches the last item, the first one will popup.
- *
- * @param it The item of diskselector
- * @param if or not set round mode
- *
- * @ingroup Diskselector
- */
 EAPI void
 elm_diskselector_round_set(Evas_Object * obj, Eina_Bool round)
 {
@@ -947,15 +902,6 @@ elm_diskselector_round_set(Evas_Object * obj, Eina_Bool round)
    _sizing_eval(obj);
 }
 
-/**
- * Get the side labels max length
- *
- * @param obj The diskselector object
- * @return The max length defined for side labels, or 0 if not a valid
- * diskselector
- *
- * @ingroup Diskselector
- */
 EAPI int
 elm_diskselector_side_label_length_get(const Evas_Object *obj)
 {
@@ -965,14 +911,6 @@ elm_diskselector_side_label_length_get(const Evas_Object *obj)
    return wd->len_side;
 }
 
-/**
- * Set the side labels max length
- *
- * @param obj The diskselector object
- * @param len The max length defined for side labels
- *
- * @ingroup Diskselector
- */
 EAPI void
 elm_diskselector_side_label_length_set(Evas_Object *obj, int len)
 {
@@ -994,19 +932,6 @@ elm_diskselector_side_label_lenght_get(const Evas_Object *obj)
    return elm_diskselector_side_label_length_get(obj);
 }
 
-/**
- * Set bounce mode
- *
- * This will enable or disable the scroller bounce mode for the diskselector.
- * See elm_scroller_bounce_set() for details. Horizontal bounce is enabled by
- * default.
- *
- * @param obj The diskselector object
- * @param h_bounce Allow bounce horizontally
- * @param v_bounce Allow bounce vertically
- *
- * @ingroup Diskselector
- */
 EAPI void
 elm_diskselector_bounce_set(Evas_Object *obj, Eina_Bool h_bounce, Eina_Bool v_bounce)
 {
@@ -1017,15 +942,6 @@ elm_diskselector_bounce_set(Evas_Object *obj, Eina_Bool h_bounce, Eina_Bool v_bo
      elm_smart_scroller_bounce_allow_set(wd->scroller, h_bounce, v_bounce);
 }
 
-/**
- * Get the bounce mode
- *
- * @param obj The Diskselector object
- * @param h_bounce Allow bounce horizontally
- * @param v_bounce Allow bounce vertically
- *
- * @ingroup Diskselector
- */
 EAPI void
 elm_diskselector_bounce_get(const Evas_Object *obj, Eina_Bool *h_bounce, Eina_Bool *v_bounce)
 {
@@ -1034,23 +950,6 @@ elm_diskselector_bounce_get(const Evas_Object *obj, Eina_Bool *h_bounce, Eina_Bo
    if (!wd) return;
    elm_smart_scroller_bounce_allow_get(wd->scroller, h_bounce, v_bounce);
 }
-
-/**
- * Get the scrollbar policy
- *
- * This sets the scrollbar visibility policy for the given scroller.
- * ELM_SMART_SCROLLER_POLICY_AUTO means the scrollber is made visible if it
- * is needed, and otherwise kept hidden. ELM_SMART_SCROLLER_POLICY_ON turns
- * it on all the time, and ELM_SMART_SCROLLER_POLICY_OFF always keeps it off.
- * This applies respectively for the horizontal and vertical scrollbars.
- * The both are disabled by default.
- *
- * @param obj The diskselector object
- * @param policy_h Horizontal scrollbar policy
- * @param policy_v Vertical scrollbar policy
- *
- * @ingroup Diskselector
- */
 
 EAPI void
 elm_diskselector_scroller_policy_get(const Evas_Object *obj, Elm_Scroller_Policy *policy_h, Elm_Scroller_Policy *policy_v)
@@ -1064,23 +963,6 @@ elm_diskselector_scroller_policy_get(const Evas_Object *obj, Elm_Scroller_Policy
    *policy_v = (Elm_Scroller_Policy) s_policy_v;
 }
 
-
-/**
- * Set the scrollbar policy
- *
- * This sets the scrollbar visibility policy for the given scroller.
- * ELM_SMART_SCROLLER_POLICY_AUTO means the scrollber is made visible if it
- * is needed, and otherwise kept hidden. ELM_SMART_SCROLLER_POLICY_ON turns
- * it on all the time, and ELM_SMART_SCROLLER_POLICY_OFF always keeps it off.
- * This applies respectively for the horizontal and vertical scrollbars.
- * The both are disabled by default.
- *
- * @param obj The diskselector object
- * @param policy_h Horizontal scrollbar policy
- * @param policy_v Vertical scrollbar policy
- *
- * @ingroup Diskselector
- */
 EAPI void
 elm_diskselector_scroller_policy_set(Evas_Object *obj, Elm_Scroller_Policy policy_h, Elm_Scroller_Policy policy_v)
 {
@@ -1092,13 +974,6 @@ elm_diskselector_scroller_policy_set(Evas_Object *obj, Elm_Scroller_Policy polic
      elm_smart_scroller_policy_set(wd->scroller, policy_h, policy_v);
 }
 
-/**
- * Clears a diskselector of all items.
- *
- * @param obj The diskselector object
- *
- * @ingroup Diskselector
- */
 EAPI void
 elm_diskselector_clear(Evas_Object *obj)
 {
@@ -1115,14 +990,6 @@ elm_diskselector_clear(Evas_Object *obj)
    _sizing_eval(obj);
 }
 
-/**
- * Returns a list of all the diskselector items.
- *
- * @param obj The diskselector object
- * @return An Eina_List* of the diskselector items, or NULL on failure
- *
- * @ingroup Diskselector
- */
 EAPI const Eina_List *
 elm_diskselector_items_get(const Evas_Object *obj)
 {
@@ -1132,19 +999,6 @@ elm_diskselector_items_get(const Evas_Object *obj)
    return wd->items;
 }
 
-/**
- * Appends an item to the diskselector object.
- *
- * @param obj The diskselector object
- * @param label The label of the diskselector item
- * @param icon The icon object to use for the left side of the item
- * @param func The function to call when the item is selected
- * @param data The data to associate with the item for related callbacks
- *
- * @return The created item or NULL upon failure
- *
- * @ingroup Diskselector
- */
 EAPI Elm_Diskselector_Item *
 elm_diskselector_item_append(Evas_Object *obj, const char *label, Evas_Object *icon, Evas_Smart_Cb func, const void *data)
 {
@@ -1186,13 +1040,6 @@ elm_diskselector_item_append(Evas_Object *obj, const char *label, Evas_Object *i
    return it;
 }
 
-/**
- * Delete the item
- *
- * @param it The item of diskselector
- *
- * @ingroup Diskselector
- */
 EAPI void
 elm_diskselector_item_del(Elm_Diskselector_Item * it)
 {
@@ -1293,14 +1140,6 @@ elm_diskselector_item_del(Elm_Diskselector_Item * it)
    _sizing_eval(wd->self);
 }
 
-/**
- * Get the label of item
- *
- * @param it The item of diskselector
- * @return The label of item
- *
- * @ingroup Diskselector
- */
 EAPI const char *
 elm_diskselector_item_label_get(const Elm_Diskselector_Item * it)
 {
@@ -1308,14 +1147,6 @@ elm_diskselector_item_label_get(const Elm_Diskselector_Item * it)
    return it->label;
 }
 
-/**
- * Set the label of item
- *
- * @param it The item of diskselector
- * @param label The label of item
- *
- * @ingroup Diskselector
- */
 EAPI void
 elm_diskselector_item_label_set(Elm_Diskselector_Item * it, const char *label)
 {
@@ -1324,14 +1155,6 @@ elm_diskselector_item_label_set(Elm_Diskselector_Item * it, const char *label)
    edje_object_part_text_set(it->base.view, "elm.text", it->label);
 }
 
-/**
- * Get the selected item
- *
- * @param obj The diskselector object
- * @return The selected diskselector item
- *
- * @ingroup Diskselector
- */
 EAPI Elm_Diskselector_Item *
 elm_diskselector_selected_item_get(const Evas_Object *obj)
 {
@@ -1341,19 +1164,6 @@ elm_diskselector_selected_item_get(const Evas_Object *obj)
    return wd->selected_item;
 }
 
-/**
- * Set the selected state of an item
- *
- * This sets the selected state (EINA_TRUE selected, EINA_FALSE not selected)
- * of the given item @p it.
- * If a new item is selected the previosly selected will be unselected.
- * If the item @p it is unselected, the first item will be selected.
- *
- * @param it The diskselector item
- * @param selected The selected state
- *
- * @ingroup Diskselector
- */
 EAPI void
 elm_diskselector_item_selected_set(Elm_Diskselector_Item *it, Eina_Bool selected)
 {
@@ -1377,14 +1187,6 @@ elm_diskselector_item_selected_set(Elm_Diskselector_Item *it, Eina_Bool selected
      ecore_idler_add(_move_scroller, it->base.widget);
 }
 
-/*
- * Get the selected state of @p item.
- *
- * @param it The diskselector item
- * @return If true, the item is selected
- *
- * @ingroup Diskselector
- */
 EAPI Eina_Bool
 elm_diskselector_item_selected_get(const Elm_Diskselector_Item *it)
 {
@@ -1396,14 +1198,6 @@ elm_diskselector_item_selected_get(const Elm_Diskselector_Item *it)
    return (wd->selected_item == it);
 }
 
-/**
- * Set the function called when a diskselector item is freed.
- *
- * @param it The item to set the callback on
- * @param func The function called
- *
- * @ingroup Diskselector
- */
 EAPI void
 elm_diskselector_item_del_cb_set(Elm_Diskselector_Item *it, Evas_Smart_Cb func)
 {
@@ -1411,14 +1205,6 @@ elm_diskselector_item_del_cb_set(Elm_Diskselector_Item *it, Evas_Smart_Cb func)
    elm_widget_item_del_cb_set(it, func);
 }
 
-/**
- * Returns the data associated with the item.
- *
- * @param it The diskselector item
- * @return The data associated with @p it
- *
- * @ingroup Diskselector
- */
 EAPI void *
 elm_diskselector_item_data_get(const Elm_Diskselector_Item *it)
 {
@@ -1426,14 +1212,6 @@ elm_diskselector_item_data_get(const Elm_Diskselector_Item *it)
    return elm_widget_item_data_get(it);
 }
 
-/**
- * Returns the icon associated with the item.
- *
- * @param it The diskselector item
- * @return The icon associated with @p it
- *
- * @ingroup Diskselector
- */
 EAPI Evas_Object *
 elm_diskselector_item_icon_get(const Elm_Diskselector_Item *it)
 {
@@ -1441,18 +1219,6 @@ elm_diskselector_item_icon_get(const Elm_Diskselector_Item *it)
    return it->icon;
 }
 
-/**
- * Sets the icon associated with the item.
- *
- * Once the icon object is set, a previously set one will be deleted.
- * You probably don't want, then, to have the <b>same</b> icon object set
- * for more than one item of the diskselector.
- *
- * @param it The diskselector item
- * @param icon The icon object to associate with @p it
- *
- * @ingroup Diskselector
- */
 EAPI void
 elm_diskselector_item_icon_set(Elm_Diskselector_Item *it, Evas_Object *icon)
 {
@@ -1465,14 +1231,6 @@ elm_diskselector_item_icon_set(Elm_Diskselector_Item *it, Evas_Object *icon)
      edje_object_part_swallow(it->base.view, "elm.swallow.icon", icon);
 }
 
-/**
- * Gets the item before @p it in the list.
- *
- * @param it The diskselector item
- * @return The item before @p it, or NULL on failure
- *
- * @ingroup Diskselector
- */
 EAPI Elm_Diskselector_Item *
 elm_diskselector_item_prev_get(const Elm_Diskselector_Item *it)
 {
@@ -1481,14 +1239,6 @@ elm_diskselector_item_prev_get(const Elm_Diskselector_Item *it)
    else return NULL;
 }
 
-/**
- * Gets the item after @p it in the list.
- *
- * @param it The diskselector item
- * @return The item after @p it, or NULL on failure
- *
- * @ingroup Diskselector
- */
 EAPI Elm_Diskselector_Item *
 elm_diskselector_item_next_get(const Elm_Diskselector_Item *it)
 {
@@ -1497,14 +1247,6 @@ elm_diskselector_item_next_get(const Elm_Diskselector_Item *it)
    else return NULL;
 }
 
-/**
- * Get the first item in the diskselector
- *
- * @param obj The diskselector object
- * @return The first item, or NULL if none
- *
- * @ingroup Diskselector
- */
 EAPI Elm_Diskselector_Item *
 elm_diskselector_first_item_get(const Evas_Object *obj)
 {
@@ -1518,14 +1260,6 @@ elm_diskselector_first_item_get(const Evas_Object *obj)
    return eina_list_data_get(wd->items);
 }
 
-/**
- * Get the last item in the diskselector
- *
- * @param obj The diskselector object
- * @return The last item, or NULL if none
- *
- * @ingroup Diskselector
- */
 EAPI Elm_Diskselector_Item *
 elm_diskselector_last_item_get(const Evas_Object *obj)
 {
@@ -1539,17 +1273,6 @@ elm_diskselector_last_item_get(const Evas_Object *obj)
    return eina_list_data_get(eina_list_last(wd->items));
 }
 
-/**
- * Set the text to be shown in the diskselector item.
- *
- * @param item Target item
- * @param text The text to set in the content
- *
- * Setup the text as tooltip to object. The item can have only one tooltip,
- * so any previous tooltip data is removed.
- *
- * @ingroup Diskselector
- */
 EAPI void
 elm_diskselector_item_tooltip_text_set(Elm_Diskselector_Item *item, const char *text)
 {
@@ -1557,26 +1280,6 @@ elm_diskselector_item_tooltip_text_set(Elm_Diskselector_Item *item, const char *
    elm_widget_item_tooltip_text_set(item, text);
 }
 
-/**
- * Set the content to be shown in the tooltip item
- *
- * Setup the tooltip to item. The item can have only one tooltip,
- * so any previous tooltip data is removed. @p func(with @p data) will
- * be called every time that need show the tooltip and it should
- * return a valid Evas_Object. This object is then managed fully by
- * tooltip system and is deleted when the tooltip is gone.
- *
- * @param item the diskselector item being attached a tooltip.
- * @param func the function used to create the tooltip contents.
- * @param data what to provide to @a func as callback data/context.
- * @param del_cb called when data is not needed anymore, either when
- *        another callback replaces @func, the tooltip is unset with
- *        elm_diskselector_item_tooltip_unset() or the owner @a item
- *        dies. This callback receives as the first parameter the
- *        given @a data, and @c event_info is the item.
- *
- * @ingroup Diskselector
- */
 EAPI void
 elm_diskselector_item_tooltip_content_cb_set(Elm_Diskselector_Item *item, Elm_Tooltip_Item_Content_Cb func, const void *data, Evas_Smart_Cb del_cb)
 {
@@ -1584,19 +1287,6 @@ elm_diskselector_item_tooltip_content_cb_set(Elm_Diskselector_Item *item, Elm_To
    elm_widget_item_tooltip_content_cb_set(item, func, data, del_cb);
 }
 
-/**
- * Unset tooltip from item
- *
- * @param item diskselector item to remove previously set tooltip.
- *
- * Remove tooltip from item. The callback provided as del_cb to
- * elm_diskselector_item_tooltip_content_cb_set() will be called to notify
- * it is not used anymore.
- *
- * @see elm_diskselector_item_tooltip_content_cb_set()
- *
- * @ingroup Diskselector
- */
 EAPI void
 elm_diskselector_item_tooltip_unset(Elm_Diskselector_Item *item)
 {
@@ -1604,18 +1294,6 @@ elm_diskselector_item_tooltip_unset(Elm_Diskselector_Item *item)
    elm_widget_item_tooltip_unset(item);
 }
 
-/**
- * Sets a different style for this item tooltip.
- *
- * @note before you set a style you should define a tooltip with
- *       elm_diskselector_item_tooltip_content_cb_set() or
- *       elm_diskselector_item_tooltip_text_set()
- *
- * @param item diskselector item with tooltip already set.
- * @param style the theme style to use (default, transparent, ...)
- *
- * @ingroup Diskselector
- */
 EAPI void
 elm_diskselector_item_tooltip_style_set(Elm_Diskselector_Item *item, const char *style)
 {
@@ -1623,15 +1301,6 @@ elm_diskselector_item_tooltip_style_set(Elm_Diskselector_Item *item, const char 
    elm_widget_item_tooltip_style_set(item, style);
 }
 
-/**
- * Get the style for this item tooltip.
- *
- * @param item diskselector item with tooltip already set.
- * @return style the theme style in use, defaults to "default". If the
- *         object does not have a tooltip set, then NULL is returned.
- *
- * @ingroup Diskselector
- */
 EAPI const char *
 elm_diskselector_item_tooltip_style_get(const Elm_Diskselector_Item *item)
 {
@@ -1639,15 +1308,6 @@ elm_diskselector_item_tooltip_style_get(const Elm_Diskselector_Item *item)
    return elm_widget_item_tooltip_style_get(item);
 }
 
-/**
- * Set the cursor to be shown when mouse is over the diskselector item
- *
- * @param item Target item
- * @param cursor the cursor name to be used.
- *
- * @see elm_object_cursor_set()
- * @ingroup Diskselector
- */
 EAPI void
 elm_diskselector_item_cursor_set(Elm_Diskselector_Item *item, const char *cursor)
 {
@@ -1655,14 +1315,6 @@ elm_diskselector_item_cursor_set(Elm_Diskselector_Item *item, const char *cursor
    elm_widget_item_cursor_set(item, cursor);
 }
 
-/**
- * Get the cursor to be shown when mouse is over the diskselector item
- *
- * @param item diskselector item with cursor already set.
- * @return the cursor name.
- *
- * @ingroup Diskselector
- */
 EAPI const char *
 elm_diskselector_item_cursor_get(const Elm_Diskselector_Item *item)
 {
@@ -1670,14 +1322,6 @@ elm_diskselector_item_cursor_get(const Elm_Diskselector_Item *item)
    return elm_widget_item_cursor_get(item);
 }
 
-/**
- * Unset the cursor to be shown when mouse is over the diskselector item
- *
- * @param item Target item
- *
- * @see elm_object_cursor_unset()
- * @ingroup Diskselector
- */
 EAPI void
 elm_diskselector_item_cursor_unset(Elm_Diskselector_Item *item)
 {
@@ -1685,17 +1329,6 @@ elm_diskselector_item_cursor_unset(Elm_Diskselector_Item *item)
    elm_widget_item_cursor_unset(item);
 }
 
-/**
- * Sets a different style for this item cursor.
- *
- * @note before you set a style you should define a cursor with
- *       elm_diskselector_item_cursor_set()
- *
- * @param item diskselector item with cursor already set.
- * @param style the theme style to use (default, transparent, ...)
- *
- * @ingroup Diskselector
- */
 EAPI void
 elm_diskselector_item_cursor_style_set(Elm_Diskselector_Item *item, const char *style)
 {
@@ -1703,15 +1336,6 @@ elm_diskselector_item_cursor_style_set(Elm_Diskselector_Item *item, const char *
    elm_widget_item_cursor_style_set(item, style);
 }
 
-/**
- * Get the style for this item cursor.
- *
- * @param item diskselector item with cursor already set.
- * @return style the theme style in use, defaults to "default". If the
- *         object does not have a cursor set, then NULL is returned.
- *
- * @ingroup Diskselector
- */
 EAPI const char *
 elm_diskselector_item_cursor_style_get(const Elm_Diskselector_Item *item)
 {
@@ -1719,20 +1343,6 @@ elm_diskselector_item_cursor_style_get(const Elm_Diskselector_Item *item)
    return elm_widget_item_cursor_style_get(item);
 }
 
-/**
- * Set if the cursor set should be searched on the theme or should use
- * the provided by the engine, only.
- *
- * @note before you set if should look on theme you should define a cursor
- * with elm_object_cursor_set(). By default it will only look for cursors
- * provided by the engine.
- *
- * @param item widget item with cursor already set.
- * @param engine_only boolean to define it cursors should be looked only
- * between the provided by the engine or searched on widget's theme as well.
- *
- * @ingroup Diskselector
- */
 EAPI void
 elm_diskselector_item_cursor_engine_only_set(Elm_Diskselector_Item *item, Eina_Bool engine_only)
 {
@@ -1740,30 +1350,13 @@ elm_diskselector_item_cursor_engine_only_set(Elm_Diskselector_Item *item, Eina_B
    elm_widget_item_cursor_engine_only_set(item, engine_only);
 }
 
-/**
- * Get the cursor engine only usage for this item cursor.
- *
- * @param item widget item with cursor already set.
- * @return engine_only boolean to define it cursors should be looked only
- * between the provided by the engine or searched on widget's theme as well. If
- *         the object does not have a cursor set, then EINA_FALSE is returned.
- *
- * @ingroup Diskselector
- */
 EAPI Eina_Bool
 elm_diskselector_item_cursor_engine_only_get(const Elm_Diskselector_Item *item)
 {
    ELM_DISKSELECTOR_ITEM_CHECK_OR_RETURN(item, EINA_FALSE);
    return elm_widget_item_cursor_engine_only_get(item);
 }
-/**
- * Set the number of items to be displayed
- *
- * @param obj The diskselector object
- * @param num The number of itmes that diskselector will display
- *
- * @ingroup Diskselector
- */
+
 EAPI void
 elm_diskselector_display_item_num_set(Evas_Object *obj, int num)
 {
