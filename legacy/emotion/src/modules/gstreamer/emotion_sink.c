@@ -397,7 +397,10 @@ static void evas_video_sink_render_handler(void *data,
    // emotion smart (like on a file set).
    evas_object_image_size_get(priv->o, &w, &h);
    if (w != priv->width || h != priv->height)
-     return ;
+     goto exit_point;
+
+   ev = evas_object_data_get(priv->o, "_emotion_gstreamer_video");
+   if (!ev) goto exit_point;
 
    evas_data = (unsigned char *)evas_object_image_data_get(priv->o, 1);
 
@@ -509,7 +512,6 @@ static void evas_video_sink_render_handler(void *data,
    evas_object_image_data_set(priv->o, evas_data);
    evas_object_image_pixels_dirty_set(priv->o, 0);
 
-   ev = evas_object_data_get(priv->o, "_emotion_gstreamer_video");
    _emotion_frame_new(ev->obj);
 
    vstream = eina_list_nth(ev->video_streams, ev->video_stream_nbr - 1);
