@@ -153,7 +153,9 @@
  * The two lists, sharing some elements, can be represented by the following
  * picture:
  *
- * <img src="eina_inlist-node_eg2-list-inlist.png" width="100%"/>
+ * @htmlonly
+ * <img src="eina_inlist-node_eg2-list-inlist.png" style="max-width: 100%;"/>
+ * @endhtmlonly
  * @image rtf eina_inlist-node_eg2-list-inlist.png
  * @image latex eina_inlist-node_eg2-list-inlist.eps width=\textwidth
  *
@@ -227,7 +229,9 @@
  *
  * And the resulting lists will be as follow:
  *
- * <img src="eina_inlist-node_eg3-two-inlists.png" width="100%"/>
+ * @htmlonly
+ * <img src="eina_inlist-node_eg3-two-inlists.png" style="max-width: 100%;"/>
+ * @endhtmlonly
  * @image rtf eina_inlist-node_eg3-two-inlists.png
  * @image latex eina_inlist-node_eg3-two-inlists.eps width=\textwidth
  *
