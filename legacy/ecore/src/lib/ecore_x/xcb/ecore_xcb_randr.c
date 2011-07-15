@@ -1,3 +1,57 @@
+/* TODO: List of missing functions
+ * 
+ * ecore_x_randr_primary_output_set
+ * ecore_x_randr_current_output_get
+ * ecore_x_randr_current_crtc_get
+ * ecore_x_randr_crtc_pos_get
+ * ecore_x_randr_crtc_size_get
+ * ecore_x_randr_crtc_refresh_rate_get
+ * ecore_x_randr_crtc_orientations_get
+ * ecore_x_randr_crtc_orientation_set
+ * ecore_x_randr_crtc_clone_set
+ * ecore_x_randr_crtc_gamma_ramp_size_get
+ * ecore_x_randr_crtc_gamma_ramps_get
+ * ecore_x_randr_crtc_gamma_ramps_set
+ * ecore_x_randr_mode_size_get
+ * ecore_x_randr_output_size_mm_get
+ * ecore_x_randr_output_crtc_set
+ * ecore_x_randr_edid_valid_header
+ * ecore_x_randr_edid_version_get
+ * ecore_x_randr_edid_info_has_valid_checksum
+ * ecore_x_randr_edid_manufacturer_name_get
+ * ecore_x_randr_edid_display_name_get
+ * ecore_x_randr_edid_display_ascii_get
+ * ecore_x_randr_edid_display_serial_get
+ * ecore_x_randr_edid_model_get
+ * ecore_x_randr_edid_manufacturer_serial_number_get
+ * ecore_x_randr_edid_manufacturer_model_get
+ * ecore_x_randr_edid_dpms_available_get
+ * ecore_x_randr_edid_dpms_standby_available_get
+ * ecore_x_randr_edid_dpms_suspend_available_get
+ * ecore_x_randr_edid_dpms_off_available_get
+ * ecore_x_randr_edid_display_aspect_ratio_preferred_get
+ * ecore_x_randr_edid_display_aspect_ratios_get
+ * ecore_x_randr_edid_display_colorscheme_get
+ * ecore_x_randr_edid_display_type_digital_get
+ * ecore_x_randr_edid_display_interface_type_get
+ * ecore_x_randr_screen_backlight_level_set
+ * ecore_x_randr_primary_output_set
+ * ecore_x_randr_output_subpixel_order_get
+ * ecore_x_randr_output_wired_clones_get
+ * ecore_x_randr_output_compatibility_list_get
+ * ecore_x_randr_output_signal_formats_get
+ * ecore_x_randr_output_signal_format_set
+ * ecore_x_randr_output_signal_properties_get
+ * ecore_x_randr_output_connector_number_get
+ * ecore_x_randr_output_connector_type_get
+ * ecore_x_randr_crtc_panning_area_get
+ * ecore_x_randr_crtc_panning_area_set
+ * ecore_x_randr_crtc_tracking_area_get
+ * ecore_x_randr_crtc_tracking_area_set
+ * ecore_x_randr_crtc_border_area_get
+ * ecore_x_randr_crtc_border_area_set
+ */
+
 #include "ecore_xcb_private.h"
 # ifdef ECORE_XCB_RANDR
 #  include <xcb/randr.h>
@@ -646,8 +700,7 @@ ecore_x_randr_mode_info_get(Ecore_X_Window root, Ecore_X_Randr_Mode mode)
    reply = xcb_randr_get_screen_resources_reply(_ecore_xcb_conn, cookie, NULL);
    if (reply) 
      {
-        ret = malloc(sizeof(Ecore_X_Randr_Mode_Info));
-        if (ret) 
+        if ((ret = malloc(sizeof(Ecore_X_Randr_Mode_Info))))
           {
              uint8_t *nbuf;
              xcb_randr_mode_info_iterator_t miter;
@@ -690,6 +743,83 @@ ecore_x_randr_mode_info_get(Ecore_X_Window root, Ecore_X_Randr_Mode mode)
                }
           }
 
+        free(reply);
+     }
+#endif
+   return ret;
+}
+
+EAPI Ecore_X_Randr_Mode_Info **
+ecore_x_randr_modes_info_get(Ecore_X_Window root, int *num) 
+{
+   Ecore_X_Randr_Mode_Info **ret = NULL;
+#ifdef ECORE_XCB_RANDR
+   xcb_randr_get_screen_resources_cookie_t cookie;
+   xcb_randr_get_screen_resources_reply_t *reply;
+#endif
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   if (num) *num = 0;
+
+#ifdef ECORE_XCB_RANDR
+   if (!_ecore_xcb_randr_root_validate(root)) return NULL;
+
+   cookie = xcb_randr_get_screen_resources_unchecked(_ecore_xcb_conn, root);
+   reply = xcb_randr_get_screen_resources_reply(_ecore_xcb_conn, cookie, NULL);
+   if (reply) 
+     {
+        if (num) *num = reply->num_modes;
+        ret = malloc(sizeof(Ecore_X_Randr_Mode_Info *) * reply->num_modes);
+        if (ret) 
+          {
+             xcb_randr_mode_info_iterator_t miter;
+             int i = 0;
+             uint8_t *nbuf;
+
+             nbuf = xcb_randr_get_screen_resources_names(reply);
+             miter = xcb_randr_get_screen_resources_modes_iterator(reply);
+             while (miter.rem) 
+               {
+                  xcb_randr_mode_info_t *minfo;
+
+                  minfo = miter.data;
+                  nbuf += minfo->name_len;
+                  if ((ret[i] = malloc(sizeof(Ecore_X_Randr_Mode_Info)))) 
+                    {
+                       ret[i]->xid = minfo->id;
+                       ret[i]->width = minfo->width;
+                       ret[i]->height = minfo->height;
+                       ret[i]->dotClock = minfo->dot_clock;
+                       ret[i]->hSyncStart = minfo->hsync_start;
+                       ret[i]->hSyncEnd = minfo->hsync_end;
+                       ret[i]->hTotal = minfo->htotal;
+                       ret[i]->vSyncStart = minfo->vsync_start;
+                       ret[i]->vSyncEnd = minfo->vsync_end;
+                       ret[i]->vTotal = minfo->vtotal;
+                       ret[i]->modeFlags = minfo->mode_flags;
+
+                       ret[i]->name = NULL;
+                       ret[i]->nameLength = minfo->name_len;
+                       if (ret[i]->nameLength > 0) 
+                         {
+                            ret[i]->name = malloc(ret[i]->nameLength + 1);
+                            if (ret[i]->name) 
+                              memcpy(ret[i]->name, nbuf, ret[i]->nameLength + 1);
+                         }
+                    }
+                  else 
+                    {
+                       while (i > 0) 
+                         free(ret[--i]);
+                       free(ret);
+                       ret = NULL;
+                       break;
+                    }
+                  i++;
+                  xcb_randr_mode_info_next(&miter);
+               }
+          }
         free(reply);
      }
 #endif
