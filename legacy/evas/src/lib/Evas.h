@@ -1310,7 +1310,7 @@ EAPI void              evas_damage_rectangle_add         (Evas *e, int x, int y,
  * this rendering (partial) freeze is something else (most problaby
  * other canvas) being on top of the specified rectangular region,
  * thus shading it completely from the user's final scene in a
- * display. To avoid unecessary processing, one should indicate to the
+ * display. To avoid unnecessary processing, one should indicate to the
  * obscured canvas not to bother about the non-important area.
  *
  * The majority of users won't have to worry about this funcion, as
@@ -2959,7 +2959,7 @@ EAPI short             evas_object_layer_get             (const Evas_Object *obj
  * @param   obj  The given object.
  * @param   name The given name.
  *
- * There might be ocasions where one would like to name his/her
+ * There might be occasions where one would like to name his/her
  * objects.
  *
  * Example:
@@ -3895,7 +3895,7 @@ EAPI Eina_Bool         evas_object_propagate_events_get   (const Evas_Object *ob
  * change (position and size) to reflect the map geometry set.
  *
  * If the object doesn't have a map set (with evas_object_map_set()), the
- * initial geometry will be undefined. It is adviced to always set a map
+ * initial geometry will be undefined. It is advised to always set a map
  * to the object first, and then call this function to enable its use.
  *
  * @param obj object to enable the map on
@@ -6616,7 +6616,7 @@ EAPI Evas_Object             *evas_object_image_source_get             (Evas_Obj
 EAPI Eina_Bool                evas_object_image_source_unset           (Evas_Object *obj) EINA_ARG_NONNULL(1);
 
 /**
- * Check if a file extention may be supported by @ref Evas_Object_Image.
+ * Check if a file extension may be supported by @ref Evas_Object_Image.
  *
  * @param file The file to check
  * @return EINA_TRUE if we may be able to opeen it, EINA_FALSE if it's unlikely.
@@ -6629,7 +6629,7 @@ EAPI Eina_Bool                evas_object_image_source_unset           (Evas_Obj
 EAPI Eina_Bool evas_object_image_extension_can_load_get(const char *file);
 
 /**
- * Check if a file extention may be supported by @ref Evas_Object_Image.
+ * Check if a file extension may be supported by @ref Evas_Object_Image.
  *
  * @param file The file to check, it should be an Eina_Stringshare.
  * @return EINA_TRUE if we may be able to opeen it, EINA_FALSE if it's unlikely.
@@ -6850,7 +6850,7 @@ EAPI const char       *evas_object_text_bidi_delimiters_get(const Evas_Object *o
  * @param cw	A pointer to an @c Evas_Coord to store the Width value in (can be NULL).
  * @param ch	A pointer to an @c Evas_Coord to store the Height value in (can be NULL).
  *
- * @returns EINA_FALSE on sucess, EINA_TRUE on error.
+ * @returns EINA_FALSE on success, EINA_TRUE on error.
  */
 EAPI Eina_Bool         evas_object_text_char_pos_get     (const Evas_Object *obj, int pos, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch) EINA_ARG_NONNULL(1);
    EAPI int               evas_object_text_char_coords_get  (const Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch) EINA_ARG_NONNULL(1);
