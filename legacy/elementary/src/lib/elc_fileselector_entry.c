@@ -1,18 +1,6 @@
 #include <Elementary.h>
 #include "elm_priv.h"
 
- /**
- * @defgroup File_Selector_Entry File Selector Entry
- *
- * An entry that shows to enter/display path and have an associated
- * button to allow selecting the file from a dialog.
- *
- * The button, when clicked, creates an Elementary window (or inner
- * window) with an Elementary File Selector within. When a file is
- * chosen, the (inner) window is closed and the selected file is
- * exposed as an evas_object_smart_callback_call() of the button.
- */
-
 typedef struct _Widget_Data Widget_Data;
 
 struct _Widget_Data
@@ -232,14 +220,6 @@ _elm_fileselector_entry_button_label_get(const Evas_Object *obj, const char *ite
    return elm_object_text_get(wd->button);
 }
 
-/**
- * Add a new file selector entry into the parent object.
- *
- * @param parent The parent object
- * @return The new object or NULL if it cannot be created
- *
- * @ingroup File_Selector_Entry
- */
 EAPI Evas_Object *
 elm_fileselector_entry_add(Evas_Object *parent)
 {
@@ -318,15 +298,6 @@ elm_fileselector_entry_add(Evas_Object *parent)
    return obj;
 }
 
-/**
- * Set the label used in the file selector entry.
- *
- * @param obj The entry object
- * @param label The text label text to be displayed on the entry
- *
- * @ingroup File_Selector_Entry
- * @deprecated use elm_object_text_set() instead.
- */
 EAPI void
 elm_fileselector_entry_button_label_set(Evas_Object *obj, const char *label)
 {
@@ -339,16 +310,6 @@ elm_fileselector_entry_button_label_get(const Evas_Object *obj)
    return _elm_fileselector_entry_button_label_get(obj, NULL);
 }
 
-/**
- * Set the path to start the entry's file selector with, when clicked.
- *
- * @param obj The entry object
- * @param path Path to a file/directory
- *
- * Default path is "HOME" environment variable's value.
- *
- * @ingroup File_Selector_Entry
- */
 EAPI void
 elm_fileselector_entry_selected_set(Evas_Object *obj, const char *path)
 {
@@ -358,16 +319,6 @@ elm_fileselector_entry_selected_set(Evas_Object *obj, const char *path)
    elm_fileselector_button_path_set(wd->button, path);
 }
 
-/**
- * Get the <b>last</b> path which the entry's file selector was set to.
- *
- * @param obj The entry object
- * @param path Path to a file/directory
- *
- * Default path is "HOME" environment variable's value.
- *
- * @ingroup File_Selector_Entry
- */
 EAPI const char *
 elm_fileselector_entry_selected_get(const Evas_Object *obj)
 {
@@ -377,17 +328,6 @@ elm_fileselector_entry_selected_get(const Evas_Object *obj)
    return elm_fileselector_button_path_get(wd->button);
 }
 
-/**
- * Set the title of the file selector entry's window.
- *
- * @param obj The entry object
- * @param title The title string
- *
- * Note that it will only take any effect if the fileselector entry
- * not at "inwin mode".
- *
- * @ingroup File_Selector_Entry
- */
 EAPI void
 elm_fileselector_entry_window_title_set(Evas_Object *obj, const char *title)
 {
@@ -397,13 +337,6 @@ elm_fileselector_entry_window_title_set(Evas_Object *obj, const char *title)
    elm_fileselector_button_window_title_set(wd->button, title);
 }
 
-/**
- * Get the title of the file selector entry's window.
- *
- * @param obj The entry object
- *
- * @ingroup File_Selector_Entry
- */
 EAPI const char *
 elm_fileselector_entry_window_title_get(const Evas_Object *obj)
 {
@@ -413,18 +346,6 @@ elm_fileselector_entry_window_title_get(const Evas_Object *obj)
    return elm_fileselector_button_window_title_get(wd->button);
 }
 
-/**
- * Set the size of the file selector entry's window.
- *
- * @param obj The entry object
- * @param width The width
- * @param height The height
- *
- * Note that it will only take any effect if the fileselector entry not at
- * "inwin mode". Default size for the window (when applicable) is 400x400.
- *
- * @ingroup File_Selector_Entry
- */
 EAPI void
 elm_fileselector_entry_window_size_set(Evas_Object *obj, Evas_Coord width, Evas_Coord height)
 {
@@ -434,15 +355,6 @@ elm_fileselector_entry_window_size_set(Evas_Object *obj, Evas_Coord width, Evas_
    elm_fileselector_button_window_size_set(wd->button, width, height);
 }
 
-/**
- * Get the size of the file selector entry's window.
- *
- * @param obj The entry object
- * @param width Pointer into which to store the width value
- * @param height Pointer into which to store the height value
- *
- * @ingroup File_Selector_Entry
- */
 EAPI void
 elm_fileselector_entry_window_size_get(const Evas_Object *obj, Evas_Coord *width, Evas_Coord *height)
 {
@@ -452,16 +364,6 @@ elm_fileselector_entry_window_size_get(const Evas_Object *obj, Evas_Coord *width
    elm_fileselector_button_window_size_get(wd->button, width, height);
 }
 
-/**
- * Set the starting path of the file selector entry's window.
- *
- * @param obj The entry object
- * @param path The path string
- *
- * It must be a <b>directory</b> path.
- *
- * @ingroup File_Selector_Entry
- */
 EAPI void
 elm_fileselector_entry_path_set(Evas_Object *obj, const char *path)
 {
@@ -472,13 +374,6 @@ elm_fileselector_entry_path_set(Evas_Object *obj, const char *path)
    elm_entry_entry_set(wd->entry, path);
 }
 
-/**
- * Get the <b>last</b> path of the file selector entry's window.
- *
- * @param obj The entry object
- *
- * @ingroup File_Selector_Entry
- */
 EAPI const char *
 elm_fileselector_entry_path_get(const Evas_Object *obj)
 {
@@ -488,17 +383,6 @@ elm_fileselector_entry_path_get(const Evas_Object *obj)
    return elm_entry_entry_get(wd->entry);
 }
 
-/**
- * Set whether the entry's file selector is to present itself as an
- * Elementary Generic List (which will expand its entries for nested
- * directories) or as canonical list, which will be rendered again
- * with the contents of each selected directory.
- *
- * @param obj The entry object
- * @param value The expandable flag
- *
- * @ingroup File_Selector_Entry
- */
 EAPI void
 elm_fileselector_entry_expandable_set(Evas_Object *obj, Eina_Bool value)
 {
@@ -508,14 +392,6 @@ elm_fileselector_entry_expandable_set(Evas_Object *obj, Eina_Bool value)
    elm_fileselector_button_expandable_set(wd->button, value);
 }
 
-/**
- * Get the entry's file selector expandable flag.
- *
- * @param obj The entry object
- * @return value The expandable flag
- *
- * @ingroup File_Selector_Entry
- */
 EAPI Eina_Bool
 elm_fileselector_entry_expandable_get(const Evas_Object *obj)
 {
@@ -525,15 +401,6 @@ elm_fileselector_entry_expandable_get(const Evas_Object *obj)
    return elm_fileselector_button_expandable_get(wd->button);
 }
 
-/**
- * Set whether the entry's file selector list is to display folders
- * only or the directory contents, as well.
- *
- * @param obj The entry object
- * @param value The "folder only" flag
- *
- * @ingroup File_Selector_Entry
- */
 EAPI void
 elm_fileselector_entry_folder_only_set(Evas_Object *obj, Eina_Bool value)
 {
@@ -543,14 +410,6 @@ elm_fileselector_entry_folder_only_set(Evas_Object *obj, Eina_Bool value)
    elm_fileselector_button_folder_only_set(wd->button, value);
 }
 
-/**
- * Get the entry's file selector "folder only" flag.
- *
- * @param obj The entry object
- * @return value The "folder only" flag
- *
- * @ingroup File_Selector_Entry
- */
 EAPI Eina_Bool
 elm_fileselector_entry_folder_only_get(const Evas_Object *obj)
 {
@@ -560,15 +419,6 @@ elm_fileselector_entry_folder_only_get(const Evas_Object *obj)
    return elm_fileselector_button_folder_only_get(wd->button);
 }
 
-/**
- * Set whether the entry's file selector has an editable text entry
- * which will hold its current selection.
- *
- * @param obj The entry object
- * @param value The "is save" flag
- *
- * @ingroup File_Selector_Entry
- */
 EAPI void
 elm_fileselector_entry_is_save_set(Evas_Object *obj, Eina_Bool value)
 {
@@ -578,14 +428,6 @@ elm_fileselector_entry_is_save_set(Evas_Object *obj, Eina_Bool value)
    elm_fileselector_button_is_save_set(wd->button, value);
 }
 
-/**
- * Get the entry's file selector "is save" flag.
- *
- * @param obj The entry object
- * @return value The "is save" flag
- *
- * @ingroup File_Selector_Entry
- */
 EAPI Eina_Bool
 elm_fileselector_entry_is_save_get(const Evas_Object *obj)
 {
@@ -595,16 +437,6 @@ elm_fileselector_entry_is_save_get(const Evas_Object *obj)
    return elm_fileselector_button_is_save_get(wd->button);
 }
 
-/**
- * Set whether the entry's file selector will raise an Elementary
- * Inner Window, instead of a dedicated Elementary Window. By default,
- * it won't.
- *
- * @param obj The entry object
- * @param value The "inwin mode" flag
- *
- * @ingroup File_Selector_Entry
- */
 EAPI void
 elm_fileselector_entry_inwin_mode_set(Evas_Object *obj, Eina_Bool value)
 {
@@ -614,14 +446,6 @@ elm_fileselector_entry_inwin_mode_set(Evas_Object *obj, Eina_Bool value)
    elm_fileselector_button_inwin_mode_set(wd->button, value);
 }
 
-/**
- * Get the entry's file selector "inwin mode" flag.
- *
- * @param obj The entry object
- * @return value The "inwin mode" flag
- *
- * @ingroup File_Selector_Entry
- */
 EAPI Eina_Bool
 elm_fileselector_entry_inwin_mode_get(const Evas_Object *obj)
 {
@@ -631,16 +455,6 @@ elm_fileselector_entry_inwin_mode_get(const Evas_Object *obj)
    return elm_fileselector_button_inwin_mode_get(wd->button);
 }
 
-/**
- * Set the icon used for the entry button
- *
- * Once the icon object is set, a previously set one will be deleted.
- *
- * @param obj The entry object
- * @param icon  The image for the entry
- *
- * @ingroup File_Selector_Entry
- */
 EAPI void
 elm_fileselector_entry_button_icon_set(Evas_Object *obj, Evas_Object *icon)
 {
@@ -650,14 +464,6 @@ elm_fileselector_entry_button_icon_set(Evas_Object *obj, Evas_Object *icon)
    elm_fileselector_button_icon_set(wd->button, icon);
 }
 
-/**
- * Get the icon used for the entry button
- *
- * @param obj The entry object
- * @return The image for the entry
- *
- * @ingroup File_Selector_Entry
- */
 EAPI Evas_Object *
 elm_fileselector_entry_button_icon_get(const Evas_Object *obj)
 {
@@ -667,16 +473,6 @@ elm_fileselector_entry_button_icon_get(const Evas_Object *obj)
    return elm_fileselector_button_icon_get(wd->button);
 }
 
-/**
- * Unset the icon used for the entry button
- *
- * Unparent and return the icon object which was set for this widget.
- *
- * @param obj The entry object
- * @return The icon object that was being used
- *
- * @ingroup File_Selector_Entry
- */
 EAPI Evas_Object *
 elm_fileselector_entry_button_icon_unset(Evas_Object *obj)
 {

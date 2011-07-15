@@ -36,6 +36,10 @@
  * @ref flipselector_example
  *
  * @ref fileselector_example
+ *
+ * @ref fileselector_button_example
+ *
+ * @ref fileselector_entry_example
  */
 
 /**
@@ -1414,6 +1418,8 @@
  * @image html screenshots/clock_example.png
  * @image latex screenshots/clock_example.eps
  *
+ * See the full @ref clock_example_c "source code" for this example.
+ *
  * @example clock_example.c
  */
 
@@ -1470,6 +1476,8 @@
  * look like this picture:
  * @image html screenshots/flipselector_example.png
  * @image latex screenshots/flipselector_example.eps
+ *
+ * See the full @ref flipselector_example_c "source code" for this example.
  *
  * @example flipselector_example.c
  */
@@ -1544,6 +1552,8 @@
  * @image html screenshots/fileselector_example.png
  * @image latex screenshots/fileselector_example.eps
  *
+ * See the full @ref fileselector_example_c "source code" for this example.
+ *
  * @example fileselector_example.c
  */
 
@@ -1607,11 +1617,86 @@
  * @image html screenshots/fileselector_button_example_03.png
  * @image latex screenshots/fileselector_button_example_03.eps
  *
- * The other checkboxes there have straightforward meanings. Play with
- * them to get the behavior, their respective API calls on the file
- * selector button where shown in the code.
+ * Play with the checkboxes to get the behavior changes on the file
+ * selector button. The respective API calls on the widget coming from
+ * those knobs where shown in the code already.
+ *
+ * See the full @ref fileselector_button_example_c "source code" for
+ * this example.
  *
  * @example fileselector_button_example.c
+ */
+
+/**
+ * @page fileselector_entry_example File selector entry widget example
+ *
+ * This code places an Elementary file selector entry widget on a
+ * window, along with some other checkboxes. Those are there just as
+ * knobs on the file selector entry's state.
+ *
+ * Here's how we instantiate it:
+ * @dontinclude fileselector_entry_example.c
+ * @skip ic = elm_icon_add
+ * @until evas_object_show
+ *
+ * Note that we set on it's button both icon and label
+ * decorations. It's set to exhibit the path of (and list the contents
+ * of, when internal file selector is launched) the @c "/tmp"
+ * directory, also, with elm_fileselector_entry_path_set(). What
+ * follows are checkboxes to exercise some of its API funtions:
+ * @dontinclude fileselector_entry_example.c
+ * @skip ck = elm_check_add
+ * @until callback_add(fs_entry
+ *
+ * The checkboxes will toggle whether the file selector entry's
+ * internal file selector:
+ * - must have an editable text entry for file names (thus, be in
+ *   "save dialog mode")
+ * - is to be raised as an "inner window" (note it's the default
+ *   behavior) or as a dedicated window
+ * - is to populate its view with folders only
+ * - is to expand its folders, in its view, <b>in place</b>, and not
+ *   repainting it entirely just with the contents of a sole
+ *   directory.
+ *
+ * Observe how the entry's text will match the string coming from the
+ * @c "file,chosen" smart event:
+ * @dontinclude fileselector_entry_example.c
+ * @skip hook on the
+ * @until }
+ * Whenever you dismiss or acknowledges the file selector, after it's
+ * raised, the @c event_info string will contain the last selection on
+ * it (if any was made).
+ *
+ * Try, also, to type in a valid system path and, then, open the file
+ * selector's window: it will start the file browsing there, for you.
+ *
+ * This is how the example, just after called, should look like:
+ * @image html screenshots/fileselector_entry_example_00.png
+ * @image latex screenshots/fileselector_entry_example_00.eps
+ *
+ * Click on the file selector entry to raise its internal file
+ * selector, which will be contained on an <b>"inner window"</b>:
+ * @image html screenshots/fileselector_entry_example_01.png
+ * @image latex screenshots/fileselector_entry_example_01.eps
+ *
+ * Toggle the "inwin mode" switch off and, if you click on the file
+ * selector entry again, you'll get @b two windows, the original one
+ * (note the last selection there!)
+ * @image html screenshots/fileselector_entry_example_02.png
+ * @image latex screenshots/fileselector_entry_example_02.eps
+ * and the file selector's new one
+ * @image html screenshots/fileselector_entry_example_03.png
+ * @image latex screenshots/fileselector_entry_example_03.eps
+ *
+ * Play with the checkboxes to get the behavior changes on the file
+ * selector entry. The respective API calls on the widget coming from
+ * those knobs where shown in the code already.
+ *
+ * See the full @ref fileselector_entry_example_c "source code" for
+ * this example.
+ *
+ * @example fileselector_entry_example.c
  */
 
 /**
@@ -1939,4 +2024,34 @@
  * @page general_functions_example_c General (top-level) functions example
  * @include general_funcs_example.c
  * @example general_funcs_example.c
+ */
+
+/**
+ * @page clock_example_c Clock example
+ * @include clock_example.c
+ * @example clock_example.c
+ */
+
+/**
+ * @page flipselector_example_c Flipselector example
+ * @include flipselector_example.c
+ * @example flipselector_example.c
+ */
+
+/**
+ * @page fileselector_example_c Fileselector example
+ * @include fileselector_example.c
+ * @example fileselector_example.c
+ */
+
+/**
+ * @page fileselector_button_example_c Fileselector button example
+ * @include fileselector_button_example.c
+ * @example fileselector_button_example.c
+ */
+
+/**
+ * @page fileselector_entry_example_c Fileselector entry example
+ * @include fileselector_entry_example.c
+ * @example fileselector_entry_example.c
  */

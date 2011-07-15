@@ -61,6 +61,7 @@ SRCS = \
 	flipselector_example.c \
 	fileselector_example.c \
 	fileselector_button_example.c \
+	fileselector_entry_example.c \
 	theme_example.edc
 
 pkglib_PROGRAMS =
@@ -114,6 +115,7 @@ pkglib_PROGRAMS += \
 	flipselector_example \
 	fileselector_example \
 	fileselector_button_example \
+	fileselector_entry_example \
 	theme_example.edj
 
 # This variable will hold the list of screenshots that will be made
