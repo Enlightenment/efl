@@ -919,7 +919,7 @@ eet_internal_read2(Eet_File *ef)
         int hash;
         int flag;
 
-        /* out directory block is inconsistent - we have oveerun our */
+        /* out directory block is inconsistent - we have overrun our */
         /* dynamic block buffer before we finished scanning dir entries */
         efn = malloc(sizeof(Eet_File_Node));
         if (eet_test_close(!efn, ef))
@@ -1179,7 +1179,7 @@ eet_internal_read1(Eet_File *ef)
 
 #define HEADER_SIZE (sizeof(int) * 5)
 
-        /* out directory block is inconsistent - we have oveerun our */
+        /* out directory block is inconsistent - we have overrun our */
         /* dynamic block buffer before we finished scanning dir entries */
         if (eet_test_close(p + HEADER_SIZE >= (dyn_buf + byte_entries), ef))
            return NULL;

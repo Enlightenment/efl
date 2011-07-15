@@ -56,7 +56,7 @@ create_eet_file(void)
    eet_write(ef, "/several/strings", buf, sizeof(buf), 1);
    eet_sync(ef);
 
-   eet_write(ef, "/some/misterious/data", some_data, sizeof(some_data) - 1, 1);
+   eet_write(ef, "/some/mysterious/data", some_data, sizeof(some_data) - 1, 1);
 
    eet_delete(ef, "/several/strings");
 
@@ -100,7 +100,7 @@ main(void)
        free(ret);
     }
 
-  ret = eet_read(ef, "/some/misterious/data", &size);
+  ret = eet_read(ef, "/some/mysterious/data", &size);
   if (ret)
     {
        Eet_File *ef2;
@@ -108,10 +108,10 @@ main(void)
        ef2 = eet_memopen_read(ret, size);
 
        num = eet_num_entries(ef2);
-       printf("Misterious data has %d entries\n", num);
+       printf("Mysterious data has %d entries\n", num);
 
-       printf("Misterious data:\n%s\n",
-              (char *)eet_read_direct(ef2, "/misterious/data", NULL));
+       printf("Mysterious data:\n%s\n",
+              (char *)eet_read_direct(ef2, "/mysterious/data", NULL));
 
        eet_close(ef2);
 
