@@ -141,6 +141,10 @@ typedef void (*Eina_Accessor_Free_Callback)(Eina_Accessor *it);
  */
 typedef Eina_Bool (*Eina_Accessor_Lock_Callback)(Eina_Accessor *it);
 
+/**
+ * @struct _Eina_Accessor
+ * Type to provide random access to data structures.
+ */
 struct _Eina_Accessor
 {
 #define EINA_ACCESSOR_VERSION 1

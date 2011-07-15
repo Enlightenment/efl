@@ -7,6 +7,10 @@
 #include "eina_magic.h"
 #include "eina_strbuf.h"
 
+/**
+ * @struct _Eina_Strbuf
+ * String buffer to facilitate string operations.
+ */
 struct _Eina_Strbuf
 {
    void *buf;
