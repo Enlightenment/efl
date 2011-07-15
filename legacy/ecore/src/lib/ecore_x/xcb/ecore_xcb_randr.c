@@ -1,11 +1,5 @@
 /* TODO: List of missing functions
  * 
- * ecore_x_randr_primary_output_set
- * ecore_x_randr_current_output_get
- * ecore_x_randr_current_crtc_get
- * ecore_x_randr_crtc_pos_get
- * ecore_x_randr_crtc_size_get
- * ecore_x_randr_crtc_refresh_rate_get
  * ecore_x_randr_crtc_orientations_get
  * ecore_x_randr_crtc_orientation_set
  * ecore_x_randr_crtc_clone_set
@@ -35,7 +29,6 @@
  * ecore_x_randr_edid_display_type_digital_get
  * ecore_x_randr_edid_display_interface_type_get
  * ecore_x_randr_screen_backlight_level_set
- * ecore_x_randr_primary_output_set
  * ecore_x_randr_output_subpixel_order_get
  * ecore_x_randr_output_wired_clones_get
  * ecore_x_randr_output_compatibility_list_get
@@ -628,6 +621,21 @@ ecore_x_randr_primary_output_get(Ecore_X_Window root)
    return ret;
 }
 
+/*
+ * @param root window which's screen should be queried
+ * @param output that should be set as given root window's screen primary output
+ */
+EAPI void 
+ecore_x_randr_primary_output_set(Ecore_X_Window root, Ecore_X_Randr_Output output) 
+{
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+#ifdef ECORE_XCB_RANDR
+   if ((output) && (_ecore_xcb_randr_root_validate(root))) 
+     xcb_randr_set_output_primary(_ecore_xcb_conn, root, output);
+#endif
+}
+
 EAPI Ecore_X_Randr_Mode *
 ecore_x_randr_output_modes_get(Ecore_X_Window root, Ecore_X_Randr_Output output, int *num, int *npreferred) 
 {
@@ -749,6 +757,12 @@ ecore_x_randr_mode_info_get(Ecore_X_Window root, Ecore_X_Randr_Mode mode)
    return ret;
 }
 
+/*
+ * @brief get detailed information for all modes related to a root window's screen
+ * @param root window which's screen's ressources are queried
+ * @param num number of modes returned
+ * @return modes' information
+ */
 EAPI Ecore_X_Randr_Mode_Info **
 ecore_x_randr_modes_info_get(Ecore_X_Window root, int *num) 
 {
@@ -1628,6 +1642,16 @@ ecore_x_randr_move_all_crtcs_but(Ecore_X_Window root, const Ecore_X_Randr_Crtc *
    return ret;
 }
 
+EAPI void 
+ecore_x_randr_crtc_pos_get(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc, int *x, int *y) 
+{
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+#ifdef ECORE_XCB_RANDR
+   ecore_x_randr_crtc_geometry_get(root, crtc, x, y, NULL, NULL);
+#endif
+}
+
 /*
  * @brief sets the position of given CRTC within root window's screen
  * @param root the window's screen to be queried
@@ -1667,6 +1691,58 @@ ecore_x_randr_crtc_pos_set(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc, int x, 
    ret = ecore_x_randr_crtc_settings_set(root, crtc, NULL, -1, x, y, -1, -1);
 #endif
 
+   return ret;
+}
+
+EAPI void 
+ecore_x_randr_crtc_size_get(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc, int *w, int *h) 
+{
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+#ifdef ECORE_XCB_RANDR
+   ecore_x_randr_crtc_geometry_get(root, crtc, NULL, NULL, w, h);
+#endif
+}
+
+EAPI Ecore_X_Randr_Refresh_Rate 
+ecore_x_randr_crtc_refresh_rate_get(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc, Ecore_X_Randr_Mode mode) 
+{
+   Ecore_X_Randr_Refresh_Rate ret = 0.0;
+#ifdef ECORE_XCB_RANDR
+   xcb_randr_get_screen_resources_cookie_t cookie;
+   xcb_randr_get_screen_resources_reply_t *reply;
+#endif
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+#ifdef ECORE_XCB_RANDR
+   if (!_ecore_xcb_randr_crtc_validate(root, crtc)) return 0.0;
+   cookie = xcb_randr_get_screen_resources_unchecked(_ecore_xcb_conn, root);
+   reply = xcb_randr_get_screen_resources_reply(_ecore_xcb_conn, cookie, NULL);
+   if (reply) 
+     {
+        xcb_randr_mode_info_iterator_t miter;
+
+        miter = xcb_randr_get_screen_resources_modes_iterator(reply);
+        while (miter.rem) 
+          {
+             xcb_randr_mode_info_t *minfo;
+
+             minfo = miter.data;
+             if (minfo->id == mode) 
+               {
+                  if ((minfo->htotal) && (minfo->vtotal)) 
+                    {
+                       ret = ((double)minfo->dot_clock / 
+                              ((double)minfo->htotal * (double)minfo->vtotal));
+                    }
+                  break;
+               }
+             xcb_randr_mode_info_next(&miter);
+          }
+        free(reply);
+     }
+#endif
    return ret;
 }
 
@@ -1722,12 +1798,10 @@ ecore_x_randr_move_crtcs(Ecore_X_Window root, const Ecore_X_Randr_Crtc *crtcs, i
                       ((oreply[i]->x + oreply[i]->width + dx) > mw) || 
                       ((oreply[i]->y + oreply[i]->height + dy) > mh)) 
                     {
-//                       free(oreply[i]);
                        continue;
                     }
                   nw = MAX((int)(oreply[i]->x + oreply[i]->width + dx), nw);
                   nh = MAX((int)(oreply[i]->y + oreply[i]->height + dy), nh);
-//                  free(oreply);
                }
           }
         free(reply);
