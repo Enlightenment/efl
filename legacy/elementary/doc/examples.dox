@@ -1548,6 +1548,73 @@
  */
 
 /**
+ * @page fileselector_button_example File selector button widget example
+ *
+ * This code places an Elementary file selector button widget on a
+ * window, along with some other checkboxes and a text entry. Those
+ * are there just as knobs on the file selector button's state and to
+ * display information from it.
+ *
+ * Here's how we instantiate it:
+ * @dontinclude fileselector_button_example.c
+ * @skip ic = elm_icon_add
+ * @until evas_object_show
+ *
+ * Note that we set on it both icon and label decorations. It's set to
+ * list the contents of the @c "/tmp" directory, too, with
+ * elm_fileselector_button_path_set(). What follows are checkboxes to
+ * exercise some of its API funtions:
+ * @dontinclude fileselector_button_example.c
+ * @skip ck = elm_check_add
+ * @until evas_object_show(en)
+ *
+ * The checkboxes will toggle whether the file selector button's
+ * internal file selector:
+ * - must have an editable text entry for file names (thus, be in
+ *   "save dialog mode")
+ * - is to be raised as an "inner window" (note it's the default
+ *   behavior) or as a dedicated window
+ * - is to populate its view with folders only
+ * - is to expand its folders, in its view, <b>in place</b>, and not
+ *   repainting it entirely just with the contents of a sole
+ *   directory.
+ *
+ * The entry labeled @c "Last selection" will exercise the @c
+ * "file,chosen" smart event coming from the file selector button:
+ * @dontinclude fileselector_button_example.c
+ * @skip hook on the
+ * @until toggle inwin
+ *
+ * Whenever you dismiss or acknowledges the file selector, after it's
+ * raised, the @c event_info string will contain the last selection on
+ * it (if any was made).
+ *
+ * This is how the example, just after called, should look like:
+ * @image html screenshots/fileselector_button_example_00.png
+ * @image latex screenshots/fileselector_button_example_00.eps
+ *
+ * Click on the file selector button to raise its internal file
+ * selector, which will be contained on an <b>"inner window"</b>:
+ * @image html screenshots/fileselector_button_example_01.png
+ * @image latex screenshots/fileselector_button_example_01.eps
+ *
+ * Toggle the "inwin mode" switch off and, if you click on the file
+ * selector button again, you'll get @b two windows, the original one
+ * (note the last selection there!)
+ * @image html screenshots/fileselector_button_example_02.png
+ * @image latex screenshots/fileselector_button_example_02.eps
+ * and the file selector's new one
+ * @image html screenshots/fileselector_button_example_03.png
+ * @image latex screenshots/fileselector_button_example_03.eps
+ *
+ * The other checkboxes there have straightforward meanings. Play with
+ * them to get the behavior, their respective API calls on the file
+ * selector button where shown in the code.
+ *
+ * @example fileselector_button_example.c
+ */
+
+/**
  * @page tutorial_hover Hover example
  * @dontinclude hover_example_01.c
  *

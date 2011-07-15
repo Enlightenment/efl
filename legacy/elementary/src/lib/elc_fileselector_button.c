@@ -1,21 +1,6 @@
 #include <Elementary.h>
 #include "elm_priv.h"
 
-/**
- * @defgroup File_Selector_Button File Selector Button
- *
- * A button that, when clicked, creates an Elementary window (or inner
- * window) with an Elementary File Selector within. When a file is
- * chosen, the (inner) window is closed and the selected file is
- * exposed as an evas_object_smart_callback_call() of the button.
- *
- * Signals that you can add callbacks for are:
- *
- * "file,chosen" - the user has selected a path, whose string pointer comes
- *                 as event info
- *
- */
-
 typedef struct _Widget_Data Widget_Data;
 
 struct _Widget_Data
@@ -275,14 +260,6 @@ _elm_fileselector_button_label_get(const Evas_Object *obj, const char *item)
    return elm_object_text_get(wd->btn);
 }
 
-/**
- * Add a new file selector button into the parent object.
- *
- * @param parent The parent object
- * @return The new object or NULL if it cannot be created
- *
- * @ingroup File_Selector_Button
- */
 EAPI Evas_Object *
 elm_fileselector_button_add(Evas_Object *parent)
 {
@@ -327,15 +304,6 @@ elm_fileselector_button_add(Evas_Object *parent)
    return obj;
 }
 
-/**
- * Set the label used in the file selector button.
- *
- * @param obj The button object
- * @param label The text label text to be displayed on the button
- *
- * @ingroup File_Selector_Button
- * @deprecated use elm_object_text_set() instead.
- */
 EAPI void
 elm_fileselector_button_label_set(Evas_Object *obj,
                                   const char  *label)
@@ -343,32 +311,12 @@ elm_fileselector_button_label_set(Evas_Object *obj,
    _elm_fileselector_button_label_set(obj, NULL, label);
 }
 
-/**
- * Get the label used in the file selector button.
- *
- * @param obj The button object
- * @return The button label
- *
- * @ingroup File_Selector_Button
- * @deprecated use elm_object_text_set() instead.
- */
 EAPI const char *
 elm_fileselector_button_label_get(const Evas_Object *obj)
 {
    return _elm_fileselector_button_label_get(obj, NULL);
 }
 
-/**
- * Set the title of the file selector button's window.
- *
- * @param obj The button object
- * @param title The title string
- *
- * Note that it will only take any effect if the fileselector button
- * not at "inwin mode".
- *
- * @ingroup File_Selector_Button
- */
 EAPI void
 elm_fileselector_button_window_title_set(Evas_Object *obj,
                                          const char  *title)
@@ -383,14 +331,6 @@ elm_fileselector_button_window_title_set(Evas_Object *obj,
      elm_win_title_set(wd->fsw, wd->window_title);
 }
 
-/**
- * Get the title of the file selector button's window.
- *
- * @param obj The button object
- * @return Title of the file selector button's window
- *
- * @ingroup File_Selector_Button
- */
 EAPI const char *
 elm_fileselector_button_window_title_get(const Evas_Object *obj)
 {
@@ -401,18 +341,6 @@ elm_fileselector_button_window_title_get(const Evas_Object *obj)
    return wd->window_title;
 }
 
-/**
- * Set the size of the file selector button's window.
- *
- * @param obj The button object
- * @param width The width
- * @param height The height
- *
- * Note that it will only take any effect if the fileselector button not at
- * "inwin mode". Default size for the window (when applicable) is 400x400.
- *
- * @ingroup File_Selector_Button
- */
 EAPI void
 elm_fileselector_button_window_size_set(Evas_Object *obj,
                                         Evas_Coord   width,
@@ -429,15 +357,6 @@ elm_fileselector_button_window_size_set(Evas_Object *obj,
      evas_object_resize(wd->fsw, wd->w, wd->h);
 }
 
-/**
- * Get the size of the file selector button's window.
- *
- * @param obj The button object
- * @param width Pointer into which to store the width value
- * @param height Pointer into which to store the height value
- *
- * @ingroup File_Selector_Button
- */
 EAPI void
 elm_fileselector_button_window_size_get(const Evas_Object *obj,
                                         Evas_Coord        *width,
@@ -451,17 +370,6 @@ elm_fileselector_button_window_size_get(const Evas_Object *obj,
    if (height) *height = wd->h;
 }
 
-/**
- * Set the starting path of the file selector button's window.
- *
- * @param obj The button object
- * @param path The path string
- *
- * It must be a <b>directory</b> path.
- * Default path is "HOME" environment variable's value.
- *
- * @ingroup File_Selector_Button
- */
 EAPI void
 elm_fileselector_button_path_set(Evas_Object *obj,
                                  const char  *path)
@@ -476,13 +384,6 @@ elm_fileselector_button_path_set(Evas_Object *obj,
      elm_fileselector_selected_set(wd->fs, wd->fsd.path);
 }
 
-/**
- * Get the <b>last</b> path of the file selector button's window.
- *
- * @param obj The button object
- *
- * @ingroup File_Selector_Button
- */
 EAPI const char *
 elm_fileselector_button_path_get(const Evas_Object *obj)
 {
@@ -492,17 +393,6 @@ elm_fileselector_button_path_get(const Evas_Object *obj)
    return wd->fsd.path;
 }
 
-/**
- * Set whether the button's file selector is to present itself as an
- * Elementary Generic List (which will expand its entries for nested
- * directories) or as canonical list, which will be rendered again
- * with the contents of each selected directory.
- *
- * @param obj The button object
- * @param value The expandable flag
- *
- * @ingroup File_Selector_Button
- */
 EAPI void
 elm_fileselector_button_expandable_set(Evas_Object *obj,
                                        Eina_Bool    value)
@@ -517,14 +407,6 @@ elm_fileselector_button_expandable_set(Evas_Object *obj,
      elm_fileselector_expandable_set(wd->fs, wd->fsd.expandable);
 }
 
-/**
- * Get the button's file selector expandable flag.
- *
- * @param obj The button object
- * @return value The expandable flag
- *
- * @ingroup File_Selector_Button
- */
 EAPI Eina_Bool
 elm_fileselector_button_expandable_get(const Evas_Object *obj)
 {
@@ -535,15 +417,6 @@ elm_fileselector_button_expandable_get(const Evas_Object *obj)
    return wd->fsd.expandable;
 }
 
-/**
- * Set whether the button's file selector list is to display folders
- * only or the directory contents, as well.
- *
- * @param obj The button object
- * @param value The "folder only" flag
- *
- * @ingroup File_Selector_Button
- */
 EAPI void
 elm_fileselector_button_folder_only_set(Evas_Object *obj,
                                         Eina_Bool    value)
@@ -558,14 +431,6 @@ elm_fileselector_button_folder_only_set(Evas_Object *obj,
      elm_fileselector_folder_only_set(wd->fs, wd->fsd.folder_only);
 }
 
-/**
- * Get the button's file selector "folder only" flag.
- *
- * @param obj The button object
- * @return value The "folder only" flag
- *
- * @ingroup File_Selector_Button
- */
 EAPI Eina_Bool
 elm_fileselector_button_folder_only_get(const Evas_Object *obj)
 {
@@ -576,15 +441,6 @@ elm_fileselector_button_folder_only_get(const Evas_Object *obj)
    return wd->fsd.folder_only;
 }
 
-/**
- * Set whether the button's file selector has an editable text entry
- * which will hold its current selection.
- *
- * @param obj The button object
- * @param value The "is save" flag
- *
- * @ingroup File_Selector_Button
- */
 EAPI void
 elm_fileselector_button_is_save_set(Evas_Object *obj,
                                     Eina_Bool    value)
@@ -599,14 +455,6 @@ elm_fileselector_button_is_save_set(Evas_Object *obj,
      elm_fileselector_is_save_set(wd->fs, wd->fsd.is_save);
 }
 
-/**
- * Get the button's file selector "is save" flag.
- *
- * @param obj The button object
- * @return value The "is save" flag
- *
- * @ingroup File_Selector_Button
- */
 EAPI Eina_Bool
 elm_fileselector_button_is_save_get(const Evas_Object *obj)
 {
@@ -617,16 +465,6 @@ elm_fileselector_button_is_save_get(const Evas_Object *obj)
    return wd->fsd.is_save;
 }
 
-/**
- * Set whether the button's file selector will raise an Elementary
- * Inner Window, instead of a dedicated Elementary Window. By default,
- * it won't.
- *
- * @param obj The button object
- * @param value The "inwin mode" flag
- *
- * @ingroup File_Selector_Button
- */
 EAPI void
 elm_fileselector_button_inwin_mode_set(Evas_Object *obj,
                                        Eina_Bool    value)
@@ -638,14 +476,6 @@ elm_fileselector_button_inwin_mode_set(Evas_Object *obj,
    wd->inwin_mode = value;
 }
 
-/**
- * Get the button's file selector "inwin mode" flag.
- *
- * @param obj The button object
- * @return value The "inwin mode" flag
- *
- * @ingroup File_Selector_Button
- */
 EAPI Eina_Bool
 elm_fileselector_button_inwin_mode_get(const Evas_Object *obj)
 {
@@ -656,18 +486,6 @@ elm_fileselector_button_inwin_mode_get(const Evas_Object *obj)
    return wd->inwin_mode;
 }
 
-/**
- * Set the icon used for the button
- *
- * Once the icon object is set, a previously set one will be deleted.
- * If you want to keep that old content object, use the
- * elm_fileselector_button_icon_unset() function.
- *
- * @param obj The button object
- * @param icon  The icon object for the button
- *
- * @ingroup File_Selector_Button
- */
 EAPI void
 elm_fileselector_button_icon_set(Evas_Object *obj,
                                  Evas_Object *icon)
@@ -682,14 +500,6 @@ elm_fileselector_button_icon_set(Evas_Object *obj,
    elm_button_icon_set(wd->btn, icon);
 }
 
-/**
- * Get the icon used for the button
- *
- * @param obj The button object
- * @return The icon object that is being used
- *
- * @ingroup File_Selector_Button
- */
 EAPI Evas_Object *
 elm_fileselector_button_icon_get(const Evas_Object *obj)
 {
@@ -699,16 +509,6 @@ elm_fileselector_button_icon_get(const Evas_Object *obj)
    return elm_button_icon_get(wd->btn);
 }
 
-/**
- * Unset the icon used for the button
- *
- * Unparent and return the icon object which was set for this widget.
- *
- * @param obj The button object
- * @return The icon object that was being used
- *
- * @ingroup File_Selector_Button
- */
 EAPI Evas_Object *
 elm_fileselector_button_icon_unset(Evas_Object *obj)
 {
