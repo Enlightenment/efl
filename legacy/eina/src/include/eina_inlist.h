@@ -52,7 +52,7 @@
  * @until }
  *
  * The @ref Eina_Inlist can be used exactly the same way as @ref Eina_List when
- * appending, prepend and removing items. But since we already have the node
+ * appending, prepending and removing items. But since we already have the node
  * pointers inside the structure, they need to be retrieved with the macro @ref
  * EINA_INLIST_GET :
  *
@@ -270,17 +270,17 @@
  */
 
 /**
- * @page eina_inlist_01_c eina_inlist_01.c
+ * @page eina_inlist_01_c eina_inlist_01.c Eina_Inlist basic usage source
  * @include eina_inlist_01.c
  */
 
 /**
- * @page eina_inlist_02_c eina_inlist_02.c
+ * @page eina_inlist_02_c eina_inlist_02.c Eina_Inlist advanced usage - lists and inlists source
  * @include eina_inlist_02.c
  */
 
 /**
- * @page eina_inlist_03_c eina_inlist_03.c
+ * @page eina_inlist_03_c eina_inlist_03.c Eina_Inlist advanced usage - multi-inlists source
  * @include eina_inlist_03.c
  */
 
