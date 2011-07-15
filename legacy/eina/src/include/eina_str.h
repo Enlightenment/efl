@@ -18,7 +18,7 @@
  * eina:
  * @until eina_init
  *
- * It's frequentely nescessary to split a string into it's constituent parts,
+ * It's frequentely necessary to split a string into its constituent parts,
  * eina_str_split() make's it easy to do so:
  * @until printf
  *
@@ -32,7 +32,7 @@
  * @until Has
  *
  * When strings will be used in a terminal(or a number of other places) it
- * nescessary to escape certain characters that appear in them:
+ * necessary to escape certain characters that appear in them:
  * @until printf
  *
  * Much as we previously split a string we will now join two strings:

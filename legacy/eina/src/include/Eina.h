@@ -61,7 +61,7 @@
  *
  * The Eina library is a library that implements an API for data types
  * in an efficient way. It also provides some useful tools like
- * openin shared libraries, errors management, type conversion,
+ * opening shared libraries, errors management, type conversion,
  * time accounting and memory pool.
  *
  * This library is cross-platform and can be compiled and used on

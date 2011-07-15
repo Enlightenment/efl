@@ -290,7 +290,7 @@ EAPI void        eina_array_step_set(Eina_Array  *array,
  * @param array The array to clean.
  *
  * This function sets the count member of @p array to 0, however it doesn't free
- * any space. This is particularly usefull if you need to empty the array and
+ * any space. This is particularly useful if you need to empty the array and
  * add lots of elements quickly. For performance reasons, there is no check of
  * @p array. If it is @c NULL or invalid, the program may crash.
  */

@@ -20,7 +20,7 @@
  *
  * Here you can see two different ways of creating a buffer with the same
  * contents. We could create them in simpler ways, but this gives us an
- * oportunity to demonstrate several functions in action:
+ * opportunity to demonstrate several functions in action:
  * @until strbuf_reset
  * @until strbuf_reset
  *

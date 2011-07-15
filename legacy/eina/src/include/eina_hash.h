@@ -228,7 +228,7 @@
  *
  * Basically for a very small number of keys (10 or less), @c djb2 should be
  * used, or @c string_small if you have a restriction on memory usage. And for a
- * higher number of keys, @c string_superfast should be always prefered.
+ * higher number of keys, @c string_superfast should be always preferred.
  *
  * If just stringshared keys are being added, use @ref
  * eina_hash_stringshared_new. If a lot of keys will be added to the hash table

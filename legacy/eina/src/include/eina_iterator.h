@@ -255,7 +255,7 @@ EAPI void eina_iterator_foreach(Eina_Iterator *iterator,
  *
  * If the container of the @p iterator permits it, it will be locked. When a
  * container is locked calling eina_iterator_foreach() on it will return
- * imediately. If @p iterator is @c NULL or if a problem occurred, #EINA_FALSE
+ * immediately. If @p iterator is @c NULL or if a problem occurred, #EINA_FALSE
  * is returned, otherwise #EINA_TRUE is returned. If the container isn't
  * lockable, it will return EINA_TRUE.
  *

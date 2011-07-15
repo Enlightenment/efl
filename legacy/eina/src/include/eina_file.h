@@ -31,7 +31,7 @@
  * @page eina_file_example_01_page
  * @dontinclude eina_file_01.c
  *
- * For brevity includes, variable declarations and initialization was ommited
+ * For brevity includes, variable declarations and initialization was omitted
  * from this page, however the full source code can be seen @ref
  * eina_file_example_01 "here".
  *
