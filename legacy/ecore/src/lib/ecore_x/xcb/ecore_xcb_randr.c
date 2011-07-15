@@ -1,12 +1,6 @@
 /* TODO: List of missing functions
  * 
- * ecore_x_randr_crtc_orientations_get
- * ecore_x_randr_crtc_orientation_set
  * ecore_x_randr_crtc_clone_set
- * ecore_x_randr_crtc_gamma_ramp_size_get
- * ecore_x_randr_crtc_gamma_ramps_get
- * ecore_x_randr_crtc_gamma_ramps_set
- * ecore_x_randr_mode_size_get
  * ecore_x_randr_output_size_mm_get
  * ecore_x_randr_output_crtc_set
  * ecore_x_randr_edid_valid_header
@@ -841,6 +835,49 @@ ecore_x_randr_modes_info_get(Ecore_X_Window root, int *num)
 }
 
 /**
+ * @brief gets the width and hight of a given mode
+ * @param mode the mode which's size is to be looked up
+ * @param w width of given mode in px
+ * @param h height of given mode in px
+ */
+EAPI void 
+ecore_x_randr_mode_size_get(Ecore_X_Window root, Ecore_X_Randr_Mode mode, int *w, int *h) 
+{
+#ifdef ECORE_XCB_RANDR
+   xcb_randr_get_screen_resources_cookie_t cookie;
+   xcb_randr_get_screen_resources_reply_t *reply;
+#endif
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+#ifdef ECORE_XCB_RANDR
+   if (mode == Ecore_X_Randr_None) return;
+   cookie = xcb_randr_get_screen_resources_unchecked(_ecore_xcb_conn, root);
+   reply = xcb_randr_get_screen_resources_reply(_ecore_xcb_conn, cookie, NULL);
+   if (reply) 
+     {
+        xcb_randr_mode_info_iterator_t miter;
+
+        miter = xcb_randr_get_screen_resources_modes_iterator(reply);
+        while (miter.rem) 
+          {
+             xcb_randr_mode_info_t *minfo;
+
+             minfo = miter.data;
+             if (minfo->id == mode) 
+               {
+                  if (w) *w = minfo->width;
+                  if (h) *h = minfo->height;
+                  break;
+               }
+             xcb_randr_mode_info_next(&miter);
+          }
+        free(reply);
+     }
+#endif
+}
+
+/**
  * @brief gets the EDID information of an attached output if available.
  * Note that this information is not to be compared using ordinary string
  * comparison functions, since it includes 0-bytes.
@@ -1338,6 +1375,64 @@ ecore_x_randr_crtc_orientation_get(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc)
         if (oreply) 
           {
              ret = oreply->rotation;
+             free(oreply);
+          }
+        free(reply);
+     }
+#endif
+
+   return ret;
+}
+
+EAPI Eina_Bool 
+ecore_x_randr_crtc_orientation_set(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc, Ecore_X_Randr_Orientation orientation) 
+{
+   Eina_Bool ret = EINA_FALSE;
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+#ifdef ECORE_XCB_RANDR
+   if (orientation != Ecore_X_Randr_None) 
+     {
+        ret = 
+          ecore_x_randr_crtc_settings_set(root, crtc, NULL, 
+                                          Ecore_X_Randr_Unset, Ecore_X_Randr_Unset, 
+                                          Ecore_X_Randr_Unset, Ecore_X_Randr_Unset, 
+                                          orientation);
+     }
+#endif
+   return ret;
+}
+
+EAPI Ecore_X_Randr_Orientation 
+ecore_x_randr_crtc_orientations_get(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc) 
+{
+   Ecore_X_Randr_Orientation ret = Ecore_X_Randr_None;
+#ifdef ECORE_XCB_RANDR
+   xcb_randr_get_screen_resources_cookie_t cookie;
+   xcb_randr_get_screen_resources_reply_t *reply;
+#endif
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+#ifdef ECORE_XCB_RANDR
+   if (!_ecore_xcb_randr_crtc_validate(root, crtc)) return ret;
+
+   cookie = xcb_randr_get_screen_resources_unchecked(_ecore_xcb_conn, root);
+   reply = xcb_randr_get_screen_resources_reply(_ecore_xcb_conn, cookie, NULL);
+   if (reply) 
+     {
+        xcb_randr_get_crtc_info_cookie_t ocookie;
+        xcb_randr_get_crtc_info_reply_t *oreply;
+
+        ocookie = 
+          xcb_randr_get_crtc_info_unchecked(_ecore_xcb_conn, crtc, 
+                                            reply->config_timestamp);
+        oreply = 
+          xcb_randr_get_crtc_info_reply(_ecore_xcb_conn, ocookie, NULL);
+        if (oreply) 
+          {
+             ret = oreply->rotations;
              free(oreply);
           }
         free(reply);
