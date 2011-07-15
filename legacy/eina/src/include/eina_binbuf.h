@@ -13,8 +13,6 @@
  *
  * The Binary Buffer data type is designed to be a mutable string,
  * allowing to append, prepend or insert a string to a buffer.
- *
- * @{
  */
 
 /**
@@ -207,10 +205,6 @@ EAPI void eina_binbuf_string_free(Eina_Binbuf *buf) EINA_ARG_NONNULL(1);
  * This function returns the length of @p buf.
  */
 EAPI size_t    eina_binbuf_length_get(const Eina_Binbuf *buf) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
-
-/**
- * @}
- */
 
 /**
  * @}

@@ -2,7 +2,7 @@
 #define EINA_PREFIX_H_
 
 /**
- * @addtogroup Eina_Prefix_Group Group
+ * @addtogroup Eina_Prefix_Group Prefix Group
  *
  * @brief These functions provide the ability to determine the runtime
  * location of a software package

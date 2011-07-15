@@ -29,8 +29,6 @@
  * set of macro do provide helper that will force to use the
  * correct code in most case and reduce the bug likeliness.
  * Of course this without affecting speed !
- *
- * @{
  */
 
 /**
@@ -66,10 +64,6 @@ typedef int Eina_Refcount;
 
 /** Get refcounting value */
 #define EINA_REFCOUNT_GET(Variable) (Variable)->__refcount
-
-/**
- * @}
- */
 
 /**
  * @}

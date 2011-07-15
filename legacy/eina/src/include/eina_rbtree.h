@@ -35,8 +35,6 @@
  * http://eternallyconfuzzled.com/tuts/datastructures/jsw_tut_rbtree.aspx . The
  * main difference is that this set of function never allocate any data, making
  * them particularly useful for memory management.
- *
- * @{
  */
 
 /**
@@ -257,10 +255,6 @@ EAPI Eina_Iterator        *eina_rbtree_iterator_infix(const Eina_Rbtree *root) E
 EAPI Eina_Iterator        *eina_rbtree_iterator_postfix(const Eina_Rbtree *root) EINA_MALLOC EINA_WARN_UNUSED_RESULT;
 
 #include "eina_inline_rbtree.x"
-
-/**
- * @}
- */
 
 /**
  * @}

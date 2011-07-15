@@ -71,8 +71,6 @@
  * memory.
  *
  * For more information, you can look at the @ref tutorial_binshare_page.
- *
- * @{
  */
 
 /**
@@ -183,10 +181,6 @@ EAPI void        eina_binshare_dump(void);
  * @see eina_stringshare_add_length()
  */
 #define eina_binshare_add(ptr) eina_binshare_add_length(ptr, sizeof(*ptr))
-
-/**
- * @}
- */
 
 /**
  * @}

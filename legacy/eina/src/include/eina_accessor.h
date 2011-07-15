@@ -93,8 +93,6 @@
  * chosen elements of a container, use eina_accessor_over().
  *
  * See an example @ref eina_accessor_example_01_page "here".
- *
- * @{
  */
 
 /**
@@ -330,10 +328,6 @@ EAPI Eina_Bool eina_accessor_unlock(Eina_Accessor *accessor) EINA_ARG_NONNULL(1)
   for ((counter) = 0;                                                   \
        eina_accessor_data_get((accessor), (counter), (void **)(void *)&(data)); \
        (counter)++)
-
-/**
- * @}
- */
 
 /**
  * @}

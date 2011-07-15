@@ -188,8 +188,6 @@
  * See here some examples:
  * @li @ref array_01_example_page
  * @li @ref array_02_example_page
- *
- * @{
  */
 
 /**
@@ -438,11 +436,6 @@ static inline Eina_Bool    eina_array_foreach(Eina_Array  *array,
 /**
  * @}
  */
-
-/**
- * @}
- */
-
 
 /**
  * @}

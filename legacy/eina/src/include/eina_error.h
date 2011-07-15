@@ -64,8 +64,6 @@
  *
  * A simple example of how to use this can be seen @ref tutorial_error_page
  * "here".
- *
- * @{
  */
 
 /**
@@ -188,10 +186,6 @@ EAPI const char *eina_error_msg_get(Eina_Error error) EINA_PURE;
  * If no such value is found, 0 is returned.
  */
 EAPI Eina_Error  eina_error_find(const char *msg) EINA_ARG_NONNULL(1) EINA_PURE;
-
-/**
- * @}
- */
 
 /**
  * @}

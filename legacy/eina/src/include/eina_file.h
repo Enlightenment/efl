@@ -373,8 +373,4 @@ EAPI void eina_file_map_free(Eina_File *file, void *map);
  * @}
  */
 
-/**
- * @}
- */
-
 #endif /* EINA_FILE_H_ */

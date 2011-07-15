@@ -144,8 +144,6 @@
  * @code
  * gcc -Wall -o test_eina_convert test_eina.c `pkg-config --cflags --libs eina` -lm
  * @endcode
- *
- * @{
  */
 
 /**
@@ -364,10 +362,6 @@ EAPI int       eina_convert_fptoa(Eina_F32p32 fp,
 EAPI Eina_Bool eina_convert_atofp(const char  *src,
                                   int          length,
                                   Eina_F32p32 *fp) EINA_ARG_NONNULL(1, 3);
-
-/**
- * @}
- */
 
 /**
  * @}

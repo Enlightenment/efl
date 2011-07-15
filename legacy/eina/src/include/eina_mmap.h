@@ -2,7 +2,7 @@
 #define EINA_MMAP_H_
 
 /**
- * @addtogroup Eina_Mmap_Group Group
+ * @addtogroup Eina_Mmap_Group Mmap Group
  *
  * @brief These functions provide helpers for safe mmap handling
  *

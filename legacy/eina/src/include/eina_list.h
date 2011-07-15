@@ -280,8 +280,6 @@
  * @li @ref list_02_example_page
  * @li @ref list_03_example_page
  * @li @ref list_04_example_page
- *
- * @{
  */
 
 /**
@@ -1617,10 +1615,6 @@ EAPI Eina_Accessor        *eina_list_accessor_new(const Eina_List *list) EINA_MA
        data = eina_list_data_get(list))
 
 #include "eina_inline_list.x"
-
-/**
- * @}
- */
 
 /**
  * @}

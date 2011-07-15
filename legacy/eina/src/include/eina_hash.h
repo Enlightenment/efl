@@ -260,8 +260,6 @@
  *      </ul>
  * <li> @ref eina_hash_08.c "Different add and delete functions"
  * </ul>
- *
- * @{
  */
 
 /**
@@ -1024,10 +1022,6 @@ static inline int eina_hash_int64(const unsigned long int *pkey,
                                   int                      len) EINA_ARG_NONNULL(1);
 
 #include "eina_inline_hash.x"
-
-/**
- * @}
- */
 
 /**
  * @}

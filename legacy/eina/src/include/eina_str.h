@@ -64,8 +64,6 @@
  * shared strings(eina_stringshare).
  *
  * See an example @ref tutorial_eina_string "here".
- *
- * @{
  */
 
 /**
@@ -315,10 +313,6 @@ static inline size_t eina_str_join(char *dst, size_t size, char sep, const char 
 static inline size_t eina_strlen_bounded(const char *str, size_t maxlen) EINA_PURE EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
 
 #include "eina_inline_str.x"
-
-/**
- * @}
- */
 
 /**
  * @}

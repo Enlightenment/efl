@@ -317,8 +317,6 @@
  * written in a gnuplot file.
  *
  * For more information, you can look at the @ref tutorial_benchmark_page.
- *
- * @{
  */
 
 /**
@@ -443,10 +441,6 @@ EAPI Eina_Bool       eina_benchmark_register(Eina_Benchmark          *bench,
  * test.
  */
 EAPI Eina_Array *eina_benchmark_run(Eina_Benchmark *bench);
-
-/**
- * @}
- */
 
 /**
  * @}

@@ -33,8 +33,6 @@
  * @brief These functions provide matrix sparse management.
  *
  * For more information, you can look at the @ref tutorial_matrixsparse_page.
- *
- * @{
  */
 
 /**
@@ -385,10 +383,6 @@ EAPI Eina_Iterator *eina_matrixsparse_iterator_new(const Eina_Matrixsparse *m);
  *    behavior is undefined and your program may crash!
  */
 EAPI Eina_Iterator *eina_matrixsparse_iterator_complete_new(const Eina_Matrixsparse *m);
-
-/**
- * @}
- */
 
 /**
  * @}

@@ -56,8 +56,6 @@
  * @li @c one_big: It call just one time malloc for the requested number
  * of items. Useful when you know in advance how many object of some
  * type will live during the life of the mempool.
- *
- * @{
  */
 
 /**
@@ -113,10 +111,6 @@ EAPI void           eina_mempool_unregister(Eina_Mempool_Backend *be) EINA_ARG_N
 EAPI unsigned int   eina_mempool_alignof(unsigned int size);
 
 #include "eina_inline_mempool.x"
-
-/**
- * @}
- */
 
 /**
  * @}

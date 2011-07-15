@@ -210,7 +210,6 @@
  * For more information, you can look at the @ref tutorial_log_page.
  *
  * @example eina_log_01.c
- * @{
  */
 
 /**
@@ -877,10 +876,6 @@ EAPI void eina_log_print_cb_file(const Eina_Log_Domain *d,
                                  va_list                args);
 
 #include "eina_inline_log.x"
-
-/**
- * @}
- */
 
 /**
  * @}

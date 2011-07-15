@@ -44,8 +44,6 @@
  * allowing to append, prepend or insert a string to a buffer.
  *
  * For more information see @ref tutorial_strbuf "this example".
- *
- * @{
  */
 
 /**

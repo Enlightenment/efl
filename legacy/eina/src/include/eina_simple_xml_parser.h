@@ -48,8 +48,6 @@
  * will not tokenize this. If you want you can use
  * eina_simple_xml_tag_attributes_find() and then
  * eina_simple_xml_attributes_parse().
- *
- * @{
  */
 
 /**
@@ -376,10 +374,6 @@ EAPI void eina_simple_xml_node_root_free(Eina_Simple_XML_Node_Root *root);
  */
 EAPI char * eina_simple_xml_node_dump(Eina_Simple_XML_Node *node, const char *indent);
 
-
-/**
- * @}
- */
 
 /**
  * @}

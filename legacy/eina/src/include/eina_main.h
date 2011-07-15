@@ -26,8 +26,6 @@
  *
  * @brief These functions provide general initialisation and shut down
  * functions.
- *
- * @{
  */
 
 /**
@@ -133,10 +131,6 @@ EAPI int eina_threads_init(void);
  * This function should never be called outside of the main loop.
  */
 EAPI int eina_threads_shutdown(void);
-
-/**
- * @}
- */
 
 /**
  * @}

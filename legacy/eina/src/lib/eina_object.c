@@ -452,7 +452,7 @@ _eina_class_range_repack(void *dst, void *src, void *data)
 }
 
 /**
- * @}
+ * @endcond
  */
 
 Eina_Bool

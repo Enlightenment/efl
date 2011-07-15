@@ -100,8 +100,6 @@
  * container, use eina_iterator_foreach().
  * 
  * Here an @ref eina_iterator_example "example"
- *
- * @{
  */
 
 /**
@@ -327,10 +325,6 @@ EAPI Eina_Bool eina_iterator_unlock(Eina_Iterator *iterator) EINA_ARG_NONNULL(1)
 #define EINA_ITERATOR_FOREACH(itr,                                   \
                               data) while (eina_iterator_next((itr), \
                                                               (void **)(void *)&(data)))
-
-/**
- * @}
- */
 
 /**
  * @}

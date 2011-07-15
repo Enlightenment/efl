@@ -27,8 +27,6 @@
  * @addtogroup Eina_Module_Group Module
  *
  * @brief These functions provide module management.
- *
- * @{
  */
 
 /**
@@ -333,14 +331,6 @@ EAPI void
  */
 EAPI Eina_Module *
  eina_module_find(const Eina_Array *array, const char *module) EINA_ARG_NONNULL(1, 2);
-
-/**
- * @}
- */
-
-/**
- * @}
- */
 
 /**
  * @}

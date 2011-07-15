@@ -60,8 +60,6 @@
  * #include "my_functions2.h"
  *
  * @endcode
- *
- * @{
  */
 
 /**

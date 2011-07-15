@@ -128,8 +128,6 @@
  *
  * For more information, see @ref eina_stringshare_example_01_page
  * "this example".
- *
- * @{
  */
 
 /**
@@ -305,10 +303,6 @@ static inline Eina_Bool eina_stringshare_replace(const char **p_str, const char 
 static inline Eina_Bool eina_stringshare_replace_length(const char **p_str, const char *news, unsigned int slen) EINA_ARG_NONNULL(1);
 
 #include "eina_inline_stringshare.x"
-
-/**
- * @}
- */
 
 /**
  * @}

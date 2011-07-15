@@ -371,8 +371,6 @@
  * @li @ref inlist_01_example_page
  * @li @ref inlist_02_example_page
  * @li @ref inlist_03_example_page
- *
- * @{
  */
 
 /**
@@ -717,10 +715,6 @@ EAPI Eina_Inlist *eina_inlist_sort(Eina_Inlist *head, Eina_Compare_Cb func);
 #define EINA_INLIST_REVERSE_FOREACH(list, l)                                \
   for (l = NULL, l = (list ? _EINA_INLIST_CONTAINER(l, list->last) : NULL); \
        l; l = (EINA_INLIST_GET(l)->prev ? _EINA_INLIST_CONTAINER(l, EINA_INLIST_GET(l)->prev) : NULL))
-
-/**
- * @}
- */
 
 /**
  * @}

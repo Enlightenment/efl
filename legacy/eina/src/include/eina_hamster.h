@@ -35,8 +35,6 @@
 
 /**
  * @defgroup Eina_Hamster_Group Hamster
- *
- * @{
  */
 
 
@@ -48,10 +46,6 @@
  * This function returns how many hamsters you have.
  */
 EAPI int eina_hamster_count(void);
-
-/**
- * @}
- */
 
 /**
  * @}

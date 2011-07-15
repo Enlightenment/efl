@@ -74,8 +74,6 @@
  * memory fragmentation, so a win all-around.
  *
  * For more information, you can look at the @ref tutorial_ustringshare_page.
- *
- * @{
  */
 
 /**
@@ -190,10 +188,6 @@ static inline Eina_Bool  eina_ustringshare_replace(const Eina_Unicode **p_str, c
 static inline Eina_Bool  eina_ustringshare_replace_length(const Eina_Unicode **p_str, const Eina_Unicode *news, unsigned int slen) EINA_ARG_NONNULL(1);
 
 #include "eina_inline_ustringshare.x"
-
-/**
- * @}
- */
 
 /**
  * @}

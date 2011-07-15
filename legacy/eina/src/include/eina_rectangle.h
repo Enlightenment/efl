@@ -25,8 +25,6 @@
  * @addtogroup Eina_Rectangle_Group Rectangle
  *
  * @brief These functions provide rectangle management.
- *
- * @{
  */
 
 /**
@@ -229,10 +227,6 @@ EAPI Eina_Rectangle *eina_rectangle_new(int x, int y, int w, int h) EINA_MALLOC 
 EAPI void            eina_rectangle_free(Eina_Rectangle *rect) EINA_ARG_NONNULL(1);
 
 #include "eina_inline_rectangle.x"
-
-/**
- * @}
- */
 
 /**
  * @}

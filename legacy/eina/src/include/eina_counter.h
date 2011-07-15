@@ -100,8 +100,6 @@
  * @endverbatim
  *
  * Note that the displayed time is in nanosecond.
- *
- * @{
  */
 
 /**
@@ -203,10 +201,6 @@ EAPI void          eina_counter_stop(Eina_Counter *counter,
  * The unit of time is the nanosecond.
  */
 EAPI char         *eina_counter_dump(Eina_Counter *counter) EINA_ARG_NONNULL(1);
-
-/**
- * @}
- */
 
 /**
  * @}
