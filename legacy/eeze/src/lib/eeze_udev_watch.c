@@ -267,6 +267,13 @@ _get_syspath_from_watch(void             *data,
 
         break;
 
+      case EEZE_UDEV_TYPE_V4L:
+        if ((!(test = udev_device_get_subsystem(device)))
+            || (strcmp(test, "video4linux")))
+          goto error;
+
+        break;
+
       default:
         break;
      }
@@ -343,6 +350,11 @@ eeze_udev_watch_add(Eeze_Udev_Type     type,
                 udev_monitor_filter_add_match_subsystem_devtype(mon, "input", "usb_interface");
                 break;
        */
+
+      case EEZE_UDEV_TYPE_V4L:
+        udev_monitor_filter_add_match_subsystem_devtype(mon, "video4linux",
+                                                        NULL);
+        break;
       default:
         break;
      }

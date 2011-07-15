@@ -233,6 +233,9 @@ eeze_udev_find_by_type(Eeze_Udev_Type etype,
                 udev_enumerate_add_match_property(en, "ID_MODEL", "Android_*");
                 break;
        */
+      case EEZE_UDEV_TYPE_V4L:
+	udev_enumerate_add_match_subsystem(en, "video4linux");
+        break;
       default:
         break;
      }

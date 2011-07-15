@@ -214,7 +214,9 @@ typedef enum
    /** - Temperature sensor */
    EEZE_UDEV_TYPE_IS_IT_HOT_OR_IS_IT_COLD_SENSOR,
    /** - Network devices */
-   EEZE_UDEV_TYPE_NET
+   EEZE_UDEV_TYPE_NET,
+   /** - WebCam */
+   EEZE_UDEV_TYPE_V4L
 } Eeze_Udev_Type;
 /**@}*/
 

@@ -204,6 +204,25 @@ main()
         eina_stringshare_del(name);
      }
 
+   printf("\nGot any v4l device ?\n");
+   /* find all V4L device, may be a webcam or anything that can get a video
+    * stream from the real worl in a numerical form */
+   type = eeze_udev_find_by_type(EEZE_UDEV_TYPE_V4L, NULL);
+   type = eeze_udev_find_unlisted_similar(type);
+   EINA_LIST_FREE(type, name)  /* get a device name using the device's syspath */
+     {
+       if ((check = eeze_udev_syspath_get_property(name, "DEVNAME")))
+	 {
+	   if ((check2 = eeze_udev_syspath_get_sysattr(name, "name")))
+	     {
+	       printf("%s: '%s' [%s]\n", name, check2, check);
+	       eina_stringshare_del(check2);
+	     }
+	   eina_stringshare_del(check);
+	 }
+       eina_stringshare_del(name);
+     }
+
    /* set a udev watch, grab all events because no EEZE_UDEV_TYPE filter is specified,
     * set the events to be sent to callback function catch_events(), and attach
     * kbdmouse to the watch as associated data
