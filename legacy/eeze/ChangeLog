@@ -47,3 +47,6 @@
         * fixed segv when detecting removable drives
         * added eeze_scanner utility daemon
         * fixed bug where watches would not properly detect disk events
+
+2011-07-15  Cedric Bail
+	* added EEZE_UDEV_TYPE_V4L
