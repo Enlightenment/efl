@@ -46,6 +46,7 @@ SRCS = \
 	flip_example_01.c \
 	general_funcs_example.c \
 	hover_example_01.c \
+	hoversel_example_01.c \
 	label_example_01.c \
 	theme_example_01.c \
 	theme_example_02.c \
@@ -95,6 +96,7 @@ pkglib_PROGRAMS += \
 	flip_example_01 \
 	general_funcs_example \
 	hover_example_01 \
+	hoversel_example_01 \
 	label_example_01 \
 	theme_example_01 \
 	theme_example_02 \
@@ -126,6 +128,7 @@ SCREENSHOTS = \
 	flip_example_01:flip_example_01.png:0.0 \
 	frame_example_01:frame_example_01.png:0.0 \
 	hover_example_01:hover_example_01.png:0.0 \
+	hoversel_example_01:hoversel_example_01.png:0.0 \
 	label_example_01:label_example_01.png:0.0 \
 	theme_example_01:theme_example_01.png:0.0 \
 	calendar_example_01:calendar_example_01.png:0.0 \

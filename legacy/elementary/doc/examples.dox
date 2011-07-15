@@ -1688,6 +1688,70 @@
   */
 
 /**
+ * @page tutorial_hoversel Hoversel example
+ * @dontinclude hoversel_example_01.c
+ *
+ * In this example we will create a hoversel with 3 items, one with a label but
+ * no icon and two with both a label and an icon. Every item that is clicked
+ * will be deleted, but everytime the hoversel is activated we will also add an
+ * item. In addition our first item will print all items when clicked and our
+ * third item will clear all items in the hoversel.
+ *
+ * We will start with the normal creation of window stuff:
+ * @until show(bg)
+ *
+ * Next we will create a red rectangle to use as the icon of our hoversel:
+ * @until show
+ *
+ * And now we create our hoversel and set some of it's properties. We set @p win
+ * as its parent, ask it to not be horizontal(be vertical) and give it a label
+ * and icon:
+ * @until icon_set
+ *
+ * Next we will add our three items, setting a callback to be called for the
+ * first and third:
+ * @until _rm_items
+ *
+ * We also set a pair of callbacks to be called whenever any item is selected or
+ * when the hoversel is activated:
+ * @until clicked
+ *
+ * And then ask that our hoversel be shown and run the main loop:
+ * @until ELM_MAIN
+ *
+ * We now have the callback for our first item which prints all items in the
+ * hoversel:
+ * @until }
+ *
+ * Next we have the callback for our third item which removes all items from the
+ * hoversel:
+ * @until }
+ *
+ * Next we have the callback that is called whenever an item is clicked and
+ * deletes that item:
+ * @until }
+ *
+ * And the callback that is called when the hoversel is activated and adds an
+ * item to the hoversel. Note that since we allocate memory for the item we need
+ * to know when the item dies so we can free that memory:
+ * @until }
+ *
+ * And finally the callback that frees the memory we allocated for items created
+ * in the @p _add_item callback:
+ * @until }
+ *
+ * Our example will initially look like this:
+ * @image html screenshots/hoversel_example_01.png
+ * @image latex screenshots/hoversel_example_01.eps
+ *
+ * And when the hoversel is clicked it will look like this:
+ * @image html screenshots/hoversel_example_01_a.png
+ * @image latex screenshots/hoversel_example_01_a.eps
+ *
+ * @example hoversel_example_01.c
+ */
+
+/**
  * @page bg_example_01_c bg_example_01.c
  * @include bg_example_01.c
  * @example bg_example_01.c
