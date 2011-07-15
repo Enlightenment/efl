@@ -238,7 +238,14 @@ PKG_CHECK_MODULES([EIO],
 
 AM_CONDITIONAL([HAVE_EIO], [test "x${have_eio}" = "xyes"])
 
-PKG_CHECK_MODULES([EMOTION],
+have_emotion="no"
+want_elementary_emotion="yes"
+AC_ARG_ENABLE([emotion],
+   [AC_HELP_STRING([--disable-emotion], [disable emotion support. @<:@default=enabled@:>@])],
+   [want_elementary_emotion=$enableval], [])
+
+if test "x$want_elementary_emotion" != "xno"; then
+   PKG_CHECK_MODULES([EMOTION],
 	[emotion],
 	[
 	 have_emotion="yes"
@@ -246,6 +253,7 @@ PKG_CHECK_MODULES([EMOTION],
 	 requirement_elm="emotion ${requirement_elm}"
 	],
 	[have_emotion="no"])
+fi
 
 AM_CONDITIONAL([HAVE_EMOTION], [test "x${have_emotion}" = "xyes"])
 
