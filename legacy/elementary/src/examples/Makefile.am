@@ -58,6 +58,8 @@ SRCS = \
 	calendar_example_06.c \
 	clock_example.c \
 	image_example_01.c \
+	flipselector_example.c \
+	fileselector_example.c \
 	theme_example.edc
 
 pkglib_PROGRAMS =
@@ -109,6 +111,7 @@ pkglib_PROGRAMS += \
 	clock_example \
 	image_example_01 \
 	flipselector_example \
+	fileselector_example \
 	theme_example.edj
 
 # This variable will hold the list of screenshots that will be made
@@ -139,7 +142,8 @@ SCREENSHOTS = \
 	calendar_example_06:calendar_example_06.png:0.0 \
 	clock_example:clock_example.png:0.5 \
 	image_example_01:image_example_01.png:0.0 \
-	flipselector_example:flipselector_example.png:0.0
+	flipselector_example:flipselector_example.png:0.0 \
+	fileselector_example:fileselector_example.png:0.0
 
 screenshots: all
 	@mkdir -p $(top_srcdir)/doc/img/screenshots

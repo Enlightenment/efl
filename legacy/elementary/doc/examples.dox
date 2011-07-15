@@ -34,6 +34,8 @@
  * @ref clock_example
  *
  * @ref flipselector_example
+ *
+ * @ref fileselector_example
  */
 
 /**
@@ -1470,6 +1472,79 @@
  * @image latex screenshots/flipselector_example.eps
  *
  * @example flipselector_example.c
+ */
+
+/**
+ * @page fileselector_example File selector widget example
+ *
+ * This code places two Elementary file selector widgets on a window.
+ * The one on the left is layouting file system items in a @b list,
+ * while the the other is layouting them in a @b grid.
+ *
+ * The one having the majority of hooks of interest is on the left,
+ * which we create as follows:
+ * @dontinclude fileselector_example.c
+ * @skip first file selector
+ * @until object_show
+ *
+ * Note that we enable custom edition of file/directory selection, via
+ * the text entry it has on its bottom, via
+ * elm_fileselector_is_save_set(). It starts with the list view, which
+ * is the default, and we make it not expandable in place
+ * (elm_fileselector_expandable_set()), so that it replaces its view's
+ * contents with the current directory's entries each time one
+ * navigates to a different folder.  For both of file selectors we are
+ * starting to list the contents found in the @c "/tmp" directory
+ * (elm_fileselector_path_set()).
+ *
+ * Note the code setting it to "grid mode" and observe the differences
+ * in the file selector's views, in the example. We also hide the
+ * second file selector's Ok/Cancel buttons -- since it's there just
+ * to show the grid view (and navigation) -- via
+ * elm_fileselector_buttons_ok_cancel_set().
+ *
+ * The @c "done" event, which triggers the callback below
+ * @dontinclude fileselector_example.c
+ * @skip 'done' cb
+ * @until }
+ * will be called at the time one clicks the "Ok"/"Cancel" buttons of
+ * the file selector (on the left). Note that it will print the path
+ * to the current selection, if any.
+ *
+ * The @c "selected" event, which triggers the callback below
+ * @dontinclude fileselector_example.c
+ * @skip bt = 'selected' cb
+ * @until }
+ * takes place when one selects a file (if the file selector is @b not
+ * under folders-only mode) or when one selects a folder (when in
+ * folders-only mode). Experiment it by selecting different file
+ * system entries.
+ *
+ * What comes next is the code creating the three check boxes and two
+ * buttons below the file selector in the right. They will exercise a
+ * bunch of functions on the file selector's API, for the instance on
+ * the left. Experiment with them, specially the buttons, to get the
+ * difference between elm_fileselector_path_get() and
+ * elm_fileselector_selected_get().
+ *
+ * Finally, there's the code adding the second file selector, on the
+ * right:
+ * @dontinclude fileselector_example.c
+ * @skip second file selector
+ * @until object_show
+ *
+ * Pay attention to the code setting it to "grid mode" and observe the
+ * differences in the file selector's views, in the example. We also
+ * hide the second file selector's Ok/Cancel buttons -- since it's
+ * there just to show the grid view (and navigation) -- via
+ * elm_fileselector_buttons_ok_cancel_set().
+ *
+ * See the full @ref fileselector_example.c "example", whose window
+ * should look like this picture:
+ * @image html screenshots/fileselector_example.png
+ * @image latex screenshots/fileselector_example.eps
+ *
+ * @example fileselector_example.c
  */
 
 /**
