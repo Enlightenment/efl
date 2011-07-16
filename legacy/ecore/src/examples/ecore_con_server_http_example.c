@@ -14,11 +14,10 @@ static const char response_template[] =
 "Server: Ecore_Con custom server\r\n"
 "Content-Length: %zd\r\n"
 "Content-Type: text/html; charset=UTF-8\r\n"
-"Set-Cookie: MYCOOKIE=1; path=/; expires=%s"
+"Set-Cookie: MYCOOKIE=1; path=/; expires=%s\r\n"
 "Set-Cookie: SESSIONCOOKIE=1; path=/\r\n"
 "\r\n"
-"%s"
-"\r\n\r\n";
+"%s";
 
 struct _Client {
     int sdata;
@@ -31,7 +30,6 @@ _add(void *data __UNUSED__, int type __UNUSED__, Ecore_Con_Event_Client_Add *ev)
    client->sdata = 0;
    static char buf[4096];
    char welcome[] = "Welcome to Ecore_Con server!";
-   int nbytes;
    time_t t;
 
    printf("Client with ip %s, port %d, connected = %d!\n",
@@ -43,9 +41,9 @@ _add(void *data __UNUSED__, int type __UNUSED__, Ecore_Con_Event_Client_Add *ev)
 
    t = time(NULL);
    t += 60 * 60 * 24;
-   nbytes = snprintf(buf, sizeof(buf), response_template, sizeof(welcome), ctime(&t), welcome);
+   snprintf(buf, sizeof(buf), response_template, sizeof(welcome) - 1, ctime(&t), welcome);
 
-   ecore_con_client_send(ev->client, buf, nbytes);
+   ecore_con_client_send(ev->client, buf, strlen(buf));
    ecore_con_client_flush(ev->client);
 
 
