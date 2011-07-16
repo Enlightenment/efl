@@ -89,9 +89,8 @@ struct _Ecore_Con_Client
    Ecore_Con_Server *host_server;
    void *data;
    Ecore_Fd_Handler *fd_handler;
-   int buf_size;
-   int buf_offset;
-   unsigned char *buf;
+   unsigned int buf_offset;
+   Eina_Binbuf *buf;
    const char *ip;
    int event_count;
    struct sockaddr *client_addr;
@@ -125,9 +124,8 @@ struct _Ecore_Con_Server
    Ecore_Fd_Handler *fd_handler;
    Eina_List *clients;
    unsigned int client_count;
-   int write_buf_size;
-   int write_buf_offset;
-   unsigned char *write_buf;
+   Eina_Binbuf *buf;
+   unsigned int write_buf_offset;
    Eina_List *infos;
    int event_count;
    int client_limit;
@@ -283,7 +281,7 @@ int                 ecore_con_ssl_server_read(Ecore_Con_Server *svr,
                                               unsigned char *buf,
                                               int size);
 int                 ecore_con_ssl_server_write(Ecore_Con_Server *svr,
-                                               unsigned char *buf,
+                                               const unsigned char *buf,
                                                int size);
 Ecore_Con_Ssl_Error ecore_con_ssl_client_init(Ecore_Con_Client *svr);
 Ecore_Con_Ssl_Error ecore_con_ssl_client_shutdown(Ecore_Con_Client *svr);
@@ -291,7 +289,7 @@ int                 ecore_con_ssl_client_read(Ecore_Con_Client *svr,
                                               unsigned char *buf,
                                               int size);
 int                 ecore_con_ssl_client_write(Ecore_Con_Client *svr,
-                                               unsigned char *buf,
+                                               const unsigned char *buf,
                                                int size);
 
 int                 ecore_con_info_get(Ecore_Con_Server *svr,

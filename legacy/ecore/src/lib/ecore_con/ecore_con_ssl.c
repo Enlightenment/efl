@@ -188,14 +188,14 @@ static Ecore_Con_Ssl_Error SSL_SUFFIX(_ecore_con_ssl_server_prepare) (Ecore_Con_
 static Ecore_Con_Ssl_Error SSL_SUFFIX(_ecore_con_ssl_server_init) (Ecore_Con_Server * svr);
 static Ecore_Con_Ssl_Error SSL_SUFFIX(_ecore_con_ssl_server_shutdown) (Ecore_Con_Server *svr);
 static int SSL_SUFFIX(_ecore_con_ssl_server_read) (Ecore_Con_Server *svr, unsigned char *buf, int size);
-static int SSL_SUFFIX(_ecore_con_ssl_server_write) (Ecore_Con_Server *svr, unsigned char *buf, int size);
+static int SSL_SUFFIX(_ecore_con_ssl_server_write) (Ecore_Con_Server *svr, const unsigned char *buf, int size);
 
 static Ecore_Con_Ssl_Error SSL_SUFFIX(_ecore_con_ssl_client_init) (Ecore_Con_Client * cl);
 static Ecore_Con_Ssl_Error SSL_SUFFIX(_ecore_con_ssl_client_shutdown) (Ecore_Con_Client *cl);
 static int SSL_SUFFIX(_ecore_con_ssl_client_read) (Ecore_Con_Client * cl,
                                         unsigned char *buf, int size);
 static int SSL_SUFFIX(_ecore_con_ssl_client_write) (Ecore_Con_Client * cl,
-                                         unsigned char *buf, int size);
+                                         const unsigned char *buf, int size);
 
 /*
  * General SSL API
@@ -260,7 +260,7 @@ ecore_con_ssl_server_read(Ecore_Con_Server *svr,
 
 int
 ecore_con_ssl_server_write(Ecore_Con_Server *svr,
-                           unsigned char    *buf,
+                           const unsigned char *buf,
                            int               size)
 {
    return SSL_SUFFIX(_ecore_con_ssl_server_write) (svr, buf, size);
@@ -292,7 +292,7 @@ ecore_con_ssl_client_read(Ecore_Con_Client *cl,
 
 int
 ecore_con_ssl_client_write(Ecore_Con_Client *cl,
-                           unsigned char    *buf,
+                           const unsigned char *buf,
                            int               size)
 {
    return SSL_SUFFIX(_ecore_con_ssl_client_write) (cl, buf, size);
@@ -884,7 +884,7 @@ _ecore_con_ssl_server_read_gnutls(Ecore_Con_Server *svr,
 
 static int
 _ecore_con_ssl_server_write_gnutls(Ecore_Con_Server *svr,
-                                   unsigned char    *buf,
+                                   const unsigned char *buf,
                                    int               size)
 {
    int num;
@@ -1109,7 +1109,7 @@ _ecore_con_ssl_client_read_gnutls(Ecore_Con_Client *cl,
 
 static int
 _ecore_con_ssl_client_write_gnutls(Ecore_Con_Client *cl,
-                                   unsigned char    *buf,
+                                   const unsigned char *buf,
                                    int               size)
 {
    int num;
@@ -1475,7 +1475,7 @@ _ecore_con_ssl_server_read_openssl(Ecore_Con_Server *svr,
 
 static int
 _ecore_con_ssl_server_write_openssl(Ecore_Con_Server *svr,
-                                    unsigned char    *buf,
+                                    const unsigned char *buf,
                                     int               size)
 {
    int num;
@@ -1628,7 +1628,7 @@ _ecore_con_ssl_client_read_openssl(Ecore_Con_Client *cl,
 
 static int
 _ecore_con_ssl_client_write_openssl(Ecore_Con_Client *cl,
-                                    unsigned char    *buf,
+                                    const unsigned char *buf,
                                     int               size)
 {
    int num;
@@ -1736,7 +1736,7 @@ _ecore_con_ssl_server_read_none(Ecore_Con_Server *svr __UNUSED__,
 
 static int
 _ecore_con_ssl_server_write_none(Ecore_Con_Server *svr __UNUSED__,
-                                 unsigned char *buf    __UNUSED__,
+                                 const unsigned char *buf __UNUSED__,
                                  int size              __UNUSED__)
 {
    return -1;
@@ -1770,7 +1770,7 @@ _ecore_con_ssl_client_read_none(Ecore_Con_Client *cl __UNUSED__,
 
 static int
 _ecore_con_ssl_client_write_none(Ecore_Con_Client *cl __UNUSED__,
-                                 unsigned char *buf   __UNUSED__,
+                                 const unsigned char *buf __UNUSED__,
                                  int size             __UNUSED__)
 {
    return -1;

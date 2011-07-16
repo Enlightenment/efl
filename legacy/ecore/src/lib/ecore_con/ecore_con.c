@@ -339,8 +339,8 @@ error:
    if (svr->fd > 0)
      close(svr->fd);
 
-   if (svr->write_buf)
-     free(svr->write_buf);
+   if (svr->buf)
+     eina_binbuf_free(svr->buf);
 
    if (svr->ip)
      eina_stringshare_del(svr->ip);
@@ -607,25 +607,12 @@ ecore_con_server_send(Ecore_Con_Server *svr,
    if (svr->fd_handler)
      ecore_main_fd_handler_active_set(svr->fd_handler, ECORE_FD_READ | ECORE_FD_WRITE);
 
-   if (svr->write_buf)
+   if (!svr->buf)
      {
-        unsigned char *newbuf;
-
-        newbuf = realloc(svr->write_buf, svr->write_buf_size + size);
-        EINA_SAFETY_ON_NULL_RETURN_VAL(newbuf, 0);
-
-        svr->write_buf = newbuf;
-        memcpy(svr->write_buf + svr->write_buf_size, data, size);
-        svr->write_buf_size += size;
+        svr->buf = eina_binbuf_new();
+        EINA_SAFETY_ON_NULL_RETURN_VAL(svr->buf, 0);
      }
-   else
-     {
-        svr->write_buf = malloc(size);
-        EINA_SAFETY_ON_NULL_RETURN_VAL(svr->write_buf, 0);
-
-        svr->write_buf_size = size;
-        memcpy(svr->write_buf, data, size);
-     }
+   eina_binbuf_append_length(svr->buf, data, size);
 
    return size;
 }
@@ -722,26 +709,12 @@ ecore_con_client_send(Ecore_Con_Client *cl,
    if (cl->host_server && ((cl->host_server->type & ECORE_CON_TYPE) == ECORE_CON_REMOTE_UDP))
      sendto(cl->host_server->fd, data, size, 0, (struct sockaddr *)cl->client_addr,
             cl->client_addr_len);
-   else if (cl->buf)
+   else if (!cl->buf)
      {
-        unsigned char *newbuf;
-
-        newbuf = realloc(cl->buf, cl->buf_size + size);
-        EINA_SAFETY_ON_NULL_RETURN_VAL(newbuf, 0);
-
-        cl->buf = newbuf;
-
-        memcpy(cl->buf + cl->buf_size, data, size);
-        cl->buf_size += size;
-     }
-   else
-     {
-        cl->buf = malloc(size);
+        cl->buf = eina_binbuf_new();
         EINA_SAFETY_ON_NULL_RETURN_VAL(cl->buf, 0);
-
-        cl->buf_size = size;
-        memcpy(cl->buf, data, size);
      }
+   eina_binbuf_append_length(cl->buf, data, size);
 
    return size;
 }
@@ -1097,7 +1070,7 @@ _ecore_con_server_free(Ecore_Con_Server *svr)
         ecore_con_info_data_clear(svr->infos->data);
         svr->infos = eina_list_remove_list(svr->infos, svr->infos);
      }
-   if ((!svr->write_buf) && svr->delete_me && (!svr->dead) && (svr->event_count < 1))
+   if ((!svr->buf) && svr->delete_me && (!svr->dead) && (svr->event_count < 1))
      {
         /* this is a catch-all for cases when a server is not properly killed. */
         svr->dead = EINA_TRUE;
@@ -1109,7 +1082,7 @@ _ecore_con_server_free(Ecore_Con_Server *svr)
      return;
    ECORE_MAGIC_SET(svr, ECORE_MAGIC_NONE);
    t_start = ecore_time_get();
-   while ((svr->write_buf) && (!svr->dead))
+   while (svr->buf && (!svr->dead))
      {
         _ecore_con_server_flush(svr);
         t = ecore_time_get();
@@ -1127,8 +1100,8 @@ _ecore_con_server_free(Ecore_Con_Server *svr)
    ecore_con_local_win32_server_del(svr);
 #endif
 
-   if (svr->write_buf)
-     free(svr->write_buf);
+   if (svr->buf)
+     eina_binbuf_free(svr->buf);
 
    EINA_LIST_FREE(svr->clients, cl)
      _ecore_con_client_free(cl);
@@ -1713,7 +1686,7 @@ svr_try_connect_plain(Ecore_Con_Server *svr)
          ecore_con_event_server_add(svr);
      }
 
-   if (svr->fd_handler && (!svr->write_buf))
+   if (svr->fd_handler && (!svr->buf))
      ecore_main_fd_handler_active_set(svr->fd_handler, ECORE_FD_READ);
 
    if (!svr->dead)
@@ -2161,13 +2134,13 @@ _ecore_con_server_flush(Ecore_Con_Server *svr)
      return;
 #endif
 
-   if (!svr->write_buf && svr->fd_handler)
+   if ((!svr->buf) && svr->fd_handler)
      {
         ecore_main_fd_handler_active_set(svr->fd_handler, ECORE_FD_READ);
         return;
      }
 
-   num = svr->write_buf_size - svr->write_buf_offset;
+   num = eina_binbuf_length_get(svr->buf) - svr->write_buf_offset;
 
    /* check whether we need to write anything at all.
     * we must not write zero bytes with SSL_write() since it
@@ -2188,9 +2161,9 @@ _ecore_con_server_flush(Ecore_Con_Server *svr)
      }
 
    if (!(svr->type & ECORE_CON_SSL))
-     count = write(svr->fd, svr->write_buf + svr->write_buf_offset, num);
+     count = write(svr->fd, eina_binbuf_string_get(svr->buf) + svr->write_buf_offset, num);
    else
-     count = ecore_con_ssl_server_write(svr, svr->write_buf + svr->write_buf_offset, num);
+     count = ecore_con_ssl_server_write(svr, eina_binbuf_string_get(svr->buf) + svr->write_buf_offset, num);
 
    if (count < 0)
      {
@@ -2203,12 +2176,11 @@ _ecore_con_server_flush(Ecore_Con_Server *svr)
      }
 
    svr->write_buf_offset += count;
-   if (svr->write_buf_offset >= svr->write_buf_size)
+   if (svr->write_buf_offset >= eina_binbuf_length_get(svr->buf))
      {
-        svr->write_buf_size = 0;
         svr->write_buf_offset = 0;
-        free(svr->write_buf);
-        svr->write_buf = NULL;
+        eina_binbuf_free(svr->buf);
+        svr->buf = NULL;
         if (svr->fd_handler)
           ecore_main_fd_handler_active_set(svr->fd_handler, ECORE_FD_READ);
      }
@@ -2242,12 +2214,12 @@ _ecore_con_client_flush(Ecore_Con_Client *cl)
 
    if (!count)
      {
-        num = cl->buf_size - cl->buf_offset;
+        num = eina_binbuf_length_get(cl->buf) - cl->buf_offset;
         if (num <= 0) return;
         if (!(cl->host_server->type & ECORE_CON_SSL) || (!cl->upgrade))
-          count = write(cl->fd, cl->buf + cl->buf_offset, num);
+          count = write(cl->fd, eina_binbuf_string_get(cl->buf) + cl->buf_offset, num);
         else
-          count = ecore_con_ssl_client_write(cl, cl->buf + cl->buf_offset, num);
+          count = ecore_con_ssl_client_write(cl, eina_binbuf_string_get(cl->buf) + cl->buf_offset, num);
      }
 
    if (count < 0)
@@ -2268,11 +2240,10 @@ _ecore_con_client_flush(Ecore_Con_Client *cl)
      }
 
    cl->buf_offset += count;
-   if (cl->buf_offset >= cl->buf_size)
+   if (cl->buf_offset >= eina_binbuf_length_get(cl->buf))
      {
-        cl->buf_size = 0;
         cl->buf_offset = 0;
-        free(cl->buf);
+        eina_binbuf_free(cl->buf);
         cl->buf = NULL;
         if (cl->fd_handler)
           ecore_main_fd_handler_active_set(cl->fd_handler, ECORE_FD_READ);
