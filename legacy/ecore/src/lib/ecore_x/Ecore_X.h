@@ -2274,17 +2274,17 @@ typedef struct _Ecore_X_Window_Attributes
    int            x, y, w, h;
    int            border;
    int            depth;
-   unsigned char  visible : 1;
-   unsigned char  viewable : 1;
-   unsigned char  override : 1;
-   unsigned char  input_only : 1;
-   unsigned char  save_under : 1;
+   Eina_Bool      visible : 1;
+   Eina_Bool      viewable : 1;
+   Eina_Bool      override : 1;
+   Eina_Bool      input_only : 1;
+   Eina_Bool      save_under : 1;
    struct
-   {
-      Ecore_X_Event_Mask mine;
-      Ecore_X_Event_Mask all;
-      Ecore_X_Event_Mask no_propagate;
-   } event_mask;
+     {
+        Ecore_X_Event_Mask mine;
+        Ecore_X_Event_Mask all;
+        Ecore_X_Event_Mask no_propagate;
+     } event_mask;
    Ecore_X_Gravity  window_gravity;
    Ecore_X_Gravity  pixel_gravity;
    Ecore_X_Colormap colormap;

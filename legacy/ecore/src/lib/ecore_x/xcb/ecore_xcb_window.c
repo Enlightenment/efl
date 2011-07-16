@@ -1076,21 +1076,19 @@ ecore_x_window_attributes_get(Ecore_X_Window win, Ecore_X_Window_Attributes *att
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    cookie = xcb_get_window_attributes_unchecked(_ecore_xcb_conn, win);
-   gcookie = xcb_get_geometry_unchecked(_ecore_xcb_conn, win);
-
    reply = xcb_get_window_attributes_reply(_ecore_xcb_conn, cookie, NULL);
    if (!reply) return EINA_FALSE;
 
    memset(att_ret, 0, sizeof(Ecore_X_Window_Attributes));
 
    if (reply->map_state != XCB_MAP_STATE_UNMAPPED)
-     att_ret->visible = 1;
+     att_ret->visible = EINA_TRUE;
    if (reply->map_state == XCB_MAP_STATE_VIEWABLE)
-     att_ret->viewable = 1;
-   if (reply->override_redirect) att_ret->override = 1;
+     att_ret->viewable = EINA_TRUE;
+   if (reply->override_redirect) att_ret->override = EINA_TRUE;
    if (reply->_class == XCB_WINDOW_CLASS_INPUT_ONLY)
-     att_ret->input_only = 1;
-   if (reply->save_under) att_ret->save_under = 1;
+     att_ret->input_only = EINA_TRUE;
+   if (reply->save_under) att_ret->save_under = EINA_TRUE;
    att_ret->event_mask.mine = reply->your_event_mask;
    att_ret->event_mask.all = reply->all_event_masks;
    att_ret->event_mask.no_propagate = reply->do_not_propagate_mask;
@@ -1101,6 +1099,7 @@ ecore_x_window_attributes_get(Ecore_X_Window win, Ecore_X_Window_Attributes *att
 
    free(reply);
 
+   gcookie = xcb_get_geometry_unchecked(_ecore_xcb_conn, win);
    greply = xcb_get_geometry_reply(_ecore_xcb_conn, gcookie, NULL);
    if (!greply) return EINA_TRUE;
 
