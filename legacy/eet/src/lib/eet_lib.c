@@ -67,6 +67,11 @@ GCRY_THREAD_OPTION_PTHREAD_IMPL;
 #include "Eet.h"
 #include "Eet_private.h"
 
+
+#ifndef O_BINARY
+# define O_BINARY 0
+#endif
+
 static Eet_Version _version = { VMAJ, VMIN, VMIC, VREV };
 EAPI Eet_Version *eet_version = &_version;
 
