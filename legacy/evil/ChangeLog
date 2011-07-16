@@ -11,12 +11,6 @@
 	add inet_pton() function. Implementation from curl library.
 	See AUTHORS.
 
-2011-04-20  Vincent Torri  <doursse at users dot sf dot net>
-
-	* evil_stdlib.c:
-	fix mkstemp() which didn't remove the file when the last
-	file descriptor was closed
-
 2011-02-27  Vincent Torri  <doursse at users dot sf dot net>
 
 	* configure.ac:

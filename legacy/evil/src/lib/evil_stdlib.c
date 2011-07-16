@@ -316,7 +316,7 @@ mkstemp(char *__template)
         v /= 62;
 
 #ifndef __MINGW32CE__
-        fd = _open(__template, _O_RDWR | _O_BINARY | _O_CREAT | _O_TEMPORARY | _O_EXCL, _S_IREAD | _S_IWRITE);
+        fd = _open(__template, _O_RDWR | _O_BINARY | _O_CREAT | _O_EXCL, _S_IREAD | _S_IWRITE);
 #else /* ! __MINGW32CE__ */
         {
            FILE    *f;
