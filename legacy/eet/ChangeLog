@@ -516,3 +516,9 @@
             eet_node_children_get, eet_node_next_get, eet_node_parent_get,
             eet_node_type_get, eet_node_value_get, eet_node_name_get
         * Fix segmentation faults in several eet_node functions
+
+2011-07-16  Vincent Torri
+
+	* On Windows, open() in text mode followed by fdopen() in
+	binary mode does not create a stream in binary mode.
+	So add O_BINARY to open().
