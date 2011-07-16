@@ -304,8 +304,6 @@ sc_compile(int argc, char *argv[])
    if (fd_out < 0)
      error(101, outfname);
 
-   unlink (outfname); /* kill this file as soon as it's (f)close'd */
-
    setconfig(argv[0]);		/* the path to the include files */
    lcl_ctrlchar = sc_ctrlchar;
    lcl_packstr = sc_packstr;
@@ -409,6 +407,7 @@ sc_compile(int argc, char *argv[])
      }				/* if */
    if (outf)
       sc_closeasm(outf);
+   unlink (outfname);
    if (binf)
       sc_closebin(binf, errnum != 0);
 
