@@ -17,7 +17,7 @@ struct _Theme
    Eina_Bool   in_search_path;
 };
 
-static Theme *tsel = NULL;
+static const Eina_List *tsel = NULL;
 static Eina_List *themes = NULL;
 
 struct _Elm_Text_Class_Data
@@ -1063,28 +1063,13 @@ _theme_use(void *data       __UNUSED__,
            void *event_info __UNUSED__)
 {
    const char *defth;
-   char *newth;
-   Theme *t = tsel;
+   Elm_Theme *th;
+   Evas_Object *win = elm_object_top_widget_get(obj);
+   Evas_Object *sample = evas_object_data_get(win, "theme_preview");
 
-   if (!t) return;
-   defth = elm_theme_get(NULL);
-   newth = malloc(strlen(defth) + 1 + strlen(t->name) + 1);
-   if (newth)
-     {
-        char *rest;
-
-        newth[0] = 0;
-        rest = strchr(defth, ':');
-        if (!rest)
-          strcpy(newth, t->name);
-        else
-          {
-             strcpy(newth, t->name);
-             strcat(newth, rest);
-          }
-        elm_theme_all_set(newth);
-        free(newth);
-     }
+   th = elm_object_theme_get(sample);
+   defth = elm_theme_get(th);
+   elm_theme_all_set(defth);
 }
 
 static void
@@ -1095,30 +1080,33 @@ _theme_sel(void            *data,
    Theme *t = data;
    Evas_Object *win = elm_object_top_widget_get(obj);
    Evas_Object *sample = evas_object_data_get(win, "theme_preview");
-   Elm_Theme *th;
-   const char *defth;
-   char *newth;
+   Elm_Theme *th, *sth;
+   const char *defth, *rest;
+   Eina_Strbuf *newth;
 
-   tsel = t;
-   defth = elm_theme_get(NULL);
-   newth = malloc(strlen(defth) + 1 + strlen(t->name) + 1);
+   tsel = elm_list_selected_items_get(obj);
+   sth = elm_object_theme_get(sample);
+   defth = elm_theme_get(sth);
+   newth = eina_strbuf_new();
+   EINA_SAFETY_ON_NULL_RETURN(newth);
    th = elm_theme_new();
-   if (newth)
+   if (!th)
      {
-        char *rest;
-
-        newth[0] = 0;
+        eina_strbuf_free(newth);
+        return;
+     }
+   if (eina_list_count(tsel) > 1)
+     eina_strbuf_append_printf(newth, "%s:%s", t->name, defth);
+   else
+     {
         rest = strchr(defth, ':');
         if (!rest)
-          strcpy(newth, t->name);
+          eina_strbuf_append(newth, t->name);
         else
-          {
-             strcpy(newth, t->name);
-             strcat(newth, rest);
-          }
-        elm_theme_set(th, newth);
-        free(newth);
+          eina_strbuf_append_printf(newth, "%s%s", t->name, rest);
      }
+   elm_theme_set(th, eina_strbuf_string_get(newth));
+   eina_strbuf_free(newth);
    elm_object_theme_set(sample, th);
    elm_theme_free(th);
 }
@@ -1303,6 +1291,7 @@ _status_config_themes(Evas_Object *win,
    evas_object_show(pd);
 
    li = elm_list_add(win);
+   elm_list_multi_select_set(li, EINA_TRUE);
    evas_object_size_hint_weight_set(li, 1.0, 1.0);
    evas_object_size_hint_align_set(li, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_frame_content_set(pd, li);
