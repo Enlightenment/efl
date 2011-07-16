@@ -2,33 +2,6 @@
 # include <config.h>
 #endif
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <sys/types.h>
-#include <dirent.h>
-#include <sys/stat.h>
-#include <sys/time.h>
-#include <math.h>
-#include <fnmatch.h>
-#include <limits.h>
-#include <ctype.h>
-#include <time.h>
-#include <dirent.h>
-
-#ifndef _MSC_VER
-# include <unistd.h>
-# include <sys/param.h>
-#endif
-
-#ifdef HAVE_EVIL
-# include <Evil.h>      /* for realpath */
-#else
-# include <pwd.h>
-# include <grp.h>
-# include <glob.h>
-#endif /* ! HAVE_EVIL */
-
 #include <Eina.h>
 
 #include "embryo_cc_prefix.h"

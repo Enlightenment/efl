@@ -34,7 +34,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#ifndef _MSC_VER
+#ifdef HAVE_UNISTD_H
 # include <unistd.h>
 #endif
 

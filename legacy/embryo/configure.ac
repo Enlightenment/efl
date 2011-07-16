@@ -97,7 +97,7 @@ AC_SUBST(pkgconfig_requires_private)
 
 EFL_EMBRYO_BUILD=""
 case "$host_os" in
-   mingw* | cegcc*)
+   mingw*)
    PKG_CHECK_MODULES([EVIL], [evil])
    AC_DEFINE(HAVE_EVIL, 1, [Set to 1 if Evil library is installed])
    requirement_embryo="evil ${requirement_embryo}"
@@ -106,10 +106,12 @@ case "$host_os" in
 esac
 AC_SUBST(EFL_EMBRYO_BUILD)
 
+# For embryo_cc_prefix.c
 PKG_CHECK_MODULES([EINA], [eina >= 1.0.999])
 
 ### Checks for header files
 
+AC_CHECK_HEADERS([unistd.h])
 EFL_CHECK_PATH_MAX
 
 
@@ -134,10 +136,6 @@ case "$host_os" in
    mingw32ce*)
       EMBRYO_CPPFLAGS="-D_WIN32_WCE=0x0420"
       ;;
-   cegcc*)
-      EMBRYO_CPPFLAGS="-D_WIN32_WCE=0x0420"
-      EMBRYO_CFLAGS="-mwin32"
-      ;;
 esac
 AC_SUBST(EMBRYO_CPPFLAGS)
 AC_SUBST(EMBRYO_CFLAGS)
@@ -147,7 +145,7 @@ AC_SUBST(EMBRYO_CFLAGS)
 
 lt_enable_auto_import=""
 case "$host_os" in
-   mingw* | cegcc*)
+   mingw*)
       lt_enable_auto_import="-Wl,--enable-auto-import"
       ;;
 esac
@@ -165,8 +163,8 @@ AC_FUNC_ALLOCA
 EFL_CHECK_FNMATCH([], [AC_MSG_ERROR([Cannot find fnmatch()])])
 
 case "$host_os" in
-   mingw* | cegcc*)
-      AC_DEFINE(HAVE_GETTIMEOFDAY, 1, [Defined to 1 (MinGW / CeGCC platform)])
+   mingw*)
+      AC_DEFINE(HAVE_GETTIMEOFDAY, 1, [Defined to 1 (MinGW platform)])
       ;;
    *)
       AC_CHECK_FUNCS(gettimeofday)
