@@ -24,6 +24,10 @@ AM_CPPFLAGS = \
 @ELEMENTARY_ETHUMB_CFLAGS@ \
 @EIO_CFLAGS@
 
+if ELEMENTARY_WINDOWS_BUILD
+AM_CPPFLAGS += -DELEMENTARY_BUILD
+endif
+
 noinst_PROGRAMS = \
 widget_preview_button1 \
 widget_preview_button2 \
