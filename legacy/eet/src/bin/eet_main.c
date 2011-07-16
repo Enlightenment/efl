@@ -5,9 +5,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#ifndef _MSC_VER
+
+#ifdef HAVE_UNISTD_H
 # include <unistd.h>
-#endif /* ifndef _MSC_VER */
+#endif /* ifdef HAVE_UNISTD_H */
 
 #ifdef HAVE_EVIL
 # include <Evil.h>
