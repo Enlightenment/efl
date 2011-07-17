@@ -8474,14 +8474,8 @@ evas_object_textblock_render(Evas_Object *obj, void *output, void *context, void
                { \
                   Evas_Coord yoff; \
                   yoff = ln->baseline; \
-                  /* FIXME: This looks correct, but it breaks stuff....
-                   * yoff = (itr->type == EVAS_TEXTBLOCK_ITEM_TEXT) ? \
-                     _ITEM_TEXT(itr)->baseline : ln->baseline; */ \
                   if (itr->format->valign != -1.0) \
                     { \
-                       /* Until I fix the FIXME above. */ \
-                       yoff = (itr->type == EVAS_TEXTBLOCK_ITEM_TEXT) ? \
-                          _ITEM_TEXT(itr)->baseline : ln->baseline; \
                        yoff += itr->format->valign * (ln->h - itr->h); \
                     } \
                   if (clip) \
