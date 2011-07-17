@@ -1783,8 +1783,8 @@ _layout_format_ascent_descent_adjust(const Evas_Object *obj,
              descent = descent * fmt->linerelsize;
              ascent = ascent * fmt->linerelsize;
           }
-        *maxdescent += fmt->linegap;
-        *maxdescent += ((ascent + descent) * fmt->linerelgap);
+        descent += fmt->linegap;
+        descent += ((ascent + descent) * fmt->linerelgap);
         if (*maxascent < ascent) *maxascent = ascent;
         if (*maxdescent < descent) *maxdescent = descent;
         if (fmt->linefill > 0.0)
