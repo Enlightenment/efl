@@ -2393,6 +2393,9 @@ _layout_line_finalize(Ctxt *c, Evas_Object_Textblock_Format *fmt)
      {
         if (it->type == EVAS_TEXTBLOCK_ITEM_TEXT)
           {
+             Evas_Object_Textblock_Text_Item *ti = _ITEM_TEXT(it);
+             _layout_format_ascent_descent_adjust(c->obj, &c->maxascent,
+                   &c->maxdescent, ti->parent.format);
              no_text = EINA_FALSE;
              break;
           }
