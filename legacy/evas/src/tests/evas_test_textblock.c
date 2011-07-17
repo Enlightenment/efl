@@ -657,6 +657,7 @@ END_TEST
 START_TEST(evas_textblock_wrapping)
 {
    Evas_Coord bw, bh, w, h, nw, nh;
+   int i;
    START_TB_TEST();
    evas_object_textblock_text_markup_set(tb, "a");
    evas_object_textblock_size_formatted_get(tb, &bw, &bh);
@@ -731,7 +732,7 @@ START_TEST(evas_textblock_wrapping)
      {
         evas_object_resize(tb, iw, 1000);
         evas_object_textblock_size_formatted_get(tb, &w, &h);
-        fail_if((w < bw) || (h < bh));
+        fail_if(w < bw);
         fail_if(w > iw);
      }
    fail_if(w != bw);
@@ -752,7 +753,7 @@ START_TEST(evas_textblock_wrapping)
      {
         evas_object_resize(tb, iw, 1000);
         evas_object_textblock_size_formatted_get(tb, &w, &h);
-        fail_if((w < bw) || (h < bh));
+        fail_if(w < bw);
         fail_if(w > iw);
      }
    fail_if(w != bw);
@@ -774,11 +775,66 @@ START_TEST(evas_textblock_wrapping)
      {
         evas_object_resize(tb, iw, 1000);
         evas_object_textblock_size_formatted_get(tb, &w, &h);
-        fail_if((w < bw) || (h < bh));
+        fail_if(w < bw);
         fail_if(w > iw);
      }
    fail_if(w != bw);
 #endif
+
+   /* Resize, making sure we keep going down in the minimum size. */
+   char *wrap_style[] = { "+ wrap=word", "+ wrap=char"/*, "+ wrap=mixed"*/ };
+   int wrap_items = sizeof(wrap_style) / sizeof(*wrap_style);
+
+   evas_object_textblock_text_markup_set(tb,
+         "This is an entry widget in this window that<br>"
+         "uses markup <b>like this</> for styling and<br>"
+         "formatting <em>like this</>, as well as<br>"
+         "<a href=X><link>links in the text</></a>, so enter text<br>"
+         "in here to edit it. By the way, links are<br>"
+         "called <a href=anc-02>Anchors</a> so you will need<br>"
+         "to refer to them this way.<br>"
+         "<br>"
+
+         "Also you can stick in items with (relsize + ascent): "
+         "<item relsize=16x16 vsize=ascent href=emoticon/evil-laugh></item>"
+         " (full) "
+         "<item relsize=16x16 vsize=full href=emoticon/guilty-smile></item>"
+         " (to the left)<br>"
+
+         "Also (size + ascent): "
+         "<item size=16x16 vsize=ascent href=emoticon/haha></item>"
+         " (full) "
+         "<item size=16x16 vsize=full href=emoticon/happy-panting></item>"
+         " (before this)<br>"
+
+         "And as well (absize + ascent): "
+         "<item absize=64x64 vsize=ascent href=emoticon/knowing-grin></item>"
+         " (full) "
+         "<item absize=64x64 vsize=full href=emoticon/not-impressed></item>"
+         " or even paths to image files on disk too like: "
+         "<item absize=96x128 vsize=full href=file://%s/images/sky_01.jpg></item>"
+         " ... end."
+         );
+
+   /* Get minimum size */
+   evas_object_textblock_size_native_get(tb, &nw, &nh);
+
+   for (i = 0 ; i < wrap_items ; i++)
+     {
+        evas_textblock_cursor_format_prepend(cur, wrap_style[i]);
+        evas_object_resize(tb, 0, 0);
+        evas_object_textblock_size_formatted_get(tb, &bw, &bh);
+
+        for (iw = nw ; iw >= bw ; iw--)
+          {
+             evas_object_resize(tb, iw, 1000);
+             evas_object_textblock_size_formatted_get(tb, &w, &h);
+             fail_if(w < bw);
+             fail_if(w > iw);
+          }
+        fail_if(w != bw);
+     }
+
 
    /* Ellipsis */
    evas_object_textblock_text_markup_set(tb, "aaaaaaaaaa");
