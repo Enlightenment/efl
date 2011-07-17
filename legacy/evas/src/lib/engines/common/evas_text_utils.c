@@ -65,9 +65,36 @@ evas_common_text_props_content_unref(Evas_Text_Props *props)
      }
 }
 
+EAPI int
+evas_common_text_props_cluster_next(const Evas_Text_Props *props, int pos)
+{
+   int prop_pos = evas_common_text_props_index_find(props, pos);
+   if ((props->bidi.dir == EVAS_BIDI_DIRECTION_RTL) && (prop_pos > 0))
+     {
+#ifdef OT_SUPPORT
+        return props->info->ot[props->start + prop_pos - 1].source_cluster -
+           props->text_offset;
+#else
+        return props->start + prop_pos - 1 - props->text_offset;
+#endif
+     }
+   else if ((props->bidi.dir != EVAS_BIDI_DIRECTION_RTL) &&
+         (prop_pos < (int) (props->len - 1)))
+     {
+#ifdef OT_SUPPORT
+        return props->info->ot[props->start + prop_pos + 1].source_cluster -
+           props->text_offset;
+#else
+        return props->start + prop_pos + 1 - props->text_offset;
+#endif
+     }
+
+   return pos;
+}
+
 /* Returns the index of the logical char in the props. */
 EAPI int
-evas_common_text_props_index_find(Evas_Text_Props *props, int _cutoff)
+evas_common_text_props_index_find(const Evas_Text_Props *props, int _cutoff)
 {
 #ifdef OT_SUPPORT
    Evas_Font_OT_Info *ot_info;

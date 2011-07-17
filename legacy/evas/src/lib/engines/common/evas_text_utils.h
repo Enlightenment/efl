@@ -72,7 +72,10 @@ void
 evas_common_text_props_content_unref(Evas_Text_Props *props);
 
 EAPI int
-evas_common_text_props_index_find(Evas_Text_Props *props, int _cutoff);
+evas_common_text_props_cluster_next(const Evas_Text_Props *props, int pos);
+
+EAPI int
+evas_common_text_props_index_find(const Evas_Text_Props *props, int _cutoff);
 
 EAPI void
 evas_common_text_props_split(Evas_Text_Props *base, Evas_Text_Props *ext,

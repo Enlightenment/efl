@@ -3153,6 +3153,7 @@ _layout_get_charwrap(Ctxt *c, Evas_Object_Textblock_Format *fmt,
       const Evas_Object_Textblock_Text_Item *ti, size_t line_start,
       const char *breaks)
 {
+   int wrap;
    size_t uwrap;
    size_t len = eina_ustrbuf_length_get(ti->parent.text_node->unicode);
    /* Currently not being used, because it doesn't contain relevant
@@ -3160,7 +3161,6 @@ _layout_get_charwrap(Ctxt *c, Evas_Object_Textblock_Format *fmt,
    (void) breaks;
 
      {
-        int wrap;
         wrap = _layout_text_cutoff_get(c, fmt, ti);
         if (wrap < 0)
            return -1;
@@ -3169,7 +3169,10 @@ _layout_get_charwrap(Ctxt *c, Evas_Object_Textblock_Format *fmt,
 
 
    if (uwrap == line_start)
-      MOVE_NEXT_UNTIL(len, uwrap);
+     {
+        uwrap = ti->parent.text_pos +
+           (size_t) evas_common_text_props_cluster_next(&ti->text_props, wrap);
+     }
    if ((uwrap <= line_start) || (uwrap > len))
       return -1;
 
