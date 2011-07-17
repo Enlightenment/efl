@@ -138,6 +138,7 @@ PKG_CHECK_MODULES(EEZE, [eeze >= 1.0.99], [have_eeze="yes"], [have_eeze="no"])
 
 if test "x${have_eeze}" = "xyes"; then
    AC_DEFINE(EMOTION_HAVE_EEZE, 1, [Define to 1 if Eeze is available])
+   requirement_emotion="${requirement_emotion} eeze >= 1.0.99"
 fi
 
 ### Checks for header files
