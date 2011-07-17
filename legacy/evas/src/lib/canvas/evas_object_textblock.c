@@ -3051,6 +3051,8 @@ _layout_do_format(const Evas_Object *obj __UNUSED__, Ctxt *c,
              fi->parent.w = fi->parent.adv = w;
              fi->parent.h = h;
           }
+        /* Not sure if it's the best handling, but will do it for now. */
+        fmt = _layout_format_push(c, fmt);
         handled = 1;
      }
 
