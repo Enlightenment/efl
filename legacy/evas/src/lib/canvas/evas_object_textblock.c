@@ -3267,22 +3267,30 @@ _layout_get_word_mixwrap_common(Ctxt *c, Evas_Object_Textblock_Format *fmt,
    /* If we need to find the position after the cutting point */
    if ((wrap == line_start) || (wrap_after))
      {
-        while (wrap < len)
+        if (mixed_wrap)
           {
-             if (ALLOW_BREAK(wrap))
-                break;
-             wrap++;
-          }
-
-
-        if ((wrap < len) && (wrap > line_start))
-          {
-             MOVE_NEXT_UNTIL(len, wrap);
-             return wrap;
+             return _layout_get_charwrap(c, fmt, ti,
+                   line_start, breaks);
           }
         else
           {
-             return -1;
+             while (wrap < len)
+               {
+                  if (ALLOW_BREAK(wrap))
+                     break;
+                  wrap++;
+               }
+
+
+             if ((wrap < len) && (wrap > line_start))
+               {
+                  MOVE_NEXT_UNTIL(len, wrap);
+                  return wrap;
+               }
+             else
+               {
+                  return -1;
+               }
           }
      }
 
