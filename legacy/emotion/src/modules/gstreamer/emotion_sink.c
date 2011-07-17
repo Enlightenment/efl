@@ -471,10 +471,10 @@ static void evas_video_sink_render_handler(void *data,
 
    if (priv->format == GST_VIDEO_FORMAT_I420) {
       int i;
-      unsigned char **rows;
+      const unsigned char **rows;
 
       evas_object_image_pixels_dirty_set(priv->o, 1);
-      rows = (unsigned char **)evas_data;
+      rows = (const unsigned char **)evas_data;
 
       for (i = 0; i < priv->height; i++)
         rows[i] = &gst_data[i * priv->width];
@@ -490,11 +490,11 @@ static void evas_video_sink_render_handler(void *data,
 
    if (priv->format == GST_VIDEO_FORMAT_YV12) {
       int i;
-      unsigned char **rows;
+      const unsigned char **rows;
 
       evas_object_image_pixels_dirty_set(priv->o, 1);
 
-      rows = (unsigned char **)evas_data;
+      rows = (const unsigned char **)evas_data;
 
       for (i = 0; i < priv->height; i++)
         rows[i] = &gst_data[i * priv->width];
@@ -646,6 +646,7 @@ gstreamer_video_sink_new(Emotion_Gstreamer_Video *ev,
    GstElement *sink;
    Evas_Object *obj;
    GstStateChangeReturn res;
+   double start, end;
 
    obj = _emotion_image_get(o);
    if (!obj)
@@ -654,13 +655,17 @@ gstreamer_video_sink_new(Emotion_Gstreamer_Video *ev,
         return NULL;
      }
 
+   start = ecore_time_get();
    playbin = gst_element_factory_make("playbin2", "playbin");
    if (!playbin)
      {
         ERR("Unable to create 'playbin' GstElement.");
         return NULL;
      }
+   end = ecore_time_get();
+   DBG("Playbin2: %f", end - start);
 
+   start = ecore_time_get();
    sink = gst_element_factory_make("emotion-sink", "sink");
    if (!sink)
      {
@@ -671,20 +676,29 @@ gstreamer_video_sink_new(Emotion_Gstreamer_Video *ev,
    g_object_set(G_OBJECT(playbin), "video-sink", sink, NULL);
    g_object_set(G_OBJECT(playbin), "uri", uri, NULL);
    g_object_set(G_OBJECT(sink), "evas-object", obj, NULL);
+   end = ecore_time_get();
 
+   DBG("emotion-sink: %f", end - start);
+
+   start = ecore_time_get();
    res = gst_element_set_state(playbin, GST_STATE_PAUSED);
    if (res == GST_STATE_CHANGE_FAILURE)
      {
         ERR("Unable to set GST_STATE_PAUSED.");
         goto unref_pipeline;
      }
+   end = ecore_time_get();
+   DBG("Pause pipeline: %f", end - start);
 
+   start = ecore_time_get();
    res = gst_element_get_state(playbin, NULL, NULL, GST_CLOCK_TIME_NONE);
    if (res != GST_STATE_CHANGE_SUCCESS)
      {
         ERR("Unable to get GST_CLOCK_TIME_NONE.");
         goto unref_pipeline;
      }
+   end = ecore_time_get();
+   DBG("No time: %f", end - start);
 
    evas_object_data_set(obj, "_emotion_gstreamer_video", ev);
 

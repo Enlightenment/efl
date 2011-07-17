@@ -227,7 +227,6 @@ static Emotion_Video_Module em_module =
    em_speed_get, /* speed_get */
    em_eject, /* eject */
    em_meta_get, /* meta_get */
-   _emotion_object_extension_can_play_generic_get, /* play_get */
    NULL /* handle */
 };
 
@@ -379,6 +378,7 @@ em_file_open(const char   *file,
    Emotion_Gstreamer_Video *ev;
    Eina_Strbuf *sbuf = NULL;
    const char *uri;
+   double start, end;
    int i;
 
    ev = (Emotion_Gstreamer_Video *)video;
@@ -407,20 +407,26 @@ em_file_open(const char   *file,
         eina_strbuf_append(sbuf, file);
      }
 
+   start = ecore_time_get();
    uri = sbuf ? eina_strbuf_string_get(sbuf) : file;
    DBG("setting file to '%s'", uri);
    ev->pipeline = gstreamer_video_sink_new(ev, obj, uri);
    if (sbuf) eina_strbuf_free(sbuf);
+   end = ecore_time_get();
+   DBG("Pipeline creation: %f", end - start);
 
    if (!ev->pipeline)
      return EINA_FALSE;
 
+   start = ecore_time_get();
    ev->eos_bus = gst_pipeline_get_bus(GST_PIPELINE(ev->pipeline));
    if (!ev->eos_bus)
      {
         ERR("could not get the bus");
         return EINA_FALSE;
      }
+   end = ecore_time_get();
+   DBG("Get the bus: %f", end - start);
 
    /* Evas Object */
    ev->obj = obj;
@@ -442,6 +448,7 @@ em_file_open(const char   *file,
 
    /* video stream */
 
+   start = ecore_time_get();
    for (i = 0; i < ev->video_stream_nbr; i++)
      {
         Emotion_Video_Stream *vstream;
@@ -515,9 +522,12 @@ em_file_open(const char   *file,
      unref_pad_v:
         gst_object_unref(pad);
      }
+   end = ecore_time_get();
+   DBG("Get video streams: %f", end - start);
 
    /* Audio streams */
 
+   start = ecore_time_get();
    for (i = 0; i < ev->audio_stream_nbr; i++)
      {
         Emotion_Audio_Stream *astream;
@@ -575,9 +585,12 @@ em_file_open(const char   *file,
      unref_pad_a:
         gst_object_unref(pad);
      }
+   end = ecore_time_get();
+   DBG("Get audio streams: %f", end - start);
 
    /* Visualization sink */
 
+   start = ecore_time_get();
    if (ev->video_stream_nbr == 0)
      {
         GstElement *vis = NULL;
@@ -613,6 +626,8 @@ em_file_open(const char   *file,
         flags |= 0x00000008;
         g_object_set(G_OBJECT(ev->pipeline), "flags", flags, NULL);
      }
+   end = ecore_time_get();
+   DBG("Get visualization streams: %f", end - start);
 
  finalize:
 
@@ -656,10 +671,13 @@ em_file_open(const char   *file,
      _free_metadata(ev->metadata);
    ev->metadata = calloc(1, sizeof(Emotion_Gstreamer_Metadata));
 
+   start = ecore_time_get();
    em_audio_channel_volume_set(ev, ev->volume);
 
    _eos_timer_fct(ev);
    _emotion_open_done(ev->obj);
+   end = ecore_time_get();
+   DBG("Last stuff: %f", end - start);
 
    return 1;
 }

@@ -134,6 +134,11 @@ PKG_CHECK_EXISTS([evas-fb >= 1.0.0], [AC_DEFINE(HAVE_EVAS_FB, 1, [Evas Framebuff
 
 EFL_EDJE_EXTERNAL([have_edje_external="yes"], [have_edje_external="no"])
 
+PKG_CHECK_MODULES(EEZE, [eeze >= 1.0.99], [have_eeze="yes"], [have_eeze="no"])
+
+if test "x${have_eeze}" = "xyes"; then
+   AC_DEFINE(EMOTION_HAVE_EEZE, 1, [Define to 1 if Eeze is available])
+fi
 
 ### Checks for header files
 AC_HEADER_STDC

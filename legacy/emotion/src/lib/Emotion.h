@@ -223,6 +223,9 @@ extern "C" {
  * @defgroup Emotion_Info Miscellaneous information retrieval functions
  */
 
+EAPI Eina_Bool emotion_init(void);
+EAPI Eina_Bool emotion_shutdown(void);
+
 /**
  * @brief Add an emotion object to the canvas.
  *
@@ -760,11 +763,14 @@ EAPI void         emotion_object_last_position_save    (Evas_Object *obj);
 EAPI void         emotion_object_suspend_set           (Evas_Object *obj, Emotion_Suspend state);
 EAPI Emotion_Suspend emotion_object_suspend_get        (Evas_Object *obj);
 
-EAPI Eina_Bool    emotion_object_extension_can_play_get(const Evas_Object *obj, const char *file);
-EAPI Eina_Bool    emotion_object_extension_can_play_fast_get(const Evas_Object *obj, const char *file);
-
 EAPI Eina_Bool    emotion_object_extension_may_play_fast_get(const char *file);
 EAPI Eina_Bool    emotion_object_extension_may_play_get(const char *file);
+
+typedef struct _Emotion_Webcam Emotion_Webcam;
+
+EAPI const Eina_List *emotion_webcams_get(void);
+EAPI const char      *emotion_webcam_name_get(Emotion_Webcam *ew);
+EAPI const char      *emotion_webcam_device_get(Emotion_Webcam *ew);
 
 /**
  * @}
