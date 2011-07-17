@@ -672,7 +672,6 @@ START_TEST(evas_textblock_wrapping)
    fail_if(h <= bh);
 
    /* Mixed - fallback to char wrap */
-#if 0
    evas_object_textblock_text_markup_set(tb, "aaaaaaa");
    evas_textblock_cursor_format_prepend(cur, "+ wrap=mixed");
    evas_object_resize(tb, bw, bh);
@@ -680,7 +679,6 @@ START_TEST(evas_textblock_wrapping)
    /* Wrap to minimum */
    fail_if(w != bw);
    fail_if(h <= bh);
-#endif
 
    /* Basic Word wrap */
    evas_object_textblock_text_markup_set(tb, "aaaa");
@@ -759,7 +757,6 @@ START_TEST(evas_textblock_wrapping)
    fail_if(w != bw);
 
    /* Mixed wrap */
-#if 0
    evas_object_textblock_text_markup_set(tb, "a");
    evas_object_textblock_size_formatted_get(tb, &bw, &bh);
    evas_object_textblock_text_markup_set(tb,
@@ -779,10 +776,9 @@ START_TEST(evas_textblock_wrapping)
         fail_if(w > iw);
      }
    fail_if(w != bw);
-#endif
 
    /* Resize, making sure we keep going down in the minimum size. */
-   char *wrap_style[] = { "+ wrap=word", "+ wrap=char"/*, "+ wrap=mixed"*/ };
+   char *wrap_style[] = { "+ wrap=word", "+ wrap=char", "+ wrap=mixed" };
    int wrap_items = sizeof(wrap_style) / sizeof(*wrap_style);
 
    evas_object_textblock_text_markup_set(tb,
