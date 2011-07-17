@@ -315,7 +315,7 @@ struct _Evas_Object_Textblock_Text_Item
 {
    Evas_Object_Textblock_Item       parent;
    Evas_Text_Props                  text_props;
-   int                              inset, baseline;
+   Evas_Coord                       inset;
    Evas_Coord                       x_adjustment; /* Used to indicate by how
                                                      much we adjusted sizes */
 };
@@ -2410,8 +2410,6 @@ _layout_line_finalize(Ctxt *c, Evas_Object_Textblock_Format *fmt)
         if (it->type == EVAS_TEXTBLOCK_ITEM_TEXT)
           {
              Evas_Object_Textblock_Text_Item *ti = _ITEM_TEXT(it);
-             if (ti->parent.format->font.font)
-               ti->baseline = c->ENFN->font_max_ascent_get(c->ENDT, ti->parent.format->font.font);
              _layout_format_ascent_descent_adjust(c->obj, &c->maxascent,
                    &c->maxdescent, ti->parent.format);
           }
