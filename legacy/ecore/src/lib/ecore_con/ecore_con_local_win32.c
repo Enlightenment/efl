@@ -684,10 +684,10 @@ ecore_con_local_win32_server_flush(Ecore_Con_Server *svr)
        ((svr->type & ECORE_CON_TYPE) != ECORE_CON_LOCAL_SYSTEM))
      return EINA_FALSE;
 
-   num = svr->write_buf_size - svr->write_buf_offset;
+   num = eina_binbuf_length_get(svr->buf) - svr->write_buf_offset;
    if (num <= 0) return EINA_TRUE;
 
-   res = WriteFile(svr->pipe, svr->write_buf + svr->write_buf_offset, num, &written, NULL);
+   res = WriteFile(svr->pipe, eina_binbuf_string_get(svr->buf) + svr->write_buf_offset, num, &written, NULL);
    if (!res)
      {
         char *msg;
@@ -704,12 +704,11 @@ ecore_con_local_win32_server_flush(Ecore_Con_Server *svr)
      }
 
    svr->write_buf_offset += written;
-   if (svr->write_buf_offset >= svr->write_buf_size)
+   if (svr->write_buf_offset >= eina_binbuf_length_get(svr->buf))
      {
-        svr->write_buf_size = 0;
         svr->write_buf_offset = 0;
-        free(svr->write_buf);
-        svr->write_buf = NULL;
+	eina_binbuf_free(svr->buf);
+        svr->buf = NULL;
         svr->want_write = 0;
      }
    else if (written < (DWORD)num)
@@ -736,10 +735,10 @@ ecore_con_local_win32_client_flush(Ecore_Con_Client *cl)
        (type != ECORE_CON_LOCAL_SYSTEM))
      return EINA_FALSE;
 
-   num = cl->buf_size - cl->buf_offset;
+   num = eina_binbuf_length_get(cl->buf) - cl->buf_offset;
    if (num <= 0) return EINA_TRUE;
 
-   res = WriteFile(cl->host_server->pipe, cl->buf + cl->buf_offset, num, &written, NULL);
+   res = WriteFile(cl->host_server->pipe, eina_binbuf_string_get(cl->buf) + cl->buf_offset, num, &written, NULL);
    if (!res)
      {
         char *msg;
@@ -756,11 +755,10 @@ ecore_con_local_win32_client_flush(Ecore_Con_Client *cl)
      }
 
    cl->buf_offset += written;
-   if (cl->buf_offset >= cl->buf_size)
+   if (cl->buf_offset >= eina_binbuf_length_get(cl->buf))
      {
-        cl->buf_size = 0;
         cl->buf_offset = 0;
-        free(cl->buf);
+        eina_binbuf_free(cl->buf);
         cl->buf = NULL;
         cl->host_server->want_write = 0;
      }
