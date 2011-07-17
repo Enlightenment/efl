@@ -299,14 +299,6 @@ emotion_object_module_option_set(Evas_Object *obj, const char *opt, const char *
 
    E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
    if ((!opt) || (!val)) return;
-   if (!strcmp(opt, "video"))
-     {
-	if (!strcmp(val, "off")) sd->module_options.no_video = EINA_TRUE;
-     }
-   else if (!strcmp(opt, "audio"))
-     {
-	if (!strcmp(val, "off")) sd->module_options.no_audio = EINA_TRUE;
-     }
 }
 
 EAPI Eina_Bool
