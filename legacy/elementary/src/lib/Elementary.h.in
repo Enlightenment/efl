@@ -5663,8 +5663,8 @@ extern "C" {
      {
         Evas_Coord x, y;       /**< Holds zoom center point reported to user  */
         Evas_Coord radius; /**< Holds radius between fingers reported to user */
-        float zoom;            /**< Zoom value: 1.0 means no zoom             */
-        float momentum;        /**< Zoom momentum: zoom growth per second (NOT YET SUPPORTED) */
+        double zoom;            /**< Zoom value: 1.0 means no zoom             */
+        double momentum;        /**< Zoom momentum: zoom growth per second (NOT YET SUPPORTED) */
      };
 
    /**

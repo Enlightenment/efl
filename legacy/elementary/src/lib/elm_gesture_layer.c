@@ -223,8 +223,8 @@ struct _Widget_Data
    int line_min_length;
    Evas_Coord zoom_tolerance;
    Evas_Coord line_tolerance;
-   float zoom_wheel_factor; /* mouse wheel zoom steps */
-   float factor; /* used for zoom factor */
+   double zoom_wheel_factor; /* mouse wheel zoom steps */
+   double factor; /* used for zoom factor */
    double  rotate_tolerance;
 
    double zoom_step;
@@ -2042,11 +2042,11 @@ get_finger_gap_length(Evas_Coord x1, Evas_Coord y1, Evas_Coord x2,
  * @ingroup Elm_Gesture_Layer
  */
 /* FIXME change float to double */
-static float
+static double
 compute_zoom(Zoom_Type *st, Evas_Coord x1, Evas_Coord y1, unsigned int tm1,
-      Evas_Coord x2, Evas_Coord y2, unsigned int tm2, float factor)
+      Evas_Coord x2, Evas_Coord y2, unsigned int tm2, double factor)
 {
-   float rt = 1.0;
+   double rt = 1.0;
    Evas_Coord diam = get_finger_gap_length(x1, y1, x2, y2,
          &st->info.x, &st->info.y);
 
