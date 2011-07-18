@@ -207,6 +207,7 @@ gboolean evas_video_sink_set_caps(GstBaseSink *bsink, GstCaps *caps)
    priv = sink->priv;
 
    if (G_UNLIKELY(!gst_video_format_parse_caps(caps, &priv->format, &width, &height))) {
+      ERR("Unable to parse caps.");
       return FALSE;
    }
 
@@ -690,6 +691,10 @@ gstreamer_video_sink_new(Emotion_Gstreamer_Video *ev,
    end = ecore_time_get();
    DBG("Pause pipeline: %f", end - start);
 
+   /** NOTE: you need to set: GST_DEBUG_DUMP_DOT_DIR=/tmp EMOTION_ENGINE=gstreamer to save the $EMOTION_GSTREAMER_DOT file in '/tmp' */
+   /** then call dot -Tpng -oemotion_pipeline.png /tmp/$TIMESTAMP-$EMOTION_GSTREAMER_DOT.dot */
+   if (getenv("EMOTION_GSTREAMER_DOT")) GST_DEBUG_BIN_TO_DOT_FILE_WITH_TS(GST_BIN(playbin), GST_DEBUG_GRAPH_SHOW_ALL, getenv("EMOTION_GSTREAMER_DOT"));
+
    start = ecore_time_get();
    res = gst_element_get_state(playbin, NULL, NULL, GST_CLOCK_TIME_NONE);
    if (res != GST_STATE_CHANGE_SUCCESS)
@@ -701,10 +706,6 @@ gstreamer_video_sink_new(Emotion_Gstreamer_Video *ev,
    DBG("No time: %f", end - start);
 
    evas_object_data_set(obj, "_emotion_gstreamer_video", ev);
-
-   /** NOTE: you need to set: GST_DEBUG_DUMP_DOT_DIR=/tmp EMOTION_ENGINE=gstreamer to save the $EMOTION_GSTREAMER_DOT file in '/tmp' */
-   /** then call dot -Tpng -oemotion_pipeline.png /tmp/$TIMESTAMP-$EMOTION_GSTREAMER_DOT.dot */
-   if (getenv("EMOTION_GSTREAMER_DOT")) GST_DEBUG_BIN_TO_DOT_FILE_WITH_TS(GST_BIN(playbin), GST_DEBUG_GRAPH_SHOW_ALL, getenv("EMOTION_GSTREAMER_DOT"));
 
    return playbin;
 
