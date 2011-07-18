@@ -2124,6 +2124,72 @@
   * @example image_example_01.c
   */
 
+ /**
+  * @page tutorial_icon Icon example
+  * @dontinclude icon_example_01.c
+  *
+  * This example is as simple as possible. An icon object will be added to the
+  * window over a white background, and set to be resizeable together with the
+  * window. All the options set through the example will affect the behavior of
+  * this icon.
+  *
+  * We start with the code for creating a window and its background:
+  *
+  * @skip int
+  * @until show(bg)
+  *
+  * Now we create the icon object, and set lookup order of the icon, and choose
+  * the "home" icon:
+  *
+  * @until home
+  *
+  * An intersting thing is that after setting this, it's possible to check where
+  * in the filesystem is the theme used by this icon, and the name of the group
+  * used:
+  *
+  * @until printf
+  *
+  * We can now go setting our options.
+  *
+  * elm_icon_no_scale_set() is used just to set this value to true (we
+  * don't want to scale our icon anyway, just resize it).
+  *
+  * elm_icon_scale_set() is used to allow the icon to be resized to a size
+  * smaller than the original one, but not to a size bigger than it.
+  *
+  * elm_elm_icon_smooth_set() will disable the smooth scaling, so the scale
+  * algorithm used to scale the icon to the new object size is going to be
+  * faster, but with a lower quality.
+  *
+  * elm_icon_fill_outside_set() is used to ensure that the icon will fill the
+  * entire area available to it, even if keeping the aspect ratio. The icon
+  * will overflow its width or height (any of them that is necessary) to the
+  * object area, instead of resizing the icon down until it can fit entirely in
+  * this area.
+  *
+  * This is the code for setting these options:
+  *
+  * @until fill_outside
+  *
+  * However, if you try this example you may notice that this image is not being
+  * affected by all of these options. This happens because the used icon will be
+  * from elementary theme, and thus it has its own set of options like smooth
+  * scaling and fill_outside options. You can change the "home" icon to use some
+  * image (from your system) and see that then those options will be respected.
+  *
+  * Now some last touches in our object size hints, window and background, to
+  * display this icon properly:
+  *
+  * @until ELM_MAIN
+  *
+  * This example will look like this:
+  *
+  * @image html screenshots/icon_example_01.png
+  * @image latex screenshots/icon_example_01.eps
+  *
+  * @example icon_example_01.c
+  */
+
 /**
  * @page tutorial_hoversel Hoversel example
  * @dontinclude hoversel_example_01.c

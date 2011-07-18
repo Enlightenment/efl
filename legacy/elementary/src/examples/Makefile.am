@@ -60,6 +60,7 @@ SRCS = \
 	conformant_example_01.c \
 	conformant_example_02.c \
 	image_example_01.c \
+	icon_example_01.c \
 	flipselector_example.c \
 	fileselector_example.c \
 	fileselector_button_example.c \
@@ -120,6 +121,7 @@ pkglib_PROGRAMS += \
 	image_example_01 \
 	diskselector_example_01 \
 	diskselector_example_02 \
+	icon_example_01 \
 	flipselector_example \
 	fileselector_example \
 	fileselector_button_example \
@@ -156,6 +158,7 @@ SCREENSHOTS = \
 	image_example_01:image_example_01.png:0.0 \
 	diskselector_example_01:diskselector_example_01.png:0.2 \
 	diskselector_example_02:diskselector_example_02.png:0.2 \
+	icon_example_01:icon_example_01.png:0.0 \
 	flipselector_example:flipselector_example.png:0.0 \
 	fileselector_example:fileselector_example.png:0.0
 
