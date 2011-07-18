@@ -6,19 +6,6 @@
 static const char *icon_theme = NULL;
 #endif
 
-/**
- * @defgroup Icon Icon
- *
- * A standard icon that may be provided by the theme (delete, edit,
- * arrows etc.) or a custom file (PNG, JPG, EDJE etc.) used for an
- * icon. The Icon may scale or not and of course... support alpha
- * channels.
- *
- * Signals that you can add callbacks for are:
- *
- * "clicked" - This is called when a user has clicked the icon
- */
-
 typedef struct _Widget_Data Widget_Data;
 
 struct _Widget_Data
@@ -443,14 +430,6 @@ _mouse_up(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *eve
    evas_object_smart_callback_call(data, SIG_CLICKED, event_info);
 }
 
-/**
- * Add a new icon to the parent
- *
- * @param parent The parent object
- * @return The new object or NULL if it cannot be created
- *
- * @ingroup Icon
- */
 EAPI Evas_Object *
 elm_icon_add(Evas_Object *parent)
 {
@@ -492,17 +471,6 @@ elm_icon_add(Evas_Object *parent)
    return obj;
 }
 
-/**
- * Set the file that will be used as icon
- *
- * @param obj The icon object
- * @param file The path to file that will be used as icon
- * @param group The group that the icon belongs in edje file
- *
- * @return (1 = success, 0 = error)
- *
- * @ingroup Icon
- */
 EAPI Eina_Bool
 elm_icon_file_set(Evas_Object *obj, const char *file, const char *group)
 {
@@ -523,15 +491,6 @@ elm_icon_file_set(Evas_Object *obj, const char *file, const char *group)
    return ret;
 }
 
-/**
- * Get the file that will be used as icon
- *
- * @param obj The icon object
- * @param file The path to file that will be used as icon
- * @param group The group that the icon belongs in edje file
- *
- * @ingroup Icon
- */
 EAPI void
 elm_icon_file_get(const Evas_Object *obj, const char **file, const char **group)
 {
@@ -717,18 +676,6 @@ _elm_icon_standard_resize(void *data,
    eina_stringshare_del(refup);
 }
 
-/**
- * Set the theme, as standard, for an icon.
- * If theme was not found and it is the absolute path of an image file, this
- * image will be used.
- *
- * @param obj The icon object
- * @param name The theme name
- *
- * @return (1 = success, 0 = error)
- *
- * @ingroup Icon
- */
 EAPI Eina_Bool
 elm_icon_standard_set(Evas_Object *obj, const char *name)
 {
@@ -751,14 +698,6 @@ elm_icon_standard_set(Evas_Object *obj, const char *name)
    return ret;
 }
 
-/**
- * Get the theme, as standard, for an icon
- *
- * @param obj The icon object
- * @return The theme name
- *
- * @ingroup Icon
- */
 EAPI const char *
 elm_icon_standard_get(const Evas_Object *obj)
 {
@@ -768,14 +707,6 @@ elm_icon_standard_get(const Evas_Object *obj)
    return wd->stdicon;
 }
 
-/**
- * Sets icon lookup order, used by elm_icon_standard_set().
- *
- * @param obj The icon object
- * @param order The icon lookup order
- *
- * @ingroup Icon
- */
 EAPI void
 elm_icon_order_lookup_set(Evas_Object *obj, Elm_Icon_Lookup_Order order)
 {
@@ -784,14 +715,6 @@ elm_icon_order_lookup_set(Evas_Object *obj, Elm_Icon_Lookup_Order order)
    if (wd) wd->lookup_order = order;
 }
 
-/**
- * Gets the icon lookup order.
- *
- * @param obj The icon object
- * @return The icon lookup order
- *
- * @ingroup Icon
- */
 EAPI Elm_Icon_Lookup_Order
 elm_icon_order_lookup_get(const Evas_Object *obj)
 {
@@ -801,15 +724,6 @@ elm_icon_order_lookup_get(const Evas_Object *obj)
    return wd->lookup_order;
 }
 
-/**
- * Set the smooth effect for an icon
- *
- * @param obj The icon object
- * @param smooth A bool to set (or no) smooth effect
- * (1 = smooth, 0 = not smooth)
- *
- * @ingroup Icon
- */
 EAPI void
 elm_icon_smooth_set(Evas_Object *obj, Eina_Bool smooth)
 {
@@ -821,14 +735,6 @@ elm_icon_smooth_set(Evas_Object *obj, Eina_Bool smooth)
    _sizing_eval(obj);
 }
 
-/**
- * Get the smooth effect for an icon
- *
- * @param obj The icon object
- * @return If setted smooth effect
- *
- * @ingroup Icon
- */
 EAPI Eina_Bool
 elm_icon_smooth_get(const Evas_Object *obj)
 {
@@ -839,15 +745,6 @@ elm_icon_smooth_get(const Evas_Object *obj)
    return wd->smooth;
 }
 
-/**
- * Set if the object is scalable
- *
- * @param obj The icon object
- * @param no_scale A bool to set scale (or no)
- * (1 = no_scale, 0 = scale)
- *
- * @ingroup Icon
- */
 EAPI void
 elm_icon_no_scale_set(Evas_Object *obj, Eina_Bool no_scale)
 {
@@ -859,14 +756,6 @@ elm_icon_no_scale_set(Evas_Object *obj, Eina_Bool no_scale)
    _sizing_eval(obj);
 }
 
-/**
- * Get if the object isn't scalable
- *
- * @param obj The icon object
- * @return If isn't scalable
- *
- * @ingroup Icon
- */
 EAPI Eina_Bool
 elm_icon_no_scale_get(const Evas_Object *obj)
 {
@@ -876,15 +765,6 @@ elm_icon_no_scale_get(const Evas_Object *obj)
    return wd->no_scale;
 }
 
-/**
- * Set if the object is (up/down) scalable
- *
- * @param obj The icon object
- * @param scale_up A bool to set if the object is scalable up
- * @param scale_down A bool to set if the object is scalable down
- *
- * @ingroup Icon
- */
 EAPI void
 elm_icon_scale_set(Evas_Object *obj, Eina_Bool scale_up, Eina_Bool scale_down)
 {
@@ -897,15 +777,6 @@ elm_icon_scale_set(Evas_Object *obj, Eina_Bool scale_up, Eina_Bool scale_down)
    _sizing_eval(obj);
 }
 
-/**
- * Get if the object is (up/down) scalable
- *
- * @param obj The icon object
- * @param scale_up A bool to set if the object is scalable up
- * @param scale_down A bool to set if the object is scalable down
- *
- * @ingroup Icon
- */
 EAPI void
 elm_icon_scale_get(const Evas_Object *obj, Eina_Bool *scale_up, Eina_Bool *scale_down)
 {
@@ -916,15 +787,6 @@ elm_icon_scale_get(const Evas_Object *obj, Eina_Bool *scale_up, Eina_Bool *scale
    if (scale_down) *scale_down = wd->scale_down;
 }
 
-/**
- * Set if the object is filled outside
- *
- * @param obj The icon object
- * @param fill_outside A bool to set if the object is filled outside
- * (1 = filled, 0 = no filled)
- *
- * @ingroup Icon
- */
 EAPI void
 elm_icon_fill_outside_set(Evas_Object *obj, Eina_Bool fill_outside)
 {
@@ -936,14 +798,6 @@ elm_icon_fill_outside_set(Evas_Object *obj, Eina_Bool fill_outside)
    _sizing_eval(obj);
 }
 
-/**
- * Get if the object is filled outside
- *
- * @param obj The icon object
- * @return If the object is filled outside
- *
- * @ingroup Icon
- */
 EAPI Eina_Bool
 elm_icon_fill_outside_get(const Evas_Object *obj)
 {
@@ -954,14 +808,6 @@ elm_icon_fill_outside_get(const Evas_Object *obj)
    return wd->fill_outside;
 }
 
-/**
- * Set the prescale size for the icon
- *
- * @param obj The icon object
- * @param size The prescale size
- *
- * @ingroup Icon
- */
 EAPI void
 elm_icon_prescale_set(Evas_Object *obj, int size)
 {
@@ -972,14 +818,6 @@ elm_icon_prescale_set(Evas_Object *obj, int size)
    _els_smart_icon_scale_size_set(wd->img, size);
 }
 
-/**
- * Get the prescale size for the icon
- *
- * @param obj The icon object
- * @return The prescale size
- *
- * @ingroup Icon
- */
 EAPI int
 elm_icon_prescale_get(const Evas_Object *obj)
 {
