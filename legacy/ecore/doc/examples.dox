@@ -773,8 +773,10 @@
  *
  * This example will start a server and start accepting connections from clients, as
  * demonstrated in the following diagram:
+ * @htmlonly
  * <img src="ecore_con-client-server-example.png" style="max-width: 400px"/>
  * <a href="ecore_con-client-server-example.png">Full size</a>
+ * @endhtmlonly
  *
  * @image rtf ecore_con-client-server-example.png
  * @image latex ecore_con-client-server-example.eps width=\textwidth
@@ -835,8 +837,10 @@
  *
  * This example will connect to the server and start comunicating with it, as
  * demonstrated in the following diagram:
+ * @htmlonly
  * <img src="ecore_con-client-server-example2.png" style="max-width: 400px"/>
  * <a href="ecore_con-client-server-example2.png">Full size</a>
+ * @endhtmlonly
  *
  * @image rtf ecore_con-client-server-example2.png
  * @image latex ecore_con-client-server-example2.eps width=\textwidth
