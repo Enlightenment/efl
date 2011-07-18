@@ -3879,6 +3879,304 @@ EAPI Eina_Bool         evas_object_propagate_events_get   (const Evas_Object *ob
  *       care. The impact on performance depends on engine in
  *       use. Software is quite optimized, but not as fast as OpenGL.
  *
+ * @section sec-map-points Map points
+ * @subsection subsec-rotation Rotation
+ *
+ * A map consists of a set of points, currently only four are supported. Each
+ * of these points contains a set of canvas coordinates @c x and @c y that
+ * can be used to alter the geometry of the mapped object, and a @c z
+ * coordinate that indicates the depth of that point. This last coordinate
+ * does not normally affect the map, but it's used by several of the utility
+ * functions to calculate the right position of the point given other
+ * parameters.
+ *
+ * The coordinates for each point are set with evas_map_point_coord_set().
+ * The following image shows a map set to match the geometry of an existing
+ * object.
+ *
+ * @image html map-set-map-points-1.png
+ * @image rtf map-set-map-points-1.png
+ * @image latex map-set-map-points-1.eps
+ *
+ * This is a common practice, so there are a few functions that help make it
+ * easier.
+ *
+ * evas_map_util_points_populate_from_geometry() sets the coordinates of each
+ * point in the given map to match the rectangle defined by the function
+ * parameters.
+ *
+ * evas_map_util_points_populate_from_object() and
+ * evas_map_util_points_populate_from_object_full() both take an object and
+ * set the map points to match its geometry. The difference between the two
+ * is that the first function sets the @c z value of all points to 0, while
+ * the latter receives the value to set in said coordinate as a parameter.
+ *
+ * The following lines of code all produce the same result as in the image
+ * above.
+ * @code
+ * evas_map_util_points_populate_from_geometry(m, 100, 100, 200, 200, 0);
+ * // Assuming o is our original object
+ * evas_object_move(o, 100, 100);
+ * evas_object_resize(o, 200, 200);
+ * evas_map_util_points_populate_from_object(m, o);
+ * evas_map_util_points_populate_from_object_full(m, o, 0);
+ * @endcode
+ *
+ * Several effects can be applied to an object by simply setting each point
+ * of the map to the right coordinates. For example, a simulated perspective
+ * could be achieve as follows.
+ *
+ * @image html map-set-map-points-2.png
+ * @image rtf map-set-map-points-2.png
+ * @image latex map-set-map-points-2.eps
+ *
+ * As said before, the @c z coordinate is unused here so when setting points
+ * by hand, its value is of no importance.
+ *
+ * @image html map-set-map-points-3.png
+ * @image rtf map-set-map-points-3.png
+ * @image latex map-set-map-points-3.eps
+ *
+ * In all three cases above, setting the map to be used by the object is the
+ * same.
+ * @code
+ * evas_object_map_set(o, m);
+ * evas_object_map_enable_set(o, EINA_TRUE);
+ * @endcode
+ *
+ * Doing things this way, however, is a lot of work that can be avoided by
+ * using the provided utility functions, as described in the next section.
+ *
+ * @section map-utils Utility functions
+ *
+ * Utility functions take an already set up map and alter it to produce a
+ * specific effect. For example, to rotate an object around its own center
+ * you would need to take the rotation angle, the coordinates of each corner
+ * of the object and do all the math to get the new set of coordinates that
+ * need to tbe set in the map.
+ *
+ * Or you can use this code:
+ * @code
+ * evas_object_geometry_get(o, &x, &y, &w, &h);
+ * m = evas_map_new(4);
+ * evas_map_util_points_populate_from_object(m, o);
+ * evas_map_util_rotate(m, 45, x + (w / 2), y + (h / 2));
+ * evas_object_map_set(o, m);
+ * evas_object_map_enable_set(o, EINA_TRUE);
+ * evas_map_free(m);
+ * @endcode
+ *
+ * Which will rotate the object around its center point in a 45 degree angle
+ * in the clockwise direction, taking it from this
+ *
+ * @image html map-rotation-2d-1.png
+ * @image rtf map-rotation-2d-1.png
+ * @image latex map-rotation-2d-1.eps
+ *
+ * to this
+ *
+ * @image html map-rotation-2d-2.png
+ * @image rtf map-rotation-2d-2.png
+ * @image latex map-rotation-2d-2.eps
+ *
+ * Objects may be rotated around any other point just by setting the last two
+ * paramaters of the evas_map_util_rotate() function to the right values. A
+ * circle of roughly the diameter of the object overlaid on each image shows
+ * where the center of rotation is set for each example.
+ *
+ * For example, this code
+ * @code
+ * evas_object_geometry_get(o, &x, &y, &w, &h);
+ * m = evas_map_new(4);
+ * evas_map_util_points_populate_from_object(m, o);
+ * evas_map_util_rotate(m, 45, x + w - 20, y + h - 20);
+ * evas_object_map_set(o, m);
+ * evas_object_map_enable_set(o, EINA_TRUE);
+ * evas_map_free(m);
+ * @endcode
+ *
+ * produces something like
+ * @image html map-rotation-2d-3.png
+ * @image rtf map-rotation-2d-3.png
+ * @image latex map-rotation-2d-3.eps
+ *
+ * And the following
+ * @code
+ * evas_output_size_get(evas, &w, &h);
+ * m = evas_map_new(4);
+ * evas_map_util_points_populate_from_object(m, o);
+ * evas_map_util_rotate(m, 45, w, h);
+ * evas_object_map_set(o, m);
+ * evas_object_map_enable_set(o, EINA_TRUE);
+ * evas_map_free(m);
+ * @endcode
+ *
+ * rotates the object around the center of the window
+ * @image html map-rotation-2d-4.png
+ * @image rtf map-rotation-2d-4.png
+ * @image latex map-rotation-2d-4.eps
+ *
+ * @subsection subsec-3d 3D Maps
+ *
+ * Maps can also be used to achieve the effect of 3-dimensionality. When doing
+ * this, the @c z coordinate of each point counts, with higher values meaning
+ * the point is further into the screen, and smaller values (negative, usually)
+ * meaning the point is closwer towards the user.
+ *
+ * Thinking in 3D also introduces the concept of back-face of an object. An
+ * object is said to be facing the user when all its points are placed in a
+ * clockwise fashion. The next image shows this, with each point showing the
+ * with which is identified within the map.
+ *
+ * @image html map-point-order-face.png
+ * @image rtf map-point-order-face.png
+ * @image latex map-point-order-face.eps
+ *
+ * Rotating this map around the @c Y axis would leave the order of the points
+ * in a counter-clockwise fashion, as seen in the following image.
+ *
+ * @image html map-point-order-back.png
+ * @image rtf map-point-order-back.png
+ * @image latex map-point-order-back.eps
+ *
+ * This way we can say that we are looking at the back face of the object.
+ * This will have stronger implications later when we talk about lighting.
+ *
+ * To know if a map is facing towards the user or not it's enough to use
+ * the evas_map_util_clockwise_get() function, but this is normally done
+ * after all the other operations are applied on the map.
+ *
+ * @subsection subsec-3d-rot 3D rotation and perspective
+ *
+ * Much like evas_map_util_rotate(), there's the function
+ * evas_map_util_3d_rotate() that transforms the map to apply a 3D rotation
+ * to an object. As in its 2D counterpart, the rotation can be applied around
+ * any point in the canvas, this time with a @c z coordinate too. The rotation
+ * can also be around any of the 3 axis.
+ *
+ * Starting from this simple setup
+ *
+ * @image html map-3d-basic-1.png
+ * @image rtf map-3d-basic-1.png
+ * @image latex map-3d-basic-1.eps
+ *
+ * and setting maps so that the blue square to rotate on all axis around a
+ * sphere that uses the object as its center, and the red square to rotate
+ * around the @c Y axis, we get the following. A simple overlay over the image
+ * shows the original geometry of each object and the axis around which they
+ * are being rotated, with the @c Z one not appearing due to being orthogonal
+ * to the screen.
+ *
+ * @image html map-3d-basic-2.png
+ * @image rtf map-3d-basic-2.png
+ * @image latex map-3d-basic-2.eps
+ *
+ * which doesn't look very real. This can be helped by adding perspective
+ * to the transformation, which can be simply done by calling
+ * evas_map_util_3d_perspective() on the map after its position has been set.
+ * The result in this case, making the vanishing point the center of each
+ * object:
+ *
+ * @image html map-3d-basic-3.png
+ * @image rtf map-3d-basic-3.png
+ * @image latex map-3d-basic-3.eps
+ *
+ * @section sec-color Color and lighting
+ *
+ * Each point in a map can be set to a color, which will be multiplied with
+ * the objects own color and linearly interpolated in between adjacent points.
+ * This is done with evas_map_point_color_set() for each point of the map,
+ * or evas_map_util_points_color_set() to set every point to the same color.
+ *
+ * When using 3D effects, colors can be used to improve the looks of them by
+ * simulating a light source. The evas_map_util_3d_lighting() function makes
+ * this task easier by taking the coordinates of the light source and its
+ * color, along with the color of the ambient light. Evas then sets the color
+ * of each point based on the distance to the light source, the angle with
+ * which the object is facing the light and the ambient light. Here, the
+ * orientation of each point as explained before, becomes more important.
+ * If the map is defined counter-clockwise, the object will be facing away
+ * from the user and thus become obscured, since no light would be reflecting
+ * from it.
+ *
+ * @image html map-light.png
+ * @image rtf map-light.png
+ * @image latex map-light.eps
+ * @note Object facing the light source
+ *
+ * @image html map-light2.png
+ * @image rtf map-light2.png
+ * @image latex map-light2.eps
+ * @note Same object facing away from the user
+ *
+ * @section Image mapping
+ *
+ * @image html map-uv-mapping-1.png
+ * @image rtf map-uv-mapping-1.png
+ * @image latex map-uv-mapping-1.eps
+ *
+ * Images need some special handlign when mapped. Evas can easily take care
+ * of objects and do almost anything with them, but it's completely oblivious
+ * to the content of images, so each point in the map needs to be told to what
+ * pixel in the source image it belongs. Failing to do may sometimes result
+ * in the expected behavior, or it may look like a partial work.
+ *
+ * The next image illustrates one possibility of a map being set to an image
+ * object, without setting the right UV mapping for each point. The objects
+ * themselves are mapped properly to their new geometry, but the image content
+ * may not be displayed correctly within the mapped object.
+ *
+ * @image html map-uv-mapping-2.png
+ * @image rtf map-uv-mapping-2.png
+ * @image latex map-uv-mapping-2.eps
+ *
+ * Once Evas knows how to handle the source image within the map, it will
+ * transform it as needed. This is done with evas_map_point_image_uv_set(),
+ * which tells the map to which pixel in image it maps.
+ *
+ * To match our example images to the maps above all we need is the size of
+ * each image, which can always be found with evas_object_image_size_get().
+ *
+ * @code
+ * evas_map_point_image_uv_set(m, 0, 0, 0);
+ * evas_map_point_image_uv_set(m, 1, 150, 0);
+ * evas_map_point_image_uv_set(m, 2, 150, 200);
+ * evas_map_point_image_uv_set(m, 3, 0, 200);
+ * evas_object_map_set(o, m);
+ * evas_object_map_enable_set(o, EINA_TRUE);
+ *
+ * evas_map_point_image_uv_set(m, 0, 0, 0);
+ * evas_map_point_image_uv_set(m, 1, 120, 0);
+ * evas_map_point_image_uv_set(m, 2, 120, 160);
+ * evas_map_point_image_uv_set(m, 3, 0, 160);
+ * evas_object_map_set(o2, m);
+ * evas_object_map_enable_set(o2, EINA_TRUE);
+ * @endcode
+ *
+ * To get
+ *
+ * @image html map-uv-mapping-3.png
+ * @image rtf map-uv-mapping-3.png
+ * @image latex map-uv-mapping-3.eps
+ *
+ * Maps can also be set to use part of an image only, or even map them inverted,
+ * and combined with evas_object_image_source_set() it can be used to achieve
+ * more interesting results.
+ *
+ * @code
+ * evas_object_image_size_get(evas_object_image_source_get(o), &w, &h);
+ * evas_map_point_image_uv_set(m, 0, 0, h);
+ * evas_map_point_image_uv_set(m, 1, w, h);
+ * evas_map_point_image_uv_set(m, 2, w, h / 3);
+ * evas_map_point_image_uv_set(m, 3, 0, h / 3);
+ * evas_object_map_set(o, m);
+ * evas_object_map_enable_set(o, EINA_TRUE);
+ * @endcode
+ *
+ * @image html map-uv-mapping-4.png
+ * @image rtf map-uv-mapping-4.png
+ * @image latex map-uv-mapping-4.eps
+ *
  * Examples:
  * @li @ref Example_Evas_Map_Overview
  *
@@ -4153,6 +4451,38 @@ EAPI void              evas_map_util_3d_rotate                       (Evas_Map *
  * light source. A surface should have its points be declared in a
  * clockwise fashion if the face is "facing" towards you (as opposed to
  * away from you) as faces have a "logical" side for lighting.
+ *
+ * @image html map-light3.png
+ * @image rtf map-light3.png
+ * @image latex map-light3.eps
+ * @note Grey object, no lighting used
+ *
+ * @image html map-light4.png
+ * @image rtf map-light4.png
+ * @image latex map-light4.eps
+ * @note Lights out! Every color set to 0
+ *
+ * @image html map-light5.png
+ * @image rtf map-light5.png
+ * @image latex map-light5.eps
+ * @note Ambient light to full black, red light coming from close at the
+ * bottom-left vertex
+ *
+ * @image html map-light6.png
+ * @image rtf map-light6.png
+ * @image latex map-light6.eps
+ * @note Same light as before, but not the light is set to 0 and ambient light
+ * is cyan
+ *
+ * @image html map-light7.png
+ * @image rtf map-light7.png
+ * @image latex map-light7.eps
+ * @note Both lights are on
+ *
+ * @image html map-light8.png
+ * @image rtf map-light8.png
+ * @image latex map-light8.eps
+ * @note Both lights again, but this time both are the same color.
  *
  * @param m map to change.
  * @param lx X coordinate in space of light point
