@@ -2051,12 +2051,10 @@ eng_image_stride_get(void *data __UNUSED__, void *image, int *stride)
 {
    Evas_GL_Image *im = image;
 
-   *stride = im->w * 4;
    if ((im->tex) && (im->tex->pt->dyn.img))
-     {
-        *stride = im->tex->pt->dyn.w * 4;
-        // FIXME: for other image formats (yuv etc.) different stride needed
-     }
+     *stride = im->tex->pt->dyn.stride;
+   else
+     *stride = im->w * 4;
 }
 
 static void
