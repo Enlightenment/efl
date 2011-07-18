@@ -640,6 +640,10 @@ _zoom_test_reset(Gesture_Info *gesture)
    Widget_Data *wd = elm_widget_data_get(gesture->obj);
    Zoom_Type *st = gesture->data;
    Pointer_Event pe, pe1;
+   Evas_Modifier_Mask mask = evas_key_modifier_mask_get(
+         evas_object_evas_get(wd->target), "Control");
+   evas_object_key_ungrab(wd->target, "Control_L", mask, 0);
+   evas_object_key_ungrab(wd->target, "Control_R", mask, 0);
 
    pe.timestamp = pe1.timestamp = 0;
 
@@ -2169,8 +2173,14 @@ _zoom_with_wheel_test(Evas_Object *obj, void *event_info,
                 }
               else
                 {  /* On first wheel event, report START */
+                   Evas_Modifier_Mask mask = evas_key_modifier_mask_get(
+                            evas_object_evas_get(wd->target), "Control");
                    force = EINA_FALSE;
                    s = ELM_GESTURE_STATE_START;
+                   if (!evas_object_key_grab(wd->target, "Control_L", mask, 0, EINA_FALSE))
+                     ERR("Failed to Grabbed CTRL_L");
+                   if (!evas_object_key_grab(wd->target, "Control_R", mask, 0, EINA_FALSE))
+                     ERR("Failed to Grabbed CTRL_R");
                 }
 
               st->zoom_distance_tolerance = 0; /* Cancel tolerance */
