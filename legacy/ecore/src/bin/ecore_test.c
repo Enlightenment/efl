@@ -14,12 +14,14 @@ static const char *timer2_str = "timer 2";
 static const char *pipe_read_str = "pipe read";
 
 int count;
+Ecore_Pipe *the_pipe;
 
 Eina_Bool timer_one(void *data __UNUSED__)
 {
    fprintf(stderr, "timer 1\n");
    assert(called == pipe_read_str);
    called = timer1_str;
+   ecore_pipe_write(the_pipe, "b", 1);
 
    count++;
    if (count == 10)
@@ -76,27 +78,21 @@ Eina_Bool idle_exiter_one(void *data __UNUSED__)
    return EINA_TRUE;
 }
 
-Eina_Bool pipe_read(void *data __UNUSED__, Ecore_Fd_Handler *fd_handler __UNUSED__)
+void pipe_read(void *data __UNUSED__, void *buffer __UNUSED__, unsigned int nbyte __UNUSED__)
 {
    fprintf(stderr, "pipe read\n");
    assert(called == idle_exiter_str);
    called = pipe_read_str;
-
-   return EINA_TRUE;
 }
 
 int main(int argc __UNUSED__, char **argv __UNUSED__)
 {
-   int fds[2];
-
-   assert(0 == pipe(fds));
-
-   assert(1 == write(fds[1], "x", 1));
-
    ecore_init();
 
+   the_pipe = ecore_pipe_add(&pipe_read, NULL);
+   ecore_pipe_write(the_pipe, "a", 1);
+
    ecore_timer_add(0.0, timer_one, NULL);
-   ecore_main_fd_handler_add(fds[0], ECORE_FD_READ, pipe_read, NULL, NULL, NULL);
 
    ecore_idle_enterer_add(&idle_enterer_one, NULL);
    ecore_idler_add(&idler_one, NULL);
