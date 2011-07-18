@@ -244,7 +244,7 @@ _transit_del(Elm_Transit *transit)
    if (transit->animator)
      ecore_animator_del(transit->animator);
 
-   //remove effects 
+   //remove effects
    while (transit->effect_list)
      {
         effect_module = EINA_INLIST_CONTAINER_GET(transit->effect_list, Elm_Transit_Effect_Module);
@@ -252,7 +252,7 @@ _transit_del(Elm_Transit *transit)
         _transit_effect_del(transit, effect_module);
      }
 
-   //remove objects. 
+   //remove objects.
    while (transit->objs)
      _transit_obj_remove(transit, eina_list_data_get(transit->objs));
 
