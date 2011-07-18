@@ -319,7 +319,6 @@ static void
 _curs_end(Evas_Textblock_Cursor *c, Evas_Object *o, Entry *en)
 {
    evas_textblock_cursor_paragraph_last(c);
-   _curs_lin_end(c, o, en);
 }
 
 static void
@@ -345,7 +344,6 @@ _curs_jump_line(Evas_Textblock_Cursor *c, Evas_Object *o, Entry *en, int ln)
    if (cx < (lx + (lw / 2)))
      {
         if (ln == last) _curs_end(c, o, en);
-//        evas_textblock_cursor_line_char_last(c);
         _curs_lin_start(c, o, en);
      }
    else
@@ -354,7 +352,6 @@ _curs_jump_line(Evas_Textblock_Cursor *c, Evas_Object *o, Entry *en, int ln)
           _curs_end(c, o, en);
         else
           _curs_lin_end(c, o, en);
-//        evas_textblock_cursor_line_char_last(c);
      }
 }
 
