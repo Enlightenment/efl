@@ -3,6 +3,8 @@ MAINTAINERCLEANFILES = Makefile.in
 .PHONY: screenshots
 
 pkglibdir = $(datadir)/$(PACKAGE)/examples
+filesdir = $(datadir)/$(PACKAGE)/examples
+files_DATA =
 
 AM_CPPFLAGS = \
 -I. \
@@ -71,16 +73,16 @@ SRCS = \
 
 pkglib_PROGRAMS =
 
+.edc.edj:
+	$(EDJE_CC) $(EDJE_FLAGS) $< $@
+
 if EFL_INSTALL_EXAMPLES
-filesdir = $(datadir)/$(PACKAGE)/examples
-files_DATA = $(SRCS)
+files_DATA += $(SRCS)
 endif
 
 if EFL_BUILD_EXAMPLES
-theme_example.edj: Makefile theme_example.edc
-	$(EDJE_CC) $(EDJE_FLAGS) \
-	$(top_srcdir)/src/examples/theme_example.edc \
-	$(top_builddir)/src/examples/theme_example.edj
+files_DATA += \
+	theme_example.edj
 
 clean-local:
 	rm -f *.edj
@@ -125,8 +127,7 @@ pkglib_PROGRAMS += \
 	flipselector_example \
 	fileselector_example \
 	fileselector_button_example \
-	fileselector_entry_example \
-	theme_example.edj
+	fileselector_entry_example
 
 # This variable will hold the list of screenshots that will be made
 # by "make screenshots". Each item in the list is of the form:
