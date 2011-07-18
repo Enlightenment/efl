@@ -1267,7 +1267,7 @@ _status_config_themes(Evas_Object *win,
    Eina_List *list, *l;
    char *th, *s, *ext;
    Elm_Theme *d;
-   Elm_List_Item *it, *def_it;
+   Elm_List_Item *it, *def_it = NULL;
    const char *theme_name, *sep[20];
    unsigned int x;
 
