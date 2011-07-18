@@ -104,19 +104,25 @@ evas_common_text_props_index_find(const Evas_Text_Props *props, int _cutoff)
 
    _cutoff += props->text_offset;
    ot_info = props->info->ot + props->start;
+   /* Should get us closer to the right place. */
+   if ((min <= _cutoff) && (_cutoff <= max))
+      mid = _cutoff;
+   else
+      mid = (min + max) / 2;
+
    if (props->bidi.dir == EVAS_BIDI_DIRECTION_RTL)
      {
         /* Monotonic in a descending order */
         do
           {
-             mid = (min + max) / 2;
-
              if (_cutoff > (int) ot_info[mid].source_cluster)
                 max = mid - 1;
              else if (_cutoff < (int) ot_info[mid].source_cluster)
                 min = mid + 1;
              else
                 break;
+
+             mid = (min + max) / 2;
           }
         while (min <= max);
      }
@@ -125,14 +131,14 @@ evas_common_text_props_index_find(const Evas_Text_Props *props, int _cutoff)
         /* Monotonic in an ascending order */
         do
           {
-             mid = (min + max) / 2;
-
              if (_cutoff < (int) ot_info[mid].source_cluster)
                 max = mid - 1;
              else if (_cutoff > (int) ot_info[mid].source_cluster)
                 min = mid + 1;
              else
                 break;
+
+             mid = (min + max) / 2;
           }
         while (min <= max);
      }
