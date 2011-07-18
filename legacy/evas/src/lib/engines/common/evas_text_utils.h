@@ -75,6 +75,9 @@ EAPI int
 evas_common_text_props_cluster_next(const Evas_Text_Props *props, int pos);
 
 EAPI int
+evas_common_text_props_cluster_prev(const Evas_Text_Props *props, int pos);
+
+EAPI int
 evas_common_text_props_index_find(const Evas_Text_Props *props, int _cutoff);
 
 EAPI void
