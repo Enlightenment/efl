@@ -149,8 +149,9 @@
  * And this is the end of this example.
  *
  * This example will look like this:
+ *
  * @image html screenshots/bg_01.png
- * @image latex screenshots/bg_01.eps
+ * @image latex screenshots/bg_01.eps width=\textwidth
  */
 
 /**
@@ -383,8 +384,9 @@
  * @until object_show
  *
  * The example will look like this:
+ *
  * @image html screenshots/actionslider_01.png
- * @image latex screenshots/actionslider_01.eps
+ * @image latex screenshots/actionslider_01.eps width=\textwidth
  *
  * See the full source code @ref actionslider_example_01 "here"
  */
@@ -461,14 +463,15 @@
  * ourselves.
  *
  * The example should look like this:
+ *
  * @image html screenshots/animator_example_01.png
- * @image latex screenshots/animator_example_01.eps
+ * @image latex screenshots/animator_example_01.eps width=\textwidth
  * @n
  * @image html screenshots/animator_example_02.png
- * @image latex screenshots/animator_example_02.eps
+ * @image latex screenshots/animator_example_02.eps width=\textwidth
  * @n
  * @image html screenshots/animator_example_03.png
- * @image latex screenshots/animator_example_03.eps
+ * @image latex screenshots/animator_example_03.eps width=\textwidth
  *
  * The full source code for this example can be found @ref
  * animator_example_01_c "here"
@@ -783,8 +786,9 @@
  * but the custom theme must be added to the front of the search path.
  *
  * In the end, we should be looking at something like this:
+ *
  * @image html screenshots/theme_example_01.png
- * @image latex screenshots/theme_example_01.eps
+ * @image latex screenshots/theme_example_01.eps width=\textwidth
  *
  * That's all. Boringly simple, and the full code in one piece can be found
  * @ref theme_example_01.c "here".
@@ -837,8 +841,9 @@
   * commonly used.
   *
   * In the end, we'll be presented with something that looks like this:
+  *
   * @image html screenshots/button_01.png
-  * @image latex screenshots/button_01.eps
+  * @image latex screenshots/button_01.eps width=\textwidth
   *
   * The full code of the example is @ref button_example_01.c "here" and we
   * will follow here with a rundown of it.
@@ -948,8 +953,9 @@
  * @skipline show
  *
  * Our example will look like this:
+ *
  * @image html screenshots/bubble_example_01.png
- * @image latex screenshots/bubble_example_01.eps
+ * @image latex screenshots/bubble_example_01.eps width=\textwidth
  *
  * See the full source code @ref bubble_example_01.c here.
  * @example bubble_example_01.c
@@ -1047,7 +1053,7 @@
  * untouched in our @ref box_example_01 "previous example".
  *
  * @image html screenshots/box_example_02.png
- * @image latex screenshots/box_example_02.eps
+ * @image latex screenshots/box_example_02.eps width=\textwidth
  *
  * @skipline Elementary.h
  *
@@ -1145,8 +1151,9 @@
  * @until ELM_MAIN
  *
  * Our example will look like this:
+ *
  * @image html screenshots/calendar_example_01.png
- * @image latex screenshots/calendar_example_01.eps
+ * @image latex screenshots/calendar_example_01.eps width=\textwidth
  *
  * See the full source code @ref calendar_example_01.c here.
  * @example calendar_example_01.c
@@ -1198,8 +1205,9 @@
  * skipline weekdays_names_set
  *
  * Our example will look like this:
+ *
  * @image html screenshots/calendar_example_02.png
- * @image latex screenshots/calendar_example_02.eps
+ * @image latex screenshots/calendar_example_02.eps width=\textwidth
  *
  * See the full source code @ref calendar_example_02.c here.
  * @example calendar_example_02.c
@@ -1224,8 +1232,9 @@
  * @skipline elm_calendar_min_max_year_set
  *
  * Our example will look like this:
+ *
  * @image html screenshots/calendar_example_03.png
- * @image latex screenshots/calendar_example_03.eps
+ * @image latex screenshots/calendar_example_03.eps width=\textwidth
  *
  * See the full source code @ref calendar_example_03.c here.
  * @example calendar_example_03.c
@@ -1253,8 +1262,9 @@
  * @until elm_calendar_selected_time_set
  *
  * Our example will look like this:
+ *
  * @image html screenshots/calendar_example_04.png
- * @image latex screenshots/calendar_example_04.eps
+ * @image latex screenshots/calendar_example_04.eps width=\textwidth
  *
  * See the full source code @ref calendar_example_04.c here.
  * @example calendar_example_04.c
@@ -1299,8 +1309,9 @@
  * @skipline evas_object_smart_callback_add
  *
  * Our example will look like this:
+ *
  * @image html screenshots/calendar_example_05.png
- * @image latex screenshots/calendar_example_05.eps
+ * @image latex screenshots/calendar_example_05.eps width=\textwidth
  *
  * See the full source code @ref calendar_example_05.c here.
  * @example calendar_example_05.c
@@ -1368,8 +1379,9 @@
  * @note Remember to draw marks after clear the calendar.
  *
  * Our example will look like this:
+ *
  * @image html screenshots/calendar_example_06.png
- * @image latex screenshots/calendar_example_06.eps
+ * @image latex screenshots/calendar_example_06.eps width=\textwidth
  *
  * See the full source code @ref calendar_example_06.c here.
  * @example calendar_example_06.c
@@ -1419,8 +1431,9 @@
  *
  * See the full @ref clock_example.c "example", whose window should
  * look like this picture:
+ *
  * @image html screenshots/clock_example.png
- * @image latex screenshots/clock_example.eps
+ * @image latex screenshots/clock_example.eps width=\textwidth
  *
  * See the full @ref clock_example_c "source code" for this example.
  *
@@ -1483,8 +1496,9 @@
  *
  * See the full @ref diskselector_example_01.c "diskselector_example_01.c"
  * code, whose window should look like this picture:
+ *
  * @image html screenshots/diskselector_example_01.png
- * @image latex screenshots/diskselector_example_01.eps
+ * @image latex screenshots/diskselector_example_01.eps width=\textwidth
  *
  * @example diskselector_example_01.c
  */
@@ -1627,8 +1641,9 @@
  *
  * See the full @ref diskselector_example_02.c "diskselector_example_02.c"
  * code, whose window should look like this picture:
+ *
  * @image html screenshots/diskselector_example_02.png
- * @image latex screenshots/diskselector_example_02.eps
+ * @image latex screenshots/diskselector_example_02.eps width=\textwidth
  *
  * @example diskselector_example_02.c
  */
@@ -1684,8 +1699,9 @@
  *
  * See the full @ref flipselector_example.c "example", whose window should
  * look like this picture:
+ *
  * @image html screenshots/flipselector_example.png
- * @image latex screenshots/flipselector_example.eps
+ * @image latex screenshots/flipselector_example.eps width=\textwidth
  *
  * See the full @ref flipselector_example_c "source code" for this example.
  *
@@ -1759,8 +1775,9 @@
  *
  * See the full @ref fileselector_example.c "example", whose window
  * should look like this picture:
+ *
  * @image html screenshots/fileselector_example.png
- * @image latex screenshots/fileselector_example.eps
+ * @image latex screenshots/fileselector_example.eps width=\textwidth
  *
  * See the full @ref fileselector_example_c "source code" for this example.
  *
@@ -1810,22 +1827,27 @@
  * it (if any was made).
  *
  * This is how the example, just after called, should look like:
+ *
  * @image html screenshots/fileselector_button_example_00.png
- * @image latex screenshots/fileselector_button_example_00.eps
+ * @image latex screenshots/fileselector_button_example_00.eps width=\textwidth
  *
  * Click on the file selector button to raise its internal file
  * selector, which will be contained on an <b>"inner window"</b>:
+ *
  * @image html screenshots/fileselector_button_example_01.png
- * @image latex screenshots/fileselector_button_example_01.eps
+ * @image latex screenshots/fileselector_button_example_01.eps width=\textwidth
  *
  * Toggle the "inwin mode" switch off and, if you click on the file
  * selector button again, you'll get @b two windows, the original one
  * (note the last selection there!)
+ *
  * @image html screenshots/fileselector_button_example_02.png
- * @image latex screenshots/fileselector_button_example_02.eps
+ * @image latex screenshots/fileselector_button_example_02.eps width=\textwidth
+ *
  * and the file selector's new one
+ *
  * @image html screenshots/fileselector_button_example_03.png
- * @image latex screenshots/fileselector_button_example_03.eps
+ * @image latex screenshots/fileselector_button_example_03.eps width=\textwidth
  *
  * Play with the checkboxes to get the behavior changes on the file
  * selector button. The respective API calls on the widget coming from
@@ -1882,22 +1904,27 @@
  * selector's window: it will start the file browsing there, for you.
  *
  * This is how the example, just after called, should look like:
+ *
  * @image html screenshots/fileselector_entry_example_00.png
- * @image latex screenshots/fileselector_entry_example_00.eps
+ * @image latex screenshots/fileselector_entry_example_00.eps width=\textwidth
  *
  * Click on the file selector entry to raise its internal file
  * selector, which will be contained on an <b>"inner window"</b>:
+ *
  * @image html screenshots/fileselector_entry_example_01.png
- * @image latex screenshots/fileselector_entry_example_01.eps
+ * @image latex screenshots/fileselector_entry_example_01.eps width=\textwidth
  *
  * Toggle the "inwin mode" switch off and, if you click on the file
  * selector entry again, you'll get @b two windows, the original one
  * (note the last selection there!)
+ *
  * @image html screenshots/fileselector_entry_example_02.png
- * @image latex screenshots/fileselector_entry_example_02.eps
+ * @image latex screenshots/fileselector_entry_example_02.eps width=\textwidth
+ *
  * and the file selector's new one
+ *
  * @image html screenshots/fileselector_entry_example_03.png
- * @image latex screenshots/fileselector_entry_example_03.eps
+ * @image latex screenshots/fileselector_entry_example_03.eps width=\textwidth
  *
  * Play with the checkboxes to get the behavior changes on the file
  * selector entry. The respective API calls on the widget coming from
@@ -1953,12 +1980,14 @@
  * @until ELM_MAIN
  *
  * Our example will initially look like this:
+ *
  * @image html screenshots/hover_example_01.png
- * @image latex screenshots/hover_example_01.eps
+ * @image latex screenshots/hover_example_01.eps width=\textwidth
  *
  * And after you click the "Show hover" button it will look like this:
+ *
  * @image html screenshots/hover_example_01_a.png
- * @image latex screenshots/hover_example_01_a.eps
+ * @image latex screenshots/hover_example_01_a.eps width=\textwidth
  *
  * @example hover_example_01.c
  */
@@ -2004,8 +2033,10 @@
   * ilustrate that it's possible to animate the flip programmatically.
   *
   * Our example will look like this:
+  *
   * @image html screenshots/flip_example_01.png
-  * @image latex screenshots/flip_example_01.eps
+  * @image latex screenshots/flip_example_01.eps width=\textwidth
+  *
   * @note Since this is an animated example the screenshot doesn't do it
   * justice, it is a good idea to compile it and see the animations.
   *
@@ -2055,8 +2086,9 @@
   * @until show(label
   *
   * Our example will look like this:
+  *
   * @image html screenshots/label_example_01.png
-  * @image latex screenshots/label_example_01.eps
+  * @image latex screenshots/label_example_01.eps width=\textwidth
   *
   * @example label_example_01.c
   */
@@ -2119,7 +2151,7 @@
   * This example will look like this:
   *
   * @image html screenshots/image_example_01.png
-  * @image latex screenshots/image_example_01.eps
+  * @image latex screenshots/image_example_01.eps width=\textwidth
   *
   * @example image_example_01.c
   */
@@ -2185,7 +2217,7 @@
   * This example will look like this:
   *
   * @image html screenshots/icon_example_01.png
-  * @image latex screenshots/icon_example_01.eps
+  * @image latex screenshots/icon_example_01.eps width=\textwidth
   *
   * @example icon_example_01.c
   */
@@ -2244,12 +2276,14 @@
  * @until }
  *
  * Our example will initially look like this:
+ *
  * @image html screenshots/hoversel_example_01.png
- * @image latex screenshots/hoversel_example_01.eps
+ * @image latex screenshots/hoversel_example_01.eps width=\textwidth
  *
  * And when the hoversel is clicked it will look like this:
+ *
  * @image html screenshots/hoversel_example_01_a.png
- * @image latex screenshots/hoversel_example_01_a.eps
+ * @image latex screenshots/hoversel_example_01_a.eps width=\textwidth
  *
  * @example hoversel_example_01.c
  */
@@ -2279,14 +2313,14 @@
  * can see on the following image:
  *
  * @image html screenshots/conformant_example_01.png
- * @image latex screenshots/conformant_example_01.eps
+ * @image latex screenshots/conformant_example_01.eps width=\textwidth
  *
  * But if you call a virtual keyboard, the window will resize, changing
  * widgets size and position. All the content will shrink.
  * The window will look like this:
  *
  * @image html screenshots/conformant_example_02.png
- * @image latex screenshots/conformant_example_02.eps
+ * @image latex screenshots/conformant_example_02.eps width=\textwidth
  *
  * If you don't want such behaviour, you
  * will need a conformant to account for space taken up by the indicator,
@@ -2296,13 +2330,13 @@
  * a window like the following when the virtual keyboard is hidden:
  *
  * @image html screenshots/conformant_example_03.png
- * @image latex screenshots/conformant_example_03.eps
+ * @image latex screenshots/conformant_example_03.eps width=\textwidth
  *
  * As you can see, it guess the space that will be required by the keyboard.
  * Verify how perfectly it fits when keyboard is visible:
  *
  * @image html screenshots/conformant_example_04.png
- * @image latex screenshots/conformant_example_04.eps
+ * @image latex screenshots/conformant_example_04.eps width=\textwidth
  *
  * So, let's study each step required to transform our initial example on
  * the second one.

@@ -4179,8 +4179,9 @@ extern "C" {
     * @until ELM_MAIN()
     *
     * Our example will look like this:
+    *
     * @image html screenshots/frame_example_01.png
-    * @image latex screenshots/frame_example_01.eps
+    * @image latex screenshots/frame_example_01.eps width=\textwidth
     *
     * @example frame_example_01.c
     */
@@ -5487,8 +5488,9 @@ extern "C" {
     * @until }
     *
     * The example will look like this:
+    *
     * @image html screenshots/anchorblock_01.png
-    * @image latex screenshots/anchorblock_01.eps
+    * @image latex screenshots/anchorblock_01.eps width=\textwidth
     *
     * @example anchorblock_example_01.c
     */
@@ -7056,8 +7058,9 @@ extern "C" {
     * value is changed when the checkbox is changed.
     *
     * Our example will look like this:
+    *
     * @image html screenshots/check_example_01.png
-    * @image latex screenshots/check_example_01.eps
+    * @image latex screenshots/check_example_01.eps width=\textwidth
     *
     * @example check_example_01.c
     */
@@ -8705,6 +8708,7 @@ extern "C" {
     * The speed in which an animation happens doesn't have to be linear, some
     * animations will look better if they're accelerating or decelerating, so
     * elm_animator provides four options in this regard:
+    *
     * @image html elm_animator_curve_style.png
     * @image latex elm_animator_curve_style.eps width=\textwidth
     * As can be seen in the image the speed of the animation will be:
@@ -10205,8 +10209,9 @@ extern "C" {
     * @until }
     *
     * This example will look like this:
+    *
     * @image html screenshots/colorselector_example_01.png
-    * @image latex screenshots/colorselector_example_01.eps
+    * @image latex screenshots/colorselector_example_01.eps width=\textwidth
     *
     * @example colorselector_example_01.c
     */
