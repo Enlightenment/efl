@@ -1073,17 +1073,19 @@ _theme_use(void *data       __UNUSED__,
 }
 
 static void
-_theme_sel(void            *data,
+_theme_sel(void            *data __UNUSED__,
            Evas_Object     *obj,
            void *event_info __UNUSED__)
 {
-   Theme *t = data;
    Evas_Object *win = elm_object_top_widget_get(obj);
    Evas_Object *sample = evas_object_data_get(win, "theme_preview");
    Elm_Theme *th, *sth;
-   const char *defth, *rest;
+   Elm_List_Item *it;
+   const char *defth;
    Eina_Strbuf *newth;
+   Eina_List *l;
 
+   if (!sample) return;
    tsel = elm_list_selected_items_get(obj);
    sth = elm_object_theme_get(sample);
    defth = elm_theme_get(sth);
@@ -1095,15 +1097,13 @@ _theme_sel(void            *data,
         eina_strbuf_free(newth);
         return;
      }
-   if (eina_list_count(tsel) > 1)
-     eina_strbuf_append_printf(newth, "%s:%s", t->name, defth);
-   else
+   EINA_LIST_REVERSE_FOREACH((Eina_List*)tsel, l, it)
      {
-        rest = strchr(defth, ':');
-        if (!rest)
-          eina_strbuf_append(newth, t->name);
-        else
-          eina_strbuf_append_printf(newth, "%s%s", t->name, rest);
+        Theme *t = elm_list_item_data_get(it);
+        eina_strbuf_append_printf(newth, "%s:", t->name);
+        if ((!l->prev) && strcmp(t->name, "default"))
+          /* ensure default theme is always there for fallback */
+          eina_strbuf_append(newth, "default");
      }
    elm_theme_set(th, eina_strbuf_string_get(newth));
    eina_strbuf_free(newth);
@@ -1266,6 +1266,10 @@ _status_config_themes(Evas_Object *win,
    Evas_Object *tb, *rc, *sc, *sp, *li, *pd, *fr, *bt, *sample;
    Eina_List *list, *l;
    char *th, *s, *ext;
+   Elm_Theme *d;
+   Elm_List_Item *it, *def_it;
+   const char *theme_name, *sep[20];
+   unsigned int x;
 
    tb = elm_table_add(win);
    evas_object_size_hint_weight_set(tb, 1.0, 1.0);
@@ -1298,10 +1302,18 @@ _status_config_themes(Evas_Object *win,
    evas_object_show(li);
 
    list = elm_theme_name_available_list_new();
+   d = elm_theme_default_get();
+   theme_name = elm_theme_get(d);
+   for (x = 1, sep[0] = theme_name; x < sizeof(sep) / sizeof(sep[0]); x++)
+     {
+        sep[x] = strchr(sep[x - 1] + 1, ':');
+        if (!sep[x]) break;
+     }
    EINA_LIST_FOREACH(list, l, th)
      {
         Theme *t;
-
+        int y;
+        
         t = calloc(1, sizeof(Theme));
         t->name = eina_stringshare_add(th);
         s = elm_theme_list_item_path_get(th, &(t->in_search_path));
@@ -1337,8 +1349,23 @@ _status_config_themes(Evas_Object *win,
                t->label = eina_stringshare_add(s);
           }
         themes = eina_list_append(themes, t);
-        elm_list_item_append(li, t->label, NULL, NULL, _theme_sel, t);
+        it = elm_list_item_append(li, t->label, NULL, NULL, NULL, t);
+        if (!strcmp(t->name, "default")) def_it = it;
+        for (y = x - 1 /* ignore default e theme */; y > 0; y--)
+          {
+             const char *start = (sep[y - 1][0] == ':') ? sep[y - 1] + 1 : sep[y - 1];
+             unsigned int len = (unsigned int)(sep[y] - start);
+             if (strncmp(start , t->name, len) || (strlen(t->name) != len)) continue;
+
+             if (!elm_list_item_selected_get(it))
+               elm_list_item_selected_set(it, EINA_TRUE);
+             break;
+          }
      }
+   if (!elm_list_selected_items_get(li))
+     elm_list_item_selected_set(def_it, EINA_TRUE);
+   evas_object_smart_callback_add(li, "selected", _theme_sel, NULL);
+   evas_object_smart_callback_add(li, "unselected", _theme_sel, NULL);
    elm_theme_name_available_list_free(list);
 
    elm_list_go(li);
