@@ -39,4 +39,12 @@ group "Elm_Config" struct {
   value "desktop_entry" uchar: 0;
   value "password_show_last" uchar: 0;
   value "password_show_last_timeout" double: 2.0;
+  value "glayer_zoom_finger_factor" double: 1.0;
+  value "glayer_zoom_wheel_factor" double: 0.05;
+  value "glayer_zoom_distance_tolerance" double: 1.0;
+  value "glayer_rotate_angular_tolerance" double: 0.034906585;
+  value "glayer_line_min_length" double: 1.0;
+  value "glayer_line_distance_tolerance" 3.0;
+  value "glayer_line_angular_tolerance" 0.34906585; /* Represents 20 DEG */
+  value "glayer_flick_time_limit_ms" 60;        /* 60 ms to finish flick */
 }

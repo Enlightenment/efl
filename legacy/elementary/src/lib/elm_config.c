@@ -601,6 +601,14 @@ _desc_init(void)
    ELM_CONFIG_VAL(D, T, desktop_entry, T_UCHAR);
    ELM_CONFIG_VAL(D, T, password_show_last, T_UCHAR);
    ELM_CONFIG_VAL(D, T, password_show_last_timeout, T_DOUBLE);
+   ELM_CONFIG_VAL(D, T, glayer_zoom_finger_factor, T_DOUBLE);
+   ELM_CONFIG_VAL(D, T, glayer_zoom_wheel_factor, T_DOUBLE);
+   ELM_CONFIG_VAL(D, T, glayer_zoom_distance_tolerance, T_DOUBLE);
+   ELM_CONFIG_VAL(D, T, glayer_rotate_angular_tolerance, T_DOUBLE);
+   ELM_CONFIG_VAL(D, T, glayer_line_min_length, T_DOUBLE);
+   ELM_CONFIG_VAL(D, T, glayer_line_distance_tolerance, T_DOUBLE);
+   ELM_CONFIG_VAL(D, T, glayer_line_angular_tolerance, T_DOUBLE);
+   ELM_CONFIG_VAL(D, T, glayer_flick_time_limit_ms, T_INT);
 #undef T
 #undef D
 #undef T_INT
@@ -1159,6 +1167,14 @@ _config_load(void)
    _elm_config->is_mirrored = EINA_FALSE; /* Read sys value in env_get() */
    _elm_config->password_show_last = EINA_FALSE;
    _elm_config->password_show_last_timeout = 2.0;
+   _elm_config->glayer_zoom_finger_factor = 1.0;
+   _elm_config->glayer_zoom_wheel_factor = 0.05;
+   _elm_config->glayer_zoom_distance_tolerance = 1.0; /* 1 times elm_finger_size_get() */
+   _elm_config->glayer_rotate_angular_tolerance = 0.034906585;     /* Represents 2 DEG */
+   _elm_config->glayer_line_min_length = 1.0;         /* 1 times elm_finger_size_get() */
+   _elm_config->glayer_line_distance_tolerance = 3.0; /* 3 times elm_finger_size_get() */
+   _elm_config->glayer_line_angular_tolerance = 0.34906585;       /* Represents 20 DEG */
+   _elm_config->glayer_flick_time_limit_ms = 60;              /* 60 ms to finish flick */
 }
 
 static const char *

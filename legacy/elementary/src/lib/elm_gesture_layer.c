@@ -4,14 +4,9 @@
 
 /* Some defaults */
 #define ELM_MOUSE_DEVICE 0
-#define ELM_GESTURE_ZOOM_FACTOR 1.0
-#define ELM_GESTURE_ZOOM_WHEEL_FACTOR 0.05
-#define ELM_GESTURE_ROTATION_TOLERANCE 0.034906585 /* Represents 2 DEG */
 /* ELM_GESTURE_NEGATIVE_ANGLE - magic number says we didn't compute this yet */
 #define ELM_GESTURE_NEGATIVE_ANGLE (-1.0) /* Magic number */
 #define ELM_GESTURE_MOMENTUM_TIMEOUT 50
-#define ELM_GESTURE_LINE_ANGLE_TOLERANCE 0.34906585 /* Represents 20 DEG */
-#define FLICK_MAX_MS 60
 #define DBL_CLICK_TIME 400
 
 /* Some Trigo values */
@@ -198,7 +193,7 @@ struct _Zoom_Type
    Pointer_Event zoom_mv1;
    Evas_Event_Mouse_Wheel *zoom_wheel;
    Evas_Coord zoom_base;  /* Holds gap between fingers on zoom-start  */
-   Evas_Coord zoom_tolerance;
+   Evas_Coord zoom_distance_tolerance;
    double next_step;
 };
 typedef struct _Zoom_Type Zoom_Type;
@@ -210,7 +205,7 @@ struct _Rotate_Type
    Pointer_Event rotate_mv;
    Pointer_Event rotate_st1;
    Pointer_Event rotate_mv1;
-   double rotate_tolerance;
+   double rotate_angular_tolerance;
    double next_step;
 };
 typedef struct _Rotate_Type Rotate_Type;
@@ -221,11 +216,13 @@ struct _Widget_Data
    Event_History *event_history_list;
 
    int line_min_length;
-   Evas_Coord zoom_tolerance;
-   Evas_Coord line_tolerance;
+   Evas_Coord zoom_distance_tolerance;
+   Evas_Coord line_distance_tolerance;
+   double line_angular_tolerance;
    double zoom_wheel_factor; /* mouse wheel zoom steps */
-   double factor; /* used for zoom factor */
-   double  rotate_tolerance;
+   double zoom_finger_factor; /* used for zoom factor */
+   double rotate_angular_tolerance;
+   unsigned int flick_time_limit_ms;
 
    double zoom_step;
    double rotate_step;
@@ -663,7 +660,7 @@ _zoom_test_reset(Gesture_Info *gesture)
    if (pe1.timestamp && (!pe.timestamp))
      memcpy(&st->zoom_st1, &pe1, sizeof(Pointer_Event));
 
-   st->zoom_tolerance = wd->zoom_tolerance;
+   st->zoom_distance_tolerance = wd->zoom_distance_tolerance;
    st->info.zoom = 1.0;
 }
 
@@ -701,7 +698,7 @@ _rotate_test_reset(Gesture_Info *gesture)
 
 
    st->info.base_angle = ELM_GESTURE_NEGATIVE_ANGLE;
-   st->rotate_tolerance = wd->rotate_tolerance;
+   st->rotate_angular_tolerance = wd->rotate_angular_tolerance;
 }
 
 
@@ -1742,8 +1739,7 @@ _n_line_test(Evas_Object *obj, Pointer_Event *pe, void *event_info,
 #if defined(DEBUG_GESTURE_LAYER)
              printf("%s a=<%f> d=<%f>\n", __func__, (a * 57.295779513), d);
 #endif
-             if ((d > wd->line_tolerance) || (a > ELM_GESTURE_LINE_ANGLE_TOLERANCE))
-//             if (a > ELM_GESTURE_LINE_ANGLE_TOLERANCE)
+             if ((d > wd->line_distance_tolerance) || (a > wd->line_angular_tolerance))
                {  /* Broke tolerance: abort line and start a new one */
                   ev_flag = _set_state(gesture, ELM_GESTURE_STATE_ABORT,
                         &st->info, EINA_FALSE);
@@ -1787,7 +1783,7 @@ _n_line_test(Evas_Object *obj, Pointer_Event *pe, void *event_info,
              if (t_line->line_angle >= 0)
                {  /* Compare angle only with lines with direction defined */
                   if (fabs(base_angle - t_line->line_angle) >
-                        ELM_GESTURE_LINE_ANGLE_TOLERANCE)
+                        wd->line_angular_tolerance)
                     lines_parallel = EINA_FALSE;
                }
           }
@@ -1847,7 +1843,7 @@ _n_line_test(Evas_Object *obj, Pointer_Event *pe, void *event_info,
         return;
      }
 
-   if ((g_type == ELM_GESTURE_N_FLICKS) && ((tm_end - tm_start) > FLICK_MAX_MS))
+   if ((g_type == ELM_GESTURE_N_FLICKS) && ((tm_end - tm_start) > wd->flick_time_limit_ms))
      {  /* We consider FLICK as a fast line.ABORT if take too long to finish */
         ev_flag = _set_state(gesture, ELM_GESTURE_STATE_ABORT, &st->info,
               EINA_FALSE);
@@ -1910,11 +1906,11 @@ rotation_broke_tolerance(Rotate_Type *st)
    if (st->info.base_angle < 0)
      return EINA_FALSE; /* Angle has to be computed first */
 
-   if (st->rotate_tolerance < 0)
+   if (st->rotate_angular_tolerance < 0)
      return EINA_TRUE;
 
-   double low  = st->info.base_angle - st->rotate_tolerance;
-   double high = st->info.base_angle + st->rotate_tolerance;
+   double low  = st->info.base_angle - st->rotate_angular_tolerance;
+   double high = st->info.base_angle + st->rotate_angular_tolerance;
    double t = st->info.angle;
 
    if (low < 0)
@@ -1944,7 +1940,7 @@ rotation_broke_tolerance(Rotate_Type *st)
 #endif
    if ((t < low) || (t > high))
      {  /* This marks that roation action has started */
-        st->rotate_tolerance = ELM_GESTURE_NEGATIVE_ANGLE;
+        st->rotate_angular_tolerance = ELM_GESTURE_NEGATIVE_ANGLE;
         st->info.base_angle = st->info.angle; /* Avoid jump in angle value */
         return EINA_TRUE;
      }
@@ -2044,7 +2040,7 @@ get_finger_gap_length(Evas_Coord x1, Evas_Coord y1, Evas_Coord x2,
 /* FIXME change float to double */
 static double
 compute_zoom(Zoom_Type *st, Evas_Coord x1, Evas_Coord y1, unsigned int tm1,
-      Evas_Coord x2, Evas_Coord y2, unsigned int tm2, double factor)
+      Evas_Coord x2, Evas_Coord y2, unsigned int tm2, double zoom_finger_factor)
 {
    double rt = 1.0;
    Evas_Coord diam = get_finger_gap_length(x1, y1, x2, y2,
@@ -2058,18 +2054,18 @@ compute_zoom(Zoom_Type *st, Evas_Coord x1, Evas_Coord y1, unsigned int tm1,
         return st->info.zoom;
      }
 
-   if (st->zoom_tolerance)
+   if (st->zoom_distance_tolerance)
      {  /* zoom tolerance <> ZERO, means zoom action NOT started yet */
-        if (diam < (st->zoom_base - st->zoom_tolerance))
+        if (diam < (st->zoom_base - st->zoom_distance_tolerance))
           {  /* avoid jump with zoom value when break tolerance */
-             st->zoom_base -= st->zoom_tolerance;
-             st->zoom_tolerance = 0;
+             st->zoom_base -= st->zoom_distance_tolerance;
+             st->zoom_distance_tolerance = 0;
           }
 
-        if (diam > (st->zoom_base + st->zoom_tolerance))
+        if (diam > (st->zoom_base + st->zoom_distance_tolerance))
           {  /* avoid jump with zoom value when break tolerance */
-             st->zoom_base += st->zoom_tolerance;
-             st->zoom_tolerance = 0;
+             st->zoom_base += st->zoom_distance_tolerance;
+             st->zoom_distance_tolerance = 0;
           }
 
         return rt;
@@ -2078,7 +2074,7 @@ compute_zoom(Zoom_Type *st, Evas_Coord x1, Evas_Coord y1, unsigned int tm1,
    /* We use factor only on the difference between gap-base   */
    /* if gap=120, base=100, we get ((120-100)/100)=0.2*factor */
    rt = ((1.0) + ((((float) diam - (float) st->zoom_base) /
-               (float) st->zoom_base) * factor));
+               (float) st->zoom_base) * zoom_finger_factor));
 
 #if 0
    /* Momentum: zoom per second: (NOT YET SUPPORTED) */
@@ -2165,8 +2161,8 @@ _zoom_with_wheel_test(Evas_Object *obj, void *event_info,
                 }
 
               /* Using mouse wheel with CTRL for zoom */
-              if (st->zoom_wheel || (st->zoom_tolerance == 0))
-                {  /* when (zoom_wheel == NULL) and (zoom_tolerance == 0)
+              if (st->zoom_wheel || (st->zoom_distance_tolerance == 0))
+                {  /* when (zoom_wheel == NULL) and (zoom_distance_tolerance == 0)
                       we continue a zoom gesture */
                    force = EINA_TRUE;
                    s = ELM_GESTURE_STATE_MOVE;
@@ -2177,16 +2173,16 @@ _zoom_with_wheel_test(Evas_Object *obj, void *event_info,
                    s = ELM_GESTURE_STATE_START;
                 }
 
-              st->zoom_tolerance = 0; /* Cancel tolerance */
+              st->zoom_distance_tolerance = 0; /* Cancel tolerance */
               st->zoom_wheel = (Evas_Event_Mouse_Wheel *) event_info;
               st->info.x  = st->zoom_wheel->canvas.x;
               st->info.y  = st->zoom_wheel->canvas.y;
 
               if (st->zoom_wheel->z > 0) /* zoom in */
-                st->info.zoom += (wd->factor * wd->zoom_wheel_factor);
+                st->info.zoom += (wd->zoom_finger_factor * wd->zoom_wheel_factor);
 
               if (st->zoom_wheel->z < 0) /* zoom out */
-                st->info.zoom -= (wd->factor * wd->zoom_wheel_factor);
+                st->info.zoom -= (wd->zoom_finger_factor * wd->zoom_wheel_factor);
 
               if (st->info.zoom < 0.0)
                 st->info.zoom = 0.0;
@@ -2259,7 +2255,7 @@ _zoom_test(Evas_Object *obj, Pointer_Event *pe, void *event_info,
               st->info.zoom = compute_zoom(st,
                     st->zoom_mv.x, st->zoom_mv.y, st->zoom_mv.timestamp,
                     st->zoom_mv1.x, st->zoom_mv1.y, st->zoom_mv1.timestamp,
-                    wd->factor);
+                    wd->zoom_finger_factor);
               break;
            }
 
@@ -2268,7 +2264,7 @@ _zoom_test(Evas_Object *obj, Pointer_Event *pe, void *event_info,
               st->info.zoom = compute_zoom(st,
                     st->zoom_mv.x, st->zoom_mv.y, st->zoom_mv.timestamp,
                     st->zoom_st1.x, st->zoom_st1.y, st->zoom_st1.timestamp,
-                    wd->factor);
+                    wd->zoom_finger_factor);
               break;
            }
 
@@ -2300,7 +2296,7 @@ _zoom_test(Evas_Object *obj, Pointer_Event *pe, void *event_info,
                 st->info.zoom = compute_zoom(st,
                       st->zoom_mv1.x, st->zoom_mv1.y, st->zoom_mv1.timestamp,
                       st->zoom_mv.x, st->zoom_mv.y, st->zoom_mv.timestamp,
-                      wd->factor);
+                      wd->zoom_finger_factor);
                 break;
              }
 
@@ -2309,7 +2305,7 @@ _zoom_test(Evas_Object *obj, Pointer_Event *pe, void *event_info,
                 st->info.zoom = compute_zoom(st,
                       st->zoom_mv1.x, st->zoom_mv1.y, st->zoom_mv1.timestamp,
                       st->zoom_st.x, st->zoom_st.y, st->zoom_st.timestamp,
-                      wd->factor);
+                      wd->zoom_finger_factor);
                 break;
              }
 
@@ -2326,7 +2322,7 @@ _zoom_test(Evas_Object *obj, Pointer_Event *pe, void *event_info,
               by _zoom_test_reset() to retain finger-down data */
            consume_event(wd, event_info, event_type, ev_flag);
            if (((st->zoom_wheel) || (st->zoom_base)) &&
-                 (st->zoom_tolerance == 0))
+                 (st->zoom_distance_tolerance == 0))
              {
                 ev_flag = _set_state(gesture_zoom, ELM_GESTURE_STATE_END,
                       &st->info, EINA_FALSE);
@@ -2352,7 +2348,7 @@ _zoom_test(Evas_Object *obj, Pointer_Event *pe, void *event_info,
      }
 
 
-   if (!st->zoom_tolerance)
+   if (!st->zoom_distance_tolerance)
      if ((event_type == EVAS_CALLBACK_MOUSE_MOVE) ||
            (event_type == EVAS_CALLBACK_MULTI_MOVE))
        {
@@ -2557,7 +2553,7 @@ _rotate_test(Evas_Object *obj, Pointer_Event *pe, void *event_info,
            consume_event(wd, event_info, event_type, ev_flag);
            /* Reset timestamp of finger-up.This is used later
               by rotate_test_reset() to retain finger-down data */
-           if (st->rotate_tolerance < 0)
+           if (st->rotate_angular_tolerance < 0)
              {
                 ev_flag = _set_state(gesture, ELM_GESTURE_STATE_END,
                       &st->info, EINA_FALSE);
@@ -3005,15 +3001,19 @@ elm_gesture_layer_add(Evas_Object *parent)
    elm_widget_disable_hook_set(obj, _disable_hook);
 
    wd->target = NULL;
-   wd->line_min_length = wd->zoom_tolerance = elm_finger_size_get();
-   wd->line_tolerance = elm_finger_size_get() * 3;
-   wd->factor = ELM_GESTURE_ZOOM_FACTOR;
-   wd->zoom_wheel_factor = ELM_GESTURE_ZOOM_WHEEL_FACTOR ; /* mouse wheel zoom steps */
-   wd->rotate_tolerance = ELM_GESTURE_ROTATION_TOLERANCE;
+   wd->line_min_length =_elm_config->glayer_line_min_length * elm_finger_size_get();
+   wd->zoom_distance_tolerance = _elm_config->glayer_zoom_distance_tolerance * elm_finger_size_get();
+   wd->line_distance_tolerance = _elm_config->glayer_line_distance_tolerance * elm_finger_size_get();
+   wd->zoom_finger_factor = _elm_config->glayer_zoom_finger_factor;
+   wd->zoom_wheel_factor = _elm_config->glayer_zoom_wheel_factor; /* mouse wheel zoom steps */
+   wd->rotate_angular_tolerance = _elm_config->glayer_rotate_angular_tolerance;
+   wd->line_angular_tolerance = _elm_config->glayer_line_angular_tolerance;
+   wd->flick_time_limit_ms = _elm_config->glayer_flick_time_limit_ms;
    wd->repeat_events = EINA_TRUE;
 
 #if defined(DEBUG_GESTURE_LAYER)
    printf("size of Gestures = <%d>\n", sizeof(wd->gesture));
+   printf("initial values:\n\tzoom_finger_factor=<%f>\n\tzoom_distance_tolerance=<%d>\n\tline_min_length=<%d>\n\tline_distance_tolerance=<%d>\n\tzoom_wheel_factor=<%f>\n\trotate_angular_tolerance=<%f>\n\twd->line_angular_tolerance=<%f>\n\twd->flick_time_limit_ms=<%d>\n", wd->zoom_finger_factor, wd->zoom_distance_tolerance, wd->line_min_length, wd->line_distance_tolerance, wd->zoom_wheel_factor, wd->rotate_angular_tolerance, wd->line_angular_tolerance, wd->flick_time_limit_ms);
 #endif
    memset(wd->gesture, 0, sizeof(wd->gesture));
 
