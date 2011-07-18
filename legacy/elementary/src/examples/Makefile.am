@@ -57,6 +57,8 @@ SRCS = \
 	calendar_example_05.c \
 	calendar_example_06.c \
 	clock_example.c \
+	conformant_example_01.c \
+	conformant_example_02.c \
 	image_example_01.c \
 	flipselector_example.c \
 	fileselector_example.c \
@@ -113,6 +115,8 @@ pkglib_PROGRAMS += \
 	calendar_example_05 \
 	calendar_example_06 \
 	clock_example \
+	conformant_example_01 \
+	conformant_example_02 \
 	image_example_01 \
 	diskselector_example_01 \
 	diskselector_example_02 \

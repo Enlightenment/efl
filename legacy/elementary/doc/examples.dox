@@ -2189,6 +2189,79 @@
  */
 
 /**
+ * @page conformant_example Conformant Example.
+ *
+ * In this example we'll explain how to create applications to work
+ * with illume, considering space required for virtual keyboards.
+ *
+ * Illume is a module for Enlightenment that modifies the user interface
+ * to work cleanly and nicely on a mobile device. It has support for
+ * virtual keyboard, among other nice features.
+ *
+ * Let's start creating a very simple window with a vertical box
+ * with multi-line entry between two buttons.
+ * This entry will expand filling all space on window not used by buttons.
+ *
+ * @dontinclude conformant_example_01.c
+ * @skipline elm_main
+ * @until }
+ *
+ * For information about how to create windows, boxes, buttons or entries,
+ * look for documentation for these widgets.
+ *
+ * It will looks fine when you don't need a virtual keyboard, as you
+ * can see on the following image:
+ *
+ * @image html screenshots/conformant_example_01.png
+ * @image latex screenshots/conformant_example_01.eps
+ *
+ * But if you call a virtual keyboard, the window will resize, changing
+ * widgets size and position. All the content will shrink.
+ * The window will look like this:
+ *
+ * @image html screenshots/conformant_example_02.png
+ * @image latex screenshots/conformant_example_02.eps
+ *
+ * If you don't want such behaviour, you
+ * will need a conformant to account for space taken up by the indicator,
+ * virtual keyboard and softkey windows.
+ *
+ * In this case, using the conformant in a proper way, you will have
+ * a window like the following when the virtual keyboard is hidden:
+ *
+ * @image html screenshots/conformant_example_03.png
+ * @image latex screenshots/conformant_example_03.eps
+ *
+ * As you can see, it guess the space that will be required by the keyboard.
+ * Verify how perfectly it fits when keyboard is visible:
+ *
+ * @image html screenshots/conformant_example_04.png
+ * @image latex screenshots/conformant_example_04.eps
+ *
+ * So, let's study each step required to transform our initial example on
+ * the second one.
+ *
+ * First of all, we need to set the window as an illume conformant window:
+ * @dontinclude conformant_example_02.c
+ * @skipline elm_win_conformant_set
+ *
+ * Next, we'll add a conformant widget, and set it to resize with the window,
+ * instead of the box.
+ * @skipline conform
+ * @until evas_object_show
+ *
+ * Finally, we'll set the box as conformant's content, just like this:
+ * @skipline elm_conformant_content_set
+ *
+ * Compare both examples code:
+ * @ref conformant_example_01.c "conformant_example_01.c"
+ * @ref conformant_example_02.c "conformant_example_02.c"
+ *
+ * @example conformant_example_01.c
+ * @example conformant_example_02.c
+ */
+
+/**
  * @page bg_example_01_c bg_example_01.c
  * @include bg_example_01.c
  * @example bg_example_01.c
