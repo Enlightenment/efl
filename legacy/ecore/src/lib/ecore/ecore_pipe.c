@@ -513,19 +513,29 @@ _ecore_pipe_read(void *data, Ecore_Fd_Handler *fd_handler __UNUSED__)
                }
              else if (ret == 0)
                {
-                  /* we got no data even though we had data to read */
-                  if (!p->delete_me)
-                     p->handler((void *)p->data, NULL, 0);
-                  if (p->passed_data) free(p->passed_data);
-                  p->passed_data = NULL;
-                  p->already_read = 0;
-                  p->len = 0;
-                  p->message++;
-                  pipe_close(p->fd_read);
-                  p->fd_read = PIPE_FD_INVALID;
-                  p->fd_handler = NULL;
-                  _ecore_pipe_unhandle(p);
-                  return ECORE_CALLBACK_CANCEL;
+                  /* we got no data */
+                  if (i == 0)
+                    {
+                       /* no data on first try through means an error */
+                       if (!p->delete_me)
+                          p->handler((void *)p->data, NULL, 0);
+                       if (p->passed_data) free(p->passed_data);
+                       p->passed_data = NULL;
+                       p->already_read = 0;
+                       p->len = 0;
+                       p->message++;
+                       pipe_close(p->fd_read);
+                       p->fd_read = PIPE_FD_INVALID;
+                       p->fd_handler = NULL;
+                       _ecore_pipe_unhandle(p);
+                       return ECORE_CALLBACK_CANCEL;
+                    }
+                  else
+                    {
+                       /* no data after first loop try is ok */
+                       _ecore_pipe_unhandle(p);
+                       return ECORE_CALLBACK_RENEW;
+                    }
                }
 #ifndef _WIN32
              else if ((ret == PIPE_FD_ERROR) &&
@@ -565,11 +575,12 @@ _ecore_pipe_read(void *data, Ecore_Fd_Handler *fd_handler __UNUSED__)
           }
 
         /* if somehow we got less than or equal to 0 we got an errnoneous
-         * messages so call callback with null and len we got */
-        if (p->len <= 0)
+         * messages so call callback with null and len we got. this case should
+         * never happen */
+        if (p->len == 0)
           {
              if (!p->delete_me)
-                p->handler((void *)p->data, NULL, p->len);
+                p->handler((void *)p->data, NULL, 0);
              /* reset all values to 0 */
              if (p->passed_data) free(p->passed_data);
              p->passed_data = NULL;
@@ -628,19 +639,9 @@ _ecore_pipe_read(void *data, Ecore_Fd_Handler *fd_handler __UNUSED__)
           }
         else if (ret == 0)
           {
-             /* 0 bytes available when woken up to handle read - error */
-             if (!p->delete_me)
-                p->handler((void *)p->data, NULL, 0);
-             if (p->passed_data) free(p->passed_data);
-             p->passed_data = NULL;
-             p->already_read = 0;
-             p->len = 0;
-             p->message++;
-             pipe_close(p->fd_read);
-             p->fd_read = PIPE_FD_INVALID;
-             p->fd_handler = NULL;
+             /* 0 bytes to read - could be more to read next select wake up */
              _ecore_pipe_unhandle(p);
-             return ECORE_CALLBACK_CANCEL;
+             return ECORE_CALLBACK_RENEW;
           }
 #ifndef _WIN32
         else if ((ret == PIPE_FD_ERROR) &&
