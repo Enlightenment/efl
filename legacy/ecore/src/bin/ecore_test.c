@@ -1,8 +1,8 @@
+#include "config.h"
+
 #include <Ecore.h>
 #include <assert.h>
 #include <unistd.h>
-
-#include "config.h"
 
 const char *called = NULL;
 
