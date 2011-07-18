@@ -5883,13 +5883,19 @@ EAPI Evas_Object      *evas_object_rectangle_add         (Evas *e) EINA_WARN_UNU
  * treated specially -- as "borders". This will make those regions be
  * treated specially on resizing scales, by keeping their aspect. This
  * makes setting frames around other objects on UIs easy.
- * See the following figures for a visual explanation:
- * @image html image-borders.png
+ * See the following figures for a visual explanation:\n
+ * @htmlonly
+ * <img src="image-borders.png" style="max-width: 100%;" />
+ * <a href="image-borders.png">Full-size</a>
+ * @endhtmlonly
  * @image rtf image-borders.png
- * @image latex image-borders.eps
- * @image html border-effect.png
+ * @image latex image-borders.eps width=\textwidth
+ * @htmlonly
+ * <img src="border-effect.png" style="max-width: 100%;" />
+ * <a href="border-effect.png">Full-size</a>
+ * @endhtmlonly
  * @image rtf border-effect.png
- * @image latex border-effect.eps
+ * @image latex border-effect.eps width=\textwidth
  *
  * @section Evas_Object_Image_Manipulation Manipulating pixels
  *
@@ -6146,13 +6152,19 @@ EAPI void                     evas_object_image_file_get               (const Ev
  * @note By default, image objects have no borders set, i. e. @c l, @c
  * r, @c t and @c b start as @c 0.
  *
- * See the following figures for visual explanation:
- * @image html image-borders.png
+ * See the following figures for visual explanation:\n
+ * @htmlonly
+ * <img src="image-borders.png" style="max-width: 100%;" />
+ * <a href="image-borders.png">Full-size</a>
+ * @endhtmlonly
  * @image rtf image-borders.png
- * @image latex image-borders.eps
- * @image html border-effect.png
+ * @image latex image-borders.eps width=\textwidth
+ * @htmlonly
+ * <img src="border-effect.png" style="max-width: 100%;" />
+ * <a href="border-effect.png">Full-size</a>
+ * @endhtmlonly
  * @image rtf border-effect.png
- * @image latex border-effect.eps
+ * @image latex border-effect.eps width=\textwidth
  *
  * @see evas_object_image_border_get()
  * @see evas_object_image_border_center_fill_set()
@@ -6979,6 +6991,8 @@ EAPI Eina_Bool evas_object_image_extension_can_load_fast_get(const char *file);
  * Functions that operate on single line, single style text objects.
  *
  * For multiline and multiple style text, see @ref Evas_Object_Textblock.
+ *
+ * See some @ref Example_Evas_Text "examples" on this group of functions.
  *
  * @ingroup Evas_Object_Specific
  */

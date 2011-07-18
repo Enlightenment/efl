@@ -7,6 +7,8 @@
  *
  * @ref Example_Evas_Init_Shutdown
  *
+ * @ref Example_Evas_Text
+ *
  * @ref Example_Evas_Images
  *
  * @ref Example_Evas_Images_2
@@ -724,4 +726,60 @@
  *
  * @include evas-smart-object.c
  * @example evas-smart-object.c
+ */
+
+/**
+ * @page Example_Evas_Text Evas text object example
+ *
+ * In this example, we illustrate how to use text objects in various
+ * manners.
+ *
+ * We place, in the canvas, a text object along with a border image to
+ * delimit its geometry.  After we instantiate the text object, we set
+ * lots of properties on it to the initial ones from a preset list,
+ * which has the following declaration:
+ * @dontinclude evas-text.c
+ * @skip init values
+ * @until };
+ *
+ * Then, we set the text string itself, on it, with
+ * evas_object_text_text_set(). We set an explicit size of 30 points
+ * for our font, as you could see, what we check back with the the
+ * getter evas_object_text_font_get().
+ *
+ * Look at how it translates to code:
+ * @dontinclude evas-text.c
+ * @skip evas_object_text_add
+ * @until fprintf
+ *
+ * Like in other Evas examples, one interacts with it by means of key
+ * commands:
+ * @dontinclude evas-text.c
+ * @skip static const char *commands
+ * @until ;
+ *
+ * Use the 't' key to exercise the evas_object_text_style_set()
+ * function on the text -- it will cycle through all styles on
+ * #Evas_Text_Style_Type (note we start on #EVAS_TEXT_STYLE_PLAIN,
+ * thus with no effects on it) and, with other keys, you'll be able to
+ * set properties applicable to individual styles on the text object.
+ *
+ * The 'z' key will change the text's @b size, keeping the font family
+ * for it. Use 'f' to change the font, keeping the last size
+ * set. There are three font families the example will cycle through:
+ *
+ * The 'b' command shows us that evas_object_color_set(), on a given
+ * text object, will change the text's @b base color. Experiment with
+ * it, which will cycle through the colors in the <c>.text</c> list in
+ * @c init_data.
+ *
+ * The 's', 'o', 'w' and 'g' keys will make the text object to cycle
+ * to the preset values on colors for shadow, outline, glow and 'glow
+ * 2' effects, respectively. Naturally, they will only take effect on
+ * the text styles which resemble them.
+ *
+ * The full example follows.
+ *
+ * @include evas-text.c
+ * @example evas-text.c
  */

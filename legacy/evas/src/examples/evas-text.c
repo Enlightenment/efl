@@ -320,9 +320,7 @@ main(void)
    };
 
    d.t_data = init_data;
-
    d.t_data.font_ptr = d.t_data.font;
-
    d.t_data.text_ptr = d.t_data.text;
    d.t_data.glow_ptr = d.t_data.glow;
    d.t_data.glow2_ptr = d.t_data.glow2;
@@ -384,7 +382,6 @@ main(void)
    evas_object_show(d.text);
 
    evas_object_text_font_get(d.text, &font, &size);
-
    fprintf(stdout, "Adding text object with font %s, size %d\n", font, size);
 
    /* this is a border around the text object above, here just to
