@@ -1928,7 +1928,7 @@ extern "C" {
     * @param group The group that the image belongs in edje file (if it's an
     * edje image)
     *
-    * @return (#EINA_TRUE = success, #EINA_FALSE = error)
+    * @return (@c EINA_TRUE = success, @c EINA_FALSE = error)
     *
     * @see elm_image_file_get()
     *
@@ -1948,11 +1948,11 @@ extern "C" {
     */
    EAPI void             elm_image_file_get(const Evas_Object *obj, const char **file, const char **group) EINA_ARG_NONNULL(1);
    /**
-    * Set the smooth effect for a image.
+    * Set the smooth effect for an image.
     *
     * @param obj The image object
-    * @param smooth #EINA_TRUE if smooth scaling should be used, #EINA_FALSE
-    * otherwise. Default is #EINA_TRUE.
+    * @param smooth @c EINA_TRUE if smooth scaling should be used, @c EINA_FALSE
+    * otherwise. Default is @c EINA_TRUE.
     *
     * Set the scaling algorithm to be used when scaling the image. Smooth
     * scaling provides a better resulting image, but is slower.
@@ -1968,10 +1968,10 @@ extern "C" {
     */
    EAPI void             elm_image_smooth_set(Evas_Object *obj, Eina_Bool smooth) EINA_ARG_NONNULL(1);
    /**
-    * Get the smooth effect for a image.
+    * Get the smooth effect for an image.
     *
     * @param obj The image object
-    * @return #EINA_TRUE if smooth scaling is enabled, #EINA_FALSE otherwise.
+    * @return @c EINA_TRUE if smooth scaling is enabled, @c EINA_FALSE otherwise.
     *
     * @see elm_image_smooth_get()
     *
@@ -1996,8 +1996,8 @@ extern "C" {
     * Disable scaling of this object.
     *
     * @param obj The image object.
-    * @param no_scale #EINA_TRUE if the object is not scalable, #EINA_FALSE
-    * otherwise. Default is #EINA_FALSE.
+    * @param no_scale @c EINA_TRUE if the object is not scalable, @c EINA_FALSE
+    * otherwise. Default is @c EINA_FALSE.
     *
     * This function disables scaling of the elm_image widget through the
     * function elm_object_scale_set(). However, this does not affect the widget
@@ -2015,7 +2015,7 @@ extern "C" {
     * Get whether scaling is disabled on the object.
     *
     * @param obj The image object
-    * @return #EINA_TRUE if scaling is disabled, #EINA_FALSE otherwise
+    * @return @c EINA_TRUE if scaling is disabled, @c EINA_FALSE otherwise
     *
     * @see elm_image_no_scale_set()
     *
@@ -2027,12 +2027,12 @@ extern "C" {
     *
     * @param obj The image object
     * @param scale_up A bool to set if the object is resizeable up. Default is
-    * #EINA_TRUE.
+    * @c EINA_TRUE.
     * @param scale_down A bool to set if the object is resizeable down. Default
-    * is #EINA_TRUE.
+    * is @c EINA_TRUE.
     *
     * This function limits the image resize ability. If @p scale_up is set to
-    * #EINA_FALSE, the object can't have its height or width resized to a value
+    * @c EINA_FALSE, the object can't have its height or width resized to a value
     * higher than the original image size. Same is valid for @p scale_down.
     *
     * @see elm_image_scale_get()
@@ -2056,17 +2056,17 @@ extern "C" {
     * Set if the image fill the entire object area when keeping the aspect ratio.
     *
     * @param obj The image object
-    * @param fill_outside #EINA_TRUE if the object is filled outside,
-    * #EINA_FALSE otherwise. Default is #EINA_FALSE.
+    * @param fill_outside @c EINA_TRUE if the object is filled outside,
+    * @c EINA_FALSE otherwise. Default is @c EINA_FALSE.
     *
     * When the image should keep its aspect ratio even if resized to another
     * aspect ratio, there are two possibilities to resize it: keep the entire
     * image inside the limits of height and width of the object (@p fill_outside
-    * is #EINA_FALSE) or let the extra width or height go outside of the object,
-    * and the image will fill the entire object (@p fill_outside is #EINA_TRUE).
+    * is @c EINA_FALSE) or let the extra width or height go outside of the object,
+    * and the image will fill the entire object (@p fill_outside is @c EINA_TRUE).
     *
     * @note This option will have no effect if
-    * elm_image_aspect_ratio_retained_set() is set to #EINA_FALSE.
+    * elm_image_aspect_ratio_retained_set() is set to @c EINA_FALSE.
     *
     * @see elm_image_fill_outside_get()
     * @see elm_image_aspect_ratio_retained_set()
@@ -2078,7 +2078,7 @@ extern "C" {
     * Get if the object is filled outside
     *
     * @param obj The image object
-    * @return #EINA_TRUE if the object is filled outside, #EINA_FALSE otherwise.
+    * @return @c EINA_TRUE if the object is filled outside, @c EINA_FALSE otherwise.
     *
     * @see elm_image_fill_outside_set()
     *
@@ -2158,7 +2158,7 @@ extern "C" {
     * Make the image 'editable'.
     *
     * @param obj Image object.
-    * @param set Turn on or off editability. Default is #EINA_FALSE.
+    * @param set Turn on or off editability. Default is @c EINA_FALSE.
     *
     * This means the image is a valid drag target for drag and drop, and can be
     * cut or pasted too.
@@ -2198,8 +2198,8 @@ extern "C" {
     * Set whether the original aspect ratio of the image should be kept on resize.
     *
     * @param obj The image object.
-    * @param retained #EINA_TRUE if the image should retain the aspect,
-    * #EINA_FALSE otherwise.
+    * @param retained @c EINA_TRUE if the image should retain the aspect,
+    * @c EINA_FALSE otherwise.
     *
     * The original aspect ratio (width / height) of the image is usually
     * distorted to match the object's size. Enabling this option will retain
@@ -2216,7 +2216,7 @@ extern "C" {
     * Get if the object retains the original aspect ratio.
     *
     * @param obj The image object.
-    * @return #EINA_TRUE if the object keeps the original aspect, #EINA_FALSE
+    * @return @c EINA_TRUE if the object keeps the original aspect, @c EINA_FALSE
     * otherwise.
     *
     * @ingroup Image
