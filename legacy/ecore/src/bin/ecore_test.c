@@ -87,22 +87,23 @@ void pipe_read(void *data __UNUSED__, void *buffer __UNUSED__, unsigned int nbyt
 
 int main(int argc __UNUSED__, char **argv __UNUSED__)
 {
-   ecore_init();
+   assert(1 == ecore_init());
 
    the_pipe = ecore_pipe_add(&pipe_read, NULL);
-   ecore_pipe_write(the_pipe, "a", 1);
+   assert(the_pipe != NULL);
+   assert(EINA_TRUE == ecore_pipe_write(the_pipe, "a", 1));
 
-   ecore_timer_add(0.0, timer_one, NULL);
+   assert(NULL != ecore_timer_add(0.0, timer_one, NULL));
 
-   ecore_idle_enterer_add(&idle_enterer_one, NULL);
-   ecore_idler_add(&idler_one, NULL);
-   ecore_idle_exiter_add(&idle_exiter_one, NULL);
+   assert(NULL != ecore_idle_enterer_add(&idle_enterer_one, NULL));
+   assert(NULL != ecore_idler_add(&idler_one, NULL));
+   assert(NULL != ecore_idle_exiter_add(&idle_exiter_one, NULL));
 
    ecore_main_loop_begin();
 
    /* glib main loop exits on an idle enterer */
    assert(called == idle_enterer_str);
 
-   ecore_shutdown();
+   assert(0 == ecore_shutdown());
    return 0;
 }
