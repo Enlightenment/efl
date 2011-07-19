@@ -30,6 +30,10 @@ bt_sm_hilight.png \
 bt_sm_shine.png \
 bt_dis_base.png \
 bt_dis_hilight.png \
+ctxpopup_arrow_left.png \
+ctxpopup_arrow_down.png \
+ctxpopup_arrow_right.png \
+ctxpopup_arrow_up.png \
 dia_botshad.png \
 dia_grad.png \
 dia_topshad.png \
@@ -234,7 +238,15 @@ icon_arrow_down_right.png \
 icon_arrow_up_left.png \
 icon_arrow_up_right.png \
 thumb_shadow.png \
-group_index.png
+group_index.png \
+mp_forward.png \
+mp_info.png \
+mp_next.png \
+mp_pause.png \
+mp_play.png \
+mp_prev.png \
+mp_rewind.png \
+mp_stop.png
 
 default.edj: Makefile $(EXTRA_DIST)
 	$(EDJE_CC) $(EDJE_FLAGS) \
