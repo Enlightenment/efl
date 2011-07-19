@@ -8,13 +8,13 @@ MAINTAINERCLEANFILES = Makefile.in aclocal.m4 config.guess emotion.spec \
                        config.h.in config.sub configure install-sh \
 		       ltconfig ltmain.sh missing mkinstalldirs \
 		       stamp-h.in emotion_docs.tar \
-		       emotion.c acconfig.h depcomp \
+		       emotion.pc acconfig.h depcomp \
 			   $(PACKAGE_TARNAME)-$(PACKAGE_VERSION)-doc.tar.bz2
 
 bin_SCRIPTS =
 
 EXTRA_DIST = README AUTHORS COPYING COPYING-PLAIN \
-	emotion.spec emotion.spec.in emotion.c.in Doxyfile \
+	emotion.spec emotion.spec.in emotion.pc.in  \
 	emotion.pc.in
 
 pkgconfigdir = $(libdir)/pkgconfig

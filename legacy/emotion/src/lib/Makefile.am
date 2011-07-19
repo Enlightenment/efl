@@ -40,7 +40,7 @@ endif
 if EMOTION_STATIC_BUILD_GSTREAMER
 libemotion_la_SOURCES += \
 $(top_srcdir)/src/modules/gstreamer/emotion_gstreamer.c \
-$(top_srcdir)/src/modules/gstreamer/emotion_gstreamer_pipeline.c
+$(top_srcdir)/src/modules/gstreamer/emotion_sink.c
 endif
 
 if EMOTION_STATIC_BUILD_VLC
