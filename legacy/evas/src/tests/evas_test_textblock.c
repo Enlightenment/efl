@@ -11,6 +11,12 @@
 
 #include "evas_tests_helpers.h"
 
+/* Functions defined in evas_object_textblock.c */
+EAPI Eina_Bool
+_evas_textblock_check_item_node_link(Evas_Object *obj);
+/* end of functions defined in evas_object_textblock.c */
+
+
 static const char *style_buf =
    "DEFAULT='font=Sans font_size=10 color=#000 text_class=entry'"
    "br='\n'"
@@ -1042,6 +1048,21 @@ START_TEST(evas_textblock_various)
    evas_object_textblock_text_markup_set(tb, "|");
    evas_object_textblock_size_formatted_get(tb, &w, &h);
    fail_if((w != bw) || (h != bh));
+
+   /* Items have correct text node information */
+   evas_object_textblock_text_markup_set(tb, "");
+   fail_if(!_evas_textblock_check_item_node_link(tb));
+   evas_object_textblock_text_markup_set(tb, "<ps>");
+   fail_if(!_evas_textblock_check_item_node_link(tb));
+   evas_object_textblock_text_markup_set(tb, "a<ps>");
+   fail_if(!_evas_textblock_check_item_node_link(tb));
+   evas_object_textblock_text_markup_set(tb, "a<ps>a");
+   fail_if(!_evas_textblock_check_item_node_link(tb));
+   evas_object_textblock_text_markup_set(tb, "a<ps>a<ps>");
+   fail_if(!_evas_textblock_check_item_node_link(tb));
+   evas_object_textblock_text_markup_set(tb, "a<ps>a<ps>a");
+   fail_if(!_evas_textblock_check_item_node_link(tb));
+
    END_TB_TEST();
 }
 END_TEST

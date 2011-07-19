@@ -8986,6 +8986,35 @@ _evas_object_textblock_rehint(Evas_Object *obj)
  * @}
  */
 
+#ifdef HAVE_TESTS
+/* return EINA_FALSE on error, used in unit_testing */
+EAPI Eina_Bool
+_evas_textblock_check_item_node_link(Evas_Object *obj)
+{
+   Evas_Object_Textblock *o;
+   Evas_Object_Textblock_Paragraph *par;
+   Evas_Object_Textblock_Line *ln;
+   Evas_Object_Textblock_Item *it;
+
+   o = (Evas_Object_Textblock *)(obj->object_data);
+   if (!o) return EINA_FALSE;
+
+   if (!o->formatted.valid) _relayout(obj);
+
+   EINA_INLIST_FOREACH(o->paragraphs, par)
+     {
+        EINA_INLIST_FOREACH(par->lines, ln)
+          {
+             EINA_INLIST_FOREACH(ln->items, it)
+               {
+                  if (it->text_node != par->text_node)
+                     return EINA_FALSE;
+               }
+          }
+     }
+   return EINA_TRUE;
+}
+#endif
 
 #if 0
 /* Good for debugging */
