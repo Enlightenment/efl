@@ -563,6 +563,178 @@ START_TEST(evas_textblock_cursor)
 }
 END_TEST
 
+START_TEST(evas_textblock_format_removal)
+{
+   START_TB_TEST();
+   const char *buf = "Th<b>is a<a>tes</a>st</b>.";
+   const Evas_Object_Textblock_Node_Format *fnode;
+   Evas_Textblock_Cursor *main_cur = evas_object_textblock_cursor_get(tb);
+   evas_object_textblock_text_markup_set(tb, buf);
+
+   /* Remove the "b" pair. */
+   fnode = evas_textblock_node_format_first_get(tb);
+   evas_textblock_node_format_remove_pair(tb,
+         (Evas_Object_Textblock_Node_Format *) fnode);
+
+   fnode = evas_textblock_node_format_first_get(tb);
+   fail_if (!fnode);
+   fail_if(strcmp(evas_textblock_node_format_text_get(fnode),
+            "+ a"));
+
+   fnode = evas_textblock_node_format_next_get(fnode);
+   fail_if (!fnode);
+   fail_if(strcmp(evas_textblock_node_format_text_get(fnode),
+            "- a"));
+
+   fnode = evas_textblock_node_format_next_get(fnode);
+   fail_if (fnode);
+
+   /* Now also remove the a pair */
+   fnode = evas_textblock_node_format_first_get(tb);
+   evas_textblock_node_format_remove_pair(tb,
+         (Evas_Object_Textblock_Node_Format *) fnode);
+   fnode = evas_textblock_node_format_first_get(tb);
+   fail_if (fnode);
+
+   /* Remove the "a" pair. */
+   evas_object_textblock_text_markup_set(tb, buf);
+
+   fnode = evas_textblock_node_format_first_get(tb);
+   fnode = evas_textblock_node_format_next_get(fnode);
+   evas_textblock_node_format_remove_pair(tb,
+         (Evas_Object_Textblock_Node_Format *) fnode);
+
+   fnode = evas_textblock_node_format_first_get(tb);
+   fail_if (!fnode);
+   fail_if(strcmp(evas_textblock_node_format_text_get(fnode),
+            "+ b"));
+
+   fnode = evas_textblock_node_format_next_get(fnode);
+   fail_if (!fnode);
+   fail_if(strcmp(evas_textblock_node_format_text_get(fnode),
+            "- b"));
+
+   fnode = evas_textblock_node_format_next_get(fnode);
+   fail_if (fnode);
+
+   /* Now also remove the b pair */
+   fnode = evas_textblock_node_format_first_get(tb);
+   evas_textblock_node_format_remove_pair(tb,
+         (Evas_Object_Textblock_Node_Format *) fnode);
+   fnode = evas_textblock_node_format_first_get(tb);
+   fail_if (fnode);
+
+   /* Now remove formats by removing text */
+   evas_object_textblock_text_markup_set(tb, buf);
+   evas_textblock_cursor_pos_set(cur, 6);
+   evas_textblock_cursor_char_delete(cur);
+   evas_textblock_cursor_char_delete(cur);
+   evas_textblock_cursor_char_delete(cur);
+   /* Only b formats should remain */
+   fnode = evas_textblock_node_format_first_get(tb);
+   fail_if (!fnode);
+   fail_if(strcmp(evas_textblock_node_format_text_get(fnode),
+            "+ b"));
+
+   fnode = evas_textblock_node_format_next_get(fnode);
+   fail_if (!fnode);
+   fail_if(strcmp(evas_textblock_node_format_text_get(fnode),
+            "- b"));
+
+   fnode = evas_textblock_node_format_next_get(fnode);
+   fail_if (fnode);
+
+   /* No formats should remain. */
+   evas_textblock_cursor_pos_set(cur, 2);
+   evas_textblock_cursor_char_delete(cur);
+   evas_textblock_cursor_char_delete(cur);
+   evas_textblock_cursor_char_delete(cur);
+   evas_textblock_cursor_char_delete(cur);
+   evas_textblock_cursor_char_delete(cur);
+   evas_textblock_cursor_char_delete(cur);
+   fnode = evas_textblock_node_format_first_get(tb);
+   fail_if (fnode);
+
+   /* Try to remove the formats in a way that shouldn't remove them */
+   evas_object_textblock_text_markup_set(tb, buf);
+   evas_textblock_cursor_pos_set(cur, 7);
+   evas_textblock_cursor_char_delete(cur);
+   evas_textblock_cursor_char_delete(cur);
+   evas_textblock_cursor_char_delete(cur);
+   evas_textblock_cursor_char_delete(cur);
+   fnode = evas_textblock_node_format_first_get(tb);
+   fail_if (!fnode);
+   fail_if(strcmp(evas_textblock_node_format_text_get(fnode),
+            "+ b"));
+
+   fnode = evas_textblock_node_format_next_get(fnode);
+   fail_if (!fnode);
+   fail_if(strcmp(evas_textblock_node_format_text_get(fnode),
+            "+ a"));
+
+   fnode = evas_textblock_node_format_next_get(fnode);
+   fail_if (!fnode);
+   fail_if(strcmp(evas_textblock_node_format_text_get(fnode),
+            "- a"));
+
+   fnode = evas_textblock_node_format_next_get(fnode);
+   fail_if (!fnode);
+   fail_if(strcmp(evas_textblock_node_format_text_get(fnode),
+            "- b"));
+
+   fnode = evas_textblock_node_format_next_get(fnode);
+   fail_if (fnode);
+
+   /* Try range deletion to delete a */
+   evas_object_textblock_text_markup_set(tb, buf);
+   evas_textblock_cursor_pos_set(cur, 6);
+   evas_textblock_cursor_pos_set(main_cur, 9);
+   evas_textblock_cursor_range_delete(cur, main_cur);
+   fnode = evas_textblock_node_format_first_get(tb);
+   fail_if (!fnode);
+   fail_if(strcmp(evas_textblock_node_format_text_get(fnode),
+            "+ b"));
+
+   fnode = evas_textblock_node_format_next_get(fnode);
+   fail_if (!fnode);
+   fail_if(strcmp(evas_textblock_node_format_text_get(fnode),
+            "- b"));
+
+   fnode = evas_textblock_node_format_next_get(fnode);
+   fail_if (fnode);
+
+   /* Range deletion to delete both */
+   evas_object_textblock_text_markup_set(tb, buf);
+   evas_textblock_cursor_pos_set(cur, 2);
+   evas_textblock_cursor_pos_set(main_cur, 11);
+   evas_textblock_cursor_range_delete(cur, main_cur);
+   fnode = evas_textblock_node_format_first_get(tb);
+   fail_if (fnode);
+
+   /* Range deletion across paragraphs */
+   evas_object_textblock_text_markup_set(tb,
+         "Th<b>is a<a>te<ps>"
+         "s</a>st</b>.");
+   evas_textblock_cursor_pos_set(cur, 6);
+   evas_textblock_cursor_pos_set(main_cur, 10);
+   evas_textblock_cursor_range_delete(cur, main_cur);
+   fnode = evas_textblock_node_format_first_get(tb);
+   fail_if (!fnode);
+   fail_if(strcmp(evas_textblock_node_format_text_get(fnode),
+            "+ b"));
+
+   fnode = evas_textblock_node_format_next_get(fnode);
+   fail_if (!fnode);
+   fail_if(strcmp(evas_textblock_node_format_text_get(fnode),
+            "- b"));
+
+   fnode = evas_textblock_node_format_next_get(fnode);
+   fail_if (fnode);
+
+   END_TB_TEST();
+}
+END_TEST
+
 /* Testing items */
 START_TEST(evas_textblock_items)
 {
@@ -1542,6 +1714,7 @@ void evas_test_textblock(TCase *tc)
    tcase_add_test(tc, evas_textblock_evas);
    tcase_add_test(tc, evas_textblock_text_getters);
    tcase_add_test(tc, evas_textblock_formats);
+   tcase_add_test(tc, evas_textblock_format_removal);
    tcase_add_test(tc, evas_textblock_escaping);
    tcase_add_test(tc, evas_textblock_set_get);
    tcase_add_test(tc, evas_textblock_geometries);
