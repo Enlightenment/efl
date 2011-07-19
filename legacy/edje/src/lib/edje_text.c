@@ -192,7 +192,14 @@ _edje_text_fit_x(Edje *ed, Edje_Real_Part *ep,
      }
    if (uc2 >= 0)
      {
-        c2 = c1;
+        if (c1 >= 0)
+          {
+             c2 = c1;
+          }
+        else
+          {
+             c2 = 0;
+          }
         for ( ; i < uc2 ; i++)
           {
              c2 = evas_string_char_next_get(text, c2, NULL);
