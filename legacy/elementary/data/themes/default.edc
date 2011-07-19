@@ -16061,7 +16061,7 @@ collections {
                }
                image.middle: SOLID;
             }
-            description { state: "default" 0.1;
+            description { state: "default" 1.0;
                inherit: "default" 0.0;
             }
             description { state: "selected" 0.0;
