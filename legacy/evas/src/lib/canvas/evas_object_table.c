@@ -1121,14 +1121,12 @@ evas_object_table_pack(Evas_Object *o, Evas_Object *child, unsigned short col, u
           {
              Eina_List *l;
              Evas_Object_Table_Option *opt2;
-             int max_row, max_col;
+             int max_row = 0, max_col = 0;
              
-             max_row = 0;
-             max_col = 0;
              EINA_LIST_FOREACH(priv->children, l, opt2)
                {
-                  if (max_col < opt->end_col) max_col = opt->end_col;
-                  if (max_row < opt->end_row) max_row = opt->end_row;
+                  if (max_col < opt2->end_col) max_col = opt2->end_col;
+                  if (max_row < opt2->end_row) max_row = opt2->end_row;
                }
              priv->size.cols = max_col;
              priv->size.rows = max_row;
