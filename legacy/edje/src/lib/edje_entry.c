@@ -1254,16 +1254,19 @@ _edje_key_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, v
         if (shift)
           {
              // redo
+             _edje_emit(ed, "entry,redo,request", rp->part->name);
           }
         else
           {
              // undo
+             _edje_emit(ed, "entry,undo,request", rp->part->name);
           }
         ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
      }
    else if ((control) && (!strcmp(ev->key, "y")))
      {
         // redo
+        _edje_emit(ed, "entry,redo,request", rp->part->name);
         ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
      }
    else if ((control) && (!strcmp(ev->key, "w")))
