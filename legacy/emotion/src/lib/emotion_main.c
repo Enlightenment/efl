@@ -184,13 +184,20 @@ static Emotion_Webcam *
 _emotion_webcam_new(const char *syspath)
 {
    Emotion_Webcam *test;
+   const char *device;
+   char *local;
 
    test = malloc(sizeof (Emotion_Webcam));
    if (!test) return NULL;
 
    test->syspath = eina_stringshare_ref(syspath);
-   test->device = eeze_udev_syspath_get_property(syspath, "DEVNAME");
    test->name = eeze_udev_syspath_get_sysattr(syspath, "name");
+
+   device = eeze_udev_syspath_get_property(syspath, "DEVNAME");
+   local = alloca(eina_stringshare_strlen(device) + 8);
+   snprintf(local, eina_stringshare_strlen(device) + 8, "v4l2://%s", device);
+   test->device = eina_stringshare_add(local);
+   eina_stringshare_del(device);
 
    return test;
 }
