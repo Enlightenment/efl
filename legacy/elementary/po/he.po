@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: elementary\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2011-04-29 19:58-0700\n"
+"POT-Creation-Date: 2011-07-13 15:31+0900\n"
 "PO-Revision-Date: 2010-12-26 10:05+0200\n"
 "Last-Translator: Aharon Hillel <a.hillel@partner.samsung.com>\n"
 "Language-Team: General\n"
@@ -16,38 +16,38 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: src/lib/elc_fileselector.c:595
+#: src/lib/elc_fileselector.c:855
 msgid "Up"
 msgstr ""
 
-#: src/lib/elc_fileselector.c:610
+#: src/lib/elc_fileselector.c:870
 msgid "Home"
 msgstr ""
 
-#: src/lib/elc_fileselector.c:791 src/lib/elm_entry.c:930
+#: src/lib/elc_fileselector.c:1058 src/lib/elm_entry.c:1109
 msgid "Cancel"
 msgstr "בטל"
 
-#: src/lib/elc_fileselector.c:801
+#: src/lib/elc_fileselector.c:1068
 msgid "OK"
 msgstr "אשר"
 
-#: src/lib/elm_config.c:1544
+#: src/lib/elm_config.c:1579
 msgid "default:LTR"
 msgstr "default:RTL"
 
-#: src/lib/elm_entry.c:924
+#: src/lib/elm_entry.c:1103
 msgid "Copy"
 msgstr "העתק"
 
-#: src/lib/elm_entry.c:927
+#: src/lib/elm_entry.c:1106
 msgid "Cut"
 msgstr "גזור"
 
-#: src/lib/elm_entry.c:941
+#: src/lib/elm_entry.c:1120
 msgid "Select"
 msgstr "התחל בחירה"
 
-#: src/lib/elm_entry.c:947
+#: src/lib/elm_entry.c:1126
 msgid "Paste"
 msgstr "הדבק"
