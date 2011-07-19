@@ -731,6 +731,13 @@ START_TEST(evas_textblock_format_removal)
    fnode = evas_textblock_node_format_next_get(fnode);
    fail_if (fnode);
 
+   /* Two formats in the same place. */
+   evas_object_textblock_text_markup_set(tb, "a<b><a>b</a></b>b");
+   evas_textblock_cursor_pos_set(cur, 1);
+   evas_textblock_cursor_char_delete(cur);
+   fnode = evas_textblock_node_format_first_get(tb);
+   fail_if (fnode);
+
    END_TB_TEST();
 }
 END_TEST
