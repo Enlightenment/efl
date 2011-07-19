@@ -4044,7 +4044,7 @@ _layout(const Evas_Object *obj, int w, int h, int *w_ret, int *h_ret)
      {
         Evas_Object_Textblock_Text_Item *ti;
         ti = _layout_text_item_new(c, c->fmt);
-        ti->parent.text_node = o->text_nodes;
+        ti->parent.text_node = c->par->text_node;
         ti->parent.text_pos = 0;
         _layout_text_add_logical_item(c, ti, NULL);
      }
