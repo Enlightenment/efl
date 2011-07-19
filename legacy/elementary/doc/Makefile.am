@@ -31,22 +31,37 @@ endif
 noinst_PROGRAMS = \
 widget_preview_button1 \
 widget_preview_button2 \
-widget_preview_button3
+widget_preview_button3 \
+widget_preview_check1 \
+widget_preview_check2 \
+widget_preview_check3 \
+widget_preview_bubble1 \
+widget_preview_bubble2 \
+widget_preview_bubble3 \
+widget_preview_fileselector_button1 \
+widget_preview_fileselector_button2 \
+widget_preview_fileselector_button3 \
+widget_preview_colorselector
 
-widget_preview_button1_SOURCES = widget_preview_button1.c
-widget_preview_button1_LDADD = $(top_builddir)/src/lib/libelementary.la @ELEMENTARY_EWEATHER_LIBS@ @ELEMENTARY_EDBUS_LIBS@ @ELEMENTARY_EFREET_LIBS@ @ELEMENTARY_LIBS@ @EIO_LIBS@ @my_libs@
-widget_preview_button2_SOURCES = widget_preview_button2.c
-widget_preview_button2_LDADD = $(top_builddir)/src/lib/libelementary.la @ELEMENTARY_EWEATHER_LIBS@ @ELEMENTARY_EDBUS_LIBS@ @ELEMENTARY_EFREET_LIBS@ @ELEMENTARY_LIBS@ @EIO_LIBS@ @my_libs@
-widget_preview_button3_SOURCES = widget_preview_button3.c
-widget_preview_button3_LDADD = $(top_builddir)/src/lib/libelementary.la @ELEMENTARY_EWEATHER_LIBS@ @ELEMENTARY_EDBUS_LIBS@ @ELEMENTARY_EFREET_LIBS@ @ELEMENTARY_LIBS@ @EIO_LIBS@ @my_libs@
+LDADD = $(top_builddir)/src/lib/libelementary.la @ELEMENTARY_EWEATHER_LIBS@ @ELEMENTARY_EDBUS_LIBS@ @ELEMENTARY_EFREET_LIBS@ @ELEMENTARY_LIBS@ @EIO_LIBS@ @my_libs@
 
 doc-clean:
 	rm -rf img/widget html/ latex/ man/ xml/ $(top_builddir)/$(PACKAGE_DOCNAME).tar*
 
 doc: all doc-clean
-	$(top_srcdir)/doc/shot.sh ./img/widget/button preview-00.png $(top_builddir)/doc/widget_preview_button1 160 50
-	$(top_srcdir)/doc/shot.sh ./img/widget/button preview-01.png $(top_builddir)/doc/widget_preview_button2 160 50
-	$(top_srcdir)/doc/shot.sh ./img/widget/button preview-02.png $(top_builddir)/doc/widget_preview_button3 160 50
+	$(top_srcdir)/doc/shot.sh $(top_builddir)/doc/html/img/widget/button preview-00.png $(top_builddir)/doc/widget_preview_button1 160 50
+	$(top_srcdir)/doc/shot.sh $(top_builddir)/doc/html/img/widget/button preview-01.png $(top_builddir)/doc/widget_preview_button2 160 50
+	$(top_srcdir)/doc/shot.sh $(top_builddir)/doc/html/img/widget/button preview-02.png $(top_builddir)/doc/widget_preview_button3 160 50
+	$(top_srcdir)/doc/shot.sh $(top_builddir)/doc/html/img/widget/fileselector_button preview-00.png $(top_builddir)/doc/widget_preview_fileselector_button1 200 50
+	$(top_srcdir)/doc/shot.sh $(top_builddir)/doc/html/img/widget/fileselector_button preview-01.png $(top_builddir)/doc/widget_preview_fileselector_button2 200 50
+	$(top_srcdir)/doc/shot.sh $(top_builddir)/doc/html/img/widget/fileselector_button preview-02.png $(top_builddir)/doc/widget_preview_fileselector_button3 160 50
+	$(top_srcdir)/doc/shot.sh $(top_builddir)/doc/html/img/widget/check preview-00.png $(top_builddir)/doc/widget_preview_check1 160 50
+	$(top_srcdir)/doc/shot.sh $(top_builddir)/doc/html/img/widget/check preview-01.png $(top_builddir)/doc/widget_preview_check2 160 50
+	$(top_srcdir)/doc/shot.sh $(top_builddir)/doc/html/img/widget/check preview-02.png $(top_builddir)/doc/widget_preview_check3 160 50
+	$(top_srcdir)/doc/shot.sh $(top_builddir)/doc/html/img/widget/bubble preview-00.png $(top_builddir)/doc/widget_preview_bubble1 160 50
+	$(top_srcdir)/doc/shot.sh $(top_builddir)/doc/html/img/widget/bubble preview-01.png $(top_builddir)/doc/widget_preview_bubble2 160 50
+	$(top_srcdir)/doc/shot.sh $(top_builddir)/doc/html/img/widget/bubble preview-02.png $(top_builddir)/doc/widget_preview_bubble3 160 50
+	$(top_srcdir)/doc/shot.sh $(top_builddir)/doc/html/img/widget/colorselector preview-00.png $(top_builddir)/doc/widget_preview_colorselector 160 200
 	$(efl_doxygen)
 	cp -r $(srcdir)/img/* html/
 	cp -r $(srcdir)/img/* latex/

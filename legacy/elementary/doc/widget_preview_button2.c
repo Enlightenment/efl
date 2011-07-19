@@ -8,7 +8,7 @@ evas_object_show(o);
 elm_object_text_set(o, "Button");
 
 Evas_Object *o2 = elm_icon_add(win);
-elm_icon_file_set(o2, "img/elementary.png", NULL);
+elm_icon_standard_set(o2, "home");
 elm_button_icon_set(o, o2);
 evas_object_show(o2);
 
