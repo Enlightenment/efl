@@ -42,6 +42,7 @@ widget_preview_fileselector_button1 \
 widget_preview_fileselector_button2 \
 widget_preview_fileselector_button3 \
 widget_preview_colorselector \
+widget_preview_layout \
 widget_preview_index
 
 LDADD = $(top_builddir)/src/lib/libelementary.la @ELEMENTARY_EWEATHER_LIBS@ @ELEMENTARY_EDBUS_LIBS@ @ELEMENTARY_EFREET_LIBS@ @ELEMENTARY_LIBS@ @EIO_LIBS@ @my_libs@
@@ -61,6 +62,7 @@ WGT_PREVIEW = \
 	bubble:preview-01.png:widget_preview_bubble2:160:50 \
 	bubble:preview-02.png:widget_preview_bubble3:160:50 \
 	colorselector:preview-00.png:widget_preview_colorselector:160:200 \
+	layout:preview-00.png:widget_preview_layout:200:160 \
 	index:preview-00.png:widget_preview_index:300:500
 
 widget-preview:

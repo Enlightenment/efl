@@ -79,6 +79,9 @@
  * @image latex img/widget/index/preview-00.eps
  * @li @ref Inwin
  * @li @ref Label
+
+ * @image html img/widget/layout/preview-00.png
+ * @image latex img/widget/layout/preview-00.eps
  * @li @ref Layout
  * @li @ref List
  * @li @ref Map
