@@ -1,15 +1,6 @@
 #include <Elementary.h>
 #include "elm_priv.h"
 
-/**
- * @defgroup Layout Layout
- *
- * This takes a standard Edje design file and wraps it very thinly
- * in a widget and handles swallowing widgets into swallow regions
- * in the Edje object, allowing Edje to be used as a design and
- * layout tool
- */
-
 typedef struct _Widget_Data Widget_Data;
 typedef struct _Subinfo Subinfo;
 typedef struct _Part_Cursor Part_Cursor;
@@ -367,14 +358,6 @@ _elm_layout_label_get(const Evas_Object *obj, const char *part)
    return edje_object_part_text_get(wd->lay, part);
 }
 
-/**
- * Add a new layout to the parent
- *
- * @param parent The parent object
- * @return The new object or NULL if it cannot be created
- *
- * @ingroup Layout
- */
 EAPI Evas_Object *
 elm_layout_add(Evas_Object *parent)
 {
@@ -413,17 +396,6 @@ elm_layout_add(Evas_Object *parent)
    return obj;
 }
 
-/**
- * Set the file that will be used as layout
- *
- * @param obj The layout object
- * @param file The path to file (edj) that will be used as layout
- * @param group The group that the layout belongs in edje file
- *
- * @return (1 = success, 0 = error)
- *
- * @ingroup Layout
- */
 EAPI Eina_Bool
 elm_layout_file_set(Evas_Object *obj, const char *file, const char *group)
 {
@@ -443,18 +415,6 @@ elm_layout_file_set(Evas_Object *obj, const char *file, const char *group)
    return ret;
 }
 
-/**
- * Set the edje group from the elementary theme that will be used as layout
- *
- * @param obj The layout object
- * @param clas the clas of the group
- * @param group the group
- * @param style the style to used
- *
- * @return (1 = success, 0 = error)
- *
- * @ingroup Layout
- */
 EAPI Eina_Bool
 elm_layout_theme_set(Evas_Object *obj, const char *clas, const char *group, const char *style)
 {
@@ -474,19 +434,6 @@ elm_layout_theme_set(Evas_Object *obj, const char *clas, const char *group, cons
    return ret;
 }
 
-/**
- * Set the layout content
- *
- * Once the content object is set, a previously set one will be deleted.
- * If you want to keep that old content object, use the
- * elm_layout_content_unset() function.
- *
- * @param obj The layout object
- * @param swallow The swallow group name in the edje file
- * @param content The content will be filled in this layout object
- *
- * @ingroup Layout
- */
 EAPI void
 elm_layout_content_set(Evas_Object *obj, const char *swallow, Evas_Object *content)
 {
@@ -521,16 +468,6 @@ elm_layout_content_set(Evas_Object *obj, const char *swallow, Evas_Object *conte
    _request_sizing_eval(wd);
 }
 
-/**
- * Get the swallowed object in the given part
- *
- * @param obj The layout object
- * @param swallow The SWALLOW part to get its content
- *
- * @return The swallowed object or NULL if none or an error occurred
- *
- * @ingroup Layout
- */
 EAPI Evas_Object *
 elm_layout_content_get(const Evas_Object *obj, const char *swallow)
 {
@@ -547,17 +484,6 @@ elm_layout_content_get(const Evas_Object *obj, const char *swallow)
    return NULL;
 }
 
-/**
- * Unset the layout content
- *
- * Unparent and return the content object which was set for this widget
- *
- * @param obj The layout object
- * @param swallow The swallow group name in the edje file
- * @return The content that was being used
- *
- * @ingroup Layout
- */
 EAPI Evas_Object *
 elm_layout_content_unset(Evas_Object *obj, const char *swallow)
 {
@@ -581,53 +507,18 @@ elm_layout_content_unset(Evas_Object *obj, const char *swallow)
    return NULL;
 }
 
-/**
- * Set the text of the given part
- *
- * @param obj The layout object
- * @param part The TEXT part where to set the text
- * @param text The text to set
- *
- * @ingroup Layout
- * @deprecate use elm_object_text_* instead.
- */
 EAPI void
 elm_layout_text_set(Evas_Object *obj, const char *part, const char *text)
 {
    _elm_layout_label_set(obj, part, text);
 }
 
-/**
- * Get the text set in the given part
- *
- * @param obj The layout object
- * @param part The TEXT part to retrieve the text off
- *
- * @return The text set in @p part
- *
- * @ingroup Layout
- * @deprecate use elm_object_text_* instead.
- */
 EAPI const char *
 elm_layout_text_get(const Evas_Object *obj, const char *part)
 {
    return _elm_layout_label_get(obj, part);
 }
 
-/**
- * Append child to layout box part.
- *
- * Once the object is appended, its lifetime will be bound to the
- * layout, whenever the layout dies the child will be deleted
- * automatically. One should use elm_layout_box_remove() to make this
- * layout forget about the object.
- *
- * @param obj the layout object
- * @param part the box part to append.
- * @param child the child object to append to box.
- *
- * @ingroup Layout
- */
 EAPI void
 elm_layout_box_append(Evas_Object *obj, const char *part, Evas_Object *child)
 {
@@ -650,20 +541,6 @@ elm_layout_box_append(Evas_Object *obj, const char *part, Evas_Object *child)
    _request_sizing_eval(wd);
 }
 
-/**
- * Prepend child to layout box part.
- *
- * Once the object is prepended, its lifetime will be bound to the
- * layout, whenever the layout dies the child will be deleted
- * automatically. One should use elm_layout_box_remove() to make this
- * layout forget about the object.
- *
- * @param obj the layout object
- * @param part the box part to prepend.
- * @param child the child object to prepend to box.
- *
- * @ingroup Layout
- */
 EAPI void
 elm_layout_box_prepend(Evas_Object *obj, const char *part, Evas_Object *child)
 {
@@ -693,21 +570,6 @@ _box_reference_del(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, 
    si->p.box.reference = NULL;
 }
 
-/**
- * Insert child to layout box part before a reference object.
- *
- * Once the object is inserted, its lifetime will be bound to the
- * layout, whenever the layout dies the child will be deleted
- * automatically. One should use elm_layout_box_remove() to make this
- * layout forget about the object.
- *
- * @param obj the layout object
- * @param part the box part to insert.
- * @param child the child object to insert into box.
- * @param reference another reference object to insert before in box.
- *
- * @ingroup Layout
- */
 EAPI void
 elm_layout_box_insert_before(Evas_Object *obj, const char *part, Evas_Object *child, const Evas_Object *reference)
 {
@@ -736,21 +598,6 @@ elm_layout_box_insert_before(Evas_Object *obj, const char *part, Evas_Object *ch
    _request_sizing_eval(wd);
 }
 
-/**
- * Insert child to layout box part at a given position.
- *
- * Once the object is inserted, its lifetime will be bound to the
- * layout, whenever the layout dies the child will be deleted
- * automatically. One should use elm_layout_box_remove() to make this
- * layout forget about the object.
- *
- * @param obj the layout object
- * @param part the box part to insert.
- * @param child the child object to insert into box.
- * @param pos the numeric position >=0 to insert the child.
- *
- * @ingroup Layout
- */
 EAPI void
 elm_layout_box_insert_at(Evas_Object *obj, const char *part, Evas_Object *child, unsigned int pos)
 {
@@ -818,20 +665,6 @@ _sub_box_is(const Subinfo *si)
      }
 }
 
-/**
- * Remove a child of the given part box.
- *
- * The object will be removed from the box part and its lifetime will
- * not be handled by the layout anymore. This is equivalent to
- * elm_layout_content_unset() for box.
- *
- * @param obj The layout object
- * @param part The box part name to remove child.
- * @param child The object to remove from box.
- * @return The object that was being used, or NULL if not found.
- *
- * @ingroup Layout
- */
 EAPI Evas_Object *
 elm_layout_box_remove(Evas_Object *obj, const char *part, Evas_Object *child)
 {
@@ -853,21 +686,6 @@ elm_layout_box_remove(Evas_Object *obj, const char *part, Evas_Object *child)
    return NULL;
 }
 
-/**
- * Remove all child of the given part box.
- *
- * The objects will be removed from the box part and their lifetime will
- * not be handled by the layout anymore. This is equivalent to
- * elm_layout_content_unset() for all box children.
- *
- * @param obj The layout object
- * @param part The box part name to remove child.
- * @param clear If EINA_TRUE, then all objects will be deleted as
- *        well, otherwise they will just be removed and will be
- *        dangling on the canvas.
- *
- * @ingroup Layout
- */
 EAPI void
 elm_layout_box_remove_all(Evas_Object *obj, const char *part, Eina_Bool clear)
 {
@@ -893,21 +711,6 @@ elm_layout_box_remove_all(Evas_Object *obj, const char *part, Eina_Bool clear)
    edje_object_part_box_remove_all(wd->lay, part, clear);
 }
 
-/**
- * Insert child to layout table part.
- *
- * Once the object is inserted, its lifetime will be bound to the
- * layout, whenever the layout dies the child will be deleted
- * automatically. One should use elm_layout_box_remove() to make this
- * layout forget about the object.
- *
- * @param obj the layout object
- * @param part the box part to pack child.
- * @param child the child object to pack into table.
- * @param reference another reference object to insert before in box.
- *
- * @ingroup Layout
- */
 EAPI void
 elm_layout_table_pack(Evas_Object *obj, const char *part, Evas_Object *child, unsigned short col, unsigned short row, unsigned short colspan, unsigned short rowspan)
 {
@@ -937,20 +740,6 @@ elm_layout_table_pack(Evas_Object *obj, const char *part, Evas_Object *child, un
    _request_sizing_eval(wd);
 }
 
-/**
- * Unpack (remove) a child of the given part table.
- *
- * The object will be unpacked from the table part and its lifetime
- * will not be handled by the layout anymore. This is equivalent to
- * elm_layout_content_unset() for table.
- *
- * @param obj The layout object
- * @param part The table part name to remove child.
- * @param child The object to remove from table.
- * @return The object that was being used, or NULL if not found.
- *
- * @ingroup Layout
- */
 EAPI Evas_Object *
 elm_layout_table_unpack(Evas_Object *obj, const char *part, Evas_Object *child)
 {
@@ -972,21 +761,6 @@ elm_layout_table_unpack(Evas_Object *obj, const char *part, Evas_Object *child)
    return NULL;
 }
 
-/**
- * Remove all child of the given part table.
- *
- * The objects will be removed from the table part and their lifetime will
- * not be handled by the layout anymore. This is equivalent to
- * elm_layout_content_unset() for all table children.
- *
- * @param obj The layout object
- * @param part The table part name to remove child.
- * @param clear If EINA_TRUE, then all objects will be deleted as
- *        well, otherwise they will just be removed and will be
- *        dangling on the canvas.
- *
- * @ingroup Layout
- */
 EAPI void
 elm_layout_table_clear(Evas_Object *obj, const char *part, Eina_Bool clear)
 {
@@ -1012,22 +786,6 @@ elm_layout_table_clear(Evas_Object *obj, const char *part, Eina_Bool clear)
    edje_object_part_table_clear(wd->lay, part, clear);
 }
 
-/**
- * Get the edje layout
- *
- * @param obj The layout object
- *
- * This returns the edje object. It is not expected to be used to then swallow
- * objects via edje_object_part_swallow() for example. Use
- * elm_layout_content_set() instead so child object handling and sizing is
- * done properly. This is more intended for setting text, emitting signals,
- * hooking to signal callbacks etc.
- *
- * @return A Evas_Object with the edje layout settings loaded
- * with function elm_layout_file_set
- *
- * @ingroup Layout
- */
 EAPI Evas_Object *
 elm_layout_edje_get(const Evas_Object *obj)
 {
@@ -1037,34 +795,6 @@ elm_layout_edje_get(const Evas_Object *obj)
    return wd->lay;
 }
 
-/**
- * Get the edje data of the given layout
- *
- * @param obj The layout object
- * @param key The data key
- *
- * @return The edje data string
- *
- * This function fetches data specified at the object level.
- * This function return NULL if data is not found.
- *
- * In EDC this comes from a data block within the group block that @a
- * obj was loaded from. E.g.
- *
- * @code
- * collections {
- *   group {
- *     name: "a_group";
- *     data {
- *	 item: "key1" "value1";
- *	 item: "key2" "value2";
- *     }
- *   }
- * }
- * @endcode
- *
- * @ingroup Layout
- */
 EAPI const char *
 elm_layout_data_get(const Evas_Object *obj, const char *key)
 {
@@ -1073,18 +803,6 @@ elm_layout_data_get(const Evas_Object *obj, const char *key)
    return edje_object_data_get(wd->lay, key);
 }
 
-/**
- * Eval sizing
- *
- * Manually forms a sizing re-evaluation when contents changed state so that
- * minimum size might have changed and needs re-evaluation. Also note that
- * a standard signal of "size,eval" "elm" emitted by the edje object will
- * cause this to happen too
- *
- * @param obj The layout object
- *
- * @ingroup Layout
- */
 EAPI void
 elm_layout_sizing_eval(Evas_Object *obj)
 {
