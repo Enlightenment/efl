@@ -531,6 +531,14 @@ evas_object_smart_need_recalculate_set(Evas_Object *obj, Eina_Bool value)
    value = !!value;
    if (o->need_recalculate == value)
      return;
+
+   if (obj->recalculate_cycle > 64)
+     {
+        ERR("Object %p is not stable during recalc loop", obj);
+        return ;
+     }
+   if (obj->layer->evas->in_smart_calc)
+     obj->recalculate_cycle++;
    o->need_recalculate = value;
 
    if (!obj->smart.smart->smart_class->calculate) return;
@@ -600,31 +608,32 @@ void
 evas_call_smarts_calculate(Evas *e)
 {
    Eina_Array *calculate;
+   Evas_Object *obj;
+   Eina_Array_Iterator it;
    unsigned int i;
-   static int in_smart_calc = 0;
 
-   in_smart_calc++;
+   e->in_smart_calc++;
    calculate = &e->calculate_objects;
-   for (i = 0; i < calculate->count; i++)
+   EINA_ARRAY_ITER_NEXT(calculate, i, obj, it)
      {
-        Evas_Object *obj;
         Evas_Object_Smart *o;
-        int before;
 
-        obj = eina_array_data_get(calculate, i);
         if (obj->delete_me)
           continue;
 
-        before = calculate->count;
         o = obj->object_data;
         if (o->need_recalculate)
           {
-             obj->smart.smart->smart_class->calculate(obj);
              o->need_recalculate = 0;
+             obj->smart.smart->smart_class->calculate(obj);
           }
      }
-   in_smart_calc--;
-   if (in_smart_calc == 0) eina_array_flush(calculate);
+   EINA_ARRAY_ITER_NEXT(calculate, i, obj, it)
+     {
+        obj->recalculate_cycle = 0;
+     }
+   e->in_smart_calc--;
+   if (e->in_smart_calc == 0) eina_array_clean(calculate);
 }
 
 EAPI void
