@@ -6898,7 +6898,6 @@ evas_textblock_cursor_char_delete(Evas_Textblock_Cursor *cur)
 {
    Evas_Object_Textblock *o;
    Evas_Object_Textblock_Node_Text *n, *n2;
-   int merge_nodes = 0;
    const Eina_Unicode *text;
    int chr, ind, ppos;
 
@@ -6915,6 +6914,7 @@ evas_textblock_cursor_char_delete(Evas_Textblock_Cursor *cur)
 
    if (chr == 0) return;
    ppos = cur->pos;
+   eina_ustrbuf_remove(n->unicode, cur->pos, ind);
    /* Remove a format node if needed, and remove the char only if the
     * fmt node is not visible */
      {
@@ -6929,7 +6929,9 @@ evas_textblock_cursor_char_delete(Evas_Textblock_Cursor *cur)
              format = last_fmt->format;
              if (format && _IS_PARAGRAPH_SEPARATOR(o, format))
                {
-                  merge_nodes = 1;
+                  /* If it was a paragraph separator, we should merge the
+                   * current with the next, there must be a next. */
+                  _evas_textblock_cursor_nodes_merge(cur);
                }
              /* If a singnular, mark as invisible, so we'll delete it. */
              if (!format || ((*format != '+') && (*format != '-')))
@@ -6944,13 +6946,6 @@ evas_textblock_cursor_char_delete(Evas_Textblock_Cursor *cur)
               -(ind - cur->pos));
 
         _evas_textblock_node_format_remove_matching(o, fmt);
-     }
-   eina_ustrbuf_remove(n->unicode, cur->pos, ind);
-   /* If it was a paragraph separator, we should merge the current with the
-    * next, there must be a next. */
-   if (merge_nodes)
-     {
-        _evas_textblock_cursor_nodes_merge(cur);
      }
 
    if (cur->pos == eina_ustrbuf_length_get(n->unicode))
