@@ -180,15 +180,18 @@ SCREENSHOTS = \
 	fileselector_example:fileselector_example.png:0.0 \
 	index_example_02:index_example_03.png:0.3
 
+HTML_SS_DIR=$(top_builddir)/doc/html/screenshots
+LATEX_SS_DIR=$(top_builddir)/doc/latex/screenshots
 screenshots: all
-	@mkdir -p $(top_srcdir)/doc/img/screenshots
+	@mkdir -p $(HTML_SS_DIR)
+	@mkdir -p $(LATEX_SS_DIR)
 	@for ss in $(SCREENSHOTS); do \
 		SS_ENTRY=($${ss//:/ }) ; \
 		EXAMPLE=$${SS_ENTRY[0]} ; \
 		SS_FILE=$${SS_ENTRY[1]} ; \
 		SS_DELAY=$${SS_ENTRY[2]} ; \
-		ELM_ENGINE="shot:delay=$${SS_DELAY}:file=$(top_srcdir)/doc/img/screenshots/$${SS_FILE}" ./$${EXAMPLE} ; \
-		convert $(top_srcdir)/doc/img/screenshots/$${SS_FILE} $(top_srcdir)/doc/img/screenshots/$${SS_FILE/.png/.eps} ; \
+		ELM_ENGINE="shot:delay=$${SS_DELAY}:file=$(HTML_SS_DIR)/$${SS_FILE}" ./$${EXAMPLE} ; \
+		convert $(HTML_SS_DIR)/$${SS_FILE} $(LATEX_SS_DIR)/$${SS_FILE/.png/.eps} ; \
 	done
 
 else

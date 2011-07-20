@@ -87,6 +87,8 @@ gen-doc:
 	cp -r $(srcdir)/img/* latex/
 
 doc: all doc-clean widget-preview gen-doc
+	@echo "entering src/examples/"
+	$(MAKE) -C $(top_builddir)/src/examples screenshots
 	rm -rf $(PACKAGE_DOCNAME).tar*
 	mkdir -p $(PACKAGE_DOCNAME)/doc
 	cp -R html/ latex/ man/ $(PACKAGE_DOCNAME)/doc
