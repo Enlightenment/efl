@@ -1941,6 +1941,254 @@
  */
 
 /**
+ * @page layout_example_01 Layout - Content, Table and Box
+ *
+ * This example shows how one can use the @ref Layout widget to create a
+ * customized distribution of widgets on the screen, controled by an Edje theme.
+ * The full source code for this example can be found at @ref
+ * layout_example_01_c.
+ *
+ * Our custom layout is defined by a file, @ref layout_example_edc, which is an
+ * Edje theme file. Look for the Edje documentation to understand it. For now,
+ * it's enough to know that we describe some specific parts on this layout
+ * theme:
+ * @li a title text field;
+ * @li a box container;
+ * @li a table container;
+ * @li and a content container.
+ *
+ * Going straight to the code, the following snippet instantiates the layout
+ * widget:
+ *
+ * @dontinclude layout_example_01.c
+ * @skip elm_layout_add
+ * @until evas_object_show(layout)
+ *
+ * As any other widget, we set some properties for the size calculation. But
+ * notice on this piece of code the call to the function elm_layout_file_set().
+ * Here is where the theme file is loaded, and particularly the specific group
+ * from this theme file. Also notice that the theme file here is referenced as
+ * an .edj, which is a .edc theme file compiled to its binary form. Again, look
+ * for the Edje documentation for more information about theme files.
+ *
+ * Next, we fetch from our theme a data string referenced by the key "title".
+ * This data was defined in the theme, and can be used as parameters which the
+ * program get from the specific theme that it is using. In this case, we store
+ * the title of this window and program in the theme, as a "data" entry, just
+ * for demonstration purposes:
+ *
+ * @until }
+ *
+ * This call elm_layout_data_get() is used to fetch the string based on the key,
+ * and elm_object_text_part_set() will set the part defined in the theme as
+ * "example/title" to contain this string. This key "example/title" has nothing
+ * special. It's just an arbitrary convention that we are using in this example.
+ * Every string in this example referencing a part of this theme will be of the
+ * form "example/<something>".
+ *
+ * Now let's start using our layout to distribute things on the window space.
+ * Since the layout was added as a resize object to the elementary window, it
+ * will always occupy the entire space available for this window.
+ *
+ * The theme already has a title, and it also defines a table element which is
+ * positioned approximately between 50% and 70% of the height of this window,
+ * and has 100% of the width. We create some widgets (two icons, a clock and a
+ * button) and pack them inside the table, in a distribution similar to a HTML
+ * table:
+ *
+ * @until evas_object_show(bt)
+ *
+ * Notice that we just set size hints for every object, and call the function
+ * elm_layout_table_pack(), which does all the work. It will place the elements
+ * in the specified row/column, with row and column span if required, and then
+ * the object's size and position will be controled by the layout widget. It
+ * will also respect size hints, alignments and weight properties set to these
+ * widgets. The resulting distribution on the screen depends on the table
+ * properties (described in the theme), the size hints set on each widget, and
+ * on the cells of the table that are being used.
+ *
+ * For instance, we add the two icons and the clock on the first, second and
+ * third cells of the first row, and add the button the second row, making it
+ * span for 3 columns (thus having the size of the entire table width). This
+ * will result in a table that has 2 rows and 3 columns.
+ *
+ * Now let's add some widgets to the box area of our layout. This box is around
+ * 20% and 50% of the vertical size of the layout, and 100% of its width. The
+ * theme defines that it will use an "horizontal flow" distribution to its
+ * elements. Unlike the table, a box will distribute elements without knowing
+ * about rows and columns, and the distribution function selected will take care
+ * of putting them in row, column, both, or any other available layout. This is
+ * also described in the Edje documentation.
+ *
+ * This box area is similar to the @ref Box widget of elementary, with the
+ * difference that its position and properties are controled by the theme of the
+ * layout. It also contains more than one API to add items to it, since the
+ * items position now is defined in terms of a list of items, not a matrix.
+ * There's the first position (can have items added to it with
+ * elm_layout_box_prepend()), the last position (elm_layout_box_append()), the
+ * nth position (elm_layout_box_insert_at()) and the position right before an
+ * element (elm_layout_box_insert_before()). We use insert_at and prepend
+ * functions to add the first two buttons to this box, and insert_before on the
+ * callback of each button. The callback code will be shown later, but it
+ * basically adds a button just before the clicked button using the
+ * elm_layout_box_insert_before() function. Here's the code for adding the first
+ * 2 buttons:
+ *
+ * @until evas_object_show(item)
+ * @until evas_object_show(item)
+ *
+ * Finally, we have an area in this layout theme, in the bottom part of it,
+ * reserved for adding an specific widget. Differently from the 2 parts
+ * described until now, this one can only receive one widget with the call
+ * elm_layout_content_set(). If there was already an item on this specific part,
+ * it will be deleted (one can use elm_layout_content_unset() in order to remove
+ * it without deleting). An example of removing it without deleting, but
+ * manually deleting this widget just after that, can be seen on the callback
+ * for this button. Actually, the callback defined for this button will clean
+ * the two other parts (deleting all of their elements) and then remove and
+ * delete this button.
+ *
+ * @until _swallow_btn_cb
+ *
+ * Also notice that, for this last added button, we don't have to call
+ * evas_object_show() on it. This is a particularity of the theme for layouts,
+ * that will have total control over the properties like size, position,
+ * visibility and clipping of a widget added with elm_layout_content_set().
+ * Again, read the Edje documentation to understand this better.
+ *
+ * Now we just put the code for the different callbacks specified for each kind
+ * of button and make simple comments about them:
+ *
+ * @dontinclude layout_example_01.c
+ * @skip static void
+ * @until evas_object_del(item)
+ * @until }
+ *
+ * The first callback is used for the button in the table, and will just remove
+ * itself from the table with elm_layout_table_unpack(), which remove items
+ * without deleting them, and then calling evas_object_del() on itself.
+ *
+ * The second callback is for buttons added to the box. When clicked, these
+ * buttons will create a new button, and add them to the same box, in the
+ * position just before the clicked button.
+ *
+ * And the last callback is for the button added to the "content" area. It will
+ * clear both the table and the box, passing @c EINA_TRUE to their respective @c
+ * clear parameters, which will imply on the items of these containers being
+ * deleted.
+ *
+ * A screenshot of this example can be seen on:
+ *
+ * @image html screenshots/layout_example_01.png
+ * @image latex screenshots/layout_example_01.eps width=\textwidth
+ *
+ */
+
+/**
+ * @page layout_example_02 Layout - Predefined Layout
+ *
+ * This example shows how one can use the @ref Layout with a predefined theme
+ * layout to add a back and next button to a simple window. The full source code
+ * for this example can be found at @ref layout_example_02_c.
+ *
+ * After setting up the window and background, we add the layout widget to the
+ * window. But instead of using elm_layout_file_set() to load its theme from a
+ * custom theme file, we can use elm_layout_theme_set() to load one of the
+ * predefined layouts that come with elementary. Particularly on this example,
+ * we load the them of class "layout", group "application" and style
+ * "content-back-next" (since we want the back and next buttons).
+ *
+ * @dontinclude layout_example_02.c
+ * @skip elm_layout_add
+ * @until evas_object_show(layout)
+ *
+ * This default theme contains only a "content" area named
+ * "elm.swallow.content", where we can add any widget (it can be even a
+ * container widget, like a box, frame, list, or even another layout). Since we
+ * just want to show the resulting layout, we add a simple icon to it:
+ *
+ * @until layout_content_set
+ *
+ * This default layout also provides some signals when the next and prev buttons
+ * are clicked. We can register callbacks to them with the
+ * elm_object_signal_callback_add() function:
+ *
+ * @until elm,action,next
+ *
+ * In the @ref layout_example_03 you can see how to send signals to the layout with
+ * elm_object_signal_emit().
+ *
+ * Now our callback just changes the picture being displayed when one of the
+ * buttons are clicked:
+ *
+ * @dontinclude layout_example_02.c
+ * @skip images
+ * @until standard_set
+ * @until }
+ *
+ * It's possible to see that it gets the name of the image being shown from the
+ * array of image names, going forward on this array when "next" is clicked and
+ * backward when "back" is clicked.
+ *
+ * A screenshot of this example can be seen on:
+ *
+ * @image html screenshots/layout_example_02.png
+ * @image latex screenshots/layout_example_02.eps width=\textwidth
+ */
+
+/**
+ * @page layout_example_03 Layout - Signals and Size Changed
+ *
+ * This example shows how one can send and receive signals to/from the layout,
+ * and what to do when the layout theme has its size changed. The full source
+ * code for this example can be found at @ref layout_example_03_c.
+ *
+ * In this exmaple we will use another group from the same layout theme file
+ * used in @ref layout_example_01. Its instanciation and loading happens in the
+ * following lines:
+ *
+ * @dontinclude layout_example_03.c
+ * @skip elm_layout_add
+ * @until evas_object_show
+ *
+ * This time we register a callback to be called whenever we receive a signal
+ * after the end of the animation that happens in this layout:
+ *
+ * @until signal_callback_add
+ *
+ * We also add a button that will send signals to the layout:
+ *
+ * @until callback_add
+ *
+ * The callback for this button will check what type of signal it should send,
+ * and then emit it. The code for this callback follows:
+ *
+ * @dontinclude layout_exmaple_03.c
+ * @skip static Eina_Bool
+ * @until Enlarge
+ * @until }
+ * @until }
+ *
+ * As we said before, we are receiving a signal whenever the animation started
+ * by the button click ends. This is the callback for that signal:
+ *
+ * @until }
+ *
+ * Notice from this callback that the elm_layout_sizing_eval() function must be
+ * called if we want our widget to update its size after the layout theme having
+ * changed its minimum size. This happens because the animation specified in the
+ * theme increases the size of the content area to a value higher than the
+ * widget size, thus requiring more space. But the elementary layout widget
+ * has no way to know this, thus needing the elm_layout_sizing_eval() to
+ * be called on the layout, informing that this size has changed.
+ *
+ * A screenshot of this example can be seen on:
+ *
+ * @image html screenshots/layout_example_03.png
+ * @image latex screenshots/layout_example_03.eps width=\textwidth
+ */
+
+/**
  * @page tutorial_hover Hover example
  * @dontinclude hover_example_01.c
  *
@@ -2606,4 +2854,32 @@
  * @page index_example_02_c Index example
  * @include index_example_02.c
  * @example index_example_02.c
+ */
+
+ * @page layout_example_01_c layout_example_01.c
+ * @include layout_example_01.c
+ * @example layout_example_01.c
+ */
+
+/**
+ * @page layout_example_02_c layout_example_02.c
+ * @include layout_example_02.c
+ * @example layout_example_02.c
+ */
+
+/**
+ * @page layout_example_03_c layout_example_03.c
+ * @include layout_example_03.c
+ * @example layout_example_03.c
+ */
+
+/**
+ * @page layout_example_edc An example of layout theme file
+ *
+ * This theme file contains two groups. Each of them is a different theme, and
+ * can be used by an Elementary Layout widget. A theme can be used more than
+ * once by many different Elementary Layout widgets too.
+ *
+ * @include layout_example.edc
+ * @example layout_example.edc
  */

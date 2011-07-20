@@ -63,6 +63,9 @@ SRCS = \
 	conformant_example_02.c \
 	image_example_01.c \
 	icon_example_01.c \
+	layout_example_01.c \
+	layout_example_02.c \
+	layout_example_03.c \
 	flipselector_example.c \
 	fileselector_example.c \
 	fileselector_button_example.c \
@@ -71,7 +74,8 @@ SRCS = \
 	diskselector_example_02.c \
 	index_example_01.c \
 	index_example_02.c \
-	theme_example.edc
+	theme_example.edc \
+	layout_example.edc
 
 pkglib_PROGRAMS =
 
@@ -85,7 +89,8 @@ endif
 
 if EFL_BUILD_EXAMPLES
 files_DATA += \
-	theme_example.edj
+	theme_example.edj \
+	layout_example.edj
 
 clean-local:
 	rm -f *.edj
@@ -127,6 +132,9 @@ pkglib_PROGRAMS += \
 	diskselector_example_01 \
 	diskselector_example_02 \
 	icon_example_01 \
+	layout_example_01 \
+	layout_example_02 \
+	layout_example_03 \
 	flipselector_example \
 	fileselector_example \
 	fileselector_button_example \
@@ -165,6 +173,9 @@ SCREENSHOTS = \
 	diskselector_example_01:diskselector_example_01.png:0.2 \
 	diskselector_example_02:diskselector_example_02.png:0.2 \
 	icon_example_01:icon_example_01.png:0.0 \
+	layout_example_01:layout_example_01.png:0.0 \
+	layout_example_02:layout_example_02.png:0.0 \
+	layout_example_03:layout_example_03.png:0.0 \
 	flipselector_example:flipselector_example.png:0.0 \
 	fileselector_example:fileselector_example.png:0.0 \
 	index_example_02:index_example_03.png:0.3
