@@ -45,26 +45,43 @@ widget_preview_colorselector
 
 LDADD = $(top_builddir)/src/lib/libelementary.la @ELEMENTARY_EWEATHER_LIBS@ @ELEMENTARY_EDBUS_LIBS@ @ELEMENTARY_EFREET_LIBS@ @ELEMENTARY_LIBS@ @EIO_LIBS@ @my_libs@
 
+# dir:file name:executable:width:height
+WGT_PREVIEW = \
+	button:preview-00.png:widget_preview_button1:160:50 \
+	button:preview-01.png:widget_preview_button2:160:50 \
+	button:preview-02.png:widget_preview_button3:160:50 \
+	fileselector_button:preview-00.png:widget_preview_fileselector_button1:200:50 \
+	fileselector_button:preview-01.png:widget_preview_fileselector_button2:200:50 \
+	fileselector_button:preview-02.png:widget_preview_fileselector_button3:160:50 \
+	check:preview-00.png:widget_preview_check1:160:50 \
+	check:preview-01.png:widget_preview_check2:160:50 \
+	check:preview-02.png:widget_preview_check3:160:50 \
+	bubble:preview-00.png:widget_preview_bubble1:160:50 \
+	bubble:preview-01.png:widget_preview_bubble2:160:50 \
+	bubble:preview-02.png:widget_preview_bubble3:160:50 \
+	colorselector:preview-00.png:widget_preview_colorselector:160:200
+
+widget-preview:
+	@mkdir -p $(top_builddir)/doc/html/img/widget
+	@for ss in $(WGT_PREVIEW); do \
+		ENTRY=($${ss//:/ }) ; \
+		DIR=$${ENTRY[0]} ; \
+		SS=$${ENTRY[1]} ; \
+		BIN=$${ENTRY[2]} ; \
+		X=$${ENTRY[3]} ; \
+		Y=$${ENTRY[4]} ; \
+		$(top_srcdir)/doc/shot.sh $(top_builddir)/doc/html/img/widget/$${DIR} $${SS} $(top_builddir)/doc/$${BIN} $${X} $${Y} ; \
+	done
+
 doc-clean:
 	rm -rf img/widget html/ latex/ man/ xml/ $(top_builddir)/$(PACKAGE_DOCNAME).tar*
 
-doc: all doc-clean
-	$(top_srcdir)/doc/shot.sh $(top_builddir)/doc/html/img/widget/button preview-00.png $(top_builddir)/doc/widget_preview_button1 160 50
-	$(top_srcdir)/doc/shot.sh $(top_builddir)/doc/html/img/widget/button preview-01.png $(top_builddir)/doc/widget_preview_button2 160 50
-	$(top_srcdir)/doc/shot.sh $(top_builddir)/doc/html/img/widget/button preview-02.png $(top_builddir)/doc/widget_preview_button3 160 50
-	$(top_srcdir)/doc/shot.sh $(top_builddir)/doc/html/img/widget/fileselector_button preview-00.png $(top_builddir)/doc/widget_preview_fileselector_button1 200 50
-	$(top_srcdir)/doc/shot.sh $(top_builddir)/doc/html/img/widget/fileselector_button preview-01.png $(top_builddir)/doc/widget_preview_fileselector_button2 200 50
-	$(top_srcdir)/doc/shot.sh $(top_builddir)/doc/html/img/widget/fileselector_button preview-02.png $(top_builddir)/doc/widget_preview_fileselector_button3 160 50
-	$(top_srcdir)/doc/shot.sh $(top_builddir)/doc/html/img/widget/check preview-00.png $(top_builddir)/doc/widget_preview_check1 160 50
-	$(top_srcdir)/doc/shot.sh $(top_builddir)/doc/html/img/widget/check preview-01.png $(top_builddir)/doc/widget_preview_check2 160 50
-	$(top_srcdir)/doc/shot.sh $(top_builddir)/doc/html/img/widget/check preview-02.png $(top_builddir)/doc/widget_preview_check3 160 50
-	$(top_srcdir)/doc/shot.sh $(top_builddir)/doc/html/img/widget/bubble preview-00.png $(top_builddir)/doc/widget_preview_bubble1 160 50
-	$(top_srcdir)/doc/shot.sh $(top_builddir)/doc/html/img/widget/bubble preview-01.png $(top_builddir)/doc/widget_preview_bubble2 160 50
-	$(top_srcdir)/doc/shot.sh $(top_builddir)/doc/html/img/widget/bubble preview-02.png $(top_builddir)/doc/widget_preview_bubble3 160 50
-	$(top_srcdir)/doc/shot.sh $(top_builddir)/doc/html/img/widget/colorselector preview-00.png $(top_builddir)/doc/widget_preview_colorselector 160 200
+gen-doc:
 	$(efl_doxygen)
 	cp -r $(srcdir)/img/* html/
 	cp -r $(srcdir)/img/* latex/
+
+doc: all doc-clean widget-preview gen-dco
 	rm -rf $(PACKAGE_DOCNAME).tar*
 	mkdir -p $(PACKAGE_DOCNAME)/doc
 	cp -R html/ latex/ man/ $(PACKAGE_DOCNAME)/doc
