@@ -701,13 +701,12 @@ _line_free(Evas_Object_Textblock_Line *ln)
  */
 static const char escape_strings[] =
 /* most common escaped stuff */
-" \0"          "\x20\0" /* NOTE: this here to avoid escaping to &nbsp */
-"&nbsp;\0"     "\x20\0" /* NOTE: we allow nsbp's to break as we map early - maybe map to ascii 0x01 and then make the rendering code think 0x01 -> 0x20 */
 "&quot;\0"     "\x22\0"
 "&amp;\0"      "\x26\0"
 "&lt;\0"       "\x3c\0"
 "&gt;\0"       "\x3e\0"
 /* all the rest */
+"&nbsp;\0"     "\xc2\xa0\0"
 "&iexcl;\0"    "\xc2\xa1\0"
 "&cent;\0"     "\xc2\xa2\0"
 "&pound;\0"    "\xc2\xa3\0"
