@@ -1251,7 +1251,6 @@ _tile_update(Grid_Item *gi)
      }
 }
 
-
 static void
 _tile_downloaded(void *data, const char *file __UNUSED__, int status)
 {
@@ -1260,10 +1259,9 @@ _tile_downloaded(void *data, const char *file __UNUSED__, int status)
    gi->download = EINA_FALSE;
    gi->job = NULL;
 
-   DBG("DOWNLOAD done %s", gi->file);
-   if ((gi->want) && (!status)) _tile_update(gi);
+   if ((gi->want) && (status == 200)) _tile_update(gi);
 
-   if (status)
+   if (status != 200)
      {
         DBG("Download failed %s (%d) ", gi->file, status);
         ecore_file_remove(gi->file);
@@ -1272,6 +1270,7 @@ _tile_downloaded(void *data, const char *file __UNUSED__, int status)
      gi->wd->finish_num++;
 
    evas_object_smart_callback_call(gi->wd->obj, SIG_DOWNLOADED, NULL);
+   DBG("DOWNLOAD done %s", gi->file);
 }
 
 static Grid *
