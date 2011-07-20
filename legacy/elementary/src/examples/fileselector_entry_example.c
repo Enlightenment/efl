@@ -24,7 +24,7 @@ _on_done(void        *data __UNUSED__,
    elm_exit();
 }
 
-/* hook on the sole smart callback */
+/* hook on the file,chosen smart callback */
 static void
 _file_chosen(void        *data __UNUSED__,
              Evas_Object *obj __UNUSED__,

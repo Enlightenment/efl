@@ -44,6 +44,10 @@
  * @ref fileselector_button_example
  *
  * @ref fileselector_entry_example
+ *
+ * @ref index_example_01
+ *
+ * @ref index_example_02
  */
 
 /**
@@ -2362,6 +2366,159 @@
  */
 
 /**
+ * @page index_example_01 Index widget example 1
+ *
+ * This code places an Elementary index widget on a window, which also
+ * has a very long list of arbitrary strings on it.  The list is
+ * sorted alphabetically and the index will be used to index the first
+ * items of each set of strings beginning with an alphabet letter.
+ *
+ * Below the list are some buttons, which are there just to exercise
+ * some index widget's API.
+ *
+ * Here's how we instantiate it:
+ * @dontinclude index_example_01.c
+ * @skip elm_list_add
+ * @until evas_object_show(d.index)
+ * where we're showing also the list being created. Note that we issue
+ * elm_win_resize_object_add() on the index, so that it's set to have
+ * the whole window as its container. Then, we have to populate both
+ * list and index widgets:
+ * @dontinclude index_example_01.c
+ * @skip for (i = 0; i < (sizeof(dict) / sizeof(dict[0])); i++)
+ * @until }
+ * @until }
+ *
+ * The strings populating the list come from a file
+ * @dontinclude index_example_01.c
+ * @skip static const char *dict
+ * @until }
+ *
+ * We use the @c curr char variable to hold the last initial letter
+ * seen on that ordered list of strings, so that we're able to have an
+ * index item pointing to each list item starting a new letter
+ * "section". Note that our index item data pointers will be the list
+ * item handles. We are also setting a callback function to index
+ * items deletion events:
+ * @dontinclude index_example_01.c
+ * @skip static void
+ * @until }
+ *
+ * There, we show you that the @c event_info pointer will contain the
+ * item in question's data, i.e., a given list item's pointer. Because
+ * item data is also returned in the @c data argument on
+ * @c Evas_Smart_Cb functions, those two pointers must have the same
+ * values. On this deletion callback, we're deleting the referred list
+ * item too, just to exemplify that anything could be done there.
+ *
+ * Next, we hook to two smart events of the index object:
+ * @dontinclude index_example_01.c
+ * @skip smart_callback_add(d.index
+ * @until _index_selected
+ * @dontinclude index_example_01.c
+ * @skip "delay,changed" hook
+ * @until }
+ * @until }
+ *
+ * Check that, whenever one holds the mouse pressed over a given index
+ * letter for some time, the list beneath it will roll down to the
+ * item pointed to by that index item. When one releases the mouse
+ * button, the second callback takes place. There, we check that the
+ * reported item data, on @c event_info, is the same reported by
+ * elm_index_item_selected_get(), which gives the last selection's
+ * data on the index widget.
+ *
+ * The first of the three buttons that follow will call
+ * elm_index_active_set(), thus showing the index automatically for
+ * you, if it's not already visible, what is checked with
+ * elm_index_active_get(). The second button will exercise @b deletion
+ * of index item objects, by the following code:
+ * @dontinclude index_example_01.c
+ * @skip delete an index item
+ * @until }
+ *
+ * It will get the last index item selected's data and find the
+ * respective #Elm_Index_Item handle with elm_index_item_find(). We
+ * need the latter to query the indexing letter string from, with
+ * elm_index_item_letter_get(). Next, comes the delition, itself,
+ * which will also trigger the @c _index_item_del callback function,
+ * as said above.
+ *
+ * The third button, finally, will exercise elm_index_item_clear(),
+ * which will delete @b all of the index's items.
+ *
+ * This is how the example program's window looks like with the index
+ * widget hidden:
+ * @image html screenshots/index_example_00.png
+ * @image latex screenshots/index_example_00.eps
+ *
+ * When it's shown, it's like the following figure:
+ * @image html screenshots/index_example_01.png
+ * @image latex screenshots/index_example_01.eps
+ *
+ * See the full @ref index_example_01_c "source code" for
+ * this example.
+ *
+ * @example index_example_01.c
+ */
+
+/**
+ * @page index_example_02 Index widget example 2
+ *
+ * This code places an Elementary index widget on a window, indexing
+ * grid items. The items are placed so that their labels @b don't
+ * follow any order, but the index itself is ordered (through
+ * elm_index_item_sorted_insert()). This is a complement to to @ref
+ * index_example_01 "the first example on indexes".
+ *
+ * Here's the list of item labels to be used on the grid (in that
+ * order):
+ * @dontinclude index_example_02.c
+ * @skip static const char *items
+ * @until };
+ *
+ * In the interesting part of the code, here, we first instantiate the
+ * grid (more on grids on their examples) and, after creating our
+ * index, for each grid item we also create an index one to reference
+ * it:
+ * @dontinclude index_example_02.c
+ * @skip grid = elm_gengrid_add
+ * @until }
+ * @until smart_callback_add
+ *
+ * The order in which they'll appear in the index, though, is @b
+ * alphabetical, becase of elm_index_item_sorted_insert() usage
+ * together with the comparing function, where we take the letters of
+ * each index item to base our ordering on. The parameters on
+ * @c _index_cmp have to be declared as void pointers because of the
+ * @c Eina_Compare_Cb prototype requisition, but in this case we know
+ * they'll be #Elm_Index_Item's:
+ * @dontinclude index_example_02.c
+ * @skip ordering alphabetically
+ * @until }
+ *
+ * The last interesting bit is the callback in the @c "delay,changed"
+ * smart event, which will bring the given grid item to the grid's
+ * visible area:
+ * @dontinclude index_example_02.c
+ * @skip static void
+ * @until }
+ *
+ * Note how the grid will move kind of randomly while you move your
+ * mouse pointer held over the index from top to bottom -- that's
+ * because of the the random order the items have in the grid itself.
+ *
+ * This is how the example program's window looks like:
+ * @image html screenshots/index_example_03.png
+ * @image latex screenshots/index_example_03.eps
+ *
+ * See the full @ref index_example_c "source code" for
+ * this example.
+ *
+ * @example index_example_02.c
+ */
+
+/**
  * @page bg_example_01_c bg_example_01.c
  * @include bg_example_01.c
  * @example bg_example_01.c
@@ -2437,4 +2594,16 @@
  * @page fileselector_entry_example_c Fileselector entry example
  * @include fileselector_entry_example.c
  * @example fileselector_entry_example.c
+ */
+
+/**
+ * @page index_example_01_c Index example
+ * @include index_example_01.c
+ * @example index_example_01.c
+ */
+
+/**
+ * @page index_example_02_c Index example
+ * @include index_example_02.c
+ * @example index_example_02.c
  */

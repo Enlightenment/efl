@@ -1,23 +1,6 @@
 #include <Elementary.h>
 #include "elm_priv.h"
 
-/**
- * @defgroup Index Index
- *
- * An index object is a type of list that categorizes items in it
- * by letter.
- *
- * Signals that you can add callbacks for are:
- *
- * "changed" - when the selected index item changes
- * "delay,changed" - when the selected index item changes, but after some small i
- *                   dle period
- * "selected" - when the user releases a finger and selects an item
- * "level,up" - when the user moves a finger from the first level to the second
- *              level
- * "level,down" - when the user moves a finger from the second level to the first *                level
- */
-
 typedef struct _Widget_Data Widget_Data;
 
 struct _Widget_Data
@@ -520,14 +503,6 @@ _mouse_move(void *data, Evas *e __UNUSED__, Evas_Object *o __UNUSED__, void *eve
    _sel_eval(data, ev->cur.canvas.x, ev->cur.canvas.y);
 }
 
-/**
- * Add a new index to the parent
- *
- * @param parent The parent object
- * @return The new object or NULL if it cannot be created
- *
- * @ingroup Index
- */
 EAPI Evas_Object *
 elm_index_add(Evas_Object *parent)
 {
@@ -602,14 +577,6 @@ elm_index_add(Evas_Object *parent)
    return obj;
 }
 
-/**
- * Set the active state of the index programatically
- *
- * @param obj The index object
- * @param active The active state
- *
- * @ingroup Index
- */
 EAPI void
 elm_index_active_set(Evas_Object *obj, Eina_Bool active)
 {
@@ -629,14 +596,6 @@ elm_index_active_set(Evas_Object *obj, Eina_Bool active)
      edje_object_signal_emit(wd->base, "elm,state,inactive", "elm");
 }
 
-/**
- * Get the active state of the index programatically
- *
- * @param obj The index object
- * @return The active state
- *
- * @ingroup Index
- */
 EAPI Eina_Bool
 elm_index_active_get(const Evas_Object *obj)
 {
@@ -646,14 +605,6 @@ elm_index_active_get(const Evas_Object *obj)
    return wd->active;
 }
 
-/**
- * Sets the level of the item.
- *
- * @param obj The index object.
- * @param level To be documented.
- *
- * @ingroup Index
- */
 EAPI void
 elm_index_item_level_set(Evas_Object *obj, int level)
 {
@@ -664,13 +615,6 @@ elm_index_item_level_set(Evas_Object *obj, int level)
    wd->level = level;
 }
 
-/**
- * Gets the level of the item.
- *
- * @param obj The index object
- *
- * @ingroup Index
- */
 EAPI int
 elm_index_item_level_get(const Evas_Object *obj)
 {
@@ -680,14 +624,6 @@ elm_index_item_level_get(const Evas_Object *obj)
    return wd->level;
 }
 
-/**
- * Returns the selected item.
- *
- * @param obj The index object.
- * @param level to be documented.
- *
- * @ingroup Index
- */
 EAPI void *
 elm_index_item_selected_get(const Evas_Object *obj, int level)
 {
@@ -702,15 +638,6 @@ elm_index_item_selected_get(const Evas_Object *obj, int level)
    return NULL;
 }
 
-/**
- * Appends a new item.
- *
- * @param obj The index object.
- * @param letter Letter under which the item should be indexed
- * @param item The item to put in the index
- *
- * @ingroup Index
- */
 EAPI void
 elm_index_item_append(Evas_Object *obj, const char *letter, const void *item)
 {
@@ -724,15 +651,6 @@ elm_index_item_append(Evas_Object *obj, const char *letter, const void *item)
    _index_box_clear(obj, wd->bx[wd->level], wd->level);
 }
 
-/**
- * Prepends a new item.
- *
- * @param obj The index object.
- * @param letter Letter under which the item should be indexed
- * @param item The item to put in the index
- *
- * @ingroup Index
- */
 EAPI void
 elm_index_item_prepend(Evas_Object *obj, const char *letter, const void *item)
 {
@@ -747,16 +665,6 @@ elm_index_item_prepend(Evas_Object *obj, const char *letter, const void *item)
    _index_box_clear(obj, wd->bx[wd->level], wd->level);
 }
 
-/**
- * Append an item after @p relative in letter @p letter.
- *
- * @param obj The index object
- * @param letter Letter under which the item should be indexed
- * @param item The item to put in the index
- * @param relative The item to put @p item after
- *
- * @ingroup Index
- */
 EAPI void
 elm_index_item_append_relative(Evas_Object *obj, const char *letter, const void *item, const void *relative)
 {
@@ -781,16 +689,6 @@ elm_index_item_append_relative(Evas_Object *obj, const char *letter, const void 
    _index_box_clear(obj, wd->bx[wd->level], wd->level);
 }
 
-/**
- * Prepend an item before @p relative in letter @p letter.
- *
- * @param obj The index object
- * @param letter Letter under which the item should be indexed
- * @param item The item to put in the index
- * @param relative The item to put @p item before
- *
- * @ingroup Index
- */
 EAPI void
 elm_index_item_prepend_relative(Evas_Object *obj, const char *letter, const void *item, const void *relative)
 {
@@ -815,24 +713,6 @@ elm_index_item_prepend_relative(Evas_Object *obj, const char *letter, const void
    _index_box_clear(obj, wd->bx[wd->level], wd->level);
 }
 
-/**
- * Insert a new @p item into the sorted index @p obj in @p letter.
- *
- * @param obj The index object
- * @param letter Letter under which the item should be indexed
- * @param item The item to put in the index
- * @param cmp_func The function called for the sort of index items.
- * @param cmp_data_func The function called for the sort of the data. It will
- * be used when cmp_func return 0. It means the index item already exists.
- * So, to decide which data item should be pointed by the index item, a function
- * to compare them is needed. If this function is not provided, index items
- * will be duplicated. If cmp_data_func returns a non-negative value, the
- * previous index item data will be replaced by the inserted @p item. So
- * if the previous data need to be free, it should be done in this function,
- * because the reference will be lost.
- *
- * @ingroup Index
- */
 EAPI void
 elm_index_item_sorted_insert(Evas_Object *obj, const char *letter, const void *item, Eina_Compare_Cb cmp_func, Eina_Compare_Cb cmp_data_func)
 {
@@ -874,14 +754,6 @@ elm_index_item_sorted_insert(Evas_Object *obj, const char *letter, const void *i
    _index_box_clear(obj, wd->bx[wd->level], wd->level);
 }
 
-/**
- * Remove an item from the index.
- *
- * @param obj The index object
- * @param item The item to remove from the index
- *
- * @ingroup Index
- */
 EAPI void
 elm_index_item_del(Evas_Object *obj, const void *item)
 {
@@ -895,15 +767,6 @@ elm_index_item_del(Evas_Object *obj, const void *item)
    _index_box_clear(obj, wd->bx[wd->level], wd->level);
 }
 
-/**
- * Find an index item using item data.
- *
- * @param obj The index object
- * @param item The item pointed by index item
- * @return The index item pointing to @p item
- *
- * @ingroup Index
- */
 EAPI Elm_Index_Item *
 elm_index_item_find(Evas_Object *obj, const void *item)
 {
@@ -913,13 +776,6 @@ elm_index_item_find(Evas_Object *obj, const void *item)
    return _item_find(obj, item);
 }
 
-/**
- * Clears an index of its items.
- *
- * @param obj The index object.
- *
- * @ingroup Index
- */
 EAPI void
 elm_index_item_clear(Evas_Object *obj)
 {
@@ -937,14 +793,6 @@ elm_index_item_clear(Evas_Object *obj)
    EINA_LIST_FREE(clear, it) _item_free(it);
 }
 
-/**
- * Go to item at @p level
- *
- * @param obj The index object
- * @param level The index level
- *
- * @ingroup Index
- */
 EAPI void
 elm_index_item_go(Evas_Object *obj, int level __UNUSED__)
 {
@@ -955,14 +803,6 @@ elm_index_item_go(Evas_Object *obj, int level __UNUSED__)
    if (wd->level == 1) _index_box_auto_fill(obj, wd->bx[1], 1);
 }
 
-/**
- * Returns the data associated with the item.
- *
- * @param it The list item
- * @return The data associated with @p it
- *
- * @ingroup Index
- */
 EAPI void *
 elm_index_item_data_get(const Elm_Index_Item *it)
 {
@@ -970,16 +810,6 @@ elm_index_item_data_get(const Elm_Index_Item *it)
    return elm_widget_item_data_get(it);
 }
 
-/**
- * Set the data item from the index item
- *
- * This set a new data value.
- *
- * @param it The item
- * @param data The new data pointer to set
- *
- * @ingroup Index
- */
 EAPI void
 elm_index_item_data_set(Elm_Index_Item *it, const void *data)
 {
@@ -987,14 +817,6 @@ elm_index_item_data_set(Elm_Index_Item *it, const void *data)
    elm_widget_item_data_set(it, data);
 }
 
-/**
- * Set the function called when a index item is freed.
- *
- * @param it The item to set the callback on
- * @param func The function called
- *
- * @ingroup Index
- */
 EAPI void
 elm_index_item_del_cb_set(Elm_Index_Item *it, Evas_Smart_Cb func)
 {
@@ -1002,14 +824,6 @@ elm_index_item_del_cb_set(Elm_Index_Item *it, Evas_Smart_Cb func)
    elm_widget_item_del_cb_set(it, func);
 }
 
-/**
- * Gets the letter of the item.
- *
- * @param it The list item
- * @return The letter of @p it
- *
- * @ingroup Index
- */
 EAPI const char *
 elm_index_item_letter_get(const Elm_Index_Item *it)
 {

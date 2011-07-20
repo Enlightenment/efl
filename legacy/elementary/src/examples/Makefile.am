@@ -69,6 +69,8 @@ SRCS = \
 	fileselector_entry_example.c \
 	diskselector_example_01.c \
 	diskselector_example_02.c \
+	index_example_01.c \
+	index_example_02.c \
 	theme_example.edc
 
 pkglib_PROGRAMS =
@@ -77,7 +79,8 @@ pkglib_PROGRAMS =
 	$(EDJE_CC) $(EDJE_FLAGS) $< $@
 
 if EFL_INSTALL_EXAMPLES
-files_DATA += $(SRCS)
+files_DATA += $(SRCS) \
+	dict.txt
 endif
 
 if EFL_BUILD_EXAMPLES
@@ -127,7 +130,9 @@ pkglib_PROGRAMS += \
 	flipselector_example \
 	fileselector_example \
 	fileselector_button_example \
-	fileselector_entry_example
+	fileselector_entry_example \
+	index_example_01 \
+	index_example_02
 
 # This variable will hold the list of screenshots that will be made
 # by "make screenshots". Each item in the list is of the form:
@@ -161,7 +166,8 @@ SCREENSHOTS = \
 	diskselector_example_02:diskselector_example_02.png:0.2 \
 	icon_example_01:icon_example_01.png:0.0 \
 	flipselector_example:flipselector_example.png:0.0 \
-	fileselector_example:fileselector_example.png:0.0
+	fileselector_example:fileselector_example.png:0.0 \
+	index_example_02:index_example_03.png:0.3
 
 screenshots: all
 	@mkdir -p $(top_srcdir)/doc/img/screenshots
