@@ -309,6 +309,8 @@ struct _Evas
 
    Eina_List     *font_path;
 
+   int            in_smart_calc;
+
    Evas_Object   *focused;
    void          *attach_data;
    Evas_Modifier  modifiers;
@@ -508,6 +510,8 @@ struct _Evas_Object
    unsigned int                ref;
 
    unsigned char               delete_me;
+
+   unsigned char               recalculate_cycle;
 
    Evas_Object_Pointer_Mode    pointer_mode : 1;
 
