@@ -4697,6 +4697,9 @@ extern "C" {
     * @image html img/widget/layout/preview-00.png
     * @image latex img/widget/layout/preview-00.eps width=\textwidth
     *
+    * @image html img/layout-predefined.png
+    * @image latex img/layout-predefined.eps width=\textwidth
+    *
     * This is a container widget that takes a standard Edje design file and
     * wraps it very thinly in a widget.
     *
