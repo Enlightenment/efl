@@ -744,6 +744,21 @@ START_TEST(evas_textblock_format_removal)
    fnode = evas_textblock_node_format_first_get(tb);
    fail_if (fnode);
 
+   /* Two formats across different paragraphs with notihng in between. */
+   evas_object_textblock_text_markup_set(tb, "<b><ps></b>");
+   evas_textblock_cursor_pos_set(cur, 0);
+   evas_textblock_cursor_char_delete(cur);
+   fnode = evas_textblock_node_format_first_get(tb);
+   fail_if (fnode);
+
+   /* Try with range */
+   evas_object_textblock_text_markup_set(tb, "<b><ps></b>");
+   evas_textblock_cursor_pos_set(cur, 0);
+   evas_textblock_cursor_pos_set(main_cur, 1);
+   evas_textblock_cursor_range_delete(cur, main_cur);
+   fnode = evas_textblock_node_format_first_get(tb);
+   fail_if (fnode);
+
    END_TB_TEST();
 }
 END_TEST
