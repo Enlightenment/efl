@@ -5982,6 +5982,7 @@ _evas_textblock_node_format_remove(Evas_Object_Textblock *o, Evas_Object_Textblo
  * Sets all the offsets of the format nodes between start and end in the text
  * node n to 0 and sets visibility to EINA_FALSE.
  * If end == -1 end means the end of the string.
+ * Assumes there is a prev node or the current node will be preserved.
  *
  * @param n the text node the positinos refer to.
  * @param start the start of where to delete from.
@@ -6022,7 +6023,7 @@ _evas_textblock_node_text_adjust_offsets_to_start(Evas_Object_Textblock *o,
         new_node = _NODE_TEXT(EINA_INLIST_GET(n)->prev);
         if (!new_node)
           {
-             new_node = _NODE_TEXT(EINA_INLIST_GET(n)->next);
+             new_node = n;
           }
      }
    else
@@ -6966,6 +6967,7 @@ evas_textblock_cursor_char_delete(Evas_Textblock_Cursor *cur)
 EAPI void
 evas_textblock_cursor_range_delete(Evas_Textblock_Cursor *cur1, Evas_Textblock_Cursor *cur2)
 {
+   Evas_Object_Textblock_Node_Format *fnode = NULL;
    Evas_Object_Textblock *o;
    Evas_Object_Textblock_Node_Text *n1, *n2;
    Eina_Bool should_merge = EINA_FALSE, reset_cursor = EINA_FALSE;
@@ -7035,8 +7037,7 @@ evas_textblock_cursor_range_delete(Evas_Textblock_Cursor *cur1, Evas_Textblock_C
         _evas_textblock_cursors_update_offset(cur2, cur2->node, 0, - cur2->pos);
         _evas_textblock_nodes_merge(o, n1);
      }
-   _evas_textblock_node_format_remove_matching(o,
-         _evas_textblock_cursor_node_format_at_pos_get(cur1));
+   fnode = _evas_textblock_cursor_node_format_at_pos_get(cur1);
 
    if (should_merge)
      {
@@ -7044,6 +7045,7 @@ evas_textblock_cursor_range_delete(Evas_Textblock_Cursor *cur1, Evas_Textblock_C
          * updated the cursors */
         _evas_textblock_nodes_merge(o, n1);
      }
+   _evas_textblock_node_format_remove_matching(o, fnode);
 
    evas_textblock_cursor_copy(cur1, cur2);
    if (reset_cursor)
