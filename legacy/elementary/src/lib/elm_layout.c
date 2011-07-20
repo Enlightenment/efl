@@ -113,7 +113,7 @@ _theme_hook(Evas_Object *obj)
    _elm_theme_object_set(obj, wd->lay, wd->clas, wd->group, wd->style);
    edje_object_scale_set(wd->lay, elm_widget_scale_get(obj) *
                          _elm_config->scale);
-   evas_object_smart_callback_call(obj, SIG_THEME_CHANGED, (void *) elm_theme_get(NULL));
+   evas_object_smart_callback_call(obj, SIG_THEME_CHANGED, NULL);
    _sizing_eval(wd);
 }
 
