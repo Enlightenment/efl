@@ -1724,6 +1724,10 @@ START_TEST(evas_textblock_escaping)
    evas_object_textblock_text_markup_set(tb, buf);
    fail_if(strcmp(evas_object_textblock_text_markup_get(tb), buf));
 
+   buf = "This &nbsp; is";
+   evas_object_textblock_text_markup_set(tb, buf);
+   fail_if(strcmp(evas_object_textblock_text_markup_get(tb), buf));
+
    END_TB_TEST();
 }
 END_TEST
