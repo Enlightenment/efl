@@ -614,10 +614,11 @@ evas_call_smarts_calculate(Evas *e)
 
    e->in_smart_calc++;
    calculate = &e->calculate_objects;
-   EINA_ARRAY_ITER_NEXT(calculate, i, obj, it)
+   for (i = 0; i < eina_array_count_get(calculate); ++i)
      {
         Evas_Object_Smart *o;
 
+	obj = eina_array_data_get(calculate, i);
         if (obj->delete_me)
           continue;
 
