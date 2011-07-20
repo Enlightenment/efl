@@ -81,7 +81,7 @@ gen-doc:
 	cp -r $(srcdir)/img/* html/
 	cp -r $(srcdir)/img/* latex/
 
-doc: all doc-clean widget-preview gen-dco
+doc: all doc-clean widget-preview gen-doc
 	rm -rf $(PACKAGE_DOCNAME).tar*
 	mkdir -p $(PACKAGE_DOCNAME)/doc
 	cp -R html/ latex/ man/ $(PACKAGE_DOCNAME)/doc
