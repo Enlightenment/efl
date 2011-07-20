@@ -35,7 +35,7 @@ SRCS = \
 	bubble_example_01.c \
 	button_example_01.c \
 	check_example_01.c \
-	colorselector_example_01.c
+	colorselector_example_01.c \
 	frame_example_01.c \
 	transit_example_01.c \
 	transit_example_02.c \
