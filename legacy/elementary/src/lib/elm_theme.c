@@ -139,6 +139,7 @@ _elm_theme_set(Elm_Theme *th, Evas_Object *o, const char *clas, const char *grou
    char buf2[1024];
    Eina_Bool ok;
 
+   if ((!clas) || (!group) || (!style)) return EINA_FALSE;
    if (!th) th = &(theme_default);
    snprintf(buf2, sizeof(buf2), "elm/%s/%s/%s", clas, group, style);
    file = _elm_theme_group_file_find(th, buf2);
