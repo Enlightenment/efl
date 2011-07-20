@@ -31,6 +31,16 @@
 
 static const char *img_path = PACKAGE_EXAMPLES_DIR "/enlightenment.png";
 
+static const char *commands = \
+  "commands are:\n"
+  "\ta - toggle animation timer\n"
+  "\tc - cycle between focus and key grabs for key input\n"
+  "\td - delete canvas callbacks\n"
+  "\tf - freeze input for 3 seconds\n"
+  "\tp - toggle precise point collision detection on image\n"
+  "\tControl + o - add an obscured rectangle\n"
+  "\th - print help\n";
+
 struct test_data
 {
    Ecore_Evas  *ee;
@@ -42,7 +52,7 @@ struct test_data
 
 static struct test_data d = {0};
 
-/* here just to keep our example's window size and background image's
+/* here to keep our example's window size and background image's
  * size in synchrony */
 static void
 _canvas_resize_cb(Ecore_Evas *ee)
@@ -69,7 +79,8 @@ _object_focus_in_cb(void *data __UNUSED__,
            "OK!" : "Oops, something is bad.");
 }
 
-static void /* render flush callback */
+/* render flush callback */
+static void
 _render_flush_cb(void *data __UNUSED__,
                  Evas *e __UNUSED__,
                  void *event_info __UNUSED__)
@@ -94,8 +105,8 @@ _resize_cb(void *data __UNUSED__)
    return EINA_TRUE; /* re-issue the timer */
 }
 
-static Eina_Bool
 /* let's have our events back */
+static Eina_Bool
 _thaw_cb(void *data __UNUSED__)
 {
    fprintf(stdout, "Canvas was frozen %d times, now thawing.\n",
@@ -104,7 +115,8 @@ _thaw_cb(void *data __UNUSED__)
    return EINA_FALSE; /* do not re-issue the timer */
 }
 
-static void /* mouse enters the object's area */
+/* mouse enters the object's area */
+static void
 _on_mouse_in(void        *data __UNUSED__,
              Evas        *evas __UNUSED__,
              Evas_Object *o __UNUSED__,
@@ -138,15 +150,7 @@ _on_keydown(void        *data __UNUSED__,
 
    if (strcmp(ev->keyname, "h") == 0) /* print help */
      {
-        fprintf(stdout,
-                "commands are:\n"
-                "\ta - toggle animation timer\n"
-                "\tc - cycle between focus and key grabs for key input\n"
-                "\td - delete canvas callbacks\n"
-                "\tf - freeze input for 3 seconds\n"
-                "\tp - toggle precise point collision detection on image\n"
-                "\tControl + o - add an obscured rectangle\n\n"
-                "\th - print help\n");
+        fprintf(stdout, commands);
         return;
      }
 
@@ -393,6 +397,7 @@ main(void)
 
    d.resize_timer = ecore_timer_add(2, _resize_cb, NULL);
 
+   fprintf(stdout, commands);
    ecore_main_loop_begin();
 
    ecore_evas_free(d.ee);
