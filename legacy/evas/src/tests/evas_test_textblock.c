@@ -1522,6 +1522,35 @@ START_TEST(evas_textblock_formats)
         fail_if(strcmp(evas_textblock_node_format_text_get(fnode), "+ item"));
      }
 
+   /* Make sure we get all the types of visible formats correctly. */
+   evas_object_textblock_text_markup_set(tb, "<ps>a<br>a<tab>a<item></>");
+   fail_if(strcmp(evas_textblock_node_format_text_get(
+               evas_textblock_cursor_format_get(cur)), "ps"));
+   /* FIXME: Current behavior makes it return "ps" instead of the actual
+    * utf8 value of the ps (same goes to "+ item" instead of the object
+    * replacement char) which is bad, but I guess I can't break API, so
+    * this is ensuring that this possibly unwanted behavior works. */
+   fail_if(strcmp(evas_textblock_cursor_content_get(cur), "ps"));
+   fail_if(!evas_textblock_cursor_format_is_visible_get(cur));
+   fail_if(!evas_textblock_cursor_char_next(cur));
+   fail_if(!evas_textblock_cursor_char_next(cur));
+   fail_if(strcmp(evas_textblock_node_format_text_get(
+               evas_textblock_cursor_format_get(cur)), "\n"));
+   fail_if(strcmp(evas_textblock_cursor_content_get(cur), "\n"));
+   fail_if(!evas_textblock_cursor_format_is_visible_get(cur));
+   fail_if(!evas_textblock_cursor_char_next(cur));
+   fail_if(!evas_textblock_cursor_char_next(cur));
+   fail_if(strcmp(evas_textblock_node_format_text_get(
+               evas_textblock_cursor_format_get(cur)), "\t"));
+   fail_if(strcmp(evas_textblock_cursor_content_get(cur), "\t"));
+   fail_if(!evas_textblock_cursor_format_is_visible_get(cur));
+   fail_if(!evas_textblock_cursor_char_next(cur));
+   fail_if(!evas_textblock_cursor_char_next(cur));
+   fail_if(strcmp(evas_textblock_node_format_text_get(
+               evas_textblock_cursor_format_get(cur)), "+ item"));
+   fail_if(strcmp(evas_textblock_cursor_content_get(cur), "+ item"));
+   fail_if(!evas_textblock_cursor_format_is_visible_get(cur));
+
    END_TB_TEST();
 }
 END_TEST
