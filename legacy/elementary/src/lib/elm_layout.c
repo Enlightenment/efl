@@ -69,6 +69,13 @@ static void _changed_size_hints(void *data, Evas *e, Evas_Object *obj, void *eve
 static void _sub_del(void *data, Evas_Object *obj, void *event_info);
 static void _part_cursor_free(Part_Cursor *pc);
 
+static const char SIG_THEME_CHANGED[] = "theme,changed";
+
+static const Evas_Smart_Cb_Description _signals[] = {
+   {SIG_THEME_CHANGED, ""},
+   {NULL, NULL}
+};
+
 static void
 _del_hook(Evas_Object *obj)
 {
@@ -106,6 +113,7 @@ _theme_hook(Evas_Object *obj)
    _elm_theme_object_set(obj, wd->lay, wd->clas, wd->group, wd->style);
    edje_object_scale_set(wd->lay, elm_widget_scale_get(obj) *
                          _elm_config->scale);
+   evas_object_smart_callback_call(obj, SIG_THEME_CHANGED, (void *) elm_theme_get(NULL));
    _sizing_eval(wd);
 }
 
@@ -398,6 +406,7 @@ elm_layout_add(Evas_Object *parent)
                                    _signal_size_eval, wd);
 
    evas_object_smart_callback_add(obj, "sub-object-del", _sub_del, obj);
+   evas_object_smart_callbacks_descriptions_set(obj, _signals);
 
    _mirrored_set(obj, elm_widget_mirrored_get(obj));
    _request_sizing_eval(wd);

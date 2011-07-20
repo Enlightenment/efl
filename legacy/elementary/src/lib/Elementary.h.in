@@ -4794,6 +4794,7 @@ extern "C" {
   elm_layout_text_get((_ly), "elm.text")
 
    /* smart callbacks called:
+    * "theme,changed" - when elm theme is changed.
     */
 
    /* notify */
