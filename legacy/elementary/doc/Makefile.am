@@ -64,7 +64,6 @@ WGT_PREVIEW = \
 	index:preview-00.png:widget_preview_index:300:500
 
 widget-preview:
-	@mkdir -p $(top_builddir)/doc/html/img/widget
 	@for ss in $(WGT_PREVIEW); do \
 		ENTRY=($${ss//:/ }) ; \
 		DIR=$${ENTRY[0]} ; \
@@ -73,6 +72,8 @@ widget-preview:
 		X=$${ENTRY[3]} ; \
 		Y=$${ENTRY[4]} ; \
 		$(top_srcdir)/doc/shot.sh $(top_builddir)/doc/html/img/widget/$${DIR} $${SS} $(top_builddir)/doc/$${BIN} $${X} $${Y} ; \
+		mkdir -p $(top_builddir)/doc/latex/img/widget/$${DIR} ; \
+		convert $(top_builddir)/doc/html/img/widget/$${DIR}/$${SS} $(top_builddir)/doc/latex/img/widget/$${DIR}/$${SS/.png/.eps} ; \
 	done
 
 doc-clean:

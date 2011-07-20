@@ -1,0 +1,110 @@
+/**
+ * @page moduleslist Index
+ *
+ * Elementary is mostly composed of widgets, but it also contains some
+ * infrastructure modules that facilitate the use of widgets. These are the
+ * infrastructure modules:
+ * @li @ref Animator
+ * @li @ref Caches
+ * @li @ref Cursors
+ * @li @ref Debug
+ * @li @ref Config
+ * @li @ref Engine
+ * @li @ref Fonts
+ * @li @ref Profile
+ * @li @ref Fingers
+ * @li @ref Focus
+ * @li @ref General
+ * @li @ref Elm_Gesture_Layer
+ * @li @ref Start
+ * @li @ref Scrolling
+ * @li @ref Scrollhints
+ * @li @ref UI-Mirroring
+ * @li @ref Scaling
+ * @li @ref Styles
+ * @li @ref Theme
+ * @li @ref Transit
+ * @li @ref WidgetNavigation
+ *
+ * And here a list of the widgets and some images to give you an idea of what
+ * they are:
+ * @li @ref Actionslider
+ * @li @ref Anchorview
+ * @li @ref Anchorblock
+ * @li @ref Bg
+ * @li @ref Box
+ * @li @ref Bubble
+ *
+ * @image html img/widget/bubble/preview-00.png
+ * @image latex img/widget/bubble/preview-00.eps
+ * @li @ref Button
+ *
+ * @image html img/widget/button/preview-00.png
+ * @image latex img/widget/button/preview-00.eps
+ * @li @ref Calendar
+ * @li @ref Check
+ *
+ * @image html img/widget/check/preview-00.png
+ * @image latex img/widget/check/preview-00.eps
+ * @li @ref Clock
+ * @li @ref Conformant
+ * @li @ref Colorselector
+ *
+ * @image html img/widget/colorselector/preview-00.png
+ * @image latex img/widget/colorselector/preview-00.eps
+ * @li @ref Ctxpopup
+ * @li @ref Diskselector
+ * @li @ref Entry
+ * @li @ref File_Selector_Button
+ *
+ * @image html img/widget/fileselector_button/preview-00.png
+ * @image latex img/widget/fileselector_button/preview-00.eps
+ * @li @ref File_Selector_Entry
+ * @li @ref Fileselector
+ * @li @ref Flip
+ * @li @ref Flipselector
+ * @li @ref Frame
+ * @li @ref Gengrid
+ * @li @ref Genlist
+ * @li @ref Genscroller
+ * @li @ref GLView
+ * @li @ref Grid
+ * @li @ref Hover
+ * @li @ref Hoversel
+ * @li @ref Icon
+ * @li @ref Image
+ * @li @ref Index
+ *
+ * @image html img/widget/index/preview-00.png
+ * @image latex img/widget/index/preview-00.eps
+ * @li @ref Inwin
+ * @li @ref Label
+ * @li @ref Layout
+ * @li @ref List
+ * @li @ref Map
+ * @li @ref Mapbuf
+ * @li @ref Menu
+ * @li @ref Notify
+ * @li @ref Pager
+ * @li @ref Panel
+ * @li @ref Panes
+ * @li @ref Photo
+ * @li @ref Photocam
+ * @li @ref Progressbar
+ * @li @ref Radio
+ * @li @ref Route
+ * @li @ref Scroller
+ * @li @ref SegmentControl
+ * @li @ref Separator
+ * @li @ref Slider
+ * @li @ref Slideshow
+ * @li @ref Spinner
+ * @li @ref Table
+ * @li @ref Thumb
+ * @li @ref Toggle
+ * @li @ref Toolbar
+ * @li @ref Tooltips
+ * @li @ref Video
+ * @li @ref Widget
+ * @li @ref Win
+ */
