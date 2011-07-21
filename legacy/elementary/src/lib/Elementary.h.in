@@ -10711,6 +10711,9 @@ extern "C" {
     */
 
    /**
+    * @enum _Elm_Calendar_Mark_Repeat
+    * @typedef Elm_Calendar_Mark_Repeat
+    *
     * Event periodicity, used to define if a mark should be repeated
     * @b beyond event's day. It's set when a mark is added.
     *
@@ -10721,8 +10724,10 @@ extern "C" {
     * Values don't work as bitmaks, only one can be choosen.
     *
     * @see elm_calendar_mark_add()
+    *
+    * @ingroup Calendar
     */
-   typedef enum
+   typedef enum _Elm_Calendar_Mark_Repeat
      {
         ELM_CALENDAR_UNIQUE, /**< Default value. Marks will be displayed only on event day. */
         ELM_CALENDAR_DAILY, /**< Marks will be displayed everyday after event day (inclusive). */
