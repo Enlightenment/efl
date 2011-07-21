@@ -127,6 +127,21 @@ _theme_hook(Evas_Object *obj)
         edje_object_scale_set(it->base.view, elm_widget_scale_get(it->base.view)
                               *_elm_config->scale);
         edje_object_mirrored_set(it->base.view, rtl);
+        if (it->label)
+          {
+             edje_object_part_text_set(it->base.view, "elm.text", it->label);
+             edje_object_signal_emit(it->base.view, "elm,state,text,visible", "elm");
+          }
+        else
+          edje_object_signal_emit(it->base.view, "elm,state,text,hidden", "elm");
+
+        if (it->icon)
+          {
+             edje_object_part_swallow(it->base.view, "elm.swallow.icon", it->icon);
+             edje_object_signal_emit(it->base.view, "elm,state,icon,visible", "elm");
+          }
+        else
+          edje_object_signal_emit(it->base.view, "elm,state,icon,hidden", "elm");
      }
 
    _update_list(wd);
