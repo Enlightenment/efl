@@ -849,7 +849,7 @@ START_TEST(evas_textblock_items)
    evas_object_textblock_text_markup_set(tb, buf);
    evas_object_textblock_size_formatted_get(tb, &w, &h);
    evas_object_textblock_size_native_get(tb, &nw, &nh);
-//   fail_if((nw != w) || (nh != h));
+   fail_if((nw != w) || (nh != h));
    evas_textblock_cursor_format_item_geometry_get(cur, NULL, NULL, &w, &h);
    evas_textblock_cursor_char_next(cur);
    evas_textblock_cursor_format_item_geometry_get(cur, NULL, NULL, &w2, &h2);
