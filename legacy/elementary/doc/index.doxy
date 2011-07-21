@@ -69,6 +69,9 @@
  * @image html img/widget/ctxpopup/preview-00.png
  * @image latex img/widget/ctxpopup/preview-00.eps
  * @li @ref Diskselector
+ *
+ * @image html img/widget/entry/preview-02.png
+ * @image latex img/widget/entry/preview-02.eps
  * @li @ref Entry
  * @li @ref File_Selector_Button
  *

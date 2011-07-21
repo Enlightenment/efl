@@ -53,7 +53,11 @@ widget_preview_image \
 widget_preview_calendar \
 widget_preview_bg \
 widget_preview_fileselector \
-widget_preview_actionslider
+widget_preview_actionslider \
+widget_preview_entry1 \
+widget_preview_entry2 \
+widget_preview_entry3 \
+widget_preview_entry4
 
 LDADD = $(top_builddir)/src/lib/libelementary.la @ELEMENTARY_EWEATHER_LIBS@ @ELEMENTARY_EDBUS_LIBS@ @ELEMENTARY_EFREET_LIBS@ @ELEMENTARY_LIBS@ @EIO_LIBS@ @my_libs@
 
@@ -83,7 +87,11 @@ WGT_PREVIEW = \
 	calendar:preview-00.png:widget_preview_calendar:300:300 \
 	bg:preview-00.png:widget_preview_bg:50:50 \
 	fileselector:preview-00.png:widget_preview_fileselector:300:300 \
-	actionslider:preview-00.png:widget_preview_actionslider:120:30
+	actionslider:preview-00.png:widget_preview_actionslider:120:30 \
+	entry:preview-00.png:widget_preview_entry1:160:50 \
+	entry:preview-01.png:widget_preview_entry2:160:50 \
+	entry:preview-02.png:widget_preview_entry3:160:50 \
+	entry:preview-03.png:widget_preview_entry4:160:50
 
 widget-preview:
 	@for ss in $(WGT_PREVIEW); do \
