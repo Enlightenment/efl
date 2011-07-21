@@ -48,7 +48,6 @@ static void _del_hook(Evas_Object *obj);
 static void _mirrored_set(Evas_Object *obj, Eina_Bool rtl);
 static void _theme_hook(Evas_Object *obj);
 static void _swallow_conformant_parts(Evas_Object *obj);
-#ifdef HAVE_ELEMENTARY_X
 static void _conformant_part_size_set(Evas_Object *obj,
                                       Evas_Object *sobj,
                                       Evas_Coord sx,
@@ -60,7 +59,6 @@ static void _conformant_part_sizing_eval(Evas_Object *obj,
 static void
 _conformant_move_resize_event_cb(void *data, Evas *e, Evas_Object *obj,
                                  void *event_info);
-#endif
 static void _sizing_eval(Evas_Object *obj);
 static Eina_Bool _prop_change(void *data, int type, void *event);
 
@@ -124,7 +122,47 @@ _sizing_eval(Evas_Object *obj)
    evas_object_size_hint_max_set(obj, -1, -1);
 }
 
-#ifdef HAVE_ELEMENTARY_X
+/* Example of env vars:
+ * ILLUME_KBD="0, 0, 800, 301"
+ * ILLUME_IND=0,0,800,32
+ * ILLUME_STK="0,568,800,32
+ */
+static Eina_Bool
+_conformant_part_geometry_env_get(const char *part, int *sx, int *sy, int *sw, int *sh)
+{
+   const char delimiters[] = " ,;";
+   char *env_val, *token;
+   char buf[PATH_MAX];
+   int tsx, tsy, tsw;
+
+   if (!(env_val = getenv(part))) return EINA_FALSE;
+
+   /* strtok would modify env var if not copied to a buffer */
+   strncpy(buf, env_val, sizeof(buf));
+
+   token = strtok(buf, delimiters);
+   if (!token) return EINA_FALSE;
+   tsx = atoi(token);
+
+   token = strtok(NULL, delimiters);
+   if (!token) return EINA_FALSE;
+   tsy = atoi(token);
+
+   token = strtok(NULL, delimiters);
+   if (!token) return EINA_FALSE;
+   tsw = atoi(token);
+
+   token = strtok(NULL, delimiters);
+   if (!token) return EINA_FALSE;
+   *sh = atoi(token);
+
+   *sx = tsx;
+   *sy = tsy;
+   *sw = tsw;
+
+   return EINA_TRUE;
+}
+
 static void
 _conformant_part_size_set(Evas_Object *obj, Evas_Object *sobj, Evas_Coord sx,
                           Evas_Coord sy, Evas_Coord sw, Evas_Coord sh)
@@ -156,26 +194,48 @@ _conformant_part_sizing_eval(Evas_Object *obj, Conformant_Part_Type part_type)
    if (!wd) return;
 
    Evas_Object *top = elm_widget_top_get(obj);
+#ifdef HAVE_ELEMENTARY_X
    xwin = elm_win_xwindow_get(top);
    zone = ecore_x_e_illume_zone_get(xwin);
+#endif
 
    if (part_type & ELM_CONFORM_INDICATOR_PART)
      {
-        ecore_x_e_illume_indicator_geometry_get(zone, &sx, &sy, &sw, &sh);
+        if (!_conformant_part_geometry_env_get("ILLUME_IND",
+                                               &sx, &sy, &sw, &sh)) {
+#ifdef HAVE_ELEMENTARY_X
+          ecore_x_e_illume_indicator_geometry_get(zone, &sx, &sy, &sw, &sh);
+#else
+        ;
+#endif
+        }
         _conformant_part_size_set(obj, wd->shelf, sx, sy, sw, sh);
      }
    if (part_type & ELM_CONFORM_VIRTUAL_KEYPAD_PART)
      {
-        ecore_x_e_illume_keyboard_geometry_get(zone, &sx, &sy, &sw, &sh);
+        if (!_conformant_part_geometry_env_get("ILLUME_KBD",
+                                               &sx, &sy, &sw, &sh)) {
+#ifdef HAVE_ELEMENTARY_X
+          ecore_x_e_illume_keyboard_geometry_get(zone, &sx, &sy, &sw, &sh);
+#else
+        ;
+#endif
+        }
         _conformant_part_size_set(obj,wd->virtualkeypad, sx, sy, sw, sh);
      }
    if (part_type & ELM_CONFORM_SOFTKEY_PART)
      {
-        ecore_x_e_illume_softkey_geometry_get(zone, &sx, &sy, &sw, &sh);
+        if (!_conformant_part_geometry_env_get("ILLUME_STK",
+                                               &sx, &sy, &sw, &sh)) {
+#ifdef HAVE_ELEMENTARY_X
+          ecore_x_e_illume_softkey_geometry_get(zone, &sx, &sy, &sw, &sh);
+#else
+        ;
+#endif
+        }
         _conformant_part_size_set(obj, wd->panel, sx, sy, sw, sh);
      }
 }
-#endif
 
 static void
 _swallow_conformant_parts(Evas_Object *obj)
@@ -190,10 +250,8 @@ _swallow_conformant_parts(Evas_Object *obj)
         evas_object_size_hint_min_set(wd->shelf, -1, 0);
         evas_object_size_hint_max_set(wd->shelf, -1, 0);
      }
-#ifdef HAVE_ELEMENTARY_X
    else
      _conformant_part_sizing_eval(obj, ELM_CONFORM_INDICATOR_PART);
-#endif
    evas_object_color_set(wd->shelf, 0, 0, 0, 0);
    edje_object_part_swallow(wd->base, "elm.swallow.shelf", wd->shelf);
 
@@ -204,10 +262,8 @@ _swallow_conformant_parts(Evas_Object *obj)
         evas_object_size_hint_min_set(wd->virtualkeypad, -1, 0);
         evas_object_size_hint_max_set(wd->virtualkeypad, -1, 0);
      }
-#ifdef HAVE_ELEMENTARY_X
    else
      _conformant_part_sizing_eval(obj, ELM_CONFORM_VIRTUAL_KEYPAD_PART);
-#endif
    evas_object_color_set(wd->virtualkeypad, 0, 0, 0, 0);
    edje_object_part_swallow(wd->base, "elm.swallow.virtualkeypad",
                             wd->virtualkeypad);
@@ -219,10 +275,8 @@ _swallow_conformant_parts(Evas_Object *obj)
         evas_object_size_hint_min_set(wd->panel, -1, 0);
         evas_object_size_hint_max_set(wd->panel, -1, 0);
      }
-#ifdef HAVE_ELEMENTARY_X
    else
      _conformant_part_sizing_eval(obj, ELM_CONFORM_SOFTKEY_PART);
-#endif
    evas_object_color_set(wd->panel, 0, 0, 0, 0);
    edje_object_part_swallow(wd->base, "elm.swallow.panel", wd->panel);
 }
@@ -243,8 +297,7 @@ _sub_del(void *data __UNUSED__, Evas_Object *obj, void *event_info)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    Evas_Object *sub = event_info;
-
-   if (!wd) return;
+if (!wd) return;
    if (sub == wd->content)
      {
         evas_object_event_callback_del_full(sub,
@@ -307,7 +360,6 @@ _autoscroll_mode_disable(Evas_Object *obj)
 }
  */
 
-#ifdef HAVE_ELEMENTARY_X
 static void
 _conformant_move_resize_event_cb(void *data __UNUSED__, Evas *e __UNUSED__,
                                  Evas_Object *obj, void *event_info __UNUSED__)
@@ -321,7 +373,6 @@ _conformant_move_resize_event_cb(void *data __UNUSED__, Evas *e __UNUSED__,
                  ELM_CONFORM_VIRTUAL_KEYPAD_PART);
    _conformant_part_sizing_eval(obj, part_type);
 }
-#endif
 
 // showing the focused/important region.
 static void
@@ -458,24 +509,25 @@ elm_conformant_add(Evas_Object *parent)
    _elm_theme_object_set(obj, wd->base, "conformant", "base", "default");
    elm_widget_resize_object_set(obj, wd->base);
 
+   _swallow_conformant_parts(obj);
 #ifdef HAVE_ELEMENTARY_X
    Evas_Object *top = elm_widget_top_get(obj);
    Ecore_X_Window xwin = elm_win_xwindow_get(top);
 
    if ((xwin) && (!elm_win_inlined_image_object_get(top)))
      {
-        _swallow_conformant_parts(obj);
         wd->prop_hdl = ecore_event_handler_add(ECORE_X_EVENT_WINDOW_PROPERTY,
                                                _prop_change, obj);
         wd->vkb_state = ECORE_X_VIRTUAL_KEYBOARD_STATE_OFF;
      }
    // FIXME: get kbd region prop
 
+#endif
    evas_object_event_callback_add(obj, EVAS_CALLBACK_RESIZE,
                                        _conformant_move_resize_event_cb, obj);
    evas_object_event_callback_add(obj, EVAS_CALLBACK_MOVE,
                                        _conformant_move_resize_event_cb, obj);
-#endif
+
    evas_object_smart_callback_add(obj, "sub-object-del", _sub_del, obj);
 
    _mirrored_set(obj, elm_widget_mirrored_get(obj));
