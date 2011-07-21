@@ -4777,9 +4777,9 @@ elm_genlist_item_del(Elm_Genlist_Item *it)
  * Set the data item from the genlist item
  *
  * This set the data value passed on the elm_genlist_item_append() and
- * related item addition calls. This function will also call
- * elm_genlist_item_update() so the item will be updated to reflect the
- * new data.
+ * related item addition calls. This function will not call
+ * elm_genlist_item_update() anymore. So call elm_genlist_item_update()
+ * manually only when it's needed.
  *
  * @param it The item
  * @param data The new data pointer to set
@@ -4792,7 +4792,6 @@ elm_genlist_item_data_set(Elm_Genlist_Item *it,
 {
    ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(it);
    elm_widget_item_data_set(it, data);
-   elm_genlist_item_update(it);
 }
 
 /**
