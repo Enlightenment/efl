@@ -716,12 +716,27 @@ ecore_x_selection_parser_del(const char *target)
      }
 } /* ecore_x_selection_parser_del */
 
+/**
+ * Change the owner and last-change time for the specified selection.
+ * @param win The owner of the specified atom.
+ * @param atom The selection atom
+ * @param time Specifies the time
+ * @since 1.1.0
+ */
 EAPI void 
 ecore_x_selection_owner_set(Ecore_X_Window win, Ecore_X_Atom atom, Ecore_X_Time time) 
 {
    XSetSelectionOwner(_ecore_x_disp, atom, win, time);
 }
 
+/**
+ * Return the window that currently owns the specified selection.
+ * 
+ * @param atom The specified selection atom.
+ * 
+ * @return The window that currently owns the specified selection.
+ * @since 1.1.0
+ */
 EAPI Ecore_X_Window 
 ecore_x_selection_owner_get(Ecore_X_Atom atom) 
 {

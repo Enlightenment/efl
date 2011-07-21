@@ -1823,10 +1823,10 @@ EAPI void
 ecore_x_pointer_last_xy_get(int *x, int *y)
 {
    if (x)
-      *x = _ecore_x_event_last_root_x;
+     *x = _ecore_x_event_last_root_x;
 
    if (y)
-      *y = _ecore_x_event_last_root_y;
+     *y = _ecore_x_event_last_root_y;
 } /* ecore_x_pointer_last_xy_get */
 
 EAPI void
@@ -1837,25 +1837,23 @@ ecore_x_pointer_xy_get(Ecore_X_Window win, int *x, int *y)
    unsigned int mask;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
-   ret = XQueryPointer(_ecore_x_disp,
-                       win,
-                       &rwin,
-                       &cwin,
-                       &rx,
-                       &ry,
-                       &wx,
-                       &wy,
-                       &mask);
+   ret = XQueryPointer(_ecore_x_disp, win, &rwin, &cwin, 
+                       &rx, &ry, &wx, &wy, &mask);
    if (!ret)
-      wx = wy = -1;
+     wx = wy = -1;
 
-   if (x)
-      *x = wx;
-
-   if (y)
-      *y = wy;
+   if (x) *x = wx;
+   if (y) *y = wy;
 } /* ecore_x_pointer_xy_get */
 
+/**
+ * Retrieve the Visual ID from a given Visual.
+ *
+ * @param visual  The Visual to get the ID for.
+ *
+ * @return The visual id.
+ * @since 1.1.0
+ */
 EAPI unsigned int 
 ecore_x_visual_id_get(Ecore_X_Visual visual) 
 {
