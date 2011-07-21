@@ -711,8 +711,10 @@ __span_insert(Span *sp, int num, int count, Evas_Coord size, Evas_Coord pos)
    Span *sp2;
    int i, j, n, src;
 
+   if (count <= 0) return;
    if (num < 0) return;
 next:
+   printf("...... hunt for spot at %p, %i %i\n", sp, count, size * count);
    // total child count and size go up by what we are inserting
    sp->total_child_count += count;
    sp->size += size * count;
@@ -723,11 +725,13 @@ next:
      {
         for (n = 0, i = 0; i < sp->child_count; i++)
           {
+             printf("   look in %i\n", i);
              sp2 = sp->child[i];
              n += sp2->total_child_count;
              // if num is within the child we are looking at
              if (n > num)
                {
+                  printf("    %i > %i\n", n, num);
                   // advance all children along by size * count
                   for (j = (i + 1); j < sp->child_count; j++)
                      sp->child[j]->pos += (size * count);
@@ -739,6 +743,7 @@ next:
                }
           }
      }
+   printf("FOUND child %p @ %i, %i, cnt %i totcnt %i\n", sp, sp->pos, sp->size, sp->child_count, sp->total_child_count);
    // now that we are just up from a leaf node... do this
    if (!sp->child)
      {

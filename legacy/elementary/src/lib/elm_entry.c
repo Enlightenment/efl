@@ -648,7 +648,7 @@ static void
 _elm_win_recalc_job(void *data)
 {
    Widget_Data *wd = elm_widget_data_get(data);
-   Evas_Coord minh = -1, resw = -1, minw = -1;
+   Evas_Coord minh = -1, resw = -1, minw = -1, fw = 0, fh = 0;
    if (!wd) return;
    wd->deferred_recalc_job = NULL;
 
@@ -666,11 +666,39 @@ _elm_win_recalc_job(void *data)
         evas_object_size_hint_min_get(data, &ominw, NULL);
         minw = ominw;
      }
-   evas_object_size_hint_min_set(data, minw, minh);
-   if (wd->single_line)
-     evas_object_size_hint_max_set(data, -1, minh);
+   
+   elm_coords_finger_size_adjust(1, &fw, 1, &fh);
+   if (wd->scroll)
+     {
+        Evas_Coord vmw = 0, vmh = 0;
+        
+        edje_object_size_min_calc
+           (elm_smart_scroller_edje_object_get(wd->scroller),
+               &vmw, &vmh);
+        if (wd->single_line)
+          {
+             evas_object_size_hint_min_set(data, vmw, minh + vmh);
+             evas_object_size_hint_max_set(data, -1, minh + vmh);
+          }
+        else
+          {
+             evas_object_size_hint_min_set(data, vmw, vmh);
+             evas_object_size_hint_max_set(data, -1, -1);
+          }
+     }
    else
-     evas_object_size_hint_max_set(data, -1, -1);
+     {
+        if (wd->single_line)
+          {
+             evas_object_size_hint_min_set(data, minw, minh);
+             evas_object_size_hint_max_set(data, -1, minh);
+          }
+        else
+          {
+             evas_object_size_hint_min_set(data, fw, minh);
+             evas_object_size_hint_max_set(data, -1, -1);
+          }
+     }
 
    if (wd->deferred_cur)
      {
