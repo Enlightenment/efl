@@ -10627,8 +10627,8 @@ extern "C" {
     * with elm_icon_add().
     *
     * Once the icon object is set, a previously set one will be deleted.
-    * You probably don't want, then, to have the @b same icon object set
-    * for more than one item of the diskselector.
+    * @warning Setting the same icon for two items will cause the icon to
+    * dissapear from the first item.
     *
     * If an icon was passed as argument on item creation, with function
     * elm_diskselector_item_append(), it will be already
