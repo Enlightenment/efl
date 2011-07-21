@@ -66,6 +66,11 @@
  * @image html img/widget/clock/preview-00.png
  * @image latex img/widget/clock/preview-00.eps
  * @li @ref Conformant
+ *
+ * @image html img/widget/conformant/preview-00.png
+ * @image latex img/widget/conformant/preview-00.eps
+ * @image html img/conformant.png
+ * @image latex img/conformant.eps
  * @li @ref Colorselector
  *
  * @image html img/widget/colorselector/preview-00.png

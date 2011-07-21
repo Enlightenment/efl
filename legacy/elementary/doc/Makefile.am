@@ -43,6 +43,7 @@ widget_preview_fileselector_button2 \
 widget_preview_fileselector_button3 \
 widget_preview_colorselector \
 widget_preview_layout \
+widget_preview_conformant \
 widget_preview_index \
 widget_preview_clock \
 widget_preview_label \
@@ -86,6 +87,7 @@ WGT_PREVIEW = \
 	bubble:preview-02.png:widget_preview_bubble3:160:50 \
 	colorselector:preview-00.png:widget_preview_colorselector:160:200 \
 	layout:preview-00.png:widget_preview_layout:200:160 \
+	conformant:preview-00.png:widget_preview_conformant:200:400 \
 	index:preview-00.png:widget_preview_index:300:500 \
 	frame:preview-00.png:widget_preview_frame:100:50 \
 	label:preview-00.png:widget_preview_label:70:30 \

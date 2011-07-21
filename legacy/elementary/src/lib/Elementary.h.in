@@ -9997,6 +9997,12 @@ extern "C" {
     * @defgroup Conformant Conformant
     * @ingroup Elementary
     *
+    * @image html img/widget/conformant/preview-00.png
+    * @image latex img/widget/conformant/preview-00.eps width=\textwidth
+    *
+    * @image html img/conformant.png
+    * @image latex img/conformant.eps width=\textwidth
+    *
     * The aim is to provide a widget that can be used in elementary apps to
     * account for space taken up by the indicator, virtual keypad & softkey
     * windows when running the illume2 module of E17.
