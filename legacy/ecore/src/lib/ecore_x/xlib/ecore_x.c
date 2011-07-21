@@ -1856,6 +1856,12 @@ ecore_x_pointer_xy_get(Ecore_X_Window win, int *x, int *y)
       *y = wy;
 } /* ecore_x_pointer_xy_get */
 
+EAPI unsigned int 
+ecore_x_visual_id_get(Ecore_X_Visual visual) 
+{
+   return XVisualIDFromVisual(visual);
+}
+
 /*****************************************************************************/
 /*****************************************************************************/
 /*****************************************************************************/

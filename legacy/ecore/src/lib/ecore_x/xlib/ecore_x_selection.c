@@ -716,6 +716,18 @@ ecore_x_selection_parser_del(const char *target)
      }
 } /* ecore_x_selection_parser_del */
 
+EAPI void 
+ecore_x_selection_owner_set(Ecore_X_Window win, Ecore_X_Atom atom, Ecore_X_Time time) 
+{
+   XSetSelectionOwner(_ecore_x_disp, atom, win, time);
+}
+
+EAPI Ecore_X_Window 
+ecore_x_selection_owner_get(Ecore_X_Atom atom) 
+{
+   return XGetSelectionOwner(_ecore_x_disp, atom);
+}
+
 /* Locate and run conversion callback for specified selection target */
 void *
 _ecore_x_selection_parse(const char *target, void *data, int size, int format)
