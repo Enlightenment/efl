@@ -5720,6 +5720,14 @@ extern "C" {
     * @li "cursor,changed": The cursor has changed position.
     * @li "anchor,clicked": An anchor has been clicked. The event_info
     * parameter for the callback will be an #Elm_Entry_Anchor_Info.
+    * @li "anchor,in": Mouse cursor has moved into an anchor. The event_info
+    * parameter for the callback will be an #Elm_Entry_Anchor_Info.
+    * @li "anchor,out": Mouse cursor has moved out of an anchor. The event_info
+    * parameter for the callback will be an #Elm_Entry_Anchor_Info.
+    * @li "anchor,up": Mouse button has been unpressed on an anchor. The event_info
+    * parameter for the callback will be an #Elm_Entry_Anchor_Info.
+    * @li "anchor,down": Mouse button has been pressed on an anchor. The event_info
+    * parameter for the callback will be an #Elm_Entry_Anchor_Info.
     * @li "preedit,changed": The preedit string has changed.
     *
     * @{
