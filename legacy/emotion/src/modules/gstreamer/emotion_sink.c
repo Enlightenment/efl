@@ -9,8 +9,8 @@
 
 static GstStaticPadTemplate sinktemplate = GST_STATIC_PAD_TEMPLATE("sink",
                                                                    GST_PAD_SINK, GST_PAD_ALWAYS,
-                                                                   GST_STATIC_CAPS(GST_VIDEO_CAPS_BGRx ";" GST_VIDEO_CAPS_BGR ";" GST_VIDEO_CAPS_BGRA ";" GST_VIDEO_CAPS_YUV("{I420,YV12}")));
-
+                                                                   GST_STATIC_CAPS(GST_VIDEO_CAPS_YUV("{ I420, YV12, YUY2 }") ";"
+                                                                                   GST_VIDEO_CAPS_BGRx ";" GST_VIDEO_CAPS_BGR ";" GST_VIDEO_CAPS_BGRA));
 
 GST_DEBUG_CATEGORY_STATIC(evas_video_sink_debug);
 #define GST_CAT_DEFAULT evas_video_sink_debug
@@ -36,7 +36,8 @@ struct _EvasVideoSinkPrivate {
 
    int width;
    int height;
-   GstVideoFormat format;
+   Evas_Colorspace eformat;
+   GstVideoFormat gformat;
 
    GMutex* buffer_mutex;
    GCond* data_cond;
@@ -53,7 +54,6 @@ struct _EvasVideoSinkPrivate {
    // Protected by the buffer mutex
    Eina_Bool unlocked : 1;
    Eina_Bool preroll : 1;
-   Eina_Bool update_size : 1;
 };
 
 #define _do_init(bla)                                   \
@@ -90,18 +90,19 @@ evas_video_sink_init(EvasVideoSink* sink, EvasVideoSinkClass* klass __UNUSED__)
 {
    EvasVideoSinkPrivate* priv;
 
+   INF("sink init");
    sink->priv = priv = G_TYPE_INSTANCE_GET_PRIVATE(sink, EVAS_TYPE_VIDEO_SINK, EvasVideoSinkPrivate);
    priv->o = NULL;
    priv->p = ecore_pipe_add(evas_video_sink_render_handler, sink);
    priv->last_buffer = NULL;
    priv->width = 0;
    priv->height = 0;
-   priv->format = GST_VIDEO_FORMAT_UNKNOWN;
+   priv->gformat = GST_VIDEO_FORMAT_UNKNOWN;
+   priv->eformat = EVAS_COLORSPACE_ARGB8888;
    priv->data_cond = g_cond_new();
    priv->buffer_mutex = g_mutex_new();
    priv->preroll = EINA_FALSE;
    priv->unlocked = EINA_FALSE;
-   priv->update_size = EINA_TRUE;
 }
 
 
@@ -125,6 +126,7 @@ evas_video_sink_set_property(GObject * object, guint prop_id,
        break;
     default:
        G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
+       ERR("invalid property");
        break;
    }
 }
@@ -157,6 +159,7 @@ evas_video_sink_get_property(GObject * object, guint prop_id,
        break;
     default:
        G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
+       ERR("invalide property");
        break;
    }
 }
@@ -200,52 +203,47 @@ gboolean evas_video_sink_set_caps(GstBaseSink *bsink, GstCaps *caps)
 {
    EvasVideoSink* sink;
    EvasVideoSinkPrivate* priv;
+   GstVideoFormat format;
    int width;
    int height;
 
    sink = EVAS_VIDEO_SINK(bsink);
    priv = sink->priv;
 
-   if (G_UNLIKELY(!gst_video_format_parse_caps(caps, &priv->format, &width, &height))) {
+   if (G_UNLIKELY(!gst_video_format_parse_caps(caps, &format, &width, &height))) {
       ERR("Unable to parse caps.");
       return FALSE;
    }
 
-   if ((width != priv->width) || (height != priv->height))
-     {
-        priv->width = width;
-        priv->height = height;
-        priv->update_size = EINA_TRUE;
-     }
+   priv->width = width;
+   priv->height = height;
 
-   printf("format :");
-   switch (priv->format)
+   printf("%p format :", priv->o);
+   switch (format)
      {
-      case GST_VIDEO_FORMAT_I420:
-         evas_object_image_size_set(priv->o, priv->width, priv->height);
-         evas_object_image_colorspace_set(priv->o, EVAS_COLORSPACE_YCBCR422P601_PL);
-         evas_object_image_alpha_set(priv->o, 0);
+      case GST_VIDEO_FORMAT_I420: priv->eformat = EVAS_COLORSPACE_YCBCR422P601_PL;
          printf ("I420\n");
          break;
-      case GST_VIDEO_FORMAT_YV12:
-         evas_object_image_size_set(priv->o, priv->width, priv->height);
-         evas_object_image_colorspace_set(priv->o, EVAS_COLORSPACE_YCBCR422P601_PL);
-         evas_object_image_alpha_set(priv->o, 0);
+      case GST_VIDEO_FORMAT_YV12: priv->eformat = EVAS_COLORSPACE_YCBCR422P601_PL;
          printf ("YV12\n");
          break;
-      case GST_VIDEO_FORMAT_BGR:
+      case GST_VIDEO_FORMAT_YUY2: priv->eformat = EVAS_COLORSPACE_YCBCR422601_PL;
+         printf("YUY2\n");
+         break;
+      case GST_VIDEO_FORMAT_BGR: priv->eformat = EVAS_COLORSPACE_ARGB8888;
          printf ("BGR\n");
          break;
-      case GST_VIDEO_FORMAT_BGRx:
+      case GST_VIDEO_FORMAT_BGRx: priv->eformat = EVAS_COLORSPACE_ARGB8888;
          printf ("BGRx\n");
          break;
-      case GST_VIDEO_FORMAT_BGRA:
+      case GST_VIDEO_FORMAT_BGRA: priv->eformat = EVAS_COLORSPACE_ARGB8888;
          printf ("BGRA\n");
          break;
       default:
-         printf ("unsupported : %d\n", priv->format);
+         ERR("unsupported : %d\n", format);
          return FALSE;
      }
+   priv->gformat = format;
 
    return TRUE;
 }
@@ -344,6 +342,7 @@ evas_video_sink_render(GstBaseSink* bsink, GstBuffer* buffer)
    g_mutex_lock(priv->buffer_mutex);
 
    if (priv->unlocked) {
+      ERR("LOCKED");
       g_mutex_unlock(priv->buffer_mutex);
       return GST_FLOW_OK;
    }
@@ -387,11 +386,6 @@ static void evas_video_sink_render_handler(void *data,
 
    gst_data = GST_BUFFER_DATA(buffer);
    if (!gst_data) goto exit_point;
-   if (priv->update_size)
-     {
-        evas_object_image_size_set(priv->o, priv->width, priv->height);
-        if (!priv->preroll) priv->update_size = FALSE;
-     }
 
    // This prevent a race condition when data are still in the pipe
    // but the buffer size as changed because of a request from
@@ -403,111 +397,142 @@ static void evas_video_sink_render_handler(void *data,
    ev = evas_object_data_get(priv->o, "_emotion_gstreamer_video");
    if (!ev) goto exit_point;
 
+   evas_object_image_size_set(priv->o, priv->width, priv->height);
+   evas_object_image_alpha_set(priv->o, 0);
+   evas_object_image_colorspace_set(priv->o, priv->eformat);
+
    evas_data = (unsigned char *)evas_object_image_data_get(priv->o, 1);
 
    // Evas's BGRA has pre-multiplied alpha while GStreamer's doesn't.
    // Here we convert to Evas's BGRA.
-   if (priv->format == GST_VIDEO_FORMAT_BGR) {
-      unsigned char *evas_tmp;
-      int x;
-      int y;
+   switch (priv->gformat)
+     {
+      case GST_VIDEO_FORMAT_BGR:
+        {
+           unsigned char *evas_tmp;
+           int x;
+           int y;
 
-      evas_tmp = evas_data;
-      /* FIXME: could this be optimized ? */
-      for (x = 0; x < priv->height; x++) {
-         for (y = 0; y < priv->width; y++) {
-            evas_tmp[0] = gst_data[0];
-            evas_tmp[1] = gst_data[1];
-            evas_tmp[2] = gst_data[2];
-            evas_tmp[3] = 255;
-            gst_data += 3;
-            evas_tmp += 4;
-         }
-      }
-   }
+           evas_tmp = evas_data;
+           /* FIXME: could this be optimized ? */
+           for (x = 0; x < priv->height; x++) {
+              for (y = 0; y < priv->width; y++) {
+                 evas_tmp[0] = gst_data[0];
+                 evas_tmp[1] = gst_data[1];
+                 evas_tmp[2] = gst_data[2];
+                 evas_tmp[3] = 255;
+                 gst_data += 3;
+                 evas_tmp += 4;
+              }
+           }
+           break;
+        }
 
-   // Evas's BGRA has pre-multiplied alpha while GStreamer's doesn't.
-   // Here we convert to Evas's BGRA.
-   if (priv->format == GST_VIDEO_FORMAT_BGRx) {
-      unsigned char *evas_tmp;
-      int x;
-      int y;
+        // Evas's BGRA has pre-multiplied alpha while GStreamer's doesn't.
+        // Here we convert to Evas's BGRA.
+      case GST_VIDEO_FORMAT_BGRx:
+        {
+           unsigned char *evas_tmp;
+           int x;
+           int y;
 
-      evas_tmp = evas_data;
-      /* FIXME: could this be optimized ? */
-      for (x = 0; x < priv->height; x++) {
-         for (y = 0; y < priv->width; y++) {
-            evas_tmp[0] = gst_data[0];
-            evas_tmp[1] = gst_data[1];
-            evas_tmp[2] = gst_data[2];
-            evas_tmp[3] = 255;
-            gst_data += 4;
-            evas_tmp += 4;
-         }
-      }
-   }
+           evas_tmp = evas_data;
+           /* FIXME: could this be optimized ? */
+           for (x = 0; x < priv->height; x++) {
+              for (y = 0; y < priv->width; y++) {
+                 evas_tmp[0] = gst_data[0];
+                 evas_tmp[1] = gst_data[1];
+                 evas_tmp[2] = gst_data[2];
+                 evas_tmp[3] = 255;
+                 gst_data += 4;
+                 evas_tmp += 4;
+              }
+           }
+           break;
+        }
 
-   // Evas's BGRA has pre-multiplied alpha while GStreamer's doesn't.
-   // Here we convert to Evas's BGRA.
-   if (priv->format == GST_VIDEO_FORMAT_BGRA) {
-      unsigned char *evas_tmp;
-      int x;
-      int y;
-      unsigned char alpha;
+        // Evas's BGRA has pre-multiplied alpha while GStreamer's doesn't.
+        // Here we convert to Evas's BGRA.
+      case GST_VIDEO_FORMAT_BGRA:
+        {
+           unsigned char *evas_tmp;
+           int x;
+           int y;
+           unsigned char alpha;
 
-      evas_tmp = evas_data;
-      /* FIXME: could this be optimized ? */
-      for (x = 0; x < priv->height; x++) {
-         for (y = 0; y < priv->width; y++) {
-            alpha = gst_data[3];
-            evas_tmp[0] = (gst_data[0] * alpha) / 255;
-            evas_tmp[1] = (gst_data[1] * alpha) / 255;
-            evas_tmp[2] = (gst_data[2] * alpha) / 255;
-            evas_tmp[3] = alpha;
-            gst_data += 4;
-            evas_tmp += 4;
-         }
-      }
-   }
+           evas_tmp = evas_data;
+           /* FIXME: could this be optimized ? */
+           for (x = 0; x < priv->height; x++) {
+              for (y = 0; y < priv->width; y++) {
+                 alpha = gst_data[3];
+                 evas_tmp[0] = (gst_data[0] * alpha) / 255;
+                 evas_tmp[1] = (gst_data[1] * alpha) / 255;
+                 evas_tmp[2] = (gst_data[2] * alpha) / 255;
+                 evas_tmp[3] = alpha;
+                 gst_data += 4;
+                 evas_tmp += 4;
+              }
+           }
+           break;
+        }
 
-   if (priv->format == GST_VIDEO_FORMAT_I420) {
-      int i;
-      const unsigned char **rows;
+      case GST_VIDEO_FORMAT_I420:
+        {
+           int i;
+           const unsigned char **rows;
 
-      evas_object_image_pixels_dirty_set(priv->o, 1);
-      rows = (const unsigned char **)evas_data;
+           evas_object_image_pixels_dirty_set(priv->o, 1);
+           rows = (const unsigned char **)evas_data;
 
-      for (i = 0; i < priv->height; i++)
-        rows[i] = &gst_data[i * priv->width];
+           for (i = 0; i < priv->height; i++)
+             rows[i] = &gst_data[i * priv->width];
 
-      rows += priv->height;
-      for (i = 0; i < (priv->height / 2); i++)
-        rows[i] = &gst_data[priv->height * priv->width + i * (priv->width / 2)];
+           rows += priv->height;
+           for (i = 0; i < (priv->height / 2); i++)
+             rows[i] = &gst_data[priv->height * priv->width + i * (priv->width / 2)];
 
-      rows += priv->height / 2;
-      for (i = 0; i < (priv->height / 2); i++)
-        rows[i] = &gst_data[priv->height * priv->width + priv->height * (priv->width /4) + i * (priv->width / 2)];
-   }
+           rows += priv->height / 2;
+           for (i = 0; i < (priv->height / 2); i++)
+             rows[i] = &gst_data[priv->height * priv->width + priv->height * (priv->width /4) + i * (priv->width / 2)];
+           break;
+        }
 
-   if (priv->format == GST_VIDEO_FORMAT_YV12) {
-      int i;
-      const unsigned char **rows;
+      case GST_VIDEO_FORMAT_YV12:
+        {
+           int i;
+           const unsigned char **rows;
 
-      evas_object_image_pixels_dirty_set(priv->o, 1);
+           evas_object_image_pixels_dirty_set(priv->o, 1);
 
-      rows = (const unsigned char **)evas_data;
+           rows = (const unsigned char **)evas_data;
 
-      for (i = 0; i < priv->height; i++)
-        rows[i] = &gst_data[i * priv->width];
+           for (i = 0; i < priv->height; i++)
+             rows[i] = &gst_data[i * priv->width];
 
-      rows += priv->height;
-      for (i = 0; i < (priv->height / 2); i++)
-        rows[i] = &gst_data[priv->height * priv->width + priv->height * (priv->width /4) + i * (priv->width / 2)];
+           rows += priv->height;
+           for (i = 0; i < (priv->height / 2); i++)
+             rows[i] = &gst_data[priv->height * priv->width + priv->height * (priv->width /4) + i * (priv->width / 2)];
 
-      rows += priv->height / 2;
-      for (i = 0; i < (priv->height / 2); i++)
-        rows[i] = &gst_data[priv->height * priv->width + i * (priv->width / 2)];
-   }
+           rows += priv->height / 2;
+           for (i = 0; i < (priv->height / 2); i++)
+             rows[i] = &gst_data[priv->height * priv->width + i * (priv->width / 2)];
+           break;
+        }
+
+      case GST_VIDEO_FORMAT_YUY2:
+        {
+           int i;
+           const unsigned char **rows;
+
+           evas_object_image_pixels_dirty_set(priv->o, 1);
+
+           rows = (const unsigned char **)evas_data;
+
+           for (i = 0; i < priv->height; i++)
+             rows[i] = &gst_data[i * priv->width * 2];
+           break;
+        }
+     }
 
    evas_object_image_data_update_add(priv->o, 0, 0, priv->width, priv->height);
    evas_object_image_data_set(priv->o, evas_data);
@@ -677,11 +702,13 @@ gstreamer_video_sink_new(Emotion_Gstreamer_Video *ev,
    g_object_set(G_OBJECT(playbin), "video-sink", sink, NULL);
    g_object_set(G_OBJECT(playbin), "uri", uri, NULL);
    g_object_set(G_OBJECT(sink), "evas-object", obj, NULL);
+
    end = ecore_time_get();
 
    DBG("emotion-sink: %f", end - start);
 
    start = ecore_time_get();
+   /* res = gst_element_set_state(playbin, GST_STATE_PLAYING); */
    res = gst_element_set_state(playbin, GST_STATE_PAUSED);
    if (res == GST_STATE_CHANGE_FAILURE)
      {
@@ -691,19 +718,23 @@ gstreamer_video_sink_new(Emotion_Gstreamer_Video *ev,
    end = ecore_time_get();
    DBG("Pause pipeline: %f", end - start);
 
-   /** NOTE: you need to set: GST_DEBUG_DUMP_DOT_DIR=/tmp EMOTION_ENGINE=gstreamer to save the $EMOTION_GSTREAMER_DOT file in '/tmp' */
-   /** then call dot -Tpng -oemotion_pipeline.png /tmp/$TIMESTAMP-$EMOTION_GSTREAMER_DOT.dot */
-   if (getenv("EMOTION_GSTREAMER_DOT")) GST_DEBUG_BIN_TO_DOT_FILE_WITH_TS(GST_BIN(playbin), GST_DEBUG_GRAPH_SHOW_ALL, getenv("EMOTION_GSTREAMER_DOT"));
-
    start = ecore_time_get();
    res = gst_element_get_state(playbin, NULL, NULL, GST_CLOCK_TIME_NONE);
    if (res != GST_STATE_CHANGE_SUCCESS)
      {
+        /** NOTE: you need to set: GST_DEBUG_DUMP_DOT_DIR=/tmp EMOTION_ENGINE=gstreamer to save the $EMOTION_GSTREAMER_DOT file in '/tmp' */
+        /** then call dot -Tpng -oemotion_pipeline.png /tmp/$TIMESTAMP-$EMOTION_GSTREAMER_DOT.dot */
+        if (getenv("EMOTION_GSTREAMER_DOT")) GST_DEBUG_BIN_TO_DOT_FILE_WITH_TS(GST_BIN(playbin), GST_DEBUG_GRAPH_SHOW_ALL, getenv("EMOTION_GSTREAMER_DOT"));
+
         ERR("Unable to get GST_CLOCK_TIME_NONE.");
         goto unref_pipeline;
      }
    end = ecore_time_get();
    DBG("No time: %f", end - start);
+
+   /** NOTE: you need to set: GST_DEBUG_DUMP_DOT_DIR=/tmp EMOTION_ENGINE=gstreamer to save the $EMOTION_GSTREAMER_DOT file in '/tmp' */
+   /** then call dot -Tpng -oemotion_pipeline.png /tmp/$TIMESTAMP-$EMOTION_GSTREAMER_DOT.dot */
+   if (getenv("EMOTION_GSTREAMER_DOT")) GST_DEBUG_BIN_TO_DOT_FILE_WITH_TS(GST_BIN(playbin), GST_DEBUG_GRAPH_SHOW_ALL, getenv("EMOTION_GSTREAMER_DOT"));
 
    evas_object_data_set(obj, "_emotion_gstreamer_video", ev);
 

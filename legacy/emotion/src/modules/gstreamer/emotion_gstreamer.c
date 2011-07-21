@@ -452,7 +452,7 @@ em_file_open(const char   *file,
    for (i = 0; i < ev->video_stream_nbr; i++)
      {
         Emotion_Video_Stream *vstream;
-        GstPad       *pad;
+        GstPad       *pad = NULL;
         GstCaps      *caps;
         GstStructure *structure;
         GstQuery     *query;
