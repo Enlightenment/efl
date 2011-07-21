@@ -666,12 +666,12 @@ _elm_win_recalc_job(void *data)
         evas_object_size_hint_min_get(data, &ominw, NULL);
         minw = ominw;
      }
-   
+
    elm_coords_finger_size_adjust(1, &fw, 1, &fh);
    if (wd->scroll)
      {
         Evas_Coord vmw = 0, vmh = 0;
-        
+
         edje_object_size_min_calc
            (elm_smart_scroller_edje_object_get(wd->scroller),
                &vmw, &vmh);
