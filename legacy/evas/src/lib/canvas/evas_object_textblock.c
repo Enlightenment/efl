@@ -2381,38 +2381,16 @@ _layout_calculate_format_item_size(const Evas_Object *obj,
  * @param add_line true if we should create a line, false otherwise.
  */
 static void
-_layout_line_finalize(Ctxt *c, Evas_Object_Textblock_Format *fmt)
+_layout_line_finalize(Ctxt *c, Evas_Object_Textblock_Format *fmt __UNUSED__)
 {
    Evas_Object_Textblock_Item *it;
-   Eina_Bool no_text = EINA_TRUE;
    Evas_Coord x = 0;
 
-   c->maxascent = c->maxdescent = 0;
+   /* Adjust all the item sizes according to the final line size,
+    * and update the x positions of all the items of the line. */
    EINA_INLIST_FOREACH(c->ln->items, it)
      {
-        if (it->type == EVAS_TEXTBLOCK_ITEM_TEXT)
-          {
-             Evas_Object_Textblock_Text_Item *ti = _ITEM_TEXT(it);
-             _layout_format_ascent_descent_adjust(c->obj, &c->maxascent,
-                   &c->maxdescent, ti->parent.format);
-             no_text = EINA_FALSE;
-             break;
-          }
-     }
-
-   if (no_text)
-      _layout_format_ascent_descent_adjust(c->obj, &c->maxascent,
-            &c->maxdescent, fmt);
-
-   EINA_INLIST_FOREACH(c->ln->items, it)
-     {
-        if (it->type == EVAS_TEXTBLOCK_ITEM_TEXT)
-          {
-             Evas_Object_Textblock_Text_Item *ti = _ITEM_TEXT(it);
-             _layout_format_ascent_descent_adjust(c->obj, &c->maxascent,
-                   &c->maxdescent, ti->parent.format);
-          }
-        else
+        if (it->type == EVAS_TEXTBLOCK_ITEM_FORMAT)
           {
              Evas_Object_Textblock_Format_Item *fi = _ITEM_FORMAT(it);
              if (!fi->formatme) goto loop_advance;
@@ -3554,6 +3532,23 @@ _layout_par(Ctxt *c)
           {
              i = eina_list_next(i);
              continue;
+          }
+
+        if (it->type == EVAS_TEXTBLOCK_ITEM_TEXT)
+          {
+             Evas_Object_Textblock_Text_Item *ti = _ITEM_TEXT(it);
+             _layout_format_ascent_descent_adjust(c->obj, &c->maxascent,
+                   &c->maxdescent, ti->parent.format);
+          }
+        else
+          {
+             Evas_Object_Textblock_Format_Item *fi = _ITEM_FORMAT(it);
+             if (fi->formatme)
+               {
+                  _layout_calculate_format_item_size(c->obj, fi, &c->maxascent,
+                        &c->maxdescent, &fi->y, &fi->parent.w, &fi->parent.h);
+                  fi->parent.adv = fi->parent.w;
+               }
           }
 
 
