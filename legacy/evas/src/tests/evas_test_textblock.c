@@ -766,7 +766,7 @@ END_TEST
 /* Testing items */
 START_TEST(evas_textblock_items)
 {
-   Evas_Coord w, h, ih;
+   Evas_Coord w, h, w2, h2, nw, nh, ih;
    START_TB_TEST();
    const char *buf = "This is an <item absize=93x152></>.";
 
@@ -843,6 +843,21 @@ START_TEST(evas_textblock_items)
    evas_textblock_cursor_pos_set(cur, 11);
    evas_textblock_cursor_format_item_geometry_get(cur, NULL, NULL, &w, &ih);
    fail_if((w > 90) || (h <= ih));
+
+   /* Relsize and abs size in the same line, all should be the same size */
+   buf = "<item relsize=64x64 vsize=ascent href=emoticon/knowing-grin></item><item absize=64x64 vsize=ascent href=emoticon/knowing-grin></item><item relsize=64x64 vsize=ascent href=emoticon/knowing-grin></item>";
+   evas_object_textblock_text_markup_set(tb, buf);
+   evas_object_textblock_size_formatted_get(tb, &w, &h);
+   evas_object_textblock_size_native_get(tb, &nw, &nh);
+//   fail_if((nw != w) || (nh != h));
+   evas_textblock_cursor_format_item_geometry_get(cur, NULL, NULL, &w, &h);
+   evas_textblock_cursor_char_next(cur);
+   evas_textblock_cursor_format_item_geometry_get(cur, NULL, NULL, &w2, &h2);
+   fail_if((w != w2) || (h != h2));
+   evas_textblock_cursor_format_item_geometry_get(cur, NULL, NULL, &w, &h);
+   evas_textblock_cursor_char_next(cur);
+   evas_textblock_cursor_format_item_geometry_get(cur, NULL, NULL, &w2, &h2);
+   fail_if((w != w2) || (h != h2));
 
    /* FIXME: Also verify x,y positions of the item. */
 
