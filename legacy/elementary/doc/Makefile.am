@@ -46,7 +46,8 @@ widget_preview_layout \
 widget_preview_index \
 widget_preview_clock \
 widget_preview_label \
-widget_preview_frame
+widget_preview_frame \
+widget_preview_ctxpopup
 
 LDADD = $(top_builddir)/src/lib/libelementary.la @ELEMENTARY_EWEATHER_LIBS@ @ELEMENTARY_EDBUS_LIBS@ @ELEMENTARY_EFREET_LIBS@ @ELEMENTARY_LIBS@ @EIO_LIBS@ @my_libs@
 
@@ -69,7 +70,8 @@ WGT_PREVIEW = \
 	index:preview-00.png:widget_preview_index:300:500 \
 	frame:preview-00.png:widget_preview_frame:100:50 \
 	label:preview-00.png:widget_preview_label:70:30 \
-	clock:preview-00.png:widget_preview_clock:200:100
+	clock:preview-00.png:widget_preview_clock:200:100 \
+	ctxpopup:preview-00.png:widget_preview_ctxpopup:200:130
 
 widget-preview:
 	@for ss in $(WGT_PREVIEW); do \

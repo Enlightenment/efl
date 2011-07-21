@@ -56,6 +56,9 @@
  * @image html img/widget/colorselector/preview-00.png
  * @image latex img/widget/colorselector/preview-00.eps
  * @li @ref Ctxpopup
+ *
+ * @image html img/widget/ctxpopup/preview-00.png
+ * @image latex img/widget/ctxpopup/preview-00.eps
  * @li @ref Diskselector
  * @li @ref Entry
  * @li @ref File_Selector_Button

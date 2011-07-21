@@ -75,7 +75,8 @@ SRCS = \
 	index_example_01.c \
 	index_example_02.c \
 	theme_example.edc \
-	layout_example.edc
+	layout_example.edc \
+	ctxpopup_example_01.c
 
 pkglib_PROGRAMS =
 
@@ -135,6 +136,7 @@ pkglib_PROGRAMS += \
 	layout_example_01 \
 	layout_example_02 \
 	layout_example_03 \
+	ctxpopup_example_01 \
 	flipselector_example \
 	fileselector_example \
 	fileselector_button_example \
@@ -178,7 +180,8 @@ SCREENSHOTS = \
 	layout_example_03:layout_example_03.png:0.0 \
 	flipselector_example:flipselector_example.png:0.0 \
 	fileselector_example:fileselector_example.png:0.0 \
-	index_example_02:index_example_03.png:0.3
+	index_example_02:index_example_03.png:0.3 \
+	ctxpopup_example_01:ctxpopup_example_01.png:0.0
 
 HTML_SS_DIR=$(top_builddir)/doc/html/screenshots
 LATEX_SS_DIR=$(top_builddir)/doc/latex/screenshots

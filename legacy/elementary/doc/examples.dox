@@ -2767,6 +2767,77 @@
  */
 
 /**
+ * @page tutorial_ctxpopup Ctxpopup example
+ * @dontinclude ctxpopup_example_01.c
+ *
+ * In this example we have a list with two items, when either item is clicked
+ * a ctxpopup for it will be shown. Our two ctxpopups are quite different, the
+ * one for the first item is a vertical and it's items contain both labels and
+ * icons, the one for the second item is horizontal and it's items have icons
+ * but not labels.
+ *
+ * We will begin examining our example code by looking at the callback we'll use
+ * when items in the ctxpopup are clicked. It's very simple, all it does is
+ * print the label present in the ctxpopup item:
+ * @until }
+ *
+ * Next we examine a function that creates ctxpopup items, it was created to
+ * avoid repeating the same code whenever we needed to add an item to our
+ * ctxpopup. Our function creates an icon from the standard set of icons, and
+ * then creates the item, with the label received as an argument. We also set
+ * the callback to be called when the item is clicked:
+ * @until }
+ *
+ * Finally we have the function that will create the ctxpopup for the first item
+ * in our list. This one is somewhat more complex though, so let's go through it
+ * in parts. First we declare our variable and add the ctxpopup:
+ * @until ctxpopup_add
+ *
+ * Next we create a bunch of items for our ctxpopup, marking two of them as
+ * disabled just so we can see what that will look like:
+ * @until disabled_set
+ * @until disabled_set
+ *
+ * Then we ask evas where the mouse pointer was so that we can have our ctxpopup
+ * appear in the right place, set a maximum size for the ctxpopup, move it and
+ * show it:
+ * @until show
+ *
+ * And last we mark the list item as not selected:
+ * @until }
+ *
+ * Our next function is the callback that will create the ctxpopup for the
+ * second list item, it is very similar to the previous function. A couple of
+ * interesting things to note is that we ask our ctxpopup to be horizontal, and
+ * that we pass NULL as the label for every item:
+ * @until }
+ *
+ * And with all of that in place we can now get to our main function where we
+ * create the window, the list, the list items and run the main loop:
+ * @until ELM_MAIN()
+ *
+ * The example will initially look like this:
+ *
+ * @image html screenshots/ctxpopup_example_01.png
+ * @image latex screenshots/ctxpopup_example_01.eps width=\textwidth
+ *
+ * @note This doesn't show the ctxpopup tough, since it will only appear when
+ * we click one of the list items.
+ *
+ * Here is what our first ctxpopup will look like:
+ *
+ * @image html screenshots/ctxpopup_example_01_a.png
+ * @image latex screenshots/ctxpopup_example_01_a.eps width=\textwidth
+ *
+ * And here the second ctxpopup:
+ *
+ * @image html screenshots/ctxpopup_example_01_b.png
+ * @image latex screenshots/ctxpopup_example_01_b.eps width=\textwidth
+ *
+ * @example ctxpopup_example_01.c
+ */
+
+/**
  * @page bg_example_01_c bg_example_01.c
  * @include bg_example_01.c
  * @example bg_example_01.c

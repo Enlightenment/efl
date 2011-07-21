@@ -1,22 +1,6 @@
 #include <Elementary.h>
 #include "elm_priv.h"
 
-/**
- * @defgroup Ctxpopup
- *
- * A ctxpopup is a widget that, when shown, pops up a list of items.
- * It automatically chooses an area inside its parent object's view
- * (set via elm_ctxpopup_add() and elm_ctxpopup_hover_parent_set()) to
- * optimally fit into it. In the default theme, it will also point an
- * arrow to the cursor position at the time one shows it. Ctxpopup
- * items have a label and/or an icon. It is intended for a small
- * number of items (hence the use of list, not genlist).
- *
- * Signals that you can add callbacks for are:
- *
- * "dismissed" - the ctxpopup was dismissed
- */
-
 typedef struct _Widget_Data Widget_Data;
 
 struct _Elm_Ctxpopup_Item
@@ -950,14 +934,6 @@ _remove_items(Widget_Data *wd)
    wd->items = NULL;
 }
 
-/**
- * Add a new Ctxpopup object to the parent.
- *
- * @param parent Parent object
- * @return New object or @c NULL, if it cannot be created
- *
- * @ingroup Ctxpopup
- */
 EAPI Evas_Object *
 elm_ctxpopup_add(Evas_Object *parent)
 {
@@ -1023,14 +999,6 @@ elm_ctxpopup_add(Evas_Object *parent)
    return obj;
 }
 
-/**
- * Get the icon object for the given ctxpopup item.
- *
- * @param item Ctxpopup item
- * @return icon object or @c NULL, if the item does not have icon or an error occurred
- *
- * @ingroup Ctxpopup
- */
 EAPI Evas_Object *
 elm_ctxpopup_item_icon_get(const Elm_Ctxpopup_Item *item)
 {
@@ -1038,19 +1006,6 @@ elm_ctxpopup_item_icon_get(const Elm_Ctxpopup_Item *item)
    return item->icon;
 }
 
-/**
- * Sets the side icon associated with the ctxpopup item
- *
- * Once the icon object is set, a previously set one will be deleted.
- * You probably don't want, then, to have the <b>same</b> icon object
- * set for more than one item of the list (when replacing one of its
- * instances).
- *
- * @param item Ctxpopup item
- * @param icon Icon object to be set
- *
- * @ingroup Ctxpopup
- */
 EAPI void
 elm_ctxpopup_item_icon_set(Elm_Ctxpopup_Item *item, Evas_Object *icon)
 {
@@ -1070,15 +1025,6 @@ elm_ctxpopup_item_icon_set(Elm_Ctxpopup_Item *item, Evas_Object *icon)
      }
 }
 
-/**
- * Get the label object for the given ctxpopup item.
- *
- * @param item Ctxpopup item
- * @return label object or @c NULL, if the item does not have label or an error occured
- *
- * @ingroup Ctxpopup
- *
- */
 EAPI const char *
 elm_ctxpopup_item_label_get(const Elm_Ctxpopup_Item *item)
 {
@@ -1086,14 +1032,6 @@ elm_ctxpopup_item_label_get(const Elm_Ctxpopup_Item *item)
    return item->label;
 }
 
-/**
- * (Re)set the label on the given ctxpopup item.
- *
- * @param item Ctxpopup item
- * @param label String to set as label
- *
- * @ingroup Ctxpopup
- */
 EAPI void
 elm_ctxpopup_item_label_set(Elm_Ctxpopup_Item *item, const char *label)
 {
@@ -1113,19 +1051,6 @@ elm_ctxpopup_item_label_set(Elm_Ctxpopup_Item *item, const char *label)
      }
 }
 
-/**
- * Set the Ctxpopup's parent
- * Set the parent object (it would much probably be the
- * window that the ctxpopup is in).
- *
- * @param obj The ctxpopup object
- * @param area The parent to use
- *
- * @note elm_ctxpopup_add() will automatically call this function
- * with its @c parent argument.
- *
- * @ingroup Ctxpopup
- */
 EAPI void
 elm_ctxpopup_hover_parent_set(Evas_Object *obj, Evas_Object *hover_parent)
 {
@@ -1151,15 +1076,6 @@ elm_ctxpopup_hover_parent_set(Evas_Object *obj, Evas_Object *hover_parent)
    wd->hover_parent = hover_parent;
 }
 
-/**
- * Get the Ctxpopup's parent
- *
- * @param obj The ctxpopup object
- *
- * @see elm_ctxpopup_hover_parent_set() for more information
- *
- * @ingroup Ctxpopup
- */
 EAPI Evas_Object *
 elm_ctxpopup_hover_parent_get(const Evas_Object *obj)
 {
@@ -1173,13 +1089,6 @@ elm_ctxpopup_hover_parent_get(const Evas_Object *obj)
    return wd->hover_parent;
 }
 
-/**
- * Clear all items in the given ctxpopup object.
- *
- * @param obj Ctxpopup object
- *
- * @ingroup Ctxpopup
- */
 EAPI void
 elm_ctxpopup_clear(Evas_Object * obj)
 {
@@ -1192,14 +1101,6 @@ elm_ctxpopup_clear(Evas_Object * obj)
    _list_del(wd);
 }
 
-/**
- * Change the ctxpopup's orientation to horizontal or vertical.
- *
- * @param obj Ctxpopup object
- * @param horizontal @c EINA_TRUE for horizontal mode, @c EINA_FALSE for vertical
- *
- * @ingroup Ctxpopup
- */
 EAPI void
 elm_ctxpopup_horizontal_set(Evas_Object *obj, Eina_Bool horizontal)
 {
@@ -1230,14 +1131,6 @@ elm_ctxpopup_horizontal_set(Evas_Object *obj, Eina_Bool horizontal)
       _sizing_eval(obj);
 }
 
-/**
- * Get the value of current ctxpopup object's orientation.
- *
- * @param obj Ctxpopup object
- * @return @c EINA_TRUE for horizontal mode, @c EINA_FALSE for vertical mode (or errors)
- *
- * @ingroup Ctxpopup
- */
 EAPI Eina_Bool
 elm_ctxpopup_horizontal_get(const Evas_Object *obj)
 {
@@ -1251,21 +1144,6 @@ elm_ctxpopup_horizontal_get(const Evas_Object *obj)
    return wd->horizontal;
 }
 
-/**
- * Add a new item to a ctxpopup object.
- *
- * Both a item list and a content could not be set at the same time!
- * once you set add a item, the previous content will be removed.
- *
- * @param obj Ctxpopup object
- * @param icon Icon to be set on new item
- * @param label The Label of the new item
- * @param func Convenience function called when item selected
- * @param data Data passed to @p func above
- * @return A handle to the item added or @c NULL, on errors
- *
- * @ingroup Ctxpopup
- */
 EAPI Elm_Ctxpopup_Item *
 elm_ctxpopup_item_append(Evas_Object *obj, const char *label,
                          Evas_Object *icon, Evas_Smart_Cb func,
@@ -1313,13 +1191,6 @@ elm_ctxpopup_item_append(Evas_Object *obj, const char *label,
    return item;
 }
 
-/**
- * Delete the given item in a ctxpopup object.
- *
- * @param item Ctxpopup item to be deleted
- *
- * @ingroup Ctxpopup
- */
 EAPI void
 elm_ctxpopup_item_del(Elm_Ctxpopup_Item *item)
 {
@@ -1348,14 +1219,6 @@ elm_ctxpopup_item_del(Elm_Ctxpopup_Item *item)
    free(item);
 }
 
-/**
- * Set the ctxpopup item's state as disabled or enabled.
- *
- * @param item Ctxpopup item to be enabled/disabled
- * @param disabled @c EINA_TRUE to disable it, @c EINA_FALSE to enable it
- *
- * @ingroup Ctxpopup
- */
 EAPI void
 elm_ctxpopup_item_disabled_set(Elm_Ctxpopup_Item *item, Eina_Bool disabled)
 {
@@ -1377,14 +1240,6 @@ elm_ctxpopup_item_disabled_set(Elm_Ctxpopup_Item *item, Eina_Bool disabled)
    item->disabled = !!disabled;
 }
 
-/**
- * Get the ctxpopup item's disabled/enabled state.
- *
- * @param item Ctxpopup item to be enabled/disabled
- * @return disabled @c EINA_TRUE, if disabled, @c EINA_FALSE otherwise
- *
- * @ingroup Ctxpopup
- */
 EAPI Eina_Bool
 elm_ctxpopup_item_disabled_get(const Elm_Ctxpopup_Item *item)
 {
@@ -1392,19 +1247,6 @@ elm_ctxpopup_item_disabled_get(const Elm_Ctxpopup_Item *item)
    return item->disabled;
 }
 
-/**
- * Once the content object is set, a previously set one will be deleted.
- * If you want to keep that old content object, use the
- * elm_ctxpopup_content_unset() function
- *
- * Both a item list and a content could not be set at the same time!
- * once you set a content, the previous list items will be removed.
- *
- * @param obj Ctxpopup object
- * @param content Content to be swallowed
- *
- * @ingroup Ctxpopup
- */
 EAPI void
 elm_ctxpopup_content_set(Evas_Object *obj, Evas_Object *content)
 {
@@ -1435,16 +1277,6 @@ elm_ctxpopup_content_set(Evas_Object *obj, Evas_Object *content)
       _sizing_eval(obj);
 }
 
-/**
- * Unset the ctxpopup content
- *
- * Unparent and return the content object which was set for this widget
- *
- * @param obj Ctxpopup object
- * @return The content that was being used
- *
- * @ingroup Ctxpopup
- */
 EAPI Evas_Object *
 elm_ctxpopup_content_unset(Evas_Object *obj)
 {
@@ -1469,18 +1301,6 @@ elm_ctxpopup_content_unset(Evas_Object *obj)
    return content;
 }
 
-/**
- * Set the direction priority of a ctxpopup.
- * This functions gives a chance to user to set the priority of ctxpopup showing direction.
- *
- * @param obj Ctxpopup object
- * @param first 1st priority of direction
- * @param second 2nd priority of direction
- * @param third 3th priority of direction
- * @param fourth 4th priority of direction
- *
- * @ingroup Ctxpopup
- */
 EAPI void
 elm_ctxpopup_direction_priority_set(Evas_Object *obj,
                                     Elm_Ctxpopup_Direction first,
@@ -1503,19 +1323,6 @@ elm_ctxpopup_direction_priority_set(Evas_Object *obj,
       _sizing_eval(obj);
 }
 
-/**
- * Get the direction priority of a ctxpopup.
- *
- * @param obj Ctxpopup object
- * @param first 1st priority of direction to be returned
- * @param second 2nd priority of direction to be returned
- * @param third 3th priority of direction to be returned
- * @param fourth 4th priority of direction to be returned
- *
- * @see elm_ctxpopup_direction_priority_set for more information.
- *
- * @ingroup Ctxpopup
- */
 EAPI void
 elm_ctxpopup_direction_priority_get(Evas_Object *obj,
                                     Elm_Ctxpopup_Direction *first,
