@@ -58,7 +58,7 @@ widget_preview_actionslider \
 widget_preview_entry1 \
 widget_preview_entry2 \
 widget_preview_entry3 \
-widget_preview_entry4
+widget_preview_entry4 \
 widget_preview_diskselector \
 widget_preview_fileselector_entry \
 widget_preview_flipselector \
@@ -102,7 +102,7 @@ WGT_PREVIEW = \
 	entry:preview-00.png:widget_preview_entry1:160:50 \
 	entry:preview-01.png:widget_preview_entry2:160:50 \
 	entry:preview-02.png:widget_preview_entry3:160:50 \
-	entry:preview-03.png:widget_preview_entry4:160:50
+	entry:preview-03.png:widget_preview_entry4:160:50 \
 	diskselector:preview-00.png:widget_preview_diskselector:120:50 \
 	fileselector_entry:preview-00.png:widget_preview_fileselector_entry:70:50 \
 	flipselector:preview-00.png:widget_preview_flipselector:100:60 \
