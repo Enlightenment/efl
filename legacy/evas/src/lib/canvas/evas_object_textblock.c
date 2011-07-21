@@ -8228,6 +8228,39 @@ evas_object_textblock_size_formatted_get(const Evas_Object *obj, Evas_Coord *w, 
    if (h) *h = o->formatted.h;
 }
 
+static void
+_size_native_calc_line_finalize(const Evas_Object *obj, Eina_List *items,
+      Evas_Coord *ascent, Evas_Coord *descent, Evas_Coord *w)
+{
+   Evas_Object_Textblock_Item *it;
+   Eina_List *i;
+
+   it = eina_list_data_get(items);
+   /* If there are no text items yet, calc ascent/descent
+    * according to the current format. */
+   if (it && (*ascent + *descent == 0))
+      _layout_format_ascent_descent_adjust(obj, ascent, descent, it->format);
+
+   *w = 0;
+   /* Adjust all the item sizes according to the final line size,
+    * and update the x positions of all the items of the line. */
+   EINA_LIST_FOREACH(items, i, it)
+     {
+        if (it->type == EVAS_TEXTBLOCK_ITEM_FORMAT)
+          {
+             Evas_Coord fw, fh, fy;
+
+             Evas_Object_Textblock_Format_Item *fi = _ITEM_FORMAT(it);
+             if (!fi->formatme) goto loop_advance;
+             _layout_calculate_format_item_size(obj, fi, ascent,
+                   descent, &fy, &fw, &fh);
+          }
+
+loop_advance:
+        *w += it->adv;
+     }
+}
+
 /* FIXME: doc */
 static void
 _size_native_calc_paragraph_size(const Evas_Object *obj,
@@ -8237,55 +8270,61 @@ _size_native_calc_paragraph_size(const Evas_Object *obj,
 {
    Eina_List *i;
    Evas_Object_Textblock_Item *it;
-   Evas_Coord x = 0, y = 0, wmax = 0, h = 0, ascent = 0, descent = 0;
+   Eina_List *line_items = NULL;
+   Evas_Coord w = 0, y = 0, wmax = 0, h = 0, ascent = 0, descent = 0;
 
    EINA_LIST_FOREACH(par->logical_items, i, it)
      {
+        line_items = eina_list_append(line_items, it);
         if (it->type == EVAS_TEXTBLOCK_ITEM_FORMAT)
           {
              Evas_Object_Textblock_Format_Item *fi = _ITEM_FORMAT(it);
              if (fi->item && (_IS_LINE_SEPARATOR(fi->item) ||
                       _IS_PARAGRAPH_SEPARATOR(o, fi->item)))
                {
-                  /* If there are no text items yet, calc ascent/descent
-                   * according to the current format. */
-                  if (ascent + descent == 0)
-                     _layout_format_ascent_descent_adjust(obj, &ascent,
-                           &descent, it->format);
+                  _size_native_calc_line_finalize(obj, line_items, &ascent,
+                        &descent, &w);
 
                   if (ascent + descent > h)
                      h = ascent + descent;
-                  if (x + it->adv > wmax)
-                     wmax = x + it->adv;
+
                   y += h;
-                  x = h = 0;
+                  if (w > wmax)
+                     wmax = w;
+                  h = 0;
                   ascent = descent = 0;
+                  line_items = eina_list_free(line_items);
                }
              else
                {
                   Evas_Coord fw, fh, fy;
+                  /* If there are no text items yet, calc ascent/descent
+                   * according to the current format. */
+                  if (it && (ascent + descent == 0))
+                     _layout_format_ascent_descent_adjust(obj, &ascent,
+                           &descent, it->format);
 
                   _layout_calculate_format_item_size(obj, fi, &ascent,
                         &descent, &fy, &fw, &fh);
-
-                  if (fh > h)
-                     h = fh;
-                  x += fw;
                }
           }
         else
           {
              _layout_format_ascent_descent_adjust(obj, &ascent,
                    &descent, it->format);
-             x += it->adv;
           }
      }
+
+   _size_native_calc_line_finalize(obj, line_items, &ascent, &descent, &w);
+
+   line_items = eina_list_free(line_items);
 
    /* Do the last addition */
    if (ascent + descent > h)
       h = ascent + descent;
-   if (x > wmax)
-      wmax = x;
+
+   if (w > wmax)
+      wmax = w;
 
    *_h = y + h;
    *_w = wmax;
