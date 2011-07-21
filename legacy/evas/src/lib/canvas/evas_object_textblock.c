@@ -1821,8 +1821,6 @@ _layout_line_new(Ctxt *c, Evas_Object_Textblock_Format *fmt)
    c->maxascent = c->maxdescent = 0;
    c->ln->line_no = -1;
    c->ln->par = c->par;
-   _layout_format_ascent_descent_adjust(c->obj, &c->maxascent,
-         &c->maxdescent, fmt);
 }
 
 /* par index functions */
@@ -2381,10 +2379,16 @@ _layout_calculate_format_item_size(const Evas_Object *obj,
  * @param add_line true if we should create a line, false otherwise.
  */
 static void
-_layout_line_finalize(Ctxt *c, Evas_Object_Textblock_Format *fmt __UNUSED__)
+_layout_line_finalize(Ctxt *c, Evas_Object_Textblock_Format *fmt)
 {
    Evas_Object_Textblock_Item *it;
    Evas_Coord x = 0;
+
+   /* If there are no text items yet, calc ascent/descent
+    * according to the current format. */
+   if (c->maxascent + c->maxdescent == 0)
+      _layout_format_ascent_descent_adjust(c->obj, &c->maxascent,
+            &c->maxdescent, fmt);
 
    /* Adjust all the item sizes according to the final line size,
     * and update the x positions of all the items of the line. */
@@ -3545,6 +3549,12 @@ _layout_par(Ctxt *c)
              Evas_Object_Textblock_Format_Item *fi = _ITEM_FORMAT(it);
              if (fi->formatme)
                {
+                  /* If there are no text items yet, calc ascent/descent
+                   * according to the current format. */
+                  if (c->maxascent + c->maxdescent == 0)
+                     _layout_format_ascent_descent_adjust(c->obj, &c->maxascent,
+                           &c->maxdescent, it->format);
+
                   _layout_calculate_format_item_size(c->obj, fi, &c->maxascent,
                         &c->maxdescent, &fi->y, &fi->parent.w, &fi->parent.h);
                   fi->parent.adv = fi->parent.w;
