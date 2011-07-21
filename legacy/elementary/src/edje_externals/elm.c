@@ -144,7 +144,7 @@ external_signals_proxy(Evas_Object *obj, Evas_Object *edje, const char *part_nam
    ctxt = malloc(sizeof(Elm_External_Signals_Proxy_Context) * total);
    if (!ctxt) return;
    evas_object_event_callback_add
-     (obj, EVAS_CALLBACK_DEL, _external_signal_proxy_free_cb, ctxt);
+     (obj, EVAS_CALLBACK_FREE, _external_signal_proxy_free_cb, ctxt);
 
    for (; cls_count > 0; cls_count--,  cls_descs++, ctxt++)
      {
