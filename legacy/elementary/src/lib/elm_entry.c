@@ -133,6 +133,10 @@ static const char SIG_SELECTION_CHANGED[] = "selection,changed";
 static const char SIG_SELECTION_CLEARED[] = "selection,cleared";
 static const char SIG_CURSOR_CHANGED[] = "cursor,changed";
 static const char SIG_ANCHOR_CLICKED[] = "anchor,clicked";
+static const char SIG_ANCHOR_DOWN[] = "anchor,down";
+static const char SIG_ANCHOR_UP[] = "anchor,up";
+static const char SIG_ANCHOR_IN[] = "anchor,in";
+static const char SIG_ANCHOR_OUT[] = "anchor,out";
 static const char SIG_PREEDIT_CHANGED[] = "preedit,changed";
 static const Evas_Smart_Cb_Description _signals[] = {
        {SIG_CHANGED, ""},
@@ -151,6 +155,10 @@ static const Evas_Smart_Cb_Description _signals[] = {
        {SIG_SELECTION_CLEARED, ""},
        {SIG_CURSOR_CHANGED, ""},
        {SIG_ANCHOR_CLICKED, ""},
+       {SIG_ANCHOR_DOWN, ""},
+       {SIG_ANCHOR_UP, ""},
+       {SIG_ANCHOR_IN, ""},
+       {SIG_ANCHOR_OUT, ""},
        {SIG_PREEDIT_CHANGED, ""},
        {NULL, NULL}
 };
@@ -1406,26 +1414,38 @@ _signal_cursor_changed(void *data, Evas_Object *obj __UNUSED__, const char *emis
 }
 
 static void
+_signal_anchor_geoms_do_things_with(Widget_Data *wd, Elm_Entry_Anchor_Info *ei)
+{
+   const Eina_List *geoms, *l;
+   Evas_Textblock_Rectangle *r;
+   Evas_Coord px, py, x, y;
+
+   geoms = edje_object_part_text_anchor_geometry_get(wd->ent, "elm.text", ei->name);
+   if (!geoms) return;
+
+
+   evas_object_geometry_get(wd->ent, &x, &y, NULL, NULL);
+   evas_pointer_canvas_xy_get(evas_object_evas_get(wd->ent), &px, &py);
+   EINA_LIST_FOREACH(geoms, l, r)
+     {
+        if (((r->x + x) <= px) && ((r->y + y) <= py) &&
+            ((r->x + x + r->w) > px) && ((r->y + y + r->h) > py))
+          {
+             ei->x = r->x + x;
+             ei->y = r->y + y;
+             ei->w = r->w;
+             ei->h = r->h;
+             break;
+          }
+     }
+}
+
+static void
 _signal_anchor_down(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
-{
-   Widget_Data *wd = elm_widget_data_get(data);
-   if (!wd) return;
-}
-
-static void
-_signal_anchor_up(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
-{
-   Widget_Data *wd = elm_widget_data_get(data);
-   if (!wd) return;
-}
-
-static void
-_signal_anchor_clicked(void *data, Evas_Object *obj __UNUSED__, const char *emission, const char *source __UNUSED__)
 {
    Widget_Data *wd = elm_widget_data_get(data);
    Elm_Entry_Anchor_Info ei;
    char *buf2, *p, *p2, *n;
-   const Eina_List *geoms;
    if (!wd) return;
    p = strrchr(emission, ',');
    if (!p) return;
@@ -1444,29 +1464,71 @@ _signal_anchor_clicked(void *data, Evas_Object *obj __UNUSED__, const char *emis
    ei.name = n;
    ei.button = atoi(buf2);
    ei.x = ei.y = ei.w = ei.h = 0;
-   geoms =
-      edje_object_part_text_anchor_geometry_get(wd->ent, "elm.text", ei.name);
-   if (geoms)
-     {
-        Evas_Textblock_Rectangle *r;
-        const Eina_List *l;
-        Evas_Coord px, py, x, y;
 
-        evas_object_geometry_get(wd->ent, &x, &y, NULL, NULL);
-        evas_pointer_canvas_xy_get(evas_object_evas_get(wd->ent), &px, &py);
-        EINA_LIST_FOREACH(geoms, l, r)
-          {
-             if (((r->x + x) <= px) && ((r->y + y) <= py) &&
-                 ((r->x + x + r->w) > px) && ((r->y + y + r->h) > py))
-               {
-                  ei.x = r->x + x;
-                  ei.y = r->y + y;
-                  ei.w = r->w;
-                  ei.h = r->h;
-                  break;
-               }
-          }
+   _signal_anchor_geoms_do_things_with(wd, &ei);
+
+   if (!wd->disabled)
+     evas_object_smart_callback_call(data, SIG_ANCHOR_DOWN, &ei);
+}
+
+static void
+_signal_anchor_up(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
+{
+   Widget_Data *wd = elm_widget_data_get(data);
+   Elm_Entry_Anchor_Info ei;
+   char *buf2, *p, *p2, *n;
+   if (!wd) return;
+   p = strrchr(emission, ',');
+   if (!p) return;
+
+   n = p + 1;
+   p2 = p -1;
+   while (p2 >= emission)
+     {
+        if (*p2 == ',') break;
+        p2--;
      }
+   p2++;
+   buf2 = alloca(5 + p - p2);
+   strncpy(buf2, p2, p - p2);
+   buf2[p - p2] = 0;
+   ei.name = n;
+   ei.button = atoi(buf2);
+   ei.x = ei.y = ei.w = ei.h = 0;
+
+   _signal_anchor_geoms_do_things_with(wd, &ei);
+
+   if (!wd->disabled)
+     evas_object_smart_callback_call(data, SIG_ANCHOR_UP, &ei);
+}
+
+static void
+_signal_anchor_clicked(void *data, Evas_Object *obj __UNUSED__, const char *emission, const char *source __UNUSED__)
+{
+   Widget_Data *wd = elm_widget_data_get(data);
+   Elm_Entry_Anchor_Info ei;
+   char *buf2, *p, *p2, *n;
+   if (!wd) return;
+   p = strrchr(emission, ',');
+   if (!p) return;
+
+   n = p + 1;
+   p2 = p -1;
+   while (p2 >= emission)
+     {
+        if (*p2 == ',') break;
+        p2--;
+     }
+   p2++;
+   buf2 = alloca(5 + p - p2);
+   strncpy(buf2, p2, p - p2);
+   buf2[p - p2] = 0;
+   ei.name = n;
+   ei.button = atoi(buf2);
+   ei.x = ei.y = ei.w = ei.h = 0;
+
+   _signal_anchor_geoms_do_things_with(wd, &ei);
+
    if (!wd->disabled)
      evas_object_smart_callback_call(data, SIG_ANCHOR_CLICKED, &ei);
 }
@@ -1482,14 +1544,32 @@ static void
 _signal_anchor_in(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
 {
    Widget_Data *wd = elm_widget_data_get(data);
+   Elm_Entry_Anchor_Info ei;
    if (!wd) return;
+   ei.name = emission + 6;
+   ei.button = 0;
+   ei.x = ei.y = ei.w = ei.h = 0;
+
+   _signal_anchor_geoms_do_things_with(wd, &ei);
+
+   if (!wd->disabled)
+     evas_object_smart_callback_call(data, SIG_ANCHOR_IN, &ei);
 }
 
 static void
 _signal_anchor_out(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
 {
    Widget_Data *wd = elm_widget_data_get(data);
+   Elm_Entry_Anchor_Info ei;
    if (!wd) return;
+   ei.name = emission + 6;
+   ei.button = 0;
+   ei.x = ei.y = ei.w = ei.h = 0;
+
+   _signal_anchor_geoms_do_things_with(wd, &ei);
+
+   if (!wd->disabled)
+     evas_object_smart_callback_call(data, SIG_ANCHOR_OUT, &ei);
 }
 
 static void
