@@ -3523,6 +3523,9 @@ extern "C" {
     /**
     * @defgroup File_Selector_Entry File Selector Entry
     *
+    * @image html img/widget/fileselector_entry/preview-00.png
+    * @image latex img/widget/fileselector_entry/preview-00.eps
+    *
     * This is an entry made to be filled with or display a <b>file
     * system path string</b>. Besides the entry itself, the widget has
     * a @ref File_Selector_Button "file selector button" on its side,
@@ -5358,6 +5361,9 @@ extern "C" {
    /**
     * @defgroup Hover Hover
     *
+    * @image html img/widget/hover/preview-00.png
+    * @image latex img/widget/hover/preview-00.eps
+    *
     * A Hover object will hover over its @p parent object at the @p target
     * location. Anything in the background will be given a darker coloring to
     * indicate that the hover object is on top (at the default theme). When the
@@ -6526,6 +6532,9 @@ extern "C" {
    /**
     * @defgroup Anchorview Anchorview
     *
+    * @image html img/widget/anchorview/preview-00.png
+    * @image latex img/widget/anchorview/preview-00.eps
+    *
     * Anchorview is for displaying text that contains markup with anchors
     * like <c>\<a href=1234\>something\</\></c> in it.
     *
@@ -6767,6 +6776,9 @@ extern "C" {
    /* anchorblock */
    /**
     * @defgroup Anchorblock Anchorblock
+    *
+    * @image html img/widget/anchorblock/preview-00.png
+    * @image latex img/widget/anchorblock/preview-00.eps
     *
     * Anchorblock is for displaying text that contains markup with anchors
     * like <c>\<a href=1234\>something\</\></c> in it.
@@ -7572,6 +7584,9 @@ extern "C" {
 
    /**
     * @defgroup Hoversel
+    *
+    * @image html img/widget/hoversel/preview-00.png
+    * @image latex img/widget/hoversel/preview-00.eps
     *
     * A hoversel is a button that pops up a list of items (automatically
     * choosing the direction to display) that have a label and, optionally, an
@@ -9647,6 +9662,9 @@ extern "C" {
    /**
     * @defgroup Flip Flip
     *
+    * @image html img/widget/flip/preview-00.png
+    * @image latex img/widget/flip/preview-00.eps
+    *
     * This widget holds 2 content objects(Evas_Object): one on the front and one
     * on the back. It allows you to flip from front to back and vice-versa using
     * various animations.
@@ -10093,6 +10111,9 @@ extern "C" {
 
    /**
     * @defgroup Flipselector Flip Selector
+    *
+    * @image html img/widget/flipselector/preview-00.png
+    * @image latex img/widget/flipselector/preview-00.eps
     *
     * A flip selector is a widget to show a set of @b text items, one
     * at a time, with the same sheet switching style as the @ref Clock
@@ -11157,6 +11178,9 @@ extern "C" {
    /**
     * @defgroup Diskselector Diskselector
     * @ingroup Elementary
+    *
+    * @image html img/widget/diskselector/preview-00.png
+    * @image latex img/widget/diskselector/preview-00.eps
     *
     * A diskselector is a kind of list widget. It scrolls horizontally,
     * and can contain label and icon objects. Three items are displayed

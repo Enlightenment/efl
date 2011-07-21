@@ -33,7 +33,13 @@
  * @image html img/widget/actionslider/preview-00.png
  * @image latex img/widget/actionslider/preview-00.eps
  * @li @ref Anchorview
+ *
+ * @image html img/widget/anchorview/preview-00.png
+ * @image latex img/widget/anchorview/preview-00.eps
  * @li @ref Anchorblock
+ *
+ * @image html img/widget/anchorblock/preview-00.png
+ * @image latex img/widget/anchorblock/preview-00.eps
  * @li @ref Bg
  *
  * @image html img/widget/bg/preview-00.png
@@ -70,20 +76,32 @@
  * @image latex img/widget/ctxpopup/preview-00.eps
  * @li @ref Diskselector
  *
+ * @image html img/widget/diskselector/preview-00.png
+ * @image latex img/widget/diskselector/preview-00.eps
+ * @li @ref Entry
+ *
  * @image html img/widget/entry/preview-02.png
  * @image latex img/widget/entry/preview-02.eps
- * @li @ref Entry
  * @li @ref File_Selector_Button
  *
  * @image html img/widget/fileselector_button/preview-00.png
  * @image latex img/widget/fileselector_button/preview-00.eps
  * @li @ref File_Selector_Entry
+ *
+ * @image html img/widget/fileselector_entry/preview-00.png
+ * @image latex img/widget/fileselector_entry/preview-00.eps
  * @li @ref Fileselector
  *
  * @image html img/widget/fileselector/preview-00.png
  * @image latex img/widget/fileselector/preview-00.eps
  * @li @ref Flip
+ *
+ * @image html img/widget/flip/preview-00.png
+ * @image latex img/widget/flip/preview-00.eps
  * @li @ref Flipselector
+ *
+ * @image html img/widget/flipselector/preview-00.png
+ * @image latex img/widget/flipselector/preview-00.eps
  * @li @ref Frame
  *
  * @image html img/widget/frame/preview-00.png
@@ -94,7 +112,13 @@
  * @li @ref GLView
  * @li @ref Grid
  * @li @ref Hover
+ *
+ * @image html img/widget/hover/preview-00.png
+ * @image latex img/widget/hover/preview-00.eps
  * @li @ref Hoversel
+ *
+ * @image html img/widget/hoversel/preview-00.png
+ * @image latex img/widget/hoversel/preview-00.eps
  * @li @ref Icon
  *
  * @image html img/widget/icon/preview-00.png

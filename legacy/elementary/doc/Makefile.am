@@ -58,11 +58,20 @@ widget_preview_entry1 \
 widget_preview_entry2 \
 widget_preview_entry3 \
 widget_preview_entry4
+widget_preview_diskselector \
+widget_preview_fileselector_entry \
+widget_preview_flipselector \
+widget_preview_hoversel \
+widget_preview_hover \
+widget_preview_anchorview \
+widget_preview_anchorblock \
+widget_preview_flip
 
 LDADD = $(top_builddir)/src/lib/libelementary.la @ELEMENTARY_EWEATHER_LIBS@ @ELEMENTARY_EDBUS_LIBS@ @ELEMENTARY_EFREET_LIBS@ @ELEMENTARY_LIBS@ @EIO_LIBS@ @my_libs@
 
 # dir:file name:executable:width:height
 WGT_PREVIEW = \
+	flip:preview-00.png:widget_preview_flip:100:100 \
 	button:preview-00.png:widget_preview_button1:160:50 \
 	button:preview-01.png:widget_preview_button2:160:50 \
 	button:preview-02.png:widget_preview_button3:160:50 \
@@ -92,6 +101,13 @@ WGT_PREVIEW = \
 	entry:preview-01.png:widget_preview_entry2:160:50 \
 	entry:preview-02.png:widget_preview_entry3:160:50 \
 	entry:preview-03.png:widget_preview_entry4:160:50
+	diskselector:preview-00.png:widget_preview_diskselector:120:50 \
+	fileselector_entry:preview-00.png:widget_preview_fileselector_entry:70:50 \
+	flipselector:preview-00.png:widget_preview_flipselector:100:60 \
+	hoversel:preview-00.png:widget_preview_hoversel:90:170 \
+	hover:preview-00.png:widget_preview_hover:90:170 \
+	anchorview:preview-00.png:widget_preview_anchorview:100:30 \
+	anchorblock:preview-00.png:widget_preview_anchorblock:100:30
 
 widget-preview:
 	@for ss in $(WGT_PREVIEW); do \
