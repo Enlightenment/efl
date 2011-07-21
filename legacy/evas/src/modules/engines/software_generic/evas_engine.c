@@ -433,6 +433,7 @@ eng_image_data_get(void *data __UNUSED__, void *image, int to_write, DATA32 **im
 	break;
       case EVAS_COLORSPACE_YCBCR422P601_PL:
       case EVAS_COLORSPACE_YCBCR422P709_PL:
+      case EVAS_COLORSPACE_YCBCR422601_PL:
 	*image_data = im->cs.data;
         break;
       default:
@@ -468,6 +469,7 @@ eng_image_data_put(void *data, void *image, DATA32 *image_data)
 	break;
       case EVAS_COLORSPACE_YCBCR422P601_PL:
       case EVAS_COLORSPACE_YCBCR422P709_PL:
+      case EVAS_COLORSPACE_YCBCR422601_PL:
 	if (image_data != im->cs.data)
 	  {
 	     if (im->cs.data)

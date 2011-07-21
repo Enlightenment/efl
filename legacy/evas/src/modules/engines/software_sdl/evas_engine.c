@@ -451,6 +451,7 @@ evas_engine_sdl_image_data_get(void *data, void *image,
         break;
      case EVAS_COLORSPACE_YCBCR422P709_PL:
      case EVAS_COLORSPACE_YCBCR422P601_PL:
+     case EVAS_COLORSPACE_YCBCR422601_PL:
         *image_data = im->cs.data;
         break;
      default:
@@ -487,6 +488,7 @@ evas_engine_sdl_image_data_put(void *data, void *image, DATA32* image_data)
         break;
      case EVAS_COLORSPACE_YCBCR422P601_PL:
      case EVAS_COLORSPACE_YCBCR422P709_PL:
+     case EVAS_COLORSPACE_YCBCR422601_PL:
         if (image_data != im->cs.data)
           {
              if (im->cs.data)

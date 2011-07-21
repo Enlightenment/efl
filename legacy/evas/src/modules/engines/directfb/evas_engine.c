@@ -1332,6 +1332,7 @@ evas_engine_dfb_image_data_get(void *data __UNUSED__, void *image, int to_write,
        }
      case EVAS_COLORSPACE_YCBCR422P709_PL:
      case EVAS_COLORSPACE_YCBCR422P601_PL:
+     case EVAS_COLORSPACE_YCBCR422601_PL:
 	/* XXX untested */
         *image_data = im->cs.data;
         break;
@@ -1383,6 +1384,7 @@ evas_engine_dfb_image_data_put(void *data, void *image, DATA32* image_data)
         break;
      case EVAS_COLORSPACE_YCBCR422P601_PL:
      case EVAS_COLORSPACE_YCBCR422P709_PL:
+     case EVAS_COLORSPACE_YCBCR422601_PL:
 	/* XXX untested */
         if (image_data != im->cs.data)
           {

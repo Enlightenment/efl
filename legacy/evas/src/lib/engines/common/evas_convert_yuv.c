@@ -25,6 +25,7 @@ static void _evas_yv12torgb_altivec(unsigned char **yuv, unsigned char *rgb, int
 static void _evas_yv12torgb_diz    (unsigned char **yuv, unsigned char *rgb, int w, int h);
 #endif
 static void _evas_yv12torgb_raster (unsigned char **yuv, unsigned char *rgb, int w, int h);
+static void _evas_yuy2torgb_raster (unsigned char **yuv, unsigned char *rgb, int w, int h);
 
 #define CRV    104595
 #define CBU    132251
@@ -119,6 +120,8 @@ static unsigned char _clip_lut[1024];
 
 #define CMP_CLIP(i) ((i&256)? (~(i>>10)) : i);
 
+static int initted = 0;
+
 #endif
 
 void
@@ -147,8 +150,6 @@ evas_common_convert_yuv_420p_601_rgba(DATA8 **src, DATA8 *dst, int w, int h)
    else
      {
 #ifdef BUILD_C
-	static int initted = 0;
-
 	if (!initted) _evas_yuv_init();
 	initted = 1;
 	/* FIXME: diz may be faster sometimes */
@@ -877,12 +878,77 @@ _evas_yv12torgb_raster(unsigned char **yuv, unsigned char *rgb, int w, int h)
 	     /* yuv to rgb */
 	     y = _v1164[*yp2++];
 	     *((DATA32 *) dp2) = 0xff000000 + RGB_JOIN(LUT_CLIP(y + v), LUT_CLIP(y - vmu), LUT_CLIP(y + u));
-	     
+
 	     dp2 += 4;
 	  }
 	/* jump down one line since we are doing 2 at once */
 	dp1 += (w * 4);
 	dp2 += (w * 4);
+     }
+#endif
+}
+
+void
+evas_common_convert_yuv_422_601_rgba(DATA8 **src, DATA8 *dst, int w, int h)
+{
+#ifdef BUILD_C
+   if (!initted) _evas_yuv_init();
+   initted = 1;
+   _evas_yuy2torgb_raster(src, dst, w, h);
+#endif
+}
+
+static void
+_evas_yuy2torgb_raster(unsigned char **yuv, unsigned char *rgb, int w, int h)
+{
+#ifdef BUILD_C
+   int xx, yy;
+   int y, u, v;
+   unsigned char *yp1, *yp2, *up, *vp;
+   unsigned char *dp1;
+
+   dp1 = rgb;
+
+   /* destination pointers */
+   for (yy = 0; yy < h; yy++)
+     {
+        /* plane pointers */
+        unsigned char *line;
+
+        line = yuv[yy];
+        yp1 = line + 0;
+        up = line + 1;
+        yp2 = line + 2;
+        vp = line + 3;
+
+        for (xx = 0; xx < w; xx += 2)
+          {
+             int vmu;
+
+             /* collect u & v for 2 pixels block */
+             u = *up;
+             v = *vp;
+
+             /* save lookups */
+             vmu = _v813[v] + _v391[u];
+             u = _v2018[u];
+             v = _v1596[v];
+
+             /* do the top 2 pixels of the 2x2 block which shared u & v */
+	     /* yuv to rgb */
+	     y = _v1164[*yp1];
+	     *((DATA32 *) dp1) = 0xff000000 + RGB_JOIN(LUT_CLIP(y + v), LUT_CLIP(y - vmu), LUT_CLIP(y + u));
+
+	     dp1 += 4;
+
+	     /* yuv to rgb */
+	     y = _v1164[*yp2];
+	     *((DATA32 *) dp1) = 0xff000000 + RGB_JOIN(LUT_CLIP(y + v), LUT_CLIP(y - vmu), LUT_CLIP(y + u));
+
+             dp1 += 4;
+
+	     yp1 += 4; yp2 += 4; up += 4; vp += 4;
+	  }
      }
 #endif
 }
