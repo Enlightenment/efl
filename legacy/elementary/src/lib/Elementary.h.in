@@ -1654,6 +1654,9 @@ extern "C" {
    /**
     * @defgroup Bg Bg
     *
+    * @image html img/icon/bg/preview-00.png
+    * @image latex img/icon/bg/preview-00.png
+    *
     * @brief Background object, used for setting a solid color, image or Edje
     * group as background to a window or any container object.
     *
@@ -1829,6 +1832,9 @@ extern "C" {
 
    /**
     * @defgroup Icon Icon
+    *
+    * @image html img/icon/button/preview-00.png
+    * @image latex img/icon/button/preview-00.png
     *
     * An object that provides standard icon images (delete, edit, arrows, etc.)
     * or a custom file (PNG, JPG, EDJE, etc.) used for an icon.
@@ -2190,6 +2196,9 @@ extern "C" {
 
    /**
     * @defgroup Image Image
+    *
+    * @image html img/image/button/preview-00.png
+    * @image latex img/image/button/preview-00.png
     *
     * An object that allows one to load an image file to it. It can be used
     * anywhere like any other elementary widget.
@@ -7217,6 +7226,9 @@ extern "C" {
    /**
     * @addtogroup Actionslider Actionslider
     *
+    * @image html img/icon/actionslider/preview-00.png
+    * @image latex img/icon/actionslider/preview-00.png
+    *
     * A actionslider is a switcher for 2 or 3 labels with customizable magnet
     * properties. The indicator is the element the user drags to choose a label.
     * When the position is set with magnet, when released the indicator will be
@@ -7781,6 +7793,9 @@ extern "C" {
 
    /**
     * @defgroup Fileselector File Selector
+    *
+    * @image html img/icon/fileselector/preview-00.png
+    * @image latex img/icon/fileselector/preview-00.png
     *
     * A file selector is a widget that allows a user to navigate
     * through a file system, reporting file selections back via its
@@ -9764,6 +9779,9 @@ extern "C" {
    /**
     * @defgroup Calendar Calendar
     * @ingroup Elementary
+    *
+    * @image html img/widget/calendar/preview-00.png
+    * @image latex img/widget/calendar/preview-00.eps
     *
     * A calendar is a widget that displays a regular calendar, one
     * month at a time, to the user, and can allows the user to select a date.

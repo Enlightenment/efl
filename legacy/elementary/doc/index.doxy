@@ -29,9 +29,15 @@
  * And here a list of the widgets and some images to give you an idea of what
  * they are:
  * @li @ref Actionslider
+ *
+ * @image html img/widget/actionslider/preview-00.png
+ * @image latex img/widget/actionslider/preview-00.eps
  * @li @ref Anchorview
  * @li @ref Anchorblock
  * @li @ref Bg
+ *
+ * @image html img/widget/bg/preview-00.png
+ * @image latex img/widget/bg/preview-00.eps
  * @li @ref Box
  * @li @ref Bubble
  *
@@ -42,6 +48,9 @@
  * @image html img/widget/button/preview-00.png
  * @image latex img/widget/button/preview-00.eps
  * @li @ref Calendar
+ *
+ * @image html img/widget/calendar/preview-00.png
+ * @image latex img/widget/calendar/preview-00.eps
  * @li @ref Check
  *
  * @image html img/widget/check/preview-00.png
@@ -67,6 +76,9 @@
  * @image latex img/widget/fileselector_button/preview-00.eps
  * @li @ref File_Selector_Entry
  * @li @ref Fileselector
+ *
+ * @image html img/widget/fileselector/preview-00.png
+ * @image latex img/widget/fileselector/preview-00.eps
  * @li @ref Flip
  * @li @ref Flipselector
  * @li @ref Frame
@@ -81,7 +93,13 @@
  * @li @ref Hover
  * @li @ref Hoversel
  * @li @ref Icon
+ *
+ * @image html img/widget/icon/preview-00.png
+ * @image latex img/widget/icon/preview-00.eps
  * @li @ref Image
+ *
+ * @image html img/widget/image/preview-00.png
+ * @image latex img/widget/image/preview-00.eps
  * @li @ref Index
  *
  * @image html img/widget/index/preview-00.png
