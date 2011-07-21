@@ -47,6 +47,9 @@
  * @image html img/widget/check/preview-00.png
  * @image latex img/widget/check/preview-00.eps
  * @li @ref Clock
+ *
+ * @image html img/widget/clock/preview-00.png
+ * @image latex img/widget/clock/preview-00.eps
  * @li @ref Conformant
  * @li @ref Colorselector
  *
@@ -64,6 +67,9 @@
  * @li @ref Flip
  * @li @ref Flipselector
  * @li @ref Frame
+ *
+ * @image html img/widget/frame/preview-00.png
+ * @image latex img/widget/frame/preview-00.eps
  * @li @ref Gengrid
  * @li @ref Genlist
  * @li @ref Genscroller
@@ -79,8 +85,11 @@
  * @image latex img/widget/index/preview-00.eps
  * @li @ref Inwin
  * @li @ref Label
-
+ *
+ * @image html img/widget/label/preview-00.png
+ * @image latex img/widget/label/preview-00.eps
  * @li @ref Layout
+ *
  * @image html img/widget/layout/preview-00.png
  * @image latex img/widget/layout/preview-00.eps
  * @image html img/layout-predefined.png

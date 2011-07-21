@@ -3904,6 +3904,9 @@ extern "C" {
    /**
     * @defgroup Label Label
     *
+    * @image html img/widget/label/preview-00.png
+    * @image latex img/widget/label/preview-00.eps
+    *
     * @brief Widget to display text, with simple html-like markup.
     *
     * The Label widget @b doesn't allow text to overflow its boundaries, if the
@@ -4192,6 +4195,9 @@ extern "C" {
    /**
     * @defgroup Frame Frame
     *
+    * @image html img/widget/frame/preview-00.png
+    * @image latex img/widget/frame/preview-00.eps
+    *
     * @brief Frame is a widget that holds some content and has a title.
     *
     * The default look is a frame with a title, but Frame supports multple
@@ -4392,6 +4398,9 @@ extern "C" {
 
    /**
     * @defgroup Clock Clock
+    *
+    * @image html img/widget/clock/preview-00.png
+    * @image latex img/widget/clock/preview-00.eps
     *
     * This is a @b digital clock widget. In its default theme, it has a
     * vintage "flipping numbers clock" appearance, which will animate
