@@ -1425,52 +1425,50 @@ _signal_anchor_clicked(void *data, Evas_Object *obj __UNUSED__, const char *emis
    Widget_Data *wd = elm_widget_data_get(data);
    Elm_Entry_Anchor_Info ei;
    char *buf2, *p, *p2, *n;
+   const Eina_List *geoms;
    if (!wd) return;
    p = strrchr(emission, ',');
-   if (p)
+   if (!p) return;
+
+   n = p + 1;
+   p2 = p -1;
+   while (p2 >= emission)
      {
-        const Eina_List *geoms;
+        if (*p2 == ',') break;
+        p2--;
+     }
+   p2++;
+   buf2 = alloca(5 + p - p2);
+   strncpy(buf2, p2, p - p2);
+   buf2[p - p2] = 0;
+   ei.name = n;
+   ei.button = atoi(buf2);
+   ei.x = ei.y = ei.w = ei.h = 0;
+   geoms =
+      edje_object_part_text_anchor_geometry_get(wd->ent, "elm.text", ei.name);
+   if (geoms)
+     {
+        Evas_Textblock_Rectangle *r;
+        const Eina_List *l;
+        Evas_Coord px, py, x, y;
 
-        n = p + 1;
-        p2 = p -1;
-        while (p2 >= emission)
+        evas_object_geometry_get(wd->ent, &x, &y, NULL, NULL);
+        evas_pointer_canvas_xy_get(evas_object_evas_get(wd->ent), &px, &py);
+        EINA_LIST_FOREACH(geoms, l, r)
           {
-             if (*p2 == ',') break;
-             p2--;
-          }
-        p2++;
-        buf2 = alloca(5 + p - p2);
-        strncpy(buf2, p2, p - p2);
-        buf2[p - p2] = 0;
-        ei.name = n;
-        ei.button = atoi(buf2);
-        ei.x = ei.y = ei.w = ei.h = 0;
-        geoms =
-           edje_object_part_text_anchor_geometry_get(wd->ent, "elm.text", ei.name);
-        if (geoms)
-          {
-             Evas_Textblock_Rectangle *r;
-             const Eina_List *l;
-             Evas_Coord px, py, x, y;
-
-             evas_object_geometry_get(wd->ent, &x, &y, NULL, NULL);
-             evas_pointer_canvas_xy_get(evas_object_evas_get(wd->ent), &px, &py);
-             EINA_LIST_FOREACH(geoms, l, r)
+             if (((r->x + x) <= px) && ((r->y + y) <= py) &&
+                 ((r->x + x + r->w) > px) && ((r->y + y + r->h) > py))
                {
-                  if (((r->x + x) <= px) && ((r->y + y) <= py) &&
-                      ((r->x + x + r->w) > px) && ((r->y + y + r->h) > py))
-                    {
-                       ei.x = r->x + x;
-                       ei.y = r->y + y;
-                       ei.w = r->w;
-                       ei.h = r->h;
-                       break;
-                    }
+                  ei.x = r->x + x;
+                  ei.y = r->y + y;
+                  ei.w = r->w;
+                  ei.h = r->h;
+                  break;
                }
           }
-        if (!wd->disabled)
-          evas_object_smart_callback_call(data, SIG_ANCHOR_CLICKED, &ei);
      }
+   if (!wd->disabled)
+     evas_object_smart_callback_call(data, SIG_ANCHOR_CLICKED, &ei);
 }
 
 static void
