@@ -127,21 +127,6 @@ _theme_hook(Evas_Object *obj)
         edje_object_scale_set(it->base.view, elm_widget_scale_get(it->base.view)
                               *_elm_config->scale);
         edje_object_mirrored_set(it->base.view, rtl);
-        if (it->label)
-          {
-             edje_object_part_text_set(it->base.view, "elm.text", it->label);
-             edje_object_signal_emit(it->base.view, "elm,state,text,visible", "elm");
-          }
-        else
-          edje_object_signal_emit(it->base.view, "elm,state,text,hidden", "elm");
-
-        if (it->icon)
-          {
-             edje_object_part_swallow(it->base.view, "elm.swallow.icon", it->icon);
-             edje_object_signal_emit(it->base.view, "elm,state,icon,visible", "elm");
-          }
-        else
-          edje_object_signal_emit(it->base.view, "elm,state,icon,hidden", "elm");
      }
 
    _update_list(wd);
@@ -361,7 +346,10 @@ _swallow_item_objects(Elm_Segment_Item *it)
      edje_object_signal_emit(it->base.view, "elm,state,icon,hidden", "elm");
 
    if (it->label)
-     edje_object_signal_emit(it->base.view, "elm,state,text,visible", "elm");
+     {
+        edje_object_part_text_set(it->base.view, "elm.text", it->label);
+        edje_object_signal_emit(it->base.view, "elm,state,text,visible", "elm");
+     }
    else
      edje_object_signal_emit(it->base.view, "elm,state,text,hidden", "elm");
    edje_object_message_signal_process(it->base.view);
@@ -476,6 +464,8 @@ _item_new(Evas_Object *obj, Evas_Object *icon, const char *label)
                          *_elm_config->scale);
    evas_object_smart_member_add(it->base.view, obj);
    elm_widget_sub_object_add(obj, it->base.view);
+   evas_object_clip_set(it->base.view, evas_object_clip_get(obj));
+
    _elm_theme_object_set(obj, it->base.view, "segment_control", "item",
                          elm_object_style_get(obj));
    edje_object_mirrored_set(it->base.view,

@@ -618,10 +618,10 @@ collections {
             type: RECT;
             scale: 1; //allow scaling
             description {
-            state: "default" 0.0;
-            visible: 0;
-            min: 480 400;
-            color:  0 0 0 0;
+               state: "default" 0.0;
+               visible: 0;
+               visible: 0;
+               min: 480 400;
             }
          }
          part { name: "top_padding";
@@ -632,9 +632,12 @@ collections {
                visible: 0;
                min : 250 30; //minimum size for gap filler
                fixed: 0 1;
-               rel1 { relative: 0 0; }
-               rel2 { relative: 1 0; }
-               color:  0 0 0 0;
+               rel1 {
+                  relative: 0 0;
+               }
+               rel2 {
+                  relative: 1 0;
+               }
                align: 0 0;
             }
          }
@@ -644,8 +647,15 @@ collections {
             description {
                state: "default" 0.0;
                fixed: 1 1;
-               rel1 { relative: 0.0 1.0; to_x: "bg"; to_y: "top_padding"; }
-               rel2 { relative: 1.0 0.25; to: "bg"; }
+               rel1 {
+                  relative: 0.0 1.0;
+                  to_x: "bg";
+                  to_y: "top_padding";
+               }
+               rel2 {
+                  relative: 1.0 0.25;
+                  to: "bg";
+               }
                align: 0.5 0.0;
             }
          }
@@ -659,9 +669,14 @@ collections {
                max : 250 10;
                fixed: 1 1;
                align: 0.5 0;
-               rel1 { relative: 0 1.0; to_y: "segment1"; }
-               rel2 { relative: 1 1.0; to_y: "segment1"; }
-               color: 0 255 0 0;
+               rel1 {
+                  relative: 0 1.0;
+                  to_y: "segment1";
+               }
+               rel2 {
+                  relative: 1 1.0;
+                  to_y: "segment1";
+               }
             }
          }
          part { name: "segment2";
@@ -670,8 +685,15 @@ collections {
             description {
                state: "default" 0.0;
                fixed: 1 1;
-               rel1 { relative: 0.1 1.0; to_x: "bg"; to_y: "segment1_bottom_padding"; }
-               rel2 { relative: 0.9 160/400; to: "bg"; }
+               rel1 {
+                  relative: 0.1 1.0;
+                  to_x: "bg";
+                  to_y: "segment1_bottom_padding";
+               }
+               rel2 {
+                  relative: 0.9 160/400;
+                  to: "bg";
+               }
                align: 0.5 0.0;
             }
          }
@@ -685,9 +707,14 @@ collections {
                max : 250 10;
                fixed: 1 1;
                align: 0.5 0;
-               rel1 { relative: 0 1.0; to_y: "segment2"; }
-               rel2 { relative: 1 1.0; to_y: "segment2"; }
-               color: 0 255 0 0;
+               rel1 {
+                  relative: 0 1.0;
+                  to_y: "segment2";
+               }
+               rel2 {
+                  relative: 1 1.0;
+                  to_y: "segment2";
+               }
             }
          }
          part { name: "segment3";
@@ -696,8 +723,15 @@ collections {
             description {
                state: "default" 0.0;
                fixed: 1 1;
-               rel1 { relative: 0.2 1.0; to_x: "bg"; to_y: "segment2_bottom_padding"; }
-               rel2 { relative: 0.8 0.6; to: "bg"; }
+               rel1 {
+                  relative: 0.2 1.0;
+                  to_x: "bg";
+                  to_y: "segment2_bottom_padding";
+               }
+               rel2 {
+                  relative: 0.8 0.6;
+                  to: "bg";
+               }
                align: 0.5 0.0;
             }
          }
@@ -711,9 +745,14 @@ collections {
                max : 250 10;
                fixed: 1 1;
                align: 0.5 0;
-               rel1 { relative: 0 1.0; to_y: "segment3"; }
-               rel2 { relative: 1 1.0; to_y: "segment3"; }
-               color: 0 255 0 0;
+               rel1 {
+                  relative: 0 1.0;
+                  to_y: "segment3";
+               }
+               rel2 {
+                  relative: 1 1.0;
+                  to_y: "segment3";
+               }
             }
          }
          part { name: "segment4";
@@ -722,8 +761,15 @@ collections {
             description {
                state: "default" 0.0;
                fixed: 1 1;
-               rel1 { relative: 0.3 1.0; to_x: "bg"; to_y: "segment3_bottom_padding"; }
-               rel2 { relative: 0.7 340/400; to: "bg"; }
+               rel1 {
+                  relative: 0.3 1.0;
+                  to_x: "bg";
+                  to_y: "segment3_bottom_padding";
+               }
+               rel2 {
+                  relative: 0.7 340/400;
+                  to: "bg";
+               }
                align: 0.5 0.0;
             }
          }
@@ -737,9 +783,14 @@ collections {
                max : 250 100;
                fixed: 1 1;
                align: 0.5 0;
-               rel1 { relative: 0 1.0; to_y: "segment4"; }
-               rel2 { relative: 1 1.0; to_y: "segment4"; }
-               color: 0 255 0 0;
+               rel1 {
+                  relative: 0 1.0;
+                  to_y: "segment4";
+               }
+               rel2 {
+                  relative: 1 1.0;
+                  to_y: "segment4";
+               }
             }
          }
        }
