@@ -2657,8 +2657,8 @@ evas_object_image_render(Evas_Object *obj, void *output, void *context, void *su
                   pt->fx = p->px;
                   pt->fy = p->py;
                   pt->fz = p->z;
-                  pt->u = ((p->u * imagew) / uvw) * FP1;
-                  pt->v = ((p->v * imageh) / uvh) * FP1;
+                  pt->u = ((p->u / obj->cur.geometry.w) * imagew) * FP1;
+                  pt->v = ((p->v / obj->cur.geometry.h) * imageh) * FP1;
                   if      (pt->u < 0) pt->u = 0;
                   else if (pt->u > (imagew * FP1)) pt->u = (imagew * FP1);
                   if      (pt->v < 0) pt->v = 0;
