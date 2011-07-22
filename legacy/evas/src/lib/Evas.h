@@ -7446,6 +7446,8 @@ EAPI Evas_BiDi_Direction evas_object_text_direction_get  (const Evas_Object *obj
  * @todo put here some usage examples
  *
  * @ingroup Evas_Object_Specific
+ *
+ * @{
  */
 
 /**
@@ -8299,6 +8301,9 @@ EAPI void                         evas_object_textblock_size_formatted_get(const
  */
 EAPI void                         evas_object_textblock_size_native_get(const Evas_Object *obj, Evas_Coord *w, Evas_Coord *h) EINA_ARG_NONNULL(1);
    EAPI void                         evas_object_textblock_style_insets_get(const Evas_Object *obj, Evas_Coord *l, Evas_Coord *r, Evas_Coord *t, Evas_Coord *b) EINA_ARG_NONNULL(1);
+/**
+ * @}
+ */
 
 /**
  * @defgroup Evas_Line_Group Line Object Functions
@@ -8306,6 +8311,8 @@ EAPI void                         evas_object_textblock_size_native_get(const Ev
  * Functions used to deal with evas line objects.
  *
  * @ingroup Evas_Object_Specific
+ *
+ * @{
  */
 
 /**
@@ -8338,6 +8345,9 @@ EAPI void              evas_object_line_xy_set           (Evas_Object *obj, Evas
  *            second end point.
  */
 EAPI void              evas_object_line_xy_get           (const Evas_Object *obj, Evas_Coord *x1, Evas_Coord *y1, Evas_Coord *x2, Evas_Coord *y2);
+/**
+ * @}
+ */
 
 /**
  * @defgroup Evas_Object_Polygon Polygon Object Functions
@@ -8348,6 +8358,8 @@ EAPI void              evas_object_line_xy_get           (const Evas_Object *obj
  * can calculate points and convert these to a polygon.
  *
  * @ingroup Evas_Object_Specific
+ *
+ * @{
  */
 
 /**
@@ -8371,6 +8383,9 @@ EAPI void              evas_object_polygon_point_add     (Evas_Object *obj, Evas
  * @param   obj The given polygon object.
  */
 EAPI void              evas_object_polygon_points_clear  (Evas_Object *obj) EINA_ARG_NONNULL(1);
+/**
+ * @}
+ */
 
 /**
  * @defgroup Evas_Smart_Group Smart Functions
