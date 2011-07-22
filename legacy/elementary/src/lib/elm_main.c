@@ -3249,7 +3249,7 @@ elm_object_signal_emit(Evas_Object *obj,
  * @ingroup General
  */
 EAPI void
-elm_object_signal_callback_add(Evas_Object *obj, const char *emission, const char *source, void (*func) (void *data, Evas_Object *o, const char *emission, const char *source), void *data)
+elm_object_signal_callback_add(Evas_Object *obj, const char *emission, const char *source, Edje_Signal_Cb func, void *data)
 {
     EINA_SAFETY_ON_NULL_RETURN(obj);
     EINA_SAFETY_ON_NULL_RETURN(func);
@@ -3274,7 +3274,7 @@ elm_object_signal_callback_add(Evas_Object *obj, const char *emission, const cha
  * @ingroup General
  */
 EAPI void *
-elm_object_signal_callback_del(Evas_Object *obj, const char *emission, const char *source, void (*func) (void *data, Evas_Object *o, const char *emission, const char *source))
+elm_object_signal_callback_del(Evas_Object *obj, const char *emission, const char *source, Edje_Signal_Cb func)
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(obj, NULL);
     EINA_SAFETY_ON_NULL_RETURN_VAL(func, NULL);
