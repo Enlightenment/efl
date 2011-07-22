@@ -44,7 +44,6 @@
  *
  * @image html img/widget/bg/preview-00.png
  * @image latex img/widget/bg/preview-00.eps
- * @li @ref Box
  * @li @ref Bubble
  *
  * @image html img/widget/bubble/preview-00.png
@@ -65,12 +64,7 @@
  *
  * @image html img/widget/clock/preview-00.png
  * @image latex img/widget/clock/preview-00.eps
- * @li @ref Conformant
  *
- * @image html img/widget/conformant/preview-00.png
- * @image latex img/widget/conformant/preview-00.eps
- * @image html img/conformant.png
- * @image latex img/conformant.eps
  * @li @ref Colorselector
  *
  * @image html img/widget/colorselector/preview-00.png
@@ -111,11 +105,8 @@
  *
  * @image html img/widget/frame/preview-00.png
  * @image latex img/widget/frame/preview-00.eps
- * @li @ref Gengrid
- * @li @ref Genlist
  * @li @ref Genscroller
  * @li @ref GLView
- * @li @ref Grid
  * @li @ref Hover
  *
  * @image html img/widget/hover/preview-00.png
@@ -141,13 +132,6 @@
  *
  * @image html img/widget/label/preview-00.png
  * @image latex img/widget/label/preview-00.eps
- * @li @ref Layout
- *
- * @image html img/widget/layout/preview-00.png
- * @image latex img/widget/layout/preview-00.eps
- * @image html img/layout-predefined.png
- * @image latex img/layout-predefined.eps
- * @li @ref List
  * @li @ref Map
  * @li @ref Mapbuf
  * @li @ref Menu
@@ -166,7 +150,6 @@
  * @li @ref Slider
  * @li @ref Slideshow
  * @li @ref Spinner
- * @li @ref Table
  * @li @ref Thumb
  * @li @ref Toggle
  * @li @ref Toolbar
@@ -174,4 +157,27 @@
  * @li @ref Video
  * @li @ref Widget
  * @li @ref Win
+ *
+ * Elementary is also about displaing its widgets in a nice layout, for this
+ * purpose it provides a number of containers. It's important to note that as
+ * containers these widgets don't have their own visual identity, so here we
+ * show one use for them and a diagram showing their component parts:
+ * @li @ref Box
+ * @li @ref Conformant
+ *
+ * @image html img/widget/conformant/preview-00.png
+ * @image latex img/widget/conformant/preview-00.eps
+ * @image html img/conformant.png
+ * @image latex img/conformant.eps
+ * @li @ref Gengrid
+ * @li @ref Genlist
+ * @li @ref Grid
+ * @li @ref Layout
+ *
+ * @image html img/widget/layout/preview-00.png
+ * @image latex img/widget/layout/preview-00.eps
+ * @image html img/layout-predefined.png
+ * @image latex img/layout-predefined.eps
+ * @li @ref List
+ * @li @ref Table
  */
