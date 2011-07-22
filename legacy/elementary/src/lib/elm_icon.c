@@ -477,13 +477,12 @@ elm_icon_file_set(Evas_Object *obj, const char *file, const char *group)
    ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
    Widget_Data *wd = elm_widget_data_get(obj);
    Eina_Bool ret;
-   const char *p;
 
    if (!wd) return EINA_FALSE;
    EINA_SAFETY_ON_NULL_RETURN_VAL(file, EINA_FALSE);
    if (wd->stdicon) eina_stringshare_del(wd->stdicon);
    wd->stdicon = NULL;
-   if (((p = strrchr(file, '.'))) && (!strcasecmp(p, ".edj")))
+   if (eina_str_has_extension(file, ".edj"))
      ret = _els_smart_icon_file_edje_set(wd->img, file, group);
    else
      ret = _els_smart_icon_file_key_set(wd->img, file, group);
