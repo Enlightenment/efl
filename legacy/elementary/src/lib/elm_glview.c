@@ -26,10 +26,10 @@ struct _Widget_Data
 
    Evas_Coord                w, h;
 
-   Elm_GLView_Func           init_func;
-   Elm_GLView_Func           del_func;
-   Elm_GLView_Func           resize_func;
-   Elm_GLView_Func           render_func;
+   Elm_GLView_Func_Cb        init_func;
+   Elm_GLView_Func_Cb        del_func;
+   Elm_GLView_Func_Cb        resize_func;
+   Elm_GLView_Func_Cb        render_func;
 
    Ecore_Idle_Enterer       *render_idle_enterer;
 
@@ -485,7 +485,7 @@ elm_glview_size_get(const Evas_Object *obj, int *width, int *height)
  * @ingroup GLView
  */
 EAPI void
-elm_glview_init_func_set(Evas_Object *obj, Elm_GLView_Func func)
+elm_glview_init_func_set(Evas_Object *obj, Elm_GLView_Func_Cb func)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -506,7 +506,7 @@ elm_glview_init_func_set(Evas_Object *obj, Elm_GLView_Func func)
  * @ingroup GLView
  */
 EAPI void
-elm_glview_del_func_set(Evas_Object *obj, Elm_GLView_Func func)
+elm_glview_del_func_set(Evas_Object *obj, Elm_GLView_Func_Cb func)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -524,7 +524,7 @@ elm_glview_del_func_set(Evas_Object *obj, Elm_GLView_Func func)
  * @ingroup GLView
  */
 EAPI void
-elm_glview_resize_func_set(Evas_Object *obj, Elm_GLView_Func func)
+elm_glview_resize_func_set(Evas_Object *obj, Elm_GLView_Func_Cb func)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -547,7 +547,7 @@ elm_glview_resize_func_set(Evas_Object *obj, Elm_GLView_Func func)
  * @ingroup GLView
  */
 EAPI void
-elm_glview_render_func_set(Evas_Object *obj, Elm_GLView_Func func)
+elm_glview_render_func_set(Evas_Object *obj, Elm_GLView_Func_Cb func)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);

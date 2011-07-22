@@ -2577,7 +2577,7 @@ extern "C" {
     */
 
    /* glview */
-   typedef void (*Elm_GLView_Func)(Evas_Object *obj);
+   typedef void (*Elm_GLView_Func_Cb)(Evas_Object *obj);
 
    typedef enum _Elm_GLView_Mode
      {
@@ -2611,10 +2611,10 @@ extern "C" {
    EAPI Eina_Bool        elm_glview_mode_set(Evas_Object *obj, Elm_GLView_Mode mode) EINA_ARG_NONNULL(1);
    EAPI Eina_Bool        elm_glview_resize_policy_set(Evas_Object *obj, Elm_GLView_Resize_Policy policy) EINA_ARG_NONNULL(1);
    EAPI Eina_Bool        elm_glview_render_policy_set(Evas_Object *obj, Elm_GLView_Render_Policy policy) EINA_ARG_NONNULL(1);
-   EAPI void             elm_glview_init_func_set(Evas_Object *obj, Elm_GLView_Func func) EINA_ARG_NONNULL(1);
-   EAPI void             elm_glview_del_func_set(Evas_Object *obj, Elm_GLView_Func func) EINA_ARG_NONNULL(1);
-   EAPI void             elm_glview_resize_func_set(Evas_Object *obj, Elm_GLView_Func func) EINA_ARG_NONNULL(1);
-   EAPI void             elm_glview_render_func_set(Evas_Object *obj, Elm_GLView_Func func) EINA_ARG_NONNULL(1);
+   EAPI void             elm_glview_init_func_set(Evas_Object *obj, Elm_GLView_Func_Cb func) EINA_ARG_NONNULL(1);
+   EAPI void             elm_glview_del_func_set(Evas_Object *obj, Elm_GLView_Func_Cb func) EINA_ARG_NONNULL(1);
+   EAPI void             elm_glview_resize_func_set(Evas_Object *obj, Elm_GLView_Func_Cb func) EINA_ARG_NONNULL(1);
+   EAPI void             elm_glview_render_func_set(Evas_Object *obj, Elm_GLView_Func_Cb func) EINA_ARG_NONNULL(1);
    EAPI void             elm_glview_changed_set(Evas_Object *obj) EINA_ARG_NONNULL(1);
 
    /* box */

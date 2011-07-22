@@ -598,7 +598,7 @@ test_glview(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    elm_glview_init_func_set(gl, _init_gl);
    elm_glview_del_func_set(gl, _del_gl);
    elm_glview_resize_func_set(gl, _resize_gl);
-   elm_glview_render_func_set(gl, (Elm_GLView_Func)_draw_gl);
+   elm_glview_render_func_set(gl, (Elm_GLView_Func_Cb)_draw_gl);
    elm_box_pack_end(bx, gl);
    evas_object_show(gl);
 
