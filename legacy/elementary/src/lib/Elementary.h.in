@@ -7285,7 +7285,7 @@ extern "C" {
    /** @defgroup Elm_Gesture_Layer Gesture Layer */
    /**
     * @enum _Elm_Gesture_Types
-    * Emum of supported gesture types.
+    * Enum of supported gesture types.
     * @ingroup Elm_Gesture_Layer
     */
    enum _Elm_Gesture_Types
@@ -7309,14 +7309,14 @@ extern "C" {
 
    /**
     * @typedef Elm_Gesture_Types
-    * Type for Emum of supported gesture types.
+    * Type for Enum of supported gesture types.
     * @ingroup Elm_Gesture_Layer
     */
    typedef enum _Elm_Gesture_Types Elm_Gesture_Types;
 
    /**
     * @enum _Elm_Gesture_State
-    * Emum of gesture states.
+    * Enum of gesture states.
     * @ingroup Elm_Gesture_Layer
     */
    enum _Elm_Gesture_State
