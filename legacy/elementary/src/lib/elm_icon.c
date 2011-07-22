@@ -472,6 +472,23 @@ elm_icon_add(Evas_Object *parent)
 }
 
 EAPI Eina_Bool
+elm_icon_memfile_set(Evas_Object *obj, const void *img, size_t size, const char *format, const char *key)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   Eina_Bool ret;
+
+   if (!wd) return EINA_FALSE;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(img, EINA_FALSE);
+   EINA_SAFETY_ON_TRUE_RETURN_VAL(!size, EINA_FALSE);
+   eina_stringshare_del(wd->stdicon);
+   wd->stdicon = NULL;
+   ret = _els_smart_icon_memfile_set(wd->img, img, size, format, key);
+   _sizing_eval(obj);
+   return ret;
+}
+
+EAPI Eina_Bool
 elm_icon_file_set(Evas_Object *obj, const char *file, const char *group)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;

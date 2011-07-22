@@ -65,14 +65,13 @@ _preloaded(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event __UNUSE
    sd->prev = NULL;
 }
 
-Eina_Bool
-_els_smart_icon_file_key_set(Evas_Object *obj, const char *file, const char *key)
+static void
+_els_smart_icon_file_helper(Evas_Object *obj)
 {
    Smart_Data *sd;
    Evas_Object *pclip;
 
    sd = evas_object_smart_data_get(obj);
-   if (!sd) return EINA_FALSE;
    /* smart code here */
    if (sd->prev) evas_object_del(sd->prev);
    pclip = evas_object_clip_get(sd->obj);
@@ -89,6 +88,40 @@ _els_smart_icon_file_key_set(Evas_Object *obj, const char *file, const char *key
 
    if (!sd->size)
      evas_object_image_load_size_set(sd->obj, sd->size, sd->size);
+}
+
+Eina_Bool
+_els_smart_icon_memfile_set(Evas_Object *obj, const void *img, size_t size, const char *format, const char *key)
+{
+   Smart_Data *sd;
+
+   sd = evas_object_smart_data_get(obj);
+   if (!sd) return EINA_FALSE;
+   _els_smart_icon_file_helper(obj);
+
+   evas_object_image_memfile_set(sd->obj, (void*)img, size, (char*)format, (char*)key);
+   sd->preloading = EINA_TRUE;
+   sd->show = EINA_TRUE;
+   evas_object_hide(sd->obj);
+   evas_object_image_preload(sd->obj, EINA_FALSE);
+   if (evas_object_image_load_error_get(sd->obj) != EVAS_LOAD_ERROR_NONE)
+     {
+        ERR("Things are going bad for some random %zu byte chunk of memory (%p)", size, sd->obj);
+        return EINA_FALSE;
+     }
+   _smart_reconfigure(sd);
+   return EINA_TRUE;
+}
+
+Eina_Bool
+_els_smart_icon_file_key_set(Evas_Object *obj, const char *file, const char *key)
+{
+   Smart_Data *sd;
+
+   sd = evas_object_smart_data_get(obj);
+   if (!sd) return EINA_FALSE;
+   _els_smart_icon_file_helper(obj);
+
    evas_object_image_file_set(sd->obj, file, key);
    sd->preloading = EINA_TRUE;
    sd->show = EINA_TRUE;

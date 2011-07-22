@@ -1956,6 +1956,23 @@ extern "C" {
     */
    EAPI Eina_Bool             elm_icon_file_set(Evas_Object *obj, const char *file, const char *group) EINA_ARG_NONNULL(1, 2);
    /**
+    * Set a location in memory to be used as an icon
+    *
+    * @param obj The icon object
+    * @param img The binary data that will be used as an image
+    * @param size The size of binary data @p img
+    * @param format Optional format of @p img to pass to the image loader
+    * @param key Optional key of @p img to pass to the image loader (eg. if @p img is an edje file)
+    *
+    * @return (@c EINA_TRUE = success, @c EINA_FALSE = error)
+    *
+    * @note The icon image set by this function can be changed by
+    * elm_icon_standard_set().
+    *
+    * @ingroup Icon
+    */
+   EAPI Eina_Bool             elm_icon_memfile_set(Evas_Object *obj, const void *img, size_t size, const char *format, const char *key);  EINA_ARG_NONNULL(1, 2);
+   /**
     * Get the file that will be used as icon.
     *
     * @param obj The icon object

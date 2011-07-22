@@ -1,4 +1,5 @@
 Evas_Object *_els_smart_icon_add              (Evas *evas);
+Eina_Bool    _els_smart_icon_memfile_set      (Evas_Object *obj, const void *file, size_t size, const char *format, const char *key);
 Eina_Bool    _els_smart_icon_file_key_set     (Evas_Object *obj, const char *file, const char *key);
 Eina_Bool    _els_smart_icon_file_edje_set    (Evas_Object *obj, const char *file, const char *part);
 void         _els_smart_icon_file_get         (const Evas_Object *obj, const char **file, const char **key);
