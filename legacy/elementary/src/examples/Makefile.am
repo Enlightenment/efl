@@ -164,6 +164,8 @@ SCREENSHOTS = \
 	hoversel_example_01:hoversel_example_01.png:0.0 \
 	label_example_01:label_example_01.png:0.0 \
 	theme_example_01:theme_example_01.png:0.0 \
+	conformant_example_01:conformant_example_01.png:0.0 \
+	conformant_example_02:conformant_example_02.png:0.0 \
 	calendar_example_01:calendar_example_01.png:0.0 \
 	calendar_example_02:calendar_example_02.png:0.0 \
 	calendar_example_03:calendar_example_03.png:0.0 \
@@ -193,7 +195,7 @@ screenshots: all
 		EXAMPLE=$${SS_ENTRY[0]} ; \
 		SS_FILE=$${SS_ENTRY[1]} ; \
 		SS_DELAY=$${SS_ENTRY[2]} ; \
-		ELM_ENGINE="shot:delay=$${SS_DELAY}:file=$(HTML_SS_DIR)/$${SS_FILE}" ./$${EXAMPLE} ; \
+		ILLUME_KBD=0,0,240,123 ILLUME_IND=0,0,240,32 ILLUME_STK=0,288,240,32 ELM_ENGINE="shot:delay=$${SS_DELAY}:file=$(HTML_SS_DIR)/$${SS_FILE}" ./$${EXAMPLE} ; \
 		convert $(HTML_SS_DIR)/$${SS_FILE} $(LATEX_SS_DIR)/$${SS_FILE/.png/.eps} ; \
 	done
 

@@ -2544,7 +2544,8 @@
  * @page conformant_example Conformant Example.
  *
  * In this example we'll explain how to create applications to work
- * with illume, considering space required for virtual keyboards.
+ * with illume, considering space required for virtual keyboards, indicator
+ * and softkeys.
  *
  * Illume is a module for Enlightenment that modifies the user interface
  * to work cleanly and nicely on a mobile device. It has support for
@@ -2569,26 +2570,19 @@
  *
  * But if you call a virtual keyboard, the window will resize, changing
  * widgets size and position. All the content will shrink.
- * The window will look like this:
+ *
+ * If you don't want such behaviour, you
+ * will need a conformant to account for space taken up by the indicator,
+ * virtual keyboard and softkey.
+ *
+ * In this case, using the conformant in a proper way, you will have
+ * a window like the following:
  *
  * @image html screenshots/conformant_example_02.png
  * @image latex screenshots/conformant_example_02.eps width=\textwidth
  *
- * If you don't want such behaviour, you
- * will need a conformant to account for space taken up by the indicator,
- * virtual keyboard and softkey windows.
- *
- * In this case, using the conformant in a proper way, you will have
- * a window like the following when the virtual keyboard is hidden:
- *
- * @image html screenshots/conformant_example_03.png
- * @image latex screenshots/conformant_example_03.eps width=\textwidth
- *
- * As you can see, it guess the space that will be required by the keyboard.
- * Verify how perfectly it fits when keyboard is visible:
- *
- * @image html screenshots/conformant_example_04.png
- * @image latex screenshots/conformant_example_04.eps width=\textwidth
+ * As you can see, it guess the space that will be required by the keyboard,
+ * indicator and softkey bars.
  *
  * So, let's study each step required to transform our initial example on
  * the second one.
