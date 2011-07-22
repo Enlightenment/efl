@@ -5474,7 +5474,7 @@ elm_genlist_bounce_get(const Evas_Object *obj,
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
-   elm_smart_scroller_bounce_allow_get(obj, h_bounce, v_bounce);
+   elm_smart_scroller_bounce_allow_get(wd->scr, h_bounce, v_bounce);
 }
 
 /**

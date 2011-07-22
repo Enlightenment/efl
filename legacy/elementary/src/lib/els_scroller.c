@@ -1277,8 +1277,8 @@ void
 elm_smart_scroller_bounce_allow_get(const Evas_Object *obj, Eina_Bool *horiz, Eina_Bool *vert)
 {
    API_ENTRY return;
-   *horiz = sd->bounce_horiz;
-   *vert = sd->bounce_vert;
+   if (horiz) *horiz = sd->bounce_horiz;
+   if (vert) *vert = sd->bounce_vert;
 }
 
 void
