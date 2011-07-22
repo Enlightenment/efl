@@ -54,14 +54,14 @@ test_table(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
    elm_object_text_set(bt, "Button 5");
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   elm_table_pack(tb, bt, 2, 1, 1, 3);
+   elm_table_pack(tb, bt, 2, 1, 1, 2);
    evas_object_show(bt);
 
    bt = elm_button_add(win);
-   elm_object_text_set(bt, "Button 6");
+   elm_object_text_set(bt, "Button a");
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   elm_table_pack(tb, bt, 0, 2, 2, 2);
+   elm_table_pack(tb, bt, 0, 2, 2, 1);
    evas_object_show(bt);
 
    evas_object_show(win);
