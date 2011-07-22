@@ -355,6 +355,7 @@ elm_check_state_set(Evas_Object *obj, Eina_Bool state)
         else
           edje_object_signal_emit(wd->chk, "elm,state,check,off", "elm");
      }
+   edje_object_message_signal_process(wd->chk);
 }
 
 EAPI Eina_Bool
