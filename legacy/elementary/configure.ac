@@ -585,6 +585,7 @@ elementary.pc
 doc/elementary.dox
 doc/Makefile
 doc/Doxyfile
+doc/widgets/Makefile
 src/Makefile
 src/lib/Makefile
 src/lib/Elementary.h
