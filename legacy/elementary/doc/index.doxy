@@ -137,6 +137,9 @@
  * @li @ref Menu
  * @li @ref Notify
  * @li @ref Pager
+ *
+ * @image html img/widget/pager/preview-00.png
+ * @image latex img/widget/pager/preview-00.eps
  * @li @ref Panel
  * @li @ref Panes
  * @li @ref Photo

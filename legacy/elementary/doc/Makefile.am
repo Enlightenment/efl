@@ -45,7 +45,8 @@ WGT_PREVIEW = \
 	hoversel:preview-00.png:widget_preview_hoversel:90:170 \
 	hover:preview-00.png:widget_preview_hover:90:170 \
 	anchorview:preview-00.png:widget_preview_anchorview:100:30 \
-	anchorblock:preview-00.png:widget_preview_anchorblock:100:30
+	anchorblock:preview-00.png:widget_preview_anchorblock:100:30 \
+	pager:preview-00.png:widget_preview_pager:100:100
 
 widget-build:
 	@$(MAKE) -C widgets
