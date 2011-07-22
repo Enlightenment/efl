@@ -1546,7 +1546,7 @@ _signal_anchor_in(void *data, Evas_Object *obj __UNUSED__, const char *emission 
    Widget_Data *wd = elm_widget_data_get(data);
    Elm_Entry_Anchor_Info ei;
    if (!wd) return;
-   ei.name = emission + 6;
+   ei.name = emission + sizeof("nchor,mouse,in,");
    ei.button = 0;
    ei.x = ei.y = ei.w = ei.h = 0;
 
@@ -1562,7 +1562,7 @@ _signal_anchor_out(void *data, Evas_Object *obj __UNUSED__, const char *emission
    Widget_Data *wd = elm_widget_data_get(data);
    Elm_Entry_Anchor_Info ei;
    if (!wd) return;
-   ei.name = emission + 6;
+   ei.name = emission + sizeof("nchor,mouse,out,");
    ei.button = 0;
    ei.x = ei.y = ei.w = ei.h = 0;
 
