@@ -1413,33 +1413,24 @@ elm_win_add(Evas_Object *parent, const char *name, Elm_Win_Type type)
    switch (type)
      {
       case ELM_WIN_INLINED_IMAGE:
-          {
-             if (parent)
-               {
-                  Evas *e = evas_object_evas_get(parent);
-                  if (e)
-                    {
-                       Ecore_Evas *ee = ecore_evas_ecore_evas_get(e);
-                       if (ee)
-                         {
-                            win->img_obj = ecore_evas_object_image_new(ee);
-                            if (win->img_obj)
-                              {
-                                 win->ee = ecore_evas_object_ecore_evas_get(win->img_obj);
-                                 if (win->ee)
-                                   {
-                                      _win_inlined_image_set(win);
-                                   }
-                                 else
-                                   {
-                                      evas_object_del(win->img_obj);
-                                      win->img_obj = NULL;
-                                   }
-                              }
-                         }
-                    }
-               }
-          }
+        if (!parent) break;
+        {
+           Evas *e = evas_object_evas_get(parent);
+           Ecore_Evas *ee;
+           if (!e) break;
+           ee = ecore_evas_ecore_evas_get(e);
+           if (!ee) break;
+           win->img_obj = ecore_evas_object_image_new(ee);
+           if (!win->img_obj) break;
+           win->ee = ecore_evas_object_ecore_evas_get(win->img_obj);
+           if (win->ee)
+             {
+                _win_inlined_image_set(win);
+                break;
+             }
+           evas_object_del(win->img_obj);
+           win->img_obj = NULL;
+        }
         break;
       default:
         if (ENGINE_COMPARE(ELM_SOFTWARE_X11))
