@@ -1745,7 +1745,7 @@ ethumb_key_cmp(const void *key1, __UNUSED__ int key1_length,
 #define HASH_PARAM_F(Param) r ^= eina_hash_int32((unsigned int*) &e->Param, 0);
 
 EAPI int
-ethumb_hash(const void *key, int key_length)
+ethumb_hash(const void *key, int key_length __UNUSED__)
 {
    const Ethumb *e = key;
    int r = 0;

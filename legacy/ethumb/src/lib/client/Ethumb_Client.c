@@ -592,7 +592,7 @@ error:
 }
 
 static void
-_ethumb_client_exists_heavy(void *data, Ecore_Thread *thread)
+_ethumb_client_exists_heavy(void *data, Ecore_Thread *thread __UNUSED__)
 {
    Ethumb_Async_Exists *async = data;
 
@@ -600,7 +600,7 @@ _ethumb_client_exists_heavy(void *data, Ecore_Thread *thread)
 }
 
 static void
-_ethumb_client_exists_end(void *data, Ecore_Thread *thread)
+_ethumb_client_exists_end(void *data, Ecore_Thread *thread __UNUSED__)
 {
    Ethumb_Async_Exists *async = data;
    Ethumb_Async_Exists_Cb *cb;
