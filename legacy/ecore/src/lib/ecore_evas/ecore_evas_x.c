@@ -1724,8 +1724,7 @@ _ecore_evas_x_alpha_set(Ecore_Evas *ee, int alpha)
    XWindowAttributes att;
 #endif
 
-   if (((ee->alpha) && (alpha)) || ((!ee->alpha) && (!alpha)))
-     return;
+   if ((ee->alpha == alpha)) return;
 
    if (!strcmp(ee->driver, "software_x11"))
      {
