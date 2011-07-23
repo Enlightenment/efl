@@ -316,7 +316,7 @@ _curs_start(Evas_Textblock_Cursor *c, Evas_Object *o __UNUSED__,
 }
 
 static void
-_curs_end(Evas_Textblock_Cursor *c, Evas_Object *o, Entry *en)
+_curs_end(Evas_Textblock_Cursor *c, Evas_Object *o __UNUSED__, Entry *en __UNUSED__)
 {
    evas_textblock_cursor_paragraph_last(c);
 }
