@@ -809,10 +809,12 @@ _span_insert(Span *sp, int num, int count, Evas_Coord size)
    __span_insert(sp, num, count, size, 0);
 }
 
+#if 0
 static Span *
 _span_rebalance(Span *sp, int levels)
 {
    // FIXME: do
+   return NULL;
 }
 
 static void
@@ -820,7 +822,7 @@ _span_resize(Span *sp, int num, Evas_Coord size)
 {
    // FIXME: do
 }
-
+#endif
 /****************************************************************************/
 
 /**
