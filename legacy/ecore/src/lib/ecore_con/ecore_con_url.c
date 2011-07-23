@@ -372,7 +372,7 @@ ecore_con_url_free(Ecore_Con_Url *url_con)
      free(s);
    EINA_LIST_FREE(url_con->response_headers, s)
      free(s);
-   free(url_con->url);
+   eina_stringshare_del(url_con->url);
    free(url_con);
 #else
    return;
@@ -410,12 +410,7 @@ ecore_con_url_url_set(Ecore_Con_Url *url_con,
    if (url_con->active)
      return EINA_FALSE;
 
-   if (url_con->url)
-     free(url_con->url);
-
-   url_con->url = NULL;
-   if (url)
-     url_con->url = strdup(url);
+   eina_stringshare_replace(&url_con->url, url);
 
    if (url_con->url)
      curl_easy_setopt(url_con->curl_easy, CURLOPT_URL,

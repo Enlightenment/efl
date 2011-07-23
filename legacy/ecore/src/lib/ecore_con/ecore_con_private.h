@@ -181,7 +181,7 @@ struct _Ecore_Con_Url
    struct curl_slist *headers;
    Eina_List *additional_headers;
    Eina_List *response_headers;
-   char *url;
+   const char *url;
 
    Ecore_Con_Url_Time time_condition;
    double timestamp;

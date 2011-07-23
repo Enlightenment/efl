@@ -1198,7 +1198,7 @@ EAPI Eina_Bool         ecore_con_url_url_set(Ecore_Con_Url *url_con,
  * Gets the URL to send the request to.
  *
  * @param url_con Connection object through which the request will be sent.
- * @return URL that will receive the request, NULL on failure
+ * @return URL that will receive the request, NULL on failure. URL is stringshared.
  * @since 1.1
  */
 EAPI const char       *ecore_con_url_url_get(Ecore_Con_Url *url_con);
