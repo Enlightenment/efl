@@ -260,3 +260,6 @@
 
         * Ecore_IMF: Added ecore_imf_context_cursor_location_set API
 
+2011-07-22  Mike Blumenkrantz
+
+        * Added ecore_con_url_url_get

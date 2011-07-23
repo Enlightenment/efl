@@ -380,6 +380,22 @@ ecore_con_url_free(Ecore_Con_Url *url_con)
 #endif
 }
 
+EAPI const char *
+ecore_con_url_url_get(Ecore_Con_Url *url_con)
+{
+#ifdef HAVE_CURL
+   if (!ECORE_MAGIC_CHECK(url_con, ECORE_MAGIC_CON_URL))
+     {
+        ECORE_MAGIC_FAIL(url_con, ECORE_MAGIC_CON_URL, __func__);
+        return NULL;
+     }
+   return url_con->url;
+#else
+   (void)url_con;
+   return NULL;
+#endif
+}
+
 EAPI Eina_Bool
 ecore_con_url_url_set(Ecore_Con_Url *url_con,
                       const char    *url)

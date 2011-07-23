@@ -1195,6 +1195,14 @@ EAPI void              ecore_con_url_free(Ecore_Con_Url *url_con);
 EAPI Eina_Bool         ecore_con_url_url_set(Ecore_Con_Url *url_con,
                                              const char *url);
 /**
+ * Gets the URL to send the request to.
+ *
+ * @param url_con Connection object through which the request will be sent.
+ * @return URL that will receive the request, NULL on failure
+ * @since 1.1
+ */
+EAPI const char       *ecore_con_url_url_get(Ecore_Con_Url *url_con);
+/**
  * Associates data with a connection object.
  *
  * @param url_con Connection object to associate data.
