@@ -187,7 +187,7 @@ _conformant_part_size_set(Evas_Object *obj, Evas_Object *sobj, Evas_Coord sx,
 static void
 _conformant_part_sizing_eval(Evas_Object *obj, Conformant_Part_Type part_type)
 {
-   Ecore_X_Window zone, xwin;
+   Ecore_X_Window zone = 0, xwin;
    int sx = -1, sy = -1, sw = -1, sh = -1;
    Widget_Data *wd = elm_widget_data_get(obj);
 
@@ -203,37 +203,40 @@ _conformant_part_sizing_eval(Evas_Object *obj, Conformant_Part_Type part_type)
    if (part_type & ELM_CONFORM_INDICATOR_PART)
      {
         if ((!_conformant_part_geometry_env_get("ILLUME_IND",
-                &sx, &sy, &sw, &sh)) && (xwin)) {
+                                                &sx, &sy, &sw, &sh)) && (xwin)) 
+          {
 #ifdef HAVE_ELEMENTARY_X
-          ecore_x_e_illume_indicator_geometry_get(zone, &sx, &sy, &sw, &sh);
+             ecore_x_e_illume_indicator_geometry_get(zone, &sx, &sy, &sw, &sh);
 #else
-        ;
+             ;
 #endif
-        }
+          }
         _conformant_part_size_set(obj, wd->shelf, sx, sy, sw, sh);
      }
    if (part_type & ELM_CONFORM_VIRTUAL_KEYPAD_PART)
      {
         if ((!_conformant_part_geometry_env_get("ILLUME_KBD",
-                &sx, &sy, &sw, &sh)) && (xwin)) {
+                                                &sx, &sy, &sw, &sh)) && (xwin)) 
+          {
 #ifdef HAVE_ELEMENTARY_X
-          ecore_x_e_illume_keyboard_geometry_get(zone, &sx, &sy, &sw, &sh);
+             ecore_x_e_illume_keyboard_geometry_get(zone, &sx, &sy, &sw, &sh);
 #else
-        ;
+             ;
 #endif
-        }
+          }
         _conformant_part_size_set(obj,wd->virtualkeypad, sx, sy, sw, sh);
      }
    if (part_type & ELM_CONFORM_SOFTKEY_PART)
      {
         if ((!_conformant_part_geometry_env_get("ILLUME_STK",
-                &sx, &sy, &sw, &sh)) && (xwin)) {
+                                                &sx, &sy, &sw, &sh)) && (xwin)) 
+          {
 #ifdef HAVE_ELEMENTARY_X
-          ecore_x_e_illume_softkey_geometry_get(zone, &sx, &sy, &sw, &sh);
+             ecore_x_e_illume_softkey_geometry_get(zone, &sx, &sy, &sw, &sh);
 #else
-        ;
+             ;
 #endif
-        }
+          }
         _conformant_part_size_set(obj, wd->panel, sx, sy, sw, sh);
      }
 }
