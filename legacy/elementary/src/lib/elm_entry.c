@@ -1445,24 +1445,12 @@ _signal_anchor_down(void *data, Evas_Object *obj __UNUSED__, const char *emissio
 {
    Widget_Data *wd = elm_widget_data_get(data);
    Elm_Entry_Anchor_Info ei;
-   char *buf2, *p, *p2, *n;
+   const char *p;
+   char *p2;
    if (!wd) return;
-   p = strrchr(emission, ',');
-   if (!p) return;
-
-   n = p + 1;
-   p2 = p -1;
-   while (p2 >= emission)
-     {
-        if (*p2 == ',') break;
-        p2--;
-     }
-   p2++;
-   buf2 = alloca(5 + p - p2);
-   strncpy(buf2, p2, p - p2);
-   buf2[p - p2] = 0;
-   ei.name = n;
-   ei.button = atoi(buf2);
+   p = emission + sizeof("nchor,mouse,down,");
+   ei.button = strtol(p, &p2, 10);
+   ei.name = p2;
    ei.x = ei.y = ei.w = ei.h = 0;
 
    _signal_anchor_geoms_do_things_with(wd, &ei);
@@ -1476,24 +1464,12 @@ _signal_anchor_up(void *data, Evas_Object *obj __UNUSED__, const char *emission 
 {
    Widget_Data *wd = elm_widget_data_get(data);
    Elm_Entry_Anchor_Info ei;
-   char *buf2, *p, *p2, *n;
+   const char *p;
+   char *p2;
    if (!wd) return;
-   p = strrchr(emission, ',');
-   if (!p) return;
-
-   n = p + 1;
-   p2 = p -1;
-   while (p2 >= emission)
-     {
-        if (*p2 == ',') break;
-        p2--;
-     }
-   p2++;
-   buf2 = alloca(5 + p - p2);
-   strncpy(buf2, p2, p - p2);
-   buf2[p - p2] = 0;
-   ei.name = n;
-   ei.button = atoi(buf2);
+   p = emission + sizeof("nchor,mouse,up,");
+   ei.button = strtol(p, &p2, 10);
+   ei.name = p2;
    ei.x = ei.y = ei.w = ei.h = 0;
 
    _signal_anchor_geoms_do_things_with(wd, &ei);
@@ -1507,24 +1483,12 @@ _signal_anchor_clicked(void *data, Evas_Object *obj __UNUSED__, const char *emis
 {
    Widget_Data *wd = elm_widget_data_get(data);
    Elm_Entry_Anchor_Info ei;
-   char *buf2, *p, *p2, *n;
+   const char *p;
+   char *p2;
    if (!wd) return;
-   p = strrchr(emission, ',');
-   if (!p) return;
-
-   n = p + 1;
-   p2 = p -1;
-   while (p2 >= emission)
-     {
-        if (*p2 == ',') break;
-        p2--;
-     }
-   p2++;
-   buf2 = alloca(5 + p - p2);
-   strncpy(buf2, p2, p - p2);
-   buf2[p - p2] = 0;
-   ei.name = n;
-   ei.button = atoi(buf2);
+   p = emission + sizeof("nchor,mouse,clicked,");
+   ei.button = strtol(p, &p2, 10);
+   ei.name = p2;
    ei.x = ei.y = ei.w = ei.h = 0;
 
    _signal_anchor_geoms_do_things_with(wd, &ei);
