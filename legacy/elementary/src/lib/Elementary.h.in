@@ -5777,6 +5777,17 @@ extern "C" {
                     w, /**< Anchor geometry, relative to canvas */
                     h; /**< Anchor geometry, relative to canvas */
      };
+   /**
+    * @typedef Elm_Entry_Filter_Cb
+    * This callback type is used by entry filters to modify text.
+    * @param data The data specified as the last param when adding the filter
+    * @param entry The entry object
+    * @param text A pointer to the location of the text being filtered. This data can be modified,
+    * but any additional allocations must be managed by the user.
+    * @see elm_entry_text_filter_append
+    * @see elm_entry_text_filter_prepend
+    */
+   typedef void (*Elm_Entry_Filter_Cb)(void *data, Evas_Object *entry, char **text);
 
    /**
     * This adds an entry to @p parent object.
@@ -6210,7 +6221,7 @@ extern "C" {
     * @param func The function to use as text filter
     * @param data User data to pass to @p func
     */
-   EAPI void         elm_entry_text_filter_append(Evas_Object *obj, void (*func) (void *data, Evas_Object *entry, char **text), void *data) EINA_ARG_NONNULL(1, 2);
+   EAPI void         elm_entry_text_filter_append(Evas_Object *obj, Elm_Entry_Filter_Cb func, void *data) EINA_ARG_NONNULL(1, 2);
    /**
     * Prepend a filter function for text insdrted in the entry
     *
@@ -6221,7 +6232,7 @@ extern "C" {
     * @param func The function to use as text filter
     * @param data User data to pass to @p func
     */
-   EAPI void         elm_entry_text_filter_prepend(Evas_Object *obj, void (*func) (void *data, Evas_Object *entry, char **text), void *data) EINA_ARG_NONNULL(1, 2);
+   EAPI void         elm_entry_text_filter_prepend(Evas_Object *obj, Elm_Entry_Filter_Cb func, void *data) EINA_ARG_NONNULL(1, 2);
    /**
     * Remove a filter from the list
     *
@@ -6232,7 +6243,7 @@ extern "C" {
     * @param func The filter function to remove
     * @param data The user data passed when adding the function
     */
-   EAPI void         elm_entry_text_filter_remove(Evas_Object *obj, void (*func) (void *data, Evas_Object *entry, char **text), void *data) EINA_ARG_NONNULL(1, 2);
+   EAPI void         elm_entry_text_filter_remove(Evas_Object *obj, Elm_Entry_Filter_Cb func, void *data) EINA_ARG_NONNULL(1, 2);
    /**
     * This converts a markup (HTML-like) string into UTF-8.
     *

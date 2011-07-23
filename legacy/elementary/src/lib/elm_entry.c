@@ -83,7 +83,7 @@ struct _Elm_Entry_Item_Provider
 
 struct _Elm_Entry_Text_Filter
 {
-   void (*func) (void *data, Evas_Object *entry, char **text);
+   Elm_Entry_Filter_Cb func;
    void *data;
 };
 
@@ -340,7 +340,7 @@ _delay_write(void *data)
 }
 
 static Elm_Entry_Text_Filter *
-_filter_new(void (*func) (void *data, Evas_Object *entry, char **text), void *data)
+_filter_new(Elm_Entry_Filter_Cb func, void *data)
 {
    Elm_Entry_Text_Filter *tf = ELM_NEW(Elm_Entry_Text_Filter);
    if (!tf) return NULL;
@@ -2585,7 +2585,7 @@ elm_entry_item_provider_remove(Evas_Object *obj, Evas_Object *(*func) (void *dat
 }
 
 EAPI void
-elm_entry_text_filter_append(Evas_Object *obj, void (*func) (void *data, Evas_Object *entry, char **text), void *data)
+elm_entry_text_filter_append(Evas_Object *obj, Elm_Entry_Filter_Cb func, void *data)
 {
    Widget_Data *wd;
    Elm_Entry_Text_Filter *tf;
@@ -2602,7 +2602,7 @@ elm_entry_text_filter_append(Evas_Object *obj, void (*func) (void *data, Evas_Ob
 }
 
 EAPI void
-elm_entry_text_filter_prepend(Evas_Object *obj, void (*func) (void *data, Evas_Object *entry, char **text), void *data)
+elm_entry_text_filter_prepend(Evas_Object *obj, Elm_Entry_Filter_Cb func, void *data)
 {
    Widget_Data *wd;
    Elm_Entry_Text_Filter *tf;
@@ -2619,7 +2619,7 @@ elm_entry_text_filter_prepend(Evas_Object *obj, void (*func) (void *data, Evas_O
 }
 
 EAPI void
-elm_entry_text_filter_remove(Evas_Object *obj, void (*func) (void *data, Evas_Object *entry, char **text), void *data)
+elm_entry_text_filter_remove(Evas_Object *obj, Elm_Entry_Filter_Cb func, void *data)
 {
    Widget_Data *wd;
    Eina_List *l;
