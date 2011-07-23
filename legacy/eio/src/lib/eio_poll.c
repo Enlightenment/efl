@@ -55,11 +55,11 @@ eio_monitor_fallback_shutdown(void)
 }
 
 void
-eio_monitor_fallback_add(Eio_Monitor *monitor)
+eio_monitor_fallback_add(Eio_Monitor *monitor __UNUSED__)
 {
 }
 
 void
-eio_monitor_fallback_del(Eio_Monitor *monitor)
+eio_monitor_fallback_del(Eio_Monitor *monitor __UNUSED__)
 {
 }

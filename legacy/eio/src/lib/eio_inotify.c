@@ -109,7 +109,7 @@ _eio_inotify_events(Eio_Monitor_Backend *backend, const char *file, int mask)
 }
 
 static Eina_Bool
-_eio_inotify_handler(void *data, Ecore_Fd_Handler *fdh)
+_eio_inotify_handler(void *data __UNUSED__, Ecore_Fd_Handler *fdh)
 {
    Eio_Monitor_Backend *backend;
    unsigned char buffer[16384];

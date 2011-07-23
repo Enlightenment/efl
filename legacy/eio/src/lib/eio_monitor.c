@@ -105,7 +105,7 @@ _eio_monitor_error(Eio_Monitor *monitor, int error)
 }
 
 static void
-_eio_monitor_error_cb(void *data, Eio_File *handler, int error)
+_eio_monitor_error_cb(void *data, Eio_File *handler __UNUSED__, int error)
 {
    Eio_Monitor *monitor = data;
 
