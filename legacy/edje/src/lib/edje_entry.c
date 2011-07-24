@@ -1235,6 +1235,7 @@ _edje_key_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, v
    else if ((control) && (!strcmp(ev->key, "v")))
      {
         _edje_emit(ed, "entry,paste,request", rp->part->name);
+        _edje_emit(ed, "entry,paste,request,3", rp->part->name);
         ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
      }
    else if ((control) && ((!strcmp(ev->key, "c") || (!strcmp(ev->key, "Insert")))))
@@ -1450,6 +1451,7 @@ _edje_part_mouse_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUS
    if (ev->button == 2)
      {
         _edje_emit(rp->edje, "entry,paste,request", rp->part->name);
+        _edje_emit(rp->edje, "entry,paste,request,1", rp->part->name);
         return;
      }
    if (ev->button != 1) return;

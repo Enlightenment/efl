@@ -127,3 +127,8 @@
 2011-06-21  Cedric Bail
 
 	* Make it possible to define part.description.max only on one axis.
+
+2011-07-24  Mike Blumenkrantz
+
+        * Add signals entry,paste,request,1 (PRIMARY) and entry,paste,request,3 (CLIPBOARD)
+          to differentiate between paste types
