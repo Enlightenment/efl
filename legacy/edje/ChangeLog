@@ -132,4 +132,4 @@
 
         * Add signals entry,paste,request,1 (PRIMARY) and entry,paste,request,3 (CLIPBOARD)
           to differentiate between paste types
-        * Add entry,selection,request for signalling ctrl+a in an entry
+        * Add entry,selection,all,request for signalling ctrl+a in an entry

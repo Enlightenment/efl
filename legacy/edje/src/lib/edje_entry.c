@@ -1240,7 +1240,7 @@ _edje_key_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, v
      }
    else if ((control) && (!strcmp(ev->key, "a")))
      {
-        _edje_emit(ed, "entry,selection,request", rp->part->name);
+        _edje_emit(ed, "entry,selection,all,request", rp->part->name);
         ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
      }
    else if ((control) && ((!strcmp(ev->key, "c") || (!strcmp(ev->key, "Insert")))))
