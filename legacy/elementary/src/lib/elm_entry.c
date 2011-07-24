@@ -969,6 +969,7 @@ _cut(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
    _store_selection(ELM_SEL_CLIPBOARD, data);
    edje_object_part_text_insert(wd->ent, "elm.text", "");
    edje_object_part_text_select_none(wd->ent, "elm.text");
+   _sizing_eval(data);
 }
 
 static void
