@@ -1458,13 +1458,7 @@ _edje_part_mouse_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUS
    if ((!en) || (rp->part->type != EDJE_PART_TYPE_TEXTBLOCK) ||
        (rp->part->entry_mode < EDJE_ENTRY_EDIT_MODE_SELECTABLE))
      return;
-   if (ev->button == 2)
-     {
-        _edje_emit(rp->edje, "entry,paste,request", rp->part->name);
-        _edje_emit(rp->edje, "entry,paste,request,1", rp->part->name);
-        return;
-     }
-   if (ev->button != 1) return;
+   if ((ev->button != 1) && (ev->button != 2)) return;
 
 #ifdef HAVE_ECORE_IMF
    if (en->imf_context)
@@ -1486,6 +1480,7 @@ _edje_part_mouse_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUS
      {
         if (en->select_allow) dosel = EINA_TRUE;
      }
+   if (ev->button == 2) dosel = EINA_FALSE;
    if (dosel)
      {
         // double click -> select word
@@ -1604,6 +1599,11 @@ _edje_part_mouse_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUS
 #endif
 
    _edje_entry_real_part_configure(rp);
+   if (ev->button == 2)
+     {
+        _edje_emit(rp->edje, "entry,paste,request", rp->part->name);
+        _edje_emit(rp->edje, "entry,paste,request,1", rp->part->name);
+     }
 }
 
 static void

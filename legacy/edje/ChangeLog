@@ -134,3 +134,4 @@
           to differentiate between paste types
         * Add entry,selection,all,request for signalling ctrl+a in an entry
         * Add entry,selection,none,request for signalling ctrl+shift+a in an entry
+        * Fix entry,paste,request* to be emitted after cursor,changed (fixes middle mouse paste location)
