@@ -6924,6 +6924,7 @@ evas_textblock_cursor_char_delete(Evas_Textblock_Cursor *cur)
    /* Remove a format node if needed, and remove the char only if the
     * fmt node is not visible */
      {
+        Eina_Bool should_merge = EINA_FALSE;
         Evas_Object_Textblock_Node_Format *fmt, *fmt2;
         fmt = _evas_textblock_cursor_node_format_at_pos_get(cur);
         if (fmt)
@@ -6937,7 +6938,7 @@ evas_textblock_cursor_char_delete(Evas_Textblock_Cursor *cur)
                {
                   /* If it was a paragraph separator, we should merge the
                    * current with the next, there must be a next. */
-                  _evas_textblock_cursor_nodes_merge(cur);
+                  should_merge = EINA_TRUE;
                }
              /* If a singnular, mark as invisible, so we'll delete it. */
              if (!format || ((*format != '+') && (*format != '-')))
@@ -6950,6 +6951,11 @@ evas_textblock_cursor_char_delete(Evas_Textblock_Cursor *cur)
         fmt2 = _evas_textblock_node_format_last_at_off(fmt2);
         _evas_textblock_node_format_adjust_offset(o, cur->node, fmt2,
               -(ind - cur->pos));
+
+        if (should_merge)
+          {
+             _evas_textblock_cursor_nodes_merge(cur);
+          }
 
         _evas_textblock_node_format_remove_matching(o, fmt);
      }
