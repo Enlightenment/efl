@@ -14,6 +14,8 @@
 /* Functions defined in evas_object_textblock.c */
 EAPI Eina_Bool
 _evas_textblock_check_item_node_link(Evas_Object *obj);
+EAPI int
+_evas_textblock_format_offset_get(const Evas_Object_Textblock_Node_Format *n);
 /* end of functions defined in evas_object_textblock.c */
 
 
@@ -758,6 +760,14 @@ START_TEST(evas_textblock_format_removal)
    evas_textblock_cursor_range_delete(cur, main_cur);
    fnode = evas_textblock_node_format_first_get(tb);
    fail_if (fnode);
+
+   /* Verify fmt position and REP_CHAR positions are the same */
+   evas_object_textblock_text_markup_set(tb,
+         "This is<ps>an <item absize=93x152 vsize=ascent></>a.");
+   evas_textblock_cursor_pos_set(cur, 7);
+   evas_textblock_cursor_char_delete(cur);
+   fnode = evas_textblock_node_format_first_get(tb);
+   fail_if(_evas_textblock_format_offset_get(fnode) != 10);
 
    END_TB_TEST();
 }

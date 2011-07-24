@@ -9060,6 +9060,12 @@ _evas_textblock_check_item_node_link(Evas_Object *obj)
      }
    return EINA_TRUE;
 }
+
+EAPI int
+_evas_textblock_format_offset_get(const Evas_Object_Textblock_Node_Format *n)
+{
+   return n->offset;
+}
 #endif
 
 #if 0
