@@ -1400,24 +1400,13 @@ _signal_entry_paste_request(void *data, Evas_Object *obj __UNUSED__, const char 
 static void
 _signal_entry_copy_notify(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
 {
-   Widget_Data *wd = elm_widget_data_get(data);
-   if (!wd) return;
-   evas_object_smart_callback_call(data, SIG_SELECTION_COPY, NULL);
-   elm_selection_set(ELM_SEL_CLIPBOARD, obj, ELM_SEL_FORMAT_MARKUP,
-                     elm_entry_selection_get(data));
+   _copy(data, NULL, NULL);
 }
 
 static void
 _signal_entry_cut_notify(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
 {
-   Widget_Data *wd = elm_widget_data_get(data);
-   if (!wd) return;
-   evas_object_smart_callback_call(data, SIG_SELECTION_CUT, NULL);
-   elm_selection_set(ELM_SEL_CLIPBOARD, obj, ELM_SEL_FORMAT_MARKUP,
-                     elm_entry_selection_get(data));
-   edje_object_part_text_insert(wd->ent, "elm.text", "");
-   wd->changed = EINA_TRUE;
-   _sizing_eval(data);
+   _cut(data, NULL, NULL);
 }
 
 static void
