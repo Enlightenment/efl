@@ -1312,6 +1312,14 @@ _signal_selection_start(void *data, Evas_Object *obj __UNUSED__, const char *emi
 }
 
 static void
+_signal_selection_all(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
+{
+   Widget_Data *wd = elm_widget_data_get(data);
+   if (!wd) return;
+   elm_entry_select_all(data);
+}
+
+static void
 _signal_selection_changed(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
 {
    Widget_Data *wd = elm_widget_data_get(data);
@@ -1968,6 +1976,8 @@ elm_entry_add(Evas_Object *parent)
                                    _signal_selection_start, obj);
    edje_object_signal_callback_add(wd->ent, "selection,changed", "elm.text",
                                    _signal_selection_changed, obj);
+   edje_object_signal_callback_add(wd->ent, "entry,selection,all,request", "elm.text",
+                                   _signal_selection_all, obj);
    edje_object_signal_callback_add(wd->ent, "selection,cleared", "elm.text",
                                    _signal_selection_cleared, obj);
    edje_object_signal_callback_add(wd->ent, "entry,paste,request,1", "elm.text",
