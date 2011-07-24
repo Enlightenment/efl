@@ -949,6 +949,7 @@ _store_selection(Elm_Sel_Type seltype, Evas_Object *obj)
 
    if (!wd) return;
    sel = edje_object_part_text_selection_get(wd->ent, "elm.text");
+   if ((!sel) || (!sel[0])) return; /* avoid deleting our own selection */
    elm_selection_set(seltype, obj, ELM_SEL_FORMAT_MARKUP, sel);
    if (seltype == ELM_SEL_CLIPBOARD)
      eina_stringshare_replace(&wd->cut_sel, sel);
@@ -1335,8 +1336,7 @@ _signal_selection_changed(void *data, Evas_Object *obj __UNUSED__, const char *e
    if (!wd) return;
    wd->have_selection = EINA_TRUE;
    evas_object_smart_callback_call(data, SIG_SELECTION_CHANGED, NULL);
-   elm_selection_set(ELM_SEL_PRIMARY, obj, ELM_SEL_FORMAT_MARKUP,
-                     elm_entry_selection_get(data));
+   _store_selection(ELM_SEL_PRIMARY, data);
 }
 
 static void
@@ -1980,9 +1980,7 @@ elm_entry_add(Evas_Object *parent)
                                    _signal_selection_none, obj);
    edje_object_signal_callback_add(wd->ent, "selection,cleared", "elm.text",
                                    _signal_selection_cleared, obj);
-   edje_object_signal_callback_add(wd->ent, "entry,paste,request,1", "elm.text",
-                                   _signal_entry_paste_request, obj);
-   edje_object_signal_callback_add(wd->ent, "entry,paste,request,3", "elm.text",
+   edje_object_signal_callback_add(wd->ent, "entry,paste,request,*", "elm.text",
                                    _signal_entry_paste_request, obj);
    edje_object_signal_callback_add(wd->ent, "entry,copy,notify", "elm.text",
                                    _signal_entry_copy_notify, obj);
