@@ -1320,6 +1320,14 @@ _signal_selection_all(void *data, Evas_Object *obj __UNUSED__, const char *emiss
 }
 
 static void
+_signal_selection_none(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
+{
+   Widget_Data *wd = elm_widget_data_get(data);
+   if (!wd) return;
+   elm_entry_select_none(data);
+}
+
+static void
 _signal_selection_changed(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
 {
    Widget_Data *wd = elm_widget_data_get(data);
@@ -1978,14 +1986,14 @@ elm_entry_add(Evas_Object *parent)
                                    _signal_selection_changed, obj);
    edje_object_signal_callback_add(wd->ent, "entry,selection,all,request", "elm.text",
                                    _signal_selection_all, obj);
+   edje_object_signal_callback_add(wd->ent, "entry,selection,none,request", "elm.text",
+                                   _signal_selection_none, obj);
    edje_object_signal_callback_add(wd->ent, "selection,cleared", "elm.text",
                                    _signal_selection_cleared, obj);
    edje_object_signal_callback_add(wd->ent, "entry,paste,request,1", "elm.text",
                                    _signal_entry_paste_request, obj);
    edje_object_signal_callback_add(wd->ent, "entry,paste,request,3", "elm.text",
                                    _signal_entry_paste_request, obj);
-   edje_object_signal_callback_add(wd->ent, "entry,copy,notify", "elm.text",
-                                   _signal_entry_copy_notify, obj);
    edje_object_signal_callback_add(wd->ent, "entry,cut,notify", "elm.text",
                                    _signal_entry_cut_notify, obj);
    edje_object_signal_callback_add(wd->ent, "cursor,changed", "elm.text",
