@@ -1994,6 +1994,8 @@ elm_entry_add(Evas_Object *parent)
                                    _signal_entry_paste_request, obj);
    edje_object_signal_callback_add(wd->ent, "entry,paste,request,3", "elm.text",
                                    _signal_entry_paste_request, obj);
+   edje_object_signal_callback_add(wd->ent, "entry,copy,notify", "elm.text",
+                                   _signal_entry_copy_notify, obj);
    edje_object_signal_callback_add(wd->ent, "entry,cut,notify", "elm.text",
                                    _signal_entry_cut_notify, obj);
    edje_object_signal_callback_add(wd->ent, "cursor,changed", "elm.text",
