@@ -8,4 +8,4 @@ Description: Library that ports on Windows some specific Unix functions.
 Version: @VERSION@
 Libs: -L${libdir} -levil
 Libs.private:
-Cflags: -I${includedir}
+Cflags: -I${includedir}/evil-@VMAJ@

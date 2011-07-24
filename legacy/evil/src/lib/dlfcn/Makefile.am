@@ -3,7 +3,10 @@ MAINTAINERCLEANFILES = Makefile.in
 
 lib_LTLIBRARIES = libdl.la
 
-include_HEADERS = dlfcn.h
+
+stdheadersdir = $(includedir)/evil-@VMAJ@
+dist_stdheaders_DATA = dlfcn.h
+
 libdl_la_SOURCES = dlfcn.c
 
 libdl_la_CPPFLAGS = -DEFL_EVIL_DLFCN_BUILD

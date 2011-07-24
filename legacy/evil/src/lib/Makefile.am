@@ -5,7 +5,8 @@ SUBDIRS = . dlfcn
 
 lib_LTLIBRARIES = libevil.la
 
-include_HEADERS = \
+install_evilheadersdir = $(includedir)/evil-@VMAJ@
+dist_install_evilheaders_DATA = \
 Evil.h \
 evil_fcntl.h \
 evil_inet.h \
@@ -19,11 +20,12 @@ evil_time.h \
 evil_unistd.h \
 evil_util.h
 
-nobase_include_HEADERS = pwd.h sys/mman.h fnmatch.h dirent.h
+nobase_stdheadersdir = $(includedir)/evil-@VMAJ@
+dist_nobase_stdheaders_DATA = pwd.h sys/mman.h fnmatch.h dirent.h
 
 if EVIL_HAVE_WINCE
 
-nobase_include_HEADERS += errno.h
+dist_nobase_stdheaders_DATA += errno.h
 
 endif
 
@@ -44,7 +46,9 @@ evil_string.c \
 evil_time.c \
 evil_unistd.c \
 evil_util.c \
-evil_uuid.c
+evil_uuid.c \
+evil_private.h \
+evil_fnmatch_private.h
 
 if EVIL_HAVE_WINCE
 
@@ -71,6 +75,3 @@ else
 libevil_la_LINK = $(CXXLINK) $(libevil_la_LDFLAGS)
 
 endif
-
-
-EXTRA_DIST = evil_private.h evil_fnmatch_private.h
