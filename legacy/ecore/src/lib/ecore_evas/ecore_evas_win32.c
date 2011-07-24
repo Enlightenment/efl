@@ -316,8 +316,11 @@ _ecore_evas_win32_event_window_configure(void *data __UNUSED__, int type __UNUSE
           }
         if (ee->prop.avoid_damage)
           {
+             int pdam;
+
+             pdam = ecore_evas_avoid_damage_get(ee);
              ecore_evas_avoid_damage_set(ee, 0);
-             ecore_evas_avoid_damage_set(ee, 1);
+             ecore_evas_avoid_damage_set(ee, pdam);
           }
 /*         if (ee->shaped) */
 /*           _ecore_evas_win32_region_border_resize(ee); */

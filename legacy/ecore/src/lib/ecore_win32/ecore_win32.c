@@ -394,6 +394,7 @@ _ecore_win32_window_procedure(HWND   window,
      case WM_WINDOWPOSCHANGED:
        INF("position changed window message");
        _ecore_win32_event_handle_configure_notify(data);
+       _ecore_win32_event_handle_expose(data);
        return 0;
      case WM_ENTERSIZEMOVE:
        INF("enter size move window message");
