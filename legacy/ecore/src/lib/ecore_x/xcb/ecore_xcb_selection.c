@@ -532,11 +532,12 @@ _ecore_xcb_selection_set(Ecore_X_Window win, const void *data, int size, Ecore_X
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    xcb_set_selection_owner(_ecore_xcb_conn, win, 
-                           selection, ecore_x_current_time_get());
+                           selection, _ecore_xcb_events_last_time_get());
 
    cookie = xcb_get_selection_owner(_ecore_xcb_conn, selection);
    reply = xcb_get_selection_owner_reply(_ecore_xcb_conn, cookie, NULL);
    if (!reply) return EINA_FALSE;
+
    if (reply->owner != win) 
      {
         free(reply);
@@ -552,7 +553,7 @@ _ecore_xcb_selection_set(Ecore_X_Window win, const void *data, int size, Ecore_X
      in = 2;
    else if (selection == ECORE_X_ATOM_SELECTION_CLIPBOARD)
      in = 3;
-   else
+   else 
      return EINA_FALSE;
 
    if (data) 
@@ -562,7 +563,7 @@ _ecore_xcb_selection_set(Ecore_X_Window win, const void *data, int size, Ecore_X
         _selections[in].win = win;
         _selections[in].selection = selection;
         _selections[in].length = size;
-        _selections[in].time = ecore_x_current_time_get();
+        _selections[in].time = _ecore_xcb_events_last_time_get();
 
         buff = malloc(size);
         if (!buff) return EINA_FALSE;
@@ -597,7 +598,7 @@ _ecore_xcb_selection_request(Ecore_X_Window win, Ecore_X_Atom selection, const c
    atarget = _ecore_xcb_selection_target_atom_get(target);
 
    xcb_convert_selection(_ecore_xcb_conn, win, selection, atarget, prop, 
-                         ecore_x_current_time_get());
+                         XCB_CURRENT_TIME);
 }
 
 static Eina_Bool 
@@ -622,7 +623,9 @@ _ecore_xcb_selection_converter_text(char *target, void *data, int size, void **d
    else 
      return EINA_FALSE;
 
-   if (!(str = strdup(data))) return EINA_FALSE;
+   str = alloca(size + 1);
+   memcpy(str, data, size);
+   str[size] = '\0';
 
 #ifdef HAVE_ICONV
    if (_ecore_xcb_utf8_textlist_to_textproperty(&str, 1, style, &ret)) 
@@ -631,15 +634,10 @@ _ecore_xcb_selection_converter_text(char *target, void *data, int size, void **d
 
         size = (strlen((char *)ret.value) + 1);
         *data_ret = malloc(size);
-        if (!*data_ret) 
-          {
-             free(str);
-             return EINA_FALSE;
-          }
+        if (!*data_ret) return EINA_FALSE;
         memcpy(*data_ret, ret.value, size);
         *size_ret = size;
         if (ret.value) free(ret.value);
-        if (str) free(str);
         return EINA_TRUE;
      }
 #else
@@ -649,23 +647,16 @@ _ecore_xcb_selection_converter_text(char *target, void *data, int size, void **d
 
         size = (strlen((char *)ret.value) + 1);
         *data_ret = malloc(size);
-        if (!*data_ret) 
-          {
-             free(str);
-             return EINA_FALSE;
-          }
+        if (!*data_ret) return EINA_FALSE;
         memcpy(*data_ret, ret.value, size);
         *size_ret = size;
         if (ret.value) free(ret.value);
-        if (str) free(str);
         return EINA_TRUE;
      }
 #endif
    else 
-     {
-        if (str) free(str);
-        return EINA_TRUE;
-     }
+     return EINA_TRUE;
+
    return EINA_FALSE;
 }
 
