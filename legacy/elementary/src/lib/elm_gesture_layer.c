@@ -2188,10 +2188,10 @@ _zoom_with_wheel_test(Evas_Object *obj, void *event_info,
               st->info.x  = st->zoom_wheel->canvas.x;
               st->info.y  = st->zoom_wheel->canvas.y;
 
-              if (st->zoom_wheel->z > 0) /* zoom in */
+              if (st->zoom_wheel->z < 0) /* zoom in */
                 st->info.zoom += (wd->zoom_finger_factor * wd->zoom_wheel_factor);
 
-              if (st->zoom_wheel->z < 0) /* zoom out */
+              if (st->zoom_wheel->z > 0) /* zoom out */
                 st->info.zoom -= (wd->zoom_finger_factor * wd->zoom_wheel_factor);
 
               if (st->info.zoom < 0.0)
