@@ -1359,9 +1359,10 @@ _signal_selection_cleared(void *data, Evas_Object *obj __UNUSED__, const char *e
 }
 
 static void
-_signal_entry_paste_request(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
+_signal_entry_paste_request(void *data, Evas_Object *obj __UNUSED__, const char *emission, const char *source __UNUSED__)
 {
    Widget_Data *wd = elm_widget_data_get(data);
+   Elm_Sel_Type type = (emission[sizeof("ntry,paste,request,")] == '1') ? ELM_SEL_PRIMARY : ELM_SEL_CLIPBOARD;
    if (!wd) return;
    evas_object_smart_callback_call(data, SIG_SELECTION_PASTE, NULL);
    if (wd->sel_notify_handler)
@@ -1373,7 +1374,7 @@ _signal_entry_paste_request(void *data, Evas_Object *obj __UNUSED__, const char 
         if ((top) && (elm_win_xwindow_get(top)))
           {
              wd->selection_asked = EINA_TRUE;
-             elm_selection_get(ELM_SEL_CLIPBOARD, ELM_SEL_FORMAT_MARKUP, data,
+             elm_selection_get(type, ELM_SEL_FORMAT_MARKUP, data,
                                NULL, NULL);
           }
 #endif
@@ -1969,7 +1970,9 @@ elm_entry_add(Evas_Object *parent)
                                    _signal_selection_changed, obj);
    edje_object_signal_callback_add(wd->ent, "selection,cleared", "elm.text",
                                    _signal_selection_cleared, obj);
-   edje_object_signal_callback_add(wd->ent, "entry,paste,request", "elm.text",
+   edje_object_signal_callback_add(wd->ent, "entry,paste,request,1", "elm.text",
+                                   _signal_entry_paste_request, obj);
+   edje_object_signal_callback_add(wd->ent, "entry,paste,request,3", "elm.text",
                                    _signal_entry_paste_request, obj);
    edje_object_signal_callback_add(wd->ent, "entry,copy,notify", "elm.text",
                                    _signal_entry_copy_notify, obj);
