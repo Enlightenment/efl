@@ -1,3 +1,5 @@
+SUBDIRS = widgets
+
 MAINTAINERCLEANFILES = Makefile.in elementary.dox
 
 .PHONY: doc
@@ -92,4 +94,4 @@ doc:
 
 endif
 
-EXTRA_DIST = Doxyfile.in $(wildcard img/*.*) e.css head.html foot.html elementary.dox.in widget_preview_tmpl_head.c widget_preview_tmpl_foot.c
+EXTRA_DIST = Doxyfile.in $(wildcard img/*.*) e.css head.html foot.html elementary.dox.in

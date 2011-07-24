@@ -68,3 +68,46 @@ widget_preview_pager
 LDADD = $(top_builddir)/src/lib/libelementary.la @ELEMENTARY_EWEATHER_LIBS@ @ELEMENTARY_EDBUS_LIBS@ @ELEMENTARY_EFREET_LIBS@ @ELEMENTARY_LIBS@ @EIO_LIBS@ @my_libs@
 
 endif
+
+EXTRA_DIST = \
+	widget_preview_actionslider.c \
+	widget_preview_anchorblock.c \
+	widget_preview_anchorview.c \
+	widget_preview_bg.c \
+	widget_preview_bubble1.c \
+	widget_preview_bubble2.c \
+	widget_preview_bubble3.c \
+	widget_preview_button1.c \
+	widget_preview_button2.c \
+	widget_preview_button3.c \
+	widget_preview_calendar.c \
+	widget_preview_check1.c \
+	widget_preview_check2.c \
+	widget_preview_check3.c \
+	widget_preview_clock.c \
+	widget_preview_colorselector.c \
+	widget_preview_conformant.c \
+	widget_preview_ctxpopup.c \
+	widget_preview_diskselector.c \
+	widget_preview_entry1.c \
+	widget_preview_entry2.c \
+	widget_preview_entry3.c \
+	widget_preview_entry4.c \
+	widget_preview_fileselector_button1.c \
+	widget_preview_fileselector_button2.c \
+	widget_preview_fileselector_button3.c \
+	widget_preview_fileselector.c \
+	widget_preview_fileselector_entry.c \
+	widget_preview_flip.c \
+	widget_preview_flipselector.c \
+	widget_preview_frame.c \
+	widget_preview_hover.c \
+	widget_preview_hoversel.c \
+	widget_preview_icon.c \
+	widget_preview_image.c \
+	widget_preview_index.c \
+	widget_preview_label.c \
+	widget_preview_layout.c \
+	widget_preview_pager.c \
+	widget_preview_tmpl_foot.c \
+	widget_preview_tmpl_head.c
