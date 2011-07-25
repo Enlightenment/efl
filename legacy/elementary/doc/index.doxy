@@ -161,6 +161,9 @@
  * @li @ref Spinner
  * @li @ref Thumb
  * @li @ref Toggle
+ *
+ * @image html img/widget/toggle/preview-00.png
+ * @image latex img/widget/toggle/preview-00.eps
  * @li @ref Toolbar
  * @li @ref Tooltips
  * @li @ref Video

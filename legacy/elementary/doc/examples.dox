@@ -2964,6 +2964,66 @@
  */
 
 /**
+ * @page tutorial_toggle Toggle example
+ * @dontinclude toggle_example_01.c
+ *
+ * In this example we'll create 2 toggle widgets. The first will have an icon
+ * and the state names will be the default "on"/"off", it will also change the
+ * value of a variable directly. The second won't have a icon, the state names
+ * will be "Enabled"/"Disabled", it will  start "Enabled" and it won't set the
+ * value of a variable.
+ *
+ * We start with the usual includes and prototype for callback which will be
+ * implemented and detailed later on:
+ * @until _cb2
+ *
+ * We then declare a static global variable(the one whose value will be changed
+ * by the first toggle):
+ * @until static
+ *
+ * We now have to create our window and all that usual stuff:
+ * @until show(bx)
+ *
+ * The creation of a toggle is no more complicated than that of any other
+ * widget:
+ * @until add
+ *
+ * For our first toggle we don't set the states labels so they will stay the
+ * default, however we do set a label for the toggle, an icon and the variable
+ * whose value it should change:
+ * @until show
+ *
+ * We also set the callback that will be called when the toggles value changes:
+ * @until smart_callback
+ *
+ * For our second toggle it important to note that we set the states labels,
+ * don't set an icon or variable, but set the initial state to
+ * EINA_TRUE("Enabled"):
+ * @until show
+ *
+ * For the second toggle we will use a different callback:
+ * @until smart_callback
+ *
+ * We then ask the main loop to start:
+ * @until ELM_MAIN
+ *
+ * The callback for our first toggle will look the value of @p val and print it:
+ * @until }
+ *
+ * For our second callback we need to do a little bit more, since the second
+ * toggle doesn't change the value of a variable we have to ask it what its
+ * state is:
+ * @until }
+ *
+ * This example will look like this:
+ *
+ * @image html screenshots/toggle_example_01.png
+ * @image latex screenshots/toggle_example_01.eps width=\textwidth
+ *
+ * @example toggle_example_01.c
+ */
+
+/**
  * @page bg_example_01_c bg_example_01.c
  * @include bg_example_01.c
  * @example bg_example_01.c

@@ -1,19 +1,6 @@
 #include <Elementary.h>
 #include "elm_priv.h"
 
-/**
- * @defgroup Toggle
- *
- * A toggle is a slider which can be used to toggle between
- * two values.  It has two states: on and off.
- *
- * Signals that you can add callbacks for are:
- *
- * "changed" - Whenever the toggle value has been changed.  Is not called until
- *             the toggle is released by the cursor (assuming it has been
- *             triggered by the cursor in the first place).
- */
-
 typedef struct _Widget_Data Widget_Data;
 
 struct _Widget_Data
@@ -228,15 +215,6 @@ _elm_toggle_label_get(const Evas_Object *obj, const char *item)
    return wd->label;
 }
 
-/**
- * Add a toggle to @p parent.
- *
- * @param parent The parent object
- *
- * @return The toggle object
- *
- * @ingroup Toggle
- */
 EAPI Evas_Object *
 elm_toggle_add(Evas_Object *parent)
 {
@@ -283,48 +261,18 @@ elm_toggle_add(Evas_Object *parent)
    return obj;
 }
 
-/**
- * Sets the label to be displayed with the toggle.
- *
- * @param obj The toggle object
- * @param label The label to be displayed
- *
- * @ingroup Toggle
- * @deprecate use elm_object_text_* instead.
- */
 EAPI void
 elm_toggle_label_set(Evas_Object *obj, const char *label)
 {
    _elm_toggle_label_set(obj, NULL, label);
 }
 
-/**
- * Gets the label of the toggle
- *
- * @param obj  toggleeee object
- * @return The label of the toggle
- *
- * @ingroup Toggle
- * @deprecate use elm_object_text_* instead.
- */
 EAPI const char *
 elm_toggle_label_get(const Evas_Object *obj)
 {
    return _elm_toggle_label_get(obj, NULL);
 }
 
-/**
- * Set the icon used for the toggle
- *
- * Once the icon object is set, a previously set one will be deleted
- * If you want to keep that old content object, use the
- * elm_toggle_icon_unset() function.
- *
- * @param obj The toggle object
- * @param icon The icon object for the button
- *
- * @ingroup Toggle
- */
 EAPI void
 elm_toggle_icon_set(Evas_Object *obj, Evas_Object *icon)
 {
@@ -346,16 +294,6 @@ elm_toggle_icon_set(Evas_Object *obj, Evas_Object *icon)
    _sizing_eval(obj);
 }
 
-/**
- * Get the icon used for the toggle
- *
- * Return the icon object which is set for this widget.
- *
- * @param obj The toggle object
- * @return The icon object that is being used
- *
- * @ingroup Toggle
- */
 EAPI Evas_Object *
 elm_toggle_icon_get(const Evas_Object *obj)
 {
@@ -365,16 +303,6 @@ elm_toggle_icon_get(const Evas_Object *obj)
    return wd->icon;
 }
 
-/**
- * Unset the icon used for the toggle
- *
- * Unparent and return the icon object which was set for this widget.
- *
- * @param obj The toggle object
- * @return The icon object that was being used
- *
- * @ingroup Toggle
- */
 EAPI Evas_Object *
 elm_toggle_icon_unset(Evas_Object *obj)
 {
@@ -389,15 +317,6 @@ elm_toggle_icon_unset(Evas_Object *obj)
    return icon;
 }
 
-/**
- * Sets the labels to be associated with the on and off states of the toggle.
- *
- * @param obj The toggle object
- * @param onlabel The label displayed when the toggle is in the "on" state
- * @param offlabel The label displayed when the toggle is in the "off" state
- *
- * @ingroup Toggle
- */
 EAPI void
 elm_toggle_states_labels_set(Evas_Object *obj, const char *onlabel, const char *offlabel)
 {
@@ -411,16 +330,6 @@ elm_toggle_states_labels_set(Evas_Object *obj, const char *onlabel, const char *
    _sizing_eval(obj);
 }
 
-
-/**
- * Gets the labels associated with the on and off states of the toggle.
- *
- * @param obj The toggle object
- * @param onlabel A char** to place the onlabel of @p obj into
- * @param offlabel A char** to place the offlabel of @p obj into
- *
- * @ingroup Toggle
- */
 EAPI void
 elm_toggle_states_labels_get(const Evas_Object *obj, const char **onlabel, const char **offlabel)
 {
@@ -433,14 +342,6 @@ elm_toggle_states_labels_get(const Evas_Object *obj, const char **onlabel, const
    if (offlabel) *offlabel = wd->offtext;
 }
 
-/**
- * Sets the state of the toggle to @p state.
- *
- * @param obj The toggle object
- * @param state The state of @p obj
- *
- * @ingroup Toggle
- */
 EAPI void
 elm_toggle_state_set(Evas_Object *obj, Eina_Bool state)
 {
@@ -458,14 +359,6 @@ elm_toggle_state_set(Evas_Object *obj, Eina_Bool state)
      }
 }
 
-/**
- * Gets the state of the toggle to @p state.
- *
- * @param obj The toggle object
- * @return The state of @p obj
- *
- * @ingroup Toggle
- */
 EAPI Eina_Bool
 elm_toggle_state_get(const Evas_Object *obj)
 {
@@ -475,14 +368,6 @@ elm_toggle_state_get(const Evas_Object *obj)
    return wd->state;
 }
 
-/**
- * Sets the state pointer of the toggle to @p statep.
- *
- * @param obj The toggle object
- * @param statep The state pointer of @p obj
- *
- * @ingroup Toggle
- */
 EAPI void
 elm_toggle_state_pointer_set(Evas_Object *obj, Eina_Bool *statep)
 {
