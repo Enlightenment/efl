@@ -2355,9 +2355,9 @@ elm_gengrid_item_data_get(const Elm_Gengrid_Item *item)
  * Set the data item from the gengrid item
  *
  * This sets the data value passed on the elm_gengrid_item_append() and
- * related item addition calls. This function will also call
- * elm_gengrid_item_update() so the item will be updated to reflect
- * the new data.
+ * related item addition calls. This function will not call
+ * elm_gengrid_item_update() anymore. So call elm_gengrid_item_update()
+ * manually only when it's needed.
  *
  * @param item The item
  * @param data The new data pointer to set
@@ -2370,7 +2370,6 @@ elm_gengrid_item_data_set(Elm_Gengrid_Item *item,
 {
    ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(item);
    elm_widget_item_data_set(item, data);
-   elm_gengrid_item_update(item);
 }
 
 EAPI const Elm_Gengrid_Item_Class *
