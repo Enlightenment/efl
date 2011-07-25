@@ -1907,7 +1907,9 @@ elm_gengrid_align_set(Evas_Object *obj,
                       double       align_y)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
+
    Widget_Data *wd = elm_widget_data_get(obj);
+   double old_h = wd->align_x, old_y = wd->align_y;
 
    if (align_x > 1.0)
      align_x = 1.0;
@@ -1920,6 +1922,9 @@ elm_gengrid_align_set(Evas_Object *obj,
    else if (align_y < 0.0)
      align_y = 0.0;
    wd->align_y = align_y;
+
+   if ((old_h != wd->align_x) || (old_y != wd->align_y))
+     evas_object_smart_calculate(wd->pan_smart);
 }
 
 /**
