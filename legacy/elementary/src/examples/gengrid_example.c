@@ -222,6 +222,32 @@ _clear_cb(void        *data,
    fprintf(stdout, "Clearing the grid!\n");
 }
 
+/* bring in 1st item */
+static void
+_bring_1st_clicked(void        *data,
+                   Evas_Object *obj __UNUSED__,
+                   void        *event_info __UNUSED__)
+{
+   Elm_Gengrid_Item *it = elm_gengrid_first_item_get(data);
+
+   if (!it) return;
+
+   elm_gengrid_item_bring_in(it);
+}
+
+/* show last item */
+static void
+_show_last_clicked(void        *data,
+                   Evas_Object *obj __UNUSED__,
+                   void        *event_info __UNUSED__)
+{
+   Elm_Gengrid_Item *it = elm_gengrid_last_item_get(data);
+
+   if (!it) return;
+
+   elm_gengrid_item_show(it);
+}
+
 /* change items' size */
 static void
 _size_changed(void        *data,
@@ -419,6 +445,18 @@ elm_main(int    argc __UNUSED__,
    bt = elm_button_add(win);
    elm_object_text_set(bt, "Clear");
    evas_object_smart_callback_add(bt, "clicked", _clear_cb, grid);
+   elm_box_pack_end(hbx_1, bt);
+   evas_object_show(bt);
+
+   bt = elm_button_add(win);
+   elm_object_text_set(bt, "Bring in 1st");
+   evas_object_smart_callback_add(bt, "clicked", _bring_1st_clicked, grid);
+   elm_box_pack_end(hbx_1, bt);
+   evas_object_show(bt);
+
+   bt = elm_button_add(win);
+   elm_object_text_set(bt, "Show last");
+   evas_object_smart_callback_add(bt, "clicked", _show_last_clicked, grid);
    elm_box_pack_end(hbx_1, bt);
    evas_object_show(bt);
 

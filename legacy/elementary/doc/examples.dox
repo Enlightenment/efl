@@ -3147,6 +3147,8 @@
  * - "Insert after" (to insert an item after the selection, on the
  *   grid),
  * - "Clear" (to delete all items in the grid),
+ * - "Bring in 1st" (to make the 1st item visible, by scrolling),
+ * - "Show last" (to directly show the last item),
  * .
  * which are displaced and declared in that order. We're not dealing
  * with the buttons' creation code (see @ref button_example_01
@@ -3182,6 +3184,24 @@
  * as expected, just issue elm_gengrid_clear():
  * @dontinclude gengrid_example.c
  * @skip delete items
+ * @until }
+ *
+ * The "Bring in 1st" button is there exercise two gengrid functions
+ * -- elm_gengrid_first_item_get() and elm_gengrid_item_bring_in().
+ * With the former, we get a handle to the first item and, with the
+ * latter, you'll see that the widget animatedly scrolls its view
+ * until we can see that item:
+ * @dontinclude gengrid_example.c
+ * @skip bring in 1st item
+ * @until }
+ *
+ * The "Show last", in its turn, will use elm_gengrid_last_item_get()
+ * and elm_gengrid_item_show(). The latter differs from
+ * elm_gengrid_item_bring_in() in that it immediately replaces the
+ * contents of the grid's viewport with the region containing the item
+ * in question:
+ * @dontinclude gengrid_example.c
+ * @skip show last item
  * @until }
  *
  * To change the grid's cell (items) size, we've placed a spinner,

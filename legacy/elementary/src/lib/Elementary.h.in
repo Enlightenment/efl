@@ -5105,23 +5105,32 @@ extern "C" {
    EAPI Eina_Bool          elm_gengrid_horizontal_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
 
    /**
-    * Get the first item in the gengrid
-    *
-    * This returns the first item in the list.
+    * Get the first item in a given gengrid widget
     *
     * @param obj The gengrid object
-    * @return The first item, or NULL if none
+    * @return The first item's handle or @c NULL, if there are no
+    * items in @p obj (and on errors)
+    *
+    * This returns the first item in the @p obj's internal list of
+    * items.
+    *
+    * @see elm_gengrid_last_item_get()
     *
     * @ingroup Gengrid
     */
    EAPI Elm_Gengrid_Item  *elm_gengrid_first_item_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
 
    /**
-    * Get the last item in the gengrid
+    * Get the last item in a given gengrid widget
     *
-    * This returns the last item in the list.
+    * @param obj The gengrid object
+    * @return The last item's handle or @c NULL, if there are no
+    * items in @p obj (and on errors)
     *
-    * @return The last item, or NULL if none
+    * This returns the last item in the @p obj's internal list of
+    * items.
+    *
+    * @see elm_gengrid_first_item_get()
     *
     * @ingroup Gengrid
     */
@@ -5281,25 +5290,32 @@ extern "C" {
    EAPI const Evas_Object *elm_gengrid_item_object_get(const Elm_Gengrid_Item *item) EINA_ARG_NONNULL(1);
 
    /**
-    * Show the given item
+    * Show the portion of a gengrid's internal grid containing a given
+    * item, @b immediately.
     *
-    * This causes gengrid to jump to the given item @p item and show it
-    * (by scrolling), if it is not fully visible.
+    * @param item The item to display
     *
-    * @param item The item
+    * This causes gengrid to @b redraw its viewport's contents to the
+    * region contining the given @p item item, if it is not fully
+    * visible.
+    *
+    * @see elm_gengrid_item_bring_in()
     *
     * @ingroup Gengrid
     */
    EAPI void               elm_gengrid_item_show(Elm_Gengrid_Item *item) EINA_ARG_NONNULL(1);
 
    /**
-    * Bring in the given item
+    * Animatedly bring in, to the visible are of a gengrid, a given
+    * item on it.
     *
-    * This causes gengrig to jump to the given item @p item and show it
-    * (by scrolling), if it is not fully visible. This may use animation
-    * to do so and take a period of time
+    * @param item The gengrid item to display
     *
-    * @param item The item
+    * This causes gengrig to jump to the given @p item item and show
+    * it (by scrolling), if it is not fully visible. This will use
+    * animation to do so and take a period of time to complete.
+    *
+    * @see elm_gengrid_item_show()
     *
     * @ingroup Gengrid
     */
@@ -5506,32 +5522,35 @@ extern "C" {
    EAPI void               elm_gengrid_clear(Evas_Object *obj) EINA_ARG_NONNULL(1);
 
    /**
-    * Get the selected item in the Gengrid
+    * Get the selected item in a given gengrid widget
     *
-    * This gets the selected item in the Gengrid (if multi-select is
-    * enabled only the first item in the list is selected - which is not
-    * very useful, so see elm_gengrid_selected_items_get() for when
-    * multi-select is used).
+    * @param obj The gengrid object.
+    * @return The selected item's handleor @c NULL, if none is
+    * selected at the moment (and on errors)
     *
-    * If no item is selected, NULL is returned.
-    *
-    * @param obj The Gengrid object.
-    * @return The selected item, or NULL if none.
+    * This returns the selected item in @p obj. If multi selection is
+    * enabled on @p obj (@see elm_gengrid_multi_select_set()), only
+    * the first item in the list is selected, which might not be very
+    * useful. For that case, see elm_gengrid_selected_items_get().
     *
     * @ingroup Gengrid
     */
    EAPI Elm_Gengrid_Item  *elm_gengrid_selected_item_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
 
    /**
-    * Get a list of selected items in the Gengrid.
+    * Get <b>a list</b> of selected items in a given gengrid
     *
-    * This returns a list of the selected items. This list pointer is
-    * only valid so long as no items are selected or unselected (or
-    * unselected implictly by deletion). The list contains
-    * Elm_Gengrid_Item pointers.
+    * @param obj The gengrid object.
+    * @return The list of selected items or @c NULL, if none is
+    * selected at the moment (and on errors)
     *
-    * @param obj The Gengrid object.
-    * @return The list of selected items, or NULL if none are selected.
+    * This returns a list of the selected items, in the order that
+    * they appear in the grid. This list is only valid as long as no
+    * more items are selected or unselected (or unselected implictly
+    * by deletion). The list contains #Elm_Gengrid_Item pointers as
+    * data, naturally.
+    *
+    * @see @elm_gengrid_selected_item_get()
     *
     * @ingroup Gengrid
     */
