@@ -36,7 +36,6 @@ elm_win_resize_object_add(win, o);
 evas_object_show(o);
 
 Evas_Object *id = elm_index_add(win);
-elm_win_resize_object_add(win, id);
 evas_object_size_hint_weight_set(id, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
 elm_win_resize_object_add(win, id);
 evas_object_show(id);
