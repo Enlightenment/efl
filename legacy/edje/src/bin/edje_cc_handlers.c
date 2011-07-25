@@ -1679,6 +1679,9 @@ st_styles_style_base(void)
         [tag name] [style properties string]
     @effect
         Style to be applied only to text between style \<tags\>..\</tags\>.
+        When creating "paired" tags, like \<bold\>\</bold\>, A '+' should be added at the start of the style properties of the first part (\<bold\>).
+        If the second part (\</bold\>) is also defined, a '-' should be prepended to it's style properties.
+        This only applies to paired tags; Single tags, like \<tab\>, must not include a starting '+'.
     @endproperty
 */
 static void
