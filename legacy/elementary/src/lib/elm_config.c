@@ -30,6 +30,7 @@ const char *_elm_engines[] = {
    "sdl",
    "software_16_sdl",
    "opengl_sdl",
+   "buffer",
    NULL
 };
 
@@ -1460,6 +1461,8 @@ _env_get(void)
                  (!strcasecmp(s, "software-16-wince-gdi")) ||
                  (!strcasecmp(s, "software_16_wince_gdi")))
           eina_stringshare_replace(&_elm_config->engine, ELM_SOFTWARE_16_WINCE);
+        else if (!strcasecmp(s, "buffer"))
+          eina_stringshare_replace(&_elm_config->engine, ELM_BUFFER);
         else if ((!strncmp(s, "shot:", 5)))
           eina_stringshare_replace(&_elm_config->engine, s);
      }

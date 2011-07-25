@@ -78,6 +78,7 @@ extern const char *_elm_engines[];
 #define ELM_SOFTWARE_SDL      (_elm_engines[9])
 #define ELM_SOFTWARE_16_SDL   (_elm_engines[10])
 #define ELM_OPENGL_SDL        (_elm_engines[11])
+#define ELM_BUFFER            (_elm_engines[12])
 
 #define ELM_FONT_TOKEN_STYLE ":style="
 
