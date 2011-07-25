@@ -872,7 +872,11 @@ START_TEST(evas_textblock_items)
    /* FIXME: Also verify x,y positions of the item. */
 
    /* FIXME We need some item tests that involve line wrapping that make the
-    * items move between lines that are in different sizes. */
+    * items move between lines that are in different sizes.
+    * Also, tests that involve wrapping positions with relsized items. We
+    * want to make sure the item gets a relsize on the correct time (before
+    * the wrapping, and then is updated after the wrapping) and that
+    * all the lines have the correct sizes afterwards. */
 
    END_TB_TEST();
 }
