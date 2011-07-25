@@ -1313,7 +1313,7 @@ _status_config_themes(Evas_Object *win,
      {
         Theme *t;
         int y;
-        
+
         t = calloc(1, sizeof(Theme));
         t->name = eina_stringshare_add(th);
         s = elm_theme_list_item_path_get(th, &(t->in_search_path));

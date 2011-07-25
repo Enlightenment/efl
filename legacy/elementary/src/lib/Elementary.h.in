@@ -12928,7 +12928,7 @@ extern "C" {
     * @param transit The transit object.
     * @param chain_transit The chain transit object.
     *
-    * This function remove the @p chain_transit transition from the @p transit. 
+    * This function remove the @p chain_transit transition from the @p transit.
     *
     * @ingroup Transit
     */

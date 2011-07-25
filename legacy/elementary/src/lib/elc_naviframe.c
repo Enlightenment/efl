@@ -111,13 +111,13 @@ _del_hook(Evas_Object *obj)
 static void
 _theme_hook(Evas_Object *obj __UNUSED__)
 {
-   //FIXME:  
+   //FIXME:
 }
 
 static void
 _disable_hook(Evas_Object *obj __UNUSED__)
 {
-   //FIXME: 
+   //FIXME:
 }
 
 static void
@@ -434,7 +434,7 @@ elm_naviframe_item_push(Evas_Object *obj, const char *title_label, Evas_Object *
                                    _popped_finished, it);
    elm_naviframe_item_style_set(it, item_style);
 
-   //title 
+   //title
    it->title = edje_object_add(evas_object_evas_get(obj));
    elm_widget_sub_object_add(obj, it->title);
    _elm_theme_object_set(obj,
@@ -448,7 +448,7 @@ elm_naviframe_item_push(Evas_Object *obj, const char *title_label, Evas_Object *
 
    elm_naviframe_item_title_label_set(it, title_label);
 
-   //title buttons 
+   //title buttons
    if ((!prev_btn) && (eina_list_count(wd->stack)))
      {
         prev_btn = _back_btn_new(obj);

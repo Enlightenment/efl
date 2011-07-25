@@ -203,7 +203,7 @@ _conformant_part_sizing_eval(Evas_Object *obj, Conformant_Part_Type part_type)
    if (part_type & ELM_CONFORM_INDICATOR_PART)
      {
         if ((!_conformant_part_geometry_env_get("ILLUME_IND",
-                                                &sx, &sy, &sw, &sh)) && (xwin)) 
+                                                &sx, &sy, &sw, &sh)) && (xwin))
           {
 #ifdef HAVE_ELEMENTARY_X
              ecore_x_e_illume_indicator_geometry_get(zone, &sx, &sy, &sw, &sh);
@@ -216,7 +216,7 @@ _conformant_part_sizing_eval(Evas_Object *obj, Conformant_Part_Type part_type)
    if (part_type & ELM_CONFORM_VIRTUAL_KEYPAD_PART)
      {
         if ((!_conformant_part_geometry_env_get("ILLUME_KBD",
-                                                &sx, &sy, &sw, &sh)) && (xwin)) 
+                                                &sx, &sy, &sw, &sh)) && (xwin))
           {
 #ifdef HAVE_ELEMENTARY_X
              ecore_x_e_illume_keyboard_geometry_get(zone, &sx, &sy, &sw, &sh);
@@ -229,7 +229,7 @@ _conformant_part_sizing_eval(Evas_Object *obj, Conformant_Part_Type part_type)
    if (part_type & ELM_CONFORM_SOFTKEY_PART)
      {
         if ((!_conformant_part_geometry_env_get("ILLUME_STK",
-                                                &sx, &sy, &sw, &sh)) && (xwin)) 
+                                                &sx, &sy, &sw, &sh)) && (xwin))
           {
 #ifdef HAVE_ELEMENTARY_X
              ecore_x_e_illume_softkey_geometry_get(zone, &sx, &sy, &sw, &sh);
