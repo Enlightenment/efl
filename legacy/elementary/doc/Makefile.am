@@ -49,7 +49,8 @@ WGT_PREVIEW = \
 	anchorview:preview-00.png:widget_preview_anchorview:100:30 \
 	anchorblock:preview-00.png:widget_preview_anchorblock:100:30 \
 	pager:preview-00.png:widget_preview_pager:100:100 \
-	separator:preview-00.png:widget_preview_separator:10:80
+	separator:preview-00.png:widget_preview_separator:10:80 \
+	radio:preview-00.png:widget_preview_radio:60:20
 
 widget-build:
 	@$(MAKE) -C widgets

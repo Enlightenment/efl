@@ -78,7 +78,8 @@ SRCS = \
 	layout_example.edc \
 	ctxpopup_example_01.c \
 	pager_example_01.c \
-	separator_example_01.c
+	separator_example_01.c \
+	radio_example_01.c
 
 pkglib_PROGRAMS =
 
@@ -146,7 +147,8 @@ pkglib_PROGRAMS += \
 	index_example_01 \
 	index_example_02 \
 	pager_example_01 \
-	separator_example_01
+	separator_example_01 \
+	radio_example_01
 
 # This variable will hold the list of screenshots that will be made
 # by "make screenshots". Each item in the list is of the form:
@@ -189,7 +191,8 @@ SCREENSHOTS = \
 	index_example_02:index_example_03.png:0.3 \
 	ctxpopup_example_01:ctxpopup_example_01.png:0.0 \
 	pager_example_01:pager_example_01.png:0.0 \
-	separator_example_01:separator_example_01.png:0.0
+	separator_example_01:separator_example_01.png:0.0 \
+	radio_example_01:radio_example_01.png:0.0
 
 HTML_SS_DIR=$(top_builddir)/doc/html/screenshots
 LATEX_SS_DIR=$(top_builddir)/doc/latex/screenshots

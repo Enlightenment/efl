@@ -2904,6 +2904,66 @@
  */
 
 /**
+ * @page tutorial_radio Radio example
+ * @dontinclude radio_example_01.c
+ *
+ * In this example we will create 4 radio buttons, three of them in a group and
+ * another one not in the group. We will also have the radios in the group
+ * change the value of a variable directly and have then print it when the value
+ * changes. The fourth button is in the example just to make clear that radios
+ * outside the group don't affect the group.
+ *
+ * We'll start with the usual includes:
+ * @until #endif
+ *
+ * And move right to declaring a static variable(the one whose value the radios
+ * will change):
+ * @until static
+ *
+ * We now need to have a window and all that good stuff to be able to place our
+ * radios in:
+ * @until show(bx)
+ *
+ * And now we create a radio button, since this is the first button in our group
+ * we set the group to be the radio(so we can set the other radios in the same
+ * group). We also set the state value of this radio to 1 and the value pointer
+ * to @p val, since val is @p 1 this has the additional effect of setting the
+ * radio value to @p 1. For this radio we choose the default home icon:
+ * @until show
+ *
+ * To check that our radio buttons are working we'll add a callback to the
+ * "changed" signal of the radio:
+ * @until smart_callback
+ *
+ * The creation of our second radio button is almost identical, the 2
+ * differences worth noting are, the value of this radio 2 and that we add this
+ * radio to the group of the first radio:
+ * @until smart_callback
+ *
+ * For our third callback we'll omit the icon and set the value to 3, we'll also
+ * add it to the group of the first radio:
+ * @until smart_callback
+ *
+ * Our fourth callback has a value of 4, no icon and most relevantly is not a
+ * member of the same group as the other radios:
+ * @until show
+ *
+ * We finally run the main loop:
+ * @until ELM_MAIN
+ *
+ * And the last detail in our example is the callback that prints @p val so that
+ * we can see that the radios are indeed changing its value:
+ * @until }
+ *
+ * The example will look like this:
+ *
+ * @image html screenshots/radio_example_01.png
+ * @image latex screenshots/radio_example_01.epx width=\textwidth
+ *
+ * @example radio_example_01.c
+ */
+
+/**
  * @page bg_example_01_c bg_example_01.c
  * @include bg_example_01.c
  * @example bg_example_01.c

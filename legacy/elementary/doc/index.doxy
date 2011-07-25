@@ -146,6 +146,9 @@
  * @li @ref Photocam
  * @li @ref Progressbar
  * @li @ref Radio
+ *
+ * @image html img/widget/radio/preview-00.png
+ * @image latex img/widget/radio/preview-00.eps
  * @li @ref Route
  * @li @ref Scroller
  * @li @ref SegmentControl
