@@ -358,8 +358,10 @@ _ecore_x_event_reverse_locks(unsigned int state)
    if(state & ECORE_IMF_KEYBOARD_LOCK_CAPS)
      locks |= LockMask;
 
+#if 0                           /* FIXME: add mask. */
    if(state & ECORE_IMF_KEYBOARD_LOCK_SCROLL)
-     ;  /* XXX */
+     ;
+#endif
 
    return locks;
 }
@@ -666,14 +668,15 @@ imf_context_data_destroy(Ecore_IMF_Context_Data *imf_context_data)
    if(imf_context_data->ic)
      XDestroyIC(imf_context_data->ic);
 
+   free(imf_context_data->preedit_chars);
    free(imf_context_data->locale);
    free(imf_context_data);
 }
 
 static int
-preedit_start_callback(XIC      xic,
+preedit_start_callback(XIC      xic __UNUSED__,
                        XPointer client_data,
-                       XPointer call_data)
+                       XPointer call_data __UNUSED__)
 {
    EINA_LOG_DBG("in");
    Ecore_IMF_Context *ctx = (Ecore_IMF_Context *)client_data;
@@ -687,9 +690,9 @@ preedit_start_callback(XIC      xic,
 }
 
 static void
-preedit_done_callback(XIC      xic,
+preedit_done_callback(XIC      xic __UNUSED__,
                       XPointer client_data,
-                      XPointer call_data)
+                      XPointer call_data __UNUSED__)
 {
    EINA_LOG_DBG("in");
    Ecore_IMF_Context *ctx = (Ecore_IMF_Context *)client_data;
@@ -708,7 +711,7 @@ preedit_done_callback(XIC      xic,
 
 /* FIXME */
 static int
-xim_text_to_utf8(Ecore_IMF_Context *ctx,
+xim_text_to_utf8(Ecore_IMF_Context *ctx __UNUSED__,
                  XIMText           *xim_text,
                  char             **text)
 {
@@ -750,7 +753,7 @@ xim_text_to_utf8(Ecore_IMF_Context *ctx,
 }
 
 static void
-preedit_draw_callback(XIC                           xic,
+preedit_draw_callback(XIC                           xic __UNUSED__,
                       XPointer                      client_data,
                       XIMPreeditDrawCallbackStruct *call_data)
 {
@@ -829,7 +832,7 @@ preedit_draw_callback(XIC                           xic,
 }
 
 static void
-preedit_caret_callback(XIC                            xic,
+preedit_caret_callback(XIC                            xic __UNUSED__,
                        XPointer                       client_data,
                        XIMPreeditCaretCallbackStruct *call_data)
 {
@@ -1053,8 +1056,8 @@ xim_info_try_im(XIM_Im_Info *info)
 }
 
 static void
-xim_info_display_closed(Ecore_X_Display *display,
-                        int              is_error,
+xim_info_display_closed(Ecore_X_Display *display __UNUSED__,
+                        int              is_error __UNUSED__,
                         XIM_Im_Info     *info)
 {
    Eina_List *ics, *tmp_list;
@@ -1085,7 +1088,7 @@ xim_info_display_closed(Ecore_X_Display *display,
 static void
 xim_instantiate_callback(Display *display,
                          XPointer client_data,
-                         XPointer call_data)
+                         XPointer call_data __UNUSED__)
 {
    XIM_Im_Info *info = (XIM_Im_Info *)client_data;
    XIM im = NULL;
@@ -1146,9 +1149,9 @@ setup_im(XIM_Im_Info *info)
 }
 
 static void
-xim_destroy_callback(XIM      xim,
+xim_destroy_callback(XIM      xim __UNUSED__,
                      XPointer client_data,
-                     XPointer call_data)
+                     XPointer call_data __UNUSED__)
 {
    XIM_Im_Info *info = (XIM_Im_Info *)client_data;
    info->im = NULL;
