@@ -461,8 +461,8 @@ _ecore_evas_x_resize_shape(Ecore_Evas *ee)
         einfo = (Evas_Engine_Info_Software_X11 *)evas_engine_info_get(ee->evas);
         if (einfo)
           {
-             unsigned int    foreground;
-             Ecore_X_GC      gc;
+             unsigned int foreground;
+             Ecore_X_GC gc;
 
              if (ee->engine.x.mask) ecore_x_pixmap_free(ee->engine.x.mask);
              ee->engine.x.mask = ecore_x_pixmap_new(ee->prop.window, ee->w, ee->h, 1);
@@ -511,8 +511,8 @@ _ecore_evas_x_resize_shape(Ecore_Evas *ee)
         einfo = (Evas_Engine_Info_Software_8_X11 *)evas_engine_info_get(ee->evas);
         if (einfo)
           {
-             unsigned int    foreground;
-             Ecore_X_GC      gc;
+             unsigned int foreground;
+             Ecore_X_GC gc;
 
              if (ee->engine.x.mask) ecore_x_pixmap_free(ee->engine.x.mask);
              ee->engine.x.mask = ecore_x_pixmap_new(ee->prop.window, ee->w, ee->h, 1);
@@ -1576,8 +1576,7 @@ _ecore_evas_x_rotation_set(Ecore_Evas *ee, int rotation, int resize)
 static void
 _ecore_evas_x_shaped_set(Ecore_Evas *ee, int shaped)
 {
-   if (((ee->shaped) && (shaped)) || ((!ee->shaped) && (!shaped)))
-     return;
+   if ((ee->shaped == shaped)) return;
    if (!strcmp(ee->driver, "opengl_x11")) return;
    if (!strcmp(ee->driver, "software_x11"))
      {
@@ -1590,8 +1589,8 @@ _ecore_evas_x_shaped_set(Ecore_Evas *ee, int shaped)
           {
              if (ee->shaped)
                {
-                  unsigned int    foreground;
-                  Ecore_X_GC      gc;
+                  unsigned int foreground;
+                  Ecore_X_GC gc;
 
                   if (!ee->engine.x.mask)
                     ee->engine.x.mask = ecore_x_pixmap_new(ee->prop.window, ee->w, ee->h, 1);
@@ -1674,8 +1673,8 @@ _ecore_evas_x_shaped_set(Ecore_Evas *ee, int shaped)
           {
              if (ee->shaped)
                {
-                  unsigned int    foreground;
-                  Ecore_X_GC      gc;
+                  unsigned int foreground;
+                  Ecore_X_GC gc;
 
                   if (!ee->engine.x.mask)
                     ee->engine.x.mask = ecore_x_pixmap_new(ee->prop.window, ee->w, ee->h, 1);
@@ -1715,14 +1714,7 @@ _ecore_evas_x_shaped_set(Ecore_Evas *ee, int shaped)
 static void
 _ecore_evas_x_alpha_set(Ecore_Evas *ee, int alpha)
 {
-# ifdef HAVE_ECORE_X_XCB
-   xcb_get_geometry_cookie_t cookie_geom;
-   xcb_get_window_attributes_cookie_t cookie_attr;
-   xcb_get_geometry_reply_t *reply_geom;
-   xcb_get_window_attributes_reply_t *reply_attr;
-#else
-   XWindowAttributes att;
-#endif
+   Ecore_X_Window_Attributes att;
 
    if ((ee->alpha == alpha)) return;
 
@@ -1762,23 +1754,10 @@ _ecore_evas_x_alpha_set(Ecore_Evas *ee, int alpha)
 
         einfo->info.destination_alpha = alpha;
 
-# ifdef BUILD_ECORE_EVAS_SOFTWARE_XCB
-        cookie_geom = xcb_get_geometry_unchecked(ecore_x_connection_get(), ee->prop.window);
-        cookie_attr = xcb_get_window_attributes_unchecked(ecore_x_connection_get(), ee->prop.window);
-
-        reply_geom = xcb_get_geometry_reply(ecore_x_connection_get(), cookie_geom, NULL);
-        reply_attr = xcb_get_window_attributes_reply(ecore_x_connection_get(), cookie_attr, NULL);
-        einfo->info.visual = xcb_visualtype_get(ecore_x_default_screen_get(), reply_attr->visual);
-        einfo->info.colormap = reply_attr->colormap;
-        einfo->info.depth = reply_geom->depth;
-        free(reply_geom);
-        free(reply_attr);
-# else
-        XGetWindowAttributes(ecore_x_display_get(), ee->prop.window, &att);
+        ecore_x_window_attributes_get(ee->prop.window, &att);
         einfo->info.visual = att.visual;
         einfo->info.colormap = att.colormap;
         einfo->info.depth = att.depth;
-# endif /* ! BUILD_ECORE_EVAS_SOFTWARE_XCB */
 
 //        if (ee->engine.x.mask) ecore_x_pixmap_free(ee->engine.x.mask);
 //        ee->engine.x.mask = 0;
@@ -1893,7 +1872,7 @@ _ecore_evas_x_alpha_set(Ecore_Evas *ee, int alpha)
           }
  */
 
-        XGetWindowAttributes(ecore_x_display_get(), ee->prop.window, &att);
+        ecore_x_window_attributes_get(ee->prop.window, &att);
         einfo->info.visual = att.visual;
         einfo->info.colormap = att.colormap;
         einfo->info.depth = att.depth;
@@ -3223,13 +3202,11 @@ ecore_evas_gl_x11_new(const char *disp_name, Ecore_X_Window parent,
 {
    return ecore_evas_gl_x11_options_new(disp_name, parent, x, y, w, h, NULL);
 }
+
 EAPI Ecore_Evas *
 ecore_evas_gl_x11_options_new(const char *disp_name, Ecore_X_Window parent,
                               int x, int y, int w, int h, const int *opt)
 {
-# ifdef HAVE_ECORE_X_XCB
-   Ecore_Evas *ee = NULL;
-# else
    Ecore_Evas *ee;
    int rmethod;
 
@@ -3332,7 +3309,6 @@ ecore_evas_gl_x11_options_new(const char *disp_name, Ecore_X_Window parent,
                                (Ecore_Event_Multi_Move_Cb)_ecore_evas_mouse_multi_move_process,
                                (Ecore_Event_Multi_Down_Cb)_ecore_evas_mouse_multi_down_process,
                                (Ecore_Event_Multi_Up_Cb)_ecore_evas_mouse_multi_up_process);
-# endif /* HAVE_ECORE_X_XCB */
 
    return ee;
 }
