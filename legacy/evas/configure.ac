@@ -784,10 +784,11 @@ AC_SUBST(have_evas_engine_software_x11)
 
 ######## OpenGL Engine ########
 have_evas_engine_gl_x11="no"
-build_gl_xcb=
+have_evas_engine_gl_xcb="no"
+build_gl_xcb="no"
 
 ## XCB Checks ##
-want_gl_xcb=
+want_gl_xcb="no"
 AC_MSG_CHECKING(whether to build OpenGL XCB Engine)
 AC_ARG_ENABLE(gl-xcb,
   AC_HELP_STRING([--enable-gl-xcb], [enable OpenGL XCB Engine. @<:@default=disabled@:>@]), [want_gl_xcb=$enableval]
