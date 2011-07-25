@@ -4776,7 +4776,7 @@ elm_genlist_item_del(Elm_Genlist_Item *it)
 /**
  * Set the data item from the genlist item
  *
- * This set the data value passed on the elm_genlist_item_append() and
+ * This sets the data value passed on the elm_genlist_item_append() and
  * related item addition calls. This function will not call
  * elm_genlist_item_update() anymore. So call elm_genlist_item_update()
  * manually only when it's needed.

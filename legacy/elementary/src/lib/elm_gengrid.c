@@ -2352,9 +2352,9 @@ elm_gengrid_item_data_get(const Elm_Gengrid_Item *item)
 }
 
 /**
- * Set the datan item from the gengrid item
+ * Set the data item from the gengrid item
  *
- * This set the data value passed on the elm_gengrid_item_append() and
+ * This sets the data value passed on the elm_gengrid_item_append() and
  * related item addition calls. This function will also call
  * elm_gengrid_item_update() so the item will be updated to reflect
  * the new data.
