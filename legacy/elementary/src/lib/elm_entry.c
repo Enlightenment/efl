@@ -123,6 +123,7 @@ static const char SIG_PRESS[] = "press";
 static const char SIG_LONGPRESSED[] = "longpressed";
 static const char SIG_CLICKED[] = "clicked";
 static const char SIG_CLICKED_DOUBLE[] = "clicked,double";
+static const char SIG_CLICKED_TRIPLE[] = "clicked,triple";
 static const char SIG_FOCUSED[] = "focused";
 static const char SIG_UNFOCUSED[] = "unfocused";
 static const char SIG_SELECTION_PASTE[] = "selection,paste";
@@ -145,6 +146,7 @@ static const Evas_Smart_Cb_Description _signals[] = {
        {SIG_LONGPRESSED, ""},
        {SIG_CLICKED, ""},
        {SIG_CLICKED_DOUBLE, ""},
+       {SIG_CLICKED_TRIPLE, ""},
        {SIG_FOCUSED, ""},
        {SIG_UNFOCUSED, ""},
        {SIG_SELECTION_PASTE, ""},
@@ -1575,6 +1577,14 @@ _signal_mouse_double(void *data, Evas_Object *obj __UNUSED__, const char *emissi
    evas_object_smart_callback_call(data, SIG_CLICKED_DOUBLE, NULL);
 }
 
+static void
+_signal_mouse_triple(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
+{
+   Widget_Data *wd = elm_widget_data_get(data);
+   if (!wd) return;
+   evas_object_smart_callback_call(data, SIG_CLICKED_TRIPLE, NULL);
+}
+
 #ifdef HAVE_ELEMENTARY_X
 static Eina_Bool
 _event_selection_notify(void *data, int type __UNUSED__, void *event)
@@ -2008,6 +2018,8 @@ elm_entry_add(Evas_Object *parent)
                                    _signal_mouse_clicked, obj);
    edje_object_signal_callback_add(wd->ent, "mouse,down,1,double", "elm.text",
                                    _signal_mouse_double, obj);
+   edje_object_signal_callback_add(wd->ent, "mouse,down,1,triple", "elm.text",
+                                   _signal_mouse_triple, obj);
    edje_object_part_text_set(wd->ent, "elm.text", "");
    if (_elm_config->desktop_entry)
      edje_object_part_text_select_allow_set(wd->ent, "elm.text", EINA_TRUE);

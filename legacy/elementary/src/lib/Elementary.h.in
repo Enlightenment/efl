@@ -5729,6 +5729,7 @@ extern "C" {
     * seconds.
     * @li "clicked": The entry has been clicked (mouse press and release).
     * @li "clicked,double": The entry has been double clicked.
+    * @li "clicked,triple": The entry has been triple clicked.
     * @li "focused": The entry has received focus.
     * @li "unfocused": The entry has lost focus.
     * @li "selection,paste": A paste of the clipboard contents was requested.
