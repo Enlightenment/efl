@@ -331,7 +331,7 @@ test_tooltip(void *data       __UNUSED__,
 
    win = elm_win_add(NULL, "tooltip", ELM_WIN_BASIC);
    elm_win_title_set(win, "Tooltip");
-   elm_win_autodel_set(win, 1);
+   elm_win_autodel_set(win, EINA_TRUE);
 
    bg = elm_bg_add(win);
    elm_win_resize_object_add(win, bg);
@@ -484,7 +484,7 @@ test_tooltip2(void *data       __UNUSED__,
 
    win = elm_win_add(NULL, "tooltip2", ELM_WIN_BASIC);
    elm_win_title_set(win, "Tooltip 2");
-   elm_win_autodel_set(win, 1);
+   elm_win_autodel_set(win, EINA_TRUE);
 
    bg = elm_bg_add(win);
    evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND,

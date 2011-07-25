@@ -10,7 +10,7 @@ test_table(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
 
    win = elm_win_add(NULL, "table", ELM_WIN_BASIC);
    elm_win_title_set(win, "Table");
-   elm_win_autodel_set(win, 1);
+   elm_win_autodel_set(win, EINA_TRUE);
 
    bg = elm_bg_add(win);
    evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -74,7 +74,7 @@ test_table2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
 
    win = elm_win_add(NULL, "table2", ELM_WIN_BASIC);
    elm_win_title_set(win, "Table Homogeneous");
-   elm_win_autodel_set(win, 1);
+   elm_win_autodel_set(win, EINA_TRUE);
 
    bg = elm_bg_add(win);
    evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -150,7 +150,7 @@ test_table3(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
 
    win = elm_win_add(NULL, "table3", ELM_WIN_BASIC);
    elm_win_title_set(win, "Table 3");
-   elm_win_autodel_set(win, 1);
+   elm_win_autodel_set(win, EINA_TRUE);
 
    bg = elm_bg_add(win);
    evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -200,7 +200,7 @@ test_table4(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
 
    win = elm_win_add(NULL, "table4", ELM_WIN_BASIC);
    elm_win_title_set(win, "Table 4");
-   elm_win_autodel_set(win, 1);
+   elm_win_autodel_set(win, EINA_TRUE);
 
    bg = elm_bg_add(win);
    evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -250,7 +250,7 @@ test_table5(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
 
    win = elm_win_add(NULL, "table5", ELM_WIN_BASIC);
    elm_win_title_set(win, "Table 5");
-   elm_win_autodel_set(win, 1);
+   elm_win_autodel_set(win, EINA_TRUE);
 
    bg = elm_bg_add(win);
    evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -308,7 +308,7 @@ test_table6(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
 
    win = elm_win_add(NULL, "table6", ELM_WIN_BASIC);
    elm_win_title_set(win, "Table 6");
-   elm_win_autodel_set(win, 1);
+   elm_win_autodel_set(win, EINA_TRUE);
 
    bg = elm_bg_add(win);
    evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);

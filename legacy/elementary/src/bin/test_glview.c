@@ -574,7 +574,7 @@ test_glview(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    // new window - do the usual and give it a name, title and delete handler
    win = elm_win_add(NULL, "glview", ELM_WIN_BASIC);
    elm_win_title_set(win, "GLView");
-   elm_win_autodel_set(win, 1);
+   elm_win_autodel_set(win, EINA_TRUE);
 
 
    // add a standard bg

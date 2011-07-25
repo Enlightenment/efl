@@ -69,7 +69,7 @@ test_flip(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info _
    win = elm_win_add(NULL, "flip", ELM_WIN_BASIC);
    elm_win_title_set(win, "Flip");
    elm_win_focus_highlight_enabled_set(win, EINA_TRUE);
-   elm_win_autodel_set(win, 1);
+   elm_win_autodel_set(win, EINA_TRUE);
 
    bg = elm_bg_add(win);
    elm_win_resize_object_add(win, bg);
@@ -211,7 +211,7 @@ test_flip2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
 
    win = elm_win_add(NULL, "flip2", ELM_WIN_BASIC);
    elm_win_title_set(win, "Flip 2");
-   elm_win_autodel_set(win, 1);
+   elm_win_autodel_set(win, EINA_TRUE);
 
    bg = elm_bg_add(win);
    snprintf(buf, sizeof(buf), "%s/images/%s", PACKAGE_DATA_DIR, "sky_01.jpg");
@@ -381,7 +381,7 @@ test_flip3(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
 
    win = elm_win_add(NULL, "flip3", ELM_WIN_BASIC);
    elm_win_title_set(win, "Flip Flip");
-   elm_win_autodel_set(win, 1);
+   elm_win_autodel_set(win, EINA_TRUE);
 
    bg = elm_bg_add(win);
    elm_win_resize_object_add(win, bg);
@@ -519,7 +519,7 @@ test_flip4(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
 
    win = elm_win_add(NULL, "flip4", ELM_WIN_BASIC);
    elm_win_title_set(win, "Flip Interactive");
-   elm_win_autodel_set(win, 1);
+   elm_win_autodel_set(win, EINA_TRUE);
 
    bg = elm_bg_add(win);
    elm_win_resize_object_add(win, bg);

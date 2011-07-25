@@ -56,7 +56,7 @@ test_bg_plain(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
 
    win = elm_win_add(NULL, "bg-plain", ELM_WIN_BASIC);
    elm_win_title_set(win, "Bg Plain");
-   elm_win_autodel_set(win, 1);
+   elm_win_autodel_set(win, EINA_TRUE);
 
    bg = elm_bg_add(win);
    /* allow bg to expand in x & y */
@@ -87,7 +87,7 @@ test_bg_image(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
 
    win = elm_win_add(NULL, "bg-image", ELM_WIN_BASIC);
    elm_win_title_set(win, "Bg Image");
-   elm_win_autodel_set(win, 1);
+   elm_win_autodel_set(win, EINA_TRUE);
 
    bg = elm_bg_add(win);
    snprintf(buf, sizeof(buf), "%s/images/plant_01.jpg", PACKAGE_DATA_DIR);
@@ -112,7 +112,7 @@ test_bg_options(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_
 
    win = elm_win_add(NULL, "bg-options", ELM_WIN_BASIC);
    elm_win_title_set(win, "Bg Options");
-   elm_win_autodel_set(win, 1);
+   elm_win_autodel_set(win, EINA_TRUE);
 
    bg = elm_bg_add(win);
    evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);

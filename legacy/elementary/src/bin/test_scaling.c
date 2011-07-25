@@ -10,7 +10,7 @@ test_scaling(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_inf
 
    win = elm_win_add(NULL, "scaling", ELM_WIN_BASIC);
    elm_win_title_set(win, "Scaling");
-   elm_win_autodel_set(win, 1);
+   elm_win_autodel_set(win, EINA_TRUE);
 
    bg = elm_bg_add(win);
    elm_win_resize_object_add(win, bg);
@@ -69,7 +69,7 @@ test_scaling2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
 
    win = elm_win_add(NULL, "scaling2", ELM_WIN_BASIC);
    elm_win_title_set(win, "Scaling 2");
-   elm_win_autodel_set(win, 1);
+   elm_win_autodel_set(win, EINA_TRUE);
 
    bg = elm_bg_add(win);
    elm_win_resize_object_add(win, bg);

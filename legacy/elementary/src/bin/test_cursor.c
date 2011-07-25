@@ -101,7 +101,7 @@ test_cursor(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
 
    win = elm_win_add(NULL, "cursor", ELM_WIN_BASIC);
    elm_win_title_set(win, "Cursor");
-   elm_win_autodel_set(win, 1);
+   elm_win_autodel_set(win, EINA_TRUE);
 
    bg = elm_bg_add(win);
    elm_win_resize_object_add(win, bg);
@@ -185,7 +185,7 @@ test_cursor2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_inf
 
    win = elm_win_add(NULL, "cursor2", ELM_WIN_BASIC);
    elm_win_title_set(win, "Cursor 2");
-   elm_win_autodel_set(win, 1);
+   elm_win_autodel_set(win, EINA_TRUE);
 
    bg = elm_bg_add(win);
    elm_win_resize_object_add(win, bg);
@@ -293,7 +293,7 @@ test_cursor3(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_inf
 
    win = elm_win_add(NULL, "cursor3", ELM_WIN_BASIC);
    elm_win_title_set(win, "Cursor 3");
-   elm_win_autodel_set(win, 1);
+   elm_win_autodel_set(win, EINA_TRUE);
 
    snprintf(buf, sizeof(buf), "%s/objects/cursors.edj", PACKAGE_DATA_DIR);
    elm_theme_extension_add(NULL, buf);

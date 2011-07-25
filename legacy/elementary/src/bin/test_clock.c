@@ -11,7 +11,7 @@ test_clock(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
 
    win = elm_win_add(NULL, "clock", ELM_WIN_BASIC);
    elm_win_title_set(win, "Clock");
-   elm_win_autodel_set(win, 1);
+   elm_win_autodel_set(win, EINA_TRUE);
 
    bg = elm_bg_add(win);
    elm_win_resize_object_add(win, bg);
@@ -104,7 +104,7 @@ test_clock2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
 
    win = elm_win_add(NULL, "clock2", ELM_WIN_BASIC);
    elm_win_title_set(win, "Clock 2");
-   elm_win_autodel_set(win, 1);
+   elm_win_autodel_set(win, EINA_TRUE);
 
    bg = elm_bg_add(win);
    elm_win_resize_object_add(win, bg);

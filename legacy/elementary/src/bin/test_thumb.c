@@ -28,7 +28,7 @@ test_thumb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
 
    win = elm_win_add(NULL, "thumb", ELM_WIN_BASIC);
    elm_win_title_set(win, "Thumb");
-   elm_win_autodel_set(win, 1);
+   elm_win_autodel_set(win, EINA_TRUE);
 
    bg = elm_bg_add(win);
    evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);

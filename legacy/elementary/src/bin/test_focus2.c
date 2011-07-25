@@ -52,7 +52,7 @@ test_focus2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
 
    win = elm_win_add(NULL, "focus2", ELM_WIN_BASIC);
    elm_win_title_set(win, "Focus2");
-   elm_win_autodel_set(win, 1);
+   elm_win_autodel_set(win, EINA_TRUE);
    elm_win_focus_highlight_enabled_set(win, EINA_TRUE);
 
    evas_event_callback_add

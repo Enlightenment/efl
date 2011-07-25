@@ -66,7 +66,7 @@ test_icon_desktops(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *eve
 
    win = elm_win_add(NULL, "icon-desktops", ELM_WIN_BASIC);
    elm_win_title_set(win, "Icon Desktops");
-   elm_win_autodel_set(win, 1);
+   elm_win_autodel_set(win, EINA_TRUE);
 
    bg = elm_bg_add(win);
    evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);

@@ -11,7 +11,7 @@ test_box_vert(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
 
    win = elm_win_add(NULL, "box-vert", ELM_WIN_BASIC);
    elm_win_title_set(win, "Box Vert");
-   elm_win_autodel_set(win, 1);
+   elm_win_autodel_set(win, EINA_TRUE);
 
    bg = elm_bg_add(win);
    elm_win_resize_object_add(win, bg);
@@ -66,7 +66,7 @@ test_box_vert2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
 
    win = elm_win_add(NULL, "box-vert2", ELM_WIN_BASIC);
    elm_win_title_set(win, "Box Vert 2");
-   elm_win_autodel_set(win, 1);
+   elm_win_autodel_set(win, EINA_TRUE);
 
    bg = elm_bg_add(win);
    elm_win_resize_object_add(win, bg);
@@ -130,7 +130,7 @@ test_box_horiz(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
 
    win = elm_win_add(NULL, "box-horiz", ELM_WIN_BASIC);
    elm_win_title_set(win, "Box Horiz");
-   elm_win_autodel_set(win, 1);
+   elm_win_autodel_set(win, EINA_TRUE);
 
    bg = elm_bg_add(win);
    elm_win_resize_object_add(win, bg);
@@ -211,7 +211,7 @@ test_box_transition(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *ev
 
    win = elm_win_add(NULL, "box-transition", ELM_WIN_BASIC);
    elm_win_title_set(win, "Box Transition");
-   elm_win_autodel_set(win, 1);
+   elm_win_autodel_set(win, EINA_TRUE);
 
    bg = elm_bg_add(win);
    elm_win_resize_object_add(win, bg);

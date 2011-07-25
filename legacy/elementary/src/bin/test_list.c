@@ -54,7 +54,7 @@ test_list(void        *data __UNUSED__,
 
    win = elm_win_add(NULL, "list", ELM_WIN_BASIC);
    elm_win_title_set(win, "List");
-   elm_win_autodel_set(win, 1);
+   elm_win_autodel_set(win, EINA_TRUE);
 
    bg = elm_bg_add(win);
    elm_win_resize_object_add(win, bg);
@@ -349,7 +349,7 @@ test_list2(void        *data __UNUSED__,
 
    win = elm_win_add(NULL, "list2", ELM_WIN_BASIC);
    elm_win_title_set(win, "List 2");
-   elm_win_autodel_set(win, 1);
+   elm_win_autodel_set(win, EINA_TRUE);
 
    bg = elm_bg_add(win);
    snprintf(buf, sizeof(buf), "%s/images/plant_01.jpg", PACKAGE_DATA_DIR);
@@ -479,7 +479,7 @@ test_list3(void        *data __UNUSED__,
 
    win = elm_win_add(NULL, "list3", ELM_WIN_BASIC);
    elm_win_title_set(win, "List 3");
-   elm_win_autodel_set(win, 1);
+   elm_win_autodel_set(win, EINA_TRUE);
 
    bg = elm_bg_add(win);
    elm_win_resize_object_add(win, bg);
@@ -642,7 +642,7 @@ test_list4(void        *data __UNUSED__,
 
    win = elm_win_add(NULL, "list4", ELM_WIN_BASIC);
    elm_win_title_set(win, "List 4");
-   elm_win_autodel_set(win, 1);
+   elm_win_autodel_set(win, EINA_TRUE);
    info.win = win;
 
    bg = elm_bg_add(win);
@@ -772,7 +772,7 @@ test_list5(void        *data __UNUSED__,
 
    win = elm_win_add(NULL, "list5", ELM_WIN_BASIC);
    elm_win_title_set(win, "List 5");
-   elm_win_autodel_set(win, 1);
+   elm_win_autodel_set(win, EINA_TRUE);
    info.win = win;
 
    bg = elm_bg_add(win);

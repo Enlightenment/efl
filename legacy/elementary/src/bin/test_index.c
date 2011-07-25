@@ -46,7 +46,7 @@ test_index(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
 
    win = elm_win_add(NULL, "index", ELM_WIN_BASIC);
    elm_win_title_set(win, "Index");
-   elm_win_autodel_set(win, 1);
+   elm_win_autodel_set(win, EINA_TRUE);
 
    bg = elm_bg_add(win);
    elm_win_resize_object_add(win, bg);
@@ -203,7 +203,7 @@ test_index2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    win = elm_win_add(NULL, "sorted-index-list", ELM_WIN_BASIC);
    elm_win_title_set(win, "Sorted Index and List");
    evas_object_smart_callback_add(win, "delete-request", test_index2_del, gui);
-   elm_win_autodel_set(win, 1);
+   elm_win_autodel_set(win, EINA_TRUE);
 
    bg = elm_bg_add(win);
    elm_win_resize_object_add(win, bg);

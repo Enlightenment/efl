@@ -82,7 +82,7 @@ test_entry(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
 
    win = elm_win_add(NULL, "entry", ELM_WIN_BASIC);
    elm_win_title_set(win, "Entry");
-   elm_win_autodel_set(win, 1);
+   elm_win_autodel_set(win, EINA_TRUE);
 
    bg = elm_bg_add(win);
    elm_win_resize_object_add(win, bg);
@@ -281,7 +281,7 @@ test_entry_scrolled(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *ev
 
    win = elm_win_add(NULL, "entry-scrolled", ELM_WIN_BASIC);
    elm_win_title_set(win, "Entry Scrolled");
-   elm_win_autodel_set(win, 1);
+   elm_win_autodel_set(win, EINA_TRUE);
 
    bg = elm_bg_add(win);
    elm_win_resize_object_add(win, bg);
@@ -721,7 +721,7 @@ test_entry3(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
 
    win = elm_win_add(NULL, "entry3", ELM_WIN_BASIC);
    elm_win_title_set(win, "Entry 3");
-   elm_win_autodel_set(win, 1);
+   elm_win_autodel_set(win, EINA_TRUE);
 
    bg = elm_bg_add(win);
    elm_win_resize_object_add(win, bg);
@@ -1284,7 +1284,7 @@ test_entry4(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
 
    win = elm_win_add(NULL, "entry4", ELM_WIN_BASIC);
    elm_win_title_set(win, "Entry 4");
-   elm_win_autodel_set(win, 1);
+   elm_win_autodel_set(win, EINA_TRUE);
 
    bg = elm_bg_add(win);
    elm_win_resize_object_add(win, bg);
@@ -1352,7 +1352,7 @@ test_entry5(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
 
    win = elm_win_add(NULL, "entry5", ELM_WIN_BASIC);
    elm_win_title_set(win, "Entry 5");
-   elm_win_autodel_set(win, 1);
+   elm_win_autodel_set(win, EINA_TRUE);
 
    bg = elm_bg_add(win);
    elm_win_resize_object_add(win, bg);
