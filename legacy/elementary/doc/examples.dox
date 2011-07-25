@@ -32,7 +32,7 @@
  * @ref calendar_example_06
  *
  * @ref clock_example
-
+ *
  * @ref diskselector_example_01
  *
  * @ref diskselector_example_02
@@ -48,6 +48,8 @@
  * @ref index_example_01
  *
  * @ref index_example_02
+ *
+ * @ref gengrid_example
  */
 
 /**
@@ -3061,6 +3063,219 @@
  */
 
 /**
+ * @page gengrid_example Gengrid widget example
+ *
+ * This application is a thorough exercise on the gengrid widget's
+ * API. We place an Elementary gengrid widget on a window, with
+ * various knobs below its viewport, each one acting on it somehow.
+ *
+ * The code's relevant part begins at the grid's creation. After
+ * instantiating it, we set its items sizes, so that we don't end with
+ * items one finger size wide, only. We're setting them to fat, 150
+ * pixel wide ones, for this example. We give it some size hints, not
+ * to be discussed in this context and, than, we register a callback
+ * on one of its smart events -- the one coming each time an item gets
+ * doubly clicked. There, we just print the item handle's value.
+ * @dontinclude gengrid_example.c
+ * @skip grid = elm_gengrid_add
+ * @until evas_object_sho
+ * @dontinclude gengrid_example.c
+ * @skip item double click callback
+ * @until }
+ *
+ * Before we actually start to deal with the items API, let's show
+ * some things items will be using throughout all the code. The first
+ * of them is a struct to be used as item data, for all of them:
+ * @dontinclude gengrid_example.c
+ * @skip typedef struct
+ * @until Item;
+ *
+ * That path will be used to index an image, to be swallowed into one
+ * of the item's icon spots. The imagens themselves are distributed
+ * with Elementary:
+ * @dontinclude gengrid_example.c
+ * @skip static const char *imgs
+ * @until ;
+ *
+ * We also have an (unique) gengrid item class we'll be using for
+ * items in the example:
+ * @dontinclude gengrid_example.c
+ * @skip static Elm_Gengrid_Item_Class
+ * @until static Elm_Gengrid_Item_Class
+ * @dontinclude gengrid_example.c
+ * @skip item_style =
+ * @until _grid_del
+ *
+ * As you see, our items will follow the default theme on gengrid
+ * items. For the label fetching code, we return a string composed of
+ * the item's image path:
+ * @dontinclude gengrid_example.c
+ * @skip label fetching callback
+ * @until }
+ *
+ * For item icons, we'll be populating the item default theme's two
+ * icon spots, @c "elm.swallow.icon" and @c "elm.swallow.end". The
+ * former will receive one of the images in our list (in the form of
+ * a @ref bg_02_example_page "background"), while the latter will be
+ * a check widget. Note that we prevent the check to propagate click
+ * events, so that the user can toggle its state without messing with
+ * the respective item's selection in the grid:
+ * @dontinclude gengrid_example.c
+ * @skip icon fetching callback
+ * @until return NULL
+ * @until }
+ *
+ * As the default gengrid item's theme does not have parts
+ * implementing item states, we'll be just returning false for every
+ * item state:
+ * @dontinclude gengrid_example.c
+ * @skip state fetching callback
+ * @until }
+ *
+ * Finally, the deletion callback on gengrid items takes care of
+ * freeing the item's label string and its data struct:
+ * @dontinclude gengrid_example.c
+ * @skip deletion callback
+ * @until }
+ *
+ * Let's move to item insertion/deletion knobs, them. They are four
+ * buttons, above the grid's viewport, namely
+ * - "Append" (to append an item to the grid),
+ * - "Prepend" (to prepend an item to the grid),
+ * - "Insert before" (to insert an item before the selection, on the
+ *   grid),
+ * - "Insert after" (to insert an item after the selection, on the
+ *   grid),
+ * - "Clear" (to delete all items in the grid),
+ * .
+ * which are displaced and declared in that order. We're not dealing
+ * with the buttons' creation code (see @ref button_example_01
+ * "a button example", for more details on it), but with their @c
+ * "clicked" registered callbacks.  For all of them, the grid's handle
+ * is passed as @c data. The ones creating new items use a common
+ * code, which just gives a new @c Example_Item struct, with @c path
+ * filled with a random image in our images list:
+ * @dontinclude gengrid_example.c
+ * @skip new item with random path
+ * @until }
+ *
+ * Moreover, that ones will set a common function to be issued on the
+ * selection of the items. There, we print the item handle's value,
+ * along with the callback function data. The latter will be @c NULL,
+ * always, because it's what we pass when adding all icons.
+ *
+ * The appending button will exercise elm_gengrid_item_append(), simply:
+ * @dontinclude gengrid_example.c
+ * @skip append an item
+ * @until }
+ *
+ * The prepending, naturally, is analogous, but exercising
+ * elm_gengrid_item_prepend(), on its turn. The "Insert before" one
+ * will expect an item to be selected in the grid, so that it will
+ * insert a new item just before it:
+ * @dontinclude gengrid_example.c
+ * @skip "insert before" callback
+ * @until }
+ *
+ * The "Insert after" is analogous, just using
+ * elm_gengrid_item_insert_after(), instead. The "Clear" button will,
+ * as expected, just issue elm_gengrid_clear():
+ * @dontinclude gengrid_example.c
+ * @skip delete items
+ * @until }
+ *
+ * To change the grid's cell (items) size, we've placed a spinner,
+ * which has the following @c "changed" smart callback:
+ * @dontinclude gengrid_example.c
+ * @skip change items' size
+ * @until }
+ *
+ * Experiment with it and see how the items are affected. To toggle
+ * between horizontal and vertical layouting modes on the grid, use
+ * the "Horizontal mode" check, which will call the respective API
+ * function on the grid:
+ * @dontinclude gengrid_example.c
+ * @skip change layouting mode
+ * @until }
+ *
+ * If you toggle the check right after that one, "Always select",
+ * you'll notice all subsequent clicks on the @b same grid item will
+ * still issue the selection callback on it, what is different from
+ * when it's not checked. This is the
+ * elm_gengrid_always_select_mode_set() behavior:
+ * @dontinclude gengrid_example.c
+ * @skip "always select" callback
+ * @until }
+ *
+ * One more check follows, "Bouncing", which will turn on/off the
+ * bouncing animations on the grid, when one scrolls past its
+ * borders. Experiment with scrolling the grid to get the idea, having
+ * it turned on and off:
+ * @dontinclude gengrid_example.c
+ * @skip "bouncing mode" callback
+ * @until }
+ *
+ * The next two checks will affect items selection on the grid. The
+ * first, "Multi-selection", will make it possible to select more the
+ * one item on the grid. Because it wouldn't make sense to fetch for
+ * an unique selected item on this case, we also disable two of the
+ * buttons, which insert items relatively, if multi-selection is on:
+ * @dontinclude gengrid_example.c
+ * @skip multi-selection callback
+ * @until }
+ *
+ * Note that we also @b unselect all items in the grid, when returning
+ * from multi-selection mode, making use of
+ * elm_gengrid_item_selected_set().
+ *
+ * The second check acting on selection, "No selection", is just what
+ * its name depicts -- no selection will be allowed anymore, on the
+ * grid, while it's on. Check it out for yourself, interacting with
+ * the program:
+ * @dontinclude gengrid_example.c
+ * @skip no selection callback
+ * @until }
+ *
+ * We have, finally, one more line of knobs, now sliders, to change
+ * the grids behavior. The two first will change the horizontal @b
+ * alignment of the whole actual grid of items within the gengrid's
+ * viewport:
+ * @dontinclude gengrid_example.c
+ * @skip items grid horizontal alignment change
+ * @until }
+ *
+ * Naturally, the vertical counterpart just issues
+ * elm_gengrid_align_set() changing the second alignment component,
+ * instead.
+ *
+ * The last slider will change the grid's <b>page size</b>, relative
+ * to its own one. Try to change those values and, one manner of
+ * observing the paging behavior, is to scroll softly and release the
+ * mouse button, with different page sizes, at different grid
+ * positions, while having lots of items in it -- you'll see it
+ * snapping to page boundaries differenty, for each configuration:
+ * @dontinclude gengrid_example.c
+ * @skip page relative size change
+ * @until }
+ *
+ * This is how the example program's window looks like:
+ * @image html screenshots/gengrid_example.png
+ * @image latex screenshots/gengrid_example.eps
+ *
+ * Note that it starts with three items which we included at will:
+ * @dontinclude gengrid_example.c
+ * @skip _clicked(grid,
+ * @until _clicked(grid,
+ * @until _clicked(grid,
+ * @until _clicked(grid,
+ *
+ * See the full @ref gengrid_example_c "source code" for
+ * this example.
+ *
+ * @example gengrid_example.c
+ */
+
+/**
  * @page bg_example_01_c bg_example_01.c
  * @include bg_example_01.c
  * @example bg_example_01.c
@@ -3177,4 +3392,9 @@
  *
  * @include layout_example.edc
  * @example layout_example.edc
+
+/**
+ * @page gengrid_example_c Gengrid example
+ * @include gengrid_example.c
+ * @example gengrid_example.c
  */

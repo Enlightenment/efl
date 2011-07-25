@@ -4423,15 +4423,191 @@ extern "C" {
    EAPI void         elm_table_pack_set(Evas_Object *subobj, int x, int y, int w, int h) EINA_ARG_NONNULL(1);
    EAPI void         elm_table_pack_get(Evas_Object *subobj, int *x, int *y, int *w, int *h) EINA_ARG_NONNULL(1);
 
-   /* gengrid */
-   typedef struct _Elm_Gengrid_Item_Class Elm_Gengrid_Item_Class;
-   typedef struct _Elm_Gengrid_Item_Class_Func Elm_Gengrid_Item_Class_Func;
-   typedef struct _Elm_Gengrid_Item Elm_Gengrid_Item; /**< Item of Elm_Gengrid. Sub-type of Elm_Widget_Item */
-   typedef char        *(*GridItemLabelGetFunc) (void *data, Evas_Object *obj, const char *part);
-   typedef Evas_Object *(*GridItemIconGetFunc)  (void *data, Evas_Object *obj, const char *part);
-   typedef Eina_Bool    (*GridItemStateGetFunc) (void *data, Evas_Object *obj, const char *part);
-   typedef void         (*GridItemDelFunc)      (void *data, Evas_Object *obj);
+   /**
+    * @defgroup Gengrid Gengrid (Generic grid)
+    *
+    * This widget aims to position objects in a grid layout while
+    * actually creating and rendering only the visible ones, using the
+    * same idea as the @ref Genlist "genlist": the user defines a @b
+    * class for each item, specifying functions that will be called at
+    * object creation, deletion, etc. When those items are selected by
+    * the user, a callback function is issued. Users may interact with
+    * a gengrid via the mouse (by clicking on items to select them and
+    * clicking on the grid's viewport and swiping to pan the whole
+    * view) or via the keyboard, navigating through item with the
+    * arrow keys.
+    *
+    * @section Gengrid_Items Gengrid items
+    *
+    * An item in a gengrid can have 0 or more text labels (they can be
+    * regular text or textblock Evas objects - that's up to the style
+    * to determine), 0 or more icons (which are simply objects
+    * swallowed into the gengrid item's theming Edje object) and 0 or
+    * more <b>boolean states</b>, which have the behavior left to the
+    * user to define. The Edje part names for each of these properties
+    * will be looked up, in the theme file for the gengrid, under the
+    * Edje (string) data items named @c "labels", @c "icons" and @c
+    * "states", respectively. For each of those properties, if more
+    * than one part is provided, they must have names listed separated
+    * by spaces in the data fields. For the default gengrid item
+    * theme, we have @b one label part (@c "elm.text"), @b two icon
+    * parts (@c "elm.swalllow.icon" and @c "elm.swallow.end") and @b
+    * no state parts.
+    *
+    * A gengrid item may be at one of several styles. Elementary
+    * provides one by default - "default", but this can be extended by
+    * system or application custom themes/overlays/extensions (see
+    * @ref Theme "themes" for more details).
+    *
+    * @section Gengrid_Item_Class Gengrid item classes
+    *
+    * In order to have the ability to add and delete items on the fly,
+    * gengrid implements a class (callback) system where the
+    * application provides a structure with information about that
+    * type of item (gengrid may contain multiple different items with
+    * different classes, states and styles). Gengrid will call the
+    * functions in this struct (methods) when an item is "realized"
+    * (i.e., created dynamically, while the user is scrolling the
+    * grid). All objects will simply be deleted when no longer needed
+    * with evas_object_del(). The #Elm_GenGrid_Item_Class structure
+    * contains the following members:
+    * - @c item_style - This is a constant string and simply defines
+    * the name of the item style. It @b must be specified and the
+    * default should be @c "default".
+    * - @c func.label_get - This function is called when an item
+    * object is actually created. The @c data parameter will point to
+    * the same data passed to elm_gengrid_item_append() and related
+    * item creation functions. The @c obj parameter is the gengrid
+    * object itself, while the @c part one is the name string of one
+    * of the existing text parts in the Edje group implementing the
+    * item's theme. This function @b must return a strdup'()ed string,
+    * as the caller will free() it when done.
+    * - @c func.icon_get - This function is called when an item object
+    * is actually created. The @c data parameter will point to the
+    * same data passed to elm_gengrid_item_append() and related item
+    * creation functions. The @c obj parameter is the gengrid object
+    * itself, while the @c part one is the name string of one of the
+    * existing (icon) swallow parts in the Edje group implementing the
+    * item's theme. It must return @c NULL, when no icon is desired,
+    * or a valid object handle, otherwise. The object will be deleted
+    * by the gengrid on its deletion or when the item is "unrealized".
+    * - @c func.state_get - This function is called when an item
+    * object is actually created. The @c data parameter will point to
+    * the same data passed to elm_gengrid_item_append() and related
+    * item creation functions. The @c obj parameter is the gengrid
+    * object itself, while the @c part one is the name string of one
+    * of the state parts in the Edje group implementing the item's
+    * theme. Return @c EINA_FALSE for false/off or @c EINA_TRUE for
+    * true/on. Gengrids will emit a signal to its theming Edje object
+    * with @c "elm,state,XXX,active" and @c "elm" as "emission" and
+    * "source" arguments, respectively, when the state is true (the
+    * default is false), where @c XXX is the name of the (state) part.
+    * - @c func.del - This is called when elm_gengrid_item_del() is
+    * called on an item or elm_gengrid_clear() is called on the
+    * gengrid. This is intended for use when gengrid items are
+    * deleted, so any data attached to the item (e.g. its data
+    * parameter on creation) can be deleted.
+    *
+    * @section Gengrid_Usage_Hints Usage hints
+    *
+    * If the user wants to have multiple items selected at the same
+    * time, elm_gengrid_multi_select_set() will permit it. If the
+    * gengrid is single-selection only (the default), then
+    * elm_gengrid_select_item_get() will return the selected item or
+    * @c NULL, if none is selected. If the gengrid is under
+    * multi-selection, then elm_gengrid_selected_items_get() will
+    * return a list (that is only valid as long as no items are
+    * modified (added, deleted, selected or unselected) of child items
+    * on a gengrid.
+    *
+    * If an item changes (internal (boolean) state, label or icon
+    * changes), then use elm_gengrid_item_update() to have gengrid
+    * update the item with the new state. A gengrid will re-"realize"
+    * the item, thus calling the functions in the
+    * #Elm_Gengrid_Item_Class set for that item.
+    *
+    * To programmatically (un)select an item, use
+    * elm_gengrid_item_selected_set(). To get its selected state use
+    * elm_gengrid_item_selected_get(). To make an item disabled
+    * (unable to be selected and appear differently) use
+    * elm_gengrid_item_disabled_set() to set this and
+    * elm_gengrid_item_disabled_get() to get the disabled state.
+    *
+    * Grid cells will only have their selection smart callbacks called
+    * when firstly getting selected. Any further clicks will do
+    * nothing, unless you enable the "always select mode", with
+    * elm_gengrid_always_select_mode_set(), thus making every click to
+    * issue selection callbacks. elm_gengrid_no_select_mode_set() will
+    * turn off the ability to select items entirely in the widget and
+    * they will neither appear selected nor call the selection smart
+    * callbacks.
+    *
+    * Remember that you can create new styles and add your own theme
+    * augmentation per application with elm_theme_extension_add(). If
+    * you absolutely must have a specific style that overrides any
+    * theme the user or system sets up you can use
+    * elm_theme_overlay_add() to add such a file.
+    *
+    * @section Gengrid_Smart_Events Gengrid smart events
+    *
+    * Smart events that you can add callbacks for are:
+    * - @c "clicked,double" - The user has double-clicked or pressed
+    *   enter on an item. The @c event_info parameter is the gengrid
+    *   item that was double-clicked.
+    * - @c "selected" - The user has made an item selected. The
+    *   @c event_info parameter is the gengrid item that was selected.
+    * - @c "unselected" - The user has made an item unselected. The
+    *   @c event_info parameter is the gengrid item that was unselected.
+    * - @c "realized" - This is called when the item in the gengrid
+    *   has its implementing Evas object instantiated, de facto. @c
+    *   event_info is the gengrid item that was created. The object
+    *   may be deleted at any time, so it is highly advised to the
+    *   caller @b not to use the object pointer returned from
+    *   elm_gengrid_item_object_get(), because it may point to freed
+    *   objects.
+    * - @c "unrealized" - This is called when the implementing Evas
+    *   object for this item is deleted. @c event_info is the gengrid
+    *   item that was deleted.
+    * - @c "changed" - Called when an item is added, removed, resized
+    *   or moved and when the gengrid is resized or gets "horizontal"
+    *   property changes.
+    * - @c "drag,start,up" - Called when the item in the gengrid has
+    *   been dragged (not scrolled) up.
+    * - @c "drag,start,down" - Called when the item in the gengrid has
+    *   been dragged (not scrolled) down.
+    * - @c "drag,start,left" - Called when the item in the gengrid has
+    *   been dragged (not scrolled) left.
+    * - @c "drag,start,right" - Called when the item in the gengrid has
+    *   been dragged (not scrolled) right.
+    * - @c "drag,stop" - Called when the item in the gengrid has
+    *   stopped being dragged.
+    * - @c "drag" - Called when the item in the gengrid is being
+    *   dragged.
+    * - @c "scroll" - called when the content has been scrolled
+    *   (moved).
+    * - @c "scroll,drag,start" - called when dragging the content has
+    *   started.
+    * - @c "scroll,drag,stop" - called when dragging the content has
+    *   stopped.
+    *
+    * List of gendrid examples:
+    * @li @ref gengrid_example
+    */
 
+   typedef struct _Elm_Gengrid_Item_Class Elm_Gengrid_Item_Class; /**< Gengrid item class definition structs */
+   typedef struct _Elm_Gengrid_Item_Class_Func Elm_Gengrid_Item_Class_Func; /**< Class functions for gengrid item classes. */
+   typedef struct _Elm_Gengrid_Item Elm_Gengrid_Item; /**< Gengrid item handles */
+   typedef char        *(*GridItemLabelGetFunc) (void *data, Evas_Object *obj, const char *part); /**< Label fetching class function for gengrid item classes. */
+   typedef Evas_Object *(*GridItemIconGetFunc)  (void *data, Evas_Object *obj, const char *part); /**< Icon fetching class function for gengrid item classes. */
+   typedef Eina_Bool    (*GridItemStateGetFunc) (void *data, Evas_Object *obj, const char *part); /**< State fetching class function for gengrid item classes. */
+   typedef void         (*GridItemDelFunc)      (void *data, Evas_Object *obj); /**< Deletion class function for gengrid item classes. */
+
+   /**
+    * @struct _Elm_Gengrid_Item_Class
+    *
+    * Gengrid item class definition. See @ref Gengrid_Item_Class for
+    * field details.
+    */
    struct _Elm_Gengrid_Item_Class
      {
         const char             *item_style;
@@ -4442,93 +4618,924 @@ extern "C" {
              GridItemStateGetFunc  state_get;
              GridItemDelFunc       del;
           } func;
-     };
+     }; /**< #Elm_Gengrid_Item_Class member definitions */
 
+   /**
+    * Add a new gengrid widget to the given parent Elementary
+    * (container) object
+    *
+    * @param parent The parent object
+    * @return a new gengrid widget handle or @c NULL, on errors
+    *
+    * This function inserts a new gengrid widget on the canvas.
+    *
+    * @see elm_gengrid_item_size_set()
+    * @see elm_gengrid_horizontal_set()
+    * @see elm_gengrid_item_append()
+    * @see elm_gengrid_item_del()
+    * @see elm_gengrid_clear()
+    *
+    * @ingroup Gengrid
+    */
    EAPI Evas_Object       *elm_gengrid_add(Evas_Object *parent) EINA_ARG_NONNULL(1);
+
+   /**
+    * Set the size for the items of a given gengrid widget
+    *
+    * @param obj The gengrid object.
+    * @param w The items' width.
+    * @param h The items' height;
+    *
+    * A gengrid, after creation, has still no information on the size
+    * to give to each of its cells. So, you most probably will end up
+    * with squares one @ref Fingers "finger" wide, the default
+    * size. Use this function to force a custom size for you items,
+    * making them as big as you wish.
+    *
+    * @see elm_gengrid_item_size_get()
+    *
+    * @ingroup Gengrid
+    */
    EAPI void               elm_gengrid_item_size_set(Evas_Object *obj, Evas_Coord w, Evas_Coord h) EINA_ARG_NONNULL(1);
+
+   /**
+    * Get the size set for the items of a given gengrid widget
+    *
+    * @param obj The gengrid object.
+    * @param w Pointer to a variable where to store the items' width.
+    * @param h Pointer to a variable where to store the items' height.
+    *
+    * @note Use @c NULL pointers on the size values you're not
+    * interested in: they'll be ignored by the function.
+    *
+    * @see elm_gengrid_item_size_get() for more details
+    *
+    * @ingroup Gengrid
+    */
    EAPI void               elm_gengrid_item_size_get(const Evas_Object *obj, Evas_Coord *w, Evas_Coord *h) EINA_ARG_NONNULL(1);
+
+   /**
+    * Set the items grid's alignment within a given gengrid widget
+    *
+    * @param obj The gengrid object.
+    * @param align_x Alignment in the horizontal axis (0 <= align_x <= 1).
+    * @param align_y Alignment in the vertical axis (0 <= align_y <= 1).
+    *
+    * This sets the alignment of the whole grid of items of a gengrid
+    * within its given viewport. By default, those values are both
+    * 0.5, meaning that the gengrid will have its items grid placed
+    * exactly in the middle of its viewport.
+    *
+    * @note If given alignment values are out of the cited ranges,
+    * they'll be changed to the nearest boundary values on the valid
+    * ranges.
+    *
+    * @see elm_gengrid_align_get()
+    *
+    * @ingroup Gengrid
+    */
    EAPI void               elm_gengrid_align_set(Evas_Object *obj, double align_x, double align_y) EINA_ARG_NONNULL(1);
+
+   /**
+    * Get the items grid's alignment values within a given gengrid
+    * widget
+    *
+    * @param obj The gengrid object.
+    * @param align_x Pointer to a variable where to store the
+    * horizontal alignment.
+    * @param align_y Pointer to a variable where to store the vertical
+    * alignment.
+    *
+    * @note Use @c NULL pointers on the alignment values you're not
+    * interested in: they'll be ignored by the function.
+    *
+    * @see elm_gengrid_align_set() for more details
+    *
+    * @ingroup Gengrid
+    */
    EAPI void               elm_gengrid_align_get(const Evas_Object *obj, double *align_x, double *align_y) EINA_ARG_NONNULL(1);
 
+   /**
+    * Set whether a given gengrid widget is or not able have items
+    * @b reordered
+    *
+    * @param obj The gengrid object
+    * @param reorder_mode Use @c EINA_TRUE to turn reoderding on,
+    * @c EINA_FALSE to turn it off
+    *
+    * If a gengrid is set to allow reordering, a click held for more
+    * than 0.5 over a given item will highlight it specially,
+    * signalling the gengrid has entered the reordering state. From
+    * that time on, the user will be able to, while still holding the
+    * mouse button down, move the item freely in the gengrid's
+    * viewport, replacing to said item to the locations it goes to.
+    * The replacements will be animated and, whenever the user
+    * releases the mouse button, the item being replaced gets a new
+    * definitive place in the grid.
+    *
+    * @see elm_gengrid_reorder_mode_get()
+    *
+    * @ingroup Gengrid
+    */
    EAPI void               elm_gengrid_reorder_mode_set(Evas_Object *obj, Eina_Bool reorder_mode) EINA_ARG_NONNULL(1);
+
+   /**
+    * Get whether a given gengrid widget is or not able have items
+    * @b reordered
+    *
+    * @param obj The gengrid object
+    * @return @c EINA_TRUE, if reoderding is on, @c EINA_FALSE if it's
+    * off
+    *
+    * @see elm_gengrid_reorder_mode_set() for more details
+    *
+    * @ingroup Gengrid
+    */
    EAPI Eina_Bool          elm_gengrid_reorder_mode_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+
+   /**
+    * Append a new item in a given gengrid widget.
+    *
+    * @param obj The gengrid object.
+    * @param gic The item class for the item.
+    * @param data The item data.
+    * @param func Convenience function called when the item is
+    * selected.
+    * @param func_data Data to be passed to @p func.
+    * @return A handle to the item added or @c NULL, on errors.
+    *
+    * This adds an item to the beginning of the gengrid.
+    *
+    * @see elm_gengrid_item_prepend()
+    * @see elm_gengrid_item_insert_before()
+    * @see elm_gengrid_item_insert_after()
+    * @see elm_gengrid_item_del()
+    *
+    * @ingroup Gengrid
+    */
+   EAPI Elm_Gengrid_Item  *elm_gengrid_item_append(Evas_Object *obj, const Elm_Gengrid_Item_Class *gic, const void *data, Evas_Smart_Cb func, const void *func_data) EINA_ARG_NONNULL(1);
+
+   /**
+    * Prepend a new item in a given gengrid widget.
+    *
+    * @param obj The gengrid object.
+    * @param gic The item class for the item.
+    * @param data The item data.
+    * @param func Convenience function called when the item is
+    * selected.
+    * @param func_data Data to be passed to @p func.
+    * @return A handle to the item added or @c NULL, on errors.
+    *
+    * This adds an item to the end of the gengrid.
+    *
+    * @see elm_gengrid_item_append()
+    * @see elm_gengrid_item_insert_before()
+    * @see elm_gengrid_item_insert_after()
+    * @see elm_gengrid_item_del()
+    *
+    * @ingroup Gengrid
+    */
+   EAPI Elm_Gengrid_Item  *elm_gengrid_item_prepend(Evas_Object *obj, const Elm_Gengrid_Item_Class *gic, const void *data, Evas_Smart_Cb func, const void *func_data) EINA_ARG_NONNULL(1);
+
+   /**
+    * Insert an item before another in a gengrid widget
+    *
+    * @param obj The gengrid object.
+    * @param gic The item class for the item.
+    * @param data The item data.
+    * @param relative The item to place this new one before.
+    * @param func Convenience function called when the item is
+    * selected.
+    * @param func_data Data to be passed to @p func.
+    * @return A handle to the item added or @c NULL, on errors.
+    *
+    * This inserts an item before another in the gengrid.
+    *
+    * @see elm_gengrid_item_append()
+    * @see elm_gengrid_item_prepend()
+    * @see elm_gengrid_item_insert_after()
+    * @see elm_gengrid_item_del()
+    *
+    * @ingroup Gengrid
+    */
+   EAPI Elm_Gengrid_Item  *elm_gengrid_item_insert_before(Evas_Object *obj, const Elm_Gengrid_Item_Class *gic, const void *data, Elm_Gengrid_Item *relative, Evas_Smart_Cb func, const void *func_data) EINA_ARG_NONNULL(1);
+
+   /**
+    * Insert an item after another in a gengrid widget
+    *
+    * @param obj The gengrid object.
+    * @param gic The item class for the item.
+    * @param data The item data.
+    * @param relative The item to place this new one after.
+    * @param func Convenience function called when the item is
+    * selected.
+    * @param func_data Data to be passed to @p func.
+    * @return A handle to the item added or @c NULL, on errors.
+    *
+    * This inserts an item after another in the gengrid.
+    *
+    * @see elm_gengrid_item_append()
+    * @see elm_gengrid_item_prepend()
+    * @see elm_gengrid_item_insert_after()
+    * @see elm_gengrid_item_del()
+    *
+    * @ingroup Gengrid
+    */
+   EAPI Elm_Gengrid_Item  *elm_gengrid_item_insert_after(Evas_Object *obj, const Elm_Gengrid_Item_Class *gic, const void *data, Elm_Gengrid_Item *relative, Evas_Smart_Cb func, const void *func_data) EINA_ARG_NONNULL(1);
+
+   EAPI Elm_Gengrid_Item  *elm_gengrid_item_sorted_insert(Evas_Object *obj, const Elm_Gengrid_Item_Class *gic, const void *data, Eina_Compare_Cb comp, Evas_Smart_Cb func, const void *func_data) EINA_ARG_NONNULL(1);
+
+   EAPI Elm_Gengrid_Item  *elm_gengrid_item_direct_sorted_insert(Evas_Object *obj, const Elm_Gengrid_Item_Class *gic, const void *data, Eina_Compare_Cb comp, Evas_Smart_Cb func, const void *func_data);
+
+   /**
+    * Set whether items on a given gengrid widget are to get their
+    * selection callbacks issued for @b every subsequent selection
+    * click on them or just for the first click.
+    *
+    * @param obj The gengrid object
+    * @param always_select @c EINA_TRUE to make items "always
+    * selected", @c EINA_FALSE, otherwise
+    *
+    * By default, grid items will only call their selection callback
+    * function when firstly getting selected, any subsequent further
+    * clicks will do nothing. With this call, you make those
+    * subsequent clicks also to issue the selection callbacks.
+    *
+    * @note <b>Double clicks</b> will @b always be reported on items.
+    *
+    * @see elm_gengrid_always_select_mode_get()
+    *
+    * @ingroup Gengrid
+    */
    EAPI void               elm_gengrid_always_select_mode_set(Evas_Object *obj, Eina_Bool always_select) EINA_ARG_NONNULL(1);
+
+   /**
+    * Get whether items on a given gengrid widget have their selection
+    * callbacks issued for @b every subsequent selection click on them
+    * or just for the first click.
+    *
+    * @param obj The gengrid object.
+    * @return @c EINA_TRUE if the gengrid items are "always selected",
+    * @c EINA_FALSE, otherwise
+    *
+    * @see elm_gengrid_always_select_mode_set() for more details
+    *
+    * @ingroup Gengrid
+    */
    EAPI Eina_Bool          elm_gengrid_always_select_mode_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+
+   /**
+    * Set whether items on a given gengrid widget can be selected or not.
+    *
+    * @param obj The gengrid object
+    * @param no_select @c EINA_TRUE to make items selectable,
+    * @c EINA_FALSE otherwise
+    *
+    * This will make items in @obj selectable or not. In the latter
+    * case, any user interacion on the gendrid items will neither make
+    * them appear selected nor them call their selection callback
+    * functions.
+    *
+    * @see elm_gengrid_no_select_mode_get()
+    *
+    * @ingroup Gengrid
+    */
    EAPI void               elm_gengrid_no_select_mode_set(Evas_Object *obj, Eina_Bool no_select) EINA_ARG_NONNULL(1);
+
+   /**
+    * Get whether items on a given gengrid widget can be selected or
+    * not.
+    *
+    * @param obj The gengrid object
+    * @return @c EINA_TRUE, if items are selectable, @c EINA_FALSE
+    * otherwise
+    *
+    * @see elm_gengrid_no_select_mode_set() for more details
+    *
+    * @ingroup Gengrid
+    */
    EAPI Eina_Bool          elm_gengrid_no_select_mode_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+
+   /**
+    * Enable or disable multi-selection in a given gengrid widget
+    *
+    * @param obj The gengrid object.
+    * @param multi @c EINA_TRUE, to enable multi-selection,
+    * @c EINA_FALSE to disable it.
+    *
+    * Multi-selection is the ability for one to have @b more than one
+    * item selected, on a given gengrid, simultaneously. When it is
+    * enabled, a sequence of clicks on different items will make them
+    * all selected, progressively. A click on an already selected item
+    * will unselect it. If interecting via the keyboard,
+    * multi-selection is enabled while holding the "Shift" key.
+    *
+    * @note By default, multi-selection is @b disabled on gengrids
+    *
+    * @see elm_gengrid_multi_select_get()
+    *
+    * @ingroup Gengrid
+    */
    EAPI void               elm_gengrid_multi_select_set(Evas_Object *obj, Eina_Bool multi) EINA_ARG_NONNULL(1);
+
+   /**
+    * Get whether multi-selection is enabled or disabled for a given
+    * gengrid widget
+    *
+    * @param obj The gengrid object.
+    * @return @c EINA_TRUE, if multi-selection is enabled, @c
+    * EINA_FALSE otherwise
+    *
+    * @see elm_gengrid_multi_select_set() for more details
+    *
+    * @ingroup Gengrid
+    */
    EAPI Eina_Bool          elm_gengrid_multi_select_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+
+   /**
+    * Enable or disable bouncing effect for a given gengrid widget
+    *
+    * @param obj The gengrid object
+    * @param h_bounce @c EINA_TRUE, to enable @b horizontal bouncing,
+    * @c EINA_FALSE to disable it
+    * @param v_bounce @c EINA_TRUE, to enable @b vertical bouncing,
+    * @c EINA_FALSE to disable it
+    *
+    * The bouncing effect occurs whenever one reaches the gengrid's
+    * edge's while panning it -- it will scroll past its limits a
+    * little bit and return to the edge again, in a animated for,
+    * automatically.
+    *
+    * @note By default, gengrids have bouncing enabled on both axis
+    *
+    * @see elm_gengrid_bounce_get()
+    *
+    * @ingroup Gengrid
+    */
    EAPI void               elm_gengrid_bounce_set(Evas_Object *obj, Eina_Bool h_bounce, Eina_Bool v_bounce) EINA_ARG_NONNULL(1);
+
+   /**
+    * Get whether bouncing effects are enabled or disabled, for a
+    * given gengrid widget, on each axis
+    *
+    * @param obj The gengrid object
+    * @param h_bounce Pointer to a variable where to store the
+    * horizontal bouncing flag.
+    * @param v_bounce Pointer to a variable where to store the
+    * vertical bouncing flag.
+    *
+    * @see elm_gengrid_bounce_set() for more details
+    *
+    * @ingroup Gengrid
+    */
    EAPI void               elm_gengrid_bounce_get(const Evas_Object *obj, Eina_Bool *h_bounce, Eina_Bool *v_bounce) EINA_ARG_NONNULL(1);
+
+   /**
+    * Set a given gengrid widget's scrolling page size, relative to
+    * its viewport size.
+    *
+    * @param obj The gengrid object
+    * @param h_pagerel The horizontal page (relative) size
+    * @param v_pagerel The vertical page (relative) size
+    *
+    * The gengrid's scroller is capable of binding scrolling by the
+    * user to "pages". It means that, while scrolling and, specially
+    * after releasing the mouse button, the grid will @b snap to the
+    * nearest displaying page's area. When page sizes are set, the
+    * grid's continuous content area is split into (equal) page sized
+    * pieces.
+    *
+    * This function sets the size of a page <b>relatively to the
+    * viewport dimensions</b> of the gengrid, for each axis. A value
+    * @c 1.0 means "the exact viewport's size", in that axis, while @c
+    * 0.0 turns paging off in that axis. Likewise, @c 0.5 means "half
+    * a viewport". Sane usable values are, than, between @c 0.0 and @c
+    * 1.0. Values beyond those will make it behave behave
+    * inconsistently. If you only want one axis to snap to pages, use
+    * the value @c 0.0 for the other one.
+    *
+    * There is a function setting page size values in @b absolute
+    * values, too -- elm_gengrid_page_size_set(). Naturally, its use
+    * is mutually exclusive to this one.
+    *
+    * @see elm_gengrid_page_relative_get()
+    *
+    * @ingroup Gengrid
+    */
    EAPI void               elm_gengrid_page_relative_set(Evas_Object *obj, double h_pagerel, double v_pagerel) EINA_ARG_NONNULL(1);
+
+   /**
+    * Get a given gengrid widget's scrolling page size, relative to
+    * its viewport size.
+    *
+    * @param obj The gengrid object
+    * @param h_pagerel Pointer to a variable where to store the
+    * horizontal page (relative) size
+    * @param v_pagerel Pointer to a variable where to store the
+    * vertical page (relative) size
+    *
+    * @see elm_gengrid_page_relative_set() for more details
+    *
+    * @ingroup Gengrid
+    */
    EAPI void               elm_gengrid_page_relative_get(const Evas_Object *obj, double *h_pagerel, double *v_pagerel) EINA_ARG_NONNULL(1);
+
+   /**
+    * Set a given gengrid widget's scrolling page size
+    *
+    * @param obj The gengrid object
+    * @param h_pagerel The horizontal page size, in pixels
+    * @param v_pagerel The vertical page size, in pixels
+    *
+    * The gengrid's scroller is capable of binding scrolling by the
+    * user to "pages". It means that, while scrolling and, specially
+    * after releasing the mouse button, the grid will @b snap to the
+    * nearest displaying page's area. When page sizes are set, the
+    * grid's continuous content area is split into (equal) page sized
+    * pieces.
+    *
+    * This function sets the size of a page of the gengrid, in pixels,
+    * for each axis. Sane usable values are, between @c 0 and the
+    * dimensions of @p obj, for each axis. Values beyond those will
+    * make it behave behave inconsistently. If you only want one axis
+    * to snap to pages, use the value @c 0 for the other one.
+    *
+    * There is a function setting page size values in @b relative
+    * values, too -- elm_gengrid_page_relative_set(). Naturally, its
+    * use is mutually exclusive to this one.
+    *
+    * @ingroup Gengrid
+    */
    EAPI void               elm_gengrid_page_size_set(Evas_Object *obj, Evas_Coord h_pagesize, Evas_Coord v_pagesize) EINA_ARG_NONNULL(1);
+
+   /**
+    * Set for what direction a given gengrid widget will expand while
+    * placing its items.
+    *
+    * @param obj The gengrid object.
+    * @param setting @c EINA_TRUE to make the gengrid expand
+    * horizontally, @c EINA_FALSE to expand vertically.
+    *
+    * When in "horizontal mode" (@c EINA_TRUE), items will be placed
+    * in @b columns, from top to bottom and, when the space for a
+    * column is filled, another one is started on the right, thus
+    * expanding the grid horizontally. When in "vertical mode"
+    * (@c EINA_FALSE), though, items will be placed in @b rows, from left
+    * to right and, when the space for a row is filled, another one is
+    * started below, thus expanding the grid vertically.
+    *
+    * @see elm_gengrid_horizontal_get()
+    *
+    * @ingroup Gengrid
+    */
    EAPI void               elm_gengrid_horizontal_set(Evas_Object *obj, Eina_Bool setting) EINA_ARG_NONNULL(1);
+
+   /**
+    * Get for what direction a given gengrid widget will expand while
+    * placing its items.
+    *
+    * @param obj The gengrid object.
+    * @return @c EINA_TRUE, if @p obj is set to expand horizontally,
+    * @c EINA_FALSE if it's set to expand vertically.
+    *
+    * @see elm_gengrid_horizontal_set() for more detais
+    *
+    * @ingroup Gengrid
+    */
    EAPI Eina_Bool          elm_gengrid_horizontal_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
 
+   /**
+    * Get the first item in the gengrid
+    *
+    * This returns the first item in the list.
+    *
+    * @param obj The gengrid object
+    * @return The first item, or NULL if none
+    *
+    * @ingroup Gengrid
+    */
    EAPI Elm_Gengrid_Item  *elm_gengrid_first_item_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+
+   /**
+    * Get the last item in the gengrid
+    *
+    * This returns the last item in the list.
+    *
+    * @return The last item, or NULL if none
+    *
+    * @ingroup Gengrid
+    */
    EAPI Elm_Gengrid_Item  *elm_gengrid_last_item_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
 
+   /**
+    * Get the next item in the gengrid
+    *
+    * This returns the item after the item @p item.
+    *
+    * @param item The item
+    * @return The item after @p item, or NULL if none
+    *
+    * @ingroup Gengrid
+    */
    EAPI Elm_Gengrid_Item  *elm_gengrid_item_next_get(const Elm_Gengrid_Item *item) EINA_ARG_NONNULL(1);
+
+   /**
+    * Get the previous item in the gengrid
+    *
+    * This returns the item before the item @p item.
+    *
+    * @param item The item
+    * @return The item before @p item, or NULL if none
+    *
+    * @ingroup Gengrid
+    */
    EAPI Elm_Gengrid_Item  *elm_gengrid_item_prev_get(const Elm_Gengrid_Item *item) EINA_ARG_NONNULL(1);
+
+   /**
+    * Get the gengrid object from an item
+    *
+    * This returns the gengrid object itself that an item belongs to.
+    *
+    * @param item The item
+    * @return The gengrid object
+    *
+    * @ingroup Gengrid
+    */
    EAPI Evas_Object       *elm_gengrid_item_gengrid_get(const Elm_Gengrid_Item *item) EINA_ARG_NONNULL(1);
+
+   /**
+    * Remove an item from the Gengrid.
+    *
+    * @param item The item to be removed.
+    * @return @c EINA_TRUE on success or @c EINA_FALSE otherwise.
+    *
+    * @see elm_gengrid_clear() to remove all items of the Gengrid.
+    *
+    * @ingroup Gengrid
+    */
    EAPI void               elm_gengrid_item_del(Elm_Gengrid_Item *item) EINA_ARG_NONNULL(1);
+
+   /**
+    * Update the contents of an item
+    *
+    * This updates an item by calling all the item class functions again
+    * to get the icons, labels and states. Use this when the original
+    * item data has changed and the changes are desired to be reflected.
+    *
+    * @param item The item
+    *
+    * @ingroup Gengrid
+    */
    EAPI void               elm_gengrid_item_update(Elm_Gengrid_Item *item) EINA_ARG_NONNULL(1);
    EAPI const Elm_Gengrid_Item_Class *elm_gengrid_item_item_class_get(const Elm_Gengrid_Item *item) EINA_ARG_NONNULL(1);
    EAPI void               elm_gengrid_item_item_class_set(Elm_Gengrid_Item *item, const Elm_Gengrid_Item_Class *gic) EINA_ARG_NONNULL(1, 2);
+
+   /**
+    * Returns the data associated to an item
+    *
+    * This returns the data value passed on the elm_gengrid_item_append()
+    * and related item addition calls.
+    *
+    * @param item The Gengrid item.
+    * @return the data associated to this item.
+    *
+    * @see elm_gengrid_item_append()
+    * @see elm_gengrid_item_object_get()
+    *
+    * @ingroup Gengrid
+    */
    EAPI void              *elm_gengrid_item_data_get(const Elm_Gengrid_Item *item) EINA_ARG_NONNULL(1);
+
+   /**
+    * Set the datan item from the gengrid item
+    *
+    * This set the data value passed on the elm_gengrid_item_append() and
+    * related item addition calls. This function will also call
+    * elm_gengrid_item_update() so the item will be updated to reflect
+    * the new data.
+    *
+    * @param item The item
+    * @param data The new data pointer to set
+    *
+    * @ingroup Gengrid
+    */
    EAPI void               elm_gengrid_item_data_set(Elm_Gengrid_Item *item, const void *data) EINA_ARG_NONNULL(1);
+
+   /**
+    * Get the item's coordinates.
+    *
+    * This returns the logical position of the item whithin the Gengrid.
+    *
+    * @param item The Gengrid item.
+    * @param x The x-axis coordinate pointer.
+    * @param y The y-axis coordinate pointer.
+    *
+    * @ingroup Gengrid
+    */
    EAPI void               elm_gengrid_item_pos_get(const Elm_Gengrid_Item *item, unsigned int *x, unsigned int *y) EINA_ARG_NONNULL(1);
+
+   /**
+    * Set the selected state of an item.
+    *
+    * This sets the selected state of an item. If multi-select is not
+    * enabled and selected is EINA_TRUE, previously selected items are
+    * unselected.
+    *
+    * @param item The item
+    * @param selected The selected state.
+    *
+    * @ingroup Gengrid
+    */
    EAPI void               elm_gengrid_item_selected_set(Elm_Gengrid_Item *item, Eina_Bool selected) EINA_ARG_NONNULL(1);
+
+   /**
+    * Get the selected state of an item.
+    *
+    * This gets the selected state of an item (1 selected, 0 not selected).
+    *
+    * @param item The item
+    * @return The selected state
+    *
+    * @ingroup Gengrid
+    */
    EAPI Eina_Bool          elm_gengrid_item_selected_get(const Elm_Gengrid_Item *item) EINA_ARG_NONNULL(1);
+
+   /**
+    * Get the real evas object of the Gengrid item
+    *
+    * This returns the actual evas object used for the specified Gengrid
+    * item.  This may be NULL as it may not be created, and may be
+    * deleted at any time by Gengrid. Do not modify this object (move,
+    * resize, show, hide etc.) as Gengrid is controlling it. This
+    * function is for querying, emitting custom signals or hooking lower
+    * level callbacks for events. Do not delete this object under any
+    * circumstances.
+    *
+    * @param item The Gengrid item.
+    * @return the evas object associated to this item.
+    *
+    * @see elm_gengrid_item_data_get()
+    *
+    * @ingroup Gengrid
+    */
    EAPI const Evas_Object *elm_gengrid_item_object_get(const Elm_Gengrid_Item *item) EINA_ARG_NONNULL(1);
+
+   /**
+    * Show the given item
+    *
+    * This causes gengrid to jump to the given item @p item and show it
+    * (by scrolling), if it is not fully visible.
+    *
+    * @param item The item
+    *
+    * @ingroup Gengrid
+    */
    EAPI void               elm_gengrid_item_show(Elm_Gengrid_Item *item) EINA_ARG_NONNULL(1);
+
+   /**
+    * Bring in the given item
+    *
+    * This causes gengrig to jump to the given item @p item and show it
+    * (by scrolling), if it is not fully visible. This may use animation
+    * to do so and take a period of time
+    *
+    * @param item The item
+    *
+    * @ingroup Gengrid
+    */
    EAPI void               elm_gengrid_item_bring_in(Elm_Gengrid_Item *item) EINA_ARG_NONNULL(1);
+
+   /**
+    * Sets the disabled state of an item.
+    *
+    * A disabled item cannot be selected or unselected. It will also
+    * change appearance to disabled. This sets the disabled state (1
+    * disabled, 0 not disabled).
+    *
+    * @param item The item
+    * @param disabled The disabled state
+    *
+    * @ingroup Gengrid
+    */
    EAPI void               elm_gengrid_item_disabled_set(Elm_Gengrid_Item *item, Eina_Bool disabled) EINA_ARG_NONNULL(1);
+
+   /**
+    * Get the disabled state of an item.
+    *
+    * This gets the disabled state of the given item.
+    *
+    * @param item The item
+    * @return The disabled state
+    *
+    * @ingroup Gengrid
+    */
    EAPI Eina_Bool          elm_gengrid_item_disabled_get(const Elm_Gengrid_Item *item) EINA_ARG_NONNULL(1);
 
+   /**
+    * Set the text to be shown in the gengrid item.
+    *
+    * @param item Target item
+    * @param text The text to set in the content
+    *
+    * Setup the text as tooltip to object. The item can have only one
+    * tooltip, so any previous tooltip data is removed.
+    *
+    * @ingroup Gengrid
+    */
    EAPI void               elm_gengrid_item_tooltip_text_set(Elm_Gengrid_Item *item, const char *text) EINA_ARG_NONNULL(1);
+
+   /**
+    * Set the content to be shown in the tooltip item
+    *
+    * Setup the tooltip to item. The item can have only one tooltip, so
+    * any previous tooltip data is removed. @p func(with @p data) will be
+    * called every time that need show the tooltip and it should return a
+    * valid Evas_Object. This object is then managed fully by tooltip
+    * system and is deleted when the tooltip is gone.
+    *
+    * @param item the gengrid item being attached a tooltip.
+    * @param func the function used to create the tooltip contents.
+    * @param data what to provide to @a func as callback data/context.
+    * @param del_cb called when data is not needed anymore, either when
+    *        another callback replaces @func, the tooltip is unset with
+    *        elm_gengrid_item_tooltip_unset() or the owner @an item
+    *        dies. This callback receives as the first parameter the
+    *        given @a data, and @c event_info is the item.
+    *
+    * @ingroup Gengrid
+    */
    EAPI void               elm_gengrid_item_tooltip_content_cb_set(Elm_Gengrid_Item *item, Elm_Tooltip_Item_Content_Cb func, const void *data, Evas_Smart_Cb del_cb) EINA_ARG_NONNULL(1);
+
+   /**
+    * Unset tooltip from item
+    *
+    * @param item gengrid item to remove previously set tooltip.
+    *
+    * Remove tooltip from item. The callback provided as del_cb to
+    * elm_gengrid_item_tooltip_content_cb_set() will be called to notify
+    * it is not used anymore.
+    *
+    * @see elm_gengrid_item_tooltip_content_cb_set()
+    *
+    * @ingroup Gengrid
+    */
    EAPI void               elm_gengrid_item_tooltip_unset(Elm_Gengrid_Item *item) EINA_ARG_NONNULL(1);
+
+   /**
+    * Sets a different style for this item tooltip.
+    *
+    * @note before you set a style you should define a tooltip with
+    *       elm_gengrid_item_tooltip_content_cb_set() or
+    *       elm_gengrid_item_tooltip_text_set()
+    *
+    * @param item gengrid item with tooltip already set.
+    * @param style the theme style to use (default, transparent, ...)
+    *
+    * @ingroup Gengrid
+    */
    EAPI void               elm_gengrid_item_tooltip_style_set(Elm_Gengrid_Item *item, const char *style) EINA_ARG_NONNULL(1);
+
+   /**
+    * Get the style for this item tooltip.
+    *
+    * @param item gengrid item with tooltip already set.
+    * @return style the theme style in use, defaults to "default". If the
+    *         object does not have a tooltip set, then NULL is returned.
+    *
+    * @ingroup Gengrid
+    */
    EAPI const char        *elm_gengrid_item_tooltip_style_get(const Elm_Gengrid_Item *item) EINA_ARG_NONNULL(1);
+
+   /**
+    * Set the cursor to be shown when mouse is over the gengrid item
+    *
+    * @param item Target item
+    * @param cursor the cursor name to be used.
+    *
+    * @see elm_object_cursor_set()
+    * @ingroup Gengrid
+    */
    EAPI void               elm_gengrid_item_cursor_set(Elm_Gengrid_Item *item, const char *cursor) EINA_ARG_NONNULL(1);
+
+   /**
+    * Get the cursor to be shown when mouse is over the gengrid item
+    *
+    * @param item gengrid item with cursor already set.
+    * @return the cursor name.
+    *
+    * @ingroup Gengrid
+    */
    EAPI const char        *elm_gengrid_item_cursor_get(const Elm_Gengrid_Item *item) EINA_ARG_NONNULL(1);
+
+   /**
+    * Unset the cursor to be shown when mouse is over the gengrid item
+    *
+    * @param item Target item
+    *
+    * @see elm_object_cursor_unset()
+    * @ingroup Gengrid
+    */
    EAPI void               elm_gengrid_item_cursor_unset(Elm_Gengrid_Item *item) EINA_ARG_NONNULL(1);
+
+   /**
+    * Sets a different style for this item cursor.
+    *
+    * @note before you set a style you should define a cursor with
+    *       elm_gengrid_item_cursor_set()
+    *
+    * @param item gengrid item with cursor already set.
+    * @param style the theme style to use (default, transparent, ...)
+    *
+    * @ingroup Gengrid
+    */
    EAPI void               elm_gengrid_item_cursor_style_set(Elm_Gengrid_Item *item, const char *style) EINA_ARG_NONNULL(1);
+
+   /**
+    * Get the style for this item cursor.
+    *
+    * @param item gengrid item with cursor already set.
+    * @return style the theme style in use, defaults to "default". If the
+    *         object does not have a cursor set, then NULL is returned.
+    *
+    * @ingroup Gengrid
+    */
    EAPI const char        *elm_gengrid_item_cursor_style_get(const Elm_Gengrid_Item *item) EINA_ARG_NONNULL(1);
+
+   /**
+    * Set if the cursor set should be searched on the theme or should use
+    * the provided by the engine, only.
+    *
+    * @note before you set if should look on theme you should define a
+    * cursor with elm_object_cursor_set(). By default it will only look
+    * for cursors provided by the engine.
+    *
+    * @param item widget item with cursor already set.
+    * @param engine_only boolean to define it cursors should be looked
+    * only between the provided by the engine or searched on widget's
+    * theme as well.
+    *
+    * @ingroup Gengrid
+    */
    EAPI void               elm_gengrid_item_cursor_engine_only_set(Elm_Gengrid_Item *item, Eina_Bool engine_only) EINA_ARG_NONNULL(1);
+
+   /**
+    * Get the cursor engine only usage for this item cursor.
+    *
+    * @param item widget item with cursor already set.
+    * @return engine_only boolean to define it cursors should be looked
+    * only between the provided by the engine or searched on widget's
+    * theme as well. If the object does not have a cursor set, then
+    * EINA_FALSE is returned.
+    *
+    * @ingroup Gengrid
+    */
    EAPI Eina_Bool          elm_gengrid_item_cursor_engine_only_get(const Elm_Gengrid_Item *item) EINA_ARG_NONNULL(1);
 
-   EAPI void               elm_gengrid_clear(Evas_Object *obj) EINA_ARG_NONNULL(1);
-   EAPI Elm_Gengrid_Item  *elm_gengrid_selected_item_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
-   EAPI const Eina_List   *elm_gengrid_selected_items_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
-
-   EAPI Elm_Gengrid_Item  *elm_gengrid_item_append(Evas_Object *obj, const Elm_Gengrid_Item_Class *gic,  const void *data, Evas_Smart_Cb func, const void *func_data) EINA_ARG_NONNULL(1);
-   EAPI Elm_Gengrid_Item  *elm_gengrid_item_prepend(Evas_Object *obj, const Elm_Gengrid_Item_Class *gic, const void *data, Evas_Smart_Cb func, const void *func_data) EINA_ARG_NONNULL(1);
-   EAPI Elm_Gengrid_Item  *elm_gengrid_item_insert_before(Evas_Object *obj, const Elm_Gengrid_Item_Class *gic, const void *data, Elm_Gengrid_Item *relative, Evas_Smart_Cb func, const void *func_data) EINA_ARG_NONNULL(1);
-   EAPI Elm_Gengrid_Item  *elm_gengrid_item_insert_after(Evas_Object *obj, const Elm_Gengrid_Item_Class *gic, const void *data, Elm_Gengrid_Item *relative, Evas_Smart_Cb func, const void *func_data) EINA_ARG_NONNULL(1);
-   EAPI Elm_Gengrid_Item  *elm_gengrid_item_sorted_insert(Evas_Object *obj, const Elm_Gengrid_Item_Class *gic, const void *data, Eina_Compare_Cb comp, Evas_Smart_Cb func, const void *func_data) EINA_ARG_NONNULL(1);
-   EAPI Elm_Gengrid_Item  *elm_gengrid_item_direct_sorted_insert(Evas_Object *obj, const Elm_Gengrid_Item_Class *gic, const void *data, Eina_Compare_Cb comp, Evas_Smart_Cb func, const void *func_data);
-   /* smart callbacks called:
+   /**
+    * Remove all items from a given gengrid widget
     *
-    * selected - User has selected an item.
-    * unselected - User has unselected an item.
-    * clicked,double - User has double-clicked or pressed enter on an item.
-    * realized - An evas object for an item was built.
-    * unrealized - An evas object for an item was deleted.
-    * changed - An item has been added, removed, resized or moved,
-    * or gengrid has been resized or horizontal property has been changed.
-    * scroll - the content has been scrolled (moved).
-    * "scroll,drag,start" - dragging the contents around has started.
-    * "scroll,drag,stop" - dragging the contents around has stopped.
-    * drag - Gengrid is being dragged.
-    * "drag,start,up" - Gengrid has been dragged (not scrolled) up.
-    * "drag,start,down" - Gengrid has been dragged (not scrolled) down.
-    * "drag,start,left" - Gengrid has been dragged (not scrolled) left.
-    * "drag,start,rigth" - Gengrid has been dragged (nto scrolled) right.
-    * "drag,stop" - Gengrid is not being dragged.
+    * @param obj The gengrid object.
+    *
+    * This removes (and deletes) all items in @p obj, leaving it
+    * empty.
+    *
+    * @see elm_gengrid_item_del(), to remove just one item.
+    *
+    * @ingroup Gengrid
     */
+   EAPI void               elm_gengrid_clear(Evas_Object *obj) EINA_ARG_NONNULL(1);
+
+   /**
+    * Get the selected item in the Gengrid
+    *
+    * This gets the selected item in the Gengrid (if multi-select is
+    * enabled only the first item in the list is selected - which is not
+    * very useful, so see elm_gengrid_selected_items_get() for when
+    * multi-select is used).
+    *
+    * If no item is selected, NULL is returned.
+    *
+    * @param obj The Gengrid object.
+    * @return The selected item, or NULL if none.
+    *
+    * @ingroup Gengrid
+    */
+   EAPI Elm_Gengrid_Item  *elm_gengrid_selected_item_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+
+   /**
+    * Get a list of selected items in the Gengrid.
+    *
+    * This returns a list of the selected items. This list pointer is
+    * only valid so long as no items are selected or unselected (or
+    * unselected implictly by deletion). The list contains
+    * Elm_Gengrid_Item pointers.
+    *
+    * @param obj The Gengrid object.
+    * @return The list of selected items, or NULL if none are selected.
+    *
+    * @ingroup Gengrid
+    */
+   EAPI const Eina_List   *elm_gengrid_selected_items_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
 
    /**
     * @defgroup Clock Clock
