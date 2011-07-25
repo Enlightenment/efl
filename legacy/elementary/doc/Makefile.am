@@ -26,7 +26,7 @@ WGT_PREVIEW = \
 	colorselector:preview-00.png:widget_preview_colorselector:160:200 \
 	layout:preview-00.png:widget_preview_layout:200:160 \
 	conformant:preview-00.png:widget_preview_conformant:200:400 \
-	index:preview-00.png:widget_preview_index:300:500 \
+	index:preview-00.png:widget_preview_index:200:160 \
 	frame:preview-00.png:widget_preview_frame:100:50 \
 	label:preview-00.png:widget_preview_label:70:30 \
 	clock:preview-00.png:widget_preview_clock:200:100 \
