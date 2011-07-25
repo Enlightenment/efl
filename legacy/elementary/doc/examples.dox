@@ -37,6 +37,12 @@
  *
  * @ref diskselector_example_02
  *
+ * @ref list_example_01
+ *
+ * @ref list_example_02
+ *
+ * @ref list_example_03
+ *
  * @ref flipselector_example
  *
  * @ref fileselector_example
@@ -1652,6 +1658,258 @@
  * @image latex screenshots/diskselector_example_02.eps width=\textwidth
  *
  * @example diskselector_example_02.c
+ */
+
+/**
+ * @page list_example_01 List widget example
+ *
+ * This code places a single Elementary list widgets on a window, just
+ * to exemplify the more simple and common use case: a list will be created
+ * and populated with a few items.
+ *
+ * To keep it simple, we won't show how to customize the list, for this check
+ * @ref list_example_02. Also, we won't focus
+ * on items management on this example. For an example about this subject,
+ * check @ref list_example_03.
+ *
+ * To add a list widget.
+ * @dontinclude list_example_01.c
+ * @skipline elm_list_add
+ *
+ * We are just adding the list, so as you can see, defaults for it are:
+ * @li Items are displayed vertically.
+ * @li Only one item can be selected.
+ * @li The list doesn't bouce.
+ *
+ * To add items, we are just appending it on a loop, using function
+ * elm_list_item_append(), that will be better exaplained on
+ * items management example.
+ * @dontinclude list_example_01.c
+ * @skipline lbl[]
+ * @until };
+ * @skipline for
+ * @skipline elm_list_item_append
+ *
+ * After we just want to show the list. But first we need to start the widget.
+ * It was done this way to improve widget's performance. So, always remember
+ * that:
+ * @warning Call elm_list_go before showing the object
+ * @skipline elm_list_go
+ * @skipline show
+ *
+ * See the full @ref list_example_01.c "list_example_01.c"
+ * code, whose window should look like this picture:
+ *
+ * @image html screenshots/list_example_01.png
+ * @image latex screenshots/list_example_01.eps width=\textwidth
+ *
+ * @example list_example_01.c
+ */
+
+/**
+ * @page list_example_02 List widget example
+ *
+ * This code places a single Elementary list widgets on a window,
+ * exemplifying a part of the widget's API.
+ *
+ * First, we will just create a simple list, as done on @ref list_example_01 :
+ * @dontinclude list_example_02.c
+ * @skipline lbl
+ * @until }
+ * @skipline elm_list_add
+ * @until elm_list_item_append
+ *
+ * Now, let's customize this list a bit. First we will display items
+ * horizontally:
+ * @skipline horizontal_set
+ *
+ * Then we will choose another list mode. There are four of them, and
+ * the default #Elm_List_Mode is #ELM_LIST_SCROLL. Let's set compress mode:
+ * @skipline mode_set
+ *
+ * To enable multiple items selection, we need to enable it, since only one
+ * selected item is allowed by default:
+ * @skipline elm_list_multi_select_set
+ *
+ * We are not adding items with callback functions here,
+ * since we'll explain it better on  @ref list_example_03. But if the callback
+ * need to be called everytime user clicks an item, even if already selected,
+ * it's required to enable this behavior:
+ * @skipline elm_list_always_select_mode_set
+ *
+ * Finally, if a bounce effect is required, or you would like to see
+ * scrollbars, it is possible. But, for default theme, list
+ * scrollbars will be invisible anyway.
+ * @skipline bounce_set
+ * @until SCROLLER_POLICY_ON
+ *
+ * See the full @ref list_example_02.c "list_example_02.c"
+ * code, whose window should look like this picture:
+ *
+ * @image html screenshots/list_example_02.png
+ * @image latex screenshots/list_example_02.eps width=\textwidth
+ *
+ * @example list_example_02.c
+ */
+
+/**
+ * @page list_example_03 List - Items management
+ *
+ * This code places a Elementary list widgets on a window,
+ * along with some buttons trigerring actions on it (though its API).
+ * It covers most of Elm_List_Item functions.
+ *
+ * On our @c main function, we are adding a default list with
+ * 3 items. We are only setting their labels (second parameter of function
+ * elm_list_item_append):
+ * @dontinclude list_example_03.c
+ * @skipline elm_list_add
+ * @until Item 2
+ *
+ * Next we are adding lots of buttons, each one for a callback function
+ * that will realize a task covering part of list items API.
+ * Lets check the first one:
+ * @skipline elm_button_add
+ * @until evas_object_show
+ *
+ * We are labeling the button with a task description with
+ * elm_object_text_set() and setting a callback
+ * function evas_object_smart_callback_add().
+ * Each callback function will have the signature:
+ * <tt> static void _task_cb(void *data, Evas_Object *obj,
+ * void *event_info)</tt> with the function name varying for each task.
+ *
+ * Now let's cover all of them.
+ *
+ * <b> Prepending an item: </b>
+ * @dontinclude list_example_03.c
+ * @skipline _prepend_cb
+ * @until }
+ *
+ * The item will be placed on the begining of the list,
+ * i.e. it will be the first one.
+ *
+ * The first parameter of elm_list_item_prepend() is the list
+ * object, that we are receiving as data on our callback function.
+ * The second one is a label, the string that will be placed in the center
+ * of our item. As we don't wan't icons or callback functions, we can
+ * send NULL as third, fourth, fifth and sixth parameters.
+ *
+ * <b> Appending an item: </b>
+ * @dontinclude list_example_03.c
+ * @skipline _add_cb
+ * @until }
+ *
+ * Items included with append will be inserted inserted after the last one.
+ *
+ * <b> Appending an item with icon: </b>
+ * @dontinclude list_example_03.c
+ * @skipline _add_ic_cb
+ * @until }
+ *
+ * If an icon is required, you can pass it as third paramenter on our
+ * elm_list_item_append() function. It will be place on the
+ * left side of item's label. If an icon is wanted on the right side,
+ * it should be passed as fourth parameter.
+ *
+ * For more details about how to create icons, look for elm_icon examples
+ * @ref tutorial_icon.
+ *
+ * <b> Appending an item with callback function for selected: </b>
+ * @dontinclude list_example_03.c
+ * @skipline _sel_cb
+ * @until }
+ * @until }
+ *
+ * To set a callback function that will be called every time an item is
+ * selected, i.e., everytime the list stops with this item in
+ * center position, just pass the function as fifth paramenter.
+ *
+ * <b> Appending an item with callback function for selected with data: </b>
+ * @dontinclude list_example_03.c
+ * @skipline _sel_data_cb
+ * @until }
+ * @until }
+ * @until }
+ * @until }
+ *
+ * If the callback function request an extra data, it can be attached to our
+ * item passing a pointer for data as sixth parameter.
+ * Our function _sel_data_cb will receive it as <tt> void *data </tt>.
+ *
+ * If you want to free this data, or handle that the way you need when the
+ * item is deleted, set a callback function for that, with
+ * elm_list_item_del_cb_set().
+ *
+ * As you can see we check if @c it is not @c NULL after appending it.
+ * If an error happens, we won't try to set a function for it.
+ *
+ * <b> Deleting an item: </b>
+ * @dontinclude list_example_03.c
+ * @skipline _del_cb(
+ * @until }
+ *
+ * To delete an item we simple need to call elm_list_item_del() with
+ * a pointer for such item.
+ *
+ * If you need, you can get selected item with
+ * elm_list_selected_item_get(), that will return a pointer for it.
+ *
+ * <b> Unselecting an item: </b>
+ * @dontinclude list_example_03.c
+ * @skipline _unselect_cb
+ * @until }
+ *
+ * To select an item, you should call elm_list_item_selected_set()
+ * passing @c EINA_TRUE, and to unselect it, @c EINA_FALSE.
+ *
+ * <b> Printing all items: </b>
+ * @dontinclude list_example_03.c
+ * @skipline _print_cb
+ * @until }
+ *
+ * <b> Clearing the list: </b>
+ * @dontinclude list_example_03.c
+ * @skipline _clear_cb
+ * @until }
+ *
+ * <b> Selecting the next item: </b>
+ * @dontinclude list_example_03.c
+ * @skipline _select_next_cb
+ * @until }
+ *
+ * <b> Inserting after an item: </b>
+ * @dontinclude list_example_03.c
+ * @skipline _insert_after_cb
+ * @until }
+ *
+ * <b> Selecting the previous item: </b>
+ * @dontinclude list_example_03.c
+ * @skipline _select_prev_cb
+ * @until }
+ *
+ * <b> Inserting before an item: </b>
+ * @dontinclude list_example_03.c
+ * @skipline _insert_before_cb
+ * @until }
+ *
+ * If a separator is required, just set an item as such:
+ * @dontinclude list_example_03.c
+ * @skipline _set_separator_cb
+ * @until }
+ *
+ * Also an item can be disabled, and the user won't be allowed to (un)select it:
+ * @dontinclude list_example_03.c
+ * @skipline _disable_cb
+ * @until }
+ *
+ * See the full @ref list_example_03.c "list_example_03.c"
+ * code, whose window should look like this picture:
+ *
+ * @image html screenshots/list_example_03.png
+ * @image latex screenshots/list_example_03.eps width=\textwidth
+ *
+ * @example list_example_03.c
  */
 
 /**

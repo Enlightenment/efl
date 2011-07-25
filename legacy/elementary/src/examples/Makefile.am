@@ -66,6 +66,9 @@ SRCS = \
 	layout_example_01.c \
 	layout_example_02.c \
 	layout_example_03.c \
+	list_example_01.c \
+	list_example_02.c \
+	list_example_03.c \
 	flipselector_example.c \
 	fileselector_example.c \
 	fileselector_button_example.c \
@@ -141,6 +144,9 @@ pkglib_PROGRAMS += \
 	layout_example_01 \
 	layout_example_02 \
 	layout_example_03 \
+	list_example_01 \
+	list_example_02 \
+	list_example_03 \
 	ctxpopup_example_01 \
 	flipselector_example \
 	fileselector_example \
@@ -191,6 +197,9 @@ SCREENSHOTS = \
 	layout_example_01:layout_example_01.png:0.0 \
 	layout_example_02:layout_example_02.png:0.0 \
 	layout_example_03:layout_example_03.png:0.0 \
+	list_example_01:list_example_01.png:0.0 \
+	list_example_02:list_example_02.png:0.0 \
+	list_example_03:list_example_03.png:0.0 \
 	flipselector_example:flipselector_example.png:0.0 \
 	fileselector_example:fileselector_example.png:0.0 \
 	index_example_02:index_example_03.png:0.3 \

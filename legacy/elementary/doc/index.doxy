@@ -197,5 +197,10 @@
  * @image html img/layout-predefined.png
  * @image latex img/layout-predefined.eps
  * @li @ref List
+ *
+ * @image html img/widget/list/preview-00.png
+ * @image latex img/widget/list/preview-00.eps
+ * @image html img/list.png
+ * @image latex img/list.eps
  * @li @ref Table
  */
