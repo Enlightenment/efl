@@ -3024,6 +3024,43 @@
  */
 
 /**
+ * @page tutorial_panel Panel example
+ * @dontinclude panel_example_01.c
+ *
+ * In this example will have 3 panels, one for each possible orientation. Two of
+ * our panels will start out hidden, the third will start out expanded. For each
+ * of the panels we will use a label as the content, it's however possible to
+ * have any widget(including containers) as the content of panels.
+ *
+ * We start by doing some setup, code you should be familiar with from other
+ * examples:
+ * @until show(bx)
+ *
+ * And move right to creating our first panel, for this panel we are going to
+ * choose the orientation as TOP and toggle it(tell it to hide itself):
+ * @until pack_end
+ *
+ * For the second panel we choose the RIGHT orientation and explicitly set the
+ * state as hidden:
+ * @until pack_end
+ *
+ * For our third and last panel we won't set the orientation(which means it will
+ * use the default: LEFT):
+ * @until pack_end
+ *
+ * All that is left is running the main loop:
+ * @until ELM_MAIN
+ *
+ * This example will look like this;
+ *
+ * @image html screenshots/panel_example_01.png
+ * @image latex screenshots/panel_example_01.epx width=\textwidth
+ * @note The buttons with arrow allow the user to hide/show the panels.
+ *
+ * @example panel_example_01.c
+ */
+
+/**
  * @page bg_example_01_c bg_example_01.c
  * @include bg_example_01.c
  * @example bg_example_01.c

@@ -141,6 +141,9 @@
  * @image html img/widget/pager/preview-00.png
  * @image latex img/widget/pager/preview-00.eps
  * @li @ref Panel
+ *
+ * @image html img/widget/panel/preview-00.png
+ * @image latex img/widget/panel/preview-00.eps
  * @li @ref Panes
  * @li @ref Photo
  * @li @ref Photocam

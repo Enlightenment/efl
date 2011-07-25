@@ -1,22 +1,6 @@
 #include <Elementary.h>
 #include "elm_priv.h"
 
-/**
- * @defgroup Panel Panel
- *
- * A panel is a type of animated container that contains subobjects.  It
- * can be expanded or contracted.
- *
- * Orientations are as follows:
- * ELM_PANEL_ORIENT_TOP
- * ELM_PANEL_ORIENT_BOTTOM
- * ELM_PANEL_ORIENT_LEFT
- * ELM_PANEL_ORIENT_RIGHT
- * NOTE: Only LEFT and RIGHT orientations are implemented.
- *
- * THIS WIDGET IS UNDER CONSTRUCTION!
- */
-
 typedef struct _Widget_Data Widget_Data;
 struct _Widget_Data
 {
@@ -239,15 +223,6 @@ _event_hook(Evas_Object *obj, Evas_Object *src __UNUSED__, Evas_Callback_Type ty
    return EINA_TRUE;
 }
 
-/**
- * Adds a panel object
- *
- * @param parent The parent object
- *
- * @return The panel object, or NULL on failure
- *
- * @ingroup Panel
- */
 EAPI Evas_Object *
 elm_panel_add(Evas_Object *parent)
 {
@@ -300,20 +275,6 @@ elm_panel_add(Evas_Object *parent)
    return obj;
 }
 
-/**
- * Sets the orientation of the panel
- *
- * @param parent The parent object
- * @param orient The panel orientation.  Can be one of the following:
- * ELM_PANEL_ORIENT_TOP
- * ELM_PANEL_ORIENT_BOTTOM
- * ELM_PANEL_ORIENT_LEFT
- * ELM_PANEL_ORIENT_RIGHT
- *
- * NOTE: Only LEFT and RIGHT orientations are implemented.
- *
- * @ingroup Panel
- */
 EAPI void
 elm_panel_orient_set(Evas_Object *obj, Elm_Panel_Orient orient)
 {
@@ -346,14 +307,6 @@ elm_panel_orient_set(Evas_Object *obj, Elm_Panel_Orient orient)
    _sizing_eval(obj);
 }
 
-/**
- * Get the orientation of the panel.
- *
- * @param obj The panel object
- * @return The Elm_Panel_Orient, or ELM_PANEL_ORIENT_LEFT on failure.
- *
- * @ingroup Panel
- */
 EAPI Elm_Panel_Orient
 elm_panel_orient_get(const Evas_Object *obj)
 {
@@ -363,18 +316,6 @@ elm_panel_orient_get(const Evas_Object *obj)
    return wd->orient;
 }
 
-/**
- * Set the content of the panel.
- *
- * Once the content object is set, a previously set one will be deleted.
- * If you want to keep that old content object, use the
- * elm_panel_content_unset() function.
- *
- * @param obj The panel object
- * @param content The panel content
- *
- * @ingroup Panel
- */
 EAPI void
 elm_panel_content_set(Evas_Object *obj, Evas_Object *content)
 {
@@ -393,16 +334,6 @@ elm_panel_content_set(Evas_Object *obj, Evas_Object *content)
    _sizing_eval(obj);
 }
 
-/**
- * Get the content of the panel.
- *
- * Return the content object which is set for this widget.
- *
- * @param obj The panel object
- * @return The content that is being used
- *
- * @ingroup Panel
- */
 EAPI Evas_Object *
 elm_panel_content_get(const Evas_Object *obj)
 {
@@ -412,16 +343,6 @@ elm_panel_content_get(const Evas_Object *obj)
    return wd->content;
 }
 
-/**
- * Unset the content of the panel.
- *
- * Unparent and return the content object which was set for this widget.
- *
- * @param obj The panel object
- * @return The content that was being used
- *
- * @ingroup Panel
- */
 EAPI Evas_Object *
 elm_panel_content_unset(Evas_Object *obj)
 {
@@ -436,14 +357,6 @@ elm_panel_content_unset(Evas_Object *obj)
    return content;
 }
 
-/**
- * Set the state of the panel.
- *
- * @param obj The panel object
- * @param hidden If true, the panel will run the edje animation to contract
- *
- * @ingroup Panel
- */
 EAPI void
 elm_panel_hidden_set(Evas_Object *obj, Eina_Bool hidden)
 {
@@ -454,14 +367,6 @@ elm_panel_hidden_set(Evas_Object *obj, Eina_Bool hidden)
    _toggle_panel(obj, NULL, "elm,action,panel,toggle", "*");
 }
 
-/**
- * Get the state of the panel.
- *
- * @param obj The panel object
- * @param hidden If true, the panel is in the "hide" state
- *
- * @ingroup Panel
- */
 EAPI Eina_Bool
 elm_panel_hidden_get(const Evas_Object *obj)
 {
@@ -471,13 +376,6 @@ elm_panel_hidden_get(const Evas_Object *obj)
    return wd->hidden;
 }
 
-/**
- * Toggle the state of the panel from code
- *
- * @param obj The panel object
- *
- * @ingroup Panel
- */
 EAPI void
 elm_panel_toggle(Evas_Object *obj)
 {
