@@ -88,7 +88,5 @@ tags
 /po/stamp-po
 /doc/Doxyfile
 /src/examples/actionslider_example_01
-/doc/widget_preview_button1
-/doc/widget_preview_button2
-/doc/widget_preview_button3
-
+/doc/widget_preview_*
+/doc/widgets/widget_preview_*
