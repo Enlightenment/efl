@@ -431,7 +431,7 @@ _item_submenu_obj_create(Elm_Menu_Item *item)
    edje_object_mirrored_set(item->base.view, elm_widget_mirrored_get(item->base.widget));
    _elm_theme_object_set(item->base.widget, item->base.view, "menu", "item_with_submenu",  elm_widget_style_get(item->base.widget));
    elm_menu_item_label_set(item, item->label);
-   elm_menu_item_icon_set(item, item->icon_str);
+   if (item->icon_str) elm_menu_item_icon_set(item, item->icon_str);
 
    edje_object_signal_callback_add(item->base.view, "elm,action,open", "",
                                    _submenu_open, item);
