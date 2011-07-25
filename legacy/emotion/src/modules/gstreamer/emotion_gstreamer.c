@@ -601,7 +601,7 @@ em_file_open(const char   *file,
 
         if (!(vis_name = emotion_visualization_element_name_get(ev->vis)))
           {
-             ERR("pb vis name %d\n", ev->vis);
+             WRN("pb vis name %d", ev->vis);
              goto finalize;
           }
 
@@ -673,6 +673,7 @@ em_file_open(const char   *file,
 
    start = ecore_time_get();
    em_audio_channel_volume_set(ev, ev->volume);
+   em_audio_channel_mute_set(ev, ev->audio_mute);
 
    _eos_timer_fct(ev);
    _emotion_open_done(ev->obj);
@@ -697,6 +698,13 @@ em_file_close(void *video)
      {
         gst_object_unref(GST_OBJECT(ev->eos_bus));
         ev->eos_bus = NULL;
+     }
+
+   if (ev->pipeline)
+     {
+        gst_element_set_state(ev->pipeline, GST_STATE_NULL);
+        gst_object_unref(ev->pipeline);
+        ev->pipeline = NULL;
      }
 
    /* we clear the stream lists */
@@ -911,7 +919,6 @@ em_vis_set(void *video,
 
    ev = (Emotion_Gstreamer_Video *)video;
 
-   if (ev->vis == vis) return;
    ev->vis = vis;
 }
 
@@ -1190,9 +1197,6 @@ em_audio_channel_mute_set(void *video,
    int flags;
 
    ev = (Emotion_Gstreamer_Video *)video;
-
-   if (ev->audio_mute == mute)
-     return;
 
    ev->audio_mute = mute;
 
@@ -1628,7 +1632,7 @@ _eos_timer_fct(void *data)
               _emotion_seek_done(ev->obj);
               break;
            default:
-              ERR("bus say: %s [%i]\n",
+              ERR("bus say: %s [%i]",
                   GST_MESSAGE_SRC_NAME(msg),
                   GST_MESSAGE_TYPE(msg));
               break;
