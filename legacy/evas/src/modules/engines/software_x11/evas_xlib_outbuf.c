@@ -312,38 +312,38 @@ evas_software_xlib_outbuf_setup_x(int w, int h, int rot, Outbuf_Depth depth,
 	   if (buf->priv.pal)
 	     {
 		if (buf->rot == 0 || buf->rot == 180)
-		  conv_func = evas_common_convert_func_get(0, buf->w, buf->h,
-							   evas_software_xlib_x_output_buffer_depth
-							   (xob), buf->priv.mask.r,
-							   buf->priv.mask.g,
-							   buf->priv.mask.b,
-							   buf->priv.pal->colors,
-							   buf->rot);
+                   conv_func = evas_common_convert_func_get(0, buf->w, buf->h,
+                                                            evas_software_xlib_x_output_buffer_depth
+                                                            (xob), buf->priv.mask.r,
+                                                            buf->priv.mask.g,
+                                                            buf->priv.mask.b,
+                                                            buf->priv.pal->colors,
+                                                            buf->rot);
 		else if (buf->rot == 90 || buf->rot == 270)
-		  conv_func = evas_common_convert_func_get(0, buf->h, buf->w,
-							   evas_software_xlib_x_output_buffer_depth
-							   (xob), buf->priv.mask.r,
-							   buf->priv.mask.g,
-							   buf->priv.mask.b,
-							   buf->priv.pal->colors,
-							   buf->rot);
+                   conv_func = evas_common_convert_func_get(0, buf->h, buf->w,
+                                                            evas_software_xlib_x_output_buffer_depth
+                                                            (xob), buf->priv.mask.r,
+                                                            buf->priv.mask.g,
+                                                            buf->priv.mask.b,
+                                                            buf->priv.pal->colors,
+                                                            buf->rot);
 	     }
 	   else
 	     {
 		if (buf->rot == 0 || buf->rot == 180)
-		  conv_func = evas_common_convert_func_get(0, buf->w, buf->h,
-							   evas_software_xlib_x_output_buffer_depth
-							   (xob), buf->priv.mask.r,
-							   buf->priv.mask.g,
-						buf->priv.mask.b, PAL_MODE_NONE,
-							   buf->rot);
+                   conv_func = evas_common_convert_func_get(0, buf->w, buf->h,
+                                                            evas_software_xlib_x_output_buffer_depth
+                                                            (xob), buf->priv.mask.r,
+                                                            buf->priv.mask.g,
+                                                            buf->priv.mask.b, PAL_MODE_NONE,
+                                                            buf->rot);
 		else if (buf->rot == 90 || buf->rot == 270)
-		  conv_func = evas_common_convert_func_get(0, buf->h, buf->w,
-							   evas_software_xlib_x_output_buffer_depth
-							   (xob), buf->priv.mask.r,
-							   buf->priv.mask.g,
-							   buf->priv.mask.b, PAL_MODE_NONE,
-							   buf->rot);
+                   conv_func = evas_common_convert_func_get(0, buf->h, buf->w,
+                                                            evas_software_xlib_x_output_buffer_depth
+                                                            (xob), buf->priv.mask.r,
+                                                            buf->priv.mask.g,
+                                                            buf->priv.mask.b, PAL_MODE_NONE,
+                                                            buf->rot);
 	     }
 	   evas_software_xlib_x_output_buffer_free(xob, 1);
 	   if (!conv_func)
@@ -383,7 +383,7 @@ evas_software_xlib_outbuf_new_region_for_update(Outbuf *buf, int x, int y, int w
 	RECTS_CLIP_TO_RECT(x, y, w, h, 0, 0, buf->w, buf->h);
 	obr = calloc(1, sizeof(Outbuf_Region));
         if (!obr) return NULL;
-	rect = eina_rectangle_new(x, y, w, h);
+        rect = eina_rectangle_new(x, y, w, h);
         if (!rect)
           {
              free(obr);
@@ -510,7 +510,7 @@ evas_software_xlib_outbuf_new_region_for_update(Outbuf *buf, int x, int y, int w
         if ((alpha) && (im->image.data))
           {
              /* FIXME: faster memset! */
-             memset(im->image.data, 0, w * h * sizeof(DATA32));
+//             memset(im->image.data, 0, w * h * sizeof(DATA32));
           }
 
         buf->priv.onebuf = im;
@@ -631,7 +631,7 @@ evas_software_xlib_outbuf_new_region_for_update(Outbuf *buf, int x, int y, int w
        (im->image.data))
      {
         /* FIXME: faster memset! */
-        memset(im->image.data, 0, w * h * sizeof(DATA32));
+//        memset(im->image.data, 0, w * h * sizeof(DATA32));
      }
 
 #ifdef EVAS_FRAME_QUEUING
@@ -668,14 +668,38 @@ evas_software_xlib_outbuf_flush(Outbuf *buf)
 
 	     rect = buf->priv.onebuf_regions->data;
 	     buf->priv.onebuf_regions = eina_list_remove_list(buf->priv.onebuf_regions, buf->priv.onebuf_regions);
-	     xr.x = rect->x;
-	     xr.y = rect->y;
-	     xr.width = rect->w;
-	     xr.height = rect->h;
+             if (buf->rot == 0)
+               {
+                  xr.x = rect->x;
+                  xr.y = rect->y;
+                  xr.width = rect->w;
+                  xr.height = rect->h;
+               }
+             else if (buf->rot == 90)
+               {
+                  xr.x = rect->y;
+                  xr.y = buf->w - rect->x - rect->w;
+                  xr.width = rect->h;
+                  xr.height = rect->w;
+               }
+             else if (buf->rot == 180)
+               {
+                  xr.x = buf->w - rect->x - rect->w;
+                  xr.y = buf->h - rect->y - rect->h;
+                  xr.width = rect->w;
+                  xr.height = rect->h;
+               }
+             else if (buf->rot == 270)
+               {
+                  xr.x = buf->h - rect->y - rect->h;
+                  xr.y = rect->x;
+                  xr.width = rect->h;
+                  xr.height = rect->w;
+               }
 	     XUnionRectWithRegion(&xr, tmpr, tmpr);
 	     if (buf->priv.debug)
-	       evas_software_xlib_outbuf_debug_show(buf, buf->priv.x11.xlib.win,
-						   rect->x, rect->y, rect->w, rect->h);
+                evas_software_xlib_outbuf_debug_show(buf, buf->priv.x11.xlib.win,
+                                                     xr.x, xr.y, xr.width, xr.height);
 	     eina_rectangle_free(rect);
 	  }
 	XSetRegion(buf->priv.x11.xlib.disp, buf->priv.x11.xlib.gc, tmpr);
@@ -687,9 +711,9 @@ evas_software_xlib_outbuf_flush(Outbuf *buf)
 	  {
 	     XSetRegion(buf->priv.x11.xlib.disp, buf->priv.x11.xlib.gcm, tmpr);
 	     evas_software_xlib_x_output_buffer_paste(obr->mxob,
-						     buf->priv.x11.xlib.mask,
-						     buf->priv.x11.xlib.gcm,
-						     0, 0, 0);
+                                                      buf->priv.x11.xlib.mask,
+                                                      buf->priv.x11.xlib.gcm,
+                                                      0, 0, 0);
 	  }
 	XDestroyRegion(tmpr);
 	buf->priv.synced = 0;
@@ -825,7 +849,7 @@ evas_software_xlib_outbuf_push_updated_region(Outbuf *buf, RGBA_Image *update, i
    Gfx_Func_Convert    conv_func = NULL;
    Outbuf_Region      *obr;
    DATA32             *src_data;
-   void               *data;
+   unsigned char      *data;
    int                 bpl = 0, yy;
 
    obr = update->extended_info;
@@ -896,11 +920,17 @@ evas_software_xlib_outbuf_push_updated_region(Outbuf *buf, RGBA_Image *update, i
 	obr->w = h;
 	obr->h = w;
      }
+   if (buf->onebuf)
+     {
+        src_data += x + (y * update->cache_entry.w);
+        data += (bpl * obr->y) + 
+           (obr->x * (evas_software_xlib_x_output_buffer_depth(obr->xob) / 8));
+     }
    if (buf->priv.pal)
      {
-	if (data != src_data)
+	if (data != (unsigned char *)src_data)
 	  conv_func(src_data, data,
-		    0,
+		    update->cache_entry.w - w,
 		    bpl /
 		    ((evas_software_xlib_x_output_buffer_depth(obr->xob) /
 		      8)) - obr->w, obr->w, obr->h, x, y,
@@ -908,9 +938,9 @@ evas_software_xlib_outbuf_push_updated_region(Outbuf *buf, RGBA_Image *update, i
      }
    else
      {
-	if (data != src_data)
+	if (data != (unsigned char *)src_data)
 	  conv_func(src_data, data,
-		    0,
+		    update->cache_entry.w - w,
 		    bpl /
 		    ((evas_software_xlib_x_output_buffer_depth(obr->xob) /
 		      8)) - obr->w, obr->w, obr->h, x, y, NULL);

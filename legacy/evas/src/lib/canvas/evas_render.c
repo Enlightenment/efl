@@ -1187,7 +1187,6 @@ evas_render_updates_internal(Evas *e,
 
         alpha = e->engine.func->canvas_alpha_get(e->engine.data.output,
                                                  e->engine.data.context);
-
         while ((surface =
                 e->engine.func->output_redraws_next_update_get
                 (e->engine.data.output,
@@ -1263,7 +1262,7 @@ evas_render_updates_internal(Evas *e,
                {
                   e->engine.func->context_clip_set(e->engine.data.output,
                                                    e->engine.data.context,
-                                                   ux, uy, uw, uh);
+                                                   ux + off_x, uy + off_y, uw, uh);
                   e->engine.func->context_color_set(e->engine.data.output,
                                                     e->engine.data.context,
                                                     0, 0, 0, 0);

@@ -376,7 +376,7 @@ evas_software_xcb_outbuf_new_region_for_update(Outbuf *buf, int x, int y, int w,
         if ((alpha) && (im->image.data)) 
           {
              /* FIXME: Faster memset */
-             memset(im->image.data, 0, (w * h * sizeof(DATA32)));
+//             memset(im->image.data, 0, (w * h * sizeof(DATA32)));
           }
         buf->priv.onebuf = im;
         return im;
@@ -471,7 +471,7 @@ evas_software_xcb_outbuf_new_region_for_update(Outbuf *buf, int x, int y, int w,
        (im->image.data)) 
      {
         /* FIXME: Faster memset */
-        memset(im->image.data, 0, (w * h * sizeof(DATA32)));
+//        memset(im->image.data, 0, (w * h * sizeof(DATA32)));
      }
 
 #ifdef EVAS_FRAME_QUEUING
@@ -504,18 +504,44 @@ evas_software_xcb_outbuf_flush(Outbuf *buf)
         pixman_region_init(&tmpr);
         while (buf->priv.onebuf_regions) 
           {
-             Eina_Rectangle *rect;
+             Eina_Rectangle *rect, xr = { 0, 0, 0, 0 };
 
+             if (buf->rot == 0)
+               {
+                  xr.x = rect->x;
+                  xr.y = rect->y;
+                  xr.w = rect->w;
+                  xr.h = rect->h;
+               }
+             else if (buf->rot == 90)
+               {
+                  xr.x = rect->y;
+                  xr.y = buf->w - rect->x - rect->w;
+                  xr.w = rect->h;
+                  xr.h = rect->w;
+               }
+             else if (buf->rot == 180)
+               {
+                  xr.x = buf->w - rect->x - rect->w;
+                  xr.y = buf->h - rect->y - rect->h;
+                  xr.w = rect->w;
+                  xr.h = rect->h;
+               }
+             else if (buf->rot == 270)
+               {
+                  xr.x = buf->h - rect->y - rect->h;
+                  xr.y = rect->x;
+                  xr.w = rect->h;
+                  xr.h = rect->w;
+               }
              rect = buf->priv.onebuf_regions->data;
              buf->priv.onebuf_regions = 
                eina_list_remove_list(buf->priv.onebuf_regions, 
                                      buf->priv.onebuf_regions);
-             pixman_region_union_rect(&tmpr, &tmpr, rect->x, rect->y, 
-                                      rect->w, rect->h);
+             pixman_region_union_rect(&tmpr, &tmpr, r.x, r.y, r.w, r.h);
              if (buf->priv.debug)
                evas_software_xcb_outbuf_debug_show(buf, buf->priv.x11.xcb.win, 
-                                                   rect->x, rect->y, rect->w, 
-                                                   rect->h);
+                                                   r.x, r.y, r.w, r.h);
              eina_rectangle_free(rect);
           }
         xcb_set_clip_rectangles(buf->priv.x11.xcb.conn, 
@@ -658,7 +684,7 @@ evas_software_xcb_outbuf_push_updated_region(Outbuf *buf, RGBA_Image *update, in
    Gfx_Func_Convert func_conv = NULL;
    Outbuf_Region *obr = NULL;
    DATA32 *src_data = NULL;
-   void *data = NULL;
+   unsigned char *data = NULL;
    int bpl = 0, yy = 0;
    int bw = 0, bh = 0;
    int bpp = 0;
@@ -734,13 +760,21 @@ evas_software_xcb_outbuf_push_updated_region(Outbuf *buf, RGBA_Image *update, in
         obr->w = h;
         obr->h = w;
      }
-   if (data != src_data) 
+   if (buf->onebuf)
+     {
+        src_data += x + (y * update->cache_entry.w);
+        data += (bpl * obr->y) +
+           (obr->x * (evas_software_xcb_output_buffer_depth(obr->xob) / 8));
+     }
+   if (data != (unsigned char *)src_data) 
      {
         if (buf->priv.pal)
-          func_conv(src_data, data, 0, (bpl / (bpp / 8)) - obr->w, 
+          func_conv(src_data, data, update->cache_entry.w - w, 
+                    (bpl / (bpp / 8)) - obr->w, 
                     obr->w, obr->h, x, y, buf->priv.pal->lookup);
         else
-          func_conv(src_data, data, 0, (bpl / (bpp / 8)) - obr->w, 
+          func_conv(src_data, data, update->cache_entry.w - w, 
+                    (bpl / (bpp / 8)) - obr->w, 
                     obr->w, obr->h, x, y, NULL);
      }
 #if 1
