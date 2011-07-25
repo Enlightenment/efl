@@ -134,8 +134,13 @@ _grid_sel(void        *data,
           Evas_Object *obj __UNUSED__,
           void        *event_info)
 {
-   fprintf(stdout, "Item [%p], with data [%p], has been selected\n",
-           event_info, data);
+   unsigned int x, y;
+   Example_Item *it = elm_gengrid_item_data_get(event_info);
+
+   elm_gengrid_item_pos_get(event_info, &x, &y);
+
+   fprintf(stdout, "Item [%p], with data [%p], path %s, at position (%d, %d),"
+                   " has been selected\n", event_info, data, it->path, x, y);
 }
 
 /* new item with random path */
@@ -246,6 +251,20 @@ _show_last_clicked(void        *data,
    if (!it) return;
 
    elm_gengrid_item_show(it);
+}
+
+/* disable selected item */
+static void
+_toggle_disabled_cb(void        *data,
+                    Evas_Object *obj __UNUSED__,
+                    void        *event_info __UNUSED__)
+{
+   Elm_Gengrid_Item *it = elm_gengrid_selected_item_get(data);
+
+   if (!it) return;
+
+   elm_gengrid_item_selected_set(it, EINA_FALSE);
+   elm_gengrid_item_disabled_set(it, EINA_TRUE);
 }
 
 /* change items' size */
@@ -474,6 +493,12 @@ elm_main(int    argc __UNUSED__,
    elm_box_horizontal_set(hbx_2, EINA_TRUE);
    elm_box_pack_end(bx, hbx_2);
    evas_object_show(hbx_2);
+
+   bt = elm_button_add(win);
+   elm_object_text_set(bt, "Disable item");
+   evas_object_smart_callback_add(bt, "clicked", _toggle_disabled_cb, grid);
+   elm_box_pack_end(hbx_2, bt);
+   evas_object_show(bt);
 
    ck = elm_check_add(win);
    elm_object_text_set(ck, "Horizontal mode");

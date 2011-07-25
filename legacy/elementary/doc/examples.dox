@@ -3164,7 +3164,14 @@
  * Moreover, that ones will set a common function to be issued on the
  * selection of the items. There, we print the item handle's value,
  * along with the callback function data. The latter will be @c NULL,
- * always, because it's what we pass when adding all icons.
+ * always, because it's what we pass when adding all icons. By using
+ * elm_gengrid_item_data_get(), we can have the item data back and,
+ * with that, we're priting the item's path string. Finally, we
+ * exemplify elm_gengrid_item_pos_get(), printing the item's position
+ * in the grid:
+ * @dontinclude gengrid_example.c
+ * @skip item selection callback
+ * @until }
  *
  * The appending button will exercise elm_gengrid_item_append(), simply:
  * @dontinclude gengrid_example.c
@@ -3210,10 +3217,19 @@
  * @skip change items' size
  * @until }
  *
- * Experiment with it and see how the items are affected. To toggle
- * between horizontal and vertical layouting modes on the grid, use
- * the "Horizontal mode" check, which will call the respective API
- * function on the grid:
+ * Experiment with it and see how the items are affected. The "Disable
+ * item" button will, as the name says, disable the currently selected
+ * item:
+ * @dontinclude gengrid_example.c
+ * @skip disable selected item
+ * @until }
+ * Note that we also make use of elm_gengrid_item_selected_set(),
+ * there, thus making the item unselected before we actually disable
+ * it.
+ *
+ * To toggle between horizontal and vertical layouting modes on the
+ * grid, use the "Horizontal mode" check, which will call the
+ * respective API function on the grid:
  * @dontinclude gengrid_example.c
  * @skip change layouting mode
  * @until }
