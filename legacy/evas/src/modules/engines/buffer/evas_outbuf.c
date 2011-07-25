@@ -23,7 +23,6 @@ evas_buffer_outbuf_buf_setup_fb(int w, int h, Outbuf_Depth depth, void *dest, in
 				)
 {
    Outbuf *buf;
-   int y;
    int bpp;
    
    buf = calloc(1, sizeof(Outbuf));
@@ -51,9 +50,7 @@ evas_buffer_outbuf_buf_setup_fb(int w, int h, Outbuf_Depth depth, void *dest, in
    if ((buf->depth == OUTBUF_DEPTH_ARGB_32BPP_8888_8888) &&
        (buf->dest) && (buf->dest_row_bytes == (buf->w * sizeof(DATA32))))
      {
-	for (y = 0; y < h; y++)
-	  memset(((unsigned char *)(buf->dest)) + (y * buf->dest_row_bytes), 
-		 0, w * bpp);
+	memset(buf->dest, 0, h * buf->dest_row_bytes);
 	buf->priv.back_buf = (RGBA_Image *) evas_cache_image_data(evas_common_image_cache_get(),
                                                                   w, h,
                                                                   buf->dest,
