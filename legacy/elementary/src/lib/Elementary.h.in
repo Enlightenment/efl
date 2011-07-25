@@ -4437,6 +4437,21 @@ extern "C" {
     * view) or via the keyboard, navigating through item with the
     * arrow keys.
     *
+    * @section Gengrid_Layouts Gengrid layouts
+    *
+    * Gengrids may layout its items in one of two possible layouts:
+    * - horizontal or
+    * - vertical.
+    *
+    * When in "horizontal mode", items will be placed in @b columns,
+    * from top to bottom and, when the space for a column is filled,
+    * another one is started on the right, thus expanding the grid
+    * horizontally, making for horizontal scrolling. When in "vertical
+    * mode" , though, items will be placed in @b rows, from left to
+    * right and, when the space for a row is filled, another one is
+    * started below, thus expanding the grid vertically (and making
+    * for vertical scrolling).
+    *
     * @section Gengrid_Items Gengrid items
     *
     * An item in a gengrid can have 0 or more text labels (they can be
@@ -4481,7 +4496,8 @@ extern "C" {
     * object itself, while the @c part one is the name string of one
     * of the existing text parts in the Edje group implementing the
     * item's theme. This function @b must return a strdup'()ed string,
-    * as the caller will free() it when done.
+    * as the caller will free() it when done. See
+    * #GridItemLabelGetFunc.
     * - @c func.icon_get - This function is called when an item object
     * is actually created. The @c data parameter will point to the
     * same data passed to elm_gengrid_item_append() and related item
@@ -4491,6 +4507,7 @@ extern "C" {
     * item's theme. It must return @c NULL, when no icon is desired,
     * or a valid object handle, otherwise. The object will be deleted
     * by the gengrid on its deletion or when the item is "unrealized".
+    * See #GridItemIconGetFunc.
     * - @c func.state_get - This function is called when an item
     * object is actually created. The @c data parameter will point to
     * the same data passed to elm_gengrid_item_append() and related
@@ -4502,11 +4519,12 @@ extern "C" {
     * with @c "elm,state,XXX,active" and @c "elm" as "emission" and
     * "source" arguments, respectively, when the state is true (the
     * default is false), where @c XXX is the name of the (state) part.
+    * See #GridItemStateGetFunc.
     * - @c func.del - This is called when elm_gengrid_item_del() is
     * called on an item or elm_gengrid_clear() is called on the
     * gengrid. This is intended for use when gengrid items are
     * deleted, so any data attached to the item (e.g. its data
-    * parameter on creation) can be deleted.
+    * parameter on creation) can be deleted. See #GridItemDelFunc.
     *
     * @section Gengrid_Usage_Hints Usage hints
     *
