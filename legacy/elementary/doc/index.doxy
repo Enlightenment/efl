@@ -185,6 +185,9 @@
  * @image html img/conformant.png
  * @image latex img/conformant.eps
  * @li @ref Gengrid
+ *
+ * @image html img/widget/gengrid/preview-00.png
+ * @image latex img/widget/gengrid/preview-00.eps
  * @li @ref Genlist
  * @li @ref Grid
  * @li @ref Layout
