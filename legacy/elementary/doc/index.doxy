@@ -150,6 +150,9 @@
  * @li @ref Scroller
  * @li @ref SegmentControl
  * @li @ref Separator
+ *
+ * @image html img/widget/separator/preview-00.png
+ * @image latex img/widget/separator/preview-00.eps
  * @li @ref Slider
  * @li @ref Slideshow
  * @li @ref Spinner

@@ -2877,6 +2877,33 @@
  */
 
 /**
+ * @page tutorial_separator Separator example
+ * @dontinclude separator_example_01.c
+ *
+ * In this example we are going to pack two rectangles in a box, and have a
+ * separator in the middle.
+ *
+ * So we start we the window, background, box and rectangle creation, all pretty
+ * normal stuff:
+ * @until pack_end
+ *
+ * Once we have our first rectangle in the box we create and add our separator:
+ * @until pack_end
+ * @note Since our box is in horizontal mode it's a good idea to set the
+ * separator to be horizontal too.
+ *
+ * And now we add our second rectangle and run the main loop:
+ * @until ELM_MAIN
+ *
+ * This example will look like this:
+ *
+ * @image html screenshots/separator_example_01.png
+ * @image eps screenshots/separator_example_01.eps width=\textwidth
+ *
+ * @example separator_example_01.c
+ */
+
+/**
  * @page bg_example_01_c bg_example_01.c
  * @include bg_example_01.c
  * @example bg_example_01.c

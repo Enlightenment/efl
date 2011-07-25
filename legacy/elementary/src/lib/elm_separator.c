@@ -1,14 +1,6 @@
 #include <Elementary.h>
 #include "elm_priv.h"
 
-/**
- * @defgroup Separator Separator
- *
- * A separator is a widget that adds a very thin object to separate other
- * objects.
- * A separator can be vertical or horizontal.
- */
-
 typedef struct _Widget_Data Widget_Data;
 
 struct _Widget_Data
@@ -66,15 +58,6 @@ _sizing_eval(Evas_Object *obj)
    evas_object_size_hint_align_set(obj, maxw, maxh);
 }
 
-/**
- * Add a separator object to @p parent
- *
- * @param parent The parent object
- *
- * @return The separator object, or NULL upon failure
- *
- * @ingroup Separator
- */
 EAPI Evas_Object *
 elm_separator_add(Evas_Object *parent)
 {
@@ -101,14 +84,6 @@ elm_separator_add(Evas_Object *parent)
    return obj;
 }
 
-/**
- * Set the horizontal mode of a separator object
- *
- * @param obj The separator object
- * @param horizontal If true, the separator is horizontal
- *
- * @ingroup Separator
- */
 EAPI void
 elm_separator_horizontal_set(Evas_Object *obj, Eina_Bool horizontal)
 {
@@ -121,14 +96,6 @@ elm_separator_horizontal_set(Evas_Object *obj, Eina_Bool horizontal)
    _theme_hook(obj);
 }
 
-/**
- * Get the horizontal mode of a separator object
- *
- * @param obj The separator object
- * @return If true, the separator is horizontal
- *
- * @ingroup Separator
- */
 EAPI Eina_Bool
 elm_separator_horizontal_get(const Evas_Object *obj)
 {

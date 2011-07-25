@@ -63,7 +63,8 @@ widget_preview_hover \
 widget_preview_anchorview \
 widget_preview_anchorblock \
 widget_preview_flip \
-widget_preview_pager
+widget_preview_pager \
+widget_preview_separator
 
 LDADD = $(top_builddir)/src/lib/libelementary.la @ELEMENTARY_EWEATHER_LIBS@ @ELEMENTARY_EDBUS_LIBS@ @ELEMENTARY_EFREET_LIBS@ @ELEMENTARY_LIBS@ @EIO_LIBS@ @my_libs@
 
@@ -109,5 +110,6 @@ EXTRA_DIST = \
 	widget_preview_label.c \
 	widget_preview_layout.c \
 	widget_preview_pager.c \
+	widget_preview_separator.c \
 	widget_preview_tmpl_foot.c \
 	widget_preview_tmpl_head.c
