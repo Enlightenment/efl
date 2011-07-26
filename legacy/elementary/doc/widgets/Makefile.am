@@ -71,7 +71,8 @@ widget_preview_radio \
 widget_preview_toggle \
 widget_preview_panel \
 widget_preview_gengrid \
-widget_preview_progressbar
+widget_preview_progressbar \
+widget_preview_box
 
 LDADD = $(top_builddir)/src/lib/libelementary.la @ELEMENTARY_EWEATHER_LIBS@ @ELEMENTARY_EDBUS_LIBS@ @ELEMENTARY_EFREET_LIBS@ @ELEMENTARY_LIBS@ @EIO_LIBS@ @my_libs@
 
@@ -125,5 +126,6 @@ EXTRA_DIST = \
 	widget_preview_panel.c \
 	widget_preview_gengrid.c \
 	widget_preview_progressbar.c \
+	widget_preview_box.c \
 	widget_preview_tmpl_foot.c \
 	widget_preview_tmpl_head.c

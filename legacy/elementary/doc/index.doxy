@@ -184,6 +184,11 @@
  * containers these widgets don't have their own visual identity, so here we
  * show one use for them and a diagram showing their component parts:
  * @li @ref Box
+ *
+ * @image html img/widget/box/preview-00.png
+ * @image latex img/widget/box/preview-00.eps
+ * @image html img/box.png
+ * @image latex img/box.eps
  * @li @ref Conformant
  *
  * @image html img/widget/conformant/preview-00.png

@@ -2640,6 +2640,12 @@ extern "C" {
    /**
     * @defgroup Box Box
     *
+    * @image html img/widget/box/preview-00.png
+    * @image latex img/widget/box/preview-00.eps width=\textwidth
+    *
+    * @image html img/box.png
+    * @image latex img/box.eps width=\textwidth
+    *
     * A box arranges objects in a linear fashion, governed by a layout function
     * that defines the details of this arrangement.
     *
