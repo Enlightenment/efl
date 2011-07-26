@@ -33,7 +33,8 @@ struct _Elm_Menu_Item
 
    Eina_Bool separator : 1;
    Eina_Bool disabled : 1;
-   Eina_Bool selected: 1;
+   Eina_Bool selected : 1;
+   Eina_Bool object_item : 1;
 };
 
 struct _Widget_Data
@@ -600,6 +601,7 @@ elm_menu_close(Evas_Object *obj)
  * Get the Evas_Object of an Elm_Menu_Item
  *
  * @param item The menu item object.
+ * @return The edje object containing the swallowed content
  *
  * @ingroup Menu
  */
@@ -644,6 +646,7 @@ elm_menu_clone(Evas_Object *from_menu, Evas_Object *to_menu, Elm_Menu_Item *pare
  * Add an item at the end
  *
  * @param obj The menu object.
+ * @param parent The parent menu item (optional)
  * @param icon A icon display on the item. The icon will be destryed by the menu.
  * @param label The label of the item.
  * @param func Function called when the user select the item.
@@ -680,6 +683,57 @@ elm_menu_item_add(Evas_Object *obj, Elm_Menu_Item *parent, const char *icon, con
    elm_widget_sub_object_add(subitem->base.widget, subitem->icon);
    edje_object_part_swallow(subitem->base.view, "elm.swallow.content", subitem->icon);
    if (icon) elm_menu_item_icon_set(subitem, icon);
+
+   if (parent)
+     {
+        if (!parent->submenu.bx) _item_submenu_obj_create(parent);
+        elm_box_pack_end(parent->submenu.bx, subitem->base.view);
+        parent->submenu.items = eina_list_append(parent->submenu.items, subitem);
+     }
+   else
+     {
+        elm_box_pack_end(wd->bx, subitem->base.view);
+        wd->items = eina_list_append(wd->items, subitem);
+     }
+
+   _sizing_eval(obj);
+   return subitem;
+}
+
+/**
+ * Add an object swallowed in an item at the end
+ *
+ * @param obj The menu object.
+ * @param parent The parent menu item (optional)
+ * @param subobj The object to swallow
+ * @param func Function called when the user select the item.
+ * @param data Data sent by the callback.
+ * @return Returns the new item.
+ *
+ * @ingroup Menu
+ */
+EAPI Elm_Menu_Item *
+elm_menu_item_add_object(Evas_Object *obj, Elm_Menu_Item *parent, Evas_Object *subobj, Evas_Smart_Cb func, const void *data)
+{
+   Elm_Menu_Item *subitem;
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+   Widget_Data *wd = elm_widget_data_get(obj);
+
+   if (!wd) return NULL;
+   subitem = elm_widget_item_new(obj, Elm_Menu_Item);
+   if (!subitem) return NULL;
+
+   subitem->base.data = data;
+   subitem->func = func;
+   subitem->parent = parent;
+   subitem->object_item = EINA_TRUE;
+   subitem->icon = subobj;
+
+   _item_obj_create(subitem);
+
+   elm_widget_sub_object_add(subitem->base.widget, subitem->icon);
+   edje_object_part_swallow(subitem->base.view, "elm.swallow.content", subobj);
+   _sizing_eval(subitem->base.widget);
 
    if (parent)
      {

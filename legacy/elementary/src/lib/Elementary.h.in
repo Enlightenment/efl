@@ -9230,6 +9230,7 @@ extern "C" {
    EAPI const Eina_List   *elm_menu_items_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
    EAPI Evas_Object       *elm_menu_item_object_get(const Elm_Menu_Item *it) EINA_ARG_NONNULL(1);
    EAPI Elm_Menu_Item     *elm_menu_item_add(Evas_Object *obj, Elm_Menu_Item *parent, const char *icon, const char *label, Evas_Smart_Cb func, const void *data) EINA_ARG_NONNULL(1);
+   EAPI Elm_Menu_Item     *elm_menu_item_add_object(Evas_Object *obj, Elm_Menu_Item *parent, Evas_Object *subobj, Evas_Smart_Cb func, const void *data) EINA_ARG_NONNULL(1);
    EAPI void               elm_menu_item_label_set(Elm_Menu_Item *item, const char *label) EINA_ARG_NONNULL(1);
    EAPI const char        *elm_menu_item_label_get(const Elm_Menu_Item *item) EINA_ARG_NONNULL(1);
    EAPI void               elm_menu_item_icon_set(Elm_Menu_Item *item, const char *icon) EINA_ARG_NONNULL(1, 2);
