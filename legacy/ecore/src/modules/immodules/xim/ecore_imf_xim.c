@@ -177,12 +177,22 @@ _ecore_imf_context_xim_preedit_string_get(Ecore_IMF_Context *ctx,
    char *utf8;
    int len;
    imf_context_data = ecore_imf_context_data_get(ctx);
-   utf8 = eina_unicode_unicode_to_utf8(imf_context_data->preedit_chars,
-                                       &len);
-   if(str)
-     *str = utf8;
+   if (imf_context_data->preedit_chars)
+     {
+        utf8 = eina_unicode_unicode_to_utf8(imf_context_data->preedit_chars,
+                                            &len);
+        if(str)
+           *str = utf8;
+        else
+           free(utf8);
+     }
    else
-     free(utf8);
+     {
+        if(str)
+           *str = NULL;
+        if(cursor_pos)
+           *cursor_pos = 0;
+     }
 
    if(cursor_pos)
      *cursor_pos = imf_context_data->preedit_cursor;
