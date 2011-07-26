@@ -66,7 +66,7 @@ _eeze_disk_mount_result_handler(void *data __UNUSED__, int type __UNUSED__, Ecor
      return ECORE_CALLBACK_RENEW;
    disk = ecore_exe_data_get(ev->exe);
 
-   if ((!disk) || (!eeze_events) || (!(l = eina_list_data_find(eeze_events, disk))))
+   if ((!disk) || (!eeze_events) || (!(l = eina_list_data_find_list(eeze_events, disk))))
      return ECORE_CALLBACK_RENEW;
 
    eeze_events = eina_list_remove_list(eeze_events, l);
