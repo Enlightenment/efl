@@ -6918,6 +6918,20 @@ extern "C" {
     * @li full: Items will be placed between the descent and ascent, or the
     * lowest point in the line and its highest.
     *
+    * The next image shows different configurations of items and how they
+    * are the previously mentioned options affect their sizes. In all cases,
+    * the green line indicates the ascent, blue for the baseline and red for
+    * the descent.
+    *
+    * @image html entry_item.png
+    * @image latex entry_item.eps width=\textwidth
+    *
+    * And another one to show how size differs from absize. In the first one,
+    * the scale value is set to 1.0, while the second one is using one of 2.0.
+    *
+    * @image html entry_item_scale.png
+    * @image latex entry_item_scale.eps width=\textwidth
+    *
     * After the size for an item is calculated, the entry will request an
     * object to place in its space. For this, the functions set with
     * elm_entry_item_provider_append() and related functions will be called
@@ -7016,6 +7030,10 @@ extern "C" {
     * @li "anchor,down": Mouse button has been pressed on an anchor. The event_info
     * parameter for the callback will be an #Elm_Entry_Anchor_Info.
     * @li "preedit,changed": The preedit string has changed.
+    *
+    * @section entry-examples
+    *
+    * An overview of the Entry API can be seen in @ref entry_example_01
     *
     * @{
     */
@@ -7320,24 +7338,41 @@ extern "C" {
     */
    EAPI void         elm_entry_cursor_selection_end(Evas_Object *obj) EINA_ARG_NONNULL(1);
    /**
-    * TODO: fill this in
+    * Gets whether a format node exists at the current cursor position.
+    *
+    * A format node is anything that defines how the text is rendered. It can
+    * be a visible format node, such as a line break or a paragraph separator,
+    * or an invisible one, such as bold begin or end tag.
+    * This function returns whether any format node exists at the current
+    * cursor position.
     *
     * @param obj The entry object
-    * @return TODO: fill this in
+    * @return EINA_TRUE if the current cursor position contains a format node,
+    * EINA_FALSE otherwise.
+    *
+    * @see elm_entry_cursor_is_visible_format_get()
     */
    EAPI Eina_Bool    elm_entry_cursor_is_format_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
    /**
-    * This returns whether the cursor is visible.
+    * Gets if the current cursor position holds a visible format node.
     *
     * @param obj The entry object
-    * @return If true, the cursor is visible.
+    * @return EINA_TRUE if the current cursor is a visible format, EINA_FALSE
+    * if it's an invisible one or no format exists.
+    *
+    * @see elm_entry_cursor_is_format_get()
     */
    EAPI Eina_Bool    elm_entry_cursor_is_visible_format_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
    /**
-    * TODO: fill this in
+    * Gets the character pointed by the cursor at its current position.
+    *
+    * This function returns a string with the utf8 character stored at the
+    * current cursor position.
+    * Only the text is returned, any format that may exist will not be part
+    * of the return value.
     *
     * @param obj The entry object
-    * @return TODO: fill this in
+    * @return The text pointed by the cursors.
     */
    EAPI const char  *elm_entry_cursor_content_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
    /**
@@ -7357,6 +7392,9 @@ extern "C" {
    EAPI Eina_Bool    elm_entry_cursor_geometry_get(const Evas_Object *obj, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h) EINA_ARG_NONNULL(1);
    /**
     * Sets the cursor position in the entry to the given value
+    *
+    * The value in @p pos is the index of the character position within the
+    * contents of the string as returned by elm_entry_cursor_pos_get().
     *
     * @param obj The entry object
     * @param pos The position of the cursor
