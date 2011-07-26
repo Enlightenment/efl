@@ -35,7 +35,7 @@ static void
 event_send(const char *device, Eeze_Scanner_Event_Type type, Eina_Bool volume)
 {
    Eeze_Scanner_Event ev;
-   Eina_List *l;
+   const Eina_List *l;
    Ecore_Con_Client *cl;
 
    ev.device = device;
