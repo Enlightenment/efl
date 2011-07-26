@@ -124,6 +124,7 @@ static Eina_Bool _deselect_all_items(Widget_Data *wd);
 static Evas_Smart_Class _pan_sc = EVAS_SMART_CLASS_INIT_VERSION;
 static void _mirrored_set(Evas_Object *obj, Eina_Bool rtl);
 
+static const char SIG_ACTIVATED[] = "activated";
 static const char SIG_CLICKED_DOUBLE[] = "clicked,double";
 static const char SIG_SELECTED[] = "selected";
 static const char SIG_UNSELECTED[] = "unselected";
@@ -142,6 +143,7 @@ static const char SIG_SCROLL_DRAG_STOP[] = "scroll,drag,stop";
 static const char SIG_MOVED[] = "moved";
 
 static const Evas_Smart_Cb_Description _signals[] = {
+       {SIG_ACTIVATED, ""},
        {SIG_CLICKED_DOUBLE, ""},
        {SIG_SELECTED, ""},
        {SIG_UNSELECTED, ""},
@@ -337,7 +339,7 @@ _event_hook(Evas_Object       *obj,
             (!strcmp(ev->keyname, "space")))
      {
         item = elm_gengrid_selected_item_get(obj);
-        evas_object_smart_callback_call(item->wd->self, SIG_CLICKED_DOUBLE, item);
+        evas_object_smart_callback_call(item->wd->self, SIG_ACTIVATED, item);
      }
    else return EINA_FALSE;
 
@@ -783,7 +785,7 @@ _mouse_down(void        *data,
    if (ev->flags & EVAS_BUTTON_DOUBLE_CLICK)
      {
         evas_object_smart_callback_call(item->wd->self, SIG_CLICKED_DOUBLE, item);
-        evas_object_smart_callback_call(item->wd->self, "clicked", item); // will be removed
+        evas_object_smart_callback_call(item->wd->self, SIG_ACTIVATED, item);
      }
    if (item->long_timer) ecore_timer_del(item->long_timer);
    if (item->realized)

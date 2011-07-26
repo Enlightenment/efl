@@ -412,6 +412,7 @@ static void      _item_auto_scroll(Widget_Data *wd);
 
 static Evas_Smart_Class _pan_sc = EVAS_SMART_CLASS_INIT_VERSION;
 
+static const char SIG_ACTIVATED[] = "activated";
 static const char SIG_CLICKED_DOUBLE[] = "clicked,double";
 static const char SIG_SELECTED[] = "selected";
 static const char SIG_UNSELECTED[] = "unselected";
@@ -442,6 +443,7 @@ static const char SIG_SWIPE[] = "swipe";
 
 static const Evas_Smart_Cb_Description _signals[] = {
    {SIG_CLICKED_DOUBLE, ""},
+   {SIG_ACTIVATED, ""},
    {SIG_SELECTED, ""},
    {SIG_UNSELECTED, ""},
    {SIG_EXPANDED, ""},
@@ -576,6 +578,7 @@ _event_hook(Evas_Object       *obj,
         it = elm_genlist_selected_item_get(obj);
         elm_genlist_item_expanded_set(it,
                                       !elm_genlist_item_expanded_get(it));
+        evas_object_smart_callback_call(it->base.widget, SIG_ACTIVATED, it);
      }
    else if (!strcmp(ev->keyname, "Escape"))
      {
@@ -1421,7 +1424,10 @@ _mouse_down(void        *data,
    _item_highlight(it);
    if (ev->flags & EVAS_BUTTON_DOUBLE_CLICK)
      if ((!it->disabled) && (!it->display_only))
-       evas_object_smart_callback_call(it->base.widget, SIG_CLICKED_DOUBLE, it);
+       {
+          evas_object_smart_callback_call(it->base.widget, SIG_CLICKED_DOUBLE, it);
+          evas_object_smart_callback_call(it->base.widget, SIG_ACTIVATED, it);
+       }
    if (it->long_timer) ecore_timer_del(it->long_timer);
    if (it->swipe_timer) ecore_timer_del(it->swipe_timer);
    it->swipe_timer = ecore_timer_add(0.4, _swipe_cancel, it);

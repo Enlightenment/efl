@@ -4569,9 +4569,11 @@ extern "C" {
     * @section Gengrid_Smart_Events Gengrid smart events
     *
     * Smart events that you can add callbacks for are:
-    * - @c "clicked,double" - The user has double-clicked or pressed
-    *   enter on an item. The @c event_info parameter is the gengrid
-    *   item that was double-clicked.
+    * - @c "activated" - The user has double-clicked or pressed
+    *   (enter|return|spacebar) on an item. The @c event_info parameter
+    *   is the gengrid item that was activated.
+    * - @c "clicked,double" - The user has double-clicked an item.
+    *   The @c event_info parameter is the gengrid item that was double-clicked.
     * - @c "selected" - The user has made an item selected. The
     *   @c event_info parameter is the gengrid item that was selected.
     * - @c "unselected" - The user has made an item unselected. The
@@ -9276,7 +9278,11 @@ extern "C" {
     * lists, @ref Genlist should probably be used.
     *
     * Smart callbacks one can listen to:
-    * - "clicked,double" - when the user double-clicked an item
+    * - @c "activated" - The user has double-clicked or pressed
+    *   (enter|return|spacebar) on an item. The @c event_info parameter
+    *   is the item that was activated.
+    * - @c "clicked,double" - The user has double-clicked an item.
+    *   The @c event_info parameter is the item that was double-clicked.
     * - "selected" - when the user selected an item
     * - "unselected" - when the user unselected an item
     * - "longpressed" - an item in the list is long-pressed
@@ -10718,9 +10724,11 @@ extern "C" {
    EAPI void               elm_genlist_reorder_mode_set(Evas_Object *obj, Eina_Bool reorder_mode) EINA_ARG_NONNULL(1);
    EAPI Eina_Bool          elm_genlist_reorder_mode_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
    /* Signals that you can add callbacks for are:
-    * "clicked,double" - This is called when a user has double-clicked an item.
-    *                    The event_info parameter is the genlist item that was
-    *                    double-clicked.
+    * - @c "activated" - The user has double-clicked or pressed
+    *   (enter|return|spacebar) on an item. The @c event_info parameter
+    *   is the item that was activated.
+    * - @c "clicked,double" - The user has double-clicked an item.
+    *   The @c event_info parameter is the item that was double-clicked.
     * "selected" - This is called when a user has made an item selected. The
     *              event_info parameter is the genlist item that was selected.
     * "unselected" - This is called when a user has made an item unselected. The

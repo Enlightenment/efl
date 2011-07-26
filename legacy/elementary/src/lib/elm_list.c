@@ -77,6 +77,7 @@ static Eina_Bool _event_hook(Evas_Object *obj, Evas_Object *src,
                              Evas_Callback_Type type, void *event_info);
 static Eina_Bool _deselect_all_items(Widget_Data *wd);
 
+static const char SIG_ACTIVATED[] = "activated";
 static const char SIG_CLICKED_DOUBLE[] = "clicked,double";
 static const char SIG_SELECTED[] = "selected";
 static const char SIG_UNSELECTED[] = "unselected";
@@ -87,6 +88,7 @@ static const char SIG_SCROLL_EDGE_LEFT[] = "scroll,edge,left";
 static const char SIG_SCROLL_EDGE_RIGHT[] = "scroll,edge,right";
 
 static const Evas_Smart_Cb_Description _signals[] = {
+   {SIG_ACTIVATED, ""},
    {SIG_CLICKED_DOUBLE, ""},
    {SIG_SELECTED, ""},
    {SIG_UNSELECTED, ""},
@@ -270,6 +272,14 @@ _event_hook(Evas_Object *obj, Evas_Object *src __UNUSED__, Evas_Callback_Type ty
              else
                y += page_y;
           }
+     }
+   else if (((!strcmp(ev->keyname, "Return")) ||
+            (!strcmp(ev->keyname, "KP_Enter")) ||
+            (!strcmp(ev->keyname, "space")))
+           && (!wd->multi) && (wd->selected))
+     {
+        it = elm_list_selected_item_get(obj);
+        evas_object_smart_callback_call(it->base.widget, SIG_ACTIVATED, it);
      }
    else if (!strcmp(ev->keyname, "Escape"))
      {
@@ -913,7 +923,10 @@ _mouse_down(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSED__, void
    it->swipe_timer = ecore_timer_add(0.4, _swipe_cancel, it);
    /* Always call the callbacks last - the user may delete our context! */
    if (ev->flags & EVAS_BUTTON_DOUBLE_CLICK)
-     evas_object_smart_callback_call(it->base.widget, SIG_CLICKED_DOUBLE, it);
+     {
+        evas_object_smart_callback_call(it->base.widget, SIG_CLICKED_DOUBLE, it);
+        evas_object_smart_callback_call(it->base.widget, SIG_ACTIVATED, it);
+     }
    wd->swipe = EINA_FALSE;
    wd->movements = 0;
 
