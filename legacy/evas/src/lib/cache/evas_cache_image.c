@@ -910,7 +910,7 @@ evas_cache_image_drop(Image_Entry *im)
 	     return;
 	  }
         _evas_cache_image_lru_add(im);
-	evas_cache_image_flush(cache);
+	if (cache) evas_cache_image_flush(cache);
      }
 }
 
