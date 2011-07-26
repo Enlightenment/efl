@@ -10,6 +10,7 @@
 #include <Eeze.h>
 #include <Eeze_Disk.h>
 #include <libmount.h>
+#include <unistd.h>
 
 #include "eeze_udev_private.h"
 #include "eeze_disk_private.h"
@@ -37,6 +38,7 @@ static Ecore_File_Monitor *_mtab_mon = NULL;
 static Ecore_File_Monitor *_fstab_mon = NULL;
 static Eina_Bool _watching = EINA_FALSE;
 static Eina_Bool _mtab_scan_active = EINA_FALSE;
+static Eina_Bool _mtab_locked = EINA_FALSE;
 static Eina_Bool _fstab_scan_active = EINA_FALSE;
 static libmnt_table *_eeze_mount_mtab = NULL;
 static libmnt_table *_eeze_mount_fstab = NULL;
@@ -50,11 +52,17 @@ static Eina_Bool
 _eeze_mount_lock_mtab(void)
 {
 //    DBG("Locking mlock: %s", mnt_lock_get_linkfile(_eeze_mtab_lock));
+    if (EINA_LIKELY(access("/etc/mtab", W_OK)))
+      {
+         INF("Insufficient privs for mtab lock, continuing without lock");
+         return EINA_TRUE;
+      }
     if (mnt_lock_file(_eeze_mtab_lock))
      {
         ERR("Couldn't lock mtab!");
         return EINA_FALSE;
      }
+   _mtab_locked = EINA_TRUE;
    return EINA_TRUE;
 }
 
@@ -62,7 +70,8 @@ static void
 _eeze_mount_unlock_mtab(void)
 {
 //   DBG("Unlocking mlock: %s", mnt_lock_get_linkfile(_eeze_mtab_lock));
-   mnt_unlock_file(_eeze_mtab_lock);
+   if (_mtab_locked) mnt_unlock_file(_eeze_mtab_lock);
+   _mtab_locked = EINA_FALSE;
 }
 
 
