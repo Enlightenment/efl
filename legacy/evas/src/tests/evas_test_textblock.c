@@ -23,7 +23,8 @@ static const char *style_buf =
    "DEFAULT='font=Sans font_size=10 color=#000 text_class=entry'"
    "br='\n'"
    "ps='ps'"
-   "tab='\t'";
+   "tab='\t'"
+   "b='+ font=Sans:style=bold'";
 
 #define START_TB_TEST() \
    Evas *evas; \
@@ -60,7 +61,7 @@ while (0)
 START_TEST(evas_textblock_simple)
 {
    START_TB_TEST();
-   const char *buf = "This is a <br> test.";
+   const char *buf = "Th<i>i</i>s is a <br> te<b>s</b>t.";
    evas_object_textblock_text_markup_set(tb, buf);
    fail_if(strcmp(evas_object_textblock_text_markup_get(tb), buf));
    END_TB_TEST();
@@ -574,6 +575,7 @@ END_TEST
 START_TEST(evas_textblock_format_removal)
 {
    START_TB_TEST();
+   int i;
    const char *buf = "Th<b>is a<a>tes</a>st</b>.";
    const Evas_Object_Textblock_Node_Format *fnode;
    Evas_Textblock_Cursor *main_cur = evas_object_textblock_cursor_get(tb);
@@ -768,6 +770,141 @@ START_TEST(evas_textblock_format_removal)
    evas_textblock_cursor_char_delete(cur);
    fnode = evas_textblock_node_format_first_get(tb);
    fail_if(_evas_textblock_format_offset_get(fnode) != 10);
+
+   /* Out of order <b><i></b></i> mixes. */
+   evas_object_textblock_text_markup_set(tb, "a<b>b<i>c</b>d</i>e");
+   evas_textblock_cursor_pos_set(cur, 2);
+
+   for (i = 0 ; i < 2 ; i++)
+     {
+        fnode = evas_textblock_node_format_first_get(tb);
+        fail_if (!fnode);
+        fail_if(strcmp(evas_textblock_node_format_text_get(fnode), "+ b"));
+
+        fnode = evas_textblock_node_format_next_get(fnode);
+        fail_if (!fnode);
+        fail_if(strcmp(evas_textblock_node_format_text_get(fnode), "+ i"));
+
+        fnode = evas_textblock_node_format_next_get(fnode);
+        fail_if (!fnode);
+        fail_if(strcmp(evas_textblock_node_format_text_get(fnode), "- b"));
+
+        fnode = evas_textblock_node_format_next_get(fnode);
+        fail_if (!fnode);
+        fail_if(strcmp(evas_textblock_node_format_text_get(fnode), "- i"));
+
+        fnode = evas_textblock_node_format_next_get(fnode);
+        fail_if (fnode);
+
+        evas_textblock_cursor_char_delete(cur);
+     }
+   fnode = evas_textblock_node_format_first_get(tb);
+   fail_if (!fnode);
+   fail_if(strcmp(evas_textblock_node_format_text_get(fnode), "+ b"));
+
+   fnode = evas_textblock_node_format_next_get(fnode);
+   fail_if (!fnode);
+   fail_if(strcmp(evas_textblock_node_format_text_get(fnode), "- b"));
+
+   fnode = evas_textblock_node_format_next_get(fnode);
+   fail_if (fnode);
+
+   /* This time with a generic closer */
+   evas_object_textblock_text_markup_set(tb, "a<b>b<i>c</b>d</>e");
+   evas_textblock_cursor_pos_set(cur, 2);
+
+   for (i = 0 ; i < 2 ; i++)
+     {
+        fnode = evas_textblock_node_format_first_get(tb);
+        fail_if (!fnode);
+        fail_if(strcmp(evas_textblock_node_format_text_get(fnode), "+ b"));
+
+        fnode = evas_textblock_node_format_next_get(fnode);
+        fail_if (!fnode);
+        fail_if(strcmp(evas_textblock_node_format_text_get(fnode), "+ i"));
+
+        fnode = evas_textblock_node_format_next_get(fnode);
+        fail_if (!fnode);
+        fail_if(strcmp(evas_textblock_node_format_text_get(fnode), "- b"));
+
+        fnode = evas_textblock_node_format_next_get(fnode);
+        fail_if (!fnode);
+        fail_if(strcmp(evas_textblock_node_format_text_get(fnode), "- "));
+
+        fnode = evas_textblock_node_format_next_get(fnode);
+        fail_if (fnode);
+
+        evas_textblock_cursor_char_delete(cur);
+     }
+   fnode = evas_textblock_node_format_first_get(tb);
+   fail_if (!fnode);
+   fail_if(strcmp(evas_textblock_node_format_text_get(fnode), "+ b"));
+
+   fnode = evas_textblock_node_format_next_get(fnode);
+   fail_if (!fnode);
+   fail_if(strcmp(evas_textblock_node_format_text_get(fnode), "- b"));
+
+   fnode = evas_textblock_node_format_next_get(fnode);
+   fail_if (fnode);
+
+   /* And now with remove pair. */
+   evas_object_textblock_text_markup_set(tb, "a<b>b<i>c</b>d</i>e");
+   evas_textblock_cursor_pos_set(cur, 2);
+   fnode = evas_textblock_node_format_first_get(tb);
+   evas_textblock_node_format_remove_pair(tb,
+         (Evas_Object_Textblock_Node_Format *) fnode);
+
+   fnode = evas_textblock_node_format_first_get(tb);
+   fail_if (!fnode);
+   fail_if(strcmp(evas_textblock_node_format_text_get(fnode), "+ i"));
+
+   fnode = evas_textblock_node_format_next_get(fnode);
+   fail_if (!fnode);
+   fail_if(strcmp(evas_textblock_node_format_text_get(fnode), "- i"));
+
+   fnode = evas_textblock_node_format_next_get(fnode);
+   fail_if (fnode);
+
+   /* Remove the other pair */
+   evas_object_textblock_text_markup_set(tb, "a<b>b<i>c</>d</i>e");
+   evas_textblock_cursor_pos_set(cur, 2);
+   fnode = evas_textblock_node_format_first_get(tb);
+   fnode = evas_textblock_node_format_next_get(fnode);
+   evas_textblock_node_format_remove_pair(tb,
+         (Evas_Object_Textblock_Node_Format *) fnode);
+
+   fnode = evas_textblock_node_format_first_get(tb);
+   fail_if (!fnode);
+   fail_if(strcmp(evas_textblock_node_format_text_get(fnode), "+ b"));
+
+   fnode = evas_textblock_node_format_next_get(fnode);
+   fail_if (!fnode);
+   fail_if(strcmp(evas_textblock_node_format_text_get(fnode), "- i"));
+
+   fnode = evas_textblock_node_format_next_get(fnode);
+   fail_if (fnode);
+
+   /* Try to remove a format that doesn't have a pair (with a bad mkup) */
+   evas_object_textblock_text_markup_set(tb, "a<b>b<i>c</>d</i>e");
+   evas_textblock_cursor_pos_set(cur, 2);
+   fnode = evas_textblock_node_format_first_get(tb);
+   evas_textblock_node_format_remove_pair(tb,
+         (Evas_Object_Textblock_Node_Format *) fnode);
+
+   fnode = evas_textblock_node_format_first_get(tb);
+   fail_if (!fnode);
+   fail_if(strcmp(evas_textblock_node_format_text_get(fnode), "+ i"));
+
+   fnode = evas_textblock_node_format_next_get(fnode);
+   fail_if (!fnode);
+   fail_if(strcmp(evas_textblock_node_format_text_get(fnode), "- "));
+
+   fnode = evas_textblock_node_format_next_get(fnode);
+   fail_if (!fnode);
+   fail_if(strcmp(evas_textblock_node_format_text_get(fnode), "- i"));
+
+   fnode = evas_textblock_node_format_next_get(fnode);
+   fail_if (fnode);
 
    END_TB_TEST();
 }
@@ -1501,6 +1638,7 @@ START_TEST(evas_textblock_formats)
         evas_object_textblock_size_formatted_get(tb, &nw, &nh);
         fail_if((w >= nw) || (h >= nh));
      }
+   /* FIXME: Should extend invalidation tests. */
 
    /* Various formats, just verify there's no seg, we can't really
     * verify them visually, well, we can some of them. Possibly in the
