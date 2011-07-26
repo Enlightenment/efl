@@ -7457,7 +7457,7 @@ EAPI Evas_BiDi_Direction evas_object_text_direction_get  (const Evas_Object *obj
  * If you want to develop textblock, you should also refer to @ref Evas_Object_Textblock_Internal.
  * The main user of the textblock object is the edje entry object in Edje, so
  * that's a good place to learn from, but I think this document is more than
- * enough, if it's not, please request for me info and I'll update it.
+ * enough, if it's not, please contact me and I'll update it.
  *
  * @subsection textblock_intro Introduction
  * The textblock objects is, as implied, an object that can show big chunks of
@@ -7465,6 +7465,15 @@ EAPI Evas_BiDi_Direction evas_object_text_direction_get  (const Evas_Object *obj
  * and manual text alignment, embedding items (for example icons) and more.
  * Textblock has three important parts, the text paragraphs, the format nodes
  * and the cursors.
+ *
+ * You can use markup to format text, for example: "<font_size=50>Big!</font>".
+ * You can also put more than one style directive in one tag:
+ * "<font_size=50 color=#F00>Big and Red!</font_size>".
+ * Please notice that we used "</font_size>" although the format also included
+ * color, this is because the first format determines the matching closing tag's
+ * name. You can also use anonymous tags, like: "<font_size=30>Big</>" which
+ * just pop any type of format, but it's advised to use the named alternatives
+ * instead.
  *
  * @subsection textblock_cursors Textblock Object Cursors
  * A textblock Cursor @ref Evas_Textblock_Cursor is data type that represents
