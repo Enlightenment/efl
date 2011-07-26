@@ -1,4 +1,4 @@
-   
+
    evas_object_resize(win, w, h);
    evas_object_show(win);
    elm_run();
@@ -7,4 +7,4 @@
 }
 ELM_MAIN()
 
-      
+
