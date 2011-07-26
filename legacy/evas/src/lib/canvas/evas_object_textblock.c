@@ -189,6 +189,16 @@ typedef struct _Evas_Object_Textblock_Format      Evas_Object_Textblock_Format;
    (((ti)->parent.text_node) ? \
     (eina_ustrbuf_string_get((ti)->parent.text_node->unicode) + \
       (ti)->parent.text_pos) : EINA_UNICODE_EMPTY_STRING)
+/**
+ * @internal
+ * @def _FORMAT_IS_CLOSER_OF(base, closer, closer_len)
+ * Returns true if closer is the closer of base.
+ */
+#define _FORMAT_IS_CLOSER_OF(base, closer, closer_len) \
+   (!strncmp(base + 1, closer, closer_len) && \
+    (!base[closer_len + 1] || \
+     (base[closer_len + 1] == '=') || \
+     _is_white(base[closer_len + 1])))
 
 /*FIXME: document the structs and struct items. */
 struct _Evas_Object_Style_Tag
@@ -2091,8 +2101,8 @@ _layout_format_pop(Ctxt *c, const char *format)
         format++; /* Skip the '-' */
 
         /* Generic pop, should just pop. */
-        if (((format[1] == ' ') && !format[2]) ||
-              !format[1])
+        if (((format[0] == ' ') && !format[1]) ||
+              !format[0])
           {
              _format_unref_free(c->obj, fmt);
              c->format_stack =
@@ -2116,10 +2126,8 @@ _layout_format_pop(Ctxt *c, const char *format)
                    * I.e whole of the ending tag matches the start of the
                    * starting tag, and the starting tag's next char is either
                    * NULL or white. Skip the starting '+'. */
-                  if (!strncmp(fmt->fnode->orig_format + 1, format, len) &&
-                        (!fmt->fnode->orig_format[len + 1] ||
-                         (fmt->fnode->orig_format[len + 1] == '=') ||
-                         _is_white(fmt->fnode->orig_format[len + 1])))
+                  if (_FORMAT_IS_CLOSER_OF(
+                           fmt->fnode->orig_format, format, len))
                     {
                        _format_unref_free(c->obj, fmt);
                        break;
@@ -5367,33 +5375,69 @@ evas_textblock_node_format_remove_pair(Evas_Object *obj,
       Evas_Object_Textblock_Node_Format *n)
 {
    Evas_Object_Textblock_Node_Text *tnode1;
-   Evas_Object_Textblock_Node_Format *fmt, *pnode;
-   int level;
+   Evas_Object_Textblock_Node_Format *fmt, *found_node = NULL;
+   Eina_List *fstack = NULL;
    TB_HEAD();
 
    if (!n) return;
 
-   pnode = NULL;
    fmt = n;
-   level = 0;
 
    do
      {
-        const char *fstr = fmt->format;
+        const char *fstr = fmt->orig_format;
 
         if (fstr && (*fstr == '+'))
           {
-             level++;
+             fstack = eina_list_prepend(fstack, fmt);
           }
         else if (fstr && (*fstr == '-'))
           {
-             level--;
+             size_t fstr_len;
+             /* Skip the '-' */
+             fstr++;
+             fstr_len = strlen(fstr);
+             /* Generic popper, just pop */
+             if (((fstr[0] == ' ') && !fstr[1]) || !fstr[0])
+               {
+                  fstack = eina_list_remove_list(fstack, fstack);
+                  if (!fstack)
+                    {
+                       found_node = fmt;
+                       goto found;
+                    }
+               }
+             /* Find the matching format and pop it, if the matching format
+              * is out format, i.e the last one, pop and break. */
+             else
+               {
+                  Eina_List *i;
+                  Evas_Object_Textblock_Node_Format *fnode;
+                  EINA_LIST_FOREACH(fstack, i, fnode)
+                    {
+                       if (_FORMAT_IS_CLOSER_OF(
+                                fnode->orig_format, fstr, fstr_len))
+                         {
+                            /* Last one, this is our item! */
+                            if (!eina_list_next(i))
+                              {
+                                 found_node = fmt;
+                                 goto found;
+                              }
+                            fstack = eina_list_remove_list(fstack, i);
+                            break;
+                         }
+                    }
+               }
           }
 
-        pnode = fmt;
         fmt = _NODE_FORMAT(EINA_INLIST_GET(fmt)->next);
      }
-   while (fmt && (level > 0));
+   while (fmt && fstack);
+
+found:
+
+   fstack = eina_list_free(fstack);
 
    if (n->visible)
      {
@@ -5412,12 +5456,12 @@ evas_textblock_node_format_remove_pair(Evas_Object *obj,
      }
    tnode1 = n->text_node;
    _evas_textblock_node_format_remove(o, n, 0);
-   if (pnode && (pnode != n))
+   if (found_node && (found_node != n))
      {
         Evas_Object_Textblock_Node_Text *tnode2;
-        tnode2 = pnode->text_node;
-        /* pnode can never be visible! (it's the closing format) */
-        _evas_textblock_node_format_remove(o, pnode, 0);
+        tnode2 = found_node->text_node;
+        /* found_node can never be visible! (it's the closing format) */
+        _evas_textblock_node_format_remove(o, found_node, 0);
 
         /* FIXME: Should be unified in the layout, for example, added to a list
          * that checks this kind of removals. But until then, this is very fast
@@ -5867,7 +5911,7 @@ _evas_textblock_node_format_remove_matching(Evas_Object_Textblock *o,
    do
      {
         Evas_Object_Textblock_Node_Format *nnode;
-        const char *fstr = fmt->format;
+        const char *fstr = fmt->orig_format;
 
         nnode = _NODE_FORMAT(EINA_INLIST_GET(fmt)->next);
         if (nnode)
@@ -5883,12 +5927,34 @@ _evas_textblock_node_format_remove_matching(Evas_Object_Textblock *o,
         else if (fstr && (*fstr == '-'))
           {
              Evas_Object_Textblock_Node_Format *fnode;
-             fnode = eina_list_data_get(formats);
-             if (fnode)
+             size_t fstr_len;
+             /* Skip the '-' */
+             fstr++;
+             fstr_len = strlen(fstr);
+             /* Generic popper, just pop */
+             if (((fstr[0] == ' ') && !fstr[1]) || !fstr[0])
                {
-                  formats = eina_list_remove(formats, fnode);
+                  fnode = eina_list_data_get(formats);
+                  formats = eina_list_remove_list(formats, formats);
                   _evas_textblock_node_format_remove(o, fnode, 0);
                   _evas_textblock_node_format_remove(o, fmt, 0);
+               }
+             /* Find the matching format and pop it, if the matching format
+              * is out format, i.e the last one, pop and break. */
+             else
+               {
+                  Eina_List *i;
+                  EINA_LIST_FOREACH(formats, i, fnode)
+                    {
+                       if (_FORMAT_IS_CLOSER_OF(
+                                fnode->orig_format, fstr, fstr_len))
+                         {
+                            fnode = eina_list_data_get(i);
+                            formats = eina_list_remove_list(formats, i);
+                            _evas_textblock_node_format_remove(o, fnode, 0);
+                            _evas_textblock_node_format_remove(o, fmt, 0);
+                         }
+                    }
                }
           }
         else if (!fmt->visible)
@@ -5898,6 +5964,7 @@ _evas_textblock_node_format_remove_matching(Evas_Object_Textblock *o,
         fmt = nnode;
      }
    while (fmt && (offset == 0) && (fmt->text_node == tnode));
+   eina_list_free(formats);
 }
 /**
  * @internal
@@ -7307,11 +7374,12 @@ evas_textblock_cursor_format_get(const Evas_Textblock_Cursor *cur)
    if (!cur->node) return NULL;
    return _evas_textblock_cursor_node_format_at_pos_get(cur);
 }
+
 EAPI const char *
 evas_textblock_node_format_text_get(const Evas_Object_Textblock_Node_Format *fmt)
 {
    if (!fmt) return NULL;
-   return fmt->format;
+   return fmt->orig_format;
 }
 
 EAPI void
