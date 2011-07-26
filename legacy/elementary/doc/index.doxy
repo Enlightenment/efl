@@ -162,6 +162,9 @@
  * @li @ref Slider
  * @li @ref Slideshow
  * @li @ref Spinner
+ *
+ * @image html img/widget/spinner/preview-00.png
+ * @image latex img/widget/spinner/preview-00.eps
  * @li @ref Thumb
  * @li @ref Toggle
  *

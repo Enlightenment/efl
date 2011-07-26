@@ -31,6 +31,7 @@ widget_preview_button3 \
 widget_preview_check1 \
 widget_preview_check2 \
 widget_preview_check3 \
+widget_preview_spinner \
 widget_preview_bubble1 \
 widget_preview_bubble2 \
 widget_preview_bubble3 \
@@ -90,6 +91,7 @@ EXTRA_DIST = \
 	widget_preview_check1.c \
 	widget_preview_check2.c \
 	widget_preview_check3.c \
+	widget_preview_spinner.c \
 	widget_preview_clock.c \
 	widget_preview_colorselector.c \
 	widget_preview_conformant.c \

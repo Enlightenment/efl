@@ -20,6 +20,7 @@ WGT_PREVIEW = \
 	check:preview-00.png:widget_preview_check1:160:50 \
 	check:preview-01.png:widget_preview_check2:160:50 \
 	check:preview-02.png:widget_preview_check3:160:50 \
+	spinner:preview-00.png:widget_preview_spinner:160:30 \
 	bubble:preview-00.png:widget_preview_bubble1:160:50 \
 	bubble:preview-01.png:widget_preview_bubble2:160:50 \
 	bubble:preview-02.png:widget_preview_bubble3:160:50 \

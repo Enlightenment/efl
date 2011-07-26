@@ -31,6 +31,8 @@
  *
  * @ref calendar_example_06
  *
+ * @ref spinner_example
+ *
  * @ref clock_example
  *
  * @ref diskselector_example_01
@@ -1397,6 +1399,79 @@
  *
  * See the full source code @ref calendar_example_06.c here.
  * @example calendar_example_06.c
+ */
+
+/**
+ * @page spinner_example Spinner widget example
+ *
+ * This code places seven Elementary spinner widgets on a window, each of
+ * them exemplifying a part of the widget's API.
+ *
+ * The first of them is the default spinner:
+ * @dontinclude spinner_example.c
+ * @skipline elm_spinner_add
+ * @until evas_object_show
+ * As you see, the defaults for a spinner are:
+ * @li no wrap
+ * @li min value set to 0
+ * @li max value set to 100
+ * @li step value set to 1
+ * @li label format set to "%0.f"
+ *
+ * If another format is required, see the second spinner. It will put a text
+ * before and after the value, and also format value to display two decimals:
+ * @skipline format_set
+ *
+ * The third one will use a customized step, define new minimum and maximum
+ * values and enable wrap, so when value reaches minimum it jumps to maximum,
+ * or jumps to minimum after maximum value is reached. Format is set to display
+ * a decimal:
+ * @skipline elm_spinner_add
+ * @until evas_object_show
+ *
+ * The fourth uses @c vertical style, so instead of left and right arrows,
+ * top and bottom are displayed. Also the change interval is reduced, so
+ * user can change value faster.
+ * @skipline style
+ * @skipline interval
+ *
+ * In the fifth the user won't be allowed to set value directly, i.e., will
+ * be obligate change value only using arrows:
+ * @skipline editable
+ *
+ * The sixth widget will receive a lot of special values, so
+ * instead of reading numeric values, user will see labels for each one.
+ * Also direct edition is disabled, otherwise users would see the numeric
+ * value on edition mode. User will be able to select a month in this widget:
+ * @skipline elm_spinner_add
+ * @until evas_object_show
+ *
+ * Finally the last widget will exemplify how to listen to widget's signals,
+ * <tt> changed </tt> and <tt> delay,changed </tt>. First we need to
+ * implement callback functions that will simply print spinner's value:
+ * @dontinclude spinner_example.c
+ * @skip static
+ * @skip }
+ * @skipline static
+ * @until }
+ * @until }
+ *
+ * The first callback function should be called everytime value changes,
+ * the second one only after user stops to increment or decrement. Try
+ * to keep arrows pressed and check the difference.
+ * @skip smart_callback
+ * @skipline smart_callback
+ * @skipline smart_callback
+ *
+ * See the full @ref spinner_example.c "example", whose window should
+ * look like this picture:
+ *
+ * @image html screenshots/spinner_example.png
+ * @image latex screenshots/spinner_example.eps width=\textwidth
+ *
+ * See the full @ref spinner_example_c "source code" for this example.
+ *
+ * @example spinner_example.c
  */
 
 /**

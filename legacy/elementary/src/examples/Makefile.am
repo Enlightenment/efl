@@ -58,6 +58,7 @@ SRCS = \
 	calendar_example_04.c \
 	calendar_example_05.c \
 	calendar_example_06.c \
+	spinner_example.c \
 	clock_example.c \
 	conformant_example_01.c \
 	conformant_example_02.c \
@@ -134,6 +135,7 @@ pkglib_PROGRAMS += \
 	calendar_example_04 \
 	calendar_example_05 \
 	calendar_example_06 \
+	spinner_example \
 	clock_example \
 	conformant_example_01 \
 	conformant_example_02 \
@@ -189,6 +191,7 @@ SCREENSHOTS = \
 	calendar_example_04:calendar_example_04.png:0.0 \
 	calendar_example_05:calendar_example_05.png:0.0 \
 	calendar_example_06:calendar_example_06.png:0.0 \
+	spinner_example:spinner_example.png:0.0 \
 	clock_example:clock_example.png:0.5 \
 	image_example_01:image_example_01.png:0.0 \
 	diskselector_example_01:diskselector_example_01.png:0.2 \
