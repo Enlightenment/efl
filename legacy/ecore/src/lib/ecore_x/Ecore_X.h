@@ -1088,6 +1088,7 @@ EAPI Ecore_X_Connection *    ecore_x_connection_get(void);
 EAPI int                     ecore_x_fd_get(void);
 EAPI Ecore_X_Screen *        ecore_x_default_screen_get(void);
 EAPI void                    ecore_x_screen_size_get(const Ecore_X_Screen *screen, int *w, int *h);
+EAPI int                     ecore_x_screen_count_get(void);
 EAPI void                    ecore_x_double_click_time_set(double t);
 EAPI double                  ecore_x_double_click_time_get(void);
 EAPI void                    ecore_x_flush(void);

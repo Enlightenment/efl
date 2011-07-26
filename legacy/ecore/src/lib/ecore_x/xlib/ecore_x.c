@@ -712,6 +712,22 @@ ecore_x_screen_size_get(const Ecore_X_Screen *screen, int *w, int *h)
 }
 
 /**
+ * Retrieves the number of screens.
+ * 
+ * @return  The count of the number of screens.
+ * @ingroup Ecore_X_Display_Attr_Group
+ *
+ * @since 1.1
+ */
+EAPI int 
+ecore_x_screen_count_get(void) 
+{
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   return ScreenCount(_ecore_x_disp);
+}
+
+/**
  * Sets the timeout for a double and triple clicks to be flagged.
  *
  * This sets the time between clicks before the double_click flag is
