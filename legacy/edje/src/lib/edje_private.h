@@ -52,6 +52,7 @@ void *alloca (size_t);
 #include <Eet.h>
 #include <Evas.h>
 #include <Ecore.h>
+#include <Ecore_Evas.h>
 #include <Ecore_File.h>
 #ifdef HAVE_ECORE_IMF
 # include <Ecore_IMF.h>

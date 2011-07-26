@@ -266,6 +266,7 @@ PKG_CHECK_MODULES([EDJE],
     eet >= 1.4.0
     evas >= 1.0.999
     ecore >= 1.0.0
+    ecore-evas >= 1.0.0
     ecore-file >= 1.0.0
     embryo >= 1.0.0
    ])
@@ -273,7 +274,7 @@ PKG_CHECK_MODULES([EDJE],
 EDJE_LIBS="${EDJE_LIBS} ${LUA_LIBS} ${lua_libs}"
 EDJE_CFLAGS="${EDJE_CFLAGS} ${LUA_CFLAGS}"
 
-requirement_edje="embryo >= 1.0.0 ecore >= 1.0.0 evas >= 1.0.0 eet >= 1.4.0 eina >= 1.0.0 ${requirement_edje}"
+requirement_edje="embryo >= 1.0.0 ecore-evas >= 1.0.0 ecore >= 1.0.0 evas >= 1.0.0 eet >= 1.4.0 eina >= 1.0.0 ${requirement_edje}"
 requirement_edje="${requirement_lua} ${requirement_edje}"
 
 have_ecore_imf="no"

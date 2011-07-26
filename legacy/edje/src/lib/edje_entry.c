@@ -1960,7 +1960,7 @@ _edje_entry_real_part_init(Edje_Real_Part *rp)
 
         if (!en->imf_context) goto done;
 
-        ecore_imf_context_client_window_set(en->imf_context, rp->object);
+        ecore_imf_context_client_window_set(en->imf_context, ecore_evas_window_get(ecore_evas_ecore_evas_get(rp->edje->base.evas)));
         ecore_imf_context_client_canvas_set(en->imf_context, rp->edje->base.evas);
 
         ecore_imf_context_retrieve_surrounding_callback_set(en->imf_context,
@@ -2897,6 +2897,7 @@ _edje_entry_imf_event_preedit_changed_cb(void *data, int type __UNUSED__, void *
    if (en->imf_context != ev->ctx) return ECORE_CALLBACK_PASS_ON;
 
    ecore_imf_context_preedit_string_get(en->imf_context, &preedit_string, &cursor_pos);
+   if (!preedit_string) return ECORE_CALLBACK_PASS_ON;
 
    if (!strcmp(preedit_string, ""))
      preedit_end_state = EINA_TRUE;
