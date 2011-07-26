@@ -1,4 +1,6 @@
 #include "ecore_xcb_private.h"
+#include <X11/Xlib-xcb.h>
+#include <dlfcn.h>
 
 /* local function prototypes */
 static int _ecore_xcb_shutdown(Eina_Bool close_display);
@@ -38,6 +40,7 @@ double _ecore_xcb_double_click_time = 0.25;
 EAPI int 
 ecore_x_init(const char *name) 
 {
+   char *gl = NULL;
    uint32_t mask, list[1];
 
    /* check if we have initialized already */
@@ -77,18 +80,83 @@ ecore_x_init(const char *name)
         eina_log_domain_unregister(_ecore_xcb_log_dom);
         _ecore_xcb_log_dom = -1;
         ecore_shutdown();
-//        eina_shutdown();
         return --_ecore_xcb_init_count;
      }
 
-   /* try to connect to the display server */
-   _ecore_xcb_conn = xcb_connect(name, NULL);
-
-   /* connect this way for opengl
-   _ecore_xcb_display = XOpenDisplay(name);
-   _ecore_xcb_conn = XGetXCBConnection(_ecore_xcb_display);
-   XSetEventQueueOwner(_ecore_xcb_display, XCBOwnsEventQueue);
+   /* check for env var which says we are not going to use GL @ all
+    * 
+    * NB: This is done because if someone wants a 'pure' xcb implementation 
+    * of ecore_x, all they need do is export this variable in the environment 
+    * and ecore_x will not use xlib stuff at all. 
+    * 
+    * The upside is you can get pure xcb-based ecore_x (w/ all the speed), but 
+    * there is a down-side here in that you cannot get OpenGL without XLib :( 
     */
+   if ((gl = getenv("ECORE_X_NO_XLIB")))
+     {
+        /* we found the env var that says 'Yes, we are not ever gonna try 
+         * OpenGL so it is safe to not use XLib at all' */
+
+        /* try to connect to the display server */
+         _ecore_xcb_conn = xcb_connect(name, NULL);
+     }
+   else 
+     {
+        /* env var was not specified, so we will assume that the user 
+         * may want opengl @ some point. connect this way for opengl to work */
+
+        /* want to dlopen here to avoid actual library linkage */
+        void *libxcb, *libxlib;
+        Display *(*_real_display)(const char *display);
+        xcb_connection_t *(*_real_connection)(Display *dpy);
+        void (*_real_queue)(Display *dpy, enum XEventQueueOwner owner);
+
+        libxlib = dlopen("libX11.so", (RTLD_LAZY | RTLD_GLOBAL));
+        if (!libxlib) 
+          libxlib = dlopen("libX11.so.6", (RTLD_LAZY | RTLD_GLOBAL));
+        if (!libxlib) 
+          libxlib = dlopen("libX11.so.6.3.0", (RTLD_LAZY | RTLD_GLOBAL));
+        if (!libxlib) 
+          {
+             ERR("Could not dlsym to libX11");
+             /* unregister log domain */
+             eina_log_domain_unregister(_ecore_xcb_log_dom);
+             _ecore_xcb_log_dom = -1;
+             ecore_shutdown();
+             return --_ecore_xcb_init_count;
+          }
+
+        libxcb = dlopen("libX11-xcb.so", (RTLD_LAZY | RTLD_GLOBAL));
+        if (!libxcb) 
+          libxcb = dlopen("libX11-xcb.so.1", (RTLD_LAZY | RTLD_GLOBAL));
+        if (!libxcb) 
+          libxcb = dlopen("libX11-xcb.so.1.0.0", (RTLD_LAZY | RTLD_GLOBAL));
+        if (!libxcb) 
+          {
+             ERR("Could not dlsym to libX11-xcb");
+             /* unregister log domain */
+             eina_log_domain_unregister(_ecore_xcb_log_dom);
+             _ecore_xcb_log_dom = -1;
+             ecore_shutdown();
+             return --_ecore_xcb_init_count;
+          }
+
+        _real_display = dlsym(libxlib, "XOpenDisplay");
+        if (_real_display) DBG("Have Real Display Symd");
+        _real_connection = dlsym(libxcb, "XGetXCBConnection");
+        if (_real_connection) DBG("Have Real Connection Symd");
+        _real_queue = dlsym(libxcb, "XSetEventQueueOwner");
+        if (_real_queue) DBG("Have Real Queue Symd");
+
+        if (_real_display) 
+          {
+             _ecore_xcb_display = _real_display(name);
+             if (_real_connection) 
+               _ecore_xcb_conn = _real_connection(_ecore_xcb_display);
+             if (_real_queue) 
+               _real_queue(_ecore_xcb_display, XCBOwnsEventQueue);
+          }
+     }
 
    if (xcb_connection_has_error(_ecore_xcb_conn))
      {
@@ -97,7 +165,6 @@ ecore_x_init(const char *name)
         _ecore_xcb_log_dom = -1;
         ecore_event_shutdown();
         ecore_shutdown();
-//        eina_shutdown();
         return --_ecore_xcb_init_count;
      }
 
@@ -169,8 +236,6 @@ ecore_x_init(const char *name)
 
    /* setup dnd */
    _ecore_xcb_dnd_init();
-
-   // FIXME: XIM support
 
    return _ecore_xcb_init_count;
 }
@@ -936,9 +1001,18 @@ ecore_x_dpi_get(void)
 EAPI Ecore_X_Display *
 ecore_x_display_get(void) 
 {
+   char *gl = NULL;
+
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
-   return (Ecore_X_Display *)_ecore_xcb_conn;
+   /* if we have the 'dont use xlib' env var, then we are not using 
+    * XLib and thus cannot return a real XDisplay.
+    * 
+    * NB: This may break EFL in some places and needs lots of testing !!! */
+   if ((gl = getenv("ECORE_X_NO_XLIB")))
+     return (Ecore_X_Display *)_ecore_xcb_conn;
+   else /* we can safely return an XDisplay var */
+     return (Ecore_X_Display *)_ecore_xcb_display;
 }
 
 /**

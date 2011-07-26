@@ -9,6 +9,9 @@
 /* local function prototypes */
 static xcb_image_t *_ecore_xcb_cursor_image_create(int w, int h, int *pixels);
 static Ecore_X_Cursor _ecore_xcb_cursor_image_load_cursor(Ecore_X_Window win, int w, int h, int hot_x, int hot_y, int *pixels, xcb_image_t *img);
+static void _ecore_xcb_cursor_default_size_get(void);
+static void _ecore_xcb_cursor_dpi_size_get(void);
+static void _ecore_xcb_cursor_guess_size(void);
 #ifdef ECORE_XCB_CURSOR
 static Ecore_X_Cursor _ecore_xcb_cursor_image_load_argb_cursor(Ecore_X_Window win, int w, int h, int hot_x, int hot_y, xcb_image_t *img);
 static xcb_render_pictforminfo_t *_ecore_xcb_cursor_find_image_format(void);
@@ -38,6 +41,21 @@ _ecore_xcb_cursor_finalize(void)
 
 #ifdef ECORE_XCB_CURSOR
    _ecore_xcb_cursor = _ecore_xcb_render_argb_get();
+
+   /* try to grab cursor size from XDefaults */
+   _ecore_xcb_cursor_default_size_get();
+
+   /* if that failed, try to get it from xft dpi setting */
+   if (_ecore_xcb_cursor_size == 0) 
+     _ecore_xcb_cursor_dpi_size_get();
+
+   /* If that fails, try to guess from display size */
+   if (_ecore_xcb_cursor_size == 0) 
+     _ecore_xcb_cursor_guess_size();
+
+   /* NB: Would normally add theme stuff here, but E cursor does not support 
+    * xcursor themes. Delay parsing that stuff out until such time if/when the 
+    * user selects to use X Cursor, rather than E cursor */
 #endif
 }
 
@@ -309,6 +327,37 @@ _ecore_xcb_cursor_image_load_cursor(Ecore_X_Window win, int w, int h, int hot_x,
    xcb_free_pixmap(_ecore_xcb_conn, mask);
 
    return cursor;
+}
+
+static void 
+_ecore_xcb_cursor_default_size_get(void) 
+{
+   char *v = NULL;
+
+   v = getenv("XCURSOR_SIZE");
+   if (!v) 
+     v = _ecore_xcb_resource_get_string("Xcursor", "size");
+   if (v) _ecore_xcb_cursor_size = ((atoi(v) * 16) / 72);
+}
+
+static void 
+_ecore_xcb_cursor_dpi_size_get(void) 
+{
+   int v = 0;
+
+   v = _ecore_xcb_resource_get_int("Xft", "dpi");
+   if (v) _ecore_xcb_cursor_size = ((v * 16) / 72);
+}
+
+static void 
+_ecore_xcb_cursor_guess_size(void) 
+{
+   int w = 0, h = 0, s = 0;
+
+   ecore_x_screen_size_get(_ecore_xcb_screen, &w, &h);
+   if (h < w) s = h;
+   else s = w;
+   _ecore_xcb_cursor_size = (s / 48);
 }
 
 #ifdef ECORE_XCB_CURSOR

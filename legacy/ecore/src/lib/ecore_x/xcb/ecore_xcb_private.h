@@ -334,4 +334,7 @@ Ecore_X_Window_State _ecore_xcb_netwm_window_state_get(Ecore_X_Atom atom);
 int _ecore_xcb_error_handle(xcb_generic_error_t *err);
 int _ecore_xcb_io_error_handle(xcb_generic_error_t *err);
 
+char *_ecore_xcb_resource_get_string(const char *prog, const char *name);
+int _ecore_xcb_resource_get_int(const char *prog, const char *name);
+
 #endif

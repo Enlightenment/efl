@@ -1,5 +1,5 @@
 #include "ecore_xcb_private.h"
-#include <ctype.h>
+#include <ctype.h> // for isupper/tolower
 #ifdef ECORE_XCB_RENDER
 # include <xcb/render.h>
 # include <xcb/xcb_renderutil.h>
@@ -7,7 +7,6 @@
 
 /* local function prototypes */
 static Eina_Bool _ecore_xcb_render_parse_boolean(char *v);
-static char *_ecore_xcb_render_get_resource(const char *prog __UNUSED__, const char *name __UNUSED__);
 
 /* local variables */
 static Eina_Bool _render_avail = EINA_FALSE;
@@ -58,10 +57,7 @@ _ecore_xcb_render_finalize(void)
                        _render_argb = EINA_TRUE;
                        v = getenv("XCURSOR_CORE");
                        if (!v) 
-                         {
-                            // TODO: check xgetdefault when xcb supports resources
-                            v = _ecore_xcb_render_get_resource("Xcursor", "core");
-                         }
+                         v = _ecore_xcb_resource_get_string("Xcursor", "core");
                        if ((v) && (_ecore_xcb_render_parse_boolean(v)))
                          _render_argb = EINA_FALSE;
                     }
@@ -71,10 +67,7 @@ _ecore_xcb_render_finalize(void)
                        _render_anim = EINA_TRUE;
                        v = getenv("XCURSOR_ANIM");
                        if (!v) 
-                         {
-                            // TODO: check xgetdefault when xcb supports resources
-                            v = _ecore_xcb_render_get_resource("Xcursor", "anim");
-                         }
+                         v = _ecore_xcb_resource_get_string("Xcursor", "anim");
                        if ((v) && (_ecore_xcb_render_parse_boolean(v)))
                          _render_anim = EINA_FALSE;
                     }
@@ -220,10 +213,4 @@ _ecore_xcb_render_parse_boolean(char *v)
         if (d == 'f') return EINA_FALSE;
      }
    return EINA_FALSE;
-}
-
-static char *
-_ecore_xcb_render_get_resource(const char *prog __UNUSED__, const char *name __UNUSED__) 
-{
-   return NULL;
 }

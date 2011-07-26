@@ -241,6 +241,30 @@ requirements_ecore_win32=""
 requirements_ecore_wince=""
 requirements_ecore_imf_xim=""
 
+AC_CHECK_DECL([MAXHOSTNAMELEN],[FOUND_MAXHOSTNAMELEN=yes])
+
+if test x$FOUND_MAXHOSTNAMELEN != xyes ; then
+  AC_MSG_CHECKING([for header that defines MAXHOSTNAMELEN])
+
+  FOUND_MAXHOSTNAMELEN='not found'
+
+  AC_COMPILE_IFELSE(
+	AC_LANG_PROGRAM([#include <sys/param.h>],
+		[int h = MAXHOSTNAMELEN;]),
+	[FOUND_MAXHOSTNAMELEN='sys/param.h'
+	   AC_DEFINE(NEED_SYS_PARAM_H,1,
+	     [Define to 1 if you need <sys/param.h> to define MAXHOSTNAMELEN])])
+
+	AC_COMPILE_IFELSE(
+	    AC_LANG_PROGRAM([#include <netdb.h>],
+			    [int h = MAXHOSTNAMELEN;]),
+	    [FOUND_MAXHOSTNAMELEN='netdb.h'
+	     AC_DEFINE(NEED_NETDB_H,1,
+	       [Define to 1 if you need <netdb.h> to define MAXHOSTNAMELEN])])
+
+  AC_MSG_RESULT([$FOUND_MAXHOSTNAMELEN])
+fi
+
 ### Additional options to configure
 
 want_glib_integration_always=no
@@ -759,6 +783,7 @@ if test "x$want_ecore_x_xcb" = "xyes" ; then
     fi
   fi
 
+## x11-xcb
   PKG_CHECK_MODULES(XCB, xcb xcb-shm xcb-icccm xcb-image xcb-keysyms pixman-1,
     [ have_ecore_x_xcb="yes"
       requirements_ecore_x="xcb xcb-shm xcb-icccm xcb-image xcb-keysyms pixman-1 ${requirements_ecore_x}" ],
@@ -1451,19 +1476,19 @@ fi
 ECORE_EVAS_CHECK_MODULE([opengl-x11],
    [${want_ecore_evas_opengl_x11}],
    [OpenGL Xlib],
-   [${have_ecore_x_xlib}])
+   [${have_ecore_x}])
 
 have_ecore_evas_opengl_xlib="no"
 have_ecore_evas_opengl_xcb="no"
 if test "x${have_ecore_evas_opengl_x11}" = "xyes" -o "x${have_ecore_evas_opengl_x11}" = "xstatic" ; then
    have_ecore_evas_opengl_xlib=`${PKG_CONFIG} --variable=Xlib evas-opengl-x11`
-   if test "x${have_ecore_evas_opengl_xlib}" = "xyes" -a "x${have_ecore_x}" = "xyes" ; then
+   if test "x${have_ecore_evas_opengl_xlib}" = "xyes" ; then
       AC_DEFINE(BUILD_ECORE_EVAS_OPENGL_XLIB, 1, [OpenGL Xlib rendering backend])
    fi
 
 # opengl does not work with xcb (yet)
    have_ecore_evas_opengl_xcb=`${PKG_CONFIG} --variable=XCB evas-opengl-x11`
-   if test "x${have_ecore_evas_opengl_xcb}" = "xyes" -a "x${have_ecore_x}" = "xyes" ; then
+   if test "x${have_ecore_evas_opengl_xcb}" = "xyes" -a "x${have_ecore_x_xcb}" = "xyes" ; then
       PKG_CHECK_MODULES(XCB_X11, x11-xcb,
         [ have_ecore_x_opengl_xcb="yes"
           requirements_ecore_x="x11-xcb ${requirements_ecore_x}"

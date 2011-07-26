@@ -66,7 +66,8 @@ libecore_x_xcb_la_SOURCES = \
   ecore_xcb_xinerama.c \
   ecore_xcb_error.c \
   ecore_xcb_xtest.c \
-  ecore_xcb_vsync.c
+  ecore_xcb_vsync.c \
+  ecore_xcb_resource.c
 
 libecore_x_xcb_la_LIBADD = \
   @XCB_DAMAGE_LIBS@ \
@@ -87,7 +88,8 @@ libecore_x_xcb_la_LIBADD = \
   @XCB_LIBS@ \
   $(top_builddir)/src/lib/ecore/libecore.la \
   $(top_builddir)/src/lib/ecore_input/libecore_input.la \
-  @EINA_LIBS@
+  @EINA_LIBS@ \
+  @dlopen_libs@
 
 endif
 
