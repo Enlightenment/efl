@@ -5865,8 +5865,8 @@ _evas_textblock_format_is_visible(Evas_Object_Textblock_Node_Format *fnode,
          * closing */
         if ((!strncmp(item, "\n", itlen) || !strncmp(item, "\\n", itlen)) ||
               (!strncmp(item, "\t", itlen) || !strncmp(item, "\\t", itlen)) ||
-              !strncmp(item, "ps", itlen) ||
-              (!strncmp(item, "item", itlen) && is_opener))
+              (!strncmp(item, "ps", itlen) && (itlen >= 2)) ||
+              (!strncmp(item, "item", itlen) && (itlen >= 4) && is_opener))
           {
              fnode->visible = EINA_TRUE;
           }
