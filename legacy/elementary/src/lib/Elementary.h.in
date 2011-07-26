@@ -4616,6 +4616,11 @@ extern "C" {
     * @li @ref gengrid_example
     */
 
+   /**
+    * @addtogroup Gengrid
+    * @{
+    */
+
    typedef struct _Elm_Gengrid_Item_Class Elm_Gengrid_Item_Class; /**< Gengrid item class definition structs */
    typedef struct _Elm_Gengrid_Item_Class_Func Elm_Gengrid_Item_Class_Func; /**< Class functions for gengrid item classes. */
    typedef struct _Elm_Gengrid_Item Elm_Gengrid_Item; /**< Gengrid item handles */
@@ -5688,11 +5693,15 @@ extern "C" {
     * by deletion). The list contains #Elm_Gengrid_Item pointers as
     * data, naturally.
     *
-    * @see @elm_gengrid_selected_item_get()
+    * @see elm_gengrid_selected_item_get()
     *
     * @ingroup Gengrid
     */
    EAPI const Eina_List   *elm_gengrid_selected_items_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+
+   /**
+    * @}
+    */
 
    /**
     * @defgroup Clock Clock
