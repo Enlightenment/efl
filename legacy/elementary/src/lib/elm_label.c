@@ -14,7 +14,7 @@ struct _Widget_Data
    Evas_Coord lastw;
    Evas_Coord wrap_w;
    Evas_Coord wrap_h;
-   Eina_Bool linewrap : 1;
+   Elm_Wrap_Type linewrap;
    Eina_Bool changed : 1;
    Eina_Bool bgcolor : 1;
    Eina_Bool ellipsis : 1;
@@ -556,7 +556,7 @@ elm_label_add(Evas_Object *parent)
    wd->bg = evas_object_rectangle_add(e);
    evas_object_color_set(wd->bg, 0, 0, 0, 0);
 
-   wd->linewrap = EINA_FALSE;
+   wd->linewrap = ELM_WRAP_NONE;
    wd->ellipsis = EINA_FALSE;
    wd->slidingmode = EINA_FALSE;
    wd->slidingellipsis = EINA_FALSE;
