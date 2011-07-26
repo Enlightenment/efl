@@ -908,6 +908,8 @@ elm_menu_item_separator_add(Evas_Object *obj, Elm_Menu_Item *parent)
  *
  * @param item The menu item object
  * @return The icon object or NULL if there's no icon
+ * @note If @p item was added with elm_menu_item_add_object, this
+ * function will return the object passed.
  *
  * @ingroup Menu
  */
