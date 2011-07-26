@@ -3,6 +3,7 @@ MAINTAINERCLEANFILES = Makefile.in
 
 filesdir = $(datadir)/elementary/images
 files_DATA = \
+insanely_huge_test_image.jpg \
 panel_01.jpg \
 plant_01.jpg \
 pol_shadow.png \
