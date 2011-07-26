@@ -215,6 +215,7 @@ struct _Evas_Object_Textblock_Node_Format
 {
    EINA_INLIST;
    const char                         *format;
+   const char                         *orig_format;
    Evas_Object_Textblock_Node_Text    *text_node;
    size_t                              offset;
    unsigned char                       anchor : 2;
@@ -333,6 +334,7 @@ struct _Evas_Object_Textblock_Format_Item
 
 struct _Evas_Object_Textblock_Format
 {
+   Evas_Object_Textblock_Node_Format *fnode;
    double               halign;
    double               valign;
    struct {
@@ -1748,6 +1750,7 @@ struct _Ctxt
 
 static void _layout_text_add_logical_item(Ctxt *c, Evas_Object_Textblock_Text_Item *ti, Eina_List *rel);
 static void _text_item_update_sizes(Ctxt *c, Evas_Object_Textblock_Text_Item *ti);
+static void _layout_do_format(const Evas_Object *obj, Ctxt *c, Evas_Object_Textblock_Format **_fmt, Evas_Object_Textblock_Node_Format *n, int *style_pad_l, int *style_pad_r, int *style_pad_t, int *style_pad_b, Eina_Bool create_item);
 /**
  * @internal
  * Adjust the ascent/descent of the format and context.
@@ -2067,12 +2070,14 @@ _paragraphs_free(const Evas_Object *obj, Evas_Object_Textblock_Paragraph *pars)
  * @see _layout_format_pop()
  */
 static Evas_Object_Textblock_Format *
-_layout_format_push(Ctxt *c, Evas_Object_Textblock_Format *fmt)
+_layout_format_push(Ctxt *c, Evas_Object_Textblock_Format *fmt,
+      Evas_Object_Textblock_Node_Format *fnode)
 {
    if (fmt)
      {
         fmt = _format_dup(c->obj, fmt);
         c->format_stack  = eina_list_prepend(c->format_stack, fmt);
+        fmt->fnode = fnode;
      }
    else
      {
@@ -2099,18 +2104,81 @@ _layout_format_push(Ctxt *c, Evas_Object_Textblock_Format *fmt)
  * and set it to point to the next item instead, else return fmt.
  *
  * @param c the context to work on - Not NULL.
- * @param fmt the format to free.
+ * @param format - the text of the format to free (assured to start with '-').
  * @return the next format in the stack, or format if there's none.
  * @see _layout_format_push()
  */
 static Evas_Object_Textblock_Format *
-_layout_format_pop(Ctxt *c, Evas_Object_Textblock_Format *fmt)
+_layout_format_pop(Ctxt *c, const char *format)
 {
+   Evas_Object_Textblock_Format *fmt = eina_list_data_get(c->format_stack);
+
    if ((c->format_stack) && (c->format_stack->next))
      {
-        _format_unref_free(c->obj, fmt);
-        c->format_stack = eina_list_remove_list(c->format_stack, c->format_stack);
-        fmt = c->format_stack->data;
+        Eina_List *redo_nodes = NULL;
+        format++; /* Skip the '-' */
+
+        /* Generic pop, should just pop. */
+        if (((format[1] == ' ') && !format[2]) ||
+              !format[1])
+          {
+             _format_unref_free(c->obj, fmt);
+             c->format_stack =
+                eina_list_remove_list(c->format_stack, c->format_stack);
+          }
+        else
+          {
+             size_t len = strlen(format);
+             Eina_List *i, *i_next;
+             /* Remove only the matching format. */
+             EINA_LIST_FOREACH_SAFE(c->format_stack, i, i_next, fmt)
+               {
+                  /* Stop when we reach the base item */
+                  if (!i_next)
+                     break;
+
+                  c->format_stack =
+                     eina_list_remove_list(c->format_stack, c->format_stack);
+
+                  /* Make sure the ending tag matches the starting tag.
+                   * I.e whole of the ending tag matches the start of the
+                   * starting tag, and the starting tag's next char is either
+                   * NULL or white. Skip the starting '+'. */
+                  if (!strncmp(fmt->fnode->orig_format + 1, format, len) &&
+                        (!fmt->fnode->orig_format[len + 1] ||
+                         (fmt->fnode->orig_format[len + 1] == '=') ||
+                         _is_white(fmt->fnode->orig_format[len + 1])))
+                    {
+                       _format_unref_free(c->obj, fmt);
+                       break;
+                    }
+                  else
+                    {
+                       redo_nodes = eina_list_prepend(redo_nodes, fmt->fnode);
+                       _format_unref_free(c->obj, fmt);
+                    }
+               }
+          }
+
+        /* Redo all the nodes needed to be redone */
+          {
+             Evas_Object_Textblock_Node_Format *fnode;
+             Eina_List *i, *i_next;
+
+             EINA_LIST_FOREACH_SAFE(redo_nodes, i, i_next, fnode)
+               {
+                  /* FIXME: Actually do something with the new acquired padding,
+                   * the can be different and affect our padding! */
+                  Evas_Coord style_pad_l, style_pad_r, style_pad_t, style_pad_b;
+                  redo_nodes = eina_list_remove_list(redo_nodes, i);
+                  fmt = eina_list_data_get(c->format_stack);
+                  _layout_do_format(c->obj, c, &fmt, fnode,
+                        &style_pad_l, &style_pad_r,
+                        &style_pad_t, &style_pad_b, EINA_FALSE);
+               }
+          }
+
+        fmt = eina_list_data_get(c->format_stack);
      }
    return fmt;
 }
@@ -3034,7 +3102,7 @@ _layout_do_format(const Evas_Object *obj __UNUSED__, Ctxt *c,
              fi->parent.h = h;
           }
         /* Not sure if it's the best handling, but will do it for now. */
-        fmt = _layout_format_push(c, fmt);
+        fmt = _layout_format_push(c, fmt, n);
         handled = 1;
      }
 
@@ -3043,13 +3111,13 @@ _layout_do_format(const Evas_Object *obj __UNUSED__, Ctxt *c,
         Eina_Bool push_fmt = EINA_FALSE;
         if (s[0] == '+')
           {
-             fmt = _layout_format_push(c, fmt);
+             fmt = _layout_format_push(c, fmt, n);
              s++;
              push_fmt = EINA_TRUE;
           }
         else if (s[0] == '-')
           {
-             fmt = _layout_format_pop(c, fmt);
+             fmt = _layout_format_pop(c, n->orig_format);
              s++;
           }
         while ((item = _format_parse(&s)))
@@ -4022,7 +4090,7 @@ _layout(const Evas_Object *obj, int w, int h, int *w_ret, int *h_ret)
    /* setup default base style */
    if ((c->o->style) && (c->o->style->default_tag))
      {
-        c->fmt = _layout_format_push(c, NULL);
+        c->fmt = _layout_format_push(c, NULL, NULL);
         _format_fill(c->obj, c->fmt, c->o->style->default_tag);
      }
    if (!c->fmt)
@@ -4777,38 +4845,9 @@ evas_object_textblock_text_markup_prepend(Evas_Textblock_Cursor *cur, const char
                        ttag = malloc(ttag_len + 1);
                        if (ttag)
                          {
-                            const char *match;
-                            size_t replace_len;
-
                             memcpy(ttag, tag_start + 1, ttag_len);
                             ttag[ttag_len] = 0;
-                            match = _style_match_tag(o->style, ttag, ttag_len, &replace_len);
-                            if (match)
-                              {
-                                 evas_textblock_cursor_format_prepend(cur, match);
-                              }
-                            else
-                              {
-                                 char *ttag2;
-
-                                 ttag2 = malloc(ttag_len + 2 + 1);
-                                 if (ttag2)
-                                   {
-                                      if (ttag[0] == '/')
-                                        {
-                                           strcpy(ttag2, "- ");
-                                           strcat(ttag2, ttag + 1);
-                                        }
-                                      else
-                                        {
-                                           strcpy(ttag2, "+ ");
-                                           strcat(ttag2, ttag);
-                                        }
-                                      evas_textblock_cursor_format_prepend(cur, ttag2);
-                                      free(ttag2);
-                                   }
-                              }
-                            free(ttag);
+                            evas_textblock_cursor_format_prepend(cur, ttag);
                          }
                        tag_start = tag_end = NULL;
                     }
@@ -6702,6 +6741,7 @@ _evas_textblock_node_format_free(Evas_Object_Textblock *o,
 {
    if (!n) return;
    eina_stringshare_del(n->format);
+   eina_stringshare_del(n->orig_format);
    if (n->anchor == ANCHOR_ITEM)
       o->anchors_item = eina_list_remove(o->anchors_item, n);
    else if (n->anchor == ANCHOR_A)
@@ -6723,7 +6763,61 @@ _evas_textblock_node_format_new(Evas_Object_Textblock *o, const char *format)
    Evas_Object_Textblock_Node_Format *n;
 
    n = calloc(1, sizeof(Evas_Object_Textblock_Node_Format));
-   n->format = eina_stringshare_add(format);
+   /* Create orig_format and format */
+     {
+        const char *match;
+        size_t format_len = strlen(format);
+        size_t replace_len;
+
+        match = _style_match_tag(o->style, format, format_len, &replace_len);
+        if (match)
+          {
+             if ((match[0] == '+') || (match[0] == '-'))
+               {
+                  char *norm_format;
+                  norm_format = malloc(format_len + 2 + 1);
+                  memcpy(norm_format, match, 2);
+                  memcpy(norm_format + 2, format, format_len);
+                  norm_format[format_len + 2] = '\0';
+                  n->orig_format =
+                     eina_stringshare_add_length(norm_format, format_len + 2);
+                  free(norm_format);
+               }
+             else
+               {
+                  n->orig_format =
+                     eina_stringshare_add_length(format, format_len);
+               }
+             n->format = eina_stringshare_add(match);
+          }
+        else
+          {
+             char *norm_format;
+
+             norm_format = malloc(format_len + 2 + 1);
+             if (norm_format)
+               {
+                  if (format[0] == '/')
+                    {
+                       memcpy(norm_format, "- ", 2);
+                       memcpy(norm_format + 2, format + 1, format_len - 1);
+                       norm_format[format_len + 2 - 1] = '\0';
+                    }
+                  else
+                    {
+                       memcpy(norm_format, "+ ", 2);
+                       memcpy(norm_format + 2, format, format_len);
+                       norm_format[format_len + 2] = '\0';
+                    }
+                  n->orig_format = eina_stringshare_add(norm_format);
+                  free(norm_format);
+               }
+             n->format = eina_stringshare_ref(n->orig_format);
+          }
+     }
+
+   format = n->format;
+
    _evas_textblock_format_is_visible(n, format);
    if (n->anchor == ANCHOR_A)
      {
