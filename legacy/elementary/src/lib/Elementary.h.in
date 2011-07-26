@@ -332,17 +332,19 @@ extern "C" {
     * Called back when a widget's tooltip is activated and needs content.
     * @param data user-data given to elm_object_tooltip_content_cb_set()
     * @param obj owner widget.
+    * @param tooltip The tooltip object (affix content to this!)
     */
-   typedef Evas_Object *(*Elm_Tooltip_Content_Cb) (void *data, Evas_Object *obj);
+   typedef Evas_Object *(*Elm_Tooltip_Content_Cb) (void *data, Evas_Object *obj, Evas_Object *tooltip);
 
    /**
     * Called back when a widget's item tooltip is activated and needs content.
     * @param data user-data given to elm_object_tooltip_content_cb_set()
     * @param obj owner widget.
+    * @param tooltip The tooltip object (affix content to this!)
     * @param item context dependent item. As an example, if tooltip was
     *        set on Elm_List_Item, then it is of this type.
     */
-   typedef Evas_Object *(*Elm_Tooltip_Item_Content_Cb) (void *data, Evas_Object *obj, void *item);
+   typedef Evas_Object *(*Elm_Tooltip_Item_Content_Cb) (void *data, Evas_Object *obj, Evas_Object *tooltip, void *item);
 
    typedef Eina_Bool (*Elm_Event_Cb) (void *data, Evas_Object *obj, Evas_Object *src, Evas_Callback_Type type, void *event_info);
 
@@ -5491,7 +5493,26 @@ extern "C" {
     * @ingroup Gengrid
     */
    EAPI const char        *elm_gengrid_item_tooltip_style_get(const Elm_Gengrid_Item *item) EINA_ARG_NONNULL(1);
-
+   /**
+    * @brief Disable size restrictions on an object's tooltip
+    * @param item The tooltip's anchor object
+    * @param disable If EINA_TRUE, size restrictions are disabled
+    * @return EINA_FALSE on failure, EINA_TRUE on success
+    *
+    * This function allows a tooltip to expand beyond its parant window's canvas.
+    * It will instead be limited only by the size of the display.
+    */
+   EAPI Eina_Bool          elm_gengrid_item_tooltip_size_restrict_disable(Elm_Gengrid_Item *item, Eina_Bool disable);
+   /**
+    * @brief Retrieve size restriction state of an object's tooltip
+    * @param item The tooltip's anchor object
+    * @return If EINA_TRUE, size restrictions are disabled
+    *
+    * This function returns whether a tooltip is allowed to expand beyond
+    * its parant window's canvas.
+    * It will instead be limited only by the size of the display.
+    */
+   EAPI Eina_Bool          elm_gengrid_item_tooltip_size_restrict_disabled_get(const Elm_Gengrid_Item *item);
    /**
     * Set the type of mouse pointer/cursor decoration to be shown,
     * when the mouse pointer is over the given gengrid widget item
@@ -9217,6 +9238,8 @@ extern "C" {
    EAPI const char  *elm_object_cursor_style_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
    EAPI void         elm_object_cursor_engine_only_set(Evas_Object *obj, Eina_Bool engine_only) EINA_ARG_NONNULL(1);
    EAPI Eina_Bool    elm_object_cursor_engine_only_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+   EAPI Eina_Bool    elm_tooltip_size_restrict_disable(Evas_Object *obj, Eina_Bool disable); EINA_ARG_NONNULL(1);
+   EAPI Eina_Bool    elm_tooltip_size_restrict_disabled_get(const Evas_Object *obj); EINA_ARG_NONNULL(1);
 
    /* cursors */
    EAPI int          elm_cursor_engine_only_get(void);
@@ -10225,6 +10248,28 @@ extern "C" {
     */
    EAPI void             elm_list_item_tooltip_text_set(Elm_List_Item *item, const char *text) EINA_ARG_NONNULL(1);
 
+
+   /**
+    * @brief Disable size restrictions on an object's tooltip
+    * @param item The tooltip's anchor object
+    * @param disable If EINA_TRUE, size restrictions are disabled
+    * @return EINA_FALSE on failure, EINA_TRUE on success
+    *
+    * This function allows a tooltip to expand beyond its parant window's canvas.
+    * It will instead be limited only by the size of the display.
+    */
+   EAPI Eina_Bool        elm_list_item_tooltip_size_restrict_disable(Elm_List_Item *item, Eina_Bool disable) EINA_ARG_NONNULL(1);
+   /**
+    * @brief Retrieve size restriction state of an object's tooltip
+    * @param obj The tooltip's anchor object
+    * @return If EINA_TRUE, size restrictions are disabled
+    *
+    * This function returns whether a tooltip is allowed to expand beyond
+    * its parant window's canvas.
+    * It will instead be limited only by the size of the display.
+    */
+   EAPI Eina_Bool        elm_list_item_tooltip_size_restrict_disabled_get(const Elm_List_Item *item) EINA_ARG_NONNULL(1);
+
    /**
     * Set the content to be shown in the tooltip item.
     *
@@ -10710,6 +10755,26 @@ extern "C" {
    EAPI void               elm_genlist_item_tooltip_unset(Elm_Genlist_Item *item) EINA_ARG_NONNULL(1);
    EAPI void               elm_genlist_item_tooltip_style_set(Elm_Genlist_Item *item, const char *style) EINA_ARG_NONNULL(1);
    EAPI const char        *elm_genlist_item_tooltip_style_get(const Elm_Genlist_Item *item) EINA_ARG_NONNULL(1);
+   /**
+    * @brief Disable size restrictions on an object's tooltip
+    * @param item The tooltip's anchor object
+    * @param disable If EINA_TRUE, size restrictions are disabled
+    * @return EINA_FALSE on failure, EINA_TRUE on success
+    *
+    * This function allows a tooltip to expand beyond its parant window's canvas.
+    * It will instead be limited only by the size of the display.
+    */
+   EAPI Eina_Bool          elm_genlist_item_tooltip_size_restrict_disable(Elm_Genlist_Item *item, Eina_Bool disable);
+   /**
+    * @brief Retrieve size restriction state of an object's tooltip
+    * @param item The tooltip's anchor object
+    * @return If EINA_TRUE, size restrictions are disabled
+    *
+    * This function returns whether a tooltip is allowed to expand beyond
+    * its parant window's canvas.
+    * It will instead be limited only by the size of the display.
+    */
+   EAPI Eina_Bool          elm_genlist_item_tooltip_size_restrict_disabled_get(const Elm_Genlist_Item *item);
    EAPI void               elm_genlist_item_cursor_set(Elm_Genlist_Item *item, const char *cursor) EINA_ARG_NONNULL(1);
    EAPI const char        *elm_genlist_item_cursor_get(const Elm_Genlist_Item *item) EINA_ARG_NONNULL(1);
    EAPI void               elm_genlist_item_cursor_unset(Elm_Genlist_Item *item) EINA_ARG_NONNULL(1);

@@ -35,9 +35,10 @@ struct _Elm_Tooltip
    Evas_Smart_Cb            del_cb;
    const void              *data;
    const char              *style;
-   Evas                    *evas;
+   Evas                    *evas, *tt_evas;
    Evas_Object             *eventarea, *owner;
    Evas_Object             *tooltip, *content;
+   Evas_Object             *tt_win;
    Ecore_Timer             *show_timer;
    Ecore_Timer             *hide_timer;
    Ecore_Job               *reconfigure_job;
@@ -50,6 +51,7 @@ struct _Elm_Tooltip
    double                   hide_timeout; /* from theme */
    Eina_Bool                visible_lock:1;
    Eina_Bool                changed_style:1;
+   Eina_Bool                free_size : 1;
 };
 
 static void _elm_tooltip_reconfigure(Elm_Tooltip *tt);
@@ -109,10 +111,24 @@ _elm_tooltip_show(Elm_Tooltip *tt)
         _elm_tooltip_reconfigure_job_start(tt);
         return;
      }
-   tt->tooltip = edje_object_add(tt->evas);
+   if (tt->free_size)
+     {
+        tt->tt_win = elm_win_add(NULL, "tooltip", ELM_WIN_BASIC);
+        elm_win_transparent_set(tt->tt_win, EINA_TRUE);
+        elm_win_override_set(tt->tt_win, EINA_TRUE);
+        elm_win_borderless_set(tt->tt_win, EINA_TRUE);
+        elm_object_focus_allow_set(tt->tt_win, EINA_FALSE);
+        tt->tt_evas = evas_object_evas_get(tt->tt_win);
+        tt->tooltip = edje_object_add(tt->tt_evas);
+        evas_object_move(tt->tooltip, 0, 0);
+        elm_win_resize_object_add(tt->tt_win, tt->tooltip);
+        evas_object_show(tt->tt_win);
+     }
+   else
+      tt->tooltip = edje_object_add(tt->evas);
    if (!tt->tooltip) return;
 
-   evas_object_layer_set(tt->tooltip, ELM_OBJECT_LAYER_TOOLTIP);
+   evas_object_layer_set(tt->tt_win ?: tt->tooltip, ELM_OBJECT_LAYER_TOOLTIP);
 
    evas_object_event_callback_add
      (tt->eventarea, EVAS_CALLBACK_MOVE, _elm_tooltip_obj_move_cb, tt);
@@ -162,7 +178,11 @@ _elm_tooltip_hide(Elm_Tooltip *tt)
    evas_object_event_callback_del_full
      (tt->eventarea, EVAS_CALLBACK_MOUSE_MOVE, _elm_tooltip_obj_mouse_move_cb, tt);
 
-   evas_object_del(tt->tooltip);
+   if (tt->tt_win) evas_object_del(tt->tt_win);
+   else evas_object_del(tt->tooltip);
+
+   tt->tt_win = NULL;
+   tt->tt_evas = NULL;
    tt->tooltip = NULL;
 }
 
@@ -221,10 +241,13 @@ _elm_tooltip_hide_anim_stop(Elm_Tooltip *tt)
 static void
 _elm_tooltip_reconfigure(Elm_Tooltip *tt)
 {
-   Evas_Coord ox, oy, ow, oh, px, py, tx, ty, tw, th, cw, ch;
+   Evas_Coord ox, oy, ow, oh, px, py, tx, ty, tw, th, cw = 0, ch = 0;
    Evas_Coord eminw, eminh, ominw, ominh;
    double rel_x, rel_y;
    Eina_Bool inside_eventarea;
+#ifdef HAVE_ELEMENTARY_X
+   Ecore_X_Window xwin;
+#endif
 
    _elm_tooltip_reconfigure_job_stop(tt);
 
@@ -234,11 +257,14 @@ _elm_tooltip_reconfigure(Elm_Tooltip *tt)
      {
         const char *style = tt->style ? tt->style : "default";
         const char *str;
-        if (!_elm_theme_object_set
-            (tt->owner, tt->tooltip, "tooltip", "base", style))
+        if (!_elm_theme_object_set(tt->owner, tt->tooltip, "tooltip", "base", style))
           {
              ERR("Could not apply the theme to the tooltip! style=%s", style);
-             evas_object_del(tt->tooltip);
+             if (tt->tt_win) evas_object_del(tt->tt_win);
+             else evas_object_del(tt->tooltip);
+
+             tt->tt_win = NULL;
+             tt->tt_evas = NULL;
              tt->tooltip = NULL;
              return;
           }
@@ -272,31 +298,34 @@ _elm_tooltip_reconfigure(Elm_Tooltip *tt)
         evas_object_pass_events_set(tt->tooltip, EINA_TRUE);
         tt->changed_style = EINA_FALSE;
         if (tt->tooltip)
-          edje_object_part_swallow
-            (tt->tooltip, "elm.swallow.content", tt->content);
+          edje_object_part_swallow(tt->tooltip, "elm.swallow.content", 
+                                   tt->content);
 
         edje_object_signal_emit(tt->tooltip, "elm,action,show", "elm");
      }
 
    if (!tt->content)
      {
-        tt->content = tt->func((void *)tt->data, tt->owner);
+        tt->content = tt->func((void *)tt->data, tt->owner, tt->tt_win ? : tt->owner);
         if (!tt->content)
           {
              WRN("could not create tooltip content!");
-             evas_object_del(tt->tooltip);
+             if (tt->tt_win) evas_object_del(tt->tt_win);
+             else evas_object_del(tt->tooltip);
+
+             tt->tt_win = NULL;
+             tt->tt_evas = NULL;
              tt->tooltip = NULL;
              return;
           }
+        evas_object_show(tt->content);
         evas_object_layer_set(tt->content, ELM_OBJECT_LAYER_TOOLTIP);
         evas_object_pass_events_set(tt->content, EINA_TRUE);
         edje_object_part_swallow
           (tt->tooltip, "elm.swallow.content", tt->content);
-        evas_object_event_callback_add
-          (tt->content, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
+        evas_object_event_callback_add(tt->content, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
            _elm_tooltip_content_changed_hints_cb, tt);
-        evas_object_event_callback_add
-          (tt->content, EVAS_CALLBACK_DEL,
+        evas_object_event_callback_add(tt->content, EVAS_CALLBACK_DEL,
            _elm_tooltip_content_del_cb, tt);
 
      }
@@ -310,16 +339,30 @@ _elm_tooltip_reconfigure(Elm_Tooltip *tt)
    if (ominw < 1) ominw = 10; /* at least it is noticeable */
    if (ominh < 1) ominh = 10; /* at least it is noticeable */
 
-   edje_object_size_min_restricted_calc
-     (tt->tooltip, &tw, &th, ominw, ominh);
+   edje_object_size_min_restricted_calc(tt->tooltip, &tw, &th, ominw, ominh);
 
-   evas_output_size_get(tt->evas, &cw, &ch);
+#ifdef HAVE_ELEMENTARY_X
+   if (tt->tt_win)
+     {
+        xwin = elm_win_xwindow_get(elm_object_top_widget_get(tt->owner));
+        if (xwin)
+          {
+             xwin = ecore_x_window_root_get(xwin);
+             ecore_x_randr_screen_current_size_get(xwin, &cw, &ch, NULL, NULL);
+          }
+     }
+   if (!cw)
+#endif
+     evas_output_size_get(tt->tt_evas ?: tt->evas, &cw, &ch);
    evas_pointer_canvas_xy_get(tt->evas, &px, &py);
 
    evas_object_geometry_get(tt->eventarea, &ox, &oy, &ow, &oh);
 
    inside_eventarea = ((px >= ox) && (py >= oy) &&
                        (px <= ox + ow) && (py <= oy + oh));
+#ifdef HAVE_ELEMENTARY_X
+   if (tt->tt_win) ecore_x_pointer_xy_get(xwin, &px, &py);
+#endif
    if (inside_eventarea)
      {
         tx = px;
@@ -347,8 +390,8 @@ _elm_tooltip_reconfigure(Elm_Tooltip *tt)
         else if (ty + th >= ch - tt->pad.by) ty = ch - th - tt->pad.by;
      }
 
-   evas_object_move(tt->tooltip, tx, ty);
-   evas_object_resize(tt->tooltip, tw, th);
+   evas_object_move(tt->tt_win ? : tt->tooltip, tx, ty);
+   evas_object_resize(tt->tt_win ? : tt->tooltip, tw, th);
    evas_object_show(tt->tooltip);
 
    if (inside_eventarea)
@@ -468,9 +511,9 @@ _elm_tooltip_obj_free_cb(void *data, Evas *e  __UNUSED__, Evas_Object *obj, void
 }
 
 static Evas_Object *
-_elm_tooltip_label_create(void *data, Evas_Object *obj)
+_elm_tooltip_label_create(void *data, Evas_Object *obj __UNUSED__, Evas_Object *tooltip)
 {
-   Evas_Object *label = elm_label_add(obj);
+   Evas_Object *label = elm_label_add(tooltip);
    if (!label)
      return NULL;
    elm_object_style_set(label, "tooltip");
@@ -785,4 +828,36 @@ elm_tooltip_delay_set(double delay)
    if (delay < 0.0) return EINA_FALSE;
    _elm_config->tooltip_delay = delay;
    return EINA_TRUE;
+}
+
+/**
+ * @brief Disable size restrictions on an object's tooltip
+ * @param obj The tooltip's anchor object
+ * @param disable If EINA_TRUE, size restrictions are disabled
+ * @return EINA_FALSE on failure, EINA_TRUE on success
+ *
+ * This function allows a tooltip to expand beyond its parant window's canvas.
+ * It will instead be limited only by the size of the display.
+ */
+EAPI Eina_Bool
+elm_tooltip_size_restrict_disable(Evas_Object *obj, Eina_Bool disable)
+{
+   ELM_TOOLTIP_GET_OR_RETURN(tt, obj, EINA_FALSE);
+   return tt->free_size = disable;
+}
+
+/**
+ * @brief Retrieve size restriction state of an object's tooltip
+ * @param obj The tooltip's anchor object
+ * @return If EINA_TRUE, size restrictions are disabled
+ *
+ * This function returns whether a tooltip is allowed to expand beyond
+ * its parant window's canvas.
+ * It will instead be limited only by the size of the display.
+ */
+EAPI Eina_Bool
+elm_tooltip_size_restrict_disabled_get(const Evas_Object *obj)
+{
+   ELM_TOOLTIP_GET_OR_RETURN(tt, obj, EINA_FALSE);
+   return tt->free_size;
 }

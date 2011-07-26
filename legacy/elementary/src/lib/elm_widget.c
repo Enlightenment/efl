@@ -2460,10 +2460,11 @@ struct _Elm_Widget_Item_Tooltip
 
 static Evas_Object *
 _elm_widget_item_tooltip_label_create(void        *data,
-                                      Evas_Object *obj,
+                                      Evas_Object *obj __UNUSED__,
+                                      Evas_Object *tooltip,
                                       void        *item __UNUSED__)
 {
-   Evas_Object *label = elm_label_add(obj);
+   Evas_Object *label = elm_label_add(tooltip);
    if (!label)
      return NULL;
    elm_object_style_set(label, "tooltip");
@@ -2507,10 +2508,11 @@ _elm_widget_item_tooltip_text_set(Elm_Widget_Item *item,
 
 static Evas_Object *
 _elm_widget_item_tooltip_create(void        *data,
-                                Evas_Object *obj)
+                                Evas_Object *obj,
+                                Evas_Object *tooltip)
 {
    Elm_Widget_Item_Tooltip *wit = data;
-   return wit->func((void *)wit->data, obj, wit->item);
+   return wit->func((void *)wit->data, obj, tooltip, wit->item);
 }
 
 static void
@@ -2623,6 +2625,20 @@ _elm_widget_item_tooltip_style_set(Elm_Widget_Item *item,
 {
    ELM_WIDGET_ITEM_CHECK_OR_RETURN(item);
    elm_object_tooltip_style_set(item->view, style);
+}
+
+EAPI Eina_Bool
+_elm_widget_item_tooltip_size_restrict_disable(Elm_Widget_Item *item, Eina_Bool disable)
+{
+   ELM_WIDGET_ITEM_CHECK_OR_RETURN(item, EINA_FALSE);
+   return elm_tooltip_size_restrict_disable(item->view, disable);
+}
+
+EAPI Eina_Bool
+_elm_widget_item_tooltip_size_restrict_disabled_get(const Elm_Widget_Item *item)
+{
+   ELM_WIDGET_ITEM_CHECK_OR_RETURN(item, EINA_FALSE);
+   return elm_tooltip_size_restrict_disabled_get(item->view);
 }
 
 /**

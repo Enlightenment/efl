@@ -2142,10 +2142,11 @@ elm_gengrid_item_disabled_get(const Elm_Gengrid_Item *item)
 
 static Evas_Object *
 _elm_gengrid_item_label_create(void        *data,
-                               Evas_Object *obj,
+                               Evas_Object *obj __UNUSED__,
+                               Evas_Object *tooltip,
                                void *item   __UNUSED__)
 {
-   Evas_Object *label = elm_label_add(obj);
+   Evas_Object *label = elm_label_add(tooltip);
    if (!label)
      return NULL;
    elm_object_style_set(label, "tooltip");
@@ -2233,6 +2234,20 @@ elm_gengrid_item_tooltip_style_get(const Elm_Gengrid_Item *item)
 {
    ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(item, NULL);
    return item->tooltip.style;
+}
+
+EAPI Eina_Bool
+elm_gengrid_item_tooltip_size_restrict_disable(Elm_Gengrid_Item *item, Eina_Bool disable)
+{
+   ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(item, EINA_FALSE);
+   return elm_widget_item_tooltip_size_restrict_disable(item, disable);
+}
+
+EAPI Eina_Bool
+elm_gengrid_item_tooltip_size_restrict_disabled_get(const Elm_Gengrid_Item *item)
+{
+   ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(item, EINA_FALSE);
+   return elm_widget_item_tooltip_size_restrict_disabled_get(item);
 }
 
 EAPI void
