@@ -544,34 +544,6 @@ _style_clear(Evas_Textblock_Style *ts)
 
 /**
  * @internal
- * Searches inside the tags stored in the style for the tag who's
- * replacement is s of size replace_len;
- * @param ts The ts to be cleared. Must not be NULL.
- * @param s The replace string to match.
- * @param replace_len the length of the replace string.
- * @param[out] tag_len The length of the tag found. - Must not be NULL.
- * @return The tag found.
- */
-static inline const char *
-_style_match_replace(Evas_Textblock_Style *ts, const char *s, size_t replace_len, size_t *tag_len)
-{
-   Evas_Object_Style_Tag *tag;
-
-   EINA_INLIST_FOREACH(ts->tags, tag)
-     {
-	if (tag->replace_len != replace_len) continue;
-	if (!strcmp(tag->replace, s))
-	  {
-	     *tag_len = tag->tag_len;
-	     return tag->tag;
-	  }
-     }
-   *tag_len = 0;
-   return NULL;
-}
-
-/**
- * @internal
  * Searches inside the tags stored in the style for the tag matching s.
  * @param ts The ts to be cleared. Must not be NULL.
  * @param s The tag to be matched.
@@ -4931,29 +4903,16 @@ evas_object_textblock_text_markup_prepend(Evas_Textblock_Cursor *cur, const char
  * @param fnode the format node to process.
  */
 static void
-_markup_get_format_append(Evas_Object_Textblock *o, Eina_Strbuf *txt, Evas_Object_Textblock_Node_Format *fnode)
+_markup_get_format_append(Evas_Object_Textblock *o __UNUSED__, Eina_Strbuf *txt, Evas_Object_Textblock_Node_Format *fnode)
 {
-   size_t replace_len;
-   size_t tag_len;
-   const char *tag;
-   const char *replace;
-
-   replace_len = strlen(fnode->format);
-   replace = fnode->format;
-   tag = _style_match_replace(o->style, replace, replace_len, &tag_len);
    eina_strbuf_append_char(txt, '<');
-   if (tag)
-     {
-        eina_strbuf_append_length(txt, tag, tag_len);
-     }
-   else
      {
         const char *s;
         int push = 0;
         int pop = 0;
 
         // FIXME: need to escape
-        s = fnode->format;
+        s = fnode->orig_format;
         if (*s == '+') push = 1;
         if (*s == '-') pop = 1;
         while ((*s == ' ') || (*s == '+') || (*s == '-')) s++;
