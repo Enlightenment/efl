@@ -143,24 +143,24 @@ static const char SIG_SCROLL_DRAG_STOP[] = "scroll,drag,stop";
 static const char SIG_MOVED[] = "moved";
 
 static const Evas_Smart_Cb_Description _signals[] = {
-       {SIG_ACTIVATED, ""},
-       {SIG_CLICKED_DOUBLE, ""},
-       {SIG_SELECTED, ""},
-       {SIG_UNSELECTED, ""},
-       {SIG_REALIZED, ""},
-       {SIG_UNREALIZED, ""},
-       {SIG_CHANGED, ""},
-       {SIG_DRAG_START_UP, ""},
-       {SIG_DRAG_START_DOWN, ""},
-       {SIG_DRAG_START_LEFT, ""},
-       {SIG_DRAG_START_RIGHT, ""},
-       {SIG_DRAG_STOP, ""},
-       {SIG_DRAG, ""},
-       {SIG_SCROLL, ""},
-       {SIG_SCROLL_DRAG_START, ""},
-       {SIG_SCROLL_DRAG_STOP, ""},
-       {SIG_MOVED, ""},
-       {NULL, NULL}
+   {SIG_ACTIVATED, ""},
+   {SIG_CLICKED_DOUBLE, ""},
+   {SIG_SELECTED, ""},
+   {SIG_UNSELECTED, ""},
+   {SIG_REALIZED, ""},
+   {SIG_UNREALIZED, ""},
+   {SIG_CHANGED, ""},
+   {SIG_DRAG_START_UP, ""},
+   {SIG_DRAG_START_DOWN, ""},
+   {SIG_DRAG_START_LEFT, ""},
+   {SIG_DRAG_START_RIGHT, ""},
+   {SIG_DRAG_STOP, ""},
+   {SIG_DRAG, ""},
+   {SIG_SCROLL, ""},
+   {SIG_SCROLL_DRAG_START, ""},
+   {SIG_SCROLL_DRAG_STOP, ""},
+   {SIG_MOVED, ""},
+   {NULL, NULL}
 };
 
 static Eina_Compare_Cb _elm_gengrid_item_compare_cb;
