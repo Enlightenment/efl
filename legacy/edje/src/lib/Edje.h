@@ -1462,7 +1462,20 @@ EAPI Eina_Bool    edje_color_class_set            (const char *color_class, int 
  *       half-transparent white is 255 255 255 128.
  */
 EAPI Eina_Bool    edje_color_class_get            (const char *color_class, int *r, int *g, int *b, int *a, int *r2, int *g2, int *b2, int *a2, int *r3, int *g3, int *b3, int *a3);
-   EAPI void         edje_color_class_del            (const char *color_class);
+
+/**
+ * @brief Delete the object color class.
+ *
+ * @param obj The edje object's reference.
+ * @param color_class The color class to be deleted.
+ *
+ * This function deletes any values at the object level for the
+ * specified object and color class.
+ *
+ * Deleting color emits a signal "color_class,del" with source being
+ * the given color.
+ */
+EAPI void         edje_color_class_del            (const char *color_class);
    EAPI Eina_List   *edje_color_class_list           (void);
 
 /**
@@ -1478,22 +1491,30 @@ EAPI Eina_Bool    edje_color_class_get            (const char *color_class, int 
  * @see edje_text_class_get().
  *
  */
+EAPI Eina_Bool    edje_text_class_set             (const char *text_class, const char *font, Evas_Font_Size size);
 
 /**
- * @brief Delete the object color class.
+ * @brief Delete the text class.
  *
- * @param obj The edje object's reference.
- * @param color_class The color class to be deleted.
+ * @param text_class The text class name string
  *
- * This function deletes any values at the object level for the
- * specified object and color class.
+ * This function deletes any values at the process level for the
+ * specified text class.
  *
- * Deleting color emits a signal "color_class,del" with source being
- * the given color.
  */
-EAPI Eina_Bool    edje_text_class_set             (const char *text_class, const char *font, Evas_Font_Size size);
-   EAPI void         edje_text_class_del             (const char *text_class);
-   EAPI Eina_List   *edje_text_class_list            (void);
+EAPI void         edje_text_class_del             (const char *text_class);
+
+/**
+ * @brief List text classes.
+ *
+ * @return A list of text class names (strings). These strings are
+ * stringshares and the list must be free()'d by the caller.
+ *
+ * This function lists all text classes known about by the current
+ * process.
+ *
+ */
+EAPI Eina_List   *edje_text_class_list            (void);
 
 /**
  * @brief Set the object minimum size.
@@ -1557,7 +1578,7 @@ EAPI void         edje_extern_object_aspect_set   (Evas_Object *obj, Edje_Aspect
 EAPI void         edje_box_layout_register        (const char *name, Evas_Object_Box_Layout func, void *(*layout_data_get)(void *), void (*layout_data_free)(void *), void (*free_data)(void *), void *data);
 
 /**
- * Constructs the Edje object
+ * @brief Constructs the Edje object
  * @param evas A valid Evas handle
  * @return The Evas_Object pointer.
  *
@@ -1592,7 +1613,7 @@ EAPI Evas_Object *edje_object_add                 (Evas *evas);
 EAPI const char  *edje_object_data_get            (const Evas_Object *obj, const char *key);
 
 /**
- * Sets the EET file and group to load @a obj from
+ * @brief Sets the EET file and group to load @a obj from
  * @param obj A valid Evas_Object handle
  * @param file The path to the EET file
  * @param group The group name in the Edje
@@ -1606,7 +1627,7 @@ EAPI const char  *edje_object_data_get            (const Evas_Object *obj, const
 EAPI Eina_Bool        edje_object_file_set        (Evas_Object *obj, const char *file, const char *group);
 
 /**
- * Get the file and group name that @a obj was loaded from
+ * @brief Get the file and group name that @a obj was loaded from
  * @param obj A valid Evas_Object handle
  * @param file A pointer to store a pointer to the filename in
  * @param group A pointer to store a pointer to the group name in
@@ -1622,7 +1643,7 @@ EAPI Eina_Bool        edje_object_file_set        (Evas_Object *obj, const char 
 EAPI void             edje_object_file_get        (const Evas_Object *obj, const char **file, const char **group);
 
 /**
- * Gets the Edje load error
+ * @brief Gets the Edje load error
  * @param obj A valid Evas_Object handle
  *
  * @return The Edje load error:\n
@@ -1639,8 +1660,8 @@ EAPI void             edje_object_file_get        (const Evas_Object *obj, const
  */
 EAPI Edje_Load_Error  edje_object_load_error_get  (const Evas_Object *obj);
 
-EAPI const char      *edje_load_error_str         (Edje_Load_Error error);
-EAPI Eina_Bool        edje_object_preload         (Evas_Object *obj, Eina_Bool cancel);
+   EAPI const char      *edje_load_error_str         (Edje_Load_Error error);
+   EAPI Eina_Bool        edje_object_preload         (Evas_Object *obj, Eina_Bool cancel);
 
 /**
  * @brief Add a callback for a signal emitted by @a obj.
@@ -1951,27 +1972,6 @@ EAPI Eina_Bool    edje_object_color_class_get         (const Evas_Object *o, con
  * @param size Font Size
  *
  * This function sets the text class for the Edje.
- *
- */
-
-/**
- * @brief List text classes.
- *
- * @return A list of text class names (strings). These strings are
- * stringshares and the list must be free()'d by the caller.
- *
- * This function lists all text classes known about by the current
- * process.
- *
- */
-
-/**
- * @brief Delete the text class.
- *
- * @param text_class The text class name string
- *
- * This function deletes any values at the process level for the
- * specified text class.
  *
  */
 EAPI Eina_Bool    edje_object_text_class_set          (Evas_Object *obj, const char *text_class, const char *font, Evas_Font_Size size);
@@ -3118,7 +3118,6 @@ EAPI void         edje_external_type_array_register       (const Edje_External_T
  */
 EAPI void         edje_external_type_array_unregister     (const Edje_External_Type_Info *array);
 
-
 /**
  * Return the current ABI version for Edje_External_Type structure.
  *
@@ -3138,8 +3137,6 @@ EAPI void         edje_external_type_array_unregister     (const Edje_External_T
  * @return version this edje library was compiled.
  */
 EAPI unsigned int edje_external_type_abi_version_get      (void) EINA_CONST;
-
-
 
 /**
  * Returns an iterator that emits Eina_Hash_Tuple pointers with key
