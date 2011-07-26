@@ -142,11 +142,8 @@ ecore_x_init(const char *name)
           }
 
         _real_display = dlsym(libxlib, "XOpenDisplay");
-        if (_real_display) DBG("Have Real Display Symd");
         _real_connection = dlsym(libxcb, "XGetXCBConnection");
-        if (_real_connection) DBG("Have Real Connection Symd");
         _real_queue = dlsym(libxcb, "XSetEventQueueOwner");
-        if (_real_queue) DBG("Have Real Queue Symd");
 
         if (_real_display) 
           {
