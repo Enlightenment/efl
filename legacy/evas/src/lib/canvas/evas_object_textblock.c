@@ -3811,24 +3811,53 @@ _format_changes_invalidate_text_nodes(Ctxt *c)
 {
    Evas_Object_Textblock_Node_Format *fnode = c->o->format_nodes;
    Evas_Object_Textblock_Node_Text *start_n = NULL;
+   Eina_List *fstack = NULL;
    int balance = 0;
    while (fnode)
      {
         if (fnode->new)
           {
-             const char *fstr = fnode->format;
+             const char *fstr = fnode->orig_format;
              /* balance < 0 means we gave up and everything should be
               * invalidated */
              if (*fstr == '+')
                {
                   balance++;
-                  if (balance == 1)
+                  if (!fstack)
                      start_n = fnode->text_node;
+                  fstack = eina_list_prepend(fstack, fnode);
                }
              else if (*fstr == '-')
                {
-                  balance--;
-                  if (balance == 0)
+                  size_t fstr_len;
+                  /* Skip the '-' */
+                  fstr++;
+                  fstr_len = strlen(fstr);
+                  /* Generic popper, just pop */
+                  if (((fstr[0] == ' ') && !fstr[1]) || !fstr[0])
+                    {
+                       fstack = eina_list_remove_list(fstack, fstack);
+                       balance--;
+                    }
+                  /* Find the matching format and pop it, if the matching format
+                   * is out format, i.e the last one, pop and break. */
+                  else
+                    {
+                       Eina_List *i;
+                       Evas_Object_Textblock_Node_Format *fnode2;
+                       EINA_LIST_FOREACH(fstack, i, fnode2)
+                         {
+                            if (_FORMAT_IS_CLOSER_OF(
+                                     fnode2->orig_format, fstr, fstr_len))
+                              {
+                                 fstack = eina_list_remove_list(fstack, i);
+                                 balance--;
+                                 break;
+                              }
+                         }
+                    }
+
+                  if (!fstack)
                     {
                        Evas_Object_Textblock_Node_Text *f_tnode =
                           fnode->text_node;
