@@ -78,6 +78,9 @@ SRCS = \
 	diskselector_example_02.c \
 	index_example_01.c \
 	index_example_02.c \
+	genlist_example_01.c \
+	genlist_example_02.c \
+	genlist_example_03.c \
 	theme_example.edc \
 	layout_example.edc \
 	ctxpopup_example_01.c \
@@ -161,7 +164,10 @@ pkglib_PROGRAMS += \
 	radio_example_01 \
 	toggle_example_01 \
 	panel_example_01 \
-	gengrid_example
+	gengrid_example \
+	genlist_example_01 \
+	genlist_example_02 \
+	genlist_example_03
 
 # This variable will hold the list of screenshots that will be made
 # by "make screenshots". Each item in the list is of the form:
