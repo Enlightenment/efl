@@ -1089,6 +1089,9 @@ EAPI int                     ecore_x_fd_get(void);
 EAPI Ecore_X_Screen *        ecore_x_default_screen_get(void);
 EAPI void                    ecore_x_screen_size_get(const Ecore_X_Screen *screen, int *w, int *h);
 EAPI int                     ecore_x_screen_count_get(void);
+EAPI int                     ecore_x_screen_index_get(const Ecore_X_Screen *screen);
+EAPI Ecore_X_Screen *        ecore_x_screen_get(int index);
+
 EAPI void                    ecore_x_double_click_time_set(double t);
 EAPI double                  ecore_x_double_click_time_get(void);
 EAPI void                    ecore_x_flush(void);
@@ -1098,6 +1101,10 @@ EAPI void                    ecore_x_kill(Ecore_X_Window win);
 EAPI int                     ecore_x_dpi_get(void);
 EAPI Eina_Bool               ecore_x_bell(int percent);
 EAPI unsigned int            ecore_x_visual_id_get(Ecore_X_Visual visual);
+
+EAPI Ecore_X_Visual          ecore_x_default_visual_get(Ecore_X_Display *disp, Ecore_X_Screen *screen);
+EAPI Ecore_X_Colormap        ecore_x_default_colormap_get(Ecore_X_Display *disp, Ecore_X_Screen *screen);
+EAPI int                     ecore_x_default_depth_get(Ecore_X_Display *disp, Ecore_X_Screen *screen);
 
 EAPI Ecore_X_Time            ecore_x_current_time_get(void);
 

@@ -728,6 +728,34 @@ ecore_x_screen_count_get(void)
 }
 
 /**
+ * Retrieves the index number of the given screen.
+ * 
+ * @return  The index number of the screen.
+ * @ingroup Ecore_X_Display_Attr_Group
+ *
+ * @since 1.1
+ */
+EAPI int 
+ecore_x_screen_index_get(const Ecore_X_Screen *screen) 
+{
+   return XScreenNumberOfScreen((Screen *)screen);
+}
+
+/**
+ * Retrieves the screen based on index number.
+ * 
+ * @return  The Ecore_X_Screen at this index.
+ * @ingroup Ecore_X_Display_Attr_Group
+ *
+ * @since 1.1
+ */
+EAPI Ecore_X_Screen *
+ecore_x_screen_get(int index) 
+{
+   return XScreenOfDisplay(_ecore_x_disp, index);
+}
+
+/**
  * Sets the timeout for a double and triple clicks to be flagged.
  *
  * This sets the time between clicks before the double_click flag is
@@ -1874,6 +1902,51 @@ EAPI unsigned int
 ecore_x_visual_id_get(Ecore_X_Visual visual) 
 {
    return XVisualIDFromVisual(visual);
+}
+
+/**
+ * Retrieve the default Visual.
+ *
+ * @param disp  The Display to get the Default Visual from
+ * @param screen The Screen.
+ *
+ * @return The default visual.
+ * @since 1.1.0
+ */
+EAPI Ecore_X_Visual 
+ecore_x_default_visual_get(Ecore_X_Display *disp, Ecore_X_Screen *screen) 
+{
+   return DefaultVisual(disp, screen);
+}
+
+/**
+ * Retrieve the default Colormap.
+ *
+ * @param disp  The Display to get the Default Colormap from
+ * @param screen The Screen.
+ *
+ * @return The default colormap.
+ * @since 1.1.0
+ */
+EAPI Ecore_X_Colormap 
+ecore_x_default_colormap_get(Ecore_X_Display *disp, Ecore_X_Screen *screen) 
+{
+   return DefaultColormap(disp, screen);
+}
+
+/**
+ * Retrieve the default depth.
+ *
+ * @param disp  The Display to get the Default Depth from
+ * @param screen The Screen.
+ *
+ * @return The default depth.
+ * @since 1.1.0
+ */
+EAPI int 
+ecore_x_default_depth_get(Ecore_X_Display *disp, Ecore_X_Screen *screen) 
+{
+   return DefaultDepth(disp, screen);
 }
 
 /*****************************************************************************/

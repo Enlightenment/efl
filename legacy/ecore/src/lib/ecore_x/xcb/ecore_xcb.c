@@ -1058,9 +1058,9 @@ ecore_x_screen_size_get(const Ecore_X_Screen *screen, int *w, int *h)
 }
 
 /**
- * Retrieves the number of screens.
+ * Retrieves the count of screens.
  * 
- * @return  The count of the number of screens.
+ * @return  The count of screens.
  * @ingroup Ecore_X_Display_Attr_Group
  *
  * @since 1.1
@@ -1073,10 +1073,124 @@ ecore_x_screen_count_get(void)
    return xcb_setup_roots_length(xcb_get_setup(_ecore_xcb_conn));
 }
 
+/**
+ * Retrieves the index number of the given screen.
+ * 
+ * @return  The index number of the screen.
+ * @ingroup Ecore_X_Display_Attr_Group
+ *
+ * @since 1.1
+ */
+EAPI int 
+ecore_x_screen_index_get(const Ecore_X_Screen *screen) 
+{
+   xcb_screen_iterator_t iter;
+
+   iter = 
+     xcb_setup_roots_iterator(xcb_get_setup((xcb_connection_t *)_ecore_xcb_conn));
+   for (; iter.rem; xcb_screen_next(&iter)) 
+     {
+        if (iter.data == (xcb_screen_t *)screen) 
+          return iter.index;
+     }
+
+   return 0;
+}
+
+/**
+ * Retrieves the screen based on index number.
+ * 
+ * @return  The Ecore_X_Screen at this index.
+ * @ingroup Ecore_X_Display_Attr_Group
+ *
+ * @since 1.1
+ */
+EAPI Ecore_X_Screen *
+ecore_x_screen_get(int index) 
+{
+   xcb_screen_iterator_t iter;
+
+   iter = 
+     xcb_setup_roots_iterator(xcb_get_setup((xcb_connection_t *)_ecore_xcb_conn));
+   for (; iter.rem; xcb_screen_next(&iter)) 
+     {
+        if (iter.index == index) 
+          return iter.data;
+     }
+
+   return NULL;
+}
+
 EAPI unsigned int 
 ecore_x_visual_id_get(Ecore_X_Visual visual)
 {
    return ((xcb_visualtype_t *)visual)->visual_id;
+}
+
+/**
+ * Retrieve the default Visual.
+ *
+ * @param disp  The Display to get the Default Visual from
+ * @param screen The Screen.
+ *
+ * @return The default visual.
+ * @since 1.1.0
+ */
+EAPI Ecore_X_Visual 
+ecore_x_default_visual_get(Ecore_X_Display *disp __UNUSED__, Ecore_X_Screen *screen)
+{
+   xcb_screen_t *s;
+   xcb_depth_iterator_t diter;
+   xcb_visualtype_iterator_t viter;
+
+   s = (xcb_screen_t *)screen;
+   diter = xcb_screen_allowed_depths_iterator(s);
+   for (; diter.rem; xcb_depth_next(&diter)) 
+     {
+        viter = xcb_depth_visuals_iterator(diter.data);
+        for (; viter.rem; xcb_visualtype_next(&viter)) 
+          {
+             if (viter.data->visual_id == s->root_visual)
+               return viter.data;
+          }
+     }
+   return 0;
+}
+
+/**
+ * Retrieve the default Colormap.
+ *
+ * @param disp  The Display to get the Default Colormap from
+ * @param screen The Screen.
+ *
+ * @return The default colormap.
+ * @since 1.1.0
+ */
+EAPI Ecore_X_Colormap 
+ecore_x_default_colormap_get(Ecore_X_Display *disp __UNUSED__, Ecore_X_Screen *screen)
+{
+   xcb_screen_t *s;
+
+   s = (xcb_screen_t *)screen;
+   return s->default_colormap;
+}
+
+/**
+ * Retrieve the default depth.
+ *
+ * @param disp  The Display to get the Default Depth from
+ * @param screen The Screen.
+ *
+ * @return The default depth.
+ * @since 1.1.0
+ */
+EAPI int 
+ecore_x_default_depth_get(Ecore_X_Display *disp __UNUSED__, Ecore_X_Screen *screen)
+{
+   xcb_screen_t *s;
+
+   s = (xcb_screen_t *)screen;
+   return s->root_depth;
 }
 
 /**
