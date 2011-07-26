@@ -79,7 +79,7 @@ disk_mount(void *data __UNUSED__, int type __UNUSED__, Eeze_Disk *disk)
 }
 
 static void
-cl_setup(Ecore_Con_Client *cl, Eet_Connection *ec)
+cl_setup(Ecore_Con_Client *cl __UNUSED__, Eet_Connection *ec)
 {
    Eina_List *l;
    Eeze_Scanner_Device *dev;
