@@ -263,3 +263,9 @@
 2011-07-22  Mike Blumenkrantz
 
         * Added ecore_con_url_url_get
+        
+2011-07-26  Carsten Haitzler (The Rasterman)
+
+        * Fix timer precision handling for grouping timer ticks so
+        they actually do tick off together
+

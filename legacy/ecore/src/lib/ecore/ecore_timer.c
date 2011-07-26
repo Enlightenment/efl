@@ -590,15 +590,17 @@ static inline Ecore_Timer *
 _ecore_timer_after_get(Ecore_Timer *base)
 {
    Ecore_Timer *timer = (Ecore_Timer *) EINA_INLIST_GET(base)->next;
+   Ecore_Timer *valid_timer = NULL;
    double maxtime = base->at + precision;
 
-   while ((timer) && ((timer->delete_me) || (timer->just_added)) && (timer->at <= maxtime))
-     timer = (Ecore_Timer *) EINA_INLIST_GET(timer)->next;
+   while ((timer) && (timer->at < maxtime))
+     {
+        if (!((timer->delete_me) || (timer->just_added)))
+           valid_timer = timer;
+        timer = (Ecore_Timer *) EINA_INLIST_GET(timer)->next;
+     }
 
-   if ((!timer) || (timer->at > maxtime))
-     return NULL;
-
-   return timer;
+   return valid_timer;
 }
 
 double
@@ -612,8 +614,7 @@ _ecore_timer_next_get(void)
    if (!first) return -1;
 
    second = _ecore_timer_after_get(first);
-   if (second)
-     first = second;
+   if (second) first = second;
 
    now = ecore_loop_time_get();
    in = first->at - now;
