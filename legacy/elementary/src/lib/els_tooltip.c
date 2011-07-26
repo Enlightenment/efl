@@ -246,7 +246,7 @@ _elm_tooltip_reconfigure(Elm_Tooltip *tt)
    double rel_x, rel_y;
    Eina_Bool inside_eventarea;
 #ifdef HAVE_ELEMENTARY_X
-   Ecore_X_Window xwin;
+   Ecore_X_Window xwin = 0;
 #endif
 
    _elm_tooltip_reconfigure_job_stop(tt);
