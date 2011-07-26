@@ -10923,6 +10923,13 @@ extern "C" {
     *   pinched out.  "- @c multi,pinch,in" - This is called when the genlist is
     *   multi-touch pinched in.
     * - @c "swipe" - This is called when the genlist is swiped.
+    *
+    * @section Genlist_Examples Examples
+    *
+    * Here is a list of examples that use the genlist, trying to show some of
+    * its capabilities:
+    * - @ref genlist_example_01
+    * - @ref genlist_example_02
     */
 
    /**

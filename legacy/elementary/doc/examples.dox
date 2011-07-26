@@ -58,6 +58,10 @@
  * @ref index_example_02
  *
  * @ref gengrid_example
+ *
+ * @ref genlist_example_01
+ *
+ * @ref genlist_example_02
  */
 
 /**
@@ -3645,6 +3649,206 @@
  */
 
 /**
+ * @page genlist_example_01
+ *
+ * This example creates a simple genlist with a small number of items and
+ * a callback that is called whenever an item is selected. All the properties of
+ * this genlist are the default ones. The full code for this example can be seen
+ * at @ref genlist_example_01_c.
+ *
+ * For the simplest list that you plan to create, it's necessary to define some
+ * of the basic functions that are used for creating each list item, and
+ * associating them with the "item class" for that list. The item class is just
+ * an struct that contains pointers to the specific list item functions that are
+ * common to all the items of the list.
+ *
+ * Let's show it by example. Our item class is declared globally and static as
+ * it will be the only item class that we need (we are just creating one list):
+ *
+ * @dontinclude genlist_example_01.c
+ * @skip static Elm_Genlist
+ * @until static Elm_Genlist
+ *
+ * This item class will be used for every item that we create. The only
+ * functions that we are going to set are @c label_get and @c icon_get. As the
+ * name suggests, they are used by the genlist to generate the label for the
+ * respective item, and to generate icon(s) to it too. Both the label and icon
+ * get functions can be called more than once for each item, with different @c
+ * part parameters, which represent where in the theme of the item that label or
+ * icon is going to be set.
+ *
+ * The default theme for the genlist contains only one area for label, and two
+ * areas for icon ("elm.swallow.icon" and "elm.swallow.end"). Since we just want
+ * to set the first icon (that will be at the left side of the label), we
+ * compare the part name given with "elm.swallow.icon". Notice that the
+ * @c label_get function must return a strduped string, that will be freed later
+ * automatically by the list. Here's the code for @c label_get and @c icon_get:
+ *
+ * @until static void
+ *
+ * We will also provide a function that will be called whenever an item is
+ * selected in the genlist. However, this function is not part of the item
+ * class, it will be passed for each item being added to the genlist explicitly.
+ * Notice the similarity of the function signature with those used by @c
+ * evas_object_smart_callback_add:
+ *
+ * @until }
+ *
+ * Now let's show the code used for really creating the list. Skipping
+ * boilerplate code used for creating a window and background, the first piece
+ * of code specific to our genlist example is setting the pointer functions of
+ * the item class to our above defined functions:
+ *
+ * @skip _itc
+ * @until func.del
+ *
+ * Notice that we also choose to use the "default" style for our genlist items.
+ * Another interesting point is that @c state_get and @c del are set to @c NULL,
+ * since we don't need these functions now. @c del doesn't need to be used
+ * because we don't add any data that must be freed to our items, and @c
+ * state_get is also not used since all of our items are the same and don't need
+ * to have different states to be used for each item. Finally we create our
+ * list:
+ *
+ * @until genlist_add
+ *
+ * Now we append several items to the list, and for all of them we need to give
+ * the list pointer, a pointer to the item class, the data that will be used
+ * with that item, a pointer to the parent of this item if it is in a group type
+ * list (this is not the case so we pass @c NULL), possible flags for this item,
+ * the callback for when the item is selected, and the data pointer that will be
+ * given to the selected callback.
+ *
+ * @until }
+ *
+ * The rest of the code is also common to all the other examples, so it will be
+ * omitted here (look at the full source code link above if you need it).
+ *
+ * You can try to play with this example, and see the selected callback being
+ * called whenever an item is clicked. It also already has some features enabled
+ * by default, like vertical bounce animation when reaching the end of the list,
+ * automatically visible/invisible scrollbar, etc. Look at the @ref
+ * genlist_example_02 to see an example of setting these properties to the list.
+ *
+ * The current example will look like this when running:
+ *
+ * @image html screenshots/genlist_example_01.png
+ * @image latex screenshots/genlistexample_01.eps width=\textwidth
+ */
+
+/**
+ * @page genlist_example_02
+ *
+ * This example is very similar to the @ref genlist_example_01, but it fetch
+ * most of the properties of the genlist and displays them on startup (thus
+ * getting the default value for them) and then set them to some other values,
+ * to show how to use that API. The full source code is at @ref
+ * genlist_example_02_c.
+ *
+ * Considering that the base code for instantiating a genlist was already
+ * described in the previous example, we are going to focus on the new code.
+ *
+ * Just a small difference for the @c _item_label_get function, we are going to
+ * store the time that this function was called. This is the "realized" time,
+ * the time when the visual representation of this item was created. This is the
+ * code for the @c label_get function:
+ *
+ * @dontinclude genlist_example_02.c
+ * @skip static char
+ * @until return strdup
+ *
+ * Now let's go to the list creation and setup. First, just after creating the
+ * list, we get most of the default properties from it, and print them on the
+ * console:
+ *
+ * @skip genlist_add
+ * @until printf("\n")
+ *
+ * We are going to change some of the properties of our list.
+ *
+ * There's no need to call the selected callback at every click, just when the
+ * selected item changes, thus we call elm_genlist_always_select_mode_set() with
+ * false.
+ *
+ * For this list we don't want bounce animations at all, so we set both the
+ * horizontal bounce and the vertical bounce to false with
+ * elm_genlist_bounce_set().
+ *
+ * We also want our list to compress items if they are wider than the list
+ * width (thus we call elm_genlist_compress_mode_set().
+ *
+ * The items have different width, so they are not homogeneous:
+ * elm_genlist_homogeneous_set() is set to false.
+ *
+ * Since the compress mode is active, the call to
+ * elm_genlist_horizontal_mode_set() doesn't make difference, but the current
+ * option would make the list to have at least the width of the largest item.
+ *
+ * This list will support multiple selection, so we call
+ * elm_genlist_multi_select_set() on it.
+ *
+ * The option elm_genlist_height_for_width_mode_set() would allow text block to
+ * wrap lines if the Edje part is configured with "text.min: 0 1", for example.
+ * But since we are compressing the elements to the width of the list, this
+ * option wouldn't take any effect.
+ *
+ * We want the vertical scrollbar to be always displayed, and the orizontal one
+ * to never be displayed, and set this with elm_genlist_scroller_policy_set().
+ *
+ * The timeout to consider a longpress is set to half of a second with
+ * elm_genlist_longpress_timeout_set().
+ *
+ * We also change the block count to a smaller value, but that should have not
+ * impact on performance since the number of visible items is too small. We just
+ * increase the granularity of the block count (setting it to have at most 4
+ * items).
+ *
+ * @until block_count_set
+ *
+ * Now let's add elements to the list:
+ *
+ * @until item_append
+ * @until }
+ *
+ * It's exactly the same as the previous example. The difference is on the
+ * behavior of the list, if you try to scroll, select items and so.
+ *
+ * In this example we also need two buttons. One of them, when clicked, will
+ * display several status info about the current selection, the "realized"
+ * items, the item in the middle of the screen, and the current mode and active
+ * item of that mode for the genlist.
+ *
+ * The other button will ask the genlist to "realize" again the items already
+ * "realized", so their respective label_get and icon_get functions will be
+ * called again.
+ *
+ * These are the callbacks for both of these buttons:
+ *
+ * @dontinclude genlist_example_02.c
+ * @skip item_sel_cb
+ * @skip static
+ * @until }
+ * @until }
+ *
+ * Try to scroll, select some items and click on the "Show status" button.
+ * You'll notice that not all items of the list are "realized", thus consuming
+ * just a small amount of memory. The selected items are listed in the order
+ * that they were selected, and the current selected item printed using
+ * elm_genlist_selected_item_get() is the first selected item of the multiple
+ * selection.
+ *
+ * Now resize the window so that you can see the "realized time" of some items.
+ * This is the time of when the label_get function was called. If you click on
+ * the "Realize" button, all the already realized items will be rebuilt, so the
+ * time will be updated for all of them.
+ *
+ * The current example will look like this when running:
+ *
+ * @image html screenshots/genlist_example_02.png
+ * @image latex screenshots/genlistexample_02.eps width=\textwidth
+ */
+
+/**
  * @page bg_example_01_c bg_example_01.c
  * @include bg_example_01.c
  * @example bg_example_01.c
@@ -3766,4 +3970,16 @@
  * @page gengrid_example_c Gengrid example
  * @include gengrid_example.c
  * @example gengrid_example.c
+ */
+
+/**
+ * @page genlist_example_01_c genlist_example_01.c
+ * @include genlist_example_01.c
+ * @example genlist_example_01.c
+ */
+
+/**
+ * @page genlist_example_02_c genlist_example_02.c
+ * @include genlist_example_02.c
+ * @example genlist_example_02.c
  */
