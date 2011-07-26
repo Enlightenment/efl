@@ -326,7 +326,9 @@ static const char vertex_shader[] =
    "}\n";
 
  static const char fragment_shader[] =
+   "#ifdef GL_ES\n"
    "precision mediump float;\n"
+   "#endif\n"
    "uniform vec4 color;\n"
    "uniform vec3 light;\n"
    "varying vec3 rotated_normal;\n"

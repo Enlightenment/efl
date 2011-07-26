@@ -47,7 +47,7 @@ load_shader( GLData *gld, GLenum type, const char *shader_src )
              char* info_log = malloc(sizeof(char) * info_len);
 
              gl->glGetShaderInfoLog(shader, info_len, NULL, info_log);
-             printf("Error compiling shader:\n%s\n", info_log );
+             printf("Error compiling shader:\n%s\n======\n%s\n======\n", info_log, shader_src );
              free(info_log);
           }
         gl->glDeleteShader(shader);
@@ -70,7 +70,9 @@ init_shaders(GLData *gld)
       "}                            \n";
 
    GLbyte fShaderStr[] =
-      "precision mediump float;\n"\
+      "#ifdef GL_ES                                 \n"
+      "precision mediump float;                     \n"
+      "#endif                                       \n"
       "void main()                                  \n"
       "{                                            \n"
       "  gl_FragColor = vec4 ( 1.0, 0.0, 0.0, 1.0 );\n"
