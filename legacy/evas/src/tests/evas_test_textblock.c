@@ -307,7 +307,7 @@ START_TEST(evas_textblock_cursor)
    evas_textblock_cursor_pos_set(cur, 0);
    fail_if(strcmp(evas_textblock_cursor_content_get(cur), "T"));
    evas_textblock_cursor_pos_set(cur, 9);
-   fail_if(strcmp(evas_textblock_cursor_content_get(cur), "\n"));
+   fail_if(strcmp(evas_textblock_cursor_content_get(cur), "br"));
    evas_textblock_cursor_pos_set(cur, 43);
    fail_if(strcmp(evas_textblock_cursor_content_get(cur), "ד"));
 
@@ -1380,7 +1380,7 @@ START_TEST(evas_textblock_formats)
 
    fnode = evas_textblock_node_format_next_get(fnode);
    fail_if(!fnode);
-   fail_if(strcmp(evas_textblock_node_format_text_get(fnode), "\n"));
+   fail_if(strcmp(evas_textblock_node_format_text_get(fnode), "br"));
 
    fnode = evas_textblock_node_format_next_get(fnode);
    fail_if(!fnode);
@@ -1412,7 +1412,7 @@ START_TEST(evas_textblock_formats)
 
    fnode = evas_textblock_node_format_prev_get(fnode);
    fail_if(!fnode);
-   fail_if(strcmp(evas_textblock_node_format_text_get(fnode), "\n"));
+   fail_if(strcmp(evas_textblock_node_format_text_get(fnode), "br"));
 
    fnode = evas_textblock_node_format_prev_get(fnode);
    fail_if(!fnode);
@@ -1579,14 +1579,14 @@ START_TEST(evas_textblock_formats)
    fail_if(!evas_textblock_cursor_char_next(cur));
    fail_if(!evas_textblock_cursor_char_next(cur));
    fail_if(strcmp(evas_textblock_node_format_text_get(
-               evas_textblock_cursor_format_get(cur)), "\n"));
-   fail_if(strcmp(evas_textblock_cursor_content_get(cur), "\n"));
+               evas_textblock_cursor_format_get(cur)), "br"));
+   fail_if(strcmp(evas_textblock_cursor_content_get(cur), "br"));
    fail_if(!evas_textblock_cursor_format_is_visible_get(cur));
    fail_if(!evas_textblock_cursor_char_next(cur));
    fail_if(!evas_textblock_cursor_char_next(cur));
    fail_if(strcmp(evas_textblock_node_format_text_get(
-               evas_textblock_cursor_format_get(cur)), "\t"));
-   fail_if(strcmp(evas_textblock_cursor_content_get(cur), "\t"));
+               evas_textblock_cursor_format_get(cur)), "tab"));
+   fail_if(strcmp(evas_textblock_cursor_content_get(cur), "tab"));
    fail_if(!evas_textblock_cursor_format_is_visible_get(cur));
    fail_if(!evas_textblock_cursor_char_next(cur));
    fail_if(!evas_textblock_cursor_char_next(cur));
