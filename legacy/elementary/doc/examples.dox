@@ -62,6 +62,8 @@
  * @ref genlist_example_01
  *
  * @ref genlist_example_02
+ *
+ * @ref progressbar_example
  */
 
 /**
@@ -3633,7 +3635,7 @@
  *
  * This is how the example program's window looks like:
  * @image html screenshots/gengrid_example.png
- * @image latex screenshots/gengrid_example.eps
+ * @image latex screenshots/gengrid_example.eps width=\textwidth
  *
  * Note that it starts with three items which we included at will:
  * @dontinclude gengrid_example.c
@@ -3997,6 +3999,101 @@
  */
 
 /**
+ * @page progressbar_example Progress bar widget example
+ *
+ * This application is a thorough example of the progress bar widget,
+ * consisting of a window with varios progress bars, each with a given
+ * look/style one can give to those widgets. With two auxiliary
+ * buttons, one can start or stop a timer which will fill in the bars
+ * in synchrony, simulating an underlying task being completed.
+ *
+ * We create @b seven progress bars, being three of them horizontal,
+ * three vertical and a final one under the "wheel" alternate style.
+ *
+ * For the first one, we add a progress bar on total pristine state,
+ * with no other call than the elm_progressbar_add() one:
+ * @dontinclude progressbar_example.c
+ * @skip pb with no label
+ * @until pb1
+ * See, than, that the defaults of a progress bar are:
+ * - no primary label shown,
+ * - unit label set to @c "%.0f %%",
+ * - no icon set
+ *
+ * The second progress bar is given a primary label, <c>"Infinite
+ * bounce"</c>, and, besides, it's set to @b pulse. See how, after one
+ * starts the progress timer, with the "Start" button, it animates
+ * differently than the previous one. It won't account for the
+ * progress, itself, and just dumbly animate a small bar within its
+ * bar region.
+ * @dontinclude progressbar_example.c
+ * @skip pb with label
+ * @until pb2
+ *
+ * Next, comes a progress bar with an @b icon, a primary label and a
+ * @b custom unit label set. It's also made to grow its bar in an
+ * @b inverted manner, so check that out during the timer's progression:
+ * @dontinclude progressbar_example.c
+ * @skip ic1 =
+ * @until pb3
+ * Another important thing in this one is the call to
+ * elm_progressbar_span_size_set() -- this is how we forcefully set a
+ * minimum horizontal size to our whole window! We're not resizing it
+ * manually, as you can see in the @ref progressbar_example_c
+ * "complete code".
+ *
+ * The next three progress bars are just variants on the ones already
+ * shown, but now all being @b vertical. Another time we use one of
+ * than to give the window a minimum vertical size, with
+ * elm_progressbar_span_size_set().  To demonstrate this trick once
+ * more, the fifth one, which is also set to pulse, has a smaller
+ * hardcoded span size:
+ * @dontinclude progressbar_example.c
+ * @skip vertical pb, with pulse
+ * @until pb5
+ *
+ * We end the widget demonstration by showing a progress bar with the
+ * special @b "wheel" progress bar style. One does @b not need to set
+ * it to pulse, with elm_progressbar_pulse_set(), explicitly, because
+ * its theme does not take it in account:
+ * @dontinclude progressbar_example.c
+ * @skip "wheel"
+ * @until pb7
+ *
+ * The two buttons exercising the bars, the facto, follow:
+ * @dontinclude progressbar_example.c
+ * @skip elm_button_add
+ * @until evas_object_show(bt)
+ * @until evas_object_show(bt)
+ *
+ * The first of the callbacks will, for the progress bars set to
+ * pulse, start the pulsing animation at that time. For the others, a
+ * timer callback will take care of updating the values:
+ * @dontinclude progressbar_example.c
+ * @skip static Eina_Bool
+ * @until }
+ * @until }
+ * @until }
+ *
+ * Finally, the callback to stop the progress timer will stop the
+ * pulsing on the pulsing progress bars and, for the others, to delete
+ * the timer which was acting on their values:
+ * @dontinclude progressbar_example.c
+ * @skip end of show
+ * @until }
+ * @until }
+ *
+ * This is how the example program's window looks like:
+ * @image html screenshots/progressbar_example.png
+ * @image latex screenshots/progressbar_example.eps width=\textwidth
+ *
+ * See the full @ref progressbar_example_c "source code" for
+ * this example.
+ *
+ * @example progressbar_example.c
+ */
+
+/**
  * @page bg_example_01_c bg_example_01.c
  * @include bg_example_01.c
  * @example bg_example_01.c
@@ -4130,4 +4227,10 @@
  * @page genlist_example_02_c genlist_example_02.c
  * @include genlist_example_02.c
  * @example genlist_example_02.c
+ */
+
+/**
+ * @page progressbar_example_c Progress bar example
+ * @include progressbar_example.c
+ * @example progressbar_example.c
  */

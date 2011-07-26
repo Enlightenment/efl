@@ -1,28 +1,6 @@
 #include <Elementary.h>
 #include "elm_priv.h"
 
-/**
- * @defgroup Progressbar Progressbar
- *
- * The progressbar adds a widget for representing current progress
- * of a job status
- *
- * A progressbar can be horizontal or vertical. It can contain an Icon and has a
- * primary label as well as a units label (that is formatted with floating
- * point values and thus accepts a printf-style format string, like
- * “%1.2f units”.
- *
- *  Label, Icon and Unit strings/objects are optional.
- *
- * A progressbar may be inverted which means values invert, with high vales being
- * on the left or top and low values on the right or bottom (as opposed to
- * normally being low on the left or top and high on the bottom and right).
- *
- * The span of the progressbar is its length (horizontally or vertically).
- * This will be scaled by the object or applications scaling factor. At any point
- * code can query the progressbar for its value with elm_progressbar_value_get().
- */
-
 #define MIN_RATIO_LVL 0.0
 #define MAX_RATIO_LVL 1.0
 
@@ -219,14 +197,6 @@ _elm_progressbar_label_get(const Evas_Object *obj, const char *item)
    return wd->label;
 }
 
-/**
- * Add a new progressbar to the parent
- *
- * @param parent The parent object
- * @return The new object or NULL if it cannot be created
- *
- * @ingroup Progressbar
- */
 EAPI Evas_Object *
 elm_progressbar_add(Evas_Object *parent)
 {
@@ -271,16 +241,6 @@ elm_progressbar_add(Evas_Object *parent)
    return obj;
 }
 
-/**
- * Normally the progressbar will display and interpret values from low to high.
- * This display a progressbar for jobs with unknow state of progression,
- * (the cursor pulse right to left and left to right, and loop) if pulse is set to 1.
- *
- * @param obj The progressbar object
- * @param pulse The pulse flag. 1 == pulse, 0 == normal
- *
- * @ingroup Progressbar
- */
 EAPI void
 elm_progressbar_pulse_set(Evas_Object *obj, Eina_Bool pulse)
 {
@@ -293,17 +253,6 @@ elm_progressbar_pulse_set(Evas_Object *obj, Eina_Bool pulse)
    _theme_hook(obj);
 }
 
-/**
- * Normally the progressbar will display and interpret values from low to high.
- * This display a progressbar for jobs with unknow state of progression,
- * (the cursor pulse right to left and left to right, and loop) if pulse is set to 1.
- *
- * @param obj The progressbar object
- * @return The pulse flag
- * (1 == pulse, 0 == normal)
- *
- * @ingroup Progressbar
- */
 EAPI Eina_Bool
 elm_progressbar_pulse_get(const Evas_Object *obj)
 {
@@ -313,14 +262,6 @@ elm_progressbar_pulse_get(const Evas_Object *obj)
    return wd->pulse;
 }
 
-/**
- * Stat/Stop de pulse action
- *
- * @param obj The progressbar object
- * @param state The pulse flag. 1 == start pulse, 0 == stop pulse
- *
- * @ingroup Progressbar
- */
 EAPI void
 elm_progressbar_pulse(Evas_Object *obj, Eina_Bool state)
 {
@@ -336,14 +277,6 @@ elm_progressbar_pulse(Evas_Object *obj, Eina_Bool state)
      edje_object_signal_emit(wd->progressbar, "elm,state,pulse,stop", "elm");
 }
 
-/**
- * Set the value the progressbar indicates
- *
- * @param obj The progressbar object
- * @param val The fraction value (must be between 0.0 and 1.0)
- *
- * @ingroup Progressbar
- */
 EAPI void
 elm_progressbar_value_set(Evas_Object *obj, double val)
 {
@@ -358,15 +291,6 @@ elm_progressbar_value_set(Evas_Object *obj, double val)
    _units_set(obj);
 }
 
-
-/**
- * Get the value the progressbar has
- *
- * @param obj The progressbar object
- * @return The value of the progressbar
- *
- * @ingroup Progressbar
- */
 EAPI double
 elm_progressbar_value_get(const Evas_Object *obj)
 {
@@ -376,48 +300,18 @@ elm_progressbar_value_get(const Evas_Object *obj)
    return wd->val;
 }
 
-/**
- * Set the label of the progressbar
- *
- * @param obj The progressbar object
- * @param label The text label string in UTF-8
- *
- * @ingroup Progressbar
- * @deprecated use elm_object_text_set() instead.
- */
 EAPI void
 elm_progressbar_label_set(Evas_Object *obj, const char *label)
 {
    _elm_progressbar_label_set(obj, NULL, label);
 }
 
-/**
- * Get the label of the progressbar
- *
- * @param obj The progressbar object
- * @return The text label string in UTF-8
- *
- * @ingroup Progressbar
- * @deprecated use elm_object_text_set() instead.
- */
 EAPI const char *
 elm_progressbar_label_get(const Evas_Object *obj)
 {
    return _elm_progressbar_label_get(obj, NULL);
 }
 
-/**
- * Set the icon object of the progressbar object
- *
- * Once the icon object is set, a previously set one will be deleted.
- * If you want to keep that old content object, use the
- * elm_progressbar_icon_unset() function.
- *
- * @param obj The progressbar object
- * @param icon The icon object
- *
- * @ingroup Progressbar
- */
 EAPI void
 elm_progressbar_icon_set(Evas_Object *obj, Evas_Object *icon)
 {
@@ -439,14 +333,6 @@ elm_progressbar_icon_set(Evas_Object *obj, Evas_Object *icon)
    _sizing_eval(obj);
 }
 
-/**
- * Get the icon object of the progressbar object
- *
- * @param obj The progressbar object
- * @return The icon object
- *
- * @ingroup Progressbar
- */
 EAPI Evas_Object *
 elm_progressbar_icon_get(const Evas_Object *obj)
 {
@@ -456,16 +342,6 @@ elm_progressbar_icon_get(const Evas_Object *obj)
    return wd->icon;
 }
 
-/**
- * Unset the icon used for the progressbar object
- *
- * Unparent and return the icon object which was set for this widget.
- *
- * @param obj The progressbar object
- * @return The icon object that was being used
- *
- * @ingroup Progressbar
- */
 EAPI Evas_Object *
 elm_progressbar_icon_unset(Evas_Object *obj)
 {
@@ -480,19 +356,6 @@ elm_progressbar_icon_unset(Evas_Object *obj)
    return icon;
 }
 
-/**
- * Set the length of the progression region of the progressbar
- *
- * This sets the minimum width or height (depending on orientation) of the
- * area of the progressbar that allows the progressbar to be dragged around. This in
- * turn affects the objects minimum size (along with icon label and unit
- * text).
- *
- * @param obj The progressbar object
- * @param size The length of the progressbar area
- *
- * @ingroup Progressbar
- */
 EAPI void
 elm_progressbar_span_size_set(Evas_Object *obj, Evas_Coord size)
 {
@@ -509,14 +372,6 @@ elm_progressbar_span_size_set(Evas_Object *obj, Evas_Coord size)
    _sizing_eval(obj);
 }
 
-/**
- * Get the length of the progression region of the progressbar
- *
- * @param obj The progressbar object
- * @return The length of the progressbar area
- *
- * @ingroup Progressbar
- */
 EAPI Evas_Coord
 elm_progressbar_span_size_get(const Evas_Object *obj)
 {
@@ -526,19 +381,6 @@ elm_progressbar_span_size_get(const Evas_Object *obj)
    return wd->size;
 }
 
-/**
- * Set the format string of the unit area
- *
- * If NULL, this disabls the unit area display. If not it sets the format
- * string for the unit text. The unit text is provided a floating point
- * value, so the unit text can display up to 1 floating point falue. Note that
- * this is optional. Use a format string such as "%1.2f meters" for example.
- *
- * @param obj The progressbar object
- * @param units The format string for the units display
- *
- * @ingroup Progressbar
- */
 EAPI void
 elm_progressbar_unit_format_set(Evas_Object *obj, const char *units)
 {
@@ -560,14 +402,6 @@ elm_progressbar_unit_format_set(Evas_Object *obj, const char *units)
    _sizing_eval(obj);
 }
 
-/**
- * Get the format string of the unit area
- *
- * @param obj The progressbar object
- * @return The format string for the units display
- *
- * @ingroup Progressbar
- */
 EAPI const char *
 elm_progressbar_unit_format_get(const Evas_Object *obj)
 {
@@ -577,14 +411,6 @@ elm_progressbar_unit_format_get(const Evas_Object *obj)
    return wd->units;
 }
 
-/**
- * Set orientation of the progressbar
- *
- * @param obj The progressbar object
- * @param horizontal If set, the progressbar will be horizontal
- *
- * @ingroup Progressbar
- */
 EAPI void
 elm_progressbar_horizontal_set(Evas_Object *obj, Eina_Bool horizontal)
 {
@@ -597,15 +423,6 @@ elm_progressbar_horizontal_set(Evas_Object *obj, Eina_Bool horizontal)
    _theme_hook(obj);
 }
 
-/**
- * Gets orientation of the progressbar
- *
- * @param obj The progressbar object
- * @return The orientation
- * (0 = vertical, 1 = horizontal)
- *
- * @ingroup Progressbar
- */
 EAPI Eina_Bool
 elm_progressbar_horizontal_get(const Evas_Object *obj)
 {
@@ -615,19 +432,6 @@ elm_progressbar_horizontal_get(const Evas_Object *obj)
    return wd->horizontal;
 }
 
-/**
- * Invert the progressbar display
- *
- * Normally the progressbar will display and interpret values from low to high
- * and when horizontal that is left to right. When vertical that is top
- * to bottom. This inverts this (so from right to left or bottom to top) if
- * inverted is set to 1.
- *
- * @param obj The progressbar object
- * @param inverted The inverted flag. 1 == inverted, 0 == normal
- *
- * @ingroup Progressbar
- */
 EAPI void
 elm_progressbar_inverted_set(Evas_Object *obj, Eina_Bool inverted)
 {
@@ -646,15 +450,6 @@ elm_progressbar_inverted_set(Evas_Object *obj, Eina_Bool inverted)
    _units_set(obj);
 }
 
-/**
- * Gets if the progressbar will displayed inverted
- *
- * @param obj The progressbar object
- * @return The inverted flag
- * (1 == inverted, 0 == normal)
- *
- * @ingroup Progressbar
- */
 EAPI Eina_Bool
 elm_progressbar_inverted_get(const Evas_Object *obj)
 {

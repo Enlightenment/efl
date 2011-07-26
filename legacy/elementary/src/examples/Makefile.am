@@ -89,7 +89,8 @@ SRCS = \
 	radio_example_01.c \
 	panel_example_01.c \
 	gengrid_example.c \
-	entry_example.c
+	entry_example.c \
+	progressbar_example.c
 
 pkglib_PROGRAMS =
 
@@ -169,7 +170,8 @@ pkglib_PROGRAMS += \
 	genlist_example_01 \
 	genlist_example_02 \
 	genlist_example_03 \
-	entry_example
+	entry_example \
+	progressbar_example
 
 # This variable will hold the list of screenshots that will be made
 # by "make screenshots". Each item in the list is of the form:
@@ -221,7 +223,8 @@ SCREENSHOTS = \
 	toggle_example_01:toggle_example_01.png:0.0 \
 	panel_example_01:panel_example_01.png:0.0 \
 	gengrid_example:gengrid_example.png:0.0 \
-	entry_example:entry_example.png:0.0
+	entry_example:entry_example.png:0.0 \
+	progressbar_example:progressbar_example.png:0.0
 
 HTML_SS_DIR=$(top_builddir)/doc/html/screenshots
 LATEX_SS_DIR=$(top_builddir)/doc/latex/screenshots

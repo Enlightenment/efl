@@ -148,6 +148,9 @@
  * @li @ref Photo
  * @li @ref Photocam
  * @li @ref Progressbar
+ *
+ * @image html img/widget/progressbar/preview-00.png
+ * @image latex img/widget/progressbar/preview-00.eps
  * @li @ref Radio
  *
  * @image html img/widget/radio/preview-00.png

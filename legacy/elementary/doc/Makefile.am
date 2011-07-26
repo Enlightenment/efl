@@ -55,7 +55,8 @@ WGT_PREVIEW = \
 	radio:preview-00.png:widget_preview_radio:60:20 \
 	toggle:preview-00.png:widget_preview_toggle:150:30 \
 	panel:preview-00.png:widget_preview_panel:150:50 \
-	gengrid:preview-00.png:widget_preview_gengrid:200:160
+	gengrid:preview-00.png:widget_preview_gengrid:200:160 \
+	progressbar:preview-00.png:widget_preview_progressbar:150:50
 
 widget-build:
 	@$(MAKE) -C widgets
