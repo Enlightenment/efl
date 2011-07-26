@@ -2077,8 +2077,6 @@ _ecore_xcb_event_handle_generic_event(xcb_generic_event_t *event)
 
    e->evtype = ev->event_type;
 
-   /* FIXME: e->extension check may need to be against xcb_input_id
-    * NB: Have to test this */
    if (e->extension == _ecore_xcb_event_input)
      _ecore_xcb_event_handle_input_event(event);
 
