@@ -279,6 +279,8 @@ _ecore_xcb_events_handle(xcb_generic_event_t *ev)
         return;
      }
 
+   /* FIXME: Filter event for xim when xcb supports xim */
+
    _ecore_xcb_event_handle_any_event(ev);
 
    if (response == XCB_KEY_PRESS)
@@ -2121,7 +2123,6 @@ _ecore_xcb_event_key_press(xcb_generic_event_t *event)
         keyname = buff;
      }
 
-   /* FIXME: Ecore_X_Ic */
    val = 
      _ecore_xcb_keymap_lookup_string(keycode, xevent->state, compose_buffer, 
                                      sizeof(compose_buffer), &sym);
@@ -2192,7 +2193,6 @@ _ecore_xcb_event_key_release(xcb_generic_event_t *event)
         keyname = buff;
      }
 
-   /* FIXME: Ecore_X_Ic */
    val = 
      _ecore_xcb_keymap_lookup_string(keycode, xevent->state, compose_buffer, 
                                      sizeof(compose_buffer), &sym);
