@@ -1916,7 +1916,7 @@ ecore_x_visual_id_get(Ecore_X_Visual visual)
 EAPI Ecore_X_Visual 
 ecore_x_default_visual_get(Ecore_X_Display *disp, Ecore_X_Screen *screen) 
 {
-   return DefaultVisual(disp, screen);
+   return DefaultVisual(disp, ecore_x_screen_index_get(screen));
 }
 
 /**
@@ -1931,7 +1931,7 @@ ecore_x_default_visual_get(Ecore_X_Display *disp, Ecore_X_Screen *screen)
 EAPI Ecore_X_Colormap 
 ecore_x_default_colormap_get(Ecore_X_Display *disp, Ecore_X_Screen *screen) 
 {
-   return DefaultColormap(disp, screen);
+   return DefaultColormap(disp, ecore_x_screen_index_get(screen));
 }
 
 /**
@@ -1946,7 +1946,7 @@ ecore_x_default_colormap_get(Ecore_X_Display *disp, Ecore_X_Screen *screen)
 EAPI int 
 ecore_x_default_depth_get(Ecore_X_Display *disp, Ecore_X_Screen *screen) 
 {
-   return DefaultDepth(disp, screen);
+   return DefaultDepth(disp, ecore_x_screen_index_get(screen));
 }
 
 /*****************************************************************************/
