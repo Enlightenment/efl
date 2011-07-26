@@ -45,7 +45,6 @@ struct _Ecore_IMF_Context_Data
    char          *locale;
    XIM_Im_Info   *im_info;
    int            preedit_length;
-   int            preedit_size;
    int            preedit_cursor;
    Eina_Unicode  *preedit_chars;
    Eina_Bool      use_preedit;
@@ -292,6 +291,14 @@ _ecore_imf_context_xim_reset(Ecore_IMF_Context *ctx)
 
    XFree(preedit_attr);
 
+   if(imf_context_data->preedit_length)
+     {
+        imf_context_data->preedit_length = 0;
+        free(imf_context_data->preedit_chars);
+        imf_context_data->preedit_chars = NULL;
+        ecore_imf_context_preedit_changed_event_add(ctx);
+     }
+
    if(result)
      {
          char *result_utf8 = strdup(result);
@@ -300,12 +307,6 @@ _ecore_imf_context_xim_reset(Ecore_IMF_Context *ctx)
               ecore_imf_context_commit_event_add(ctx, result_utf8);
               free(result_utf8);
            }
-     }
-
-   if(imf_context_data->preedit_length)
-     {
-        imf_context_data->preedit_length = 0;
-        ecore_imf_context_preedit_changed_event_add(ctx);
      }
 
    XFree (result);
@@ -712,6 +713,8 @@ preedit_done_callback(XIC      xic __UNUSED__,
    if(imf_context_data->preedit_length)
      {
         imf_context_data->preedit_length = 0;
+        free(imf_context_data->preedit_chars);
+        imf_context_data->preedit_chars = NULL;
         ecore_imf_context_preedit_changed_event_add(ctx);
      }
 
@@ -768,22 +771,20 @@ preedit_draw_callback(XIC                           xic __UNUSED__,
                       XIMPreeditDrawCallbackStruct *call_data)
 {
    EINA_LOG_DBG("in");
+   Eina_Bool ret = EINA_FALSE;
    Ecore_IMF_Context *ctx = (Ecore_IMF_Context *)client_data;
    Ecore_IMF_Context_Data *imf_context_data = ecore_imf_context_data_get(ctx);
    XIMText *t = call_data->text;
    char *tmp;
    Eina_Unicode *new_text = NULL;
-   int new_length;
+   Eina_UStrbuf *preedit_bufs = NULL;
    int new_text_length;
-   int diff;
-   int chg_first;
-   int chg_length;
-   int i;
 
-   /* XXX */
-   chg_first = CLAMP(call_data->chg_first, 0, imf_context_data->preedit_length);
-   chg_length = CLAMP(call_data->chg_length, 0,
-                      imf_context_data->preedit_length - chg_first);
+   preedit_bufs = eina_ustrbuf_new();
+   if(imf_context_data->preedit_chars) {
+      ret = eina_ustrbuf_append(preedit_bufs, imf_context_data->preedit_chars);
+      if(ret == EINA_FALSE) goto done;
+   }
 
    new_text_length = xim_text_to_utf8(ctx, t, &tmp);
    if(tmp)
@@ -793,52 +794,37 @@ preedit_draw_callback(XIC                           xic __UNUSED__,
         free(tmp);
      }
 
-   diff = new_text_length - chg_length;
-   new_length = imf_context_data->preedit_length + diff;
-   if(new_length > imf_context_data->preedit_size)
-     {
-        Eina_Unicode *tmp_chars = NULL;
-        imf_context_data->preedit_size = new_length;
+   if(t == NULL) {
+      /* delete string */
+      ret = eina_ustrbuf_remove(preedit_bufs,
+                                call_data->chg_first, call_data->chg_length);
+   } else if(call_data->chg_length == 0) {
+      /* insert string */
+      ret = eina_ustrbuf_insert(preedit_bufs, new_text, call_data->chg_first);
+   } else if(call_data->chg_length > 0) {
+      /* replace string */
+      ret = eina_ustrbuf_remove(preedit_bufs,
+                                call_data->chg_first, call_data->chg_length);
+      if(ret == EINA_FALSE) goto done;
 
-        if(imf_context_data->preedit_chars)
-          {
-             tmp_chars = eina_unicode_strdup(imf_context_data->preedit_chars);
-             free(imf_context_data->preedit_chars);
-             imf_context_data->preedit_chars = calloc(new_length + 1,
-                                                      sizeof(Eina_Unicode));
-             eina_unicode_strcpy(imf_context_data->preedit_chars, tmp_chars);
-             free(tmp_chars);
-          }
-        else {
-             imf_context_data->preedit_chars = calloc(new_length + 1,
-                                                      sizeof(Eina_Unicode));
-          }
-        // XXX feedback?
-     }
+      ret = eina_ustrbuf_insert_n(preedit_bufs, new_text, 
+                                  new_text_length, call_data->chg_first);
+      if(ret == EINA_FALSE) goto done;
+   } else {
+      ret = EINA_FALSE;
+   }
 
-   if(diff < 0)
-     {
-        for(i = chg_first + chg_length; i < imf_context_data->preedit_length; i++) {
-             imf_context_data->preedit_chars[i + diff] =
-               imf_context_data->preedit_chars[i];
-          }
-     }
-   else {
-        for(i = imf_context_data->preedit_length - 1; i >= chg_first + chg_length; i--) {
-             imf_context_data->preedit_chars[i + diff] =
-               imf_context_data->preedit_chars[i];
-          }
-     }
+ done:
+   if(ret == EINA_TRUE) {
+      free(imf_context_data->preedit_chars);
+      imf_context_data->preedit_chars = 
+          eina_ustrbuf_string_steal(preedit_bufs);
+      imf_context_data->preedit_length =
+          eina_unicode_strlen(imf_context_data->preedit_chars);
+   }
 
-   for(i = 0; i < new_text_length; i++) {
-        imf_context_data->preedit_chars[chg_first + i] = new_text[i];
-     }
-
-   imf_context_data->preedit_length += diff;
    free(new_text);
-
-   if(imf_context_data->finalizing == EINA_FALSE)
-     ecore_imf_context_preedit_changed_event_add(ctx);
+   eina_ustrbuf_free(preedit_bufs);
 }
 
 static void
@@ -950,6 +936,8 @@ reinitialize_ic(Ecore_IMF_Context *ctx)
         if(imf_context_data->preedit_length)
           {
              imf_context_data->preedit_length = 0;
+             free(imf_context_data->preedit_chars);
+             imf_context_data->preedit_chars = NULL;
              ecore_imf_context_preedit_changed_event_add(ctx);
           }
      }
