@@ -1002,7 +1002,7 @@ elm_genscroller_world_size_set(Evas_Object *obj, Evas_Coord w, Evas_Coord h)
 }
 
 EAPI void
-elm_genscroller_world_size_get(Evas_Object *obj, Evas_Coord *w, Evas_Coord *h)
+elm_genscroller_world_size_get(Evas_Object *obj __UNUSED__, Evas_Coord *w __UNUSED__, Evas_Coord *h __UNUSED__)
 {
 }
 
@@ -1017,41 +1017,41 @@ elm_genscroller_cell_size_set(Evas_Object *obj, int w, int h)
 }
 
 EAPI void
-elm_genscroller_cell_size_get(Evas_Object *obj, int *w, int *h)
+elm_genscroller_cell_size_get(Evas_Object *obj __UNUSED__, int *w __UNUSED__, int *h __UNUSED__)
 {
 }
 
 EAPI void
-elm_genscroller_cell_all_size_set(Evas_Object *obj, Evas_Coord w, Evas_Coord h)
+elm_genscroller_cell_all_size_set(Evas_Object *obj __UNUSED__, Evas_Coord w __UNUSED__, Evas_Coord h __UNUSED__)
 {
 }
 
 EAPI void
-elm_genscroller_cell_row_size_set(Evas_Object *obj, int y, Evas_Coord h)
+elm_genscroller_cell_row_size_set(Evas_Object *obj __UNUSED__, int y __UNUSED__, Evas_Coord h __UNUSED__)
 {
 }
 
 EAPI void
-elm_genscroller_cell_col_size_set(Evas_Object *obj, int x, Evas_Coord w)
+elm_genscroller_cell_col_size_set(Evas_Object *obj __UNUSED__, int x __UNUSED__, Evas_Coord w __UNUSED__)
 {
 }
 
 EAPI void
-elm_genscroller_cell_rows_insert(Evas_Object *obj, int y, int rows)
+elm_genscroller_cell_rows_insert(Evas_Object *obj __UNUSED__, int y __UNUSED__, int rows __UNUSED__)
 {
 }
 
 EAPI void
-elm_genscroller_cell_rows_del(Evas_Object *obj, int y, int rows)
+elm_genscroller_cell_rows_del(Evas_Object *obj __UNUSED__, int y __UNUSED__, int rows __UNUSED__)
 {
 }
 
 EAPI void
-elm_genscroller_cell_cols_insert(Evas_Object *obj, int x, int cols)
+elm_genscroller_cell_cols_insert(Evas_Object *obj __UNUSED__, int x __UNUSED__, int cols __UNUSED__)
 {
 }
 
 EAPI void
-elm_genscroller_cell_cols_del(Evas_Object *obj, int x, int cols)
+elm_genscroller_cell_cols_del(Evas_Object *obj __UNUSED__, int x __UNUSED__, int cols __UNUSED__)
 {
 }
