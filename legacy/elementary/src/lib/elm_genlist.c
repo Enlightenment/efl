@@ -8,191 +8,6 @@
 #define MAX_ITEMS_PER_BLOCK 32
 #define REORDER_EFFECT_TIME 0.5
 
-/**
- * @defgroup Genlist Genlist
- *
- * The aim was to have more expansive list than the simple list in
- * Elementary that could have more flexible items and allow many more entries
- * while still being fast and low on memory usage. At the same time it was
- * also made to be able to do tree structures. But the price to pay is more
- * complex when it comes to usage. If all you want is a simple list with
- * icons and a single label, use the normal List object.
- *
- * Genlist has a fairly large API, mostly because it's relatively complex,
- * trying to be both expansive, powerful and efficient. First we will begin
- * an overview on the theory behind genlist.
- *
- * Evas tracks every object you create. Every time it processes an event
- * (mouse move, down, up etc.) it needs to walk through objects and find out
- * what event that affects. Even worse every time it renders display updates,
- * in order to just calculate what to re-draw, it needs to walk through many
- * many many objects. Thus, the more objects you keep active, the more
- * overhead Evas has in just doing its work. It is advisable to keep your
- * active objects to the minimum working set you need. Also remember that
- * object creation and deletion carries an overhead, so there is a
- * middle-ground, which is not easily determined. But don't keep massive lists
- * of objects you can't see or use. Genlist does this with list objects. It
- * creates and destroys them dynamically as you scroll around. It groups them
- * into blocks so it can determine the visibility etc. of a whole block at
- * once as opposed to having to walk the whole list. This 2-level list allows
- * for very large numbers of items to be in the list (tests have used up to
- * 2,000,000 items). Also genlist employs a queue for adding items. As items
- * may be different sizes, every item added needs to be calculated as to its
- * size and thus this presents a lot of overhead on populating the list, this
- * genlist employs a queue. Any item added is queued and spooled off over
- * time, actually appearing some time later, so if your list has many members
- * you may find it takes a while for them to all appear, with your process
- * consuming a lot of CPU while it is busy spooling.
- *
- * Genlist also implements a tree structure, but it does so with callbacks to
- * the application, with the application filling in tree structures when
- * requested (allowing for efficient building of a very deep tree that could
- * even be used for file-management). See the above smart signal callbacks for
- * details.
- *
- * An item in the genlist world can have 0 or more text labels (they can be
- * regular text or textblock - that's up to the style to determine), 0 or
- * more icons (which are simply objects swallowed into the genlist item) and
- * 0 or more boolean states that can be used for check, radio or other
- * indicators by the edje theme style. An item may be one of several styles
- * (Elementary provides 4 by default - "default", "double_label", "group_index"
- * and "icon_top_text_bottom", but this can be extended by system or
- * application custom themes/overlays/extensions).
- *
- * In order to implement the ability to add and delete items on the fly,
- * Genlist implements a class/callback system where the application provides
- * a structure with information about that type of item (genlist may contain
- * multiple different items with different classes, states and styles).
- * Genlist will call the functions in this struct (methods) when an item is
- * "realized" (that is created dynamically while scrolling). All objects will
- * simply be deleted  when no longer needed with evas_object_del(). The
- * Elm_Genlist_Item_Class structure contains the following members:
- *
- * item_style - This is a constant string and simply defines the name of the
- * item style. It must be specified and the default should be "default".
- *
- * func.label_get - This function is called when an actual item object is
- * created. The data parameter is the data parameter passed to
- * elm_genlist_item_append() and related item creation functions. The obj
- * parameter is the genlist object and the part parameter is the string name
- * of the text part in the edje design that is listed as one of the possible
- * labels that can be set. This function must return a strudup()'ed string as
- * the caller will free() it when done.
- *
- * func.icon_get - This function is called when an actual item object is
- * created. The data parameter is the data parameter passed to
- * elm_genlist_item_append() and related item creation functions. The obj
- * parameter is the genlist object and the part parameter is the string name
- * of the icon part in the edje design that is listed as one of the possible
- * icons that can be set. This must return NULL for no object or a valid
- * object. The object will be deleted by genlist on shutdown or when the item
- * is unrealized.
- *
- * func.state_get - This function is called when an actual item object is
- * created. The data parameter is the data parameter passed to
- * elm_genlist_item_append() and related item creation functions. The obj
- * parameter is the genlist object and the part parameter is the string name
- * of the state part in the edje design that is listed as one of the possible
- * states that can be set. Return 0 for false or 1 for true. Genlist will
- * emit a signal to the edje object with "elm,state,XXX,active" "elm" when
- * true (the default is false), where XXX is the name of the part.
- *
- * func.del - This is called when elm_genlist_item_del() is called on an
- * item, elm_genlist_clear() is called on the genlist, or
- * elm_genlist_item_subitems_clear() is called to clear sub-items. This is
- * intended for use when actual genlist items are deleted, so any backing
- * data attached to the item (e.g. its data parameter on creation) can be
- * deleted.
- *
- * Items can be added by several calls. All of them return a Elm_Genlist_Item
- * handle that is an internal member inside the genlist. They all take a data
- * parameter that is meant to be used for a handle to the applications
- * internal data (eg the struct with the original item data). The parent
- * parameter is the parent genlist item this belongs to if it is a tree or
- * an indexed group, and NULL if there is no parent. The flags can be a bitmask
- * of ELM_GENLIST_ITEM_NONE, ELM_GENLIST_ITEM_SUBITEMS and
- * ELM_GENLIST_ITEM_GROUP. If ELM_GENLIST_ITEM_SUBITEMS is set then this item
- * is displayed as an item that is able to expand and have child items.
- * If ELM_GENLIST_ITEM_GROUP is set then this item is group idex item that is
- * displayed at the top until the next group comes. The func parameter is a
- * convenience callback that is called when the item is selected and the data
- * parameter will be the func_data parameter, obj be the genlist object and
- * event_info will be the genlist item.
- *
- * elm_genlist_item_append() appends an item to the end of the list, or if
- * there is a parent, to the end of all the child items of the parent.
- * elm_genlist_item_prepend() is the same but prepends to the beginning of
- * the list or children list. elm_genlist_item_insert_before() inserts at
- * item before another item and elm_genlist_item_insert_after() inserts after
- * the indicated item.
- *
- * The application can clear the list with elm_genlist_clear() which deletes
- * all the items in the list and elm_genlist_item_del() will delete a specific
- * item. elm_genlist_item_subitems_clear() will clear all items that are
- * children of the indicated parent item.
- *
- * If the application wants multiple items to be able to be selected,
- * elm_genlist_multi_select_set() can enable this. If the list is
- * single-selection only (the default), then elm_genlist_selected_item_get()
- * will return the selected item, if any, or NULL I none is selected. If the
- * list is multi-select then elm_genlist_selected_items_get() will return a
- * list (that is only valid as long as no items are modified (added, deleted,
- * selected or unselected)).
- *
- * To help inspect list items you can jump to the item at the top of the list
- * with elm_genlist_first_item_get() which will return the item pointer, and
- * similarly elm_genlist_last_item_get() gets the item at the end of the list.
- * elm_genlist_item_next_get() and elm_genlist_item_prev_get() get the next
- * and previous items respectively relative to the indicated item. Using
- * these calls you can walk the entire item list/tree. Note that as a tree
- * the items are flattened in the list, so elm_genlist_item_parent_get() will
- * let you know which item is the parent (and thus know how to skip them if
- * wanted).
- *
- * There are also convenience functions. elm_genlist_item_genlist_get() will
- * return the genlist object the item belongs to. elm_genlist_item_show()
- * will make the scroller scroll to show that specific item so its visible.
- * elm_genlist_item_data_get() returns the data pointer set by the item
- * creation functions.
- *
- * If an item changes (state of boolean changes, label or icons change),
- * then use elm_genlist_item_update() to have genlist update the item with
- * the new state. Genlist will re-realize the item thus call the functions
- * in the _Elm_Genlist_Item_Class for that item.
- *
- * To programmatically (un)select an item use elm_genlist_item_selected_set().
- * To get its selected state use elm_genlist_item_selected_get(). Similarly
- * to expand/contract an item and get its expanded state, use
- * elm_genlist_item_expanded_set() and elm_genlist_item_expanded_get(). And
- * again to make an item disabled (unable to be selected and appear
- * differently) use elm_genlist_item_disabled_set() to set this and
- * elm_genlist_item_disabled_get() to get the disabled state.
- *
- * In general to indicate how the genlist should expand items horizontally to
- * fill the list area, use elm_genlist_horizontal_mode_set(). Valid modes are
- * ELM_LIST_LIMIT and ELM_LIST_SCROLL . The default is ELM_LIST_SCROLL. This
- * mode means that if items are too wide to fit, the scroller will scroll
- * horizontally. Otherwise items are expanded to fill the width of the
- * viewport of the scroller. If it is ELM_LIST_LIMIT, items will be expanded
- * to the viewport width and limited to that size. This can be combined with
- * a different style that uses edjes' ellipsis feature (cutting text off like
- * this: "tex...").
- *
- * Items will only call their selection func and callback when first becoming
- * selected. Any further clicks will do nothing, unless you enable always
- * select with elm_genlist_always_select_mode_set(). This means even if
- * selected, every click will make the selected callbacks be called.
- * elm_genlist_no_select_mode_set() will turn off the ability to select
- * items entirely and they will neither appear selected nor call selected
- * callback functions.
- *
- * Remember that you can create new styles and add your own theme augmentation
- * per application with elm_theme_extension_add(). If you absolutely must
- * have a specific style that overrides any theme the user or system sets up
- * you can use elm_theme_overlay_add() to add such a file.
- *
- */
-
 typedef struct _Widget_Data Widget_Data;
 typedef struct _Item_Block  Item_Block;
 typedef struct _Pan         Pan;
@@ -3130,14 +2945,6 @@ _item_auto_scroll(Widget_Data *wd)
      }
 }
 
-/**
- * Add a new Genlist object
- *
- * @param parent The parent object
- * @return The new object or NULL if it cannot be created
- *
- * @ingroup Genlist
- */
 EAPI Evas_Object *
 elm_genlist_add(Evas_Object *parent)
 {
@@ -3549,9 +3356,9 @@ _item_move_before(Elm_Genlist_Item *it, Elm_Genlist_Item *before)
 }
 
 /**
- * Append item to the end of the genlist
+ * Add item to the end of the genlist
  *
- * This appends the given item to the end of the list or the end of
+ * This adds the given item to the end of the list or the end of
  * the children if the parent is given.
  *
  * @param obj The genlist object
@@ -3611,7 +3418,7 @@ elm_genlist_item_append(Evas_Object                  *obj,
 }
 
 /**
- * Prepend item at start of the genlist
+ * Add item at start of the genlist
  *
  * This adds an item to the beginning of the list or beginning of the
  * children of the parent if given.
@@ -3840,15 +3647,6 @@ elm_genlist_item_insert_after(Evas_Object                  *obj,
    return it;
 }
 
-/**
- * Clear the genlist
- *
- * This clears all items in the list, leaving it empty.
- *
- * @param obj The genlist object
- *
- * @ingroup Genlist
- */
 EAPI void
 elm_genlist_clear(Evas_Object *obj)
 {
@@ -3945,17 +3743,6 @@ elm_genlist_clear(Evas_Object *obj)
    evas_event_thaw_eval(evas_object_evas_get(wd->obj));
 }
 
-/**
- * Enable or disable multi-select in the genlist
- *
- * This enables (EINA_TRUE) or disables (EINA_FALSE) multi-select in
- * the list. This allows more than 1 item to be selected.
- *
- * @param obj The genlist object
- * @param multi Multi-select enable/disable
- *
- * @ingroup Genlist
- */
 EAPI void
 elm_genlist_multi_select_set(Evas_Object *obj,
                              Eina_Bool    multi)
@@ -3966,15 +3753,6 @@ elm_genlist_multi_select_set(Evas_Object *obj,
    wd->multi = multi;
 }
 
-/**
- * Gets if multi-select in genlist is enable or disable
- *
- * @param obj The genlist object
- * @return Multi-select enable/disable
- * (EINA_TRUE = enabled/EINA_FALSE = disabled)
- *
- * @ingroup Genlist
- */
 EAPI Eina_Bool
 elm_genlist_multi_select_get(const Evas_Object *obj)
 {
@@ -3984,21 +3762,6 @@ elm_genlist_multi_select_get(const Evas_Object *obj)
    return wd->multi;
 }
 
-/**
- * Get the selectd item in the genlist
- *
- * This gets the selected item in the list (if multi-select is enabled
- * only the first item in the list is selected - which is not very
- * useful, so see elm_genlist_selected_items_get() for when
- * multi-select is used).
- *
- * If no item is selected, NULL is returned.
- *
- * @param obj The genlist object
- * @return The selected item, or NULL if none.
- *
- * @ingroup Genlist
- */
 EAPI Elm_Genlist_Item *
 elm_genlist_selected_item_get(const Evas_Object *obj)
 {
@@ -4009,19 +3772,6 @@ elm_genlist_selected_item_get(const Evas_Object *obj)
    return NULL;
 }
 
-/**
- * Get a list of selected items in the genlist
- *
- * This returns a list of the selected items. This list pointer is
- * only valid so long as no items are selected or unselected (or
- * unselected implicitly by deletion). The list contains
- * Elm_Genlist_Item pointers.
- *
- * @param obj The genlist object
- * @return The list of selected items, nor NULL if none are selected.
- *
- * @ingroup Genlist
- */
 EAPI const Eina_List *
 elm_genlist_selected_items_get(const Evas_Object *obj)
 {
@@ -4031,20 +3781,6 @@ elm_genlist_selected_items_get(const Evas_Object *obj)
    return wd->selected;
 }
 
-/**
- * Get a list of realized items in genlist
- *
- * This returns a list of the realized items in the genlist. The list
- * contains Elm_Genlist_Item pointers. The list must be freed by the
- * caller when done with eina_list_free(). The item pointers in the
- * list are only valid so long as those items are not deleted or the
- * genlist is not deleted.
- *
- * @param obj The genlist object
- * @return The list of realized items, nor NULL if none are realized.
- *
- * @ingroup Genlist
- */
 EAPI Eina_List *
 elm_genlist_realized_items_get(const Evas_Object *obj)
 {
@@ -4075,27 +3811,6 @@ elm_genlist_realized_items_get(const Evas_Object *obj)
    return list;
 }
 
-/**
- * Get the item that is at the x, y canvas coords
- *
- * This returns the item at the given coordinates (which are canvas
- * relative not object-relative). If an item is at that coordinate,
- * that item handle is returned, and if @p posret is not NULL, the
- * integer pointed to is set to a value of -1, 0 or 1, depending if
- * the coordinate is on the upper portion of that item (-1), on the
- * middle section (0) or on the lower part (1). If NULL is returned as
- * an item (no item found there), then posret may indicate -1 or 1
- * based if the coordinate is above or below all items respectively in
- * the genlist.
- *
- * @param it The item
- * @param x The input x coordinate
- * @param y The input y coordinate
- * @param posret The position relative to the item returned here
- * @return The item at the coordinates or NULL if none
- *
- * @ingroup Genlist
- */
 EAPI Elm_Genlist_Item *
 elm_genlist_at_xy_item_get(const Evas_Object *obj,
                            Evas_Coord         x,
@@ -5226,22 +4941,6 @@ elm_genlist_item_cursor_engine_only_get(const Elm_Genlist_Item *item)
    return elm_widget_item_cursor_engine_only_get(item);
 }
 
-/**
- * This sets the horizontal stretching mode
- *
- * This sets the mode used for sizing items horizontally. Valid modes
- * are ELM_LIST_LIMIT and ELM_LIST_SCROLL. The default is
- * ELM_LIST_SCROLL. This mode means that if items are too wide to fit,
- * the scroller will scroll horizontally. Otherwise items are expanded
- * to fill the width of the viewport of the scroller. If it is
- * ELM_LIST_LIMIT, Items will be expanded to the viewport width and
- * limited to that size.
- *
- * @param obj The genlist object
- * @param mode The mode to use
- *
- * @ingroup Genlist
- */
 EAPI void
 elm_genlist_horizontal_mode_set(Evas_Object  *obj,
                                 Elm_List_Mode mode)
@@ -5254,15 +4953,6 @@ elm_genlist_horizontal_mode_set(Evas_Object  *obj,
    _sizing_eval(obj);
 }
 
-/**
- * Gets the horizontal stretching mode
- *
- * @param obj The genlist object
- * @return The mode to use
- * (ELM_LIST_LIMIT, ELM_LIST_SCROLL)
- *
- * @ingroup Genlist
- */
 EAPI Elm_List_Mode
 elm_genlist_horizontal_mode_get(const Evas_Object *obj)
 {
@@ -5272,21 +4962,6 @@ elm_genlist_horizontal_mode_get(const Evas_Object *obj)
    return wd->mode;
 }
 
-/**
- * Set the always select mode.
- *
- * Items will only call their selection func and callback when first
- * becoming selected. Any further clicks will do nothing, unless you
- * enable always select with elm_genlist_always_select_mode_set().
- * This means even if selected, every click will make the selected
- * callbacks be called.
- *
- * @param obj The genlist object
- * @param always_select The always select mode
- * (EINA_TRUE = on, EINA_FALSE = off)
- *
- * @ingroup Genlist
- */
 EAPI void
 elm_genlist_always_select_mode_set(Evas_Object *obj,
                                    Eina_Bool    always_select)
@@ -5297,15 +4972,6 @@ elm_genlist_always_select_mode_set(Evas_Object *obj,
    wd->always_select = always_select;
 }
 
-/**
- * Get the always select mode.
- *
- * @param obj The genlist object
- * @return The always select mode
- * (EINA_TRUE = on, EINA_FALSE = off)
- *
- * @ingroup Genlist
- */
 EAPI Eina_Bool
 elm_genlist_always_select_mode_get(const Evas_Object *obj)
 {
@@ -5315,18 +4981,6 @@ elm_genlist_always_select_mode_get(const Evas_Object *obj)
    return wd->always_select;
 }
 
-/**
- * Set no select mode
- *
- * This will turn off the ability to select items entirely and they
- * will neither appear selected nor call selected callback functions.
- *
- * @param obj The genlist object
- * @param no_select The no select mode
- * (EINA_TRUE = on, EINA_FALSE = off)
- *
- * @ingroup Genlist
- */
 EAPI void
 elm_genlist_no_select_mode_set(Evas_Object *obj,
                                Eina_Bool    no_select)
@@ -5337,15 +4991,6 @@ elm_genlist_no_select_mode_set(Evas_Object *obj,
    wd->no_select = no_select;
 }
 
-/**
- * Gets no select mode
- *
- * @param obj The genlist object
- * @return The no select mode
- * (EINA_TRUE = on, EINA_FALSE = off)
- *
- * @ingroup Genlist
- */
 EAPI Eina_Bool
 elm_genlist_no_select_mode_get(const Evas_Object *obj)
 {
@@ -5355,21 +5000,6 @@ elm_genlist_no_select_mode_get(const Evas_Object *obj)
    return wd->no_select;
 }
 
-/**
- * Set compress mode
- *
- * This will enable the compress mode where items are "compressed"
- * horizontally to fit the genlist scrollable viewport width. This is
- * special for genlist.  Do not rely on
- * elm_genlist_horizontal_mode_set() being set to ELM_LIST_COMPRESS to
- * work as genlist needs to handle it specially.
- *
- * @param obj The genlist object
- * @param compress The compress mode
- * (EINA_TRUE = on, EINA_FALSE = off)
- *
- * @ingroup Genlist
- */
 EAPI void
 elm_genlist_compress_mode_set(Evas_Object *obj,
                               Eina_Bool    compress)
@@ -5381,15 +5011,6 @@ elm_genlist_compress_mode_set(Evas_Object *obj,
    if (!compress) elm_genlist_homogeneous_set(obj, EINA_FALSE);
 }
 
-/**
- * Get the compress mode
- *
- * @param obj The genlist object
- * @return The compress mode
- * (EINA_TRUE = on, EINA_FALSE = off)
- *
- * @ingroup Genlist
- */
 EAPI Eina_Bool
 elm_genlist_compress_mode_get(const Evas_Object *obj)
 {
@@ -5399,29 +5020,6 @@ elm_genlist_compress_mode_get(const Evas_Object *obj)
    return wd->compress;
 }
 
-/**
- * Set height-for-width mode
- *
- * With height-for-width mode the item width will be fixed (restricted
- * to a minimum of) to the list width when calculating its size in
- * order to allow the height to be calculated based on it. This allows,
- * for instance, text block to wrap lines if the Edje part is
- * configured with "text.min: 0 1".
- *
- * @note This mode will make list resize slower as it will have to
- *       recalculate every item height again whenever the list width
- *       changes!
- *
- * @note When height-for-width mode is enabled, it also enables
- *       compress mode (see elm_genlist_compress_mode_set()) and
- *       disables homogeneous (see elm_genlist_homogeneous_set()).
- *
- * @param obj The genlist object
- * @param setting The height-for-width mode (EINA_TRUE = on,
- * EINA_FALSE = off)
- *
- * @ingroup Genlist
- */
 EAPI void
 elm_genlist_height_for_width_mode_set(Evas_Object *obj,
                                       Eina_Bool    height_for_width)
@@ -5437,15 +5035,6 @@ elm_genlist_height_for_width_mode_set(Evas_Object *obj,
      }
 }
 
-/**
- * Get the height-for-width mode
- *
- * @param obj The genlist object
- * @return The height-for-width mode (EINA_TRUE = on, EINA_FALSE =
- * off)
- *
- * @ingroup Genlist
- */
 EAPI Eina_Bool
 elm_genlist_height_for_width_mode_get(const Evas_Object *obj)
 {
@@ -5455,18 +5044,6 @@ elm_genlist_height_for_width_mode_get(const Evas_Object *obj)
    return wd->height_for_width;
 }
 
-/**
- * Set bounce mode
- *
- * This will enable or disable the scroller bounce mode for the
- * genlist. See elm_scroller_bounce_set() for details
- *
- * @param obj The genlist object
- * @param h_bounce Allow bounce horizontally
- * @param v_bounce Allow bounce vertically
- *
- * @ingroup Genlist
- */
 EAPI void
 elm_genlist_bounce_set(Evas_Object *obj,
                        Eina_Bool    h_bounce,
@@ -5478,15 +5055,6 @@ elm_genlist_bounce_set(Evas_Object *obj,
    elm_smart_scroller_bounce_allow_set(wd->scr, h_bounce, v_bounce);
 }
 
-/**
- * Get the bounce mode
- *
- * @param obj The genlist object
- * @param h_bounce Allow bounce horizontally
- * @param v_bounce Allow bounce vertically
- *
- * @ingroup Genlist
- */
 EAPI void
 elm_genlist_bounce_get(const Evas_Object *obj,
                        Eina_Bool         *h_bounce,
@@ -5498,19 +5066,6 @@ elm_genlist_bounce_get(const Evas_Object *obj,
    elm_smart_scroller_bounce_allow_get(wd->scr, h_bounce, v_bounce);
 }
 
-/**
- * Set homogenous mode
- *
- * This will enable the homogeneous mode where items are of the same
- * height and width so that genlist may do the lazy-loading at its
- * maximum. This implies 'compressed' mode.
- *
- * @param obj The genlist object
- * @param homogeneous Assume the items within the genlist are of the
- * same height and width (EINA_TRUE = on, EINA_FALSE = off)
- *
- * @ingroup Genlist
- */
 EAPI void
 elm_genlist_homogeneous_set(Evas_Object *obj,
                             Eina_Bool    homogeneous)
@@ -5522,15 +5077,6 @@ elm_genlist_homogeneous_set(Evas_Object *obj,
    wd->homogeneous = homogeneous;
 }
 
-/**
- * Get the homogenous mode
- *
- * @param obj The genlist object
- * @return Assume the items within the genlist are of the same height
- * and width (EINA_TRUE = on, EINA_FALSE = off)
- *
- * @ingroup Genlist
- */
 EAPI Eina_Bool
 elm_genlist_homogeneous_get(const Evas_Object *obj)
 {
@@ -5540,17 +5086,6 @@ elm_genlist_homogeneous_get(const Evas_Object *obj)
    return wd->homogeneous;
 }
 
-/**
- * Set the maximum number of items within an item block
- *
- * This will configure the block count to tune to the target with
- * particular performance matrix.
- *
- * @param obj The genlist object
- * @param n   Maximum number of items within an item block
- *
- * @ingroup Genlist
- */
 EAPI void
 elm_genlist_block_count_set(Evas_Object *obj,
                             int          n)
@@ -5563,14 +5098,6 @@ elm_genlist_block_count_set(Evas_Object *obj,
    _item_cache_clean(wd);
 }
 
-/**
- * Get the maximum number of items within an item block
- *
- * @param obj The genlist object
- * @return Maximum number of items within an item block
- *
- * @ingroup Genlist
- */
 EAPI int
 elm_genlist_block_count_get(const Evas_Object *obj)
 {
@@ -5580,14 +5107,6 @@ elm_genlist_block_count_get(const Evas_Object *obj)
    return wd->max_items_per_block;
 }
 
-/**
- * Set the timeout in seconds for the longpress event
- *
- * @param obj The genlist object
- * @param timeout timeout in seconds
- *
- * @ingroup Genlist
- */
 EAPI void
 elm_genlist_longpress_timeout_set(Evas_Object *obj,
                                   double       timeout)
@@ -5598,14 +5117,6 @@ elm_genlist_longpress_timeout_set(Evas_Object *obj,
    wd->longpress_timeout = timeout;
 }
 
-/**
- * Get the timeout in seconds for the longpress event
- *
- * @param obj The genlist object
- * @return timeout in seconds
- *
- * @ingroup Genlist
- */
 EAPI double
 elm_genlist_longpress_timeout_get(const Evas_Object *obj)
 {
@@ -5615,22 +5126,6 @@ elm_genlist_longpress_timeout_get(const Evas_Object *obj)
    return wd->longpress_timeout;
 }
 
-/**
- * Set the scrollbar policy
- *
- * This sets the scrollbar visibility policy for the given genlist
- * scroller. ELM_SMART_SCROLLER_POLICY_AUTO means the scrollbar is
- * made visible if it is needed, and otherwise kept hidden.
- * ELM_SMART_SCROLLER_POLICY_ON turns it on all the time, and
- * ELM_SMART_SCROLLER_POLICY_OFF always keeps it off. This applies
- * respectively for the horizontal and vertical scrollbars.
- *
- * @param obj The genlist object
- * @param policy_h Horizontal scrollbar policy
- * @param policy_v Vertical scrollbar policy
- *
- * @ingroup Genlist
- */
 EAPI void
 elm_genlist_scroller_policy_set(Evas_Object        *obj,
                                 Elm_Scroller_Policy policy_h,
@@ -5646,15 +5141,6 @@ elm_genlist_scroller_policy_set(Evas_Object        *obj,
      elm_smart_scroller_policy_set(wd->scr, policy_h, policy_v);
 }
 
-/**
- * Get the scrollbar policy
- *
- * @param obj The genlist object
- * @param policy_h Horizontal scrollbar policy
- * @param policy_v Vertical scrollbar policy
- *
- * @ingroup Genlist
- */
 EAPI void
 elm_genlist_scroller_policy_get(const Evas_Object   *obj,
                                 Elm_Scroller_Policy *policy_h,
@@ -5669,17 +5155,6 @@ elm_genlist_scroller_policy_get(const Evas_Object   *obj,
    if (policy_v) *policy_v = (Elm_Scroller_Policy)s_policy_v;
 }
 
-/**
- * Update the contents of all realized items
- *
- * This updates all realized items by calling all the item class functions again
- * to get the icons, labels and states. Use this when the original
- * item data has changed and the changes are desired to be reflected.
- *
- * @param it The item
- *
- * @ingroup Genlist
- */
 EAPI void
 elm_genlist_realized_items_update(Evas_Object *obj)
 {
