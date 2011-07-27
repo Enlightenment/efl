@@ -282,9 +282,15 @@ _elm_tooltip_reconfigure(Elm_Tooltip *tt)
         if (tt->tt_win)
           {  /* FIXME: hardcoded here is bad */
              if (!strcmp(style, "transparent"))
-               elm_win_transparent_set(tt->tt_win, EINA_TRUE);
+               {
+                  elm_win_alpha_set(tt->tt_win, EINA_TRUE);
+                  elm_win_transparent_set(tt->tt_win, EINA_TRUE);
+               }
              else
-               elm_win_transparent_set(tt->tt_win, EINA_FALSE);
+               {
+                  elm_win_alpha_set(tt->tt_win, EINA_FALSE);
+                  elm_win_transparent_set(tt->tt_win, EINA_FALSE);
+               }
           }
 
         str = edje_object_data_get(tt->tooltip, "pad_x");
