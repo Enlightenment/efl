@@ -465,9 +465,11 @@ test_tooltip(void *data       __UNUSED__,
    elm_list_item_tooltip_content_cb_set(li, _tt_item_icon, NULL, NULL);
    li = elm_list_item_append(lst, "Big Icon Tooltip", NULL, NULL, NULL, NULL);
    elm_list_item_tooltip_content_cb_set(li, _tt_item_icon2, NULL, NULL);
+   elm_list_item_tooltip_style_set(li, "transparent");
    elm_list_item_tooltip_size_restrict_disable(li, EINA_TRUE);
    li = elm_list_item_append(lst, "Insanely Big Icon Tooltip", NULL, NULL, NULL, NULL);
    elm_list_item_tooltip_content_cb_set(li, _tt_item_icon3, NULL, NULL);
+   elm_list_item_tooltip_style_set(li, "transparent");
    elm_list_item_tooltip_size_restrict_disable(li, EINA_TRUE);
    evas_object_size_hint_weight_set(lst, EVAS_HINT_EXPAND,
                                     EVAS_HINT_EXPAND);
