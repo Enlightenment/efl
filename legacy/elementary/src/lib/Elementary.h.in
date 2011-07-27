@@ -14269,7 +14269,7 @@ extern "C" {
 
    /**
     * Insert a new item into the given index widget, using @p cmp_func
-    * function to sort items (by item data).
+    * function to sort items (by item handles).
     *
     * @param obj The index object.
     * @param letter Letter under which the item should be indexed
@@ -15532,13 +15532,13 @@ extern "C" {
     * Get the internal list of items in a given flip selector widget.
     *
     * @param obj The flipselector object
-    * @return The list of items (#Elm_Flipselector_Item as data) or @c
-    * NULL on errors.
+    * @return The list of items (#Elm_Flipselector_Item as data) or
+    * @c NULL on errors.
     *
     * This list is @b not to be modified in any way and must not be
     * freed. Use the list members with functions like
     * elm_flipselector_item_label_set(),
-    * elm_flipselector_item_label_get(), elm_flipselector_item_del(),
+    * elm_flipselector_item_label_get(),
     * elm_flipselector_item_del(),
     * elm_flipselector_item_selected_get(),
     * elm_flipselector_item_selected_set().
