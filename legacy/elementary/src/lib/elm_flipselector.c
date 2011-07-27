@@ -826,8 +826,9 @@ EAPI void
 elm_flipselector_item_del(Elm_Flipselector_Item *item)
 {
    ELM_FLIPSELECTOR_ITEM_CHECK_DELETED_RETURN(item);
-
    Widget_Data *wd;
+   Elm_Flipselector_Item *item2;
+   Eina_List *l;
 
    wd = elm_widget_data_get(item->base.widget);
    if (!wd)
@@ -841,7 +842,26 @@ elm_flipselector_item_del(Elm_Flipselector_Item *item)
 
    _flipselector_walk(wd);
 
-   wd->items = eina_list_remove(wd->items, item);
+   EINA_LIST_FOREACH(wd->items, l, item2)
+     {
+        if (item2 == item)
+          {
+             wd->items = eina_list_remove_list(wd->items, l);
+             if (wd->current == l)
+               {
+                  wd->current = l->prev;
+                  if (!wd->current) wd->current = l->next;
+                  if (wd->current)
+                    {
+                       item2 = wd->current->data;
+                       _send_msg(wd, MSG_FLIP_DOWN, (char *)item2->label);
+                    }
+                  else
+                     _send_msg(wd, MSG_FLIP_DOWN, "");
+               }
+             break;
+          }
+     }
    _item_free(item);
    _sentinel_eval(wd);
 
