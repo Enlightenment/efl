@@ -6917,6 +6917,7 @@ evas_textblock_cursor_format_append(Evas_Textblock_Cursor *cur, const char *form
 
    n = _evas_textblock_node_format_new(o, format);
    is_visible = n->visible;
+   format = n->format;
    if (!cur->node)
      {
 	o->format_nodes = _NODE_FORMAT(eina_inlist_append(
