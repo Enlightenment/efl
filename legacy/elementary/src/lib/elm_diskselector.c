@@ -274,6 +274,7 @@ _theme_hook(Evas_Object * obj)
           {
              _elm_theme_object_set(obj, it->base.view, "diskselector", "item",
                                    elm_widget_style_get(obj));
+             edje_object_part_text_set(it->base.view, "elm.text", it->label);
           }
      }
    else
@@ -282,6 +283,7 @@ _theme_hook(Evas_Object * obj)
           {
              _elm_theme_object_set(obj, it->base.view, "diskselector", "item",
                                    elm_widget_style_get(obj));
+             edje_object_part_text_set(it->base.view, "elm.text", it->label);
           }
      }
    _elm_theme_object_set(obj, wd->right_blank, "diskselector", "item",
