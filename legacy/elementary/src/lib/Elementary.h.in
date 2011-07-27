@@ -4327,60 +4327,6 @@ extern "C" {
     */
 
    /**
-    * @page tutorial_frame Frame example
-    * @dontinclude frame_example_01.c
-    *
-    * In this example we are going to create 4 Frames with different styles and
-    * add a rectangle of different color in each.
-    *
-    * We start we the usual setup code:
-    * @until show(bg)
-    *
-    * And then create one rectangle:
-    * @until show
-    *
-    * To add it in our first frame, which since it doesn't have it's style
-    * specifically set uses the default style:
-    * @until show
-    *
-    * And then create another rectangle:
-    * @until show
-    *
-    * To add it in our second frame, which uses the "pad_small" style, note that
-    * even tough we are setting a text for this frame it won't be show, only the
-    * default style shows the Frame's title:
-    * @until show
-    * @note The "pad_small", "pad_medium", "pad_large" and "pad_huge" styles are
-    * very similar, their only difference is the size of the empty area around
-    * the content of the frame.
-    *
-    * And then create yet another rectangle:
-    * @until show
-    *
-    * To add it in our third frame, which uses the "outdent_top" style, note
-    * that even tough we are setting a text for this frame it won't be show,
-    * only the default style shows the Frame's title:
-    * @until show
-    *
-    * And then create one last rectangle:
-    * @until show
-    *
-    * To add it in our fourth and final frame, which uses the "outdent_bottom"
-    * style, note that even tough we are setting a text for this frame it won't
-    * be show, only the default style shows the Frame's title:
-    * @until show
-    *
-    * And now we are left with just some more setup code:
-    * @until ELM_MAIN()
-    *
-    * Our example will look like this:
-    *
-    * @image html screenshots/frame_example_01.png
-    * @image latex screenshots/frame_example_01.eps width=\textwidth
-    *
-    * @example frame_example_01.c
-    */
-   /**
     * @defgroup Frame Frame
     *
     * @image html img/widget/frame/preview-00.png
@@ -8328,113 +8274,6 @@ extern "C" {
     * try @ref tutorial_anchorblock_example "one".
     */
    /**
-    * @page tutorial_anchorblock_example Anchorblock/Anchorview example
-    * This example will show both Anchorblock and @ref Anchorview,
-    * since both are very similar and it's easier to show them once and side
-    * by side, so the difference is more clear.
-    *
-    * We'll show the relevant snippets of the code here, but the full example
-    * can be found here... sorry, @ref anchorblock_example_01.c "here".
-    *
-    * As for the actual example, it's just a simple window with an anchorblock
-    * and an anchorview, both containing the same text. After including
-    * Elementary.h and declaring some functions we'll need, we jump to our
-    * elm_main (see ELM_MAIN) and create our window.
-    * @dontinclude anchorblock_example_01.c
-    * @skip int
-    * @until const char
-    * @until ;
-    *
-    * With the needed variables declared, we'll create the window and a box to
-    * hold our widgets, but we don't need to go through that here.
-    *
-    * In order to make clear where the anchorblock ends and the anchorview
-    * begins, they'll be each inside a @ref Frame. After creating the frame,
-    * the anchorblock follows.
-    * @skip elm_frame_add
-    * @until elm_frame_content_set
-    *
-    * Nothing out of the ordinary there. What's worth mentioning is the call
-    * to elm_anchorblock_hover_parent_set(). We are telling our widget that
-    * when an anchor is clicked, the hover for the popup will cover the entire
-    * window. This affects the area that will be obscured by the hover and
-    * where clicking will dismiss it, as well as the calculations it does to
-    * inform the best locations where to insert the popups content.
-    * Other than that, the code is pretty standard. We also need to set our
-    * callback for when an anchor is clicked, since it's our task to populate
-    * the popup. There's no default for it.
-    *
-    * The anchorview is no different, we only change a few things so it looks
-    * different.
-    * @until elm_frame_content_set
-    *
-    * Then we run, so stuff works and close our main function in the usual way.
-    * @until ELM_MAIN
-    *
-    * Now, a little note. Normally you would use either one of anchorblock or
-    * anchorview, set your one callback to clicks and do your stuff in there.
-    * In this example, however, there are a few tricks to make it easier to
-    * show both widgets in one go (and to save me some typing). So we have
-    * two callbacks, one per widget, that will call a common function to do
-    * the rest. The trick is using ::Elm_Entry_Anchorblock_Info for the
-    * anchorview too, since both are equal, and passing a callback to use
-    * for our buttons to end the hover, because each widget has a different
-    * function for it.
-    * @until _anchorview_clicked_cb
-    * @until }
-    *
-    * The meat of our popup is in the following function. We check what kind
-    * of menu we need to show, based on the name set to the anchor in the
-    * markup text. If there's no type (something went wrong, no valid contact
-    * in the address list) we are just putting a button that does nothing, but
-    * it's perfectly reasonable to just end the hover and call it quits.
-    *
-    * Our popup will consist of one main button in the middle of our hover,
-    * and possibly a secondary button and a list of other options. We'll create
-    * first our main button and check what kind of popup we need afterwards.
-    * @skip static void
-    * @skip static void
-    * @until eina_stringshare_add
-    * @until }
-    *
-    * Each button has two callbacks, one is our hack to close the hover
-    * properly based on which widget it belongs to, the other a simple
-    * printf that will show the action with the anchors own data. This is
-    * not how you would usually do it. Instead, the common case is to have
-    * one callback for the button that will know which function to call to end
-    * things, but since we are doing it this way it's worth noting that
-    * smart callbacks will be called in reverse in respect to the order they
-    * were added, and since our @c btn_end_cb will close the hover, and thus
-    * delete our buttons, the other callback wouldn't be called if we had
-    * added it before.
-    *
-    * After our telephone popup, there are a few others that are practically
-    * the same, so they won't be shown here.
-    *
-    * Once we are done with that, it's time to place our actions into our
-    * hover. Main button goes in the middle without much questioning, and then
-    * we see if we have a secondary button and a box of extra options.
-    * Because I said so, secondary button goes on either side and box of
-    * options either on top or below the main one, but to choose which
-    * exactly, we use the hints our callback info has, which saves us from
-    * having to do the math and see which side has more space available, with
-    * a little special case where we delete our extra stuff if there's nowhere
-    * to place it.
-    * @skip url:
-    * @skip }
-    * @skip evas_object_smart
-    * @until evas_object_del(box)
-    * @until }
-    * @until }
-    *
-    * The example will look like this:
-    *
-    * @image html screenshots/anchorblock_01.png
-    * @image latex screenshots/anchorblock_01.eps width=\textwidth
-    *
-    * @example anchorblock_example_01.c
-    */
-   /**
     * @addtogroup Anchorblock
     * @{
     */
@@ -12238,49 +12077,6 @@ extern "C" {
     * @}
     */
 
-   /**
-    * @page tutorial_check Check example
-    * @dontinclude check_example_01.c
-    *
-    * This example will show 2 checkboxes, one with just a label and the second
-    * one with both a label and an icon. This example also ilustrates how to
-    * have the checkbox change the value of a variable and how to react to those
-    * changes.
-    *
-    * We will start with the usual setup code:
-    * @until show(bg)
-    *
-    * And now we create our first checkbox, set its label, tell it to change
-    * the value of @p value when the checkbox stats is changed and ask to be
-    * notified of state changes:
-    * @until show
-    *
-    * For our second checkbox we are going to set an icon so we need to create
-    * and icon:
-    * @until show
-    * @note For simplicity we are using a rectangle as icon, but any evas object
-    * can be used.
-    *
-    * And for our second checkbox we set the label, icon and state to true:
-    * @until show
-    *
-    * We now do some more setup:
-    * @until ELM_MAIN
-    *
-    * And finally implement the callback that will be called when the first
-    * checkbox's state changes. This callback will use @p data to print a
-    * message:
-    * @until }
-    * @note This work because @p data is @p value(from the main function) and @p
-    * value is changed when the checkbox is changed.
-    *
-    * Our example will look like this:
-    *
-    * @image html screenshots/check_example_01.png
-    * @image latex screenshots/check_example_01.eps width=\textwidth
-    *
-    * @example check_example_01.c
-    */
    /**
     * @defgroup Check Check
     *
@@ -17453,35 +17249,6 @@ extern "C" {
     * @}
     */
 
-   /**
-    * @page tutorial_colorselector Color selector example
-    * @dontinclude colorselector_example_01.c
-    *
-    * This example shows how to change the color of a rectangle using a color
-    * selector. We aren't going to explain a lot of the code since it's the
-    * usual setup code:
-    * @until show(rect)
-    *
-    * Now that we have a window with background and a rectangle we can create
-    * our color_selector and set it's initial color to fully opaque blue:
-    * @until show
-    *
-    * Next we tell ask to be notified whenever the color changes:
-    * @until changed
-    *
-    * We follow that we some more run of the mill setup code:
-    * @until ELM_MAIN()
-    *
-    * And now get to the callback that sets the color of the rectangle:
-    * @until }
-    *
-    * This example will look like this:
-    *
-    * @image html screenshots/colorselector_example_01.png
-    * @image latex screenshots/colorselector_example_01.eps width=\textwidth
-    *
-    * @example colorselector_example_01.c
-    */
    /**
     * @defgroup Colorselector Colorselector
     *
