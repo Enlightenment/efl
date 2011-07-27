@@ -4714,6 +4714,56 @@
  */
 
 /**
+ * @page tutorial_photocam Photocam example
+ * @dontinclude photocam_example_01.c
+ *
+ * In this example we will have a photocam and a couple of buttons and slider to
+ * control the photocam. To avoid cluttering we'll only show the parts of the
+ * example that relate to the photocam, the full source code can be seen @ref
+ * photocam_example_01.c "here".
+ *
+ * Creating a photocam is as easy as creating any other widget:
+ * @skipline elm_photocam_add
+ *
+ * A photocam is only useful if we have a image on it, so lets set a file for it
+ * to work with:
+ * @until file_set
+ *
+ * We now set the photocam to not bounce horizontally:
+ * @until bounce_set
+ *
+ * And we want to know when the photocam has finished loading the image so:
+ * @until smart_callback
+ *
+ * The reason to know when the image is loaded is so that we can bring the
+ * center of the image into view:
+ * @skip static
+ * @until }
+ *
+ * As mentioned we have 2 buttons in this example, the "Fit" one will cause
+ * the photocam to go in to a zoom mode that makes the image fit inside the
+ * photocam. Tough this has no effect on the image we also print what region was
+ * being viewed before setting the zoom mode:
+ * @until }
+ * @note When in fit mode our slider(explained below) won't work.
+ *
+ * The second button("Unfit") will bring the photocam back into manual zoom
+ * mode:
+ * @until }
+ *
+ * Our slider controls the level of zoom of the photocam:
+ * @until }
+ * @note It is important to note that this only works when in manual zoom mode.
+ *
+ * Our example will initially look like this:
+ *
+ * @image html screenshots/photocam_example_01.png
+ * @image latex screenshots/photocam_example_01.eps width=\textwidth
+ *
+ * @example photocam_example_01.c
+ */
+
+/**
  * @page bg_example_01_c bg_example_01.c
  * @include bg_example_01.c
  * @example bg_example_01.c

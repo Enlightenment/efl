@@ -155,6 +155,9 @@
  * @image latex img/panes.eps
  * @li @ref Photo
  * @li @ref Photocam
+ *
+ * @image html img/widget/photocam/preview-00.png
+ * @image latex img/widget/photocam/preview-00.eps
  * @li @ref Progressbar
  *
  * @image html img/widget/progressbar/preview-00.png

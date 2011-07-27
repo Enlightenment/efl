@@ -95,7 +95,8 @@ SRCS = \
 	entry_example.c \
 	slideshow_example.c \
 	progressbar_example.c \
-	notify_example_01.c
+	notify_example_01.c \
+	photocam_example_01.c
 
 pkglib_PROGRAMS =
 
@@ -180,7 +181,8 @@ pkglib_PROGRAMS += \
 	entry_example \
 	slideshow_example \
 	progressbar_example \
-	notify_example_01
+	notify_example_01 \
+	photocam_example_01
 
 # This variable will hold the list of screenshots that will be made
 # by "make screenshots". Each item in the list is of the form:
@@ -238,7 +240,8 @@ SCREENSHOTS = \
 	progressbar_example:progressbar_example.png:0.0 \
 	notify_example_01:notify_example_01.png:0.0 \
 	notify_example_01:notify_example_01_a.png:6.0 \
-	slideshow_example:slideshow_example.png:1.0
+	slideshow_example:slideshow_example.png:1.0 \
+	photocam_example_01:photocam_example_01.png:3
 
 HTML_SS_DIR=$(top_builddir)/doc/html/screenshots
 LATEX_SS_DIR=$(top_builddir)/doc/latex/screenshots

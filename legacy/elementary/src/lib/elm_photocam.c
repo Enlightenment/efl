@@ -1,48 +1,15 @@
 #include <Elementary.h>
 #include "elm_priv.h"
 
-/**
- * @defgroup Photocam Photocam
- *
- * This is a widget specifically for displaying high-resolution digital
- * camera photos giving speedy feedback (fast load), low memory footprint
- * and zooming and panning as well as fitting logic. It is entirely focused
- * on jpeg images, and takes advantage of properties of the jpeg format (via
- * evas loader features in the jpeg loader).
- *
- * Signals that you can add callbacks for are:
- *
- * "clicked" - This is called when a user has clicked the photo without dragging
- *             around.
- * "press" - This is called when a user has pressed down on the photo.
- * "longpressed" - This is called when a user has pressed down on the photo for
- *                 a long time without dragging around.
- * "clicked,double" - This is called when a user has double-clicked the photo.
- * "load" - Photo load begins.
- * "loaded" - This is called when the image file load is complete for the first
- *            view (low resolution blurry version).
- * "load,detail" - Photo detailed data load begins.
- * "loaded,detail" - This is called when the image file load is complete for
- *                    the detailed image data (full resolution needed).
- * "zoom,start" - Zoom animation started.
- * "zoom,stop" - Zoom animation stopped.
- * "zoom,change" - Zoom changed when using an auto zoom mode.
- * "scroll" - the content has been scrolled (moved)
- * "scroll,anim,start" - scrolling animation has started
- * "scroll,anim,stop" - scrolling animation has stopped
- * "scroll,drag,start" - dragging the contents around has started
- * "scroll,drag,stop" - dragging the contents around has stopped
- *
- * ---
- *
+/*
  * TODO (maybe - optional future stuff):
  *
  * 1. wrap photo in theme edje so u can have styling around photo (like white
  *    photo bordering).
  * 2. exif handling
  * 3. rotation flags in exif handling (nasty! should have rot in evas)
- *
  */
+
 typedef struct _Widget_Data Widget_Data;
 typedef struct _Pan Pan;
 typedef struct _Grid Grid;
@@ -1067,14 +1034,6 @@ _event_hook(Evas_Object *obj, Evas_Object *src __UNUSED__,
    return EINA_TRUE;
 }
 
-/**
- * Add a new Photocam object
- *
- * @param parent The parent object
- * @return The new object or NULL if it cannot be created
- *
- * @ingroup Photocam
- */
 EAPI Evas_Object *
 elm_photocam_add(Evas_Object *parent)
 {
@@ -1175,22 +1134,6 @@ elm_photocam_add(Evas_Object *parent)
    return obj;
 }
 
-/**
- * Set the photo file to be shown
- *
- * This sets (and shows) the specified file (with a relative or absolute path)
- * and will return a load error (same error that
- * evas_object_image_load_error_get() will return). The image will change and
- * adjust its size at this point and begin a background load process for this
- * photo that at some time in the future will be displayed at the full quality
- * needed.
- *
- * @param obj The photocam object
- * @param file The photo file
- * @return The return error (see EVAS_LOAD_ERROR_NONE, EVAS_LOAD_ERROR_GENERIC etc.)
- *
- * @ingroup Photocam
- */
 EAPI Evas_Load_Error
 elm_photocam_file_set(Evas_Object *obj, const char *file)
 {
@@ -1241,14 +1184,6 @@ elm_photocam_file_set(Evas_Object *obj, const char *file)
    return evas_object_image_load_error_get(wd->img);
 }
 
-/*
- * Returns the path of the current image file
- *
- * @param obj The photocam object
- * @return Returns the path
- *
- * @ingroup Photocam
- */
 EAPI const char *
 elm_photocam_file_get(const Evas_Object *obj)
 {
@@ -1258,20 +1193,6 @@ elm_photocam_file_get(const Evas_Object *obj)
    return wd->file;
 }
 
-/**
- * Set the zoom level of the photo
- *
- * This sets the zoom level. 1 will be 1:1 pixel for pixel. 2 will be 2:1
- * (that is 2x2 photo pixels will display as 1 on-screen pixel). 4:1 will be
- * 4x4 photo pixels as 1 screen pixel, and so on. The @p zoom parameter must
- * be greater than 0. It is usggested to stick to powers of 2. (1, 2, 4, 8,
- * 16, 32, etc.).
- *
- * @param obj The photocam object
- * @param zoom The zoom level to set
- *
- * @ingroup Photocam
- */
 EAPI void
 elm_photocam_zoom_set(Evas_Object *obj, double zoom)
 {
@@ -1457,19 +1378,6 @@ done:
      evas_object_smart_callback_call(obj, SIG_ZOOM_CHANGE, NULL);
 }
 
-/**
- * Get the zoom level of the photo
- *
- * This returns the current zoom level of the photocam object. Note that if
- * you set the fill mode to other than ELM_PHOTOCAM_ZOOM_MODE_MANUAL
- * (which is the default), the zoom level may be changed at any time by the
- * photocam object itself to account for photo size and photocam viewpoer size
- *
- * @param obj The photocam object
- * @return The current zoom level
- *
- * @ingroup Photocam
- */
 EAPI double
 elm_photocam_zoom_get(const Evas_Object *obj)
 {
@@ -1479,24 +1387,6 @@ elm_photocam_zoom_get(const Evas_Object *obj)
    return wd->zoom;
 }
 
-/**
- * Set the zoom mode
- *
- * This sets the zoom mode to manual or one of several automatic levels.
- * Manual (ELM_PHOTOCAM_ZOOM_MODE_MANUAL) means that zoom is set manually by
- * elm_photocam_zoom_set() and will stay at that level until changed by code
- * or until zoom mode is changed. This is the default mode.
- * The Automatic modes will allow the photocam object to automatically
- * adjust zoom mode based on properties. ELM_PHOTOCAM_ZOOM_MODE_AUTO_FIT) will
- * adjust zoom so the photo fits EXACTLY inside the scroll frame with no pixels
- * outside this area. ELM_PHOTOCAM_ZOOM_MODE_AUTO_FILL will be similar but
- * ensure no pixels within the frame are left unfilled.
- *
- * @param obj The photocam object
- * @param mode The desired mode
- *
- * @ingroup Photocam
- */
 EAPI void
 elm_photocam_zoom_mode_set(Evas_Object *obj, Elm_Photocam_Zoom_Mode mode)
 {
@@ -1512,16 +1402,6 @@ elm_photocam_zoom_mode_set(Evas_Object *obj, Elm_Photocam_Zoom_Mode mode)
      }
 }
 
-/**
- * Get the zoom mode
- *
- * This gets the current zoom mode of the photocam object
- *
- * @param obj The photocam object
- * @return The current zoom mode
- *
- * @ingroup Photocam
- */
 EAPI Elm_Photocam_Zoom_Mode
 elm_photocam_zoom_mode_get(const Evas_Object *obj)
 {
@@ -1531,19 +1411,6 @@ elm_photocam_zoom_mode_get(const Evas_Object *obj)
    return wd->mode;
 }
 
-/**
- * Get the current image pixel width and height
- *
- * This gets the current photo pixel width and height (for the original).
- * The size will be returned in the integers @p w and @p h that are pointed
- * to.
- *
- * @param obj The photocam object
- * @param w A pointer to the width return
- * @param h A pointer to the height return
- *
- * @ingroup Photocam
- */
 EAPI void
 elm_photocam_image_size_get(const Evas_Object *obj, int *w, int *h)
 {
@@ -1554,12 +1421,6 @@ elm_photocam_image_size_get(const Evas_Object *obj, int *w, int *h)
    if (h) *h = wd->size.imh;
 }
 
-/**
- * Get the current area of the image that is currently shown
- *
- * This gets the region
- *
- */
 EAPI void
 elm_photocam_region_get(const Evas_Object *obj, int *x, int *y, int *w, int *h)
 {
@@ -1612,19 +1473,6 @@ elm_photocam_region_get(const Evas_Object *obj, int *x, int *y, int *w, int *h)
      }
 }
 
-/**
- * Set the viewed portion of the image
- *
- * This sets the region of the image to be viewed
- *
- * @param obj The photocam object
- * @param x X-coordinate of region in image original pixels
- * @param y Y-coordinate of region in image original pixels
- * @param w Width of region in image original pixels
- * @param h Height of region in image original pixels
- *
- * @ingroup Photocam
- */
 EAPI void
 elm_photocam_image_region_show(Evas_Object *obj, int x, int y, int w, int h __UNUSED__)
 {
@@ -1652,19 +1500,6 @@ elm_photocam_image_region_show(Evas_Object *obj, int x, int y, int w, int h __UN
    elm_smart_scroller_child_region_show(wd->scr, rx, ry, rw, rh);
 }
 
-/**
- * Bring in the viewed portion of the image
- *
- * This brings in the region of the image over time
- *
- * @param obj The photocam object
- * @param x X-coordinate of region in image original pixels
- * @param y Y-coordinate of region in image original pixels
- * @param w Width of region in image original pixels
- * @param h Height of region in image original pixels
- *
- * @ingroup Photocam
- */
 EAPI void
 elm_photocam_image_region_bring_in(Evas_Object *obj, int x, int y, int w, int h __UNUSED__)
 {
@@ -1693,18 +1528,6 @@ elm_photocam_image_region_bring_in(Evas_Object *obj, int x, int y, int w, int h 
    elm_smart_scroller_region_bring_in(wd->scr, rx, ry, rw, rh);
 }
 
-/**
- * Set the paused state for photocam
- *
- * This sets the paused state to on (1) or off (0) for photocam. The default
- * is on. This will stop zooming using animation ch change zoom levels and
- * change instantly. This will stop any existing animations that are running.
- *
- * @param obj The photocam object
- * @param paused The pause state to set
- *
- * @ingroup Photocam
- */
 EAPI void
 elm_photocam_paused_set(Evas_Object *obj, Eina_Bool paused)
 {
@@ -1725,16 +1548,6 @@ elm_photocam_paused_set(Evas_Object *obj, Eina_Bool paused)
      }
 }
 
-/**
- * Get the paused state for photocam
- *
- * This gets the current paused state for the photocam object.
- *
- * @param obj The photocam object
- * @return The current paused state
- *
- * @ingroup Photocam
- */
 EAPI Eina_Bool
 elm_photocam_paused_get(const Evas_Object *obj)
 {
@@ -1744,18 +1557,6 @@ elm_photocam_paused_get(const Evas_Object *obj)
    return wd->paused;
 }
 
-/**
- * Get the internal low-res image used for photocam
- *
- * This gets the internal image object inside photocam. Do not modify it. It
- * is for inspection only, and hooking callbacks to. Nothing else. It may be
- * deleted at any time as well.
- *
- * @param obj The photocam object
- * @return The internal image object handle, or NULL if none exists
- *
- * @ingroup Photocam
- */
 EAPI Evas_Object *
 elm_photocam_internal_image_get(const Evas_Object *obj)
 {
@@ -1765,14 +1566,6 @@ elm_photocam_internal_image_get(const Evas_Object *obj)
    return wd->img;
 }
 
-/**
- * Set the photocam scrolling bouncing.
- *
- * @param obj The photocam object
- * @param h_bounce bouncing for horizontal
- * @param v_bounce bouncing for vertical
- * @ingroup Photocam
- */
 EAPI void
 elm_photocam_bounce_set(Evas_Object *obj, Eina_Bool h_bounce, Eina_Bool v_bounce)
 {
@@ -1782,15 +1575,6 @@ elm_photocam_bounce_set(Evas_Object *obj, Eina_Bool h_bounce, Eina_Bool v_bounce
    elm_smart_scroller_bounce_allow_set(wd->scr, h_bounce, v_bounce);
 }
 
-
-/**
- * Get the photocam scrolling bouncing.
- *
- * @param obj The photocam object
- * @param h_bounce bouncing for horizontal
- * @param v_bounce bouncing for vertical
- * @ingroup Photocam
- */
 EAPI void
 elm_photocam_bounce_get(const Evas_Object *obj, Eina_Bool *h_bounce, Eina_Bool *v_bounce)
 {
