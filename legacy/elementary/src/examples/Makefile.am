@@ -84,6 +84,7 @@ SRCS = \
 	genlist_example_03.c \
 	theme_example.edc \
 	layout_example.edc \
+	slider_example.c \
 	ctxpopup_example_01.c \
 	pager_example_01.c \
 	separator_example_01.c \
@@ -155,6 +156,7 @@ pkglib_PROGRAMS += \
 	list_example_01 \
 	list_example_02 \
 	list_example_03 \
+	slider_example \
 	ctxpopup_example_01 \
 	flipselector_example \
 	fileselector_example \
@@ -217,6 +219,7 @@ SCREENSHOTS = \
 	flipselector_example:flipselector_example.png:0.0 \
 	fileselector_example:fileselector_example.png:0.0 \
 	index_example_02:index_example_03.png:0.3 \
+	slider_example:slider_example.png:0.0 \
 	ctxpopup_example_01:ctxpopup_example_01.png:0.0 \
 	pager_example_01:pager_example_01.png:0.0 \
 	separator_example_01:separator_example_01.png:0.0 \

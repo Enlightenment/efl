@@ -1,43 +1,6 @@
 #include <Elementary.h>
 #include "elm_priv.h"
 
-/**
- * @defgroup Slider Slider
- *
- * The slider adds a dragable “slider” widget for selecting the value of
- * something within a range.
- *
- *
- * A slider can be horizontal or vertical. It can contain an Icon and has a
- * primary label as well as a units label (that is formatted with floating
- * point values and thus accepts a printf-style format string, like
- * “%1.2f units”. There is also an indicator string that may be somewhere
- * else (like on the slider itself) that also accepts a format string like
- * units. Label, Icon Unit and Indicator strings/objects are optional.
- *
- * A slider may be inverted which means values invert, with high vales being
- * on the left or top and low values on the right or bottom (as opposed to
- * normally being low on the left or top and high on the bottom and right).
- *
- * The slider should have its minimum and maximum values set by the
- * application with  elm_slider_min_max_set() and value should also be set by
- * the application before use with  elm_slider_value_set(). The span of the
- * slider is its length (horizontally or vertically). This will be scaled by
- * the object or applications scaling factor. At any point code can query the
- * slider for its value with elm_slider_value_get().
- *
- * Signals that you can add callbacks for are:
- *
- * "changed" - Whenever the slider value is changed by the user.
- * "slider,drag,start" - dragging the slider indicator around has started
- * "slider,drag,stop" - dragging the slider indicator around has stopped
- * "delay,changed" - A short time after the value is changed by the user.
- *                   This will be called only when the user stops dragging for
- *                   a very short period or when they release their
- *                   finger/mouse, so it avoids possibly expensive reactions to
- *                   the value change.
- */
-
 typedef struct _Widget_Data Widget_Data;
 
 struct _Widget_Data
@@ -531,14 +494,6 @@ _elm_slider_label_get(const Evas_Object *obj, const char *item)
    return wd->label;
 }
 
-/**
- * Add a new slider to the parent
- *
- * @param parent The parent object
- * @return The new object or NULL if it cannot be created
- *
- * @ingroup Slider
- */
 EAPI Evas_Object *
 elm_slider_add(Evas_Object *parent)
 {
@@ -595,49 +550,18 @@ elm_slider_add(Evas_Object *parent)
    return obj;
 }
 
-/**
- * Set the label of the slider
- *
- * @param obj The slider object
- * @param label The text label string in UTF-8
- *
- * @ingroup Slider
- */
 EAPI void
 elm_slider_label_set(Evas_Object *obj, const char *label)
 {
    _elm_slider_label_set(obj, NULL, label);
 }
 
-/**
- * Get the label of the slider
- *
- * @param obj The slider object
- * @return The text label string in UTF-8
- *
- * @ingroup Slider
- */
 EAPI const char *
 elm_slider_label_get(const Evas_Object *obj)
 {
    return _elm_slider_label_get(obj, NULL);
 }
 
-/**
- * Set the icon object (leftmost widget) of the slider object.
- *
- * Once the icon object is set, a previously set one will be deleted.
- * If you want to keep that old content object, use the
- * elm_slider_icon_unset() function.
- *
- * @param obj The slider object
- * @param icon The icon object
- *
- * @note If the object being set does not have minimum size hints set,
- * it won't get properly displayed.
- *
- * @ingroup Slider
- */
 EAPI void
 elm_slider_icon_set(Evas_Object *obj, Evas_Object *icon)
 {
@@ -659,18 +583,6 @@ elm_slider_icon_set(Evas_Object *obj, Evas_Object *icon)
    _sizing_eval(obj);
 }
 
-/**
- * Unset the leftmost widget of the slider, unparenting and
- * returning it.
- *
- * @param obj The slider object
- * @return the previously set icon sub-object of this slider, on
- * success.
- *
- * @see elm_slider_icon_set()
- *
- * @ingroup Slider
- */
 EAPI Evas_Object *
 elm_slider_icon_unset(Evas_Object *obj)
 {
@@ -690,15 +602,6 @@ elm_slider_icon_unset(Evas_Object *obj)
    return ret;
 }
 
-/**
- * Get the icon object of the slider object. This object is owned by
- * the scrolled entry and should not be modified.
- *
- * @param obj The slider object
- * @return The icon object
- *
- * @ingroup Slider
- */
 EAPI Evas_Object *
 elm_slider_icon_get(const Evas_Object *obj)
 {
@@ -708,19 +611,6 @@ elm_slider_icon_get(const Evas_Object *obj)
    return wd->icon;
 }
 
-/**
- * Set the length of the dragable region of the slider
- *
- * This sets the minimum width or height (depending on orientation) of the
- * area of the slider that allows the slider to be dragged around. This in
- * turn affects the objects minimum size (along with icon label and unit
- * text). Note that this will also get multiplied by the scale factor.
- *
- * @param obj The slider object
- * @param size The length of the slider area
- *
- * @ingroup Slider
- */
 EAPI void
 elm_slider_span_size_set(Evas_Object *obj, Evas_Coord size)
 {
@@ -741,19 +631,6 @@ elm_slider_span_size_set(Evas_Object *obj, Evas_Coord size)
    _sizing_eval(obj);
 }
 
-/**
- * Get the length of the dragable region of the slider
- *
- * This gets the minimum width or height (depending on orientation) of
- * the area of the slider that allows the slider to be dragged
- * around. Note that this will also get multiplied by the scale
- * factor.
- *
- * @param obj The slider object
- * @return The length of the slider area
- *
- * @ingroup Slider
- */
 EAPI Evas_Coord
 elm_slider_span_size_get(const Evas_Object *obj)
 {
@@ -763,19 +640,6 @@ elm_slider_span_size_get(const Evas_Object *obj)
    return wd->size;
 }
 
-/**
- * Set the format string of the unit area
- *
- * If NULL, this disabls the unit area display. If not it sets the format
- * string for the unit text. The unit text is provided a floating point
- * value, so the unit text can display up to 1 floating point value. Note that
- * this is optional. Use a format string such as "%1.2f meters" for example.
- *
- * @param obj The slider object
- * @param units The format string for the units display
- *
- * @ingroup Slider
- */
 EAPI void
 elm_slider_unit_format_set(Evas_Object *obj, const char *units)
 {
@@ -797,19 +661,6 @@ elm_slider_unit_format_set(Evas_Object *obj, const char *units)
    _sizing_eval(obj);
 }
 
-/**
- * Get the format string for the unit area
- *
- * The slider may also display a value (the value of the slider) somewhere
- * (for example above the slider knob that is dragged around). This sets the
- * format string for this. See elm_slider_unit_format_set() for more
- * information on how this works.
- *
- * @param obj The slider object
- * @return The format string for the unit display.
- *
- * @ingroup Slider
- */
 EAPI const char *
 elm_slider_unit_format_get(const Evas_Object *obj)
 {
@@ -819,19 +670,6 @@ elm_slider_unit_format_get(const Evas_Object *obj)
    return wd->units;
 }
 
-/**
- * Set the format string for the indicator area
- *
- * The slider may also display a value (the value of the slider) somewhere
- * (for example above the slider knob that is dragged around). This sets the
- * format string for this. See elm_slider_unit_format_set() for more
- * information on how this works.
- *
- * @param obj The slider object
- * @param indicator The format string for the indicator display
- *
- * @ingroup Slider
- */
 EAPI void
 elm_slider_indicator_format_set(Evas_Object *obj, const char *indicator)
 {
@@ -842,19 +680,6 @@ elm_slider_indicator_format_set(Evas_Object *obj, const char *indicator)
    _indicator_set(obj);
 }
 
-/**
- * Get the format string for the indicator area
- *
- * The slider may also display a value (the value of the slider) somewhere
- * (for example above the slider knob that is dragged around). This sets the
- * format string for this. See elm_slider_indicator_format_set() for more
- * information on how this works.
- *
- * @param obj The slider object
- * @return The format string for the indicator display.
- *
- * @ingroup Slider
- */
 EAPI const char *
 elm_slider_indicator_format_get(const Evas_Object *obj)
 {
@@ -864,14 +689,6 @@ elm_slider_indicator_format_get(const Evas_Object *obj)
    return wd->indicator;
 }
 
-/**
- * Set orientation of the slider
- *
- * @param obj The slider object
- * @param horizontal If set, the slider will be horizontal
- *
- * @ingroup Slider
- */
 EAPI void
 elm_slider_horizontal_set(Evas_Object *obj, Eina_Bool horizontal)
 {
@@ -884,14 +701,6 @@ elm_slider_horizontal_set(Evas_Object *obj, Eina_Bool horizontal)
    _theme_hook(obj);
 }
 
-/**
- * Get orientation of the slider
- *
- * @param obj The slider object
- * @return If @c EINA_TRUE the slider will be horizontal, else it is
- *         vertical.
- * @ingroup Slider
- */
 EAPI Eina_Bool
 elm_slider_horizontal_get(const Evas_Object *obj)
 {
@@ -901,17 +710,6 @@ elm_slider_horizontal_get(const Evas_Object *obj)
    return wd->horizontal;
 }
 
-/**
- * Set the minimum and maximum values for the slider
- *
- * Maximum mut be greater than minimum.
- *
- * @param obj The slider object
- * @param min The minimum value
- * @param max The maximum value
- *
- * @ingroup Slider
- */
 EAPI void
 elm_slider_min_max_set(Evas_Object *obj, double min, double max)
 {
@@ -928,15 +726,6 @@ elm_slider_min_max_set(Evas_Object *obj, double min, double max)
    _indicator_set(obj);
 }
 
-/**
- * Get the minimum and maximum values for the slider
- *
- * @param obj The slider object
- * @param min The pointer to store minimum value, may be @c NULL.
- * @param max The pointer to store maximum value, may be @c NULL.
- *
- * @ingroup Slider
- */
 EAPI void
 elm_slider_min_max_get(const Evas_Object *obj, double *min, double *max)
 {
@@ -949,14 +738,6 @@ elm_slider_min_max_get(const Evas_Object *obj, double *min, double *max)
    if (max) *max = wd->val_max;
 }
 
-/**
- * Set the value the slider indicates
- *
- * @param obj The slider object
- * @param val The value (must be between min and max for the slider)
- *
- * @ingroup Slider
- */
 EAPI void
 elm_slider_value_set(Evas_Object *obj, double val)
 {
@@ -972,14 +753,6 @@ elm_slider_value_set(Evas_Object *obj, double val)
    _indicator_set(obj);
 }
 
-/**
- * Get the value the slider has
- *
- * @param obj The slider object
- * @return The value of the slider
- *
- * @ingroup Slider
- */
 EAPI double
 elm_slider_value_get(const Evas_Object *obj)
 {
@@ -989,19 +762,6 @@ elm_slider_value_get(const Evas_Object *obj)
    return wd->val;
 }
 
-/**
- * Invert the slider display
- *
- * Normally the slider will display and interpret values from low to high
- * and when horizontal that is left to right. When vertical that is top
- * to bottom. This inverts this (so from right to left or bottom to top) if
- * inverted is set to 1.
- *
- * @param obj The slider object
- * @param inverted The inverted flag. 1 == inverted, 0 == normal
- *
- * @ingroup Slider
- */
 EAPI void
 elm_slider_inverted_set(Evas_Object *obj, Eina_Bool inverted)
 {
@@ -1021,13 +781,6 @@ elm_slider_inverted_set(Evas_Object *obj, Eina_Bool inverted)
    _indicator_set(obj);
 }
 
-/**
- * Get if the slider display is inverted (backwards)
- *
- * @param obj The slider object
- * @return If @c EINA_TRUE the slider will be inverted.
- * @ingroup Slider
- */
 EAPI Eina_Bool
 elm_slider_inverted_get(const Evas_Object *obj)
 {
@@ -1037,19 +790,6 @@ elm_slider_inverted_get(const Evas_Object *obj)
    return wd->inverted;
 }
 
-/**
- * Set the format function pointer for the indicator area
- *
- * Set the callback function to format the indicator string.
- * See elm_slider_indicator_format_set() for more info on how this works.
- *
- * @param obj The slider object
- * @param indicator The format string for the indicator display
- * @param func The indicator format function
- * @param free_func The freeing function for the format string
- *
- * @ingroup Slider
- */
 EAPI void
 elm_slider_indicator_format_function_set(Evas_Object *obj, const char *(*func)(double val), void (*free_func)(const char *str))
 {
@@ -1061,19 +801,6 @@ elm_slider_indicator_format_function_set(Evas_Object *obj, const char *(*func)(d
    _indicator_set(obj);
 }
 
-/**
- * Set the format function pointer for the units area
- *
- * Set the callback function to format the indicator string.
- * See elm_slider_units_format_set() for more info on how this works.
- *
- * @param obj The slider object
- * @param indicator The format string for the units display
- * @param func The units format function
- * @param free_func The freeing function for the format string
- *
- * @ingroup Slider
- */
 EAPI void
 elm_slider_units_format_function_set(Evas_Object *obj, const char *(*func)(double val), void (*free_func)(const char *str))
 {
@@ -1085,21 +812,6 @@ elm_slider_units_format_function_set(Evas_Object *obj, const char *(*func)(doubl
    _indicator_set(obj);
 }
 
-/**
- * Set the end object (rightmost widget) of the slider object.
- *
- * Once the end object is set, a previously set one will be deleted.
- * If you want to keep that old content object, use the
- * elm_button_end_unset() function.
- *
- * @param obj The slider object
- * @param end The end object
- *
- * @note If the object being set does not have minimum size hints set,
- * it won't get properly displayed.
- *
- * @ingroup Slider
- */
 EAPI void
 elm_slider_end_set(Evas_Object *obj, Evas_Object *end)
 {
@@ -1121,18 +833,6 @@ elm_slider_end_set(Evas_Object *obj, Evas_Object *end)
    _sizing_eval(obj);
 }
 
-/**
- * Unset the rightmost widget of the slider, unparenting and
- * returning it.
- *
- * @param obj The slider object
- * @return the previously set end sub-object of this slider, on
- * success.
- *
- * @see elm_slider_end_set()
- *
- * @ingroup Slider
- */
 EAPI Evas_Object *
 elm_slider_end_unset(Evas_Object *obj)
 {
@@ -1152,15 +852,6 @@ elm_slider_end_unset(Evas_Object *obj)
    return ret;
 }
 
-/**
- * Get the end icon object of the slider object. This object is owned
- * by the scrolled entry and should not be modified.
- *
- * @param obj The slider object
- * @return The end icon object
- *
- * @ingroup Slider
- */
 EAPI Evas_Object *
 elm_slider_end_get(const Evas_Object *obj)
 {
@@ -1170,18 +861,6 @@ elm_slider_end_get(const Evas_Object *obj)
    return wd->end;
 }
 
-/**
- * Set whether to the slider indicator (augmented knob) at all.
- *
- * @param obj The slider object
- * @param show @c EINA_TRUE will make it show it, @c EINA_FALSE will
- * let the knob alwayes at default size.
- *
- * @note It will conflict with elm_slider_indicator_format_set(), if
- * you wanted those effects.
- *
- * @ingroup Slider
- */
 EAPI void
 elm_slider_indicator_show_set(Evas_Object *obj, Eina_Bool show)
 {
@@ -1197,16 +876,6 @@ elm_slider_indicator_show_set(Evas_Object *obj, Eina_Bool show)
    }
 }
 
-/**
- * Get the state of indicator in the slider (if it's being shown or
- * not).
- *
- * @param obj The slider object
- * @return @c EINA_TRUE if the indicator is being shown, @c EINA_FALSE
- * otherwise.
- *
- *  @ingroup Slider
- */
 EAPI Eina_Bool
 elm_slider_indicator_show_get(const Evas_Object *obj)
 {

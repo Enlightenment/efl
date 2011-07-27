@@ -33,6 +33,8 @@
  *
  * @ref spinner_example
  *
+ * @ref slider_example
+ *
  * @ref clock_example
  *
  * @ref diskselector_example_01
@@ -1478,6 +1480,104 @@
  * See the full @ref spinner_example_c "source code" for this example.
  *
  * @example spinner_example.c
+ */
+
+/**
+ * @page slider_example Slider widget example
+ *
+ * This code places seven Elementary slider widgets on a window, each of
+ * them exemplifying a part of the widget's API.
+ *
+ * The first of them is the default slider:
+ * @dontinclude slider_example.c
+ * @skipline elm_slider_add
+ * @until evas_object_show
+ *
+ * As you see, the defaults for a slider are:
+ * @li horizontal
+ * @li no label
+ * @li no values (on indicator or unit labels)
+ *
+ * Actually it's pretty useless this way. So let's learn how to improve it.
+ *
+ * If some decoration is required, a label can be set, and icon before and
+ * after the bar as well. On the second slider will add a @c home icon
+ * and a @c folder icon at @c end.
+ * @skipline text_set
+ * @until end_set
+ *
+ * If the bar size need to be changed, it can be done with span set function,
+ * that doesn't accounts other widget's parts size. Also the bar can starts
+ * with a not default value (0.0), as we done on third slider:
+ * @skipline value_set
+ * @skipline span_size_set
+ *
+ * So far, users won't be able to see the slider value. If it's required,
+ * it can be displayed in two different areas, units label or above
+ * the indicator.
+ *
+ * Let's place a units label on our widget, and also let's set minimum and
+ * maximum value (uses 0.0 and 1.0 by default):
+ * @skipline unit_format_set
+ * @skipline min_max_set
+ *
+ * If above the indicator is the place to display the value, just set it.
+ * Also, is possible to invert a bar, as you can see:
+ * @skipline indicator_format_set
+ * @skipline inverted_set
+ *
+ * But if you require to use a function a bit more customized to show the value,
+ * is possible to registry a callback function that will be called
+ * to display unit or indicator label. Only the value will be passed to this
+ * function, that should return a string.
+ * In this case, a function to free this string will be required.
+ *
+ * Let's exemplify with indicator label on our sixth slider:
+ * @dontinclude slider_example.c
+ * @skip static
+ * @skip }
+ * @skip static
+ * @skip }
+ * @skip static
+ * @skip }
+ * @skipline static
+ * @until }
+ * @until }
+ *
+ * Setting callback functions:
+ * @skipline indicator_format_function_set
+ * @skipline _indicator_free
+ *
+ * Also, a slider can be displayed vertically:
+ * @dontinclude slider_example.c
+ * @skipline elm_slider_horizontal_set
+ *
+ * Finally the last widget will exemplify how to listen to widget's signals,
+ * <tt> changed </tt> and <tt> delay,changed </tt>. First we need to
+ * implement callback functions that will simply print slider's value:
+ * @dontinclude slider_example.c
+ * @skip static
+ * @skip }
+ * @skipline static
+ * @until }
+ * @until }
+ *
+ * The first callback function should be called everytime value changes,
+ * the second one only after user stops to increment or decrement. Try
+ * to keep arrows pressed and check the difference.
+ * @skip smart_callback
+ * @skipline smart_callback
+ * @skipline smart_callback
+ *
+ * See the full @ref slider_example.c "example", whose window should
+ * look like this picture:
+ *
+ * @image html screenshots/slider_example.png
+ * @image latex screenshots/slider_example.eps width=\textwidth
+ *
+ * See the full @ref slider_example_c "source code" for this example.
+ *
+ * @example slider_example.c
  */
 
 /**

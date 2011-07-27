@@ -163,6 +163,9 @@
  * @image html img/widget/separator/preview-00.png
  * @image latex img/widget/separator/preview-00.eps
  * @li @ref Slider
+ *
+ * @image html img/widget/slider/preview-00.png
+ * @image latex img/widget/slider/preview-00.eps
  * @li @ref Slideshow
  * @li @ref Spinner
  *
