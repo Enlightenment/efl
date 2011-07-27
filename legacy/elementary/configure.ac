@@ -210,22 +210,14 @@ PKG_CHECK_MODULES([ELEMENTARY],
     eina >= 1.0.999
     eet >= 1.4.0
     evas >= 1.0.999
-    ecore >= 1.0.0
-    ecore-evas >= 1.0.0
-    ecore-file >= 1.0.0
-    ecore-imf >= 1.0.0
+    ecore >= 1.0.999
+    ecore-evas >= 1.0.999
+    ecore-file >= 1.0.999
+    ecore-imf >= 1.0.999
+    ecore-con >= 1.0.999
     edje >= 1.0.999
    ]
 )
-
-PKG_CHECK_MODULES([ECORE_CON],
-	[ecore-con],
-	[
-	 have_ecore_con="yes"
-	 AC_DEFINE(HAVE_ECORE_CON, 1, [Use Ecore_Con for downloding files])
-	 requirement_elm="ecore-con ${requirement_elm}"
-	],
-	[have_ecore_con="no"])
 
 PKG_CHECK_MODULES([EIO],
 	[eio],
@@ -641,8 +633,8 @@ echo "  eet......................: ${eet_eet}"
 echo "  edje_cc..................: ${edje_cc}"
 echo
 echo "  Build elementary_test....: ${have_elementary_test}"
-echo "  Examples.............: ${enable_build_examples}"
-echo "  Examples installed...: ${enable_install_examples}"
+echo "  Examples.................: ${enable_build_examples}"
+echo "  Examples installed.......: ${enable_install_examples}"
 echo "  Build elementary_config..: ${have_elementary_config}"
 echo
 echo "Compilation................: make (or gmake)"

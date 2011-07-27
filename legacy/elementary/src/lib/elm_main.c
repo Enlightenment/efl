@@ -674,6 +674,8 @@ elm_quicklaunch_sub_init(int    argc,
           }
         ecore_evas_init(); // FIXME: check errors
         ecore_imf_init();
+        ecore_con_init();
+        ecore_con_url_init();
      }
    return _elm_sub_init_count;
 }
@@ -693,6 +695,8 @@ elm_quicklaunch_sub_shutdown(void)
      {
         _elm_win_shutdown();
         _elm_module_shutdown();
+        ecore_con_url_shutdown();
+        ecore_con_shutdown();
         ecore_imf_shutdown();
         ecore_evas_shutdown();
 #define ENGINE_COMPARE(name) (!strcmp(_elm_config->engine, name))
