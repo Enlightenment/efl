@@ -410,6 +410,16 @@ _elm_tooltip_reconfigure(Elm_Tooltip *tt)
         else if (ty + th >= ch - tt->pad.by) ty = ch - th - tt->pad.by;
      }
 
+   if (tx + tw > cw)
+     {
+        if (abs(tx - tw) < (tx + tw) - cw)
+          tx -= tw;
+     }
+   if (ty + th > ch)
+     {
+        if (abs(ty - th) < (ty + th) - ch)
+          ty -= th;
+     }
    evas_object_move(tt->tt_win ? : tt->tooltip, tx, ty);
    evas_object_resize(tt->tt_win ? : tt->tooltip, tw, th);
    evas_object_show(tt->tooltip);
