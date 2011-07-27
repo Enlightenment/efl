@@ -1,21 +1,6 @@
 #include <Elementary.h>
 #include "elm_priv.h"
 
-/**
- * @defgroup Notify Notify
- *
- * Display a window in a particular region of the application (top,
- * bottom, etc.  A timeout can be set to automatically close the
- * window. This is so that, after an evas_object_show() on a notify
- * object, if a timeout was set on it, it will <b>automatically</b>
- * get hidden after that time.
- *
- * Signals that you can add callbacks for are:
- *
- * "timeout" - when timeout happens on notify and it's hidden
- * "block,clicked" - when it's hidden by a click outside of the notify's view
- */
-
 typedef struct _Widget_Data Widget_Data;
 
 struct _Widget_Data
@@ -428,14 +413,6 @@ _elm_notify_focus_next_hook(const Evas_Object *obj, Elm_Focus_Direction dir, Eva
    return elm_widget_focus_next_get(cur, dir, next);
 }
 
-/**
- * Add a new notify to the parent
- *
- * @param parent The parent object
- * @return The new object or NULL if it cannot be created
- *
- * @ingroup Notify
- */
 EAPI Evas_Object *
 elm_notify_add(Evas_Object *parent)
 {
@@ -476,18 +453,6 @@ elm_notify_add(Evas_Object *parent)
    return obj;
 }
 
-/**
- * Set the content of the notify widget
- *
- * Once the content object is set, a previously set one will be deleted.
- * If you want to keep that old content object, use the
- * elm_notify_content_unset() function.
- *
- * @param obj The notify object
- * @param content The content will be filled in this notify object
- *
- * @ingroup Notify
- */
 EAPI void
 elm_notify_content_set(Evas_Object *obj, Evas_Object *content)
 {
@@ -511,16 +476,6 @@ elm_notify_content_set(Evas_Object *obj, Evas_Object *content)
    _calc(obj);
 }
 
-/**
- * Unset the content of the notify widget
- *
- * Unparent and return the content object which was set for this widget
- *
- * @param obj The notify object
- * @return The content that was being used
- *
- * @ingroup Notify
- */
 EAPI Evas_Object *
 elm_notify_content_unset(Evas_Object *obj)
 {
@@ -536,14 +491,6 @@ elm_notify_content_unset(Evas_Object *obj)
    return content;
 }
 
-/**
- * Return the content of the notify widget
- *
- * @param obj The notify object
- * @return The content that is being used
- *
- * @ingroup Notify
- */
 EAPI Evas_Object *
 elm_notify_content_get(const Evas_Object *obj)
 {
@@ -554,17 +501,6 @@ elm_notify_content_get(const Evas_Object *obj)
    return wd->content;
 }
 
-/**
- * Set the notify parent
- *
- * Once the parent object is set, a previously set one will be disconnected
- * and replaced.
- *
- * @param obj The notify object
- * @param content The new parent
- *
- * @ingroup Notify
- */
 EAPI void
 elm_notify_parent_set(Evas_Object *obj, Evas_Object *parent)
 {
@@ -607,14 +543,6 @@ elm_notify_parent_set(Evas_Object *obj, Evas_Object *parent)
    _calc(obj);
 }
 
-/**
- * Get the notify parent
- *
- * @param obj The notify object
- * @return The parent
- *
- * @ingroup Notify
- */
 EAPI Evas_Object *
 elm_notify_parent_get(const Evas_Object *obj)
 {
@@ -624,14 +552,6 @@ elm_notify_parent_get(const Evas_Object *obj)
    return wd->parent;
 }
 
-/**
- * Set the orientation
- *
- * @param obj The notify object
- * @param orient The new orientation
- *
- * @ingroup Notify
- */
 EAPI void
 elm_notify_orient_set(Evas_Object *obj, Elm_Notify_Orient orient)
 {
@@ -644,10 +564,6 @@ elm_notify_orient_set(Evas_Object *obj, Elm_Notify_Orient orient)
    _resize(obj, NULL, obj, NULL);
 }
 
-/**
- * Return the orientation
- * @param obj the notify objects
- */
 EAPI Elm_Notify_Orient
 elm_notify_orient_get(const Evas_Object *obj)
 {
@@ -657,25 +573,6 @@ elm_notify_orient_get(const Evas_Object *obj)
    return wd->orient;
 }
 
-/**
- * Set the time interval after which the notify window is going to be
- * hidden.
- *
- * @param obj The notify object
- * @param time The new timeout
- *
- * As said previously, an evas_object_show() on a notify object which
- * had a timeout set by this function will trigger a timer to
- * automatically hide it again. So, any order one calls
- * elm_notify_timeout_set() and evas_object_show() on the same object
- * (at hidden state) will behave the same.
- *
- * @note Set a value <= 0.0 to disable a running timer.
- *
- * @note If the value > 0.0 and the notify is previously visible, the
- * timer will be started with this value, canceling any running timer.
- *
- */
 EAPI void
 elm_notify_timeout_set(Evas_Object *obj, double timeout)
 {
@@ -686,10 +583,6 @@ elm_notify_timeout_set(Evas_Object *obj, double timeout)
    _timer_init(obj, wd);
 }
 
-/**
- * Return the timeout value (in seconds)
- * @param obj the notify object
- */
 EAPI double
 elm_notify_timeout_get(const Evas_Object *obj)
 {
@@ -699,16 +592,6 @@ elm_notify_timeout_get(const Evas_Object *obj)
    return wd->timeout;
 }
 
-/**
- * When true if the user clicks outside the window the events will be
- * catch by the others widgets, else the events are block and the signal
- * dismiss will be sent when the user click outside the window.
- *
- * @note The default value is EINA_TRUE.
- *
- * @param obj The notify object
- * @param repeats EINA_TRUE Events are repeats, else no
- */
 EAPI void
 elm_notify_repeat_events_set(Evas_Object *obj, Eina_Bool repeat)
 {
@@ -729,10 +612,6 @@ elm_notify_repeat_events_set(Evas_Object *obj, Eina_Bool repeat)
      evas_object_del(wd->block_events);
 }
 
-/**
- * Return true if events are repeat below the notify object
- * @param obj the notify object
- */
 EAPI Eina_Bool
 elm_notify_repeat_events_get(const Evas_Object *obj)
 {

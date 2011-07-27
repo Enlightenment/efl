@@ -4194,6 +4194,60 @@
  */
 
 /**
+ * @page tutorial_notify Notify example
+ * @dontinclude notify_example_01.c
+ *
+ * In this example we will have 3 notifys in 3 different positions. The first of
+ * which will dissapear after 5 seconds or when a click outside it occurs, the
+ * second and third will not dissapear and differ from each other only in
+ * position.
+ *
+ * We start our example with the usual stuff you've seen in other examples:
+ * @until show(bx)
+ *
+ * We now create a label to use as the content of our first notify:
+ * @until show
+ *
+ * Having the label we move to creating our notify, telling it to block events,
+ * setting its timeout(to autohide it):
+ * @until pack_end
+ *
+ * To have the notify dissapear when a click outside its area occur we have to
+ * listen to its "block,clicked" signal:
+ * @until smart_callback
+ *
+ * Our callback will look like this:
+ * @skip static
+ * @until }
+ * @dontinclude notify_example_01.c
+ *
+ * Next we create another label and another notify. Note, however, that this
+ * time we don't set a timeout and don't have it block events. What we do is set
+ * the orient so that this notify will appear in the bottom of its parent:
+ * @skip smart_callback
+ * @skip content
+ * @until pack_end
+ *
+ * For our third notify the only change is the orient which is now center:
+ * @until pack_end
+ *
+ * Now we tell the main loop to run:
+ * @until ELM_MAIN
+ *
+ * Our example will initially look like this:
+ *
+ * @image html screenshots/notify_example_01.png
+ * @image latex screenshots/notify_example_01.eps width=\textwidth
+ *
+ * Once the first notify is hidden:
+ *
+ * @image html screenshots/notify_example_01_a.png
+ * @image latex screenshots/notify_example_01_a.eps width=\textwidth
+ *
+ * @example notify_example_01.c
+ */
+
+/**
  * @page bg_example_01_c bg_example_01.c
  * @include bg_example_01.c
  * @example bg_example_01.c

@@ -136,6 +136,9 @@
  * @li @ref Mapbuf
  * @li @ref Menu
  * @li @ref Notify
+ *
+ * @image html img/widget/notify/preview-00.png
+ * @image latex img/widget/notify/preview-00.eps
  * @li @ref Pager
  *
  * @image html img/widget/pager/preview-00.png
