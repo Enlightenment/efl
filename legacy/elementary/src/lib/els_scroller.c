@@ -470,6 +470,8 @@ _smart_momentum_end(Smart_Data *sd)
         sd->down.bounce_y_hold = 0;
         sd->down.ax = 0;
         sd->down.ay = 0;
+        sd->down.dx = 0;
+        sd->down.dy = 0;
         sd->down.pdx = 0;
         sd->down.pdy = 0;
      }
@@ -970,19 +972,25 @@ elm_smart_scroller_child_pos_set(Evas_Object *obj, Evas_Coord x, Evas_Coord y)
      edje_object_signal_emit(sd->edje_obj, "elm,action,scroll", "elm");
    if (!sd->down.bounce_x_animator)
      {
-        if ((x < minx) || (x > (mx + minx)))
+        if (((x < minx) && (0 <= sd->down.dx)) || 
+            ((x > (mx + minx)) && (0 >= sd->down.dx)))
           {
              sd->bouncemex = 1;
              bounce_eval(sd);
           }
+        else
+           sd->bouncemex = 0;
      }
    if (!sd->down.bounce_y_animator)
      {
-        if ((y < miny) || (y > my + miny))
+        if (((y < miny) && (0 <= sd->down.dy)) || 
+            ((y > (my + miny)) && (0 >= sd->down.dy)))
           {
              sd->bouncemey = 1;
              bounce_eval(sd);
           }
+        else
+           sd->bouncemey = 0;
      }
    if ((x != px) || (y != py))
      {
