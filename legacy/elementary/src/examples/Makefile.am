@@ -93,6 +93,7 @@ SRCS = \
 	panel_example_01.c \
 	gengrid_example.c \
 	entry_example.c \
+	slideshow_example.c \
 	progressbar_example.c \
 	notify_example_01.c
 
@@ -177,6 +178,7 @@ pkglib_PROGRAMS += \
 	genlist_example_02 \
 	genlist_example_03 \
 	entry_example \
+	slideshow_example \
 	progressbar_example \
 	notify_example_01
 
@@ -235,7 +237,8 @@ SCREENSHOTS = \
 	entry_example:entry_example.png:0.0 \
 	progressbar_example:progressbar_example.png:0.0 \
 	notify_example_01:notify_example_01.png:0.0 \
-	notify_example_01:notify_example_01_a.png:6.0
+	notify_example_01:notify_example_01_a.png:6.0 \
+	slideshow_example:slideshow_example.png:1.0
 
 HTML_SS_DIR=$(top_builddir)/doc/html/screenshots
 LATEX_SS_DIR=$(top_builddir)/doc/latex/screenshots

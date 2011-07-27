@@ -68,6 +68,8 @@
  * @ref genlist_example_02
  *
  * @ref progressbar_example
+ *
+ * @ref slideshow_example
  */
 
 /**
@@ -4362,6 +4364,119 @@
  */
 
 /**
+ * @page slideshow_example Slideshow widget example
+ *
+ * This application is aimed to exemplify the slideshow widget. It
+ * consists of a window with a slideshow widget set as "resize
+ * object", along with a control bar, in the form of a notify. Those
+ * controls will exercise most of the slideshow's API functions.
+ *
+ * We create the slideshow, itself, first, making it @b loop on its
+ * image itens, when in slideshow mode:
+ * @dontinclude slideshow_example.c
+ * @skip slideshow = elm_slideshow_add
+ * @until evas_object_show
+ *
+ * Next, we define the <b>item class</b> for our slideshow
+ * items. Slideshow images are going to be Elementary @ref Photo "photo"
+ * widgets, here, as pointed by our @c get class
+ * function. We'll let the Elementary infrastructure to delete those
+ * objects for us, and, as there's no additional data attached to our
+ * slideshow items, the @c del class function can be left undefined:
+ * @dontinclude slideshow_example.c
+ * @skip itc
+ * @until ;
+ * @dontinclude slideshow_example.c
+ * @skip itc.func
+ * @until = NULL
+ * @dontinclude slideshow_example.c
+ * @skip get our images to make slideshow items
+ * @until }
+ *
+ * We now get to populate the slideshow widget with items. Our images
+ * are going to be some randomly chosen from the Elementary package,
+ * nine of them. For the first eight, we insert them ordered in the
+ * widget, by using elm_slideshow_item_sorted_insert(). The comparing
+ * function will use the image names to sort items. The last item is
+ * inserted at the end of the slideshow's items list, with
+ * elm_slideshow_item_add(). We check out how that list ends with
+ * elm_slideshow_items_get(), than:
+ * @dontinclude slideshow_example.c
+ * @skip static const char *img
+ * @until _2
+ * @dontinclude slideshow_example.c
+ * @skip first =
+ * @until data_get
+ *
+ * Note that we save the pointers to the first and last items in the
+ * slideshow, for future use.
+ *
+ * What follows is the code creating a notify, to be shown over the
+ * slideshow's viewport, with knobs to act on it. We're not showing
+ * that boilerplate code, but only the callbacks attached to the
+ * interesting smart events of those knobs. The first four are
+ * buttons, which will:
+ * - Select the @b next item in the slideshow
+ * - Select the @b previous item in the slideshow
+ * - Select the @b first item in the slideshow
+ * - Select the @b last item in the slideshow
+ *
+ * Check out the code for those four actions, being the two last @c
+ * data pointers the same @c first and @c last pointers we save
+ * before, respectively:
+ * @dontinclude slideshow_example.c
+ * @skip jump to next
+ * @until }
+ * @until }
+ * @until }
+ * @until }
+ *
+ * What follow are two hoversels, meant for one to change the
+ * slideshow's @b transition and @b layout styles, respectively. We
+ * fetch all the available transition and layout names to populate
+ * those widgets and, when one selects any of them, we apply the
+ * corresponding setters on the slideshow:
+ * @dontinclude slideshow_example.c
+ * @skip hv = elm_hoversel_add
+ * @until show(hv)
+ * @until show(hv)
+ * @dontinclude slideshow_example.c
+ * @skip transition changed
+ * @until }
+ * @until }
+ *
+ * For one to change the transition @b time on the slideshow widget,
+ * we use a spinner widget. We set it to the initial value of 3
+ * (seconds), which will be probed by the next knob -- a button
+ * starting the slideshow, de facto. Note that changing the transition
+ * time while a slideshow is already happening will ajust its
+ * transition time:
+ * @dontinclude slideshow_example.c
+ * @skip spin = elm_spinner_add
+ * @until evas_object_show
+ * @dontinclude slideshow_example.c
+ * @skip slideshow transition time has
+ * @until }
+ *
+ * Finally, we have two buttons which will, respectively, start and
+ * stop the slideshow on our widget. Here are their "clicked"
+ * callbacks:
+ * @dontinclude slideshow_example.c
+ * @skip start the show
+ * @until }
+ * @until }
+ *
+ * This is how the example program's window looks like:
+ * @image html screenshots/slideshow_example.png
+ * @image latex screenshots/slideshow_example.eps width=\textwidth
+ *
+ * See the full @ref slideshow_example_c "source code" for
+ * this example.
+ *
+ * @example slideshow_example.c
+ */
+
+/**
  * @page bg_example_01_c bg_example_01.c
  * @include bg_example_01.c
  * @example bg_example_01.c
@@ -4501,4 +4616,10 @@
  * @page progressbar_example_c Progress bar example
  * @include progressbar_example.c
  * @example progressbar_example.c
+ */
+
+/**
+ * @page slideshow_example_c Slideshow example
+ * @include slideshow_example.c
+ * @example slideshow_example.c
  */

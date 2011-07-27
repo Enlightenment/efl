@@ -1,24 +1,6 @@
 #include <Elementary.h>
 #include "elm_priv.h"
 
-/**
- * @defgroup Slideshow Slideshow
- *
- * This object display a list of object (generally a list of images) and some actions like
- * next/previous are used to navigate. The animations are defined in the theme,
- * consequently new animations can be added without having to update the
- * applications.
- *
- * The slideshow use 2 callbacks to create and delete the objects displayed. When an item
- * is displayed the function itc->func.get() is called. This function should create the object,
- * for example the object can be an evas_object_image or a photocam. When an object is no more
- * displayed the function itc->func.del() is called, the user can delete the dana associated to the item.
- *
- * Signals that you can add callbacks for are:
- *
- * "changed" - when the slideshow switch to another item
- */
-
 typedef struct _Widget_Data Widget_Data;
 
 struct _Elm_Slideshow_Item
@@ -344,14 +326,6 @@ _timer_cb(void *data)
    return ECORE_CALLBACK_CANCEL;
 }
 
-/**
- * Add a new slideshow to the parent
- *
- * @param parent The parent object
- * @return The new object or NULL if it cannot be created
- *
- * @ingroup Slideshow
- */
 EAPI Evas_Object *
 elm_slideshow_add(Evas_Object *parent)
 {
@@ -402,16 +376,6 @@ elm_slideshow_add(Evas_Object *parent)
    return obj;
 }
 
-/**
- * Add an object in the list. The object can be a evas object image or a elm photo for example.
- *
- * @param obj The slideshow object
- * @aram itc Callbacks used to create the object and delete the data associated when the item is deleted.
- * @param data Data used by the user to identified the item
- * @return Returns The slideshow item
- *
- * @ingroup Slideshow
- */
 EAPI Elm_Slideshow_Item*
 elm_slideshow_item_add(Evas_Object *obj, const Elm_Slideshow_Item_Class *itc, const void *data)
 {
@@ -432,17 +396,6 @@ elm_slideshow_item_add(Evas_Object *obj, const Elm_Slideshow_Item_Class *itc, co
    return item;
 }
 
-/**
- * Insert an object in the list. The object can be a evas object image or a elm photo for example.
- *
- * @param obj The slideshow object
- * @aram itc Callbacks used to create the object and delete the data associated when the item is deleted.
- * @param data Data used by the user to identified the item
- * @param func The function to compare data
- * @return Returns The slideshow item
- *
- * @ingroup Slideshow
- */
 EAPI Elm_Slideshow_Item*
 elm_slideshow_item_sorted_insert(Evas_Object *obj, const Elm_Slideshow_Item_Class *itc, const void *data, Eina_Compare_Cb func)
 {
@@ -463,14 +416,6 @@ elm_slideshow_item_sorted_insert(Evas_Object *obj, const Elm_Slideshow_Item_Clas
    return item;
 }
 
-/**
- * Go to the item
- *
- * @param obj The slideshow object
- * @param item The item
- *
- * @ingroup Slideshow
- */
 EAPI void
 elm_slideshow_show(Elm_Slideshow_Item *item)
 {
@@ -500,13 +445,6 @@ elm_slideshow_show(Elm_Slideshow_Item *item)
    evas_object_smart_callback_call(item->base.widget, SIG_CHANGED, wd->current);
 }
 
-/**
- * Go to the next item
- *
- * @param obj The slideshow object
- *
- * @ingroup Slideshow
- */
 EAPI void
 elm_slideshow_next(Evas_Object *obj)
 {
@@ -541,13 +479,6 @@ elm_slideshow_next(Evas_Object *obj)
    evas_object_smart_callback_call(obj, SIG_CHANGED, wd->current);
 }
 
-/**
- * Go to the previous item
- *
- * @param obj The slideshow object
- *
- * @ingroup Slideshow
- */
 EAPI void
 elm_slideshow_previous(Evas_Object *obj)
 {
@@ -582,14 +513,6 @@ elm_slideshow_previous(Evas_Object *obj)
    evas_object_smart_callback_call(obj, SIG_CHANGED, wd->current);
 }
 
-/**
- * Returns the list of transitions available.
- *
- * @param obj The slideshow object
- * @return Returns the list of transitions (list of const char*)
- *
- * @ingroup Slideshow
- */
 EAPI const Eina_List *
 elm_slideshow_transitions_get(const Evas_Object *obj)
 {
@@ -599,14 +522,6 @@ elm_slideshow_transitions_get(const Evas_Object *obj)
    return wd->transitions;
 }
 
-/**
- * Returns the list of layouts available.
- *
- * @param obj The slideshow object
- * @return Returns the list of layout (list of const char*)
- *
- * @ingroup Slideshow
- */
 EAPI const Eina_List *
 elm_slideshow_layouts_get(const Evas_Object *obj)
 {
@@ -616,14 +531,6 @@ elm_slideshow_layouts_get(const Evas_Object *obj)
    return wd->layout.list;
 }
 
-/**
- * Set the transition to use
- *
- * @param obj The slideshow object
- * @param transition the new transition
- *
- * @ingroup Slideshow
- */
 EAPI void
 elm_slideshow_transition_set(Evas_Object *obj, const char *transition)
 {
@@ -633,14 +540,6 @@ elm_slideshow_transition_set(Evas_Object *obj, const char *transition)
    eina_stringshare_replace(&wd->transition, transition);
 }
 
-/**
- * Returns the transition to use
- *
- * @param obj The slideshow object
- * @return the transition set
- *
- * @ingroup Slideshow
- */
 EAPI const char *
 elm_slideshow_transition_get(const Evas_Object *obj)
 {
@@ -650,15 +549,6 @@ elm_slideshow_transition_get(const Evas_Object *obj)
    return wd->transition;
 }
 
-/**
- * The slideshow can go to the next item automatically after a few seconds.
- * This method set the timeout to use. A timeout <=0 disable the timer.
- *
- * @param obj The slideshow object
- * @param timeout The new timeout
- *
- * @ingroup Slideshow
- */
 EAPI void
 elm_slideshow_timeout_set(Evas_Object *obj, double timeout)
 {
@@ -672,14 +562,6 @@ elm_slideshow_timeout_set(Evas_Object *obj, double timeout)
      wd->timer = ecore_timer_add(timeout, _timer_cb, obj);
 }
 
-/**
- * Returns the timeout value
- *
- * @param obj The slideshow object
- * @return Returns the timeout
- *
- * @ingroup Slideshow
- */
 EAPI double
 elm_slideshow_timeout_get(const Evas_Object *obj)
 {
@@ -689,14 +571,6 @@ elm_slideshow_timeout_get(const Evas_Object *obj)
    return wd->timeout;
 }
 
-/**
- * Set if the first item should follow the last and vice versa
- *
- * @param obj The slideshow object
- * @param loop if EINA_TRUE, the first item will follow the last and vice versa
- *
- * @ingroup Slideshow
- */
 EAPI void
 elm_slideshow_loop_set(Evas_Object *obj, Eina_Bool loop)
 {
@@ -706,14 +580,6 @@ elm_slideshow_loop_set(Evas_Object *obj, Eina_Bool loop)
    wd->loop = loop;
 }
 
-/**
- * Returns the current layout name
- *
- * @param obj The slideshow object
- * @returns Returns the layout name
- *
- * @ingroup Slideshow
- */
 EAPI const char *
 elm_slideshow_layout_get(const Evas_Object *obj)
 {
@@ -723,14 +589,6 @@ elm_slideshow_layout_get(const Evas_Object *obj)
    return wd->layout.current;
 }
 
-/**
- * Set the layout
- *
- * @param obj The slideshow object
- * @param layout the new layout
- *
- * @ingroup Slideshow
- */
 EAPI void
 elm_slideshow_layout_set(Evas_Object *obj, const char *layout)
 {
@@ -744,14 +602,6 @@ elm_slideshow_layout_set(Evas_Object *obj, const char *layout)
    edje_object_signal_emit(wd->slideshow, buf, "slideshow");
 }
 
-/**
- * Return if the first item should follow the last and vice versa
- *
- * @param obj The slideshow object
- * @returns Returns the loop flag
- *
- * @ingroup Slideshow
- */
 EAPI Eina_Bool
 elm_slideshow_loop_get(const Evas_Object *obj)
 {
@@ -761,13 +611,6 @@ elm_slideshow_loop_get(const Evas_Object *obj)
    return wd->loop;
 }
 
-/**
- * Delete all the items
- *
- * @param obj The slideshow object
- *
- * @ingroup Slideshow
- */
 EAPI void
 elm_slideshow_clear(Evas_Object *obj)
 {
@@ -791,13 +634,6 @@ elm_slideshow_clear(Evas_Object *obj)
      }
 }
 
-/**
- * Delete the item
- *
- * @param item The slideshow item
- *
- * @ingroup Slideshow
- */
 EAPI void
 elm_slideshow_item_del(Elm_Slideshow_Item *item)
 {
@@ -826,13 +662,6 @@ elm_slideshow_item_del(Elm_Slideshow_Item *item)
    free(item);
 }
 
-/**
- * Returns the list of items
- * @param obj The slideshow object
- * @return Returns the list of items (list of Elm_Slideshow_Item).
- *
- * @ingroup Slideshow
- */
 EAPI const Eina_List *
 elm_slideshow_items_get(const Evas_Object *obj)
 {
@@ -842,14 +671,6 @@ elm_slideshow_items_get(const Evas_Object *obj)
    return wd->items;
 }
 
-/**
- * Returns the current item displayed
- *
- * @param obj The slideshow object
- * @return Returns the current item displayed
- *
- * @ingroup Slideshow
- */
 EAPI Elm_Slideshow_Item *
 elm_slideshow_item_current_get(const Evas_Object *obj)
 {
@@ -859,14 +680,6 @@ elm_slideshow_item_current_get(const Evas_Object *obj)
    return wd->current;
 }
 
-/**
- * Returns the evas object associated to an item
- *
- * @param item The slideshow item
- * @return Returns the evas object associated to this item
- *
- * @ingroup Slideshow
- */
 EAPI Evas_Object *
 elm_slideshow_item_object_get(const Elm_Slideshow_Item * item)
 {
@@ -874,14 +687,6 @@ elm_slideshow_item_object_get(const Elm_Slideshow_Item * item)
    return item->base.view;
 }
 
-/**
- * Returns the data associated to an item
- *
- * @param item The slideshow item
- * @return Returns the data associated to this item
- *
- * @ingroup Slideshow
- */
 EAPI void *
 elm_slideshow_item_data_get(const Elm_Slideshow_Item * item)
 {
@@ -889,14 +694,6 @@ elm_slideshow_item_data_get(const Elm_Slideshow_Item * item)
    return elm_widget_item_data_get(item);
 }
 
-/**
- * Returns max amount of cached items before current
- *
- * @param obj The slideshow object
- * @return Returns max amount of cached items
- *
- * @ingroup Slideshow
- */
 EAPI int
 elm_slideshow_cache_before_get(const Evas_Object *obj)
 {
@@ -906,14 +703,6 @@ elm_slideshow_cache_before_get(const Evas_Object *obj)
    return wd->count_item_pre_before;
 }
 
-/**
- * Set max amount of cached items before current
- *
- * @param obj The slideshow object
- * @param count Max amount of cached items
- *
- * @ingroup Slideshow
- */
 EAPI void
 elm_slideshow_cache_before_set(Evas_Object *obj, int count)
 {
@@ -924,14 +713,6 @@ elm_slideshow_cache_before_set(Evas_Object *obj, int count)
    wd->count_item_pre_before = count;
 }
 
-/**
- * Returns max amount of cached items after current
- *
- * @param obj The slideshow object
- * @return Returns max amount of cached items
- *
- * @ingroup Slideshow
- */
 EAPI int
 elm_slideshow_cache_after_get(const Evas_Object *obj)
 {
@@ -941,14 +722,6 @@ elm_slideshow_cache_after_get(const Evas_Object *obj)
    return wd->count_item_pre_after;
 }
 
-/**
- * Set max amount of cached items after current
- *
- * @param obj The slideshow object
- * @param count max amount of cached items
- *
- * @ingroup Slideshow
- */
 EAPI void
 elm_slideshow_cache_after_set(Evas_Object *obj, int count)
 {
@@ -959,15 +732,6 @@ elm_slideshow_cache_after_set(Evas_Object *obj, int count)
    wd->count_item_pre_after = count;
 }
 
-/**
- * Get the nth item of the slideshow
- *
- * @param obj The slideshow object
- * @param nth The number of the element (0 being first)
- * @return The item stored in slideshow at position required
- *
- * @ingroup Slideshow
- */
 EAPI Elm_Slideshow_Item *
 elm_slideshow_item_nth_get(const Evas_Object *obj, unsigned int nth)
 {
@@ -977,14 +741,6 @@ elm_slideshow_item_nth_get(const Evas_Object *obj, unsigned int nth)
    return eina_list_nth(wd->items, nth);
 }
 
-/**
- * Get count of items stored in slideshow
- *
- * @param obj The slideshow object
- * @return The count of items
- *
- * @ingroup Slideshow
- */
 EAPI unsigned int
 elm_slideshow_count_get(const Evas_Object *obj)
 {

@@ -175,6 +175,9 @@
  * @image html img/widget/slider/preview-00.png
  * @image latex img/widget/slider/preview-00.eps
  * @li @ref Slideshow
+ *
+ * @image html img/widget/slideshow/preview-00.png
+ * @image latex img/widget/slideshow/preview-00.eps
  * @li @ref Spinner
  *
  * @image html img/widget/spinner/preview-00.png
