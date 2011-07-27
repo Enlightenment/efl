@@ -814,6 +814,16 @@ elm_icon_fill_outside_set(Evas_Object *obj, Eina_Bool fill_outside)
    _sizing_eval(obj);
 }
 
+EAPI void
+elm_icon_size_get(const Evas_Object *obj, int *w, int *h)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+
+   if (!wd) return;
+   _els_smart_icon_size_get(wd->img, w, h);
+}
+
 EAPI Eina_Bool
 elm_icon_fill_outside_get(const Evas_Object *obj)
 {

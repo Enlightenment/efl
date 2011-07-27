@@ -2165,6 +2165,16 @@ extern "C" {
     */
    EAPI void                  elm_icon_scale_get(const Evas_Object *obj, Eina_Bool *scale_up, Eina_Bool *scale_down) EINA_ARG_NONNULL(1);
    /**
+    * Get the object's image size
+    *
+    * @param obj The icon object
+    * @param w A pointer to store the width in
+    * @param h A pointer to store the height in
+    *
+    * @ingroup Icon
+    */
+   EAPI void                  elm_icon_size_get(const Evas_Object *obj, int *w, int *h) EINA_ARG_NONNULL(1);
+   /**
     * Set if the icon fill the entire object area.
     *
     * @param obj The icon object
