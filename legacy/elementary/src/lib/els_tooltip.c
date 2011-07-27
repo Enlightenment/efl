@@ -266,7 +266,6 @@ _elm_tooltip_reconfigure(Elm_Tooltip *tt)
              ERR("Could not apply the theme to the tooltip! style=%s", style);
              if (tt->tt_win) evas_object_del(tt->tt_win);
              else evas_object_del(tt->tooltip);
-elm_win_transparent_set(tt->tt_win, EINA_TRUE);
              tt->tt_win = NULL;
              tt->tt_evas = NULL;
              tt->tooltip = NULL;
