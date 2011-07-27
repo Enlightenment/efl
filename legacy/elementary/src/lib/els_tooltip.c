@@ -63,7 +63,6 @@ static void _elm_tooltip_show_timer_stop(Elm_Tooltip *tt);
 static void _elm_tooltip_hide(Elm_Tooltip *tt);
 static void _elm_tooltip_data_clean(Elm_Tooltip *tt);
 
-
 static void
 _elm_tooltip_content_changed_hints_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
@@ -114,14 +113,16 @@ _elm_tooltip_show(Elm_Tooltip *tt)
    if (tt->free_size)
      {
         tt->tt_win = elm_win_add(NULL, "tooltip", ELM_WIN_BASIC);
-        elm_win_transparent_set(tt->tt_win, EINA_TRUE);
-        elm_win_override_set(tt->tt_win, EINA_TRUE);
         elm_win_borderless_set(tt->tt_win, EINA_TRUE);
-        elm_object_focus_allow_set(tt->tt_win, EINA_FALSE);
+        elm_win_override_set(tt->tt_win, EINA_TRUE);
         tt->tt_evas = evas_object_evas_get(tt->tt_win);
         tt->tooltip = edje_object_add(tt->tt_evas);
+        evas_object_pass_events_set(tt->tooltip, EINA_TRUE);
         evas_object_move(tt->tooltip, 0, 0);
         elm_win_resize_object_add(tt->tt_win, tt->tooltip);
+#ifdef HAVE_ELEMENTARY_X
+        ecore_x_window_shape_input_rectangle_set(elm_win_xwindow_get(tt->tt_win), 0, 0, 0, 0);
+#endif
         evas_object_show(tt->tt_win);
      }
    else
@@ -222,10 +223,13 @@ _elm_tooltip_hide_anim_cb(void *data)
 static void
 _elm_tooltip_hide_anim_start(Elm_Tooltip *tt)
 {
+   double extra = 0;
    if (tt->hide_timer) return;
+   /* hide slightly faster when in window mode to look less stupid */
+   if ((tt->hide_timeout > 0) && tt->tt_win) extra = 0.1;
    edje_object_signal_emit(tt->tooltip, "elm,action,hide", "elm");
    tt->hide_timer = ecore_timer_add
-     (tt->hide_timeout, _elm_tooltip_hide_anim_cb, tt);
+     (tt->hide_timeout - extra, _elm_tooltip_hide_anim_cb, tt);
 }
 
 static void
@@ -262,7 +266,7 @@ _elm_tooltip_reconfigure(Elm_Tooltip *tt)
              ERR("Could not apply the theme to the tooltip! style=%s", style);
              if (tt->tt_win) evas_object_del(tt->tt_win);
              else evas_object_del(tt->tooltip);
-
+elm_win_transparent_set(tt->tt_win, EINA_TRUE);
              tt->tt_win = NULL;
              tt->tt_evas = NULL;
              tt->tooltip = NULL;
@@ -277,6 +281,13 @@ _elm_tooltip_reconfigure(Elm_Tooltip *tt)
         tt->pad.bx = 0;
         tt->pad.by = 0;
         tt->hide_timeout = 0.0;
+        if (tt->tt_win)
+          {  /* FIXME: hardcoded here is bad */
+             if (!strcmp(style, "transparent"))
+               elm_win_transparent_set(tt->tt_win, EINA_TRUE);
+             else
+               elm_win_transparent_set(tt->tt_win, EINA_FALSE);
+          }
 
         str = edje_object_data_get(tt->tooltip, "pad_x");
         if (str) tt->pad.x = atoi(str);
@@ -354,15 +365,25 @@ _elm_tooltip_reconfigure(Elm_Tooltip *tt)
    if (!cw)
 #endif
      evas_output_size_get(tt->tt_evas ?: tt->evas, &cw, &ch);
-   evas_pointer_canvas_xy_get(tt->evas, &px, &py);
 
    evas_object_geometry_get(tt->eventarea, &ox, &oy, &ow, &oh);
 
+   if (tt->tt_win)
+     {
+        int x, y;
+#ifdef HAVE_ELEMENTARY_X
+        ecore_x_pointer_xy_get(xwin, &px, &py);
+#endif
+        elm_win_screen_position_get(elm_object_top_widget_get(tt->owner), &x, &y);
+        ox += x;
+        oy += y;
+     }
+
+   else
+     evas_pointer_canvas_xy_get(tt->evas, &px, &py);
+
    inside_eventarea = ((px >= ox) && (py >= oy) &&
                        (px <= ox + ow) && (py <= oy + oh));
-#ifdef HAVE_ELEMENTARY_X
-   if (tt->tt_win) ecore_x_pointer_xy_get(xwin, &px, &py);
-#endif
    if (inside_eventarea)
      {
         tx = px;
@@ -453,10 +474,8 @@ _elm_tooltip_obj_mouse_in_cb(void *data, Evas *e  __UNUSED__, Evas_Object *obj _
 }
 
 static void
-_elm_tooltip_obj_mouse_out_cb(void *data, Evas *e  __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info  __UNUSED__)
+_elm_tooltip_obj_mouse_out_cb(Elm_Tooltip *tt, Evas *e  __UNUSED__, Evas_Object *obj __UNUSED__, Evas_Event_Mouse_Out *event __UNUSED__)
 {
-   Elm_Tooltip *tt = data;
-
    if (tt->visible_lock) return;
 
    if (!tt->tooltip)
@@ -464,7 +483,6 @@ _elm_tooltip_obj_mouse_out_cb(void *data, Evas *e  __UNUSED__, Evas_Object *obj 
         _elm_tooltip_show_timer_stop(tt);
         return;
      }
-
    _elm_tooltip_hide_anim_start(tt);
 }
 
@@ -484,7 +502,7 @@ _elm_tooltip_unset(Elm_Tooltip *tt)
            _elm_tooltip_obj_mouse_in_cb, tt);
         evas_object_event_callback_del_full
           (tt->eventarea, EVAS_CALLBACK_MOUSE_OUT,
-           _elm_tooltip_obj_mouse_out_cb, tt);
+           (Evas_Object_Event_Cb)_elm_tooltip_obj_mouse_out_cb, tt);
         evas_object_event_callback_del_full
           (tt->eventarea, EVAS_CALLBACK_FREE, _elm_tooltip_obj_free_cb, tt);
 
@@ -634,14 +652,12 @@ elm_object_sub_tooltip_content_cb_set(Evas_Object *eventarea, Evas_Object *owner
 
         just_created = EINA_TRUE;
 
-        evas_object_event_callback_add
-          (eventarea, EVAS_CALLBACK_MOUSE_IN,
+        evas_object_event_callback_add(eventarea, EVAS_CALLBACK_MOUSE_IN,
            _elm_tooltip_obj_mouse_in_cb, tt);
-        evas_object_event_callback_add
-          (eventarea, EVAS_CALLBACK_MOUSE_OUT,
-           _elm_tooltip_obj_mouse_out_cb, tt);
-        evas_object_event_callback_add
-          (eventarea, EVAS_CALLBACK_FREE, _elm_tooltip_obj_free_cb, tt);
+        evas_object_event_callback_add(eventarea, EVAS_CALLBACK_MOUSE_OUT,
+           (Evas_Object_Event_Cb)_elm_tooltip_obj_mouse_out_cb, tt);
+        evas_object_event_callback_add(eventarea, EVAS_CALLBACK_FREE,
+           _elm_tooltip_obj_free_cb, tt);
 
         if (owner != eventarea)
           evas_object_event_callback_add
