@@ -1214,6 +1214,27 @@ elm_object_text_part_get(const Evas_Object *obj, const char *item)
    return elm_widget_text_part_get(obj, item);
 }
 
+EAPI void
+elm_object_content_part_set(Evas_Object *obj, const char *item, Evas_Object *content)
+{
+   EINA_SAFETY_ON_NULL_RETURN(obj);
+   elm_widget_content_part_set(obj, item, content);
+}
+
+EAPI Evas_Object *
+elm_object_content_part_get(const Evas_Object *obj, const char *item)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(obj, NULL);
+   return elm_widget_content_part_get(obj, item);
+}
+
+EAPI Evas_Object *
+elm_object_content_part_unset(Evas_Object *obj, const char *item)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(obj, NULL);
+   return elm_widget_content_part_unset(obj, item);
+}
+
 /**
  * Get the global scaling factor
  *

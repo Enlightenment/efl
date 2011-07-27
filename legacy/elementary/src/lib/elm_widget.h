@@ -230,6 +230,9 @@ EAPI void             elm_widget_on_show_region_hook_set(Evas_Object *obj, void 
 EAPI void             elm_widget_focus_region_hook_set(Evas_Object *obj, void (*func) (Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h));
 EAPI void             elm_widget_text_set_hook_set(Evas_Object *obj, void (*func)(Evas_Object *obj, const char *item, const char *text));
 EAPI void             elm_widget_text_get_hook_set(Evas_Object *obj, const char *(*func)(const Evas_Object *obj, const char *item));
+EAPI void             elm_widget_content_set_hook_set(Evas_Object *obj, void (*func)(Evas_Object *obj, const char *item, Evas_Object *content));
+EAPI void             elm_widget_content_get_hook_set(Evas_Object *obj, Evas_Object *(*func)(const Evas_Object *obj, const char *item));
+EAPI void             elm_widget_content_unset_hook_set(Evas_Object *obj, Evas_Object *(*func)(Evas_Object *obj, const char *item));
 EAPI void             elm_widget_on_focus_region_hook_set(Evas_Object *obj, void (*func) (const Evas_Object *obj, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h));
 EAPI void             elm_widget_data_set(Evas_Object *obj, void *data);
 EAPI void            *elm_widget_data_get(const Evas_Object *obj);
@@ -313,7 +316,9 @@ EAPI void             elm_widget_focus_mouse_down_handle(Evas_Object *obj);
 EAPI void             elm_widget_focus_disabled_handle(Evas_Object *obj);
 EAPI void             elm_widget_text_part_set(Evas_Object *obj, const char *item, const char *label);
 EAPI const char      *elm_widget_text_part_get(const Evas_Object *obj, const char *item);
-
+EAPI void             elm_widget_content_part_set(Evas_Object *obj, const char *item, Evas_Object *content);
+EAPI Evas_Object     *elm_widget_content_part_get(const Evas_Object *obj, const char *item);
+EAPI Evas_Object     *elm_widget_content_part_unset(Evas_Object *obj, const char *item);
 EAPI Elm_Widget_Item *_elm_widget_item_new(Evas_Object *parent, size_t alloc_size);
 EAPI void             _elm_widget_item_del(Elm_Widget_Item *item);
 EAPI void             _elm_widget_item_pre_notify_del(Elm_Widget_Item *item);

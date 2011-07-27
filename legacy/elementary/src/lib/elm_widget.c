@@ -75,6 +75,13 @@ struct _Smart_Data
                                    const char  *text);
    const char *(*on_text_get_func)(const Evas_Object *obj,
                                     const char  *item);
+   void       (*on_content_set_func)(Evas_Object *obj,
+                                     const char *item,
+                                     Evas_Object *content);
+   Evas_Object *(*on_content_get_func)(const Evas_Object *obj,
+                                       const char *item);
+   Evas_Object *(*on_content_unset_func)(Evas_Object *obj,
+                                         const char *item);
    void        *data;
    Evas_Coord   rx, ry, rw, rh;
    int          scroll_hold;
@@ -499,6 +506,33 @@ elm_widget_text_get_hook_set(Evas_Object *obj,
 {
    API_ENTRY return;
    sd->on_text_get_func = func;
+}
+
+EAPI void
+elm_widget_content_set_hook_set(Evas_Object *obj,
+                                void (*func)(Evas_Object *obj,
+                                              const char *item,
+                                              Evas_Object *content))
+{
+   API_ENTRY return;
+   sd->on_content_set_func = func;
+}
+
+EAPI void
+elm_widget_content_get_hook_set(Evas_Object *obj,
+                                Evas_Object *(*func)(const Evas_Object *obj,                                                    const char *item))
+{
+   API_ENTRY return;
+   sd->on_content_get_func = func;
+}
+
+EAPI void
+elm_widget_content_unset_hook_set(Evas_Object *obj,
+                                  Evas_Object  *(*func)(Evas_Object *obj,
+                                                        const char *item))
+{
+   API_ENTRY return;
+   sd->on_content_unset_func = func;
 }
 
 EAPI void
@@ -2040,6 +2074,33 @@ elm_widget_text_part_get(const Evas_Object *obj, const char *item)
      return NULL;
 
    return sd->on_text_get_func(obj, item);
+}
+
+EAPI void
+elm_widget_content_part_set(Evas_Object *obj, const char *item, Evas_Object *content)
+{
+   API_ENTRY return;
+
+   if (!sd->on_content_set_func)  return;
+   sd->on_content_set_func(obj, item, content);
+}
+
+EAPI Evas_Object *
+elm_widget_content_part_get(const Evas_Object *obj, const char *item)
+{
+   API_ENTRY return NULL;
+
+   if (!sd->on_content_get_func) return NULL;
+   return sd->on_content_get_func(obj, item);
+}
+
+EAPI Evas_Object *
+elm_widget_content_part_unset(Evas_Object *obj, const char *item)
+{
+   API_ENTRY return NULL;
+
+   if (!sd->on_content_unset_func) return NULL;
+   return sd->on_content_unset_func(obj, item);
 }
 
 EAPI Elm_Theme *

@@ -711,6 +711,51 @@ extern "C" {
 #define elm_object_text_get(obj) elm_object_text_part_get((obj), NULL)
 
    /**
+    * Set a content of an object
+    *
+    * @param obj The Elementary object
+    * @param item The content id to set (NULL for the default content)
+    * @param content The new content of the object 
+    *
+    * @note Elementary objects may have many contents
+    *
+    * @ingroup General
+    */
+   EAPI void elm_object_content_part_set(Evas_Object *obj, const char *item, Evas_Object *content);
+
+#define elm_object_content_set(obj, content) elm_object_content_part_set((obj), NULL, (content))
+
+   /**
+    * Get a content of an object
+    *
+    * @param obj The Elementary object
+    * @param item The content id to get (NULL for the default content)
+    * @return content of the object or
+    *         NULL for any error
+    *
+    * @note Elementary objects may have many contents
+    *
+    * @ingroup General
+    */
+   EAPI Evas_Object *elm_object_content_part_get(const Evas_Object *obj, const char *item);
+
+#define elm_object_content_get(obj) elm_object_content_part_get((obj), NULL)
+
+   /**
+    * Unset a content of an object
+    *
+    * @param obj The Elementary object
+    * @param item The content id to unset (NULL for the default content)
+    *
+    * @note Elementary objects may have many contents
+    *
+    * @ingroup General
+    */
+   EAPI Evas_Object *elm_object_content_part_unset(Evas_Object *obj, const char *item);
+
+#define elm_object_content_unset(obj) elm_object_content_part_unset((obj), NULL)
+
+   /**
     * @}
     */
 
