@@ -48,6 +48,7 @@ widget_preview_clock \
 widget_preview_label \
 widget_preview_frame \
 widget_preview_slider \
+widget_preview_panes \
 widget_preview_ctxpopup \
 widget_preview_icon \
 widget_preview_image \
@@ -101,6 +102,7 @@ EXTRA_DIST = \
 	widget_preview_colorselector.c \
 	widget_preview_conformant.c \
 	widget_preview_slider.c \
+	widget_preview_panes.c \
 	widget_preview_ctxpopup.c \
 	widget_preview_diskselector.c \
 	widget_preview_entry1.c \

@@ -2,8 +2,10 @@
 #include "elm_priv.h"
 
 /**
- * @defgroup Panes Panes
- *
+ * TODO
+ * Update the minimun height of the bar in the theme.
+ * No minimun should be set in the vertical theme
+ * Add events (move, start ...)
  */
 
 typedef struct _Widget_Data Widget_Data;
@@ -209,14 +211,6 @@ _unpress(void *data, Evas_Object *obj __UNUSED__ , const char *emission __UNUSED
      }
 }
 
-/**
- * Add a new panes to the parent
- *
- * @param parent The parent object
- * @return The new object or NULL if it cannot be created
- *
- * @ingroup Panes
- */
 EAPI Evas_Object *
 elm_panes_add(Evas_Object *parent)
 {
@@ -263,18 +257,6 @@ elm_panes_add(Evas_Object *parent)
 }
 
 
-/**
- * Set the left content of the panes widget.
- *
- * Once the content object is set, a previously set one will be deleted.
- * If you want to keep that old content object, use the
- * elm_panes_content_left_unset() function.
- *
- * @param obj The panes object
- * @param content The new left content object
- *
- * @ingroup Panes
- */
 EAPI void
 elm_panes_content_left_set(Evas_Object *obj, Evas_Object *content)
 {
@@ -293,18 +275,6 @@ elm_panes_content_left_set(Evas_Object *obj, Evas_Object *content)
      }
 }
 
-/**
- * Set the right content of the panes widget.
- *
- * Once the content object is set, a previously set one will be deleted.
- * If you want to keep that old content object, use the
- * elm_panes_content_right_unset() function.
- *
- * @param obj The panes object
- * @param content The new right content object
- *
- * @ingroup Panes
- */
 EAPI void
 elm_panes_content_right_set(Evas_Object *obj, Evas_Object *content)
 {
@@ -323,16 +293,6 @@ elm_panes_content_right_set(Evas_Object *obj, Evas_Object *content)
      }
 }
 
-/**
- * Get the left content used for the panes
- *
- * Return the left content object which is set for this widget.
- *
- * @param obj The panes object
- * @return The left content object that is being used
- *
- * @ingroup Panes
- */
 EAPI Evas_Object *
 elm_panes_content_left_get(const Evas_Object *obj)
 {
@@ -341,16 +301,6 @@ elm_panes_content_left_get(const Evas_Object *obj)
    return wd->contents.left;
 }
 
-/**
- * Get the right content used for the panes
- *
- * Return the right content object which is set for this widget.
- *
- * @param obj The panes object
- * @return The right content object that is being used
- *
- * @ingroup Panes
- */
 EAPI Evas_Object *
 elm_panes_content_right_get(const Evas_Object *obj)
 {
@@ -359,16 +309,6 @@ elm_panes_content_right_get(const Evas_Object *obj)
    return wd->contents.right;
 }
 
-/**
- * Unset the left content used for the panes
- *
- * Unparent and return the left content object which was set for this widget.
- *
- * @param obj The panes object
- * @return The left content object that was being used
- *
- * @ingroup Panes
- */
 EAPI Evas_Object *
 elm_panes_content_left_unset(Evas_Object *obj)
 {
@@ -383,16 +323,6 @@ elm_panes_content_left_unset(Evas_Object *obj)
    return content;
 }
 
-/**
- * Unset the right content used for the panes
- *
- * Unparent and return the right content object which was set for this widget.
- *
- * @param obj The panes object
- * @return The right content object that was being used
- *
- * @ingroup Panes
- */
 EAPI Evas_Object *
 elm_panes_content_right_unset(Evas_Object *obj)
 {

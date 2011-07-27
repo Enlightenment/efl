@@ -148,6 +148,11 @@
  * @image html img/widget/panel/preview-00.png
  * @image latex img/widget/panel/preview-00.eps
  * @li @ref Panes
+ *
+ * @image html img/widget/panes/preview-00.png
+ * @image latex img/widget/panes/preview-00.eps
+ * @image html img/panes.png
+ * @image latex img/panes.eps
  * @li @ref Photo
  * @li @ref Photocam
  * @li @ref Progressbar

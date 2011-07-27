@@ -35,6 +35,8 @@
  *
  * @ref slider_example
  *
+ * @ref panes_example
+ *
  * @ref clock_example
  *
  * @ref diskselector_example_01
@@ -1578,6 +1580,118 @@
  * See the full @ref slider_example_c "source code" for this example.
  *
  * @example slider_example.c
+ */
+
+/**
+ * @page panes_example Panes widget example
+ *
+ * This code places two Elementary panes widgets on a window, one of them
+ * displayed vertically and the other horizontally, to exemplify
+ * a part of the widget's API. Also, all the signals emitted by this
+ * widget will be covered.
+ *
+ * Let's start adding a panes to our window:
+ * @dontinclude panes_example.c
+ * @skipline elm_panes_add
+ * @until evas_object_show
+ *
+ * Now we will set a content (a simple button) to the left side of our
+ * panes widget:
+ * @skipline elm_button_add
+ * @until content_left_set
+ *
+ * The content of the right side will be something a bit more elaborated, we'll
+ * place another panes, displayed vertically (it's displayed horizontally
+ * by default):
+ * @skipline elm_panes_add
+ * @until content_right_set
+ *
+ * When populating a panes displayed vertically, remember that left content
+ * will be placed at top, and right content will place at bottom. Next
+ * we will add two buttons to exemplify that:
+ * @skipline elm_button_add
+ * @until content_right_set
+ *
+ * Panes widgets emits 4 different signals, depending on users interaction
+ * with the draggable bar. We'll add a callback function for each of them.
+ *
+ * <tt> "clicked" signal </tt>:
+ *
+ * Callback function that just print "Clicked" to stdin:
+ * @dontinclude panes_example.c
+ * @skip static void
+ * @skip }
+ * @skip static void
+ * @skip }
+ * @skip static void
+ * @skip }
+ * @skipline static void
+ * @until }
+ *
+ * Also, add callback function to the panes:
+ * @skipline "clicked"
+ *
+ * <tt> "press" signal </tt>:
+ *
+ * Callback function that just print "Pressed" to stdin:
+ * @dontinclude panes_example.c
+ * @skip static void
+ * @skip }
+ * @skipline static void
+ * @until }
+ *
+ * Also, add callback function to the panes:
+ * @skipline "press"
+ *
+ * Now, let's try to make our callback functions a bit more useful:
+ *
+ * <tt> "unpress" signal </tt>:
+ *
+ * Suppose we want to know the size proportion of left content after
+ * user drags the bar. We need to listen for @c unpress signal, and
+ * get this size from our panes widget. It's done on the following
+ * function:
+ * @dontinclude panes_example.c
+ * @skip static void
+ * @skip }
+ * @skip static void
+ * @skip }
+ * @skipline static void
+ * @until }
+ *
+ * Adding the callback function to the panes:
+ * @skipline "unpress"
+
+ * <tt> "clicked,double" signal </tt>:
+ *
+ * Now, a interesting feature that could be addded to panes widget.
+ * Hide a content when user double click the draggable bar. It's done
+ * using a variable to store size and content left size getter and setter
+ * on the following function:
+ * @dontinclude panes_example.c
+ * @skipline static double
+ * @skip static void
+ * @skip }
+ * @skip static void
+ * @skip }
+ * @skip static void
+ * @skip }
+ * @skipline static void
+ * @until }
+ * @until }
+ * @until }
+ *
+ * Adding the callback function to the panes:
+ * @skipline "clicked,double"
+ * @until panes);
+ *
+ * See the full @ref panes_example.c "example", whose window should
+ * look like this picture:
+ *
+ * @image html screenshots/panes_example.png
+ * @image latex screenshots/panes_example.eps width=\textwidth
+ *
+ * @example panes_example.c
  */
 
 /**
