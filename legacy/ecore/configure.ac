@@ -784,12 +784,26 @@ if test "x$want_ecore_x_xcb" = "xyes" ; then
   fi
 
 ## x11-xcb
-  PKG_CHECK_MODULES(XCB, xcb xcb-shm xcb-icccm xcb-image xcb-keysyms pixman-1,
+  PKG_CHECK_MODULES(XCB, xcb xcb-shm xcb-icccm xcb-image xcb-keysyms,
     [ have_ecore_x_xcb="yes"
-      requirements_ecore_x="xcb xcb-shm xcb-icccm xcb-image xcb-keysyms pixman-1 ${requirements_ecore_x}" ],
+      requirements_ecore_x="xcb xcb-shm xcb-icccm xcb-image xcb-keysyms ${requirements_ecore_x}" ],
     [ have_ecore_x_xcb="no" ])
 
   if test "x$have_ecore_x_xcb" = "xyes" ; then
+
+   PKG_CHECK_MODULES([PIXMAN],
+      [pixman-1],
+      [
+       have_pixman="yes"
+       AC_DEFINE(HAVE_PIXMAN, 1, [have pixman for rendering])
+       requirements_ecore_x="pixman-1 ${requirements_ecore_x}"
+      ],
+      [
+       if test "x${want_pixman}" = "xyes" -a "x${use_strict}" = "xyes" ; then
+          AC_MSG_ERROR([Pixman not found (strict dependencies checking)])
+       fi
+      ])
+
     if test "x$want_ecore_x_composite" != "xno"; then
       PKG_CHECK_MODULES(XCB_COMPOSITE, xcb-composite,
         [ have_ecore_x_xcb_composite="yes"
