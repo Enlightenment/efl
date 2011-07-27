@@ -10693,7 +10693,7 @@ extern "C" {
     *
     * @param obj The actionslider object
     * @return The indicator label
-    * @deprecated use elm_object_text_set() instead.
+    * @deprecated use elm_object_text_get() instead.
     */
    EINA_DEPRECATED EAPI const char           *elm_actionslider_indicator_label_get(Evas_Object *obj) EINA_ARG_NONNULL(1);
    /**
