@@ -492,6 +492,9 @@ _ecore_main_gsource_prepare(GSource *source __UNUSED__, gint *next_time)
 
    if (!ecore_idling && !_ecore_glib_idle_enterer_called)
      {
+        while (_ecore_timer_call(_ecore_time_loop_time));
+        _ecore_timer_cleanup();
+
         _ecore_idle_enterer_call();
         _ecore_throttle();
         _ecore_glib_idle_enterer_called = FALSE;
