@@ -1859,14 +1859,20 @@ _smart_event_mouse_up(void *data, Evas *e, Evas_Object *obj __UNUSED__, void *ev
                             if ((_elm_config->thumbscroll_friction > 0.0) &&
                                 (vel > _elm_config->thumbscroll_momentum_threshold))
                               {
+                                 int minx, miny, mx, my, px, py;
+                                 sd->pan_func.min_get(sd->pan_obj, &minx, &miny);
+                                 sd->pan_func.max_get(sd->pan_obj, &mx, &my);
+                                 sd->pan_func.get(sd->pan_obj, &px, &py);
                                  sd->down.dx = ((double)dx / at);
                                  sd->down.dy = ((double)dy / at);
                                  if (((sd->down.dx > 0) && (sd->down.pdx > 0)) ||
                                      ((sd->down.dx < 0) && (sd->down.pdx < 0)))
-                                   sd->down.dx += (double)sd->down.pdx * 1.5; // FIXME: * 1.5 - probably should be config
+                                   if (px > minx && px < mx)
+                                     sd->down.dx += (double)sd->down.pdx * 1.5; // FIXME: * 1.5 - probably should be config
                                  if (((sd->down.dy > 0) && (sd->down.pdy > 0)) ||
                                      ((sd->down.dy < 0) && (sd->down.pdy < 0)))
-                                   sd->down.dy += (double)sd->down.pdy * 1.5; // FIXME: * 1.5 - probably should be config
+                                   if (py > miny && py < my)
+                                     sd->down.dy += (double)sd->down.pdy * 1.5; // FIXME: * 1.5 - probably should be config
                                  if (((sd->down.dx > 0) && (sd->down.pdx > 0)) ||
                                      ((sd->down.dx < 0) && (sd->down.pdx < 0)) ||
                                      ((sd->down.dy > 0) && (sd->down.pdy > 0)) ||
