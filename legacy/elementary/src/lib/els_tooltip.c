@@ -206,9 +206,8 @@ _elm_tooltip_reconfigure_job_stop(Elm_Tooltip *tt)
 static void
 _elm_tooltip_reconfigure_job_start(Elm_Tooltip *tt)
 {
-   if (tt->reconfigure_job) ecore_job_del(tt->reconfigure_job);
-   tt->reconfigure_job = ecore_job_add
-     (_elm_tooltip_reconfigure_job, tt);
+   if (!tt->reconfigure_job)
+     tt->reconfigure_job = ecore_job_add(_elm_tooltip_reconfigure_job, tt);
 }
 
 static Eina_Bool
