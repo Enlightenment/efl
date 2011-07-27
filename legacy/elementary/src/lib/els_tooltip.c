@@ -398,6 +398,27 @@ _elm_tooltip_reconfigure(Elm_Tooltip *tt)
         else ty = oy + oh;
      }
 
+   if (tx + tw > cw)
+     {
+        if (abs(tx - tw) < (tx + tw) - cw)
+          tx -= tw;
+     }
+   else if ((tx < px) && (px < tx + tw))
+     {
+        if (0 < tx - tw)
+          tx -= tw;
+     }
+   if (ty + th > ch)
+     {
+        if (abs(ty - th) < (ty + th) - ch)
+          ty -= th;
+     }
+   else if ((ty < py) && (py < ty + th))
+     {
+        if (0 < ty - th)
+          ty -= th;
+     }
+
    if (tt->pad.bx * 2 + tw < cw)
      {
         if (tx < tt->pad.bx) tx = tt->pad.bx;
@@ -410,16 +431,6 @@ _elm_tooltip_reconfigure(Elm_Tooltip *tt)
         else if (ty + th >= ch - tt->pad.by) ty = ch - th - tt->pad.by;
      }
 
-   if (tx + tw > cw)
-     {
-        if (abs(tx - tw) < (tx + tw) - cw)
-          tx -= tw;
-     }
-   if (ty + th > ch)
-     {
-        if (abs(ty - th) < (ty + th) - ch)
-          ty -= th;
-     }
    evas_object_move(tt->tt_win ? : tt->tooltip, tx, ty);
    evas_object_resize(tt->tt_win ? : tt->tooltip, tw, th);
    evas_object_show(tt->tooltip);
