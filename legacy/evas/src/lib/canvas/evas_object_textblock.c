@@ -3851,10 +3851,10 @@ _format_changes_invalidate_text_nodes(Ctxt *c)
                                      fnode2->orig_format, fstr, fstr_len))
                               {
                                  fstack = eina_list_remove_list(fstack, i);
-                                 balance--;
                                  break;
                               }
                          }
+                       balance--;
                     }
 
                   if (!fstack)
