@@ -784,9 +784,9 @@ if test "x$want_ecore_x_xcb" = "xyes" ; then
   fi
 
 ## x11-xcb
-  PKG_CHECK_MODULES(XCB, xcb xcb-shm xcb-icccm xcb-image xcb-keysyms,
+  PKG_CHECK_MODULES(XCB, x11-xcb xcb xcb-shm xcb-icccm xcb-image xcb-keysyms,
     [ have_ecore_x_xcb="yes"
-      requirements_ecore_x="xcb xcb-shm xcb-icccm xcb-image xcb-keysyms ${requirements_ecore_x}" ],
+      requirements_ecore_x="x11-xcb xcb xcb-shm xcb-icccm xcb-image xcb-keysyms ${requirements_ecore_x}" ],
     [ have_ecore_x_xcb="no" ])
 
   if test "x$have_ecore_x_xcb" = "xyes" ; then
