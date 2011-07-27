@@ -492,12 +492,16 @@ _ecore_main_gsource_prepare(GSource *source __UNUSED__, gint *next_time)
 
    if (!ecore_idling && !_ecore_glib_idle_enterer_called)
      {
+        _ecore_time_loop_time = ecore_time_get();
         while (_ecore_timer_call(_ecore_time_loop_time));
         _ecore_timer_cleanup();
 
         _ecore_idle_enterer_call();
         _ecore_throttle();
         _ecore_glib_idle_enterer_called = FALSE;
+
+        if (fd_handlers_with_buffer)
+          _ecore_main_fd_handlers_buf_call();
      }
 
    while (_ecore_signal_count_get()) _ecore_signal_call();
@@ -607,7 +611,6 @@ _ecore_main_gsource_check(GSource *source __UNUSED__)
      ret = TRUE;
 
    /* check timers after updating loop time */
-   _ecore_time_loop_time = ecore_time_get();
    if (!ret && _ecore_timers_exists())
      ret = (0.0 == _ecore_timer_next_get());
 
@@ -675,6 +678,9 @@ _ecore_main_gsource_dispatch(GSource *source __UNUSED__, GSourceFunc callback __
         _ecore_idle_enterer_call();
         _ecore_throttle();
         _ecore_glib_idle_enterer_called = TRUE;
+
+        if (fd_handlers_with_buffer)
+          _ecore_main_fd_handlers_buf_call();
      }
 
    in_main_loop--;
