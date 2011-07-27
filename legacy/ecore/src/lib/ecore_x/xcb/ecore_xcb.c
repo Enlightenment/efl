@@ -1233,11 +1233,8 @@ _ecore_xcb_shutdown(Eina_Bool close_display)
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
-   /* shutdown keymap */
-   _ecore_xcb_keymap_shutdown();
-
-   /* shutdown events */
-   _ecore_xcb_events_shutdown();
+   /* shutdown dnd */
+   _ecore_xcb_dnd_shutdown();
 
    /* shutdown selection */
    _ecore_xcb_selection_shutdown();
@@ -1245,15 +1242,14 @@ _ecore_xcb_shutdown(Eina_Bool close_display)
    /* shutdown netwm */
    ecore_x_netwm_shutdown();
 
-   /* shutdown dnd */
-   _ecore_xcb_dnd_shutdown();
-
-#ifdef ECORE_XCB_XINPUT
-   _ecore_xcb_input_shutdown();
-#endif
-
    if (_ecore_xcb_fd_handler)
      ecore_main_fd_handler_del(_ecore_xcb_fd_handler);
+
+   /* shutdown keymap */
+   _ecore_xcb_keymap_shutdown();
+
+   /* shutdown events */
+   _ecore_xcb_events_shutdown();
 
    /* disconnect from display server */
    if (close_display)

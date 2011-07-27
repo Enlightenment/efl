@@ -56,8 +56,8 @@ _ecore_xcb_render_finalize(void)
                     {
                        _render_argb = EINA_TRUE;
                        v = getenv("XCURSOR_CORE");
-                       if (!v) 
-                         v = _ecore_xcb_resource_get_string("Xcursor", "core");
+                       /* if (!v)  */
+                       /*   v = _ecore_xcb_resource_get_string("Xcursor", "core"); */
                        if ((v) && (_ecore_xcb_render_parse_boolean(v)))
                          _render_argb = EINA_FALSE;
                     }
@@ -66,8 +66,8 @@ _ecore_xcb_render_finalize(void)
                     {
                        _render_anim = EINA_TRUE;
                        v = getenv("XCURSOR_ANIM");
-                       if (!v) 
-                         v = _ecore_xcb_resource_get_string("Xcursor", "anim");
+                       /* if (!v)  */
+                       /*   v = _ecore_xcb_resource_get_string("Xcursor", "anim"); */
                        if ((v) && (_ecore_xcb_render_parse_boolean(v)))
                          _render_anim = EINA_FALSE;
                     }

@@ -332,21 +332,21 @@ _ecore_xcb_cursor_image_load_cursor(Ecore_X_Window win, int w, int h, int hot_x,
 static void 
 _ecore_xcb_cursor_default_size_get(void) 
 {
-   char *v = NULL;
+   /* char *v = NULL; */
 
-   v = getenv("XCURSOR_SIZE");
-   if (!v) 
-     v = _ecore_xcb_resource_get_string("Xcursor", "size");
-   if (v) _ecore_xcb_cursor_size = ((atoi(v) * 16) / 72);
+   /* v = getenv("XCURSOR_SIZE"); */
+   /* if (!v)  */
+   /*   v = _ecore_xcb_resource_get_string("Xcursor", "size"); */
+   /* if (v) _ecore_xcb_cursor_size = ((atoi(v) * 16) / 72); */
 }
 
 static void 
 _ecore_xcb_cursor_dpi_size_get(void) 
 {
-   int v = 0;
+   /* int v = 0; */
 
-   v = _ecore_xcb_resource_get_int("Xft", "dpi");
-   if (v) _ecore_xcb_cursor_size = ((v * 16) / 72);
+   /* v = _ecore_xcb_resource_get_int("Xft", "dpi"); */
+   /* if (v) _ecore_xcb_cursor_size = ((v * 16) / 72); */
 }
 
 static void 

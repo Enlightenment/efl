@@ -66,8 +66,7 @@ libecore_x_xcb_la_SOURCES = \
   ecore_xcb_xinerama.c \
   ecore_xcb_error.c \
   ecore_xcb_xtest.c \
-  ecore_xcb_vsync.c \
-  ecore_xcb_resource.c
+  ecore_xcb_vsync.c
 
 libecore_x_xcb_la_LIBADD = \
   @XCB_DAMAGE_LIBS@ \
