@@ -425,3 +425,18 @@
 2011-07-07  Cedric Bail
 
 	* Fix infite loop when reinserting object during recalc stage.
+
+2011-07-27  Tom Hacohen (TAsn)
+
+	* Textblock: Closing tags formats is now well-defined for complex
+	  formats.
+	  For example: <font=Sans font_size=23 color=#FFF> should now be
+	  closed with </font> (or, like before, with the generic poper).
+	* Textblock: Add support for out-of-order tag openers/closers.
+	  Markup sequences like <b><i></b></i> are now legal and work as
+	  expeceted.
+
+2011-07-28  Tom Hacohen (TAsn)
+
+	* Textblock: Added support for quoting format parameters.
+	  Formats like: <font='Sans' color='#FFF'> are now legal.
