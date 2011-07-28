@@ -1401,8 +1401,8 @@ collections {
             base: "font=Sans font_size=10 color=#000 text_class=label";
             tag:  "br" "\n";
             tag:  "ps" "ps";
-            tag:  "hilight" "+ font=Sans:style=Bold";
-            tag:  "b" "+ font=Sans:style=Bold";
+            tag:  "hilight" "+ font_weight=Bold";
+            tag:  "b" "+ font_weight=Bold";
             tag:  "tab" "\t";
            }
         }
@@ -5909,8 +5909,8 @@ collections {
          style { name: "tooltip_style";
             base: "font=Sans font_size=8 color=#666 wrap=word";
             tag:  "br" "\n";
-            tag:  "hilight" "+ font=Sans:style=Bold";
-            tag:  "b" "+ font=Sans:style=Bold";
+            tag:  "hilight" "+ font_weight=Bold";
+            tag:  "b" "+ font_weight=Bold";
             tag:  "tab" "\t";
          }
       }
@@ -8553,20 +8553,20 @@ collections {
             tag:  "br" "\n";
             tag:  "ps" "ps";
             tag:  "tab" "\t";
-            tag:  "em" "+ font=Sans:style=Oblique";
-            tag:  "b" "+ font=Sans:style=Bold";
+            tag:  "em" "+ font_style=Oblique";
+            tag:  "b" "+ font_weight=Bold";
             tag:  "link" "+ color=#800 underline=on underline_color=#8008";
-            tag:  "hilight" "+ font=Sans:style=Bold";
+            tag:  "hilight" "+ font_weight=Bold";
          }
          style { name: "entry_textblock_disabled_style";
             base: "font=Sans font_size=10 color=#00000080 wrap=word text_class=entry";
             tag:  "br" "\n";
             tag:  "ps" "ps";
             tag:  "tab" "\t";
-            tag:  "em" "+ font=Sans:style=Oblique";
-            tag:  "b" "+ font=Sans:style=Bold";
+            tag:  "em" "+ font_style=Oblique";
+            tag:  "b" "+ font_weight=Bold";
             tag:  "link" "+ color=#00000080 underline=on underline_color=#00000080";
-            tag:  "hilight" "+ font=Sans:style=Bold";
+            tag:  "hilight" "+ font_weight=Bold";
          }
       }
       data {
@@ -8634,20 +8634,20 @@ collections {
             tag:  "br" "\n";
             tag:  "ps" "ps";
             tag:  "tab" "\t";
-            tag:  "em" "+ font=Sans:style=Oblique";
-            tag:  "b" "+ font=Sans:style=Bold";
+            tag:  "em" "+ font_style=Oblique";
+            tag:  "b" "+ font_weight=Bold";
             tag:  "link" "+ color=#800 underline=on underline_color=#8008";
-            tag:  "hilight" "+ font=Sans:style=Bold";
+            tag:  "hilight" "+ font_weight=Bold";
          }
          style { name: "entry_textblock_disabled_style_mixedwrap";
             base: "font=Sans font_size=10 color=#00000080 wrap=char text_class=entry";
             tag:  "br" "\n";
             tag:  "ps" "ps";
             tag:  "tab" "\t";
-            tag:  "em" "+ font=Sans:style=Oblique";
-            tag:  "b" "+ font=Sans:style=Bold";
+            tag:  "em" "+ font_style=Oblique";
+            tag:  "b" "+ font_weight=Bold";
             tag:  "link" "+ color=#00000080 underline=on underline_color=#00000080";
-            tag:  "hilight" "+ font=Sans:style=Bold";
+            tag:  "hilight" "+ font_weight=Bold";
          }
       }
       parts {
@@ -8711,20 +8711,20 @@ collections {
             tag:  "br" "\n";
             tag:  "ps" "ps";
             tag:  "tab" "\t";
-            tag:  "em" "+ font=Sans:style=Oblique";
-            tag:  "b" "+ font=Sans:style=Bold";
+            tag:  "em" "+ font_style=Oblique";
+            tag:  "b" "+ font_weight=Bold";
             tag:  "link" "+ color=#800 underline=on underline_color=#8008";
-            tag:  "hilight" "+ font=Sans:style=Bold";
+            tag:  "hilight" "+ font_weight=Bold";
          }
          style { name: "entry_textblock_disabled_style_charwrap";
             base: "font=Sans font_size=10 color=#00000080 wrap=char text_class=entry";
             tag:  "br" "\n";
             tag:  "ps" "ps";
             tag:  "tab" "\t";
-            tag:  "em" "+ font=Sans:style=Oblique";
-            tag:  "b" "+ font=Sans:style=Bold";
+            tag:  "em" "+ font_style=Oblique";
+            tag:  "b" "+ font_weight=Bold";
             tag:  "link" "+ color=#00000080 underline=on underline_color=#00000080";
-            tag:  "hilight" "+ font=Sans:style=Bold";
+            tag:  "hilight" "+ font_weight=Bold";
          }
       }
       parts {
@@ -8868,20 +8868,20 @@ collections {
             tag:  "br" "\n";
             tag:  "ps" "ps";
             tag:  "tab" "\t";
-            tag:  "em" "+ font=Sans:style=Oblique";
-            tag:  "b" "+ font=Sans:style=Bold";
+            tag:  "em" "+ font_style=Oblique";
+            tag:  "b" "+ font_weight=Bold";
             tag:  "link" "+ color=#800 underline=on underline_color=#8008";
-            tag:  "hilight" "+ font=Sans:style=Bold";
+            tag:  "hilight" "+ font_weight=Bold";
          }
          style { name: "entry_single_textblock_disabled_style";
             base: "font=Sans font_size=10 color=#00000080 wrap=none text_class=entry";
             tag:  "br" "\n";
             tag:  "ps" "ps";
             tag:  "tab" "\t";
-            tag:  "em" "+ font=Sans:style=Oblique";
-            tag:  "b" "+ font=Sans:style=Bold";
+            tag:  "em" "+ font_style=Oblique";
+            tag:  "b" "+ font_weight=Bold";
             tag:  "link" "+ color=#00000080 underline=on underline_color=#00000080";
-            tag:  "hilight" "+ font=Sans:style=Bold";
+            tag:  "hilight" "+ font_weight=Bold";
          }
       }
       parts {
@@ -18019,16 +18019,16 @@ collections {
                base: "font=Sans font_size=10 align=left valign=0.5 color=#000 text_class=list_item";
                tag:  "br" "\n";
                tag:  "ps" "ps";
-               tag:  "hilight" "+ font=Sans:style=Bold";
-               tag:  "b" "+ font=Sans:style=Bold";
+               tag:  "hilight" "+ font_weight=Bold";
+               tag:  "b" "+ font_weight=Bold";
                tag:  "tab" "\t";
            }
            style { name: "genlist_selected_style";
                base: "font=Sans font_size=10 align=left valign=0.5 color=#fff text_class=list_item";
                tag:  "br" "\n";
                tag:  "ps" "ps";
-               tag:  "hilight" "+ font=Sans:style=Bold";
-               tag:  "b" "+ font=Sans:style=Bold";
+               tag:  "hilight" "+ font_weight=Bold";
+               tag:  "b" "+ font_weight=Bold";
                tag:  "tab" "\t";
            }
        }
@@ -29480,16 +29480,16 @@ collections {
                base: "font=Sans font_size=10 align=left valign=0.5 color=#000 text_class=grid_item";
                tag:  "br" "\n";
                tag:  "ps" "ps";
-               tag:  "hilight" "+ font=Sans:style=Bold";
-               tag:  "b" "+ font=Sans:style=Bold";
+               tag:  "hilight" "+ font_weight=Bold";
+               tag:  "b" "+ font_weight=Bold";
                tag:  "tab" "\t";
            }
            style { name: "gengrid_selected_style";
                base: "font=Sans font_size=10 align=left valign=0.5 color=#fff text_class=grid_item";
                tag:  "br" "\n";
                tag:  "ps" "ps";
-               tag:  "hilight" "+ font=Sans:style=Bold";
-               tag:  "b" "+ font=Sans:style=Bold";
+               tag:  "hilight" "+ font_weight=Bold";
+               tag:  "b" "+ font_weight=Bold";
                tag:  "tab" "\t";
            }
        }
