@@ -1132,7 +1132,7 @@ _format_clean_param(char *dst, const char *src)
 }
 
 static const char *_style_weight_map[] = { "ultralight", "light", "bold",
-     "ultrabold", "heavy", "normal" };
+     "ultrabold", "black", "normal" };
 #define _STYLE_WEIGHT_MAP_LEN (sizeof(_style_weight_map) / sizeof(_style_weight_map[0]))
 
 static const char *_style_style_map[] = { "normal", "oblique", "italic" };
