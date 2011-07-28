@@ -937,7 +937,6 @@ elm_fileselector_is_save_set(Evas_Object *obj,
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
 
-   printf("%i\n", is_save);
    elm_object_disabled_set(wd->filename_entry, !is_save);
 
    if (is_save)
