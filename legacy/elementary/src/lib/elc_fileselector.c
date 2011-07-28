@@ -712,7 +712,6 @@ _populate(Evas_Object      *obj,
 #endif
 
    if (!wd) return;
-   if (wd->expand && wd->current) return ;
 #ifndef HAVE_EIO
    if (!ecore_file_is_dir(path)) return ;
    it = eina_file_stat_ls(path);
@@ -776,6 +775,7 @@ _populate(Evas_Object      *obj,
                                   NULL, NULL);
      }
 #else
+   if (wd->expand && wd->current) return ;
    if (wd->current)
      eio_file_cancel(wd->current);
    wr = malloc(sizeof (Widget_Request));
