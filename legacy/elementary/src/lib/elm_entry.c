@@ -1976,6 +1976,8 @@ elm_entry_add(Evas_Object *parent)
    evas_object_size_hint_align_set(wd->scroller, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_smart_scroller_bounce_allow_set(wd->scroller, EINA_FALSE, EINA_FALSE);
    evas_object_propagate_events_set(wd->scroller, EINA_TRUE);
+   evas_object_propagate_events_set(elm_smart_scroller_edje_object_get(
+                                    wd->scroller), EINA_TRUE);
 
    wd->linewrap     = ELM_WRAP_WORD;
    wd->editable     = EINA_TRUE;
