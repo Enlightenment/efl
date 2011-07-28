@@ -803,7 +803,7 @@ _unregister_callbacks(Evas_Object *obj)
 static int
 device_in_pending_list(const void *data1, const void *data2)
 {  /* Compare the two device numbers */
-   return (((int) data1) - ((int) data2));
+   return (((intptr_t) data1) - ((intptr_t) data2));
 }
 
 /**
@@ -828,9 +828,9 @@ _add_device_pending(Eina_List *list, void *event, Evas_Callback_Type event_type)
      }
 
    if (!eina_list_search_unsorted_list(list, device_in_pending_list,
-            (void *) device))
+            (intptr_t*) device))
      {
-        return eina_list_append(list, (void *) device);
+        return eina_list_append(list, (intptr_t*) device);
      }
 
    return list;
@@ -858,7 +858,7 @@ _device_is_pending(Eina_List *list, void *event, Evas_Callback_Type event_type)
      }
 
    return eina_list_search_unsorted_list(list, device_in_pending_list,
-         (void *) device);
+         (intptr_t *) device);
 }
 
 /**
