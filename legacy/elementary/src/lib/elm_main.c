@@ -2422,6 +2422,21 @@ elm_object_focus_direction_go(Evas_Object *obj,
    elm_widget_focus_direction_go(obj, x, y);
 }
 
+EAPI void
+elm_object_tree_unfocusable_set(Evas_Object *obj,
+                                Eina_Bool    tree_unfocusable)
+{
+   EINA_SAFETY_ON_NULL_RETURN(obj);
+   elm_widget_tree_unfocusable_set(obj, tree_unfocusable);
+}
+
+EAPI Eina_Bool
+elm_object_tree_unfocusable_get(const Evas_Object *obj)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(obj, EINA_FALSE);
+   return elm_widget_tree_unfocusable_get(obj);
+}
+
 /**
  * Get the enable status of the focus highlight
  *

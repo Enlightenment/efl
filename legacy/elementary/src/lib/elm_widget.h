@@ -246,6 +246,8 @@ EAPI void            *elm_widget_signal_callback_del(Evas_Object *obj, const cha
 EAPI void             elm_widget_can_focus_set(Evas_Object *obj, Eina_Bool can_focus);
 EAPI Eina_Bool        elm_widget_can_focus_get(const Evas_Object *obj);
 EAPI Eina_Bool        elm_widget_child_can_focus_get(const Evas_Object *obj);
+EAPI void             elm_widget_tree_unfocusable_set(Evas_Object *obj, Eina_Bool tree_unfocusable);
+EAPI Eina_Bool        elm_widget_tree_unfocusable_get(const Evas_Object *obj);
 EAPI void             elm_widget_highlight_ignore_set(Evas_Object *obj, Eina_Bool ignore);
 EAPI Eina_Bool        elm_widget_highlight_ignore_get(const Evas_Object *obj);
 EAPI void             elm_widget_highlight_in_theme_set(Evas_Object *obj, Eina_Bool highlight);
@@ -313,6 +315,7 @@ EAPI Eina_List       *elm_widget_stringlist_get(const char *str);
 EAPI void             elm_widget_stringlist_free(Eina_List *list);
 EAPI void             elm_widget_focus_hide_handle(Evas_Object *obj);
 EAPI void             elm_widget_focus_mouse_down_handle(Evas_Object *obj);
+EAPI void             elm_widget_focus_tree_unfocusable_handle(Evas_Object *obj);
 EAPI void             elm_widget_focus_disabled_handle(Evas_Object *obj);
 EAPI void             elm_widget_text_part_set(Evas_Object *obj, const char *item, const char *label);
 EAPI const char      *elm_widget_text_part_get(const Evas_Object *obj, const char *item);
