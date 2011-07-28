@@ -122,6 +122,7 @@ struct _Elm_Genlist_Item
       Elm_Tooltip_Item_Content_Cb content_cb;
       Evas_Smart_Cb               del_cb;
       const char                 *style;
+      Eina_Bool                   free_size : 1;
    } tooltip;
 
    const char                   *mouse_cursor;
@@ -1927,6 +1928,7 @@ _item_realize(Elm_Genlist_Item *it,
                                                it->tooltip.content_cb,
                                                it->tooltip.data, NULL);
         elm_widget_item_tooltip_style_set(it, it->tooltip.style);
+        elm_widget_item_tooltip_size_restrict_disable(it, it->tooltip.free_size);
      }
 
    if (it->mouse_cursor)
@@ -4722,6 +4724,7 @@ elm_genlist_item_tooltip_content_cb_set(Elm_Genlist_Item           *item,
                                                item->tooltip.content_cb,
                                                item->tooltip.data, NULL);
         elm_widget_item_tooltip_style_set(item, item->tooltip.style);
+        elm_widget_item_tooltip_size_restrict_disable(item, item->tooltip.free_size);
      }
 
    return;
@@ -4755,6 +4758,7 @@ elm_genlist_item_tooltip_unset(Elm_Genlist_Item *item)
    item->tooltip.del_cb = NULL;
    item->tooltip.content_cb = NULL;
    item->tooltip.data = NULL;
+   item->tooltip.free_size = EINA_FALSE;
    if (item->tooltip.style)
      elm_genlist_item_tooltip_style_set(item, NULL);
 }
@@ -4800,14 +4804,16 @@ EAPI Eina_Bool
 elm_genlist_item_tooltip_size_restrict_disable(Elm_Genlist_Item *item, Eina_Bool disable)
 {
    ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(item, EINA_FALSE);
-   return elm_widget_item_tooltip_size_restrict_disable(item, disable);
+   item->tooltip.free_size = disable;
+   if (item->base.view) return elm_widget_item_tooltip_size_restrict_disable(item, disable);
+   return EINA_TRUE;
 }
 
 EAPI Eina_Bool
 elm_genlist_item_tooltip_size_restrict_disabled_get(const Elm_Genlist_Item *item)
 {
    ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(item, EINA_FALSE);
-   return elm_widget_item_tooltip_size_restrict_disabled_get(item);
+   return item->tooltip.free_size;
 }
 
 /**
