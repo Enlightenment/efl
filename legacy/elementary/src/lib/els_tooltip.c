@@ -117,7 +117,6 @@ _elm_tooltip_show(Elm_Tooltip *tt)
         elm_win_override_set(tt->tt_win, EINA_TRUE);
         tt->tt_evas = evas_object_evas_get(tt->tt_win);
         tt->tooltip = edje_object_add(tt->tt_evas);
-        evas_object_pass_events_set(tt->tooltip, EINA_TRUE);
         evas_object_move(tt->tooltip, 0, 0);
         elm_win_resize_object_add(tt->tt_win, tt->tooltip);
 #ifdef HAVE_ELEMENTARY_X
@@ -138,7 +137,6 @@ _elm_tooltip_show(Elm_Tooltip *tt)
    evas_object_event_callback_add
      (tt->eventarea, EVAS_CALLBACK_MOUSE_MOVE, _elm_tooltip_obj_mouse_move_cb, tt);
 
-   evas_object_pass_events_set(tt->tooltip, EINA_TRUE);
    tt->changed_style = EINA_TRUE;
    _elm_tooltip_reconfigure_job_start(tt);
 }
@@ -260,7 +258,7 @@ _elm_tooltip_reconfigure(Elm_Tooltip *tt)
      {
         const char *style = tt->style ? tt->style : "default";
         const char *str;
-        if (!_elm_theme_object_set(tt->owner, tt->tooltip, "tooltip", "base", style))
+        if (!_elm_theme_object_set(tt->tt_win ? NULL : tt->owner, tt->tooltip, "tooltip", "base", style))
           {
              ERR("Could not apply the theme to the tooltip! style=%s", style);
              if (tt->tt_win) evas_object_del(tt->tt_win);
@@ -313,7 +311,7 @@ _elm_tooltip_reconfigure(Elm_Tooltip *tt)
         evas_object_pass_events_set(tt->tooltip, EINA_TRUE);
         tt->changed_style = EINA_FALSE;
         if (tt->tooltip)
-          edje_object_part_swallow(tt->tooltip, "elm.swallow.content", 
+          edje_object_part_swallow(tt->tooltip, "elm.swallow.content",
                                    tt->content);
 
         edje_object_signal_emit(tt->tooltip, "elm,action,show", "elm");
@@ -382,7 +380,6 @@ _elm_tooltip_reconfigure(Elm_Tooltip *tt)
         ox += x;
         oy += y;
      }
-
    else
      evas_pointer_canvas_xy_get(tt->evas, &px, &py);
 
@@ -390,51 +387,60 @@ _elm_tooltip_reconfigure(Elm_Tooltip *tt)
                        (px <= ox + ow) && (py <= oy + oh));
    if (inside_eventarea)
      {
-        tx = px;
-        ty = py;
-
-        if (tx + tw + tt->pad.x < cw) tx += tt->pad.x;
-        if (ty + th + tt->pad.y < ch) ty += tt->pad.y;
+        tx = px - tw;
+        ty = py - th;
      }
    else
      {
         tx = ox + (ow / 2) - (tw / 2);
-        if (ch < (th + oy + oh)) ty = oy - th;
-        else ty = oy + oh;
+        if (0 > (th - oy - oh)) ty = oy + th;
+        else ty = oy - oh;
      }
 
-   if (tx + tw > cw)
+   if (tx < 0)
      {
-        if (abs(tx - tw) < (tx + tw) - cw)
-          tx -= tw;
+        if (abs((tx + 2 * tw) - cw) < abs(tx))
+          tx += tw;
      }
-   else if ((tx < px) && (px < tx + tw))
+   else if ((tx > px) && (px > tx))
      {
-        if (0 < tx - tw)
-          tx -= tw;
+        if (tx + tw < cw)
+          tx += tw;
      }
-   if (ty + th > ch)
+   if (ty < 0)
      {
-        if (abs(ty - th) < (ty + th) - ch)
-          ty -= th;
+        if (abs((ty + 2 * th) - ch) < abs(ty))
+          ty += th;
      }
-   else if ((ty < py) && (py < ty + th))
+   else if ((ty > py) && (py > ty))
      {
-        if (0 < ty - th)
-          ty -= th;
+        if (ty + th < ch)
+          ty += th;
      }
-
+   if (inside_eventarea)
+     {
+        if ((tx == px) && ((tx + tw + tt->pad.x < cw) || (tx + tw > cw))) tx += tt->pad.x;
+        else if ((tx - tt->pad.x > 0) || (tx < 0)) tx -= tt->pad.x;
+        if ((ty == py) && ((ty + th + tt->pad.y < ch) || (ty + th > ch))) ty += tt->pad.y;
+        else if ((ty - tt->pad.y > 0) || (ty < 0)) ty -= tt->pad.y;
+     }
    if (tt->pad.bx * 2 + tw < cw)
      {
         if (tx < tt->pad.bx) tx = tt->pad.bx;
-        else if (tx + tw >= cw - tt->pad.bx) tx = cw - tw - tt->pad.bx;
+        else if ((tx >= tw) && (tx + tt->pad.bx <= cw)) tx += tt->pad.bx;
+        else if (tx - tt->pad.bx >= 0) tx -= tt->pad.bx;
      }
+   else if (tx < 0) tx -= tt->pad.bx;
+   else if (tx > cw) tx += tt->pad.bx;
 
    if (tt->pad.by * 2 + th < ch)
      {
         if (ty < tt->pad.by) ty = tt->pad.by;
-        else if (ty + th >= ch - tt->pad.by) ty = ch - th - tt->pad.by;
+        else if ((ty >= th) && (ty + tt->pad.by <= ch)) ty += tt->pad.by;
+        else if (ty - tt->pad.by >= 0) ty -= tt->pad.by;
      }
+   else if (ty < 0) ty -= tt->pad.by;
+   else if (ty > ch) ty += tt->pad.by;
 
    evas_object_move(tt->tt_win ? : tt->tooltip, tx, ty);
    evas_object_resize(tt->tt_win ? : tt->tooltip, tw, th);
