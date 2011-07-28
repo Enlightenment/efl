@@ -1096,7 +1096,7 @@ elm_widget_child_can_focus_get(const Evas_Object *obj)
  * This API makes the widget object and its children to be unfocusable.
  *
  * This API can be helpful for an object to be deleted.
- * When an object will be deleted soon, it and its children may not 
+ * When an object will be deleted soon, it and its children may not
  * want to get focus (by focus reverting or by other focus controls).
  * Then, just use this API before deleting.
  *
