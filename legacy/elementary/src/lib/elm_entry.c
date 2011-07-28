@@ -1913,7 +1913,28 @@ _elm_entry_text_get(const Evas_Object *obj, const char *item)
         ERR("text=NULL for edje %p, part 'elm.text'", wd->ent);
         return NULL;
      }
-   eina_stringshare_replace(&wd->text, text);
+
+   if (wd->append_text_len > 0)
+     {
+        char *tmpbuf;
+        size_t tlen;
+        tlen = strlen(text);
+        tmpbuf = malloc(tlen + wd->append_text_len + 1);
+        if (!tmpbuf)
+          {
+             ERR("Failed to allocate memory for entry's text %p", obj);
+             return NULL;
+          }
+        memcpy(tmpbuf, text, tlen);
+        memcpy(tmpbuf + tlen, wd->append_text_left, wd->append_text_len);
+        tmpbuf[tlen + wd->append_text_len] = '\0';
+        eina_stringshare_replace(&wd->text, tmpbuf);
+        free(tmpbuf);
+     }
+   else
+     {
+        eina_stringshare_replace(&wd->text, text);
+     }
    return wd->text;
 }
 
