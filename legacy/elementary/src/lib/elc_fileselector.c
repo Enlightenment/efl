@@ -937,6 +937,7 @@ elm_fileselector_is_save_set(Evas_Object *obj,
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
 
+   printf("%i\n", is_save);
    elm_object_disabled_set(wd->filename_entry, !is_save);
 
    if (is_save)
@@ -951,7 +952,7 @@ elm_fileselector_is_save_get(const Evas_Object *obj)
    ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return EINA_FALSE;
-   return elm_object_disabled_get(wd->filename_entry);
+   return !elm_object_disabled_get(wd->filename_entry);
 }
 
 EAPI void
