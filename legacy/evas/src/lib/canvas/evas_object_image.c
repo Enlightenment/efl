@@ -395,6 +395,7 @@ evas_object_image_source_set(Evas_Object *obj, Evas_Object *src)
    if (src == obj) return EINA_FALSE;
    if (o->cur.source == src) return EINA_TRUE;
 
+   if (o->tmpf) _cleanup_tmpf(obj);
    /* Kill the image if any */
    if (o->cur.file || o->cur.key)
       evas_object_image_file_set(obj, NULL, NULL);
@@ -717,6 +718,7 @@ evas_object_image_size_set(Evas_Object *obj, int w, int h)
    if (h > 32768) return;
    if ((w == o->cur.image.w) &&
        (h == o->cur.image.h)) return;
+   if (o->tmpf) _cleanup_tmpf(obj);
    o->cur.image.w = w;
    o->cur.image.h = h;
    if (o->engine_data)
@@ -866,6 +868,7 @@ evas_object_image_data_set(Evas_Object *obj, void *data)
      evas_common_pipe_op_image_flush(o->engine_data);
 #endif
    p_data = o->engine_data;
+   if (o->tmpf) _cleanup_tmpf(obj);
    if (data)
      {
 	if (o->engine_data)
@@ -1044,6 +1047,7 @@ evas_object_image_data_copy_set(Evas_Object *obj, void *data)
      }
    if ((o->cur.image.w <= 0) ||
        (o->cur.image.h <= 0)) return;
+   if (o->tmpf) _cleanup_tmpf(obj);
    if (o->engine_data)
      obj->layer->evas->engine.func->image_free(obj->layer->evas->engine.data.output,
 					       o->engine_data);
@@ -1325,6 +1329,7 @@ evas_object_image_pixels_import(Evas_Object *obj, Evas_Pixel_Import_Source *pixe
                                                                  obj);
      }
    if ((pixels->w != o->cur.image.w) || (pixels->h != o->cur.image.h)) return 0;
+   if (o->tmpf) _cleanup_tmpf(obj);
    switch (pixels->format)
      {
 #if 0
@@ -1664,6 +1669,7 @@ evas_object_image_colorspace_set(Evas_Object *obj, Evas_Colorspace cspace)
                                                                  o->engine_data,
                                                                  obj);
      }
+   if (o->tmpf) _cleanup_tmpf(obj);
 #ifdef EVAS_FRAME_QUEUING
    if ((Evas_Colorspace)o->cur.cspace != cspace)
      {
@@ -1713,6 +1719,7 @@ evas_object_image_native_surface_set(Evas_Object *obj, Evas_Native_Surface *surf
                                                                  o->engine_data,
                                                                  obj);
      }
+   if (o->tmpf) _cleanup_tmpf(obj);
    if (o->cur.source) _proxy_unset(obj);
    if (!obj->layer->evas->engine.func->image_native_set) return;
    if ((surf) &&
