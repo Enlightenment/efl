@@ -1199,7 +1199,8 @@ _format_command_parse_font_weight_style(Evas_Object_Textblock_Format *fmt,
           }
         else
           {
-             found_start = style + 7;
+             found_start = style + 7; /* + 7 for :style= */
+             eina_strbuf_insert_char(buf, ' ', found_start - fmt->font.name);
           }
         eina_strbuf_insert(buf, param, found_start - fmt->font.name);
         if (fmt->font.name) eina_stringshare_del(fmt->font.name);
