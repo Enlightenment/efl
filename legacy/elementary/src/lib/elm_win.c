@@ -374,7 +374,6 @@ _elm_win_focus_in(Ecore_Evas *ee)
    if (!obj) return;
    win = elm_widget_data_get(obj);
    if (!win) return;
-   /*NB: Why two different "focus signals" here ??? */
    evas_object_smart_callback_call(win->win_obj, SIG_FOCUS_IN, NULL);
    win->focus_highlight.cur.visible = EINA_TRUE;
    _elm_win_focus_highlight_reconfigure_job_start(win);
