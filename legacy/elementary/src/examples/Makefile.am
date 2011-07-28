@@ -248,6 +248,10 @@ SCREENSHOTS = \
 	toggle_example_01:toggle_example_01.png:0.0 \
 	panel_example_01:panel_example_01.png:0.0 \
 	gengrid_example:gengrid_example.png:0.0 \
+	genlist_example_01:genlist_example_01.png:0.1 \
+	genlist_example_02:genlist_example_02.png:0.1 \
+	genlist_example_04:genlist_example_04.png:0.1 \
+	genlist_example_05:genlist_example_05.png:0.1 \
 	entry_example:entry_example.png:0.0 \
 	progressbar_example:progressbar_example.png:0.0 \
 	notify_example_01:notify_example_01.png:0.0 \

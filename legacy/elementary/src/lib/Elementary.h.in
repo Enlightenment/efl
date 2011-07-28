@@ -11970,6 +11970,8 @@ extern "C" {
     * its capabilities:
     * - @ref genlist_example_01
     * - @ref genlist_example_02
+    * - @ref genlist_example_04
+    * - @ref genlist_example_05
     */
 
    /**
