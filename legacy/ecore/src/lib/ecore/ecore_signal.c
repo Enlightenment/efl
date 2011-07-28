@@ -220,7 +220,7 @@ _ecore_signal_call(void)
              if ((n < MAXSIGQ) && (sigusr1_info[n].si_signo))
                e->data = sigusr1_info[n];
 
-             ecore_event_add(ECORE_EVENT_SIGNAL_USER, e, NULL, NULL);
+             _ecore_event_add(ECORE_EVENT_SIGNAL_USER, e, NULL, NULL);
           }
         sig_count--;
      }
@@ -241,7 +241,7 @@ _ecore_signal_call(void)
              if ((n < MAXSIGQ) && (sigusr2_info[n].si_signo))
                e->data = sigusr2_info[n];
 
-             ecore_event_add(ECORE_EVENT_SIGNAL_USER, e, NULL, NULL);
+             _ecore_event_add(ECORE_EVENT_SIGNAL_USER, e, NULL, NULL);
           }
         sig_count--;
      }
@@ -260,7 +260,7 @@ _ecore_signal_call(void)
              if ((n < MAXSIGQ) && (sighup_info[n].si_signo))
                e->data = sighup_info[n];
 
-             ecore_event_add(ECORE_EVENT_SIGNAL_HUP, e, NULL, NULL);
+             _ecore_event_add(ECORE_EVENT_SIGNAL_HUP, e, NULL, NULL);
           }
         sig_count--;
      }
@@ -281,7 +281,7 @@ _ecore_signal_call(void)
              if ((n < MAXSIGQ) && (sigquit_info[n].si_signo))
                e->data = sigquit_info[n];
 
-             ecore_event_add(ECORE_EVENT_SIGNAL_EXIT, e, NULL, NULL);
+             _ecore_event_add(ECORE_EVENT_SIGNAL_EXIT, e, NULL, NULL);
           }
         sig_count--;
      }
@@ -302,7 +302,7 @@ _ecore_signal_call(void)
              if ((n < MAXSIGQ) && (sigint_info[n].si_signo))
                e->data = sigint_info[n];
 
-             ecore_event_add(ECORE_EVENT_SIGNAL_EXIT, e, NULL, NULL);
+             _ecore_event_add(ECORE_EVENT_SIGNAL_EXIT, e, NULL, NULL);
           }
         sig_count--;
      }
@@ -323,7 +323,7 @@ _ecore_signal_call(void)
              if ((n < MAXSIGQ) && (sigterm_info[n].si_signo))
                e->data = sigterm_info[n];
 
-             ecore_event_add(ECORE_EVENT_SIGNAL_EXIT, e, NULL, NULL);
+             _ecore_event_add(ECORE_EVENT_SIGNAL_EXIT, e, NULL, NULL);
           }
         sig_count--;
      }
@@ -343,7 +343,7 @@ _ecore_signal_call(void)
              if ((n < MAXSIGQ) && (sigpwr_info[n].si_signo))
                e->data = sigpwr_info[n];
 
-             ecore_event_add(ECORE_EVENT_SIGNAL_POWER, e, NULL, NULL);
+             _ecore_event_add(ECORE_EVENT_SIGNAL_POWER, e, NULL, NULL);
           }
         sig_count--;
      }

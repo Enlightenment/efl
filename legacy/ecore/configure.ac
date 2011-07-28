@@ -1161,6 +1161,22 @@ EFL_CHECK_THREADS(
    ],
    [have_threads="no"])
 
+### enable thread safety if we have threads, unless specifically asked not to
+if test "x${have_threads}" = "xno"
+then
+  want_thread_safety="no"
+else
+  want_thread_safety="no"  # to be changed to yes when ready
+  AC_ARG_ENABLE(thread-safety,
+    AC_HELP_STRING([--enable-thread-safety], [enable or disable thread safety]),
+    [want_thread_safety=$enableval])
+fi
+
+if test "x${want_thread_safety}" = "xyes"
+then
+   AC_DEFINE([HAVE_THREAD_SAFETY], [1], [Define to enable thread safety])
+fi
+
 ### Checks for types
 AC_CHECK_SIZEOF(int, 4)
 AC_CHECK_SIZEOF(long, 4)
@@ -1706,6 +1722,7 @@ echo " Core:"
 echo
 echo "  Ecore........................: always"
 echo "    Thread support.............: $have_threads"
+echo "    Thread safety..............: $want_thread_safety"
 echo "    GLib support...............: $have_glib"
 echo "    Always integrate GLib......: $want_glib_integration_always"
 echo "    Use g_main_loop............: $want_g_main_loop"

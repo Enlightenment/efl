@@ -140,14 +140,14 @@ static void *_ecore_event_del(Ecore_Event *event);
 EAPI Ecore_Event_Handler *
 ecore_event_handler_add(int type, Ecore_Event_Handler_Cb func, const void *data)
 {
-   Ecore_Event_Handler *eh;
+   Ecore_Event_Handler *eh = NULL;
 
-   ECORE_MAIN_LOOP_ASSERT();
+   _ecore_lock();
 
-   if (!func) return NULL;
-   if ((type <= ECORE_EVENT_NONE) || (type >= event_id_max)) return NULL;
+   if (!func) goto unlock;
+   if ((type <= ECORE_EVENT_NONE) || (type >= event_id_max)) goto unlock;
    eh = calloc(1, sizeof(Ecore_Event_Handler));
-   if (!eh) return NULL;
+   if (!eh) goto unlock;
    ECORE_MAGIC_SET(eh, ECORE_MAGIC_EVENT_HANDLER);
    eh->type = type;
    eh->func = func;
@@ -168,7 +168,7 @@ ecore_event_handler_add(int type, Ecore_Event_Handler_Cb func, const void *data)
              if (!new_handlers)
                {
                   free(eh);
-                  return NULL;
+                  goto unlock;
                }
              event_handlers = new_handlers;
              for (i = p_alloc_num; i < event_handlers_alloc_num; i++)
@@ -179,6 +179,9 @@ ecore_event_handler_add(int type, Ecore_Event_Handler_Cb func, const void *data)
      event_handlers_add_list = (Ecore_Event_Handler *)eina_inlist_append(EINA_INLIST_GET(event_handlers_add_list), EINA_INLIST_GET(eh));
    else if (type < event_handlers_alloc_num)
      event_handlers[type] = (Ecore_Event_Handler *)eina_inlist_append(EINA_INLIST_GET(event_handlers[type]), EINA_INLIST_GET(eh));
+
+unlock:
+   _ecore_unlock();
    return eh;
 }
 
@@ -195,18 +198,23 @@ ecore_event_handler_add(int type, Ecore_Event_Handler_Cb func, const void *data)
 EAPI void *
 ecore_event_handler_del(Ecore_Event_Handler *event_handler)
 {
-   ECORE_MAIN_LOOP_ASSERT();
+   void *data = NULL;
 
+   _ecore_lock();
    if (!ECORE_MAGIC_CHECK(event_handler, ECORE_MAGIC_EVENT_HANDLER))
      {
         ECORE_MAGIC_FAIL(event_handler, ECORE_MAGIC_EVENT_HANDLER,
                          "ecore_event_handler_del");
-        return NULL;
+        goto unlock;
      }
    EINA_SAFETY_ON_TRUE_RETURN_VAL(event_handler->delete_me, NULL);
    event_handler->delete_me = 1;
    event_handlers_delete_list = eina_list_append(event_handlers_delete_list, event_handler);
-   return event_handler->data;
+   data = event_handler->data;
+unlock:
+   _ecore_unlock();
+
+   return data;
 }
 
 /**
@@ -220,14 +228,18 @@ ecore_event_handler_del(Ecore_Event_Handler *event_handler)
 EAPI void *
 ecore_event_handler_data_get(Ecore_Event_Handler *eh)
 {
-   ECORE_MAIN_LOOP_ASSERT();
+   void *data = NULL;
 
+   _ecore_lock();
    if (!ECORE_MAGIC_CHECK(eh, ECORE_MAGIC_EVENT_HANDLER))
      {
         ECORE_MAGIC_FAIL(eh, ECORE_MAGIC_EVENT_HANDLER, "ecore_event_handler_data_get");
-        return NULL;
+        goto unlock;
      }
-   return eh->data;
+   data = eh->data;
+unlock:
+   _ecore_unlock();
+   return data;
 }
 
 /**
@@ -242,17 +254,19 @@ ecore_event_handler_data_get(Ecore_Event_Handler *eh)
 EAPI void *
 ecore_event_handler_data_set(Ecore_Event_Handler *eh, const void *data)
 {
-   void *old;
+   void *old = NULL;
 
-   ECORE_MAIN_LOOP_ASSERT();
-
+   _ecore_lock();
    if (!ECORE_MAGIC_CHECK(eh, ECORE_MAGIC_EVENT_HANDLER))
      {
         ECORE_MAGIC_FAIL(eh, ECORE_MAGIC_EVENT_HANDLER, "ecore_event_handler_data_set");
-        return NULL;
+        goto unlock;
      }
    old = eh->data;
    eh->data = (void *)data;
+unlock:
+   _ecore_unlock();
+
    return old;
 }
 
@@ -283,13 +297,18 @@ _ecore_event_generic_free (void *data __UNUSED__, void *event)
 EAPI Ecore_Event *
 ecore_event_add(int type, void *ev, Ecore_End_Cb func_free, void *data)
 {
-   ECORE_MAIN_LOOP_ASSERT();
+   Ecore_Event *event = NULL;
 
-/*   if (!ev) return NULL;*/
-   if (type <= ECORE_EVENT_NONE) return NULL;
-   if (type >= event_id_max) return NULL;
+   _ecore_lock();
+
+/*   if (!ev) goto unlock; */
+   if (type <= ECORE_EVENT_NONE) goto unlock;
+   if (type >= event_id_max) goto unlock;
    if ((ev) && (!func_free)) func_free = _ecore_event_generic_free;
-   return _ecore_event_add(type, ev, func_free, data);
+   event = _ecore_event_add(type, ev, func_free, data);
+unlock:
+   _ecore_unlock();
+   return event;
 }
 
 /**
@@ -306,16 +325,20 @@ ecore_event_add(int type, void *ev, Ecore_End_Cb func_free, void *data)
 EAPI void *
 ecore_event_del(Ecore_Event *event)
 {
-   ECORE_MAIN_LOOP_ASSERT();
+   void *data = NULL;
 
+   _ecore_lock();
    if (!ECORE_MAGIC_CHECK(event, ECORE_MAGIC_EVENT))
      {
         ECORE_MAGIC_FAIL(event, ECORE_MAGIC_EVENT, "ecore_event_del");
-        return NULL;
+        goto unlock;
      }
    EINA_SAFETY_ON_TRUE_RETURN_VAL(event->delete_me, NULL);
    event->delete_me = 1;
-   return event->data;
+   data = event->data;
+unlock:
+   _ecore_unlock();
+   return data;
 }
 
 /**
@@ -331,10 +354,13 @@ ecore_event_del(Ecore_Event *event)
 EAPI int
 ecore_event_type_new(void)
 {
-   ECORE_MAIN_LOOP_ASSERT();
+   int id;
 
-   event_id_max++;
-   return event_id_max - 1;
+   _ecore_lock();
+   id = event_id_max++;
+   _ecore_unlock();
+
+   return id;
 }
 
 /**
@@ -360,19 +386,20 @@ ecore_event_type_new(void)
 EAPI Ecore_Event_Filter *
 ecore_event_filter_add(Ecore_Data_Cb func_start, Ecore_Filter_Cb func_filter, Ecore_End_Cb func_end, const void *data)
 {
-   Ecore_Event_Filter *ef;
+   Ecore_Event_Filter *ef = NULL;
 
-   ECORE_MAIN_LOOP_ASSERT();
-
-   if (!func_filter) return NULL;
+   _ecore_lock();
+   if (!func_filter) goto unlock;
    ef = calloc(1, sizeof(Ecore_Event_Filter));
-   if (!ef) return NULL;
+   if (!ef) goto unlock;
    ECORE_MAGIC_SET(ef, ECORE_MAGIC_EVENT_FILTER);
    ef->func_start = func_start;
    ef->func_filter = func_filter;
    ef->func_end = func_end;
    ef->data = (void *)data;
    event_filters = (Ecore_Event_Filter *) eina_inlist_append(EINA_INLIST_GET(event_filters), EINA_INLIST_GET(ef));
+unlock:
+   _ecore_unlock();
    return ef;
 }
 
@@ -388,17 +415,22 @@ ecore_event_filter_add(Ecore_Data_Cb func_start, Ecore_Filter_Cb func_filter, Ec
 EAPI void *
 ecore_event_filter_del(Ecore_Event_Filter *ef)
 {
-   ECORE_MAIN_LOOP_ASSERT();
+   void *data = NULL;
 
+   _ecore_lock();
    if (!ECORE_MAGIC_CHECK(ef, ECORE_MAGIC_EVENT_FILTER))
      {
         ECORE_MAGIC_FAIL(ef, ECORE_MAGIC_EVENT_FILTER, "ecore_event_filter_del");
-        return NULL;
+        goto unlock;
      }
    EINA_SAFETY_ON_TRUE_RETURN_VAL(ef->delete_me, NULL);
    ef->delete_me = 1;
    event_filters_delete_me = 1;
-   return ef->data;
+   data = ef->data;
+unlock:
+   _ecore_unlock();
+
+   return data;
 }
 
 /**
@@ -524,7 +556,20 @@ _ecore_event_del(Ecore_Event *event)
    void *data;
 
    data = event->data;
-   if (event->func_free) event->func_free(event->data, event->event);
+   if (event->func_free)
+     {
+        Ecore_End_Cb func_free;
+        void *ev;
+        void *data;
+
+        func_free = event->func_free;
+        ev = event->event;
+        data = event->data;
+
+        _ecore_unlock();
+        func_free(data, ev);
+        _ecore_lock();
+     }
    events = (Ecore_Event *) eina_inlist_remove(EINA_INLIST_GET(events), EINA_INLIST_GET(event));
    ECORE_MAGIC_SET(event, ECORE_MAGIC_NONE);
    free(event);
@@ -578,7 +623,18 @@ _ecore_event_filters_apply()
              ef->references++;
 
              if (ef->func_start)
-               ef->loop_data = ef->func_start(ef->data);
+               {
+                  Ecore_Data_Cb func_start;
+                  void *data;
+                  void *r;
+
+                  func_start = ef->func_start;
+                  data = ef->data;
+                  _ecore_unlock();
+                  r = func_start(data);
+                  _ecore_lock();
+                  ef->loop_data = r;
+               }
 
              if (!event_filter_event_current)
                {
@@ -594,9 +650,23 @@ _ecore_event_filters_apply()
              while (event_filter_event_current)
                {
                   Ecore_Event *e = event_filter_event_current;
+                  Ecore_Filter_Cb func_filter;
+                  void *loop_data;
+                  void *data;
+                  int type;
+                  void *event;
+                  Eina_Bool r;
 
-                  if (!ef->func_filter(ef->data, ef->loop_data,
-                                       e->type, e->event))
+                  func_filter = ef->func_filter;
+                  data = ef->data;
+                  loop_data = ef->loop_data;
+                  type = e->type;
+                  event = e->event;
+
+                  _ecore_unlock();
+                  r = func_filter(data, loop_data, type, event);
+                  _ecore_lock();
+                  if (!r)
                     {
                        ecore_event_del(e);
                     }
@@ -605,7 +675,19 @@ _ecore_event_filters_apply()
                     event_filter_event_current = (Ecore_Event *)EINA_INLIST_GET(event_filter_event_current)->next;
                }
              if (ef->func_end)
-               ef->func_end(ef->data, ef->loop_data);
+               {
+                  Ecore_End_Cb func_end;
+                  void *loop_data;
+                  void *data;
+
+                  func_end = ef->func_end;
+                  data = ef->data;
+                  loop_data = ef->loop_data;
+
+                  _ecore_unlock();
+                  ef->func_end(ef->data, ef->loop_data);
+                  _ecore_lock();
+               }
 
              ef->references--;
           }
@@ -685,12 +767,22 @@ _ecore_event_call(void)
                   eh = event_handler_current;
                   if (!eh->delete_me)
                     {
+                       Ecore_Event_Handler_Cb func;
+                       void *data;
+                       int type;
+                       void *event;
                        Eina_Bool ret;
 
                        handle_count++;
 
+                       func = eh->func;
+                       data = eh->data;
+                       type = e->type;
+                       event = e->event;
                        eh->references++;
-                       ret = eh->func(eh->data, e->type, e->event);
+                       _ecore_unlock();
+                       ret = func(data, type, event);
+                       _ecore_lock();
                        eh->references--;
 
                        if (!ret)

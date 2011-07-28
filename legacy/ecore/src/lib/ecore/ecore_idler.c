@@ -23,6 +23,9 @@ static Ecore_Idler *idlers = NULL;
 static Ecore_Idler *idler_current = NULL;
 static int          idlers_delete_me = 0;
 
+static void *
+_ecore_idler_del(Ecore_Idler *idler);
+
 /**
  * @addtogroup Ecore_Group Ecore - Main Loop and Job Functions.
  *
@@ -86,15 +89,18 @@ Example with functions that deal with idle state:
 EAPI Ecore_Idler *
 ecore_idler_add(Ecore_Task_Cb func, const void *data)
 {
-   Ecore_Idler *ie;
+   Ecore_Idler *ie = NULL;
 
-   if (!func) return NULL;
+   _ecore_lock();
+   if (!func) goto unlock;
    ie = calloc(1, sizeof(Ecore_Idler));
-   if (!ie) return NULL;
+   if (!ie) goto unlock;
    ECORE_MAGIC_SET(ie, ECORE_MAGIC_IDLER);
    ie->func = func;
    ie->data = (void *)data;
    idlers = (Ecore_Idler *) eina_inlist_append(EINA_INLIST_GET(idlers), EINA_INLIST_GET(ie));
+unlock:
+   _ecore_unlock();
    return ie;
 }
 
@@ -107,16 +113,19 @@ ecore_idler_add(Ecore_Task_Cb func, const void *data)
 EAPI void *
 ecore_idler_del(Ecore_Idler *idler)
 {
+   void *data = NULL;
+
    if (!ECORE_MAGIC_CHECK(idler, ECORE_MAGIC_IDLER))
      {
         ECORE_MAGIC_FAIL(idler, ECORE_MAGIC_IDLER,
                          "ecore_idler_del");
         return NULL;
      }
-   EINA_SAFETY_ON_TRUE_RETURN_VAL(idler->delete_me, NULL);
-   idler->delete_me = 1;
-   idlers_delete_me = 1;
-   return idler->data;
+
+   _ecore_lock();
+   data = _ecore_idler_del(idler);
+   _ecore_unlock();
+   return data;
 }
 
 /**
@@ -126,6 +135,16 @@ ecore_idler_del(Ecore_Idler *idler)
 /**
  * @}
  */
+
+static void *
+_ecore_idler_del(Ecore_Idler *idler)
+{
+   EINA_SAFETY_ON_TRUE_RETURN_VAL(idler->delete_me, NULL);
+   idler->delete_me = 1;
+   idlers_delete_me = 1;
+   return idler->data;
+}
+
 
 void
 _ecore_idler_shutdown(void)
@@ -160,10 +179,19 @@ _ecore_idler_call(void)
         Ecore_Idler *ie = (Ecore_Idler *)idler_current;
         if (!ie->delete_me)
           {
+             Eina_Bool ret;
+             Ecore_Task_Cb func;
+             void *data;
+
+             func = ie->func;
+             data = ie->data;
              ie->references++;
-             if (!ie->func(ie->data))
+             _ecore_unlock();
+             ret = func(data);
+             _ecore_lock();
+             if (!ret)
                {
-                  if (!ie->delete_me) ecore_idler_del(ie);
+                  if (!ie->delete_me) _ecore_idler_del(ie);
                }
              ie->references--;
           }
