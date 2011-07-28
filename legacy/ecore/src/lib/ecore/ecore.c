@@ -53,6 +53,17 @@ static int _ecore_init_count = 0;
 int _ecore_log_dom = -1;
 int _ecore_fps_debug = 0;
 
+typedef struct _Ecore_Safe_Call Ecore_Safe_Call;
+struct _Ecore_Safe_Call
+{
+   Ecore_Cb cb;
+   void *data;
+};
+
+static void _thread_callback(void *data, void *buffer, unsigned int nbyte);
+static Ecore_Pipe *_thread_call = NULL;
+static Eina_Lock _thread_safety;
+
 /** OpenBSD does not define CODESET
  * FIXME ??
  */
@@ -126,6 +137,9 @@ ecore_init(void)
    _ecore_job_init();
    _ecore_time_init();
 
+   eina_lock_new(&_thread_safety);
+   _thread_call = ecore_pipe_add(_thread_callback, NULL);
+
 #if HAVE_MALLINFO
    if (getenv("ECORE_MEM_STAT"))
      {
@@ -165,6 +179,9 @@ ecore_shutdown(void)
    if (--_ecore_init_count != 0)
      return _ecore_init_count;
 
+   ecore_pipe_del(_thread_call);
+   eina_lock_free(&_thread_safety);
+
    if (_ecore_fps_debug) _ecore_fps_debug_shutdown();
    _ecore_poller_shutdown();
    _ecore_animator_shutdown();
@@ -201,6 +218,22 @@ ecore_shutdown(void)
 #endif
 
    return _ecore_init_count;
+}
+
+EAPI void
+ecore_main_loop_thread_safe_call(Ecore_Cb callback, void *data)
+{
+   Ecore_Safe_Call *order;
+
+   order = malloc(sizeof (Ecore_Safe_Call));
+   if (!order) return ;
+
+   order->cb = callback;
+   order->data = data;
+
+   eina_lock_take(&_thread_safety);
+   ecore_pipe_write(_thread_call, &order, sizeof (Ecore_Safe_Call*));
+   eina_lock_release(&_thread_safety);
 }
 
 /**
@@ -428,3 +461,18 @@ _ecore_memory_statistic(__UNUSED__ void *data)
 }
 
 #endif
+
+static void
+_thread_callback(void *data __UNUSED__, void *buffer, unsigned int nbyte)
+{
+   Ecore_Safe_Call *call = buffer;
+
+   while (nbyte >= sizeof (Ecore_Safe_Call*))
+     {
+        call->cb(call->data);
+        free(call);
+
+        call++;
+        nbyte -= sizeof (Ecore_Safe_Call*);
+     }
+}

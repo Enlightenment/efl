@@ -737,6 +737,22 @@ extern "C" {
    EAPI void                *ecore_main_win32_handler_del(Ecore_Win32_Handler *win32_handler);
 
   /**
+   * @brief Call callback in the main loop.
+   *
+   * @param callback The callback to call in the main loop
+   * @param data The data to give to that call back
+   *
+   * For all call that need to happen in the main loop (most EFL functions do),
+   * this helper function provide the infrastructure needed to do it safely
+   * by avoind dead lock, race condition and properly wake up the main loop.
+   *
+   * Remember after that function call, you should never touch again the @p data
+   * in the thread, it is owned by the main loop and you callback should take
+   * care of freeing it if necessary.
+   */
+   EAPI void                 ecore_main_loop_thread_safe_call(Ecore_Cb callback, void *data);
+
+  /**
    * @}
    */
 
