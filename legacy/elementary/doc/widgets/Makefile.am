@@ -74,6 +74,11 @@ widget_preview_radio \
 widget_preview_toggle \
 widget_preview_panel \
 widget_preview_gengrid \
+widget_preview_genlist1 \
+widget_preview_genlist2 \
+widget_preview_genlist3 \
+widget_preview_genlist4 \
+widget_preview_genlist5 \
 widget_preview_progressbar \
 widget_preview_box \
 widget_preview_notify \
@@ -138,6 +143,11 @@ EXTRA_DIST = \
 	widget_preview_toggle.c \
 	widget_preview_panel.c \
 	widget_preview_gengrid.c \
+	widget_preview_genlist1.c \
+	widget_preview_genlist2.c \
+	widget_preview_genlist3.c \
+	widget_preview_genlist4.c \
+	widget_preview_genlist5.c \
 	widget_preview_progressbar.c \
 	widget_preview_box.c \
 	widget_preview_notify.c \

@@ -11684,6 +11684,9 @@ extern "C" {
    /**
     * @defgroup Genlist Genlist
     *
+    * @image html img/widget/genlist/preview-00.png
+    * @image latex img/widget/genlist/preview-00.eps
+    *
     * This widget aims to have more expansive list than the simple list in
     * Elementary that could have more flexible items and allow many more entries
     * while still being fast and low on memory usage. At the same time it was
@@ -11744,8 +11747,24 @@ extern "C" {
     * available item styles:
     * - default
     * - default_style - The text part is a textblock
+    *
+    * @image html img/widget/genlist/preview-04.png
+    * @image latex img/widget/genlist/preview-04.eps
+    *
     * - double_label
+    *
+    * @image html img/widget/genlist/preview-01.png
+    * @image latex img/widget/genlist/preview-01.eps
+   *
     * - icon_top_text_bottom
+    *
+    * @image html img/widget/genlist/preview-02.png
+    * @image latex img/widget/genlist/preview-02.eps
+    *
+    * - group_index
+    *
+    * @image html img/widget/genlist/preview-03.png
+    * @image latex img/widget/genlist/preview-03.eps
     *
     * @section Genlist_Items Structure of items
     *
