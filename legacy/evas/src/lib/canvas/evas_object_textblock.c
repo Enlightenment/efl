@@ -1561,32 +1561,46 @@ _format_is_param(const char *item)
 static void
 _format_param_parse(const char *item, const char **key, const char **val)
 {
-   const char *equal, *end;
+   const char *start, *end, *quote;
 
-   equal = strchr(item, '=');
-   *key = eina_stringshare_add_length(item, equal - item);
-   equal++; /* Advance after the '=' */
-   /* Null terminate before the spaces */
-   end = strchr(equal, ' ');
-   if (end)
+   start = strchr(item, '=');
+   *key = eina_stringshare_add_length(item, start - item);
+   start++; /* Advance after the '=' */
+   /* If we can find a quote, our new delimiter is a quote, not a space. */
+   if ((quote = strchr(start, '\'')))
      {
-        *val = eina_stringshare_add_length(equal, end - equal);
+        start = quote + 1;
+        end = strchr(start, '\'');
      }
    else
      {
-        *val = eina_stringshare_add(equal);
+        end = strchr(start, ' ');
+     }
+
+   /* Null terminate before the spaces */
+   if (end)
+     {
+        *val = eina_stringshare_add_length(start, end - start);
+     }
+   else
+     {
+        *val = eina_stringshare_add(start);
      }
 }
 
 /**
  * @internal
- * FIXME: comment.
+ * This function parses the format passed in *s and advances s to point to the
+ * next format item, while returning the current one as the return value.
+ * @param s The current and returned position in the format string.
+ * @return the current item parsed from the string.
  */
 static const char *
 _format_parse(const char **s)
 {
-   const char *p, *item;
+   const char *p;
    const char *s1 = NULL, *s2 = NULL;
+   Eina_Bool quote = EINA_FALSE;;
 
    p = *s;
    if (*p == 0) return NULL;
@@ -1599,7 +1613,12 @@ _format_parse(const char **s)
           }
         else if (!s2)
           {
-             if ((p > *s) && (p[-1] != '\\'))
+             if (*p == '\'')
+               {
+                  quote = !quote;
+               }
+
+             if ((p > *s) && (p[-1] != '\\') && (!quote))
                {
                   if (*p == ' ') s2 = p;
                }
@@ -1608,10 +1627,8 @@ _format_parse(const char **s)
         p++;
         if (s1 && s2)
           {
-             item = s1;
-
              *s = s2;
-             return item;
+             return s1;
           }
      }
    *s = p;
