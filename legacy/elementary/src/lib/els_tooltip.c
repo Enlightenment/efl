@@ -277,9 +277,11 @@ _elm_tooltip_reconfigure(Elm_Tooltip *tt)
         tt->pad.bx = 0;
         tt->pad.by = 0;
         tt->hide_timeout = 0.0;
+
+        str = edje_object_data_get(tt->tooltip, "transparent");
         if (tt->tt_win)
           {  /* FIXME: hardcoded here is bad */
-             if (!strcmp(style, "transparent"))
+             if (str && (!strcmp(str, "enabled")))
                {
                   elm_win_alpha_set(tt->tt_win, EINA_TRUE);
                   elm_win_transparent_set(tt->tt_win, EINA_TRUE);
