@@ -4312,7 +4312,6 @@ extern "C" {
     * If set to true the text of the label will slide throught the length of
     * label.
     *
-    * @warning This must be called before elm_label_slide_set().
     * @warning This only work with the themes "slide_short", "slide_long" and
     * "slide_bounce".
     */
