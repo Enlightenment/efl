@@ -4764,6 +4764,82 @@
  */
 
 /**
+ * @page inwin_example_01 Inwin - General overview
+ *
+ * Inwin is a very simple widget to show, so this example will be a very simple
+ * one, just using all of the available API.
+ *
+ * The program is nothing but a window with a lonely button, as shown here.
+ *
+ * @image html screenshots/inwin_example.png
+ * @image latex screenshots/inwin_example.eps width=\textwidth
+ *
+ * And pressing the button makes an inwin appear.
+ *
+ * @image html screenshots/inwin_example_a.png
+ * @image latex screenshots/inwin_example_a.eps width=\textwidth
+ *
+ * And the code is just as simple. We being with some global variables to keep
+ * track of our Inwin.
+ * @dontinclude inwin_example.c
+ * @skip static
+ * @until current_style
+ *
+ * And two callbacks used by the buttons the above screenshot showed. In these,
+ * we check if @c inwin exists and execute the proper action on it. If it's not
+ * there anymore, then we were abandoned to our luck, so we disabled ourselves.
+ * @until _inwin_destroy
+ * @until }
+ * @until }
+ *
+ * The lonely button from the beginning, when clicked, will call the following
+ * function, which begins by checking if an inwin exists, and if it's there,
+ * we bring it back to the front and exit from our function without any further
+ * ado.
+ * @until }
+ *
+ * But if no inwin is there to show, we need to create one. First we need the
+ * top-most window for the program, as no inwin can be created using other
+ * objects as parents. Then we create our popup, set the next style in the list
+ * and show it.
+ * @until current_style =
+ *
+ * As for the content of our inwin, it's just a box with a label and some
+ * buttons inside.
+ * @until _inwin_destroy
+ * @until }
+ *
+ * Now, all the code above shows how every object must always be set as content
+ * for some other object, be it by setting the full content, packing it in a
+ * box or table or working as icon for some other widget. But we didn't do
+ * anything like that for the inwin, this one is just created and shown and
+ * everything works. Other widgets can be used this way, but they would need
+ * to be placed and resized manually or nothing would be shown correctly. The
+ * inwin, however, sets itself as a children of the top-level window and will
+ * be resized as the parent window changes too.
+ *
+ * Another characteristic of Inwin is that when it's shown above everyone else,
+ * it will work kind of like a modal window, blocking any other widget from
+ * receiving events until the window is manually dismissed by pressing some
+ * button to close it or having blocking task signalling its completion so
+ * normal operations can be resumed. This is unlike the @ref Hover widget,
+ * that would show its content on top of the designated target, but clicking
+ * anywhere else would dismiss it automatically.
+ *
+ * To illustrate that last point, when we close the main window and an inwin
+ * is still there, we'll take out the content from the inwin and place it in
+ * a hover.
+ * @until }
+ * @until }
+ *
+ * And the rest of the program doesn't have anything else related to inwin,
+ * so it won't be shown here, but you can find it in
+ * @ref inwin_example.c "inwin_example.c".
+ *
+ * @example inwin_example.c
+ */
+
+/**
  * @page bg_example_01_c bg_example_01.c
  * @include bg_example_01.c
  * @example bg_example_01.c

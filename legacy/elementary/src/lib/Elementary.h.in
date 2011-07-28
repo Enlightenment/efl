@@ -1743,6 +1743,9 @@ extern "C" {
     * possible, but it's sized vertically the most it needs to fit its\
     * contents.
     *
+    * Some examples of Inwin can be found in the following:
+    * @li @ref inwin_example_01
+    *
     * @{
     */
    /**
