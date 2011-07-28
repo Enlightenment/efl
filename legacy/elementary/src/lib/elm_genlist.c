@@ -3365,23 +3365,6 @@ _item_move_before(Elm_Genlist_Item *it, Elm_Genlist_Item *before)
      it->itc->func.moved(it->base.widget, it, before, EINA_FALSE);
 }
 
-/**
- * Add item to the end of the genlist
- *
- * This adds the given item to the end of the list or the end of
- * the children if the parent is given.
- *
- * @param obj The genlist object
- * @param itc The item class for the item
- * @param data The item data
- * @param parent The parent item, or NULL if none
- * @param flags Item flags
- * @param func Convenience function called when item selected
- * @param func_data Data passed to @p func above.
- * @return A handle to the item added or NULL if not possible
- *
- * @ingroup Genlist
- */
 EAPI Elm_Genlist_Item *
 elm_genlist_item_append(Evas_Object                  *obj,
                         const Elm_Genlist_Item_Class *itc,
@@ -3427,23 +3410,6 @@ elm_genlist_item_append(Evas_Object                  *obj,
    return it;
 }
 
-/**
- * Add item at start of the genlist
- *
- * This adds an item to the beginning of the list or beginning of the
- * children of the parent if given.
- *
- * @param obj The genlist object
- * @param itc The item class for the item
- * @param data The item data
- * @param parent The parent item, or NULL if none
- * @param flags Item flags
- * @param func Convenience function called when item selected
- * @param func_data Data passed to @p func above.
- * @return A handle to the item added or NULL if not possible
- *
- * @ingroup Genlist
- */
 EAPI Elm_Genlist_Item *
 elm_genlist_item_prepend(Evas_Object                  *obj,
                          const Elm_Genlist_Item_Class *itc,
@@ -3484,23 +3450,6 @@ elm_genlist_item_prepend(Evas_Object                  *obj,
    return it;
 }
 
-/**
- * Insert item before another in the genlist
- *
- * This inserts an item before another in the list. It will be in the
- * same tree level or group as the item it is inseted before.
- *
- * @param obj The genlist object
- * @param itc The item class for the item
- * @param data The item data
- * @param before The item to insert before
- * @param flags Item flags
- * @param func Convenience function called when item selected
- * @param func_data Data passed to @p func above.
- * @return A handle to the item added or NULL if not possible
- *
- * @ingroup Genlist
- */
 EAPI Elm_Genlist_Item *
 elm_genlist_item_insert_before(Evas_Object                  *obj,
                                const Elm_Genlist_Item_Class *itc,
@@ -3614,21 +3563,6 @@ elm_genlist_item_direct_sorted_insert(Evas_Object                  *obj,
    return it;
 }
 
-/**
- * Insert a new item into the sorted genlist object
- *
- * @param obj The genlist object
- * @param itc The item class for the item
- * @param data The item data
- * @param parent The parent item, or NULL if none
- * @param flags Item flags
- * @param comp The function called for the sort
- * @param func Convenience function called when item selected
- * @param func_data Data passed to @p func above.
- * @return A handle to the item added or NULL if not possible
- *
- * @ingroup Genlist
- */
 EAPI Elm_Genlist_Item *
 elm_genlist_item_sorted_insert(Evas_Object                  *obj,
                                const Elm_Genlist_Item_Class *itc,
@@ -3645,23 +3579,6 @@ elm_genlist_item_sorted_insert(Evas_Object                  *obj,
                                                 _elm_genlist_item_compare_data, func, func_data);
 }
 
-/**
- * Insert an item after another in the genlst
- *
- * This inserts an item after another in the list. It will be in the
- * same tree level or group as the item it is inseted after.
- *
- * @param obj The genlist object
- * @param itc The item class for the item
- * @param data The item data
- * @param after The item to insert after
- * @param flags Item flags
- * @param func Convenience function called when item selected
- * @param func_data Data passed to @p func above.
- * @return A handle to the item added or NULL if not possible
- *
- * @ingroup Genlist
- */
 EAPI Elm_Genlist_Item *
 elm_genlist_item_insert_after(Evas_Object                  *obj,
                               const Elm_Genlist_Item_Class *itc,
@@ -3911,16 +3828,6 @@ elm_genlist_at_xy_item_get(const Evas_Object *obj,
    return NULL;
 }
 
-/**
- * Get the first item in the genlist
- *
- * This returns the first item in the list.
- *
- * @param obj The genlist object
- * @return The first item, or NULL if none
- *
- * @ingroup Genlist
- */
 EAPI Elm_Genlist_Item *
 elm_genlist_first_item_get(const Evas_Object *obj)
 {
@@ -3934,15 +3841,6 @@ elm_genlist_first_item_get(const Evas_Object *obj)
    return it;
 }
 
-/**
- * Get the last item in the genlist
- *
- * This returns the last item in the list.
- *
- * @return The last item, or NULL if none
- *
- * @ingroup Genlist
- */
 EAPI Elm_Genlist_Item *
 elm_genlist_last_item_get(const Evas_Object *obj)
 {
@@ -3956,16 +3854,6 @@ elm_genlist_last_item_get(const Evas_Object *obj)
    return it;
 }
 
-/**
- * Get the next item in the genlist
- *
- * This returns the item after the item @p it.
- *
- * @param it The item
- * @return The item after @p it, or NULL if none
- *
- * @ingroup Genlist
- */
 EAPI Elm_Genlist_Item *
 elm_genlist_item_next_get(const Elm_Genlist_Item *it)
 {
@@ -3978,16 +3866,6 @@ elm_genlist_item_next_get(const Elm_Genlist_Item *it)
    return (Elm_Genlist_Item *)it;
 }
 
-/**
- * Get the previous item in the genlist
- *
- * This returns the item before the item @p it.
- *
- * @param it The item
- * @return The item before @p it, or NULL if none
- *
- * @ingroup Genlist
- */
 EAPI Elm_Genlist_Item *
 elm_genlist_item_prev_get(const Elm_Genlist_Item *it)
 {
@@ -4000,16 +3878,6 @@ elm_genlist_item_prev_get(const Elm_Genlist_Item *it)
    return (Elm_Genlist_Item *)it;
 }
 
-/**
- * Get the genlist object from an item
- *
- * This returns the genlist object itself that an item belongs to.
- *
- * @param it The item
- * @return The genlist object
- *
- * @ingroup Genlist
- */
 EAPI Evas_Object *
 elm_genlist_item_genlist_get(const Elm_Genlist_Item *it)
 {
@@ -4017,16 +3885,6 @@ elm_genlist_item_genlist_get(const Elm_Genlist_Item *it)
    return it->base.widget;
 }
 
-/**
- * Get the parent item of the given item
- *
- * This returns the parent item of the item @p it given.
- *
- * @param it The item
- * @return The parent of the item or NULL if none
- *
- * @ingroup Genlist
- */
 EAPI Elm_Genlist_Item *
 elm_genlist_item_parent_get(const Elm_Genlist_Item *it)
 {
@@ -4034,16 +3892,6 @@ elm_genlist_item_parent_get(const Elm_Genlist_Item *it)
    return it->parent;
 }
 
-/**
- * Clear all sub-items (children) of the given item
- *
- * This clears all items that are children (or their descendants) of the
- * given item @p it.
- *
- * @param it The item
- *
- * @ingroup Genlist
- */
 EAPI void
 elm_genlist_item_subitems_clear(Elm_Genlist_Item *it)
 {
@@ -4057,17 +3905,6 @@ elm_genlist_item_subitems_clear(Elm_Genlist_Item *it)
      elm_genlist_item_del(it2);
 }
 
-/**
- * Set the selected state of an item
- *
- * This sets the selected state (1 selected, 0 not selected) of the given
- * item @p it.
- *
- * @param it The item
- * @param selected The selected state
- *
- * @ingroup Genlist
- */
 EAPI void
 elm_genlist_item_selected_set(Elm_Genlist_Item *it,
                               Eina_Bool         selected)
@@ -4099,16 +3936,6 @@ elm_genlist_item_selected_set(Elm_Genlist_Item *it,
      }
 }
 
-/**
- * Get the selected state of an item
- *
- * This gets the selected state of an item (1 selected, 0 not selected).
- *
- * @param it The item
- * @return The selected state
- *
- * @ingroup Genlist
- */
 EAPI Eina_Bool
 elm_genlist_item_selected_get(const Elm_Genlist_Item *it)
 {
@@ -4116,17 +3943,6 @@ elm_genlist_item_selected_get(const Elm_Genlist_Item *it)
    return it->selected;
 }
 
-/**
- * Sets the expanded state of an item (if it's a parent)
- *
- * This expands or contracts a parent item (thus showing or hiding the
- * children).
- *
- * @param it The item
- * @param expanded The expanded state (1 expanded, 0 not expanded).
- *
- * @ingroup Genlist
- */
 EAPI void
 elm_genlist_item_expanded_set(Elm_Genlist_Item *it,
                               Eina_Bool         expanded)
@@ -4151,16 +3967,6 @@ elm_genlist_item_expanded_set(Elm_Genlist_Item *it,
      }
 }
 
-/**
- * Get the expanded state of an item
- *
- * This gets the expanded state of an item
- *
- * @param it The item
- * @return Thre expanded state
- *
- * @ingroup Genlist
- */
 EAPI Eina_Bool
 elm_genlist_item_expanded_get(const Elm_Genlist_Item *it)
 {
@@ -4168,14 +3974,6 @@ elm_genlist_item_expanded_get(const Elm_Genlist_Item *it)
    return it->expanded;
 }
 
-/**
- * Get the depth of expanded item
- *
- * @param it The genlist item object
- * @return The depth of expanded item
- *
- * @ingroup Genlist
- */
 EAPI int
 elm_genlist_item_expanded_depth_get(const Elm_Genlist_Item *it)
 {
@@ -4183,18 +3981,6 @@ elm_genlist_item_expanded_depth_get(const Elm_Genlist_Item *it)
    return it->expanded_depth;
 }
 
-/**
- * Sets the disabled state of an item.
- *
- * A disabled item cannot be selected or unselected. It will also
- * change appearance to appear disabled. This sets the disabled state
- * (1 disabled, 0 not disabled).
- *
- * @param it The item
- * @param disabled The disabled state
- *
- * @ingroup Genlist
- */
 EAPI void
 elm_genlist_item_disabled_set(Elm_Genlist_Item *it,
                               Eina_Bool         disabled)
@@ -4218,16 +4004,6 @@ elm_genlist_item_disabled_set(Elm_Genlist_Item *it,
      }
 }
 
-/**
- * Get the disabled state of an item
- *
- * This gets the disabled state of the given item.
- *
- * @param it The item
- * @return The disabled state
- *
- * @ingroup Genlist
- */
 EAPI Eina_Bool
 elm_genlist_item_disabled_get(const Elm_Genlist_Item *it)
 {
@@ -4236,19 +4012,6 @@ elm_genlist_item_disabled_get(const Elm_Genlist_Item *it)
    return it->disabled;
 }
 
-/**
- * Sets the display only state of an item.
- *
- * A display only item cannot be selected or unselected. It is for
- * display only and not selecting or otherwise clicking, dragging
- * etc. by the user, thus finger size rules will not be applied to
- * this item.
- *
- * @param it The item
- * @param display_only The display only state
- *
- * @ingroup Genlist
- */
 EAPI void
 elm_genlist_item_display_only_set(Elm_Genlist_Item *it,
                                   Eina_Bool         display_only)
@@ -4264,16 +4027,6 @@ elm_genlist_item_display_only_set(Elm_Genlist_Item *it,
    it->wd->update_job = ecore_job_add(_update_job, it->wd);
 }
 
-/**
- * Get the display only state of an item
- *
- * This gets the display only state of the given item.
- *
- * @param it The item
- * @return The display only state
- *
- * @ingroup Genlist
- */
 EAPI Eina_Bool
 elm_genlist_item_display_only_get(const Elm_Genlist_Item *it)
 {
@@ -4282,16 +4035,6 @@ elm_genlist_item_display_only_get(const Elm_Genlist_Item *it)
    return it->display_only;
 }
 
-/**
- * Show the given item
- *
- * This causes genlist to jump to the given item @p it and show it (by
- * scrolling), if it is not fully visible.
- *
- * @param it The item
- *
- * @ingroup Genlist
- */
 EAPI void
 elm_genlist_item_show(Elm_Genlist_Item *it)
 {
@@ -4318,17 +4061,6 @@ elm_genlist_item_show(Elm_Genlist_Item *it)
                                         it->block->w, it->h);
 }
 
-/**
- * Bring in the given item
- *
- * This causes genlist to jump to the given item @p it and show it (by
- * scrolling), if it is not fully visible. This may use animation to
- * do so and take a period of time
- *
- * @param it The item
- *
- * @ingroup Genlist
- */
 EAPI void
 elm_genlist_item_bring_in(Elm_Genlist_Item *it)
 {
@@ -4355,16 +4087,6 @@ elm_genlist_item_bring_in(Elm_Genlist_Item *it)
                                       it->block->w, it->h);
 }
 
-/**
- * Show the given item at the top
- *
- * This causes genlist to jump to the given item @p it and show it (by
- * scrolling), if it is not fully visible.
- *
- * @param it The item
- *
- * @ingroup Genlist
- */
 EAPI void
 elm_genlist_item_top_show(Elm_Genlist_Item *it)
 {
@@ -4393,17 +4115,6 @@ elm_genlist_item_top_show(Elm_Genlist_Item *it)
                                         it->block->w, oh);
 }
 
-/**
- * Bring in the given item at the top
- *
- * This causes genlist to jump to the given item @p it and show it (by
- * scrolling), if it is not fully visible. This may use animation to
- * do so and take a period of time
- *
- * @param it The item
- *
- * @ingroup Genlist
- */
 EAPI void
 elm_genlist_item_top_bring_in(Elm_Genlist_Item *it)
 {
@@ -4432,16 +4143,6 @@ elm_genlist_item_top_bring_in(Elm_Genlist_Item *it)
                                       it->block->w, oh);
 }
 
-/**
- * Show the given item at the middle
- *
- * This causes genlist to jump to the given item @p it and show it (by
- * scrolling), if it is not fully visible.
- *
- * @param it The item
- *
- * @ingroup Genlist
- */
 EAPI void
 elm_genlist_item_middle_show(Elm_Genlist_Item *it)
 {
@@ -4468,17 +4169,6 @@ elm_genlist_item_middle_show(Elm_Genlist_Item *it)
                                         it->h / 2, it->block->w, oh);
 }
 
-/**
- * Bring in the given item at the middle
- *
- * This causes genlist to jump to the given item @p it and show it (by
- * scrolling), if it is not fully visible. This may use animation to
- * do so and take a period of time
- *
- * @param it The item
- *
- * @ingroup Genlist
- */
 EAPI void
 elm_genlist_item_middle_bring_in(Elm_Genlist_Item *it)
 {
@@ -4505,17 +4195,6 @@ elm_genlist_item_middle_bring_in(Elm_Genlist_Item *it)
                                       it->block->w, oh);
 }
 
-/**
- * Delete a given item
- *
- * This deletes the item from genlist and calls the genlist item del
- * class callback defined in the item class, if it is set. This clears all
- * subitems if it is a tree.
- *
- * @param it The item
- *
- * @ingroup Genlist
- */
 EAPI void
 elm_genlist_item_del(Elm_Genlist_Item *it)
 {
@@ -4543,19 +4222,6 @@ elm_genlist_item_del(Elm_Genlist_Item *it)
    _item_del(it);
 }
 
-/**
- * Set the data item from the genlist item
- *
- * This sets the data value passed on the elm_genlist_item_append() and
- * related item addition calls. This function will not call
- * elm_genlist_item_update() anymore. So call elm_genlist_item_update()
- * manually only when it's needed.
- *
- * @param it The item
- * @param data The new data pointer to set
- *
- * @ingroup Genlist
- */
 EAPI void
 elm_genlist_item_data_set(Elm_Genlist_Item *it,
                           const void       *data)
@@ -4564,17 +4230,6 @@ elm_genlist_item_data_set(Elm_Genlist_Item *it,
    elm_widget_item_data_set(it, data);
 }
 
-/**
- * Get the data item from the genlist item
- *
- * This returns the data value passed on the elm_genlist_item_append()
- * and related item addition calls and elm_genlist_item_data_set().
- *
- * @param it The item
- * @return The data pointer provided when created
- *
- * @ingroup Genlist
- */
 EAPI void *
 elm_genlist_item_data_get(const Elm_Genlist_Item *it)
 {
@@ -4582,18 +4237,6 @@ elm_genlist_item_data_get(const Elm_Genlist_Item *it)
    return elm_widget_item_data_get(it);
 }
 
-/**
- * Tells genlist to "orphan" icons fetchs by the item class
- *
- * This instructs genlist to release references to icons in the item,
- * meaning that they will no longer be managed by genlist and are
- * floating "orphans" that can be re-used elsewhere if the user wants
- * to.
- *
- * @param it The item
- *
- * @ingroup Genlist
- */
 EAPI void
 elm_genlist_item_icons_orphan(Elm_Genlist_Item *it)
 {
@@ -4607,21 +4250,6 @@ elm_genlist_item_icons_orphan(Elm_Genlist_Item *it)
      }
 }
 
-/**
- * Get the real evas object of the genlist item
- *
- * This returns the actual evas object used for the specified genlist
- * item. This may be NULL as it may not be created, and may be deleted
- * at any time by genlist. Do not modify this object (move, resize,
- * show, hide etc.) as genlist is controlling it. This function is for
- * querying, emitting custom signals or hooking lower level callbacks
- * for events. Do not delete this object under any circumstances.
- *
- * @param it The item
- * @return The object pointer
- *
- * @ingroup Genlist
- */
 EAPI const Evas_Object *
 elm_genlist_item_object_get(const Elm_Genlist_Item *it)
 {
@@ -4629,17 +4257,6 @@ elm_genlist_item_object_get(const Elm_Genlist_Item *it)
    return it->base.view;
 }
 
-/**
- * Update the contents of an item
- *
- * This updates an item by calling all the item class functions again
- * to get the icons, labels and states. Use this when the original
- * item data has changed and the changes are desired to be reflected.
- *
- * @param it The item
- *
- * @ingroup Genlist
- */
 EAPI void
 elm_genlist_item_update(Elm_Genlist_Item *it)
 {
@@ -4653,14 +4270,6 @@ elm_genlist_item_update(Elm_Genlist_Item *it)
    it->wd->update_job = ecore_job_add(_update_job, it->wd);
 }
 
-/**
- * Update the item class of an item
- *
- * @param it The item
- * @parem itc The item class for the item
- *
- * @ingroup Genlist
- */
 EAPI void
 elm_genlist_item_item_class_update(Elm_Genlist_Item             *it,
                                    const Elm_Genlist_Item_Class *itc)
@@ -4704,17 +4313,6 @@ _elm_genlist_item_label_del_cb(void        *data,
    eina_stringshare_del(data);
 }
 
-/**
- * Set the text to be shown in the genlist item.
- *
- * @param item Target item
- * @param text The text to set in the content
- *
- * Setup the text as tooltip to object. The item can have only one
- * tooltip, so any previous tooltip data is removed.
- *
- * @ingroup Genlist
- */
 EAPI void
 elm_genlist_item_tooltip_text_set(Elm_Genlist_Item *item,
                                   const char       *text)
@@ -4726,26 +4324,6 @@ elm_genlist_item_tooltip_text_set(Elm_Genlist_Item *item,
                                            _elm_genlist_item_label_del_cb);
 }
 
-/**
- * Set the content to be shown in the tooltip item
- *
- * Setup the tooltip to item. The item can have only one tooltip, so
- * any previous tooltip data is removed. @p func(with @p data) will be
- * called every time that need to show the tooltip and it should return a
- * valid Evas_Object. This object is then managed fully by tooltip
- * system and is deleted when the tooltip is gone.
- *
- * @param item the genlist item being attached by a tooltip.
- * @param func the function used to create the tooltip contents.
- * @param data what to provide to @a func as callback data/context.
- * @param del_cb called when data is not needed anymore, either when
- *        another callback replaces @func, the tooltip is unset with
- *        elm_genlist_item_tooltip_unset() or the owner @a item
- *        dies. This callback receives as the first parameter the
- *        given @a data, and @c event_info is the item.
- *
- * @ingroup Genlist
- */
 EAPI void
 elm_genlist_item_tooltip_content_cb_set(Elm_Genlist_Item           *item,
                                         Elm_Tooltip_Item_Content_Cb func,
@@ -4780,19 +4358,6 @@ error:
    if (del_cb) del_cb((void *)data, NULL, NULL);
 }
 
-/**
- * Unset tooltip from item
- *
- * @param item genlist item to remove previously set tooltip.
- *
- * Remove tooltip from item. The callback provided as del_cb to
- * elm_genlist_item_tooltip_content_cb_set() will be called to notify
- * it is not used anymore.
- *
- * @see elm_genlist_item_tooltip_content_cb_set()
- *
- * @ingroup Genlist
- */
 EAPI void
 elm_genlist_item_tooltip_unset(Elm_Genlist_Item *item)
 {
@@ -4810,18 +4375,6 @@ elm_genlist_item_tooltip_unset(Elm_Genlist_Item *item)
      elm_genlist_item_tooltip_style_set(item, NULL);
 }
 
-/**
- * Sets a different style for this item tooltip.
- *
- * @note before you set a style you should define a tooltip with
- *       elm_genlist_item_tooltip_content_cb_set() or
- *       elm_genlist_item_tooltip_text_set()
- *
- * @param item genlist item with tooltip already set.
- * @param style the theme style to use (default, transparent, ...)
- *
- * @ingroup Genlist
- */
 EAPI void
 elm_genlist_item_tooltip_style_set(Elm_Genlist_Item *item,
                                    const char       *style)
@@ -4831,15 +4384,6 @@ elm_genlist_item_tooltip_style_set(Elm_Genlist_Item *item,
    if (item->base.view) elm_widget_item_tooltip_style_set(item, style);
 }
 
-/**
- * Get the style for this item tooltip.
- *
- * @param item genlist item with tooltip already set.
- * @return style the theme style in use, defaults to "default". If the
- *         object does not have a tooltip set, then NULL is returned.
- *
- * @ingroup Genlist
- */
 EAPI const char *
 elm_genlist_item_tooltip_style_get(const Elm_Genlist_Item *item)
 {
@@ -4863,15 +4407,6 @@ elm_genlist_item_tooltip_size_restrict_disabled_get(const Elm_Genlist_Item *item
    return item->tooltip.free_size;
 }
 
-/**
- * Set the cursor to be shown when mouse is over the genlist item
- *
- * @param item Target item
- * @param cursor the cursor name to be used.
- *
- * @see elm_object_cursor_set()
- * @ingroup Genlist
- */
 EAPI void
 elm_genlist_item_cursor_set(Elm_Genlist_Item *item,
                             const char       *cursor)
@@ -4881,14 +4416,6 @@ elm_genlist_item_cursor_set(Elm_Genlist_Item *item,
    if (item->base.view) elm_widget_item_cursor_set(item, cursor);
 }
 
-/**
- * Get the cursor to be shown when mouse is over the genlist item
- *
- * @param item genlist item with cursor already set.
- * @return the cursor name.
- *
- * @ingroup Genlist
- */
 EAPI const char *
 elm_genlist_item_cursor_get(const Elm_Genlist_Item *item)
 {
@@ -4896,14 +4423,6 @@ elm_genlist_item_cursor_get(const Elm_Genlist_Item *item)
    return elm_widget_item_cursor_get(item);
 }
 
-/**
- * Unset the cursor to be shown when mouse is over the genlist item
- *
- * @param item Target item
- *
- * @see elm_object_cursor_unset()
- * @ingroup Genlist
- */
 EAPI void
 elm_genlist_item_cursor_unset(Elm_Genlist_Item *item)
 {
@@ -4918,17 +4437,6 @@ elm_genlist_item_cursor_unset(Elm_Genlist_Item *item)
    item->mouse_cursor = NULL;
 }
 
-/**
- * Sets a different style for this item cursor.
- *
- * @note before you set a style you should define a cursor with
- *       elm_genlist_item_cursor_set()
- *
- * @param item genlist item with cursor already set.
- * @param style the theme style to use (default, transparent, ...)
- *
- * @ingroup Genlist
- */
 EAPI void
 elm_genlist_item_cursor_style_set(Elm_Genlist_Item *item,
                                   const char       *style)
@@ -4937,15 +4445,6 @@ elm_genlist_item_cursor_style_set(Elm_Genlist_Item *item,
    elm_widget_item_cursor_style_set(item, style);
 }
 
-/**
- * Get the style for this item cursor.
- *
- * @param item genlist item with cursor already set.
- * @return style the theme style in use, defaults to "default". If the
- *         object does not have a cursor set, then NULL is returned.
- *
- * @ingroup Genlist
- */
 EAPI const char *
 elm_genlist_item_cursor_style_get(const Elm_Genlist_Item *item)
 {
@@ -4953,21 +4452,6 @@ elm_genlist_item_cursor_style_get(const Elm_Genlist_Item *item)
    return elm_widget_item_cursor_style_get(item);
 }
 
-/**
- * Set if the cursor set should be searched on the theme or should use
- * the provided by the engine, only.
- *
- * @note before you set if should look on theme you should define a
- * cursor with elm_object_cursor_set(). By default it will only look
- * for cursors provided by the engine.
- *
- * @param item widget item with cursor already set.
- * @param engine_only boolean to define it cursors should be looked
- * only between the provided by the engine or searched on widget's
- * theme as well.
- *
- * @ingroup Genlist
- */
 EAPI void
 elm_genlist_item_cursor_engine_only_set(Elm_Genlist_Item *item,
                                         Eina_Bool         engine_only)
@@ -4976,17 +4460,6 @@ elm_genlist_item_cursor_engine_only_set(Elm_Genlist_Item *item,
    elm_widget_item_cursor_engine_only_set(item, engine_only);
 }
 
-/**
- * Get the cursor engine only usage for this item cursor.
- *
- * @param item widget item with cursor already set.
- * @return engine_only boolean to define it cursors should be looked
- * only between the provided by the engine or searched on widget's
- * theme as well. If the object does not have a cursor set, then
- * EINA_FALSE is returned.
- *
- * @ingroup Genlist
- */
 EAPI Eina_Bool
 elm_genlist_item_cursor_engine_only_get(const Elm_Genlist_Item *item)
 {
