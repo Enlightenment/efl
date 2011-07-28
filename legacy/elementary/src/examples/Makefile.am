@@ -82,6 +82,8 @@ SRCS = \
 	genlist_example_01.c \
 	genlist_example_02.c \
 	genlist_example_03.c \
+	genlist_example_04.c \
+	genlist_example_05.c \
 	theme_example.edc \
 	layout_example.edc \
 	slider_example.c \
@@ -182,6 +184,8 @@ pkglib_PROGRAMS += \
 	genlist_example_01 \
 	genlist_example_02 \
 	genlist_example_03 \
+	genlist_example_04 \
+	genlist_example_05 \
 	entry_example \
 	slideshow_example \
 	progressbar_example \
