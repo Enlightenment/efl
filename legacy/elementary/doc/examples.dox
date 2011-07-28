@@ -48,6 +48,8 @@
  * @ref list_example_02
  *
  * @ref list_example_03
+
+ * @ref segment_control_example
  *
  * @ref flipselector_example
  *
@@ -2211,6 +2213,72 @@
  * @image latex screenshots/list_example_03.eps width=\textwidth
  *
  * @example list_example_03.c
+ */
+
+/**
+ * @page segment_control_example Segment Control Example
+ *
+ * This code places a Elementary segment control widgets on a window,
+ * to exemplify part of the widget's API.
+ *
+ * Let's start adding a segment control to our window:
+ * @dontinclude segment_control_example.c
+ * @skipline elm_segment_control_add
+ * @until evas_object_show
+ *
+ * Now will add an item only with label:
+ * @skipline item_add
+ *
+ * Really simple. To add an item with only an icon, the icon needs to be created
+ * first, them added with this same function:
+ * @skipline icon_add
+ * @until item_add
+ *
+ * If an item with label and icon is required, it can be done as well. In this
+ * case, instead of a label (or icon) centered, the item will display an icon
+ * at left and the label at right:
+ * @skipline icon_add
+ * @until item_add
+ *
+ * But, if you need to add some items that can have or not a label, but
+ * want that all of them looks the same way, with icon at left, just add
+ * an empty string label. It's done on our example to ilustrate that:
+ * @skipline icon_add
+ * @until item_add
+ *
+ * So far, all the item were added to the last position of the widget,
+ * but if something different is required, it can be done using another
+ * insertion function. Let's suppose we want to put an item just before
+ * the last item:
+ * @skipline count
+ * @until insert_at
+ *
+ * There are two ways to delete items. Using the item handle, like:
+ * @skipline insert_at
+ * @until del
+ *
+ * Or using item's index:
+ * @skipline insert_at
+ * @until del_at
+ *
+ * To set properties of an item already added to the widget, you just need
+ * to get the item and set icon or label, as the following code shows:
+ * @skipline item_get
+ * @until label_set
+ *
+ * Finally, it's possible to select an item from the code, and also get
+ * the selected item. We will select the item at the center of the widget
+ * and print its position.
+ * @skipline count_get
+ * @until printf
+ *
+ * See the full @ref segment_control_example.c "example", whose window should
+ * look like this picture:
+ *
+ * @image html screenshots/segment_control_example.png
+ * @image latex screenshots/segment_control_example.eps width=\textwidth
+ *
+ * @example segment_control_example.c
  */
 
 /**

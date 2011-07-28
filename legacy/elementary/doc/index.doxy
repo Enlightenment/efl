@@ -165,6 +165,11 @@
  * @image latex img/widget/radio/preview-00.eps
  * @li @ref Route
  * @li @ref SegmentControl
+ *
+ * @image html img/widget/segment_control/preview-00.png
+ * @image latex img/widget/segment_control/preview-00.eps
+ * @image html img/segment_control.png
+ * @image latex img/segment_control.eps
  * @li @ref Separator
  *
  * @image html img/widget/separator/preview-00.png

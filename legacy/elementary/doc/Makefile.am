@@ -28,6 +28,7 @@ WGT_PREVIEW = \
 	layout:preview-00.png:widget_preview_layout:200:160 \
 	conformant:preview-00.png:widget_preview_conformant:200:400 \
 	list:preview-00.png:widget_preview_list:200:200 \
+	segment_control:preview-00.png:widget_preview_segment_control:240:120 \
 	index:preview-00.png:widget_preview_index:200:160 \
 	frame:preview-00.png:widget_preview_frame:100:50 \
 	label:preview-00.png:widget_preview_label:70:30 \

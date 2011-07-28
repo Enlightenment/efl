@@ -71,6 +71,7 @@ SRCS = \
 	list_example_01.c \
 	list_example_02.c \
 	list_example_03.c \
+	segment_control_example.c \
 	flipselector_example.c \
 	fileselector_example.c \
 	fileselector_button_example.c \
@@ -166,6 +167,7 @@ pkglib_PROGRAMS += \
 	list_example_01 \
 	list_example_02 \
 	list_example_03 \
+	segment_control_example \
 	slider_example \
 	panes_example \
 	ctxpopup_example_01 \
@@ -236,6 +238,7 @@ SCREENSHOTS = \
 	list_example_01:list_example_01.png:0.0 \
 	list_example_02:list_example_02.png:0.0 \
 	list_example_03:list_example_03.png:0.0 \
+	segment_control_example:segment_control_example.png:0.0 \
 	flipselector_example:flipselector_example.png:0.0 \
 	fileselector_example:fileselector_example.png:0.0 \
 	index_example_02:index_example_03.png:0.3 \

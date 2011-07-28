@@ -42,6 +42,7 @@ widget_preview_fileselector_button3 \
 widget_preview_colorselector \
 widget_preview_layout \
 widget_preview_list \
+widget_preview_segment_control \
 widget_preview_conformant \
 widget_preview_index \
 widget_preview_clock \
@@ -137,6 +138,7 @@ EXTRA_DIST = \
 	widget_preview_label.c \
 	widget_preview_layout.c \
 	widget_preview_list.c \
+	widget_preview_segment_control.c \
 	widget_preview_pager.c \
 	widget_preview_separator.c \
 	widget_preview_radio.c \
