@@ -989,6 +989,8 @@ static const char *fontstr = NULL;
 static const char *font_fallbacksstr = NULL;
 static const char *font_sizestr = NULL;
 static const char *font_sourcestr = NULL;
+static const char *font_weightstr = NULL;
+static const char *font_stylestr = NULL;
 static const char *colorstr = NULL;
 static const char *underline_colorstr = NULL;
 static const char *underline2_colorstr = NULL;
@@ -1030,6 +1032,8 @@ _format_command_init(void)
         font_fallbacksstr = eina_stringshare_add("font_fallbacks");
         font_sizestr = eina_stringshare_add("font_size");
         font_sourcestr = eina_stringshare_add("font_source");
+        font_weightstr = eina_stringshare_add("font_weight");
+        font_stylestr = eina_stringshare_add("font_style");
         colorstr = eina_stringshare_add("color");
         underline_colorstr = eina_stringshare_add("underline_color");
         underline2_colorstr = eina_stringshare_add("underline2_color");
@@ -1074,6 +1078,8 @@ _format_command_shutdown(void)
    eina_stringshare_del(font_fallbacksstr);
    eina_stringshare_del(font_sizestr);
    eina_stringshare_del(font_sourcestr);
+   eina_stringshare_del(font_weightstr);
+   eina_stringshare_del(font_stylestr);
    eina_stringshare_del(colorstr);
    eina_stringshare_del(underline_colorstr);
    eina_stringshare_del(underline2_colorstr);
@@ -1123,6 +1129,94 @@ _format_clean_param(char *dst, const char *src)
         *ds = *ss;
      }
    *ds = 0;
+}
+
+static const char *_style_weight_map[] = { "ultralight", "light", "bold",
+     "ultrabold", "heavy", "normal" };
+#define _STYLE_WEIGHT_MAP_LEN (sizeof(_style_weight_map) / sizeof(_style_weight_map[0]))
+
+static const char *_style_style_map[] = { "normal", "oblique", "italic" };
+#define _STYLE_STYLE_MAP_LEN (sizeof(_style_style_map) / sizeof(_style_style_map[0]))
+/**
+ * @internal
+ * Find a certain attribute from the map in the style.
+ * @return true if found, false otherwise.
+ */
+static Eina_Bool
+_format_font_style_find(const char *style, const char *style_end,
+      const char **start, const char **end, const char *_map[], size_t map_len)
+{
+   size_t i;
+   while (style < style_end)
+     {
+        for (i = 0 ; i < map_len ; i++)
+          {
+             size_t len;
+             const char *cur = _map[i];
+             len = strlen(cur);
+             if (!strncasecmp(style, cur, len) &&
+                   (!cur[len] || (cur[len] == ' ')))
+               {
+                  *start = style;
+                  *end = *start + len;
+                  return EINA_TRUE;
+               }
+          }
+        style = strchr(style, ' ');
+        if (!style)
+           break;
+
+        while (*style && _is_white(*style))
+           style++;
+     }
+   return EINA_FALSE;
+}
+
+static void
+_format_command_parse_font_weight_style(Evas_Object_Textblock_Format *fmt,
+      const char *param, const char *_map[], size_t map_len)
+{
+   size_t flen = eina_stringshare_strlen(fmt->font.name);
+   const char *style = strstr(fmt->font.name, ":style=");
+   if (style)
+     {
+        Eina_Strbuf *buf;
+        const char *found_start, *found_end;
+        const char *style_end = strchr(style + 7, ':');
+        /* Point to the end, either it be the next attribute,
+         * or the terminating 0 */
+        if (!style_end)
+           style_end = fmt->font.name + flen;
+
+        buf = eina_strbuf_new();
+        eina_strbuf_append_length(buf, fmt->font.name, flen);
+
+        if (_format_font_style_find(style + 7, style_end,
+                 &found_start, &found_end, _map, map_len))
+          {
+             eina_strbuf_remove(buf, found_start - fmt->font.name,
+                   found_end - fmt->font.name);
+          }
+        else
+          {
+             found_start = style + 7;
+          }
+        eina_strbuf_insert(buf, param, found_start - fmt->font.name);
+        if (fmt->font.name) eina_stringshare_del(fmt->font.name);
+        fmt->font.name = eina_stringshare_add(eina_strbuf_string_get(buf));
+        eina_strbuf_free(buf);
+     }
+   else
+     {
+        /* Make a buffer big enough to hold whatever we do.
+         * 7 == len(:style=). */
+        char *tmpres = alloca(flen + strlen(param) + 7 + 1);
+        /* Handle font.name == NULL */
+        memcpy(tmpres, fmt->font.name, flen);
+        sprintf(tmpres + flen, ":style=%s", param);
+        if (fmt->font.name) eina_stringshare_del(fmt->font.name);
+        fmt->font.name = eina_stringshare_add(tmpres);
+     }
 }
 
 /**
@@ -1188,6 +1282,18 @@ _format_command(Evas_Object *obj, Evas_Object_Textblock_Format *fmt, const char 
              fmt->font.source = eina_stringshare_add(tmp_param);
              new_font = 1;
           }
+     }
+   if (cmd == font_weightstr)
+     {
+        _format_command_parse_font_weight_style(fmt, tmp_param,
+              _style_weight_map, _STYLE_WEIGHT_MAP_LEN);
+        new_font = 1;
+     }
+   if (cmd == font_stylestr)
+     {
+        _format_command_parse_font_weight_style(fmt, tmp_param,
+              _style_style_map, _STYLE_STYLE_MAP_LEN);
+        new_font = 1;
      }
    else if (cmd == colorstr)
      _format_color_parse(tmp_param,
