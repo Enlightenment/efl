@@ -901,10 +901,13 @@ get_ic(Ecore_IMF_Context *ctx)
           }
         im_style |= XIMStatusNothing;
 
-        ic = XCreateIC(im_info->im,
-                       XNInputStyle, im_style,
-                       XNClientWindow, imf_context_data->win,
-                       name, preedit_attr, NULL);
+        if (im_info->im)
+          {
+             ic = XCreateIC(im_info->im,
+                            XNInputStyle, im_style,
+                            XNClientWindow, imf_context_data->win,
+                            name, preedit_attr, NULL);
+          }
         XFree(preedit_attr);
         if(ic)
           {
@@ -1093,8 +1096,11 @@ xim_instantiate_callback(Display *display,
 
    im = XOpenIM(display, NULL, NULL, NULL);
 
-   if(!im)
-     return;
+   if (!im)
+     {
+        fprintf(stderr, "Failed to connect to IM\n");
+        return;
+     }
 
    info->im = im;
    setup_im (info);
