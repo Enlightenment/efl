@@ -269,7 +269,9 @@ _font_style_name_match(const char *font_name, const char *style_name)
              if (strstr(style_key, "Italic")
                  || strstr(style_key, "italic")
                  || strstr(style_key, "Cursiva")
-                 || strstr(style_key, "cursiva"))
+                 || strstr(style_key, "cursiva")
+                 || strstr(style_key, "Oblique")
+                 || strstr(style_key, "oblique"))
                 return EINA_TRUE;
              else
                 return EINA_FALSE;
