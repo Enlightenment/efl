@@ -649,9 +649,14 @@ _main_cb(void *data, Eio_File *handler, const Eina_File_Direct_Info *info __UNUS
    _signal_first(wr);
 
    if (wr->wd->mode == ELM_FILESELECTOR_LIST)
-     elm_genlist_item_direct_sorted_insert(wr->wd->files_list, eio_file_associate_find(handler, "type/list"),
-                                           eina_stringshare_ref(eio_file_associate_find(handler, "filename")),
-                                           wr->parent, ELM_GENLIST_ITEM_NONE, _file_list_cmp, NULL, NULL);
+     {
+        Eina_Bool is_dir = (eio_file_associate_find(handler, "type/list") == &list_itc[ELM_DIRECTORY]);
+
+        elm_genlist_item_direct_sorted_insert(wr->wd->files_list, eio_file_associate_find(handler, "type/list"),
+                                              eina_stringshare_ref(eio_file_associate_find(handler, "filename")),
+                                              wr->parent, wr->wd->expand && is_dir ? ELM_GENLIST_ITEM_SUBITEMS : ELM_GENLIST_ITEM_NONE,
+                                              _file_list_cmp, NULL, NULL);
+     }
    else if (wr->wd->mode == ELM_FILESELECTOR_GRID)
      elm_gengrid_item_direct_sorted_insert(wr->wd->files_grid, eio_file_associate_find(handler, "type/grid"),
                                            eina_stringshare_ref(eio_file_associate_find(handler, "filename")),
@@ -675,9 +680,7 @@ _done_cb(void *data, Eio_File *handler __UNUSED__)
 
    _signal_first(wr);
 
-#ifdef HAVE_EIO
    wr->wd->current = NULL;
-#endif
    _widget_request_cleanup(wr);
 }
 
@@ -686,10 +689,8 @@ _error_cb(void *data, Eio_File *handler, int error __UNUSED__)
 {
    Widget_Request *wr = data;
 
-#ifdef HAVE_EIO
    if (wr->wd->current == handler)
      wr->wd->current = NULL;
-#endif
    _widget_request_cleanup(wr);
 }
 
@@ -711,6 +712,7 @@ _populate(Evas_Object      *obj,
 #endif
 
    if (!wd) return;
+   if (wd->expand && wd->current) return ;
 #ifndef HAVE_EIO
    if (!ecore_file_is_dir(path)) return ;
    it = eina_file_stat_ls(path);
