@@ -98,7 +98,9 @@ SRCS = \
 	notify_example_01.c \
 	photocam_example_01.c \
 	inwin_example.c \
-	scroller_example_01.c
+	scroller_example_01.c \
+	table_example_01.c \
+	table_example_02.c
 
 pkglib_PROGRAMS =
 
@@ -186,7 +188,9 @@ pkglib_PROGRAMS += \
 	notify_example_01 \
 	photocam_example_01 \
 	inwin_example \
-	scroller_example_01
+	scroller_example_01 \
+	table_example_01 \
+	table_example_02
 
 # This variable will hold the list of screenshots that will be made
 # by "make screenshots". Each item in the list is of the form:
@@ -248,7 +252,9 @@ SCREENSHOTS = \
 	photocam_example_01:photocam_example_01.png:3 \
 	scroller_example_01:scroller_example_01.png:0.0 \
 	inwin_example:inwin_example.png:0.0 \
-	inwin_example:inwin_example_a.png:0.2
+	inwin_example:inwin_example_a.png:0.2 \
+	table_example_01:table_example_01.png:0.0 \
+	table_example_02:table_example_02.png:0.0
 
 HTML_SS_DIR=$(top_builddir)/doc/html/screenshots
 LATEX_SS_DIR=$(top_builddir)/doc/latex/screenshots

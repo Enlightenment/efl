@@ -1,14 +1,6 @@
 #include <Elementary.h>
 #include "elm_priv.h"
 
-/**
- * @defgroup Table Table
- *
- * Arranges widgets in a table where items can also span multiple
- * columns or rows - even overlap (and then be raised or lowered
- * accordingly to adjust stacking if they do overlap).
- */
-
 typedef struct _Widget_Data Widget_Data;
 
 struct _Widget_Data
@@ -125,14 +117,6 @@ _sub_del(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
    _sizing_eval(obj);
 }
 
-/**
- * Add a new table to the parent
- *
- * @param parent The parent object
- * @return The new object or NULL if it cannot be created
- *
- * @ingroup Table
- */
 EAPI Evas_Object *
 elm_table_add(Evas_Object *parent)
 {
@@ -164,16 +148,6 @@ elm_table_add(Evas_Object *parent)
    return obj;
 }
 
-/**
- * Set the homogeneous layout in the table
- *
- * @param obj The layout object
- * @param homogeneous A boolean to set (or no) layout homogeneous
- * in the table
- * (1 = homogeneous,  0 = no homogeneous)
- *
- * @ingroup Table
- */
 EAPI void
 elm_table_homogeneous_set(Evas_Object *obj, Eina_Bool homogeneous)
 {
@@ -189,15 +163,6 @@ elm_table_homogenous_set(Evas_Object *obj, Eina_Bool homogenous)
    elm_table_homogeneous_set(obj, homogenous);
 }
 
-/**
- * Get the current table homogeneous mode.
- *
- * @param obj The table object
- * @return a boolean to set (or no) layout homogeneous in the table
- * (1 = homogeneous,  0 = no homogeneous)
- *
- * @ingroup Table
- */
 EAPI Eina_Bool
 elm_table_homogeneous_get(const Evas_Object *obj)
 {
@@ -213,15 +178,6 @@ elm_table_homogenous_get(const Evas_Object *obj)
    return elm_table_homogeneous_get(obj);
 }
 
-/**
- * Set padding between cells.
- *
- * @param obj The layout object.
- * @param horizontal set the horizontal padding.
- * @param vertical set the vertical padding.
- *
- * @ingroup Table
- */
 EAPI void
 elm_table_padding_set(Evas_Object *obj, Evas_Coord horizontal, Evas_Coord vertical)
 {
@@ -231,15 +187,6 @@ elm_table_padding_set(Evas_Object *obj, Evas_Coord horizontal, Evas_Coord vertic
    evas_object_table_padding_set(wd->tbl, horizontal, vertical);
 }
 
-/**
- * Get padding between cells.
- *
- * @param obj The layout object.
- * @param horizontal set the horizontal padding.
- * @param vertical set the vertical padding.
- *
- * @ingroup Table
- */
 EAPI void
 elm_table_padding_get(const Evas_Object *obj, Evas_Coord *horizontal, Evas_Coord *vertical)
 {
@@ -249,18 +196,6 @@ elm_table_padding_get(const Evas_Object *obj, Evas_Coord *horizontal, Evas_Coord
    evas_object_table_padding_get(wd->tbl, horizontal, vertical);
 }
 
-/**
- * Add a subobject on the table with the coordinates passed
- *
- * @param obj The table object
- * @param subobj The subobject to be added to the table
- * @param x Coordinate to X axis
- * @param y Coordinate to Y axis
- * @param w Horizontal length
- * @param h Vertical length
- *
- * @ingroup Table
- */
 EAPI void
 elm_table_pack(Evas_Object *obj, Evas_Object *subobj, int x, int y, int w, int h)
 {
@@ -271,14 +206,6 @@ elm_table_pack(Evas_Object *obj, Evas_Object *subobj, int x, int y, int w, int h
    evas_object_table_pack(wd->tbl, subobj, x, y, w, h);
 }
 
-/**
- * Remove child from table.
- *
- * @param obj The table object
- * @param subobj The subobject
- *
- * @ingroup Table
- */
 EAPI void
 elm_table_unpack(Evas_Object *obj, Evas_Object *subobj)
 {
@@ -289,17 +216,6 @@ elm_table_unpack(Evas_Object *obj, Evas_Object *subobj)
    evas_object_table_unpack(wd->tbl, subobj);
 }
 
-/**
- * Set the packing location of an existing child of the table
- *
- * @param subobj The subobject to be modified in the table
- * @param x Coordinate to X axis
- * @param y Coordinate to Y axis
- * @param w Horizontal length
- * @param h Vertical length
- *
- * @ingroup Table
- */
 EAPI void
 elm_table_pack_set(Evas_Object *subobj, int x, int y, int w, int h)
 {
@@ -310,17 +226,6 @@ elm_table_pack_set(Evas_Object *subobj, int x, int y, int w, int h)
    evas_object_table_pack(wd->tbl, subobj, x, y, w, h);
 }
 
-/**
- * Set the packing location of an existing child of the table
- *
- * @param subobj The subobject to be modified in the table
- * @param x Coordinate to X axis
- * @param y Coordinate to Y axis
- * @param w Horizontal length
- * @param h Vertical length
- *
- * @ingroup Table
- */
 EAPI void
 elm_table_pack_get(Evas_Object *subobj, int *x, int *y, int *w, int *h)
 {
@@ -336,14 +241,6 @@ elm_table_pack_get(Evas_Object *subobj, int *x, int *y, int *w, int *h)
    if (h) *h = ih;
 }
 
-/**
- * Faster way to remove all child objects from a table object.
- *
- * @param obj The table object
- * @param clear If true, it will delete just removed children
- *
- * @ingroup Table
- */
 EAPI void
 elm_table_clear(Evas_Object *obj, Eina_Bool clear)
 {

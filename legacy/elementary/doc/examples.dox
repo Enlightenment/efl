@@ -4885,6 +4885,61 @@
  */
 
 /**
+ * @page tutorial_table_01
+ *
+ * In this example we add four labels to a homogeneous table that has a padding
+ * of 5px between cells.
+ *
+ * The interesting bits from this example are:
+ * @li Where we set the table as homogeneous and the padding:
+ * @dontinclude table_example_01.c
+ * @skip padding_set
+ * @until homogeneous_set
+ * @li Where we add each label to the table:
+ * @skipline elm_table_pack
+ * @skipline elm_table_pack
+ * @skipline elm_table_pack
+ * @skipline elm_table_pack
+ *
+ * Here you can see the full source:
+ * @include table_example_01.c
+ *
+ * Our example will look like this:
+ *
+ * @image html screenshots/table_example_01.png
+ * @image latex screenshots/table_example_01.eps width=\textwidth
+ *
+ * @example table_example_01.c
+ */
+
+/**
+ * @page tutorial_table_02
+ *
+ * For our second example we'll create a table with 4 rectangles in it. Since
+ * our rectangles are of different sizes our table won't be homogeneous.
+ *
+ * The interesting bits from this example are:
+ * @li Where we set the table as not homogeneous:
+ * @dontinclude table_example_02.c
+ * @skipline homogeneous_set
+ * @li Where we add each rectangle to the table:
+ * @skipline elm_table_pack
+ * @skipline elm_table_pack
+ * @skipline elm_table_pack
+ * @skipline elm_table_pack
+ *
+ * Here you can see the full source:
+ * @include table_example_02.c
+ *
+ * Our example will look like this:
+ *
+ * @image html screenshots/table_example_02.png
+ * @image latex screenshots/table_example_02.eps width=\textwidth
+ *
+ * @example table_example_02.c
+ */
+
+/**
  * @page bg_example_01_c bg_example_01.c
  * @include bg_example_01.c
  * @example bg_example_01.c
