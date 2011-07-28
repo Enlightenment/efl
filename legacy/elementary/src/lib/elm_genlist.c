@@ -3310,9 +3310,17 @@ _elm_genlist_item_compare_data(const void *data, const void *data1)
 static int
 _elm_genlist_item_compare(const void *data, const void *data1)
 {
-   Elm_Genlist_Item *item, *item1;
+   const Elm_Genlist_Item *item, *item1;
    item = ELM_GENLIST_ITEM_FROM_INLIST(data);
    item1 = ELM_GENLIST_ITEM_FROM_INLIST(data1);
+   return _elm_genlist_item_compare_cb(item, item1);
+}
+
+static int
+_elm_genlist_item_list_compare(const void *data, const void *data1)
+{
+   const Elm_Genlist_Item *item = data;
+   const Elm_Genlist_Item *item1 = data1;
    return _elm_genlist_item_compare_cb(item, item1);
 }
 
@@ -3537,6 +3545,7 @@ elm_genlist_item_direct_sorted_insert(Evas_Object                  *obj,
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return NULL;
+   Elm_Genlist_Item *rel = NULL;
    Elm_Genlist_Item *it = _item_new(wd, itc, data, parent, flags, func,
                                     func_data);
    if (!it) return NULL;
@@ -3545,23 +3554,61 @@ elm_genlist_item_direct_sorted_insert(Evas_Object                  *obj,
 
    if (it->parent)
      {
-        it->parent->items =
-          eina_list_sorted_insert(it->parent->items, _elm_genlist_item_compare, it);
+        Eina_List *l;
+        int cmp_result;
+
+        l = eina_list_search_sorted_near_list(it->parent->items,
+                                              _elm_genlist_item_list_compare, it,
+                                              &cmp_result);
+        if (l)
+          rel = eina_list_data_get(l);
+        else
+          rel = it->parent;
+
+        if (cmp_result > 0)
+          {
+             it->parent->items = eina_list_prepend_relative_list(it->parent->items, it, l);
+             wd->items = eina_inlist_prepend_relative(wd->items, EINA_INLIST_GET(it), EINA_INLIST_GET(rel));
+             it->before = EINA_FALSE;
+          }
+        else if (cmp_result < 0)
+          {
+             it->parent->items = eina_list_append_relative_list(it->parent->items, it, l);
+             wd->items = eina_inlist_append_relative(wd->items, EINA_INLIST_GET(it), EINA_INLIST_GET(rel));
+             it->before = EINA_TRUE;
+          }
+
+        if (it->parent->flags & ELM_GENLIST_ITEM_GROUP)
+          it->group_item = parent;
+        else if (it->parent->group_item)
+          it->group_item = it->parent->group_item;
      }
-   wd->items = eina_inlist_sorted_insert(wd->items, EINA_INLIST_GET(it),
-                                         _elm_genlist_item_compare);
-   if (EINA_INLIST_GET(it)->next)
+   else
      {
-        it->rel = ELM_GENLIST_ITEM_FROM_INLIST(EINA_INLIST_GET(it)->next);
-        it->rel->relcount++;
-        it->before = EINA_TRUE;
+        if (flags & ELM_GENLIST_ITEM_GROUP)
+          wd->group_items = eina_list_append(wd->group_items, it);
+
+        wd->items = eina_inlist_sorted_insert(wd->items, EINA_INLIST_GET(it),
+                                              _elm_genlist_item_compare);
+
+        if (EINA_INLIST_GET(it)->next)
+          {
+             rel = ELM_GENLIST_ITEM_FROM_INLIST(EINA_INLIST_GET(it)->next);
+             it->before = EINA_TRUE;
+          }
+        else if (EINA_INLIST_GET(it)->prev)
+          {
+             rel = ELM_GENLIST_ITEM_FROM_INLIST(EINA_INLIST_GET(it)->prev);
+             it->before = EINA_FALSE;
+          }
      }
-   else if (EINA_INLIST_GET(it)->prev)
+
+   if (rel)
      {
-        it->rel = ELM_GENLIST_ITEM_FROM_INLIST(EINA_INLIST_GET(it)->prev);
+        it->rel = rel;
         it->rel->relcount++;
-        it->before = EINA_FALSE;
      }
+
    _item_queue(wd, it);
 
    return it;
