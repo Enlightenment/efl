@@ -2174,11 +2174,8 @@ static void
 _layout_format_value_handle(Ctxt *c, Evas_Object_Textblock_Format *fmt, const char *item)
 {
    const char *key = NULL, *val = NULL;
-   char *tmp;
-   tmp = alloca(strlen(item) + 1);
-   strcpy(tmp, item);
 
-   _format_param_parse(tmp, &key, &val);
+   _format_param_parse(item, &key, &val);
    if ((key) && (val)) _format_command(c->obj, fmt, key, val);
    if (key) eina_stringshare_del(key);
    if (val) eina_stringshare_del(val);
