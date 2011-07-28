@@ -3032,11 +3032,6 @@ _sub_del(void *data __UNUSED__, Evas_Object *obj, void *event_info)
      }
 }
 
-/**
- * @defgroup Inwin Inwin
- *
- * An inwin is a window inside a window that is useful for a quick popup.  It does not hover.
- */
 EAPI Evas_Object *
 elm_win_inwin_add(Evas_Object *obj)
 {
@@ -3073,13 +3068,6 @@ elm_win_inwin_add(Evas_Object *obj)
    return obj2;
 }
 
-/**
- * Activates an inwin object
- *
- * @param obj The inwin to activate
- *
- * @ingroup Inwin
- */
 EAPI void
 elm_win_inwin_activate(Evas_Object *obj)
 {
@@ -3092,18 +3080,6 @@ elm_win_inwin_activate(Evas_Object *obj)
    elm_object_focus(obj);
 }
 
-/**
- * Set the content of an inwin object.
- *
- * Once the content object is set, a previously set one will be deleted.
- * If you want to keep that old content object, use the
- * elm_win_inwin_content_unset() function.
- *
- * @param obj The inwin object
- * @param content The object to set as content
- *
- * @ingroup Inwin
- */
 EAPI void
 elm_win_inwin_content_set(Evas_Object *obj, Evas_Object *content)
 {
@@ -3123,16 +3099,6 @@ elm_win_inwin_content_set(Evas_Object *obj, Evas_Object *content)
    _sizing_eval(obj);
 }
 
-/**
- * Get the content of an inwin object.
- *
- * Return the content object which is set for this widget.
- *
- * @param obj The inwin object
- * @return The content that is being used
- *
- * @ingroup Inwin
- */
 EAPI Evas_Object *
 elm_win_inwin_content_get(const Evas_Object *obj)
 {
@@ -3142,16 +3108,6 @@ elm_win_inwin_content_get(const Evas_Object *obj)
    return wd->content;
 }
 
-/**
- * Unset the content of an inwin object.
- *
- * Unparent and return the content object which was set for this widget.
- *
- * @param obj The inwin object
- * @return The content that was being used
- *
- * @ingroup Inwin
- */
 EAPI Evas_Object *
 elm_win_inwin_content_unset(Evas_Object *obj)
 {

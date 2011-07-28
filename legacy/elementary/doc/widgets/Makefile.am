@@ -78,7 +78,10 @@ widget_preview_progressbar \
 widget_preview_box \
 widget_preview_notify \
 widget_preview_slideshow \
-widget_preview_photocam
+widget_preview_photocam \
+widget_preview_inwin1 \
+widget_preview_inwin2 \
+widget_preview_inwin3
 
 LDADD = $(top_builddir)/src/lib/libelementary.la @ELEMENTARY_EWEATHER_LIBS@ @ELEMENTARY_EDBUS_LIBS@ @ELEMENTARY_EFREET_LIBS@ @ELEMENTARY_EMAP_LIBS@ @ELEMENTARY_LIBS@ @EIO_LIBS@ @my_libs@
 
@@ -138,5 +141,8 @@ EXTRA_DIST = \
 	widget_preview_notify.c \
 	widget_preview_slideshow.c \
 	widget_preview_photocam.c \
+	widget_preview_inwin1.c \
+	widget_preview_inwin2.c \
+	widget_preview_inwin3.c \
 	widget_preview_tmpl_foot.c \
 	widget_preview_tmpl_head.c

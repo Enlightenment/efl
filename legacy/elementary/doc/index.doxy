@@ -128,6 +128,9 @@
  * @image html img/widget/index/preview-00.png
  * @image latex img/widget/index/preview-00.eps
  * @li @ref Inwin
+ *
+ * @image html img/widget/inwin/preview-00.png
+ * @image latex img/widget/inwin/preview-00.eps
  * @li @ref Label
  *
  * @image html img/widget/label/preview-00.png
