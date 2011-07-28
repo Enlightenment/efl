@@ -1,7 +1,12 @@
 #include <Elementary.h>
+#ifdef HAVE_CONFIG_H
+# include "elementary_config.h"
+#else
+# define __UNUSED__
+#endif
 
 EAPI int
-elm_main(int argc, char **argv)
+elm_main(int argc __UNUSED__, char **argv)
 {
    Evas_Object *win, *bg;
    Evas_Coord w, h;
