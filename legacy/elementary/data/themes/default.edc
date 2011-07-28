@@ -37548,6 +37548,7 @@ collections {
             mouse_events: 0;
             description { state: "default" 0.0;
                rel1.to_y: "title_clip";
+               rel1.relative: 0 1;
             }
          }
          part { name: "elm.swallow.content";
@@ -37669,6 +37670,7 @@ collections {
             mouse_events: 0;
             description { state: "default" 0.0;
                rel1.to_y: "title_clip";
+               rel1.relative: 0 1;
             }
          }
          part { name: "elm.swallow.content";
