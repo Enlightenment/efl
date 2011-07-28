@@ -164,7 +164,6 @@
  * @image html img/widget/radio/preview-00.png
  * @image latex img/widget/radio/preview-00.eps
  * @li @ref Route
- * @li @ref Scroller
  * @li @ref SegmentControl
  * @li @ref Separator
  *
@@ -233,5 +232,9 @@
  * @image latex img/widget/panes/preview-00.eps
  * @image html img/panes.png
  * @image latex img/panes.eps
+ * @li @ref Scroller
+ *
+ * @image html img/widget/scroller/preview-00.png
+ * @image latex img/widget/scroller/preview-00.eps
  * @li @ref Table
  */

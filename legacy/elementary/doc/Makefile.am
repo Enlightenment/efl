@@ -65,7 +65,8 @@ WGT_PREVIEW = \
 	photocam:preview-00.png:widget_preview_photocam:243:162 \
 	inwin:preview-00.png:widget_preview_inwin1:200:160 \
 	inwin:preview-01.png:widget_preview_inwin2:200:160 \
-	inwin:preview-02.png:widget_preview_inwin3:200:160
+	inwin:preview-02.png:widget_preview_inwin3:200:160 \
+	scroller:preview-00.png:widget_preview_scroller:100:30
 
 widget-build:
 	@$(MAKE) -C widgets

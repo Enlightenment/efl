@@ -97,7 +97,8 @@ SRCS = \
 	progressbar_example.c \
 	notify_example_01.c \
 	photocam_example_01.c \
-	inwin_example.c
+	inwin_example.c \
+	scroller_example_01.c
 
 pkglib_PROGRAMS =
 
@@ -184,7 +185,8 @@ pkglib_PROGRAMS += \
 	progressbar_example \
 	notify_example_01 \
 	photocam_example_01 \
-	inwin_example
+	inwin_example \
+	scroller_example_01
 
 # This variable will hold the list of screenshots that will be made
 # by "make screenshots". Each item in the list is of the form:
@@ -243,7 +245,8 @@ SCREENSHOTS = \
 	notify_example_01:notify_example_01.png:0.0 \
 	notify_example_01:notify_example_01_a.png:6.0 \
 	slideshow_example:slideshow_example.png:1.0 \
-	photocam_example_01:photocam_example_01.png:3
+	photocam_example_01:photocam_example_01.png:3 \
+	scroller_example_01:scroller_example_01.png:0.0 \
 	inwin_example:inwin_example.png:0.0 \
 	inwin_example:inwin_example_a.png:0.2
 

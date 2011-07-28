@@ -4840,6 +4840,51 @@
  */
 
 /**
+ * @page tutorial_scroller Scroller example
+ * @dontinclude scroller_example_01.c
+ *
+ * This example is very short and will illustrate one way to use a scroller.
+ * We'll omit the declaration of the @p text variable because it's a very long
+ * @htmlonly<a href="http://lipsum.com/">@endhtmlonly ipsum lorem
+ * @htmlonly</a>@endhtmlonly. If you really want to see the full code, it's @ref
+ * scroller_example_01.c "scroller_example_01.c".
+ *
+ * We start our example by creating our window and background:
+ * @skip EAPI
+ * @until show(bg)
+ *
+ * Next we create a label and set it's text to @p text(very long ipsum lorem):
+ * @until show(label)
+ *
+ * We then create our scroller, ask that it have the same size as the window and
+ * set its content:
+ * @until content_set
+ *
+ * We are now going to set a number of properties in our scroller:
+ * @li We make it bounce horizontally but not vertically.
+ * @li We make both scrollbars always be visible.
+ * @li We have the events be propagated from the content to the scroller.
+ * @li We enforce a page policy vertically(having a page be the size of the
+ * viewport) and leave horizontal scrolling free.
+ * @li And finally we ask the scroller to show us a region starting at 50,50 and
+ * having a width and height of 200px.
+ * @until region_show
+ * @note Observant reader will note that the elm_scroller_region_show() didn't
+ * scroll the view vertically, this is because we told the scroller to only
+ * accept vertical scrolling in pages.
+ *
+ * And now we're done:
+ * @until ELM_MAIN
+ *
+ * Our example will look like this:
+ *
+ * @image html screenshots/scroller_example_01.png
+ * @image latex screenshots/scroller_example_01.eps width=\textwidth
+ *
+ * @example scroller_example_01.c
+ */
+
+/**
  * @page bg_example_01_c bg_example_01.c
  * @include bg_example_01.c
  * @example bg_example_01.c
