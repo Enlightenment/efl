@@ -643,6 +643,26 @@ elm_menu_clone(Evas_Object *from_menu, Evas_Object *to_menu, Elm_Menu_Item *pare
       _item_clone(to_menu, parent, item);
 }
 
+static void
+_elm_menu_item_add_helper(Evas_Object *obj, Elm_Menu_Item *parent, Elm_Menu_Item *subitem, Widget_Data *wd)
+{
+   if (parent)
+     {
+        if (!parent->submenu.bx) _item_submenu_obj_create(parent);
+        elm_box_pack_end(parent->submenu.bx, subitem->base.view);
+        parent->submenu.items = eina_list_append(parent->submenu.items, subitem);
+        subitem->idx = eina_list_count(parent->submenu.items) - 1;
+     }
+   else
+     {
+        elm_box_pack_end(wd->bx, subitem->base.view);
+        wd->items = eina_list_append(wd->items, subitem);
+        subitem->idx = eina_list_count(wd->items) - 1;
+     }
+
+   _sizing_eval(obj);
+}
+
 /**
  * Add an item at the end
  *
@@ -685,21 +705,8 @@ elm_menu_item_add(Evas_Object *obj, Elm_Menu_Item *parent, const char *icon, con
    edje_object_part_swallow(subitem->base.view, "elm.swallow.content", subitem->icon);
    if (icon) elm_menu_item_icon_set(subitem, icon);
 
-   if (parent)
-     {
-        if (!parent->submenu.bx) _item_submenu_obj_create(parent);
-        elm_box_pack_end(parent->submenu.bx, subitem->base.view);
-        parent->submenu.items = eina_list_append(parent->submenu.items, subitem);
-        subitem->idx = eina_list_count(parent->submenu.items) - 1;
-     }
-   else
-     {
-        elm_box_pack_end(wd->bx, subitem->base.view);
-        wd->items = eina_list_append(wd->items, subitem);
-        subitem->idx = eina_list_count(wd->items) - 1;
-     }
+   _elm_menu_item_add_helper(obj, parent, subitem, wd);
 
-   _sizing_eval(obj);
    return subitem;
 }
 
@@ -738,21 +745,8 @@ elm_menu_item_add_object(Evas_Object *obj, Elm_Menu_Item *parent, Evas_Object *s
    edje_object_part_swallow(subitem->base.view, "elm.swallow.content", subobj);
    _sizing_eval(subitem->base.widget);
 
-   if (parent)
-     {
-        if (!parent->submenu.bx) _item_submenu_obj_create(parent);
-        elm_box_pack_end(parent->submenu.bx, subitem->base.view);
-        parent->submenu.items = eina_list_append(parent->submenu.items, subitem);
-        subitem->idx = eina_list_count(parent->submenu.items) - 1;
-     }
-   else
-     {
-        elm_box_pack_end(wd->bx, subitem->base.view);
-        wd->items = eina_list_append(wd->items, subitem);
-        subitem->idx = eina_list_count(wd->items) - 1;
-     }
+   _elm_menu_item_add_helper(obj, parent, subitem, wd);
 
-   _sizing_eval(obj);
    return subitem;
 }
 
