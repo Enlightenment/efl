@@ -3183,6 +3183,7 @@ ecore_evas_gl_x11_options_new(const char *disp_name, Ecore_X_Window parent,
      (ee, ee->engine.x.win_root, x, y, w, h, 0, 0, opt);
    if (!ee->prop.window)
      {
+        ERR("evas_engine_info_set() init engine '%s' failed.", ee->driver);
         ecore_evas_free(ee);
         return NULL;
      }
@@ -3519,6 +3520,12 @@ ecore_evas_software_x11_16_new(const char *disp_name, Ecore_X_Window parent,
              return NULL;
           }
      }
+   else
+     {
+        ERR("evas_engine_info_set() init engine '%s' failed.", ee->driver);
+        ecore_evas_free(ee);
+        return NULL;
+     }
 
    ecore_x_icccm_hints_set(ee->prop.window,
                            1 /* accepts_focus */,
@@ -3836,6 +3843,12 @@ ecore_evas_software_x11_8_new(const char *disp_name, Ecore_X_Window parent,
              ecore_evas_free(ee);
              return NULL;
           }
+     }
+   else
+     {
+        ERR("evas_engine_info_set() init engine '%s' failed.", ee->driver);
+        ecore_evas_free(ee);
+        return NULL;
      }
 
    ecore_x_icccm_hints_set(ee->prop.window,

@@ -966,7 +966,13 @@ _ecore_evas_engine_software_gdi_init(Ecore_Evas *ee)
         if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
           {
              ERR("evas_engine_info_set() for engine '%s' failed.", ee->driver);
+             return 0;
           }
+     }
+   else
+     {
+        ERR("evas_engine_info_set() init engine '%s' failed.", ee->driver);
+        return 0;
      }
 
    return 1;
@@ -1000,7 +1006,13 @@ _ecore_evas_engine_software_ddraw_init(Ecore_Evas *ee)
         if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
           {
              ERR("evas_engine_info_set() for engine '%s' failed.", ee->driver);
+             return 0;
           }
+     }
+   else
+     {
+        ERR("evas_engine_info_set() init engine '%s' failed.", ee->driver);
+        return 0;
      }
 
    return 1;
@@ -1034,7 +1046,13 @@ _ecore_evas_engine_direct3d_init(Ecore_Evas *ee)
         if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
           {
              ERR("evas_engine_info_set() for engine '%s' failed.", ee->driver);
+             return 0;
           }
+     }
+   else
+     {
+        ERR("evas_engine_info_set() init engine '%s' failed.", ee->driver);
+        return 0;
      }
 
    return 1;
@@ -1067,7 +1085,13 @@ _ecore_evas_engine_opengl_glew_init(Ecore_Evas *ee)
         if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
           {
              ERR("evas_engine_info_set() for engine '%s' failed.", ee->driver);
+             return 0;
           }
+     }
+   else
+     {
+        ERR("evas_engine_info_set() init engine '%s' failed.", ee->driver);
+        return 0;
      }
 
    return 1;
@@ -1104,7 +1128,13 @@ _ecore_evas_engine_software_16_ddraw_init(Ecore_Evas *ee)
         if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
           {
              ERR("evas_engine_info_set() for engine '%s' failed.", ee->driver);
+             return 0;
           }
+     }
+   else
+     {
+        ERR("evas_engine_info_set() init engine '%s' failed.", ee->driver);
+        return 0;
      }
 
    return 1;

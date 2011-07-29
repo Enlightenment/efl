@@ -545,7 +545,15 @@ ecore_evas_directfb_new(const char *disp_name, int windowed, int x, int y, int w
         if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
           {
              ERR("evas_engine_info_set() for engine '%s' failed.", ee->driver);
+             ecore_evas_free(ee);
+             return NULL;
           }
+     }
+   else
+     {
+        ERR("evas_engine_info_set() init engine '%s' failed.", ee->driver);
+        ecore_evas_free(ee);
+        return NULL;
      }
 
    ee->engine.func->fn_render = _ecore_evas_directfb_render;

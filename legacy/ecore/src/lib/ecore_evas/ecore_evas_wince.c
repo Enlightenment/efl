@@ -812,11 +812,23 @@ ecore_evas_software_wince_new_internal(int                 backend,
         if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
           {
              ERR("evas_engine_info_set() for engine '%s' failed.", ee->driver);
+             _ecore_evas_wince_shutdown();
+             free(ee);
+             ecore_wince_shutdown();
+             return NULL;
           }
 
         ecore_wince_window_backend_set((Ecore_WinCE_Window *)ee->prop.window, backend);
         ecore_wince_window_suspend_cb_set((Ecore_WinCE_Window *)ee->prop.window, einfo->func.suspend);
         ecore_wince_window_resume_cb_set((Ecore_WinCE_Window *)ee->prop.window, einfo->func.resume);
+     }
+   else
+     {
+        ERR("evas_engine_info_set() init engine '%s' failed.", ee->driver);
+        _ecore_evas_wince_shutdown();
+        free(ee);
+        ecore_wince_shutdown();
+        return NULL;
      }
 
    ee->engine.func->fn_render = _ecore_evas_wince_render;

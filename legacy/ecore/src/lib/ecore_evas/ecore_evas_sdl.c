@@ -398,7 +398,15 @@ _ecore_evas_internal_sdl_new(int rmethod, const char* name, int w, int h, int fu
              if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
                {
                   ERR("evas_engine_info_set() for engine '%s' failed.", ee->driver);
+                  ecore_evas_free(ee);
+                  return NULL;
                }
+          }
+        else
+          {
+             ERR("evas_engine_info_set() init engine '%s' failed.", ee->driver);
+             ecore_evas_free(ee);
+             return NULL;
           }
 #endif
      }
@@ -413,9 +421,23 @@ _ecore_evas_internal_sdl_new(int rmethod, const char* name, int w, int h, int fu
              if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
                {
                   ERR("evas_engine_info_set() for engine '%s' failed.", ee->driver);
+                  ecore_evas_free(ee);
+                  return NULL;
                }
           }
+        else
+          {
+             ERR("evas_engine_info_set() init engine '%s' failed.", ee->driver);
+             ecore_evas_free(ee);
+             return NULL;
+          }
 #endif
+     }
+   else
+     {
+        ERR("evas_engine_info_set() init engine '%s' failed.", ee->driver);
+        ecore_evas_free(ee);
+        return NULL;
      }
 
    if (!ecore_sdl_init(name))

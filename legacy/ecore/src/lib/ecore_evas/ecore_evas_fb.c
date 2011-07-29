@@ -656,7 +656,15 @@ ecore_evas_fb_new(const char *disp_name, int rotation, int w, int h)
         if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
           {
              ERR("evas_engine_info_set() for engine '%s' failed.", ee->driver);
+             ecore_evas_free(ee);
+             return NULL;
           }
+     }
+   else
+     {
+        ERR("evas_engine_info_set() init engine '%s' failed.", ee->driver);
+        ecore_evas_free(ee);
+        return NULL;
      }
    evas_key_modifier_add(ee->evas, "Shift");
    evas_key_modifier_add(ee->evas, "Control");
