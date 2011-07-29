@@ -316,6 +316,19 @@ eina_threads_shutdown(void)
 #endif
 }
 
+EAPI Eina_Bool
+eina_main_loop_is(void)
+{
+#ifdef EINA_HAVE_DEBUG_THREADS
+   if (pthread_equal(_eina_main_loop, pthread_self()))
+     return EINA_TRUE;
+   return EINA_FALSE;
+#else
+   /* FIXME: need to check how to do this on windows */
+   return EINA_TRUE;
+#endif
+}
+
 /**
  * @}
  */

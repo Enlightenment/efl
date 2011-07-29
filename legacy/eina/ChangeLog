@@ -118,3 +118,8 @@
 2011-07-04  Carsten Haitzler (The Rasterman)
 
 	* Add eina_mmap safety handling.
+
+2011-07-29  Cedric Bail
+
+	* Add eina_main_loop_is.
+
