@@ -76,9 +76,18 @@ static int _eina_log_dom = -1;
 
 EAPI Eina_Bool _eina_threads_activated = EINA_FALSE;
 
+#ifdef EINA_HAVE_THREADS
+# ifdef _WIN32_WCE
+#  warning "no way to know the main loop thread id yet on Windows CE !"
+# elif defined(_WIN32)
+#  warning "no way to know the main loop thread id yet on Windows !"
+# else
+EAPI pthread_t _eina_main_loop;;
+# endif
+#endif
+
 #ifdef EINA_HAVE_DEBUG_THREADS
 EAPI int _eina_threads_debug = 0;
-EAPI pthread_t _eina_main_loop;;
 EAPI pthread_mutex_t _eina_tracking_lock;
 EAPI Eina_Inlist *_eina_tracking = NULL;
 #endif
@@ -205,8 +214,10 @@ eina_init(void)
         return 0;
      }
 
-#ifdef EINA_HAVE_DEBUG_THREADS
+#if !(defined(_WIN32_WCE)) && !(defined(_WIN32))
    _eina_main_loop = pthread_self();
+#endif
+#ifdef EINA_HAVE_DEBUG_THREADS
    pthread_mutex_init(&_eina_tracking_lock, NULL);
 
    if (getenv("EINA_DEBUG_THREADS"))
@@ -319,14 +330,18 @@ eina_threads_shutdown(void)
 EAPI Eina_Bool
 eina_main_loop_is(void)
 {
-#ifdef EINA_HAVE_DEBUG_THREADS
+#ifdef EINA_HAVE_THREADS
+   /* FIXME: need to check how to do this on windows */
+# ifdef _WIN32_CE
+   return EINA_FALSE;
+# elif defined(_WIN32)
+   return EINA_FALSE;
+# else
    if (pthread_equal(_eina_main_loop, pthread_self()))
      return EINA_TRUE;
-   return EINA_FALSE;
-#else
-   /* FIXME: need to check how to do this on windows */
-   return EINA_TRUE;
+# endif
 #endif
+   return EINA_FALSE;
 }
 
 /**
