@@ -1,0 +1,129 @@
+/**
+ * @page Examples Examples
+ *
+ * Here is a page with examples.
+ *
+ * @ref Example_Edje_Basics
+ */
+
+/**
+ * @page Example_Edje_Basics Edje basics example
+ *
+ * In this example, we illustrate how to start using the Edje library,
+ * with the very basic one needs to instantiate an Edje object.
+ *
+ * We place, in the canvas, an Edje object along with a @b red border
+ * image to delimit its geometry. After we instantiate the Edje
+ * object, we @b have to set a file and a group, within that file, to
+ * bind to it. For this example, we're using an EDC file which
+ * declares two parts (blue and green rectangles) and an item data:
+ * @include basic.edc
+ *
+ * We start by trying to acces an @b unexistant group in the file, so
+ * that you can see the usefulness of edje_object_load_error_get() and
+ * edje_load_error_str(). Check that the error message will tell you
+ * just that -- a group which didn't exist in the file was called for:
+ * @dontinclude edje-basic.c
+ * @skip file_path
+ * @until file_path
+ * @dontinclude edje-basic.c
+ * @skip edje_object_add
+ * @until }
+ *
+ * Than, we finally bind our Edje object to @c "example_group",
+ * printing a message afterwards:
+ * @dontinclude edje-basic.c
+ * @skip file_path, "example_group"
+ * @until object_show
+ *
+ * What follows is a series of Edje API calls which are of general
+ * use. The first of them is edje_object_data_get(), which we use to
+ * get the value we have put in the @c "example_data" data field, in
+ * our EDC object declaration:
+ * @dontinclude edje-basic.c
+ * @skip data field in group
+ * @until ;
+ *
+ * Than, we exemplify edje_object_part_exists():
+ * @dontinclude edje-basic.c
+ * @skip Testing if
+ * @until ;
+ *
+ * The next call is to query @c "part_one"'s geometry, relative to the
+ * whole Edje object's area. The part will be situated in the middle
+ * of the Edje object's, because it has a restricted forced size (we
+ * set its minimum size equal to its maximum, for that) and, by
+ * default, parts are aligned to the center of their containers:
+ * @dontinclude edje-basic.c
+ * @skip part_geometry_get
+ * @until x, y, w, h
+ *
+ * We can grab a direct pointer on the rectangle implementing @c
+ * "part_one", by using edje_object_part_object_get(). Since we are
+ * not allowed to set properties on it, we just check its color, to
+ * assure its really blue, as declared in the EDC:
+ * @dontinclude edje-basic.c
+ * @skip color_get
+ * @until x, y, w, h
+ *
+ * The @c "min" and @c "max" EDC properties can be queried with the
+ * following calls:
+ * @dontinclude edje-basic.c
+ * @skip max_get
+ * @until min. size is
+ *
+ * The next two calls are to make <b>size calculations</b> on our
+ * object. Because of the minumim size declared for @c "part_one" part's
+ * default state description, that will be our exact minimum
+ * size calculated for the group (remember the @c "min" declaration at
+ * group level is just a @b hint, not an enforcement). We then
+ * exercise the edje_object_size_min_restricted_calc() function,
+ * passing a minimum size of 500, in each axis. Since we have @b no
+ * object bigger than that, it will be the minimum size calculated, in
+ * the end:
+ * @dontinclude edje-basic.c
+ * @skip min_calc
+ * @until size calculation is
+ *
+ * @c "part_two" part is there with a purpose: since it extrapolates
+ * the Edje object's boundaries, the edje_object_parts_extends_calc()
+ * function will report origin coordinates for the rectangle grouping
+ * both parts with @b negative values, indicating it extrapolates to
+ * the upper left of our group, just as we see it.
+ *
+ * To interact with the last features exemplified in the program,
+ * there's a command line interface.  A help string can be asked for
+ * with the 'h' key:
+ * @dontinclude edje-basic.c
+ * @skip commands
+ * @until ;
+ *
+ * Those commands will change the scaling factors of our Edje objects.
+ * The first of them, @c 's', will change Edje's @b global scaling
+ * factor between @c 1.0 (no scaling) and @c 2.0 (double
+ * scale). Scaling will be applied to @c "part_one", only, because
+ * that's the part flagged to be scaled at EDC level:
+ * @dontinclude edje-basic.c
+ * @skip strcmp(ev->keyname, "s") == 0
+ * @until }
+ *
+ * Note, finally, that the @c 's' command will depend on the 'r' one
+ * to have its effects applied. The latter will change @c "part_one"'s
+ * @b individual scaling factor, which @b overrides Edje's global
+ * scaling factor. Only when the individual one is set to zero, will
+ * the global one take effect:
+ * @dontinclude edje-basic.c
+ * @skip strcmp(ev->keyname, "r") == 0
+ * @until }
+ *
+ * The example's window should look like this picture:
+ *
+ * @image html edje-basics-example.png
+ * @image rtf edje-basics-example.png
+ * @image latex edje-basics-example.eps
+ *
+ * The full example follows.
+ *
+ * @include edje-basic.c
+ * @example edje-basic.c
+ */
