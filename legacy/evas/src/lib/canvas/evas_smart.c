@@ -86,7 +86,7 @@ evas_smart_class_inherit_full(Evas_Smart_Class *sc, const Evas_Smart_Class *pare
    unsigned int off;
 
    /* api does not match abi! for now refuse as we only have 1 version */
-   if (parent_sc->version != EVAS_SMART_CLASS_VERSION) return 0;
+   if (parent_sc->version != EVAS_SMART_CLASS_VERSION) return EINA_FALSE;
 
 #define _CP(m) sc->m = parent_sc->m
    _CP(add);
@@ -106,10 +106,10 @@ evas_smart_class_inherit_full(Evas_Smart_Class *sc, const Evas_Smart_Class *pare
    sc->parent = parent_sc;
 
    off = sizeof(Evas_Smart_Class);
-   if (parent_sc_size == off) return 1;
+   if (parent_sc_size == off) return EINA_TRUE;
 
    memcpy(((char *)sc) + off, ((char *)parent_sc) + off, parent_sc_size - off);
-   return 1;
+   return EINA_TRUE;
 }
 
 EAPI int
@@ -142,14 +142,14 @@ evas_smart_cb_descriptions_resize(Evas_Smart_Cb_Description_Array *a, unsigned i
    void *tmp;
 
    if (size == a->size)
-     return 1;
+     return EINA_TRUE;
 
-   if (size == 0)
+   if (size == EINA_FALSE)
      {
         free(a->array);
         a->array = NULL;
         a->size = 0;
-        return 1;
+        return EINA_TRUE;
      }
 
    tmp = realloc(a->array, (size + 1) * sizeof(Evas_Smart_Cb_Description *));
@@ -158,12 +158,12 @@ evas_smart_cb_descriptions_resize(Evas_Smart_Cb_Description_Array *a, unsigned i
         a->array = tmp;
         a->size = size;
         a->array[size] = NULL;
-        return 1;
+        return EINA_TRUE;
      }
    else
      {
         ERR("realloc failed!");
-        return 0;
+        return EINA_FALSE;
      }
 }
 
