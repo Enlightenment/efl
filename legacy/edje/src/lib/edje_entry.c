@@ -2694,7 +2694,7 @@ _edje_entry_imf_event_commit_cb(void *data, int type __UNUSED__, void *event)
    Evas_Textblock_Cursor *tc;
    Eina_Bool cursor_move = EINA_FALSE;
 
-   if (!rp) return ECORE_CALLBACK_PASS_ON;
+   if ((!rp) || (!ev) || (!ev->str)) return ECORE_CALLBACK_PASS_ON;
 
    en = rp->entry_data;
    if ((!en) || (rp->part->type != EDJE_PART_TYPE_TEXTBLOCK) ||
@@ -2779,7 +2779,7 @@ _edje_entry_imf_event_preedit_changed_cb(void *data, int type __UNUSED__, void *
    int i;
    Eina_Bool preedit_end_state = EINA_FALSE;
 
-   if (!rp) return ECORE_CALLBACK_PASS_ON;
+   if ((!rp) || (!ev)) return ECORE_CALLBACK_PASS_ON;
 
    en = rp->entry_data;
    if ((!en) || (rp->part->type != EDJE_PART_TYPE_TEXTBLOCK) ||
@@ -2873,7 +2873,7 @@ _edje_entry_imf_event_delete_surrounding_cb(void *data, int type __UNUSED__, voi
    Evas_Textblock_Cursor *del_start, *del_end;
    int cursor_pos;
 
-   if (!rp) return ECORE_CALLBACK_PASS_ON;
+   if ((!rp) || (!ev)) return ECORE_CALLBACK_PASS_ON;
    en = rp->entry_data;
    if ((!en) || (rp->part->type != EDJE_PART_TYPE_TEXTBLOCK) ||
        (rp->part->entry_mode < EDJE_ENTRY_EDIT_MODE_SELECTABLE))
