@@ -424,31 +424,31 @@ evas_object_smart_callbacks_descriptions_set(Evas_Object *obj, const Evas_Smart_
    unsigned int i, count = 0;
 
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
-   return 0;
+   return EINA_FALSE;
    MAGIC_CHECK_END();
    o = (Evas_Object_Smart *)(obj->object_data);
    MAGIC_CHECK(o, Evas_Object_Smart, MAGIC_OBJ_SMART);
-   return 0;
+   return EINA_FALSE;
    MAGIC_CHECK_END();
 
    if ((!descriptions) || (!descriptions->name))
      {
         evas_smart_cb_descriptions_resize(&o->callbacks_descriptions, 0);
-        return 1;
+        return EINA_TRUE;
      }
 
    for (count = 0, d = descriptions; d->name; d++)
      count++;
 
    evas_smart_cb_descriptions_resize(&o->callbacks_descriptions, count);
-   if (count == 0) return 1;
+   if (count == 0) return EINA_TRUE;
 
    for (i = 0, d = descriptions; i < count; d++, i++)
      o->callbacks_descriptions.array[i] = d;
 
    evas_smart_cb_descriptions_fix(&o->callbacks_descriptions);
 
-   return 1;
+   return EINA_TRUE;
 }
 
 EAPI void
@@ -561,11 +561,11 @@ evas_object_smart_need_recalculate_get(const Evas_Object *obj)
 {
    Evas_Object_Smart *o;
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
-   return 0;
+   return EINA_FALSE;
    MAGIC_CHECK_END();
    o = obj->object_data;
    MAGIC_CHECK(o, Evas_Object_Smart, MAGIC_OBJ_SMART);
-   return 0;
+   return EINA_FALSE;
    MAGIC_CHECK_END();
 
    return o->need_recalculate;
@@ -618,7 +618,7 @@ evas_call_smarts_calculate(Evas *e)
      {
         Evas_Object_Smart *o;
 
-	obj = eina_array_data_get(calculate, i);
+        obj = eina_array_data_get(calculate, i);
         if (obj->delete_me)
           continue;
 
@@ -677,8 +677,8 @@ evas_object_smart_del(Evas_Object *obj)
 {
    Evas_Smart *s;
 
-   s = obj->smart.smart;
    if (obj->delete_me) return;
+   s = obj->smart.smart;
    if ((s) && (s->smart_class->del)) s->smart_class->del(obj);
    if (obj->smart.parent) evas_object_smart_member_del(obj);
    if (s) evas_object_smart_unuse(s);
