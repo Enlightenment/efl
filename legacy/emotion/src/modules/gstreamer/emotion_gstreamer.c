@@ -690,6 +690,7 @@ em_file_close(void *video)
    Emotion_Audio_Stream *astream;
    Emotion_Video_Stream *vstream;
 
+   fprintf(stderr, "close\n");
    ev = (Emotion_Gstreamer_Video *)video;
    if (!ev)
      return;
@@ -734,6 +735,8 @@ em_play(void   *video,
    Emotion_Gstreamer_Video *ev;
 
    ev = (Emotion_Gstreamer_Video *)video;
+   if (!ev->pipeline) return ;
+
    gst_element_set_state(ev->pipeline, GST_STATE_PLAYING);
    ev->play = 1;
    ev->play_started = 1;
@@ -748,6 +751,8 @@ em_stop(void *video)
    Emotion_Gstreamer_Video *ev;
 
    ev = (Emotion_Gstreamer_Video *)video;
+
+   if (!ev->pipeline) return ;
 
    /* shutdown eos */
    if (ev->eos_timer)
@@ -792,12 +797,20 @@ em_pos_set(void   *video,
 
    ev = (Emotion_Gstreamer_Video *)video;
 
+   if (!ev->pipeline) return ;
+
+   if (ev->play)
+     res = gst_element_set_state(ev->pipeline, GST_STATE_PAUSED);
+
    res = gst_element_seek(ev->pipeline, 1.0,
                           GST_FORMAT_TIME,
                           GST_SEEK_FLAG_ACCURATE | GST_SEEK_FLAG_FLUSH,
                           GST_SEEK_TYPE_SET,
                           (gint64)(pos * (double)GST_SECOND),
                           GST_SEEK_TYPE_NONE, -1);
+
+   if (ev->play)
+     res = gst_element_set_state(ev->pipeline, GST_STATE_PLAYING);
 }
 
 static double
@@ -813,6 +826,9 @@ em_len_get(void *video)
 
    ev = video;
    fmt = GST_FORMAT_TIME;
+
+   if (!ev->pipeline) return 0.0;
+
    ret = gst_element_query_duration(ev->pipeline, &fmt, &val);
    if (!ret)
      goto fallback;
@@ -896,6 +912,9 @@ em_pos_get(void *video)
 
    ev = video;
    fmt = GST_FORMAT_TIME;
+
+   if (!ev->pipeline) return 0.0;
+
    ret = gst_element_query_position(ev->pipeline, &fmt, &val);
    if (!ret)
      return ev->position;
@@ -1198,6 +1217,8 @@ em_audio_channel_mute_set(void *video,
 
    ev = (Emotion_Gstreamer_Video *)video;
 
+   if (!ev->pipeline) return ;
+
    ev->audio_mute = mute;
 
    g_object_set(G_OBJECT(ev->pipeline), "mute", !!mute, NULL);
@@ -1229,6 +1250,8 @@ em_audio_channel_volume_set(void  *video,
    Emotion_Gstreamer_Video *ev;
 
    ev = (Emotion_Gstreamer_Video *)video;
+
+   if (!ev->pipeline) return ;
 
    if (vol < 0.0)
      vol = 0.0;
