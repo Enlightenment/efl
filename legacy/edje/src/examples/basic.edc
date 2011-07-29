@@ -1,0 +1,39 @@
+collections {
+   group {
+      name: "example_group";
+      max: 500 500;
+      min: 50 50;
+
+      data {
+         item: "example_data" "a string";
+      }
+
+      parts {
+         part {
+            name: "part_one";
+            type: RECT;
+            scale: 1;
+            description {
+               min: 50 50;
+               max: 50 50;
+               state: "default" 0.0;
+               color: 0 0 255 255; /* blue */
+               rel1.relative: 0.0 0.0;
+               rel2.relative: 1.0 1.0;
+            }
+         }
+
+         part {
+            name: "part_two";
+            type: RECT;
+            description {
+               state: "default" 0.0;
+               color: 0 255 0 255; /* green */
+               rel1.relative: -1.0 -1.0;
+               rel2.relative: 0.0 0.0;
+            }
+         }
+      }
+
+   }
+}

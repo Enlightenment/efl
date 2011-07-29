@@ -441,8 +441,12 @@ Unlike Ebits, Edje separates the layout and behavior logic.
 
 
 
+@section Edje_Examples Examples on Edje's usage
 
+What follows is a list with varios commented examples, covering a great
+part of Edje's API:
 
+- @ref Example_Edje_Basics
 
 
 
@@ -1154,15 +1158,19 @@ EAPI const char  *edje_fontset_append_get         (void);
  *
  * Edje allows one to build scalable interfaces. Scaling factors,
  * which are set to neutral (@c 1.0) values by default (no scaling,
- * actual sizes), are of two types: @b global and @b
- * individual. Edje's global scaling factor will affect all its
- * objects which hadn't their individual scaling factors altered from
- * the default value. If they had it set differently, by
+ * actual sizes), are of two types: @b global and @b individual.
+ * Edje's global scaling factor will affect all its objects which
+ * hadn't their individual scaling factors altered from the default
+ * value (which is zero). If they had it set differently, by
  * edje_object_scale_set(), that factor will @b override the global
  * one.
  *
- * Scaling affects the values of mininum/maximum object sizes, which
+ * Scaling affects the values of mininum/maximum @b part sizes, which
  * are @b multiplied by it. Font sizes are scaled, too.
+ *
+ * @warning Only parts which, at EDC level, had the @c "scale"
+ * property set to @c 1, will be affected by this function. Check the
+ * complete @ref edcref "syntax reference" for EDC files.
  *
  * @see edje_scale_get().
  */
@@ -1213,16 +1221,19 @@ EAPI void edje_password_show_last_timeout_set(double password_show_last_timeout)
  * @brief Set the scaling factor for a given Edje object.
  *
  * @param obj A handle to an Edje object
- * @param scale The scaling factor (the defaul value is @c 1.0)
+ * @param scale The scaling factor (the default value is @c 0.0,
+ * meaning indivinual scaling @b not set)
  *
  * This function sets an @b individual scaling factor on the @a obj
  * Edje object. This property (or Edje's global scaling factor, when
- * applicable), will affect this object's parts. However, only parts
- * which, at the EDC language level, were declared which the
- * @c "scale" attribute set to @c 1 (default value being @c 0) will be
- * affected. That EDC attribute means that the given part is subject
- * to scaling. Check the complete @ref edcref "syntax reference" for
- * EDC files.
+ * applicable), will affect this object's part sizes. If @p scale is
+ * not zero, than the individual scaling will @b override any global
+ * scaling set, for the object @p obj's parts. Put it back to zero to
+ * get the effects of the global scaling again.
+ *
+ * @warning Only parts which, at EDC level, had the @c "scale"
+ * property set to @c 1, will be affected by this function. Check the
+ * complete @ref edcref "syntax reference" for EDC files.
  *
  * @see edje_object_scale_get()
  * @see edje_scale_get() for more details
@@ -1628,9 +1639,11 @@ EAPI Evas_Object *edje_object_add                 (Evas *evas);
  * @return The data's value string
  *
  * This function fetches an EDC data field's value, which is declared
- * on the objects building EDC file, <b>under its group</b>.
+ * on the objects building EDC file, <b>under its group</b>. EDC data
+ * blocks are most commonly used to pass arbitrary parameters from an
+ * application's theme to its code.
  *
- * Data fields in EDC files are @c "data" blocks, like the following:
+ * They look like the following:
  *
  * @code
  * collections {
@@ -2162,7 +2175,7 @@ EAPI void         edje_object_calc_force              (Evas_Object *obj);
  *
  * This call works exactly as edje_object_size_min_restricted_calc(),
  * with the last two arguments set to 0. Please refer to its
- * documentation, than.
+ * documentation, then.
  */
 EAPI void         edje_object_size_min_calc           (Evas_Object *obj, Evas_Coord *minw, Evas_Coord *minh);
 
@@ -2221,8 +2234,7 @@ EAPI Eina_Bool    edje_object_parts_extends_calc      (Evas_Object *obj, Evas_Co
  * sizes. The caller is the one up to change its geometry or not.
  *
  * @warning Be advised that invisible parts in @p obj @b will be taken
- * into account in this calculation. If you don't want that to happen,
- * resize those parts to zeroed dimensions.
+ * into account in this calculation.
  */
 EAPI void         edje_object_size_min_restricted_calc(Evas_Object *obj, Evas_Coord *minw, Evas_Coord *minh, Evas_Coord restrictedw, Evas_Coord restrictedh);
 

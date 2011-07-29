@@ -371,6 +371,42 @@ case "$host_os" in
       ;;
 esac
 
+## Examples
+
+install_examples="yes"
+AC_ARG_ENABLE([install-examples],
+   AC_HELP_STRING([--disable-install-examples],
+                  [disable installing examples (compiled or just source).
+                   @<:@default==enabled@:>@]),
+   [
+    if test "x${enableval}" = "xyes" ; then
+       install_examples="yes"
+    else
+       install_examples="no"
+    fi
+   ],
+   [install_examples="yes"])
+AM_CONDITIONAL([INSTALL_EXAMPLES], [test "x${install_examples}" = "xyes"])
+
+build_examples="no"
+AC_ARG_ENABLE([build-examples],
+   AC_HELP_STRING([--enable-build-examples],
+                  [Enable building examples. This requires extra denpendencies. If you don't have them installed yet, don't build with this option or it will fail. Build again when you have it, overriding the previous installation). @<:@default==disabled@:>@]),
+   [
+    if test "x${enableval}" = "xyes" ; then
+       build_examples="yes"
+       edje_cc=$($PKG_CONFIG --variable=prefix edje)/bin/edje_cc
+       # put in here the dependencies for Edje' examples. They are
+       # meant to be 'real world' usage examples, thus one will be
+       # using higher level libraries on these programs
+       PKG_CHECK_MODULES([ECORE_EVAS], [ecore-evas ecore], [], [build_examples="no"])
+       AC_SUBST(edje_cc)
+    else
+       build_examples="no"
+    fi
+   ],
+   [build_examples="no"])
+AM_CONDITIONAL([BUILD_EXAMPLES], [test "x${build_examples}" = "xyes"])
 
 AC_SUBST(requirement_edje)
 
@@ -388,6 +424,7 @@ src/lib/Makefile
 src/bin/Makefile
 src/bin/epp/Makefile
 utils/Makefile
+src/examples/Makefile
 ])
 
 
@@ -409,6 +446,7 @@ echo "  EDJE_PROGRAM_CACHE...: $want_edje_program_cache"
 echo "  EDJE_CALC_CACHE......: $want_edje_calc_cache"
 echo "  Fixed point..........: $want_fixed_point"
 echo "  Documentation........: ${build_doc}"
+echo "  Examples.............: install:${install_examples} build:${build_examples}"
 echo
 echo "Programs:"
 echo
