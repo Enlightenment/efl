@@ -197,6 +197,9 @@
  * @li @ref Widget
  * @li @ref Win
  *
+ * @image html img/widget/win/preview-00.png
+ * @image latex img/widget/win/preview-00.eps
+ *
  * Elementary is also about displaing its widgets in a nice layout, for this
  * purpose it provides a number of containers. It's important to note that as
  * containers these widgets don't have their own visual identity, so here we

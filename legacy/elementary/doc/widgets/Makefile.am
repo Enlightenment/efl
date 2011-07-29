@@ -89,7 +89,8 @@ widget_preview_inwin1 \
 widget_preview_inwin2 \
 widget_preview_inwin3 \
 widget_preview_scroller \
-widget_preview_table
+widget_preview_table \
+widget_preview_win
 
 LDADD = $(top_builddir)/src/lib/libelementary.la @ELEMENTARY_EWEATHER_LIBS@ @ELEMENTARY_EDBUS_LIBS@ @ELEMENTARY_EFREET_LIBS@ @ELEMENTARY_EMAP_LIBS@ @ELEMENTARY_LIBS@ @EIO_LIBS@ @my_libs@
 
@@ -160,5 +161,6 @@ EXTRA_DIST = \
 	widget_preview_inwin3.c \
 	widget_preview_scroller.c \
 	widget_preview_table.c \
+	widget_preview_win.c \
 	widget_preview_tmpl_foot.c \
 	widget_preview_tmpl_head.c

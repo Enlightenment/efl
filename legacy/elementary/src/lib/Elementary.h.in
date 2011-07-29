@@ -1599,6 +1599,9 @@ extern "C" {
    /* win */
    /** @defgroup Win Win
     *
+    * @image html img/widget/win/preview-00.png
+    * @image latex img/widget/win/preview-00.eps
+    *
     * The window class of Elementary.  Contains functions to manipulate
     * windows. The Evas engine used to render the window contents is specified
     * in the system or user elementary config files (whichever is found last),
