@@ -5282,6 +5282,62 @@
  */
 
 /**
+ * @page tutorial_menu Menu Example
+ * @dontinclude menu_example_01.c
+ *
+ * This example shows how to create a menu with regular items, object items,
+ * submenus and how to delete items from a menu. The full source for this
+ * example is @ref menu_example_01.c "menu_example_01.c".
+ *
+ * We'll start looking at the menu creation and how to create a very simple
+ * item:
+ * @skip menu_add
+ * @until item_add
+ *
+ * For our next item we are going to add an icon:
+ * @until item_add
+ *
+ * Now we are going to add more items, but these icons are going to have a
+ * parent, which will put them in a sub-menu. First just another item with an
+ * icon:
+ * @until item_add
+ *
+ * Next we are going to add a button to our menu(any elm widget can be added to
+ * a menu):
+ * @until item_add
+ *
+ * We are also going to have the button delete the first item of our
+ * sub-menu when clicked:
+ * @until smart_callback
+ * @dontinclude menu_example_01.c
+ * @skip static
+ * @until }
+ *
+ * We now add a separator and three more regular items:
+ * @until item_add
+ * @until item_add
+ * @until item_add
+ *
+ * We now add another item, however this time it won't go the sub-menu and it'll
+ * be disabled:
+ * @until disabled_set
+ *
+ * To make sure that our menu is shown whenever the window is clicked(and where
+ * clicked) we use the following callback:
+ * @dontinclude menu_example_01.c
+ * @skip static
+ * @skipline static
+ * @until }
+ *
+ * Our example will look like this:
+ *
+ * @image html screenshots/menu_example_01.png
+ * @image latex screenshots/menu_example_01.eps width=\textwidth
+ *
+ * @example menu_example_01.c
+ */
+
+/**
  * @page bg_example_01_c bg_example_01.c
  * @include bg_example_01.c
  * @example bg_example_01.c

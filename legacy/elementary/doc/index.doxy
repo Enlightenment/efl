@@ -138,6 +138,9 @@
  * @li @ref Map
  * @li @ref Mapbuf
  * @li @ref Menu
+ *
+ * @image html img/widget/menu/preview-00.png
+ * @image latex img/widget/menu/preview-00.eps
  * @li @ref Notify
  *
  * @image html img/widget/notify/preview-00.png

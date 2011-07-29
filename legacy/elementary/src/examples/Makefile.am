@@ -103,7 +103,8 @@ SRCS = \
 	inwin_example.c \
 	scroller_example_01.c \
 	table_example_01.c \
-	table_example_02.c
+	table_example_02.c \
+	menu_example_01.c
 
 pkglib_PROGRAMS =
 
@@ -196,7 +197,8 @@ pkglib_PROGRAMS += \
 	inwin_example \
 	scroller_example_01 \
 	table_example_01 \
-	table_example_02
+	table_example_02 \
+	menu_example_01
 
 # This variable will hold the list of screenshots that will be made
 # by "make screenshots". Each item in the list is of the form:
@@ -266,7 +268,8 @@ SCREENSHOTS = \
 	inwin_example:inwin_example.png:0.0 \
 	inwin_example:inwin_example_a.png:0.2 \
 	table_example_01:table_example_01.png:0.0 \
-	table_example_02:table_example_02.png:0.0
+	table_example_02:table_example_02.png:0.0 \
+	menu_example_01:menu_example_01.png:0.5
 
 HTML_SS_DIR=$(top_builddir)/doc/html/screenshots
 LATEX_SS_DIR=$(top_builddir)/doc/latex/screenshots
