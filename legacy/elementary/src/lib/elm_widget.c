@@ -521,7 +521,8 @@ elm_widget_content_set_hook_set(Evas_Object *obj,
 
 EAPI void
 elm_widget_content_get_hook_set(Evas_Object *obj,
-                                Evas_Object *(*func)(const Evas_Object *obj,                                                    const char *item))
+                                Evas_Object *(*func)(const Evas_Object *obj,
+                                                     const char *item))
 {
    API_ENTRY return;
    sd->on_content_get_func = func;
