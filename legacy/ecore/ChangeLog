@@ -273,3 +273,8 @@
 
 	* Add ecore_main_loop_thread_safe_call.
 
+2011-07-26  Carsten Haitzler (The Rasterman)
+
+        * Make ecore-evas give more errors on stderr when engines are
+        not found.
+
