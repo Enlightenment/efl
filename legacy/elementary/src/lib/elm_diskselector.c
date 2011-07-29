@@ -153,7 +153,6 @@ static void
 _theme_data_get(Widget_Data *wd)
 {
    const char* str;
-   Evas_Object *parent;
    str = edje_object_data_get(wd->right_blank, "len_threshold");
    if (str) wd->len_threshold = MAX(0, atoi(str));
    else wd->len_threshold = 0;
@@ -167,12 +166,7 @@ _theme_data_get(Widget_Data *wd)
 
    str = edje_object_data_get(wd->right_blank, "min_width");
    if (str) wd->minw = MAX(-1, atoi(str));
-   else
-     {
-        parent = elm_widget_parent_widget_get(wd->self);
-        if (!parent) wd->minw = -1;
-        else evas_object_geometry_get(parent, NULL, NULL, &wd->minw, NULL);
-     }
+   else wd->minw = -1;
 
    str = edje_object_data_get(wd->right_blank, "min_height");
    if (str) wd->minh = MAX(-1, atoi(str));
