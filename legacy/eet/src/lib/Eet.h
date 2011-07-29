@@ -2466,7 +2466,7 @@ eet_data_descriptor3_new(const Eet_Data_Descriptor_Class *eddc);
  * a network or more.
  *
  * This function specially ignores str_direct_alloc and str_direct_free. It
- * is useful when the eet_data you are reading doesn't have a dictionnary,
+ * is useful when the eet_data you are reading doesn't have a dictionary,
  * like network stream or IPC. It also mean that all string will be allocated
  * and duplicated in memory.
  *

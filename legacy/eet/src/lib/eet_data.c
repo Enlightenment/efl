@@ -1576,7 +1576,7 @@ _eet_descriptor_hash_find(Eet_Data_Descriptor *edd,
 
    if (!edd->elements.hash.buckets[hash].element)
       return NULL;  /*
-                       When we use the dictionnary as a source for chunk name, we will always
+                       When we use the dictionary as a source for chunk name, we will always
                        have the same pointer in name. It's a good idea to just compare pointer
                        instead of running strcmp on both string.
                      */

@@ -566,7 +566,7 @@ eet_flush2(Eet_File *ef)
           }
      }
 
-   /* write dictionnary */
+   /* write dictionary */
    if (ef->ed)
      {
         int offset = strings_offset;
