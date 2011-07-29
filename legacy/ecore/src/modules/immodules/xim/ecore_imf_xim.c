@@ -33,7 +33,8 @@ struct _XIM_Im_Info
    Eina_List     *ics;
    Eina_Bool      reconnecting;
    XIMStyles     *xim_styles;
-   // Eina_Bool supports_string_conversion;
+   Eina_Bool      supports_string_conversion : 1;
+   Eina_Bool      supports_cursor : 1;
 };
 
 typedef struct _Ecore_IMF_Context_Data Ecore_IMF_Context_Data;
@@ -332,6 +333,38 @@ _ecore_imf_context_xim_use_preedit_set(Ecore_IMF_Context *ctx,
 #endif
 }
 
+static void
+_ecore_imf_context_xim_cursor_location_set (Ecore_IMF_Context   *ctx,
+                                            int x, int y, int w, int h)
+{
+   EINA_LOG_DBG("%s in", __FUNCTION__);
+
+#ifdef ENABLE_XIM
+   Ecore_IMF_Context_Data *imf_context_data;
+   XIC ic;
+   XVaNestedList preedit_attr;
+   XPoint        spot;
+
+   imf_context_data = ecore_imf_context_data_get(ctx);
+   ic = imf_context_data->ic;
+   if (!ic)
+     return;
+
+   spot.x = x;
+   spot.y = y + h;
+   
+   preedit_attr = XVaCreateNestedList (0,
+                                       XNSpotLocation, &spot,
+                                       NULL);
+   XSetICValues (ic,
+                 XNPreeditAttributes, preedit_attr,
+                 NULL);
+
+   XFree(preedit_attr);
+#endif
+   w = 0; // yes w is unused, but only a bi-product of the algorithm
+}
+
 #ifdef ENABLE_XIM
 static unsigned int
 _ecore_x_event_reverse_modifiers(unsigned int state)
@@ -585,7 +618,7 @@ static Ecore_IMF_Context_Class xim_class = {
    .input_panel_layout_get = NULL,
    .input_panel_language_set = NULL,
    .input_panel_language_get = NULL,
-   .cursor_location_set = NULL,
+   .cursor_location_set = _ecore_imf_context_xim_cursor_location_set,
 };
 
 static Ecore_IMF_Context *
@@ -890,18 +923,78 @@ get_ic(Ecore_IMF_Context *ctx)
         XIM_Im_Info *im_info = imf_context_data->im_info;
         XVaNestedList preedit_attr = NULL;
         XIMStyle im_style = 0;
+        XPoint spot = { 0, 0 };
         char *name = NULL;
-
-        if(imf_context_data->use_preedit == EINA_TRUE)
+        
+        // supported styles
+#if 0
+        int i;
+        if (im_info->xim_styles)
           {
-             im_style |= XIMPreeditCallbacks;
-             preedit_attr = preedit_callback_set(ctx);
+             for (i = 0; i < im_info->xim_styles->count_styles; i++)
+               {
+                  printf("%i: ", i);
+                  if (im_info->xim_styles->supported_styles[i] & XIMPreeditCallbacks)
+                     printf("XIMPreeditCallbacks | ");
+                  if (im_info->xim_styles->supported_styles[i] & XIMPreeditPosition)
+                     printf("XIMPreeditPosition | ");
+                  if (im_info->xim_styles->supported_styles[i] & XIMPreeditArea)
+                     printf("XIMPreeditArea | ");
+                  if (im_info->xim_styles->supported_styles[i] & XIMPreeditNothing)
+                     printf("XIMPreeditNothing | ");
+                  if (im_info->xim_styles->supported_styles[i] & XIMPreeditNone)
+                     printf("XIMPreeditNone | ");
+                  if (im_info->xim_styles->supported_styles[i] & XIMStatusArea)
+                     printf("XIMStatusArea | ");
+                  if (im_info->xim_styles->supported_styles[i] & XIMStatusCallbacks)
+                     printf("XIMStatusCallbacks | ");
+                  if (im_info->xim_styles->supported_styles[i] & XIMStatusNothing)
+                     printf("XIMStatusNothing | ");
+                  if (im_info->xim_styles->supported_styles[i] & XIMStatusNone)
+                     printf("XIMStatusNone | ");
+                  printf("\n");
+               }
+          }
+#endif
+        // "OverTheSpot" = XIMPreeditPosition | XIMStatusNothing
+        // "OffTheSpot" = XIMPreeditArea | XIMStatusArea
+        // "Root" = XIMPreeditNothing | XIMStatusNothing
+
+        if (imf_context_data->use_preedit == EINA_TRUE)
+          {
+             if (im_info->supports_cursor)
+               {
+                  // kinput2 DOES do this...             
+                  XFontSet fs;
+                  char **missing_charset_list;
+                  int missing_charset_count;
+                  char *def_string;
+                  
+                  im_style |= XIMPreeditPosition;
+                  im_style |= XIMStatusNothing;
+                  fs = XCreateFontSet(ecore_x_display_get(),
+                                      "fixed",
+                                      &missing_charset_list,
+                                      &missing_charset_count,
+                                      &def_string);
+                  preedit_attr = XVaCreateNestedList(0,
+                                                     XNSpotLocation, &spot,
+                                                     XNFontSet, fs,
+                                                     NULL);
+               }
+             else
+               {
+                  im_style |= XIMPreeditCallbacks;
+                  im_style |= XIMStatusNothing;
+                  preedit_attr = preedit_callback_set(ctx);
+               }
              name = XNPreeditAttributes;
           }
-        else {
+        else 
+          {
              im_style |= XIMPreeditNothing;
+             im_style |= XIMStatusNothing;
           }
-        im_style |= XIMStatusNothing;
 
         if (im_info->im)
           {
@@ -1133,22 +1226,26 @@ setup_im(XIM_Im_Info *info)
                 XNQueryICValuesList, &ic_values,
                 NULL);
 
-   if(ic_values)
+   if (ic_values)
      {
         int i;
 
-        for(i = 0; i < ic_values->count_values; i++)
-          if(strcmp (ic_values->supported_values[i],
-                     XNStringConversionCallback) == 0)
-            {
-               // info->supports_string_conversion = EINA_TRUE;
-                 break;
-            }
+        for (i = 0; i < ic_values->count_values; i++)
+          {
+             if (!strcmp(ic_values->supported_values[i],
+                         XNStringConversionCallback))
+                info->supports_string_conversion = EINA_TRUE;
+             if (!strcmp(ic_values->supported_values[i],
+                         XNCursor))
+                info->supports_cursor = EINA_TRUE;
+          }
 #if 0
-        for(i = 0; i < ic_values->count_values; i++)
-          printf("%s\n", ic_values->supported_values[i]);
-        for(i = 0; i < info->xim_styles->count_styles; i++)
-          printf("%lx\n", info->xim_styles->supported_styles[i]);
+        printf("values........\n");
+        for (i = 0; i < ic_values->count_values; i++)
+           printf("%s\n", ic_values->supported_values[i]);
+        printf("styles........\n");
+        for (i = 0; i < info->xim_styles->count_styles; i++)
+           printf("%lx\n", info->xim_styles->supported_styles[i]);
 #endif
         XFree(ic_values);
      }
