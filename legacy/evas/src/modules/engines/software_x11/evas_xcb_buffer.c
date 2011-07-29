@@ -234,7 +234,7 @@ evas_software_xcb_can_do_shm(xcb_connection_t *conn, xcb_screen_t *screen)
 
    xcbob = 
      evas_software_xcb_output_buffer_new(conn, visual, screen->root_depth,
-                                         1, 1, EINA_TRUE, NULL);
+                                         16, 16, 2, NULL); // 1, 1 EINA_TRUE
    if (!xcbob)
      cached_result = 0;
    else 
@@ -247,7 +247,7 @@ evas_software_xcb_can_do_shm(xcb_connection_t *conn, xcb_screen_t *screen)
 }
 
 Xcb_Output_Buffer *
-evas_software_xcb_output_buffer_new(xcb_connection_t *conn, xcb_visualtype_t *vis, int depth, int w, int h, Eina_Bool try_shm, unsigned char *data) 
+evas_software_xcb_output_buffer_new(xcb_connection_t *conn, xcb_visualtype_t *vis, int depth, int w, int h, int try_shm, unsigned char *data) 
 {
    Xcb_Output_Buffer *xcbob = NULL;
 
@@ -262,7 +262,7 @@ evas_software_xcb_output_buffer_new(xcb_connection_t *conn, xcb_visualtype_t *vi
    xcbob->h = h;
    xcbob->data = data;
 
-   if (try_shm) 
+   if (try_shm > 0) 
      {
         xcbob->shm_info = malloc(sizeof(xcb_shm_segment_info_t));
         if (xcbob->shm_info) 
@@ -273,8 +273,9 @@ evas_software_xcb_output_buffer_new(xcb_connection_t *conn, xcb_visualtype_t *vi
                                     depth, NULL, ~0, NULL);
              if (xcbob->xim) 
                {
+                  /* was 0666 */
                   xcbob->shm_info->shmid = 
-                    shmget(IPC_PRIVATE, xcbob->xim->size, (IPC_CREAT | 0666));
+                    shmget(IPC_PRIVATE, xcbob->xim->size, (IPC_CREAT | 0777));
                   if (xcbob->shm_info->shmid == (uint32_t)-1) 
                     {
                        xcb_image_destroy(xcbob->xim);
@@ -286,15 +287,29 @@ evas_software_xcb_output_buffer_new(xcb_connection_t *conn, xcb_visualtype_t *vi
                     shmat(xcbob->shm_info->shmid, 0, 0);
                   if (xcbob->shm_info->shmaddr != ((void *)-1))
                     {
+                       /* Sync only needed for testing */
+                       if (try_shm == 2) _xcbob_sync(conn);
+
                        xcbob->xim->data = xcbob->shm_info->shmaddr;
+#if defined(EVAS_FRAME_QUEING) && defined(LIBXEXT_VERSION_LOW)
+                       if (evas_common_frameq_enabled())
+                         xcb_grab_server(conn);
+#endif
                        xcb_shm_attach(conn, xcbob->shm_info->shmseg, 
                                       xcbob->shm_info->shmid, 0);
+#if defined(EVAS_FRAME_QUEING) && defined(LIBXEXT_VERSION_LOW)
+                       if (evas_common_frameq_enabled()) 
+                         xcb_ungrab_server(conn);
+#endif
+                       if (try_shm == 2) _xcbob_sync(conn);
+
                        xcbob->bpl = xcbob->xim->stride;
                        xcbob->psize = (xcbob->bpl * xcbob->h);
                        return xcbob;
                     }
                   else 
                     {
+                       shmdt(xcbob->shm_info->shmaddr);
                        shmctl(xcbob->shm_info->shmid, IPC_RMID, 0);
                        xcb_image_destroy(xcbob->xim);
                        free(xcbob->shm_info);
@@ -315,30 +330,31 @@ evas_software_xcb_output_buffer_new(xcb_connection_t *conn, xcb_visualtype_t *vi
              return NULL;
           }
      }
-   else 
+
+   if (try_shm > 1) return NULL;
+
+   /* no shm */
+   xcbob->xim = 
+     _xcbob_create_native(conn, w, h, XCB_IMAGE_FORMAT_Z_PIXMAP, 
+                          depth, NULL, ~0, NULL);
+   if (!xcbob->xim) 
      {
-        /* no shm */
-        xcbob->xim = 
-          _xcbob_create_native(conn, w, h, XCB_IMAGE_FORMAT_Z_PIXMAP, 
-                               depth, NULL, ~0, NULL);
-        if (!xcbob->xim) 
+        free(xcbob);
+        return NULL;
+     }
+
+   if (!xcbob->xim->data) 
+     {
+        xcbob->xim->data = malloc(xcbob->xim->size);
+        if (!xcbob->xim->data) 
           {
+             xcb_image_destroy(xcbob->xim);
              free(xcbob);
              return NULL;
           }
-        if (!xcbob->xim->data) 
-          {
-             xcbob->xim->data = malloc(xcbob->xim->size);
-             if (!xcbob->xim->data) 
-               {
-                  xcb_image_destroy(xcbob->xim);
-                  free(xcbob);
-                  return NULL;
-               }
-          }
-        xcbob->bpl = xcbob->xim->stride;
-        xcbob->psize = xcbob->xim->size;
      }
+   xcbob->bpl = xcbob->xim->stride;
+   xcbob->psize = xcbob->xim->size;
    return xcbob;
 }
 
