@@ -225,6 +225,12 @@ ecore_main_loop_thread_safe_call(Ecore_Cb callback, void *data)
 {
    Ecore_Safe_Call *order;
 
+   if (eina_main_loop_is())
+     {
+        callback(data);
+        return ;
+     }
+
    order = malloc(sizeof (Ecore_Safe_Call));
    if (!order) return ;
 
