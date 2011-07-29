@@ -594,7 +594,15 @@ ecore_evas_buffer_allocfunc_new(int w, int h, void *(*alloc_func) (void *data, i
         if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
           {
              ERR("evas_engine_info_set() for engine '%s' failed.", ee->driver);
+             ecore_evas_free(ee);
+             return NULL;
           }
+     }
+   else
+     {
+        ERR("evas_engine_info_set() init engine '%s' failed.", ee->driver);
+        ecore_evas_free(ee);
+        return NULL;
      }
    evas_key_modifier_add(ee->evas, "Shift");
    evas_key_modifier_add(ee->evas, "Control");
@@ -765,7 +773,15 @@ ecore_evas_object_image_new(Ecore_Evas *ee_target)
         if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
           {
              ERR("evas_engine_info_set() for engine '%s' failed.", ee->driver);
+             ecore_evas_free(ee);
+             return NULL;
           }
+     }
+   else
+     {
+        ERR("evas_engine_info_set() for engine '%s' failed.", ee->driver);
+        ecore_evas_free(ee);
+        return NULL;
      }
    evas_key_modifier_add(ee->evas, "Shift");
    evas_key_modifier_add(ee->evas, "Control");
