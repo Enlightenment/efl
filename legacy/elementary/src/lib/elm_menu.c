@@ -1108,7 +1108,7 @@ elm_menu_item_selected_get(const Elm_Menu_Item *item)
  *
  * @ingroup Menu
  */
-EAPI const Elm_Menu_Item *
+EAPI Elm_Menu_Item *
 elm_menu_item_prev_get(const Elm_Menu_Item *it)
 {
    ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(it, NULL);
@@ -1139,7 +1139,7 @@ elm_menu_item_prev_get(const Elm_Menu_Item *it)
  *
  * @ingroup Menu
  */
-EAPI const Elm_Menu_Item *
+EAPI Elm_Menu_Item *
 elm_menu_item_next_get(const Elm_Menu_Item *it)
 {
    ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(it, NULL);
@@ -1170,7 +1170,7 @@ elm_menu_item_next_get(const Elm_Menu_Item *it)
  *
  * @ingroup Menu
  */
-EAPI const Elm_Menu_Item *
+EAPI Elm_Menu_Item *
 elm_menu_first_item_get(const Evas_Object * obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
@@ -1188,7 +1188,7 @@ elm_menu_first_item_get(const Evas_Object * obj)
  *
  * @ingroup Menu
  */
-EAPI const Elm_Menu_Item *
+EAPI Elm_Menu_Item *
 elm_menu_last_item_get(const Evas_Object * obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
@@ -1207,7 +1207,7 @@ elm_menu_last_item_get(const Evas_Object * obj)
  *
  * @ingroup Menu
  */
-EAPI const Elm_Menu_Item *
+EAPI Elm_Menu_Item *
 elm_menu_selected_item_get(const Evas_Object * obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
