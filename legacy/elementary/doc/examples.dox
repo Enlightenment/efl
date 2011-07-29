@@ -69,6 +69,8 @@
  *
  * @ref genlist_example_02
  *
+ * @ref genlist_example_03
+ *
  * @ref genlist_example_04
  *
  * @ref genlist_example_05
@@ -4284,6 +4286,27 @@
  *
  * @image html screenshots/genlist_example_02.png
  * @image latex screenshots/genlistexample_02.eps width=\textwidth
+ */
+
+/**
+ * @page genlist_example_03 Genlist - different width options
+ *
+ * This example doesn't present any other feature that is not already present in
+ * the other examples, but visually shows the difference between using the
+ * default list options (first list of the example), setting the horizontal mode
+ * to #ELM_LIST_LIMIT (second list), enabling compress mode (third list) and
+ * using height_for_width option (fourth list).
+ *
+ * The full code for this example is listed below:
+ *
+ * @include genlist_example_03.c
+ *
+ * And the screenshot of the running example:
+ *
+ * @image html screenshots/genlist_example_03.png
+ * @image latex screenshots/genlistexample_03.eps width=\textwidth
+ *
+ * @example genlist_example_03.c
  */
 
 /**
