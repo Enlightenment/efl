@@ -821,6 +821,8 @@ preedit_draw_callback(XIC                           xic __UNUSED__,
           eina_ustrbuf_string_steal(preedit_bufs);
       imf_context_data->preedit_length =
           eina_unicode_strlen(imf_context_data->preedit_chars);
+
+      ecore_imf_context_preedit_changed_event_add(ctx);
    }
 
    free(new_text);
