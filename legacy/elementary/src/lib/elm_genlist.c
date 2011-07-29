@@ -3514,7 +3514,7 @@ elm_genlist_item_direct_sorted_insert(Evas_Object                  *obj,
         else
           rel = it->parent;
 
-        if (cmp_result > 0)
+        if (cmp_result >= 0)
           {
              it->parent->items = eina_list_prepend_relative_list(it->parent->items, it, l);
              wd->items = eina_inlist_prepend_relative(wd->items, EINA_INLIST_GET(it), EINA_INLIST_GET(rel));
