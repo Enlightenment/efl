@@ -467,6 +467,9 @@ typedef enum _Evas_Colorspace
 /**
  * How to pack items into cells in a table.
  * @ingroup Evas_Object_Table
+ *
+ * @see evas_object_table_homogeneous_set() for an explanation of the funcion of
+ * each one.
  */
 typedef enum _Evas_Object_Table_Homogeneous_Mode
 {
@@ -10060,28 +10063,31 @@ EAPI Eina_Bool                  evas_object_box_option_property_vget            
  * layout using children size hints to define their size and
  * alignment inside their cell space.
  *
+ * @ref tutorial_table shows how to use this Evas_Object.
+ *
  * @see @ref Evas_Object_Group_Size_Hints
  *
  * @ingroup Evas_Smart_Object_Group
+ *
+ * @{
  */
 
 /**
- * Create a new table.
+ * @brief Create a new table.
  *
- * It's set to non-homogeneous by default, add children with
- * evas_object_table_pack().
+ * @param evas Canvas in which table will be added.
  */
 EAPI Evas_Object                        *evas_object_table_add             (Evas *evas) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_MALLOC;
 
 /**
- * Create a table that is child of a given element @a parent.
+ * @brief Create a table that is child of a given element @a parent.
  *
  * @see evas_object_table_add()
  */
 EAPI Evas_Object                        *evas_object_table_add_to          (Evas_Object *parent) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_MALLOC;
 
 /**
- * Set how this table should layout children.
+ * @brief Set how this table should layout children.
  *
  * @todo consider aspect hint and respect it.
  *
@@ -10089,8 +10095,8 @@ EAPI Evas_Object                        *evas_object_table_add_to          (Evas
  * If table does not use homogeneous mode then columns and rows will
  * be calculated based on hints of individual cells. This operation
  * mode is more flexible, but more complex and heavy to calculate as
- * well. @b Weight properties are handled as a boolean
- * expand. Negative alignment will be considered as 0.5.
+ * well. @b Weight properties are handled as a boolean expand. Negative
+ * alignment will be considered as 0.5. This is the default.
  *
  * @todo @c EVAS_OBJECT_TABLE_HOMOGENEOUS_NONE should balance weight.
  *
@@ -10154,7 +10160,7 @@ EAPI void                                evas_object_table_align_get       (cons
 /**
  * Sets the mirrored mode of the table. In mirrored mode the table items go
  * from right to left instead of left to right. That is, 1,1 is top right, not
- * to left.
+ * top left.
  *
  * @param obj The table object.
  * @param mirrored the mirrored mode to set
@@ -10163,22 +10169,14 @@ EAPI void                                evas_object_table_align_get       (cons
 EAPI void                                evas_object_table_mirrored_set    (Evas_Object *o, Eina_Bool mirrored) EINA_ARG_NONNULL(1);
 
 /**
- * Gets the mirrored mode of the table. In mirrored mode the table items go
- * from right to left instead of left to right. That is, 1,1 is top right, not
- * to left.
+ * Gets the mirrored mode of the table.
  *
  * @param obj The table object.
  * @return EINA_TRUE if it's a mirrored table, EINA_FALSE otherwise.
  * @since 1.1.0
- */
-
-/**
- * Get a child from the table using its coordinates
- *
- * @note This does not take into account col/row spanning
+ * @see evas_object_table_mirrored_set()
  */
 EAPI Eina_Bool                           evas_object_table_mirrored_get    (const Evas_Object *o) EINA_ARG_NONNULL(1);
-
 
 /**
  * Get packing location of a child of table
@@ -10228,7 +10226,6 @@ EAPI Eina_Bool                           evas_object_table_unpack          (Evas
  */
 EAPI void                                evas_object_table_clear           (Evas_Object *o, Eina_Bool clear) EINA_ARG_NONNULL(1);
 
-
 /**
  * Get the number of columns and rows this table takes.
  *
@@ -10262,7 +10259,16 @@ EAPI Eina_Accessor                      *evas_object_table_accessor_new    (cons
  *       list, but these removals won't be reflected on it.
  */
 EAPI Eina_List                          *evas_object_table_children_get    (const Evas_Object *o) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_MALLOC;
-   EAPI Evas_Object                        *evas_object_table_child_get       (const Evas_Object *o, unsigned short col, unsigned short row) EINA_ARG_NONNULL(1);
+
+/**
+ * Get the child of the table at the given coordinates
+ *
+ * @note This does not take into account col/row spanning
+ */
+EAPI Evas_Object                        *evas_object_table_child_get       (const Evas_Object *o, unsigned short col, unsigned short row) EINA_ARG_NONNULL(1);
+/**
+ * @}
+ */
 
 /**
  * @defgroup Evas_Object_Grid Grid Smart Object.

@@ -823,3 +823,32 @@
  * @include evas-text.c
  * @example evas-text.c
  */
+
+/**
+ * @page tutorial_table Table Smart Object example
+ *
+ * This example will arrange  rectangles of different sizes(and colors) in a
+ * table. While it's possible to create the same layout we are doing here by
+ * positioning each rectangle independently, using a table makes it a lot
+ * easier, since the table will control layout of all the objects, allowing you
+ * to move, resize or hide the entire table.
+ *
+ * We'll start with creating the table, setting it to
+ * EVAS_OBJECT_TABLE_HOMOGENEOUS_NONE to have maximum flexibility and setting
+ * its padding to 0:
+ * @dontinclude evas-table.c
+ * @skip object_table
+ * @until show
+ *
+ * We then create each rectangle and add it to the table:
+ * @until table_pack
+ * @until table_pack
+ * @until table_pack
+ * @until table_pack
+ * @note Each rectangle has a different minimum size based on how many rows and
+ * columns it will occupy.
+ *
+ * The full source for this example follow:
+ * @include evas-table.c
+ * @example evas-table.c
+ */
