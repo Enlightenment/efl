@@ -2470,8 +2470,8 @@ extern "C" {
    /**
     * @defgroup Bg Bg
     *
-    * @image html img/icon/bg/preview-00.png
-    * @image latex img/icon/bg/preview-00.png
+    * @image html img/widget/bg/preview-00.png
+    * @image latex img/widget/bg/preview-00.eps
     *
     * @brief Background object, used for setting a solid color, image or Edje
     * group as background to a window or any container object.
@@ -2649,8 +2649,8 @@ extern "C" {
    /**
     * @defgroup Icon Icon
     *
-    * @image html img/icon/button/preview-00.png
-    * @image latex img/icon/button/preview-00.png
+    * @image html img/widget/icon/preview-00.png
+    * @image latex img/widget/icon/preview-00.eps
     *
     * An object that provides standard icon images (delete, edit, arrows, etc.)
     * or a custom file (PNG, JPG, EDJE, etc.) used for an icon.
@@ -3046,8 +3046,8 @@ extern "C" {
    /**
     * @defgroup Image Image
     *
-    * @image html img/image/button/preview-00.png
-    * @image latex img/image/button/preview-00.png
+    * @image html img/widget/image/preview-00.png
+    * @image latex img/widget/image/preview-00.eps
     *
     * An object that allows one to load an image file to it. It can be used
     * anywhere like any other elementary widget.
@@ -7176,7 +7176,7 @@ extern "C" {
     * added to its @c SWALLOW:
     *
     * @image html layout_swallow.png
-    * @image latex layout_swallow.png width=\textwidth
+    * @image latex layout_swallow.eps width=\textwidth
     *
     * @section secBox Box (BOX part)
     *
@@ -7205,7 +7205,7 @@ extern "C" {
     * added to its @c BOX part:
     *
     * @image html layout_box.png
-    * @image latex layout_box.png width=\textwidth
+    * @image latex layout_box.eps width=\textwidth
     *
     * @section secTable Table (TABLE part)
     *
@@ -7226,7 +7226,7 @@ extern "C" {
     * added to its @c TABLE part:
     *
     * @image html layout_table.png
-    * @image latex layout_table.png width=\textwidth
+    * @image latex layout_table.eps width=\textwidth
     *
     * @section secPredef Predefined Layouts
     *
@@ -12197,8 +12197,8 @@ extern "C" {
    /**
     * @addtogroup Actionslider Actionslider
     *
-    * @image html img/icon/actionslider/preview-00.png
-    * @image latex img/icon/actionslider/preview-00.png
+    * @image html img/widget/actionslider/preview-00.png
+    * @image latex img/widget/actionslider/preview-00.eps
     *
     * A actionslider is a switcher for 2 or 3 labels with customizable magnet
     * properties. The indicator is the element the user drags to choose a label.
@@ -14882,8 +14882,8 @@ extern "C" {
    /**
     * @defgroup Fileselector File Selector
     *
-    * @image html img/icon/fileselector/preview-00.png
-    * @image latex img/icon/fileselector/preview-00.png
+    * @image html img/widget/fileselector/preview-00.png
+    * @image latex img/widget/fileselector/preview-00.eps
     *
     * A file selector is a widget that allows a user to navigate
     * through a file system, reporting file selections back via its

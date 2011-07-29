@@ -3589,7 +3589,7 @@
  * The example will look like this:
  *
  * @image html screenshots/radio_example_01.png
- * @image latex screenshots/radio_example_01.epx width=\textwidth
+ * @image latex screenshots/radio_example_01.eps width=\textwidth
  *
  * @example radio_example_01.c
  */
@@ -3685,7 +3685,7 @@
  * This example will look like this;
  *
  * @image html screenshots/panel_example_01.png
- * @image latex screenshots/panel_example_01.epx width=\textwidth
+ * @image latex screenshots/panel_example_01.eps width=\textwidth
  * @note The buttons with arrow allow the user to hide/show the panels.
  *
  * @example panel_example_01.c
@@ -4173,7 +4173,7 @@
  * The current example will look like this when running:
  *
  * @image html screenshots/genlist_example_01.png
- * @image latex screenshots/genlistexample_01.eps width=\textwidth
+ * @image latex screenshots/genlist_example_01.eps width=\textwidth
  */
 
 /**
@@ -4285,7 +4285,7 @@
  * The current example will look like this when running:
  *
  * @image html screenshots/genlist_example_02.png
- * @image latex screenshots/genlistexample_02.eps width=\textwidth
+ * @image latex screenshots/genlist_example_02.eps width=\textwidth
  */
 
 /**
@@ -4304,7 +4304,7 @@
  * And the screenshot of the running example:
  *
  * @image html screenshots/genlist_example_03.png
- * @image latex screenshots/genlistexample_03.eps width=\textwidth
+ * @image latex screenshots/genlist_example_03.eps width=\textwidth
  *
  * @example genlist_example_03.c
  */
@@ -4390,7 +4390,7 @@
  * The example will look like this when running:
  *
  * @image html screenshots/genlist_example_04.png
- * @image latex screenshots/genlistexample_04.eps width=\textwidth
+ * @image latex screenshots/genlist_example_04.eps width=\textwidth
  */
 
 /**
@@ -4553,7 +4553,7 @@
  * The example will look like this when running:
  *
  * @image html screenshots/genlist_example_05.png
- * @image latex screenshots/genlistexample_05.eps width=\textwidth
+ * @image latex screenshots/genlist_example_05.eps width=\textwidth
  */
 
 /**
