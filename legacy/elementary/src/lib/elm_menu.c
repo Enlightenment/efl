@@ -24,6 +24,7 @@ struct _Elm_Menu_Item
    const char *icon_str;
    const char *label;
    Evas_Smart_Cb func;
+   unsigned int idx;
 
    struct {
       Evas_Object *hv, *bx, *location;
@@ -689,11 +690,13 @@ elm_menu_item_add(Evas_Object *obj, Elm_Menu_Item *parent, const char *icon, con
         if (!parent->submenu.bx) _item_submenu_obj_create(parent);
         elm_box_pack_end(parent->submenu.bx, subitem->base.view);
         parent->submenu.items = eina_list_append(parent->submenu.items, subitem);
+        subitem->idx = eina_list_count(parent->submenu.items) - 1;
      }
    else
      {
         elm_box_pack_end(wd->bx, subitem->base.view);
         wd->items = eina_list_append(wd->items, subitem);
+        subitem->idx = eina_list_count(wd->items) - 1;
      }
 
    _sizing_eval(obj);
@@ -740,15 +743,34 @@ elm_menu_item_add_object(Evas_Object *obj, Elm_Menu_Item *parent, Evas_Object *s
         if (!parent->submenu.bx) _item_submenu_obj_create(parent);
         elm_box_pack_end(parent->submenu.bx, subitem->base.view);
         parent->submenu.items = eina_list_append(parent->submenu.items, subitem);
+        subitem->idx = eina_list_count(parent->submenu.items) - 1;
      }
    else
      {
         elm_box_pack_end(wd->bx, subitem->base.view);
         wd->items = eina_list_append(wd->items, subitem);
+        subitem->idx = eina_list_count(wd->items) - 1;
      }
 
    _sizing_eval(obj);
    return subitem;
+}
+
+/**
+ * Get the position of a menu item
+ *
+ * This function returns the index position of a menu item in a menu.
+ * For a sub-menu, this number is relative to the first item in the sub-menu.
+ * @param item The menu item
+ * @return The item's index
+ * @note Index values begin with 0
+ * @ingroup Menu
+ */
+EAPI unsigned int
+elm_menu_item_index_get(const Elm_Menu_Item *item)
+{
+   ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(item, 0);
+   return item->idx;
 }
 
 /**

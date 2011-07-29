@@ -9823,6 +9823,7 @@ extern "C" {
    EAPI void              *elm_menu_item_data_get(const Elm_Menu_Item *it) EINA_ARG_NONNULL(1);
    EAPI void               elm_menu_item_data_set(Elm_Menu_Item *item, const void *data) EINA_ARG_NONNULL(1);
    EAPI const Eina_List   *elm_menu_item_subitems_get(const Elm_Menu_Item *item) EINA_ARG_NONNULL(1);
+   EAPI unsigned int       elm_menu_item_index_get(const Elm_Menu_Item *item) EINA_ARG_NONNULL(1) EINA_PURE;
    EAPI Elm_Menu_Item *elm_menu_selected_item_get(const Evas_Object * obj) EINA_ARG_NONNULL(1);
    EAPI Elm_Menu_Item *elm_menu_last_item_get(const Evas_Object * obj) EINA_ARG_NONNULL(1);
    EAPI Elm_Menu_Item *elm_menu_first_item_get(const Evas_Object * obj) EINA_ARG_NONNULL(1);
