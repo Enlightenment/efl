@@ -9809,9 +9809,13 @@ extern "C" {
    EAPI Elm_Menu_Item     *elm_menu_item_add_object(Evas_Object *obj, Elm_Menu_Item *parent, Evas_Object *subobj, Evas_Smart_Cb func, const void *data) EINA_ARG_NONNULL(1);
    EAPI void               elm_menu_item_label_set(Elm_Menu_Item *item, const char *label) EINA_ARG_NONNULL(1);
    EAPI const char        *elm_menu_item_label_get(const Elm_Menu_Item *item) EINA_ARG_NONNULL(1);
-   EAPI void               elm_menu_item_icon_set(Elm_Menu_Item *item, const char *icon) EINA_ARG_NONNULL(1, 2);
-   EAPI const char        *elm_menu_item_icon_get(const Elm_Menu_Item *item) EINA_ARG_NONNULL(1);
-   EAPI const Evas_Object *elm_menu_item_object_icon_get(const Elm_Menu_Item *item) EINA_ARG_NONNULL(1);
+   EAPI void               elm_menu_item_object_icon_name_set(Elm_Menu_Item *item, const char *icon) EINA_ARG_NONNULL(1, 2);
+   EAPI const char        *elm_menu_item_object_icon_name_get(const Elm_Menu_Item *item) EINA_ARG_NONNULL(1);
+   EAPI void               elm_menu_item_icon_set(Elm_Menu_Item *item, const char *icon) EINA_ARG_NONNULL(1, 2) EINA_DEPRECATED;
+   EAPI const char        *elm_menu_item_icon_get(const Elm_Menu_Item *item) EINA_ARG_NONNULL(1) EINA_DEPRECATED;
+   EAPI Eina_Bool          elm_menu_item_object_content_set(Elm_Menu_Item *item, Evas_Object *obj) EINA_ARG_NONNULL(1);
+   EAPI Evas_Object *elm_menu_item_object_content_get(const Elm_Menu_Item *item) EINA_ARG_NONNULL(1);
+   EAPI Evas_Object *elm_menu_item_object_icon_get(const Elm_Menu_Item *item) EINA_ARG_NONNULL(1) EINA_DEPRECATED;
    EAPI void               elm_menu_item_selected_set(Elm_Menu_Item *item, Eina_Bool selected) EINA_ARG_NONNULL(1);
    EAPI Eina_Bool          elm_menu_item_selected_get(const Elm_Menu_Item *item) EINA_ARG_NONNULL(1);
    EAPI void               elm_menu_item_disabled_set(Elm_Menu_Item *item, Eina_Bool disabled) EINA_ARG_NONNULL(1);
@@ -9824,6 +9828,7 @@ extern "C" {
    EAPI void               elm_menu_item_data_set(Elm_Menu_Item *item, const void *data) EINA_ARG_NONNULL(1);
    EAPI const Eina_List   *elm_menu_item_subitems_get(const Elm_Menu_Item *item) EINA_ARG_NONNULL(1);
    EAPI unsigned int       elm_menu_item_index_get(const Elm_Menu_Item *item) EINA_ARG_NONNULL(1) EINA_PURE;
+   EAPI Evas_Object       *elm_menu_item_menu_get(const Elm_Menu_Item *item) EINA_ARG_NONNULL(1) EINA_PURE;
    EAPI Elm_Menu_Item *elm_menu_selected_item_get(const Evas_Object * obj) EINA_ARG_NONNULL(1);
    EAPI Elm_Menu_Item *elm_menu_last_item_get(const Evas_Object * obj) EINA_ARG_NONNULL(1);
    EAPI Elm_Menu_Item *elm_menu_first_item_get(const Evas_Object * obj) EINA_ARG_NONNULL(1);
