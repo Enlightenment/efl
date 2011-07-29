@@ -626,7 +626,7 @@ eet_dictionary_get(Eet_File *ef);
  *
  * This checks the given dictionary to see if the given string is actually
  * inside that dictionary (i.e. comes from it) and returns 1 if it does.
- * If the dictionary handle is invlide, the string is NULL or the string is
+ * If the dictionary handle is invalid, the string is NULL or the string is
  * not in the dictionary, 0 is returned.
  *
  * @since 1.0.0
