@@ -789,17 +789,17 @@ typedef enum _Edje_Drag_Dir
 
 typedef enum _Edje_Load_Error
 {
-   EDJE_LOAD_ERROR_NONE = 0,
-   EDJE_LOAD_ERROR_GENERIC = 1,
-   EDJE_LOAD_ERROR_DOES_NOT_EXIST = 2,
-   EDJE_LOAD_ERROR_PERMISSION_DENIED = 3,
-   EDJE_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED = 4,
-   EDJE_LOAD_ERROR_CORRUPT_FILE = 5,
-   EDJE_LOAD_ERROR_UNKNOWN_FORMAT = 6,
-   EDJE_LOAD_ERROR_INCOMPATIBLE_FILE = 7,
-   EDJE_LOAD_ERROR_UNKNOWN_COLLECTION = 8,
-   EDJE_LOAD_ERROR_RECURSIVE_REFERENCE = 9
-} Edje_Load_Error;
+   EDJE_LOAD_ERROR_NONE = 0, /**< No error happened, the loading was successful */
+   EDJE_LOAD_ERROR_GENERIC = 1, /**< A generic error happened during the loading */
+   EDJE_LOAD_ERROR_DOES_NOT_EXIST = 2, /**< The file pointed to did not exist */
+   EDJE_LOAD_ERROR_PERMISSION_DENIED = 3, /**< Permission to read the given file was denied */
+   EDJE_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED = 4, /**< Resource allocation failed during the loading */
+   EDJE_LOAD_ERROR_CORRUPT_FILE = 5, /**< The file pointed to was corrupt */
+   EDJE_LOAD_ERROR_UNKNOWN_FORMAT = 6, /**< The file pointed to had an unknown format */
+   EDJE_LOAD_ERROR_INCOMPATIBLE_FILE = 7, /**< The file pointed to is incompatible, i.e., it doesn't match the library's current version's format */
+   EDJE_LOAD_ERROR_UNKNOWN_COLLECTION = 8, /**< The group/collection set to load from was @b not found in the file */
+   EDJE_LOAD_ERROR_RECURSIVE_REFERENCE = 9 /**< The group/collection set to load from had <b>recursive references</b> on its components */
+} Edje_Load_Error; /**< Edje file loading error codes one can get - see edje_load_error_str() too. */
 
 typedef enum _Edje_Text_Filter_Type
 {
@@ -1035,15 +1035,16 @@ typedef void         (*Edje_Text_Filter_Cb)     (void *data, Evas_Object *obj, c
 typedef Evas_Object *(*Edje_Item_Provider_Cb)   (void *data, Evas_Object *obj, const char *part, const char *item);
 
 /**
- * @brief Initialize the edje library.
+ * @brief Initialize the Edje library.
  *
  * @return The new init count. The initial value is zero.
  *
- * This function initializes the ejde library, making the propers
- * calls to initialization functions. It makes calls to functions
- * eina_init(), ecore_init(), embryo_init() and eet_init() so
- * there is no need to call those functions again in your code. To
- * shutdown edje there is a function edje_shutdown().
+ * This function initializes the Ejde library, making the proper calls
+ * to internal initialization functions. It will also initialize its
+ * @b dependencies, making calls to @c eina_init(), @c ecore_init(),
+ * @c embryo_init() and @c eet_init(). So, there is no need to call
+ * those functions again, in your code. To shutdown Edje there is the
+ * function edje_shutdown().
  *
  * @see edje_shutdown()
  * @see eina_init()
@@ -1055,14 +1056,15 @@ typedef Evas_Object *(*Edje_Item_Provider_Cb)   (void *data, Evas_Object *obj, c
 EAPI int          edje_init                       (void);
 
 /**
- * @brief Shutdown the edje library.
+ * @brief Shutdown the Edje library.
  *
- * @return The number of times the library has been initialised without being
- *         shutdown.
+ * @return The number of times the library has been initialised
+ *         without being shutdown.
  *
- * This function shuts down the edje library. It calls the functions
- * eina_shutdown(), ecore_shutdown(), embryo_shutdown() and
- * eet_shutdown(), so there is no need to call these functions again
+ * This function shuts down the Edje library. It will also call the
+ * shutdown functions of its @b dependencies, which are @c
+ * eina_shutdown(), @c ecore_shutdown(), @c embryo_shutdown() and @c
+ * eet_shutdown(), so there is no need to call these functions again,
  * in your code.
  *
  * @see edje_init()
@@ -1146,36 +1148,34 @@ EAPI void         edje_fontset_append_set         (const char *fonts);
 EAPI const char  *edje_fontset_append_get         (void);
 
 /**
- * @brief Set edje's global scaling factor.
+ * @brief Set Edje's global scaling factor.
  *
- * @param scale The edje (global) scale factor. The defaul is 1.0.
+ * @param scale The global scaling factor (the default value is @c 1.0)
  *
- * Edje allows one to build scalable interfaces. Scale factors, which
- * are set to neutral values by default (no scaling, actual sizes),
- * are of two types: global and individual. Edje's global scaling
- * factor will affect all its objects which hadn't their individual
- * scaling factors altered from the default value. If they had it set
- * differently, that factor will override the global one.
+ * Edje allows one to build scalable interfaces. Scaling factors,
+ * which are set to neutral (@c 1.0) values by default (no scaling,
+ * actual sizes), are of two types: @b global and @b
+ * individual. Edje's global scaling factor will affect all its
+ * objects which hadn't their individual scaling factors altered from
+ * the default value. If they had it set differently, by
+ * edje_object_scale_set(), that factor will @b override the global
+ * one.
  *
- * Scaling affects the values of min/max object sizes, which are
- * multiplied by it. Font sizes are scaled, too.
- *
- * This property can be retrieved with edje_scale_get().
+ * Scaling affects the values of mininum/maximum object sizes, which
+ * are @b multiplied by it. Font sizes are scaled, too.
  *
  * @see edje_scale_get().
- *
  */
 EAPI void         edje_scale_set                  (double scale);
 
 /**
- * @brief Get edje's global scaling factor.
+ * @brief Retrieve Edje's global scaling factor.
  *
- * @return The edje (global) scale factor. The defaul is 1.0.
+ * @return The global scaling factor
  *
- * This function returns edje's global scale factor, which can be set
- * by edje_scale_set().
+ * This function returns Edje's global scaling factor.
  *
- * @see edje_scale_set().
+ * @see edje_scale_set() for more details
  *
  */
 EAPI double       edje_scale_get                  (void);
@@ -1210,32 +1210,34 @@ EAPI void edje_password_show_last_set(Eina_Bool password_show_last);
 EAPI void edje_password_show_last_timeout_set(double password_show_last_timeout);
 
 /**
- * @brief Set the edje object's scaling factor.
+ * @brief Set the scaling factor for a given Edje object.
  *
- * @param obj The edje object's reference.
- * @param scale The edje object scale factor. The defaul is 1.0.
+ * @param obj A handle to an Edje object
+ * @param scale The scaling factor (the defaul value is @c 1.0)
  *
- * This function sets the individual scale factor of the @a obj edje
- * object. This property (or edje's global scale factor, when
+ * This function sets an @b individual scaling factor on the @a obj
+ * Edje object. This property (or Edje's global scaling factor, when
  * applicable), will affect this object's parts. However, only parts
- * which, at the EDC language level, were declared which the "scale"
- * attribute set to 1 (default is zero) will be affected.
+ * which, at the EDC language level, were declared which the
+ * @c "scale" attribute set to @c 1 (default value being @c 0) will be
+ * affected. That EDC attribute means that the given part is subject
+ * to scaling. Check the complete @ref edcref "syntax reference" for
+ * EDC files.
  *
- * This scale factor can be retrieved with edje_object_scale_get().
- * @see edje_object_scale_get().
- *
+ * @see edje_object_scale_get()
+ * @see edje_scale_get() for more details
  */
 EAPI Eina_Bool    edje_object_scale_set           (Evas_Object *obj, double scale);
 
 /**
- * @brief Get the edje object's scaling factor.
+ * @brief Get a given Edje object's scaling factor.
  *
- * @param obj The edje object's reference.
+ * @param obj A handle to an Edje object
  *
- * This function returns the individual scale factor of the @a obj
- * edje object, which can be set by edje_object_scale_set().
+ * This function returns the @c individual scaling factor set on the
+ * @a obj Edje object.
  *
- * @see edje_object_scale_set().
+ * @see edje_object_scale_set() for more details
  *
  */
 EAPI double       edje_object_scale_get           (const Evas_Object *obj);
@@ -1578,25 +1580,57 @@ EAPI void         edje_extern_object_aspect_set   (Evas_Object *obj, Edje_Aspect
 EAPI void         edje_box_layout_register        (const char *name, Evas_Object_Box_Layout func, void *(*layout_data_get)(void *), void (*layout_data_free)(void *), void (*free_data)(void *), void *data);
 
 /**
- * @brief Constructs the Edje object
- * @param evas A valid Evas handle
- * @return The Evas_Object pointer.
+ * @brief Instantiate a new Edje object
  *
- * Creates the Edje smart object, returning the Evas_Object handle.
+ * @param evas A valid Evas handle, the canvas to place the new object
+ * in
+ * @return A handle to the new object created or @c NULL, on errors.
+ *
+ * This function creates a new Edje smart object, returning its @c
+ * Evas_Object handle. An Edje object is useless without a (source)
+ * file set to it, so you'd most probably call edje_object_file_set()
+ * afterwards, like in:
+ * @code
+ * Evas_Object *edje;
+ *
+ * edje = edje_object_add(canvas);
+ * if (!edje)
+ *   {
+ *      fprintf(stderr, "could not create edje object!\n");
+ *      return NULL;
+ *   }
+ *
+ * if (!edje_object_file_set(edje, "theme.edj", "group_name"))
+ *   {
+ *      int err = edje_object_load_error_get(edje);
+ *      const char *errmsg = edje_load_error_str(err);
+ *      fprintf(stderr, "could not load 'group_name' from theme.edj: %s",
+ *      	errmsg);
+ *
+ *      evas_object_del(edje);
+ *      return NULL;
+ *   }
+ *
+ * @endcode
+ *
+ * @note before creating the first Edje object in your code, remember
+ * to initialize the library, with edje_init(), or unexpected behavior
+ * might occur.
  */
 EAPI Evas_Object *edje_object_add                 (Evas *evas);
 
 /**
- * @brief Get Edje object data.
+ * @brief Retrive an <b>EDC data field's value</b> from a given Edje
+ * object's group.
  *
- * @param obj A valid Evas_Object handle
- * @param key The data key
- * @return The data string
+ * @param obj A handle to an Edje object
+ * @param key The data field's key string
+ * @return The data's value string
  *
- * This function fetches data specified at the object level.
+ * This function fetches an EDC data field's value, which is declared
+ * on the objects building EDC file, <b>under its group</b>.
  *
- * In EDC this comes from a data block within the group block that @a
- * obj was loaded from. E.g.
+ * Data fields in EDC files are @c "data" blocks, like the following:
  *
  * @code
  * collections {
@@ -1609,59 +1643,115 @@ EAPI Evas_Object *edje_object_add                 (Evas *evas);
  *   }
  * }
  * @endcode
+ *
+ * EDC data fields always hold @b strings as values, hence the return
+ * type of this function. Check the complete @ref edcref "syntax reference"
+ * for EDC files.
+ *
+ * @warning Do not confuse this call with edje_file_data_get(), which
+ * queries for a @b global EDC data field on an EDC declaration file.
+ *
+ * @see edje_object_file_set()
  */
 EAPI const char  *edje_object_data_get            (const Evas_Object *obj, const char *key);
 
 /**
- * @brief Sets the EET file and group to load @a obj from
- * @param obj A valid Evas_Object handle
- * @param file The path to the EET file
- * @param group The group name in the Edje
- * @return 0 on Error\n
- * 1 on Success and sets EDJE_LOAD_ERROR_NONE
+ * @brief Sets the @b EDJ file (and group within it) to load an Edje
+ * object's contents from
  *
- * Edje uses EET files, conventionally ending in .edj, to store object
- * descriptions. A single file contains multiple named groups. This function
- * specifies the file and group name to load @a obj from.
+ * @param obj A handle to an Edje object
+ * @param file The path to the EDJ file to load @p from
+ * @param group The name of the group, in @p file, which implements an
+ * Edje object
+ * @return @c EINA_TRUE, on success or @c EINA_FALSE, on errors (check
+ * edje_object_load_error_get() after this call to get errors causes)
+ *
+ * Edje expects EDJ files, which are theming objects' descriptions and
+ * resources packed together in an EET file, to read Edje object
+ * definitions from. They usually are created with the @c .edj
+ * extension. EDJ files, in turn, are assembled from @b textual object
+ * description files, where one describes Edje objects declaratively
+ * -- the EDC files (see @ref edcref "the syntax" for those files).
+ *
+ * Those description files were designed so that many Edje object
+ * definitions -- also called @b groups (or collections) -- could be
+ * packed together <b>in the same EDJ file</b>, so that a whole
+ * application's theme could be packed in one file only. This is the
+ * reason for the @p group argument.
+ *
+ * Use this function after you instantiate a new Edje object, so that
+ * you can "give him life", telling where to get its contents from.
+ *
+ * @see edje_object_add()
+ * @see edje_object_file_get()
  */
 EAPI Eina_Bool        edje_object_file_set        (Evas_Object *obj, const char *file, const char *group);
 
 /**
- * @brief Get the file and group name that @a obj was loaded from
- * @param obj A valid Evas_Object handle
- * @param file A pointer to store a pointer to the filename in
- * @param group A pointer to store a pointer to the group name in
+ * @brief Get the file and group name that a given Edje object is bound to
  *
- * This gets the EET file location and group for the given Evas_Object.
- * If @a obj is either not an edje file, or has not had its file/group set
- * using edje_object_file_set(), then both @a file and @a group will be set
- * to NULL.
+ * @param obj A handle to an Edje object
+ * @param file A pointer to a variable whero to store the <b>file's
+ * path</b>
+ * @param group A pointer to a variable where to store the <b>group
+ * name</b> in
  *
- * It is valid to pass in NULL for either @a file or @a group if you are not
- * interested in one of the values.
+ * This gets the EDJ file's path, with the respective group set for
+ * the given Edje object. If @a obj is either not an Edje file, or has
+ * not had its file/group set previously, by edje_object_file_set(),
+ * then both @p file and @p group will be set to @c NULL, indicating
+ * an error.
+ *
+ * @see edje_object_file_set()
+ *
+ * @note Use @c NULL pointers on the file/group components you're not
+ * interested in: they'll be ignored by the function.
  */
 EAPI void             edje_object_file_get        (const Evas_Object *obj, const char **file, const char **group);
 
 /**
- * @brief Gets the Edje load error
- * @param obj A valid Evas_Object handle
+ * @brief Gets the (last) file loading error for a given Edje object
  *
- * @return The Edje load error:\n
- * EDJE_LOAD_ERROR_NONE: No Error\n
- * EDJE_LOAD_ERROR_GENERIC: Generic Error\n
- * EDJE_LOAD_ERROR_DOES_NOT_EXIST: Does not Exist\n
- * EDJE_LOAD_ERROR_PERMISSION_DENIED: Permission Denied\n
- * EDJE_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED: Resource Allocation Failed\n
- * EDJE_LOAD_ERROR_CORRUPT_FILE: Corrupt File\n
- * EDJE_LOAD_ERROR_UNKNOWN_FORMAT: Unknown Format\n
- * EDJE_LOAD_ERROR_INCOMPATIBLE_FILE: Incompatible File\n
- * EDJE_LOAD_ERROR_UNKNOWN_COLLECTION: Unknown Collection\n
- * EDJE_LOAD_ERROR_RECURSIVE_REFERENCE: Recursive Reference\n
+ * @param obj A handlet to an Edje object
+ *
+ * @return The Edje loading error, one of:
+ * - #EDJE_LOAD_ERROR_NONE
+ * - #EDJE_LOAD_ERROR_GENERIC
+ * - #EDJE_LOAD_ERROR_DOES_NOT_EXIST
+ * - #EDJE_LOAD_ERROR_PERMISSION_DENIED
+ * - #EDJE_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED
+ * - #EDJE_LOAD_ERROR_CORRUPT_FILE
+ * - #EDJE_LOAD_ERROR_UNKNOWN_FORMAT
+ * - #EDJE_LOAD_ERROR_INCOMPATIBLE_FILE
+ * - #EDJE_LOAD_ERROR_UNKNOWN_COLLECTION
+ * - #EDJE_LOAD_ERROR_RECURSIVE_REFERENCE
+ *
+ * This function is meant to be used after an Edje EDJ <b>file
+ * loading</b>, what takes place with the edje_object_file_set()
+ * function. If that function does not return @c EINA_TRUE, one should
+ * check for the reason of failure with this one.
+ *
+ * @see edje_load_error_str()
  */
 EAPI Edje_Load_Error  edje_object_load_error_get  (const Evas_Object *obj);
 
-   EAPI const char      *edje_load_error_str         (Edje_Load_Error error);
-   EAPI Eina_Bool        edje_object_preload         (Evas_Object *obj, Eina_Bool cancel);
+/**
+ * Converts the given Edje file load error code into a string
+ * describing it in English.
+ *
+ * @param error the error code, a value in ::Edje_Load_Error.
+ * @return Always returns a valid string. If the given @p error is not
+ *         supported, <code>"Unknown error"</code> is returned.
+ *
+ * edje_object_file_set() is a function which sets an error value,
+ * afterwards, which can be fetched with
+ * edje_object_load_error_get(). The function in question is meant
+ * to be used in conjunction with the latter, for pretty-printing any
+ * possible error cause.
+ */
+EAPI const char      *edje_load_error_str         (Edje_Load_Error error);
+
+EAPI Eina_Bool        edje_object_preload         (Evas_Object *obj, Eina_Bool cancel);
 
 /**
  * @brief Add a callback for a signal emitted by @a obj.
@@ -1977,26 +2067,77 @@ EAPI Eina_Bool    edje_object_color_class_get         (const Evas_Object *o, con
 EAPI Eina_Bool    edje_object_text_class_set          (Evas_Object *obj, const char *text_class, const char *font, Evas_Font_Size size);
 
 /**
- * @brief Get the minimum size for an object.
+ * @brief Get the minimum size specified -- as an EDC property -- for a
+ * given Edje object
  *
- * @param obj A valid Evas_Object handle
- * @param minw Minimum width pointer
- * @param minh Minimum height pointer
+ * @param obj A handle to an Edje object
+ * @param minw Pointer to a variable where to store the minimum width
+ * @param minh Pointer to a variable where to store the minimum height
  *
- * Gets the object's minimum size values from the Edje. These are set
- * to zero if no Edje is connected to the Evas Object.
+ * This function retrieves the @p obj object's minimum size values,
+ * <b>as declared in its EDC group definition</b>. Minimum size of
+ * groups have the following syntax
+ * @code
+ * collections {
+ *   group {
+ *     name: "a_group";
+ *     min: 100 100;
+ *   }
+ * }
+ * @endcode
+ *
+ * where one declares a minimum size of 100 pixels both for width and
+ * height. Those are (hint) values which should be respected when the
+ * given object/group is to be controlled by a given container object
+ * (e.g. an Edje object being "swallowed" into a given @c SWALLOW
+ * typed part, as in edje_object_part_swallow()). Check the complete
+ * @ref edcref "syntax reference" for EDC files.
+ *
+ * @note If the @c min EDC property was not declared for @p obj, this
+ * call will return the value 0, for each axis.
+ *
+ * @note On failure, this function will make all non-@c NULL size
+ * pointers' pointed variables be set to zero.
+ *
+ * @see edje_object_size_max_get()
  */
 EAPI void         edje_object_size_min_get            (const Evas_Object *obj, Evas_Coord *minw, Evas_Coord *minh);
 
 /**
- * @brief Get the maximum size for an object.
+ * @brief Get the maximum size specified -- as an EDC property -- for a
+ * given Edje object
  *
- * @param obj A valid Evas_Object handle
- * @param maxw Maximum width pointer
- * @param maxh Maximum height pointer
+ * @param obj A handle to an Edje object
+ * @param maxw Pointer to a variable where to store the maximum width
+ * @param maxh Pointer to a variable where to store the maximum height
  *
- * Gets the object's maximum size values from the Edje. These are set
- * to zero if no Edje is connected to the Evas Object.
+ * This function retrieves the @p obj object's maximum size values,
+ * <b>as declared in its EDC group definition</b>. Maximum size of
+ * groups have the following syntax
+ * @code
+ * collections {
+ *   group {
+ *     name: "a_group";
+ *     max: 100 100;
+ *   }
+ * }
+ * @endcode
+ *
+ * where one declares a maximum size of 100 pixels both for width and
+ * height. Those are (hint) values which should be respected when the
+ * given object/group is to be controlled by a given container object
+ * (e.g. an Edje object being "swallowed" into a given @c SWALLOW
+ * typed part, as in edje_object_part_swallow()). Check the complete
+ * @ref edcref "syntax reference" for EDC files.
+ *
+ * @note If the @c max EDC property was not declared for @p obj, this
+ * call will return the maximum size a given Edje object may have, for
+ * each axis.
+ *
+ * @note On failure, this function will make all non-@c NULL size
+ * pointers' pointed variables be set to zero.
+ *
+ * @see edje_object_size_min_get()
  */
 EAPI void         edje_object_size_max_get            (const Evas_Object *obj, Evas_Coord *maxw, Evas_Coord *maxh);
 
@@ -2011,63 +2152,141 @@ EAPI void         edje_object_size_max_get            (const Evas_Object *obj, E
 EAPI void         edje_object_calc_force              (Evas_Object *obj);
 
 /**
- * @brief Calculate minimum size.
+ * @brief Calculate the minimum required size for a given Edje object.
  *
- * @param obj A valid Evas_Object handle
- * @param minw Minimum width pointer
- * @param minh Minimum height pointer
+ * @param obj A handle to an Edje object
+ * @param minw Pointer to a variable where to store the minimum
+ * required width
+ * @param minh Pointer to a variable where to store the minimum
+ * required height
  *
- * Calculates the object's minimum size ?!
+ * This call works exactly as edje_object_size_min_restricted_calc(),
+ * with the last two arguments set to 0. Please refer to its
+ * documentation, than.
  */
 EAPI void         edje_object_size_min_calc           (Evas_Object *obj, Evas_Coord *minw, Evas_Coord *minh);
-   EAPI Eina_Bool    edje_object_parts_extends_calc      (Evas_Object *obj, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h);
-   EAPI void         edje_object_size_min_restricted_calc(Evas_Object *obj, Evas_Coord *minw, Evas_Coord *minh, Evas_Coord restrictedw, Evas_Coord restrictedh);
 
 /**
- * @brief Check if Edje part exists.
+ * Calculate the geometry of the region, relative to a given Edje
+ * object's area, <b>occupied by all parts in the object</b>
  *
- * @param obj A valid Evas_Object handle
- * @param part The part name to check
+ * @param obj A handle to an Edje object
+ * @param part The Edje part's name
+ * @param x A pointer to a variable where to store the parts region's
+ * x coordinate
+ * @param y A pointer to a variable where to store the parts region's
+ * y coordinate
+ * @param w A pointer to a variable where to store the parts region's
+ * width
+ * @param h A pointer to a variable where to store the parts region's
+ * height
  *
- * @return 0 on Error, 1 if Edje part exists.
+ * This function gets the geometry of the rectangle equal to the area
+ * required to group all parts in @p obj's group/collection. The @p x
+ * and @p y coordinates are relative to the top left corner of the
+ * whole @p obj object's area. Parts placed out of the group's
+ * boundaries will also be taken in account, so that @p x and @p y
+ * <b>may be negative</b>.
  *
- * This function returns if a part exists in the edje.
+ * @note Use @c NULL pointers on the geometry components you're not
+ * interested in: they'll be ignored by the function.
  *
+ * @note On failure, this function will make all non-@c NULL geometry
+ * pointers' pointed variables be set to zero.
+ */
+EAPI Eina_Bool    edje_object_parts_extends_calc      (Evas_Object *obj, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h);
+
+/**
+ * @brief Calculate the minimum required size for a given Edje object.
+ *
+ * @param obj A handle to an Edje object
+ * @param minw Pointer to a variable where to store the minimum
+ * required width
+ * @param minh Pointer to a variable where to store the minimum
+ * required height
+ * @param restrictedw Do not allow object's calculated (minimum) width
+ * to be less than this value
+ * @param restrictedh Do not allow object's calculated (minimum)
+ * height to be less than this value
+ *
+ * This call will trigger an internal recalculation of all parts of
+ * the @p obj object, in order to return its minimum required
+ * dimensions for width and height. The user might choose to @b impose
+ * those minimum sizes, making the resulting calculation to get to values
+ * equal or bigger than @p restrictedw and @p restrictedh, for width and
+ * height, respectively.
+ *
+ * @note At the end of this call, @p obj @b won't be automatically
+ * resized to new dimensions, but just return the calculated
+ * sizes. The caller is the one up to change its geometry or not.
+ *
+ * @warning Be advised that invisible parts in @p obj @b will be taken
+ * into account in this calculation. If you don't want that to happen,
+ * resize those parts to zeroed dimensions.
+ */
+EAPI void         edje_object_size_min_restricted_calc(Evas_Object *obj, Evas_Coord *minw, Evas_Coord *minh, Evas_Coord restrictedw, Evas_Coord restrictedh);
+
+/**
+ * @brief Check if an Edje part exists in a given Edje object's group
+ * definition..
+ *
+ * @param obj A handle to an Edje object
+ * @param part The part's name to check for existence in @p obj's
+ * group
+ * @return @c EINA_TRUE, if the Edje part exists in @p obj's group or
+ * @c EINA_FALSE, otherwise (and on errors)
+ *
+ * This function returns if a given part exists in the Edje group
+ * bound to object @p obj (with edje_object_file_set()).
+ *
+ * This call is useful, for example, when one could expect or not a
+ * given GUI element, depending on the @b theme applied to @p obj.
  */
 EAPI Eina_Bool    edje_object_part_exists             (const Evas_Object *obj, const char *part);
 
 /**
- * @brief Gets the evas object from a part.
+ * @brief Get a handle to the Evas object implementing a given Edje
+ * part, in an Edje object.
  *
- * @param obj A valid Evas_Object handle
- * @param part The Edje part
- * @return Returns the Evas_Object corresponding to the given part, or
- * NULL on failure (if the part doesn't exist)
+ * @param obj A handle to an Edje object
+ * @param part The Edje part's name
+ * @return A pointer to the Evas object implementing the given part,
+ * or @c NULL on failure (e.g. the given part doesn't exist)
  *
- * This functio gets the Evas_Object corresponding to a given part.
+ * This function gets a pointer the Evas object corresponding to a
+ * given part in the @p obj object's group.
  *
- * You should never modify the state of the returned object (with
- * evas_object_move() or evas_object_hide() for example), but you can
- * safely query info about its current state (with
- * evas_object_visible_get() or evas_object_color_get() for example)
- *
- **/
+ * You should @b never modify the state of the returned object (with
+ * @c evas_object_move() or @c evas_object_hide() for example),
+ * because it's meant to be managed be Edje, solely. You are safe to
+ * query information about its current state (with @c
+ * evas_object_visible_get() or @c evas_object_color_get() for
+ * example), though.
+ */
 EAPI const Evas_Object *edje_object_part_object_get   (const Evas_Object *obj, const char *part);
 
 /**
- * @brief Get the geometry of an Edje part.
+ * @brief Retrieve the geometry of a given Edje part, in a given Edje
+ * object's group definition, <b>relative to the object's area</b>
  *
- * @param obj A valid Evas_Object handle
- * @param part The Edje part
- * @param x The x coordinate pointer
- * @param y The y coordinate pointer
- * @param w The width pointer
- * @param h The height pointer
+ * @param obj A handle to an Edje object
+ * @param part The Edje part's name
+ * @param x A pointer to a variable where to store the part's x
+ * coordinate
+ * @param y A pointer to a variable where to store the part's y
+ * coordinate
+ * @param w A pointer to a variable where to store the part's width
+ * @param h A pointer to a variable where to store the part's height
  *
- * This function gets the geometry of an Edje part.
+ * This function gets the geometry of an Edje part within its
+ * group. The @p x and @p y coordinates are relative to the top left
+ * corner of the whole @p obj object's area.
  *
- * It is valid to pass NULL as any of @a x, @a y, @a w or @a h, whose
- * values you are uninterested in.
+ * @note Use @c NULL pointers on the geometry components you're not
+ * interested in: they'll be ignored by the function.
+ *
+ * @note On failure, this function will make all non-@c NULL geometry
+ * pointers' pointed variables be set to zero.
  */
 EAPI Eina_Bool    edje_object_part_geometry_get       (const Evas_Object *obj, const char *part, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h);
 

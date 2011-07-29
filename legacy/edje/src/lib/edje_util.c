@@ -2236,15 +2236,6 @@ edje_object_size_min_calc(Evas_Object *obj, Evas_Coord *minw, Evas_Coord *minh)
    edje_object_size_min_restricted_calc(obj, minw, minh, 0, 0);
 }
 
-/** Calculate the geometry used by all parts
- * @param obj A valid Evas_Object handle
- * @param x The x coordinate pointer
- * @param y The y coordinate pointer
- * @param w The width pointer
- * @param h The height pointer
- *
- * Calculates the geometry used by all object parts. Including out of bounds parts.
- */
 EAPI Eina_Bool
 edje_object_parts_extends_calc(Evas_Object *obj, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h)
 {
@@ -2298,17 +2289,6 @@ edje_object_parts_extends_calc(Evas_Object *obj, Evas_Coord *x, Evas_Coord *y, E
    return EINA_TRUE;
 }
 
-/** Calculate minimum size
- * @param obj A valid Evas_Object handle
- * @param minw Minimum width pointer
- * @param minh Minimum height pointer
- * @param restrictedw Do not allow object min width calc to be less than this
- * @param restrictedh Do not allow object min height calc to be less than this
- *
- * Calculates the object's minimum size. Be advised that invisible parts *ARE*
- * taken into account in this calculation, if you don't want that to happen,
- * resize them to 0.
- */
 EAPI void
 edje_object_size_min_restricted_calc(Evas_Object *obj, Evas_Coord *minw, Evas_Coord *minh, Evas_Coord restrictedw, Evas_Coord restrictedh)
 {
