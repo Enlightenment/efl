@@ -4,6 +4,7 @@
  * Here is a page with examples.
  *
  * @ref Example_Edje_Basics
+ * @ref tutorial_edje_swallow
  */
 
 /**
@@ -126,4 +127,27 @@
  *
  * @include edje-basic.c
  * @example edje-basic.c
+ */
+
+/**
+ * @page tutorial_edje_swallow Swallow example
+ * @dontinclude edje-swallow.c
+ *
+ * This is a simple example in which we create a rect and swallow it.
+ *
+ * Focusing on the relevant parts of the code we go right to the creation of our
+ * rectangle. It should be noted that we don't resize or show our rect, that is
+ * because when an object is swallowed it's geometry and visibility is
+ * controlled by the theme:
+ * @skip 20
+ * @skipline evas_object_rectangle_add
+ * @until swallow
+ *
+ * The other bit of code that is relevant to us now is our check that the
+ * swallow worked:
+ * @until printf
+ *
+ * The full source code follows:
+ * @include edje-swallow.c
+ * @example edje-swallow.c
  */

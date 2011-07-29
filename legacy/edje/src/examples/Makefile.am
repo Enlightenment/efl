@@ -3,7 +3,8 @@ MAINTAINERCLEANFILES = Makefile.in
 pkglibdir = $(datadir)/$(PACKAGE)/examples
 
 #put here all EDCs one needs to the examples
-EDCS = basic.edc
+EDCS = basic.edc \
+	swallow.edc
 
 filesdir = $(datadir)/$(PACKAGE)/examples
 files_DATA =
@@ -24,12 +25,11 @@ pkglib_PROGRAMS =
 #the ones using ecore_evas follow
 AM_CPPFLAGS += @ECORE_EVAS_CFLAGS@
 
-pkglib_PROGRAMS += edje_basic
-edje_basic_DEPS = $(srcdir)/basic.edc
-edje_basic_SOURCES = edje-basic.c
-edje_basic_LDADD = $(top_builddir)/src/lib/libedje.la @ECORE_EVAS_LIBS@
+pkglib_PROGRAMS += \
+	edje-basic \
+	edje-swallow
 
-basic.edj: ${edje_basic_DEPS}
+LDADD = $(top_builddir)/src/lib/libedje.la @ECORE_EVAS_LIBS@
 
 .edc.edj:
 	$(edje_cc) -v -id $(srcdir) $< $(builddir)/$(@F)
@@ -47,8 +47,10 @@ files_DATA += $(srcdir)/red.png
 
 files_DATA += \
 	$(EDCS) \
-	$(srcdir)/edje-basic.c
+	$(srcdir)/edje-basic.c \
+	$(srcdir)/edje-swallow.c
 endif
 
 EXTRA_DIST = $(EDCS) \
-	$(srcdir)/edje-basic.c
+	$(srcdir)/edje-basic.c \
+	$(srcdir)/edje-swallow.c

@@ -447,6 +447,7 @@ What follows is a list with varios commented examples, covering a great
 part of Edje's API:
 
 - @ref Example_Edje_Basics
+- @ref tutorial_edje_swallow
 
 
 
@@ -2775,7 +2776,6 @@ EAPI void            *edje_object_text_insert_filter_callback_del       (Evas_Ob
  */
 EAPI void            *edje_object_text_insert_filter_callback_del_full  (Evas_Object *obj, const char *part, Edje_Text_Filter_Cb func, void *data);
 
-
 /**
  * @brief Swallows an object into the edje.
  *
@@ -2798,7 +2798,9 @@ EAPI Eina_Bool        edje_object_part_swallow        (Evas_Object *obj, const c
  * @param obj A valid Evas_Object handle
  * @param obj_swallow The swallowed object
  *
- * Causes the edje to regurgitate a previously swallowed object.  :)
+ * Causes the edje to regurgitate a previously swallowed object. :)
+ *
+ * @note @p obj_swallow will be deleted.
  */
 EAPI void             edje_object_part_unswallow      (Evas_Object *obj, Evas_Object *obj_swallow);
 
