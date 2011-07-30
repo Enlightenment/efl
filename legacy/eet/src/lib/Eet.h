@@ -750,12 +750,13 @@ eet_delete(Eet_File   *ef,
  * Alias a specific section to another one. Destination may exist or not,
  * no check are done.
  * @param ef A valid eet file handle opened for writing.
- * @param name Name of the entry. eg: "/base/file_i_want".
- * @param destination Destination of the alias. eg: "/base/the_real_stuff_i_want".
+ * @param name Name of the new entry. eg: "/base/file_i_want".
+ * @param destination Actual source of the aliased entry eg: "/base/the_real_stuff_i_want".
  * @param compress Compression flags (1 == compress, 0 = don't compress).
  * @return EINA_TRUE on success, EINA_FALSE on failure.
  *
  * Name and Destination must not be NULL, otherwise EINA_FALSE will be returned.
+ * The equivalent of this would be calling 'ln -s destination name'
  *
  * @since 1.3.3
  * @ingroup Eet_File_Group
