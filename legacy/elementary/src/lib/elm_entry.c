@@ -548,7 +548,6 @@ _recalc_cursor_geometry(Evas_Object *obj)
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
    evas_object_smart_callback_call(obj, SIG_CURSOR_CHANGED, NULL);
-   if (!elm_object_focus_get(obj)) return;
    if (!wd->deferred_recalc_job)
      {
         Evas_Coord cx, cy, cw, ch;
