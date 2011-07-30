@@ -131,8 +131,8 @@ _evas_jpeg_membuf_src_skip(j_decompress_ptr cinfo,
 static void
 _evas_jpeg_membuf_src_term(j_decompress_ptr cinfo)
 {
-   struct jpeg_membuf_src *src = ((struct jpeg_membuf_src *)cinfo->src)->self;
-
+   struct jpeg_membuf_src *src = (struct jpeg_membuf_src *)cinfo->src;
+   if (!src) return;
    free(src);
    cinfo->src = NULL;
 }
@@ -179,6 +179,7 @@ evas_image_load_file_head_jpeg_internal(Image_Entry *ie,
    if (setjmp(jerr.setjmp_buffer))
      {
 	jpeg_destroy_decompress(&cinfo);
+        _evas_jpeg_membuf_src_term(&cinfo);
 	if (cinfo.saw_JFIF_marker)
 	  *error = EVAS_LOAD_ERROR_CORRUPT_FILE;
 	else
@@ -190,8 +191,9 @@ evas_image_load_file_head_jpeg_internal(Image_Entry *ie,
    if (_evas_jpeg_membuf_src(&cinfo, map, length))
      {
         jpeg_destroy_decompress(&cinfo);
+        _evas_jpeg_membuf_src_term(&cinfo);
         *error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
-        return 0;
+        return EINA_FALSE;
      }
 
    jpeg_read_header(&cinfo, TRUE);
@@ -208,6 +210,7 @@ evas_image_load_file_head_jpeg_internal(Image_Entry *ie,
        (IMG_TOO_BIG(w, h)))
      {
         jpeg_destroy_decompress(&cinfo);
+        _evas_jpeg_membuf_src_term(&cinfo);
 	if (IMG_TOO_BIG(w, h))
 	  *error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
 	else
@@ -271,13 +274,15 @@ evas_image_load_file_head_jpeg_internal(Image_Entry *ie,
    if (ie->scale > 1)
      {
 	jpeg_destroy_decompress(&cinfo);
+        _evas_jpeg_membuf_src_term(&cinfo);
 	jpeg_create_decompress(&cinfo);
 
         if (_evas_jpeg_membuf_src(&cinfo, map, length))
           {
              jpeg_destroy_decompress(&cinfo);
+             _evas_jpeg_membuf_src_term(&cinfo);
              *error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
-             return 0;
+             return EINA_FALSE;
           }
 
 	jpeg_read_header(&cinfo, TRUE);
@@ -301,6 +306,7 @@ evas_image_load_file_head_jpeg_internal(Image_Entry *ie,
         if ((ie->load_opts.region.w <= 0) || (ie->load_opts.region.h <= 0))
           {
              jpeg_destroy_decompress(&cinfo);
+             _evas_jpeg_membuf_src_term(&cinfo);
 	     *error = EVAS_LOAD_ERROR_GENERIC;
 	     return EINA_FALSE;
           }
@@ -310,6 +316,7 @@ evas_image_load_file_head_jpeg_internal(Image_Entry *ie,
 /* end head decoding */
 
    jpeg_destroy_decompress(&cinfo);
+   _evas_jpeg_membuf_src_term(&cinfo);
    *error = EVAS_LOAD_ERROR_NONE;
    return EINA_TRUE;
 }
@@ -345,6 +352,7 @@ evas_image_load_file_data_jpeg_internal(Image_Entry *ie,
    if (setjmp(jerr.setjmp_buffer))
      {
 	jpeg_destroy_decompress(&cinfo);
+        _evas_jpeg_membuf_src_term(&cinfo);
 	*error = EVAS_LOAD_ERROR_CORRUPT_FILE;
 	return EINA_FALSE;
      }
@@ -353,6 +361,7 @@ evas_image_load_file_data_jpeg_internal(Image_Entry *ie,
    if (_evas_jpeg_membuf_src(&cinfo, map, size))
      {
         jpeg_destroy_decompress(&cinfo);
+        _evas_jpeg_membuf_src_term(&cinfo);
         *error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
         return 0;
      }
@@ -409,6 +418,7 @@ evas_image_load_file_data_jpeg_internal(Image_Entry *ie,
 	// race condition, the file could have change from when we call header
 	// this test will not solve the problem with region code.
 	jpeg_destroy_decompress(&cinfo);
+        _evas_jpeg_membuf_src_term(&cinfo);
 	*error = EVAS_LOAD_ERROR_GENERIC;
 	return EINA_FALSE;
      }
@@ -424,6 +434,7 @@ evas_image_load_file_data_jpeg_internal(Image_Entry *ie,
          ((cinfo.out_color_space == JCS_CMYK) && (cinfo.output_components == 4))))
      {
 	jpeg_destroy_decompress(&cinfo);
+        _evas_jpeg_membuf_src_term(&cinfo);
 	*error = EVAS_LOAD_ERROR_UNKNOWN_FORMAT;
 	return EINA_FALSE;
      }
@@ -433,6 +444,7 @@ evas_image_load_file_data_jpeg_internal(Image_Entry *ie,
    if (cinfo.rec_outbuf_height > 16)
      {
 	jpeg_destroy_decompress(&cinfo);
+        _evas_jpeg_membuf_src_term(&cinfo);
 	*error = EVAS_LOAD_ERROR_UNKNOWN_FORMAT;
 	return EINA_FALSE;
      }
@@ -441,6 +453,7 @@ evas_image_load_file_data_jpeg_internal(Image_Entry *ie,
    if (ie->flags.loaded)
      {
 	jpeg_destroy_decompress(&cinfo);
+        _evas_jpeg_membuf_src_term(&cinfo);
 	*error = EVAS_LOAD_ERROR_NONE;
 	return EINA_TRUE;
      }
@@ -516,6 +529,7 @@ evas_image_load_file_data_jpeg_internal(Image_Entry *ie,
                   if (l >= (ie->load_opts.region.y + ie->load_opts.region.h))
                     {
                        jpeg_destroy_decompress(&cinfo);
+                       _evas_jpeg_membuf_src_term(&cinfo);
 		       *error = EVAS_LOAD_ERROR_NONE;
                        return EINA_FALSE;
                     }
@@ -624,6 +638,7 @@ evas_image_load_file_data_jpeg_internal(Image_Entry *ie,
                   if (l >= (ie->load_opts.region.y + ie->load_opts.region.h))
                     {
                        jpeg_destroy_decompress(&cinfo);
+                       _evas_jpeg_membuf_src_term(&cinfo);
 /*                       
                        t = get_time() - t;
                        printf("%3.3f\n", t);
@@ -689,6 +704,7 @@ evas_image_load_file_data_jpeg_internal(Image_Entry *ie,
                   if (l >= (ie->load_opts.region.y + ie->load_opts.region.h))
                     {
                        jpeg_destroy_decompress(&cinfo);
+                       _evas_jpeg_membuf_src_term(&cinfo);
 		       *error = EVAS_LOAD_ERROR_NONE;
                        return EINA_TRUE;
                     }
@@ -720,6 +736,7 @@ evas_image_load_file_data_jpeg_internal(Image_Entry *ie,
 /* end data decoding */
    jpeg_finish_decompress(&cinfo);
    jpeg_destroy_decompress(&cinfo);
+   _evas_jpeg_membuf_src_term(&cinfo);
    *error = EVAS_LOAD_ERROR_NONE;
    return EINA_TRUE;
 }
