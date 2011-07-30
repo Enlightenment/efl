@@ -1804,20 +1804,20 @@ _add_chars_till_limit(Evas_Object *obj, char **text, int can_add, Length_Unit un
           }
         else
           {
-             int index = 0;
+             int idx = 0;
              if (*new_text == '&')
                {
-                  while (*(new_text + index) != ';')
+                  while (*(new_text + idx) != ';')
                     {
-                       index++;
-                       if (!*(new_text + index)) break;
+                       idx++;
+                       if (!*(new_text + idx)) break;
                     }
                }
              char *markup;
-             index = evas_string_char_next_get(new_text, index, NULL);
-             markup = malloc(index + 1);
-             strncpy(markup, new_text, index);
-             markup[index] = 0;
+             idx = evas_string_char_next_get(new_text, idx, NULL);
+             markup = malloc(idx + 1);
+             strncpy(markup, new_text, idx);
+             markup[idx] = 0;
              if (unit == LENGTH_UNIT_BYTE)
                unit_size = strlen(elm_entry_markup_to_utf8(markup));
              else if (unit == LENGTH_UNIT_CHAR)
@@ -1837,13 +1837,13 @@ _add_chars_till_limit(Evas_Object *obj, char **text, int can_add, Length_Unit un
                        return;
                     }
                   can_add = 0;
-                  strncpy(new_text, new_text + index, current_len - ((new_text + index) - *text));
-                  current_len -= index;
+                  strncpy(new_text, new_text + idx, current_len - ((new_text + idx) - *text));
+                  current_len -= idx;
                   (*text)[current_len] = 0;
                }
              else
                {
-                  new_text += index;
+                  new_text += idx;
                   can_add -= unit_size;
                }
              i++;
