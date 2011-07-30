@@ -20,6 +20,7 @@ These routines are used for Eet Library interaction
 @author Mathieu Taillefumier <mathieu.taillefumier@@free.fr>
 @author Albin "Lutin" Tonnerre <albin.tonnerre@@gmail.com>
 @author Adam Simpkins <adam@@adamsimpkins.net>
+@author Mike Blumenkrantz <mike@zentific.com>
 @date 2000-2011
 
 @section toc Table of Contents
@@ -750,11 +751,11 @@ eet_delete(Eet_File   *ef,
  * no check are done.
  * @param ef A valid eet file handle opened for writing.
  * @param name Name of the entry. eg: "/base/file_i_want".
- * @param destination Destionation of the alias. eg: "/base/the_real_stuff_i_want".
+ * @param destination Destination of the alias. eg: "/base/the_real_stuff_i_want".
  * @param compress Compression flags (1 == compress, 0 = don't compress).
  * @return EINA_TRUE on success, EINA_FALSE on failure.
  *
- * Name and Destination must not be NULL, otherwhise EINA_FALSE will be returned.
+ * Name and Destination must not be NULL, otherwise EINA_FALSE will be returned.
  *
  * @since 1.3.3
  * @ingroup Eet_File_Group
@@ -764,6 +765,21 @@ eet_alias(Eet_File   *ef,
           const char *name,
           const char *destination,
           int         compress);
+
+/**
+ * Retrieve the destination name of an alias
+ * @param ef A valid eet file handle opened for writing
+ * @param name Name of the entry. eg: "/base/file_i_want"
+ * @return Destination of the alias. eg: "/base/the_real_stuff_i_want", NULL on failure
+ *
+ * Name must not be NULL, otherwise NULL will be returned.
+ *
+ * @since 1.5
+ * @ingroup Eet_File_Group
+ */
+EAPI const char *
+eet_alias_get(Eet_File *ef,
+              const char *name);
 
 /**
  * List all entries in eet file matching shell glob.

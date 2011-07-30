@@ -522,3 +522,7 @@
 	* On Windows, open() in text mode followed by fdopen() in
 	binary mode does not create a stream in binary mode.
 	So add O_BINARY to open().
+
+2011-07-29  Mike Blumenkrantz
+
+        * Add eet_alias_get to return the destination name of an alias

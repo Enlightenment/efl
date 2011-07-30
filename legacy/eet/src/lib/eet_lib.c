@@ -1983,6 +1983,83 @@ on_error:
    return NULL;
 } /* eet_read_direct */
 
+EAPI const char *
+eet_alias_get(Eet_File *ef,
+              const char *name)
+{
+   Eet_File_Node *efn;
+   const char *data = NULL;
+   int size = 0;
+
+   /* check to see its' an eet file pointer */
+   if (eet_check_pointer(ef))
+      return NULL;
+
+   if (!name)
+      return NULL;
+
+   if ((ef->mode != EET_FILE_MODE_READ) &&
+       (ef->mode != EET_FILE_MODE_READ_WRITE))
+      return NULL;
+
+   /* no header, return NULL */
+   if (eet_check_header(ef))
+      return NULL;
+
+   LOCK_FILE(ef);
+
+   /* hunt hash bucket */
+   efn = find_node_by_name(ef, name);
+   if (!efn)
+      goto on_error;
+
+   /* trick to detect data in memory instead of mmaped from disk */
+   if (efn->offset > ef->data_size && !efn->data)
+      goto on_error;
+
+   /* get size (uncompressed, if compressed at all) */
+   size = efn->data_size;
+
+   if (!efn->alias) return NULL;
+   data = efn->data ? efn->data : ef->data + efn->offset;
+
+   /* handle alias case */
+   if (efn->compression)
+     {
+        char *tmp;
+        int compr_size = efn->size;
+        uLongf dlen;
+
+        tmp = alloca(sizeof (compr_size));
+        dlen = size;
+
+        if (uncompress((Bytef *)tmp, &dlen, (Bytef *)data,
+                       (uLongf)compr_size))
+           goto on_error;
+
+        if (tmp[compr_size - 1] != '\0')
+           goto on_error;
+
+        UNLOCK_FILE(ef);
+
+        return eina_stringshare_add(tmp);
+     }
+
+   if (!data)
+      goto on_error;
+
+   if (data[size - 1] != '\0')
+      goto on_error;
+
+   UNLOCK_FILE(ef);
+
+   return eina_stringshare_add(data);
+
+on_error:
+   UNLOCK_FILE(ef);
+   return NULL;
+}
+
 EAPI Eina_Bool
 eet_alias(Eet_File   *ef,
           const char *name,
