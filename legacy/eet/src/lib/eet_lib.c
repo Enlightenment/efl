@@ -929,7 +929,7 @@ eet_internal_read2(Eet_File *ef)
         efn = malloc(sizeof(Eet_File_Node));
         if (eet_test_close(!efn, ef))
           {
-             if (efn) free(efn); /* yes i know - we only get here if 
+             if (efn) free(efn); /* yes i know - we only get here if
                                   * efn is null/0 -> trying to shut up
                                   * warning tools like cppcheck */
              return NULL;
@@ -1193,7 +1193,7 @@ eet_internal_read1(Eet_File *ef)
         efn = malloc (sizeof(Eet_File_Node));
         if (eet_test_close(!efn, ef))
           {
-             if (efn) free(efn); /* yes i know - we only get here if 
+             if (efn) free(efn); /* yes i know - we only get here if
                                   * efn is null/0 -> trying to shut up
                                   * warning tools like cppcheck */
              return NULL;

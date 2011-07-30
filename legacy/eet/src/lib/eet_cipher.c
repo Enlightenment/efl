@@ -150,7 +150,7 @@ eet_identity_open(const char               *certificate_file,
 
    /* let's make mmap safe and just get 0 pages for IO erro */
    eina_mmap_safety_enabled_set(EINA_TRUE);
-   
+
    if ((data =
            mmap(NULL, st.st_size, PROT_READ, MAP_PRIVATE, fd, 0)) == MAP_FAILED)
       goto on_error;
@@ -184,7 +184,7 @@ eet_identity_open(const char               *certificate_file,
 
    /* let's make mmap safe and just get 0 pages for IO erro */
    eina_mmap_safety_enabled_set(EINA_TRUE);
-   
+
    if ((data =
            mmap(NULL, st.st_size, PROT_READ, MAP_PRIVATE, fd, 0)) == MAP_FAILED)
       goto on_error;
@@ -533,7 +533,7 @@ eet_identity_sign(FILE    *fp,
 
    /* let's make mmap safe and just get 0 pages for IO erro */
    eina_mmap_safety_enabled_set(EINA_TRUE);
-   
+
    /* Map the file in memory. */
    data = mmap(NULL, st_buf.st_size, PROT_READ, MAP_PRIVATE, fd, 0);
    if (data == MAP_FAILED)

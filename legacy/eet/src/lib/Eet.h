@@ -522,7 +522,7 @@ typedef struct _Eet_Dictionary   Eet_Dictionary;
  * You can also open the file for read/write. If you then write a key that
  * does not exist it will be created, if the key exists it will be replaced
  * by the new data.
- * 
+ *
  * If the same file is opened multiple times, then the same file handle will
  * be returned as eet maintains an internal list of all currently open
  * files. Note that it considers files opened for read only and those opened
@@ -1389,7 +1389,7 @@ eet_data_image_read_cipher(Eet_File     *ef,
                            int          *compress,
                            int          *quality,
                            int          *lossy);
-   
+
 /**
  * Read image data from the named key in the eet file using a cipher.
  * @param ef A valid eet file handle opened for reading.
@@ -2343,7 +2343,7 @@ typedef struct _Eet_Data_Descriptor         Eet_Data_Descriptor;
 typedef struct _Eet_Data_Descriptor_Class   Eet_Data_Descriptor_Class;
 
 typedef int         (*Eet_Descriptor_Hash_Foreach_Callback_Callback)(void *h, const char *k, void *dt, void *fdt);
-  
+
 typedef void       *(*Eet_Descriptor_Mem_Alloc_Callback)(size_t size);
 typedef void        (*Eet_Descriptor_Mem_Free_Callback)(void *mem);
 typedef char       *(*Eet_Descriptor_Str_Alloc_Callback)(const char *str);
@@ -2405,7 +2405,7 @@ struct _Eet_Data_Descriptor_Class
  * @}
  */
 
-  
+
 /**
  * Create a new empty data structure descriptor.
  * @param name The string name of this data structure (most be a
@@ -3218,7 +3218,7 @@ eet_data_descriptor_encode(Eet_Data_Descriptor *edd,
                                       (char *)(& (___ett)), \
                                       NULL, unified_type); \
    } while (0)
-   
+
 /**
  * Add a automatically selectable type to a data descriptor
  * @param edd The data descriptor to add the type to.
@@ -3250,7 +3250,7 @@ eet_data_descriptor_encode(Eet_Data_Descriptor *edd,
                                       (char *)(& (___ett)), \
                                       NULL, unified_type); \
    } while (0)
-   
+
 /**
  * Add a mapping to a data descriptor that will be used by union, variant or inherited type
  * @param unified_type The data descriptor to add the mapping to.
@@ -3906,7 +3906,7 @@ typedef void *(*Eet_Node_Walk_List_Callback)(const char *name, void *user_data);
 typedef void  (*Eet_Node_Walk_Append_Callback)(void *list, void *child, void *user_data);
 typedef void *(*Eet_Node_Walk_Hash_Callback)(void *parent, const char *name, const char *key, void *value, void *user_data);
 typedef void *(*Eet_Node_Walk_Simple_Callback)(int type, Eet_Node_Data *data, void *user_data);
-  
+
 /**
  * @struct _Eet_Node_Walk
  * Describes how to walk trees of #Eet_Node.
