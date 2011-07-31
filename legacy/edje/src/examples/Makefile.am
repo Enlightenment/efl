@@ -52,5 +52,6 @@ files_DATA += \
 endif
 
 EXTRA_DIST = $(EDCS) \
+	$(srcdir)/red.png \
 	$(srcdir)/edje-basic.c \
 	$(srcdir)/edje-swallow.c
