@@ -4978,6 +4978,7 @@ evas_object_textblock_text_markup_prepend(Evas_Textblock_Cursor *cur, const char
                             memcpy(ttag, tag_start + 1, ttag_len);
                             ttag[ttag_len] = 0;
                             evas_textblock_cursor_format_prepend(cur, ttag);
+                            free(ttag);
                          }
                        tag_start = tag_end = NULL;
                     }
