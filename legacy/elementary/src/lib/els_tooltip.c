@@ -348,8 +348,8 @@ _elm_tooltip_reconfigure(Elm_Tooltip *tt)
    evas_object_size_hint_min_get(tt->content, &ominw, &ominh);
    edje_object_size_min_get(tt->tooltip, &eminw, &eminh);
 
-   if (ominw < eminw) ominw = eminw;
-   if (ominh < eminh) ominh = eminh;
+   if (eminw && (ominw < eminw)) ominw = eminw;
+   if (eminw && (ominh < eminh)) ominh = eminh;
 
    if (ominw < 1) ominw = 10; /* at least it is noticeable */
    if (ominh < 1) ominh = 10; /* at least it is noticeable */
