@@ -134,6 +134,7 @@ EAPI int eina_threads_shutdown(void);
 
 /**
  * @brief Check if you are calling this function from the same thread Eina was initialized or not
+ * @since 1.1.0
  *
  * Most EFL function are not thread safe and all the call need to happen in
  * the main loop. With this call you could know if you can call an EFL
