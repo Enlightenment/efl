@@ -12690,7 +12690,7 @@ extern "C" {
     *
     * @image html img/widget/genlist/preview-01.png
     * @image latex img/widget/genlist/preview-01.eps
-   *
+    *
     * - icon_top_text_bottom
     *
     * @image html img/widget/genlist/preview-02.png
