@@ -19,6 +19,7 @@ struct _Evas_Object_Text
    struct {
       const char          *utf8_text; /* The text exposed to the API */
       const char          *font;
+      Evas_Font_Description *fdesc;
       const char          *source;
       Evas_Font_Size       size;
       struct {
@@ -345,7 +346,7 @@ evas_object_text_font_set(Evas_Object *obj, const char *font, Evas_Font_Size siz
 {
    Evas_Object_Text *o;
    int is, was = 0, pass = 0;
-   int same_font = 0;
+   Evas_Font_Description *fdesc;
 
    if ((!font) || (size <= 0)) return;
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
@@ -356,11 +357,22 @@ evas_object_text_font_set(Evas_Object *obj, const char *font, Evas_Font_Size siz
    return;
    MAGIC_CHECK_END();
 
-   if ((o->cur.font) && (font) && (!strcmp(o->cur.font, font)))
+   fdesc = evas_font_desc_new();
+   evas_font_name_parse(fdesc, font);
+   if (o->cur.fdesc && !evas_font_desc_cmp(fdesc, o->cur.fdesc) &&
+         (size == o->cur.size))
      {
-	same_font = 1;
-	if (size == o->cur.size) return;
+        evas_font_desc_unref(fdesc);
+        return;
      }
+
+   if (o->cur.fdesc) evas_font_desc_unref(o->cur.fdesc);
+   o->cur.fdesc = fdesc;
+
+   o->cur.size = size;
+   eina_stringshare_replace(&o->cur.font, font);
+   o->prev.font = NULL;
+
    if (obj->layer->evas->events_frozen <= 0)
      {
 	pass = evas_event_passes_through(obj);
@@ -381,19 +393,9 @@ evas_object_text_font_set(Evas_Object *obj, const char *font, Evas_Font_Size siz
 	evas_font_free(obj->layer->evas, o->font);
 	o->font = NULL;
      }
-   if (!same_font)
-     {
-	/*
-	if (o->cur.font) eina_stringshare_del(o->cur.font);
-	if (font) o->cur.font = eina_stringshare_add(font);
-	else o->cur.font = NULL;
-	 */
-	eina_stringshare_replace(&o->cur.font, font);
-	o->prev.font = NULL;
-     }
-   o->cur.size = size;
-   o->font = evas_font_load(obj->layer->evas, o->cur.font, o->cur.source,
-				   (int)(((double)o->cur.size) * obj->cur.scale));
+
+   o->font = evas_font_load(obj->layer->evas, o->cur.fdesc, o->cur.source,
+         (int)(((double) o->cur.size) * obj->cur.scale));
    if (o->font)
      {
         o->ascent = ENFN->font_ascent_get(ENDT, o->font);
@@ -1441,6 +1443,7 @@ evas_object_text_free(Evas_Object *obj)
    if (o->items) _evas_object_text_items_clear(o);
    if (o->cur.utf8_text) eina_stringshare_del(o->cur.utf8_text);
    if (o->cur.font) eina_stringshare_del(o->cur.font);
+   if (o->cur.fdesc) evas_font_desc_unref(o->cur.fdesc);
    if (o->cur.source) eina_stringshare_del(o->cur.source);
    if (o->font) evas_font_free(obj->layer->evas, o->font);
 #ifdef BIDI_SUPPORT

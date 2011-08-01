@@ -31,6 +31,7 @@ typedef struct _Evas_Size_Hints             Evas_Size_Hints;
 typedef struct _Evas_Font_Dir               Evas_Font_Dir;
 typedef struct _Evas_Font                   Evas_Font;
 typedef struct _Evas_Font_Alias             Evas_Font_Alias;
+typedef struct _Evas_Font_Description       Evas_Font_Description;
 typedef struct _Evas_Data_Node              Evas_Data_Node;
 typedef struct _Evas_Func_Node              Evas_Func_Node;
 typedef RGBA_Image_Loadopts                 Evas_Image_Load_Opts;
@@ -45,6 +46,11 @@ typedef struct _Evas_Format                 Evas_Format;
 typedef struct _Evas_Map_Point              Evas_Map_Point;
 typedef struct _Evas_Smart_Cb_Description_Array Evas_Smart_Cb_Description_Array;
 typedef struct _Evas_Post_Callback          Evas_Post_Callback;
+
+typedef enum _Evas_Font_Style               Evas_Font_Style;
+typedef enum _Evas_Font_Slant               Evas_Font_Slant;
+typedef enum _Evas_Font_Weight              Evas_Font_Weight;
+typedef enum _Evas_Font_Width               Evas_Font_Width;
 
 /* General types - used for script type chceking */
 #define OPAQUE_TYPE(type) struct __##type { int a; }; \
@@ -584,6 +590,61 @@ struct _Evas_Font_Alias
    Evas_Font  *fn;
 };
 
+enum _Evas_Font_Style
+{
+   EVAS_FONT_STYLE_SLANT,
+   EVAS_FONT_STYLE_WEIGHT,
+   EVAS_FONT_STYLE_WIDTH
+};
+
+enum _Evas_Font_Slant
+{
+   EVAS_FONT_SLANT_NORMAL,
+   EVAS_FONT_SLANT_OBLIQUE,
+   EVAS_FONT_SLANT_ITALIC
+};
+
+enum _Evas_Font_Weight
+{
+   EVAS_FONT_WEIGHT_NORMAL,
+   EVAS_FONT_WEIGHT_THIN,
+   EVAS_FONT_WEIGHT_ULTRALIGHT,
+   EVAS_FONT_WEIGHT_LIGHT,
+   EVAS_FONT_WEIGHT_BOOK,
+   EVAS_FONT_WEIGHT_MEDIUM,
+   EVAS_FONT_WEIGHT_SEMIBOLD,
+   EVAS_FONT_WEIGHT_BOLD,
+   EVAS_FONT_WEIGHT_ULTRABOLD,
+   EVAS_FONT_WEIGHT_BLACK,
+   EVAS_FONT_WEIGHT_EXTRABLACK
+};
+
+enum _Evas_Font_Width
+{
+   EVAS_FONT_WIDTH_NORMAL,
+   EVAS_FONT_WIDTH_ULTRACONDENSED,
+   EVAS_FONT_WIDTH_EXTRACONDENSED,
+   EVAS_FONT_WIDTH_CONDENSED,
+   EVAS_FONT_WIDTH_SEMICONDENSED,
+   EVAS_FONT_WIDTH_SEMIEXPANDED,
+   EVAS_FONT_WIDTH_EXPANDED,
+   EVAS_FONT_WIDTH_EXTRAEXPANDED,
+   EVAS_FONT_WIDTH_ULTRAEXPANDED
+};
+
+struct _Evas_Font_Description
+{
+   int ref;
+   /* We assume everywhere this is stringshared */
+   const char *name;
+
+   Evas_Font_Slant slant;
+   Evas_Font_Weight weight;
+   Evas_Font_Width width;
+
+   Eina_Bool new : 1;
+};
+
 struct _Evas_Object_Func
 {
    void (*free) (Evas_Object *obj);
@@ -871,7 +932,14 @@ void evas_font_dir_available_list_free(Eina_List *available);
 void evas_font_free(Evas *evas, void *font);
 void evas_fonts_zero_free(Evas *evas);
 void evas_fonts_zero_presure(Evas *evas);
-void *evas_font_load(Evas *evas, const char *name, const char *source, int size);
+void evas_font_name_parse(Evas_Font_Description *fdesc, const char *name);
+int evas_font_style_find(const char *start, const char *end, Evas_Font_Style style);
+Evas_Font_Description *evas_font_desc_new(void);
+Evas_Font_Description *evas_font_desc_dup(const Evas_Font_Description *fdesc);
+void evas_font_desc_unref(Evas_Font_Description *fdesc);
+int evas_font_desc_cmp(const Evas_Font_Description *a, const Evas_Font_Description *b);
+Evas_Font_Description *evas_font_desc_ref(Evas_Font_Description *fdesc);
+void * evas_font_load(Evas *evas, Evas_Font_Description *fdesc, const char *source, Evas_Font_Size size);
 void evas_font_load_hinting_set(Evas *evas, void *font, int hinting);
 void evas_object_smart_member_cache_invalidate(Evas_Object *obj);
 void evas_text_style_pad_get(Evas_Text_Style_Type style, int *l, int *r, int *t, int *b);

@@ -348,11 +348,11 @@ struct _Evas_Object_Textblock_Format
    double               halign;
    double               valign;
    struct {
-      const char       *name;
+      Evas_Font_Description *fdesc;
       const char       *source;
       const char       *fallbacks;
       Evas_Font_Set    *font;
-      int               size;
+      Evas_Font_Size    size;
    } font;
    struct {
       struct {
@@ -620,7 +620,7 @@ _format_unref_free(const Evas_Object *obj, Evas_Object_Textblock_Format *fmt)
 {
    fmt->ref--;
    if (fmt->ref > 0) return;
-   if (fmt->font.name) eina_stringshare_del(fmt->font.name);
+   if (fmt->font.fdesc) evas_font_desc_unref(fmt->font.fdesc);
    if (fmt->font.fallbacks) eina_stringshare_del(fmt->font.fallbacks);
    if (fmt->font.source) eina_stringshare_del(fmt->font.source);
    evas_font_free(obj->layer->evas, fmt->font.font);
@@ -1131,95 +1131,6 @@ _format_clean_param(char *dst, const char *src)
    *ds = 0;
 }
 
-static const char *_style_weight_map[] = { "ultralight", "light", "bold",
-     "ultrabold", "black", "normal" };
-#define _STYLE_WEIGHT_MAP_LEN (sizeof(_style_weight_map) / sizeof(_style_weight_map[0]))
-
-static const char *_style_style_map[] = { "normal", "oblique", "italic" };
-#define _STYLE_STYLE_MAP_LEN (sizeof(_style_style_map) / sizeof(_style_style_map[0]))
-/**
- * @internal
- * Find a certain attribute from the map in the style.
- * @return true if found, false otherwise.
- */
-static Eina_Bool
-_format_font_style_find(const char *style, const char *style_end,
-      const char **start, const char **end, const char *_map[], size_t map_len)
-{
-   size_t i;
-   while (style < style_end)
-     {
-        for (i = 0 ; i < map_len ; i++)
-          {
-             size_t len;
-             const char *cur = _map[i];
-             len = strlen(cur);
-             if (!strncasecmp(style, cur, len) &&
-                   (!cur[len] || (cur[len] == ' ')))
-               {
-                  *start = style;
-                  *end = *start + len;
-                  return EINA_TRUE;
-               }
-          }
-        style = strchr(style, ' ');
-        if (!style)
-           break;
-
-        while (*style && _is_white(*style))
-           style++;
-     }
-   return EINA_FALSE;
-}
-
-static void
-_format_command_parse_font_weight_style(Evas_Object_Textblock_Format *fmt,
-      const char *param, const char *_map[], size_t map_len)
-{
-   size_t flen = eina_stringshare_strlen(fmt->font.name);
-   const char *style = strstr(fmt->font.name, ":style=");
-   if (style)
-     {
-        Eina_Strbuf *buf;
-        const char *found_start, *found_end;
-        const char *style_end = strchr(style + 7, ':');
-        /* Point to the end, either it be the next attribute,
-         * or the terminating 0 */
-        if (!style_end)
-           style_end = fmt->font.name + flen;
-
-        buf = eina_strbuf_new();
-        eina_strbuf_append_length(buf, fmt->font.name, flen);
-
-        if (_format_font_style_find(style + 7, style_end,
-                 &found_start, &found_end, _map, map_len))
-          {
-             eina_strbuf_remove(buf, found_start - fmt->font.name,
-                   found_end - fmt->font.name);
-          }
-        else
-          {
-             found_start = style + 7; /* + 7 for :style= */
-             eina_strbuf_insert_char(buf, ' ', found_start - fmt->font.name);
-          }
-        eina_strbuf_insert(buf, param, found_start - fmt->font.name);
-        if (fmt->font.name) eina_stringshare_del(fmt->font.name);
-        fmt->font.name = eina_stringshare_add(eina_strbuf_string_get(buf));
-        eina_strbuf_free(buf);
-     }
-   else
-     {
-        /* Make a buffer big enough to hold whatever we do.
-         * 7 == len(:style=). */
-        char *tmpres = alloca(flen + strlen(param) + 7 + 1);
-        /* Handle font.name == NULL */
-        memcpy(tmpres, fmt->font.name, flen);
-        sprintf(tmpres + flen, ":style=%s", param);
-        if (fmt->font.name) eina_stringshare_del(fmt->font.name);
-        fmt->font.name = eina_stringshare_add(tmpres);
-     }
-}
-
 /**
  * @internal
  * Parses the cmd and parameter and adds the parsed format to fmt.
@@ -1232,7 +1143,6 @@ _format_command_parse_font_weight_style(Evas_Object_Textblock_Format *fmt,
 static void
 _format_command(Evas_Object *obj, Evas_Object_Textblock_Format *fmt, const char *cmd, const char *param)
 {
-   int new_font = 0;
    int len;
    char *tmp_param;
 
@@ -1240,15 +1150,26 @@ _format_command(Evas_Object *obj, Evas_Object_Textblock_Format *fmt, const char 
    tmp_param = alloca(len + 1);
 
    _format_clean_param(tmp_param, param);
+
+   /* If we are changing the font, create the fdesc. */
+   if ((cmd == font_weightstr) || (cmd == font_stylestr) || (cmd == fontstr))
+     {
+        if (!fmt->font.fdesc)
+          {
+             fmt->font.fdesc = evas_font_desc_new();
+          }
+        else if (!fmt->font.fdesc->new)
+          {
+             Evas_Font_Description *old = fmt->font.fdesc;
+             fmt->font.fdesc = evas_font_desc_dup(fmt->font.fdesc);
+             if (old) evas_font_desc_unref(old);
+          }
+     }
+
+
    if (cmd == fontstr)
      {
-        if ((!fmt->font.name) ||
-              ((fmt->font.name) && (strcmp(fmt->font.name, tmp_param))))
-          {
-             if (fmt->font.name) eina_stringshare_del(fmt->font.name);
-             fmt->font.name = eina_stringshare_add(tmp_param);
-             new_font = 1;
-          }
+        evas_font_name_parse(fmt->font.fdesc, tmp_param);
      }
    else if (cmd == font_fallbacksstr)
      {
@@ -1260,7 +1181,6 @@ _format_command(Evas_Object *obj, Evas_Object_Textblock_Format *fmt, const char 
               */
              if (fmt->font.fallbacks) eina_stringshare_del(fmt->font.fallbacks);
              fmt->font.fallbacks = eina_stringshare_add(tmp_param);
-             new_font = 1;
           }
      }
    else if (cmd == font_sizestr)
@@ -1271,7 +1191,6 @@ _format_command(Evas_Object *obj, Evas_Object_Textblock_Format *fmt, const char 
         if (v != fmt->font.size)
           {
              fmt->font.size = v;
-             new_font = 1;
           }
      }
    else if (cmd == font_sourcestr)
@@ -1281,20 +1200,17 @@ _format_command(Evas_Object *obj, Evas_Object_Textblock_Format *fmt, const char 
           {
              if (fmt->font.source) eina_stringshare_del(fmt->font.source);
              fmt->font.source = eina_stringshare_add(tmp_param);
-             new_font = 1;
           }
      }
    if (cmd == font_weightstr)
      {
-        _format_command_parse_font_weight_style(fmt, tmp_param,
-              _style_weight_map, _STYLE_WEIGHT_MAP_LEN);
-        new_font = 1;
+        fmt->font.fdesc->weight = evas_font_style_find(tmp_param,
+              tmp_param + strlen(tmp_param), EVAS_FONT_STYLE_WEIGHT);
      }
    if (cmd == font_stylestr)
      {
-        _format_command_parse_font_weight_style(fmt, tmp_param,
-              _style_style_map, _STYLE_STYLE_MAP_LEN);
-        new_font = 1;
+        fmt->font.fdesc->slant = evas_font_style_find(tmp_param,
+              tmp_param + strlen(tmp_param), EVAS_FONT_STYLE_SLANT);
      }
    else if (cmd == colorstr)
      _format_color_parse(tmp_param,
@@ -1616,29 +1532,6 @@ _format_command(Evas_Object *obj, Evas_Object_Textblock_Format *fmt, const char 
         else if (!strcmp(tmp_param, "on"))
           fmt->password = 1;
      }
-
-   if (new_font)
-     {
-        void *of;
-        char *buf = NULL;
-
-        of = fmt->font.font;
-        if ((fmt->font.name) && (fmt->font.fallbacks))
-          {
-             buf = malloc(strlen(fmt->font.name) + 1 + strlen(fmt->font.fallbacks) + 1);
-             strcpy(buf, fmt->font.name);
-             strcat(buf, ",");
-             strcat(buf, fmt->font.fallbacks);
-          }
-        else if (fmt->font.name)
-          buf = strdup(fmt->font.name);
-
-        fmt->font.font = evas_font_load(obj->layer->evas,
-              buf, fmt->font.source,
-              (int)(((double)fmt->font.size) * obj->cur.scale));
-        if (buf) free(buf);
-        if (of) evas_font_free(obj->layer->evas, of);
-     }
 }
 
 /**
@@ -1796,22 +1689,14 @@ _format_dup(Evas_Object *obj, const Evas_Object_Textblock_Format *fmt)
    fmt2 = calloc(1, sizeof(Evas_Object_Textblock_Format));
    memcpy(fmt2, fmt, sizeof(Evas_Object_Textblock_Format));
    fmt2->ref = 1;
-   if (fmt->font.name) fmt2->font.name = eina_stringshare_add(fmt->font.name);
+   fmt2->font.fdesc = evas_font_desc_ref(fmt->font.fdesc);
+
    if (fmt->font.fallbacks) fmt2->font.fallbacks = eina_stringshare_add(fmt->font.fallbacks);
    if (fmt->font.source) fmt2->font.source = eina_stringshare_add(fmt->font.source);
 
-   if ((fmt2->font.name) && (fmt2->font.fallbacks))
-     {
-        buf = malloc(strlen(fmt2->font.name) + 1 + strlen(fmt2->font.fallbacks) + 1);
-        strcpy(buf, fmt2->font.name);
-        strcat(buf, ",");
-        strcat(buf, fmt2->font.fallbacks);
-     }
-   else if (fmt2->font.name)
-     buf = strdup(fmt2->font.name);
-   fmt2->font.font = evas_font_load(obj->layer->evas,
-         buf, fmt2->font.source,
-         (int)(((double)fmt2->font.size) * obj->cur.scale));
+   /* FIXME: just ref the font here... */
+   fmt2->font.font = evas_font_load(obj->layer->evas, fmt2->font.fdesc,
+         fmt2->font.source, (int)(((double) fmt2->font.size) * obj->cur.scale));
    if (buf) free(buf);
    return fmt2;
 }
@@ -3067,6 +2952,23 @@ _layout_format_item_add(Ctxt *c, Evas_Object_Textblock_Node_Format *n, const cha
 
 /**
  * @internal
+ * Should be call after we finish filling a format.
+ * FIXME: doc.
+ */
+static void
+_format_finalize(Evas_Object *obj, Evas_Object_Textblock_Format *fmt)
+{
+   void *of;
+
+   of = fmt->font.font;
+
+   fmt->font.font = evas_font_load(obj->layer->evas, fmt->font.fdesc,
+         fmt->font.source, (int)(((double) fmt->font.size) * obj->cur.scale));
+   if (of) evas_font_free(obj->layer->evas, of);
+}
+
+/**
+ * @internal
  * Returns true if the item is a tab
  * @def _IS_TAB(item)
  */
@@ -3253,6 +3155,7 @@ _layout_do_format(const Evas_Object *obj __UNUSED__, Ctxt *c,
                     }
                }
           }
+        _format_finalize(c->obj, fmt);
      }
 
      {
@@ -4222,6 +4125,7 @@ _layout(const Evas_Object *obj, int w, int h, int *w_ret, int *h_ret)
      {
         c->fmt = _layout_format_push(c, NULL, NULL);
         _format_fill(c->obj, c->fmt, c->o->style->default_tag);
+        _format_finalize(c->obj, c->fmt);
      }
    if (!c->fmt)
      {
