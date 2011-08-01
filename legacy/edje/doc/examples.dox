@@ -5,6 +5,7 @@
  *
  * @li @ref Example_Edje_Basics
  * @li @ref tutorial_edje_swallow
+ * @li @ref tutorial_edje_text
  */
 
 /**
@@ -150,4 +151,52 @@
  * The full source code follows:
  * @include edje-swallow.c
  * @example edje-swallow.c
+ */
+
+/**
+ * @page tutorial_edje_text Edje Text example
+ * @dontinclude edje-text.c
+ *
+ * This example shows how to manipulate TEXT and TEXTBLOCK parts from code.
+ *
+ * The very first we are going to do is register a callback to react to changes
+ * in the text of our parts:
+ * @skip _on_destroy
+ * @skip static void
+ * @until }
+ *
+ * @skipline text_change
+ * @note Since edje_obj represent a group we'll be notified whenever any part's
+ * text in that group changes.
+ *
+ * We now set the text for two our two parts:
+ * @until text_set
+ * @until text_set
+ * @note Since the "part_two" part is a TEXTBLOCK we can use formatting such as
+ * @<b@>
+ *
+ * And we now move on to selection issues, first thing we do is make sure the
+ * user can select text:
+ * @until select_allow
+ *
+ * We then select the entire text, and print the selected text:
+ * @until printf
+ *
+ * We now unselect the entire text(set selection to none), and print the
+ * selected text:
+ * @until printf
+ *
+ * Our example will look like this:
+ *
+ * @image html edje-text.png
+ * @image rtf edje-text.png
+ * @image latex edje-text.eps
+ *
+ * The full source code follows:
+ * @include edje-text.c
+ * @example edje-text.c
+ *
+ * The theme used in this example is:
+ * @include text.edc
+ * @example text.edc
  */

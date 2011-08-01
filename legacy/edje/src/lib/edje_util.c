@@ -1046,11 +1046,6 @@ _edje_object_part_text_raw_append(Evas_Object *obj, Edje_Real_Part *rp, const ch
    return EINA_TRUE;
 }
 
-/** Sets the text for an object part
- * @param obj A valid Evas Object handle
- * @param part The part name
- * @param text The text string
- */
 EAPI Eina_Bool
 edje_object_part_text_set(Evas_Object *obj, const char *part, const char *text)
 {

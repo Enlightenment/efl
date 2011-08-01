@@ -4,7 +4,8 @@ pkglibdir = $(datadir)/$(PACKAGE)/examples
 
 #put here all EDCs one needs to the examples
 EDCS = basic.edc \
-	swallow.edc
+	swallow.edc \
+	text.edc
 
 filesdir = $(datadir)/$(PACKAGE)/examples
 files_DATA =
@@ -27,7 +28,8 @@ AM_CPPFLAGS += @ECORE_EVAS_CFLAGS@
 
 pkglib_PROGRAMS += \
 	edje-basic \
-	edje-swallow
+	edje-swallow \
+	edje-text
 
 LDADD = $(top_builddir)/src/lib/libedje.la @ECORE_EVAS_LIBS@
 
@@ -48,10 +50,12 @@ files_DATA += $(srcdir)/red.png
 files_DATA += \
 	$(EDCS) \
 	$(srcdir)/edje-basic.c \
-	$(srcdir)/edje-swallow.c
+	$(srcdir)/edje-swallow.c \
+	$(srcdir)/edje-text.c \
 endif
 
 EXTRA_DIST = $(EDCS) \
 	$(srcdir)/red.png \
 	$(srcdir)/edje-basic.c \
-	$(srcdir)/edje-swallow.c
+	$(srcdir)/edje-swallow.c \
+	$(srcdir)/edje-text.c

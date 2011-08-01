@@ -2324,16 +2324,13 @@ EAPI void         edje_object_item_provider_set       (Evas_Object *obj, Edje_It
  * @param func The callback function to handle the text change
  * @param data The data associated to the callback function.
  *
- * This function gets the geometry of an Edje part
- *
- * It is valid to pass NULL as any of @a x, @a y, @a w or @a h, whose
- * values you are uninterested in.
- *
+ * This function sets the callback to be called when the text changes.
  */
 EAPI void         edje_object_text_change_cb_set      (Evas_Object *obj, Edje_Text_Change_Cb func, void *data);
 
 /**
- * Sets the text for an object part
+ * @brief Sets the text for an object part
+ *
  * @param obj A valid Evas Object handle
  * @param part The part name
  * @param text The text string
@@ -2350,6 +2347,7 @@ EAPI Eina_Bool    edje_object_part_text_set           (Evas_Object *obj, const c
  *
  * This function returns the text associated to the object part.
  *
+ * @see edje_object_part_text_set().
  */
 EAPI const char  *edje_object_part_text_get           (const Evas_Object *obj, const char *part);
 
@@ -2360,12 +2358,10 @@ EAPI const char  *edje_object_part_text_get           (const Evas_Object *obj, c
  * @param part The part name
  * @param text_to_escape The text string
  *
- * This funciton will do escape for you if it is a TEXTBLOCK part,
- * that is, if text contain tags, these tags will not be
- * interpreted/parsed by TEXTBLOCK.
+ * This funciton will not do escape for you if it is a TEXTBLOCK part, that is,
+ * if text contain tags, these tags will not be interpreted/parsed by TEXTBLOCK.
  *
  * @see edje_object_part_text_unescaped_get().
- *
  */
 EAPI Eina_Bool    edje_object_part_text_unescaped_set (Evas_Object *obj, const char *part, const char *text_to_escape);
 
@@ -2383,7 +2379,6 @@ EAPI Eina_Bool    edje_object_part_text_unescaped_set (Evas_Object *obj, const c
  * when done.
  *
  * @see edje_object_part_text_unescaped_set().
- *
  */
 EAPI char        *edje_object_part_text_unescaped_get (const Evas_Object *obj, const char *part);
 
@@ -2396,6 +2391,8 @@ EAPI char        *edje_object_part_text_unescaped_get (const Evas_Object *obj, c
  *
  * This function returns selection text of the object part.
  *
+ * @see edje_object_part_text_select_all()
+ * @see edje_object_part_text_select_none()
  */
 EAPI const char      *edje_object_part_text_selection_get           (const Evas_Object *obj, const char *part);
 
@@ -2406,7 +2403,6 @@ EAPI const char      *edje_object_part_text_selection_get           (const Evas_
  * @param part The part name
  *
  * This function sets the selection text to be none.
- *
  */
 EAPI void             edje_object_part_text_select_none             (const Evas_Object *obj, const char *part);
 
@@ -2417,7 +2413,6 @@ EAPI void             edje_object_part_text_select_none             (const Evas_
  * @param part The part name
  *
  * This function selects all text of the object of the part.
- *
  */
 EAPI void             edje_object_part_text_select_all              (const Evas_Object *obj, const char *part);
 
@@ -2530,6 +2525,10 @@ EAPI void             edje_object_part_text_cursor_geometry_get     (const Evas_
  * @param obj A valid Evas_Object handle
  * @param part The part name
  * @param allow EINA_TRUE to enable, EINA_FALSE otherwise
+ *
+ * The default is to @b not allow selection. This function only affects user
+ * selection, functions such as edje_object_part_text_select_all() and
+ * edje_object_part_text_select_none() are not affected.
  */
 EAPI void             edje_object_part_text_select_allow_set        (const Evas_Object *obj, const char *part, Eina_Bool allow);
 
