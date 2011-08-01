@@ -254,13 +254,6 @@ evas_load_fontconfig(Evas *evas, FcFontSet *set, int size,
 }
 #endif
 
-struct _FcPattern {   
-   int             num;
-   int             size;
-   intptr_t        elts_offset;
-   int             ref;
-};
-
 #ifdef HAVE_FONTCONFIG
 /* In sync with Evas_Font_Style, Evas_Font_Weight and Evas_Font_Width */
 static int _fc_slant_map[] =
