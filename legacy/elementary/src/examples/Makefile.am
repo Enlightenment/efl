@@ -64,6 +64,7 @@ SRCS = \
 	toolbar_example_03.c \
 	spinner_example.c \
 	clock_example.c \
+	mapbuf_example.c \
 	conformant_example_01.c \
 	conformant_example_02.c \
 	image_example_01.c \
@@ -163,6 +164,7 @@ pkglib_PROGRAMS += \
 	toolbar_example_03 \
 	spinner_example \
 	clock_example \
+	mapbuf_example \
 	conformant_example_01 \
 	conformant_example_02 \
 	image_example_01 \
@@ -241,6 +243,7 @@ SCREENSHOTS = \
 	toolbar_example_03:toolbar_example_03.png:1 \
 	spinner_example:spinner_example.png:0.0 \
 	clock_example:clock_example.png:0.5 \
+	mapbuf_example:mapbuf_example.png:0.0 \
 	image_example_01:image_example_01.png:0.0 \
 	diskselector_example_01:diskselector_example_01.png:0.2 \
 	diskselector_example_02:diskselector_example_02.png:0.2 \

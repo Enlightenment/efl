@@ -39,6 +39,8 @@
  *
  * @ref clock_example
  *
+ * @ref mapbuf_example
+ *
  * @ref diskselector_example_01
  *
  * @ref diskselector_example_02
@@ -1763,6 +1765,88 @@
  * See the full @ref clock_example_c "source code" for this example.
  *
  * @example clock_example.c
+ */
+
+/**
+ * @page mapbuf_example Mapbuf Widget Example
+ *
+ * This code places a Elementary mapbuf widget on a window,
+ * to exemplify part of the widget's API.
+ *
+ * First we'll add an window with a background and a vertical box to
+ * pack our interface elements:
+ * @dontinclude mapbuf_example.c
+ * @skipline win_add
+ * @until show(bx)
+ *
+ * Next we'll simply add the mapbuf widget to the box:
+ * @skipline mapbuf_add
+ * @until pack_end
+ *
+ * But mapbuf is a container widget, it won't do anything alone. So let's
+ * create a table full of icons. For that we'll loop to fill each line of each
+ * column. See @ref tutorial_table_01 "tutorial_table_01"
+ * if you don't know how to use tables:
+ * @skipline table_add
+ * @until }
+ * @until }
+ *
+ * Finally, setting mapbuf content:
+ * @skipline content_set
+ * @skipline show
+ *
+ * Also, would be good a horizontal box with some controls to change mapbuf
+ * behavior:
+ * @skipline box_add
+ * @until show
+ *
+ * By default map is disabled. So just setting content isn't enough.
+ * Alpha and smooth settings will be applied when map is enabled.
+ * So we'll add a toggle for that. Everytime the map properties
+ * are changed, map will need to be enabled again. So if you
+ * want to play a bit with our example, remember to always enable
+ * map again after concluding your changes.
+ * @skipline toggle_add
+ * @until show
+ *
+ * We have added a callback function to this toggle, so it will enable
+ * or disable map:
+ * @dontinclude mapbuf_example.c
+ * @skip static
+ * @skip }
+ * @skipline static
+ * @until }
+ *
+ * Let's add check boxes for alpha blending and smooth rendering:
+ * @skipline check_add
+ * @until show
+ * @until show
+ *
+ * By default, mapbuf would enable alpha blending and smooth rendering,
+ * so we need to check boxes to be consistent with its behavior.
+ *
+ * Callback functions look like the one added to the toggle. This way we
+ * could enable or disable the both properties:
+ * @dontinclude mapbuf_example.c
+ * @skip static
+ * @skip }
+ * @skip static
+ * @skip }
+ * @skipline static
+ * @until }
+ * @until }
+ *
+ * You'll see that disabling alpha blending will set a black rectangle below
+ * the icons. That's the reason you only should enable that when you're sure
+ * the mapbuf content is 100% solid.
+ *
+ * See @ref mapbuf_example.c "mapbuf_example.c", whose window should
+ * look like this picture:
+ *
+ * @image html screenshots/mapbuf_example.png
+ * @image latex screenshots/mapbuf_example.eps width=\textwidth
+ *
+ * @example mapbuf_example.c
  */
 
 /**

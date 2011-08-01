@@ -1,12 +1,6 @@
 #include <Elementary.h>
 #include "elm_priv.h"
 
-/**
- * @defgroup Mapbuf Mapbuf
- *
- * This holds 1 content object and uses an Evas Map to move/resize etc. it.
- */
-
 typedef struct _Widget_Data Widget_Data;
 
 struct _Widget_Data
@@ -152,14 +146,6 @@ _resize(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, 
    _configure(data);
 }
 
-/**
- * Add a new mapbuf to the parent
- *
- * @param parent The parent object
- * @return The new object or NULL if it cannot be created
- *
- * @ingroup Mapbuf
- */
 EAPI Evas_Object *
 elm_mapbuf_add(Evas_Object *parent)
 {
@@ -196,18 +182,6 @@ elm_mapbuf_add(Evas_Object *parent)
    return obj;
 }
 
-/**
- * Set the mapbuf front content
- *
- * Once the content object is set, a previously set one will be deleted.
- * If you want to keep that old content object, use the
- * elm_mapbuf_content_unset() function.
- *
- * @param obj The mapbuf object
- * @param content The content will be filled in this mapbuf object
- *
- * @ingroup Mapbuf
- */
 EAPI void
 elm_mapbuf_content_set(Evas_Object *obj, Evas_Object *content)
 {
@@ -234,16 +208,6 @@ elm_mapbuf_content_set(Evas_Object *obj, Evas_Object *content)
    _configure(obj);
 }
 
-/**
- * Get the mapbuf front content
- *
- * Return the content object which is set for this widget.
- *
- * @param obj The mapbuf object
- * @return The content that is being used
- *
- * @ingroup Mapbuf
- */
 EAPI Evas_Object *
 elm_mapbuf_content_get(const Evas_Object *obj)
 {
@@ -253,16 +217,6 @@ elm_mapbuf_content_get(const Evas_Object *obj)
    return wd->content;
 }
 
-/**
- * Unset the mapbuf front content
- *
- * Unparent and return the content object which was set for this widget.
- *
- * @param obj The mapbuf object
- * @return The content that was being used
- *
- * @ingroup Mapbuf
- */
 EAPI Evas_Object *
 elm_mapbuf_content_unset(Evas_Object *obj)
 {
@@ -281,14 +235,6 @@ elm_mapbuf_content_unset(Evas_Object *obj)
    return content;
 }
 
-/**
- * Set the mapbuf enabled state
- *
- * @param obj The mapbuf object
- * @param enabled The value to set the enabled state to
- *
- * @ingroup Mapbuf
- */
 EAPI void
 elm_mapbuf_enabled_set(Evas_Object *obj, Eina_Bool enabled)
 {
@@ -301,14 +247,6 @@ elm_mapbuf_enabled_set(Evas_Object *obj, Eina_Bool enabled)
    _configure(obj);
 }
 
-/**
- * Get the mapbuf enabled state
- *
- * @param obj The mapbuf object
- * @return The value that the enabled state is set to
- *
- * @ingroup Mapbuf
- */
 EAPI Eina_Bool
 elm_mapbuf_enabled_get(const Evas_Object *obj)
 {
@@ -318,14 +256,6 @@ elm_mapbuf_enabled_get(const Evas_Object *obj)
    return wd->enabled;
 }
 
-/**
- * Sets the mapbuf smooth state
- *
- * @param obj The mapbuf object
- * @param smooth The value of the smooth state of @p obj
- *
- * @ingroup Mapbuf
- */
 EAPI void
 elm_mapbuf_smooth_set(Evas_Object *obj, Eina_Bool smooth)
 {
@@ -337,14 +267,6 @@ elm_mapbuf_smooth_set(Evas_Object *obj, Eina_Bool smooth)
    _configure(obj);
 }
 
-/**
- * Gets the mapbuf smooth state
- *
- * @param obj The mapbuf object
- * @return The value of the smooth state of @p obj
- *
- * @ingroup Mapbuf
- */
 EAPI Eina_Bool
 elm_mapbuf_smooth_get(const Evas_Object *obj)
 {
@@ -354,14 +276,6 @@ elm_mapbuf_smooth_get(const Evas_Object *obj)
    return wd->smooth;
 }
 
-/**
- * Enables/disables the mapbuf alpha channel
- *
- * @param obj The mapbuf object
- * @param alpha The state of the alpha channel
- *
- * @ingroup Mapbuf
- */
 EAPI void
 elm_mapbuf_alpha_set(Evas_Object *obj, Eina_Bool alpha)
 {
@@ -373,14 +287,6 @@ elm_mapbuf_alpha_set(Evas_Object *obj, Eina_Bool alpha)
    _configure(obj);
 }
 
-/**
- * Gets the state of the mapbuf alpha channel
- *
- * @param obj The mapbuf object
- * @return The state of the alpha channel
- *
- * @ingroup Mapbuf
- */
 EAPI Eina_Bool
 elm_mapbuf_alpha_get(const Evas_Object *obj)
 {

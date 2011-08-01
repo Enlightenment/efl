@@ -137,6 +137,9 @@
  * @image latex img/widget/label/preview-00.eps
  * @li @ref Map
  * @li @ref Mapbuf
+ *
+ * @image html img/widget/mapbuf/preview-00.png
+ * @image latex img/widget/mapbuf/preview-00.eps
  * @li @ref Menu
  *
  * @image html img/widget/menu/preview-00.png
