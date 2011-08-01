@@ -3,8 +3,8 @@
  *
  * Here is a page with examples.
  *
- * @ref Example_Edje_Basics
- * @ref tutorial_edje_swallow
+ * @li @ref Example_Edje_Basics
+ * @li @ref tutorial_edje_swallow
  */
 
 /**
