@@ -6,7 +6,8 @@ pkglibdir = $(datadir)/$(PACKAGE)/examples
 EDCS = basic.edc \
 	swallow.edc \
 	text.edc \
-	table.edc
+	table.edc \
+	signals-messages.edc
 
 filesdir = $(datadir)/$(PACKAGE)/examples
 files_DATA =
@@ -31,7 +32,8 @@ pkglib_PROGRAMS += \
 	edje-basic \
 	edje-swallow \
 	edje-text \
-	edje-table
+	edje-table \
+	edje-signals-messages
 
 LDADD = $(top_builddir)/src/lib/libedje.la @ECORE_EVAS_LIBS@
 
@@ -54,7 +56,8 @@ files_DATA += \
 	$(srcdir)/edje-basic.c \
 	$(srcdir)/edje-swallow.c \
 	$(srcdir)/edje-text.c \
-	$(srcdir)/edje-table.c
+	$(srcdir)/edje-table.c \
+	$(srcdir)/edje-signals-messages.c
 endif
 
 EXTRA_DIST = $(EDCS) \
@@ -62,4 +65,5 @@ EXTRA_DIST = $(EDCS) \
 	$(srcdir)/edje-basic.c \
 	$(srcdir)/edje-swallow.c \
 	$(srcdir)/edje-text.c \
-	$(srcdir)/edje-table.c
+	$(srcdir)/edje-table.c \
+	$(srcdir)/edje-signals-messages.c

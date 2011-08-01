@@ -449,6 +449,7 @@ part of Edje's API:
 - @ref Example_Edje_Basics
 - @ref tutorial_edje_swallow
 - @ref tutorial_edje_table
+- @ref Example_Edje_Signals_Messages
 
 
 
@@ -583,25 +584,32 @@ extern "C" {
  * These routines are used for Edje.
  */
 
+/**
+ * Identifiers of Edje message types, which can be sent back and forth
+ * code and a given Edje object's theme file/group.
+ *
+ * @see edje_object_message_send()
+ * @see edje_object_message_handler_set()
+ */
 typedef enum _Edje_Message_Type
 {
    EDJE_MESSAGE_NONE = 0,
 
    EDJE_MESSAGE_SIGNAL = 1, /* DONT USE THIS */
 
-   EDJE_MESSAGE_STRING = 2,
-   EDJE_MESSAGE_INT = 3,
-   EDJE_MESSAGE_FLOAT = 4,
+   EDJE_MESSAGE_STRING = 2, /**< A message with a string as value. Use #Edje_Message_String structs as message body, for this type. */
+   EDJE_MESSAGE_INT = 3, /**< A message with an integer number as value. Use #Edje_Message_Int structs as message body, for this type. */
+   EDJE_MESSAGE_FLOAT = 4, /**< A message with a floating pointer number as value. Use #Edje_Message_Float structs as message body, for this type. */
 
-   EDJE_MESSAGE_STRING_SET = 5,
-   EDJE_MESSAGE_INT_SET = 6,
-   EDJE_MESSAGE_FLOAT_SET = 7,
+   EDJE_MESSAGE_STRING_SET = 5, /**< A message with a list of strings as value. Use #Edje_Message_String_Set structs as message body, for this type. */
+   EDJE_MESSAGE_INT_SET = 6, /**< A message with a list of integer numbers as value. Use #Edje_Message_Int_Set structs as message body, for this type. */
+   EDJE_MESSAGE_FLOAT_SET = 7, /**< A message with a list of floating point numbers as value. Use #Edje_Message_Float_Set structs as message body, for this type. */
 
-   EDJE_MESSAGE_STRING_INT = 8,
-   EDJE_MESSAGE_STRING_FLOAT = 9,
+   EDJE_MESSAGE_STRING_INT = 8, /**< A message with a struct containing a string and an integer number as value. Use #Edje_Message_String_Int structs as message body, for this type. */
+   EDJE_MESSAGE_STRING_FLOAT = 9, /**< A message with a struct containing a string and a floating point number as value. Use #Edje_Message_String_Float structs as message body, for this type. */
 
-   EDJE_MESSAGE_STRING_INT_SET = 10,
-   EDJE_MESSAGE_STRING_FLOAT_SET = 11
+   EDJE_MESSAGE_STRING_INT_SET = 10, /**< A message with a struct containing a string and list of integer numbers as value. Use #Edje_Message_String_Int_Set structs as message body, for this type. */
+   EDJE_MESSAGE_STRING_FLOAT_SET = 11 /**< A message with a struct containing a string and list of floating point numbers as value. Use #Edje_Message_String_Float_Set structs as message body, for this type. */
 } Edje_Message_Type;
 
 typedef enum _Edje_Aspect_Control
@@ -728,62 +736,62 @@ typedef struct _Edje_Message_String_Float_Set Edje_Message_String_Float_Set;
 
 struct _Edje_Message_String
 {
-   char *str;
-};
+   char *str; /**< The message's string pointer */
+}; /**< Structure passed as value on #EDJE_MESSAGE_STRING messages. The string in it is automatically freed be Edje */
 
 struct _Edje_Message_Int
 {
-   int val;
-};
+   int val; /**< The message's value */
+}; /**< Structure passed as value on #EDJE_MESSAGE_INT messages */
 
 struct _Edje_Message_Float
 {
-   double val;
-};
+   double val; /**< The message's value */
+}; /**< Structure passed as value on #EDJE_MESSAGE_FLOAT messages */
 
 struct _Edje_Message_String_Set
 {
-   int count;
-   char *str[1];
-};
+   int count; /**< The size of the message's array (may be greater than 1) */
+   char *str[1]; /**< The message's @b array of string pointers */
+}; /**< Structure passed as value on #EDJE_MESSAGE_STRING_SET messages. The array in it is automatically freed be Edje */
 
 struct _Edje_Message_Int_Set
 {
-   int count;
-   int val[1];
-};
+   int count; /**< The size of the message's array (may be greater than 1) */
+   int val[1]; /**< The message's @b array of integers */
+}; /**< Structure passed as value on #EDJE_MESSAGE_INT_SET messages. The array in it is automatically freed be Edje */
 
 struct _Edje_Message_Float_Set
 {
-   int count;
-   double val[1];
-};
+   int count; /**< The size of the message's array (may be greater than 1) */
+   double val[1]; /**< The message's @b array of floats */
+}; /**< Structure passed as value on #EDJE_MESSAGE_FLOAT_SET messages. The array in it is automatically freed be Edje */
 
 struct _Edje_Message_String_Int
 {
-   char *str;
-   int val;
-};
+   char *str; /**< The message's string value */
+   int val; /**< The message's integer value */
+}; /**< Structure passed as value on #EDJE_MESSAGE_STRING_INT messages */
 
 struct _Edje_Message_String_Float
 {
-   char *str;
-   double val;
-};
+   char *str; /**< The message's string value */
+   double val; /**< The message's float value */
+}; /**< Structure passed as value on #EDJE_MESSAGE_STRING_FLOAT messages */
 
 struct _Edje_Message_String_Int_Set
 {
-   char *str;
-   int count;
-   int val[1];
-};
+   char *str; /**< The message's string value */
+   int count; /**< The size of the message's array (may be greater than 1) */
+   int val[1]; /**< The message's @b array of integers */
+}; /**< Structure passed as value on #EDJE_MESSAGE_STRING_INT_SET messages */
 
 struct _Edje_Message_String_Float_Set
 {
-   char *str;
-   int count;
-   double val[1];
-};
+   char *str; /**< The message's string value */
+   int count; /**< The size of the message's array (may be greater than 1) */
+   double val[1]; /**< The message's @b array of floats */
+}; /**< Structure passed as value on #EDJE_MESSAGE_STRING_FLOAT_SET messages */
 
 typedef enum _Edje_Drag_Dir
 {
@@ -1034,9 +1042,9 @@ struct _Edje_External_Type_Info
 };
 typedef struct _Edje_External_Type_Info Edje_External_Type_Info;
 
-typedef void         (*Edje_Signal_Cb)          (void *data, Evas_Object *obj, const char *emission, const char *source);
+typedef void         (*Edje_Signal_Cb)          (void *data, Evas_Object *obj, const char *emission, const char *source); /**< Edje signal callback functions's prototype definition. @c data will have the auxiliary data pointer set at the time the callback registration. @c obj will be a pointer the Edje object where the signal comes from. @c emission will identify the exact signal's emission string and @c source the exact signal's source one. */
 typedef void         (*Edje_Text_Change_Cb)     (void *data, Evas_Object *obj, const char *part);
-typedef void         (*Edje_Message_Handler_Cb) (void *data, Evas_Object *obj, Edje_Message_Type type, int id, void *msg);
+typedef void         (*Edje_Message_Handler_Cb) (void *data, Evas_Object *obj, Edje_Message_Type type, int id, void *msg); /**< Edje message handler callback functions's prototype definition. @c data will have the auxiliary data pointer set at the time the callback registration. @c obj will be a pointer the Edje object where the message comes from. @c type will identify the type of the given message and @c msg will be a pointer the message's contents, de facto, which depend on @c type. */
 typedef void         (*Edje_Text_Filter_Cb)     (void *data, Evas_Object *obj, const char *part, Edje_Text_Filter_Type type, char **text);
 typedef Evas_Object *(*Edje_Item_Provider_Cb)   (void *data, Evas_Object *obj, const char *part, const char *item);
 
@@ -1769,52 +1777,64 @@ EAPI const char      *edje_load_error_str         (Edje_Load_Error error);
 EAPI Eina_Bool        edje_object_preload         (Evas_Object *obj, Eina_Bool cancel);
 
 /**
- * @brief Add a callback for a signal emitted by @a obj.
+ * @brief Add a callback for an arriving Edje signal, emitted by
+ * a given Ejde object.
  *
- * @param obj A valid Evas_Object handle.
- * @param emission The signal's name.
- * @param source The signal's source.
+ * @param obj A handle to an Edje object
+ * @param emission The signal's "emission" string
+ * @param source The signal's "source" string
  * @param func The callback function to be executed when the signal is
  * emitted.
- * @param data A pointer to data to pass in to the callback function.
+ * @param data A pointer to data to pass in to @p func.
  *
- * Connects a callback function to a signal emitted by @a obj.
- * In EDC, a program can emit a signal as follows:
+ * Edje signals are one of the communication interfaces between
+ * @b code and a given Edje object's @b theme. With signals, one can
+ * communicate two string values at a time, which are:
+ * - "emission" value: the name of the signal, in general
+ * - "source" value: a name for the signal's context, in general
  *
+ * Though there are those common uses for the two strings, one is free
+ * to use them however they like.
+ *
+ * This function adds a callback function to a signal emitted by @a obj, to
+ * be issued every time an EDC program like the following
  * @code
  * program {
  *   name: "emit_example";
  *   action: SIGNAL_EMIT "a_signal" "a_source";
  * }
  * @endcode
+ * is run, if @p emission and @p source are given those same values,
+ * here.
  *
- * Assuming a function with the following declaration is definded:
+ * Signal callback registration is powerful, in the way that @b blobs
+ * may be used to match <b>multiple signals at once</b>. All the @c
+ * "*?[\" set of @c fnmatch() operators can be used, both for @p
+ * emission and @p source.
  *
+ * Edje has @b internal signals it will emit, automatically, on
+ * various actions taking place on group parts. For example, the mouse
+ * cursor being moved, pressed, released, etc., over a given part's
+ * area, all generate individual signals.
+ *
+ * By using something like
  * @code
- * void cb_signal(void *data, Evas_Object *o, const char *emission, const char *source);
+ * edje_object_signal_callback_add(obj, "mouse,down,*", "button.*",
+ *                                 signal_cb, NULL);
  * @endcode
+ * being @c "button.*" the pattern for the names of parts implementing
+ * buttons on an interface, you'd be registering for notifications on
+ * events of mouse buttons being pressed down on either of those parts
+ * (those events all have the @c "mouse,down," common prefix on their
+ * names, with a suffix giving the button number). The actual emisson
+ * and source strings of an event will be passed in as the @a emission
+ * and @a source parameters of the callback function (e.g. @c
+ * "mouse,down,2" and @c "button.close"), for each of those events.
  *
- * a callback is attached using:
- *
- * @code
- * edje_object_signal_callback_add(obj, "a_signal", "a_source", cb_signal, data);
- * @endcode
- *
- * Here, @a data is an arbitrary pointer to be used as desired.  Note
- * that @a emission and @a source correspond respectively to the first
- * and the second parameters at the SIGNAL_EMIT action.
- *
- * Internal edje signals can also be attached to, and globs can occur
- * in either the emission or source name, e.g.
- *
- * @code
- * edje_object_signal_callback_add(obj, "mouse,down,*", "button.*", NULL);
- * @endcode
- *
- * Here, any mouse down events on an edje part whose name begins with
- * "button." will trigger the callback. The actual signal and source
- * names will be passed in to the @a emission and @a source parameters
- * of the callback function (e.g. "mouse,down,2" and "button.close").
+ * @note See @ref edcref "the syntax" for EDC files
+ * @see edje_object_signal_emit() on how to emits Edje signals from
+ * code to a an object
+ * @see edje_object_signal_callback_del_full()
  */
 EAPI void         edje_object_signal_callback_add (Evas_Object *obj, const char *emission, const char *source, Edje_Signal_Cb func, void *data);
 
@@ -1840,20 +1860,23 @@ EAPI void         edje_object_signal_callback_add (Evas_Object *obj, const char 
 EAPI void        *edje_object_signal_callback_del (Evas_Object *obj, const char *emission, const char *source, Edje_Signal_Cb func);
 
 /**
- * @brief Remove a signal-triggered callback from an object.
+ * @brief Unregister/delete a callback set for an arriving Edje
+ * signal, emitted by a given Ejde object.
  *
- * @param obj A valid Evas_Object handle.
- * @param emission The emission string.
- * @param source The source string.
- * @param func The callback function.
- * @param data The user data passed to the callback.
- * @return The data pointer
+ * @param obj A handle to an Edje object
+ * @param emission The signal's "emission" string
+ * @param source The signal's "source" string
+ * @param func The callback function passed on the callback's
+ * registration
+ * @param data The pointer given to be passed as data to @p func
+ * @return @p data, on success or @c NULL, on errors (or if @p data
+ * had this value)
  *
  * This function removes a callback, previously attached to the
- * emittion of a signal, from the object @a obj. The parameters @a
- * emission, @a sourcei, @a func and @a data must match exactly those
- * passed to a previous call to edje_object_signal_callback_add(). The data
- * pointer that was passed to this call will be returned.
+ * emittion of a signal, from the object @a obj. The parameters
+ * @a emission, @a source, @a func and @a data must match exactly those
+ * passed to a previous call to edje_object_signal_callback_add(). The
+ * data pointer that was passed to this call will be returned.
  *
  * @see edje_object_signal_callback_add().
  * @see edje_object_signal_callback_del().
@@ -1862,22 +1885,22 @@ EAPI void        *edje_object_signal_callback_del (Evas_Object *obj, const char 
 EAPI void        *edje_object_signal_callback_del_full(Evas_Object *obj, const char *emission, const char *source, Edje_Signal_Cb func, void *data);
 
 /**
- * @brief Send a signal to an edje object.
+ * @brief Send/emit an Edje signal to a given Edje object
  *
- * @param obj A valid Evas_Object handle.
- * @param emission The signal's name.
- * @param source The signal's source.
+ * @param obj A handle to an Edje object
+ * @param emission The signal's "emission" string
+ * @param source The signal's "source" string
  *
- * This function sends a signal to the object @a obj. An edje program
- * can respond to a signal by specifying matching 'signal' and
- * 'source' fields.
+ * This function sends a signal to the object @a obj. An Edje program,
+ * at @p obj's EDC specification level, can respond to a signal by
+ * having declared matching @c 'signal' and @c 'source' fields on its
+ * block (see @ref edcref "the syntax" for EDC files).
  *
+ * As an example,
  * @code
  * edje_object_signal_emit(obj, "a_signal", "");
  * @endcode
- *
- * will trigger a program whose EDC block is:
- *
+ * would trigger a program which had an EDC declaration block like
  * @code
  * program {
  *  name: "a_program";
@@ -1887,7 +1910,7 @@ EAPI void        *edje_object_signal_callback_del_full(Evas_Object *obj, const c
  * }
  * @endcode
  *
- * FIXME: should this signal be sent to children also?
+ * @see edje_object_signal_callback_add() for more on Edje signals.
  */
 EAPI void         edje_object_signal_emit         (Evas_Object *obj, const char *emission, const char *source);
 
@@ -3232,35 +3255,52 @@ EAPI Eina_Bool    edje_object_part_table_col_row_size_get (const Evas_Object *ob
 EAPI Eina_Bool    edje_object_part_table_clear            (Evas_Object *obj, const char *part, Eina_Bool clear);
 
 /**
- * @brief Send message to object.
+ * @brief Send an (Edje) message to a given Edje object
  *
- * @param obj The edje object reference.
- * @param type The type of message to send.
- * @param id A identification number for the message.
- * @param msg The message to be send.
+ * @param obj A handle to an Edje object
+ * @param type The type of message to send to @p obj
+ * @param id A identification number for the message to be sent
+ * @param msg The message's body, a struct depending on @p type
  *
+ * This function sends an Edje message to @p obj and to all of its
+ * child objects, if it has any (swallowed objects are one kind of
+ * child object). @p type and @p msg @b must be matched accordingly,
+ * as documented in #Edje_Message_Type.
  *
- * This function sends messages to this object and to all of its child
- * objects, if applicable. The function that handles messages arriving
- * at this edje object is is set with
+ * The @p id argument as a form of code and theme defining a common
+ * interface on message communication. One should define the same IDs
+ * on both code and EDC declaration (see @ref edcref "the syntax" for
+ * EDC files), to individualize messages (binding them to a given
+ * context).
+ *
+ * The function to handle messages arriving @b from @b obj is set with
  * edje_object_message_handler_set().
- *
- * @see edje_object_message_handler_set()
- *
  */
 EAPI void         edje_object_message_send                (Evas_Object *obj, Edje_Message_Type type, int id, void *msg);
 
 /**
- * @brief Set the message handler function for this an object.
+ * @brief Set an Edje message handler function for a given Edje object.
  *
- * @param obj The edje object reference.
- * @param func The function to handle messages.
- * @param data The data to be associated to the message handler.
+ * @param obj A handle to an Edje object
+ * @param func The function to handle messages @b coming from @p obj
+ * @param data Auxiliary data to be passed to @p func
  *
+ * Edje messages are one of the communication interfaces between
+ * @b code and a given Edje object's @b theme. With messages, one can
+ * communicate values beyond strings (which are the subject of Edje
+ * signals -- see edje_object_signal_emit()), like float and integer
+ * numbers. Moreover, messages can be identified by integer
+ * numbers. See #Edje_Message_Type for the full list of message types.
  *
- * This function associates a message handler function and data to the
- * edje object.
+ * For scriptable programs on an Edje object's defining EDC file which
+ * send messages with the @c send_message() primitive, one can attach
+ * <b>handler functions</b>, to be called in the code which creates
+ * that object (see @ref edcref "the syntax" for EDC files).
  *
+ * This function associates a message handler function and the
+ * attached data pointer to the object @p obj.
+ *
+ * @see edje_object_message_send()
  */
 EAPI void         edje_object_message_handler_set         (Evas_Object *obj, Edje_Message_Handler_Cb func, void *data);
 

@@ -6,7 +6,8 @@
  * @li @ref Example_Edje_Basics
  * @li @ref tutorial_edje_swallow
  * @li @ref tutorial_edje_text
- * @li@ref tutorial_edje_table
+ * @li @ref tutorial_edje_table
+ * @li @ref Example_Edje_Signals_Messages
  */
 
 /**
@@ -256,4 +257,125 @@
  * The full source code follows:
  * @include edje-table.c
  * @example edje-table.c
+ */
+
+/**
+ * @page Example_Edje_Signals_Messages Edje signals and messages
+ *
+ * In this example, we illustrate how Edje signals and Edje messages
+ * work.
+ *
+ * We place, in the canvas, an Edje object along with a @b red border
+ * image to delimit its geometry. The object's group definition is so
+ * that we have four parts:
+ * - a blue rectangle, aligned to the right
+ * - a white rectangle, aligned to the left
+ * - a text part, aligned to the center
+ * - a clipper rectangle on the blue rectangle
+ *
+ * The left rectangle is bound to a <b>color class</b>, so that we can
+ * multiply its colors by chosen values on the go:
+ * @dontinclude signals-messages.edc
+ * @until visible
+ * @until }
+ * @until }
+ * @until }
+ *
+ * The @c #define's on the beginning will serve as message
+ * identifiers, for our accorded message interface between the code
+ * and the this theme file.
+ *
+ * Let's move to the code, then. After instantiating the Edje object,
+ * we register two <b>signal callbacks</b> on it. The first one uses
+ * @b globbing, making all of the wheel mouse actions over the left
+ * rectangle to trigger @c _mouse_wheel_cb. Note that those kind of
+ * signals are generated @b internally (and automatically) in Edje. The
+ * second is a direct signal match, to a (custom) signal we defined in
+ * the EDC, ourselves:
+ * @dontinclude edje-signals-messages.c
+ * @skip edje_object_add
+ * @until _mouse_over_cb
+ * @dontinclude edje-signals-messages.c
+ * @skip print signals coming from theme
+ * @until }
+ * @until }
+ *
+ * That second callback is on a signal we emit on the theme, where we
+ * just translate Edje @c "mouse,move" internal events to the custom @c
+ * "mouse,over" one. When that signals reaches the code, we are,
+ * besides printing the signals' strings, sending a @b message back to
+ * the theme. We generate random values of color components and send
+ * them as an #EDJE_MESSAGE_INT_SET message type:
+ * @dontinclude signals-messages.edc
+ * @skip custom signal
+ * @until }
+ * @dontinclude edje-signals-messages.c
+ * @skip mouse over signals
+ * @until }
+ *
+ * In our theme we'll be changing the @c "cc" color class' values with
+ * those integer values of the message, so that moving the mouse over
+ * the right rectangle will change the left one's colors:
+ * @dontinclude signals-messages.edc
+ * @skip public message
+ * @until }
+ * @until }
+ *
+ * Now we're also sending messages <b>from the Edje object</b>,
+ * besides signals.  We do so when one clicks with the left button
+ * over the left rectangle.  With that, we change the text part's
+ * text, cycling between 3 pre-set strings declared in the EDC. With
+ * each new text string attribution, we send a string message to our
+ * code, with the current string as argument:
+ * @dontinclude signals-messages.edc
+ * @skip program
+ * @until }
+ * @until }
+ * @skip change text
+ * @until }
+ * @until }
+ * @dontinclude signals-messages.edc
+ * @skip set_text_string
+ * @until }
+ *
+ * To get the message in code, we have to register a message handler, as
+ * follows:
+ * @dontinclude edje-signals-messages.c
+ * @skip message_handler_set
+ * @until message_handler_set
+ * @dontinclude edje-signals-messages.c
+ * @skip print out
+ * @until }
+ *
+ * To interact with the last missing feature -- emitting signals
+ * <b>from code</b> -- there's a command line interface to exercise
+ * it.  A help string can be asked for with the 'h' key:
+ * @dontinclude edje-signals-messages.c
+ * @skip commands
+ * @until ;
+ *
+ * The @c 't' command will send either @c "part_right,show" or @c
+ * "part_right,hide" signals to the Edje object (those being the
+ * emission part of the signal), which was set to react on them as the
+ * names indicate. We'll set the right rectangle's visibility on/off,
+ * respectively, for those two signals:
+ * @dontinclude signals-messages.edc
+ * @skip hide right rectangle
+ * @until }
+ * @until }
+ * @dontinclude edje-signals-messages.c
+ * @skip keyname, "t"
+ * @until }
+ *
+ * The example's window should look like this picture:
+ *
+ * @image html edje-signals-messages-example.png
+ * @image rtf edje-signals-messages-example.png
+ * @image latex edje-signals-messages-example.eps
+ *
+ * The full example follows, along with its EDC file.
+ *
+ * @include signals-messages.edc
+ * @include edje-signals-messages.c
+ * @example edje-signals-messages.c
  */
