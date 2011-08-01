@@ -150,6 +150,21 @@ _tt_item_icon3(void *data   __UNUSED__,
    return ic;
 }
 
+static Evas_Object *
+_tt_item_label(void *data   __UNUSED__,
+              Evas_Object *obj __UNUSED__,
+              Evas_Object *tt,
+              void *item   __UNUSED__)
+{
+   Evas_Object *l = elm_label_add(tt);
+   elm_object_text_set(l, "Something useful here?<ps>"
+                          "No probably not, but this is a super long label<ps>"
+                          "which probably breaks on your system, now doesn't it?<ps>"
+                          "Yeah, I thought so.");
+   elm_label_line_wrap_set(l, ELM_WRAP_MIXED);
+   return l;
+}
+
 static void
 _tt_item_icon_del(void            *data,
                   Evas_Object *obj __UNUSED__,
@@ -460,7 +475,8 @@ test_tooltip(void *data       __UNUSED__,
 
    lst = elm_list_add(win);
    li = elm_list_item_append(lst, "Hello", NULL, NULL, NULL, NULL);
-   elm_list_item_tooltip_text_set(li, "Something useful here?");
+   elm_list_item_tooltip_content_cb_set(li, _tt_item_label, NULL, NULL);
+   elm_list_item_tooltip_size_restrict_disable(li, EINA_TRUE);
    li = elm_list_item_append(lst, "Icon Tooltip", NULL, NULL, NULL, NULL);
    elm_list_item_tooltip_content_cb_set(li, _tt_item_icon, NULL, NULL);
    li = elm_list_item_append(lst, "Big Icon Tooltip", NULL, NULL, NULL, NULL);
