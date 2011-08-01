@@ -2168,6 +2168,7 @@ _layout_format_pop(Ctxt *c, const char *format)
                   /* FIXME: Actually do something with the new acquired padding,
                    * the can be different and affect our padding! */
                   Evas_Coord style_pad_l, style_pad_r, style_pad_t, style_pad_b;
+                  style_pad_l = style_pad_r = style_pad_t = style_pad_b = 0;
                   redo_nodes = eina_list_remove_list(redo_nodes, i);
                   fmt = eina_list_data_get(c->format_stack);
                   _layout_do_format(c->obj, c, &fmt, fnode,
