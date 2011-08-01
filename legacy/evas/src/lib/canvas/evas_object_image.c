@@ -227,7 +227,7 @@ _create_tmpf(Evas_Object *obj, void *data, int size, char *format __UNUSED__)
    o->tmpf_fd = fd;
 #ifdef __linux__
    snprintf(buf, sizeof(buf), "/proc/%li/fd/%i", (long)getpid(), fd);
-#endif   
+#endif
    o->tmpf = eina_stringshare_add(buf);
    memcpy(dst, data, size);
    munmap(dst, size);
@@ -247,18 +247,20 @@ evas_object_image_memfile_set(Evas_Object *obj, void *data, int size, char *form
    MAGIC_CHECK_END();
    _cleanup_tmpf(obj);
    evas_object_image_file_set(obj, NULL, NULL);
+   // invalidate the cache effectively
+   evas_object_image_alpha_set(obj, !o->cur.has_alpha);
+   evas_object_image_alpha_set(obj, !o->cur.has_alpha);
+
    if ((size < 1) || (!data)) return;
-       
+
    _create_tmpf(obj, data, size, format);
    evas_object_image_file_set(obj, o->tmpf, key);
    if (!o->engine_data)
      {
+        ERR("unable to load '%s' from memory", o->tmpf);
         _cleanup_tmpf(obj);
         return;
      }
-   // invalidate the cache effectively
-   evas_object_image_alpha_set(obj, !o->cur.has_alpha);
-   evas_object_image_alpha_set(obj, !o->cur.has_alpha);
 }
 
 EAPI void

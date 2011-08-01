@@ -220,7 +220,7 @@ _evas_cache_image_entry_delete(Evas_Cache_Image *cache, Image_Entry *ie)
    _evas_cache_image_activ_del(ie);
    _evas_cache_image_lru_del(ie);
    _evas_cache_image_lru_nodata_del(ie);
-   
+
    cache->func.destructor(ie);
    FREESTRC(ie->cache_key);
    FREESTRC(ie->file);
@@ -826,9 +826,9 @@ evas_cache_image_request(Evas_Cache_Image *cache, const char *file,
    _timestamp_build(&tstamp, &st);
    im = _evas_cache_image_entry_new(cache, hkey, &tstamp, file, key, 
                                     lo, error);
-   if (!im) return NULL;
+   if (!im) goto on_stat_error;
    if (cache->func.debug) cache->func.debug("request", im);
-   
+
  on_ok:
    *error = EVAS_LOAD_ERROR_NONE;
 #ifdef EVAS_FRAME_QUEUING
