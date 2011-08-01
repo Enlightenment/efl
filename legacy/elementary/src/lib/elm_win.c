@@ -74,8 +74,8 @@ static void _elm_win_focus_highlight_anim_end(void *data, Evas_Object *obj, cons
 static void _elm_win_focus_highlight_reconfigure(Elm_Win *win);
 
 static const char SIG_DELETE_REQUEST[] = "delete,request";
-static const char SIG_FOCUS_OUT[] = "focus,in";
-static const char SIG_FOCUS_IN[] = "focus,out";
+static const char SIG_FOCUS_OUT[] = "focus,out";
+static const char SIG_FOCUS_IN[] = "focus,in";
 static const char SIG_MOVED[] = "moved";
 
 static const Evas_Smart_Cb_Description _signals[] = {
