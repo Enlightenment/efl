@@ -443,3 +443,9 @@
 	* Textblock: Added font_weight and font_style formats.
 	  These format allow overriding the font style set using:
 	  font=':style=Bold'.
+
+2011-07-31  Tom Hacohen (TAsn)
+
+	* Textblock: Added font_width.
+	  This allows overriding the font width set using:
+	  font=':style=Condensed'
