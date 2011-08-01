@@ -5906,7 +5906,7 @@ _evas_textblock_format_is_visible(Evas_Object_Textblock_Node_Format *fnode,
           {
              fnode->anchor = ANCHOR_A;
           }
-        else if (is_opener && !strncmp(item, "item", itlen))
+        else if (is_opener && !strncmp(item, "item", itlen) && (itlen >= 4))
           {
              fnode->anchor = ANCHOR_ITEM;
           }
