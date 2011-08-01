@@ -195,6 +195,11 @@
  * @image html img/widget/toggle/preview-00.png
  * @image latex img/widget/toggle/preview-00.eps
  * @li @ref Toolbar
+ *
+ * @image html img/widget/toolbar/preview-00.png
+ * @image latex img/widget/toolbar/preview-00.eps
+ * @image html img/toolbar.png
+ * @image latex img/toolbar.eps
  * @li @ref Tooltips
  * @li @ref Video
  * @li @ref Widget

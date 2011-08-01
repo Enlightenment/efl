@@ -48,7 +48,13 @@
  * @ref list_example_02
  *
  * @ref list_example_03
-
+ *
+ * @ref toolbar_example_01
+ *
+ * @ref toolbar_example_02
+ *
+ * @ref toolbar_example_03
+ *
  * @ref segment_control_example
  *
  * @ref flipselector_example
@@ -2215,6 +2221,158 @@
  * @image latex screenshots/list_example_03.eps width=\textwidth
  *
  * @example list_example_03.c
+ */
+
+/**
+ * @page toolbar_example_01 Toolbar Example - Simple Items
+ *
+ * This code places a Elementary toolbar widget on a window,
+ * to exemplify part of the widget's API.
+ *
+ * Let's start adding a button to our window, that will have its text
+ * modified depending on which item is selected. It's used just to exemplify
+ * how to change a window content from the toolbar.
+ * @dontinclude toolbar_example_01.c
+ * @skipline elm_button_add
+ * @until evas_object_show
+ *
+ * Also, we'll need a toolbar widget, obviously:
+ * @skipline elm_toolbar_add
+ * @until evas_object_show
+ *
+ * When appending an item is possible to set an icon, label, and a callback
+ * function that will receive passed data.
+ * @skipline _item_append
+ * @until Folder
+ *
+ * It's possible to disable items, so the user can't select then. We will
+ * disable the third item:
+ * @skipline _item_append
+ * @until disable
+ *
+ * Our callbacks will just set button's label:
+ * @dontinclude toolbar_example_01.c
+ * @skip static
+ * @skip }
+ * @skipline static
+ * @until }
+ * @until }
+ * @until }
+ *
+ * By default, toolbars would display items homogeneously, so item with
+ * long labels, like the third, will make all of them occupy a lot of space.
+ * To avoid that, we can disable it:
+ * @dontinclude toolbar_example_01.c
+ * @skipline homogeneous
+ *
+ * Another default behavior, is to add an menu item if we have more items
+ * that would fit on toolbar size. To simply enable scroll, without menus,
+ * it's required to change toolbar's shrink mode:
+ * @dontinclude toolbar_example_01.c
+ * @skipline shrink
+ *
+ * See @ref toolbar_example_01.c "toolbar_example_01.c", whose window should
+ * look like this picture:
+ *
+ * @image html screenshots/toolbar_example_01.png
+ * @image latex screenshots/toolbar_example_01.eps width=\textwidth
+ *
+ * @example toolbar_example_01.c
+ */
+
+/**
+ * @page toolbar_example_02 Toolbar Example - Items with States
+ *
+ * This code places a Elementary toolbar widget on a window,
+ * to exemplify part of the widget's API.
+ *
+ * Toolbar widgets has support to items with states. Each state
+ * can have it's own label, icon, and callback function.
+ *
+ * Let's start populating a toolbar with some regular items.
+ * If you don't know how to do that, see
+ * @ref toolbar_example_01 "Toolbar Example 1".
+ * @dontinclude toolbar_example_02.c
+ * @skipline elm_toolbar_add
+ * @until Update
+ *
+ * The only difference here is that we set shrink mode to #ELM_SHRINK_MODE_HIDE,
+ * that won't display items that doesn't fit to the window.
+ *
+ * Now, let's add an item with states. First, add the item just as any other.
+ * @skipline elm_toolbar_item_append
+ * @until _item_pressed
+ *
+ * After that states can be added to this item:
+ * @skipline state_add
+ * @until Full
+ * @until _item_pressed
+ *
+ * The both states and the item are using the same callback function,
+ * that will cycle between states and unselect the item. Unseleting
+ * is required because it won't call the callback if an user clicks
+ * over an item already selected:
+ * @dontinclude toolbar_example_02.c
+ * @skip static
+ * @skip }
+ * @skipline static
+ * @until }
+ *
+ * On our example, some items are hidden
+ * because we set the window to be small. But if an item should be displayed
+ * anyway, is needed to set its priority to be higher than others.
+ * Any positive value will be enough in our case. Let's force the item
+ * with multiple states to be displayed.
+ * @skipline priority
+ *
+ * See @ref toolbar_example_02.c "toolbar_example_02.c", whose window should
+ * look like this picture:
+ *
+ * @image html screenshots/toolbar_example_02.png
+ * @image latex screenshots/toolbar_example_02.eps width=\textwidth
+ *
+ * @example toolbar_example_02.c
+ */
+
+/**
+ * @page toolbar_example_03 Toolbar Example - Items with Menus
+ *
+ * Toolbar widgets have support to items with menus. This kind
+ * of item will display a menu when selected by the user.
+ *
+ * Let's start populating a toolbar with some regular items, the same
+ * way we started @ref toolbar_example_02 "Toolbar Example 2".
+ * @dontinclude toolbar_example_03.c
+ * @skipline elm_toolbar_add
+ * @until Update
+ *
+ * The only difference is that we'll keep the default shrink mode, that
+ * adds an item with a menu of hidden items.
+ *
+ * So, a important thing to do is to set a parent for toolbar menus, or they
+ * will use the toolbar as parent, and its size will be restricted to that.
+ * @skipline parent_set
+ *
+ * Not only items' menus will respect this parent, but also the own toolbar
+ * menu, used to show hidden items.
+ *
+ * Next, let's add an item set to display a menu:
+ * @skipline elm_toolbar_item_append
+ * @until _menu_set
+ *
+ * Now, to add two options to this item, we can get the menu object and use
+ * it as a regular elm_menu. See @ref tutorial_menu "Menu example" for more
+ * about menu widget.
+ * @skipline _menu_get
+ * @until Full
+ *
+ * See @ref toolbar_example_03.c "toolbar_example_03.c", whose window should
+ * look like this picture:
+ *
+ * @image html screenshots/toolbar_example_03.png
+ * @image latex screenshots/toolbar_example_03.eps width=\textwidth
+ *
+ * @example toolbar_example_03.c
  */
 
 /**

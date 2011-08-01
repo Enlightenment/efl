@@ -35,6 +35,7 @@ WGT_PREVIEW = \
 	clock:preview-00.png:widget_preview_clock:200:100 \
 	slider:preview-00.png:widget_preview_slider:200:100 \
 	panes:preview-00.png:widget_preview_panes:200:100 \
+	toolbar:preview-00.png:widget_preview_toolbar:300:100 \
 	ctxpopup:preview-00.png:widget_preview_ctxpopup:200:130 \
 	icon:preview-00.png:widget_preview_icon:50:50 \
 	image:preview-00.png:widget_preview_image:50:50 \

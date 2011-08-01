@@ -1,18 +1,6 @@
 #include <Elementary.h>
 #include "elm_priv.h"
 
-/**
- * @defgroup Toolbar Toolbar
- *
- * A toolbar is a widget that displays a list of buttons inside
- * a box.  It is scrollable, and only one item can be selected at a time.
- *
- * Signals that you can add callbacks for are:
- *
- * "clicked" - when the user clicks on a toolbar item and becomes selected
- *
- */
-
 typedef struct _Widget_Data Widget_Data;
 
 struct _Widget_Data
@@ -698,15 +686,6 @@ _item_new(Evas_Object *obj, const char *icon, const char *label, Evas_Smart_Cb f
    return it;
 }
 
-/**
- * Add a toolbar object to @p parent.
- *
- * @param parent The parent object
- *
- * @return The created object, or NULL on failure
- *
- * @ingroup Toolbar
- */
 EAPI Evas_Object *
 elm_toolbar_add(Evas_Object *parent)
 {
@@ -763,14 +742,6 @@ elm_toolbar_add(Evas_Object *parent)
    return obj;
 }
 
-/**
- * Set the icon size (in pixels) for the toolbar.
- *
- * @param obj The toolbar object
- * @param icon_size The icon size in pixels
- *
- * @ingroup Toolbar
- */
 EAPI void
 elm_toolbar_icon_size_set(Evas_Object *obj, int icon_size)
 {
@@ -782,14 +753,6 @@ elm_toolbar_icon_size_set(Evas_Object *obj, int icon_size)
    _theme_hook(obj);
 }
 
-/**
- * Get the icon size (in pixels) for the toolbar.
- *
- * @param obj The toolbar object
- * @return The icon size in pixels
- *
- * @ingroup Toolbar
- */
 EAPI int
 elm_toolbar_icon_size_get(const Evas_Object *obj)
 {
@@ -799,20 +762,6 @@ elm_toolbar_icon_size_get(const Evas_Object *obj)
    return wd->icon_size;
 }
 
-/**
- * Append item to the toolbar
- *
- * @param obj The toolbar object
- * @param icon A string with icon name or the absolute path of an image file.
- * @param label The label of the item
- * @param func The function to call when the item is clicked
- * @param data The data to associate with the item
- * @return The toolbar item, or NULL upon failure
- *
- * @see elm_toolbar_item_icon_set
- *
- * @ingroup Toolbar
- */
 EAPI Elm_Toolbar_Item *
 elm_toolbar_item_append(Evas_Object *obj, const char *icon, const char *label, Evas_Smart_Cb func, const void *data)
 {
@@ -842,13 +791,6 @@ _elm_toolbar_item_state_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, v
      it_state->func((void *)it_state->data, obj, event_info);
 }
 
-/**
- * Sets the next @p item state as the current state.
- *
- * @param item The item.
- *
- * @ingroup Toolbar
- */
 EAPI Elm_Toolbar_Item_State *
 elm_toolbar_item_state_next(Elm_Toolbar_Item *item)
 {
@@ -868,13 +810,6 @@ elm_toolbar_item_state_next(Elm_Toolbar_Item *item)
    return eina_list_data_get(next_state);
 }
 
-/**
- * Sets the previous @p item state as the current state.
- *
- * @param item The item.
- *
- * @ingroup Toolbar
- */
 EAPI Elm_Toolbar_Item_State *
 elm_toolbar_item_state_prev(Elm_Toolbar_Item *item)
 {
@@ -894,14 +829,6 @@ elm_toolbar_item_state_prev(Elm_Toolbar_Item *item)
    return eina_list_data_get(prev_state);
 }
 
-/**
- * Unset the state of @p it
- * The default icon and label from this item will be displayed.
- *
- * @param it The item.
- *
- * @ingroup Toolbar
- */
 EAPI void
 elm_toolbar_item_state_unset(Elm_Toolbar_Item *it)
 {
@@ -909,18 +836,6 @@ elm_toolbar_item_state_unset(Elm_Toolbar_Item *it)
    elm_toolbar_item_state_set(it, NULL);
 }
 
-/**
- * Sets @p state as the current state of @p it.
- * If @p state is NULL, it won't select any state and the default icon and
- * label will be used.
- *
- * @param it The item.
- * @param state The state to use.
- *
- * @return True if the state was correctly set.
- *
- * @ingroup Toolbar
- */
 EAPI Eina_Bool
 elm_toolbar_item_state_set(Elm_Toolbar_Item *it, Elm_Toolbar_Item_State *state)
 {
@@ -967,16 +882,6 @@ elm_toolbar_item_state_set(Elm_Toolbar_Item *it, Elm_Toolbar_Item_State *state)
    return EINA_TRUE;
 }
 
-/**
- * Get the current state of @p item.
- * If no state is selected, returns NULL.
- *
- * @param item The item.
- *
- * @return The state.
- *
- * @ingroup Toolbar
- */
 EAPI Elm_Toolbar_Item_State *
 elm_toolbar_item_state_get(const Elm_Toolbar_Item *it)
 {
@@ -1000,19 +905,6 @@ _item_state_new(const char *label, const char *icon_str, Evas_Object *icon, Evas
    return it_state;
 }
 
-/**
- * Add a new state to @p item
- *
- * @param item The item.
- * @param icon The icon string
- * @param label The label of the new state
- * @param func The function to call when the item is clicked when this state is
- * selected.
- * @param data The data to associate with the state
- * @return The toolbar item state, or NULL upon failure
- *
- * @ingroup Toolbar
- */
 EAPI Elm_Toolbar_Item_State *
 elm_toolbar_item_state_add(Elm_Toolbar_Item *item, const char *icon, const char *label, Evas_Smart_Cb func, const void *data)
 {
@@ -1097,21 +989,6 @@ elm_toolbar_item_state_del(Elm_Toolbar_Item *item, Elm_Toolbar_Item_State *state
    return EINA_TRUE;
 }
 
-
-/**
- * Prepend item to the toolbar
- *
- * @param obj The toolbar object
- * @param icon A string with icon name or the absolute path of an image file.
- * @param label The label of the item
- * @param func The function to call when the item is clicked
- * @param data The data to associate with the item
- * @return The toolbar item, or NULL upon failure
- *
- * @see elm_toolbar_item_icon_set
- *
- * @ingroup Toolbar
- */
 EAPI Elm_Toolbar_Item *
 elm_toolbar_item_prepend(Evas_Object *obj, const char *icon, const char *label, Evas_Smart_Cb func, const void *data)
 {
@@ -1130,21 +1007,6 @@ elm_toolbar_item_prepend(Evas_Object *obj, const char *icon, const char *label, 
    return it;
 }
 
-/**
- * Insert item before another in the toolbar
- *
- * @param obj The toolbar object
- * @param before The item to insert before
- * @param icon A string with icon name or the absolute path of an image file.
- * @param label The label of the item
- * @param func The function to call when the item is clicked
- * @param data The data to associate with the item
- * @return The toolbar item, or NULL upon failure
- *
- * @see elm_toolbar_item_icon_set
- *
- * @ingroup Toolbar
- */
 EAPI Elm_Toolbar_Item *
 elm_toolbar_item_insert_before(Evas_Object *obj, Elm_Toolbar_Item *before, const char *icon, const char *label, Evas_Smart_Cb func, const void *data)
 {
@@ -1165,21 +1027,6 @@ elm_toolbar_item_insert_before(Evas_Object *obj, Elm_Toolbar_Item *before, const
    return it;
 }
 
-/**
- * Insert item after another in the toolbar
- *
- * @param obj The toolbar object
- * @param after The item to insert after
- * @param icon A string with icon name or the absolute path of an image file.
- * @param label The label of the item
- * @param func The function to call when the item is clicked
- * @param data The data to associate with the item
- * @return The toolbar item, or NULL upon failure
- *
- * @see elm_toolbar_item_icon_set
- *
- * @ingroup Toolbar
- */
 EAPI Elm_Toolbar_Item *
 elm_toolbar_item_insert_after(Evas_Object *obj, Elm_Toolbar_Item *after, const char *icon, const char *label, Evas_Smart_Cb func, const void *data)
 {
@@ -1200,14 +1047,6 @@ elm_toolbar_item_insert_after(Evas_Object *obj, Elm_Toolbar_Item *after, const c
    return it;
 }
 
-/**
- * Get the first item in the toolbar
- *
- * @param obj The toolbar object
- * @return The first item, or NULL if none
- *
- * @ingroup Toolbar
- */
 EAPI Elm_Toolbar_Item *
 elm_toolbar_first_item_get(const Evas_Object *obj)
 {
@@ -1218,13 +1057,6 @@ elm_toolbar_first_item_get(const Evas_Object *obj)
    return it;
 }
 
-/**
- * Get the last item in the toolbar
- *
- * @return The last item, or NULL if none
- *
- * @ingroup Toolbar
- */
 EAPI Elm_Toolbar_Item *
 elm_toolbar_last_item_get(const Evas_Object *obj)
 {
@@ -1235,16 +1067,6 @@ elm_toolbar_last_item_get(const Evas_Object *obj)
    return it;
 }
 
-/**
- * Get the next item in the toolbar
- *
- * This returns the item after the item @p it.
- *
- * @param item The item
- * @return The item after @p it, or NULL if none
- *
- * @ingroup Toolbar
- */
 EAPI Elm_Toolbar_Item *
 elm_toolbar_item_next_get(const Elm_Toolbar_Item *item)
 {
@@ -1254,16 +1076,6 @@ elm_toolbar_item_next_get(const Elm_Toolbar_Item *item)
    return next;
 }
 
-/**
- * Get the previous item in the toolbar
- *
- * This returns the item before the item @p it.
- *
- * @param item The item
- * @return The item before @p it, or NULL if none
- *
- * @ingroup Toolbar
- */
 EAPI Elm_Toolbar_Item *
 elm_toolbar_item_prev_get(const Elm_Toolbar_Item *item)
 {
@@ -1273,16 +1085,6 @@ elm_toolbar_item_prev_get(const Elm_Toolbar_Item *item)
    return prev;
 }
 
-/**
- * Get the toolbar object from an item
- *
- * This returns the toolbar object itself that an item belongs to.
- *
- * @param item The item
- * @return The toolbar object
- *
- * @ingroup Toolbar
- */
 EAPI Evas_Object *
 elm_toolbar_item_toolbar_get(const Elm_Toolbar_Item *item)
 {
@@ -1290,19 +1092,6 @@ elm_toolbar_item_toolbar_get(const Elm_Toolbar_Item *item)
    return item->base.widget;
 }
 
-/**
- * Sets the priority of a toolbar item. This is used only when the toolbar
- * shrink mode is set to ELM_TOOLBAR_SHRINK_MENU or ELM_TOOLBAR_SHRINK_HIDE:
- * when space is at a premium, items with low priority will be removed from
- * the toolbar and added to a dynamically-created menu, while items with
- * higher priority will remain on the toolbar, with the same order they were
- * added.
- *
- * @param item The toolbar item.
- * @param priority The item priority. The default is zero.
- *
- * @ingroup Toolbar
- */
 EAPI void
 elm_toolbar_item_priority_set(Elm_Toolbar_Item *item, int priority)
 {
@@ -1312,14 +1101,6 @@ elm_toolbar_item_priority_set(Elm_Toolbar_Item *item, int priority)
    _resize(item->base.widget, NULL, NULL, NULL);
 }
 
-/**
- * Gets the priority of a toolbar item.
- *
- * @param item The toolbar item.
- * @return The item priority, or 0 if an error occurred.
- *
- * @ingroup Toolbar
- */
 EAPI int
 elm_toolbar_item_priority_get(const Elm_Toolbar_Item *item)
 {
@@ -1327,16 +1108,6 @@ elm_toolbar_item_priority_get(const Elm_Toolbar_Item *item)
    return item->prio.priority;
 }
 
-/**
- * Get the string used to set the icon of @p item.
- *
- * @param item The toolbar item
- * @return The string associated with the icon object.
- *
- * @see elm_toolbar_item_icon_set()
- *
- * @ingroup Toolbar
- */
 EAPI const char *
 elm_toolbar_item_icon_get(const Elm_Toolbar_Item *item)
 {
@@ -1344,14 +1115,6 @@ elm_toolbar_item_icon_get(const Elm_Toolbar_Item *item)
    return item->icon_str;
 }
 
-/**
- * Get the label associated with @p item.
- *
- * @param item The toolbar item
- * @return The label
- *
- * @ingroup Toolbar
- */
 EAPI const char *
 elm_toolbar_item_label_get(const Elm_Toolbar_Item *item)
 {
@@ -1405,14 +1168,6 @@ _item_label_set(Elm_Toolbar_Item *item, const char *label, const char *signal)
    _resize(item->base.widget, NULL, NULL, NULL);
 }
 
-/**
- * Set the label associated with @p item.
- *
- * @param item The toolbar item
- * @param label The label of @p item
- *
- * @ingroup Toolbar
- */
 EAPI void
 elm_toolbar_item_label_set(Elm_Toolbar_Item *item, const char *label)
 {
@@ -1444,14 +1199,6 @@ _elm_toolbar_item_icon_update(Elm_Toolbar_Item *item)
    evas_object_del(old_icon);
 }
 
-/**
- * Get the selected state of @p item.
- *
- * @param item The toolbar item
- * @return If true, the item is selected
- *
- * @ingroup Toolbar
- */
 EAPI Eina_Bool
 elm_toolbar_item_selected_get(const Elm_Toolbar_Item *item)
 {
@@ -1459,18 +1206,6 @@ elm_toolbar_item_selected_get(const Elm_Toolbar_Item *item)
    return item->selected;
 }
 
-/**
- * Set the selected state of an item
- *
- * This sets the selected state (1 selected, 0 not selected) of the given
- * item @p it. If a new item is selected the previosly selected will be
- * unselected.
- *
- * @param item The item
- * @param selected The selected state
- *
- * @ingroup Toolbar
- */
 EAPI void
 elm_toolbar_item_selected_set(Elm_Toolbar_Item *item, Eina_Bool selected)
 {
@@ -1486,16 +1221,6 @@ elm_toolbar_item_selected_set(Elm_Toolbar_Item *item, Eina_Bool selected)
      _item_unselect(item);
 }
 
-/**
- * Get the selectd item in the toolbar
- *
- * If no item is selected, NULL is returned.
- *
- * @param obj The toolbar object
- * @return The selected item, or NULL if none.
- *
- * @ingroup Toolbar
- */
 EAPI Elm_Toolbar_Item *
 elm_toolbar_selected_item_get(const Evas_Object *obj)
 {
@@ -1561,21 +1286,6 @@ _elm_toolbar_item_icon_obj_set(Evas_Object *obj, Elm_Toolbar_Item *item, Evas_Ob
    _resize(obj, NULL, NULL, NULL);
 }
 
-/**
- * Set the icon associated with @p item.
- *
- * Toolbar will load icon image from fdo or current theme.
- * This behavior can be set by elm_toolbar_icon_order_lookup_set() function.
- * If an absolute path is provided it will load it direct from a file.
- *
- * @param obj The parent of this item
- * @param item The toolbar item
- * @param icon A string with icon name or the absolute path of an image file.
- *
- * @see elm_toolbar_icon_order_lookup_set(), elm_toolbar_icon_order_lookup_get()
- *
- * @ingroup Toolbar
- */
 EAPI void
 elm_toolbar_item_icon_set(Elm_Toolbar_Item *item, const char *icon)
 {
@@ -1601,13 +1311,6 @@ elm_toolbar_item_icon_set(Elm_Toolbar_Item *item, const char *icon)
      }
 }
 
-/**
- * Delete a toolbar item.
- *
- * @param item The toolbar item
- *
- * @ingroup Toolbar
- */
 EAPI void
 elm_toolbar_item_del(Elm_Toolbar_Item *item)
 {
@@ -1623,14 +1326,6 @@ elm_toolbar_item_del(Elm_Toolbar_Item *item)
    _theme_hook(obj2);
 }
 
-/**
- * Set the function called when a toolbar item is freed.
- *
- * @param item The item to set the callback on
- * @param func The function called
- *
- * @ingroup Toolbar
- */
 EAPI void
 elm_toolbar_item_del_cb_set(Elm_Toolbar_Item *item, Evas_Smart_Cb func)
 {
@@ -1638,14 +1333,6 @@ elm_toolbar_item_del_cb_set(Elm_Toolbar_Item *item, Evas_Smart_Cb func)
    elm_widget_item_del_cb_set(item, func);
 }
 
-/**
- * Get the disabled state of @p item.
- *
- * @param item The toolbar item
- * @return If true, the item is disabled
- *
- * @ingroup Toolbar
- */
 EAPI Eina_Bool
 elm_toolbar_item_disabled_get(const Elm_Toolbar_Item *item)
 {
@@ -1653,14 +1340,6 @@ elm_toolbar_item_disabled_get(const Elm_Toolbar_Item *item)
    return item->disabled;
 }
 
-/**
- * Set the disabled state of @p item.
- *
- * @param item The toolbar item
- * @param disabled If true, the item is disabled
- *
- * @ingroup Toolbar
- */
 EAPI void
 elm_toolbar_item_disabled_set(Elm_Toolbar_Item *item, Eina_Bool disabled)
 {
@@ -1669,14 +1348,6 @@ elm_toolbar_item_disabled_set(Elm_Toolbar_Item *item, Eina_Bool disabled)
    _resize(item->base.widget, NULL, NULL, NULL);
 }
 
-/**
- * Get the separator state of @p item.
- *
- * @param item The toolbar item
- * @param separator If true, the item is a separator
- *
- * @ingroup Toolbar
- */
 EAPI void
 elm_toolbar_item_separator_set(Elm_Toolbar_Item *item, Eina_Bool separator)
 {
@@ -1686,14 +1357,6 @@ elm_toolbar_item_separator_set(Elm_Toolbar_Item *item, Eina_Bool separator)
    _theme_hook(item->base.view);
 }
 
-/**
- * Set the separator state of @p item.
- *
- * @param item The toolbar item
- * @return If true, the item is a separator
- *
- * @ingroup Toolbar
- */
 EAPI Eina_Bool
 elm_toolbar_item_separator_get(const Elm_Toolbar_Item *item)
 {
@@ -1701,18 +1364,6 @@ elm_toolbar_item_separator_get(const Elm_Toolbar_Item *item)
    return item->separator;
 }
 
-/**
- * Set the shrink state of toolbar @p obj.
- *
- * @param obj The toolbar object
- * @param shrink_mode The toolbar won't scroll if ELM_TOOLBAR_SHRINK_NONE,
- * but will enforce a minimun size so all the items will fit, won't scroll
- * and won't show the items that don't fit if ELM_TOOLBAR_SHRINK_HIDE,
- * will scroll if ELM_TOOLBAR_SHRINK_SCROLL, and will create a button to
- * pop up excess elements with ELM_TOOLBAR_SHRINK_MENU.
- *
- * @ingroup Toolbar
- */
 EAPI void
 elm_toolbar_mode_shrink_set(Evas_Object *obj, Elm_Toolbar_Shrink_Mode shrink_mode)
 {
@@ -1748,14 +1399,6 @@ elm_toolbar_mode_shrink_set(Evas_Object *obj, Elm_Toolbar_Shrink_Mode shrink_mod
    _sizing_eval(obj);
 }
 
-/**
- * Get the shrink mode of toolbar @p obj.
- *
- * @param obj The toolbar object
- * @return See elm_toolbar_mode_shrink_set.
- *
- * @ingroup Toolbar
- */
 EAPI Elm_Toolbar_Shrink_Mode
 elm_toolbar_mode_shrink_get(const Evas_Object *obj)
 {
@@ -1766,14 +1409,6 @@ elm_toolbar_mode_shrink_get(const Evas_Object *obj)
    return wd->shrink_mode;
 }
 
-/**
- * Set the homogeneous mode of toolbar @p obj.
- *
- * @param obj The toolbar object
- * @param homogeneous If true, the toolbar items will be uniform in size
- *
- * @ingroup Toolbar
- */
 EAPI void
 elm_toolbar_homogeneous_set(Evas_Object *obj, Eina_Bool homogeneous)
 {
@@ -1791,14 +1426,6 @@ elm_toolbar_homogenous_set(Evas_Object *obj, Eina_Bool homogenous)
    elm_toolbar_homogeneous_set(obj, homogenous);
 }
 
-/**
- * Get the homogeneous mode of toolbar @p obj.
- *
- * @param obj The toolbar object
- * @return If true, the toolbar items are uniform in size
- *
- * @ingroup Toolbar
- */
 EAPI Eina_Bool
 elm_toolbar_homogeneous_get(const Evas_Object *obj)
 {
@@ -1815,14 +1442,6 @@ elm_toolbar_homogenous_get(const Evas_Object *obj)
    return elm_toolbar_homogeneous_get(obj);
 }
 
-/**
- * Set the parent object of the toolbar menu
- *
- * @param obj The toolbar object
- * @param parent The parent of the menu object
- *
- * @ingroup Toolbar
- */
 EAPI void
 elm_toolbar_menu_parent_set(Evas_Object *obj, Evas_Object *parent)
 {
@@ -1842,14 +1461,6 @@ elm_toolbar_menu_parent_set(Evas_Object *obj, Evas_Object *parent)
      elm_menu_parent_set(wd->more_item->o_menu, wd->menu_parent);
 }
 
-/**
- * Get the parent object of the toolbar menu
- *
- * @param obj The toolbar object
- * @return The parent of the menu object
- *
- * @ingroup Toolbar
- */
 EAPI Evas_Object *
 elm_toolbar_menu_parent_get(const Evas_Object *obj)
 {
@@ -1860,14 +1471,6 @@ elm_toolbar_menu_parent_get(const Evas_Object *obj)
    return wd->menu_parent;
 }
 
-/**
- * Set the alignment of the items.
- *
- * @param obj The toolbar object
- * @param align The new alignment. (left) 0.0 ... 1.0 (right)
- *
- * @ingroup Toolbar
- */
 EAPI void
 elm_toolbar_align_set(Evas_Object *obj, double align)
 {
@@ -1880,14 +1483,6 @@ elm_toolbar_align_set(Evas_Object *obj, double align)
    wd->align = align;
 }
 
-/**
- * Get the alignment of the items.
- *
- * @param obj The toolbar object
- * @return The alignment. (left) 0.0 ... 1.0 (right)
- *
- * @ingroup Toolbar
- */
 EAPI double
 elm_toolbar_align_get(const Evas_Object *obj)
 {
@@ -1898,14 +1493,6 @@ elm_toolbar_align_get(const Evas_Object *obj)
    return wd->align;
 }
 
-/**
- * Set whether the toolbar item opens a menu.
- *
- * @param item The toolbar item
- * @param menu If true, @p item will open a menu when selected
- *
- * @ingroup Toolbar
- */
 EAPI void
 elm_toolbar_item_menu_set(Elm_Toolbar_Item *item, Eina_Bool menu)
 {
@@ -1919,17 +1506,6 @@ elm_toolbar_item_menu_set(Elm_Toolbar_Item *item, Eina_Bool menu)
    else _item_menu_destroy(item);
 }
 
-/**
- * Set the text to be shown in the toolbar item.
- *
- * @param item Target item
- * @param text The text to set in the content
- *
- * Setup the text as tooltip to object. The item can have only one tooltip,
- * so any previous tooltip data is removed.
- *
- * @ingroup Toolbar
- */
 EAPI void
 elm_toolbar_item_tooltip_text_set(Elm_Toolbar_Item *item, const char *text)
 {
@@ -1937,26 +1513,6 @@ elm_toolbar_item_tooltip_text_set(Elm_Toolbar_Item *item, const char *text)
    elm_widget_item_tooltip_text_set(item, text);
 }
 
-/**
- * Set the content to be shown in the tooltip item
- *
- * Setup the tooltip to item. The item can have only one tooltip,
- * so any previous tooltip data is removed. @p func(with @p data) will
- * be called every time that need show the tooltip and it should
- * return a valid Evas_Object. This object is then managed fully by
- * tooltip system and is deleted when the tooltip is gone.
- *
- * @param item the toolbar item being attached a tooltip.
- * @param func the function used to create the tooltip contents.
- * @param data what to provide to @a func as callback data/context.
- * @param del_cb called when data is not needed anymore, either when
- *        another callback replaces @func, the tooltip is unset with
- *        elm_toolbar_item_tooltip_unset() or the owner @a item
- *        dies. This callback receives as the first parameter the
- *        given @a data, and @c event_info is the item.
- *
- * @ingroup Toolbar
- */
 EAPI void
 elm_toolbar_item_tooltip_content_cb_set(Elm_Toolbar_Item *item, Elm_Tooltip_Item_Content_Cb func, const void *data, Evas_Smart_Cb del_cb)
 {
@@ -1964,19 +1520,6 @@ elm_toolbar_item_tooltip_content_cb_set(Elm_Toolbar_Item *item, Elm_Tooltip_Item
    elm_widget_item_tooltip_content_cb_set(item, func, data, del_cb);
 }
 
-/**
- * Unset tooltip from item
- *
- * @param item toolbar item to remove previously set tooltip.
- *
- * Remove tooltip from item. The callback provided as del_cb to
- * elm_toolbar_item_tooltip_content_cb_set() will be called to notify
- * it is not used anymore.
- *
- * @see elm_toolbar_item_tooltip_content_cb_set()
- *
- * @ingroup Toolbar
- */
 EAPI void
 elm_toolbar_item_tooltip_unset(Elm_Toolbar_Item *item)
 {
@@ -1984,18 +1527,6 @@ elm_toolbar_item_tooltip_unset(Elm_Toolbar_Item *item)
    elm_widget_item_tooltip_unset(item);
 }
 
-/**
- * Sets a different style for this item tooltip.
- *
- * @note before you set a style you should define a tooltip with
- *       elm_toolbar_item_tooltip_content_cb_set() or
- *       elm_toolbar_item_tooltip_text_set()
- *
- * @param item toolbar item with tooltip already set.
- * @param style the theme style to use (default, transparent, ...)
- *
- * @ingroup Toolbar
- */
 EAPI void
 elm_toolbar_item_tooltip_style_set(Elm_Toolbar_Item *item, const char *style)
 {
@@ -2003,15 +1534,6 @@ elm_toolbar_item_tooltip_style_set(Elm_Toolbar_Item *item, const char *style)
    elm_widget_item_tooltip_style_set(item, style);
 }
 
-/**
- * Get the style for this item tooltip.
- *
- * @param item toolbar item with tooltip already set.
- * @return style the theme style in use, defaults to "default". If the
- *         object does not have a tooltip set, then NULL is returned.
- *
- * @ingroup Toolbar
- */
 EAPI const char *
 elm_toolbar_item_tooltip_style_get(const Elm_Toolbar_Item *item)
 {
@@ -2019,15 +1541,6 @@ elm_toolbar_item_tooltip_style_get(const Elm_Toolbar_Item *item)
    return elm_widget_item_tooltip_style_get(item);
 }
 
-/**
- * Set the cursor to be shown when mouse is over the toolbar item
- *
- * @param item Target item
- * @param cursor the cursor name to be used.
- *
- * @see elm_object_cursor_set()
- * @ingroup Toolbar
- */
 EAPI void
 elm_toolbar_item_cursor_set(Elm_Toolbar_Item *item, const char *cursor)
 {
@@ -2035,14 +1548,6 @@ elm_toolbar_item_cursor_set(Elm_Toolbar_Item *item, const char *cursor)
    elm_widget_item_cursor_set(item, cursor);
 }
 
-/**
- * Get the cursor to be shown when mouse is over the toolbar item
- *
- * @param item toolbar item with cursor already set.
- * @return the cursor name.
- *
- * @ingroup Toolbar
- */
 EAPI const char *
 elm_toolbar_item_cursor_get(const Elm_Toolbar_Item *item)
 {
@@ -2050,14 +1555,6 @@ elm_toolbar_item_cursor_get(const Elm_Toolbar_Item *item)
    return elm_widget_item_cursor_get(item);
 }
 
-/**
- * Unset the cursor to be shown when mouse is over the toolbar item
- *
- * @param item Target item
- *
- * @see elm_object_cursor_unset()
- * @ingroup Toolbar
- */
 EAPI void
 elm_toolbar_item_cursor_unset(Elm_Toolbar_Item *item)
 {
@@ -2065,17 +1562,6 @@ elm_toolbar_item_cursor_unset(Elm_Toolbar_Item *item)
    elm_widget_item_cursor_unset(item);
 }
 
-/**
- * Sets a different style for this item cursor.
- *
- * @note before you set a style you should define a cursor with
- *       elm_toolbar_item_cursor_set()
- *
- * @param item toolbar item with cursor already set.
- * @param style the theme style to use (default, transparent, ...)
- *
- * @ingroup Toolbar
- */
 EAPI void
 elm_toolbar_item_cursor_style_set(Elm_Toolbar_Item *item, const char *style)
 {
@@ -2083,15 +1569,6 @@ elm_toolbar_item_cursor_style_set(Elm_Toolbar_Item *item, const char *style)
    elm_widget_item_cursor_style_set(item, style);
 }
 
-/**
- * Get the style for this item cursor.
- *
- * @param item toolbar item with cursor already set.
- * @return style the theme style in use, defaults to "default". If the
- *         object does not have a cursor set, then NULL is returned.
- *
- * @ingroup Toolbar
- */
 EAPI const char *
 elm_toolbar_item_cursor_style_get(const Elm_Toolbar_Item *item)
 {
@@ -2099,20 +1576,6 @@ elm_toolbar_item_cursor_style_get(const Elm_Toolbar_Item *item)
    return elm_widget_item_cursor_style_get(item);
 }
 
-/**
- * Set if the cursor set should be searched on the theme or should use
- * the provided by the engine, only.
- *
- * @note before you set if should look on theme you should define a cursor
- * with elm_object_cursor_set(). By default it will only look for cursors
- * provided by the engine.
- *
- * @param item widget item with cursor already set.
- * @param engine_only boolean to define it cursors should be looked only
- * between the provided by the engine or searched on widget's theme as well.
- *
- * @ingroup Toolbar
- */
 EAPI void
 elm_toolbar_item_cursor_engine_only_set(Elm_Toolbar_Item *item, Eina_Bool engine_only)
 {
@@ -2120,16 +1583,6 @@ elm_toolbar_item_cursor_engine_only_set(Elm_Toolbar_Item *item, Eina_Bool engine
    elm_widget_item_cursor_engine_only_set(item, engine_only);
 }
 
-/**
- * Get the cursor engine only usage for this item cursor.
- *
- * @param item widget item with cursor already set.
- * @return engine_only boolean to define it cursors should be looked only
- * between the provided by the engine or searched on widget's theme as well. If
- *         the object does not have a cursor set, then EINA_FALSE is returned.
- *
- * @ingroup Toolbar
- */
 EAPI Eina_Bool
 elm_toolbar_item_cursor_engine_only_get(const Elm_Toolbar_Item *item)
 {
@@ -2137,14 +1590,6 @@ elm_toolbar_item_cursor_engine_only_get(const Elm_Toolbar_Item *item)
    return elm_widget_item_cursor_engine_only_get(item);
 }
 
-/**
- * Get whether the toolbar item opens a menu.
- *
- * @param item The toolbar item
- * @return If true, @p item opens a menu when selected
- *
- * @ingroup Toolbar
- */
 EAPI Evas_Object *
 elm_toolbar_item_menu_get(Elm_Toolbar_Item *item)
 {
@@ -2157,17 +1602,6 @@ elm_toolbar_item_menu_get(Elm_Toolbar_Item *item)
    return item->o_menu;
 }
 
-/**
- * Returns a pointer to a toolbar item by its label
- *
- * @param obj The toolbar object
- * @param label The label of the item to find
- *
- * @return The pointer to the toolbar item matching @p label
- * Returns NULL on failure.
- *
- * @ingroup Toolbar
- */
 EAPI Elm_Toolbar_Item *
 elm_toolbar_item_find_by_label(const Evas_Object *obj, const char *label)
 {
@@ -2184,17 +1618,6 @@ elm_toolbar_item_find_by_label(const Evas_Object *obj, const char *label)
    return NULL;
 }
 
-/**
- * Set the data item from the toolbar item
- *
- * This set the data value passed on the elm_toolbar_item_append() and
- * related item addition calls.
- *
- * @param item The item
- * @param data The new data pointer to set
- *
- * @ingroup Toolbar
- */
 EAPI void
 elm_toolbar_item_data_set(Elm_Toolbar_Item *item, const void *data)
 {
@@ -2202,17 +1625,6 @@ elm_toolbar_item_data_set(Elm_Toolbar_Item *item, const void *data)
    elm_widget_item_data_set(item, data);
 }
 
-/**
- * Get the data item from the toolbar item
- *
- * This returns the data value passed on the elm_toolbar_item_append() and
- * related item addition calls.
- *
- * @param item The item
- * @return The data pointer provided when created
- *
- * @ingroup Toolbar
- */
 EAPI void *
 elm_toolbar_item_data_get(const Elm_Toolbar_Item *item)
 {
@@ -2220,18 +1632,6 @@ elm_toolbar_item_data_get(const Elm_Toolbar_Item *item)
    return elm_widget_item_data_get(item);
 }
 
-/**
- * Set no select mode.
- *
- * This will turn off the ability to select items entirely and they will
- * neither appear selected nor emit selected signals. The clicked
- * callback function will still be called.
- *
- * @param obj The Toolbar object
- * @param no_select The no select mode (EINA_TRUE = on, EINA_FALSE = off)
- *
- * @ingroup Toolbar
- */
 EAPI void
 elm_toolbar_no_select_mode_set(Evas_Object *obj, Eina_Bool no_select)
 {
@@ -2241,14 +1641,6 @@ elm_toolbar_no_select_mode_set(Evas_Object *obj, Eina_Bool no_select)
    wd->no_select = no_select;
 }
 
-/**
- * Gets no select mode.
- *
- * @param obj The Toolbar object
- * @return The no select mode (EINA_TRUE = on, EINA_FALSE = off)
- *
- * @ingroup Toolbar
- */
 EAPI Eina_Bool
 elm_toolbar_no_select_mode_get(const Evas_Object *obj)
 {
@@ -2258,16 +1650,6 @@ elm_toolbar_no_select_mode_get(const Evas_Object *obj)
    return wd->no_select;
 }
 
-/**
- * Sets icon lookup order, for icons used in this toolbar.
- * Icons added before calling this function will not be affected.
- * The default lookup order is ELM_ICON_LOOKUP_THEME_FDO.
- *
- * @param obj The toolbar object
- * @param order The icon lookup order
- *
- * @ingroup Toolbar
- */
 EAPI void
 elm_toolbar_icon_order_lookup_set(Evas_Object *obj, Elm_Icon_Lookup_Order order)
 {
@@ -2283,14 +1665,6 @@ elm_toolbar_icon_order_lookup_set(Evas_Object *obj, Elm_Icon_Lookup_Order order)
      elm_icon_order_lookup_set(wd->more_item->icon, order);
 }
 
-/**
- * Gets the icon lookup order.
- *
- * @param obj The Toolbar object
- * @return The icon lookup order
- *
- * @ingroup Toolbar
- */
 EAPI Elm_Icon_Lookup_Order
 elm_toolbar_icon_order_lookup_get(const Evas_Object *obj)
 {
