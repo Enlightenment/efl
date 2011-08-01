@@ -190,6 +190,9 @@
  * @image html img/widget/spinner/preview-00.png
  * @image latex img/widget/spinner/preview-00.eps
  * @li @ref Thumb
+
+ * @image html img/widget/thumb/preview-00.png
+ * @image latex img/widget/thumb/preview-00.eps
  * @li @ref Toggle
  *
  * @image html img/widget/toggle/preview-00.png

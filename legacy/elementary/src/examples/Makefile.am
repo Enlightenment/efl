@@ -107,7 +107,8 @@ SRCS = \
 	scroller_example_01.c \
 	table_example_01.c \
 	table_example_02.c \
-	menu_example_01.c
+	menu_example_01.c \
+	thumb_example_01.c
 
 pkglib_PROGRAMS =
 
@@ -204,7 +205,8 @@ pkglib_PROGRAMS += \
 	scroller_example_01 \
 	table_example_01 \
 	table_example_02 \
-	menu_example_01
+	menu_example_01 \
+	thumb_example_01
 
 # This variable will hold the list of screenshots that will be made
 # by "make screenshots". Each item in the list is of the form:
@@ -267,6 +269,7 @@ SCREENSHOTS = \
 	genlist_example_03:genlist_example_03.png:0.1 \
 	genlist_example_04:genlist_example_04.png:0.1 \
 	genlist_example_05:genlist_example_05.png:0.1 \
+	thumb_example_01:thumb_example_01.png:0.5 \
 	entry_example:entry_example.png:0.0 \
 	progressbar_example:progressbar_example.png:0.0 \
 	notify_example_01:notify_example_01.png:0.0 \
