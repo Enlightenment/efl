@@ -2799,7 +2799,7 @@ EAPI Eina_Bool        edje_object_part_swallow        (Evas_Object *obj, const c
  *
  * Causes the edje to regurgitate a previously swallowed object. :)
  *
- * @note @p obj_swallow will be deleted.
+ * @note @p obj_swallow will @b not be deleted.
  */
 EAPI void             edje_object_part_unswallow      (Evas_Object *obj, Evas_Object *obj_swallow);
 
