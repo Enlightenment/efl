@@ -990,6 +990,7 @@ static const char *font_sourcestr = NULL;
 static const char *font_weightstr = NULL;
 static const char *font_stylestr = NULL;
 static const char *font_widthstr = NULL;
+static const char *langstr = NULL;
 static const char *colorstr = NULL;
 static const char *underline_colorstr = NULL;
 static const char *underline2_colorstr = NULL;
@@ -1034,6 +1035,7 @@ _format_command_init(void)
         font_weightstr = eina_stringshare_add("font_weight");
         font_stylestr = eina_stringshare_add("font_style");
         font_widthstr = eina_stringshare_add("font_width");
+        langstr = eina_stringshare_add("lang");
         colorstr = eina_stringshare_add("color");
         underline_colorstr = eina_stringshare_add("underline_color");
         underline2_colorstr = eina_stringshare_add("underline2_color");
@@ -1081,6 +1083,7 @@ _format_command_shutdown(void)
    eina_stringshare_del(font_weightstr);
    eina_stringshare_del(font_stylestr);
    eina_stringshare_del(font_widthstr);
+   eina_stringshare_del(langstr);
    eina_stringshare_del(colorstr);
    eina_stringshare_del(underline_colorstr);
    eina_stringshare_del(underline2_colorstr);
@@ -1154,7 +1157,7 @@ _format_command(Evas_Object *obj, Evas_Object_Textblock_Format *fmt, const char 
 
    /* If we are changing the font, create the fdesc. */
    if ((cmd == font_weightstr) || (cmd == font_widthstr) ||
-         (cmd == font_stylestr) ||
+         (cmd == font_stylestr) || (cmd == langstr) ||
          (cmd == fontstr) || (cmd == font_fallbacksstr))
      {
         if (!fmt->font.fdesc)
@@ -1211,6 +1214,10 @@ _format_command(Evas_Object *obj, Evas_Object_Textblock_Format *fmt, const char 
      {
         fmt->font.fdesc->width = evas_font_style_find(tmp_param,
               tmp_param + strlen(tmp_param), EVAS_FONT_STYLE_WIDTH);
+     }
+   else if (cmd == langstr)
+     {
+        eina_stringshare_replace(&(fmt->font.fdesc->lang), tmp_param);
      }
    else if (cmd == colorstr)
      _format_color_parse(tmp_param,

@@ -449,3 +449,7 @@
 	* Textblock: Added font_width.
 	  This allows overriding the font width set using:
 	  font=':style=Condensed'
+
+2011-08-01  Tom Hacohen (TAsn)
+
+	* Textblock: Added lang to markup to set the lang of the text.
