@@ -2261,9 +2261,9 @@ st_collections_group_parts_part_type(void)
     @parameters
         [1 or 0]
     @effect
-        Specifies whether the part will emit signals, altought is named
+        Specifies whether the part will emit signals, although it is named
         "mouse_events", disabling it (0) will prevent the part from emitting
-        any type of signal at all. Its set to 1 by default.
+        any type of signal at all. It's set to 1 by default.
     @endproperty
 */
 static void
@@ -2287,7 +2287,7 @@ st_collections_group_parts_part_mouse_events(void)
         [1 or 0]
     @effect
         Specifies whether a part echoes a mouse event to other parts below the
-        pointer (1), or not (0). Its set to 0 by default.
+        pointer (1), or not (0). It's set to 0 by default.
     @endproperty
 */
 static void
