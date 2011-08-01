@@ -406,6 +406,7 @@ evas_font_desc_unref(Evas_Font_Description *fdesc)
      {
         eina_stringshare_del(fdesc->name);
         eina_stringshare_del(fdesc->fallbacks);
+        eina_stringshare_del(fdesc->lang);
         free(fdesc);
      }
 }
@@ -458,9 +459,9 @@ evas_font_name_parse(Evas_Font_Description *fdesc, const char *name)
 
    end = strchr(name, ':');
    if (!end)
-      fdesc->name = eina_stringshare_add(name);
+      eina_stringshare_replace(&(fdesc->name), name);
    else
-      fdesc->name = eina_stringshare_add_length(name, end - name);
+      eina_stringshare_replace_length(&(fdesc->name), name, end - name);
 
    while (end)
      {
@@ -484,7 +485,8 @@ evas_font_name_parse(Evas_Font_Description *fdesc, const char *name)
           }
         else if (!strncmp(name, ":lang=", 6))
           {
-             /* FIXME: handle lang. */
+             const char *tmp = name + 6;
+             eina_stringshare_replace_length(&(fdesc->lang), tmp, tend - tmp);
           }
      }
 }
@@ -732,6 +734,9 @@ evas_font_load(Evas *evas, Evas_Font_Description *fdesc, const char *source, Eva
                     }
                }
           }
+
+        if (fdesc->lang)
+           FcPatternAddString (p_nm, FC_LANG, (FcChar8 *) fdesc->lang);
 
 	FcConfigSubstitute(NULL, p_nm, FcMatchPattern);
 	FcDefaultSubstitute(p_nm);
