@@ -978,7 +978,7 @@ evas_image_load_file_data_bmp(Image_Entry *ie, const char *file, const char *key
                        ie->flags.alpha = 0;
                        if (hasa)
                          {
-                            unsigned int *pixend = pix + (w * h);
+                            unsigned int *pixend = surface + (w * h);
                             
                             for (pix = surface; pix < pixend; pix++)
                                A_VAL(pix) = 0xff;
