@@ -350,7 +350,6 @@ struct _Evas_Object_Textblock_Format
    struct {
       Evas_Font_Description *fdesc;
       const char       *source;
-      const char       *fallbacks;
       Evas_Font_Set    *font;
       Evas_Font_Size    size;
    } font;
@@ -621,7 +620,6 @@ _format_unref_free(const Evas_Object *obj, Evas_Object_Textblock_Format *fmt)
    fmt->ref--;
    if (fmt->ref > 0) return;
    if (fmt->font.fdesc) evas_font_desc_unref(fmt->font.fdesc);
-   if (fmt->font.fallbacks) eina_stringshare_del(fmt->font.fallbacks);
    if (fmt->font.source) eina_stringshare_del(fmt->font.source);
    evas_font_free(obj->layer->evas, fmt->font.font);
    free(fmt);
@@ -1156,7 +1154,8 @@ _format_command(Evas_Object *obj, Evas_Object_Textblock_Format *fmt, const char 
 
    /* If we are changing the font, create the fdesc. */
    if ((cmd == font_weightstr) || (cmd == font_widthstr) ||
-         (cmd == font_stylestr) || (cmd == fontstr))
+         (cmd == font_stylestr) ||
+         (cmd == fontstr) || (cmd == font_fallbacksstr))
      {
         if (!fmt->font.fdesc)
           {
@@ -1177,15 +1176,7 @@ _format_command(Evas_Object *obj, Evas_Object_Textblock_Format *fmt, const char 
      }
    else if (cmd == font_fallbacksstr)
      {
-        if ((!fmt->font.fallbacks) ||
-              ((fmt->font.fallbacks) && (strcmp(fmt->font.fallbacks, tmp_param))))
-          {
-             /* policy - when we say "fallbacks" do we prepend and use prior
-              * fallbacks... or should we replace. for now we replace
-              */
-             if (fmt->font.fallbacks) eina_stringshare_del(fmt->font.fallbacks);
-             fmt->font.fallbacks = eina_stringshare_add(tmp_param);
-          }
+        eina_stringshare_replace(&(fmt->font.fdesc->fallbacks), tmp_param);
      }
    else if (cmd == font_sizestr)
      {
@@ -1693,20 +1684,17 @@ static Evas_Object_Textblock_Format *
 _format_dup(Evas_Object *obj, const Evas_Object_Textblock_Format *fmt)
 {
    Evas_Object_Textblock_Format *fmt2;
-   char *buf = NULL;
 
    fmt2 = calloc(1, sizeof(Evas_Object_Textblock_Format));
    memcpy(fmt2, fmt, sizeof(Evas_Object_Textblock_Format));
    fmt2->ref = 1;
    fmt2->font.fdesc = evas_font_desc_ref(fmt->font.fdesc);
 
-   if (fmt->font.fallbacks) fmt2->font.fallbacks = eina_stringshare_add(fmt->font.fallbacks);
    if (fmt->font.source) fmt2->font.source = eina_stringshare_add(fmt->font.source);
 
    /* FIXME: just ref the font here... */
    fmt2->font.font = evas_font_load(obj->layer->evas, fmt2->font.fdesc,
          fmt2->font.source, (int)(((double) fmt2->font.size) * obj->cur.scale));
-   if (buf) free(buf);
    return fmt2;
 }
 

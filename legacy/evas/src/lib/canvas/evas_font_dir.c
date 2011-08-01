@@ -405,6 +405,7 @@ evas_font_desc_unref(Evas_Font_Description *fdesc)
    if (--(fdesc->ref) == 0)
      {
         eina_stringshare_del(fdesc->name);
+        eina_stringshare_del(fdesc->fallbacks);
         free(fdesc);
      }
 }
@@ -707,8 +708,30 @@ evas_font_load(Evas *evas, Evas_Font_Description *fdesc, const char *source, Eva
               FC_WIDTH,  FcTypeInteger, _fc_width_map[fdesc->width],
 #endif
               NULL);
-        /* FIXME: Handle font fallbacks!!! */
         FcPatternAddString (p_nm, FC_FAMILY, (FcChar8*) fdesc->name);
+
+        /* Handle font fallbacks */
+        if (fdesc->fallbacks)
+          {
+             while (1)
+               {
+                  const char *start, *end;
+                  start = fdesc->fallbacks;
+                  end = strchr(start, ',');
+                  if (end)
+                    {
+                       char *tmp;
+                       tmp = strndup(start, end - start);
+                       FcPatternAddString (p_nm, FC_FAMILY, (FcChar8*) start);
+                       free(tmp);
+                    }
+                  else
+                    {
+                       FcPatternAddString (p_nm, FC_FAMILY, (FcChar8*) start);
+                       break;
+                    }
+               }
+          }
 
 	FcConfigSubstitute(NULL, p_nm, FcMatchPattern);
 	FcDefaultSubstitute(p_nm);
