@@ -431,16 +431,16 @@ evas_common_font_int_load_complete(RGBA_Font_Int *fi)
    fi->max_h += ret;
 
    /* If the loaded font doesn't match with wanted_rend value requested by
-    * textobject and textblock, Set the runtime_rend value as FONT_REND_ITALIC
-    * or FONT_REND_BOLD for software rendering. */
+    * textobject and textblock, Set the runtime_rend value as FONT_REND_SLANT
+    * or FONT_REND_WEIGHT for software rendering. */
    fi->runtime_rend = FONT_REND_REGULAR;
-   if ((fi->wanted_rend & FONT_REND_ITALIC) &&
+   if ((fi->wanted_rend & FONT_REND_SLANT) &&
        !(fi->src->ft.face->style_flags & FT_STYLE_FLAG_ITALIC))
-      fi->runtime_rend |= FONT_REND_ITALIC;
+      fi->runtime_rend |= FONT_REND_SLANT;
 
-   if ((fi->wanted_rend & FONT_REND_BOLD) &&
+   if ((fi->wanted_rend & FONT_REND_WEIGHT) &&
        !(fi->src->ft.face->style_flags & FT_STYLE_FLAG_BOLD))
-      fi->runtime_rend |= FONT_REND_BOLD;
+      fi->runtime_rend |= FONT_REND_WEIGHT;
 
    return fi;
 }

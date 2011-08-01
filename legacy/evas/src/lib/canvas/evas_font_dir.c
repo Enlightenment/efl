@@ -509,9 +509,9 @@ evas_font_load(Evas *evas, Evas_Font_Description *fdesc, const char *source, Eva
    fdesc->new = EINA_FALSE;
 
    if (fdesc->slant != EVAS_FONT_SLANT_NORMAL)
-      wanted_rend |= FONT_REND_ITALIC;
+      wanted_rend |= FONT_REND_SLANT;
    if (fdesc->weight == EVAS_FONT_WEIGHT_BOLD)
-      wanted_rend |= FONT_REND_BOLD;
+      wanted_rend |= FONT_REND_WEIGHT;
 
    evas_font_init();
 

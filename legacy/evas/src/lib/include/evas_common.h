@@ -470,8 +470,8 @@ typedef enum _Font_Hint_Flags
 typedef enum _Font_Rend_Flags
 {
    FONT_REND_REGULAR   = 0,
-   FONT_REND_ITALIC    = (1 << 0),
-   FONT_REND_BOLD      = (1 << 1),
+   FONT_REND_SLANT     = (1 << 0),
+   FONT_REND_WEIGHT    = (1 << 1),
 } Font_Rend_Flags;
 
 /*****************************************************************************/
