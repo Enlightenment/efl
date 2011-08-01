@@ -715,7 +715,7 @@ extern "C" {
     *
     * @param obj The Elementary object
     * @param item The content id to set (NULL for the default content)
-    * @param content The new content of the object 
+    * @param content The new content of the object
     *
     * @note Elementary objects may have many contents
     *

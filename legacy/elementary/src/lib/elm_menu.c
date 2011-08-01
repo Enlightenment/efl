@@ -785,7 +785,7 @@ elm_menu_item_object_content_set(Elm_Menu_Item *item, Evas_Object *obj)
         elm_widget_sub_object_del(item->base.widget, item->content);
         evas_object_del(item->content);
      }
-     
+
    item->content = obj;
 
    elm_widget_sub_object_add(item->base.widget, item->content);

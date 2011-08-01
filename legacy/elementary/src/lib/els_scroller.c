@@ -972,7 +972,7 @@ elm_smart_scroller_child_pos_set(Evas_Object *obj, Evas_Coord x, Evas_Coord y)
      edje_object_signal_emit(sd->edje_obj, "elm,action,scroll", "elm");
    if (!sd->down.bounce_x_animator)
      {
-        if (((x < minx) && (0 <= sd->down.dx)) || 
+        if (((x < minx) && (0 <= sd->down.dx)) ||
             ((x > (mx + minx)) && (0 >= sd->down.dx)))
           {
              sd->bouncemex = 1;
@@ -983,7 +983,7 @@ elm_smart_scroller_child_pos_set(Evas_Object *obj, Evas_Coord x, Evas_Coord y)
      }
    if (!sd->down.bounce_y_animator)
      {
-        if (((y < miny) && (0 <= sd->down.dy)) || 
+        if (((y < miny) && (0 <= sd->down.dy)) ||
             ((y > (my + miny)) && (0 >= sd->down.dy)))
           {
              sd->bouncemey = 1;
