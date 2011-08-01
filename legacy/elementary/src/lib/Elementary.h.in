@@ -13726,6 +13726,8 @@ extern "C" {
     *
     * @image html img/widget/genlist/preview-00.png
     * @image latex img/widget/genlist/preview-00.eps
+    * @image html img/genlist.png
+    * @image latex img/genlist.eps
     *
     * This widget aims to have more expansive list than the simple list in
     * Elementary that could have more flexible items and allow many more entries

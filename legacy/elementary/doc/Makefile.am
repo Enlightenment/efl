@@ -60,7 +60,7 @@ WGT_PREVIEW = \
 	toggle:preview-00.png:widget_preview_toggle:150:30 \
 	panel:preview-00.png:widget_preview_panel:150:50 \
 	gengrid:preview-00.png:widget_preview_gengrid:200:160 \
-	genlist:preview-00.png:widget_preview_genlist1:200:160 \
+	genlist:preview-00.png:widget_preview_genlist1:200:200 \
 	genlist:preview-01.png:widget_preview_genlist2:200:160 \
 	genlist:preview-02.png:widget_preview_genlist3:200:160 \
 	genlist:preview-03.png:widget_preview_genlist4:200:160 \

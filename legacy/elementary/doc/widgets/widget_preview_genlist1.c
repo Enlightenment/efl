@@ -34,6 +34,7 @@ elm_win_resize_object_add(win, genlist);
 evas_object_show(genlist);
 
 Elm_Genlist_Item_Class gic;
+Elm_Genlist_Item *it, *top;
 gic.item_style = "default";
 gic.func.label_get = _label_get;
 gic.func.icon_get = _icon_get;
@@ -42,6 +43,15 @@ gic.func.del = NULL;
 
 elm_genlist_item_append(genlist, &gic, NULL, NULL, ELM_GENLIST_ITEM_NONE, NULL, NULL);
 elm_genlist_item_append(genlist, &gic, NULL, NULL, ELM_GENLIST_ITEM_NONE, NULL, NULL);
+it = elm_genlist_item_append(genlist, &gic, NULL, NULL, ELM_GENLIST_ITEM_NONE, NULL, NULL);
+top = it;
+elm_genlist_item_expanded_set(it, EINA_TRUE);
+elm_genlist_item_append(genlist, &gic, NULL, it, ELM_GENLIST_ITEM_NONE, NULL, NULL);
+it = elm_genlist_item_append(genlist, &gic, NULL, it, ELM_GENLIST_ITEM_NONE, NULL, NULL);
+elm_genlist_item_append(genlist, &gic, NULL, it, ELM_GENLIST_ITEM_NONE, NULL, NULL);
 elm_genlist_item_append(genlist, &gic, NULL, NULL, ELM_GENLIST_ITEM_NONE, NULL, NULL);
+elm_genlist_item_append(genlist, &gic, NULL, NULL, ELM_GENLIST_ITEM_NONE, NULL, NULL);
+
+elm_genlist_item_top_show(top);
 
 #include "widget_preview_tmpl_foot.c"

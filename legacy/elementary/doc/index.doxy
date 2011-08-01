@@ -232,6 +232,8 @@
  *
  * @image html img/widget/genlist/preview-00.png
  * @image latex img/widget/genlist/preview-00.eps
+ * @image html img/genlist.png
+ * @image latex img/genlist.eps
  * @li @ref Grid
  * @li @ref Layout
  *
