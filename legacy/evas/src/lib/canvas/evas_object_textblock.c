@@ -1206,17 +1206,17 @@ _format_command(Evas_Object *obj, Evas_Object_Textblock_Format *fmt, const char 
              fmt->font.source = eina_stringshare_add(tmp_param);
           }
      }
-   if (cmd == font_weightstr)
+   else if (cmd == font_weightstr)
      {
         fmt->font.fdesc->weight = evas_font_style_find(tmp_param,
               tmp_param + strlen(tmp_param), EVAS_FONT_STYLE_WEIGHT);
      }
-   if (cmd == font_stylestr)
+   else if (cmd == font_stylestr)
      {
         fmt->font.fdesc->slant = evas_font_style_find(tmp_param,
               tmp_param + strlen(tmp_param), EVAS_FONT_STYLE_SLANT);
      }
-   if (cmd == font_widthstr)
+   else if (cmd == font_widthstr)
      {
         fmt->font.fdesc->width = evas_font_style_find(tmp_param,
               tmp_param + strlen(tmp_param), EVAS_FONT_STYLE_WIDTH);
