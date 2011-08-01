@@ -786,8 +786,8 @@ _elm_win_eval_subobjs(Evas_Object *obj)
         if (wy == 0.0) xy = 0;
 
         evas_object_size_hint_min_get(child, &w, &h);
-        if (w < 1) w = -1;
-        if (h < 1) h = -1;
+        if (w < 1) w = 1;
+        if (h < 1) h = 1;
         if (w > minw) minw = w;
         if (h > minh) minh = h;
 
