@@ -3687,6 +3687,9 @@ _layout_par(Ctxt *c)
                             /* Only relevant in those cases */
                             if (it->format->wrap_word || it->format->wrap_mixed)
                               {
+                                 const char *lang;
+                                 lang = (it->format->font.fdesc) ?
+                                    it->format->font.fdesc->lang : "";
                                  size_t len =
                                     eina_ustrbuf_length_get(
                                           it->text_node->unicode);
@@ -3694,8 +3697,7 @@ _layout_par(Ctxt *c)
                                  set_linebreaks_utf32((const utf32_t *)
                                     eina_ustrbuf_string_get(
                                        it->text_node->unicode),
-                                    len, "", line_breaks);
-                                 /* FIXME: "" should be text_props language */
+                                    len, lang, line_breaks);
                               }
                          }
 #endif
