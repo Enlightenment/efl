@@ -1,8 +1,3 @@
-#include <glib.h>
-#include <gst/gst.h>
-#include <gst/video/video.h>
-#include <gst/video/gstvideosink.h>
-
 #include <Ecore.h>
 
 #include "emotion_gstreamer.h"
@@ -30,32 +25,6 @@ enum {
 
 static guint evas_video_sink_signals[LAST_SIGNAL] = { 0, };
 
-struct _EvasVideoSinkPrivate {
-   Evas_Object *o;
-   Ecore_Pipe *p;
-
-   int width;
-   int height;
-   Evas_Colorspace eformat;
-   GstVideoFormat gformat;
-
-   GMutex* buffer_mutex;
-   GCond* data_cond;
-
-   GstBuffer *last_buffer; /* We need to keep a copy of the last inserted buffer as evas doesn't copy YUV data around */
-
-   // If this is TRUE all processing should finish ASAP
-   // This is necessary because there could be a race between
-   // unlock() and render(), where unlock() wins, signals the
-   // GCond, then render() tries to render a frame although
-   // everything else isn't running anymore. This will lead
-   // to deadlocks because render() holds the stream lock.
-   //
-   // Protected by the buffer mutex
-   Eina_Bool unlocked : 1;
-   Eina_Bool preroll : 1;
-};
-
 #define _do_init(bla)                                   \
   GST_DEBUG_CATEGORY_INIT(evas_video_sink_debug,        \
                           "emotion-sink",		\
@@ -71,7 +40,7 @@ GST_BOILERPLATE_FULL(EvasVideoSink,
 
 static void unlock_buffer_mutex(EvasVideoSinkPrivate* priv);
 
-static void evas_video_sink_render_handler(void *data, void *buf, unsigned int len);
+static void evas_video_sink_main_render(void *data);
 
 static void
 evas_video_sink_base_init(gpointer g_class)
@@ -93,7 +62,6 @@ evas_video_sink_init(EvasVideoSink* sink, EvasVideoSinkClass* klass __UNUSED__)
    INF("sink init");
    sink->priv = priv = G_TYPE_INSTANCE_GET_PRIVATE(sink, EVAS_TYPE_VIDEO_SINK, EvasVideoSinkPrivate);
    priv->o = NULL;
-   priv->p = ecore_pipe_add(evas_video_sink_render_handler, sink);
    priv->last_buffer = NULL;
    priv->width = 0;
    priv->height = 0;
@@ -101,7 +69,6 @@ evas_video_sink_init(EvasVideoSink* sink, EvasVideoSinkClass* klass __UNUSED__)
    priv->eformat = EVAS_COLORSPACE_ARGB8888;
    priv->data_cond = g_cond_new();
    priv->buffer_mutex = g_mutex_new();
-   priv->preroll = EINA_FALSE;
    priv->unlocked = EINA_FALSE;
 }
 
@@ -183,11 +150,6 @@ evas_video_sink_dispose(GObject* object)
       priv->data_cond = 0;
    }
 
-   if (priv->p) {
-      ecore_pipe_del(priv->p);
-      priv->p = NULL;
-   }
-
    if (priv->last_buffer) {
       gst_buffer_unref(priv->last_buffer);
       priv->last_buffer = NULL;
@@ -259,14 +221,7 @@ evas_video_sink_start(GstBaseSink* base_sink)
    if (!priv->o)
      res = FALSE;
    else
-     {
-        if (!priv->p)
-          res = FALSE;
-        else
-          {
-             priv->unlocked = EINA_FALSE;
-          }
-     }
+     priv->unlocked = EINA_FALSE;
    g_mutex_unlock(priv->buffer_mutex);
    return res;
 }
@@ -313,27 +268,27 @@ evas_video_sink_unlock_stop(GstBaseSink* object)
 static GstFlowReturn
 evas_video_sink_preroll(GstBaseSink* bsink, GstBuffer* buffer)
 {
-   GstBuffer *send;
-   EvasVideoSink* sink;
-   EvasVideoSinkPrivate* priv;
+   Emotion_Gstreamer_Buffer *send;
+   EvasVideoSinkPrivate *priv;
+   EvasVideoSink *sink;
 
    sink = EVAS_VIDEO_SINK(bsink);
    priv = sink->priv;
 
-   send = gst_buffer_ref(buffer);
+   send = emotion_gstreamer_buffer_alloc(priv, buffer, EINA_TRUE);
 
-   priv->preroll = EINA_TRUE;
+   if (send)
+     ecore_main_loop_thread_safe_call(evas_video_sink_main_render, send);
 
-   ecore_pipe_write(priv->p, &send, sizeof(buffer));
    return GST_FLOW_OK;
 }
 
 static GstFlowReturn
 evas_video_sink_render(GstBaseSink* bsink, GstBuffer* buffer)
 {
-   GstBuffer *send;
-   EvasVideoSink* sink;
-   EvasVideoSinkPrivate* priv;
+   Emotion_Gstreamer_Buffer *send;
+   EvasVideoSinkPrivate *priv;
+   EvasVideoSink *sink;
    Eina_Bool ret;
 
    sink = EVAS_VIDEO_SINK(bsink);
@@ -347,12 +302,10 @@ evas_video_sink_render(GstBaseSink* bsink, GstBuffer* buffer)
       return GST_FLOW_OK;
    }
 
-   priv->preroll = EINA_FALSE;
+   send = emotion_gstreamer_buffer_alloc(priv, buffer, EINA_FALSE);
+   if (!send) return GST_FLOW_ERROR;
 
-   send = gst_buffer_ref(buffer);
-   ret = ecore_pipe_write(priv->p, &send, sizeof(buffer));
-   if (!ret)
-     return GST_FLOW_ERROR;
+   ecore_main_loop_thread_safe_call(evas_video_sink_main_render, send);
 
    g_cond_wait(priv->data_cond, priv->buffer_mutex);
    g_mutex_unlock(priv->buffer_mutex);
@@ -360,13 +313,11 @@ evas_video_sink_render(GstBaseSink* bsink, GstBuffer* buffer)
    return GST_FLOW_OK;
 }
 
-static void evas_video_sink_render_handler(void *data,
-                                           void *buf,
-                                           unsigned int len)
+static void evas_video_sink_main_render(void *data)
 {
+   Emotion_Gstreamer_Buffer *send;
    Emotion_Gstreamer_Video *ev;
    Emotion_Video_Stream *vstream;
-   EvasVideoSink* sink;
    EvasVideoSinkPrivate* priv;
    GstBuffer* buffer;
    unsigned char *evas_data;
@@ -375,14 +326,17 @@ static void evas_video_sink_render_handler(void *data,
    GstFormat fmt = GST_FORMAT_TIME;
    Evas_Coord w, h;
    gint64 pos;
+   Eina_Bool preroll;
 
-   sink = (EvasVideoSink *)data;
-   priv = sink->priv;
+   send = data;
 
-   buffer = *((GstBuffer **)buf);
+   priv = send->sink;
+   if (!priv) goto exit_point;
 
-   if (priv->unlocked)
-     goto exit_point;
+   buffer = send->frame;
+   preroll = send->preroll;
+
+   if (priv->unlocked) goto exit_point;
 
    gst_data = GST_BUFFER_DATA(buffer);
    if (!gst_data) goto exit_point;
@@ -552,11 +506,13 @@ static void evas_video_sink_render_handler(void *data,
    _emotion_video_pos_update(ev->obj, ev->position, vstream->length_time);
    _emotion_frame_resize(ev->obj, priv->width, priv->height, ev->ratio);
 
- exit_point:
    if (priv->last_buffer) gst_buffer_unref(priv->last_buffer);
-   priv->last_buffer = buffer;
+   priv->last_buffer = gst_buffer_ref(buffer);
 
-   if (priv->preroll) return ;
+ exit_point:
+   emotion_gstreamer_buffer_free(send);
+
+   if (preroll) return ;
 
    g_mutex_lock(priv->buffer_mutex);
 

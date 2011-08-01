@@ -7,13 +7,21 @@
 
 #define HTTP_STREAM 0
 #define RTSP_STREAM 1
+#include <glib.h>
 #include <gst/gst.h>
 #include <glib-object.h>
 #include <gst/video/gstvideosink.h>
+#include <gst/video/video.h>
 
 #include "emotion_private.h"
 
-
+typedef struct _EvasVideoSinkPrivate EvasVideoSinkPrivate;
+typedef struct _EvasVideoSink        EvasVideoSink;
+typedef struct _EvasVideoSinkClass   EvasVideoSinkClass;
+typedef struct _Emotion_Gstreamer_Video Emotion_Gstreamer_Video;
+typedef struct _Emotion_Audio_Stream Emotion_Audio_Stream;
+typedef struct _Emotion_Gstreamer_Metadata Emotion_Gstreamer_Metadata;
+typedef struct _Emotion_Gstreamer_Buffer Emotion_Gstreamer_Buffer;
 typedef struct _Emotion_Video_Stream Emotion_Video_Stream;
 
 struct _Emotion_Video_Stream
@@ -27,16 +35,12 @@ struct _Emotion_Video_Stream
    int         index;
 };
 
-typedef struct _Emotion_Audio_Stream Emotion_Audio_Stream;
-
 struct _Emotion_Audio_Stream
 {
    gdouble     length_time;
    gint        channels;
    gint        samplerate;
 };
-
-typedef struct _Emotion_Gstreamer_Metadata Emotion_Gstreamer_Metadata;
 
 struct _Emotion_Gstreamer_Metadata
 {
@@ -49,9 +53,6 @@ struct _Emotion_Gstreamer_Metadata
    char *count;
    char *disc_id;
 };
-
-
-typedef struct _Emotion_Gstreamer_Video Emotion_Gstreamer_Video;
 
 struct _Emotion_Gstreamer_Video
 {
@@ -90,6 +91,53 @@ struct _Emotion_Gstreamer_Video
    unsigned char     audio_mute   : 1;
 };
 
+struct _EvasVideoSink {
+    /*< private >*/
+    GstVideoSink parent;
+    EvasVideoSinkPrivate *priv;
+};
+
+struct _EvasVideoSinkClass {
+    /*< private >*/
+    GstVideoSinkClass parent_class;
+};
+
+struct _EvasVideoSinkPrivate {
+   EINA_REFCOUNT;
+
+   Evas_Object *o;
+
+   int width;
+   int height;
+   Evas_Colorspace eformat;
+   GstVideoFormat gformat;
+
+   GMutex* buffer_mutex;
+   GCond* data_cond;
+
+    /* We need to keep a copy of the last inserted buffer as evas doesn't copy YUV data around */
+   GstBuffer *last_buffer;
+
+   // If this is TRUE all processing should finish ASAP
+   // This is necessary because there could be a race between
+   // unlock() and render(), where unlock() wins, signals the
+   // GCond, then render() tries to render a frame although
+   // everything else isn't running anymore. This will lead
+   // to deadlocks because render() holds the stream lock.
+   //
+   // Protected by the buffer mutex
+   Eina_Bool unlocked : 1;
+};
+
+struct _Emotion_Gstreamer_Buffer
+{
+   EvasVideoSinkPrivate *sink;
+
+   GstBuffer *frame;
+
+   Eina_Bool preroll : 1;
+};
+
 extern int _emotion_gstreamer_log_domain;
 #define DBG(...) EINA_LOG_DOM_DBG(_emotion_gstreamer_log_domain, __VA_ARGS__)
 #define INF(...) EINA_LOG_DOM_INFO(_emotion_gstreamer_log_domain, __VA_ARGS__)
@@ -119,25 +167,14 @@ extern int _emotion_gstreamer_log_domain;
     (G_TYPE_INSTANCE_GET_CLASS((obj), \
     EVAS_TYPE_VIDEO_SINK, EvasVideoSinkClass))
 
-typedef struct _EvasVideoSink        EvasVideoSink;
-typedef struct _EvasVideoSinkClass   EvasVideoSinkClass;
-typedef struct _EvasVideoSinkPrivate EvasVideoSinkPrivate;
-
-struct _EvasVideoSink {
-    /*< private >*/
-    GstVideoSink parent;
-    EvasVideoSinkPrivate *priv;
-};
-
-struct _EvasVideoSinkClass {
-    /*< private >*/
-    GstVideoSinkClass parent_class;
-};
-
 GstElement *gstreamer_video_sink_new(Emotion_Gstreamer_Video *ev,
                                      Evas_Object *obj,
                                      const char *uri);
 
 gboolean    gstreamer_plugin_init(GstPlugin *plugin);
 
+Emotion_Gstreamer_Buffer *emotion_gstreamer_buffer_alloc(EvasVideoSinkPrivate *sink,
+                                                         GstBuffer *buffer,
+                                                         Eina_Bool preroll);
+void emotion_gstreamer_buffer_free(Emotion_Gstreamer_Buffer *send);
 #endif /* __EMOTION_GSTREAMER_H__ */
