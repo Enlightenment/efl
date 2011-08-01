@@ -448,6 +448,7 @@ part of Edje's API:
 
 - @ref Example_Edje_Basics
 - @ref tutorial_edje_swallow
+- @ref tutorial_edje_table
 
 
 
@@ -3183,8 +3184,7 @@ EAPI Evas_Object *edje_object_part_table_child_get        (Evas_Object *obj, con
  * @param colspan Columns the child will take
  * @param rowspan Rows the child will take
  *
- * @return 1: Successfully added.\n
- * 0: An error occurred.
+ * @return @c EINA_TRUE object was added, @c EINA_FALSE on failure
  *
  * Packs an object into the table indicated by part.
  */
@@ -3197,8 +3197,7 @@ EAPI Eina_Bool    edje_object_part_table_pack             (Evas_Object *obj, con
  * @param part The part name
  * @param child_obj The object to pack in
  *
- * @return 1: Successfully removed.\n
- * 0: An error occurred.
+ * @return @c EINA_TRUE object removed, @c EINA_FALSE on failure
  *
  * Removes an object from the table indicated by part.
  */
@@ -3212,8 +3211,7 @@ EAPI Eina_Bool    edje_object_part_table_unpack           (Evas_Object *obj, con
  * @param cols Pointer where to store number of columns (can be NULL)
  * @param rows Pointer where to store number of rows (can be NULL)
  *
- * @return 1: Successfully get some data.\n
- * 0: An error occurred.
+ * @return @c EINA_TRUE get some data, @c EINA_FALSE on failure
  *
  * Retrieves the size of the table in number of columns and rows.
  */
@@ -3226,8 +3224,7 @@ EAPI Eina_Bool    edje_object_part_table_col_row_size_get (const Evas_Object *ob
  * @param part The part name
  * @param clear If set, will delete subobjs on remove
  *
- * @return 1: Successfully clear table.\n
- * 0: An error occurred.
+ * @return @c EINA_TRUE clear the table, @c EINA_FALSE on failure
  *
  * Removes all object from the table indicated by part, except the
  * internal ones set from the theme.
