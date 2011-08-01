@@ -51,4 +51,5 @@ group "Elm_Config" struct {
   value "glayer_line_distance_tolerance" double: 3.0;
   value "glayer_line_angular_tolerance" double: 0.34906585; /* Represents 20 DEG */
   value "glayer_flick_time_limit_ms" uint: 60; /* 60 ms to finish flick */
+  value "glayer_long_tap_start_timeout" double: 1.2; /* 1.2 sec to start long-tap */
 }

@@ -9776,6 +9776,7 @@ extern "C" {
         ELM_GESTURE_FIRST = 0,
 
         ELM_GESTURE_N_TAPS, /**< N fingers single taps */
+        ELM_GESTURE_N_LONG_TAPS, /**< N fingers single long-taps */
         ELM_GESTURE_N_DOUBLE_TAPS, /**< N fingers double-single taps */
         ELM_GESTURE_N_TRIPLE_TAPS, /**< N fingers triple-single taps */
 

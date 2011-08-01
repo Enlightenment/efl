@@ -153,6 +153,17 @@ struct _Taps_Type
 };
 typedef struct _Taps_Type Taps_Type;
 
+struct _Long_Tap_Type
+{
+   Elm_Gesture_Taps_Info info;
+   unsigned int center_x;
+   unsigned int center_y;
+   unsigned int n_taps;
+   Ecore_Timer *timeout; /* When this expires, long tap STARTed */
+   Eina_List *touched;
+};
+typedef struct _Long_Tap_Type Long_Tap_Type;
+
 struct _Momentum_Type
 {  /* Fields used by _line_test() */
    Elm_Gesture_Momentum_Info info;
@@ -223,6 +234,7 @@ struct _Widget_Data
    double zoom_finger_factor; /* used for zoom factor */
    double rotate_angular_tolerance;
    unsigned int flick_time_limit_ms;
+   double long_tap_start_timeout;
 
    double zoom_step;
    double rotate_step;
@@ -586,6 +598,30 @@ _dbl_click_test_reset(Gesture_Info *gesture)
   memset(gesture->data, 0, sizeof(Taps_Type));
 }
 
+/* All *test_reset() funcs are called to clear
+ * gesture intermediate data.
+ * This happens when we need to reset our tests.
+ * for example when gesture is detected or all ABORTed. */
+static void
+_n_long_tap_test_reset(Gesture_Info *gesture)
+{
+   if (!gesture)
+     return;
+
+   if (!gesture->data)
+     return;
+
+   Long_Tap_Type *st = gesture->data;
+   if (st->timeout) ecore_timer_del(st->timeout);
+   Eina_List *l;
+   Pointer_Event *p;
+   EINA_LIST_FOREACH(st->touched, l, p)
+      free(p);
+
+   eina_list_free(st->touched);
+   memset(gesture->data, 0, sizeof(Long_Tap_Type));
+}
+
 static void
 _momentum_test_reset(Gesture_Info *gesture)
 {
@@ -903,6 +939,7 @@ _event_history_clear(Evas_Object *obj)
    _reset_states(wd); /* we are ready to start testing for gestures again */
 
    /* Clear all gestures intermediate date */
+   _n_long_tap_test_reset(wd->gesture[ELM_GESTURE_N_LONG_TAPS]);
    _dbl_click_test_reset(wd->gesture[ELM_GESTURE_N_TAPS]);
    _dbl_click_test_reset(wd->gesture[ELM_GESTURE_N_DOUBLE_TAPS]);
    _dbl_click_test_reset(wd->gesture[ELM_GESTURE_N_TRIPLE_TAPS]);
@@ -1142,6 +1179,29 @@ _dbl_click_timeout(void *data)
 /**
  * @internal
  *
+ * when this timer expires we START long tap gesture
+ *
+ * @param data The gesture-layer object.
+ * @return cancles callback for this timer.
+ *
+ * @ingroup Elm_Gesture_Layer
+ */
+static Eina_Bool
+_long_tap_timeout(void *data)
+{
+   Gesture_Info *gesture = data;
+   Long_Tap_Type *st = gesture->data;
+   st->timeout = NULL;
+
+   _set_state(gesture, ELM_GESTURE_STATE_START,
+         gesture->data, EINA_FALSE);
+
+   return ECORE_CALLBACK_CANCEL;
+}
+
+/**
+ * @internal
+ *
  * This function checks all click/tap and double/triple taps
  *
  * @param obj The gesture-layer object.
@@ -1264,6 +1324,144 @@ _dbl_click_test(Evas_Object *obj, Pointer_Event *pe,
                       &st->info, EINA_FALSE);
                 consume_event(wd, event_info, event_type, ev_flag);
                 }
+           }
+         break;
+
+      default:
+         return;
+     }
+}
+
+/**
+ * @internal
+ *
+ * This function computes center-point for  long-tap gesture
+ *
+ * @param st Long Tap gesture info pointer
+ * @param pe The recent input event as stored in pe struct.
+ *
+ * @ingroup Elm_Gesture_Layer
+ */
+static void
+_compute_taps_center(Long_Tap_Type *st, Pointer_Event *pe)
+{
+   if(!eina_list_count(st->touched))
+     return;
+
+   Eina_List *l;
+   Pointer_Event *p;
+   Evas_Coord x = 0, y = 0;
+   EINA_LIST_FOREACH(st->touched, l, p)
+     {  /* Accumulate all then take avarage */
+        if (p->device == pe->device)
+          {  /* This will take care of values coming from MOVE event */
+             x += pe->x;
+             y += pe->y;
+          }
+        else
+          {
+             x += p->x;
+             y += p->y;
+          }
+     }
+
+   st->info.x = x / eina_list_count(st->touched);
+   st->info.y = y / eina_list_count(st->touched);
+}
+
+/**
+ * @internal
+ *
+ * This function checks N long-tap gesture.
+ *
+ * @param obj The gesture-layer object.
+ * @param pe The recent input event as stored in pe struct.
+ * @param event_info Original input event pointer.
+ * @param event_type Type of original input event.
+ * @param g_type what Gesture we are testing.
+ * @param taps How many click/taps we test for.
+ *
+ * @ingroup Elm_Gesture_Layer
+ */
+static void
+_n_long_tap_test(Evas_Object *obj, Pointer_Event *pe,
+      void *event_info, Evas_Callback_Type event_type,
+      Elm_Gesture_Types g_type)
+{  /* Here we fill Recent_Taps struct and fire-up click/tap timers */
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+
+   if (!pe)   /* this happens when unhandled event arrived */
+     return; /* see _make_pointer_event function */
+
+   Gesture_Info *gesture = wd->gesture[g_type];
+   if (!gesture ) return;
+
+   Long_Tap_Type *st = gesture->data;
+   if (!st)
+     {  /* Allocated once on first time */
+        st = calloc(1, sizeof(Long_Tap_Type));
+        gesture->data = st;
+        _n_long_tap_test_reset(gesture);
+     }
+
+   Evas_Event_Flags ev_flag = EVAS_EVENT_FLAG_NONE;
+   switch (pe->event_type)
+     {
+      case EVAS_CALLBACK_MULTI_DOWN:
+      case EVAS_CALLBACK_MOUSE_DOWN:
+         if (st->info.n > eina_list_count(st->touched))
+           {  /* ABORT: user lifts finger then back before completing gesgure */
+              if (st->timeout) ecore_timer_del(st->timeout);
+              st->timeout = NULL;
+              ev_flag =_set_state(gesture, ELM_GESTURE_STATE_ABORT,
+                    &st->info, EINA_FALSE);
+           }
+
+         st->touched = _add_touched_device(st->touched, pe);
+         st->info.n = eina_list_count(st->touched);
+         if ((pe->device == 0) && (eina_list_count(st->touched) == 1))
+           {  /* This is the first mouse down we got */
+              st->info.timestamp = pe->timestamp;
+
+              /* To test long tap */
+              /* When this timer expires, gesture STARTED */
+              if (!st->timeout)
+                st->timeout = ecore_timer_add(wd->long_tap_start_timeout, _long_tap_timeout,
+                      gesture);
+           }
+
+         consume_event(wd, event_info, event_type, ev_flag);
+         _compute_taps_center(st, pe);
+         break;
+
+      case EVAS_CALLBACK_MULTI_UP:
+      case EVAS_CALLBACK_MOUSE_UP:
+         st->touched = _remove_touched_device(st->touched, pe);
+         if (st->info.n &&
+               ((gesture->state == ELM_GESTURE_STATE_START) ||
+                (gesture->state == ELM_GESTURE_STATE_MOVE)))
+           {  /* Report END only for gesture that STARTed */
+              if (eina_list_count(st->touched) == 0)
+                {  /* Report END only at last release event */
+                   ev_flag =_set_state(gesture, ELM_GESTURE_STATE_END,
+                         &st->info, EINA_FALSE);
+                   consume_event(wd, event_info, event_type, ev_flag);
+                }
+           }
+         break;
+
+      case EVAS_CALLBACK_MULTI_MOVE:
+      case EVAS_CALLBACK_MOUSE_MOVE:
+         if(st->info.n &&
+               ((gesture->state == ELM_GESTURE_STATE_START) ||
+                (gesture->state == ELM_GESTURE_STATE_MOVE)))
+           {  /* Report MOVE only if STARTED */
+              _compute_taps_center(st, pe);
+              /* Report MOVE if gesture started */
+              ev_flag = _set_state(gesture, ELM_GESTURE_STATE_MOVE,
+                    &st->info, EINA_TRUE);
+              consume_event(wd, event_info, event_type, ev_flag);
            }
          break;
 
@@ -2736,6 +2934,10 @@ _event_process(void *data, Evas_Object *obj __UNUSED__,
    if (_make_pointer_event(data, event_info, event_type, &_pe))
      pe = &_pe;
 
+   if (IS_TESTED(ELM_GESTURE_N_LONG_TAPS))
+     _n_long_tap_test(data, pe, event_info, event_type,
+           ELM_GESTURE_N_LONG_TAPS);
+
    if (IS_TESTED(ELM_GESTURE_N_TAPS))
      _dbl_click_test(data, pe, event_info, event_type,
            ELM_GESTURE_N_TAPS, 1);
@@ -3019,11 +3221,12 @@ elm_gesture_layer_add(Evas_Object *parent)
    wd->rotate_angular_tolerance = _elm_config->glayer_rotate_angular_tolerance;
    wd->line_angular_tolerance = _elm_config->glayer_line_angular_tolerance;
    wd->flick_time_limit_ms = _elm_config->glayer_flick_time_limit_ms;
+   wd->long_tap_start_timeout = _elm_config->glayer_long_tap_start_timeout;
    wd->repeat_events = EINA_TRUE;
 
 #if defined(DEBUG_GESTURE_LAYER)
    printf("size of Gestures = <%d>\n", sizeof(wd->gesture));
-   printf("initial values:\n\tzoom_finger_factor=<%f>\n\tzoom_distance_tolerance=<%d>\n\tline_min_length=<%d>\n\tline_distance_tolerance=<%d>\n\tzoom_wheel_factor=<%f>\n\trotate_angular_tolerance=<%f>\n\twd->line_angular_tolerance=<%f>\n\twd->flick_time_limit_ms=<%d>\n", wd->zoom_finger_factor, wd->zoom_distance_tolerance, wd->line_min_length, wd->line_distance_tolerance, wd->zoom_wheel_factor, wd->rotate_angular_tolerance, wd->line_angular_tolerance, wd->flick_time_limit_ms);
+   printf("initial values:\n\tzoom_finger_factor=<%f>\n\tzoom_distance_tolerance=<%d>\n\tline_min_length=<%d>\n\tline_distance_tolerance=<%d>\n\tzoom_wheel_factor=<%f>\n\trotate_angular_tolerance=<%f>\n\twd->line_angular_tolerance=<%f>\n\twd->flick_time_limit_ms=<%d>\nwd->long_tap_start_timeout=<%f>\n", wd->zoom_finger_factor, wd->zoom_distance_tolerance, wd->line_min_length, wd->line_distance_tolerance, wd->zoom_wheel_factor, wd->rotate_angular_tolerance, wd->line_angular_tolerance, wd->flick_time_limit_ms, wd->long_tap_start_timeout);
 #endif
    memset(wd->gesture, 0, sizeof(wd->gesture));
 

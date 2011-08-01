@@ -610,6 +610,7 @@ _desc_init(void)
    ELM_CONFIG_VAL(D, T, glayer_line_distance_tolerance, T_DOUBLE);
    ELM_CONFIG_VAL(D, T, glayer_line_angular_tolerance, T_DOUBLE);
    ELM_CONFIG_VAL(D, T, glayer_flick_time_limit_ms, T_INT);
+   ELM_CONFIG_VAL(D, T, glayer_long_tap_start_timeout, T_DOUBLE);
 #undef T
 #undef D
 #undef T_INT
@@ -1176,6 +1177,7 @@ _config_load(void)
    _elm_config->glayer_line_distance_tolerance = 3.0; /* 3 times elm_finger_size_get() */
    _elm_config->glayer_line_angular_tolerance = 0.34906585;       /* Represents 20 DEG */
    _elm_config->glayer_flick_time_limit_ms = 60;              /* 60 ms to finish flick */
+   _elm_config->glayer_long_tap_start_timeout = 1.2;   /* 1.2 second to start long-tap */
 }
 
 static const char *

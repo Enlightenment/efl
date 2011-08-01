@@ -139,6 +139,7 @@ struct _Elm_Config
    double         glayer_line_distance_tolerance;
    double         glayer_line_angular_tolerance;
    unsigned int   glayer_flick_time_limit_ms;
+   double         glayer_long_tap_start_timeout;
 };
 
 struct _Elm_Module
