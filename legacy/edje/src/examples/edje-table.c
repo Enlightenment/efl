@@ -30,7 +30,7 @@ static Evas *evas;
 static Evas_Object *bg, *edje_obj, *rects[4];
 
 static void
-_on_destroy(Ecore_Evas *ee __UNUSED__)
+_on_delete(Ecore_Evas *ee __UNUSED__)
 {
    ecore_main_loop_quit();
 }
@@ -109,7 +109,7 @@ main(void)
     * engine available */
    ee = ecore_evas_new(NULL, 0, 0, WIDTH, HEIGHT, NULL);
 
-   ecore_evas_callback_destroy_set(ee, _on_destroy);
+   ecore_evas_callback_delete_request_set(ee, _on_delete);
    ecore_evas_callback_resize_set(ee, _canvas_resize_cb);
    ecore_evas_title_set(ee, "Edje Table Example");
    ecore_evas_show(ee);

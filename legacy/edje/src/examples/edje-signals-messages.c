@@ -71,7 +71,7 @@ _on_keydown(void        *data __UNUSED__,
 }
 
 static void
-_on_destroy(Ecore_Evas *ee __UNUSED__)
+_on_delete(Ecore_Evas *ee __UNUSED__)
 {
    ecore_main_loop_quit();
 }
@@ -152,7 +152,7 @@ main(void)
    if (!ee)
      goto error;
 
-   ecore_evas_callback_destroy_set(ee, _on_destroy);
+   ecore_evas_callback_delete_request_set(ee, _on_delete);
    ecore_evas_title_set(ee, "Edje Basics Example");
    ecore_evas_show(ee);
 
