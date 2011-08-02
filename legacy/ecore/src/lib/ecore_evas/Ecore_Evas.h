@@ -55,6 +55,14 @@
 extern "C" {
 #endif
 
+/**
+ * @defgroup Ecore_Evas_Group Ecore_Evas wrapper/helper set of functions
+ *
+ * This is a list of examples of these functions:
+ * - @ref Ecore_Evas_Window_Sizes_Example_c
+ * @{
+ */
+
 /* these are dummy and just tell u what API levels ecore_evas supports - not if
  * the actual support is compiled in. you need to query for that separately.
  */
@@ -477,14 +485,125 @@ EAPI void        ecore_evas_title_set(Ecore_Evas *ee, const char *t);
 EAPI const char *ecore_evas_title_get(const Ecore_Evas *ee);
 EAPI void        ecore_evas_name_class_set(Ecore_Evas *ee, const char *n, const char *c);
 EAPI void        ecore_evas_name_class_get(const Ecore_Evas *ee, const char **n, const char **c);
+
+/**
+ * Set the minimum size of a given @c Ecore_Evas window
+ *
+ * @param ee An @c Ecore_Evas window's handle
+ * @param w The minimum width
+ * @param h The minimum height
+ *
+ * This function sets the minimum size of @p ee to be @p w x @p h.
+ * One won't be able to resize that window to dimensions smaller than
+ * the ones set.
+ *
+ * @note When base sizes are set, via ecore_evas_size_base_set(),
+ * they'll be used to calculate a window's minimum size, instead of
+ * those set by this function.
+ *
+ * @see ecore_evas_size_min_get()
+ */
 EAPI void        ecore_evas_size_min_set(Ecore_Evas *ee, int w, int h);
+
+/**
+ * Get the minimum size set for a given @c Ecore_Evas window
+ *
+ * @param ee An @c Ecore_Evas window's handle
+ * @param w A pointer to an int to place the minimum width in.
+ * @param h A pointer to an int to place the minimum height in.
+ *
+ * @note Use @c NULL pointers on the size components you're not
+ * interested in: they'll be ignored by the function.
+ *
+ * @see ecore_evas_size_min_set() for more details
+ */
 EAPI void        ecore_evas_size_min_get(const Ecore_Evas *ee, int *w, int *h);
+
+/**
+ * Set the maximum size of a given @c Ecore_Evas window
+ *
+ * @param ee An @c Ecore_Evas window's handle
+ * @param w The maximum width
+ * @param h The maximum height
+ *
+ * This function sets the maximum size of @p ee to be @p w x @p h.
+ * One won't be able to resize that window to dimensions bigger than
+ * the ones set.
+ *
+ * @see ecore_evas_size_max_get()
+ */
 EAPI void        ecore_evas_size_max_set(Ecore_Evas *ee, int w, int h);
+
+/**
+ * Get the maximum size set for a given @c Ecore_Evas window
+ *
+ * @param ee An @c Ecore_Evas window's handle
+ * @param w A pointer to an int to place the maximum width in.
+ * @param h A pointer to an int to place the maximum height in.
+ *
+ * @note Use @c NULL pointers on the size components you're not
+ * interested in: they'll be ignored by the function.
+ *
+ * @see ecore_evas_size_max_set() for more details
+ */
 EAPI void        ecore_evas_size_max_get(const Ecore_Evas *ee, int *w, int *h);
+
+/**
+ * Set the base size for a given @c Ecore_Evas window
+ *
+ * @param ee An @c Ecore_Evas window's handle
+ * @param w The base width
+ * @param h The base height
+ *
+ * This function sets the @b base size of @p ee to be @p w x @p h.
+ * When base sizes are set, they'll be used to calculate a window's
+ * @b minimum size, instead of those set by ecore_evas_size_min_get().
+ *
+ * @see ecore_evas_size_base_get()
+ */
 EAPI void        ecore_evas_size_base_set(Ecore_Evas *ee, int w, int h);
+
+/**
+ * Get the base size set for a given @c Ecore_Evas window
+ *
+ * @param ee An @c Ecore_Evas window's handle
+ * @param w A pointer to an int to place the base width in.
+ * @param h A pointer to an int to place the base height in.
+ *
+ * @note Use @c NULL pointers on the size components you're not
+ * interested in: they'll be ignored by the function.
+ *
+ * @see ecore_evas_size_base_set() for more details
+ */
 EAPI void        ecore_evas_size_base_get(const Ecore_Evas *ee, int *w, int *h);
+
+/**
+ * Set the "size step" for a given @c Ecore_Evas window
+ *
+ * @param ee An @c Ecore_Evas window's handle
+ * @param w The step width
+ * @param h The step height
+ *
+ * This function sets the size steps of @p ee to be @p w x @p h. This
+ * limits the size of this @cEcore_Evas window to be @b always an
+ * integer multiple of the step size, for each axis.
+ */
 EAPI void        ecore_evas_size_step_set(Ecore_Evas *ee, int w, int h);
+
+/**
+ * Get the "size step" set for a given @c Ecore_Evas window
+ *
+ * @param ee An @c Ecore_Evas window's handle
+ * @param w A pointer to an int to place the step width in.
+ * @param h A pointer to an int to place the step height in.
+ *
+ * @note Use @c NULL pointers on the size components you're not
+ * interested in: they'll be ignored by the function.
+ *
+ * @see ecore_evas_size_base_set() for more details
+ */
 EAPI void        ecore_evas_size_step_get(const Ecore_Evas *ee, int *w, int *h);
+
 EAPI void        ecore_evas_cursor_set(Ecore_Evas *ee, const char *file, int layer, int hot_x, int hot_y);
 EAPI void        ecore_evas_object_cursor_set(Ecore_Evas *ee, Evas_Object *obj, int layer, int hot_x, int hot_y);
 EAPI void        ecore_evas_cursor_get(const Ecore_Evas *ee, Evas_Object **obj, int *layer, int *hot_x, int *hot_y);
@@ -539,6 +658,10 @@ EAPI void           ecore_evas_x11_shape_input_rectangle_subtract(Ecore_Evas *ee
 EAPI void           ecore_evas_x11_shape_input_empty(Ecore_Evas *ee);
 EAPI void           ecore_evas_x11_shape_input_reset(Ecore_Evas *ee);
 EAPI void           ecore_evas_x11_shape_input_apply(Ecore_Evas *ee);
+
+/**
+ * @}
+ */
 
 #ifdef __cplusplus
 }

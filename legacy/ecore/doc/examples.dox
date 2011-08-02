@@ -1220,3 +1220,75 @@
  * @include ecore_evas_callbacks.c
  * @example ecore_evas_callbacks.c
  */
+
+/**
+ * @page Ecore_Evas_Window_Sizes_Example_c @c Ecore_Evas window sizes
+ *
+ * On this example, we show you how to deal with @c Ecore_Evas window
+ * size hints, which are implemented <b>per Evas engine</b>.
+ *
+ * We start by defining an initial size for our window and, after
+ * creating it, adding a background white rectangle and a text object
+ * to it, to be used to display the current window's sizes, at any
+ * given time:
+ * @dontinclude ecore_evas_window_sizes_example.c
+ * @skip define WIDTH
+ * @until define
+ * @until define
+ * @dontinclude ecore_evas_window_sizes_example.c
+ * @skip evas_init
+ * @until show(bg)
+ * @dontinclude ecore_evas_window_sizes_example.c
+ * @skip text =
+ * @until main_loop_begin
+ * @dontinclude ecore_evas_window_sizes_example.c
+ * @skip to inform
+ * @until }
+ *
+ * The program has a command line interface, responding to the
+ * following keys:
+ * @dontinclude ecore_evas_window_sizes_example.c
+ * @skip commands
+ * @until ;
+ *
+ * Use the @c 'm' key to impose a minimum size of half the initial
+ * ones on our window. Test it by trying to resize it to smaller sizes
+ * than that:
+ * @dontinclude ecore_evas_window_sizes_example.c
+ * @skip keyname, "m"
+ * @until }
+ * @until }
+ * @until }
+ *
+ * The @c 'x' key will, in turn, set a maximum size on our window --
+ * to two times our initial size. Test it by trying to resize the
+ * window to bigger sizes than that:
+ * @dontinclude ecore_evas_window_sizes_example.c
+ * @skip keyname, "x"
+ * @until }
+ * @until }
+ * @until }
+ *
+ * Window base sizes will override any minimum sizes set, so try it
+ * with the @c 'b' key. It will set a base size of two times the
+ * initial one:
+ * @dontinclude ecore_evas_window_sizes_example.c
+ * @skip keyname, "b"
+ * @until }
+ * @until }
+ * @until }
+ *
+ * Finally, there's a key to impose a "step size" on our window, of 40
+ * pixels.  With than on (@c 's' key), you'll see the window will
+ * always be bound to @b multiples of that size, for dimensions on
+ * both axis:
+ * @skip keyname, "s"
+ * @until }
+ * @until }
+ * @until }
+ *
+ * The full example follows.
+ *
+ * @include ecore_evas_window_sizes_example.c
+ * @example ecore_evas_window_sizes_example.c
+ */

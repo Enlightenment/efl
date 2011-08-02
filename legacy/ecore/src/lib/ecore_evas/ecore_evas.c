@@ -1694,14 +1694,6 @@ ecore_evas_name_class_get(const Ecore_Evas *ee, const char **n, const char **c)
    if (c) *c = ee->prop.clas;
 }
 
-/**
- * Set the min size of an Ecore_Evas' window
- * @param ee The Ecore_Evas to set
- * @param w The minimum width
- * @param h The minimum height
- *
- * This function sets the minimum size of @p ee to @p w x @p h.
- */
 EAPI void
 ecore_evas_size_min_set(Ecore_Evas *ee, int w, int h)
 {
@@ -1725,14 +1717,6 @@ ecore_evas_size_min_set(Ecore_Evas *ee, int w, int h)
      }
 }
 
-/**
- * Get the min size of an Ecore_Evas' window
- * @param ee The Ecore_Evas to set
- * @param w A pointer to an int to place the min width in.
- * @param h A pointer to an int to place the min height in.
- *
- * This function puts the minimum size of @p ee into @p w and @p h.
- */
 EAPI void
 ecore_evas_size_min_get(const Ecore_Evas *ee, int *w, int *h)
 {
@@ -1754,14 +1738,6 @@ ecore_evas_size_min_get(const Ecore_Evas *ee, int *w, int *h)
      }
 }
 
-/**
- * Set the max size of an Ecore_Evas' window
- * @param ee The Ecore_Evas to set
- * @param w The maximum width
- * @param h The maximum height
- *
- * This function sets the maximum size of @p ee to @p w x @p h.
- */
 EAPI void
 ecore_evas_size_max_set(Ecore_Evas *ee, int w, int h)
 {
@@ -1785,14 +1761,6 @@ ecore_evas_size_max_set(Ecore_Evas *ee, int w, int h)
      }
 }
 
-/**
- * Get the max size of an Ecore_Evas' window
- * @param ee The Ecore_Evas to set
- * @param w A pointer to an int to place the max width in.
- * @param h A pointer to an int to place the max height in.
- *
- * This function puts the maximum size of @p ee into @p w and @p h.
- */
 EAPI void
 ecore_evas_size_max_get(const Ecore_Evas *ee, int *w, int *h)
 {
@@ -1814,14 +1782,6 @@ ecore_evas_size_max_get(const Ecore_Evas *ee, int *w, int *h)
      }
 }
 
-/**
- * Set the base size of an Ecore_Evas' window
- * @param ee The Ecore_Evas to set
- * @param w The base width
- * @param h The base height
- *
- * This function sets the base size of @p ee to @p w x @p h.
- */
 EAPI void
 ecore_evas_size_base_set(Ecore_Evas *ee, int w, int h)
 {
@@ -1845,14 +1805,6 @@ ecore_evas_size_base_set(Ecore_Evas *ee, int w, int h)
      }
 }
 
-/**
- * Get the base size of an Ecore_Evas' window
- * @param ee The Ecore_Evas to set
- * @param w A pointer to an int to place the base width in.
- * @param h A pointer to an int to place the base height in.
- *
- * This function puts the base size of @p ee into @p w and @p h.
- */
 EAPI void
 ecore_evas_size_base_get(const Ecore_Evas *ee, int *w, int *h)
 {
@@ -1874,15 +1826,6 @@ ecore_evas_size_base_get(const Ecore_Evas *ee, int *w, int *h)
      }
 }
 
-/**
- * Set the step size of an Ecore_Evas
- * @param ee The Ecore_Evas to set
- * @param w The step width
- * @param h The step height
- *
- * This function sets the step size of @p ee to @p w x @p h. This limits the
- * size of an Ecore_Evas to always being an integer multiple of the step size.
- */
 EAPI void
 ecore_evas_size_step_set(Ecore_Evas *ee, int w, int h)
 {
@@ -1906,14 +1849,6 @@ ecore_evas_size_step_set(Ecore_Evas *ee, int w, int h)
      }
 }
 
-/**
- * Get the step size of an Ecore_Evas' window
- * @param ee The Ecore_Evas to set
- * @param w A pointer to an int to place the step width in.
- * @param h A pointer to an int to place the step height in.
- *
- * This function puts the step size of @p ee into @p w and @p h.
- */
 EAPI void
 ecore_evas_size_step_get(const Ecore_Evas *ee, int *w, int *h)
 {
