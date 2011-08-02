@@ -677,7 +677,7 @@ edje_object_color_class_del(Evas_Object *obj, const char *color_class)
 	     ed->color_classes = eina_list_remove(ed->color_classes, cc);
 	     eina_stringshare_del(cc->name);
 	     free(cc);
-	     return;
+	     break;
 	  }
      }
 
