@@ -291,13 +291,13 @@ evas_software_xcb_output_buffer_new(xcb_connection_t *conn, xcb_visualtype_t *vi
                        if (try_shm == 2) _xcbob_sync(conn);
 
                        xcbob->xim->data = xcbob->shm_info->shmaddr;
-#if defined(EVAS_FRAME_QUEING) && defined(LIBXEXT_VERSION_LOW)
+#if defined(EVAS_FRAME_QUEUING) && defined(LIBXEXT_VERSION_LOW)
                        if (evas_common_frameq_enabled())
                          xcb_grab_server(conn);
 #endif
                        xcb_shm_attach(conn, xcbob->shm_info->shmseg, 
                                       xcbob->shm_info->shmid, 0);
-#if defined(EVAS_FRAME_QUEING) && defined(LIBXEXT_VERSION_LOW)
+#if defined(EVAS_FRAME_QUEUING) && defined(LIBXEXT_VERSION_LOW)
                        if (evas_common_frameq_enabled()) 
                          xcb_ungrab_server(conn);
 #endif
