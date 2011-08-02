@@ -30,3 +30,25 @@ emotion_gstreamer_buffer_free(Emotion_Gstreamer_Buffer *send)
    gst_buffer_unref(send->frame);
    free(send);
 }
+
+Emotion_Gstreamer_Message *
+emotion_gstreamer_message_alloc(Emotion_Gstreamer_Video *ev,
+				GstMessage *msg)
+{
+   Emotion_Gstreamer_Message *send;
+
+   send = malloc(sizeof (Emotion_Gstreamer_Message));
+   if (!send) return NULL;
+
+   send->ev = ev;
+   send->msg = gst_message_ref(msg);
+
+   return send;
+}
+
+void
+emotion_gstreamer_message_free(Emotion_Gstreamer_Message *send)
+{
+   gst_message_unref(send->msg);
+   free(send);
+}

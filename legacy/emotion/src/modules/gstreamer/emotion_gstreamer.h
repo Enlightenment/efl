@@ -22,6 +22,7 @@ typedef struct _Emotion_Gstreamer_Video Emotion_Gstreamer_Video;
 typedef struct _Emotion_Audio_Stream Emotion_Audio_Stream;
 typedef struct _Emotion_Gstreamer_Metadata Emotion_Gstreamer_Metadata;
 typedef struct _Emotion_Gstreamer_Buffer Emotion_Gstreamer_Buffer;
+typedef struct _Emotion_Gstreamer_Message Emotion_Gstreamer_Message;
 typedef struct _Emotion_Video_Stream Emotion_Video_Stream;
 
 struct _Emotion_Video_Stream
@@ -61,7 +62,6 @@ struct _Emotion_Gstreamer_Video
 
    /* eos */
    GstBus           *eos_bus;
-   Ecore_Timer      *eos_timer;
 
    /* Strams */
    Eina_List        *video_streams;
@@ -138,6 +138,13 @@ struct _Emotion_Gstreamer_Buffer
    Eina_Bool preroll : 1;
 };
 
+struct _Emotion_Gstreamer_Message
+{
+   Emotion_Gstreamer_Video *ev;
+
+   GstMessage *msg;
+};
+
 extern int _emotion_gstreamer_log_domain;
 #define DBG(...) EINA_LOG_DOM_DBG(_emotion_gstreamer_log_domain, __VA_ARGS__)
 #define INF(...) EINA_LOG_DOM_INFO(_emotion_gstreamer_log_domain, __VA_ARGS__)
@@ -177,4 +184,9 @@ Emotion_Gstreamer_Buffer *emotion_gstreamer_buffer_alloc(EvasVideoSinkPrivate *s
                                                          GstBuffer *buffer,
                                                          Eina_Bool preroll);
 void emotion_gstreamer_buffer_free(Emotion_Gstreamer_Buffer *send);
+
+Emotion_Gstreamer_Message *emotion_gstreamer_message_alloc(Emotion_Gstreamer_Video *ev,
+                                                           GstMessage *msg);
+void emotion_gstreamer_message_free(Emotion_Gstreamer_Message *send);
+
 #endif /* __EMOTION_GSTREAMER_H__ */

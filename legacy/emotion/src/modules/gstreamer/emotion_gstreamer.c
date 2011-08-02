@@ -10,7 +10,6 @@
 int _emotion_gstreamer_log_domain = -1;
 
 /* Callbacks to get the eos */
-static Eina_Bool  _eos_timer_fct   (void *data);
 static void _for_each_tag    (GstTagList const* list, gchar const* tag, void *data);
 static void _free_metadata   (Emotion_Gstreamer_Metadata *m);
 
@@ -166,6 +165,10 @@ static int            em_eject                    (void             *video);
 
 static const char    *em_meta_get                 (void             *video,
                                                    int               meta);
+
+static GstBusSyncReply _eos_sync_fct(GstBus *bus,
+				     GstMessage *message,
+				     gpointer data);
 
 /* Module interface */
 
@@ -418,6 +421,8 @@ em_file_open(const char   *file,
    if (!ev->pipeline)
      return EINA_FALSE;
 
+   eina_threads_init();
+
    start = ecore_time_get();
    ev->eos_bus = gst_pipeline_get_bus(GST_PIPELINE(ev->pipeline));
    if (!ev->eos_bus)
@@ -427,6 +432,8 @@ em_file_open(const char   *file,
      }
    end = ecore_time_get();
    DBG("Get the bus: %f", end - start);
+
+   gst_bus_set_sync_handler(ev->eos_bus, _eos_sync_fct, ev);
 
    /* Evas Object */
    ev->obj = obj;
@@ -675,7 +682,12 @@ em_file_open(const char   *file,
    em_audio_channel_volume_set(ev, ev->volume);
    em_audio_channel_mute_set(ev, ev->audio_mute);
 
-   _eos_timer_fct(ev);
+   if (ev->play_started)
+     {
+        _emotion_playback_started(ev->obj);
+        ev->play_started = 0;
+     }
+
    _emotion_open_done(ev->obj);
    end = ecore_time_get();
    DBG("Last stuff: %f", end - start);
@@ -690,7 +702,6 @@ em_file_close(void *video)
    Emotion_Audio_Stream *astream;
    Emotion_Video_Stream *vstream;
 
-   fprintf(stderr, "close\n");
    ev = (Emotion_Gstreamer_Video *)video;
    if (!ev)
      return;
@@ -708,6 +719,8 @@ em_file_close(void *video)
         ev->pipeline = NULL;
      }
 
+   eina_threads_shutdown();
+
    /* we clear the stream lists */
    EINA_LIST_FREE(ev->audio_streams, astream)
      free(astream);
@@ -715,12 +728,6 @@ em_file_close(void *video)
      free(vstream);
 
    /* shutdown eos */
-   if (ev->eos_timer)
-     {
-        ecore_timer_del(ev->eos_timer);
-        ev->eos_timer = NULL;
-     }
-
    if (ev->metadata)
      {
         _free_metadata(ev->metadata);
@@ -740,9 +747,6 @@ em_play(void   *video,
    gst_element_set_state(ev->pipeline, GST_STATE_PLAYING);
    ev->play = 1;
    ev->play_started = 1;
-
-   /* eos */
-   ev->eos_timer = ecore_timer_add(0.1, _eos_timer_fct, ev);
 }
 
 static void
@@ -753,14 +757,7 @@ em_stop(void *video)
    ev = (Emotion_Gstreamer_Video *)video;
 
    if (!ev->pipeline) return ;
-
-   /* shutdown eos */
-   if (ev->eos_timer)
-     {
-        ecore_timer_del(ev->eos_timer);
-        ev->eos_timer = NULL;
-     }
-
+ 
    gst_element_set_state(ev->pipeline, GST_STATE_PAUSED);
    ev->play = 0;
 }
@@ -1601,66 +1598,93 @@ _free_metadata(Emotion_Gstreamer_Metadata *m)
   free(m);
 }
 
-static Eina_Bool
-_eos_timer_fct(void *data)
+static void
+_eos_main_fct(void *data)
 {
+   Emotion_Gstreamer_Message *send;
    Emotion_Gstreamer_Video *ev;
    GstMessage              *msg;
 
-   ev = (Emotion_Gstreamer_Video *)data;
+   send = data;
+   ev = send->ev;
+   msg = send->msg;
+
    if (ev->play_started)
      {
         _emotion_playback_started(ev->obj);
         ev->play_started = 0;
      }
-   while ((msg = gst_bus_poll(ev->eos_bus, GST_MESSAGE_ERROR | GST_MESSAGE_EOS | GST_MESSAGE_TAG | GST_MESSAGE_ASYNC_DONE, 0)))
+
+   switch (GST_MESSAGE_TYPE(msg))
      {
-        switch (GST_MESSAGE_TYPE(msg))
-          {
-           case GST_MESSAGE_ERROR:
-                {
-                   gchar *debug;
-                   GError *err;
+      case GST_MESSAGE_ERROR:
+        {
+           gchar *debug;
+           GError *err;
 
-                   gst_message_parse_error(msg, &err, &debug);
-                   g_free(debug);
+           gst_message_parse_error(msg, &err, &debug);
+           g_free(debug);
 
-                   ERR("Error: %s", err->message);
-                   g_error_free(err);
+           ERR("Error: %s", err->message);
+           g_error_free(err);
 
-                   break;
-                }
-           case GST_MESSAGE_EOS:
-              if (ev->eos_timer)
-                {
-                   ecore_timer_del(ev->eos_timer);
-                   ev->eos_timer = NULL;
-                }
-              ev->play = 0;
-              _emotion_decode_stop(ev->obj);
-              _emotion_playback_finished(ev->obj);
-              break;
-           case GST_MESSAGE_TAG:
-                {
-                   GstTagList *new_tags;
-                   gst_message_parse_tag(msg, &new_tags);
-                   if (new_tags)
-                     {
-                        gst_tag_list_foreach(new_tags, (GstTagForeachFunc)_for_each_tag, ev);
-                        gst_tag_list_free(new_tags);
-                     }
-                   break;
-                }
-           case GST_MESSAGE_ASYNC_DONE:
-              _emotion_seek_done(ev->obj);
-              break;
-           default:
-              ERR("bus say: %s [%i]",
-                  GST_MESSAGE_SRC_NAME(msg),
-                  GST_MESSAGE_TYPE(msg));
-              break;
-          }
-        gst_message_unref(msg);
+           break;
+        }
+      case GST_MESSAGE_EOS:
+         ev->play = 0;
+         _emotion_decode_stop(ev->obj);
+         _emotion_playback_finished(ev->obj);
+         break;
+      case GST_MESSAGE_TAG:
+        {
+           GstTagList *new_tags;
+           gst_message_parse_tag(msg, &new_tags);
+           if (new_tags)
+             {
+                gst_tag_list_foreach(new_tags,
+                                     (GstTagForeachFunc)_for_each_tag,
+                                     ev);
+                gst_tag_list_free(new_tags);
+             }
+           break;
+        }
+      case GST_MESSAGE_ASYNC_DONE:
+         _emotion_seek_done(ev->obj);
+         break;
+      default:
+         ERR("bus say: %s [%i]",
+             GST_MESSAGE_SRC_NAME(msg),
+             GST_MESSAGE_TYPE(msg));
+         break;
      }
-   return EINA_TRUE;
+
+   emotion_gstreamer_message_free(send);
+}
+
+static GstBusSyncReply
+_eos_sync_fct(GstBus *bus, GstMessage *msg, gpointer data)
+{
+   Emotion_Gstreamer_Video *ev = data;
+   Emotion_Gstreamer_Message *send;
+
+   switch (GST_MESSAGE_TYPE(msg))
+     {
+      case GST_MESSAGE_ERROR:
+      case GST_MESSAGE_EOS:
+      case GST_MESSAGE_TAG:
+      case GST_MESSAGE_ASYNC_DONE:
+         send = emotion_gstreamer_message_alloc(ev, msg);
+
+         if (send) ecore_main_loop_thread_safe_call(_eos_main_fct, send);
+
+         break;
+
+      default:
+         WRN("bus say: %s [%i]",
+             GST_MESSAGE_SRC_NAME(msg),
+             GST_MESSAGE_TYPE(msg));
+         break;
+     }
+
+   return GST_BUS_DROP;
 }
