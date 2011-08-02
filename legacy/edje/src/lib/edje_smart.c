@@ -23,6 +23,8 @@ edje_object_add(Evas *evas)
 {
    Evas_Object *e;
 
+   _edje_lib_ref();
+   
    if (!_edje_smart)
      {
         memset(&_edje_smart_parent, 0, sizeof(_edje_smart_parent));
@@ -150,6 +152,7 @@ _edje_smart_del(Evas_Object * obj)
    _edje_file_del(ed);
    _edje_clean_objects(ed);
    _edje_unref(ed);
+   _edje_lib_unref();
 }
 
 static void

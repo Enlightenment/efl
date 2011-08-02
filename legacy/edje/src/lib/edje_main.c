@@ -107,16 +107,12 @@ edje_init(void)
    return --_edje_init_count;
 }
 
+static int _edje_users = 0;
 
-EAPI int
-edje_shutdown(void)
+static void
+_edje_shutdown_core(void)
 {
-   if (--_edje_init_count != 0)
-     return _edje_init_count;
-
-   if (_edje_timer)
-     ecore_animator_del(_edje_timer);
-   _edje_timer = NULL;
+   if (_edje_users > 0) return;
 
    _edje_file_cache_shutdown();
    _edje_color_class_members_free();
@@ -141,6 +137,33 @@ edje_shutdown(void)
    eina_log_domain_unregister(_edje_default_log_dom);
    _edje_default_log_dom = -1;
    eina_shutdown();
+}
+
+void
+_edje_lib_ref(void)
+{
+   _edje_users++;
+}
+
+void
+_edje_lib_unref(void)
+{
+   _edje_users--;
+   if (_edje_users != 0) return;
+   if (_edje_init_count == 0) _edje_shutdown_core();
+}
+
+EAPI int
+edje_shutdown(void)
+{
+   if (--_edje_init_count != 0)
+     return _edje_init_count;
+
+   if (_edje_timer)
+     ecore_animator_del(_edje_timer);
+   _edje_timer = NULL;
+
+   _edje_shutdown_core();
 
    return _edje_init_count;
 }

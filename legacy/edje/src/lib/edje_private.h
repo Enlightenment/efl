@@ -1883,4 +1883,7 @@ const char *edje_string_id_get(const Edje_String *es);
 
 void _edje_object_orientation_inform(Evas_Object *obj);
 
+void _edje_lib_ref(void);
+void _edje_lib_unref(void);
+
 #endif
