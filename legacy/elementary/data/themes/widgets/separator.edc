@@ -1,0 +1,43 @@
+   group { name: "elm/separator/horizontal/default";
+       images {
+           image: "separator_h.png" COMP;
+       }
+       parts {
+           part { name: "separator"; // separator group
+               description { state: "default" 0.0;
+                   min: 2 2;
+                   rel1.offset: 4 4;
+                   rel2.offset: -5 -5;
+                   image {
+                       normal: "separator_h.png";
+                   }
+                   fill {
+                       smooth: 0;
+                   }
+               }
+           }
+       }
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   group { name: "elm/separator/vertical/default";
+       images {
+           image: "separator_v.png" COMP;
+       }
+       parts {
+           part { name: "separator"; // separator group
+               description { state: "default" 0.0;
+                   min: 2 2;
+                   rel1.offset: 4 4;
+                   rel2.offset: -5 -5;
+                   image {
+                       normal: "separator_v.png";
+                   }
+                   fill {
+                       smooth: 0;
+                   }
+               }
+           }
+       }
+   }
+

@@ -1,0 +1,1223 @@
+   group { name: "elm/clock/flipdigit/default";
+      images {
+         image: "flip_base.png" COMP;
+         image: "flip_base_shad.png" COMP;
+         image: "flip_shad.png" COMP;
+         image: "flip_0t.png" COMP;
+         image: "flip_0b.png" COMP;
+         image: "flip_1t.png" COMP;
+         image: "flip_1b.png" COMP;
+         image: "flip_2t.png" COMP;
+         image: "flip_2b.png" COMP;
+         image: "flip_3t.png" COMP;
+         image: "flip_3b.png" COMP;
+         image: "flip_4t.png" COMP;
+         image: "flip_4b.png" COMP;
+         image: "flip_5t.png" COMP;
+         image: "flip_5b.png" COMP;
+         image: "flip_6t.png" COMP;
+         image: "flip_6b.png" COMP;
+         image: "flip_7t.png" COMP;
+         image: "flip_7b.png" COMP;
+         image: "flip_8t.png" COMP;
+         image: "flip_8b.png" COMP;
+         image: "flip_9t.png" COMP;
+         image: "flip_9b.png" COMP;
+         image: "arrow_up.png" COMP;
+         image: "arrow_down.png" COMP;
+      }
+      script {
+         public v0_cur, v0_pre, v0_lock, v0_next;
+
+       public animator2(val, Float:pos) {
+          new st1[11], st2[11], v;
+
+          v = get_int(v0_cur);
+          snprintf(st1, 10, "%ih", v);
+          snprintf(st2, 10, "%i", v);
+          set_tween_state(PART:"bot", pos, st1, 0.0, st2, 0.0);
+          set_tween_state(PART:"sh", pos, "half", 0.0, "full", 0.0);
+          if (pos >= 1.0) {
+             set_state(PART:"sh", "default", 0.0);
+             set_int(v0_lock, 0);
+             v = get_int(v0_next);
+             if (v >= 0) {
+                set_int(v0_next, -1);
+                message(MSG_INT, 1, v);
+             }
+          }
+       }
+       public animator1(val, Float:pos) {
+          new st1[11], st2[11], v;
+
+          v = get_int(v0_pre);
+          snprintf(st1, 10, "%i", v);
+          snprintf(st2, 10, "%ih", v);
+          set_tween_state(PART:"top", pos, st1, 0.0, st2, 0.0);
+          set_tween_state(PART:"sh", pos, "default", 0.0, "half", 0.0);
+          if (pos >= 1.0) anim(0.2, "animator2", val);
+       }
+       public message(Msg_Type:type, id, ...) {
+          if ((type == MSG_INT) && (id == 1)) {
+             new value, v, buf[11];
+
+             value = getarg(2);
+             if (get_int(v0_lock) == 1) {
+                set_int(v0_next, value);
+                return;
+             }
+             v = get_int(v0_cur);
+             set_int(v0_pre, v);
+             set_int(v0_cur, value);
+             set_int(v0_lock, 1);
+             snprintf(buf, 10, "%i", get_int(v0_pre));
+             set_state(PART:"bot0", buf, 0.0);
+             snprintf(buf, 10, "%ih", get_int(v0_cur));
+             set_state(PART:"bot", buf, 0.0);
+             snprintf(buf, 10, "%i", get_int(v0_cur));
+             set_state(PART:"top0", buf, 0.0);
+             snprintf(buf, 10, "%i", get_int(v0_pre));
+             set_state(PART:"top", buf, 0.0);
+             set_state(PART:"sh", "default", 0.0);
+             anim(0.2, "animator1", 1);
+          }
+       }
+      }
+      parts {
+         part { name: "shad";
+            mouse_events: 0;
+            description { state: "default" 0.0;
+               rel1.offset: -4 -4;
+               rel1.to: "base";
+               rel2.offset: 3 3;
+               rel2.to: "base";
+               image {
+                  normal: "flip_base_shad.png";
+                  border: 8 8 8 8;
+               }
+            }
+         }
+         part { name: "base";
+            scale: 1;
+            description { state: "default" 0.0;
+               rel1.offset: 4 4;
+               rel2.offset: -5 -5;
+               // FIXME 48x96 should be the native pixel design, right now
+               // its 80x160. fix int he artwork later
+               min: 24 48;
+               aspect: 0.5 0.5;
+//               max: 24 48;
+               image.normal: "flip_base.png";
+            }
+         }
+         part { name: "b";
+            type: RECT;
+            mouse_events: 1;
+            description { state: "default" 0.0;
+               visible: 0;
+               rel1.to: "base";
+               rel1.relative: 0.0 0.5;
+               rel2.to: "base";
+               color: 0 0 0 0;
+            }
+            description { state: "visible" 0.0;
+               inherit: "default" 0.0;
+               visible: 1;
+            }
+         }
+         part { name: "t";
+            type: RECT;
+            mouse_events: 1;
+            description { state: "default" 0.0;
+               visible: 0;
+               rel1.to: "base";
+               rel2.to: "base";
+               rel2.relative: 1.0 0.5;
+               color: 0 0 0 0;
+            }
+            description { state: "visible" 0.0;
+               inherit: "default" 0.0;
+               visible: 1;
+            }
+         }
+         part { name: "bot0";
+            mouse_events: 0;
+            description { state: "default" 0.0;
+               rel1.to: "b";
+               rel2.to: "b";
+               image.normal: "flip_0b.png";
+            }
+            description { state: "0" 0.0;
+               inherit: "default" 0.0;
+               image.normal: "flip_0b.png";
+            }
+            description { state: "1" 0.0;
+               inherit: "default" 0.0;
+               image.normal: "flip_1b.png";
+            }
+            description { state: "2" 0.0;
+               inherit: "default" 0.0;
+               image.normal: "flip_2b.png";
+            }
+            description { state: "3" 0.0;
+               inherit: "default" 0.0;
+               image.normal: "flip_3b.png";
+            }
+            description { state: "4" 0.0;
+               inherit: "default" 0.0;
+               image.normal: "flip_4b.png";
+            }
+            description { state: "5" 0.0;
+               inherit: "default" 0.0;
+               image.normal: "flip_5b.png";
+            }
+            description { state: "6" 0.0;
+               inherit: "default" 0.0;
+               image.normal: "flip_6b.png";
+            }
+            description { state: "7" 0.0;
+               inherit: "default" 0.0;
+               image.normal: "flip_7b.png";
+            }
+            description { state: "8" 0.0;
+               inherit: "default" 0.0;
+               image.normal: "flip_8b.png";
+            }
+            description { state: "9" 0.0;
+               inherit: "default" 0.0;
+               image.normal: "flip_9b.png";
+            }
+         }
+         part { name: "sh";
+            mouse_events: 0;
+            description { state: "default" 0.0;
+               rel1.to: "b";
+               rel2.to: "b";
+               rel2.relative: 1.0 0.0;
+               image.normal: "flip_shad.png";
+            }
+            description { state: "half" 0.0;
+               inherit: "default" 0.0;
+               rel2.relative: 1.0 0.5;
+            }
+            description { state: "full" 0.0;
+               inherit: "default" 0.0;
+               rel2.relative: 1.0 1.0;
+            }
+         }
+         part { name: "bot";
+            mouse_events: 0;
+            description { state: "default" 0.0;
+               visible: 1;
+               rel1.to: "b";
+               rel2.to: "b";
+               image.normal: "flip_0b.png";
+            }
+            description { state: "0" 0.0;
+               inherit: "default" 0.0;
+               visible: 1;
+               rel2.relative: 1.0 1.0;
+               image.normal: "flip_0b.png";
+            }
+            description { state: "0h" 0.0;
+               inherit: "default" 0.0;
+               visible: 0;
+               rel2.relative: 1.0 0.0;
+               image.normal: "flip_0b.png";
+            }
+            description { state: "1" 0.0;
+               inherit: "default" 0.0;
+               visible: 1;
+               rel2.relative: 1.0 1.0;
+               image.normal: "flip_1b.png";
+            }
+            description { state: "1h" 0.0;
+               inherit: "default" 0.0;
+               visible: 0;
+               rel2.relative: 1.0 0.0;
+               image.normal: "flip_1b.png";
+            }
+            description { state: "2" 0.0;
+               inherit: "default" 0.0;
+               visible: 1;
+               rel2.relative: 1.0 1.0;
+               image.normal: "flip_2b.png";
+            }
+            description { state: "2h" 0.0;
+               inherit: "default" 0.0;
+               visible: 0;
+               rel2.relative: 1.0 0.0;
+               image.normal: "flip_2b.png";
+            }
+            description { state: "3" 0.0;
+               inherit: "default" 0.0;
+               visible: 1;
+               rel2.relative: 1.0 1.0;
+               image.normal: "flip_3b.png";
+            }
+            description { state: "3h" 0.0;
+               inherit: "default" 0.0;
+               visible: 0;
+               rel2.relative: 1.0 0.0;
+               image.normal: "flip_3b.png";
+            }
+            description { state: "4" 0.0;
+               inherit: "default" 0.0;
+               visible: 1;
+               rel2.relative: 1.0 1.0;
+               image.normal: "flip_4b.png";
+            }
+            description { state: "4h" 0.0;
+               inherit: "default" 0.0;
+               visible: 0;
+               rel2.relative: 1.0 0.0;
+               image.normal: "flip_4b.png";
+            }
+            description { state: "5" 0.0;
+               inherit: "default" 0.0;
+               visible: 1;
+               rel2.relative: 1.0 1.0;
+               image.normal: "flip_5b.png";
+            }
+            description { state: "5h" 0.0;
+               inherit: "default" 0.0;
+               visible: 0;
+               rel2.relative: 1.0 0.0;
+               image.normal: "flip_5b.png";
+            }
+            description { state: "6" 0.0;
+               inherit: "default" 0.0;
+               visible: 1;
+               rel2.relative: 1.0 1.0;
+               image.normal: "flip_6b.png";
+            }
+            description { state: "6h" 0.0;
+               inherit: "default" 0.0;
+               visible: 0;
+               rel2.relative: 1.0 0.0;
+               image.normal: "flip_6b.png";
+            }
+            description { state: "7" 0.0;
+               inherit: "default" 0.0;
+               visible: 1;
+               rel2.relative: 1.0 1.0;
+               image.normal: "flip_7b.png";
+            }
+            description { state: "7h" 0.0;
+               inherit: "default" 0.0;
+               visible: 0;
+               rel2.relative: 1.0 0.0;
+               image.normal: "flip_7b.png";
+            }
+            description { state: "8" 0.0;
+               inherit: "default" 0.0;
+               visible: 1;
+               rel2.relative: 1.0 1.0;
+               image.normal: "flip_8b.png";
+            }
+            description { state: "8h" 0.0;
+               inherit: "default" 0.0;
+               visible: 0;
+               rel2.relative: 1.0 0.0;
+               image.normal: "flip_8b.png";
+            }
+            description { state: "9" 0.0;
+               inherit: "default" 0.0;
+               visible: 1;
+               rel2.relative: 1.0 1.0;
+               image.normal: "flip_9b.png";
+            }
+            description { state: "9h" 0.0;
+               inherit: "default" 0.0;
+               visible: 0;
+               rel2.relative: 1.0 0.0;
+               image.normal: "flip_9b.png";
+            }
+         }
+         part { name: "top0";
+            mouse_events: 0;
+            description { state: "default" 0.0;
+               rel1.to: "t";
+               rel2.to: "t";
+               image.normal: "flip_0t.png";
+            }
+            description { state: "0" 0.0;
+               inherit: "default" 0.0;
+               image.normal: "flip_0t.png";
+            }
+            description { state: "1" 0.0;
+               inherit: "default" 0.0;
+               image.normal: "flip_1t.png";
+            }
+            description { state: "2" 0.0;
+               inherit: "default" 0.0;
+               image.normal: "flip_2t.png";
+            }
+            description { state: "3" 0.0;
+               inherit: "default" 0.0;
+               image.normal: "flip_3t.png";
+            }
+            description { state: "4" 0.0;
+               inherit: "default" 0.0;
+               image.normal: "flip_4t.png";
+            }
+            description { state: "5" 0.0;
+               inherit: "default" 0.0;
+               image.normal: "flip_5t.png";
+            }
+            description { state: "6" 0.0;
+               inherit: "default" 0.0;
+               image.normal: "flip_6t.png";
+            }
+            description { state: "7" 0.0;
+               inherit: "default" 0.0;
+               image.normal: "flip_7t.png";
+            }
+            description { state: "8" 0.0;
+               inherit: "default" 0.0;
+               image.normal: "flip_8t.png";
+            }
+            description { state: "9" 0.0;
+               inherit: "default" 0.0;
+               image.normal: "flip_9t.png";
+            }
+         }
+         part { name: "top";
+            mouse_events: 0;
+            description { state: "default" 0.0;
+               visible: 1;
+               rel1.to: "t";
+               rel2.to: "t";
+               image.normal: "flip_0t.png";
+            }
+            description { state: "0" 0.0;
+               inherit: "default" 0.0;
+               visible: 1;
+               rel1.relative: 0.0 0.0;
+               image.normal: "flip_0t.png";
+            }
+            description { state: "0h" 0.0;
+               inherit: "default" 0.0;
+               color: 128 128 128 255;
+               visible: 0;
+               rel1.relative: 0.0 1.0;
+               image.normal: "flip_0t.png";
+            }
+            description { state: "1" 0.0;
+               inherit: "default" 0.0;
+               visible: 1;
+               rel1.relative: 0.0 0.0;
+               image.normal: "flip_1t.png";
+            }
+            description { state: "1h" 0.0;
+               inherit: "default" 0.0;
+               color: 128 128 128 255;
+               visible: 0;
+               rel1.relative: 0.0 1.0;
+               image.normal: "flip_1t.png";
+            }
+            description { state: "2" 0.0;
+               inherit: "default" 0.0;
+               visible: 1;
+               rel1.relative: 0.0 0.0;
+               image.normal: "flip_2t.png";
+            }
+            description { state: "2h" 0.0;
+               inherit: "default" 0.0;
+               color: 128 128 128 255;
+               visible: 0;
+               rel1.relative: 0.0 1.0;
+               image.normal: "flip_2t.png";
+            }
+            description { state: "3" 0.0;
+               inherit: "default" 0.0;
+               visible: 1;
+               rel1.relative: 0.0 0.0;
+               image.normal: "flip_3t.png";
+            }
+            description { state: "3h" 0.0;
+               inherit: "default" 0.0;
+               color: 128 128 128 255;
+               visible: 0;
+               rel1.relative: 0.0 1.0;
+               image.normal: "flip_3t.png";
+            }
+            description { state: "4" 0.0;
+               inherit: "default" 0.0;
+               visible: 1;
+               rel1.relative: 0.0 0.0;
+               image.normal: "flip_4t.png";
+            }
+            description { state: "4h" 0.0;
+               inherit: "default" 0.0;
+               color: 128 128 128 255;
+               visible: 0;
+               rel1.relative: 0.0 1.0;
+               image.normal: "flip_4t.png";
+            }
+            description { state: "5" 0.0;
+               inherit: "default" 0.0;
+               visible: 1;
+               rel1.relative: 0.0 0.0;
+               image.normal: "flip_5t.png";
+            }
+            description { state: "5h" 0.0;
+               inherit: "default" 0.0;
+               color: 128 128 128 255;
+               visible: 0;
+               rel1.relative: 0.0 1.0;
+               image.normal: "flip_5t.png";
+            }
+            description { state: "6" 0.0;
+               inherit: "default" 0.0;
+               visible: 1;
+               rel1.relative: 0.0 0.0;
+               image.normal: "flip_6t.png";
+            }
+            description { state: "6h" 0.0;
+               inherit: "default" 0.0;
+               color: 128 128 128 255;
+               visible: 0;
+               rel1.relative: 0.0 1.0;
+               image.normal: "flip_6t.png";
+            }
+            description { state: "7" 0.0;
+               inherit: "default" 0.0;
+               visible: 1;
+               rel1.relative: 0.0 0.0;
+               image.normal: "flip_7t.png";
+            }
+            description { state: "7h" 0.0;
+               inherit: "default" 0.0;
+               color: 128 128 128 255;
+               visible: 0;
+               rel1.relative: 0.0 1.0;
+               image.normal: "flip_7t.png";
+            }
+            description { state: "8" 0.0;
+               inherit: "default" 0.0;
+               visible: 1;
+               rel1.relative: 0.0 0.0;
+               image.normal: "flip_8t.png";
+            }
+            description { state: "8h" 0.0;
+               inherit: "default" 0.0;
+               color: 128 128 128 255;
+               visible: 0;
+               rel1.relative: 0.0 1.0;
+               image.normal: "flip_8t.png";
+            }
+            description { state: "9" 0.0;
+               inherit: "default" 0.0;
+               visible: 1;
+               rel1.relative: 0.0 0.0;
+               image.normal: "flip_9t.png";
+            }
+            description { state: "9h" 0.0;
+               inherit: "default" 0.0;
+               color: 128 128 128 255;
+               visible: 0;
+               rel1.relative: 0.0 1.0;
+               image.normal: "flip_9t.png";
+            }
+         }
+         part { name: "atop";
+            mouse_events: 0;
+            scale: 1;
+            description { state: "default" 0.0;
+               visible: 0;
+               min: 15 15;
+               max: 15 15;
+               align: 0.5 0.0;
+               rel1.to: "t";
+               rel2.to: "t";
+               image.normal: "arrow_up.png";
+            }
+            description { state: "visible" 0.0;
+               inherit: "default" 0.0;
+               visible: 1;
+            }
+         }
+         part { name: "abot";
+            mouse_events: 0;
+            scale: 1;
+            description { state: "default" 0.0;
+               visible: 0;
+               min: 15 15;
+               max: 15 15;
+               align: 0.5 1.0;
+               rel1.to: "b";
+               rel2.to: "b";
+               image.normal: "arrow_down.png";
+            }
+            description { state: "visible" 0.0;
+               inherit: "default" 0.0;
+               visible: 1;
+            }
+         }
+      }
+      programs {
+         program { name: "load";
+            signal: "load";
+            source: "";
+            script {
+               set_int(v0_cur, 0);
+               set_int(v0_pre, 0);
+               set_int(v0_lock, 0);
+               set_int(v0_next, -1);
+            }
+         }
+         program { name: "edit_on";
+            signal: "elm,state,edit,on";
+            source: "elm";
+            action: STATE_SET "visible" 0.0;
+            target: "atop";
+            target: "abot";
+            target: "t";
+            target: "b";
+         }
+         program { name: "edit_off";
+            signal: "elm,state,edit,off";
+            source: "elm";
+            action: STATE_SET "default" 0.0;
+            target: "atop";
+            target: "abot";
+            target: "t";
+            target: "b";
+         }
+         program { name: "up";
+            signal: "mouse,down,1";
+            source: "t";
+            action: SIGNAL_EMIT "elm,action,up,start" "";
+         }
+         program { name: "up,stop";
+            signal: "mouse,up,1";
+            source: "t";
+            action: SIGNAL_EMIT "elm,action,up,stop" "";
+         }
+         program { name: "down";
+            signal: "mouse,down,1";
+            source: "b";
+            action: SIGNAL_EMIT "elm,action,down,start" "";
+         }
+         program { name: "down,stop";
+            signal: "mouse,up,1";
+            source: "b";
+            action: SIGNAL_EMIT "elm,action,down,stop" "";
+         }
+      }
+   }
+
+   group { name: "elm/clock/flipampm/default";
+      images {
+         image: "flip_base.png" COMP;
+         image: "flip_base_shad.png" COMP;
+         image: "flip_shad.png" COMP;
+         image: "flip_amt.png" COMP;
+         image: "flip_amb.png" COMP;
+         image: "flip_pmt.png" COMP;
+         image: "flip_pmb.png" COMP;
+         image: "arrow_up.png" COMP;
+         image: "arrow_down.png" COMP;
+      }
+      script {
+         public v0_cur, v0_pre, v0_lock, v0_next;
+
+       public animator2(val, Float:pos) {
+          new st1[11], st2[11], v;
+
+          v = get_int(v0_cur);
+          snprintf(st1, 10, "%ih", v);
+          snprintf(st2, 10, "%i", v);
+          set_tween_state(PART:"bot", pos, st1, 0.0, st2, 0.0);
+          set_tween_state(PART:"sh", pos, "half", 0.0, "full", 0.0);
+          if (pos >= 1.0) {
+             set_state(PART:"sh", "default", 0.0);
+             set_int(v0_lock, 0);
+             v = get_int(v0_next);
+             if (v >= 0) {
+                set_int(v0_next, -1);
+                message(MSG_INT, 1, v);
+             }
+          }
+       }
+       public animator1(val, Float:pos) {
+          new st1[11], st2[11], v;
+
+          v = get_int(v0_pre);
+          snprintf(st1, 10, "%i", v);
+          snprintf(st2, 10, "%ih", v);
+          set_tween_state(PART:"top", pos, st1, 0.0, st2, 0.0);
+          set_tween_state(PART:"sh", pos, "default", 0.0, "half", 0.0);
+          if (pos >= 1.0) anim(0.2, "animator2", val);
+       }
+       public message(Msg_Type:type, id, ...) {
+          if ((type == MSG_INT) && (id == 1)) {
+             new value, v, buf[11];
+
+             value = getarg(2);
+             if (get_int(v0_lock) == 1) {
+                set_int(v0_next, value);
+                return;
+             }
+             v = get_int(v0_cur);
+             set_int(v0_pre, v);
+             set_int(v0_cur, value);
+             set_int(v0_lock, 1);
+             snprintf(buf, 10, "%i", get_int(v0_pre));
+             set_state(PART:"bot0", buf, 0.0);
+             snprintf(buf, 10, "%ih", get_int(v0_cur));
+             set_state(PART:"bot", buf, 0.0);
+             snprintf(buf, 10, "%i", get_int(v0_cur));
+             set_state(PART:"top0", buf, 0.0);
+             snprintf(buf, 10, "%i", get_int(v0_pre));
+             set_state(PART:"top", buf, 0.0);
+             set_state(PART:"sh", "default", 0.0);
+             anim(0.2, "animator1", 1);
+          }
+       }
+      }
+      parts {
+         part { name: "shad";
+            mouse_events: 0;
+            description { state: "default" 0.0;
+               rel1.offset: -4 -4;
+               rel1.to: "base";
+               rel2.offset: 3 3;
+               rel2.to: "base";
+               image {
+                  normal: "flip_base_shad.png";
+                  border: 8 8 8 8;
+               }
+            }
+         }
+         part { name: "base";
+            mouse_events: 0;
+            scale: 1;
+            description { state: "default" 0.0;
+               rel1.offset: 4 4;
+               rel2.offset: -5 -5;
+               // FIXME 48x96 should be the native pixel design, right now
+               // its 80x160. fix int he artwork later
+               aspect: 0.5 0.5;
+               min: 24 48;
+//               max: 24 48;
+               image.normal: "flip_base.png";
+            }
+         }
+         part { name: "b";
+            type: RECT;
+            mouse_events: 1;
+            description { state: "default" 0.0;
+               rel1.to: "base";
+               rel1.relative: 0.0 0.5;
+               rel2.to: "base";
+               color: 0 0 0 0;
+            }
+         }
+         part { name: "t";
+            type: RECT;
+            mouse_events: 1;
+            description { state: "default" 0.0;
+               rel1.to: "base";
+               rel2.to: "base";
+               rel2.relative: 1.0 0.5;
+               color: 0 0 0 0;
+            }
+         }
+         part { name: "bot0";
+            mouse_events: 0;
+            description { state: "default" 0.0;
+               rel1.to: "b";
+               rel2.to: "b";
+               image.normal: "flip_amb.png";
+            }
+            description { state: "0" 0.0;
+               inherit: "default" 0.0;
+               image.normal: "flip_amb.png";
+            }
+            description { state: "1" 0.0;
+               inherit: "default" 0.0;
+               image.normal: "flip_pmb.png";
+            }
+         }
+         part { name: "sh";
+            mouse_events: 0;
+            description { state: "default" 0.0;
+               rel1.to: "b";
+               rel2.to: "b";
+               rel2.relative: 1.0 0.0;
+               image.normal: "flip_shad.png";
+            }
+            description { state: "half" 0.0;
+               inherit: "default" 0.0;
+               rel2.relative: 1.0 0.5;
+            }
+            description { state: "full" 0.0;
+               inherit: "default" 0.0;
+               rel2.relative: 1.0 1.0;
+            }
+         }
+         part { name: "bot";
+            mouse_events: 0;
+            description { state: "default" 0.0;
+               visible: 1;
+               rel1.to: "b";
+               rel2.to: "b";
+               image.normal: "flip_amb.png";
+            }
+            description { state: "0" 0.0;
+               inherit: "default" 0.0;
+               visible: 1;
+               rel2.relative: 1.0 1.0;
+               image.normal: "flip_amb.png";
+            }
+            description { state: "0h" 0.0;
+               inherit: "default" 0.0;
+               visible: 0;
+               rel2.relative: 1.0 0.0;
+               image.normal: "flip_amb.png";
+            }
+            description { state: "1" 0.0;
+               inherit: "default" 0.0;
+               visible: 1;
+               rel2.relative: 1.0 1.0;
+               image.normal: "flip_pmb.png";
+            }
+            description { state: "1h" 0.0;
+               inherit: "default" 0.0;
+               visible: 0;
+               rel2.relative: 1.0 0.0;
+               image.normal: "flip_pmb.png";
+            }
+         }
+         part { name: "top0";
+            mouse_events: 0;
+            description { state: "default" 0.0;
+               rel1.to: "t";
+               rel2.to: "t";
+               image.normal: "flip_amt.png";
+            }
+            description { state: "0" 0.0;
+               inherit: "default" 0.0;
+               image.normal: "flip_amt.png";
+            }
+            description { state: "1" 0.0;
+               inherit: "default" 0.0;
+               image.normal: "flip_pmt.png";
+            }
+         }
+         part { name: "top";
+            mouse_events: 0;
+            description { state: "default" 0.0;
+               visible: 1;
+               rel1.to: "t";
+               rel2.to: "t";
+               image.normal: "flip_amt.png";
+            }
+            description { state: "0" 0.0;
+               inherit: "default" 0.0;
+               visible: 1;
+               rel1.relative: 0.0 0.0;
+               image.normal: "flip_amt.png";
+            }
+            description { state: "0h" 0.0;
+               inherit: "default" 0.0;
+               color: 128 128 128 255;
+               visible: 0;
+               rel1.relative: 0.0 1.0;
+               image.normal: "flip_amt.png";
+            }
+            description { state: "1" 0.0;
+               inherit: "default" 0.0;
+               visible: 1;
+               rel1.relative: 0.0 0.0;
+               image.normal: "flip_pmt.png";
+            }
+            description { state: "1h" 0.0;
+               inherit: "default" 0.0;
+               color: 128 128 128 255;
+               visible: 0;
+               rel1.relative: 0.0 1.0;
+               image.normal: "flip_pmt.png";
+            }
+         }
+         part { name: "atop";
+            mouse_events: 0;
+            scale: 1;
+            description { state: "default" 0.0;
+               visible: 0;
+               min: 15 15;
+               max: 15 15;
+               align: 0.5 0.0;
+               rel1.to: "t";
+               rel2.to: "t";
+               image.normal: "arrow_up.png";
+            }
+            description { state: "visible" 0.0;
+               inherit: "default" 0.0;
+               visible: 1;
+            }
+         }
+         part { name: "abot";
+            mouse_events: 0;
+            scale: 1;
+            description { state: "default" 0.0;
+               visible: 0;
+               min: 15 15;
+               max: 15 15;
+               align: 0.5 1.0;
+               rel1.to: "b";
+               rel2.to: "b";
+               image.normal: "arrow_down.png";
+            }
+            description { state: "visible" 0.0;
+               inherit: "default" 0.0;
+               visible: 1;
+            }
+         }
+      }
+      programs {
+         program { name: "load";
+            signal: "load";
+            source: "";
+            script {
+               set_int(v0_cur, 0);
+               set_int(v0_pre, 0);
+               set_int(v0_lock, 0);
+               set_int(v0_next, -1);
+            }
+         }
+         program { name: "edit_on";
+            signal: "elm,state,edit,on";
+            source: "elm";
+            action: STATE_SET "visible" 0.0;
+            target: "atop";
+            target: "abot";
+         }
+/*
+         program { name: "edit_off";
+            signal: "elm,state,edit,off";
+            source: "elm";
+            action: STATE_SET "default" 0.0;
+            target: "atop";
+            target: "abot";
+         }
+ */
+         program { name: "up";
+            signal: "mouse,down,1";
+            source: "t";
+            action: SIGNAL_EMIT "elm,action,up,start" "";
+         }
+         program { name: "up,stop";
+            signal: "mouse,up,1";
+            source: "t";
+            action: SIGNAL_EMIT "elm,action,up,stop" "";
+         }
+         program { name: "down";
+            signal: "mouse,down,1";
+            source: "b";
+            action: SIGNAL_EMIT "elm,action,down,start" "";
+         }
+         program { name: "down,stop";
+            signal: "mouse,up,1";
+            source: "b";
+            action: SIGNAL_EMIT "elm,action,down,stop" "";
+         }
+      }
+   }
+
+   group { name: "elm/clock/base-all/default";
+      parts {
+         part { name: "d0";
+            type: SWALLOW;
+            description { state: "default" 0.0;
+               rel1.relative: 0.0000000 0.0;
+               rel2.relative: 0.1250000 1.0;
+            }
+         }
+         part { name: "d1";
+            type: SWALLOW;
+            description { state: "default" 0.0;
+               rel1.relative: 0.1250000 0.0;
+               rel2.relative: 0.2500000 1.0;
+            }
+         }
+         part { name: "c0";
+            type: SWALLOW;
+            type: TEXT;
+            mouse_events:  0;
+            scale: 1;
+            description { state: "default" 0.0;
+               rel1.relative: 0.2500000 0.0;
+               rel2.relative: 0.3125000 1.0;
+               color: 0 0 0 255;
+               text {
+                  font:     "Sans,Edje-Vera";
+                  text:     ":";
+                  size:     10;
+                  min:      1 1;
+                  align:    0.5 0.5;
+               }
+            }
+         }
+         part { name: "d2";
+            type: SWALLOW;
+            description { state: "default" 0.0;
+               rel1.relative: 0.3125000 0.0;
+               rel2.relative: 0.4375000 1.0;
+            }
+         }
+         part { name: "d3";
+            type: SWALLOW;
+            description { state: "default" 0.0;
+               rel1.relative: 0.4375000 0.0;
+               rel2.relative: 0.5625000 1.0;
+            }
+         }
+         // (if seconds)
+         part { name: "c1";
+            type: SWALLOW;
+            type: TEXT;
+            mouse_events:  0;
+            scale: 1;
+            description { state: "default" 0.0;
+               rel1.relative: 0.5625000 0.0;
+               rel2.relative: 0.6250000 1.0;
+               color: 0 0 0 255;
+               text {
+                  font:     "Sans,Edje-Vera";
+                  text:     ":";
+                  size:     10;
+                  min:      1 1;
+                  align:    0.5 0.5;
+               }
+            }
+         }
+         // (if seconds)
+         part { name: "d4";
+            type: SWALLOW;
+            description { state: "default" 0.0;
+               rel1.relative: 0.6250000 0.0;
+               rel2.relative: 0.7500000 1.0;
+            }
+         }
+         // (if seconds)
+         part { name: "d5";
+            type: SWALLOW;
+            description { state: "default" 0.0;
+               rel1.relative: 0.7500000 0.0;
+               rel2.relative: 0.8750000 1.0;
+            }
+         }
+         // (if am_pm)
+         part { name: "ampm";
+            type: SWALLOW;
+            description { state: "default" 0.0;
+               rel1.relative: 0.8750000 0.0;
+               rel2.relative: 1.0 1.0;
+            }
+         }
+      }
+   }
+
+///////////////////////////////////////////////////////////////////////////////
+   group { name: "elm/clock/base-seconds/default";
+      parts {
+         part { name: "d0";
+            type: SWALLOW;
+            description { state: "default" 0.0;
+               rel1.relative: 0.000000000 0.0;
+               rel2.relative: 0.142857143 1.0;
+            }
+         }
+         part { name: "d1";
+            type: SWALLOW;
+            description { state: "default" 0.0;
+               rel1.relative: 0.142857143 0.0;
+               rel2.relative: 0.285714286 1.0;
+            }
+         }
+         part { name: "c0";
+            type: SWALLOW;
+            type: TEXT;
+            mouse_events:  0;
+            scale: 1;
+            description { state: "default" 0.0;
+               rel1.relative: 0.285714286 0.0;
+               rel2.relative: 0.357142857 1.0;
+               color: 0 0 0 255;
+               text {
+                  font:     "Sans,Edje-Vera";
+                  text:     ":";
+                  size:     10;
+                  min:      1 1;
+                  align:    0.5 0.5;
+               }
+            }
+         }
+         part { name: "d2";
+            type: SWALLOW;
+            description { state: "default" 0.0;
+               rel1.relative: 0.357142857 0.0;
+               rel2.relative: 0.500000000 1.0;
+            }
+         }
+         part { name: "d3";
+            type: SWALLOW;
+            description { state: "default" 0.0;
+               rel1.relative: 0.500000000 0.0;
+               rel2.relative: 0.642857143 1.0;
+            }
+         }
+         // (if seconds)
+         part { name: "c1";
+            type: SWALLOW;
+            type: TEXT;
+            mouse_events:  0;
+            scale: 1;
+            description { state: "default" 0.0;
+               rel1.relative: 0.642857143 0.0;
+               rel2.relative: 0.714285714 1.0;
+               color: 0 0 0 255;
+               text {
+                  font:     "Sans,Edje-Vera";
+                  text:     ":";
+                  size:     10;
+                  min:      1 1;
+                  align:    0.5 0.5;
+               }
+            }
+         }
+         // (if seconds)
+         part { name: "d4";
+            type: SWALLOW;
+            description { state: "default" 0.0;
+               rel1.relative: 0.714285714 0.0;
+               rel2.relative: 0.857142857 1.0;
+            }
+         }
+         // (if seconds)
+         part { name: "d5";
+            type: SWALLOW;
+            description { state: "default" 0.0;
+               rel1.relative: 0.857142857 0.0;
+               rel2.relative: 1.000000000 1.0;
+            }
+         }
+      }
+   }
+
+///////////////////////////////////////////////////////////////////////////////
+   group { name: "elm/clock/base-am_pm/default";
+      parts {
+         part { name: "d0";
+            type: SWALLOW;
+            description { state: "default" 0.0;
+               rel1.relative: 0.000000000 0.0;
+               rel2.relative: 0.181818182 1.0;
+            }
+         }
+         part { name: "d1";
+            type: SWALLOW;
+            description { state: "default" 0.0;
+               rel1.relative: 0.181818182 0.0;
+               rel2.relative: 0.363636364 1.0;
+            }
+         }
+         part { name: "c0";
+            type: SWALLOW;
+            type: TEXT;
+            mouse_events:  0;
+            scale: 1;
+            description { state: "default" 0.0;
+               rel1.relative: 0.363636364 0.0;
+               rel2.relative: 0.454545455 1.0;
+               color: 0 0 0 255;
+               text {
+                  font:     "Sans,Edje-Vera";
+                  text:     ":";
+                  size:     10;
+                  min:      1 1;
+                  align:    0.5 0.5;
+               }
+            }
+         }
+         part { name: "d2";
+            type: SWALLOW;
+            description { state: "default" 0.0;
+               rel1.relative: 0.454545455 0.0;
+               rel2.relative: 0.636363636 1.0;
+            }
+         }
+         part { name: "d3";
+            type: SWALLOW;
+            description { state: "default" 0.0;
+               rel1.relative: 0.636363636 0.0;
+               rel2.relative: 0.818181818 1.0;
+            }
+         }
+         // (if am_pm)
+         part { name: "ampm";
+            type: SWALLOW;
+            description { state: "default" 0.0;
+               rel1.relative: 0.818181818 0.0;
+               rel2.relative: 1.0 1.0;
+            }
+         }
+      }
+   }
+
+///////////////////////////////////////////////////////////////////////////////
+   group { name: "elm/clock/base/default";
+      parts {
+         part { name: "d0";
+            type: SWALLOW;
+            description { state: "default" 0.0;
+               rel1.relative: 0.000000000 0.0;
+               rel2.relative: 0.222222222 1.0;
+            }
+         }
+         part { name: "d1";
+            type: SWALLOW;
+            description { state: "default" 0.0;
+               rel1.relative: 0.222222222 0.0;
+               rel2.relative: 0.444444444 1.0;
+            }
+         }
+         part { name: "c0";
+            type: SWALLOW;
+            type: TEXT;
+            mouse_events:  0;
+            scale: 1;
+            description { state: "default" 0.0;
+               rel1.relative: 0.444444444 0.0;
+               rel2.relative: 0.555555556 1.0;
+               color: 0 0 0 255;
+               text {
+                  font:     "Sans,Edje-Vera";
+                  text:     ":";
+                  size:     10;
+                  min:      1 1;
+                  align:    0.5 0.5;
+               }
+            }
+         }
+         part { name: "d2";
+            type: SWALLOW;
+            description { state: "default" 0.0;
+               rel1.relative: 0.555555556 0.0;
+               rel2.relative: 0.777777778 1.0;
+            }
+         }
+         part { name: "d3";
+            type: SWALLOW;
+            description { state: "default" 0.0;
+               rel1.relative: 0.777777778 0.0;
+               rel2.relative: 1.000000000 1.0;
+            }
+         }
+      }
+   }
+
+///////////////////////////////////////////////////////////////////////////////

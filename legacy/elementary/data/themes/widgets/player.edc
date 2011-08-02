@@ -1,0 +1,185 @@
+   group {
+      name: "elm/player/base/default";
+      min: 290 26;
+
+      parts {
+         part {
+            type: SWALLOW;
+            name: "media_player/slider";
+
+            description {
+               rel2 {
+                  relative: 1.0 0.0;
+                  to_x: "media_player/forward";
+               }
+            }
+         }
+         part {
+            type: SWALLOW;
+            name: "media_player/rewind";
+
+            description {
+               rel1 {
+                  to_y: "media_player/slider";
+                  offset: 42 0;
+                  relative: 0.0 1.0;
+               }
+               rel2 {
+                  relative: 0.0 1.0;
+               }
+            }
+         }
+         part {
+            type: SWALLOW;
+            name: "media_player/prev";
+
+            description {
+               rel1 {
+                  to: "media_player/rewind";
+                  relative: 1.0 0.0;
+               }
+               rel2 {
+                  to: "media_player/rewind";
+                  relative: 2.0 1.0;
+               }
+            }
+         }
+         part {
+            type: SWALLOW;
+            name: "media_player/play";
+
+            description {
+               rel1 {
+                  to: "media_player/prev";
+                  relative: 1.0 0.0;
+               }
+               rel2 {
+                  to: "media_player/prev";
+                  relative: 2.0 1.0;
+               }
+            }
+            description {
+               state: hidden 0.0;
+               inherit: default 0.0;
+               visible: 0;
+            }
+         }
+         part {
+            type: SWALLOW;
+            name: "media_player/pause";
+
+            description {
+               rel1.to: "media_player/play";
+               rel2.to: "media_player/play";
+            }
+            description {
+               state: hidden 0.0;
+               inherit: default 0.0;
+               visible: 0;
+            }
+         }
+         part {
+            type: SWALLOW;
+            name: "media_player/info";
+            description {
+               rel1 {
+                  to: "media_player/play";
+                  relative: 1.0 0.0;
+               }
+               rel2 {
+                  to: "media_player/play";
+                  relative: 2.0 1.0;
+               }
+            }
+         }
+
+         part {
+            type: SWALLOW;
+            name: "media_player/stop";
+            description {
+               rel1 {
+                  to: "media_player/info";
+                  relative: 3.0 0.0;
+               }
+               rel2 {
+                  to: "media_player/info";
+                  relative: 4.0 1.0;
+               }
+            }
+         }
+         part {
+            type: SWALLOW;
+            name: "media_player/next";
+            description {
+               rel1 {
+                  to: "media_player/stop";
+                  relative: 1.0 0.0;
+               }
+               rel2 {
+                  to: "media_player/stop";
+                  relative: 2.0 1.0;
+               }
+            }
+         }
+         part {
+            type: SWALLOW;
+            name: "media_player/forward";
+            description {
+               rel1 {
+                  to: "media_player/next";
+                  relative: 1.0 0.0;
+               }
+               rel2 {
+                  to: "media_player/next";
+                  relative: 2.0 1.0;
+               }
+            }
+         }
+      }
+      programs {
+         program {
+            signal: "show";
+            source: "";
+            after: "pause/0";
+         }
+         program {
+            signal: "elm,player,play";
+            source: "elm";
+            after: "play/0";
+         }
+         program {
+            signal: "elm,player,pause";
+            source: "elm";
+            after: "pause/0";
+         }
+         program {
+            name: "play/0";
+
+            action: STATE_SET "hidden" 0.0;
+            target: "media_player/play";
+
+            after: "play/1";
+         }
+         program {
+            name: "play/1";
+
+            action: STATE_SET "default" 0.0;
+            target: "media_player/pause";
+         }
+         program {
+            name: "pause/0";
+
+            action: STATE_SET "hidden" 0.0;
+            target: "media_player/pause";
+
+            after: "pause/1";
+         }
+         program {
+            name: "pause/1";
+
+            action: STATE_SET "default" 0.0;
+            target: "media_player/play";
+         }
+      }
+   }
+

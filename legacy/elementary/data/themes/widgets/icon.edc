@@ -1,0 +1,59 @@
+#define GROUP_ALIAS_ICON(Name, Alias, File, Min, Max)                   \
+   group { name: "elm/icon/"##Name##"/default"; min: Min Min; max: Max Max; \
+      alias: "elm/icon/"##Alias##"/default";                            \
+      images.image: File COMP; parts { part { name: "base";             \
+            description { aspect: 1.0 1.0; aspect_preference: BOTH;     \
+               image.normal: File; } } } }
+
+#define GROUP_ICON(Name, File, Min, Max)                      \
+   group { name: "elm/icon/"##Name##"/default"; min: Min Min; max: Max Max; \
+      images.image: File COMP; parts { part { name: "base";             \
+            description { aspect: 1.0 1.0; aspect_preference: BOTH;     \
+               image.normal: File; } } } }
+
+   group { name: "elm/icon/arrow_down/default";
+           alias: "elm/icon/toolbar/arrow_down/default";
+           alias: "elm/icon/toolbar/more_menu/default"; min: 32 32;
+      images.image: "icon_arrow_down.png" COMP; parts { part { name: "base";
+         description { state: "default" 0.0; aspect: 1.0 1.0; aspect_preference: BOTH;
+            image.normal: "icon_arrow_down.png"; } } } }
+
+   GROUP_ALIAS_ICON("home", "toolbar/home", "icon_home.png", 32, 0);
+   GROUP_ALIAS_ICON("close", "toolbar/close", "icon_close.png", 32, 0);
+   GROUP_ALIAS_ICON("apps", "toolbar/apps", "icon_apps.png", 32, 0);
+   GROUP_ALIAS_ICON("arrow_up", "toolbar/arrow_up", "icon_arrow_up.png", 32, 0);
+   GROUP_ALIAS_ICON("arrow_left", "toolbar/arrow_left", "icon_arrow_left.png", 32, 0);
+   GROUP_ALIAS_ICON("arrow_right", "toolbar/arrow_right", "icon_arrow_right.png", 32, 0);
+   GROUP_ALIAS_ICON("chat", "toolbar/chat", "icon_chat.png", 32, 0);
+   GROUP_ALIAS_ICON("clock", "toolbar/clock", "icon_clock.png", 32, 0);
+   GROUP_ALIAS_ICON("delete", "toolbar/delete", "icon_delete.png", 32, 0);
+   GROUP_ALIAS_ICON("edit", "toolbar/edit", "icon_edit.png", 32, 0);
+   GROUP_ALIAS_ICON("refresh", "toolbar/refresh", "icon_refresh.png", 32, 0);
+   GROUP_ALIAS_ICON("folder", "toolbar/folder", "icon_folder.png", 32, 0);
+   GROUP_ALIAS_ICON("file", "toolbar/file", "icon_file.png", 32, 0);
+///////////////////////////////////////////////////////////////////////////////
+   GROUP_ICON("menu/home", "icon_home.png", 24, 24);
+   GROUP_ICON("menu/close", "icon_close.png", 24, 24);
+   GROUP_ICON("menu/apps", "icon_apps.png", 24, 24);
+   GROUP_ICON("menu/arrow_up", "icon_arrow_up.png", 24, 24);
+   GROUP_ICON("menu/arrow_down", "icon_arrow_down.png", 24, 24);
+   GROUP_ICON("menu/arrow_left", "icon_arrow_left.png", 24, 24);
+   GROUP_ICON("menu/arrow_right", "icon_arrow_right.png", 24, 24);
+   GROUP_ICON("menu/chat", "icon_chat.png", 24, 24);
+   GROUP_ICON("menu/clock", "icon_clock.png", 24, 24);
+   GROUP_ICON("menu/delete", "icon_delete.png", 24, 24);
+   GROUP_ICON("menu/edit", "icon_edit.png", 24, 24);
+   GROUP_ICON("menu/refresh", "icon_refresh.png", 24, 24);
+   GROUP_ICON("menu/folder", "icon_folder.png", 24, 24);
+   GROUP_ICON("menu/file", "icon_file.png", 24, 24);
+
+   GROUP_ICON("media_player/forward", "mp_forward.png", 16, 0);
+   GROUP_ICON("media_player/info", "mp_info.png", 16, 0);
+   GROUP_ICON("media_player/next", "mp_next.png", 16, 0);
+   GROUP_ICON("media_player/pause", "mp_pause.png", 16, 0);
+   GROUP_ICON("media_player/play", "mp_play.png", 16, 0);
+   GROUP_ICON("media_player/prev", "mp_prev.png", 16, 0);
+   GROUP_ICON("media_player/rewind", "mp_rewind.png", 16, 0);
+   GROUP_ICON("media_player/stop", "mp_stop.png", 16, 0);
+
+///////////////////////////////////////////////////////////////////////////////

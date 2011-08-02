@@ -1,0 +1,603 @@
+///////////////////////////////////////////////////////////////////////////////
+   group { name: "elm/segment_control/base/default";
+#define SEGMENT_TYPE_SINGLE 1
+#define SEGMENT_TYPE_LEFT 2
+#define SEGMENT_TYPE_MIDDLE 3
+#define SEGMENT_TYPE_RIGHT 4
+#define SEGMENT_STATE_NORMAL 1
+#define SEGMENT_STATE_PRESSED 2
+#define SEGMENT_STATE_SELECTED 3
+#define SEGMENT_STATUS_ENABLED 0
+#define SEGMENT_STATUS_DISABLED 1
+      parts {
+         part { name: "bg";
+            type: RECT;
+            mouse_events: 0;
+            scale: 1;
+            description {
+               state: "default" 0.0;
+               color: 0 0 0 0;
+               min: 100 40;
+            }
+         }
+      }
+   }
+   group { name: "elm/segment_control/item/default";
+      images {
+         image: "seg_single_pressed.png" COMP;
+         image: "seg_single_selected.png" COMP;
+         image: "seg_single_normal.png" COMP;
+
+         image: "seg_left_pressed.png" COMP;
+         image: "seg_left_selected.png" COMP;
+         image: "seg_left_normal.png" COMP;
+
+         image: "seg_middle_pressed.png" COMP;
+         image: "seg_middle_selected.png" COMP;
+         image: "seg_middle_normal.png" COMP;
+
+         image: "seg_right_pressed.png" COMP;
+         image: "seg_right_selected.png" COMP;
+         image: "seg_right_normal.png" COMP;
+      }
+      parts {
+         part { name: "segment";
+            mouse_events: 1;
+            scale: 1;
+            description { state: "default" 0.0;
+               min: 1 1;
+               visible: 0;
+               image {
+                  normal: "seg_single_normal.png";
+                  border: 7 7 7 7;
+                  border_scale: 1;
+                  middle: 1;
+               }
+            }
+            description { state: "default_single" 0.0;
+               inherit: "default" 0.0;
+               visible: 1;
+               image {
+                  normal: "seg_single_normal.png";
+                  border: 7 7 7 7;
+               }
+            }
+            description { state: "default_left" 0.0;
+               inherit: "default" 0.0;
+               visible: 1;
+               image {
+               normal: "seg_left_normal.png";
+                  border:  6 1 7 7;
+               }
+            }
+            description { state: "default_right" 0.0;
+               inherit: "default" 0.0;
+               visible: 1;
+               image {
+                  normal: "seg_right_normal.png";
+                  border: 1 6 7 7;
+               }
+            }
+            description { state: "default_middle" 0.0;
+               inherit: "default" 0.0;
+               visible: 1;
+               image {
+                  normal: "seg_middle_normal.png";
+                  border: 2 2 2 2;
+               }
+            }
+            description { state: "pressed_single" 0.0;
+               inherit: "default" 0.0;
+               visible: 1;
+               image {
+                  normal: "seg_single_pressed.png";
+                  border: 7 7 7 7;
+               }
+            }
+            description { state: "pressed_left" 0.0;
+               inherit: "default" 0.0;
+               visible: 1;
+               image {
+                  normal: "seg_left_pressed.png";
+                  border:  6 1 7 7;
+               }
+            }
+            description { state: "pressed_right" 0.0;
+               inherit: "default" 0.0;
+               visible: 1;
+               image {
+                  normal: "seg_right_pressed.png";
+                  border: 1 6 7 7;
+               }
+            }
+            description { state: "pressed_middle" 0.0;
+               inherit: "default" 0.0;
+               visible: 1;
+               image {
+                  normal: "seg_middle_pressed.png";
+                  border: 1 1 2 2;
+               }
+            }
+            description { state: "selected_single" 0.0;
+               inherit: "default" 0.0;
+               visible: 1;
+               image {
+                  normal: "seg_single_selected.png";
+                  border: 7 7 7 7;
+               }
+            }
+            description { state: "selected_left" 0.0;
+               inherit: "default" 0.0;
+               visible: 1;
+               image {
+                  normal: "seg_left_selected.png";
+                  border:  6 3 7 7;
+               }
+            }
+            description { state: "selected_right" 0.0;
+               inherit: "default" 0.0;
+               visible: 1;
+               image {
+                  normal: "seg_right_selected.png";
+                  border: 3 6 7 7;
+               }
+            }
+            description { state: "selected_middle" 0.0;
+               inherit: "default" 0.0;
+               visible: 1;
+               image {
+                  normal: "seg_middle_selected.png";
+                  border: 3 3 3 3;
+               }
+            }
+         }
+         part { name: "padding_left";
+            type: RECT;
+            scale: 1;
+            mouse_events: 0;
+            description { state: "default" 0.0;
+               align: 0.0 0.0;
+               rel1.relative: 0.0 0.0;
+               rel2.relative: 0.0 1.0;
+               min: 2 2;
+               max: 2 2;
+               fixed: 1 0;
+               color: 0 0 0 0;
+            }
+         }
+         part { name: "padding_right";
+            type: RECT;
+            scale: 1;
+            mouse_events: 0;
+            description { state: "default" 0.0;
+               visible: 0;
+               align: 1.0 0.0;
+               rel1.relative: 1.0 0.0;
+               rel2.relative: 1.0 1.0;
+               min: 2 2;
+               max: 2 2;
+               fixed: 1 0;
+            }
+         }
+         part { name: "padding_top";
+            type: RECT;
+            scale: 1;
+            mouse_events: 0;
+            description { state: "default" 0.0;
+               visible: 0;
+               align: 0.0 0.0;
+               rel1.relative: 0.0 0.0;
+               rel2.relative: 1.0 0.0;
+               min: 2 2;
+               max: 2 2;
+               fixed: 0 1;
+            }
+         }
+         part { name: "padding_bottom";
+            type: RECT;
+            scale: 1;
+            mouse_events: 0;
+            description { state: "default" 0.0;
+               visible: 0;
+               align: 1.0 1.0;
+               rel1.relative: 0.0 1.0;
+               rel2.relative: 1.0 1.0;
+               min: 2 2;
+               max: 2 2;
+               fixed: 0 1;
+            }
+         }
+         part { name: "icon.bg";
+            type: RECT;
+            scale: 1;
+            mouse_events: 0;
+            description { state: "default" 0.0;
+               visible: 0;
+               fixed: 1 0;
+               rel1 {
+                  to_x: "padding_left";
+                  to_y: "padding_top";
+                  relative: 1.0 1.0;
+               }
+               rel2 {
+                  to: "elm.swallow.icon";
+                  relative: 1.0 1.0;
+               }
+               align: 0.0 0.5;
+            }
+         }
+         part { name: "padding_icon_text";
+            type: RECT;
+            scale: 1;
+            mouse_events: 0;
+            description { state: "default" 0.0; //when only icon or no icon is there
+               visible: 0;
+               align: 0.0 0.0;
+               rel1 {
+                  to: "icon.bg";
+                  relative: 1.0 0.0;
+               }
+               rel2 {
+                  to: "icon.bg";
+                  relative: 1.0 1.0;
+               }
+               fixed: 1 0;
+               min: 0 0;
+            }
+            description { state: "icononly" 0.0;
+               inherit: "default" 0.0;
+            }
+            description { state: "visible" 0.0; //when icon is visible
+               inherit: "default" 0.0;
+               min: 2 0;
+            }
+         }
+         part { name: "elm.swallow.icon";
+            type: SWALLOW;
+            scale: 1;
+            description { state: "default" 0.0;
+               visible: 0;
+               align: 0.0 0.5;
+               rel1 {
+                  to_x: "padding_left";
+                  to_y: "padding_top";
+                  relative: 1.0 1.0;
+               }
+               rel2 {
+                  to_y: "padding_bottom";
+                  relative: 0.0 0.0;
+               }
+               fixed: 1 0;
+               aspect: 1.0 1.0;
+               aspect_preference: BOTH;
+            }
+            description { state: "visible" 0.0;
+               inherit: "default" 0.0;
+               visible: 1;
+               rel2 {
+                  to_y: "padding_bottom";
+                  relative: 0.3 0.0;
+               }
+            }
+            description { state: "icononly" 0.0;
+               inherit: "default" 0.0;
+               visible: 1;
+               rel2 {
+                  to_x: "padding_right";
+                  to_y: "padding_bottom";
+                  relative: 0.0 0.0;
+               }
+               align: 0.5 0.5;
+            }
+         }
+         part { name: "elm.text";
+            type: TEXT;
+            mouse_events: 0;
+            scale: 1;
+            description {
+               state: "default" 0.0;
+               visible: 0;
+               fixed: 1 1;
+               min: 1 1;
+               rel1 {
+                  to_x: "padding_icon_text";
+                  relative: 1.0 1.0;
+               }
+               rel2 {
+                  to_x: "padding_right";
+                  relative: 0.0 0.0;
+               }
+               color: 224 224 224 255;
+               color3: 0 0 0 64;
+               text {
+                  font: "Sans";
+                  ellipsis: 0.0;
+                  fit: 1 1;
+                  size: 24;
+                  size_range: 8 36;
+                  min: 0 1;
+               }
+            }
+            description { state: "normal" 0.0;
+               inherit: "default" 0.0;
+               visible: 1;
+            }
+            description { state: "pressed" 0.0;
+               inherit: "default" 0.0;
+               visible: 1;
+               color: 0 0 0 255;
+            }
+            description { state: "selected" 0.0;
+               inherit: "default" 0.0;
+               visible: 1;
+               color: 50 50 50 255;
+            }
+            description { state: "disabled" 0.0;
+               inherit: "default" 0.0;
+               visible: 1;
+               color: 200 200 200 255;
+            }
+         }
+         part { name: "disabler";
+            repeat_events: 0;
+            scale: 1;
+            description { state: "default" 0.0;
+               visible: 0;
+               fixed: 1 1;
+               min: 1 1;
+               align: 0.0 0.5;
+               rel1 {
+                  relative: 0.0 0.0;
+                  to: "segment";
+               }
+               rel2 {
+                  relative: 1.0 1.0;
+                  to: "segment";
+               }
+               color: 255 255 255 150;
+            }
+            description { state: "disabled_single" 0.0;
+               inherit: "default" 0.0;
+               visible: 1;
+               image {
+                  normal: "seg_single_normal.png";
+                  border: 7 7 7 7;
+               }
+            }
+            description { state: "disabled_left" 0.0;
+               inherit: "default" 0.0;
+               visible: 1;
+               image {
+                  normal: "seg_left_normal.png";
+                  border:  6 1 7 7;
+               }
+            }
+            description { state: "disabled_right" 0.0;
+               inherit: "default" 0.0;
+               visible: 1;
+               image {
+                  normal: "seg_right_normal.png";
+                  border: 1 6 7 7;
+               }
+            }
+            description { state: "disabled_middle" 0.0;
+               inherit: "default" 0.0;
+               visible: 1;
+               image {
+                  normal: "seg_middle_normal.png";
+                  border: 2 2 2 2;
+               }
+            }
+         }
+      }
+      programs {
+         script {
+            public seg_type; // Single, Left, Middle, Right.
+            public seg_state; // Normal/Default, Pressed, Selected.
+            public seg_status;// Enabled/Default, Disabled
+
+            public update_state() {
+               new type, state, disabled;
+               type = get_int(seg_type);
+               state = get_int(seg_state);
+               disabled = get_int(seg_status);
+
+               if(state == SEGMENT_STATE_NORMAL)
+                 {
+                    if(type == SEGMENT_TYPE_SINGLE)
+                      set_state(PART:"segment", "default_single", 0.0);
+                    else if(type == SEGMENT_TYPE_LEFT)
+                      set_state(PART:"segment", "default_left", 0.0);
+                    else if(type == SEGMENT_TYPE_MIDDLE)
+                      set_state(PART:"segment", "default_middle", 0.0);
+                    else if(type == SEGMENT_TYPE_RIGHT)
+                      set_state(PART:"segment", "default_right", 0.0);
+                    set_state(PART:"elm.text", "normal", 0.0);
+                 }
+               else if(state == SEGMENT_STATE_PRESSED)
+                 {
+                    if(type == SEGMENT_TYPE_SINGLE)
+                      set_state(PART:"segment", "pressed_single", 0.0);
+                    else if(type == SEGMENT_TYPE_LEFT)
+                      set_state(PART:"segment", "pressed_left", 0.0);
+                    else if(type == SEGMENT_TYPE_MIDDLE)
+                      set_state(PART:"segment", "pressed_middle", 0.0);
+                    else if(type == SEGMENT_TYPE_RIGHT)
+                      set_state(PART:"segment", "pressed_right", 0.0);
+                    set_state(PART:"elm.text", "pressed", 0.0);
+                 }
+               else if(state == SEGMENT_STATE_SELECTED)
+                 {
+                    if(type == SEGMENT_TYPE_SINGLE)
+                      set_state(PART:"segment", "selected_single", 0.0);
+                    else if(type == SEGMENT_TYPE_LEFT)
+                      set_state(PART:"segment", "selected_left", 0.0);
+                    else if(type == SEGMENT_TYPE_MIDDLE)
+                      set_state(PART:"segment", "selected_middle", 0.0);
+                    else if(type == SEGMENT_TYPE_RIGHT)
+                      set_state(PART:"segment", "selected_right", 0.0);
+                    set_state(PART:"elm.text", "selected", 0.0);
+                 }
+               if(disabled == SEGMENT_STATUS_DISABLED)
+                 {
+                    if(type == SEGMENT_TYPE_SINGLE)
+                      set_state(PART:"disabler", "disabled_single", 0.0);
+                    else if(type == SEGMENT_TYPE_LEFT)
+                      set_state(PART:"disabler", "disabled_left", 0.0);
+                    else if(type == SEGMENT_TYPE_MIDDLE)
+                      set_state(PART:"disabler", "disabled_middle", 0.0);
+                    else if(type == SEGMENT_TYPE_RIGHT)
+                      set_state(PART:"disabler", "disabled_right", 0.0);
+                    set_state(PART:"elm.text", "disabled", 0.0);
+                 }
+            }
+         }
+         program {
+            name: "segment_type_s";
+            signal: "elm,type,segment,single";
+            source: "elm";
+            script {
+               set_int(seg_type, SEGMENT_TYPE_SINGLE);
+               update_state();
+            }
+         }
+         program {
+            name: "segment_type_l";
+            signal: "elm,type,segment,left";
+            source: "elm";
+            script {
+               set_int(seg_type, SEGMENT_TYPE_LEFT);
+               update_state();
+            }
+         }
+         program {
+            name: "segment_type_m";
+            signal: "elm,type,segment,middle";
+            source: "elm";
+            script {
+               set_int(seg_type, SEGMENT_TYPE_MIDDLE);
+               update_state();
+            }
+         }
+         program {
+            name: "segment_type_r";
+            signal: "elm,type,segment,right";
+            source: "elm";
+            script {
+               set_int(seg_type, SEGMENT_TYPE_RIGHT);
+               update_state();
+            }
+         }
+         program {
+            name: "normal_segment";
+            signal: "elm,state,segment,normal";
+            source: "elm";
+            script {
+               set_int(seg_state, SEGMENT_STATE_NORMAL);
+               update_state();
+            }
+         }
+         program {
+            name: "pressed_segment";
+            signal: "elm,state,segment,pressed";
+            source: "elm";
+            script {
+               set_int(seg_state, SEGMENT_STATE_PRESSED);
+               update_state();
+            }
+         }
+         program {
+            name: "selected_segment";
+            signal: "elm,state,segment,selected";
+            source: "elm";
+            script {
+               set_int(seg_state, SEGMENT_STATE_SELECTED);
+               update_state();
+            }
+         }
+         program { name: "disable_segment";
+            signal: "elm,state,disabled";
+            source: "elm";
+            script {
+               set_int(seg_status, SEGMENT_STATUS_DISABLED);
+               update_state();
+            }
+         }
+         program { name: "enable_segment";
+            signal: "elm,state,enabled";
+            source: "elm";
+            script {
+               set_int(seg_status, SEGMENT_STATUS_ENABLED);
+               update_state();
+            }
+         }
+         program { name: "text_show";
+            signal: "elm,state,text,visible";
+            source: "elm";
+            script {
+               new st[31];
+               new Float:vl;
+               get_state(PART:"elm.swallow.icon", st, 30, vl);
+               if (!strcmp(st, "icononly"))
+                 {
+                    set_state(PART:"elm.swallow.icon", "visible", 0.0);
+                    set_state(PART:"padding_icon_text", "visible", 0.0);
+                 }
+               get_state(PART:"elm.text", st, 30, vl);
+               if (!strcmp(st, "selected"))
+                  set_state(PART:"elm.text", "selected", 0.0);
+               else
+                  set_state(PART:"elm.text", "normal", 0.0);
+            }
+         }
+         program { name: "text_hide";
+            signal: "elm,state,text,hidden";
+            source: "elm";
+            script {
+               new st[31];
+               new Float:vl;
+               get_state(PART:"elm.swallow.icon", st, 30, vl);
+               if (!strcmp(st, "visible"))
+                 {
+                    set_state(PART:"elm.swallow.icon", "icononly", 0.0);
+                    set_state(PART:"padding_icon_text", "icononly", 0.0);
+                 }
+               set_state(PART:"elm.text", "default", 0.0);
+            }
+         }
+         program { name: "icon_show";
+            signal: "elm,state,icon,visible";
+            source: "elm";
+            script {
+               new st[31];
+               new Float:vl;
+               get_state(PART:"elm.text", st, 30, vl);
+               if ((!strcmp(st, "normal")) || (!strcmp(st, "selected")))
+                 {
+                    set_state(PART:"elm.swallow.icon", "visible", 0.0);
+                    set_state(PART:"padding_icon_text", "visible", 0.0);
+                 }
+               else
+                 {
+                    set_state(PART:"elm.swallow.icon", "icononly", 0.0);
+                    set_state(PART:"padding_icon_text", "icononly", 0.0);
+                 }
+            }
+         }
+         program { name: "icon_hide";
+            signal: "elm,state,icon,hidden";
+            source: "elm";
+            action:  STATE_SET "default" 0.0;
+            target: "elm.swallow.icon";
+         }
+      }
+#undef SEGMENT_TYPE_SINGLE
+#undef SEGMENT_TYPE_LEFT
+#undef SEGMENT_TYPE_MIDDLE
+#undef SEGMENT_TYPE_RIGHT
+#undef SEGMENT_STATE_NORMAL
+#undef SEGMENT_STATE_PRESSED
+#undef SEGMENT_STATE_SELECTED
+#undef SEGMENT_STATUS_ENABLED
+#undef SEGMENT_STATUS_DISABLED
+   }

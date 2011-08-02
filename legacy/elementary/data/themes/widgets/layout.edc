@@ -1,0 +1,830 @@
+////////////////////////////////////////////////////////////////////////
+// Standard layouts to be used                                        //
+////////////////////////////////////////////////////////////////////////
+   /* application with toolbar and main content area */
+   group { name: "elm/layout/application/toolbar-content";
+      parts {
+         part { name: "elm.swallow.content";
+            type: SWALLOW;
+            description { state: "default" 0.0;
+               rel1 { to_y: "elm.external.toolbar";
+                  relative: 0.0 1.0;
+                  offset: -1 1;
+               }
+            }
+         }
+
+         part { name: "elm.external.toolbar";
+            type: EXTERNAL;
+            source: "elm/toolbar";
+            description { state: "default" 0.0;
+               align: 0.5 0.0;
+               fixed: 0 1;
+               rel2 {
+                  relative: 1.0 0.0;
+                  offset: -1 47;
+               }
+            }
+         }
+      }
+   }
+
+   /* application with toolbar and main content area with a back button and title area */
+   group { name: "elm/layout/application/toolbar-content-back";
+      parts {
+         part { name: "elm.swallow.content";
+            type: SWALLOW;
+            description { state: "default" 0.0;
+               rel1 { to_y: "title_clipper";
+                  relative: 0.0 1.0;
+                  offset: -1 1;
+               }
+            }
+         }
+
+         part { name: "elm.external.toolbar";
+            type: EXTERNAL;
+            source: "elm/toolbar";
+            description { state: "default" 0.0;
+               fixed: 0 1;
+               align: 0.5 0.0;
+               rel2 {
+                  relative: 1.0 0.0;
+                  offset: -1 47;
+               }
+            }
+         }
+         part { name: "title_clipper";
+            type: RECT;
+            description { state: "default" 0.0;
+               visible: 1;
+               rel1 {
+                  to_y: "back";
+               }
+               rel2 {
+                  to_y: "back";
+               }
+            }
+            description { state: "hidden" 0.0;
+               inherit: "default" 0.0;
+               visible: 0;
+               rel2 {
+                  relative: 1.0 0.0;
+               }
+            }
+         }
+         part { name: "back_clipper";
+            type: RECT;
+            clip_to: "title_clipper";
+            description { state: "default" 0.0;
+               visible: 1;
+            }
+            description { state: "hidden" 0.0;
+               visible: 0;
+            }
+         }
+         part { name: "back";
+            type: EXTERNAL;
+            source: "elm/button";
+            clip_to: "back_clipper";
+            description { state: "default" 0.0;
+               align: 0.0 0.0;
+               fixed: 1 1;
+               rel1 { to_y: "elm.external.toolbar";
+                  relative: 0.0 1.0;
+                  offset: 0 1;
+               }
+               rel2 { to_y: "elm.external.toolbar";
+                  relative: 0.0 1.0;
+                  offset: 50 32;
+               }
+               params.string: "label" "Back";
+            }
+         }
+         programs {
+            program {
+               signal: "clicked";
+               source: "back";
+               action: SIGNAL_EMIT "elm,action,back" "";
+            }
+            program {
+               signal: "elm,back,hide";
+               source: "elm";
+               action: STATE_SET "hidden" 0.0;
+               target: "back_clipper";
+            }
+            program {
+               signal: "elm,back,show";
+               source: "elm";
+               action: STATE_SET "default" 0.0;
+               target: "back_clipper";
+            }
+            program {
+               signal: "elm,title,hide";
+               source: "elm";
+               action: STATE_SET "hidden" 0.0;
+               transition: LINEAR 0.1;
+               target: "title_clipper";
+            }
+            program {
+               signal: "elm,title,show";
+               source: "elm";
+               action: STATE_SET "default" 0.0;
+               target: "title_clipper";
+            }
+         }
+
+         part { name: "elm.swallow.end";
+            type: SWALLOW;
+            description { state: "default" 0.0;
+               align: 1.0 0.0;
+               fixed: 1 1;
+               rel1 { to_y: "elm.external.toolbar";
+                  relative: 1.0 1.0;
+                  offset: -2 1;
+               }
+               rel2 { to_y: "elm.external.toolbar";
+                  relative: 1.0 1.0;
+                  offset: -1 32;
+               }
+            }
+         }
+
+         part { name: "elm.text.title";
+            type: TEXT;
+            effect: SOFT_SHADOW;
+            scale: 1;
+            description { state: "default" 0.0;
+               rel1 { to_y: "elm.external.toolbar";
+                  to_x: "back";
+                  relative: 1.0 1.0;
+                  offset: 2 1;
+               }
+               rel2 { to_y: "back";
+                  to_x: "elm.swallow.end";
+                  relative: 0.0 1.0;
+                  offset: -3 -1;
+               }
+               text {
+                  font: "Sans:style=Bold";
+                  size: 12;
+               }
+            }
+         }
+      }
+   }
+
+   /* application with toolbar and main content area with a back and next buttons and title area */
+   group { name: "elm/layout/application/toolbar-content-back-next";
+      parts {
+         part { name: "elm.swallow.content";
+            type: SWALLOW;
+            description { state: "default" 0.0;
+               rel1 { to_y: "title_clipper";
+                  relative: 0.0 1.0;
+                  offset: -1 1;
+               }
+            }
+         }
+
+         part { name: "elm.external.toolbar";
+            type: EXTERNAL;
+            source: "elm/toolbar";
+            description { state: "default" 0.0;
+               fixed: 0 1;
+               align: 0.5 0.0;
+               rel2 {
+                  relative: 1.0 0.0;
+                  offset: -1 47;
+               }
+            }
+         }
+         part { name: "title_clipper";
+            type: RECT;
+            description { state: "default" 0.0;
+               visible: 1;
+               rel1 {
+                  to_y: "back";
+               }
+               rel2 {
+                  to_y: "back";
+               }
+            }
+            description { state: "hidden" 0.0;
+               inherit: "default" 0.0;
+               visible: 0;
+               rel2 {
+                  relative: 1.0 0.0;
+               }
+            }
+         }
+         part { name: "back";
+            type: EXTERNAL;
+            source: "elm/button";
+            clip_to: "back_clipper";
+            description { state: "default" 0.0;
+               align: 0.0 0.0;
+               fixed: 1 1;
+               rel1 { to_y: "elm.external.toolbar";
+                  relative: 0.0 1.0;
+                  offset: 0 1;
+               }
+               rel2 { to_y: "elm.external.toolbar";
+                  relative: 0.0 1.0;
+                  offset: 50 32;
+               }
+               params.string: "label" "Back";
+            }
+         }
+         part { name: "back_clipper";
+            type: RECT;
+            clip_to: "title_clipper";
+            description { state: "default" 0.0;
+               visible: 1;
+            }
+            description { state: "hidden" 0.0;
+               visible: 0;
+            }
+         }
+         part { name: "next";
+            type: EXTERNAL;
+            source: "elm/button";
+            clip_to: "next_clipper";
+            description { state: "default" 0.0;
+               align: 1.0 0.0;
+               fixed: 1 1;
+               rel1 { to_y: "elm.external.toolbar";
+                  relative: 1.0 1.0;
+                  offset: -2 1;
+               }
+               rel2 { to_y: "elm.external.toolbar";
+                  relative: 1.0 1.0;
+                  offset: -1 32;
+               }
+               params.string: "label" "Next";
+           }
+         }
+         part { name: "next_clipper";
+            type: RECT;
+            clip_to: "title_clipper";
+            description { state: "default" 0.0;
+               visible: 1;
+            }
+            description { state: "hidden" 0.0;
+               visible: 0;
+            }
+         }
+         programs {
+            program {
+               signal: "clicked";
+               source: "back";
+               action: SIGNAL_EMIT "elm,action,back" "";
+            }
+            program {
+               signal: "elm,title,hide";
+               source: "elm";
+               action: STATE_SET "hidden" 0.0;
+               transition: LINEAR 0.1;
+               target: "title_clipper";
+            }
+            program {
+               signal: "elm,title,show";
+               source: "elm";
+               action: STATE_SET "default" 0.0;
+               target: "title_clipper";
+            }
+            program {
+               signal: "elm,back,hide";
+               source: "elm";
+               action: STATE_SET "hidden" 0.0;
+               target: "back_clipper";
+            }
+            program {
+               signal: "elm,back,show";
+               source: "elm";
+               action: STATE_SET "default" 0.0;
+               target: "back_clipper";
+            }
+            program {
+               signal: "clicked";
+               source: "next";
+               action: SIGNAL_EMIT "elm,action,next" "";
+            }
+            program {
+               signal: "elm,next,hide";
+               source: "elm";
+               action: STATE_SET "hidden" 0.0;
+               target: "next_clipper";
+            }
+            program {
+               signal: "elm,next,show";
+               source: "elm";
+               action: STATE_SET "default" 0.0;
+               target: "next_clipper";
+            }
+         }
+         part { name: "elm.text.title";
+            type: TEXT;
+            effect: SOFT_SHADOW;
+            scale: 1;
+            clip_to: "title_clipper";
+            description { state: "default" 0.0;
+               rel1 { to_y: "elm.external.toolbar";
+                  to_x: "back";
+                  relative: 1.0 1.0;
+                  offset: 2 1;
+               }
+               rel2 { to_y: "back";
+                  to_x: "next";
+                  relative: 0.0 1.0;
+                  offset: -3 -1;
+               }
+               text {
+                  font: "Sans:style=Bold";
+                  size: 12;
+               }
+            }
+         }
+      }
+   }
+   /* application with a main content area with a back button and title area */
+   group { name: "elm/layout/application/content-back";
+      parts {
+         part { name: "elm.swallow.content";
+            type: SWALLOW;
+            description { state: "default" 0.0;
+               rel1 { to_y: "title_clipper";
+                  relative: 0.0 1.0;
+                  offset: -1 1;
+               }
+            }
+         }
+         part { name: "title_clipper";
+            type: RECT;
+            description { state: "default" 0.0;
+               visible: 1;
+               rel1 {
+                  to_y: "back";
+               }
+               rel2 {
+                  to_y: "back";
+               }
+            }
+            description { state: "hidden" 0.0;
+               inherit: "default" 0.0;
+               visible: 0;
+               rel2 {
+                  relative: 1.0 0.0;
+               }
+            }
+         }
+         part { name: "back_clipper";
+            type: RECT;
+            clip_to: "title_clipper";
+            description { state: "default" 0.0;
+               visible: 1;
+            }
+            description { state: "hidden" 0.0;
+               visible: 0;
+            }
+         }
+         part { name: "back";
+            type: EXTERNAL;
+            source: "elm/button";
+            clip_to: "back_clipper";
+            description { state: "default" 0.0;
+               align: 0.0 0.0;
+               fixed: 1 1;
+               rel1 {
+                  relative: 0.0 0.0;
+                  offset: 0 1;
+               }
+               rel2 {
+                  relative: 0.0 0.0;
+                  offset: 50 32;
+               }
+               params.string: "label" "Back";
+            }
+         }
+         programs {
+            program {
+               signal: "clicked";
+               source: "back";
+               action: SIGNAL_EMIT "elm,action,back" "";
+            }
+            program {
+               signal: "elm,back,hide";
+               source: "elm";
+               action: STATE_SET "hidden" 0.0;
+               target: "back_clipper";
+            }
+            program {
+               signal: "elm,back,show";
+               source: "elm";
+               action: STATE_SET "default" 0.0;
+               target: "back_clipper";
+            }
+            program {
+               signal: "elm,title,hide";
+               source: "elm";
+               action: STATE_SET "hidden" 0.0;
+               transition: LINEAR 0.1;
+               target: "title_clipper";
+            }
+            program {
+               signal: "elm,title,show";
+               source: "elm";
+               action: STATE_SET "default" 0.0;
+               target: "title_clipper";
+            }
+         }
+
+         part { name: "elm.swallow.end";
+            type: SWALLOW;
+            description { state: "default" 0.0;
+               align: 1.0 0.0;
+               fixed: 1 1;
+               rel1 {
+                  relative: 1.0 0.0;
+                  offset: -2 1;
+               }
+               rel2 {
+                  relative: 1.0 1.0;
+                  offset: -1 32;
+               }
+            }
+         }
+
+         part { name: "elm.text.title";
+            type: TEXT;
+            effect: SOFT_SHADOW;
+            scale: 1;
+            description { state: "default" 0.0;
+               rel1 {
+                  to_x: "back";
+                  relative: 1.0 0.0;
+                  offset: 2 1;
+               }
+               rel2 { to_y: "back";
+                  to_x: "elm.swallow.end";
+                  relative: 0.0 1.0;
+                  offset: -3 -1;
+               }
+               text {
+                  font: "Sans:style=Bold";
+                  size: 12;
+               }
+            }
+         }
+      }
+   }
+
+   /* application with a main content area with a back and next buttons and title area */
+   group { name: "elm/layout/application/content-back-next";
+      parts {
+         part { name: "elm.swallow.content";
+            type: SWALLOW;
+            description { state: "default" 0.0;
+               rel1 { to_y: "title_clipper";
+                  relative: 0.0 1.0;
+                  offset: -1 1;
+               }
+            }
+         }
+
+         part { name: "title_clipper";
+            type: RECT;
+            description { state: "default" 0.0;
+               visible: 1;
+               rel1 {
+                  to_y: "back";
+               }
+               rel2 {
+                  to_y: "back";
+               }
+            }
+            description { state: "hidden" 0.0;
+               inherit: "default" 0.0;
+               visible: 0;
+               rel2 {
+                  relative: 1.0 0.0;
+               }
+            }
+         }
+         part { name: "back";
+            type: EXTERNAL;
+            source: "elm/button";
+            clip_to: "back_clipper";
+            description { state: "default" 0.0;
+               align: 0.0 0.0;
+               fixed: 1 1;
+               rel1 {
+                  relative: 0.0 0.0;
+                  offset: 0 1;
+               }
+               rel2 {
+                  relative: 0.0 0.0;
+                  offset: 50 32;
+               }
+               params.string: "label" "Back";
+            }
+         }
+         part { name: "back_clipper";
+            type: RECT;
+            clip_to: "title_clipper";
+            description { state: "default" 0.0;
+               visible: 1;
+            }
+            description { state: "hidden" 0.0;
+               visible: 0;
+            }
+         }
+         part { name: "next";
+            type: EXTERNAL;
+            source: "elm/button";
+            clip_to: "next_clipper";
+            description { state: "default" 0.0;
+               align: 1.0 0.0;
+               fixed: 1 1;
+               rel1 {
+                  relative: 1.0 0.0;
+                  offset: -2 1;
+               }
+               rel2 {
+                  relative: 1.0 0.0;
+                  offset: -1 32;
+               }
+               params.string: "label" "Next";
+           }
+         }
+         part { name: "next_clipper";
+            type: RECT;
+            clip_to: "title_clipper";
+            description { state: "default" 0.0;
+               visible: 1;
+            }
+            description { state: "hidden" 0.0;
+               visible: 0;
+            }
+         }
+         programs {
+            program {
+               signal: "clicked";
+               source: "back";
+               action: SIGNAL_EMIT "elm,action,back" "";
+            }
+            program {
+               signal: "elm,title,hide";
+               source: "elm";
+               action: STATE_SET "hidden" 0.0;
+               transition: LINEAR 0.1;
+               target: "title_clipper";
+            }
+            program {
+               signal: "elm,title,show";
+               source: "elm";
+               action: STATE_SET "default" 0.0;
+               target: "title_clipper";
+            }
+            program {
+               signal: "elm,back,hide";
+               source: "elm";
+               action: STATE_SET "hidden" 0.0;
+               target: "back_clipper";
+            }
+            program {
+               signal: "elm,back,show";
+               source: "elm";
+               action: STATE_SET "default" 0.0;
+               target: "back_clipper";
+            }
+            program {
+               signal: "clicked";
+               source: "next";
+               action: SIGNAL_EMIT "elm,action,next" "";
+            }
+            program {
+               signal: "elm,next,hide";
+               source: "elm";
+               action: STATE_SET "hidden" 0.0;
+               target: "next_clipper";
+            }
+            program {
+               signal: "elm,next,show";
+               source: "elm";
+               action: STATE_SET "default" 0.0;
+               target: "next_clipper";
+            }
+         }
+         part { name: "elm.text.title";
+            type: TEXT;
+            effect: SOFT_SHADOW;
+            scale: 1;
+            clip_to: "title_clipper";
+            description { state: "default" 0.0;
+               rel1 {
+                  to_x: "back";
+                  relative: 1.0 0.0;
+                  offset: 2 1;
+               }
+               rel2 { to_y: "back";
+                  to_x: "next";
+                  relative: 0.0 1.0;
+                  offset: -3 -1;
+               }
+               text {
+                  font: "Sans:style=Bold";
+                  size: 12;
+               }
+            }
+         }
+      }
+   }
+
+   /* application with toolbar and main content area as a vertical box */
+   group { name: "elm/layout/application/toolbar-vbox";
+      parts {
+         part { name: "elm.box.content";
+            type: BOX;
+            description { state: "default" 0.0;
+               rel1 { to_y: "elm.external.toolbar";
+                  relative: 0.0 1.0;
+                  offset: -1 1;
+               }
+               box.layout: "vertical";
+            }
+         }
+
+         part { name: "elm.external.toolbar";
+            type: EXTERNAL;
+            source: "elm/toolbar";
+            description { state: "default" 0.0;
+               align: 0.5 0.0;
+               fixed: 0 1;
+               rel2 {
+                  relative: 1.0 0.0;
+                  offset: -1 47;
+               }
+            }
+         }
+      }
+   }
+
+   /* application with toolbar and main content area as a table */
+   group { name: "elm/layout/application/toolbar-table";
+      parts {
+         part { name: "elm.table.content";
+            type: TABLE;
+            description { state: "default" 0.0;
+               rel1 { to_y: "elm.external.toolbar";
+                  relative: 0.0 1.0;
+                  offset: -1 1;
+               }
+            }
+         }
+
+         part { name: "elm.external.toolbar";
+            type: EXTERNAL;
+            source: "elm/toolbar";
+            description { state: "default" 0.0;
+               align: 0.5 0.0;
+               fixed: 0 1;
+               rel2 {
+                  relative: 1.0 0.0;
+                  offset: -1 47;
+               }
+            }
+         }
+      }
+   }
+   /* a simple title layout, with a label and two icons */
+   group { name: "elm/layout/application/titlebar";
+      images {
+         image: "toolbar_sel.png" COMP;
+      }
+      parts {
+         part { name: "base";
+            mouse_events: 0;
+            scale: 1;
+            description { state: "default" 0.0;
+               min: 0 33;
+               max: 99999 33;
+               align: 0.5 0.0;
+               rel1.offset: -1 0;
+               rel2.offset: 1 0;
+               image {
+                  normal: "toolbar_sel.png";
+                  border: 3 3 0 0;
+               }
+            }
+         }
+         part { name: "elm.swallow.content";
+            type: SWALLOW;
+            description { state: "default" 0.0;
+               visible: 1;
+               rel1 {
+                  to: "base";
+                  relative: 0.0 1.0;
+               }
+            }
+         }
+         part { name: "elm.swallow.icon";
+            type: SWALLOW;
+            scale: 1;
+            description { state: "default" 0.0;
+               visible: 0;
+               fixed: 1 1;
+               align: 0.0 0.0;
+               rel1 {
+                  to: "base";
+                  relative: 0.0 0.0;
+                  offset: 4 0;
+               }
+               rel2 {
+                  to: "base";
+                  relative: 0.0 1.0;
+               }
+            }
+            description { state: "visible" 0.0;
+               inherit: "default" 0.0;
+               visible: 1;
+            }
+         }
+         part { name: "elm.swallow.end";
+            type: SWALLOW;
+            scale: 1;
+            description { state: "default" 0.0;
+               visible: 0;
+               fixed: 1 1;
+               align: 1.0 0.0;
+               rel1 {
+                  to: "base";
+                  relative: 1.0 0.0;
+                  offset: 0 0;
+               }
+               rel2 {
+                  to: "base";
+                  relative: 1.0 1.0;
+                  offset: -5 -1;
+               }
+            }
+            description { state: "visible" 0.0;
+               inherit: "default" 0.0;
+               visible: 1;
+            }
+         }
+         part { name: "elm.text";
+            type: TEXT;
+            effect: SOFT_SHADOW;
+            mouse_events: 0;
+            scale: 1;
+            description { state: "default" 0.0;
+               fixed: 1 1;
+               rel1 {
+                  to_x: "elm.swallow.icon";
+                  to_y: "base";
+                  relative: 1.0 0.0;
+               }
+               rel2 {
+                  to_x: "elm.swallow.end";
+                  to_y: "base";
+                  relative: 0.0 1.0;
+               }
+               text {
+                  font: "Sans";
+                  size: 12;
+                  min: 0 0;
+                  align: 0.5 0.5;
+                  text_class: "title_bar";
+               }
+            }
+         }
+      }
+      programs {
+         program { name: "show_icon";
+            signal: "elm,state,icon,visible";
+            source: "elm";
+            action: STATE_SET "visible" 0.0;
+            target: "elm.swallow.icon";
+         }
+         program { name: "hide_icon";
+            signal: "elm,state,icon,hidden";
+            source: "elm";
+            action: STATE_SET "default" 0.0;
+            target: "elm.swallow.icon";
+         }
+         program { name: "show_end";
+            signal: "elm,state,end,visible";
+            source: "elm";
+            action: STATE_SET "visible" 0.0;
+            target: "elm.swallow.end";
+         }
+         program { name: "hide_end";
+            signal: "elm,state,end,hidden";
+            source: "elm";
+            action: STATE_SET "default" 0.0;
+            target: "elm.swallow.end";
+         }
+      }
+   }
+

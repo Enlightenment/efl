@@ -1,0 +1,41 @@
+///////////////////////////////////////////////////////////////////////////////
+  group { name: "elm/conformant/base/default";
+     parts {
+        part { name: "elm.swallow.shelf";
+           type: SWALLOW;
+           description { state: "default" 0.0;
+              fixed: 0 1;
+              align: 0.0 0.0;
+              rel2.relative: 1.0 0.0;
+           }
+        }
+        part { name: "elm.swallow.content";
+           type: SWALLOW;
+           description { state: "default" 0.0;
+              fixed: 0 1;
+              align: 0.5 0.5;
+              rel1.relative: 0.0 1.0;
+              rel1.to_y: "elm.swallow.shelf";
+              rel2.relative: 1.0 0.0;
+              rel2.to_y: "elm.swallow.virtualkeypad";
+           }
+        }
+        part { name: "elm.swallow.virtualkeypad";
+           type: SWALLOW;
+           description { state: "default" 0.0;
+              fixed: 0 1;
+              align: 0.0 1.0;
+              rel2.relative: 1.0 0.0;
+              rel2.to_y: "elm.swallow.panel";
+           }
+        }
+        part { name: "elm.swallow.panel";
+           type: SWALLOW;
+           description { state: "default" 0.0;
+              fixed: 0 1;
+              align: 0.0 1.0;
+              rel1.relative: 0.0 1.0;
+           }
+        }
+     }
+  }
