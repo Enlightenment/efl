@@ -399,7 +399,6 @@ AC_ARG_ENABLE([build-examples],
        # put in here the dependencies for Edje' examples. They are
        # meant to be 'real world' usage examples, thus one will be
        # using higher level libraries on these programs
-       PKG_CHECK_MODULES([ECORE_EVAS], [ecore-evas ecore], [], [build_examples="no"])
        AC_SUBST(edje_cc)
     else
        build_examples="no"

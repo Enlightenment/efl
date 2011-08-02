@@ -26,7 +26,7 @@ AM_CPPFLAGS = \
 pkglib_PROGRAMS =
 
 #the ones using ecore_evas follow
-AM_CPPFLAGS += @ECORE_EVAS_CFLAGS@
+AM_CPPFLAGS += @EDJE_CFLAGS@
 
 pkglib_PROGRAMS += \
 	edje-basic \
@@ -35,7 +35,7 @@ pkglib_PROGRAMS += \
 	edje-table \
 	edje-signals-messages
 
-LDADD = $(top_builddir)/src/lib/libedje.la @ECORE_EVAS_LIBS@
+LDADD = $(top_builddir)/src/lib/libedje.la @EDJE_LIBS@
 
 .edc.edj:
 	$(edje_cc) -v -id $(srcdir) $< $(builddir)/$(@F)
