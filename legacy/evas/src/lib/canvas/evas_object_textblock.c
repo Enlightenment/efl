@@ -568,7 +568,7 @@ _style_match_tag(Evas_Textblock_Style *ts, const char *s, size_t tag_len, size_t
    EINA_INLIST_FOREACH(ts->tags, tag)
      {
 	if (tag->tag_len != tag_len) continue;
-	if (!strcmp(tag->tag, s))
+	if (!strncmp(tag->tag, s, tag_len))
 	  {
 	     *replace_len = tag->replace_len;
 	     return tag->replace;
@@ -4880,13 +4880,13 @@ evas_object_textblock_text_markup_prepend(Evas_Textblock_Cursor *cur, const char
                     {
                        /* If we reached to a tag ending, analyze the tag */
                        char *ttag;
-                       size_t ttag_len = tag_end - tag_start -1;
+                       size_t ttag_len = tag_end - tag_start;
 
 
                        ttag = malloc(ttag_len + 1);
                        if (ttag)
                          {
-                            memcpy(ttag, tag_start + 1, ttag_len);
+                            memcpy(ttag, tag_start, ttag_len);
                             ttag[ttag_len] = 0;
                             evas_textblock_cursor_format_prepend(cur, ttag);
                             free(ttag);
@@ -4922,7 +4922,7 @@ evas_object_textblock_text_markup_prepend(Evas_Textblock_Cursor *cur, const char
                {
                   if (tag_start)
                     {
-                       tag_end = p;
+                       tag_end = p + 1;
                        s = p + 1;
                     }
                }
@@ -6846,16 +6846,23 @@ _evas_textblock_node_format_free(Evas_Object_Textblock *o,
  * @return Returns the new format node
  */
 static Evas_Object_Textblock_Node_Format *
-_evas_textblock_node_format_new(Evas_Object_Textblock *o, const char *format)
+_evas_textblock_node_format_new(Evas_Object_Textblock *o, const char *_format)
 {
    Evas_Object_Textblock_Node_Format *n;
+   const char *format = _format;
 
    n = calloc(1, sizeof(Evas_Object_Textblock_Node_Format));
    /* Create orig_format and format */
+   if (format[0] == '<')
      {
         const char *match;
-        size_t format_len = strlen(format);
+        size_t format_len;
         size_t replace_len;
+
+        format++; /* Advance after '<' */
+        format_len = strlen(format);
+        if (format[format_len - 1] == '>')
+           format_len--; /* We don't care about '>' */
 
         match = _style_match_tag(o->style, format, format_len, &replace_len);
         if (match)
@@ -6902,6 +6909,12 @@ _evas_textblock_node_format_new(Evas_Object_Textblock *o, const char *format)
                }
              n->format = eina_stringshare_ref(n->orig_format);
           }
+     }
+   /* Just use as is, it's a special format. */
+   else
+     {
+        n->orig_format = eina_stringshare_add(format);
+        n->format = eina_stringshare_ref(n->orig_format);
      }
 
    format = n->format;
