@@ -67,10 +67,18 @@ _ecore_xcb_error_handle(xcb_generic_error_t *err)
    WRN("Got Error:");
    WRN("\tEvent: %s", xcb_event_get_request_label(err->major_code));
    WRN("\tError: %s", xcb_event_get_error_label(err->error_code));
+
+#ifdef OLD_XCB_VERSION
    if (err->error_code == XCB_EVENT_ERROR_BAD_VALUE)
      WRN("\tBad Value: %d", ((xcb_value_error_t *)err)->bad_value);
    else if (err->error_code == XCB_EVENT_ERROR_BAD_WINDOW) 
      WRN("\tBad Window: %d", ((xcb_window_error_t *)err)->bad_value);
+#else
+   if (err->error_code == XCB_VALUE)
+     WRN("\tBad Value: %d", ((xcb_value_error_t *)err)->bad_value);
+   else if (err->error_code == XCB_WINDOW) 
+     WRN("\tBad Window: %d", ((xcb_window_error_t *)err)->bad_value);
+#endif
 
    _error_request_code = err->sequence;
    _error_code = err->error_code;

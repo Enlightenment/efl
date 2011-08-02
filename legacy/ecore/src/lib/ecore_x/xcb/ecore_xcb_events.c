@@ -240,6 +240,7 @@ _ecore_xcb_events_handle(xcb_generic_event_t *ev)
          * so trap those cases and ignore. We also ignore BadValue from 
          * xcb_grab/ungrab_button (happens when we are using any_mod) 
          * and a few others */
+#ifdef OLD_XCB_VERSION
         if (err->error_code == XCB_EVENT_ERROR_BAD_WINDOW) return;
         else if (err->error_code == XCB_EVENT_ERROR_BAD_MATCH) 
           {
@@ -254,7 +255,22 @@ _ecore_xcb_events_handle(xcb_generic_event_t *ev)
                  (err->major_code == XCB_UNGRAB_BUTTON))
                return;
           }
-
+#else
+        if (err->error_code == XCB_WINDOW) return;
+        else if (err->error_code == XCB_MATCH) 
+          {
+             if ((err->major_code == XCB_SET_INPUT_FOCUS) || 
+                 (err->major_code == XCB_CONFIGURE_WINDOW))
+               return;
+          }
+        else if (err->error_code == XCB_VALUE) 
+          {
+             if ((err->major_code == XCB_KILL_CLIENT) || 
+                 (err->major_code == XCB_GRAB_BUTTON) || 
+                 (err->major_code == XCB_UNGRAB_BUTTON))
+               return;
+          }
+#endif
         /* WRN("Got Event Error:"); */
         /* WRN("\tMajor Code: %d", err->major_code); */
         /* WRN("\tMinor Code: %d", err->minor_code); */
@@ -1627,8 +1643,13 @@ _ecore_xcb_event_handle_client_message(xcb_generic_event_t *event)
         e->source = ev->data.data32[3];
         ecore_event_add(ECORE_X_EVENT_WINDOW_STATE_REQUEST, e, NULL, NULL);
      }
+#ifdef OLD_XCB_VERSION
    else if ((ev->type == ECORE_X_ATOM_WM_CHANGE_STATE) && 
             (ev->format == 32) && (ev->data.data32[0] == XCB_WM_STATE_ICONIC)) 
+#else
+   else if ((ev->type == ECORE_X_ATOM_WM_CHANGE_STATE) && (ev->format == 32) && 
+            (ev->data.data32[0] == XCB_ICCCM_WM_STATE_ICONIC)) 
+#endif
      {
         Ecore_X_Event_Window_State_Request *e;
 
