@@ -7446,14 +7446,6 @@ EAPI Evas_BiDi_Direction evas_object_text_direction_get  (const Evas_Object *obj
  * styles and multiline text based on HTML-like tags. Of these extra
  * features will be heavier on memory and processing cost.
  *
- * @todo put here some usage examples
- *
- * @ingroup Evas_Object_Specific
- *
- * @{
- */
-
-/**
  * @section Evas_Object_Textblock_Tutorial Textblock Object Tutorial
  *
  * This part explains about the textblock object's API and proper usage.
@@ -7522,10 +7514,57 @@ EAPI Evas_BiDi_Direction evas_object_text_direction_get  (const Evas_Object *obj
  * tags defined in the style, see @ref evas_textblock_style_set
  *
  * @subsection textblock_special_formats Special Formats
- * This section is not yet written. If you want some info about styles/formats
- * and how to use them, expedite's textblock_basic test is a great start.
- * @todo Write @textblock_special_formats
+ * Textblock supports various format directives that can be used either in
+ * markup, or by calling @ref evas_object_textblock_format_append or
+ * @ref evas_object_textblock_format_prepend. In addition to the mentioned
+ * format directives, textblock allows creating additional format directives
+ * using "tags" that can be set in the style see @ref evas_textblock_style_set .
+ *
+ * Textblock supports the following formats:
+ * @li font - Font description in fontconfig like format, e.g: "Sans:style=Italic:lang=hi". or "Serif:style=Bold".
+ * @li font_weight - Overrides the weight defined in "font". E.g: "font_weight=Bold" is the same as "font=:style=Bold". Supported weights: "normal", "thin", "ultralight", "light", "book", "medium", "semibold", "bold", "ultrabold", "black", and "extrablack".
+ * @li font_style - Overrides the style defined in "font". E.g: "font_style=Italic" is the same as "font=:style=Italic". Supported styles: "normal", "oblique", and "italic".
+ * @li font_width - Overrides the width defined in "font". E.g: "font_width=Condensed" is the same as "font=:style=Condensed". Supported widths: "normal", "ultracondensed", "extracondensed", "condensed", "semicondensed", "semiexpanded", "expanded", "extraexpanded", and "ultraexpanded".
+ * @li lang - Overrides the language defined in "font". E.g: "lang=he" is the same as "font=:lang=he".
+ * @li font_fallbacks - A comma delimited list of fonts to try if finding the main font fails.
+ * @li font_size - The font size in points.
+ * @li font_source - The source of the font, e.g an eet file.
+ * @li color - Text color in one of the following formats: "#RRGGBB", "#RRGGBBAA", "#RGB", and "#RGBA".
+ * @li underline_color - color in one of the following formats: "#RRGGBB", "#RRGGBBAA", "#RGB", and "#RGBA".
+ * @li underline2_color - color in one of the following formats: "#RRGGBB", "#RRGGBBAA", "#RGB", and "#RGBA".
+ * @li outline_color - color in one of the following formats: "#RRGGBB", "#RRGGBBAA", "#RGB", and "#RGBA".
+ * @li shadow_color - color in one of the following formats: "#RRGGBB", "#RRGGBBAA", "#RGB", and "#RGBA".
+ * @li glow_color - color in one of the following formats: "#RRGGBB", "#RRGGBBAA", "#RGB", and "#RGBA".
+ * @li glow2_color - color in one of the following formats: "#RRGGBB", "#RRGGBBAA", "#RGB", and "#RGBA".
+ * @li backing_color - color in one of the following formats: "#RRGGBB", "#RRGGBBAA", "#RGB", and "#RGBA".
+ * @li strikethrough_color - color in one of the following formats: "#RRGGBB", "#RRGGBBAA", "#RGB", and "#RGBA".
+ * @li align - Either "auto" (meaning according to text direction), "left", "right", "center", "middle", a value between 0.0 and 1.0, or a value between 0% to 100%.
+ * @li valign - Either "top", "bottom", "middle", "center", "baseline", "base", a value between 0.0 and 1.0, or a value between 0% to 100%.
+ * @li wrap - "word", "char", "mixed", or "none".
+ * @li left_margin - Either "reset", or a pixel value indicating the margin.
+ * @li right_margin - Either "reset", or a pixel value indicating the margin.
+ * @li underline - "on", "off", "single", or "double".
+ * @li strikethrough - "on" or "off"
+ * @li backing - "on" or "off"
+ * @li style - Either "off", "none", "plain", "shadow", "outline", "soft_outline", "outline_shadow", "outline_soft_shadow", "glow", "far_shadow", "soft_shadow", or "far_soft_shadow".
+ * @li tabstops - Pixel value for tab width.
+ * @li linesize - Force a line size in pixels.
+ * @li linerelsize - Either a floating point value or a percentage indicating the wanted size of the line relative to the calculated size.
+ * @li linegap - Force a line gap in pixels.
+ * @li linerelgap - Either a floating point value or a percentage indicating the wanted size of the line relative to the calculated size.
+ * @li item - Creates an empty space that should be filled by an upper layer. Use "size", "abssize", or "relsize". To define the items size, and an optional: vsize=full/ascent to define the item's position in the line.
+ * @li linefill - Either a float value or percentage indicating how much to fill the line.
+ * @li ellipsis - Value between 0.0-1.0 to indicate the type of ellipsis, or -1.0 to indicate ellipsis isn't wanted.
+ * @li password - "on" or "off". This is used to specifically turn replacing chars with the replacement char (i.e password mode) on and off.
+ *
+ *
+ * @todo put here some usage examples
+ *
+ * @ingroup Evas_Object_Specific
+ *
+ * @{
  */
+
    typedef struct _Evas_Textblock_Style                 Evas_Textblock_Style;
    typedef struct _Evas_Textblock_Cursor                Evas_Textblock_Cursor;
    /**
