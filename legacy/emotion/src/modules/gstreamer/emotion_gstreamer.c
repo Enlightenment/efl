@@ -1493,6 +1493,10 @@ _emotion_gstreamer_video_pipeline_parse(Emotion_Gstreamer_Video *ev,
      return EINA_FALSE;
 
    res = gst_element_get_state(ev->pipeline, NULL, NULL, GST_CLOCK_TIME_NONE);
+   if (res == GST_STATE_CHANGE_NO_PREROLL)
+     gst_element_set_state(ev->pipeline, GST_STATE_PLAYING);
+
+   res = gst_element_get_state(ev->pipeline, NULL, NULL, GST_CLOCK_TIME_NONE);
    if (!(res == GST_STATE_CHANGE_SUCCESS
          || res == GST_STATE_CHANGE_NO_PREROLL))
      {
