@@ -7469,7 +7469,7 @@ EAPI Evas_BiDi_Direction evas_object_text_direction_get  (const Evas_Object *obj
  * Textblock has three important parts, the text paragraphs, the format nodes
  * and the cursors.
  *
- * You can use markup to format text, for example: "<font_size=50>Big!</font>".
+ * You can use markup to format text, for example: "<font_size=50>Big!</font_size>".
  * You can also put more than one style directive in one tag:
  * "<font_size=50 color=#F00>Big and Red!</font_size>".
  * Please notice that we used "</font_size>" although the format also included
