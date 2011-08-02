@@ -429,7 +429,7 @@ struct _Evas_Object_Textblock
    Eina_Bool                           content_changed : 1;
    Eina_Bool                           format_changed : 1;
    Eina_Bool                           have_ellipsis : 1;
-   Eina_Bool                           newline_is_ps : 1;
+   Eina_Bool                           legacy_newline : 1;
 };
 
 /* private methods for textblock objects */
@@ -2993,7 +2993,7 @@ _format_finalize(Evas_Object *obj, Evas_Object_Textblock_Format *fmt)
  */
 #define _IS_PARAGRAPH_SEPARATOR(o, item)                                     \
    (!strcmp(item, "ps") ||                                                   \
-    (o->newline_is_ps && _IS_LINE_SEPARATOR(item))) /* Paragraph separator */
+    (o->legacy_newline && _IS_LINE_SEPARATOR(item))) /* Paragraph separator */
 
 /**
  * @internal
@@ -3794,7 +3794,7 @@ _layout_par(Ctxt *c)
                    * mode, or we are in newline compat mode, and this is
                    * not used as a paragraph separator, advance */
                   if (fi->item && _IS_LINE_SEPARATOR(fi->item) &&
-                        (!c->o->newline_is_ps ||
+                        (!c->o->legacy_newline ||
                          eina_list_next(i)))
                     {
                        adv_line = 1;
@@ -4555,22 +4555,22 @@ evas_object_textblock_replace_char_set(Evas_Object *obj, const char *ch)
 }
 
 EAPI void
-evas_object_textblock_newline_mode_set(Evas_Object *obj, Eina_Bool mode)
+evas_object_textblock_legacy_newline_set(Evas_Object *obj, Eina_Bool mode)
 {
    TB_HEAD();
-   if (o->newline_is_ps == mode)
+   if (o->legacy_newline == mode)
       return;
 
-   o->newline_is_ps = mode;
+   o->legacy_newline = mode;
    /* FIXME: Should recreate all the textnodes... For now, it's just
     * for new text inserted. */
 }
 
 EAPI Eina_Bool
-evas_object_textblock_newline_mode_get(const Evas_Object *obj)
+evas_object_textblock_legacy_newline_get(const Evas_Object *obj)
 {
    TB_HEAD_RETURN(EINA_FALSE);
-   return o->newline_is_ps;
+   return o->legacy_newline;
 }
 
 EAPI void
@@ -8596,7 +8596,7 @@ evas_object_textblock_init(Evas_Object *obj)
 
    o = (Evas_Object_Textblock *)(obj->object_data);
    o->cursor->obj = obj;
-   o->newline_is_ps = EINA_TRUE;
+   o->legacy_newline = EINA_TRUE;
 }
 
 static void *

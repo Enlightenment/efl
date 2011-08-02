@@ -35,7 +35,7 @@ static const char *style_buf =
    evas_font_hinting_set(evas, EVAS_FONT_HINTING_AUTO); \
    tb = evas_object_textblock_add(evas); \
    fail_if(!tb); \
-   evas_object_textblock_newline_mode_set(tb, EINA_FALSE); \
+   evas_object_textblock_legacy_newline_set(tb, EINA_FALSE); \
    st = evas_textblock_style_new(); \
    fail_if(!st); \
    evas_textblock_style_set(st, style_buf); \

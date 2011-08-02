@@ -7703,20 +7703,20 @@ EAPI const char                  *evas_object_textblock_bidi_delimiters_get(cons
  * as a paragraph separator.
  *
  * @param obj The given textblock object.
- * @param mode EINA_TRUE for PS mode, EINA_FALSE otherwise.
+ * @param mode EINA_TRUE for legacy mode, EINA_FALSE otherwise.
  * @since 1.1.0
  */
-EAPI void                         evas_object_textblock_newline_mode_set(Evas_Object *obj, Eina_Bool mode) EINA_ARG_NONNULL(1);
+EAPI void                         evas_object_textblock_legacy_newline_set(Evas_Object *obj, Eina_Bool mode) EINA_ARG_NONNULL(1);
 
 /**
  * @brief Gets newline mode. When true, newline character behaves
  * as a paragraph separator.
  *
  * @param obj The given textblock object.
- * @return EINA_TRUE if in PS mode, EINA_FALSE otherwise.
+ * @return EINA_TRUE if in legacy mode, EINA_FALSE otherwise.
  * @since 1.1.0
  */
-EAPI Eina_Bool                    evas_object_textblock_newline_mode_get(const Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
+EAPI Eina_Bool                    evas_object_textblock_legacy_newline_get(const Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
 
 
 /**
