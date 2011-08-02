@@ -13,7 +13,7 @@ AM_CPPFLAGS = \
 ECOREBASELDADD = \
 	$(top_builddir)/src/lib/ecore/libecore.la \
 	$(top_builddir)/src/lib/ecore_evas/libecore_evas.la \
-	@dlopen_libs@ @EINA_LIBS@ @EVIL_LIBS@ @GLIB_LIBS@ @WIN32_LIBS@ @LTLIBINTL@ @EFL_PTHREAD_LIBS@ @rt_libs@ -lm
+	@dlopen_libs@ @EINA_LIBS@ @EVIL_LIBS@ @EVAS_LIBS@ @GLIB_LIBS@ @WIN32_LIBS@ @LTLIBINTL@ @EFL_PTHREAD_LIBS@ @rt_libs@ -lm
 
 
 LDADD = \
