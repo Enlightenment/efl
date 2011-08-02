@@ -34,6 +34,9 @@
 /**
  * @file Ecore_Evas.h
  * @brief Evas wrapper functions
+ *
+ * The following is a list of example that partially exemplify Ecore_Evas's API:
+ * @li @ref ecore_evas_callbacks_example_c
  */
 
 /* FIXME:
@@ -269,20 +272,185 @@ EAPI Ecore_Evas *ecore_evas_ecore_evas_get(const Evas *e);
 EAPI void        ecore_evas_free(Ecore_Evas *ee);
 EAPI void       *ecore_evas_data_get(const Ecore_Evas *ee, const char *key);
 EAPI void        ecore_evas_data_set(Ecore_Evas *ee, const char *key, const void *data);
+/**
+ * Set a callback for Ecore_Evas resize events.
+ * @param ee The Ecore_Evas to set callbacks on
+ * @param func The function to call
+
+ * A call to this function will set a callback on an Ecore_Evas, causing
+ * @p func to be called whenever @p ee is resized.
+ *
+ * @warning If and when this function is called depends on the underlying
+ * windowing system.
+ */
 EAPI void        ecore_evas_callback_resize_set(Ecore_Evas *ee, void (*func) (Ecore_Evas *ee));
+/**
+ * Set a callback for Ecore_Evas move events.
+ * @param ee The Ecore_Evas to set callbacks on
+ * @param func The function to call
+
+ * A call to this function will set a callback on an Ecore_Evas, causing
+ * @p func to be called whenever @p ee is moved.
+ *
+ * @warning If and when this function is called depends on the underlying
+ * windowing system.
+ */
 EAPI void        ecore_evas_callback_move_set(Ecore_Evas *ee, void (*func) (Ecore_Evas *ee));
+/**
+ * Set a callback for Ecore_Evas show events.
+ * @param ee The Ecore_Evas to set callbacks on
+ * @param func The function to call
+
+ * A call to this function will set a callback on an Ecore_Evas, causing
+ * @p func to be called whenever @p ee is shown.
+ *
+ * @warning If and when this function is called depends on the underlying
+ * windowing system.
+ */
 EAPI void        ecore_evas_callback_show_set(Ecore_Evas *ee, void (*func) (Ecore_Evas *ee));
+/**
+ * Set a callback for Ecore_Evas hide events.
+ * @param ee The Ecore_Evas to set callbacks on
+ * @param func The function to call
+
+ * A call to this function will set a callback on an Ecore_Evas, causing
+ * @p func to be called whenever @p ee is hidden.
+ *
+ * @warning If and when this function is called depends on the underlying
+ * windowing system.
+ */
 EAPI void        ecore_evas_callback_hide_set(Ecore_Evas *ee, void (*func) (Ecore_Evas *ee));
+/**
+ * Set a callback for Ecore_Evas delete request events.
+ * @param ee The Ecore_Evas to set callbacks on
+ * @param func The function to call
+
+ * A call to this function will set a callback on an Ecore_Evas, causing
+ * @p func to be called whenever @p ee gets a delete request.
+ *
+ * @warning If and when this function is called depends on the underlying
+ * windowing system.
+ */
 EAPI void        ecore_evas_callback_delete_request_set(Ecore_Evas *ee, void (*func) (Ecore_Evas *ee));
+/**
+ * Set a callback for Ecore_Evas destroy events.
+ * @param ee The Ecore_Evas to set callbacks on
+ * @param func The function to call
+
+ * A call to this function will set a callback on an Ecore_Evas, causing
+ * @p func to be called whenever @p ee is destroyed.
+ *
+ * @warning If and when this function is called depends on the underlying
+ * windowing system.
+ */
 EAPI void        ecore_evas_callback_destroy_set(Ecore_Evas *ee, void (*func) (Ecore_Evas *ee));
+/**
+ * Set a callback for Ecore_Evas focus in events.
+ * @param ee The Ecore_Evas to set callbacks on
+ * @param func The function to call
+
+ * A call to this function will set a callback on an Ecore_Evas, causing
+ * @p func to be called whenever @p ee gets focus.
+ *
+ * @warning If and when this function is called depends on the underlying
+ * windowing system.
+ */
 EAPI void        ecore_evas_callback_focus_in_set(Ecore_Evas *ee, void (*func) (Ecore_Evas *ee));
+/**
+ * Set a callback for Ecore_Evas focus out events.
+ * @param ee The Ecore_Evas to set callbacks on
+ * @param func The function to call
+
+ * A call to this function will set a callback on an Ecore_Evas, causing
+ * @p func to be called whenever @p ee loses focus.
+ *
+ * @warning If and when this function is called depends on the underlying
+ * windowing system.
+ */
 EAPI void        ecore_evas_callback_focus_out_set(Ecore_Evas *ee, void (*func) (Ecore_Evas *ee));
+/**
+ * Set a callback for Ecore_Evas sticky events.
+ * @param ee The Ecore_Evas to set callbacks on
+ * @param func The function to call
+
+ * A call to this function will set a callback on an Ecore_Evas, causing
+ * @p func to be called whenever @p ee becomes sticky.
+ *
+ * @warning If and when this function is called depends on the underlying
+ * windowing system.
+ */
 EAPI void        ecore_evas_callback_sticky_set(Ecore_Evas *ee, void (*func) (Ecore_Evas *ee));
+/**
+ * Set a callback for Ecore_Evas un-sticky events.
+ * @param ee The Ecore_Evas to set callbacks on
+ * @param func The function to call
+
+ * A call to this function will set a callback on an Ecore_Evas, causing
+ * @p func to be called whenever @p ee becomes un-sticky.
+ *
+ * @warning If and when this function is called depends on the underlying
+ * windowing system.
+ */
 EAPI void        ecore_evas_callback_unsticky_set(Ecore_Evas *ee, void (*func) (Ecore_Evas *ee));
+/**
+ * Set a callback for Ecore_Evas mouse in events.
+ * @param ee The Ecore_Evas to set callbacks on
+ * @param func The function to call
+
+ * A call to this function will set a callback on an Ecore_Evas, causing
+ * @p func to be called whenever the mouse enters @p ee.
+ *
+ * @warning If and when this function is called depends on the underlying
+ * windowing system.
+ */
 EAPI void        ecore_evas_callback_mouse_in_set(Ecore_Evas *ee, void (*func) (Ecore_Evas *ee));
+/**
+ * Set a callback for Ecore_Evas mouse out events.
+ * @param ee The Ecore_Evas to set callbacks on
+ * @param func The function to call
+
+ * A call to this function will set a callback on an Ecore_Evas, causing
+ * @p func to be called whenever the mouse leaves @p ee.
+ *
+ * @warning If and when this function is called depends on the underlying
+ * windowing system.
+ */
 EAPI void        ecore_evas_callback_mouse_out_set(Ecore_Evas *ee, void (*func) (Ecore_Evas *ee));
+/**
+ * Set a callback for Ecore_Evas pre render events.
+ * @param ee The Ecore_Evas to set callbacks on
+ * @param func The function to call
+
+ * A call to this function will set a callback on an Ecore_Evas, causing
+ * @p func to be called just before the evas in @p ee is rendered.
+ *
+ * @warning If and when this function is called depends on the underlying
+ * windowing system.
+ */
 EAPI void        ecore_evas_callback_pre_render_set(Ecore_Evas *ee, void (*func) (Ecore_Evas *ee));
+/**
+ * Set a callback for Ecore_Evas mouse post render events.
+ * @param ee The Ecore_Evas to set callbacks on
+ * @param func The function to call
+
+ * A call to this function will set a callback on an Ecore_Evas, causing
+ * @p func to be called just after the evas in @p ee is rendered.
+ *
+ * @warning If and when this function is called depends on the underlying
+ * windowing system.
+ */
 EAPI void        ecore_evas_callback_post_render_set(Ecore_Evas *ee, void (*func) (Ecore_Evas *ee));
+/**
+ * Set a callback for Ecore_Evas pre-free event.
+ * @param ee The Ecore_Evas to set callbacks on
+ * @param func The function to call
+ *
+ * A call to this function will set a callback on an Ecore_Evas, causing
+ * @p func to be called just before the instance @p ee is freed.
+ *
+ * @warning If and when this function is called depends on the underlying
+ * windowing system.
+ */
 EAPI void        ecore_evas_callback_pre_free_set(Ecore_Evas *ee, void (*func) (Ecore_Evas *ee));
 EAPI Evas       *ecore_evas_get(const Ecore_Evas *ee);
 EAPI void        ecore_evas_move(Ecore_Evas *ee, int x, int y);

@@ -14,6 +14,7 @@
  * @li @ref ecore_con_url_download_example_c
  * @li @ref ecore_con_server_simple_example_c
  * @li @ref ecore_con_client_simple_example_c
+ * @li @ref ecore_evas_callbacks_example_c
  *
  */
 
@@ -1198,4 +1199,24 @@
  * @until }
  *
  * @example ecore_thread_example.c
+ */
+
+/**
+ * @page ecore_evas_callbacks_example_c Ecore Evas Callbacks
+ * @dontinclude ecore_evas_callbacks.c
+ *
+ * Our example is remarkably simple, all it does is create an Ecore_Evas and
+ * register a callback for a bunch of events. What's interesting here is
+ * knowing when each of these callbacks will be called, however since that
+ * depends on the underlying windowing system there are no guarantees that all
+ * of the callbacks will be called for your windowing system. To know which
+ * callbacks will be called for your windowing system run the example and
+ * redirect the output to a file, and take a look at it.
+ *
+ * @note Make sure you minimize, resize, give and remove focus to see more
+ * callbacks called.
+ *
+ * Here you have the full-source of the code:
+ * @include ecore_evas_callbacks.c
+ * @example ecore_evas_callbacks.c
  */

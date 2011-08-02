@@ -909,14 +909,6 @@ ecore_evas_data_set(Ecore_Evas *ee, const char *key, const void *data)
 #define IFC(_ee, _fn)  if (_ee->engine.func->_fn) {_ee->engine.func->_fn
 #define IFE            return;}
 
-/**
- * Set a callback for Ecore_Evas resize events.
- * @param ee The Ecore_Evas to set callbacks on
- * @param func The function to call
-
- * A call to this function will set a callback on an Ecore_Evas, causing
- * @p func to be called whenever @p ee is resized.
- */
 EAPI void
 ecore_evas_callback_resize_set(Ecore_Evas *ee, void (*func) (Ecore_Evas *ee))
 {
@@ -931,14 +923,6 @@ ecore_evas_callback_resize_set(Ecore_Evas *ee, void (*func) (Ecore_Evas *ee))
    ee->func.fn_resize = func;
 }
 
-/**
- * Set a callback for Ecore_Evas move events.
- * @param ee The Ecore_Evas to set callbacks on
- * @param func The function to call
-
- * A call to this function will set a callback on an Ecore_Evas, causing
- * @p func to be called whenever @p ee is moved.
- */
 EAPI void
 ecore_evas_callback_move_set(Ecore_Evas *ee, void (*func) (Ecore_Evas *ee))
 {
@@ -953,14 +937,6 @@ ecore_evas_callback_move_set(Ecore_Evas *ee, void (*func) (Ecore_Evas *ee))
    ee->func.fn_move = func;
 }
 
-/**
- * Set a callback for Ecore_Evas show events.
- * @param ee The Ecore_Evas to set callbacks on
- * @param func The function to call
-
- * A call to this function will set a callback on an Ecore_Evas, causing
- * @p func to be called whenever @p ee is shown.
- */
 EAPI void
 ecore_evas_callback_show_set(Ecore_Evas *ee, void (*func) (Ecore_Evas *ee))
 {
@@ -975,14 +951,6 @@ ecore_evas_callback_show_set(Ecore_Evas *ee, void (*func) (Ecore_Evas *ee))
    ee->func.fn_show = func;
 }
 
-/**
- * Set a callback for Ecore_Evas hide events.
- * @param ee The Ecore_Evas to set callbacks on
- * @param func The function to call
-
- * A call to this function will set a callback on an Ecore_Evas, causing
- * @p func to be called whenever @p ee is hidden.
- */
 EAPI void
 ecore_evas_callback_hide_set(Ecore_Evas *ee, void (*func) (Ecore_Evas *ee))
 {
@@ -997,14 +965,6 @@ ecore_evas_callback_hide_set(Ecore_Evas *ee, void (*func) (Ecore_Evas *ee))
    ee->func.fn_hide = func;
 }
 
-/**
- * Set a callback for Ecore_Evas delete request events.
- * @param ee The Ecore_Evas to set callbacks on
- * @param func The function to call
-
- * A call to this function will set a callback on an Ecore_Evas, causing
- * @p func to be called whenever @p ee gets a delete request.
- */
 EAPI void
 ecore_evas_callback_delete_request_set(Ecore_Evas *ee, void (*func) (Ecore_Evas *ee))
 {
@@ -1019,14 +979,6 @@ ecore_evas_callback_delete_request_set(Ecore_Evas *ee, void (*func) (Ecore_Evas 
    ee->func.fn_delete_request = func;
 }
 
-/**
- * Set a callback for Ecore_Evas destroy events.
- * @param ee The Ecore_Evas to set callbacks on
- * @param func The function to call
-
- * A call to this function will set a callback on an Ecore_Evas, causing
- * @p func to be called whenever @p ee is destroyed.
- */
 EAPI void
 ecore_evas_callback_destroy_set(Ecore_Evas *ee, void (*func) (Ecore_Evas *ee))
 {
@@ -1041,14 +993,6 @@ ecore_evas_callback_destroy_set(Ecore_Evas *ee, void (*func) (Ecore_Evas *ee))
    ee->func.fn_destroy = func;
 }
 
-/**
- * Set a callback for Ecore_Evas focus in events.
- * @param ee The Ecore_Evas to set callbacks on
- * @param func The function to call
-
- * A call to this function will set a callback on an Ecore_Evas, causing
- * @p func to be called whenever @p ee gets focus.
- */
 EAPI void
 ecore_evas_callback_focus_in_set(Ecore_Evas *ee, void (*func) (Ecore_Evas *ee))
 {
@@ -1063,14 +1007,6 @@ ecore_evas_callback_focus_in_set(Ecore_Evas *ee, void (*func) (Ecore_Evas *ee))
    ee->func.fn_focus_in = func;
 }
 
-/**
- * Set a callback for Ecore_Evas focus out events.
- * @param ee The Ecore_Evas to set callbacks on
- * @param func The function to call
-
- * A call to this function will set a callback on an Ecore_Evas, causing
- * @p func to be called whenever @p ee loses focus.
- */
 EAPI void
 ecore_evas_callback_focus_out_set(Ecore_Evas *ee, void (*func) (Ecore_Evas *ee))
 {
@@ -1085,14 +1021,6 @@ ecore_evas_callback_focus_out_set(Ecore_Evas *ee, void (*func) (Ecore_Evas *ee))
    ee->func.fn_focus_out = func;
 }
 
-/**
- * Set a callback for Ecore_Evas sticky events.
- * @param ee The Ecore_Evas to set callbacks on
- * @param func The function to call
-
- * A call to this function will set a callback on an Ecore_Evas, causing
- * @p func to be called whenever @p ee becomes sticky.
- */
 EAPI void
 ecore_evas_callback_sticky_set(Ecore_Evas *ee, void (*func) (Ecore_Evas *ee))
 {
@@ -1107,14 +1035,6 @@ ecore_evas_callback_sticky_set(Ecore_Evas *ee, void (*func) (Ecore_Evas *ee))
    ee->func.fn_sticky = func;
 }
 
-/**
- * Set a callback for Ecore_Evas un-sticky events.
- * @param ee The Ecore_Evas to set callbacks on
- * @param func The function to call
-
- * A call to this function will set a callback on an Ecore_Evas, causing
- * @p func to be called whenever @p ee becomes un-sticky.
- */
 EAPI void
 ecore_evas_callback_unsticky_set(Ecore_Evas *ee, void (*func) (Ecore_Evas *ee))
 {
@@ -1129,14 +1049,6 @@ ecore_evas_callback_unsticky_set(Ecore_Evas *ee, void (*func) (Ecore_Evas *ee))
    ee->func.fn_unsticky = func;
 }
 
-/**
- * Set a callback for Ecore_Evas mouse in events.
- * @param ee The Ecore_Evas to set callbacks on
- * @param func The function to call
-
- * A call to this function will set a callback on an Ecore_Evas, causing
- * @p func to be called whenever the mouse enters @p ee.
- */
 EAPI void
 ecore_evas_callback_mouse_in_set(Ecore_Evas *ee, void (*func) (Ecore_Evas *ee))
 {
@@ -1151,14 +1063,6 @@ ecore_evas_callback_mouse_in_set(Ecore_Evas *ee, void (*func) (Ecore_Evas *ee))
    ee->func.fn_mouse_in = func;
 }
 
-/**
- * Set a callback for Ecore_Evas mouse out events.
- * @param ee The Ecore_Evas to set callbacks on
- * @param func The function to call
-
- * A call to this function will set a callback on an Ecore_Evas, causing
- * @p func to be called whenever the mouse leaves @p ee.
- */
 EAPI void
 ecore_evas_callback_mouse_out_set(Ecore_Evas *ee, void (*func) (Ecore_Evas *ee))
 {
@@ -1173,14 +1077,6 @@ ecore_evas_callback_mouse_out_set(Ecore_Evas *ee, void (*func) (Ecore_Evas *ee))
    ee->func.fn_mouse_out = func;
 }
 
-/**
- * Set a callback for Ecore_Evas mouse pre render events.
- * @param ee The Ecore_Evas to set callbacks on
- * @param func The function to call
-
- * A call to this function will set a callback on an Ecore_Evas, causing
- * @p func to be called just before the evas in @p ee is rendered.
- */
 EAPI void
 ecore_evas_callback_pre_render_set(Ecore_Evas *ee, void (*func) (Ecore_Evas *ee))
 {
@@ -1195,14 +1091,6 @@ ecore_evas_callback_pre_render_set(Ecore_Evas *ee, void (*func) (Ecore_Evas *ee)
    ee->func.fn_pre_render = func;
 }
 
-/**
- * Set a callback for Ecore_Evas mouse post render events.
- * @param ee The Ecore_Evas to set callbacks on
- * @param func The function to call
-
- * A call to this function will set a callback on an Ecore_Evas, causing
- * @p func to be called just after the evas in @p ee is rendered.
- */
 EAPI void
 ecore_evas_callback_post_render_set(Ecore_Evas *ee, void (*func) (Ecore_Evas *ee))
 {
@@ -1217,14 +1105,6 @@ ecore_evas_callback_post_render_set(Ecore_Evas *ee, void (*func) (Ecore_Evas *ee
    ee->func.fn_post_render = func;
 }
 
-/**
- * Set a callback for Ecore_Evas pre-free event.
- * @param ee The Ecore_Evas to set callbacks on
- * @param func The function to call
- *
- * A call to this function will set a callback on an Ecore_Evas, causing
- * @p func to be called just before the instance @p ee is freed.
- */
 EAPI void
 ecore_evas_callback_pre_free_set(Ecore_Evas *ee, void (*func) (Ecore_Evas *ee))
 {
