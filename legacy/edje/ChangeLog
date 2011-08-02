@@ -135,3 +135,10 @@
         * Add entry,selection,all,request for signalling ctrl+a in an entry
         * Add entry,selection,none,request for signalling ctrl+shift+a in an entry
         * Fix entry,paste,request* to be emitted after cursor,changed (fixes middle mouse paste location)
+        
+2011-05-27  Carsten Haitzler (The Rasterman)
+
+	* Fix edje_shutdown() being called before all evas objects created
+        by edje (edje objects) are gone. Delay internal core shutdown
+        until all references gone.
+
