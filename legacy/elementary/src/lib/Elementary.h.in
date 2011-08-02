@@ -1782,13 +1782,6 @@ extern "C" {
     * #ELM_WIN_INLINED_IMAGE, which needs a parent to retrieve the canvas on
     * which the image object will be created.
     *
-    * For any other type, if @p parent is @c NULL, then the window created
-    * will be independent of any other window in the application. When another
-    * widget is used as the @p parent, the window will visually be the same
-    * as any other, but it would be added as a sub-object of the given parent,
-    * which means that if the parent object is destroyed the window will also
-    * be destroyed.
-    *
     * @return The created object, or NULL on failure
     */
    EAPI Evas_Object *elm_win_add(Evas_Object *parent, const char *name, Elm_Win_Type type);
