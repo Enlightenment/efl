@@ -171,29 +171,18 @@ if $USE_MODULE_ETHUMBD ; then
                     ]
                    )
 fi
-AC_ARG_ENABLE([libexif],
-        [AC_HELP_STRING([--disable-libexif], [disable libexif support. Default is enabled.])],
-        [
-         if test "x${enableval}" = "xyes" ; then
-            _iv_enable_libexif="yes"
-         else
-            _iv_enable_libexif="no"
-         fi
-        ],
-        [_iv_enable_libexif="yes"]
-)
 
-AC_MSG_CHECKING([whether libexif is built])
-AC_MSG_RESULT([${_iv_enable_libexif}])
 
-HAVE_LIBEXIF="no"
+AM_CONDITIONAL(HAVE_LIBEXIF, false)
+define([CHECK_MODULE_LIBEXIF],
+[
+        AC_ETH_CHECK_PKG(LIBEXIF, libexif, [], [HAVE_LIBEXIF=false])
+])
 
-if test "x${_iv_enable_libexif}" = "xyes" ; then
-        AC_ETH_CHECK_PKG(LIBEXIF, libexif)
+AC_ETH_OPTIONAL_MODULE([libexif], true, [CHECK_MODULE_LIBEXIF])
+if $USE_MODULE_LIBEXIF ; then
+        requirement_ethumb="$requirement_ethumb libexif"
 fi
-
-AM_CONDITIONAL(HAVE_LIBEXIF, test $HAVE_LIBEXIF = yes)
-AC_SUBST(HAVE_LIBEXIF)
 
 AC_COMPILE_IFELSE(
    [AC_LANG_PROGRAM(
