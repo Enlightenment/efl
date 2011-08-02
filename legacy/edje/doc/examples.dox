@@ -8,6 +8,8 @@
  * @li @ref tutorial_edje_text
  * @li @ref tutorial_edje_table
  * @li @ref Example_Edje_Signals_Messages
+ * @li @ref tutorial_edje_box
+ * @li @ref tutorial_edje_box2
  */
 
 /**
@@ -207,7 +209,7 @@
  * @page tutorial_edje_table Table example
  *
  * In this example, we illustrate how to organize your objects on a table, using
- * the evas_object_part_table functions. To be easier to understand the objects
+ * the edje_object_part_table functions. To be easier to understand the objects
  * in this example will be four simple rects, when the user click over one
  * item with the left button its is removed from the table, if any other button
  * was used all items are removed. For each action is printed a message with
@@ -257,6 +259,143 @@
  * The full source code follows:
  * @include edje-table.c
  * @example edje-table.c
+ */
+
+/**
+ * @page tutorial_edje_box Box example - basic usage
+ *
+ * This example shows how to append, insert and remove elements from an Edje box
+ * part. It will make use of the edje_object_part_box functions.
+ *
+ * To play with this example, use mouse left click to delete an existing
+ * rectangle from the box and right mouse click to add a new rectangle just
+ * before the clicked one. Use the keyboard keys "a" to append a rectangle, "i"
+ * to prepend, and "c" to remove all rectangles from the box.
+ *
+ * We will store our example global information in the data structure defined
+ * below, and also set some callbacks for resizing the canvas and exiting the
+ * window:
+ *
+ * @dontinclude edje-box.c
+ * @skip static const char
+ * @until ecore_evas_geometry_get
+ * @until }
+ *
+ * In the @c main function, we create our @c Ecore_Evas, add a background to it,
+ * and finally load our @c Edje file that contains a @c Box part. This part is
+ * named @c "example/box" in this case, and we use this name to append elements
+ * to it.
+ *
+ * The code until now is the one that follows:
+ *
+ * @skip main
+ * @until evas_object_show(app.edje)
+ *
+ * Also notice that we set the callback @c _bg_key_down for @c "key down" events
+ * on the background object, and that object is the one with focus.
+ *
+ * Now we add some small rectangles to the box part, using the
+ * edje_object_part_box_append() API, and set some callbacks for @c "mouse down"
+ * events on every object. These callbacks will be used to add or delete objects
+ * from the box part.
+ *
+ * @until evas_object_event
+ * @until }
+ *
+ * Now let's take a look at the callbacks for key down and mouse down events:
+ *
+ * @dontinclude edje-box.c
+ * @skip ecore_evas_geometry_get
+ * @skip static
+ * @until evas_object_event
+ * @until }
+ * @until }
+ *
+ * This callback for mouse down events will get left clicks and remove the
+ * object that received that left click from the box part, and then delete it.
+ * This is done with the edje_object_part_box_remove() function.
+ *
+ * However, on right clicks it will create a new rectangle object, and add it
+ * just before the right clicked object, using
+ * edje_object_part_box_insert_before().
+ *
+ * And this is the key down callback:
+ *
+ * @until remove_all
+ * @until }
+ *
+ * It will insert elements at the beginning of the box if "i" was pressed, using
+ * edje_object_part_box_insert_at(). It will also append objects to the box if
+ * "a" was pressed, just exactly like we did in the @c main function. And will
+ * remove all objects (deleting them) if "c" was pressed.
+ *
+ * As you can see, this example uses the @c "horizontal_flow" layout for the
+ * box, where each item is put linearly in rows, in as many rows as necessary to
+ * store all of them.
+ *
+ * The example's window should look like this picture:
+ *
+ * @image html edje-box-example.png
+ * @image rtf edje-box-example.png
+ * @image latex edje-box-example.eps
+ *
+ * The full source code follows:
+ * @include edje-box.c
+ * @example edje-box.c
+ */
+
+/**
+ * @page tutorial_edje_box2 Box example - custom layout
+ *
+ * This example shows how to register a custom layout to be used by the Edje box
+ * part. It will use edje_box_layout_register() for that.
+ *
+ * To play with this example, use the keyboard modifier keys and number keys
+ * together. The Ctrl key is used for adding elements, and Shift is used for
+ * removing them. For instance, Ctrl + 3 will insert a new rectangle object in
+ * the 3rd position of the box, while Shift + 6 will try to remove the 6th
+ * element of the box.
+ *
+ * This example is very similar to the other box example, has a structure with
+ * global data, a callback for key down events where we create or delete
+ * rectangle objects and add or remove them to/from the box part.
+ *
+ * But the important part is the next one:
+ *
+ * @dontinclude edje-box2.c
+ * @skip static struct _App
+ * @skip static
+ * @until }
+ * @until }
+ *
+ * This code implements our custom layout, which will position every object
+ * added to the box in a diagonal through the size of the box part. Notice that
+ * it just calculates the position and offset based on the size of the box and
+ * number of children, and then moves each child to the respective position.
+ *
+ * Later on the @c main function, everything we need to do is to register this
+ * custom layout function with edje:
+ *
+ * @skipline edje_box_layout_register
+ *
+ * And use it inside the .edc file:
+ *
+ * @dontinclude box.edc
+ * @skip example/group2
+ * @skip example/title
+ * @skip part
+ * @until BOX
+ * @until example/box
+ *
+ * The example's window should look like this picture:
+ *
+ * @image html edje-box2-example.png
+ * @image rtf edje-box2-example.png
+ * @image latex edje-box2-example.eps
+ *
+ * The full source code follows:
+ * @include edje-box2.c
+ * @example edje-box2.c
  */
 
 /**

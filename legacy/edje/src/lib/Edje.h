@@ -449,6 +449,8 @@ part of Edje's API:
 - @ref Example_Edje_Basics
 - @ref tutorial_edje_swallow
 - @ref tutorial_edje_table
+- @ref tutorial_edje_box
+- @ref tutorial_edje_box2
 - @ref Example_Edje_Signals_Messages
 
 
@@ -3090,10 +3092,14 @@ EAPI Edje_External_Param_Type  edje_object_part_external_param_type_get (const E
  * @param part The part name
  * @param child The object to append
  *
- * @return 1: Successfully added.\n
- * 0: An error occurred.
+ * @return @c EINA_TRUE: Successfully added.\n
+ * @c EINA_FALSE: An error occurred.
  *
  * Appends child to the box indicated by part.
+ *
+ * @see edje_object_part_box_prepend()
+ * @see edje_object_part_box_insert_before()
+ * @see edje_object_part_box_insert_at()
  */
 EAPI Eina_Bool    edje_object_part_box_append             (Evas_Object *obj, const char *part, Evas_Object *child);
 
@@ -3104,10 +3110,14 @@ EAPI Eina_Bool    edje_object_part_box_append             (Evas_Object *obj, con
  * @param part The part name
  * @param child The object to prepend
  *
- * @return 1: Successfully added.\n
- * 0: An error occurred.
+ * @return @c EINA_TRUE: Successfully added.\n
+ * @c EINA_FALSE: An error occurred.
  *
  * Prepends child to the box indicated by part.
+ *
+ * @see edje_object_part_box_append()
+ * @see edje_object_part_box_insert_before()
+ * @see edje_object_part_box_insert_at()
  */
 EAPI Eina_Bool    edje_object_part_box_prepend            (Evas_Object *obj, const char *part, Evas_Object *child);
 
@@ -3119,11 +3129,15 @@ EAPI Eina_Bool    edje_object_part_box_prepend            (Evas_Object *obj, con
  * @param child The object to insert
  * @param reference The object to be used as reference
  *
- * @return 1: Successfully added.\n
- * 0: An error occurred.
+ * @return @c EINA_TRUE: Successfully added.\n
+ * @c EINA_FALSE: An error occurred.
  *
  * Inserts child in the box given by part, in the position marked by
  * reference.
+ *
+ * @see edje_object_part_box_append()
+ * @see edje_object_part_box_prepend()
+ * @see edje_object_part_box_insert_at()
  */
 EAPI Eina_Bool    edje_object_part_box_insert_before      (Evas_Object *obj, const char *part, Evas_Object *child, const Evas_Object *reference);
 
@@ -3135,11 +3149,15 @@ EAPI Eina_Bool    edje_object_part_box_insert_before      (Evas_Object *obj, con
  * @param child The object to insert
  * @param pos The position where to insert child
  *
- * @return 1: Successfully added.\n
- * 0: An error occurred.
+ * @return @c EINA_TRUE: Successfully added.\n
+ * @c EINA_FALSE: An error occurred.
  *
  * Adds child to the box indicated by part, in the position given by
  * pos.
+ *
+ * @see edje_object_part_box_append()
+ * @see edje_object_part_box_prepend()
+ * @see edje_object_part_box_insert_before()
  */
 EAPI Eina_Bool    edje_object_part_box_insert_at          (Evas_Object *obj, const char *part, Evas_Object *child, unsigned int pos);
 
@@ -3150,9 +3168,12 @@ EAPI Eina_Bool    edje_object_part_box_insert_at          (Evas_Object *obj, con
  * @param part The part name
  * @param child The object to remove
  *
- * @return Pointer to the object removed, or NULL.
+ * @return Pointer to the object removed, or @c NULL.
  *
  * Removes child from the box indicated by part.
+ *
+ * @see edje_object_part_box_remove_at()
+ * @see edje_object_part_box_remove_all()
  */
 EAPI Evas_Object *edje_object_part_box_remove             (Evas_Object *obj, const char *part, Evas_Object *child);
 
@@ -3161,12 +3182,15 @@ EAPI Evas_Object *edje_object_part_box_remove             (Evas_Object *obj, con
  *
  * @param obj A valid Evas_Object handle
  * @param part The part name
- * @param pos
+ * @param pos The position index of the object (starts counting from 0)
  *
- * @return Pointer to the object removed, or NULL.
+ * @return Pointer to the object removed, or @c NULL.
  *
  * Removes from the box indicated by part, the object in the position
  * pos.
+ *
+ * @see edje_object_part_box_remove()
+ * @see edje_object_part_box_remove_all()
  */
 EAPI Evas_Object *edje_object_part_box_remove_at          (Evas_Object *obj, const char *part, unsigned int pos);
 
@@ -3182,6 +3206,9 @@ EAPI Evas_Object *edje_object_part_box_remove_at          (Evas_Object *obj, con
  *
  * Removes all the external objects from the box indicated by part.
  * Elements created from the theme will not be removed.
+ *
+ * @see edje_object_part_box_remove()
+ * @see edje_object_part_box_remove_at()
  */
 EAPI Eina_Bool    edje_object_part_box_remove_all         (Evas_Object *obj, const char *part, Eina_Bool clear);
 

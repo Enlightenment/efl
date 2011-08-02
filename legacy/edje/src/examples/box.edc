@@ -1,0 +1,142 @@
+collections {
+
+   group {
+      name: "example/group";
+
+      parts {
+         part {
+            name: "bg";
+            type: RECT;
+
+            description {
+            state: "default" 0.0;
+               color: 128 128 128 255;
+               rel1.offset: 20 20;
+               rel2.offset: -21 -21;
+            }
+         }
+
+         part {
+            name: "example/title";
+            type: TEXT;
+
+            description {
+               state: "default" 0.0;
+               color: 0 0 0 255;
+               rel1 {
+                  relative: 0.0 0.0;
+                  offset: 0 0;
+                  to: "bg";
+               }
+               rel2 {
+                  relative: 1.0 0.2;
+                  offset: -1 -1;
+                  to: "bg";
+               }
+               text {
+                  text: "Box Example";
+                  size: 16;
+                  font: "sans";
+                  min: 1 1;
+               }
+            }
+         }
+
+         part {
+            name: "example/box";
+            type: BOX;
+
+            description {
+               state: "default" 0.0;
+
+               box {
+                  layout: "horizontal_flow";
+                  padding: 2 2;
+                  align: 0.5 0.5;
+                  min: 1 1;
+               }
+               rel1 {
+                  relative: 0.0 0.2;
+                  offset: 0 0;
+                  to: "bg";
+               }
+               rel2 {
+                  relative: 1.0 1.0;
+                  offset: -1 -61;
+                  to: "bg";
+               }
+            }
+         } // example/box
+      }
+   }
+
+   group {
+      name: "example/group2";
+
+      parts {
+         part {
+            name: "bg";
+            type: RECT;
+
+            description {
+            state: "default" 0.0;
+               color: 128 128 128 255;
+               rel1.offset: 20 20;
+               rel2.offset: -21 -21;
+            }
+         }
+
+         part {
+            name: "example/title";
+            type: TEXT;
+
+            description {
+               state: "default" 0.0;
+               color: 0 0 0 255;
+               rel1 {
+                  relative: 0.0 0.0;
+                  offset: 0 0;
+                  to: "bg";
+               }
+               rel2 {
+                  relative: 1.0 0.2;
+                  offset: -1 -1;
+                  to: "bg";
+               }
+               text {
+                  text: "Box Example 2";
+                  size: 16;
+                  font: "sans";
+                  min: 1 1;
+               }
+            }
+         }
+
+         part {
+            name: "example/box";
+            type: BOX;
+
+            description {
+               state: "default" 0.0;
+
+               box {
+                  layout: "custom_layout";
+                  padding: 2 2;
+                  align: 0.5 0.5;
+                  min: 1 1;
+               }
+               rel1 {
+                  relative: 0.0 0.2;
+                  offset: 0 0;
+                  to: "bg";
+               }
+               rel2 {
+                  relative: 1.0 1.0;
+                  offset: -1 -61;
+                  to: "bg";
+               }
+            }
+         } // example/box
+      }
+   }
+}

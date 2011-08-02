@@ -31,7 +31,7 @@ static const char *edje_file_path = PACKAGE_EXAMPLES_DIR "/basic.edj";
 static Ecore_Evas *ee;
 static Evas_Object *edje_obj;
 
-static const char *commands = \
+static const char commands[] = \
   "commands are:\n"
   "\ts - change Edje's global scaling factor\n"
   "\tr - change center rectangle's scaling factor\n"
