@@ -7287,8 +7287,8 @@ evas_textblock_cursor_content_get(const Evas_Textblock_Cursor *cur)
    return s;
 }
 
-EAPI char *
-evas_textblock_cursor_range_text_get(const Evas_Textblock_Cursor *cur1, const Evas_Textblock_Cursor *_cur2, Evas_Textblock_Text_Type format __UNUSED__)
+static char *
+_evas_textblock_cursor_range_text_markup_get(const Evas_Textblock_Cursor *cur1, const Evas_Textblock_Cursor *_cur2)
 {
    Evas_Object_Textblock *o;
    Evas_Object_Textblock_Node_Text *n1, *n2, *tnode;
@@ -7407,6 +7407,79 @@ evas_textblock_cursor_range_text_get(const Evas_Textblock_Cursor *cur1, const Ev
         eina_strbuf_free(buf);
         return ret;
      }
+}
+
+static char *
+_evas_textblock_cursor_range_text_plain_get(const Evas_Textblock_Cursor *cur1, const Evas_Textblock_Cursor *_cur2)
+{
+   Evas_Object_Textblock *o;
+   Eina_UStrbuf *buf;
+   Evas_Object_Textblock_Node_Text *n1, *n2;
+   Evas_Textblock_Cursor *cur2;
+
+   buf = eina_ustrbuf_new();
+
+   if (!cur1 || !cur1->node) return NULL;
+   if (!_cur2 || !_cur2->node) return NULL;
+   if (cur1->obj != _cur2->obj) return NULL;
+   o = (Evas_Object_Textblock *)(cur1->obj->object_data);
+   if (evas_textblock_cursor_compare(cur1, _cur2) > 0)
+     {
+	const Evas_Textblock_Cursor *tc;
+
+	tc = cur1;
+	cur1 = _cur2;
+	_cur2 = tc;
+     }
+   n1 = cur1->node;
+   n2 = _cur2->node;
+   /* Work on a local copy of the cur */
+   cur2 = alloca(sizeof(Evas_Textblock_Cursor));
+   cur2->obj = _cur2->obj;
+   evas_textblock_cursor_copy(_cur2, cur2);
+
+
+   if (n1 == n2)
+     {
+        const Eina_Unicode *tmp;
+        tmp = eina_ustrbuf_string_get(n1->unicode);
+        eina_ustrbuf_append_length(buf, tmp + cur1->pos, cur2->pos - cur1->pos);
+     }
+   else
+     {
+        const Eina_Unicode *tmp;
+        tmp = eina_ustrbuf_string_get(n1->unicode);
+        eina_ustrbuf_append(buf, tmp + cur1->pos);
+        n1 = _NODE_TEXT(EINA_INLIST_GET(n1)->next);
+        while (n1 != n2)
+          {
+             tmp = eina_ustrbuf_string_get(n1->unicode);
+             eina_ustrbuf_append_length(buf, tmp,
+                   eina_ustrbuf_length_get(n1->unicode));
+             n1 = _NODE_TEXT(EINA_INLIST_GET(n1)->next);
+          }
+        tmp = eina_ustrbuf_string_get(n2->unicode);
+        eina_ustrbuf_append_length(buf, tmp, cur2->pos);
+     }
+
+   /* Free and return */
+     {
+        char *ret;
+        ret = eina_unicode_unicode_to_utf8(eina_ustrbuf_string_get(buf), NULL);
+        eina_ustrbuf_free(buf);
+        return ret;
+     }
+}
+
+EAPI char *
+evas_textblock_cursor_range_text_get(const Evas_Textblock_Cursor *cur1, const Evas_Textblock_Cursor *cur2, Evas_Textblock_Text_Type format)
+{
+   if (format == EVAS_TEXTBLOCK_TEXT_MARKUP)
+      return _evas_textblock_cursor_range_text_markup_get(cur1, cur2);
+   else if (format == EVAS_TEXTBLOCK_TEXT_PLAIN)
+      return _evas_textblock_cursor_range_text_plain_get(cur1, cur2);
+   else
+      return NULL; /* Not yet supported */
 }
 
 EAPI const char *
