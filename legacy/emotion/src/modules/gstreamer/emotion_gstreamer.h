@@ -59,6 +59,7 @@ struct _Emotion_Gstreamer_Video
 {
    /* Gstreamer elements */
    GstElement       *pipeline;
+   Ecore_Thread     *thread;
 
    /* eos */
    GstBus           *eos_bus;
@@ -85,10 +86,11 @@ struct _Emotion_Gstreamer_Video
 
    Emotion_Vis       vis;
 
-   unsigned char     play         : 1;
-   unsigned char     play_started : 1;
-   unsigned char     video_mute   : 1;
-   unsigned char     audio_mute   : 1;
+   Eina_Bool         play         : 1;
+   Eina_Bool         play_started : 1;
+   Eina_Bool         video_mute   : 1;
+   Eina_Bool         audio_mute   : 1;
+   Eina_Bool         pipeline_parsed : 1;
 };
 
 struct _EvasVideoSink {
@@ -188,5 +190,7 @@ void emotion_gstreamer_buffer_free(Emotion_Gstreamer_Buffer *send);
 Emotion_Gstreamer_Message *emotion_gstreamer_message_alloc(Emotion_Gstreamer_Video *ev,
                                                            GstMessage *msg);
 void emotion_gstreamer_message_free(Emotion_Gstreamer_Message *send);
+Eina_Bool _emotion_gstreamer_video_pipeline_parse(Emotion_Gstreamer_Video *ev,
+                                                  Eina_Bool force);
 
 #endif /* __EMOTION_GSTREAMER_H__ */

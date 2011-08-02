@@ -82,6 +82,7 @@ struct _Smart_Data
 
    double         ratio;
    double         pos;
+   double         remember_jump;
    double         seek_pos;
    double         len;
 
@@ -89,7 +90,9 @@ struct _Smart_Data
 
    Emotion_Suspend state;
 
+   Eina_Bool open : 1;
    Eina_Bool play : 1;
+   Eina_Bool remember_play : 1;
    Eina_Bool seek : 1;
    Eina_Bool seeking : 1;
 };
@@ -329,8 +332,10 @@ emotion_object_init(Evas_Object *obj, const char *module_filename)
    sd->spu.button = -1;
    sd->ratio = 1.0;
    sd->pos = 0;
+   sd->remember_jump = 0;
    sd->seek_pos = 0;
    sd->len = 0;
+   sd->remember_play = 0;
 
    _emotion_module_close(sd->module, sd->video);
    sd->module = NULL;
@@ -370,6 +375,7 @@ emotion_object_file_set(Evas_Object *obj, const char *file)
 	sd->module->file_close(sd->video);
         evas_object_image_data_set(sd->obj, NULL);
 	evas_object_image_size_set(sd->obj, 1, 1);
+        sd->open = 0;
 	if (!sd->module->file_open(sd->file, obj, sd->video))
 	  return EINA_FALSE;
 	sd->module->size_get(sd->video, &w, &h);
@@ -419,7 +425,13 @@ emotion_object_play_set(Evas_Object *obj, Eina_Bool play)
    if (play == sd->play) return;
    if (!sd->module) return;
    if (!sd->video) return;
+   if (!sd->open)
+     {
+        sd->remember_play = play;
+        return;
+     }
    sd->play = play;
+   sd->remember_play = play;
    if (sd->state != EMOTION_WAKEUP) emotion_object_suspend_set(obj, EMOTION_WAKEUP);
    if (sd->play) sd->module->play(sd->video, sd->pos);
    else sd->module->stop(sd->video);
@@ -445,6 +457,12 @@ emotion_object_position_set(Evas_Object *obj, double sec)
    DBG("sec=%f", sec);
    if (!sd->module) return;
    if (!sd->video) return;
+   if (!sd->open)
+     {
+        sd->remember_jump = sec;
+        return ;
+     }
+   sd->remember_jump = 0;
    sd->seek_pos = sec;
    sd->seek = 1;
    sd->pos = sd->seek_pos;
@@ -1064,7 +1082,11 @@ emotion_object_last_position_load(Evas_Object *obj)
 
    EINA_REFCOUNT_REF(sd);
 
-   sd->load_xattr = eio_file_xattr_get(tmp, "user.e.time_seek", _eio_load_xattr_done, _eio_load_xattr_error, sd);
+   sd->load_xattr = eio_file_xattr_get(tmp,
+                                       "user.e.time_seek",
+                                       _eio_load_xattr_done,
+                                       _eio_load_xattr_error,
+                                       sd);
 #else
 # ifdef HAVE_XATTR
    {
@@ -1266,6 +1288,15 @@ _emotion_decode_stop(Evas_Object *obj)
 EAPI void
 _emotion_open_done(Evas_Object *obj)
 {
+   Smart_Data *sd;
+
+   E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
+   sd->open = 1;
+
+   if (sd->remember_jump)
+     emotion_object_position_set(obj, sd->remember_jump);
+   if (sd->remember_play != sd->play)
+     emotion_object_play_set(obj, sd->remember_play);
    evas_object_smart_callback_call(obj, SIG_OPEN_DONE, NULL);
 }
 

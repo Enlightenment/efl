@@ -355,6 +355,12 @@ em_shutdown(void *video)
    if (!ev)
      return 0;
 
+   if (ev->thread)
+     {
+        ecore_thread_cancel(ev->thread);
+        ev->thread = NULL;
+     }
+
    if (ev->pipeline)
      {
        gst_element_set_state(ev->pipeline, GST_STATE_NULL);
@@ -381,8 +387,6 @@ em_file_open(const char   *file,
    Emotion_Gstreamer_Video *ev;
    Eina_Strbuf *sbuf = NULL;
    const char *uri;
-   double start, end;
-   int i;
 
    ev = (Emotion_Gstreamer_Video *)video;
 
@@ -410,28 +414,20 @@ em_file_open(const char   *file,
         eina_strbuf_append(sbuf, file);
      }
 
-   start = ecore_time_get();
    uri = sbuf ? eina_strbuf_string_get(sbuf) : file;
    DBG("setting file to '%s'", uri);
    ev->pipeline = gstreamer_video_sink_new(ev, obj, uri);
    if (sbuf) eina_strbuf_free(sbuf);
-   end = ecore_time_get();
-   DBG("Pipeline creation: %f", end - start);
 
    if (!ev->pipeline)
      return EINA_FALSE;
 
-   eina_threads_init();
-
-   start = ecore_time_get();
    ev->eos_bus = gst_pipeline_get_bus(GST_PIPELINE(ev->pipeline));
    if (!ev->eos_bus)
      {
         ERR("could not get the bus");
         return EINA_FALSE;
      }
-   end = ecore_time_get();
-   DBG("Get the bus: %f", end - start);
 
    gst_bus_set_sync_handler(ev->eos_bus, _eos_sync_fct, ev);
 
@@ -439,258 +435,6 @@ em_file_open(const char   *file,
    ev->obj = obj;
 
    ev->position = 0.0;
-
-   g_object_get(G_OBJECT(ev->pipeline),
-                "n-audio", &ev->audio_stream_nbr,
-                "n-video", &ev->video_stream_nbr,
-                NULL);
-
-   if ((ev->video_stream_nbr == 0) && (ev->audio_stream_nbr == 0))
-     {
-        ERR("No audio nor video stream found");
-        gst_object_unref(ev->pipeline);
-        ev->pipeline = NULL;
-        return EINA_FALSE;
-     }
-
-   /* video stream */
-
-   start = ecore_time_get();
-   for (i = 0; i < ev->video_stream_nbr; i++)
-     {
-        Emotion_Video_Stream *vstream;
-        GstPad       *pad = NULL;
-        GstCaps      *caps;
-        GstStructure *structure;
-        GstQuery     *query;
-        const GValue *val;
-        gchar        *str;
-
-        gdouble length_time = 0.0;
-        gint width;
-        gint height;
-        gint fps_num;
-        gint fps_den;
-        guint32 fourcc = 0;
-
-        g_signal_emit_by_name(ev->pipeline, "get-video-pad", i, &pad);
-        if (!pad)
-          continue;
-
-        caps = gst_pad_get_negotiated_caps(pad);
-        if (!caps)
-          goto unref_pad_v;
-        structure = gst_caps_get_structure(caps, 0);
-        str = gst_caps_to_string(caps);
-
-        if (!gst_structure_get_int(structure, "width", &width))
-          goto unref_caps_v;
-        if (!gst_structure_get_int(structure, "height", &height))
-          goto unref_caps_v;
-        if (!gst_structure_get_fraction(structure, "framerate", &fps_num, &fps_den))
-          goto unref_caps_v;
-
-        if (g_str_has_prefix(str, "video/x-raw-yuv"))
-          {
-             val = gst_structure_get_value(structure, "format");
-             fourcc = gst_value_get_fourcc(val);
-          }
-        else if (g_str_has_prefix(str, "video/x-raw-rgb"))
-          fourcc = GST_MAKE_FOURCC('A', 'R', 'G', 'B');
-        else
-          goto unref_caps_v;
-
-        query = gst_query_new_duration(GST_FORMAT_TIME);
-        if (gst_pad_peer_query(pad, query))
-          {
-             gint64 t;
-
-             gst_query_parse_duration(query, NULL, &t);
-             length_time = (double)t / (double)GST_SECOND;
-          }
-        else
-          goto unref_query_v;
-
-        vstream = emotion_video_stream_new(ev);
-        if (!vstream) goto unref_query_v;
-
-        vstream->length_time = length_time;
-        vstream->width = width;
-        vstream->height = height;
-        vstream->fps_num = fps_num;
-        vstream->fps_den = fps_den;
-        vstream->fourcc = fourcc;
-        vstream->index = i;
-
-     unref_query_v:
-        gst_query_unref(query);
-     unref_caps_v:
-        gst_caps_unref(caps);
-     unref_pad_v:
-        gst_object_unref(pad);
-     }
-   end = ecore_time_get();
-   DBG("Get video streams: %f", end - start);
-
-   /* Audio streams */
-
-   start = ecore_time_get();
-   for (i = 0; i < ev->audio_stream_nbr; i++)
-     {
-        Emotion_Audio_Stream *astream;
-        GstPad       *pad;
-        GstCaps      *caps;
-        GstStructure *structure;
-        GstQuery     *query;
-
-        gdouble length_time = 0.0;
-        gint channels;
-        gint samplerate;
-
-        g_signal_emit_by_name(ev->pipeline, "get-audio-pad", i, &pad);
-        if (!pad)
-          continue;
-
-        caps = gst_pad_get_negotiated_caps(pad);
-        if (!caps)
-          goto unref_pad_a;
-        structure = gst_caps_get_structure(caps, 0);
-
-        if (!gst_structure_get_int(structure, "channels", &channels))
-          goto unref_caps_a;
-        if (!gst_structure_get_int(structure, "rate", &samplerate))
-          goto unref_caps_a;
-
-        query = gst_query_new_duration(GST_FORMAT_TIME);
-        if (gst_pad_peer_query(pad, query))
-          {
-             gint64 t;
-
-             gst_query_parse_duration(query, NULL, &t);
-             length_time = (double)t / (double)GST_SECOND;
-          }
-        else
-          goto unref_query_a;
-
-        astream = calloc(1, sizeof(Emotion_Audio_Stream));
-        if (!astream) continue;
-        ev->audio_streams = eina_list_append(ev->audio_streams, astream);
-        if (eina_error_get())
-          {
-             free(astream);
-             continue;
-          }
-
-        astream->length_time = length_time;
-        astream->channels = channels;
-        astream->samplerate = samplerate;
-
-     unref_query_a:
-        gst_query_unref(query);
-     unref_caps_a:
-        gst_caps_unref(caps);
-     unref_pad_a:
-        gst_object_unref(pad);
-     }
-   end = ecore_time_get();
-   DBG("Get audio streams: %f", end - start);
-
-   /* Visualization sink */
-
-   start = ecore_time_get();
-   if (ev->video_stream_nbr == 0)
-     {
-        GstElement *vis = NULL;
-        Emotion_Video_Stream *vstream;
-        Emotion_Audio_Stream *astream;
-        gint flags;
-        const char *vis_name;
-
-        if (!(vis_name = emotion_visualization_element_name_get(ev->vis)))
-          {
-             WRN("pb vis name %d", ev->vis);
-             goto finalize;
-          }
-
-        astream = eina_list_data_get(ev->audio_streams);
-
-        vis = gst_element_factory_make(vis_name, "vissink");
-        vstream = emotion_video_stream_new(ev);
-        if (!vstream)
-          goto finalize;
-        else
-          DBG("could not create visualization stream");
-
-        vstream->length_time = astream->length_time;
-        vstream->width = 320;
-        vstream->height = 200;
-        vstream->fps_num = 25;
-        vstream->fps_den = 1;
-        vstream->fourcc = GST_MAKE_FOURCC('A', 'R', 'G', 'B');
-
-        g_object_set(G_OBJECT(ev->pipeline), "vis-plugin", vis, NULL);
-        g_object_get(G_OBJECT(ev->pipeline), "flags", &flags, NULL);
-        flags |= 0x00000008;
-        g_object_set(G_OBJECT(ev->pipeline), "flags", flags, NULL);
-     }
-   end = ecore_time_get();
-   DBG("Get visualization streams: %f", end - start);
-
- finalize:
-
-   ev->video_stream_nbr = eina_list_count(ev->video_streams);
-   ev->audio_stream_nbr = eina_list_count(ev->audio_streams);
-
-   if (ev->video_stream_nbr == 1)
-     {
-       Emotion_Video_Stream *vstream;
-
-       vstream = eina_list_data_get(ev->video_streams);
-       ev->ratio = (double)vstream->width / (double)vstream->height;
-       _emotion_frame_resize(ev->obj, vstream->width, vstream->height, ev->ratio);
-     }
-
-   {
-     /* on recapitule : */
-     Emotion_Video_Stream *vstream;
-     Emotion_Audio_Stream *astream;
-
-     vstream = eina_list_data_get(ev->video_streams);
-     if (vstream)
-       {
-         DBG("video size=%dx%d, fps=%d/%d, "
-             "fourcc=%"GST_FOURCC_FORMAT", length=%"GST_TIME_FORMAT,
-             vstream->width, vstream->height, vstream->fps_num, vstream->fps_den,
-             GST_FOURCC_ARGS(vstream->fourcc),
-             GST_TIME_ARGS((guint64)(vstream->length_time * GST_SECOND)));
-       }
-
-     astream = eina_list_data_get(ev->audio_streams);
-     if (astream)
-       {
-         DBG("audio channels=%d, rate=%d, length=%"GST_TIME_FORMAT,
-             astream->channels, astream->samplerate,
-             GST_TIME_ARGS((guint64)(astream->length_time * GST_SECOND)));
-       }
-   }
-
-   if (ev->metadata)
-     _free_metadata(ev->metadata);
-   ev->metadata = calloc(1, sizeof(Emotion_Gstreamer_Metadata));
-
-   start = ecore_time_get();
-   em_audio_channel_volume_set(ev, ev->volume);
-   em_audio_channel_mute_set(ev, ev->audio_mute);
-
-   if (ev->play_started)
-     {
-        _emotion_playback_started(ev->obj);
-        ev->play_started = 0;
-     }
-
-   _emotion_open_done(ev->obj);
-   end = ecore_time_get();
-   DBG("Last stuff: %f", end - start);
 
    return 1;
 }
@@ -712,6 +456,12 @@ em_file_close(void *video)
         ev->eos_bus = NULL;
      }
 
+   if (ev->thread)
+     {
+        ecore_thread_cancel(ev->thread);
+        ev->thread = NULL;
+     }
+
    if (ev->pipeline)
      {
         gst_element_set_state(ev->pipeline, GST_STATE_NULL);
@@ -719,13 +469,12 @@ em_file_close(void *video)
         ev->pipeline = NULL;
      }
 
-   eina_threads_shutdown();
-
    /* we clear the stream lists */
    EINA_LIST_FREE(ev->audio_streams, astream)
      free(astream);
    EINA_LIST_FREE(ev->video_streams, vstream)
      free(vstream);
+   ev->pipeline_parsed = EINA_FALSE;
 
    /* shutdown eos */
    if (ev->metadata)
@@ -772,17 +521,21 @@ em_size_get(void  *video,
 
    ev = (Emotion_Gstreamer_Video *)video;
 
-   vstream = (Emotion_Video_Stream *)eina_list_nth(ev->video_streams, ev->video_stream_nbr - 1);
+   if (!_emotion_gstreamer_video_pipeline_parse(ev, EINA_FALSE))
+     goto on_error;
+
+   vstream = eina_list_nth(ev->video_streams, ev->video_stream_nbr - 1);
    if (vstream)
      {
         if (width) *width = vstream->width;
         if (height) *height = vstream->height;
+
+        return ;
      }
-   else
-     {
-        if (width) *width = 0;
-        if (height) *height = 0;
-     }
+
+ on_error:
+   if (width) *width = 0;
+   if (height) *height = 0;
 }
 
 static void
@@ -833,7 +586,7 @@ em_len_get(void *video)
    if (fmt != GST_FORMAT_TIME)
      {
         DBG("requrested duration in time, but got %s instead.",
-                gst_format_get_name(fmt));
+            gst_format_get_name(fmt));
         goto fallback;
      }
 
@@ -843,6 +596,9 @@ em_len_get(void *video)
    return val / 1000000000.0;
 
  fallback:
+   if (!_emotion_gstreamer_video_pipeline_parse(ev, EINA_FALSE))
+     return 0.0;
+
    EINA_LIST_FOREACH(ev->audio_streams, l, astream)
      if (astream->length_time >= 0)
        return astream->length_time;
@@ -862,7 +618,10 @@ em_fps_num_get(void *video)
 
    ev = (Emotion_Gstreamer_Video *)video;
 
-   vstream = (Emotion_Video_Stream *)eina_list_nth(ev->video_streams, ev->video_stream_nbr - 1);
+   if (!_emotion_gstreamer_video_pipeline_parse(ev, EINA_FALSE))
+     return 0;
+
+   vstream = eina_list_nth(ev->video_streams, ev->video_stream_nbr - 1);
    if (vstream)
      return vstream->fps_num;
 
@@ -877,7 +636,10 @@ em_fps_den_get(void *video)
 
    ev = (Emotion_Gstreamer_Video *)video;
 
-   vstream = (Emotion_Video_Stream *)eina_list_nth(ev->video_streams, ev->video_stream_nbr - 1);
+   if (!_emotion_gstreamer_video_pipeline_parse(ev, EINA_FALSE))
+     return 1;
+
+   vstream = eina_list_nth(ev->video_streams, ev->video_stream_nbr - 1);
    if (vstream)
      return vstream->fps_den;
 
@@ -892,7 +654,10 @@ em_fps_get(void *video)
 
    ev = (Emotion_Gstreamer_Video *)video;
 
-   vstream = (Emotion_Video_Stream *)eina_list_nth(ev->video_streams, ev->video_stream_nbr - 1);
+   if (!_emotion_gstreamer_video_pipeline_parse(ev, EINA_FALSE))
+     return 0.0;
+
+   vstream = eina_list_nth(ev->video_streams, ev->video_stream_nbr - 1);
    if (vstream)
      return (double)vstream->fps_num / (double)vstream->fps_den;
 
@@ -986,6 +751,8 @@ em_video_handled(void *video)
 
    ev = (Emotion_Gstreamer_Video *)video;
 
+   _emotion_gstreamer_video_pipeline_parse(ev, EINA_FALSE);
+
    if (!eina_list_count(ev->video_streams))
      return 0;
 
@@ -998,6 +765,8 @@ em_audio_handled(void *video)
    Emotion_Gstreamer_Video *ev;
 
    ev = (Emotion_Gstreamer_Video *)video;
+
+   _emotion_gstreamer_video_pipeline_parse(ev, EINA_FALSE);
 
    if (!eina_list_count(ev->audio_streams))
      return 0;
@@ -1020,11 +789,14 @@ static Emotion_Format
 em_format_get(void *video)
 {
    Emotion_Gstreamer_Video *ev;
-   Emotion_Video_Stream      *vstream;
+   Emotion_Video_Stream    *vstream;
 
    ev = (Emotion_Gstreamer_Video *)video;
 
-   vstream = (Emotion_Video_Stream *)eina_list_nth(ev->video_streams, ev->video_stream_nbr - 1);
+   if (!_emotion_gstreamer_video_pipeline_parse(ev, EINA_FALSE))
+     return EMOTION_FORMAT_NONE;
+
+   vstream = eina_list_nth(ev->video_streams, ev->video_stream_nbr - 1);
    if (vstream)
      {
         switch (vstream->fourcc)
@@ -1048,21 +820,25 @@ static void
 em_video_data_size_get(void *video, int *w, int *h)
 {
    Emotion_Gstreamer_Video *ev;
-   Emotion_Video_Stream      *vstream;
+   Emotion_Video_Stream    *vstream;
 
    ev = (Emotion_Gstreamer_Video *)video;
 
-   vstream = (Emotion_Video_Stream *)eina_list_nth(ev->video_streams, ev->video_stream_nbr - 1);
+   if (!_emotion_gstreamer_video_pipeline_parse(ev, EINA_FALSE))
+     goto on_error;
+
+   vstream = eina_list_nth(ev->video_streams, ev->video_stream_nbr - 1);
    if (vstream)
      {
         *w = vstream->width;
         *h = vstream->height;
+
+        return ;
      }
-   else
-     {
-        *w = 0;
-        *h = 0;
-     }
+
+ on_error:
+   *w = 0;
+   *h = 0;
 }
 
 static int
@@ -1105,6 +881,8 @@ em_video_channel_count(void *video)
 
    ev = (Emotion_Gstreamer_Video *)video;
 
+   _emotion_gstreamer_video_pipeline_parse(ev, EINA_FALSE);
+
    return eina_list_count(ev->video_streams);
 }
 
@@ -1128,6 +906,8 @@ em_video_channel_get(void *video)
    Emotion_Gstreamer_Video *ev;
 
    ev = (Emotion_Gstreamer_Video *)video;
+
+   _emotion_gstreamer_video_pipeline_parse(ev, EINA_FALSE);
 
    return ev->video_stream_nbr;
 }
@@ -1169,6 +949,8 @@ em_audio_channel_count(void *video)
 
    ev = (Emotion_Gstreamer_Video *)video;
 
+   _emotion_gstreamer_video_pipeline_parse(ev, EINA_FALSE);
+
    return eina_list_count(ev->audio_streams);
 }
 
@@ -1192,6 +974,8 @@ em_audio_channel_get(void *video)
    Emotion_Gstreamer_Video *ev;
 
    ev = (Emotion_Gstreamer_Video *)video;
+
+   _emotion_gstreamer_video_pipeline_parse(ev, EINA_FALSE);
 
    return ev->audio_stream_nbr;
 }
@@ -1687,4 +1471,277 @@ _eos_sync_fct(GstBus *bus, GstMessage *msg, gpointer data)
      }
 
    return GST_BUS_DROP;
+}
+
+Eina_Bool
+_emotion_gstreamer_video_pipeline_parse(Emotion_Gstreamer_Video *ev,
+                                        Eina_Bool force)
+{
+   gboolean res;
+   int i;
+
+   if (ev->pipeline_parsed)
+     return EINA_TRUE;
+
+   if (force && ev->thread)
+     {
+        ecore_thread_cancel(ev->thread);
+        ev->thread = NULL;
+     }
+
+   if (ev->thread)
+     return EINA_FALSE;
+
+   res = gst_element_get_state(ev->pipeline, NULL, NULL, GST_CLOCK_TIME_NONE);
+   if (!(res == GST_STATE_CHANGE_SUCCESS
+         || res == GST_STATE_CHANGE_NO_PREROLL))
+     {
+        /** NOTE: you need to set: GST_DEBUG_DUMP_DOT_DIR=/tmp EMOTION_ENGINE=gstreamer to save the $EMOTION_GSTREAMER_DOT file in '/tmp' */
+        /** then call dot -Tpng -oemotion_pipeline.png /tmp/$TIMESTAMP-$EMOTION_GSTREAMER_DOT.dot */
+        if (getenv("EMOTION_GSTREAMER_DOT"))
+          GST_DEBUG_BIN_TO_DOT_FILE_WITH_TS(GST_BIN(ev->pipeline),
+                                            GST_DEBUG_GRAPH_SHOW_ALL,
+                                            getenv("EMOTION_GSTREAMER_DOT"));
+
+        ERR("Unable to get GST_CLOCK_TIME_NONE.");
+        return EINA_FALSE;
+     }
+
+   g_object_get(G_OBJECT(ev->pipeline),
+                "n-audio", &ev->audio_stream_nbr,
+                "n-video", &ev->video_stream_nbr,
+                NULL);
+
+   if ((ev->video_stream_nbr == 0) && (ev->audio_stream_nbr == 0))
+     {
+        ERR("No audio nor video stream found");
+        return EINA_FALSE;
+     }
+
+   /* video stream */
+   for (i = 0; i < ev->video_stream_nbr; i++)
+     {
+        Emotion_Video_Stream *vstream;
+        GstPad       *pad = NULL;
+        GstCaps      *caps;
+        GstStructure *structure;
+        GstQuery     *query;
+        const GValue *val;
+        gchar        *str;
+
+        gdouble length_time = 0.0;
+        gint width;
+        gint height;
+        gint fps_num;
+        gint fps_den;
+        guint32 fourcc = 0;
+
+        g_signal_emit_by_name(ev->pipeline, "get-video-pad", i, &pad);
+        if (!pad)
+          continue;
+
+        caps = gst_pad_get_negotiated_caps(pad);
+        if (!caps)
+          goto unref_pad_v;
+        structure = gst_caps_get_structure(caps, 0);
+        str = gst_caps_to_string(caps);
+
+        if (!gst_structure_get_int(structure, "width", &width))
+          goto unref_caps_v;
+        if (!gst_structure_get_int(structure, "height", &height))
+          goto unref_caps_v;
+        if (!gst_structure_get_fraction(structure, "framerate", &fps_num, &fps_den))
+          goto unref_caps_v;
+
+        if (g_str_has_prefix(str, "video/x-raw-yuv"))
+          {
+             val = gst_structure_get_value(structure, "format");
+             fourcc = gst_value_get_fourcc(val);
+          }
+        else if (g_str_has_prefix(str, "video/x-raw-rgb"))
+          fourcc = GST_MAKE_FOURCC('A', 'R', 'G', 'B');
+        else
+          goto unref_caps_v;
+
+        query = gst_query_new_duration(GST_FORMAT_TIME);
+        if (gst_pad_peer_query(pad, query))
+          {
+             gint64 t;
+
+             gst_query_parse_duration(query, NULL, &t);
+             length_time = (double)t / (double)GST_SECOND;
+          }
+        else
+          goto unref_query_v;
+
+        vstream = emotion_video_stream_new(ev);
+        if (!vstream) goto unref_query_v;
+
+        vstream->length_time = length_time;
+        vstream->width = width;
+        vstream->height = height;
+        vstream->fps_num = fps_num;
+        vstream->fps_den = fps_den;
+        vstream->fourcc = fourcc;
+        vstream->index = i;
+
+     unref_query_v:
+        gst_query_unref(query);
+     unref_caps_v:
+        gst_caps_unref(caps);
+     unref_pad_v:
+        gst_object_unref(pad);
+     }
+
+   /* Audio streams */
+   for (i = 0; i < ev->audio_stream_nbr; i++)
+     {
+        Emotion_Audio_Stream *astream;
+        GstPad       *pad;
+        GstCaps      *caps;
+        GstStructure *structure;
+        GstQuery     *query;
+
+        gdouble length_time = 0.0;
+        gint channels;
+        gint samplerate;
+
+        g_signal_emit_by_name(ev->pipeline, "get-audio-pad", i, &pad);
+        if (!pad)
+          continue;
+
+        caps = gst_pad_get_negotiated_caps(pad);
+        if (!caps)
+          goto unref_pad_a;
+        structure = gst_caps_get_structure(caps, 0);
+
+        if (!gst_structure_get_int(structure, "channels", &channels))
+          goto unref_caps_a;
+        if (!gst_structure_get_int(structure, "rate", &samplerate))
+          goto unref_caps_a;
+
+        query = gst_query_new_duration(GST_FORMAT_TIME);
+        if (gst_pad_peer_query(pad, query))
+          {
+             gint64 t;
+
+             gst_query_parse_duration(query, NULL, &t);
+             length_time = (double)t / (double)GST_SECOND;
+          }
+        else
+          goto unref_query_a;
+
+        astream = calloc(1, sizeof(Emotion_Audio_Stream));
+        if (!astream) continue;
+        ev->audio_streams = eina_list_append(ev->audio_streams, astream);
+        if (eina_error_get())
+          {
+             free(astream);
+             continue;
+          }
+
+        astream->length_time = length_time;
+        astream->channels = channels;
+        astream->samplerate = samplerate;
+
+     unref_query_a:
+        gst_query_unref(query);
+     unref_caps_a:
+        gst_caps_unref(caps);
+     unref_pad_a:
+        gst_object_unref(pad);
+     }
+
+   /* Visualization sink */
+   if (ev->video_stream_nbr == 0)
+     {
+        GstElement *vis = NULL;
+        Emotion_Video_Stream *vstream;
+        Emotion_Audio_Stream *astream;
+        gint flags;
+        const char *vis_name;
+
+        if (!(vis_name = emotion_visualization_element_name_get(ev->vis)))
+          {
+             WRN("pb vis name %d", ev->vis);
+             goto finalize;
+          }
+
+        astream = eina_list_data_get(ev->audio_streams);
+
+        vis = gst_element_factory_make(vis_name, "vissink");
+        vstream = emotion_video_stream_new(ev);
+        if (!vstream)
+          goto finalize;
+        else
+          DBG("could not create visualization stream");
+
+        vstream->length_time = astream->length_time;
+        vstream->width = 320;
+        vstream->height = 200;
+        vstream->fps_num = 25;
+        vstream->fps_den = 1;
+        vstream->fourcc = GST_MAKE_FOURCC('A', 'R', 'G', 'B');
+
+        g_object_set(G_OBJECT(ev->pipeline), "vis-plugin", vis, NULL);
+        g_object_get(G_OBJECT(ev->pipeline), "flags", &flags, NULL);
+        flags |= 0x00000008;
+        g_object_set(G_OBJECT(ev->pipeline), "flags", flags, NULL);
+     }
+
+ finalize:
+
+   ev->video_stream_nbr = eina_list_count(ev->video_streams);
+   ev->audio_stream_nbr = eina_list_count(ev->audio_streams);
+
+   if (ev->video_stream_nbr == 1)
+     {
+       Emotion_Video_Stream *vstream;
+
+       vstream = eina_list_data_get(ev->video_streams);
+       ev->ratio = (double)vstream->width / (double)vstream->height;
+       _emotion_frame_resize(ev->obj, vstream->width, vstream->height, ev->ratio);
+     }
+
+   {
+     /* on recapitule : */
+     Emotion_Video_Stream *vstream;
+     Emotion_Audio_Stream *astream;
+
+     vstream = eina_list_data_get(ev->video_streams);
+     if (vstream)
+       {
+         DBG("video size=%dx%d, fps=%d/%d, "
+             "fourcc=%"GST_FOURCC_FORMAT", length=%"GST_TIME_FORMAT,
+             vstream->width, vstream->height, vstream->fps_num, vstream->fps_den,
+             GST_FOURCC_ARGS(vstream->fourcc),
+             GST_TIME_ARGS((guint64)(vstream->length_time * GST_SECOND)));
+       }
+
+     astream = eina_list_data_get(ev->audio_streams);
+     if (astream)
+       {
+         DBG("audio channels=%d, rate=%d, length=%"GST_TIME_FORMAT,
+             astream->channels, astream->samplerate,
+             GST_TIME_ARGS((guint64)(astream->length_time * GST_SECOND)));
+       }
+   }
+
+   if (ev->metadata)
+     _free_metadata(ev->metadata);
+   ev->metadata = calloc(1, sizeof(Emotion_Gstreamer_Metadata));
+
+   em_audio_channel_volume_set(ev, ev->volume);
+   em_audio_channel_mute_set(ev, ev->audio_mute);
+
+   if (ev->play_started)
+     {
+        _emotion_playback_started(ev->obj);
+        ev->play_started = 0;
+     }
+
+   _emotion_open_done(ev->obj);
+   ev->pipeline_parsed = EINA_TRUE;
+
+   return EINA_TRUE;
 }

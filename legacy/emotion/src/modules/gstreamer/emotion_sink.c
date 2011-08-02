@@ -341,15 +341,17 @@ static void evas_video_sink_main_render(void *data)
    gst_data = GST_BUFFER_DATA(buffer);
    if (!gst_data) goto exit_point;
 
+   ev = evas_object_data_get(priv->o, "_emotion_gstreamer_video");
+   if (!ev) goto exit_point;
+
+   _emotion_gstreamer_video_pipeline_parse(ev, EINA_TRUE);
+
    // This prevent a race condition when data are still in the pipe
    // but the buffer size as changed because of a request from
    // emotion smart (like on a file set).
    evas_object_image_size_get(priv->o, &w, &h);
    if (w != priv->width || h != priv->height)
      goto exit_point;
-
-   ev = evas_object_data_get(priv->o, "_emotion_gstreamer_video");
-   if (!ev) goto exit_point;
 
    evas_object_image_size_set(priv->o, priv->width, priv->height);
    evas_object_image_alpha_set(priv->o, 0);
@@ -619,6 +621,29 @@ gstreamer_plugin_init (GstPlugin * plugin)
                                 EVAS_TYPE_VIDEO_SINK);
 }
 
+static void
+_emotion_gstreamer_pause(void *data, Ecore_Thread *thread __UNUSED__)
+{
+   Emotion_Gstreamer_Video *ev = data;
+
+   gst_element_set_state(ev->pipeline, GST_STATE_PAUSED);
+}
+
+static void
+_emotion_gstreamer_cancel(void *data, Ecore_Thread *thread __UNUSED__)
+{
+   Emotion_Gstreamer_Video *ev = data;
+
+   ev->thread = NULL;
+}
+
+static void
+_emotion_gstreamer_end(void *data, Ecore_Thread *thread)
+{
+   _emotion_gstreamer_video_pipeline_parse(data, EINA_TRUE);
+   _emotion_gstreamer_cancel(data, thread);
+}
+
 GstElement *
 gstreamer_video_sink_new(Emotion_Gstreamer_Video *ev,
 			 Evas_Object *o,
@@ -628,7 +653,6 @@ gstreamer_video_sink_new(Emotion_Gstreamer_Video *ev,
    GstElement *sink;
    Evas_Object *obj;
    GstStateChangeReturn res;
-   double start, end;
 
    obj = _emotion_image_get(o);
    if (!obj)
@@ -637,17 +661,13 @@ gstreamer_video_sink_new(Emotion_Gstreamer_Video *ev,
         return NULL;
      }
 
-   start = ecore_time_get();
    playbin = gst_element_factory_make("playbin2", "playbin");
    if (!playbin)
      {
         ERR("Unable to create 'playbin' GstElement.");
         return NULL;
      }
-   end = ecore_time_get();
-   DBG("Playbin2: %f", end - start);
 
-   start = ecore_time_get();
    sink = gst_element_factory_make("emotion-sink", "sink");
    if (!sink)
      {
@@ -659,34 +679,11 @@ gstreamer_video_sink_new(Emotion_Gstreamer_Video *ev,
    g_object_set(G_OBJECT(playbin), "uri", uri, NULL);
    g_object_set(G_OBJECT(sink), "evas-object", obj, NULL);
 
-   end = ecore_time_get();
-
-   DBG("emotion-sink: %f", end - start);
-
-   start = ecore_time_get();
-   /* res = gst_element_set_state(playbin, GST_STATE_PLAYING); */
-   res = gst_element_set_state(playbin, GST_STATE_PAUSED);
-   if (res == GST_STATE_CHANGE_FAILURE)
-     {
-        ERR("Unable to set GST_STATE_PAUSED.");
-        goto unref_pipeline;
-     }
-   end = ecore_time_get();
-   DBG("Pause pipeline: %f", end - start);
-
-   start = ecore_time_get();
-   res = gst_element_get_state(playbin, NULL, NULL, GST_CLOCK_TIME_NONE);
-   if (res != GST_STATE_CHANGE_SUCCESS)
-     {
-        /** NOTE: you need to set: GST_DEBUG_DUMP_DOT_DIR=/tmp EMOTION_ENGINE=gstreamer to save the $EMOTION_GSTREAMER_DOT file in '/tmp' */
-        /** then call dot -Tpng -oemotion_pipeline.png /tmp/$TIMESTAMP-$EMOTION_GSTREAMER_DOT.dot */
-        if (getenv("EMOTION_GSTREAMER_DOT")) GST_DEBUG_BIN_TO_DOT_FILE_WITH_TS(GST_BIN(playbin), GST_DEBUG_GRAPH_SHOW_ALL, getenv("EMOTION_GSTREAMER_DOT"));
-
-        ERR("Unable to get GST_CLOCK_TIME_NONE.");
-        goto unref_pipeline;
-     }
-   end = ecore_time_get();
-   DBG("No time: %f", end - start);
+   ev->pipeline = playbin;
+   ev->thread = ecore_thread_run(_emotion_gstreamer_pause,
+                                 _emotion_gstreamer_end,
+                                 _emotion_gstreamer_cancel,
+                                 ev);
 
    /** NOTE: you need to set: GST_DEBUG_DUMP_DOT_DIR=/tmp EMOTION_ENGINE=gstreamer to save the $EMOTION_GSTREAMER_DOT file in '/tmp' */
    /** then call dot -Tpng -oemotion_pipeline.png /tmp/$TIMESTAMP-$EMOTION_GSTREAMER_DOT.dot */
