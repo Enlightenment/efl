@@ -176,7 +176,7 @@ fi
 AM_CONDITIONAL(HAVE_LIBEXIF, false)
 define([CHECK_MODULE_LIBEXIF],
 [
-        AC_ETH_CHECK_PKG(LIBEXIF, libexif, [], [HAVE_LIBEXIF=false])
+        AC_ETH_CHECK_PKG(LIBEXIF, libexif, [], [LIBEXIF=false])
 ])
 
 AC_ETH_OPTIONAL_MODULE([libexif], true, [CHECK_MODULE_LIBEXIF])
