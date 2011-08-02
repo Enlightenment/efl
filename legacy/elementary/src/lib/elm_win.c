@@ -1491,6 +1491,8 @@ elm_win_add(Evas_Object *parent, const char *name, Elm_Win_Type type)
    evas_object_layer_set(win->win_obj, 50);
    evas_object_pass_events_set(win->win_obj, EINA_TRUE);
 
+   if (type == ELM_WIN_INLINED_IMAGE)
+      elm_widget_parent2_set(win->win_obj, parent);
    ecore_evas_object_associate(win->ee, win->win_obj,
                                ECORE_EVAS_OBJECT_ASSOCIATE_BASE |
                                ECORE_EVAS_OBJECT_ASSOCIATE_STACK |

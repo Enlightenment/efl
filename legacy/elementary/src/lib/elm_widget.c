@@ -19,6 +19,7 @@ struct _Smart_Data
    Evas_Object *obj;
    const char  *type;
    Evas_Object *parent_obj;
+   Evas_Object *parent2;
    Evas_Coord   x, y, w, h;
    Eina_List   *subobjs;
    Evas_Object *resize_obj;
@@ -1230,6 +1231,24 @@ elm_widget_parent_widget_get(const Evas_Object *obj)
    return parent;
 }
 
+EAPI Evas_Object *
+elm_widget_parent2_get(const Evas_Object *obj)
+{
+   if (_elm_widget_is(obj))
+     {
+        Smart_Data *sd = evas_object_smart_data_get(obj);
+        if (sd) return sd->parent2;
+     }
+   return NULL;
+}
+
+EAPI void
+elm_widget_parent2_set(Evas_Object *obj, Evas_Object *parent)
+{
+   API_ENTRY return;
+   sd->parent2 = parent;
+}
+
 EAPI void
 elm_widget_event_callback_add(Evas_Object *obj,
                               Elm_Event_Cb func,
@@ -1821,7 +1840,7 @@ elm_widget_focused_object_clear(Evas_Object *obj)
 EAPI void
 elm_widget_focus_steal(Evas_Object *obj)
 {
-   Evas_Object *parent, *o;
+   Evas_Object *parent, *parent2, *o;
    API_ENTRY return;
 
    if (sd->focused) return;
@@ -1838,24 +1857,30 @@ elm_widget_focus_steal(Evas_Object *obj)
         if (sd->focused) break;
         parent = o;
      }
-   if (!elm_widget_parent_get(parent))
-     elm_widget_focused_object_clear(parent);
+   if ((!elm_widget_parent_get(parent)) &&
+       (!elm_widget_parent2_get(parent)))
+      elm_widget_focused_object_clear(parent);
    else
      {
-        parent = elm_widget_parent_get(parent);
+        parent2 = elm_widget_parent_get(parent);
+        if (!parent2) parent2 = elm_widget_parent2_get(parent);
+        parent = parent2;
         sd = evas_object_smart_data_get(parent);
-        if ((sd->resize_obj) && (elm_widget_focus_get(sd->resize_obj)))
-          elm_widget_focused_object_clear(sd->resize_obj);
-        else
+        if (sd)
           {
-             const Eina_List *l;
-             Evas_Object *child;
-             EINA_LIST_FOREACH(sd->subobjs, l, child)
+             if ((sd->resize_obj) && (elm_widget_focus_get(sd->resize_obj)))
+                elm_widget_focused_object_clear(sd->resize_obj);
+             else
                {
-                  if (elm_widget_focus_get(child))
+                  const Eina_List *l;
+                  Evas_Object *child;
+                  EINA_LIST_FOREACH(sd->subobjs, l, child)
                     {
-                       elm_widget_focused_object_clear(child);
-                       break;
+                       if (elm_widget_focus_get(child))
+                         {
+                            elm_widget_focused_object_clear(child);
+                            break;
+                         }
                     }
                }
           }

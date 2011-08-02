@@ -272,6 +272,8 @@ EAPI Eina_Bool        elm_widget_focus_list_next_get(const Evas_Object *obj, con
 EAPI void             elm_widget_focus_set(Evas_Object *obj, int first);
 EAPI void             elm_widget_focused_object_clear(Evas_Object *obj);
 EAPI Evas_Object     *elm_widget_parent_get(const Evas_Object *obj);
+EAPI Evas_Object     *elm_widget_parent2_get(const Evas_Object *obj);
+EAPI void             elm_widget_parent2_set(Evas_Object *obj, Evas_Object *parent);
 EAPI void             elm_widget_focus_steal(Evas_Object *obj);
 EAPI void             elm_widget_activate(Evas_Object *obj);
 EAPI void             elm_widget_change(Evas_Object *obj);
