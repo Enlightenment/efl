@@ -18859,6 +18859,9 @@ extern "C" {
     * flip was a book, the other content is shown as the page below that.
     * @li ELM_FLIP_PAGE_DOWN - Move the currently visible content down as if the
     * flip was a book, the other content is shown as the page below that.
+    *
+    * @image html elm_flip.png
+    * @image latex elm_flip.eps width=\textwidth
     */
    EAPI void         elm_flip_go(Evas_Object *obj, Elm_Flip_Mode mode) EINA_ARG_NONNULL(1);
    /**
