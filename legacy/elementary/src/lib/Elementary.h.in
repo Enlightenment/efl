@@ -1665,6 +1665,9 @@ extern "C" {
     * @li "focus,out": window lost focus
     * @li "moved": window that holds the canvas was moved
     *
+    * Examples:
+    * @li @ref win_example_01
+    *
     * @{
     */
    /**
