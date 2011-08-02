@@ -1,185 +1,185 @@
-   group { name: "elm/thumb/base/default";
-      images {
-         image: "frame_1.png" COMP;
-         image: "frame_2.png" COMP;
-         image: "dia_grad.png" COMP;
-         image: "busy-1.png" COMP;
-         image: "busy-2.png" COMP;
-         image: "busy-3.png" COMP;
-         image: "busy-4.png" COMP;
-         image: "busy-5.png" COMP;
-         image: "busy-6.png" COMP;
-         image: "busy-7.png" COMP;
-         image: "busy-8.png" COMP;
-         image: "busy-9.png" COMP;
+group { name: "elm/thumb/base/default";
+   images {
+      image: "frame_1.png" COMP;
+      image: "frame_2.png" COMP;
+      image: "dia_grad.png" COMP;
+      image: "busy-1.png" COMP;
+      image: "busy-2.png" COMP;
+      image: "busy-3.png" COMP;
+      image: "busy-4.png" COMP;
+      image: "busy-5.png" COMP;
+      image: "busy-6.png" COMP;
+      image: "busy-7.png" COMP;
+      image: "busy-8.png" COMP;
+      image: "busy-9.png" COMP;
+   }
+   parts {
+      part { name: "base0";
+         mouse_events:  0;
+         description { state:        "default" 0.0;
+            image.normal: "dia_grad.png";
+            rel1.to: "over";
+            rel2.to: "over";
+            fill {
+               smooth: 0;
+               size {
+                  relative: 0.0 1.0;
+                  offset: 64 0;
+               }
+            }
+         }
       }
-      parts {
-         part { name: "base0";
-            mouse_events:  0;
-            description { state:        "default" 0.0;
-               image.normal: "dia_grad.png";
-               rel1.to: "over";
-               rel2.to: "over";
-               fill {
-                  smooth: 0;
-                  size {
-                     relative: 0.0 1.0;
-                     offset: 64 0;
-                  }
-               }
+      part { name: "base";
+         mouse_events:  0;
+         description { state:        "default" 0.0;
+            image {
+               normal: "frame_2.png";
+               border: 5 5 32 26;
+               middle: 0;
             }
+            fill.smooth : 0;
          }
-         part { name: "base";
-            mouse_events:  0;
-            description { state:        "default" 0.0;
-               image {
-                  normal: "frame_2.png";
-                  border: 5 5 32 26;
-                  middle: 0;
-               }
-               fill.smooth : 0;
-            }
+      }
+      part { name: "clip";
+         mouse_events:  0;
+         type: RECT;
+         description { state:        "default" 0.0;
+            rel1.offset: 4 4;
+            rel2.offset: -5 -5;
+            color: 255 255 255 255;
          }
-         part { name: "clip";
-            mouse_events:  0;
-            type: RECT;
-            description { state:        "default" 0.0;
-               rel1.offset: 4 4;
-               rel2.offset: -5 -5;
-               color: 255 255 255 255;
-            }
+      }
+      part { name: "elm.swallow.content";
+         type: SWALLOW;
+         clip_to: "clip";
+         description { state:        "default" 0.0;
+            rel1.offset: 4 4;
+            rel2.offset: -5 -5;
          }
-         part { name: "elm.swallow.content";
-            type: SWALLOW;
-            clip_to: "clip";
-            description { state:        "default" 0.0;
-               rel1.offset: 4 4;
-               rel2.offset: -5 -5;
-            }
-         }
-         part { name: "progress";
-            mouse_events: 0;
+      }
+      part { name: "progress";
+         mouse_events: 0;
 
-            clip_to: "clip";
-            description { state:        "default" 0.0;
-               min: 32 32;
-               max: 32 32;
-               visible: 0;
-               aspect: 1.0 1.0;
-               aspect_preference: BOTH;
-            }
-            description { state:        "pulse" 0.0;
-               inherit: "default" 0.0;
-               visible: 1;
-               image {
-                  normal: "busy-9.png";
-                  tween:  "busy-1.png";
-                  tween:  "busy-2.png";
-                  tween:  "busy-3.png";
-                  tween:  "busy-4.png";
-                  tween:  "busy-5.png";
-                  tween:  "busy-6.png";
-                  tween:  "busy-7.png";
-                  tween:  "busy-8.png";
-                  border: 7 7 7 7;
-               }
+         clip_to: "clip";
+         description { state:        "default" 0.0;
+            min: 32 32;
+            max: 32 32;
+            visible: 0;
+            aspect: 1.0 1.0;
+            aspect_preference: BOTH;
+         }
+         description { state:        "pulse" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+            image {
+               normal: "busy-9.png";
+               tween:  "busy-1.png";
+               tween:  "busy-2.png";
+               tween:  "busy-3.png";
+               tween:  "busy-4.png";
+               tween:  "busy-5.png";
+               tween:  "busy-6.png";
+               tween:  "busy-7.png";
+               tween:  "busy-8.png";
+               border: 7 7 7 7;
             }
          }
-         part { name: "over";
-            mouse_events:  0;
-            description { state:        "default" 0.0;
-               rel1.offset: 4 4;
-               rel2.offset: -5 -5;
-               image {
-                  normal: "frame_1.png";
-                  border: 2 2 28 22;
-                  middle: 0;
-               }
-               fill.smooth: 0;
+      }
+      part { name: "over";
+         mouse_events:  0;
+         description { state:        "default" 0.0;
+            rel1.offset: 4 4;
+            rel2.offset: -5 -5;
+            image {
+               normal: "frame_1.png";
+               border: 2 2 28 22;
+               middle: 0;
             }
+            fill.smooth: 0;
          }
-         programs {
-            program { name: "start_pulse";
-               signal: "elm,state,pulse,start";
-               source: "elm";
-               action: STATE_SET "pulse" 0.0;
-               target: "progress";
-               transition: LINEAR 0.5;
-               after: "start_pulse";
-            }
-            program { name: "stop_pulse";
-               signal: "elm,state,pulse,stop";
-               source: "elm";
-               action: STATE_SET "default" 0.0;
-               target: "progress";
-            }
+      }
+      programs {
+         program { name: "start_pulse";
+            signal: "elm,state,pulse,start";
+            source: "elm";
+            action: STATE_SET "pulse" 0.0;
+            target: "progress";
+            transition: LINEAR 0.5;
+            after: "start_pulse";
+         }
+         program { name: "stop_pulse";
+            signal: "elm,state,pulse,stop";
+            source: "elm";
+            action: STATE_SET "default" 0.0;
+            target: "progress";
          }
       }
    }
+}
 
-   group { name: "elm/thumb/base/noframe";
-      images {
-         image: "busy-1.png" COMP;
-         image: "busy-2.png" COMP;
-         image: "busy-3.png" COMP;
-         image: "busy-4.png" COMP;
-         image: "busy-5.png" COMP;
-         image: "busy-6.png" COMP;
-         image: "busy-7.png" COMP;
-         image: "busy-8.png" COMP;
-         image: "busy-9.png" COMP;
+group { name: "elm/thumb/base/noframe";
+   images {
+      image: "busy-1.png" COMP;
+      image: "busy-2.png" COMP;
+      image: "busy-3.png" COMP;
+      image: "busy-4.png" COMP;
+      image: "busy-5.png" COMP;
+      image: "busy-6.png" COMP;
+      image: "busy-7.png" COMP;
+      image: "busy-8.png" COMP;
+      image: "busy-9.png" COMP;
+   }
+   parts {
+      part { name: "elm.swallow.content";
+         type: SWALLOW;
+         description { state: "default" 0.0;
+            rel1.offset: 4 4;
+            rel2.offset: -5 -5;
+         }
       }
-      parts {
-         part { name: "elm.swallow.content";
-            type: SWALLOW;
-            description { state: "default" 0.0;
-               rel1.offset: 4 4;
-               rel2.offset: -5 -5;
+      part { name: "progress";
+         mouse_events: 0;
+         description { state:        "default" 0.0;
+            min: 32 32;
+            max: 32 32;
+            visible: 0;
+            aspect: 1.0 1.0;
+            aspect_preference: BOTH;
+         }
+         description { state:        "pulse" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+            image {
+               normal: "busy-9.png";
+               tween:  "busy-1.png";
+               tween:  "busy-2.png";
+               tween:  "busy-3.png";
+               tween:  "busy-4.png";
+               tween:  "busy-5.png";
+               tween:  "busy-6.png";
+               tween:  "busy-7.png";
+               tween:  "busy-8.png";
+               border: 7 7 7 7;
             }
          }
-         part { name: "progress";
-            mouse_events: 0;
-            description { state:        "default" 0.0;
-               min: 32 32;
-               max: 32 32;
-               visible: 0;
-               aspect: 1.0 1.0;
-               aspect_preference: BOTH;
-            }
-            description { state:        "pulse" 0.0;
-               inherit: "default" 0.0;
-               visible: 1;
-               image {
-                  normal: "busy-9.png";
-                  tween:  "busy-1.png";
-                  tween:  "busy-2.png";
-                  tween:  "busy-3.png";
-                  tween:  "busy-4.png";
-                  tween:  "busy-5.png";
-                  tween:  "busy-6.png";
-                  tween:  "busy-7.png";
-                  tween:  "busy-8.png";
-                  border: 7 7 7 7;
-               }
-            }
+      }
+      programs {
+         program { name: "start_pulse";
+            signal: "elm,state,pulse,start";
+            source: "elm";
+            action: STATE_SET "pulse" 0.0;
+            target: "progress";
+            transition: LINEAR 0.5;
+            after: "start_pulse";
          }
-         programs {
-            program { name: "start_pulse";
-               signal: "elm,state,pulse,start";
-               source: "elm";
-               action: STATE_SET "pulse" 0.0;
-               target: "progress";
-               transition: LINEAR 0.5;
-               after: "start_pulse";
-            }
-            program { name: "stop_pulse";
-               signal: "elm,state,pulse,stop";
-               source: "elm";
-               action: STATE_SET "default" 0.0;
-               target: "progress";
-            }
+         program { name: "stop_pulse";
+            signal: "elm,state,pulse,stop";
+            source: "elm";
+            action: STATE_SET "default" 0.0;
+            target: "progress";
          }
       }
    }
+}
 
 

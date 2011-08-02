@@ -1,489 +1,486 @@
-////////////////////////////////////////////////////////////////////////////////
-// colorselector
-////////////////////////////////////////////////////////////////////////////////
-   group { name: "elm/colorselector/bg/default";
-      parts {
-         part { name: "elm.colorbar_0";
-            type: SWALLOW;
-            mouse_events: 1;
-            description { state: "default" 0.0;
-               min: 120 30;
-               rel1.relative: 0.0 0.00653594771;
-               rel2.relative: 1.0 0.254901961;
+group { name: "elm/colorselector/bg/default";
+   parts {
+      part { name: "elm.colorbar_0";
+         type: SWALLOW;
+         mouse_events: 1;
+         description { state: "default" 0.0;
+            min: 120 30;
+            rel1.relative: 0.0 0.00653594771;
+            rel2.relative: 1.0 0.254901961;
+         }
+      }
+      part { name: "elm.colorbar_1";
+         type: SWALLOW;
+         mouse_events: 1;
+         description { state: "default" 0.0;
+            min: 120 30;
+            rel1.relative: 0.0 0.254901961;
+            rel2.relative: 1.0 0.503267974;
+         }
+      }
+      part { name: "elm.colorbar_2";
+         type: SWALLOW;
+         mouse_events: 1;
+         description { state: "default" 0.0;
+            min: 120 30;
+            rel1.relative: 0.0 0.503267974;
+            rel2.relative: 1.0 0.751633987;
+         }
+      }
+      part { name: "elm.colorbar_3";
+         type: SWALLOW;
+         mouse_events: 1;
+         description { state: "default" 0.0;
+            min: 120 30;
+            rel1.relative: 0.0 0.751633987;
+            rel2.relative: 1.0 1.0;
+         }
+      }
+   }
+}
+
+group { name: "elm/colorselector/base/default";
+   parts {
+      part { name: "elm.bar_bg";
+         type: SWALLOW;
+         mouse_events: 0;
+         description { state: "default" 0.0;
+            min: 60 22;
+            rel1 {
+               relative: 0.0 0.8;
+               to_x: "elm.arrow_bg";
+               to_y: "elm.arrow_icon";
+               offset: 0 0;
+            }
+            rel2 {
+               relative: 1.0 0.83;
+               to_x: "elm.arrow_bg";
+               offset: 0 0;
             }
          }
-         part { name: "elm.colorbar_1";
-            type: SWALLOW;
-            mouse_events: 1;
-            description { state: "default" 0.0;
-               min: 120 30;
-               rel1.relative: 0.0 0.254901961;
-               rel2.relative: 1.0 0.503267974;
+      }
+      part { name: "elm.bar";
+         type: SWALLOW;
+         mouse_events: 0;
+         description { state: "default" 0.0;
+            rel1.to: "elm.bar_bg";
+            rel2.to: "elm.bar_bg";
+         }
+      }
+      part { name: "elm.arrow_bg";
+         type: SWALLOW;
+         mouse_events: 1;
+         description { state: "default" 0.0;
+            rel1 {
+               relative: 1.0 0.17;
+               offset: 3 0;
+               to_x: "elm.l_button";
+            }
+            rel2 {
+               relative: 0.0 0.83;
+               offset: -4 0;
+               to_x: "elm.r_button";
             }
          }
-         part { name: "elm.colorbar_2";
-            type: SWALLOW;
-            mouse_events: 1;
-            description { state: "default" 0.0;
-               min: 120 30;
-               rel1.relative: 0.0 0.503267974;
-               rel2.relative: 1.0 0.751633987;
+      }
+      part { name: "elm.arrow";
+         type: RECT;
+         mouse_events: 1;
+         scale: 1;
+         description { state: "default" 0.0;
+            min: 1 1;
+            fixed: 1 1;
+            align: 0 0;
+            rel1 {
+               to_x: "elm.arrow_bg";
+            }
+            rel2 {
+               relative: 0.0 0.17;
+               to_x: "elm.arrow_bg";
+            }
+            color: 0 0 0 0;
+            visible: 0;
+         }
+         dragable {
+            confine: "elm.arrow_bg";
+            x: 1 1 0;
+            y: 0 0 0;
+         }
+      }
+      part { name: "elm.arrow_icon";
+         type: SWALLOW;
+         mouse_events: 0;
+         description { state: "default" 0.0;
+            min: 25 15;
+            max: 25 15;
+            fixed: 1 1;
+            align: 0.5 0;
+            rel1 {
+               to_x: "elm.arrow";
+            }
+            rel2 {
+               relative: 1.0 0.0;
+               offset: 0 10;
+               to_x: "elm.arrow";
             }
          }
-         part { name: "elm.colorbar_3";
-            type: SWALLOW;
-            mouse_events: 1;
-            description { state: "default" 0.0;
-               min: 120 30;
-               rel1.relative: 0.0 0.751633987;
-               rel2.relative: 1.0 1.0;
+      }
+      part { name: "event";
+         type: RECT;
+         mouse_events: 1;
+         description { state: "default" 0.0;
+            rel1 {
+               to: "elm.arrow_icon";
             }
+            rel2 {
+               to_x: "elm.arrow_icon";
+               to_y: "elm.arrow_bg";
+               offset: 0 0;
+            }
+            color: 0 0 0 0;
+         }
+         dragable {
+            events: "elm.arrow";
+         }
+      }
+      part { name: "elm.l_button";
+         type: SWALLOW;
+         mouse_events: 1;
+         scale: 1;
+         description { state: "default" 0.0;
+            min: 24 24;
+            fixed: 1 1;
+            rel1 {
+               relative: 0.0 0.0;
+               to_y: "elm.bar_bg";
+            }
+            rel2 {
+               relative: 0.0 1.0;
+               to_y: "elm.bar_bg";
+            }
+            align: 0.0 0.5;
+         }
+      }
+      part { name: "elm.r_button";
+         type: SWALLOW;
+         mouse_events: 1;
+         scale: 1;
+         description {
+            state: "default" 0.0;
+            min: 24 24;
+            fixed: 1 1;
+            rel1 {
+               relative: 1.0 0.0;
+               to_y: "elm.bar_bg";
+            }
+            rel2 {
+               relative: 1.0 1.0;
+               to_y: "elm.bar_bg";
+            }
+            align: 1.0 0.5;
+         }
+      }
+   }
+}
+
+group{ name: "elm/colorselector/image/colorbar_0";
+   images {
+      image: "color_picker_color.png" COMP;
+   }
+   parts {
+      part { name: "colorbar_0_image";
+         type: IMAGE;
+         mouse_events: 1;
+         description { state: "default" 0.0;
+            rel2.offset: -1 -1;
+            image.normal: "color_picker_color.png";
+         }
+      }
+   }
+}
+
+group { name: "elm/colorselector/image/colorbar_1";
+   images {
+      image: "color_picker_opacity.png" COMP;
+   }
+   parts {
+      part { name: "colorbar_1_image";
+         type: IMAGE;
+         mouse_events: 1;
+         description { state: "default" 0.0;
+            rel2.offset: -1 -1;
+            image.normal: "color_picker_opacity.png";
+         }
+      }
+   }
+}
+
+group { name: "elm/colorselector/image/colorbar_2";
+   images {
+      image: "color_picker_brightness.png" COMP;
+   }
+   parts {
+      part { name: "colorbar_2_image";
+         type: IMAGE;
+         mouse_events: 1;
+         description { state: "default" 0.0;
+            rel2.offset: -1 -1;
+            image.normal: "color_picker_brightness.png";
+         }
+      }
+   }
+}
+
+group { name: "elm/colorselector/image/colorbar_3";
+   images {
+      image: "color_picker_alpha.png" COMP;
+   }
+   parts {
+      part { name: "colorbar_3_image";
+         type: IMAGE;
+         mouse_events: 1;
+         description { state: "default" 0.0;
+            rel2.offset: -1 -1;
+            image.normal: "color_picker_alpha.png";
+         }
+      }
+   }
+}
+
+group { name: "elm/colorselector/bg_image/colorbar_3";
+   images {
+      image: "color_picker_alpha_bg.png" COMP;
+   }
+   parts {
+      part { name: "colorbar_3_image";
+         type: IMAGE;
+         mouse_events: 1;
+         description { state: "default" 0.0;
+            rel2.offset: -1 -1;
+            image.normal: "color_picker_alpha_bg.png";
+         }
+      }
+   }
+}
+
+group { name: "elm/colorselector/image/updown";
+   images {
+      image: "icon_arrow_down.png" COMP;
+   }
+   parts {
+      part { name: "bg";
+         type: RECT;
+         mouse_events: 1;
+         description { state: "default" 0.0;
+            color: 0 0 0 0;
+         }
+      }
+      part { name: "arrow_image";
+         type: IMAGE;
+         mouse_events: 1;
+         description { state: "default" 0.0;
+            image.normal: "icon_arrow_down.png";
+         }
+      }
+   }
+}
+
+group { name: "elm/colorselector/button/left";
+   images {
+      image: "bt_base1.png" COMP;
+      image: "bt_shine.png" COMP;
+      image: "sp_bt_l.png" COMP;
+   }
+   parts {
+      part { name: "button_image";
+         mouse_events: 1;
+         description { state: "default" 0.0;
+            image.normal: "bt_base1.png";
+            image.border: 6 6 6 6;
+            image.middle: SOLID;
+         }
+
+         description { state: "clicked" 0.0;
+            inherit: "default" 0.0;
+            image.normal: "bt_shine.png";
+            image.border: 6 6 6 6;
+            image.middle: SOLID;
+         }
+      }
+      part { name: "btn_over";
+         type: IMAGE;
+         mouse_events: 0;
+         description { state: "default" 0.0;
+            rel1.to: "button_image";
+            rel2 {
+               relative: 1.0 0.5;
+               to: "button_image";
+            }
+            image {
+               normal: "bt_hilight.png";
+               border: 7 7 7 0;
+            }
+         }
+      }
+      part { name: "btn_over2";
+         type: IMAGE;
+         mouse_events: 1;
+         repeat_events: 1;
+         ignore_flags: ON_HOLD;
+         description { state: "default" 0.0;
+            rel1.to: "button_image";
+            rel2.to: "button_image";
+            image {
+               normal: "bt_shine.png";
+               border: 7 7 7 7;
+            }
+         }
+      }
+      part { name: "focus_image";
+         type: IMAGE;
+         description { state: "default" 0.0;
+            color: 255 255 255 0;
+            rel1.to: "button_image";
+            rel2.to: "button_image";
+            image {
+               normal: "bt_glow.png";
+               border: 12 12 12 12;
+            }
+            fill.smooth: 0;
+
+         }
+         description { state: "clicked" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+            color: 255 255 255 255;
+         }
+      }
+      part { name: "left_arrow";
+         mouse_events: 1;
+         description { state: "default" 0.0;
+            min: 16 16;
+            max: 16 16;
+            image.normal: "sp_bt_l.png";
          }
       }
    }
 
-   group { name: "elm/colorselector/base/default";
-      parts {
-         part { name: "elm.bar_bg";
-            type: SWALLOW;
-            mouse_events: 0;
-            description { state: "default" 0.0;
-               min: 60 22;
-               rel1 {
-                  relative: 0.0 0.8;
-                  to_x: "elm.arrow_bg";
-                  to_y: "elm.arrow_icon";
-                  offset: 0 0;
-               }
-               rel2 {
-                  relative: 1.0 0.83;
-                  to_x: "elm.arrow_bg";
-                  offset: 0 0;
-               }
+   programs {
+      program {
+         name:   "button_down";
+         signal: "elm,state,left,button,down";
+         source: "left_button";
+         action: STATE_SET "clicked" 0.0;
+         target: "button_image";
+         target: "focus_image";
+      }
+      program {
+         name:   "button_up";
+         signal: "elm,state,left,button,up";
+         source: "left_button";
+         action: STATE_SET "default" 0.0;
+         target: "button_image";
+         target: "focus_image";
+      }
+   }
+}
+
+group { name: "elm/colorselector/button/right";
+   images {
+      image: "bt_base1.png" COMP;
+      image: "bt_shine.png" COMP;
+      image: "sp_bt_r.png" COMP;
+   }
+   parts {
+      part { name: "button_image";
+         mouse_events: 1;
+         description { state: "default" 0.0;
+            image.normal: "bt_base1.png";
+            image.border: 6 6 6 6;
+            image.middle: SOLID;
+         }
+
+         description { state: "clicked" 0.0;
+            inherit: "default" 0.0;
+            image.normal: "bt_shine.png";
+            image.border: 6 6 6 6;
+            image.middle: SOLID;
+         }
+      }
+      part { name: "btn_over";
+         type: IMAGE;
+         mouse_events: 0;
+         description { state: "default" 0.0;
+            rel1.to: "button_image";
+            rel2 {
+               relative: 1.0 0.5;
+               to: "button_image";
+            }
+            image {
+               normal: "bt_hilight.png";
+               border: 7 7 7 0;
             }
          }
-         part { name: "elm.bar";
-            type: SWALLOW;
-            mouse_events: 0;
-            description { state: "default" 0.0;
-               rel1.to: "elm.bar_bg";
-               rel2.to: "elm.bar_bg";
+      }
+      part { name: "btn_over2";
+         type: IMAGE;
+         mouse_events: 1;
+         repeat_events: 1;
+         ignore_flags: ON_HOLD;
+         description { state: "default" 0.0;
+            rel1.to: "button_image";
+            rel2.to: "button_image";
+            image {
+               normal: "bt_shine.png";
+               border: 7 7 7 7;
             }
          }
-         part { name: "elm.arrow_bg";
-            type: SWALLOW;
-            mouse_events: 1;
-            description { state: "default" 0.0;
-               rel1 {
-                  relative: 1.0 0.17;
-                  offset: 3 0;
-                  to_x: "elm.l_button";
-               }
-               rel2 {
-                  relative: 0.0 0.83;
-                     offset: -4 0;
-                  to_x: "elm.r_button";
-               }
+      }
+      part { name: "focus_image";
+         type: IMAGE;
+         description { state: "default" 0.0;
+            color: 255 255 255 0;
+            rel1.to: "button_image";
+            rel2.to: "button_image";
+            image {
+               normal: "bt_glow.png";
+               border: 12 12 12 12;
             }
+            fill.smooth: 0;
+
          }
-         part { name: "elm.arrow";
-            type: RECT;
-            mouse_events: 1;
-            scale: 1;
-            description { state: "default" 0.0;
-               min: 1 1;
-               fixed: 1 1;
-               align: 0 0;
-               rel1 {
-                  to_x: "elm.arrow_bg";
-               }
-               rel2 {
-                  relative: 0.0 0.17;
-                  to_x: "elm.arrow_bg";
-               }
-               color: 0 0 0 0;
-               visible: 0;
-            }
-            dragable {
-               confine: "elm.arrow_bg";
-               x: 1 1 0;
-               y: 0 0 0;
-            }
+         description { state: "clicked" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+            color: 255 255 255 255;
          }
-         part { name: "elm.arrow_icon";
-            type: SWALLOW;
-            mouse_events: 0;
-            description { state: "default" 0.0;
-               min: 25 15;
-               max: 25 15;
-               fixed: 1 1;
-               align: 0.5 0;
-               rel1 {
-                  to_x: "elm.arrow";
-               }
-               rel2 {
-                  relative: 1.0 0.0;
-                  offset: 0 10;
-                  to_x: "elm.arrow";
-               }
-            }
-         }
-         part { name: "event";
-            type: RECT;
-            mouse_events: 1;
-            description { state: "default" 0.0;
-               rel1 {
-                  to: "elm.arrow_icon";
-               }
-               rel2 {
-                  to_x: "elm.arrow_icon";
-                  to_y: "elm.arrow_bg";
-                  offset: 0 0;
-               }
-               color: 0 0 0 0;
-            }
-            dragable {
-               events: "elm.arrow";
-            }
-         }
-         part { name: "elm.l_button";
-            type: SWALLOW;
-            mouse_events: 1;
-            scale: 1;
-            description { state: "default" 0.0;
-               min: 24 24;
-               fixed: 1 1;
-               rel1 {
-                  relative: 0.0 0.0;
-                  to_y: "elm.bar_bg";
-               }
-               rel2 {
-                  relative: 0.0 1.0;
-                  to_y: "elm.bar_bg";
-               }
-               align: 0.0 0.5;
-            }
-         }
-         part { name: "elm.r_button";
-            type: SWALLOW;
-            mouse_events: 1;
-            scale: 1;
-            description {
-               state: "default" 0.0;
-               min: 24 24;
-               fixed: 1 1;
-               rel1 {
-                  relative: 1.0 0.0;
-                  to_y: "elm.bar_bg";
-               }
-               rel2 {
-                  relative: 1.0 1.0;
-                  to_y: "elm.bar_bg";
-               }
-               align: 1.0 0.5;
-            }
+      }
+      part { name: "right_arrow";
+         mouse_events: 1;
+         description { state: "default" 0.0;
+            min: 16 16;
+            max: 16 16;
+            image.normal: "sp_bt_r.png";
          }
       }
    }
 
-   group{ name: "elm/colorselector/image/colorbar_0";
-      images {
-         image: "color_picker_color.png" COMP;
+   programs {
+      program {
+         name:   "button_down";
+         signal: "elm,state,right,button,down";
+         source: "right_button";
+         action: STATE_SET "clicked" 0.0;
+         target: "button_image";
+         target: "focus_image";
       }
-      parts {
-         part { name: "colorbar_0_image";
-            type: IMAGE;
-            mouse_events: 1;
-            description { state: "default" 0.0;
-               rel2.offset: -1 -1;
-               image.normal: "color_picker_color.png";
-            }
-         }
-      }
-   }
-
-   group { name: "elm/colorselector/image/colorbar_1";
-      images {
-         image: "color_picker_opacity.png" COMP;
-      }
-      parts {
-         part { name: "colorbar_1_image";
-            type: IMAGE;
-            mouse_events: 1;
-            description { state: "default" 0.0;
-               rel2.offset: -1 -1;
-               image.normal: "color_picker_opacity.png";
-            }
-         }
+      program {
+         name:   "button_up";
+         signal: "elm,state,right,button,up";
+         source: "right_button";
+         action: STATE_SET "default" 0.0;
+         target: "button_image";
+         target: "focus_image";
       }
    }
-
-   group { name: "elm/colorselector/image/colorbar_2";
-      images {
-         image: "color_picker_brightness.png" COMP;
-      }
-      parts {
-         part { name: "colorbar_2_image";
-            type: IMAGE;
-            mouse_events: 1;
-            description { state: "default" 0.0;
-               rel2.offset: -1 -1;
-               image.normal: "color_picker_brightness.png";
-            }
-         }
-      }
-   }
-
-   group { name: "elm/colorselector/image/colorbar_3";
-      images {
-         image: "color_picker_alpha.png" COMP;
-      }
-      parts {
-         part { name: "colorbar_3_image";
-            type: IMAGE;
-            mouse_events: 1;
-            description { state: "default" 0.0;
-               rel2.offset: -1 -1;
-               image.normal: "color_picker_alpha.png";
-            }
-         }
-      }
-   }
-
-   group { name: "elm/colorselector/bg_image/colorbar_3";
-      images {
-         image: "color_picker_alpha_bg.png" COMP;
-      }
-      parts {
-         part { name: "colorbar_3_image";
-            type: IMAGE;
-            mouse_events: 1;
-            description { state: "default" 0.0;
-               rel2.offset: -1 -1;
-               image.normal: "color_picker_alpha_bg.png";
-            }
-         }
-      }
-   }
-
-   group { name: "elm/colorselector/image/updown";
-      images {
-         image: "icon_arrow_down.png" COMP;
-      }
-      parts {
-         part { name: "bg";
-            type: RECT;
-            mouse_events: 1;
-            description { state: "default" 0.0;
-               color: 0 0 0 0;
-            }
-         }
-         part { name: "arrow_image";
-            type: IMAGE;
-            mouse_events: 1;
-            description { state: "default" 0.0;
-               image.normal: "icon_arrow_down.png";
-            }
-         }
-      }
-   }
-
-   group { name: "elm/colorselector/button/left";
-      images {
-         image: "bt_base1.png" COMP;
-         image: "bt_shine.png" COMP;
-         image: "sp_bt_l.png" COMP;
-      }
-      parts {
-         part { name: "button_image";
-            mouse_events: 1;
-            description { state: "default" 0.0;
-               image.normal: "bt_base1.png";
-               image.border: 6 6 6 6;
-               image.middle: SOLID;
-            }
-
-            description { state: "clicked" 0.0;
-               inherit: "default" 0.0;
-               image.normal: "bt_shine.png";
-               image.border: 6 6 6 6;
-               image.middle: SOLID;
-            }
-         }
-         part { name: "btn_over";
-            type: IMAGE;
-            mouse_events: 0;
-            description { state: "default" 0.0;
-               rel1.to: "button_image";
-               rel2 {
-                  relative: 1.0 0.5;
-                  to: "button_image";
-               }
-               image {
-                  normal: "bt_hilight.png";
-                  border: 7 7 7 0;
-               }
-            }
-         }
-         part { name: "btn_over2";
-            type: IMAGE;
-            mouse_events: 1;
-            repeat_events: 1;
-            ignore_flags: ON_HOLD;
-            description { state: "default" 0.0;
-               rel1.to: "button_image";
-               rel2.to: "button_image";
-               image {
-                  normal: "bt_shine.png";
-                  border: 7 7 7 7;
-               }
-            }
-         }
-         part { name: "focus_image";
-            type: IMAGE;
-            description { state: "default" 0.0;
-               color: 255 255 255 0;
-               rel1.to: "button_image";
-               rel2.to: "button_image";
-               image {
-                  normal: "bt_glow.png";
-                  border: 12 12 12 12;
-               }
-               fill.smooth: 0;
-
-            }
-            description { state: "clicked" 0.0;
-               inherit: "default" 0.0;
-               visible: 1;
-               color: 255 255 255 255;
-            }
-         }
-         part { name: "left_arrow";
-            mouse_events: 1;
-            description { state: "default" 0.0;
-               min: 16 16;
-               max: 16 16;
-               image.normal: "sp_bt_l.png";
-            }
-         }
-      }
-
-      programs {
-         program {
-            name:   "button_down";
-            signal: "elm,state,left,button,down";
-            source: "left_button";
-            action: STATE_SET "clicked" 0.0;
-            target: "button_image";
-            target: "focus_image";
-         }
-         program {
-            name:   "button_up";
-            signal: "elm,state,left,button,up";
-            source: "left_button";
-            action: STATE_SET "default" 0.0;
-            target: "button_image";
-            target: "focus_image";
-         }
-      }
-   }
-
-   group { name: "elm/colorselector/button/right";
-      images {
-         image: "bt_base1.png" COMP;
-         image: "bt_shine.png" COMP;
-         image: "sp_bt_r.png" COMP;
-      }
-      parts {
-         part { name: "button_image";
-            mouse_events: 1;
-            description { state: "default" 0.0;
-               image.normal: "bt_base1.png";
-               image.border: 6 6 6 6;
-               image.middle: SOLID;
-            }
-
-            description { state: "clicked" 0.0;
-               inherit: "default" 0.0;
-               image.normal: "bt_shine.png";
-               image.border: 6 6 6 6;
-               image.middle: SOLID;
-            }
-         }
-         part { name: "btn_over";
-            type: IMAGE;
-            mouse_events: 0;
-            description { state: "default" 0.0;
-               rel1.to: "button_image";
-               rel2 {
-                  relative: 1.0 0.5;
-                  to: "button_image";
-               }
-               image {
-                  normal: "bt_hilight.png";
-                  border: 7 7 7 0;
-               }
-            }
-         }
-         part { name: "btn_over2";
-            type: IMAGE;
-            mouse_events: 1;
-            repeat_events: 1;
-            ignore_flags: ON_HOLD;
-            description { state: "default" 0.0;
-               rel1.to: "button_image";
-               rel2.to: "button_image";
-               image {
-                  normal: "bt_shine.png";
-                  border: 7 7 7 7;
-               }
-            }
-         }
-         part { name: "focus_image";
-            type: IMAGE;
-            description { state: "default" 0.0;
-               color: 255 255 255 0;
-               rel1.to: "button_image";
-               rel2.to: "button_image";
-               image {
-                  normal: "bt_glow.png";
-                  border: 12 12 12 12;
-               }
-               fill.smooth: 0;
-
-            }
-            description { state: "clicked" 0.0;
-               inherit: "default" 0.0;
-               visible: 1;
-               color: 255 255 255 255;
-            }
-         }
-         part { name: "right_arrow";
-            mouse_events: 1;
-            description { state: "default" 0.0;
-               min: 16 16;
-               max: 16 16;
-               image.normal: "sp_bt_r.png";
-            }
-         }
-      }
-
-      programs {
-         program {
-            name:   "button_down";
-            signal: "elm,state,right,button,down";
-            source: "right_button";
-            action: STATE_SET "clicked" 0.0;
-            target: "button_image";
-            target: "focus_image";
-         }
-         program {
-            name:   "button_up";
-            signal: "elm,state,right,button,up";
-            source: "right_button";
-            action: STATE_SET "default" 0.0;
-            target: "button_image";
-            target: "focus_image";
-         }
-      }
-   }
+}

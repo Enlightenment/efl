@@ -1,806 +1,803 @@
-/////////////////////////////////////////////////////////////////////////////
-// PANES
-/////////////////////////////////////////////////////////////////////////////
-  group {
-     name: "elm/panes/vertical/default";
-      images {
-         image: "bt_base1.png" COMP;
-         image: "bt_base2.png" COMP;
-         image: "bt_hilight.png" COMP;
-         image: "bt_shine.png" COMP;
-         image: "bt_glow.png" COMP;
-         image: "bt_dis_base.png" COMP;
-         image: "bt_dis_hilight.png" COMP;
-         image: "arrow_right.png" COMP;
-         image: "arrow_left.png" COMP;
+group {
+   name: "elm/panes/vertical/default";
+   images {
+      image: "bt_base1.png" COMP;
+      image: "bt_base2.png" COMP;
+      image: "bt_hilight.png" COMP;
+      image: "bt_shine.png" COMP;
+      image: "bt_glow.png" COMP;
+      image: "bt_dis_base.png" COMP;
+      image: "bt_dis_hilight.png" COMP;
+      image: "arrow_right.png" COMP;
+      image: "arrow_left.png" COMP;
+   }
+   parts
+   {
+      part
+      {
+         name: "whole";
+         type: RECT;
+         mouse_events: 0;
+         description
+         {
+            state: "default" 0.0;
+            visible: 0;
+         }
       }
-     parts
-       {
-          part
-            {
-               name: "whole";
-               type: RECT;
-               mouse_events: 0;
-               description
-                 {
-                    state: "default" 0.0;
-                    visible: 0;
-                 }
-            }
 
-         //2 contents
-          part
-            {
-               name: "whole_left";
-               type: RECT;
-               mouse_events: 0;
-               description
-                 {
-                    state: "default" 0.0;
-                    rel2.to_x: "elm.bar";
-                    rel2.relative: 0.0 1.0;
-                    visible: 1;
-                 }
-            }
-          part
-            {
-               name: "elm.swallow.left";
-               type: SWALLOW;
-               clip_to: "whole_left";
-               description
-                 {
-                    state: "default" 0.0;
-                    rel1.to: "whole_left";
-                    rel2.to: "whole_left";
-                 }
-            }
+      //2 contents
+      part
+      {
+         name: "whole_left";
+         type: RECT;
+         mouse_events: 0;
+         description
+         {
+            state: "default" 0.0;
+            rel2.to_x: "elm.bar";
+            rel2.relative: 0.0 1.0;
+            visible: 1;
+         }
+      }
+      part
+      {
+         name: "elm.swallow.left";
+         type: SWALLOW;
+         clip_to: "whole_left";
+         description
+         {
+            state: "default" 0.0;
+            rel1.to: "whole_left";
+            rel2.to: "whole_left";
+         }
+      }
 
-            part
-            {
-               name: "whole_right";
-               type: RECT;
-               mouse_events: 0;
-               description
-                 {
-                    state: "default" 0.0;
-                    rel1.to_x: "elm.bar";
-                    rel1.relative: 1.0 0.0;
-                    visible: 1;
-                 }
-            }
-          part
-            {
-               name: "elm.swallow.right";
-               type: SWALLOW;
-               clip_to: "whole_right";
-               description
-                 {
-                    state: "default" 0.0;
-                    rel1.to: "whole_right";
-                    rel2.to: "whole_right";
-                 }
-            }
-         //BAR
-         part { name: "elm.bar";
-            mouse_events: 1;
-            dragable {
-               confine: "whole";
-               x: 1 1 1;
-               y: 0 0 0;
-            }
-            description { state: "default" 0.0;
-               max: 15 9999;
-               min: 15 100;
-               rel1.relative: 0.0 0.5;
-               rel2.relative: 1.0 0.5;
-               image {
-                  normal: "bt_base2.png";
-                  border: 7 7 7 7;
-               }
-               image.middle: SOLID;
-            }
-            description { state: "clicked" 0.0;
-               inherit: "default" 0.0;
-               image.normal: "bt_base1.png";
-               image.middle: SOLID;
-            }
-            description { state: "disabled" 0.0;
-               inherit:  "default" 0.0;
-               image {
-                  normal: "bt_dis_base.png";
-                  border: 4 4 4 4;
-               }
-            }
+      part
+      {
+         name: "whole_right";
+         type: RECT;
+         mouse_events: 0;
+         description
+         {
+            state: "default" 0.0;
+            rel1.to_x: "elm.bar";
+            rel1.relative: 1.0 0.0;
+            visible: 1;
          }
-         part {          name: "over1";
-            mouse_events: 0;
-            description { state: "default" 0.0;
-            rel1.to: "elm.bar";
-            rel2.to: "elm.bar";
-               rel2.relative: 1.0 0.5;
-               image {
-                  normal: "bt_hilight.png";
-                  border: 7 7 7 0;
-               }
+      }
+      part
+      {
+         name: "elm.swallow.right";
+         type: SWALLOW;
+         clip_to: "whole_right";
+         description
+         {
+            state: "default" 0.0;
+            rel1.to: "whole_right";
+            rel2.to: "whole_right";
+         }
+      }
+      //BAR
+      part { name: "elm.bar";
+         mouse_events: 1;
+         dragable {
+            confine: "whole";
+            x: 1 1 1;
+            y: 0 0 0;
+         }
+         description { state: "default" 0.0;
+            max: 15 9999;
+            min: 15 100;
+            rel1.relative: 0.0 0.5;
+            rel2.relative: 1.0 0.5;
+            image {
+               normal: "bt_base2.png";
+               border: 7 7 7 7;
             }
-            description { state: "disabled" 0.0;
-               inherit:  "default" 0.0;
-               image {
-                  normal: "bt_dis_hilight.png";
-                  border: 4 4 4 0;
-               }
-            }
+            image.middle: SOLID;
          }
-         part { name: "over2";
-            mouse_events: 1;
-            repeat_events: 1;
-            ignore_flags: ON_HOLD;
-            description { state: "default" 0.0;
-            rel1.to: "elm.bar";
-            rel2.to: "elm.bar";
-               image {
-                  normal: "bt_shine.png";
-                  border: 7 7 7 7;
-               }
-            }
-            description { state: "disabled" 0.0;
-               inherit:  "default" 0.0;
-               visible: 0;
-            }
+         description { state: "clicked" 0.0;
+            inherit: "default" 0.0;
+            image.normal: "bt_base1.png";
+            image.middle: SOLID;
          }
-         part { name: "over3";
-            mouse_events: 1;
-            repeat_events: 1;
-            description { state: "default" 0.0;
-               color: 255 255 255 0;
-            rel1.to: "elm.bar";
-            rel2.to: "elm.bar";
-               image {
-                  normal: "bt_glow.png";
-                  border: 12 12 12 12;
-               }
-               fill.smooth : 0;
-            }
-            description { state: "clicked" 0.0;
-               inherit:  "default" 0.0;
-               visible: 1;
-               color: 255 255 255 255;
-            }
-         }
-
-         //Arrow
-         part {
-            name: "arrow_right";
-            repeat_events: 1;
-            description { state: "default" 0.0;
-                min: 45 45;
-                max: 45 45;
-                color: 255 255 255 0;
-
-                rel1.relative: 1.0 0.5;
-                rel1.to_x: "elm.bar";
-                rel1.offset: 45/2 -45/2;
-
-                rel2.relative: 1.0 0.5;
-                rel2.to_x: "elm.bar";
-                rel2.offset: 45/2 45/2;
-
-                image.normal: "arrow_right.png";
-
-                fixed: 1 1;
-            }
-            description { state: "default" 0.1;
-                inherit: "default" 0.0;
-                image.normal: "arrow_left.png";
-            }
-            description { state: "anim_1" 0.0;
-                inherit: "default" 0.0;
-                color: 255 255 255 200;
-                rel1.offset: (45/2 + 10) -45/2;
-                rel2.offset: (45/2 +10) 45/2;
-            }
-            description { state: "anim_1" 0.1;
-                inherit: "default" 0.0;
-                image.normal: "arrow_left.png";
-                color: 255 255 255 200;
-                rel1.offset: (45/2 + 10) -45/2;
-                rel2.offset: (45/2 +10) 45/2;
-            }
-            description { state: "anim_2" 0.0;
-                inherit: "default" 0.0;
-                color: 255 255 255 0;
-                rel1.offset: (45/2 + 20) -45/2;
-                rel2.offset: (45/2 + 20) 45/2;
-            }
-            description { state: "anim_2" 0.1;
-                inherit: "default" 0.0;
-                image.normal: "arrow_left.png";
-                color: 255 255 255 0;
-                rel1.offset: (45/2 + 20) -45/2;
-                rel2.offset: (45/2 + 20) 45/2;
-            }
-         }
-        part {
-            name: "arrow_left";
-            repeat_events: 1;
-            description { state: "default" 0.0;
-                min: 45 45;
-                max: 45 45;
-                color: 255 255 255 0;
-
-                rel1.relative: 0.0 0.5;
-                rel1.to_x: "elm.bar";
-                rel1.offset: -45/2 -45/2;
-
-                rel2.relative: 0.0 0.5;
-                rel2.to_x: "elm.bar";
-                rel2.offset: -45/2 45/2;
-
-                image.normal: "arrow_left.png";
-
-                fixed: 1 1;
-            }
-            description { state: "default" 0.1;
-                inherit: "default" 0.0;
-                image.normal: "arrow_right.png";
-            }
-            description { state: "anim_1" 0.0;
-                inherit: "default" 0.0;
-                color: 255 255 255 200;
-                rel1.offset: (-45/2 - 10) -45/2;
-                rel2.offset: (-45/2 - 10) 45/2;
-            }
-            description { state: "anim_1" 0.1;
-                inherit: "default" 0.0;
-                image.normal: "arrow_right.png";
-                color: 255 255 255 200;
-                rel1.offset: (-45/2 - 10) -45/2;
-                rel2.offset: (-45/2 - 10) 45/2;
-            }
-            description { state: "anim_2" 0.0;
-                inherit: "default" 0.0;
-                color: 255 255 255 0;
-                rel1.offset: (-45/2 - 20) -45/2;
-                rel2.offset: (-45/2 - 20) 45/2;
-            }
-            description { state: "anim_2" 0.1;
-                inherit: "default" 0.0;
-                image.normal: "arrow_right.png";
-                color: 255 255 255 0;
-                rel1.offset: (-45/2 - 20) -45/2;
-                rel2.offset: (-45/2 - 20) 45/2;
-            }
-         }
-
-       }
-        programs {
-         program {
-            name:   "button_click";
-            signal: "mouse,down,1";
-            source: "over2";
-            action: SIGNAL_EMIT "elm,action,press" "";
-            after: "button_click_anim";
-            after: "arrow_anim_start";
-         }
-         program {
-            name:   "button_click_anim";
-            action: STATE_SET "clicked" 0.0;
-            target: "elm.bar";
-         }
-         program {
-            name:   "button_unclick";
-            signal: "mouse,up,1";
-            source: "over2";
-            action: SIGNAL_EMIT "elm,action,unpress" "";
-            after: "button_unclick_anim";
-            after: "arrow_anim_stop";
-         }
-         program {
-            name:   "button_unclick_anim";
-            action: STATE_SET "default" 0.0;
-            target: "elm.bar";
-         }
-         program {
-            name:   "button_click2";
-            signal: "mouse,down,1";
-            source: "over3";
-            action: STATE_SET "clicked" 0.0;
-            target: "over3";
-         }
-         program {
-            name:   "button_unclick2";
-            signal: "mouse,up,1";
-            source: "over3";
-            action: STATE_SET "default" 0.0;
-            transition: DECELERATE 0.5;
-            target: "over3";
-         }
-         program {
-            name:   "button_unclick3";
-            signal: "mouse,up,1";
-            source: "over2";
-            action: SIGNAL_EMIT "elm,action,click" "";
-         }
-         program {
-            name:   "button_down_double";
-            signal: "mouse,down,1,double";
-            source: "over3";
-            action: SIGNAL_EMIT "elm,action,click,double" "";
-         }
-
-         //arrows animation
-         program {
-            name: "arrow_anim_start";
-            script {
-               new st[31];
-               new Float:vl;
-               get_state(PART:"arrow_left", st, 30, vl);
-               if (vl == 0.0) {
-                  run_program(PROGRAM:"arrow_anim_start_ltr");
-               }
-               else {
-                  run_program(PROGRAM:"arrow_anim_start_rtl");
-               }
-            }
-         }
-         program {
-            name: "arrow_anim_stop";
-            script {
-               new st[31];
-               new Float:vl;
-               get_state(PART:"arrow_left", st, 30, vl);
-               if (vl == 0.0) {
-                  run_program(PROGRAM:"arrow_anim_stop_ltr");
-               }
-               else {
-                  run_program(PROGRAM:"arrow_anim_stop_rtl");
-               }
-            }
-         }
-
-         program {
-            name: "arrow_anim_start_ltr";
-            action: STATE_SET "anim_1" 0.0;
-            target: "arrow_right";
-            target: "arrow_left";
-            transition: LINEAR 0.6;
-            after: "arrow_anim_1_ltr";
-         }
-         program {
-            name: "arrow_anim_1_ltr";
-            action: STATE_SET "anim_2" 0.0;
-            target: "arrow_right";
-            target: "arrow_left";
-            transition: LINEAR 0.6;
-            after: "arrow_anim_2_ltr";
-         }
-         program {
-            name: "arrow_anim_2_ltr";
-            action: STATE_SET "default" 0.0;
-            target: "arrow_right";
-            target: "arrow_left";
-            after: "arrow_anim_start_ltr";
-         }
-         program {
-            name: "arrow_anim_stop_ltr";
-            action: ACTION_STOP;
-            target: "arrow_anim_start_ltr";
-            target: "arrow_anim_1_ltr";
-            target: "arrow_anim_2_ltr";
-            after: "arrow_anim_stop_1_ltr";
-         }
-         program {
-            name: "arrow_anim_stop_1_ltr";
-            action: STATE_SET "default" 0.0;
-            target: "arrow_right";
-            target: "arrow_left";
-            transition: DECELERATE 0.4;
-        }
-         program {
-            name: "arrow_anim_start_rtl";
-            action: STATE_SET "anim_1" 0.1;
-            target: "arrow_right";
-            target: "arrow_left";
-            transition: LINEAR 0.6;
-            after: "arrow_anim_1_rtl";
-         }
-         program {
-            name: "arrow_anim_1_rtl";
-            action: STATE_SET "anim_2" 0.1;
-            target: "arrow_right";
-            target: "arrow_left";
-            transition: LINEAR 0.6;
-            after: "arrow_anim_2_rtl";
-         }
-         program {
-            name: "arrow_anim_2_rtl";
-            action: STATE_SET "default" 0.1;
-            target: "arrow_right";
-            target: "arrow_left";
-            after: "arrow_anim_start_rtl";
-         }
-         program {
-            name: "arrow_anim_stop_rtl";
-            action: ACTION_STOP;
-            target: "arrow_anim_start_rtl";
-            target: "arrow_anim_1_rtl";
-            target: "arrow_anim_2_rtl";
-            after: "arrow_anim_stop_1_rtl";
-         }
-         program {
-            name: "arrow_anim_stop_1_rtl";
-            action: STATE_SET "default" 0.1;
-            target: "arrow_right";
-            target: "arrow_left";
-            transition: DECELERATE 0.4;
-        }
-         program { name: "to_rtl";
-            signal: "edje,state,rtl";
-            source: "edje";
-            script {
-               new st[31];
-               new Float:vl;
-               get_state(PART:"arrow_left", st, 30, vl);
-               if (vl == 0.0) {
-                  set_state(PART:"arrow_left", st, 0.1);
-               }
-               get_state(PART:"arrow_right", st, 30, vl);
-               if (vl == 0.0) {
-                  set_state(PART:"arrow_right", st, 0.1);
-               }
-            }
-         }
-         program { name: "to_ltr";
-            signal: "edje,state,ltr";
-            source: "edje";
-            script {
-               new st[31];
-               new Float:vl;
-               get_state(PART:"arrow_left", st, 30, vl);
-               if (vl == 0.1) {
-                  set_state(PART:"arrow_left", st, 0.0);
-               }
-               get_state(PART:"arrow_right", st, 30, vl);
-               if (vl == 0.1) {
-                  set_state(PART:"arrow_right", st, 0.0);
-               }
+         description { state: "disabled" 0.0;
+            inherit:  "default" 0.0;
+            image {
+               normal: "bt_dis_base.png";
+               border: 4 4 4 4;
             }
          }
       }
-  }
-
-  group {
-     name: "elm/panes/horizontal/default";
-      images {
-         image: "bt_base1.png" COMP;
-         image: "bt_base2.png" COMP;
-         image: "bt_hilight.png" COMP;
-         image: "bt_shine.png" COMP;
-         image: "bt_glow.png" COMP;
-         image: "bt_dis_base.png" COMP;
-         image: "bt_dis_hilight.png" COMP;
-         image: "arrow_up.png" COMP;
-         image: "arrow_down.png" COMP;
+      part {          name: "over1";
+         mouse_events: 0;
+         description { state: "default" 0.0;
+            rel1.to: "elm.bar";
+            rel2.to: "elm.bar";
+            rel2.relative: 1.0 0.5;
+            image {
+               normal: "bt_hilight.png";
+               border: 7 7 7 0;
+            }
+         }
+         description { state: "disabled" 0.0;
+            inherit:  "default" 0.0;
+            image {
+               normal: "bt_dis_hilight.png";
+               border: 4 4 4 0;
+            }
+         }
       }
-     parts
-       {
-          part
-            {
-               name: "whole";
-               type: RECT;
-               mouse_events: 0;
-               description
-                 {
-                    state: "default" 0.0;
-                    visible: 0;
-                 }
-            }
-
-         //2 contents
-          part
-            {
-               name: "whole_left";
-               type: RECT;
-               mouse_events: 0;
-               description
-                 {
-                    state: "default" 0.0;
-                    rel2.to_y: "elm.bar";
-                    rel2.relative: 1.0 0.0;
-                    visible: 1;
-                 }
-            }
-          part
-            {
-               name: "elm.swallow.left";
-               type: SWALLOW;
-               clip_to: "whole_left";
-               description
-                 {
-                    state: "default" 0.0;
-                    rel1.to: "whole_left";
-                    rel2.to: "whole_left";
-                 }
-            }
-
-            part
-            {
-               name: "whole_right";
-               type: RECT;
-               mouse_events: 0;
-               description
-                 {
-                    state: "default" 0.0;
-                    rel1.to_y: "elm.bar";
-                    rel1.relative: 0.0 1.0;
-                    visible: 1;
-                 }
-            }
-          part
-            {
-               name: "elm.swallow.right";
-               type: SWALLOW;
-               clip_to: "whole_right";
-               description
-                 {
-                    state: "default" 0.0;
-                    rel1.to: "whole_right";
-                    rel2.to: "whole_right";
-                 }
-            }
-         //BAR
-         part { name: "elm.bar";
-            mouse_events: 1;
-            dragable {
-               confine: "whole";
-               x: 0 0 0;
-               y: 1 1 1;
-            }
-            description { state: "default" 0.0;
-               max: 999 15;
-               min: 100 15;
-               rel1.relative: 0.5 0.0;
-               rel2.relative: 0.5 1.0;
-               image {
-                  normal: "bt_base2.png";
-                  border: 7 7 7 7;
-               }
-               image.middle: SOLID;
-            }
-            description { state: "clicked" 0.0;
-               inherit: "default" 0.0;
-               image.normal: "bt_base1.png";
-               image.middle: SOLID;
-            }
-            description { state: "disabled" 0.0;
-               inherit:  "default" 0.0;
-               image {
-                  normal: "bt_dis_base.png";
-                  border: 4 4 4 4;
-               }
-            }
-         }
-         part {          name: "over1";
-            mouse_events: 0;
-            description { state: "default" 0.0;
+      part { name: "over2";
+         mouse_events: 1;
+         repeat_events: 1;
+         ignore_flags: ON_HOLD;
+         description { state: "default" 0.0;
             rel1.to: "elm.bar";
             rel2.to: "elm.bar";
-               rel2.relative: 1.0 0.5;
-               image {
-                  normal: "bt_hilight.png";
-                  border: 7 7 7 0;
-               }
-            }
-            description { state: "disabled" 0.0;
-               inherit:  "default" 0.0;
-               image {
-                  normal: "bt_dis_hilight.png";
-                  border: 4 4 4 0;
-               }
+            image {
+               normal: "bt_shine.png";
+               border: 7 7 7 7;
             }
          }
-         part { name: "over2";
-            mouse_events: 1;
-            repeat_events: 1;
-            ignore_flags: ON_HOLD;
-            description { state: "default" 0.0;
-            rel1.to: "elm.bar";
-            rel2.to: "elm.bar";
-               image {
-                  normal: "bt_shine.png";
-                  border: 7 7 7 7;
-               }
-            }
-            description { state: "disabled" 0.0;
-               inherit:  "default" 0.0;
-               visible: 0;
-            }
+         description { state: "disabled" 0.0;
+            inherit:  "default" 0.0;
+            visible: 0;
          }
-         part { name: "over3";
-            mouse_events: 1;
-            repeat_events: 1;
-            description { state: "default" 0.0;
-               color: 255 255 255 0;
-            rel1.to: "elm.bar";
-            rel2.to: "elm.bar";
-               image {
-                  normal: "bt_glow.png";
-                  border: 12 12 12 12;
-               }
-               fill.smooth : 0;
-            }
-            description { state: "clicked" 0.0;
-               inherit:  "default" 0.0;
-               visible: 1;
-               color: 255 255 255 255;
-            }
-         }
-
-         //Arrow
-         part {
-            name: "arrow_right";
-            repeat_events: 1;
-            description { state: "default" 0.0;
-                min: 45 45;
-                max: 45 45;
-                color: 255 255 255 0;
-
-                rel1.relative: 0.5 1.0;
-                rel1.to_y: "elm.bar";
-                rel1.offset: -45/2 45/2;
-
-                rel2.relative: 0.5 1.0;
-                rel2.to_y: "elm.bar";
-                rel2.offset: 45/2 45/2;
-
-                image.normal: "arrow_down.png";
-
-                fixed: 1 1;
-            }
-            description { state: "anim_1" 0.0;
-                inherit: "default" 0.0;
-                color: 255 255 255 200;
-                rel1.offset: -45/2 (45/2 +10);
-                rel2.offset: 45/2 (45/2 +10);
-            }
-            description { state: "anim_2" 0.0;
-                inherit: "default" 0.0;
-                color: 255 255 255 0;
-                rel1.offset: -45/2 (45/2 + 20);
-                rel2.offset: 45/2 (45/2 + 20);
-            }
-         }
-        part {
-            name: "arrow_left";
-            repeat_events: 1;
-            description { state: "default" 0.0;
-                min: 45 45;
-                max: 45 45;
-                color: 255 255 255 0;
-
-                rel1.relative: 0.5 0.0;
-                rel1.to_y: "elm.bar";
-                rel1.offset: -45/2 -45/2;
-
-                rel2.relative: 0.5 0.0;
-                rel2.to_y: "elm.bar";
-                rel2.offset: 45/2 -45/2;
-
-                image.normal: "arrow_up.png";
-
-                fixed: 1 1;
-            }
-            description { state: "anim_1" 0.0;
-                inherit: "default" 0.0;
-                color: 255 255 255 200;
-                rel1.offset: -45/2 (-45/2 - 10);
-                rel2.offset: 45/2 (-45/2 - 10);
-            }
-            description { state: "anim_2" 0.0;
-                inherit: "default" 0.0;
-                color: 255 255 255 0;
-                rel1.offset: -45/2 (-45/2 - 20);
-                rel2.offset: 45/2 (-45/2 - 20);
-            }
-         }
-
-       }
-        programs {
-         program {
-            name:   "button_click";
-            signal: "mouse,down,1";
-            source: "over2";
-            action: SIGNAL_EMIT "elm,action,press" "";
-            after: "button_click_anim";
-            after: "arrow_anim_start";
-         }
-         program {
-            name:   "button_click_anim";
-            action: STATE_SET "clicked" 0.0;
-            target: "elm.bar";
-         }
-         program {
-            name:   "button_unclick";
-            signal: "mouse,up,1";
-            source: "over2";
-            action: SIGNAL_EMIT "elm,action,unpress" "";
-            after: "button_unclick_anim";
-            after: "arrow_anim_stop";
-         }
-         program {
-            name:   "button_unclick_anim";
-            action: STATE_SET "default" 0.0;
-            target: "elm.bar";
-         }
-         program {
-            name:   "button_click2";
-            signal: "mouse,down,1";
-            source: "over3";
-            action: STATE_SET "clicked" 0.0;
-            target: "over3";
-         }
-         program {
-            name:   "button_unclick2";
-            signal: "mouse,up,1";
-            source: "over3";
-            action: STATE_SET "default" 0.0;
-            transition: DECELERATE 0.5;
-            target: "over3";
-         }
-         program {
-            name:   "button_unclick3";
-            signal: "mouse,up,1";
-            source: "over2";
-            action: SIGNAL_EMIT "elm,action,click" "";
-         }
-         program {
-            name:   "button_down_double";
-            signal: "mouse,down,1,double";
-            source: "over3";
-            action: SIGNAL_EMIT "elm,action,click,double" "";
-         }
-
-         //arrows animation
-         program {
-            name: "arrow_anim_start";
-            action: STATE_SET "anim_1" 0.0;
-            target: "arrow_right";
-            target: "arrow_left";
-            transition: LINEAR 0.6;
-            after: "arrow_anim_1";
-         }
-         program {
-            name: "arrow_anim_1";
-            action: STATE_SET "anim_2" 0.0;
-            target: "arrow_right";
-            target: "arrow_left";
-            transition: LINEAR 0.6;
-            after: "arrow_anim_2";
-         }
-         program {
-            name: "arrow_anim_2";
-            action: STATE_SET "default" 0.0;
-            target: "arrow_right";
-            target: "arrow_left";
-            after: "arrow_anim_start";
-         }
-         program {
-            name: "arrow_anim_stop";
-            action: ACTION_STOP;
-            target: "arrow_anim_start";
-            target: "arrow_anim_1";
-            target: "arrow_anim_2";
-            after: "arrow_anim_stop_1";
-         }
-         program {
-            name: "arrow_anim_stop_1";
-            action: STATE_SET "default" 0.0;
-            target: "arrow_right";
-            target: "arrow_left";
-            transition: DECELERATE 0.4;
-        }
       }
-  }
+      part { name: "over3";
+         mouse_events: 1;
+         repeat_events: 1;
+         description { state: "default" 0.0;
+            color: 255 255 255 0;
+            rel1.to: "elm.bar";
+            rel2.to: "elm.bar";
+            image {
+               normal: "bt_glow.png";
+               border: 12 12 12 12;
+            }
+            fill.smooth : 0;
+         }
+         description { state: "clicked" 0.0;
+            inherit:  "default" 0.0;
+            visible: 1;
+            color: 255 255 255 255;
+         }
+      }
+
+      //Arrow
+      part {
+         name: "arrow_right";
+         repeat_events: 1;
+         description { state: "default" 0.0;
+            min: 45 45;
+            max: 45 45;
+            color: 255 255 255 0;
+
+            rel1.relative: 1.0 0.5;
+            rel1.to_x: "elm.bar";
+            rel1.offset: 45/2 -45/2;
+
+            rel2.relative: 1.0 0.5;
+            rel2.to_x: "elm.bar";
+            rel2.offset: 45/2 45/2;
+
+            image.normal: "arrow_right.png";
+
+            fixed: 1 1;
+         }
+         description { state: "default" 0.1;
+            inherit: "default" 0.0;
+            image.normal: "arrow_left.png";
+         }
+         description { state: "anim_1" 0.0;
+            inherit: "default" 0.0;
+            color: 255 255 255 200;
+            rel1.offset: (45/2 + 10) -45/2;
+            rel2.offset: (45/2 +10) 45/2;
+         }
+         description { state: "anim_1" 0.1;
+            inherit: "default" 0.0;
+            image.normal: "arrow_left.png";
+            color: 255 255 255 200;
+            rel1.offset: (45/2 + 10) -45/2;
+            rel2.offset: (45/2 +10) 45/2;
+         }
+         description { state: "anim_2" 0.0;
+            inherit: "default" 0.0;
+            color: 255 255 255 0;
+            rel1.offset: (45/2 + 20) -45/2;
+            rel2.offset: (45/2 + 20) 45/2;
+         }
+         description { state: "anim_2" 0.1;
+            inherit: "default" 0.0;
+            image.normal: "arrow_left.png";
+            color: 255 255 255 0;
+            rel1.offset: (45/2 + 20) -45/2;
+            rel2.offset: (45/2 + 20) 45/2;
+         }
+      }
+      part {
+         name: "arrow_left";
+         repeat_events: 1;
+         description { state: "default" 0.0;
+            min: 45 45;
+            max: 45 45;
+            color: 255 255 255 0;
+
+            rel1.relative: 0.0 0.5;
+            rel1.to_x: "elm.bar";
+            rel1.offset: -45/2 -45/2;
+
+            rel2.relative: 0.0 0.5;
+            rel2.to_x: "elm.bar";
+            rel2.offset: -45/2 45/2;
+
+            image.normal: "arrow_left.png";
+
+            fixed: 1 1;
+         }
+         description { state: "default" 0.1;
+            inherit: "default" 0.0;
+            image.normal: "arrow_right.png";
+         }
+         description { state: "anim_1" 0.0;
+            inherit: "default" 0.0;
+            color: 255 255 255 200;
+            rel1.offset: (-45/2 - 10) -45/2;
+            rel2.offset: (-45/2 - 10) 45/2;
+         }
+         description { state: "anim_1" 0.1;
+            inherit: "default" 0.0;
+            image.normal: "arrow_right.png";
+            color: 255 255 255 200;
+            rel1.offset: (-45/2 - 10) -45/2;
+            rel2.offset: (-45/2 - 10) 45/2;
+         }
+         description { state: "anim_2" 0.0;
+            inherit: "default" 0.0;
+            color: 255 255 255 0;
+            rel1.offset: (-45/2 - 20) -45/2;
+            rel2.offset: (-45/2 - 20) 45/2;
+         }
+         description { state: "anim_2" 0.1;
+            inherit: "default" 0.0;
+            image.normal: "arrow_right.png";
+            color: 255 255 255 0;
+            rel1.offset: (-45/2 - 20) -45/2;
+            rel2.offset: (-45/2 - 20) 45/2;
+         }
+      }
+
+   }
+   programs {
+      program {
+         name:   "button_click";
+         signal: "mouse,down,1";
+         source: "over2";
+         action: SIGNAL_EMIT "elm,action,press" "";
+         after: "button_click_anim";
+         after: "arrow_anim_start";
+      }
+      program {
+         name:   "button_click_anim";
+         action: STATE_SET "clicked" 0.0;
+         target: "elm.bar";
+      }
+      program {
+         name:   "button_unclick";
+         signal: "mouse,up,1";
+         source: "over2";
+         action: SIGNAL_EMIT "elm,action,unpress" "";
+         after: "button_unclick_anim";
+         after: "arrow_anim_stop";
+      }
+      program {
+         name:   "button_unclick_anim";
+         action: STATE_SET "default" 0.0;
+         target: "elm.bar";
+      }
+      program {
+         name:   "button_click2";
+         signal: "mouse,down,1";
+         source: "over3";
+         action: STATE_SET "clicked" 0.0;
+         target: "over3";
+      }
+      program {
+         name:   "button_unclick2";
+         signal: "mouse,up,1";
+         source: "over3";
+         action: STATE_SET "default" 0.0;
+         transition: DECELERATE 0.5;
+         target: "over3";
+      }
+      program {
+         name:   "button_unclick3";
+         signal: "mouse,up,1";
+         source: "over2";
+         action: SIGNAL_EMIT "elm,action,click" "";
+      }
+      program {
+         name:   "button_down_double";
+         signal: "mouse,down,1,double";
+         source: "over3";
+         action: SIGNAL_EMIT "elm,action,click,double" "";
+      }
+
+      //arrows animation
+      program {
+         name: "arrow_anim_start";
+         script {
+            new st[31];
+            new Float:vl;
+            get_state(PART:"arrow_left", st, 30, vl);
+            if (vl == 0.0) {
+               run_program(PROGRAM:"arrow_anim_start_ltr");
+            }
+            else {
+               run_program(PROGRAM:"arrow_anim_start_rtl");
+            }
+         }
+      }
+      program {
+         name: "arrow_anim_stop";
+         script {
+            new st[31];
+            new Float:vl;
+            get_state(PART:"arrow_left", st, 30, vl);
+            if (vl == 0.0) {
+               run_program(PROGRAM:"arrow_anim_stop_ltr");
+            }
+            else {
+               run_program(PROGRAM:"arrow_anim_stop_rtl");
+            }
+         }
+      }
+
+      program {
+         name: "arrow_anim_start_ltr";
+         action: STATE_SET "anim_1" 0.0;
+         target: "arrow_right";
+         target: "arrow_left";
+         transition: LINEAR 0.6;
+         after: "arrow_anim_1_ltr";
+      }
+      program {
+         name: "arrow_anim_1_ltr";
+         action: STATE_SET "anim_2" 0.0;
+         target: "arrow_right";
+         target: "arrow_left";
+         transition: LINEAR 0.6;
+         after: "arrow_anim_2_ltr";
+      }
+      program {
+         name: "arrow_anim_2_ltr";
+         action: STATE_SET "default" 0.0;
+         target: "arrow_right";
+         target: "arrow_left";
+         after: "arrow_anim_start_ltr";
+      }
+      program {
+         name: "arrow_anim_stop_ltr";
+         action: ACTION_STOP;
+         target: "arrow_anim_start_ltr";
+         target: "arrow_anim_1_ltr";
+         target: "arrow_anim_2_ltr";
+         after: "arrow_anim_stop_1_ltr";
+      }
+      program {
+         name: "arrow_anim_stop_1_ltr";
+         action: STATE_SET "default" 0.0;
+         target: "arrow_right";
+         target: "arrow_left";
+         transition: DECELERATE 0.4;
+      }
+      program {
+         name: "arrow_anim_start_rtl";
+         action: STATE_SET "anim_1" 0.1;
+         target: "arrow_right";
+         target: "arrow_left";
+         transition: LINEAR 0.6;
+         after: "arrow_anim_1_rtl";
+      }
+      program {
+         name: "arrow_anim_1_rtl";
+         action: STATE_SET "anim_2" 0.1;
+         target: "arrow_right";
+         target: "arrow_left";
+         transition: LINEAR 0.6;
+         after: "arrow_anim_2_rtl";
+      }
+      program {
+         name: "arrow_anim_2_rtl";
+         action: STATE_SET "default" 0.1;
+         target: "arrow_right";
+         target: "arrow_left";
+         after: "arrow_anim_start_rtl";
+      }
+      program {
+         name: "arrow_anim_stop_rtl";
+         action: ACTION_STOP;
+         target: "arrow_anim_start_rtl";
+         target: "arrow_anim_1_rtl";
+         target: "arrow_anim_2_rtl";
+         after: "arrow_anim_stop_1_rtl";
+      }
+      program {
+         name: "arrow_anim_stop_1_rtl";
+         action: STATE_SET "default" 0.1;
+         target: "arrow_right";
+         target: "arrow_left";
+         transition: DECELERATE 0.4;
+      }
+      program { name: "to_rtl";
+         signal: "edje,state,rtl";
+         source: "edje";
+         script {
+            new st[31];
+            new Float:vl;
+            get_state(PART:"arrow_left", st, 30, vl);
+            if (vl == 0.0) {
+               set_state(PART:"arrow_left", st, 0.1);
+            }
+            get_state(PART:"arrow_right", st, 30, vl);
+            if (vl == 0.0) {
+               set_state(PART:"arrow_right", st, 0.1);
+            }
+         }
+      }
+      program { name: "to_ltr";
+         signal: "edje,state,ltr";
+         source: "edje";
+         script {
+            new st[31];
+            new Float:vl;
+            get_state(PART:"arrow_left", st, 30, vl);
+            if (vl == 0.1) {
+               set_state(PART:"arrow_left", st, 0.0);
+            }
+            get_state(PART:"arrow_right", st, 30, vl);
+            if (vl == 0.1) {
+               set_state(PART:"arrow_right", st, 0.0);
+            }
+         }
+      }
+   }
+}
+
+group {
+   name: "elm/panes/horizontal/default";
+   images {
+      image: "bt_base1.png" COMP;
+      image: "bt_base2.png" COMP;
+      image: "bt_hilight.png" COMP;
+      image: "bt_shine.png" COMP;
+      image: "bt_glow.png" COMP;
+      image: "bt_dis_base.png" COMP;
+      image: "bt_dis_hilight.png" COMP;
+      image: "arrow_up.png" COMP;
+      image: "arrow_down.png" COMP;
+   }
+   parts
+   {
+      part
+      {
+         name: "whole";
+         type: RECT;
+         mouse_events: 0;
+         description
+         {
+            state: "default" 0.0;
+            visible: 0;
+         }
+      }
+
+      //2 contents
+      part
+      {
+         name: "whole_left";
+         type: RECT;
+         mouse_events: 0;
+         description
+         {
+            state: "default" 0.0;
+            rel2.to_y: "elm.bar";
+            rel2.relative: 1.0 0.0;
+            visible: 1;
+         }
+      }
+      part
+      {
+         name: "elm.swallow.left";
+         type: SWALLOW;
+         clip_to: "whole_left";
+         description
+         {
+            state: "default" 0.0;
+            rel1.to: "whole_left";
+            rel2.to: "whole_left";
+         }
+      }
+
+      part
+      {
+         name: "whole_right";
+         type: RECT;
+         mouse_events: 0;
+         description
+         {
+            state: "default" 0.0;
+            rel1.to_y: "elm.bar";
+            rel1.relative: 0.0 1.0;
+            visible: 1;
+         }
+      }
+      part
+      {
+         name: "elm.swallow.right";
+         type: SWALLOW;
+         clip_to: "whole_right";
+         description
+         {
+            state: "default" 0.0;
+            rel1.to: "whole_right";
+            rel2.to: "whole_right";
+         }
+      }
+      //BAR
+      part { name: "elm.bar";
+         mouse_events: 1;
+         dragable {
+            confine: "whole";
+            x: 0 0 0;
+            y: 1 1 1;
+         }
+         description { state: "default" 0.0;
+            max: 999 15;
+            min: 100 15;
+            rel1.relative: 0.5 0.0;
+            rel2.relative: 0.5 1.0;
+            image {
+               normal: "bt_base2.png";
+               border: 7 7 7 7;
+            }
+            image.middle: SOLID;
+         }
+         description { state: "clicked" 0.0;
+            inherit: "default" 0.0;
+            image.normal: "bt_base1.png";
+            image.middle: SOLID;
+         }
+         description { state: "disabled" 0.0;
+            inherit:  "default" 0.0;
+            image {
+               normal: "bt_dis_base.png";
+               border: 4 4 4 4;
+            }
+         }
+      }
+      part {          name: "over1";
+         mouse_events: 0;
+         description { state: "default" 0.0;
+            rel1.to: "elm.bar";
+            rel2.to: "elm.bar";
+            rel2.relative: 1.0 0.5;
+            image {
+               normal: "bt_hilight.png";
+               border: 7 7 7 0;
+            }
+         }
+         description { state: "disabled" 0.0;
+            inherit:  "default" 0.0;
+            image {
+               normal: "bt_dis_hilight.png";
+               border: 4 4 4 0;
+            }
+         }
+      }
+      part { name: "over2";
+         mouse_events: 1;
+         repeat_events: 1;
+         ignore_flags: ON_HOLD;
+         description { state: "default" 0.0;
+            rel1.to: "elm.bar";
+            rel2.to: "elm.bar";
+            image {
+               normal: "bt_shine.png";
+               border: 7 7 7 7;
+            }
+         }
+         description { state: "disabled" 0.0;
+            inherit:  "default" 0.0;
+            visible: 0;
+         }
+      }
+      part { name: "over3";
+         mouse_events: 1;
+         repeat_events: 1;
+         description { state: "default" 0.0;
+            color: 255 255 255 0;
+            rel1.to: "elm.bar";
+            rel2.to: "elm.bar";
+            image {
+               normal: "bt_glow.png";
+               border: 12 12 12 12;
+            }
+            fill.smooth : 0;
+         }
+         description { state: "clicked" 0.0;
+            inherit:  "default" 0.0;
+            visible: 1;
+            color: 255 255 255 255;
+         }
+      }
+
+      //Arrow
+      part {
+         name: "arrow_right";
+         repeat_events: 1;
+         description { state: "default" 0.0;
+            min: 45 45;
+            max: 45 45;
+            color: 255 255 255 0;
+
+            rel1.relative: 0.5 1.0;
+            rel1.to_y: "elm.bar";
+            rel1.offset: -45/2 45/2;
+
+            rel2.relative: 0.5 1.0;
+            rel2.to_y: "elm.bar";
+            rel2.offset: 45/2 45/2;
+
+            image.normal: "arrow_down.png";
+
+            fixed: 1 1;
+         }
+         description { state: "anim_1" 0.0;
+            inherit: "default" 0.0;
+            color: 255 255 255 200;
+            rel1.offset: -45/2 (45/2 +10);
+            rel2.offset: 45/2 (45/2 +10);
+         }
+         description { state: "anim_2" 0.0;
+            inherit: "default" 0.0;
+            color: 255 255 255 0;
+            rel1.offset: -45/2 (45/2 + 20);
+            rel2.offset: 45/2 (45/2 + 20);
+         }
+      }
+      part {
+         name: "arrow_left";
+         repeat_events: 1;
+         description { state: "default" 0.0;
+            min: 45 45;
+            max: 45 45;
+            color: 255 255 255 0;
+
+            rel1.relative: 0.5 0.0;
+            rel1.to_y: "elm.bar";
+            rel1.offset: -45/2 -45/2;
+
+            rel2.relative: 0.5 0.0;
+            rel2.to_y: "elm.bar";
+            rel2.offset: 45/2 -45/2;
+
+            image.normal: "arrow_up.png";
+
+            fixed: 1 1;
+         }
+         description { state: "anim_1" 0.0;
+            inherit: "default" 0.0;
+            color: 255 255 255 200;
+            rel1.offset: -45/2 (-45/2 - 10);
+            rel2.offset: 45/2 (-45/2 - 10);
+         }
+         description { state: "anim_2" 0.0;
+            inherit: "default" 0.0;
+            color: 255 255 255 0;
+            rel1.offset: -45/2 (-45/2 - 20);
+            rel2.offset: 45/2 (-45/2 - 20);
+         }
+      }
+
+   }
+   programs {
+      program {
+         name:   "button_click";
+         signal: "mouse,down,1";
+         source: "over2";
+         action: SIGNAL_EMIT "elm,action,press" "";
+         after: "button_click_anim";
+         after: "arrow_anim_start";
+      }
+      program {
+         name:   "button_click_anim";
+         action: STATE_SET "clicked" 0.0;
+         target: "elm.bar";
+      }
+      program {
+         name:   "button_unclick";
+         signal: "mouse,up,1";
+         source: "over2";
+         action: SIGNAL_EMIT "elm,action,unpress" "";
+         after: "button_unclick_anim";
+         after: "arrow_anim_stop";
+      }
+      program {
+         name:   "button_unclick_anim";
+         action: STATE_SET "default" 0.0;
+         target: "elm.bar";
+      }
+      program {
+         name:   "button_click2";
+         signal: "mouse,down,1";
+         source: "over3";
+         action: STATE_SET "clicked" 0.0;
+         target: "over3";
+      }
+      program {
+         name:   "button_unclick2";
+         signal: "mouse,up,1";
+         source: "over3";
+         action: STATE_SET "default" 0.0;
+         transition: DECELERATE 0.5;
+         target: "over3";
+      }
+      program {
+         name:   "button_unclick3";
+         signal: "mouse,up,1";
+         source: "over2";
+         action: SIGNAL_EMIT "elm,action,click" "";
+      }
+      program {
+         name:   "button_down_double";
+         signal: "mouse,down,1,double";
+         source: "over3";
+         action: SIGNAL_EMIT "elm,action,click,double" "";
+      }
+
+      //arrows animation
+      program {
+         name: "arrow_anim_start";
+         action: STATE_SET "anim_1" 0.0;
+         target: "arrow_right";
+         target: "arrow_left";
+         transition: LINEAR 0.6;
+         after: "arrow_anim_1";
+      }
+      program {
+         name: "arrow_anim_1";
+         action: STATE_SET "anim_2" 0.0;
+         target: "arrow_right";
+         target: "arrow_left";
+         transition: LINEAR 0.6;
+         after: "arrow_anim_2";
+      }
+      program {
+         name: "arrow_anim_2";
+         action: STATE_SET "default" 0.0;
+         target: "arrow_right";
+         target: "arrow_left";
+         after: "arrow_anim_start";
+      }
+      program {
+         name: "arrow_anim_stop";
+         action: ACTION_STOP;
+         target: "arrow_anim_start";
+         target: "arrow_anim_1";
+         target: "arrow_anim_2";
+         after: "arrow_anim_stop_1";
+      }
+      program {
+         name: "arrow_anim_stop_1";
+         action: STATE_SET "default" 0.0;
+         target: "arrow_right";
+         target: "arrow_left";
+         transition: DECELERATE 0.4;
+      }
+   }
+}
 
 
 

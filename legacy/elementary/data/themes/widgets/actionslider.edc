@@ -1,432 +1,431 @@
-   group { name: "elm/actionslider/base/default";
+group { name: "elm/actionslider/base/default";
 
-      images {
-         image: "shelf_inset.png" COMP;
-         image: "ilist_1.png" COMP;
-         image: "bt_bases.png" COMP;
-         image: "bt_basew.png" COMP;
-         image: "bt_hilightw.png" COMP;
+   images {
+      image: "shelf_inset.png" COMP;
+      image: "ilist_1.png" COMP;
+      image: "bt_bases.png" COMP;
+      image: "bt_basew.png" COMP;
+      image: "bt_hilightw.png" COMP;
+   }
+
+   parts {
+      part {
+         name: "base";
+         mouse_events: 0;
+         description {
+            state: "default" 0.0;
+            min: 75 25;
+            rel1.offset: 1 1;
+            rel2.offset: -2 -2;
+            image {
+               normal: "ilist_1.png";
+               border: 2 2 2 2;
+            }
+            fill.smooth: 0;
+         }
       }
-
-      parts {
-         part {
-            name: "base";
-            mouse_events: 0;
-            description {
-               state: "default" 0.0;
-               min: 75 25;
-               rel1.offset: 1 1;
-               rel2.offset: -2 -2;
-               image {
-                  normal: "ilist_1.png";
-                  border: 2 2 2 2;
-               }
-               fill.smooth: 0;
+      part { name: "conf_over";
+         mouse_events:  0;
+         description { state: "default" 0.0;
+            rel1.to: "base";
+            rel2.to: "base";
+            image {
+               normal: "shelf_inset.png";
+               border: 7 7 7 7;
+               middle: 0;
+            }
+            fill.smooth : 0;
+         }
+      }
+      part { name: "icon.dragable.area";
+         type: RECT;
+         mouse_events: 0;
+         description { state: "default" 0.0;
+            visible: 0;
+            rel1.to: "base";
+            rel2.to: "base";
+         }
+      }
+      part { name: "elm.text.left";
+         type: TEXT;
+         mouse_events: 0;
+         scale: 1;
+         description { state: "default" 0.0;
+            color: 0 0 0 255;
+            text {
+               font: "Sans,Edje-Vera";
+               size: 10;
+               align: 0.05 0.5;
+               min: 1 1;
             }
          }
-         part { name: "conf_over";
-            mouse_events:  0;
-            description { state: "default" 0.0;
-               rel1.to: "base";
-               rel2.to: "base";
-               image {
-                  normal: "shelf_inset.png";
-                  border: 7 7 7 7;
-                  middle: 0;
-               }
-               fill.smooth : 0;
-            }
-         }
-         part { name: "icon.dragable.area";
-           type: RECT;
-            mouse_events: 0;
-            description { state: "default" 0.0;
-               visible: 0;
-               rel1.to: "base";
-               rel2.to: "base";
-            }
-         }
-         part { name: "elm.text.left";
-            type: TEXT;
-            mouse_events: 0;
-            scale: 1;
-            description { state: "default" 0.0;
-               color: 0 0 0 255;
-               text {
-                  font: "Sans,Edje-Vera";
-                  size: 10;
-                  align: 0.05 0.5;
-                  min: 1 1;
-               }
-            }
-         }
-         part { name: "elm.text.center";
-            type: TEXT;
-            mouse_events: 0;
-            scale: 1;
-            description { state: "default" 0.0;
-               color: 0 0 0 255;
-               text {
-                  font: "Sans,Edje-Vera";
-                  size: 10;
-                  align: 0.5 0.5;
-                  min: 1 1;
-               }
-            }
-         }
-         part { name: "elm.text.right";
-            type: TEXT;
-            mouse_events: 0;
-            scale: 1;
-            description { state: "default" 0.0;
-               color: 0 0 0 255;
-               text {
-                  font: "Sans,Edje-Vera";
-                  size: 10;
-                  align: 0.95 0.5;
-                  min: 1 1;
-               }
-            }
-         }
-         part { name: "elm.drag_button_base";
-            type: SWALLOW;
-            mouse_events: 0;
-            scale: 1;
-            description { state: "default" 0.0;
-               fixed: 1 1;
-               min: 50 25;
+      }
+      part { name: "elm.text.center";
+         type: TEXT;
+         mouse_events: 0;
+         scale: 1;
+         description { state: "default" 0.0;
+            color: 0 0 0 255;
+            text {
+               font: "Sans,Edje-Vera";
+               size: 10;
                align: 0.5 0.5;
-               rel1.to: "icon.dragable.area";
-               rel2 {
-                  relative: 0.0 1.0;
-                  to: "icon.dragable.area";
-               }
-            }
-            dragable {
-               confine: "icon.dragable.area";
-               x: 1 1 0;
-               y: 0 0 0;
-            }
-         }
-         part { name: "elm.drag_button";
-            type: RECT;
-            mouse_events: 1;
-            description { state: "default" 0.0;
-               min: 50 25;
-               color: 255 255 255 0;
-               rel1.to_x: "elm.drag_button_base";
-               rel1.to_y: "icon.dragable.area";
-               rel2.to_x: "elm.drag_button_base";
-               rel2.to_y: "icon.dragable.area";
-            }
-            dragable {
-               events: "elm.drag_button_base";
-            }
-         }
-         part { name: "button0";
-            mouse_events: 0;
-            description { state: "default" 0.0;
-               rel1.to: "button2";
-               rel1.offset: -4 -4;
-               rel2.to: "button2";
-               rel2.offset: 3 3;
-               image {
-                  normal: "bt_bases.png";
-                  border: 11 11 11 11;
-                  middle: SOLID;
-               }
-               color: 255 255 255 128;
-            }
-         }
-         part { name: "button2";
-            mouse_events: 0;
-            description { state: "default" 0.0;
-               rel1.to: "elm.drag_button";
-               rel2.to: "elm.drag_button";
-               image {
-                  normal: "bt_basew.png";
-                  border: 7 7 7 7;
-                  middle: SOLID;
-               }
-               color: 255 255 255 210;
-            }
-         }
-         part { name: "button3";
-            mouse_events: 0;
-            description { state: "default" 0.0;
-               rel1.to: "button2";
-               rel2.to: "button2";
-               rel2.relative: 1.0 0.5;
-               image {
-                  normal: "bt_hilightw.png";
-                  border: 4 4 4 0;
-               }
-               color: 255 255 255 190;
-            }
-         }
-         part { name: "elm.text.indicator";
-            type: TEXT;
-            scale: 1;
-            mouse_events: 0;
-            description { state: "default" 0.0;
-               rel1 {
-                  to: "elm.drag_button";
-                  offset: 5 0;
-               }
-               rel2 {
-                  to: "elm.drag_button";
-                  offset: -5 0;
-               }
-               color: 0 0 0 255;
-               text {
-                  font: "Sans,Edje-Vera";
-                  size: 10;
-                  align: 0.5 0.5;
-                  min: 0 1;
-               }
+               min: 1 1;
             }
          }
       }
-      programs {
-         program { name: "elm.drag_button,mouse,up";
-            signal: "mouse,up,1";
-            source: "elm.drag_button";
-            action: SIGNAL_EMIT "elm.drag_button,mouse,up" "";
+      part { name: "elm.text.right";
+         type: TEXT;
+         mouse_events: 0;
+         scale: 1;
+         description { state: "default" 0.0;
+            color: 0 0 0 255;
+            text {
+               font: "Sans,Edje-Vera";
+               size: 10;
+               align: 0.95 0.5;
+               min: 1 1;
+            }
          }
-         program { name: "elm.drag_button,mouse,down";
-            signal: "mouse,down,1";
-            source: "elm.drag_button";
-            action: SIGNAL_EMIT "elm.drag_button,mouse,down" "";
+      }
+      part { name: "elm.drag_button_base";
+         type: SWALLOW;
+         mouse_events: 0;
+         scale: 1;
+         description { state: "default" 0.0;
+            fixed: 1 1;
+            min: 50 25;
+            align: 0.5 0.5;
+            rel1.to: "icon.dragable.area";
+            rel2 {
+               relative: 0.0 1.0;
+               to: "icon.dragable.area";
+            }
          }
-         program { name: "elm.drag_button,mouse,move";
-            signal: "mouse,move";
-            source: "elm.drag_button_base";
-            action: SIGNAL_EMIT "elm.drag_button,mouse,move" "";
+         dragable {
+            confine: "icon.dragable.area";
+            x: 1 1 0;
+            y: 0 0 0;
+         }
+      }
+      part { name: "elm.drag_button";
+         type: RECT;
+         mouse_events: 1;
+         description { state: "default" 0.0;
+            min: 50 25;
+            color: 255 255 255 0;
+            rel1.to_x: "elm.drag_button_base";
+            rel1.to_y: "icon.dragable.area";
+            rel2.to_x: "elm.drag_button_base";
+            rel2.to_y: "icon.dragable.area";
+         }
+         dragable {
+            events: "elm.drag_button_base";
+         }
+      }
+      part { name: "button0";
+         mouse_events: 0;
+         description { state: "default" 0.0;
+            rel1.to: "button2";
+            rel1.offset: -4 -4;
+            rel2.to: "button2";
+            rel2.offset: 3 3;
+            image {
+               normal: "bt_bases.png";
+               border: 11 11 11 11;
+               middle: SOLID;
+            }
+            color: 255 255 255 128;
+         }
+      }
+      part { name: "button2";
+         mouse_events: 0;
+         description { state: "default" 0.0;
+            rel1.to: "elm.drag_button";
+            rel2.to: "elm.drag_button";
+            image {
+               normal: "bt_basew.png";
+               border: 7 7 7 7;
+               middle: SOLID;
+            }
+            color: 255 255 255 210;
+         }
+      }
+      part { name: "button3";
+         mouse_events: 0;
+         description { state: "default" 0.0;
+            rel1.to: "button2";
+            rel2.to: "button2";
+            rel2.relative: 1.0 0.5;
+            image {
+               normal: "bt_hilightw.png";
+               border: 4 4 4 0;
+            }
+            color: 255 255 255 190;
+         }
+      }
+      part { name: "elm.text.indicator";
+         type: TEXT;
+         scale: 1;
+         mouse_events: 0;
+         description { state: "default" 0.0;
+            rel1 {
+               to: "elm.drag_button";
+               offset: 5 0;
+            }
+            rel2 {
+               to: "elm.drag_button";
+               offset: -5 0;
+            }
+            color: 0 0 0 255;
+            text {
+               font: "Sans,Edje-Vera";
+               size: 10;
+               align: 0.5 0.5;
+               min: 0 1;
+            }
          }
       }
    }
-
-   group { name: "elm/actionslider/base/bar";
-
-      images {
-         image: "shelf_inset.png" COMP;
-         image: "ilist_1.png" COMP;
-         image: "bt_bases.png" COMP;
-         image: "bt_basew.png" COMP;
-         image: "bt_hilightw.png" COMP;
+   programs {
+      program { name: "elm.drag_button,mouse,up";
+         signal: "mouse,up,1";
+         source: "elm.drag_button";
+         action: SIGNAL_EMIT "elm.drag_button,mouse,up" "";
       }
+      program { name: "elm.drag_button,mouse,down";
+         signal: "mouse,down,1";
+         source: "elm.drag_button";
+         action: SIGNAL_EMIT "elm.drag_button,mouse,down" "";
+      }
+      program { name: "elm.drag_button,mouse,move";
+         signal: "mouse,move";
+         source: "elm.drag_button_base";
+         action: SIGNAL_EMIT "elm.drag_button,mouse,move" "";
+      }
+   }
+}
 
-      parts {
-         part {
-            name: "base";
-            mouse_events: 0;
-            description {
-               state: "default" 0.0;
-               min: 150 30;
-               rel1.offset: 1 1;
-               rel2.offset: -2 -2;
-               image {
-                  normal: "ilist_1.png";
-                  border: 2 2 2 2;
-               }
-               fill.smooth: 0;
+group { name: "elm/actionslider/base/bar";
+
+   images {
+      image: "shelf_inset.png" COMP;
+      image: "ilist_1.png" COMP;
+      image: "bt_bases.png" COMP;
+      image: "bt_basew.png" COMP;
+      image: "bt_hilightw.png" COMP;
+   }
+
+   parts {
+      part {
+         name: "base";
+         mouse_events: 0;
+         description {
+            state: "default" 0.0;
+            min: 150 30;
+            rel1.offset: 1 1;
+            rel2.offset: -2 -2;
+            image {
+               normal: "ilist_1.png";
+               border: 2 2 2 2;
+            }
+            fill.smooth: 0;
+         }
+      }
+      part { name: "conf_over";
+         mouse_events:  0;
+         description { state: "default" 0.0;
+            rel1.to: "base";
+            rel2.to: "base";
+            image {
+               normal: "shelf_inset.png";
+               border: 7 7 7 7;
+               middle: 0;
+            }
+            fill.smooth : 0;
+         }
+      }
+      part { name: "icon.dragable.area";
+         type: RECT;
+         mouse_events: 0;
+         description { state: "default" 0.0;
+            visible: 0;
+            rel1.to: "base";
+            rel2.to: "base";
+         }
+      }
+      part { name: "elm.text.left";
+         type: TEXT;
+         mouse_events: 0;
+         scale: 1;
+         description { state: "default" 0.0;
+            color: 0 0 0 255;
+            text {
+               font: "Sans,Edje-Vera";
+               size: 10;
+               align: 0.05 0.5;
+               min: 1 1;
             }
          }
-         part { name: "conf_over";
-            mouse_events:  0;
-            description { state: "default" 0.0;
-               rel1.to: "base";
-               rel2.to: "base";
-               image {
-                  normal: "shelf_inset.png";
-                  border: 7 7 7 7;
-                  middle: 0;
-               }
-               fill.smooth : 0;
-            }
-         }
-         part { name: "icon.dragable.area";
-           type: RECT;
-            mouse_events: 0;
-            description { state: "default" 0.0;
-               visible: 0;
-               rel1.to: "base";
-               rel2.to: "base";
-            }
-         }
-         part { name: "elm.text.left";
-            type: TEXT;
-            mouse_events: 0;
-            scale: 1;
-            description { state: "default" 0.0;
-               color: 0 0 0 255;
-               text {
-                  font: "Sans,Edje-Vera";
-                  size: 10;
-                  align: 0.05 0.5;
-                  min: 1 1;
-               }
-            }
-         }
-         part { name: "elm.text.center";
-            type: TEXT;
-            mouse_events: 0;
-            scale: 1;
-            description { state: "default" 0.0;
-               color: 0 0 0 255;
-               text {
-                  font: "Sans,Edje-Vera";
-                  size: 10;
-                  align: 0.5 0.5;
-                  min: 1 1;
-               }
-            }
-         }
-         part { name: "elm.text.right";
-            type: TEXT;
-            mouse_events: 0;
-            scale: 1;
-            description { state: "default" 0.0;
-               color: 0 0 0 255;
-               text {
-                  font: "Sans,Edje-Vera";
-                  size: 10;
-                  align: 0.95 0.5;
-                  min: 1 1;
-               }
-            }
-         }
-         part { name: "bar";
-            type: RECT;
-            mouse_events: 0;
-            description { state: "default" 0.0;
-               rel1.to: "base";
-               rel1.offset: 0 2;
-               rel2 {
-                  relative: 0 1;
-                  offset: 3 -3;
-                  to_x: "elm.drag_button_base";
-                  to_y: "base";
-               }
-               color: 0 0 0 180;
-            }
-         }
-         part { name: "elm.drag_button_base";
-            type: SWALLOW;
-            mouse_events: 1;
-            scale: 1;
-            description { state: "default" 0.0;
-               fixed: 1 1;
-               min: 50 25;
+      }
+      part { name: "elm.text.center";
+         type: TEXT;
+         mouse_events: 0;
+         scale: 1;
+         description { state: "default" 0.0;
+            color: 0 0 0 255;
+            text {
+               font: "Sans,Edje-Vera";
+               size: 10;
                align: 0.5 0.5;
-               rel1.to: "icon.dragable.area";
-               rel2 {
-                  relative: 0.0 1.0;
-                  to: "icon.dragable.area";
-               }
-            }
-            dragable {
-               confine: "icon.dragable.area";
-               x: 1 1 0;
-               y: 0 0 0;
-            }
-         }
-         part { name: "elm.drag_button";
-            type: RECT;
-            mouse_events: 1;
-            description { state: "default" 0.0;
-               min: 50 25;
-               color: 255 255 255 0;
-               rel1.to_x: "elm.drag_button_base";
-               rel1.to_y: "icon.dragable.area";
-               rel2.to_x: "elm.drag_button_base";
-               rel2.to_y: "icon.dragable.area";
-            }
-            dragable {
-               events: "elm.drag_button_base";
-            }
-         }
-         part { name: "button0";
-            mouse_events: 0;
-            description { state: "default" 0.0;
-               rel1.to: "button2";
-               rel1.offset: -4 -4;
-               rel2.to: "button2";
-               rel2.offset: 3 3;
-               image {
-                  normal: "bt_bases.png";
-                  border: 11 11 11 11;
-                  middle: SOLID;
-               }
-               color: 255 255 255 128;
-            }
-         }
-         part { name: "button2";
-            mouse_events: 0;
-            description { state: "default" 0.0;
-               rel1.to: "elm.drag_button";
-               rel2.to: "elm.drag_button";
-               image {
-                  normal: "bt_basew.png";
-                  border: 7 7 7 7;
-                  middle: SOLID;
-               }
-               color: 255 255 255 210;
-            }
-         }
-         part { name: "button3";
-            mouse_events: 0;
-            description { state: "default" 0.0;
-               rel1.to: "button2";
-               rel2.to: "button2";
-               rel2.relative: 1.0 0.5;
-               image {
-                  normal: "bt_hilightw.png";
-                  border: 4 4 4 0;
-               }
-               color: 255 255 255 190;
-            }
-         }
-         part { name: "elm.text.indicator";
-            type: TEXT;
-            scale: 1;
-            mouse_events: 0;
-            description { state: "default" 0.0;
-               rel1 {
-                  to: "elm.drag_button";
-                  offset: 5 0;
-               }
-               rel2 {
-                  to: "elm.drag_button";
-                  offset: -5 0;
-               }
-               color: 0 0 0 255;
-               text {
-                  font: "Sans,Edje-Vera";
-                  size: 10;
-                  align: 0.5 0.5;
-                  min: 0 1;
-               }
+               min: 1 1;
             }
          }
       }
-      programs {
-         program { name: "elm.drag_button,mouse,up";
-            signal: "mouse,up,1";
-            source: "elm.drag_button";
-            action: SIGNAL_EMIT "elm.drag_button,mouse,up" "";
+      part { name: "elm.text.right";
+         type: TEXT;
+         mouse_events: 0;
+         scale: 1;
+         description { state: "default" 0.0;
+            color: 0 0 0 255;
+            text {
+               font: "Sans,Edje-Vera";
+               size: 10;
+               align: 0.95 0.5;
+               min: 1 1;
+            }
          }
-         program { name: "elm.drag_button,mouse,down";
-            signal: "mouse,down,1";
-            source: "elm.drag_button";
-            action: SIGNAL_EMIT "elm.drag_button,mouse,down" "";
+      }
+      part { name: "bar";
+         type: RECT;
+         mouse_events: 0;
+         description { state: "default" 0.0;
+            rel1.to: "base";
+            rel1.offset: 0 2;
+            rel2 {
+               relative: 0 1;
+               offset: 3 -3;
+               to_x: "elm.drag_button_base";
+               to_y: "base";
+            }
+            color: 0 0 0 180;
          }
-         program { name: "elm.drag_button,mouse,move";
-            signal: "mouse,move";
-            source: "elm.drag_button_base";
-            action: SIGNAL_EMIT "elm.drag_button,mouse,move" "";
+      }
+      part { name: "elm.drag_button_base";
+         type: SWALLOW;
+         mouse_events: 1;
+         scale: 1;
+         description { state: "default" 0.0;
+            fixed: 1 1;
+            min: 50 25;
+            align: 0.5 0.5;
+            rel1.to: "icon.dragable.area";
+            rel2 {
+               relative: 0.0 1.0;
+               to: "icon.dragable.area";
+            }
+         }
+         dragable {
+            confine: "icon.dragable.area";
+            x: 1 1 0;
+            y: 0 0 0;
+         }
+      }
+      part { name: "elm.drag_button";
+         type: RECT;
+         mouse_events: 1;
+         description { state: "default" 0.0;
+            min: 50 25;
+            color: 255 255 255 0;
+            rel1.to_x: "elm.drag_button_base";
+            rel1.to_y: "icon.dragable.area";
+            rel2.to_x: "elm.drag_button_base";
+            rel2.to_y: "icon.dragable.area";
+         }
+         dragable {
+            events: "elm.drag_button_base";
+         }
+      }
+      part { name: "button0";
+         mouse_events: 0;
+         description { state: "default" 0.0;
+            rel1.to: "button2";
+            rel1.offset: -4 -4;
+            rel2.to: "button2";
+            rel2.offset: 3 3;
+            image {
+               normal: "bt_bases.png";
+               border: 11 11 11 11;
+               middle: SOLID;
+            }
+            color: 255 255 255 128;
+         }
+      }
+      part { name: "button2";
+         mouse_events: 0;
+         description { state: "default" 0.0;
+            rel1.to: "elm.drag_button";
+            rel2.to: "elm.drag_button";
+            image {
+               normal: "bt_basew.png";
+               border: 7 7 7 7;
+               middle: SOLID;
+            }
+            color: 255 255 255 210;
+         }
+      }
+      part { name: "button3";
+         mouse_events: 0;
+         description { state: "default" 0.0;
+            rel1.to: "button2";
+            rel2.to: "button2";
+            rel2.relative: 1.0 0.5;
+            image {
+               normal: "bt_hilightw.png";
+               border: 4 4 4 0;
+            }
+            color: 255 255 255 190;
+         }
+      }
+      part { name: "elm.text.indicator";
+         type: TEXT;
+         scale: 1;
+         mouse_events: 0;
+         description { state: "default" 0.0;
+            rel1 {
+               to: "elm.drag_button";
+               offset: 5 0;
+            }
+            rel2 {
+               to: "elm.drag_button";
+               offset: -5 0;
+            }
+            color: 0 0 0 255;
+            text {
+               font: "Sans,Edje-Vera";
+               size: 10;
+               align: 0.5 0.5;
+               min: 0 1;
+            }
          }
       }
    }
+   programs {
+      program { name: "elm.drag_button,mouse,up";
+         signal: "mouse,up,1";
+         source: "elm.drag_button";
+         action: SIGNAL_EMIT "elm.drag_button,mouse,up" "";
+      }
+      program { name: "elm.drag_button,mouse,down";
+         signal: "mouse,down,1";
+         source: "elm.drag_button";
+         action: SIGNAL_EMIT "elm.drag_button,mouse,down" "";
+      }
+      program { name: "elm.drag_button,mouse,move";
+         signal: "mouse,move";
+         source: "elm.drag_button_base";
+         action: SIGNAL_EMIT "elm.drag_button,mouse,move" "";
+      }
+   }
+}
 
-///////////////////////////////////////////////////////////////////////////////

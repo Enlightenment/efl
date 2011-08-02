@@ -1,862 +1,862 @@
-   group { name: "elm/notify/block_events/default";
-       parts {
-           part { name: "block_events";
-               type: RECT;
-               description { state: "default" 0.0;
-                   color: 0 0 0 64;
-                   visible: 1;
-               }
-           }
-       }
-           programs {
-                   program {
-                                name: "block_clicked";
-                                signal: "mouse,clicked,1";
-                                source: "block_events";
-                                action: SIGNAL_EMIT "elm,action,clicked" "elm";
-                   }
-           }
+group { name: "elm/notify/block_events/default";
+   parts {
+      part { name: "block_events";
+         type: RECT;
+         description { state: "default" 0.0;
+            color: 0 0 0 64;
+            visible: 1;
+         }
+      }
    }
-   group { name: "elm/notify/top/default";
-       //this group is a design similar to the inwin group
-       images {
-           image: "shad_circ.png" COMP;
-           image: "bt_dis_base.png" COMP;
-           image: "bt_dis_hilight.png" COMP;
-       }
-       parts {
-           part { name: "base";
-               type: RECT;
-               mouse_events: 0;
-               repeat_events: 1;
-               description { state: "default" 0.0;
-                   color: 0 0 0 0;
-                   rel1.offset: 10 10;
-                   rel2.offset: -10 -10;
-                   rel1.relative: 0.0 -1.0;
-                   rel2.relative: 1.0 0.0;
-               }
-               description { state: "visible" 0.0;
-                   inherit: "default" 0.0;
-                   color: 0 0 0 64;
-                   rel1.relative: 0.0 0.0;
-                   rel2.relative: 1.0 1.0;
-               }
-           }
-           part { name: "shad";
-               mouse_events:  0;
-               description { state: "default" 0.0;
-                   image.normal: "shad_circ.png";
-                   rel1.to: "elm.swallow.content";
-                   rel1.offset: -64 -64;
-                   rel2.to: "elm.swallow.content";
-                   rel2.offset: 63 63;
-                   fill.smooth: 0;
-               }
-           }
-           part { name: "pop";
-               mouse_events: 1;
-               description { state: "default" 0.0;
-                   rel1.to: "elm.swallow.content";
-                   rel1.offset: -5 -5;
-                   rel2.to: "elm.swallow.content";
-                   rel2.offset: 4 4;
-                   image {
-                       normal: "bt_dis_base.png";
-                       border: 4 4 4 4;
-                   }
-                   image.middle: SOLID;
-               }
-           }
-           part { name: "popover";
-               mouse_events: 0;
-               description { state: "default" 0.0;
-                   rel1.to: "pop";
-                   rel2.to: "pop";
-                   rel2.relative: 1.0 0.5;
-                   image {
-                       normal: "bt_dis_hilight.png";
-                       border: 4 4 4 0;
-                   }
-               }
-           }
-           part { name: "elm.swallow.content";
-               type: SWALLOW;
-               description { state: "default" 0.0;
-                   rel1.to: "base";
-                   rel2.to: "base";
-               }
-           }
-       }
-       programs {
-           program { name: "show";
-               signal: "elm,action,show";
-               source: "elm";
-               action: STATE_SET "visible" 0.0;
-               target: "base";
-           }
-           program { name: "show_2";
-                signal: "show";
-                action: STATE_SET "default" 0.0;
-                target: "base";
-                after: "show_3";
-           }
-           program { name: "show_3";
-                signal: "show";
-                action: STATE_SET "visible" 0.0;
-                target: "base";
-                transition: LINEAR 0.5;
-           }
-           program { name: "hide";
-               signal: "elm,action,hide";
-               source: "elm";
-               action: STATE_SET "default" 0.0;
-               target: "base";
-           }
-       }
+   programs {
+      program {
+         name: "block_clicked";
+         signal: "mouse,clicked,1";
+         source: "block_events";
+         action: SIGNAL_EMIT "elm,action,clicked" "elm";
+      }
    }
-   group { name: "elm/notify/center/default";
-       //this group is a design similar to the inwin group
-       images {
-           image: "bt_dis_base.png" COMP;
-       }
-       parts {
-           part { name: "base";
-               type: RECT;
-               mouse_events: 0;
-               repeat_events: 1;
-               description { state: "default" 0.0;
-                   color: 0 0 0 0;
-                   rel1.relative: 0.0 0.0;
-                   rel2.relative: 1.0 1.0;
-               }
-           }
-           part { name: "pop";
-               mouse_events: 1;
-               description { state: "default" 0.0;
-                   rel1.to: "elm.swallow.content";
-                   rel1.offset: -5 -5;
-                   rel2.to: "elm.swallow.content";
-                   rel2.offset: 4 4;
-                   image {
-                       normal: "bt_dis_base.png";
-                       border: 4 4 4 4;
-                   }
-               }
-           }
-           part { name: "elm.swallow.content";
-               type: SWALLOW;
-               description { state: "default" 0.0;
-                   rel1.to: "base";
-                   rel2.to: "base";
-               }
-           }
-       }
-       programs {
-           program { name: "show";
-               signal: "elm,action,show";
-               source: "elm";
-               action: STATE_SET "default" 0.0;
-               target: "base";
-           }
-           program { name: "show_2";
-                signal: "show";
-                action: STATE_SET "default" 0.0;
-                target: "base";
-           }
-           program { name: "hide";
-               signal: "elm,action,hide";
-               source: "elm";
-               action: STATE_SET "default" 0.0;
-               target: "base";
-           }
-       }
+}
+group { name: "elm/notify/top/default";
+     //this group is a design similar to the inwin group
+   images {
+      image: "shad_circ.png" COMP;
+      image: "bt_dis_base.png" COMP;
+      image: "bt_dis_hilight.png" COMP;
    }
-   group { name: "elm/notify/bottom/default";
-       //this group is a design similar to the inwin group
-       images {
-           image: "shad_circ.png" COMP;
-           image: "bt_dis_base.png" COMP;
-           image: "bt_dis_hilight.png" COMP;
-       }
-       parts {
-           part { name: "base";
-               type: RECT;
-               mouse_events: 0;
-               repeat_events: 1;
-               description { state: "default" 0.0;
-                   color: 0 0 0 0;
-                   rel1.offset: 10 10;
-                   rel2.offset: -10 -10;
-                   rel1.relative: 0.0 1.0;
-                   rel2.relative: 1.0 2.0;
-               }
-               description { state: "visible" 0.0;
-                   inherit: "default" 0.0;
-                   color: 0 0 0 64;
-                   rel1.relative: 0.0 0.0;
-                   rel2.relative: 1.0 1.0;
-               }
-           }
-           part { name: "shad";
-               mouse_events:  0;
-               description { state: "default" 0.0;
-                   image.normal: "shad_circ.png";
-                   rel1.to: "elm.swallow.content";
-                   rel1.offset: -64 -64;
-                   rel2.to: "elm.swallow.content";
-                   rel2.offset: 63 63;
-                   fill.smooth: 0;
-               }
-           }
-           part { name: "pop";
-               mouse_events: 1;
-               description { state: "default" 0.0;
-                   rel1.to: "elm.swallow.content";
-                   rel1.offset: -5 -5;
-                   rel2.to: "elm.swallow.content";
-                   rel2.offset: 4 4;
-                   image {
-                       normal: "bt_dis_base.png";
-                       border: 4 4 4 4;
-                   }
-                   image.middle: SOLID;
-               }
-           }
-           part { name: "popover";
-               mouse_events: 0;
-               description { state: "default" 0.0;
-                   rel1.to: "pop";
-                   rel2.to: "pop";
-                   rel2.relative: 1.0 0.5;
-                   image {
-                       normal: "bt_dis_hilight.png";
-                       border: 4 4 4 0;
-                   }
-               }
-           }
-           part { name: "elm.swallow.content";
-               type: SWALLOW;
-               description { state: "default" 0.0;
-                   rel1.to: "base";
-                   rel2.to: "base";
-               }
-           }
-       }
-       programs {
-           program { name: "show";
-               signal: "elm,action,show";
-               source: "elm";
-               action: STATE_SET "visible" 0.0;
-               target: "base";
-           }
-           program { name: "show_2";
-                signal: "show";
-                action: STATE_SET "default" 0.0;
-                target: "base";
-                after: "show_3";
-           }
-           program { name: "show_3";
-                signal: "show";
-                action: STATE_SET "visible" 0.0;
-                target: "base";
-                transition: LINEAR 0.5;
-           }
-           program { name: "hide";
-               signal: "elm,action,hide";
-               source: "elm";
-               action: STATE_SET "default" 0.0;
-               target: "base";
-           }
-       }
+   parts {
+      part { name: "base";
+         type: RECT;
+         mouse_events: 0;
+         repeat_events: 1;
+         description { state: "default" 0.0;
+            color: 0 0 0 0;
+            rel1.offset: 10 10;
+            rel2.offset: -10 -10;
+            rel1.relative: 0.0 -1.0;
+            rel2.relative: 1.0 0.0;
+         }
+         description { state: "visible" 0.0;
+            inherit: "default" 0.0;
+            color: 0 0 0 64;
+            rel1.relative: 0.0 0.0;
+            rel2.relative: 1.0 1.0;
+         }
+      }
+      part { name: "shad";
+         mouse_events:  0;
+         description { state: "default" 0.0;
+            image.normal: "shad_circ.png";
+            rel1.to: "elm.swallow.content";
+            rel1.offset: -64 -64;
+            rel2.to: "elm.swallow.content";
+            rel2.offset: 63 63;
+            fill.smooth: 0;
+         }
+      }
+      part { name: "pop";
+         mouse_events: 1;
+         description { state: "default" 0.0;
+            rel1.to: "elm.swallow.content";
+            rel1.offset: -5 -5;
+            rel2.to: "elm.swallow.content";
+            rel2.offset: 4 4;
+            image {
+               normal: "bt_dis_base.png";
+               border: 4 4 4 4;
+            }
+            image.middle: SOLID;
+         }
+      }
+      part { name: "popover";
+         mouse_events: 0;
+         description { state: "default" 0.0;
+            rel1.to: "pop";
+            rel2.to: "pop";
+            rel2.relative: 1.0 0.5;
+            image {
+               normal: "bt_dis_hilight.png";
+               border: 4 4 4 0;
+            }
+         }
+      }
+      part { name: "elm.swallow.content";
+         type: SWALLOW;
+         description { state: "default" 0.0;
+            rel1.to: "base";
+            rel2.to: "base";
+         }
+      }
    }
-   group { name: "elm/notify/left/default";
-       //this group is a design similar to the inwin group
-       images {
-           image: "shad_circ.png" COMP;
-           image: "bt_dis_base.png" COMP;
-           image: "bt_dis_hilight.png" COMP;
-       }
-       parts {
-           part { name: "base";
-               type: RECT;
-               mouse_events: 0;
-               repeat_events: 1;
-               description { state: "default" 0.0;
-                   color: 0 0 0 0;
-                   rel1.offset: 10 10;
-                   rel2.offset: -10 -10;
-                   rel1.relative: -1.0 0.0;
-                   rel2.relative: 0.0 1.0;
-               }
-               description { state: "visible" 0.0;
-                   inherit: "default" 0.0;
-                   color: 0 0 0 64;
-                   rel1.relative: 0.0 0.0;
-                   rel2.relative: 1.0 1.0;
-               }
-           }
-           part { name: "shad";
-               mouse_events:  0;
-               description { state: "default" 0.0;
-                   image.normal: "shad_circ.png";
-                   rel1.to: "elm.swallow.content";
-                   rel1.offset: -64 -64;
-                   rel2.to: "elm.swallow.content";
-                   rel2.offset: 63 63;
-                   fill.smooth: 0;
-               }
-           }
-           part { name: "pop";
-               mouse_events: 1;
-               description { state: "default" 0.0;
-                   rel1.to: "elm.swallow.content";
-                   rel1.offset: -5 -5;
-                   rel2.to: "elm.swallow.content";
-                   rel2.offset: 4 4;
-                   image {
-                       normal: "bt_dis_base.png";
-                       border: 4 4 4 4;
-                   }
-                   image.middle: SOLID;
-               }
-           }
-           part { name: "popover";
-               mouse_events: 0;
-               description { state: "default" 0.0;
-                   rel1.to: "pop";
-                   rel2.to: "pop";
-                   rel2.relative: 1.0 0.5;
-                   image {
-                       normal: "bt_dis_hilight.png";
-                       border: 4 4 4 0;
-                   }
-               }
-           }
-           part { name: "elm.swallow.content";
-               type: SWALLOW;
-               description { state: "default" 0.0;
-                   rel1.to: "base";
-                   rel2.to: "base";
-               }
-           }
-       }
-       programs {
-           program { name: "show";
-               signal: "elm,action,show";
-               source: "elm";
-               action: STATE_SET "visible" 0.0;
-               target: "base";
-           }
-           program { name: "show_2";
-               signal: "show";
-               action: STATE_SET "default" 0.0;
-               target: "base";
-               after: "show_3";
-           }
-           program { name: "show_3";
-               signal: "show";
-               action: STATE_SET "visible" 0.0;
-               target: "base";
-               transition: LINEAR 0.5;
-           }
-           program { name: "hide";
-               signal: "elm,action,hide";
-               source: "elm";
-               action: STATE_SET "default" 0.0;
-               target: "base";
-           }
-       }
+   programs {
+      program { name: "show";
+         signal: "elm,action,show";
+         source: "elm";
+         action: STATE_SET "visible" 0.0;
+         target: "base";
+      }
+      program { name: "show_2";
+         signal: "show";
+         action: STATE_SET "default" 0.0;
+         target: "base";
+         after: "show_3";
+      }
+      program { name: "show_3";
+         signal: "show";
+         action: STATE_SET "visible" 0.0;
+         target: "base";
+         transition: LINEAR 0.5;
+      }
+      program { name: "hide";
+         signal: "elm,action,hide";
+         source: "elm";
+         action: STATE_SET "default" 0.0;
+         target: "base";
+      }
    }
-   group { name: "elm/notify/right/default";
-       //this group is a design similar to the inwin group
-       images {
-           image: "shad_circ.png" COMP;
-           image: "bt_dis_base.png" COMP;
-           image: "bt_dis_hilight.png" COMP;
-       }
-       parts {
-           part { name: "base";
-               type: RECT;
-               mouse_events: 0;
-               repeat_events: 1;
-                description { state: "default" 0.0;
-                   color: 0 0 0 0;
-                   rel1.offset: 10 10;
-                   rel2.offset: -10 -10;
-                   rel1.relative: 1.0 0.0;
-                   rel2.relative: 2.0 1.0;
-               }
-               description { state: "visible" 0.0;
-                   inherit: "default" 0.0;
-                   color: 0 0 0 64;
-                   rel1.relative: 0.0 0.0;
-                   rel2.relative: 1.0 1.0;
-               }
-           }
-           part { name: "shad";
-               mouse_events:  0;
-               description { state: "default" 0.0;
-                   image.normal: "shad_circ.png";
-                   rel1.to: "elm.swallow.content";
-                   rel1.offset: -64 -64;
-                   rel2.to: "elm.swallow.content";
-                   rel2.offset: 63 63;
-                   fill.smooth: 0;
-               }
-           }
-           part { name: "pop";
-               mouse_events: 1;
-               description { state: "default" 0.0;
-                   rel1.to: "elm.swallow.content";
-                   rel1.offset: -5 -5;
-                   rel2.to: "elm.swallow.content";
-                   rel2.offset: 4 4;
-                   image {
-                       normal: "bt_dis_base.png";
-                       border: 4 4 4 4;
-                   }
-                   image.middle: SOLID;
-               }
-           }
-           part { name: "popover";
-               mouse_events: 0;
-               description { state: "default" 0.0;
-                   rel1.to: "pop";
-                   rel2.to: "pop";
-                   rel2.relative: 1.0 0.5;
-                   image {
-                       normal: "bt_dis_hilight.png";
-                       border: 4 4 4 0;
-                   }
-               }
-           }
-           part { name: "elm.swallow.content";
-               type: SWALLOW;
-               description { state: "default" 0.0;
-                   rel1.to: "base";
-                   rel2.to: "base";
-               }
-           }
-       }
-       programs {
-           program { name: "show";
-               signal: "elm,action,show";
-               source: "elm";
-               action: STATE_SET "visible" 0.0;
-               target: "base";
-           }
-           program { name: "show_2";
-               signal: "show";
-               action: STATE_SET "default" 0.0;
-               target: "base";
-               after: "show_3";
-           }
-           program { name: "show_3";
-               signal: "show";
-               action: STATE_SET "visible" 0.0;
-               target: "base";
-               transition: LINEAR 0.5;
-           }
-           program { name: "hide";
-               signal: "elm,action,hide";
-               source: "elm";
-               action: STATE_SET "default" 0.0;
-               target: "base";
-           }
-       }
+}
+group { name: "elm/notify/center/default";
+     //this group is a design similar to the inwin group
+   images {
+      image: "bt_dis_base.png" COMP;
    }
-   group { name: "elm/notify/top_left/default";
-       //this group is a design similar to the inwin group
-       images {
-           image: "shad_circ.png" COMP;
-           image: "bt_dis_base.png" COMP;
-           image: "bt_dis_hilight.png" COMP;
-       }
-       parts {
-           part { name: "base";
-               type: RECT;
-               mouse_events: 0;
-               repeat_events: 1;
-                description { state: "default" 0.0;
-                   color: 0 0 0 0;
-                   rel1.offset: 10 10;
-                   rel2.offset: -10 -10;
-                   rel1.relative: 0.0 -1.0;
-                   rel2.relative: 1.0 0.0;
-               }
-               description { state: "visible" 0.0;
-                   inherit: "default" 0.0;
-                   color: 0 0 0 64;
-                   rel1.relative: 0.0 0.0;
-                   rel2.relative: 1.0 1.0;
-               }
-           }
-           part { name: "shad";
-               mouse_events:  0;
-               description { state: "default" 0.0;
-                   image.normal: "shad_circ.png";
-                   rel1.to: "elm.swallow.content";
-                   rel1.offset: -64 -64;
-                   rel2.to: "elm.swallow.content";
-                   rel2.offset: 63 63;
-                   fill.smooth: 0;
-               }
-           }
-           part { name: "pop";
-               mouse_events: 1;
-               description { state: "default" 0.0;
-                   rel1.to: "elm.swallow.content";
-                   rel1.offset: -5 -5;
-                   rel2.to: "elm.swallow.content";
-                   rel2.offset: 4 4;
-                   image {
-                       normal: "bt_dis_base.png";
-                       border: 4 4 4 4;
-                   }
-                   image.middle: SOLID;
-               }
-           }
-           part { name: "popover";
-               mouse_events: 0;
-               description { state: "default" 0.0;
-                   rel1.to: "pop";
-                   rel2.to: "pop";
-                   rel2.relative: 1.0 0.5;
-                   image {
-                       normal: "bt_dis_hilight.png";
-                       border: 4 4 4 0;
-                   }
-               }
-           }
-           part { name: "elm.swallow.content";
-               type: SWALLOW;
-               description { state: "default" 0.0;
-                   rel1.to: "base";
-                   rel2.to: "base";
-               }
-           }
-       }
-       programs {
-           program { name: "show";
-               signal: "elm,action,show";
-               source: "elm";
-               action: STATE_SET "visible" 0.0;
-               target: "base";
-           }
-           program { name: "show_2";
-               signal: "show";
-               action: STATE_SET "default" 0.0;
-               target: "base";
-               after: "show_3";
-           }
-           program { name: "show_3";
-               signal: "show";
-               action: STATE_SET "visible" 0.0;
-               target: "base";
-               transition: LINEAR 0.5;
-           }
-           program { name: "hide";
-               signal: "elm,action,hide";
-               source: "elm";
-               action: STATE_SET "default" 0.0;
-               target: "base";
-           }
-       }
+   parts {
+      part { name: "base";
+         type: RECT;
+         mouse_events: 0;
+         repeat_events: 1;
+         description { state: "default" 0.0;
+            color: 0 0 0 0;
+            rel1.relative: 0.0 0.0;
+            rel2.relative: 1.0 1.0;
+         }
+      }
+      part { name: "pop";
+         mouse_events: 1;
+         description { state: "default" 0.0;
+            rel1.to: "elm.swallow.content";
+            rel1.offset: -5 -5;
+            rel2.to: "elm.swallow.content";
+            rel2.offset: 4 4;
+            image {
+               normal: "bt_dis_base.png";
+               border: 4 4 4 4;
+            }
+         }
+      }
+      part { name: "elm.swallow.content";
+         type: SWALLOW;
+         description { state: "default" 0.0;
+            rel1.to: "base";
+            rel2.to: "base";
+         }
+      }
    }
-   group { name: "elm/notify/top_right/default";
-       //this group is a design similar to the inwin group
-       images {
-           image: "shad_circ.png" COMP;
-           image: "bt_dis_base.png" COMP;
-           image: "bt_dis_hilight.png" COMP;
-       }
-       parts {
-           part { name: "base";
-               type: RECT;
-               mouse_events: 0;
-               repeat_events: 1;
-               description { state: "default" 0.0;
-                   color: 0 0 0 0;
-                   rel1.offset: 10 10;
-                   rel2.offset: -10 -10;
-                   rel1.relative: 0.0 -1.0;
-                   rel2.relative: 1.0 0.0;
-               }
-               description { state: "visible" 0.0;
-                   inherit: "default" 0.0;
-                   color: 0 0 0 64;
-                   rel1.relative: 0.0 0.0;
-                   rel2.relative: 1.0 1.0;
-               }
-           }
-           part { name: "shad";
-               mouse_events:  0;
-               description { state: "default" 0.0;
-                   image.normal: "shad_circ.png";
-                   rel1.to: "elm.swallow.content";
-                   rel1.offset: -64 -64;
-                   rel2.to: "elm.swallow.content";
-                   rel2.offset: 63 63;
-                   fill.smooth: 0;
-               }
-           }
-           part { name: "pop";
-               mouse_events: 1;
-               description { state: "default" 0.0;
-                   rel1.to: "elm.swallow.content";
-                   rel1.offset: -5 -5;
-                   rel2.to: "elm.swallow.content";
-                   rel2.offset: 4 4;
-                   image {
-                       normal: "bt_dis_base.png";
-                       border: 4 4 4 4;
-                   }
-                   image.middle: SOLID;
-               }
-           }
-           part { name: "popover";
-               mouse_events: 0;
-               description { state: "default" 0.0;
-                   rel1.to: "pop";
-                   rel2.to: "pop";
-                   rel2.relative: 1.0 0.5;
-                   image {
-                       normal: "bt_dis_hilight.png";
-                       border: 4 4 4 0;
-                   }
-               }
-           }
-           part { name: "elm.swallow.content";
-               type: SWALLOW;
-               description { state: "default" 0.0;
-                   rel1.to: "base";
-                   rel2.to: "base";
-               }
-           }
-       }
-       programs {
-           program { name: "show";
-               signal: "elm,action,show";
-               source: "elm";
-               action: STATE_SET "visible" 0.0;
-               target: "base";
-           }
-           program { name: "show_2";
-               signal: "show";
-               action: STATE_SET "default" 0.0;
-               target: "base";
-               after: "show_3";
-           }
-           program { name: "show_3";
-               signal: "show";
-               action: STATE_SET "visible" 0.0;
-               target: "base";
-               transition: LINEAR 0.5;
-           }
-           program { name: "hide";
-               signal: "elm,action,hide";
-               source: "elm";
-               action: STATE_SET "default" 0.0;
-               target: "base";
-           }
-       }
+   programs {
+      program { name: "show";
+         signal: "elm,action,show";
+         source: "elm";
+         action: STATE_SET "default" 0.0;
+         target: "base";
+      }
+      program { name: "show_2";
+         signal: "show";
+         action: STATE_SET "default" 0.0;
+         target: "base";
+      }
+      program { name: "hide";
+         signal: "elm,action,hide";
+         source: "elm";
+         action: STATE_SET "default" 0.0;
+         target: "base";
+      }
    }
-   group { name: "elm/notify/bottom_left/default";
-       //this group is a design similar to the inwin group
-       images {
-           image: "shad_circ.png" COMP;
-           image: "bt_dis_base.png" COMP;
-           image: "bt_dis_hilight.png" COMP;
-       }
-       parts {
-           part { name: "base";
-               type: RECT;
-               mouse_events: 0;
-               repeat_events: 1;
-               description { state: "default" 0.0;
-                   color: 0 0 0 0;
-                   rel1.offset: 10 10;
-                   rel2.offset: -10 -10;
-                   rel1.relative: 0.0 1.0;
-                   rel2.relative: 1.0 2.0;
-               }
-               description { state: "visible" 0.0;
-                   inherit: "default" 0.0;
-                   color: 0 0 0 64;
-                   rel1.relative: 0.0 0.0;
-                   rel2.relative: 1.0 1.0;
-               }
-           }
-           part { name: "shad";
-               mouse_events:  0;
-               description { state: "default" 0.0;
-                   image.normal: "shad_circ.png";
-                   rel1.to: "elm.swallow.content";
-                   rel1.offset: -64 -64;
-                   rel2.to: "elm.swallow.content";
-                   rel2.offset: 63 63;
-                   fill.smooth: 0;
-               }
-           }
-           part { name: "pop";
-               mouse_events: 1;
-               description { state: "default" 0.0;
-                   rel1.to: "elm.swallow.content";
-                   rel1.offset: -5 -5;
-                   rel2.to: "elm.swallow.content";
-                   rel2.offset: 4 4;
-                   image {
-                       normal: "bt_dis_base.png";
-                       border: 4 4 4 4;
-                   }
-                   image.middle: SOLID;
-               }
-           }
-           part { name: "popover";
-               mouse_events: 0;
-               description { state: "default" 0.0;
-                   rel1.to: "pop";
-                   rel2.to: "pop";
-                   rel2.relative: 1.0 0.5;
-                   image {
-                       normal: "bt_dis_hilight.png";
-                       border: 4 4 4 0;
-                   }
-               }
-           }
-           part { name: "elm.swallow.content";
-               type: SWALLOW;
-               description { state: "default" 0.0;
-                   rel1.to: "base";
-                   rel2.to: "base";
-               }
-           }
-       }
-       programs {
-           program { name: "show";
-               signal: "elm,action,show";
-               source: "elm";
-               action: STATE_SET "visible" 0.0;
-               target: "base";
-           }
-           program { name: "show_2";
-               signal: "show";
-               action: STATE_SET "default" 0.0;
-               target: "base";
-               after: "show_3";
-           }
-           program { name: "show_3";
-               signal: "show";
-               action: STATE_SET "visible" 0.0;
-               target: "base";
-               transition: LINEAR 0.5;
-           }
-           program { name: "hide";
-               signal: "elm,action,hide";
-               source: "elm";
-               action: STATE_SET "default" 0.0;
-               target: "base";
-           }
-       }
+}
+group { name: "elm/notify/bottom/default";
+     //this group is a design similar to the inwin group
+   images {
+      image: "shad_circ.png" COMP;
+      image: "bt_dis_base.png" COMP;
+      image: "bt_dis_hilight.png" COMP;
    }
-   group { name: "elm/notify/bottom_right/default";
-       //this group is a design similar to the inwin group
-       images {
-           image: "shad_circ.png" COMP;
-           image: "bt_dis_base.png" COMP;
-           image: "bt_dis_hilight.png" COMP;
-       }
-       parts {
-           part { name: "base";
-               type: RECT;
-               mouse_events: 0;
-               repeat_events: 1;
-              description { state: "default" 0.0;
-                   color: 0 0 0 0;
-                   rel1.offset: 10 10;
-                   rel2.offset: -10 -10;
-                   rel1.relative: 0.0 1.0;
-                   rel2.relative: 1.0 2.0;
-               }
-               description { state: "visible" 0.0;
-                   inherit: "default" 0.0;
-                   color: 0 0 0 64;
-                   rel1.relative: 0.0 0.0;
-                   rel2.relative: 1.0 1.0;
-               }
-           }
-           part { name: "shad";
-               mouse_events:  0;
-               description { state: "default" 0.0;
-                   image.normal: "shad_circ.png";
-                   rel1.to: "elm.swallow.content";
-                   rel1.offset: -64 -64;
-                   rel2.to: "elm.swallow.content";
-                   rel2.offset: 63 63;
-                   fill.smooth: 0;
-               }
-           }
-           part { name: "pop";
-               mouse_events: 1;
-               description { state: "default" 0.0;
-                   rel1.to: "elm.swallow.content";
-                   rel1.offset: -5 -5;
-                   rel2.to: "elm.swallow.content";
-                   rel2.offset: 4 4;
-                   image {
-                       normal: "bt_dis_base.png";
-                       border: 4 4 4 4;
-                   }
-                   image.middle: SOLID;
-               }
-           }
-           part { name: "popover";
-               mouse_events: 0;
-               description { state: "default" 0.0;
-                   rel1.to: "pop";
-                   rel2.to: "pop";
-                   rel2.relative: 1.0 0.5;
-                   image {
-                       normal: "bt_dis_hilight.png";
-                       border: 4 4 4 0;
-                   }
-               }
-           }
-           part { name: "elm.swallow.content";
-               type: SWALLOW;
-               description { state: "default" 0.0;
-                   rel1.to: "base";
-                   rel2.to: "base";
-               }
-           }
-       }
-       programs {
-           program { name: "show";
-               signal: "elm,action,show";
-               source: "elm";
-               action: STATE_SET "visible" 0.0;
-               target: "base";
-           }
-           program { name: "show_2";
-               signal: "show";
-               action: STATE_SET "default" 0.0;
-               target: "base";
-               after: "show_3";
-           }
-           program { name: "show_3";
-               signal: "show";
-               action: STATE_SET "visible" 0.0;
-               target: "base";
-               transition: LINEAR 0.5;
-           }
-           program { name: "hide";
-               signal: "elm,action,hide";
-               source: "elm";
-               action: STATE_SET "default" 0.0;
-               target: "base";
-           }
-       }
+   parts {
+      part { name: "base";
+         type: RECT;
+         mouse_events: 0;
+         repeat_events: 1;
+         description { state: "default" 0.0;
+            color: 0 0 0 0;
+            rel1.offset: 10 10;
+            rel2.offset: -10 -10;
+            rel1.relative: 0.0 1.0;
+            rel2.relative: 1.0 2.0;
+         }
+         description { state: "visible" 0.0;
+            inherit: "default" 0.0;
+            color: 0 0 0 64;
+            rel1.relative: 0.0 0.0;
+            rel2.relative: 1.0 1.0;
+         }
+      }
+      part { name: "shad";
+         mouse_events:  0;
+         description { state: "default" 0.0;
+            image.normal: "shad_circ.png";
+            rel1.to: "elm.swallow.content";
+            rel1.offset: -64 -64;
+            rel2.to: "elm.swallow.content";
+            rel2.offset: 63 63;
+            fill.smooth: 0;
+         }
+      }
+      part { name: "pop";
+         mouse_events: 1;
+         description { state: "default" 0.0;
+            rel1.to: "elm.swallow.content";
+            rel1.offset: -5 -5;
+            rel2.to: "elm.swallow.content";
+            rel2.offset: 4 4;
+            image {
+               normal: "bt_dis_base.png";
+               border: 4 4 4 4;
+            }
+            image.middle: SOLID;
+         }
+      }
+      part { name: "popover";
+         mouse_events: 0;
+         description { state: "default" 0.0;
+            rel1.to: "pop";
+            rel2.to: "pop";
+            rel2.relative: 1.0 0.5;
+            image {
+               normal: "bt_dis_hilight.png";
+               border: 4 4 4 0;
+            }
+         }
+      }
+      part { name: "elm.swallow.content";
+         type: SWALLOW;
+         description { state: "default" 0.0;
+            rel1.to: "base";
+            rel2.to: "base";
+         }
+      }
    }
+   programs {
+      program { name: "show";
+         signal: "elm,action,show";
+         source: "elm";
+         action: STATE_SET "visible" 0.0;
+         target: "base";
+      }
+      program { name: "show_2";
+         signal: "show";
+         action: STATE_SET "default" 0.0;
+         target: "base";
+         after: "show_3";
+      }
+      program { name: "show_3";
+         signal: "show";
+         action: STATE_SET "visible" 0.0;
+         target: "base";
+         transition: LINEAR 0.5;
+      }
+      program { name: "hide";
+         signal: "elm,action,hide";
+         source: "elm";
+         action: STATE_SET "default" 0.0;
+         target: "base";
+      }
+   }
+}
+group { name: "elm/notify/left/default";
+     //this group is a design similar to the inwin group
+   images {
+      image: "shad_circ.png" COMP;
+      image: "bt_dis_base.png" COMP;
+      image: "bt_dis_hilight.png" COMP;
+   }
+   parts {
+      part { name: "base";
+         type: RECT;
+         mouse_events: 0;
+         repeat_events: 1;
+         description { state: "default" 0.0;
+            color: 0 0 0 0;
+            rel1.offset: 10 10;
+            rel2.offset: -10 -10;
+            rel1.relative: -1.0 0.0;
+            rel2.relative: 0.0 1.0;
+         }
+         description { state: "visible" 0.0;
+            inherit: "default" 0.0;
+            color: 0 0 0 64;
+            rel1.relative: 0.0 0.0;
+            rel2.relative: 1.0 1.0;
+         }
+      }
+      part { name: "shad";
+         mouse_events:  0;
+         description { state: "default" 0.0;
+            image.normal: "shad_circ.png";
+            rel1.to: "elm.swallow.content";
+            rel1.offset: -64 -64;
+            rel2.to: "elm.swallow.content";
+            rel2.offset: 63 63;
+            fill.smooth: 0;
+         }
+      }
+      part { name: "pop";
+         mouse_events: 1;
+         description { state: "default" 0.0;
+            rel1.to: "elm.swallow.content";
+            rel1.offset: -5 -5;
+            rel2.to: "elm.swallow.content";
+            rel2.offset: 4 4;
+            image {
+               normal: "bt_dis_base.png";
+               border: 4 4 4 4;
+            }
+            image.middle: SOLID;
+         }
+      }
+      part { name: "popover";
+         mouse_events: 0;
+         description { state: "default" 0.0;
+            rel1.to: "pop";
+            rel2.to: "pop";
+            rel2.relative: 1.0 0.5;
+            image {
+               normal: "bt_dis_hilight.png";
+               border: 4 4 4 0;
+            }
+         }
+      }
+      part { name: "elm.swallow.content";
+         type: SWALLOW;
+         description { state: "default" 0.0;
+            rel1.to: "base";
+            rel2.to: "base";
+         }
+      }
+   }
+   programs {
+      program { name: "show";
+         signal: "elm,action,show";
+         source: "elm";
+         action: STATE_SET "visible" 0.0;
+         target: "base";
+      }
+      program { name: "show_2";
+         signal: "show";
+         action: STATE_SET "default" 0.0;
+         target: "base";
+         after: "show_3";
+      }
+      program { name: "show_3";
+         signal: "show";
+         action: STATE_SET "visible" 0.0;
+         target: "base";
+         transition: LINEAR 0.5;
+      }
+      program { name: "hide";
+         signal: "elm,action,hide";
+         source: "elm";
+         action: STATE_SET "default" 0.0;
+         target: "base";
+      }
+   }
+}
+group { name: "elm/notify/right/default";
+     //this group is a design similar to the inwin group
+   images {
+      image: "shad_circ.png" COMP;
+      image: "bt_dis_base.png" COMP;
+      image: "bt_dis_hilight.png" COMP;
+   }
+   parts {
+      part { name: "base";
+         type: RECT;
+         mouse_events: 0;
+         repeat_events: 1;
+         description { state: "default" 0.0;
+            color: 0 0 0 0;
+            rel1.offset: 10 10;
+            rel2.offset: -10 -10;
+            rel1.relative: 1.0 0.0;
+            rel2.relative: 2.0 1.0;
+         }
+         description { state: "visible" 0.0;
+            inherit: "default" 0.0;
+            color: 0 0 0 64;
+            rel1.relative: 0.0 0.0;
+            rel2.relative: 1.0 1.0;
+         }
+      }
+      part { name: "shad";
+         mouse_events:  0;
+         description { state: "default" 0.0;
+            image.normal: "shad_circ.png";
+            rel1.to: "elm.swallow.content";
+            rel1.offset: -64 -64;
+            rel2.to: "elm.swallow.content";
+            rel2.offset: 63 63;
+            fill.smooth: 0;
+         }
+      }
+      part { name: "pop";
+         mouse_events: 1;
+         description { state: "default" 0.0;
+            rel1.to: "elm.swallow.content";
+            rel1.offset: -5 -5;
+            rel2.to: "elm.swallow.content";
+            rel2.offset: 4 4;
+            image {
+               normal: "bt_dis_base.png";
+               border: 4 4 4 4;
+            }
+            image.middle: SOLID;
+         }
+      }
+      part { name: "popover";
+         mouse_events: 0;
+         description { state: "default" 0.0;
+            rel1.to: "pop";
+            rel2.to: "pop";
+            rel2.relative: 1.0 0.5;
+            image {
+               normal: "bt_dis_hilight.png";
+               border: 4 4 4 0;
+            }
+         }
+      }
+      part { name: "elm.swallow.content";
+         type: SWALLOW;
+         description { state: "default" 0.0;
+            rel1.to: "base";
+            rel2.to: "base";
+         }
+      }
+   }
+   programs {
+      program { name: "show";
+         signal: "elm,action,show";
+         source: "elm";
+         action: STATE_SET "visible" 0.0;
+         target: "base";
+      }
+      program { name: "show_2";
+         signal: "show";
+         action: STATE_SET "default" 0.0;
+         target: "base";
+         after: "show_3";
+      }
+      program { name: "show_3";
+         signal: "show";
+         action: STATE_SET "visible" 0.0;
+         target: "base";
+         transition: LINEAR 0.5;
+      }
+      program { name: "hide";
+         signal: "elm,action,hide";
+         source: "elm";
+         action: STATE_SET "default" 0.0;
+         target: "base";
+      }
+   }
+}
+group { name: "elm/notify/top_left/default";
+     //this group is a design similar to the inwin group
+   images {
+      image: "shad_circ.png" COMP;
+      image: "bt_dis_base.png" COMP;
+      image: "bt_dis_hilight.png" COMP;
+   }
+   parts {
+      part { name: "base";
+         type: RECT;
+         mouse_events: 0;
+         repeat_events: 1;
+         description { state: "default" 0.0;
+            color: 0 0 0 0;
+            rel1.offset: 10 10;
+            rel2.offset: -10 -10;
+            rel1.relative: 0.0 -1.0;
+            rel2.relative: 1.0 0.0;
+         }
+         description { state: "visible" 0.0;
+            inherit: "default" 0.0;
+            color: 0 0 0 64;
+            rel1.relative: 0.0 0.0;
+            rel2.relative: 1.0 1.0;
+         }
+      }
+      part { name: "shad";
+         mouse_events:  0;
+         description { state: "default" 0.0;
+            image.normal: "shad_circ.png";
+            rel1.to: "elm.swallow.content";
+            rel1.offset: -64 -64;
+            rel2.to: "elm.swallow.content";
+            rel2.offset: 63 63;
+            fill.smooth: 0;
+         }
+      }
+      part { name: "pop";
+         mouse_events: 1;
+         description { state: "default" 0.0;
+            rel1.to: "elm.swallow.content";
+            rel1.offset: -5 -5;
+            rel2.to: "elm.swallow.content";
+            rel2.offset: 4 4;
+            image {
+               normal: "bt_dis_base.png";
+               border: 4 4 4 4;
+            }
+            image.middle: SOLID;
+         }
+      }
+      part { name: "popover";
+         mouse_events: 0;
+         description { state: "default" 0.0;
+            rel1.to: "pop";
+            rel2.to: "pop";
+            rel2.relative: 1.0 0.5;
+            image {
+               normal: "bt_dis_hilight.png";
+               border: 4 4 4 0;
+            }
+         }
+      }
+      part { name: "elm.swallow.content";
+         type: SWALLOW;
+         description { state: "default" 0.0;
+            rel1.to: "base";
+            rel2.to: "base";
+         }
+      }
+   }
+   programs {
+      program { name: "show";
+         signal: "elm,action,show";
+         source: "elm";
+         action: STATE_SET "visible" 0.0;
+         target: "base";
+      }
+      program { name: "show_2";
+         signal: "show";
+         action: STATE_SET "default" 0.0;
+         target: "base";
+         after: "show_3";
+      }
+      program { name: "show_3";
+         signal: "show";
+         action: STATE_SET "visible" 0.0;
+         target: "base";
+         transition: LINEAR 0.5;
+      }
+      program { name: "hide";
+         signal: "elm,action,hide";
+         source: "elm";
+         action: STATE_SET "default" 0.0;
+         target: "base";
+      }
+   }
+}
+group { name: "elm/notify/top_right/default";
+     //this group is a design similar to the inwin group
+   images {
+      image: "shad_circ.png" COMP;
+      image: "bt_dis_base.png" COMP;
+      image: "bt_dis_hilight.png" COMP;
+   }
+   parts {
+      part { name: "base";
+         type: RECT;
+         mouse_events: 0;
+         repeat_events: 1;
+         description { state: "default" 0.0;
+            color: 0 0 0 0;
+            rel1.offset: 10 10;
+            rel2.offset: -10 -10;
+            rel1.relative: 0.0 -1.0;
+            rel2.relative: 1.0 0.0;
+         }
+         description { state: "visible" 0.0;
+            inherit: "default" 0.0;
+            color: 0 0 0 64;
+            rel1.relative: 0.0 0.0;
+            rel2.relative: 1.0 1.0;
+         }
+      }
+      part { name: "shad";
+         mouse_events:  0;
+         description { state: "default" 0.0;
+            image.normal: "shad_circ.png";
+            rel1.to: "elm.swallow.content";
+            rel1.offset: -64 -64;
+            rel2.to: "elm.swallow.content";
+            rel2.offset: 63 63;
+            fill.smooth: 0;
+         }
+      }
+      part { name: "pop";
+         mouse_events: 1;
+         description { state: "default" 0.0;
+            rel1.to: "elm.swallow.content";
+            rel1.offset: -5 -5;
+            rel2.to: "elm.swallow.content";
+            rel2.offset: 4 4;
+            image {
+               normal: "bt_dis_base.png";
+               border: 4 4 4 4;
+            }
+            image.middle: SOLID;
+         }
+      }
+      part { name: "popover";
+         mouse_events: 0;
+         description { state: "default" 0.0;
+            rel1.to: "pop";
+            rel2.to: "pop";
+            rel2.relative: 1.0 0.5;
+            image {
+               normal: "bt_dis_hilight.png";
+               border: 4 4 4 0;
+            }
+         }
+      }
+      part { name: "elm.swallow.content";
+         type: SWALLOW;
+         description { state: "default" 0.0;
+            rel1.to: "base";
+            rel2.to: "base";
+         }
+      }
+   }
+   programs {
+      program { name: "show";
+         signal: "elm,action,show";
+         source: "elm";
+         action: STATE_SET "visible" 0.0;
+         target: "base";
+      }
+      program { name: "show_2";
+         signal: "show";
+         action: STATE_SET "default" 0.0;
+         target: "base";
+         after: "show_3";
+      }
+      program { name: "show_3";
+         signal: "show";
+         action: STATE_SET "visible" 0.0;
+         target: "base";
+         transition: LINEAR 0.5;
+      }
+      program { name: "hide";
+         signal: "elm,action,hide";
+         source: "elm";
+         action: STATE_SET "default" 0.0;
+         target: "base";
+      }
+   }
+}
+group { name: "elm/notify/bottom_left/default";
+     //this group is a design similar to the inwin group
+   images {
+      image: "shad_circ.png" COMP;
+      image: "bt_dis_base.png" COMP;
+      image: "bt_dis_hilight.png" COMP;
+   }
+   parts {
+      part { name: "base";
+         type: RECT;
+         mouse_events: 0;
+         repeat_events: 1;
+         description { state: "default" 0.0;
+            color: 0 0 0 0;
+            rel1.offset: 10 10;
+            rel2.offset: -10 -10;
+            rel1.relative: 0.0 1.0;
+            rel2.relative: 1.0 2.0;
+         }
+         description { state: "visible" 0.0;
+            inherit: "default" 0.0;
+            color: 0 0 0 64;
+            rel1.relative: 0.0 0.0;
+            rel2.relative: 1.0 1.0;
+         }
+      }
+      part { name: "shad";
+         mouse_events:  0;
+         description { state: "default" 0.0;
+            image.normal: "shad_circ.png";
+            rel1.to: "elm.swallow.content";
+            rel1.offset: -64 -64;
+            rel2.to: "elm.swallow.content";
+            rel2.offset: 63 63;
+            fill.smooth: 0;
+         }
+      }
+      part { name: "pop";
+         mouse_events: 1;
+         description { state: "default" 0.0;
+            rel1.to: "elm.swallow.content";
+            rel1.offset: -5 -5;
+            rel2.to: "elm.swallow.content";
+            rel2.offset: 4 4;
+            image {
+               normal: "bt_dis_base.png";
+               border: 4 4 4 4;
+            }
+            image.middle: SOLID;
+         }
+      }
+      part { name: "popover";
+         mouse_events: 0;
+         description { state: "default" 0.0;
+            rel1.to: "pop";
+            rel2.to: "pop";
+            rel2.relative: 1.0 0.5;
+            image {
+               normal: "bt_dis_hilight.png";
+               border: 4 4 4 0;
+            }
+         }
+      }
+      part { name: "elm.swallow.content";
+         type: SWALLOW;
+         description { state: "default" 0.0;
+            rel1.to: "base";
+            rel2.to: "base";
+         }
+      }
+   }
+   programs {
+      program { name: "show";
+         signal: "elm,action,show";
+         source: "elm";
+         action: STATE_SET "visible" 0.0;
+         target: "base";
+      }
+      program { name: "show_2";
+         signal: "show";
+         action: STATE_SET "default" 0.0;
+         target: "base";
+         after: "show_3";
+      }
+      program { name: "show_3";
+         signal: "show";
+         action: STATE_SET "visible" 0.0;
+         target: "base";
+         transition: LINEAR 0.5;
+      }
+      program { name: "hide";
+         signal: "elm,action,hide";
+         source: "elm";
+         action: STATE_SET "default" 0.0;
+         target: "base";
+      }
+   }
+}
+group { name: "elm/notify/bottom_right/default";
+     //this group is a design similar to the inwin group
+   images {
+      image: "shad_circ.png" COMP;
+      image: "bt_dis_base.png" COMP;
+      image: "bt_dis_hilight.png" COMP;
+   }
+   parts {
+      part { name: "base";
+         type: RECT;
+         mouse_events: 0;
+         repeat_events: 1;
+         description { state: "default" 0.0;
+            color: 0 0 0 0;
+            rel1.offset: 10 10;
+            rel2.offset: -10 -10;
+            rel1.relative: 0.0 1.0;
+            rel2.relative: 1.0 2.0;
+         }
+         description { state: "visible" 0.0;
+            inherit: "default" 0.0;
+            color: 0 0 0 64;
+            rel1.relative: 0.0 0.0;
+            rel2.relative: 1.0 1.0;
+         }
+      }
+      part { name: "shad";
+         mouse_events:  0;
+         description { state: "default" 0.0;
+            image.normal: "shad_circ.png";
+            rel1.to: "elm.swallow.content";
+            rel1.offset: -64 -64;
+            rel2.to: "elm.swallow.content";
+            rel2.offset: 63 63;
+            fill.smooth: 0;
+         }
+      }
+      part { name: "pop";
+         mouse_events: 1;
+         description { state: "default" 0.0;
+            rel1.to: "elm.swallow.content";
+            rel1.offset: -5 -5;
+            rel2.to: "elm.swallow.content";
+            rel2.offset: 4 4;
+            image {
+               normal: "bt_dis_base.png";
+               border: 4 4 4 4;
+            }
+            image.middle: SOLID;
+         }
+      }
+      part { name: "popover";
+         mouse_events: 0;
+         description { state: "default" 0.0;
+            rel1.to: "pop";
+            rel2.to: "pop";
+            rel2.relative: 1.0 0.5;
+            image {
+               normal: "bt_dis_hilight.png";
+               border: 4 4 4 0;
+            }
+         }
+      }
+      part { name: "elm.swallow.content";
+         type: SWALLOW;
+         description { state: "default" 0.0;
+            rel1.to: "base";
+            rel2.to: "base";
+         }
+      }
+   }
+   programs {
+      program { name: "show";
+         signal: "elm,action,show";
+         source: "elm";
+         action: STATE_SET "visible" 0.0;
+         target: "base";
+      }
+      program { name: "show_2";
+         signal: "show";
+         action: STATE_SET "default" 0.0;
+         target: "base";
+         after: "show_3";
+      }
+      program { name: "show_3";
+         signal: "show";
+         action: STATE_SET "visible" 0.0;
+         target: "base";
+         transition: LINEAR 0.5;
+      }
+      program { name: "hide";
+         signal: "elm,action,hide";
+         source: "elm";
+         action: STATE_SET "default" 0.0;
+         target: "base";
+      }
+   }
+}
 
 ///////////////////////////////////////////////////////////////////////////////

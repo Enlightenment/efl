@@ -1,64 +1,64 @@
-   group {
-      name: "elm/video/base/default";
+group {
+   name: "elm/video/base/default";
 
-      parts {
-         part {
-            name: "clipper";
-            type: RECT;
+   parts {
+      part {
+         name: "clipper";
+         type: RECT;
 
-            description {
-               color: 255 255 255 255;
-            }
-            description {
-               state: "darker" 0.0;
-               color: 128 128 128 255;
-            }
+         description {
+            color: 255 255 255 255;
          }
-         part {
-            name: "elm.swallow.video";
-            type: SWALLOW;
-
-            clip_to: "clipper";
-            mouse_events: 1;
-            repeat_events: 1;
-
-            description {
-               aspect_preference: BOTH;
-               aspect: 1 1;
-            }
+         description {
+            state: "darker" 0.0;
+            color: 128 128 128 255;
          }
       }
+      part {
+         name: "elm.swallow.video";
+         type: SWALLOW;
 
-      programs {
-         program {
-            signal: "elm,video,load";
-            source: "elm";
+         clip_to: "clipper";
+         mouse_events: 1;
+         repeat_events: 1;
 
-            action: STATE_SET "darker" 0.0;
-            target: "clipper";
-         }
-         program {
-            signal: "elm,video,play";
-            source: "elm";
-
-            action: STATE_SET "default" 0.0;
-            target: "clipper";
-         }
-         program {
-            signal: "elm,video,end";
-            source: "elm";
-
-            action: STATE_SET "darker" 0.0;
-            target: "clipper";
-            transition: LINEAR 0.5;
-         }
-         program {
-            signal: "elm,video,pause";
-            source: "elm";
-
-            action: STATE_SET "darker" 0.0;
-            target: "clipper";
+         description {
+            aspect_preference: BOTH;
+            aspect: 1 1;
          }
       }
    }
+
+   programs {
+      program {
+         signal: "elm,video,load";
+         source: "elm";
+
+         action: STATE_SET "darker" 0.0;
+         target: "clipper";
+      }
+      program {
+         signal: "elm,video,play";
+         source: "elm";
+
+         action: STATE_SET "default" 0.0;
+         target: "clipper";
+      }
+      program {
+         signal: "elm,video,end";
+         source: "elm";
+
+         action: STATE_SET "darker" 0.0;
+         target: "clipper";
+         transition: LINEAR 0.5;
+      }
+      program {
+         signal: "elm,video,pause";
+         source: "elm";
+
+         action: STATE_SET "darker" 0.0;
+         target: "clipper";
+      }
+   }
+}
 /////////////////////////////////////////////////////////////////////////

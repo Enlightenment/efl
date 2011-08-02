@@ -1,189 +1,186 @@
-////////////////////////////////////////////////////////////////////////////////
-// diskselector
-////////////////////////////////////////////////////////////////////////////////
-   group { name: "elm/diskselector/base/default";
-      images {
-         image: "bar_shine.png" COMP;
-      }
+group { name: "elm/diskselector/base/default";
+   images {
+      image: "bar_shine.png" COMP;
+   }
 
-      parts {
-         part { name: "bg";
-            type: RECT;
-            mouse_events: 0;
-            description { state: "default" 0.0;
-               color: 0 0 0 255;
+   parts {
+      part { name: "bg";
+         type: RECT;
+         mouse_events: 0;
+         description { state: "default" 0.0;
+            color: 0 0 0 255;
+         }
+      }
+      part { name: "shine_left";
+         mouse_events:  0;
+         description { state: "default" 0.0;
+            rel1.to: "bg";
+            rel1.relative: -0.1 0;
+            rel2.to: "bg";
+            rel2.relative: 0.1 1;
+            image.normal: "bar_shine.png";
+            color: 255 255 255 120;
+         }
+      }
+      part { name: "shine_center";
+         mouse_events:  0;
+         description { state: "default" 0.0;
+            rel1.to: "bg";
+            rel1.relative: 0.2 0;
+            rel2.to: "bg";
+            rel2.relative: 0.8 1;
+            image.normal: "bar_shine.png";
+            color: 255 255 255 180;
+         }
+      }
+      part { name: "shine_right";
+         mouse_events:  0;
+         description { state: "default" 0.0;
+            rel1.to: "bg";
+            rel1.relative: 0.9 0;
+            rel2.to: "bg";
+            rel2.relative: 1.1 1;
+            image.normal: "bar_shine.png";
+            color: 255 255 255 120;
+         }
+      }
+      part { name: "clipper";
+         type: RECT;
+         mouse_events: 0;
+         description { state: "default" 0.0;
+            rel1.to: "bg";
+            rel2.to: "bg";
+            rel1.offset: 2 2;
+            rel2.offset: -3 -3;
+         }
+      }
+      part { name: "elm.swallow.content";
+         clip_to: "clipper";
+         type: SWALLOW;
+         description { state: "default" 0.0;
+            rel1.to: "bg";
+            rel2.to: "bg";
+         }
+      }
+   }
+}
+
+group { name: "elm/diskselector/item/default";
+
+   data {
+      item: "len_threshold" "14";
+      item: "display_item_num" "3";
+      item: "min_height" "-1";
+      item: "min_width" "-1";
+   }
+
+   parts {
+      part { name: "elm.swallow.icon";
+         type: SWALLOW;
+         description { state: "default" 0.0;
+            fixed: 1 0;
+            align: 0.0 0.5;
+            rel1 {
+               relative: 0 0;
+               offset: 4 4;
+            }
+            rel2 {
+               relative: 0 1;
+               offset: 4 -5;
             }
          }
-         part { name: "shine_left";
-            mouse_events:  0;
-            description { state: "default" 0.0;
-               rel1.to: "bg";
-               rel1.relative: -0.1 0;
-               rel2.to: "bg";
-               rel2.relative: 0.1 1;
-               image.normal: "bar_shine.png";
-               color: 255 255 255 120;
+         description { state: "show" 0.0;
+            inherit: "default" 0.0;
+         }
+         description { state: "default_small" 0.0;
+            inherit: "default" 0.0;
+            rel1.relative: 0 0.2;
+            rel2.relative: 0 0.8;
+         }
+         description { state: "left_side" 0.0;
+            inherit: "default" 0.0;
+            rel1.relative: 0 0.2;
+            rel2.relative: 0 0.8;
+            color: 255 255 255 160;
+         }
+         description { state: "right_side" 0.0;
+            inherit: "left_side" 0.0;
+            rel1.relative: 0.4 0.2;
+            rel2.relative: 0.4 0.8;
+            color: 255 255 255 160;
+         }
+      }
+      part { name: "elm.text";
+         type: TEXT;
+         mouse_events: 0;
+         scale: 1;
+         description { state: "default" 0.0;
+            rel1.relative: 1 0.0;
+            rel1.to_x: "elm.swallow.icon";
+            rel2.relative: 1.0 1.0;
+            color: 255 255 255 255;
+            visible: 0;
+            text {
+               font: "Sans,Edje-Vera";
+               size: 13;
+               align: 0.5 0.5;
+               min: 0 1;
             }
          }
-         part { name: "shine_center";
-            mouse_events:  0;
-            description { state: "default" 0.0;
-               rel1.to: "bg";
-               rel1.relative: 0.2 0;
-               rel2.to: "bg";
-               rel2.relative: 0.8 1;
-               image.normal: "bar_shine.png";
-               color: 255 255 255 180;
-            }
+         description { state: "show" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
          }
-         part { name: "shine_right";
-            mouse_events:  0;
-            description { state: "default" 0.0;
-               rel1.to: "bg";
-               rel1.relative: 0.9 0;
-               rel2.to: "bg";
-               rel2.relative: 1.1 1;
-               image.normal: "bar_shine.png";
-               color: 255 255 255 120;
-            }
+         description { state: "default_small" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+            text.size: 10;
          }
-         part { name: "clipper";
-            type: RECT;
-            mouse_events: 0;
-            description { state: "default" 0.0;
-               rel1.to: "bg";
-               rel2.to: "bg";
-               rel1.offset: 2 2;
-               rel2.offset: -3 -3;
-            }
+         description { state: "left_side" 0.0;
+            inherit: "default" 0.0;
+            color: 172 172 172 255;
+            text.size: 10;
+            visible: 1;
+            text.align: 0.2 0.5;
          }
-         part { name: "elm.swallow.content";
-            clip_to: "clipper";
-            type: SWALLOW;
-            description { state: "default" 0.0;
-               rel1.to: "bg";
-               rel2.to: "bg";
-            }
+         description { state: "right_side" 0.0;
+            inherit: "default" 0.0;
+            color: 172 172 172 255;
+            visible: 1;
+            text.size: 10;
+            text.align: 0.8 0.5;
          }
       }
    }
 
-   group { name: "elm/diskselector/item/default";
-
-      data {
-         item: "len_threshold" "14";
-         item: "display_item_num" "3";
-         item: "min_height" "-1";
-         item: "min_width" "-1";
+   programs {
+      program { name: "center_text";
+         signal: "elm,state,center";
+         source: "elm";
+         action: STATE_SET "show" 0.0;
+         target: "elm.text";
+         target: "elm.swallow.icon";
       }
-
-      parts {
-         part { name: "elm.swallow.icon";
-            type: SWALLOW;
-            description { state: "default" 0.0;
-               fixed: 1 0;
-               align: 0.0 0.5;
-               rel1 {
-                  relative: 0 0;
-                  offset: 4 4;
-               }
-               rel2 {
-                  relative: 0 1;
-                  offset: 4 -5;
-               }
-            }
-            description { state: "show" 0.0;
-               inherit: "default" 0.0;
-            }
-            description { state: "default_small" 0.0;
-               inherit: "default" 0.0;
-               rel1.relative: 0 0.2;
-               rel2.relative: 0 0.8;
-            }
-            description { state: "left_side" 0.0;
-               inherit: "default" 0.0;
-               rel1.relative: 0 0.2;
-               rel2.relative: 0 0.8;
-               color: 255 255 255 160;
-            }
-            description { state: "right_side" 0.0;
-               inherit: "left_side" 0.0;
-               rel1.relative: 0.4 0.2;
-               rel2.relative: 0.4 0.8;
-               color: 255 255 255 160;
-            }
-         }
-         part { name: "elm.text";
-            type: TEXT;
-            mouse_events: 0;
-            scale: 1;
-            description { state: "default" 0.0;
-               rel1.relative: 1 0.0;
-               rel1.to_x: "elm.swallow.icon";
-               rel2.relative: 1.0 1.0;
-               color: 255 255 255 255;
-               visible: 0;
-               text {
-                  font: "Sans,Edje-Vera";
-                  size: 13;
-                  align: 0.5 0.5;
-                  min: 0 1;
-               }
-            }
-            description { state: "show" 0.0;
-               inherit: "default" 0.0;
-               visible: 1;
-            }
-            description { state: "default_small" 0.0;
-               inherit: "default" 0.0;
-               visible: 1;
-               text.size: 10;
-            }
-            description { state: "left_side" 0.0;
-               inherit: "default" 0.0;
-               color: 172 172 172 255;
-               text.size: 10;
-               visible: 1;
-               text.align: 0.2 0.5;
-            }
-            description { state: "right_side" 0.0;
-               inherit: "default" 0.0;
-               color: 172 172 172 255;
-               visible: 1;
-               text.size: 10;
-               text.align: 0.8 0.5;
-            }
-         }
+      program { name: "center_small_text";
+         signal: "elm,state,center_small";
+         source: "elm";
+         action: STATE_SET "default_small" 0.0;
+         target: "elm.text";
+         target: "elm.swallow.icon";
       }
-
-      programs {
-         program { name: "center_text";
-            signal: "elm,state,center";
-            source: "elm";
-            action: STATE_SET "show" 0.0;
-            target: "elm.text";
-            target: "elm.swallow.icon";
-         }
-         program { name: "center_small_text";
-            signal: "elm,state,center_small";
-            source: "elm";
-            action: STATE_SET "default_small" 0.0;
-            target: "elm.text";
-            target: "elm.swallow.icon";
-         }
-         program { name: "l_side_text";
-            signal: "elm,state,left_side";
-            source: "elm";
-            action: STATE_SET "left_side" 0.0;
-            target: "elm.text";
-            target: "elm.swallow.icon";
-         }
-         program { name: "r_side_text";
-            signal: "elm,state,right_side";
-            source: "elm";
-            action: STATE_SET "right_side" 0.0;
-            target: "elm.text";
-            target: "elm.swallow.icon";
-         }
+      program { name: "l_side_text";
+         signal: "elm,state,left_side";
+         source: "elm";
+         action: STATE_SET "left_side" 0.0;
+         target: "elm.text";
+         target: "elm.swallow.icon";
+      }
+      program { name: "r_side_text";
+         signal: "elm,state,right_side";
+         source: "elm";
+         action: STATE_SET "right_side" 0.0;
+         target: "elm.text";
+         target: "elm.swallow.icon";
       }
    }
+}

@@ -1,160 +1,160 @@
-   group { name: "elm/entry/path/separator/default";
-      images.image: "arrow_right.png" COMP;
-      parts {
-         part { name: "icon";
-            mouse_events: 0;
-            description { state: "default" 0.0;
-               image.normal: "arrow_right.png";
-               max: 64 64;
-               aspect: 1.0 1.0;
-            }
+group { name: "elm/entry/path/separator/default";
+   images.image: "arrow_right.png" COMP;
+   parts {
+      part { name: "icon";
+         mouse_events: 0;
+         description { state: "default" 0.0;
+            image.normal: "arrow_right.png";
+            max: 64 64;
+            aspect: 1.0 1.0;
          }
       }
    }
+}
 
-   group { name: "elm/fileselector/base/default";
-      data {
-         item: "path_separator" "<item relsize=16x16 vsize=full href=path/separator></item>";
+group { name: "elm/fileselector/base/default";
+   data {
+      item: "path_separator" "<item relsize=16x16 vsize=full href=path/separator></item>";
+   }
+   parts {
+      part { name: "elm.swallow.up";
+         type: SWALLOW;
+         description { state: "default" 0.0;
+            align: 0.0 0.0;
+            min: 10 10;
+            fixed: 1 1;
+            rel2 {
+               relative: 0.0 0.0;
+               offset: 0 0;
+            }
+         }
       }
-      parts {
-         part { name: "elm.swallow.up";
-            type: SWALLOW;
-            description { state: "default" 0.0;
-               align: 0.0 0.0;
-               min: 10 10;
-               fixed: 1 1;
-               rel2 {
-                  relative: 0.0 0.0;
-                  offset: 0 0;
-               }
+      part { name: "elm.swallow.home";
+         type: SWALLOW;
+         description { state: "default" 0.0;
+            align: 0.0 0.0;
+            min: 10 10;
+            fixed: 1 1;
+            rel1 {
+               to: "elm.swallow.up";
+               relative: 1.0 0.0;
+               offset: 5 0;
+            }
+            rel2 {
+               to: "elm.swallow.up";
+               relative: 1.0 1.0;
+               offset: 20 -1;
             }
          }
-         part { name: "elm.swallow.home";
-            type: SWALLOW;
-            description { state: "default" 0.0;
-               align: 0.0 0.0;
-               min: 10 10;
-               fixed: 1 1;
-               rel1 {
-                  to: "elm.swallow.up";
-                  relative: 1.0 0.0;
-                  offset: 5 0;
-               }
-               rel2 {
-                  to: "elm.swallow.up";
-                  relative: 1.0 1.0;
-                  offset: 20 -1;
-               }
+      }
+      part { name: "elm.swallow.files";
+         type: SWALLOW;
+         description { state: "default" 0.0;
+            align: 1.0 0.0;
+            min: 10 10;
+            fixed: 1 1;
+            rel1 {
+               to_y: "elm.swallow.home";
+               relative: 0.0 1.0;
+               offset: 0 0;
+            }
+            rel2 {
+               to_y: "elm.swallow.path";
+               relative: 1.0 0.0;
+               offset: -1 -1;
             }
          }
-         part { name: "elm.swallow.files";
-            type: SWALLOW;
-            description { state: "default" 0.0;
-               align: 1.0 0.0;
-               min: 10 10;
-               fixed: 1 1;
-               rel1 {
-                  to_y: "elm.swallow.home";
-                  relative: 0.0 1.0;
-                  offset: 0 0;
-               }
-               rel2 {
-                  to_y: "elm.swallow.path";
-                  relative: 1.0 0.0;
-                  offset: -1 -1;
-               }
+      }
+      part { name: "elm.swallow.path";
+         type: SWALLOW;
+         description { state: "default" 0.0;
+            align: 0.5 1.0;
+            fixed: 1 1;
+            rel1 {
+               to_y: "elm.swallow.filename";
+               relative: 0.0 0.0;
+               offset: 0 -1;
+            }
+            rel2 {
+               to_y: "elm.swallow.filename";
+               relative: 1.0 0.0;
+               offset: -1 -1;
             }
          }
-         part { name: "elm.swallow.path";
-            type: SWALLOW;
-            description { state: "default" 0.0;
-               align: 0.5 1.0;
-               fixed: 1 1;
-               rel1 {
-                  to_y: "elm.swallow.filename";
-                  relative: 0.0 0.0;
-                  offset: 0 -1;
-               }
-               rel2 {
-                  to_y: "elm.swallow.filename";
-                  relative: 1.0 0.0;
-                  offset: -1 -1;
-               }
+      }
+      part { name: "elm.swallow.filename";
+         type: SWALLOW;
+         description { state: "default" 0.0;
+            align: 0.5 1.0;
+            fixed: 1 1;
+            rel1 {
+               to_y: "elm.swallow.ok";
+               relative: 0.0 0.0;
+               offset: 0 -1;
+            }
+            rel2 {
+               to_y: "elm.swallow.ok";
+               relative: 1.0 0.0;
+               offset: -1 -1;
             }
          }
-         part { name: "elm.swallow.filename";
-            type: SWALLOW;
-            description { state: "default" 0.0;
-               align: 0.5 1.0;
-               fixed: 1 1;
-               rel1 {
-                  to_y: "elm.swallow.ok";
-                  relative: 0.0 0.0;
-                  offset: 0 -1;
-               }
-               rel2 {
-                  to_y: "elm.swallow.ok";
-                  relative: 1.0 0.0;
-                  offset: -1 -1;
-               }
+      }
+      part { name: "elm.swallow.cancel";
+         type: SWALLOW;
+         description { state: "default" 0.0;
+            align: 1.0 1.0;
+            fixed: 1 1;
+            rel1 {
+               to: "elm.swallow.ok";
+               relative: 0.0 0.0;
+               offset: -3 0;
+            }
+            rel2 {
+               to: "elm.swallow.ok";
+               relative: 0.0 1.0;
+               offset: -3 -1;
             }
          }
-         part { name: "elm.swallow.cancel";
-            type: SWALLOW;
-            description { state: "default" 0.0;
-               align: 1.0 1.0;
-               fixed: 1 1;
-               rel1 {
-                  to: "elm.swallow.ok";
-                  relative: 0.0 0.0;
-                  offset: -3 0;
-               }
-               rel2 {
-                  to: "elm.swallow.ok";
-                  relative: 0.0 1.0;
-                  offset: -3 -1;
-               }
-            }
-         }
-         part { name: "elm.swallow.ok";
-            type: SWALLOW;
-            description { state: "default" 0.0;
-               align: 1.0 1.0;
-               fixed: 1 1;
-               rel1 {
-                  relative: 1.0 1.0;
-                  offset: -1 -1;
-               }
+      }
+      part { name: "elm.swallow.ok";
+         type: SWALLOW;
+         description { state: "default" 0.0;
+            align: 1.0 1.0;
+            fixed: 1 1;
+            rel1 {
+               relative: 1.0 1.0;
+               offset: -1 -1;
             }
          }
       }
    }
+}
 
-   group { name: "elm/fileselector_entry/base/default";
-      parts {
-         part { name: "elm.swallow.entry";
-            type: SWALLOW;
-            description { state: "default" 0.0;
-               align: 0.0 0.0;
-               min: 50 10;
-               rel2 { to_x: "elm.swallow.button";
-                  relative: 0.0 1.0;
-                  offset: -1 -1;
-               }
+group { name: "elm/fileselector_entry/base/default";
+   parts {
+      part { name: "elm.swallow.entry";
+         type: SWALLOW;
+         description { state: "default" 0.0;
+            align: 0.0 0.0;
+            min: 50 10;
+            rel2 { to_x: "elm.swallow.button";
+               relative: 0.0 1.0;
+               offset: -1 -1;
             }
          }
-         part { name: "elm.swallow.button";
-            type: SWALLOW;
-            description { state: "default" 0.0;
-               align: 1.0 0.0;
-               min: 10 10;
-               fixed: 1 1;
-               rel1 {
-                  relative: 1.0 0.0;
-                  offset: -21 0;
-               }
+      }
+      part { name: "elm.swallow.button";
+         type: SWALLOW;
+         description { state: "default" 0.0;
+            align: 1.0 0.0;
+            min: 10 10;
+            fixed: 1 1;
+            rel1 {
+               relative: 1.0 0.0;
+               offset: -21 0;
             }
          }
       }
    }
+}
 

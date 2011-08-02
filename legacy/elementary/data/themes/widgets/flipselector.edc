@@ -1,491 +1,491 @@
 #define FLIP_PICKER_MAX_LEN (50)
 #define FLIP_PICKER_MAX_LEN_STR "50"
 
-   group { name: "elm/flipselector/base/default";
-      images {
-         image: "flip_base.png" COMP;
-         image: "flip_base_shad.png" COMP;
-         image: "flip_shad.png" COMP;
-         image: "arrow_up.png" COMP;
-         image: "arrow_down.png" COMP;
-         image: "flip_t.png" COMP;
-         image: "flip_b.png" COMP;
-      }
+group { name: "elm/flipselector/base/default";
+   images {
+      image: "flip_base.png" COMP;
+      image: "flip_base_shad.png" COMP;
+      image: "flip_shad.png" COMP;
+      image: "arrow_up.png" COMP;
+      image: "arrow_down.png" COMP;
+      image: "flip_t.png" COMP;
+      image: "flip_b.png" COMP;
+   }
 
-      data {
-         item: "max_len" FLIP_PICKER_MAX_LEN_STR;
-      }
+   data {
+      item: "max_len" FLIP_PICKER_MAX_LEN_STR;
+   }
 
-      //FIXME: quick successive clicks on, say, up, lead to nastiness
-      script {
-         public cur, prev, next, lock;
+   //FIXME: quick successive clicks on, say, up, lead to nastiness
+   script {
+      public cur, prev, next, lock;
 
-         public animator_bottom_down(val, Float:pos) {
-            new tmp[FLIP_PICKER_MAX_LEN];
+      public animator_bottom_down(val, Float:pos) {
+         new tmp[FLIP_PICKER_MAX_LEN];
 
-            set_tween_state(PART:"bottom", pos, "shrink", 0.0, "default", 0.0);
-            set_tween_state(PART:"bottom_sheet", pos, "shrink", 0.0, "default",
-                            0.0);
-            set_tween_state(PART:"shadow", pos, "half", 0.0, "full",
-                            0.0);
+         set_tween_state(PART:"bottom", pos, "shrink", 0.0, "default", 0.0);
+         set_tween_state(PART:"bottom_sheet", pos, "shrink", 0.0, "default",
+         0.0);
+         set_tween_state(PART:"shadow", pos, "half", 0.0, "full",
+         0.0);
 
-            if (pos >= 1.0) {
-               set_state(PART:"shadow", "default", 0.0);
-               set_int(lock, 0);
+         if (pos >= 1.0) {
+            set_state(PART:"shadow", "default", 0.0);
+            set_int(lock, 0);
 
-               fetch_str(next, 0, tmp, FLIP_PICKER_MAX_LEN);
-               if (strncmp(tmp, "", FLIP_PICKER_MAX_LEN) != 0) {
-                  replace_str(next, 0, "");
-                  message(MSG_STRING, 1, tmp);
-               }
-            }
-         }
-
-         public animator_top_down(val, Float:pos) {
-            set_tween_state(PART:"top", pos, "default", 0.0, "shrink", 0.0);
-            set_tween_state(PART:"top_sheet", pos, "default", 0.0, "shrink",
-                            0.0);
-            set_tween_state(PART:"shadow", pos, "default", 0.0, "half",
-                            0.0);
-
-            if (pos >= 1.0)
-               anim(0.2, "animator_bottom_down", val);
-         }
-
-         public animator_bottom_up(val, Float:pos) {
-            set_tween_state(PART:"bottom", pos, "default", 0.0, "shrink", 0.0);
-            set_tween_state(PART:"bottom_sheet", pos, "default", 0.0, "shrink",
-                            0.0);
-            set_tween_state(PART:"shadow", pos, "full", 0.0, "half",
-                            0.0);
-
-            if (pos >= 1.0)
-               anim(0.2, "animator_top_up", val);
-         }
-
-         public animator_top_up(val, Float:pos) {
-            new tmp[FLIP_PICKER_MAX_LEN];
-
-            set_tween_state(PART:"top", pos, "shrink", 0.0, "default", 0.0);
-            set_tween_state(PART:"top_sheet", pos, "shrink", 0.0, "default",
-                            0.0);
-            set_tween_state(PART:"shadow", pos, "half", 0.0, "default",
-                            0.0);
-
-            if (pos >= 1.0) {
-               set_state(PART:"shadow", "default", 0.0);
-               set_int(lock, 0);
-
-               fetch_str(next, 0, tmp, FLIP_PICKER_MAX_LEN);
-               if (strncmp(tmp, "", FLIP_PICKER_MAX_LEN) != 0) {
-                  replace_str(next, 0, "");
-                  message(MSG_STRING, 2, tmp);
-               }
-            }
-         }
-
-         public message(Msg_Type:type, id, ...) {
-            /* flip down */
-            if ((type == MSG_STRING) && (id == 1)) {
-               new value[FLIP_PICKER_MAX_LEN], tmp[FLIP_PICKER_MAX_LEN];
-
-               snprintf(value, FLIP_PICKER_MAX_LEN, "%s", getarg(2));
-
-               if (get_int(lock) == 1) {
-                  replace_str(next, 0, value);
-                  return;
-               }
-
-               fetch_str(cur, 0, tmp, FLIP_PICKER_MAX_LEN);
-
-               set_text(PART:"bottom_b", tmp);
-
-               set_state(PART:"top", "shrink", 0.0);
-               set_text(PART:"top", tmp);
-               set_state(PART:"top", "default", 0.0);
-               set_text(PART:"top", tmp);
-
-               replace_str(prev, 0, tmp);
-
-               set_state(PART:"bottom", "default", 0.0);
-               set_text(PART:"bottom", value);
-               set_state(PART:"bottom", "shrink", 0.0);
-               set_text(PART:"bottom", value);
-
-               set_text(PART:"top_b", value);
-
-               replace_str(cur, 0, value);
-
-               set_state(PART:"bottom_sheet", "shrink", 0.0);
-               set_state(PART:"top_sheet", "default", 0.0);
-
-               set_int(lock, 1);
-               set_state(PART:"shadow", "default", 0.0);
-               anim(0.2, "animator_top_down", 1);
-            }
-
-            /* flip up */
-            if ((type == MSG_STRING) && (id == 2)) {
-               new value[FLIP_PICKER_MAX_LEN], tmp[FLIP_PICKER_MAX_LEN];
-
-               snprintf(value, FLIP_PICKER_MAX_LEN, "%s", getarg(2));
-
-               if (get_int(lock) == 1) {
-                  replace_str(next, 0, value);
-                  return;
-               }
-
-               fetch_str(cur, 0, tmp, FLIP_PICKER_MAX_LEN);
-
-               set_text(PART:"top_b", tmp);
-
-               set_state(PART:"bottom", "shrink", 0.0);
-               set_text(PART:"bottom", tmp);
-               set_state(PART:"bottom", "default", 0.0);
-               set_text(PART:"bottom", tmp);
-
-               replace_str(prev, 0, tmp);
-
-               set_state(PART:"top", "default", 0.0);
-               set_text(PART:"top", value);
-               set_state(PART:"top", "shrink", 0.0);
-               set_text(PART:"top", value);
-
-               set_text(PART:"bottom_b", value);
-
-               replace_str(cur, 0, value);
-
-               set_state(PART:"bottom_sheet", "default", 0.0);
-               set_state(PART:"top_sheet", "shrink", 0.0);
-
-               set_int(lock, 1);
-               set_state(PART:"shadow", "full", 0.0);
-               anim(0.2, "animator_bottom_up", 1);
+            fetch_str(next, 0, tmp, FLIP_PICKER_MAX_LEN);
+            if (strncmp(tmp, "", FLIP_PICKER_MAX_LEN) != 0) {
+               replace_str(next, 0, "");
+               message(MSG_STRING, 1, tmp);
             }
          }
       }
 
-      parts {
-         part { name: "shad";
-            mouse_events: 0;
-            description { state: "default" 0.0;
-               rel1.offset: -4 -4;
-               rel1.to: "base";
-               rel2.offset: 3 3;
-               rel2.to: "base";
-               image {
-                  normal: "flip_base_shad.png";
-                  border: 8 8 8 8;
-               }
-            }
-         }
+      public animator_top_down(val, Float:pos) {
+         set_tween_state(PART:"top", pos, "default", 0.0, "shrink", 0.0);
+         set_tween_state(PART:"top_sheet", pos, "default", 0.0, "shrink",
+         0.0);
+         set_tween_state(PART:"shadow", pos, "default", 0.0, "half",
+         0.0);
 
-         part { name: "base";
-            scale: 1;
-            description { state: "default" 0.0;
-               rel1.offset: 4 4;
-               rel2.offset: -5 -5;
-               min: 24 48;
-               image.normal: "flip_base.png";
-            }
-         }
+         if (pos >= 1.0)
+         anim(0.2, "animator_bottom_down", val);
+      }
 
-         part { name: "b";
-            type: RECT;
-            mouse_events: 1;
-            description { state: "default" 0.0;
-               rel1.to: "base";
-               rel1.relative: 0.0 0.5;
-               rel2.to: "base";
-               color: 0 0 0 0;
-            }
-            description { state: "hidden" 0.0;
-               inherit: "default" 0.0;
-               visible: 0;
-            }
-         }
+      public animator_bottom_up(val, Float:pos) {
+         set_tween_state(PART:"bottom", pos, "default", 0.0, "shrink", 0.0);
+         set_tween_state(PART:"bottom_sheet", pos, "default", 0.0, "shrink",
+         0.0);
+         set_tween_state(PART:"shadow", pos, "full", 0.0, "half",
+         0.0);
 
-         part { name: "t";
-            type: RECT;
-            mouse_events: 1;
-            description { state: "default" 0.0;
-               rel1.to: "base";
-               rel2.to: "base";
-               rel2.relative: 1.0 0.5;
-               color: 0 0 0 0;
-            }
-            description { state: "hidden" 0.0;
-               inherit: "default" 0.0;
-               visible: 0;
-            }
-         }
+         if (pos >= 1.0)
+         anim(0.2, "animator_top_up", val);
+      }
 
-         part { name: "bottom_sheet_static";
-            mouse_events: 0;
-            description { state: "default" 0.0;
-               visible: 1;
-               rel1.to: "b";
-               rel2.to: "b";
-               image.normal: "flip_b.png";
-            }
-         }
+      public animator_top_up(val, Float:pos) {
+         new tmp[FLIP_PICKER_MAX_LEN];
 
-         part { name: "bottom_b";
-            mouse_events: 0;
-            clip_to: "bottom_clipper";
-            type: TEXT;
-            scale: 1;
-            description { state: "default" 0.0;
-               rel1.to: "base";
-               rel2.to: "base";
-               color: 0 0 0 255;
-               color2: 0 0 0 255;
-               text {
-                  font: "Sans:style=Bold,Edje-Vera-Bold";
-                  size: 30;
-                  min: 1 1;
-                  align: 0.5 0.5;
-               }
-            }
-         }
+         set_tween_state(PART:"top", pos, "shrink", 0.0, "default", 0.0);
+         set_tween_state(PART:"top_sheet", pos, "shrink", 0.0, "default",
+         0.0);
+         set_tween_state(PART:"shadow", pos, "half", 0.0, "default",
+         0.0);
 
-         part { name: "shadow";
-            mouse_events: 0;
-            description { state: "default" 0.0;
-               rel1.to: "b";
-               rel2.to: "b";
-               rel2.relative: 1.0 0.0;
-               image.normal: "flip_shad.png";
-            }
-            description { state: "half" 0.0;
-               inherit: "default" 0.0;
-               rel2.relative: 1.0 0.5;
-            }
-            description { state: "full" 0.0;
-               inherit: "default" 0.0;
-               rel2.relative: 1.0 1.0;
-            }
-         }
+         if (pos >= 1.0) {
+            set_state(PART:"shadow", "default", 0.0);
+            set_int(lock, 0);
 
-         part { name: "bottom_sheet";
-            mouse_events: 0;
-            description { state: "default" 0.0;
-               visible: 1;
-               rel1.to: "b";
-               rel2.to: "b";
-               image.normal: "flip_b.png";
-            }
-            description { state: "shrink" 0.0;
-               inherit: "default" 0.0;
-               visible: 0;
-               rel2.relative: 1.0 0.0;
-            }
-         }
-
-         part { name: "bottom";
-            mouse_events: 0;
-            clip_to: "bottom_clipper";
-            type: TEXT;
-            scale: 1;
-            description { state: "default" 0.0;
-               rel1.to: "base";
-               rel2.to: "base";
-               color: 0 0 0 255;
-               color2: 0 0 0 255;
-               text {
-                  font: "Sans:style=Bold,Edje-Vera-Bold";
-                  size: 30;
-                  min: 1 1;
-                  align: 0.5 0.5;
-               }
-            }
-            description { state: "shrink" 0.0;
-               inherit: "default" 0.0;
-               color: 128 128 128 255;
-               visible: 0;
-               rel2.relative: 1.0 0.5; /* FIXME: same visual effect? --> MAP! */
-            }
-         }
-
-         part { name: "top_sheet_static";
-            mouse_events: 0;
-            description { state: "default" 0.0;
-               visible: 1;
-               rel1.to: "t";
-               rel2.to: "t";
-               image.normal: "flip_t.png";
-            }
-         }
-
-         part { name: "top_b";
-            mouse_events: 0;
-            clip_to: "top_clipper";
-            type: TEXT;
-            scale: 1;
-            description { state: "default" 0.0;
-               rel1.to: "base";
-               rel2.to: "base";
-               color: 0 0 0 255;
-               color2: 0 0 0 255;
-               text {
-                  font: "Sans:style=Bold,Edje-Vera-Bold";
-                  size: 30;
-                  min: 1 1;
-                  align: 0.5 0.5;
-                  source: "top";
-               }
-            }
-         }
-
-         part { name: "top_sheet";
-            mouse_events: 0;
-            description { state: "default" 0.0;
-               visible: 1;
-               rel1.to: "t";
-               rel2.to: "t";
-               image.normal: "flip_t.png";
-            }
-            description { state: "shrink" 0.0;
-               inherit: "default" 0.0;
-               color: 128 128 128 255;
-               visible: 0;
-               rel1.relative: 0.0 1.0;
-            }
-         }
-
-         part { name: "top";
-            mouse_events: 0;
-            clip_to: "top_clipper";
-            type: TEXT;
-            scale: 1;
-            description { state: "default" 0.0;
-               rel1.to: "base";
-               rel2.to: "base";
-               color: 0 0 0 255;
-               color2: 0 0 0 255;
-               text {
-                  font: "Sans:style=Bold,Edje-Vera-Bold";
-                  size: 30;
-                  min: 1 1;
-                  align: 0.5 0.5;
-               }
-            }
-            description { state: "shrink" 0.0;
-               inherit: "default" 0.0;
-               visible: 0;
-               rel1.relative: 0.0 0.5;
-            }
-         }
-
-         part { name: "arrow_top";
-            mouse_events: 0;
-            scale: 1;
-            description { state: "default" 0.0;
-               min: 15 15;
-               max: 15 15;
-               align: 0.5 0.0;
-               rel1.to: "t";
-               rel2.to: "t";
-               image.normal: "arrow_up.png";
-            }
-            description { state: "hidden" 0.0;
-               inherit: "default" 0.0;
-               visible: 0;
-            }
-         }
-         part { name: "arrow_bottom";
-            mouse_events: 0;
-            scale: 1;
-            description { state: "default" 0.0;
-               min: 15 15;
-               max: 15 15;
-               align: 0.5 1.0;
-               rel1.to: "b";
-               rel2.to: "b";
-               image.normal: "arrow_down.png";
-            }
-            description { state: "hidden" 0.0;
-               inherit: "default" 0.0;
-               visible: 0;
-            }
-         }
-
-         part {
-            type: RECT;
-            mouse_events: 0;
-            name: "top_clipper";
-            description {
-               state: "default" 0.0;
-               rel1.to: "t";
-               rel2.to: "t";
-               visible: 1;
-            }
-         }
-
-         part {
-            type: RECT;
-            mouse_events: 0;
-            name: "bottom_clipper";
-            description {
-               state: "default" 0.0;
-               rel1.to: "b";
-               rel2.to: "b";
-               visible: 1;
+            fetch_str(next, 0, tmp, FLIP_PICKER_MAX_LEN);
+            if (strncmp(tmp, "", FLIP_PICKER_MAX_LEN) != 0) {
+               replace_str(next, 0, "");
+               message(MSG_STRING, 2, tmp);
             }
          }
       }
 
-      programs {
-         program { name: "load";
-            signal: "load";
-            source: "";
-            script {
-               append_str(cur, "");
-               append_str(prev, "");
-               append_str(next, "");
-               set_int(lock, 0);
+      public message(Msg_Type:type, id, ...) {
+         /* flip down */
+         if ((type == MSG_STRING) && (id == 1)) {
+            new value[FLIP_PICKER_MAX_LEN], tmp[FLIP_PICKER_MAX_LEN];
+
+            snprintf(value, FLIP_PICKER_MAX_LEN, "%s", getarg(2));
+
+            if (get_int(lock) == 1) {
+               replace_str(next, 0, value);
+               return;
             }
+
+            fetch_str(cur, 0, tmp, FLIP_PICKER_MAX_LEN);
+
+            set_text(PART:"bottom_b", tmp);
+
+            set_state(PART:"top", "shrink", 0.0);
+            set_text(PART:"top", tmp);
+            set_state(PART:"top", "default", 0.0);
+            set_text(PART:"top", tmp);
+
+            replace_str(prev, 0, tmp);
+
+            set_state(PART:"bottom", "default", 0.0);
+            set_text(PART:"bottom", value);
+            set_state(PART:"bottom", "shrink", 0.0);
+            set_text(PART:"bottom", value);
+
+            set_text(PART:"top_b", value);
+
+            replace_str(cur, 0, value);
+
+            set_state(PART:"bottom_sheet", "shrink", 0.0);
+            set_state(PART:"top_sheet", "default", 0.0);
+
+            set_int(lock, 1);
+            set_state(PART:"shadow", "default", 0.0);
+            anim(0.2, "animator_top_down", 1);
          }
 
-         program { name: "hide_arrows";
-            signal: "elm,state,button,hidden";
-            source: "elm";
-            action: STATE_SET "hidden" 0.0;
-            target: "arrow_top";
-            target: "arrow_bottom";
-            target: "t";
-            target: "b";
-         }
+         /* flip up */
+         if ((type == MSG_STRING) && (id == 2)) {
+            new value[FLIP_PICKER_MAX_LEN], tmp[FLIP_PICKER_MAX_LEN];
 
-         program { name: "show_arrows";
-            signal: "elm,state,button,visible";
-            source: "elm";
-            action: STATE_SET "default" 0.0;
-            target: "arrow_top";
-            target: "arrow_bottom";
-            target: "t";
-            target: "b";
-         }
+            snprintf(value, FLIP_PICKER_MAX_LEN, "%s", getarg(2));
 
-         program { name: "up";
-            signal: "mouse,down,1";
-            source: "t";
-            action: SIGNAL_EMIT "elm,action,up,start" "";
-         }
-         program { name: "up,stop";
-            signal: "mouse,up,1";
-            source: "t";
-            action: SIGNAL_EMIT "elm,action,up,stop" "";
-         }
-         program { name: "down";
-            signal: "mouse,down,1";
-            source: "b";
-            action: SIGNAL_EMIT "elm,action,down,start" "";
-         }
-         program { name: "down,stop";
-            signal: "mouse,up,1";
-            source: "b";
-            action: SIGNAL_EMIT "elm,action,down,stop" "";
+            if (get_int(lock) == 1) {
+               replace_str(next, 0, value);
+               return;
+            }
+
+            fetch_str(cur, 0, tmp, FLIP_PICKER_MAX_LEN);
+
+            set_text(PART:"top_b", tmp);
+
+            set_state(PART:"bottom", "shrink", 0.0);
+            set_text(PART:"bottom", tmp);
+            set_state(PART:"bottom", "default", 0.0);
+            set_text(PART:"bottom", tmp);
+
+            replace_str(prev, 0, tmp);
+
+            set_state(PART:"top", "default", 0.0);
+            set_text(PART:"top", value);
+            set_state(PART:"top", "shrink", 0.0);
+            set_text(PART:"top", value);
+
+            set_text(PART:"bottom_b", value);
+
+            replace_str(cur, 0, value);
+
+            set_state(PART:"bottom_sheet", "default", 0.0);
+            set_state(PART:"top_sheet", "shrink", 0.0);
+
+            set_int(lock, 1);
+            set_state(PART:"shadow", "full", 0.0);
+            anim(0.2, "animator_bottom_up", 1);
          }
       }
    }
+
+   parts {
+      part { name: "shad";
+         mouse_events: 0;
+         description { state: "default" 0.0;
+            rel1.offset: -4 -4;
+            rel1.to: "base";
+            rel2.offset: 3 3;
+            rel2.to: "base";
+            image {
+               normal: "flip_base_shad.png";
+               border: 8 8 8 8;
+            }
+         }
+      }
+
+      part { name: "base";
+         scale: 1;
+         description { state: "default" 0.0;
+            rel1.offset: 4 4;
+            rel2.offset: -5 -5;
+            min: 24 48;
+            image.normal: "flip_base.png";
+         }
+      }
+
+      part { name: "b";
+         type: RECT;
+         mouse_events: 1;
+         description { state: "default" 0.0;
+            rel1.to: "base";
+            rel1.relative: 0.0 0.5;
+            rel2.to: "base";
+            color: 0 0 0 0;
+         }
+         description { state: "hidden" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+      }
+
+      part { name: "t";
+         type: RECT;
+         mouse_events: 1;
+         description { state: "default" 0.0;
+            rel1.to: "base";
+            rel2.to: "base";
+            rel2.relative: 1.0 0.5;
+            color: 0 0 0 0;
+         }
+         description { state: "hidden" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+      }
+
+      part { name: "bottom_sheet_static";
+         mouse_events: 0;
+         description { state: "default" 0.0;
+            visible: 1;
+            rel1.to: "b";
+            rel2.to: "b";
+            image.normal: "flip_b.png";
+         }
+      }
+
+      part { name: "bottom_b";
+         mouse_events: 0;
+         clip_to: "bottom_clipper";
+         type: TEXT;
+         scale: 1;
+         description { state: "default" 0.0;
+            rel1.to: "base";
+            rel2.to: "base";
+            color: 0 0 0 255;
+            color2: 0 0 0 255;
+            text {
+               font: "Sans:style=Bold,Edje-Vera-Bold";
+               size: 30;
+               min: 1 1;
+               align: 0.5 0.5;
+            }
+         }
+      }
+
+      part { name: "shadow";
+         mouse_events: 0;
+         description { state: "default" 0.0;
+            rel1.to: "b";
+            rel2.to: "b";
+            rel2.relative: 1.0 0.0;
+            image.normal: "flip_shad.png";
+         }
+         description { state: "half" 0.0;
+            inherit: "default" 0.0;
+            rel2.relative: 1.0 0.5;
+         }
+         description { state: "full" 0.0;
+            inherit: "default" 0.0;
+            rel2.relative: 1.0 1.0;
+         }
+      }
+
+      part { name: "bottom_sheet";
+         mouse_events: 0;
+         description { state: "default" 0.0;
+            visible: 1;
+            rel1.to: "b";
+            rel2.to: "b";
+            image.normal: "flip_b.png";
+         }
+         description { state: "shrink" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+            rel2.relative: 1.0 0.0;
+         }
+      }
+
+      part { name: "bottom";
+         mouse_events: 0;
+         clip_to: "bottom_clipper";
+         type: TEXT;
+         scale: 1;
+         description { state: "default" 0.0;
+            rel1.to: "base";
+            rel2.to: "base";
+            color: 0 0 0 255;
+            color2: 0 0 0 255;
+            text {
+               font: "Sans:style=Bold,Edje-Vera-Bold";
+               size: 30;
+               min: 1 1;
+               align: 0.5 0.5;
+            }
+         }
+         description { state: "shrink" 0.0;
+            inherit: "default" 0.0;
+            color: 128 128 128 255;
+            visible: 0;
+            rel2.relative: 1.0 0.5; /* FIXME: same visual effect? --> MAP! */
+         }
+      }
+
+      part { name: "top_sheet_static";
+         mouse_events: 0;
+         description { state: "default" 0.0;
+            visible: 1;
+            rel1.to: "t";
+            rel2.to: "t";
+            image.normal: "flip_t.png";
+         }
+      }
+
+      part { name: "top_b";
+         mouse_events: 0;
+         clip_to: "top_clipper";
+         type: TEXT;
+         scale: 1;
+         description { state: "default" 0.0;
+            rel1.to: "base";
+            rel2.to: "base";
+            color: 0 0 0 255;
+            color2: 0 0 0 255;
+            text {
+               font: "Sans:style=Bold,Edje-Vera-Bold";
+               size: 30;
+               min: 1 1;
+               align: 0.5 0.5;
+               source: "top";
+            }
+         }
+      }
+
+      part { name: "top_sheet";
+         mouse_events: 0;
+         description { state: "default" 0.0;
+            visible: 1;
+            rel1.to: "t";
+            rel2.to: "t";
+            image.normal: "flip_t.png";
+         }
+         description { state: "shrink" 0.0;
+            inherit: "default" 0.0;
+            color: 128 128 128 255;
+            visible: 0;
+            rel1.relative: 0.0 1.0;
+         }
+      }
+
+      part { name: "top";
+         mouse_events: 0;
+         clip_to: "top_clipper";
+         type: TEXT;
+         scale: 1;
+         description { state: "default" 0.0;
+            rel1.to: "base";
+            rel2.to: "base";
+            color: 0 0 0 255;
+            color2: 0 0 0 255;
+            text {
+               font: "Sans:style=Bold,Edje-Vera-Bold";
+               size: 30;
+               min: 1 1;
+               align: 0.5 0.5;
+            }
+         }
+         description { state: "shrink" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+            rel1.relative: 0.0 0.5;
+         }
+      }
+
+      part { name: "arrow_top";
+         mouse_events: 0;
+         scale: 1;
+         description { state: "default" 0.0;
+            min: 15 15;
+            max: 15 15;
+            align: 0.5 0.0;
+            rel1.to: "t";
+            rel2.to: "t";
+            image.normal: "arrow_up.png";
+         }
+         description { state: "hidden" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+      }
+      part { name: "arrow_bottom";
+         mouse_events: 0;
+         scale: 1;
+         description { state: "default" 0.0;
+            min: 15 15;
+            max: 15 15;
+            align: 0.5 1.0;
+            rel1.to: "b";
+            rel2.to: "b";
+            image.normal: "arrow_down.png";
+         }
+         description { state: "hidden" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+      }
+
+      part {
+         type: RECT;
+         mouse_events: 0;
+         name: "top_clipper";
+         description {
+            state: "default" 0.0;
+            rel1.to: "t";
+            rel2.to: "t";
+            visible: 1;
+         }
+      }
+
+      part {
+         type: RECT;
+         mouse_events: 0;
+         name: "bottom_clipper";
+         description {
+            state: "default" 0.0;
+            rel1.to: "b";
+            rel2.to: "b";
+            visible: 1;
+         }
+      }
+   }
+
+   programs {
+      program { name: "load";
+         signal: "load";
+         source: "";
+         script {
+            append_str(cur, "");
+            append_str(prev, "");
+            append_str(next, "");
+            set_int(lock, 0);
+         }
+      }
+
+      program { name: "hide_arrows";
+         signal: "elm,state,button,hidden";
+         source: "elm";
+         action: STATE_SET "hidden" 0.0;
+         target: "arrow_top";
+         target: "arrow_bottom";
+         target: "t";
+         target: "b";
+      }
+
+      program { name: "show_arrows";
+         signal: "elm,state,button,visible";
+         source: "elm";
+         action: STATE_SET "default" 0.0;
+         target: "arrow_top";
+         target: "arrow_bottom";
+         target: "t";
+         target: "b";
+      }
+
+      program { name: "up";
+         signal: "mouse,down,1";
+         source: "t";
+         action: SIGNAL_EMIT "elm,action,up,start" "";
+      }
+      program { name: "up,stop";
+         signal: "mouse,up,1";
+         source: "t";
+         action: SIGNAL_EMIT "elm,action,up,stop" "";
+      }
+      program { name: "down";
+         signal: "mouse,down,1";
+         source: "b";
+         action: SIGNAL_EMIT "elm,action,down,start" "";
+      }
+      program { name: "down,stop";
+         signal: "mouse,up,1";
+         source: "b";
+         action: SIGNAL_EMIT "elm,action,down,stop" "";
+      }
+   }
+}

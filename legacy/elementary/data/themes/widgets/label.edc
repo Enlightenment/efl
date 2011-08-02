@@ -1,471 +1,471 @@
 #define TEXT_SLIDE_DURATION     10
 
-   group { name: "elm/label/base/default";
-      data.item: "default_font_size" "10";
-      data.item: "min_font_size" "6";
-      data.item: "max_font_size" "60";
-      styles {
-         style { name: "textblock_style";
-            base: "font=Sans font_size=10 color=#000 text_class=label";
-            tag:  "br" "\n";
-            tag:  "ps" "ps";
-            tag:  "hilight" "+ font_weight=Bold";
-            tag:  "b" "+ font_weight=Bold";
-            tag:  "tab" "\t";
-           }
-        }
-      parts {
-         part { name: "label.swallow.background";
-            type: SWALLOW;
-            description { state: "default" 0.0;
-               visible: 1;
-            }
+group { name: "elm/label/base/default";
+   data.item: "default_font_size" "10";
+   data.item: "min_font_size" "6";
+   data.item: "max_font_size" "60";
+   styles {
+      style { name: "textblock_style";
+         base: "font=Sans font_size=10 color=#000 text_class=label";
+         tag:  "br" "\n";
+         tag:  "ps" "ps";
+         tag:  "hilight" "+ font_weight=Bold";
+         tag:  "b" "+ font_weight=Bold";
+         tag:  "tab" "\t";
+      }
+   }
+   parts {
+      part { name: "label.swallow.background";
+         type: SWALLOW;
+         description { state: "default" 0.0;
+            visible: 1;
          }
-         part { name: "label.text.clip";
-            type: RECT;
-            description { state: "default" 0.0;
-               rel1 { relative: 0 0; to: "label.swallow.background"; }
-               rel2 { relative: 1 1; to: "label.swallow.background"; }
-            }
+      }
+      part { name: "label.text.clip";
+         type: RECT;
+         description { state: "default" 0.0;
+            rel1 { relative: 0 0; to: "label.swallow.background"; }
+            rel2 { relative: 1 1; to: "label.swallow.background"; }
          }
-         part { name: "elm.text";
-            type: TEXTBLOCK;
-            mouse_events: 0;
-            scale: 1;
-            clip_to: "label.text.clip";
-            description { state: "default" 0.0;
-               rel1.relative: 0.0 0.0;
-               rel2.relative: 1.0 1.0;
-               text {
-                  style: "textblock_style";
-                  min: 0 1;
-               }
+      }
+      part { name: "elm.text";
+         type: TEXTBLOCK;
+         mouse_events: 0;
+         scale: 1;
+         clip_to: "label.text.clip";
+         description { state: "default" 0.0;
+            rel1.relative: 0.0 0.0;
+            rel2.relative: 1.0 1.0;
+            text {
+               style: "textblock_style";
+               min: 0 1;
             }
          }
       }
    }
+}
 
-   group { name: "elm/label/base/marker";
-      data.item: "default_font_size" "10";
-      data.item: "min_font_size" "6";
-      data.item: "max_font_size" "60";
-      styles {
-         style { name: "textblock_style2";
-           base: "font=Sans:style=Bold font_size=10 align=center color=#fff wrap=word text_class=label";
-           tag:  "br" "\n";
-           tag:  "ps" "ps";
-           tag:  "hilight" "+ color=#ffff";
-           tag:  "b" "+ color=#ffff";
-           tag:  "tab" "\t";
+group { name: "elm/label/base/marker";
+   data.item: "default_font_size" "10";
+   data.item: "min_font_size" "6";
+   data.item: "max_font_size" "60";
+   styles {
+      style { name: "textblock_style2";
+         base: "font=Sans:style=Bold font_size=10 align=center color=#fff wrap=word text_class=label";
+         tag:  "br" "\n";
+         tag:  "ps" "ps";
+         tag:  "hilight" "+ color=#ffff";
+         tag:  "b" "+ color=#ffff";
+         tag:  "tab" "\t";
+      }
+   }
+   parts {
+      part { name: "label.swallow.background";
+         type: SWALLOW;
+         description { state: "default" 0.0;
+            visible: 1;
+            rel1 { relative: 0 0; to: "elm.text"; }
+            rel2 { relative: 1 1; to: "elm.text"; }
          }
       }
-      parts {
-         part { name: "label.swallow.background";
-            type: SWALLOW;
-            description { state: "default" 0.0;
-               visible: 1;
-               rel1 { relative: 0 0; to: "elm.text"; }
-               rel2 { relative: 1 1; to: "elm.text"; }
-            }
-         }
-         part { name: "elm.text";
-            type: TEXTBLOCK;
-            mouse_events: 0;
-            scale: 1;
-            description { state: "default" 0.0;
-               text {
-                  style: "textblock_style2";
-                  min: 1 1;
-               }
+      part { name: "elm.text";
+         type: TEXTBLOCK;
+         mouse_events: 0;
+         scale: 1;
+         description { state: "default" 0.0;
+            text {
+               style: "textblock_style2";
+               min: 1 1;
             }
          }
       }
    }
+}
 
-   group { name: "elm/label/base/slide_long";
-      data.item: "default_font_size" "10";
-      data.item: "min_font_size" "6";
-      data.item: "max_font_size" "60";
+group { name: "elm/label/base/slide_long";
+   data.item: "default_font_size" "10";
+   data.item: "min_font_size" "6";
+   data.item: "max_font_size" "60";
 
-      script {
-        public g_duration, g_stopslide, g_timer_id, g_anim_id;
+   script {
+      public g_duration, g_stopslide, g_timer_id, g_anim_id;
 
-        public message(Msg_Type:type, id, ...) {
-           if ((type == MSG_FLOAT_SET) && (id == 0)) {
-              new Float:duration;
-              duration = getfarg(2);
-              set_float(g_duration, duration);
-           }
-        }
-        public slide_to_end_anim(val, Float:pos) {
-           new stopflag;
-           new id;
-           stopflag = get_int(g_stopslide);
-           if (stopflag == 1) return;
-           set_tween_state(PART:"elm.text", pos, "slide_begin", 0.0, "slide_end", 0.0);
-           if (pos >= 1.0) {
-              id = timer(0.5, "slide_to_begin", 1);
-              set_int(g_timer_id, id);
-           }
-        }
-        public slide_to_end() {
-           new stopflag;
-           new id;
-           new Float:duration;
-           stopflag = get_int(g_stopslide);
-           if (stopflag == 1) return;
-           duration = get_float(g_duration);
-           id = anim(duration, "slide_to_end_anim", 1);
-           set_int(g_anim_id, id);
-        }
-        public slide_to_begin() {
-           new stopflag;
-           new id;
-           stopflag = get_int(g_stopslide);
-           if (stopflag == 1) return;
-           set_state(PART:"elm.text", "slide_begin", 0.0);
-           id = timer(0.5, "slide_to_end", 1);
-           set_int(g_timer_id, id);
-        }
-        public start_slide() {
-           set_int(g_stopslide, 0);
-           set_state(PART:"elm.text", "slide_begin", 0.0);
-           slide_to_end();
-        }
-        public stop_slide() {
-           new id;
-           set_int(g_stopslide, 1);
-           id = get_int(g_anim_id);
-           cancel_anim(id);
-           id = get_int(g_timer_id);
-           cancel_timer(id);
-           set_state(PART:"elm.text", "default", 0.0);
-        }
-      }
-
-      parts {
-         part { name: "label.swallow.background";
-            type: SWALLOW;
-            description { state: "default" 0.0;
-               visible: 1;
-            }
-         }
-         part { name: "label.text.clip";
-            type: RECT;
-            description { state: "default" 0.0;
-               visible: 1;
-               color: 255 255 255 255;
-               rel1 { relative: 0 0; to: "label.swallow.background"; }
-               rel2 { relative: 1 1; to: "label.swallow.background"; }
-            }
-         }
-         part { name: "elm.text";
-            type: TEXTBLOCK;
-            mouse_events: 0;
-            scale: 1;
-            clip_to: "label.text.clip";
-            description { state: "default" 0.0;
-               rel1.relative: 0.0 0.0;
-               rel2.relative: 1.0 1.0;
-               align: 0.0 0.0;
-               text {
-                  style: "textblock_style";
-                  min: 1 1;
-               }
-            }
-            description { state: "slide_end" 0.0;
-               inherit: "default" 0.0;
-               rel1.relative: 0.0 0.0;
-               rel2.relative: 0.0 1.0;
-               align: 1.0 0.0;
-            }
-            description { state: "slide_begin" 0.0;
-               inherit: "default" 0.0;
-               rel1.relative: 1.0 0.0;
-               rel2.relative: 1.0 1.0;
-               align: 0.0 0.0;
-            }
-         }
-       }
-       programs {
-          program { name: "start_slide";
-             source: "elm";
-             signal: "elm,state,slide,start";
-             script
-               {
-                  start_slide();
-               }
-          }
-          program { name: "stop_slide";
-             source: "elm";
-             signal: "elm,state,slide,stop";
-             script
-               {
-                  stop_slide();
-               }
-          }
-       }
-   }
-
-
-   group { name: "elm/label/base/slide_short";
-      data.item: "default_font_size" "10";
-      data.item: "min_font_size" "6";
-      data.item: "max_font_size" "60";
-
-      script {
-         public g_duration, g_stopslide, g_timer_id, g_anim_id;
-
-         public message(Msg_Type:type, id, ...) {
-            if ((type == MSG_FLOAT_SET) && (id == 0)) {
-               new Float:duration;
-               duration = getfarg(2);
-               set_float(g_duration, duration);
-            }
-         }
-         public slide_to_end_anim(val, Float:pos) {
-            new stopflag;
-            new id;
-            stopflag = get_int(g_stopslide);
-            if (stopflag == 1) return;
-            set_tween_state(PART:"elm.text", pos, "slide_begin", 0.0, "slide_end", 0.0);
-            if (pos >= 1.0) {
-               id = timer(0.5, "slide_to_begin", 1);
-               set_int(g_timer_id, id);
-            }
-         }
-         public slide_to_end() {
-            new stopflag;
-            new id;
+      public message(Msg_Type:type, id, ...) {
+         if ((type == MSG_FLOAT_SET) && (id == 0)) {
             new Float:duration;
-            stopflag = get_int(g_stopslide);
-            if (stopflag == 1) return;
-            duration = get_float(g_duration);
-            id = anim(duration, "slide_to_end_anim", 1);
-            set_int(g_anim_id, id);
+            duration = getfarg(2);
+            set_float(g_duration, duration);
          }
-         public slide_to_begin() {
-            new stopflag;
-            new id;
-            stopflag = get_int(g_stopslide);
-            if (stopflag == 1) return;
-            set_state(PART:"elm.text", "slide_begin", 0.0);
+      }
+      public slide_to_end_anim(val, Float:pos) {
+         new stopflag;
+         new id;
+         stopflag = get_int(g_stopslide);
+         if (stopflag == 1) return;
+         set_tween_state(PART:"elm.text", pos, "slide_begin", 0.0, "slide_end", 0.0);
+         if (pos >= 1.0) {
+            id = timer(0.5, "slide_to_begin", 1);
+            set_int(g_timer_id, id);
+         }
+      }
+      public slide_to_end() {
+         new stopflag;
+         new id;
+         new Float:duration;
+         stopflag = get_int(g_stopslide);
+         if (stopflag == 1) return;
+         duration = get_float(g_duration);
+         id = anim(duration, "slide_to_end_anim", 1);
+         set_int(g_anim_id, id);
+      }
+      public slide_to_begin() {
+         new stopflag;
+         new id;
+         stopflag = get_int(g_stopslide);
+         if (stopflag == 1) return;
+         set_state(PART:"elm.text", "slide_begin", 0.0);
+         id = timer(0.5, "slide_to_end", 1);
+         set_int(g_timer_id, id);
+      }
+      public start_slide() {
+         set_int(g_stopslide, 0);
+         set_state(PART:"elm.text", "slide_begin", 0.0);
+         slide_to_end();
+      }
+      public stop_slide() {
+         new id;
+         set_int(g_stopslide, 1);
+         id = get_int(g_anim_id);
+         cancel_anim(id);
+         id = get_int(g_timer_id);
+         cancel_timer(id);
+         set_state(PART:"elm.text", "default", 0.0);
+      }
+   }
+
+   parts {
+      part { name: "label.swallow.background";
+         type: SWALLOW;
+         description { state: "default" 0.0;
+            visible: 1;
+         }
+      }
+      part { name: "label.text.clip";
+         type: RECT;
+         description { state: "default" 0.0;
+            visible: 1;
+            color: 255 255 255 255;
+            rel1 { relative: 0 0; to: "label.swallow.background"; }
+            rel2 { relative: 1 1; to: "label.swallow.background"; }
+         }
+      }
+      part { name: "elm.text";
+         type: TEXTBLOCK;
+         mouse_events: 0;
+         scale: 1;
+         clip_to: "label.text.clip";
+         description { state: "default" 0.0;
+            rel1.relative: 0.0 0.0;
+            rel2.relative: 1.0 1.0;
+            align: 0.0 0.0;
+            text {
+               style: "textblock_style";
+               min: 1 1;
+            }
+         }
+         description { state: "slide_end" 0.0;
+            inherit: "default" 0.0;
+            rel1.relative: 0.0 0.0;
+            rel2.relative: 0.0 1.0;
+            align: 1.0 0.0;
+         }
+         description { state: "slide_begin" 0.0;
+            inherit: "default" 0.0;
+            rel1.relative: 1.0 0.0;
+            rel2.relative: 1.0 1.0;
+            align: 0.0 0.0;
+         }
+      }
+   }
+   programs {
+      program { name: "start_slide";
+         source: "elm";
+         signal: "elm,state,slide,start";
+         script
+         {
+            start_slide();
+         }
+      }
+      program { name: "stop_slide";
+         source: "elm";
+         signal: "elm,state,slide,stop";
+         script
+         {
+            stop_slide();
+         }
+      }
+   }
+}
+
+
+group { name: "elm/label/base/slide_short";
+   data.item: "default_font_size" "10";
+   data.item: "min_font_size" "6";
+   data.item: "max_font_size" "60";
+
+   script {
+      public g_duration, g_stopslide, g_timer_id, g_anim_id;
+
+      public message(Msg_Type:type, id, ...) {
+         if ((type == MSG_FLOAT_SET) && (id == 0)) {
+            new Float:duration;
+            duration = getfarg(2);
+            set_float(g_duration, duration);
+         }
+      }
+      public slide_to_end_anim(val, Float:pos) {
+         new stopflag;
+         new id;
+         stopflag = get_int(g_stopslide);
+         if (stopflag == 1) return;
+         set_tween_state(PART:"elm.text", pos, "slide_begin", 0.0, "slide_end", 0.0);
+         if (pos >= 1.0) {
+            id = timer(0.5, "slide_to_begin", 1);
+            set_int(g_timer_id, id);
+         }
+      }
+      public slide_to_end() {
+         new stopflag;
+         new id;
+         new Float:duration;
+         stopflag = get_int(g_stopslide);
+         if (stopflag == 1) return;
+         duration = get_float(g_duration);
+         id = anim(duration, "slide_to_end_anim", 1);
+         set_int(g_anim_id, id);
+      }
+      public slide_to_begin() {
+         new stopflag;
+         new id;
+         stopflag = get_int(g_stopslide);
+         if (stopflag == 1) return;
+         set_state(PART:"elm.text", "slide_begin", 0.0);
+         id = timer(0.5, "slide_to_end", 1);
+         set_int(g_timer_id, id);
+      }
+      public start_slide() {
+         set_int(g_stopslide, 0);
+         set_state(PART:"elm.text", "slide_begin", 0.0);
+         slide_to_end();
+      }
+      public stop_slide() {
+         new id;
+         set_int(g_stopslide, 1);
+         id = get_int(g_anim_id);
+         cancel_anim(id);
+         id = get_int(g_timer_id);
+         cancel_timer(id);
+         set_state(PART:"elm.text", "default", 0.0);
+      }
+   }
+
+   parts {
+      part { name: "label.swallow.background";
+         type: SWALLOW;
+         description { state: "default" 0.0;
+            visible: 1;
+         }
+      }
+      part { name: "label.text.clip";
+         type: RECT;
+         description { state: "default" 0.0;
+            visible: 1;
+            color: 255 255 255 255;
+            rel1 { relative: 0 0; to: "label.swallow.background"; }
+            rel2 { relative: 1 1; to: "label.swallow.background"; }
+         }
+      }
+      part { name: "elm.text";
+         type: TEXTBLOCK;
+         mouse_events: 0;
+         scale: 1;
+         clip_to: "label.text.clip";
+         description { state: "default" 0.0;
+            rel1.relative: 0.0 0.0;
+            rel2.relative: 1.0 1.0;
+            align: 0.0 0.0;
+            text {
+               style: "textblock_style";
+               min: 1 1;
+            }
+         }
+         description { state: "slide_end" 0.0;
+            inherit: "default" 0.0;
+            rel1.relative: 1.0 0.0;
+            rel2.relative: 1.0 1.0;
+            align: 1.0 0.0;
+         }
+         description { state: "slide_begin" 0.0;
+            inherit: "default" 0.0;
+            rel1.relative: 0.0 0.0;
+            rel2.relative: 0.0 1.0;
+            align: 0.0 0.0;
+         }
+      }
+   }
+   programs {
+      program { name: "start_slide";
+         source: "elm";
+         signal: "elm,state,slide,start";
+         script
+         {
+            start_slide();
+         }
+      }
+      program { name: "stop_slide";
+         source: "elm";
+         signal: "elm,state,slide,stop";
+         script
+         {
+            stop_slide();
+         }
+      }
+   }
+}
+
+group { name: "elm/label/base/slide_bounce";
+   data.item: "default_font_size" "10";
+   data.item: "min_font_size" "6";
+   data.item: "max_font_size" "60";
+
+   script {
+      public g_duration, g_stopslide, g_timer_id, g_anim_id;
+
+      public message(Msg_Type:type, id, ...) {
+         if ((type == MSG_FLOAT_SET) && (id == 0)) {
+            new Float:duration;
+            duration = getfarg(2);
+            set_float(g_duration, duration);
+         }
+      }
+      public slide_to_end_anim(val, Float:pos) {
+         new stopflag;
+         new id;
+         stopflag = get_int(g_stopslide);
+         if (stopflag == 1) return;
+         set_tween_state(PART:"elm.text", pos, "slide_begin", 0.0, "slide_end", 0.0);
+         if (pos >= 1.0) {
+            id = timer(0.5, "slide_to_begin", 1);
+            set_int(g_timer_id, id);
+         }
+      }
+      public slide_to_end() {
+         new stopflag;
+         new id;
+         new Float:duration;
+         stopflag = get_int(g_stopslide);
+         if (stopflag == 1) return;
+         duration = get_float(g_duration);
+         id = anim(duration, "slide_to_end_anim", 1);
+         set_int(g_anim_id, id);
+      }
+      public slide_to_begin_anim(val, Float:pos) {
+         new stopflag;
+         new id;
+         stopflag = get_int(g_stopslide);
+         if (stopflag == 1) return;
+         set_tween_state(PART:"elm.text", pos, "slide_end", 0.0, "slide_begin", 0.0);
+         if (pos >= 1.0) {
             id = timer(0.5, "slide_to_end", 1);
             set_int(g_timer_id, id);
          }
-         public start_slide() {
-            set_int(g_stopslide, 0);
-            set_state(PART:"elm.text", "slide_begin", 0.0);
-            slide_to_end();
-         }
-         public stop_slide() {
-            new id;
-            set_int(g_stopslide, 1);
-            id = get_int(g_anim_id);
-            cancel_anim(id);
-            id = get_int(g_timer_id);
-            cancel_timer(id);
-            set_state(PART:"elm.text", "default", 0.0);
-         }
       }
-
-      parts {
-         part { name: "label.swallow.background";
-            type: SWALLOW;
-            description { state: "default" 0.0;
-               visible: 1;
-            }
-         }
-         part { name: "label.text.clip";
-            type: RECT;
-            description { state: "default" 0.0;
-               visible: 1;
-               color: 255 255 255 255;
-               rel1 { relative: 0 0; to: "label.swallow.background"; }
-               rel2 { relative: 1 1; to: "label.swallow.background"; }
-            }
-         }
-         part { name: "elm.text";
-            type: TEXTBLOCK;
-            mouse_events: 0;
-            scale: 1;
-            clip_to: "label.text.clip";
-            description { state: "default" 0.0;
-               rel1.relative: 0.0 0.0;
-               rel2.relative: 1.0 1.0;
-               align: 0.0 0.0;
-               text {
-                  style: "textblock_style";
-                  min: 1 1;
-               }
-            }
-            description { state: "slide_end" 0.0;
-               inherit: "default" 0.0;
-               rel1.relative: 1.0 0.0;
-               rel2.relative: 1.0 1.0;
-               align: 1.0 0.0;
-            }
-            description { state: "slide_begin" 0.0;
-               inherit: "default" 0.0;
-               rel1.relative: 0.0 0.0;
-               rel2.relative: 0.0 1.0;
-               align: 0.0 0.0;
-            }
-         }
+      public slide_to_begin() {
+         new stopflag;
+         new id;
+         new Float:duration;
+         stopflag = get_int(g_stopslide);
+         if (stopflag == 1) return;
+         duration = get_float(g_duration);
+         id = anim(duration, "slide_to_begin_anim", 1);
+         set_int(g_anim_id, id);
       }
-      programs {
-         program { name: "start_slide";
-            source: "elm";
-            signal: "elm,state,slide,start";
-            script
-              {
-                 start_slide();
-              }
-         }
-         program { name: "stop_slide";
-            source: "elm";
-            signal: "elm,state,slide,stop";
-            script
-              {
-                 stop_slide();
-              }
-         }
+      public start_slide() {
+         set_int(g_stopslide, 0);
+         set_state(PART:"elm.text", "slide_begin", 0.0);
+         slide_to_end();
+      }
+      public stop_slide() {
+         new id;
+         set_int(g_stopslide, 1);
+         id = get_int(g_anim_id);
+         cancel_anim(id);
+         id = get_int(g_timer_id);
+         cancel_timer(id);
+         set_state(PART:"elm.text", "default", 0.0);
       }
    }
 
-   group { name: "elm/label/base/slide_bounce";
-      data.item: "default_font_size" "10";
-      data.item: "min_font_size" "6";
-      data.item: "max_font_size" "60";
-
-      script {
-         public g_duration, g_stopslide, g_timer_id, g_anim_id;
-
-         public message(Msg_Type:type, id, ...) {
-            if ((type == MSG_FLOAT_SET) && (id == 0)) {
-               new Float:duration;
-               duration = getfarg(2);
-               set_float(g_duration, duration);
-            }
-         }
-         public slide_to_end_anim(val, Float:pos) {
-            new stopflag;
-            new id;
-            stopflag = get_int(g_stopslide);
-            if (stopflag == 1) return;
-            set_tween_state(PART:"elm.text", pos, "slide_begin", 0.0, "slide_end", 0.0);
-            if (pos >= 1.0) {
-               id = timer(0.5, "slide_to_begin", 1);
-               set_int(g_timer_id, id);
-            }
-         }
-         public slide_to_end() {
-            new stopflag;
-            new id;
-            new Float:duration;
-            stopflag = get_int(g_stopslide);
-            if (stopflag == 1) return;
-            duration = get_float(g_duration);
-            id = anim(duration, "slide_to_end_anim", 1);
-            set_int(g_anim_id, id);
-         }
-         public slide_to_begin_anim(val, Float:pos) {
-            new stopflag;
-            new id;
-            stopflag = get_int(g_stopslide);
-            if (stopflag == 1) return;
-            set_tween_state(PART:"elm.text", pos, "slide_end", 0.0, "slide_begin", 0.0);
-            if (pos >= 1.0) {
-               id = timer(0.5, "slide_to_end", 1);
-               set_int(g_timer_id, id);
-            }
-         }
-         public slide_to_begin() {
-            new stopflag;
-            new id;
-            new Float:duration;
-            stopflag = get_int(g_stopslide);
-            if (stopflag == 1) return;
-            duration = get_float(g_duration);
-            id = anim(duration, "slide_to_begin_anim", 1);
-            set_int(g_anim_id, id);
-         }
-         public start_slide() {
-            set_int(g_stopslide, 0);
-            set_state(PART:"elm.text", "slide_begin", 0.0);
-            slide_to_end();
-         }
-         public stop_slide() {
-            new id;
-            set_int(g_stopslide, 1);
-            id = get_int(g_anim_id);
-            cancel_anim(id);
-            id = get_int(g_timer_id);
-            cancel_timer(id);
-            set_state(PART:"elm.text", "default", 0.0);
+   parts {
+      part { name: "label.swallow.background";
+         type: SWALLOW;
+         description { state: "default" 0.0;
+            visible: 1;
          }
       }
-
-      parts {
-         part { name: "label.swallow.background";
-            type: SWALLOW;
-            description { state: "default" 0.0;
-               visible: 1;
-            }
-         }
-         part { name: "label.text.clip";
-            type: RECT;
-            description { state: "default" 0.0;
-               visible: 1;
-               color: 255 255 255 255;
-               rel1 { relative: 0 0; to: "label.swallow.background"; }
-               rel2 { relative: 1 1; to: "label.swallow.background"; }
-            }
-         }
-         part { name: "elm.text";
-            type: TEXTBLOCK;
-            mouse_events: 0;
-            scale: 1;
-            clip_to: "label.text.clip";
-            description { state: "default" 0.0;
-               rel1.relative: 0.0 0.0;
-               rel2.relative: 1.0 1.0;
-               align: 0.0 0.0;
-               text {
-                  style: "textblock_style";
-                  min: 1 1;
-               }
-            }
-            description { state: "slide_end" 0.0;
-               inherit: "default" 0.0;
-               rel1.relative: 1.0 0.0;
-               rel2.relative: 1.0 1.0;
-               align: 1.0 0.0;
-            }
-            description { state: "slide_begin" 0.0;
-               inherit: "default" 0.0;
-               rel1.relative: 0.0 0.0;
-               rel2.relative: 0.0 1.0;
-               align: 0.0 0.0;
-            }
+      part { name: "label.text.clip";
+         type: RECT;
+         description { state: "default" 0.0;
+            visible: 1;
+            color: 255 255 255 255;
+            rel1 { relative: 0 0; to: "label.swallow.background"; }
+            rel2 { relative: 1 1; to: "label.swallow.background"; }
          }
       }
-      programs {
-         program { name: "start_slide";
-            source: "elm";
-            signal: "elm,state,slide,start";
-            script
-              {
-                 start_slide();
-              }
+      part { name: "elm.text";
+         type: TEXTBLOCK;
+         mouse_events: 0;
+         scale: 1;
+         clip_to: "label.text.clip";
+         description { state: "default" 0.0;
+            rel1.relative: 0.0 0.0;
+            rel2.relative: 1.0 1.0;
+            align: 0.0 0.0;
+            text {
+               style: "textblock_style";
+               min: 1 1;
+            }
          }
-         program { name: "stop_slide";
-            source: "elm";
-            signal: "elm,state,slide,stop";
-            script
-              {
-                 stop_slide();
-              }
+         description { state: "slide_end" 0.0;
+            inherit: "default" 0.0;
+            rel1.relative: 1.0 0.0;
+            rel2.relative: 1.0 1.0;
+            align: 1.0 0.0;
+         }
+         description { state: "slide_begin" 0.0;
+            inherit: "default" 0.0;
+            rel1.relative: 0.0 0.0;
+            rel2.relative: 0.0 1.0;
+            align: 0.0 0.0;
          }
       }
    }
+   programs {
+      program { name: "start_slide";
+         source: "elm";
+         signal: "elm,state,slide,start";
+         script
+         {
+            start_slide();
+         }
+      }
+      program { name: "stop_slide";
+         source: "elm";
+         signal: "elm,state,slide,stop";
+         script
+         {
+            stop_slide();
+         }
+      }
+   }
+}
