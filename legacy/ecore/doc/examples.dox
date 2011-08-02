@@ -15,6 +15,7 @@
  * @li @ref ecore_con_server_simple_example_c
  * @li @ref ecore_con_client_simple_example_c
  * @li @ref ecore_evas_callbacks_example_c
+ * @li @ref ecore_evas_object_example_c
  *
  */
 
@@ -1291,4 +1292,36 @@
  *
  * @include ecore_evas_window_sizes_example.c
  * @example ecore_evas_window_sizes_example.c
+ */
+
+/**
+ * @page ecore_evas_object_example_c Ecore Evas Object example
+ * @dontinclude ecore_evas_object_example.c
+ *
+ * This example creates an Ecore_Evas(a window) and associates a background and
+ * a custom cursor for it.
+ *
+ * We'll start looking at the association, which is quite simple. We choose to
+ * associate using ECORE_EVAS_OBJECT_ASSOCIATE_BASE to have it be resized with
+ * the window, since for a background that is what's most useful:
+ * @skipline ecore_evas_object_associate
+ * @note If we didn't associate the background we'd need to listen to resize of
+ * Ecore_Evas and manually resize the background or have artifacts on our
+ * window.
+ *
+ * We then check that the association worked:
+ * @until printf
+ *
+ * Next we are going to set a custom cursor, for our cursor we are going to use
+ * a small green rectangle. Our cursor is going to be on layer 0(any lower and
+ * it would be below the background and thus invisible) and clicks will be
+ * computed as happening on pixel 1, 1 of the image:
+ * @until cursor_set
+ *
+ * We then check every one of those parameters:
+ * @until printf
+ *
+ * Here you have the full-source of the code:
+ * @include ecore_evas_object_example.c
+ * @example ecore_evas_object_example.c
  */

@@ -217,47 +217,6 @@ _ecore_evas_object_evas_check(const char *function, const Ecore_Evas *ee, const 
    return 0;
 }
 
-/**
- * Associate the given object to this ecore evas.
- *
- * Association means that operations on one will affect the other, for
- * example moving the object will move the window, resize the object will
- * also affect the ecore evas window, hide and show applies as well.
- *
- * This is meant to simplify development, since you often need to associate
- * these events with your "base" objects, background or bottom-most object.
- *
- * Be aware that some methods might not be what you would like, deleting
- * either the window or the object will delete the other. If you want to
- * change that behavior, let's say to hide window when it's closed, you
- * must use ecore_evas_callback_delete_request_set() and set your own code,
- * like ecore_evas_hide(). Just remember that if you override delete_request
- * and still want to delete the window/object, you must do that yourself.
- *
- * Since we now define delete_request, deleting windows will not quit
- * main loop, if you wish to do so, you should listen for EVAS_CALLBACK_FREE
- * on the object, that way you get notified and you can call
- * ecore_main_loop_quit().
- *
- * Flags can be OR'ed of:
- *   - ECORE_EVAS_OBJECT_ASSOCIATE_BASE (or 0): to listen to basic events
- *     like delete, resize and move, but no stacking or layer are used.
- *   - ECORE_EVAS_OBJECT_ASSOCIATE_STACK: stacking operations will act
- *     on the Ecore_Evas, not the object. So evas_object_raise() will
- *     call ecore_evas_raise(). Relative operations (stack_above, stack_below)
- *     are still not implemented.
- *   - ECORE_EVAS_OBJECT_ASSOCIATE_LAYER: stacking operations will act
- *     on the Ecore_Evas, not the object. So evas_object_layer_set() will
- *     call ecore_evas_layer_set().
- *   - ECORE_EVAS_OBJECT_ASSOCIATE_DEL: the object delete will delete the
- *     ecore_evas as well as delete_requests on the ecore_evas will delete
- *     etc.
- *
- * @param ee The Ecore_Evas to associate to @a obj
- * @param obj The object to associate to @a ee
- * @param flags The association flags.
- * @return EINA_TRUE on success, EINA_FALSE otherwise.
- */
 EAPI Eina_Bool
 ecore_evas_object_associate(Ecore_Evas *ee, Evas_Object *obj, Ecore_Evas_Object_Associate_Flags flags)
 {
@@ -286,13 +245,6 @@ ecore_evas_object_associate(Ecore_Evas *ee, Evas_Object *obj, Ecore_Evas_Object_
    return EINA_TRUE;
 }
 
-/**
- * Cancel the association set with ecore_evas_object_associate().
- *
- * @param ee The Ecore_Evas to dissociate from @a obj
- * @param obj The object to dissociate from @a ee
- * @return EINA_TRUE on success, EINA_FALSE otherwise.
- */
 EAPI Eina_Bool
 ecore_evas_object_dissociate(Ecore_Evas *ee, Evas_Object *obj)
 {

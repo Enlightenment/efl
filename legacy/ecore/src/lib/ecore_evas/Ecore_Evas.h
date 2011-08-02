@@ -37,6 +37,7 @@
  *
  * The following is a list of example that partially exemplify Ecore_Evas's API:
  * @li @ref ecore_evas_callbacks_example_c
+ * @li @ref ecore_evas_object_example_c
  */
 
 /* FIXME:
@@ -604,9 +605,59 @@ EAPI void        ecore_evas_size_step_set(Ecore_Evas *ee, int w, int h);
  */
 EAPI void        ecore_evas_size_step_get(const Ecore_Evas *ee, int *w, int *h);
 
+/**
+ * @brief Set the cursor of an Ecore_Evas.
+ *
+ * @param ee The Ecore_Evas
+ * @param file  The path to an image file for the cursor.
+ * @param layer The layer in which the cursor will appear.
+ * @param hot_x The x coordinate of the cursor's hot spot.
+ * @param hot_y The y coordinate of the cursor's hot spot.
+ *
+ * This function makes the mouse cursor over @p ee be the image specified by
+ * @p file. The actual point within the image that the mouse is at is specified
+ * by @p hot_x and @p hot_y, which are coordinates with respect to the top left
+ * corner of the cursor image.
+ *
+ * @note This function creates an object from the image and uses
+ * ecore_evas_object_cursor_set().
+ *
+ * @see ecore_evas_object_cursor_set()
+ */
 EAPI void        ecore_evas_cursor_set(Ecore_Evas *ee, const char *file, int layer, int hot_x, int hot_y);
-EAPI void        ecore_evas_object_cursor_set(Ecore_Evas *ee, Evas_Object *obj, int layer, int hot_x, int hot_y);
+/**
+ * @brief Get information about an Ecore_Evas' cursor
+ *
+ * @param ee The Ecore_Evas to set
+ * @param obj A pointer to an Evas_Object to place the cursor Evas_Object.
+ * @param layer A pointer to an int to place the cursor's layer in.
+ * @param hot_x A pointer to an int to place the cursor's hot_x coordinate in.
+ * @param hot_y A pointer to an int to place the cursor's hot_y coordinate in.
+ *
+ * This function queries information about an Ecore_Evas' cursor.
+ *
+ * @see ecore_evas_cursor_set()
+ * @see ecore_evas_object_cursor_set()
+ */
 EAPI void        ecore_evas_cursor_get(const Ecore_Evas *ee, Evas_Object **obj, int *layer, int *hot_x, int *hot_y);
+/**
+ * @brief Set the cursor of an Ecore_Evas
+ *
+ * @param ee The Ecore_Evas
+ *
+ * @param obj The Evas_Object which will be the cursor.
+ * @param layer The layer in which the cursor will appear.
+ * @param hot_x The x coordinate of the cursor's hot spot.
+ * @param hot_y The y coordinate of the cursor's hot spot.
+ *
+ * This function makes the mouse cursor over @p ee be the object specified by
+ * @p obj. The actual point within the object that the mouse is at is specified
+ * by @p hot_x and @p hot_y, which are coordinates with respect to the top left
+ * corner of the cursor object.
+ *
+ * @see ecore_evas_cursor_set()
+ */
+EAPI void        ecore_evas_object_cursor_set(Ecore_Evas *ee, Evas_Object *obj, int layer, int hot_x, int hot_y);
 EAPI void        ecore_evas_layer_set(Ecore_Evas *ee, int layer);
 EAPI int         ecore_evas_layer_get(const Ecore_Evas *ee);
 EAPI void        ecore_evas_focus_set(Ecore_Evas *ee, Eina_Bool on);
@@ -639,8 +690,62 @@ EAPI Ecore_Window ecore_evas_window_get(const Ecore_Evas *ee);
 
 EAPI void        ecore_evas_screen_geometry_get(const Ecore_Evas *ee, int *x, int *y, int *w, int *h);
 
+/**
+ * @brief Associate the given object to this ecore evas.
+ *
+ * @param ee The Ecore_Evas to associate to @a obj
+ * @param obj The object to associate to @a ee
+ * @param flags The association flags.
+ * @return EINA_TRUE on success, EINA_FALSE otherwise.
+ *
+ * Association means that operations on one will affect the other, for
+ * example moving the object will move the window, resize the object will
+ * also affect the ecore evas window, hide and show applies as well.
+ *
+ * This is meant to simplify development, since you often need to associate
+ * these events with your "base" objects, background or bottom-most object.
+ *
+ * Be aware that some methods might not be what you would like, deleting
+ * either the window or the object will delete the other. If you want to
+ * change that behavior, let's say to hide window when it's closed, you
+ * must use ecore_evas_callback_delete_request_set() and set your own code,
+ * like ecore_evas_hide(). Just remember that if you override delete_request
+ * and still want to delete the window/object, you must do that yourself.
+ *
+ * Since we now define delete_request, deleting windows will not quit
+ * main loop, if you wish to do so, you should listen for EVAS_CALLBACK_FREE
+ * on the object, that way you get notified and you can call
+ * ecore_main_loop_quit().
+ *
+ * Flags can be OR'ed of:
+ * @li ECORE_EVAS_OBJECT_ASSOCIATE_BASE (or 0): to listen to basic events
+ *     like delete, resize and move, but no stacking or layer are used.
+ * @li ECORE_EVAS_OBJECT_ASSOCIATE_STACK: stacking operations will act
+ *     on the Ecore_Evas, not the object. So evas_object_raise() will
+ *     call ecore_evas_raise(). Relative operations (stack_above, stack_below)
+ *     are still not implemented.
+ * @li ECORE_EVAS_OBJECT_ASSOCIATE_LAYER: stacking operations will act
+ *     on the Ecore_Evas, not the object. So evas_object_layer_set() will
+ *     call ecore_evas_layer_set().
+ * @li ECORE_EVAS_OBJECT_ASSOCIATE_DEL: the object delete will delete the
+ *     ecore_evas as well as delete_requests on the ecore_evas will delete
+ *     etc.
+ */
 EAPI Eina_Bool    ecore_evas_object_associate(Ecore_Evas *ee, Evas_Object *obj, Ecore_Evas_Object_Associate_Flags flags);
+/**
+ * @brief Cancel the association set with ecore_evas_object_associate().
+ *
+ * @param ee The Ecore_Evas to dissociate from @a obj
+ * @param obj The object to dissociate from @a ee
+ * @return EINA_TRUE on success, EINA_FALSE otherwise.
+ */
 EAPI Eina_Bool    ecore_evas_object_dissociate(Ecore_Evas *ee, Evas_Object *obj);
+/**
+ * @brief Get the object associated with @p ee
+ *
+ * @param ee The Ecore_Evas to get the object from.
+ * @return The associated object, or NULL if there is no associated object.
+ */
 EAPI Evas_Object *ecore_evas_object_associate_get(const Ecore_Evas *ee);
 
 /* helper function to be used with ECORE_GETOPT_CALLBACK_*() */

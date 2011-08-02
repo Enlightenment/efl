@@ -1870,19 +1870,6 @@ ecore_evas_size_step_get(const Ecore_Evas *ee, int *w, int *h)
      }
 }
 
-/**
- * Set the cursor of an Ecore_Evas
- * @param ee The Ecore_Evas
- * @param file  The path to an image file for the cursor
- * @param layer
- * @param hot_x The x coordinate of the cursor's hot spot
- * @param hot_y The y coordinate of the cursor's hot spot
- *
- * This function makes the mouse cursor over @p ee be the image specified by
- * @p file. The actual point within the image that the mouse is at is specified
- * by @p hot_x and @p hot_y, which are coordinates with respect to the top left
- * corner of the cursor image.
- */
 EAPI void
 ecore_evas_cursor_set(Ecore_Evas *ee, const char *file, int layer, int hot_x, int hot_y)
 {
@@ -1910,19 +1897,6 @@ ecore_evas_cursor_set(Ecore_Evas *ee, const char *file, int layer, int hot_x, in
    IFE;
 }
 
-/**
- * Set the cursor of an Ecore_Evas
- * @param ee The Ecore_Evas
- * @param obj The Evas_Object for the cursor
- * @param layer
- * @param hot_x The x coordinate of the cursor's hot spot
- * @param hot_y The y coordinate of the cursor's hot spot
- *
- * This function makes the mouse cursor over @p ee be the image specified by
- * @p file. The actual point within the image that the mouse is at is specified
- * by @p hot_x and @p hot_y, which are coordinates with respect to the top left
- * corner of the cursor image.
- */
 EAPI void
 ecore_evas_object_cursor_set(Ecore_Evas *ee, Evas_Object *obj, int layer, int hot_x, int hot_y)
 {
@@ -1936,16 +1910,6 @@ ecore_evas_object_cursor_set(Ecore_Evas *ee, Evas_Object *obj, int layer, int ho
    IFE;
 }
 
-/**
- * Get information about an Ecore_Evas' cursor
- * @param ee The Ecore_Evas to set
- * @param obj A pointer to an Evas_Object to place the cursor Evas_Object.
- * @param layer A pointer to an int to place the cursor's layer in..
- * @param hot_x A pointer to an int to place the cursor's hot_x coordinate in.
- * @param hot_y A pointer to an int to place the cursor's hot_y coordinate in.
- *
- * This function queries information about an Ecore_Evas' cursor.
- */
 EAPI void
 ecore_evas_cursor_get(const Ecore_Evas *ee, Evas_Object **obj, int *layer, int *hot_x, int *hot_y)
 {
