@@ -3470,6 +3470,9 @@ elm_genlist_item_insert_before(Evas_Object                  *obj,
    Elm_Genlist_Item *it = _item_new(wd, itc, data, parent, flags, func,
                                     func_data);
    if (!it) return NULL;
+   /* It makes no sense to insert before in an empty list with before != NULL, something really bad is happening in your app. */
+   EINA_SAFETY_ON_NULL_RETURN_VAL(wd->items, NULL);
+
    if (!it->parent)
      {
         if ((flags & ELM_GENLIST_ITEM_GROUP) &&
@@ -3604,8 +3607,6 @@ elm_genlist_item_insert_after(Evas_Object                  *obj,
    /* It makes no sense to insert after in an empty list with after != NULL, something really bad is happening in your app. */
    EINA_SAFETY_ON_NULL_RETURN_VAL(wd->items, NULL);
 
-   wd->items = eina_inlist_append_relative(wd->items, EINA_INLIST_GET(it),
-                                           EINA_INLIST_GET(after));
    if (!it->parent)
      {
         if ((flags & ELM_GENLIST_ITEM_GROUP) &&
@@ -3618,6 +3619,8 @@ elm_genlist_item_insert_after(Evas_Object                  *obj,
         it->parent->items = eina_list_append_relative(it->parent->items, it,
                                                       after);
      }
+   wd->items = eina_inlist_append_relative(wd->items, EINA_INLIST_GET(it),
+                                           EINA_INLIST_GET(after));
    it->rel = after;
    it->rel->relcount++;
    it->before = EINA_FALSE;
