@@ -9765,13 +9765,59 @@ extern "C" {
     */
 
    /* gesture layer */
-   /** @defgroup Elm_Gesture_Layer Gesture Layer */
+   /**
+    * @defgroup Elm_Gesture_Layer Gesture Layer
+    * Gesture Layer Usage:
+    *
+    * Use Gesture Layer to detect gestures.
+    * The advantage is that you don't have to implement
+    * gesture detection, just set callbacks of gesture state.
+    * By using gesture layer we make standard interface.
+    *
+    * In order to use Gesture Layer you start with @ref elm_gesture_layer_add
+    * with a parent object parameter.
+    * Next 'activate' gesture layer with a @ref elm_gesture_layer_attach
+    * call. Usually with same object as target (2nd parameter).
+    *
+    * Now you need to tell gesture layer what gestures you follow.
+    * This is done with @ref elm_gesture_layer_cb_set call.
+    * By setting the callback you actually saying to gesture layer:
+    * I would like to know when the gesture @ref Elm_Gesture_Types
+    * switches to state @ref Elm_Gesture_State.
+    *
+    * Next, you need to implement the actual action that follows the input
+    * in your callback.
+    *
+    * Note that if you like to stop being reported about a gesture, just set
+    * all callbacks referring this gesture to NULL.
+    * (again with @ref elm_gesture_layer_cb_set)
+    *
+    * The information reported by gesture layer to your callback is depending
+    * on @ref Elm_Gesture_Types:
+    * @ref Elm_Gesture_Taps_Info is the info reported for tap gestures:
+    * @ref ELM_GESTURE_N_TAPS, @ref ELM_GESTURE_N_LONG_TAPS,
+    * @ref ELM_GESTURE_N_DOUBLE_TAPS, @ref ELM_GESTURE_N_TRIPLE_TAPS.
+    *
+    * @ref Elm_Gesture_Momentum_Info is info reported for momentum gestures:
+    * @ref ELM_GESTURE_MOMENTUM.
+    *
+    * @ref Elm_Gesture_Line_Info is the info reported for line gestures:
+    * (this also contains @ref Elm_Gesture_Momentum_Info internal structure)
+    * @ref ELM_GESTURE_N_LINES, @ref ELM_GESTURE_N_FLICKS.
+    * Note that we consider a flick as a line-gesture that should be completed
+    * in flick-time-limit as defined in @ref Config.
+    *
+    * @ref Elm_Gesture_Zoom_Info is the info reported for @ref ELM_GESTURE_ZOOM gesture.
+    *
+    * @ref Elm_Gesture_Rotate_Info is the info reported for @ref ELM_GESTURE_ROTATE gesture.
+    * */
+
    /**
     * @enum _Elm_Gesture_Types
     * Enum of supported gesture types.
     * @ingroup Elm_Gesture_Layer
     */
-   typedef enum _Elm_Gesture_Types
+   enum _Elm_Gesture_Types
      {
         ELM_GESTURE_FIRST = 0,
 
@@ -9789,21 +9835,35 @@ extern "C" {
         ELM_GESTURE_ROTATE, /**< Rotate */
 
         ELM_GESTURE_LAST
-     } Elm_Gesture_Types;
+     };
+
+   /**
+    * @typedef Elm_Gesture_Types
+    * gesture types enum
+    * @ingroup Elm_Gesture_Layer
+    */
+   typedef enum _Elm_Gesture_Types Elm_Gesture_Types;
 
    /**
     * @enum _Elm_Gesture_State
     * Enum of gesture states.
     * @ingroup Elm_Gesture_Layer
     */
-   typedef enum _Elm_Gesture_State
+   enum _Elm_Gesture_State
      {
         ELM_GESTURE_STATE_UNDEFINED = -1, /**< Gesture not STARTed */
         ELM_GESTURE_STATE_START,          /**< Gesture STARTed     */
         ELM_GESTURE_STATE_MOVE,           /**< Gesture is ongoing  */
         ELM_GESTURE_STATE_END,            /**< Gesture completed   */
         ELM_GESTURE_STATE_ABORT    /**< Onging gesture was ABORTed */
-     } Elm_Gesture_State;
+     };
+
+   /**
+    * @typedef Elm_Gesture_State
+    * gesture states enum
+    * @ingroup Elm_Gesture_Layer
+    */
+   typedef enum _Elm_Gesture_State Elm_Gesture_State;
 
    /**
     * @struct _Elm_Gesture_Taps_Info
@@ -9868,7 +9928,7 @@ extern "C" {
      };
 
    /**
-    * @typedef _Elm_Gesture_Line_Info
+    * @typedef Elm_Gesture_Line_Info
     * Holds line info for user
     * @ingroup Elm_Gesture_Layer
     */
