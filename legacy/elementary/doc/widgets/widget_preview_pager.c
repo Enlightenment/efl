@@ -26,4 +26,5 @@ evas_object_show(o);
 unsigned char _func(void *data)
 {
    elm_pager_content_promote(o, data);
+   return 0;
 }
