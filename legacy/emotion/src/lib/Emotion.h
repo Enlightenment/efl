@@ -58,6 +58,7 @@
  * See the @ref Emotion_API for a better reference.
  * 
  * Please see the @ref authors page for contact details.
+ * 
  */
 
 /**
