@@ -12,7 +12,12 @@
  *
  * @mainpage Emotion Library Documentation
  *
- * @image html e.png
+ * @version 0.2.0
+ * @date 2003-2011
+ *
+ * @section intro What is Emotion?
+ *
+ * A media object library for Evas and Ecore.
  *
  * Emotion is a library that allows playing audio and video files, using one of
  * its backends (gstreamer or xine).
@@ -26,18 +31,6 @@
  * emotion_object_add() is an Evas smart object, so it can be manipulated with
  * default Evas object functions. Callbacks can be added to the signals emitted
  * by this object with evas_object_smart_callback_add().
- *
- * @version 0.2.0
- * @author Carsten Haitzler <raster@rasterman.com>
- * @author Vincent Torri <torri@maths.univ-evry.fr>
- * @author Nicolas Aguirre <aguirre.nicolas@gmail.com>
- * @author Sebastian Dransfeld <sd@tango.flipp.net>
- * @author Cedric Bail <cedric.bail@free.fr>
- * @date 2003-2011
- *
- * @section intro What is Emotion?
- *
- * A media object library for Evas and Ecore.
  *
  * @section work How does Emotion work?
  *
@@ -63,6 +56,15 @@
  * @endcode
  *
  * See the @ref Emotion_API for a better reference.
+ * 
+ * @section authors Authors
+ * 
+ * @author Carsten Haitzler <raster@rasterman.com>
+ * @author Vincent Torri <torri@maths.univ-evry.fr>
+ * @author Nicolas Aguirre <aguirre.nicolas@gmail.com>
+ * @author Sebastian Dransfeld <sd@tango.flipp.net>
+ * @author Cedric Bail <cedric.bail@free.fr>
+ * 
  */
 
 #include <Evas.h>
