@@ -138,6 +138,8 @@ main(void)
    evas_object_resize(app.edje, WIDTH, HEIGHT);
    evas_object_show(app.edje);
 
+   edje_object_part_drag_size_set(app.edje, PARTNAME, 1.0, 0.4);
+
    if (!edje_object_part_drag_step_set(app.edje, PARTNAME, 0.0, 0.1))
      printf("error when setting drag step size.\n");
 

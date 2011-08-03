@@ -81,8 +81,6 @@ collections {
 
                color: 255 0 0 200;
 
-               min: 10 30;
-               max: 10 30;
             }
          } // example/knob
 
