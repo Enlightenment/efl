@@ -142,3 +142,7 @@
         by edje (edje objects) are gone. Delay internal core shutdown
         until all references gone.
 
+2011-08-03  Tom Hacohen (TAsn)
+
+	* Entry: Added changed,user signal. This signal indicates the entry
+	has changed because of user interaction, i.e not by code.

@@ -1162,6 +1162,7 @@ _edje_key_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, v
         _sel_clear(en->cursor, rp->object, en);
         _anchors_get(en->cursor, rp->object, en);
         _edje_emit(ed, "entry,changed", rp->part->name);
+        _edje_emit(ed, "entry,changed,user", rp->part->name);
         _edje_emit(ed, "entry,key,backspace", rp->part->name);
         ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
      }
@@ -1185,6 +1186,7 @@ _edje_key_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, v
         _sel_clear(en->cursor, rp->object, en);
         _anchors_get(en->cursor, rp->object, en);
         _edje_emit(ed, "entry,changed", rp->part->name);
+        _edje_emit(ed, "entry,changed,user", rp->part->name);
         _edje_emit(ed, "entry,key,delete", rp->part->name);
         ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
      }
@@ -1297,6 +1299,7 @@ _edje_key_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, v
                   _text_filter_format_prepend(en, en->cursor, "\t");
                   _anchors_get(en->cursor, rp->object, en);
                   _edje_emit(ed, "entry,changed", rp->part->name);
+                  _edje_emit(ed, "entry,changed,user", rp->part->name);
                }
              ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
           }
@@ -1358,6 +1361,7 @@ _edje_key_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, v
                }
              _anchors_get(en->cursor, rp->object, en);
              _edje_emit(ed, "entry,changed", rp->part->name);
+             _edje_emit(ed, "entry,changed,user", rp->part->name);
              _edje_emit(ed, "cursor,changed", rp->part->name);
              cursor_changed = EINA_TRUE;
              ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
@@ -1391,6 +1395,7 @@ _edje_key_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, v
                _text_filter_text_prepend(en, en->cursor, ev->string);
              _anchors_get(en->cursor, rp->object, en);
              _edje_emit(ed, "entry,changed", rp->part->name);
+             _edje_emit(ed, "entry,changed,user", rp->part->name);
              _edje_emit(ed, "cursor,changed", rp->part->name);
              cursor_changed = EINA_TRUE;
              ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
@@ -2763,6 +2768,7 @@ _edje_entry_imf_event_commit_cb(void *data, int type __UNUSED__, void *event)
    _edje_entry_imf_cursor_info_set(en);
    _anchors_get(en->cursor, rp->object, en);
    _edje_emit(rp->edje, "entry,changed", rp->part->name);
+   _edje_emit(ed, "entry,changed,user", rp->part->name);
    _edje_emit(ed, "cursor,changed", rp->part->name);
 
    return ECORE_CALLBACK_DONE;
