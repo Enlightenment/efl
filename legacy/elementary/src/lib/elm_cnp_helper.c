@@ -750,7 +750,7 @@ notify_handler_text(Cnp_Selection *sel, Ecore_X_Event_Selection_Notify *notify)
    cnp_debug("Notify handler text %d %d %p\n", data->format,data->length, data->data);
    str = mark_up((char *)data->data, data->length, NULL);
    cnp_debug("String is %s (from %s)\n", str, data->data);
-   elm_entry_entry_insert(sel->requestwidget, str);
+   _elm_entry_entry_paste(sel->requestwidget, str);
    free(str);
    return 0;
 }
@@ -936,7 +936,7 @@ notify_handler_html(Cnp_Selection *sel, Ecore_X_Event_Selection_Notify *notify)
    strncpy(stripstr, (char *)data->data, data->length);
    stripstr[data->length] = '\0';
    cnp_debug("String is %s (%d bytes)\n", stripstr, data->length);
-   elm_entry_entry_insert(sel->requestwidget, stripstr);
+   _elm_entry_entry_paste(sel->requestwidget, stripstr);
    free(stripstr);
    return 0;
 }
@@ -1023,7 +1023,7 @@ pasteimage_append(char *file, Evas_Object *entry)
 
    entrytag = alloca(len + 1);
    snprintf(entrytag, len + 1, tagstring, file);
-   elm_entry_entry_insert(entry, entrytag);
+   _elm_entry_entry_paste(entry, entrytag);
 
    return EINA_TRUE;
 }

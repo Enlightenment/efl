@@ -8256,6 +8256,7 @@ extern "C" {
     * This widget emits the following signals:
     *
     * @li "changed": The text within the entry was changed.
+    * @li "changed,user": The text within the entry was changed because of user interaction.
     * @li "activated": The enter key was pressed on a single line entry.
     * @li "press": A mouse button has been pressed on the entry.
     * @li "longpressed": A mouse button has been pressed and held for a couple

@@ -237,4 +237,7 @@ extern int          _elm_log_dom;
 extern Eina_List   *_elm_win_list;
 extern int          _elm_win_deferred_free;
 
+/* Used by the paste handler */
+void _elm_entry_entry_paste(Evas_Object *obj, const char *entry);
+
 #endif

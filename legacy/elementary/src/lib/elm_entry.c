@@ -118,6 +118,7 @@ static void _signal_cursor_changed(void *data, Evas_Object *obj, const char *emi
 static void _add_chars_till_limit(Evas_Object *obj, char **text, int can_add, Length_Unit unit);
 
 static const char SIG_CHANGED[] = "changed";
+static const char SIG_CHANGED_USER[] = "changed,user";
 static const char SIG_ACTIVATED[] = "activated";
 static const char SIG_PRESS[] = "press";
 static const char SIG_LONGPRESSED[] = "longpressed";
@@ -162,6 +163,7 @@ static const Evas_Smart_Cb_Description _signals[] = {
        {SIG_ANCHOR_IN, ""},
        {SIG_ANCHOR_OUT, ""},
        {SIG_PREEDIT_CHANGED, ""},
+       {SIG_CHANGED_USER, ""},
        {NULL, NULL}
 };
 
@@ -924,6 +926,13 @@ _select(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
      elm_widget_scroll_hold_push(data);
 }
 
+void
+_elm_entry_entry_paste(Evas_Object *obj, const char *entry)
+{
+   elm_entry_entry_insert(obj, entry);
+   evas_object_smart_callback_call(obj, SIG_CHANGED_USER, NULL);
+}
+
 static void
 _paste(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
@@ -1281,6 +1290,12 @@ static void
 _signal_entry_changed(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
 {
    _entry_changed_common_handling(data, SIG_CHANGED);
+}
+
+static void
+_signal_entry_changed_user(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
+{
+   evas_object_smart_callback_call(data, SIG_CHANGED_USER, NULL);
 }
 
 static void
@@ -2001,6 +2016,8 @@ elm_entry_add(Evas_Object *parent)
    _elm_theme_object_set(obj, wd->ent, "entry", "base", "default");
    edje_object_signal_callback_add(wd->ent, "entry,changed", "elm.text",
                                    _signal_entry_changed, obj);
+   edje_object_signal_callback_add(wd->ent, "entry,changed,user", "elm.text",
+                                   _signal_entry_changed_user, obj);
    edje_object_signal_callback_add(wd->ent, "preedit,changed", "elm.text",
                                    _signal_preedit_changed, obj);
    edje_object_signal_callback_add(wd->ent, "selection,start", "elm.text",
