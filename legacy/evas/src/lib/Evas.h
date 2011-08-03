@@ -3014,7 +3014,7 @@ EAPI const char       *evas_object_name_get              (const Evas_Object *obj
  * where, inside a code block, callbacks exist which would possibly
  * delete an object we are operating on afterwards. Then, one would
  * evas_object_ref() it on the beginning of the block and
- * evas_object_unref() it on the end. I would then be deleted at this
+ * evas_object_unref() it on the end. It would then be deleted at this
  * point, if it should be.
  *
  * Example:
