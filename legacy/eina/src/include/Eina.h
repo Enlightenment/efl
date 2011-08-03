@@ -1,5 +1,5 @@
 /* EINA - EFL data type library
- * Copyright (C) 2008-2010 Enlightenment Developers:
+ * Copyright (C) 2008-2011 Enlightenment Developers:
  *           Albin "Lutin" Tonnerre <albin.tonnerre@gmail.com>
  *           Alexandre "diaxen" Becoulet <diaxen@free.fr>
  *           Andre Dieb <andre.dieb@gmail.com>
@@ -36,27 +36,18 @@
 #define EINA_H_
 
 /**
+ * @file
+ * @brief Eina Utility library
+ *
+ * These routines are used for Eina.
+ */
+
+/**
  * @mainpage Eina
  *
  * @version 1.1
- * @author Albin "Lutin" Tonnerre <albin.tonnerre@@gmail.com>
- * @author Alexandre "diaxen" Becoulet <diaxen@@free.fr>
- * @author Andre Dieb <andre.dieb@@gmail.com>
- * @author Arnaud de Turckheim "quarium" <quarium@@gmail.com>
- * @author Carsten Haitzler <raster@@rasterman.com>
- * @author Cedric Bail <cedric.bail@@free.fr>
- * @author Corey "atmos" Donohoe <atmos@@atmos.org>
- * @author Fabiano Fidêncio <fidencio@@profusion.mobi>
- * @author Gustavo Chaves <glima@@profusion.mobi>
- * @author Gustavo Sverzut Barbieri <barbieri@@profusion.mobi>
- * @author Jorge Luis "turran" Zapata <jorgeluis.zapata@@gmail.com>
- * @author Peter "pfritz" Wehrfritz <peter.wehrfritz@@web.de>
- * @author Raphael Kubo da Costa <kubo@@profusion.mobi>
- * @author Tilman Sauerbeck <tilman@@code-monkey.de>
- * @author Vincent "caro" Torri  <vtorri at univ-evry dot fr>
- * @author Tom Hacohen <tom@@stosb.com>
- * @date 2008-2010
- *
+ * @date 2008-2011
+ * 
  * @section eina_intro_sec Introduction
  *
  * The Eina library is a library that implements an API for data types
@@ -94,8 +85,10 @@
  * @li @ref Eina_Rectangle_Group rectangle structure and standard manipulation methods.
  * @li @ref Eina_Safety_Checks_Group extra checks that will report unexpected conditions and can be disabled at compile time.
  * @li @ref Eina_String_Group a set of functions that manages C strings.
+ * 
+ * Please see the @ref authors page for contact details.
  *
- * @defgroup Eina_Data_Types_Group Data types.
+ * @defgroup Eina_Data_Types_Group Data types
  *
  * Eina provide easy to use and optimized data types and structures.
  *
@@ -111,6 +104,33 @@
  *
  * Eina tools aims to help application development, providing ways to
  * make it safer, log errors, manage memory more efficiently and more.
+ * 
+ */
+
+/**
+ * 
+ * @page authors Authors
+ * 
+ * @author Albin "Lutin" Tonnerre <albin.tonnerre@@gmail.com>
+ * @author Alexandre "diaxen" Becoulet <diaxen@@free.fr>
+ * @author Andre Dieb <andre.dieb@@gmail.com>
+ * @author Arnaud de Turckheim "quarium" <quarium@@gmail.com>
+ * @author Carsten Haitzler <raster@@rasterman.com>
+ * @author Cedric Bail <cedric.bail@@free.fr>
+ * @author Corey "atmos" Donohoe <atmos@@atmos.org>
+ * @author Fabiano Fidêncio <fidencio@@profusion.mobi>
+ * @author Gustavo Chaves <glima@@profusion.mobi>
+ * @author Gustavo Sverzut Barbieri <barbieri@@profusion.mobi>
+ * @author Jorge Luis "turran" Zapata <jorgeluis.zapata@@gmail.com>
+ * @author Peter "pfritz" Wehrfritz <peter.wehrfritz@@web.de>
+ * @author Raphael Kubo da Costa <kubo@@profusion.mobi>
+ * @author Tilman Sauerbeck <tilman@@code-monkey.de>
+ * @author Vincent "caro" Torri  <vtorri at univ-evry dot fr>
+ * @author Tom Hacohen <tom@@stosb.com>
+ *
+ * Please contact <enlightenment-devel@lists.sourceforge.net> to get in
+ * contact with the developers and maintainers.
+ * 
  */
 
 #include <dirent.h>
