@@ -705,8 +705,7 @@ extern "C" {
     *
     * @param obj The Elementary object
     * @param item The label id to get (NULL for the default label)
-    * @return text of the label or
-    *         NULL for any error
+    * @return text of the label or NULL for any error
     *
     * @note Elementary objects may have many labels (e.g. Action Slider)
     *
@@ -736,8 +735,7 @@ extern "C" {
     *
     * @param obj The Elementary object
     * @param item The content id to get (NULL for the default content)
-    * @return content of the object or
-    *         NULL for any error
+    * @return content of the object or NULL for any error
     *
     * @note Elementary objects may have many contents
     *
