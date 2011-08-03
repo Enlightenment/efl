@@ -11,48 +11,9 @@ These routines are used for Ecore Library interaction
 @image html  e.png
 
 @version 1.1
-@author Carsten Haitzler <raster@rasterman.com>
-@author Tom Gilbert <tom@linuxbrit.co.uk>
-@author Burra <burra@colorado.edu>
-@author Chris Ross <chris@darkrock.co.uk>
-@author Term <term@twistedpath.org>
-@author Tilman Sauerbeck <tilman@code-monkey.de>
-@author Ibukun Olumuyiwa <ibukun@computer.org>
-@author Yuri <da2001@hotmail.ru>
-@author Nicholas Curran <quasar@bigblue.net.au>
-@author Howell Tam <pigeon@pigeond.net>
-@author Nathan Ingersoll <rbdpngn@users.sourceforge.net>
-@author Andrew Elcock <andy@elcock.org>
-@author Kim Woelders <kim@woelders.dk>
-@author Sebastian Dransfeld <sebastid@tango.flipp.net>
-@author Simon Poole <simon.armlinux@themalago.net>
-@author Jorge Luis Zapata Muga <jorgeluis.zapata@gmail.com>
-@author dan sinclair <zero@everburning.com>
-@author Michael 'Mickey' Lauer <mickey@tm.informatik.uni-frankfurt.de>
-@author David 'onefang' Seikel <onefang@gmail.com>
-@author Hisham 'CodeWarrior' Mardam Bey <hisham@hisham.cc>
-@author Brian 'rephorm' Mattern <rephorm@rephorm.com>
-@author Tim Horton <hortont424@gmail.com>
-@author Arnaud de Turckheim 'quarium' <quarium@gmail.com>
-@author Matt Barclay <mbarclay@gmail.com>
-@author Peter Wehrfritz <peter.wehrfritz@web.de>
-@author Albin "Lutin" Tonnerre <albin.tonnerre@gmail.com>
-@author Vincent Torri <vincent.torri@gmail.com>
-@author Lars Munch <lars@segv.dk>
-@author Andre Dieb <andre.dieb@gmail.com>
-@author Mathieu Taillefumier <mathieu.taillefumier@free.fr>
-@author Rui Miguel Silva Seabra <rms@1407.org>
-@author Samsung Electronics
-@author Samsung SAIT
-@author Nicolas Aguirre <aguirre.nicolas@gmail.com>
-@author Brett Nash <nash@nash.id.au>
-@author Mike Blumenkrantz <mike@zentific.com>
-@author Leif Middelschulte <leif.middelschulte@gmail.com>
-@author Mike McCormack <mj.mccormack@samsung.com>
-@author Sangho Park <gouache95@gmail.com>
-@author Jihoon Kim <jihoon48.kim@samsung.com> <imfine98@gmail.com>
-@author Daniel Juyung Seo <seojuyung2@gmail.com> <juyung.seo@samsung.com>
 @date 2000-2011
+
+Please see the @ref authors page for contact details.
 
 @section intro Introduction
 
@@ -96,6 +57,54 @@ make CFLAGS="-O9 -mpentiumpro -march=pentiumpro -mcpu=pentiumpro"
 @endverbatim
 
 @todo (1.0) Document API
+*/
+
+/**
+@page authors Authors
+@author Carsten Haitzler <raster@rasterman.com>
+@author Tom Gilbert <tom@linuxbrit.co.uk>
+@author Burra <burra@colorado.edu>
+@author Chris Ross <chris@darkrock.co.uk>
+@author Term <term@twistedpath.org>
+@author Tilman Sauerbeck <tilman@code-monkey.de>
+@author Ibukun Olumuyiwa <ibukun@computer.org>
+@author Yuri <da2001@hotmail.ru>
+@author Nicholas Curran <quasar@bigblue.net.au>
+@author Howell Tam <pigeon@pigeond.net>
+@author Nathan Ingersoll <rbdpngn@users.sourceforge.net>
+@author Andrew Elcock <andy@elcock.org>
+@author Kim Woelders <kim@woelders.dk>
+@author Sebastian Dransfeld <sebastid@tango.flipp.net>
+@author Simon Poole <simon.armlinux@themalago.net>
+@author Jorge Luis Zapata Muga <jorgeluis.zapata@gmail.com>
+@author dan sinclair <zero@everburning.com>
+@author Michael 'Mickey' Lauer <mickey@tm.informatik.uni-frankfurt.de>
+@author David 'onefang' Seikel <onefang@gmail.com>
+@author Hisham 'CodeWarrior' Mardam Bey <hisham@hisham.cc>
+@author Brian 'rephorm' Mattern <rephorm@rephorm.com>
+@author Tim Horton <hortont424@gmail.com>
+@author Arnaud de Turckheim 'quarium' <quarium@gmail.com>
+@author Matt Barclay <mbarclay@gmail.com>
+@author Peter Wehrfritz <peter.wehrfritz@web.de>
+@author Albin "Lutin" Tonnerre <albin.tonnerre@gmail.com>
+@author Vincent Torri <vincent.torri@gmail.com>
+@author Lars Munch <lars@segv.dk>
+@author Andre Dieb <andre.dieb@gmail.com>
+@author Mathieu Taillefumier <mathieu.taillefumier@free.fr>
+@author Rui Miguel Silva Seabra <rms@1407.org>
+@author Samsung Electronics
+@author Samsung SAIT
+@author Nicolas Aguirre <aguirre.nicolas@gmail.com>
+@author Brett Nash <nash@nash.id.au>
+@author Mike Blumenkrantz <mike@zentific.com>
+@author Leif Middelschulte <leif.middelschulte@gmail.com>
+@author Mike McCormack <mj.mccormack@samsung.com>
+@author Sangho Park <gouache95@gmail.com>
+@author Jihoon Kim <jihoon48.kim@samsung.com> <imfine98@gmail.com>
+@author Daniel Juyung Seo <seojuyung2@gmail.com> <juyung.seo@samsung.com>
+
+Please contact <enlightenment-devel@lists.sourceforge.net> to get in
+contact with the developers and maintainers.
 */
 
 /*
