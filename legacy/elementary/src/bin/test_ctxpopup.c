@@ -139,7 +139,7 @@ _list_item_cb5(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
    elm_box_pack_end(bx, sc);
 
    ctxpopup = elm_ctxpopup_add(obj);
-   elm_ctxpopup_content_set(ctxpopup, bx);
+   elm_object_content_set(ctxpopup, bx);
 
    evas_pointer_canvas_xy_get(evas_object_evas_get(obj), &x, &y);
    evas_object_move(ctxpopup, x, y);
