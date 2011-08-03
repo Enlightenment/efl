@@ -494,7 +494,7 @@ elm_widget_event_hook_set(Evas_Object *obj,
 EAPI void
 elm_widget_text_set_hook_set(Evas_Object *obj,
                               void       (*func)(Evas_Object *obj,
-                                                 const char  *item,
+                                                 const char  *part,
                                                  const char  *text))
 {
    API_ENTRY return;
@@ -504,7 +504,7 @@ elm_widget_text_set_hook_set(Evas_Object *obj,
 EAPI void
 elm_widget_text_get_hook_set(Evas_Object *obj,
                               const char *(*func)(const Evas_Object *obj,
-                                                  const char  *item))
+                                                  const char  *part))
 {
    API_ENTRY return;
    sd->on_text_get_func = func;
@@ -513,7 +513,7 @@ elm_widget_text_get_hook_set(Evas_Object *obj,
 EAPI void
 elm_widget_content_set_hook_set(Evas_Object *obj,
                                 void (*func)(Evas_Object *obj,
-                                              const char *item,
+                                              const char *part,
                                               Evas_Object *content))
 {
    API_ENTRY return;
@@ -523,7 +523,7 @@ elm_widget_content_set_hook_set(Evas_Object *obj,
 EAPI void
 elm_widget_content_get_hook_set(Evas_Object *obj,
                                 Evas_Object *(*func)(const Evas_Object *obj,
-                                                     const char *item))
+                                                     const char *part))
 {
    API_ENTRY return;
    sd->on_content_get_func = func;
@@ -532,7 +532,7 @@ elm_widget_content_get_hook_set(Evas_Object *obj,
 EAPI void
 elm_widget_content_unset_hook_set(Evas_Object *obj,
                                   Evas_Object  *(*func)(Evas_Object *obj,
-                                                        const char *item))
+                                                        const char *part))
 {
    API_ENTRY return;
    sd->on_content_unset_func = func;
@@ -2128,52 +2128,52 @@ elm_widget_theme_set(Evas_Object *obj,
 }
 
 EAPI void
-elm_widget_text_part_set(Evas_Object *obj, const char *item, const char *label)
+elm_widget_text_part_set(Evas_Object *obj, const char *part, const char *label)
 {
    API_ENTRY return;
 
    if (!sd->on_text_set_func)
      return;
 
-   sd->on_text_set_func(obj, item, label);
+   sd->on_text_set_func(obj, part, label);
 }
 
 EAPI const char *
-elm_widget_text_part_get(const Evas_Object *obj, const char *item)
+elm_widget_text_part_get(const Evas_Object *obj, const char *part)
 {
    API_ENTRY return NULL;
 
    if (!sd->on_text_get_func)
      return NULL;
 
-   return sd->on_text_get_func(obj, item);
+   return sd->on_text_get_func(obj, part);
 }
 
 EAPI void
-elm_widget_content_part_set(Evas_Object *obj, const char *item, Evas_Object *content)
+elm_widget_content_part_set(Evas_Object *obj, const char *part, Evas_Object *content)
 {
    API_ENTRY return;
 
    if (!sd->on_content_set_func)  return;
-   sd->on_content_set_func(obj, item, content);
+   sd->on_content_set_func(obj, part, content);
 }
 
 EAPI Evas_Object *
-elm_widget_content_part_get(const Evas_Object *obj, const char *item)
+elm_widget_content_part_get(const Evas_Object *obj, const char *part)
 {
    API_ENTRY return NULL;
 
    if (!sd->on_content_get_func) return NULL;
-   return sd->on_content_get_func(obj, item);
+   return sd->on_content_get_func(obj, part);
 }
 
 EAPI Evas_Object *
-elm_widget_content_part_unset(Evas_Object *obj, const char *item)
+elm_widget_content_part_unset(Evas_Object *obj, const char *part)
 {
    API_ENTRY return NULL;
 
    if (!sd->on_content_unset_func) return NULL;
-   return sd->on_content_unset_func(obj, item);
+   return sd->on_content_unset_func(obj, part);
 }
 
 EAPI Elm_Theme *

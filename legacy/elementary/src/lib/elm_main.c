@@ -1201,38 +1201,38 @@ elm_object_scale_get(const Evas_Object *obj)
 }
 
 EAPI void
-elm_object_text_part_set(Evas_Object *obj, const char *item, const char *label)
+elm_object_text_part_set(Evas_Object *obj, const char *part, const char *label)
 {
    EINA_SAFETY_ON_NULL_RETURN(obj);
-   elm_widget_text_part_set(obj, item, label);
+   elm_widget_text_part_set(obj, part, label);
 }
 
 EAPI const char *
-elm_object_text_part_get(const Evas_Object *obj, const char *item)
+elm_object_text_part_get(const Evas_Object *obj, const char *part)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(obj, NULL);
-   return elm_widget_text_part_get(obj, item);
+   return elm_widget_text_part_get(obj, part);
 }
 
 EAPI void
-elm_object_content_part_set(Evas_Object *obj, const char *item, Evas_Object *content)
+elm_object_content_part_set(Evas_Object *obj, const char *part, Evas_Object *content)
 {
    EINA_SAFETY_ON_NULL_RETURN(obj);
-   elm_widget_content_part_set(obj, item, content);
+   elm_widget_content_part_set(obj, part, content);
 }
 
 EAPI Evas_Object *
-elm_object_content_part_get(const Evas_Object *obj, const char *item)
+elm_object_content_part_get(const Evas_Object *obj, const char *part)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(obj, NULL);
-   return elm_widget_content_part_get(obj, item);
+   return elm_widget_content_part_get(obj, part);
 }
 
 EAPI Evas_Object *
-elm_object_content_part_unset(Evas_Object *obj, const char *item)
+elm_object_content_part_unset(Evas_Object *obj, const char *part)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(obj, NULL);
-   return elm_widget_content_part_unset(obj, item);
+   return elm_widget_content_part_unset(obj, part);
 }
 
 /**

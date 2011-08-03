@@ -689,14 +689,14 @@ extern "C" {
     * Set a label of an object
     *
     * @param obj The Elementary object
-    * @param item The label id to set (NULL for the default label)
+    * @param part The text part name to set (NULL for the default label)
     * @param label The new text of the label
     *
     * @note Elementary objects may have many labels (e.g. Action Slider)
     *
     * @ingroup General
     */
-   EAPI void         elm_object_text_part_set(Evas_Object *obj, const char *item, const char *label);
+   EAPI void         elm_object_text_part_set(Evas_Object *obj, const char *part, const char *label);
 
 #define elm_object_text_set(obj, label) elm_object_text_part_set((obj), NULL, (label))
 
@@ -704,14 +704,14 @@ extern "C" {
     * Get a label of an object
     *
     * @param obj The Elementary object
-    * @param item The label id to get (NULL for the default label)
+    * @param part The text part name to get (NULL for the default label)
     * @return text of the label or NULL for any error
     *
     * @note Elementary objects may have many labels (e.g. Action Slider)
     *
     * @ingroup General
     */
-   EAPI const char  *elm_object_text_part_get(const Evas_Object *obj, const char *item);
+   EAPI const char  *elm_object_text_part_get(const Evas_Object *obj, const char *part);
 
 #define elm_object_text_get(obj) elm_object_text_part_get((obj), NULL)
 
@@ -719,14 +719,14 @@ extern "C" {
     * Set a content of an object
     *
     * @param obj The Elementary object
-    * @param item The content id to set (NULL for the default content)
+    * @param part The content part name to set (NULL for the default content)
     * @param content The new content of the object
     *
     * @note Elementary objects may have many contents
     *
     * @ingroup General
     */
-   EAPI void elm_object_content_part_set(Evas_Object *obj, const char *item, Evas_Object *content);
+   EAPI void elm_object_content_part_set(Evas_Object *obj, const char *part, Evas_Object *content);
 
 #define elm_object_content_set(obj, content) elm_object_content_part_set((obj), NULL, (content))
 
@@ -734,14 +734,14 @@ extern "C" {
     * Get a content of an object
     *
     * @param obj The Elementary object
-    * @param item The content id to get (NULL for the default content)
+    * @param item The content part name to get (NULL for the default content)
     * @return content of the object or NULL for any error
     *
     * @note Elementary objects may have many contents
     *
     * @ingroup General
     */
-   EAPI Evas_Object *elm_object_content_part_get(const Evas_Object *obj, const char *item);
+   EAPI Evas_Object *elm_object_content_part_get(const Evas_Object *obj, const char *part);
 
 #define elm_object_content_get(obj) elm_object_content_part_get((obj), NULL)
 
@@ -749,13 +749,13 @@ extern "C" {
     * Unset a content of an object
     *
     * @param obj The Elementary object
-    * @param item The content id to unset (NULL for the default content)
+    * @param item The content part name to unset (NULL for the default content)
     *
     * @note Elementary objects may have many contents
     *
     * @ingroup General
     */
-   EAPI Evas_Object *elm_object_content_part_unset(Evas_Object *obj, const char *item);
+   EAPI Evas_Object *elm_object_content_part_unset(Evas_Object *obj, const char *part);
 
 #define elm_object_content_unset(obj) elm_object_content_part_unset((obj), NULL)
 

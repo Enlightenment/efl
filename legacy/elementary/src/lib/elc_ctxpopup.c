@@ -71,12 +71,12 @@ static void _del_pre_hook(Evas_Object *obj);
 static void _del_hook(Evas_Object *obj);
 static void _theme_hook(Evas_Object *obj);
 static void _content_set_hook(Evas_Object *obj,
-                              const char *item __UNUSED__,
+                              const char *part __UNUSED__,
                               Evas_Object *content);
 static Evas_Object * _content_unset_hook(Evas_Object *obj,
-                                         const char *item __UNUSED__);
+                                         const char *part __UNUSED__);
 static Evas_Object * _content_get_hook(const Evas_Object *obj,
-                                       const char *item __UNUSED__);
+                                       const char *part __UNUSED__);
 static void _bg_clicked_cb(void *data, Evas_Object *obj __UNUSED__,
                            const char *emission __UNUSED__,
                            const char *source __UNUSED__);
@@ -700,7 +700,7 @@ _theme_hook(Evas_Object *obj)
 }
 
 static void
-_content_set_hook(Evas_Object *obj, const char *item __UNUSED__,
+_content_set_hook(Evas_Object *obj, const char *part __UNUSED__,
                   Evas_Object *content)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
@@ -727,7 +727,7 @@ _content_set_hook(Evas_Object *obj, const char *item __UNUSED__,
 }
 
 static Evas_Object *
-_content_unset_hook(Evas_Object *obj, const char *item __UNUSED__)
+_content_unset_hook(Evas_Object *obj, const char *part __UNUSED__)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
 
@@ -752,7 +752,7 @@ _content_unset_hook(Evas_Object *obj, const char *item __UNUSED__)
 }
 
 static Evas_Object *
-_content_get_hook(const Evas_Object *obj, const char *item __UNUSED__)
+_content_get_hook(const Evas_Object *obj, const char *part __UNUSED__)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
 
