@@ -255,7 +255,6 @@ src/bin/Makefile
 src/examples/Makefile
 doc/Makefile
 doc/Doxyfile
-doc/emotion.dox
 data/Makefile
 ])
 
