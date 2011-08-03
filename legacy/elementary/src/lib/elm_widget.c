@@ -2921,6 +2921,53 @@ _smart_reconfigure(Smart_Data *sd)
      }
 }
 
+EAPI void
+elm_widget_item_content_part_set(Elm_Widget_Item *it,
+                                 const char *item,
+                                 Evas_Object *content)
+{
+   ELM_WIDGET_ITEM_CHECK_OR_RETURN(it);
+   if (!it->on_content_set_func) return;
+   it->on_content_set_func(it, item, content);
+}
+
+EAPI Evas_Object *
+elm_widget_item_content_part_get(const Elm_Widget_Item *it,
+                                 const char *item)
+{
+   ELM_WIDGET_ITEM_CHECK_OR_RETURN(it, NULL);
+   if (!it->on_content_get_func) return NULL;
+   return it->on_content_get_func(it, item);
+}
+
+EAPI Evas_Object *
+elm_widget_item_content_part_unset(Elm_Widget_Item *it,
+                                   const char *item)
+{
+   ELM_WIDGET_ITEM_CHECK_OR_RETURN(it, NULL);
+   if (!it->on_content_unset_func) return NULL;
+   return it->on_content_unset_func(it, item);
+}
+
+EAPI void
+elm_widget_item_text_part_set(Elm_Widget_Item *it,
+                              const char *item,
+                              const char *label)
+{
+   ELM_WIDGET_ITEM_CHECK_OR_RETURN(it);
+   if (!it->on_text_set_func) return;
+   it->on_text_set_func(it, item, label);
+}
+
+EAPI const char *
+elm_widget_item_text_part_get(const Elm_Widget_Item *it,
+                              const char *item)
+{
+   ELM_WIDGET_ITEM_CHECK_OR_RETURN(it, NULL);
+   if (!it->on_text_get_func) return NULL;
+   return it->on_text_get_func(it, item);
+}
+
 static void
 _smart_add(Evas_Object *obj)
 {

@@ -328,6 +328,12 @@ extern "C" {
         ELM_WRAP_LAST
      } Elm_Wrap_Type;
 
+   /**
+    * @typedef Elm_Object_Item
+    * An Elementary Object item handle.
+    * @ingroup General
+    */
+   typedef struct _Elm_Widget_Item Elm_Object_Item;
 
    /**
     * Called back when a widget's tooltip is activated and needs content.
@@ -754,6 +760,80 @@ extern "C" {
    EAPI Evas_Object *elm_object_content_part_unset(Evas_Object *obj, const char *item);
 
 #define elm_object_content_unset(obj) elm_object_content_part_unset((obj), NULL)
+
+   /**
+    * Set a content of an object item
+    *
+    * @param it The Elementary object item
+    * @param item The content id to unset (NULL for the default content)
+    * @param content The new content of the object item
+    *
+    * @note Elementary object items may have many contents
+    *
+    * @ingroup General
+    */
+   EAPI void elm_object_item_content_part_set(Elm_Object_Item *it, const char *item, Evas_Object *content);
+
+#define elm_object_item_content_set(it, content) elm_object_item_content_part_set((it), NULL, (content))
+
+   /**
+    * Get a content of an object item
+    *
+    * @param it The Elementary object item
+    * @param item The content id to unset (NULL for the default content)
+    * @return content of the object item or NULL for any error
+    *
+    * @note Elementary object items may have many contents
+    *
+    * @ingroup General
+    */
+   EAPI Evas_Object *elm_object_item_content_part_get(const Elm_Object_Item *it, const char *item);
+
+#define elm_object_item_content_get(it, content) elm_object_item_content_part_get((it), NULL, (content))
+
+   /**
+    * Unset a content of an object item
+    *
+    * @param it The Elementary object item
+    * @param item The content id to unset (NULL for the default content)
+    *
+    * @note Elementary object items may have many contents
+    *
+    * @ingroup General
+    */
+   EAPI Evas_Object *elm_object_item_content_part_unset(Elm_Object_Item *it, const char *item);
+
+#define elm_object_item_content_unset(it, content) elm_object_item_content_part_unset((it), (content))
+
+   /**
+    * Set a label of an objec itemt
+    *
+    * @param obj The Elementary object item
+    * @param item The label id to set (NULL for the default label)
+    * @param label The new text of the label
+    *
+    * @note Elementary object items may have many labels
+    *
+    * @ingroup General
+    */
+   EAPI void elm_object_item_text_part_set(Elm_Object_Item *it, const char *item, const char *label);
+
+#define elm_object_item_text_set(it, label) elm_object_item_text_part_set((it), NULL, (label))
+
+   /**
+    * Get a label of an object
+    *
+    * @param obj The Elementary object item
+    * @param item The label id to get (NULL for the default label)
+    * @return text of the label or NULL for any error
+    *
+    * @note Elementary object items may have many labels
+    *
+    * @ingroup General
+    */
+   EAPI const char *elm_object_item_text_part_get(const Elm_Object_Item *it, const char *item);
+
+#define elm_object_item_text_get(it) elm_object_item_part_text_get((it), NULL)
 
    /**
     * @}

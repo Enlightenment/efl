@@ -3437,3 +3437,38 @@ elm_longpress_timeout_get(void)
 {
    return _elm_config->longpress_timeout;
 }
+
+EAPI void
+elm_object_item_content_part_set(Elm_Object_Item *it,
+                                 const char *item,
+                                 Evas_Object *content)
+{
+   elm_widget_item_content_part_set(it, item, content);
+}
+
+EAPI Evas_Object *
+elm_object_item_content_part_get(const Elm_Object_Item *it,
+                                 const char *item)
+{
+   return elm_widget_item_content_part_get(it, item);
+}
+
+EAPI Evas_Object *
+elm_object_item_content_part_unset(Elm_Object_Item *it, const char *item)
+{
+   return elm_widget_item_content_part_unset(it, item);
+}
+
+EAPI void
+elm_object_item_text_part_set(Elm_Object_Item *it,
+                              const char *item,
+                              const char *label)
+{
+   elm_widget_item_text_part_set(it, item, label);
+}
+
+EAPI const char *
+elm_object_item_text_part_get(const Elm_Object_Item *it, const char *item)
+{
+   return elm_widget_item_text_part_get(it, item);
+}
