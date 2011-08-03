@@ -123,3 +123,6 @@
 
 	* Add eina_main_loop_is.
 
+2011-08-03  Myungjae Lee
+
+	* Fix eina_share_common_del and eina_share_common_ref to release lock on failure.
