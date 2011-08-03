@@ -552,6 +552,66 @@ EAPI Eina_Bool    emotion_object_audio_handled_get     (const Evas_Object *obj);
  * so the aspect won't be changed (by wrongly resizing the object). Or to crop
  * the video correctly, if necessary.
  *
+ * The described behavior can be applied like following. Consider a given
+ * emotion object that we want to position inside an area, which we will
+ * represent by @c w and @c h. Since we want to position this object either
+ * stretching, or filling the entire area but overflowing the video, or just
+ * adjust the video to fit inside the area without keeping the aspect ratio, we
+ * must compare the video aspect ratio with the area aspect ratio:
+ * @code
+ * int w = 200, h = 300; // an arbitrary value which represents the area where
+ *                       // the video would be placed
+ * int vw, vh;
+ * double r, vr = emotion_object_ratio_get(obj);
+ * r = (double)w / h;
+ * @endcode
+ *
+ * Now, if we want to make the video fit inside the area, the following code
+ * would do it:
+ * @code
+ * if (vr > r) // the video is wider than the area
+ *   {
+ *      vw = w;
+ *      vh = w / vr;
+ *   }
+ * else // the video is taller than the area
+ *   {
+ *      vh = h;
+ *      vw = h * vr;
+ *   }
+ * evas_object_resize(obj, vw, vh);
+ * @endcode
+ *
+ * And for keeping the aspect ratio but making the video fill the entire area,
+ * overflowing the content which can't fit inside it, we would do:
+ * @code
+ * if (vr > r) // the video is wider than the area
+ *   {
+ *      vh = h;
+ *      vw = h * vr;
+ *   }
+ * else // the video is taller than the area
+ *   {
+ *      vw = w;
+ *      vh = w / vr;
+ *   }
+ * evas_object_resize(obj, vw, vh);
+ * @endcode
+ *
+ * Finally, by just resizing the video to the video area, we would have the
+ * video stretched:
+ * @code
+ * vw = w;
+ * vh = h;
+ * evas_object_resize(obj, vw, vh);
+ * @endcode
+ *
+ * The following diagram exemplifies what would happen to the video,
+ * respectively, in each case:
+ *
+ * @image html emotion_ratio.png
+ * @image latex emotion_ratio.eps width=\textwidth
+ *
  * @note This function returns the aspect ratio that the video @b should be, but
  * sometimes the reported size from emotion_object_size_get() represents a
  * different aspect ratio. You can safely resize the video to respect the aspect
