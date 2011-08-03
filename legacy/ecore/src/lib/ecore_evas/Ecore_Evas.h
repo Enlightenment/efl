@@ -38,6 +38,7 @@
  * The following is a list of example that partially exemplify Ecore_Evas's API:
  * @li @ref ecore_evas_callbacks_example_c
  * @li @ref ecore_evas_object_example_c
+ * @li @ref ecore_evas_basics_example_c
  */
 
 /* FIXME:
@@ -142,14 +143,61 @@ typedef struct _Ecore_Evas Ecore_Evas;
 
 EAPI int         ecore_evas_engine_type_supported_get(Ecore_Evas_Engine_Type engine);
 
+/**
+ * @brief Init the Ecore_Evas system.
+ *
+ * @return How many times the lib has been initialized, 0 indicates failure.
+ *
+ * Set up the Evas wrapper system. Init Evas and Ecore libraries.
+ *
+ * @see ecore_evas_shutdown()
+ */
 EAPI int         ecore_evas_init(void);
+/**
+ * @brief Shut down the Ecore_Evas system.
+ *
+ * @return 0 if ecore evas is fully shut down, or > 0 if it still being used.
+ *
+ * This closes the Evas wrapper system down. Shut down Evas and Ecore libraries.
+ *
+ * @see ecore_evas_init()
+ */
 EAPI int         ecore_evas_shutdown(void);
 
 EAPI void        ecore_evas_app_comp_sync_set(Eina_Bool do_sync);
 EAPI Eina_Bool   ecore_evas_app_comp_sync_get(void);
 
+/**
+ * @brief Returns a list of supported engines names.
+ *
+ * @return Newly allocated list with engines names. Engines names
+ * strings are internal and should be considered constants, do not
+ * free or modify them, to free the list use ecore_evas_engines_free().
+ */
 EAPI Eina_List  *ecore_evas_engines_get(void);
+/**
+ * @brief Free list returned by ecore_evas_engines_get()
+ */
 EAPI void        ecore_evas_engines_free(Eina_List *engines);
+/**
+ * @brief Creates a new Ecore_Evas based on engine name and common parameters.
+ *
+ * @param engine_name engine name as returned by
+ *        ecore_evas_engines_get() or NULL to use environment variable
+ *        ECORE_EVAS_ENGINE, that can be undefined and in this case
+ *        this call will try to find the first working engine.
+ * @param x horizontal position of window (not supported in all engines)
+ * @param y vertical position of window (not supported in all engines)
+ * @param w width of window
+ * @param h height of window
+ * @param extra_options string with extra parameter, dependent on engines
+ *        or NULL. String is usually in the form: 'key1=value1;key2=value2'.
+ *        Pay attention that when getting that from shell commands, most
+ *        consider ';' as the command terminator, so you need to escape
+ *        it or use quotes.
+ *
+ * @return Ecore_Evas instance or NULL if creation failed.
+ */
 EAPI Ecore_Evas *ecore_evas_new(const char *engine_name, int x, int y, int w, int h, const char *extra_options);
 
 
@@ -276,10 +324,64 @@ EAPI Ecore_WinCE_Window *ecore_evas_software_wince_window_get(const Ecore_Evas *
 EAPI Ecore_Evas *ecore_evas_cocoa_new(const char* name, int w, int h);
 
 /* generic manipulation calls */
+/**
+ * @brief Get the engine name used by this Ecore_Evas(window).
+ *
+ * @param ee Ecore_Evas whose engine's name is desired.
+ * @return A string that can(usually) be used in ecore_evas_new()
+ *
+ * @see ecore_evas_free()
+ */
 EAPI const char *ecore_evas_engine_name_get(const Ecore_Evas *ee);
+/**
+ * @brief Return the Ecore_Evas for this Evas
+ *
+ * @param e The Evas to get the Ecore_Evas from
+ * @return The Ecore_Evas that holds this Evas, or NULL if not held by one.
+ *
+ * @warning Only use on Evas' created with ecore evas!
+ */
 EAPI Ecore_Evas *ecore_evas_ecore_evas_get(const Evas *e);
+/**
+ * @brief Free an Ecore_Evas
+ *
+ * @param ee The Ecore_Evas to free
+ *
+ * This frees up any memory used by the Ecore_Evas.
+ */
 EAPI void        ecore_evas_free(Ecore_Evas *ee);
+/**
+ * @brief Retrieve user data associated with an Ecore_Evas.
+ *
+ * @param ee The Ecore_Evas to retrieve the user data from.
+ * @param key The key which the user data to be retrieved is associated with.
+ *
+ * This function retrieves user specific data that has been stored within an
+ * Ecore_Evas structure with ecore_evas_data_set().
+ *
+ * @returns NULL on error or no data found, A pointer to the user data on
+ *     success.
+ *
+ * @see ecore_evas_data_set()
+ */
 EAPI void       *ecore_evas_data_get(const Ecore_Evas *ee, const char *key);
+/**
+ * @brief Store user data in an Ecore_Evas structure.
+ *
+ * @param ee The Ecore_Evas to store the user data in.
+ * @param key A unique string to associate the user data against. Cannot
+ * be NULL.
+ * @param data A pointer to the user data to store.
+ *
+ * This function associates the @p data with a @p key which is stored by
+ * the Ecore_Evas @p ee. Be aware that a call to ecore_evas_free() will
+ * not free any memory for the associated user data, this is the responsibility
+ * of the caller.
+ *
+ * @see ecore_evas_callback_pre_free_set()
+ * @see ecore_evas_free()
+ * @see ecore_evas_data_get()
+ */
 EAPI void        ecore_evas_data_set(Ecore_Evas *ee, const char *key, const void *data);
 /**
  * Set a callback for Ecore_Evas resize events.
@@ -476,7 +578,21 @@ EAPI void        ecore_evas_alpha_set(Ecore_Evas *ee, Eina_Bool alpha);
 EAPI Eina_Bool   ecore_evas_alpha_get(const Ecore_Evas *ee);
 EAPI void        ecore_evas_transparent_set(Ecore_Evas *ee, Eina_Bool transparent);
 EAPI Eina_Bool   ecore_evas_transparent_get(const Ecore_Evas *ee);
+/**
+ * @brief Show an Ecore_Evas' window
+ *
+ * @param ee The Ecore_Evas to show.
+ *
+ * This function makes @p ee visible.
+ */
 EAPI void        ecore_evas_show(Ecore_Evas *ee);
+/**
+ * @brief Hide an Ecore_Evas' window
+ *
+ * @param ee The Ecore_Evas to hide.
+ *
+ * This function makes @p ee hidden(not visible).
+ */
 EAPI void        ecore_evas_hide(Ecore_Evas *ee);
 EAPI int         ecore_evas_visibility_get(const Ecore_Evas *ee);
 EAPI void        ecore_evas_raise(Ecore_Evas *ee);
@@ -751,6 +867,15 @@ EAPI Evas_Object *ecore_evas_object_associate_get(const Ecore_Evas *ee);
 /* helper function to be used with ECORE_GETOPT_CALLBACK_*() */
 EAPI unsigned char ecore_getopt_callback_ecore_evas_list_engines(const Ecore_Getopt *parser, const Ecore_Getopt_Desc *desc, const char *str, void *data, Ecore_Getopt_Value *storage);
 
+/**
+ * @brief Get a list of all the ecore_evases.
+ *
+ * @return A list of ecore_evases.
+ *
+ * The returned list of ecore evases is only valid until the canvases are
+ * destroyed (and should not be cached for instance). The list can be freed by
+ * just deleting the list.
+ */
 EAPI Eina_List   *ecore_evas_ecore_evas_list_get(void);
 
 /* specific calls to an x11 environment ecore_evas */

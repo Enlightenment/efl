@@ -16,6 +16,7 @@
  * @li @ref ecore_con_client_simple_example_c
  * @li @ref ecore_evas_callbacks_example_c
  * @li @ref ecore_evas_object_example_c
+ * @li @ref ecore_evas_basics_example_c
  *
  */
 
@@ -959,7 +960,7 @@
  * pipe, fork our process, and then the child is going to comunicate to the
  * parent the result of its processing through the pipe.
  *
- * As always we start with our includes, nothing especial:
+ * As always we start with our includes, nothing special:
  * @skip #include
  * @until Ecore.h
  *
@@ -1324,4 +1325,57 @@
  * Here you have the full-source of the code:
  * @include ecore_evas_object_example.c
  * @example ecore_evas_object_example.c
+ */
+
+/**
+ * @page ecore_evas_basics_example_c Ecore Evas basics example
+ * @dontinclude ecore_evas_basics_example.c
+ *
+ * This example will ilustrate the usage of some basic Ecore_Evas functions.
+ * This example will list the available evas engines, check which one we used to
+ * create our window and set some data on our Ecore_Evas. It also allows you to
+ * hide/show all windows in this process(we only have one, but if there were
+ * more they would be hidden), to hide the windows type 'h' and hit return, to
+ * show them, type 's' and hit return.
+ *
+ * The very first thing we'll do is init ecore_evas:
+ * @skipline evas_init
+ * @until return 1
+ *
+ * Once inited we query which engines are available:
+ * @until ecore_evas_engines_free
+ *
+ * We then create an Ecore_Evas(window) with the first available engine, on
+ * position 0,0 with size 200,200 and no especial flags:
+ * @until evas_show
+ *
+ * We now add some important data to our Ecore_Evas:
+ * @until data_set
+ *
+ * And since our data is dinamically allocated we'll need to free it when the
+ * Ecore_Evas dies:
+ * @until delete_request
+ * @dontinclude ecore_evas_basics_example.c
+ * @skip static void
+ * @until }
+ * @skip printf("Using
+ *
+ * We now print which Evas engine is being used for our example:
+ * @until printf
+ *
+ * Next we are going to add a background to our window, for which we'll need to
+ * get the canvas(Evas) on which to draw it:
+ * @until canvas
+ *
+ * We then do a sanity check, veryfing if the Ecore_Evas of the Evas is the
+ * Ecore_Evas from which we got the Evas:
+ * @until printf
+ *
+ * Once all else is done we run our main loop, and when that is done(application
+ * is exiting) we free our Ecore_Evas and shutdown the ecore_evas subsystem:
+ * @until shutdown
+ *
+ * Here you have the full-source of the code:
+ * @include ecore_evas_basics_example.c
+ * @example ecore_evas_basics_example.c
  */
