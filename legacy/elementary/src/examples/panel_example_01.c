@@ -66,7 +66,7 @@ elm_main(int argc, char **argv)
    evas_object_show(content);
    evas_object_size_hint_min_set(content, 100, 30);
    elm_panel_content_set(panel, content);
-   
+
 
    evas_object_show(win);
 
