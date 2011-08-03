@@ -2256,14 +2256,12 @@ _item_block_position(Item_Block *itb,
                          }
                        if (!it->move_effect_enabled)
                          {
-                              {
-                                 if (it->mode_view)
-                                   _item_position(it, it->mode_view, it->scrl_x,
-                                                  it->scrl_y);
-                                 else
-                                   _item_position(it, it->base.view, it->scrl_x,
-                                                  it->scrl_y);
-                              }
+                            if (it->mode_view)
+                               _item_position(it, it->mode_view, it->scrl_x,
+                                              it->scrl_y);
+                            else
+                               _item_position(it, it->base.view, it->scrl_x,
+                                              it->scrl_y);
                             it->old_scrl_y = it->scrl_y;
                          }
                     }
