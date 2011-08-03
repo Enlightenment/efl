@@ -1670,6 +1670,9 @@ extern "C" {
    * position 1.0, and wobble v2 times, with decay factor of v1
    * @note When not listed v1 and v2 have no effect.
    *
+   * @image html ecore-pos-map.png
+   * @image latex ecore-pos-map.eps width=\textwidth
+   *
    * One way to use this would be:
    * @code
    * double pos; // input position in a timeline from 0.0 to 1.0
