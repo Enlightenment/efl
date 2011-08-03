@@ -824,47 +824,34 @@ typedef enum _Edje_Text_Filter_Type
    EDJE_TEXT_FILTER_MARKUP = 2
 } Edje_Text_Filter_Type;
 
+/**
+ * The possible types the parameters of an EXTERNAL part can be.
+ */
 typedef enum _Edje_External_Param_Type
 {
-   EDJE_EXTERNAL_PARAM_TYPE_INT,
-   EDJE_EXTERNAL_PARAM_TYPE_DOUBLE,
-   EDJE_EXTERNAL_PARAM_TYPE_STRING,
-   EDJE_EXTERNAL_PARAM_TYPE_BOOL,
-   EDJE_EXTERNAL_PARAM_TYPE_CHOICE,
-   EDJE_EXTERNAL_PARAM_TYPE_MAX
+   EDJE_EXTERNAL_PARAM_TYPE_INT, /**< Parameter value is an integer. */
+   EDJE_EXTERNAL_PARAM_TYPE_DOUBLE, /**< Parameter value is a double. */
+   EDJE_EXTERNAL_PARAM_TYPE_STRING, /**< Paramater value is a string. */
+   EDJE_EXTERNAL_PARAM_TYPE_BOOL, /**< Parameter value is boolean. */
+   EDJE_EXTERNAL_PARAM_TYPE_CHOICE, /**< Parameter value is one of a set of
+                                      predefined string choices. */
+   EDJE_EXTERNAL_PARAM_TYPE_MAX /**< Sentinel. Don't use. */
 } Edje_External_Param_Type;
 
 /**
- * @typedef Edje_External_Param_Flags flags that determines the
- * behavior of a parameter.
- *
- * @var EDJE_EXTERNAL_PARAM_FLAGS_NONE property is incapable of
- *      operations, this is used to catch bogus flags.
- * @var EDJE_EXTERNAL_PARAM_FLAGS_GET property can be read/get
- * @var EDJE_EXTERNAL_PARAM_FLAGS_SET property can be written/set.
- *      This only enables edje_object_part_external_param_set() and
- *      Embryo scripts. To enable parameter being set from state
- *      description whenever it changes state, use
- *      #EDJE_EXTERNAL_PARAM_FLAGS_STATE.
- * @var EDJE_EXTERNAL_PARAM_FLAGS_STATE property can be set from state
- *      description.
- * @var EDJE_EXTERNAL_PARAM_FLAGS_CONSTRUCTOR this property is only
- *      set once when object is constructed using its value from
- *      "default" 0.0 state description. Setting this overrides
- *      #EDJE_EXTERNAL_PARAM_FLAGS_STATE.
- * @var EDJE_EXTERNAL_PARAM_FLAGS_REGULAR convenience flag that sets
- *      property as GET, SET and STATE.
+ * Flags that determine how a parameter may be accessed in different
+ * circumstances.
  */
 typedef enum _Edje_External_Param_Flags
 {
-   EDJE_EXTERNAL_PARAM_FLAGS_NONE        = 0,
-   EDJE_EXTERNAL_PARAM_FLAGS_GET         = (1 << 0),
-   EDJE_EXTERNAL_PARAM_FLAGS_SET         = (1 << 1),
-   EDJE_EXTERNAL_PARAM_FLAGS_STATE       = (1 << 2),
-   EDJE_EXTERNAL_PARAM_FLAGS_CONSTRUCTOR = (1 << 3),
+   EDJE_EXTERNAL_PARAM_FLAGS_NONE        = 0, /**< Propery is incapable of operations, this is used to catch bogus flags. */
+   EDJE_EXTERNAL_PARAM_FLAGS_GET         = (1 << 0), /**< Property can be read/get. */
+   EDJE_EXTERNAL_PARAM_FLAGS_SET         = (1 << 1), /**< Property can be written/set. This only enables edje_object_part_external_param_set() and Embryo scripts. To enable the parameter being set from state description whenever it changes state, use #EDJE_EXTERNAL_PARAM_FLAGS_STATE. */
+   EDJE_EXTERNAL_PARAM_FLAGS_STATE       = (1 << 2), /**< Property can be set from state dsecription. */
+   EDJE_EXTERNAL_PARAM_FLAGS_CONSTRUCTOR = (1 << 3), /**< This property is only set once when the object is constructed using its value from "default" 0.0 state description. Setting this overrides #EDJE_EXTERNAL_PARAM_FLAGS_STATE. */
    EDJE_EXTERNAL_PARAM_FLAGS_REGULAR     = (EDJE_EXTERNAL_PARAM_FLAGS_GET |
                                             EDJE_EXTERNAL_PARAM_FLAGS_SET |
-                                            EDJE_EXTERNAL_PARAM_FLAGS_STATE)
+                                            EDJE_EXTERNAL_PARAM_FLAGS_STATE) /**< Convenience flag that sets property as GET, SET and STATE. */
 } Edje_External_Param_Flags;
 
 
@@ -878,49 +865,97 @@ typedef enum _Edje_External_Param_Flags
  */
 EAPI const char *edje_external_param_type_str(Edje_External_Param_Type type) EINA_PURE;
 
+/**
+ * Struct that holds parameters for parts of type EXTERNAL.
+ */
 struct _Edje_External_Param
 {
-   const char               *name;
-   Edje_External_Param_Type  type;
+   const char               *name; /**< The name of the parameter. */
+   Edje_External_Param_Type  type; /**< The type of the parameter. This defines
+                                     which of the next three variables holds
+                                     the value for it. */
    // XXX these could be in a union, but eet doesn't support them (or does it?)
-   int                       i; /**< used by both integer and boolean */
-   double                    d;
-   const char               *s; /**< used by both string and choice */
+   int                       i; /**< Used by both integer and boolean */
+   double                    d; /**< Used by double */
+   const char               *s; /**< Used by both string and choice */
 };
+/**
+ * Struct that holds parameters for parts of type EXTERNAL.
+ */
 typedef struct _Edje_External_Param Edje_External_Param;
 
+/**
+ * Helper macro to indicate an EXTERNAL's integer parameter is undefined.
+ */
 #define EDJE_EXTERNAL_INT_UNSET INT_MAX
+/**
+ * Helper macro to indicate an EXTERNAL's double parameter is undefined.
+ */
 #define EDJE_EXTERNAL_DOUBLE_UNSET DBL_MAX
 
+/**
+ * Struct holding information about an EXTERNAL part's parameters.
+ *
+ * When creating types to use with EXTERNAL parts, an array of this type is
+ * used to describe the different parameters the object uses.
+ *
+ * This struct holds the name, type and flags that define how and when the
+ * parameter is used, as well as information specific to each type, like the
+ * maximum or minimum value, that can be used by editors to restrict the
+ * range of values to set for each parameter.
+ */
 typedef struct _Edje_External_Param_Info Edje_External_Param_Info;
+/**
+ * Struct holding information about an EXTERNAL part's parameters.
+ *
+ * When creating types to use with EXTERNAL parts, an array of this type is
+ * used to describe the different parameters the object uses.
+ *
+ * This struct holds the name, type and flags that define how and when the
+ * parameter is used, as well as information specific to each type, like the
+ * maximum or minimum value, that can be used by editors to restrict the
+ * range of values to set for each parameter.
+ */
 struct _Edje_External_Param_Info
 {
-   const char               *name;
-   Edje_External_Param_Type  type;
-   Edje_External_Param_Flags flags;
+   const char               *name; /**< Name of the parameter. */
+   Edje_External_Param_Type  type; /**< Type of the parameter. */
+   Edje_External_Param_Flags flags; /**< Flags indicating how this parameter is
+                                      used. */
    union {
       struct {
-         int                 def, min, max, step;
-      } i;
+         int                 def, /**< Default value for the paramter. */
+                             min, /**< Minimum value it can have. */
+                             max, /**< Maximum value it can have. */
+                             step; /**< Values will be a multiple of this. */
+      } i; /**< Info about integer type parametrs. Use #EDJE_EXTERNAL_INT_UNSET
+             on any of them to indicate they are not defined.*/
       struct {
-         double              def, min, max, step;
-      } d;
+         double              def, /**< Default value for the paramter. */
+                             min, /**< Minimum value it can have. */
+                             max, /**< Maximum value it can have. */
+                             step; /**< Values will be a multiple of this. */
+      } d; /**< Info about double type parametrs. Use
+#EDJE_EXTERNAL_DOUBLE_UNSET on any of them to indicate they are not defined.*/
       struct {
-         const char         *def;
-         const char         *accept_fmt;
-         const char         *deny_fmt;
-      } s;
+         const char         *def; /**< Default value. */
+         const char         *accept_fmt; /**< Not implemented. */
+         const char         *deny_fmt; /**< Not implemented */
+      } s; /**< Info about string type parameters. NULL indicates undefined. */
       struct {
-         int                 def;
-         const char         *false_str;
-         const char         *true_str;
-      } b;
+         int                 def; /**< Default value. */
+         const char         *false_str; /**< String shown by editors to indicate the false state. */
+         const char         *true_str; /**< String shown by editors to indicate the true state. */
+      } b; /**< Info about boolean type parameters.*/
       struct {
-         const char         *def;
-         const char        **choices; /* NULL terminated array */
-         char               *(*def_get)(void *data, const Edje_External_Param_Info *info); /* return malloc() memory with the default choice, should be used if def is NULL. First parameter is Edje_External_Type::data */
-         char              **(*query)(void *data, const Edje_External_Param_Info *info); /* NULL terminated array of strings, memory is dynamically allocated and should be freed with free() for array and each element. First parameter is Edje_External_Type::data */
-      } c;
+         const char         *def; /**< Default value. */
+         const char        **choices; /* Array of strings, each represents a
+                                         valid value for this parameter. The
+                                         last element of the array must be
+                                         NULL. */
+         char               *(*def_get)(void *data, const Edje_External_Param_Info *info); /** return malloc() memory with the default choice, should be used if def is NULL. First parameter is Edje_External_Type::data */
+         char              **(*query)(void *data, const Edje_External_Param_Info *info); /** NULL terminated array of strings, memory is dynamically allocated and should be freed with free() for array and each element. First parameter is Edje_External_Type::data */
+      } c; /**< Info about choice type parameters. */
    } info;
 };
 
@@ -1013,34 +1048,43 @@ struct _Edje_External_Type
                               *  - #EDJE_EXTERNAL_TYPE_ABI_VERSION to declare.
                               *  - edje_external_type_abi_version_get() to check.
                               */
-  const char    *module;
-  const char    *module_name;
-  Evas_Object *(*add) (void *data, Evas *evas, Evas_Object *parent, const Eina_List *params, const char *part_name); /**< creates the object to be used by Edje as the part */
-  void         (*state_set) (void *data, Evas_Object *obj, const void *from_params, const void *to_params, float pos); /**< called upon state changes, including the initial "default" 0.0 state. Parameters are the value returned by params_parse() */
+  const char    *module; /**< Name of the module that holds these definitions,
+                           as used in the externals {} block of a theme
+                           definition. */
+  const char    *module_name; /**< Canonical name of the module, for displaying
+                                in edition programs, for example. */
+  Evas_Object *(*add) (void *data, Evas *evas, Evas_Object *parent, const Eina_List *params, const char *part_name); /**< Creates the object to be used by Edje as the part. @p part_name is the name of the part that holds the object and can be used to forward callbacks from the object as signals from Edje. @p params is the list of #Edje_External_Param, not parsed, from the default state of the part. Parameters of type #EDJE_EXTERNAL_PARAM_FLAGS_CONSTRUCTOR should be set on
+ the object here. */
+  void         (*state_set) (void *data, Evas_Object *obj, const void *from_params, const void *to_params, float pos); /**< Called upon state changes, including the initial "default" 0.0 state. Parameters are the value returned by params_parse(). The @p pos parameter is a value between 0.0 and 1.0 indicating the position in time within the state transition. */
   void         (*signal_emit) (void *data, Evas_Object *obj, const char *emission, const char *source); /**< Feed a signal emitted with emission originally set as part_name:signal to this object (without the "part_name:" prefix) */
-  Eina_Bool    (*param_set) (void *data, Evas_Object *obj, const Edje_External_Param *param); /**< dynamically change a parameter of this external, called by scripts and user code. Returns @c EINA_TRUE on success */
-  Eina_Bool    (*param_get) (void *data, const Evas_Object *obj, Edje_External_Param *param); /**< dynamically fetch a parameter of this external, called by scripts and user code. Returns @c EINA_TRUE on success. (Must check parameter name and type!) */
-  Evas_Object *(*content_get) (void *data, const Evas_Object *obj, const char *content); /**< dynamically fetch a sub object of this external, called by scripts and user code. Returns @c Evas_Object * on success. (Must check parameter name and type!) */
-  void        *(*params_parse) (void *data, Evas_Object *obj, const Eina_List *params); /**< parses the list of parameters, converting into a friendly representation. Used with state_set() */
-  void         (*params_free) (void *params); /**< free parameters parsed with params_parse() */
+  Eina_Bool    (*param_set) (void *data, Evas_Object *obj, const Edje_External_Param *param); /**< Dynamically change a parameter of this external, called by scripts and user code. Returns @c EINA_TRUE on success */
+  Eina_Bool    (*param_get) (void *data, const Evas_Object *obj, Edje_External_Param *param); /**< Dynamically fetch a parameter of this external, called by scripts and user code. Returns @c EINA_TRUE on success. (Must check parameter name and type!) */
+  Evas_Object *(*content_get) (void *data, const Evas_Object *obj, const char *content); /**< Dynamically fetch a sub object of this external, called by scripts and user code. Returns @c Evas_Object * on success. (Must check parameter name and type!) */
+  void        *(*params_parse) (void *data, Evas_Object *obj, const Eina_List *params); /**< Parses the list of parameters, converting into a friendly representation. Used with state_set() */
+  void         (*params_free) (void *params); /**< Free parameters parsed with params_parse() */
 
   /* The following callbacks aren't used by Edje itself, but by UI design
      tools instead */
-  const char  *(*label_get) (void *data);
-  const char  *(*description_get) (void *data);
-  Evas_Object *(*icon_add) (void *data, Evas *e);
-  Evas_Object *(*preview_add) (void *data, Evas *e);
-  const char  *(*translate) (void *data, const char *orig); /**< called to translate parameters_info name properties for use in user interfaces that support internationalization (i18n) */
+  const char  *(*label_get) (void *data); /**< Get a label to use to identify this EXTERNAL. (For editors) */
+  const char  *(*description_get) (void *data); /**< Get a user friendly description of this EXTERNAL. (For editors) */
+  Evas_Object *(*icon_add) (void *data, Evas *e); /**< Get an icon to use to identify this EXTERNAL. (For editors) */
+  Evas_Object *(*preview_add) (void *data, Evas *e); /**< Get a preview of the EXTERNAL object in use. (For editors) */
+  const char  *(*translate) (void *data, const char *orig); /**< called to translate parameters_info name properties for use in user interfaces that support internationalization (i18n) (For editors) */
 
-  Edje_External_Param_Info *parameters_info;
-  void                     *data;
+  Edje_External_Param_Info *parameters_info; /**< An array of #Edje_External_Param_Info describing the different parameters this EXTERNAL may have. The last element in the array must be #EDJE_EXTERNAL_PARAM_INFO_SENTINEL. */
+  void                     *data; /**< Private user data that will be passed to all of the class functions. */
 };
 typedef struct _Edje_External_Type Edje_External_Type;
 
+/**
+ * Convenience struct used to mass-register types of EXTERNAL objects.
+ *
+ * Used with edje_external_type_array_register().
+ */
 struct _Edje_External_Type_Info
 {
-   const char               *name;
-   const Edje_External_Type *info;
+   const char               *name; /**< The name of the type to register. */
+   const Edje_External_Type *info; /**< The type definition. */
 };
 typedef struct _Edje_External_Type_Info Edje_External_Type_Info;
 
@@ -3070,6 +3114,16 @@ EAPI Eina_Bool                 edje_object_part_external_param_set      (Evas_Ob
  */
 EAPI Eina_Bool                 edje_object_part_external_param_get      (const Evas_Object *obj, const char *part, Edje_External_Param *param);
 
+/**
+ * @brief Get an object contained in an part of type EXTERNAL
+ *
+ * The @p content string must not be NULL. Its actual value depends on the
+ * code providing the EXTERNAL.
+ *
+ * @param obj The Edje object
+ * @param part The name of the part holding the EXTERNAL
+ * @param content A string identifying which content from the EXTERNAL to get
+ */
 EAPI Evas_Object              *edje_object_part_external_content_get    (const Evas_Object *obj, const char *part, const char *content);
 
 /**
@@ -3354,7 +3408,12 @@ EAPI void         edje_object_message_signal_process      (Evas_Object *obj);
 EAPI void         edje_message_signal_process             (void);
 
 /**
- * Register given type name to return the given information.
+ * Register a type to be used by EXTERNAL parts.
+ *
+ * Edje supports parts of type EXTERNAL, which will call user defined functions
+ * to create and manipulate the object that's allocated in that part. This is
+ * done by expecifying in the @c source property of the part the name of the
+ * external to use, which must be one registered with this function.
  *
  * @param type_name name to register and be known by edje's "source:"
  *        parameter of "type: EXTERNAL" parts.
@@ -3368,9 +3427,9 @@ EAPI void         edje_message_signal_process             (void);
 EAPI Eina_Bool    edje_external_type_register             (const char *type_name, const Edje_External_Type *type_info);
 
 /**
- * Unregister given type name previously registered.
+ * Unregister a previously registered EXTERNAL type.
  *
- * @param type_name name to unregister. It should be registered with
+ * @param type_name name to unregister. It should have been registered with
  *        edje_external_type_register() before.
  *
  * @return @c EINA_TRUE on success, @c EINA_FALSE on failure (like
@@ -3383,18 +3442,19 @@ EAPI Eina_Bool    edje_external_type_unregister           (const char *type_name
 /**
  * Register a batch of types and their information.
  *
- * This is the recommended function to add information as it's faster
- * than the single version edje_external_type_register().
+ * When several types will be registered it is recommended to use this
+ * function instead of several calls to edje_external_type_register(), as it
+ * is faster.
  *
- * @note the given array is not modified, but the type name strings
- *       are @b not duplicated! That is, all type names must be @b
- *       live until they are unregistered! This was chosen to save
- *       some memory and most people will just define the array as a
- *       global static const type anyway.
+ * @note The contents of the array will be referenced directly for as long as
+ * the type remains registered, so both the @c name and @c info in the
+ * @p array must be kept alive during all this period (usually, the entire
+ * program lifetime). The most common case would be to keep the array as a
+ * @c static @c const type anyway.
  *
  * @param array @c NULL terminated array with type name and
- *        information. Note that type name or information are not
- *        modified by are @b referenced, so they must keep alive after
+ *        information. Note that type name or information are
+ *        referenced directly, so they must be kept alive after
  *        this function returns!
  *
  * @return @c EINA_TRUE on success, @c EINA_FALSE on failure (like
@@ -3430,13 +3490,16 @@ EAPI void         edje_external_type_array_unregister     (const Edje_External_T
  *   - use edje_external_type_abi_version_get() to check.
  *   - use #EDJE_EXTERNAL_TYPE_ABI_VERSION to define/declare.
  *
- * @return version this edje library was compiled.
+ * @return The external ABI version the Edje library was compiled with. That
+ * is, the value #EDJE_EXTERNAL_TYPE_ABI_VERSION had at that moment.
  */
 EAPI unsigned int edje_external_type_abi_version_get      (void) EINA_CONST;
 
 /**
- * Returns an iterator that emits Eina_Hash_Tuple pointers with key
- * being the name and data being the Edje_External_Type pointer.
+ * Returns an interator of all the registered EXTERNAL types.
+ *
+ * Each item in the iterator is an @c Eina_Hash_Tuple which has the type
+ * of the external in the @c key and #Edje_External_Type as @c data.
  *
  * @code
  * const Eina_Hash_Tuple *tuple;
@@ -3476,17 +3539,109 @@ EAPI unsigned int edje_external_type_abi_version_get      (void) EINA_CONST;
  */
 EAPI Eina_Iterator                  *edje_external_iterator_get     (void);
 
+/**
+ * Conevenience function to find a specific parameter in a list of them.
+ *
+ * @param params The list of parameters for the external
+ * @param key The parameter to look for
+ *
+ * @return The matching #Edje_External_Param or NULL if it's not found.
+ */
    EAPI Edje_External_Param            *edje_external_param_find       (const Eina_List *params, const char *key);
+/**
+ * Get the value of the given parameter of integer type.
+ *
+ * Look for the @p key parameter in the @p params list and return its value in
+ * @p ret. If the parameter is found and is of type
+ * #EDJE_EXTERNAL_PARAM_TYPE_INT, its value will be stored in the int pointed
+ * by @p ret, returning EINA_TRUE. In any other case, the function returns
+ * EINA_FALSE.
+ *
+ * @param params List of parameters where to look
+ * @param key Name of the parameter to fetch
+ * @param ret Int pointer where to store the value, must not be NULL.
+ *
+ * @return EINA_TRUE if the parameter was found and is of integer type,
+ * EINA_FALSE otherwise.
+ */
    EAPI Eina_Bool                       edje_external_param_int_get    (const Eina_List *params, const char *key, int *ret);
+/**
+ * Get the value of the given parameter of double type.
+ *
+ * Look for the @p key parameter in the @p params list and return its value in
+ * @p ret. If the parameter is found and is of type
+ * #EDJE_EXTERNAL_PARAM_TYPE_DOUBLE, its value will be stored in the double
+ * pointed by @p ret, returning EINA_TRUE. In any other case, the function
+ * returns EINA_FALSE.
+ *
+ * @param params List of parameters where to look
+ * @param key Name of the parameter to fetch
+ * @param ret Double pointer where to store the value, must not be NULL.
+ *
+ * @return EINA_TRUE if the parameter was found and is of double type,
+ * EINA_FALSE otherwise.
+ */
    EAPI Eina_Bool                       edje_external_param_double_get (const Eina_List *params, const char *key, double *ret);
+/**
+ * Get the value of the given parameter of string type.
+ *
+ * Look for the @p key parameter in the @p params list and return its value in
+ * @p ret. If the parameter is found and is of type
+ * #EDJE_EXTERNAL_PARAM_TYPE_STRING, its value will be stored in the pointer
+ * pointed by @p ret, returning EINA_TRUE. In any other case, the function
+ * returns EINA_FALSE.
+ *
+ * The string stored in @p ret must not be freed or modified.
+ *
+ * @param params List of parameters where to look
+ * @param key Name of the parameter to fetch
+ * @param ret String pointer where to store the value, must not be NULL.
+ *
+ * @return EINA_TRUE if the parameter was found and is of string type,
+ * EINA_FALSE otherwise.
+ */
    EAPI Eina_Bool                       edje_external_param_string_get (const Eina_List *params, const char *key, const char **ret);
+/**
+ * Get the value of the given parameter of boolean type.
+ *
+ * Look for the @p key parameter in the @p params list and return its value in
+ * @p ret. If the parameter is found and is of type
+ * #EDJE_EXTERNAL_PARAM_TYPE_BOOL, its value will be stored in the Eina_Bool
+ * pointed by @p ret, returning EINA_TRUE. In any other case, the function
+ * returns EINA_FALSE.
+ *
+ * @param params List of parameters where to look
+ * @param key Name of the parameter to fetch
+ * @param ret Eina_Bool pointer where to store the value, must not be NULL.
+ *
+ * @return EINA_TRUE if the parameter was found and is of boolean type,
+ * EINA_FALSE otherwise.
+ */
    EAPI Eina_Bool                       edje_external_param_bool_get   (const Eina_List *params, const char *key, Eina_Bool *ret);
+/**
+ * Get the value of the given parameter of choice type.
+ *
+ * Look for the @p key parameter in the @p params list and return its value in
+ * @p ret. If the parameter is found and is of type
+ * #EDJE_EXTERNAL_PARAM_TYPE_CHOICE, its value will be stored in the string
+ * pointed by @p ret, returning EINA_TRUE. In any other case, the function
+ * returns EINA_FALSE.
+ *
+ * The string stored in @p ret must not be freed or modified.
+ *
+ * @param params List of parameters where to look
+ * @param key Name of the parameter to fetch
+ * @param ret String pointer where to store the value, must not be NULL.
+ *
+ * @return EINA_TRUE if the parameter was found and is of integer type,
+ * EINA_FALSE otherwise.
+ */
    EAPI Eina_Bool                       edje_external_param_choice_get (const Eina_List *params, const char *key, const char **ret);
 
 /**
  * Get the array of parameters information about a type given its name.
  *
- * @note the type names and other strings are static, that means they
+ * @note the type names and other strings are static, that means they are
  *       @b NOT translated. One must use
  *       Edje_External_Type::translate() to translate those.
  *
@@ -3497,6 +3652,10 @@ EAPI Eina_Iterator                  *edje_external_iterator_get     (void);
  */
 EAPI const Edje_External_Param_Info *edje_external_param_info_get   (const char *type_name);
 
+/**
+ * Get the #Edje_External_Type that defines an EXTERNAL type registered with
+ * the name @p type_name.
+ */
    EAPI const Edje_External_Type       *edje_external_type_get         (const char *type_name);
 
    EAPI Eina_Bool               edje_module_load                (const char *module);
