@@ -199,6 +199,416 @@ EAPI void        ecore_evas_engines_free(Eina_List *engines);
  * @return Ecore_Evas instance or NULL if creation failed.
  */
 EAPI Ecore_Evas *ecore_evas_new(const char *engine_name, int x, int y, int w, int h, const char *extra_options);
+/**
+ * @brief Set whether an Ecore_Evas has an alpha channel or not.
+ *
+ * @param ee The Ecore_Evas to shape
+ * @param alpha EINA_TRUE to enable the alpha channel, EINA_FALSE to disable it
+ *
+ * This function allows you to make an Ecore_Evas translucent using an
+ * alpha channel. See ecore_evas_shaped_set() for details. The difference
+ * between a shaped window and a window with an alpha channel is that an
+ * alpha channel supports multiple levels of transpararency, as opposed to
+ * the 1 bit transparency of a shaped window (a pixel is either opaque, or
+ * it's transparent).
+ *
+ * @warning Support for this depends on the underlying windowing system.
+ */
+EAPI void        ecore_evas_alpha_set(Ecore_Evas *ee, Eina_Bool alpha);
+/**
+ * @brief Query whether an Ecore_Evas has an alpha channel.
+ * @param ee The Ecore_Evas to query.
+ * @return EINA_TRUE if ee has an alpha channel, EINA_FALSE if it does not.
+ *
+ * This function returns EINA_TRUE if @p ee has an alpha channel, and EINA_FALSE
+ * if it does not.
+ *
+ * @see ecore_evas_alpha_set()
+ */
+EAPI Eina_Bool   ecore_evas_alpha_get(const Ecore_Evas *ee);
+/**
+ * @brief Set whether an Ecore_Evas has an transparent window or not.
+ *
+ * @param ee The Ecore_Evas to shape
+ * @param transparent EINA_TRUE to enable the transparent window, EINA_FALSE to
+ * disable it
+ *
+ * This function sets some translucency options, for more complete support see
+ * ecore_evas_alpha_set().
+ *
+ * @warning Support for this depends on the underlying windowing system.
+ *
+ * @see ecore_evas_alpha_set()
+ */
+EAPI void        ecore_evas_transparent_set(Ecore_Evas *ee, Eina_Bool transparent);
+/**
+ * @brief  Query whether an Ecore_Evas is transparent.
+ *
+ * @param ee The Ecore_Evas to query.
+ * @return EINA_TRUE if ee is transparent, EINA_FALSE if it isn't.
+ *
+ * @see ecore_evas_transparent_set()
+ */
+EAPI Eina_Bool   ecore_evas_transparent_get(const Ecore_Evas *ee);
+/**
+ * @brief  Get the geometry of an Ecore_Evas.
+ *
+ * @param ee The Ecore_Evas whose geometry y
+ * @param x A pointer to an int to place the x coordinate in
+ * @param y A pointer to an int to place the y coordinate in
+ * @param w A pointer to an int to place the w size in
+ * @param h A pointer to an int to place the h size in
+ *
+ * This function takes four pointers to (already allocated) ints, and places
+ * the geometry of @p ee in them. If any of the parameters is not desired you
+ * may pass NULL on them.
+ *
+ * @code
+ * int x, y, w, h;
+ * ecore_evas_geometry_get(ee, &x, &y, &w, &h);
+ * @endcode
+ *
+ * @see ecore_evas_new()
+ * @see ecore_evas_resize()
+ * @see ecore_evas_move()
+ * @see ecore_evas_move_resize()
+ */
+EAPI void        ecore_evas_geometry_get(const Ecore_Evas *ee, int *x, int *y, int *w, int *h);
+/**
+ * @brief Set the focus of an Ecore_Evas' window.
+ *
+ * @param ee The Ecore_Evas
+ * @param on EINA_TRUE for focus, EINA_FALSE to defocus.
+ *
+ * This function focuses @p ee if @p on is EINA_TRUE, or unfocuses @p ee if @p
+ * on is EINA_FALSE.
+ *
+ * @warning Support for this depends on the underlying windowing system.
+ */
+EAPI void        ecore_evas_focus_set(Ecore_Evas *ee, Eina_Bool on);
+/**
+ * @brief Query whether an Ecore_Evas' window is focused or not.
+ *
+ * @param ee The Ecore_Evas to set
+ * @return EINA_TRUE if @p ee if focused, EINA_FALSE if not.
+ *
+ * @see ecore_evas_focus_set()
+ */
+EAPI Eina_Bool   ecore_evas_focus_get(const Ecore_Evas *ee);
+/**
+ * @brief Iconify or uniconify an Ecore_Evas' window.
+ *
+ * @param ee The Ecore_Evas
+ * @param on EINA_TRUE to iconify, EINA_FALSE to uniconify.
+ *
+ * This function iconifies @p ee if @p on is EINA_TRUE, or uniconifies @p ee if
+ * @p on is EINA_FALSE.
+ *
+ * @note Iconify and minize are synonims.
+ *
+ * @warning Support for this depends on the underlying windowing system.
+ */
+EAPI void        ecore_evas_iconified_set(Ecore_Evas *ee, Eina_Bool on);
+/**
+ * @brief Query whether an Ecore_Evas' window is iconified or not.
+ *
+ * @param ee The Ecore_Evas to set
+ * @return EINA_TRUE if @p ee is iconified, EINA_FALSE if not.
+ *
+ * @note Iconify and minize are synonims.
+ *
+ * @see ecore_evas_iconified_set()
+ */
+EAPI Eina_Bool   ecore_evas_iconified_get(const Ecore_Evas *ee);
+/**
+ * @brief Set whether an Ecore_Evas' window is borderless or not.
+ *
+ * @param ee The Ecore_Evas
+ * @param on EINA_TRUE for borderless, EINA_FALSE for bordered.
+ *
+ * This function makes @p ee borderless if @p on is EINA_TRUE, or bordered if @p
+ * on is EINA_FALSE.
+ *
+ * @warning Support for this depends on the underlying windowing system.
+ */
+EAPI void        ecore_evas_borderless_set(Ecore_Evas *ee, Eina_Bool on);
+/**
+ * @brief Query whether an Ecore_Evas' window is borderless or not.
+ *
+ * @param ee The Ecore_Evas to set
+ * @return EINA_TRUE if @p ee is borderless, EINA_FALSE if not.
+ *
+ * @see ecore_evas_borderless_set()
+ */
+EAPI Eina_Bool   ecore_evas_borderless_get(const Ecore_Evas *ee);
+/**
+ * @brief Set whether or not an Ecore_Evas' window is fullscreen.
+ *
+ * @param ee The Ecore_Evas
+ * @param on EINA_TRUE fullscreen, EINA_FALSE not.
+ *
+ * This function causes @p ee to be fullscreen if @p on is EINA_TRUE,
+ * or not if @p on is EINA_FALSE.
+ *
+ * @warning Support for this depends on the underlying windowing system.
+ */
+EAPI void        ecore_evas_fullscreen_set(Ecore_Evas *ee, Eina_Bool on);
+/**
+ * @brief Query whether an Ecore_Evas' window is fullscreen or not.
+ *
+ * @param ee The Ecore_Evas to set
+ * @return EINA_TRUE if @p ee is fullscreen, EINA_FALSE if not.
+ *
+ * @see ecore_evas_fullscreen_set()
+ */
+EAPI Eina_Bool   ecore_evas_fullscreen_get(const Ecore_Evas *ee);
+/**
+ * @brief Set if this evas should ignore @b all events.
+ *
+ * @param ee The Ecore_Evas whose window's to ignore events.
+ * @param ignore The Ecore_Evas new ignore state.
+ *
+ * @warning Support for this depends on the underlying windowing system.
+ */
+EAPI void        ecore_evas_ignore_events_set(Ecore_Evas *ee, Eina_Bool ignore);
+/**
+ * @brief Returns the ignore state of an Ecore_Evas' window.
+ *
+ * @param ee The Ecore_Evas whose window's ignore events state is returned.
+ * @return The Ecore_Evas window's ignore state.
+ *
+ * @see ecore_evas_ignore_events_set()
+ */
+EAPI Eina_Bool   ecore_evas_ignore_events_get(const Ecore_Evas *ee);
+/**
+ * @brief Query whether an Ecore_Evas' window is visible or not.
+ *
+ * @param ee The Ecore_Evas to query.
+ * @return 1 if visible, 0 if not.
+ *
+ * This function queries @p ee and returns 1 if it is visible, and 0 if not.
+ *
+ * @see ecore_evas_show()
+ * @see ecore_evas_hide()
+ */
+EAPI int         ecore_evas_visibility_get(const Ecore_Evas *ee);
+/**
+ * @brief Set the layer of an Ecore_Evas' window.
+ *
+ * @param ee The Ecore_Evas
+ * @param layer The layer to put @p ee on.
+ *
+ * This function moves @p ee to the layer @p layer.
+ *
+ * @warning Support for this depends on the underlying windowing system.
+ *
+ * @see ecore_evas_lower()
+ * @see ecore_evas_raise()
+ */
+EAPI void        ecore_evas_layer_set(Ecore_Evas *ee, int layer);
+/**
+ * @brief Get the layer of an Ecore_Evas' window.
+ *
+ * @param ee The Ecore_Evas to set
+ * @return the layer @p ee's window is on.
+ *
+ * @see ecore_evas_layer_set()
+ * @see ecore_evas_lower()
+ * @see ecore_evas_raise()
+ */
+EAPI int         ecore_evas_layer_get(const Ecore_Evas *ee);
+/**
+ * @brief Maximize (or unmaximize) an Ecore_Evas' window.
+ *
+ * @param ee The Ecore_Evas
+ * @param on EINA_TRUE to maximize, EINA_FALSE to unmaximize.
+ *
+ * This function maximizes @p ee if @p on is EINA_TRUE, or unmaximizes @p ee
+ * if @p on is EINA_FALSE.
+ *
+ * @warning Support for this depends on the underlying windowing system.
+ */
+EAPI void        ecore_evas_maximized_set(Ecore_Evas *ee, Eina_Bool on);
+/**
+ * @brief Query whether an Ecore_Evas' window is maximized or not.
+ *
+ * @param ee The Ecore_Evas to set
+ * @return EINA_TRUE if @p ee is maximized, EINA_FALSE if not.
+ *
+ * @see ecore_evas_maximized_set()
+ */
+EAPI Eina_Bool   ecore_evas_maximized_get(const Ecore_Evas *ee);
+/**
+ * @brief Move an Ecore_Evas.
+ *
+ * @param ee The Ecore_Evas to move
+ * @param x The x coordinate to move to
+ * @param y The y coordinate to move to
+ *
+ * This moves @p ee to the screen coordinates (@p x, @p y)
+ *
+ * @warning Support for this depends on the underlying windowing system.
+ *
+ * @see ecore_evas_new()
+ * @see ecore_evas_resize()
+ * @see ecore_evas_move_resize()
+ */
+EAPI void        ecore_evas_move(Ecore_Evas *ee, int x, int y);
+/**
+ * @brief Resize an Ecore_Evas.
+ *
+ * @param ee The Ecore_Evas to move
+ * @param w The w coordinate to resize to
+ * @param h The h coordinate to resize to
+ *
+ * This resizes @p ee to @p w x @p h.
+ *
+ * @warning Support for this depends on the underlying windowing system.
+ *
+ * @see ecore_evas_new()
+ * @see ecore_evas_move()
+ * @see ecore_evas_move_resize()
+ */
+EAPI void        ecore_evas_resize(Ecore_Evas *ee, int w, int h);
+/**
+ * @brief Move and resize an Ecore_Evas
+ *
+ * @param ee The Ecore_Evas to move and resize
+ * @param x The x coordinate to move to
+ * @param y The y coordinate to move to
+ * @param w The w coordinate to resize to
+ * @param h The h coordinate to resize to
+ *
+ * This moves @p ee to the screen coordinates (@p x, @p y) and  resizes
+ * it to @p w x @p h.
+ *
+ * @warning Support for this depends on the underlying windowing system.
+ *
+ * @see ecore_evas_new()
+ * @see ecore_evas_move()
+ * @see ecore_evas_resize()
+ */
+EAPI void        ecore_evas_move_resize(Ecore_Evas *ee, int x, int y, int w, int h);
+/**
+ * @brief Set the rotation of an Ecore_Evas' window.
+ *
+ * @param ee The Ecore_Evas
+ * @param rot the angle (in degrees) of rotation.
+ *
+ * The allowed values of @p rot depend on the engine being used. Most only
+ * allow multiples of 90.
+ *
+ * @warning Support for this depends on the underlying windowing system.
+ *
+ * @see ecore_evas_rotation_with_resize_set()
+ */
+EAPI void        ecore_evas_rotation_set(Ecore_Evas *ee, int rot);
+/**
+ * @brief Set the rotation of an Ecore_Evas' window
+ *
+ * @param ee The Ecore_Evas
+ * @param rot the angle (in degrees) of rotation.
+ *
+ * Like ecore_evas_rotation_set(), but it also resizes the window's contents so
+ * that they fit inside the current window geometry.
+ *
+ * @warning Support for this depends on the underlying windowing system.
+ *
+ * @see ecore_evas_rotation_set()
+ */
+EAPI void        ecore_evas_rotation_with_resize_set(Ecore_Evas *ee, int rot);
+/**
+ * @brief Get the rotation of an Ecore_Evas' window
+ *
+ * @param ee The Ecore_Evas
+ * @return the angle (in degrees) of rotation.
+ *
+ * @see ecore_evas_rotation_set()
+ * @see ecore_evas_rotation_with_resize_set()
+ */
+EAPI int         ecore_evas_rotation_get(const Ecore_Evas *ee);
+/**
+ * @brief Raise an Ecore_Evas' window.
+ *
+ * @param ee The Ecore_Evas to raise.
+ *
+ * This functions raises the Ecore_Evas to the front.
+ *
+ * @warning Support for this depends on the underlying windowing system.
+ *
+ * @see ecore_evas_lower()
+ * @see ecore_evas_layer_set()
+ */
+EAPI void        ecore_evas_raise(Ecore_Evas *ee);
+/**
+ * @brief Lower an Ecore_Evas' window.
+ *
+ * @param ee The Ecore_Evas to raise.
+ *
+ * This functions lowers the Ecore_Evas to the back.
+ *
+ * @warning Support for this depends on the underlying windowing system.
+ *
+ * @see ecore_evas_raise()
+ * @see ecore_evas_layer_set()
+ */
+EAPI void        ecore_evas_lower(Ecore_Evas *ee);
+/**
+ * @brief Set the title of an Ecore_Evas' window.
+ *
+ * @param ee The Ecore_Evas whose title you wish to set.
+ * @param t The title
+ *
+ * This function sets the title of @p ee to @p t.
+ *
+ * @warning Support for this depends on the underlying windowing system.
+ */
+EAPI void        ecore_evas_title_set(Ecore_Evas *ee, const char *t);
+/**
+ * @brief Get the title of an Ecore_Evas' window.
+ *
+ * @param ee The Ecore_Evas whose title you wish to get.
+ * @return The title of @p ee.
+ *
+ * This function returns the title of @p ee.
+ *
+ * @see ecore_evas_title_set()
+ */
+EAPI const char *ecore_evas_title_get(const Ecore_Evas *ee);
+/**
+ * @brief Set the name and class of an Ecore_Evas' window.
+ *
+ * @param ee the Ecore_Evas
+ * @param n the name
+ * @param c the class
+ *
+ * This function sets the name of @p ee to @p n, and its class to @p c. The
+ * meaning of @p name and @p class depends on the underlying windowing system.
+ *
+ * @warning Support for this depends on the underlying windowing system.
+ */
+EAPI void        ecore_evas_name_class_set(Ecore_Evas *ee, const char *n, const char *c);
+/**
+ * @brief Get the name and class of an Ecore_Evas' window
+ *
+ * @p ee The Ecore_Evas to query
+ * @p n A pointer to a string to place the name in.
+ * @p c A pointer to a string to place the class in.
+ *
+ * This function gets the name of @p ee into @p n, and its class into
+ * @p c.
+ *
+ * @see ecore_evas_name_class_set()
+ */
+EAPI void        ecore_evas_name_class_get(const Ecore_Evas *ee, const char **n, const char **c);
+/**
+ * @brief Returns a pointer to the underlying window.
+ *
+ * @param ee The Ecore_Evas whose window is desired.
+ *
+ * @warning Support for this depends on the underlying windowing system.
+ */
+EAPI Ecore_Window ecore_evas_window_get(const Ecore_Evas *ee);
 
 
 /* engine/target specific init calls */
@@ -564,20 +974,9 @@ EAPI void        ecore_evas_callback_post_render_set(Ecore_Evas *ee, void (*func
  */
 EAPI void        ecore_evas_callback_pre_free_set(Ecore_Evas *ee, void (*func) (Ecore_Evas *ee));
 EAPI Evas       *ecore_evas_get(const Ecore_Evas *ee);
-EAPI void        ecore_evas_move(Ecore_Evas *ee, int x, int y);
 EAPI void        ecore_evas_managed_move(Ecore_Evas *ee, int x, int y);
-EAPI void        ecore_evas_resize(Ecore_Evas *ee, int w, int h);
-EAPI void        ecore_evas_move_resize(Ecore_Evas *ee, int x, int y, int w, int h);
-EAPI void        ecore_evas_geometry_get(const Ecore_Evas *ee, int *x, int *y, int *w, int *h);
-EAPI void        ecore_evas_rotation_set(Ecore_Evas *ee, int rot);
-EAPI void        ecore_evas_rotation_with_resize_set(Ecore_Evas *ee, int rot);
-EAPI int         ecore_evas_rotation_get(const Ecore_Evas *ee);
 EAPI void        ecore_evas_shaped_set(Ecore_Evas *ee, Eina_Bool shaped);
 EAPI Eina_Bool   ecore_evas_shaped_get(const Ecore_Evas *ee);
-EAPI void        ecore_evas_alpha_set(Ecore_Evas *ee, Eina_Bool alpha);
-EAPI Eina_Bool   ecore_evas_alpha_get(const Ecore_Evas *ee);
-EAPI void        ecore_evas_transparent_set(Ecore_Evas *ee, Eina_Bool transparent);
-EAPI Eina_Bool   ecore_evas_transparent_get(const Ecore_Evas *ee);
 /**
  * @brief Show an Ecore_Evas' window
  *
@@ -594,14 +993,8 @@ EAPI void        ecore_evas_show(Ecore_Evas *ee);
  * This function makes @p ee hidden(not visible).
  */
 EAPI void        ecore_evas_hide(Ecore_Evas *ee);
-EAPI int         ecore_evas_visibility_get(const Ecore_Evas *ee);
-EAPI void        ecore_evas_raise(Ecore_Evas *ee);
-EAPI void        ecore_evas_lower(Ecore_Evas *ee);
 EAPI void        ecore_evas_activate(Ecore_Evas *ee);
-EAPI void        ecore_evas_title_set(Ecore_Evas *ee, const char *t);
-EAPI const char *ecore_evas_title_get(const Ecore_Evas *ee);
-EAPI void        ecore_evas_name_class_set(Ecore_Evas *ee, const char *n, const char *c);
-EAPI void        ecore_evas_name_class_get(const Ecore_Evas *ee, const char **n, const char **c);
+
 
 /**
  * Set the minimum size of a given @c Ecore_Evas window
@@ -774,36 +1167,30 @@ EAPI void        ecore_evas_cursor_get(const Ecore_Evas *ee, Evas_Object **obj, 
  * @see ecore_evas_cursor_set()
  */
 EAPI void        ecore_evas_object_cursor_set(Ecore_Evas *ee, Evas_Object *obj, int layer, int hot_x, int hot_y);
-EAPI void        ecore_evas_layer_set(Ecore_Evas *ee, int layer);
-EAPI int         ecore_evas_layer_get(const Ecore_Evas *ee);
-EAPI void        ecore_evas_focus_set(Ecore_Evas *ee, Eina_Bool on);
-EAPI Eina_Bool   ecore_evas_focus_get(const Ecore_Evas *ee);
-EAPI void        ecore_evas_iconified_set(Ecore_Evas *ee, Eina_Bool on);
-EAPI Eina_Bool   ecore_evas_iconified_get(const Ecore_Evas *ee);
-EAPI void        ecore_evas_borderless_set(Ecore_Evas *ee, Eina_Bool on);
-EAPI Eina_Bool   ecore_evas_borderless_get(const Ecore_Evas *ee);
 EAPI void        ecore_evas_override_set(Ecore_Evas *ee, Eina_Bool on);
 EAPI Eina_Bool   ecore_evas_override_get(const Ecore_Evas *ee);
-EAPI void        ecore_evas_maximized_set(Ecore_Evas *ee, Eina_Bool on);
-EAPI Eina_Bool   ecore_evas_maximized_get(const Ecore_Evas *ee);
-EAPI void        ecore_evas_fullscreen_set(Ecore_Evas *ee, Eina_Bool on);
-EAPI Eina_Bool   ecore_evas_fullscreen_get(const Ecore_Evas *ee);
 EAPI void        ecore_evas_avoid_damage_set(Ecore_Evas *ee, Ecore_Evas_Avoid_Damage_Type on);
 EAPI Ecore_Evas_Avoid_Damage_Type ecore_evas_avoid_damage_get(const Ecore_Evas *ee);
 EAPI void        ecore_evas_withdrawn_set(Ecore_Evas *ee, Eina_Bool withdrawn);
 EAPI Eina_Bool   ecore_evas_withdrawn_get(const Ecore_Evas *ee);
 EAPI void        ecore_evas_sticky_set(Ecore_Evas *ee, Eina_Bool sticky);
 EAPI Eina_Bool   ecore_evas_sticky_get(const Ecore_Evas *ee);
-EAPI void        ecore_evas_ignore_events_set(Ecore_Evas *ee, Eina_Bool ignore);
-EAPI Eina_Bool   ecore_evas_ignore_events_get(const Ecore_Evas *ee);
 EAPI void        ecore_evas_manual_render_set(Ecore_Evas *ee, Eina_Bool manual_render);
 EAPI Eina_Bool   ecore_evas_manual_render_get(const Ecore_Evas *ee);
 EAPI void        ecore_evas_manual_render(Ecore_Evas *ee);
 EAPI void        ecore_evas_comp_sync_set(Ecore_Evas *ee, Eina_Bool do_sync);
 EAPI Eina_Bool   ecore_evas_comp_sync_get(const Ecore_Evas *ee);
-       
-EAPI Ecore_Window ecore_evas_window_get(const Ecore_Evas *ee);
-
+/**
+ * @brief Get geometry of screen associated with this Ecore_Evas.
+ *
+ * @param ee The Ecore_Evas whose window's to query container screen geometry.
+ * @param x where to return the horizontal offset value. May be NULL.
+ * @param y where to return the vertical offset value. May be NULL.
+ * @param w where to return the width value. May be NULL.
+ * @param h where to return the height value. May be NULL.
+ *
+ * @since 1.1
+ */
 EAPI void        ecore_evas_screen_geometry_get(const Ecore_Evas *ee, int *x, int *y, int *w, int *h);
 
 /**
