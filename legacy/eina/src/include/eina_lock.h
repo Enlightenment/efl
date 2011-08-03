@@ -29,7 +29,7 @@
  */
 
 /**
- * @defgroup Eina_File_Group File
+ * @defgroup Eina_Lock_Group Lock
  *
  * @{
  */
