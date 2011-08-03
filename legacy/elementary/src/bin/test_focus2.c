@@ -29,8 +29,8 @@ _focus_obj(void *data, Evas_Object *o __UNUSED__, void *event_info __UNUSED__)
    const char *type = evas_object_type_get(newfocus);
    if ((type) && (!strcmp(type, "elm_widget")))
      type = elm_object_widget_type_get(newfocus);
-   printf("elm_object_focus(%p) %s\n", newfocus, type);
-   elm_object_focus(newfocus);
+   printf("elm_object_focus_set(%p, EINA_TRUE) %s\n", newfocus, type);
+   elm_object_focus_set(newfocus, EINA_TRUE);
 }
 
 static void

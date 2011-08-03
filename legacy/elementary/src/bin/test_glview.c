@@ -605,7 +605,7 @@ test_glview(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    evas_object_show(gl);
 
    // Add Mouse/Key Event Callbacks
-   elm_object_focus(gl);
+   elm_object_focus_set(gl, EINA_TRUE);
    evas_object_event_callback_add(gl, EVAS_CALLBACK_KEY_DOWN, _key_down, gl);
    evas_object_event_callback_add(gl, EVAS_CALLBACK_MOUSE_DOWN, _mouse_down, gl);
    evas_object_event_callback_add(gl, EVAS_CALLBACK_MOUSE_UP, _mouse_up, gl);

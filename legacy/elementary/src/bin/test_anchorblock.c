@@ -237,7 +237,7 @@ test_anchorblock(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event
 
    evas_object_resize(win, 320, 300);
 
-   elm_object_focus(win);
+   elm_object_focus_set(win, EINA_TRUE);
    evas_object_show(win);
 }
 #endif

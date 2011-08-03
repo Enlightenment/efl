@@ -201,7 +201,7 @@ test_entry(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
    elm_box_pack_end(bx, bx2);
    evas_object_show(bx2);
 
-   elm_object_focus(en);
+   elm_object_focus_set(en, EINA_TRUE);
    evas_object_show(win);
 }
 
@@ -530,7 +530,7 @@ test_entry_scrolled(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *ev
 
    evas_object_resize(win, 320, 300);
 
-   elm_object_focus(win);
+   elm_object_focus_set(win, EINA_TRUE);
    evas_object_show(win);
 }
 
@@ -1272,7 +1272,7 @@ test_entry3(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
 
    evas_object_resize(win, 320, 480);
 
-   elm_object_focus(win);
+   elm_object_focus_set(win, EINA_TRUE);
    evas_object_show(win);
 }
 
@@ -1637,7 +1637,7 @@ test_entry5(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
 
    evas_object_resize(win, 320, 480);
 
-   elm_object_focus(win);
+   elm_object_focus_set(win, EINA_TRUE);
    evas_object_show(win);
 }
 
@@ -1694,7 +1694,7 @@ test_entry_notepad(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *eve
 
    evas_object_resize(win, 320, 300);
 
-   elm_object_focus(win);
+   elm_object_focus_set(win, EINA_TRUE);
    evas_object_show(win);
 }
 #endif

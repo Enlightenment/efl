@@ -268,7 +268,7 @@ test_glview_simple(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *eve
    elm_box_pack_end(bx, gl);
    evas_object_show(gl);
 
-   elm_object_focus(gl);
+   elm_object_focus_set(gl, EINA_TRUE);
 
    ani = ecore_animator_add(_anim, gl);
    gld->glapi = elm_glview_gl_api_get(gl);
