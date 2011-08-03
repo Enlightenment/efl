@@ -2922,50 +2922,50 @@ _smart_reconfigure(Smart_Data *sd)
 }
 
 EAPI void
-elm_widget_item_content_part_set(Elm_Widget_Item *it,
-                                 const char *item,
+_elm_widget_item_content_part_set(Elm_Widget_Item *item,
+                                 const char *part,
                                  Evas_Object *content)
 {
-   ELM_WIDGET_ITEM_CHECK_OR_RETURN(it);
-   if (!it->on_content_set_func) return;
-   it->on_content_set_func(it, item, content);
+   ELM_WIDGET_ITEM_CHECK_OR_RETURN(item);
+   if (!item->on_content_set_func) return;
+   item->on_content_set_func(item, part, content);
 }
 
 EAPI Evas_Object *
-elm_widget_item_content_part_get(const Elm_Widget_Item *it,
-                                 const char *item)
+_elm_widget_item_content_part_get(const Elm_Widget_Item *item,
+                                 const char *part)
 {
-   ELM_WIDGET_ITEM_CHECK_OR_RETURN(it, NULL);
-   if (!it->on_content_get_func) return NULL;
-   return it->on_content_get_func(it, item);
+   ELM_WIDGET_ITEM_CHECK_OR_RETURN(item, NULL);
+   if (!item->on_content_get_func) return NULL;
+   return item->on_content_get_func(item, part);
 }
 
 EAPI Evas_Object *
-elm_widget_item_content_part_unset(Elm_Widget_Item *it,
-                                   const char *item)
+_elm_widget_item_content_part_unset(Elm_Widget_Item *item,
+                                   const char *part)
 {
-   ELM_WIDGET_ITEM_CHECK_OR_RETURN(it, NULL);
-   if (!it->on_content_unset_func) return NULL;
-   return it->on_content_unset_func(it, item);
+   ELM_WIDGET_ITEM_CHECK_OR_RETURN(item, NULL);
+   if (!item->on_content_unset_func) return NULL;
+   return item->on_content_unset_func(item, part);
 }
 
 EAPI void
-elm_widget_item_text_part_set(Elm_Widget_Item *it,
-                              const char *item,
+_elm_widget_item_text_part_set(Elm_Widget_Item *item,
+                              const char *part,
                               const char *label)
 {
-   ELM_WIDGET_ITEM_CHECK_OR_RETURN(it);
-   if (!it->on_text_set_func) return;
-   it->on_text_set_func(it, item, label);
+   ELM_WIDGET_ITEM_CHECK_OR_RETURN(item);
+   if (!item->on_text_set_func) return;
+   item->on_text_set_func(item, part, label);
 }
 
 EAPI const char *
-elm_widget_item_text_part_get(const Elm_Widget_Item *it,
-                              const char *item)
+_elm_widget_item_text_part_get(const Elm_Widget_Item *item,
+                              const char *part)
 {
-   ELM_WIDGET_ITEM_CHECK_OR_RETURN(it, NULL);
-   if (!it->on_text_get_func) return NULL;
-   return it->on_text_get_func(it, item);
+   ELM_WIDGET_ITEM_CHECK_OR_RETURN(item, NULL);
+   if (!item->on_text_get_func) return NULL;
+   return item->on_text_get_func(item, part);
 }
 
 static void

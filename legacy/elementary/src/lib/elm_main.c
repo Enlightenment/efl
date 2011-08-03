@@ -3453,35 +3453,35 @@ elm_longpress_timeout_get(void)
 
 EAPI void
 elm_object_item_content_part_set(Elm_Object_Item *it,
-                                 const char *item,
+                                 const char *part,
                                  Evas_Object *content)
 {
-   elm_widget_item_content_part_set(it, item, content);
+   elm_widget_item_content_part_set(it, part, content);
 }
 
 EAPI Evas_Object *
 elm_object_item_content_part_get(const Elm_Object_Item *it,
-                                 const char *item)
+                                 const char *part)
 {
-   return elm_widget_item_content_part_get(it, item);
+   return elm_widget_item_content_part_get(it, part);
 }
 
 EAPI Evas_Object *
-elm_object_item_content_part_unset(Elm_Object_Item *it, const char *item)
+elm_object_item_content_part_unset(Elm_Object_Item *it, const char *part)
 {
-   return elm_widget_item_content_part_unset(it, item);
+   return elm_widget_item_content_part_unset(it, part);
 }
 
 EAPI void
 elm_object_item_text_part_set(Elm_Object_Item *it,
-                              const char *item,
+                              const char *part,
                               const char *label)
 {
-   elm_widget_item_text_part_set(it, item, label);
+   elm_widget_item_text_part_set(it, part, label);
 }
 
 EAPI const char *
-elm_object_item_text_part_get(const Elm_Object_Item *it, const char *item)
+elm_object_item_text_part_get(const Elm_Object_Item *it, const char *part)
 {
-   return elm_widget_item_text_part_get(it, item);
+   return elm_widget_item_text_part_get(it, part);
 }
