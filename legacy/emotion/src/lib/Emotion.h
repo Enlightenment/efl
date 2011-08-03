@@ -57,13 +57,21 @@
  *
  * See the @ref Emotion_API for a better reference.
  * 
- * @section authors Authors
+ * Please see the @ref authors page for contact details.
+ */
+
+/**
+ * 
+ * @page authors Authors
  * 
  * @author Carsten Haitzler <raster@rasterman.com>
  * @author Vincent Torri <torri@maths.univ-evry.fr>
  * @author Nicolas Aguirre <aguirre.nicolas@gmail.com>
  * @author Sebastian Dransfeld <sd@tango.flipp.net>
  * @author Cedric Bail <cedric.bail@free.fr>
+ * 
+ * Please contact <enlightenment-devel@lists.sourceforge.net> to get in
+ * contact with the developers and maintainers.
  * 
  */
 
