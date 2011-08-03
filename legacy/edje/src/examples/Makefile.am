@@ -8,6 +8,7 @@ EDCS = basic.edc \
 	text.edc \
 	table.edc \
 	box.edc \
+	drag.edc \
 	signals-messages.edc \
 	color-class.edc
 
@@ -37,6 +38,7 @@ pkglib_PROGRAMS += \
 	edje-table \
 	edje-box \
 	edje-box2 \
+	edje-drag\
 	edje-signals-messages \
 	edje-color-class
 
@@ -64,6 +66,7 @@ files_DATA += \
 	$(srcdir)/edje-table.c \
 	$(srcdir)/edje-box.c \
 	$(srcdir)/edje-box2.c \
+	$(srcdir)/edje-drag.c \
 	$(srcdir)/edje-signals-messages.c \
 	$(srcdir)/edje-color-class.c
 endif
@@ -76,5 +79,6 @@ EXTRA_DIST = $(EDCS) \
 	$(srcdir)/edje-table.c \
 	$(srcdir)/edje-box.c \
 	$(srcdir)/edje-box2.c \
+	$(srcdir)/edje-drag.c \
 	$(srcdir)/edje-signals-messages.c \
 	$(srcdir)/edje-color-class.c

@@ -2917,10 +2917,14 @@ EAPI const char      *edje_object_part_state_get      (const Evas_Object *obj, c
  * @param obj A valid Evas_Object handle
  * @param part The part name
  *
- * @return 0: Not dragable\n
- * 1: Dragable in X direction\n
- * 2: Dragable in Y direction\n
- * 3: Dragable in X & Y directions
+ * The dragable directions are defined in the EDC file, inside the @c dragable
+ * section, by the attributes @c x and @c y. See the @ref edcref for more
+ * information.
+ *
+ * @return #EDJE_DRAG_DIR_NONE: Not dragable\n
+ * #EDJE_DRAG_DIR_X: Dragable in X direction\n
+ * #EDJE_DRAG_DIR_Y: Dragable in Y direction\n
+ * #EDJE_DRAG_DIR_XY: Dragable in X & Y directions
  */
 EAPI Edje_Drag_Dir    edje_object_part_drag_dir_get   (const Evas_Object *obj, const char *part);
 
@@ -2933,6 +2937,18 @@ EAPI Edje_Drag_Dir    edje_object_part_drag_dir_get   (const Evas_Object *obj, c
  * @param dy The y value
  *
  * Places the dragable object at the given location.
+ *
+ * Values for @p dx and @p dy are real numbers that range from 0 to 1,
+ * representing the relative position to the dragable area on that axis.
+ *
+ * This value means, for the vertical axis, that 0.0 will be at the top if the
+ * first parameter of @c y in the dragable part theme is 1, and at bottom if it
+ * is -1.
+ *
+ * For the horizontal axis, 0.0 means left if the first parameter of @c x in the
+ * dragable part theme is 1, and right if it is -1.
+ *
+ * @see edje_object_part_drag_value_get()
  */
 EAPI Eina_Bool        edje_object_part_drag_value_set (Evas_Object *obj, const char *part, double dx, double dy);
 
@@ -2943,6 +2959,11 @@ EAPI Eina_Bool        edje_object_part_drag_value_set (Evas_Object *obj, const c
  * @param part The part name
  * @param dx The X value pointer
  * @param dy The Y value pointer
+ *
+ * Values for @p dx and @p dy are real numbers that range from 0 to 1,
+ * representing the relative position to the dragable area on that axis.
+ *
+ * @see edje_object_part_drag_value_set()
  *
  * Gets the drag location values.
  */
@@ -2956,7 +2977,12 @@ EAPI Eina_Bool        edje_object_part_drag_value_get (const Evas_Object *obj, c
  * @param dw The drag width
  * @param dh The drag height
  *
+ * Values for @p dw and @p dh are real numbers that range from 0 to 1,
+ * representing the relative size of the dragable area on that axis.
+ *
  * Sets the size of the dragable object.
+ *
+ * @see edje_object_part_drag_size_get()
  */
 EAPI Eina_Bool        edje_object_part_drag_size_set  (Evas_Object *obj, const char *part, double dw, double dh);
 
@@ -2969,6 +2995,8 @@ EAPI Eina_Bool        edje_object_part_drag_size_set  (Evas_Object *obj, const c
  * @param dh The drag height pointer
  *
  * Gets the dragable object size.
+ *
+ * @see edje_object_part_drag_size_set()
  */
 EAPI Eina_Bool        edje_object_part_drag_size_get  (const Evas_Object *obj, const char *part, double *dw, double *dh);
 
@@ -2981,6 +3009,12 @@ EAPI Eina_Bool        edje_object_part_drag_size_get  (const Evas_Object *obj, c
  * @param dy The y step amount
  *
  * Sets the x,y step increments for a dragable object.
+ *
+ * Values for @p dx and @p dy are real numbers that range from 0 to 1,
+ * representing the relative size of the dragable area on that axis by which the
+ * part will be moved.
+ *
+ * @see edje_object_part_drag_step_get()
  */
 EAPI Eina_Bool        edje_object_part_drag_step_set  (Evas_Object *obj, const char *part, double dx, double dy);
 
@@ -2993,6 +3027,9 @@ EAPI Eina_Bool        edje_object_part_drag_step_set  (Evas_Object *obj, const c
  * @param dy The y step increment pointer
  *
  * Gets the x and y step increments for the dragable object.
+ *
+ *
+ * @see edje_object_part_drag_step_set()
  */
 EAPI Eina_Bool        edje_object_part_drag_step_get  (const Evas_Object *obj, const char *part, double *dx, double *dy);
 
@@ -3005,6 +3042,12 @@ EAPI Eina_Bool        edje_object_part_drag_step_get  (const Evas_Object *obj, c
  * @param dy The y page step increment
  *
  * Sets the x,y page step increment values.
+ *
+ * Values for @p dx and @p dy are real numbers that range from 0 to 1,
+ * representing the relative size of the dragable area on that axis by which the
+ * part will be moved.
+ *
+ * @see edje_object_part_drag_page_get()
  */
 EAPI Eina_Bool        edje_object_part_drag_page_set  (Evas_Object *obj, const char *part, double dx, double dy);
 
@@ -3017,6 +3060,8 @@ EAPI Eina_Bool        edje_object_part_drag_page_set  (Evas_Object *obj, const c
  * @param dy The dy page increment pointer
  *
  * Gets the x,y page step increments for the dragable object.
+ *
+ * @see edje_object_part_drag_page_set()
  */
 EAPI Eina_Bool        edje_object_part_drag_page_get  (const Evas_Object *obj, const char *part, double *dx, double *dy);
 
@@ -3030,6 +3075,10 @@ EAPI Eina_Bool        edje_object_part_drag_page_get  (const Evas_Object *obj, c
  *
  * Steps x,y where the step increment is the amount set by
  * edje_object_part_drag_step_set.
+ *
+ * Values for @p dx and @p dy are real numbers that range from 0 to 1.
+ *
+ * @see edje_object_part_drag_page()
  */
 EAPI Eina_Bool        edje_object_part_drag_step      (Evas_Object *obj, const char *part, double dx, double dy);
 
@@ -3042,7 +3091,13 @@ EAPI Eina_Bool        edje_object_part_drag_step      (Evas_Object *obj, const c
  * @param dy The y step
  *
  * Pages x,y where the increment is defined by
- * edje_object_part_drag_page_set.\n WARNING: Paging is bugged!
+ * edje_object_part_drag_page_set.
+ *
+ * Values for @p dx and @p dy are real numbers that range from 0 to 1.
+ *
+ * @warning Paging is bugged!
+ *
+ * @see edje_object_part_drag_step()
  */
 EAPI Eina_Bool        edje_object_part_drag_page      (Evas_Object *obj, const char *part, double dx, double dy);
 

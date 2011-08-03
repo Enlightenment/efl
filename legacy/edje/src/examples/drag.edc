@@ -1,0 +1,91 @@
+collections {
+   group {
+      name: "example/group";
+
+      min: 160 160;
+
+      parts {
+         part {
+            name: "bg";
+            type: RECT;
+
+            mouse_events: 0;
+
+            description {
+               state: "default" 0.0;
+            }
+         } // bg
+
+         part {
+            name: "title";
+            type: TEXT;
+            mouse_events: 0;
+
+            description {
+               state: "default" 0.0;
+               color: 0 0 0 255;
+               rel1 {
+                  relative: 0.0 0.0;
+                  offset: 0 0;
+                  to: "bg";
+               }
+               rel2 {
+                  relative: 1.0 0.2;
+                  offset: -1 -1;
+                  to: "bg";
+               }
+               text {
+                  text: "Drag Example";
+                  size: 16;
+                  font: "sans";
+                  min: 1 1;
+               }
+            }
+         }
+
+         part {
+            name: "drag_area";
+            type: RECT;
+
+            mouse_events: 0;
+
+            description {
+               state: "default" 0.0;
+               color: 0 0 0 255;
+               rel1 {
+                  relative: 0.5 0.3;
+                  offset: -5 0;
+               }
+
+               rel2 {
+                  relative: 0.5 0.9;
+                  offset: 4 0;
+               }
+            }
+         } // drag_area
+
+         part {
+            name: "example/knob";
+            type: RECT;
+
+            mouse_events: 1;
+
+            dragable {
+               confine: "drag_area";
+               x: 0 0 0;
+               y: 1 1 0;
+            }
+
+            description {
+               state: "default" 0.0;
+
+               color: 255 0 0 200;
+
+               min: 10 30;
+               max: 10 30;
+            }
+         } // example/knob
+
+      }
+   }
+}

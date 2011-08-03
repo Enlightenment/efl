@@ -11,6 +11,7 @@
  * @li @ref Example_Edje_Signals_Messages
  * @li @ref tutorial_edje_box
  * @li @ref tutorial_edje_box2
+ * @li @ref tutorial_edje_drag
  */
 
 /**
@@ -397,6 +398,88 @@
  * The full source code follows:
  * @include edje-box2.c
  * @example edje-box2.c
+ */
+
+/**
+ * @page tutorial_edje_drag Dragable parts example
+ *
+ * This example shows how to manipulate a dragable part through the
+ * edje_object_part_drag API.
+ *
+ * First, in the edc code, we are declaring a part which will be our movable
+ * part, called "knob". It is a normal rectangle, which contains a block called
+ * "dragable", that will define the area where this rectangle can be moved, and
+ * in which axis it can be moved.
+ *
+ * This is our part:
+ *
+ * @dontinclude drag.edc
+ * @skip // drag_area
+ * @skip part
+ * @until example/knob
+ * @until example/knob
+ *
+ * Notice that it defines, through its @c "x:" and @c "y:' properties, that the
+ * part will be only moved on the y axis (vertical). Check the edc reference
+ * docs for more info about this.
+ *
+ * Now, in our example C code, we just do the same as on the other examples,
+ * setting some global data on a structure, load the edje file and so:
+ *
+ * @dontinclude edje-drag.c
+ * @skip value changed
+ * @skip }
+ * @skip int
+ * @until evas_object_show(app.edje)
+ *
+ * We want to use the drag_page and drag_step functions, and in order to do so we
+ * need to define the step size and page size of our dragable part. They are
+ * defined as float values which represent a portion of the entire size of the
+ * dragable area:
+ *
+ * @until drag page step
+ *
+ * We are going to use the keyboard to move the @c knob part, through the key
+ * down callback @c _bg_key_down, but we also want to know when the user has
+ * moved the knob by using the mouse (which is possible, since we defined that
+ * this part will receive mouse events). Thus, we set a callback for the signal
+ * "drag", which comes from the dragable part:
+ *
+ * @until _knob_moved_cb
+ *
+ * Now, let's take a look at our key down callback:
+ *
+ * @dontinclude edje-drag.c
+ * @skip _canvas_resize_cb
+ * @skip static
+ * @until unhandled key
+ * @until }
+ *
+ * On this callback we define that the user will use the "up" and "down" arrows
+ * to move the dragable part, respectively, -1.0 and 1.0 times the step size.
+ * And that the "Page Up" (Prior) and "Page Down" (Next) keys will move -1.0 and
+ * 1.0 times the page size. Both of these will occur on the vertical axis, since
+ * we pass 0.0 as value to the respective horizontal axis parameters. And our
+ * dragable part also only supports being moved in the vertical axis (defined in
+ * the edc).
+ *
+ * We also define that the "m" key will be used to explicitly position the knob
+ * part in the middle of the dragable area.
+ *
+ * And here is the callback for the @c "drag" signal that is received from the
+ * theme:
+ *
+ * @until }
+ *
+ * The example's window should look like this picture:
+ *
+ * @image html edje-drag-example.png
+ * @image rtf edje-drag-example.png
+ * @image latex edje-drag-example.eps
+ *
+ * The full source code follows:
+ * @include edje-drag.c
+ * @example edje-drag.c
  */
 
 /**
