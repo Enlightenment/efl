@@ -227,6 +227,7 @@ data/Makefile
 data/frames/Makefile
 m4/Makefile
 doc/Makefile
+doc/Doxyfile
 ])
 
 AC_OUTPUT
