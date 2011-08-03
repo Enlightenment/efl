@@ -124,6 +124,8 @@ struct _Emotion_Webcam
    const char *syspath;
    const char *device;
    const char *name;
+
+   const char *filename;
 };
 
 static int _emotion_webcams_count = 0;
@@ -150,8 +152,8 @@ _emotion_check_device(Emotion_Webcam *ew)
    if (!ew) return ;
    if (!ew->device) goto on_error;
 
-   fd = open(ew->device, O_RDONLY);
-   if (!fd) goto on_error;
+   fd = open(ew->filename, O_RDONLY);
+   if (fd < 0) goto on_error;
 
    if (ioctl(fd, VIDIOC_QUERYCAP, &caps) == -1) goto on_error;
 
@@ -173,7 +175,7 @@ _emotion_check_device(Emotion_Webcam *ew)
    return ;
 
  on_error:
-   fprintf(stderr, "'%s' is not a webcam\n", ew->name);
+   fprintf(stderr, "'%s' is not a webcam ['%s']\n", ew->name, strerror(errno));
    eina_stringshare_del(ew->syspath);
    eina_stringshare_del(ew->device);
    eina_stringshare_del(ew->name);
@@ -198,6 +200,7 @@ _emotion_webcam_new(const char *syspath)
    snprintf(local, eina_stringshare_strlen(device) + 8, "v4l2://%s", device);
    test->device = eina_stringshare_add(local);
    eina_stringshare_del(device);
+   test->filename = test->device + 7;
 
    return test;
 }
@@ -303,7 +306,7 @@ emotion_webcams_get(void)
 }
 
 EAPI const char *
-emotion_webcam_name_get(Emotion_Webcam *ew)
+emotion_webcam_name_get(const Emotion_Webcam *ew)
 {
    if (!ew) return NULL;
 
@@ -315,7 +318,7 @@ emotion_webcam_name_get(Emotion_Webcam *ew)
 }
 
 EAPI const char *
-emotion_webcam_device_get(Emotion_Webcam *ew)
+emotion_webcam_device_get(const Emotion_Webcam *ew)
 {
    if (!ew) return NULL;
 

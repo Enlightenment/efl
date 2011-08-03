@@ -843,9 +843,11 @@ EAPI Eina_Bool    emotion_object_extension_may_play_get(const char *file);
 
 typedef struct _Emotion_Webcam Emotion_Webcam;
 
+extern int EMOTION_WEBCAM_UPDATE;
+
 EAPI const Eina_List *emotion_webcams_get(void);
-EAPI const char      *emotion_webcam_name_get(Emotion_Webcam *ew);
-EAPI const char      *emotion_webcam_device_get(Emotion_Webcam *ew);
+EAPI const char      *emotion_webcam_name_get(const Emotion_Webcam *ew);
+EAPI const char      *emotion_webcam_device_get(const Emotion_Webcam *ew);
 
 /**
  * @}
