@@ -363,7 +363,7 @@ _show(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj, void *event_i
    if (!wd->repeat_events)
      evas_object_show(wd->block_events);
    _timer_init(obj, wd);
-   elm_object_focus(obj);
+   elm_object_focus_set(obj, EINA_TRUE);
 }
 
 static void

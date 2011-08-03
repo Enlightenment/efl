@@ -3036,8 +3036,8 @@ _if_focused_revert(Evas_Object *obj,
         newest = _newest_focus_order_get(top, &newest_focus_order, can_focus_only);
         if (newest)
           {
-             elm_object_unfocus(newest);
-             elm_object_focus(newest);
+             elm_object_focus_set(newest, EINA_FALSE);
+             elm_object_focus_set(newest, EINA_TRUE);
           }
      }
 }

@@ -177,7 +177,7 @@ _eval_top(Evas_Object *obj)
         if (wd->oldtop)
           {
              if (elm_object_focus_get(wd->oldtop->content))
-               elm_object_focus(wd->top->content);
+               elm_object_focus_set(wd->top->content, EINA_TRUE);
              if (wd->oldtop->popme)
                edje_object_signal_emit(o, "elm,action,show", "elm");
              else

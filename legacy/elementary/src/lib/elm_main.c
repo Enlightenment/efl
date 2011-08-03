@@ -2256,21 +2256,34 @@ elm_object_focus_get(const Evas_Object *obj)
 }
 
 EAPI void
+elm_object_focus_set(Evas_Object *obj,
+                     Eina_Bool    focus)
+{
+   EINA_SAFETY_ON_NULL_RETURN(obj);
+   if (focus)
+     {
+        if (elm_widget_focus_get(obj)) return;
+        elm_widget_focus_cycle(obj, ELM_FOCUS_NEXT);
+     }
+   else
+     {
+        if (!elm_widget_can_focus_get(obj)) return;
+        elm_widget_focused_object_clear(obj);
+     }
+}
+
+EAPI void
 elm_object_focus(Evas_Object *obj)
 {
    EINA_SAFETY_ON_NULL_RETURN(obj);
-   if (elm_widget_focus_get(obj))
-     return;
-
-   elm_widget_focus_cycle(obj, ELM_FOCUS_NEXT);
+   elm_object_focus_set(obj, EINA_TRUE);
 }
 
 EAPI void
 elm_object_unfocus(Evas_Object *obj)
 {
    EINA_SAFETY_ON_NULL_RETURN(obj);
-   if (!elm_widget_can_focus_get(obj)) return;
-   elm_widget_focused_object_clear(obj);
+   elm_object_focus_set(obj, EINA_FALSE);
 }
 
 EAPI void
