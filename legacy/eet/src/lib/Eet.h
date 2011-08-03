@@ -8,20 +8,9 @@ These routines are used for Eet Library interaction
 @image html  e_big.png
 
 @version 1.0.0
-@author Carsten Haitzler <raster@@rasterman.com>
-@author David Goodlad <dgoodlad@@gmail.com>
-@author Cedric Bail <cedric.bail@@free.fr>
-@author Arnaud de Turckheim <quarium@@gmail.com>
-@author Luis Felipe Strano Moraes <lfelipe@@profusion.mobi>
-@author Chidambar Zinnoury <illogict@@online.fr>
-@author Vincent Torri <vtorri@@univ-evry.fr>
-@author Gustavo Sverzut Barbieri <barbieri@@profusion.mobi>
-@author Raphael Kubo da Costa <kubo@@profusion.mobi>
-@author Mathieu Taillefumier <mathieu.taillefumier@@free.fr>
-@author Albin "Lutin" Tonnerre <albin.tonnerre@@gmail.com>
-@author Adam Simpkins <adam@@adamsimpkins.net>
-@author Mike Blumenkrantz <mike@zentific.com>
 @date 2000-2011
+
+Please see the @ref authors page for contact details.
 
 @section toc Table of Contents
 
@@ -133,6 +122,26 @@ Recommended reading:
 
 @todo Document data format for images and data structures.
 
+*/
+
+/**
+@page authors Authors
+@author Carsten Haitzler <raster@@rasterman.com>
+@author David Goodlad <dgoodlad@@gmail.com>
+@author Cedric Bail <cedric.bail@@free.fr>
+@author Arnaud de Turckheim <quarium@@gmail.com>
+@author Luis Felipe Strano Moraes <lfelipe@@profusion.mobi>
+@author Chidambar Zinnoury <illogict@@online.fr>
+@author Vincent Torri <vtorri@@univ-evry.fr>
+@author Gustavo Sverzut Barbieri <barbieri@@profusion.mobi>
+@author Raphael Kubo da Costa <kubo@@profusion.mobi>
+@author Mathieu Taillefumier <mathieu.taillefumier@@free.fr>
+@author Albin "Lutin" Tonnerre <albin.tonnerre@@gmail.com>
+@author Adam Simpkins <adam@@adamsimpkins.net>
+@author Mike Blumenkrantz <mike@zentific.com>
+
+Please contact <enlightenment-devel@lists.sourceforge.net> to get in
+contact with the developers and maintainers.
 */
 
 #ifndef _EET_H
