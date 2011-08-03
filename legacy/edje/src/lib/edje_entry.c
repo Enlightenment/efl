@@ -106,8 +106,8 @@ _edje_entry_focus_in_cb(void *data, Evas_Object *o __UNUSED__, const char *emiss
    if (evas_object_focus_get(rp->edje->obj))
      {
         ecore_imf_context_reset(en->imf_context);
-        _edje_entry_imf_cursor_info_set(en);
         ecore_imf_context_focus_in(en->imf_context);
+        _edje_entry_imf_cursor_info_set(en);
      }
 }
 
@@ -124,7 +124,7 @@ _edje_entry_focus_out_cb(void *data, Evas_Object *o __UNUSED__, const char *emis
    if (!en || !en->imf_context) return;
 
    ecore_imf_context_reset(en->imf_context);
-   ecore_imf_context_cursor_position_set(en->imf_context, evas_textblock_cursor_pos_get(en->cursor));
+   _edje_entry_imf_cursor_info_set(en);
    ecore_imf_context_focus_out(en->imf_context);
 }
 #endif
@@ -152,6 +152,7 @@ _edje_focus_in_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, v
 
    ecore_imf_context_reset(en->imf_context);
    ecore_imf_context_focus_in(en->imf_context);
+   _edje_entry_imf_cursor_info_set(en);
 #endif
 }
 
@@ -176,7 +177,7 @@ _edje_focus_out_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, 
    if (!en->imf_context) return;
 
    ecore_imf_context_reset(en->imf_context);
-   ecore_imf_context_cursor_position_set(en->imf_context, evas_textblock_cursor_pos_get(en->cursor));
+   _edje_entry_imf_cursor_info_set(en);
    ecore_imf_context_focus_out(en->imf_context);
 #endif
 }
@@ -2079,6 +2080,7 @@ _edje_entry_text_markup_set(Edje_Real_Part *rp, const char *text)
 
    _anchors_get(en->cursor, rp->object, en);
    _edje_emit(rp->edje, "entry,changed", rp->part->name);
+   _edje_entry_imf_cursor_info_set(en);
 #if 0
    /* Don't emit cursor changed cause it didn't. It's just init to 0. */
    _edje_emit(rp->edje, "cursor,changed", rp->part->name);
