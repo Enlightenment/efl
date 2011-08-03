@@ -451,6 +451,7 @@ part of Edje's API:
 - @ref tutorial_edje_table
 - @ref tutorial_edje_box
 - @ref tutorial_edje_box2
+- @ref tutorial_edje_color_class
 - @ref Example_Edje_Signals_Messages
 
 
@@ -1533,19 +1534,31 @@ EAPI Eina_Bool    edje_color_class_set            (const char *color_class, int 
 EAPI Eina_Bool    edje_color_class_get            (const char *color_class, int *r, int *g, int *b, int *a, int *r2, int *g2, int *b2, int *a2, int *r3, int *g3, int *b3, int *a3);
 
 /**
- * @brief Delete the object color class.
+ * @brief Delete edje color class.
  *
- * @param obj The edje object's reference.
- * @param color_class The color class to be deleted.
+ * @param color_class
  *
- * This function deletes any values at the object level for the
- * specified object and color class.
+ * This function deletes any values at the process level for the
+ * specified color class.
+ * @note Deleting the color class will revert it to the
+ *       values defined in the theme file.
  *
- * Deleting color emits a signal "color_class,del" with source being
- * the given color.
+ * Deleting the color class will emit the signal "color_class,del"
+ * to all the Edje objects in the running program.
  */
 EAPI void         edje_color_class_del            (const char *color_class);
-   EAPI Eina_List   *edje_color_class_list           (void);
+
+/**
+ * @brief Lists color classes.
+ *
+ * @return A list of color class names (strings). These strings and
+ * the list must be free()'d by the caller.
+ *
+ * This function lists all color classes known about by the current
+ * process.
+ *
+ */
+EAPI Eina_List   *edje_color_class_list           (void);
 
 /**
  * @brief Set the Edje text class.
@@ -1554,8 +1567,10 @@ EAPI void         edje_color_class_del            (const char *color_class);
  * @param font The font name
  * @param size The font size
  *
- * This function sets updates all edje members which belong to this
- * text class with the new font attributes.
+ * @return @c EINA_TRUE, on success or @c EINA_FALSE, on error
+ *
+ * This function updates all Edje members at the process level which
+ * belong to this text class with the new font attributes.
  *
  * @see edje_text_class_get().
  *
@@ -2077,35 +2092,12 @@ EAPI int          edje_object_thaw                    (Evas_Object *obj);
  * @note unlike Evas, Edje colors are @b not pre-multiplied. That is,
  *       half-transparent white is 255 255 255 128.
  */
-
-/**
- * @brief Lists color classes.
- *
- * @return A list of color class names (strings). These strings and
- * the list must be free()'d by the caller.
- *
- * This function lists all color classes known about by the current
- * process.
- *
- */
-
-/**
- * @brief Delete edje color class.
- *
- * @param color_class
- *
- * This function deletes any values at the process level for the
- * specified color class.
- *
- * Deleting color emits a signal "color_class,del" with source being
- * the given color class in all objects.
- */
 EAPI Eina_Bool    edje_object_color_class_set         (Evas_Object *obj, const char *color_class, int r, int g, int b, int a, int r2, int g2, int b2, int a2, int r3, int g3, int b3, int a3);
 
 /**
  * @brief Gets the object color class.
  *
- * @param obj A valid Evas_Object handle
+ * @param o A valid Evas_Object handle
  * @param color_class
  * @param r Object Red value
  * @param g Object Green value
@@ -2135,7 +2127,23 @@ EAPI Eina_Bool    edje_object_color_class_set         (Evas_Object *obj, const c
  *       half-transparent white is 255 255 255 128.
  */
 EAPI Eina_Bool    edje_object_color_class_get         (const Evas_Object *o, const char *color_class, int *r, int *g, int *b, int *a, int *r2, int *g2, int *b2, int *a2, int *r3, int *g3, int *b3, int *a3);
-   EAPI void         edje_object_color_class_del         (Evas_Object *obj, const char *color_class);
+
+/**
+ * @brief Delete the object color class.
+ *
+ * @param obj The edje object's reference.
+ * @param color_class The color class to be deleted.
+ *
+ * This function deletes any values at the object level for the
+ * specified object and color class.
+ * @note Deleting the color class will revert it to the values
+ *       defined by edje_color_class_set() or the color class
+ *       defined in the theme file.
+ *
+ * Deleting the color class will emit the signal "color_class,del"
+ * for the given Edje object.
+ */
+ EAPI void         edje_object_color_class_del         (Evas_Object *obj, const char *color_class);
 
 /**
  * @brief Sets Edje text class.
@@ -2144,6 +2152,8 @@ EAPI Eina_Bool    edje_object_color_class_get         (const Evas_Object *o, con
  * @param text_class The text class name
  * @param font Font name
  * @param size Font Size
+ *
+ * @return @c EINA_TRUE, on success or @c EINA_FALSE, on error
  *
  * This function sets the text class for the Edje.
  *

@@ -7,6 +7,7 @@
  * @li @ref tutorial_edje_swallow
  * @li @ref tutorial_edje_text
  * @li @ref tutorial_edje_table
+ * @li @ref tutorial_edje_color_class
  * @li @ref Example_Edje_Signals_Messages
  * @li @ref tutorial_edje_box
  * @li @ref tutorial_edje_box2
@@ -517,4 +518,72 @@
  * @include signals-messages.edc
  * @include edje-signals-messages.c
  * @example edje-signals-messages.c
+ */
+
+/**
+ * @page tutorial_edje_color_class Edje Color Class example
+ * @dontinclude edje-color-class.c
+ *
+ * This example shows how to manipulate and change Color classes. In this example
+ * we will create two surfaces to show what happens when you change the color
+ * class at the proccess and object level.
+ *
+ * It's a very simple example, there are two surfaces created from the same EDC,
+ * but just in one of them we will set a specific color class, althoug both will be
+ * affected by color class set at the process level as you will see.
+ *
+ * It's important you know that all colors has the format R G B A. Just to be easier
+ * to understand this example, we will create a small set of colors that will be used
+ * along of the example. This piece of code is shown below:
+ * @skip static color colors_init_data
+ * @until return EINA_FALSE
+ * @until }
+ *
+ * Focusing on the relevant parts of the code we go right to the part where we set
+ * the new color class. For that we will use the functions edje_color_class_set (
+ * which will affect all edjes) and edje_object_color_class_set (which affects just
+ * the specific object).
+ * @skip edje_color_class_set
+ * @until Text shadow
+ * @until Text shadow
+ * @note
+ *       - argv[1] is the name of a color class used in the EDC.
+ *       - The second and third colors only apply to text part.
+ *       - The color class set for the object overrides the color previously set.
+ *
+ * After we have set the color class we will check the color classes, for that
+ * we created a function which prints all color classes and tries to get theirs
+ * values and print too.
+ * @dontinclude edje-color-class.c
+ * @skip _color_classes_print(void)
+ * @until free
+ * @until }
+ * @until }
+ *
+ * There are two other things that are worth mentioning, we added two callbacks for the
+ * objects, one for mouse down (that we use to delete the color class) and another
+ * for the signal emmited when a color class is deleted.
+ * @skip  evas_object_event
+ * @until NULL
+ * @skip  edje_object_si
+ * @until process
+ *
+ * And then we delete the color class:
+ * @dontinclude edje-color-class.c
+ * @skip _on_mouse_down
+ * @until }
+ *
+ * Our example will look like this, if you run with the parameters "green_class gray pink yellow":
+ *
+ * @image html edje-color-class-example.png
+ * @image rtf edje-color-class-example.png
+ * @image latex edje-color-class-example.eps
+ *
+ * The full source code follows:
+ * @include edje-color-class.c
+ * @example edje-color-class.c
+ *
+ * The theme used in this example is:
+ * @include color-class.edc
+ * @example color-class.edc
  */
