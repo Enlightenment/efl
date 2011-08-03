@@ -70,6 +70,13 @@ static void _shift_base_by_arrow(Evas_Object *arrow,
 static void _del_pre_hook(Evas_Object *obj);
 static void _del_hook(Evas_Object *obj);
 static void _theme_hook(Evas_Object *obj);
+static void _content_set_hook(Evas_Object *obj,
+                              const char *item __UNUSED__,
+                              Evas_Object *content);
+static Evas_Object * _content_unset_hook(Evas_Object *obj,
+                                         const char *item __UNUSED__);
+static Evas_Object * _content_get_hook(const Evas_Object *obj,
+                                       const char *item __UNUSED__);
 static void _bg_clicked_cb(void *data, Evas_Object *obj __UNUSED__,
                            const char *emission __UNUSED__,
                            const char *source __UNUSED__);
@@ -693,6 +700,68 @@ _theme_hook(Evas_Object *obj)
 }
 
 static void
+_content_set_hook(Evas_Object *obj, const char *item __UNUSED__,
+                  Evas_Object *content)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+
+   Widget_Data *wd;
+
+   wd = elm_widget_data_get(obj);
+   if ((!wd) || (!content)) return;
+
+   if (wd->items) elm_ctxpopup_clear(obj);
+   if (wd->content) evas_object_del(wd->content);
+
+   evas_object_event_callback_add(content, EVAS_CALLBACK_DEL, _content_del,
+                                  obj);
+
+   elm_widget_sub_object_add(obj, content);
+   edje_object_part_swallow(wd->base, "elm.swallow.content", content);
+   edje_object_message_signal_process(wd->base);
+
+   wd->content = content;
+
+   if (wd->visible)
+      _sizing_eval(obj);
+}
+
+static Evas_Object *
+_content_unset_hook(Evas_Object *obj, const char *item __UNUSED__)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+
+   Widget_Data *wd;
+   Evas_Object *content;
+
+   wd = elm_widget_data_get(obj);
+   if (!wd) return NULL;
+
+   content = wd->content;
+   if (!content) return NULL;
+
+   edje_object_part_unswallow(wd->base, content);
+   elm_widget_sub_object_del(obj, content);
+   evas_object_event_callback_del(content, EVAS_CALLBACK_DEL, _content_del);
+   edje_object_signal_emit(wd->base, "elm,state,content,disable", "elm");
+
+   wd->content = NULL;
+
+   return content;
+
+}
+
+static Evas_Object *
+_content_get_hook(const Evas_Object *obj, const char *item __UNUSED__)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return NULL;
+   return wd->content;
+}
+
+static void
 _bg_clicked_cb(void *data, Evas_Object *obj __UNUSED__,
                const char *emission __UNUSED__, const char *source __UNUSED__)
 {
@@ -875,7 +944,7 @@ static void
 _content_del(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__,
              void *event_info __UNUSED__)
 {
-   elm_ctxpopup_content_unset(data);
+   elm_object_content_unset(data);
 }
 
 static void
@@ -951,6 +1020,9 @@ elm_ctxpopup_add(Evas_Object *parent)
    elm_widget_del_pre_hook_set(obj, _del_pre_hook);
    elm_widget_del_hook_set(obj, _del_hook);
    elm_widget_theme_hook_set(obj, _theme_hook);
+   elm_widget_content_set_hook_set(obj, _content_set_hook);
+   elm_widget_content_unset_hook_set(obj, _content_unset_hook);
+   elm_widget_content_get_hook_set(obj, _content_get_hook);
 
    wd->parent = parent;
 
@@ -1162,7 +1234,7 @@ elm_ctxpopup_item_append(Evas_Object *obj, const char *label,
 
    //The first item is appended.
    if (wd->content)
-      evas_object_del(elm_ctxpopup_content_unset(obj));
+      evas_object_del(elm_object_content_unset(obj));
 
    if (!wd->items)
       _list_new(obj);
@@ -1250,55 +1322,13 @@ elm_ctxpopup_item_disabled_get(const Elm_Ctxpopup_Item *item)
 EAPI void
 elm_ctxpopup_content_set(Evas_Object *obj, Evas_Object *content)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype);
-
-   Widget_Data *wd;
-
-   wd = elm_widget_data_get(obj);
-   if ((!wd) || (!content))
-      return;
-
-   if (wd->items)
-      elm_ctxpopup_clear(obj);
-
-   if (wd->content)
-      evas_object_del(wd->content);
-
-   evas_object_event_callback_add(content, EVAS_CALLBACK_DEL, _content_del,
-                                  obj);
-
-   elm_widget_sub_object_add(obj, content);
-   edje_object_part_swallow(wd->base, "elm.swallow.content", content);
-   edje_object_message_signal_process(wd->base);
-
-   wd->content = content;
-
-   if (wd->visible)
-      _sizing_eval(obj);
+   elm_object_content_set(obj, content);
 }
 
 EAPI Evas_Object *
 elm_ctxpopup_content_unset(Evas_Object *obj)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
-
-   Widget_Data *wd;
-   Evas_Object *content;
-
-   wd = elm_widget_data_get(obj);
-   if (!wd) return NULL;
-
-   content = wd->content;
-   if (!content) return NULL;
-
-   edje_object_part_unswallow(wd->base, content);
-   elm_widget_sub_object_del(obj, content);
-   evas_object_event_callback_del(content, EVAS_CALLBACK_DEL, _content_del);
-   edje_object_signal_emit(wd->base, "elm,state,content,disable", "elm");
-
-   wd->content = NULL;
-
-   return content;
+   return elm_object_content_unset(obj);
 }
 
 EAPI void

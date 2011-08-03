@@ -7348,7 +7348,7 @@ extern "C" {
     *
     * @ingroup Layout
     */
-   EAPI Evas_Object       *elm_layout_content_unset(Evas_Object *obj, const char *swallow) EINA_ARG_NONNULL(1);
+    EAPI Evas_Object       *elm_layout_content_unset(Evas_Object *obj, const char *swallow) EINA_ARG_NONNULL(1);
    /**
     * Set the text of the given part
     *
@@ -21398,10 +21398,12 @@ extern "C" {
     * you want to keep that old content object, use the
     * elm_ctxpopup_content_unset() function.
     *
+    * @deprecated use elm_object_content_set()
+    *
     * @warning Ctxpopup can't hold both a item list and a content at the same
     * time. When a content is set, any previous items will be removed.
     */
-   EAPI void          elm_ctxpopup_content_set(Evas_Object *obj, Evas_Object *content) EINA_ARG_NONNULL(1, 2);
+   EINA_DEPRECATED EAPI void          elm_ctxpopup_content_set(Evas_Object *obj, Evas_Object *content) EINA_ARG_NONNULL(1, 2);
    /**
     * @brief Unset the ctxpopup content
     *
@@ -21410,9 +21412,11 @@ extern "C" {
     *
     * Unparent and return the content object which was set for this widget.
     *
+    * @deprecated use elm_object_content_unset()
+    *
     * @see elm_ctxpopup_content_set()
     */
-   EAPI Evas_Object  *elm_ctxpopup_content_unset(Evas_Object *obj) EINA_ARG_NONNULL(1);
+   EINA_DEPRECATED EAPI Evas_Object  *elm_ctxpopup_content_unset(Evas_Object *obj) EINA_ARG_NONNULL(1);
    /**
     * @brief Set the direction priority of a ctxpopup.
     *
