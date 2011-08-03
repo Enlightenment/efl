@@ -1,12 +1,6 @@
 #include <Elementary.h>
 #include "elm_priv.h"
 
-/**
- * @defgroup Theme
- *
- * Functions to modify the theme in the currently running app.
- */
-
 static Elm_Theme theme_default =
 {
    NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1

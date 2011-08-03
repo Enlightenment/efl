@@ -626,7 +626,7 @@ elm_tooltip_theme(Elm_Tooltip *tt)
  *        @a Evas_Object parameters will receive @a owner as value.
  * @param data what to provide to @a func as callback data/context.
  * @param del_cb called when data is not needed anymore, either when
- *        another callback replaces @func, the tooltip is unset with
+ *        another callback replaces @p func, the tooltip is unset with
  *        elm_object_tooltip_unset() or the owner object @a obj
  *        dies. This callback receives as the first parameter the
  *        given @a data, and @c event_info is NULL.
@@ -783,7 +783,7 @@ elm_object_tooltip_text_set(Evas_Object *obj, const char *text)
  * @param func the function used to create the tooltip contents.
  * @param data what to provide to @a func as callback data/context.
  * @param del_cb called when data is not needed anymore, either when
- *        another callback replaces @func, the tooltip is unset with
+ *        another callback replaces @p func, the tooltip is unset with
  *        elm_object_tooltip_unset() or the owner object @a obj
  *        dies. This callback receives as the first parameter the
  *        given @a data, and @c event_info is NULL.

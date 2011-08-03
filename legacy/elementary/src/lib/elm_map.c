@@ -4436,7 +4436,7 @@ elm_map_group_class_zoom_grouped_set(Elm_Map_Group_Class *clas, int zoom)
 }
 
 /**
- * Set if the markers associated to the group class @clas are hidden or not.
+ * Set if the markers associated to the group class @p clas are hidden or not.
  * If @ref hide is true the markers will be hidden.
  *
  * @param clas the group class

@@ -1473,7 +1473,7 @@ extern "C" {
     *
     * This clears @p th to be empty and then sets it to refer to @p thref
     * so @p th acts as an override to @p thref, but where its overrides
-    * don't apply, it will fall through to @pthref for configuration.
+    * don't apply, it will fall through to @p thref for configuration.
     */
    EAPI void             elm_theme_ref_set(Elm_Theme *th, Elm_Theme *thref);
    /**
@@ -5313,7 +5313,7 @@ extern "C" {
     */
 
    /**
-    * @defgroup Toggle
+    * @defgroup Toggle Toggle
     *
     * @image html img/widget/toggle/preview-00.png
     * @image latex img/widget/toggle/preview-00.eps
@@ -6128,7 +6128,7 @@ extern "C" {
     * @param no_select @c EINA_TRUE to make items selectable,
     * @c EINA_FALSE otherwise
     *
-    * This will make items in @obj selectable or not. In the latter
+    * This will make items in @p obj selectable or not. In the latter
     * case, any user interacion on the gendrid items will neither make
     * them appear selected nor them call their selection callback
     * functions.
@@ -6637,7 +6637,7 @@ extern "C" {
     * @param func The function returning the tooltip contents.
     * @param data What to provide to @a func as callback data/context.
     * @param del_cb Called when data is not needed anymore, either when
-    *        another callback replaces @func, the tooltip is unset with
+    *        another callback replaces @p func, the tooltip is unset with
     *        elm_gengrid_item_tooltip_unset() or the owner @p item
     *        dies. This callback receives as its first parameter the
     *        given @p data, being @c event_info the item handle.
@@ -7806,7 +7806,7 @@ extern "C" {
  * Elementary naming convention for its parts.
  *
  * @ingroup Layout
- * @deprecate use elm_object_text_* instead.
+ * @deprecated use elm_object_text_* instead.
  */
 #define elm_layout_label_set(_ly, _txt) \
   elm_layout_text_set((_ly), "elm.text", (_txt))
@@ -7817,7 +7817,7 @@ extern "C" {
  * Elementary naming convention for its parts.
  *
  * @ingroup Layout
- * @deprecate use elm_object_text_* instead.
+ * @deprecated use elm_object_text_* instead.
  */
 #define elm_layout_label_get(_ly) \
   elm_layout_text_get((_ly), "elm.text")
@@ -9048,7 +9048,7 @@ extern "C" {
    EAPI Evas_Object *elm_entry_icon_unset(Evas_Object *obj);
    /**
     * Sets the visibility of the left-side widget of the scrolled entry,
-    * set by @elm_entry_icon_set().
+    * set by elm_entry_icon_set().
     *
     * @param obj The scrolled entry object
     * @param setting EINA_TRUE if the object should be displayed,
@@ -9090,7 +9090,7 @@ extern "C" {
    EAPI Evas_Object *elm_entry_end_unset(Evas_Object *obj);
    /**
     * Sets the visibility of the end widget of the scrolled entry, set by
-    * @elm_entry_end_set().
+    * elm_entry_end_set().
     *
     * @param obj The scrolled entry object
     * @param setting EINA_TRUE if the object should be displayed,
@@ -10223,7 +10223,7 @@ extern "C" {
     */
 
    /**
-    * @enum _Elm_Thum_Animation_Setting
+    * @enum _Elm_Thumb_Animation_Setting
     * @typedef Elm_Thumb_Animation_Setting
     *
     * Used to set if a video thumbnail is animating or not.
@@ -10404,7 +10404,7 @@ extern "C" {
     * This means the thumbnail is a valid drag target for drag and drop, and can be
     * cut or pasted too.
     *
-    * @seee elm_thumb_editable_get()
+    * @see elm_thumb_editable_get()
     *
     * @ingroup Thumb
     */
@@ -10418,7 +10418,7 @@ extern "C" {
     * This means the thumbnail is a valid drag target for drag and drop, and can be
     * cut or pasted too.
     *
-    * @seee elm_thumb_editable_set()
+    * @see elm_thumb_editable_set()
     *
     * @ingroup Thumb
     */
@@ -10429,7 +10429,7 @@ extern "C" {
     */
 
    /**
-    * @defgroup Hoversel
+    * @defgroup Hoversel Hoversel
     *
     * @image html img/widget/hoversel/preview-00.png
     * @image latex img/widget/hoversel/preview-00.eps
@@ -15440,7 +15440,7 @@ extern "C" {
     * Update the item class of an item
     *
     * @param it The item
-    * @parem itc The item class for the item
+    * @param itc The item class for the item
     *
     * This sets another class fo the item, changing the way that it is
     * displayed. After changing the item class, elm_genlist_item_update() is
@@ -15475,7 +15475,7 @@ extern "C" {
     * @param func The function returning the tooltip contents.
     * @param data What to provide to @a func as callback data/context.
     * @param del_cb Called when data is not needed anymore, either when
-    *        another callback replaces @func, the tooltip is unset with
+    *        another callback replaces @p func, the tooltip is unset with
     *        elm_genlist_item_tooltip_unset() or the owner @p item
     *        dies. This callback receives as its first parameter the
     *        given @p data, being @c event_info the item handle.
@@ -16190,7 +16190,7 @@ extern "C" {
     * Add (append) a new item in a given slideshow widget.
     *
     * @param obj The slideshow object
-    * @aram itc The item class for the item
+    * @param itc The item class for the item
     * @param data The item's data
     * @return A handle to the item added or @c NULL, on errors
     *
@@ -16213,7 +16213,7 @@ extern "C" {
     * function to sort items (by item handles).
     *
     * @param obj The slideshow object
-    * @aram itc The item class for the item
+    * @param itc The item class for the item
     * @param data The item's data
     * @param func The comparing function to be used to sort slideshow
     * items <b>by #Elm_Slideshow_Item item handles</b>
@@ -17022,7 +17022,7 @@ extern "C" {
     * not.
     *
     * @param obj The progress bar object
-    * @param pulse @c EINA_TRUE to put @obj in pulsing mode,
+    * @param pulse @c EINA_TRUE to put @p obj in pulsing mode,
     * @c EINA_FALSE to put it back to its default one
     *
     * By default, progress bars will display values from the low to
@@ -17047,7 +17047,7 @@ extern "C" {
     * not.
     *
     * @param obj The progress bar object
-    * @return @c EINA_TRUE, if @obj is in pulsing mode, @c EINA_FALSE
+    * @return @c EINA_TRUE, if @p obj is in pulsing mode, @c EINA_FALSE
     * if it's in the default one (and on errors)
     *
     * @ingroup Progressbar
@@ -18695,7 +18695,7 @@ extern "C" {
    EAPI Evas_Object          *elm_panes_content_left_unset(Evas_Object *obj) EINA_ARG_NONNULL(1);
 
    /**
-    * Unset the right content used for the panes..
+    * Unset the right content used for the panes.
     *
     * @param obj The panes object.
     * @return The right content object that was being used.
@@ -20081,7 +20081,7 @@ extern "C" {
     * Set weekdays names to be displayed by the calendar.
     *
     * @param obj The calendar object.
-    * @param weedays Array of seven strings to be used as weekday names.
+    * @param weekdays Array of seven strings to be used as weekday names.
     * @warning It must have 7 elements, or it will access invalid memory.
     * @warning The strings must be NULL terminated ('@\0').
     *
@@ -20268,7 +20268,7 @@ extern "C" {
     * date in the calendar.
     * @param repeat Repeat the event following this periodicity. Can be a unique
     * mark (that don't repeat), daily, weekly, monthly or annually.
-    * @return The created mark or @NULL upon failure.
+    * @return The created mark or @p NULL upon failure.
     *
     * Add a mark that will be drawn in the calendar respecting the insertion
     * time and periodicity. It will emit the type as signal to the widget theme.
@@ -20835,7 +20835,7 @@ extern "C" {
     * @param it The diskselector item
     * @return The data associated to @p it
     *
-    * The return value is a pointer to data associated to @item when it was
+    * The return value is a pointer to data associated to @p item when it was
     * created, with function elm_diskselector_item_append(). If no data
     * was passed as argument, it will return @c NULL.
     *
@@ -20876,7 +20876,7 @@ extern "C" {
     * @param it The diskselector item
     * @return The icon associated to @p it
     *
-    * The return value is a pointer to the icon associated to @item when it was
+    * The return value is a pointer to the icon associated to @p item when it was
     * created, with function elm_diskselector_item_append(), or later
     * with function elm_diskselector_item_icon_set. If no icon
     * was passed as argument, it will return @c NULL.
@@ -20905,7 +20905,7 @@ extern "C" {
     * elm_diskselector_side_label_lenght_set(), or "Janu", if this property
     * is set to 4.
     *
-    * When this @item is selected, the entire label will be displayed,
+    * When this @p item is selected, the entire label will be displayed,
     * except for width restrictions.
     * In this case label will be cropped and "..." will be concatenated,
     * but only for display purposes. It will keep the entire string, so
@@ -20929,7 +20929,7 @@ extern "C" {
     * @param it The item of diskselector.
     * @return The label of item.
     *
-    * The return value is a pointer to the label associated to @item when it was
+    * The return value is a pointer to the label associated to @p item when it was
     * created, with function elm_diskselector_item_append(), or later
     * with function elm_diskselector_item_label_set. If no label
     * was passed as argument, it will return @c NULL.
@@ -21041,7 +21041,7 @@ extern "C" {
     * @return The item before @p item, or @c NULL if none or on failure.
     *
     * The list of items follows append order. So it will return item appended
-    * just before @item and that wasn't deleted.
+    * just before @p item and that wasn't deleted.
     *
     * If it is the first item, @c NULL will be returned.
     * First item can be get by elm_diskselector_first_item_get().
@@ -21060,7 +21060,7 @@ extern "C" {
     * @return The item after @p item, or @c NULL if none or on failure.
     *
     * The list of items follows append order. So it will return item appended
-    * just after @item and that wasn't deleted.
+    * just after @p item and that wasn't deleted.
     *
     * If it is the last item, @c NULL will be returned.
     * Last item can be get by elm_diskselector_last_item_get().
@@ -21100,7 +21100,7 @@ extern "C" {
     * @param func the function used to create the tooltip contents.
     * @param data what to provide to @a func as callback data/context.
     * @param del_cb called when data is not needed anymore, either when
-    *        another callback replaces @func, the tooltip is unset with
+    *        another callback replaces @p func, the tooltip is unset with
     *        elm_diskselector_item_tooltip_unset() or the owner @a item
     *        dies. This callback receives as the first parameter the
     *        given @a data, and @c event_info is the item.
@@ -21318,7 +21318,7 @@ extern "C" {
     */
 
    /**
-    * @defgroup Ctxpopup
+    * @defgroup Ctxpopup Ctxpopup
     *
     * @image html img/widget/ctxpopup/preview-00.png
     * @image latex img/widget/ctxpopup/preview-00.eps

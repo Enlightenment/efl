@@ -1610,7 +1610,7 @@ elm_font_overlay_list_get(void)
  *
  * @p font has to be in the format returned by
  * elm_font_fontconfig_name_get(). @see elm_font_overlay_list_get()
- * and @elm_font_overlay_unset().
+ * and elm_font_overlay_unset().
  */
 EAPI void
 elm_font_overlay_set(const char    *text_class,

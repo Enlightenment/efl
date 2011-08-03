@@ -1184,7 +1184,7 @@
  * @until elm_win_autodel
  *
  * Next a simple background is placed on our windows. More details on
- * @ref bg_01_example_page:
+ * @ref bg_01_example_page :
  * @until evas_object_show(bg)
  *
  * Now, the exciting part, let's add the calendar with elm_calendar_add(),
@@ -1499,7 +1499,7 @@
  * @image html screenshots/spinner_example.png
  * @image latex screenshots/spinner_example.eps width=\textwidth
  *
- * See the full @ref spinner_example_c "source code" for this example.
+ * See the full @ref spinner_example.c "source code" for this example.
  *
  * @example spinner_example.c
  */
@@ -1597,7 +1597,7 @@
  * @image html screenshots/slider_example.png
  * @image latex screenshots/slider_example.eps width=\textwidth
  *
- * See the full @ref slider_example_c "source code" for this example.
+ * See the full @ref slider_example.c "source code" for this example.
  *
  * @example slider_example.c
  */
@@ -3038,7 +3038,7 @@
  * The callback for this button will check what type of signal it should send,
  * and then emit it. The code for this callback follows:
  *
- * @dontinclude layout_exmaple_03.c
+ * @dontinclude layout_example_03.c
  * @skip static Eina_Bool
  * @until Enlarge
  * @until }
@@ -3127,7 +3127,7 @@
   * green). Our example will allow the user to choose the animation the flip
   * uses and to interact with it. To allow the user to choose the interaction
   * mode we use radio buttons, we will however not explain them, if you would
-  * like to know more about radio buttons see @ref radio.
+  * like to know more about radio buttons see @ref Radio.
   *
   * We start our example with the usual setup and then create the 2 rectangles
   * we will use in our flip:
@@ -3629,7 +3629,7 @@
  * @image html screenshots/index_example_03.png
  * @image latex screenshots/index_example_03.eps
  *
- * See the full @ref index_example_c "source code" for
+ * See the full @ref index_example.c "source code" for
  * this example.
  *
  * @example index_example_02.c
@@ -3773,7 +3773,7 @@
  * This example will look like this:
  *
  * @image html screenshots/separator_example_01.png
- * @image eps screenshots/separator_example_01.eps width=\textwidth
+ * @image latex screenshots/separator_example_01.eps width=\textwidth
  *
  * @example separator_example_01.c
  */
