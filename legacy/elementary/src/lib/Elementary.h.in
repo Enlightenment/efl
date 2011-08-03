@@ -15721,9 +15721,12 @@ extern "C" {
    /**
     * @defgroup Check Check
     *
-    * @image html img/widget/button/preview-00.png
-    * @image html img/widget/button/preview-01.png
-    * @image html img/widget/button/preview-02.png
+    * @image html img/widget/check/preview-00.png
+    * @image latex img/widget/check/preview-00.eps
+    * @image html img/widget/check/preview-01.png
+    * @image latex img/widget/check/preview-01.eps
+    * @image html img/widget/check/preview-02.png
+    * @image latex img/widget/check/preview-02.eps
     *
     * @brief The check widget allows for toggling a value between true and
     * false.
