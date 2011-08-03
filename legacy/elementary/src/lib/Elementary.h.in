@@ -12,6 +12,32 @@
 @mainpage Elementary
 @image html  elementary.png
 @version @PACKAGE_VERSION@
+@date 2008-2011
+
+@section intro What is Elementary?
+
+This is a VERY SIMPLE toolkit. It is not meant for writing extensive desktop
+applications (yet). Small simple ones with simple needs.
+
+It is meant to make the programmers work almost brainless but give them lots
+of flexibility.
+
+License: LGPL v2 (see COPYING in the base of Elementary's source). This
+applies to all files in the source here.
+
+Acknowledgements: There is a lot that goes into making a widget set, and
+they don't happen out of nothing. It's like trying to make everyone
+everywhere happy, regardless of age, gender, race or nationality - and
+that is really tough. So thanks to people and organisations behind this,
+as listed in the @ref authors page.
+
+@verbatim
+Pants
+@endverbatim
+*/
+
+/**
+@page authors Authors
 @author Carsten Haitzler <raster@@rasterman.com>
 @author Gustavo Sverzut Barbieri <barbieri@@profusion.mobi>
 @author Cedric Bail <cedric.bail@@free.fr>
@@ -54,29 +80,10 @@
 @author Shinwoo Kim <kimcinoo@@gmail.com>
 @author Govindaraju SM <govi.sm@@samsung.com> <govism@@gmail.com>
 @author Prince Kumar Dubey <prince.dubey@@samsung.com> <prince.dubey@@gmail.com>
-@date 2008-2011
 
-@section intro What is Elementary?
-
-This is a VERY SIMPLE toolkit. It is not meant for writing extensive desktop
-applications (yet). Small simple ones with simple needs.
-
-It is meant to make the programmers work almost brainless but give them lots
-of flexibility.
-
-License: LGPL v2 (see COPYING in the base of Elementary's source). This
-applies to all files in the source here.
-
-Acknowledgements: There is a lot that goes into making a widget set, and
-they don't happen out of nothing. It's like trying to make everyone
-everywhere happy, regardless of age, gender, race or nationality - and
-that is really tough. So thanks to people and organisations behind this,
-aslisted in the Authors section above.
-
-@verbatim
-Pants
-@endverbatim
-*/
+Please contact <enlightenment-devel@lists.sourceforge.net> to get in
+contact with the developers and maintainers.
+ */
 
 #ifndef ELEMENTARY_H
 #define ELEMENTARY_H
