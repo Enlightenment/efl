@@ -989,11 +989,16 @@ _range_del(Evas_Textblock_Cursor *c __UNUSED__, Evas_Object *o __UNUSED__, Entry
    evas_textblock_cursor_range_delete(en->sel_start, en->sel_end);
 }
 
-static void
+/* Return true if changed something */
+static Eina_Bool
 _backspace(Evas_Textblock_Cursor *c, Evas_Object *o __UNUSED__, Entry *en __UNUSED__)
 {
    if (evas_textblock_cursor_char_prev(c))
-     evas_textblock_cursor_char_delete(c);
+     {
+        evas_textblock_cursor_char_delete(c);
+        return EINA_TRUE;
+     }
+   return EINA_FALSE;
 }
 
 static void
@@ -1155,14 +1160,20 @@ _edje_key_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, v
         else
           {
              if (en->have_selection)
-               _range_del(en->cursor, rp->object, en);
+               {
+                  _range_del(en->cursor, rp->object, en);
+               }
              else
-               _backspace(en->cursor, rp->object, en);
+               {
+                  if (_backspace(en->cursor, rp->object, en))
+                    {
+                       _edje_emit(ed, "entry,changed", rp->part->name);
+                       _edje_emit(ed, "entry,changed,user", rp->part->name);
+                    }
+               }
           }
         _sel_clear(en->cursor, rp->object, en);
         _anchors_get(en->cursor, rp->object, en);
-        _edje_emit(ed, "entry,changed", rp->part->name);
-        _edje_emit(ed, "entry,changed,user", rp->part->name);
         _edje_emit(ed, "entry,key,backspace", rp->part->name);
         ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
      }
