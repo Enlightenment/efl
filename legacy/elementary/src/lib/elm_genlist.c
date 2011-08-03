@@ -540,6 +540,12 @@ _del_hook(Evas_Object *obj)
    if (wd->multi_timer) ecore_timer_del(wd->multi_timer);
    if (wd->mode_type) eina_stringshare_del(wd->mode_type);
    if (wd->scr_hold_timer) ecore_timer_del(wd->scr_hold_timer);
+   if (wd->walking > 0)
+     {
+        wd->walking = 0;
+        elm_genlist_clear(obj);
+     }
+
    free(wd);
 }
 
@@ -829,7 +835,14 @@ _item_select(Elm_Genlist_Item *it)
 call:
    it->walking++;
    it->wd->walking++;
-   if (it->func.func) it->func.func((void *)it->func.data, it->base.widget, it);
+   if (it->func.func)
+     {
+        Evas_Object *baseobj = it->base.widget;
+        const char *objtype = NULL;
+        it->func.func((void *)it->func.data, it->base.widget, it);
+        objtype = evas_object_type_get(baseobj);
+        if ((!objtype) || (!strcmp(objtype,""))) return;
+     }
    if (!it->delete_me)
      evas_object_smart_callback_call(it->base.widget, SIG_SELECTED, it);
    it->walking--;
