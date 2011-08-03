@@ -22,18 +22,24 @@ applications (yet). Small simple ones with simple needs.
 It is meant to make the programmers work almost brainless but give them lots
 of flexibility.
 
-License: LGPL v2 (see COPYING in the base of Elementary's source). This
-applies to all files in the source here.
+@section organization Organization
 
-Acknowledgements: There is a lot that goes into making a widget set, and
-they don't happen out of nothing. It's like trying to make everyone
-everywhere happy, regardless of age, gender, race or nationality - and
-that is really tough. So thanks to people and organisations behind this,
-as listed in the @ref authors page.
+One can divide Elemementary into three main groups:
+@li @ref infralist - These are modules that deal with Elementary as a whole.
+@li @ref widgetslist - These are the widgets you'll compose your UI out of.
+@li @ref containerslist - These are the containers in which the widgets will be
+                          layouted.
 
-@verbatim
-Pants
-@endverbatim
+@section license License
+
+LGPL v2 (see COPYING in the base of Elementary's source). This applies to
+all files in the source tree.
+
+@section ack Acknowledgements
+There is a lot that goes into making a widget set, and they don't happen out of
+nothing. It's like trying to make everyone everywhere happy, regardless of age,
+gender, race or nationality - and that is really tough. So thanks to people and
+organisations behind this, as listed in the @ref authors page.
 */
 
 /**

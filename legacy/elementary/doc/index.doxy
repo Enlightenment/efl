@@ -1,5 +1,5 @@
 /**
- * @page moduleslist Index
+ * @page infralist Infrastructure list
  *
  * Elementary is mostly composed of widgets, but it also contains some
  * infrastructure modules that facilitate the use of widgets. These are the
@@ -26,7 +26,15 @@
  * @li @ref Transit
  * @li @ref WidgetNavigation
  *
- * And here a list of the widgets and some images to give you an idea of what
+ * The other two main groups in Elementary are:
+ * @li @ref widgetslist - These are the widgets you'll compose your UI out of.
+ * @li @ref containerslist - These are the containers in which the widgets will be
+ *                           layouted.
+ */
+/**
+ * @page widgetslist Widget list
+ *
+ * Here is a list of the widgets and some images to give you an idea of what
  * they are:
  * @li @ref Actionslider
  *
@@ -217,10 +225,18 @@
  * @image html img/widget/win/preview-00.png
  * @image latex img/widget/win/preview-00.eps
  *
- * Elementary is also about displaing its widgets in a nice layout, for this
- * purpose it provides a number of containers. It's important to note that as
- * containers these widgets don't have their own visual identity, so here we
- * show one use for them and a diagram showing their component parts:
+ * The other two main groups in Elementary are:
+ * @li @ref infralist - These are modules that deal with Elementary as a whole.
+ * @li @ref containerslist - These are the containers in which the widgets will be
+ *                           layouted.
+ */
+/**
+ * @page containerslist Containers List
+ *
+ * Elementary is about displaing its widgets in a nice layout, for this purpose
+ * it provides a number of containers. It's important to note that as containers
+ * widgets don't have their own visual identity, so here we show one use for
+ * them and a diagram showing their component parts:
  * @li @ref Box
  *
  * @image html img/widget/box/preview-00.png
@@ -270,4 +286,8 @@
  *
  * @image html img/widget/table/preview-00.png
  * @image latex img/widget/table/preview-00.eps
+ *
+ * The other two main groups in Elementary are:
+ * @li @ref infralist - These are modules that deal with Elementary as a whole.
+ * @li @ref widgetslist - These are the widgets you'll compose your UI out of.
  */
