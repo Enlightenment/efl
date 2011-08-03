@@ -6,26 +6,9 @@ These routines are used for Edje.
 @mainpage Edje Library Documentation
 @image html  e.png
 @version 1.1
-@author Carsten Haitzler <raster@@rasterman.com>
-@author Tilman Sauerbeck (tilman at code-monkey de)
-@author ZigsMcKenzie <zigsmckenzie@@gmail.com>
-@author Cedric BAIL <cedric.bail@@free.fr>
-@author Brian Mattern <rephorm@@rephorm.com>
-@author Mathieu Taillefumier <mathieu.taillefumier@@free.fr>
-@author Tristan <blunderer@@gmail.com>
-@author Gustavo Lima Chaves <glima@@profusion.mobi>
-@author Bruno Dilly <bdilly@@profusion.mobi>
-@author Fabiano Fidêncio <fidencio@@profusion.mobi>
-@author Jihoon Kim <jihoon48.kim@@samsung.com>
-@author Tiago Falcão <tiago@@profusion.mobi>
-@author Davide Andreoli <dave@@gurumeditation.it>
-@author Sebastian Dransfeld <sd@@tango.flipp.net>
-@author Tom Hacohen <tom@@stosb.com>
-@author Aharon Hillel <a.hillel@@partner.samsung.com>
 @date 2003-2011
 
-
-
+Please see the @ref authors page for contact details.
 
 
 
@@ -460,6 +443,29 @@ part of Edje's API:
 @todo Complete documentation of API
 @todo Bytecode language for extending programs... but what/how?
 
+*/
+
+/**
+@page authors Authors
+@author Carsten Haitzler <raster@@rasterman.com>
+@author Tilman Sauerbeck (tilman at code-monkey de)
+@author ZigsMcKenzie <zigsmckenzie@@gmail.com>
+@author Cedric BAIL <cedric.bail@@free.fr>
+@author Brian Mattern <rephorm@@rephorm.com>
+@author Mathieu Taillefumier <mathieu.taillefumier@@free.fr>
+@author Tristan <blunderer@@gmail.com>
+@author Gustavo Lima Chaves <glima@@profusion.mobi>
+@author Bruno Dilly <bdilly@@profusion.mobi>
+@author Fabiano Fidêncio <fidencio@@profusion.mobi>
+@author Jihoon Kim <jihoon48.kim@@samsung.com>
+@author Tiago Falcão <tiago@@profusion.mobi>
+@author Davide Andreoli <dave@@gurumeditation.it>
+@author Sebastian Dransfeld <sd@@tango.flipp.net>
+@author Tom Hacohen <tom@@stosb.com>
+@author Aharon Hillel <a.hillel@@partner.samsung.com>
+
+Please contact <enlightenment-devel@lists.sourceforge.net> to get in
+contact with the developers and maintainers.
 */
 
 
