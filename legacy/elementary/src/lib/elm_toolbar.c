@@ -1352,9 +1352,13 @@ EAPI void
 elm_toolbar_item_separator_set(Elm_Toolbar_Item *item, Eina_Bool separator)
 {
    ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(item);
+   Evas_Object *obj = item->base.widget;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   double scale;
    if (item->separator == separator) return;
    item->separator = separator;
-   _theme_hook(item->base.view);
+   scale = (elm_widget_scale_get(obj) * _elm_config->scale);
+   _theme_hook_item(obj, item, scale, wd->icon_size);
 }
 
 EAPI Eina_Bool
