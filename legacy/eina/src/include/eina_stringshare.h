@@ -130,7 +130,7 @@
  * with eina_stringshare_add():
  *
  * @image html eina_stringshare.png
- * @image latex eina_stringshare.eps width=\textwidth
+ * @image latex eina_stringshare.eps height=\textheight
  *
  * For more information, see @ref eina_stringshare_example_01_page
  * "this example".
