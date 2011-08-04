@@ -10,6 +10,8 @@ struct _Shadow
    unsigned short w, h;
 };
 
+static Eina_Bool _inside_rects(Shadow *s, int x, int y, int bx, int by, Ecore_X_Rectangle *rects, int num);
+
 //static int shadow_count = 0;
 static Shadow **shadow_base = NULL;
 static int shadow_num = 0;
@@ -224,12 +226,19 @@ static Ecore_X_Window
 _ecore_x_window_shadow_tree_at_xy_get_shadow(Shadow *s, int bx, int by, int x, int y, Ecore_X_Window *skip, int skip_num)
 {
    Ecore_X_Window child;
-   int i = 0, j = 0, wx = 0, wy = 0;
+   Ecore_X_Rectangle *rects;
+   int i = 0, j = 0, wx = 0, wy = 0, num = 0;
 
    wx = s->x + bx;
    wy = s->y + by;
    if (!((x >= wx) && (y >= wy) && (x < (wx + s->w)) && (y < (wy + s->h))))
      return 0;
+
+   rects = ecore_x_window_shape_rectangles_get(s->win, &num);
+   if (!_inside_rects(s, x, y, bx, by, rects, num)) return 0;
+   num = 0;
+   rects = ecore_x_window_shape_input_rectangles_get(s->win, &num);
+   if (!_inside_rects(s, x, y, bx, by, rects, num)) return 0;
 
    if (s->children)
      {
@@ -279,6 +288,28 @@ _ecore_x_window_shadow_tree_at_xy_get(Ecore_X_Window base, int bx, int by, int x
    if (!s) return 0;
 
    return _ecore_x_window_shadow_tree_at_xy_get_shadow(s, bx, by, x, y, skip, skip_num);
+}
+
+static Eina_Bool 
+_inside_rects(Shadow *s, int x, int y, int bx, int by, Ecore_X_Rectangle *rects, int num) 
+{
+   Eina_Bool inside = EINA_FALSE;
+   int i = 0;
+
+   if (!rects) return EINA_FALSE;
+   for (i = 0; i < num; i++) 
+     {
+        if ((x >= s->x + bx + rects[i].x) && 
+            (y >= s->y + by + rects[i].y) && 
+            (x < (int)(s->x + bx + rects[i].x + rects[i].width)) && 
+            (y < (int)(s->y + by + rects[i].y + rects[i].height)))
+          {
+             inside = EINA_TRUE;
+             break;
+          }
+     }
+   free(rects);
+   return inside;
 }
 
 /**

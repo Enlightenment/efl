@@ -25,7 +25,6 @@ ecore_x_window_shape_input_mask_set(Ecore_X_Window win, Ecore_X_Pixmap mask)
 #ifdef ECORE_XCB_SHAPE
    xcb_shape_mask(_ecore_xcb_conn, XCB_SHAPE_SO_SET, XCB_SHAPE_SK_INPUT, 
                   win, 0, 0, mask);
-
 #else
    return;
    win = 0;
@@ -48,7 +47,6 @@ ecore_x_window_shape_mask_set(Ecore_X_Window win, Ecore_X_Pixmap mask)
 #ifdef ECORE_XCB_SHAPE
    xcb_shape_mask(_ecore_xcb_conn, XCB_SHAPE_SO_SET, XCB_SHAPE_SK_BOUNDING, 
                   win, 0, 0, mask);
-
 #else
    return;
    win = 0;
