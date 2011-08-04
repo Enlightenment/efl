@@ -654,7 +654,7 @@ gstreamer_video_sink_new(Emotion_Gstreamer_Video *ev,
    Evas_Object *obj;
    GstStateChangeReturn res;
 
-   obj = _emotion_image_get(o);
+   obj = emotion_object_image_get(o);
    if (!obj)
      {
         ERR("Not Evas_Object specified");

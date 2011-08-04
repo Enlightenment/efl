@@ -901,6 +901,8 @@ EAPI Emotion_Suspend emotion_object_suspend_get        (Evas_Object *obj);
 EAPI Eina_Bool    emotion_object_extension_may_play_fast_get(const char *file);
 EAPI Eina_Bool    emotion_object_extension_may_play_get(const char *file);
 
+EAPI Evas_Object *emotion_object_image_get(const Evas_Object *obj);
+
 typedef struct _Emotion_Webcam Emotion_Webcam;
 
 extern int EMOTION_WEBCAM_UPDATE;
