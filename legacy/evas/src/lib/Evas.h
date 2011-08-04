@@ -7816,7 +7816,7 @@ EAPI Evas_Textblock_Cursor *evas_object_textblock_cursor_get(const Evas_Object *
  * @param obj the object to associate to.
  * @return the new cursor.
  */
-EAPI Evas_Textblock_Cursor       *evas_object_textblock_cursor_new(Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_MALLOC;
+EAPI Evas_Textblock_Cursor       *evas_object_textblock_cursor_new(const Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_MALLOC;
 
 
 /**

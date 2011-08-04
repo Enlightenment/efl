@@ -5355,7 +5355,7 @@ evas_object_textblock_cursor_get(const Evas_Object *obj)
 }
 
 EAPI Evas_Textblock_Cursor *
-evas_object_textblock_cursor_new(Evas_Object *obj)
+evas_object_textblock_cursor_new(const Evas_Object *obj)
 {
    Evas_Textblock_Cursor *cur;
 
