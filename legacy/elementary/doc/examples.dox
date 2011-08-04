@@ -40,6 +40,12 @@
  * @ref clock_example
  *
  * @ref mapbuf_example
+
+ * @ref map_example_01
+ *
+ * @ref map_example_02
+ *
+ * @ref map_example_03
  *
  * @ref diskselector_example_01
  *
@@ -1847,6 +1853,290 @@
  * @image latex screenshots/mapbuf_example.eps width=\textwidth
  *
  * @example mapbuf_example.c
+ */
+
+/**
+ * @page map_example_01 Map Example - Creation and Zoom
+ *
+ * This code places a Elementary map widget on a window,
+ * to exemplify part of the widget's API.
+ *
+ * Let's start adding a map to our window:
+ * @dontinclude map_example_01.c
+ * @skipline elm_map_add
+ * @until evas_object_show
+ *
+ * It's enough to display a world map inside our window. But usually you'll
+ * need to let user interact with the map. We need to place some buttons,
+ * so the user could control the map. It's done on the followin code.
+ * If you don't know about boxes, or buttons, check their examples,
+ * @ref box_example_01 "Box Example 1" and
+ * @ref button_example_01 "Button Example 1".
+ * @skipline elm_box_add
+ * @until _bt_zoom_fill
+ *
+ * We are adding callback functions that will be called when the user clicks
+ * over these buttons. Let's study such functions, starting from the function
+ * that will zoom in the map:
+ * @dontinclude map_example_01.c
+ * @skipline static void
+ * @until }
+ *
+ * First thing done is assure zoom mode is set to manual. It's the default
+ * mode, but the other buttons will change this, so before setting a new
+ * zoom value, we need to change the zoom mode.
+ *
+ * Then, we get the current zoom value, increment that, and set the new
+ * value to the map. If it's bigger than max zoom value allowed, it will
+ * remain on the maximum allowed, nothing bad will happen. This way we
+ * don't need to check first if it won't be bigger than max.
+ *
+ * Zoom out function is basically the same thing, but zoom will be decremented
+ * instead of incremented:
+ * @skipline static void
+ * @until }
+ *
+ * The "X" button, when pressed, will call a function that will
+ * zoom the map until it fits
+ * inside the scroll frame with no pixels outside this area:
+ * @skipline static void
+ * @until }
+ *
+ * And the "#" button, will call a function that will zoom until map fills
+ * scroll, ensuring no pixels are left unfilled:
+ * @skipline static void
+ * @until }
+ *
+ * But we can also set map to show something different from default
+ * world map, changing the zoom level and region shown. Let's pick a
+ * wonderful city coordinates, one placed at <tt> 43 20 S, 22 90 W </tt>.
+ * Since map uses double variables to represent latitude and longitude,
+ * to represent north or east, we should represent it as positive values,
+ * and south or west as negative. Also, the value will be represented as
+ * degree.min. So, for example, our longitude <tt> 43 20 S </tt> will
+ * be represented
+ * by the value <tt> -43.20 </tt>. A zoom set to @c 12 should be enough
+ * to show a city.
+ * @skipline region_show
+ * @until zoom_set
+ *
+ * See @ref map_example_01.c "map_example_01.c" for full source,
+ * whose window should
+ * look like this picture:
+ *
+ * @image html screenshots/map_example_01.png
+ * @image latex screenshots/map_example_01.eps width=\textwidth
+ *
+ * @example map_example_01.c
+ */
+
+/**
+ * @page map_example_02 Map Example - Markers Usage
+ *
+ * This code places a Elementary map widget on a window,
+ * to exemplify part of the widget's API, related to markers.
+ *
+ * We'll start this example the same way
+ * @ref map_example_01 "Map Example 1". Adding a map with buttons to control
+ * zoom, so if you didn't read it yet, just do it now.
+ * @dontinclude map_example_02.c
+ * @skipline elm_map_add
+ * @until zoom_fill
+ *
+ * Markers can be placed over the map to represent anything we want. Let's
+ * say we want to represent some countries and cities with markers. To add
+ * a mark we need a marker class and also a group class.
+ *
+ * A marker class can be created as the following code does:
+ * @skipline marker_class_new
+ * @until style_set
+ *
+ * These lines create a new class, set a function to return the object
+ * to be displayed inside the bubble that opens when a user clicks over
+ * the mark, set the function to retrieve an icon to be placed inside
+ * the marker, and defines the style of this marker. It can be @c empty
+ * that will just show the icon, @c radio, that will place a blue circle,
+ * and @c radio2 that will place a green circle.
+ *
+ * The group classes can be created in a very similar way, but you won't
+ * set callback functions to get stuff to be placed inside the bubble,
+ * since clicking over a group marker will just get the content
+ * of all the markers composing the group and place on this bubble.
+ * The limit of markers to get can be set with function
+ * elm_map_max_marker_per_group_set() but we won't need on this example.
+ * But we can set the zoom required to display the marks that belongs
+ * to this group class, so if the zoom is less than this value, nothing
+ * will be show. The group marker style will be used when markers are
+ * near each other, and the count of markers grouped will be placed
+ * inside the group marker.
+ * @skipline group_class_new
+ * @until displayed_set
+ *
+ * For marker and group classes to represent a country, the same is done:
+ * @skipline marker_class_new
+ * @until displayed_set
+ *
+ * Next we'll create some markers representing cities and coutries.
+ * We'll append them in a list, to close up them later. To create a marker
+ * we need to pass the coordinates, marker class, group class and optionally,
+ * data:
+ * @skipline marker_add
+ * @until data_chile
+ * @until append
+ *
+ * We have created a specific structure for this example to store the name
+ * of the place and a path to a image file to represent it.
+ * @dontinclude map_example_02.c
+ * @skipline typedef
+ * @until Marker_Data;
+ *
+ * We'll create instances for each place:
+ * @skipline argentina
+ * @until sky_03
+ *
+ * Finally, on our @c main function, we ask the map to show all the markers
+ * with the biggest zoom possible, passing the list of markers added:
+ * @skipline list_show
+ *
+ * Actually the zoom is not what we want, so after the download of the map
+ * is concluded, let's set another zoom level. For this we add a callback
+ * for @c "downloaded" signal:
+ * @skipline callback_add
+ *
+ * The callback function will simply set the zoom level we want and remove
+ * the callback, otherwise it would be called all the time, after the map
+ * is downloaded:
+ * @dontinclude map_example_02.c
+ * @skipline _map_downloaded
+ * @until }
+ *
+ * We added two kinds of callback functions when we added the markers.
+ * One will return the content of the bubbles, and other the icon to be
+ * placed inside the marker.
+ *
+ * To return an icon, all we need to do is add a elm_icon and return it:
+ * @dontinclude map_example_02.c
+ * @skip static Evas_Object
+ * @skip }
+ * @skipline static Evas_Object
+ * @until }
+ *
+ * For the content, let's return something more elaboreate. We will return
+ * a box with an image representing the place, and the name of this place:
+ * @skipline static Evas_Object
+ * @until }
+ *
+ * See @ref map_example_02.c "map_example_02.c" for full source,
+ * whose window should
+ * look like this picture:
+ *
+ * @image html screenshots/map_example_02.png
+ * @image latex screenshots/map_example_02.eps width=\textwidth
+ *
+ * @example map_example_02.c
+ */
+
+/**
+ * @page map_example_03 Map Example - Route and Name Usage
+ *
+ * This code places a Elementary map widget on a window,
+ * to exemplify part of the widget's API, related routes and names.
+ *
+ * In this example, we will suppose we need to set a route for the user
+ * from his current point (a gps could provide us this information)
+ * to somewhere else. So we would have coordinates of this
+ * start point, and would like that he enters the address of his
+ * destination in a entry, and we'll trace a route on the map.
+ *
+ * We'll start this example the same way
+ * @ref map_example_01 "Map Example 1". Adding a map with buttons to control
+ * zoom, so if you didn't read it yet, just do it now. Actually there is
+ * a change, that we're aligning buttons to the top, since we wan't a
+ * vertical control box this time.
+ * @dontinclude map_example_03.c
+ * @skipline elm_map_add
+ * @until zoom_fill
+ * @until align_set
+ *
+ * Next we set the box to be vertical and change it's size, weight
+ * and alignment, so it will occupy the top of the window, from left
+ * to right:
+ * @skipline horizontal_set
+ * @until align_set
+ *
+ * We'll add an entry with a preliminar address, that I know will
+ * find a coordinate, to examplify names work. But you can try
+ * lots of addresses. From city or country names to pubs, or whatever
+ * you want. To try is enough to run the example, type the address and
+ * press "Route" button. This button will call a function that will
+ * get the typed address and find the route.
+ * @skipline entry_add
+ * @until align_set
+ * @until align_set
+ *
+ * The button pass an structure
+ * instance we make for this example, with all the fields we'll need.
+ * @dontinclude map_example_03.c
+ * @skipline _Example_Data
+ * @until example_data;
+ *
+ * Let's initialize it's fields:
+ * @skipline example_data.map
+ * @until example_data.start_lat
+ *
+ * @c map and @c entry are our elementary objects, @c route is set to @c NULL,
+ * since we don't have one yet, and the coordinates of the start point is set
+ * (longitude and latitude).
+ *
+ * Also, let's show this start point at the center of the map, and set a zoom
+ * nice enough to close it:
+ * @skipline region_show
+ * @until zoom_set
+ *
+ * These lines were already explained on @ref map_example_02 "Map Example 2".
+ *
+ * Now we'll see the "Route" button callback function:
+ * @dontinclude map_example_03.c
+ * @skip static void
+ * @skip }
+ * @skipline static void
+ * @until }
+ *
+ * First we get the address string from our entry. Then we use @c name
+ * conversion
+ * util functions, so we could get coordinates for this address. These
+ * functions return an #Elm_Map_Name handle for us.
+ * Function elm_map_utils_convert_name_into_coord() will do this job for us,
+ * but it's an assyncronous function, since it requires this
+ * information from the server.
+ *
+ * That's the reason we need to wait for
+ * <tt> "name,loaded" </tt> signal. We add a callback function for this:
+ * @dontinclude map_example_03.c
+ * @skipline static void
+ * @until }
+ *
+ * This function will check if a previous route was traced, and if it was,
+ * it will remove it. Next we'll get destination coordinates from our
+ * @c name, and use them to add a new route.
+ *
+ * To trace a route we need to know how the user will go through the path.
+ * Let's suppose he'll be walking, but doesn't like to walk, so we
+ * need to choose the shortest path intead of the route that would
+ * made him spend less time. Coordinates of the point from where he will
+ * start and of the destination point need to be passed as well.
+ *
+ * Finally we'll set a color different from solid red (default), to show
+ * our route. We set it green.
+ *
+ * See @ref map_example_03.c "map_example_03.c" for full source,
+ * whose window should
+ * look like this picture:
+ *
+ * @image html screenshots/map_example_03.png
+ * @image latex screenshots/map_example_03.eps width=\textwidth
+ *
+ * @example map_example_03.c
  */
 
 /**

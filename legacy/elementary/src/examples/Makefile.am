@@ -62,6 +62,9 @@ SRCS = \
 	calendar_example_04.c \
 	calendar_example_05.c \
 	calendar_example_06.c \
+	map_example_01.c \
+	map_example_02.c \
+	map_example_03.c \
 	toolbar_example_01.c \
 	toolbar_example_02.c \
 	toolbar_example_03.c \
@@ -163,6 +166,9 @@ pkglib_PROGRAMS += \
 	calendar_example_04 \
 	calendar_example_05 \
 	calendar_example_06 \
+	map_example_01 \
+	map_example_02 \
+	map_example_03 \
 	toolbar_example_01 \
 	toolbar_example_02 \
 	toolbar_example_03 \
@@ -243,6 +249,9 @@ SCREENSHOTS = \
 	calendar_example_04:calendar_example_04.png:0.0 \
 	calendar_example_05:calendar_example_05.png:0.0 \
 	calendar_example_06:calendar_example_06.png:0.0 \
+	map_example_01:map_example_01.png:2 \
+	map_example_02:map_example_02.png:2.5 \
+	map_example_03:map_example_03.png:2 \
 	toolbar_example_01:toolbar_example_01.png:0.0 \
 	toolbar_example_02:toolbar_example_02.png:1 \
 	toolbar_example_03:toolbar_example_03.png:1 \
