@@ -9536,6 +9536,10 @@ EAPI const Evas_Smart_Class *evas_object_smart_clipped_class_get     (void) EINA
  * in Evas</b>, all of them using children size hints to define their
  * size and alignment inside their cell space.
  *
+ * Examples on this smart object's usage:
+ * - @ref Example_Evas_Box
+ * - @ref Example_Evas_Size_Hints
+ *
  * @see @ref Evas_Object_Group_Size_Hints
  *
  * @ingroup Evas_Smart_Object_Group

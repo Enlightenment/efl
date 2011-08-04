@@ -77,6 +77,10 @@ pkglib_PROGRAMS += evas_smart_object
 evas_smart_object_SOURCES = evas-smart-object.c
 evas_smart_object_LDADD = $(top_builddir)/src/lib/libevas.la @ECORE_EVAS_LIBS@
 
+pkglib_PROGRAMS += evas_box
+evas_box_SOURCES = evas-box.c
+evas_box_LDADD = $(top_builddir)/src/lib/libevas.la @ECORE_EVAS_LIBS@
+
 #the ones using ecore_evas and edje follow
 AM_CPPFLAGS += @EDJE_CFLAGS@
 
@@ -121,7 +125,8 @@ files_DATA += \
 	$(srcdir)/evas-stacking.c \
 	$(srcdir)/evas-map-utils.c \
 	$(srcdir)/evas-text.c \
-	$(srcdir)/evas-smart-object.c
+	$(srcdir)/evas-smart-object.c \
+	$(srcdir)/evas-box.c
 endif
 
 EXTRA_DIST = $(EDCS) \
@@ -137,6 +142,7 @@ EXTRA_DIST = $(EDCS) \
 	$(srcdir)/evas-map-utils.c \
 	$(srcdir)/evas-text.c \
 	$(srcdir)/evas-smart-object.c \
+	$(srcdir)/box.c \
 	$(srcdir)/enlightenment.png \
 	$(srcdir)/red.png \
 	$(srcdir)/im1.png \

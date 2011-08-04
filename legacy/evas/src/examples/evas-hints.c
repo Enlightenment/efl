@@ -10,7 +10,7 @@
  * output.
  *
  * @verbatim
- * gcc -o evas-events evas-events.c `pkg-config --libs --cflags ecore-evas edje`
+ * gcc -o evas-events evas-events.c `pkg-config --libs --cflags ecore-evas`
  * @endverbatim
  */
 
@@ -27,6 +27,21 @@
 
 #define WIDTH  320
 #define HEIGHT 480
+
+static const char commands[] = \
+  "commands are:\n"
+  "\tShift + a - change alignment hints on top rectangle\n"
+  "\tShift + m - change min. size hint on top rectangle\n"
+  "\tShift + n - change max. size hint on top rectangle\n"
+  "\tShift + p - change padding hints on top rectangle\n"
+  "\tShift + w - change weight hints on top rectangle\n\n"
+  "\tControl + a - change alignment hints on bottom rectangle\n"
+  "\tControl + m - change min. size hint on bottom rectangle\n"
+  "\tControl + n - change max. size hint on bottom rectangle\n"
+  "\tControl + p - change padding hints on bottom rectangle\n"
+  "\tControl + w - change weight hints on bottom rectangle\n\n"
+  "\ts - print current hints information\n"
+  "\th - print help\n";
 
 static const char *border_img_path = PACKAGE_EXAMPLES_DIR "/red.png";
 
@@ -48,10 +63,10 @@ struct padding_tuple
 struct rect_data
 {
    struct coord_tuple   *min_ptr;
-   struct coord_tuple    min[3];
+   struct coord_tuple    min[4];
 
    struct coord_tuple   *max_ptr;
-   struct coord_tuple    max[3];
+   struct coord_tuple    max[4];
 
    struct weight_tuple  *align_ptr;
    struct weight_tuple   align[3];
@@ -82,6 +97,12 @@ _canvas_resize_cb(Ecore_Evas *ee)
 
    ecore_evas_geometry_get(ee, NULL, NULL, &w, &h);
    evas_object_resize(d.bg, w, h);
+
+   evas_object_move(d.box, (w / 4), (h / 4));
+   evas_object_resize(d.box, (w / 2), (h / 2));
+
+   evas_object_move(d.border, (w / 4) - 3, (h / 4) - 3);
+   evas_object_resize(d.border, (w / 2) + 6, (h / 2) + 6);
 }
 
 static void
@@ -136,20 +157,7 @@ _on_keydown(void        *data __UNUSED__,
      }
    else if (strcmp(ev->keyname, "h") == 0) /* print help */
      {
-        fprintf(stdout,
-                "commands are:\n"
-                "\tShift + a - change alignment hints on top rectangle\n"
-                "\tShift + m - change min. size hint on top rectangle\n"
-                "\tShift + n - change max. size hint on top rectangle\n"
-                "\tShift + p - change padding hints on top rectangle\n"
-                "\tShift + w - change weight hints on top rectangle\n\n"
-                "\tControl + a - change alignment hints on bottom rectangle\n"
-                "\tControl + m - change min. size hint on bottom rectangle\n"
-                "\tControl + n - change max. size hint on bottom rectangle\n"
-                "\tControl + p - change padding hints on bottom rectangle\n"
-                "\tControl + w - change weight hints on bottom rectangle\n\n"
-                "\ts - print current hints information\n"
-                "\th - print help\n");
+        fprintf(stdout, commands);
         return;
      }
    else if (strcmp(ev->keyname, "s") == 0) /* get aspect status of the
@@ -174,10 +182,10 @@ _on_keydown(void        *data __UNUSED__,
         if ((unsigned)
             (((void *)(r_data->align_ptr)) - ((void *)(r_data->align))) >=
             sizeof(r_data->align))
-            r_data->align_ptr = r_data->align;
+          r_data->align_ptr = r_data->align;
 
         evas_object_size_hint_align_set(
-            rect, r_data->align_ptr->x, r_data->align_ptr->y);
+          rect, r_data->align_ptr->x, r_data->align_ptr->y);
 
         fprintf(stdout, "Changing align hints for %s rect. to (%f, %f)\n",
                 name, r_data->align_ptr->x, r_data->align_ptr->y);
@@ -191,10 +199,10 @@ _on_keydown(void        *data __UNUSED__,
         if ((unsigned)
             (((void *)(r_data->min_ptr)) - ((void *)(r_data->min))) >=
             sizeof(r_data->min))
-            r_data->min_ptr = r_data->min;
+          r_data->min_ptr = r_data->min;
 
         evas_object_size_hint_min_set(
-            rect, r_data->min_ptr->w, r_data->min_ptr->h);
+          rect, r_data->min_ptr->w, r_data->min_ptr->h);
 
         fprintf(stdout, "Changing min. size hints for %s rect. to (%d, %d)\n",
                 name, r_data->min_ptr->w, r_data->min_ptr->h);
@@ -208,10 +216,10 @@ _on_keydown(void        *data __UNUSED__,
         if ((unsigned)
             (((void *)(r_data->max_ptr)) - ((void *)(r_data->max))) >=
             sizeof(r_data->max))
-            r_data->max_ptr = r_data->max;
+          r_data->max_ptr = r_data->max;
 
         evas_object_size_hint_max_set(
-            rect, r_data->max_ptr->w, r_data->max_ptr->h);
+          rect, r_data->max_ptr->w, r_data->max_ptr->h);
 
         fprintf(stdout, "Changing max. size hints for %s rect. to (%d, %d)\n",
                 name, r_data->max_ptr->w, r_data->max_ptr->h);
@@ -225,14 +233,14 @@ _on_keydown(void        *data __UNUSED__,
         if ((unsigned)
             (((void *)(r_data->padding_ptr)) - ((void *)(r_data->padding))) >=
             sizeof(r_data->padding))
-            r_data->padding_ptr = r_data->padding;
+          r_data->padding_ptr = r_data->padding;
 
         evas_object_size_hint_padding_set(
-            rect, r_data->padding_ptr->l, r_data->padding_ptr->r,
-            r_data->padding_ptr->t, r_data->padding_ptr->b);
+          rect, r_data->padding_ptr->l, r_data->padding_ptr->r,
+          r_data->padding_ptr->t, r_data->padding_ptr->b);
 
         fprintf(stdout, "Changing padding size hints for %s rect."
-                " to (%d, %d, %d, %d)\n",
+                        " to (%d, %d, %d, %d)\n",
                 name, r_data->padding_ptr->l, r_data->padding_ptr->r,
                 r_data->padding_ptr->t, r_data->padding_ptr->b);
         return;
@@ -248,10 +256,10 @@ _on_keydown(void        *data __UNUSED__,
         if ((unsigned)
             (((void *)(r_data->weight_ptr)) - ((void *)(r_data->weight))) >=
             sizeof(r_data->weight))
-            r_data->weight_ptr = r_data->weight;
+          r_data->weight_ptr = r_data->weight;
 
         evas_object_size_hint_weight_set(
-            rect, r_data->weight_ptr->x, r_data->weight_ptr->y);
+          rect, r_data->weight_ptr->x, r_data->weight_ptr->y);
 
         fprintf(stdout, "Changing weight hints for %s rect. to (%f, %f)\n",
                 name, r_data->weight_ptr->x, r_data->weight_ptr->y);
@@ -274,24 +282,26 @@ main(void)
    /* init values one is going to cycle through while running this
     * example */
    struct rect_data init_data = \
-   {.min = {{30, 30}, {100, 70}, {200, 200}},
-    .max = {{100, 100}, {100, 70}, {300, 300}},
-    .align = {{0.0, 0.0}, {0.5, 0.5}, {1.0, 0.5}},
-    .weight = {{0.0, 0.0}, {3, 6}, {10, 100}},
-    .padding = {{0, 0, 0, 0}, {3, 6, 9, 12}, {10, 20, 0, 30}}};
+   {
+      .min = {{0, 0}, {30, 30}, {100, 70}, {200, 200}},
+      .max = {{0, 0}, {100, 100}, {100, 70}, {300, 300}},
+      .align = {{0.0, 0.0}, {0.5, 0.5}, {1.0, 0.5}},
+      .weight = {{0.0, 0.0}, {3, 6}, {10, 100}},
+      .padding = {{0, 0, 0, 0}, {3, 6, 9, 12}, {10, 20, 0, 30}}
+   };
 
    d.t_data = init_data;
 
-   d.t_data.min_ptr = d.t_data.min;
-   d.t_data.max_ptr = d.t_data.max;
+   d.t_data.min_ptr = d.t_data.min + 1;
+   d.t_data.max_ptr = d.t_data.max + 1;
    d.t_data.align_ptr = d.t_data.align;
    d.t_data.weight_ptr = d.t_data.weight;
    d.t_data.padding_ptr = d.t_data.padding;
 
    d.b_data = init_data;
 
-   d.b_data.min_ptr = d.b_data.min;
-   d.b_data.max_ptr = d.b_data.max;
+   d.b_data.min_ptr = d.b_data.min + 1;
+   d.b_data.max_ptr = d.b_data.max + 1;
    d.b_data.align_ptr = d.b_data.align;
    d.b_data.weight_ptr = d.b_data.weight;
    d.b_data.padding_ptr = d.b_data.padding;
@@ -319,12 +329,10 @@ main(void)
    evas_object_event_callback_add(
      d.bg, EVAS_CALLBACK_KEY_DOWN, _on_keydown, NULL);
 
-   /* Evas box with horizontal layout */
+   /* Evas box with vertical layout */
    d.box = evas_object_box_add(d.canvas);
    evas_object_box_layout_set(
      d.box, evas_object_box_layout_vertical, NULL, NULL);
-   evas_object_move(d.box, (WIDTH / 4), (HEIGHT / 4));
-   evas_object_resize(d.box, (WIDTH / 2), (HEIGHT / 2));
    evas_object_show(d.box);
 
    /* this is a border around the box, container of the rectangles we
@@ -334,31 +342,33 @@ main(void)
    evas_object_image_file_set(d.border, border_img_path, NULL);
    evas_object_image_border_set(d.border, 3, 3, 3, 3);
    evas_object_image_border_center_fill_set(d.border, EVAS_BORDER_FILL_NONE);
-   evas_object_move(d.border, (WIDTH / 4) - 3, (HEIGHT / 4) - 3);
-   evas_object_resize(d.border, (WIDTH / 2) + 6, (HEIGHT / 2) + 6);
    evas_object_show(d.border);
 
    d.t_rect = evas_object_rectangle_add(d.canvas);
    evas_object_color_set(d.t_rect, 0, 0, 255, 255);
 
-   evas_object_size_hint_min_set(d.t_rect, 100, 100);
+   evas_object_size_hint_min_set(
+          d.t_rect, d.t_data.min_ptr->w, d.t_data.min_ptr->h);
    evas_object_show(d.t_rect);
    evas_object_box_append(d.box, d.t_rect);
 
    d.b_rect = evas_object_rectangle_add(d.canvas);
    evas_object_color_set(d.b_rect, 0, 255, 0, 255);
 
-   evas_object_size_hint_min_set(d.b_rect, 100, 100);
+   evas_object_size_hint_min_set(
+          d.b_rect, d.b_data.min_ptr->w, d.b_data.min_ptr->h);
    evas_object_show(d.b_rect);
    evas_object_box_append(d.box, d.b_rect);
 
-   ecore_main_loop_begin();
+   _canvas_resize_cb(d.ee);
 
+   fprintf(stdout, commands);
+   ecore_main_loop_begin();
    ecore_evas_shutdown();
    return 0;
 
 error:
-   fprintf(stderr, "you got to have at least one evas engine built and linked"
+   fprintf(stderr, "You got to have at least one evas engine built and linked"
                    " up to ecore-evas for this example to run properly.\n");
    return -1;
 }

@@ -24,6 +24,8 @@
  * @ref Example_Evas_Stacking
  *
  * @ref Example_Evas_Smart_Objects
+ *
+ * @ref Example_Evas_Box Evas box
  */
 
 /**
@@ -349,8 +351,150 @@
 /**
  * @page Example_Evas_Size_Hints Evas alignment, minimum size, maximum size, padding and weight hints example
  *
+ * In this code, we place a (vertical) box with two rectangles as
+ * child elements. It has a command line interface with which to act
+ * on those rectangles' <b>size hints</b>:
+ * @dontinclude evas-hints.c
+ * @skip static const char commands
+ * @until ;
+ *
+ * That should be self explanatory. Change those values (possibly
+ * resizing the box, which will resize together with the example's
+ * window) to get how size hints are honored by a container object,
+ * which in this case is the Evas box.
+ *
+ * More on this smart object can be found on @ref Example_Evas_Box.
+ * The full code for this example follows.
+ *
  * @include evas-hints.c
  * @example evas-hints.c
+ */
+
+/**
+ * @page Example_Evas_Box Evas box example
+ *
+ * In this example, we demonstrate the use of Evas box objects. We
+ * cover changing boxes' layouts (with a custom layout, besides the
+ * ones provided by Evas), box padding and alignment influence on the
+ * layouts, insertion and removal of box items.
+ *
+ * The interesting part of the code starts, naturally, when we add a
+ * box object to the canvas. Just after it, we place five rectangles,
+ * with random colors, inside of it. Those rectangles get a minimum
+ * size hint of 50 pixels on each axis, which will be respected by
+ * most of the box's possible layouts:
+ * @dontinclude evas-box.c
+ * @skip evas_object_box_add
+ * @until }
+ * @until }
+ *
+ * Just like in other Evas examples, we have a white background on the
+ * canvas and a red border around the container object of interest,
+ * the box, to mark its boundaries. Resizing of the canvas will keep
+ * the box's proportion with regard to the whole canvas', so that you
+ * can experiment with different sizes of the box to accomodate its
+ * children:
+ * @dontinclude evas-box.c
+ * @skip adjust canvas' contents on resizes
+ * @until }
+ *
+ * Again, one interacts with this program by means of key commands:
+ * @dontinclude evas-box.c
+ * @skip static const char *commands
+ * @until ;
+ *
+ * Let's start with the @b numeric ones, each of which will impose a
+ * different layout on the box object.
+ *
+ * The initial layout the box starts at is the one triggered by the
+ * key @c '1' -- the horizontal layout. Thus, the initial appearence
+ * of this program, demonstrating this layout, is something like:
+ * @image html evas-box-example-00.png
+ * @image rtf evas-box-example-00.png
+ * @image latex evas-box-example-00.eps
+ *
+ * The vertical layout (@c '2' key) is very similar, but just
+ * disposing the items vertically:
+ * @image html evas-box-example-01.png
+ * @image rtf evas-box-example-01.png
+ * @image latex evas-box-example-01.eps
+ *
+ * Note the influence of the (default) @c 0.5 box alignment property,
+ * which will let the children line in the middle of the box's
+ * area. Also, because the space required by them extrapolates the
+ * box's height (we resized it to be smaller), they'll be drawn out if
+ * its bounds.
+ *
+ * Next, comes the horizontal @b homogeneous layout (@c '3' key). See
+ * how it reserves an equal amount of space for each child to take:
+ * @image html evas-box-example-02.png
+ * @image rtf evas-box-example-02.png
+ * @image latex evas-box-example-02.eps
+ *
+ * Its vertical equivalent can be triggered by the @c '4' key. The
+ * next different layout of interest is the horizontal maximum size
+ * homogeneous (@c '5' key). It will reserve cells to children sized
+ * equally to the dimensions of the child with bigger size (or minimum
+ * size hints). For this example, all cells would be just the size of
+ * our rectangles' minimum size hints and, to prove that, insert a new
+ * (smaller) rectangle at position 3, say, with @c Ctrl and @c 3 keys
+ * together:
+ * @image html evas-box-example-03.png
+ * @image rtf evas-box-example-03.png
+ * @image latex evas-box-example-03.eps
+ *
+ * The code for the commands inserting and deleting box items is:
+ * @dontinclude evas-box.c
+ * @skip mods, "Shift"
+ * @until }
+ * @until }
+ * @dontinclude evas-box.c
+ * @skip new rectangle to be put in the box
+ * @until }
+ * In that code, we exemplify evas_object_box_children_get(), to fetch
+ * a child element at an exact position. After the element removal
+ * from the box (leaving it unparented again), we delete it and free
+ * that list. The code inserting a new rectangle, there, is
+ * straightforward.
+ *
+ * Try the @c '6' key for the vertical equivalent of the last shown
+ * layout. Then, comes the @b flow layout, triggered by the @c '7'
+ * key. We make our box small to demonstrate the effect on the items
+ * layouting:
+ * @image html evas-box-example-04.png
+ * @image rtf evas-box-example-04.png
+ * @image latex evas-box-example-04.eps
+ *
+ * The next two numerical commands are for the vertical equivalent of
+ * the last and the stack one, respectively. Try them out to get their
+ * looks.
+ *
+ * The last numerical key, @c '0', shows the effect of a @b custom
+ * layout on the box. We wrote one that would split the width and
+ * height of the box equally and, then, place the items in the cells
+ * in the diagonal:
+ * @dontinclude evas-box.c
+ * @skip keyname, "0"
+ * @until }
+ * @dontinclude evas-box.c
+ * @skip custom 'diagonal' layout
+ * @until }
+ * @until }
+ * @image html evas-box-example-05.png
+ * @image rtf evas-box-example-05.png
+ * @image latex evas-box-example-05.eps
+ *
+ * Finally, the @c 'a' and @c 'p' commands will change the box's
+ * alignment and padding property values, respectively. For each of
+ * the layouts above, see the effects they make by setting different
+ * values on those properties.
+ *
+ * The full code for this example follows. For an exercise on <b>the
+ * effect of children box elements' size hints on a box layout</b>,
+ * try the @ref Example_Evas_Size_Hints.
+ *
+ * @include evas-box.c
+ * @example evas-box.c
  */
 
 /**
@@ -367,7 +511,8 @@
  * @skip d.rects[2] = evas_object_rectangle_add(d.canvas);
  * @until evas_object_show(d.rects[0]);
  * @dontinclude evas-stacking.c
- * Like in other Evas examples, one interacts with it be means of key commands:
+ * Like in other Evas examples, one interacts with it by means of key
+ * commands:
  * @skip static const char *commands
  * @until ;
  * At any given point, like seem above, you'll be operating one rectangle only.
