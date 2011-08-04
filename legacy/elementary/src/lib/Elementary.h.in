@@ -24139,12 +24139,6 @@ extern "C" {
    EAPI void elm_player_video_set(Evas_Object *player, Evas_Object *video);
 
   /* naviframe */
-   typedef enum
-     {
-        ELM_NAVIFRAME_PREV_BUTTON,
-        ELM_NAVIFRAME_NEXT_BUTTON
-     } Elm_Naviframe_Button_Type;
-
    EAPI Evas_Object        *elm_naviframe_add(Evas_Object *parent) EINA_ARG_NONNULL(1);
    EAPI Elm_Object_Item    *elm_naviframe_item_push(Evas_Object *obj, const char *title_label, Evas_Object *prev_btn, Evas_Object *next_btn, Evas_Object *content, const char *item_style) EINA_ARG_NONNULL(1, 5);
    EAPI Evas_Object        *elm_naviframe_item_pop(Evas_Object *obj) EINA_ARG_NONNULL(1);
@@ -24156,8 +24150,6 @@ extern "C" {
    EAPI const char         *elm_naviframe_item_subtitle_label_get(const Elm_Object_Item *it) EINA_ARG_NONNULL(1);
    EAPI Elm_Object_Item    *elm_naviframe_top_item_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
    EAPI Elm_Object_Item    *elm_naviframe_bottom_item_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
-   EAPI void                elm_naviframe_item_button_set(Elm_Object_Item *it, Evas_Object *btn, Elm_Naviframe_Button_Type btn_type) EINA_ARG_NONNULL(1);
-   EAPI Evas_Object        *elm_naviframe_item_button_get(const Elm_Object_Item *it, Elm_Naviframe_Button_Type btn_type) EINA_ARG_NONNULL(1);
    EAPI void                elm_naviframe_item_style_set(Elm_Object_Item *it, const char *item_style) EINA_ARG_NONNULL(1);
    EAPI const char         *elm_naviframe_item_style_get(const Elm_Object_Item *it) EINA_ARG_NONNULL(1);
    EAPI void                elm_naviframe_item_title_visible_set(Elm_Object_Item *it, Eina_Bool visible) EINA_ARG_NONNULL(1);

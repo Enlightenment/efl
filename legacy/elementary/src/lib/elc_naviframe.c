@@ -154,6 +154,7 @@ _text_set_hook(Elm_Object_Item *it, const char *part, const char *label)
         _item_subtitle_label_set(navi_it, label);
         return;
      }
+   WRN("The part name is invalid! : naviframe=%p", navi_it->base.widget);
 }
 
 static const char *
@@ -170,6 +171,7 @@ _text_get_hook(const Elm_Object_Item *it, const char *part)
      {
         return navi_it->title_sublabel;
      }
+   WRN("The part name is invalid! : naviframe=%p", navi_it->base.widget);
    return NULL;
 }
 
@@ -191,7 +193,20 @@ _content_set_hook(Elm_Object_Item *it,
         _item_icon_set(navi_it, content);
         return;
      }
+   else if(!strcmp(part, "elm.swallow.prev_btn"))
+     {
+       _title_prev_btn_set(navi_it, content, EINA_FALSE);
+       return;
+     }
+   else if(!strcmp(part, "elm.swallow.next_btn"))
+     {
+       _title_next_btn_set(navi_it, content);
+       return;
+     }
+
+   WRN("The part name is invalid! : naviframe=%p", navi_it->base.widget);
 }
+
 
 static Evas_Object *
 _content_get_hook(const Elm_Object_Item *it,
@@ -208,6 +223,16 @@ _content_get_hook(const Elm_Object_Item *it,
      {
         return navi_it->title_icon;
      }
+   else if(!strcmp(part, "elm.swallow.prev_btn"))
+     {
+        return navi_it->title_prev_btn;
+     }
+   else if(!strcmp(part, "elm.swallow.next_btn"))
+     {
+        return navi_it->title_next_btn;
+     }
+
+   WRN("The part name is invalid! : naviframe=%p", navi_it->base.widget);
    return NULL;
 }
 
@@ -371,6 +396,8 @@ _title_prev_btn_set(Elm_Naviframe_Item *it, Evas_Object *btn, Eina_Bool back_btn
                                   it);
    edje_object_part_swallow(it->title, "elm.swallow.prev_btn", btn);
    it->back_btn = back_btn;
+
+   _item_sizing_eval(it);
 }
 
 static void
@@ -398,6 +425,8 @@ _title_next_btn_set(Elm_Naviframe_Item *it, Evas_Object *btn)
                                   _title_next_btn_del,
                                   it);
    edje_object_part_swallow(it->title, "elm.swallow.next_btn", btn);
+
+   _item_sizing_eval(it);
 }
 
 static void
@@ -732,46 +761,6 @@ elm_naviframe_bottom_item_get(const Evas_Object *obj)
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return NULL;
-   return NULL;
-}
-
-EAPI void
-elm_naviframe_item_button_set(Elm_Object_Item *it, Evas_Object *btn, Elm_Naviframe_Button_Type btn_type)
-{
-   ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
-   Elm_Naviframe_Item *navi_it = ELM_CAST(it);
-
-   switch(btn_type)
-     {
-        case ELM_NAVIFRAME_PREV_BUTTON:
-          _title_prev_btn_set(navi_it, btn, EINA_FALSE);
-          break;
-        case ELM_NAVIFRAME_NEXT_BUTTON:
-          _title_next_btn_set(navi_it, btn);
-          break;
-        default:
-          WRN("Button type is invalid! : naviframe=%p", navi_it->base.widget);
-          break;
-     }
-   _item_sizing_eval(navi_it);
-}
-
-EAPI Evas_Object *
-elm_naviframe_item_button_get(const Elm_Object_Item *it, Elm_Naviframe_Button_Type btn_type)
-{
-   ELM_OBJ_ITEM_CHECK_OR_RETURN(it, NULL);
-   Elm_Naviframe_Item *navi_it = ELM_CAST(it);
-
-   switch(btn_type)
-     {
-        case ELM_NAVIFRAME_PREV_BUTTON:
-           return navi_it->title_prev_btn;
-        case ELM_NAVIFRAME_NEXT_BUTTON:
-           return navi_it->title_next_btn;
-        default:
-           WRN("Button type is invalid! : naviframe=%p", navi_it->base.widget);
-           break;
-     }
    return NULL;
 }
 
