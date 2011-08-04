@@ -54,8 +54,8 @@ _page4(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
                                 bt,
                                 bt2,
                                 NULL);
-   elm_naviframe_item_subtitle_label_set(it, "Here is sub-title part!");
-   elm_naviframe_item_icon_set(it, ic);
+   elm_object_item_text_part_set(it, "elm.text.subtitle", "Here is sub-title part!");
+   elm_object_item_content_part_set(it, "elm.swallow.icon", ic);
    elm_naviframe_item_title_visible_set(it, EINA_FALSE);
    evas_object_smart_callback_add(bt2, "clicked", _title_visible, it);
 }
@@ -92,8 +92,8 @@ _page3(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
                                 bt2,
                                 bt3,
                                 NULL);
-   elm_naviframe_item_subtitle_label_set(it, "Here is sub-title part!");
-   elm_naviframe_item_icon_set(it, ic);
+   elm_object_item_text_part_set(it, "elm.text.subtitle", "Here is sub-title part!");
+   elm_object_item_content_part_set(it, "elm.swallow.icon", ic);
 }
 
 void
@@ -123,7 +123,7 @@ _page2(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
                                 bt,
                                 bt2,
                                 NULL);
-   elm_naviframe_item_subtitle_label_set(it, "Here is sub-title part!");
+   elm_object_item_text_part_set(it, "elm.text.subtitle", "Here is sub-title part!");
 }
 
 void
