@@ -7360,12 +7360,19 @@ st_collections_group_programs_program_target(void)
    ep = current_program;
      {
 	Edje_Program_Target *et;
+	Edje_Program_Target *etw;
+	Eina_List *l;
 	char *name;
-
-	et = mem_alloc(SZ(Edje_Program_Target));
-	ep->targets = eina_list_append(ep->targets, et);
+	char *copy;
 
 	name = parse_str(0);
+
+	et = mem_alloc(SZ(Edje_Program_Target) + strlen(name) + 1);
+	ep->targets = eina_list_append(ep->targets, et);
+	copy = (char*) (et + 1);
+
+	memcpy(copy, name, strlen(name) + 1);
+
 	if (ep->action == EDJE_ACTION_TYPE_STATE_SET)
 	  data_queue_part_lookup(pc, name, &(et->id));
 	else if (ep->action == EDJE_ACTION_TYPE_ACTION_STOP)
@@ -7387,6 +7394,14 @@ st_collections_group_programs_program_target(void)
 		 progname, file_in, line - 1);
 	     exit(-1);
 	  }
+	EINA_LIST_FOREACH(ep->targets, l, etw)
+	  if (et != etw && strcmp(name, (char*) (etw + 1)) == 0)
+	    {
+	      ERR("%s: Error. parse error %s:%i. "
+		  "target is targetted twice",
+		  progname, file_in, line - 1);
+	      exit(-1);
+	    }
 	free(name);
      }
 }
