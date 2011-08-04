@@ -218,6 +218,11 @@ struct _Elm_Widget_Item
    /* @todo: TODO check if this is enough for 1.0 release, maybe add padding! */
 };
 
+struct _Elm_Object_Item
+{
+   Elm_Widget_Item it;
+};
+
 #define ELM_NEW(t) calloc(1, sizeof(t))
 
 EAPI Eina_Bool        elm_widget_api_check(int ver);
@@ -356,11 +361,11 @@ EAPI void             _elm_widget_item_cursor_style_set(Elm_Widget_Item *item, c
 EAPI const char      *_elm_widget_item_cursor_style_get(const Elm_Widget_Item *item);
 EAPI void             _elm_widget_item_cursor_engine_only_set(Elm_Widget_Item *item, Eina_Bool engine_only);
 EAPI Eina_Bool        _elm_widget_item_cursor_engine_only_get(const Elm_Widget_Item *item);
-EAPI void             _elm_widget_item_content_part_set(Elm_Object_Item *item, const char *part, Evas_Object *content);
-EAPI Evas_Object     *_elm_widget_item_content_part_get(const Elm_Object_Item *item, const char *part);
-EAPI Evas_Object     *_elm_widget_item_content_part_unset(Elm_Object_Item *item, const char *part);
-EAPI void             _elm_widget_item_text_part_set(Elm_Object_Item *item, const char *part, const char *label);
-EAPI const char      *_elm_widget_item_text_part_get(const Elm_Object_Item *item, const char *part);
+EAPI void             _elm_widget_item_content_part_set(Elm_Widget_Item *item, const char *part, Evas_Object *content);
+EAPI Evas_Object     *_elm_widget_item_content_part_get(const Elm_Widget_Item *item, const char *part);
+EAPI Evas_Object     *_elm_widget_item_content_part_unset(Elm_Widget_Item *item, const char *part);
+EAPI void             _elm_widget_item_text_part_set(Elm_Widget_Item *item, const char *part, const char *label);
+EAPI const char      *_elm_widget_item_text_part_get(const Elm_Widget_Item *item, const char *part);
 
 
 /* debug function. don't use it unless you are tracking parenting issues */

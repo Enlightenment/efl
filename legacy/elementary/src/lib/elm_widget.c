@@ -2933,7 +2933,7 @@ _elm_widget_item_content_part_set(Elm_Widget_Item *item,
 
 EAPI Evas_Object *
 _elm_widget_item_content_part_get(const Elm_Widget_Item *item,
-                                 const char *part)
+                                  const char *part)
 {
    ELM_WIDGET_ITEM_CHECK_OR_RETURN(item, NULL);
    if (!item->on_content_get_func) return NULL;
@@ -2942,7 +2942,7 @@ _elm_widget_item_content_part_get(const Elm_Widget_Item *item,
 
 EAPI Evas_Object *
 _elm_widget_item_content_part_unset(Elm_Widget_Item *item,
-                                   const char *part)
+                                    const char *part)
 {
    ELM_WIDGET_ITEM_CHECK_OR_RETURN(item, NULL);
    if (!item->on_content_unset_func) return NULL;
@@ -2961,7 +2961,7 @@ _elm_widget_item_text_part_set(Elm_Widget_Item *item,
 
 EAPI const char *
 _elm_widget_item_text_part_get(const Elm_Widget_Item *item,
-                              const char *part)
+                               const char *part)
 {
    ELM_WIDGET_ITEM_CHECK_OR_RETURN(item, NULL);
    if (!item->on_text_get_func) return NULL;

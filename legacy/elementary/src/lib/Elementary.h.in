@@ -346,7 +346,7 @@ extern "C" {
     * An Elementary Object item handle.
     * @ingroup General
     */
-   typedef struct _Elm_Widget_Item Elm_Object_Item;
+   typedef struct _Elm_Object_Item Elm_Object_Item;
 
    /**
     * Called back when a widget's tooltip is activated and needs content.
