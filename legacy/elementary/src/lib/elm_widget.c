@@ -2928,7 +2928,7 @@ _elm_widget_item_content_part_set(Elm_Widget_Item *item,
 {
    ELM_WIDGET_ITEM_CHECK_OR_RETURN(item);
    if (!item->on_content_set_func) return;
-   item->on_content_set_func(item, part, content);
+   item->on_content_set_func((Elm_Object_Item *) item, part, content);
 }
 
 EAPI Evas_Object *
@@ -2937,7 +2937,7 @@ _elm_widget_item_content_part_get(const Elm_Widget_Item *item,
 {
    ELM_WIDGET_ITEM_CHECK_OR_RETURN(item, NULL);
    if (!item->on_content_get_func) return NULL;
-   return item->on_content_get_func(item, part);
+   return item->on_content_get_func((Elm_Object_Item *) item, part);
 }
 
 EAPI Evas_Object *
@@ -2946,7 +2946,7 @@ _elm_widget_item_content_part_unset(Elm_Widget_Item *item,
 {
    ELM_WIDGET_ITEM_CHECK_OR_RETURN(item, NULL);
    if (!item->on_content_unset_func) return NULL;
-   return item->on_content_unset_func(item, part);
+   return item->on_content_unset_func((Elm_Object_Item *) item, part);
 }
 
 EAPI void
@@ -2956,7 +2956,7 @@ _elm_widget_item_text_part_set(Elm_Widget_Item *item,
 {
    ELM_WIDGET_ITEM_CHECK_OR_RETURN(item);
    if (!item->on_text_set_func) return;
-   item->on_text_set_func(item, part, label);
+   item->on_text_set_func((Elm_Object_Item *) item, part, label);
 }
 
 EAPI const char *
@@ -2965,7 +2965,54 @@ _elm_widget_item_text_part_get(const Elm_Widget_Item *item,
 {
    ELM_WIDGET_ITEM_CHECK_OR_RETURN(item, NULL);
    if (!item->on_text_get_func) return NULL;
-   return item->on_text_get_func(item, part);
+   return item->on_text_get_func((Elm_Object_Item *) item, part);
+}
+
+EAPI void
+_elm_widget_item_content_set_hook_set(Elm_Widget_Item *item,
+                                      void (*func)(Elm_Object_Item *it,
+                                                   const char *part,
+                                                   Evas_Object *content))
+{
+   ELM_WIDGET_ITEM_CHECK_OR_RETURN(item);
+   item->on_content_set_func = func;
+}
+
+EAPI void
+_elm_widget_item_content_get_hook_set(Elm_Widget_Item *item,
+                                      Evas_Object *(*func)(const Elm_Object_Item *it,
+                                                           const char *part))
+{
+   ELM_WIDGET_ITEM_CHECK_OR_RETURN(item);
+   item->on_content_get_func = func;
+}
+
+EAPI void
+_elm_widget_item_content_unset_hook_set(Elm_Widget_Item *item,
+                                        Evas_Object *(*func)(Elm_Object_Item *it,
+                                                             const char *part))
+{
+   ELM_WIDGET_ITEM_CHECK_OR_RETURN(item);
+   item->on_content_unset_func = func;
+}
+
+EAPI void
+_elm_widget_item_text_set_hook_set(Elm_Widget_Item *item,
+                                   void (*func)(Elm_Object_Item *it,
+                                                const char *part,
+                                                const char *label))
+{
+   ELM_WIDGET_ITEM_CHECK_OR_RETURN(item);
+   item->on_text_set_func = func;
+}
+
+EAPI void
+_elm_widget_item_text_get_hook_set(Elm_Widget_Item *item,
+                                   const char *(*func)(const Elm_Object_Item *it,
+                                                       const char *part))
+{
+   ELM_WIDGET_ITEM_CHECK_OR_RETURN(item);
+   item->on_text_get_func = func;
 }
 
 static void

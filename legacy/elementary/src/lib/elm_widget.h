@@ -202,17 +202,17 @@ struct _Elm_Widget_Item
    Evas_Object   *view; /**< the base view object */
    const void    *data; /**< item specific data */
    Evas_Smart_Cb  del_cb; /**< used to notify the item is being deleted */
-   void         (*on_content_set_func)(Elm_Widget_Item *item,
+   void         (*on_content_set_func)(Elm_Object_Item *item,
                                        const char *part,
                                        Evas_Object *content);
-   Evas_Object *(*on_content_get_func)(const Elm_Widget_Item *item,
+   Evas_Object *(*on_content_get_func)(const Elm_Object_Item *item,
                                        const char *part);
-   Evas_Object *(*on_content_unset_func)(Elm_Widget_Item *item,
+   Evas_Object *(*on_content_unset_func)(Elm_Object_Item *item,
                                          const char *part);
-   void         (*on_text_set_func)(Elm_Widget_Item *item,
+   void         (*on_text_set_func)(Elm_Object_Item *item,
                                     const char *part,
                                     const char *label);
-   const char  *(*on_text_get_func)(const Elm_Widget_Item *item,
+   const char  *(*on_text_get_func)(const Elm_Object_Item *item,
                                     const char *part);
    /* widget variations should have data from here and on */
    /* @todo: TODO check if this is enough for 1.0 release, maybe add padding! */
@@ -372,6 +372,11 @@ EAPI Evas_Object     *_elm_widget_item_content_part_get(const Elm_Widget_Item *i
 EAPI Evas_Object     *_elm_widget_item_content_part_unset(Elm_Widget_Item *item, const char *part);
 EAPI void             _elm_widget_item_text_part_set(Elm_Widget_Item *item, const char *part, const char *label);
 EAPI const char      *_elm_widget_item_text_part_get(const Elm_Widget_Item *item, const char *part);
+EAPI void             _elm_widget_item_content_set_hook_set(Elm_Widget_Item *item, void (*func)(Elm_Object_Item *it, const char *part, Evas_Object *content));
+EAPI void             _elm_widget_item_content_get_hook_set(Elm_Widget_Item *item, Evas_Object *(*func)(const Elm_Object_Item *it, const char *part));
+EAPI void             _elm_widget_item_content_unset_hook_set(Elm_Widget_Item *item, Evas_Object *(*func)(Elm_Object_Item *it, const char *part));
+EAPI void             _elm_widget_item_text_set_hook_set(Elm_Widget_Item *item, void (*func)(Elm_Object_Item *it, const char *part, const char *label));
+EAPI void             _elm_widget_item_text_get_hook_set(Elm_Widget_Item *item, const char *(*func)(const Elm_Object_Item *it, const char *part));
 
 
 /* debug function. don't use it unless you are tracking parenting issues */
@@ -528,7 +533,36 @@ EAPI void             elm_widget_tree_dot_dump(const Evas_Object *top, FILE *out
  */
 #define elm_widget_item_text_part_get(item, part) \
   _elm_widget_item_text_part_get((const Elm_Widget_Item *)item, part)
-
+/**
+ * Convenience function to query item's content set hook.
+ * @see _elm_widget_item_content_set_hook_set()
+ */
+#define elm_widget_item_content_set_hook_set(item, func) \
+  _elm_widget_item_content_set_hook_set((Elm_Widget_Item *)item, func)
+/**
+ * Convenience function to query item's content get hook.
+ * @see _elm_widget_item_content_get_hook_set()
+ */
+#define elm_widget_item_content_get_hook_set(item, func) \
+  _elm_widget_item_content_get_hook_set((Elm_Widget_Item *)item, func)
+/**
+ * Convenience function to query item's content unset hook.
+ * @see _elm_widget_item_content_unset_hook_set()
+ */
+#define elm_widget_item_content_unset_hook_set(item, func) \
+  _elm_widget_item_content_unset_hook_set((Elm_Widget_Item *)item, func)
+/**
+ * Convenience function to query item's text set hook.
+ * @see _elm_widget_item_text_set_hook_set()
+ */
+#define elm_widget_item_text_set_hook_set(item, func) \
+  _elm_widget_item_text_set_hook_set((Elm_Widget_Item *)item, func)
+/**
+ * Convenience function to query item's text get hook.
+ * @see _elm_widget_item_text_get_hook_set()
+ */
+#define elm_widget_item_text_get_hook_set(item, func) \
+  _elm_widget_item_text_get_hook_set((Elm_Widget_Item *)item, func)
 
 /**
  * Cast and ensure the given pointer is an Elm_Widget_Item or return NULL.
