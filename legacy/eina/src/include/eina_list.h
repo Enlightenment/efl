@@ -1261,7 +1261,7 @@ static inline void        *eina_list_data_get(const Eina_List *list) EINA_PURE E
  *
  * @warning @p list must be a pointer to the first element of the list.
  */
-static inline void        *eina_list_data_set(Eina_List *list, const void *data) EINA_PURE;
+static inline void        *eina_list_data_set(Eina_List *list, const void *data);
 
 /**
  * @brief Get the count of the number of items in a list.
