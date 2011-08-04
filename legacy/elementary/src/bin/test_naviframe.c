@@ -28,7 +28,7 @@ _page4(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *bt, *bt2, *ic, *nf = data;
    char buf[PATH_MAX];
-   Elm_Naviframe_Item *it;
+   Elm_Object_Item *it;
 
    bt = elm_button_add(nf);
    evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
@@ -65,7 +65,7 @@ _page3(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *bt, *bt2, *bt3, *ic, *nf = data;
    char buf[PATH_MAX];
-   Elm_Naviframe_Item *it;
+   Elm_Object_Item *it;
 
    bt = elm_button_add(nf);
    evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
@@ -101,7 +101,7 @@ _page2(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *bt, *bt2, *ic, *nf = data;
    char buf[PATH_MAX];
-   Elm_Naviframe_Item *it;
+   Elm_Object_Item *it;
 
    bt = elm_button_add(nf);
    evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
