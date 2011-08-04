@@ -371,6 +371,7 @@ typedef enum _Evas_BiDi_Direction
  * objects.
  *
  * The following figure illustrates some Evas callbacks:
+ *
  * @image html evas-callbacks.png
  * @image rtf evas-callbacks.png
  * @image latex evas-callbacks.eps
@@ -2778,6 +2779,7 @@ EAPI const Eina_List  *evas_font_path_list               (const Evas *e) EINA_WA
  * and is made now to be clipped by its new clipper.
  *
  * The following figure illustrates some clipping in Evas:
+ *
  * @image html clipping.png
  * @image rtf clipping.png
  * @image latex clipping.eps
@@ -3479,6 +3481,7 @@ EAPI Evas_Object      *evas_object_below_get             (const Evas_Object *obj
  * callback functions to be issued just after they happen.
  *
  * The following figure illustrates some Evas (event) callbacks:
+ *
  * @image html evas-callbacks.png
  * @image rtf evas-callbacks.png
  * @image latex evas-callbacks.eps
@@ -4009,6 +4012,7 @@ EAPI Eina_Bool         evas_object_propagate_events_get   (const Evas_Object *ob
  * @endcode
  *
  * produces something like
+ *
  * @image html map-rotation-2d-3.png
  * @image rtf map-rotation-2d-3.png
  * @image latex map-rotation-2d-3.eps
@@ -4025,6 +4029,7 @@ EAPI Eina_Bool         evas_object_propagate_events_get   (const Evas_Object *ob
  * @endcode
  *
  * rotates the object around the center of the window
+ *
  * @image html map-rotation-2d-4.png
  * @image rtf map-rotation-2d-4.png
  * @image latex map-rotation-2d-4.eps
@@ -5030,6 +5035,7 @@ EAPI void              evas_object_size_hint_align_get   (const Evas_Object *obj
  * to the top, @c 1.0 means to the bottom.
  *
  * See the following figure:
+ *
  * @image html alignment-hints.png
  * @image rtf alignment-hints.png
  * @image latex alignment-hints.eps
@@ -5121,6 +5127,7 @@ EAPI void              evas_object_size_hint_weight_set  (Evas_Object *obj, doub
  * Padding is extra space an object takes on each of its delimiting
  * rectangle sides, in canvas units. This space will be rendered
  * transparent, naturally, as in the following figure:
+ *
  * @image html padding-hints.png
  * @image rtf padding-hints.png
  * @image latex padding-hints.eps
@@ -7244,6 +7251,7 @@ EAPI Evas_Text_Style_Type evas_object_text_style_get     (const Evas_Object *obj
  * #EVAS_TEXT_STYLE_SHADOW_DIRECTION_SET to assemble a style value.
  *
  * The following figure illustrates the text styles:
+ *
  * @image html text-styles.png
  * @image rtf text-styles.png
  * @image latex text-styles.eps

@@ -409,12 +409,14 @@
  * The initial layout the box starts at is the one triggered by the
  * key @c '1' -- the horizontal layout. Thus, the initial appearence
  * of this program, demonstrating this layout, is something like:
+ *
  * @image html evas-box-example-00.png
  * @image rtf evas-box-example-00.png
  * @image latex evas-box-example-00.eps
  *
  * The vertical layout (@c '2' key) is very similar, but just
  * disposing the items vertically:
+ *
  * @image html evas-box-example-01.png
  * @image rtf evas-box-example-01.png
  * @image latex evas-box-example-01.eps
@@ -427,6 +429,7 @@
  *
  * Next, comes the horizontal @b homogeneous layout (@c '3' key). See
  * how it reserves an equal amount of space for each child to take:
+ *
  * @image html evas-box-example-02.png
  * @image rtf evas-box-example-02.png
  * @image latex evas-box-example-02.eps
@@ -439,6 +442,7 @@
  * our rectangles' minimum size hints and, to prove that, insert a new
  * (smaller) rectangle at position 3, say, with @c Ctrl and @c 3 keys
  * together:
+ *
  * @image html evas-box-example-03.png
  * @image rtf evas-box-example-03.png
  * @image latex evas-box-example-03.eps
@@ -461,6 +465,7 @@
  * layout. Then, comes the @b flow layout, triggered by the @c '7'
  * key. We make our box small to demonstrate the effect on the items
  * layouting:
+ *
  * @image html evas-box-example-04.png
  * @image rtf evas-box-example-04.png
  * @image latex evas-box-example-04.eps
@@ -480,6 +485,7 @@
  * @skip custom 'diagonal' layout
  * @until }
  * @until }
+ *
  * @image html evas-box-example-05.png
  * @image rtf evas-box-example-05.png
  * @image latex evas-box-example-05.eps
@@ -543,11 +549,13 @@
  * Let's make some tests with those commands. The rectangle which starts
  * selected and which will receive our commands is the @b red one. It
  * starts stacked above all the others, like seem above:
+ *
  * @image html evas-stacking-example-00.png
  * @image rtf evas-stacking-example-00.png
  * @image latex evas-stacking-example-00.eps
  *
  * Stack it one level below, with 'b', and you'll get:
+ *
  * @image html evas-stacking-example-01.png
  * @image rtf evas-stacking-example-01.png
  * @image latex evas-stacking-example-01.eps
@@ -556,14 +564,17 @@
  * one, with two consecutive 'c' commands. Note that it's the lowest
  * one on the stack of rectangles. Issue the 'a' command for it, thus
  * re-stacking it one level above:
+ *
  * @image html evas-stacking-example-02.png
  * @image rtf evas-stacking-example-02.png
  * @image latex evas-stacking-example-02.eps
  * You can send it to the top of its layer directly with the 't' command:
+ *
  * @image html evas-stacking-example-03.png
  * @image rtf evas-stacking-example-03.png
  * @image latex evas-stacking-example-03.eps
  * Now put it back to the bottom of that layer with 'm':
+ *
  * @image html evas-stacking-example-04.png
  * @image rtf evas-stacking-example-04.png
  * @image latex evas-stacking-example-04.eps
@@ -572,6 +583,7 @@
  * for the white background. Let's change this setup by issuing the
  * 'l' command, which will change the background's layer to 1, i.e., a
  * layer @b above the one holding the other rectangles:
+ *
  * @image html evas-stacking-example-05.png
  * @image rtf evas-stacking-example-05.png
  * @image latex evas-stacking-example-05.eps
@@ -580,10 +592,12 @@
  * layer as the highest one on the objects stack. As we have the blue
  * rectangle as the one receiving stacking commands, hit 't' and
  * you'll see it again:
+ *
  * @image html evas-stacking-example-06.png
  * @image rtf evas-stacking-example-06.png
  * @image latex evas-stacking-example-06.eps
  * By bringing the background back to layer -1 ('l'), you'll get:
+ *
  * @image html evas-stacking-example-07.png
  * @image rtf evas-stacking-example-07.png
  * @image latex evas-stacking-example-07.eps
