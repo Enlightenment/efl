@@ -3869,7 +3869,7 @@ EAPI Eina_Bool         evas_object_propagate_events_get   (const Evas_Object *ob
  */
 
 /**
- * @defgroup Evas_Object_Group_Map UV Mapping (Rotation, Perspecitve, 3D...)
+ * @defgroup Evas_Object_Group_Map UV Mapping (Rotation, Perspective, 3D...)
  *
  * Evas allows different transformations to be applied to all kinds of
  * objects. These are applied by means of UV mapping.
