@@ -14143,6 +14143,10 @@ extern "C" {
     * - @c item_style - This is a constant string and simply defines the name
     *   of the item style. It @b must be specified and the default should be @c
     *   "default".
+    * - @c mode_item_style - This is a constant string and simply defines the
+    *   name of the style that will be used for mode animations. It can be left
+    *   as @c NULL if you don't plan to use Genlist mode. See
+    *   elm_genlist_item_mode_set() for more info.
     *
     * - @c func - A struct with pointers to functions that will be called when
     *   an item is going to be actually created. All of them receive a @c data
@@ -15722,8 +15726,76 @@ extern "C" {
     * @ingroup Genlist
     */
    EAPI void               elm_genlist_realized_items_update(Evas_Object *obj) EINA_ARG_NONNULL(1);
+   /**
+    * Activate a genlist mode on an item
+    *
+    * @param item The genlist item
+    * @param mode Mode name
+    * @param mode_set Boolean to define set or unset mode.
+    *
+    * A genlist mode is a different way of selecting an item. Once a mode is
+    * activated on an item, any other selected item is immediately unselected.
+    * This feature provides an easy way of implementing a new kind of animation
+    * for selecting an item, without having to entirely rewrite the item style
+    * theme. However, the elm_genlist_selected_* API can't be used to get what
+    * item is activate for a mode.
+    *
+    * The current item style will still be used, but applying a genlist mode to
+    * an item will select it using a different kind of animation.
+    *
+    * The current active item for a mode can be found by
+    * elm_genlist_mode_item_get().
+    *
+    * The characteristics of genlist mode are:
+    * - Only one mode can be active at any time, and for only one item.
+    * - Genlist handles deactivating other items when one item is activated.
+    * - A mode is defined in the genlist theme (edc), and more modes can easily
+    *   be added.
+    * - A mode style and the genlist item style are different things. They
+    *   can be combined to provide a default style to the item, with some kind
+    *   of animation for that item when the mode is activated.
+    *
+    * When a mode is activated on an item, a new view for that item is created.
+    * The theme of this mode defines the animation that will be used to transit
+    * the item from the old view to the new view. This second (new) view will be
+    * active for that item while the mode is active on the item, and will be
+    * destroyed after the mode is totally deactivated from that item.
+    *
+    * @see elm_genlist_mode_get()
+    * @see elm_genlist_mode_item_get()
+    *
+    * @ingroup Genlist
+    */
    EAPI void               elm_genlist_item_mode_set(Elm_Genlist_Item *it, const char *mode_type, Eina_Bool mode_set) EINA_ARG_NONNULL(1, 2);
+   /**
+    * Get the last (or current) genlist mode used.
+    *
+    * @param obj The genlist object
+    *
+    * This function just returns the name of the last used genlist mode. It will
+    * be the current mode if it's still active.
+    *
+    * @see elm_genlist_item_mode_set()
+    * @see elm_genlist_mode_item_get()
+    *
+    * @ingroup Genlist
+    */
    EAPI const char        *elm_genlist_mode_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+   /**
+    * Get active genlist mode item
+    *
+    * @param obj The genlist object
+    * @return The active item for that current mode. Or @c NULL if no item is
+    * activated with any mode.
+    *
+    * This function returns the item that was activated with a mode, by the
+    * function elm_genlist_item_mode_set().
+    *
+    * @see elm_genlist_item_mode_set()
+    * @see elm_genlist_mode_get()
+    *
+    * @ingroup Genlist
+    */
    EAPI const Elm_Genlist_Item *elm_genlist_mode_item_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
    EAPI void               elm_genlist_reorder_mode_set(Evas_Object *obj, Eina_Bool reorder_mode) EINA_ARG_NONNULL(1);
    EAPI Eina_Bool          elm_genlist_reorder_mode_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);

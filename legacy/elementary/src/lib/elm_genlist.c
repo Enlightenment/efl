@@ -4720,15 +4720,6 @@ elm_genlist_realized_items_update(Evas_Object *obj)
      elm_genlist_item_update(it);
 }
 
-/**
- * Set genlist item mode
- *
- * @param item The genlist item
- * @param mode Mode name
- * @param mode_set Boolean to define set or unset mode.
- *
- * @ingroup Genlist
- */
 EAPI void
 elm_genlist_item_mode_set(Elm_Genlist_Item *it,
                           const char       *mode_type,
@@ -4771,13 +4762,6 @@ elm_genlist_item_mode_set(Elm_Genlist_Item *it,
    if (mode_set) _item_mode_set(it);
 }
 
-/**
- * Get active genlist mode type
- *
- * @param obj The genlist object
- *
- * @ingroup Genlist
- */
 EAPI const char *
 elm_genlist_mode_get(const Evas_Object *obj)
 {
@@ -4787,13 +4771,6 @@ elm_genlist_mode_get(const Evas_Object *obj)
    return wd->mode_type;
 }
 
-/**
- * Get active genlist mode item
- *
- * @param obj The genlist object
- *
- * @ingroup Genlist
- */
 EAPI const Elm_Genlist_Item *
 elm_genlist_mode_item_get(const Evas_Object *obj)
 {
