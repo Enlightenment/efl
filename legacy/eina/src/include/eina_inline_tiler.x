@@ -42,19 +42,6 @@ struct _Eina_Tile_Grid_Slicer
  * @endcond
  */
 
-/**
- * @brief Iterates over the tiles set by eina_tile_grid_slicer_setup().
- *
- * @param   slc Pointer to an Eina_Tile_Grid_Slicer struct.
- * @param   rect Pointer to a struct Eina_Tile_Grid_Info *.
- * @return  @c EINA_TRUE if the current rect is valid.
- *          @c EINA_FALSE if there is no more rects to iterate over (and
- *	       thus the current one isn't valid).
- *
- * This functions iterates over each Eina_Tile_Grid_Info *rect of the grid.
- * eina_tile_grid_slicer_setup() must be called first, and *rect is only valid
- * if this function returns EINA_TRUE. Its content shouldn't be modified.
- */
 static inline Eina_Bool
 eina_tile_grid_slicer_next(Eina_Tile_Grid_Slicer *slc, const Eina_Tile_Grid_Info **rect)
 {
@@ -102,24 +89,6 @@ eina_tile_grid_slicer_next(Eina_Tile_Grid_Slicer *slc, const Eina_Tile_Grid_Info
    return EINA_TRUE;
 }
 
-/**
- * @brief Setup an Eina_Tile_Grid_Slicer struct.
- *
- * @param   slc Pointer to an Eina_Tile_Grid_Slicer struct.
- * @param   x X axis coordinate.
- * @param   y Y axis coordinate.
- * @param   w width.
- * @param   h height.
- * @param   tile_w tile width.
- * @param   tile_h tile height.
- * @return  A pointer to the Eina_Iterator.
- *          @c NULL on failure.
- *
- * This function splits the rectangle given as argument into tiles of size
- * tile_w X tile_h, and returns an iterator to them. The geometry of each
- * tile can be accessed with eina_tile_grid_slicer_next, where rect
- * will be a pointer to a struct Eina_Tile_Grid_Info.
- */
 static inline Eina_Bool
 eina_tile_grid_slicer_setup(Eina_Tile_Grid_Slicer *slc, int x, int y, int w, int h, int tile_w, int tile_h)
 {
