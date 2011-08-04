@@ -411,6 +411,18 @@ elm_widget_type_register(const char **ptr)
    widtypes = eina_list_append(widtypes, (void *)ptr);
 }
 
+/**
+ * @defgroup Widget Widget
+ *
+ * @internal
+ * Disposed api for making widgets
+ */
+EAPI void
+elm_widget_type_unregister(const char **ptr)
+{
+   widtypes = eina_list_remove(widtypes, (void *)ptr);
+}
+
 EAPI Eina_Bool
 elm_widget_api_check(int ver)
 {

@@ -335,6 +335,7 @@ EAPI int              elm_widget_drag_child_locked_x_get(const Evas_Object *obj)
 EAPI int              elm_widget_drag_child_locked_y_get(const Evas_Object *obj);
 EAPI Eina_Bool        elm_widget_theme_object_set(Evas_Object *obj, Evas_Object *edj, const char *wname, const char *welement, const char *wstyle);
 EAPI void             elm_widget_type_register(const char **ptr);
+EAPI void             elm_widget_type_unregister(const char **ptr);
 EAPI Eina_Bool        elm_widget_type_check(const Evas_Object *obj, const char *type);
 EAPI Eina_List       *elm_widget_stringlist_get(const char *str);
 EAPI void             elm_widget_stringlist_free(Eina_List *list);
