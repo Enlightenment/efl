@@ -218,8 +218,18 @@ struct _Elm_Widget_Item
    /* @todo: TODO check if this is enough for 1.0 release, maybe add padding! */
 };
 
+struct _Elm_Object_Item
+{
+   Elm_Widget_Item it;
+};
+
 #define ELM_NEW(t) calloc(1, sizeof(t))
+
 #define ELM_CAST(p) ((void *)(p))
+
+#define ELM_OBJ_ITEM_CHECK_OR_RETURN(it, ...)                               \
+   ELM_WIDGET_ITEM_CHECK_OR_RETURN((Elm_Widget_Item *) (it), __VA_ARGS__);  \
+   ELM_CHECK_WIDTYPE(it->it.widget, widtype) __VA_ARGS__;
 
 EAPI Eina_Bool        elm_widget_api_check(int ver);
 EAPI Evas_Object     *elm_widget_add(Evas *evas);
