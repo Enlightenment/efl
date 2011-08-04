@@ -24,6 +24,60 @@
 #include "eina_rectangle.h"
 
 /**
+ * @page eina_tiler_example_01
+ * @dontinclude eina_tiler_01.c
+ *
+ * This is an example that illustrates how Eina_Tiler works for a given set of
+ * rectangles. The rectangles must be given in the command line in the form:
+ * <width>x<height>+<x offset>+<y offset>
+ * The example will show two panels, the first(input) will show the given
+ * rectangles(in different colors) and in the seconds(output) it will show the
+ * rectangles given by the tiler. The rectangles will be added one by one every
+ * two seconds. A lot of the example deals with actually painting the rectangles
+ * so we'll skip over quite a bit of code, but you can see all of it in @ref
+ * eina_tiler_01.c "eina_tiler_01.c".
+ *
+ * The first thing of note in our example is the creation of the tiler:
+ * @skipline eina_tiler_new
+ * @note @p maxw and @p maxh are calculated such that the tiler's size will
+ * fully encompass all given rectangles.
+ *
+ * We'll now look at the function that actually adds rectangles to our tiler. It
+ * first checks if we added all rectangles already and if so stops right there:
+ * @dontinclude eina_tiler_01.c
+ * @skip static Eina_Bool
+ * @until }
+ *
+ * Our function then clears all rectangles given to us by tiler from the last
+ * execution. It does this because each rectangle we add may change everything
+ * about the output of eina_tiler:
+ * @until output_rects_reset
+ *
+ * Next we get another rectangle, print it and show it in the input panel:
+ * @until add_input_rect
+ *
+ * We now come to the tiler stuff, we add our new rectangle to it and get a new
+ * iterator for the tiler:
+ * @until itr
+ *
+ * We now iterate over our tiler printing every rect it gives us and sowing it
+ * in the output panel:
+ * @until }
+ *
+ * We of course must remember to free our iterator and that's it for this
+ * function:
+ * @until }
+ *
+ * You should try many different inputs to see how the tiler works, here are a
+ * few suggestions:
+ * @li 100x100+0+0 100x100+200+200
+ * @li 100x100+0+0 100x100+5+5 100x100+10+10 100x100+15+15 100x100+20+20
+ * @li 100x100+0+0 100x100+100+100 100x100+200+0 100x100+0+200 100x100+200+200
+ * @li 10x10+0+0 10x10+10+10 10x10+20+0 10x10+0+20 10x10+20+20
+ *
+ * @example eina_tiler_01.c
+ */
+/**
  * @addtogroup Eina_Data_Types_Group Data Types
  *
  * @{
@@ -44,14 +98,14 @@
  * to re-render in the form of a set of non-overlapping rectangles that covers
  * the whole area that needs re-rendering.
  *
- * The following is a pseudo-code showing some simple use of Eina_Tiler:
+ * The following is pseudo-code showing some simple use of Eina_Tiler:
  * @code
  * tiler = eina_tiler_new(MY_CANVAS_WIDTH, MY_CANVAS_HEIGHT);
  * EINA_LIST_FOREACH(list_of_areas_that_need_re_rendering, l, rect)
- *    eina_tiler_add(tiler, rect);
+ *   eina_tiler_add(tiler, rect);
  * itr = eina_tiler_iterator_new(tiler);
  * EINA_ITERATOR_FOREACH(itr, rect)
- *    my_function_that_repaints_areas_of_the_canvas(rect);
+ *   my_function_that_repaints_areas_of_the_canvas(rect);
  * @endcode
  *
  * @see eina_tiler_new()
@@ -68,6 +122,21 @@
  * to divide an area in tiles which is usefull in certain applications to divide
  * the area that will be rendered into tiles. It's customary to, then create one
  * Eina_Tiler for each tile.
+ *
+ * The following is pseudo-code showing a very simplified use of grid slicer
+ * together with Eina_Tiler:
+ * @code
+ * itr = eina_tile_grid_slicer_iterator_new(0, 0, MY_CANVAS_WIDTH, MY_CANVAS_HEIGHT, TILE_WIDTH, TILE_HEIGHT);
+ * EINA_ITERATOR_FOREACH(itr, grid_info)
+ *   {
+ *      tiler = eina_tiler_new(grid_info->rect.w, grid_info->rect.w);
+ *      EINA_LIST_FOREACH(list_of_areas_that_need_re_rendering_in_this_tile, l, rect)
+ *        eina_tiler_add(tiler, rect);
+ *      itr = eina_tiler_iterator_new(tiler);
+ *      EINA_ITERATOR_FOREACH(itr, rect)
+ *      my_function_that_repaints_areas_of_the_canvas(rect);
+ *   }
+ * @endcode
  *
  * @see eina_tiler_new()
  * @see eina_tiler_rect_add()

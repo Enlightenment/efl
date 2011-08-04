@@ -36,7 +36,8 @@ SRCS = \
 	eina_inlist_02.c \
 	eina_inlist_03.c \
 	eina_str_01.c \
-	eina_strbuf_01.c
+	eina_strbuf_01.c \
+	eina_tiler_01.c
 
 pkglib_PROGRAMS =
 
@@ -73,5 +74,11 @@ pkglib_PROGRAMS += \
 	eina_inlist_03 \
 	eina_str_01 \
 	eina_strbuf_01
+
+if BUILD_TILER_EXAMPLE
+AM_CPPFLAGS += @ECORE_EVAS_CFLAGS@
+pkglib_PROGRAMS += eina_tiler_01
+eina_tiler_01_LDADD = @ECORE_EVAS_LIBS@
 endif
 
+endif

@@ -346,6 +346,8 @@ if test "x${enable_ememoa}" = "xyes" ; then
    )
 fi
 
+PKG_CHECK_MODULES([ECORE_EVAS], [ecore-evas ecore], [build_tiler_example="yes"], [build_tiler_example="no"])
+AM_CONDITIONAL([BUILD_TILER_EXAMPLE], [test "x${build_tiler_example}" = "xyes"])
 
 ### Checks for header files
 AC_HEADER_ASSERT
@@ -738,6 +740,7 @@ echo "  Documentation........: ${build_doc}"
 echo "  Tests................: ${enable_tests}"
 echo "  Coverage.............: ${enable_coverage}"
 echo "  Examples.............: ${enable_build_examples}"
+echo "  Tiler Example........: ${build_tiler_example}"
 echo "  Examples installed...: ${enable_install_examples}"
 echo "  Benchmark............: ${enable_benchmark}"
 if test "x${enable_benchmark}" = "xyes" ; then
