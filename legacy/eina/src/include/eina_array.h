@@ -182,6 +182,11 @@
  * more elements. Similarly if you remove elements in such a way that that the
  * array is left holding its capacity - @p step elements it will shrink.
  *
+ * The following image illustrates how an Eina_Array grows:
+ *
+ * @image html eina_array-growth.png
+ * @image latex eina_array-growth.eps width=\textwidth
+ *
  * Eina_Array only stores pointers but it can store data of any type in the form
  * of void pointers.
  *
