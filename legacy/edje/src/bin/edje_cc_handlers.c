@@ -3674,6 +3674,10 @@ st_collections_group_parts_part_description_inherit(void)
    data_queue_part_slave_lookup(&parent->rel2.id_x, &ed->rel2.id_x);
    data_queue_part_slave_lookup(&parent->rel2.id_y, &ed->rel2.id_y);
 
+   data_queue_part_slave_lookup(&parent->map.id_persp, &ed->map.id_persp);
+   data_queue_part_slave_lookup(&parent->map.id_light, &ed->map.id_light);
+   data_queue_part_slave_lookup(&parent->map.rot.id_center, &ed->map.rot.id_center);
+
    /* make sure all the allocated memory is getting copied, not just
     * referenced
     */
