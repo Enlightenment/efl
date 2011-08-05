@@ -73,7 +73,9 @@ _eval(Evas_Object *obj)
    evas_object_geometry_get(obj, &x, &y, &w, &h);
    evas_output_viewport_get(evas_object_evas_get(obj), 
                             &cvx, &cvy, &cvw, &cvh);
+   // this is a hack to get things sane for now.
    if ((w < 10) || (h < 10) || (cvw < 1) || (cvh < 1)) return;
+   // need some fuzz value thats beyond the current viewport
    if (ELM_RECTS_INTERSECT(x, y, w, h, cvx, cvy, cvw, cvh))
      {
         if (!wd->content)
