@@ -2832,7 +2832,7 @@ static void
 _parse_kml(void *data)
 {
    Elm_Map_Route *r = (Elm_Map_Route*)data;
-   if (!r && !r->ud.fname) return;
+   if (!r || !r->ud.fname) return;
 
    FILE *f;
    char **str;
@@ -2928,7 +2928,7 @@ static void
 _parse_name(void *data)
 {
    Elm_Map_Name *n = (Elm_Map_Name*)data;
-   if (!n && !n->ud.fname) return;
+   if (!n || !n->ud.fname) return;
 
    FILE *f;
 
@@ -4112,8 +4112,11 @@ elm_map_source_name_set(Evas_Object *obj, const char *source_name)
    int zoom;
 
    if (!wd) return;
-   if ((wd->src) && (!strcmp(wd->src->name, source_name))) return;
-   if ((wd->src) && (!wd->src->url_cb)) return;
+   if (wd->src)
+     {
+        if (!strcmp(wd->src->name, source_name)) return;
+        if (!wd->src->url_cb) return;
+     }
 
    EINA_LIST_FREE(wd->grids, grid) grid_clear(obj, grid);
    EINA_LIST_FOREACH(wd->map_sources_tab, l, s)
@@ -4127,11 +4130,13 @@ elm_map_source_name_set(Evas_Object *obj, const char *source_name)
    zoom = wd->zoom;
    wd->zoom = -1;
 
-   if (wd->src->zoom_max < zoom)
-     zoom = wd->src->zoom_max;
-   if (wd->src->zoom_min > zoom)
-     zoom = wd->src->zoom_min;
-
+   if (wd->src)
+     {
+        if (wd->src->zoom_max < zoom)
+          zoom = wd->src->zoom_max;
+        if (wd->src->zoom_min > zoom)
+          zoom = wd->src->zoom_min;
+     }
    elm_map_zoom_set(obj, zoom);
 }
 
