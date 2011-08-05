@@ -910,7 +910,7 @@ elm_menu_item_prev_get(const Elm_Menu_Item *it)
    else
      {
         Widget_Data *wd = elm_widget_data_get(it->base.widget);
-        if (!wd | !wd->items) return NULL;
+        if (!wd || !wd->items) return NULL;
         Eina_List *l = eina_list_data_find_list(wd->items, it);
         l = eina_list_prev(l);
         if (!l) return NULL;
@@ -933,7 +933,7 @@ elm_menu_item_next_get(const Elm_Menu_Item *it)
    else
      {
         Widget_Data *wd = elm_widget_data_get(it->base.widget);
-        if (!wd | !wd->items) return NULL;
+        if (!wd || !wd->items) return NULL;
         Eina_List *l = eina_list_data_find_list(wd->items, it);
         l = eina_list_next(l);
         if (!l) return NULL;
