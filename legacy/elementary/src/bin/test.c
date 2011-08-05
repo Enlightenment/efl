@@ -70,7 +70,6 @@ void test_genlist8(void *data, Evas_Object *obj, void *event_info);
 void test_genlist9(void *data, Evas_Object *obj, void *event_info);
 void test_genlist10(void *data, Evas_Object *obj, void *event_info);
 void test_genlist11(void *data, Evas_Object *obj, void *event_info);
-void test_genscroller(void *data, Evas_Object *obj, void *event_info);
 void test_gesture_layer(void *data, Evas_Object *obj, void *event_info);
 void test_table(void *data, Evas_Object *obj, void *event_info);
 void test_table2(void *data, Evas_Object *obj, void *event_info);
@@ -415,7 +414,6 @@ my_win_main(char *autorun, Eina_Bool test_win_only)
    ADD_TEST("GLViewSimple", test_glview_simple);
    ADD_TEST("GLView", test_glview);
    ADD_TEST("3D", test_3d);
-   ADD_TEST("Genscroller", test_genscroller);
    ADD_TEST("Gesture Layer", test_gesture_layer);
    ADD_TEST("Naviframe", test_naviframe);
 #undef ADD_TEST
