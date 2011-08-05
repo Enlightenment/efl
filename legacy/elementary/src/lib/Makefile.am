@@ -66,13 +66,13 @@ elm_config.c \
 elm_conform.c \
 elm_diskselector.c \
 elm_entry.c \
+elm_factory.c \
 elm_flip.c \
 elm_flipselector.c \
 elm_font.c \
 elm_frame.c \
 elm_gengrid.c \
 elm_genlist.c \
-elm_genscroller.c \
 elm_gesture_layer.c \
 elm_glview.c \
 elm_grid.c \
