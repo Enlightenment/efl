@@ -12084,14 +12084,6 @@ extern "C" {
     */
    EAPI const char        *elm_menu_item_object_icon_name_get(const Elm_Menu_Item *item) EINA_ARG_NONNULL(1);
    /**
-    * @deprecated Use elm_menu_item_object_icon_name_set()
-    */
-   EAPI void               elm_menu_item_icon_set(Elm_Menu_Item *item, const char *icon) EINA_ARG_NONNULL(1, 2) EINA_DEPRECATED;
-   /**
-    * @deprecated Use elm_menu_item_object_icon_name_get()
-    */
-   EAPI const char        *elm_menu_item_icon_get(const Elm_Menu_Item *item) EINA_ARG_NONNULL(1) EINA_DEPRECATED;
-   /**
     * @brief Set the content object of a menu item
     *
     * @param item The menu item object
@@ -12114,10 +12106,6 @@ extern "C" {
     * @see elm_menu_item_object_content_set()
     */
    EAPI Evas_Object *elm_menu_item_object_content_get(const Elm_Menu_Item *item) EINA_ARG_NONNULL(1);
-   /**
-    * @deprecated Use elm_menu_item_object_content_get() instead.
-    */
-   EAPI Evas_Object *elm_menu_item_object_icon_get(const Elm_Menu_Item *item) EINA_ARG_NONNULL(1) EINA_DEPRECATED;
    /**
     * @brief Set the selected state of @p item.
     *

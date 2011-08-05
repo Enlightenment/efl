@@ -714,12 +714,6 @@ elm_menu_item_object_icon_name_set(Elm_Menu_Item *item, const char *icon)
 }
 
 EAPI void
-elm_menu_item_icon_set(Elm_Menu_Item *item, const char *icon)
-{
-   elm_menu_item_object_icon_name_set(item, icon);
-}
-
-EAPI void
 elm_menu_item_disabled_set(Elm_Menu_Item *item, Eina_Bool disabled)
 {
    ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(item);
@@ -801,23 +795,11 @@ elm_menu_item_object_content_get(const Elm_Menu_Item *item)
    return item->content;
 }
 
-EAPI Evas_Object *
-elm_menu_item_object_icon_get(const Elm_Menu_Item *item)
-{
-   return elm_menu_item_object_content_get(item);
-}
-
 EAPI const char *
 elm_menu_item_object_icon_name_get(const Elm_Menu_Item *item)
 {
    ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(item, NULL);
    return item->icon_str;
-}
-
-EAPI const char *
-elm_menu_item_icon_get(const Elm_Menu_Item *item)
-{
-   return elm_menu_item_object_icon_name_get(item);
 }
 
 EAPI Eina_Bool
