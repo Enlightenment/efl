@@ -224,7 +224,7 @@ _del_pre_hook(Evas_Object * obj)
         if (it)
           {
              eina_stringshare_del(it->label);
-             evas_object_del(wd->first->base.view);
+             if (wd->first) evas_object_del(wd->first->base.view);
              free(it);
           }
      }
@@ -234,7 +234,7 @@ _del_pre_hook(Evas_Object * obj)
      if (it)
         {
            eina_stringshare_del(it->label);
-           evas_object_del(wd->first->base.view);
+           if (wd->first) evas_object_del(wd->first->base.view);
            free(it);
         }
    }
