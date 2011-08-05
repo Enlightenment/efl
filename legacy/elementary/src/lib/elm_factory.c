@@ -61,7 +61,6 @@ _sizing_eval(Evas_Object *obj)
    evas_object_size_hint_max_get(wd->content, &maxw, &maxh);
    evas_object_size_hint_min_set(obj, minw, minh);
    evas_object_size_hint_max_set(obj, maxw, maxh);
-   printf("fac: %p, size %ix%i -> %ix%i\n", obj, minw, minh, maxw, maxh);
 }
 
 static void
@@ -74,7 +73,7 @@ _eval(Evas_Object *obj)
    evas_object_geometry_get(obj, &x, &y, &w, &h);
    evas_output_viewport_get(evas_object_evas_get(obj), 
                             &cvx, &cvy, &cvw, &cvh);
-   if ((w < 1) || (h < 1) || (cvw < 1) || (cvh < 1)) return;
+   if ((w < 10) || (h < 10) || (cvw < 1) || (cvh < 1)) return;
    if (ELM_RECTS_INTERSECT(x, y, w, h, cvx, cvy, cvw, cvh))
      {
         if (!wd->content)
