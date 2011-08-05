@@ -62,6 +62,8 @@ extern "C" {
  *
  * This is a list of examples of these functions:
  * - @ref Ecore_Evas_Window_Sizes_Example_c
+ * - @ref Ecore_Evas_Buffer_Example_01_c
+ * - @ref Ecore_Evas_Buffer_Example_02_c
  * @{
  */
 
@@ -750,16 +752,20 @@ EAPI const void     *ecore_evas_buffer_pixels_get(Ecore_Evas *ee);
  * the canvas of @p ee, though, being exactly the image data of the
  * object returned by this function.
  *
- * This is a helper function for the scenario of one willing to grab a
+ * This is a helper function for the scenario of one wanting to grab a
  * buffer canvas' contents (with ecore_evas_buffer_pixels_get()) to be
  * used on another canvas, for whichever reason. The most common goal
  * of this setup is to @b save an image file with a whole canvas as
  * contents, which could not be achieved by using an image file within
  * the target canvas.
  *
- * @warning Always resize the returned image and its underlying @c
- * Ecore_Evas handle accordingly and successively. They must be kept
- * with same sizes for things to work as expected.
+ * @warning Always resize the returned image and its underlying
+ * @c Ecore_Evas handle accordingly. They must be kept with same sizes
+ * for things to work as expected. Also, you @b must issue
+ * @c evas_object_image_size_set() on the image with that same size. If
+ * the image is to be shown in a canvas bound to an engine different
+ * than the buffer one, then you must also set this image's @b fill
+ * properties accordingly.
  *
  * @note The image returned will always be bound to the
  * @c EVAS_COLORSPACE_ARGB8888 colorspace, always.

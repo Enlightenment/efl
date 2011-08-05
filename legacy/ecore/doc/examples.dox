@@ -17,7 +17,9 @@
  * @li @ref ecore_evas_callbacks_example_c
  * @li @ref ecore_evas_object_example_c
  * @li @ref ecore_evas_basics_example_c
- *
+ * @li Ecore_Evas_Window_Sizes_Example_c
+ * @li Ecore_Evas_Buffer_Example_01_c
+ * @li Ecore_Evas_Buffer_Example_02_c
  */
 
 /**
@@ -1378,4 +1380,89 @@
  * Here you have the full-source of the code:
  * @include ecore_evas_basics_example.c
  * @example ecore_evas_basics_example.c
+ */
+
+/**
+ * @page Ecore_Evas_Buffer_Example_01_c @c Ecore_Evas buffer example
+ *
+ * Between the Evas examples, there is one in which one creates a
+ * canvas bound to the Evas @b buffer engine and uses its pixel
+ * contents to create an PPM image on disk. There, one does that by
+ * creating the canvas "by hand", with @c evas_new(), @c
+ * evas_engine_info_set(), etc.
+ *
+ * On this example, we accomplish the very same task, but by using the
+ * @c Ecore_Evas helper wrapper functions on a buffer engine
+ * canvas. If you compare both codes, you'll see how much code one is
+ * saved from by using the @Ecore_Evas wrapper functions.
+ *
+ * The code is simple as it can be. After instantianting our canvas
+ * window, with ecore_evas_buffer_new(), we grab its canvas pointer
+ * and create the desired objects scene on it, which in this case is
+ * formed by 3 rectangles over the top left corner of a white
+ * background:
+ * @dontinclude ecore_evas_buffer_example_01.c
+ * @skip main(void)
+ * @until show(r3)
+ *
+ * Since it's a buffer canvas and we're using it to only save its
+ * contents on a file, we even needn't ecore_evas_show() it. We make
+ * it render itself, forcefully, without the aid of Ecore's mainloop,
+ * with ecore_evas_manual_render():
+ * @dontinclude ecore_evas_buffer_example_01.c
+ * @skip manual_render
+ * @until manual_render
+ *
+ * And we're ready to save the window's shiny rendered contents as a
+ * simple PPM image. We do so by grabbing the pixels of the @c
+ * Ecore_Evas' internal canvas, with ecore_evas_buffer_pixels_get():
+ * @dontinclude ecore_evas_buffer_example_01.c
+ * @skip _scene_save
+ * @until }
+ * @dontinclude ecore_evas_buffer_example_01.c
+ * @skip support function
+ * @until }
+ * @until }
+ * @until }
+ *
+ * Check that destination file for the result. The full example
+ * follows.
+ *
+ * @include ecore_evas_buffer_example_01.c
+ * @example ecore_evas_buffer_example_01.c
+ */
+
+/**
+ * @page Ecore_Evas_Buffer_Example_02_c @c Ecore_Evas (image) buffer example
+ *
+ * In this example, we'll demonstrate the use of
+ * ecore_evas_object_image_new().  The idea is to have the same scene
+ * created for @ref Ecore_Evas_Buffer_Example_01_c as the contents of
+ * an image object.
+ *
+ * The canvas receiving this image object will have a white
+ * background, a red border image to delimit this image's boundaries
+ * and the image itself.  After we create the special image, we set
+ * its "fill" property, place and resize it as we want. We have also
+ * to resize its underlying @c Ecore_Evas too, to the same dimensions:
+ * @dontinclude ecore_evas_buffer_example_02.c
+ * @skip object_image_new
+ * @until resize(sub_ee
+ *
+ * Now, we re-create the scene we cited, using the sub-canvas of our
+ * image to parent the objects in question. Because image objects are
+ * created with the alpha channel enabled, by default, we'll be seeing
+ * our white rectangle beneath the scene:
+ * @dontinclude ecore_evas_buffer_example_02.c
+ * @skip rectangle_add(sub_canvas
+ * @until loop_begin
+ *
+ * And that's all. The contents of our image could be updated as one
+ * wished, and they would always be mirrored in the image's area.
+ *
+ * Check that destination file for the result. The full example
+ * follows.
+ *
+ * @include ecore_evas_buffer_example_02.c
+ * @example ecore_evas_buffer_example_02.c
  */
