@@ -129,7 +129,7 @@
  *
  * @image html edje-basics-example.png
  * @image rtf edje-basics-example.png
- * @image latex edje-basics-example.eps
+ * @image latex edje-basics-example.eps width=\textwidth
  *
  * The full example follows.
  *
@@ -197,7 +197,7 @@
  *
  * @image html edje-text.png
  * @image rtf edje-text.png
- * @image latex edje-text.eps
+ * @image latex edje-text.eps width=\textwidth
  *
  * The full source code follows:
  * @include edje-text.c
@@ -257,7 +257,7 @@
  *
  * @image html edje-table-example.png
  * @image rtf edje-table-example.png
- * @image latex edje-table-example.eps
+ * @image latex edje-table-example.eps width=\textwidth
  *
  * The full source code follows:
  * @include edje-table.c
@@ -340,7 +340,7 @@
  *
  * @image html edje-box-example.png
  * @image rtf edje-box-example.png
- * @image latex edje-box-example.eps
+ * @image latex edje-box-example.eps width=\textwidth
  *
  * The full source code follows:
  * @include edje-box.c
@@ -394,7 +394,7 @@
  *
  * @image html edje-box2-example.png
  * @image rtf edje-box2-example.png
- * @image latex edje-box2-example.eps
+ * @image latex edje-box2-example.eps width=\textwidth
  *
  * The full source code follows:
  * @include edje-box2.c
@@ -476,7 +476,7 @@
  *
  * @image html edje-drag-example.png
  * @image rtf edje-drag-example.png
- * @image latex edje-drag-example.eps
+ * @image latex edje-drag-example.eps width=\textwidth
  *
  * The full source code follows:
  * @include edje-drag.c
@@ -595,7 +595,7 @@
  *
  * @image html edje-signals-messages-example.png
  * @image rtf edje-signals-messages-example.png
- * @image latex edje-signals-messages-example.eps
+ * @image latex edje-signals-messages-example.eps width=\textwidth
  *
  * The full example follows, along with its EDC file.
  *
@@ -661,7 +661,7 @@
  *
  * @image html edje-color-class-example.png
  * @image rtf edje-color-class-example.png
- * @image latex edje-color-class-example.eps
+ * @image latex edje-color-class-example.eps width=\textwidth
  *
  * The full source code follows:
  * @include edje-color-class.c
@@ -723,10 +723,10 @@
  *
  * @image html edje-animations.png
  * @image rtf edje-animations.png
- * @image latex edje-animations.eps
+ * @image latex edje-animations.eps width=\textwidth
  * @image html edje-animations2.png
  * @image rtf edje-animations2.png
- * @image latex edje-animations2.eps
+ * @image latex edje-animations2.eps width=\textwidth
  *
  * The full example follows.
  *
