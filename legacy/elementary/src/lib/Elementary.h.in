@@ -320,7 +320,11 @@ extern "C" {
    typedef enum _Elm_Focus_Direction
      {
         ELM_FOCUS_PREVIOUS,
-        ELM_FOCUS_NEXT
+        ELM_FOCUS_NEXT,
+        ELM_FOCUS_UP,
+        ELM_FOCUS_DOWN,
+        ELM_FOCUS_LEFT,
+        ELM_FOCUS_RIGHT
      } Elm_Focus_Direction;
 
    typedef enum _Elm_Text_Format

@@ -397,6 +397,34 @@ _elm_win_event_cb(Evas_Object *obj, Evas_Object *src __UNUSED__, Evas_Callback_T
              ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
              return EINA_TRUE;
           }
+        else if ((!strcmp(ev->keyname, "Left")) ||
+                 (!strcmp(ev->keyname, "KP_Left")))
+          {
+             elm_widget_focus_cycle(obj, ELM_FOCUS_LEFT);
+             ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
+             return EINA_TRUE;
+          }
+        else if ((!strcmp(ev->keyname, "Right")) ||
+                 (!strcmp(ev->keyname, "KP_Right")))
+          {
+             elm_widget_focus_cycle(obj, ELM_FOCUS_RIGHT);
+             ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
+             return EINA_TRUE;
+          }
+        else if ((!strcmp(ev->keyname, "Up")) ||
+                 (!strcmp(ev->keyname, "KP_Up")))
+          {
+             elm_widget_focus_cycle(obj, ELM_FOCUS_UP);
+             ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
+             return EINA_TRUE;
+          }
+        else if ((!strcmp(ev->keyname, "Down")) ||
+                 (!strcmp(ev->keyname, "KP_Down")))
+          {
+             elm_widget_focus_cycle(obj, ELM_FOCUS_DOWN);
+             ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
+             return EINA_TRUE;
+          }
      }
 
    return EINA_FALSE;

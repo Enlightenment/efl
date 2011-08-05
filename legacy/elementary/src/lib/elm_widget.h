@@ -269,6 +269,7 @@ EAPI void            *elm_widget_signal_callback_del(Evas_Object *obj, const cha
 EAPI void             elm_widget_can_focus_set(Evas_Object *obj, Eina_Bool can_focus);
 EAPI Eina_Bool        elm_widget_can_focus_get(const Evas_Object *obj);
 EAPI Eina_Bool        elm_widget_child_can_focus_get(const Evas_Object *obj);
+EAPI Eina_List       *elm_widget_can_focus_child_list_get(const Evas_Object *obj);
 EAPI void             elm_widget_tree_unfocusable_set(Evas_Object *obj, Eina_Bool tree_unfocusable);
 EAPI Eina_Bool        elm_widget_tree_unfocusable_get(const Evas_Object *obj);
 EAPI void             elm_widget_highlight_ignore_set(Evas_Object *obj, Eina_Bool ignore);
