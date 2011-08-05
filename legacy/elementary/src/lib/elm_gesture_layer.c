@@ -3169,12 +3169,14 @@ elm_gesture_layer_cb_set(Evas_Object *obj, Elm_Gesture_Types idx,
       Elm_Gesture_State cb_type, Elm_Gesture_Event_Cb cb, void *data)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
+   Gesture_Info *p;
    if (!wd) return;
 
    if (!wd->gesture[idx])
      wd->gesture[idx] = calloc(1, sizeof(Gesture_Info));
+   if (!wd->gesture[idx]) return;
 
-   Gesture_Info *p = wd->gesture[idx];
+   p = wd->gesture[idx];
    p->obj = obj;
    p->g_type = idx;
    p->fn[cb_type].cb = cb;
