@@ -11,6 +11,7 @@ EDCS = basic.edc \
 	drag.edc \
 	signals-messages.edc \
 	color-class.edc \
+	perspective.edc \
 	animations.edc
 
 filesdir = $(datadir)/$(PACKAGE)/examples
@@ -42,6 +43,7 @@ pkglib_PROGRAMS += \
 	edje-drag\
 	edje-signals-messages \
 	edje-color-class \
+	edje-perspective \
 	edje-animations
 
 LDADD = $(top_builddir)/src/lib/libedje.la @EDJE_LIBS@
@@ -71,6 +73,7 @@ files_DATA += \
 	$(srcdir)/edje-drag.c \
 	$(srcdir)/edje-signals-messages.c \
 	$(srcdir)/edje-color-class.c \
+	$(srcdir)/edje-perspective.c \
 	$(srcdir)/edje-animations.c
 endif
 
@@ -85,4 +88,5 @@ EXTRA_DIST = $(EDCS) \
 	$(srcdir)/edje-drag.c \
 	$(srcdir)/edje-signals-messages.c \
 	$(srcdir)/edje-color-class.c \
+	$(srcdir)/edje-perspective.c \
 	$(srcdir)/edje-animations.c

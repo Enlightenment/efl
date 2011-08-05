@@ -12,6 +12,7 @@
  * @li @ref tutorial_edje_box
  * @li @ref tutorial_edje_box2
  * @li @ref tutorial_edje_drag
+ * @li @ref tutorial_edje_perspective
  * @li @ref tutorial_edje_animations
  */
 
@@ -481,6 +482,93 @@
  * The full source code follows:
  * @include edje-drag.c
  * @example edje-drag.c
+ */
+
+/**
+ * @page tutorial_edje_perspective Perspective example
+ *
+ * This example demonstrates how someone can set a perspective to be used by an
+ * Edje object, but setting a global perspective. The API for setting a
+ * perspective for just one Edje object is almost the same and it's trivial, so
+ * we are not doing that on this example.
+ *
+ * Let's go first to the main function, where we start creating our objects and
+ * loading the theme. We also set some variables that will be used globally in
+ * our program:
+ *
+ * @dontinclude edje-perspective.c
+ * @skip main(
+ * @until focal =
+ *
+ * A boolean is used to indicate that we are animating.
+ *
+ * We also set the @c app.x and @c app.y to (0, 0) because the original position
+ * of our text + rectangle part will be on top left. This is a convention that
+ * we are using in this example, and setting x, y to 1, 1 would mean bottom
+ * right.  We do this to later define the name of the signals that we are
+ * sending to the theme.
+ *
+ * After this, some boilerplate code to load the theme:
+ *
+ * @until evas_object_show(app.edje)
+ *
+ * Now we are going to setup a callback to tell us that the animation has ended.
+ * We do this just to avoid sending signals to the theme while it's animating.
+ *
+ * @until edje_object_signal
+ *
+ * Finally, let's create our perspective object, define its position, focal
+ * distance and z plane position, and set it as global:
+ *
+ * @until global_set
+ *
+ * Notice that if we wanted to set it just to our edje object, instead of
+ * setting the perspective as global to the entire canvas, we could just use
+ * edje_object_perspective_set() instead of edje_perspective_global_set(). The
+ * rest of the code would be exactly the same.
+ *
+ * Now, let's take a look at what we do in our callbacks.
+ *
+ * The callback for key_down is converting the arrow keys to a signal that
+ * represents where we want our text and rectangle moved to. It does that by
+ * using the following function:
+ *
+ * @dontinclude edje-perspective.c
+ * @skip part_move(
+ * @until }
+ *
+ * Notice that, after sending the signal to the Edje object, we set our boolean
+ * to store that we are animating now. It will only be unset when we receive a
+ * signal from the theme that the animation has ended.
+ *
+ * Now, on the key_down code, we just call this function when the arrows or
+ * "PgUp" or "PgDown" keys are pressed:
+ *
+ * @until unhandled
+ * @until }
+ *
+ * Notice that we also do something else when the numeric keyboard "+" and "-"
+ * keys are pressed. We change the focal distance of our global perspective, and
+ * that will affect the part that has a map rotation applied to it, with
+ * perspective enabled. We also need to call edje_object_calc_force(), otherwise
+ * the Edje object has no way to know that we changed the global perspective.
+ *
+ * Try playing with these keys and see what happens to the animation when the
+ * value of the focal distance changes.
+ *
+ * Finally we add a callback for the animation ended signal:
+ *
+ * @until }
+ *
+ * The example's window should look like this picture:
+ *
+ * @image html edje-perspective-example.png
+ * @image rtf edje-perspective-example.png
+ * @image latex edje-perspective-example.eps width=\textwidth
+ *
+ * The full source code follows:
+ * @include edje-perspective.c
+ * @example edje-perspective.c
  */
 
 /**

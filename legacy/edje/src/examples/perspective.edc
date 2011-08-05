@@ -1,0 +1,140 @@
+collections {
+   group {
+      name: "example/group";
+
+      min: 480 320;
+
+      parts {
+         part {
+            name: "bg";
+            type: RECT;
+            mouse_events: 1;
+
+            description {
+               state: "default" 0.0;
+            }
+         } // bg
+
+         part {
+            name: "rectangle";
+            type: RECT;
+            mouse_events: 0;
+
+            description {
+               state: "default" 0.0;
+               color: 255 0 0 128;
+
+               rel1 {
+                  offset: -5 -5;
+                  to: "title";
+               }
+               rel2 {
+                  offset: 4 4;
+                  to: "title";
+               }
+
+               map {
+                  on: 1;
+                  perspective_on: 1;
+                  rotation {
+                     x: 45;
+                  }
+               }
+            }
+         } // rectangle
+
+         part {
+            name: "title";
+            type: TEXT;
+            mouse_events: 0;
+
+            description {
+               state: "default" 0.0;
+               color: 200 200 200 255;
+
+               align: 0.0 0.5;
+
+               rel1.relative: 0.1 0.1;
+               rel2.relative: 0.1 0.1;
+
+               text {
+                  text: "Perspective example";
+                  font: "Sans";
+                  size: 16;
+                  min: 1 1;
+               }
+
+               map {
+                  on: 1;
+                  perspective_on: 1;
+                  rotation {
+                     x: 45;
+                  }
+               }
+            }
+
+            description {
+               state: "right" 0.0;
+               inherit: "default" 0.0;
+
+               rel1.relative: 0.5 0.1;
+               rel2.relative: 0.5 0.1;
+            }
+            description {
+               state: "bottom" 0.0;
+               inherit: "default" 0.0;
+
+               rel1.relative: 0.1 0.9;
+               rel2.relative: 0.1 0.9;
+            }
+            description {
+               state: "bottomright" 0.0;
+               inherit: "default" 0.0;
+
+               rel1.relative: 0.5 0.9;
+               rel2.relative: 0.5 0.9;
+            }
+         } // title
+      }
+
+      programs {
+         program {
+            name: "move,right";
+            signal: "move,1,0";
+            action: STATE_SET "right" 0.0;
+            transition: SINUSOIDAL 1.0;
+            target: "title";
+            after: "animation,end";
+         }
+         program {
+            name: "move,bottom";
+            signal: "move,0,1";
+            action: STATE_SET "bottom" 0.0;
+            transition: SINUSOIDAL 1.0;
+            target: "title";
+            after: "animation,end";
+         }
+         program {
+            name: "move,bottomright";
+            signal: "move,1,1";
+            action: STATE_SET "bottomright" 0.0;
+            transition: SINUSOIDAL 1.0;
+            target: "title";
+            after: "animation,end";
+         }
+         program {
+            name: "move,default";
+            signal: "move,0,0";
+            action: STATE_SET "default" 0.0;
+            transition: SINUSOIDAL 1.0;
+            target: "title";
+            after: "animation,end";
+         }
+
+         program {
+            name: "animation,end";
+            action: SIGNAL_EMIT "animation,end" "";
+         }
+      }
+   }
+}
