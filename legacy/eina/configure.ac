@@ -346,7 +346,7 @@ if test "x${enable_ememoa}" = "xyes" ; then
    )
 fi
 
-PKG_CHECK_MODULES([ECORE_EVAS], [ecore-evas ecore], [build_tiler_example="yes"], [build_tiler_example="no"])
+PKG_CHECK_MODULES([ECORE_EVAS], [ecore-evas ecore evas], [build_tiler_example="yes"], [build_tiler_example="no"])
 AM_CONDITIONAL([BUILD_TILER_EXAMPLE], [test "x${build_tiler_example}" = "xyes"])
 
 ### Checks for header files
