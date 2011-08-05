@@ -4494,7 +4494,7 @@ elm_genlist_item_cursor_engine_only_get(const Elm_Genlist_Item *item)
 }
 
 EAPI void
-elm_genlist_horizontal_mode_set(Evas_Object  *obj,
+elm_genlist_horizontal_set(Evas_Object  *obj,
                                 Elm_List_Mode mode)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
@@ -4505,13 +4505,26 @@ elm_genlist_horizontal_mode_set(Evas_Object  *obj,
    _sizing_eval(obj);
 }
 
+EAPI void
+elm_genlist_horizontal_mode_set(Evas_Object  *obj,
+                                Elm_List_Mode mode)
+{
+   elm_genlist_horizontal_set(obj, mode);
+}
+
 EAPI Elm_List_Mode
-elm_genlist_horizontal_mode_get(const Evas_Object *obj)
+elm_genlist_horizontal_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) ELM_LIST_LAST;
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return ELM_LIST_LAST;
    return wd->mode;
+}
+
+EAPI Elm_List_Mode
+elm_genlist_horizontal_mode_get(const Evas_Object *obj)
+{
+   return elm_genlist_horizontal_get(obj);
 }
 
 EAPI void

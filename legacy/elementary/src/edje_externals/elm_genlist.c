@@ -5,7 +5,7 @@
 typedef struct _Elm_Params_Genlist
 {
    Elm_Params base;
-   const char *horizontal_mode;
+   const char *horizontal;
    Eina_Bool multi:1;
    Eina_Bool multi_exists:1;
    Eina_Bool always_select:1;
@@ -22,18 +22,18 @@ typedef struct _Elm_Params_Genlist
    Eina_Bool v_bounce_exists:1;
 } Elm_Params_Genlist;
 
-static const char* list_horizontal_mode_choices[] = {"compress", "scroll", "limit", "expand", NULL};
+static const char* list_horizontal_choices[] = {"compress", "scroll", "limit", "expand", NULL};
 
 static Elm_List_Mode
-_list_horizontal_mode_setting_get(const char *horizontal_mode_str)
+_list_horizontal_setting_get(const char *horizontal_str)
 {
    unsigned int i;
 
-   assert(sizeof(list_horizontal_mode_choices)/sizeof(list_horizontal_mode_choices[0]) == ELM_LIST_LAST + 1);
+   assert(sizeof(list_horizontal_choices)/sizeof(list_horizontal_choices[0]) == ELM_LIST_LAST + 1);
 
-   for (i = 0; i < sizeof(list_horizontal_mode_choices); i++)
+   for (i = 0; i < sizeof(list_horizontal_choices); i++)
      {
-	if (!strcmp(horizontal_mode_str, list_horizontal_mode_choices[i]))
+	if (!strcmp(horizontal_str, list_horizontal_choices[i]))
 	  return i;
      }
    return ELM_LIST_LAST;
@@ -48,12 +48,12 @@ external_genlist_state_set(void *data __UNUSED__, Evas_Object *obj, const void *
    else if (from_params) p = from_params;
    else return;
 
-   if (p->horizontal_mode)
+   if (p->horizontal)
      {
-	Elm_List_Mode set = _list_horizontal_mode_setting_get(p->horizontal_mode);
+	Elm_List_Mode set = _list_horizontal_setting_get(p->horizontal);
 
 	if (set != ELM_LIST_LAST)
-	   elm_genlist_horizontal_mode_set(obj, set);
+	   elm_genlist_horizontal_set(obj, set);
      }
    if (p->multi_exists)
      elm_genlist_multi_select_set(obj, p->multi);
@@ -86,10 +86,10 @@ external_genlist_param_set(void *data __UNUSED__, Evas_Object *obj, const Edje_E
      {
 	if (param->type == EDJE_EXTERNAL_PARAM_TYPE_CHOICE)
 	  {
-	     Elm_List_Mode set = _list_horizontal_mode_setting_get(param->s);
+	     Elm_List_Mode set = _list_horizontal_setting_get(param->s);
 
 	     if (set == ELM_LIST_LAST) return EINA_FALSE;
-	     elm_genlist_horizontal_mode_set(obj, set);
+	     elm_genlist_horizontal_set(obj, set);
 	     return EINA_TRUE;
 	  }
      }
@@ -167,12 +167,12 @@ external_genlist_param_get(void *data __UNUSED__, const Evas_Object *obj, Edje_E
      {
 	if (param->type == EDJE_EXTERNAL_PARAM_TYPE_CHOICE)
 	  {
-	     Elm_List_Mode list_horizontal_mode_set = elm_genlist_horizontal_mode_get(obj);
+	     Elm_List_Mode list_horizontal_set = elm_genlist_horizontal_get(obj);
 
-	     if (list_horizontal_mode_set == ELM_LIST_LAST)
+	     if (list_horizontal_set == ELM_LIST_LAST)
 	       return EINA_FALSE;
 
-	     param->s = list_horizontal_mode_choices[list_horizontal_mode_set];
+	     param->s = list_horizontal_choices[list_horizontal_set];
 	     return EINA_TRUE;
 	  }
      }
@@ -257,7 +257,7 @@ external_genlist_params_parse(void *data __UNUSED__, Evas_Object *obj __UNUSED__
    EINA_LIST_FOREACH(params, l, param)
      {
 	if (!strcmp(param->name, "horizontal mode"))
-	     mem->horizontal_mode = eina_stringshare_add(param->s);
+	     mem->horizontal = eina_stringshare_add(param->s);
 	else if (!strcmp(param->name, "multi select"))
 	  {
 	     mem->multi = !!param->i;
@@ -310,15 +310,15 @@ external_genlist_params_free(void *params)
 {
    Elm_Params_Genlist *mem = params;
 
-   if (mem->horizontal_mode)
-     eina_stringshare_del(mem->horizontal_mode);
+   if (mem->horizontal)
+     eina_stringshare_del(mem->horizontal);
 
    free(mem);
 }
 
 static Edje_External_Param_Info external_genlist_params[] = {
    DEFINE_EXTERNAL_COMMON_PARAMS,
-   EDJE_EXTERNAL_PARAM_INFO_CHOICE_FULL("horizontal mode", "scroll", list_horizontal_mode_choices),
+   EDJE_EXTERNAL_PARAM_INFO_CHOICE_FULL("horizontal mode", "scroll", list_horizontal_choices),
    EDJE_EXTERNAL_PARAM_INFO_BOOL("multi select"),
    EDJE_EXTERNAL_PARAM_INFO_BOOL("always select"),
    EDJE_EXTERNAL_PARAM_INFO_BOOL("no select"),
