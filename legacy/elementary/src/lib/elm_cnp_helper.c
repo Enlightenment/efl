@@ -78,7 +78,7 @@ struct _Cnp_Selection
 struct _Escape
 {
    const char *escape;
-   const char  value;
+   const char  *value;
 };
 
 struct _Tmp_Info
@@ -147,16 +147,19 @@ static int vcard_receive(Cnp_Selection *sed, Ecore_X_Event_Selection_Notify *not
 
 static Eina_Bool pasteimage_append(char *file, Evas_Object *entry);
 
+#define _PARAGRAPH_SEPARATOR "\xE2\x80\xA9"
+
 /* Optimisation: Turn this into a 256 byte table:
  *	then can lookup in one index, not N checks */
 static const Escape escapes[] = {
-       { "<br>",   '\n' },
-       { "<\t>",   '\t' },
-       { "gt;",    '>'  },
-       { "lt;",    '<'  },
-       { "amp;",   '&'  },
-       { "quot;",  '\'' },
-       { "dquot;", '"'  }
+  { "<ps>",  _PARAGRAPH_SEPARATOR },
+  { "<br>",  "\n" },
+  { "<\t>",  "\t" },
+  { "gt;",   ">" },
+  { "lt;",    "<" },
+  { "amp;",   "&" },
+  { "quot;",  "\'" },
+  { "dquot;", "\"" }
 };
 #define N_ESCAPES ((int)(sizeof(escapes) / sizeof(escapes[0])))
 
@@ -1035,7 +1038,7 @@ remove_tags(const char *p, int *len)
    int i;
    if (!p) return NULL;
 
-   q = malloc(strlen(p) + 1);
+   q = malloc(strlen(p)+1);
    if (!q) return NULL;
    ret = q;
 
@@ -1047,6 +1050,11 @@ remove_tags(const char *p, int *len)
              if ((p[1] == 'b') && (p[2] == 'r') &&
                  ((p[3] == ' ') || (p[3] == '/') || (p[3] == '>')))
                *q++ = '\n';
+             else if ((p[1] == 'p') && (p[2] == 's') && (p[3] == '>'))
+               {
+                  strcpy(q, _PARAGRAPH_SEPARATOR);
+                  q += (sizeof(_PARAGRAPH_SEPARATOR)-1);
+               }
              while ((*p) && (*p != '>')) p++;
              p++;
           }
@@ -1058,8 +1066,8 @@ remove_tags(const char *p, int *len)
                   if (!strncmp(p,escapes[i].escape, strlen(escapes[i].escape)))
                     {
                        p += strlen(escapes[i].escape);
-                       *q = escapes[i].value;
-                       q++;
+                       strcpy(q, escapes[i].value);
+                       q += strlen(escapes[i].value);
                        break;
                     }
                }
@@ -1087,9 +1095,10 @@ mark_up(const char *start, int inlen, int *lenp)
      {
         for (i = 0 ; i < N_ESCAPES ; i ++)
           {
-             if (*p == escapes[i].value)
+             if (*p == escapes[i].value[0])
                {
-                  l += strlen(escapes[i].escape);
+                  if (!strncmp(p, escapes[i].value, strlen(escapes[i].value)))
+                    l += strlen(escapes[i].escape);
                   break;
                }
           }
@@ -1103,11 +1112,14 @@ mark_up(const char *start, int inlen, int *lenp)
      {
         for (i = 0; i < N_ESCAPES; i++)
           {
-             if (*p == escapes[i].value)
+             if (*p == escapes[i].value[0])
                {
-                  strcpy(q, escapes[i].escape);
-                  q += strlen(escapes[i].escape);
-                  p ++;
+                  if (!strncmp(p, escapes[i].value, strlen(escapes[i].value)))
+                    {
+                       strcpy(q, escapes[i].escape);
+                       q += strlen(escapes[i].escape);
+                       p += strlen(escapes[i].value);
+                    }
                   break;
                }
           }
