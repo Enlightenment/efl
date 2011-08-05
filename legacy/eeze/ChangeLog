@@ -50,3 +50,6 @@
 
 2011-07-15  Cedric Bail
 	* added EEZE_UDEV_TYPE_V4L
+
+2011-08-01  Mike Blumenkrantz (discomfitor/zmike)
+        * added fix for battery/ac detection with very recent versions of udev
