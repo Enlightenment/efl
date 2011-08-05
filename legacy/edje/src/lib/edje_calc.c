@@ -2756,6 +2756,8 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
 
                             // fixme: a tad inefficient as this is a has lookup
                             ps = edje_object_perspective_get(ed->obj);
+                            if (!ps)
+                              ps = edje_evas_global_perspective_get(evas_object_evas_get(ed->obj));
                             if (ps)
                               {
                                  px = ps->px; py = ps->py;
