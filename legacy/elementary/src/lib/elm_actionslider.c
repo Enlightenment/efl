@@ -170,11 +170,7 @@ _button_animation(void *data)
    double cur_position = 0.0, new_position = 0.0;
    double move_amount = 0.05;
    Eina_Bool flag_finish_animation = EINA_FALSE;
-   if (!wd)
-     {
-        wd->button_animator = NULL;
-        return ECORE_CALLBACK_CANCEL;
-     }
+   if (!wd) return ECORE_CALLBACK_CANCEL;
 
    edje_object_part_drag_value_get(wd->as,
                                    "elm.drag_button_base", &cur_position, NULL);
