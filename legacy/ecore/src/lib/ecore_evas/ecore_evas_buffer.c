@@ -515,11 +515,6 @@ _ecore_evas_buffer_pix_free(void *data __UNUSED__, void *pix)
    free(pix);
 }
 
-/**
- * To be documented.
- *
- * FIXME: To be fixed.
- */
 EAPI Ecore_Evas *
 ecore_evas_buffer_new(int w, int h)
 {

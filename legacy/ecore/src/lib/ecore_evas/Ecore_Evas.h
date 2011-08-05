@@ -655,12 +655,142 @@ EAPI Ecore_Evas     *ecore_evas_fb_new(const char *disp_name, int rotation, int 
 EAPI Ecore_Evas     *ecore_evas_directfb_new(const char *disp_name, int windowed, int x, int y, int w, int h);
 EAPI Ecore_DirectFB_Window *ecore_evas_directfb_window_get(const Ecore_Evas *ee);
 
+/**
+ * @brief Create a new @c Ecore_Evas canvas bound to the Evas
+ * @b buffer engine
+ *
+ * @param w The width of the canvas, in pixels
+ * @param h The height of the canvas, in pixels
+ * @return A new @c Ecore_Evas instance or @c NULL, on failure
+ *
+ * This creates a new buffer canvas wrapper, with image data array
+ * @b bound to the ARGB format, 8 bits per pixel.
+ *
+ * This function will allocate the needed pixels array with canonical
+ * @c malloc(). If you wish a custom function to allocate it, consider
+ * using ecore_evas_buffer_allocfunc_new(), instead.
+ *
+ * @note This function actually is a wrapper on
+ * ecore_evas_buffer_allocfunc_new(), using the same @a w and @a h
+ * arguments and canonical @c malloc() and @c free() to the memory
+ * allocation and freeing functions. See that function's documentation
+ * for more details.
+ */
 EAPI Ecore_Evas     *ecore_evas_buffer_new(int w, int h);
+
+/**
+ * @brief Create a new @c Ecore_Evas canvas bound to the Evas
+ * @b buffer engine, giving custom allocation and freeing functions for
+ * the canvas memory region
+ *
+ * @param w The width of the canvas, in canvas units
+ * @param h The height of the canvas, in canvas units
+ * @param alloc_func Function to be called to allocate the memory
+ * needed for the new buffer canvas. @a data will be passed the same
+ * value as the @p data of this function, while @a size will be passed
+ * @p w times @p h times @c sizeof(int).
+ * @param free_func Function to be called to free the memory used by
+ * the new buffer canvas. @a data will be passed the same value as the
+ * @p data of this function, while @a pix will be passed the canvas
+ * memory pointer.
+ * @param data Custom data to be passed to the allocation and freeing
+ * functions
+ * @return A new @c Ecore_Evas instance or @c NULL, on failure
+ *
+ * This creates a new buffer canvas wrapper, with image data array
+ * @b bound to the ARGB format, 8 bits per pixel.
+ *
+ * This function is useful when one wants an @c Ecore_Evas buffer
+ * canvas with a custom allocation function, like one getting memory
+ * chunks from a memory pool, for example.
+ *
+ * On any resizing of this @c Ecore_Evas buffer canvas, its image data
+ * will be @b freed, to be allocated again with the new size.
+ *
+ * @note @p w and @p h sizes have to greater or equal to 1. Otherwise,
+ * they'll be interpreted as 1, exactly.
+ *
+ * @see ecore_evas_buffer_new()
+ */
 EAPI Ecore_Evas     *ecore_evas_buffer_allocfunc_new(int w, int h, void *(*alloc_func) (void *data, int size), void (*free_func) (void *data, void *pix), const void *data);
+
+/**
+ * @brief Grab a pointer to the actual pixels array of a given
+ * @c Ecore_Evas @b buffer canvas/window.
+ *
+ * @param ee An @c Ecore_Evas handle
+ * @return A pointer to the internal pixels array of @p ee
+ *
+ * Besides returning a pointer to the actual pixel array of the given
+ * canvas, this call will force a <b>rendering update on @p ee</b>,
+ * first.
+ *
+ * A common use case for this call is to create an image object, from
+ * @b another canvas, to have as data @p ee's contents, thus
+ * snapshoting the canvas. For that case, one can also use the
+ * ecore_evas_object_image_new() helper function.
+ */
 EAPI const void     *ecore_evas_buffer_pixels_get(Ecore_Evas *ee);
 
+/**
+ * @brief Create an Evas image object with image data <b>bound to an
+ * own, internal @c Ecore_Evas canvas wrapper<b>
+ *
+ * @param ee_target @c Ecore_Evas to have the canvas receiving the new
+ * image object
+ * @return A handle to the new image object
+ *
+ * This will create a @b special Evas image object. The image's pixel
+ * array will get bound to the same image data array of an @b internal
+ * @b buffer @c Ecore_Evas canvas. The user of this function is, then,
+ * supposed to grab that @c Ecore_Evas handle, with
+ * ecore_evas_object_ecore_evas_get(), and use its canvas to render
+ * whichever contents he/she wants, @b independently of the contents
+ * of the canvas owned by @p ee_target. Those contents will reflect on
+ * the canvas of @p ee, though, being exactly the image data of the
+ * object returned by this function.
+ *
+ * This is a helper function for the scenario of one willing to grab a
+ * buffer canvas' contents (with ecore_evas_buffer_pixels_get()) to be
+ * used on another canvas, for whichever reason. The most common goal
+ * of this setup is to @b save an image file with a whole canvas as
+ * contents, which could not be achieved by using an image file within
+ * the target canvas.
+ *
+ * @warning Always resize the returned image and its underlying @c
+ * Ecore_Evas handle accordingly and successively. They must be kept
+ * with same sizes for things to work as expected.
+ *
+ * @note The image returned will always be bound to the
+ * @c EVAS_COLORSPACE_ARGB8888 colorspace, always.
+ *
+ * @note Use ecore_evas_object_evas_get() to grab the image's internal
+ * own canvas directly.
+ *
+ * @note If snapshoting this image's internal canvas, remember to
+ * flush its internal @c Ecore_Evas firstly, with
+ * ecore_evas_manual_render().
+ */
 EAPI Evas_Object    *ecore_evas_object_image_new(Ecore_Evas *ee_target);
+
+/**
+ * @brief Retrieve the internal @c Ecore_Evas handle of an image
+ * object created via ecore_evas_object_image_new()
+ *
+ * @param obj A handle to an image object created via
+ * ecore_evas_object_image_new()
+ * @return The underlying @c Ecore_Evas handle in @p obj
+ */
 EAPI Ecore_Evas     *ecore_evas_object_ecore_evas_get(Evas_Object *obj);
+
+/**
+ * @brief Retrieve the canvas bound to the internal @c Ecore_Evas
+ * handle of an image object created via ecore_evas_object_image_new()
+ *
+ * @param obj A handle to an image object created via
+ * ecore_evas_object_image_new()
+ * @return A handle to @p obj's underlying @c Ecore_Evas's canvas
+ */
 EAPI Evas           *ecore_evas_object_evas_get(Evas_Object *obj);
 
 EAPI Ecore_Evas     *ecore_evas_software_gdi_new(Ecore_Win32_Window *parent,
@@ -1177,6 +1307,16 @@ EAPI void        ecore_evas_sticky_set(Ecore_Evas *ee, Eina_Bool sticky);
 EAPI Eina_Bool   ecore_evas_sticky_get(const Ecore_Evas *ee);
 EAPI void        ecore_evas_manual_render_set(Ecore_Evas *ee, Eina_Bool manual_render);
 EAPI Eina_Bool   ecore_evas_manual_render_get(const Ecore_Evas *ee);
+
+
+/**
+ * @brief Force immediate rendering on a given @c Ecore_Evas window
+ *
+ * @param ee An @c Ecore_Evas handle
+ *
+ * Use this call to forcefully flush the @p ee's canvas rendering
+ * pipeline, thus bring its window to an up to date state.
+ */
 EAPI void        ecore_evas_manual_render(Ecore_Evas *ee);
 EAPI void        ecore_evas_comp_sync_set(Ecore_Evas *ee, Eina_Bool do_sync);
 EAPI Eina_Bool   ecore_evas_comp_sync_get(const Ecore_Evas *ee);
