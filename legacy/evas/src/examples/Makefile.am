@@ -79,7 +79,7 @@ evas_smart_object_LDADD = $(top_builddir)/src/lib/libevas.la @ECORE_EVAS_LIBS@
 
 pkglib_PROGRAMS += evas_box
 evas_box_SOURCES = evas-box.c
-evas_box_LDADD = $(top_builddir)/src/lib/libevas.la @ECORE_EVAS_LIBS@
+evas_box_LDADD = $(top_builddir)/src/lib/libevas.la @ECORE_EVAS_LIBS@ @EINA_LIBS@
 
 #the ones using ecore_evas and edje follow
 AM_CPPFLAGS += @EDJE_CFLAGS@
