@@ -361,6 +361,12 @@ em_shutdown(void *video)
         ev->thread = NULL;
      }
 
+   if (ev->eos_bus)
+     {
+        gst_object_unref(GST_OBJECT(ev->eos_bus));
+        ev->eos_bus = NULL;
+     }
+
    if (ev->pipeline)
      {
        gst_element_set_state(ev->pipeline, GST_STATE_NULL);
