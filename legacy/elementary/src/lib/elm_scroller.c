@@ -53,6 +53,7 @@ _event_hook(Evas_Object *obj, Evas_Object *src __UNUSED__, Evas_Callback_Type ty
    if (type != EVAS_CALLBACK_KEY_DOWN) return EINA_FALSE;
    Evas_Event_Key_Down *ev = event_info;
    Widget_Data *wd = elm_widget_data_get(obj);
+
    if (!wd) return EINA_FALSE;
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return EINA_FALSE;
    if (elm_widget_disabled_get(obj)) return EINA_FALSE;
@@ -67,27 +68,131 @@ _event_hook(Evas_Object *obj, Evas_Object *src __UNUSED__, Evas_Callback_Type ty
    Evas_Coord v_h = 0;
    Evas_Coord page_x = 0;
    Evas_Coord page_y = 0;
+   Evas_Coord c_x = 0;
+   Evas_Coord c_y = 0;
 
    elm_smart_scroller_child_pos_get(wd->scr, &x, &y);
    elm_smart_scroller_step_size_get(wd->scr, &step_x, &step_y);
    elm_smart_scroller_page_size_get(wd->scr, &page_x, &page_y);
    elm_smart_scroller_child_viewport_size_get(wd->scr, &v_w, &v_h);
-   elm_scroller_child_size_get(obj, &max_x, &max_y);
+   evas_object_geometry_get(wd->content, &c_x, &c_y, &max_x, &max_y);
+
+   if ((!strcmp(ev->keyname, "Left")) ||
+       (!strcmp(ev->keyname, "KP_Left")) ||
+       (!strcmp(ev->keyname, "Right")) ||
+       (!strcmp(ev->keyname, "KP_Right")) ||
+       (!strcmp(ev->keyname, "Up"))  ||
+       (!strcmp(ev->keyname, "KP_Up")) ||
+       (!strcmp(ev->keyname, "Down")) ||
+       (!strcmp(ev->keyname, "KP_Down")))
+     {
+        Evas_Object *current_focus = NULL;
+        Evas_Object *new_focus = NULL;
+        Eina_List *can_focus_list = NULL;
+        Evas_Coord f_x = 0;
+        Evas_Coord f_y = 0;
+        Evas_Coord f_w = 0;
+        Evas_Coord f_h = 0;
+
+        current_focus = elm_widget_focused_object_get(obj);
+        evas_object_geometry_get(current_focus, &f_x, &f_y, &f_w, &f_h);
+        can_focus_list = elm_widget_can_focus_child_list_get(obj);
+        if ((current_focus == obj) ||
+            (!ELM_RECTS_INTERSECT(x, y, v_w, v_h,
+                                  (f_x - c_x), (f_y - c_y), f_w, f_h)))
+          {
+             Evas_Object *cur;
+             Eina_List *l;
+             double weight = 0.0;
+
+             EINA_LIST_FOREACH(can_focus_list, l, cur)
+               {
+                  double cur_weight = 0.0;
+                  evas_object_geometry_get(cur, &f_x, &f_y, &f_w, &f_h);
+                  if (ELM_RECTS_INTERSECT(x, y, v_w, v_h,
+                                          (f_x - c_x), (f_y - c_y), f_w, f_h))
+                    {
+                       if ((f_x - c_x) > x)
+                         cur_weight += ((f_x - c_x) - x) * ((f_x - c_x) - x);
+                       if ((f_y - c_y) > y)
+                         cur_weight += ((f_y - c_y) - y) * ((f_y - c_y) - y);
+                       if (cur_weight == 0.0)
+                         {
+                            elm_widget_focus_steal(cur);
+                            return EINA_TRUE;
+                         }
+                       cur_weight = 1.0 / cur_weight;
+                       if (cur_weight > weight)
+                         {
+                            new_focus = cur;
+                            weight = cur_weight;
+                         }
+                    }
+               }
+             if (new_focus)
+               {
+                  elm_widget_focus_steal(new_focus);
+                  return EINA_TRUE;
+               }
+          }
+        else
+          {
+             Evas_Object *tmp = NULL;
+             Elm_Focus_Direction dir = ELM_FOCUS_PREVIOUS;
+             void *(*list_data_get) (const Eina_List *list);
+             list_data_get = eina_list_data_get;
+
+             if ((!strcmp(ev->keyname, "Left")) || (!strcmp(ev->keyname, "KP_Left")))
+               dir = ELM_FOCUS_LEFT;
+             else if ((!strcmp(ev->keyname, "Right")) || (!strcmp(ev->keyname, "KP_Right")))
+               dir = ELM_FOCUS_RIGHT;
+             else if ((!strcmp(ev->keyname, "Up"))  || (!strcmp(ev->keyname, "KP_Up")))
+               dir = ELM_FOCUS_UP;
+             else if ((!strcmp(ev->keyname, "Down")) || (!strcmp(ev->keyname, "KP_Down")))
+               dir = ELM_FOCUS_DOWN;
+
+             if (elm_widget_focus_list_next_get(obj, can_focus_list, list_data_get, dir, &tmp))
+               new_focus = tmp;
+
+             if (new_focus)
+               {
+                  Evas_Coord l_x = 0;
+                  Evas_Coord l_y = 0;
+                  Evas_Coord l_w = 0;
+                  Evas_Coord l_h = 0;
+
+                  evas_object_geometry_get(new_focus, &f_x, &f_y, &f_w, &f_h);
+                  l_x = f_x - c_x - step_x;
+                  l_y = f_y - c_y - step_y;
+                  l_w = f_w + (step_x * 2);
+                  l_h = f_h + (step_y * 2);
+                  if (ELM_RECTS_INTERSECT(x, y, v_w, v_h, l_x, l_y, l_w, l_h))
+                      {
+                       elm_widget_focus_steal(new_focus);
+                       return EINA_TRUE;
+                    }
+               }
+          }
+     }
 
    if ((!strcmp(ev->keyname, "Left")) || (!strcmp(ev->keyname, "KP_Left")))
      {
+        if (x <= 0) return EINA_FALSE;
         x -= step_x;
      }
    else if ((!strcmp(ev->keyname, "Right")) || (!strcmp(ev->keyname, "KP_Right")))
      {
+        if (x >= (max_x - v_w)) return EINA_FALSE;
         x += step_x;
      }
    else if ((!strcmp(ev->keyname, "Up"))  || (!strcmp(ev->keyname, "KP_Up")))
      {
+        if (y == 0) return EINA_FALSE;
         y -= step_y;
      }
    else if ((!strcmp(ev->keyname, "Down")) || (!strcmp(ev->keyname, "KP_Down")))
      {
+        if (y >= (max_y - v_h)) return EINA_FALSE;
         y += step_y;
      }
    else if ((!strcmp(ev->keyname, "Home")) || (!strcmp(ev->keyname, "KP_Home")))
