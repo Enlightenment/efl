@@ -12,6 +12,7 @@
  * @li @ref tutorial_edje_box
  * @li @ref tutorial_edje_box2
  * @li @ref tutorial_edje_drag
+ * @li @ref tutorial_edje_animations
  */
 
 /**
@@ -669,4 +670,66 @@
  * The theme used in this example is:
  * @include color-class.edc
  * @example color-class.edc
+ */
+
+/**
+ * @page tutorial_edje_animations Edje Animations example
+ *
+ * In this example we will figure out how to manipulate the animations on
+ * an Edje object. After reading this document you will be able to manipulate
+ * the frametime, freeze, pause and stop, all animations on an Edje object.
+ *
+ * To play with this example you will use the keyboard. Below are listed the
+ * keys and what each does.
+ *
+ * - '+' Increase the frametime;
+ * - '-' Decrease the frametime;
+ * - '=' Prints the actual frametime and says if the animations is playing;
+ * - 'f' Freezes the animations in the Edje object;
+ * - 'F' Freezes the animations in all objects in the running program;
+ * - 't' Thaws the animations in the Edje object;
+ * - 'T' Thaws the animations in all objects in the running program;
+ * - 's' Pauses the animations;
+ * - 'p' Plays the animations previously stopped;
+ * - 'a' Starts the animation in the Edje object;
+ * - 'A' Stops the animations in the Edje object;
+ *
+ * Now that we've explained how to use our example, we will see how it is made.
+ * Let's start by looking at the piece of code responsible to the actions commented
+ * above.
+ * @dontinclude edje-animations.c
+ * @skip _on_key_down_cb
+ * @until Stopping
+ * @until }
+ * @until }
+ * @note The actions for the keys 'f' and 'F' will have the same effect in
+ *       our example, just because there is only one object in the running
+ *       program, The same happens with the keys 't' and 'T'.
+ *
+ * As you may have seen these set of functions are pretty easy to handle. The other
+ * important part of this example is the EDC file. The animations used in the
+ * code were created there
+ * @dontinclude animations.edc
+ * @skip program
+ * @until after: "animation,state1"
+ * @until }
+ * @skip program
+ * @until }
+ * @skip program
+ * @until }
+ * @until }
+ *
+ * The example's window should look like this picture:
+ *
+ * @image html edje-animations.png
+ * @image rtf edje-animations.png
+ * @image latex edje-animations.eps
+ * @image html edje-animations2.png
+ * @image rtf edje-animations2.png
+ * @image latex edje-animations2.eps
+ *
+ * The full example follows.
+ *
+ * @include edje-animations.c
+ * @include animations.edc
  */

@@ -435,6 +435,7 @@ part of Edje's API:
 - @ref tutorial_edje_box
 - @ref tutorial_edje_box2
 - @ref tutorial_edje_color_class
+- @ref tutorial_edje_animations
 - @ref Example_Edje_Signals_Messages
 
 
@@ -1164,7 +1165,7 @@ EAPI void         edje_frametime_set              (double t);
  * @return The frame time, in seconds.
  *
  * This function returns the edje frame time set by
- * edje_frametime_set().
+ * edje_frametime_set() or the default value 1/30.
  *
  * @see edje_frametime_set()
  *
@@ -1174,19 +1175,23 @@ EAPI double       edje_frametime_get              (void);
 /**
  * @brief Freeze Edje objects.
  *
- * This function freezes every edje objects in the current process.
+ * This function freezes all Edje animations in the current process.
  *
- * See edje_object_freeze().
+ * @note: for freeze a specific object @see edje_object_freeze().
+ *
+ * @see edje_thaw()
  *
  */
 EAPI void         edje_freeze                     (void);
 
 /**
- * @brief Thaw edje objects.
+ * @brief Thaw Edje objects.
  *
- * This function thaw all edje object in the current process.
+ * This function thaws all Edje animations in the current process.
  *
- * See edje_object_thaw().
+ * @note for thaw a specific object @see edje_object_thaw().
+ *
+ * @see edje_freeze()
  *
  */
 EAPI void         edje_thaw                       (void);
@@ -1317,21 +1322,21 @@ EAPI Eina_Bool    edje_object_scale_set           (Evas_Object *obj, double scal
 EAPI double       edje_object_scale_get           (const Evas_Object *obj);
 
 /**
- * Set the RTL orientation for this object.
+ * @brief Set the RTL orientation for this object.
  *
- * @param obj the smart object
+ * @param obj A handle to an Edje object.
  * @rtl new value of flag EINA_TRUE/EINA_FALSE
  * @since 1.1.0
  */
 EAPI void         edje_object_mirrored_set        (Evas_Object *obj, Eina_Bool rtl);
 
 /**
- * Get the RTL orientation for this object.
+ * @brief Get the RTL orientation for this object.
  *
  * You can RTL orientation explicitly with edje_object_mirrored_set.
  *
- * @param obj the smart object
- * @return if flag is set or not.
+ * @param obj A handle to an Edje object.
+ * @return @c EINA_TRUE if the flag is set or @c EINA_FALSE if not.
  * @since 1.1.0
  */
 EAPI Eina_Bool    edje_object_mirrored_get        (const Evas_Object *obj);
@@ -1841,6 +1846,23 @@ EAPI Edje_Load_Error  edje_object_load_error_get  (const Evas_Object *obj);
  */
 EAPI const char      *edje_load_error_str         (Edje_Load_Error error);
 
+/**
+ * @brief Preload the images on the Edje Object in the background.
+ *
+ * @param obj A handle to an Edje object
+ * @param cancel @c EINA_FALSE will add it the preloading work queue,
+ *               @c EINA_TRUE will remove it (if it was issued before).
+ * @return @c EINA_FASLE if obj was not a valid Edje object
+ *         otherwise @c EINA_TRUE
+ *
+ * This function requests the preload of all data images (on the given
+ * object) in the background. The work is queued before being processed
+ * (because there might be other pending requests of this type).
+ * It emits a signal "preload,done" when finished.
+ *
+ * @note Use @c EINA_TRUE on scenarios where you don't need
+ *       the image data preloaded anymore.
+ */
 EAPI Eina_Bool        edje_object_preload         (Evas_Object *obj, Eina_Bool cancel);
 
 /**
@@ -1982,13 +2004,14 @@ EAPI void        *edje_object_signal_callback_del_full(Evas_Object *obj, const c
 EAPI void         edje_object_signal_emit         (Evas_Object *obj, const char *emission, const char *source);
 
 /**
- * @brief Set the edje object to playing or paused states.
+ * @brief Set the Edje object to playing or paused states.
  *
- * @param obj A valid Evas_Object handle.
- * @param play Object state (1 to playing, 0 to pauseed).
+ * @param obj A handle to an Edje object.
+ * @param play Object state (@c EINA_TRUE to playing,
+ *                           @c EINA_FALSE to paused).
  *
- * This function sets the edje object @a obj to playing or paused
- * states, depending on the parameter @a play.  This has no effect if
+ * This function sets the Edje object @a obj to playing or paused
+ * states, depending on the parameter @a play. This has no effect if
  * the object was already at that state.
  *
  * @see edje_object_play_get().
@@ -1997,14 +2020,14 @@ EAPI void         edje_object_signal_emit         (Evas_Object *obj, const char 
 EAPI void         edje_object_play_set            (Evas_Object *obj, Eina_Bool play);
 
 /**
- * @brief Get the edje object's play/pause state.
+ * @brief Get the Edje object's state.
  *
- * @param obj A valid Evas_Object handle.
+ * @param obj A handle to an Edje object.
  * @return @c EINA_FALSE if the object is not connected, its @c delete_me flag
  * is set, or it is at paused state; @c EINA_TRUE if the object is at playing
  * state.
  *
- * This function tells if an edje object is playing or not. This state
+ * This function tells if an Edje object is playing or not. This state
  * is set by edje_object_play_set().
  *
  * @see edje_object_play_set().
@@ -2015,11 +2038,12 @@ EAPI Eina_Bool    edje_object_play_get            (const Evas_Object *obj);
 /**
  * @brief Set the object's animation state.
  *
- * @param obj A valid Evas_Object handle.
- * @param on Animation State.
+ * @param obj A handle to an Edje object.
+ * @param on The animation state. @c EINA_TRUE to starts or
+ *           @c EINA_FALSE to stops.
  *
- * This function starts or stops an edje object's animation. The
- * information if it's runnig can be retrieved by
+ * This function starts or stops an Edje object's animation. The
+ * information if it's stopped can be retrieved by
  * edje_object_animation_get().
  *
  * @see edje_object_animation_get()
@@ -2028,14 +2052,14 @@ EAPI Eina_Bool    edje_object_play_get            (const Evas_Object *obj);
 EAPI void         edje_object_animation_set       (Evas_Object *obj, Eina_Bool on);
 
 /**
- * @brief Get the edje object's animation state.
+ * @brief Get the Edje object's animation state.
  *
- * @param obj A valid Evas_Object handle.
+ * @param obj A handle to an Edje object.
  * @return @c EINA_FALSE on error or if object is not animated;
- * @c EINA_TRUE if animated.
+ *         @c EINA_TRUE if animated.
  *
- * This function returns if the animation is playing or not. The
- * animation state is set by edje_object_play_set().
+ * This function returns if the animation is stopped or not. The
+ * animation state is set by edje_object_animation_set().
  *
  * @see edje_object_animation_set().
  *
@@ -2043,25 +2067,30 @@ EAPI void         edje_object_animation_set       (Evas_Object *obj, Eina_Bool o
 EAPI Eina_Bool    edje_object_animation_get       (const Evas_Object *obj);
 
 /**
- * @brief Freeze object.
+ * @brief Freezes the Edje object.
  *
- * @param obj A valid Evas_Object handle
+ * @param obj A handle to an Edje object.
  * @return The frozen state or 0 on Error
  *
  * This function puts all changes on hold. Successive freezes will
  * nest, requiring an equal number of thaws.
  *
+ * @see edje_object_thaw()
  */
 EAPI int          edje_object_freeze                  (Evas_Object *obj);
 
 /**
- * @brief Thaw object.
+ * @brief Thaws the Edje object.
  *
- * @param obj A valid Evas_Object handle
- * @return The frozen state or 0 on Error
+ * @param obj A handle to an Edje object.
+ * @return The frozen state or 0 if the object is not frozen or on error.
  *
- * This allows frozen changes to occur.
+ * This function thaws the given Edje object.
  *
+ * @note: If sucessives freezes were done, an equal number of
+ *        thaws will be required.
+ *
+ * @see edje_object_freeze()
  */
 EAPI int          edje_object_thaw                    (Evas_Object *obj);
 
@@ -3459,10 +3488,10 @@ EAPI void         edje_object_message_handler_set         (Evas_Object *obj, Edj
 /**
  * @brief Process an object's message queue.
  *
- * @param obj The edje object reference.
+ * @param obj A handle to an Edje object.
  *
  * This function goes through the object message queue processing the
- * pending messages for *this* specific edje object. Normally they'd
+ * pending messages for @b this specific Edje object. Normally they'd
  * be processed only at idle time.
  *
  */

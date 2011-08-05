@@ -1,0 +1,93 @@
+collections {
+   group {
+      name: "animations_group";
+      min: 100 80;
+
+      parts {
+         part {
+            name: "part_one";
+            type: RECT;
+            scale: 1;
+            description {
+               min: 50 50;
+               state: "default" 0.0;
+               color: 0 0 0 255; /* black */
+               rel1.relative: 0.0 0.0;
+               rel2.relative: 0.33 1.0;
+            }
+            description {
+               state: "invert" 1.0;
+               inherit: "default" 0.0;
+               rel1.relative: 0.0 0.0;
+               rel2.relative: 1.0 0.33;
+            }
+         }
+
+         part {
+            name: "part_two";
+            type: RECT;
+            scale: 1;
+            description {
+               min: 50 50;
+               state: "default" 0.0;
+               color: 255 255 0 255; /* yellow */
+               rel1.relative: 0.33 0.0;
+               rel2.relative: 0.66 1.0;
+            }
+            description {
+               state: "invert" 1.0;
+               inherit: "default" 0.0;
+               rel1.relative: 0.0 0.66;
+               rel2.relative: 1.0 1.0;
+            }
+         }
+
+         part {
+            name: "part_three";
+            type: RECT;
+            description {
+               state: "default" 0.0;
+               color: 255 0 0 255; /* red */
+               rel1.relative: 0.66 0.0;
+               rel2.relative: 1.0 1.0;
+            }
+            description {
+               state: "invert" 1.0;
+               inherit: "default" 0.0;
+               rel1.relative: 0.0 0.33;
+               rel2.relative: 1.0 0.66;
+            }
+         }
+      }
+
+      program {
+         signal: "load";
+         source: "";
+         in: 2.0 0.0;
+         after: "animation,state1";
+      }
+      program {
+         name: "animation,state1";
+         signal: "animation,start";
+         source: "";
+         in: 1.0 0.0;
+         action: STATE_SET "invert" 1.0;
+         target: "part_one";
+         target: "part_two";
+         target: "part_three";
+         transition: LINEAR 0.6;
+         after: "animation,state2";
+      }
+      program {
+         name: "animation,state2";
+         signal: "animation,start";
+         source: "";
+         in: 1.0 0.0;
+         action: STATE_SET "default" 0.0;
+         target: "part_one";
+         target: "part_two";
+         target: "part_three";
+         transition: LINEAR 0.6;
+         after: "animation,state1";
+   }
+}
