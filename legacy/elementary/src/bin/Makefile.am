@@ -52,6 +52,7 @@ test_ctxpopup.c \
 test_cursor.c \
 test_diskselector.c \
 test_entry.c \
+test_factory.c \
 test_fileselector_button.c \
 test_fileselector.c \
 test_fileselector_entry.c \

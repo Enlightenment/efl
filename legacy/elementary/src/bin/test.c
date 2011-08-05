@@ -139,6 +139,7 @@ void test_glview_simple(void *data, Evas_Object *obj, void *event_info);
 void test_glview(void *data, Evas_Object *obj, void *event_info);
 void test_3d(void *data, Evas_Object *obj, void *event_info);
 void test_naviframe(void *data, Evas_Object *obj, void *event_info);
+void test_factory(void *data, Evas_Object *obj, void *event_info);
 #ifdef HAVE_EIO
 void test_eio(void *data, Evas_Object *obj, void *event_info);
 #endif
@@ -416,6 +417,7 @@ my_win_main(char *autorun, Eina_Bool test_win_only)
    ADD_TEST("3D", test_3d);
    ADD_TEST("Gesture Layer", test_gesture_layer);
    ADD_TEST("Naviframe", test_naviframe);
+   ADD_TEST("Factory", test_factory);
 #undef ADD_TEST
 
    if (autorun)

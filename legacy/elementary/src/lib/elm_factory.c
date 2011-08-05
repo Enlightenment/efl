@@ -7,13 +7,19 @@ struct _Widget_Data
 {
    Evas_Object *obj;
    Evas_Object *content;
-   Ecore_Job *eval_job;
+   Eina_Bool eval : 1;
 };
 
 static const char *widtype = NULL;
 static void _del_hook(Evas_Object *obj);
+static Eina_Bool _focus_next_hook(const Evas_Object *obj, Elm_Focus_Direction dir, Evas_Object **next);
 static void _sizing_eval(Evas_Object *obj);
-static void _changed_size_hints(void *data, Evas *e, Evas_Object *obj, void *event_info);
+static void _eval(Evas_Object *obj);
+static void _changed(Evas_Object *obj);
+static void _move(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__);
+static void _resize(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__);
+static void _child_change(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__);
+static void _child_del(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__);
 
 static const char SIG_REALIZE[] = "realize";
 static const char SIG_UNREALIZE[] = "unrealize";
@@ -29,7 +35,6 @@ _del_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
-   if (wd->eval_job) ecore_job_del(wd->eval_job);
    free(wd);
 }
 
@@ -56,24 +61,33 @@ _sizing_eval(Evas_Object *obj)
    evas_object_size_hint_max_get(wd->content, &maxw, &maxh);
    evas_object_size_hint_min_set(obj, minw, minh);
    evas_object_size_hint_max_set(obj, maxw, maxh);
+   printf("fac: %p, size %ix%i -> %ix%i\n", obj, minw, minh, maxw, maxh);
 }
 
 static void
-_eval_do(void *data)
+_eval(Evas_Object *obj)
 {
-   Evas_Object *obj = data;
    Evas_Coord x, y, w, h, cvx, cvy, cvw, cvh;
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
    
-   wd->eval_job = NULL;
    evas_object_geometry_get(obj, &x, &y, &w, &h);
    evas_output_viewport_get(evas_object_evas_get(obj), 
                             &cvx, &cvy, &cvw, &cvh);
+   if ((w < 1) || (h < 1) || (cvw < 1) || (cvh < 1)) return;
    if (ELM_RECTS_INTERSECT(x, y, w, h, cvx, cvy, cvw, cvh))
      {
         if (!wd->content)
-           evas_object_smart_callback_call(obj, SIG_REALIZE, NULL);
+          {
+             printf("intersect: %i %i %ix%i | %i %i %ix%i\n",
+                    x, y, w, h, cvx, cvy, cvw, cvh);
+             evas_object_smart_callback_call(obj, SIG_REALIZE, NULL);
+             if (wd->content)
+               {
+                  if (evas_object_smart_data_get(wd->content))
+                     evas_object_smart_calculate(wd->content);
+               }
+          }
      }
    else
      {
@@ -83,31 +97,43 @@ _eval_do(void *data)
 }
 
 static void
-_eval(Evas_Object *obj)
+_changed(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
-   
-   if (wd->eval_job) ecore_job_del(wd->eval_job);
-   wd->eval_job = ecore_job_add(_eval_do, obj);
+   if (wd->eval)
+     {
+        _eval(obj);
+        _sizing_eval(obj);
+        wd->eval = EINA_FALSE;
+     }
 }
 
 static void
 _move(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
-   _eval(obj);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   wd->eval = EINA_TRUE;
+   evas_object_smart_changed(obj);
 }
                
 static void
 _resize(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {              
-   _eval(obj);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   wd->eval = EINA_TRUE;
+   evas_object_smart_changed(obj);
 }
 
 static void
-_child_change(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+_child_change(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   _eval(obj);
+   Widget_Data *wd = elm_widget_data_get(data);
+   if (!wd) return;
+   wd->eval = EINA_TRUE;
+   evas_object_smart_changed(data);
 }
 
 static void
@@ -142,6 +168,7 @@ elm_factory_add(Evas_Object *parent)
    elm_widget_del_hook_set(obj, _del_hook);
    elm_widget_focus_next_hook_set(obj, _focus_next_hook);
    elm_widget_can_focus_set(obj, EINA_FALSE);
+   elm_widget_changed_hook_set(obj, _changed);
 
    evas_object_event_callback_add(obj, EVAS_CALLBACK_MOVE, _move, NULL);
    evas_object_event_callback_add(obj, EVAS_CALLBACK_RESIZE, _resize, NULL);
@@ -166,7 +193,8 @@ elm_factory_content_set(Evas_Object *obj, Evas_Object *content)
                                   _child_del, obj);
    evas_object_event_callback_add(wd->content, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
                                   _child_change, obj);
-    _sizing_eval(obj);
+   wd->eval = EINA_TRUE;
+   evas_object_smart_changed(obj);
 }
 
 EAPI Evas_Object *
