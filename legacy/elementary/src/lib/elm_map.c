@@ -1950,11 +1950,7 @@ _wheel_timer_cb(void *data)
    Widget_Data *wd = elm_widget_data_get(data);
    int zoom;
 
-   if (!wd)
-     {
-        wd->wheel_timer = NULL;
-        return ECORE_CALLBACK_CANCEL;
-     }
+   if (!wd) return ECORE_CALLBACK_CANCEL;
    if (wd->zoom_method == ZOOM_METHOD_IN) zoom = (int)ceil(wd->wheel_zoom - 1.0);
    else if (wd->zoom_method == ZOOM_METHOD_OUT) zoom = (int)floor((-1.0 / wd->wheel_zoom) + 1.0);
    else
