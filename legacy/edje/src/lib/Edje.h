@@ -3764,13 +3764,132 @@ EAPI const Edje_External_Param_Info *edje_external_param_info_get   (const char 
    /* perspective info for maps inside edje objects */
    typedef struct _Edje_Perspective Edje_Perspective;
 
+   /**
+    * Creates a new perspective in the given canvas.
+    *
+    * @param e The given canvas (Evas).
+    * @return An @ref Edje_Perspective object for this canvas, or @c NULL on errors.
+    *
+    * This function creates a perspective object that can be set on an Edje
+    * object, or globally to all Edje objects on this canvas.
+    *
+    * @see edje_perspective_set()
+    * @see edje_perspective_free()
+    */
    EAPI Edje_Perspective       *edje_perspective_new            (Evas *e);
+   /**
+    * Delete the given perspective object.
+    *
+    * @param ps A valid perspective object, or @c NULL.
+    *
+    * This function will delete the perspective object. If the perspective
+    * effect was being applied to any Edje object or part, this effect won't be
+    * applied anymore.
+    *
+    * @see edje_perspective_new()
+    */
    EAPI void                    edje_perspective_free           (Edje_Perspective *ps);
+   /**
+    * Setup the transform for this perspective object.
+    *
+    * This sets the parameters of the perspective transformation. X, Y and Z
+    * values are used. The px and py points specify the "infinite distance" point
+    * in the 3D conversion (where all lines converge to like when artists draw
+    * 3D by hand). The @p z0 value specifis the z value at which there is a 1:1
+    * mapping between spatial coorinates and screen coordinates. Any points
+    * on this z value will not have their X and Y values modified in the transform.
+    * Those further away (Z value higher) will shrink into the distance, and
+    * those less than this value will expand and become bigger. The @p foc value
+    * determines the "focal length" of the camera. This is in reality the distance
+    * between the camera lens plane itself (at or closer than this rendering
+    * results are undefined) and the "z0" z value. This allows for some "depth"
+    * control and @p foc must be greater than 0.
+    *
+    * @param m map to change.
+    * @param px The pespective distance X coordinate
+    * @param py The pespective distance Y coordinate
+    * @param z0 The "0" z plane value
+    * @param foc The focal distance
+    */
    EAPI void                    edje_perspective_set            (Edje_Perspective *ps, Evas_Coord px, Evas_Coord py, Evas_Coord z0, Evas_Coord foc);
+   /**
+    * Make this perspective object be global for its canvas.
+    *
+    * @param ps The given perspective object
+    * @param global @c EINA_TRUE if the perspective should be global, @c
+    * EINA_FALSE otherwise.
+    *
+    * The canvas which this perspective object is being set as global is the one
+    * given as argument upon the object creation (the @p evas parameter on the
+    * function @c edje_perspective_new(evas) ).
+    *
+    * There can be only one global perspective object set per canvas, and if
+    * a perspective object is set to global when there was already another
+    * global perspective set, the old one will be set as non-global.
+    *
+    * A global perspective just affects a part if its Edje object doesn't have a
+    * perspective object set to it, and if the part doesn't point to another
+    * part to be used as perspective.
+    *
+    * @see edje_object_perspective_set()
+    * @see edje_perspective_global_get()
+    * @see edje_perspective_new()
+    */
    EAPI void                    edje_perspective_global_set     (Edje_Perspective *ps, Eina_Bool global);
+   /**
+    * Get whether the given perspective object is global or not.
+    *
+    * @param ps The given perspective object.
+    * @return @c EINA_TRUE if this perspective object is global, @c EINA_FALSE
+    * otherwise.
+    *
+    * @see edje_perspective_global_set()
+    */
    EAPI Eina_Bool               edje_perspective_global_get     (const Edje_Perspective *ps);
+   /**
+    * Get the global perspective object set for this canvas.
+    *
+    * @param e The given canvas (Evas).
+    * @return The perspective object set as global for this canvas. Or @c NULL
+    * if there is no global perspective set and on errors.
+    *
+    * This function will return the perspective object that was set as global
+    * with edje_perspective_global_set().
+    *
+    * @see edje_perspective_global_set()
+    * @see edje_perspective_global_get()
+    */
    EAPI const Edje_Perspective *edje_evas_global_perspective_get(const Evas *e);
+   /**
+    * Set the given perspective object on this Edje object.
+    *
+    * @param obj The Edje object on the perspective will be set.
+    * @param ps The perspective object that will be used.
+    *
+    * Make the given perspective object be the default perspective for this Edje
+    * object.
+    *
+    * There can be only one perspective object per Edje object, and if a
+    * previous one was set, it will be removed and the new perspective object
+    * will be used.
+    *
+    * An Edje perspective will only affect a part if it doesn't point to another
+    * part to be used as perspective.
+    *
+    * @see edje_object_perspective_new()
+    * @see edje_object_perspective_get()
+    * @see edje_perspective_set()
+    */
    EAPI void                    edje_object_perspective_set     (Evas_Object *obj, Edje_Perspective *ps);
+   /**
+    * Get the current perspective used on this Edje object.
+    *
+    * @param obj the given Edje object.
+    * @return The perspective object being used on this Edje object. Or @c NULL
+    * if there was none, and on errors.
+    *
+    * @see edje_object_perspective_set()
+    */
    EAPI const Edje_Perspective *edje_object_perspective_get     (const Evas_Object *obj);
 
 #ifdef __cplusplus
