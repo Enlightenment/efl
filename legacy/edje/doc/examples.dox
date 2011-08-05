@@ -662,6 +662,10 @@
  * @image html edje-color-class-example.png
  * @image rtf edje-color-class-example.png
  * @image latex edje-color-class-example.eps width=\textwidth
+ * @n
+ * @image html edje-color-class-example2.png
+ * @image rtf edje-color-class-example2.png
+ * @image latex edje-color-class-example2.eps width=\textwidth
  *
  * The full source code follows:
  * @include edje-color-class.c
@@ -724,6 +728,7 @@
  * @image html edje-animations.png
  * @image rtf edje-animations.png
  * @image latex edje-animations.eps width=\textwidth
+ * @n
  * @image html edje-animations2.png
  * @image rtf edje-animations2.png
  * @image latex edje-animations2.eps width=\textwidth
