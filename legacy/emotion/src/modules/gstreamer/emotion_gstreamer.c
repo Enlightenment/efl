@@ -333,6 +333,7 @@ em_init(Evas_Object            *obj,
    ev->ratio = 1.0;
    ev->vis = EMOTION_VIS_NONE;
    ev->volume = 0.8;
+   ev->play_started = 0;
 
    *emotion_video = ev;
 
@@ -420,6 +421,8 @@ em_file_open(const char   *file,
         eina_strbuf_append(sbuf, file);
      }
 
+   ev->play_started = 0;
+
    uri = sbuf ? eina_strbuf_string_get(sbuf) : file;
    DBG("setting file to '%s'", uri);
    ev->pipeline = gstreamer_video_sink_new(ev, obj, uri);
@@ -481,6 +484,7 @@ em_file_close(void *video)
    EINA_LIST_FREE(ev->video_streams, vstream)
      free(vstream);
    ev->pipeline_parsed = EINA_FALSE;
+   ev->play_started = 0;
 
    /* shutdown eos */
    if (ev->metadata)
