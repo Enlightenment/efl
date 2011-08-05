@@ -62,7 +62,7 @@ struct _Evas_Object_Grid_Accessor
        return val;							\
     }
 
-static const char EVAS_OBJECT_GRID_OPTION_KEY[] = "Evas_Object_Grid_Option";
+static const char EVAS_OBJECT_GRID_OPTION_KEY[] = "|EvGd";
 
 static Eina_Bool
 _evas_object_grid_iterator_next(Evas_Object_Grid_Iterator *it, void **data)

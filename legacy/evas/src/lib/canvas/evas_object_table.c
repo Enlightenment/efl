@@ -111,7 +111,7 @@ struct _Evas_Object_Table_Accessor
        return val;							\
     }
 
-static const char EVAS_OBJECT_TABLE_OPTION_KEY[] = "Evas_Object_Table_Option";
+static const char EVAS_OBJECT_TABLE_OPTION_KEY[] = "|EvTb";
 
 static Eina_Bool
 _evas_object_table_iterator_next(Evas_Object_Table_Iterator *it, void **data)
