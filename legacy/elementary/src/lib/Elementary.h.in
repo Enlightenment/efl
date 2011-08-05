@@ -4001,8 +4001,11 @@ extern "C" {
     * @defgroup Button Button
     *
     * @image html img/widget/button/preview-00.png
+    * @image latex img/widget/button/preview-00.eps
     * @image html img/widget/button/preview-01.png
+    * @image latex img/widget/button/preview-01.eps
     * @image html img/widget/button/preview-02.png
+    * @image latex img/widget/button/preview-02.eps
     *
     * This is a push-button. Press it and run some function. It can contain
     * a simple label and icon object and it also has an autorepeat feature.
@@ -4171,8 +4174,11 @@ extern "C" {
     * @defgroup File_Selector_Button File Selector Button
     *
     * @image html img/widget/fileselector_button/preview-00.png
+    * @image latex img/widget/fileselector_button/preview-00.eps
     * @image html img/widget/fileselector_button/preview-01.png
+    * @image latex img/widget/fileselector_button/preview-01.eps
     * @image html img/widget/fileselector_button/preview-02.png
+    * @image latex img/widget/fileselector_button/preview-02.eps
     *
     * This is a button that, when clicked, creates an Elementary
     * window (or inner window) <b> with a @ref Fileselector "file
@@ -9694,8 +9700,11 @@ extern "C" {
     * @defgroup Bubble Bubble
     *
     * @image html img/widget/bubble/preview-00.png
+    * @image latex img/widget/bubble/preview-00.eps
     * @image html img/widget/bubble/preview-01.png
+    * @image latex img/widget/bubble/preview-01.eps
     * @image html img/widget/bubble/preview-02.png
+    * @image latex img/widget/bubble/preview-02.eps
     *
     * @brief The Bubble is a widget to show text similarly to how speech is
     * represented in comics.
@@ -17789,6 +17798,7 @@ extern "C" {
     * @defgroup Index Index
     *
     * @image html img/widget/index/preview-00.png
+    * @image latex img/widget/index/preview-00.eps
     *
     * An index widget gives you an index for fast access to whichever
     * group of other UI items one might have. It's a list of text
@@ -22630,6 +22640,7 @@ extern "C" {
     * @{
     *
     * @image html img/widget/colorselector/preview-00.png
+    * @image latex img/widget/colorselector/preview-00.eps
     *
     * @brief Widget for user to select a color.
     *
