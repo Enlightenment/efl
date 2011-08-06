@@ -234,7 +234,7 @@ evas_software_xcb_can_do_shm(xcb_connection_t *conn, xcb_screen_t *screen)
 
    xcbob = 
      evas_software_xcb_output_buffer_new(conn, visual, screen->root_depth,
-                                         16, 16, 2, NULL); // 1, 1 EINA_TRUE
+                                         16, 16, 2, NULL);
    if (!xcbob)
      cached_result = 0;
    else 
@@ -260,7 +260,6 @@ evas_software_xcb_output_buffer_new(xcb_connection_t *conn, xcb_visualtype_t *vi
    xcbob->shm_info = NULL;
    xcbob->w = w;
    xcbob->h = h;
-   xcbob->data = data;
 
    if (try_shm > 0) 
      {
@@ -273,9 +272,12 @@ evas_software_xcb_output_buffer_new(xcb_connection_t *conn, xcb_visualtype_t *vi
                                     depth, NULL, ~0, NULL);
              if (xcbob->xim) 
                {
-                  /* was 0666 */
                   xcbob->shm_info->shmid = 
-                    shmget(IPC_PRIVATE, xcbob->xim->size, (IPC_CREAT | 0777));
+                    shmget(IPC_PRIVATE, 
+                           xcbob->xim->stride * xcbob->xim->height, 
+                           (IPC_CREAT | 0777));
+                  /* xcbob->shm_info->shmid =  */
+                  /*   shmget(IPC_PRIVATE, xcbob->xim->size, (IPC_CREAT | 0777)); */
                   if (xcbob->shm_info->shmid == (uint32_t)-1) 
                     {
                        xcb_image_destroy(xcbob->xim);
@@ -283,14 +285,14 @@ evas_software_xcb_output_buffer_new(xcb_connection_t *conn, xcb_visualtype_t *vi
                        free(xcbob);
                        return NULL;
                     }
-                  xcbob->shm_info->shmaddr = 
+                  xcbob->shm_info->shmaddr = xcbob->xim->data = 
                     shmat(xcbob->shm_info->shmid, 0, 0);
                   if (xcbob->shm_info->shmaddr != ((void *)-1))
                     {
                        /* Sync only needed for testing */
                        if (try_shm == 2) _xcbob_sync(conn);
 
-                       xcbob->xim->data = xcbob->shm_info->shmaddr;
+//                       xcbob->xim->data = xcbob->shm_info->shmaddr;
 #if defined(EVAS_FRAME_QUEUING) && defined(LIBXEXT_VERSION_LOW)
                        if (evas_common_frameq_enabled())
                          xcb_grab_server(conn);
@@ -307,28 +309,14 @@ evas_software_xcb_output_buffer_new(xcb_connection_t *conn, xcb_visualtype_t *vi
                        xcbob->psize = (xcbob->bpl * xcbob->h);
                        return xcbob;
                     }
-                  else 
-                    {
-                       shmdt(xcbob->shm_info->shmaddr);
-                       shmctl(xcbob->shm_info->shmid, IPC_RMID, 0);
-                       xcb_image_destroy(xcbob->xim);
-                       free(xcbob->shm_info);
-                       free(xcbob);
-                       return NULL;
-                    }
+                  shmdt(xcbob->shm_info->shmaddr);
+                  shmctl(xcbob->shm_info->shmid, IPC_RMID, 0);
                }
-             else 
-               {
-                  free(xcbob->shm_info);
-                  free(xcbob);
-                  return NULL;
-               }
+             if (xcbob->xim) xcb_image_destroy(xcbob->xim);
+             xcbob->xim = NULL;
           }
-        else 
-          {
-             free(xcbob);
-             return NULL;
-          }
+        if (xcbob->shm_info) free(xcbob->shm_info);
+        xcbob->shm_info = NULL;
      }
 
    if (try_shm > 1) return NULL;
@@ -343,9 +331,11 @@ evas_software_xcb_output_buffer_new(xcb_connection_t *conn, xcb_visualtype_t *vi
         return NULL;
      }
 
+   xcbob->data = data;
+
    if (!xcbob->xim->data) 
      {
-        xcbob->xim->data = malloc(xcbob->xim->size);
+        xcbob->xim->data = malloc(xcbob->xim->stride * xcbob->xim->height);
         if (!xcbob->xim->data) 
           {
              xcb_image_destroy(xcbob->xim);
@@ -354,7 +344,7 @@ evas_software_xcb_output_buffer_new(xcb_connection_t *conn, xcb_visualtype_t *vi
           }
      }
    xcbob->bpl = xcbob->xim->stride;
-   xcbob->psize = xcbob->xim->size;
+   xcbob->psize = (xcbob->bpl * xcbob->h);
    return xcbob;
 }
 
@@ -373,7 +363,7 @@ evas_software_xcb_output_buffer_free(Xcb_Output_Buffer *xcbob, Eina_Bool sync)
    else 
      {
         if (xcbob->data) xcbob->xim->data = NULL;
-        free(xcbob->xim->data);
+//        free(xcbob->xim->data);
         xcb_image_destroy(xcbob->xim);
      }
    free(xcbob);
@@ -396,7 +386,7 @@ DATA8 *
 evas_software_xcb_output_buffer_data(Xcb_Output_Buffer *xcbob, int *bpl_ret) 
 {
    if (bpl_ret) *bpl_ret = xcbob->xim->stride;
-   return xcbob->xim->data;
+   return (DATA8 *)xcbob->xim->data;
 }
 
 int 
@@ -433,8 +423,8 @@ _xcbob_create_native(xcb_connection_t *conn, int w, int h, xcb_image_format_t fo
    xcb_image_format_t xif;
 
    /* NB: We cannot use xcb_image_create_native as it only creates images 
-    * using MSB_FIRST, so this routine recreates that function and checks 
-    * endian-ness correctly */
+    * using MSB_FIRST, so this routine recreates that function and uses 
+    * the endian-ness of the server setup */
    setup = xcb_get_setup(conn);
    xif = format;
 
@@ -449,13 +439,13 @@ _xcbob_create_native(xcb_connection_t *conn, int w, int h, xcb_image_format_t fo
       case XCB_IMAGE_FORMAT_XY_BITMAP:
         if (depth != 1) return 0;
       case XCB_IMAGE_FORMAT_XY_PIXMAP:
-        return xcb_image_create(w, h, xif, 
-                                fmt->scanline_pad, 
-                                fmt->depth, fmt->bits_per_pixel, 
-                                setup->bitmap_format_scanline_unit, 
-                                setup->image_byte_order, 
-                                setup->bitmap_format_bit_order, 
-                                base, bytes, data);
+        /* return xcb_image_create(w, h, xif,  */
+        /*                         fmt->scanline_pad,  */
+        /*                         fmt->depth, fmt->bits_per_pixel,  */
+        /*                         setup->bitmap_format_scanline_unit,  */
+        /*                         setup->image_byte_order,  */
+        /*                         setup->bitmap_format_bit_order,  */
+        /*                         base, bytes, data); */
       case XCB_IMAGE_FORMAT_Z_PIXMAP:
         return xcb_image_create(w, h, xif, 
                                 fmt->scanline_pad, 

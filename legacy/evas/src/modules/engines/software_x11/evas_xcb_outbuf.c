@@ -254,10 +254,11 @@ evas_software_xcb_outbuf_new_region_for_update(Outbuf *buf, int x, int y, int w,
      {
         Eina_Rectangle *rect;
 
+        RECTS_CLIP_TO_RECT(x, y, w, h, 0, 0, buf->w, buf->h);
+
         if (!(obr = calloc(1, sizeof(Outbuf_Region))))
           return NULL;
 
-        RECTS_CLIP_TO_RECT(x, y, w, h, 0, 0, buf->w, buf->h);
         if (!(rect = eina_rectangle_new(x, y, w, h))) 
           {
              free(obr);
@@ -287,10 +288,12 @@ evas_software_xcb_outbuf_new_region_for_update(Outbuf *buf, int x, int y, int w,
         if (cy) *cy = y;
         if (cw) *cw = w;
         if (ch) *ch = h;
+
         alpha = ((buf->priv.x11.xcb.mask) || (buf->priv.destination_alpha));
         use_shm = buf->priv.x11.xcb.shm;
+
         if ((buf->rot == 0) && (buf->priv.mask.r == 0xff0000) && 
-            (buf->priv.mask.g == 0x00ff00) && (buf->priv.mask.b ==  0x0000ff)) 
+            (buf->priv.mask.g == 0x00ff00) && (buf->priv.mask.b == 0x0000ff)) 
           {
              obr->xcbob = 
                evas_software_xcb_output_buffer_new(buf->priv.x11.xcb.conn, 
@@ -393,7 +396,7 @@ evas_software_xcb_outbuf_new_region_for_update(Outbuf *buf, int x, int y, int w,
    use_shm = buf->priv.x11.xcb.shm;
    alpha = ((buf->priv.x11.xcb.mask) || (buf->priv.destination_alpha));
    if ((buf->rot == 0) && (buf->priv.mask.r == 0xff0000) && 
-       (buf->priv.mask.g == 0x00ff00) && (buf->priv.mask.b ==  0x0000ff)) 
+       (buf->priv.mask.g == 0x00ff00) && (buf->priv.mask.b == 0x0000ff)) 
      {
         obr->xcbob = 
           _find_xcbob(buf->priv.x11.xcb.conn, buf->priv.x11.xcb.visual, 
@@ -622,7 +625,7 @@ evas_software_xcb_outbuf_flush(Outbuf *buf)
              if (obr->xcbob) _unfind_xcbob(obr->xcbob, EINA_FALSE);
              if (obr->mask) _unfind_xcbob(obr->mask, EINA_FALSE);
              free(obr);
-             evas_cache_image_drop(&im->cache_entry);
+//             evas_cache_image_drop(&im->cache_entry);
           }
 #endif
      }
@@ -640,12 +643,12 @@ evas_software_xcb_outbuf_idle_flush(Outbuf *buf)
         im = buf->priv.onebuf;
         buf->priv.onebuf = NULL;
         obr = im->extended_info;
+        evas_cache_image_drop(&im->cache_entry);
         if (obr->xcbob) 
           evas_software_xcb_output_buffer_free(obr->xcbob, EINA_FALSE);
         if (obr->mask) 
           evas_software_xcb_output_buffer_free(obr->mask, EINA_FALSE);
         free(obr);
-        evas_cache_image_drop(&im->cache_entry);
      }
    else 
      {
@@ -822,14 +825,12 @@ evas_software_xcb_outbuf_push_updated_region(Outbuf *buf, RGBA_Image *update, in
           }
 #if 1
 #else
-   /* Async Push */
-   if (!((buf->priv.onebuf) && (buf->priv.onebuf_regions))) 
-     {
-        evas_software_xcb_output_buffer_paste(obr->xcbob, 
-                                              buf->priv.x11.xcb.mask, 
-                                              buf->priv.x11.xcb.gcm, 
-                                              obr->x, obr->y, 0);
-     }
+        /* Async Push */
+        if (!((buf->priv.onebuf) && (buf->priv.onebuf_regions))) 
+          evas_software_xcb_output_buffer_paste(obr->xcbob, 
+                                                buf->priv.x11.xcb.mask, 
+                                                buf->priv.x11.xcb.gcm, 
+                                                obr->x, obr->y, 0);
 #endif
      }
 #if 1
@@ -938,7 +939,7 @@ evas_software_xcb_outbuf_debug_show(Outbuf *buf, xcb_drawable_t drawable, int x,
                             xcb_get_geometry_unchecked(buf->priv.x11.xcb.conn, 
                                                        drawable), 0);
    root = geom->root;
-   free (geom);
+   free(geom);
    geom = 
      xcb_get_geometry_reply(buf->priv.x11.xcb.conn, 
                             xcb_get_geometry_unchecked(buf->priv.x11.xcb.conn, 
@@ -953,7 +954,7 @@ evas_software_xcb_outbuf_debug_show(Outbuf *buf, xcb_drawable_t drawable, int x,
              break;
           }
      }
-   free (geom);
+   free(geom);
 
    for (i = 0; i < 20; i++)
      {
@@ -969,6 +970,7 @@ evas_software_xcb_outbuf_debug_show(Outbuf *buf, xcb_drawable_t drawable, int x,
 	xcb_poly_fill_rectangle(buf->priv.x11.xcb.conn, drawable, 
                                 buf->priv.x11.xcb.gc, 1, &rect);
         _xcbob_sync(buf->priv.x11.xcb.conn);
+        _xcbob_sync(buf->priv.x11.xcb.conn);
 
 	mask = XCB_GC_FOREGROUND | XCB_GC_GRAPHICS_EXPOSURES;
 	value[0] = screen->white_pixel;
@@ -978,16 +980,17 @@ evas_software_xcb_outbuf_debug_show(Outbuf *buf, xcb_drawable_t drawable, int x,
 	xcb_poly_fill_rectangle(buf->priv.x11.xcb.conn, drawable, 
                                 buf->priv.x11.xcb.gc, 1, &rect);
         _xcbob_sync(buf->priv.x11.xcb.conn);
+        _xcbob_sync(buf->priv.x11.xcb.conn);
      }
 }
 
-# ifdef EVAS_FRAME_QUEUING
+#ifdef EVAS_FRAME_QUEUING
 void 
 evas_software_xcb_outbuf_priv_set(Outbuf *buf, void *cur, void *prev __UNUSED__) 
 {
    buf->priv.pending_writes = (Eina_List *)cur;
 }
-# endif
+#endif
 
 /* local functions */
 static Xcb_Output_Buffer *
