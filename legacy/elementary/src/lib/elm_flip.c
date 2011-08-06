@@ -427,7 +427,6 @@ _state_update(Widget_Data *st)
    double b, minv = 0.0, minva, mgrad;
    int gx, gy, gszw, gszh, gw, gh, col, row, nw, nh;
    double rho, A, theta, perc, percm, n, rhol, Al, thetal;
-   Vertex2 *tvi;
    Vertex3 *tvo, *tvol;
    Evas_Object *front, *back;
 
@@ -578,7 +577,6 @@ _state_update(Widget_Data *st)
 
    num = (st->slices_w + 1) * (st->slices_h + 1);
 
-   tvi = alloca(sizeof(Vertex2) * num);
    tvo = alloca(sizeof(Vertex3) * num);
    tvol = alloca(sizeof(Vertex3) * (st->slices_w + 1));
 
