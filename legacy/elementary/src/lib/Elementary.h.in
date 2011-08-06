@@ -9756,7 +9756,7 @@ extern "C" {
     * @return The string of set in the label
     *
     * This function gets the title of the bubble.
-    * @deprecated use elm_object_text_set() instead.
+    * @deprecated use elm_object_text_get() instead.
     */
    EINA_DEPRECATED EAPI const char  *elm_bubble_label_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
    /**
@@ -9767,7 +9767,7 @@ extern "C" {
     *
     * This function sets the info of the bubble. Where this appears depends on
     * the selected corner.
-    * @deprecated use elm_object_text_set() instead.
+    * @deprecated use elm_object_text_part_set() instead. (with "info" as the parameter).
     */
    EINA_DEPRECATED EAPI void         elm_bubble_info_set(Evas_Object *obj, const char *info) EINA_ARG_NONNULL(1);
    /**
@@ -9778,7 +9778,7 @@ extern "C" {
     * @return The "info" string of the bubble
     *
     * This function gets the info text.
-    * @deprecated use elm_object_text_set() instead.
+    * @deprecated use elm_object_text_part_get() instead. (with "info" as the parameter).
     */
    EINA_DEPRECATED EAPI const char  *elm_bubble_info_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
    /**
