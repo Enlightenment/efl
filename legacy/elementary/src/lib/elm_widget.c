@@ -158,10 +158,6 @@ static void _if_focused_revert(Evas_Object *obj,
 static Evas_Object *_newest_focus_order_get(Evas_Object  *obj,
                                             unsigned int *newest_focus_order,
                                             Eina_Bool     can_focus_only);
-static Eina_Bool _focus_list_direction_nearest_get(Evas_Object        *obj,
-                                                Eina_List          *list,
-                                                Elm_Focus_Direction dir,
-                                                Evas_Object       **nearest);
 
 /* local subsystem globals */
 static Evas_Smart *_e_smart = NULL;
@@ -402,96 +398,6 @@ _elm_widget_focus_region_show(const Evas_Object *obj)
         o = elm_widget_parent_get(o);
      }
 }
-
-static Eina_Bool
-_focus_list_direction_nearest_get(Evas_Object        *obj,
-                                  Eina_List          *list,
-                                  Elm_Focus_Direction dir,
-                                  Evas_Object       **nearest)
-{
-   Evas_Object *cur, *next = NULL;
-   Eina_List *l;
-   double weight = 0.0;
-   Evas_Coord x, y, w, h, cx, cy;
-
-   if (!nearest) return EINA_FALSE;
-   *nearest =  NULL;
-
-   evas_object_geometry_get(obj, &x, &y, &w, &h);
-   cx = x + (w / 2);
-   cy = y + (h / 2);
-
-   EINA_LIST_FOREACH(list, l, cur)
-     {
-        if (obj == cur) continue;
-        Evas_Coord cur_x, cur_y, cur_w, cur_h;
-        int w_gap = 0, h_gap = 0;
-        double cur_weight = 0.0;
-
-        evas_object_geometry_get(cur, &cur_x, &cur_y, &cur_w, &cur_h);
-
-        if (dir == ELM_FOCUS_LEFT)
-          {
-             if (x < (cur_x + cur_w)) continue;
-             w_gap = x - (cur_x + cur_w);
-             if ((cy >= cur_y) && (cy <= (cur_y + cur_h)))
-               h_gap = 0;
-             else if (cy > (cur_y + cur_h))
-               h_gap = cy - (cur_y + cur_h);
-             else if (cy < (cur_y))
-               h_gap = cur_y - cy;
-          }
-        else if (dir == ELM_FOCUS_RIGHT)
-          {
-             if ((x + w) > cur_x) continue;
-             w_gap = cur_x - (x + w);
-             if ((cy >= cur_y) && (cy <= (cur_y + cur_h)))
-               h_gap = 0;
-             else if (cy > (cur_y + cur_h))
-               h_gap = cy - (cur_y + cur_h);
-             else if (cy < (cur_y))
-               h_gap = cur_y - cy;
-          }
-        else if (dir == ELM_FOCUS_UP)
-          {
-             if (y < (cur_y + cur_h)) continue;
-             h_gap = y - (cur_y + cur_h);
-             if ((cx >= cur_x) && (cx <= (cur_x + cur_w)))
-               w_gap = 0;
-             else if (cx < cur_x)
-               w_gap = cur_x - cx;
-             else if (cx > (cur_x + cur_w))
-               w_gap = cur_x + cur_w - cx;
-          }
-        else if (dir == ELM_FOCUS_DOWN)
-          {
-             if ((y + h) > cur_y) continue;
-             h_gap = cur_y - (y + h);
-             if ((cx >= cur_x) && (cx <= (cur_x + cur_w))) w_gap = 0;
-             else if (cx < cur_x)
-               w_gap = cur_x - cx;
-             else if (cx > (cur_x + cur_w))
-               w_gap = cur_x + cur_w - cx;
-          }
-        cur_weight = (w_gap * w_gap) + (h_gap * h_gap);
-
-        if (cur_weight == 0.0)
-          {
-             *nearest = cur;
-             return EINA_TRUE;
-          }
-        cur_weight = 1.0 / cur_weight;
-        if (cur_weight > weight)
-          {
-             weight = cur_weight;
-             next = cur;
-          }
-     }
-   if (!next) return EINA_FALSE;
-   *nearest = next;
-   return EINA_TRUE;
-}
-
 
 /**
  * @defgroup Widget Widget
@@ -1752,110 +1658,64 @@ elm_widget_focus_list_next_get(const Evas_Object  *obj,
         list_next = eina_list_prev;
      }
    else if (dir == ELM_FOCUS_NEXT)
-     {
-        list_next = eina_list_next;
-     }
-   else if ((dir == ELM_FOCUS_LEFT) || (dir == ELM_FOCUS_RIGHT) ||
-            (dir == ELM_FOCUS_UP) || (dir == ELM_FOCUS_DOWN))
-     {
-        list_next = eina_list_next;
-     }
+     list_next = eina_list_next;
    else
      return EINA_FALSE;
 
-   if ((dir == ELM_FOCUS_PREVIOUS) || (dir == ELM_FOCUS_NEXT))
+   const Eina_List *l = items;
+
+   /* Recovery last focused sub item */
+   if (elm_widget_focus_get(obj))
+     for (; l; l = list_next(l))
+       {
+          Evas_Object *cur = list_data_get(l);
+          if (elm_widget_focus_get(cur)) break;
+       }
+
+   const Eina_List *start = l;
+   Evas_Object *to_focus = NULL;
+
+   /* Interate sub items */
+   /* Go to end of list */
+   for (; l; l = list_next(l))
      {
-        const Eina_List *l = items;
-
-        /* Recovery last focused sub item */
-        if (elm_widget_focus_get(obj))
-          for (; l; l = list_next(l))
-            {
-               Evas_Object *cur = list_data_get(l);
-               if (elm_widget_focus_get(cur)) break;
-            }
-
-        const Eina_List *start = l;
-        Evas_Object *to_focus = NULL;
-
-        /* Interate sub items */
-        /* Go to end of list */
-        for (; l; l = list_next(l))
-          {
-             Evas_Object *tmp = NULL;
-             Evas_Object *cur = list_data_get(l);
-
-             if (elm_widget_parent_get(cur) != obj)
-               continue;
-
-             /* Try Focus cycle in subitem */
-             if (elm_widget_focus_next_get(cur, dir, &tmp))
-               {
-                  *next = tmp;
-                  return EINA_TRUE;
-               }
-             else if ((tmp) && (!to_focus))
-               to_focus = tmp;
-          }
-
-        l = items;
-
-        /* Get First possible */
-        for (; l != start; l = list_next(l))
-          {
-             Evas_Object *tmp = NULL;
-             Evas_Object *cur = list_data_get(l);
-
-             if (elm_widget_parent_get(cur) != obj)
-               continue;
-
-             /* Try Focus cycle in subitem */
-             elm_widget_focus_next_get(cur, dir, &tmp);
-             if (tmp)
-               {
-                  *next = tmp;
-                  return EINA_FALSE;
-               }
-          }
-
-        *next = to_focus;
-        return EINA_FALSE;
-     }
-   else if ((dir == ELM_FOCUS_LEFT) || (dir == ELM_FOCUS_RIGHT) ||
-            (dir == ELM_FOCUS_UP) || (dir == ELM_FOCUS_DOWN))
-     {
-        Eina_List *can_focus_list;
         Evas_Object *tmp = NULL;
-        Evas_Object *cur;
+        Evas_Object *cur = list_data_get(l);
 
-        can_focus_list = elm_widget_can_focus_child_list_get(obj);
-        if (can_focus_list)
+        if (elm_widget_parent_get(cur) != obj)
+          continue;
+
+        /* Try Focus cycle in subitem */
+        if (elm_widget_focus_next_get(cur, dir, &tmp))
           {
-             Eina_List *l;
-             EINA_LIST_FOREACH(can_focus_list, l, cur)
-               {
-                  if (elm_widget_focus_get(cur))
-                    {
-                       if (_focus_list_direction_nearest_get(cur, can_focus_list, dir, &tmp))
-                         {
-                            *next = tmp;
-                            return EINA_TRUE;
-                         }
-                       else
-                         {
-                            *next = cur;
-                            return EINA_FALSE;
-                         }
-                    }
-               }
-             if (elm_widget_focus_get(obj))
-               {
-                  *next = list_data_get(can_focus_list);
-                  return EINA_FALSE;
-               }
+             *next = tmp;
+             return EINA_TRUE;
+          }
+        else if ((tmp) && (!to_focus))
+          to_focus = tmp;
+     }
+
+   l = items;
+
+   /* Get First possible */
+   for (; l != start; l = list_next(l))
+     {
+        Evas_Object *tmp = NULL;
+        Evas_Object *cur = list_data_get(l);
+
+        if (elm_widget_parent_get(cur) != obj)
+          continue;
+
+        /* Try Focus cycle in subitem */
+        elm_widget_focus_next_get(cur, dir, &tmp);
+        if (tmp)
+          {
+             *next = tmp;
+             return EINA_FALSE;
           }
      }
 
+   *next = to_focus;
    return EINA_FALSE;
 }
 
