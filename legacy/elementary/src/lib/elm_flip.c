@@ -224,7 +224,7 @@ _slice_apply(Widget_Data *st, Slice *sl,
              evas_map_point_coord_set(m, i, ox + sl->y[p[i]], oy + sl->x[p[i]], sl->z[p[i]]);
              evas_map_point_image_uv_set(m, i, sl->v[p[i]] , sl->u[p[i]]);
           }
-        else if (st->dir == 3)
+        else/* if (st->dir == 3) will be this anyway */
           {
              int p[4] = { 0, 1, 2, 3 };
              evas_map_point_coord_set(m, i, ox + sl->y[p[i]], oy + (w - sl->x[p[i]]), sl->z[p[i]]);
@@ -466,7 +466,7 @@ _state_update(Widget_Data *st)
         tmp = x2; x2 = y2; y2 = tmp;
         tmp = w; w = h; h = tmp;
      }
-   else if (st->dir == 3)
+   else/* if (st->dir == 3) will be this anyway */
      {
         Evas_Coord tmp;
 
@@ -744,7 +744,7 @@ _state_update(Widget_Data *st)
              else if (st->dir == 2)
                 _slice_obj_vert_color_merge(s[0], 3, s[1], 2,
                                             s[2], 0, s[3], 1);
-             else if (st->dir == 3)
+             else/* if (st->dir == 3) will be this anyway */
                 _slice_obj_vert_color_merge(s[0], 2, s[1], 3,
                                             s[2], 1, s[3], 0);
              s[0] = s[1] = s[2] = s[3] = NULL;
@@ -765,7 +765,7 @@ _state_update(Widget_Data *st)
              else if (st->dir == 2)
                 _slice_obj_vert_color_merge(s[0], 2, s[1], 3,
                                             s[2], 1, s[3], 0);
-             else if (st->dir == 3)
+             else/* if (st->dir == 3) will be this anyway */
                 _slice_obj_vert_color_merge(s[0], 3, s[1], 2,
                                             s[2], 0, s[3], 1);
              num++;
