@@ -1725,7 +1725,7 @@ elm_toolbar_orientation_set(Evas_Object *obj, Eina_Bool vertical)
 EAPI Eina_Bool
 elm_toolbar_orientation_get(Evas_Object *obj)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype);
+   ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return EINA_FALSE;
    return wd->vertical;
