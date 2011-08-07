@@ -8185,11 +8185,9 @@ EAPI int                          evas_textblock_cursor_paragraph_text_length_ge
 /**
  * Return the text in the range between cur1 and cur2
  *
- * FIXME: format is currently unused, you always get markup back.
- *
  * @param cur1 one side of the range.
  * @param cur2 the other side of the range
- * @param format to be documented
+ * @param format The form on which to return the text. Markup - in textblock markup. Plain - UTF8.
  * @return the text in the range
  * @see elm_entry_markup_to_utf8()
  */
