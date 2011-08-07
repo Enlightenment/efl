@@ -365,19 +365,15 @@ _sizing_eval(Evas_Object *obj)
    edje_object_size_min_calc(elm_smart_scroller_edje_object_get(wd->scr),
                              &minw, &minh);
    evas_object_geometry_get(obj, NULL, NULL, &w, &h);
-fprintf(stderr, "%i: w=%i, h=%i\n", __LINE__, w, h);
    if (w < minw) w = minw;
    if (h < minh) h = minh;
-fprintf(stderr, "%i: w=%i, h=%i\n", __LINE__, w, h);
    evas_object_resize(wd->scr, w, h);
 
    evas_object_size_hint_min_get(wd->bx, &minw, &minh);
    minw_bx = minw;
    minh_bx = minh;
-fprintf(stderr, "%i: minw=%i, minh=%i\n", __LINE__, minw, minh);
    if (wd->vertical && (h > minh)) minh = h;
    if ((!wd->vertical) && (w > minw)) minw = w;
-fprintf(stderr, "%i: minw=%i, minh=%i\n", __LINE__, minw, minh);
    evas_object_resize(wd->bx, minw, minh);
    elm_smart_scroller_child_viewport_size_get(wd->scr, &vw, &vh);
    switch (wd->shrink_mode)
@@ -393,9 +389,7 @@ fprintf(stderr, "%i: minw=%i, minh=%i\n", __LINE__, minw, minh);
         else minw = minw_bx + (w - vw);
         break;
      }
-fprintf(stderr, "%i: minw=%i, minh=%i\n", __LINE__, minw, minh);
    minh = minh + (h - vh);
-fprintf(stderr, "%i: minw=%i, minh=%i\n", __LINE__, minw, minh);
    evas_object_size_hint_min_set(obj, minw, minh);
    evas_object_size_hint_max_set(obj, -1, -1);
 }
