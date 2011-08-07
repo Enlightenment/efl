@@ -513,6 +513,7 @@ ecore_imf_context_cursor_position_set(Ecore_IMF_Context *ctx, int cursor_pos)
  * @param w cursor width.
  * @param h cursor height.
  * @ingroup Ecore_IMF_Context_Group
+ * @since 1.1.0
  */
 EAPI void
 ecore_imf_context_cursor_location_set(Ecore_IMF_Context *ctx, int x, int y, int w, int h)
