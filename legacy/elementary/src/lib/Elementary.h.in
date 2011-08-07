@@ -11912,6 +11912,24 @@ extern "C" {
    EAPI Eina_Bool        elm_toolbar_item_cursor_engine_only_get(const Elm_Toolbar_Item *item) EINA_ARG_NONNULL(1);
 
    /**
+    * Change a toolbar's orientation
+    * @param obj The toolbar object
+    * @param vertical If @c EINA_TRUE, the toolbar is vertical
+    * By default, a toolbar will be horizontal. Use this function to create a vertical toolbar.
+    * @ingroup Toolbar
+    */
+   EAPI void             elm_toolbar_orientation_set(Evas_Object *obj, Eina_Bool vertical) EINA_ARG_NONNULL(1);
+
+   /**
+    * Get a toolbar's orientation
+    * @param obj The toolbar object
+    * @return If @c EINA_TRUE, the toolbar is vertical
+    * By default, a toolbar will be horizontal. Use this function to determine whether a toolbar is vertical.
+    * @ingroup Toolbar
+    */
+   EAPI Eina_Bool        elm_toolbar_orientation_get(Evas_Object *obj) EINA_ARG_NONNULL(1);
+
+   /**
     * @}
     */
 

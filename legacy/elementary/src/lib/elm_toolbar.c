@@ -15,6 +15,7 @@ struct _Widget_Data
    double align;
    Eina_Bool homogeneous : 1;
    Eina_Bool no_select : 1;
+   Eina_Bool vertical : 1;
    Ecore_Job *resize_job;
 };
 
@@ -355,7 +356,7 @@ static void
 _sizing_eval(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
-   Evas_Coord minw = -1, minh = -1, minw_bx;
+   Evas_Coord minw = -1, minh = -1, minw_bx, minh_bx;
    Evas_Coord vw = 0, vh = 0;
    Evas_Coord w, h;
 
@@ -364,24 +365,37 @@ _sizing_eval(Evas_Object *obj)
    edje_object_size_min_calc(elm_smart_scroller_edje_object_get(wd->scr),
                              &minw, &minh);
    evas_object_geometry_get(obj, NULL, NULL, &w, &h);
+fprintf(stderr, "%i: w=%i, h=%i\n", __LINE__, w, h);
    if (w < minw) w = minw;
    if (h < minh) h = minh;
-
+fprintf(stderr, "%i: w=%i, h=%i\n", __LINE__, w, h);
    evas_object_resize(wd->scr, w, h);
 
    evas_object_size_hint_min_get(wd->bx, &minw, &minh);
    minw_bx = minw;
-   if (w > minw) minw = w;
+   minh_bx = minh;
+fprintf(stderr, "%i: minw=%i, minh=%i\n", __LINE__, minw, minh);
+   if (wd->vertical && (h > minh)) minh = h;
+   if ((!wd->vertical) && (w > minw)) minw = w;
+fprintf(stderr, "%i: minw=%i, minh=%i\n", __LINE__, minw, minh);
    evas_object_resize(wd->bx, minw, minh);
    elm_smart_scroller_child_viewport_size_get(wd->scr, &vw, &vh);
    switch (wd->shrink_mode)
      {
       case ELM_TOOLBAR_SHRINK_MENU: /* fallthrough */
       case ELM_TOOLBAR_SHRINK_HIDE: /* fallthrough */
-      case ELM_TOOLBAR_SHRINK_SCROLL: minw = w - vw; break;
-      case ELM_TOOLBAR_SHRINK_NONE: minw = minw_bx + (w - vw); break;
+      case ELM_TOOLBAR_SHRINK_SCROLL:
+        if (wd->vertical) minh = h - vh;
+        else minw = w - vw;
+        break;
+      case ELM_TOOLBAR_SHRINK_NONE:
+        if (wd->vertical) minh = minh_bx + (h - vh);
+        else minw = minw_bx + (w - vw);
+        break;
      }
+fprintf(stderr, "%i: minw=%i, minh=%i\n", __LINE__, minw, minh);
    minh = minh + (h - vh);
+fprintf(stderr, "%i: minw=%i, minh=%i\n", __LINE__, minw, minh);
    evas_object_size_hint_min_set(obj, minw, minh);
    evas_object_size_hint_max_set(obj, -1, -1);
 }
@@ -614,7 +628,7 @@ _layout(Evas_Object *o, Evas_Object_Box_Data *priv, void *data)
    Evas_Object *obj = (Evas_Object *) data;
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
-   _els_box_layout(o, priv, 1, wd->homogeneous, elm_widget_mirrored_get(obj));
+   _els_box_layout(o, priv, !wd->vertical, wd->homogeneous, elm_widget_mirrored_get(obj));
 }
 
 static Elm_Toolbar_Item *
@@ -678,8 +692,16 @@ _item_new(Evas_Object *obj, const char *icon, const char *label, Evas_Smart_Cb f
    elm_coords_finger_size_adjust(1, &mw, 1, &mh);
    edje_object_size_min_restricted_calc(it->base.view, &mw, &mh, mw, mh);
    elm_coords_finger_size_adjust(1, &mw, 1, &mh);
-   evas_object_size_hint_weight_set(it->base.view, -1.0, EVAS_HINT_EXPAND);
-   evas_object_size_hint_align_set(it->base.view, 0.5, EVAS_HINT_FILL);
+   if (wd->vertical)
+     {
+        evas_object_size_hint_weight_set(it->base.view, EVAS_HINT_EXPAND, -1.0);
+        evas_object_size_hint_align_set(it->base.view, EVAS_HINT_FILL, 0.5);
+     }
+   else
+     {
+        evas_object_size_hint_weight_set(it->base.view, -1.0, EVAS_HINT_EXPAND);
+        evas_object_size_hint_align_set(it->base.view, 0.5, EVAS_HINT_FILL);
+     }
    evas_object_size_hint_min_set(it->base.view, mw, mh);
    evas_object_event_callback_add(it->base.view, EVAS_CALLBACK_RESIZE,
                                   _resize_item, obj);
@@ -1126,13 +1148,22 @@ static void
 _elm_toolbar_item_label_update(Elm_Toolbar_Item *item)
 {
    Evas_Coord mw = -1, mh = -1;
+   Widget_Data *wd = elm_widget_data_get(item->base.widget);
    edje_object_part_text_set(item->base.view, "elm.text", item->label);
 
    elm_coords_finger_size_adjust(1, &mw, 1, &mh);
    edje_object_size_min_restricted_calc(item->base.view, &mw, &mh, mw, mh);
    elm_coords_finger_size_adjust(1, &mw, 1, &mh);
-   evas_object_size_hint_weight_set(item->base.view, -1.0, EVAS_HINT_EXPAND);
-   evas_object_size_hint_align_set(item->base.view, 0.5, EVAS_HINT_FILL);
+   if (wd->vertical)
+     {
+        evas_object_size_hint_weight_set(item->base.view, EVAS_HINT_EXPAND, -1.0);
+        evas_object_size_hint_align_set(item->base.view, EVAS_HINT_FILL, 0.5);
+     }
+   else
+     {
+        evas_object_size_hint_weight_set(item->base.view, -1.0, EVAS_HINT_EXPAND);
+        evas_object_size_hint_align_set(item->base.view, 0.5, EVAS_HINT_FILL);
+     }
    evas_object_size_hint_min_set(item->base.view, mw, mh);
 }
 
@@ -1181,6 +1212,7 @@ _elm_toolbar_item_icon_update(Elm_Toolbar_Item *item)
    Elm_Toolbar_Item_State *it_state;
    Eina_List *l;
    Evas_Coord mw = -1, mh = -1;
+   Widget_Data *wd = elm_widget_data_get(item->base.widget);
    Evas_Object *old_icon = edje_object_part_swallow_get(item->base.view,
                                                         "elm.swallow.icon");
    elm_widget_sub_object_del(item->base.view, old_icon);
@@ -1189,8 +1221,16 @@ _elm_toolbar_item_icon_update(Elm_Toolbar_Item *item)
    elm_coords_finger_size_adjust(1, &mw, 1, &mh);
    edje_object_size_min_restricted_calc(item->base.view, &mw, &mh, mw, mh);
    elm_coords_finger_size_adjust(1, &mw, 1, &mh);
-   evas_object_size_hint_weight_set(item->base.view, -1.0, EVAS_HINT_EXPAND);
-   evas_object_size_hint_align_set(item->base.view, 0.5, EVAS_HINT_FILL);
+   if (wd->vertical)
+     {
+        evas_object_size_hint_weight_set(item->base.view, EVAS_HINT_EXPAND, -1.0);
+        evas_object_size_hint_align_set(item->base.view, EVAS_HINT_FILL, 0.5);
+     }
+   else
+     {
+        evas_object_size_hint_weight_set(item->base.view, -1.0, EVAS_HINT_EXPAND);
+        evas_object_size_hint_align_set(item->base.view, 0.5, EVAS_HINT_FILL);
+     }
    evas_object_size_hint_min_set(item->base.view, mw, mh);
 
    EINA_LIST_FOREACH(item->states, l, it_state)
@@ -1676,4 +1716,23 @@ elm_toolbar_icon_order_lookup_get(const Evas_Object *obj)
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return ELM_ICON_LOOKUP_THEME_FDO;
    return wd->lookup_order;
+}
+
+EAPI void
+elm_toolbar_orientation_set(Evas_Object *obj, Eina_Bool vertical)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   wd->vertical = vertical;
+   _sizing_eval(obj);
+}
+
+EAPI Eina_Bool
+elm_toolbar_orientation_get(Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return EINA_FALSE;
+   return wd->vertical;
 }
