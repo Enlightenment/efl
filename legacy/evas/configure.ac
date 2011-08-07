@@ -760,14 +760,6 @@ else
   have_evas_engine_software_xlib="no"
 fi
 
-if test "x$have_evas_engine_software_xlib" = "xstatic" ; then
-   have_evas_engine_software_xlib="yes"
-fi
-
-if test "x$have_evas_engine_software_xcb" = "xstatic" ; then
-   have_evas_engine_software_xcb="yes"
-fi
-
 AC_SUBST(have_evas_engine_software_xcb)
 AC_SUBST(have_evas_engine_software_xlib)
 
@@ -819,7 +811,7 @@ if test "x$build_gl_xcb" = "xno" ; then
     AC_DEFINE_UNQUOTED(BUILD_ENGINE_GL_X11, [1], [Build OpenGL X11 engine])
     AC_DEFINE_UNQUOTED(BUILD_ENGINE_GL_XLIB, [1], [Build OpenGL Xlib backend])
     if test "x$have_evas_engine_gl_xlib" = "xstatic" ; then
-      AC_DEFINE_UNQUOTED(EVAS_STATIC_BUILD_GL_XLIB, [1], [Build OpenGL X11 engine as part of libevas])
+      AC_DEFINE_UNQUOTED(EVAS_STATIC_BUILD_GL_X11, [1], [Build OpenGL X11 engine as part of libevas])
     fi
   fi
 else
