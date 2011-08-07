@@ -151,7 +151,7 @@ _elm_util_mkup_to_text(const char *mkup)
           {
              if (esc_start)
                {
-                  esc_end = p;
+                  esc_end = p + 1;
                   s = p + 1;
                }
           }
