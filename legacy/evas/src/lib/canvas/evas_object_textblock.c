@@ -5361,7 +5361,7 @@ evas_object_textblock_cursor_new(const Evas_Object *obj)
 
    TB_HEAD_RETURN(NULL);
    cur = calloc(1, sizeof(Evas_Textblock_Cursor));
-   cur->obj = obj;
+   cur->obj = (Evas_Object *) obj;
    cur->node = o->text_nodes;
    cur->pos = 0;
 
