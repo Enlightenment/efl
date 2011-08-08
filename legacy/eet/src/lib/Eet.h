@@ -16,7 +16,6 @@ Please see the @ref authors page for contact details.
 
 @li @ref intro
 @li @ref example
-@li @ref format
 @li @ref compiling
 @li @ref install
 @li @ref next_steps
