@@ -105,6 +105,113 @@
  *
  */
 
+/**
+ * @defgroup Ecore_Con_Buffer Buffering
+ * 
+ * As Ecore_Con works on an event driven design, as data arrives, events will
+ * be produced containing the data that arrived. It is up to the user of
+ * Ecore_Con to either parse as they go, append to a file to later parse the
+ * whole file in one go, or append to memory to parse or handle leter.
+ * 
+ * To help with this Eina has some handy API's. The Eina_Binbuf and 
+ * Eina_Strbuf APIs, abstract dynamic buffer management and make it trivial 
+ * to handle buffers at runtime, without having to manage them. Eina_Binbuf 
+ * makes it possible to create, expand, reset and slice a blob of memory - 
+ * all via API. No system calls, no pointer manipulations and no size 
+ * calculation.
+ * 
+ * Additional functions include adding content at specified byte positions in 
+ * the buffer, escaping the inputs, find and replace strings. This provides 
+ * extreme flexibility to play around, with a dynamic blob of memory.
+ * 
+ * It is good to free it (using eina_binbuf_free()) after using it.
+ * 
+ * Eina_Binbuf compliments Ecore_Con use cases, where dynamic sizes of data
+ * arrive from the network (think http download in chunks). Using
+ * Eina_Binbuf provides enough flexibility to handle data as it arrives and
+ * to defer its processing until desired, without having to think about
+ * where to store the temporary data and how to manage its size.
+ * 
+ * An example of how to use these with Ecore_Con follows.
+ * 
+ * @code
+ * #include <Eina.h>
+ * #include <Ecore.h>
+ * #include <Ecore_Con.h>
+ * 
+ * static Eina_Bool
+ * data_callback(void *data, int type, void *event)
+ * {
+ *    Ecore_Con_Event_Url_Data *url_data = event;
+ *    if ( url_data->size > 0)
+ *      {
+ *         // append data as it arrives - don't worry where or how it gets stored.
+ *         // Also don't worry about size, expanding, reallocing etc.
+ *         // just keep appending - size is automatically handled.
+ * 
+ *         eina_binbuf_append_length(data, url_data->data, url_data->size);
+ * 
+ *         fprintf(stderr, "Appended %d \n", url_data->size);
+ *      }
+ *    return EINA_TRUE;
+ * }
+ * 
+ * 
+ * 
+ * static Eina_Bool
+ * completion_callback(void *data, int type, void *event)
+ * {
+ *    Ecore_Con_Event_Url_Complete *url_complete = event;
+ *    printf("download completed with status code: %d\n", url_complete->status);
+ * 
+ *    // get the data back from Eina_Binbuf
+ *    char *ptr = eina_binbuf_string_get(data);
+ *    size_t size = eina_binbuf_length_get(data);
+ * 
+ *    // process data as required (write to file)
+ *    fprintf(stderr, "Size of data = %d bytes\n", size);
+ *    int fd = open("./elm.png", O_CREAT);
+ *    write(fd, ptr, size);
+ *    close(fd);
+ *   
+ *    // free it when done.
+ *    eina_binbuf_free(data);
+ * 
+ *    ecore_main_loop_quit();
+ * 
+ *    return EINA_TRUE;
+ * }
+ * 
+ * 
+ * int
+ * main(int argc, char **argv)
+ * {
+ * 
+ *    const char *url = "http://www.enlightenment.org/p/index/d/logo.png";
+ * 
+ *    ecore_init();
+ *    ecore_con_init();
+ *    ecore_con_url_init();
+ *   
+ * 
+ *    // This is single additional line to manage dynamic network data.
+ *    Eina_Binbuf *data = eina_binbuf_new();
+ *    Ecore_Con_Url *url_con = ecore_con_url_new(url);
+ * 
+ *    ecore_event_handler_add(ECORE_CON_EVENT_URL_COMPLETE,
+ *                                                       completion_callback,
+ *                                                       data);
+ *    ecore_event_handler_add(ECORE_CON_EVENT_URL_DATA,
+ *                                                       data_callback,
+ *                                                       data);
+ *    ecore_con_url_get(url_con);
+ * 
+ *    ecore_main_loop_begin();
+ *    return 0;
+ * }
+ * @endcode
+ */
+
 #ifdef __cplusplus
 extern "C" {
 #endif
