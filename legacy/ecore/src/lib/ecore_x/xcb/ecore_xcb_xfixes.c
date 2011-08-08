@@ -46,6 +46,12 @@ _ecore_xcb_xfixes_finalize(void)
         reply = xcb_xfixes_query_version_reply(_ecore_xcb_conn, cookie, NULL);
         if (reply) 
           {
+             /* NB: XFixes Extension >= 3 needed for shape stuff.
+              * for now, I am removing this check so that it matches the 
+              * xlib code closer. If the extension version ends up being 
+              * that important, then re-enable this */
+
+             /* if (reply->major_version >= 3) */
              _xfixes_avail = EINA_TRUE;
              free(reply);
           }
@@ -366,23 +372,17 @@ ecore_x_region_invert(Ecore_X_Region dest, Ecore_X_Rectangle *bounds, Ecore_X_Re
 {
 #ifdef ECORE_XCB_XFIXES
    xcb_rectangle_t xrects;
-   int num = 0;
 #endif
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
 #ifdef ECORE_XCB_XFIXES
-   while (bounds + num)
-     num++;
-
    xrects.x = bounds->x;
    xrects.y = bounds->y;
    xrects.width = bounds->width;
    xrects.height = bounds->height;
 
-//   xrects = _ecore_xcb_rect_to_xcb(bounds, num);
    xcb_xfixes_invert_region(_ecore_xcb_conn, source, xrects, dest);
-//   free(xrects);
 #endif
 }
 
