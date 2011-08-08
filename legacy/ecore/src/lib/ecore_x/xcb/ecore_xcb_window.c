@@ -886,8 +886,8 @@ ecore_x_window_container_manage(Ecore_X_Window win)
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
-   list = (XCB_EVENT_MASK_SUBSTRUCTURE_NOTIFY | 
-           XCB_EVENT_MASK_SUBSTRUCTURE_REDIRECT);
+   list = (XCB_EVENT_MASK_SUBSTRUCTURE_REDIRECT | 
+           XCB_EVENT_MASK_SUBSTRUCTURE_NOTIFY);
 
    xcb_change_window_attributes(_ecore_xcb_conn, win, 
                                 XCB_CW_EVENT_MASK, &list);
@@ -1045,6 +1045,8 @@ ecore_x_window_manage(Ecore_X_Window win)
 
    ecore_x_sync(); // needed
 
+   /* FIXME: XLib uses XSelectInput */
+   /* FIXME: Add error handler trap */
    list = (XCB_EVENT_MASK_ENTER_WINDOW | XCB_EVENT_MASK_LEAVE_WINDOW | 
            XCB_EVENT_MASK_PROPERTY_CHANGE | XCB_EVENT_MASK_RESIZE_REDIRECT | 
            XCB_EVENT_MASK_SUBSTRUCTURE_REDIRECT | 
@@ -1083,12 +1085,19 @@ ecore_x_window_attributes_get(Ecore_X_Window win, Ecore_X_Window_Attributes *att
 
    if (reply->map_state != XCB_MAP_STATE_UNMAPPED)
      att_ret->visible = EINA_TRUE;
+
    if (reply->map_state == XCB_MAP_STATE_VIEWABLE)
      att_ret->viewable = EINA_TRUE;
-   if (reply->override_redirect) att_ret->override = EINA_TRUE;
+
+   if (reply->override_redirect) 
+     att_ret->override = EINA_TRUE;
+
    if (reply->_class == XCB_WINDOW_CLASS_INPUT_ONLY)
      att_ret->input_only = EINA_TRUE;
-   if (reply->save_under) att_ret->save_under = EINA_TRUE;
+
+   if (reply->save_under) 
+     att_ret->save_under = EINA_TRUE;
+
    att_ret->event_mask.mine = reply->your_event_mask;
    att_ret->event_mask.all = reply->all_event_masks;
    att_ret->event_mask.no_propagate = reply->do_not_propagate_mask;
@@ -1237,6 +1246,7 @@ ecore_x_window_root_list(int *num_ret)
 
    if (!num_ret) return NULL;
 
+   /* FIXME: Use xprint if available. Reference xlib */
    setup = xcb_get_setup(_ecore_xcb_conn);
    iter = xcb_setup_roots_iterator(setup);
    num = setup->roots_len;
@@ -1253,25 +1263,28 @@ ecore_x_window_children_get(Ecore_X_Window win, int *num)
 {
    xcb_query_tree_cookie_t cookie;
    xcb_query_tree_reply_t *reply;
-   xcb_window_t *w;
    Ecore_X_Window *windows = NULL;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    if (num) *num = 0;
-   cookie = xcb_query_tree(_ecore_xcb_conn, win);
+   cookie = xcb_query_tree_unchecked(_ecore_xcb_conn, win);
    reply = xcb_query_tree_reply(_ecore_xcb_conn, cookie, NULL);
    if (!reply) return NULL;
+
    if (num) *num = reply->children_len;
-
-   windows = malloc(sizeof(Ecore_X_Window) * reply->children_len);
-   if (windows) 
+   if (reply->children_len > 0) 
      {
-        unsigned int i = 0;
+        windows = malloc(sizeof(Ecore_X_Window) * reply->children_len);
+        if (windows) 
+          {
+             unsigned int i = 0;
+             xcb_window_t *w;
 
-        w = xcb_query_tree_children(reply);
-        for (i = 0; i < reply->children_len; i++) 
-          windows[i] = w[i];
+             w = xcb_query_tree_children(reply);
+             for (i = 0; i < reply->children_len; i++) 
+               windows[i] = w[i];
+          }
      }
 
    free(reply);
