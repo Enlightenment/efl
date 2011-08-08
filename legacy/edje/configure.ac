@@ -417,7 +417,6 @@ data/Makefile
 data/include/Makefile
 doc/Makefile
 doc/Doxyfile
-doc/edje.dox
 src/Makefile
 src/lib/Makefile
 src/bin/Makefile

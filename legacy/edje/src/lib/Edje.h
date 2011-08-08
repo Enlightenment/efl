@@ -4,7 +4,6 @@
 These routines are used for Edje.
 
 @mainpage Edje Library Documentation
-@image html  e.png
 @version 1.1
 @date 2003-2011
 

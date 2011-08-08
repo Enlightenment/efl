@@ -1,5 +1,5 @@
 
-MAINTAINERCLEANFILES = Makefile.in edje.dox
+MAINTAINERCLEANFILES = Makefile.in
 
 .PHONY: doc
 
@@ -32,4 +32,4 @@ doc:
 endif
 
 EXTRA_DIST = Doxyfile e.css foot.html head.html $(wildcard img/*.*) \
-             edje.dox.in $(wildcard examples/*.*)
+             $(wildcard examples/*.*)
