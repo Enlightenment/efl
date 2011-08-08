@@ -142,7 +142,7 @@ ecore_x_window_shape_rectangles_set(Ecore_X_Window win, Ecore_X_Rectangle *rects
      }
    xcb_shape_rectangles(_ecore_xcb_conn, XCB_SHAPE_SO_SET, 
                         XCB_SHAPE_SK_BOUNDING, XCB_CLIP_ORDERING_UNSORTED, 
-                        win, 0, 0, num, (xcb_rectangle_t *)&rect);
+                        win, 0, 0, num, (xcb_rectangle_t *)rect);
 
    if (rect) free(rect);
 #else
@@ -475,7 +475,7 @@ ecore_x_window_shape_input_rectangles_set(Ecore_X_Window win, Ecore_X_Rectangle 
      }
    xcb_shape_rectangles(_ecore_xcb_conn, XCB_SHAPE_SO_SET, 
                         XCB_SHAPE_SK_INPUT, XCB_CLIP_ORDERING_UNSORTED, 
-                        win, 0, 0, num, (xcb_rectangle_t *)&rect);
+                        win, 0, 0, num, (xcb_rectangle_t *)rect);
 
    if (rect) free(rect);
 #else
@@ -543,11 +543,13 @@ ecore_x_window_shape_input_rectangle_add(Ecore_X_Window win, int x, int y, int w
 EAPI void 
 ecore_x_window_shape_input_rectangle_set(Ecore_X_Window win, int x, int y, int w, int h) 
 {
+#ifdef ECORE_XCB_SHAPE
+   xcb_rectangle_t rect;
+#endif
+
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
 #ifdef ECORE_XCB_SHAPE
-   xcb_rectangle_t rect;
-
    rect.x = x;
    rect.y = y;
    rect.width = w;
