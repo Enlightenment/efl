@@ -8,8 +8,6 @@ These routines are used for Ecore Library interaction
 
 @mainpage Ecore
 
-@image html  e.png
-
 @version 1.1
 @date 2000-2011
 
