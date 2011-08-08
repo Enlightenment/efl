@@ -341,7 +341,7 @@ EAPI Eina_Bool        elm_widget_type_check(const Evas_Object *obj, const char *
 EAPI Eina_List       *elm_widget_stringlist_get(const char *str);
 EAPI void             elm_widget_stringlist_free(Eina_List *list);
 EAPI void             elm_widget_focus_hide_handle(Evas_Object *obj);
-EAPI void             elm_widget_focus_mouse_down_handle(Evas_Object *obj);
+EAPI void             elm_widget_focus_mouse_up_handle(Evas_Object *obj);
 EAPI void             elm_widget_focus_tree_unfocusable_handle(Evas_Object *obj);
 EAPI void             elm_widget_focus_disabled_handle(Evas_Object *obj);
 EAPI void             elm_widget_text_part_set(Evas_Object *obj, const char *part, const char *label);

@@ -1277,13 +1277,15 @@ _win_img_hide(void        *data,
 }
 
 static void
-_win_img_mouse_down(void        *data,
-                    Evas        *e __UNUSED__,
-                    Evas_Object *obj __UNUSED__,
-                    void        *event_info __UNUSED__)
+_win_img_mouse_up(void        *data,
+                  Evas        *e __UNUSED__,
+                  Evas_Object *obj __UNUSED__,
+                  void        *event_info)
 {
    Elm_Win *win = data;
-   elm_widget_focus_mouse_down_handle(win->win_obj);
+   Evas_Event_Mouse_Up *ev = event_info;
+   if (!(ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD))
+      elm_widget_focus_mouse_up_handle(win->win_obj);
 }
 
 static void
@@ -1316,8 +1318,8 @@ _win_inlined_image_set(Elm_Win *win)
 
    evas_object_event_callback_add(win->img_obj, EVAS_CALLBACK_HIDE,
                                   _win_img_hide, win);
-   evas_object_event_callback_add(win->img_obj, EVAS_CALLBACK_MOUSE_DOWN,
-                                  _win_img_mouse_down, win);
+   evas_object_event_callback_add(win->img_obj, EVAS_CALLBACK_MOUSE_UP,
+                                  _win_img_mouse_up, win);
    evas_object_event_callback_add(win->img_obj, EVAS_CALLBACK_FOCUS_IN,
                                   _win_img_focus_in, win);
    evas_object_event_callback_add(win->img_obj, EVAS_CALLBACK_FOCUS_OUT,

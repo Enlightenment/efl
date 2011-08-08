@@ -233,12 +233,14 @@ _sub_obj_hide(void        *data __UNUSED__,
 }
 
 static void
-_sub_obj_mouse_down(void        *data __UNUSED__,
-                    Evas        *e __UNUSED__,
-                    Evas_Object *obj,
-                    void        *event_info __UNUSED__)
+_sub_obj_mouse_up(void        *data __UNUSED__,
+                  Evas        *e __UNUSED__,
+                  Evas_Object *obj,
+                  void        *event_info)
 {
-   elm_widget_focus_mouse_down_handle(obj);
+   Evas_Event_Mouse_Up *ev = event_info;
+   if (!(ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD))
+      elm_widget_focus_mouse_up_handle(obj);
 }
 
 static void
@@ -986,8 +988,8 @@ elm_widget_resize_object_set(Evas_Object *obj,
           }
         evas_object_event_callback_del_full(sd->resize_obj, EVAS_CALLBACK_DEL,
                                             _sub_obj_del, sd);
-        evas_object_event_callback_del_full(sd->resize_obj, EVAS_CALLBACK_MOUSE_DOWN,
-                                            _sub_obj_mouse_down, sd);
+        evas_object_event_callback_del_full(sd->resize_obj, EVAS_CALLBACK_MOUSE_UP,
+                                            _sub_obj_mouse_up, sd);
         evas_object_smart_member_del(sd->resize_obj);
         if (_elm_widget_is(sd->resize_obj))
           {
@@ -1007,8 +1009,8 @@ elm_widget_resize_object_set(Evas_Object *obj,
           }
         evas_object_event_callback_del_full(sobj, EVAS_CALLBACK_DEL,
                                             _sub_obj_del, sd);
-        evas_object_event_callback_del_full(sobj, EVAS_CALLBACK_MOUSE_DOWN,
-                                            _sub_obj_mouse_down, sd);
+        evas_object_event_callback_del_full(sobj, EVAS_CALLBACK_MOUSE_UP,
+                                            _sub_obj_mouse_up, sd);
         evas_object_smart_member_del(sobj);
         if (_elm_widget_is(sobj))
           {
@@ -1030,8 +1032,8 @@ elm_widget_resize_object_set(Evas_Object *obj,
         evas_object_smart_member_add(sobj, obj);
         evas_object_event_callback_add(sobj, EVAS_CALLBACK_DEL,
                                        _sub_obj_del, sd);
-        evas_object_event_callback_add(sobj, EVAS_CALLBACK_MOUSE_DOWN,
-                                       _sub_obj_mouse_down, sd);
+        evas_object_event_callback_add(sobj, EVAS_CALLBACK_MOUSE_UP,
+                                       _sub_obj_mouse_up, sd);
         _smart_reconfigure(sd);
         evas_object_data_set(sobj, "elm-parent", obj);
         evas_object_smart_callback_call(obj, "sub-object-add", sobj);
@@ -2445,7 +2447,7 @@ elm_widget_focus_hide_handle(Evas_Object *obj)
 }
 
 EAPI void
-elm_widget_focus_mouse_down_handle(Evas_Object *obj)
+elm_widget_focus_mouse_up_handle(Evas_Object *obj)
 {
    Evas_Object *o = obj;
    do
