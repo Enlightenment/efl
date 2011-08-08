@@ -357,11 +357,6 @@ part of Edje's API:
 - @ref Example_Edje_Signals_Messages
 
 
-
-
-@todo Complete documentation of API
-@todo Bytecode language for extending programs... but what/how?
-
 */
 
 /**
