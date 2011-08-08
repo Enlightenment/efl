@@ -150,131 +150,131 @@ ecore_x_e_comp_sync_supported_set(Ecore_X_Window root, Eina_Bool enabled)
 EAPI void 
 ecore_x_e_comp_sync_begin_send(Ecore_X_Window win) 
 {
-//   xcb_client_message_event_t ev;
+   xcb_client_message_event_t ev;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
-   ecore_x_client_message32_send(win, ECORE_X_ATOM_E_COMP_SYNC_BEGIN, 
-                                 XCB_EVENT_MASK_NO_EVENT, win, 0, 0, 0, 0);
+   /* ecore_x_client_message32_send(win, ECORE_X_ATOM_E_COMP_SYNC_BEGIN,  */
+   /*                               XCB_EVENT_MASK_NO_EVENT, win, 0, 0, 0, 0); */
 
-   /* memset(&ev, 0, sizeof(xcb_client_message_event_t)); */
+   memset(&ev, 0, sizeof(xcb_client_message_event_t));
 
-   /* ev.response_type = XCB_CLIENT_MESSAGE; */
-   /* ev.format = 32; */
-   /* ev.window = win; */
-   /* ev.type = ECORE_X_ATOM_E_COMP_SYNC_BEGIN; */
-   /* ev.data.data32[0] = win; */
-   /* ev.data.data32[1] = 0; */
-   /* ev.data.data32[2] = 0; */
-   /* ev.data.data32[3] = 0; */
-   /* ev.data.data32[4] = 0; */
+   ev.response_type = XCB_CLIENT_MESSAGE;
+   ev.format = 32;
+   ev.window = win;
+   ev.type = ECORE_X_ATOM_E_COMP_SYNC_BEGIN;
+   ev.data.data32[0] = win;
+   ev.data.data32[1] = 0;
+   ev.data.data32[2] = 0;
+   ev.data.data32[3] = 0;
+   ev.data.data32[4] = 0;
 
-   /* xcb_send_event(_ecore_xcb_conn, 0, win,  */
-   /*                XCB_EVENT_MASK_NO_EVENT, (const char *)&ev); */
+   xcb_send_event(_ecore_xcb_conn, 0, win, 
+                  XCB_EVENT_MASK_NO_EVENT, (const char *)&ev);
 }
 
 EAPI void 
 ecore_x_e_comp_sync_end_send(Ecore_X_Window win) 
 {
-//   xcb_client_message_event_t ev;
+   xcb_client_message_event_t ev;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
-   ecore_x_client_message32_send(win, ECORE_X_ATOM_E_COMP_SYNC_END, 
-                                 XCB_EVENT_MASK_NO_EVENT, win, 0, 0, 0, 0);
+   /* ecore_x_client_message32_send(win, ECORE_X_ATOM_E_COMP_SYNC_END,  */
+   /*                               XCB_EVENT_MASK_NO_EVENT, win, 0, 0, 0, 0); */
 
-   /* memset(&ev, 0, sizeof(xcb_client_message_event_t)); */
+   memset(&ev, 0, sizeof(xcb_client_message_event_t));
 
-   /* ev.response_type = XCB_CLIENT_MESSAGE; */
-   /* ev.format = 32; */
-   /* ev.window = win; */
-   /* ev.type = ECORE_X_ATOM_E_COMP_SYNC_END; */
-   /* ev.data.data32[0] = win; */
-   /* ev.data.data32[1] = 0; */
-   /* ev.data.data32[2] = 0; */
-   /* ev.data.data32[3] = 0; */
-   /* ev.data.data32[4] = 0; */
+   ev.response_type = XCB_CLIENT_MESSAGE;
+   ev.format = 32;
+   ev.window = win;
+   ev.type = ECORE_X_ATOM_E_COMP_SYNC_END;
+   ev.data.data32[0] = win;
+   ev.data.data32[1] = 0;
+   ev.data.data32[2] = 0;
+   ev.data.data32[3] = 0;
+   ev.data.data32[4] = 0;
 
-   /* xcb_send_event(_ecore_xcb_conn, 0, win,  */
-   /*                XCB_EVENT_MASK_NO_EVENT, (const char *)&ev); */
+   xcb_send_event(_ecore_xcb_conn, 0, win, 
+                  XCB_EVENT_MASK_NO_EVENT, (const char *)&ev);
 }
 
 EAPI void 
 ecore_x_e_comp_sync_cancel_send(Ecore_X_Window win) 
 {
-//   xcb_client_message_event_t ev;
+   xcb_client_message_event_t ev;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
-   ecore_x_client_message32_send(win, ECORE_X_ATOM_E_COMP_SYNC_CANCEL, 
-                                 XCB_EVENT_MASK_NO_EVENT, win, 0, 0, 0, 0);
+   /* ecore_x_client_message32_send(win, ECORE_X_ATOM_E_COMP_SYNC_CANCEL,  */
+   /*                               XCB_EVENT_MASK_NO_EVENT, win, 0, 0, 0, 0); */
 
-   /* memset(&ev, 0, sizeof(xcb_client_message_event_t)); */
+   memset(&ev, 0, sizeof(xcb_client_message_event_t));
 
-   /* ev.response_type = XCB_CLIENT_MESSAGE; */
-   /* ev.format = 32; */
-   /* ev.window = win; */
-   /* ev.type = ECORE_X_ATOM_E_COMP_SYNC_CANCEL; */
-   /* ev.data.data32[0] = win; */
-   /* ev.data.data32[1] = 0; */
-   /* ev.data.data32[2] = 0; */
-   /* ev.data.data32[3] = 0; */
-   /* ev.data.data32[4] = 0; */
+   ev.response_type = XCB_CLIENT_MESSAGE;
+   ev.format = 32;
+   ev.window = win;
+   ev.type = ECORE_X_ATOM_E_COMP_SYNC_CANCEL;
+   ev.data.data32[0] = win;
+   ev.data.data32[1] = 0;
+   ev.data.data32[2] = 0;
+   ev.data.data32[3] = 0;
+   ev.data.data32[4] = 0;
 
-   /* xcb_send_event(_ecore_xcb_conn, 0, win,  */
-   /*                XCB_EVENT_MASK_NO_EVENT, (const char *)&ev); */
+   xcb_send_event(_ecore_xcb_conn, 0, win, 
+                  XCB_EVENT_MASK_NO_EVENT, (const char *)&ev);
 }
 
 EAPI void 
 ecore_x_e_comp_flush_send(Ecore_X_Window win) 
 {
-//   xcb_client_message_event_t ev;
+   xcb_client_message_event_t ev;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
-   ecore_x_client_message32_send(win, ECORE_X_ATOM_E_COMP_FLUSH, 
-                                 XCB_EVENT_MASK_NO_EVENT, win, 0, 0, 0, 0);
+   /* ecore_x_client_message32_send(win, ECORE_X_ATOM_E_COMP_FLUSH,  */
+   /*                               XCB_EVENT_MASK_NO_EVENT, win, 0, 0, 0, 0); */
 
-   /* memset(&ev, 0, sizeof(xcb_client_message_event_t)); */
+   memset(&ev, 0, sizeof(xcb_client_message_event_t));
 
-   /* ev.response_type = XCB_CLIENT_MESSAGE; */
-   /* ev.format = 32; */
-   /* ev.window = win; */
-   /* ev.type = ECORE_X_ATOM_E_COMP_FLUSH; */
-   /* ev.data.data32[0] = win; */
-   /* ev.data.data32[1] = 0; */
-   /* ev.data.data32[2] = 0; */
-   /* ev.data.data32[3] = 0; */
-   /* ev.data.data32[4] = 0; */
+   ev.response_type = XCB_CLIENT_MESSAGE;
+   ev.format = 32;
+   ev.window = win;
+   ev.type = ECORE_X_ATOM_E_COMP_FLUSH;
+   ev.data.data32[0] = win;
+   ev.data.data32[1] = 0;
+   ev.data.data32[2] = 0;
+   ev.data.data32[3] = 0;
+   ev.data.data32[4] = 0;
 
-   /* xcb_send_event(_ecore_xcb_conn, 0, win,  */
-   /*                XCB_EVENT_MASK_NO_EVENT, (const char *)&ev); */
+   xcb_send_event(_ecore_xcb_conn, 0, win, 
+                  XCB_EVENT_MASK_NO_EVENT, (const char *)&ev);
 }
 
 EAPI void 
 ecore_x_e_comp_dump_send(Ecore_X_Window win) 
 {
-//   xcb_client_message_event_t ev;
+   xcb_client_message_event_t ev;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
-   ecore_x_client_message32_send(win, ECORE_X_ATOM_E_COMP_DUMP, 
-                                 XCB_EVENT_MASK_NO_EVENT, win, 0, 0, 0, 0);
+   /* ecore_x_client_message32_send(win, ECORE_X_ATOM_E_COMP_DUMP,  */
+   /*                               XCB_EVENT_MASK_NO_EVENT, win, 0, 0, 0, 0); */
 
-   /* memset(&ev, 0, sizeof(xcb_client_message_event_t)); */
+   memset(&ev, 0, sizeof(xcb_client_message_event_t));
 
-   /* ev.response_type = XCB_CLIENT_MESSAGE; */
-   /* ev.format = 32; */
-   /* ev.window = win; */
-   /* ev.type = ECORE_X_ATOM_E_COMP_DUMP; */
-   /* ev.data.data32[0] = win; */
-   /* ev.data.data32[1] = 0; */
-   /* ev.data.data32[2] = 0; */
-   /* ev.data.data32[3] = 0; */
-   /* ev.data.data32[4] = 0; */
+   ev.response_type = XCB_CLIENT_MESSAGE;
+   ev.format = 32;
+   ev.window = win;
+   ev.type = ECORE_X_ATOM_E_COMP_DUMP;
+   ev.data.data32[0] = win;
+   ev.data.data32[1] = 0;
+   ev.data.data32[2] = 0;
+   ev.data.data32[3] = 0;
+   ev.data.data32[4] = 0;
 
-   /* xcb_send_event(_ecore_xcb_conn, 0, win,  */
-   /*                XCB_EVENT_MASK_NO_EVENT, (const char *)&ev); */
+   xcb_send_event(_ecore_xcb_conn, 0, win, 
+                  XCB_EVENT_MASK_NO_EVENT, (const char *)&ev);
 }
 
 EAPI void 
