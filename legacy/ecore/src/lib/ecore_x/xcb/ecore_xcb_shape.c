@@ -37,10 +37,7 @@ _ecore_xcb_shape_finalize(void)
         reply = xcb_shape_query_version_reply(_ecore_xcb_conn, cookie, NULL);
         if (reply) 
           {
-             if ((reply->major_version >= XCB_SHAPE_MAJOR_VERSION) && 
-                 (reply->minor_version >= XCB_SHAPE_MINOR_VERSION))
-               _shape_avail = EINA_TRUE;
-
+             _shape_avail = EINA_TRUE;
              free(reply);
           }
 
