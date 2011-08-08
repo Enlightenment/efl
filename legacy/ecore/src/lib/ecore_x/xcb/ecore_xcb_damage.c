@@ -42,8 +42,7 @@ _ecore_xcb_damage_finalize(void)
         reply = xcb_damage_query_version_reply(_ecore_xcb_conn, cookie, NULL);
         if (reply)
           {
-             if (reply->major_version >= XCB_DAMAGE_MAJOR_VERSION) 
-               _damage_avail = EINA_TRUE;
+             _damage_avail = EINA_TRUE;
              free(reply);
           }
 
