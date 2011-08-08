@@ -216,7 +216,7 @@ ecore_x_composite_render_window_enable(Ecore_X_Window root)
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
 #ifdef ECORE_XCB_COMPOSITE
-   cookie = xcb_composite_get_overlay_window(_ecore_xcb_conn, root);
+   cookie = xcb_composite_get_overlay_window_unchecked(_ecore_xcb_conn, root);
    reply = 
      xcb_composite_get_overlay_window_reply(_ecore_xcb_conn, cookie, NULL);
    if (!reply) return win;
