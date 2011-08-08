@@ -5,9 +5,7 @@ These routines are used for Eet Library interaction
 
 @mainpage Eet Library Documentation
 
-@image html  e_big.png
-
-@version 1.0.0
+@version 1.5.0
 @date 2000-2011
 
 Please see the @ref authors page for contact details.
