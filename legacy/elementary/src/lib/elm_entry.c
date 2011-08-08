@@ -1078,7 +1078,7 @@ _menu_press(Evas_Object *obj)
                          elm_hoversel_item_add(wd->hoversel, E_("Select"), NULL, ELM_ICON_NONE,
                                                _select, obj);
                     }
-                  if (1) // need way to detect if someone has a selection
+                  if (elm_selection_selection_has_owner())
                     {
                        if (wd->editable)
                          elm_hoversel_item_add(wd->hoversel, E_("Paste"), NULL, ELM_ICON_NONE,

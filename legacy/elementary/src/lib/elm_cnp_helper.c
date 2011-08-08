@@ -390,6 +390,16 @@ static Ecore_Event_Handler *handler_status = NULL;
 static const char *text_uri;
 
 Eina_Bool
+elm_selection_selection_has_owner(void)
+{
+#ifdef HAVE_ELEMENTARY_X
+   return !!ecore_x_selection_owner_get(clipboard_atom);
+#else
+   return EINA_FALSE;
+#endif
+}
+
+Eina_Bool
 elm_selection_set(Elm_Sel_Type selection, Evas_Object *widget, Elm_Sel_Format format, const char *selbuf)
 {
 #ifdef HAVE_ELEMENTARY_X

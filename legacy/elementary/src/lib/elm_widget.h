@@ -673,6 +673,7 @@ struct _Elm_Selection_Data
 Eina_Bool            elm_selection_set(Elm_Sel_Type selection, Evas_Object *widget, Elm_Sel_Format format, const char *buf);
 Eina_Bool            elm_selection_clear(Elm_Sel_Type selection, Evas_Object *widget);
 Eina_Bool            elm_selection_get(Elm_Sel_Type selection, Elm_Sel_Format format, Evas_Object *widget, Elm_Drop_Cb datacb, void *udata);
+Eina_Bool            elm_selection_selection_has_owner(void);
 Eina_Bool            elm_drop_target_add(Evas_Object *widget, Elm_Sel_Type, Elm_Drop_Cb, void *);
 Eina_Bool            elm_drop_target_del(Evas_Object *widget);
 Eina_Bool            elm_drag_start(Evas_Object *, Elm_Sel_Format, const char *, void (*)(void *,Evas_Object*),void*);
