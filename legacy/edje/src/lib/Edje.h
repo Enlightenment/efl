@@ -55,12 +55,6 @@ use Edje as a convenient way of being able to configure parts of the display.
 For details of Edje's history, see the \ref history section.
 
 
-
-
-
-
-
-
 @section requirements What does Edje require?
 
 Edje requires fairly little on your system. to use the Edje runtime library
@@ -71,83 +65,15 @@ you need:
   - Eet (library)
   - Embryo (library)
   - Eina (library)
+  - Lua 5.1 (library)
 
 Evas needs to be build with the JPEG, PNG and EET image loaders enabled at a
-minimum. Edje uses X for the test program, so you will need the SOFTWARE_X11
-engine built into Evas as well. A suggested configure list is below in the
-"cheat sheet" for Evas.
+minimum. You will also need the buffer engine (which requires the
+software_generic engine) as well.
 
 Ecore needs the ECORE, ECORE_EVAS and ECORE_X modules built at a minimum.
-It's suggested to build all the Ecore modules, but the ECORE_FB modules is
-definitely optional.
-
-Eina, Eet and Embryo have no interesting options so just build and
-install them.
-
-It is suggested right now that you get the latest SVN versions of the
-required libraries. You also need to build them in the right order and make
-sure the right options are enabled in the required libraries. Here is a
-quick "cheat sheet" on how to get started.
-
-@verbatim
-1. You need Eina from the trunk svn branch.
-
-  svn co http://svn.enlightenment.org/svn/e/trunk/eina/
-  cd eina
-  ./autogen.sh
-  ./configure
-  make
-  sudo make install
-  cd
-
-2. You need Eet from the trunk svn branch.
-
-  svn co http://svn.enlightenment.org/svn/e/trunk/eet/
-  cd eet
-  ./autogen.sh
-  ./configure
-  make
-  sudo make install
-  cd
-
-3. You need Evas from the trunk svn branch built with eet, png and jpeg loader support.
-
-  svn co http://svn.enlightenment.org/svn/e/trunk/evas/
-  cd evas
-  ./autogen.sh
-  ./configure --enable-image-loader-eet --enable-font-loader-eet --enable-image-loader-jpeg --enable-image-loader-png --enable-buffer
-  make
-  sudo make install
-  cd
-
-4. You need Ecore from the trunk svn branch built with ecore-x and ecore-evas.
-
-  svn co http://svn.enlightenment.org/svn/e/trunk/ecore/
-  cd ecore
-  ./autogen.sh
-  ./configure --enable-ecore-x --enable-ecore-evas --enable-ecore-evas-software-buffer --enable-ecore-evas-software-x11 --enable-ecore-evas-software-buffer
-  make
-  sudo make install
-  cd
-
-5. You need embryo from the trunk svn branch
-
-  svn co http://svn.enlightenment.org/svn/e/trunk/embryo/
-  cd embryo
-  ./autogen.sh
-  ./configure
-  make
-  sudo make install
-  cd
-
-@endverbatim
-
-
-
-
-
-
-
+It's suggested to build all the Ecore modules. You will beed the Buffer
+engine support built into Ecore_Evas for edje?_cc to function.
 
 
 @section compiling How to compile and test Edje
@@ -167,16 +93,9 @@ Enlightenment's own theme file.
 You may use different tools to edit and view the generated ".edj"
 files, for instance:
 
+  - edje_player (provided by Edje)
   - editje (http://trac.enlightenment.org/e/wiki/Editje)
   - edje_viewer (http://trac.enlightenment.org/e/wiki/Edje_Viewer)
-
-
-
-
-
-
-
-
 
 
 @section details So how does this all work?
@@ -398,7 +317,7 @@ changes can be done from the Edje file itself without any requirement
 in the C application.
 
 Before digging into changing or creating your own Edje source (edc)
-files, read the \ref edcref.
+files, read the @ref edcref.
 
 
 
@@ -426,7 +345,7 @@ Unlike Ebits, Edje separates the layout and behavior logic.
 
 @section Edje_Examples Examples on Edje's usage
 
-What follows is a list with varios commented examples, covering a great
+What follows is a list with various commented examples, covering a great
 part of Edje's API:
 
 - @ref Example_Edje_Basics
