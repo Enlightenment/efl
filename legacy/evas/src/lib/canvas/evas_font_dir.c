@@ -718,7 +718,7 @@ evas_font_load(Evas *evas, Evas_Font_Description *fdesc, const char *source, Eva
                        char *tmp = alloca((end - start) + 1);
                        strncpy(tmp, start, end - start);
                        tmp[end - start] = 0;
-                       FcPatternAddString (p_nm, FC_FAMILY, (FcChar8*) start);
+                       FcPatternAddString (p_nm, FC_FAMILY, (FcChar8*) tmp);
                     }
                   else
                     {
