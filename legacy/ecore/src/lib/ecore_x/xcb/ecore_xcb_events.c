@@ -130,6 +130,7 @@ EAPI int ECORE_X_EVENT_MAPPING_CHANGE = 0;
 EAPI int ECORE_X_EVENT_SELECTION_CLEAR = 0;
 EAPI int ECORE_X_EVENT_SELECTION_REQUEST = 0;
 EAPI int ECORE_X_EVENT_SELECTION_NOTIFY = 0;
+EAPI int ECORE_X_EVENT_FIXES_SELECTION_NOTIFY = 0;
 EAPI int ECORE_X_EVENT_CLIENT_MESSAGE = 0;
 EAPI int ECORE_X_EVENT_WINDOW_SHAPE = 0;
 EAPI int ECORE_X_EVENT_SCREENSAVER_NOTIFY = 0;
@@ -2059,14 +2060,37 @@ _ecore_xcb_event_handle_sync_alarm(xcb_generic_event_t *event)
 static void 
 _ecore_xcb_event_handle_xfixes_selection_notify(xcb_generic_event_t *event __UNUSED__) 
 {
-//   xcb_xfixes_selection_notify_event_t *ev;
+   Ecore_X_Event_Fixes_Selection_Notify *e;
+   Ecore_X_Atom sel;
+   xcb_xfixes_selection_notify_event_t *ev;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    _ecore_xcb_event_last_mouse_move = EINA_FALSE;
-//   ev = (xcb_xfixes_selection_notify_event_t *)event;
+   ev = (xcb_xfixes_selection_notify_event_t *)event;
 
-//   FIXME: TBD
+   e = calloc(1, sizeof(*e));
+   if (!e)
+      return;
+
+   e->win = ev->window;
+   e->owner = ev->owner;
+   e->time = ev->timestamp;
+   e->selection_time = ev->selection_timestamp;
+   e->atom = sel = ev->selection;
+   if (sel == ECORE_X_ATOM_SELECTION_PRIMARY)
+      e->selection = ECORE_X_SELECTION_PRIMARY;
+   else if (sel == ECORE_X_ATOM_SELECTION_SECONDARY)
+      e->selection = ECORE_X_SELECTION_SECONDARY;
+   else if (sel == ECORE_X_ATOM_SELECTION_CLIPBOARD)
+      e->selection = ECORE_X_SELECTION_CLIPBOARD;
+   else
+      e->selection = ECORE_X_SELECTION_OTHER;
+   e->reason = ev->subtype;
+
+   ecore_event_add(ECORE_X_EVENT_FIXES_SELECTION_NOTIFY, e, NULL, NULL);
+} /* _ecore_x_event_handle_fixes_selection_notify */
+
 }
 
 static void 

@@ -371,6 +371,7 @@ typedef struct _Ecore_X_Event_Window_Mapping      Ecore_X_Event_Window_Mapping;
 typedef struct _Ecore_X_Event_Selection_Clear     Ecore_X_Event_Selection_Clear;
 typedef struct _Ecore_X_Event_Selection_Request   Ecore_X_Event_Selection_Request;
 typedef struct _Ecore_X_Event_Selection_Notify    Ecore_X_Event_Selection_Notify;
+typedef struct _Ecore_X_Event_Fixes_Selection_Notify    Ecore_X_Event_Fixes_Selection_Notify;
 typedef struct _Ecore_X_Selection_Data            Ecore_X_Selection_Data;
 typedef struct _Ecore_X_Selection_Data_Files      Ecore_X_Selection_Data_Files;
 typedef struct _Ecore_X_Selection_Data_Text       Ecore_X_Selection_Data_Text;
@@ -615,6 +616,24 @@ struct _Ecore_X_Event_Selection_Request
    Ecore_X_Atom   selection;
    Ecore_X_Atom   target;
    Ecore_X_Atom   property;
+};
+
+typedef enum
+{
+   ECORE_X_OWNER_CHANGE_REASON_NEW_OWNER,
+   ECORE_X_OWNER_CHANGE_REASON_DESTROY,
+   ECORE_X_OWNER_CHANGE_REASON_CLOSE
+} Ecore_X_Owner_Change_Reason;
+
+struct _Ecore_X_Event_Fixes_Selection_Notify
+{
+   Ecore_X_Window    win;
+   Ecore_X_Window    owner;
+   Ecore_X_Time      time;
+   Ecore_X_Time      selection_time;
+   Ecore_X_Selection selection;
+   Ecore_X_Atom      atom;
+   Ecore_X_Owner_Change_Reason reason;
 };
 
 struct _Ecore_X_Event_Selection_Notify
@@ -898,6 +917,7 @@ EAPI extern int ECORE_X_EVENT_MAPPING_CHANGE;
 EAPI extern int ECORE_X_EVENT_SELECTION_CLEAR;
 EAPI extern int ECORE_X_EVENT_SELECTION_REQUEST;
 EAPI extern int ECORE_X_EVENT_SELECTION_NOTIFY;
+EAPI extern int ECORE_X_EVENT_FIXES_SELECTION_NOTIFY;
 EAPI extern int ECORE_X_EVENT_CLIENT_MESSAGE;
 EAPI extern int ECORE_X_EVENT_WINDOW_SHAPE;
 EAPI extern int ECORE_X_EVENT_SCREENSAVER_NOTIFY;
@@ -3001,6 +3021,16 @@ EAPI void                   ecore_x_region_picture_clip_set(Ecore_X_Region  regi
                                                             Ecore_X_Picture picture,
                                                             int             x_origin,
                                                             int             y_origin);
+
+/**
+ * xfixes selection notification request.
+ *
+ * This lets you choose which selections you want to get notifications for.
+ * @param selection the selection atom.
+ * @return EINA_TRUE on success, EINA_FALSE otherwise.
+ * @since 1.1.0
+ */
+EAPI Eina_Bool              ecore_x_fixes_selection_notification_request(Ecore_X_Atom selection);
 
 /* XComposite Extension Support */
 EAPI Eina_Bool              ecore_x_composite_query(void);

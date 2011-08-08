@@ -21,7 +21,11 @@ _ecore_x_fixes_init(void)
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    if (XFixesQueryVersion(_ecore_x_disp, &_fixes_major, &_fixes_minor))
-      _fixes_available = 1;
+     {
+        _fixes_available = 1;
+
+        ECORE_X_EVENT_FIXES_SELECTION_NOTIFY = ecore_event_type_new();
+     }
    else
       _fixes_available = 0;
 
@@ -79,6 +83,24 @@ _ecore_x_rectangle_x_to_ecore(XRectangle *xrect, int num)
 } /* _ecore_x_rectangle_x_to_ecore */
 
 #endif /* ifdef ECORE_XFIXES */
+
+EAPI Eina_Bool
+ecore_x_fixes_selection_notification_request(Ecore_X_Atom selection)
+{
+#ifdef ECORE_XFIXES
+   if (_fixes_available)
+     {
+        XFixesSelectSelectionInput (_ecore_x_disp,
+              DefaultRootWindow(_ecore_x_disp),
+              selection,
+              XFixesSetSelectionOwnerNotifyMask |
+              XFixesSelectionWindowDestroyNotifyMask |
+              XFixesSelectionClientCloseNotifyMask);
+        return EINA_TRUE;
+     }
+#endif
+   return EINA_FALSE;
+}
 
 EAPI Ecore_X_Region
 ecore_x_region_new(Ecore_X_Rectangle *rects, int num)

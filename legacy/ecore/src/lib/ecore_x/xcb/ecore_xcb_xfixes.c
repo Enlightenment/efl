@@ -47,7 +47,10 @@ _ecore_xcb_xfixes_finalize(void)
         if (reply) 
           {
              if (reply->major_version >= 3) 
-               _xfixes_avail = EINA_TRUE;
+               {
+                  _xfixes_avail = EINA_TRUE;
+                  ECORE_X_EVENT_FIXES_SELECTION_NOTIFY = ecore_event_type_new();
+               }
              free(reply);
           }
 
@@ -55,6 +58,25 @@ _ecore_xcb_xfixes_finalize(void)
           _ecore_xcb_event_xfixes = ext_reply->first_event;
      }
 #endif
+}
+
+EAPI Eina_Bool
+ecore_x_fixes_selection_notification_request(Ecore_X_Atom selection)
+{
+#ifdef ECORE_XCB_XFIXES
+   if (_xfixes_avail)
+     {
+        xcb_xfixes_select_selection_input_checked(_ecore_xcb_conn,
+              /* FIXME: We need a way to know the root window. */
+              NULL,
+              selection,
+              XCB_XFIXES_SELECTION_EVENT_MASK_SET_SELECTION_OWNER |
+              XCB_XFIXES_SELECTION_EVENT_MASK_SELECTION_WINDOW_DESTROY |
+              XCB_XFIXES_SELECTION_EVENT_MASK_SELECTION_CLIENT_CLOSE);
+        return EINA_TRUE;
+     }
+#endif
+   return EINA_FALSE;
 }
 
 Eina_Bool 

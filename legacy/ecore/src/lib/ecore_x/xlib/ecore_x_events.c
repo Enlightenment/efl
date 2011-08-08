@@ -2107,9 +2107,34 @@ _ecore_x_event_handle_randr_notify(XEvent *xevent)
 void
 _ecore_x_event_handle_fixes_selection_notify(XEvent *event)
 {
+   XFixesSelectionNotifyEvent *notify_event =
+      (XFixesSelectionNotifyEvent *) event;
+   Ecore_X_Event_Fixes_Selection_Notify *e;
+   Ecore_X_Atom sel;
+
    _ecore_x_last_event_mouse_move = 0;
    /* Nothing here yet */
-   event = NULL;
+
+   e = calloc(1, sizeof(*e));
+   if (!e)
+      return;
+
+   e->win = notify_event->window;
+   e->owner = notify_event->owner;
+   e->time = notify_event->timestamp;
+   e->selection_time = notify_event->selection_timestamp;
+   e->atom = sel = notify_event->selection;
+   if (sel == ECORE_X_ATOM_SELECTION_PRIMARY)
+      e->selection = ECORE_X_SELECTION_PRIMARY;
+   else if (sel == ECORE_X_ATOM_SELECTION_SECONDARY)
+      e->selection = ECORE_X_SELECTION_SECONDARY;
+   else if (sel == ECORE_X_ATOM_SELECTION_CLIPBOARD)
+      e->selection = ECORE_X_SELECTION_CLIPBOARD;
+   else
+      e->selection = ECORE_X_SELECTION_OTHER;
+   e->reason = notify_event->subtype;
+
+   ecore_event_add(ECORE_X_EVENT_FIXES_SELECTION_NOTIFY, e, NULL, NULL);
 } /* _ecore_x_event_handle_fixes_selection_notify */
 
 #endif /* ifdef ECORE_XFIXES */
