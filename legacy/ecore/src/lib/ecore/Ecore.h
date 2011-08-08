@@ -47,16 +47,12 @@ Suggested configure options for evas for a Linux desktop X display:
 
 @verbatim
 ./configure \
---enable-ecore-x \
---enable-ecore-fb \
---enable-ecore-evas \
---enable-ecore-evas-gl \
---enable-ecore-con \
---enable-ecore-ipc
-make CFLAGS="-O9 -mpentiumpro -march=pentiumpro -mcpu=pentiumpro"
+make
+su -
+...
+make install
 @endverbatim
 
-@todo (1.0) Document API
 */
 
 /**
