@@ -46,8 +46,7 @@ _ecore_xcb_xfixes_finalize(void)
         reply = xcb_xfixes_query_version_reply(_ecore_xcb_conn, cookie, NULL);
         if (reply) 
           {
-             if (reply->major_version >= 3) 
-               _xfixes_avail = EINA_TRUE;
+             _xfixes_avail = EINA_TRUE;
              free(reply);
           }
 
