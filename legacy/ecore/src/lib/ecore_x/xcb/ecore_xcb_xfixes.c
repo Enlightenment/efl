@@ -47,10 +47,7 @@ _ecore_xcb_xfixes_finalize(void)
         if (reply) 
           {
              if (reply->major_version >= 3) 
-               {
-                  _xfixes_avail = EINA_TRUE;
-                  ECORE_X_EVENT_FIXES_SELECTION_NOTIFY = ecore_event_type_new();
-               }
+               _xfixes_avail = EINA_TRUE;
              free(reply);
           }
 
@@ -64,17 +61,31 @@ EAPI Eina_Bool
 ecore_x_fixes_selection_notification_request(Ecore_X_Atom selection)
 {
 #ifdef ECORE_XCB_XFIXES
-   if (_xfixes_avail)
+   Ecore_X_Window root = 0;
+   xcb_void_cookie_t cookie;
+   xcb_generic_error_t *err;
+   int mask = 0;
+#endif
+
+   if (!_xfixes_avail) return EINA_FALSE;
+#ifdef ECORE_XCB_XFIXES
+   root = ((xcb_screen_t *)_ecore_xcb_screen)->root;
+
+   mask = (XCB_XFIXES_SELECTION_EVENT_MASK_SET_SELECTION_OWNER |
+           XCB_XFIXES_SELECTION_EVENT_MASK_SELECTION_WINDOW_DESTROY |
+           XCB_XFIXES_SELECTION_EVENT_MASK_SELECTION_CLIENT_CLOSE);
+
+   cookie = 
+     xcb_xfixes_select_selection_input_checked(_ecore_xcb_conn, root, 
+                                               selection, mask);
+   err = xcb_request_check(_ecore_xcb_conn, cookie);
+   if (err) 
      {
-        xcb_xfixes_select_selection_input_checked(_ecore_xcb_conn,
-              /* FIXME: We need a way to know the root window. */
-              NULL,
-              selection,
-              XCB_XFIXES_SELECTION_EVENT_MASK_SET_SELECTION_OWNER |
-              XCB_XFIXES_SELECTION_EVENT_MASK_SELECTION_WINDOW_DESTROY |
-              XCB_XFIXES_SELECTION_EVENT_MASK_SELECTION_CLIENT_CLOSE);
-        return EINA_TRUE;
+        free(err);
+        return EINA_FALSE;
      }
+
+   return EINA_TRUE;
 #endif
    return EINA_FALSE;
 }
