@@ -246,7 +246,7 @@
 /**
  * @page containerslist Containers List
  *
- * Elementary is about displaing its widgets in a nice layout, for this purpose
+ * Elementary is about displaying its widgets in a nice layout, for this purpose
  * it provides a number of containers. It's important to note that as containers
  * widgets don't have their own visual identity, so here we show one use for
  * them and a diagram showing their component parts:
