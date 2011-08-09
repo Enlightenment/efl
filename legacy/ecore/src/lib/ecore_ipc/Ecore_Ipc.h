@@ -39,9 +39,6 @@ extern "C" {
 typedef struct _Ecore_Ipc_Server Ecore_Ipc_Server; /**< An IPC connection handle */
 typedef struct _Ecore_Ipc_Client Ecore_Ipc_Client; /**< An IPC connection handle */
 
-/**
- * Macros used for generic data packing
- */
 EAPI unsigned short     _ecore_ipc_swap_16(unsigned short v);
 EAPI unsigned int       _ecore_ipc_swap_32(unsigned int v);
 EAPI unsigned long long _ecore_ipc_swap_64(unsigned long long v);

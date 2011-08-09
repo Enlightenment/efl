@@ -45,7 +45,6 @@
 
 int _ecore_ipc_log_dom = -1;
 
-/* byte swappers - for dealing with big vs little endian machines */
 EAPI unsigned short
 _ecore_ipc_swap_16(unsigned short v)
 {
