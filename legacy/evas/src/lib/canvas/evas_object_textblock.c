@@ -7471,6 +7471,68 @@ _evas_textblock_cursor_range_text_plain_get(const Evas_Textblock_Cursor *cur1, c
      }
 }
 
+EAPI Eina_List *
+evas_textblock_cursor_range_formats_get(const Evas_Textblock_Cursor *cur1, const Evas_Textblock_Cursor *cur2)
+{
+   Evas_Object *obj = cur1->obj;
+   Eina_List *ret = NULL;
+   Evas_Object_Textblock_Node_Text *n1, *n2;
+   Evas_Object_Textblock_Node_Format *first, *last;
+   TB_HEAD_RETURN(NULL);
+   if (!cur1 || !cur1->node) return NULL;
+   if (!cur2 || !cur2->node) return NULL;
+   if (cur1->obj != cur2->obj) return NULL;
+   if (evas_textblock_cursor_compare(cur1, cur2) > 0)
+     {
+        const Evas_Textblock_Cursor *tc;
+
+        tc = cur1;
+        cur1 = cur2;
+        cur2 = tc;
+     }
+   n1 = cur1->node;
+   n2 = cur2->node;
+
+   /* FIXME: Change first and last getting to format_before_or_at_pos_get */
+
+   last = n2->format_node;
+   /* If the found format is on our text node, we should go to the last
+    * one, otherwise, the one we found is good enough. */
+   if (last->text_node == n2)
+     {
+        Evas_Object_Textblock_Node_Format *fnode = last;
+        while (fnode && (fnode->text_node == n2))
+          {
+             last = fnode;
+             fnode = _NODE_FORMAT(EINA_INLIST_GET(fnode)->next);
+          }
+     }
+
+   /* If the first format node is within the range (i.e points to n1) or if
+    * we have other formats in the range, go through them */
+   first = n1->format_node;
+   if ((first->text_node == n1) || (first != last))
+     {
+        Evas_Object_Textblock_Node_Format *fnode = first;
+        /* Go to the first one in the range */
+        if (first->text_node != n1)
+          {
+             first = _NODE_FORMAT(EINA_INLIST_GET(first)->next);
+          }
+
+        while (fnode)
+          {
+             ret = eina_list_append(ret, fnode);
+             if (fnode == last)
+                break;
+             fnode = _NODE_FORMAT(EINA_INLIST_GET(fnode)->next);
+          }
+     }
+
+   return ret;
+
+}
+
 EAPI char *
 evas_textblock_cursor_range_text_get(const Evas_Textblock_Cursor *cur1, const Evas_Textblock_Cursor *cur2, Evas_Textblock_Text_Type format)
 {
@@ -7877,6 +7939,22 @@ evas_textblock_cursor_line_geometry_get(const Evas_Textblock_Cursor *cur, Evas_C
    if (cw) *cw = w;
    if (ch) *ch = h;
    return ln->par->line_no + ln->line_no;
+}
+
+EAPI Eina_Bool
+evas_textblock_cursor_visible_range_get(Evas_Textblock_Cursor *start, Evas_Textblock_Cursor *end)
+{
+   Evas_Coord cy, ch;
+   Evas_Object *obj = start->obj;
+   TB_HEAD_RETURN(EINA_FALSE);
+   /* Clip is relative to the object */
+   cy = obj->cur.cache.clip.y - obj->cur.geometry.y;
+   ch = obj->cur.cache.clip.h;
+   evas_textblock_cursor_line_coord_set(start, cy);
+   evas_textblock_cursor_line_coord_set(end, cy + ch);
+   evas_textblock_cursor_line_char_last(end);
+
+   return EINA_TRUE;
 }
 
 EAPI Eina_Bool

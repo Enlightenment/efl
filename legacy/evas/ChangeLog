@@ -453,3 +453,11 @@
 2011-08-01  Tom Hacohen (TAsn)
 
 	* Textblock: Added lang to markup to set the lang of the text.
+
+2011-08-09  Tom Hacohen (TAsn)
+
+	* Textblock: Added evas_textblock_cursor_range_formats_get which
+	returns the formats inside a range.
+	* Textblock: Added evas_textblock_cursor_visible_range_get which
+	updates the cursors to the ends of the area currently visible on
+	screen.

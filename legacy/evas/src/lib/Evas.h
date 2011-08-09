@@ -8181,6 +8181,26 @@ EAPI const char                  *evas_textblock_cursor_paragraph_text_get(const
 EAPI int                          evas_textblock_cursor_paragraph_text_length_get(const Evas_Textblock_Cursor *cur) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
 
 /**
+ * Return the currently visible range.
+ *
+ * @param start the start of the range.
+ * @param end the end of the range.
+ * @return EINA_TRUE on success. EINA_FALSE otherwise.
+ * @since 1.1.0
+ */
+Eina_Bool                         evas_textblock_cursor_visible_range_get(Evas_Textblock_Cursor *start, Evas_Textblock_Cursor *end) EINA_ARG_NONNULL(1, 2);
+
+/**
+ * Return the format nodes in the range between cur1 and cur2.
+ *
+ * @param cur1 one side of the range.
+ * @param cur2 the other side of the range
+ * @return the foramt nodes in the range. You have to free it.
+ * @since 1.1.0
+ */
+EAPI Eina_List *                 evas_textblock_cursor_range_formats_get(const Evas_Textblock_Cursor *cur1, const Evas_Textblock_Cursor *cur2) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1, 2) EINA_PURE;
+
+/**
  * Return the text in the range between cur1 and cur2
  *
  * @param cur1 one side of the range.
