@@ -20,29 +20,14 @@
 # include "config.h"
 #endif
 
+#ifndef _WIN32
+
 #ifdef STDC_HEADERS
 # include <stdlib.h>
 # include <stddef.h>
 #else
 # ifdef HAVE_STDLIB_H
 #  include <stdlib.h>
-# endif
-#endif
-#ifdef HAVE_ALLOCA_H
-# include <alloca.h>
-#elif defined __GNUC__
-# define alloca __builtin_alloca
-#elif defined _AIX
-# define alloca __alloca
-#elif defined _MSC_VER
-# include <malloc.h>
-# define alloca _alloca
-#else
-# ifndef HAVE_ALLOCA
-#  ifdef  __cplusplus
-extern "C"
-#  endif
-void *alloca (size_t);
 # endif
 #endif
 
@@ -56,13 +41,8 @@ void *alloca (size_t);
 #include <signal.h>
 #include <errno.h>
 #include <fcntl.h>
-
-#ifdef HAVE_UNISTD_H
 # include <unistd.h>
-#endif
 
-#ifdef HAVE_EVIL
-# include <Evil.h>
 #endif
 
 #include "eina_config.h"
@@ -73,6 +53,7 @@ void *alloca (size_t);
 /*============================================================================*
  *                                 Local                                      *
  *============================================================================*/
+
 static Eina_Bool mmap_safe = EINA_FALSE;
 #ifndef _WIN32
 static int _eina_mmap_log_dom = -1;
