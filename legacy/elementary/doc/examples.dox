@@ -11,8 +11,6 @@
  *
  * @ref actionslider_example_page
  *
- * @ref elm_animator_example_page_01
- *
  * @ref transit_example_01_explained
  *
  * @ref transit_example_02_explained
@@ -439,92 +437,6 @@
  * @image latex screenshots/actionslider_01.eps width=\textwidth
  *
  * See the full source code @ref actionslider_example_01 "here"
- */
-
-/**
- * @page elm_animator_example_page_01 Animator usage
- * @dontinclude animator_example_01.c
- *
- * For this example we will be using a bit of evas, you could animate a
- * elementary widget in much the same way, but to keep things simple we use
- * an evas_object_rectangle.
- *
- * As every other example we start with our include and a simple callback to
- * exit the app when the window is closed:
- * @skipline #include
- * @until }
- *
- * This next callback is the one that actually creates our animation, it
- * changes the size, position and color of a rectangle given to it in @a
- * data:
- * @until }
- *
- * Next we have a callback that prints a string, nothing special:
- * @until }
- *
- * This next callback is a little more interesting, it has a state variable
- * to know if the animation is currently paused or running, and it toogles
- * the state of the animation accordingly:
- * @until }
- * @until }
- * @until }
- *
- * Finally we have a callback to stop the animation:
- * @until }
- *
- * As with every example we need to do a bit of setup before we can actually
- * use an animation, but for the purposes of this example that's not relevant
- * so let's just skip to the good stuff, creating an animator:
- * @skipline animator_add
- * @note Since elm_animator is not a widget we can give it a NULL parent.
- *
- * Now that we have an elm_animator we set it's duration to 1 second:
- * @line duration_set
- *
- * We would also like our animation to be reversible, so:
- * @line reverse_set
- *
- * We also set our animation to repeat as many times as possible, which will
- * mean that _end_cb will only be called after UINT_MAX * 2 seconds(UINT_MAX
- * for the animation running forward and UNIT_MAX for the animation running
- * backwards):
- * @line repeat_set
- *
- * To add some fun to our animation we will use the IN_OUT curve style:
- * @line curve_style
- *
- * To actually animate anything we need an operation callback:
- * @line operation_callback
- *
- * Even though we set our animation to repeat for a very long time we are
- * going to set a end callback to it:
- * @line completion_callback
- * @note Notice that stoping the animation with the stop button will not make
- * _end_cb be called.
- *
- * Now that we have fully set up our animator we can tell it to start
- * animating:
- * @line animate
- *
- * There's a bit more of code that doesn't really matter to use so we skip
- * right down to our last interesting point:
- * @skipline animator_del
- * @note Because we created our animator with no parent we need to delete it
- * ourselves.
- *
- * The example should look like this:
- *
- * @image html screenshots/animator_example_01.png
- * @image latex screenshots/animator_example_01.eps width=\textwidth
- * @n
- * @image html screenshots/animator_example_02.png
- * @image latex screenshots/animator_example_02.eps width=\textwidth
- * @n
- * @image html screenshots/animator_example_03.png
- * @image latex screenshots/animator_example_03.eps width=\textwidth
- *
- * The full source code for this example can be found @ref
- * animator_example_01_c "here"
  */
 
 /**

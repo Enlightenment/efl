@@ -52,7 +52,6 @@ elc_naviframe.c \
 elc_player.c \
 elc_scrolled_entry.c \
 elm_actionslider.c \
-elm_animator.c \
 elm_bg.c \
 elm_box.c \
 elm_bubble.c \

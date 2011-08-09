@@ -35,7 +35,6 @@ EDJE_FLAGS = $(EDJE_FLAGS_$(V))
 SRCS = \
 	actionslider_example_01.c \
 	anchorblock_example_01.c \
-	animator_example_01.c \
 	bubble_example_01.c \
 	button_example_01.c \
 	check_example_01.c \

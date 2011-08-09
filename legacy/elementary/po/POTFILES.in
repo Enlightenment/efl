@@ -102,7 +102,6 @@
 ./src/lib/elc_fileselector_entry.c
 ./src/lib/elc_hoversel.c
 ./src/lib/elm_actionslider.c
-./src/lib/elm_animator.c
 ./src/lib/elm_bg.c
 ./src/lib/elm_box.c
 ./src/lib/elm_bubble.c
