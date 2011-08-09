@@ -13,7 +13,6 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
-#include <sys/mman.h>
 
 #ifdef HAVE_NETINET_IN_H
 # include <netinet/in.h>

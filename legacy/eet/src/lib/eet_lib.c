@@ -27,7 +27,6 @@ void *    alloca (size_t);
 #include <errno.h>
 #include <sys/types.h>
 #include <sys/stat.h>
-#include <sys/mman.h>
 #include <time.h>
 #include <string.h>
 #include <fnmatch.h>

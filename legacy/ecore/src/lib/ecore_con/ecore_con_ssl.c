@@ -18,8 +18,6 @@
 
 #include "Ecore.h"
 #include "ecore_con_private.h"
-#include <sys/mman.h>
-#include <errno.h>
 
 EAPI int ECORE_CON_EVENT_CLIENT_UPGRADE = 0;
 EAPI int ECORE_CON_EVENT_SERVER_UPGRADE = 0;
