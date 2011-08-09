@@ -8015,7 +8015,7 @@ evas_textblock_cursor_line_coord_set(Evas_Textblock_Cursor *cur, Evas_Coord y)
                }
           }
      }
-   else if (o->paragraphs && (y > o->paragraphs->y + o->formatted.h))
+   else if (o->paragraphs && (y >= o->paragraphs->y + o->formatted.h))
      {
         int line_no = 0;
         /* If we are after the last paragraph, use the last position in the
