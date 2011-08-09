@@ -43,7 +43,7 @@ static char **app_argv = NULL;
 EAPI void
 ecore_app_args_set(int argc, const char **argv)
 {
-   ECORE_MAIN_LOOP_ASSERT();
+   EINA_MAIN_LOOP_CHECK_RETURN;
 
    if ((argc < 1) ||
        (!argv)) return;
@@ -65,7 +65,7 @@ ecore_app_args_set(int argc, const char **argv)
 EAPI void
 ecore_app_args_get(int *argc, char ***argv)
 {
-   ECORE_MAIN_LOOP_ASSERT();
+   EINA_MAIN_LOOP_CHECK_RETURN;
 
    if (argc) *argc = app_argc;
    if (argv) *argv = app_argv;
