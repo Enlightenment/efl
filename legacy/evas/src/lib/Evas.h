@@ -1,8 +1,6 @@
 /**
 @mainpage Evas
 
-@image html  e_big.png
-
 @version 1.1
 @date 2000-2011
 
