@@ -46,7 +46,9 @@ void *alloca (size_t);
 # include <libgen.h>
 #endif
 
-#include <dlfcn.h>
+#ifdef HAVE_DLOPEN
+# include <dlfcn.h>
+#endif
 
 #ifdef HAVE_EVIL
 # include <Evil.h>
@@ -313,6 +315,7 @@ EAPI Eina_Bool eina_module_free(Eina_Module *m)
 
 EAPI Eina_Bool eina_module_load(Eina_Module *m)
 {
+#ifdef HAVE_DLOPEN
    void *dl_handle;
    Eina_Module_Init *initcall;
 
@@ -352,10 +355,14 @@ loaded:
 
    eina_error_set(0);
    return EINA_TRUE;
+#else
+   return EINA_FALSE;
+#endif
 }
 
 EAPI Eina_Bool eina_module_unload(Eina_Module *m)
 {
+#ifdef HAVE_DLOPEN
    Eina_Module_Shutdown *shut;
    EINA_SAFETY_ON_NULL_RETURN_VAL(m, EINA_FALSE);
 
@@ -375,13 +382,20 @@ EAPI Eina_Bool eina_module_unload(Eina_Module *m)
      }
 
    return EINA_FALSE;
+#else
+   return EINA_FALSE;
+#endif
 }
 
 EAPI void *eina_module_symbol_get(const Eina_Module *m, const char *symbol)
 {
+#ifdef HAVE_DLOPEN
    EINA_SAFETY_ON_NULL_RETURN_VAL(m,         NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(m->handle, NULL);
    return dlsym(m->handle, symbol);
+#else
+   return NULL;
+#endif
 }
 
 EAPI const char *eina_module_file_get(const Eina_Module *m)
