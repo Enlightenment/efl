@@ -119,7 +119,7 @@ eet_identity_open(const char               *certificate_file,
    Eet_Key *key = NULL;
 # ifdef HAVE_GNUTLS
    /* Gnutls private declarations */
-   Eina_File *f;
+   Eina_File *f = NULL;
    void *data = NULL;
    gnutls_datum_t load_file = { NULL, 0 };
    char pass[1024];
