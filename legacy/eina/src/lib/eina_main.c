@@ -82,6 +82,9 @@ static int _eina_log_dom = -1;
 #define DBG(...) EINA_LOG_DOM_DBG(_eina_log_dom, __VA_ARGS__)
 
 EAPI Eina_Bool _eina_threads_activated = EINA_FALSE;
+EAPI Eina_Error EINA_ERROR_NOT_MAIN_LOOP = 0;
+
+static const char EINA_ERROR_NOT_MAIN_LOOP_STR[] = "Main loop thread check failed.";
 
 #ifdef EFL_HAVE_THREADS
 # ifdef _WIN32_WCE
@@ -221,6 +224,9 @@ eina_init(void)
         eina_log_shutdown();
         return 0;
      }
+
+   EINA_ERROR_NOT_MAIN_LOOP = eina_error_msg_static_register(
+         EINA_ERROR_NOT_MAIN_LOOP_STR);
 
 #ifdef EFL_HAVE_THREADS
 # ifdef _WIN32_CE

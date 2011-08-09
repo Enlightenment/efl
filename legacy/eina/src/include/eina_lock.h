@@ -21,6 +21,7 @@
 
 #include "eina_config.h"
 #include "eina_types.h"
+#include "eina_error.h"
 
 /**
  * @addtogroup Eina_Tools_Group Tools
@@ -53,6 +54,8 @@ typedef enum
 # include "eina_inline_lock_void.x"
 #endif
 
+EAPI extern Eina_Error EINA_ERROR_NOT_MAIN_LOOP;
+
 static inline Eina_Bool eina_lock_new(Eina_Lock *mutex);
 static inline void eina_lock_free(Eina_Lock *mutex);
 static inline Eina_Lock_Result eina_lock_take(Eina_Lock *mutex);
@@ -72,6 +75,38 @@ static inline void eina_rwlock_free(Eina_RWLock *mutex);
 static inline Eina_Lock_Result eina_rwlock_take_read(Eina_RWLock *mutex);
 static inline Eina_Lock_Result eina_rwlock_take_write(Eina_RWLock *mutex);
 static inline Eina_Lock_Result eina_rwlock_release(Eina_RWLock *mutex);
+
+#ifdef EINA_HAVE_DEBUG_THREADS
+# define EINA_MAIN_LOOP_CHECK_RETURN_VAL(val)				\
+  do {									\
+    if (EINA_UNLIKELY(eina_main_loop_is()))				\
+      {									\
+	eina_error_set(EINA_ERROR_NOT_MAIN_LOOP);			\
+	EINA_LOG_ERR("You are calling %s from outside"			\
+		     "of the main loop threads in %s at line %i",	\
+		     __FUNCTION__,					\
+		     __FILE__,						\
+		     __LINE__);						\
+	return val;							\
+      }									\
+  } while (0)
+# define EINA_MAIN_LOOP_CHECK_RETURN					\
+  do {									\
+    if (EINA_UNLIKELY(eina_main_loop_is()))				\
+      {									\
+	eina_error_set(EINA_ERROR_NOT_MAIN_LOOP);			\
+	EINA_LOG_ERR("You are calling %s from outside"			\
+		     "of the main loop threads in %s at line %i",	\
+		     __FUNCTION__,					\
+		     __FILE__,						\
+		     __LINE__);						\
+	return ;							\
+      }									\
+  } while (0)
+#else
+# define EINA_MAIN_LOOP_CHECK_RETURN_VAL(val)
+# define EINA_MAIN_LOOP_CHECK_RETURN
+#endif
 
 /**
  * @}
