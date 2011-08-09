@@ -7971,7 +7971,7 @@ evas_textblock_cursor_char_coord_set(Evas_Textblock_Cursor *cur, Evas_Coord x, E
                }
           }
      }
-   else if (o->paragraphs && (y > o->paragraphs->y + o->formatted.h))
+   else if (o->paragraphs && (y >= o->paragraphs->y + o->formatted.h))
      {
         /* If we are after the last paragraph, use the last position in the
          * text. */
