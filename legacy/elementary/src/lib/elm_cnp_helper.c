@@ -368,8 +368,6 @@ static void (*dragdonecb) (void *data, Evas_Object *obj) = NULL;
 static void *dragdonedata = NULL;
 
 static int _elm_cnp_init_count = 0;
-/* FIXME: who left this out of XAtoms.h */
-static Ecore_X_Atom clipboard_atom;
 
 /**
  * Drag & Drop functions
@@ -393,7 +391,7 @@ Eina_Bool
 elm_selection_selection_has_owner(void)
 {
 #ifdef HAVE_ELEMENTARY_X
-   return !!ecore_x_selection_owner_get(clipboard_atom);
+   return !!ecore_x_selection_owner_get(ECORE_X_ATOM_SELECTION_CLIPBOARD);
 #else
    return EINA_FALSE;
 #endif
@@ -495,7 +493,6 @@ _elm_cnp_init(void)
         ecore_x_selection_converter_atom_add(atoms[i].atom,
                                              atoms[i].converter);
      }
-   clipboard_atom = ecore_x_atom_get("CLIPBOARD");
 
    ecore_event_handler_add(ECORE_X_EVENT_SELECTION_CLEAR, selection_clear, NULL);
    ecore_event_handler_add(ECORE_X_EVENT_SELECTION_NOTIFY, selection_notify, NULL);
