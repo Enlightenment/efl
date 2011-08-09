@@ -5948,12 +5948,6 @@
  */
 
 /**
- * @page animator_example_01_c Animator example 01
- * @include animator_example_01.c
- * @example animator_example_01.c
- */
-
-/**
  * @page transit_example_01_c Transit example 1
  * @include transit_example_01.c
  * @example transit_example_01.c

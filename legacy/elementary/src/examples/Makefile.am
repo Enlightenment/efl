@@ -138,7 +138,6 @@ clean-local:
 pkglib_PROGRAMS += \
 	actionslider_example_01 \
 	anchorblock_example_01 \
-	animator_example_01 \
 	bubble_example_01 \
 	button_example_01 \
 	check_example_01 \
