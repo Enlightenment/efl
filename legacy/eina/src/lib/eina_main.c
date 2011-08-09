@@ -28,6 +28,13 @@
 # undef WIN32_LEAN_AND_MEAN
 #endif
 
+#ifdef EFL_HAVE_THREADS
+# if !(defined(_WIN32_WCE)) && !(defined(_WIN32))
+#  include <sys/types.h>
+#  include <unistd.h>
+# endif
+#endif
+
 #include "eina_lock.h"
 #include "eina_config.h"
 #include "eina_private.h"
@@ -76,13 +83,14 @@ static int _eina_log_dom = -1;
 
 EAPI Eina_Bool _eina_threads_activated = EINA_FALSE;
 
-#ifdef EINA_HAVE_THREADS
+#ifdef EFL_HAVE_THREADS
 # ifdef _WIN32_WCE
-#  warning "no way to know the main loop thread id yet on Windows CE !"
+EAPI HANDLE _eina_main_loop;
 # elif defined(_WIN32)
-#  warning "no way to know the main loop thread id yet on Windows !"
+EAPI HANDLE _eina_main_loop;
 # else
-EAPI pthread_t _eina_main_loop;;
+EAPI pthread_t _eina_main_loop;
+static pid_t _eina_pid;
 # endif
 #endif
 
@@ -214,9 +222,14 @@ eina_init(void)
         return 0;
      }
 
-#ifdef EINA_HAVE_THREADS
-# if !(defined(_WIN32_WCE)) && !(defined(_WIN32))
+#ifdef EFL_HAVE_THREADS
+# ifdef _WIN32_CE
+   _eina_main_loop = (HANDLE) GetCurrentThreadId();
+# elif defined (_WIN32)
+   _eina_main_loop = (HANDLE) GetCurrentThreadId();
+# else
    _eina_main_loop = pthread_self();
+   _eina_pid = getpid();
 # endif
 #endif
 
@@ -333,13 +346,27 @@ eina_threads_shutdown(void)
 EAPI Eina_Bool
 eina_main_loop_is(void)
 {
-#ifdef EINA_HAVE_THREADS
+#ifdef EFL_HAVE_THREADS
    /* FIXME: need to check how to do this on windows */
 # ifdef _WIN32_CE
+   if (_eina_main_loop == (HANDLE) GetCurrentThreadId())
+     return EINA_TRUE;
    return EINA_FALSE;
 # elif defined(_WIN32)
+   if (_eina_main_loop == (HANDLE) GetCurrentThreadId())
+     return EINA_TRUE;
    return EINA_FALSE;
 # else
+   pid_t pid = getpid();
+
+   if (pid != _eina_pid)
+     {
+        /* This is in case of a fork, but don't like the solution */
+        _eina_pid = pid;
+        _eina_main_loop = pthread_self();
+        return EINA_TRUE;
+     }
+
    if (pthread_equal(_eina_main_loop, pthread_self()))
      return EINA_TRUE;
 # endif
