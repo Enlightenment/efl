@@ -3457,7 +3457,7 @@ EAPI Evas_Object      *evas_object_above_get             (const Evas_Object *obj
  *
  * @see evas_object_layer_get()
  * @see evas_object_layer_set()
- * @see evas_object_below_set()
+ * @see evas_object_below_get()
  */
 EAPI Evas_Object      *evas_object_below_get             (const Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
 
@@ -5584,8 +5584,8 @@ EAPI Eina_List        *evas_objects_at_xy_get            (const Evas *e, Evas_Co
  *
  * @see evas_object_layer_get()
  * @see evas_object_layer_set()
- * @see evas_object_below_set()
- * @see evas_object_above_set()
+ * @see evas_object_below_get()
+ * @see evas_object_above_get()
  */
 EAPI Evas_Object      *evas_object_bottom_get            (const Evas *e) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
 
@@ -5602,8 +5602,8 @@ EAPI Evas_Object      *evas_object_bottom_get            (const Evas *e) EINA_WA
  *
  * @see evas_object_layer_get()
  * @see evas_object_layer_set()
- * @see evas_object_below_set()
- * @see evas_object_above_set()
+ * @see evas_object_below_get()
+ * @see evas_object_above_get()
  */
 EAPI Evas_Object      *evas_object_top_get               (const Evas *e) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
 
