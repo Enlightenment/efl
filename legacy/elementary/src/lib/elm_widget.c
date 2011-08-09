@@ -1945,6 +1945,21 @@ elm_widget_focus_steal(Evas_Object *obj)
 }
 
 EAPI void
+elm_widget_focus_restore(Evas_Object *obj)
+{
+   Evas_Object *newest = NULL;
+   unsigned int newest_focus_order = 0;
+   API_ENTRY return;
+
+   newest = _newest_focus_order_get(obj, &newest_focus_order, EINA_TRUE);
+   if (newest)
+     {
+        elm_object_focus_set(newest, EINA_FALSE);
+        elm_object_focus_set(newest, EINA_TRUE);
+     }
+}
+
+EAPI void
 elm_widget_activate(Evas_Object *obj)
 {
    API_ENTRY return;

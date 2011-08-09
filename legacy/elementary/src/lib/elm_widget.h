@@ -299,6 +299,22 @@ EAPI Evas_Object     *elm_widget_parent_get(const Evas_Object *obj);
 EAPI Evas_Object     *elm_widget_parent2_get(const Evas_Object *obj);
 EAPI void             elm_widget_parent2_set(Evas_Object *obj, Evas_Object *parent);
 EAPI void             elm_widget_focus_steal(Evas_Object *obj);
+
+/**
+ * @internal
+ *
+ * Restore the focus state of the sub-tree.
+ * 
+ * This API will restore the focus state of the sub-tree to the lastest
+ * state. If a sub-tree is unfocused and wants to get back to the lastest
+ * focus state, this API will be helpful.
+ *
+ * @param obj The widget root of sub-tree
+ *
+ * @ingroup Widget
+ */
+EAPI void             elm_widget_focus_restore(Evas_Object *obj);
+
 EAPI void             elm_widget_activate(Evas_Object *obj);
 EAPI void             elm_widget_change(Evas_Object *obj);
 EAPI void             elm_widget_disabled_set(Evas_Object *obj, Eina_Bool disabled);
