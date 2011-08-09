@@ -220,8 +220,9 @@ _on_keydown(void        *data __UNUSED__,
         Evas_Coord x, y, w, h;
 
         evas_object_image_fill_get(d.img1, &x, &y, &w, &h);
-        if (w > (WIDTH / 2)) w = (WIDTH / 2);
-        else w = WIDTH;
+        if (w == (WIDTH / 4)) w = (WIDTH / 2);
+        else if (w == WIDTH / 2) w = WIDTH;
+        else w = (WIDTH / 4);
         evas_object_image_fill_set(d.img1, x, y, w, h);
 
         fprintf(stdout, "Image's w fill size changed to %d\n", w);
@@ -234,8 +235,9 @@ _on_keydown(void        *data __UNUSED__,
         Evas_Coord x, y, w, h;
 
         evas_object_image_fill_get(d.img1, &x, &y, &w, &h);
-        if (h > (HEIGHT / 2)) h = (HEIGHT / 2);
-        else h = HEIGHT;
+        if (h == (HEIGHT / 4)) h = (HEIGHT / 2);
+        else if (h == HEIGHT / 2) h = HEIGHT;
+        else h = (HEIGHT / 4);
         evas_object_image_fill_set(d.img1, x, y, w, h);
 
         fprintf(stdout, "Image's h fill size changed to %d\n", h);

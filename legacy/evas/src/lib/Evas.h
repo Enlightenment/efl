@@ -244,10 +244,16 @@ Recommended reading:
     and object events, etc.
 @li @ref Evas_Object_Rectangle, to learn about the most basic object
     type on Evas -- the rectangle.
+@li @ref Evas_Object_Polygon, to learn how to create polygon elements
+    on the canvas.
+@li @ref Evas_Line_Group, to learn how to create line elements on the
+    canvas.
 @li @ref Evas_Object_Image, to learn about image objects, over which
     Evas can do a plethora of operations.
 @li @ref Evas_Object_Text, to learn how to create textual elements on
     the canvas.
+@li @ref Evas_Object_Textblock, to learn how to create multiline
+    textual elements on the canvas.
 @li @ref Evas_Smart_Object_Group and @ref Evas_Smart_Group, to define
     new objects that provide @b custom functions to handle clipping,
     hiding, moving, resizing, color setting and more. These could
@@ -2521,6 +2527,11 @@ EAPI void              evas_event_refeed_event           (Evas *e, void *event_c
  */
 
 /**
+ * @addtogroup Evas_Image_Group
+ * @{
+ */
+
+/**
  * Flush the image cache of the canvas.
  *
  * @param e The given evas pointer.
@@ -2560,6 +2571,10 @@ EAPI void              evas_image_cache_set              (Evas *e, int size) EIN
  *
  */
 EAPI int               evas_image_cache_get              (const Evas *e) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
+
+/**
+ * @}
+ */
 
 /**
  * @defgroup Evas_Font_Group Font Functions
@@ -5511,7 +5526,6 @@ EAPI Evas_Render_Op            evas_object_render_op_get        (const Evas_Obje
  */
 EAPI Evas_Object      *evas_focus_get                    (const Evas *e) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
 
-
 /**
  * Retrieves the object on the given evas with the given name.
  * @param   e    The given evas.
@@ -5522,52 +5536,101 @@ EAPI Evas_Object      *evas_focus_get                    (const Evas *e) EINA_WA
  */
 EAPI Evas_Object      *evas_object_name_find             (const Evas *e, const char *name) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
 
-
 /**
- * Retrieves the top object at the given position (x,y)
- * @param   e The given Evas object.
- * @param   x The horizontal coordinate
- * @param   y The vertical coordinate
- * @param   include_pass_events_objects Boolean Flag to include or not
- * pass events objects
- * @param   include_hidden_objects Boolean Flag to include or not hidden objects
- * @return  The Evas object that is over all others objects at the given position.
+ * Retrieve the Evas object stacked at the top of a given position in
+ * a canvas
+ *
+ * @param   e A handle to the canvas.
+ * @param   x The horizontal coordinate of the position
+ * @param   y The vertical coordinate of the position
+ * @param   include_pass_events_objects Boolean flag to include or not
+ * objects which pass events in this calculation
+ * @param   include_hidden_objects Boolean flag to include or not hidden
+ * objects in this calculation
+ * @return  The Evas object that is over all other objects at the given
+ * position.
+ *
+ * This function will traverse all the layers of the given canvas,
+ * from top to bottom, querying for objects with areas covering the
+ * given position. The user can remove from from the query
+ * objects which are hidden and/or which are set to pass events.
+ *
+ * @warning This function will @b skip objects parented by smart
+ * objects, acting only on the ones at the "top level", with regard to
+ * object parenting.
  */
 EAPI Evas_Object      *evas_object_top_at_xy_get         (const Evas *e, Evas_Coord x, Evas_Coord y, Eina_Bool include_pass_events_objects, Eina_Bool include_hidden_objects) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
 
 /**
- * Retrieves the top object at mouse pointer position
- * @param   e The given Evas object.
- * @return The Evas object that is over all others objects at the
- * pointer position.
+ * Retrieve the Evas object stacked at the top at the position of the
+ * mouse cursor, over a given canvas
+ *
+ * @param   e A handle to the canvas.
+ * @return  The Evas object that is over all other objects at the mouse
+ * pointer's position
+ *
+ * This function will traverse all the layers of the given canvas,
+ * from top to bottom, querying for objects with areas covering the
+ * mouse pointer's position, over @p e.
+ *
+ * @warning This function will @b skip objects parented by smart
+ * objects, acting only on the ones at the "top level", with regard to
+ * object parenting.
  */
 EAPI Evas_Object      *evas_object_top_at_pointer_get    (const Evas *e) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
 
 /**
- * Retrieves the top object in the given rectangle region
- * @param   e The given Evas object.
- * @param   x The horizontal coordinate.
- * @param   y The vertical coordinate.
- * @param   w The width size.
- * @param   h The height size.
- * @param   include_pass_events_objects Boolean Flag to include or not pass events objects
- * @param   include_hidden_objects Boolean Flag to include or not hidden objects
- * @return  The Evas object that is over all others objects at the pointer position.
+ * Retrieve the Evas object stacked at the top of a given rectangular
+ * region in a canvas
  *
+ * @param   e A handle to the canvas.
+ * @param   x The top left corner's horizontal coordinate for the
+ * rectangular region
+ * @param   y The top left corner's vertical coordinate for the
+ * rectangular region
+ * @param   w The width of the rectangular region
+ * @param   h The height of the rectangular region
+ * @param   include_pass_events_objects Boolean flag to include or not
+ * objects which pass events in this calculation
+ * @param   include_hidden_objects Boolean flag to include or not hidden
+ * objects in this calculation
+ * @return  The Evas object that is over all other objects at the given
+ * rectangular region.
+ *
+ * This function will traverse all the layers of the given canvas,
+ * from top to bottom, querying for objects with areas overlapping
+ * with the given rectangular region inside @p e. The user can remove
+ * from the query objects which are hidden and/or which are set to
+ * pass events.
+ *
+ * @warning This function will @b skip objects parented by smart
+ * objects, acting only on the ones at the "top level", with regard to
+ * object parenting.
  */
 EAPI Evas_Object      *evas_object_top_in_rectangle_get  (const Evas *e, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h, Eina_Bool include_pass_events_objects, Eina_Bool include_hidden_objects) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
 
-
 /**
- * Retrieves the objects at the given position
- * @param   e The given Evas object.
- * @param   x The horizontal coordinate.
- * @param   y The vertical coordinate.
- * @param include_pass_events_objects Boolean Flag to include or not
- * pass events objects
- * @param   include_hidden_objects Boolean Flag to include or not hidden objects
- * @return  The list of Evas objects at the pointer position.
+ * Retrieve a list of Evas objects lying over a given position in
+ * a canvas
  *
+ * @param   e A handle to the canvas.
+ * @param   x The horizontal coordinate of the position
+ * @param   y The vertical coordinate of the position
+ * @param   include_pass_events_objects Boolean flag to include or not
+ * objects which pass events in this calculation
+ * @param   include_hidden_objects Boolean flag to include or not hidden
+ * objects in this calculation
+ * @return  The list of Evas objects that are over the given position
+ * in @p e
+ *
+ * This function will traverse all the layers of the given canvas,
+ * from top to bottom, querying for objects with areas covering the
+ * given position. The user can remove from from the query
+ * objects which are hidden and/or which are set to pass events.
+ *
+ * @warning This function will @b skip objects parented by smart
+ * objects, acting only on the ones at the "top level", with regard to
+ * object parenting.
  */
 EAPI Eina_List        *evas_objects_at_xy_get            (const Evas *e, Evas_Coord x, Evas_Coord y, Eina_Bool include_pass_events_objects, Eina_Bool include_hidden_objects) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
    EAPI Eina_List        *evas_objects_in_rectangle_get     (const Evas *e, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h, Eina_Bool include_pass_events_objects, Eina_Bool include_hidden_objects) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
@@ -5586,6 +5649,10 @@ EAPI Eina_List        *evas_objects_at_xy_get            (const Evas *e, Evas_Co
  * @see evas_object_layer_set()
  * @see evas_object_below_get()
  * @see evas_object_above_get()
+ *
+ * @warning This function will @b skip objects parented by smart
+ * objects, acting only on the ones at the "top level", with regard to
+ * object parenting.
  */
 EAPI Evas_Object      *evas_object_bottom_get            (const Evas *e) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
 
@@ -5604,6 +5671,10 @@ EAPI Evas_Object      *evas_object_bottom_get            (const Evas *e) EINA_WA
  * @see evas_object_layer_set()
  * @see evas_object_below_get()
  * @see evas_object_above_get()
+ *
+ * @warning This function will @b skip objects parented by smart
+ * objects, acting only on the ones at the "top level", with regard to
+ * object parenting.
  */
 EAPI Evas_Object      *evas_object_top_get               (const Evas *e) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
 
@@ -5622,6 +5693,12 @@ EAPI Evas_Object      *evas_object_top_get               (const Evas *e) EINA_WA
  *
  * @ingroup Evas_Object_Group
  */
+
+/**
+ * @addtogroup Evas_Object_Group_Interceptors
+ * @{
+ */
+
 typedef void (*Evas_Object_Intercept_Show_Cb) (void *data, Evas_Object *obj);
 typedef void (*Evas_Object_Intercept_Hide_Cb) (void *data, Evas_Object *obj);
 typedef void (*Evas_Object_Intercept_Move_Cb) (void *data, Evas_Object *obj, Evas_Coord x, Evas_Coord y);
@@ -5634,7 +5711,6 @@ typedef void (*Evas_Object_Intercept_Layer_Set_Cb) (void *data, Evas_Object *obj
 typedef void (*Evas_Object_Intercept_Color_Set_Cb) (void *data, Evas_Object *obj, int r, int g, int b, int a);
 typedef void (*Evas_Object_Intercept_Clip_Set_Cb) (void *data, Evas_Object *obj, Evas_Object *clip);
 typedef void (*Evas_Object_Intercept_Clip_Unset_Cb) (void *data, Evas_Object *obj);
-
 
 /**
  * Set the callback function that intercepts a show event of a object.
@@ -5744,6 +5820,10 @@ EAPI void             *evas_object_intercept_move_callback_del        (Evas_Obje
    EAPI void             *evas_object_intercept_clip_set_callback_del    (Evas_Object *obj, Evas_Object_Intercept_Clip_Set_Cb func) EINA_ARG_NONNULL(1, 2);
    EAPI void              evas_object_intercept_clip_unset_callback_add  (Evas_Object *obj, Evas_Object_Intercept_Clip_Unset_Cb func, const void *data) EINA_ARG_NONNULL(1, 2);
    EAPI void             *evas_object_intercept_clip_unset_callback_del  (Evas_Object *obj, Evas_Object_Intercept_Clip_Unset_Cb func) EINA_ARG_NONNULL(1, 2);
+
+/**
+ * @}
+ */
 
 /**
  * @defgroup Evas_Object_Specific Specific Object Functions
@@ -6304,11 +6384,20 @@ EAPI double                   evas_object_image_border_scale_get       (const Ev
  * @param w The width the bound image will be displayed at.
  * @param h The height the bound image will be displayed at.
  *
- * Note that if @p w or @h are smaller the same dimensions @p obj, the
- * displayed image will be @b tiled around the object's area. To have
- * only one copy of the bound image drawn, @p x and @p y must be 0 and
- * @p w and @p h need to be the exact width and height of the image
- * object itself, respectively.
+ * Note that if @p w or @p h are smaller than the dimensions of
+ * @p obj, the displayed image will be @b tiled around the object's
+ * area. To have only one copy of the bound image drawn, @p x and @p y
+ * must be 0 and @p w and @p h need to be the exact width and height
+ * of the image object itself, respectively.
+ *
+ * See the following image to better understand the effects of this
+ * call. On this diagram, both image object and original image source
+ * have @c a x @c a dimentions and the image itself is a circle, with
+ * empty space around it:
+ *
+ * @image html image-fill.png
+ * @image rtf image-fill.png
+ * @image latex image-fill.eps
  *
  * @warning The default values for the fill parameters are @p x = 0,
  * @p y = 0, @p w = 0 and @p h = 0. Thus, if you're not using the
@@ -6316,9 +6405,9 @@ EAPI double                   evas_object_image_border_scale_get       (const Ev
  * displayed, you'll have to set valid values with this fuction on
  * your object.
  *
- * @note evas_object_image_filled_set() is helper function which will
- * @b override the values set here automatically, for you, in a given
- * way.
+ * @note evas_object_image_filled_set() is a helper function which
+ * will @b override the values set here automatically, for you, in a
+ * given way.
  */
 EAPI void                     evas_object_image_fill_set               (Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h) EINA_ARG_NONNULL(1);
 
@@ -10724,12 +10813,17 @@ EAPI Evas_Object                        *evas_object_table_child_get       (cons
 /**
  * @defgroup Evas_Object_Grid Grid Smart Object.
  *
- * Convenience smart object that packs children using a regular grid
- * layout using Their virtual grid location and size to determine
- * position inside the grid object
+ * Convenience smart object that packs children under a regular grid
+ * layout, using their virtual grid location and size to determine
+ * children's positions inside the grid object's area.
  *
  * @ingroup Evas_Smart_Object_Group
  * @since 1.1.0
+ */
+
+/**
+ * @addtogroup Evas_Object_Grid
+ * @{
  */
 
 /**
@@ -10870,10 +10964,18 @@ EAPI Eina_Accessor                      *evas_object_grid_accessor_new    (const
 EAPI Eina_List                          *evas_object_grid_children_get    (const Evas_Object *o) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_MALLOC;
 
 /**
+ * @}
+ */
+
+/**
  * @defgroup Evas_Cserve Shared Image Cache Server
  *
- * Provides client-server infrastructure to share bitmaps across
- * multiple processes, saving data and processing power.
+ * Evas has an (optional) module which provides client-server
+ * infrastructure to <b>share bitmaps across multiple processes</b>,
+ * saving data and processing power.
+ *
+ * Be warned that it @b doesn't work when <b>threaded image
+ * preloading</b> is enabled for Evas, though.
  */
    typedef struct _Evas_Cserve_Stats       Evas_Cserve_Stats;
    typedef struct _Evas_Cserve_Image_Cache Evas_Cserve_Image_Cache;
@@ -10881,21 +10983,21 @@ EAPI Eina_List                          *evas_object_grid_children_get    (const
    typedef struct _Evas_Cserve_Config      Evas_Cserve_Config;
 
 /**
- * Statistics about server that shares cached bitmaps.
+ * Statistics about the server that shares cached bitmaps.
  * @ingroup Evas_Cserve
  */
    struct _Evas_Cserve_Stats
      {
-        int    saved_memory; /**< current saved memory, in bytes */
-        int    wasted_memory; /**< current wasted memory, in bytes */
-        int    saved_memory_peak; /**< peak of saved memory, in bytes */
-        int    wasted_memory_peak; /**< peak of wasted memory, in bytes */
+        int    saved_memory; /**< current amount of saved memory, in bytes */
+        int    wasted_memory; /**< current amount of wasted memory, in bytes */
+        int    saved_memory_peak; /**< peak ammount of saved memory, in bytes */
+        int    wasted_memory_peak; /**< peak ammount of wasted memory, in bytes */
         double saved_time_image_header_load; /**< time, in seconds, saved in header loads by sharing cached loads instead */
         double saved_time_image_data_load; /**< time, in seconds, saved in data loads by sharing cached loads instead */
      };
 
 /**
- * Cache of images shared by server.
+ * A handle of a cache of images shared by a server.
  * @ingroup Evas_Cserve
  */
    struct _Evas_Cserve_Image_Cache
@@ -10908,7 +11010,7 @@ EAPI Eina_List                          *evas_object_grid_children_get    (const
      };
 
 /**
- * An image shared by the server.
+ * A handle to an image shared by a server.
  * @ingroup Evas_Cserve
  */
    struct _Evas_Cserve_Image
@@ -10944,49 +11046,74 @@ EAPI Eina_List                          *evas_object_grid_children_get    (const
 
 /**
  * Retrieves if the system wants to share bitmaps using the server.
- * @return @c EINA_TRUE if wants, @c EINA_FALSE otherwise.
+ * @return @c EINA_TRUE if it wants, @c EINA_FALSE otherwise.
  * @ingroup Evas_Cserve
  */
 EAPI Eina_Bool         evas_cserve_want_get                   (void) EINA_WARN_UNUSED_RESULT EINA_PURE;
 
 /**
- * Retrieves if the system is connected to the server used to shae bitmaps.
- * @return @c EINA_TRUE if connected, @c EINA_FALSE otherwise.
+ * Retrieves if the system is connected to the server used to share
+ * bitmaps.
+ *
+ * @return @c EINA_TRUE if it's connected, @c EINA_FALSE otherwise.
  * @ingroup Evas_Cserve
  */
 EAPI Eina_Bool         evas_cserve_connected_get              (void) EINA_WARN_UNUSED_RESULT;
 
 /**
- * Retrieves if the system wants to share bitmaps using the server.
- * @param stats pointer to structure to fill with statistics about
- *        cache server.
+ * Retrieves statistics from a running bitmap sharing server.
+ * @param stats pointer to structure to fill with statistics about the
+ *        bitmap cache server.
+ *
  * @return @c EINA_TRUE if @p stats were filled with data,
- *         @c EINA_FALSE otherwise and @p stats is untouched.
+ *         @c EINA_FALSE otherwise (when @p stats is untouched)
  * @ingroup Evas_Cserve
  */
 EAPI Eina_Bool         evas_cserve_stats_get                  (Evas_Cserve_Stats *stats) EINA_WARN_UNUSED_RESULT;
-   EAPI void              evas_cserve_image_cache_contents_clean (Evas_Cserve_Image_Cache *cache) EINA_PURE;
 
 /**
- * Retrieves the current configuration of the server.
- * @param config where to store current server configuration.
- * @return @c EINA_TRUE if @p config were filled with data,
- *         @c EINA_FALSE otherwise and @p config is untouched.
+ * Completely discard/clean a given images cache, thus re-setting it.
+ *
+ * @param cache A handle to the given images cache.
+ */
+EAPI void              evas_cserve_image_cache_contents_clean (Evas_Cserve_Image_Cache *cache) EINA_PURE;
+
+/**
+ * Retrieves the current configuration of the Evas image caching
+ * server.
+ *
+ * @param config where to store current image caching server's
+ * configuration.
+ *
+ * @return @c EINA_TRUE if @p config was filled with data,
+ *         @c EINA_FALSE otherwise (when @p config is untouched)
+ *
+ * The fields of @p config will be altered to reflect the current
+ * configuration's values.
+ *
+ * @see evas_cserve_config_set()
+ *
  * @ingroup Evas_Cserve
  */
 EAPI Eina_Bool         evas_cserve_config_get                 (Evas_Cserve_Config *config) EINA_WARN_UNUSED_RESULT EINA_PURE;
 
 /**
- * Changes the configuration of the server.
- * @param config where to store current server configuration.
- * @return @c EINA_TRUE if @p config were successfully applied,
+ * Changes the configurations of the Evas image caching server.
+ *
+ * @param config A bitmap cache configuration handle with fields set
+ * to desired configuration values.
+ * @return @c EINA_TRUE if @p config was successfully applied,
  *         @c EINA_FALSE otherwise.
+ *
+ * @see evas_cserve_config_get()
+ *
  * @ingroup Evas_Cserve
  */
 EAPI Eina_Bool         evas_cserve_config_set                 (const Evas_Cserve_Config *config) EINA_WARN_UNUSED_RESULT EINA_PURE;
 
 /**
- * Force system to disconnect from cache server.
+ * Force the system to disconnect from the bitmap caching server.
+ *
  * @ingroup Evas_Cserve
  */
 EAPI void              evas_cserve_disconnect                 (void);
