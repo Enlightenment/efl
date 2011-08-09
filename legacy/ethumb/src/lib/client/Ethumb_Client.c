@@ -610,7 +610,10 @@ _ethumb_client_exists_end(void *data, Ecore_Thread *thread __UNUSED__)
    async->source->ethumb_dirty = ethumb_cmp(tmp, async->dup);
 
    EINA_LIST_FREE(async->callbacks, cb)
-     cb->exists_cb(async->source, (Ethumb_Exists*) async, async->exists, (void*) cb->data);
+     {
+       cb->exists_cb(async->source, (Ethumb_Exists*) async, async->exists, (void*) cb->data);
+       free(cb);
+     }
 
    async->source->ethumb = tmp;
    async->thread = NULL;
@@ -2144,6 +2147,7 @@ ethumb_client_thumb_exists(Ethumb_Client *client, Ethumb_Client_Thumb_Exists_Cb 
 {
    Ethumb_Async_Exists_Cb *cb;
    Ethumb_Async_Exists *async;
+   Ecore_Thread *t;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(client, NULL);
 
@@ -2182,11 +2186,13 @@ ethumb_client_thumb_exists(Ethumb_Client *client, Ethumb_Client_Thumb_Exists_Cb 
    async->callbacks = eina_list_append(NULL, cb);
 
    EINA_REFCOUNT_INIT(async);
-   async->thread = ecore_thread_run(_ethumb_client_exists_heavy,
-				    _ethumb_client_exists_end,
-				    _ethumb_client_exists_end,
-				    async);
+   t = ecore_thread_run(_ethumb_client_exists_heavy,
+			_ethumb_client_exists_end,
+			_ethumb_client_exists_end,
+			async);
+   if (!t) return NULL;
 
+   async->thread = t;
    eina_hash_direct_add(_exists_request, async->dup, async);
 
    return (Ethumb_Exists*) async;
@@ -2208,6 +2214,7 @@ ethumb_client_thumb_exists_cancel(Ethumb_Exists *exists, Ethumb_Client_Thumb_Exi
      if (cb->exists_cb == exists_cb && cb->data == data)
        {
           async->callbacks = eina_list_remove_list(async->callbacks, l);
+	  free(cb);
           break;
        }
 
