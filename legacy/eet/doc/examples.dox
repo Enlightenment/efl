@@ -7,7 +7,11 @@
  *
  * @ref Example_Eet_Data_Nested
  *
- * @ref Example_Eet_Data_File_Descriptor
+ * @ref Example_Eet_Data_File_Descriptor_01
+ *
+ * @ref Example_Eet_Data_File_Descriptor_02
+ *
+ * @ref Example_Eet_Data_Cipher_Decipher
  *
  * <a href="examples.html">List of examples</a>
  */
@@ -41,8 +45,140 @@
  */
 
 /**
- * @page Example_Eet_Data_File_Descriptor File descriptor data example
+ * @page Example_Eet_Data_File_Descriptor_01 File descriptor data example
  *
- * @includelineno eet-data-file_descriptor.c
- * @example eet-data-file_descriptor.c
+ * @includelineno eet-data-file_descriptor_01.c
+ * @example eet-data-file_descriptor_01.c
+ */
+
+/**
+ * @page Example_Eet_Data_File_Descriptor_02 File descriptor data example, with Eet unions and variants
+ *
+ * This is an example much like the one shown in @ref
+ * eet_data_file_descriptor. The difference is that here we're
+ * attaining ourselves to two new data types to store in an Eet file
+ * -- @b unions and @b variants. We don't try to come with data
+ * mapping to real world use cases, here. Instead, we're defining
+ * 3 different simple structures to be used throughout the example:
+ * @dontinclude eet-data-file_descriptor_02.c
+ * @skip typedef struct _Example_Struct1
+ * @until typedef struct _Example_Struct3
+ * @skip struct _Example_Struct1
+ * @until int body
+ * @until };
+ *
+ * To identify, for both union and variant data cases, the type of
+ * each chunk of data, we're defining types to point to each of those
+ * structs:
+ * @dontinclude eet-data-file_descriptor_02.c
+ * @skip typedef enum _Example_Data_Type
+ * @until ;
+ * @skip enum _Example_Data_Type
+ * @until };
+ *
+ * We have also a mapping from those types to name strings, to be used
+ * in the Eet unions and variants @c type_get() and @c type_set() type
+ * identifying callbacks:
+ * @skip struct
+ * @until };
+ *
+ * In this example, we have no fancy hash to store our data into
+ * profiles/accounts, but just two lists for union and variant data
+ * nodes:
+ * @dontinclude eet-data-file_descriptor_02.c
+ * @skip typedef struct _Example_Lists
+ * @until typedef struct _Example_Lists
+ * @skip struct _Example_Lists
+ * @until };
+ *
+ * Let's begin with our unions, then, which look like:
+ * @dontinclude eet-data-file_descriptor_02.c
+ * @skip typedef struct _Example_Union
+ * @until typedef struct _Example_Union
+ * @skip struct _Example_Union
+ * @until };
+ *
+ * The first interesting part of the code is where we define our data
+ * descriptors for the main lists, the unions and all of structures
+ * upon which those two depend.
+ * @dontinclude eet-data-file_descriptor_02.c
+ * @skip declaring types
+ * @until _union_descriptor);
+ * The code for descriptors on @c Example_Struct1, @c Example_Struct2
+ * and @c Example_Struct3 is straightforward, a matter already covered
+ * on @ref eet_data_file_descriptor. What is new, here, are the two
+ * type matching functions for our unions. There, we must set the @c
+ * data pointer to its matching type, on @c _union_type_set and return
+ * the correct matching type, on @c _union_type_get:
+ * @dontinclude eet-data-file_descriptor_02.c
+ * @skip union type_get()
+ * @until _union_type_set
+ * @until _union_type_set
+ *
+ * With the #EET_DATA_DESCRIPTOR_ADD_MAPPING calls, which follow, we
+ * make the the link between our type names and their respective
+ * structs. The code handling actual data is pretty much the same as in
+ * @ref eet_data_file_descriptor -- one uses command line arguments to
+ * enter new data chunks (or just to visualize the contents of an Eet
+ * file), signalling if they are unions or variants. One must also
+ * pass the type of the data chuck to enter, with integers 1, 2 or
+ * 3. Then, come the fields for each type:
+ * @dontinclude eet-data-file_descriptor_02.c
+ * @skip Usage
+ * @until argv
+ *
+ * Variants are very similar to unions, except that data chunks need
+ * @b not contain previously allocated space for each of the possible
+ * types of data going in them:
+ * @dontinclude eet-data-file_descriptor_02.c
+ * @skip typedef struct _Example_Variant
+ * @until typedef struct _Example_Variant
+ * @skip struct _Example_Variant_Type
+ * @until };
+ * @until };
+ *
+ * The code declaring the data descriptors and handling the data is
+ * very similar to the unions part, and is left for the reader to
+ * check for him/herself. The complete code of the example follows.
+ *
+ * @includelineno eet-data-file_descriptor_02.c
+ * @example eet-data-file_descriptor_02.c
+ */
+
+/**
+ * @page Example_Eet_Data_Cipher_Decipher Eet data cipher/decipher example
+ *
+ * In this example, we exemplify the usage of eet_write_cipher() and
+ * eet_read_cipher(). For it to work, <b>make sure</b> to have your
+ * Eet installation with a ciphering backend enabled.
+ *
+ * We start by defining the information to record in an Eet file (@c
+ * buffer), the key to cipher that (@c key) and a dummy wrong key to
+ * try to access that information, later (@c key_bad).
+ * @dontinclude eet-data-cipher_decipher.c
+ * @skip buffer =
+ * @until bad =
+ *
+ * After opening our file, we simply use the first cited function to
+ * write our string ciphered:
+ * @dontinclude eet-data-cipher_decipher.c
+ * @skip eet_open
+ * @until eet_close
+ *
+ * Then, after closing it on purpose, we open it again, to retrieve
+ * the encrypted information back, in a readable format:
+ * @skip eet_open
+ * @until eet_close
+ * @until eet_close
+ *
+ * Note that we do it twice, being the last time with the wrong
+ * key. In this last case, if the information is read back and matches
+ * the original @c buffer, something wrong is going on (we made it to
+ * fail on purpose). The former access is OK, and must work.
+ *
+ * What we do in sequence is just to delete the file. The complete
+ * code of the example follows.
+ *
+ * @includelineno eet-data-cipher_decipher.c
+ * @example eet-data-cipher_decipher.c
  */

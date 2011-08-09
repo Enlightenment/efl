@@ -2002,6 +2002,8 @@ eet_identity_certificate_print(const unsigned char *certificate,
  * The following is a list of more advanced and detailed examples.
  * @li @ref eet_data_nested_example
  * @li @ref eet_data_file_descriptor
+ * @li @ref Example_Eet_Data_File_Descriptor_02
+ * @li @ref Example_Eet_Data_Cipher_Decipher
  */
 
 /**
@@ -2112,14 +2114,14 @@ eet_identity_certificate_print(const unsigned char *certificate,
  * the following example. It's been slightly modified from the original
  * source to show more of the varied ways in which Eet can handle our data.
  *
- * @ref eet-data-file_descriptor.c "This example" shows a cache of user
+ * @ref eet-data-file_descriptor_01.c "This example" shows a cache of user
  * accounts and messages received, and it's a bit more interactive than
  * previous examples.
  *
  * Let's begin by looking at the structures we'll be using. First we have
  * one to define the messages the user receives and one for the one he posts.
  * Straight forward and nothing new here.
- * @dontinclude eet-data-file_descriptor.c
+ * @dontinclude eet-data-file_descriptor_01.c
  * @skip typedef
  * @until My_Post
  *
@@ -2244,7 +2246,7 @@ eet_identity_certificate_print(const unsigned char *certificate,
  * @until }
  *
  * Skipping all the utility functions used by our program (remember you can
- * look at the full example @ref eet-data-file_descriptor.c "here") we get to
+ * look at the full example @ref eet-data-file_descriptor_01.c "here") we get to
  * our cache loading code. Nothing out of the ordinary at first, just the
  * same old open file, read data using our main descriptor to decode it
  * into something we can use and check version of loaded data and if it doesn't
