@@ -112,7 +112,6 @@
  *
  * @image html img/widget/frame/preview-00.png
  * @image latex img/widget/frame/preview-00.eps
- * @li @ref Genscroller
  * @li @ref GLView
  * @li @ref Hover
  *
