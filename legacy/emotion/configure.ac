@@ -206,6 +206,25 @@ setxattr("/", "user.ethumb.md5", NULL, 0, 0);
 AC_MSG_CHECKING([for Xattr])
 AC_MSG_RESULT([${have_xattr}])
 
+### Check for video4linux
+
+AC_COMPILE_IFELSE(
+   [AC_LANG_PROGRAM(
+       [[
+#include <stdio.h>
+#include <linux/videodev2.h>
+       ]],
+       [[
+fprintf(stdout, "%i\n", V4L2_CAP_VIDEO_CAPTURE);
+       ]])],
+   [
+     AC_DEFINE(HAVE_V4L2, 1, [Define to 1 if you have Video4Linux 2 available])
+     have_v4l2="yes"
+   ],
+   [have_v4l2="no"])
+AC_MSG_CHECKING([for V4L2])
+AC_MSG_RESULT([${have_v4l2}])
+
 ### Modules
 
 EMOTION_CHECK_MODULE([Xine], [${want_xine}])
@@ -283,6 +302,7 @@ echo "  Edje EXTERNAL support: ${have_edje_external}"
 echo
 echo "  Xattr................: ${have_xattr}"
 echo "  Eio..................: ${have_eio}"
+echo "  V4L2.................: ${have_v4l2}"
 echo
 echo "Documentation..........: ${build_doc}"
 echo "Examples.............: ${enable_build_examples}"

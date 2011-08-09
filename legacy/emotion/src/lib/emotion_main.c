@@ -6,7 +6,9 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 # include <sys/ioctl.h>
-# include <linux/videodev2.h>
+# ifdef HAVE_V4L2
+#  include <linux/videodev2.h>
+# endif
 
 # include <Ecore.h>
 # include <Eeze.h>
@@ -144,12 +146,15 @@ emotion_webcam_destroy(Emotion_Webcam *ew)
 static void
 _emotion_check_device(Emotion_Webcam *ew)
 {
+#ifdef HAVE_V4L2
    Emotion_Webcam *check;
    Eina_List *l;
    struct v4l2_capability caps;
    int fd;
+#endif
 
    if (!ew) return ;
+#ifdef HAVE_V4L2
    if (!ew->device) goto on_error;
 
    fd = open(ew->filename, O_RDONLY);
@@ -175,6 +180,7 @@ _emotion_check_device(Emotion_Webcam *ew)
    return ;
 
  on_error:
+#endif
    fprintf(stderr, "'%s' is not a webcam ['%s']\n", ew->name, strerror(errno));
    eina_stringshare_del(ew->syspath);
    eina_stringshare_del(ew->device);
