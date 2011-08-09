@@ -574,7 +574,6 @@ AC_OUTPUT([
 Makefile
 elementary.spec
 elementary.pc
-doc/elementary.dox
 doc/Makefile
 doc/Doxyfile
 doc/widgets/Makefile

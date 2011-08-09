@@ -1,7 +1,7 @@
 PROJECT_NAME           = Elementary
 PROJECT_NUMBER         =
 OUTPUT_DIRECTORY       = .
-INPUT                  = @srcdir@/elementary.dox @srcdir@/examples.dox @top_srcdir@/src/lib/Elementary.h.in @top_srcdir@/src/lib @srcdir@/index.doxy
+INPUT                  = @srcdir@/examples.dox @top_srcdir@/src/lib/Elementary.h.in @top_srcdir@/src/lib @srcdir@/index.doxy
 IMAGE_PATH             = @srcdir@/img
 OUTPUT_LANGUAGE        = English
 GENERATE_HTML          = YES
