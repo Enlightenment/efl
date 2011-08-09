@@ -116,11 +116,9 @@ eet_identity_open(const char               *certificate_file,
 #ifdef HAVE_SIGNATURE
    /* Signature declarations */
    Eet_Key *key = NULL;
-   FILE *fp = NULL;
 # ifdef HAVE_GNUTLS
    /* Gnutls private declarations */
-   int fd = -1;
-   struct stat st;
+   Eina_File *f;
    void *data = NULL;
    gnutls_datum_t load_file = { NULL, 0 };
    char pass[1024];
@@ -138,59 +136,47 @@ eet_identity_open(const char               *certificate_file,
       goto on_error;
 
    /* Mmap certificate_file */
-   if (!(fp = fopen(certificate_file, "r")))
-      goto on_error;
-
-   if ((fd = fileno(fp)) == -1)
-      goto on_error;
-
-   if (fstat(fd, &st))
+   f = eina_file_open(certificate_file, 0);
+   if (!f)
       goto on_error;
 
    /* let's make mmap safe and just get 0 pages for IO erro */
    eina_mmap_safety_enabled_set(EINA_TRUE);
 
-   if ((data =
-           mmap(NULL, st.st_size, PROT_READ, MAP_PRIVATE, fd, 0)) == MAP_FAILED)
-      goto on_error;
+   data = eina_file_map_all(f, EINA_FILE_SEQUENTIAL);
+   if (!data) goto on_error;
 
    /* Import the certificate in Eet_Key structure */
    load_file.data = data;
-   load_file.size = st.st_size;
+   load_file.size = eina_file_size_get(f);;
    if (gnutls_x509_crt_import(key->certificate, &load_file,
                               GNUTLS_X509_FMT_PEM) < 0)
       goto on_error;
 
-   if (munmap(data, st.st_size))
-      goto on_error;
+   eina_file_map_free(f, data);
 
    /* Reset values */
-   fclose(fp);
-   fp = NULL;
+   eina_file_close(f);
+   f = NULL;
    data = NULL;
    load_file.data = NULL;
    load_file.size = 0;
 
    /* Mmap private_key_file */
-   if (!(fp = fopen(private_key_file, "r")))
-      goto on_error;
-
-   if ((fd = fileno(fp)) == -1)
-      goto on_error;
-
-   if (fstat(fd, &st))
+   f = eina_file_open(private_key_file, 0);
+   if (!f)
       goto on_error;
 
    /* let's make mmap safe and just get 0 pages for IO erro */
    eina_mmap_safety_enabled_set(EINA_TRUE);
 
-   if ((data =
-           mmap(NULL, st.st_size, PROT_READ, MAP_PRIVATE, fd, 0)) == MAP_FAILED)
+   data = eina_file_map_all(f, EINA_FILE_SEQUENTIAL);
+   if (!data)
       goto on_error;
 
    /* Import the private key in Eet_Key structure */
    load_file.data = data;
-   load_file.size = st.st_size;
+   load_file.size = eina_file_size_get(f);;
    /* Try to directly import the PEM encoded private key */
    if (gnutls_x509_privkey_import(key->private_key, &load_file,
                                   GNUTLS_X509_FMT_PEM) < 0)
@@ -210,16 +196,14 @@ eet_identity_open(const char               *certificate_file,
            goto on_error;
      }
 
-   if (munmap(data, st.st_size))
-      goto on_error;
-
-   fclose(fp);
+   eina_file_map_free(f, data);
+   eina_file_close(f);
 
    return key;
 
 on_error:
-   if (fp)
-      fclose(fp);
+   if (data) eina_file_map_free(f, data);
+   if (f) eina_file_close(f);
 
    if (key)
      {
@@ -232,11 +216,9 @@ on_error:
         free(key);
      }
 
-   if (data)
-      munmap(data, st.st_size);
-
 # else /* ifdef HAVE_GNUTLS */
    /* Openssl private declarations */
+   FILE *fp;
    EVP_PKEY *pkey = NULL;
    X509 *cert = NULL;
 
