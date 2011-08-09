@@ -69,6 +69,7 @@ _els_box_layout(Evas_Object *o, Evas_Object_Box_Data *priv, int horizontal, int 
    evas_object_size_hint_min_get(o, &minw, &minh);
    evas_object_size_hint_align_get(o, &ax, &ay);
    count = eina_list_count(priv->children);
+   if (rtl) ax = 1.0 - ax;
 
    if (w < minw)
      {
@@ -97,6 +98,7 @@ _els_box_layout(Evas_Object *o, Evas_Object_Box_Data *priv, int horizontal, int 
    if (!expand)
      {
         evas_object_size_hint_align_get(o, &ax, &ay);
+        if (rtl) ax = 1.0 - ax;
         if (horizontal)
           {
              x += (double)(w - minw) * ax;
@@ -127,6 +129,7 @@ _els_box_layout(Evas_Object *o, Evas_Object_Box_Data *priv, int horizontal, int 
         xw = xh = 0;
         if (ax == -1.0) {fw = 1; ax = 0.5;}
         if (ay == -1.0) {fh = 1; ay = 0.5;}
+        if (rtl) ax = 1.0 - ax;
         if (wx > 0.0) xw = 1;
         if (wy > 0.0) xh = 1;
         if (horizontal)
