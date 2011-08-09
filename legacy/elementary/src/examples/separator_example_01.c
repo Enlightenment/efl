@@ -10,7 +10,6 @@ EAPI int
 elm_main(int argc, char **argv)
 {
    Evas_Object *win, *bg, *bx, *rect, *separator;
-   Elm_Animator *animator;
    char buf[256];
 
    win = elm_win_add(NULL, "separator", ELM_WIN_BASIC);

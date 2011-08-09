@@ -4,7 +4,6 @@
  * Elementary is mostly composed of widgets, but it also contains some
  * infrastructure modules that facilitate the use of widgets. These are the
  * infrastructure modules:
- * @li @ref Animator
  * @li @ref Caches
  * @li @ref Cursors
  * @li @ref Debug
@@ -28,8 +27,8 @@
  *
  * The other two main groups in Elementary are:
  * @li @ref widgetslist - These are the widgets you'll compose your UI out of.
- * @li @ref containerslist - These are the containers in which the widgets will be
- *                           layouted.
+ * @li @ref containerslist - These are the containers in which the widgets will
+ *                           be laid out.
  */
 /**
  * @page widgetslist Widget list

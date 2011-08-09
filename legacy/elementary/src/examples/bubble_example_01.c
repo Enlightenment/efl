@@ -20,7 +20,6 @@ EAPI int
 elm_main(int argc, char **argv)
 {
    Evas_Object *win, *bg, *bubble, *label, *icon;
-   Elm_Animator *animator;
    char buf[256];
 
    win = elm_win_add(NULL, "bubble", ELM_WIN_BASIC);
