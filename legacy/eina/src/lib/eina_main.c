@@ -214,9 +214,12 @@ eina_init(void)
         return 0;
      }
 
-#if !(defined(_WIN32_WCE)) && !(defined(_WIN32))
+#ifdef EINA_HAVE_THREADS
+# if !(defined(_WIN32_WCE)) && !(defined(_WIN32))
    _eina_main_loop = pthread_self();
+# endif
 #endif
+
 #ifdef EINA_HAVE_DEBUG_THREADS
    pthread_mutex_init(&_eina_tracking_lock, NULL);
 
