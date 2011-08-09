@@ -110,6 +110,16 @@
  * @image latex img/widget/flipselector/preview-00.eps
  * @li @ref Frame
  *
+ * @image html img/widget/conformant/preview-00.png
+ * @image latex img/widget/conformant/preview-00.eps
+ * @image html img/conformant.png
+ * @image latex img/conformant.eps
+ * @li @ref Gengrid
+ *
+ * @image html img/widget/gengrid/preview-00.png
+ * @image latex img/widget/gengrid/preview-00.eps
+ * @li @ref Genlist
+ *
  * @image html img/widget/frame/preview-00.png
  * @image latex img/widget/frame/preview-00.eps
  * @li @ref GLView
@@ -138,6 +148,12 @@
  * @image html img/widget/inwin/preview-00.png
  * @image latex img/widget/inwin/preview-00.eps
  * @li @ref Label
+ *
+ * @image html img/widget/layout/preview-00.png
+ * @image latex img/widget/layout/preview-00.eps
+ * @image html img/layout-predefined.png
+ * @image latex img/layout-predefined.eps
+ * @li @ref List
  *
  * @image html img/widget/label/preview-00.png
  * @image latex img/widget/label/preview-00.eps
@@ -243,28 +259,12 @@
  * @image latex img/box.eps
  * @li @ref Conformant
  *
- * @image html img/widget/conformant/preview-00.png
- * @image latex img/widget/conformant/preview-00.eps
- * @image html img/conformant.png
- * @image latex img/conformant.eps
- * @li @ref Gengrid
- *
- * @image html img/widget/gengrid/preview-00.png
- * @image latex img/widget/gengrid/preview-00.eps
- * @li @ref Genlist
- *
  * @image html img/widget/genlist/preview-00.png
  * @image latex img/widget/genlist/preview-00.eps
  * @image html img/genlist.png
  * @image latex img/genlist.eps
  * @li @ref Grid
  * @li @ref Layout
- *
- * @image html img/widget/layout/preview-00.png
- * @image latex img/widget/layout/preview-00.eps
- * @image html img/layout-predefined.png
- * @image latex img/layout-predefined.eps
- * @li @ref List
  *
  * @image html img/widget/list/preview-00.png
  * @image latex img/widget/list/preview-00.eps
