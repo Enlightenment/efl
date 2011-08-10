@@ -13837,10 +13837,19 @@ extern "C" {
    /**
     * @defgroup Cursors Cursors
     *
-    * The Cursor is an internal smart object used to customize the
-    * cursor displayed over objects (or widgets).
-    * It can use default X cursors (if using X), or cursors from a
-    * theme.
+    * The Elementary cursor is an internal smart object used to
+    * customize the mouse cursor displayed over objects (or
+    * widgets). In the most common scenario, the cursor decoration
+    * comes from the graphical @b engine Elementary is running
+    * on. Those engines may provide different decorations for cursors,
+    * and Elementary provides functions to choose them (think of X11
+    * cursors, as an example).
+    *
+    * There's also the possibility of, besides using engine provided
+    * cursors, also use ones coming from Edje theming files. Both
+    * globally and per widget, Elementary makes it possible for one to
+    * make the cursors lookup to be held on engines only or on
+    * Elementary's theme file, too.
     *
     * @{
     */
