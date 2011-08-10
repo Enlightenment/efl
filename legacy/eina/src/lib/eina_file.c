@@ -895,6 +895,8 @@ eina_file_map_new(Eina_File *file, Eina_File_Populate rule,
    Eina_File_Map *map;
    unsigned long int key[2];
 
+   EINA_SAFETY_ON_NULL_RETURN_VAL(file, NULL);
+
    if (offset > file->length)
      return NULL;
    if (offset + length > file->length)
