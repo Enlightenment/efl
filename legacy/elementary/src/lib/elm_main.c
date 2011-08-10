@@ -888,6 +888,8 @@ elm_policy_get(unsigned int policy)
  * and manual means only explicit changes will matter. You are not supposed to
  * change mirroring state of a widget set to automatic, will mostly work, but
  * the behavior is not really defined.
+ *
+ * @{
  */
 
 /**
@@ -944,6 +946,10 @@ elm_object_mirrored_automatic_set(Evas_Object *obj, Eina_Bool automatic)
    EINA_SAFETY_ON_NULL_RETURN(obj);
    elm_widget_mirrored_automatic_set(obj, automatic);
 }
+
+/**
+ * @}
+ */
 
 EAPI void
 elm_object_scale_set(Evas_Object *obj,
