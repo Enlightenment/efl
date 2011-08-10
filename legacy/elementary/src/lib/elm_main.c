@@ -1289,7 +1289,7 @@ elm_engine_current_get(void)
  * Elementary applications. Note that it will take effect only to
  * subsequent Elementary window creations.
  *
- * @param The rendering engine's name
+ * @param engine The rendering engine's name
  * @ingroup Engine
  *
  * @note there's no need to free the returned string, here.
