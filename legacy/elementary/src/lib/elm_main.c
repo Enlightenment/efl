@@ -1205,7 +1205,7 @@ elm_profile_list_get(void)
 /**
  * Free Elementary's list of available profiles.
  *
- * @param The profiles list, as returned by elm_profile_list_get().
+ * @param l The profiles list, as returned by elm_profile_list_get().
  * @ingroup Profile
  *
  */
