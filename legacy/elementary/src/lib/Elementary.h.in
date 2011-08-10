@@ -2194,9 +2194,13 @@ extern "C" {
    EAPI void             elm_object_focus_custom_chain_set(Evas_Object *obj, Eina_List *objs) EINA_ARG_NONNULL(1);
 
    /**
-    * Unset custom focus chain
+    * Unset a custom focus chain on a given Elementary widget
     *
-    * @param obj The container object
+    * @param obj The container object to remove focus chain from
+    *
+    * Any focus chain previously set on @p obj (for its child objects)
+    * is removed entirely after this call.
+    *
     * @ingroup Focus
     */
    EAPI void             elm_object_focus_custom_chain_unset(Evas_Object *obj) EINA_ARG_NONNULL(1);
