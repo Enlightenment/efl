@@ -1059,7 +1059,7 @@ extern "C" {
     */
    EAPI const char *elm_object_item_text_part_get(const Elm_Object_Item *it, const char *part);
 
-#define elm_object_item_text_get(it) elm_object_item_part_text_get((it), NULL)
+#define elm_object_item_text_get(it) elm_object_item_text_part_get((it), NULL)
 
    /**
     * @}
