@@ -1394,7 +1394,7 @@ extern "C" {
     * @return @c EINA_TRUE, if the object is focused, @c EINA_FALSE if
     *            not (and on errors).
     *
-    * @see elm_object_focus()
+    * @see elm_object_focus_set()
     *
     * @ingroup Focus
     */
