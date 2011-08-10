@@ -2064,9 +2064,9 @@ elm_object_focus_allow_get(const Evas_Object *obj)
 /**
  * Set custom focus chain.
  *
- * This function i set one new and overwrite any previous custom focus chain
- * with the list of objects. The previous list will be deleted and this list
- * will be managed. After setted, don't modity it.
+ * This function overwrites any previous custom focus chain within
+ * the list of objects. The previous list will be deleted and this list
+ * will be managed by elementary. After it is set, don't modify it.
  *
  * @note On focus cycle, only will be evaluated children of this container.
  *
