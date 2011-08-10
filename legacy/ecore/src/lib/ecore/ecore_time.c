@@ -29,13 +29,7 @@ static double _ecore_time_clock_conversion = 1e-9;
 double _ecore_time_loop_time = -1.0;
 
 /**
- * @addtogroup Ecore_Group Ecore - Main Loop and Job Functions.
- *
- * @{
- */
-
-/**
- * @addtogroup Ecore_Time_Group Ecore Time functions
+ * @addtogroup Ecore_Time_Group
  *
  * @{
  */
@@ -128,10 +122,6 @@ ecore_loop_time_get(void)
 {
    return _ecore_time_loop_time;
 }
-
-/**
- * @}
- */
 
 /**
  * @}

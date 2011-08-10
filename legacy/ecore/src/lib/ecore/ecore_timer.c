@@ -48,23 +48,9 @@ static Ecore_Timer *suspended = NULL;
 static double       last_check = 0.0;
 static double       precision = 10.0 / 1000000.0;
 
-/**
- * @addtogroup Ecore_Group Ecore - Main Loop and Job Functions.
- *
- * @{
- */
 
 /**
- * @addtogroup Ecore_Time_Group Ecore Time functions
- *
- * Functions that deal with time.  These functions include those that simply
- * retrieve it in a given format, and those that create events based on it.
- *
- * The timer allows callbacks to be called at specific intervals.
- *
- * Examples with functions that deal with time:
- * @li @ref ecore_time_functions_example_c
- * @li @ref ecore_timer_example_c
+ * @addtogroup Ecore_Time_Group
  *
  * @{
  */
@@ -458,10 +444,6 @@ ecore_timer_dump(void)
    return NULL;
 #endif
 }
-
-/**
- * @}
- */
 
 /**
  * @}

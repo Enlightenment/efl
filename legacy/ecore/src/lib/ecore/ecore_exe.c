@@ -299,17 +299,8 @@ _ecore_exe_check_errno(int result, const char *file, int line)
    return result;
 }
 
-
 /**
- * @addtogroup Ecore_Group Ecore - Main Loop and Job Functions.
- *
- * @{
- */
-
-/**
- * @addtogroup Ecore_Exe_Group Process Spawning Functions
- *
- * Functions that deal with and send signals to spawned processes.
+ * @addtogroup Ecore_Exe_Group
  *
  * @{
  */
@@ -1313,10 +1304,6 @@ ecore_exe_hup(Ecore_Exe *exe)
      }
    kill(exe->pid, SIGHUP);
 }
-
-/**
- * @}
- */
 
 /**
  * @}

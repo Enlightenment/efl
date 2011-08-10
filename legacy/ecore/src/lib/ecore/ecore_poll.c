@@ -191,21 +191,7 @@ _ecore_poller_cb_timer(void *data __UNUSED__)
 }
 
 /**
- * @addtogroup Ecore_Group Ecore - Main Loop and Job Functions.
- *
- * @{
- */
-
-/**
- * @addtogroup Ecore_Poller_Group Ecore Poll functions
- *
- * These functions are for the need to poll information, but provide a shared
- * abstracted API to pool such polling to minimise wakeup and ensure all the
- * polling happens in as few spots as possible areound a core poll interval.
- * For now only 1 core poller type is supprted: ECORE_POLLER_CORE
- *
- * Example of @ref Ecore_Poller:
- * @li @ref ecore_poller_example_c
+ * @addtogroup Ecore_Poller_Group
  *
  * @{
  */
@@ -429,10 +415,6 @@ ecore_poller_del(Ecore_Poller *poller)
    _ecore_poller_next_tick_eval();
    return data;
 }
-
-/**
- * @}
- */
 
 /**
  * @}

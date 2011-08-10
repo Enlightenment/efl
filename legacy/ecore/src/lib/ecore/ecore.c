@@ -74,7 +74,7 @@ static Eina_Lock _thread_safety;
 #endif
 
 /**
- * @addtogroup Ecore_Init_Group Ecore initialisation and shutdown functions.
+ * @addtogroup Ecore_Init_Group
  *
  * @{
  */
@@ -221,6 +221,10 @@ ecore_shutdown(void)
    return _ecore_init_count;
 }
 
+/**
+ * @}
+ */
+
 EAPI void
 ecore_main_loop_thread_safe_call(Ecore_Cb callback, void *data)
 {
@@ -248,10 +252,6 @@ ecore_main_loop_thread_safe_call(Ecore_Cb callback, void *data)
 
    eina_lock_release(&_thread_safety);
 }
-
-/**
- * @}
- */
 
 EAPI void
 ecore_print_warning(const char *function, const char *sparam)

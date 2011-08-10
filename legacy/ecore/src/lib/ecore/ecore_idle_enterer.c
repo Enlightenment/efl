@@ -27,13 +27,7 @@ static void *
 _ecore_idle_enterer_del(Ecore_Idle_Enterer *idle_enterer);
 
 /**
- * @addtogroup Ecore_Group Ecore - Main Loop and Job Functions.
- *
- * @{
- */
-
-/**
- * @addtogroup Ecore_Idle_Group Ecore Idle functions
+ * @addtogroup Ecore_Idle_Group
  *
  * @{
  */
@@ -118,10 +112,6 @@ ecore_idle_enterer_del(Ecore_Idle_Enterer *idle_enterer)
    _ecore_unlock();
    return data;
 }
-
-/**
- * @}
- */
 
 /**
  * @}

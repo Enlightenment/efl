@@ -11,12 +11,6 @@
 static int throttle_val = 0;
 
 /**
- * @addtogroup Ecore_Group Ecore - Main Loop and Job Functions.
- *
- * @{
- */
-
-/**
  * @addtogroup Ecore_Throttle_Group Ecore Throttle functions
  *
  * @{
@@ -91,10 +85,6 @@ ecore_throttle_get(void)
 {
    return (double)throttle_val / 1000000.0;
 }
-
-/**
- * @}
- */
 
 /**
  * @}

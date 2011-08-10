@@ -220,13 +220,7 @@ _ecore_glib_shutdown(void)
 }
 
 /**
- * @addtogroup Ecore_Group Ecore - Main Loop and Job Functions.
- *
- * @{
- */
-
-/**
- * @addtogroup Ecore_Main_Loop_Group Ecore Main Loop functions
+ * @addtogroup Ecore_Main_Loop_Group
  *
  * @}
  */
@@ -317,10 +311,6 @@ ecore_main_loop_glib_always_integrate_disable(void)
 {
    _ecore_glib_always_integrate = 0;
 }
-
-/**
- * @}
- */
 
 /**
  * @}

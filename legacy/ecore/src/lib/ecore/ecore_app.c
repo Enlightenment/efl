@@ -21,13 +21,7 @@ static int app_argc = 0;
 static char **app_argv = NULL;
 
 /**
- * @addtogroup Ecore_Group Ecore - Main Loop and Job Functions.
- *
- * @{
- */
-
-/**
- * @addtogroup Ecore_Application_Group Ecore Application functions
+ * @addtogroup Ecore_Application_Group
  *
  * @{
  */
@@ -91,10 +85,6 @@ ecore_app_restart(void)
    args[i] = NULL;
    execvp(app_argv[0], args);
 }
-
-/**
- * @}
- */
 
 /**
  * @}

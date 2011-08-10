@@ -790,29 +790,7 @@ _ecore_main_loop_shutdown(void)
 }
 
 /**
- * @addtogroup Ecore_Group Ecore - Main Loop and Job Functions.
- *
- * @{
- */
-
-/**
- * @addtogroup Ecore_Main_Loop_Group Ecore Main Loop functions
- *
- * These functions control the Ecore event handling loop.  This loop is
- * designed to work on embedded systems all the way to large and
- * powerful mutli-cpu workstations.
- *
- * It serialises all system signals and events into a single event
- * queue, that can be easily processed without needing to worry about
- * concurrency.  A properly written, event-driven program using this
- * kind of programming does not need threads.  It makes the program very
- * robust and easy to follow.
- *
- * Here is an example of simple program and its basic event loop flow:
- * @image html prog_flow.png
- *
- * For examples of setting up and using a main loop, see @ref
- * Ecore_Main_Loop_Page.
+ * @addtogroup Ecore_Main_Loop_Group
  *
  * @{
  */
@@ -916,29 +894,6 @@ ecore_main_loop_select_func_get(void)
 {
    return main_loop_select;
 }
-
-/**
- * @defgroup Ecore_FD_Handler_Group File Event Handling Functions
- *
- * Functions that deal with file descriptor handlers.
- *
- * The @ref Ecore_Fd_Handler can be used to watch a file descriptor for data
- * available for reading, for the availability to write without blocking, and
- * for errors on the file descriptor.
- *
- * ecore_main_fd_handler_add() is used to setup a handler for a given file
- * descriptor. This file descriptor can be the standard input, a network socket,
- * a stream received through some driver of a hardware decoder, etc. Thus it can
- * contain errors, like a disconnection, a broken pipe, and so, and that's why
- * it's possible to check for these errors with the @ref ECORE_FD_ERROR flag.
- *
- * An @ref Ecore_Fd_Handler can be used to watch on a file descriptor without
- * blocking, still being able to receive events, expire timers, and other watch
- * for other things that happen in the Ecore main loop.
- *
- * Example of use of a file descriptor handler:
- * @li @ref ecore_fd_handler_example_c
- */
 
 /**
  * Adds a callback for activity on the given file descriptor.
@@ -1231,10 +1186,6 @@ ecore_main_fd_handler_active_set(Ecore_Fd_Handler *fd_handler, Ecore_Fd_Handler_
 unlock:
    _ecore_unlock();
 }
-
-/**
- * @}
- */
 
 /**
  * @}

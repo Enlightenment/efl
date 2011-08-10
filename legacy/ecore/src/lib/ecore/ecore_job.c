@@ -36,28 +36,7 @@ _ecore_job_shutdown(void)
 }
 
 /**
- * @addtogroup Ecore_Group Ecore - Main Loop and Job Functions.
- *
- * @{
- */
-
-/**
- * @addtogroup Ecore_Job_Group Ecore Job functions
- *
- * You can queue jobs that are to be done by the main loop when the current
- * event is dealt with.
- *
- * Jobs are processed by the main loop similarly to events. They also will be
- * executed in the order which they were added.
- *
- * A good use for them is when you don't want to execute an action immeditately,
- * but want to give the control back to the main loop so that it will call your
- * job callback when jobs start being processed (and if there are other jobs
- * added before yours, they will be processed first). This also gives the chance
- * to other actions in your program to cancel the job before it is started.
- *
- * Examples of using @ref Ecore_Job:
- * @li @ref ecore_job_example_c
+ * @addtogroup Ecore_Job_Group
  *
  * @{
  */
@@ -113,10 +92,6 @@ ecore_job_del(Ecore_Job *job)
    ecore_event_del(job->event);
    return data;
 }
-
-/**
- * @}
- */
 
 /**
  * @}
