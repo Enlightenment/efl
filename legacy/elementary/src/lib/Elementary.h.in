@@ -21332,6 +21332,9 @@ extern "C" {
     * @ingroup Flipselector
     */
    EAPI double                     elm_flipselector_interval_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+   /**
+    * @}
+    */
 
    /**
     * @addtogroup Calendar
