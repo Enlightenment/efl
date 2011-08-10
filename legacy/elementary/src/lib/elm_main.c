@@ -2828,12 +2828,15 @@ elm_scroll_thumbscroll_border_friction_all_set(double friction)
  *
  * Objects when inside a scroller can scroll, but this may not always be
  * desirable in certain situations. This allows an object to hint to itself
- * and parents to "not scroll" in one of 2 ways.
+ * and parents to "not scroll" in one of 2 ways. If any chilkd object of a
+ * scroller has pushed a scroll freeze or hold then it affects all parent
+ * scrollers until all children have released them.
  *
  * 1. To hold on scrolling. This means just flicking and dragging may no
  * longer scroll, but pressing/dragging near an edge of the scroller will
- * still scroll. This is automastically used by the entry object when
+ * still scroll. This is automatically used by the entry object when
  * selecting text.
+ * 
  * 2. To totally freeze scrolling. This means it stops. until popped/released.
  */
 
