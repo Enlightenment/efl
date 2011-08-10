@@ -1128,9 +1128,11 @@ extern "C" {
     * @param style The style name to use
     *
     * @see elm_theme_extension_add()
+    * @see elm_theme_extension_del()
     * @see elm_theme_overlay_add()
+    * @see elm_theme_overlay_del()
     *
-    * @ingroup Theme
+    * @ingroup Styles
     */
    EAPI void         elm_object_style_set(Evas_Object *obj, const char *style) EINA_ARG_NONNULL(1);
    /**
@@ -1145,7 +1147,7 @@ extern "C" {
     *
     * @see elm_object_style_set()
     *
-    * @ingroup Theme
+    * @ingroup Styles
     */
    EAPI const char  *elm_object_style_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
 
