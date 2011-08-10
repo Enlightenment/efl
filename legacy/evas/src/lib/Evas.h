@@ -766,14 +766,14 @@ struct _Evas_Event_Mouse_Down /** Mouse button press event */
 {
    int button; /**< Mouse button number that went down (1 - 32) */
 
-   Evas_Point output;
-   Evas_Coord_Point canvas;
+   Evas_Point output; /**< The X/Y location of the cursor */
+   Evas_Coord_Point canvas; /**< The X/Y location of the cursor */
 
    void          *data;
-   Evas_Modifier *modifiers;
+   Evas_Modifier *modifiers; /**< modifier keys pressed during the event */
    Evas_Lock     *locks;
 
-   Evas_Button_Flags flags;
+   Evas_Button_Flags flags; /**< button flags set during the event */
    unsigned int      timestamp;
    Evas_Event_Flags  event_flags;
    Evas_Device      *dev;
