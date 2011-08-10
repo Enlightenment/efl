@@ -43,7 +43,7 @@ _focus_next_hook(const Evas_Object *obj, Elm_Focus_Direction dir, Evas_Object **
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    Evas_Object *cur;
-   
+
    if ((!wd) || (!wd->content)) return EINA_FALSE;
    cur = wd->content;
    return elm_widget_focus_next_get(cur, dir, next);
@@ -54,7 +54,7 @@ _sizing_eval(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    Evas_Coord minw = -1, minh = -1, maxw = -1, maxh = -1;
-   
+
    if (!wd) return;
    if (!wd->content) return;
    evas_object_size_hint_min_get(wd->content, &minw, &minh);
@@ -69,9 +69,9 @@ _eval(Evas_Object *obj)
    Evas_Coord x, y, w, h, cvx, cvy, cvw, cvh;
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
-   
+
    evas_object_geometry_get(obj, &x, &y, &w, &h);
-   evas_output_viewport_get(evas_object_evas_get(obj), 
+   evas_output_viewport_get(evas_object_evas_get(obj),
                             &cvx, &cvy, &cvw, &cvh);
    // this is a hack to get things sane for now.
    if ((w < 10) || (h < 10) || (cvw < 1) || (cvh < 1)) return;
@@ -118,10 +118,10 @@ _move(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj, void *event_i
    wd->eval = EINA_TRUE;
    evas_object_smart_changed(obj);
 }
-               
+
 static void
 _resize(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
-{              
+{
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
    wd->eval = EINA_TRUE;
@@ -144,10 +144,10 @@ _child_del(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __
    Widget_Data *wd = elm_widget_data_get(fobj);
    if (!wd) return;
    if (wd->content != obj) return;
-   evas_object_event_callback_del_full(wd->content, 
+   evas_object_event_callback_del_full(wd->content,
                                        EVAS_CALLBACK_CHANGED_SIZE_HINTS,
                                        _child_change, obj);
-   evas_object_event_callback_del_full(wd->content, 
+   evas_object_event_callback_del_full(wd->content,
                                        EVAS_CALLBACK_DEL,
                                        _child_del, obj);
    wd->content = NULL;
@@ -175,7 +175,7 @@ elm_factory_add(Evas_Object *parent)
    evas_object_event_callback_add(obj, EVAS_CALLBACK_RESIZE, _resize, NULL);
 
    evas_object_smart_callbacks_descriptions_set(obj, _signals);
-   
+
    wd->obj = obj;
    return obj;
 }

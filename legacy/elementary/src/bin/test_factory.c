@@ -21,7 +21,7 @@ fac_realize_end(void *data, Evas_Object *obj, void *event_info __UNUSED__)
    Evas_Object *win = data;
    Evas_Object *bx, *bt;
    int i;
-   
+
    printf("ADD for factory 4 %p [%i]\n", obj, (BLOK * (int)evas_object_data_get(obj, "num")));
    bx = elm_box_add(win);
    elm_box_homogeneous_set(bx, EINA_TRUE);
@@ -29,10 +29,10 @@ fac_realize_end(void *data, Evas_Object *obj, void *event_info __UNUSED__)
    for (i = 0; i < BLOK; i++)
      {
         char buf[32];
-        
-        snprintf(buf, sizeof(buf), "%i", 
+
+        snprintf(buf, sizeof(buf), "%i",
                  (i + (BLOK * (int)evas_object_data_get(obj, "num"))));
-        
+
         bt = elm_button_add(win);
         evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
         evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
@@ -40,7 +40,7 @@ fac_realize_end(void *data, Evas_Object *obj, void *event_info __UNUSED__)
         elm_box_pack_end(bx, bt);
         evas_object_show(bt);
      }
-   
+
    elm_factory_content_set(obj, bx);
    evas_object_show(bx);
 }
@@ -51,7 +51,7 @@ fac_realize3(void *data, Evas_Object *obj, void *event_info __UNUSED__)
    Evas_Object *win = data;
    Evas_Object *bx, *fc;
    int i;
-   
+
    printf("ADD for factory 3 %p [%i]\n", obj, (BLOK * (int)evas_object_data_get(obj, "num")));
    bx = elm_box_add(win);
    elm_box_homogeneous_set(bx, EINA_TRUE);
@@ -83,11 +83,11 @@ fac_realize2(void *data, Evas_Object *obj, void *event_info __UNUSED__)
    Evas_Object *win = data;
    Evas_Object *bx, *fc;
    int i;
-   
+
    printf("ADD for factory 2 %p [%i]\n", obj, (BLOK * (int)evas_object_data_get(obj, "num")));
    bx = elm_box_add(win);
    elm_box_homogeneous_set(bx, EINA_TRUE);
-   
+
    for (i = 0; i < BLOK; i++)
      {
         fc = elm_factory_add(win);
@@ -115,7 +115,7 @@ fac_realize1(void *data, Evas_Object *obj, void *event_info __UNUSED__)
    Evas_Object *win = data;
    Evas_Object *bx, *fc;
    int i;
-   
+
    printf("ADD for factory 1 %p [%i]\n", obj, (BLOK * (int)evas_object_data_get(obj, "num")));
    bx = elm_box_add(win);
    elm_box_homogeneous_set(bx, EINA_TRUE);
@@ -186,7 +186,7 @@ test_factory(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_inf
    evas_object_show(bx);
 
    evas_object_show(sc);
-   
+
    evas_object_resize(win, 320, 480);
    evas_object_show(win);
 }

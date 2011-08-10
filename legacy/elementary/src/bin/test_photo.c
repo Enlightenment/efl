@@ -63,10 +63,11 @@ test_photo(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
              evas_object_smart_callback_add(ph, "drag,stop",
                                             drag_stop_cb, NULL);
 
-             if((n == 2) || (n == 3)) {
+             if ((n == 2) || (n == 3))
+               {
                   elm_photo_fill_inside_set(ph, EINA_TRUE);
                   elm_object_style_set(ph, "shadow");
-             }
+               }
              elm_table_pack(tb, ph, i, j, 1, 1);
              evas_object_show(ph);
           }
@@ -86,17 +87,20 @@ test_photo(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
 
 /* Never called, elm_photo never call "drop" smart cb */
 static void
-drop_cb(void *mydata __UNUSED__, Evas_Object *obj, void *evdata __UNUSED__){
-     printf("Drop on obj %p\n", obj);
+drop_cb(void *mydata __UNUSED__, Evas_Object *obj, void *evdata __UNUSED__)
+{
+   printf("Drop on obj %p\n", obj);
 }
 
 static void
-drag_start_cb(void *mydata __UNUSED__, Evas_Object *obj __UNUSED__, void *evdata __UNUSED__){
+drag_start_cb(void *mydata __UNUSED__, Evas_Object *obj __UNUSED__, void *evdata __UNUSED__)
+{
 
 }
 
 static void
-drag_stop_cb(void *mydata __UNUSED__, Evas_Object *obj __UNUSED__, void *evdata __UNUSED__){
+drag_stop_cb(void *mydata __UNUSED__, Evas_Object *obj __UNUSED__, void *evdata __UNUSED__)
+{
 
 }
 
