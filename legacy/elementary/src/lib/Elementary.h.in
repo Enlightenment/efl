@@ -1079,7 +1079,7 @@ extern "C" {
    EAPI void         elm_edje_collection_cache_all_set(int size);
 
    /**
-    * @defgroup Scaling Selective Widget Scaling
+    * @defgroup Scaling Widget Scaling
     *
     * Different widgets can be scaled independently. These functions
     * allow you to manipulate this scaling on a per-widget basis. The
