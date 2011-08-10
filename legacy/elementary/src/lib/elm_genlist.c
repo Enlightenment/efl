@@ -1657,6 +1657,13 @@ _item_cache_free(Item_Cache *itc)
    free(itc);
 }
 
+static const char *
+_item_label_hook(Elm_Genlist_Item *it, const char *part)
+{
+   if (!it->itc->func.label_get) return NULL;
+   return edje_object_part_text_get(it->base.view, part);
+}
+
 static void
 _item_label_realize(Elm_Genlist_Item *it,
                     Evas_Object *target,
@@ -3054,6 +3061,7 @@ _item_new(Widget_Data                  *wd,
    it->func.data = func_data;
    it->mouse_cursor = NULL;
    it->expanded_depth = 0;
+   elm_widget_item_text_get_hook_set(it, _item_label_hook);
 
    if (it->parent)
      {

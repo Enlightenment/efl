@@ -1254,6 +1254,13 @@ _item_place(Elm_Gengrid_Item *item,
      }
 }
 
+static const char *
+_item_label_hook(Elm_Gengrid_Item *it, const char *part)
+{
+   if (!it->gic->func.label_get) return NULL;
+   return edje_object_part_text_get(it->base.view, part);
+}
+
 static Elm_Gengrid_Item *
 _item_create(Widget_Data                  *wd,
              const Elm_Gengrid_Item_Class *gic,
@@ -1272,6 +1279,7 @@ _item_create(Widget_Data                  *wd,
    item->func.func = func;
    item->func.data = func_data;
    item->mouse_cursor = NULL;
+   elm_widget_item_text_get_hook_set(item, _item_label_hook);
    return item;
 }
 
