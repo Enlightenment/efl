@@ -4782,15 +4782,6 @@ elm_genlist_mode_item_get(const Evas_Object *obj)
    return wd->mode_item;
 }
 
-/**
- * Set reorder mode
- *
- * @param obj The genlist object
- * @param reorder_mode The reorder mode
- * (EINA_TRUE = on, EINA_FALSE = off)
- *
- * @ingroup Genlist
- */
 EAPI void
 elm_genlist_reorder_mode_set(Evas_Object *obj,
                              Eina_Bool    reorder_mode)
@@ -4801,15 +4792,6 @@ elm_genlist_reorder_mode_set(Evas_Object *obj,
    wd->reorder_mode = reorder_mode;
 }
 
-/**
- * Get the reorder mode
- *
- * @param obj The genlist object
- * @return The reorder mode
- * (EINA_TRUE = on, EINA_FALSE = off)
- *
- * @ingroup Genlist
- */
 EAPI Eina_Bool
 elm_genlist_reorder_mode_get(const Evas_Object *obj)
 {

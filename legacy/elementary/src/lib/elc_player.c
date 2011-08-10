@@ -5,25 +5,6 @@
 # include <Emotion.h>
 #endif
 
-/**
- * @defgroup Video Video
- *
- * This object display an player that let you control an Elm_Video object. It take care of updating
- * it's content according to what is going on inside the Emotion object. It does activate the remember
- * function on the linked Elm_Video object.
- *
- * Signals that you cann add callback for are :
- *
- * "forward,clicked" - the user clicked the forward button.
- * "info,clicked" - the user clicked the info button.
- * "next,clicked" - the user clicked the next button.
- * "pause,clicked" - the user clicked the pause button.
- * "play,clicked" - the user clicked the play button.
- * "prev,clicked" - the user clicked the prev button.
- * "rewind,clicked" - the user clicked the rewind button.
- * "stop,clicked" - the user clicked the stop button.
- */
-
 typedef struct _Widget_Data Widget_Data;
 struct _Widget_Data
 {

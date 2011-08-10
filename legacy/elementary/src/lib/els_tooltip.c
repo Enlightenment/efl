@@ -1,14 +1,6 @@
 #include <Elementary.h>
 #include "elm_priv.h"
 
-/**
- * @defgroup Tooltips Tooltips
- *
- * The Tooltip is an (internal, for now) smart object used to show a
- * content in a frame on mouse hover of objects(or widgets), with
- * tips/information about them.
- */
-
 static const char _tooltip_key[] = "_elm_tooltip";
 
 #define ELM_TOOLTIP_GET_OR_RETURN(tt, obj, ...)         \

@@ -812,18 +812,6 @@ elm_layout_sizing_eval(Evas_Object *obj)
    _request_sizing_eval(wd);
 }
 
-/**
- * Sets a specific cursor for an edje part.
- *
- * @param obj The layout object.
- * @param part_name a part from loaded edje group.
- * @param cursor cursor name to use, see Elementary_Cursor.h
- *
- * @return EINA_TRUE on success or EINA_FALSE on failure, that may be
- *         part not exists or it has "mouse_events: 0".
- *
- * @ingroup Layout
- */
 EAPI Eina_Bool
 elm_layout_part_cursor_set(Evas_Object *obj, const char *part_name, const char *cursor)
 {
@@ -867,15 +855,6 @@ elm_layout_part_cursor_set(Evas_Object *obj, const char *part_name, const char *
    return EINA_TRUE;
 }
 
-/**
- * Get the cursor to be shown when mouse is over an edje part
- *
- * @param obj The layout object.
- * @param part_name a part from loaded edje group.
- * @return the cursor name.
- *
- * @ingroup Layout
- */
 EAPI const char *
 elm_layout_part_cursor_get(const Evas_Object *obj, const char *part_name)
 {
@@ -889,15 +868,6 @@ elm_layout_part_cursor_get(const Evas_Object *obj, const char *part_name)
    return elm_object_cursor_get(pc->obj);
 }
 
-/**
- * Unsets a cursor previously set with elm_layout_part_cursor_set().
- *
- * @param obj The layout object.
- * @param part_name a part from loaded edje group, that had a cursor set
- *        with elm_layout_part_cursor_set().
- *
- * @ingroup Layout
- */
 EAPI void
 elm_layout_part_cursor_unset(Evas_Object *obj, const char *part_name)
 {
@@ -920,18 +890,6 @@ elm_layout_part_cursor_unset(Evas_Object *obj, const char *part_name)
      }
 }
 
-/**
- * Sets a specific cursor style for an edje part.
- *
- * @param obj The layout object.
- * @param part_name a part from loaded edje group.
- * @param style the theme style to use (default, transparent, ...)
- *
- * @return EINA_TRUE on success or EINA_FALSE on failure, that may be
- *         part not exists or it did not had a cursor set.
- *
- * @ingroup Layout
- */
 EAPI Eina_Bool
 elm_layout_part_cursor_style_set(Evas_Object *obj, const char *part_name, const char *style)
 {
@@ -948,17 +906,6 @@ elm_layout_part_cursor_style_set(Evas_Object *obj, const char *part_name, const 
    return EINA_TRUE;
 }
 
-/**
- * Gets a specific cursor style for an edje part.
- *
- * @param obj The layout object.
- * @param part_name a part from loaded edje group.
- *
- * @return the theme style in use, defaults to "default". If the
- *         object does not have a cursor set, then NULL is returned.
- *
- * @ingroup Layout
- */
 EAPI const char *
 elm_layout_part_cursor_style_get(const Evas_Object *obj, const char *part_name)
 {
@@ -972,24 +919,6 @@ elm_layout_part_cursor_style_get(const Evas_Object *obj, const char *part_name)
    return elm_object_cursor_style_get(pc->obj);
 }
 
-/**
- * Sets if the cursor set should be searched on the theme or should use
- * the provided by the engine, only.
- *
- * @note before you set if should look on theme you should define a
- * cursor with elm_layout_part_cursor_set(). By default it will only
- * look for cursors provided by the engine.
- *
- * @param obj The layout object.
- * @param part_name a part from loaded edje group.
- * @param engine_only if cursors should be just provided by the engine
- *        or should also search on widget's theme as well
- *
- * @return EINA_TRUE on success or EINA_FALSE on failure, that may be
- *         part not exists or it did not had a cursor set.
- *
- * @ingroup Layout
- */
 EAPI Eina_Bool
 elm_layout_part_cursor_engine_only_set(Evas_Object *obj, const char *part_name, Eina_Bool engine_only)
 {
@@ -1006,16 +935,6 @@ elm_layout_part_cursor_engine_only_set(Evas_Object *obj, const char *part_name, 
    return EINA_TRUE;
 }
 
-/**
- * Gets a specific cursor engine_only for an edje part.
- *
- * @param obj The layout object.
- * @param part_name a part from loaded edje group.
- *
- * @return whenever the cursor is just provided by engine or also from theme.
- *
- * @ingroup Layout
- */
 EAPI Eina_Bool
 elm_layout_part_cursor_engine_only_get(const Evas_Object *obj, const char *part_name)
 {

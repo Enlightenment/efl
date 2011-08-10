@@ -5,15 +5,6 @@
 # include <Emotion.h>
 #endif
 
-/**
- * @defgroup Video Video
- *
- * This object take care of setting up an Emotion object to display it's content with the right
- * aspect ratio. If build with eio, it also remember the last position that was played and start
- * playing from this position. It expose the basic property of an Emotion and let the more complex
- * accessible by retrieving the Emotion object. It also needed to link it with a Elementary @ref player.
- */
-
 /* TODO: add buffering support to Emotion and display buffering progression in the theme when needed */
 
 typedef struct _Widget_Data Widget_Data;

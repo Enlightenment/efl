@@ -1640,24 +1640,12 @@ _env_get(void)
    if (s) _elm_config->desktop_entry = !!atoi(s);
 }
 
-/**
- * Get the system mirrored mode. This determines the default mirrored mode
- * of widgets.
- *
- * @return EINA_TRUE if mirrored is set, EINA_FALSE otherwise
- */
 EAPI Eina_Bool
 elm_mirrored_get(void)
 {
    return _elm_config->is_mirrored;
 }
 
-/**
- * Set the system mirrored mode. This determines the default mirrored mode
- * of widgets.
- *
- * @param mirrored EINA_TRUE to set mirrored mode, EINA_FALSE to unset it.
- */
 EAPI void
 elm_mirrored_set(Eina_Bool mirrored)
 {

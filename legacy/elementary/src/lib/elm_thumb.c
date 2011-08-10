@@ -560,12 +560,6 @@ _elm_thumb_dropcb(void *data __UNUSED__, Evas_Object *o, Elm_Selection_Data *dro
    return EINA_TRUE;
 }
 
-/**
- * This must be called before any other function that handle with
- * elm_thumb objects or ethumb_client instances.
- *
- * @ingroup Thumb
- */
 EAPI Eina_Bool
 elm_need_ethumb(void)
 {

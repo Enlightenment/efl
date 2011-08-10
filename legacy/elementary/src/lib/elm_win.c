@@ -2572,15 +2572,6 @@ _elm_ee_win_get(const Evas_Object *obj)
    return 0;
 }
 
-/**
- * Get the Ecore_X_Window of an Evas_Object
- *
- * @param obj The object
- *
- * @return The Ecore_X_Window of @p obj
- *
- * @ingroup Win
- */
 EAPI Ecore_X_Window
 elm_win_xwindow_get(const Evas_Object *obj)
 {
