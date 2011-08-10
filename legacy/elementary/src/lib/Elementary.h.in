@@ -5972,7 +5972,7 @@ extern "C" {
     * of the existing text parts in the Edje group implementing the
     * item's theme. This function @b must return a strdup'()ed string,
     * as the caller will free() it when done. See
-    * #GridItemLabelGetFunc.
+    * #Elm_Gengrid_Item_Label_Get_Cb.
     * - @c func.icon_get - This function is called when an item object
     * is actually created. The @c data parameter will point to the
     * same data passed to elm_gengrid_item_append() and related item
@@ -5982,7 +5982,7 @@ extern "C" {
     * item's theme. It must return @c NULL, when no icon is desired,
     * or a valid object handle, otherwise. The object will be deleted
     * by the gengrid on its deletion or when the item is "unrealized".
-    * See #GridItemIconGetFunc.
+    * See #Elm_Gengrid_Item_Icon_Get_Cb.
     * - @c func.state_get - This function is called when an item
     * object is actually created. The @c data parameter will point to
     * the same data passed to elm_gengrid_item_append() and related
@@ -5994,12 +5994,12 @@ extern "C" {
     * with @c "elm,state,XXX,active" and @c "elm" as "emission" and
     * "source" arguments, respectively, when the state is true (the
     * default is false), where @c XXX is the name of the (state) part.
-    * See #GridItemStateGetFunc.
+    * See #Elm_Gengrid_Item_State_Get_Cb.
     * - @c func.del - This is called when elm_gengrid_item_del() is
     * called on an item or elm_gengrid_clear() is called on the
     * gengrid. This is intended for use when gengrid items are
     * deleted, so any data attached to the item (e.g. its data
-    * parameter on creation) can be deleted. See #GridItemDelFunc.
+    * parameter on creation) can be deleted. See #Elm_Gengrid_Item_Del_Cb.
     *
     * @section Gengrid_Usage_Hints Usage hints
     *
@@ -6097,10 +6097,15 @@ extern "C" {
    typedef struct _Elm_Gengrid_Item_Class Elm_Gengrid_Item_Class; /**< Gengrid item class definition structs */
    typedef struct _Elm_Gengrid_Item_Class_Func Elm_Gengrid_Item_Class_Func; /**< Class functions for gengrid item classes. */
    typedef struct _Elm_Gengrid_Item Elm_Gengrid_Item; /**< Gengrid item handles */
-   typedef char        *(*GridItemLabelGetFunc) (void *data, Evas_Object *obj, const char *part); /**< Label fetching class function for gengrid item classes. */
-   typedef Evas_Object *(*GridItemIconGetFunc)  (void *data, Evas_Object *obj, const char *part); /**< Icon fetching class function for gengrid item classes. */
-   typedef Eina_Bool    (*GridItemStateGetFunc) (void *data, Evas_Object *obj, const char *part); /**< State fetching class function for gengrid item classes. */
-   typedef void         (*GridItemDelFunc)      (void *data, Evas_Object *obj); /**< Deletion class function for gengrid item classes. */
+   typedef char        *(*Elm_Gengrid_Item_Label_Get_Cb) (void *data, Evas_Object *obj, const char *part); /**< Label fetching class function for gengrid item classes. */
+   typedef Evas_Object *(*Elm_Gengrid_Item_Icon_Get_Cb)  (void *data, Evas_Object *obj, const char *part); /**< Icon fetching class function for gengrid item classes. */
+   typedef Eina_Bool    (*Elm_Gengrid_Item_State_Get_Cb) (void *data, Evas_Object *obj, const char *part); /**< State fetching class function for gengrid item classes. */
+   typedef void         (*Elm_Gengrid_Item_Del_Cb)      (void *data, Evas_Object *obj); /**< Deletion class function for gengrid item classes. */
+
+   typedef char        *(*GridItemLabelGetFunc) (void *data, Evas_Object *obj, const char *part); /** DEPRECATED. Use Elm_Gengrid_Item_Label_Get_Cb. */
+   typedef Evas_Object *(*GridItemIconGetFunc)  (void *data, Evas_Object *obj, const char *part); /** DEPRECATED. Use Elm_Gengrid_Item_Icon_Get_Cb. */
+   typedef Eina_Bool    (*GridItemStateGetFunc) (void *data, Evas_Object *obj, const char *part); /** DEPRECATED. Use Elm_Gengrid_Item_State_Get_Cb. */
+   typedef void         (*GridItemDelFunc)      (void *data, Evas_Object *obj); /** DEPRECATED. Use Elm_Gengrid_Item_Del_Cb. */
 
    /**
     * @struct _Elm_Gengrid_Item_Class
@@ -6113,10 +6118,10 @@ extern "C" {
         const char             *item_style;
         struct _Elm_Gengrid_Item_Class_Func
           {
-             GridItemLabelGetFunc  label_get;
-             GridItemIconGetFunc   icon_get;
-             GridItemStateGetFunc  state_get;
-             GridItemDelFunc       del;
+             Elm_Gengrid_Item_Label_Get_Cb label_get;
+             Elm_Gengrid_Item_Icon_Get_Cb  icon_get;
+             Elm_Gengrid_Item_State_Get_Cb state_get;
+             Elm_Gengrid_Item_Del_Cb       del;
           } func;
      }; /**< #Elm_Gengrid_Item_Class member definitions */
 
@@ -14419,23 +14424,23 @@ extern "C" {
     * - @c label_get - The @c part parameter is the name string of one of the
     *   existing text parts in the Edje group implementing the item's theme.
     *   This function @b must return a strdup'()ed string, as the caller will
-    *   free() it when done. See #GenlistItemLabelGetFunc.
+    *   free() it when done. See #Elm_Genlist_Item_Label_Get_Cb.
     * - @c icon_get - The @c part parameter is the name string of one of the
     *   existing (icon) swallow parts in the Edje group implementing the item's
     *   theme. It must return @c NULL, when no icon is desired, or a valid
     *   object handle, otherwise.  The object will be deleted by the genlist on
     *   its deletion or when the item is "unrealized".  See
-    *   #GenlistItemIconGetFunc.
+    *   #Elm_Genlist_Item_Icon_Get_Cb.
     * - @c func.state_get - The @c part parameter is the name string of one of
     *   the state parts in the Edje group implementing the item's theme. Return
     *   @c EINA_FALSE for false/off or @c EINA_TRUE for true/on. Genlists will
     *   emit a signal to its theming Edje object with @c "elm,state,XXX,active"
     *   and @c "elm" as "emission" and "source" arguments, respectively, when
     *   the state is true (the default is false), where @c XXX is the name of
-    *   the (state) part.  See #GenlistItemStateGetFunc.
+    *   the (state) part.  See #Elm_Genlist_Item_State_Get_Cb.
     * - @c func.del - This is intended for use when genlist items are deleted,
     *   so any data attached to the item (e.g. its data parameter on creation)
-    *   can be deleted. See #GenlistItemDelFunc.
+    *   can be deleted. See #Elm_Genlist_Item_Del_Cb.
     *
     * available item styles:
     * - default
@@ -14710,11 +14715,16 @@ extern "C" {
    typedef struct _Elm_Genlist_Item_Class Elm_Genlist_Item_Class;  /**< Genlist item class definition structs */
    typedef struct _Elm_Genlist_Item       Elm_Genlist_Item; /**< Item of Elm_Genlist. Sub-type of Elm_Widget_Item */
    typedef struct _Elm_Genlist_Item_Class_Func Elm_Genlist_Item_Class_Func; /**< Class functions for genlist item class */
-   typedef char        *(*GenlistItemLabelGetFunc) (void *data, Evas_Object *obj, const char *part); /**< Label fetching class function for genlist item classes. */
-   typedef Evas_Object *(*GenlistItemIconGetFunc)  (void *data, Evas_Object *obj, const char *part); /**< Icon fetching class function for genlist item classes. */
-   typedef Eina_Bool    (*GenlistItemStateGetFunc) (void *data, Evas_Object *obj, const char *part); /**< State fetching class function for genlist item classes. */
-   typedef void         (*GenlistItemDelFunc)      (void *data, Evas_Object *obj); /**< Deletion class function for genlist item classes. */
-   typedef void         (*GenlistItemMovedFunc)    (Evas_Object *obj, Elm_Genlist_Item *item, Elm_Genlist_Item *rel_item, Eina_Bool move_after);
+   typedef char        *(*Elm_Genlist_Item_Label_Get_Cb) (void *data, Evas_Object *obj, const char *part); /**< Label fetching class function for genlist item classes. */
+   typedef Evas_Object *(*Elm_Genlist_Item_Icon_Get_Cb)  (void *data, Evas_Object *obj, const char *part); /**< Icon fetching class function for genlist item classes. */
+   typedef Eina_Bool    (*Elm_Genlist_Item_State_Get_Cb) (void *data, Evas_Object *obj, const char *part); /**< State fetching class function for genlist item classes. */
+   typedef void         (*Elm_Genlist_Item_Del_Cb)      (void *data, Evas_Object *obj); /**< Deletion class function for genlist item classes. */
+   typedef void         (*GenlistItemMovedFunc)    (Evas_Object *obj, Elm_Genlist_Item *item, Elm_Genlist_Item *rel_item, Eina_Bool move_after); /** TODO: remove this by SeoZ **/
+
+   typedef char        *(*GenlistItemLabelGetFunc) (void *data, Evas_Object *obj, const char *part); /** DEPRECATED. Use Elm_Genlist_Item_Label_Get_Cb instead. */
+   typedef Evas_Object *(*GenlistItemIconGetFunc)  (void *data, Evas_Object *obj, const char *part); /** DEPRECATED. Use Elm_Genlist_Item_Icon_Get_Cb instead. */
+   typedef Eina_Bool    (*GenlistItemStateGetFunc) (void *data, Evas_Object *obj, const char *part); /** DEPRECATED. Use Elm_Genlist_Item_State_Get_Cb instead. */
+   typedef void         (*GenlistItemDelFunc)      (void *data, Evas_Object *obj); /** DEPRECATED. Use Elm_Genlist_Item_Del_Cb instead. */
 
    /**
     * @struct _Elm_Genlist_Item_Class
@@ -14731,10 +14741,10 @@ extern "C" {
         const char                *item_style; /**< style of this class. */
         struct
           {
-             GenlistItemLabelGetFunc  label_get; /**< Label fetching class function for genlist item classes.*/
-             GenlistItemIconGetFunc   icon_get; /**< Icon fetching class function for genlist item classes. */
-             GenlistItemStateGetFunc  state_get; /**< State fetching class function for genlist item classes. */
-             GenlistItemDelFunc       del; /**< Deletion class function for genlist item classes. */
+             Elm_Genlist_Item_Label_Get_Cb  label_get; /**< Label fetching class function for genlist item classes.*/
+             Elm_Genlist_Item_Icon_Get_Cb   icon_get; /**< Icon fetching class function for genlist item classes. */
+             Elm_Genlist_Item_State_Get_Cb  state_get; /**< State fetching class function for genlist item classes. */
+             Elm_Genlist_Item_Del_Cb        del; /**< Deletion class function for genlist item classes. */
              GenlistItemMovedFunc     moved; // TODO: do not use this. change this to smart callback.
           } func;
         const char                *mode_item_style;
