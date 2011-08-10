@@ -65,7 +65,7 @@ eina_hamster_count(void)
         if (fields == 3)
           {
              _eina_hamsters = (hrs * 60) + min;
-             fields = sscanf(_eina_hamster_date, "%s %i %i", mon, &day, &year);
+             fields = sscanf(_eina_hamster_date, "%s %d %d", mon, &day, &year);
              if (fields == 3)
                {
                   int i;
