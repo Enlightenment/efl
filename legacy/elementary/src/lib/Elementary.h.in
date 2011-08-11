@@ -2678,7 +2678,7 @@ extern "C" {
     *
     * Objects when inside a scroller can scroll, but this may not always be
     * desirable in certain situations. This allows an object to hint to itself
-    * and parents to "not scroll" in one of 2 ways. If any chilkd object of a
+    * and parents to "not scroll" in one of 2 ways. If any child object of a
     * scroller has pushed a scroll freeze or hold then it affects all parent
     * scrollers until all children have released them.
     *
