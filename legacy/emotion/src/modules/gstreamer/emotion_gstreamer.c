@@ -19,8 +19,6 @@ static unsigned char  em_init                     (Evas_Object     *obj,
                                                    void           **emotion_video,
                                                    Emotion_Module_Options *opt);
 
-static int            em_shutdown                 (void           *video);
-
 static unsigned char  em_file_open                (const char     *file,
                                                    Evas_Object     *obj,
                                                    void            *video);
@@ -334,6 +332,7 @@ em_init(Evas_Object            *obj,
    ev->vis = EMOTION_VIS_NONE;
    ev->volume = 0.8;
    ev->play_started = 0;
+   ev->delete_me = EINA_FALSE;
 
    *emotion_video = ev;
 
@@ -345,7 +344,7 @@ failure:
    return 0;
 }
 
-static int
+int
 em_shutdown(void *video)
 {
    Emotion_Gstreamer_Video *ev;
@@ -360,6 +359,12 @@ em_shutdown(void *video)
      {
         ecore_thread_cancel(ev->thread);
         ev->thread = NULL;
+     }
+
+   if (ev->in != ev->out)
+     {
+        ev->delete_me = EINA_TRUE;
+        return 1;
      }
 
    if (ev->eos_bus)
@@ -1403,7 +1408,7 @@ _eos_main_fct(void *data)
    ev = send->ev;
    msg = send->msg;
 
-   if (ev->play_started)
+   if (ev->play_started && !ev->delete_me)
      {
         _emotion_playback_started(ev->obj);
         ev->play_started = 0;
@@ -1425,25 +1430,29 @@ _eos_main_fct(void *data)
            break;
         }
       case GST_MESSAGE_EOS:
-         ev->play = 0;
-         _emotion_decode_stop(ev->obj);
-         _emotion_playback_finished(ev->obj);
+         if (!ev->delete_me)
+           {
+              ev->play = 0;
+              _emotion_decode_stop(ev->obj);
+              _emotion_playback_finished(ev->obj);
+           }
          break;
       case GST_MESSAGE_TAG:
-        {
-           GstTagList *new_tags;
-           gst_message_parse_tag(msg, &new_tags);
-           if (new_tags)
-             {
-                gst_tag_list_foreach(new_tags,
-                                     (GstTagForeachFunc)_for_each_tag,
-                                     ev);
-                gst_tag_list_free(new_tags);
-             }
-           break;
-        }
+         if (!ev->delete_me)
+           {
+              GstTagList *new_tags;
+              gst_message_parse_tag(msg, &new_tags);
+              if (new_tags)
+                {
+                   gst_tag_list_foreach(new_tags,
+                                        (GstTagForeachFunc)_for_each_tag,
+                                        ev);
+                   gst_tag_list_free(new_tags);
+                }
+           }
+         break;
       case GST_MESSAGE_ASYNC_DONE:
-         _emotion_seek_done(ev->obj);
+         if (!ev->delete_me) _emotion_seek_done(ev->obj);
          break;
       default:
          ERR("bus say: %s [%i]",
