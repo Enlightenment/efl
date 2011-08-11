@@ -177,8 +177,12 @@ ecore_init(void)
 EAPI int
 ecore_shutdown(void)
 {
+   /*
+    * take a lock here because _ecore_event_shutdown() does callbacks
+    */
+   _ecore_lock();
    if (--_ecore_init_count != 0)
-     return _ecore_init_count;
+     goto unlock;
 
    ecore_pipe_del(_thread_call);
    eina_lock_free(&_thread_safety);
@@ -217,6 +221,8 @@ ecore_shutdown(void)
 #ifdef HAVE_EVIL
    evil_shutdown();
 #endif
+unlock:
+   _ecore_unlock();
 
    return _ecore_init_count;
 }
