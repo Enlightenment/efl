@@ -938,7 +938,7 @@ ecore_main_fd_handler_add(int fd, Ecore_Fd_Handler_Flags flags, Ecore_Fd_Cb func
    if ((fd < 0) || (flags == 0) || (!func)) goto unlock;
 
    fdh = calloc(1, sizeof(Ecore_Fd_Handler));
-   if (!fdh) return NULL;
+   if (!fdh) goto unlock;
    ECORE_MAGIC_SET(fdh, ECORE_MAGIC_FD_HANDLER);
    fdh->next_ready = NULL;
    fdh->fd = fd;
