@@ -176,7 +176,7 @@ make maintainer-clean
  * There is a more advanced way of making use of the quicklaunch infrastructure
  * in Elementary (which will not be covered here due to its more advanced
  * nature).
- * 
+ *
  * Now let's actually create an interactive "Hello World" gui that you can
  * click the ok button to exit. It's more code because this now does something
  * much more significant, but it's still very simple:
@@ -195,20 +195,20 @@ EAPI int
 elm_main(int argc, char **argv)
 {
    Evas_Object *win, *bg, *box, *lab, *btn;
-   
+
    // new window - do the usual and give it a name, title and delete handler
    win = elm_win_add(NULL, "hello", ELM_WIN_BASIC);
    elm_win_title_set(win, "Hello");
    // when the user clicks "close" on a window there is a request to delete
    evas_object_smart_callback_add(win, "delete,request", on_done, NULL);
-   
+
    // add a standard bg
    bg = elm_bg_add(win);
    // add object as a resize object for the window (controls window minimum
    // size as well as gets resized if window is resized)
    elm_win_resize_object_add(win, bg);
    evas_object_show(bg);
-   
+
    // add a box object - default is vertical. a box holds children in a row,
    // either horizontally or vertically. nothing more.
    box = elm_box_add(win);
@@ -218,7 +218,7 @@ elm_main(int argc, char **argv)
    // size as well as gets resized if window is resized)
    elm_win_resize_object_add(win, box);
    evas_object_show(box);
-   
+
    // add a label widget, set the text and put it in the pad frame
    lab = elm_label_add(win);
    // set default text of the label
@@ -226,7 +226,7 @@ elm_main(int argc, char **argv)
    // pack the label at the end of the box
    elm_box_pack_end(box, lab);
    evas_object_show(lab);
-   
+
    // add an ok button
    btn = elm_button_add(win);
    // set default text of button to "OK"
@@ -236,17 +236,17 @@ elm_main(int argc, char **argv)
    evas_object_show(btn);
    // call on_done when button is clicked
    evas_object_smart_callback_add(btn, "clicked", on_done, NULL);
-   
+
    // now we are done, show the window
    evas_object_show(win);
-   
+
    // run the mainloop and process events and callbacks
    elm_run();
    return 0;
 }
 ELM_MAIN()
 @endcode
-   * 
+   *
    */
 
 /**
@@ -1075,7 +1075,7 @@ extern "C" {
     */
 
    /**
-    * @brief Flush all caches. 
+    * @brief Flush all caches.
     *
     * Frees all data that was in cache and is not currently being used to reduce
     * memory usage. This frees Edje's, Evas' and Eet's cache. This is equivalent
@@ -26102,7 +26102,7 @@ extern "C" {
    EAPI Evas_Object *elm_factory_add(Evas_Object *parent);
    EAPI void         elm_factory_content_set(Evas_Object *obj, Evas_Object *content);
    EAPI Evas_Object *elm_factory_content_get(const Evas_Object *obj);
-   
+
    EAPI Evas_Object *elm_video_add(Evas_Object *parent);
    EAPI void elm_video_file_set(Evas_Object *video, const char *filename);
    EAPI void elm_video_uri_set(Evas_Object *video, const char *uri);
