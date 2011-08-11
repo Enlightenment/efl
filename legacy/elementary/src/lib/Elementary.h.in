@@ -574,7 +574,7 @@ extern "C" {
     */
    typedef Evas_Object *(*Elm_Tooltip_Item_Content_Cb) (void *data, Evas_Object *obj, Evas_Object *tooltip, void *item);
 
-   typedef Eina_Bool (*Elm_Event_Cb) (void *data, Evas_Object *obj, Evas_Object *src, Evas_Callback_Type type, void *event_info);
+   typedef Eina_Bool (*Elm_Event_Cb) (void *data, Evas_Object *obj, Evas_Object *src, Evas_Callback_Type type, void *event_info); /**< Function prototype definition for callbacks on input events happening on Elementary widgets. @a data will receive the user data pointer passed to elm_object_event_callback_add(). @a src will be a pointer to the widget on which the input event took place. @a type will get the type of this event and @a event_info, the struct with details on this event. */
 
 #ifndef ELM_LIB_QUICKLAUNCH
 #define ELM_MAIN() int main(int argc, char **argv) {elm_init(argc, argv); return elm_main(argc, argv);} /**< macro to be used after the elm_main() function */
@@ -2838,23 +2838,59 @@ extern "C" {
    EAPI void            *elm_object_signal_callback_del(Evas_Object *obj, const char *emission, const char *source, Edje_Signal_Cb func) EINA_ARG_NONNULL(1, 4);
 
    /**
-    * Add a callback for a event emitted by widget or their children.
+    * Add a callback for input events (key up, key down, mouse wheel)
+    * on a given Elementary widget
     *
-    * This function connects a callback function to any key_down key_up event
-    * emitted by the @p obj or their children.
-    * This only will be called if no other callback has consumed the event.
-    * If you want consume the event, and no other get it, func should return
-    * EINA_TRUE and put EVAS_EVENT_FLAG_ON_HOLD in event_flags.
+    * @param obj The widget to add an event callback on
+    * @param func The callback function to be executed when the event
+    * happens
+    * @param data Data to pass in to @p func
     *
-    * @warning Accept duplicated callback addition.
+    * Every widget in an Elementary interface set to receive focus,
+    * with elm_object_focus_allow_set(), will propagate @b all of its
+    * key up, key down and mouse wheel input events up to its parent
+    * object, and so on. All of the focusable ones in this chain which
+    * had an event callback set, with this call, will be able to treat
+    * those events. There are two ways of making the propagation of
+    * these event upwards in the tree of widgets to @b cease:
+    * - Just return @c EINA_TRUE on @p func. @c EINA_FALSE will mean
+    *   the event was @b not processed, so the propagation will go on.
+    * - The @c event_info pointer passed to @p func will contain the
+    *   event's structure and, if you OR its @c event_flags inner
+    *   value to @c EVAS_EVENT_FLAG_ON_HOLD, you're telling Elementary
+    *   one has already handled it, thus killing the event's
+    *   propagation, too.
     *
-    * @param obj The object
-    * @param func The callback function to be executed when the event is
-    * emitted.
-    * @param data Data to pass in to the callback function.
+    * @note Your event callback will be issued on those events taking
+    * place only if no other child widget of @obj has consumed the
+    * event already.
+    *
+    * @note Not to be confused with @c
+    * evas_object_event_callback_add(), which will add event callbacks
+    * per type on general Evas objects (no event propagation
+    * infrastructure taken in account).
+    *
+    * @note Not to be confused with @c
+    * elm_object_signal_callback_add(), which will add callbacks to @b
+    * signals coming from a widget's theme, not input events.
+    *
+    * @note Not to be confused with @c
+    * edje_object_signal_callback_add(), which does the same as
+    * elm_object_signal_callback_add(), but directly on an Edje
+    * object.
+    *
+    * @note Not to be confused with @c
+    * evas_object_smart_callback_add(), which adds callbacks to smart
+    * objects' <b>smart events</b>, and not input events.
+    *
+    * @see elm_object_event_callback_del()
+    *
     * @ingroup General
     */
    EAPI void             elm_object_event_callback_add(Evas_Object *obj, Elm_Event_Cb func, const void *data) EINA_ARG_NONNULL(1, 2);
+
+   /**
+
 
    /**
     * Remove a event callback from an widget.
