@@ -99,17 +99,7 @@ _do_tick(void)
      {
         if (!animator->delete_me && !animator->suspended)
           {
-             Ecore_Task_Cb func;
-             void *data;
-             Eina_Bool ret;
-
-             func = animator->func;
-             data = animator->data;
-             _ecore_unlock();
-             ret = func(data);
-             _ecore_lock();
-
-             if (!ret)
+             if (!_ecore_call_task_cb(animator->func, animator->data))
                {
                   animator->delete_me = EINA_TRUE;
                   animators_delete_me++;

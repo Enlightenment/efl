@@ -1255,15 +1255,8 @@ _ecore_main_prepare_handlers(void)
           }
         if (!fdh->delete_me && fdh->prep_func)
           {
-             Ecore_Fd_Prep_Cb prep_func;
-             void *prep_data;
-
-             prep_func = fdh->prep_func;
-             prep_data = fdh->prep_data;
              fdh->references++;
-             _ecore_unlock();
-             prep_func(prep_data, fdh);
-             _ecore_lock();
+             _ecore_call_prep_cb(fdh->prep_func, fdh->prep_data, fdh);
              fdh->references--;
           }
         else
@@ -1413,13 +1406,9 @@ _ecore_main_fd_handlers_bads_rem(void)
              ERR("Found bad fd at index %d", fdh->fd);
              if (fdh->flags & ECORE_FD_ERROR)
                {
-                  Eina_Bool ret;
                   ERR("Fd set for error! calling user");
                   fdh->references++;
-                  _ecore_unlock();
-                  ret = fdh->func(fdh->data, fdh);
-                  _ecore_lock();
-                  if (!ret)
+                  if (!_ecore_call_fd_cb(fdh->func, fdh->data, fdh))
                     {
                        ERR("Fd function err returned 0, remove it");
                        if (!fdh->delete_me)
@@ -1539,12 +1528,8 @@ _ecore_main_fd_handlers_call(void)
                  (fdh->write_active) ||
                  (fdh->error_active))
                {
-                  Eina_Bool ret;
                   fdh->references++;
-                  _ecore_unlock();
-                  ret = fdh->func(fdh->data, fdh);
-                  _ecore_lock();
-                  if (!ret)
+                  if (!_ecore_call_fd_cb(fdh->func, fdh->data, fdh))
                     {
                        if (!fdh->delete_me)
                          {
@@ -1592,27 +1577,10 @@ _ecore_main_fd_handlers_buf_call(void)
           }
         if ((!fdh->delete_me) && fdh->buf_func)
           {
-             Ecore_Fd_Cb buf_func;
-             void *buf_data;
-             Eina_Bool r;
-
-             /* copy data before releasing lock */
-             buf_func = fdh->buf_func;
-             buf_data = fdh->buf_data;
              fdh->references++;
-             _ecore_unlock();
-             r = buf_func(buf_data, fdh);
-             _ecore_lock();
-             if (r)
+             if (_ecore_call_fd_cb(fdh->buf_func, fdh->buf_data, fdh))
                {
-                  Ecore_Fd_Cb func;
-                  void *data;
-
-                  func = fdh->func;
-                  data = fdh->data;
-                  _ecore_unlock();
-                  ret |= func(data, fdh);
-                  _ecore_lock();
+                  ret |= _ecore_call_fd_cb(fdh->func, fdh->data, fdh);
                   fdh->read_active = EINA_TRUE;
                   _ecore_try_add_to_call_list(fdh);
                }

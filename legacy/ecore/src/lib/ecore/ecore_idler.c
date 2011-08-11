@@ -113,17 +113,8 @@ _ecore_idler_call(void)
         Ecore_Idler *ie = (Ecore_Idler *)idler_current;
         if (!ie->delete_me)
           {
-             Eina_Bool ret;
-             Ecore_Task_Cb func;
-             void *data;
-
-             func = ie->func;
-             data = ie->data;
              ie->references++;
-             _ecore_unlock();
-             ret = func(data);
-             _ecore_lock();
-             if (!ret)
+             if (!_ecore_call_task_cb(ie->func, ie->data))
                {
                   if (!ie->delete_me) _ecore_idler_del(ie);
                }

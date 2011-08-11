@@ -203,16 +203,98 @@ void _ecore_throttle(void);
 void _ecore_lock(void);
 void _ecore_unlock(void);
 #else
-static inline void _ecore_lock(void)
-  {
-     /* at least check we're not being called from a thread */
-     EINA_MAIN_LOOP_CHECK_RETURN;
-  }
+static inline void
+_ecore_lock(void)
+{
+   /* at least check we're not being called from a thread */
+   EINA_MAIN_LOOP_CHECK_RETURN;
+}
 
-static inline void _ecore_unlock(void)
-  {
-  }
+static inline void
+_ecore_unlock(void)
+{
+}
 #endif
+
+/*
+ * Callback wrappers all assume that ecore _ecore_lock has been called
+ */
+static inline Eina_Bool
+_ecore_call_task_cb(Ecore_Task_Cb func, void *data)
+{
+   Eina_Bool r;
+
+   _ecore_unlock();
+   r = func(data);
+   _ecore_lock();
+
+   return r;
+}
+
+static inline void *
+_ecore_call_data_cb(Ecore_Data_Cb func, void *data)
+{
+   void *r;
+
+   _ecore_unlock();
+   r = func(data);
+   _ecore_lock();
+
+   return r;
+}
+
+static inline void
+_ecore_call_end_cb(Ecore_End_Cb func, void *user_data, void *func_data)
+{
+   _ecore_unlock();
+   func(user_data, func_data);
+   _ecore_lock();
+}
+
+static inline Eina_Bool
+_ecore_call_filter_cb(Ecore_Filter_Cb func, void *data,
+                        void *loop_data, int type, void *event)
+{
+   Eina_Bool r;
+
+   _ecore_unlock();
+   r = func(data, loop_data, type, event);
+   _ecore_lock();
+
+   return r;
+}
+
+static inline Eina_Bool
+_ecore_call_handler_cb(Ecore_Event_Handler_Cb func, void *data, int type, void *event)
+{
+   Eina_Bool r;
+
+   _ecore_unlock();
+   r = func(data, type, event);
+   _ecore_lock();
+
+   return r;
+}
+
+static inline void
+_ecore_call_prep_cb(Ecore_Fd_Prep_Cb func, void *data, Ecore_Fd_Handler *fd_handler)
+{
+   _ecore_unlock();
+   func(data, fd_handler);
+   _ecore_lock();
+}
+
+static inline Eina_Bool
+_ecore_call_fd_cb(Ecore_Fd_Cb func, void *data, Ecore_Fd_Handler *fd_handler)
+{
+   Eina_Bool r;
+
+   _ecore_unlock();
+   r = func(data, fd_handler);
+   _ecore_lock();
+
+   return r;
+}
 
 extern int    _ecore_fps_debug;
 extern double _ecore_time_loop_time;

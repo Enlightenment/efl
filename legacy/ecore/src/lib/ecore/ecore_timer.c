@@ -706,9 +706,6 @@ _ecore_timer_call(double when)
    while (timer_current)
      {
         Ecore_Timer *timer = timer_current;
-        Eina_Bool cont;
-        Ecore_Task_Cb func;
-        void *data;
 
         if (timer->at > when)
           {
@@ -723,12 +720,7 @@ _ecore_timer_call(double when)
           }
 
         timer->references++;
-        func = timer->func;
-        data = timer->data;
-        _ecore_unlock();
-        cont = func(data);
-        _ecore_lock();
-        if (!cont)
+        if (!_ecore_call_task_cb(timer->func, timer->data))
           {
              if (!timer->delete_me) _ecore_timer_del(timer);
           }

@@ -516,20 +516,7 @@ _ecore_event_del(Ecore_Event *event)
    void *data;
 
    data = event->data;
-   if (event->func_free)
-     {
-        Ecore_End_Cb func_free;
-        void *ev;
-        void *data;
-
-        func_free = event->func_free;
-        ev = event->event;
-        data = event->data;
-
-        _ecore_unlock();
-        func_free(data, ev);
-        _ecore_lock();
-     }
+   if (event->func_free) _ecore_call_end_cb(event->func_free, event->data, event->event);
    events = (Ecore_Event *) eina_inlist_remove(EINA_INLIST_GET(events), EINA_INLIST_GET(event));
    ECORE_MAGIC_SET(event, ECORE_MAGIC_NONE);
    free(event);
@@ -583,18 +570,7 @@ _ecore_event_filters_apply()
              ef->references++;
 
              if (ef->func_start)
-               {
-                  Ecore_Data_Cb func_start;
-                  void *data;
-                  void *r;
-
-                  func_start = ef->func_start;
-                  data = ef->data;
-                  _ecore_unlock();
-                  r = func_start(data);
-                  _ecore_lock();
-                  ef->loop_data = r;
-               }
+               ef->loop_data = _ecore_call_data_cb(ef->func_start, ef->data);
 
              if (!event_filter_event_current)
                {
@@ -610,23 +586,9 @@ _ecore_event_filters_apply()
              while (event_filter_event_current)
                {
                   Ecore_Event *e = event_filter_event_current;
-                  Ecore_Filter_Cb func_filter;
-                  void *loop_data;
-                  void *data;
-                  int type;
-                  void *event;
-                  Eina_Bool r;
 
-                  func_filter = ef->func_filter;
-                  data = ef->data;
-                  loop_data = ef->loop_data;
-                  type = e->type;
-                  event = e->event;
-
-                  _ecore_unlock();
-                  r = func_filter(data, loop_data, type, event);
-                  _ecore_lock();
-                  if (!r)
+                  if (!_ecore_call_filter_cb(ef->func_filter, ef->data,
+                                               ef->loop_data, e->type, e->event))
                     {
                        ecore_event_del(e);
                     }
@@ -635,19 +597,7 @@ _ecore_event_filters_apply()
                     event_filter_event_current = (Ecore_Event *)EINA_INLIST_GET(event_filter_event_current)->next;
                }
              if (ef->func_end)
-               {
-                  Ecore_End_Cb func_end;
-                  void *loop_data;
-                  void *data;
-
-                  func_end = ef->func_end;
-                  data = ef->data;
-                  loop_data = ef->loop_data;
-
-                  _ecore_unlock();
-                  ef->func_end(ef->data, ef->loop_data);
-                  _ecore_lock();
-               }
+               _ecore_call_end_cb(ef->func_end, ef->data, ef->loop_data);
 
              ef->references--;
           }
@@ -727,22 +677,12 @@ _ecore_event_call(void)
                   eh = event_handler_current;
                   if (!eh->delete_me)
                     {
-                       Ecore_Event_Handler_Cb func;
-                       void *data;
-                       int type;
-                       void *event;
                        Eina_Bool ret;
 
                        handle_count++;
 
-                       func = eh->func;
-                       data = eh->data;
-                       type = e->type;
-                       event = e->event;
                        eh->references++;
-                       _ecore_unlock();
-                       ret = func(data, type, event);
-                       _ecore_lock();
+                       ret = _ecore_call_handler_cb(eh->func, eh->data, e->type, e->event);
                        eh->references--;
 
                        if (!ret)

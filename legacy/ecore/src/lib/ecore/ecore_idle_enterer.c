@@ -161,17 +161,8 @@ _ecore_idle_enterer_call(void)
         Ecore_Idle_Enterer *ie = (Ecore_Idle_Enterer *)idle_enterer_current;
         if (!ie->delete_me)
           {
-             Ecore_Task_Cb func;
-             void *data;
-             Eina_Bool ret;
-
-             func = ie->func;
-             data = ie->data;
              ie->references++;
-             _ecore_unlock();
-             ret = func(data);
-             _ecore_lock();
-             if (!ret)
+             if (!_ecore_call_task_cb(ie->func, ie->data))
                {
                   if (!ie->delete_me) _ecore_idle_enterer_del(ie);
                }
