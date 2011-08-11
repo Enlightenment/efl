@@ -92,9 +92,9 @@ evas_common_font_ascent_get(RGBA_Font *fn)
    evas_common_font_int_reload(fi);
    if (fi->src->current_size != fi->size)
      {
-	FTLOCK();
+        FTLOCK();
         FT_Activate_Size(fi->ft.size);
-	FTUNLOCK();
+        FTUNLOCK();
         fi->src->current_size = fi->size;
      }
    if (!FT_IS_SCALABLE(fi->src->ft.face))
@@ -122,9 +122,9 @@ evas_common_font_descent_get(RGBA_Font *fn)
    evas_common_font_int_reload(fi);
    if (fi->src->current_size != fi->size)
      {
-	FTLOCK();
+        FTLOCK();
         FT_Activate_Size(fi->ft.size);
-	FTUNLOCK();
+        FTUNLOCK();
         fi->src->current_size = fi->size;
      }
    val = -(int)fi->src->ft.face->size->metrics.descender;
@@ -145,12 +145,12 @@ evas_common_font_max_ascent_get(RGBA_Font *fn)
 
 //   evas_common_font_size_use(fn);
    fi = fn->fonts->data;
-   evas_common_font_int_reload(fi); 
+   evas_common_font_int_reload(fi);
   if (fi->src->current_size != fi->size)
      {
-	FTLOCK();
+        FTLOCK();
         FT_Activate_Size(fi->ft.size);
-	FTUNLOCK();
+        FTUNLOCK();
         fi->src->current_size = fi->size;
      }
    val = (int)fi->src->ft.face->bbox.yMax;
@@ -173,9 +173,9 @@ evas_common_font_max_descent_get(RGBA_Font *fn)
    evas_common_font_int_reload(fi);
    if (fi->src->current_size != fi->size)
      {
-	FTLOCK();
+        FTLOCK();
         FT_Activate_Size(fi->ft.size);
-	FTUNLOCK();
+        FTUNLOCK();
         fi->src->current_size = fi->size;
      }
    val = -(int)fi->src->ft.face->bbox.yMin;
@@ -197,9 +197,9 @@ evas_common_font_get_line_advance(RGBA_Font *fn)
    evas_common_font_int_reload(fi);
    if (fi->src->current_size != fi->size)
      {
-	FTLOCK();
+        FTLOCK();
         FT_Activate_Size(fi->ft.size);
-	FTUNLOCK();
+        FTUNLOCK();
         fi->src->current_size = fi->size;
      }
    val = (int)fi->src->ft.face->size->metrics.height;
@@ -384,10 +384,10 @@ evas_common_font_int_cache_glyph_get(RGBA_Font_Int *fi, FT_UInt idx)
    FTUNLOCK();
    if (error)
      {
-	free(fg);
+        free(fg);
         if (!fi->fash) fi->fash = _fash_gl_new();
         if (fi->fash) _fash_gl_add(fi->fash, idx, (void *)(-1));
-	return NULL;
+        return NULL;
      }
 
    FTLOCK();
@@ -486,10 +486,10 @@ evas_common_font_glyph_search(RGBA_Font *fn, RGBA_Font_Int **fi_ret, Eina_Unicod
 
    for (l = fn->fonts; l; l = l->next)
      {
-	RGBA_Font_Int *fi;
-	int idx;
+        RGBA_Font_Int *fi;
+        int idx;
 
-	fi = l->data;
+        fi = l->data;
 
 #if 0 /* FIXME: charmap user is disabled and use a deprecated data type. */
 /*        
@@ -512,27 +512,27 @@ evas_common_font_glyph_search(RGBA_Font *fn, RGBA_Font_Int **fi_ret, Eina_Unicod
 */
 #endif
         if (!fi->src->ft.face) /* Charmap not loaded, FI/FS blank */
-	  {
+          {
              evas_common_font_int_reload(fi);
-	  }
+          }
         if (fi->src->ft.face)
-	  {
-	     idx = evas_common_get_char_index(fi, gl);
-	     if (idx != 0)
-	       {
-		  if (!fi->ft.size)
-                     evas_common_font_int_load_complete(fi);
+          {
+             idx = evas_common_get_char_index(fi, gl);
+             if (idx != 0)
+               {
+                  if (!fi->ft.size)
+                    evas_common_font_int_load_complete(fi);
                   if (!fn->fash) fn->fash = _fash_int_new();
                   if (fn->fash) _fash_int_add(fn->fash, gl, fi, idx);
-		  *fi_ret = fi;
-		  return idx;
-	       }
+                  *fi_ret = fi;
+                  return idx;
+               }
              else
                {
                   if (!fn->fash) fn->fash = _fash_int_new();
                   if (fn->fash) _fash_int_add(fn->fash, gl, NULL, -1);
                }
-	  }
+          }
      }
    *fi_ret = NULL;
    return 0;
