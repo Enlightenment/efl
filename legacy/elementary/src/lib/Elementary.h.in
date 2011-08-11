@@ -4736,6 +4736,70 @@ extern "C" {
     * @ingroup Icon
     */
    EAPI Elm_Icon_Lookup_Order elm_icon_order_lookup_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+   /**
+    * Get the flag related with elm icon can support animation
+    *
+    * @param obj The icon object
+    * @return The flag of animation available
+    *
+    * Return this elm icon's image can be animated
+    * Currently Evas only support gif's animation
+    * If the return value of this function is EINA_FALSE,
+    * other elm_icon_animated_XXX functions don't work
+    * @ingroup Icon
+    */
+   EAPI Eina_Bool           elm_icon_animated_available_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+   /**
+    * Set animation mode of the icon.
+    *
+    * @param obj The icon object
+    * @param anim @c EINA_TRUE if the object do animation job,
+    * @c EINA_FALSE otherwise. Default is @c EINA_FALSE.
+    *
+    * Even though elm icon's file can be animated, 
+    * sometimes appication developer want to just first page of image.
+    * In that time, don't call this function, because default value is EINA_FALSE
+    * Only when you want icon support anition, 
+    * use this function and set animated to EINA_TURE
+    * @ingroup Icon
+    */
+   EAPI void                elm_icon_animated_set(Evas_Object *obj, Eina_Bool animated) EINA_ARG_NONNULL(1);
+   /**
+    * Get animation mode of the icon.
+    *
+    * @param obj The icon object
+    * @return The animation mode of the icon object
+    * @see elm_icon_animated_set
+    * @ingroup Icon
+    */
+   EAPI Eina_Bool           elm_icon_animated_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+   /**
+    * Set animation play mode of the icon.
+    *
+    * @param obj The icon object
+    * @param play @c EINA_TRUE the object play animation images,
+    * @c EINA_FALSE otherwise. Default is @c EINA_FALSE.
+    * 
+    * If you want to play elm icon's animation, you set play to EINA_TURE.
+    * For example, you make gif player using this set/get API and click event.
+    *
+    * 1. Click event occurs
+    * 2. Check play flag using elm_icon_animaged_play_get
+    * 3. If elm icon was playing, set play to EINA_FALSE. 
+    *    Then animation will be stopped and vice versa
+    * @ingroup Icon
+    */
+   EAPI void                elm_icon_animated_play_set(Evas_Object *obj, Eina_Bool play) EINA_ARG_NONNULL(1);
+   /**
+    * Get animation play mode of the icon.
+    *
+    * @param obj The icon object
+    * @return The play mode of the icon object
+    *
+    * @see elm_icon_animated_lay_get
+    * @ingroup Icon
+    */
+   EAPI Eina_Bool           elm_icon_animated_play_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
 
    /**
     * @}
@@ -4746,6 +4810,7 @@ extern "C" {
     *
     * @image html img/widget/image/preview-00.png
     * @image latex img/widget/image/preview-00.eps
+
     *
     * An object that allows one to load an image file to it. It can be used
     * anywhere like any other elementary widget.

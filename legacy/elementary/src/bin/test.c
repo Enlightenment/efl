@@ -96,6 +96,7 @@ void test_photocam(void *data, Evas_Object *obj, void *event_info);
 void test_photo(void *data, Evas_Object *obj, void *event_info);
 void test_thumb(void *data, Evas_Object *obj, void *event_info);
 void test_icon_desktops(void *data, Evas_Object *obj, void *event_info);
+void test_icon_animated(void *data, Evas_Object *obj, void *event_info);
 void test_notify(void *data, Evas_Object *obj, void *event_info);
 void test_slideshow(void *data, Evas_Object *obj, void *event_info);
 void test_menu(void *data, Evas_Object *obj, void *event_info);
@@ -285,6 +286,7 @@ my_win_main(char *autorun, Eina_Bool test_win_only)
    ADD_TEST("Bg Image", test_bg_image);
    ADD_TEST("Bg Options", test_bg_options);
    ADD_TEST("Icon Transparent", test_icon);
+   ADD_TEST("Icon Animation", test_icon_animated);
    ADD_TEST("Box Vert", test_box_vert);
    ADD_TEST("Box Vert 2", test_box_vert2);
    ADD_TEST("Box Horiz", test_box_horiz);

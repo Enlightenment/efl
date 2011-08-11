@@ -73,6 +73,7 @@ test_hover.c \
 test_hoversel.c \
 test_icon.c \
 test_icon_desktops.c \
+test_icon_animated.c \
 test_index.c \
 test_inwin.c \
 test_label.c \
