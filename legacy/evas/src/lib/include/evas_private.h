@@ -818,6 +818,14 @@ struct _Evas_Func
    void *(*gl_api_get)                   (void *data);
    int  (*image_load_error_get)          (void *data, void *image);
    int  (*font_run_end_get)              (void *data, Evas_Font_Set *font, Evas_Font_Instance **script_fi, Evas_Font_Instance **cur_fi, Evas_Script_Type script, const Eina_Unicode *text, int run_len);
+
+   /* animated feature */
+   Eina_Bool (*image_animated_get)       (void *data, void *image);
+   int (*image_animated_frame_count_get) (void *data, void *image);
+   Evas_Image_Animated_Loop_Hint  (*image_animated_loop_type_get) (void *data, void *image);
+   int (*image_animated_loop_count_get)  (void *data, void *image);
+   double (*image_animated_frame_duration_get) (void *data, void *image, int start_frame, int frame_num);
+   Eina_Bool (*image_animated_frame_set) (void *data, void *image, int frame_index);
 };
 
 struct _Evas_Image_Load_Func
@@ -825,6 +833,7 @@ struct _Evas_Image_Load_Func
   Eina_Bool threadable;
   Eina_Bool (*file_head) (Image_Entry *ie, const char *file, const char *key, int *error);
   Eina_Bool (*file_data) (Image_Entry *ie, const char *file, const char *key, int *error);
+  double    (*frame_duration) (Image_Entry *ie, const char *file, const int start, const int frame_num);
 };
 
 struct _Evas_Image_Save_Func

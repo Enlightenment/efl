@@ -37,6 +37,7 @@ struct _Evas_Object_Image
       Evas_Map      *defmap;
       const char    *file;
       const char    *key;
+      int            frame;
       int            cspace;
 
       unsigned char  smooth_scale : 1;
@@ -1858,6 +1859,7 @@ evas_object_image_alpha_mask_set(Evas_Object *obj, Eina_Bool ismask)
 
 }
 
+#define FRAME_MAX 1024
 EAPI Evas_Image_Content_Hint
 evas_object_image_content_hint_get(const Evas_Object *obj)
 {
@@ -1871,6 +1873,152 @@ evas_object_image_content_hint_get(const Evas_Object *obj)
    return EVAS_IMAGE_CONTENT_HINT_NONE;
    MAGIC_CHECK_END();
    return o->content_hint;
+}
+
+/* animated feature */
+EAPI Eina_Bool
+evas_object_image_animated_get(const Evas_Object *obj)
+{
+   Evas_Object_Image *o;
+
+   MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
+   return EINA_FALSE;
+   MAGIC_CHECK_END();
+   o = (Evas_Object_Image *)(obj->object_data);
+   MAGIC_CHECK(o, Evas_Object_Image, MAGIC_OBJ_IMAGE);
+   return EINA_FALSE;
+   MAGIC_CHECK_END();
+
+   if (obj->layer->evas->engine.func->image_animated_get)
+     return obj->layer->evas->engine.func->image_animated_get(obj->layer->evas->engine.data.output, o->engine_data);
+   return EINA_FALSE;
+}
+
+EAPI int
+evas_object_image_animated_frame_count_get(const Evas_Object *obj)
+{
+   Evas_Object_Image *o;
+
+   MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
+   return -1;
+   MAGIC_CHECK_END();
+   o = (Evas_Object_Image *)(obj->object_data);
+   MAGIC_CHECK(o, Evas_Object_Image, MAGIC_OBJ_IMAGE);
+   return -1;
+   MAGIC_CHECK_END();
+
+   if (!evas_object_image_animated_get(obj)) return -1;
+   if (obj->layer->evas->engine.func->image_animated_frame_count_get)
+     return obj->layer->evas->engine.func->image_animated_frame_count_get(obj->layer->evas->engine.data.output, o->engine_data);
+   return -1;
+}
+
+EAPI Evas_Image_Animated_Loop_Hint
+evas_object_image_animated_loop_type_get(const Evas_Object *obj)
+{
+   Evas_Object_Image *o;
+
+   MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
+   return EVAS_IMAGE_ANIMATED_HINT_NONE;
+   MAGIC_CHECK_END();
+   o = (Evas_Object_Image *)(obj->object_data);
+   MAGIC_CHECK(o, Evas_Object_Image, MAGIC_OBJ_IMAGE);
+   return EVAS_IMAGE_ANIMATED_HINT_NONE;
+   MAGIC_CHECK_END();
+
+   if (!evas_object_image_animated_get(obj)) return EVAS_IMAGE_ANIMATED_HINT_NONE;
+
+   if (obj->layer->evas->engine.func->image_animated_loop_type_get)
+     return obj->layer->evas->engine.func->image_animated_loop_type_get(obj->layer->evas->engine.data.output, o->engine_data);
+   return EVAS_IMAGE_ANIMATED_HINT_NONE;
+}
+
+EAPI int
+evas_object_image_animated_loop_count_get(const Evas_Object *obj)
+{
+   Evas_Object_Image *o;
+
+   MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
+   return -1;
+   MAGIC_CHECK_END();
+   o = (Evas_Object_Image *)(obj->object_data);
+   MAGIC_CHECK(o, Evas_Object_Image, MAGIC_OBJ_IMAGE);
+   return -1;
+   MAGIC_CHECK_END();
+
+   if (!evas_object_image_animated_get(obj)) return -1;
+
+   if (obj->layer->evas->engine.func->image_animated_loop_count_get)
+     return obj->layer->evas->engine.func->image_animated_loop_count_get(obj->layer->evas->engine.data.output, o->engine_data);
+   return -1;
+}
+
+EAPI double
+evas_object_image_animated_frame_duration_get(const Evas_Object *obj, int start_frame, int frame_num)
+{
+   Evas_Object_Image *o;
+   int frame_count = 0;
+
+   if (start_frame < 1) return -1;
+   if (frame_num < 0) return -1;
+
+   MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
+   return -1;
+   MAGIC_CHECK_END();
+   o = (Evas_Object_Image *)(obj->object_data);
+   MAGIC_CHECK(o, Evas_Object_Image, MAGIC_OBJ_IMAGE);
+   return -1;
+   MAGIC_CHECK_END();
+
+   if (!evas_object_image_animated_get(obj)) return -1;
+
+   if (!obj->layer->evas->engine.func->image_animated_frame_count_get) return -1;
+
+   frame_count = obj->layer->evas->engine.func->image_animated_frame_count_get(obj->layer->evas->engine.data.output, o->engine_data);
+
+   if ((start_frame + frame_num) > frame_count) return -1;
+   if (obj->layer->evas->engine.func->image_animated_frame_duration_get)
+     return obj->layer->evas->engine.func->image_animated_frame_duration_get(obj->layer->evas->engine.data.output, o->engine_data, start_frame, frame_num);
+   return -1;
+}
+
+EAPI void
+evas_object_image_animated_frame_set(Evas_Object *obj, int frame_index)
+{
+   Evas_Object_Image *o;
+   int frame_count = 0;
+   Eina_Bool animated = EINA_FALSE;
+   char frame_index_char[4];
+
+   MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
+   return;
+   MAGIC_CHECK_END();
+   o = (Evas_Object_Image *)(obj->object_data);
+   MAGIC_CHECK(o, Evas_Object_Image, MAGIC_OBJ_IMAGE);
+   return;
+   MAGIC_CHECK_END();
+
+   if (!o->cur.file) return;
+   if (o->cur.frame == frame_index) return;
+
+   if (!evas_object_image_animated_get(obj)) return;
+
+   frame_count = evas_object_image_animated_frame_count_get(obj);
+
+   /* limit the size of frame to FRAME_MAX */
+   if ((frame_count > FRAME_MAX) || (frame_count < 0) || (frame_index > frame_count))
+     return;
+
+   if (!obj->layer->evas->engine.func->image_animated_frame_set) return;
+   if (!obj->layer->evas->engine.func->image_animated_frame_set(obj->layer->evas->engine.data.output, o->engine_data, frame_index))
+     return;
+
+   o->prev.frame = o->cur.frame;
+   o->cur.frame = frame_index;
+
+   o->changed = 1;
+   evas_object_change(obj);
+
 }
 
 EAPI void
@@ -3000,6 +3148,12 @@ evas_object_image_render_pre(Evas_Object *obj)
 	     evas_object_render_pre_prev_cur_add(&e->clip_changes, obj);
 	     if (!o->pixel_updates) goto done;
 	  }
+	if (o->cur.frame != o->prev.frame)
+	  {
+	     evas_object_render_pre_prev_cur_add(&e->clip_changes, obj);
+	     if (!o->pixel_updates) goto done;
+	  }
+	
      }
    /* if it changed geometry - and obviously not visibility or color */
    /* calculate differences since we have a constant color fill */

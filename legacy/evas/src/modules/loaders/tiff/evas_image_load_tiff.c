@@ -33,7 +33,8 @@ static Evas_Image_Load_Func evas_image_load_tiff_func =
 {
   EINA_TRUE,
   evas_image_load_file_head_tiff,
-  evas_image_load_file_data_tiff
+  evas_image_load_file_data_tiff,
+  NULL
 };
 
 typedef struct TIFFRGBAImage_Extra TIFFRGBAImage_Extra;

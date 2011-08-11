@@ -34,7 +34,8 @@ static Evas_Image_Load_Func evas_image_load_png_func =
 {
   EINA_TRUE,
   evas_image_load_file_head_png,
-  evas_image_load_file_data_png
+  evas_image_load_file_data_png,
+  NULL
 };
 
 static Eina_Bool

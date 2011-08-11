@@ -1166,7 +1166,7 @@ evas_cache_image_load_data(Image_Entry *im)
 #endif
    int error = EVAS_LOAD_ERROR_NONE;
 
-   if (im->flags.loaded) return error;
+   if ((im->flags.loaded) && (!im->flags.animated)) return error;
 #ifdef BUILD_ASYNC_PRELOAD
    if (im->preload)
      {
@@ -1190,7 +1190,7 @@ evas_cache_image_load_data(Image_Entry *im)
 	LKU(wakeup);
      }
    
-   if (im->flags.loaded) return error;
+   if ((im->flags.loaded) && (!im->flags.animated)) return error;
    LKL(im->lock);
 #endif
    im->flags.in_progress = EINA_TRUE;

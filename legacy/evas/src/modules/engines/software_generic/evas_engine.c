@@ -653,6 +653,73 @@ eng_image_scale_hint_get(void *data __UNUSED__, void *image)
    return im->scale_hint;
 }
 
+static Eina_Bool
+eng_image_animated_get(void *data __UNUSED__, void *image)
+{
+   Image_Entry *im;
+
+   if (!image) return EINA_FALSE;
+   im = image;
+   return im->flags.animated;
+}
+
+static int
+eng_image_animated_frame_count_get(void *data __UNUSED__, void *image)
+{
+   Image_Entry *im;
+
+   if (!image) return -1;
+   im = image;
+   if (!im->flags.animated) return -1;
+   return im->frame_count;
+}
+
+static Evas_Image_Animated_Loop_Hint
+eng_image_animated_loop_type_get(void *data __UNUSED__, void *image)
+{
+   Image_Entry *im;
+
+   if (!image) return EVAS_IMAGE_ANIMATED_HINT_NONE;
+   im = image;
+   if (!im->flags.animated) return EVAS_IMAGE_ANIMATED_HINT_NONE;
+   return im->loop_hint;
+}
+
+static int
+eng_image_animated_loop_count_get(void *data __UNUSED__, void *image)
+{
+   Image_Entry *im;
+
+   if (!image) return -1;
+   im = image;
+   if (!im->flags.animated) return -1;
+   return im->loop_count;
+}
+
+static double
+eng_image_animated_frame_duration_get(void *data __UNUSED__, void *image, int start_frame, int frame_num)
+{
+   Image_Entry *im;
+
+   if (!image) return -1;
+   im = image;
+   if (!im->flags.animated) return -1;
+   return evas_common_load_rgba_image_frame_duration_from_file(im, start_frame, frame_num);
+}
+
+static Eina_Bool
+eng_image_animated_frame_set(void *data __UNUSED__, void *image, int frame_index)
+{
+   Image_Entry *im;
+
+   if (!image) return EINA_FALSE;
+   im = image;
+   if (!im->flags.animated) return EINA_FALSE;
+   if (im->cur_frame == frame_index) return EINA_FALSE;
+   im->cur_frame = frame_index;
+   return EINA_TRUE;
+}
+
 static void
 eng_image_cache_flush(void *data __UNUSED__)
 {
@@ -1099,7 +1166,13 @@ static Evas_Func func =
      NULL, // FIXME: need software mesa for gl rendering <- gl_native_surface_get
      NULL, // FIXME: need software mesa for gl rendering <- gl_api_get
      eng_image_load_error_get,
-     eng_font_run_font_end_get
+     eng_font_run_font_end_get,
+     eng_image_animated_get,
+     eng_image_animated_frame_count_get,
+     eng_image_animated_loop_type_get,
+     eng_image_animated_loop_count_get,
+     eng_image_animated_frame_duration_get,
+     eng_image_animated_frame_set
    /* FUTURE software generic calls go here */
 };
 

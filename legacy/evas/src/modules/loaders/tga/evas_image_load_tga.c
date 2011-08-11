@@ -61,7 +61,8 @@ static Evas_Image_Load_Func evas_image_load_tga_func =
 {
   EINA_TRUE,
   evas_image_load_file_head_tga,
-  evas_image_load_file_data_tga
+  evas_image_load_file_data_tga,
+  NULL
 };
 
 static Eina_Bool

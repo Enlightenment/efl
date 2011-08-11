@@ -357,6 +357,7 @@ typedef unsigned char                   DATA8;
 
 typedef struct _Image_Entry             Image_Entry;
 typedef struct _Image_Entry_Flags	Image_Entry_Flags;
+typedef struct _Image_Entry_Frame       Image_Entry_Frame;
 typedef struct _Image_Timestamp         Image_Timestamp;
 typedef struct _Engine_Image_Entry      Engine_Image_Entry;
 typedef struct _Evas_Cache_Target       Evas_Cache_Target;
@@ -511,6 +512,15 @@ struct _Image_Entry_Flags
    Eina_Bool delete_me    : 1;
    Eina_Bool pending      : 1;
 #endif
+   Eina_Bool animated     : 1;
+};
+
+struct _Image_Entry_Frame
+{
+   int       index;
+   DATA32   *data;     /* frame decoding data */
+   void     *info;     /* special image type info */
+   Eina_Bool loaded       : 1;
 };
 
 struct _Evas_Cache_Target
@@ -593,6 +603,13 @@ struct _Image_Entry
    int                    connect_num;
    int                    channel;
    int                    load_error;
+
+   /* for animation feature */
+   int                    frame_count;
+   Evas_Image_Animated_Loop_Hint loop_hint;
+   int                    loop_count;
+   int                    cur_frame;
+   Eina_List             *frames;
 };
 
 struct _Engine_Image_Entry

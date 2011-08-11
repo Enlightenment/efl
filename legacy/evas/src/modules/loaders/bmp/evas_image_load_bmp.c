@@ -18,7 +18,8 @@ static Evas_Image_Load_Func evas_image_load_bmp_func =
 {
   EINA_TRUE,
   evas_image_load_file_head_bmp,
-  evas_image_load_file_data_bmp
+  evas_image_load_file_data_bmp,
+  NULL
 };
 
 static int

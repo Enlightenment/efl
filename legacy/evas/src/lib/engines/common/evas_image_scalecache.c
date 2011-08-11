@@ -728,7 +728,7 @@ evas_common_rgba_image_scalecache_do(Image_Entry *ie, RGBA_Image *dst,
              didpop = 1;
           }
      }
-   if (sci->im)
+   if (sci->im && !ie->flags.animated)
      {
         if (!didpop)
           {

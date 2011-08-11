@@ -54,6 +54,7 @@ EAPI void
 
 EAPI int evas_common_load_rgba_image_module_from_file (Image_Entry *im);
 EAPI int evas_common_load_rgba_image_data_from_file   (Image_Entry *im);
+EAPI double evas_common_load_rgba_image_frame_duration_from_file(Image_Entry *im, int start_frame, int frame_num);
 
 void _evas_common_rgba_image_post_surface(Image_Entry *ie);
 

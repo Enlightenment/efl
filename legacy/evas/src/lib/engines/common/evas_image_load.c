@@ -309,7 +309,7 @@ evas_common_load_rgba_image_data_from_file(Image_Entry *ie)
    Evas_Image_Load_Func *evas_image_load_func = NULL;
    int ret = EVAS_LOAD_ERROR_NONE;
 
-   if (ie->flags.loaded) return EVAS_LOAD_ERROR_GENERIC;
+   if ((ie->flags.loaded) && (!ie->flags.animated)) return EVAS_LOAD_ERROR_GENERIC;
 
 #ifdef EVAS_CSERVE
    if (ie->data1)
@@ -344,6 +344,20 @@ evas_common_load_rgba_image_data_from_file(Image_Entry *ie)
 //   ie->info.module = NULL;
 
    return EVAS_LOAD_ERROR_NONE;
+}
+
+EAPI double
+evas_common_load_rgba_image_frame_duration_from_file(Image_Entry *ie, const int start, const int frame_num)
+{
+   Evas_Image_Load_Func *evas_image_load_func = NULL;
+
+   if (!ie->info.module) return -1;
+
+   evas_image_load_func = ie->info.loader;
+   evas_module_use((Evas_Module*) ie->info.module);
+   if (evas_image_load_func->frame_duration)
+     return evas_image_load_func->frame_duration(ie, ie->file, start, frame_num);
+   return -1;
 }
 
 EAPI Eina_Bool

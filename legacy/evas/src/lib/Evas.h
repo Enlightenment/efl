@@ -744,6 +744,13 @@ typedef enum _Evas_Image_Scale_Hint
    EVAS_IMAGE_SCALE_HINT_STATIC = 2 /**< Image is not being re-scaled over time, thus turning scaling cache @b on for its data */
 } Evas_Image_Scale_Hint; /**< How an image's data is to be treated by Evas, with regard to scaling cache */
 
+typedef enum _Evas_Image_Animated_Loop_Hint
+{
+   EVAS_IMAGE_ANIMATED_HINT_NONE = 0,
+   EVAS_IMAGE_ANIMATED_HINT_LOOP = 1, /**< Image's animation mode is loop like 1->2->3->1->2->3 */
+   EVAS_IMAGE_ANIMATED_HINT_PINGPONG = 2 /**< Image's animation mode is pingpong like 1->2->3->2->1-> ... */
+} Evas_Image_Animated_Loop_Hint;
+
 typedef enum _Evas_Engine_Render_Mode
 {
    EVAS_RENDER_MODE_BLOCKING = 0,
@@ -7088,6 +7095,121 @@ EAPI Eina_Bool evas_object_image_extension_can_load_get(const char *file);
  */
 EAPI Eina_Bool evas_object_image_extension_can_load_fast_get(const char *file);
 
+/**
+ * Get the animation of an image object.
+ *
+ * @param obj Image object
+ * @return whether obj support animation
+ *
+ * This returns the possibility of animation of image object's image
+ * currently Evas only support animation of gif file type.
+ *
+ * Example:
+ * @code
+ * extern Evas_Object *object;
+ *
+ *
+ * if (evas_object_image_animated_get(obj))
+ *   {
+ *     int frame_count;
+ *     int loop_count;
+ *     Evas_Image_Animated_Loop_Hint loop_type;
+ *     double duration;
+ *
+ *     frame_count = evas_object_image_animated_frame_count_get(obj);
+ *     printf("This image has %d frames\n",frame_count);
+ *
+ *     duration = evas_object_image_animated_frame_duration_get(obj,1,0); 
+ *     printf("Frame 1's duration is %f. You had better set object's frame to 2 after this duration using timer\n");
+ *     
+ *     loop_count = evas_object_image_animated_loop_count_get(obj);
+ *     printf("loop count is %d. You had better run loop %d times\n",loop_count,loop_count);
+ *
+ *     loop_type = evas_object_image_animated_loop_type_get(obj);
+ *     if (loop_type == EVAS_IMAGE_ANIMATED_HINT_LOOP)
+ *       printf("You had better set frame like 1->2->3->1->2->3...\n");
+ *     else if (loop_type == EVAS_IMAGE_ANIMATED_HINT_PINGPONG)
+ *       printf("You had better set frame like 1->2->3->2->1->2...\n");
+ *     else
+ *       printf("Unknown loop type\n");
+ *
+ *     evas_object_image_animated_frame_set(obj,1);
+ *     printf("You set image object's frame to 1. You can see frame 1\n");
+ *   }
+ *
+ * @endcode
+ */
+EAPI Eina_Bool evas_object_image_animated_get(const Evas_Object *obj);
+
+/**
+ * Get the total frame number of image object's file.
+ *
+ * @param obj Image object
+ * @return the number of frame
+ *
+ * This returns total frame number of image object's file.
+ * See @ref evas_object_image_animated_get for more details.
+ */
+EAPI int evas_object_image_animated_frame_num_get(const Evas_Object *obj);
+
+/**
+ * Get the loop type of an animated image object.
+ *
+ * @param obj Image object
+ * @return loop type of animated image object
+ *
+ * This returns loop type. 
+ * If Evas_Image_Animated_Loop_Hint is EVAS_IMAGE_ANIMATED_HINT_LOOP, It is better to set sequence like 1->2->3->1->2->3
+ * If Evas_Image_Animated_Loop_Hint is EVAS_IMAGE_ANIMATED_HINT_PINGPONG, It is better to set sequence like 1->2->3->2->1->2
+ * Default type is EVAS_IMAGE_ANIMATED_HINT_LOOP.
+ *
+ * See @ref evas_object_image_animated_get for more details.
+ */
+EAPI Evas_Image_Animated_Loop_Hint evas_object_image_animated_loop_type_get(const Evas_Object *obj);
+
+/**
+ * Get the number of loop of an animated image object.
+ *
+ * @param obj Image object
+ * @return the number of loop of an animated image object
+ *
+ * This returns loop count of image. 
+ * Default value is 0. It means infinite loop.
+ * If loop count is 1, you can set each frame only one time.
+ *
+ * See @ref evas_object_image_animated_get for more details.
+ */
+EAPI int evas_object_image_animated_loop_count_get(const Evas_Object *obj);
+
+/**
+ * Get the duration of frames of an image object.
+ *
+ * @param obj Image object
+ * @param start_frame start frame
+ * @param fram_num number of frames which want to duration
+ *
+ * This returns total duration of frames.
+ * For example. 
+ * If you set start_frame to 1 and frame_num 0, you can frame 1's duration
+ * If you set start_frame to 1 and frame_num 1, you can frame1 duration + frame2 duration
+ *
+ * See @ref evas_object_image_animated_get for more details.
+ *
+ */
+EAPI double evas_object_image_animated_frame_duration_get(const Evas_Object *obj, int start_frame, int fram_num);
+
+/**
+ * Set the frame to current frame of an image object must render
+ *
+ * @param obj The given image object.
+ * @param frame_num The index of current frame
+ *
+ * This set image object's current frame to frame_num.
+ * If you set frame_num to 5, evas will render frame 5 of image when rendering time
+ *
+ * See @ref evas_object_image_animated_get for more details.
+ */
+EAPI void evas_object_image_animated_frame_set(Evas_Object *obj, int frame_num);
 /**
  * @}
  */
