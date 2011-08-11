@@ -134,6 +134,7 @@ for reading or writing, allowing for streamlined, non-blocking IO.
 Here is an example of a simple program and its basic event loop flow:
 
 @image html  prog_flow.png
+@image latex prog_flow.eps width=\textwidth
 
 
 
@@ -346,6 +347,7 @@ extern "C" {
    * flow:
    *
    * @image html prog_flow.png
+   * @image latex prog_flow.eps width=\textwidth
    *
    * For examples of setting up and using a main loop, see
    * @ref Ecore_Main_Loop_Page.
