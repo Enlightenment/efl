@@ -1480,6 +1480,8 @@ _eos_sync_fct(GstBus *bus, GstMessage *msg, gpointer data)
          break;
      }
 
+   gst_message_unref(msg);
+
    return GST_BUS_DROP;
 }
 
