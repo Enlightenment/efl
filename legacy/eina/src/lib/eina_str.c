@@ -56,6 +56,7 @@ eina_str_has_suffix_helper(const char *str,
    size_t str_len;
    size_t suffix_len;
 
+   if ((!str) || (!suffix)) return EINA_FALSE;
    str_len = strlen(str);
    suffix_len = eina_strlen_bounded(suffix, str_len);
    if (suffix_len == (size_t)-1)
