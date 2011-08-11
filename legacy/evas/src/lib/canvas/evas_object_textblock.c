@@ -7496,6 +7496,10 @@ evas_textblock_cursor_range_formats_get(const Evas_Textblock_Cursor *cur1, const
    /* FIXME: Change first and last getting to format_before_or_at_pos_get */
 
    last = n2->format_node;
+
+   /* If n2->format_node is NULL, we don't have formats in the tb/range. */
+   if (!last)
+      return NULL;
    /* If the found format is on our text node, we should go to the last
     * one, otherwise, the one we found is good enough. */
    if (last->text_node == n2)
