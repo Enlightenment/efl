@@ -1503,6 +1503,9 @@ if test "x$have_ecore_evas_software_x11" = "xyes" ; then
       AC_DEFINE(BUILD_ECORE_EVAS_SOFTWARE_XLIB, 1, [Evas Software Xlib Engine Support])
    fi
    have_ecore_evas_software_xcb=`${PKG_CONFIG} --variable=XCB evas-software-x11`
+   if test "x$have_ecore_evas_software_xcb" = "xstatic"; then
+      have_ecore_evas_software_xcb="yes"
+   fi
    if test "x$have_ecore_evas_software_xcb" = "xyes" -a "x${have_ecore_x_xcb}" = "xyes" ; then
       AC_DEFINE(BUILD_ECORE_EVAS_SOFTWARE_XCB, 1, [Evas Software XCB Engine Support])
    fi
@@ -1525,6 +1528,9 @@ if test "x${have_ecore_evas_opengl_x11}" = "xyes" -o "x${have_ecore_evas_opengl_
 
 # opengl does not work with xcb (yet)
    have_ecore_evas_opengl_xcb=`${PKG_CONFIG} --variable=XCB evas-opengl-x11`
+   if test "x${have_ecore_evas_opengl_xcb}" = "xstatic"; then
+      have_ecore_evas_opengl_xcb="yes"
+   fi
    if test "x${have_ecore_evas_opengl_xcb}" = "xyes" -a "x${have_ecore_x_xcb}" = "xyes" ; then
       PKG_CHECK_MODULES(XCB_X11, x11-xcb,
         [ have_ecore_x_opengl_xcb="yes"
