@@ -380,8 +380,8 @@ _evas_image_load_frame(Image_Entry *ie, GifFileType *gif, Image_Entry_Frame *fra
    if ((!gif) || (!frame)) return EINA_FALSE;
    gif_frame = (Gif_Frame *) frame->info;
 
-   if (LOAD_FRAME_NONE < type) return EINA_FALSE;
-
+   if (type > LOAD_FRAME_DATA_INFO) return EINA_FALSE;
+   
    do
      {
         if (DGifGetRecordType(gif, &rec) == GIF_ERROR) return EINA_FALSE;
