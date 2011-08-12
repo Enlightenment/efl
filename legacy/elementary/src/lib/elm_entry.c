@@ -621,7 +621,7 @@ _elm_win_recalc_job(void *data)
           }
      }
 
-   if ((wd->deferred_cur) && (elm_object_focus_get(data)))
+   if (wd->deferred_cur)
      {
         Evas_Coord cx, cy, cw, ch;
         edje_object_part_text_cursor_geometry_get(wd->ent, "elm.text",
