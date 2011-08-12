@@ -147,6 +147,7 @@ void          _ecore_event_shutdown(void);
 int           _ecore_event_exist(void);
 Ecore_Event  *_ecore_event_add(int type, void *ev, Ecore_End_Cb func_free, void *data);
 void          _ecore_event_call(void);
+void         *_ecore_event_handler_del(Ecore_Event_Handler *event_handler);
 
 Ecore_Timer  *_ecore_exe_doomsday_clock_get(Ecore_Exe *exe);
 void          _ecore_exe_doomsday_clock_set(Ecore_Exe *exe, Ecore_Timer *dc);

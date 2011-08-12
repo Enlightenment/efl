@@ -839,7 +839,7 @@ _ecore_thread_shutdown(void)
      }
    if (_ecore_thread_global_hash)
      eina_hash_free(_ecore_thread_global_hash);
-   ecore_event_handler_del(del_handler);
+   _ecore_event_handler_del(del_handler);
    have_main_loop_thread = 0;
    del_handler = NULL;
 

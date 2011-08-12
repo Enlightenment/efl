@@ -31,7 +31,7 @@ _ecore_job_init(void)
 void
 _ecore_job_shutdown(void)
 {
-   ecore_event_handler_del(_ecore_job_handler);
+   _ecore_event_handler_del(_ecore_job_handler);
    _ecore_job_handler = NULL;
 }
 

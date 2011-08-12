@@ -171,10 +171,7 @@ ecore_event_handler_del(Ecore_Event_Handler *event_handler)
                          "ecore_event_handler_del");
         goto unlock;
      }
-   EINA_SAFETY_ON_TRUE_GOTO(event_handler->delete_me, unlock);
-   event_handler->delete_me = 1;
-   event_handlers_delete_list = eina_list_append(event_handlers_delete_list, event_handler);
-   data = event_handler->data;
+   data = _ecore_event_handler_del(event_handler);
 unlock:
    _ecore_unlock();
 
@@ -440,6 +437,15 @@ ecore_event_current_event_get(void)
 /**
  * @}
  */
+
+EAPI void *
+_ecore_event_handler_del(Ecore_Event_Handler *event_handler)
+{
+   EINA_SAFETY_ON_TRUE_RETURN_VAL(event_handler->delete_me, NULL);
+   event_handler->delete_me = 1;
+   event_handlers_delete_list = eina_list_append(event_handlers_delete_list, event_handler);
+   return event_handler->data;
+}
 
 void
 _ecore_event_shutdown(void)
