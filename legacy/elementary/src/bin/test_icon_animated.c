@@ -34,8 +34,8 @@ test_icon_animated(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *eve
      {
         printf("============Support animator==============\n");
      }
-   elm_icon_animated_set(ic, TRUE);
-   elm_icon_animated_play_set(ic, TRUE);
+   elm_icon_animated_set(ic, EINA_TRUE);
+   elm_icon_animated_play_set(ic, EINA_TRUE);
    elm_icon_scale_set(ic, 0, 0);
    elm_icon_no_scale_set(ic, 1);
    evas_object_size_hint_weight_set(ic, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
