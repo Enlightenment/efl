@@ -273,7 +273,7 @@ next_token(char *p, char *end, char **new_p, int *delim)
 
 	     /* handle cpp comments */
 	     /* their line format is
-	      * # <line no. of next line> <filename from next line on> [??]
+	      * #line <line no. of next line> <filename from next line on> [??]
 	      */
 	     cpp_token_line = NULL;
 	     cpp_token_file = NULL;

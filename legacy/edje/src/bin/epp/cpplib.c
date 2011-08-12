@@ -2147,13 +2147,8 @@ output_line_command(cpp_reader * pfile, int conditional,
 
    CPP_RESERVE(pfile, 4 * strlen(ip->nominal_fname) + 50);
    {
-#ifdef OUTPUT_LINE_COMMANDS
       static char         sharp_line[] = "#line ";
 
-#else
-      static char         sharp_line[] = "# ";
-
-#endif
       CPP_PUTS_Q(pfile, sharp_line, sizeof(sharp_line) - 1);
    }
 
