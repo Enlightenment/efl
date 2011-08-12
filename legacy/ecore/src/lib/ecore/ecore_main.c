@@ -789,6 +789,25 @@ _ecore_main_loop_shutdown(void)
      }
 }
 
+void *
+_ecore_main_fd_handler_del(Ecore_Fd_Handler *fd_handler)
+{
+   if (fd_handler->delete_me)
+     {
+        ERR("fdh %p deleted twice", fd_handler);
+        return NULL;
+     }
+
+   _ecore_main_fdh_poll_del(fd_handler);
+   fd_handler->delete_me = EINA_TRUE;
+   fd_handlers_to_delete = eina_list_append(fd_handlers_to_delete, fd_handler);
+   if (fd_handler->prep_func && fd_handlers_with_prep)
+     fd_handlers_with_prep = eina_list_remove(fd_handlers_with_prep, fd_handler);
+   if (fd_handler->buf_func && fd_handlers_with_buffer)
+     fd_handlers_with_buffer = eina_list_remove(fd_handlers_with_buffer, fd_handler);
+   return fd_handler->data;
+}
+
 /**
  * @addtogroup Ecore_Main_Loop_Group
  *
@@ -998,6 +1017,7 @@ ecore_main_win32_handler_add(void *h __UNUSED__, Ecore_Win32_Handle_Cb func __UN
 }
 #endif
 
+
 /**
  * Deletes the given FD handler.
  * @param   fd_handler The given FD handler.
@@ -1023,20 +1043,7 @@ ecore_main_fd_handler_del(Ecore_Fd_Handler *fd_handler)
                          "ecore_main_fd_handler_del");
         goto unlock;
      }
-   if (fd_handler->delete_me)
-     {
-        ERR("fdh %p deleted twice", fd_handler);
-        goto unlock;
-     }
-
-   _ecore_main_fdh_poll_del(fd_handler);
-   fd_handler->delete_me = EINA_TRUE;
-   fd_handlers_to_delete = eina_list_append(fd_handlers_to_delete, fd_handler);
-   if (fd_handler->prep_func && fd_handlers_with_prep)
-     fd_handlers_with_prep = eina_list_remove(fd_handlers_with_prep, fd_handler);
-   if (fd_handler->buf_func && fd_handlers_with_buffer)
-     fd_handlers_with_buffer = eina_list_remove(fd_handlers_with_buffer, fd_handler);
-   ret = fd_handler->data;
+   ret = _ecore_main_fd_handler_del(fd_handler);
 unlock:
    _ecore_unlock();
    return ret;

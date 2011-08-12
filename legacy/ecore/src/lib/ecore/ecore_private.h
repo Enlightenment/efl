@@ -157,6 +157,8 @@ void         *_ecore_event_signal_exit_new(void);
 void         *_ecore_event_signal_power_new(void);
 void         *_ecore_event_signal_realtime_new(void);
 
+void         *_ecore_main_fd_handler_del(Ecore_Fd_Handler *fd_handler);
+
 void          _ecore_main_shutdown(void);
 
 #ifdef _WIN32

@@ -157,7 +157,7 @@ ecore_pipe_del(Ecore_Pipe *p)
      }
    p->delete_me = EINA_TRUE;
    if (p->handling > 0) return (void *)p->data;
-   if (p->fd_handler) ecore_main_fd_handler_del(p->fd_handler);
+   if (p->fd_handler) _ecore_main_fd_handler_del(p->fd_handler);
    if (p->fd_read != PIPE_FD_INVALID) pipe_close(p->fd_read);
    if (p->fd_write != PIPE_FD_INVALID) pipe_close(p->fd_write);
    data = (void *)p->data;
@@ -180,7 +180,7 @@ ecore_pipe_read_close(Ecore_Pipe *p)
      }
    if (p->fd_handler)
      {
-        ecore_main_fd_handler_del(p->fd_handler);
+        _ecore_main_fd_handler_del(p->fd_handler);
         p->fd_handler = NULL;
      }
    if (p->fd_read != PIPE_FD_INVALID)
@@ -207,7 +207,7 @@ ecore_pipe_freeze(Ecore_Pipe *p)
      }
    if (p->fd_handler)
      {
-        ecore_main_fd_handler_del(p->fd_handler);
+        _ecore_main_fd_handler_del(p->fd_handler);
         p->fd_handler = NULL;
      }
 }
