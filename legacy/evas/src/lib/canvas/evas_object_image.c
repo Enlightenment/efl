@@ -1987,8 +1987,6 @@ evas_object_image_animated_frame_set(Evas_Object *obj, int frame_index)
 {
    Evas_Object_Image *o;
    int frame_count = 0;
-   Eina_Bool animated = EINA_FALSE;
-   char frame_index_char[4];
 
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return;
