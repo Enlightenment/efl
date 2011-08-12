@@ -196,54 +196,54 @@ my_win_main(char *autorun, Eina_Bool test_win_only)
    Eina_List *tests, *l;
    struct elm_test *t;
 
-   /* create an elm window - it returns an evas object. this is a little
+   /* Create an elm window - It returns an evas object. This is a little
     * special as the object lives in the canvas that is inside the window
     * so what is returned is really inside the window, but as you manipulate
     * the evas object returned - the window will respond. elm_win makes sure
     * of that so you can blindly treat it like any other evas object
     * pretty much, just as long as you know it has special significance.
-    * the first parameter is a "parent" window - eg for a dialog you want to
+    * The first parameter is a "parent" window - eg for a dialog you want to
     * have a main window it is related to, here it is NULL meaning there
     * is no parent. "main" is the name of the window - used by the window
     * manager for identifying the window uniquely amongst all the windows
-    * within this application (and all instances of the application). the
+    * within this application (and all instances of the application). The
     * type is a basic window (the final parameter) */
    win = elm_win_add(NULL, "main", ELM_WIN_BASIC);
-   /* set the title of the window - this is in the titlebar */
+   /* Set the title of the window - This is in the titlebar. */
    elm_win_title_set(win, "Elementary Tests");
 
-   /* set a callback on the window when "delete,request" is emitted as
-    * a callback. when this happens my_win_del() is called and the
+   /* Set a callback on the window when "delete,request" is emitted as
+    * a callback. When this happens my_win_del() is called and the
     * data pointer (first param) is passed the final param here (in this
     * case it is NULL). This is how you can pass specific things to a
-    * callback like objects or data layered on top */
+    * callback like objects or data layered on top. */
    evas_object_smart_callback_add(win, "delete,request", my_win_del, NULL);
 
-   /* add a background to our window. this just uses the standard theme set
-    * background. without a background, you could make a window seem
-    * transparent with elm_win_alpha_set(win, 1); for example. if you have
+   /* Add a background to our window. This just uses the standard theme set
+    * background. Without a background, you could make a window seem
+    * transparent with elm_win_alpha_set(win, 1); For example. if you have
     * a compositor running this will make the window able to be
     * semi-transparent and any space not filled by object/widget pixels will
-    * be transparent or translucent based on alpha. if you do not have a
-    * comnpositor running this should fall back to using shaped windows
-    * (which have a mask). both these features will be slow and rely on
+    * be transparent or translucent based on alpha. If you do not have a
+    * compositor running this should fall back to using shaped windows
+    * (which have a mask). Both these features will be slow and rely on
     * a lot more resources, so only use it if you need it. */
    bg = elm_bg_add(win);
-   /* set weight to 1.0 x 1.0 == expand in both x and y direction */
+   /* Set weight to 1.0 x 1.0 == expand in both x and y direction. */
    evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   /* tell the window that this object is to be resized along with the window.
-    * also as a result this object will be one of several objects that
-    * controls the minimum/maximum size of the window */
+   /* Tell the window that this object is to be resized along with the window.
+    * Also as a result this object will be one of several objects that
+    * controls the minimum/maximum size of the window. */
    elm_win_resize_object_add(win, bg);
-   /* and show the background */
+   /* And show the background. */
    evas_object_show(bg);
 
-   /* add a box layout widget to the window */
+   /* Add a box layout widget to the window. */
    bx0 = elm_box_add(win);
-   /* allow base box (bx0) to expand in x and y */
+   /* Allow base box (bx0) to expand in x and y. */
    evas_object_size_hint_weight_set(bx0, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   /* tell the window that the box affects window size and also will be
-    * resized when the window is */
+   /* Tell the window that the box affects window size and also will be
+    * resized when the window is resized. */
    elm_win_resize_object_add(win, bx0);
    evas_object_show(bx0);
 
