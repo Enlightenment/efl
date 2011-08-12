@@ -133,22 +133,31 @@ _do_tick(void)
    return ECORE_CALLBACK_RENEW;
 }
 
-EAPI Ecore_Animator *
-ecore_animator_add(Ecore_Task_Cb func, const void *data)
+static Ecore_Animator *
+_ecore_animator_add(Ecore_Task_Cb func, const void *data)
 {
    Ecore_Animator *animator = NULL;
 
-   _ecore_lock();
-   if (!func) goto unlock;
+   if (!func) return animator;
    animator = calloc(1, sizeof(Ecore_Animator));
-   if (!animator) goto unlock;
+   if (!animator) return animator;
    ECORE_MAGIC_SET(animator, ECORE_MAGIC_ANIMATOR);
    animator->func = func;
    animator->data = (void *)data;
    animators = (Ecore_Animator *)eina_inlist_append(EINA_INLIST_GET(animators), EINA_INLIST_GET(animator));
    _begin_tick();
-unlock:
+   return animator;
+}
+
+EAPI Ecore_Animator *
+ecore_animator_add(Ecore_Task_Cb func, const void *data)
+{
+   Ecore_Animator *animator;
+
+   _ecore_lock();
+   animator = _ecore_animator_add(func, data);
    _ecore_unlock();
+
    return animator;
 }
 
@@ -159,7 +168,7 @@ ecore_animator_timeline_add(double runtime, Ecore_Timeline_Cb func, const void *
 
    _ecore_lock();
    if (runtime <= 0.0) runtime = 0.0;
-   animator = ecore_animator_add(_ecore_animator_run, NULL);
+   animator = _ecore_animator_add(_ecore_animator_run, NULL);
    animator->data = animator;
    animator->run_func = func;
    animator->run_data = (void *)data;
