@@ -942,6 +942,22 @@ command(void)
 	     if (lex(&val, &str) != tNUMBER)
 		error(8);	/* invalid/non-constant expression */
 	     fline = (int)val;
+
+	     while (*lptr == ' ' && *lptr != '\0')
+	        lptr++;			/* skip whitespace */
+	     if (*lptr == '"')
+               {
+		  char pathname[PATH_MAX];
+
+		  lptr = getstring(pathname, sizeof pathname);
+		  if (pathname[0] != '\0')
+		    {
+		       free(inpfname);
+		       inpfname = strdup(pathname);
+		       if (!inpfname)
+		          error(103);	/* insufficient memory */
+		    }		/* if */
+	       }
 	  }			/* if */
 	check_empty(lptr);
 	break;
