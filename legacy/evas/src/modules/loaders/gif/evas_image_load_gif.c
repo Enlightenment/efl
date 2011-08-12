@@ -794,10 +794,10 @@ evas_image_load_frame_duration_gif(Image_Entry *ie, const char *file, const int 
 
    gif = DGifOpenFileHandle(fd);
    if (!gif)
-   {
-      if (fd) close(fd);
-      return -1;
-   }
+     {
+        if (fd) close(fd);
+        return -1;
+     }
 
    do
      {
