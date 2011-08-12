@@ -64,6 +64,8 @@ static void _thread_callback(void *data, void *buffer, unsigned int nbyte);
 static Eina_List *_thread_cb = NULL;
 static Ecore_Pipe *_thread_call = NULL;
 static Eina_Lock _thread_safety;
+Eina_Lock _ecore_main_loop_lock;
+int _ecore_main_lock_count;
 
 /** OpenBSD does not define CODESET
  * FIXME ??
@@ -139,6 +141,7 @@ ecore_init(void)
    _ecore_time_init();
 
    eina_lock_new(&_thread_safety);
+   eina_lock_new(&_ecore_main_loop_lock);
    _thread_call = ecore_pipe_add(_thread_callback, NULL);
 
 #if HAVE_MALLINFO

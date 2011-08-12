@@ -390,7 +390,6 @@ static LRWK(_ecore_thread_global_hash_lock);
 static LK(_ecore_thread_global_hash_mutex);
 static CD(_ecore_thread_global_hash_cond);
 
-static LK(_ecore_main_loop_mutex);
 static Eina_Bool have_main_loop_thread = 0;
 
 static Eina_Trash *_ecore_thread_worker_trash = NULL;
@@ -794,7 +793,6 @@ _ecore_thread_init(void)
    LKI(_ecore_pending_job_threads_mutex);
    LRWKI(_ecore_thread_global_hash_lock);
    LKI(_ecore_thread_global_hash_mutex);
-   LKI(_ecore_main_loop_mutex);
    CDI(_ecore_thread_global_hash_cond);
 #endif
 }
@@ -873,26 +871,6 @@ _ecore_thread_assert_main_loop_thread(const char *function)
         abort();
      }
 }
-
-#ifdef HAVE_THREAD_SAFETY
-static int lock_count;
-
-void
-_ecore_lock(void)
-{
-  LKL(_ecore_main_loop_mutex);
-  lock_count++;
-  assert(lock_count == 1);
-}
-
-void
-_ecore_unlock(void)
-{
-  lock_count--;
-  assert(lock_count == 0);
-  LKU(_ecore_main_loop_mutex);
-}
-#endif
 
 EAPI Ecore_Thread *
 ecore_thread_run(Ecore_Thread_Cb func_blocking,

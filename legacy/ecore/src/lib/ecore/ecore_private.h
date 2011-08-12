@@ -1,6 +1,8 @@
 #ifndef _ECORE_PRIVATE_H
 #define _ECORE_PRIVATE_H
 
+#include <assert.h>
+
 extern int _ecore_log_dom ;
 #ifdef  _ECORE_DEFAULT_LOG_DOM
 # undef _ECORE_DEFAULT_LOG_DOM
@@ -199,22 +201,31 @@ void _ecore_main_loop_shutdown(void);
 
 void _ecore_throttle(void);
 
-#ifdef HAVE_THREAD_SAFETY
-void _ecore_lock(void);
-void _ecore_unlock(void);
-#else
+extern int _ecore_main_lock_count;
+extern Eina_Lock _ecore_main_loop_lock;
+
 static inline void
 _ecore_lock(void)
 {
+#ifdef HAVE_THREAD_SAFETY
+   eina_lock_take(&_ecore_main_loop_lock);
+#else
    /* at least check we're not being called from a thread */
    EINA_MAIN_LOOP_CHECK_RETURN;
+#endif
+   _ecore_main_lock_count++;
+   assert(_ecore_main_lock_count == 1);
 }
 
 static inline void
 _ecore_unlock(void)
 {
-}
+   _ecore_main_lock_count--;
+   assert(_ecore_main_lock_count == 0);
+#ifdef HAVE_THREAD_SAFETY
+   eina_lock_release(&_ecore_main_loop_lock);
 #endif
+}
 
 /*
  * Callback wrappers all assume that ecore _ecore_lock has been called
