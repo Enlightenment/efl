@@ -755,29 +755,29 @@ preproc_expr(cell * val, int *tag)
  * character that caused the input to be ended.
  */
 static char        *
-getstring(char *dest, int max, char *line)
+getstring(char *dest, int max)
 {
-   assert(dest != NULL && line != NULL);
+   assert(dest != NULL);
    *dest = '\0';
-   while (*line <= ' ' && *line != '\0')
-      line++;			/* skip whitespace */
-   if (*line != '"')
+   while (*lptr <= ' ' && *lptr != '\0')
+      lptr++;			/* skip whitespace */
+   if (*lptr != '"')
      {
 	error(37);		/* invalid string */
      }
-   else if (*line == '\0')
+   else
      {
 	int                 len = 0;
 
-	line++;			/* skip " */
-	while (*line != '"' && *line != '\0')
+	lptr++;			/* skip " */
+	while (*lptr != '"' && *lptr != '\0')
 	  {
 	     if (len < max - 1)
-		dest[len++] = *line;
-	     line++;
+		dest[len++] = *lptr;
+	     lptr++;
 	  }			/* if */
 	dest[len] = '\0';
-	if (*line == '"')
+	if (*lptr == '"')
 	   lptr++;		/* skip closing " */
 	else
 	   error(37);		/* invalid string */
@@ -925,7 +925,7 @@ command(void)
 	  {
 	     char                pathname[PATH_MAX];
 
-	     lptr = getstring(pathname, sizeof pathname, lptr);
+	     lptr = getstring(pathname, sizeof pathname);
 	     if (pathname[0] != '\0')
 	       {
 		  free(inpfname);
@@ -984,7 +984,7 @@ command(void)
 			  lptr++;
 		       if (*lptr == '"')
 			 {
-			    lptr = getstring(name, sizeof name, lptr);
+			    lptr = getstring(name, sizeof name);
 			 }
 		       else
 			 {
