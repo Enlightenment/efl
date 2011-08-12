@@ -40,7 +40,7 @@ elm_main(int argc __UNUSED__, char **argv __UNUSED__)
    win = elm_win_add(NULL, "thumb", ELM_WIN_BASIC);
    elm_win_title_set(win, "Thumbnailer");
    elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_CLOSED);
-   elm_win_autodel_set(win, 1);
+   elm_win_autodel_set(win, EINA_TRUE);
 
    bg = elm_bg_add(win);
    evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);

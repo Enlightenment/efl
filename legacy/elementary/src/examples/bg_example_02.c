@@ -25,7 +25,7 @@ elm_main(int argc __UNUSED__, char **argv __UNUSED__)
    win = elm_win_add(NULL, "bg-image", ELM_WIN_BASIC);
    elm_win_title_set(win, "Bg Image");
    evas_object_smart_callback_add(win, "delete,request", on_done, NULL);
-   elm_win_autodel_set(win, 1);
+   elm_win_autodel_set(win, EINA_TRUE);
 
    bg = elm_bg_add(win);
    elm_bg_load_size_set(bg, 20, 20);

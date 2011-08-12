@@ -104,7 +104,7 @@ elm_main(int argc __UNUSED__, char **argv __UNUSED__)
    win = elm_win_add(NULL, "transit", ELM_WIN_BASIC);
    elm_win_title_set(win, "Transit Example");
    evas_object_smart_callback_add(win, "delete,request", on_done, NULL);
-   elm_win_autodel_set(win, 1);
+   elm_win_autodel_set(win, EINA_TRUE);
 
    /* add a scalable white background to this window */
    bg = elm_bg_add(win);
