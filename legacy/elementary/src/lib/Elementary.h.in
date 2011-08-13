@@ -4634,12 +4634,12 @@ extern "C" {
     */
    EAPI Eina_Bool             elm_icon_no_scale_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
    /**
-    * Set if the object is (up/down) resizeable.
+    * Set if the object is (up/down) resizable.
     *
     * @param obj The icon object
-    * @param scale_up A bool to set if the object is resizeable up. Default is
+    * @param scale_up A bool to set if the object is resizable up. Default is
     * @c EINA_TRUE.
-    * @param scale_down A bool to set if the object is resizeable down. Default
+    * @param scale_down A bool to set if the object is resizable down. Default
     * is @c EINA_TRUE.
     *
     * This function limits the icon object resize ability. If @p scale_up is set to
@@ -4652,11 +4652,11 @@ extern "C" {
     */
    EAPI void                  elm_icon_scale_set(Evas_Object *obj, Eina_Bool scale_up, Eina_Bool scale_down) EINA_ARG_NONNULL(1);
    /**
-    * Get if the object is (up/down) resizeable.
+    * Get if the object is (up/down) resizable.
     *
     * @param obj The icon object
-    * @param scale_up A bool to set if the object is resizeable up
-    * @param scale_down A bool to set if the object is resizeable down
+    * @param scale_up A bool to set if the object is resizable up
+    * @param scale_down A bool to set if the object is resizable down
     *
     * @see elm_icon_scale_set()
     *
@@ -5007,12 +5007,12 @@ extern "C" {
     */
    EAPI Eina_Bool        elm_image_no_scale_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
    /**
-    * Set if the object is (up/down) resizeable.
+    * Set if the object is (up/down) resizable.
     *
     * @param obj The image object
-    * @param scale_up A bool to set if the object is resizeable up. Default is
+    * @param scale_up A bool to set if the object is resizable up. Default is
     * @c EINA_TRUE.
-    * @param scale_down A bool to set if the object is resizeable down. Default
+    * @param scale_down A bool to set if the object is resizable down. Default
     * is @c EINA_TRUE.
     *
     * This function limits the image resize ability. If @p scale_up is set to
@@ -5025,11 +5025,11 @@ extern "C" {
     */
    EAPI void             elm_image_scale_set(Evas_Object *obj, Eina_Bool scale_up, Eina_Bool scale_down) EINA_ARG_NONNULL(1);
    /**
-    * Get if the object is (up/down) resizeable.
+    * Get if the object is (up/down) resizable.
     *
     * @param obj The image object
-    * @param scale_up A bool to set if the object is resizeable up
-    * @param scale_down A bool to set if the object is resizeable down
+    * @param scale_up A bool to set if the object is resizable up
+    * @param scale_down A bool to set if the object is resizable down
     *
     * @see elm_image_scale_set()
     *
