@@ -13,7 +13,6 @@ icon_clicked(void *data , Evas_Object *obj __UNUSED__, void *event_info __UNUSED
    rec = !rec;
    printf("clicked!rec =%d\n",rec);
    elm_icon_animated_play_set(ic, rec);
-
 }
 
 void

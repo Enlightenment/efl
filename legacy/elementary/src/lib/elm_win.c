@@ -1517,7 +1517,7 @@ elm_win_add(Evas_Object *parent, const char *name, Elm_Win_Type type)
    evas_object_pass_events_set(win->win_obj, EINA_TRUE);
 
    if (type == ELM_WIN_INLINED_IMAGE)
-      elm_widget_parent2_set(win->win_obj, parent);
+     elm_widget_parent2_set(win->win_obj, parent);
    ecore_evas_object_associate(win->ee, win->win_obj,
                                ECORE_EVAS_OBJECT_ASSOCIATE_BASE |
                                ECORE_EVAS_OBJECT_ASSOCIATE_STACK |
@@ -1533,8 +1533,8 @@ elm_win_add(Evas_Object *parent, const char *name, Elm_Win_Type type)
    evas_object_event_callback_add(win->win_obj, EVAS_CALLBACK_RESIZE,
                                   _elm_win_obj_callback_resize, win);
    if (win->img_obj)
-      evas_object_intercept_move_callback_add(win->win_obj,
-                                              _elm_win_obj_intercept_move, win);
+     evas_object_intercept_move_callback_add(win->win_obj,
+                                             _elm_win_obj_intercept_move, win);
    evas_object_intercept_show_callback_add(win->win_obj,
                                            _elm_win_obj_intercept_show, win);
 
@@ -1547,7 +1547,7 @@ elm_win_add(Evas_Object *parent, const char *name, Elm_Win_Type type)
    evas_image_cache_set(win->evas, (_elm_config->image_cache * 1024));
    evas_font_cache_set(win->evas, (_elm_config->font_cache * 1024));
    EINA_LIST_FOREACH(_elm_config->font_dirs, l, fontpath)
-      evas_font_path_append(win->evas, fontpath);
+     evas_font_path_append(win->evas, fontpath);
    if (!_elm_config->font_hinting)
      evas_font_hinting_set(win->evas, EVAS_FONT_HINTING_NONE);
    else if (_elm_config->font_hinting == 1)
