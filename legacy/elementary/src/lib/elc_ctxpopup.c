@@ -388,61 +388,66 @@ _calc_base_geometry(Evas_Object *obj, Evas_Coord_Rectangle *rect)
    //In this case, all directions are invalid because of lack of space.
    if (idx == 4)
      {
-        //TODO 1: Find the largest space direction.
         Evas_Coord length[2];
 
-        length[0] = pos.y - hover_area.y;
-        length[1] = (hover_area.y + hover_area.h) - pos.y;
-
-        if (length[0] > length[1])
-           idx = ELM_CTXPOPUP_DIRECTION_UP;
-        else
-           idx = ELM_CTXPOPUP_DIRECTION_DOWN;
-
-        //TODO 2: determine x , y
-        switch (idx)
+        if(!wd->horizontal)
           {
-           case ELM_CTXPOPUP_DIRECTION_UP:
-              _adjust_pos_x(&pos, &base_size, &hover_area);
-              pos.y -= base_size.y;
-              arrow = ELM_CTXPOPUP_DIRECTION_DOWN;
-              if (pos.y < hover_area.y + arrow_size.y)
-                {
-                   base_size.y -= ((hover_area.y + arrow_size.y) - pos.y);
-                   pos.y = hover_area.y + arrow_size.y;
-                }
-              break;
-           case ELM_CTXPOPUP_DIRECTION_LEFT:
-              _adjust_pos_y(&pos, &base_size, &hover_area);
-              pos.x -= base_size.x;
-              arrow = ELM_CTXPOPUP_DIRECTION_RIGHT;
-              if (pos.x < hover_area.x + arrow_size.x)
-                {
-                   base_size.x -= ((hover_area.x + arrow_size.x) - pos.x);
-                   pos.x = hover_area.x + arrow_size.x;
-                }
-              break;
-           case ELM_CTXPOPUP_DIRECTION_RIGHT:
-              _adjust_pos_y(&pos, &base_size, &hover_area);
-              arrow = ELM_CTXPOPUP_DIRECTION_LEFT;
-              if (pos.x + arrow_size.x + base_size.x >
-                  hover_area.x + hover_area.w)
-                 base_size.x -=
-                    ((pos.x + arrow_size.x + base_size.x) -
-                     (hover_area.x + hover_area.w));
-              break;
-           case ELM_CTXPOPUP_DIRECTION_DOWN:
-              _adjust_pos_x(&pos, &base_size, &hover_area);
-              arrow = ELM_CTXPOPUP_DIRECTION_UP;
-              if (pos.y + arrow_size.y + base_size.y >
-                  hover_area.y + hover_area.h)
-                 base_size.y -=
-                    ((pos.y + arrow_size.y + base_size.y) -
-                     (hover_area.y + hover_area.h));
-              break;
-           default:
-              break;
+             length[0] = pos.y - hover_area.y;
+             length[1] = (hover_area.y + hover_area.h) - pos.y;
+
+             if (length[0] > length[1])
+               {
+                  // ELM_CTXPOPUP_DIRECTION_UP
+                  _adjust_pos_x(&pos, &base_size, &hover_area);
+                  pos.y -= base_size.y;
+                  arrow = ELM_CTXPOPUP_DIRECTION_DOWN;
+                  if (pos.y < hover_area.y + arrow_size.y)
+                    {
+                        base_size.y -= ((hover_area.y + arrow_size.y) - pos.y);
+                        pos.y = hover_area.y + arrow_size.y;
+                    }
+               }
+             else
+               {
+                  //ELM_CTXPOPUP_DIRECTION_DOWN
+                  _adjust_pos_x(&pos, &base_size, &hover_area);
+                  arrow = ELM_CTXPOPUP_DIRECTION_UP;
+                  if (pos.y + arrow_size.y + base_size.y >
+                      hover_area.y + hover_area.h)
+                     base_size.y -=
+                        ((pos.y + arrow_size.y + base_size.y) -
+                         (hover_area.y + hover_area.h));
+               }
           }
+        else
+          {
+             length[0] = pos.x - hover_area.x;
+             length[1] = (hover_area.x + hover_area.w) - pos.x;
+             if (length[0] > length[1])
+               {
+                  //ELM_CTXPOPUP_DIRECTION_LEFT
+                  _adjust_pos_y(&pos, &base_size, &hover_area);
+                  pos.x -= base_size.x;
+                  arrow = ELM_CTXPOPUP_DIRECTION_RIGHT;
+                  if (pos.x < hover_area.x + arrow_size.x)
+                    {
+                       base_size.x -= ((hover_area.x + arrow_size.x) - pos.x);
+                       pos.x = hover_area.x + arrow_size.x;
+                    }
+               }
+             else
+               {
+                  //ELM_CTXPOPUP_DIRECTION_RIGHT
+                  _adjust_pos_y(&pos, &base_size, &hover_area);
+                  arrow = ELM_CTXPOPUP_DIRECTION_LEFT;
+                  if (pos.x + arrow_size.x + base_size.x >
+                      hover_area.x + hover_area.w)
+                     base_size.x -=
+                        ((pos.x + arrow_size.x + base_size.x) -
+                         (hover_area.x + hover_area.w));
+               }
+          }
+
      }
 
    //Final position and size.
