@@ -4770,15 +4770,15 @@ extern "C" {
     */
    EAPI Elm_Icon_Lookup_Order elm_icon_order_lookup_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
    /**
-    * Get the flag related with elm icon can support animation
+    * Get if the icon supports animation or not.
     *
     * @param obj The icon object
-    * @return The flag of animation available
+    * @return @c EINA_TRUE if the icon supports animation,
+    *         @c EINA_FALSE otherwise.
     *
-    * Return this elm icon's image can be animated
-    * Currently Evas only support gif's animation
-    * If the return value of this function is EINA_FALSE,
-    * other elm_icon_animated_XXX functions don't work
+    * Return if this elm icon's image can be animated. Currently Evas only
+    * supports gif animation. If the return value is EINA_FALSE, other
+    * elm_icon_animated_XXX APIs won't work.
     * @ingroup Icon
     */
    EAPI Eina_Bool           elm_icon_animated_available_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
