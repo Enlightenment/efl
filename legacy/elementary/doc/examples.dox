@@ -488,7 +488,7 @@
  * @skip on_done
  * @until evas_object_resize
  *
- * We also add a resizeable white background to use behind our animation:
+ * We also add a resizable white background to use behind our animation:
  *
  * @skip bg_add
  * @until evas_object_show
@@ -538,7 +538,7 @@
  * @skip on_done
  * @until evas_object_resize
  *
- * We also add a resizeable white background to use behind our animation:
+ * We also add a resizable white background to use behind our animation:
  *
  * @skip bg_add
  * @until evas_object_show
@@ -3427,7 +3427,7 @@
   * @dontinclude image_example_01.c
   *
   * This example is as simple as possible. An image object will be added to the
-  * window over a white background, and set to be resizeable together with the
+  * window over a white background, and set to be resizable together with the
   * window. All the options set through the example will affect the behavior of
   * this image.
   *
@@ -3490,7 +3490,7 @@
   * @dontinclude icon_example_01.c
   *
   * This example is as simple as possible. An icon object will be added to the
-  * window over a white background, and set to be resizeable together with the
+  * window over a white background, and set to be resizable together with the
   * window. All the options set through the example will affect the behavior of
   * this icon.
   *
