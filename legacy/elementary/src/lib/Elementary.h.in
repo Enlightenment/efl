@@ -24605,8 +24605,6 @@ extern "C" {
     * @ref tutorial_ctxpopup shows the usage of a good deal of the API.
     * @{
     */
-   typedef struct _Elm_Ctxpopup_Item Elm_Ctxpopup_Item;
-
    typedef enum _Elm_Ctxpopup_Direction
      {
         ELM_CTXPOPUP_DIRECTION_DOWN, /**< ctxpopup show appear below clicked
