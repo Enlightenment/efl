@@ -2,6 +2,7 @@
 #include "elm_priv.h"
 
 typedef struct _Widget_Data Widget_Data;
+typedef struct _Elm_Ctxpopup_Item Elm_Ctxpopup_Item;
 
 struct _Elm_Ctxpopup_Item
 {
@@ -162,7 +163,7 @@ _hover_parent_callbacks_del(Evas_Object *obj)
    Widget_Data *wd = elm_widget_data_get(obj);
 
    if ((!wd) || (!wd->hover_parent))
-      return;
+     return;
 
    evas_object_event_callback_del_full(wd->hover_parent, EVAS_CALLBACK_DEL,
                                        _hover_parent_del, obj);
@@ -233,15 +234,15 @@ _adjust_pos_x(Evas_Coord_Point *pos, Evas_Coord_Point *base_size,
    pos->x -= (base_size->x / 2);
 
    if (pos->x < hover_area->x)
-      pos->x = hover_area->x;
+     pos->x = hover_area->x;
    else if ((pos->x + base_size->x) > (hover_area->x + hover_area->w))
-      pos->x = (hover_area->x + hover_area->w) - base_size->x;
+     pos->x = (hover_area->x + hover_area->w) - base_size->x;
 
    if (base_size->x > hover_area->w)
-      base_size->x -= (base_size->x - hover_area->w);
+     base_size->x -= (base_size->x - hover_area->w);
 
    if (pos->x < hover_area->x)
-      pos->x = hover_area->x;
+     pos->x = hover_area->x;
 }
 
 static void
@@ -251,15 +252,15 @@ _adjust_pos_y(Evas_Coord_Point *pos, Evas_Coord_Point *base_size,
    pos->y -= (base_size->y / 2);
 
    if (pos->y < hover_area->y)
-      pos->y = hover_area->y;
+     pos->y = hover_area->y;
    else if ((pos->y + base_size->y) > (hover_area->y + hover_area->h))
-      pos->y = hover_area->y + hover_area->h - base_size->y;
+     pos->y = hover_area->y + hover_area->h - base_size->y;
 
    if (base_size->y > hover_area->h)
-      base_size->y -= (base_size->y - hover_area->h);
+     base_size->y -= (base_size->y - hover_area->h);
 
    if (pos->y < hover_area->y)
-      pos->y = hover_area->y;
+     pos->y = hover_area->y;
 }
 
 static void
@@ -272,7 +273,7 @@ _ctxpopup_changed_size_hints(void *data __UNUSED__, Evas *e __UNUSED__,
    if (!wd) return;
 
    if (wd->visible)
-      _sizing_eval(obj);
+     _sizing_eval(obj);
 }
 
 static Elm_Ctxpopup_Direction
@@ -293,7 +294,7 @@ _calc_base_geometry(Evas_Object *obj, Evas_Coord_Rectangle *rect)
    wd = elm_widget_data_get(obj);
 
    if ((!wd) || (!rect))
-      return ELM_CTXPOPUP_DIRECTION_DOWN;
+     return ELM_CTXPOPUP_DIRECTION_DOWN;
 
    edje_object_part_geometry_get(wd->arrow, "ctxpopup_arrow", NULL, NULL,
                                  &arrow_size.x, &arrow_size.y);
@@ -301,8 +302,8 @@ _calc_base_geometry(Evas_Object *obj, Evas_Coord_Rectangle *rect)
 
    //Initialize Area Rectangle.
    if (wd->hover_parent)
-      evas_object_geometry_get(wd->hover_parent, &hover_area.x, &hover_area.y,
-                               &hover_area.w, &hover_area.h);
+     evas_object_geometry_get(wd->hover_parent, &hover_area.x, &hover_area.y,
+                              &hover_area.w, &hover_area.h);
    else
      {
         evas_object_geometry_get(wd->parent, &parent_size.x, &parent_size.y,
@@ -323,19 +324,19 @@ _calc_base_geometry(Evas_Object *obj, Evas_Coord_Rectangle *rect)
    evas_object_size_hint_max_get(obj, &max_size.x, &max_size.y);
 
    if ((max_size.y > 0) && (base_size.y > max_size.y))
-      base_size.y = max_size.y;
+     base_size.y = max_size.y;
 
    if ((max_size.x > 0) && (base_size.x > max_size.x))
-      base_size.x = max_size.x;
+     base_size.x = max_size.x;
 
    //Limit to Min Size
    evas_object_size_hint_min_get(obj, &min_size.x, &min_size.y);
 
    if ((min_size.y > 0) && (base_size.y < min_size.y))
-      base_size.y = min_size.y;
+     base_size.y = min_size.y;
 
    if ((min_size.x > 0) && (base_size.x < min_size.x))
-      base_size.x = min_size.x;
+     base_size.x = min_size.x;
 
    //Check the Which direction is available.
    //If find a avaialble direction, it adjusts position and size.
@@ -346,7 +347,7 @@ _calc_base_geometry(Evas_Object *obj, Evas_Coord_Rectangle *rect)
            case ELM_CTXPOPUP_DIRECTION_UP:
               temp.y = (pos.y - base_size.y);
               if ((temp.y - arrow_size.y) < hover_area.y)
-                 continue;
+                continue;
               _adjust_pos_x(&pos, &base_size, &hover_area);
               pos.y -= base_size.y;
               dir = ELM_CTXPOPUP_DIRECTION_UP;
@@ -354,7 +355,7 @@ _calc_base_geometry(Evas_Object *obj, Evas_Coord_Rectangle *rect)
            case ELM_CTXPOPUP_DIRECTION_LEFT:
               temp.x = (pos.x - base_size.x);
               if ((temp.x - arrow_size.x) < hover_area.x)
-                 continue;
+                continue;
               _adjust_pos_y(&pos, &base_size, &hover_area);
               pos.x -= base_size.x;
               dir = ELM_CTXPOPUP_DIRECTION_LEFT;
@@ -363,7 +364,7 @@ _calc_base_geometry(Evas_Object *obj, Evas_Coord_Rectangle *rect)
               temp.x = (pos.x + base_size.x);
               if ((temp.x + arrow_size.x) >
                   (hover_area.x + hover_area.w))
-                 continue;
+                continue;
               _adjust_pos_y(&pos, &base_size, &hover_area);
               dir = ELM_CTXPOPUP_DIRECTION_RIGHT;
               break;
@@ -371,7 +372,7 @@ _calc_base_geometry(Evas_Object *obj, Evas_Coord_Rectangle *rect)
               temp.y = (pos.y + base_size.y);
               if ((temp.y + arrow_size.y) >
                   (hover_area.y + hover_area.h))
-                 continue;
+                continue;
               _adjust_pos_x(&pos, &base_size, &hover_area);
               dir = ELM_CTXPOPUP_DIRECTION_DOWN;
               break;
@@ -399,8 +400,8 @@ _calc_base_geometry(Evas_Object *obj, Evas_Coord_Rectangle *rect)
                   dir = ELM_CTXPOPUP_DIRECTION_UP;
                   if (pos.y < (hover_area.y + arrow_size.y))
                     {
-                        base_size.y -= ((hover_area.y + arrow_size.y) - pos.y);
-                        pos.y = hover_area.y + arrow_size.y;
+                       base_size.y -= ((hover_area.y + arrow_size.y) - pos.y);
+                       pos.y = hover_area.y + arrow_size.y;
                     }
                }
              //ELM_CTXPOPUP_DIRECTION_DOWN
@@ -558,16 +559,16 @@ _sizing_eval(Evas_Object *obj)
         if (!wd->horizontal)
           {
              if (_box_size.x > box_size.x)
-                box_size.x = _box_size.x;
+               box_size.x = _box_size.x;
              if (_box_size.y != -1)
-                box_size.y += _box_size.y;
+               box_size.y += _box_size.y;
           }
         else
           {
              if (_box_size.x != -1)
-                box_size.x += _box_size.x;
+               box_size.x += _box_size.x;
              if (_box_size.y > box_size.y)
-                box_size.y = _box_size.y;
+               box_size.y = _box_size.y;
           }
      }
 
@@ -584,7 +585,7 @@ _sizing_eval(Evas_Object *obj)
 
    //resize scroller according to final size.
    if (!wd->content)
-      evas_object_smart_calculate(wd->scr);
+     evas_object_smart_calculate(wd->scr);
 
    evas_object_move(wd->base, rect.x, rect.y);
    evas_object_resize(wd->base, rect.w, rect.h);
@@ -659,20 +660,20 @@ _theme_hook(Evas_Object *obj)
    EINA_LIST_FOREACH(wd->items, elist, item)
      {
         if (item->label && item->icon)
-           _elm_theme_object_set(obj, item->base.view, "ctxpopup",
-                                 "icon_text_style_item",
-                                 elm_widget_style_get(obj));
+          _elm_theme_object_set(obj, item->base.view, "ctxpopup",
+                                "icon_text_style_item",
+                                elm_widget_style_get(obj));
         else if (item->label)
-           _elm_theme_object_set(obj, item->base.view, "ctxpopup", "text_style_item",
-                                 elm_widget_style_get(obj));
+          _elm_theme_object_set(obj, item->base.view, "ctxpopup", "text_style_item",
+                                elm_widget_style_get(obj));
         else if (item->icon)
-           _elm_theme_object_set(obj, item->base.view, "ctxpopup", "icon_style_item",
-                                 elm_widget_style_get(obj));
+          _elm_theme_object_set(obj, item->base.view, "ctxpopup", "icon_style_item",
+                                elm_widget_style_get(obj));
         if (item->label)
-           edje_object_part_text_set(item->base.view, "elm.text", item->label);
+          edje_object_part_text_set(item->base.view, "elm.text", item->label);
 
         if (item->disabled)
-           edje_object_signal_emit(item->base.view, "elm,state,disabled", "elm");
+          edje_object_signal_emit(item->base.view, "elm,state,disabled", "elm");
 
         edje_object_message_signal_process(item->base.view);
      }
@@ -724,7 +725,7 @@ _content_set_hook(Evas_Object *obj, const char *part __UNUSED__,
    wd->content = content;
 
    if (wd->visible)
-      _sizing_eval(obj);
+     _sizing_eval(obj);
 }
 
 static Evas_Object *
@@ -834,7 +835,7 @@ _ctxpopup_hide(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj,
 
    wd = elm_widget_data_get(obj);
    if ((!wd) || (!wd->visible))
-      return;
+     return;
 
    _hide(obj);
 }
@@ -864,9 +865,9 @@ _scroller_resize(void *data, Evas *e __UNUSED__, Evas_Object *obj,
      }
 
    if (wd->max_sc_w < w)
-      wd->max_sc_w = w;
+     wd->max_sc_w = w;
    if (wd->max_sc_h < h)
-      wd->max_sc_h = h;
+     wd->max_sc_h = h;
 
    _sizing_eval(data);
 }
@@ -882,7 +883,7 @@ _ctxpopup_move(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj,
    if (!wd) return;
 
    if (wd->visible)
-      evas_object_show(wd->arrow);
+     evas_object_show(wd->arrow);
 
    _scroller_size_reset(wd);
    _sizing_eval(obj);
@@ -898,7 +899,7 @@ _item_select_cb(void *data, Evas_Object *obj __UNUSED__,
    if (item->disabled) return;
 
    if (item->func)
-      item->func((void*) item->base.data, item->base.widget, data);
+     item->func((void*) item->base.data, item->base.widget, data);
 }
 
 static void
@@ -918,7 +919,7 @@ static void
 _item_label_set(Elm_Ctxpopup_Item *item, const char *label)
 {
    if (!eina_stringshare_replace(&item->label, label))
-      return;
+     return;
 
    edje_object_part_text_set(item->base.view, "elm.text", label);
    edje_object_message_signal_process(item->base.view);
@@ -994,9 +995,9 @@ _remove_items(Widget_Data *wd)
    EINA_LIST_FOREACH(wd->items, elist, item)
      {
         if (item->label)
-           eina_stringshare_del(item->label);
+          eina_stringshare_del(item->label);
         if (item->icon)
-           evas_object_del(item->icon);
+          evas_object_del(item->icon);
         wd->items = eina_list_remove(wd->items, item);
         free(item);
      }
@@ -1239,20 +1240,20 @@ elm_ctxpopup_item_append(Evas_Object *obj, const char *label,
 
    //The first item is appended.
    if (wd->content)
-      evas_object_del(elm_object_content_unset(obj));
+     evas_object_del(elm_object_content_unset(obj));
 
    if (!wd->items)
-      _list_new(obj);
+     _list_new(obj);
 
    item->func = func;
    item->base.data = data;
 
    if (icon && label)
-      _item_new(item, "icon_text_style_item");
+     _item_new(item, "icon_text_style_item");
    else if (label)
-      _item_new(item, "text_style_item");
+     _item_new(item, "text_style_item");
    else
-      _item_new(item, "icon_style_item");
+     _item_new(item, "icon_style_item");
 
    _item_icon_set(item, icon);
    _item_label_set(item, label);
@@ -1282,17 +1283,17 @@ elm_ctxpopup_item_del(Elm_Object_Item *it)
    if (ctxpopup_it->icon)
       evas_object_del(ctxpopup_it->icon);
    if (ctxpopup_it->base.view)
-      evas_object_del(ctxpopup_it->base.view);
+     evas_object_del(ctxpopup_it->base.view);
 
    eina_stringshare_del(ctxpopup_it->label);
 
    wd->items = eina_list_remove(wd->items, ctxpopup_it);
 
    if (eina_list_count(wd->items) < 1)
-      wd->items = NULL;
+     wd->items = NULL;
 
    if (wd->visible)
-      _sizing_eval(ctxpopup_it->base.widget);
+     _sizing_eval(ctxpopup_it->base.widget);
 
    free(ctxpopup_it);
 }
@@ -1311,12 +1312,12 @@ elm_ctxpopup_item_disabled_set(Elm_Object_Item *it, Eina_Bool disabled)
    ctxpopup_it = ELM_CAST(it);
 
    if (disabled == ctxpopup_it->disabled)
-      return;
+     return;
 
    if (disabled)
-      edje_object_signal_emit(ctxpopup_it->base.view, "elm,state,disabled", "elm");
+     edje_object_signal_emit(ctxpopup_it->base.view, "elm,state,disabled", "elm");
    else
-      edje_object_signal_emit(ctxpopup_it->base.view, "elm,state,enabled", "elm");
+     edje_object_signal_emit(ctxpopup_it->base.view, "elm,state,enabled", "elm");
 
    ctxpopup_it->disabled = !!disabled;
 }
@@ -1360,7 +1361,7 @@ elm_ctxpopup_direction_priority_set(Evas_Object *obj,
    wd->dir_priority[3] = fourth;
 
    if (wd->visible)
-      _sizing_eval(obj);
+     _sizing_eval(obj);
 }
 
 EAPI void
