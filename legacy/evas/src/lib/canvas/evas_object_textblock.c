@@ -7272,11 +7272,40 @@ evas_textblock_cursor_content_get(const Evas_Textblock_Cursor *cur)
    if (!cur || !cur->node) return NULL;
    if (evas_textblock_cursor_format_is_visible_get(cur))
      {
-        const char *tmp;
-        tmp  = evas_textblock_node_format_text_get(
+        size_t len;
+        const char *fstr;
+        char *ret;
+        int pop = 0;
+        fstr  = evas_textblock_node_format_text_get(
               _evas_textblock_node_visible_at_pos_get(
                  evas_textblock_cursor_format_get(cur)));
-        return (tmp) ? strdup(tmp) : NULL;
+
+        if (!fstr)
+           return NULL;
+
+        if (*fstr == '-') pop = 1;
+        while ((*fstr == ' ') || (*fstr == '+') || (*fstr == '-')) fstr++;
+        len = strlen(fstr);
+
+          {
+             char *tmp;
+             if (pop)
+               {
+                  ret = tmp = malloc(len + 3 + 1); /* </> and the null */
+                  memcpy(tmp, "</", 2);
+                  tmp += 2;
+               }
+             else
+               {
+                  ret = tmp = malloc(len + 2 + 1); /* <> and the null */
+                  *tmp = '<';
+                  tmp++;
+               }
+             memcpy(tmp, fstr, len);
+             memcpy(tmp + len, ">", 2); /* Including the null */
+          }
+
+        return ret;
      }
 
    ustr = eina_ustrbuf_string_get(cur->node->unicode);
