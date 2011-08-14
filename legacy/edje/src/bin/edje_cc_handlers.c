@@ -2220,6 +2220,7 @@ st_collections_group_parts_part_name(void)
             @li BOX
             @li TABLE
             @li EXTERNAL
+	    @li PROXY
     @endproperty
 */
 static void
