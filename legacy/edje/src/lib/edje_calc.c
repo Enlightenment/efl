@@ -1948,6 +1948,7 @@ static void
 _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
 {
 #ifdef EDJE_CALC_CACHE
+   Eina_Bool proxy_invalidate = EINA_FALSE;
    int state1 = -1;
    int state2 = -1;
    int statec = -1;
@@ -2101,6 +2102,24 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
 	return;
      }
 
+   if (ep->part->type == EDJE_PART_TYPE_PROXY)
+     {
+        Edje_Real_Part *pp;
+        int part_id;
+
+        if (pos >= 0.5)
+          part_id = ((Edje_Part_Description_Proxy*) ep->param2->description)->proxy.id;
+        else
+          part_id = ((Edje_Part_Description_Proxy*) chosen_desc)->proxy.id;
+        pp = ed->table_parts[part_id % ed->table_parts_size];
+#ifdef EDJE_CALC_CACHE
+        if (pp->invalidate)
+          proxy_invalidate = EINA_TRUE;
+#endif
+
+        if (!pp->calculated) _edje_part_recalc(ed, ep, flags);
+     }
+
 #ifndef EDJE_CALC_CACHE
    p1 = &lp1;
 #else
@@ -2114,6 +2133,7 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
  	    ep->invalidate ||
  	    state1 >= ep->param1.state ||
  	    statec >= ep->param1.state ||
+            proxy_invalidate ||
  	    ((ep->part->type == EDJE_PART_TYPE_TEXT || ep->part->type == EDJE_PART_TYPE_TEXTBLOCK) && ed->text_part_change))
 #endif
  	  {
@@ -2143,6 +2163,7 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
  	    ep->invalidate ||
  	    state2 >= ep->param2->state ||
  	    statec >= ep->param2->state ||
+            proxy_invalidate ||
  	    ((ep->part->type == EDJE_PART_TYPE_TEXT || ep->part->type == EDJE_PART_TYPE_TEXTBLOCK) && ed->text_part_change))
 #endif
  	  {
