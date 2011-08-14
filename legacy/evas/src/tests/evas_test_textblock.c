@@ -308,7 +308,7 @@ START_TEST(evas_textblock_cursor)
    evas_textblock_cursor_pos_set(cur, 0);
    fail_if(strcmp(evas_textblock_cursor_content_get(cur), "T"));
    evas_textblock_cursor_pos_set(cur, 9);
-   fail_if(strcmp(evas_textblock_cursor_content_get(cur), "br"));
+   fail_if(strcmp(evas_textblock_cursor_content_get(cur), "<br>"));
    evas_textblock_cursor_pos_set(cur, 43);
    fail_if(strcmp(evas_textblock_cursor_content_get(cur), "ד"));
 
@@ -1708,29 +1708,25 @@ START_TEST(evas_textblock_formats)
    evas_object_textblock_text_markup_set(tb, "<ps>a<br>a<tab>a<item></>");
    fail_if(strcmp(evas_textblock_node_format_text_get(
                evas_textblock_cursor_format_get(cur)), "ps"));
-   /* FIXME: Current behavior makes it return "ps" instead of the actual
-    * utf8 value of the ps (same goes to "+ item" instead of the object
-    * replacement char) which is bad, but I guess I can't break API, so
-    * this is ensuring that this possibly unwanted behavior works. */
-   fail_if(strcmp(evas_textblock_cursor_content_get(cur), "ps"));
+   fail_if(strcmp(evas_textblock_cursor_content_get(cur), "<ps>"));
    fail_if(!evas_textblock_cursor_format_is_visible_get(cur));
    fail_if(!evas_textblock_cursor_char_next(cur));
    fail_if(!evas_textblock_cursor_char_next(cur));
    fail_if(strcmp(evas_textblock_node_format_text_get(
                evas_textblock_cursor_format_get(cur)), "br"));
-   fail_if(strcmp(evas_textblock_cursor_content_get(cur), "br"));
+   fail_if(strcmp(evas_textblock_cursor_content_get(cur), "<br>"));
    fail_if(!evas_textblock_cursor_format_is_visible_get(cur));
    fail_if(!evas_textblock_cursor_char_next(cur));
    fail_if(!evas_textblock_cursor_char_next(cur));
    fail_if(strcmp(evas_textblock_node_format_text_get(
                evas_textblock_cursor_format_get(cur)), "tab"));
-   fail_if(strcmp(evas_textblock_cursor_content_get(cur), "tab"));
+   fail_if(strcmp(evas_textblock_cursor_content_get(cur), "<tab>"));
    fail_if(!evas_textblock_cursor_format_is_visible_get(cur));
    fail_if(!evas_textblock_cursor_char_next(cur));
    fail_if(!evas_textblock_cursor_char_next(cur));
    fail_if(strcmp(evas_textblock_node_format_text_get(
                evas_textblock_cursor_format_get(cur)), "+ item"));
-   fail_if(strcmp(evas_textblock_cursor_content_get(cur), "+ item"));
+   fail_if(strcmp(evas_textblock_cursor_content_get(cur), "<item>"));
    fail_if(!evas_textblock_cursor_format_is_visible_get(cur));
 
    END_TB_TEST();
