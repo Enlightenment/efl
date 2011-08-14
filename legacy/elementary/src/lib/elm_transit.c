@@ -319,16 +319,16 @@ _transit_animate_cb(void *data)
    switch (transit->tween_mode)
      {
       case ELM_TRANSIT_TWEEN_MODE_ACCELERATE:
-        transit->progress = 1.0 - sin((ELM_PI / 2.0) + (transit->progress * ELM_PI / 2.0));
-        break;
+         transit->progress = 1.0 - sin((ELM_PI / 2.0) + (transit->progress * ELM_PI / 2.0));
+         break;
       case ELM_TRANSIT_TWEEN_MODE_DECELERATE:
-        transit->progress = sin(transit->progress * ELM_PI / 2.0);
-        break;
+         transit->progress = sin(transit->progress * ELM_PI / 2.0);
+         break;
       case ELM_TRANSIT_TWEEN_MODE_SINUSOIDAL:
-        transit->progress = (1.0 - cos(transit->progress * ELM_PI)) / 2.0;
-        break;
+         transit->progress = (1.0 - cos(transit->progress * ELM_PI)) / 2.0;
+         break;
       default:
-        break;
+         break;
      }
 
    /* Reverse? */
