@@ -8,7 +8,7 @@ static void
 _ctxpopup_item_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
 {
    printf("ctxpopup item selected: %s\n",
-          elm_ctxpopup_item_label_get(event_info));
+   elm_ctxpopup_item_label_get(event_info));
 }
 
 #define ITEM_NEW(_hov, _label, _icon)                                           \
@@ -26,7 +26,7 @@ static void
 _list_item_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *ctxpopup, *ic;
-   Elm_Ctxpopup_Item *it;
+   Elm_Object_Item *it;
    Evas_Coord x,y;
 
    ctxpopup = elm_ctxpopup_add(obj);
@@ -50,7 +50,7 @@ static void
 _list_item_cb2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *ctxpopup, *ic;
-   Elm_Ctxpopup_Item *it;
+   Elm_Object_Item *it;
    Evas_Coord x,y;
 
    ctxpopup = elm_ctxpopup_add(obj);
@@ -73,7 +73,7 @@ static void
 _list_item_cb3(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *ctxpopup, *ic;
-   Elm_Ctxpopup_Item *it;
+   Elm_Object_Item *it;
    Evas_Coord x,y;
 
    ctxpopup = elm_ctxpopup_add(obj);
@@ -95,7 +95,7 @@ static void
 _list_item_cb4(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *ctxpopup, *ic;
-   Elm_Ctxpopup_Item *it;
+   Elm_Object_Item *it;
    Evas_Coord x,y;
 
    ctxpopup = elm_ctxpopup_add(obj);
@@ -168,6 +168,7 @@ test_ctxpopup(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
 
    list = elm_list_add(win);
    elm_win_resize_object_add(win, list);
+   evas_object_size_hint_weight_set(list, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_list_mode_set(list, ELM_LIST_COMPRESS);
    evas_object_smart_callback_add(list, "selected", _list_clicked, NULL);
 

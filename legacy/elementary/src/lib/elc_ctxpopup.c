@@ -110,10 +110,6 @@ static const Evas_Smart_Cb_Description _signals[] = {
    {NULL, NULL}
 };
 
-#define ELM_CTXPOPUP_ITEM_CHECK_RETURN(it, ...)                        \
-  ELM_WIDGET_ITEM_CHECK_OR_RETURN((Elm_Widget_Item *)it, __VA_ARGS__); \
-  ELM_CHECK_WIDTYPE(item->base.widget, widtype) __VA_ARGS__;
-
 static void
 _freeze_on(void *data __UNUSED__, Evas_Object *obj,
            void *event_info __UNUSED__)
@@ -1077,54 +1073,58 @@ elm_ctxpopup_add(Evas_Object *parent)
 }
 
 EAPI Evas_Object *
-elm_ctxpopup_item_icon_get(const Elm_Ctxpopup_Item *item)
+elm_ctxpopup_item_icon_get(const Elm_Object_Item *it)
 {
-   ELM_CTXPOPUP_ITEM_CHECK_RETURN(item, NULL);
-   return item->icon;
+   ELM_OBJ_ITEM_CHECK_OR_RETURN(it, NULL);
+   Elm_Ctxpopup_Item *ctxpopup_it = ELM_CAST(it);
+   return ctxpopup_it->icon;
 }
 
 EAPI void
-elm_ctxpopup_item_icon_set(Elm_Ctxpopup_Item *item, Evas_Object *icon)
+elm_ctxpopup_item_icon_set(Elm_Object_Item *it, Evas_Object *icon)
 {
-   ELM_CTXPOPUP_ITEM_CHECK_RETURN(item);
+   ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
 
    Widget_Data *wd;
+   Elm_Ctxpopup_Item *ctxpopup_it  = ELM_CAST(it);
 
-   wd = elm_widget_data_get(item->base.widget);
+   wd = elm_widget_data_get(ctxpopup_it->base.widget);
    if (!wd) return;
 
-   _item_icon_set(item, icon);
+   _item_icon_set(ctxpopup_it, icon);
 
    if (wd->visible)
      {
         _scroller_size_reset(wd);
-        _sizing_eval(item->base.widget);
+        _sizing_eval(ctxpopup_it->base.widget);
      }
 }
 
 EAPI const char *
-elm_ctxpopup_item_label_get(const Elm_Ctxpopup_Item *item)
+elm_ctxpopup_item_label_get(const Elm_Object_Item *it)
 {
-   ELM_CTXPOPUP_ITEM_CHECK_RETURN(item, NULL);
-   return item->label;
+   ELM_OBJ_ITEM_CHECK_OR_RETURN(it, NULL);
+   Elm_Ctxpopup_Item *ctxpopup_it = ELM_CAST(it);
+   return ctxpopup_it->label;
 }
 
 EAPI void
-elm_ctxpopup_item_label_set(Elm_Ctxpopup_Item *item, const char *label)
+elm_ctxpopup_item_label_set(Elm_Object_Item *it, const char *label)
 {
-   ELM_CTXPOPUP_ITEM_CHECK_RETURN(item);
+   ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
 
    Widget_Data *wd;
+   Elm_Ctxpopup_Item *ctxpopup_it = ELM_CAST(it);
 
-   wd = elm_widget_data_get(item->base.widget);
+   wd = elm_widget_data_get(ctxpopup_it->base.widget);
    if (!wd) return;
 
-   _item_label_set(item, label);
+   _item_label_set(ctxpopup_it, label);
 
    if (wd->visible)
      {
         _scroller_size_reset(wd);
-        _sizing_eval(item->base.widget);
+        _sizing_eval(ctxpopup_it->base.widget);
      }
 }
 
@@ -1221,7 +1221,7 @@ elm_ctxpopup_horizontal_get(const Evas_Object *obj)
    return wd->horizontal;
 }
 
-EAPI Elm_Ctxpopup_Item *
+EAPI Elm_Object_Item *
 elm_ctxpopup_item_append(Evas_Object *obj, const char *label,
                          Evas_Object *icon, Evas_Smart_Cb func,
                          const void *data)
@@ -1265,63 +1265,68 @@ elm_ctxpopup_item_append(Evas_Object *obj, const char *label,
         _sizing_eval(obj);
      }
 
-   return item;
+   return ELM_CAST(item);
 }
 
 EAPI void
-elm_ctxpopup_item_del(Elm_Ctxpopup_Item *item)
+elm_ctxpopup_item_del(Elm_Object_Item *it)
 {
-   ELM_CTXPOPUP_ITEM_CHECK_RETURN(item);
+   ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
 
    Widget_Data *wd;
+   Elm_Ctxpopup_Item *ctxpopup_it = ELM_CAST(it);
 
-   wd = elm_widget_data_get(item->base.widget);
+   wd = elm_widget_data_get(ctxpopup_it->base.widget);
    if (!wd) return;
 
-   if (item->icon)
-      evas_object_del(item->icon);
-   if (item->base.view)
-      evas_object_del(item->base.view);
+   if (ctxpopup_it->icon)
+      evas_object_del(ctxpopup_it->icon);
+   if (ctxpopup_it->base.view)
+      evas_object_del(ctxpopup_it->base.view);
 
-   eina_stringshare_del(item->label);
+   eina_stringshare_del(ctxpopup_it->label);
 
-   wd->items = eina_list_remove(wd->items, item);
+   wd->items = eina_list_remove(wd->items, ctxpopup_it);
 
    if (eina_list_count(wd->items) < 1)
       wd->items = NULL;
 
    if (wd->visible)
-      _sizing_eval(item->base.widget);
+      _sizing_eval(ctxpopup_it->base.widget);
 
-   free(item);
+   free(ctxpopup_it);
 }
 
 EAPI void
-elm_ctxpopup_item_disabled_set(Elm_Ctxpopup_Item *item, Eina_Bool disabled)
+elm_ctxpopup_item_disabled_set(Elm_Object_Item *it, Eina_Bool disabled)
 {
-   ELM_CTXPOPUP_ITEM_CHECK_RETURN(item);
+   ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
 
    Widget_Data *wd;
+   Elm_Ctxpopup_Item *ctxpopup_it = ELM_CAST(it);
 
-   wd = elm_widget_data_get(item->base.widget);
+   wd = elm_widget_data_get(ctxpopup_it->base.widget);
    if (!wd) return;
 
-   if (disabled == item->disabled)
+   ctxpopup_it = ELM_CAST(it);
+
+   if (disabled == ctxpopup_it->disabled)
       return;
 
    if (disabled)
-      edje_object_signal_emit(item->base.view, "elm,state,disabled", "elm");
+      edje_object_signal_emit(ctxpopup_it->base.view, "elm,state,disabled", "elm");
    else
-      edje_object_signal_emit(item->base.view, "elm,state,enabled", "elm");
+      edje_object_signal_emit(ctxpopup_it->base.view, "elm,state,enabled", "elm");
 
-   item->disabled = !!disabled;
+   ctxpopup_it->disabled = !!disabled;
 }
 
 EAPI Eina_Bool
-elm_ctxpopup_item_disabled_get(const Elm_Ctxpopup_Item *item)
+elm_ctxpopup_item_disabled_get(const Elm_Object_Item *it)
 {
-   ELM_CTXPOPUP_ITEM_CHECK_RETURN(item, EINA_FALSE);
-   return item->disabled;
+   ELM_OBJ_ITEM_CHECK_OR_RETURN(it, EINA_FALSE);
+   Elm_Ctxpopup_Item *ctxpopup_it = ELM_CAST(it);
+   return ctxpopup_it->disabled;
 }
 
 EAPI void
