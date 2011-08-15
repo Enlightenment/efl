@@ -1391,7 +1391,7 @@ _edje_key_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, v
                {
                   _edje_entry_hide_visible_password(en->rp);
                   _text_filter_format_prepend(en, en->cursor, "+ password=off");
-                  _text_filter_markup_prepend(en, en->cursor, ev->string);
+                  _text_filter_text_prepend(en, en->cursor, ev->string);
                   _text_filter_format_prepend(en, en->cursor, "- password");
                   if (en->pw_timer)
                     {
