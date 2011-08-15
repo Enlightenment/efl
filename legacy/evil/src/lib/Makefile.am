@@ -20,12 +20,12 @@ evil_time.h \
 evil_unistd.h \
 evil_util.h
 
-nobase_stdheadersdir = $(includedir)/evil-@VMAJ@
-dist_nobase_stdheaders_DATA = pwd.h sys/mman.h fnmatch.h dirent.h
+stdheadersdir = $(includedir)/evil-@VMAJ@
+nobase_dist_stdheaders_DATA = pwd.h sys/mman.h fnmatch.h dirent.h
 
 if EVIL_HAVE_WINCE
 
-dist_nobase_stdheaders_DATA += errno.h
+nobase_dist_stdheaders_DATA += errno.h
 
 endif
 
