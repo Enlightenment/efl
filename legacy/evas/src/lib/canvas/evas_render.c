@@ -1571,7 +1571,7 @@ evas_sync(Evas *e)
    return;
    MAGIC_CHECK_END();
 
-   evas_common_frameq_flush ();
+   evas_common_frameq_flush();
 #else
    (void) e;
 #endif
