@@ -649,13 +649,13 @@ struct _Ecore_X_Event_Selection_Notify
 struct _Ecore_X_Selection_Data
 {
    enum 
-   {
-      ECORE_X_SELECTION_CONTENT_NONE,
-      ECORE_X_SELECTION_CONTENT_TEXT,
-      ECORE_X_SELECTION_CONTENT_FILES,
-      ECORE_X_SELECTION_CONTENT_TARGETS,
-      ECORE_X_SELECTION_CONTENT_CUSTOM
-   } content;
+     {
+        ECORE_X_SELECTION_CONTENT_NONE,
+        ECORE_X_SELECTION_CONTENT_TEXT,
+        ECORE_X_SELECTION_CONTENT_FILES,
+        ECORE_X_SELECTION_CONTENT_TARGETS,
+        ECORE_X_SELECTION_CONTENT_CUSTOM
+     } content;
    unsigned char *data;
    int            length;
    int            format;
