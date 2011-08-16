@@ -487,8 +487,11 @@ main(int argc, char **argv)
     tmpfd = open(file, O_CREAT | O_WRONLY, S_IRUSR | S_IWUSR);
     if (tmpfd >= 0)
     {
+        char c = 'n';
+
         efreet_fsetowner(tmpfd);
-        if (write(tmpfd, "a", 1) != 1) perror("write");
+        if (changed) c = 'c';
+        if (write(tmpfd, &c, 1) != 1) perror("write");
         close(tmpfd);
     }
 

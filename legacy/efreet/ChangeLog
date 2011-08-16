@@ -86,7 +86,7 @@
 
 	* Fixed uri encoding when opening files.
 
-2011-08-16  sebastian Dransfeld
+2011-08-16  Sebastian Dransfeld
 
 	* Always rebuild cache from scratch when needed, but rely on correct
 	spec behaviour to check for theme changes. This will considerably
@@ -94,3 +94,7 @@
 	correctness of the cache when changes occur. For example didn't the
 	previous behaviour handle file removal gracefully.
 
+2011-08-16  Sebastian Dransfeld
+
+	* Save whether cache changed in update file, and propagate to update
+	event.
