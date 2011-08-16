@@ -25,12 +25,12 @@
  * bytes of the value 0 will replace the "bad page", allowing the process
  * to continue and allow its own parsing error detection to safely abort
  * the operation without the process falling apart.
- * 
+ *
  * If you disable mmap safety, the SIGBUS handler will be restored to its
  * default handler. Note that eina_file_map_all() and eina_file_map_new()
  * will automatically enable mmap safety as they provide an mmaped file IO
  * layer, and rely on mmap to not fail for any part of the file.
- * 
+ *
  * If you set up your own SIGBUS handler, then this will effectively disable
  * the safe mmap handling and make you liable to crashes on IO to or from
  * such "damaged files" that would take down your process.

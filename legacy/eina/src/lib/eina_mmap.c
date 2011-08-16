@@ -84,7 +84,7 @@ _eina_mmap_safe_sigbus(int sig __UNUSED__,
    if (siginfo->si_code == BUS_ADRALN)
      {
         ERR("Unaligned memory access. SIGBUS!!!");
-        errno = perrno; 
+        errno = perrno;
         abort();
      }
    /* send this to stderr - not eina_log. Specifically want this on stderr */
@@ -96,17 +96,17 @@ _eina_mmap_safe_sigbus(int sig __UNUSED__,
    /* mmap a pzge of zero's from /dev/zero in there */
    if (mmap(addr, _eina_mmap_pagesize,
             PROT_READ | PROT_WRITE | PROT_EXEC,
-            MAP_PRIVATE | MAP_FIXED, 
+            MAP_PRIVATE | MAP_FIXED,
             _eina_mmap_zero_fd, 0) == MAP_FAILED)
      {
         /* mmap of /dev/zero failed :( */
         perror("mmap");
         ERR("Failed to mmap() /dev/zero in place of page. SIGBUS!!!");
-        errno = perrno; 
+        errno = perrno;
         abort();
      }
    /* restore previous errno */
-   errno = perrno; 
+   errno = perrno;
 }
 #endif
 
@@ -130,16 +130,16 @@ eina_mmap_safety_enabled_set(Eina_Bool enabled)
              return EINA_FALSE;
           }
      }
-   
+
    enabled = !!enabled;
-   
+
    if (mmap_safe == enabled) return mmap_safe;
    if (enabled)
      {
         struct sigaction  sa;
 
         /* find out system page size the cleanest way we can */
-#ifdef _SC_PAGESIZE   
+#ifdef _SC_PAGESIZE
         _eina_mmap_pagesize = sysconf(_SC_PAGESIZE);
         if (_eina_mmap_pagesize <= 0) return EINA_FALSE;
 #else
@@ -169,7 +169,7 @@ eina_mmap_safety_enabled_set(Eina_Bool enabled)
      }
    mmap_safe = enabled;
    return mmap_safe;
-#endif   
+#endif
 }
 
 EAPI Eina_Bool
