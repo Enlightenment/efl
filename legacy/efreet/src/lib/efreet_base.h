@@ -70,7 +70,7 @@ typedef struct _Efreet_Event_Cache_Update Efreet_Event_Cache_Update;
  */
 struct _Efreet_Event_Cache_Update
 {
-    int changed;
+    int changed; /**< @since 1.1.0 */
 };
 
 /**
