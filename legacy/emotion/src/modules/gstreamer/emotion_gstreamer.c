@@ -333,6 +333,7 @@ em_init(Evas_Object            *obj,
    ev->volume = 0.8;
    ev->play_started = 0;
    ev->delete_me = EINA_FALSE;
+   ev->threads = NULL;
 
    *emotion_video = ev;
 
@@ -355,10 +356,15 @@ em_shutdown(void *video)
    if (!ev)
      return 0;
 
-   if (ev->thread)
+   if (ev->threads)
      {
-        ecore_thread_cancel(ev->thread);
-        ev->thread = NULL;
+        Ecore_Thread *t;
+
+        EINA_LIST_FREE(ev->threads, t)
+          ecore_thread_cancel(t);
+
+        ev->delete_me = EINA_TRUE;
+        return 1;
      }
 
    if (ev->in != ev->out)
@@ -375,9 +381,12 @@ em_shutdown(void *video)
 
    if (ev->pipeline)
      {
+       g_object_set(G_OBJECT(ev->sink), "ev", NULL, NULL);
+       g_object_set(G_OBJECT(ev->sink), "evas-object", NULL, NULL);
        gst_element_set_state(ev->pipeline, GST_STATE_NULL);
        gst_object_unref(ev->pipeline);
        ev->pipeline = NULL;
+       ev->sink = NULL;
      }
 
    EINA_LIST_FREE(ev->audio_streams, astream)
@@ -470,17 +479,22 @@ em_file_close(void *video)
         ev->eos_bus = NULL;
      }
 
-   if (ev->thread)
+   if (ev->threads)
      {
-        ecore_thread_cancel(ev->thread);
-        ev->thread = NULL;
+        Ecore_Thread *t;
+
+        EINA_LIST_FREE(ev->threads, t)
+          ecore_thread_cancel(t);
      }
 
    if (ev->pipeline)
      {
+        g_object_set(G_OBJECT(ev->sink), "ev", NULL, NULL);
+        g_object_set(G_OBJECT(ev->sink), "evas-object", NULL, NULL);
         gst_element_set_state(ev->pipeline, GST_STATE_NULL);
         gst_object_unref(ev->pipeline);
         ev->pipeline = NULL;
+        ev->sink = NULL;
      }
 
    /* we clear the stream lists */
@@ -521,7 +535,7 @@ em_stop(void *video)
    ev = (Emotion_Gstreamer_Video *)video;
 
    if (!ev->pipeline) return ;
- 
+
    gst_element_set_state(ev->pipeline, GST_STATE_PAUSED);
    ev->play = 0;
 }
@@ -1478,7 +1492,7 @@ _eos_sync_fct(GstBus *bus, GstMessage *msg, gpointer data)
       case GST_MESSAGE_ASYNC_DONE:
          send = emotion_gstreamer_message_alloc(ev, msg);
 
-         if (send) ecore_main_loop_thread_safe_call(_eos_main_fct, send);
+         if (send) ecore_main_loop_thread_safe_call_async(_eos_main_fct, send);
 
          break;
 
@@ -1504,13 +1518,15 @@ _emotion_gstreamer_video_pipeline_parse(Emotion_Gstreamer_Video *ev,
    if (ev->pipeline_parsed)
      return EINA_TRUE;
 
-   if (force && ev->thread)
+   if (force && ev->threads)
      {
-        ecore_thread_cancel(ev->thread);
-        ev->thread = NULL;
+        Ecore_Thread *t;
+
+        EINA_LIST_FREE(ev->threads, t)
+          ecore_thread_cancel(t);
      }
 
-   if (ev->thread)
+   if (ev->threads)
      return EINA_FALSE;
 
    res = gst_element_get_state(ev->pipeline, NULL, NULL, GST_CLOCK_TIME_NONE);

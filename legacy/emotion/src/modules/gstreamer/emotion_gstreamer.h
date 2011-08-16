@@ -59,7 +59,8 @@ struct _Emotion_Gstreamer_Video
 {
    /* Gstreamer elements */
    GstElement       *pipeline;
-   Ecore_Thread     *thread;
+   GstElement       *sink;
+   Eina_List        *threads;
 
    /* eos */
    GstBus           *eos_bus;
@@ -113,13 +114,15 @@ struct _EvasVideoSinkPrivate {
 
    Evas_Object *o;
 
+   Emotion_Gstreamer_Video *ev;
+
    int width;
    int height;
    Evas_Colorspace eformat;
    GstVideoFormat gformat;
 
-   GMutex* buffer_mutex;
-   GCond* data_cond;
+   Eina_Lock m;
+   Eina_Condition c;
 
     /* We need to keep a copy of the last inserted buffer as evas doesn't copy YUV data around */
    GstBuffer *last_buffer;
@@ -137,6 +140,7 @@ struct _EvasVideoSinkPrivate {
 
 struct _Emotion_Gstreamer_Buffer
 {
+   Emotion_Gstreamer_Video *ev;
    EvasVideoSinkPrivate *sink;
 
    GstBuffer *frame;

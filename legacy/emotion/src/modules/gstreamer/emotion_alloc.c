@@ -14,12 +14,16 @@ emotion_gstreamer_buffer_alloc(EvasVideoSinkPrivate *sink,
 {
    Emotion_Gstreamer_Buffer *send;
 
+   if (!sink->ev) return NULL;
+
    send = malloc(sizeof (Emotion_Gstreamer_Buffer));
    if (!send) return NULL;
 
    send->sink = sink;
    send->frame = gst_buffer_ref(buffer);
    send->preroll = preroll;
+   sink->ev->out++;
+   send->ev = sink->ev;
 
    return send;
 }
@@ -27,6 +31,13 @@ emotion_gstreamer_buffer_alloc(EvasVideoSinkPrivate *sink,
 void
 emotion_gstreamer_buffer_free(Emotion_Gstreamer_Buffer *send)
 {
+   send->ev->in++;
+
+   if (send->ev->in == send->ev->out
+       && send->ev->threads == NULL
+       && send->ev->delete_me)
+     em_shutdown(send->ev);
+
    gst_buffer_unref(send->frame);
    free(send);
 }
@@ -36,6 +47,8 @@ emotion_gstreamer_message_alloc(Emotion_Gstreamer_Video *ev,
 				GstMessage *msg)
 {
    Emotion_Gstreamer_Message *send;
+
+   if (!ev) return NULL;
 
    send = malloc(sizeof (Emotion_Gstreamer_Message));
    if (!send) return NULL;
@@ -52,7 +65,9 @@ emotion_gstreamer_message_free(Emotion_Gstreamer_Message *send)
 {
    send->ev->in++;
 
-   if (send->ev->in == send->ev->out && send->ev->delete_me)
+   if (send->ev->in == send->ev->out
+       && send->ev->threads == NULL
+       && send->ev->delete_me)
      em_shutdown(send->ev);
 
    gst_message_unref(send->msg);

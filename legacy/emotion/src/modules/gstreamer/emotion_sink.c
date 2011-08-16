@@ -20,7 +20,8 @@ enum {
   PROP_EVAS_OBJECT,
   PROP_WIDTH,
   PROP_HEIGHT,
-  PROP_LAST,
+  PROP_EV,
+  PROP_LAST
 };
 
 static guint evas_video_sink_signals[LAST_SIGNAL] = { 0, };
@@ -67,13 +68,25 @@ evas_video_sink_init(EvasVideoSink* sink, EvasVideoSinkClass* klass __UNUSED__)
    priv->height = 0;
    priv->gformat = GST_VIDEO_FORMAT_UNKNOWN;
    priv->eformat = EVAS_COLORSPACE_ARGB8888;
-   priv->data_cond = g_cond_new();
-   priv->buffer_mutex = g_mutex_new();
+   eina_lock_new(&priv->m);
+   eina_condition_new(&priv->c, &priv->m);
    priv->unlocked = EINA_FALSE;
 }
 
 
 /**** Object methods ****/
+static void
+_cleanup_priv(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+{
+   EvasVideoSinkPrivate* priv;
+
+   priv = data;
+
+   eina_lock_take(&priv->m);
+   if (priv->o == obj)
+     priv->o = NULL;
+   eina_lock_release(&priv->m);
+}
 
 static void
 evas_video_sink_set_property(GObject * object, guint prop_id,
@@ -87,9 +100,16 @@ evas_video_sink_set_property(GObject * object, guint prop_id,
 
    switch (prop_id) {
     case PROP_EVAS_OBJECT:
-       g_mutex_lock(priv->buffer_mutex);
+       eina_lock_take(&priv->m);
+       evas_object_event_callback_del(priv->o, EVAS_CALLBACK_FREE, _cleanup_priv);
        priv->o = g_value_get_pointer (value);
-       g_mutex_unlock(priv->buffer_mutex);
+       evas_object_event_callback_add(priv->o, EVAS_CALLBACK_FREE, _cleanup_priv, priv);
+       eina_lock_release(&priv->m);
+       break;
+    case PROP_EV:
+       eina_lock_take(&priv->m);
+       priv->ev = g_value_get_pointer (value);
+       eina_lock_release(&priv->m);
        break;
     default:
        G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
@@ -110,19 +130,24 @@ evas_video_sink_get_property(GObject * object, guint prop_id,
 
    switch (prop_id) {
     case PROP_EVAS_OBJECT:
-       g_mutex_lock(priv->buffer_mutex);
+       eina_lock_take(&priv->m);
        g_value_set_pointer (value, priv->o);
-       g_mutex_unlock(priv->buffer_mutex);
+       eina_lock_release(&priv->m);
        break;
     case PROP_WIDTH:
-       g_mutex_lock(priv->buffer_mutex);
+       eina_lock_take(&priv->m);
        g_value_set_int(value, priv->width);
-       g_mutex_unlock(priv->buffer_mutex);
+       eina_lock_release(&priv->m);
        break;
     case PROP_HEIGHT:
-       g_mutex_lock(priv->buffer_mutex);
+       eina_lock_take(&priv->m);
        g_value_set_int (value, priv->height);
-       g_mutex_unlock(priv->buffer_mutex);
+       eina_lock_release(&priv->m);
+       break;
+    case PROP_EV:
+       eina_lock_take(&priv->m);
+       g_value_set_pointer (value, priv->ev);
+       eina_lock_release(&priv->m);
        break;
     default:
        G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
@@ -140,15 +165,8 @@ evas_video_sink_dispose(GObject* object)
    sink = EVAS_VIDEO_SINK(object);
    priv = sink->priv;
 
-   if (priv->buffer_mutex) {
-      g_mutex_free(priv->buffer_mutex);
-      priv->buffer_mutex = 0;
-   }
-
-   if (priv->data_cond) {
-      g_cond_free(priv->data_cond);
-      priv->data_cond = 0;
-   }
+   eina_lock_free(&priv->m);
+   eina_condition_free(&priv->c);
 
    if (priv->last_buffer) {
       gst_buffer_unref(priv->last_buffer);
@@ -217,12 +235,12 @@ evas_video_sink_start(GstBaseSink* base_sink)
    gboolean res = TRUE;
 
    priv = EVAS_VIDEO_SINK(base_sink)->priv;
-   g_mutex_lock(priv->buffer_mutex);
+   eina_lock_take(&priv->m);
    if (!priv->o)
      res = FALSE;
    else
      priv->unlocked = EINA_FALSE;
-   g_mutex_unlock(priv->buffer_mutex);
+   eina_lock_release(&priv->m);
    return res;
 }
 
@@ -257,9 +275,9 @@ evas_video_sink_unlock_stop(GstBaseSink* object)
    sink = EVAS_VIDEO_SINK(object);
    priv = sink->priv;
 
-   g_mutex_lock(priv->buffer_mutex);
+   eina_lock_take(&priv->m);
    priv->unlocked = FALSE;
-   g_mutex_unlock(priv->buffer_mutex);
+   eina_lock_release(&priv->m);
 
    return GST_CALL_PARENT_WITH_DEFAULT(GST_BASE_SINK_CLASS, unlock_stop,
                                        (object), TRUE);
@@ -278,7 +296,7 @@ evas_video_sink_preroll(GstBaseSink* bsink, GstBuffer* buffer)
    send = emotion_gstreamer_buffer_alloc(priv, buffer, EINA_TRUE);
 
    if (send)
-     ecore_main_loop_thread_safe_call(evas_video_sink_main_render, send);
+     ecore_main_loop_thread_safe_call_async(evas_video_sink_main_render, send);
 
    return GST_FLOW_OK;
 }
@@ -289,40 +307,42 @@ evas_video_sink_render(GstBaseSink* bsink, GstBuffer* buffer)
    Emotion_Gstreamer_Buffer *send;
    EvasVideoSinkPrivate *priv;
    EvasVideoSink *sink;
-   Eina_Bool ret;
 
    sink = EVAS_VIDEO_SINK(bsink);
    priv = sink->priv;
 
-   g_mutex_lock(priv->buffer_mutex);
+   eina_lock_take(&priv->m);
 
    if (priv->unlocked) {
       ERR("LOCKED");
-      g_mutex_unlock(priv->buffer_mutex);
+      eina_lock_release(&priv->m);
       return GST_FLOW_OK;
    }
 
    send = emotion_gstreamer_buffer_alloc(priv, buffer, EINA_FALSE);
-   if (!send) return GST_FLOW_ERROR;
+   if (!send) {
+      eina_lock_release(&priv->m);
+      return GST_FLOW_ERROR;
+   }
 
-   ecore_main_loop_thread_safe_call(evas_video_sink_main_render, send);
+   ecore_main_loop_thread_safe_call_async(evas_video_sink_main_render, send);
 
-   g_cond_wait(priv->data_cond, priv->buffer_mutex);
-   g_mutex_unlock(priv->buffer_mutex);
+   eina_condition_wait(&priv->c);
+   eina_lock_release(&priv->m);
 
    return GST_FLOW_OK;
 }
 
-static void evas_video_sink_main_render(void *data)
+static void
+evas_video_sink_main_render(void *data)
 {
    Emotion_Gstreamer_Buffer *send;
-   Emotion_Gstreamer_Video *ev;
+   Emotion_Gstreamer_Video *ev = NULL;
    Emotion_Video_Stream *vstream;
    EvasVideoSinkPrivate* priv;
    GstBuffer* buffer;
    unsigned char *evas_data;
    const guint8 *gst_data;
-   GstQuery *query;
    GstFormat fmt = GST_FORMAT_TIME;
    Evas_Coord w, h;
    gint64 pos;
@@ -332,6 +352,7 @@ static void evas_video_sink_main_render(void *data)
 
    priv = send->sink;
    if (!priv) goto exit_point;
+   if (!priv->o) goto exit_point;
 
    buffer = send->frame;
    preroll = send->preroll;
@@ -341,7 +362,7 @@ static void evas_video_sink_main_render(void *data)
    gst_data = GST_BUFFER_DATA(buffer);
    if (!gst_data) goto exit_point;
 
-   ev = evas_object_data_get(priv->o, "_emotion_gstreamer_video");
+   ev = send->ev;
    if (!ev) goto exit_point;
 
    _emotion_gstreamer_video_pipeline_parse(ev, EINA_TRUE);
@@ -514,27 +535,23 @@ static void evas_video_sink_main_render(void *data)
  exit_point:
    emotion_gstreamer_buffer_free(send);
 
-   if (preroll) return ;
+   if (preroll || !priv->o || !ev) return ;
 
-   g_mutex_lock(priv->buffer_mutex);
+   eina_lock_take(&priv->m);
+   if (!priv->unlocked)
+     eina_condition_signal(&priv->c);
 
-   if (priv->unlocked) {
-      g_mutex_unlock(priv->buffer_mutex);
-      return;
-   }
-
-   g_cond_signal(priv->data_cond);
-   g_mutex_unlock(priv->buffer_mutex);
+   eina_lock_release(&priv->m);
 }
 
 static void
 unlock_buffer_mutex(EvasVideoSinkPrivate* priv)
 {
-   g_mutex_lock(priv->buffer_mutex);
-
+   eina_lock_take(&priv->m);
    priv->unlocked = EINA_TRUE;
-   g_cond_signal(priv->data_cond);
-   g_mutex_unlock(priv->buffer_mutex);
+
+   eina_condition_signal(&priv->c);
+   eina_lock_release(&priv->m);
 }
 
 static void
@@ -591,6 +608,10 @@ evas_video_sink_class_init(EvasVideoSinkClass* klass)
                                     g_param_spec_int ("height", "Height",
                                                       "The height of the video",
                                                       0, 65536, 0, G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
+   g_object_class_install_property (gobject_class, PROP_EV,
+                                    g_param_spec_pointer ("ev", "Emotion_Gstreamer_Video",
+                                                          "THe internal data of the emotion object",
+                                                          G_PARAM_READWRITE));
 
    gobject_class->dispose = evas_video_sink_dispose;
 
@@ -622,19 +643,24 @@ gstreamer_plugin_init (GstPlugin * plugin)
 }
 
 static void
-_emotion_gstreamer_pause(void *data, Ecore_Thread *thread __UNUSED__)
+_emotion_gstreamer_pause(void *data, Ecore_Thread *thread)
 {
    Emotion_Gstreamer_Video *ev = data;
+
+   if (ecore_thread_check(thread) || !ev->pipeline) return ;
 
    gst_element_set_state(ev->pipeline, GST_STATE_PAUSED);
 }
 
 static void
-_emotion_gstreamer_cancel(void *data, Ecore_Thread *thread __UNUSED__)
+_emotion_gstreamer_cancel(void *data, Ecore_Thread *thread)
 {
    Emotion_Gstreamer_Video *ev = data;
 
-   ev->thread = NULL;
+   ev->threads = eina_list_remove(ev->threads, thread);
+
+   if (ev->in == ev->out && ev->threads == NULL && ev->delete_me)
+     em_shutdown(ev);
 }
 
 static void
@@ -652,7 +678,6 @@ gstreamer_video_sink_new(Emotion_Gstreamer_Video *ev,
    GstElement *playbin;
    GstElement *sink;
    Evas_Object *obj;
-   GstStateChangeReturn res;
 
    obj = emotion_object_image_get(o);
    if (!obj)
@@ -675,21 +700,23 @@ gstreamer_video_sink_new(Emotion_Gstreamer_Video *ev,
         goto unref_pipeline;
      }
 
+   g_object_set(G_OBJECT(sink), "evas-object", obj, NULL);
+   g_object_set(G_OBJECT(sink), "ev", ev, NULL);
+
    g_object_set(G_OBJECT(playbin), "video-sink", sink, NULL);
    g_object_set(G_OBJECT(playbin), "uri", uri, NULL);
-   g_object_set(G_OBJECT(sink), "evas-object", obj, NULL);
 
    ev->pipeline = playbin;
-   ev->thread = ecore_thread_run(_emotion_gstreamer_pause,
-                                 _emotion_gstreamer_end,
-                                 _emotion_gstreamer_cancel,
-                                 ev);
+   ev->sink = sink;
+   ev->threads = eina_list_append(ev->threads,
+                                  ecore_thread_run(_emotion_gstreamer_pause,
+                                                   _emotion_gstreamer_end,
+                                                   _emotion_gstreamer_cancel,
+                                                   ev));
 
    /** NOTE: you need to set: GST_DEBUG_DUMP_DOT_DIR=/tmp EMOTION_ENGINE=gstreamer to save the $EMOTION_GSTREAMER_DOT file in '/tmp' */
    /** then call dot -Tpng -oemotion_pipeline.png /tmp/$TIMESTAMP-$EMOTION_GSTREAMER_DOT.dot */
    if (getenv("EMOTION_GSTREAMER_DOT")) GST_DEBUG_BIN_TO_DOT_FILE_WITH_TS(GST_BIN(playbin), GST_DEBUG_GRAPH_SHOW_ALL, getenv("EMOTION_GSTREAMER_DOT"));
-
-   evas_object_data_set(obj, "_emotion_gstreamer_video", ev);
 
    return playbin;
 
