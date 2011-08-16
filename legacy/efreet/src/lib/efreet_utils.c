@@ -3,7 +3,6 @@
 #endif
 
 /* TODO: add no_display check, as we might want only displayable items */
-/* TODO: Consider flushing local cache after a idling a while */
 
 #undef alloca
 #ifdef HAVE_ALLOCA_H
