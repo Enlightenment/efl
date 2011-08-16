@@ -6902,6 +6902,84 @@ extern "C" {
     */
    EAPI void         elm_scroller_page_size_set(Evas_Object *obj, Evas_Coord h_pagesize, Evas_Coord v_pagesize) EINA_ARG_NONNULL(1);
    /**
+    * @brief Get scroll current page number.
+    *
+    * @param obj The scroller object
+    * @param h_pagenumber The horizoptal page number
+    * @param v_pagenumber The vertical page number
+    *
+    * The page number starts from 0. 0 is the first page.
+    * Current page means the page which meet the top-left of the viewport.
+    * If there are two or more pages in the viewport, it returns the number of page
+    * which meet the top-left of the viewport.
+    * 
+    * @see elm_scroller_last_page_get() 
+    * @see elm_scroller_page_show() 
+    * @see elm_scroller_page_brint_in() 
+    */
+   EAPI void         elm_scroller_current_page_get(Evas_Object *obj, int *h_pagenumber, int *v_pagenumber) EINA_ARG_NONNULL(1);
+   /**
+    * @brief Get scroll last page number.
+    *
+    * @param obj The scroller object
+    * @param h_pagenumber The horizoptal page number
+    * @param v_pagenumber The vertical page number
+    *
+    * The page number starts from 0. 0 is the first page.
+    * This returns the last page number among the pages.
+    *
+    * @see elm_scroller_current_page_get() 
+    * @see elm_scroller_page_show() 
+    * @see elm_scroller_page_brint_in() 
+    */
+   EAPI void         elm_scroller_last_page_get(Evas_Object *obj, int *h_pagenumber, int *v_pagenumber) EINA_ARG_NONNULL(1);
+   /**
+    * Show a specific virtual region within the scroller content object by page number.
+    *
+    * @param obj The scroller object
+    * @param h_pagenumber The horizoptal page number
+    * @param v_pagenumber The vertical page number
+    *
+    * 0, 0 of the indicated page is located at the top-left of the viewport.
+    * This will jump to the page directly without animation.
+    *
+    * Example of usage:
+    *
+    * @code
+    * sc = elm_scroller_add(win);
+    * elm_scroller_content_set(sc, content);
+    * elm_scroller_page_relative_set(sc, 1, 0);
+    * elm_scroller_current_page_get(sc, &h_page, &v_page);
+    * elm_scroller_page_show(sc, h_page + 1, v_page);
+    * @endcode
+    *
+    * @see elm_scroller_page_bring_in()
+    */
+   EAPI void         elm_scroller_page_show(Evas_Object *obj, int h_pagenumber, int v_pagenumber) EINA_ARG_NONNULL(1);
+   /**
+    * Show a specific virtual region within the scroller content object by page number.
+    *
+    * @param obj The scroller object
+    * @param h_pagenumber The horizoptal page number
+    * @param v_pagenumber The vertical page number
+    *
+    * 0, 0 of the indicated page is located at the top-left of the viewport.
+    * This will slide to the page with animation.
+    *
+    * Example of usage:
+    *
+    * @code
+    * sc = elm_scroller_add(win);
+    * elm_scroller_content_set(sc, content);
+    * elm_scroller_page_relative_set(sc, 1, 0);
+    * elm_scroller_last_page_get(sc, &h_page, &v_page);
+    * elm_scroller_page_bring_in(sc, h_page, v_page);
+    * @endcode
+    *
+    * @see elm_scroller_page_show()
+    */
+   EAPI void         elm_scroller_page_bring_in(Evas_Object *obj, int h_pagenumber, int v_pagenumber) EINA_ARG_NONNULL(1);
+   /**
     * @brief Show a specific virtual region within the scroller content object.
     *
     * @param obj The scroller object

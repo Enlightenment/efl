@@ -654,6 +654,46 @@ elm_scroller_page_size_set(Evas_Object *obj, Evas_Coord h_pagesize, Evas_Coord v
 }
 
 EAPI void
+elm_scroller_current_page_get(Evas_Object *obj, int *h_pagenumber, int *v_pagenumber)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   if (wd->scr)
+     elm_smart_scroller_current_page_get(wd->scr, h_pagenumber, v_pagenumber);
+}
+
+EAPI void
+elm_scroller_last_page_get(Evas_Object *obj, int *h_pagenumber, int *v_pagenumber)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   if (wd->scr)
+     elm_smart_scroller_last_page_get(wd->scr, h_pagenumber, v_pagenumber);
+}
+
+EAPI void
+elm_scroller_page_show(Evas_Object *obj, int h_pagenumber, int v_pagenumber)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   if (wd->scr)
+     elm_smart_scroller_page_show(wd->scr, h_pagenumber, v_pagenumber);
+}
+
+EAPI void
+elm_scroller_page_bring_in(Evas_Object *obj, int h_pagenumber, int v_pagenumber)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   if (wd->scr)
+     elm_smart_scroller_page_bring_in(wd->scr, h_pagenumber, v_pagenumber);
+}
+
+EAPI void
 elm_scroller_region_bring_in(Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);

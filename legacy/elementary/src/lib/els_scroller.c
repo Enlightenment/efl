@@ -599,12 +599,8 @@ _smart_page_x_get(Smart_Data *sd, int offset)
    x += offset;
 
    if (sd->pagerel_h > 0.0)
-     {
-        x = x + (w * sd->pagerel_h * 0.5);
-        x = x / (w * sd->pagerel_h);
-        x = x * (w * sd->pagerel_h);
-     }
-   else if (sd->pagesize_h > 0)
+     sd->pagesize_h = w * sd->pagerel_h;
+   if (sd->pagesize_h > 0)
      {
         x = x + (sd->pagesize_h * 0.5);
         x = x / (sd->pagesize_h);
@@ -628,12 +624,8 @@ _smart_page_y_get(Smart_Data *sd, int offset)
    y += offset;
 
    if (sd->pagerel_v > 0.0)
-     {
-        y = y + (h * sd->pagerel_v * 0.5);
-        y = y / (h * sd->pagerel_v);
-        y = y * (h * sd->pagerel_v);
-     }
-   else if (sd->pagesize_v > 0)
+     sd->pagesize_v = h * sd->pagerel_v;
+   if (sd->pagesize_v > 0)
      {
         y = y + (sd->pagesize_v * 0.5);
         y = y / (sd->pagesize_v);
@@ -1308,6 +1300,65 @@ elm_smart_scroller_paging_get(Evas_Object *obj, double *pagerel_h, double *pager
    if(pagerel_v) *pagerel_v = sd->pagerel_v;
    if(pagesize_h) *pagesize_h = sd->pagesize_h;
    if(pagesize_v) *pagesize_v = sd->pagesize_v;
+}
+
+void
+elm_smart_scroller_current_page_get(Evas_Object *obj, int *pagenumber_h, int *pagenumber_v)
+{
+   API_ENTRY return;
+   Evas_Coord x, y;
+   elm_smart_scroller_child_pos_get(sd->smart_obj, &x, &y);
+   if (pagenumber_h) *pagenumber_h = (x + sd->pagesize_h - 1) / sd->pagesize_h;
+   if (pagenumber_v) *pagenumber_v = (y + sd->pagesize_v - 1) / sd->pagesize_v;
+}
+
+void
+elm_smart_scroller_last_page_get(Evas_Object *obj, int *pagenumber_h, int *pagenumber_v)
+{
+   API_ENTRY return;
+   Evas_Coord cw, ch;
+   sd->pan_func.child_size_get(sd->pan_obj, &cw, &ch);
+   if (pagenumber_h)
+     {
+        if (sd->pagesize_h > 0)
+           *pagenumber_h = cw / sd->pagesize_h + 1;
+        else
+           *pagenumber_h = 0;
+     }
+   if (pagenumber_v)
+     {
+        if (sd->pagesize_v > 0)
+           *pagenumber_v = ch / sd->pagesize_v + 1;
+        else
+           *pagenumber_v = 0;
+     }
+}
+
+void
+elm_smart_scroller_page_show(Evas_Object *obj, int pagenumber_h, int pagenumber_v)
+{
+   API_ENTRY return;
+   Evas_Coord x, y, w, h;
+   elm_smart_scroller_child_viewport_size_get(sd->smart_obj, &w, &h);
+   if (pagenumber_h) x = sd->pagesize_h * pagenumber_h;
+   if (pagenumber_v) y = sd->pagesize_v * pagenumber_v;
+   if (_elm_smart_scroller_child_region_show_internal(obj, &x, &y, w, h))
+      elm_smart_scroller_child_pos_set(obj, x, y);
+}
+
+void
+elm_smart_scroller_page_bring_in(Evas_Object *obj, int pagenumber_h, int pagenumber_v)
+{
+   API_ENTRY return;
+   Evas_Coord x, y, w, h;
+   elm_smart_scroller_child_viewport_size_get(sd->smart_obj, &w, &h);
+   if (pagenumber_h) x = sd->pagesize_h * pagenumber_h;
+   if (pagenumber_v) y = sd->pagesize_v * pagenumber_v;
+   if (_elm_smart_scroller_child_region_show_internal(obj, &x, &y, w, h))
+     {
+        _smart_scrollto_x(sd, _elm_config->bring_in_scroll_friction, x);
+        _smart_scrollto_y(sd, _elm_config->bring_in_scroll_friction, y);
+     }
 }
 
 void
@@ -2621,6 +2672,7 @@ _smart_reconfigure(Smart_Data *sd)
    evas_object_move(sd->event_obj, sd->x, sd->y);
    evas_object_resize(sd->event_obj, sd->w, sd->h);
    _smart_scrollbar_size_adjust(sd);
+   _smart_page_adjust(sd);
 }
 
 static void
