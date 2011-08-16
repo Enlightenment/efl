@@ -271,10 +271,13 @@
 
 2011-07-28  Cedric Bail
 
-	* Add ecore_main_loop_thread_safe_call.
+	* Add ecore_main_loop_thread_safe_call_async.
 
 2011-07-26  Carsten Haitzler (The Rasterman)
 
         * Make ecore-evas give more errors on stderr when engines are
         not found.
 
+2011-08-16  Cedric Bail
+
+	* Add ecore_main_loop_thread_safe_call_sync.

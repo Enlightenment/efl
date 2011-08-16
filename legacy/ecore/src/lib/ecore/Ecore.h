@@ -404,8 +404,15 @@ extern "C" {
     */
    typedef void (*Ecore_Cb) (void *data);
 
+   /**
+    * @typedef Ecore_Data_Cb Ecore_Data_Cb
+    * A callback which is used to return data to the main function
+    */
+   typedef void *(*Ecore_Data_Cb) (void *data);
+
   /**
-   * @brief Call callback in the main loop.
+   * @brief Call callback asynchronously in the main loop.
+   * @since 1.1.0
    *
    * @param callback The callback to call in the main loop
    * @param data The data to give to that call back
@@ -418,7 +425,24 @@ extern "C" {
    * in the thread, it is owned by the main loop and you callback should take
    * care of freeing it if necessary.
    */
-   EAPI void                 ecore_main_loop_thread_safe_call(Ecore_Cb callback, void *data);
+   EAPI void                 ecore_main_loop_thread_safe_call_async(Ecore_Cb callback, void *data);
+
+  /**
+   * @brief Call callback synchronously in the main loop.
+   * @since 1.1.0
+   *
+   * @param callback The callback to call in the main loop
+   * @param data The data to give to that call back
+   * @return the value returned by the callback in the main loop
+   *
+   * For all call that need to happen in the main loop (most EFL functions do),
+   * this helper function provide the infrastructure needed to do it safely
+   * by avoind dead lock, race condition and properly wake up the main loop.
+   *
+   * Remember this function will block until the callback is executed in the
+   * main loop. It can take time and you have no guaranty about the timeline.
+   */
+  EAPI void                 *ecore_main_loop_thread_safe_call_sync(Ecore_Data_Cb callback, void *data);
 
    /**
     * @}
@@ -482,12 +506,6 @@ extern "C" {
    typedef struct _Ecore_Event_Signal_Exit     Ecore_Event_Signal_Exit; /**< Exit signal event */
    typedef struct _Ecore_Event_Signal_Power    Ecore_Event_Signal_Power; /**< Power signal event */
    typedef struct _Ecore_Event_Signal_Realtime Ecore_Event_Signal_Realtime; /**< Realtime signal event */
-
-   /**
-    * @typedef Ecore_Data_Cb Ecore_Data_Cb
-    * A callback which is used to return data to the main function
-    */
-   typedef void *(*Ecore_Data_Cb) (void *data);
 
    /**
     * @typedef Ecore_Filter_Cb

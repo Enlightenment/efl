@@ -56,10 +56,20 @@ int _ecore_fps_debug = 0;
 typedef struct _Ecore_Safe_Call Ecore_Safe_Call;
 struct _Ecore_Safe_Call
 {
-   Ecore_Cb cb;
+   union {
+      Ecore_Cb async;
+      Ecore_Data_Cb sync;
+   } cb;
    void *data;
+
+   Eina_Lock m;
+   Eina_Condition c;
+
+   Eina_Bool sync : 1;
 };
 
+static void _ecore_main_loop_thread_safe_call(Ecore_Safe_Call *order);
+static void _thread_safe_cleanup(void *data);
 static void _thread_callback(void *data, void *buffer, unsigned int nbyte);
 static Eina_List *_thread_cb = NULL;
 static Ecore_Pipe *_thread_call = NULL;
@@ -234,12 +244,14 @@ unlock:
  * @}
  */
 
+static int wakeup = 42;
+
 EAPI void
-ecore_main_loop_thread_safe_call(Ecore_Cb callback, void *data)
+ecore_main_loop_thread_safe_call_async(Ecore_Cb callback, void *data)
 {
    Ecore_Safe_Call *order;
-   int wakeup = 42;
-   Eina_Bool count;
+
+   if (!callback) return ;
 
    if (eina_main_loop_is())
      {
@@ -250,16 +262,50 @@ ecore_main_loop_thread_safe_call(Ecore_Cb callback, void *data)
    order = malloc(sizeof (Ecore_Safe_Call));
    if (!order) return ;
 
-   order->cb = callback;
+   order->cb.async = callback;
    order->data = data;
+   order->sync = EINA_FALSE;
 
-   eina_lock_take(&_thread_safety);
+   _ecore_main_loop_thread_safe_call(order);
+}
 
-   count = _thread_cb ? 0 : 1;
-   _thread_cb = eina_list_append(_thread_cb, order);
-   if (count) ecore_pipe_write(_thread_call, &wakeup, sizeof (int));
+EAPI void *
+ecore_main_loop_thread_safe_call_sync(Ecore_Data_Cb callback, void *data)
+{
+   Ecore_Safe_Call *order;
+   void *ret;
 
-   eina_lock_release(&_thread_safety);
+   if (!callback) return NULL;
+
+   if (eina_main_loop_is())
+     {
+        return callback(data);
+     }
+
+   order = malloc(sizeof (Ecore_Safe_Call));
+   if (!order) return NULL;
+
+   order->cb.sync = callback;
+   order->data = data;
+   eina_lock_new(&order->m);
+   eina_condition_new(&order->c, &order->m);
+   order->sync = EINA_TRUE;
+
+   _ecore_main_loop_thread_safe_call(order);
+
+   eina_lock_take(&order->m);
+   eina_condition_wait(&order->c);
+   eina_lock_release(&order->m);
+
+   ret = order->data;
+
+   order->sync = EINA_FALSE;
+   order->cb.async = _thread_safe_cleanup;
+   order->data = order;
+
+   _ecore_main_loop_thread_safe_call(order);
+
+   return ret;
 }
 
 EAPI void
@@ -485,6 +531,29 @@ _ecore_memory_statistic(__UNUSED__ void *data)
 #endif
 
 static void
+_ecore_main_loop_thread_safe_call(Ecore_Safe_Call *order)
+{
+   Eina_Bool count;
+
+   eina_lock_take(&_thread_safety);
+
+   count = _thread_cb ? 0 : 1;
+   _thread_cb = eina_list_append(_thread_cb, order);
+   if (count) ecore_pipe_write(_thread_call, &wakeup, sizeof (int));
+
+   eina_lock_release(&_thread_safety);
+}
+
+static void
+_thread_safe_cleanup(void *data)
+{
+   Ecore_Safe_Call *call = data;
+
+   eina_condition_free(&call->c);
+   eina_lock_free(&call->m);
+}
+
+static void
 _thread_callback(void *data __UNUSED__,
                  void *buffer __UNUSED__,
                  unsigned int nbyte __UNUSED__)
@@ -499,7 +568,15 @@ _thread_callback(void *data __UNUSED__,
 
    EINA_LIST_FREE(callback, call)
      {
-        call->cb(call->data);
-        free(call);
+        if (call->sync)
+          {
+             call->data = call->cb.sync(call->data);
+             eina_condition_broadcast(&call->c);
+          }
+        else
+          {
+             call->cb.async(call->data);
+             free(call);
+          }
      }
 }
