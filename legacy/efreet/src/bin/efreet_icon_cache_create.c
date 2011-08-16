@@ -986,7 +986,6 @@ main(int argc, char **argv)
         }
 
         eet_data_write(icon_ef, efreet_version_edd(), EFREET_CACHE_VERSION, icon_version, 1);
-        eet_sync(icon_ef);
         eet_close(icon_ef);
         efreet_setowner(efreet_icon_cache_file(theme->theme.name.internal));
         free(icon_version);
