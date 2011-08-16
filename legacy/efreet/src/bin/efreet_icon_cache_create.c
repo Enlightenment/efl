@@ -24,11 +24,7 @@ static int _efreet_icon_cache_log_dom = -1;
 #include "efreet_cache_private.h"
 
 /* TODO:
- * - Need to cache all exts searched and extra_dirs, so we know if we
- *   need to rescan dirs. Then re-enable cache_directory_find().
- * - Need to check if files has disappeared, as we only add new.
- * - Base dir is touched on icon theme update, no need to scan all.
- * - There is something weird going on with inheritance when adding extensions
+ * - Need to handle programs using different exts
  */
 
 static Eina_Array *exts = NULL;
@@ -37,10 +33,8 @@ static Eina_Array *strs = NULL;
 static Eina_Hash *icon_themes = NULL;
 
 static Eina_Bool
-cache_directory_find(Eina_Hash *dirs __UNUSED__, const char *dir __UNUSED__)
+cache_directory_modified(Eina_Hash *dirs, const char *dir)
 {
-    return EINA_TRUE;
-#if 0
     Efreet_Cache_Directory *dcache;
     struct stat st;
 
@@ -60,7 +54,6 @@ cache_directory_find(Eina_Hash *dirs __UNUSED__, const char *dir __UNUSED__)
     dcache->modified_time = st.st_mtime;
 
     return EINA_TRUE;
-#endif
 }
 
 static Eina_Bool
@@ -75,12 +68,12 @@ cache_extension_lookup(const char *ext)
 }
 
 static Eina_Bool
-cache_fallback_scan_dir(Eina_Hash *icons, Eina_Hash *dirs, const char *dir, Eina_Bool *changed)
+cache_fallback_scan_dir(Eina_Hash *icons, Eina_Hash *dirs, const char *dir)
 {
     Eina_Iterator *it;
     Eina_File_Direct_Info *entry;
 
-    if (!cache_directory_find(dirs, dir)) return EINA_TRUE;
+    if (!cache_directory_modified(dirs, dir)) return EINA_TRUE;
 
     it = eina_file_stat_ls(dir);
     if (!it) return EINA_TRUE;
@@ -123,8 +116,6 @@ cache_fallback_scan_dir(Eina_Hash *icons, Eina_Hash *dirs, const char *dir, Eina
         icon->icons = realloc(icon->icons, sizeof (char *) * (icon->icons_count + 1));
         icon->icons[icon->icons_count] = eina_stringshare_add(entry->path);
         eina_array_push(strs, icon->icons[icon->icons_count++]);
-
-        *changed = EINA_TRUE;
     }
 
     eina_iterator_free(it);
@@ -133,7 +124,7 @@ cache_fallback_scan_dir(Eina_Hash *icons, Eina_Hash *dirs, const char *dir, Eina
 }
 
 static Eina_Bool
-cache_fallback_scan(Eina_Hash *icons, Eina_Hash *dirs, Eina_Bool *changed)
+cache_fallback_scan(Eina_Hash *icons, Eina_Hash *dirs)
 {
     unsigned int i;
     Eina_List *xdg_dirs, *l;
@@ -141,47 +132,94 @@ cache_fallback_scan(Eina_Hash *icons, Eina_Hash *dirs, Eina_Bool *changed)
     char path[PATH_MAX];
 
     for (i = 0; i < extra_dirs->count; i++)
-        cache_fallback_scan_dir(icons, dirs, extra_dirs->data[i], changed);
+        cache_fallback_scan_dir(icons, dirs, extra_dirs->data[i]);
 
-    cache_fallback_scan_dir(icons, dirs, efreet_icon_deprecated_user_dir_get(), changed);
-    cache_fallback_scan_dir(icons, dirs, efreet_icon_user_dir_get(), changed);
+    cache_fallback_scan_dir(icons, dirs, efreet_icon_deprecated_user_dir_get());
+    cache_fallback_scan_dir(icons, dirs, efreet_icon_user_dir_get());
 
     xdg_dirs = efreet_data_dirs_get();
     EINA_LIST_FOREACH(xdg_dirs, l, dir)
     {
         snprintf(path, sizeof(path), "%s/icons", dir);
-        cache_fallback_scan_dir(icons, dirs, path, changed);
+        cache_fallback_scan_dir(icons, dirs, path);
     }
 
 #ifndef STRICT_SPEC
     EINA_LIST_FOREACH(xdg_dirs, l, dir)
     {
         snprintf(path, sizeof(path), "%s/pixmaps", dir);
-        cache_fallback_scan_dir(icons, dirs, path, changed);
+        cache_fallback_scan_dir(icons, dirs, path);
     }
 #endif
 
-    cache_fallback_scan_dir(icons, dirs, "/usr/share/pixmaps", changed);
+    cache_fallback_scan_dir(icons, dirs, "/usr/share/pixmaps");
 
     return EINA_TRUE;
+}
+
+static Eina_Bool
+check_fallback_changed(Efreet_Cache_Icon_Theme *theme)
+{
+    unsigned int i;
+    Eina_List *xdg_dirs, *l;
+    const char *dir;
+    char path[PATH_MAX];
+
+    /* Check if the dirs we have cached are changed */
+    if (theme->dirs)
+    {
+        Eina_Iterator *it;
+        Eina_Bool changed = EINA_FALSE;
+
+        it = eina_hash_iterator_key_new(theme->dirs);
+        EINA_ITERATOR_FOREACH(it, dir)
+        {
+            changed = !ecore_file_exists(dir);
+            if (changed) break;
+            changed = cache_directory_modified(theme->dirs, dir);
+            if (changed) break;
+        }
+        eina_iterator_free(it);
+        if (changed) return EINA_TRUE;
+    }
+
+    /* Check if spec dirs have changed */
+    for (i = 0; i < extra_dirs->count; i++)
+        if (cache_directory_modified(theme->dirs, extra_dirs->data[i])) return EINA_TRUE;
+
+    if (cache_directory_modified(theme->dirs, efreet_icon_deprecated_user_dir_get())) return EINA_TRUE;
+    if (cache_directory_modified(theme->dirs, efreet_icon_user_dir_get())) return EINA_TRUE;
+
+    xdg_dirs = efreet_data_dirs_get();
+    EINA_LIST_FOREACH(xdg_dirs, l, dir)
+    {
+        snprintf(path, sizeof(path), "%s/icons", dir);
+        if (cache_directory_modified(theme->dirs, path)) return EINA_TRUE;
+    }
+
+#ifndef STRICT_SPEC
+    EINA_LIST_FOREACH(xdg_dirs, l, dir)
+    {
+        snprintf(path, sizeof(path), "%s/pixmaps", dir);
+        if (cache_directory_modified(theme->dirs, path)) return EINA_TRUE;
+    }
+#endif
+
+    if (cache_directory_modified(theme->dirs, "/usr/share/pixmaps")) return EINA_TRUE;
+    return EINA_FALSE;
 }
 
 static Eina_Bool
 cache_scan_path_dir(Efreet_Icon_Theme *theme,
                     const char *path,
                     Efreet_Icon_Theme_Directory *dir,
-                    Eina_Hash *icons,
-                    Eina_Hash *dirs,
-                    Eina_Bool *changed)
+                    Eina_Hash *icons)
 {
     Eina_Iterator *it;
     char buf[PATH_MAX];
     Eina_File_Direct_Info *entry;
 
     snprintf(buf, sizeof(buf), "%s/%s", path, dir->name);
-
-    if (!cache_directory_find(dirs, buf))
-        return EINA_TRUE;
 
     it = eina_file_stat_ls(buf);
     if (!it) return EINA_TRUE;
@@ -261,8 +299,6 @@ cache_scan_path_dir(Efreet_Icon_Theme *theme,
                                         sizeof (char*) * (icon->icons[i]->paths_count + 1));
         icon->icons[i]->paths[icon->icons[i]->paths_count] = eina_stringshare_add(entry->path);
         eina_array_push(strs, icon->icons[i]->paths[icon->icons[i]->paths_count++]);
-
-        *changed = EINA_TRUE;
     }
 
     eina_iterator_free(it);
@@ -271,19 +307,19 @@ cache_scan_path_dir(Efreet_Icon_Theme *theme,
 }
 
 static Eina_Bool
-cache_scan_path(Efreet_Icon_Theme *theme, Eina_Hash *icons, Eina_Hash *dirs, const char *path, Eina_Bool *changed)
+cache_scan_path(Efreet_Icon_Theme *theme, Eina_Hash *icons, const char *path)
 {
     Eina_List *l;
     Efreet_Icon_Theme_Directory *dir;
 
     EINA_LIST_FOREACH(theme->directories, l, dir)
-        if (!cache_scan_path_dir(theme, path, dir, icons, dirs, changed)) return EINA_FALSE;
+        if (!cache_scan_path_dir(theme, path, dir, icons)) return EINA_FALSE;
 
     return EINA_TRUE;
 }
 
 static Eina_Bool
-cache_scan(Efreet_Icon_Theme *theme, Eina_Hash *themes, Eina_Hash *icons, Eina_Hash *dirs, Eina_Bool *changed)
+cache_scan(Efreet_Icon_Theme *theme, Eina_Hash *themes, Eina_Hash *icons)
 {
     Eina_List *l;
     const char *path;
@@ -295,7 +331,7 @@ cache_scan(Efreet_Icon_Theme *theme, Eina_Hash *themes, Eina_Hash *icons, Eina_H
 
     /* scan theme */
     EINA_LIST_FOREACH(theme->paths, l, path)
-        if (!cache_scan_path(theme, icons, dirs, path, changed)) return EINA_FALSE;
+        if (!cache_scan_path(theme, icons, path)) return EINA_FALSE;
 
     /* scan inherits */
     if (theme->inherits)
@@ -308,13 +344,13 @@ cache_scan(Efreet_Icon_Theme *theme, Eina_Hash *themes, Eina_Hash *icons, Eina_H
             if (!inherit)
                 INF("Theme `%s` not found for `%s`.",
                     name, theme->name.internal);
-            if (!cache_scan(inherit, themes, icons, dirs, changed)) return EINA_FALSE;
+            if (!cache_scan(inherit, themes, icons)) return EINA_FALSE;
         }
     }
     else if (strcmp(theme->name.internal, "hicolor"))
     {
         theme = eina_hash_find(icon_themes, "hicolor");
-        if (!cache_scan(theme, themes, icons, dirs, changed)) return EINA_FALSE;
+        if (!cache_scan(theme, themes, icons)) return EINA_FALSE;
     }
 
     return EINA_TRUE;
@@ -731,11 +767,9 @@ main(int argc, char **argv)
     Efreet_Cache_Version *icon_version;
     Efreet_Cache_Version *theme_version;
     Efreet_Cache_Icon_Theme *theme;
-    Efreet_Cache_Icon *icon;
     Eet_Data_Descriptor *theme_edd;
     Eet_Data_Descriptor *icon_edd;
     Eet_Data_Descriptor *fallback_edd;
-    Eina_Hash *icons;
     Eet_File *icon_ef;
     Eet_File *theme_ef;
     Eina_List *xdg_dirs = NULL;
@@ -848,6 +882,8 @@ main(int argc, char **argv)
         flush = EINA_TRUE;
     if (add_data(theme_ef, extra_dirs, EFREET_CACHE_ICON_EXTRA_DIRS))
         flush = EINA_TRUE;
+    if (flush)
+        changed = EINA_TRUE;
 
     if (exts->count == 0)
     {
@@ -893,23 +929,22 @@ main(int argc, char **argv)
     it = eina_hash_iterator_data_new(icon_themes);
     EINA_ITERATOR_FOREACH(it, theme)
     {
-        Eina_Hash *themes;
-
         if (!theme->valid) continue;
 #ifndef STRICT_SPEC
         if (!theme->theme.name.name) continue;
 #endif
         INF("scan theme %s", theme->theme.name.name);
 
-        changed = EINA_FALSE;
-        themes = eina_hash_string_superfast_new(NULL);
+        theme->changed = check_changed(theme);
+        if (flush)
+            theme->changed = EINA_TRUE;
 
         INF("open icon file");
         /* open icon file */
         icon_ef = eet_open(efreet_icon_cache_file(theme->theme.name.internal), EET_FILE_MODE_READ_WRITE);
         if (!icon_ef) goto on_error_efreet;
         icon_version = eet_data_read(icon_ef, efreet_version_edd(), EFREET_CACHE_VERSION);
-        if (flush || (icon_version &&
+        if (theme->changed || (icon_version &&
             ((icon_version->major != EFREET_ICON_CACHE_MAJOR) ||
              (icon_version->minor != EFREET_ICON_CACHE_MINOR))))
         {
@@ -921,68 +956,47 @@ main(int argc, char **argv)
             }
             icon_ef = eet_open(efreet_icon_cache_file(theme->theme.name.internal), EET_FILE_MODE_READ_WRITE);
             if (!icon_ef) goto on_error_efreet;
-            changed = EINA_TRUE;
-        }
-        if (!icon_version)
-            icon_version = NEW(Efreet_Cache_Version, 1);
-
-        icon_version->major = EFREET_ICON_CACHE_MAJOR;
-        icon_version->minor = EFREET_ICON_CACHE_MINOR;
-
-        /* load icons */
-        icons = eina_hash_string_superfast_new(NULL);
-        keys = eet_list(icon_ef, "*", &num);
-        if (keys)
-        {
-            for (i = 0; i < num; i++)
-            {
-                if (!strncmp(keys[i], "__efreet", 8)) continue;
-                icon = eet_data_read(icon_ef, icon_edd, keys[i]);
-                if (icon) eina_hash_add(icons, keys[i], icon);
-            }
-            free(keys);
+            theme->changed = EINA_TRUE;
         }
 
-        theme->changed = check_changed(theme);
         if (theme->changed)
             changed = EINA_TRUE;
-        if (flush)
-            changed = theme->changed = EINA_TRUE;
-        if (changed && theme->dirs)
-        {
-            efreet_hash_free(theme->dirs, free);
-            theme->dirs = NULL;
-        }
-        if (!theme->dirs)
-            theme->dirs = eina_hash_string_superfast_new(NULL);
 
-        INF("scan icons\n");
-        if (cache_scan(&(theme->theme), themes, icons, theme->dirs, &changed))
+        if (theme->changed)
         {
-            INF("generated: '%s' %i (%i)",
-                theme->theme.name.internal,
-                changed,
-                eina_hash_population(icons));
-            if (changed)
+            Eina_Hash *themes;
+            Eina_Hash *icons;
+
+            if (!icon_version)
+                icon_version = NEW(Efreet_Cache_Version, 1);
+
+            icon_version->major = EFREET_ICON_CACHE_MAJOR;
+            icon_version->minor = EFREET_ICON_CACHE_MINOR;
+
+            themes = eina_hash_string_superfast_new(NULL);
+            icons = eina_hash_string_superfast_new(NULL);
+
+            INF("scan icons\n");
+            if (cache_scan(&(theme->theme), themes, icons))
             {
                 Eina_Iterator *icons_it;
                 Eina_Hash_Tuple *tuple;
+
+                INF("generated: '%s' %i (%i)",
+                    theme->theme.name.internal,
+                    changed,
+                    eina_hash_population(icons));
 
                 icons_it = eina_hash_iterator_tuple_new(icons);
                 EINA_ITERATOR_FOREACH(icons_it, tuple)
                     eet_data_write(icon_ef, icon_edd, tuple->key, tuple->data, 1);
                 eina_iterator_free(icons_it);
-            }
-        }
 
-        eina_hash_free(themes);
-        eina_hash_free(icons);
-
-        if (changed)
-        {
-            if (theme->changed)
                 INF("theme change: %s %lld", theme->theme.name.internal, theme->last_cache_check);
-            eet_data_write(theme_ef, theme_edd, theme->theme.name.internal, theme, 1);
+                eet_data_write(theme_ef, theme_edd, theme->theme.name.internal, theme, 1);
+            }
+            eina_hash_free(themes);
+            eina_hash_free(icons);
         }
 
         eet_data_write(icon_ef, efreet_version_edd(), EFREET_CACHE_VERSION, icon_version, 1);
@@ -992,14 +1006,22 @@ main(int argc, char **argv)
     }
     eina_iterator_free(it);
 
-    changed = EINA_FALSE;
+    INF("scan fallback icons");
+    theme = eet_data_read(theme_ef, theme_edd, EFREET_CACHE_ICON_FALLBACK);
+    if (!theme)
+    {
+        theme = NEW(Efreet_Cache_Icon_Theme, 1);
+        theme->changed = EINA_TRUE;
+    }
+    if (flush)
+        theme->changed = EINA_TRUE;
 
     INF("open fallback file");
     /* open icon file */
     icon_ef = eet_open(efreet_icon_cache_file(EFREET_CACHE_ICON_FALLBACK), EET_FILE_MODE_READ_WRITE);
     if (!icon_ef) goto on_error_efreet;
     icon_version = eet_data_read(icon_ef, efreet_version_edd(), EFREET_CACHE_VERSION);
-    if (flush || (icon_version &&
+    if (theme->changed || (icon_version &&
         ((icon_version->major != EFREET_ICON_CACHE_MAJOR) ||
          (icon_version->minor != EFREET_ICON_CACHE_MINOR))))
     {
@@ -1011,35 +1033,11 @@ main(int argc, char **argv)
         }
         icon_ef = eet_open(efreet_icon_cache_file(EFREET_CACHE_ICON_FALLBACK), EET_FILE_MODE_READ_WRITE);
         if (!icon_ef) goto on_error_efreet;
-        changed = EINA_TRUE;
+        theme->changed = EINA_TRUE;
     }
-    if (!icon_version)
-        icon_version = NEW(Efreet_Cache_Version, 1);
-
-    icon_version->major = EFREET_ICON_CACHE_MAJOR;
-    icon_version->minor = EFREET_ICON_CACHE_MINOR;
-
-    /* load icons */
-    icons = eina_hash_string_superfast_new(NULL);
-    keys = eet_list(icon_ef, "*", &num);
-    if (keys)
-    {
-        for (i = 0; i < num; i++)
-        {
-            if (!strncmp(keys[i], "__efreet", 8)) continue;
-            icon = eet_data_read(icon_ef, fallback_edd, keys[i]);
-            if (icon) eina_hash_add(icons, keys[i], icon);
-        }
-        free(keys);
-    }
-
-    theme = eet_data_read(theme_ef, theme_edd, EFREET_CACHE_ICON_FALLBACK);
-    if (!theme)
-        theme = NEW(Efreet_Cache_Icon_Theme, 1);
-    theme->changed = changed;
-    if (flush)
-        changed = theme->changed = EINA_TRUE;
-    if (changed && theme->dirs)
+    if (!theme->changed)
+        theme->changed = check_fallback_changed(theme);
+    if (theme->changed && theme->dirs)
     {
         efreet_hash_free(theme->dirs, free);
         theme->dirs = NULL;
@@ -1047,25 +1045,40 @@ main(int argc, char **argv)
     if (!theme->dirs)
         theme->dirs = eina_hash_string_superfast_new(NULL);
 
-    INF("scan fallback icons");
-    /* Save fallback in the right part */
-    if (cache_fallback_scan(icons, theme->dirs, &changed))
+    if (theme->changed)
+        changed = EINA_TRUE;
+
+    if (theme->changed)
     {
-        WRN("generated: fallback %i (%i)", changed, eina_hash_population(icons));
-        if (changed)
+        Eina_Hash *icons;
+
+        if (!icon_version)
+            icon_version = NEW(Efreet_Cache_Version, 1);
+
+        icon_version->major = EFREET_ICON_CACHE_MAJOR;
+        icon_version->minor = EFREET_ICON_CACHE_MINOR;
+
+        icons = eina_hash_string_superfast_new(NULL);
+
+        INF("scan fallback icons");
+        /* Save fallback in the right part */
+        if (cache_fallback_scan(icons, theme->dirs))
         {
             Eina_Iterator *icons_it;
             Eina_Hash_Tuple *tuple;
+
+            INF("generated: fallback %i (%i)", theme->changed, eina_hash_population(icons));
 
             icons_it = eina_hash_iterator_tuple_new(icons);
             EINA_ITERATOR_FOREACH(icons_it, tuple)
                 eet_data_write(icon_ef, fallback_edd, tuple->key, tuple->data, 1);
             eina_iterator_free(icons_it);
         }
+        eina_hash_free(icons);
+
+        eet_data_write(theme_ef, theme_edd, EFREET_CACHE_ICON_FALLBACK, theme, 1);
     }
 
-    eina_hash_free(icons);
-    eet_data_write(theme_ef, theme_edd, EFREET_CACHE_ICON_FALLBACK, theme, 1);
     icon_theme_free(theme);
 
     eet_data_write(icon_ef, efreet_version_edd(), EFREET_CACHE_VERSION, icon_version, 1);

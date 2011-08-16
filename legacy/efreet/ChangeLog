@@ -82,6 +82,15 @@
 
         * Use eina_log more effectively
 
-2011-04-04 Tom Hacohen (TAsn)
+2011-04-04  Tom Hacohen (TAsn)
 
 	* Fixed uri encoding when opening files.
+
+2011-08-16  sebastian Dransfeld
+
+	* Always rebuild cache from scratch when needed, but rely on correct
+	spec behaviour to check for theme changes. This will considerably
+	speed up the cache process when there is no change, and improve the
+	correctness of the cache when changes occur. For example didn't the
+	previous behaviour handle file removal gracefully.
+
