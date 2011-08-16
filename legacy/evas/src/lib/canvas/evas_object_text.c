@@ -257,37 +257,6 @@ _evas_object_text_vert_advance_get(const Evas_Object *obj __UNUSED__,
    return o->max_ascent + o->max_descent;
 }
 
-/* FIXME: returns the advance instead of the width just because it's usuallly
- * bigger, major hack, should fix. */
-static void
-_evas_object_text_string_size_get(const Evas_Object *obj,
-      const Evas_Object_Text *o,
-      Evas_Coord *cw, Evas_Coord *ch)
-{
-   Evas_Object_Text_Item *it, *last_it = NULL;
-   Evas_Coord w, h;
-   (void) obj;
-
-   w = h = 0;
-   EINA_INLIST_FOREACH(EINA_INLIST_GET(o->items), it)
-     {
-        w += it->adv;
-        if (it->h > h)
-          {
-             h = it->h;
-          }
-        last_it = it;
-     }
-   /* Take the width, not the advance of the last item */
-   if (last_it)
-     {
-        w += last_it->w - last_it->adv;
-     }
-
-   if (cw) *cw = w;
-   if (ch) *ch = h;
-}
-
 EAPI Evas_Object *
 evas_object_text_add(Evas *e)
 {
@@ -1952,7 +1921,8 @@ _evas_object_text_recalc(Evas_Object *obj)
 	int w, h;
 	int l = 0, r = 0, t = 0, b = 0;
 
-        _evas_object_text_string_size_get(obj, o, &w, &h);
+        w = _evas_object_text_horiz_advance_get(obj, o);
+        h = _evas_object_text_vert_advance_get(obj, o);
 	evas_text_style_pad_get(o->cur.style, &l, &r, &t, &b);
 	obj->cur.geometry.w = w + l + r;
         obj->cur.geometry.h = h + t + b;
