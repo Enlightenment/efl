@@ -80,6 +80,7 @@ typedef void (*_eng_fn) (void);
 typedef _eng_fn (*glsym_func_eng_fn) ();
 typedef void    (*glsym_func_void) ();
 typedef void   *(*glsym_func_void_ptr) ();
+typedef unsigned int  (*glsym_func_uint) ();
 
 _eng_fn  (*glsym_eglGetProcAddress)            (const char *a) = NULL;
 void     (*glsym_eglBindTexImage)              (EGLDisplay a, EGLSurface b, int c) = NULL;
@@ -87,6 +88,8 @@ void     (*glsym_eglReleaseTexImage)           (EGLDisplay a, EGLSurface b, int 
 void    *(*glsym_eglCreateImage)               (EGLDisplay a, EGLContext b, EGLenum c, EGLClientBuffer d, const int *e) = NULL;
 void     (*glsym_eglDestroyImage)              (EGLDisplay a, void *b) = NULL;
 void     (*glsym_glEGLImageTargetTexture2DOES) (int a, void *b)  = NULL;
+void          *(*glsym_eglMapImageSEC)               (void *a, void *b) = NULL;
+unsigned int   (*glsym_eglUnmapImageSEC)             (void *a, void *b) = NULL;
 #else
 typedef void (*_eng_fn) (void);
 
@@ -148,6 +151,9 @@ _sym_init(void)
    FINDSYM(glsym_eglDestroyImage, "eglDestroyImageKHR", glsym_func_void);
 
    FINDSYM(glsym_glEGLImageTargetTexture2DOES, "glEGLImageTargetTexture2DOES", glsym_func_void);
+
+   FINDSYM(glsym_eglMapImageSEC, "eglMapImageSEC", glsym_func_void_ptr);
+   FINDSYM(glsym_eglUnmapImageSEC, "eglUnmapImageSEC", glsym_func_uint);
 #else
 #define FINDSYM(dst, sym, typ) \
    if ((!dst) && (glsym_glXGetProcAddress)) dst = (typ)glsym_glXGetProcAddress(sym); \
@@ -1760,13 +1766,35 @@ eng_image_data_get(void *data, void *image, int to_write, DATA32 **image_data, i
         if (err) *err = EVAS_LOAD_ERROR_NONE;
         return im;
      }
+
+#if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
+   eng_window_use(re->win);
+
+   if ((im->tex) && (im->tex->pt) && (im->tex->pt->dyn.img))
+     {
+        *image_data = im->tex->pt->dyn.data = glsym_eglMapImageSEC(re->win->egl_disp, im->tex->pt->dyn.img);
+
+        if (!im->tex->pt->dyn.data)
+          {
+             glsym_eglDestroyImage(re->win->egl_disp, im->tex->pt->dyn.img);
+             im->tex->pt->dyn.img = NULL;
+             GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+          }
+
+        if (err) *err = EVAS_LOAD_ERROR_NONE;
+        return im;
+     }
+#else
    if ((im->tex) && (im->tex->pt) && (im->tex->pt->dyn.data))
      {
         *image_data = im->tex->pt->dyn.data;
         if (err) *err = EVAS_LOAD_ERROR_NONE;
         return im;
      }
+
    eng_window_use(re->win);
+#endif
+
    error = evas_cache_image_load_data(&im->im->cache_entry);
    switch (im->cs.space)
      {
@@ -1821,6 +1849,9 @@ eng_image_data_put(void *data, void *image, DATA32 *image_data)
    eng_window_use(re->win);
    if ((im->tex) && (im->tex->pt) && (im->tex->pt->dyn.data))
      {
+#if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
+        glsym_eglUnmapImageSEC(re->win->egl_disp, im->tex->pt->dyn.img);
+#endif
         if (im->tex->pt->dyn.data == image_data)
           {
              return image;

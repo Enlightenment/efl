@@ -520,15 +520,6 @@ _pool_tex_dynamic_new(Evas_Engine_GL_Context *gc, int w, int h, int intformat, i
         GLERR(__FUNCTION__, __FILE__, __LINE__, "");
         return pt;
      }
-   pt->dyn.data = secsym_eglMapImageSEC(egldisplay,
-                                        pt->dyn.img);
-   if (!pt->dyn.data)
-     {
-        secsym_eglDestroyImage(egldisplay, pt->dyn.img);
-        pt->dyn.img = NULL;
-        GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-        return pt;
-     }
    if (secsym_eglGetImageAttribSEC(egldisplay,
                                    pt->dyn.img,
                                    EGL_MAP_GL_TEXTURE_WIDTH_SEC,
