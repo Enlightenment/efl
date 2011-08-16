@@ -483,16 +483,13 @@ main(int argc, char **argv)
     }
 
     /* touch update file */
-    //if (changed)
+    snprintf(file, sizeof(file), "%s/efreet/desktop_data.update", efreet_cache_home_get());
+    tmpfd = open(file, O_CREAT | O_WRONLY, S_IRUSR | S_IWUSR);
+    if (tmpfd >= 0)
     {
-        snprintf(file, sizeof(file), "%s/efreet/desktop_data.update", efreet_cache_home_get());
-        tmpfd = open(file, O_CREAT | O_WRONLY, S_IRUSR | S_IWUSR);
-        if (tmpfd >= 0)
-        {
-            efreet_fsetowner(tmpfd);
-            if (write(tmpfd, "a", 1) != 1) perror("write");
-            close(tmpfd);
-        }
+        efreet_fsetowner(tmpfd);
+        if (write(tmpfd, "a", 1) != 1) perror("write");
+        close(tmpfd);
     }
 
     EINA_LIST_FREE(scanned, dir)

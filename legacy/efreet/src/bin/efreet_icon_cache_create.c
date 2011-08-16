@@ -1086,18 +1086,15 @@ main(int argc, char **argv)
     free(theme_version);
 
     /* touch update file */
-    //if (changed)
+    snprintf(file, sizeof(file), "%s/efreet/icon_data.update", efreet_cache_home_get());
+    tmpfd = open(file, O_CREAT | O_WRONLY, S_IRUSR | S_IWUSR);
+    if (tmpfd >= 0)
     {
-        snprintf(file, sizeof(file), "%s/efreet/icon_data.update", efreet_cache_home_get());
-        tmpfd = open(file, O_CREAT | O_WRONLY, S_IRUSR | S_IWUSR);
-        if (tmpfd >= 0)
-        {
-            int written;
-           
-            efreet_fsetowner(tmpfd);
-            written = write(tmpfd, "a", 1);
-            close(tmpfd);
-        }
+        int written;
+
+        efreet_fsetowner(tmpfd);
+        written = write(tmpfd, "a", 1);
+        close(tmpfd);
     }
 
     INF("done");
