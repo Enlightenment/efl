@@ -1052,7 +1052,7 @@ main(int argc, char **argv)
     /* Save fallback in the right part */
     if (cache_fallback_scan(icons, theme->dirs, &changed))
     {
-            WRN("generated: fallback %i (%i)", changed, eina_hash_population(icons));
+        WRN("generated: fallback %i (%i)", changed, eina_hash_population(icons));
         if (changed)
         {
             Eina_Iterator *icons_it;
