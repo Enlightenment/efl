@@ -1090,10 +1090,8 @@ main(int argc, char **argv)
     tmpfd = open(file, O_CREAT | O_WRONLY, S_IRUSR | S_IWUSR);
     if (tmpfd >= 0)
     {
-        int written;
-
         efreet_fsetowner(tmpfd);
-        written = write(tmpfd, "a", 1);
+        if (write(tmpfd, "a", 1) != 1) perror("write");
         close(tmpfd);
     }
 
