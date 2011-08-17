@@ -551,20 +551,20 @@ evas_font_word_prerender(RGBA_Draw_Context *dc, const Evas_Text_Props *text_prop
         im = calloc(height, width);
         for (i = 0 ; i  < len ; i ++)
           {
-             struct cinfo *ci = metrics + i;
+             struct cinfo *cin = metrics + i;
 
-             for (j = 0 ; j < ci->bm.rows ; j ++)
+             for (j = 0 ; j < cin->bm.rows ; j ++)
                {
                   int correction; /* Used to remove negative inset and such */
-                  if (ci->pos.x < 0)
-                    correction = -ci->pos.x;
+                  if (cin->pos.x < 0)
+                    correction = -cin->pos.x;
                   else
                     correction = 0;
 
-                  memcpy(im + ci->pos.x + (j + baseline - ci->bm.h) * width +
+                  memcpy(im + cin->pos.x + (j + baseline - cin->bm.h) * width +
                         correction,
-                        ci->bm.data + j * ci->bm.w + correction,
-                        ci->bm.w - correction);
+                        cin->bm.data + j * cin->bm.w + correction,
+                        cin->bm.w - correction);
                }
           }
      }
