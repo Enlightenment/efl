@@ -281,3 +281,9 @@
 2011-08-16  Cedric Bail
 
 	* Add ecore_main_loop_thread_safe_call_sync.
+
+2011-08-17  Cedric Bail
+
+	* Add ecore_thread_main_loop_begin and ecore_thread_main_loop_end.
+	Usefull to protect EFL call from another thread.
+
