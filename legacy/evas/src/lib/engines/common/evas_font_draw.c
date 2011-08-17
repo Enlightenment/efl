@@ -149,7 +149,10 @@ evas_common_font_draw_internal(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font
                }
 
              if (xrun < 1) return;
-# ifdef WORD_CACHE
+/* For some reason, metric and word chache are exactly the same except for
+ * this piece of code that makes metric go nuts. ATM, we'll just go the
+ * WORD_CACHE path. */
+#if defined(METRIC_CACHE) || defined(WORD_CACHE)
              if (word->im)
                {
                   for (j = rowstart ; j < rowend ; j ++)
