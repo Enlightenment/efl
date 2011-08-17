@@ -830,7 +830,7 @@ ecore_main_loop_iterate(void)
    _ecore_main_loop_iterate_internal(1);
    _ecore_unlock();
 #else
-   g_main_context_iteration(NULL, 1);
+   g_main_context_iteration(NULL, 0);
 #endif
 }
 
