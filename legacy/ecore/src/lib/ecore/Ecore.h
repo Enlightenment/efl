@@ -444,6 +444,34 @@ extern "C" {
    */
   EAPI void                 *ecore_main_loop_thread_safe_call_sync(Ecore_Data_Cb callback, void *data);
 
+  /**
+   * @brief This function suspend the main loop in a know state
+   * @since 1.1.0
+   *
+   * @result EINA_TRUE if the main loop was suspended correcly.
+   *
+   * This function suspend the main loop in a know state, this let you
+   * use any EFL call you want after it return. Be carefull, the main loop
+   * is blocked until you call ecore_thread_main_loop_end(). This is
+   * the only sane way to achieve pseudo thread safety.
+   *
+   * Notice that until the main loop is blocked, the thread is blocked
+   * and their is noway around that.
+   *
+   * We still advise you, when possible, to use ecore_main_loop_thread_safe_call_async()
+   * as it will not block the thread nor the main loop.
+   */
+  EAPI Eina_Bool ecore_thread_main_loop_begin(void);
+
+  /**
+   * @brief Unlock the main loop.
+   * @since 1.1.0
+   *
+   * After a call to ecore_thread_main_loop_begin(), you need to absolutly
+   * call ecore_thread_main_loop_end(), or you application will stay frozen.
+   */
+  EAPI void ecore_thread_main_loop_end(void);
+
    /**
     * @}
     */

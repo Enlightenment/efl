@@ -66,6 +66,7 @@ struct _Ecore_Safe_Call
    Eina_Condition c;
 
    Eina_Bool sync : 1;
+   Eina_Bool suspend : 1;
 };
 
 static void _ecore_main_loop_thread_safe_call(Ecore_Safe_Call *order);
@@ -74,6 +75,11 @@ static void _thread_callback(void *data, void *buffer, unsigned int nbyte);
 static Eina_List *_thread_cb = NULL;
 static Ecore_Pipe *_thread_call = NULL;
 static Eina_Lock _thread_safety;
+
+static Eina_Bool _thread_loop = EINA_FALSE;
+static Eina_Lock _thread_mutex;
+static Eina_Condition _thread_cond;
+
 Eina_Lock _ecore_main_loop_lock;
 int _ecore_main_lock_count;
 
@@ -151,8 +157,11 @@ ecore_init(void)
    _ecore_time_init();
 
    eina_lock_new(&_thread_safety);
-   eina_lock_new(&_ecore_main_loop_lock);
+   eina_lock_new(&_thread_mutex);
+   eina_condition_new(&_thread_cond, &_thread_mutex);
    _thread_call = ecore_pipe_add(_thread_callback, NULL);
+
+   eina_lock_new(&_ecore_main_loop_lock);
 
 #if HAVE_MALLINFO
    if (getenv("ECORE_MEM_STAT"))
@@ -265,6 +274,7 @@ ecore_main_loop_thread_safe_call_async(Ecore_Cb callback, void *data)
    order->cb.async = callback;
    order->data = data;
    order->sync = EINA_FALSE;
+   order->suspend = EINA_FALSE;
 
    _ecore_main_loop_thread_safe_call(order);
 }
@@ -290,6 +300,7 @@ ecore_main_loop_thread_safe_call_sync(Ecore_Data_Cb callback, void *data)
    eina_lock_new(&order->m);
    eina_condition_new(&order->c, &order->m);
    order->sync = EINA_TRUE;
+   order->suspend = EINA_FALSE;
 
    _ecore_main_loop_thread_safe_call(order);
 
@@ -306,6 +317,44 @@ ecore_main_loop_thread_safe_call_sync(Ecore_Data_Cb callback, void *data)
    _ecore_main_loop_thread_safe_call(order);
 
    return ret;
+}
+
+EAPI Eina_Bool
+ecore_thread_main_loop_begin(void)
+{
+   Ecore_Safe_Call *order;
+
+   if (eina_main_loop_is())
+     return EINA_FALSE;
+
+   order = malloc(sizeof (Ecore_Safe_Call));
+   if (!order) return EINA_FALSE;
+
+   eina_lock_new(&order->m);
+   eina_condition_new(&order->c, &order->m);
+   order->suspend = EINA_TRUE;
+
+   _ecore_main_loop_thread_safe_call(order);
+
+   eina_lock_take(&order->m);
+   eina_condition_wait(&order->c);
+   eina_lock_release(&order->m);
+
+   eina_main_loop_define();
+
+   _thread_loop = EINA_TRUE;
+
+   return EINA_TRUE;
+}
+
+EAPI void
+ecore_thread_main_loop_end(void)
+{
+   if (!_thread_loop) return ;
+   /* until we unlock the main loop, this thread has the main loop id */
+   if (!eina_main_loop_is()) return ;
+
+   eina_condition_broadcast(&_thread_cond);
 }
 
 EAPI void
@@ -568,7 +617,20 @@ _thread_callback(void *data __UNUSED__,
 
    EINA_LIST_FREE(callback, call)
      {
-        if (call->sync)
+        if (call->suspend)
+          {
+             eina_condition_broadcast(&call->c);
+
+             eina_lock_take(&_thread_mutex);
+             eina_condition_wait(&_thread_cond);
+             eina_lock_release(&_thread_mutex);
+
+             eina_main_loop_define();
+
+             _thread_safe_cleanup(call);
+             free(call);
+          }
+        else if (call->sync)
           {
              call->data = call->cb.sync(call->data);
              eina_condition_broadcast(&call->c);
