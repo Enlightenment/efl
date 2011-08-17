@@ -1520,6 +1520,7 @@ _pixels_get(void *data, Evas_Object *obj)
 	  }
 	else if (format == EMOTION_FORMAT_BGRA)
 	  {
+	     evas_object_image_colorspace_set(obj, EVAS_COLORSPACE_ARGB8888);
 	     if (sd->module->bgra_data_get(sd->video, &bgra_data))
 	       {
 		  evas_object_image_data_set(obj, bgra_data);
