@@ -21,6 +21,7 @@ static const Evas_Test_Case etc[] = {
   { "Evas", evas_test_init },
   { "Object Textblock", evas_test_textblock },
   { "Object Text", evas_test_text },
+  { "Callbacks", evas_test_callbacks },
   { NULL, NULL }
 };
 

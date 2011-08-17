@@ -256,10 +256,29 @@ evas_object_event_callback_call(Evas_Object *obj, Evas_Callback_Type type, void 
    _evas_unwalk(e);
 }
 
-
+static int
+_callback_priority_cmp(const void *_a, const void *_b)
+{
+   const Evas_Func_Node *a, *b;
+   a = EINA_INLIST_CONTAINER_GET(_a, Evas_Func_Node);
+   b = EINA_INLIST_CONTAINER_GET(_b, Evas_Func_Node);
+   if (a->priority < b->priority)
+      return -1;
+   else if (a->priority == b->priority)
+      return 0;
+   else
+      return 1;
+}
 
 EAPI void
 evas_object_event_callback_add(Evas_Object *obj, Evas_Callback_Type type, Evas_Object_Event_Cb func, const void *data)
+{
+   evas_object_event_callback_priority_add(obj, type,
+         EVAS_CALLBACK_PRIORITY_DEFAULT, func, data);
+}
+
+EAPI void
+evas_object_event_callback_priority_add(Evas_Object *obj, Evas_Callback_Type type, Evas_Callback_Priority priority, Evas_Object_Event_Cb func, const void *data)
 {
    /* MEM OK */
    Evas_Func_Node *fn;
@@ -285,9 +304,11 @@ evas_object_event_callback_add(Evas_Object *obj, Evas_Callback_Type type, Evas_O
    fn->func = func;
    fn->data = (void *)data;
    fn->type = type;
+   fn->priority = priority;
 
    obj->callbacks->callbacks =
-     eina_inlist_prepend(obj->callbacks->callbacks, EINA_INLIST_GET(fn));
+     eina_inlist_sorted_insert(obj->callbacks->callbacks, EINA_INLIST_GET(fn),
+           _callback_priority_cmp);
 }
 
 EAPI void *
@@ -352,10 +373,15 @@ evas_object_event_callback_del_full(Evas_Object *obj, Evas_Callback_Type type, E
    return NULL;
 }
 
-
-
 EAPI void
 evas_event_callback_add(Evas *e, Evas_Callback_Type type, Evas_Event_Cb func, const void *data)
+{
+   evas_event_callback_priority_add(e, type, EVAS_CALLBACK_PRIORITY_DEFAULT,
+         func, data);
+}
+
+EAPI void
+evas_event_callback_priority_add(Evas *e, Evas_Callback_Type type, Evas_Callback_Priority priority, Evas_Event_Cb func, const void *data)
 {
    /* MEM OK */
    Evas_Func_Node *fn;
@@ -381,9 +407,10 @@ evas_event_callback_add(Evas *e, Evas_Callback_Type type, Evas_Event_Cb func, co
    fn->func = func;
    fn->data = (void *)data;
    fn->type = type;
+   fn->priority = priority;
 
-   e->callbacks->callbacks =
-     eina_inlist_prepend(e->callbacks->callbacks, EINA_INLIST_GET(fn));
+   e->callbacks->callbacks = eina_inlist_sorted_insert(e->callbacks->callbacks,
+         EINA_INLIST_GET(fn), _callback_priority_cmp);
 }
 
 EAPI void *

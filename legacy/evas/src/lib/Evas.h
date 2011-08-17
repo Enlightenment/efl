@@ -433,6 +433,39 @@ typedef enum _Evas_Callback_Type
 } Evas_Callback_Type; /**< The types of events triggering a callback */
 
 /**
+ * @def EVAS_CALLBACK_PRIORITY_BEFORE
+ * Slightly more prioritized than default.
+ * @since 1.1.0
+ */
+#define EVAS_CALLBACK_PRIORITY_BEFORE -100
+/**
+ * @def EVAS_CALLBACK_PRIORITY_DEFAULT
+ * Default callback priority level
+ * @since 1.1.0
+ */
+#define EVAS_CALLBACK_PRIORITY_DEFAULT 0
+/**
+ * @def EVAS_CALLBACK_PRIORITY_AFTER
+ * Slightly less prioritized than default.
+ * @since 1.1.0
+ */
+#define EVAS_CALLBACK_PRIORITY_AFTER 100
+
+/**
+ * @typedef Evas_Callback_Priority
+ *
+ * Callback priority value. Range is -32k - 32k. The lower the number, the
+ * bigger the priority.
+ *
+ * @see EVAS_CALLBACK_PRIORITY_AFTER
+ * @see EVAS_CALLBACK_PRIORITY_BEFORE
+ * @see EVAS_CALLBACK_PRIORITY_DEFAULT
+ *
+ * @since 1.1.0
+ */
+typedef short Evas_Callback_Priority;
+
+/**
  * Flags for Mouse Button events
  */
 typedef enum _Evas_Button_Flags
@@ -2104,6 +2137,23 @@ EAPI Eina_Bool         evas_pointer_inside_get           (const Evas *e) EINA_WA
 EAPI void              evas_event_callback_add              (Evas *e, Evas_Callback_Type type, Evas_Event_Cb func, const void *data) EINA_ARG_NONNULL(1, 3);
 
 /**
+ * Add (register) a callback function to a given canvas event with a
+ * non-default priority set. Except for the priority field, it's exactly the
+ * same as @ref evas_event_callback_add
+ *
+ * @param e Canvas to attach a callback to
+ * @param type The type of event that will trigger the callback
+ * @param priority The priority of the callback, lower values called first.
+ * @param func The (callback) function to be called when the event is
+ *        triggered
+ * @param data The data pointer to be passed to @p func
+ *
+ * @see evas_event_callback_add
+ * @since 1.1.0
+ */
+EAPI void              evas_event_callback_priority_add(Evas *e, Evas_Callback_Type type, Evas_Callback_Priority priority, Evas_Event_Cb func, const void *data) EINA_ARG_NONNULL(1, 4);
+
+/**
  * Delete a callback function from the canvas.
  *
  * @param e Canvas to remove a callback from
@@ -3707,6 +3757,22 @@ EAPI Evas_Object      *evas_object_below_get             (const Evas_Object *obj
  *
  */
    EAPI void              evas_object_event_callback_add     (Evas_Object *obj, Evas_Callback_Type type, Evas_Object_Event_Cb func, const void *data) EINA_ARG_NONNULL(1, 3);
+
+/**
+ * Add (register) a callback function to a given Evas object event with a
+ * non-default priority set. Except for the priority field, it's exactly the
+ * same as @ref evas_object_event_callback_add
+ *
+ * @param obj Object to attach a callback to
+ * @param type The type of event that will trigger the callback
+ * @param priority The priority of the callback, lower values called first.
+ * @param func The function to be called when the event is triggered
+ * @param data The data pointer to be passed to @p func
+ *
+ * @see evas_object_event_callback_add
+ * @since 1.1.0
+ */
+EAPI void                 evas_object_event_callback_priority_add(Evas_Object *obj, Evas_Callback_Type type, Evas_Callback_Priority priority, Evas_Object_Event_Cb func, const void *data) EINA_ARG_NONNULL(1, 4);
 
 /**
  * Delete a callback function from an object
@@ -9438,6 +9504,23 @@ EAPI void              evas_object_smart_data_set        (Evas_Object *obj, void
  * @ingroup Evas_Smart_Object_Group
  */
 EAPI void              evas_object_smart_callback_add    (Evas_Object *obj, const char *event, Evas_Smart_Cb func, const void *data) EINA_ARG_NONNULL(1, 2, 3);
+
+/**
+ * Add (register) a callback function to the smart event specified by
+ * @p event on the smart object @p obj. Except for the priority field,
+ * it's exactly the same as @ref evas_object_smart_callback_add
+ *
+ * @param obj a smart object
+ * @param event the event's name string
+ * @param priority The priority of the callback, lower values called first.
+ * @param func the callback function
+ * @param data user data to be passed to the callback function
+ *
+ * @see evas_object_smart_callback_add
+ * @since 1.1.0
+ * @ingroup Evas_Smart_Object_Group
+ */
+EAPI void              evas_object_smart_callback_priority_add(Evas_Object *obj, const char *event, Evas_Callback_Priority priority, Evas_Smart_Cb func, const void *data);
 
 /**
  * Delete (unregister) a callback function from the smart event

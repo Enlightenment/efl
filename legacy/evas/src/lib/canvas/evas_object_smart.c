@@ -22,6 +22,7 @@ struct _Evas_Smart_Callback
    const char *event;
    Evas_Smart_Cb func;
    void *func_data;
+   Evas_Callback_Priority priority;
    char  delete_me : 1;
 };
 
@@ -324,8 +325,29 @@ evas_object_smart_add(Evas *e, Evas_Smart *s)
    return obj;
 }
 
+static int
+_callback_priority_cmp(const void *_a, const void *_b)
+{
+   const Evas_Smart_Callback *a, *b;
+   a = (const Evas_Smart_Callback *) _a;
+   b = (const Evas_Smart_Callback *) _b;
+   if (a->priority < b->priority)
+      return -1;
+   else if (a->priority == b->priority)
+      return 0;
+   else
+      return 1;
+}
+
 EAPI void
 evas_object_smart_callback_add(Evas_Object *obj, const char *event, Evas_Smart_Cb func, const void *data)
+{
+   evas_object_smart_callback_priority_add(obj, event,
+         EVAS_CALLBACK_PRIORITY_DEFAULT, func, data);
+}
+
+EAPI void
+evas_object_smart_callback_priority_add(Evas_Object *obj, const char *event, Evas_Callback_Priority priority, Evas_Smart_Cb func, const void *data)
 {
    Evas_Object_Smart *o;
    Evas_Smart_Callback *cb;
@@ -346,7 +368,9 @@ evas_object_smart_callback_add(Evas_Object *obj, const char *event, Evas_Smart_C
    cb->event = eina_stringshare_add(event);
    cb->func = func;
    cb->func_data = (void *)data;
-   o->callbacks = eina_list_prepend(o->callbacks, cb);
+   cb->priority = priority;
+   o->callbacks = eina_list_sorted_insert(o->callbacks, _callback_priority_cmp,
+         cb);
 }
 
 EAPI void *

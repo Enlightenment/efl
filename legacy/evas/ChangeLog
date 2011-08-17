@@ -461,3 +461,7 @@
 	* Textblock: Added evas_textblock_cursor_visible_range_get which
 	updates the cursors to the ends of the area currently visible on
 	screen.
+
+2011-08-17  Tom Hacohen (TAsn)
+
+	* Callbacks: Added priority support to callbacks.

@@ -553,6 +553,7 @@ struct _Evas_Func_Node
    void (*func) ();
    void *data;
    Evas_Callback_Type type;
+   Evas_Callback_Priority priority;
    unsigned char delete_me : 1;
 };
 

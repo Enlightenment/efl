@@ -20,6 +20,7 @@ evas_suite.c \
 evas_test_init.c \
 evas_test_textblock.c \
 evas_test_text.c \
+evas_test_callbacks.c \
 evas_tests_helpers.h \
 evas_suite.h
 
