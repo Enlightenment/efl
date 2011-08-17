@@ -380,6 +380,14 @@ eina_main_loop_is(void)
    return EINA_FALSE;
 }
 
+/** The purpose of this API should not be documented, it is used only by the one who know what they are doing. */
+EAPI void
+eina_main_loop_define(void)
+{
+   _eina_pid = getpid();
+   _eina_main_loop = pthread_self();
+}
+
 /**
  * @}
  */

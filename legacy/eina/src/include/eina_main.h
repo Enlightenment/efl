@@ -143,6 +143,15 @@ EAPI int eina_threads_shutdown(void);
 EAPI Eina_Bool eina_main_loop_is(void);
 
 /**
+ * @brief You should never use that function excpet if you really really know what your are doing.
+ * @since 1.1.0
+ *
+ * If you are reading this documentation, that certainly means you don't know what is the purpose of
+ * this call and you should just not use it.
+ */
+EAPI void eina_main_loop_define(void);
+
+/**
  * @}
  */
 
