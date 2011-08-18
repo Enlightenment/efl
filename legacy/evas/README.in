@@ -764,7 +764,7 @@ into N regions (1 per core) to speed up rendering in software when you
 have multiple cpu cores.
 
 
---enable-word-cache
+--enable-word-cache **DISABLED DUE TO BUGS**
 
 Cache rendered words and draw them as a single object, instead of
 individual characters.  This is a big gain for things like neon which
@@ -788,7 +788,7 @@ the e-devel mailing list or Brett Nash <nash@nash.id.uau>
 For GL see metric caching...
 
 
---enable-metric-cache
+--enable-metric-cache **DISABLED DUE TO BUGS**
 
 Metric caching saves character metrics between characters in words.
 This enables it to render words much quicker as it avoids things like

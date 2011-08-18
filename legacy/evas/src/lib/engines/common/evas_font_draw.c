@@ -7,6 +7,15 @@
 
 #include "evas_font_ot.h"
 
+/* Forcibly disable the broken word/metric caching. */
+#ifdef METRIC_CACHE
+# undef METRIC_CACHE
+#endif
+
+#ifdef WORD_CACHE
+# undef WORD_CACHE
+#endif
+
 #define WORD_CACHE_MAXLEN	50
 /* How many to cache */
 #define WORD_CACHE_NWORDS 40
