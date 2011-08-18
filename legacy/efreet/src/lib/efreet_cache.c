@@ -234,9 +234,12 @@ efreet_cache_shutdown(void)
         desktop_cache_exe_lock = -1;
     }
 
+    if (old_desktop_caches)
+        WRN("This application has not properly closed all its desktop references!");
     EINA_LIST_FREE(old_desktop_caches, d)
     {
         eina_hash_free(d->hash);
+        eet_close(d->ef);
         free(d);
     }
 
@@ -845,11 +848,15 @@ efreet_cache_desktop_free(Efreet_Desktop *desktop)
         curr = eina_hash_find(d->hash, desktop->orig_path);
         if (curr && curr == desktop)
         {
+            INF("Found in old cache, purge\n");
             eina_hash_del_by_key(d->hash, desktop->orig_path);
             if (eina_hash_population(d->hash) == 0)
             {
+                INF("Cache empty, close file\n");
                 eina_hash_free(d->hash);
-                d->hash = NULL;
+                eet_close(d->ef);
+                free(d);
+                old_desktop_caches = eina_list_remove_list(old_desktop_caches, l);
             }
             break;
         }
@@ -1286,11 +1293,12 @@ desktop_cache_update_free(void *data, void *ev)
     int dangling = 0;
 
     d = data;
-    if (d)
+    if (d && (eina_list_data_find(old_desktop_caches, d) == d))
     {
         /*
-         * All users should now had the chance to update their pointers, so we can now
-         * free the old cache
+         * All users should now had the chance to update their pointers.
+         * Check whether we still have some dangling and print a warning.
+         * Programs might close their pointers later.
          */
         if (d->hash)
         {
@@ -1301,34 +1309,21 @@ desktop_cache_update_free(void *data, void *ev)
             EINA_ITERATOR_FOREACH(it, tuple)
             {
                 if (tuple->data == NON_EXISTING) continue;
-                ERR("%d:%s still in cache on cache close!",
+                WRN("%d:%s still in cache after update event!",
                     ((Efreet_Desktop *)tuple->data)->ref, (char *)tuple->key);
                 dangling++;
             }
             eina_iterator_free(it);
-
-            eina_hash_free(d->hash);
         }
-        /*
-         * If there are dangling references the eet file won't be closed - to
-         * avoid crashes, but this will leak instead.
-         */
-        if (dangling == 0)
+        if (dangling != 0)
         {
-            efreet_cache_close(d->ef);
-        }
-        else
-        {
-            /* TODO: Keep in old_desktop_caches, as we might close ref later */
-            ERR("There are still %i desktop files with old\n"
+            WRN("There are still %i desktop files with old\n"
                 "dangling references to desktop files. This application\n"
                 "has not handled the EFREET_EVENT_DESKTOP_CACHE_UPDATE\n"
                 "fully and released its references. Please fix the application\n"
                 "so it does this.",
                 dangling);
         }
-        old_desktop_caches = eina_list_remove(old_desktop_caches, d);
-        free(d);
     }
     free(ev);
 }
