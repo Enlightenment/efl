@@ -722,18 +722,17 @@ compile(void)
 	  def = mem_strdup("");
 	else
 	  {
-	     Eina_List *l;
 	     int len;
-	     char *data;
+	     char *define;
 
 	     len = 0;
-	     EINA_LIST_FOREACH(defines, l, data)
-	       len += strlen(data) + 1;
+	     EINA_LIST_FOREACH(defines, l, define)
+	       len += strlen(define) + 1;
 	     def = mem_alloc(len + 1);
 	     def[0] = 0;
-	     EINA_LIST_FOREACH(defines, l, data)
+	     EINA_LIST_FOREACH(defines, l, define)
 	       {
-		  strcat(def, data);
+		  strcat(def, define);
 		  strcat(def, " ");
 	       }
 	  }

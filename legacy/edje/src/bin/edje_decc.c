@@ -162,7 +162,7 @@ void
 output(void)
 {
    Eina_List *l;
-   Eet_File *ef;
+   Eet_File *tef;
    SrcFile *sf;
    char *outdir, *p;
 
@@ -181,7 +181,7 @@ output(void)
      }
 
 
-   ef = eet_open(file_in, EET_FILE_MODE_READ);
+   tef = eet_open(file_in, EET_FILE_MODE_READ);
 
    if (edje_file->image_dir)
      {
@@ -296,7 +296,7 @@ output(void)
              /* FIXME!!!! */
                                          /* should be fn->entry -v */
 	     snprintf(out, sizeof(out), "edje/fonts/%s", fn->file);
-	     font = eet_read(ef, out, &fontsize);
+	     font = eet_read(tef, out, &fontsize);
 	     if (font)
 	       {
 		  FILE *f;
@@ -336,7 +336,7 @@ output(void)
      {
 	char out[4096];
 	FILE *f;
-	SrcFile *sf = eina_list_data_get(srcfiles->list);
+	sf = eina_list_data_get(srcfiles->list);
 
 
 	if (build_sh)
@@ -370,7 +370,7 @@ output(void)
 	chmod(out, S_IRUSR | S_IWUSR | S_IXUSR | S_IRGRP | S_IWGRP | S_IXGRP);
 
      }
-   eet_close(ef);
+   eet_close(tef);
 }
 
 static int

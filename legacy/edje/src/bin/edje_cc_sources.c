@@ -241,11 +241,11 @@ source_load(Eet_File *ef)
 }
 
 int
-source_fontmap_save(Eet_File *ef, Eina_List *fonts)
+source_fontmap_save(Eet_File *ef, Eina_List *font_list)
 {
    Font_List fl;
 
-   fl.list = fonts;
+   fl.list = font_list;
    return eet_data_write(ef, _font_list_edd, "edje_source_fontmap", &fl, 1);
 }
 
