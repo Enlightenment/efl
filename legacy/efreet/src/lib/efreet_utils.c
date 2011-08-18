@@ -472,13 +472,7 @@ efreet_util_cache_glob_list(const char *search, const char *what)
 EAPI void
 efreet_hash_free(Eina_Hash *hash, Eina_Free_Cb free_cb)
 {
-    Eina_Iterator *it;
-    void *data;
-
-    it = eina_hash_iterator_data_new(hash);
-    EINA_ITERATOR_FOREACH(it, data)
-        (*free_cb)(data);
-    eina_iterator_free(it);
+    eina_hash_free_cb_set(hash, free_cb);
     eina_hash_free(hash);
 }
 
