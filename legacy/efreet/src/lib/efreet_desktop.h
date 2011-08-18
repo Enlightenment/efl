@@ -31,6 +31,11 @@ EAPI extern int EFREET_DESKTOP_TYPE_DIRECTORY;
  * be invalidated.
  */
 EAPI extern int EFREET_EVENT_DESKTOP_CACHE_UPDATE;
+/**
+ * Event id for cache build complete.
+ * @since 1.1.0
+ */
+EAPI extern int EFREET_EVENT_DESKTOP_CACHE_BUILD;
 
 /**
  * Efreet_Desktop

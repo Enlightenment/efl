@@ -114,6 +114,7 @@ static int strcmplen(const void *data1, const void *data2);
 
 EAPI int EFREET_EVENT_ICON_CACHE_UPDATE = 0;
 EAPI int EFREET_EVENT_DESKTOP_CACHE_UPDATE = 0;
+EAPI int EFREET_EVENT_DESKTOP_CACHE_BUILD = 0;
 
 int
 efreet_cache_init(void)
@@ -126,6 +127,7 @@ efreet_cache_init(void)
 
     EFREET_EVENT_ICON_CACHE_UPDATE = ecore_event_type_new();
     EFREET_EVENT_DESKTOP_CACHE_UPDATE = ecore_event_type_new();
+    EFREET_EVENT_DESKTOP_CACHE_BUILD = ecore_event_type_new();
 
     themes = eina_hash_string_superfast_new(EINA_FREE_CB(efreet_cache_icon_theme_free));
     icons = eina_hash_string_superfast_new(EINA_FREE_CB(efreet_cache_icon_free));
@@ -1076,11 +1078,10 @@ cache_update_cb(void *data __UNUSED__, Ecore_File_Monitor *em __UNUSED__,
     if (!file) return;
     if (!strcmp(file, "desktop_data.update"))
     {
+        ev = NEW(Efreet_Event_Cache_Update, 1);
+        if (!ev) goto error;
         if (cache_check_change(path))
         {
-            ev = NEW(Efreet_Event_Cache_Update, 1);
-            if (!ev) goto error;
-
             IF_RELEASE(util_cache_names_key);
             IF_RELEASE(util_cache_hash_key);
 
@@ -1109,7 +1110,7 @@ cache_update_cb(void *data __UNUSED__, Ecore_File_Monitor *em __UNUSED__,
 
             ecore_event_add(EFREET_EVENT_DESKTOP_CACHE_UPDATE, ev, desktop_cache_update_free, d);
         }
-
+        ecore_event_add(EFREET_EVENT_DESKTOP_CACHE_BUILD, NULL, NULL, NULL);
         /* TODO: Check if desktop_dirs_add exists, and rebuild cache if */
     }
     else if (!strcmp(file, "icon_data.update"))
