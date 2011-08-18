@@ -5,7 +5,6 @@
 /* TODO: Consider flushing local icons cache after idling.
  *       Icon requests will probably come in batches, f.ex. during menu
  *       browsing.
- * TODO: Retry closing desktop cache on dangling references.
  */
 
 #include <libgen.h>
