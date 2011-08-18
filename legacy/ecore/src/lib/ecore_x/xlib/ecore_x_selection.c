@@ -500,7 +500,7 @@ ecore_x_selection_notify_send(Ecore_X_Window requestor,
                               Ecore_X_Atom   selection,
                               Ecore_X_Atom   target,
                               Ecore_X_Atom   property,
-                              Ecore_X_Time   time)
+                              Ecore_X_Time   tim)
 {
    XEvent xev;
    XSelectionEvent xnotify;
@@ -512,7 +512,7 @@ ecore_x_selection_notify_send(Ecore_X_Window requestor,
    xnotify.selection = selection;
    xnotify.target = target;
    xnotify.property = property;
-   xnotify.time = time;
+   xnotify.time = tim;
    xnotify.send_event = True;
    xnotify.serial = 0;
 
@@ -724,9 +724,9 @@ ecore_x_selection_parser_del(const char *target)
  * @since 1.1.0
  */
 EAPI void 
-ecore_x_selection_owner_set(Ecore_X_Window win, Ecore_X_Atom atom, Ecore_X_Time time) 
+ecore_x_selection_owner_set(Ecore_X_Window win, Ecore_X_Atom atom, Ecore_X_Time tim) 
 {
-   XSetSelectionOwner(_ecore_x_disp, atom, win, time);
+   XSetSelectionOwner(_ecore_x_disp, atom, win, tim);
 }
 
 /**

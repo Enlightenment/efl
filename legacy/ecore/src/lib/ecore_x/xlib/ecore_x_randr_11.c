@@ -156,7 +156,7 @@ ecore_x_randr_screen_primary_output_current_size_get(Ecore_X_Window root,
 #ifdef ECORE_XRANDR
    XRRScreenSize *sizes;
    XRRScreenConfiguration *sc = NULL;
-   int index;
+   int idx;
    Rotation orientation;
    int n;
 
@@ -166,27 +166,27 @@ ecore_x_randr_screen_primary_output_current_size_get(Ecore_X_Window root,
         return;
      }
 
-   index = XRRConfigCurrentConfiguration(sc, &orientation);
+   idx = XRRConfigCurrentConfiguration(sc, &orientation);
 
    sizes =
       XRRSizes(_ecore_x_disp, XRRRootToScreen(_ecore_x_disp,
                                                     root), &n);
-   if ((index < n) && (index >= 0))
+   if ((idx < n) && (idx >= 0))
      {
         if (w)
-           *w = sizes[index].width;
+           *w = sizes[idx].width;
 
         if (h)
-           *h = sizes[index].height;
+           *h = sizes[idx].height;
 
         if (w_mm)
-           *w_mm = sizes[index].mwidth;
+           *w_mm = sizes[idx].mwidth;
 
         if (h_mm)
-           *h_mm = sizes[index].mheight;
+           *h_mm = sizes[idx].mheight;
 
         if (size_index)
-           *size_index = index;
+           *size_index = idx;
      }
 
    XRRFreeScreenConfigInfo(sc);

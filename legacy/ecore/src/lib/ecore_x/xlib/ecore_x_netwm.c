@@ -815,15 +815,15 @@ ecore_x_netwm_handled_icons_get(Ecore_X_Window win)
 } /* ecore_x_netwm_handled_icons_get */
 
 EAPI void
-ecore_x_netwm_user_time_set(Ecore_X_Window win, unsigned int time)
+ecore_x_netwm_user_time_set(Ecore_X_Window win, unsigned int tim)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    ecore_x_window_prop_card32_set(win, ECORE_X_ATOM_NET_WM_USER_TIME,
-                                  &time, 1);
+                                  &tim, 1);
 } /* ecore_x_netwm_user_time_set */
 
 EAPI Eina_Bool
-ecore_x_netwm_user_time_get(Ecore_X_Window win, unsigned int *time)
+ecore_x_netwm_user_time_get(Ecore_X_Window win, unsigned int *tim)
 {
    int ret;
    unsigned int tmp;
@@ -831,8 +831,8 @@ ecore_x_netwm_user_time_get(Ecore_X_Window win, unsigned int *time)
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    ret = ecore_x_window_prop_card32_get(win, ECORE_X_ATOM_NET_WM_USER_TIME,
                                         &tmp, 1);
-   if (time)
-      *time = tmp;
+   if (tim)
+      *tim = tmp;
 
    return ret == 1 ? EINA_TRUE : EINA_FALSE;
 } /* ecore_x_netwm_user_time_get */

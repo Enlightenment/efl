@@ -919,7 +919,7 @@ ecore_x_randr_crtc_pos_get(Ecore_X_Window root,
 EAPI Eina_Bool
 ecore_x_randr_crtc_clone_set(Ecore_X_Window root,
                              Ecore_X_Randr_Crtc original,
-                             Ecore_X_Randr_Crtc clone)
+                             Ecore_X_Randr_Crtc clon)
 {
 #ifdef ECORE_XRANDR
    RANDR_CHECK_1_2_RET(EINA_FALSE);
@@ -935,18 +935,18 @@ ecore_x_randr_crtc_clone_set(Ecore_X_Window root,
            _ecore_x_randr_crtc_validate(root,
                                     original) &&
            _ecore_x_randr_crtc_validate(root,
-                                    clone) &&
+                                    clon) &&
        (res =
            _ecore_x_randr_get_screen_resources (_ecore_x_disp,
                                                 root)) &&
-       (clone_crtc_info = XRRGetCrtcInfo(_ecore_x_disp, res, clone)))
+       (clone_crtc_info = XRRGetCrtcInfo(_ecore_x_disp, res, clon)))
      {
         ecore_x_randr_crtc_geometry_get(root, original, &x, &y, NULL, NULL);
         original_mode = ecore_x_randr_crtc_mode_get(root, original);
         original_orientation = ecore_x_randr_crtc_orientation_get(root,
                                                                   original);
         ret = ecore_x_randr_crtc_settings_set(root,
-                                              clone,
+                                              clon,
                                               NULL,
                                               Ecore_X_Randr_Unset,
                                               x,

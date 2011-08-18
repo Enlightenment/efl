@@ -25,7 +25,7 @@ ecore_x_gc_new(Ecore_X_Drawable      draw,
 {
    XGCValues gcv;
    int mask;
-   int index;
+   int idx;
    int i;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
@@ -34,123 +34,123 @@ ecore_x_gc_new(Ecore_X_Drawable      draw,
 
    memset(&gcv, 0, sizeof (gcv));
 
-   for (i = 0, index = 0, mask = 1; i <= 22; i++, mask <<= 1)
+   for (i = 0, idx = 0, mask = 1; i <= 22; i++, mask <<= 1)
      {
         switch (mask & value_mask)
           {
            case ECORE_X_GC_VALUE_MASK_FUNCTION:
-              gcv.function = value_list[index];
-              index++;
+              gcv.function = value_list[idx];
+              idx++;
               break;
 
            case ECORE_X_GC_VALUE_MASK_PLANE_MASK:
-              gcv.plane_mask = value_list[index];
-              index++;
+              gcv.plane_mask = value_list[idx];
+              idx++;
               break;
 
            case ECORE_X_GC_VALUE_MASK_FOREGROUND:
-              gcv.foreground = value_list[index];
-              index++;
+              gcv.foreground = value_list[idx];
+              idx++;
               break;
 
            case ECORE_X_GC_VALUE_MASK_BACKGROUND:
-              gcv.background = value_list[index];
-              index++;
+              gcv.background = value_list[idx];
+              idx++;
               break;
 
            case ECORE_X_GC_VALUE_MASK_LINE_WIDTH:
-              gcv.line_width = value_list[index];
-              index++;
+              gcv.line_width = value_list[idx];
+              idx++;
               break;
 
            case ECORE_X_GC_VALUE_MASK_LINE_STYLE:
-              gcv.line_style = value_list[index];
-              index++;
+              gcv.line_style = value_list[idx];
+              idx++;
               break;
 
            case ECORE_X_GC_VALUE_MASK_CAP_STYLE:
-              gcv.cap_style = value_list[index];
-              index++;
+              gcv.cap_style = value_list[idx];
+              idx++;
               break;
 
            case ECORE_X_GC_VALUE_MASK_JOIN_STYLE:
-              gcv.join_style = value_list[index];
-              index++;
+              gcv.join_style = value_list[idx];
+              idx++;
               break;
 
            case ECORE_X_GC_VALUE_MASK_FILL_STYLE:
-              gcv.fill_style = value_list[index];
-              index++;
+              gcv.fill_style = value_list[idx];
+              idx++;
               break;
 
            case ECORE_X_GC_VALUE_MASK_FILL_RULE:
-              gcv.fill_rule = value_list[index];
-              index++;
+              gcv.fill_rule = value_list[idx];
+              idx++;
               break;
 
            case ECORE_X_GC_VALUE_MASK_TILE:
-              gcv.tile = value_list[index];
-              index++;
+              gcv.tile = value_list[idx];
+              idx++;
               break;
 
            case ECORE_X_GC_VALUE_MASK_STIPPLE:
-              gcv.stipple = value_list[index];
-              index++;
+              gcv.stipple = value_list[idx];
+              idx++;
               break;
 
            case ECORE_X_GC_VALUE_MASK_TILE_STIPPLE_ORIGIN_X:
-              gcv.ts_x_origin = value_list[index];
-              index++;
+              gcv.ts_x_origin = value_list[idx];
+              idx++;
               break;
 
            case ECORE_X_GC_VALUE_MASK_TILE_STIPPLE_ORIGIN_Y:
-              gcv.ts_y_origin = value_list[index];
-              index++;
+              gcv.ts_y_origin = value_list[idx];
+              idx++;
               break;
 
            case ECORE_X_GC_VALUE_MASK_FONT:
-              gcv.font = value_list[index];
-              index++;
+              gcv.font = value_list[idx];
+              idx++;
               break;
 
            case ECORE_X_GC_VALUE_MASK_SUBWINDOW_MODE:
-              gcv.subwindow_mode = value_list[index];
-              index++;
+              gcv.subwindow_mode = value_list[idx];
+              idx++;
               break;
 
            case ECORE_X_GC_VALUE_MASK_GRAPHICS_EXPOSURES:
-              gcv.graphics_exposures = value_list[index];
-              index++;
+              gcv.graphics_exposures = value_list[idx];
+              idx++;
               break;
 
            case ECORE_X_GC_VALUE_MASK_CLIP_ORIGIN_X:
-              gcv.clip_x_origin = value_list[index];
-              index++;
+              gcv.clip_x_origin = value_list[idx];
+              idx++;
               break;
 
            case ECORE_X_GC_VALUE_MASK_CLIP_ORIGIN_Y:
-              gcv.clip_y_origin = value_list[index];
-              index++;
+              gcv.clip_y_origin = value_list[idx];
+              idx++;
               break;
 
            case ECORE_X_GC_VALUE_MASK_CLIP_MASK:
-              gcv.clip_mask = value_list[index];
-              index++;
+              gcv.clip_mask = value_list[idx];
+              idx++;
               break;
 
            case ECORE_X_GC_VALUE_MASK_DASH_OFFSET:
-              gcv.dash_offset = value_list[index];
-              index++;
+              gcv.dash_offset = value_list[idx];
+              idx++;
               break;
 
            case ECORE_X_GC_VALUE_MASK_DASH_LIST:
-              gcv.dashes = value_list[index];
-              index++;
+              gcv.dashes = value_list[idx];
+              idx++;
               break;
 
            case ECORE_X_GC_VALUE_MASK_ARC_MODE:
-              gcv.arc_mode = value_list[index];
-              index++;
+              gcv.arc_mode = value_list[idx];
+              idx++;
               break;
           } /* switch */
      }

@@ -2122,16 +2122,16 @@ _ecore_evas_fps_debug_init(void)
    if (_ecore_evas_fps_debug_fd >= 0)
      {
         unsigned int zero = 0;
-        char *buf = (char *)&zero;
+        char *buf2 = (char *)&zero;
         ssize_t todo = sizeof(unsigned int);
 
         while (todo > 0)
           {
-             ssize_t r = write(_ecore_evas_fps_debug_fd, buf, todo);
+             ssize_t r = write(_ecore_evas_fps_debug_fd, buf2, todo);
              if (r > 0)
                {
                   todo -= r;
-                  buf += r;
+                  buf2 += r;
                }
              else if ((r < 0) && (errno == EINTR))
                continue;
