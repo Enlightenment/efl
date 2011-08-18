@@ -379,13 +379,12 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
 
 	if (fnt)
 	  {
-             char *font2;
-             
              size_t len = strlen(font) + sizeof("edje/fonts/") + 1;
              font2 = alloca(len);
              sprintf(font2, "edje/fonts/%s", font);
              font = font2;
 	     inlined_font = 1;
+             font2 = NULL;
 	  }
      }
 

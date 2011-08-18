@@ -560,7 +560,6 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *g
 	     if (n > 0)
 	       {
 		  Edje_Program *pr;
-		  unsigned int i;
 
 		  ed->table_programs = malloc(sizeof(Edje_Program *) * n);
 		  if (ed->table_programs)
@@ -1384,7 +1383,7 @@ _edje_find_alias(Eina_Hash *aliased, char *src, int *length)
 }
 
 static void
-_cb_signal_repeat(void *data, Evas_Object *obj, const char *signal, const char *source)
+_cb_signal_repeat(void *data, Evas_Object *obj, const char *sig, const char *source)
 {
    Edje_Pack_Element *pack_it;
    Evas_Object	*parent;
@@ -1491,5 +1490,5 @@ _cb_signal_repeat(void *data, Evas_Object *obj, const char *signal, const char *
           }
      }
 
-   edje_object_signal_emit(parent, signal, alias ? alias : new_src);
+   edje_object_signal_emit(parent, sig, alias ? alias : new_src);
 }

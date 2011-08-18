@@ -86,8 +86,6 @@ _edje_var_anim_cb(void *data __UNUSED__)
 	ed->var_pool->walking_list++;
 	while (tl2)
 	  {
-	     Edje_Var_Animator *ea;
-
 	     ea = eina_list_data_get(tl2);
 	     if ((ed->var_pool) && (!ea->delete_me))
 	       {

@@ -454,7 +454,7 @@ edje_match_callback_exec_check_finals(const Edje_Patterns *singal_ppat,
                                       const size_t      *source_finals,
                                       const Edje_States *signal_states,
                                       const Edje_States *source_states,
-                                      const char        *signal,
+                                      const char        *sig,
                                       const char        *source,
                                       Eina_List         *callbacks,
                                       Edje              *ed)
@@ -480,7 +480,7 @@ edje_match_callback_exec_check_finals(const Edje_Patterns *singal_ppat,
                             if ((!escb->just_added)
                                 && (!escb->delete_me))
                               {
-                                 escb->func(escb->data, ed->obj, signal, source);
+                                 escb->func(escb->data, ed->obj, sig, source);
                                  r = 2;
                               }
                             if (_edje_block_break(ed))
@@ -570,7 +570,7 @@ edje_match_collection_dir_exec(const Edje_Patterns      *ppat,
 Eina_Bool
 edje_match_programs_exec(const Edje_Patterns    *ppat_signal,
                          const Edje_Patterns    *ppat_source,
-                         const char             *signal,
+                         const char             *sig,
                          const char             *source,
                          Edje_Program          **programs,
                          Eina_Bool (*func)(Edje_Program *pr, void *data),
@@ -590,7 +590,7 @@ edje_match_programs_exec(const Edje_Patterns    *ppat_signal,
                                          ppat_source->patterns_size,
                                          ppat_source->max_length);
 
-   signal_result = _edje_match_fn(ppat_signal, signal, ppat_signal->states);
+   signal_result = _edje_match_fn(ppat_signal, sig, ppat_signal->states);
    source_result = _edje_match_fn(ppat_source, source, ppat_source->states);
 
    if (signal_result && source_result)
@@ -607,7 +607,7 @@ edje_match_programs_exec(const Edje_Patterns    *ppat_signal,
 int
 edje_match_callback_exec(Edje_Patterns          *ppat_signal,
                          Edje_Patterns          *ppat_source,
-                         const char             *signal,
+                         const char             *sig,
                          const char             *source,
                          Eina_List              *callbacks,
                          Edje                   *ed)
@@ -628,7 +628,7 @@ edje_match_callback_exec(Edje_Patterns          *ppat_signal,
                                          ppat_source->patterns_size,
                                          ppat_source->max_length);
 
-   signal_result = _edje_match_fn(ppat_signal, signal, ppat_signal->states);
+   signal_result = _edje_match_fn(ppat_signal, sig, ppat_signal->states);
    source_result = _edje_match_fn(ppat_source, source, ppat_source->states);
 
    if (signal_result && source_result)
@@ -638,7 +638,7 @@ edje_match_callback_exec(Edje_Patterns          *ppat_signal,
                                                 ppat_source->finals,
                                                 signal_result,
                                                 source_result,
-                                                signal,
+                                                sig,
                                                 source,
                                                 callbacks,
                                                 ed);
@@ -688,13 +688,13 @@ _edje_signal_source_node_cmp(const Edje_Signal_Source_Char *n1,
 
 static int
 _edje_signal_source_key_cmp(const Edje_Signal_Source_Char *node,
-			    const char *signal,
+			    const char *sig,
 			    __UNUSED__ int length,
 			    const char *source)
 {
    int cmp;
 
-   cmp = strcmp(node->signal, signal);
+   cmp = strcmp(node->signal, sig);
    if (cmp) return cmp;
 
    return strcmp(node->source, source);
@@ -784,13 +784,13 @@ edje_match_callback_hash_build(const Eina_List *callbacks,
 }
 
 const Eina_List *
-edje_match_signal_source_hash_get(const char *signal,
+edje_match_signal_source_hash_get(const char *sig,
 				  const char *source,
 				  const Eina_Rbtree *tree)
 {
    Edje_Signal_Source_Char *lookup;
 
-   lookup = (Edje_Signal_Source_Char*) eina_rbtree_inline_lookup(tree, signal, 0,
+   lookup = (Edje_Signal_Source_Char*) eina_rbtree_inline_lookup(tree, sig, 0,
 								 EINA_RBTREE_CMP_KEY_CB(_edje_signal_source_key_cmp), source);
 
    if (lookup) return lookup->list;

@@ -113,9 +113,9 @@ edje_object_signal_callback_del_full(Evas_Object *obj, const char *emission, con
 	    ((!escb->source && !source[0]) ||
              (escb->source && !strcmp(escb->source, source))))
 	  {
-	     void *data;
+	     void *data2;
 
-	     data = escb->data;
+	     data2 = escb->data;
 	     if (ed->walking_callbacks)
 	       {
 		  escb->delete_me = 1;
@@ -130,7 +130,7 @@ edje_object_signal_callback_del_full(Evas_Object *obj, const char *emission, con
 		  if (escb->source) eina_stringshare_del(escb->source);
 		  free(escb);
 	       }
-	     return data;
+	     return data2;
 	  }
      }
    return NULL;
@@ -1164,7 +1164,7 @@ _edje_emit_cb(Edje *ed, const char *sig, const char *src)
      {
 	Edje_Signal_Callback *escb;
 	const Eina_List *match;
-	const Eina_List *l;
+	const Eina_List *l2;
         int r = 1;
 
 	_edje_callbacks_patterns_init(ed);
@@ -1181,7 +1181,7 @@ _edje_emit_cb(Edje *ed, const char *sig, const char *src)
 
 	match = edje_match_signal_source_hash_get(sig, src,
 						  ed->patterns.callbacks.exact_match);
-	EINA_LIST_FOREACH(match, l, escb)
+	EINA_LIST_FOREACH(match, l2, escb)
 	  if ((!escb->just_added) && (!escb->delete_me))
 	    {
 	       escb->func(escb->data, ed->obj, sig, src);

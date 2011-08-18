@@ -5317,8 +5317,6 @@ edje_edit_program_del(Evas_Object *obj, const char *prog)
    //We also update all other programs that point to old_id and id
    for (i = 0; i < ed->table_programs_size; i++)
      {
-	Edje_Program_After *pa;
-
 	p = ed->table_programs[i];
 
 	/* check in afters */
@@ -5503,21 +5501,21 @@ edje_edit_program_signal_get(Evas_Object *obj, const char *prog)
 }
 
 EAPI Eina_Bool
-edje_edit_program_signal_set(Evas_Object *obj, const char *prog, const char *signal)
+edje_edit_program_signal_set(Evas_Object *obj, const char *prog, const char *sig)
 {
    eina_error_set(0);
 
    GET_ED_OR_RETURN(EINA_FALSE);
    GET_EPR_OR_RETURN(EINA_FALSE);
 
-   if (!signal) return EINA_FALSE;
+   if (!sig) return EINA_FALSE;
 
    /* Remove from program array */
    _edje_program_remove(ed->collection, epr);
    _edje_if_string_free(ed, epr->signal);
 
    /* Insert it back */
-   epr->signal = eina_stringshare_add(signal);
+   epr->signal = eina_stringshare_add(sig);
    _edje_program_insert(ed->collection, epr);
 
    //Update patterns
