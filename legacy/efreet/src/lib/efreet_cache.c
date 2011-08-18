@@ -1076,11 +1076,11 @@ cache_update_cb(void *data __UNUSED__, Ecore_File_Monitor *em __UNUSED__,
     if (!file) return;
     if (!strcmp(file, "desktop_data.update"))
     {
-        ev = NEW(Efreet_Event_Cache_Update, 1);
-        if (!ev) goto error;
-        ev->changed = 0;
         if (cache_check_change(path))
         {
+            ev = NEW(Efreet_Event_Cache_Update, 1);
+            if (!ev) goto error;
+
             IF_RELEASE(util_cache_names_key);
             IF_RELEASE(util_cache_hash_key);
 
@@ -1106,19 +1106,19 @@ cache_update_cb(void *data __UNUSED__, Ecore_File_Monitor *em __UNUSED__,
             }
 
             util_cache = efreet_cache_close(util_cache);
-            ev->changed = 1;
+
+            ecore_event_add(EFREET_EVENT_DESKTOP_CACHE_UPDATE, ev, desktop_cache_update_free, d);
         }
 
-        ecore_event_add(EFREET_EVENT_DESKTOP_CACHE_UPDATE, ev, desktop_cache_update_free, d);
         /* TODO: Check if desktop_dirs_add exists, and rebuild cache if */
     }
     else if (!strcmp(file, "icon_data.update"))
     {
-        ev = NEW(Efreet_Event_Cache_Update, 1);
-        if (!ev) goto error;
-        ev->changed = 0;
         if (cache_check_change(path))
         {
+            ev = NEW(Efreet_Event_Cache_Update, 1);
+            if (!ev) goto error;
+
             IF_RELEASE(theme_name);
 
             /* Save all old caches */
@@ -1148,11 +1148,10 @@ cache_update_cb(void *data __UNUSED__, Ecore_File_Monitor *em __UNUSED__,
             icon_theme_cache = NULL;
             icon_cache = NULL;
             fallback_cache = NULL;
-            ev->changed = 1;
-        }
 
-        /* Send event */
-        ecore_event_add(EFREET_EVENT_ICON_CACHE_UPDATE, ev, icon_cache_update_free, l);
+            /* Send event */
+            ecore_event_add(EFREET_EVENT_ICON_CACHE_UPDATE, ev, icon_cache_update_free, l);
+        }
     }
     return;
 error:
