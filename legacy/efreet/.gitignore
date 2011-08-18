@@ -21,6 +21,9 @@ autom4te.cache/
 doc/Doxyfile
 doc/Makefile
 doc/Makefile.in
+/doc/efreet_doxy_warnings.txt
+/doc/html/
+/doc/latex/
 /efreet-mime.pc
 /efreet-trash.pc
 /efreet.pc
