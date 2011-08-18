@@ -65,7 +65,7 @@ ELM_MAIN()
  *
  * To use autotools (which helps in many ways in the long run, like being able
  * to immediately create releases of your software directly from your tree
- * and ensure everything needed to buiuld it is there) you will need a
+ * and ensure everything needed to build it is there) you will need a
  * configure.ac, Makefile.am and autogen.sh file.
  *
  * configure.ac:
@@ -507,7 +507,7 @@ extern "C" {
     */
     typedef enum _Elm_Policy
     {
-        ELM_POLICY_QUIT, /**< under which circunstances the application
+        ELM_POLICY_QUIT, /**< under which circumstances the application
                           * should quit automatically. @see
                           * Elm_Policy_Quit.
                           */
@@ -593,7 +593,7 @@ extern "C" {
     * @return The init counter value.
     *
     * This function initializes Elementary and increments a counter of
-    * the number of calls to it. It returs the new counter's value.
+    * the number of calls to it. It returns the new counter's value.
     *
     * @warning This call is exported only for use by the @c ELM_MAIN()
     * macro. There is no need to use this if you use this macro (which
@@ -2819,7 +2819,7 @@ extern "C" {
    EAPI void             elm_object_signal_callback_add(Evas_Object *obj, const char *emission, const char *source, Edje_Signal_Cb func, void *data) EINA_ARG_NONNULL(1, 4);
 
    /**
-    * Remove a signal-triggered callback from an widget edje object.
+    * Remove a signal-triggered callback from a widget edje object.
     *
     * This function removes a callback, previoulsy attached to a
     * signal emitted by the edje object of the obj.  The parameters
@@ -2890,7 +2890,7 @@ extern "C" {
    EAPI void             elm_object_event_callback_add(Evas_Object *obj, Elm_Event_Cb func, const void *data) EINA_ARG_NONNULL(1, 2);
 
    /**
-    * Remove a event callback from an widget.
+    * Remove an event callback from a widget.
     *
     * This function removes a callback, previoulsy attached to event emission
     * by the @p obj.
