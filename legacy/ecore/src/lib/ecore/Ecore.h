@@ -159,7 +159,7 @@ int main(int argc, const char **argv)
 }
 @endcode
 
-This program is very simple and does't check for errors, but it does start up
+This program is very simple and doesn't check for errors, but it does start up
 and begin a main loop waiting for events or timers to tick off. This program
 doesn't set up any, but now we can expand on this simple program a little
 more by adding some event handlers and timers.
