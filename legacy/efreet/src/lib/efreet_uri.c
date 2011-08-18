@@ -2,10 +2,7 @@
 # include <config.h>
 #endif
 
-#include <stdio.h>
-#include <string.h>
 #include <ctype.h>
-#include <limits.h>
 
 #ifndef _POSIX_HOST_NAME_MAX
 #define _POSIX_HOST_NAME_MAX 255

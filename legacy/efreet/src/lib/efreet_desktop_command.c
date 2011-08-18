@@ -22,7 +22,6 @@ void *alloca (size_t);
 
 #include <sys/types.h>
 #include <unistd.h>
-#include <limits.h>
 #include <ctype.h>
 
 #ifdef _WIN32

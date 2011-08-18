@@ -2,10 +2,6 @@
 # include <config.h>
 #endif
 
-#include <stdio.h>
-#include <errno.h>
-#include <time.h>
-#include <limits.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>

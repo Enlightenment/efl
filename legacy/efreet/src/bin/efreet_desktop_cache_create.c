@@ -1,15 +1,10 @@
 #ifdef HAVE_CONFIG_H
 # include <config.h>
 #endif
-#include <limits.h>
-#include <stdio.h>
-#include <dirent.h>
 #include <sys/types.h>
 #include <sys/stat.h>
-#include <sys/mman.h>
 #include <fcntl.h>
 #include <unistd.h>
-#include <errno.h>
 
 #include <Eina.h>
 #include <Eet.h>

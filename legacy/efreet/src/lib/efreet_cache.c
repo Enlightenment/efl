@@ -9,8 +9,9 @@
 
 #include <libgen.h>
 #include <unistd.h>
-#include <fcntl.h>
+#include <sys/types.h>
 #include <sys/stat.h>
+#include <fcntl.h>
 
 #include <Eet.h>
 #include <Ecore.h>

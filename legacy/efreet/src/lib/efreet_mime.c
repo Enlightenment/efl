@@ -19,18 +19,13 @@ extern "C"
 void *alloca (size_t);
 #endif
 
-#include <stdio.h>
-#include <string.h>
 #include <ctype.h>
 #include <sys/types.h>
 #include <sys/stat.h>
-#include <sys/time.h>
-#include <sys/mman.h>
-#include <unistd.h>
-#include <time.h>
 #include <fcntl.h>
+#include <unistd.h>
+#include <sys/mman.h>
 #include <fnmatch.h>
-#include <limits.h>
 
 #ifdef _WIN32
 # include <winsock2.h>

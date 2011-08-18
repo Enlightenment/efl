@@ -20,12 +20,6 @@ extern "C"
 void *alloca (size_t);
 #endif
 
-#include <stdio.h>
-#include <string.h>
-#include <sys/types.h>
-#include <dirent.h>
-#include <limits.h>
-
 #include <Ecore_File.h>
 
 /* define macros and variable for using the eina logging system  */
