@@ -622,32 +622,32 @@ efreet_desktop_edd(void)
 
     if (desktop_edd) return desktop_edd;
 
-    EET_EINA_FILE_DATA_DESCRIPTOR_CLASS_SET(&eddc, Efreet_Desktop);
+    EET_EINA_FILE_DATA_DESCRIPTOR_CLASS_SET(&eddc, Efreet_Cache_Desktop);
     desktop_edd = eet_data_descriptor_file_new(&eddc);
     if (!desktop_edd) return NULL;
 
-    EET_DATA_DESCRIPTOR_ADD_BASIC(desktop_edd, Efreet_Desktop, "type", type, EET_T_INT);
-    EET_DATA_DESCRIPTOR_ADD_BASIC(desktop_edd, Efreet_Desktop, "version", version, EET_T_STRING);
-    EET_DATA_DESCRIPTOR_ADD_BASIC(desktop_edd, Efreet_Desktop, "orig_path", orig_path, EET_T_STRING);
-    EET_DATA_DESCRIPTOR_ADD_BASIC(desktop_edd, Efreet_Desktop, "load_time", load_time, EET_T_LONG_LONG);
-    EET_DATA_DESCRIPTOR_ADD_BASIC(desktop_edd, Efreet_Desktop, "name", name, EET_T_STRING);
-    EET_DATA_DESCRIPTOR_ADD_BASIC(desktop_edd, Efreet_Desktop, "generic_name", generic_name, EET_T_STRING);
-    EET_DATA_DESCRIPTOR_ADD_BASIC(desktop_edd, Efreet_Desktop, "comment", comment, EET_T_STRING);
-    EET_DATA_DESCRIPTOR_ADD_BASIC(desktop_edd, Efreet_Desktop, "icon", icon, EET_T_STRING);
-    EET_DATA_DESCRIPTOR_ADD_BASIC(desktop_edd, Efreet_Desktop, "try_exec", try_exec, EET_T_STRING);
-    EET_DATA_DESCRIPTOR_ADD_BASIC(desktop_edd, Efreet_Desktop, "exec", exec, EET_T_STRING);
-    EET_DATA_DESCRIPTOR_ADD_BASIC(desktop_edd, Efreet_Desktop, "path", path, EET_T_STRING);
-    EET_DATA_DESCRIPTOR_ADD_BASIC(desktop_edd, Efreet_Desktop, "startup_wm_class", startup_wm_class, EET_T_STRING);
-    EET_DATA_DESCRIPTOR_ADD_BASIC(desktop_edd, Efreet_Desktop, "url", url, EET_T_STRING);
-    eet_data_descriptor_element_add(desktop_edd, "only_show_in", EET_T_STRING, EET_G_LIST, offsetof(Efreet_Desktop, only_show_in), 0, NULL, NULL);
-    eet_data_descriptor_element_add(desktop_edd, "not_show_in", EET_T_STRING, EET_G_LIST, offsetof(Efreet_Desktop, not_show_in), 0, NULL, NULL);
-    eet_data_descriptor_element_add(desktop_edd, "categories", EET_T_STRING, EET_G_LIST, offsetof(Efreet_Desktop, categories), 0, NULL, NULL);
-    eet_data_descriptor_element_add(desktop_edd, "mime_types", EET_T_STRING, EET_G_LIST, offsetof(Efreet_Desktop, mime_types), 0, NULL, NULL);
-    eet_data_descriptor_element_add(desktop_edd, "x", EET_T_STRING, EET_G_HASH, offsetof(Efreet_Desktop, x), 0, NULL, NULL);
-    EET_DATA_DESCRIPTOR_ADD_BASIC(desktop_edd, Efreet_Desktop, "no_display", no_display, EET_T_UCHAR);
-    EET_DATA_DESCRIPTOR_ADD_BASIC(desktop_edd, Efreet_Desktop, "hidden", hidden, EET_T_UCHAR);
-    EET_DATA_DESCRIPTOR_ADD_BASIC(desktop_edd, Efreet_Desktop, "terminal", terminal, EET_T_UCHAR);
-    EET_DATA_DESCRIPTOR_ADD_BASIC(desktop_edd, Efreet_Desktop, "startup_notify", startup_notify, EET_T_UCHAR);
+    EET_DATA_DESCRIPTOR_ADD_BASIC(desktop_edd, Efreet_Cache_Desktop, "type", desktop.type, EET_T_INT);
+    EET_DATA_DESCRIPTOR_ADD_BASIC(desktop_edd, Efreet_Cache_Desktop, "version", desktop.version, EET_T_STRING);
+    EET_DATA_DESCRIPTOR_ADD_BASIC(desktop_edd, Efreet_Cache_Desktop, "orig_path", desktop.orig_path, EET_T_STRING);
+    EET_DATA_DESCRIPTOR_ADD_BASIC(desktop_edd, Efreet_Cache_Desktop, "load_time", desktop.load_time, EET_T_LONG_LONG);
+    EET_DATA_DESCRIPTOR_ADD_BASIC(desktop_edd, Efreet_Cache_Desktop, "name", desktop.name, EET_T_STRING);
+    EET_DATA_DESCRIPTOR_ADD_BASIC(desktop_edd, Efreet_Cache_Desktop, "generic_name", desktop.generic_name, EET_T_STRING);
+    EET_DATA_DESCRIPTOR_ADD_BASIC(desktop_edd, Efreet_Cache_Desktop, "comment", desktop.comment, EET_T_STRING);
+    EET_DATA_DESCRIPTOR_ADD_BASIC(desktop_edd, Efreet_Cache_Desktop, "icon", desktop.icon, EET_T_STRING);
+    EET_DATA_DESCRIPTOR_ADD_BASIC(desktop_edd, Efreet_Cache_Desktop, "try_exec", desktop.try_exec, EET_T_STRING);
+    EET_DATA_DESCRIPTOR_ADD_BASIC(desktop_edd, Efreet_Cache_Desktop, "exec", desktop.exec, EET_T_STRING);
+    EET_DATA_DESCRIPTOR_ADD_BASIC(desktop_edd, Efreet_Cache_Desktop, "path", desktop.path, EET_T_STRING);
+    EET_DATA_DESCRIPTOR_ADD_BASIC(desktop_edd, Efreet_Cache_Desktop, "startup_wm_class", desktop.startup_wm_class, EET_T_STRING);
+    EET_DATA_DESCRIPTOR_ADD_BASIC(desktop_edd, Efreet_Cache_Desktop, "url", desktop.url, EET_T_STRING);
+    eet_data_descriptor_element_add(desktop_edd, "only_show_in", EET_T_STRING, EET_G_LIST, offsetof(Efreet_Cache_Desktop, desktop.only_show_in), 0, NULL, NULL);
+    eet_data_descriptor_element_add(desktop_edd, "not_show_in", EET_T_STRING, EET_G_LIST, offsetof(Efreet_Cache_Desktop, desktop.not_show_in), 0, NULL, NULL);
+    eet_data_descriptor_element_add(desktop_edd, "categories", EET_T_STRING, EET_G_LIST, offsetof(Efreet_Cache_Desktop, desktop.categories), 0, NULL, NULL);
+    eet_data_descriptor_element_add(desktop_edd, "mime_types", EET_T_STRING, EET_G_LIST, offsetof(Efreet_Cache_Desktop, desktop.mime_types), 0, NULL, NULL);
+    eet_data_descriptor_element_add(desktop_edd, "x", EET_T_STRING, EET_G_HASH, offsetof(Efreet_Cache_Desktop, desktop.x), 0, NULL, NULL);
+    EET_DATA_DESCRIPTOR_ADD_BASIC(desktop_edd, Efreet_Cache_Desktop, "no_display", desktop.no_display, EET_T_UCHAR);
+    EET_DATA_DESCRIPTOR_ADD_BASIC(desktop_edd, Efreet_Cache_Desktop, "hidden", desktop.hidden, EET_T_UCHAR);
+    EET_DATA_DESCRIPTOR_ADD_BASIC(desktop_edd, Efreet_Cache_Desktop, "terminal", desktop.terminal, EET_T_UCHAR);
+    EET_DATA_DESCRIPTOR_ADD_BASIC(desktop_edd, Efreet_Cache_Desktop, "startup_notify", desktop.startup_notify, EET_T_UCHAR);
 
     return desktop_edd;
 }
@@ -806,7 +806,7 @@ efreet_cache_array_string_free(Efreet_Cache_Array_String *array)
 Efreet_Desktop *
 efreet_cache_desktop_find(const char *file)
 {
-    Efreet_Desktop *cache;
+    Efreet_Cache_Desktop *cache;
     char rp[PATH_MAX];
 
     if (!realpath(file, rp)) return NULL;
@@ -815,17 +815,48 @@ efreet_cache_desktop_find(const char *file)
 
     cache = eina_hash_find(desktops, rp);
     if (cache == NON_EXISTING) return NULL;
-    if (cache) return cache;
+    if (cache)
+    {
+        /* If less than one second since last stat, return desktop */
+        if ((ecore_time_get() - cache->check_time) < 1)
+        {
+            INF("Return without stat %f %f", ecore_time_get(), cache->check_time);
+            return &cache->desktop;
+        }
+        if (cache->desktop.load_time == ecore_file_mod_time(cache->desktop.orig_path))
+        {
+            INF("Return with stat %f %f", ecore_time_get(), cache->check_time);
+            cache->check_time = ecore_time_get();
+            return &cache->desktop;
+        }
+
+        /* We got stale data. The desktop will be free'd eventually as
+         * users will call efreet_desktop_free */
+        eina_hash_set(desktops, rp, NON_EXISTING);
+        cache = NULL;
+    }
 
     cache = eet_data_read(desktop_cache, efreet_desktop_edd(), rp);
     if (cache)
     {
-        cache->eet = 1;
-        eina_hash_add(desktops, cache->orig_path, cache);
+        if (cache->desktop.load_time != ecore_file_mod_time(cache->desktop.orig_path))
+        {
+            /* Don't return stale data */
+            INF("We got stale data in the desktop cache");
+            efreet_cache_desktop_free(&cache->desktop);
+            eina_hash_set(desktops, rp, NON_EXISTING);
+        }
+        else
+        {
+            cache->desktop.eet = 1;
+            cache->check_time = ecore_time_get();
+            eina_hash_set(desktops, cache->desktop.orig_path, cache);
+            return &cache->desktop;
+        }
     }
     else
-        eina_hash_add(desktops, rp, NON_EXISTING);
-    return cache;
+        eina_hash_set(desktops, rp, NON_EXISTING);
+    return NULL;
 }
 
 void
@@ -841,12 +872,15 @@ efreet_cache_desktop_free(Efreet_Desktop *desktop)
 
     curr = eina_hash_find(desktops, desktop->orig_path);
     if (curr == desktop)
+    {
+        INF("Found in current cache, purge\n");
         eina_hash_del_by_key(desktops, desktop->orig_path);
+    }
 
     EINA_LIST_FOREACH(old_desktop_caches, l, d)
     {
         curr = eina_hash_find(d->hash, desktop->orig_path);
-        if (curr && curr == desktop)
+        if (curr == desktop)
         {
             INF("Found in old cache, purge\n");
             eina_hash_del_by_key(d->hash, desktop->orig_path);

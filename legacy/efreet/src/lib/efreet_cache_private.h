@@ -33,6 +33,7 @@ EAPI Eet_Data_Descriptor *efreet_icon_fallback_edd(void);
 
 typedef struct _Efreet_Cache_Icon_Theme Efreet_Cache_Icon_Theme;
 typedef struct _Efreet_Cache_Directory Efreet_Cache_Directory;
+typedef struct _Efreet_Cache_Desktop Efreet_Cache_Desktop;
 
 struct _Efreet_Cache_Icon_Theme
 {
@@ -52,6 +53,13 @@ struct _Efreet_Cache_Icon_Theme
 struct _Efreet_Cache_Directory
 {
     long long modified_time;
+};
+
+struct _Efreet_Cache_Desktop
+{
+    Efreet_Desktop desktop;
+
+    double check_time; /**< Last time we check for disk modification */
 };
 
 #endif
