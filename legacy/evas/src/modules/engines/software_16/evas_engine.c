@@ -90,6 +90,7 @@ eng_image_format_get(void *data __UNUSED__, void *image __UNUSED__)
    return NULL;
 }
 
+static int
 eng_image_colorspace_get(void *data __UNUSED__, void *image __UNUSED__)
 {
    return EVAS_COLORSPACE_RGB565_A5P;
