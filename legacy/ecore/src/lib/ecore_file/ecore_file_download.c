@@ -153,6 +153,7 @@ _ecore_file_download(const char *url,
         (void)progress_cb;
         (void)data;
         (void)job_ret;
+        (void)headers;
         return EINA_FALSE;
      }
 # endif
@@ -161,9 +162,13 @@ _ecore_file_download(const char *url,
         return EINA_FALSE;
      }
 #else
-   completion_cb = NULL;
-   progress_cb = NULL;
-   data = NULL;
+   (void)url;
+   (void)dst;
+   (void)completion_cb;
+   (void)progress_cb;
+   (void)data;
+   (void)job_ret;
+   (void)headers;
    return EINA_FALSE;
 #endif /* BUILD_ECORE_CON */
 }
@@ -258,6 +263,8 @@ ecore_file_download_protocol_available(const char *protocol)
    else if (!strncmp(protocol, "http://", 7)) return EINA_TRUE;
    else if (!strncmp(protocol, "ftp://", 6)) return EINA_TRUE;
 # endif
+#else
+   (void)protocol;
 #endif /* BUILD_ECORE_CON */
 
    return EINA_FALSE;

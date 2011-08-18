@@ -204,6 +204,9 @@ ecore_con_url_pipeline_set(Eina_Bool enable)
   else
     curl_multi_setopt(_curlm, CURLMOPT_PIPELINING, 0);
   pipelining = enable;
+#else
+  return;
+  (void)enable;
 #endif
 }
 
@@ -376,7 +379,7 @@ ecore_con_url_free(Ecore_Con_Url *url_con)
    free(url_con);
 #else
    return;
-   url_con = NULL;
+   (void)url_con;
 #endif
 }
 
@@ -391,8 +394,8 @@ ecore_con_url_url_get(Ecore_Con_Url *url_con)
      }
    return url_con->url;
 #else
-   (void)url_con;
    return NULL;
+   (void)url_con;
 #endif
 }
 
@@ -547,6 +550,10 @@ ecore_con_url_fd_set(Ecore_Con_Url *url_con,
      }
 
    url_con->write_fd = fd;
+#else
+   return;
+   (void)url_con;
+   (void)fd;
 #endif
 }
 
@@ -564,6 +571,7 @@ ecore_con_url_received_bytes_get(Ecore_Con_Url *url_con)
    return url_con->received;
 #else
    return 0;
+   (void)url_con;
 #endif
 }
 
@@ -574,6 +582,7 @@ ecore_con_url_response_headers_get(Ecore_Con_Url *url_con)
    return url_con->response_headers;
 #else
    return NULL;
+   (void)url_con;
 #endif
 }
 
@@ -621,6 +630,12 @@ ecore_con_url_httpauth_set(Ecore_Con_Url *url_con,
         return EINA_TRUE;
      }
 # endif
+#else
+   return EINA_FALSE;
+   (void)url_con;
+   (void)username;
+   (void)password;
+   (void)safe;
 #endif
 
    return EINA_FALSE;
@@ -710,10 +725,11 @@ _ecore_con_url_send(Ecore_Con_Url *url_con,
    return _ecore_con_url_perform(url_con);
 #else
    return EINA_FALSE;
-   url_con = NULL;
-   data = NULL;
-   length = 0;
-   content_type = NULL;
+   (void)url_con;
+   (void)mode;
+   (void)data;
+   (void)length;
+   (void)content_type;
 #endif
 }
 
@@ -812,8 +828,6 @@ ecore_con_url_ftp_upload(Ecore_Con_Url *url_con,
 
         return _ecore_con_url_perform(url_con);
      }
-
-   return EINA_FALSE;
 #else
    return EINA_FALSE;
    (void)url_con;
@@ -822,6 +836,8 @@ ecore_con_url_ftp_upload(Ecore_Con_Url *url_con,
    (void)pass;
    (void)upload_dir;
 #endif
+
+   return EINA_FALSE;
 }
 
 EAPI void
@@ -840,6 +856,7 @@ ecore_con_url_cookies_init(Ecore_Con_Url *url_con)
 
    curl_easy_setopt(url_con->curl_easy, CURLOPT_COOKIEFILE, "");
 #else
+   return;
    (void)url_con;
 #endif
 }
@@ -860,6 +877,7 @@ ecore_con_url_cookies_ignore_old_session_set(Ecore_Con_Url *url_con, Eina_Bool i
 
    curl_easy_setopt(url_con->curl_easy, CURLOPT_COOKIESESSION, ignore);
 #else
+   return;
    (void)url_con;
    (void)ignore;
 #endif
@@ -881,6 +899,7 @@ ecore_con_url_cookies_clear(Ecore_Con_Url *url_con)
 
    curl_easy_setopt(url_con->curl_easy, CURLOPT_COOKIELIST, "ALL");
 #else
+   return;
    (void)url_con;
 #endif
 }
@@ -901,6 +920,7 @@ ecore_con_url_cookies_session_clear(Ecore_Con_Url *url_con)
 
    curl_easy_setopt(url_con->curl_easy, CURLOPT_COOKIELIST, "SESS");
 #else
+   return;
    (void)url_con;
 #endif
 }
@@ -921,6 +941,7 @@ ecore_con_url_cookies_file_add(Ecore_Con_Url *url_con, const char * const file_n
 
    curl_easy_setopt(url_con->curl_easy, CURLOPT_COOKIEFILE, file_name);
 #else
+   return;
    (void)url_con;
    (void)file_name;
 #endif
@@ -975,6 +996,7 @@ ecore_con_url_cookies_jar_write(Ecore_Con_Url *url_con)
 
    curl_easy_setopt(url_con->curl_easy, CURLOPT_COOKIELIST, "FLUSH");
 #else
+   return;
    (void)url_con;
 #endif
 }
@@ -999,6 +1021,7 @@ ecore_con_url_verbose_set(Ecore_Con_Url *url_con,
 
    curl_easy_setopt(url_con->curl_easy, CURLOPT_VERBOSE, (int)verbose);
 #else
+   return;
    (void)url_con;
    (void)verbose;
 #endif
@@ -1023,9 +1046,11 @@ ecore_con_url_ftp_use_epsv_set(Ecore_Con_Url *url_con,
      return;
 
    curl_easy_setopt(url_con->curl_easy, CURLOPT_FTP_USE_EPSV, (int)use_epsv);
-#endif
+#else
+   return;
    (void)url_con;
    (void)use_epsv;
+#endif
 }
 
 /**
@@ -1060,6 +1085,7 @@ ecore_con_url_ssl_verify_peer_set(Ecore_Con_Url *url_con,
 
    curl_easy_setopt(url_con->curl_easy, CURLOPT_SSL_VERIFYPEER, (int)verify);
 #else
+   return;
    (void)url_con;
    (void)verify;
 #endif
@@ -1106,6 +1132,7 @@ ecore_con_url_ssl_ca_set(Ecore_Con_Url *url_con, const char *ca_path)
          res = curl_easy_setopt(url_con->curl_easy, CURLOPT_CAINFO, ca_path);
      }
 #else
+   return -1;
    (void)url_con;
    (void)ca_path;
 #endif
