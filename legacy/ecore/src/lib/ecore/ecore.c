@@ -442,7 +442,7 @@ unsigned int *_ecore_fps_runtime_mmap = NULL;
 void
 _ecore_fps_debug_init(void)
 {
-   char  buf[4096];
+   char  buf[PATH_MAX];
    const char *tmp;
    int   pid;
 
