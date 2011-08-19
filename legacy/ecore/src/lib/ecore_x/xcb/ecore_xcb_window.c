@@ -1619,19 +1619,25 @@ static Ecore_X_Window
 _ecore_xcb_window_argb_internal_new(Ecore_X_Window parent, int x, int y, int w, int h, uint8_t override_redirect, uint8_t save_under) 
 {
    Ecore_X_Window win = 0;
+#ifdef ECORE_XCB_RENDER
+   uint32_t value_list[10];
+   uint32_t value_mask;
+   static uint32_t vis = -1;
+   Ecore_X_Colormap colormap;
+#endif
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
 #ifdef ECORE_XCB_RENDER
-   uint32_t value_list[10];
-   uint32_t value_mask, vis;
-   Ecore_X_Colormap colormap;
-
    if (parent == 0)
      parent = ((xcb_screen_t *)_ecore_xcb_screen)->root;
 
-   vis = 
-     _ecore_xcb_render_find_visual_id(XCB_RENDER_PICT_TYPE_DIRECT, EINA_TRUE);
+   if (vis < 0) 
+     {
+        vis = 
+          _ecore_xcb_render_find_visual_id(XCB_RENDER_PICT_TYPE_DIRECT, 
+                                           EINA_TRUE);
+     }
 
    colormap = xcb_generate_id(_ecore_xcb_conn);
    xcb_create_colormap(_ecore_xcb_conn, XCB_COLORMAP_ALLOC_NONE, 
