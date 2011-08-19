@@ -720,7 +720,6 @@ _content_set_hook(Evas_Object *obj, const char *part __UNUSED__,
 
    elm_widget_sub_object_add(obj, content);
    edje_object_part_swallow(wd->base, "elm.swallow.content", content);
-   edje_object_message_signal_process(wd->base);
 
    wd->content = content;
 

@@ -774,7 +774,6 @@ _content_set_hook(Evas_Object *obj, const char *part, Evas_Object *content)
    elm_widget_sub_object_add(obj, content);
    evas_object_event_callback_add(content, EVAS_CALLBACK_DEL, _content_del, obj);
    edje_object_part_swallow(wd->ent, part, content);
-   edje_object_message_signal_process(wd->ent);
    _sizing_eval(obj);
 }
 
