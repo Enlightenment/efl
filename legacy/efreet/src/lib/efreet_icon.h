@@ -15,11 +15,6 @@
 /**
  * Event id for cache update.
  */
-
-/**
- * @return Returns the user icon directory
- * @brief Returns the user icon directory
- */
 EAPI extern int EFREET_EVENT_ICON_CACHE_UPDATE;
 
 /**
@@ -144,6 +139,10 @@ struct Efreet_Icon_Point
     int y;          /**< y coord */
 };
 
+/**
+ * @return Returns the user icon directory
+ * @brief Returns the user icon directory
+ */
 EAPI const char        *efreet_icon_user_dir_get(void);
 
 /**
