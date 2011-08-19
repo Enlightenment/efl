@@ -926,7 +926,7 @@ efreet_cache_desktop_add(Efreet_Desktop *desktop)
         for (i = 0; i < arr->array_count; i++)
         {
             /* Check if we already have this dir in cache */
-            if (!strncmp(dir, arr->array[i], strlen(arr->array[i])))
+            if (!strcmp(dir, arr->array[i]))
                 return;
         }
     }

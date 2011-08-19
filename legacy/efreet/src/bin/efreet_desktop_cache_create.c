@@ -36,12 +36,6 @@ static Eina_Hash *comment = NULL;
 static Eina_Hash *exec = NULL;
 
 static int
-strcmplen(const void *data1, const void *data2)
-{
-    return strncmp(data1, data2, eina_stringshare_strlen(data1));
-}
-
-static int
 cache_add(const char *path, const char *file_id, int priority __UNUSED__, int *changed)
 {
     Efreet_Desktop *desk;
@@ -335,7 +329,7 @@ main(int argc, char **argv)
 
         for (j = 0; j < user_dirs->array_count; j++)
         {
-            if (eina_list_search_unsorted_list(scanned, strcmplen, user_dirs->array[j]))
+            if (eina_list_search_unsorted_list(scanned, EINA_COMPARE_CB(strcmp), user_dirs->array[j]))
                 continue;
             if (!ecore_file_is_dir(user_dirs->array[j])) continue;
             if (!cache_scan(user_dirs->array[j], NULL, priority, 0, &changed)) goto error;
@@ -352,7 +346,7 @@ main(int argc, char **argv)
 
         EINA_LIST_FOREACH(extra_dirs, l, path)
         {
-            if (eina_list_search_unsorted_list(scanned, strcmplen, path))
+            if (eina_list_search_unsorted_list(scanned, EINA_COMPARE_CB(strcmp), path))
                 continue;
             if (!ecore_file_is_dir(path)) continue;
 
