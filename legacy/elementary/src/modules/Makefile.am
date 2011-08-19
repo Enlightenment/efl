@@ -3,4 +3,5 @@ MAINTAINERCLEANFILES = Makefile.in
 
 SUBDIRS = \
 test_entry \
-test_map
+test_map \
+access_output

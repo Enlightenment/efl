@@ -51,6 +51,7 @@ elc_hoversel.c \
 elc_naviframe.c \
 elc_player.c \
 elc_scrolled_entry.c \
+elm_access.c \
 elm_actionslider.c \
 elm_bg.c \
 elm_box.c \

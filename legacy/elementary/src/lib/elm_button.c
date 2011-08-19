@@ -316,6 +316,14 @@ _elm_button_label_get(const Evas_Object *obj, const char *item)
    return wd->label;
 }
 
+static char *
+_access_info_cb(const void *data, Evas_Object *obj, Elm_Widget_Item *item)
+{
+   const char *txt = _elm_button_label_get(obj, NULL);
+   if (txt) return strdup(txt);
+   return txt;
+}
+
 EAPI Evas_Object *
 elm_button_add(Evas_Object *parent)
 {
@@ -359,6 +367,12 @@ elm_button_add(Evas_Object *parent)
    // TODO: convert Elementary to subclassing of Evas_Smart_Class
    // TODO: and save some bytes, making descriptions per-class and not instance!
    evas_object_smart_callbacks_descriptions_set(obj, _signals);
+   
+   _elm_access_object_register(obj, wd->btn);
+   _elm_access_text_set(_elm_access_object_get(obj),
+                        ELM_ACCESS_TYPE, E_("Button"));
+   _elm_access_callback_set(_elm_access_object_get(obj),
+                            ELM_ACCESS_INFO, _access_info_cb, obj);
    return obj;
 }
 

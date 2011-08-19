@@ -192,11 +192,45 @@ typedef struct _Elm_Tooltip Elm_Tooltip;
 typedef struct _Elm_Cursor Elm_Cursor;
 typedef struct _Elm_Widget_Item Elm_Widget_Item; /**< base structure for all widget items that are not Elm_Widget themselves */
 
-typedef void (*Elm_Widget_On_Text_Set_Cb)(void *, const char *part, const char *text);
-typedef void (*Elm_Widget_On_Content_Set_Cb)(void *, const char *part, Evas_Object *content);
-typedef const char *(*Elm_Widget_On_Text_Get_Cb)(const void *, const char *part);
-typedef Evas_Object *(*Elm_Widget_On_Content_Get_Cb)(const void *, const char *part);
-typedef Evas_Object *(*Elm_Widget_On_Content_Unset_Cb)(const void *, const char *part);
+typedef struct _Elm_Access_Info Elm_Access_Info; /**< accessibility information to be able to set and get from the access API */
+typedef struct _Elm_Access_Item Elm_Access_Item; /**< accessibility info item */
+
+typedef void (*Elm_Widget_On_Text_Set_Cb)(void *data, const char *part, const char *text);
+typedef void (*Elm_Widget_On_Content_Set_Cb)(void *data, const char *part, Evas_Object *content);
+typedef const char *(*Elm_Widget_On_Text_Get_Cb)(const void *data, const char *part);
+typedef Evas_Object *(*Elm_Widget_On_Content_Get_Cb)(const void *data, const char *part);
+typedef Evas_Object *(*Elm_Widget_On_Content_Unset_Cb)(const void *data, const char *part);
+
+#define ELM_ACCESS_TYPE     0 // when reading out widget or item this is read first
+#define ELM_ACCESS_INFO     1 // next read is info - this is normally label
+#define ELM_ACCESS_STATE    2 // if there is a state (eg checkbox) then read state out
+#define ELM_ACCESS_CONTENT  3 // read ful content - eg all of the label, not a shortened version
+
+#define ELM_ACCESS_DONE    -1 // sentence done - send done event here
+#define ELM_ACCESS_CANCEL  -2 // stop reading immediately
+
+typedef char *(*Elm_Access_Content_Cb)(const void *data, Evas_Object *obj, Elm_Widget_Item *item);
+
+struct _Elm_Access_Item
+{
+   int type;
+   const void *data;
+   Elm_Access_Content_Cb func;
+};
+
+struct _Elm_Access_Info
+{
+   Eina_List *items;
+   Ecore_Timer *delay_timer;
+};
+
+EAPI void             _elm_access_clear(Elm_Access_Info *ac);
+EAPI void             _elm_access_text_set(Elm_Access_Info *ac, int type, const char *text);
+EAPI void             _elm_access_callback_set(Elm_Access_Info *ac, int type, Elm_Access_Content_Cb func, const void *data);
+EAPI char            *_elm_access_text_get(Elm_Access_Info *ac, int type,  Evas_Object *obj, Elm_Widget_Item *item);
+EAPI void             _elm_access_read(Elm_Access_Info *ac, int type, Evas_Object *obj, Elm_Widget_Item *item);
+EAPI Elm_Access_Info *_elm_access_object_get(Evas_Object *obj);
+EAPI void             _elm_access_object_register(Evas_Object *obj, Evas_Object *hoverobj);
 
 struct _Elm_Widget_Item
 {
