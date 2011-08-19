@@ -232,6 +232,7 @@ EAPI void             _elm_access_read(Elm_Access_Info *ac, int type, Evas_Objec
 EAPI void             _elm_access_say(const char *txt);
 EAPI Elm_Access_Info *_elm_access_object_get(Evas_Object *obj);
 EAPI void             _elm_access_object_register(Evas_Object *obj, Evas_Object *hoverobj);
+EAPI Eina_Bool        _elm_access_2nd_click_timeout(Evas_Object *obj);
 
 struct _Elm_Widget_Item
 {

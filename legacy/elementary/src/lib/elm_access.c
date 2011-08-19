@@ -62,16 +62,20 @@ _access_add_set(Elm_Access_Info *ac, int type)
    ac->items = eina_list_prepend(ac->items, ai);
    return ai;
 }
+
 static Eina_Bool
 _access_obj_over_timeout_cb(void *data)
 {
    Elm_Access_Info *ac = evas_object_data_get(data, "_elm_access");
    if (!ac) return EINA_FALSE;
-   _elm_access_read(ac, ELM_ACCESS_CANCEL, data, NULL);
-   _elm_access_read(ac, ELM_ACCESS_TYPE,   data, NULL);
-   _elm_access_read(ac, ELM_ACCESS_INFO,   data, NULL);
-   _elm_access_read(ac, ELM_ACCESS_STATE,  data, NULL);
-   _elm_access_read(ac, ELM_ACCESS_DONE,   data, NULL);
+   if (_elm_config->access_mode != ELM_ACCESS_MODE_OFF)
+     {
+        _elm_access_read(ac, ELM_ACCESS_CANCEL, data, NULL);
+        _elm_access_read(ac, ELM_ACCESS_TYPE,   data, NULL);
+        _elm_access_read(ac, ELM_ACCESS_INFO,   data, NULL);
+        _elm_access_read(ac, ELM_ACCESS_STATE,  data, NULL);
+        _elm_access_read(ac, ELM_ACCESS_DONE,   data, NULL);
+     }
    ac->delay_timer = NULL;
    return EINA_FALSE;
 }
@@ -87,7 +91,8 @@ _access_obj_mouse_in_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSE
         ecore_timer_del(ac->delay_timer);
         ac->delay_timer = NULL;
      }
-   ac->delay_timer = ecore_timer_add(0.2, _access_obj_over_timeout_cb, data);
+   if (_elm_config->access_mode != ELM_ACCESS_MODE_OFF)
+      ac->delay_timer = ecore_timer_add(0.2, _access_obj_over_timeout_cb, data);
 }
 
 static void
@@ -242,6 +247,22 @@ _elm_access_object_get(Evas_Object *obj)
 }
 
 EAPI void
+_elm_access_object_hilight(Evas_Object *win, Evas_Object *obj)
+{
+   // if hilight obj doens exist - create and attach to window
+   // make sure its on a high layer
+   // show it and emit signal
+   // if exists, move and resize to obj object location
+   // ** try use dragables to specify pos+size??
+}
+
+EAPI void
+_elm_access_object_unhilight(Evas_Object *win)
+{
+   // hide highlight obj is there, emit hide and then del when done
+}
+
+EAPI void
 _elm_access_object_register(Evas_Object *obj, Evas_Object *hoverobj)
 {
    Elm_Access_Info *ac;
@@ -254,6 +275,51 @@ _elm_access_object_register(Evas_Object *obj, Evas_Object *hoverobj)
                                   _access_obj_del_cb, obj);
    ac = calloc(1, sizeof(Elm_Access_Info));
    evas_object_data_set(obj, "_elm_access", ac);
+}
+
+static void
+_access_2nd_click_del_cb(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+{
+   Ecore_Timer *t;
+
+   evas_object_event_callback_del_full(obj, EVAS_CALLBACK_DEL,
+                                       _access_2nd_click_del_cb, NULL);
+   t = evas_object_data_get(obj, "_elm_2nd_timeout");
+   if (t)
+     {
+        ecore_timer_del(t);
+        evas_object_data_del(obj, "_elm_2nd_timeout");
+     }
+}
+
+static Eina_Bool
+_access_2nd_click_timeout_cb(void *data)
+{
+   evas_object_event_callback_del_full(data, EVAS_CALLBACK_DEL,
+                                       _access_2nd_click_del_cb, NULL);
+   evas_object_data_del(data, "_elm_2nd_timeout");
+   return EINA_FALSE;
+}
+
+EAPI Eina_Bool
+_elm_access_2nd_click_timeout(Evas_Object *obj)
+{
+   Ecore_Timer *t;
+
+   t = evas_object_data_get(obj, "_elm_2nd_timeout");
+   if (t)
+     {
+        ecore_timer_del(t);
+        evas_object_data_del(obj, "_elm_2nd_timeout");
+        evas_object_event_callback_del_full(obj, EVAS_CALLBACK_DEL,
+                                            _access_2nd_click_del_cb, NULL);
+        return EINA_TRUE;
+     }
+   t = ecore_timer_add(0.3, _access_2nd_click_timeout_cb, obj);
+   evas_object_data_set(obj, "_elm_2nd_timeout", t);
+   evas_object_event_callback_add(obj, EVAS_CALLBACK_DEL,
+                                  _access_2nd_click_del_cb, NULL);
+   return EINA_FALSE;
 }
 
 // XXX special version for items

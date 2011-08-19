@@ -212,8 +212,13 @@ _activate(Evas_Object *obj)
         wd->timer = NULL;
      }
    wd->repeating = EINA_FALSE;
-   _elm_access_say(E_("Clicked"));
-   evas_object_smart_callback_call(obj, SIG_CLICKED, NULL);
+   if ((_elm_config->access_mode == ELM_ACCESS_MODE_OFF) || 
+       (_elm_access_2nd_click_timeout(obj)))
+     {
+        if (_elm_config->access_mode != ELM_ACCESS_MODE_OFF)
+           _elm_access_say(E_("Clicked"));
+        evas_object_smart_callback_call(obj, SIG_CLICKED, NULL);
+     }
 }
 
 static void

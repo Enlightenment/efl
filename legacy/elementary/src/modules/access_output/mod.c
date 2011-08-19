@@ -5,6 +5,7 @@
 
 /* to enable this module
 export ELM_MODULES="access_output>access/api"
+export ELM_ACCESS_MODE=1
  */
 
 static void (*cb_func) (void *data);

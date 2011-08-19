@@ -611,6 +611,7 @@ _desc_init(void)
    ELM_CONFIG_VAL(D, T, glayer_line_angular_tolerance, T_DOUBLE);
    ELM_CONFIG_VAL(D, T, glayer_flick_time_limit_ms, T_INT);
    ELM_CONFIG_VAL(D, T, glayer_long_tap_start_timeout, T_DOUBLE);
+   ELM_CONFIG_VAL(D, T, access_mode, T_INT);
 #undef T
 #undef D
 #undef T_INT
@@ -1638,6 +1639,8 @@ _env_get(void)
 
    s = getenv("ELM_DESKTOP_ENTRY");
    if (s) _elm_config->desktop_entry = !!atoi(s);
+   s = getenv("ELM_ACCESS_MODE");
+   if (s) _elm_config->access_mode = ELM_ACCESS_MODE_ON;
 }
 
 EAPI Eina_Bool
