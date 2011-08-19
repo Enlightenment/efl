@@ -105,6 +105,10 @@ static void _theme_hook(Evas_Object *obj);
 static void _disable_hook(Evas_Object *obj);
 static void _sizing_eval(Evas_Object *obj);
 static void _on_focus_hook(void *data, Evas_Object *obj);
+static void _content_del(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__);
+static void _content_set_hook(Evas_Object *obj, const char *part, Evas_Object *content);
+static Evas_Object *_content_unset_hook(Evas_Object *obj, const char *part);
+static Evas_Object *_content_get_hook(const Evas_Object *obj, const char *part);
 static void _resize(void *data, Evas *e, Evas_Object *obj, void *event_info);
 static const char *_getbase(Evas_Object *obj);
 static void _signal_entry_changed(void *data, Evas_Object *obj, const char *emission, const char *source);
@@ -749,6 +753,57 @@ _on_focus_hook(void *data __UNUSED__, Evas_Object *obj)
         if (top) elm_win_keyboard_mode_set(top, ELM_WIN_KEYBOARD_OFF);
         evas_object_smart_callback_call(obj, SIG_UNFOCUSED, NULL);
      }
+}
+
+static void
+_content_del(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+{
+   Widget_Data *wd = elm_widget_data_get(data);
+   if (!wd) return;
+
+   elm_widget_sub_object_del(data, obj);
+   edje_object_part_unswallow(wd->ent, obj);
+}
+
+static void
+_content_set_hook(Evas_Object *obj, const char *part, Evas_Object *content)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if ((!wd) || (!content)) return;
+
+   elm_widget_sub_object_add(obj, content);
+   evas_object_event_callback_add(content, EVAS_CALLBACK_DEL, _content_del, obj);
+   edje_object_part_swallow(wd->ent, part, content);
+   edje_object_message_signal_process(wd->ent);
+   _sizing_eval(obj);
+}
+
+static Evas_Object *
+_content_unset_hook(Evas_Object *obj, const char *part)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   Evas_Object *content;
+   if (!wd) return NULL;
+
+   content = (Evas_Object *)edje_object_part_object_get(wd->ent, part);
+   if (!content) return NULL;
+   elm_widget_sub_object_del(obj, content);
+   evas_object_event_callback_del(content, EVAS_CALLBACK_DEL, _content_del);
+   edje_object_part_unswallow(wd->ent, content);
+   _sizing_eval(obj);
+
+   return content;
+}
+
+static Evas_Object *
+_content_get_hook(const Evas_Object *obj, const char *part)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   Evas_Object *content;
+   if (!wd) return NULL;
+
+   content = (Evas_Object *)edje_object_part_object_get(wd->ent, part);
+   return content;
 }
 
 static void
@@ -1980,6 +2035,9 @@ elm_entry_add(Evas_Object *parent)
    elm_widget_highlight_ignore_set(obj, EINA_TRUE);
    elm_widget_text_set_hook_set(obj, _elm_entry_text_set);
    elm_widget_text_get_hook_set(obj, _elm_entry_text_get);
+   elm_widget_content_set_hook_set(obj, _content_set_hook);
+   elm_widget_content_unset_hook_set(obj, _content_unset_hook);
+   elm_widget_content_get_hook_set(obj, _content_get_hook);
 
    wd->scroller = elm_smart_scroller_add(e);
    elm_widget_sub_object_add(obj, wd->scroller);
