@@ -213,6 +213,9 @@ EAPI Efreet_Icon       *efreet_icon_find(const char *theme_name,
  * the list.
  * @note This function will search the given theme for all icons before falling
  * back. This is useful when searching for mimetype icons.
+ *
+ * There is no guarantee for how long the pointer to the path will be valid.
+ * If the pointer is to be kept, the user must create a copy of the path.
  */
 EAPI const char        *efreet_icon_list_find(const char *theme_name,
                                                 Eina_List *icons,
@@ -224,6 +227,9 @@ EAPI const char        *efreet_icon_list_find(const char *theme_name,
  * @param size; The icon size to look for
  * @return Returns the path to the given icon or NULL if none found
  * @brief Retrives the path to the given icon.
+ *
+ * There is no guarantee for how long the pointer to the path will be valid.
+ * If the pointer is to be kept, the user must create a copy of the path.
  */
 EAPI const char        *efreet_icon_path_find(const char *theme_name,
                                                 const char *icon,

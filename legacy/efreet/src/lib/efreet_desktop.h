@@ -122,6 +122,11 @@ struct _Efreet_Desktop
  *
  * By using efreet_desktop_get the Efreet_Desktop will be saved in an internal
  * cache for quicker loading.
+ *
+ * Users of this command should listen to EFREET_EVENT_DESKTOP_CACHE_UPDATE
+ * event, if the application is to keep the reference. When the event fires
+ * the Efreet_Desktop struct should be invalidated and reloaded from a new
+ * cache file.
  */
 EAPI Efreet_Desktop   *efreet_desktop_get(const char *file);
 
@@ -145,6 +150,11 @@ EAPI Efreet_Desktop   *efreet_desktop_empty_new(const char *file);
  * on failure
  * @brief Gets a reference to an Efreet_Desktop structure representing the
  * contents of @a file or NULL if @a file is not a valid .desktop file.
+ *
+ * Users of this command should listen to EFREET_EVENT_DESKTOP_CACHE_UPDATE
+ * event, if the application is to keep the reference. When the event fires
+ * the Efreet_Desktop struct should be invalidated and reloaded from a new
+ * cache file.
  */
 EAPI Efreet_Desktop   *efreet_desktop_new(const char *file);
 
