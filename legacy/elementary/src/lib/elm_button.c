@@ -317,11 +317,19 @@ _elm_button_label_get(const Evas_Object *obj, const char *item)
 }
 
 static char *
-_access_info_cb(const void *data, Evas_Object *obj, Elm_Widget_Item *item)
+_access_info_cb(const void *data __UNUSED__, Evas_Object *obj, Elm_Widget_Item *item __UNUSED__)
 {
-   const char *txt = _elm_button_label_get(obj, NULL);
+   char *txt = (char *)_elm_button_label_get(obj, NULL);
    if (txt) return strdup(txt);
    return txt;
+}
+
+static char *
+_access_state_cb(const void *data __UNUSED__, Evas_Object *obj, Elm_Widget_Item *item __UNUSED__)
+{
+   if (elm_widget_disabled_get(obj))
+      return strdup(E_("State: Disabled"));
+   return NULL;
 }
 
 EAPI Evas_Object *
@@ -373,6 +381,8 @@ elm_button_add(Evas_Object *parent)
                         ELM_ACCESS_TYPE, E_("Button"));
    _elm_access_callback_set(_elm_access_object_get(obj),
                             ELM_ACCESS_INFO, _access_info_cb, obj);
+   _elm_access_callback_set(_elm_access_object_get(obj),
+                            ELM_ACCESS_STATE, _access_state_cb, obj);
    return obj;
 }
 
