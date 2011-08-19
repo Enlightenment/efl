@@ -111,7 +111,7 @@ static void
 _access_obj_del_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
    Elm_Access_Info *ac;
-   
+
    evas_object_event_callback_del_full(obj, EVAS_CALLBACK_MOUSE_IN,
                                        _access_obj_mouse_in_cb, data);
    evas_object_event_callback_del_full(obj, EVAS_CALLBACK_MOUSE_OUT,
@@ -178,7 +178,7 @@ _elm_access_text_get(Elm_Access_Info *ac, int type, Evas_Object *obj, Elm_Widget
 {
    Elm_Access_Item *ai;
    Eina_List *l;
-   
+
    if (!ac) return NULL;
    EINA_LIST_FOREACH(ac->items, l, ai)
      {
@@ -266,7 +266,7 @@ EAPI void
 _elm_access_object_register(Evas_Object *obj, Evas_Object *hoverobj)
 {
    Elm_Access_Info *ac;
-   
+
    evas_object_event_callback_add(hoverobj, EVAS_CALLBACK_MOUSE_IN,
                                   _access_obj_mouse_in_cb, obj);
    evas_object_event_callback_add(hoverobj, EVAS_CALLBACK_MOUSE_OUT,

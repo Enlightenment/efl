@@ -212,7 +212,7 @@ _activate(Evas_Object *obj)
         wd->timer = NULL;
      }
    wd->repeating = EINA_FALSE;
-   if ((_elm_config->access_mode == ELM_ACCESS_MODE_OFF) || 
+   if ((_elm_config->access_mode == ELM_ACCESS_MODE_OFF) ||
        (_elm_access_2nd_click_timeout(obj)))
      {
         if (_elm_config->access_mode != ELM_ACCESS_MODE_OFF)
@@ -382,7 +382,7 @@ elm_button_add(Evas_Object *parent)
    // TODO: convert Elementary to subclassing of Evas_Smart_Class
    // TODO: and save some bytes, making descriptions per-class and not instance!
    evas_object_smart_callbacks_descriptions_set(obj, _signals);
-   
+
    _elm_access_object_register(obj, wd->btn);
    _elm_access_text_set(_elm_access_object_get(obj),
                         ELM_ACCESS_TYPE, E_("Button"));

@@ -6922,10 +6922,10 @@ extern "C" {
     * Current page means the page which meet the top-left of the viewport.
     * If there are two or more pages in the viewport, it returns the number of page
     * which meet the top-left of the viewport.
-    * 
-    * @see elm_scroller_last_page_get() 
-    * @see elm_scroller_page_show() 
-    * @see elm_scroller_page_brint_in() 
+    *
+    * @see elm_scroller_last_page_get()
+    * @see elm_scroller_page_show()
+    * @see elm_scroller_page_brint_in()
     */
    EAPI void         elm_scroller_current_page_get(Evas_Object *obj, int *h_pagenumber, int *v_pagenumber) EINA_ARG_NONNULL(1);
    /**
@@ -6938,9 +6938,9 @@ extern "C" {
     * The page number starts from 0. 0 is the first page.
     * This returns the last page number among the pages.
     *
-    * @see elm_scroller_current_page_get() 
-    * @see elm_scroller_page_show() 
-    * @see elm_scroller_page_brint_in() 
+    * @see elm_scroller_current_page_get()
+    * @see elm_scroller_page_show()
+    * @see elm_scroller_page_brint_in()
     */
    EAPI void         elm_scroller_last_page_get(Evas_Object *obj, int *h_pagenumber, int *v_pagenumber) EINA_ARG_NONNULL(1);
    /**
