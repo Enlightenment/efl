@@ -212,6 +212,7 @@ _activate(Evas_Object *obj)
         wd->timer = NULL;
      }
    wd->repeating = EINA_FALSE;
+   _elm_access_say(E_("Clicked"));
    evas_object_smart_callback_call(obj, SIG_CLICKED, NULL);
 }
 
@@ -319,7 +320,8 @@ _elm_button_label_get(const Evas_Object *obj, const char *item)
 static char *
 _access_info_cb(const void *data __UNUSED__, Evas_Object *obj, Elm_Widget_Item *item __UNUSED__)
 {
-   char *txt = (char *)_elm_button_label_get(obj, NULL);
+   char *txt = (char *)elm_widget_access_info_get(obj);
+   if (!txt) txt = (char *)_elm_button_label_get(obj, NULL);
    if (txt) return strdup(txt);
    return txt;
 }

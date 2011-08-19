@@ -89,6 +89,7 @@ struct _Smart_Data
    double       scale;
    Elm_Theme   *theme;
    const char  *style;
+   const char  *access_info;
    unsigned int focus_order;
    Eina_Bool    focus_order_on_calc;
 
@@ -2238,6 +2239,23 @@ elm_widget_content_part_unset(Evas_Object *obj, const char *part)
    return sd->on_content_unset_func(obj, part);
 }
 
+EAPI void
+elm_widget_access_info_set(Evas_Object *obj, const char *txt)
+{
+   API_ENTRY return;
+   if (sd->access_info) eina_stringshare_del(sd->access_info);
+   if (!txt) sd->access_info = NULL;
+   else sd->access_info = eina_stringshare_add(txt);
+}
+
+EAPI const char *
+elm_widget_access_info_get(Evas_Object *obj)
+{
+   API_ENTRY return NULL;
+   return sd->access_info;
+}
+
+
 EAPI Elm_Theme *
 elm_widget_theme_get(const Evas_Object *obj)
 {
@@ -3189,6 +3207,7 @@ _smart_del(Evas_Object *obj)
    if (sd->type) eina_stringshare_del(sd->type);
    if (sd->theme) elm_theme_free(sd->theme);
    _if_focused_revert(obj, EINA_TRUE);
+   if (sd->access_info) eina_stringshare_del(sd->access_info);
    free(sd);
 }
 

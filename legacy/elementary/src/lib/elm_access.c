@@ -217,6 +217,24 @@ _elm_access_read(Elm_Access_Info *ac, int type, Evas_Object *obj, Elm_Widget_Ite
    if (txt) free(txt);
 }
 
+EAPI void
+_elm_access_say(const char *txt)
+{
+   _access_init();
+   if (mapi)
+     {
+        if (mapi->out_done_callback_set)
+           mapi->out_done_callback_set(_access_read_done, NULL);
+        if (mapi->out_cancel) mapi->out_cancel();
+        if (txt)
+          {
+             if (mapi->out_read) mapi->out_read(txt);
+             if (mapi->out_read) mapi->out_read(".\n");
+          }
+        if (mapi->out_read_done) mapi->out_read_done();
+     }
+}
+
 EAPI Elm_Access_Info *
 _elm_access_object_get(Evas_Object *obj)
 {
