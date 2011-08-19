@@ -1239,7 +1239,7 @@ desktop_cache_update_cache_cb(void *data __UNUSED__)
             eina_stringshare_del(str);
         }
     }
-    printf("Run desktop cache creation: %s\n", file);
+    INF("Run desktop cache creation: %s", file);
     desktop_cache_exe = ecore_exe_run(file, NULL);
     ecore_exe_run_priority_set(prio);
     if (!desktop_cache_exe) goto error;
