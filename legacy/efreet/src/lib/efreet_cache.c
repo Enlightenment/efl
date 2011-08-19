@@ -66,7 +66,6 @@ static Eet_Data_Descriptor *array_string_edd = NULL;
 static Eet_Data_Descriptor *hash_string_edd = NULL;
 
 static Eina_Hash           *desktops = NULL;
-static Efreet_Cache_Array_String *desktop_dirs = NULL;
 static Eina_List           *desktop_dirs_add = NULL;
 static Eet_File            *desktop_cache = NULL;
 static const char          *desktop_cache_file = NULL;
@@ -203,8 +202,6 @@ efreet_cache_shutdown(void)
     IF_FREE_HASH(fallbacks);
 
     IF_FREE_HASH_CB(desktops, EINA_FREE_CB(efreet_cache_desktop_free));
-    efreet_cache_array_string_free(desktop_dirs);
-    desktop_dirs = NULL;
     EINA_LIST_FREE(desktop_dirs_add, data)
         eina_stringshare_del(data);
     desktop_cache = efreet_cache_close(desktop_cache);
@@ -929,6 +926,7 @@ efreet_cache_desktop_add(Efreet_Desktop *desktop)
             if (!strcmp(dir, arr->array[i]))
                 return;
         }
+        efreet_cache_array_string_free(arr);
     }
     if (!eina_list_search_unsorted_list(desktop_dirs_add, strcmplen, dir))
         desktop_dirs_add = eina_list_append(desktop_dirs_add, eina_stringshare_add(dir));
@@ -939,12 +937,9 @@ efreet_cache_desktop_add(Efreet_Desktop *desktop)
 Efreet_Cache_Array_String *
 efreet_cache_desktop_dirs(void)
 {
-    if (desktop_dirs) return desktop_dirs;
-
     if (!efreet_cache_check(&desktop_cache, efreet_desktop_cache_file(), EFREET_DESKTOP_CACHE_MAJOR)) return NULL;
 
-    desktop_dirs = eet_data_read(desktop_cache, efreet_array_string_edd(), EFREET_CACHE_DESKTOP_DIRS);
-    return desktop_dirs;
+    return eet_data_read(desktop_cache, efreet_array_string_edd(), EFREET_CACHE_DESKTOP_DIRS);
 }
 
 void
@@ -1132,8 +1127,6 @@ cache_update_cb(void *data __UNUSED__, Ecore_File_Monitor *em __UNUSED__,
             d->ef = desktop_cache;
             old_desktop_caches = eina_list_append(old_desktop_caches, d);
 
-            efreet_cache_array_string_free(desktop_dirs);
-            desktop_dirs = NULL;
             desktops = eina_hash_string_superfast_new(NULL);
             desktop_cache = NULL;
 

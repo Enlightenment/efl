@@ -205,6 +205,8 @@ Efreet_Cache_Hash *efreet_cache_util_hash_string(const char *key);
 Efreet_Cache_Hash *efreet_cache_util_hash_array_string(const char *key);
 Efreet_Cache_Array_String *efreet_cache_util_names(const char *key);
 
+EAPI void efreet_cache_array_string_free(Efreet_Cache_Array_String *array);
+
 EAPI void efreet_hash_free(Eina_Hash *hash, Eina_Free_Cb free_cb);
 EAPI void efreet_setowner(const char *path);
 EAPI void efreet_fsetowner(int fd);

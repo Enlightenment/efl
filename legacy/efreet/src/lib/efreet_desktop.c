@@ -984,6 +984,7 @@ efreet_desktop_changes_listen(void)
 
         for (i = 0; i < arr->array_count; i++)
             efreet_desktop_changes_monitor_add(arr->array[i]);
+        efreet_cache_array_string_free(arr);
     }
 }
 

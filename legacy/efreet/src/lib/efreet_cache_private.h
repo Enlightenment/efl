@@ -20,8 +20,6 @@ EAPI const char *efreet_desktop_cache_file(void);
 EAPI const char *efreet_icon_cache_file(const char *theme);
 EAPI const char *efreet_icon_theme_cache_file(void);
 
-EAPI void efreet_cache_array_string_free(Efreet_Cache_Array_String *array);
-
 EAPI Eet_Data_Descriptor *efreet_version_edd(void);
 EAPI Eet_Data_Descriptor *efreet_desktop_edd(void);
 EAPI Eet_Data_Descriptor *efreet_hash_array_string_edd(void);
