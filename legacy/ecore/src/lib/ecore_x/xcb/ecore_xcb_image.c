@@ -3,6 +3,7 @@
 #include <sys/shm.h>
 #include <xcb/xcb_image.h>
 #include <xcb/xcb_event.h>
+#include <xcb/shm.h>
 
 struct _Ecore_X_Image 
 {
@@ -65,6 +66,7 @@ ecore_x_image_free(Ecore_X_Image *im)
      }
 
    free(im);
+   ecore_x_flush();
 }
 
 EAPI Eina_Bool 
@@ -141,6 +143,7 @@ ecore_x_image_get(Ecore_X_Image *im, Ecore_X_Drawable draw, int x, int y, int sx
                         0xffffffff, XCB_IMAGE_FORMAT_Z_PIXMAP);
         if (!im->xim) ret = EINA_FALSE;
         ecore_x_ungrab();
+        ecore_x_sync(); // needed
 
         if (im->xim) 
           {
@@ -196,13 +199,19 @@ ecore_x_image_put(Ecore_X_Image *im, Ecore_X_Drawable draw, Ecore_X_GC gc, int x
    if (im->xim) 
      {
         if (im->shm) 
-          xcb_image_shm_put(_ecore_xcb_conn, draw, gc, im->xim, 
-                            im->shminfo, sx, sy, x, y, w, h, 0);
+          xcb_shm_put_image(_ecore_xcb_conn, draw, gc, im->xim->width, 
+                            im->xim->height, sx, sy, w, h, x, y, 
+                            im->xim->depth, im->xim->format, 0, 
+                            im->shminfo.shmseg, 
+                            im->xim->data - im->shminfo.shmaddr);
+//          xcb_image_shm_put(_ecore_xcb_conn, draw, gc, im->xim, 
+//                            im->shminfo, sx, sy, x, y, w, h, 0);
         else 
           xcb_image_put(_ecore_xcb_conn, draw, gc, im->xim, sx, sy, 0);
 
      }
    if (tgc) ecore_x_gc_free(tgc);
+   ecore_x_sync();
 }
 
 EAPI Eina_Bool 
@@ -483,7 +492,7 @@ ecore_x_image_to_argb_convert(void *src, int sbpp, int sbpl, Ecore_X_Colormap c,
 static void 
 _ecore_xcb_image_shm_check(void) 
 {
-   xcb_shm_query_version_reply_t *reply;
+//   xcb_shm_query_version_reply_t *reply;
    xcb_shm_segment_info_t shminfo;
    xcb_shm_get_image_cookie_t cookie;
    xcb_shm_get_image_reply_t *ireply;
@@ -492,24 +501,24 @@ _ecore_xcb_image_shm_check(void)
 
    if (_ecore_xcb_image_shm_can != -1) return;
 
-   reply = 
-     xcb_shm_query_version_reply(_ecore_xcb_conn, 
-                                 xcb_shm_query_version(_ecore_xcb_conn), NULL);
-   if (!reply) 
-     {
-        _ecore_xcb_image_shm_can = 0;
-        return;
-     }
+   /* reply =  */
+   /*   xcb_shm_query_version_reply(_ecore_xcb_conn,  */
+   /*                               xcb_shm_query_version(_ecore_xcb_conn), NULL); */
+   /* if (!reply)  */
+   /*   { */
+   /*      _ecore_xcb_image_shm_can = 0; */
+   /*      return; */
+   /*   } */
 
-   if ((reply->major_version < 1) || 
-       ((reply->major_version == 1) && (reply->minor_version == 0))) 
-     {
-        _ecore_xcb_image_shm_can = 0;
-        free(reply);
-        return;
-     }
+   /* if ((reply->major_version < 1) ||  */
+   /*     ((reply->major_version == 1) && (reply->minor_version == 0)))  */
+   /*   { */
+   /*      _ecore_xcb_image_shm_can = 0; */
+   /*      free(reply); */
+   /*      return; */
+   /*   } */
 
-   free(reply);
+   /* free(reply); */
 
    depth = ((xcb_screen_t *)_ecore_xcb_screen)->root_depth;
 
