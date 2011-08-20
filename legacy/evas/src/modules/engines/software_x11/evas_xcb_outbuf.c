@@ -17,7 +17,6 @@ struct _Outbuf_Region
 static Xcb_Output_Buffer *_find_xcbob(xcb_connection_t *conn, xcb_visualtype_t *vis, int depth, int w, int h, Eina_Bool shm, void *data);
 static void _unfind_xcbob(Xcb_Output_Buffer *xcbob, Eina_Bool sync);
 static void _clear_xcbob(Eina_Bool sync);
-static xcb_format_t *_find_format_by_depth(const xcb_setup_t *setup, uint8_t depth);
 static void _xcbob_sync(xcb_connection_t *conn);
 
 /* local variables */
@@ -1049,7 +1048,7 @@ _unfind_xcbob(Xcb_Output_Buffer *xcbob, Eina_Bool sync)
         _shmpool = eina_list_prepend(_shmpool, xcbob);
         _shmsize += xcbob->psize * xcbob->xim->depth / 8;
         while ((_shmsize > _shmlimit) || 
-               ((int)eina_list_count(_shmpool) > _shmcountlimit))
+               (eina_list_count(_shmpool) > _shmcountlimit))
           {
              Eina_List *xl = NULL;
 
@@ -1083,21 +1082,6 @@ _clear_xcbob(Eina_Bool sync)
      }
    _shmsize = 0;
    SHMPOOL_UNLOCK();
-}
-
-static xcb_format_t *
-_find_format_by_depth(const xcb_setup_t *setup, uint8_t depth) 
-{
-   xcb_format_t *fmt, *fmt_end;
-
-   fmt = xcb_setup_pixmap_formats(setup);
-   fmt_end = fmt + xcb_setup_pixmap_formats_length(setup);
-
-   for (; fmt != fmt_end; ++fmt)
-     if (fmt->depth == depth)
-       return fmt;
-
-   return 0;
 }
 
 static void 
