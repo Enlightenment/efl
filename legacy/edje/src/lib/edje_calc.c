@@ -1773,22 +1773,21 @@ static void
 _edje_proxy_recalc_apply(Edje *ed, Edje_Real_Part *ep, Edje_Calc_Params *p3, Edje_Part_Description_Proxy *chosen_desc, FLOAT_T pos)
 {
    Edje_Real_Part *pp;
-   int part_id;
+   int part_id = -1;
 
-   if (p3->type.common.fill.w == 0 || p3->type.common.fill.h == 0)
+   if (pos >= 0.5)
+      part_id = ((Edje_Part_Description_Proxy*) ep->param2->description)->proxy.id;
+   else
+      part_id = chosen_desc->proxy.id;
+
+   if ((p3->type.common.fill.w == 0) || (p3->type.common.fill.h == 0) ||
+       (part_id < 0))
      {
         evas_object_image_source_set(ep->object, NULL);
         return ;
      }
-
-   if (pos >= 0.5) {
-      part_id = ((Edje_Part_Description_Proxy*) ep->param2->description)->proxy.id;
-   } else {
-      part_id = chosen_desc->proxy.id;
-   }
-
    pp = ed->table_parts[part_id % ed->table_parts_size];
-
+   
    switch (pp->part->type)
      {
       case EDJE_PART_TYPE_IMAGE:
@@ -2116,7 +2115,7 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
         if (pp->invalidate)
           proxy_invalidate = EINA_TRUE;
 #endif
-
+        
         if (!pp->calculated) _edje_part_recalc(ed, ep, flags);
      }
 
