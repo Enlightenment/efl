@@ -939,6 +939,7 @@ ecore_x_focus_reset(void)
    xcb_set_input_focus(_ecore_xcb_conn, XCB_INPUT_FOCUS_POINTER_ROOT, 
                        ((xcb_screen_t *)_ecore_xcb_screen)->root, 
                        XCB_CURRENT_TIME);
+   ecore_x_flush();
 }
 
 EAPI void 
@@ -947,6 +948,7 @@ ecore_x_events_allow_all(void)
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    xcb_allow_events(_ecore_xcb_conn, XCB_ALLOW_ASYNC_BOTH, XCB_CURRENT_TIME);
+   ecore_x_flush();
 }
 
 /**
@@ -962,6 +964,7 @@ ecore_x_kill(Ecore_X_Window win)
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    xcb_kill_client(_ecore_xcb_conn, win);
+   ecore_x_flush();
 }
 
 /**

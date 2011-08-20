@@ -309,7 +309,7 @@ ecore_x_window_free(Ecore_X_Window win)
         /*                (const char *)&ev); */
 
         xcb_destroy_window(_ecore_xcb_conn, win);
-        ecore_x_sync();
+        ecore_x_flush();
      }
 }
 
@@ -379,6 +379,7 @@ ecore_x_window_configure(Ecore_X_Window win, Ecore_X_Window_Configure_Mask mask,
 
    xcb_configure_window(_ecore_xcb_conn, win, vmask, 
                         (const uint32_t *)&vlist);
+   ecore_x_flush();
 }
 
 /**
@@ -413,6 +414,7 @@ ecore_x_window_move(Ecore_X_Window win, int x, int y)
 
    xcb_configure_window(_ecore_xcb_conn, win, mask, 
                         (const uint32_t *)&list);
+   ecore_x_flush();
 }
 
 /**
@@ -439,6 +441,7 @@ ecore_x_window_resize(Ecore_X_Window win, int w, int h)
 
    xcb_configure_window(_ecore_xcb_conn, win, mask, 
                         (const uint32_t *)&list);
+   ecore_x_flush();
 }
 
 /**
@@ -470,6 +473,7 @@ ecore_x_window_move_resize(Ecore_X_Window win, int x, int y, int w, int h)
 
    xcb_configure_window(_ecore_xcb_conn, win, mask, 
                         (const uint32_t *)&list);
+   ecore_x_flush();
 }
 
 /**
@@ -506,6 +510,7 @@ ecore_x_window_border_width_set(Ecore_X_Window win, int border_width)
 
    xcb_configure_window(_ecore_xcb_conn, win, 
                         XCB_CONFIG_WINDOW_BORDER_WIDTH, &list);
+   ecore_x_flush();
 }
 
 /**
@@ -528,6 +533,7 @@ ecore_x_window_raise(Ecore_X_Window win)
 
    xcb_configure_window(_ecore_xcb_conn, win, 
                         XCB_CONFIG_WINDOW_STACK_MODE, list);
+   ecore_x_flush();
 }
 
 /**
@@ -544,6 +550,7 @@ ecore_x_window_lower(Ecore_X_Window win)
 
    xcb_configure_window(_ecore_xcb_conn, win, 
                         XCB_CONFIG_WINDOW_STACK_MODE, list);
+   ecore_x_flush();
 }
 
 /**
@@ -668,6 +675,7 @@ ecore_x_window_hide(Ecore_X_Window win)
                        (const char *)&ev);
 
         xcb_unmap_window(_ecore_xcb_conn, win);
+        ecore_x_flush();
      }
 }
 
@@ -691,6 +699,7 @@ ecore_x_window_focus(Ecore_X_Window win)
 
    xcb_set_input_focus(_ecore_xcb_conn, 
                        XCB_INPUT_FOCUS_PARENT, win, XCB_CURRENT_TIME);
+   ecore_x_flush();
 }
 
 /**
@@ -706,6 +715,7 @@ ecore_x_window_focus_at_time(Ecore_X_Window win, Ecore_X_Time time)
 
    if (!win) win = ((xcb_screen_t *)_ecore_xcb_screen)->root;
    xcb_set_input_focus(_ecore_xcb_conn, XCB_INPUT_FOCUS_PARENT, win, time);
+   ecore_x_flush();
 }
 
 /**
@@ -731,6 +741,7 @@ ecore_x_window_reparent(Ecore_X_Window win, Ecore_X_Window parent, int x, int y)
      parent = ((xcb_screen_t *)_ecore_xcb_screen)->root;
 
    xcb_reparent_window(_ecore_xcb_conn, win, parent, x, y);
+   ecore_x_flush();
 }
 
 EAPI void 
@@ -744,6 +755,7 @@ ecore_x_window_pixmap_set(Ecore_X_Window win, Ecore_X_Pixmap pixmap)
 
    xcb_change_window_attributes(_ecore_xcb_conn, win, 
                                 XCB_CW_BACK_PIXMAP, &list);
+   ecore_x_flush();
 }
 
 /**
@@ -773,6 +785,7 @@ ecore_x_window_background_color_set(Ecore_X_Window win, unsigned short red, unsi
 
    xcb_change_window_attributes(_ecore_xcb_conn, win, 
                                 XCB_CW_BACK_PIXEL, &list);
+   ecore_x_flush();
 }
 
 EAPI void 
@@ -786,6 +799,7 @@ ecore_x_window_pixel_gravity_set(Ecore_X_Window win, Ecore_X_Gravity gravity)
 
    xcb_change_window_attributes(_ecore_xcb_conn, win, 
                                 XCB_CW_BIT_GRAVITY, &list);
+   ecore_x_flush();
 }
 
 EAPI void 
@@ -799,6 +813,7 @@ ecore_x_window_gravity_set(Ecore_X_Window win, Ecore_X_Gravity gravity)
 
    xcb_change_window_attributes(_ecore_xcb_conn, win, 
                                 XCB_CW_WIN_GRAVITY, &list);
+   ecore_x_flush();
 }
 
 EAPI void 
@@ -812,6 +827,7 @@ ecore_x_window_override_set(Ecore_X_Window win, Eina_Bool override)
 
    xcb_change_window_attributes(_ecore_xcb_conn, win, 
                                 XCB_CW_OVERRIDE_REDIRECT, &list);
+   ecore_x_flush();
 }
 
 /**
@@ -865,6 +881,7 @@ ecore_x_window_cursor_show(Ecore_X_Window win, Eina_Bool show)
         xcb_change_window_attributes(_ecore_xcb_conn, win, 
                                      XCB_CW_CURSOR, &list);
      }
+   ecore_x_flush();
 }
 
 EAPI void 
@@ -877,6 +894,7 @@ ecore_x_window_cursor_set(Ecore_X_Window win, Ecore_X_Cursor cursor)
    list = cursor;
 
    xcb_change_window_attributes(_ecore_xcb_conn, win, XCB_CW_CURSOR, &list);
+   ecore_x_flush();
 }
 
 EAPI void 
@@ -891,6 +909,7 @@ ecore_x_window_container_manage(Ecore_X_Window win)
 
    xcb_change_window_attributes(_ecore_xcb_conn, win, 
                                 XCB_CW_EVENT_MASK, &list);
+   ecore_x_flush();
 }
 
 EAPI void 
@@ -913,6 +932,7 @@ ecore_x_window_client_manage(Ecore_X_Window win)
 #ifdef ECORE_XCB_SHAPE
    xcb_shape_select_input(_ecore_xcb_conn, win, 1);
 #endif
+   ecore_x_flush();
 }
 
 EAPI void 
@@ -927,6 +947,7 @@ ecore_x_window_sniff(Ecore_X_Window win)
 
    xcb_change_window_attributes(_ecore_xcb_conn, win, 
                                 XCB_CW_EVENT_MASK, &list);
+   ecore_x_flush();
 }
 
 EAPI void 
@@ -948,7 +969,7 @@ ecore_x_window_client_sniff(Ecore_X_Window win)
 #ifdef ECORE_XCB_SHAPE
    xcb_shape_select_input(_ecore_xcb_conn, win, 1);
 #endif
-
+   ecore_x_flush();
 }
 
 EAPI void 
@@ -957,6 +978,7 @@ ecore_x_window_area_clear(Ecore_X_Window win, int x, int y, int w, int h)
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    xcb_clear_area(_ecore_xcb_conn, 0, win, x, y, w, h);
+   ecore_x_flush();
 }
 
 EAPI void 
@@ -965,6 +987,7 @@ ecore_x_window_area_expose(Ecore_X_Window win, int x, int y, int w, int h)
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    xcb_clear_area(_ecore_xcb_conn, 1, win, x, y, w, h);
+   ecore_x_flush();
 }
 
 EAPI void 
@@ -1043,7 +1066,8 @@ ecore_x_window_manage(Ecore_X_Window win)
    reply = xcb_get_window_attributes_reply(_ecore_xcb_conn, cookie, NULL);
    if (!reply) return EINA_FALSE;
 
-   ecore_x_sync(); // needed
+   ecore_x_flush(); // needed
+//   ecore_x_sync(); // needed
 
    /* FIXME: XLib uses XSelectInput */
    /* FIXME: Add error handler trap */
@@ -1059,7 +1083,8 @@ ecore_x_window_manage(Ecore_X_Window win)
    change_cookie = xcb_change_window_attributes(_ecore_xcb_conn, win, 
                                                 XCB_CW_EVENT_MASK, &list);
 
-   ecore_x_sync(); // needed
+   ecore_x_flush(); // needed
+//   ecore_x_sync(); // needed
 
    err = xcb_request_check(_ecore_xcb_conn, change_cookie);
    if (err) return EINA_FALSE;

@@ -143,6 +143,7 @@ ecore_x_cursor_new(Ecore_X_Window win, int *pixels, int w, int h, int hot_x, int
         mask = XCB_CW_CURSOR;
         list = cursor;
         xcb_change_window_attributes(_ecore_xcb_conn, win, mask, &list);
+        ecore_x_flush();
      }
 
    return cursor;
@@ -176,12 +177,12 @@ _ecore_xcb_cursor_image_create(int w, int h, int *pixels)
 #ifdef ECORE_XCB_CURSOR
         return xcb_image_create_native(_ecore_xcb_conn, w, h, 
                                        XCB_IMAGE_FORMAT_Z_PIXMAP, 
-                                       32, pixels, (w * h * sizeof(int)), // 32
+                                       32, pixels, (w * h * sizeof(int)),
                                        (uint8_t *)pixels);
 #else
         return xcb_image_create_native(_ecore_xcb_conn, w, h, 
                                        XCB_IMAGE_FORMAT_Z_PIXMAP, 
-                                       1, pixels, (w * h * sizeof(int)), // 32
+                                       1, pixels, (w * h * sizeof(int)),
                                        (uint8_t *)pixels);
 #endif
      }
@@ -326,6 +327,7 @@ _ecore_xcb_cursor_image_load_cursor(Ecore_X_Window win, int w, int h, int hot_x,
    xcb_free_pixmap(_ecore_xcb_conn, pixmap);
    xcb_free_pixmap(_ecore_xcb_conn, mask);
 
+   ecore_x_flush();
    return cursor;
 }
 
@@ -391,6 +393,7 @@ _ecore_xcb_cursor_image_load_argb_cursor(Ecore_X_Window win, int w, int h, int h
    xcb_render_create_cursor(_ecore_xcb_conn, cursor, pict, hot_x, hot_y);
    xcb_render_free_picture(_ecore_xcb_conn, pict);
 
+   ecore_x_flush();
    return cursor;
 }
 

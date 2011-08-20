@@ -28,6 +28,7 @@ ecore_x_drawable_rectangle_fill(Ecore_X_Drawable draw, Ecore_X_GC gc, int x, int
    rect.height = h;
    xcb_poly_fill_rectangle(_ecore_xcb_conn, draw, gc, 1, 
                            (const xcb_rectangle_t *)&rect);
+   ecore_x_flush();
 }
 
 /**

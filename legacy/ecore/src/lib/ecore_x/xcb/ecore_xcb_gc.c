@@ -100,6 +100,7 @@ ecore_x_gc_new(Ecore_X_Drawable drawable, Ecore_X_GC_Value_Mask value_mask, cons
    gc = xcb_generate_id(_ecore_xcb_conn);
    xcb_create_gc(_ecore_xcb_conn, gc, drawable, vmask, value_list);
 
+   ecore_x_flush();
    return gc;
 }
 
@@ -113,6 +114,7 @@ ecore_x_gc_free(Ecore_X_GC gc)
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    xcb_free_gc(_ecore_xcb_conn, gc);
+   ecore_x_flush();
 }
 
 EAPI void 
@@ -124,6 +126,7 @@ ecore_x_gc_foreground_set(Ecore_X_GC gc, unsigned long foreground)
 
    list = foreground;
    xcb_change_gc(_ecore_xcb_conn, gc, XCB_GC_FOREGROUND, &list);
+   ecore_x_flush();
 }
 
 EAPI void 
@@ -135,4 +138,5 @@ ecore_x_gc_background_set(Ecore_X_GC gc, unsigned long background)
 
    list = background;
    xcb_change_gc(_ecore_xcb_conn, gc, XCB_GC_BACKGROUND, &list);
+   ecore_x_flush();
 }

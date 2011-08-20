@@ -48,6 +48,7 @@ ecore_x_window_prop_card32_set(Ecore_X_Window win, Ecore_X_Atom atom, unsigned i
 #if SIZEOF_INT == SIZEOF_LONG
    xcb_change_property(_ecore_xcb_conn, XCB_PROP_MODE_REPLACE, win, atom, 
                        ECORE_X_ATOM_CARDINAL, 32, num, (unsigned char *)val);
+   ecore_x_flush();
 #else
    long *v2;
    unsigned int i;
@@ -60,6 +61,7 @@ ecore_x_window_prop_card32_set(Ecore_X_Window win, Ecore_X_Atom atom, unsigned i
    xcb_change_property(_ecore_xcb_conn, XCB_PROP_MODE_REPLACE, win, atom, 
                        ECORE_X_ATOM_CARDINAL, 32, num, (unsigned char *)v2);
    free(v2);
+   ecore_x_flush();
 #endif
 }
 
@@ -146,6 +148,7 @@ ecore_x_window_prop_xid_set(Ecore_X_Window win, Ecore_X_Atom atom, Ecore_X_Atom 
    xcb_change_property(_ecore_xcb_conn, XCB_PROP_MODE_REPLACE, win, atom, 
                        type, 32, num, (unsigned char *)v2);
    free(v2);
+   ecore_x_flush();
 #endif
 }
 
@@ -194,6 +197,7 @@ ecore_x_window_prop_string_set(Ecore_X_Window win, Ecore_X_Atom type, const char
 
    xcb_change_property(_ecore_xcb_conn, XCB_PROP_MODE_REPLACE, win, type, 
                        ECORE_X_ATOM_UTF8_STRING, 8, strlen(str), str);
+   ecore_x_flush();
 }
 
 EAPI char *
@@ -297,9 +301,12 @@ ecore_x_window_prop_property_set(Ecore_X_Window win, Ecore_X_Atom property, Ecor
    if (win == 0)
      win = ((xcb_screen_t *)_ecore_xcb_screen)->root;
 
-   if (size != 32)
-     xcb_change_property(_ecore_xcb_conn, XCB_PROP_MODE_REPLACE, win, 
-                         property, type, size, num, (unsigned char *)data);
+   if (size != 32) 
+     {
+        xcb_change_property(_ecore_xcb_conn, XCB_PROP_MODE_REPLACE, win, 
+                            property, type, size, num, (unsigned char *)data);
+        ecore_x_flush();
+     }
    else 
      {
         unsigned long *dat;
@@ -314,6 +321,7 @@ ecore_x_window_prop_property_set(Ecore_X_Window win, Ecore_X_Atom property, Ecor
                                  property, type, size, num, 
                                  (unsigned char *)dat);
              free(dat);
+             ecore_x_flush();
           }
      }
 }

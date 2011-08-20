@@ -58,6 +58,7 @@ _ecore_xcb_sync_magic_send(int val, Ecore_X_Window win)
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    ecore_x_client_message32_send(win, 27777, XCB_EVENT_MASK_NO_EVENT, 
                                  0x7162534, (0x10000000 + val), win, 0, 0);
+   ecore_x_flush();
 }
 
 /* public functions */
@@ -107,6 +108,7 @@ ecore_x_sync_alarm_free(Ecore_X_Sync_Alarm alarm)
 
 #ifdef ECORE_XCB_SYNC
    xcb_sync_destroy_alarm(_ecore_xcb_conn, alarm);
+   ecore_x_flush();
    return EINA_TRUE;
 #endif
 
@@ -154,6 +156,7 @@ ecore_x_sync_counter_inc(Ecore_X_Sync_Counter counter, int by)
    v.lo = by;
 
    xcb_sync_change_counter(_ecore_xcb_conn, counter, v);
+   ecore_x_flush();
 #endif
 }
 
@@ -190,6 +193,7 @@ ecore_x_sync_counter_val_wait(Ecore_X_Sync_Counter counter, int val)
    cond.event_threshold = v2;
 
    xcb_sync_await(_ecore_xcb_conn, 1, &cond);
+   ecore_x_flush();
 #endif
 }
 
@@ -211,6 +215,7 @@ ecore_x_sync_counter_new(int val)
 
    counter = xcb_generate_id(_ecore_xcb_conn);
    xcb_sync_create_counter(_ecore_xcb_conn, counter, v);
+   ecore_x_flush();
 
    return counter;
 #endif
@@ -227,6 +232,7 @@ ecore_x_sync_counter_free(Ecore_X_Sync_Counter counter)
 
 #ifdef ECORE_XCB_SYNC
    xcb_sync_destroy_counter(_ecore_xcb_conn, counter);
+   ecore_x_flush();
 #endif
 }
 
@@ -246,6 +252,7 @@ ecore_x_sync_counter_set(Ecore_X_Sync_Counter counter, int val)
    v.lo = val;
 
    xcb_sync_set_counter(_ecore_xcb_conn, counter, v);
+   ecore_x_flush();
 #endif
 }
 
@@ -265,6 +272,7 @@ ecore_x_sync_counter_2_set(Ecore_X_Sync_Counter counter, int val_hi, unsigned in
    v.lo = val_lo;
 
    xcb_sync_set_counter(_ecore_xcb_conn, counter, v);
+   ecore_x_flush();
 #endif
 }
 
