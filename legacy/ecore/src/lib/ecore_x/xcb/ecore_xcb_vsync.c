@@ -241,7 +241,7 @@ _ecore_xcb_dri_start(void)
    xcb_dri2_connect_reply_t *reply;
    xcb_dri2_authenticate_cookie_t acookie;
    xcb_dri2_authenticate_reply_t *areply;
-   char *device = NULL, *driver = NULL;
+   char *device = NULL;
 #endif
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
@@ -253,7 +253,6 @@ _ecore_xcb_dri_start(void)
                                        _vsync_root, XCB_DRI2_DRIVER_TYPE_DRI);
    reply = xcb_dri2_connect_reply(_ecore_xcb_conn, cookie, NULL);
    if (!reply) return EINA_FALSE;
-   driver = xcb_dri2_connect_driver_name(reply);
    device = xcb_dri2_connect_device_name(reply);
    free(reply);
 
