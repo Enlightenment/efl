@@ -989,6 +989,10 @@ void _evas_unwalk(Evas *e);
 // expose for use in engines
 EAPI int _evas_module_engine_inherit(Evas_Func *funcs, char *name);
 
+Eina_Bool evas_render_mapped(Evas *e, Evas_Object *obj, 
+                             void *context, void *surface,
+                             int off_x, int off_y, int mapped,
+                             int ecx, int ecy, int ecw, int ech);
 void evas_render_invalidate(Evas *e);
 void evas_render_object_recalc(Evas_Object *obj);
 

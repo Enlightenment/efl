@@ -647,7 +647,7 @@ pending_change(void *data, void *gdata __UNUSED__)
    }
  */
 
-static Eina_Bool
+Eina_Bool
 evas_render_mapped(Evas *e, Evas_Object *obj, void *context, void *surface,
                    int off_x, int off_y, int mapped,
                    int ecx, int ecy, int ecw, int ech
