@@ -374,7 +374,8 @@ ecore_x_sync(void)
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    free(xcb_get_input_focus_reply(_ecore_xcb_conn, 
-                                  xcb_get_input_focus(_ecore_xcb_conn), NULL));
+                                  xcb_get_input_focus_unchecked(_ecore_xcb_conn), 
+                                  NULL));
 }
 
 EAPI void 

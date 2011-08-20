@@ -621,34 +621,32 @@ _ecore_xcb_image_shm_create(Ecore_X_Image *im)
 static xcb_image_t *
 _ecore_xcb_image_create_native(int w, int h, xcb_image_format_t format, uint8_t depth, void *base, uint32_t bytes, uint8_t *data) 
 {
+   static uint8_t dpth = 0;
+   static xcb_format_t *fmt = NULL;
    const xcb_setup_t *setup;
-   xcb_format_t *fmt = NULL;
    xcb_image_format_t xif;
 
    /* NB: We cannot use xcb_image_create_native as it only creates images 
-    * using MSB_FIRST, so this routine recreates that function and checks 
-    * endian-ness correctly */
+    * using MSB_FIRST, so this routine recreates that function and uses 
+    * the endian-ness of the server setup */
    setup = xcb_get_setup(_ecore_xcb_conn);
    xif = format;
 
    if ((xif == XCB_IMAGE_FORMAT_Z_PIXMAP) && (depth == 1))
      xif = XCB_IMAGE_FORMAT_XY_PIXMAP;
 
-   fmt = _ecore_xcb_image_find_format(setup, depth);
-   if (!fmt) return 0;
+   if (dpth != depth) 
+     {
+        dpth = depth;
+        fmt = _ecore_xcb_image_find_format(setup, depth);
+        if (!fmt) return 0;
+     }
 
    switch (xif) 
      {
       case XCB_IMAGE_FORMAT_XY_BITMAP:
         if (depth != 1) return 0;
       case XCB_IMAGE_FORMAT_XY_PIXMAP:
-        return xcb_image_create(w, h, xif, 
-                                fmt->scanline_pad, 
-                                fmt->depth, fmt->bits_per_pixel, 
-                                setup->bitmap_format_scanline_unit, 
-                                setup->image_byte_order, 
-                                setup->bitmap_format_bit_order, 
-                                base, bytes, data);
       case XCB_IMAGE_FORMAT_Z_PIXMAP:
         return xcb_image_create(w, h, xif, 
                                 fmt->scanline_pad, 
