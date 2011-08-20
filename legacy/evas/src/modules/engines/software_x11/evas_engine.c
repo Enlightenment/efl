@@ -596,19 +596,18 @@ eng_output_free(void *data)
 {
    Render_Engine *re;
 
-   if (!data) return;
-
-   re = (Render_Engine *)data;
-
 #ifdef BUILD_ENGINE_SOFTWARE_XLIB
 // NOTE: XrmGetDatabase() result is shared per connection, do not free it.
 //   if (re->xrdb) XrmDestroyDatabase(re->xrdb);
 #endif
 
-   re->outbuf_free(re->ob);
-   evas_common_tilebuf_free(re->tb);
-   if (re->rects) evas_common_tilebuf_free_render_rects(re->rects);
-   free(re);
+   if ((re = (Render_Engine *)data))
+     {
+        re->outbuf_free(re->ob);
+        evas_common_tilebuf_free(re->tb);
+        if (re->rects) evas_common_tilebuf_free_render_rects(re->rects);
+        free(re);
+     }
 
    evas_common_font_shutdown();
    evas_common_image_shutdown();
