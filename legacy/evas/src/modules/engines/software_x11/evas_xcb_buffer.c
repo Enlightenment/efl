@@ -222,26 +222,33 @@ evas_software_xcb_write_mask_line_vert_rev(Outbuf *buf, Xcb_Output_Buffer *xcbob
 Eina_Bool 
 evas_software_xcb_can_do_shm(xcb_connection_t *conn, xcb_screen_t *screen) 
 {
+   const xcb_query_extension_reply_t *reply;
    static xcb_connection_t *cached_conn = NULL;
    static int cached_result = 0;
-   Xcb_Output_Buffer *xcbob = NULL;
-   xcb_visualtype_t *visual;
 
    if (conn == cached_conn) return cached_result;
    cached_conn = conn;
 
-   visual = _xcbob_find_visual_by_id(screen, screen->root_visual);
-
-   xcbob = 
-     evas_software_xcb_output_buffer_new(conn, visual, screen->root_depth,
-                                         16, 16, 2, NULL);
-   if (!xcbob)
-     cached_result = 0;
-   else 
+   reply = xcb_get_extension_data(conn, &xcb_shm_id);
+   if ((reply) && (reply->present)) 
      {
-        evas_software_xcb_output_buffer_free(xcbob, EINA_TRUE);
-        cached_result = 1;
+        xcb_visualtype_t *visual;
+        Xcb_Output_Buffer *xcbob = NULL;
+
+        visual = _xcbob_find_visual_by_id(screen, screen->root_visual);
+        xcbob = 
+          evas_software_xcb_output_buffer_new(conn, visual, screen->root_depth,
+                                              16, 16, 2, NULL);
+        if (!xcbob)
+          cached_result = 0;
+        else 
+          {
+             evas_software_xcb_output_buffer_free(xcbob, EINA_TRUE);
+             cached_result = 1;
+          }
      }
+   else
+     cached_result = 0;
 
    return cached_result;
 }
@@ -276,8 +283,6 @@ evas_software_xcb_output_buffer_new(xcb_connection_t *conn, xcb_visualtype_t *vi
                     shmget(IPC_PRIVATE, 
                            xcbob->xim->stride * xcbob->xim->height, 
                            (IPC_CREAT | 0777));
-                  /* xcbob->shm_info->shmid =  */
-                  /*   shmget(IPC_PRIVATE, xcbob->xim->size, (IPC_CREAT | 0777)); */
                   if (xcbob->shm_info->shmid == (uint32_t)-1) 
                     {
                        xcb_image_destroy(xcbob->xim);
@@ -292,7 +297,6 @@ evas_software_xcb_output_buffer_new(xcb_connection_t *conn, xcb_visualtype_t *vi
                        /* Sync only needed for testing */
                        if (try_shm == 2) _xcbob_sync(conn);
 
-//                       xcbob->xim->data = xcbob->shm_info->shmaddr;
 #if defined(EVAS_FRAME_QUEUING) && defined(LIBXEXT_VERSION_LOW)
                        if (evas_common_frameq_enabled())
                          xcb_grab_server(conn);
