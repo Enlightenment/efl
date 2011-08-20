@@ -2276,10 +2276,10 @@ edje_object_parts_extends_calc(Evas_Object *obj, Evas_Coord *x, Evas_Coord *y, E
 
    ed->calc_only = 0;
 
-   *x = x1;
-   *y = y1;
-   *w = x2 - x1;
-   *h = y2 - y1;
+   if (x) *x = x1;
+   if (y) *y = y1;
+   if (w) *w = x2 - x1;
+   if (h) *h = y2 - y1;
 
    return EINA_TRUE;
 }
