@@ -243,6 +243,7 @@ ecore_x_init(const char *name)
                                ECORE_FD_READ, _ecore_xcb_fd_handle, 
                                _ecore_xcb_conn, _ecore_xcb_fd_handle_buff, 
                                _ecore_xcb_conn);
+
    if (!_ecore_xcb_fd_handler) 
      return _ecore_xcb_shutdown(EINA_TRUE);
 
@@ -1336,6 +1337,7 @@ _ecore_xcb_fd_handle(void *data, Ecore_Fd_Handler *hdlr __UNUSED__)
 {
    xcb_connection_t *conn;
    xcb_generic_event_t *ev = NULL;
+   xcb_generic_event_t *ev_mouse = NULL;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
@@ -1344,13 +1346,16 @@ _ecore_xcb_fd_handle(void *data, Ecore_Fd_Handler *hdlr __UNUSED__)
    if (_ecore_xcb_event_buffered) 
      {
         _ecore_xcb_events_handle(_ecore_xcb_event_buffered);
+        free(_ecore_xcb_event_buffered);
         _ecore_xcb_event_buffered = NULL;
      }
 
+   xcb_flush(conn);
+
    while ((ev = xcb_poll_for_event(conn))) 
      {
-        // Event type 0 is an error if we don't use the xcb_*_checked funcs
-        if (xcb_connection_has_error(_ecore_xcb_conn)) 
+        /* check for errors first */
+        if (xcb_connection_has_error(conn))
           {
              xcb_generic_error_t *err;
 
@@ -1359,11 +1364,30 @@ _ecore_xcb_fd_handle(void *data, Ecore_Fd_Handler *hdlr __UNUSED__)
           }
         else 
           {
-             /* FIXME: Filter event for XIM */
-             _ecore_xcb_events_handle(ev);
+             /* trap mouse motion events and filter out all but the last one. 
+              * we do this because handling every one is fairly cpu intensive 
+              * (especially on under-powered devices.
+              * 
+              * NB: I've tested this extensively and have found no ill effects, 
+              * but if someone notices something, please report it */
+             if ((ev->response_type & ~0x80) == XCB_MOTION_NOTIFY) 
+               {
+                  if (ev_mouse) free(ev_mouse);
+                  ev_mouse = ev;
+               }
+             else 
+               {
+                  /* FIXME: Filter event for XIM */
+                  _ecore_xcb_events_handle(ev);
+                  free(ev);
+               }
           }
+     }
 
-        free(ev);
+   if (ev_mouse) 
+     {
+        _ecore_xcb_events_handle(ev_mouse);
+        free(ev_mouse);
      }
 
    return ECORE_CALLBACK_RENEW;
@@ -1373,12 +1397,39 @@ static Eina_Bool
 _ecore_xcb_fd_handle_buff(void *data, Ecore_Fd_Handler *hdlr __UNUSED__) 
 {
    xcb_connection_t *conn;
+   xcb_generic_event_t *ev = NULL;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    conn = (xcb_connection_t *)data;
-   _ecore_xcb_event_buffered = xcb_poll_for_event(conn);
-   if (_ecore_xcb_event_buffered) return ECORE_CALLBACK_RENEW;
+   ev = xcb_poll_for_event(conn);
+   if (ev) 
+     {
+        /* check for errors first */
+        if (xcb_connection_has_error(conn))
+          {
+             xcb_generic_error_t *err;
 
+             err = (xcb_generic_error_t *)ev;
+             _ecore_xcb_io_error_handle(err);
+             return ECORE_CALLBACK_CANCEL;
+          }
+        /* trap mouse motion events and filter out all but the last one. 
+         * we do this because handling every one is fairly cpu intensive 
+         * (especially on under-powered devices.
+         * 
+         * NB: I've tested this extensively and have found no ill effects, 
+         * but if someone notices something, please report it */
+        else if ((ev->response_type & ~0x80) == XCB_MOTION_NOTIFY) 
+          {
+             free(ev);
+             return ECORE_CALLBACK_CANCEL;
+          }
+        else 
+          {
+             _ecore_xcb_event_buffered = ev;
+             return ECORE_CALLBACK_RENEW;
+          }
+     }
    return ECORE_CALLBACK_CANCEL;
 }
