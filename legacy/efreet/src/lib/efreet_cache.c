@@ -232,7 +232,7 @@ efreet_cache_shutdown(void)
     }
 
     if (old_desktop_caches)
-        WRN("This application has not properly closed all its desktop references!");
+        ERR("This application has not properly closed all its desktop references!");
     EINA_LIST_FREE(old_desktop_caches, d)
     {
         eina_hash_free(d->hash);
@@ -1121,15 +1121,18 @@ cache_update_cb(void *data __UNUSED__, Ecore_File_Monitor *em __UNUSED__,
             IF_RELEASE(util_cache_names_key);
             IF_RELEASE(util_cache_hash_key);
 
-            d = NEW(Efreet_Old_Cache, 1);
-            if (!d) goto error;
-            d->hash = desktops;
-            d->ef = desktop_cache;
-            old_desktop_caches = eina_list_append(old_desktop_caches, d);
-
-            desktops = eina_hash_string_superfast_new(NULL);
-            desktop_cache = NULL;
-
+            if ((desktop_cache) && (desktop_cache != NON_EXISTING))
+            {
+                d = NEW(Efreet_Old_Cache, 1);
+                if (!d) goto error;
+                d->hash = desktops;
+                d->ef = desktop_cache;
+                old_desktop_caches = eina_list_append(old_desktop_caches, d);
+                
+                desktops = eina_hash_string_superfast_new(NULL);
+                desktop_cache = NULL;
+            }
+            
             efreet_cache_array_string_free(util_cache_names);
             util_cache_names = NULL;
 
