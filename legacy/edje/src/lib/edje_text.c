@@ -562,6 +562,7 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
       size = chosen_desc->text.size_range_min;
 
    /* Handle ellipsis */
+   if (!chosen_desc->text.min_x)
      {
 	if (inlined_font) evas_object_text_font_source_set(ep->object, ed->path);
 	else evas_object_text_font_source_set(ep->object, NULL);
