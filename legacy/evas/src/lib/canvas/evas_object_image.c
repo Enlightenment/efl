@@ -2159,7 +2159,7 @@ _proxy_error(Evas_Object *proxy, void *context, void *output, void *surface,
    return;
 }
 
-
+/*
 static void
 _proxy_subrender_recurse(Evas_Object *obj, Evas_Object *clip, void *output, void *surface, void *ctx, int x, int y)
 {
@@ -2167,7 +2167,6 @@ _proxy_subrender_recurse(Evas_Object *obj, Evas_Object *clip, void *output, void
    Evas *e = obj->layer->evas;
    
    if (obj->clip.clipees) return;
-   /* evas_object_is_visible, inline and tweaked to handle it's clip hidden*/
    if (!obj->cur.visible) return;
    if ((!clip) || (clip != obj->cur.clipper))
      {
@@ -2193,6 +2192,7 @@ _proxy_subrender_recurse(Evas_Object *obj, Evas_Object *clip, void *output, void
      }
    e->engine.func->context_free(output, ctx);
 }
+*/
 
 /**
  * Render the source object when a proxy is set.
@@ -2203,7 +2203,7 @@ static void
 _proxy_subrender(Evas *e, Evas_Object *source)
 {
    void *ctx;
-   Evas_Object *obj2, *clip;
+/*   Evas_Object *obj2, *clip;*/
    int w, h;
 
    if (!source) return;
