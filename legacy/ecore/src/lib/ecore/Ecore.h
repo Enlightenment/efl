@@ -448,7 +448,7 @@ extern "C" {
    * @brief This function suspend the main loop in a know state
    * @since 1.1.0
    *
-   * @result EINA_TRUE if the main loop was suspended correcly.
+   * @result EINA_TRUE if the main loop was suspended correctly.
    *
    * This function suspend the main loop in a know state, this let you
    * use any EFL call you want after it return. Be carefull, the main loop
