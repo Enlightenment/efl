@@ -93,7 +93,7 @@ static void _transit_obj_remove(Elm_Transit *transit, Evas_Object *obj);
 static void _transit_effect_del(Elm_Transit *transit, Elm_Transit_Effect_Module *effect_module);
 static void _transit_remove_dead_effects(Elm_Transit *transit);
 static void _transit_del(Elm_Transit *transit);
-static void _transit_animate_op(Elm_Transit *transit, double progress);
+static Eina_Bool _transit_animate_op(Elm_Transit *transit, double progress);
 static Eina_Bool _transit_animate_cb(void *data);
 
 static char *_transit_key= "_elm_transit_key";
@@ -282,7 +282,8 @@ _transit_del(Elm_Transit *transit)
    free(transit);
 }
 
-static void
+//If the transit is deleted then EINA_FALSE is retruned.
+static Eina_Bool
 _transit_animate_op(Elm_Transit *transit, double progress)
 {
    Elm_Transit_Effect_Module *effect_module;
@@ -296,10 +297,17 @@ _transit_animate_op(Elm_Transit *transit, double progress)
      }
    transit->walking--;
 
-   if (transit->walking) return;
+   if (transit->walking) return EINA_TRUE;
 
-   if (transit->deleted) _transit_del(transit);
+   if (transit->deleted)
+     {
+        _transit_del(transit);
+        return EINA_FALSE;
+     }
+
    else if (transit->effects_pending_del) _transit_remove_dead_effects(transit);
+
+   return EINA_TRUE;
 }
 
 static Eina_Bool
@@ -334,7 +342,11 @@ _transit_animate_cb(void *data)
    /* Reverse? */
    if (transit->repeat.reverse) transit->progress = 1 - transit->progress;
 
-   if (transit->time.duration > 0) _transit_animate_op(transit, transit->progress);
+   if (transit->time.duration > 0)
+     {
+        if (!_transit_animate_op(transit, transit->progress))
+          return ECORE_CALLBACK_CANCEL;
+     }
 
    /* Not end. Keep going. */
    if (elapsed_time < duration) return ECORE_CALLBACK_RENEW;
