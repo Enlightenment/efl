@@ -3485,17 +3485,28 @@ elm_genlist_item_insert_after(Evas_Object                  *obj,
      {
         if ((flags & ELM_GENLIST_ITEM_GROUP) &&
             (after->flags & ELM_GENLIST_ITEM_GROUP))
-          wd->group_items = eina_list_append_relative(wd->group_items, it,
-                                                      after);
+          {
+             Elm_Genlist_Item *it2 = NULL;
+             Eina_List *ll = eina_list_last(after->items);
+             if (ll) it2 = ll->data;
+             else it2 = after;
+
+             wd->items =
+                eina_inlist_append_relative(wd->items, EINA_INLIST_GET(it),
+                                            EINA_INLIST_GET(it2));
+             it->rel = it2;
+             wd->group_items = eina_list_append_relative(wd->group_items, it,
+                                                         after);
+          }
      }
    else
      {
         it->parent->items = eina_list_append_relative(it->parent->items, it,
                                                       after);
+        wd->items = eina_inlist_append_relative(wd->items, EINA_INLIST_GET(it),
+                                                EINA_INLIST_GET(after));
+        it->rel = after;
      }
-   wd->items = eina_inlist_append_relative(wd->items, EINA_INLIST_GET(it),
-                                           EINA_INLIST_GET(after));
-   it->rel = after;
    it->rel->relcount++;
    it->before = EINA_FALSE;
    _item_queue(wd, it);
