@@ -989,6 +989,69 @@ _edje_part_recalc_single_text(FLOAT_T sc,
 			      Edje_Calc_Params *params,
 			      int *minw, int *minh,
 			      int *maxw, int *maxh)
+#define RECALC_SINGLE_TEXT_USING_APPLY 1
+#if RECALC_SINGLE_TEXT_USING_APPLY
+/*
+ * XXX TODO NOTE:
+ *
+ * Original _edje_part_recalc_single_text() was not working as
+ * expected since it was not doing size fit, range, ellipsis and so
+ * on.
+ *
+ * The purpose of this function compared with
+ * _edje_text_recalc_apply() is to be faster, not calling Evas update
+ * functions. However for text this is quite difficult given that to
+ * fit we need to set the font, size, style, etc. If it was done
+ * correctly, we'd save some calls to move and some color sets,
+ * however those shouldn't matter much in the overall picture.
+ *
+ * I've changed this to force applying the value, it should be more
+ * correct and not so slow. The previous code is kept below for
+ * reference but should be removed before next release!
+ *
+ * -- Gustavo Barbieri at 20-Aug-2011
+ */
+{
+   int tw, th, mw, mh, l, r, t, b, size;
+   char *sfont = NULL;
+
+   _edje_text_class_font_get(ed, desc, &size, &sfont);
+   free(sfont);
+   params->type.text.size = size; /* XXX TODO used by further calcs, go inside recalc_apply? */
+
+   _edje_text_recalc_apply(ed, ep, params, chosen_desc);
+
+   evas_object_geometry_get(ep->object, NULL, NULL, &tw, &th);
+
+   if ((!chosen_desc) ||
+       ((!chosen_desc->text.min_x) && (!chosen_desc->text.min_y) &&
+        (!chosen_desc->text.max_x) && (!chosen_desc->text.max_y)))
+     return;
+
+   evas_object_geometry_get(ep->object, NULL, NULL, &tw, &th);
+   evas_object_text_style_pad_get(ep->object, &l, &r, &t, &b);
+
+   mw = tw + l + r;
+   mh = th + t + b;
+
+   if (chosen_desc->text.max_x)
+     {
+        if ((*maxw < 0) || (mw < *maxw)) *maxw = mw;
+     }
+   if (chosen_desc->text.max_y)
+     {
+        if ((*maxh < 0) || (mh < *maxh)) *maxh = mh;
+     }
+   if (chosen_desc->text.min_x)
+     {
+        if (mw > *minw) *minw = mw;
+     }
+   if (chosen_desc->text.min_y)
+     {
+        if (mh > *minh) *minh = mh;
+     }
+}
+#else
 {
    char *sfont = NULL;
    int size;
@@ -1166,6 +1229,7 @@ _edje_part_recalc_single_text(FLOAT_T sc,
    free(sfont);
    params->type.text.size = size;
 }
+#endif
 
 static void
 _edje_part_recalc_single_min_length(FLOAT_T align, int *start, int *length, int min)
