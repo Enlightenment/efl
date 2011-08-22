@@ -753,22 +753,22 @@ evas_font_load(Evas *evas, Evas_Font_Description *fdesc, const char *source, Eva
    fd = calloc(1, sizeof(Fndat));
    if (fd)
      {
-	fd->fdesc = evas_font_desc_ref(fdesc);
-	if (source) fd->source = eina_stringshare_add(source);
-	fd->font = font;
+        fd->fdesc = evas_font_desc_ref(fdesc);
+        if (source) fd->source = eina_stringshare_add(source);
+        fd->font = font;
         fd->wanted_rend = wanted_rend;
         fd->size = size;
-	fd->ref = 1;
-	fonts_cache = eina_list_prepend(fonts_cache, fd);
+        fd->ref = 1;
+        fonts_cache = eina_list_prepend(fonts_cache, fd);
 #ifdef HAVE_FONTCONFIG
-	fd->set = set;
-	fd->p_nm = p_nm;
+        fd->set = set;
+        fd->p_nm = p_nm;
 #endif
      }
 
    if (font)
-     evas->engine.func->font_hinting_set(evas->engine.data.output, font,
-					 evas->hinting);
+      evas->engine.func->font_hinting_set(evas->engine.data.output, font,
+            evas->hinting);
    return font;
 }
 
