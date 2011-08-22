@@ -208,6 +208,40 @@ _edje_smart_move(Evas_Object * obj, Evas_Coord x, Evas_Coord y)
 }
 
 static void
+_edje_limit_emit(Edje *ed, const char *limit_name, Eina_Bool over)
+{
+   char *buffer;
+   unsigned int length;
+
+   if (!limit_name) return ;
+
+   length = strlen(limit_name) + 13;
+   buffer = alloca(length);
+   snprintf(buffer, length, "limit,%s,%s", limit_name, over ? "over" : "below");
+   _edje_emit(ed, buffer, NULL);
+}
+
+static void
+_edje_limit_get(Edje *ed, Edje_Limit **limits, unsigned int length, Evas_Coord size_current, Evas_Coord size_next)
+{
+   unsigned int i;
+
+   if (size_next == size_current) return ;
+
+   for (i = 0; i < length; ++i)
+     {
+        if ((size_current <= limits[i]->value) && (limits[i]->value < size_next))
+          {
+             _edje_limit_emit(ed, limits[i]->name, EINA_TRUE);
+          }
+        else if ((size_next <= limits[i]->value) && (limits[i]->value < size_current))
+          {
+             _edje_limit_emit(ed, limits[i]->name, EINA_FALSE);
+          }
+     }
+}
+
+static void
 _edje_smart_resize(Evas_Object * obj, Evas_Coord w, Evas_Coord h)
 {
    Edje *ed;
@@ -215,6 +249,11 @@ _edje_smart_resize(Evas_Object * obj, Evas_Coord w, Evas_Coord h)
    ed = evas_object_smart_data_get(obj);
    if (!ed) return;
    if ((w == ed->w) && (h == ed->h)) return;
+   if (ed->collection)
+     {
+        _edje_limit_get(ed, ed->collection->limits.horizontal, ed->collection->limits.horizontal_count, ed->w, w);
+        _edje_limit_get(ed, ed->collection->limits.vertical, ed->collection->limits.vertical_count, ed->h, h);
+     }
    ed->w = w;
    ed->h = h;
 #ifdef EDJE_CALC_CACHE

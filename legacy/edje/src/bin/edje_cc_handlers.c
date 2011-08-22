@@ -104,6 +104,9 @@ static void st_collections_group_max(void);
 static void st_collections_group_data_item(void);
 static void st_collections_group_orientation(void);
 
+static void st_collections_group_limits_vertical(void);
+static void st_collections_group_limits_horizontal(void);
+
 static void ob_collections_group_script(void);
 static void ob_collections_group_lua_script(void);
 
@@ -296,6 +299,8 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.max", st_collections_group_max},
      {"collections.group.orientation", st_collections_group_orientation},
      {"collections.group.data.item", st_collections_group_data_item},
+     {"collections.group.limits.horizontal", st_collections_group_limits_horizontal},
+     {"collections.group.limits.vertical", st_collections_group_limits_vertical},
      {"collections.group.externals.external", st_externals_external}, /* dup */
      {"collections.group.image", st_images_image}, /* dup */
      {"collections.group.set.name", st_images_set_name},
@@ -2058,6 +2063,92 @@ st_collections_group_orientation(void)
          "LTR", EDJE_ORIENTATION_LTR,
          "RTL", EDJE_ORIENTATION_RTL,
          NULL);
+}
+
+/**
+    @page edcref
+    @property
+	group {
+            limits {
+	        vertical: "limit_name" height_barrier;
+		..
+	    }
+	}
+    @parameters
+       [name] [height barrier]
+    @effect
+        This defines when to trigger some even when the Edje object is resized.
+	It will send a signal: "limit,name,over" when the object is resized and pass
+	the limit by growing over it. And it will send: "limit,name,below" when
+	it pass below that limit.
+    @endproperty
+*/
+static void
+st_collections_group_limits_vertical(void)
+{
+   Edje_Part_Collection *pc;
+   Edje_Limit *el;
+
+   check_arg_count(2);
+
+   el = mem_alloc(SZ(Edje_Limit));
+
+   pc = eina_list_data_get(eina_list_last(edje_collections));
+   pc->limits.vertical_count++;
+   pc->limits.vertical = realloc(pc->limits.vertical, pc->limits.vertical_count * sizeof (Edje_Limit *));
+   if (!pc->limits.vertical || el)
+     {
+        ERR("%s: Error. Not enough memory.", progname);
+        exit(-1);
+     }
+
+   pc->limits.vertical[pc->limits.vertical_count - 1] = el;
+
+   el->name = parse_str(0);
+   el->value = parse_int_range(1, 1, 0xffff);
+}
+
+/**
+    @page edcref
+    @property
+	group {
+            limits {
+	        horizontal: "limit_name" width_barrier;
+		..
+	    }
+	}
+    @parameters
+       [name] [width barrier]
+    @effect
+        This defines when to trigger some signal when the Edje object is resized.
+	It will send a signal: "limit,name,over" when the object is resized and pass
+	the limit by growing over it. And it will send: "limit,name,below" when
+	it pass below that limit.
+    @endproperty
+*/
+static void
+st_collections_group_limits_horizontal(void)
+{
+   Edje_Part_Collection *pc;
+   Edje_Limit *el;
+
+   check_arg_count(2);
+
+   el = mem_alloc(SZ(Edje_Limit));
+
+   pc = eina_list_data_get(eina_list_last(edje_collections));
+   pc->limits.horizontal_count++;
+   pc->limits.horizontal = realloc(pc->limits.horizontal, pc->limits.horizontal_count * sizeof (Edje_Limit *));
+   if (!pc->limits.horizontal || el)
+     {
+        ERR("%s: Error. Not enough memory.", progname);
+        exit(-1);
+     }
+
+   pc->limits.horizontal[pc->limits.horizontal_count - 1] = el;
+
+   el->name = parse_str(0);
+   el->value = parse_int_range(1, 1, 0xffff);
 }
 
 /**
