@@ -757,6 +757,7 @@ evas_font_load(Evas *evas, Evas_Font_Description *fdesc, const char *source, Eva
 	if (source) fd->source = eina_stringshare_add(source);
 	fd->font = font;
         fd->wanted_rend = wanted_rend;
+        fd->size = size;
 	fd->ref = 1;
 	fonts_cache = eina_list_prepend(fonts_cache, fd);
 #ifdef HAVE_FONTCONFIG
