@@ -691,13 +691,23 @@ ecore_x_pointer_xy_get(Ecore_X_Window win, int *x, int *y)
 EAPI Eina_Bool 
 ecore_x_pointer_control_set(int accel_num, int accel_denom, int threshold) 
 {
+   xcb_void_cookie_t vcookie;
+   xcb_generic_error_t *err;
+
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
-   /* FIXME: Check request for success */
-   /* xcb_change_pointer_control_checked */
-   /* xcb_request_check */
-   xcb_change_pointer_control(_ecore_xcb_conn, 
-                              accel_num, accel_denom, threshold, 1, 1);
+   vcookie = 
+     xcb_change_pointer_control_checked(_ecore_xcb_conn, 
+                                        accel_num, accel_denom, threshold, 
+                                        1, 1);
+   err = xcb_request_check(_ecore_xcb_conn, vcookie);
+   if (err) 
+     {
+        _ecore_xcb_error_handle(err);
+        free(err);
+        return EINA_FALSE;
+     }
+
    return EINA_TRUE;
 }
 
@@ -845,12 +855,21 @@ ecore_x_pointer_ungrab(void)
 EAPI Eina_Bool 
 ecore_x_pointer_warp(Ecore_X_Window win, int x, int y) 
 {
+   xcb_void_cookie_t vcookie;
+   xcb_generic_error_t *err;
+
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
-   /* FIXME: Check Return */
-   /* xcb_warp_pointer_checked */
-   /* xcb_request_check */
-   xcb_warp_pointer(_ecore_xcb_conn, XCB_NONE, win, 0, 0, 0, 0, x, y);
+   vcookie = 
+     xcb_warp_pointer_checked(_ecore_xcb_conn, XCB_NONE, win, 0, 0, 0, 0, x, y);
+   err = xcb_request_check(_ecore_xcb_conn, vcookie);
+   if (err) 
+     {
+        _ecore_xcb_error_handle(err);
+        free(err);
+        return EINA_FALSE;
+     }
+
    return EINA_TRUE;
 }
 
@@ -1366,7 +1385,7 @@ _ecore_xcb_fd_handle(void *data, Ecore_Fd_Handler *hdlr __UNUSED__)
           {
              /* trap mouse motion events and filter out all but the last one. 
               * we do this because handling every one is fairly cpu intensive 
-              * (especially on under-powered devices.
+              * (especially on under-powered devices).
               * 
               * NB: I've tested this extensively and have found no ill effects, 
               * but if someone notices something, please report it */
@@ -1416,7 +1435,7 @@ _ecore_xcb_fd_handle_buff(void *data, Ecore_Fd_Handler *hdlr __UNUSED__)
           }
         /* trap mouse motion events and filter out all but the last one. 
          * we do this because handling every one is fairly cpu intensive 
-         * (especially on under-powered devices.
+         * (especially on under-powered devices).
          * 
          * NB: I've tested this extensively and have found no ill effects, 
          * but if someone notices something, please report it */
