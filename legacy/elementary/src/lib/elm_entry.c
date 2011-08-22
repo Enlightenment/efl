@@ -1818,13 +1818,46 @@ _text_append_idler(void *data)
    wd->changed = EINA_TRUE;
 
    start = wd->append_text_position;
-   if(start + _CHUNK_SIZE < wd->append_text_len)
+   if (start + _CHUNK_SIZE < wd->append_text_len)
      {
-        wd->append_text_position = (start + _CHUNK_SIZE);
-        /* Go to the start of the nearest codepoint, because we don't want
-         * to cut it in the middle */
-        eina_unicode_utf8_get_prev(wd->append_text_left,
-                                   &wd->append_text_position);
+        int pos = start;
+        int tag_start, esc_start;
+
+        tag_start = esc_start = -1;
+        /* Find proper markup cut place */
+        while (pos - start < _CHUNK_SIZE)
+          {
+             int prev_pos = pos;
+             Eina_Unicode tmp =
+                eina_unicode_utf8_get_next(wd->append_text_left, &pos);
+             if (esc_start == -1)
+               {
+                  if (tmp == '<')
+                     tag_start = prev_pos;
+                  else if (tmp == '>')
+                     tag_start = -1;
+               }
+             else if (tag_start == -1)
+               {
+                  if (tmp == '&')
+                     esc_start = prev_pos;
+                  else if (tmp == ';')
+                     esc_start = -1;
+               }
+          }
+
+        if (tag_start >= 0)
+          {
+             wd->append_text_position = tag_start;
+          }
+        else if (esc_start >= 0)
+          {
+             wd->append_text_position = esc_start;
+          }
+        else
+          {
+             wd->append_text_position = pos;
+          }
      }
    else
      {
