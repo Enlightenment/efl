@@ -22,8 +22,8 @@
 /* Visual walk helper macros */
 #ifdef OT_SUPPORT
 #define _EVAS_FONT_WALK_TEXT_START() \
-        Evas_Font_OT_Info *_ot_itr = \
-           text_props->info->ot + text_props->start; \
+        Evas_Font_OT_Info *_ot_itr = (text_props->info) ? \
+           text_props->info->ot + text_props->start : NULL; \
         for (char_index = 0 ; char_index < text_props->len ; char_index++, _glyph_itr++, _ot_itr++) \
           {
 #else
