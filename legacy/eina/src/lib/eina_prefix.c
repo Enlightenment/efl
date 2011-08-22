@@ -420,6 +420,11 @@ eina_prefix_new(const char *argv0, void *symbol, const char *envprefix,
     *   bindir = bin
     *   libdir = lib64
     *   datadir = share/enlightennment
+    * in theory this should also work with debians new multiarch style like
+    *   bindir = bin
+    *   libdir = lib/i386-linux-gnu
+    *     or
+    *   libdir = lib/x86_64-linux-gnu
     * all with a common prefix that can be relocated
     */
    /* 1. check last common char in bin and lib strings */
@@ -460,6 +465,10 @@ eina_prefix_new(const char *argv0, void *symbol, const char *envprefix,
         libdir = pkg_lib_p;
         datadir = pkg_data_p;
         localedir = pkg_locale_p;
+        DBG("Prefix relative bindir = %s\n", bindir);
+        DBG("Prefix relative libdir = %s\n", libdir);
+        DBG("Prefix relative datadir = %s\n", datadir);
+        DBG("Prefix relative localedir = %s\n", localedir);
      }
    /* 3. some galoot thought it awesome not to give us a common prefix at compile time
     * so fall back to the compile time directories. we are no longer relocatable */
@@ -470,6 +479,7 @@ eina_prefix_new(const char *argv0, void *symbol, const char *envprefix,
         STRDUP_REP(pfx->prefix_path_data, pkg_data);
         STRDUP_REP(pfx->prefix_path_locale, pkg_locale);
         pfx->no_common_prefix = 1;
+        DBG("Can't work out a common prefix - compiled in fallback\n");
      }
 
    /* if user provides env vars - then use that or also more specific sub
