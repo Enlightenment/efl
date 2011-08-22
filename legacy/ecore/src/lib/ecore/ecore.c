@@ -76,7 +76,7 @@ static Eina_List *_thread_cb = NULL;
 static Ecore_Pipe *_thread_call = NULL;
 static Eina_Lock _thread_safety;
 
-static Eina_Bool _thread_loop = EINA_FALSE;
+static int _thread_loop = 0;
 static Eina_Lock _thread_mutex;
 static Eina_Condition _thread_cond;
 
@@ -319,16 +319,18 @@ ecore_main_loop_thread_safe_call_sync(Ecore_Data_Cb callback, void *data)
    return ret;
 }
 
-EAPI Eina_Bool
+EAPI int
 ecore_thread_main_loop_begin(void)
 {
    Ecore_Safe_Call *order;
 
    if (eina_main_loop_is())
-     return EINA_FALSE;
+     {
+        return ++_thread_loop;
+     }
 
    order = malloc(sizeof (Ecore_Safe_Call));
-   if (!order) return EINA_FALSE;
+   if (!order) return -1;
 
    eina_lock_new(&order->m);
    eina_condition_new(&order->c, &order->m);
@@ -342,19 +344,34 @@ ecore_thread_main_loop_begin(void)
 
    eina_main_loop_define();
 
-   _thread_loop = EINA_TRUE;
+   _thread_loop = 1;
 
    return EINA_TRUE;
 }
 
-EAPI void
+EAPI int
 ecore_thread_main_loop_end(void)
 {
-   if (!_thread_loop) return ;
+   if (_thread_loop == 0)
+     {
+        ERR("the main loop is not locked ! No matching call to ecore_thread_main_loop_begin().");
+        return -1;
+     }
+
    /* until we unlock the main loop, this thread has the main loop id */
-   if (!eina_main_loop_is()) return ;
+   if (!eina_main_loop_is())
+     {
+        ERR("Not in a locked thread !");
+        return -1;
+     }
+
+   _thread_loop--;
+   if (_thread_loop > 0)
+     return _thread_loop;
 
    eina_condition_broadcast(&_thread_cond);
+
+   return 0;
 }
 
 EAPI void

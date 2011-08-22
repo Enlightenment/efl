@@ -448,7 +448,8 @@ extern "C" {
    * @brief This function suspend the main loop in a know state
    * @since 1.1.0
    *
-   * @result EINA_TRUE if the main loop was suspended correctly.
+   * @result the number of time ecore_thread_main_loop_begin() has been called
+   * in this thread, if the main loop was suspended correctly. If not, it return @c -1.
    *
    * This function suspend the main loop in a know state, this let you
    * use any EFL call you want after it return. Be carefull, the main loop
@@ -461,16 +462,20 @@ extern "C" {
    * We still advise you, when possible, to use ecore_main_loop_thread_safe_call_async()
    * as it will not block the thread nor the main loop.
    */
-  EAPI Eina_Bool ecore_thread_main_loop_begin(void);
+  EAPI int ecore_thread_main_loop_begin(void);
 
   /**
    * @brief Unlock the main loop.
    * @since 1.1.0
    *
+   * @result the number of time ecore_thread_main_loop_end() need to be called before
+   * the main loop is unlocked again. @c -1 will be returned if you are trying to unlock
+   * when there wasn't enough call to ecore_thread_main_loop_begin().
+   *
    * After a call to ecore_thread_main_loop_begin(), you need to absolutly
    * call ecore_thread_main_loop_end(), or you application will stay frozen.
    */
-  EAPI void ecore_thread_main_loop_end(void);
+  EAPI int ecore_thread_main_loop_end(void);
 
    /**
     * @}
