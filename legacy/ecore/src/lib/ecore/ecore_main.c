@@ -1678,67 +1678,65 @@ _ecore_main_loop_iterate_internal(int once_only)
         _ecore_timer_enable_new();
         return;
      }
-   if (!_ecore_event_exist())
+   /* init flags */
+   have_event = have_signal = 0;
+   next_time = _ecore_timer_next_get();
+   /* no timers */
+   if (next_time < 0)
      {
-        /* init flags */
-        have_event = have_signal = 0;
-        next_time = _ecore_timer_next_get();
-        /* no timers */
-        if (next_time < 0)
+        /* no idlers */
+        if (!_ecore_idler_exist())
           {
-             /* no idlers */
-             if (!_ecore_idler_exist())
-               {
-                  if (_ecore_main_select(-1.0) > 0) have_event = 1;
-               }
-             /* idlers */
-             else
-               {
-                  for (;;)
-                    {
-                       _ecore_time_loop_time = ecore_time_get();
-                       if (!_ecore_idler_call()) goto start_loop;
-                       if (_ecore_main_select(0.0) > 0) break;
-                       if (_ecore_event_exist()) break;
-                       if (_ecore_signal_count_get() > 0) break;
-                       if (_ecore_timers_exists()) goto start_loop;
-                       if (do_quit) break;
-                    }
-               }
+             if (_ecore_main_select(-1.0) > 0) have_event = 1;
           }
-        /* timers */
+        /* idlers */
         else
           {
-             /* no idlers */
-             if (!_ecore_idler_exist())
+             for (;;)
                {
-                  if (_ecore_main_select(next_time) > 0) have_event = 1;
-               }
-             /* idlers */
-             else
-               {
-                  for (;;)
-                    {
-                       _ecore_time_loop_time = ecore_time_get();
-                       if (!_ecore_idler_call()) goto start_loop;
-                       if (_ecore_main_select(0.0) > 0) break;
-                       if (_ecore_event_exist()) break;
-                       if (_ecore_signal_count_get() > 0) break;
-                       if (have_event || have_signal) break;
-                       next_time = _ecore_timer_next_get();
-                       if (next_time <= 0) break;
-                       if (do_quit) break;
-                    }
+                  _ecore_time_loop_time = ecore_time_get();
+                  if (!_ecore_idler_call()) goto start_loop;
+                  if (_ecore_main_select(0.0) > 0) break;
+                  if (_ecore_event_exist()) break;
+                  if (_ecore_signal_count_get() > 0) break;
+                  if (_ecore_timers_exists()) goto start_loop;
+                  if (do_quit) break;
                }
           }
      }
+   /* timers */
+   else
+     {
+        /* no idlers */
+        if (!_ecore_idler_exist())
+          {
+             if (_ecore_main_select(next_time) > 0) have_event = 1;
+          }
+        /* idlers */
+        else
+          {
+             for (;;)
+               {
+                  _ecore_time_loop_time = ecore_time_get();
+                  if (!_ecore_idler_call()) goto start_loop;
+                  if (_ecore_main_select(0.0) > 0) break;
+                  if (_ecore_event_exist()) break;
+                  if (_ecore_signal_count_get() > 0) break;
+                  if (have_event || have_signal) break;
+                  next_time = _ecore_timer_next_get();
+                  if (next_time <= 0) break;
+                  if (do_quit) break;
+               }
+          }
+     }
+   
    if (_ecore_fps_debug) t1 = ecore_time_get();
    /* we came out of our "wait state" so idle has exited */
+   process_events:
    if (!once_only) _ecore_idle_exiter_call();
    /* call the fd handler per fd that became alive... */
    /* this should read or write any data to the monitored fd and then */
    /* post events onto the ecore event pipe if necessary */
-   process_events:
    _ecore_main_fd_handlers_call();
    if (fd_handlers_with_buffer)
      _ecore_main_fd_handlers_buf_call();
