@@ -139,6 +139,8 @@ static const char SIG_DRAG_START_RIGHT[] = "drag,start,right";
 static const char SIG_DRAG_STOP[] = "drag,stop";
 static const char SIG_DRAG[] = "drag";
 static const char SIG_SCROLL[] = "scroll";
+static const char SIG_SCROLL_ANIM_START[] = "scroll,anim,start";
+static const char SIG_SCROLL_ANIM_STOP[] = "scroll,anim,stop";
 static const char SIG_SCROLL_DRAG_START[] = "scroll,drag,start";
 static const char SIG_SCROLL_DRAG_STOP[] = "scroll,drag,stop";
 static const char SIG_MOVED[] = "moved";
@@ -158,6 +160,8 @@ static const Evas_Smart_Cb_Description _signals[] = {
    {SIG_DRAG_STOP, ""},
    {SIG_DRAG, ""},
    {SIG_SCROLL, ""},
+   {SIG_SCROLL_ANIM_START, ""},
+   {SIG_SCROLL_ANIM_STOP, ""},
    {SIG_SCROLL_DRAG_START, ""},
    {SIG_SCROLL_DRAG_STOP, ""},
    {SIG_MOVED, ""},
@@ -1585,6 +1589,22 @@ _freeze_off(void *data       __UNUSED__,
 }
 
 static void
+_scr_anim_start(void        *data,
+                Evas_Object *obj __UNUSED__,
+                void        *event_info __UNUSED__)
+{
+   evas_object_smart_callback_call(data, SIG_SCROLL_ANIM_START, NULL);
+}
+
+static void
+_scrl_anim_stop(void        *data,
+                Evas_Object *obj __UNUSED__,
+                void        *event_info __UNUSED__)
+{
+   evas_object_smart_callback_call(data, SIG_SCROLL_ANIM_STOP, NULL);
+}
+
+static void
 _scr_drag_start(void            *data,
                 Evas_Object *obj __UNUSED__,
                 void *event_info __UNUSED__)
@@ -1655,6 +1675,8 @@ elm_gengrid_add(Evas_Object *parent)
                                        "default");
    elm_widget_resize_object_set(obj, wd->scr);
 
+   evas_object_smart_callback_add(wd->scr, "animate,start", _scroll_anim_start, obj);
+   evas_object_smart_callback_add(wd->scr, "animate,stop", _scroll_anim_stop, obj);
    evas_object_smart_callback_add(wd->scr, "drag,start", _scr_drag_start, obj);
    evas_object_smart_callback_add(wd->scr, "drag,stop", _scr_drag_stop, obj);
    evas_object_smart_callback_add(wd->scr, "scroll", _scr_scroll, obj);
