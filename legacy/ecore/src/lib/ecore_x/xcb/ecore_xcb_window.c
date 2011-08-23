@@ -14,7 +14,9 @@ static Ecore_X_Window _ecore_xcb_window_argb_internal_new(Ecore_X_Window parent,
 static Ecore_X_Window _ecore_xcb_window_at_xy_get(Ecore_X_Window base, int bx, int by, int x, int y, Ecore_X_Window *skip, int skip_num);
 static int _ecore_xcb_window_modifiers_get(unsigned int state);
 static xcb_visualtype_t *_ecore_xcb_window_find_visual_by_id(xcb_visualid_t id);
+#ifdef ECORE_XCB_XPRINT
 static xcb_screen_t *_ecore_xcb_window_screen_of_display(int screen);
+#endif
 
 /* local variables */
 static int ignore_num = 0;
@@ -2022,6 +2024,7 @@ _ecore_xcb_window_find_visual_by_id(xcb_visualid_t id)
    return 0;
 }
 
+#ifdef ECORE_XCB_XPRINT
 static xcb_screen_t *
 _ecore_xcb_window_screen_of_display(int screen) 
 {
@@ -2034,3 +2037,4 @@ _ecore_xcb_window_screen_of_display(int screen)
 
    return NULL;
 }
+#endif
