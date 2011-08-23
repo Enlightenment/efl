@@ -233,6 +233,11 @@ ecore_x_cursor_free(Ecore_X_Cursor c)
    xcb_free_cursor(_ecore_xcb_conn, c);
 }
 
+/*
+ * Returns the cursor for the given shape.
+ * Note that the return value must not be freed with
+ * ecore_x_cursor_free()!
+ */
 EAPI Ecore_X_Cursor 
 ecore_x_cursor_shape_get(int shape) 
 {
