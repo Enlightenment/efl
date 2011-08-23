@@ -465,3 +465,8 @@
 2011-08-17  Tom Hacohen (TAsn)
 
 	* Callbacks: Added priority support to callbacks.
+
+2011-08-23  Cedric Bail
+
+	* Fix evas_object_image_data_convert.
+	* Add YUV 601 input format to evas_object_image_data_convert.
