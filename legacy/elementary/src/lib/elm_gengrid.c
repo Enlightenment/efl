@@ -1597,7 +1597,7 @@ _scr_anim_start(void        *data,
 }
 
 static void
-_scrl_anim_stop(void        *data,
+_scr_anim_stop(void        *data,
                 Evas_Object *obj __UNUSED__,
                 void        *event_info __UNUSED__)
 {
@@ -1675,8 +1675,8 @@ elm_gengrid_add(Evas_Object *parent)
                                        "default");
    elm_widget_resize_object_set(obj, wd->scr);
 
-   evas_object_smart_callback_add(wd->scr, "animate,start", _scroll_anim_start, obj);
-   evas_object_smart_callback_add(wd->scr, "animate,stop", _scroll_anim_stop, obj);
+   evas_object_smart_callback_add(wd->scr, "animate,start", _scr_anim_start, obj);
+   evas_object_smart_callback_add(wd->scr, "animate,stop", _scr_anim_stop, obj);
    evas_object_smart_callback_add(wd->scr, "drag,start", _scr_drag_start, obj);
    evas_object_smart_callback_add(wd->scr, "drag,stop", _scr_drag_stop, obj);
    evas_object_smart_callback_add(wd->scr, "scroll", _scr_scroll, obj);
