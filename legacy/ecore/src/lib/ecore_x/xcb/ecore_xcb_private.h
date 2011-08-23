@@ -13,6 +13,7 @@
 # include <xcb/xcb.h>
 # include <xcb/bigreq.h>
 # include <xcb/shm.h>
+# include <xcb/xcb_image.h>
 
 /* EFL includes */
 # include "Ecore.h"
@@ -333,5 +334,7 @@ Ecore_X_Window_State _ecore_xcb_netwm_window_state_get(Ecore_X_Atom atom);
 
 int _ecore_xcb_error_handle(xcb_generic_error_t *err);
 int _ecore_xcb_io_error_handle(xcb_generic_error_t *err);
+
+xcb_image_t *_ecore_xcb_image_create_native(int w, int h, xcb_image_format_t format, uint8_t depth, void *base, uint32_t bytes, uint8_t *data);
 
 #endif

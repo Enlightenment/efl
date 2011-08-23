@@ -1,7 +1,6 @@
 #include "ecore_xcb_private.h"
 #include <sys/ipc.h>
 #include <sys/shm.h>
-#include <xcb/xcb_image.h>
 #include <xcb/xcb_event.h>
 #include <xcb/shm.h>
 
@@ -19,7 +18,6 @@ struct _Ecore_X_Image
 /* local function prototypes */
 static void _ecore_xcb_image_shm_check(void);
 static void _ecore_xcb_image_shm_create(Ecore_X_Image *im);
-static xcb_image_t *_ecore_xcb_image_create_native(int w, int h, xcb_image_format_t format, uint8_t depth, void *base, uint32_t bytes, uint8_t *data);
 static xcb_format_t *_ecore_xcb_image_find_format(const xcb_setup_t *setup, uint8_t depth);
 
 /* local variables */
@@ -586,7 +584,6 @@ _ecore_xcb_image_shm_create(Ecore_X_Image *im)
    if (!im->xim) return;
 
    im->shminfo.shmid = shmget(IPC_PRIVATE, im->xim->size, (IPC_CREAT | 0666));
-//     shmget(IPC_PRIVATE, im->xim->stride * im->xim->height, (IPC_CREAT | 0666));
    if (im->shminfo.shmid == (uint32_t)-1) 
      {
         xcb_image_destroy(im->xim);
@@ -618,7 +615,7 @@ _ecore_xcb_image_shm_create(Ecore_X_Image *im)
      im->bpp = 4;
 }
 
-static xcb_image_t *
+xcb_image_t *
 _ecore_xcb_image_create_native(int w, int h, xcb_image_format_t format, uint8_t depth, void *base, uint32_t bytes, uint8_t *data) 
 {
    static uint8_t dpth = 0;
