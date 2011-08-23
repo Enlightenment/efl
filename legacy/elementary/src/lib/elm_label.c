@@ -35,7 +35,7 @@ static void _ellipsis_label_to_width(Evas_Object *obj);
 static void _label_sliding_change(Evas_Object *obj);
 
 static void
-_elm_win_recalc_job(void *data)
+_elm_recalc_job(void *data)
 {
    Widget_Data *wd = elm_widget_data_get(data);
    Evas_Coord minw = -1, minh = -1;
@@ -123,10 +123,10 @@ _sizing_eval(Evas_Object *obj)
         if ((resw == wd->lastw) && (!wd->changed)) return;
         wd->changed = EINA_FALSE;
         wd->lastw = resw;
-        _elm_win_recalc_job(obj);
+        _elm_recalc_job(obj);
         // FIXME: works ok. but NOT for genlist. what should genlist do?
         //        if (wd->deferred_recalc_job) ecore_job_del(wd->deferred_recalc_job);
-        //        wd->deferred_recalc_job = ecore_job_add(_elm_win_recalc_job, obj);
+        //        wd->deferred_recalc_job = ecore_job_add(_elm_recalc_job, obj);
      }
    else
      {

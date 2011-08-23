@@ -570,7 +570,7 @@ _recalc_cursor_geometry(Evas_Object *obj)
 }
 
 static void
-_elm_win_recalc_job(void *data)
+_elm_deferred_recalc_job(void *data)
 {
    Widget_Data *wd = elm_widget_data_get(data);
    Evas_Coord minh = -1, resw = -1, minw = -1, fw = 0, fh = 0;
@@ -681,7 +681,7 @@ _sizing_eval(Evas_Object *obj)
         else
           {
              if (wd->deferred_recalc_job) ecore_job_del(wd->deferred_recalc_job);
-             wd->deferred_recalc_job = ecore_job_add(_elm_win_recalc_job, obj);
+             wd->deferred_recalc_job = ecore_job_add(_elm_deferred_recalc_job, obj);
           }
      }
    else
