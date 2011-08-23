@@ -1061,6 +1061,7 @@ eng_image_colorspace_set(void *data, void *image, int cspace)
 	break;
       case EVAS_COLORSPACE_YCBCR422P601_PL:
       case EVAS_COLORSPACE_YCBCR422P709_PL:
+      case EVAS_COLORSPACE_YCBCR422601_PL:
         if (im->tex) evas_gl_common_texture_free(im->tex);
         im->tex = NULL;
 	if (im->cs.data)
@@ -1705,7 +1706,8 @@ eng_image_size_set(void *data, void *image, int w, int h)
      }
    im_old = image;
    if ((eng_image_colorspace_get(data, image) == EVAS_COLORSPACE_YCBCR422P601_PL) ||
-       (eng_image_colorspace_get(data, image) == EVAS_COLORSPACE_YCBCR422P709_PL))
+       (eng_image_colorspace_get(data, image) == EVAS_COLORSPACE_YCBCR422P709_PL) ||
+       (eng_image_colorspace_get(data, image) == EVAS_COLORSPACE_YCBCR422601_PL))
      w &= ~0x1;
    if ((im_old) &&
        ((int)im_old->im->cache_entry.w == w) &&
@@ -1826,6 +1828,7 @@ eng_image_data_get(void *data, void *image, int to_write, DATA32 **image_data, i
 	break;
       case EVAS_COLORSPACE_YCBCR422P601_PL:
       case EVAS_COLORSPACE_YCBCR422P709_PL:
+      case EVAS_COLORSPACE_YCBCR422601_PL:
 	*image_data = im->cs.data;
 	break;
       default:
@@ -1891,6 +1894,7 @@ eng_image_data_put(void *data, void *image, DATA32 *image_data)
         break;
       case EVAS_COLORSPACE_YCBCR422P601_PL:
       case EVAS_COLORSPACE_YCBCR422P709_PL:
+      case EVAS_COLORSPACE_YCBCR422601_PL:
         if (image_data != im->cs.data)
 	  {
 	     if (im->cs.data)

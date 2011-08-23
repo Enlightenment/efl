@@ -82,7 +82,11 @@ shader/filter_greyscale_bgra_nomul.h \
 shader/filter_blur.h \
 shader/filter_blur_nomul.h \
 shader/filter_blur_bgra.h \
-shader/filter_blur_bgra_nomul.h
+shader/filter_blur_bgra_nomul.h \
+shader/yuy2_frag.h \
+shader/yuy2_vert.h \
+shader/yuy2_nomul_frag.h \
+shader/yuy2_nomul_vert.h
 
 libevas_engine_gl_common_la_LIBADD = @EINA_LIBS@ @GL_EET_LIBS@ @evas_engine_gl_common_libs@ @dlopen_libs@
 endif

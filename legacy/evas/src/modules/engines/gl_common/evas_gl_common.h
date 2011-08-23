@@ -208,6 +208,7 @@ struct _Evas_GL_Shared
       Evas_GL_Program  img_bgra,       img_bgra_nomul;
       Evas_GL_Program  img_mask;
       Evas_GL_Program  yuv,            yuv_nomul;
+      Evas_GL_Program  yuy2,           yuy2_nomul;
       Evas_GL_Program  tex,            tex_nomul;
 
       Evas_GL_Program  filter_invert,         filter_invert_nomul;
@@ -237,7 +238,7 @@ struct _Evas_GL_Shared
 #define RTYPE_YUV   4
 #define RTYPE_MAP   5 /* need to merge with image */
 #define RTYPE_IMASK 6
-
+#define RTYPE_YUY2  7
 
 
 struct _Evas_Engine_GL_Context
@@ -255,7 +256,7 @@ struct _Evas_Engine_GL_Context
       int                top_pipe;
       struct {
          GLuint          cur_prog;
-         GLuint          cur_tex, cur_texu, cur_texv;
+	 GLuint          cur_tex, cur_texu, cur_texv;
          GLuint          cur_texm, cur_texmu, cur_texmv;
          int             render_op;
          int             cx, cy, cw, ch;
@@ -345,7 +346,7 @@ struct _Evas_GL_Texture
 {
    Evas_Engine_GL_Context *gc;
    Evas_GL_Image   *im;
-   Evas_GL_Texture_Pool *pt, *ptu, *ptv;
+  Evas_GL_Texture_Pool *pt, *ptu, *ptv, *ptuv;
    int              x, y, w, h;
    double           sx1, sy1, sx2, sy2;
    int              references;
@@ -430,6 +431,11 @@ extern Evas_GL_Program_Source shader_yuv_vert_src;
 extern Evas_GL_Program_Source shader_yuv_nomul_frag_src;
 extern Evas_GL_Program_Source shader_yuv_nomul_vert_src;
 
+extern Evas_GL_Program_Source shader_yuy2_frag_src;
+extern Evas_GL_Program_Source shader_yuy2_vert_src;
+extern Evas_GL_Program_Source shader_yuy2_nomul_frag_src;
+extern Evas_GL_Program_Source shader_yuy2_nomul_vert_src;
+
 extern Evas_GL_Program_Source shader_tex_frag_src;
 extern Evas_GL_Program_Source shader_tex_vert_src;
 extern Evas_GL_Program_Source shader_tex_nomul_frag_src;
@@ -499,6 +505,12 @@ void             evas_gl_common_context_yuv_push(Evas_Engine_GL_Context *gc,
                                                  int x, int y, int w, int h,
                                                  int r, int g, int b, int a,
                                                  Eina_Bool smooth);
+void             evas_gl_common_context_yuy2_push(Evas_Engine_GL_Context *gc,
+						  Evas_GL_Texture *tex,
+						  double sx, double sy, double sw, double sh,
+						  int x, int y, int w, int h,
+						  int r, int g, int b, int a,
+						  Eina_Bool smooth);
 void             evas_gl_common_context_image_map_push(Evas_Engine_GL_Context *gc,
                                                        Evas_GL_Texture *tex,
                                                        int npoints,
@@ -507,7 +519,8 @@ void             evas_gl_common_context_image_map_push(Evas_Engine_GL_Context *g
                                                        int r, int g, int b, int a,
                                                        Eina_Bool smooth,
                                                        Eina_Bool tex_only,
-                                                       Eina_Bool yuv);
+                                                       Eina_Bool yuv,
+						       Eina_Bool yuy2);
 void              evas_gl_common_context_flush(Evas_Engine_GL_Context *gc);
 
 int               evas_gl_common_shader_program_init(Evas_GL_Shared *shared);
@@ -527,6 +540,8 @@ Evas_GL_Texture  *evas_gl_common_texture_alpha_new(Evas_Engine_GL_Context *gc, D
 void              evas_gl_common_texture_alpha_update(Evas_GL_Texture *tex, DATA8 *pixels, unsigned int w, unsigned int h, int fh);
 Evas_GL_Texture  *evas_gl_common_texture_yuv_new(Evas_Engine_GL_Context *gc, DATA8 **rows, unsigned int w, unsigned int h);
 void              evas_gl_common_texture_yuv_update(Evas_GL_Texture *tex, DATA8 **rows, unsigned int w, unsigned int h);
+Evas_GL_Texture  *evas_gl_common_texture_yuy2_new(Evas_Engine_GL_Context *gc, DATA8 **rows, unsigned int w, unsigned int h);
+void              evas_gl_common_texture_yuy2_update(Evas_GL_Texture *tex, DATA8 **rows, unsigned int w, unsigned int h);
 
 void              evas_gl_common_image_all_unload(Evas_Engine_GL_Context *gc);
 

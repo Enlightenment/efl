@@ -122,6 +122,86 @@ Evas_GL_Program_Source shader_yuv_vert_src =
 
 /////////////////////////////////////////////
 #if defined (GLES_VARIETY_S3C6410)
+const unsigned int yuy2_frag_bin[] =
+{
+# include "shader/yuy2_frag_bin_s3c6410.h"
+};
+#endif
+
+const char yuy2_frag_glsl[] =
+#include "shader/yuy2_frag.h"
+  ;
+Evas_GL_Program_Source shader_yuy2_frag_src =
+{
+   yuy2_frag_glsl,
+#if defined (GLES_VARIETY_S3C6410)
+     yuy2_frag_bin, sizeof(yuy2_frag_bin)
+#else
+     NULL, 0
+#endif
+};
+
+#if defined (GLES_VARIETY_S3C6410)
+const unsigned int yuy2_vert_bin[] =
+{
+# include "shader/yuy2_vert_bin_s3c6410.h"
+};
+#endif
+const char yuy2_vert_glsl[] =
+#include "shader/yuy2_vert.h"
+  ;
+Evas_GL_Program_Source shader_yuy2_vert_src =
+{
+   yuy2_vert_glsl,
+#if defined (GLES_VARIETY_S3C6410)
+     yuy2_vert_bin, sizeof(yuy2_vert_bin)
+#else
+     NULL, 0
+#endif
+};
+
+/////////////////////////////////////////////
+#if defined (GLES_VARIETY_S3C6410)
+const unsigned int yuy2_nomul_frag_bin[] =
+{
+# include "shader/yuy2_nomul_frag_bin_s3c6410.h"
+};
+#endif
+
+const char yuy2_nomul_frag_glsl[] =
+#include "shader/yuy2_nomul_frag.h"
+  ;
+Evas_GL_Program_Source shader_yuy2_nomul_frag_src =
+{
+   yuy2_nomul_frag_glsl,
+#if defined (GLES_VARIETY_S3C6410)
+     yuy2_nomul_frag_bin, sizeof(yuy2_nomul_frag_bin)
+#else
+     NULL, 0
+#endif
+};
+
+#if defined (GLES_VARIETY_S3C6410)
+const unsigned int yuy2_nomul_vert_bin[] =
+{
+# include "shader/yuy2_nomul_vert_bin_s3c6410.h"
+};
+#endif
+const char yuy2_nomul_vert_glsl[] =
+#include "shader/yuy2_nomul_vert.h"
+  ;
+Evas_GL_Program_Source shader_yuy2_nomul_vert_src =
+{
+   yuy2_nomul_vert_glsl,
+#if defined (GLES_VARIETY_S3C6410)
+     yuy2_nomul_vert_bin, sizeof(yuy2_nomul_vert_bin)
+#else
+     NULL, 0
+#endif
+};
+
+/////////////////////////////////////////////
+#if defined (GLES_VARIETY_S3C6410)
 const unsigned int yuv_nomul_frag_bin[] =
 {
 # include "shader/yuv_nomul_frag_bin_s3c6410.h"
@@ -969,6 +1049,14 @@ _evas_gl_common_shader_source_init(Evas_GL_Shared *shared)
                                                    &(shader_yuv_vert_src),
                                                    &(shader_yuv_frag_src),
                                                    "yuv")) return 0;
+   if (!_evas_gl_common_shader_program_source_init(&(shared->shader.yuy2),
+                                                   &(shader_yuy2_vert_src),
+                                                   &(shader_yuy2_frag_src),
+                                                   "yuy2")) return 0;
+   if (!_evas_gl_common_shader_program_source_init(&(shared->shader.yuy2_nomul),
+                                                   &(shader_yuy2_nomul_vert_src),
+                                                   &(shader_yuy2_nomul_frag_src),
+                                                   "yuy2_nomul")) return 0;
    if (!_evas_gl_common_shader_program_source_init(&(shared->shader.yuv_nomul),
                                                    &(shader_yuv_nomul_vert_src),
                                                    &(shader_yuv_nomul_frag_src),
@@ -1077,7 +1165,9 @@ _evas_gl_common_shader_binary_init(Evas_GL_Shared *shared)
    if (!_evas_gl_common_shader_program_binary_init(&(shared->shader.tex), "tex", et)) goto error;
    if (!_evas_gl_common_shader_program_binary_init(&(shared->shader.tex_nomul),"tex_nomul", et)) goto error;
    if (!_evas_gl_common_shader_program_binary_init(&(shared->shader.yuv), "yuv", et)) goto error;
+   if (!_evas_gl_common_shader_program_binary_init(&(shared->shader.yuy2), "yuy2", et)) goto error;
    if (!_evas_gl_common_shader_program_binary_init(&(shared->shader.yuv_nomul), "yuv_nomul", et)) goto error;
+   if (!_evas_gl_common_shader_program_binary_init(&(shared->shader.yuy2_nomul), "yuy2_nomul", et)) goto error;
 
    /* Most of the filters use the image fragment shader */
    if (!_evas_gl_common_shader_program_binary_init(&(shared->shader.filter_invert), "filter_invert", et)) goto error;
@@ -1151,7 +1241,9 @@ _evas_gl_common_shader_binary_save(Evas_GL_Shared *shared)
    if (!_evas_gl_common_shader_program_binary_save(&(shared->shader.tex), "tex", et)) goto error;
    if (!_evas_gl_common_shader_program_binary_save(&(shared->shader.tex_nomul),"tex_nomul", et)) goto error;
    if (!_evas_gl_common_shader_program_binary_save(&(shared->shader.yuv), "yuv", et)) goto error;
+   if (!_evas_gl_common_shader_program_binary_save(&(shared->shader.yuy2), "yuy2", et)) goto error;
    if (!_evas_gl_common_shader_program_binary_save(&(shared->shader.yuv_nomul), "yuv_nomul", et)) goto error;
+   if (!_evas_gl_common_shader_program_binary_save(&(shared->shader.yuy2_nomul), "yuy2_nomul", et)) goto error;
    /* Most of the filters use the image fragment shader */
    if (!_evas_gl_common_shader_program_binary_save(&(shared->shader.filter_invert), "filter_invert", et)) goto error;
    if (!_evas_gl_common_shader_program_binary_save(&(shared->shader.filter_invert_nomul), "filter_invert_nomul", et)) goto error;
