@@ -294,14 +294,31 @@ _evas_image_load_frame_image_data(Image_Entry *ie, GifFileType *gif, Image_Entry
         DATA32            *ptr_src;
         Image_Entry_Frame *new_frame = NULL;
         int                cur_frame = frame->index;
+        int                start_frame = 1;
+        int                j = 0;
 
-        if (!_find_close_frame(ie, cur_frame,  &new_frame))
+        if (_find_close_frame(ie, cur_frame, &new_frame))
+          start_frame = new_frame->index + 1;
+
+        if ((start_frame < 1) || (start_frame > cur_frame))
           {
-             if (!evas_image_load_specific_frame(ie, ie->file, cur_frame-1, error))
+             *error = EVAS_LOAD_ERROR_CORRUPT_FILE;
+             goto error;
+          }
+        /* load previous frame of cur_frame */
+        for (j = start_frame; j < cur_frame ; j++)
+          {
+             if (!evas_image_load_specific_frame(ie, ie->file, j, error))
                {
                   *error = EVAS_LOAD_ERROR_CORRUPT_FILE;
                   goto error;
                }
+          }
+
+        if (!_find_frame(ie, cur_frame - 1, &new_frame))
+          {
+             *error = EVAS_LOAD_ERROR_CORRUPT_FILE;
+             goto error;
           }
         else
           {

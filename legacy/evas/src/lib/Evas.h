@@ -7205,7 +7205,7 @@ EAPI Eina_Bool evas_object_image_extension_can_load_fast_get(const char *file);
  * @endcode
  * 
  * @see evas_object_image_animated_get()
- * @see evas_object_image_animated_frame_num_get() 
+ * @see evas_object_image_animated_frame_count_get() 
  * @see evas_object_image_animated_loop_type_get()
  * @see evas_object_image_animated_loop_count_get()
  * @see evas_object_image_animated_frame_duration_get()
@@ -7223,7 +7223,7 @@ EAPI Eina_Bool evas_object_image_animated_get(const Evas_Object *obj);
  * This returns total number of frames the image object supports (if animated)
  * 
  * @see evas_object_image_animated_get()
- * @see evas_object_image_animated_frame_num_get() 
+ * @see evas_object_image_animated_frame_count_get() 
  * @see evas_object_image_animated_loop_type_get()
  * @see evas_object_image_animated_loop_count_get()
  * @see evas_object_image_animated_frame_duration_get()
@@ -7248,7 +7248,7 @@ EAPI int evas_object_image_animated_frame_count_get(const Evas_Object *obj);
  * The default type is EVAS_IMAGE_ANIMATED_HINT_LOOP.
  *
  * @see evas_object_image_animated_get()
- * @see evas_object_image_animated_frame_num_get() 
+ * @see evas_object_image_animated_frame_count_get() 
  * @see evas_object_image_animated_loop_type_get()
  * @see evas_object_image_animated_loop_count_get()
  * @see evas_object_image_animated_frame_duration_get()
@@ -7271,7 +7271,7 @@ EAPI Evas_Image_Animated_Loop_Hint evas_object_image_animated_loop_type_get(cons
  * the number of times it loops).
  *
  * @see evas_object_image_animated_get()
- * @see evas_object_image_animated_frame_num_get() 
+ * @see evas_object_image_animated_frame_count_get() 
  * @see evas_object_image_animated_loop_type_get()
  * @see evas_object_image_animated_loop_count_get()
  * @see evas_object_image_animated_frame_duration_get()
@@ -7295,7 +7295,7 @@ EAPI int evas_object_image_animated_loop_count_get(const Evas_Object *obj);
  * frame2's duration
  *
  * @see evas_object_image_animated_get()
- * @see evas_object_image_animated_frame_num_get() 
+ * @see evas_object_image_animated_frame_count_get() 
  * @see evas_object_image_animated_loop_type_get()
  * @see evas_object_image_animated_loop_count_get()
  * @see evas_object_image_animated_frame_duration_get()
@@ -7314,7 +7314,7 @@ EAPI double evas_object_image_animated_frame_duration_get(const Evas_Object *obj
  * frame.
  *
  * @see evas_object_image_animated_get()
- * @see evas_object_image_animated_frame_num_get() 
+ * @see evas_object_image_animated_frame_count_get() 
  * @see evas_object_image_animated_loop_type_get()
  * @see evas_object_image_animated_loop_count_get()
  * @see evas_object_image_animated_frame_duration_get()
