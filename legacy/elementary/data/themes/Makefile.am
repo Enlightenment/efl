@@ -293,7 +293,8 @@ mp_pause.png \
 mp_play.png \
 mp_prev.png \
 mp_rewind.png \
-mp_stop.png
+mp_stop.png \
+access_glow.png
 
 default.edj: Makefile $(EXTRA_DIST)
 	$(EDJE_CC) $(EDJE_FLAGS) \

@@ -209,7 +209,7 @@ typedef Evas_Object *(*Elm_Widget_On_Content_Unset_Cb)(const void *data, const c
 #define ELM_ACCESS_DONE    -1 // sentence done - send done event here
 #define ELM_ACCESS_CANCEL  -2 // stop reading immediately
 
-typedef char *(*Elm_Access_Content_Cb)(const void *data, Evas_Object *obj, Elm_Widget_Item *item);
+typedef char *(*Elm_Access_Content_Cb)(void *data, Evas_Object *obj, Elm_Widget_Item *item);
 
 struct _Elm_Access_Item
 {
@@ -231,6 +231,8 @@ EAPI char            *_elm_access_text_get(Elm_Access_Info *ac, int type,  Evas_
 EAPI void             _elm_access_read(Elm_Access_Info *ac, int type, Evas_Object *obj, Elm_Widget_Item *item);
 EAPI void             _elm_access_say(const char *txt);
 EAPI Elm_Access_Info *_elm_access_object_get(Evas_Object *obj);
+EAPI void             _elm_access_object_hilight(Evas_Object *obj);
+EAPI void             _elm_access_object_unhilight(Evas_Object *obj);
 EAPI void             _elm_access_object_register(Evas_Object *obj, Evas_Object *hoverobj);
 EAPI Eina_Bool        _elm_access_2nd_click_timeout(Evas_Object *obj);
 

@@ -204,13 +204,24 @@ _activate(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
-   wd->state = !wd->state;
-   if (wd->statep) *wd->statep = wd->state;
-   if (wd->state)
-     edje_object_signal_emit(wd->chk, "elm,state,check,on", "elm");
-   else
-     edje_object_signal_emit(wd->chk, "elm,state,check,off", "elm");
-   evas_object_smart_callback_call(obj, SIG_CHANGED, NULL);
+   if ((_elm_config->access_mode == ELM_ACCESS_MODE_OFF) ||
+       (_elm_access_2nd_click_timeout(obj)))
+     {
+        if (_elm_config->access_mode != ELM_ACCESS_MODE_OFF)
+           wd->state = !wd->state;
+        if (wd->statep) *wd->statep = wd->state;
+        if (wd->state)
+          {
+             edje_object_signal_emit(wd->chk, "elm,state,check,on", "elm");
+             _elm_access_say(E_("State: On"));
+          }
+        else
+          {
+             edje_object_signal_emit(wd->chk, "elm,state,check,off", "elm");
+             _elm_access_say(E_("State: Off"));
+          }
+        evas_object_smart_callback_call(obj, SIG_CHANGED, NULL);
+     }
 }
 
 static void
@@ -238,6 +249,28 @@ _elm_check_label_get(const Evas_Object *obj, const char *item)
    if (item && strcmp(item, "default")) return NULL;
    if (!wd) return NULL;
    return wd->label;
+}
+
+static char *
+_access_info_cb(void *data __UNUSED__, Evas_Object *obj, Elm_Widget_Item *item __UNUSED__)
+{
+   char *txt = (char *)elm_widget_access_info_get(obj);
+   if (!txt) txt = (char *)_elm_check_label_get(obj, NULL);
+   if (txt) return strdup(txt);
+   return txt;
+}
+
+static char *
+_access_state_cb(void *data, Evas_Object *obj, Elm_Widget_Item *item __UNUSED__)
+{
+   Evas_Object *o = data;
+   Widget_Data *wd = elm_widget_data_get(o);
+   if (!wd) return NULL;
+   if (elm_widget_disabled_get(obj))
+      return strdup(E_("State: Disabled"));
+   if (wd->state)
+      return strdup(E_("State: On"));
+   return strdup(E_("State: Off"));
 }
 
 EAPI Evas_Object *
@@ -281,6 +314,14 @@ elm_check_add(Evas_Object *parent)
    // TODO: convert Elementary to subclassing of Evas_Smart_Class
    // TODO: and save some bytes, making descriptions per-class and not instance!
    evas_object_smart_callbacks_descriptions_set(obj, _signals);
+   
+   _elm_access_object_register(obj, wd->chk);
+   _elm_access_text_set(_elm_access_object_get(obj),
+                        ELM_ACCESS_TYPE, E_("Check"));
+   _elm_access_callback_set(_elm_access_object_get(obj),
+                            ELM_ACCESS_INFO, _access_info_cb, obj);
+   _elm_access_callback_set(_elm_access_object_get(obj),
+                            ELM_ACCESS_STATE, _access_state_cb, obj);
    return obj;
 }
 

@@ -70,6 +70,7 @@ _access_obj_over_timeout_cb(void *data)
    if (!ac) return EINA_FALSE;
    if (_elm_config->access_mode != ELM_ACCESS_MODE_OFF)
      {
+        _elm_access_object_hilight(data);
         _elm_access_read(ac, ELM_ACCESS_CANCEL, data, NULL);
         _elm_access_read(ac, ELM_ACCESS_TYPE,   data, NULL);
         _elm_access_read(ac, ELM_ACCESS_INFO,   data, NULL);
@@ -100,6 +101,7 @@ _access_obj_mouse_out_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUS
 {
    Elm_Access_Info *ac = evas_object_data_get(data, "_elm_access");
    if (!ac) return;
+   _elm_access_object_unhilight(data);
    if (ac->delay_timer)
      {
         ecore_timer_del(ac->delay_timer);
@@ -184,7 +186,7 @@ _elm_access_text_get(Elm_Access_Info *ac, int type, Evas_Object *obj, Elm_Widget
      {
         if (ai->type == type)
           {
-             if (ai->func) return ai->func(ai->data, obj, item);
+             if (ai->func) return ai->func((void *)(ai->data), obj, item);
              else if (ai->data) return strdup(ai->data);
              return NULL;
           }
@@ -247,9 +249,40 @@ _elm_access_object_get(Evas_Object *obj)
 }
 
 EAPI void
-_elm_access_object_hilight(Evas_Object *win, Evas_Object *obj)
+_elm_access_object_hilight(Evas_Object *obj)
 {
-   // if hilight obj doens exist - create and attach to window
+   Evas_Object *o;
+   
+   o = evas_object_name_find(evas_object_evas_get(obj), "_elm_access_disp");
+   if (!o)
+     {
+        o = edje_object_add(evas_object_evas_get(obj));
+        evas_object_name_set(o, "_elm_access_disp");
+        evas_object_layer_set(o, ELM_OBJECT_LAYER_TOOLTIP);
+     }
+   else
+     {
+        Evas_Object *ptarget = evas_object_data_get(o, "_elm_access_target");
+        if (ptarget)
+          {
+             evas_object_data_del(o, "_elm_access_target");
+             // FIXME: delete move/resize/del callbacks from ptarget
+          }
+     }
+   evas_object_data_set(o, "_elm_access_target", obj);
+   // FIXME: track obj pos/size until hilight removed
+   _elm_theme_object_set(obj, o, "access", "base", "default");
+   evas_object_raise(o);
+
+     {
+        Evas_Coord x, y, w, h;
+        evas_object_geometry_get(obj, &x, &y, &w, &h);
+        evas_object_move(o, x, y);
+        evas_object_resize(o, w, h);
+     }
+   
+   evas_object_show(o);
+   // if hilight obj doesnt exist - create and attach to window
    // make sure its on a high layer
    // show it and emit signal
    // if exists, move and resize to obj object location
@@ -257,9 +290,14 @@ _elm_access_object_hilight(Evas_Object *win, Evas_Object *obj)
 }
 
 EAPI void
-_elm_access_object_unhilight(Evas_Object *win)
+_elm_access_object_unhilight(Evas_Object *obj)
 {
-   // hide highlight obj is there, emit hide and then del when done
+   Evas_Object *o, *ptarget;
+   
+   o = evas_object_name_find(evas_object_evas_get(obj), "_elm_access_disp");
+   if (!o) return;
+   ptarget = evas_object_data_get(o, "_elm_access_target");
+   if (ptarget == obj) evas_object_del(o);
 }
 
 EAPI void
