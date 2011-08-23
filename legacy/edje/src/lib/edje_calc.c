@@ -981,7 +981,7 @@ _edje_part_recalc_single_textblock(FLOAT_T sc,
 }
 
 static void
-_edje_part_recalc_single_text(FLOAT_T sc,
+_edje_part_recalc_single_text(FLOAT_T sc __UNUSED__,
 			      Edje *ed,
 			      Edje_Real_Part *ep,
 			      Edje_Part_Description_Text *desc,
