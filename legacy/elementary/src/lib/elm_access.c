@@ -101,7 +101,7 @@ _access_obj_mouse_out_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUS
 {
    Elm_Access_Info *ac = evas_object_data_get(data, "_elm_access");
    if (!ac) return;
-   _elm_access_object_unhilight(data);
+//   _elm_access_object_unhilight(data);
    if (ac->delay_timer)
      {
         ecore_timer_del(ac->delay_timer);
@@ -134,6 +134,44 @@ _access_read_done(void *data __UNUSED__)
 {
    printf("read done\n");
 }
+
+static void
+_access_obj_hilight_del_cb(void *data __UNUSED__, Evas *e, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+   _elm_access_object_hilight_disable(e);
+}
+
+static void
+_access_obj_hilight_hide_cb(void *data __UNUSED__, Evas *e, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+   _elm_access_object_hilight_disable(e);
+}
+
+static void
+_access_obj_hilight_move_cb(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+{
+   Evas_Coord x, y;
+   Evas_Object *o;
+   
+   o = evas_object_name_find(evas_object_evas_get(obj), "_elm_access_disp");
+   if (!o) return;
+   evas_object_geometry_get(obj, &x, &y, NULL, NULL);
+   evas_object_move(o, x, y);
+}
+
+static void
+_access_obj_hilight_resize_cb(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+{
+   Evas_Coord w, h;
+   Evas_Object *o;
+   
+   o = evas_object_name_find(evas_object_evas_get(obj), "_elm_access_disp");
+   if (!o) return;
+   evas_object_geometry_get(obj, NULL, NULL, &w, &h);
+   evas_object_resize(o, w, h);
+}
+
+
 
 //-------------------------------------------------------------------------//
 
@@ -252,6 +290,7 @@ EAPI void
 _elm_access_object_hilight(Evas_Object *obj)
 {
    Evas_Object *o;
+   Evas_Coord x, y, w, h;
    
    o = evas_object_name_find(evas_object_evas_get(obj), "_elm_access_disp");
    if (!o)
@@ -266,27 +305,31 @@ _elm_access_object_hilight(Evas_Object *obj)
         if (ptarget)
           {
              evas_object_data_del(o, "_elm_access_target");
-             // FIXME: delete move/resize/del callbacks from ptarget
+             evas_object_event_callback_del_full(ptarget, EVAS_CALLBACK_DEL,
+                                                 _access_obj_hilight_del_cb, NULL);
+             evas_object_event_callback_del_full(ptarget, EVAS_CALLBACK_HIDE,
+                                                 _access_obj_hilight_hide_cb, NULL);
+             evas_object_event_callback_del_full(ptarget, EVAS_CALLBACK_MOVE,
+                                                 _access_obj_hilight_move_cb, NULL);
+             evas_object_event_callback_del_full(ptarget, EVAS_CALLBACK_RESIZE,
+                                                 _access_obj_hilight_resize_cb, NULL);
           }
      }
    evas_object_data_set(o, "_elm_access_target", obj);
-   // FIXME: track obj pos/size until hilight removed
    _elm_theme_object_set(obj, o, "access", "base", "default");
+   evas_object_event_callback_add(obj, EVAS_CALLBACK_DEL,
+                                  _access_obj_hilight_del_cb, NULL);
+   evas_object_event_callback_add(obj, EVAS_CALLBACK_HIDE,
+                                  _access_obj_hilight_hide_cb, NULL);
+   evas_object_event_callback_add(obj, EVAS_CALLBACK_MOVE,
+                                  _access_obj_hilight_move_cb, NULL);
+   evas_object_event_callback_add(obj, EVAS_CALLBACK_RESIZE,
+                                  _access_obj_hilight_resize_cb, NULL);
    evas_object_raise(o);
-
-     {
-        Evas_Coord x, y, w, h;
-        evas_object_geometry_get(obj, &x, &y, &w, &h);
-        evas_object_move(o, x, y);
-        evas_object_resize(o, w, h);
-     }
-   
+   evas_object_geometry_get(obj, &x, &y, &w, &h);
+   evas_object_move(o, x, y);
+   evas_object_resize(o, w, h);
    evas_object_show(o);
-   // if hilight obj doesnt exist - create and attach to window
-   // make sure its on a high layer
-   // show it and emit signal
-   // if exists, move and resize to obj object location
-   // ** try use dragables to specify pos+size??
 }
 
 EAPI void
@@ -297,7 +340,40 @@ _elm_access_object_unhilight(Evas_Object *obj)
    o = evas_object_name_find(evas_object_evas_get(obj), "_elm_access_disp");
    if (!o) return;
    ptarget = evas_object_data_get(o, "_elm_access_target");
-   if (ptarget == obj) evas_object_del(o);
+   if (ptarget == obj)
+     {
+        evas_object_event_callback_del_full(ptarget, EVAS_CALLBACK_DEL,
+                                            _access_obj_hilight_del_cb, NULL);
+        evas_object_event_callback_del_full(ptarget, EVAS_CALLBACK_HIDE,
+                                            _access_obj_hilight_hide_cb, NULL);
+        evas_object_event_callback_del_full(ptarget, EVAS_CALLBACK_MOVE,
+                                            _access_obj_hilight_move_cb, NULL);
+        evas_object_event_callback_del_full(ptarget, EVAS_CALLBACK_RESIZE,
+                                            _access_obj_hilight_resize_cb, NULL);
+        evas_object_del(o);
+     }
+}
+
+EAPI void
+_elm_access_object_hilight_disable(Evas *e)
+{
+   Evas_Object *o, *ptarget;
+
+   o = evas_object_name_find(e, "_elm_access_disp");
+   if (!o) return;
+   ptarget = evas_object_data_get(o, "_elm_access_target");
+   if (ptarget)
+     {
+        evas_object_event_callback_del_full(ptarget, EVAS_CALLBACK_DEL,
+                                            _access_obj_hilight_del_cb, NULL);
+        evas_object_event_callback_del_full(ptarget, EVAS_CALLBACK_HIDE,
+                                            _access_obj_hilight_hide_cb, NULL);
+        evas_object_event_callback_del_full(ptarget, EVAS_CALLBACK_MOVE,
+                                            _access_obj_hilight_move_cb, NULL);
+        evas_object_event_callback_del_full(ptarget, EVAS_CALLBACK_RESIZE,
+                                            _access_obj_hilight_resize_cb, NULL);
+     }
+   evas_object_del(o);
 }
 
 EAPI void
