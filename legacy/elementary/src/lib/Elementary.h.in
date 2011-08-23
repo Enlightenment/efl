@@ -15355,7 +15355,8 @@ extern "C" {
     *
     * @ingroup List
     */
-   EAPI Evas_Object     *elm_list_item_base_get(const Elm_List_Item *item) EINA_ARG_NONNULL(1);
+   EAPI Evas_Object     *elm_list_item_object_get(const Elm_List_Item *item) EINA_ARG_NONNULL(1);
+   EINA_DEPRECATED EAPI Evas_Object     *elm_list_item_base_get(const Elm_List_Item *item) EINA_ARG_NONNULL(1);
 
    /**
     * Get the label of item.

@@ -1848,6 +1848,12 @@ elm_list_item_end_set(Elm_List_Item *it, Evas_Object *end)
 EAPI Evas_Object *
 elm_list_item_base_get(const Elm_List_Item *it)
 {
+   return elm_list_item_object_get(it);
+}
+
+EAPI Evas_Object *
+elm_list_item_object_get(const Elm_List_Item *it)
+{
    ELM_LIST_ITEM_CHECK_DELETED_RETURN(it, NULL);
    return it->base.view;
 }
