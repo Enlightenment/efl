@@ -1577,7 +1577,7 @@ elm_win_add(Evas_Object *parent, const char *name, Elm_Win_Type type)
 
    Eina_Bool ret = evas_object_key_grab(win->win_obj, "F12", mask, 0,
                                         EINA_TRUE);
-   printf("Key F12 exclusive for dot tree generation. (%d)\n", ret);
+   printf("Ctrl+F12 key combination exclusive for dot tree generation\n");
 #endif
 
    evas_object_smart_callbacks_descriptions_set(win->win_obj, _signals);
