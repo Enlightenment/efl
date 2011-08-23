@@ -84,8 +84,10 @@ out_read_done(void)
      }
    if (tmpf)
      {
+        // FIXME: espeak supporets -v XX for voice locale. should provide this
+        // based on actual lang/locale
         close(tmpfd);
-        snprintf(buf, sizeof(buf), "espeak -m -a 20 -f %s", tmpf);
+        snprintf(buf, sizeof(buf), "espeak -p 2 -s 120 -k 10 -m -f %s", tmpf);
         espeak = ecore_exe_pipe_run(buf,
                                     ECORE_EXE_NOT_LEADER,
                                     NULL);

@@ -160,6 +160,7 @@ test_button(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    elm_icon_file_set(ic, buf, NULL);
    evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
    bt = elm_button_add(win);
+   elm_widget_access_info_set(bt, "This is some custom text describing this widget");
    elm_object_style_set(bt, "anchor");
    elm_button_icon_set(bt, ic);
    elm_object_disabled_set(bt, 1);
