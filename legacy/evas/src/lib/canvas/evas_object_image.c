@@ -38,7 +38,7 @@ struct _Evas_Object_Image
       const char    *file;
       const char    *key;
       int            frame;
-      int            cspace;
+      Evas_Colorspace cspace;
 
       unsigned char  smooth_scale : 1;
       unsigned char  has_alpha :1;
@@ -836,7 +836,7 @@ evas_object_image_data_convert(Evas_Object *obj, Evas_Colorspace to_cspace)
                                                                  obj);
      }
    if (!o->engine_data) return NULL;
-   if (!o->cur.cspace == to_cspace) return NULL;
+   if (o->cur.cspace == to_cspace) return NULL;
    data = NULL;
    o->engine_data = obj->layer->evas->engine.func->image_data_get(obj->layer->evas->engine.data.output,
 								  o->engine_data,
@@ -3605,6 +3605,7 @@ evas_object_image_data_convert_internal(Evas_Object_Image *o, void *data, Evas_C
 {
    void *out = NULL;
 
+   fprintf(stderr, "data: %p (%i)\n", data, o->cur.cspace);
    if (!data)
      return NULL;
 
@@ -3626,7 +3627,21 @@ evas_object_image_data_convert_internal(Evas_Object_Image *o, void *data, Evas_C
 						  o->cur.has_alpha,
 						  to_cspace);
 	  break;
+        case EVAS_COLORSPACE_YCBCR422601_PL:
+           fprintf(stderr, "EVAS_COLORSPACE_YCBCR422601_PL:\n");
+          out = evas_common_convert_yuv_422_601_to(data,
+                                                   o->cur.image.w,
+                                                   o->cur.image.h,
+                                                   to_cspace);
+          break;
+        case EVAS_COLORSPACE_YCBCR422P601_PL:
+          out = evas_common_convert_yuv_422P_601_to(data,
+                                                    o->cur.image.w,
+                                                    o->cur.image.h,
+                                                    to_cspace);
+          break;
 	default:
+           fprintf(stderr, "unknow colorspace: %i\n", o->cur.cspace);
 	  break;
      }
 
