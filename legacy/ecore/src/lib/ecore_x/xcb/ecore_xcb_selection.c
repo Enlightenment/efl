@@ -690,7 +690,7 @@ static void *
 _ecore_xcb_selection_parser_files(const char *target, void *data, int size, int format __UNUSED__) 
 {
    Ecore_X_Selection_Data_Files *sel;
-   char *_data, *tmp;
+   char *_data, *tmp, *t, **t2;
    int i = 0, is = 0;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
@@ -708,7 +708,13 @@ _ecore_xcb_selection_parser_files(const char *target, void *data, int size, int 
    if (_data[size - 1]) 
      {
         size++;
-        _data = realloc(_data, size);
+        t = realloc(_data, size);
+        if (!t) 
+          {
+             free(sel);
+             return NULL;
+          }
+        _data = t;
         _data[size - 1] = 0;
      }
 
@@ -729,9 +735,12 @@ _ecore_xcb_selection_parser_files(const char *target, void *data, int size, int 
                     is++;
                   tmp[i] = 0;
                   sel->num_files++;
-                  sel->files = 
-                    realloc(sel->files, sel->num_files * sizeof(char *));
-                  sel->files[sel->num_files - 1] = strdup(tmp);
+                  t2 = realloc(sel->files, sel->num_files * sizeof(char *));
+                  if (t2) 
+                    {
+                       sel->files = t2;
+                       sel->files[sel->num_files - 1] = strdup(tmp);
+                    }
                   tmp[0] = 0;
                   i = 0;
                }
@@ -741,13 +750,19 @@ _ecore_xcb_selection_parser_files(const char *target, void *data, int size, int 
      {
         tmp[i] = 0;
         sel->num_files++;
-        sel->files = realloc(sel->files, sel->num_files * sizeof(char *));
-        sel->files[sel->num_files - 1] = strdup(tmp);
+        t2 = realloc(sel->files, sel->num_files * sizeof(char *));
+        if (t2) 
+          {
+             sel->files = t2;
+             sel->files[sel->num_files - 1] = strdup(tmp);
+          }
      }
    if (tmp) free(tmp);
    if (_data) free(_data);
+
    ECORE_XCB_SELECTION_DATA(sel)->content = ECORE_X_SELECTION_CONTENT_FILES;
    ECORE_XCB_SELECTION_DATA(sel)->length = sel->num_files;
+
    return ECORE_XCB_SELECTION_DATA(sel);
 }
 
@@ -863,7 +878,7 @@ _ecore_xcb_selection_data_files_free(void *data)
         if (sel->files) free(sel->files);
      }
    free(sel);
-   return 1;
+   return 0;
 }
 
 static int 
