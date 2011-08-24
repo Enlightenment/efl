@@ -231,10 +231,12 @@ EAPI char            *_elm_access_text_get(Elm_Access_Info *ac, int type,  Evas_
 EAPI void             _elm_access_read(Elm_Access_Info *ac, int type, Evas_Object *obj, Elm_Widget_Item *item);
 EAPI void             _elm_access_say(const char *txt);
 EAPI Elm_Access_Info *_elm_access_object_get(Evas_Object *obj);
+EAPI Elm_Access_Info *_elm_access_item_get(Elm_Widget_Item *it);
 EAPI void             _elm_access_object_hilight(Evas_Object *obj);
 EAPI void             _elm_access_object_unhilight(Evas_Object *obj);
 EAPI void             _elm_access_object_hilight_disable(Evas *e);
 EAPI void             _elm_access_object_register(Evas_Object *obj, Evas_Object *hoverobj);
+EAPI void             _elm_access_item_register(Elm_Widget_Item *item, Evas_Object *hoverobj);
 EAPI Eina_Bool        _elm_access_2nd_click_timeout(Evas_Object *obj);
 
 struct _Elm_Widget_Item
@@ -252,6 +254,7 @@ struct _Elm_Widget_Item
    Elm_Widget_On_Content_Unset_Cb on_content_unset_func;
    Elm_Widget_On_Text_Set_Cb on_text_set_func;
    Elm_Widget_On_Text_Get_Cb on_text_get_func;
+   Elm_Access_Info *access;
    /* widget variations should have data from here and on */
    /* @todo: TODO check if this is enough for 1.0 release, maybe add padding! */
 };

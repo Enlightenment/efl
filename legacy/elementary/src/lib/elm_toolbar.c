@@ -597,7 +597,15 @@ _resize(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event
 static void
 _select(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
 {
-   _item_select(data);
+   Elm_Toolbar_Item *it = data;
+   
+   if ((_elm_config->access_mode == ELM_ACCESS_MODE_OFF) ||
+       (_elm_access_2nd_click_timeout(it->base.view)))
+     {
+        if (_elm_config->access_mode != ELM_ACCESS_MODE_OFF)
+           _elm_access_say(E_("Selected"));
+        _item_select(it);
+     }
 }
 
 static void
@@ -625,6 +633,31 @@ _layout(Evas_Object *o, Evas_Object_Box_Data *priv, void *data)
    _els_box_layout(o, priv, !wd->vertical, wd->homogeneous, elm_widget_mirrored_get(obj));
 }
 
+static char *
+_access_info_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, Elm_Widget_Item *item __UNUSED__)
+{
+   Elm_Toolbar_Item *it = (Elm_Toolbar_Item *)item;
+   char *txt = NULL; // FIXME set access info on items - prefer that
+   if (!txt) txt = (char *)it->label;
+   if (txt) return strdup(txt);
+   return txt;
+}
+
+static char *
+_access_state_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, Elm_Widget_Item *item __UNUSED__)
+{
+   Elm_Toolbar_Item *it = (Elm_Toolbar_Item *)item;
+   if (it->separator)
+      return strdup(E_("Separator"));
+   else if (it->disabled)
+      return strdup(E_("State: Disabled"));
+   else if (it->selected)
+      return strdup(E_("State: Selected"));
+   else if (it->menu)
+      return strdup(E_("Has menu"));
+   return NULL;
+}
+
 static Elm_Toolbar_Item *
 _item_new(Evas_Object *obj, const char *icon, const char *label, Evas_Smart_Cb func, const void *data)
 {
@@ -649,6 +682,14 @@ _item_new(Evas_Object *obj, const char *icon, const char *label, Evas_Smart_Cb f
    it->separator = EINA_FALSE;
    it->base.data = data;
    it->base.view = edje_object_add(evas_object_evas_get(obj));
+   _elm_access_item_register((Elm_Widget_Item *)it, it->base.view);
+   _elm_access_text_set(_elm_access_item_get((Elm_Widget_Item *)it),
+                        ELM_ACCESS_TYPE, E_("Tool Item"));
+   _elm_access_callback_set(_elm_access_item_get((Elm_Widget_Item *)it),
+                            ELM_ACCESS_INFO, _access_info_cb, it);
+   _elm_access_callback_set(_elm_access_item_get((Elm_Widget_Item *)it),
+                            ELM_ACCESS_STATE, _access_state_cb, it);
+   
    if (_item_icon_set(icon_obj, "toolbar/", icon))
      {
         it->icon = icon_obj;
