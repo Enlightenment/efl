@@ -177,7 +177,7 @@ _access_obj_hilight_move_cb(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Obje
 {
    Evas_Coord x, y;
    Evas_Object *o;
-   
+
    o = evas_object_name_find(evas_object_evas_get(obj), "_elm_access_disp");
    if (!o) return;
    evas_object_geometry_get(obj, &x, &y, NULL, NULL);
@@ -189,7 +189,7 @@ _access_obj_hilight_resize_cb(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Ob
 {
    Evas_Coord w, h;
    Evas_Object *o;
-   
+
    o = evas_object_name_find(evas_object_evas_get(obj), "_elm_access_disp");
    if (!o) return;
    evas_object_geometry_get(obj, NULL, NULL, &w, &h);
@@ -322,7 +322,7 @@ _elm_access_object_hilight(Evas_Object *obj)
 {
    Evas_Object *o;
    Evas_Coord x, y, w, h;
-   
+
    o = evas_object_name_find(evas_object_evas_get(obj), "_elm_access_disp");
    if (!o)
      {
@@ -367,7 +367,7 @@ EAPI void
 _elm_access_object_unhilight(Evas_Object *obj)
 {
    Evas_Object *o, *ptarget;
-   
+
    o = evas_object_name_find(evas_object_evas_get(obj), "_elm_access_disp");
    if (!o) return;
    ptarget = evas_object_data_get(o, "_elm_access_target");
@@ -460,7 +460,7 @@ _access_item_mouse_out_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNU
 {
    Elm_Access_Info *ac = ((Elm_Widget_Item *)data)->access;
    if (!ac) return;
-   
+
    _elm_access_object_unhilight(((Elm_Widget_Item *)data)->view);
    if (ac->delay_timer)
      {

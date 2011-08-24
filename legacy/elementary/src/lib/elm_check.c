@@ -314,7 +314,7 @@ elm_check_add(Evas_Object *parent)
    // TODO: convert Elementary to subclassing of Evas_Smart_Class
    // TODO: and save some bytes, making descriptions per-class and not instance!
    evas_object_smart_callbacks_descriptions_set(obj, _signals);
-   
+
    _elm_access_object_register(obj, wd->chk);
    _elm_access_text_set(_elm_access_object_get(obj),
                         ELM_ACCESS_TYPE, E_("Check"));

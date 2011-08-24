@@ -598,7 +598,7 @@ static void
 _select(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
 {
    Elm_Toolbar_Item *it = data;
-   
+
    if ((_elm_config->access_mode == ELM_ACCESS_MODE_OFF) ||
        (_elm_access_2nd_click_timeout(it->base.view)))
      {
@@ -689,7 +689,7 @@ _item_new(Evas_Object *obj, const char *icon, const char *label, Evas_Smart_Cb f
                             ELM_ACCESS_INFO, _access_info_cb, it);
    _elm_access_callback_set(_elm_access_item_get((Elm_Widget_Item *)it),
                             ELM_ACCESS_STATE, _access_state_cb, it);
-   
+
    if (_item_icon_set(icon_obj, "toolbar/", icon))
      {
         it->icon = icon_obj;

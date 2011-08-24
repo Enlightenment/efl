@@ -1082,7 +1082,7 @@ extern "C" {
     * @ingroup General
     */
    EAPI void elm_object_item_access_info_set(Elm_Object_Item *it, const char *txt);
-         
+
 
 #define elm_object_item_text_get(it) elm_object_item_text_part_get((it), NULL)
 
