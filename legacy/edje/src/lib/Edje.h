@@ -441,7 +441,7 @@ param in edje programs
  * language is in order. Lua is that language.
  *
  * To get you started, here's an example:
- * @include lua_script.edc
+ * @ref lua_script.edc
  *
  */
 
