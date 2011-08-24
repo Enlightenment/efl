@@ -826,6 +826,8 @@ _item_del(Elm_Genlist_Item *it)
 static void
 _item_select(Elm_Genlist_Item *it)
 {
+   Evas_Object *parent = it->base.widget;
+
    if ((it->wd->no_select) || (it->delete_me) || (it->mode_view)) return;
    if (it->selected)
      {
@@ -835,25 +837,31 @@ _item_select(Elm_Genlist_Item *it)
    it->selected = EINA_TRUE;
    it->wd->selected = eina_list_append(it->wd->selected, it);
 call:
-   evas_object_ref(it->base.widget);
+   evas_object_ref(parent);
    it->walking++;
    it->wd->walking++;
-   if (it->func.func) it->func.func((void *)it->func.data, it->base.widget, it);
+   if (it->func.func) it->func.func((void *)it->func.data, parent, it);
    if (!it->delete_me)
-     evas_object_smart_callback_call(it->base.widget, SIG_SELECTED, it);
+     evas_object_smart_callback_call(parent, SIG_SELECTED, it);
    it->walking--;
    it->wd->walking--;
    if ((it->wd->clear_me) && (!it->wd->walking))
-     elm_genlist_clear(it->base.widget);
+     {
+        elm_genlist_clear(parent);
+        goto end;
+     }
    else
      {
         if ((!it->walking) && (it->delete_me))
           {
              if (!it->relcount) _item_del(it);
+             goto end;
           }
      }
    it->wd->last_selected_item = it;
-   evas_object_unref(it->base.widget);
+
+end:
+   evas_object_unref(parent);
 }
 
 static void
