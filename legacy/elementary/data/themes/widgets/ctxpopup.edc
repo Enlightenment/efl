@@ -417,6 +417,7 @@ group { name: "elm/ctxpopup/bg/default";
          source: "elm";
          action: STATE_SET "visible" 0.0;
          target: "ctxpopup_bg";
+         transition: LINEAR 0.25;
       }
       program { name: "hide";
          signal: "elm,state,hide";
@@ -437,6 +438,7 @@ group { name: "elm/ctxpopup/base/default";
       part { name: "arrow_area_left";
          type: RECT;
          mouse_events: 0;
+         clip_to: "ctxpopup_clip";
          description { state: "default" 0.0;
             visible: 0;
             min: 20 0;
@@ -454,6 +456,7 @@ group { name: "elm/ctxpopup/base/default";
       part { name: "arrow_area_right";
          type: RECT;
          mouse_events: 0;
+         clip_to: "ctxpopup_clip";
          description { state: "default" 0.0;
             visible: 0;
             min: 20 0;
@@ -471,6 +474,7 @@ group { name: "elm/ctxpopup/base/default";
       part { name: "arrow_area_up";
          type: RECT;
          mouse_events: 0;
+         clip_to: "ctxpopup_clip";
          description { state: "default" 0.0;
             visible: 0;
             min: 0 20;
@@ -488,6 +492,7 @@ group { name: "elm/ctxpopup/base/default";
       part { name: "arrow_area_down";
          type: RECT;
          mouse_events: 0;
+         clip_to: "ctxpopup_clip";
          description { state: "default" 0.0;
             visible: 0;
             min: 0 20;
@@ -506,6 +511,7 @@ group { name: "elm/ctxpopup/base/default";
          type: SWALLOW;
          mouse_events: 0;
          scale: 1;
+         clip_to: "ctxpopup_clip";
          dragable {
             x: 1 1 0;
             y: 1 1 0;
@@ -521,6 +527,7 @@ group { name: "elm/ctxpopup/base/default";
          type: SWALLOW;
          mouse_events: 0;
          scale: 1;
+         clip_to: "ctxpopup_clip";
          dragable {
             x: 1 1 0;
             y: 1 1 0;
@@ -536,6 +543,7 @@ group { name: "elm/ctxpopup/base/default";
          type: SWALLOW;
          mouse_events: 0;
          scale: 1;
+         clip_to: "ctxpopup_clip";
          dragable {
             x: 1 1 0;
             y: 1 1 0;
@@ -551,6 +559,7 @@ group { name: "elm/ctxpopup/base/default";
          type: SWALLOW;
          mouse_events: 0;
          scale: 1;
+         clip_to: "ctxpopup_clip";
          dragable {
             x: 1 1 0;
             y: 1 1 0;
@@ -564,6 +573,7 @@ group { name: "elm/ctxpopup/base/default";
       }
       part { name: "base";
          scale: 1;
+         clip_to: "ctxpopup_clip";
          description { state: "default" 0.0;
             rel1.offset: -3 -3;
             rel2.offset: 3 3;
@@ -574,6 +584,7 @@ group { name: "elm/ctxpopup/base/default";
       }
       part { name: "over1";
          scale: 1;
+         clip_to: "ctxpopup_clip";
          description { state: "default" 0.0;
             rel1.to: "base";
             rel2.to: "base";
@@ -585,6 +596,7 @@ group { name: "elm/ctxpopup/base/default";
       }
       part { name: "over2";
          scale: 1;
+         clip_to: "ctxpopup_clip";
          description { state: "default" 0.0;
             rel1.to: "base";
             rel2.to: "base";
@@ -595,10 +607,81 @@ group { name: "elm/ctxpopup/base/default";
       }
       part { name: "elm.swallow.content";
          type: SWALLOW;
+         clip_to: "ctxpopup_clip";
          description { state: "default" 0.0;
             rel1 { to:"base"; offset: 4 4; }
             rel2 { to:"base"; offset: -5 -5; }
          }
+      }
+      part { name: "ctxpopup_clip";
+         type: RECT;
+         description { state: "default" 0.0;
+            color: 255 255 255 0;
+            rel1 { to:"base"; relative: 0 0; }
+            rel2 { to:"base"; relative: 0 1; }
+         }
+         description { state: "up" 0.0;
+            color: 255 255 255 0;
+            rel1 { to:"arrow_area_down"; relative: 0 1; }
+            rel2 { to:"arrow_area_down"; relative: 1 1; }
+         }
+         description { state: "left" 0.0;
+            color: 255 255 255 0;
+            rel1 { to:"arrow_area_right"; relative: 1 0; }
+            rel2 { to:"arrow_area_right"; relative: 1 1; }
+         }
+         description { state: "right" 0.0;
+            color: 255 255 255 0;
+            rel1 { to:"arrow_area_left"; relative: 0 0; }
+            rel2 { to:"arrow_area_left"; relative: 0 1; }
+         }
+         description { state: "down" 0.0;
+            color: 255 255 255 0;
+            rel1 { to:"arrow_area_up"; relative: 0 0; }
+            rel2 { to:"arrow_area_up"; relative: 1 0; }
+         }
+         description { state: "visible" 0.0;
+            color: 255 255 255 255;
+            rel1 { to_x:"arrow_area_left"; to_y:"arrow_area_up"; }
+            rel2 { to_x:"arrow_area_right"; to_y:"arrow_area_down"; }
+         }
+      }
+   }
+   programs {
+      program { name: "show";
+         signal: "elm,state,show";
+         source: "elm";
+         action: STATE_SET "visible" 0.0;
+         transition: LINEAR 0.25;
+         target: "ctxpopup_clip";
+      }
+      program { name: "up";
+         signal: "elm,state,show,up";
+         source: "elm";
+         action: STATE_SET "up" 0.0;
+         transition: LINEAR 0.25;
+         target: "ctxpopup_clip";
+      }
+      program { name: "left";
+         signal: "elm,state,show,left";
+         source: "elm";
+         action: STATE_SET "left" 0.0;
+         transition: LINEAR 0.25;
+         target: "ctxpopup_clip";
+      }
+      program { name: "right";
+         signal: "elm,state,show,right";
+         source: "elm";
+         action: STATE_SET "right" 0.0;
+         transition: LINEAR 0.25;
+         target: "ctxpopup_clip";
+      }
+      program { name: "down";
+         signal: "elm,state,show,down";
+         source: "elm";
+         action: STATE_SET "down" 0.0;
+         transition: LINEAR 0.25;
+         target: "ctxpopup_clip";
       }
    }
 }

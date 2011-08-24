@@ -539,6 +539,33 @@ _update_arrow(Evas_Object *obj, Elm_Ctxpopup_Direction dir)
 }
 
 static void
+_show_signal_emit(Evas_Object *obj, Elm_Ctxpopup_Direction dir)
+{
+   Widget_Data *wd;
+
+   wd = elm_widget_data_get(obj);
+   if (!wd || wd->visible) return;
+
+   switch (dir)
+     {
+        case ELM_CTXPOPUP_DIRECTION_UP:
+           edje_object_signal_emit(wd->base, "elm,state,show,up", "elm");
+           break;
+        case ELM_CTXPOPUP_DIRECTION_LEFT:
+           edje_object_signal_emit(wd->base, "elm,state,show,left", "elm");
+           break;
+        case ELM_CTXPOPUP_DIRECTION_RIGHT:
+           edje_object_signal_emit(wd->base, "elm,state,show,right", "elm");
+           break;
+        case ELM_CTXPOPUP_DIRECTION_DOWN:
+           edje_object_signal_emit(wd->base, "elm,state,show,down", "elm");
+           break;
+        default:
+           break;
+     }
+}
+
+static void
 _sizing_eval(Evas_Object *obj)
 {
    Widget_Data *wd;
@@ -580,6 +607,7 @@ _sizing_eval(Evas_Object *obj)
 
    //Base
    wd->dir = _calc_base_geometry(obj, &rect);
+   _show_signal_emit(obj, wd->dir);
    _update_arrow(obj, wd->dir);
    _shift_base_by_arrow(wd->arrow, wd->dir, &rect);
 
@@ -805,6 +833,7 @@ _ctxpopup_show(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj,
    evas_object_show(wd->arrow);
 
    edje_object_signal_emit(wd->bg, "elm,state,show", "elm");
+   edje_object_signal_emit(wd->base, "elm,state,show", "elm");
 
    _sizing_eval(obj);
 }
