@@ -118,9 +118,44 @@ typedef struct _Evas_GL_Font_Texture                 Evas_GL_Font_Texture;
 typedef struct _Evas_GL_Polygon                      Evas_GL_Polygon;
 typedef struct _Evas_GL_Polygon_Point                Evas_GL_Polygon_Point;
 
+typedef enum {
+  SHADER_RECT,
+  SHADER_FONT,
+  SHADER_IMG,
+  SHADER_IMG_NOMUL,
+  SHADER_IMG_BGRA,
+  SHADER_IMG_BGRA_NOMUL,
+  SHADER_IMG_MASK,
+  SHADER_YUV,
+  SHADER_YUV_NOMUL,
+  SHADER_YUY2,
+  SHADER_YUY2_NOMUL,
+  SHADER_TEX,
+  SHADER_TEX_NOMUL,
+  SHADER_FILTER_INVERT,
+  SHADER_FILTER_INVERT_NOMUL,
+  SHADER_FILTER_INVERT_BGRA,
+  SHADER_FILTER_INVERT_BGRA_NOMUL,
+  SHADER_FILTER_GREYSCALE,
+  SHADER_FILTER_GREYSCALE_NOMUL,
+  SHADER_FILTER_GREYSCALE_BGRA,
+  SHADER_FILTER_GREYSCALE_BGRA_NOMUL,
+  SHADER_FILTER_SEPIA,
+  SHADER_FILTER_SEPIA_NOMUL,
+  SHADER_FILTER_SEPIA_BGRA,
+  SHADER_FILTER_SEPIA_BGRA_NOMUL,
+  /* SHADER_FILTER_BLUR, */
+  /* SHADER_FILTER_BLUR_NOMUL, */
+  /* SHADER_FILTER_BLUR_BGRA, */
+  /* SHADER_FILTER_BLUR_BGRA_NOMUL, */
+  SHADER_LAST
+} Evas_GL_Shader;
+
 struct _Evas_GL_Program
 {
    GLuint vert, frag, prog;
+
+   int tex_count;
 };
 
 struct _Evas_GL_Program_Source
@@ -200,29 +235,8 @@ struct _Evas_GL_Shared
    Eina_Hash          *native_pm_hash;
    Eina_Hash          *native_tex_hash;
 
-   struct {
-      Evas_GL_Program  rect;
-      Evas_GL_Program  font;
+   Evas_GL_Program     shader[SHADER_LAST];
 
-      Evas_GL_Program  img,            img_nomul;
-      Evas_GL_Program  img_bgra,       img_bgra_nomul;
-      Evas_GL_Program  img_mask;
-      Evas_GL_Program  yuv,            yuv_nomul;
-      Evas_GL_Program  yuy2,           yuy2_nomul;
-      Evas_GL_Program  tex,            tex_nomul;
-
-      Evas_GL_Program  filter_invert,         filter_invert_nomul;
-      Evas_GL_Program  filter_invert_bgra,    filter_invert_bgra_nomul;
-      Evas_GL_Program  filter_greyscale,      filter_greyscale_nomul;
-      Evas_GL_Program  filter_greyscale_bgra, filter_greyscale_bgra_nomul;
-      Evas_GL_Program  filter_sepia,          filter_sepia_nomul;
-      Evas_GL_Program  filter_sepia_bgra,     filter_sepia_bgra_nomul;
-#if 0
-      Evas_GL_Program  filter_blur_vert;
-      Evas_GL_Program  filter_blur,           filter_blur_nomul;
-      Evas_GL_Program  filter_blur_bgra,      filter_blur_bgra_nomul;
-#endif
-   } shader;
    int references;
    int w, h;
    int rot;
@@ -410,6 +424,7 @@ struct _Evas_GL_Polygon_Point
    int x, y;
 };
 
+#if 0
 extern Evas_GL_Program_Source shader_rect_frag_src;
 extern Evas_GL_Program_Source shader_rect_vert_src;
 extern Evas_GL_Program_Source shader_font_frag_src;
@@ -453,7 +468,6 @@ extern Evas_GL_Program_Source shader_filter_greyscale_frag_src;
 extern Evas_GL_Program_Source shader_filter_greyscale_nomul_frag_src;
 extern Evas_GL_Program_Source shader_filter_greyscale_bgra_frag_src;
 extern Evas_GL_Program_Source shader_filter_greyscale_bgra_nomul_frag_src;
-#if 0
 /* blur (annoyingly) needs (aka is faster with) a vertex shader */
 extern Evas_GL_Program_Source shader_filter_blur_vert_src;
 extern Evas_GL_Program_Source shader_filter_blur_frag_src;
