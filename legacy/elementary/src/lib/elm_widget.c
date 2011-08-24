@@ -2572,6 +2572,18 @@ _elm_widget_item_del(Elm_Widget_Item *item)
 
    if (item->view)
      evas_object_del(item->view);
+   
+   if (item->access)
+     {
+        _elm_access_clear(item->access);
+        free(item->access);
+        item->access = NULL;
+     }
+   if (item->access_info)
+     {
+        eina_stringshare_del(item->access_info);
+        item->access_info = NULL;
+     }
 
    EINA_MAGIC_SET(item, EINA_MAGIC_NONE);
    free(item);
@@ -3087,6 +3099,16 @@ _elm_widget_item_text_get_hook_set(Elm_Widget_Item *item,
    ELM_WIDGET_ITEM_CHECK_OR_RETURN(item);
    item->on_text_get_func = func;
 }
+
+EAPI void
+_elm_widget_item_access_info_set(Elm_Widget_Item *item, const char *txt)
+{
+   ELM_WIDGET_ITEM_CHECK_OR_RETURN(item);
+   if (item->access_info) eina_stringshare_del(item->access_info);
+   if (!txt) item->access_info = NULL;
+   else item->access_info = eina_stringshare_add(txt);
+}
+
 
 static void
 _smart_add(Evas_Object *obj)

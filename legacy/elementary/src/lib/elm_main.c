@@ -2080,3 +2080,10 @@ elm_object_access_info_set(Evas_Object *obj, const char *txt)
 {
    elm_widget_access_info_set(obj, txt);
 }
+
+EAPI void
+elm_object_item_access_info_set(Elm_Object_Item *it, const char *txt)
+{
+   _elm_widget_item_access_info_set((Elm_Widget_Item *)it, txt);
+}
+

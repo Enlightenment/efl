@@ -255,6 +255,7 @@ struct _Elm_Widget_Item
    Elm_Widget_On_Text_Set_Cb on_text_set_func;
    Elm_Widget_On_Text_Get_Cb on_text_get_func;
    Elm_Access_Info *access;
+   const char *access_info;
    /* widget variations should have data from here and on */
    /* @todo: TODO check if this is enough for 1.0 release, maybe add padding! */
 };
@@ -443,6 +444,7 @@ EAPI void             _elm_widget_item_content_get_hook_set(Elm_Widget_Item *ite
 EAPI void             _elm_widget_item_content_unset_hook_set(Elm_Widget_Item *item, Elm_Widget_On_Content_Unset_Cb func);
 EAPI void             _elm_widget_item_text_set_hook_set(Elm_Widget_Item *item, Elm_Widget_On_Text_Set_Cb func);
 EAPI void             _elm_widget_item_text_get_hook_set(Elm_Widget_Item *item, Elm_Widget_On_Text_Get_Cb func);
+EAPI void             _elm_widget_item_access_info_set(Elm_Widget_Item *item, const char *txt);
 
 
 /* debug function. don't use it unless you are tracking parenting issues */

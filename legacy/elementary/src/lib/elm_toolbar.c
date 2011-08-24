@@ -637,7 +637,7 @@ static char *
 _access_info_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, Elm_Widget_Item *item __UNUSED__)
 {
    Elm_Toolbar_Item *it = (Elm_Toolbar_Item *)item;
-   char *txt = NULL; // FIXME set access info on items - prefer that
+   char *txt = item->access_info;
    if (!txt) txt = (char *)it->label;
    if (txt) return strdup(txt);
    return txt;

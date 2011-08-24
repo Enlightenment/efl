@@ -1066,12 +1066,23 @@ extern "C" {
    /**
     * Set the text to read out when in accessibility mode
     *
-    * @param obj The object which is described
+    * @param obj The object which is to be described
     * @param txt The text that describes the widget to people with poor or no vision
     *
     * @ingroup General
     */
    EAPI void elm_object_access_info_set(Evas_Object *obj, const char *txt);
+
+   /**
+    * Set the text to read out when in accessibility mode
+    *
+    * @param it The object item which is to be described
+    * @param txt The text that describes the widget to people with poor or no vision
+    *
+    * @ingroup General
+    */
+   EAPI void elm_object_item_access_info_set(Elm_Object_Item *it, const char *txt);
+         
 
 #define elm_object_item_text_get(it) elm_object_item_text_part_get((it), NULL)
 
