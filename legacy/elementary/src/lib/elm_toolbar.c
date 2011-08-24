@@ -634,13 +634,13 @@ _layout(Evas_Object *o, Evas_Object_Box_Data *priv, void *data)
 }
 
 static char *
-_access_info_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, Elm_Widget_Item *item __UNUSED__)
+_access_info_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, Elm_Widget_Item *item)
 {
    Elm_Toolbar_Item *it = (Elm_Toolbar_Item *)item;
-   char *txt = (char *)item->access_info;
-   if (!txt) txt = (char *)it->label;
+   const char *txt = item->access_info;
+   if (!txt) txt = it->label;
    if (txt) return strdup(txt);
-   return txt;
+   return NULL;
 }
 
 static char *
