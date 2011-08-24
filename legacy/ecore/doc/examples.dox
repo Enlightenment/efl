@@ -1226,7 +1226,7 @@
  */
 
 /**
- * @page Ecore_Evas_Window_Sizes_Example_c @c Ecore_Evas window sizes
+ * @page Ecore_Evas_Window_Sizes_Example_c Ecore_Evas window sizes
  *
  * On this example, we show you how to deal with @c Ecore_Evas window
  * size hints, which are implemented <b>per Evas engine</b>.
@@ -1383,7 +1383,7 @@
  */
 
 /**
- * @page Ecore_Evas_Buffer_Example_01_c @c Ecore_Evas buffer example
+ * @page Ecore_Evas_Buffer_Example_01_c Ecore_Evas buffer example
  *
  * Between the Evas examples, there is one in which one creates a
  * canvas bound to the Evas @b buffer engine and uses its pixel
@@ -1433,7 +1433,7 @@
  */
 
 /**
- * @page Ecore_Evas_Buffer_Example_02_c @c Ecore_Evas (image) buffer example
+ * @page Ecore_Evas_Buffer_Example_02_c Ecore_Evas (image) buffer example
  *
  * In this example, we'll demonstrate the use of
  * ecore_evas_object_image_new().  The idea is to have the same scene
