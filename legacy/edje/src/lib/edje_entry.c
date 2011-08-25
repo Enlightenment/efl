@@ -2646,6 +2646,30 @@ _edje_entry_cursor_pos_get(Edje_Real_Part *rp, Edje_Cursor cur)
    return evas_textblock_cursor_pos_get(c);
 }
 
+void
+_edje_entry_input_panel_layout_set(Edje_Real_Part *rp, Edje_Input_Panel_Layout layout)
+{
+   Entry *en = rp->entry_data;
+   if (!en) return;
+#ifdef HAVE_ECORE_IMF
+   if (en->imf_context)
+     ecore_imf_context_input_panel_layout_set(en->imf_context, layout);
+#endif
+}
+
+Edje_Input_Panel_Layout
+_edje_entry_input_panel_layout_get(Edje_Real_Part *rp)
+{
+   Entry *en = rp->entry_data;
+   if ((!en) || (!en->imf_context)) return EDJE_INPUT_PANEL_LAYOUT_INVALID;
+#ifdef HAVE_ECORE_IMF
+   if (en->imf_context)
+     return ecore_imf_context_input_panel_layout_get(en->imf_context);
+#endif
+
+   return EDJE_INPUT_PANEL_LAYOUT_INVALID;
+}
+
 static void
 _edje_entry_imf_context_reset(Entry *en)
 {

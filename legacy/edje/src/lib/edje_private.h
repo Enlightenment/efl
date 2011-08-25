@@ -1834,7 +1834,9 @@ Eina_Bool _edje_entry_cursor_is_visible_format_get(Edje_Real_Part *rp, Edje_Curs
 const char *_edje_entry_cursor_content_get(Edje_Real_Part *rp, Edje_Cursor cur);
 void _edje_entry_cursor_pos_set(Edje_Real_Part *rp, Edje_Cursor cur, int pos);
 int _edje_entry_cursor_pos_get(Edje_Real_Part *rp, Edje_Cursor cur);
-    
+void _edje_entry_input_panel_layout_set(Edje_Real_Part *rp, Edje_Input_Panel_Layout layout);
+Edje_Input_Panel_Layout _edje_entry_input_panel_layout_get(Edje_Real_Part *rp);
+
 void _edje_external_init();
 void _edje_external_shutdown();
 Evas_Object *_edje_external_type_add(const char *type_name, Evas *evas, Evas_Object *parent, const Eina_List *params, const char *part_name);

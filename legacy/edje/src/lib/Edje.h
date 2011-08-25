@@ -775,6 +775,18 @@ typedef enum _Edje_External_Param_Flags
                                             EDJE_EXTERNAL_PARAM_FLAGS_STATE) /**< Convenience flag that sets property as GET, SET and STATE. */
 } Edje_External_Param_Flags;
 
+typedef enum
+{
+   EDJE_INPUT_PANEL_LAYOUT_NORMAL,          /**< Default layout */
+   EDJE_INPUT_PANEL_LAYOUT_NUMBER,          /**< Number layout */
+   EDJE_INPUT_PANEL_LAYOUT_EMAIL,           /**< Email layout */
+   EDJE_INPUT_PANEL_LAYOUT_URL,             /**< URL layout */
+   EDJE_INPUT_PANEL_LAYOUT_PHONENUMBER,     /**< Phone Number layout */
+   EDJE_INPUT_PANEL_LAYOUT_IP,              /**< IP layout */
+   EDJE_INPUT_PANEL_LAYOUT_MONTH,           /**< Month layout */
+   EDJE_INPUT_PANEL_LAYOUT_NUMBERONLY,      /**< Number Only layout */
+   EDJE_INPUT_PANEL_LAYOUT_INVALID
+} Edje_Input_Panel_Layout;
 
 /**
  * @brief Converts type identifier to string nicer representation.
@@ -2740,6 +2752,34 @@ EAPI void             edje_object_part_text_cursor_pos_set              (Evas_Ob
  * @since 1.1.0
  */
 EAPI int              edje_object_part_text_cursor_pos_get              (const Evas_Object *obj, const char *part, Edje_Cursor cur);
+
+/**
+ * @brief Set the layout of the input panel.
+ * 
+ * The layout of the inptu panel or virtual keyboard can make it easier or
+ * harder to enter content. This allows you to hint what kind of input you
+ * are expecting to enter and thus have the input panel automatically
+ * come up with the right mode.
+ *
+ * @param obj A valid Evas_Object handle
+ * @param part The part name
+ * @param layout layout type
+ * @since 1.1
+ */
+EAPI void             edje_object_part_text_input_panel_layout_set (const Evas_Object *obj, const char *part, Edje_Input_Panel_Layout layout);
+
+/**
+ * @brief Get the layout of the input panel.
+ *
+ * @param obj A valid Evas_Object handle
+ * @param part The part name
+ *
+ * @return Layout type of the input panel
+ *
+ * @see edje_object_part_text_input_panel_layout_set
+ * @since 1.1
+ */
+EAPI Edje_Input_Panel_Layout edje_object_part_text_input_panel_layout_get (const Evas_Object *obj, const char *part);
 
 /**
  * Add a filter function for newly inserted text.

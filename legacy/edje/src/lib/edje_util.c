@@ -1724,6 +1724,39 @@ edje_object_part_text_cursor_pos_get(const Evas_Object *obj, const char *part, E
 }
 
 EAPI void
+edje_object_part_text_input_panel_layout_set(const Evas_Object *obj, const char *part, Edje_Input_Panel_Layout layout)
+{
+   Edje *ed;
+   Edje_Real_Part *rp;
+
+   ed = _edje_fetch(obj);
+   if ((!ed) || (!part)) return;
+   rp = _edje_real_part_recursive_get(ed, part);
+   if (!rp) return;
+   if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
+     {
+        return _edje_entry_input_panel_layout_set(rp, layout);
+     }
+}
+
+EAPI Edje_Input_Panel_Layout
+edje_object_part_text_input_panel_layout_get(const Evas_Object *obj, const char *part)
+{
+   Edje *ed;
+   Edje_Real_Part *rp;
+
+   ed = _edje_fetch(obj);
+   if ((!ed) || (!part)) return EDJE_INPUT_PANEL_LAYOUT_INVALID;
+   rp = _edje_real_part_recursive_get(ed, part);
+   if (!rp) return EINA_FALSE;
+   if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
+     {
+        return _edje_entry_input_panel_layout_get(rp);
+     }
+   return EDJE_INPUT_PANEL_LAYOUT_INVALID;
+}
+
+EAPI void
 edje_object_text_insert_filter_callback_add(Evas_Object *obj, const char *part, Edje_Text_Filter_Cb func, void *data)
 {
    Edje *ed;
