@@ -1300,7 +1300,7 @@ _for_each_tag(GstTagList const* list,
         if (!strcmp(tag, GST_TAG_TITLE))
           {
              char *str;
-             if (ev->metadata->title) g_free(ev->metadata->title);
+             g_free(ev->metadata->title);
              if (gst_tag_list_get_string(list, GST_TAG_TITLE, &str))
                ev->metadata->title = str;
              else
@@ -1310,7 +1310,7 @@ _for_each_tag(GstTagList const* list,
         if (!strcmp(tag, GST_TAG_ALBUM))
           {
              gchar *str;
-             if (ev->metadata->album) g_free(ev->metadata->album);
+             g_free(ev->metadata->album);
              if (gst_tag_list_get_string(list, GST_TAG_ALBUM, &str))
                ev->metadata->album = str;
              else
@@ -1320,7 +1320,7 @@ _for_each_tag(GstTagList const* list,
         if (!strcmp(tag, GST_TAG_ARTIST))
           {
              gchar *str;
-             if (ev->metadata->artist) g_free( ev->metadata->artist);
+             g_free(ev->metadata->artist);
              if (gst_tag_list_get_string(list, GST_TAG_ARTIST, &str))
                ev->metadata->artist = str;
              else
@@ -1330,7 +1330,7 @@ _for_each_tag(GstTagList const* list,
         if (!strcmp(tag, GST_TAG_GENRE))
           {
              gchar *str;
-             if (ev->metadata->genre) g_free( ev->metadata->genre);
+             g_free(ev->metadata->genre);
              if (gst_tag_list_get_string(list, GST_TAG_GENRE, &str))
                ev->metadata->genre = str;
              else
@@ -1340,7 +1340,7 @@ _for_each_tag(GstTagList const* list,
         if (!strcmp(tag, GST_TAG_COMMENT))
           {
              gchar *str;
-             if (ev->metadata->comment) g_free(ev->metadata->comment);
+             g_free(ev->metadata->comment);
              if (gst_tag_list_get_string(list, GST_TAG_COMMENT, &str))
                ev->metadata->comment = str;
              else
@@ -1351,7 +1351,7 @@ _for_each_tag(GstTagList const* list,
           {
              gchar *str;
              const GValue *date;
-             if (ev->metadata->year) g_free(ev->metadata->year);
+             g_free(ev->metadata->year);
              date = gst_tag_list_get_value_index(list, GST_TAG_DATE, 0);
              if (date)
                str = g_strdup_value_contents(date);
@@ -1365,7 +1365,7 @@ _for_each_tag(GstTagList const* list,
           {
              gchar *str;
              const GValue *track;
-             if (ev->metadata->count) g_free( ev->metadata->count);
+             g_free(ev->metadata->count);
              track = gst_tag_list_get_value_index(list, GST_TAG_TRACK_NUMBER, 0);
              if (track)
                str = g_strdup_value_contents(track);
@@ -1380,7 +1380,7 @@ _for_each_tag(GstTagList const* list,
           {
              gchar *str;
              const GValue *discid;
-             if (ev->metadata->disc_id) g_free(ev->metadata->disc_id);
+             g_free(ev->metadata->disc_id);
              discid = gst_tag_list_get_value_index(list, GST_TAG_CDDA_CDDB_DISCID, 0);
              if (discid)
                str = g_strdup_value_contents(discid);
@@ -1399,14 +1399,14 @@ _free_metadata(Emotion_Gstreamer_Metadata *m)
 {
   if (!m) return;
 
-  if (m->title)   g_free(m->title);
-  if (m->album)   g_free(m->album);
-  if (m->artist)  g_free(m->artist);
-  if (m->genre)   g_free(m->genre);
-  if (m->comment) g_free(m->comment);
-  if (m->year)    g_free(m->year);
-  if (m->count)   g_free(m->count);
-  if (m->disc_id) g_free(m->disc_id);
+  g_free(m->title);
+  g_free(m->album);
+  g_free(m->artist);
+  g_free(m->genre);
+  g_free(m->comment);
+  g_free(m->year);
+  g_free(m->count);
+  g_free(m->disc_id);
 
   free(m);
 }
