@@ -16638,7 +16638,7 @@ extern "C" {
     *
     * In general to indicate how the genlist should expand items horizontally to
     * fill the list area, use elm_genlist_horizontal_set(). Valid modes are
-    * ELM_LIST_LIMIT and ELM_LIST_SCROLL . The default is ELM_LIST_SCROLL. This
+    * ELM_LIST_LIMIT and ELM_LIST_SCROLL. The default is ELM_LIST_SCROLL. This
     * mode means that if items are too wide to fit, the scroller will scroll
     * horizontally. Otherwise items are expanded to fill the width of the
     * viewport of the scroller. If it is ELM_LIST_LIMIT, items will be expanded
