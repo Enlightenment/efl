@@ -103,7 +103,7 @@ struct _Eina_Prefix
    unsigned char env_used : 1;
 };
 
-#define STRDUP_REP(x, y) do { if (x) free(x); x = NULL; if (y) { x = strdup(y); } } while (0)
+#define STRDUP_REP(x, y) do { if (x) free(x); x = strdup(y); } while (0)
 #define IF_FREE_NULL(p) do { if (p) { free(p); p = NULL; } } while (0)
 #define DBG(fmt, args...) do { if (getenv("EINA_PREFIX_DEBUG")) fprintf(stderr, fmt, ##args); } while (0)
 
@@ -204,11 +204,8 @@ _try_argv(Eina_Prefix *pfx, const char *argv0)
 {
    char *path, *p, *cp, *s;
    int len, lenexe;
-   char *buf, *buf2, *buf3;
+   char buf[PATH_MAX], buf2[PATH_MAX], buf3[PATH_MAX];
 
-   buf = alloca(PATH_MAX);
-   buf2 = alloca(PATH_MAX);
-   buf3 = alloca(PATH_MAX);
    DBG("Try argv0 = %s\n", argv0);
    /* 1. is argv0 abs path? */
 #ifdef _WIN32
@@ -289,10 +286,9 @@ _try_argv(Eina_Prefix *pfx, const char *argv0)
 static int
 _get_env_var(char **var, const char *env, const char *prefix, const char *dir)
 {
-   char *buf;
+   char buf[PATH_MAX];
    const char *s = getenv(env);
 
-   buf = alloca(PATH_MAX);
    DBG("Try env var %s\n", env);
    if (s)
      {
@@ -357,7 +353,7 @@ eina_prefix_new(const char *argv0, void *symbol, const char *envprefix,
                 const char *pkg_data, const char *pkg_locale)
 {
    Eina_Prefix *pfx;
-   char *p, *buf, *tmp, *magic = NULL;
+   char *p, buf[4096], *tmp, *magic = NULL;
    struct stat st;
    const char *p1, *p2;
    const char *pkg_bin_p = NULL;
@@ -369,7 +365,6 @@ eina_prefix_new(const char *argv0, void *symbol, const char *envprefix,
    const char *datadir = "share";
    const char *localedir = "share";
 
-   buf = alloca(PATH_MAX);
    DBG("EINA PREFIX: argv0=%s, symbol=%p, magicsharefile=%s, envprefix=%s\n", argv0, symbol, magicsharefile, envprefix);
    pfx = calloc(1, sizeof(Eina_Prefix));
    if (!pfx) return NULL;
@@ -433,41 +428,32 @@ eina_prefix_new(const char *argv0, void *symbol, const char *envprefix,
     * all with a common prefix that can be relocated
     */
    /* 1. check last common char in bin and lib strings */
-   if ( pkg_bin && pkg_lib )
+   for (p1 = pkg_bin, p2 = pkg_lib; *p1 && *p2; p1++, p2++)
      {
-       for (p1 = pkg_bin, p2 = pkg_lib; *p1 && *p2; p1++, p2++)
-         {
-           if (*p1 != *p2)
-             {
-               pkg_bin_p = p1;
-               pkg_lib_p = p2;
-               break;
-             }
-         }
+        if (*p1 != *p2)
+          {
+             pkg_bin_p = p1;
+             pkg_lib_p = p2;
+             break;
+          }
      }
    /* 1. check last common char in bin and data strings */
-   if (pkg_bin && pkg_data)
+   for (p1 = pkg_bin, p2 = pkg_data; *p1 && *p2; p1++, p2++)
      {
-       for (p1 = pkg_bin, p2 = pkg_data; *p1 && *p2; p1++, p2++)
-         {
-           if (*p1 != *p2)
-             {
-               pkg_data_p = p2;
-               break;
-             }
-         }
+        if (*p1 != *p2)
+          {
+             pkg_data_p = p2;
+             break;
+          }
      }
    /* 1. check last common char in bin and locale strings */
-   if (pkg_bin && pkg_locale)
+   for (p1 = pkg_bin, p2 = pkg_locale; *p1 && *p2; p1++, p2++)
      {
-       for (p1 = pkg_bin, p2 = pkg_locale; *p1 && *p2; p1++, p2++)
-         {
-           if (*p1 != *p2)
-             {
-               pkg_locale_p = p2;
-               break;
-             }
-         }
+        if (*p1 != *p2)
+          {
+             pkg_locale_p = p2;
+             break;
+          }
      }
    /* 2. if all the common string offsets match we compiled with a common prefix */
    if (((pkg_bin_p - pkg_bin) == (pkg_lib_p - pkg_lib))
