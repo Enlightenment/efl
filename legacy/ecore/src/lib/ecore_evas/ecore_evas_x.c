@@ -3326,7 +3326,7 @@ ecore_evas_gl_x11_pre_post_swap_callback_set(const Ecore_Evas *ee, void *data, v
    if (einfo)
      {
         einfo->callback.pre_swap = pre_cb;
-        einfo->callback.pre_swap = post_cb;
+        einfo->callback.post_swap = post_cb;
         einfo->callback.data = data;
         if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
           {
