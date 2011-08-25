@@ -207,18 +207,19 @@ _activate(Evas_Object *obj)
    if ((_elm_config->access_mode == ELM_ACCESS_MODE_OFF) ||
        (_elm_access_2nd_click_timeout(obj)))
      {
-        if (_elm_config->access_mode != ELM_ACCESS_MODE_OFF)
-           wd->state = !wd->state;
+        wd->state = !wd->state;
         if (wd->statep) *wd->statep = wd->state;
         if (wd->state)
           {
              edje_object_signal_emit(wd->chk, "elm,state,check,on", "elm");
-             _elm_access_say(E_("State: On"));
+             if (_elm_config->access_mode != ELM_ACCESS_MODE_OFF)
+                _elm_access_say(E_("State: On"));
           }
         else
           {
              edje_object_signal_emit(wd->chk, "elm,state,check,off", "elm");
-             _elm_access_say(E_("State: Off"));
+             if (_elm_config->access_mode != ELM_ACCESS_MODE_OFF)
+                _elm_access_say(E_("State: Off"));
           }
         evas_object_smart_callback_call(obj, SIG_CHANGED, NULL);
      }
