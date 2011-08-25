@@ -556,9 +556,9 @@ _del_pre_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
+   elm_genlist_clear(obj);
    evas_object_del(wd->pan_smart);
    wd->pan_smart = NULL;
-   elm_genlist_clear(obj);
 }
 
 static void
