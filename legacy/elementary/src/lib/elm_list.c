@@ -46,7 +46,7 @@ struct _Elm_List_Item
    Eina_Bool is_separator : 1;
    Eina_Bool fixed : 1;
    Eina_Bool selected : 1;
-   Eina_Bool hilighted : 1;
+   Eina_Bool highlighted : 1;
    Eina_Bool dummy_icon : 1;
    Eina_Bool dummy_end : 1;
 };
@@ -493,7 +493,7 @@ _disable_hook(Evas_Object *obj)
         _signal_emit_hook(obj, "elm,state,disabled", "elm");
         elm_widget_scroll_freeze_push(obj);
         elm_widget_scroll_hold_push(obj);
-        /* FIXME: if we get to have a way to only un-hilight items
+        /* FIXME: if we get to have a way to only un-highlight items
          * in the future, keeping them selected... */
         _deselect_all_items(wd);
      }
@@ -687,7 +687,7 @@ _sub_del(void *data __UNUSED__, Evas_Object *obj, void *event_info)
 }
 
 static void
-_item_hilight(Elm_List_Item *it)
+_item_highlight(Elm_List_Item *it)
 {
    Evas_Object *obj = it->base.widget;
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -695,7 +695,7 @@ _item_hilight(Elm_List_Item *it)
 
    if (!wd) return;
    ELM_LIST_ITEM_CHECK_DELETED_RETURN(it);
-   if (it->hilighted) return;
+   if (it->highlighted) return;
 
    evas_object_ref(obj);
    _elm_list_walk(wd);
@@ -704,7 +704,7 @@ _item_hilight(Elm_List_Item *it)
    selectraise = edje_object_data_get(it->base.view, "selectraise");
    if ((selectraise) && (!strcmp(selectraise, "on")))
      evas_object_raise(it->base.view);
-   it->hilighted = EINA_TRUE;
+   it->highlighted = EINA_TRUE;
 
    _elm_list_unwalk(wd);
    evas_object_unref(obj);
@@ -747,7 +747,7 @@ _item_unselect(Elm_List_Item *it)
 
    if (!wd) return;
    ELM_LIST_ITEM_CHECK_DELETED_RETURN(it);
-   if (!it->hilighted) return;
+   if (!it->highlighted) return;
 
    evas_object_ref(obj);
    _elm_list_walk(wd);
@@ -760,7 +760,7 @@ _item_unselect(Elm_List_Item *it)
         if ((stacking) && (!strcmp(stacking, "below")))
           evas_object_lower(it->base.view);
      }
-   it->hilighted = EINA_FALSE;
+   it->highlighted = EINA_FALSE;
    if (it->selected)
      {
         it->selected = EINA_FALSE;
@@ -915,7 +915,7 @@ _mouse_down(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSED__, void
    evas_object_ref(obj2);
    _elm_list_walk(wd);
 
-   _item_hilight(it);
+   _item_highlight(it);
    wd->longpressed = EINA_FALSE;
    if (it->long_timer) ecore_timer_del(it->long_timer);
    it->long_timer = ecore_timer_add(_elm_config->longpress_timeout, _long_press, it);
@@ -982,7 +982,7 @@ _mouse_up(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSED__, void *
      {
         if (!it->selected)
           {
-             _item_hilight(it);
+             _item_highlight(it);
              _item_select(it);
           }
         else _item_unselect(it);
@@ -993,7 +993,7 @@ _mouse_up(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSED__, void *
           {
              while (wd->selected)
                _item_unselect(wd->selected->data);
-             _item_hilight(it);
+             _item_highlight(it);
              _item_select(it);
           }
         else
@@ -1003,7 +1003,7 @@ _mouse_up(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSED__, void *
 
              EINA_LIST_FOREACH_SAFE(wd->selected, l, l_next, it2)
                 if (it2 != it) _item_unselect(it2);
-             _item_hilight(it);
+             _item_highlight(it);
              _item_select(it);
           }
      }
@@ -1218,7 +1218,7 @@ _fix_items(Evas_Object *obj)
                   evas_object_size_hint_min_set(it->base.view, mw, mh);
                   evas_object_show(it->base.view);
                }
-             if ((it->selected) || (it->hilighted))
+             if ((it->selected) || (it->highlighted))
                {
                   const char *selectraise;
 
@@ -1682,7 +1682,7 @@ elm_list_item_selected_set(Elm_List_Item *it, Eina_Bool selected)
              while (wd->selected)
                _item_unselect(wd->selected->data);
           }
-        _item_hilight(it);
+        _item_highlight(it);
         _item_select(it);
      }
    else

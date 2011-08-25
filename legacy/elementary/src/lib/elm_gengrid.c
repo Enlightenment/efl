@@ -53,7 +53,7 @@
    Eina_Bool   display_only : 1;
    Eina_Bool   disabled : 1;
    Eina_Bool   selected : 1;
-   Eina_Bool   hilighted : 1;
+   Eina_Bool   highlighted : 1;
    Eina_Bool   moving : 1;
 };
 
@@ -101,7 +101,7 @@ struct _Pan
 };
 
 static const char *widtype = NULL;
-static void      _item_hilight(Elm_Gengrid_Item *item);
+static void      _item_highlight(Elm_Gengrid_Item *item);
 static void      _item_unrealize(Elm_Gengrid_Item *item);
 static void      _item_select(Elm_Gengrid_Item *item);
 static void      _item_unselect(Elm_Gengrid_Item *item);
@@ -786,7 +786,7 @@ _mouse_down(void        *data,
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) item->wd->on_hold = EINA_TRUE;
    else item->wd->on_hold = EINA_FALSE;
    item->wd->wasselected = item->selected;
-   _item_hilight(item);
+   _item_highlight(item);
    if (ev->flags & EVAS_BUTTON_DOUBLE_CLICK)
      {
         evas_object_smart_callback_call(item->wd->self, SIG_CLICKED_DOUBLE, item);
@@ -858,7 +858,7 @@ _mouse_up(void            *data,
      {
         if (!item->selected)
           {
-             _item_hilight(item);
+             _item_highlight(item);
              _item_select(item);
           }
         else _item_unselect(item);
@@ -878,17 +878,17 @@ _mouse_up(void            *data,
              EINA_LIST_FOREACH_SAFE(item->wd->selected, l, l_next, item2)
                 if (item2 != item) _item_unselect(item2);
           }
-        _item_hilight(item);
+        _item_highlight(item);
         _item_select(item);
      }
 }
 
 static void
-_item_hilight(Elm_Gengrid_Item *item)
+_item_highlight(Elm_Gengrid_Item *item)
 {
-   if ((item->wd->no_select) || (item->delete_me) || (item->hilighted)) return;
+   if ((item->wd->no_select) || (item->delete_me) || (item->highlighted)) return;
    edje_object_signal_emit(item->base.view, "elm,state,selected", "elm");
-   item->hilighted = EINA_TRUE;
+   item->highlighted = EINA_TRUE;
 }
 
 static void
@@ -1341,9 +1341,9 @@ call:
 static void
 _item_unselect(Elm_Gengrid_Item *item)
 {
-   if ((item->delete_me) || (!item->hilighted)) return;
+   if ((item->delete_me) || (!item->highlighted)) return;
    edje_object_signal_emit(item->base.view, "elm,state,unselected", "elm");
-   item->hilighted = EINA_FALSE;
+   item->highlighted = EINA_FALSE;
    if (item->selected)
      {
         item->selected = EINA_FALSE;
@@ -2133,7 +2133,7 @@ elm_gengrid_item_selected_set(Elm_Gengrid_Item *item,
              while (wd->selected)
                _item_unselect(wd->selected->data);
           }
-        _item_hilight(item);
+        _item_highlight(item);
         _item_select(item);
      }
    else
