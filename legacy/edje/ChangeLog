@@ -153,3 +153,8 @@
 	          vertical: "name" value;
 	          horizontal: "name" value;
 	      }.
+
+2011-08-25  Jihoon Kim
+
+	* Add entry input panel layout setting api's
+
