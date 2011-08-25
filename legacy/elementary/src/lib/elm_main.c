@@ -988,6 +988,34 @@ elm_scale_all_set(double scale)
 #endif
 }
 
+EAPI Eina_Bool
+elm_password_show_last_get(void)
+{
+   return _elm_config->password_show_last;
+}
+
+EAPI void
+elm_password_show_last_set(Eina_Bool password_show_last)
+{
+   if (_elm_config->password_show_last == password_show_last) return;
+   _elm_config->password_show_last = password_show_last;
+   edje_password_show_last_set(_elm_config->password_show_last);
+}
+
+EAPI double
+elm_password_show_last_timeout_get(void)
+{
+   return _elm_config->password_show_last_timeout;
+}
+
+EAPI void
+elm_password_show_last_timeout_set(double password_show_last_timeout)
+{
+   if (_elm_config->password_show_last_timeout == password_show_last_timeout) return;
+   _elm_config->password_show_last_timeout = password_show_last_timeout;
+   edje_password_show_last_timeout_set(_elm_config->password_show_last_timeout);
+}
+
 EAPI void
 elm_object_style_set(Evas_Object *obj,
                      const char  *style)
