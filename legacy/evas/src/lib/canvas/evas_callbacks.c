@@ -264,8 +264,6 @@ _callback_priority_cmp(const void *_a, const void *_b)
    b = EINA_INLIST_CONTAINER_GET(_b, Evas_Func_Node);
    if (a->priority < b->priority)
       return -1;
-   else if (a->priority == b->priority)
-      return 0;
    else
       return 1;
 }
