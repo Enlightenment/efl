@@ -442,6 +442,7 @@ _mouse_down(void *data, Evas *e __UNUSED__, Evas_Object *o __UNUSED__, void *eve
    _sel_eval(data, ev->canvas.x, ev->canvas.y);
    edje_object_part_drag_value_set(wd->base, "elm.dragable.pointer",
                                    (!edje_object_mirrored_get(wd->base)) ? wd->dx : (wd->dx - w), wd->dy);
+   edje_object_signal_emit(wd->base, "elm,indicator,state,active", "elm");
 }
 
 static void
@@ -457,6 +458,7 @@ _mouse_up(void *data, Evas *e __UNUSED__, Evas_Object *o __UNUSED__, void *event
    if (d) evas_object_smart_callback_call(data, SIG_SELECTED, d);
    elm_index_active_set(data, 0);
    edje_object_signal_emit(wd->base, "elm,state,level,0", "elm");
+   edje_object_signal_emit(wd->base, "elm,indicator,state,inactive", "elm");
 }
 
 static void
