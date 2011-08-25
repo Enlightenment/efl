@@ -15,6 +15,7 @@
  * @li @ref Focus
  * @li @ref General
  * @li @ref Elm_Gesture_Layer
+ * @li @ref Password_last_show
  * @li @ref Start
  * @li @ref Scrolling
  * @li @ref Scrollhints

@@ -1472,6 +1472,10 @@ extern "C" {
    EAPI void elm_password_show_last_timeout_set(double password_show_last_timeout);
 
    /**
+    * @}
+    */
+
+   /**
     * @defgroup UI-Mirroring Selective Widget mirroring
     *
     * These functions allow you to set ui-mirroring on specific
