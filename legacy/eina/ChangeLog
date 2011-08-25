@@ -126,3 +126,8 @@
 2011-08-03  Myungjae Lee
 
 	* Fix eina_share_common_del and eina_share_common_ref to release lock on failure.
+
+2011-08-25  Jérémy Zurcher
+
+	* Max eina_prefix more robust so it handles null bin and share
+        dirs better etc.
