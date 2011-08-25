@@ -278,7 +278,6 @@ my_win_main(char *autorun, Eina_Bool test_win_only)
    evas_object_smart_callback_add(idx, "delay,changed", index_changed, NULL);
    evas_object_size_hint_weight_set(idx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_win_resize_object_add(win, idx);
-   elm_index_active_set(idx, EINA_TRUE);
    evas_object_show(idx);
 
    tests = NULL;
