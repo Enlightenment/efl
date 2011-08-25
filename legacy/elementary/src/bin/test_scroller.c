@@ -65,7 +65,7 @@ test_scroller(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
           {
              bg2 = elm_bg_add(win);
              snprintf(buf, sizeof(buf), "%s/images/%s",
-                      PACKAGE_DATA_DIR, img[n]);
+                      elm_app_data_dir_get(), img[n]);
              n++;
              if (n >= 9) n = 0;
              elm_bg_file_set(bg2, buf, NULL);

@@ -89,13 +89,13 @@ test_flip(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info _
    o = elm_bg_add(win);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   snprintf(buf, sizeof(buf), "%s/images/%s", PACKAGE_DATA_DIR, "sky_01.jpg");
+   snprintf(buf, sizeof(buf), "%s/images/%s", elm_app_data_dir_get(), "sky_01.jpg");
    elm_bg_file_set(o, buf, NULL);
    elm_flip_content_front_set(fl, o);
    evas_object_show(o);
 
    ly = elm_layout_add(win);
-   snprintf(buf, sizeof(buf), "%s/objects/test.edj", PACKAGE_DATA_DIR);
+   snprintf(buf, sizeof(buf), "%s/objects/test.edj", elm_app_data_dir_get());
    elm_layout_file_set(ly, buf, "layout");
    evas_object_size_hint_align_set(ly, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(ly, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -214,7 +214,7 @@ test_flip2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
    elm_win_autodel_set(win, EINA_TRUE);
 
    bg = elm_bg_add(win);
-   snprintf(buf, sizeof(buf), "%s/images/%s", PACKAGE_DATA_DIR, "sky_01.jpg");
+   snprintf(buf, sizeof(buf), "%s/images/%s", elm_app_data_dir_get(), "sky_01.jpg");
    elm_bg_file_set(bg, buf, NULL);
    elm_win_resize_object_add(win, bg);
    evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -302,7 +302,7 @@ test_flip2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
             " or even paths to image files on disk too like: "
             "<item absize=96x128 vsize=full href=file://%s/images/sky_01.jpg></item>"
             " ... end."
-            , PACKAGE_DATA_DIR
+            , elm_app_data_dir_get()
            );
    elm_entry_entry_set(en, buf);
    evas_object_size_hint_align_set(en, EVAS_HINT_FILL, EVAS_HINT_FILL);
@@ -415,7 +415,7 @@ test_flip3(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
    o = elm_bg_add(win);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   snprintf(buf, sizeof(buf), "%s/images/%s", PACKAGE_DATA_DIR, "sky_01.jpg");
+   snprintf(buf, sizeof(buf), "%s/images/%s", elm_app_data_dir_get(), "sky_01.jpg");
    elm_bg_file_set(o, buf, NULL);
    elm_flip_content_front_set(fl_f, o);
    evas_object_show(o);
@@ -423,7 +423,7 @@ test_flip3(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
    o = elm_bg_add(win);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   snprintf(buf, sizeof(buf), "%s/images/%s", PACKAGE_DATA_DIR, "sky_02.jpg");
+   snprintf(buf, sizeof(buf), "%s/images/%s", elm_app_data_dir_get(), "sky_02.jpg");
    elm_bg_file_set(o, buf, NULL);
    elm_flip_content_back_set(fl_f, o);
    evas_object_show(o);
@@ -444,7 +444,7 @@ test_flip3(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
    o = elm_bg_add(win);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   snprintf(buf, sizeof(buf), "%s/images/%s", PACKAGE_DATA_DIR, "sky_03.jpg");
+   snprintf(buf, sizeof(buf), "%s/images/%s", elm_app_data_dir_get(), "sky_03.jpg");
    elm_bg_file_set(o, buf, NULL);
    elm_flip_content_front_set(fl_b, o);
    evas_object_show(o);
@@ -452,7 +452,7 @@ test_flip3(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
    o = elm_bg_add(win);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   snprintf(buf, sizeof(buf), "%s/images/%s", PACKAGE_DATA_DIR, "sky_04.jpg");
+   snprintf(buf, sizeof(buf), "%s/images/%s", elm_app_data_dir_get(), "sky_04.jpg");
    elm_bg_file_set(o, buf, NULL);
    elm_flip_content_back_set(fl_b, o);
    evas_object_show(o);
@@ -551,7 +551,7 @@ test_flip4(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
    im = evas_object_image_filled_add(evas_object_evas_get(win));
    evas_object_size_hint_weight_set(im, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    snprintf(buf, sizeof(buf), "%s/images/%s",
-            PACKAGE_DATA_DIR, "twofish.jpg");
+            elm_app_data_dir_get(), "twofish.jpg");
    evas_object_image_file_set(im, buf, NULL);
    elm_flip_content_front_set(fl, im);
    evas_object_show(im);
@@ -560,7 +560,7 @@ test_flip4(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
    im = evas_object_image_filled_add(evas_object_evas_get(win));
    evas_object_size_hint_weight_set(im, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    snprintf(buf, sizeof(buf), "%s/images/%s",
-            PACKAGE_DATA_DIR, "sky_04.jpg");
+            elm_app_data_dir_get(), "sky_04.jpg");
    evas_object_image_file_set(im, buf, NULL);
    elm_flip_content_back_set(fl, im);
    evas_object_show(im);

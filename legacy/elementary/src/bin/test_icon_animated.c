@@ -27,7 +27,7 @@ test_icon_animated(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *eve
    elm_win_alpha_set(win, 1);
 
    ic = elm_icon_add(win);
-   snprintf(buf, sizeof(buf), "%s/images/animated_logo.gif", PACKAGE_DATA_DIR);
+   snprintf(buf, sizeof(buf), "%s/images/animated_logo.gif", elm_app_data_dir_get());
    elm_icon_file_set(ic, buf, NULL);
    if (elm_icon_animated_available_get(ic))
      {

@@ -76,13 +76,13 @@ test_anim(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info _
    elm_win_autodel_set(win, EINA_TRUE);
 
    bg = elm_bg_add(win);
-   snprintf(buf, sizeof(buf), "%s/images/rock_01.jpg", PACKAGE_DATA_DIR);
+   snprintf(buf, sizeof(buf), "%s/images/rock_01.jpg", elm_app_data_dir_get());
    elm_bg_file_set(bg, buf, NULL);
    elm_win_resize_object_add(win, bg);
    evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_show(bg);
 
-   snprintf(buf, sizeof(buf), "%s/images/bubble_sh.png", PACKAGE_DATA_DIR);
+   snprintf(buf, sizeof(buf), "%s/images/bubble_sh.png", elm_app_data_dir_get());
    for (i = 0; i < (sizeof(names) / sizeof(char *) / 2); i++)
      {
         sh = evas_object_image_filled_add(evas_object_evas_get(win));
@@ -92,7 +92,7 @@ test_anim(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info _
         evas_object_data_set(win, names[(i * 2) + 1], sh);
      }
 
-   snprintf(buf, sizeof(buf), "%s/images/bubble.png", PACKAGE_DATA_DIR);
+   snprintf(buf, sizeof(buf), "%s/images/bubble.png", elm_app_data_dir_get());
     for (i = 0; i < (sizeof(names) / sizeof(char *) / 2); i++)
      {
         bub = evas_object_image_filled_add(evas_object_evas_get(win));

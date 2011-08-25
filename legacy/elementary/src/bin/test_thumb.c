@@ -44,7 +44,7 @@ test_thumb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
         for (i = 0; i < 12; i++)
           {
              th = elm_thumb_add(win);
-             snprintf(buf, sizeof(buf), "%s/images/%s", PACKAGE_DATA_DIR,
+             snprintf(buf, sizeof(buf), "%s/images/%s", elm_app_data_dir_get(),
                       img[n]);
              n = (n + 1) % 11;
              elm_thumb_file_set(th, buf, img[n]);

@@ -33,9 +33,9 @@ Evas_Object *gl_icon_get(void *data __UNUSED__, Evas_Object *obj, const char *pa
    char buf[PATH_MAX];
    Evas_Object *ic = elm_icon_add(obj);
    if (!strcmp(part, "elm.swallow.end"))
-     snprintf(buf, sizeof(buf), "%s/images/bubble.png", PACKAGE_DATA_DIR);
+     snprintf(buf, sizeof(buf), "%s/images/bubble.png", elm_app_data_dir_get());
    else
-     snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
+     snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
    elm_icon_file_set(ic, buf, NULL);
    evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
    return ic;
@@ -351,7 +351,7 @@ test_genlist2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    elm_win_autodel_set(win, EINA_TRUE);
 
    bg = elm_bg_add(win);
-   snprintf(buf, sizeof(buf), "%s/images/plant_01.jpg", PACKAGE_DATA_DIR);
+   snprintf(buf, sizeof(buf), "%s/images/plant_01.jpg", elm_app_data_dir_get());
    elm_bg_file_set(bg, buf, NULL);
    elm_win_resize_object_add(win, bg);
    evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -527,25 +527,25 @@ Evas_Object *gl2_icon_get(void *data, Evas_Object *obj, const char *part)
    if (!strcmp(part, "elm.swallow.icon"))
      {
         if (!(tit->mode & 0x3))
-          snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
+          snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
         else if ((tit->mode & 0x3) == 1)
-          snprintf(buf, sizeof(buf), "%s/images/logo.png", PACKAGE_DATA_DIR);
+          snprintf(buf, sizeof(buf), "%s/images/logo.png", elm_app_data_dir_get());
         else if ((tit->mode & 0x3) == 2)
-          snprintf(buf, sizeof(buf), "%s/images/panel_01.jpg", PACKAGE_DATA_DIR);
+          snprintf(buf, sizeof(buf), "%s/images/panel_01.jpg", elm_app_data_dir_get());
         else if ((tit->mode & 0x3) == 3)
-          snprintf(buf, sizeof(buf), "%s/images/rock_01.jpg", PACKAGE_DATA_DIR);
+          snprintf(buf, sizeof(buf), "%s/images/rock_01.jpg", elm_app_data_dir_get());
         elm_icon_file_set(ic, buf, NULL);
      }
    else if (!strcmp(part, "elm.swallow.end"))
      {
         if (!(tit->mode & 0x3))
-          snprintf(buf, sizeof(buf), "%s/images/sky_01.jpg", PACKAGE_DATA_DIR);
+          snprintf(buf, sizeof(buf), "%s/images/sky_01.jpg", elm_app_data_dir_get());
         else if ((tit->mode & 0x3) == 1)
-          snprintf(buf, sizeof(buf), "%s/images/sky_02.jpg", PACKAGE_DATA_DIR);
+          snprintf(buf, sizeof(buf), "%s/images/sky_02.jpg", elm_app_data_dir_get());
         else if ((tit->mode & 0x3) == 2)
-          snprintf(buf, sizeof(buf), "%s/images/sky_03.jpg", PACKAGE_DATA_DIR);
+          snprintf(buf, sizeof(buf), "%s/images/sky_03.jpg", elm_app_data_dir_get());
         else if ((tit->mode & 0x3) == 3)
-          snprintf(buf, sizeof(buf), "%s/images/sky_04.jpg", PACKAGE_DATA_DIR);
+          snprintf(buf, sizeof(buf), "%s/images/sky_04.jpg", elm_app_data_dir_get());
         elm_icon_file_set(ic, buf, NULL);
      }
    evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
@@ -822,7 +822,7 @@ Evas_Object *gl5_icon_get(void *data, Evas_Object *obj, const char *part)
         Evas_Object *ic;
         elm_box_horizontal_set(bx, EINA_TRUE);
         ic = elm_icon_add(obj);
-        snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
+        snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
         elm_icon_file_set(ic, buf, NULL);
         elm_icon_scale_set(ic, 0, 0);
         evas_object_show(ic);
@@ -1084,7 +1084,7 @@ Evas_Object *gl4_icon_get(void *data __UNUSED__, Evas_Object *obj, const char *p
    if (!strcmp(part, "elm.swallow.icon"))
      {
         Evas_Object *ic = elm_icon_add(obj);
-        snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
+        snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
         elm_icon_file_set(ic, buf, NULL);
         evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
         evas_object_show(ic);
@@ -1651,9 +1651,9 @@ Evas_Object *gl10_icon_get(void *data __UNUSED__, Evas_Object *obj, const char *
    char buf[PATH_MAX];
    Evas_Object *ic = elm_icon_add(obj);
    if (!strcmp(part, "elm.swallow.end"))
-     snprintf(buf, sizeof(buf), "%s/images/bubble.png", PACKAGE_DATA_DIR);
+     snprintf(buf, sizeof(buf), "%s/images/bubble.png", elm_app_data_dir_get());
    else
-     snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
+     snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
    elm_icon_file_set(ic, buf, NULL);
    evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
    return ic;

@@ -206,7 +206,7 @@ test_launcher(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    elm_win_autodel_set(win, EINA_TRUE);
 
    bg = elm_bg_add(win);
-   snprintf(buf, sizeof(buf), "%s/images/sky_04.jpg", PACKAGE_DATA_DIR);
+   snprintf(buf, sizeof(buf), "%s/images/sky_04.jpg", elm_app_data_dir_get());
    elm_bg_file_set(bg, buf, NULL);
    evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_win_resize_object_add(win, bg);
@@ -263,7 +263,7 @@ test_launcher(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
                {
                   ic = elm_icon_add(win);
                   elm_object_scale_set(ic, 0.5);
-                  snprintf(buf, sizeof(buf), "%s/images/icon_%02i.png", PACKAGE_DATA_DIR, n);
+                  snprintf(buf, sizeof(buf), "%s/images/icon_%02i.png", elm_app_data_dir_get(), n);
                   elm_icon_file_set(ic, buf, NULL);
                   elm_icon_scale_set(ic, 0, 0);
                   evas_object_size_hint_weight_set(ic, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -389,7 +389,7 @@ test_launcher2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
    elm_win_autodel_set(win, EINA_TRUE);
 
    bg = elm_bg_add(win);
-   snprintf(buf, sizeof(buf), "%s/images/sky_03.jpg", PACKAGE_DATA_DIR);
+   snprintf(buf, sizeof(buf), "%s/images/sky_03.jpg", elm_app_data_dir_get());
    elm_bg_file_set(bg, buf, NULL);
    evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_win_resize_object_add(win, bg);
@@ -402,7 +402,7 @@ test_launcher2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
    for (k = 0 ; k < 8; k++)
      {
         ly = elm_layout_add(win);
-        snprintf(buf, sizeof(buf), "%s/objects/test.edj", PACKAGE_DATA_DIR);
+        snprintf(buf, sizeof(buf), "%s/objects/test.edj", elm_app_data_dir_get());
         elm_layout_file_set(ly, buf, "layout");
         evas_object_size_hint_weight_set(ly, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
 
@@ -737,7 +737,7 @@ test_launcher3(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
    elm_win_autodel_set(win, EINA_TRUE);
 
    bg = elm_bg_add(win);
-   snprintf(buf, sizeof(buf), "%s/images/sky_04.jpg", PACKAGE_DATA_DIR);
+   snprintf(buf, sizeof(buf), "%s/images/sky_04.jpg", elm_app_data_dir_get());
    elm_bg_file_set(bg, buf, NULL);
    evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_win_resize_object_add(win, bg);
@@ -787,7 +787,7 @@ test_launcher3(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
         evas_object_show(mb);
 
         ly = elm_layout_add(win);
-        snprintf(buf, sizeof(buf), "%s/objects/test.edj", PACKAGE_DATA_DIR);
+        snprintf(buf, sizeof(buf), "%s/objects/test.edj", elm_app_data_dir_get());
         elm_layout_file_set(ly, buf, "launcher_page");
         evas_object_size_hint_weight_set(ly, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
         evas_object_size_hint_align_set(ly, EVAS_HINT_FILL, EVAS_HINT_FILL);
@@ -799,7 +799,7 @@ test_launcher3(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
              for (i = 0; i < 4; i++)
                {
                   ly2 = elm_layout_add(win);
-                  snprintf(buf, sizeof(buf), "%s/objects/test.edj", PACKAGE_DATA_DIR);
+                  snprintf(buf, sizeof(buf), "%s/objects/test.edj", elm_app_data_dir_get());
                   elm_layout_file_set(ly2, buf, "launcher_icon");
                   evas_object_size_hint_weight_set(ly2, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
                   evas_object_size_hint_align_set(ly2, EVAS_HINT_FILL, EVAS_HINT_FILL);
@@ -807,7 +807,7 @@ test_launcher3(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
 
                   ic = elm_icon_add(win);
                   elm_object_scale_set(ic, 0.5);
-                  snprintf(buf, sizeof(buf), "%s/images/icon_%02i.png", PACKAGE_DATA_DIR, n);
+                  snprintf(buf, sizeof(buf), "%s/images/icon_%02i.png", elm_app_data_dir_get(), n);
                   elm_icon_file_set(ic, buf, NULL);
                   elm_icon_scale_set(ic, 0, 0);
                   evas_object_size_hint_weight_set(ic, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);

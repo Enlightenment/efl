@@ -1990,7 +1990,7 @@ _status_config_fonts(Evas_Object *win,
    evas_object_show(bx);
 
    /* FIXME: what to do here? dedicated widget? some new entry API set? */
-   snprintf(buf, sizeof(buf), "%s/objects/font_preview.edj", PACKAGE_DATA_DIR);
+   snprintf(buf, sizeof(buf), "%s/objects/font_preview.edj", elm_app_data_dir_get());
    preview = elm_layout_add(win);
    elm_layout_file_set(preview, buf, "font_preview");
    elm_object_text_part_set(preview, "elm.text", "Preview Text — 我真的会写中文");

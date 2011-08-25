@@ -51,7 +51,7 @@ test_colorselector(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *eve
    evas_object_show(fr);
 
    ly = elm_layout_add(win);
-   snprintf(buf, sizeof(buf), "%s/objects/colorpreview.edj", PACKAGE_DATA_DIR);
+   snprintf(buf, sizeof(buf), "%s/objects/colorpreview.edj", elm_app_data_dir_get());
    elm_layout_file_set(ly, buf, "main");
    evas_object_size_hint_align_set(ly, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(ly, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);

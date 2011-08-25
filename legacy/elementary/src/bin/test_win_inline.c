@@ -47,7 +47,7 @@ fill(Evas_Object *win, Eina_Bool do_bg)
    elm_box_pack_end(bx, en);
 
    ic = elm_icon_add(win);
-   snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
+   snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
    elm_icon_file_set(ic, buf, NULL);
    elm_icon_scale_set(ic, 0, 0);
    evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_HORIZONTAL, 1, 1);
@@ -72,7 +72,7 @@ fill(Evas_Object *win, Eina_Bool do_bg)
    evas_object_show(bb);
 
    ic = elm_icon_add(win);
-   snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
+   snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
    elm_icon_file_set(ic, buf, NULL);
    evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
 
@@ -106,7 +106,7 @@ fill(Evas_Object *win, Eina_Bool do_bg)
    evas_object_show(bb);
 
    ic = elm_icon_add(win);
-   snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
+   snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
    elm_icon_file_set(ic, buf, NULL);
    elm_icon_scale_set(ic, 0, 0);
    evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_HORIZONTAL, 1, 1);
@@ -188,7 +188,7 @@ create_handles(Evas_Object *obj)
 
         hand = evas_object_image_filled_add(evas_object_evas_get(obj));
         evas_object_resize(hand, 31, 31);
-        snprintf(buf, sizeof(buf), "%s/images/pt.png", PACKAGE_DATA_DIR);
+        snprintf(buf, sizeof(buf), "%s/images/pt.png", elm_app_data_dir_get());
         evas_object_image_file_set(hand, buf, NULL);
         if (i == 0)      evas_object_move(hand, x     - 15, y     - 15);
         else if (i == 1) evas_object_move(hand, x + w - 15, y     - 15);
@@ -212,7 +212,7 @@ test_win_inline(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_
    elm_win_autodel_set(win, EINA_TRUE);
 
    bg = elm_bg_add(win);
-   snprintf(buf, sizeof(buf), "%s/images/plant_01.jpg", PACKAGE_DATA_DIR);
+   snprintf(buf, sizeof(buf), "%s/images/plant_01.jpg", elm_app_data_dir_get());
    elm_bg_file_set(bg, buf, NULL);
    elm_win_resize_object_add(win, bg);
    evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);

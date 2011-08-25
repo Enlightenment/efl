@@ -31,7 +31,7 @@ test_bubble(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    evas_object_show(bx);
 
    ic = elm_icon_add(win);
-   snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
+   snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
    elm_icon_file_set(ic, buf, NULL);
    elm_icon_scale_set(ic, 0, 0);
    evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_HORIZONTAL, 1, 1);

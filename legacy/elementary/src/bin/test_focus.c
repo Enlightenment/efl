@@ -247,7 +247,7 @@ test_focus(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
      {//Second Col
         char buf[PATH_MAX];
         Evas_Object *ly = elm_layout_add(win);
-        snprintf(buf, sizeof(buf), "%s/objects/test.edj", PACKAGE_DATA_DIR);
+        snprintf(buf, sizeof(buf), "%s/objects/test.edj", elm_app_data_dir_get());
         elm_layout_file_set(ly, buf, "twolines");
         evas_object_size_hint_weight_set(ly, EVAS_HINT_EXPAND,
                                          EVAS_HINT_EXPAND);

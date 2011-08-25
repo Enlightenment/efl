@@ -49,6 +49,7 @@ void
 test_focus2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *win, *bg, *bx, *ly, *bt, *en, *bt1;
+   char buf[PATH_MAX];
 
    win = elm_win_add(NULL, "focus2", ELM_WIN_BASIC);
    elm_win_title_set(win, "Focus2");
@@ -92,7 +93,8 @@ test_focus2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    evas_object_show(bt);
 
    ly = elm_layout_add(PARENT);
-   elm_layout_file_set(ly, PACKAGE_DATA_DIR"/objects/test.edj", "layout");
+   snprintf(buf, sizeof(buf), "%s/objects/test.edj", elm_app_data_dir_get());
+   elm_layout_file_set(ly, buf, "layout");
    evas_object_size_hint_weight_set(ly, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(en, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_box_pack_end(bx, ly);

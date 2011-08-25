@@ -203,13 +203,13 @@ test_pager(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
    char buf[4096];
 
    ly = elm_layout_add(win);
-   snprintf(buf, sizeof(buf), "%s/objects/test.edj", PACKAGE_DATA_DIR);
+   snprintf(buf, sizeof(buf), "%s/objects/test.edj", elm_app_data_dir_get());
    elm_layout_file_set(ly, buf, "test/layout");
    evas_object_size_hint_weight_set(ly, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_show(ly);
 
    ly2 = elm_layout_add(win);
-   snprintf(buf, sizeof(buf), "%s/objects/test.edj", PACKAGE_DATA_DIR);
+   snprintf(buf, sizeof(buf), "%s/objects/test.edj", elm_app_data_dir_get());
    elm_layout_file_set(ly2, buf, "layout2");
    evas_object_size_hint_weight_set(ly2, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    //elm_win_resize_object_add(win, ly2);

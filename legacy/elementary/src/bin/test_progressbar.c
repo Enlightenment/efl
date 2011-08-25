@@ -109,7 +109,7 @@ test_progressbar(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event
    _test_progressbar.pb2 = pb;
 
    ic1 = elm_icon_add(win);
-   snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
+   snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
    elm_icon_file_set(ic1, buf, NULL);
    evas_object_size_hint_aspect_set(ic1, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
 

@@ -189,7 +189,7 @@ test_gengrid(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_inf
    n = 0;
    for (i = 0; i < 12 * 12; i++)
      {
-	snprintf(buf, sizeof(buf), "%s/images/%s", PACKAGE_DATA_DIR, img[n]);
+	snprintf(buf, sizeof(buf), "%s/images/%s", elm_app_data_dir_get(), img[n]);
 	n = (n + 1) % 9;
 	ti[i].mode = i;
 	ti[i].path = eina_stringshare_add(buf);
@@ -216,7 +216,7 @@ _before_bt_clicked(void *data, Evas_Object *obj __UNUSED__, void *event_info __U
    sel = elm_gengrid_selected_item_get(grid);
    if (!sel)
        return;
-   snprintf(buf, sizeof(buf), "%s/images/%s", PACKAGE_DATA_DIR, img[rand() % 9]);
+   snprintf(buf, sizeof(buf), "%s/images/%s", elm_app_data_dir_get(), img[rand() % 9]);
    ti = malloc(sizeof(*ti));
    ti->mode = 0;
    ti->path = eina_stringshare_add(buf);
@@ -235,7 +235,7 @@ _after_bt_clicked(void *data, Evas_Object *obj __UNUSED__, void *event_info __UN
    sel = elm_gengrid_selected_item_get(grid);
    if (!sel)
        return;
-   snprintf(buf, sizeof(buf), "%s/images/%s", PACKAGE_DATA_DIR, img[rand() % 9]);
+   snprintf(buf, sizeof(buf), "%s/images/%s", elm_app_data_dir_get(), img[rand() % 9]);
    ti = malloc(sizeof(*ti));
    ti->mode = 0;
    ti->path = eina_stringshare_add(buf);
@@ -250,7 +250,7 @@ _prepend_bt_clicked(void *data, Evas_Object *obj __UNUSED__, void *event_info __
    Evas_Object *grid = data;
    char buf[PATH_MAX];
 
-   snprintf(buf, sizeof(buf), "%s/images/%s", PACKAGE_DATA_DIR, img[rand() % 9]);
+   snprintf(buf, sizeof(buf), "%s/images/%s", elm_app_data_dir_get(), img[rand() % 9]);
    ti = malloc(sizeof(*ti));
    ti->mode = 0;
    ti->path = eina_stringshare_add(buf);
@@ -264,7 +264,7 @@ _append_bt_clicked(void *data, Evas_Object *obj __UNUSED__, void *event_info __U
    Evas_Object *grid = data;
    char buf[PATH_MAX];
 
-   snprintf(buf, sizeof(buf), "%s/images/%s", PACKAGE_DATA_DIR, img[rand() % 9]);
+   snprintf(buf, sizeof(buf), "%s/images/%s", elm_app_data_dir_get(), img[rand() % 9]);
    ti = malloc(sizeof(*ti));
    ti->mode = 0;
    ti->path = eina_stringshare_add(buf);

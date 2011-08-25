@@ -34,7 +34,7 @@ _page4(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
    evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
 
    ic = elm_icon_add(nf);
-   snprintf(buf, sizeof(buf), "%s/images/icon_right_arrow.png", PACKAGE_DATA_DIR);
+   snprintf(buf, sizeof(buf), "%s/images/icon_right_arrow.png", elm_app_data_dir_get());
    elm_icon_file_set(ic, buf, NULL);
    evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
    elm_button_icon_set(bt, ic);
@@ -44,7 +44,7 @@ _page4(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
    elm_object_text_set(bt2, "Naviframe Test");
 
    ic = elm_icon_add(nf);
-   snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
+   snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
    elm_icon_file_set(ic, buf, NULL);
    evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
 
@@ -82,7 +82,7 @@ _page3(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
    elm_object_text_set(bt3, "Naviframe Test");
 
    ic = elm_icon_add(nf);
-   snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
+   snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
    elm_icon_file_set(ic, buf, NULL);
    evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
 
@@ -112,7 +112,7 @@ _page2(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
    elm_object_text_set(bt2, "Naviframe Test");
 
    ic = elm_icon_add(nf);
-   snprintf(buf, sizeof(buf), "%s/images/icon_right_arrow.png", PACKAGE_DATA_DIR);
+   snprintf(buf, sizeof(buf), "%s/images/icon_right_arrow.png", elm_app_data_dir_get());
    elm_icon_file_set(ic, buf, NULL);
    evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
    elm_button_icon_set(bt, ic);

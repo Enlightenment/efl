@@ -31,17 +31,17 @@ test_segment_control(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *e
 
    in_layout = elm_layout_add( win );
    elm_win_resize_object_add(win, in_layout);
-   snprintf(buf, sizeof(buf), "%s/objects/test.edj", PACKAGE_DATA_DIR);
+   snprintf(buf, sizeof(buf), "%s/objects/test.edj", elm_app_data_dir_get());
    elm_layout_file_set(in_layout, buf, "segment_test");
    evas_object_size_hint_weight_set(in_layout, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
 
    ic = elm_icon_add(in_layout);
-   snprintf(buf1, sizeof(buf1), "%s/images/logo.png", PACKAGE_DATA_DIR);
+   snprintf(buf1, sizeof(buf1), "%s/images/logo.png", elm_app_data_dir_get());
    elm_icon_file_set(ic, buf1, NULL);
    evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_BOTH, 1, 1);
 
    ic1 = elm_icon_add(in_layout);
-   snprintf(buf2, sizeof(buf2), "%s/images/logo.png", PACKAGE_DATA_DIR);
+   snprintf(buf2, sizeof(buf2), "%s/images/logo.png", elm_app_data_dir_get());
    elm_icon_file_set(ic1, buf2, NULL);
    evas_object_size_hint_aspect_set(ic1, EVAS_ASPECT_CONTROL_BOTH, 1, 1);
 
@@ -61,17 +61,17 @@ test_segment_control(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *e
    it4 = elm_segment_control_item_add(segment2, NULL, "SegmentItem");
 
    ic2 = elm_icon_add(in_layout);
-   snprintf(buf3, sizeof(buf3), "%s/images/logo.png", PACKAGE_DATA_DIR);
+   snprintf(buf3, sizeof(buf3), "%s/images/logo.png", elm_app_data_dir_get());
    elm_icon_file_set(ic2, buf3, NULL);
    evas_object_size_hint_aspect_set(ic2, EVAS_ASPECT_CONTROL_BOTH, 1, 1);
 
    ic3 = elm_icon_add(in_layout);
-   snprintf(buf4, sizeof(buf4), "%s/images/logo.png", PACKAGE_DATA_DIR);
+   snprintf(buf4, sizeof(buf4), "%s/images/logo.png", elm_app_data_dir_get());
    elm_icon_file_set(ic3, buf4, NULL);
    evas_object_size_hint_aspect_set(ic3, EVAS_ASPECT_CONTROL_BOTH, 1, 1);
 
    ic4 = elm_icon_add(in_layout);
-   snprintf(buf5, sizeof(buf5), "%s/images/logo.png", PACKAGE_DATA_DIR);
+   snprintf(buf5, sizeof(buf5), "%s/images/logo.png", elm_app_data_dir_get());
    elm_icon_file_set(ic4, buf5, NULL);
    evas_object_size_hint_aspect_set(ic4, EVAS_ASPECT_CONTROL_BOTH, 1, 1);
 
@@ -82,7 +82,7 @@ test_segment_control(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *e
    it3 = elm_segment_control_item_add(segment3, ic4, NULL);
 
    ic5 = elm_icon_add(in_layout);
-   snprintf(buf6, sizeof(buf6), "%s/images/logo.png", PACKAGE_DATA_DIR);
+   snprintf(buf6, sizeof(buf6), "%s/images/logo.png", elm_app_data_dir_get());
    elm_icon_file_set(ic5, buf6, NULL);
    evas_object_size_hint_aspect_set(ic5, EVAS_ASPECT_CONTROL_BOTH, 1, 1);
 

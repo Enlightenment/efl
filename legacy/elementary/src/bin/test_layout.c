@@ -51,7 +51,7 @@ test_layout(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    elm_layout_end_set(ly, bt);
 
    ly = elm_layout_add(win);
-   snprintf(buf, sizeof(buf), "%s/objects/test.edj", PACKAGE_DATA_DIR);
+   snprintf(buf, sizeof(buf), "%s/objects/test.edj", elm_app_data_dir_get());
    elm_layout_file_set(ly, buf, "layout");
    evas_object_size_hint_weight_set(ly, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_box_pack_end(box, ly);

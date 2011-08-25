@@ -67,12 +67,12 @@ test_list(void        *data __UNUSED__,
    evas_object_size_hint_weight_set(li, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
 
    ic = elm_icon_add(win);
-   snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
+   snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
    elm_icon_file_set(ic, buf, NULL);
    elm_icon_scale_set(ic, 1, 1);
    it1 = elm_list_item_append(li, "Hello", ic, NULL, NULL, NULL);
    ic = elm_icon_add(win);
-   snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
+   snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
    elm_icon_scale_set(ic, 0, 0);
    elm_icon_file_set(ic, buf, NULL);
    elm_list_item_append(li, "world", ic, NULL, NULL, NULL);
@@ -93,7 +93,7 @@ test_list(void        *data __UNUSED__,
    elm_box_horizontal_set(bx, EINA_TRUE);
 
    ic = elm_icon_add(win);
-   snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
+   snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
    elm_icon_file_set(ic, buf, NULL);
    elm_icon_scale_set(ic, 0, 0);
    evas_object_size_hint_align_set(ic, 0.5, 0.5);
@@ -101,7 +101,7 @@ test_list(void        *data __UNUSED__,
    evas_object_show(ic);
 
    ic = elm_icon_add(win);
-   snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
+   snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
    elm_icon_file_set(ic, buf, NULL);
    elm_icon_scale_set(ic, 0, 0);
    evas_object_size_hint_align_set(ic, 0.5, 0.0);
@@ -109,7 +109,7 @@ test_list(void        *data __UNUSED__,
    evas_object_show(ic);
 
    ic = elm_icon_add(win);
-   snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
+   snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
    elm_icon_file_set(ic, buf, NULL);
    elm_icon_scale_set(ic, 0, 0);
    evas_object_size_hint_align_set(ic, 0.0, EVAS_HINT_EXPAND);
@@ -215,12 +215,12 @@ test_list_horizontal(void        *data __UNUSED__,
    evas_object_size_hint_weight_set(li, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
 
    ic = elm_icon_add(win);
-   snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
+   snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
    elm_icon_file_set(ic, buf, NULL);
    elm_icon_scale_set(ic, 1, 1);
    it1 = elm_list_item_append(li, "Hello", ic, NULL, NULL, NULL);
    ic = elm_icon_add(win);
-   snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
+   snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
    elm_icon_scale_set(ic, 0, 0);
    elm_icon_file_set(ic, buf, NULL);
    elm_list_item_append(li, "world", ic, NULL, NULL, NULL);
@@ -240,7 +240,7 @@ test_list_horizontal(void        *data __UNUSED__,
    bx = elm_box_add(win);
 
    ic = elm_icon_add(win);
-   snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
+   snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
    elm_icon_file_set(ic, buf, NULL);
    elm_icon_scale_set(ic, 0, 0);
    evas_object_size_hint_align_set(ic, 0.5, 0.5);
@@ -248,7 +248,7 @@ test_list_horizontal(void        *data __UNUSED__,
    evas_object_show(ic);
 
    ic = elm_icon_add(win);
-   snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
+   snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
    elm_icon_file_set(ic, buf, NULL);
    elm_icon_scale_set(ic, 0, 0);
    evas_object_size_hint_align_set(ic, 0.5, 0.0);
@@ -352,7 +352,7 @@ test_list2(void        *data __UNUSED__,
    elm_win_autodel_set(win, EINA_TRUE);
 
    bg = elm_bg_add(win);
-   snprintf(buf, sizeof(buf), "%s/images/plant_01.jpg", PACKAGE_DATA_DIR);
+   snprintf(buf, sizeof(buf), "%s/images/plant_01.jpg", elm_app_data_dir_get());
    elm_bg_file_set(bg, buf, NULL);
    elm_win_resize_object_add(win, bg);
    evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -370,12 +370,12 @@ test_list2(void        *data __UNUSED__,
 //   elm_list_multi_select_set(li, 1);
 
    ic = elm_icon_add(win);
-   snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
+   snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
    elm_icon_file_set(ic, buf, NULL);
    it = elm_list_item_append(li, "Hello", ic, NULL, my_li2_sel, NULL);
    elm_list_item_selected_set(it, 1);
    ic = elm_icon_add(win);
-   snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
+   snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
    elm_icon_scale_set(ic, 0, 0);
    elm_icon_file_set(ic, buf, NULL);
    elm_list_item_append(li, "world", ic, NULL, NULL, NULL);
@@ -396,7 +396,7 @@ test_list2(void        *data __UNUSED__,
    elm_box_horizontal_set(bx2, EINA_TRUE);
 
    ic = elm_icon_add(win);
-   snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
+   snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
    elm_icon_file_set(ic, buf, NULL);
    elm_icon_scale_set(ic, 0, 0);
    evas_object_size_hint_align_set(ic, 0.5, 0.5);
@@ -404,7 +404,7 @@ test_list2(void        *data __UNUSED__,
    evas_object_show(ic);
 
    ic = elm_icon_add(win);
-   snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
+   snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
    elm_icon_file_set(ic, buf, NULL);
    elm_icon_scale_set(ic, 0, 0);
    evas_object_size_hint_align_set(ic, 0.5, 0.0);
@@ -492,7 +492,7 @@ test_list3(void        *data __UNUSED__,
    elm_list_mode_set(li, ELM_LIST_COMPRESS);
 
    ic = elm_icon_add(win);
-   snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
+   snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
    elm_icon_scale_set(ic, 0, 0);
    elm_icon_file_set(ic, buf, NULL);
    ic2 = elm_button_add(win);
@@ -502,7 +502,7 @@ test_list3(void        *data __UNUSED__,
    elm_list_item_append(li, "Hello", ic, ic2, _it_clicked, NULL);
 
    ic = elm_icon_add(win);
-   snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
+   snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
    elm_icon_scale_set(ic, 0, 0);
    elm_icon_file_set(ic, buf, NULL);
    ic2 = elm_button_add(win);
@@ -527,7 +527,7 @@ test_list3(void        *data __UNUSED__,
    elm_box_horizontal_set(bx, EINA_TRUE);
 
    ic = elm_icon_add(win);
-   snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
+   snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
    elm_icon_file_set(ic, buf, NULL);
    elm_icon_scale_set(ic, 0, 0);
    evas_object_size_hint_align_set(ic, 0.5, 0.5);
@@ -535,7 +535,7 @@ test_list3(void        *data __UNUSED__,
    evas_object_show(ic);
 
    ic = elm_icon_add(win);
-   snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
+   snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
    elm_icon_file_set(ic, buf, NULL);
    elm_icon_scale_set(ic, 0, 0);
    evas_object_size_hint_align_set(ic, 0.5, 0.0);
@@ -543,7 +543,7 @@ test_list3(void        *data __UNUSED__,
    evas_object_show(ic);
 
    ic = elm_icon_add(win);
-   snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
+   snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
    elm_icon_file_set(ic, buf, NULL);
    elm_icon_scale_set(ic, 0, 0);
    evas_object_size_hint_align_set(ic, 0.0, EVAS_HINT_EXPAND);
@@ -674,7 +674,7 @@ test_list4(void        *data __UNUSED__,
                            "line-up, Floyd went on to achieve worldwide critical and commercial success with the "        \
                            "conceptalbums The Dark Side of the Moon, Wish You Were Here, Animals, and The Wall.";
    ic = elm_icon_add(win);
-   snprintf(buf, sizeof(buf), "%s/images/mystrale.jpg", PACKAGE_DATA_DIR);
+   snprintf(buf, sizeof(buf), "%s/images/mystrale.jpg", elm_app_data_dir_get());
    elm_icon_scale_set(ic, 0, 0);
    elm_icon_file_set(ic, buf, NULL);
    elm_list_item_append(li, "Pink Floyd", ic, NULL, NULL, &pf_data);
@@ -691,7 +691,7 @@ test_list4(void        *data __UNUSED__,
                            "self-effacing approach to rock and roll, Dire Straits soon became hugely successful, with " \
                            "their first album going multi-platinum globally.";
    ic = elm_icon_add(win);
-   snprintf(buf, sizeof(buf), "%s/images/mystrale_2.jpg", PACKAGE_DATA_DIR);
+   snprintf(buf, sizeof(buf), "%s/images/mystrale_2.jpg", elm_app_data_dir_get());
    elm_icon_scale_set(ic, 0, 0);
    elm_icon_file_set(ic, buf, NULL);
    elm_list_item_append(li, "Dire Straits", ic, NULL, NULL, &ds_data);
@@ -703,7 +703,7 @@ test_list4(void        *data __UNUSED__,
                            "Germany, the Netherlands, Scandinavia, the Balkans, Japan and Russia, where they still "    \
                            "perform at stadium-sized venues.";
    ic = elm_icon_add(win);
-   snprintf(buf, sizeof(buf), "%s/images/icon_17.png", PACKAGE_DATA_DIR);
+   snprintf(buf, sizeof(buf), "%s/images/icon_17.png", elm_app_data_dir_get());
    elm_icon_scale_set(ic, 1, 1);
    elm_icon_file_set(ic, buf, NULL);
    elm_list_item_append(li, "Uriah Heep", ic, NULL, NULL, &uh_data);
@@ -715,7 +715,7 @@ test_list4(void        *data __UNUSED__,
                           "achieving their current form when Peart replaced original drummer John Rutsey in July 1974, " \
                           "two weeks before the group's first United States tour.";
    ic = elm_icon_add(win);
-   snprintf(buf, sizeof(buf), "%s/images/icon_21.png", PACKAGE_DATA_DIR);
+   snprintf(buf, sizeof(buf), "%s/images/icon_21.png", elm_app_data_dir_get());
    elm_icon_scale_set(ic, 0, 0);
    elm_icon_file_set(ic, buf, NULL);
    ic2 = elm_icon_add(win);

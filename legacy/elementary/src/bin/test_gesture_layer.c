@@ -237,6 +237,7 @@ Photo_Object *
 photo_object_add(Evas_Object *parent, Evas_Object *ic, const char *icon, Evas_Coord x,
       Evas_Coord y, Evas_Coord w, Evas_Coord h, int angle)
 {
+   char buf[PATH_MAX];
    Photo_Object *po;
    po = calloc(1, sizeof(*po));
    po->base_zoom = po->zoom = BASE_ZOOM;
@@ -259,7 +260,8 @@ photo_object_add(Evas_Object *parent, Evas_Object *ic, const char *icon, Evas_Co
    /* Add shadow */
      {
         po->shadow = elm_icon_add(po->ic);
-        elm_icon_file_set(po->shadow, PACKAGE_DATA_DIR "/images/pol_shadow.png", NULL);
+        snprintf(buf, sizeof(buf), "%s/images/pol_shadow.png", elm_app_data_dir_get());
+        elm_icon_file_set(po->shadow, buf, NULL);
         evas_object_resize(po->shadow, SHADOW_W, SHADOW_H);
         evas_object_show(po->shadow);
      }
@@ -300,6 +302,7 @@ test_gesture_layer(void *data __UNUSED__, Evas_Object *obj __UNUSED__,
 {
    Evas_Coord w, h;
    Evas_Object *win, *bg;
+   char buf[PATH_MAX];
 
    w = 480;
    h = 800;
@@ -310,14 +313,16 @@ test_gesture_layer(void *data __UNUSED__, Evas_Object *obj __UNUSED__,
    evas_object_resize(win, w, h);
 
    bg = elm_bg_add(win);
-   elm_bg_file_set(bg, PACKAGE_DATA_DIR "/images/wood_01.jpg", NULL);
+   snprintf(buf, sizeof(buf), "%s/images/wood_01.jpg", elm_app_data_dir_get());
+   elm_bg_file_set(bg, buf, NULL);
    elm_win_resize_object_add(win, bg);
    evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_show(bg);
 
-
-   photo_object_add(win, NULL, PACKAGE_DATA_DIR "/images/pol_sky.png", 200, 200, 365, 400, 0);
-   photo_object_add(win, NULL, PACKAGE_DATA_DIR "/images/pol_twofish.png", 40, 300, 365, 400, 45);
+    snprintf(buf, sizeof(buf), "%s/images/pol_sky.png", elm_app_data_dir_get());
+   photo_object_add(win, NULL, buf, 200, 200, 365, 400, 0);
+   snprintf(buf, sizeof(buf), "%s/images/pol_twofish.png", elm_app_data_dir_get());
+   photo_object_add(win, NULL, buf, 40, 300, 365, 400, 45);
 
    Evas_Object *en = elm_entry_add(win);
    elm_entry_entry_set(en, "You can use whatever object you want, "
@@ -325,7 +330,8 @@ test_gesture_layer(void *data __UNUSED__, Evas_Object *obj __UNUSED__,
    elm_entry_line_wrap_set(en, ELM_WRAP_MIXED);
 
    Evas_Object *postit = elm_layout_add(win);
-   elm_layout_file_set(postit, PACKAGE_DATA_DIR "/objects/postit_ent.edj", "main");
+   snprintf(buf, sizeof(buf), "%s/objects/postit_ent.edj", elm_app_data_dir_get());
+   elm_layout_file_set(postit, buf, "main");
    elm_layout_content_set(postit, "ent", en);
 
    photo_object_add(win, postit, NULL, 50, 50, 382, 400, 355);

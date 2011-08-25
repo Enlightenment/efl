@@ -854,7 +854,7 @@ test_flip_page(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
 
    im2 = evas_object_image_filled_add(evas_object_evas_get(win));
    snprintf(buf, sizeof(buf), "%s/images/%s",
-            PACKAGE_DATA_DIR, "sky_04.jpg");
+            elm_app_data_dir_get(), "sky_04.jpg");
    evas_object_image_file_set(im2, buf, NULL);
    evas_object_move(im2, 40, 40);
    evas_object_resize(im2, 400, 400);
@@ -862,12 +862,12 @@ test_flip_page(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
 
 #if 0
    im = elm_layout_add(win);
-   snprintf(buf, sizeof(buf), "%s/objects/test.edj", PACKAGE_DATA_DIR);
+   snprintf(buf, sizeof(buf), "%s/objects/test.edj", elm_app_data_dir_get());
    elm_layout_file_set(im, buf, "layout");
 #else
    im = evas_object_image_filled_add(evas_object_evas_get(win));
    snprintf(buf, sizeof(buf), "%s/images/%s",
-            PACKAGE_DATA_DIR, "twofish.jpg");
+            elm_app_data_dir_get(), "twofish.jpg");
    evas_object_image_file_set(im, buf, NULL);
 #endif
    evas_object_move(im, 40, 40);

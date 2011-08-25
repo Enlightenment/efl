@@ -22,7 +22,7 @@ _cb_overlay_changed(void *data, Evas_Object *obj, void *event __UNUSED__)
         Evas_Object *parent, *over;
         char buff[PATH_MAX];
 
-        snprintf(buff, sizeof(buff), "%s/objects/test.edj", PACKAGE_DATA_DIR);
+        snprintf(buff, sizeof(buff), "%s/objects/test.edj", elm_app_data_dir_get());
         parent = elm_object_parent_widget_get(o_bg);
         over = edje_object_add(evas_object_evas_get(parent));
         edje_object_file_set(over, buff, "bg_overlay");
@@ -90,7 +90,7 @@ test_bg_image(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    elm_win_autodel_set(win, EINA_TRUE);
 
    bg = elm_bg_add(win);
-   snprintf(buf, sizeof(buf), "%s/images/plant_01.jpg", PACKAGE_DATA_DIR);
+   snprintf(buf, sizeof(buf), "%s/images/plant_01.jpg", elm_app_data_dir_get());
    elm_bg_file_set(bg, buf, NULL);
    evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_win_resize_object_add(win, bg);
@@ -125,7 +125,7 @@ test_bg_options(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_
    evas_object_show(box);
 
    o_bg = elm_bg_add(win);
-   snprintf(buf, sizeof(buf), "%s/images/plant_01.jpg", PACKAGE_DATA_DIR);
+   snprintf(buf, sizeof(buf), "%s/images/plant_01.jpg", elm_app_data_dir_get());
    elm_bg_file_set(o_bg, buf, NULL);
    evas_object_size_hint_weight_set(o_bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(o_bg, EVAS_HINT_FILL, EVAS_HINT_FILL);

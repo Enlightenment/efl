@@ -113,16 +113,16 @@ _transit_image_animation(void *data, Evas_Object *obj __UNUSED__, void *event_in
    Elm_Transit *trans;
    Evas_Object *ic = data;
 
-   snprintf(buf, sizeof(buf), "%s/images/icon_19.png", PACKAGE_DATA_DIR);
+   snprintf(buf, sizeof(buf), "%s/images/icon_19.png", elm_app_data_dir_get());
    images = eina_list_append(images, eina_stringshare_add(buf));
 
-   snprintf(buf, sizeof(buf), "%s/images/icon_00.png", PACKAGE_DATA_DIR);
+   snprintf(buf, sizeof(buf), "%s/images/icon_00.png", elm_app_data_dir_get());
    images = eina_list_append(images, eina_stringshare_add(buf));
 
-   snprintf(buf, sizeof(buf), "%s/images/icon_11.png", PACKAGE_DATA_DIR);
+   snprintf(buf, sizeof(buf), "%s/images/icon_11.png", elm_app_data_dir_get());
    images = eina_list_append(images, eina_stringshare_add(buf));
 
-   snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
+   snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
    images = eina_list_append(images, eina_stringshare_add(buf));
 
    trans = elm_transit_add();
@@ -249,7 +249,7 @@ test_transit(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_inf
    evas_object_show(bx);
 
    ic = elm_icon_add(win);
-   snprintf(buf, sizeof(buf), "%s/images/icon_11.png", PACKAGE_DATA_DIR);
+   snprintf(buf, sizeof(buf), "%s/images/icon_11.png", elm_app_data_dir_get());
    elm_icon_file_set(ic, buf, NULL);
    evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
 
@@ -368,6 +368,7 @@ void
 test_transit5(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *win, *bg, *bt, *bt2, *ic;
+   char buf[PATH_MAX];
 
    win = elm_win_add(NULL, "transit5", ELM_WIN_BASIC);
    elm_win_title_set(win, "Transit 5");
@@ -380,7 +381,8 @@ test_transit5(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    evas_object_show(bg);
 
    ic = elm_icon_add(win);
-   elm_icon_file_set(ic, PACKAGE_DATA_DIR"/images/rock_01.jpg", NULL);
+   snprintf(buf, sizeof(buf), "%s/images/rock_01.jpg", elm_app_data_dir_get());
+   elm_icon_file_set(ic, buf, NULL);
    evas_object_size_hint_max_set(ic, 50, 50);
 
    bt = elm_button_add(win);
@@ -391,7 +393,8 @@ test_transit5(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    evas_object_show(bt);
 
    ic = elm_icon_add(win);
-   elm_icon_file_set(ic, PACKAGE_DATA_DIR"/images/rock_02.jpg", NULL);
+   snprintf(buf, sizeof(buf), "%s/images/rock_02.jpg", elm_app_data_dir_get());
+   elm_icon_file_set(ic, buf, NULL);
    evas_object_size_hint_max_set(ic, 50, 50);
 
    bt2 = elm_button_add(win);
@@ -411,6 +414,7 @@ void
 test_transit6(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *win, *bg, *bt, *bt2, *ic;
+   char buf[PATH_MAX];
 
    win = elm_win_add(NULL, "transit6", ELM_WIN_BASIC);
    elm_win_title_set(win, "Transit 6");
@@ -423,7 +427,8 @@ test_transit6(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    evas_object_show(bg);
 
    ic = elm_icon_add(win);
-   elm_icon_file_set(ic, PACKAGE_DATA_DIR"/images/rock_01.jpg", NULL);
+   snprintf(buf, sizeof(buf), "%s/images/rock_01.jpg", elm_app_data_dir_get());
+   elm_icon_file_set(ic, buf, NULL);
    evas_object_size_hint_max_set(ic, 50, 50);
 
    bt = elm_button_add(win);
@@ -434,7 +439,8 @@ test_transit6(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    evas_object_show(bt);
 
    ic = elm_icon_add(win);
-   elm_icon_file_set(ic, PACKAGE_DATA_DIR"/images/rock_02.jpg", NULL);
+   snprintf(buf, sizeof(buf), "%s/images/rock_02.jpg", elm_app_data_dir_get());
+   elm_icon_file_set(ic, buf, NULL);
    evas_object_size_hint_max_set(ic, 50, 50);
 
    bt2 = elm_button_add(win);

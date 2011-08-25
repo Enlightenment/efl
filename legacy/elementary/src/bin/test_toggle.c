@@ -24,7 +24,7 @@ test_toggle(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    evas_object_show(bx);
 
    ic = elm_icon_add(win);
-   snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
+   snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
    elm_icon_file_set(ic, buf, NULL);
    evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
 
@@ -40,7 +40,7 @@ test_toggle(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    evas_object_show(ic);
 
    ic = elm_icon_add(win);
-   snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
+   snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
    elm_icon_file_set(ic, buf, NULL);
    elm_icon_scale_set(ic, 0, 0);
 
@@ -52,7 +52,7 @@ test_toggle(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    evas_object_show(ic);
 
    ic = elm_icon_add(win);
-   snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
+   snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
    elm_icon_file_set(ic, buf, NULL);
    elm_icon_scale_set(ic, 0, 0);
 
@@ -72,7 +72,7 @@ test_toggle(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    evas_object_show(tg);
 
    ic = elm_icon_add(win);
-   snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
+   snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
    elm_icon_file_set(ic, buf, NULL);
    elm_icon_scale_set(ic, 0, 0);
 

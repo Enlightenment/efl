@@ -47,7 +47,7 @@ _cube_new(Evas *evas, Evas_Coord w, Evas_Coord h, Evas_Coord d)
         o = evas_object_image_add(evas);
         c->side[i].o = o;
         snprintf(buf, sizeof(buf), "%s/images/%s",
-                 PACKAGE_DATA_DIR, "twofish.jpg");
+                 elm_app_data_dir_get(), "twofish.jpg");
         evas_object_image_file_set(o, buf, NULL);
         evas_object_image_fill_set(o, 0, 0, 256, 256);
         evas_object_resize(o, 256, 256);

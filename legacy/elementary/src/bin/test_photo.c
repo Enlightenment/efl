@@ -46,7 +46,7 @@ test_photo(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
           {
              ph = elm_photo_add(win);
              snprintf(buf, sizeof(buf), "%s/images/%s",
-                      PACKAGE_DATA_DIR, img[n]);
+                      elm_app_data_dir_get(), img[n]);
              n++;
              if (n >= 9) n = 0;
              elm_photo_size_set(ph, 80);

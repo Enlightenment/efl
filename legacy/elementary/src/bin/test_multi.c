@@ -101,7 +101,7 @@ test_multi(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
      {
         char buf[PATH_MAX];
 
-        snprintf(buf, sizeof(buf), "%s/objects/multip.edj", PACKAGE_DATA_DIR);
+        snprintf(buf, sizeof(buf), "%s/objects/multip.edj", elm_app_data_dir_get());
         indicator[i] = edje_object_add(evas_object_evas_get(win));
         edje_object_file_set(indicator[i], buf, "point");
      }

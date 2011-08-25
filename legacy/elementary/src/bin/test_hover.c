@@ -47,7 +47,7 @@ test_hover(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
    bx = elm_box_add(win);
 
    ic = elm_icon_add(win);
-   snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
+   snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
    elm_icon_file_set(ic, buf, NULL);
    elm_icon_scale_set(ic, 0, 0);
    elm_box_pack_end(bx, ic);
@@ -129,7 +129,7 @@ test_hover2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    bx = elm_box_add(win);
 
    ic = elm_icon_add(win);
-   snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
+   snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
    elm_icon_file_set(ic, buf, NULL);
    elm_icon_scale_set(ic, 0, 0);
    elm_box_pack_end(bx, ic);

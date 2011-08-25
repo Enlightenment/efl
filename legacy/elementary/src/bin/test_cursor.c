@@ -265,7 +265,7 @@ test_cursor2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_inf
    n = 0;
    for (i = 0; i < 3 * 3; i++)
      {
-        snprintf(buf, sizeof(buf), "%s/images/%s", PACKAGE_DATA_DIR, img[n]);
+        snprintf(buf, sizeof(buf), "%s/images/%s", elm_app_data_dir_get(), img[n]);
         n = (n + 1) % 9;
         ti[i].mode = i;
         ti[i].path = eina_stringshare_add(buf);
@@ -295,7 +295,7 @@ test_cursor3(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_inf
    elm_win_title_set(win, "Cursor 3");
    elm_win_autodel_set(win, EINA_TRUE);
 
-   snprintf(buf, sizeof(buf), "%s/objects/cursors.edj", PACKAGE_DATA_DIR);
+   snprintf(buf, sizeof(buf), "%s/objects/cursors.edj", elm_app_data_dir_get());
    elm_theme_extension_add(NULL, buf);
 
    bg = elm_bg_add(win);
