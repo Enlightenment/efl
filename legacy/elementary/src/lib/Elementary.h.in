@@ -552,6 +552,19 @@ extern "C" {
         ELM_WRAP_LAST
      } Elm_Wrap_Type;
 
+   typedef enum
+     {
+        ELM_INPUT_PANEL_LAYOUT_NORMAL,          /**< Default layout */
+        ELM_INPUT_PANEL_LAYOUT_NUMBER,          /**< Number layout */
+        ELM_INPUT_PANEL_LAYOUT_EMAIL,           /**< Email layout */
+        ELM_INPUT_PANEL_LAYOUT_URL,             /**< URL layout */
+        ELM_INPUT_PANEL_LAYOUT_PHONENUMBER,     /**< Phone Number layout */
+        ELM_INPUT_PANEL_LAYOUT_IP,              /**< IP layout */
+        ELM_INPUT_PANEL_LAYOUT_MONTH,           /**< Month layout */
+        ELM_INPUT_PANEL_LAYOUT_NUMBERONLY,      /**< Number Only layout */
+        ELM_INPUT_PANEL_LAYOUT_INVALID
+     } Elm_Input_Panel_Layout;
+
    /**
     * @typedef Elm_Object_Item
     * An Elementary Object item handle.
@@ -11318,6 +11331,22 @@ extern "C" {
     * elm_entry_entry_set()).
     */
    EAPI void         elm_entry_filter_accept_set(void *data, Evas_Object *entry, char **text) EINA_ARG_NONNULL(1, 3);
+   /**
+    * Set the input panel layout of the entry
+    *
+    * @param obj The entry object
+    * @param layout layout type
+    */
+   EAPI void elm_entry_input_panel_layout_set(Evas_Object *obj, Elm_Input_Panel_Layout layout) EINA_ARG_NONNULL(1);
+   /**
+    * Get the input panel layout of the entry
+    *
+    * @param obj The entry object
+    * @return layout type
+    *
+    * @see elm_entry_input_panel_layout_set
+    */
+   EAPI Elm_Input_Panel_Layout elm_entry_input_panel_layout_get(Evas_Object *obj) EINA_ARG_NONNULL(1);
    /**
     * @}
     */

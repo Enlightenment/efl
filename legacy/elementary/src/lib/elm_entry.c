@@ -45,6 +45,7 @@ struct _Widget_Data
    int cursor_pos;
    Elm_Scroller_Policy policy_h, policy_v;
    Elm_Wrap_Type linewrap;
+   Elm_Input_Panel_Layout input_panel_layout;
    Eina_Bool changed : 1;
    Eina_Bool single_line : 1;
    Eina_Bool password : 1;
@@ -508,6 +509,7 @@ _theme_hook(Evas_Object *obj)
    eina_stringshare_del(t);
    if (elm_widget_disabled_get(obj))
      edje_object_signal_emit(wd->ent, "elm,state,disabled", "elm");
+   edje_object_part_text_input_panel_layout_set(wd->ent, "elm.text", wd->input_panel_layout);
    elm_entry_cursor_pos_set(obj, wd->cursor_pos);
    if (elm_widget_focus_get(obj))
      edje_object_signal_emit(wd->ent, "elm,action,focus", "elm");
@@ -2156,6 +2158,8 @@ elm_entry_add(Evas_Object *parent)
    elm_widget_resize_object_set(obj, wd->ent);
    _sizing_eval(obj);
 
+   elm_entry_input_panel_layout_set(obj, ELM_INPUT_PANEL_LAYOUT_NORMAL);
+
 #ifdef HAVE_ELEMENTARY_X
    top = elm_widget_top_get(obj);
    if ((top) && (elm_win_xwindow_get(top)))
@@ -3169,4 +3173,26 @@ elm_entry_bounce_get(const Evas_Object *obj, Eina_Bool *h_bounce, Eina_Bool *v_b
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
    elm_smart_scroller_bounce_allow_get(wd->scroller, h_bounce, v_bounce);
+}
+
+EAPI void
+elm_entry_input_panel_layout_set(Evas_Object *obj, Elm_Input_Panel_Layout layout)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+
+   wd->input_panel_layout = layout;
+
+   edje_object_part_text_input_panel_layout_set(wd->ent, "elm.text", layout);
+}
+
+EAPI Elm_Input_Panel_Layout
+elm_entry_input_panel_layout_get(Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) ELM_INPUT_PANEL_LAYOUT_INVALID;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return ELM_INPUT_PANEL_LAYOUT_INVALID;
+
+   return wd->input_panel_layout;
 }
