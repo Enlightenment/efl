@@ -1530,7 +1530,7 @@ _signal_anchor_down(void *data, Evas_Object *obj __UNUSED__, const char *emissio
    if (!wd) return;
    p = emission + sizeof("nchor,mouse,down,");
    ei.button = strtol(p, &p2, 10);
-   ei.name = p2;
+   ei.name = p2 + 1;
    ei.x = ei.y = ei.w = ei.h = 0;
 
    _signal_anchor_geoms_do_things_with(wd, &ei);
@@ -1549,7 +1549,7 @@ _signal_anchor_up(void *data, Evas_Object *obj __UNUSED__, const char *emission 
    if (!wd) return;
    p = emission + sizeof("nchor,mouse,up,");
    ei.button = strtol(p, &p2, 10);
-   ei.name = p2;
+   ei.name = p2 + 1;
    ei.x = ei.y = ei.w = ei.h = 0;
 
    _signal_anchor_geoms_do_things_with(wd, &ei);
@@ -1568,7 +1568,7 @@ _signal_anchor_clicked(void *data, Evas_Object *obj __UNUSED__, const char *emis
    if (!wd) return;
    p = emission + sizeof("nchor,mouse,clicked,");
    ei.button = strtol(p, &p2, 10);
-   ei.name = p2;
+   ei.name = p2 + 1;
    ei.x = ei.y = ei.w = ei.h = 0;
 
    _signal_anchor_geoms_do_things_with(wd, &ei);
