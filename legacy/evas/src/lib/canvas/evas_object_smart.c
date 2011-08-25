@@ -333,8 +333,6 @@ _callback_priority_cmp(const void *_a, const void *_b)
    b = (const Evas_Smart_Callback *) _b;
    if (a->priority < b->priority)
       return -1;
-   else if (a->priority == b->priority)
-      return 0;
    else
       return 1;
 }
