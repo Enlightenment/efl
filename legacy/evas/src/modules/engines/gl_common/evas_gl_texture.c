@@ -348,7 +348,7 @@ _pool_tex_render_new(Evas_Engine_GL_Context *gc, int w, int h, int intformat, in
    pt->h = h;
    pt->intformat = intformat;
    pt->format = format;
-   if (intformat == rgba8_ifmt && format == rgba8_fmt)
+   if ((intformat == (int)rgba8_ifmt) && (format == (int)rgba8_fmt))
      pt->dataformat = GL_UNSIGNED_INT_8_8_8_8_REV;
    else
      pt->dataformat = GL_UNSIGNED_BYTE;
@@ -568,17 +568,18 @@ _pool_tex_dynamic_new(Evas_Engine_GL_Context *gc, int w, int h, int intformat, i
    return pt;
 
 /* ERROR HANDLING */
+#if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
 error:
   secsym_eglDestroyImage(egldisplay, pt->dyn.img);
   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
   pt->dyn.img = NULL;
-
   glBindTexture(GL_TEXTURE_2D, 0);
   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
   glDeleteTextures(1, &(pt->texture));
   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
   free(pt);
   return NULL;
+#endif   
 }
 
 void
