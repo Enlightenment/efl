@@ -926,6 +926,27 @@ typedef signed long int  GLsizeiptr;   // Changed khronos_ssize_t
 
 #define GL_INVALID_FRAMEBUFFER_OPERATION  0x0506
 
+//---------------------------//
+// GLES extension defines
+
+/* GL_EXT_read_format_bgra */
+#ifndef GL_EXT_read_format_bgra
+#define GL_BGRA_EXT                                             0x80E1
+#define GL_UNSIGNED_SHORT_4_4_4_4_REV_EXT                       0x8365
+#define GL_UNSIGNED_SHORT_1_5_5_5_REV_EXT                       0x8366
+#endif
+
+/* GL_EXT_texture_filter_anisotropic */
+#ifndef GL_EXT_texture_filter_anisotropic
+#define GL_TEXTURE_MAX_ANISOTROPY_EXT                           0x84FE
+#define GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT                       0x84FF
+#endif
+
+/* GL_EXT_texture_format_BGRA8888 */
+#ifndef GL_EXT_texture_format_BGRA8888
+#define GL_BGRA_EXT                                             0x80E1
+#endif
+
 #else
 # ifndef EVAS_GL_NO_GL_H_CHECK
 #  error "You may only include either Evas_GL.h OR use your native OpenGL's headers. If you use Evas to do GL, then you cannot use the native gl headers."

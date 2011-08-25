@@ -62,13 +62,15 @@ struct _Render_Engine_GL_Context
 #else
    GLXContext  context;
 #endif
-   GLuint      fbo;
+   GLuint      context_fbo;     
+   GLuint      current_fbo;
 
    Render_Engine_GL_Surface   *current_sfc;
 };
 
 static int initted = 0;
 static int gl_wins = 0;
+static Render_Engine_GL_Context *current_evgl_ctx;
 
 #if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
 
@@ -539,6 +541,7 @@ eng_output_redraws_rect_add(void *data, int x, int y, int w, int h)
    Render_Engine *re;
 
    re = (Render_Engine *)data;
+   eng_window_use(re->win);
    evas_gl_common_context_resize(re->win->gl_context, re->win->w, re->win->h, re->win->rot);
    /* smple bounding box */
    RECTS_CLIP_TO_RECT(x, y, w, h, 0, 0, re->win->w, re->win->h);
@@ -2257,7 +2260,7 @@ _attach_fbo_surface(Render_Engine *data __UNUSED__,
    int fb_status;
 
    // FBO
-   glBindFramebuffer(GL_FRAMEBUFFER, ctx->fbo);
+   glBindFramebuffer(GL_FRAMEBUFFER, ctx->context_fbo);
    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
                           GL_TEXTURE_2D, sfc->rt_tex, 0);
 
@@ -2492,7 +2495,7 @@ eng_gl_context_create(void *data, void *share_context)
 #endif
 
    ctx->initialized = 0;
-   ctx->fbo = 0;
+   ctx->context_fbo = 0;
    ctx->current_sfc = NULL;
 
    return ctx;
@@ -2523,8 +2526,8 @@ eng_gl_context_destroy(void *data, void *context)
      }
 
    // 2. Delete the FBO
-   if (glIsBuffer(ctx->fbo))
-     glDeleteBuffers(1, &ctx->fbo);
+   if (glIsBuffer(ctx->context_fbo))
+     glDeleteBuffers(1, &ctx->context_fbo);
 
    // 3. Destroy the Context
 #if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
@@ -2565,28 +2568,6 @@ eng_gl_make_current(void *data, void *surface, void *context)
    sfc = (Render_Engine_GL_Surface*)surface;
    ctx = (Render_Engine_GL_Context*)context;
 
-   // Flush remainder of what's in Evas' pipeline
-   if (re->win)
-     {
-#if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
-        if ((eglGetCurrentContext() == re->win->egl_context[0]) ||
-            (eglGetCurrentSurface(EGL_READ) == re->win->egl_surface[0]) ||
-            (eglGetCurrentSurface(EGL_DRAW) == re->win->egl_surface[0]))
-          {
-             evas_gl_common_context_use(re->win->gl_context);
-             evas_gl_common_context_flush(re->win->gl_context);
-          }
-#else
-        if (glXGetCurrentContext() == re->win->context)
-          {
-             evas_gl_common_context_use(re->win->gl_context);
-             evas_gl_common_context_flush(re->win->gl_context);
-          }
-#endif
-        eng_window_use(NULL);
-        evas_gl_common_context_use(NULL);
-     }
-
    // Unset surface/context
    if ((!sfc) || (!ctx))
      {
@@ -2601,53 +2582,86 @@ eng_gl_make_current(void *data, void *surface, void *context)
              ERR("xxxMakeCurrent() failed!");
              return 0;
           }
+
+        ctx->current_sfc = NULL;
+        sfc->current_ctx = NULL;
+        current_evgl_ctx = NULL;
         return ret;
      }
 
    // Don't do a make current if it's already current
-   ret = 1;
 #if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
-   if ((eglGetCurrentContext() != ctx->context))
-      ret = eglMakeCurrent(re->win->egl_disp, re->win->egl_surface[0],
-                           re->win->egl_surface[0], ctx->context);
+   if ((eglGetCurrentContext() == ctx->context) && 
+       (eglGetCurrentSurface(EGL_READ) == re->win->egl_surface[0]) &&
+       (eglGetCurrentSurface(EGL_DRAW) == re->win->egl_surface[0]) ) 
+     {
+
+        DBG("Context same\n");
+        return 1;
+     }
 #else
-   if (glXGetCurrentContext() != ctx->context)
-      ret = glXMakeCurrent(re->info->info.display, re->win->win, ctx->context);
+   if ((glXGetCurrentContext() == ctx->context) &&
+       (glXGetCurrentDrawable() == re->win->win) )
+     {
+        DBG("Context same\n");
+        return 1;
+     }
 #endif
+
+
+   // Flush remainder of what's in Evas' pipeline
+   if (re->win)
+      eng_window_use(NULL);
+
+
+   // Set the context current
+#if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
+   ret = eglMakeCurrent(re->win->egl_disp, re->win->egl_surface[0], 
+                              re->win->egl_surface[0], ctx->context);
    if (!ret)
      {
         ERR("xxxMakeCurrent() failed!");
         return 0;
      }
+#else
+   ret = glXMakeCurrent(re->info->info.display, re->win->win, ctx->context);
+   if (!ret) 
+     {
+        ERR("xxxMakeCurrent() failed!");
+        return 0;
+     }
+#endif
 
    // Create FBO if not already created
    if (!ctx->initialized)
      {
-        glGenFramebuffers(1, &ctx->fbo);
+        glGenFramebuffers(1, &ctx->context_fbo);
         ctx->initialized = 1;
      }
 
    // Attach FBO if it hasn't been attached or if surface changed
-   if ((!sfc->fbo_attached) || (ctx != sfc->current_ctx))
+   if ((!sfc->fbo_attached) || (ctx->current_sfc != sfc))
      {
         if (!_attach_fbo_surface(re, sfc, ctx))
           {
              ERR("_attach_fbo_surface() failed.");
              return 0;
           }
+
+        if (ctx->current_fbo)
+           // Bind to the previously bound buffer
+           glBindFramebuffer(GL_FRAMEBUFFER, ctx->current_fbo);
+        else
+           // Bind FBO
+           glBindFramebuffer(GL_FRAMEBUFFER, ctx->context_fbo);
+
         sfc->fbo_attached = 1;
      }
 
    // Set the current surface/context
    ctx->current_sfc = sfc;
    sfc->current_ctx = ctx;
-
-   // Bind FBO
-   glBindFramebuffer(GL_FRAMEBUFFER, ctx->fbo);
-#if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
-#else
-   //glDrawBuffer(GL_COLOR_ATTACHMENT0);
-#endif
+   current_evgl_ctx = ctx; 
 
    return 1;
 }
@@ -2692,14 +2706,32 @@ eng_gl_native_surface_get(void *data, void *surface, void *native_surface)
 static void
 evgl_glBindFramebuffer(GLenum target, GLuint framebuffer)
 {
-   // Add logic to take care when framebuffer=0
-   glBindFramebuffer(target, framebuffer);
+   Render_Engine_GL_Context *ctx = current_evgl_ctx;
+
+   // Take care of BindFramebuffer 0 issue
+   if (framebuffer==0)
+     {
+        if (ctx)
+          {
+             glBindFramebuffer(target, ctx->context_fbo);
+             ctx->current_fbo = 0;
+          }
+     }
+   else
+     {
+        glBindFramebuffer(target, framebuffer);
+
+        // Save this for restore when doing make current
+        if (ctx)
+           ctx->current_fbo = framebuffer;
+     }
 }
 
 static void
 evgl_glBindRenderbuffer(GLenum target, GLuint renderbuffer)
 {
    // Add logic to take care when renderbuffer=0
+   // On a second thought we don't need this
    glBindRenderbuffer(target, renderbuffer);
 }
 
