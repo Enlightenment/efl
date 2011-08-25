@@ -965,6 +965,10 @@ evas_object_image_data_get(const Evas_Object *obj, Eina_Bool for_writing)
 								  for_writing,
 								  &data,
                                                                   &o->load_error);
+
+   /* if we fail to get engine_data, we have to return NULL */
+   if (!o->engine_data) return NULL;
+
    if (o->engine_data)
      {
         int stride = 0;

@@ -524,73 +524,37 @@ _pool_tex_dynamic_new(Evas_Engine_GL_Context *gc, int w, int h, int intformat, i
                                        0, attr);
    if (!pt->dyn.img)
      {
+        glBindTexture(GL_TEXTURE_2D, 0);
         GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-        return pt;
+        glDeleteTextures(1, &(pt->texture));
+        GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+        free(pt);
+        return NULL;
      }
    if (secsym_eglGetImageAttribSEC(egldisplay,
                                    pt->dyn.img,
                                    EGL_MAP_GL_TEXTURE_WIDTH_SEC,
-                                   &(pt->dyn.w)) != EGL_TRUE)
-     {
-        secsym_eglDestroyImage(egldisplay, pt->dyn.img);
-        pt->dyn.img = NULL;
-        GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-        return pt;
-     }
+                                   &(pt->dyn.w)) != EGL_TRUE) goto error;
    if (secsym_eglGetImageAttribSEC(egldisplay,
                                    pt->dyn.img,
                                    EGL_MAP_GL_TEXTURE_HEIGHT_SEC,
-                                   &(pt->dyn.h)) != EGL_TRUE)
-     {
-        secsym_eglDestroyImage(egldisplay, pt->dyn.img);
-        pt->dyn.img = NULL;
-        GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-        return pt;
-     }
+                                   &(pt->dyn.h)) != EGL_TRUE) goto error;
    if (secsym_eglGetImageAttribSEC(egldisplay,
                                    pt->dyn.img,
                                    EGL_MAP_GL_TEXTURE_STRIDE_IN_BYTES_SEC,
-                                   &(pt->dyn.stride)) != EGL_TRUE)
-     {
-        secsym_eglDestroyImage(egldisplay, pt->dyn.img);
-        pt->dyn.img = NULL;
-        GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-        return pt;
-     }
+                                   &(pt->dyn.stride)) != EGL_TRUE) goto error;
    if (secsym_eglGetImageAttribSEC(egldisplay,
                                    pt->dyn.img,
                                    EGL_MAP_GL_TEXTURE_FORMAT_SEC,
-                                   &(fmt)) != EGL_TRUE)
-     {
-        secsym_eglDestroyImage(egldisplay, pt->dyn.img);
-        pt->dyn.img = NULL;
-        GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-        return pt;
-     }
-   if (fmt != EGL_MAP_GL_TEXTURE_RGBA_SEC)
-     {
-        secsym_eglDestroyImage(egldisplay, pt->dyn.img);
-        pt->dyn.img = NULL;
-        GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-        return pt;
-     }
+                                   &(fmt)) != EGL_TRUE) goto error;
+   if (fmt != EGL_MAP_GL_TEXTURE_RGBA_SEC) goto error;
+
    if (secsym_eglGetImageAttribSEC(egldisplay,
                                    pt->dyn.img,
                                    EGL_MAP_GL_TEXTURE_PIXEL_TYPE_SEC,
-                                   &(pixtype)) != EGL_TRUE)
-     {
-        secsym_eglDestroyImage(egldisplay, pt->dyn.img);
-        pt->dyn.img = NULL;
-        GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-        return pt;
-     }
-   if (pixtype != EGL_MAP_GL_TEXTURE_UNSIGNED_BYTE_SEC)
-     {
-        secsym_eglDestroyImage(egldisplay, pt->dyn.img);
-        pt->dyn.img = NULL;
-        GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-        return pt;
-     }
+                                   &(pixtype)) != EGL_TRUE) goto error;
+
+   if (pixtype != EGL_MAP_GL_TEXTURE_UNSIGNED_BYTE_SEC) goto error;
 
    glBindTexture(GL_TEXTURE_2D, gc->pipe[0].shader.cur_tex);
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
@@ -602,6 +566,19 @@ _pool_tex_dynamic_new(Evas_Engine_GL_Context *gc, int w, int h, int intformat, i
    format = 0;
 #endif
    return pt;
+
+/* ERROR HANDLING */
+error:
+  secsym_eglDestroyImage(egldisplay, pt->dyn.img);
+  GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+  pt->dyn.img = NULL;
+
+  glBindTexture(GL_TEXTURE_2D, 0);
+  GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+  glDeleteTextures(1, &(pt->texture));
+  GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+  free(pt);
+  return NULL;
 }
 
 void

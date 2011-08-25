@@ -1797,6 +1797,16 @@ eng_image_data_get(void *data, void *image, int to_write, DATA32 **image_data, i
    eng_window_use(re->win);
 #endif
 
+   /* Engine can be fail to create texture after cache drop like eng_image_content_hint_set function,
+        so it is need to add code which check im->im's NULL value*/ 
+
+   if (!im->im)
+    {
+       *image_data = NULL;
+       if (err) *err = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
+       return NULL;
+    }
+
    error = evas_cache_image_load_data(&im->im->cache_entry);
    switch (im->cs.space)
      {
@@ -1816,7 +1826,7 @@ eng_image_data_get(void *data, void *image, int to_write, DATA32 **image_data, i
 		    {
 		       *image_data = NULL;
                        if (err) *err = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
-		       return im;
+   		       return NULL;
 		    }
 		  evas_gl_common_image_free(im);
 		  im = im_new;
