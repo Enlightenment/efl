@@ -676,7 +676,7 @@ _smart_bounce_x_animator(void *data)
           {
              if (sd->down.momentum_animator)
                sd->down.bounce_x_hold = 1;
-             else if ((!sd->down.bounce_y_animator) &&
+             if ((!sd->down.bounce_y_animator) &&
                       (!sd->scrollto.y.animator))
                _smart_anim_stop(sd->smart_obj);
              sd->down.bounce_x_animator = NULL;
@@ -714,7 +714,7 @@ _smart_bounce_y_animator(void *data)
           {
              if (sd->down.momentum_animator)
                sd->down.bounce_y_hold = 1;
-             else if ((!sd->down.bounce_x_animator) &&
+             if ((!sd->down.bounce_x_animator) &&
                  (!sd->scrollto.y.animator))
                _smart_anim_stop(sd->smart_obj);
              sd->down.bounce_y_animator = NULL;
