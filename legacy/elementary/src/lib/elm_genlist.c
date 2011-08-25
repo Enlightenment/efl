@@ -3791,6 +3791,7 @@ elm_genlist_clear(Evas_Object *obj)
         evas_object_smart_callback_call(wd->pan_smart, "changed", NULL);
      }
    _sizing_eval(obj);
+   elm_smart_scroller_child_region_show(wd->scr, 0, 0, 0, 0);
    evas_event_thaw(evas_object_evas_get(wd->obj));
    evas_event_thaw_eval(evas_object_evas_get(wd->obj));
 }
