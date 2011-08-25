@@ -296,6 +296,8 @@ Recommended reading:
 @author Myoungwoon Roy Kim(roy_kim) <myoungwoon.kim@@samsung.com> <myoungwoon@@gmail.com>
 @author Thierry el Borgi <thierry@@substantiel.fr>
 @author ChunEon Park <hermet@@hermet.pe.kr>
+@author Christopher 'devilhorns' Michael <cpmichael1@comcast.net>
+@author Seungsoo Woo <om101.woo@samsung.com>
 
 Please contact <enlightenment-devel@lists.sourceforge.net> to get in
 contact with the developers and maintainers.
