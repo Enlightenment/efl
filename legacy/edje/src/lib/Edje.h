@@ -2756,7 +2756,7 @@ EAPI int              edje_object_part_text_cursor_pos_get              (const E
 /**
  * @brief Set the layout of the input panel.
  * 
- * The layout of the inptu panel or virtual keyboard can make it easier or
+ * The layout of the input panel or virtual keyboard can make it easier or
  * harder to enter content. This allows you to hint what kind of input you
  * are expecting to enter and thus have the input panel automatically
  * come up with the right mode.
