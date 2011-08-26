@@ -87,14 +87,12 @@ EAPI Eina_Error EINA_ERROR_NOT_MAIN_LOOP = 0;
 static const char EINA_ERROR_NOT_MAIN_LOOP_STR[] = "Main loop thread check failed.";
 
 #ifdef EFL_HAVE_THREADS
-# ifdef _WIN32_WCE
-EAPI HANDLE _eina_main_loop;
-# elif defined(_WIN32)
-EAPI HANDLE _eina_main_loop;
+# ifdef _WIN32
+EAPI DWORD _eina_main_loop;
 # else
 EAPI pthread_t _eina_main_loop;
-static pid_t _eina_pid;
 # endif
+static pid_t _eina_pid;
 #endif
 
 #ifdef EINA_HAVE_DEBUG_THREADS
@@ -229,14 +227,12 @@ eina_init(void)
          EINA_ERROR_NOT_MAIN_LOOP_STR);
 
 #ifdef EFL_HAVE_THREADS
-# ifdef _WIN32_CE
-   _eina_main_loop = (HANDLE) GetCurrentThreadId();
-# elif defined (_WIN32)
-   _eina_main_loop = (HANDLE) GetCurrentThreadId();
+# ifdef _WIN32
+   _eina_main_loop = GetCurrentThreadId();
 # else
    _eina_main_loop = pthread_self();
-   _eina_pid = getpid();
 # endif
+   _eina_pid = getpid();
 #endif
 
 #ifdef EINA_HAVE_DEBUG_THREADS
@@ -353,18 +349,18 @@ EAPI Eina_Bool
 eina_main_loop_is(void)
 {
 #ifdef EFL_HAVE_THREADS
-   /* FIXME: need to check how to do this on windows */
-# ifdef _WIN32_CE
-   if (_eina_main_loop == (HANDLE) GetCurrentThreadId())
-     return EINA_TRUE;
-   return EINA_FALSE;
-# elif defined(_WIN32)
-   if (_eina_main_loop == (HANDLE) GetCurrentThreadId())
-     return EINA_TRUE;
-   return EINA_FALSE;
-# else
    pid_t pid = getpid();
 
+# ifdef _WIN32
+   if (pid != _eina_pid)
+     {
+        _eina_pid = pid;
+        _eina_main_loop = GetCurrentThreadId();
+        return EINA_TRUE;
+     }
+   if (_eina_main_loop == GetCurrentThreadId())
+     return EINA_TRUE;
+# else
    if (pid != _eina_pid)
      {
         /* This is in case of a fork, but don't like the solution */
@@ -384,8 +380,14 @@ eina_main_loop_is(void)
 EAPI void
 eina_main_loop_define(void)
 {
+#ifdef EFL_HAVE_THREADS
    _eina_pid = getpid();
+# ifdef _WIN32
+   _eina_main_loop = GetCurrentThreadId();
+# else
    _eina_main_loop = pthread_self();
+# endif
+#endif
 }
 
 /**
