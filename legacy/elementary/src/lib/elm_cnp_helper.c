@@ -951,11 +951,17 @@ notify_handler_html(Cnp_Selection *sel, Ecore_X_Event_Selection_Notify *notify)
 
 
 static Eina_Bool
-text_converter(char *target __UNUSED__, void *data, int size __UNUSED__, void **data_ret, int *size_ret, Ecore_X_Atom *ttype __UNUSED__, int *typesize __UNUSED__)
+text_converter(char *target __UNUSED__, void *data, int size, void **data_ret, int *size_ret, Ecore_X_Atom *ttype __UNUSED__, int *typesize __UNUSED__)
 {
    Cnp_Selection *sel;
 
    cnp_debug("text converter\n");
+   if (size != sizeof(int))
+     {
+        if (data_ret) *data_ret = strndup(data, size - 1);
+        if (size_ret) *size_ret = size - 1;
+        return EINA_TRUE;
+     }
    sel = selections + *((int *)data);
    if (!sel->active) return EINA_TRUE;
 
