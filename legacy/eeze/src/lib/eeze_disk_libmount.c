@@ -34,12 +34,15 @@ static struct libmnt_optmap eeze_optmap[] =
 typedef struct libmnt_table libmnt_table;
 typedef struct libmnt_lock libmnt_lock;
 typedef struct libmnt_fs libmnt_fs;
+typedef struct libmnt_cache libmnt_cache;
 static Ecore_File_Monitor *_mtab_mon = NULL;
 static Ecore_File_Monitor *_fstab_mon = NULL;
 static Eina_Bool _watching = EINA_FALSE;
 static Eina_Bool _mtab_scan_active = EINA_FALSE;
 static Eina_Bool _mtab_locked = EINA_FALSE;
 static Eina_Bool _fstab_scan_active = EINA_FALSE;
+static libmnt_cache *_eeze_mount_mtab_cache = NULL;
+static libmnt_cache *_eeze_mount_fstab_cache = NULL;
 static libmnt_table *_eeze_mount_mtab = NULL;
 static libmnt_table *_eeze_mount_fstab = NULL;
 static libmnt_lock *_eeze_mtab_lock = NULL;
@@ -172,6 +175,18 @@ _eeze_mount_tab_watcher(void *data, Ecore_File_Monitor *mon __UNUSED__, Ecore_Fi
      }
 
    mnt_free_table(bak);
+   if (data)
+     {
+        mnt_free_cache(_eeze_mount_mtab_cache);
+        _eeze_mount_mtab_cache = mnt_new_cache();
+        mnt_table_set_cache(_eeze_mount_mtab, _eeze_mount_mtab_cache);
+     }
+   else
+     {
+        mnt_free_cache(_eeze_mount_fstab_cache);
+        _eeze_mount_fstab_cache = mnt_new_cache();
+        mnt_table_set_cache(_eeze_mount_fstab, _eeze_mount_fstab_cache);
+     }
    return;
 
 error:
@@ -377,6 +392,12 @@ eeze_mount_tabs_watch(void)
    mnt_free_table(_eeze_mount_fstab);
    _eeze_mount_fstab = bak;
 
+   _eeze_mount_mtab_cache = mnt_new_cache();
+   mnt_table_set_cache(_eeze_mount_mtab, _eeze_mount_mtab_cache);
+
+   _eeze_mount_fstab_cache = mnt_new_cache();
+   mnt_table_set_cache(_eeze_mount_fstab, _eeze_mount_fstab_cache);
+
    _mtab_mon = ecore_file_monitor_add("/etc/mtab", _eeze_mount_tab_watcher, (void*)1);
    _fstab_mon = ecore_file_monitor_add("/etc/fstab", _eeze_mount_tab_watcher, NULL);
    _watching = EINA_TRUE;
@@ -419,8 +440,14 @@ eeze_mount_mtab_scan(void)
    if (!bak)
      goto error;
    if (_eeze_mount_mtab)
-     mnt_free_table(_eeze_mount_mtab);
+     {
+        mnt_free_table(_eeze_mount_mtab);
+        mnt_free_cache(_eeze_mount_mtab_cache);
+     }
    _eeze_mount_mtab = bak;
+   _eeze_mount_mtab_cache = mnt_new_cache();
+   mnt_table_set_cache(_eeze_mount_mtab, _eeze_mount_mtab_cache);
+
    return EINA_TRUE;
 
 error:
@@ -438,8 +465,13 @@ eeze_mount_fstab_scan(void)
    if (!bak)
      goto error;
    if (_eeze_mount_fstab)
-     mnt_free_table(_eeze_mount_fstab);
+     {
+        mnt_free_table(_eeze_mount_fstab);
+        mnt_free_cache(_eeze_mount_fstab_cache);
+     }
    _eeze_mount_fstab = bak;
+   _eeze_mount_fstab_cache = mnt_new_cache();
+   mnt_table_set_cache(_eeze_mount_fstab, _eeze_mount_fstab_cache);
 
    return EINA_TRUE;
 
