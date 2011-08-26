@@ -325,17 +325,17 @@ _elm_button_label_get(const Evas_Object *obj, const char *item)
 static char *
 _access_info_cb(void *data __UNUSED__, Evas_Object *obj, Elm_Widget_Item *item __UNUSED__)
 {
-   char *txt = (char *)elm_widget_access_info_get(obj);
-   if (!txt) txt = (char *)_elm_button_label_get(obj, NULL);
+   const char *txt = elm_widget_access_info_get(obj);
+   if (!txt) txt = _elm_button_label_get(obj, NULL);
    if (txt) return strdup(txt);
-   return txt;
+   return NULL;
 }
 
 static char *
 _access_state_cb(void *data __UNUSED__, Evas_Object *obj, Elm_Widget_Item *item __UNUSED__)
 {
    if (elm_widget_disabled_get(obj))
-      return strdup(E_("State: Disabled"));
+     return strdup(E_("State: Disabled"));
    return NULL;
 }
 
