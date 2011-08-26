@@ -39,7 +39,7 @@ _exe_del(void *data __UNUSED__, int type __UNUSED__, void *event)
 EAPI int
 elm_modapi_init(void *m __UNUSED__)
 {
-   exe_exit_handler = 
+   exe_exit_handler =
       ecore_event_handler_add(ECORE_EXE_EVENT_DEL,
                               _exe_del, NULL);
    return 1; // succeed always
@@ -63,7 +63,7 @@ out_read(const char *txt)
    if (!tmpf)
      {
         char buf[PATH_MAX];
-        
+
         snprintf(buf, sizeof(buf), "/tmp/.elm-speak-XXXXXX");
         tmpfd = mkstemp(buf);
         if (tmpfd >= 0) tmpf = strdup(buf);
@@ -76,7 +76,7 @@ EAPI void
 out_read_done(void)
 {
    char buf[PATH_MAX];
-   
+
    if (espeak)
      {
         ecore_exe_interrupt(espeak);
