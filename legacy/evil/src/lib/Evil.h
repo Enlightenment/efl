@@ -88,7 +88,7 @@ extern "C" {
 # define W_OK 2  /* Check for write permission */
 # define R_OK 4  /* Check for read permission */
 
-typedef int            pid_t;
+typedef DWORD          pid_t;
 typedef unsigned short mode_t;
 
 typedef unsigned short uint16_t;
