@@ -458,17 +458,18 @@ case "$host_os" in
    mingw*)
 # managed by evil
       AC_DEFINE(HAVE_DLADDR)
+      AC_DEFINE(HAVE_DLOPEN)
       ;;
    *)
       AC_CHECK_FUNCS([dlopen], [res="yes"], [res="no"])
       if test "x${res}" = "xyes" ; then
          AC_CHECK_FUNCS([dladdr], [AC_DEFINE(HAVE_DLADDR)])
-	 AC_DEFINE(HAVE_DLOPEN)
+         AC_DEFINE(HAVE_DLOPEN)
       else
          AC_CHECK_LIB([dl], [dlopen], [res="yes"], [res="no"])
          if test "x${res}" = "xyes" ; then
             AC_CHECK_LIB([dl], [dladdr], [AC_DEFINE(HAVE_DLADDR)])
-	    AC_DEFINE(HAVE_DLOPEN)
+            AC_DEFINE(HAVE_DLOPEN)
             dlopen_libs="-ldl"
          fi
       fi
