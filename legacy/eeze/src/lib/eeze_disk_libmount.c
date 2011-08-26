@@ -436,7 +436,7 @@ eeze_mount_tabs_unwatch(void)
    _mtab_mon = NULL;
    ecore_file_monitor_del(_fstab_mon);
    _fstab_mon = NULL;
-   watching = EINA_FALSE;
+   _watching = EINA_FALSE;
 }
 
 EAPI Eina_Bool
