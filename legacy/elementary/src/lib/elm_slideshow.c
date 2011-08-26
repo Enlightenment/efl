@@ -197,7 +197,7 @@ _item_realize(Elm_Slideshow_Item *item)
    Elm_Slideshow_Item *_item_prev, *_item_next;
    Evas_Object *obj = item->base.widget;
    Widget_Data *wd = elm_widget_data_get(obj);
-   int ac, bc, lc;
+   int ac, bc, lc, ic = 0;
 
    if (!wd) return;
    if ((!item->base.view) && (item->itc->func.get))
@@ -230,6 +230,7 @@ _item_realize(Elm_Slideshow_Item *item)
                       && (!_item_next->base.view)
                       && (_item_next->itc->func.get))
                     {
+		       ic++;
                        _item_next->base.view =
                           _item_next->itc->func.get(
                              (void*)_item_next->base.data, obj);
@@ -240,9 +241,12 @@ _item_realize(Elm_Slideshow_Item *item)
                        evas_object_hide(_item_next->base.view);
                     }
                   else if (_item_next && _item_next->l_built)
-                    wd->items_built =
-                       eina_list_demote_list(wd->items_built,
+                    {
+		       ic++;
+                       wd->items_built =
+                           eina_list_demote_list(wd->items_built,
                                              _item_next->l_built);
+                    }
                }
           }
 
@@ -257,6 +261,7 @@ _item_realize(Elm_Slideshow_Item *item)
                       && (!_item_prev->base.view)
                       && (_item_prev->itc->func.get))
                     {
+		       ic++;
                        _item_prev->base.view =
                           _item_prev->itc->func.get(
                              (void*)_item_prev->base.data, obj);
@@ -267,15 +272,18 @@ _item_realize(Elm_Slideshow_Item *item)
                        evas_object_hide(_item_prev->base.view);
                     }
                   else if (_item_prev && _item_prev->l_built)
-                    wd->items_built =
-                       eina_list_demote_list(wd->items_built,
+                    {
+		       ic++;
+                       wd->items_built =
+                           eina_list_demote_list(wd->items_built,
                                              _item_prev->l_built);
+                    }
                }
           }
      }
 
    //delete unused items
-   lc = wd->count_item_pre_before + wd->count_item_pre_after + 1;
+   lc = ic + 1;
    while ((int)eina_list_count(wd->items_built) > lc)
      {
         item = eina_list_data_get(wd->items_built);
@@ -643,12 +651,18 @@ elm_slideshow_item_del(Elm_Slideshow_Item *item)
    if (wd->previous == item) wd->previous = NULL;
    if (wd->current == item)
      {
+        Elm_Slideshow_Item *p = NULL;
         Eina_List *l = eina_list_data_find_list(wd->items, item);
         Eina_List *l2 = eina_list_next(l);
         wd->current = NULL;
         if (!l2)
-          l2 = eina_list_nth_list(wd->items, eina_list_count(wd->items) - 1);
-        if (l2)
+	  {
+	    l2 = eina_list_prev(l);
+	    if (l2)
+	       elm_slideshow_show(eina_list_data_get(l2));
+
+	  }
+        else
           elm_slideshow_show(eina_list_data_get(l2));
      }
 
