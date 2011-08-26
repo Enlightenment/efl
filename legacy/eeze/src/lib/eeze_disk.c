@@ -61,7 +61,7 @@ _eeze_disk_type_find(Eeze_Disk *disk)
           {
              test = udev_device_get_subsystem(dev);
              if (!test) return EEZE_DISK_TYPE_UNKNOWN;
-             if (!strcmp(test, "block"))) continue;
+             if (!strcmp(test, "block")) continue;
              if (!strcmp(test, "mmc")) return EEZE_DISK_TYPE_FLASH;
              break;
           }
