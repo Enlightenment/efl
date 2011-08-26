@@ -196,6 +196,7 @@ my_win_main(char *autorun, Eina_Bool test_win_only)
    Eina_List *tests, *l;
    struct elm_test *t;
 
+   if (test_win_only) goto add_tests;
    /* Create an elm window - It returns an evas object. This is a little
     * special as the object lives in the canvas that is inside the window
     * so what is returned is really inside the window, but as you manipulate
@@ -280,6 +281,7 @@ my_win_main(char *autorun, Eina_Bool test_win_only)
    elm_win_resize_object_add(win, idx);
    evas_object_show(idx);
 
+add_tests:
    tests = NULL;
 #define ADD_TEST(name_, cb_) elm_test_add(&tests, name_, cb_)
    ADD_TEST("Bg Plain", test_bg_plain);
@@ -429,7 +431,10 @@ my_win_main(char *autorun, Eina_Bool test_win_only)
         EINA_LIST_FOREACH(tests, l, t)
            if ((t->name) && (t->cb) && (!strcmp(t->name, autorun)))
              t->cb(NULL, NULL, NULL);
+
      }
+   
+   if (test_win_only) return;
 
    if (tests)
      {
