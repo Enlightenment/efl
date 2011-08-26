@@ -9754,6 +9754,24 @@ EAPI void              evas_object_smart_calculate       (Evas_Object *obj) EINA
 EAPI void              evas_smart_objects_calculate      (Evas *e);
 
 /**
+ * This gets the internal counter that counts the number of smart calculations
+ * 
+ * @param e The canvas to get the calculate counter from
+ * 
+ * Whenever evas performs smart object calculations on the whole canvas
+ * it increments a counter by 1. This is the smart object calculate counter
+ * that this function returns the value of. It starts at the value of 0 and
+ * will increase (and eventually wrap around to negative values and so on) by
+ * 1 every time objects are calculated. You can use this counter to ensure
+ * you dont re-do calculations withint the same calculation generation/run
+ * if the calculations maybe cause self-feeding effects.
+ * 
+ * @ingroup Evas_Smart_Object_Group
+ * @since 1.1
+ */
+EAPI int               evas_smart_objects_calculate_count_get (const Evas *e);
+   
+/**
  * Moves all children objects of a given smart object relative to a
  * given offset.
  *

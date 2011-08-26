@@ -619,6 +619,15 @@ evas_smart_objects_calculate(Evas *e)
    evas_call_smarts_calculate(e);
 }
 
+EAPI int
+evas_smart_objects_calculate_count_get(const Evas *e)
+{
+   MAGIC_CHECK(e, Evas, MAGIC_EVAS);
+   return 0;
+   MAGIC_CHECK_END();
+   return e->smart_calc_count;
+}
+
 /**
  * Call calculate() on all smart objects that need_recalculate.
  *
@@ -632,6 +641,7 @@ evas_call_smarts_calculate(Evas *e)
    Eina_Array_Iterator it;
    unsigned int i;
 
+   evas_event_freeze(e);
    e->in_smart_calc++;
    calculate = &e->calculate_objects;
    for (i = 0; i < eina_array_count_get(calculate); ++i)
@@ -654,7 +664,13 @@ evas_call_smarts_calculate(Evas *e)
         obj->recalculate_cycle = 0;
      }
    e->in_smart_calc--;
-   if (e->in_smart_calc == 0) eina_array_clean(calculate);
+   if (e->in_smart_calc == 0)
+     {
+        eina_array_clean(calculate);
+        e->smart_calc_count++;
+     }
+   evas_event_thaw(e);
+   evas_event_thaw_eval(e);
 }
 
 EAPI void

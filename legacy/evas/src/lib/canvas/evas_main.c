@@ -122,7 +122,7 @@ evas_new(void)
    e->name_hash = eina_hash_string_superfast_new(NULL);
 
 #define EVAS_ARRAY_SET(E, Array)		\
-   eina_array_step_set(&E->Array, sizeof (E->Array), 256);
+   eina_array_step_set(&E->Array, sizeof (E->Array), 4096);
 
    EVAS_ARRAY_SET(e, delete_objects);
    EVAS_ARRAY_SET(e, active_objects);

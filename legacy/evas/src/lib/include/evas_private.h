@@ -304,7 +304,7 @@ struct _Evas
    Eina_Array     temporary_objects;
    Eina_Array     calculate_objects;
    Eina_Array     clip_changes;
-
+   
    Eina_List     *post_events; // free me on evas_free
 
    Evas_Callbacks *callbacks;
@@ -316,6 +316,7 @@ struct _Evas
    Eina_List     *font_path;
 
    int            in_smart_calc;
+   int            smart_calc_count;
 
    Evas_Object   *focused;
    void          *attach_data;
