@@ -63,6 +63,7 @@ _els_box_layout(Evas_Object *o, Evas_Object_Box_Data *priv, int horizontal, int 
    Evas_Object_Box_Option *opt;
 
    _smart_extents_calculate(o, priv, horizontal, homogeneous);
+   if (evas_object_smart_need_recalculate_get(o)) return;
 
    evas_object_geometry_get(o, &x, &y, &w, &h);
 

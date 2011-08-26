@@ -7,6 +7,7 @@ struct _Widget_Data
 {
    Evas_Object *obj;
    Evas_Object *content;
+   int last_calc_count; 
    Eina_Bool eval : 1;
 };
 
@@ -70,31 +71,46 @@ _eval(Evas_Object *obj)
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
 
+   evas_event_freeze(evas_object_evas_get(obj));
    evas_object_geometry_get(obj, &x, &y, &w, &h);
+   if (w < 1) w = 1;
+   if (h < 1) h = 1;
    evas_output_viewport_get(evas_object_evas_get(obj),
                             &cvx, &cvy, &cvw, &cvh);
-   // this is a hack to get things sane for now.
-   if ((w < 10) || (h < 10) || (cvw < 1) || (cvh < 1)) return;
+   if ((cvw < 1) || (cvh < 1)) return;
    // need some fuzz value thats beyond the current viewport
+   // for now just make it the viewport * 3 in size (so 1 vp in each direction)
+   /*
+   cvx -= cvw;
+   cvy -= cvh;
+   cvw *= 3;
+   cvh *= 3;
+    */
    if (ELM_RECTS_INTERSECT(x, y, w, h, cvx, cvy, cvw, cvh))
      {
         if (!wd->content)
           {
-             printf("intersect: %i %i %ix%i | %i %i %ix%i\n",
-                    x, y, w, h, cvx, cvy, cvw, cvh);
              evas_object_smart_callback_call(obj, SIG_REALIZE, NULL);
              if (wd->content)
                {
                   if (evas_object_smart_data_get(wd->content))
                      evas_object_smart_calculate(wd->content);
                }
+             wd->last_calc_count = 
+                evas_smart_objects_calculate_count_get(evas_object_evas_get(obj));
           }
      }
    else
      {
         if (wd->content)
-           evas_object_smart_callback_call(obj, SIG_UNREALIZE, NULL);
+          {
+             if (wd->last_calc_count != 
+                evas_smart_objects_calculate_count_get(evas_object_evas_get(obj)))
+                evas_object_smart_callback_call(obj, SIG_UNREALIZE, NULL);
+          }
      }
+   evas_event_thaw(evas_object_evas_get(obj));
+   evas_event_thaw_eval(evas_object_evas_get(obj));
 }
 
 static void
@@ -177,6 +193,7 @@ elm_factory_add(Evas_Object *parent)
    evas_object_smart_callbacks_descriptions_set(obj, _signals);
 
    wd->obj = obj;
+   wd->last_calc_count = -1;
    return obj;
 }
 

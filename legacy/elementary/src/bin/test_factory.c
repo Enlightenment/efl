@@ -4,14 +4,21 @@
 #endif
 #ifndef ELM_LIB_QUICKLAUNCH
 
+// 64 ^ 5 = 1 billion (or so)
+//#define BLOK 64
+// homogenous layout
+//#define HOMOG 1
+
 // 32 ^ 5 = 33mil
 #define BLOK 32
+// homogenous layout
+//#define HOMOG 1
 
 static void
 fac_unrealize(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
    // setting factory content to null deletes it
-   printf("DELETE for factory %p\n", obj);
+   printf("--------DELETE for factory %p [f: %p]\n", elm_factory_content_get(obj), obj);
    elm_factory_content_set(obj, NULL);
 }
 
@@ -22,10 +29,12 @@ fac_realize_end(void *data, Evas_Object *obj, void *event_info __UNUSED__)
    Evas_Object *bx, *bt;
    int i;
 
-   printf("ADD for factory 4 %p [%i]\n", obj, (BLOK * (int)evas_object_data_get(obj, "num")));
    bx = elm_box_add(win);
+   printf("    ADD lv 4 = %p [%i]\n", bx, (BLOK * (int)evas_object_data_get(obj, "num")));
+#ifdef HOMOG   
    elm_box_homogeneous_set(bx, EINA_TRUE);
-
+#endif
+   
    for (i = 0; i < BLOK; i++)
      {
         char buf[32];
@@ -52,10 +61,12 @@ fac_realize3(void *data, Evas_Object *obj, void *event_info __UNUSED__)
    Evas_Object *bx, *fc;
    int i;
 
-   printf("ADD for factory 3 %p [%i]\n", obj, (BLOK * (int)evas_object_data_get(obj, "num")));
    bx = elm_box_add(win);
+   printf("   ADD lv 3 = %p [%i]\n", bx, (BLOK * (int)evas_object_data_get(obj, "num")));
+#ifdef HOMOG   
    elm_box_homogeneous_set(bx, EINA_TRUE);
-
+#endif
+   
    for (i = 0; i < BLOK; i++)
      {
         fc = elm_factory_add(win);
@@ -84,10 +95,12 @@ fac_realize2(void *data, Evas_Object *obj, void *event_info __UNUSED__)
    Evas_Object *bx, *fc;
    int i;
 
-   printf("ADD for factory 2 %p [%i]\n", obj, (BLOK * (int)evas_object_data_get(obj, "num")));
    bx = elm_box_add(win);
+   printf("  ADD lv 2 = %p [%i]\n", bx, (BLOK * (int)evas_object_data_get(obj, "num")));
+#ifdef HOMOG   
    elm_box_homogeneous_set(bx, EINA_TRUE);
-
+#endif
+   
    for (i = 0; i < BLOK; i++)
      {
         fc = elm_factory_add(win);
@@ -116,10 +129,12 @@ fac_realize1(void *data, Evas_Object *obj, void *event_info __UNUSED__)
    Evas_Object *bx, *fc;
    int i;
 
-   printf("ADD for factory 1 %p [%i]\n", obj, (BLOK * (int)evas_object_data_get(obj, "num")));
    bx = elm_box_add(win);
+   printf(" ADD lv 1 = %p [%i]\n", bx, (BLOK * (int)evas_object_data_get(obj, "num")));
+#ifdef HOMOG   
    elm_box_homogeneous_set(bx, EINA_TRUE);
-
+#endif
+   
    for (i = 0; i < BLOK; i++)
      {
         fc = elm_factory_add(win);
@@ -157,7 +172,9 @@ test_factory(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_inf
    evas_object_show(bg);
 
    bx = elm_box_add(win);
+#ifdef HOMOG   
    elm_box_homogeneous_set(bx, EINA_TRUE);
+#endif   
    evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
 
    for (i = 0; i < BLOK; i++)
