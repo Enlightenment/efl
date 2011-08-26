@@ -130,9 +130,7 @@ static char *mark_up(const char *start, int inlen, int *lenp);
 
 static Eina_Bool targets_converter(char *target, void *data, int size, void **data_ret, int *size_ret, Ecore_X_Atom *ttype, int *typesize);
 static Eina_Bool text_converter(char *target, void *data, int size, void **data_ret, int *size_ret, Ecore_X_Atom *ttype, int *typesize);
-static Eina_Bool html_converter(char *target, void *data, int size, void **data_ret, int *size_ret, Ecore_X_Atom *ttype, int *typesize);
-static Eina_Bool edje_converter(char *target, void *data, int size, void **data_ret, int *size_ret, Ecore_X_Atom *ttype, int *typesize);
-static Eina_Bool uri_converter(char *target, void *data, int size, void **data_ret, int *size_ret, Ecore_X_Atom *ttype, int *typesize);
+static Eina_Bool general_converter(char *target, void *data, int size, void **data_ret, int *size_ret, Ecore_X_Atom *ttype, int *typesize);
 static Eina_Bool image_converter(char *target, void *data, int size, void **data_ret, int *size_ret, Ecore_X_Atom *ttype, int *typesize);
 static Eina_Bool vcard_send(char *target, void *data, int size, void **data_ret, int *size_ret, Ecore_X_Atom *ttype, int *typesize);
 
@@ -175,7 +173,7 @@ static Cnp_Atom atoms[CNP_N_ATOMS] = {
      [CNP_ATOM_XELM] =  {
           "application/x-elementary-markup",
           ELM_SEL_FORMAT_MARKUP,
-          edje_converter,
+          general_converter,
           NULL,
           NULL,
           0
@@ -183,7 +181,7 @@ static Cnp_Atom atoms[CNP_N_ATOMS] = {
      [CNP_ATOM_text_uri] = {
           "text/uri",
           ELM_SEL_FORMAT_MARKUP | ELM_SEL_FORMAT_IMAGE, /* Either images or entries */
-          uri_converter,
+          general_converter,
           NULL,
           notify_handler_uri,
           0
@@ -191,7 +189,7 @@ static Cnp_Atom atoms[CNP_N_ATOMS] = {
      [CNP_ATOM_text_urilist] = {
           "text/uri-list",
           ELM_SEL_FORMAT_IMAGE,
-          uri_converter,
+          general_converter,
           NULL,
           notify_handler_uri,
           0
@@ -277,7 +275,7 @@ static Cnp_Atom atoms[CNP_N_ATOMS] = {
      [CNP_ATOM_text_html_utf8] = {
           "text/html;charset=utf-8",
           ELM_SEL_FORMAT_HTML,
-          html_converter,
+          general_converter,
           NULL,
           notify_handler_html,
           0
@@ -285,7 +283,7 @@ static Cnp_Atom atoms[CNP_N_ATOMS] = {
      [CNP_ATOM_text_html] = {
           "text/html",
           ELM_SEL_FORMAT_HTML,
-          html_converter,
+          general_converter,
           NULL,
           notify_handler_html, /* No encoding: Webkit only */
           0
@@ -984,7 +982,7 @@ text_converter(char *target __UNUSED__, void *data, int size __UNUSED__, void **
 }
 
 static Eina_Bool
-edje_converter(char *target __UNUSED__, void *data, int size, void **data_ret, int *size_ret, Ecore_X_Atom *ttype __UNUSED__, int *typesize __UNUSED__)
+general_converter(char *target __UNUSED__, void *data, int size, void **data_ret, int *size_ret, Ecore_X_Atom *ttype __UNUSED__, int *typesize __UNUSED__)
 {
    if (size == sizeof(int))
      {
@@ -999,47 +997,6 @@ edje_converter(char *target __UNUSED__, void *data, int size, void **data_ret, i
         if (data_ret) *data_ret = strndup(data, size - 1);
         if (size_ret) *size_ret = size - 1;
      }
-   return EINA_TRUE;
-}
-
-
-static Eina_Bool
-html_converter(char *target __UNUSED__, void *data, int size __UNUSED__, void **data_ret, int *size_ret, Ecore_X_Atom *ttype __UNUSED__, int *typesize __UNUSED__)
-{
-   if (size == sizeof(int))
-     {
-        Cnp_Selection *sel;
-
-        sel = selections + *((int *)data);
-        if (data_ret) *data_ret = strdup(sel->selbuf);
-        if (size_ret) *size_ret = strlen(sel->selbuf);
-     }
-   else if (size)
-     {
-        if (data_ret) *data_ret = strndup(data, size - 1);
-        if (size_ret) *size_ret = size - 1;
-     }
-
-   return EINA_TRUE;
-}
-
-static Eina_Bool
-uri_converter(char *target __UNUSED__, void *data, int size __UNUSED__, void **data_ret, int *size_ret, Ecore_X_Atom *ttype __UNUSED__, int *typesize __UNUSED__)
-{
-   if (size == sizeof(int))
-     {
-        Cnp_Selection *sel;
-
-        sel = selections + *((int *)data);
-        if (data_ret) *data_ret = strdup(sel->selbuf);
-        if (size_ret) *size_ret = strlen(sel->selbuf);
-     }
-   else if (size)
-     {
-        if (data_ret) *data_ret = strndup(data, size - 1);
-        if (size_ret) *size_ret = size - 1;
-     }
-
    return EINA_TRUE;
 }
 
