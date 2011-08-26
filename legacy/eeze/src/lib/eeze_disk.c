@@ -54,11 +54,23 @@ _eeze_disk_type_find(Eeze_Disk *disk)
    if ((!test) && (!filesystem))
      test = _walk_children_get_attr(disk->syspath, "ID_BUS", "block", EINA_TRUE);
    if (!test)
-     return EEZE_DISK_TYPE_UNKNOWN; /* FIXME */
+     {
+        _udev_device *dev;
+
+        for (dev = udev_device_get_parent(disk->device); dev; dev = udev_device_get_parent(dev))
+          {
+             test = udev_device_get_subsystem(dev);
+             if (!test) return EEZE_DISK_TYPE_UNKNOWN;
+             if (!strcmp(test, "block"))) continue;
+             if (!strcmp(test, "mmc")) return EEZE_DISK_TYPE_FLASH;
+             break;
+          }
+        return EEZE_DISK_TYPE_UNKNOWN;  /* FIXME */
+     }
 
    if (!strcmp(test, "ata")) ret = EEZE_DISK_TYPE_INTERNAL;
    else if (!strcmp(test, "usb")) ret = EEZE_DISK_TYPE_USB;
-   else ret = EEZE_DISK_TYPE_UNKNOWN;
+   else ret = EEZE_DISK_TYPE_UNKNOWN; /* FIXME */
 
    eina_stringshare_del(test);
 

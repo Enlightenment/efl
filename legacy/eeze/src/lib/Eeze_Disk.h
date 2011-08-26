@@ -36,9 +36,10 @@ extern "C" {
 typedef enum
 {
    EEZE_DISK_TYPE_UNKNOWN = 0, /**< type could not be determined */
-   EEZE_DISK_TYPE_INTERNAL = 1, /**< internal drive */
-   EEZE_DISK_TYPE_CDROM = 2, /**< cdrom drive */
-   EEZE_DISK_TYPE_USB = 4 /**< usb drive */
+   EEZE_DISK_TYPE_INTERNAL = (1 << 0), /**< internal drive */
+   EEZE_DISK_TYPE_CDROM = (1 << 1), /**< cdrom drive */
+   EEZE_DISK_TYPE_USB = (1 << 2), /**< usb drive */
+   EEZE_DISK_TYPE_FLASH = (1 << 3) /**< flash disk */
 } Eeze_Disk_Type;
 
 typedef enum
