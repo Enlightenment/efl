@@ -213,6 +213,17 @@ eeze_libmount_init(void)
 void
 eeze_libmount_shutdown(void)
 {
+   if (_eeze_mount_fstab)
+     {
+        mnt_free_table(_eeze_mount_fstab);
+        mnt_free_cache(_eeze_mount_fstab_cache);
+     }
+   if (_eeze_mount_mtab)
+     {
+        mnt_free_table(_eeze_mount_mtab);
+        mnt_free_cache(_eeze_mount_mtab_cache);
+     }
+   eeze_mount_tabs_unwatch();
    if (!_eeze_mtab_lock)
      return;
 
