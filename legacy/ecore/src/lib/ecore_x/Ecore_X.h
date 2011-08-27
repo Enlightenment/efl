@@ -2664,7 +2664,7 @@ ecore_x_randr_output_crtc_set(Ecore_X_Window root,
  * @return EINA_TRUE, if the header is valid. Else EINA_FALSE.
  */
 EAPI Eina_Bool
-ecore_x_randr_edid_valid_header(unsigned char *edid, 
+ecore_x_randr_edid_has_valid_header(unsigned char *edid,
                                 unsigned long edid_length);
    
 /*
