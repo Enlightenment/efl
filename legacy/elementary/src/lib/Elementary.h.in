@@ -52,7 +52,7 @@ organisations behind this, as listed in the @ref authors page.
  *
 @code
 #include <Elementary.h>
-EAPI int
+EAPI_MAIN int
 elm_main(int argc, char **argv)
 {
    // create window(s) here and do any application init
@@ -191,7 +191,7 @@ on_done(void *data, Evas_Object *obj, void *event_info)
    elm_exit();
 }
 
-EAPI int
+EAPI_MAIN int
 elm_main(int argc, char **argv)
 {
    Evas_Object *win, *bg, *box, *lab, *btn;
@@ -420,6 +420,11 @@ contact with the developers and maintainers.
 # endif
 #endif /* ! _WIN32 */
 
+#ifdef _WIN32
+# define EAPI_MAIN
+#else
+# define EAPI_MAIN EAPI
+#endif
 
 /* allow usage from c++ */
 #ifdef __cplusplus
@@ -12560,7 +12565,7 @@ extern "C" {
     * @code
     * #include <Elementary.h>
     * #ifndef ELM_LIB_QUICKLAUNCH
-    * EAPI int
+    * EAPI_MAIN int
     * elm_main(int argc, char **argv)
     * {
     *    Ethumb_Client *client;
