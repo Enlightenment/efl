@@ -39,6 +39,11 @@ static void _freeze_off(void *data, Evas_Object *obj, void *event_info);
 static void _hold_on(void *data, Evas_Object *obj, void *event_info);
 static void _hold_off(void *data, Evas_Object *obj, void *event_info);
 static void _scroller_size_reset(Widget_Data *wd);
+static void _on_focus_hook(void *data, Evas_Object *obj);
+static Eina_Bool _event_hook(Evas_Object *obj,
+                             Evas_Object *src,
+                             Evas_Callback_Type type,
+                             void *event_info);
 static void _hover_parent_callbacks_del(Evas_Object *obj);
 static void _hover_parent_resize(void *data, Evas *e,
                                  Evas_Object *obj,
@@ -164,6 +169,42 @@ _scroller_size_reset(Widget_Data *wd)
    wd->finished = EINA_FALSE;
    wd->max_sc_h = -1;
    wd->max_sc_w = -1;
+}
+
+static void
+_on_focus_hook(void *data __UNUSED__, Evas_Object *obj)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+
+   if (elm_widget_focus_get(obj))
+     {
+        //FIXME: 
+     }
+   else
+     {
+        //FIXME:
+     }
+}
+
+static Eina_Bool
+_event_hook(Evas_Object *obj, Evas_Object *src __UNUSED__, Evas_Callback_Type type, void *event_info)
+{
+   Evas_Event_Key_Down *ev;
+   Widget_Data *wd;
+
+   if (type != EVAS_CALLBACK_KEY_DOWN)
+     return EINA_FALSE;
+   wd = elm_widget_data_get(obj);
+   if (!wd) return EINA_FALSE;
+
+   ev = event_info;
+   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return EINA_FALSE;
+   if (strcmp(ev->keyname, "Escape")) return EINA_FALSE;
+
+   evas_object_hide(obj);
+   ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
+   return EINA_TRUE;
 }
 
 static void
@@ -845,6 +886,8 @@ _ctxpopup_show(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj,
    edje_object_signal_emit(wd->base, "elm,state,show", "elm");
 
    _sizing_eval(obj);
+
+   elm_object_focus_set(obj, EINA_TRUE);
 }
 
 static void
@@ -1059,6 +1102,9 @@ elm_ctxpopup_add(Evas_Object *parent)
    elm_widget_del_pre_hook_set(obj, _del_pre_hook);
    elm_widget_del_hook_set(obj, _del_hook);
    elm_widget_theme_hook_set(obj, _theme_hook);
+   elm_widget_on_focus_hook_set(obj, _on_focus_hook, NULL);
+   elm_widget_can_focus_set(obj, EINA_TRUE);
+   elm_widget_event_hook_set(obj, _event_hook);
    elm_widget_content_set_hook_set(obj, _content_set_hook);
    elm_widget_content_unset_hook_set(obj, _content_unset_hook);
    elm_widget_content_get_hook_set(obj, _content_get_hook);
