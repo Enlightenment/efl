@@ -231,6 +231,8 @@ _hover_parent_resize(void *data, Evas *e __UNUSED__,
 
    if (!wd) return;
 
+   wd->dir = ELM_CTXPOPUP_DIRECTION_DONT_KNOW;
+
    if (wd->visible)
      {
         _scroller_size_reset(wd);
@@ -245,6 +247,8 @@ _hover_parent_move(void *data, Evas *e __UNUSED__,
    Widget_Data *wd = elm_widget_data_get(data);
 
    if (!wd) return;
+
+   wd->dir = ELM_CTXPOPUP_DIRECTION_DONT_KNOW;
 
    if (wd->visible)
      {
@@ -322,6 +326,8 @@ _ctxpopup_changed_size_hints(void *data __UNUSED__, Evas *e __UNUSED__,
    wd = elm_widget_data_get(obj);
    if (!wd) return;
 
+   wd->dir = ELM_CTXPOPUP_DIRECTION_DONT_KNOW;
+
    if (wd->visible)
      _sizing_eval(obj);
 }
@@ -337,7 +343,7 @@ _calc_base_geometry(Evas_Object *obj, Evas_Coord_Rectangle *rect)
    Evas_Coord_Rectangle hover_area;
    Evas_Coord_Rectangle parent_size;
    Evas_Coord_Point arrow_size;
-   Elm_Ctxpopup_Direction dir = ELM_CTXPOPUP_DIRECTION_DOWN;
+   Elm_Ctxpopup_Direction dir = ELM_CTXPOPUP_DIRECTION_DONT_KNOW;
    Evas_Coord_Point temp;
    int idx;
 
@@ -394,6 +400,7 @@ _calc_base_geometry(Evas_Object *obj, Evas_Coord_Rectangle *rect)
      {
         switch (wd->dir_priority[idx])
           {
+           case ELM_CTXPOPUP_DIRECTION_DONT_KNOW:
            case ELM_CTXPOPUP_DIRECTION_UP:
               temp.y = (pos.y - base_size.y);
               if ((temp.y - arrow_size.y) < hover_area.y)
@@ -772,6 +779,8 @@ _theme_hook(Evas_Object *obj)
            elm_object_style_set(wd->scr, elm_object_style_get(obj));
      }
 
+   wd->dir = ELM_CTXPOPUP_DIRECTION_DONT_KNOW;
+
    if (wd->visible)
      {
         _scroller_size_reset(wd);
@@ -801,6 +810,8 @@ _content_set_hook(Evas_Object *obj, const char *part __UNUSED__,
 
    wd->content = content;
 
+   wd->dir = ELM_CTXPOPUP_DIRECTION_DONT_KNOW;
+
    if (wd->visible)
      _sizing_eval(obj);
 }
@@ -825,6 +836,7 @@ _content_unset_hook(Evas_Object *obj, const char *part __UNUSED__)
    edje_object_signal_emit(wd->base, "elm,state,content,disable", "elm");
 
    wd->content = NULL;
+   wd->dir = ELM_CTXPOPUP_DIRECTION_DONT_KNOW;
 
    return content;
 
@@ -859,6 +871,7 @@ _parent_resize(void *data, Evas *e __UNUSED__, Evas_Object *obj,
 
    evas_object_geometry_get(obj, NULL, NULL, &w, &h);
    evas_object_resize(wd->bg, w, h);
+   wd->dir = ELM_CTXPOPUP_DIRECTION_DONT_KNOW;
 
    if (!wd->visible) return;
 
@@ -1135,6 +1148,7 @@ elm_ctxpopup_add(Evas_Object *parent)
    wd->dir_priority[1] = ELM_CTXPOPUP_DIRECTION_LEFT;
    wd->dir_priority[2] = ELM_CTXPOPUP_DIRECTION_RIGHT;
    wd->dir_priority[3] = ELM_CTXPOPUP_DIRECTION_DOWN;
+   wd->dir = ELM_CTXPOPUP_DIRECTION_DONT_KNOW;
 
    evas_object_event_callback_add(parent, EVAS_CALLBACK_RESIZE, _parent_resize,
                                   obj);
@@ -1176,6 +1190,7 @@ elm_ctxpopup_item_icon_set(Elm_Object_Item *it, Evas_Object *icon)
    if (!wd) return;
 
    _item_icon_set(ctxpopup_it, icon);
+   wd->dir = ELM_CTXPOPUP_DIRECTION_DONT_KNOW;
 
    if (wd->visible)
      {
@@ -1204,6 +1219,7 @@ elm_ctxpopup_item_label_set(Elm_Object_Item *it, const char *label)
    if (!wd) return;
 
    _item_label_set(ctxpopup_it, label);
+   wd->dir = ELM_CTXPOPUP_DIRECTION_DONT_KNOW;
 
    if (wd->visible)
      {
@@ -1260,6 +1276,7 @@ elm_ctxpopup_clear(Evas_Object * obj)
 
    _remove_items(wd);
    _list_del(wd);
+   wd->dir = ELM_CTXPOPUP_DIRECTION_DONT_KNOW;
 }
 
 EAPI void
@@ -1287,6 +1304,8 @@ elm_ctxpopup_horizontal_set(Evas_Object *obj, Eina_Bool horizontal)
         elm_box_horizontal_set(wd->box, EINA_TRUE);
         elm_scroller_bounce_set(wd->scr, EINA_TRUE, EINA_FALSE);
      }
+
+   wd->dir = ELM_CTXPOPUP_DIRECTION_DONT_KNOW;
 
    if (wd->visible)
       _sizing_eval(obj);
@@ -1342,6 +1361,7 @@ elm_ctxpopup_item_append(Evas_Object *obj, const char *label,
    _item_label_set(item, label);
    elm_box_pack_end(wd->box, item->base.view);
    wd->items = eina_list_append(wd->items, item);
+   wd->dir = ELM_CTXPOPUP_DIRECTION_DONT_KNOW;
 
    if (wd->visible)
      {
@@ -1374,6 +1394,8 @@ elm_ctxpopup_item_del(Elm_Object_Item *it)
 
    if (eina_list_count(wd->items) < 1)
      wd->items = NULL;
+
+   wd->dir = ELM_CTXPOPUP_DIRECTION_DONT_KNOW;
 
    if (wd->visible)
      _sizing_eval(ctxpopup_it->base.widget);
@@ -1464,4 +1486,15 @@ elm_ctxpopup_direction_priority_get(Evas_Object *obj,
    if (second) *second = wd->dir_priority[1];
    if (third) *third = wd->dir_priority[2];
    if (fourth) *fourth = wd->dir_priority[3];
+}
+
+EAPI Elm_Ctxpopup_Direction
+elm_ctxpopup_direction_get(const Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) ELM_CTXPOPUP_DIRECTION_DONT_KNOW;
+   Widget_Data *wd;
+
+   wd = elm_widget_data_get(obj);
+   if (!wd) return ELM_CTXPOPUP_DIRECTION_DONT_KNOW;
+   return wd->dir;
 }

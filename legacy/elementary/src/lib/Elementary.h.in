@@ -24827,6 +24827,7 @@ extern "C" {
                                           the clicked area */
         ELM_CTXPOPUP_DIRECTION_UP, /**< ctxpopup show appear above the clicked
                                         area */
+        ELM_CTXPOPUP_DIRECTION_DONT_KNOW, /**< ctxpopup does not determine it's direction yet*/
      } Elm_Ctxpopup_Direction;
 
    /**
@@ -25022,6 +25023,17 @@ extern "C" {
     * @see elm_ctxpopup_direction_priority_set() for more information.
     */
    EAPI void          elm_ctxpopup_direction_priority_get(Evas_Object *obj, Elm_Ctxpopup_Direction *first, Elm_Ctxpopup_Direction *second, Elm_Ctxpopup_Direction *third, Elm_Ctxpopup_Direction *fourth) EINA_ARG_NONNULL(1);
+
+   /**
+    * @brief Get the current direction of a ctxpopup.
+    *
+    * @param obj Ctxpopup object
+    * @return current direction of a ctxpopup
+    *
+    * @warning Once the ctxpopup showed up, the direction would be determined
+    */
+   EAPI Elm_Ctxpopup_Direction elm_ctxpopup_direction_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+
    /**
     * @}
     */
