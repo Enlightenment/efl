@@ -5,6 +5,32 @@
 #ifndef ELM_LIB_QUICKLAUNCH
 
 static void
+_print_current_dir(Evas_Object *obj)
+{
+   Elm_Ctxpopup_Direction dir;
+   dir = elm_ctxpopup_direction_get(obj);
+
+   switch(dir)
+     {
+      case ELM_CTXPOPUP_DIRECTION_LEFT:
+         printf("ctxpopup direction: left!\n");
+         break;
+      case ELM_CTXPOPUP_DIRECTION_RIGHT:
+         printf("ctxpopup direction: right!\n");
+         break;
+      case ELM_CTXPOPUP_DIRECTION_UP:
+         printf("ctxpopup direction: up!\n");
+         break;
+      case ELM_CTXPOPUP_DIRECTION_DOWN:
+         printf("ctxpopup direction: down!\n");
+         break;
+      case ELM_CTXPOPUP_DIRECTION_DONT_KNOW:
+         printf("ctxpopup direction: dont know!\n");
+         break;
+     }
+}
+
+static void
 _ctxpopup_item_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
 {
    printf("ctxpopup item selected: %s\n",
@@ -44,6 +70,7 @@ _list_item_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    evas_object_size_hint_max_set(ctxpopup, 240, 240);
    evas_object_move(ctxpopup, x, y);
    evas_object_show(ctxpopup);
+   _print_current_dir(ctxpopup);
 }
 
 static void
@@ -67,6 +94,7 @@ _list_item_cb2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
    evas_object_size_hint_max_set(ctxpopup, 240, 240);
    evas_object_move(ctxpopup, x, y);
    evas_object_show(ctxpopup);
+   _print_current_dir(ctxpopup);
 }
 
 static void
@@ -89,6 +117,7 @@ _list_item_cb3(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
    evas_pointer_canvas_xy_get(evas_object_evas_get(obj), &x, &y);
    evas_object_move(ctxpopup, x, y);
    evas_object_show(ctxpopup);
+   _print_current_dir(ctxpopup);
 }
 
 static void
@@ -112,6 +141,7 @@ _list_item_cb4(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
    evas_object_size_hint_max_set(ctxpopup, 240, 240);
    evas_object_move(ctxpopup, x, y);
    evas_object_show(ctxpopup);
+   _print_current_dir(ctxpopup);
 }
 
 
@@ -144,6 +174,7 @@ _list_item_cb5(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
    evas_pointer_canvas_xy_get(evas_object_evas_get(obj), &x, &y);
    evas_object_move(ctxpopup, x, y);
    evas_object_show(ctxpopup);
+   _print_current_dir(ctxpopup);
 }
 
 
