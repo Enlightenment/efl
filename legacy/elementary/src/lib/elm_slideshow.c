@@ -230,7 +230,7 @@ _item_realize(Elm_Slideshow_Item *item)
                       && (!_item_next->base.view)
                       && (_item_next->itc->func.get))
                     {
-		       ic++;
+                       ic++;
                        _item_next->base.view =
                           _item_next->itc->func.get(
                              (void*)_item_next->base.data, obj);
@@ -242,7 +242,7 @@ _item_realize(Elm_Slideshow_Item *item)
                     }
                   else if (_item_next && _item_next->l_built)
                     {
-		       ic++;
+                       ic++;
                        wd->items_built =
                            eina_list_demote_list(wd->items_built,
                                              _item_next->l_built);
@@ -261,7 +261,7 @@ _item_realize(Elm_Slideshow_Item *item)
                       && (!_item_prev->base.view)
                       && (_item_prev->itc->func.get))
                     {
-		       ic++;
+                       ic++;
                        _item_prev->base.view =
                           _item_prev->itc->func.get(
                              (void*)_item_prev->base.data, obj);
@@ -273,7 +273,7 @@ _item_realize(Elm_Slideshow_Item *item)
                     }
                   else if (_item_prev && _item_prev->l_built)
                     {
-		       ic++;
+                       ic++;
                        wd->items_built =
                            eina_list_demote_list(wd->items_built,
                                              _item_prev->l_built);
@@ -651,17 +651,16 @@ elm_slideshow_item_del(Elm_Slideshow_Item *item)
    if (wd->previous == item) wd->previous = NULL;
    if (wd->current == item)
      {
-        Elm_Slideshow_Item *p = NULL;
         Eina_List *l = eina_list_data_find_list(wd->items, item);
         Eina_List *l2 = eina_list_next(l);
         wd->current = NULL;
         if (!l2)
-	  {
-	    l2 = eina_list_prev(l);
-	    if (l2)
-	       elm_slideshow_show(eina_list_data_get(l2));
+          {
+             l2 = eina_list_prev(l);
+             if (l2)
+               elm_slideshow_show(eina_list_data_get(l2));
 
-	  }
+          }
         else
           elm_slideshow_show(eina_list_data_get(l2));
      }
