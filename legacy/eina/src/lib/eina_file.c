@@ -832,6 +832,7 @@ eina_file_open(const char *filename, Eina_Bool shared)
 EAPI void
 eina_file_close(Eina_File *file)
 {
+   if (!file) return;
    eina_lock_take(&file->lock);
    file->refcount--;
    eina_lock_release(&file->lock);
@@ -843,18 +844,21 @@ eina_file_close(Eina_File *file)
 EAPI size_t
 eina_file_size_get(Eina_File *file)
 {
+   if (!file) return 0;
    return file->length;
 }
 
 EAPI time_t
 eina_file_mtime_get(Eina_File *file)
 {
+   if (!file) return 0;
    return file->mtime;
 }
 
 EAPI const char *
 eina_file_filename_get(Eina_File *file)
 {
+   if (!file) return NULL;
    return file->filename;
 }
 
