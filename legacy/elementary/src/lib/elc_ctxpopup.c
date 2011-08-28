@@ -34,33 +34,32 @@ struct _Widget_Data
 
 static const char *widtype = NULL;
 
-static void _freeze_on(void *data __UNUSED__, Evas_Object *obj,
-                       void *event_info __UNUSED__);
-static void _freeze_off(void *data __UNUSED__, Evas_Object *obj,
-                        void *event_info __UNUSED__);
-static void _hold_on(void *data __UNUSED__, Evas_Object *obj,
-                     void *event_info __UNUSED__);
-static void _hold_off(void *data __UNUSED__, Evas_Object *obj,
-                      void *event_info __UNUSED__);
+static void _freeze_on(void *data, Evas_Object *obj, void *event_info);
+static void _freeze_off(void *data, Evas_Object *obj, void *event_info);
+static void _hold_on(void *data, Evas_Object *obj, void *event_info);
+static void _hold_off(void *data, Evas_Object *obj, void *event_info);
 static void _scroller_size_reset(Widget_Data *wd);
 static void _hover_parent_callbacks_del(Evas_Object *obj);
-static void _hover_parent_resize(void *data, Evas *e __UNUSED__,
-                                 Evas_Object *obj __UNUSED__,
-                                 void *event_info __UNUSED__);
-static void _hover_parent_move(void *data, Evas *e __UNUSED__,
-                               Evas_Object *obj __UNUSED__,
-                               void *event_info __UNUSED__);
-static void _hover_parent_del(void *data, Evas *e __UNUSED__,
-                              Evas_Object *obj __UNUSED__,
-                              void *event_info __UNUSED__);
+static void _hover_parent_resize(void *data, Evas *e,
+                                 Evas_Object *obj,
+                                 void *event_info);
+static void _hover_parent_move(void *data, Evas *e,
+                               Evas_Object *obj,
+                               void *event_info);
+static void _hover_parent_del(void *data, Evas *e,
+                              Evas_Object *obj,
+                              void *event_info);
 static void _item_sizing_eval(Elm_Ctxpopup_Item *item);
-static void _adjust_pos_x(Evas_Coord_Point *pos, Evas_Coord_Point *base_size,
+static void _adjust_pos_x(Evas_Coord_Point *pos,
+                          Evas_Coord_Point *base_size,
                           Evas_Coord_Rectangle *hover_area);
-static void _adjust_pos_y(Evas_Coord_Point *pos, Evas_Coord_Point *base_size,
+static void _adjust_pos_y(Evas_Coord_Point *pos,
+                          Evas_Coord_Point *base_size,
                           Evas_Coord_Rectangle *hover_area);
-static void _ctxpopup_changed_size_hints(void *data __UNUSED__,
-                                         Evas *e __UNUSED__, Evas_Object *obj,
-                                         void *event_info __UNUSED__);
+static void _ctxpopup_changed_size_hints(void *data,
+                                         Evas *e,
+                                         Evas_Object *obj,
+                                         void *event_info);
 static Elm_Ctxpopup_Direction _calc_base_geometry(Evas_Object *obj,
                                                   Evas_Coord_Rectangle *rect);
 static void _update_arrow(Evas_Object *obj, Elm_Ctxpopup_Direction dir);
@@ -72,34 +71,44 @@ static void _del_pre_hook(Evas_Object *obj);
 static void _del_hook(Evas_Object *obj);
 static void _theme_hook(Evas_Object *obj);
 static void _content_set_hook(Evas_Object *obj,
-                              const char *part __UNUSED__,
+                              const char *part,
                               Evas_Object *content);
 static Evas_Object * _content_unset_hook(Evas_Object *obj,
-                                         const char *part __UNUSED__);
+                                         const char *part__);
 static Evas_Object * _content_get_hook(const Evas_Object *obj,
-                                       const char *part __UNUSED__);
-static void _bg_clicked_cb(void *data, Evas_Object *obj __UNUSED__,
-                           const char *emission __UNUSED__,
-                           const char *source __UNUSED__);
+                                       const char *part);
+static void _bg_clicked_cb(void *data, Evas_Object *obj,
+                           const char *emission,
+                           const char *source);
 static void _parent_resize(void *data, Evas *e, Evas_Object *obj,
-                           void *event_info __UNUSED__);
-static void _ctxpopup_show(void *data __UNUSED__, Evas *e __UNUSED__,
-                           Evas_Object *obj, void *event_info __UNUSED__);
+                           void *event_info);
+static void _ctxpopup_show(void *data,
+                           Evas *e,
+                           Evas_Object *obj,
+                           void *event_info);
 static void _hide(Evas_Object *obj);
-static void _ctxpopup_hide(void *data __UNUSED__, Evas *e __UNUSED__,
-                           Evas_Object *obj, void *event_info __UNUSED__);
-static void _scroller_resize(void *data, Evas *e __UNUSED__, Evas_Object *obj,
-                             void *event_info __UNUSED__);
-static void _ctxpopup_move(void *data __UNUSED__, Evas *e __UNUSED__,
-                           Evas_Object *obj, void *event_info __UNUSED__);
-static void _item_select_cb(void *data, Evas_Object *obj __UNUSED__,
-                            const char *emission __UNUSED__,
-                            const char *source __UNUSED__);
+static void _ctxpopup_hide(void *data,
+                           Evas *e,
+                           Evas_Object *obj,
+                           void *event_info);
+static void _scroller_resize(void *data,
+                             Evas *e,
+                             Evas_Object *obj,
+                             void *event_info);
+static void _ctxpopup_move(void *data,
+                           Evas *e,
+                           Evas_Object *obj,
+                           void *event_info);
+static void _item_select_cb(void *data, Evas_Object *obj,
+                            const char *emission,
+                            const char *source);
 static void _item_icon_set(Elm_Ctxpopup_Item *item, Evas_Object *icon);
 static void _item_label_set(Elm_Ctxpopup_Item *item, const char *label);
 static void _item_new(Elm_Ctxpopup_Item *item, char *group_name);
-static void _content_del(void *data, Evas *e, Evas_Object *obj __UNUSED__,
-                         void *event_info __UNUSED__);
+static void _content_del(void *data,
+                         Evas *e,
+                         Evas_Object *obj,
+                         void *event_info);
 static void _list_del(Widget_Data *wd);
 static void _list_new(Evas_Object *obj);
 static void _remove_items(Widget_Data * wd);
