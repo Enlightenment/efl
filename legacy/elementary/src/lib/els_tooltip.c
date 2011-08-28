@@ -717,6 +717,7 @@ elm_object_sub_tooltip_content_cb_set(Evas_Object *eventarea, Evas_Object *owner
 EAPI void
 elm_object_tooltip_show(Evas_Object *obj)
 {
+   ELM_CHECK_WID_IS(obj);
    ELM_TOOLTIP_GET_OR_RETURN(tt, obj);
    tt->visible_lock = EINA_TRUE;
    _elm_tooltip_show(tt);
@@ -734,6 +735,7 @@ elm_object_tooltip_show(Evas_Object *obj)
 EAPI void
 elm_object_tooltip_hide(Evas_Object *obj)
 {
+   ELM_CHECK_WID_IS(obj);
    ELM_TOOLTIP_GET_OR_RETURN(tt, obj);
    tt->visible_lock = EINA_FALSE;
    _elm_tooltip_hide_anim_start(tt);
@@ -754,6 +756,7 @@ elm_object_tooltip_hide(Evas_Object *obj)
 EAPI void
 elm_object_tooltip_text_set(Evas_Object *obj, const char *text)
 {
+   ELM_CHECK_WID_IS(obj);
    EINA_SAFETY_ON_NULL_RETURN(obj);
    EINA_SAFETY_ON_NULL_RETURN(text);
 
@@ -785,6 +788,7 @@ elm_object_tooltip_text_set(Evas_Object *obj, const char *text)
 EAPI void
 elm_object_tooltip_content_cb_set(Evas_Object *obj, Elm_Tooltip_Content_Cb func, const void *data, Evas_Smart_Cb del_cb)
 {
+   ELM_CHECK_WID_IS(obj);
    elm_object_sub_tooltip_content_cb_set(obj, obj, func, data, del_cb);
 }
 
@@ -804,6 +808,7 @@ elm_object_tooltip_content_cb_set(Evas_Object *obj, Elm_Tooltip_Content_Cb func,
 EAPI void
 elm_object_tooltip_unset(Evas_Object *obj)
 {
+   ELM_CHECK_WID_IS(obj);
    ELM_TOOLTIP_GET_OR_RETURN(tt, obj);
    _elm_tooltip_unset(tt);
 }
@@ -821,6 +826,7 @@ elm_object_tooltip_unset(Evas_Object *obj)
 EAPI void
 elm_object_tooltip_style_set(Evas_Object *obj, const char *style)
 {
+   ELM_CHECK_WID_IS(obj);
    ELM_TOOLTIP_GET_OR_RETURN(tt, obj);
    if (!eina_stringshare_replace(&tt->style, style)) return;
    elm_tooltip_theme(tt);
@@ -836,6 +842,7 @@ elm_object_tooltip_style_set(Evas_Object *obj, const char *style)
 EAPI const char *
 elm_object_tooltip_style_get(const Evas_Object *obj)
 {
+   ELM_CHECK_WID_IS(obj);
    ELM_TOOLTIP_GET_OR_RETURN(tt, obj, NULL);
    return tt->style ? tt->style : "default";
 }
@@ -883,6 +890,7 @@ elm_tooltip_delay_set(double delay)
 EAPI Eina_Bool
 elm_tooltip_size_restrict_disable(Evas_Object *obj, Eina_Bool disable)
 {
+   ELM_CHECK_WID_IS(obj);
    ELM_TOOLTIP_GET_OR_RETURN(tt, obj, EINA_FALSE);
    return tt->free_size = disable;
 }
@@ -899,6 +907,7 @@ elm_tooltip_size_restrict_disable(Evas_Object *obj, Eina_Bool disable)
 EAPI Eina_Bool
 elm_tooltip_size_restrict_disabled_get(const Evas_Object *obj)
 {
+   ELM_CHECK_WID_IS(obj);
    ELM_TOOLTIP_GET_OR_RETURN(tt, obj, EINA_FALSE);
    return tt->free_size;
 }

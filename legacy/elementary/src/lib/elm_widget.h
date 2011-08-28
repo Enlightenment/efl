@@ -400,6 +400,7 @@ EAPI int              elm_widget_drag_child_locked_y_get(const Evas_Object *obj)
 EAPI Eina_Bool        elm_widget_theme_object_set(Evas_Object *obj, Evas_Object *edj, const char *wname, const char *welement, const char *wstyle);
 EAPI void             elm_widget_type_register(const char **ptr);
 EAPI void             elm_widget_type_unregister(const char **ptr);
+EAPI Eina_Bool        elm_widget_is_check(const Evas_Object *obj);
 EAPI Eina_Bool        elm_widget_type_check(const Evas_Object *obj, const char *type);
 EAPI Eina_List       *elm_widget_stringlist_get(const char *str);
 EAPI void             elm_widget_stringlist_free(Eina_List *list);
@@ -670,6 +671,9 @@ EAPI void             elm_widget_tree_dot_dump(const Evas_Object *top, FILE *out
          elm_widget_type_register(&widtype); \
       } \
    } while (0)
+
+#define ELM_CHECK_WID_IS(obj) \
+   if (!elm_widget_is_check(obj)) return
 
 #define ELM_CHECK_WIDTYPE(obj, widtype) \
    if (!elm_widget_type_check((obj), (widtype))) return

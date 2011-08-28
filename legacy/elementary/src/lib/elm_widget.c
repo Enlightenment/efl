@@ -2398,6 +2398,23 @@ elm_widget_theme_object_set(Evas_Object *obj,
 }
 
 EAPI Eina_Bool
+elm_widget_is_check(const Evas_Object *obj)
+{
+   static int abort_on_warn = -1;
+   if (elm_widget_is(obj))
+      return EINA_TRUE;
+
+   ERR("Passing Object: %p.", obj);
+   if (abort_on_warn == -1)
+     {
+        if (getenv("ELM_ERROR_ABORT")) abort_on_warn = 1;
+        else abort_on_warn = 0;
+     }
+   if (abort_on_warn == 1) abort();
+   return EINA_FALSE;
+}
+
+EAPI Eina_Bool
 elm_widget_type_check(const Evas_Object *obj,
                       const char        *type)
 {
