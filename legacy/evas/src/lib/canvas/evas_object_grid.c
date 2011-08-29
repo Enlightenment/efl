@@ -266,6 +266,8 @@ evas_object_grid_size_set(Evas_Object *o, int w, int h)
 EAPI void
 evas_object_grid_size_get(const Evas_Object *o, int *w, int *h)
 {
+   if (w) *w = 0;
+   if (h) *h = 0;
    EVAS_OBJECT_GRID_DATA_GET_OR_RETURN(o, priv);
    if (w) *w = priv->size.w;
    if (h) *h = priv->size.h;
@@ -367,6 +369,10 @@ evas_object_grid_pack_get(Evas_Object *o, Evas_Object *child, int *x, int *y, in
 {
    Evas_Object_Grid_Option *opt;
 
+   if (x) *x = 0;
+   if (y) *y = 0;
+   if (w) *w = 0;
+   if (h) *h = 0;
    EVAS_OBJECT_GRID_DATA_GET_OR_RETURN_VAL(o, priv, 0);
    opt = _evas_object_grid_option_get(child);
    if (!opt) return 0;
