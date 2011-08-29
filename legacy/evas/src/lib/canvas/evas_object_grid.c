@@ -267,16 +267,8 @@ EAPI void
 evas_object_grid_size_get(const Evas_Object *o, int *w, int *h)
 {
    EVAS_OBJECT_GRID_DATA_GET_OR_RETURN(o, priv);
-   if (priv)
-     {
-        if (w) *w = priv->size.w;
-        if (h) *h = priv->size.h;
-     }
-   else
-     {
-        if (w) *w = 0;
-        if (h) *h = 0;
-     }
+   if (w) *w = priv->size.w;
+   if (h) *h = priv->size.h;
 }
 
 EAPI Eina_Bool
