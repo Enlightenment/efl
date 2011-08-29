@@ -915,19 +915,9 @@ ecore_exe_event_data_get(Ecore_Exe *exe, Ecore_Exe_Flags flags)
                        count++;
                     }
                }
-             if (count == 0)        /* No lines to send, cancel the event. */
-               {
-                  _ecore_exe_event_exe_data_free(NULL, e);
-                  e = NULL;
-               }
-             else                /* NULL terminate the array, so that people know where the end is. */
-               {
-                  e->lines[count].line = NULL;
-                  e->lines[count].size = 0;
-               }
              if (i > last)        /* Partial line left over, save it for next time. */
                {
-                  if (e) e->size = last;
+                  if (count != 0) e->size = last;
                   if (flags & ECORE_EXE_PIPE_READ)
                     {
                        exe->read_data_size = i - last;
@@ -940,6 +930,16 @@ ecore_exe_event_data_get(Ecore_Exe *exe, Ecore_Exe_Flags flags)
                        exe->error_data_buf = malloc(exe->error_data_size);
                        memcpy(exe->error_data_buf, c, exe->error_data_size);
                     }
+               }
+             if (count == 0)        /* No lines to send, cancel the event. */
+               {
+                  _ecore_exe_event_exe_data_free(NULL, e);
+                  e = NULL;
+               }
+             else                /* NULL terminate the array, so that people know where the end is. */
+               {
+                  e->lines[count].line = NULL;
+                  e->lines[count].size = 0;
                }
           }
      }
