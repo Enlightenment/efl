@@ -559,7 +559,7 @@ evas_video_sink_main_render(void *data)
                    rows[i] = &gst_data[priv->height * priv->width + i * priv->width];
                  break;
 	      }
-            case EVAS_COLORSPACE_YCBCR420NV12T601_PL:
+            case EVAS_COLORSPACE_YCBCR420TM12601_PL:
               {
                  int i;
                  const unsigned char **rows;
