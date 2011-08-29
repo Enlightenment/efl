@@ -964,10 +964,11 @@ elm_diskselector_scroller_policy_set(Evas_Object *obj, Elm_Scroller_Policy polic
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return;
-   if ((policy_h >= 3) || (policy_v >= 3)) return;
-   if (wd->scroller)
-     elm_smart_scroller_policy_set(wd->scroller, policy_h, policy_v);
+   if ((!wd) || (!wd->scroller)) return;
+   if ((policy_h >= ELM_SCROLLER_POLICY_LAST) ||
+       (policy_v >= ELM_SCROLLER_POLICY_LAST))
+     return;
+   elm_smart_scroller_policy_set(wd->scroller, policy_h, policy_v);
 }
 
 EAPI void

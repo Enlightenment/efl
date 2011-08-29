@@ -568,15 +568,11 @@ elm_scroller_policy_set(Evas_Object *obj, Elm_Scroller_Policy policy_h, Elm_Scro
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
-   const Elm_Scroller_Policy map[3] =
-     {
-        ELM_SMART_SCROLLER_POLICY_AUTO,
-        ELM_SMART_SCROLLER_POLICY_ON,
-        ELM_SMART_SCROLLER_POLICY_OFF
-     };
    if ((!wd) || (!wd->scr)) return;
-   if ((policy_h >= 3) || (policy_v >= 3)) return;
-   elm_smart_scroller_policy_set(wd->scr, map[policy_h], map[policy_v]);
+   if ((policy_h >= ELM_SCROLLER_POLICY_LAST) ||
+       (policy_v >= ELM_SCROLLER_POLICY_LAST))
+     return;
+   elm_smart_scroller_policy_set(wd->scr, policy_h, policy_v);
 }
 
 EAPI void
