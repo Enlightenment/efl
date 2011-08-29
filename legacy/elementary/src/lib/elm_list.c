@@ -2013,11 +2013,11 @@ elm_list_scroller_policy_set(Evas_Object *obj, Elm_Scroller_Policy policy_h, Elm
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return;
+   if ((!wd) || (!wd->scr)) return;
    if ((policy_h >= ELM_SCROLLER_POLICY_LAST) ||
        (policy_v >= ELM_SCROLLER_POLICY_LAST))
-     if (wd->scr)
-       elm_smart_scroller_policy_set(wd->scr, policy_h, policy_v);
+     return;
+   elm_smart_scroller_policy_set(wd->scr, policy_h, policy_v);
 }
 
 EAPI void
