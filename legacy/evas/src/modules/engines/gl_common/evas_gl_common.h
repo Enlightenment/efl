@@ -130,6 +130,8 @@ typedef enum {
   SHADER_YUV_NOMUL,
   SHADER_YUY2,
   SHADER_YUY2_NOMUL,
+  SHADER_NV12,
+  SHADER_NV12_NOMUL,
   SHADER_TEX,
   SHADER_TEX_NOMUL,
   SHADER_FILTER_INVERT,
@@ -525,6 +527,12 @@ void             evas_gl_common_context_yuy2_push(Evas_Engine_GL_Context *gc,
 						  int x, int y, int w, int h,
 						  int r, int g, int b, int a,
 						  Eina_Bool smooth);
+void             evas_gl_common_context_nv12_push(Evas_Engine_GL_Context *gc,
+						  Evas_GL_Texture *tex,
+						  double sx, double sy, double sw, double sh,
+						  int x, int y, int w, int h,
+						  int r, int g, int b, int a,
+						  Eina_Bool smooth);
 void             evas_gl_common_context_image_map_push(Evas_Engine_GL_Context *gc,
                                                        Evas_GL_Texture *tex,
                                                        int npoints,
@@ -533,8 +541,7 @@ void             evas_gl_common_context_image_map_push(Evas_Engine_GL_Context *g
                                                        int r, int g, int b, int a,
                                                        Eina_Bool smooth,
                                                        Eina_Bool tex_only,
-                                                       Eina_Bool yuv,
-						       Eina_Bool yuy2);
+						       Evas_Colorspace cspace);
 void              evas_gl_common_context_flush(Evas_Engine_GL_Context *gc);
 
 int               evas_gl_common_shader_program_init(Evas_GL_Shared *shared);
@@ -556,6 +563,10 @@ Evas_GL_Texture  *evas_gl_common_texture_yuv_new(Evas_Engine_GL_Context *gc, DAT
 void              evas_gl_common_texture_yuv_update(Evas_GL_Texture *tex, DATA8 **rows, unsigned int w, unsigned int h);
 Evas_GL_Texture  *evas_gl_common_texture_yuy2_new(Evas_Engine_GL_Context *gc, DATA8 **rows, unsigned int w, unsigned int h);
 void              evas_gl_common_texture_yuy2_update(Evas_GL_Texture *tex, DATA8 **rows, unsigned int w, unsigned int h);
+Evas_GL_Texture  *evas_gl_common_texture_nv12_new(Evas_Engine_GL_Context *gc, DATA8 **rows, unsigned int w, unsigned int h);
+void              evas_gl_common_texture_nv12_update(Evas_GL_Texture *tex, DATA8 **row, unsigned int w, unsigned int h);
+Evas_GL_Texture  *evas_gl_common_texture_nv12tiled_new(Evas_Engine_GL_Context *gc, DATA8 **rows, unsigned int w, unsigned int h);
+void              evas_gl_common_texture_nv12tiled_update(Evas_GL_Texture *tex, DATA8 **row, unsigned int w, unsigned int h);
 
 void              evas_gl_common_image_all_unload(Evas_Engine_GL_Context *gc);
 

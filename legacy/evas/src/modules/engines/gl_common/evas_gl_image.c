@@ -578,6 +578,40 @@ evas_gl_common_image_update(Evas_Engine_GL_Context *gc, Evas_GL_Image *im)
           }
         if (!im->tex) return;
         break;
+      case EVAS_COLORSPACE_YCBCR420NV12601_PL:
+        if ((im->tex) && (im->dirty))
+          {
+             evas_gl_common_texture_nv12_update(im->tex, im->cs.data,
+                                                im->im->cache_entry.w,
+                                                im->im->cache_entry.h);
+             im->dirty = 0;
+          }
+        if ((!im->tex) && (im->cs.data) && (*((unsigned char **)im->cs.data)))
+          {
+             im->tex = evas_gl_common_texture_nv12_new(gc, im->cs.data,
+                                                       im->im->cache_entry.w,
+                                                       im->im->cache_entry.h);
+             im->dirty = 0;
+          }
+        if (!im->tex) return;
+        break;
+      case EVAS_COLORSPACE_YCBCR420TM12601_PL:
+        if ((im->tex) && (im->dirty))
+          {
+             evas_gl_common_texture_nv12tiled_update(im->tex, im->cs.data,
+                                                     im->im->cache_entry.w,
+                                                     im->im->cache_entry.h);
+             im->dirty = 0;
+          }
+        if ((!im->tex) && (im->cs.data) && (*((unsigned char **)im->cs.data)))
+          {
+             im->tex = evas_gl_common_texture_nv12tiled_new(gc, im->cs.data,
+                                                            im->im->cache_entry.w,
+                                                            im->im->cache_entry.h);
+             im->dirty = 0;
+          }
+        if (!im->tex) return;
+        break;
       default:
         ERR("unhandled img format colorspace=%d", im->cs.space);
         break;
@@ -613,15 +647,11 @@ evas_gl_common_image_map_draw(Evas_Engine_GL_Context *gc, Evas_GL_Image *im,
    cx = gc->dc->clip.x; cy = gc->dc->clip.y;
    cw = gc->dc->clip.w; ch = gc->dc->clip.h;
    im->tex->im = im;
-   if ((im->cs.space == EVAS_COLORSPACE_YCBCR422P601_PL) ||
-       (im->cs.space == EVAS_COLORSPACE_YCBCR422P709_PL))
-      yuv = 1;
-   if (im->cs.space == EVAS_COLORSPACE_YCBCR422601_PL)
-      yuy2 = 1;
+
    evas_gl_common_context_image_map_push(gc, im->tex, npoints, p,
                                          c, cx, cy, cw, ch,
                                          r, g, b, a, smooth, im->tex_only,
-                                         yuv, yuy2);
+                                         im->cs.space);
 }
 
 void

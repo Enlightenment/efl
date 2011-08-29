@@ -470,3 +470,8 @@
 
 	* Fix evas_object_image_data_convert.
 	* Add YUV 601 input format to evas_object_image_data_convert.
+
+2011-08-29  Cedric Bail
+
+	* Add colorspaces NV12 and MT12 (64 * 32 macro block tiled
+	format, see Linux videodev documentation for more information).

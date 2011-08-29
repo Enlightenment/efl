@@ -1,0 +1,26 @@
+#ifdef GL_ES
+precision mediump float;
+#endif
+uniform sampler2D tex, texuv;
+varying vec4 col;
+varying vec2 tex_c, tex_cuv;
+void main()
+{
+  float y,u,v,vmu,r,g,b;
+  y=texture2D(tex,tex_c).r;
+  u=texture2D(texuv,tex_cuv).g;
+  v=texture2D(texuv,tex_cuv).a;
+
+  u=u-0.5;
+  v=v-0.5;
+  vmu=v*0.813+u*0.391;
+  u=u*2.018;
+  v=v*1.596;
+
+  r=y+v;
+  g=y-vmu;
+  b=y+u;
+
+  gl_FragColor=vec4(r,g,b,1.0) * col;
+}
+

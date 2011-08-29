@@ -510,7 +510,9 @@ typedef enum _Evas_Colorspace
    EVAS_COLORSPACE_YCBCR422P709_PL,/**< YCbCr 4:2:2 Planar, ITU.BT-709 specifications. The data pointed to is just an array of row pointer, pointing to the Y rows, then the Cb, then Cr rows */
    EVAS_COLORSPACE_RGB565_A5P, /**< 16bit rgb565 + Alpha plane at end - 5 bits of the 8 being used per alpha byte */
    EVAS_COLORSPACE_GRY8, /**< 8bit grayscale */
-   EVAS_COLORSPACE_YCBCR422601_PL /**<  YCbCr 4:2:2, ITU.BT-601 specifications. The data poitned to is just an array of row pointer, pointing to line of Y,Cb,Y,Cr bytes */
+   EVAS_COLORSPACE_YCBCR422601_PL, /**<  YCbCr 4:2:2, ITU.BT-601 specifications. The data poitned to is just an array of row pointer, pointing to line of Y,Cb,Y,Cr bytes */
+   EVAS_COLORSPACE_YCBCR420NV12601_PL, /**< YCbCr 4:2:0, ITU.BT-601 specification. The data pointed to is just an array of row pointer, pointing to the Y rows, then the Cb,Cr rows. */
+   EVAS_COLORSPACE_YCBCR420TM12601_PL, /**< YCbCr 4:2:0, ITU.BT-601 specification. The data pointed to is just an array of tiled row pointer, pointing to the Y rows, then the Cb,Cr rows. */
 } Evas_Colorspace; /**< Colorspaces for pixel data supported by Evas */
 
 /**

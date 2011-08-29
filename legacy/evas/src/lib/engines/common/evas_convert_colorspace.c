@@ -140,5 +140,47 @@ evas_common_convert_yuv_422P_601_to(void *data, int w, int h, Evas_Colorspace cs
    return NULL;
 }
 
+EAPI void *
+evas_common_convert_yuv_420_601_to(void *data, int w, int h, Evas_Colorspace cspace)
+{
+   switch (cspace)
+     {
+      case EVAS_COLORSPACE_ARGB8888:
+        {
+           void *dst;
+
+           dst = malloc(sizeof (unsigned int) * w * h);
+           if (!dst) return NULL;
+
+           evas_common_convert_yuv_420_601_rgba(data, dst, w, h);
+           break;
+        }
+      default:
+         break;
+     }
+   return NULL;
+}
+
+EAPI void *
+evas_common_convert_yuv_420T_601_to(void *data, int w, int h, Evas_Colorspace cspace)
+{
+   switch (cspace)
+     {
+      case EVAS_COLORSPACE_ARGB8888:
+        {
+           void *dst;
+
+           dst = malloc(sizeof (unsigned int) * w * h);
+           if (!dst) return NULL;
+
+           evas_common_convert_yuv_420_601_rgba(data, dst, w, h);
+           break;
+        }
+      default:
+         break;
+     }
+   return NULL;
+}
+
 
 /* vim:set ts=8 sw=3 sts=3 expandtab cino=>5n-2f0^-2{2(0W1st0 :*/

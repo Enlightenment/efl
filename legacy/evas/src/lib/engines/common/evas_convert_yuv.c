@@ -26,6 +26,8 @@ static void _evas_yv12torgb_diz    (unsigned char **yuv, unsigned char *rgb, int
 #endif
 static void _evas_yv12torgb_raster (unsigned char **yuv, unsigned char *rgb, int w, int h);
 static void _evas_yuy2torgb_raster (unsigned char **yuv, unsigned char *rgb, int w, int h);
+static void _evas_nv12torgb_raster (unsigned char **yuv, unsigned char *rgb, int w, int h);
+static void _evas_nv12tiledtorgb_raster(unsigned char **yuv, unsigned char *rgb, int w, int h);
 
 #define CRV    104595
 #define CBU    132251
@@ -898,6 +900,26 @@ evas_common_convert_yuv_422_601_rgba(DATA8 **src, DATA8 *dst, int w, int h)
 #endif
 }
 
+void
+evas_common_convert_yuv_420_601_rgba(DATA8 **src, DATA8 *dst, int w, int h)
+{
+#ifdef BUILD_C
+   if (!initted) _evas_yuv_init();
+   initted = 1;
+   _evas_nv12torgb_raster(src, dst, w, h);
+#endif
+}
+
+void
+evas_common_convert_yuv_420T_601_rgba(DATA8 **src, DATA8 *dst, int w, int h)
+{
+#ifdef BUILD_C
+   if (initted) _evas_yuv_init();
+   initted = 1;
+   _evas_nv12tiledtorgb_raster(src, dst, w, h);
+#endif
+}
+
 static void
 _evas_yuy2torgb_raster(unsigned char **yuv, unsigned char *rgb, int w, int h)
 {
@@ -949,6 +971,205 @@ _evas_yuy2torgb_raster(unsigned char **yuv, unsigned char *rgb, int w, int h)
 
 	     yp1 += 4; yp2 += 4; up += 4; vp += 4;
 	  }
+     }
+#endif
+}
+
+#ifdef BUILD_C
+static inline void
+_evas_yuv2rgb_420_raster(unsigned char *yp1, unsigned char *yp2, unsigned char *up, unsigned char *vp,
+                         unsigned char *dp1, unsigned char *dp2)
+{
+   int y, u, v;
+   int vmu;
+
+   /* collect u & v for 4 pixels block */
+   u = *up;
+   v = *vp;
+
+   /* save lookups */
+   vmu = _v813[v] + _v391[u];
+   u = _v2018[u];
+   v = _v1596[v];
+
+   /* do the top 2 pixels of the 2x2 block which shared u & v */
+   /* yuv to rgb */
+   y = _v1164[*yp1];
+   *((DATA32 *) dp1) = 0xff000000 + RGB_JOIN(LUT_CLIP(y + v), LUT_CLIP(y - vmu), LUT_CLIP(y + u));
+
+   dp1 += 4; yp1++;
+
+   /* yuv to rgb */
+   y = _v1164[*yp1];
+   *((DATA32 *) dp1) = 0xff000000 + RGB_JOIN(LUT_CLIP(y + v), LUT_CLIP(y - vmu), LUT_CLIP(y + u));
+
+   /* do the bottom 2 pixels of the 2x2 block which shared u & v */
+   /* yuv to rgb */
+   y = _v1164[*yp2];
+   *((DATA32 *) dp2) = 0xff000000 + RGB_JOIN(LUT_CLIP(y + v), LUT_CLIP(y - vmu), LUT_CLIP(y + u));
+
+   dp2 += 4; yp2++;
+
+   /* yuv to rgb */
+   y = _v1164[*yp2];
+   *((DATA32 *) dp2) = 0xff000000 + RGB_JOIN(LUT_CLIP(y + v), LUT_CLIP(y - vmu), LUT_CLIP(y + u));
+}
+#endif
+
+static void
+_evas_nv12tiledtorgb_raster(unsigned char **yuv, unsigned char *rgb, int w, int h)
+{
+#ifdef BUILD_C
+
+#define HANDLE_MACROBLOCK(YP1, YP2, UP, VP, DP1, DP2)                   \
+   {                                                                    \
+     int i;                                                             \
+     int j;                                                             \
+                                                                        \
+     for (i = 0; i < 32; i += 2)                                        \
+       {                                                                \
+          for (j = 0; j < 64; j += 2)                                   \
+            {                                                           \
+               _evas_yuv2rgb_420_raster(YP1, YP2, UP, VP, DP1, DP2);    \
+                                                                        \
+               /* the previous call just rendered 2 pixels per lines */ \
+               DP1 += 8; DP2 += 8;                                      \
+                                                                        \
+               /* and took for that 2 lines with 2 Y, 1 U and 1 V. Don't forget U & V are in the same plane */ \
+               YP1 += 2; YP2 += 2; UP += 2; VP += 2;                    \
+            }                                                           \
+                                                                        \
+          DP1 += sizeof (int) * w;                                      \
+          DP2 += sizeof (int) * w;                                      \
+          YP1 += 64;                                                    \
+          YP2 += 64;                                                    \
+       }                                                                \
+   }
+
+   /* One macro block is 32 lines of Y and 16 lines of UV */
+   int mb_x, mb_y, mb_w, mb_h;
+
+   /* Idea iterate over each macroblock and convert each of them using _evas_nv12torgb_raster */
+
+   /* The layout of the macroblock order in RGB non tiled space : */
+   /* --------------------------------------------------- */
+   /* | 0  | 1  | 6  | 7  | 8  | 9  | 14 | 15 | 16 | 17 | */
+   /* --------------------------------------------------- */
+   /* | 2  | 3  | 4  | 5  | 10 | 11 | 12 | 13 | 18 | 19 | */
+   /* --------------------------------------------------- */
+   /* | 20 | 21 | 26 | 27 | 28 | 29 | 34 | 35 | 36 | 37 | */
+   /* --------------------------------------------------- */
+   /* | 22 | 23 | 24 | 25 | 30 | 31 | 32 | 33 | 38 | 39 | */
+   /* --------------------------------------------------- */
+   /* | 40 | 41 | 42 | 43 | 44 | 45 | 46 | 47 | 48 | 49 | */
+   /* --------------------------------------------------- */
+
+   /* the number of macroblock should be a multiple of 64x32 */
+   mb_w = w / 64;
+   mb_h = h / 32;
+
+   /* In this format we linearize macroblock on two line to form a Z and it's invert */
+   for (mb_y = 0; mb_y < (mb_h / 2); ++mb_y)
+     {
+        int step = 1;
+        int offset = 0;
+        int x = 0;
+
+        for (mb_x = 0; mb_x < (mb_w * 2); ++mb_x)
+          {
+             unsigned char *yp1, *yp2, *up, *vp;
+             unsigned char *dp1, *dp2;
+
+             step++;
+
+             if (step % 4 == 0)
+               {
+                  x -= 2;
+                  offset = 1 - offset;
+               }
+             else
+               {
+                  x++;
+               }
+
+             /* Y mb addr = yuv[mb_y] + mb_x */
+             /* UV mb addr = yuv[mb_y + mb_h / 2] + mb_x / 2*/
+             /* visual addr = rgb + x * 64 + (mb_y + offset) * 2 * 32 * w */
+
+             dp1 = rgb + x * 64 + (mb_y + offset) * 2 * 32 * w;
+             dp2 = dp1 + sizeof (int) * w;
+
+             yp1 = yuv[mb_y] + mb_x * 64;
+             yp2 = yp1 + 64;
+
+             up = yuv[mb_y + mb_h / 2] + mb_x * 64; /* UV plane is two time less bigger in pixel count, but it old two bytes each times */
+             vp = up + 1;
+
+             HANDLE_MACROBLOCK(yp1, yp2, up, vp, dp1, dp2);
+          }
+     }
+
+   if (mb_h % 2)
+     {
+        mb_y++;
+        int x = 0;
+
+        for (mb_x = 0; mb_x < mb_w; ++mb_x, ++x)
+          {
+             unsigned char *yp1, *yp2, *up, *vp;
+             unsigned char *dp1, *dp2;
+
+             dp1 = rgb + x * 64 + mb_y * 2 * 32 *w;
+             dp2 = dp1 + sizeof (int) * w;
+
+             yp1 = yuv[mb_y] + mb_x * 64;
+             yp2 = yp1 + 64;
+
+             up = yuv[mb_y + mb_h / 2] + mb_x * 64;
+             vp = up + 1;
+
+             HANDLE_MACROBLOCK(yp1, yp2, up, vp, dp1, dp2);
+          }
+     }
+#endif
+}
+
+static void
+_evas_nv12torgb_raster(unsigned char **yuv, unsigned char *rgb, int w, int h)
+{
+#ifdef BUILD_C
+   int xx, yy;
+   unsigned char *yp1, *yp2, *up, *vp;
+   unsigned char *dp1;
+   unsigned char *dp2;
+
+   dp1 = rgb;
+   dp2 = dp1 + sizeof (int) * w;
+
+   for (yy = 0; yy < h; yy++)
+     {
+        yp1 = yuv[yy++];
+        yp2 = yuv[yy];
+
+        up = yuv[h + (yy >> 1)];
+        vp = up + 1;
+
+        for (xx = 0; xx < w; xx += 2)
+          {
+             _evas_yuv2rgb_420_raster(yp1, yp2, up, vp, dp1, dp2);
+
+             /* the previous call just rendered 2 pixels per lines */
+             dp1 += 8; dp2 += 8;
+
+             /* and took for that 2 lines with 2 Y, 1 U and 1 V. Don't forget U & V are in the same plane */
+             yp1 += 2; yp2 += 2; up += 2; vp += 2;
+          }
+
+        /* jump one line */
+        dp1 += sizeof (int) * w;
+        dp2 += sizeof (int) * w;
+        yp1 += w;
+        yp2 += w;
      }
 #endif
 }

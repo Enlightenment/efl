@@ -610,6 +610,20 @@ evas_common_image_colorspace_normalize(RGBA_Image *im)
                                                im->cache_entry.w, im->cache_entry.h);
 #endif
         break;
+      case EVAS_COLORSPACE_YCBCR420NV12601_PL:
+#ifdef BUILD_CONVERT_YUV
+        if ((im->image.data) && (*((unsigned char **)im->cs.data)))
+          evas_common_convert_yuv_420_601_rgba(im->cs.data, (DATA8*) im->image.data,
+                                               im->cache_entry.w, im->cache_entry.h);
+#endif
+        break;
+      case EVAS_COLORSPACE_YCBCR420TM12601_PL:
+#ifdef BUILD_CONVERT_YUV
+        if ((im->image.data) && (*((unsigned char **)im->cs.data)))
+          evas_common_convert_yuv_420T_601_rgba(im->cs.data, (DATA8*) im->image.data,
+                                                im->cache_entry.w, im->cache_entry.h);
+#endif
+         break;
       default:
 	break;
      }

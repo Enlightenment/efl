@@ -1,0 +1,16 @@
+#ifdef GL_ES
+precision mediump float;
+#endif
+attribute vec4 vertex;
+attribute vec4 color;
+attribute vec2 tex_coord, tex_coord2;
+uniform mat4 mvp;
+varying vec4 col;
+varying vec2 tex_y, tex_cuv;
+void main()
+{
+   gl_Position = mvp * vertex;
+   col = color;
+   tex_y = tex_coord;
+   tex_cuv = tex_coord2;
+}

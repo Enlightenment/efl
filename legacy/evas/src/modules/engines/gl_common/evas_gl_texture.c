@@ -1067,8 +1067,10 @@ evas_gl_common_texture_yuv_update(Evas_GL_Texture *tex, DATA8 **rows, unsigned i
      }
 }
 
-Evas_GL_Texture *
-evas_gl_common_texture_yuy2_new(Evas_Engine_GL_Context *gc, DATA8 **rows, unsigned int w, unsigned int h)
+static Evas_GL_Texture *
+_evas_gl_common_texture_y2uv_new(Evas_Engine_GL_Context *gc,
+				 unsigned int yw, unsigned int yh,
+				 unsigned int uvw, unsigned int uvh)
 {
    Evas_GL_Texture *tex;
 
@@ -1077,7 +1079,7 @@ evas_gl_common_texture_yuy2_new(Evas_Engine_GL_Context *gc, DATA8 **rows, unsign
 
    tex->gc = gc;
    tex->references = 1;
-   tex->pt = _pool_tex_new(gc, w + 1, h  + 1, lum_alpha_ifmt, lum_alpha_fmt);
+   tex->pt = _pool_tex_new(gc, yw + 1, yh  + 1, lum_alpha_ifmt, lum_alpha_fmt);
    if (!tex->pt)
      {
         free(tex);
@@ -1087,7 +1089,7 @@ evas_gl_common_texture_yuy2_new(Evas_Engine_GL_Context *gc, DATA8 **rows, unsign
    tex->pt->slot = -1;
    tex->pt->fslot = -1;
    tex->pt->whole = 1;
-   tex->ptuv = _pool_tex_new(gc, (w / 2) + 1, h  + 1, rgba8_ifmt, rgba8_fmt);
+   tex->ptuv = _pool_tex_new(gc, uvw + 1, uvh  + 1, rgba8_ifmt, rgba8_fmt);
    if (!tex->ptuv)
      {
         pt_unref(tex->pt);
@@ -1100,13 +1102,42 @@ evas_gl_common_texture_yuy2_new(Evas_Engine_GL_Context *gc, DATA8 **rows, unsign
    tex->ptuv->whole = 1;
    tex->x = 0;
    tex->y = 0;
-   tex->w = w;
-   tex->h = h;
+   tex->w = yw;
+   tex->h = yh;
    tex->pt->allocations = eina_list_prepend(tex->pt->allocations, tex);
    tex->ptuv->allocations = eina_list_prepend(tex->ptuv->allocations, tex);
    tex->pt->references++;
    tex->ptuv->references++;
+   return tex;
+}
+
+Evas_GL_Texture *
+evas_gl_common_texture_yuy2_new(Evas_Engine_GL_Context *gc, DATA8 **rows, unsigned int w, unsigned int h)
+{
+   Evas_GL_Texture *tex;
+
+   tex = _evas_gl_common_texture_y2uv_new(gc, w, h, w / 2, h);
    evas_gl_common_texture_yuy2_update(tex, rows, w, h);
+   return tex;
+}
+
+Evas_GL_Texture *
+evas_gl_common_texture_nv12_new(Evas_Engine_GL_Context *gc, DATA8 **rows, unsigned int w, unsigned int h)
+{
+   Evas_GL_Texture *tex;
+
+   tex = _evas_gl_common_texture_y2uv_new(gc, w, h, w / 2, h / 2);
+   evas_gl_common_texture_nv12_update(tex, rows, w, h);
+   return tex;
+}
+
+Evas_GL_Texture *
+evas_gl_common_texture_nv12tiled_new(Evas_Engine_GL_Context *gc, DATA8 **rows, unsigned int w, unsigned int h)
+{
+   Evas_GL_Texture *tex;
+
+   tex = _evas_gl_common_texture_y2uv_new(gc, w, h, w / 2, h / 2);
+   evas_gl_common_texture_nv12tiled_update(tex, rows, w, h);
    return tex;
 }
 
@@ -1115,23 +1146,6 @@ evas_gl_common_texture_yuy2_update(Evas_GL_Texture *tex, DATA8 **rows, unsigned 
 {
    if (!tex->pt) return;
    // FIXME: works on lowest size 4 pixel high buffers. must also be multiple of 2
-#undef GL_UNPACK_ROW_LENGTH
-#ifdef GL_UNPACK_ROW_LENGTH
-   glPixelStorei(GL_UNPACK_ROW_LENGTH, rows[1] - rows[0]);
-   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-   glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-   glBindTexture(GL_TEXTURE_2D, tex->pt->texture);
-   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-   fprintf(stderr, "rows: %p\n", rows[0]);
-   fprintf(stderr, "rows end: %p\n", rows[h - 1] + (rows[1] - rows[0]));
-   _tex_sub_2d(0, 0, w, h, tex->pt->format, tex->pt->dataformat, rows[0]);
-   glBindTexture(GL_TEXTURE_2D, tex->ptuv->texture);
-   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-   glPixelStorei(GL_UNPACK_ROW_LENGTH, rows[1] - rows[0]);
-   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-   _tex_sub_2d(0, 0, w / 2, h, tex->ptuv->format, tex->ptuv->dataformat, rows[0]);
-#else
    unsigned int y;
 
    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
@@ -1156,10 +1170,67 @@ evas_gl_common_texture_yuy2_update(Evas_GL_Texture *tex, DATA8 **rows, unsigned 
           _tex_sub_2d(0, y, w / 2, 1, tex->ptuv->format, tex->ptuv->dataformat, rows[y]);
      }
 
+   if (tex->pt->texture != tex->gc->pipe[0].shader.cur_tex)
+     {
+        glBindTexture(GL_TEXTURE_2D, tex->gc->pipe[0].shader.cur_tex);
+        GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+     }
+}
+
+void
+evas_gl_common_texture_nv12_update(Evas_GL_Texture *tex, DATA8 **rows, unsigned int w, unsigned int h)
+{
+   if (!tex->pt) return;
+   // FIXME: works on lowest size 4 pixel high buffers. must also be multiple of 2
+#ifdef GL_UNPACK_ROW_LENGTH
+   glPixelStorei(GL_UNPACK_ROW_LENGTH, rows[1] - rows[0]);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+   glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+   glBindTexture(GL_TEXTURE_2D, tex->pt->texture);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+   _tex_sub_2d(0, 0, w, h, tex->pt->format, tex->pt->dataformat, rows[0]);
+   glBindTexture(GL_TEXTURE_2D, tex->ptuv->texture);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+   glPixelStorei(GL_UNPACK_ROW_LENGTH, rows[h + 1] - rows[h]);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+   _tex_sub_2d(0, 0, w / 2, h / 2, tex->ptuv->format, tex->ptuv->dataformat, rows[h]);
+#else
+   unsigned int y;
+
+   glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+   glBindTexture(GL_TEXTURE_2D, tex->pt->texture);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+   if ((rows[1] - rows[0]) == (int)w)
+     _tex_sub_2d(0, 0, w, h, tex->pt->format, tex->pt->dataformat, rows[0]);
+   else
+     {
+        for (y = 0; y < h; y++)
+          _tex_sub_2d(0, y, w, 1, tex->pt->format, tex->pt->dataformat, rows[y]);
+     }
+
+   glBindTexture(GL_TEXTURE_2D, tex->ptuv->texture);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+   if ((rows[h + 1] - rows[h]) == (int)(w / 2))
+     _tex_sub_2d(0, 0, w / 2, h / 2, tex->ptuv->format, tex->ptuv->dataformat, rows[h]);
+   else
+     {
+        for (y = 0; y < (h / 2); y++)
+          _tex_sub_2d(0, y, w / 2, 1, tex->ptuv->format, tex->ptuv->dataformat, rows[h + y]);
+     }
 #endif
    if (tex->pt->texture != tex->gc->pipe[0].shader.cur_tex)
      {
         glBindTexture(GL_TEXTURE_2D, tex->gc->pipe[0].shader.cur_tex);
         GLERR(__FUNCTION__, __FILE__, __LINE__, "");
      }
+}
+
+void
+evas_gl_common_texture_nv12tiled_update(Evas_GL_Texture *tex, DATA8 **rows, unsigned int w, unsigned int h)
+{
+   if (!tex->pt) return;
+   // FIXME: not done yet
+   abort();
 }
