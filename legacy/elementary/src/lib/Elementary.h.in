@@ -6907,7 +6907,7 @@ extern "C" {
     * @param policy_v Vertical scrollbar policy
     *
     * This sets the scrollbar visibility policy for the given scroller.
-    * ELM_SCROLLER_POLICY_AUTO means the scrollber is made visible if it is
+    * ELM_SCROLLER_POLICY_AUTO means the scrollbar is made visible if it is
     * needed, and otherwise kept hidden. ELM_SCROLLER_POLICY_ON turns it on all
     * the time, and ELM_SCROLLER_POLICY_OFF always keeps it off. This applies
     * respectively for the horizontal and vertical scrollbars.
@@ -14900,7 +14900,7 @@ extern "C" {
     * @param policy_v Vertical scrollbar policy.
     *
     * This sets the scrollbar visibility policy for the given scroller.
-    * #ELM_SCROLLER_POLICY_AUTO means the scrollber is made visible if it
+    * #ELM_SCROLLER_POLICY_AUTO means the scrollbar is made visible if it
     * is needed, and otherwise kept hidden. #ELM_SCROLLER_POLICY_ON turns
     * it on all the time, and #ELM_SCROLLER_POLICY_OFF always keeps it off.
     * This applies respectively for the horizontal and vertical scrollbars.
@@ -24179,7 +24179,7 @@ extern "C" {
     * @param policy_v Vertical scrollbar policy.
     *
     * This sets the scrollbar visibility policy for the given scroller.
-    * #ELM_SCROLLER_POLICY_AUTO means the scrollber is made visible if it
+    * #ELM_SCROLLER_POLICY_AUTO means the scrollbar is made visible if it
     * is needed, and otherwise kept hidden. #ELM_SCROLLER_POLICY_ON turns
     * it on all the time, and #ELM_SCROLLER_POLICY_OFF always keeps it off.
     * This applies respectively for the horizontal and vertical scrollbars.
