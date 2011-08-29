@@ -4,14 +4,15 @@
 static void
 _smart_extents_calculate(Evas_Object *box, Evas_Object_Box_Data *priv, int horizontal, int homogeneous)
 {
-   Evas_Coord minw, minh, mnw, mnh;
+   Evas_Coord minw, minh, mnw, mnh, maxw, maxh;
    const Eina_List *l;
    Evas_Object_Box_Option *opt;
    int c;
 
-   /* FIXME: need to calc max */
    minw = 0;
    minh = 0;
+   maxw = -1;
+   maxh = -1;
    if (homogeneous)
      {
         EINA_LIST_FOREACH(priv->children, l, opt)
@@ -19,11 +20,33 @@ _smart_extents_calculate(Evas_Object *box, Evas_Object_Box_Data *priv, int horiz
              evas_object_size_hint_min_get(opt->obj, &mnw, &mnh);
              if (minh < mnh) minh = mnh;
              if (minw < mnw) minw = mnw;
+             
+             evas_object_size_hint_max_get(opt->obj, &mnw, &mnh);
+             if (mnh >= 0)
+               {
+                  if (maxw == -1) maxh = mnh;
+                  else if (maxh > mnh) maxh = mnh;
+               }
+             if (mnw >= 0)
+               {
+                  if (maxw == -1) maxw = mnw;
+                  else if (maxw > mnw) maxw = mnw;
+               }
           }
         if (horizontal)
-          minw *= eina_list_count(priv->children);
+          {
+             minw *= eina_list_count(priv->children);
+             if (maxw != -1)
+                maxw *= eina_list_count(priv->children);
+             else maxw = -1;
+          }
         else
-          minh *= eina_list_count(priv->children);
+          {
+             minh *= eina_list_count(priv->children);
+             if (maxh != -1)
+                maxh *= eina_list_count(priv->children);
+             else maxh = -1;
+          }
      }
    else
      {
@@ -40,15 +63,43 @@ _smart_extents_calculate(Evas_Object *box, Evas_Object_Box_Data *priv, int horiz
                   if (minw < mnw) minw = mnw;
                   minh += mnh;
                }
+             evas_object_size_hint_max_get(opt->obj, &mnw, &mnh);
+             if (horizontal)
+               {
+                  if (mnw < 0) maxw = -1;
+                  if (maxw != -1)
+                    {
+                       if (maxw > mnw) maxw = mnw;
+                       maxw += mnw;
+                    }
+               }
+             else
+               {
+                  if (mnh < 0) maxh = -1;
+                  if (maxh != -1)
+                    {
+                       if (maxh > mnh) maxh = mnh;
+                       maxh += mnh;
+                    }
+               }
           }
      }
    c = eina_list_count(priv->children) - 1;
    if (c > 0)
      {
-        if (horizontal) minw += priv->pad.h * c;
-        else            minh += priv->pad.v * c;
+        if (horizontal)
+          {
+             minw += priv->pad.h * c;
+             if (maxw != -1) maxw += priv->pad.h * c;
+          }
+        else
+          {
+             minh += priv->pad.v * c;
+             if (maxh != -1) maxh += priv->pad.v * c;
+          }
      }
    evas_object_size_hint_min_set(box, minw, minh);
+   evas_object_size_hint_max_set(box, maxw, maxh);
 }
 
 void
@@ -69,6 +120,8 @@ _els_box_layout(Evas_Object *o, Evas_Object_Box_Data *priv, int horizontal, int 
 
    evas_object_size_hint_min_get(o, &minw, &minh);
    evas_object_size_hint_align_get(o, &ax, &ay);
+   if ((w < minw) || (h < minh)) return;
+//   printf("====== %i %i | %ix%i | %ix%i | %1.3f %1.3f\n", x, y, w, h, minw, minh, ax, ay);
    count = eina_list_count(priv->children);
    if (rtl) ax = 1.0 - ax;
 
@@ -115,6 +168,7 @@ _els_box_layout(Evas_Object *o, Evas_Object_Box_Data *priv, int horizontal, int 
    hdif = h - minh;
    xx = x;
    yy = y;
+//   printf("-------- SZ %ix%i | MIN %ix%i | POS %i %i\n", w, h, minw, minh, x, y);
    EINA_LIST_FOREACH(priv->children, l, opt)
      {
         Evas_Coord mnw, mnh, mxw, mxh;
@@ -193,6 +247,8 @@ _els_box_layout(Evas_Object *o, Evas_Object_Box_Data *priv, int horizontal, int 
              oh = mnh;
              if (fh) oh = hh;
              if ((mxh >= 0) && (mxh < oh)) oh = mxh;
+//             printf("mv: %p %i\n", obj,
+//                    yy + (Evas_Coord)(((double)(hh - oh)) * ay));
              evas_object_move(obj,
                               xx + (Evas_Coord)(((double)(ww - ow)) * ax),
                               yy + (Evas_Coord)(((double)(hh - oh)) * ay));

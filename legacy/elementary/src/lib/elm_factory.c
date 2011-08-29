@@ -1,6 +1,8 @@
 #include <Elementary.h>
 #include "elm_priv.h"
 
+// FIXME: handle if canvas resizes
+
 typedef struct _Widget_Data Widget_Data;
 
 struct _Widget_Data
@@ -8,7 +10,10 @@ struct _Widget_Data
    Evas_Object *obj;
    Evas_Object *content;
    int last_calc_count; 
+   Evas_Coord maxminw, maxminh;
    Eina_Bool eval : 1;
+   Eina_Bool szeval : 1;
+   Eina_Bool maxmin : 1;
 };
 
 static const char *widtype = NULL;
@@ -31,11 +36,28 @@ static const Evas_Smart_Cb_Description _signals[] = {
    {NULL, NULL}
 };
 
+static int fac = 0;
+
 static void
 _del_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
+   if (wd->content)
+     {
+        Evas_Object *o = wd->content;
+        
+        evas_object_event_callback_del_full(o,
+                                            EVAS_CALLBACK_CHANGED_SIZE_HINTS,
+                                            _child_change, obj);
+        evas_object_event_callback_del_full(o,
+                                            EVAS_CALLBACK_DEL,
+                                            _child_del, obj);
+        wd->content = NULL;
+        evas_object_del(o);
+        fac--;
+//        printf("FAC-- = %i\n", fac);
+     }
    free(wd);
 }
 
@@ -60,8 +82,18 @@ _sizing_eval(Evas_Object *obj)
    if (!wd->content) return;
    evas_object_size_hint_min_get(wd->content, &minw, &minh);
    evas_object_size_hint_max_get(wd->content, &maxw, &maxh);
-   evas_object_size_hint_min_set(obj, minw, minh);
+   if (wd->maxmin)
+     {
+        if (minw > wd->maxminw) wd->maxminw = minw;
+        if (minh > wd->maxminh) wd->maxminh = minh;
+        evas_object_size_hint_min_set(obj, wd->maxminw, wd->maxminh);
+     }
+   else
+     {
+        evas_object_size_hint_min_set(obj, minw, minh);
+     }
    evas_object_size_hint_max_set(obj, maxw, maxh);
+//   printf("FAC SZ: %i %i | %i %i\n", minw, minh, maxw, maxh);
 }
 
 static void
@@ -90,6 +122,7 @@ _eval(Evas_Object *obj)
      {
         if (!wd->content)
           {
+//             printf("                 + %i %i %ix%i <> %i %i %ix%i\n", x, y, w, h, cvx, cvy, cvw, cvh);
              evas_object_smart_callback_call(obj, SIG_REALIZE, NULL);
              if (wd->content)
                {
@@ -121,8 +154,12 @@ _changed(Evas_Object *obj)
    if (wd->eval)
      {
         _eval(obj);
-        _sizing_eval(obj);
         wd->eval = EINA_FALSE;
+     }
+   if (wd->szeval)
+     {
+        _sizing_eval(obj);
+        wd->szeval = EINA_FALSE;
      }
 }
 
@@ -150,6 +187,7 @@ _child_change(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj __UNUS
    Widget_Data *wd = elm_widget_data_get(data);
    if (!wd) return;
    wd->eval = EINA_TRUE;
+   wd->szeval = EINA_TRUE;
    evas_object_smart_changed(data);
 }
 
@@ -167,6 +205,8 @@ _child_del(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __
                                        EVAS_CALLBACK_DEL,
                                        _child_del, obj);
    wd->content = NULL;
+   fac--;
+//   printf("FAC-- = %i\n", fac);
 }
 
 EAPI Evas_Object *
@@ -204,15 +244,35 @@ elm_factory_content_set(Evas_Object *obj, Evas_Object *content)
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
    if (wd->content == content) return;
-   if (wd->content) evas_object_del(wd->content);
+   if (wd->content)
+      {
+         Evas_Object *o = wd->content;
+
+         evas_object_event_callback_del_full(wd->content,
+                                             EVAS_CALLBACK_CHANGED_SIZE_HINTS,
+                                             _child_change, obj);
+         evas_object_event_callback_del_full(wd->content,
+                                             EVAS_CALLBACK_DEL,
+                                             _child_del, obj);
+         wd->content = NULL;
+         evas_object_del(o);
+         fac--;
+//         printf("FAC-- = %i\n", fac);
+      }
    wd->content = content;
-   elm_widget_resize_object_set(obj, wd->content);
-   evas_object_event_callback_add(wd->content, EVAS_CALLBACK_DEL,
-                                  _child_del, obj);
-   evas_object_event_callback_add(wd->content, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
-                                  _child_change, obj);
-   wd->eval = EINA_TRUE;
-   evas_object_smart_changed(obj);
+   if (wd->content)
+     {
+        fac++;
+//        printf("FAC++ = %i\n", fac);
+        elm_widget_resize_object_set(obj, wd->content);
+        evas_object_event_callback_add(wd->content, EVAS_CALLBACK_DEL,
+                                       _child_del, obj);
+        evas_object_event_callback_add(wd->content, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
+                                       _child_change, obj);
+        wd->eval = EINA_TRUE;
+        wd->szeval = EINA_TRUE;
+        evas_object_smart_changed(obj);
+     }
 }
 
 EAPI Evas_Object *
@@ -222,4 +282,35 @@ elm_factory_content_get(const Evas_Object *obj)
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return NULL;
    return wd->content;
+}
+
+EAPI void
+elm_factory_maxmin_mode_set(Evas_Object *obj, Eina_Bool enabled)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   wd->maxmin = !!enabled;
+}
+
+EAPI Eina_Bool
+elm_factory_maxmin_mode_get(const Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return EINA_FALSE;
+   return wd->maxmin;
+}
+
+EAPI void
+elm_factory_maxmin_reset_set(Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   wd->maxminw = 0;
+   wd->maxminh = 0;
+   wd->eval = EINA_TRUE;
+   wd->szeval = EINA_TRUE;
+   evas_object_smart_changed(obj);
 }

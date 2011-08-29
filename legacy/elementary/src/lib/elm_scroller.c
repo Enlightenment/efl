@@ -249,7 +249,7 @@ static void
 _sizing_eval(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
-   Evas_Coord  vw, vh, minw = 0, minh = 0, maxw = 0, maxh = 0, w, h, vmw, vmh;
+   Evas_Coord  vw = 0, vh = 0, minw = 0, minh = 0, maxw = 0, maxh = 0, w, h, vmw, vmh;
    double xw = 0.0, yw = 0.0;
 
    if (!wd) return;

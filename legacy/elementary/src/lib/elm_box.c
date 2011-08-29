@@ -639,7 +639,7 @@ elm_box_align_set(Evas_Object *obj, double horizontal, double vertical)
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
-   evas_object_box_align_set(wd->box, horizontal, vertical);
+   evas_object_size_hint_align_set(wd->box, horizontal, vertical);
 }
 
 EAPI void
@@ -648,5 +648,5 @@ elm_box_align_get(const Evas_Object *obj, double *horizontal, double *vertical)
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
-   evas_object_box_align_get(wd->box, horizontal, vertical);
+   evas_object_size_hint_align_get(wd->box, horizontal, vertical);
 }
