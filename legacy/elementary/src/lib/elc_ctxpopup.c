@@ -61,10 +61,6 @@ static void _adjust_pos_x(Evas_Coord_Point *pos,
 static void _adjust_pos_y(Evas_Coord_Point *pos,
                           Evas_Coord_Point *base_size,
                           Evas_Coord_Rectangle *hover_area);
-static void _ctxpopup_changed_size_hints(void *data,
-                                         Evas *e,
-                                         Evas_Object *obj,
-                                         void *event_info);
 static Elm_Ctxpopup_Direction _calc_base_geometry(Evas_Object *obj,
                                                   Evas_Coord_Rectangle *rect);
 static void _update_arrow(Evas_Object *obj, Elm_Ctxpopup_Direction dir);
@@ -315,21 +311,6 @@ _adjust_pos_y(Evas_Coord_Point *pos, Evas_Coord_Point *base_size,
 
    if (pos->y < hover_area->y)
      pos->y = hover_area->y;
-}
-
-static void
-_ctxpopup_changed_size_hints(void *data __UNUSED__, Evas *e __UNUSED__,
-                             Evas_Object *obj, void *event_info __UNUSED__)
-{
-   Widget_Data *wd;
-
-   wd = elm_widget_data_get(obj);
-   if (!wd) return;
-
-   wd->dir = ELM_CTXPOPUP_DIRECTION_DONT_KNOW;
-
-   if (wd->visible)
-     _sizing_eval(obj);
 }
 
 static Elm_Ctxpopup_Direction
@@ -1158,8 +1139,6 @@ elm_ctxpopup_add(Evas_Object *parent)
                                   NULL);
    evas_object_event_callback_add(obj, EVAS_CALLBACK_MOVE, _ctxpopup_move,
                                   NULL);
-   evas_object_event_callback_add(obj, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
-                                  _ctxpopup_changed_size_hints, NULL);
    evas_object_smart_callback_add(obj, "scroll-freeze-on", _freeze_on, obj);
    evas_object_smart_callback_add(obj, "scroll-freeze-off", _freeze_off, obj);
    evas_object_smart_callback_add(obj, "scroll-hold-on", _hold_on, obj);
