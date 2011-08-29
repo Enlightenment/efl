@@ -28,7 +28,7 @@ static const GLenum lum_fmt        = GL_LUMINANCE;
 static const GLenum lum_ifmt       = GL_LUMINANCE;
 static const GLenum lum_alpha_fmt  = GL_LUMINANCE_ALPHA;
 static const GLenum lum_alpha_ifmt = GL_LUMINANCE_ALPHA;
-static const GLenum rgba8_ifmt     = GL_RGBA8;
+static const GLenum rgba8_ifmt     = GL_RGBA;
 static const GLenum rgba8_fmt      = GL_BGRA;
 
 static struct {
@@ -348,10 +348,7 @@ _pool_tex_render_new(Evas_Engine_GL_Context *gc, int w, int h, int intformat, in
    pt->h = h;
    pt->intformat = intformat;
    pt->format = format;
-   if ((intformat == (int)rgba8_ifmt) && (format == (int)rgba8_fmt))
-     pt->dataformat = GL_UNSIGNED_INT_8_8_8_8_REV;
-   else
-     pt->dataformat = GL_UNSIGNED_BYTE;
+   pt->dataformat = GL_UNSIGNED_BYTE;
    pt->render = 1;
    pt->references = 0;
 #if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
