@@ -666,8 +666,20 @@ _emotion_gstreamer_cancel(void *data, Ecore_Thread *thread)
 static void
 _emotion_gstreamer_end(void *data, Ecore_Thread *thread)
 {
-   _emotion_gstreamer_video_pipeline_parse(data, EINA_TRUE);
-   _emotion_gstreamer_cancel(data, thread);
+   Emotion_Gstreamer_Video *ev = data;
+
+   ev->threads = eina_list_remove(ev->threads, thread);
+
+   if (ev->play)
+     {
+        gst_element_set_state(ev->pipeline, GST_STATE_PLAYING);
+        ev->play_started = 1;
+     }
+
+   if (ev->in == ev->out && ev->threads == NULL && ev->delete_me)
+     em_shutdown(ev);
+   else
+     _emotion_gstreamer_video_pipeline_parse(data, EINA_TRUE);
 }
 
 GstElement *

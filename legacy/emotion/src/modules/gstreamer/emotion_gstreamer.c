@@ -436,6 +436,7 @@ em_file_open(const char   *file,
      }
 
    ev->play_started = 0;
+   ev->pipeline_parsed = 0;
 
    uri = sbuf ? eina_strbuf_string_get(sbuf) : file;
    DBG("setting file to '%s'", uri);
@@ -522,7 +523,8 @@ em_play(void   *video,
    ev = (Emotion_Gstreamer_Video *)video;
    if (!ev->pipeline) return ;
 
-   gst_element_set_state(ev->pipeline, GST_STATE_PLAYING);
+   if (ev->pipeline_parsed)
+     gst_element_set_state(ev->pipeline, GST_STATE_PLAYING);
    ev->play = 1;
    ev->play_started = 1;
 }
@@ -536,7 +538,8 @@ em_stop(void *video)
 
    if (!ev->pipeline) return ;
 
-   gst_element_set_state(ev->pipeline, GST_STATE_PAUSED);
+   if (ev->pipeline_parsed)
+     gst_element_set_state(ev->pipeline, GST_STATE_PAUSED);
    ev->play = 0;
 }
 
@@ -1468,6 +1471,8 @@ _eos_main_fct(void *data)
       case GST_MESSAGE_ASYNC_DONE:
          if (!ev->delete_me) _emotion_seek_done(ev->obj);
          break;
+      case GST_MESSAGE_STREAM_STATUS:
+         break;
       default:
          ERR("bus say: %s [%i]",
              GST_MESSAGE_SRC_NAME(msg),
@@ -1490,6 +1495,7 @@ _eos_sync_fct(GstBus *bus, GstMessage *msg, gpointer data)
       case GST_MESSAGE_EOS:
       case GST_MESSAGE_TAG:
       case GST_MESSAGE_ASYNC_DONE:
+      case GST_MESSAGE_STREAM_STATUS:
          send = emotion_gstreamer_message_alloc(ev, msg);
 
          if (send) ecore_main_loop_thread_safe_call_async(_eos_main_fct, send);
@@ -1772,6 +1778,8 @@ _emotion_gstreamer_video_pipeline_parse(Emotion_Gstreamer_Video *ev,
      _free_metadata(ev->metadata);
    ev->metadata = calloc(1, sizeof(Emotion_Gstreamer_Metadata));
 
+   ev->pipeline_parsed = EINA_TRUE;
+
    em_audio_channel_volume_set(ev, ev->volume);
    em_audio_channel_mute_set(ev, ev->audio_mute);
 
@@ -1782,7 +1790,6 @@ _emotion_gstreamer_video_pipeline_parse(Emotion_Gstreamer_Video *ev,
      }
 
    _emotion_open_done(ev->obj);
-   ev->pipeline_parsed = EINA_TRUE;
 
    return EINA_TRUE;
 }
