@@ -842,7 +842,7 @@ elm_object_tooltip_style_set(Evas_Object *obj, const char *style)
 EAPI const char *
 elm_object_tooltip_style_get(const Evas_Object *obj)
 {
-   ELM_CHECK_WID_IS(obj);
+   ELM_CHECK_WID_IS(obj) NULL;
    ELM_TOOLTIP_GET_OR_RETURN(tt, obj, NULL);
    return tt->style ? tt->style : "default";
 }
@@ -890,7 +890,7 @@ elm_tooltip_delay_set(double delay)
 EAPI Eina_Bool
 elm_tooltip_size_restrict_disable(Evas_Object *obj, Eina_Bool disable)
 {
-   ELM_CHECK_WID_IS(obj);
+   ELM_CHECK_WID_IS(obj) EINA_FALSE;
    ELM_TOOLTIP_GET_OR_RETURN(tt, obj, EINA_FALSE);
    return tt->free_size = disable;
 }
@@ -907,7 +907,7 @@ elm_tooltip_size_restrict_disable(Evas_Object *obj, Eina_Bool disable)
 EAPI Eina_Bool
 elm_tooltip_size_restrict_disabled_get(const Evas_Object *obj)
 {
-   ELM_CHECK_WID_IS(obj);
+   ELM_CHECK_WID_IS(obj) EINA_FALSE;
    ELM_TOOLTIP_GET_OR_RETURN(tt, obj, EINA_FALSE);
    return tt->free_size;
 }
