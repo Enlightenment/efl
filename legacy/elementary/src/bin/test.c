@@ -192,7 +192,8 @@ _ui_tg_changed(void *data, Evas_Object *obj, void *event_info)
 static void
 my_win_main(char *autorun, Eina_Bool test_win_only)
 {
-   Evas_Object *win, *bg, *bx0, *lb, *li, *idx, *fr, *tg;
+   Evas_Object *win = NULL, *bg = NULL, *bx0 = NULL, *lb = NULL, *li = NULL;
+   Evas_Object *idx = NULL, *fr = NULL, *tg = NULL;
    Eina_List *tests, *l;
    struct elm_test *t;
 
@@ -429,11 +430,11 @@ add_tests:
    if (autorun)
      {
         EINA_LIST_FOREACH(tests, l, t)
-           if ((t->name) && (t->cb) && (!strcmp(t->name, autorun)))
-             t->cb(NULL, NULL, NULL);
+          if ((t->name) && (t->cb) && (!strcmp(t->name, autorun)))
+            t->cb(NULL, NULL, NULL);
 
      }
-   
+
    if (test_win_only) return;
 
    if (tests)
@@ -460,7 +461,7 @@ add_tests:
    evas_object_resize(win, 320, 480);
    /* show the window */
    if (!test_win_only)
-      evas_object_show(win);
+     evas_object_show(win);
 }
 
 /* this is your elementary main function - it MUST be called IMMEDIATELY
