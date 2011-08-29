@@ -1251,6 +1251,8 @@ elm_ctxpopup_hover_parent_set(Evas_Object *obj, Evas_Object *hover_parent)
      }
 
    wd->hover_parent = hover_parent;
+
+   if (wd->visible) _sizing_eval(obj);
 }
 
 EAPI Evas_Object *
