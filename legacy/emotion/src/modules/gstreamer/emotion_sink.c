@@ -4,7 +4,7 @@
 
 static GstStaticPadTemplate sinktemplate = GST_STATIC_PAD_TEMPLATE("sink",
                                                                    GST_PAD_SINK, GST_PAD_ALWAYS,
-                                                                   GST_STATIC_CAPS(GST_VIDEO_CAPS_YUV("{ I420, YV12, YUY2 }") ";"
+                                                                   GST_STATIC_CAPS(GST_VIDEO_CAPS_YUV("{ I420, YV12, YUY2, NV12, ST12, TM12 }") ";"
                                                                                    GST_VIDEO_CAPS_BGRx ";" GST_VIDEO_CAPS_BGR ";" GST_VIDEO_CAPS_BGRA));
 
 GST_DEBUG_CATEGORY_STATIC(evas_video_sink_debug);
@@ -183,45 +183,73 @@ gboolean evas_video_sink_set_caps(GstBaseSink *bsink, GstCaps *caps)
 {
    EvasVideoSink* sink;
    EvasVideoSinkPrivate* priv;
+   GstStructure *structure;
    GstVideoFormat format;
+   guint32 fourcc;
    int width;
    int height;
 
    sink = EVAS_VIDEO_SINK(bsink);
    priv = sink->priv;
 
-   if (G_UNLIKELY(!gst_video_format_parse_caps(caps, &format, &width, &height))) {
-      ERR("Unable to parse caps.");
-      return FALSE;
-   }
+   if (!gst_video_format_parse_caps(caps, &format, &width, &height))
+     {
+        ERR("Unable to parse caps.");
+        return FALSE;
+     }
 
    priv->width = width;
    priv->height = height;
 
-   printf("%p format :", priv->o);
-   switch (format)
+   structure = gst_caps_get_structure(caps, 0);
+
+   if (gst_structure_get_fourcc(structure, "format", &fourcc))
      {
-      case GST_VIDEO_FORMAT_I420: priv->eformat = EVAS_COLORSPACE_YCBCR422P601_PL;
-         printf ("I420\n");
-         break;
-      case GST_VIDEO_FORMAT_YV12: priv->eformat = EVAS_COLORSPACE_YCBCR422P601_PL;
-         printf ("YV12\n");
-         break;
-      case GST_VIDEO_FORMAT_YUY2: priv->eformat = EVAS_COLORSPACE_YCBCR422601_PL;
-         printf("YUY2\n");
-         break;
-      case GST_VIDEO_FORMAT_BGR: priv->eformat = EVAS_COLORSPACE_ARGB8888;
-         printf ("BGR\n");
-         break;
-      case GST_VIDEO_FORMAT_BGRx: priv->eformat = EVAS_COLORSPACE_ARGB8888;
-         printf ("BGRx\n");
-         break;
-      case GST_VIDEO_FORMAT_BGRA: priv->eformat = EVAS_COLORSPACE_ARGB8888;
-         printf ("BGRA\n");
-         break;
-      default:
-         ERR("unsupported : %d\n", format);
-         return FALSE;
+        switch (fourcc)
+          {
+           case GST_MAKE_FOURCC('I', '4', '2', '0'):
+              priv->eformat = EVAS_COLORSPACE_YCBCR422P601_PL;
+              printf ("I420\n");
+              break;
+           case GST_MAKE_FOURCC('Y', 'V', '1', '2'):
+              priv->eformat = EVAS_COLORSPACE_YCBCR422P601_PL;
+              printf ("YV12\n");
+              break;
+           case GST_MAKE_FOURCC('Y', 'U', 'Y', '2'):
+              priv->eformat = EVAS_COLORSPACE_YCBCR422601_PL;
+              printf("YUY2\n");
+              break;
+           case GST_MAKE_FOURCC('N', 'V', '1', '2'):
+              priv->eformat = EVAS_COLORSPACE_YCBCR420NV12601_PL;
+              printf("NV12\n");
+              break;
+           case GST_MAKE_FOURCC('S', 'T', '1', '2'):
+           case GST_MAKE_FOURCC('T', 'M', '1', '2'):
+              priv->eformat = EVAS_COLORSPACE_YCBCR420TM12601_PL;
+              printf("ST12\n");
+              break;
+           default:
+              goto test_format;
+          }
+     }
+   else
+     {
+     test_format:
+        switch (format)
+          {
+           case GST_VIDEO_FORMAT_BGR: priv->eformat = EVAS_COLORSPACE_ARGB8888;
+              printf ("BGR\n");
+              break;
+           case GST_VIDEO_FORMAT_BGRx: priv->eformat = EVAS_COLORSPACE_ARGB8888;
+              printf ("BGRx\n");
+              break;
+           case GST_VIDEO_FORMAT_BGRA: priv->eformat = EVAS_COLORSPACE_ARGB8888;
+              printf ("BGRA\n");
+              break;
+           default:
+              ERR("unsupported : %d\n", format);
+              return FALSE;
+          }
      }
    priv->gformat = format;
 
@@ -509,6 +537,49 @@ evas_video_sink_main_render(void *data)
              rows[i] = &gst_data[i * priv->width * 2];
            break;
         }
+
+      default:
+
+         switch (priv->eformat)
+           {
+            case EVAS_COLORSPACE_YCBCR420NV12601_PL:
+	      {
+                 int i;
+                 const unsigned char **rows;
+
+                 evas_object_image_pixels_dirty_set(priv->o, 1);
+
+                 rows = (const unsigned char **)evas_data;
+
+                 for (i = 0; i < priv->height; i++)
+                   rows[i] = &gst_data[i * priv->width];
+
+                 rows += priv->height;
+                 for (i = 0; i < (priv->height / 2); i++)
+                   rows[i] = &gst_data[priv->height * priv->width + i * priv->width];
+                 break;
+	      }
+            case EVAS_COLORSPACE_YCBCR420NV12T601_PL:
+              {
+                 int i;
+                 const unsigned char **rows;
+
+                 evas_object_image_pixels_dirty_set(priv->o, 1);
+
+                 rows = (const unsigned char **)evas_data;
+
+                 for (i = 0; i < (priv->height / 32) / 2; i++)
+                   rows[i] = &gst_data[i * priv->width * 2 * 32];
+
+                 if ((priv->height / 32) % 2)
+                   rows[i] = &gst_data[i * priv->width * 2 * 32];
+
+                 rows += priv->height;
+                 for (i = 0; i < ((priv->height / 2) / 32) / 2; ++i)
+                   rows[i] = &gst_data[priv->height * priv->width + i * (priv->width / 2) * 2 * 16];
+                 break;
+              }
+           }
      }
 
    evas_object_image_data_update_add(priv->o, 0, 0, priv->width, priv->height);
