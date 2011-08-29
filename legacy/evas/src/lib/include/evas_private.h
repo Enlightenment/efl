@@ -305,6 +305,9 @@ struct _Evas
    Eina_Array     calculate_objects;
    Eina_Array     clip_changes;
    
+   Eina_List     *calc_list;
+   Eina_List     *calc_list_current;
+
    Eina_List     *post_events; // free me on evas_free
 
    Evas_Callbacks *callbacks;

@@ -10,7 +10,8 @@ struct _Evas_Object_Smart
    void             *engine_data;
    void             *data;
    Eina_List        *callbacks;
-   Eina_Inlist *contained;
+   Eina_Inlist      *contained;
+   Eina_List        *calc_node;
    Evas_Smart_Cb_Description_Array callbacks_descriptions;
    int               walking_list;
    Eina_Bool         deletions_waiting : 1;
@@ -548,7 +549,38 @@ evas_object_smart_need_recalculate_set(Evas_Object *obj, Eina_Bool value)
    return;
    MAGIC_CHECK_END();
 
+   // XXX: do i need this?
+   if (obj->delete_me) return;
+   
    value = !!value;
+   if (value)
+     {
+        Evas *e = obj->layer->evas;
+        
+        if (o->need_recalculate)
+          {
+             if ((o->calc_node) && (e->calc_list_current != o->calc_node))
+                e->calc_list = eina_list_demote_list(e->calc_list,
+                                                     o->calc_node);
+             else
+                e->calc_list = eina_list_append(e->calc_list, obj);
+          }
+        else
+           e->calc_list = eina_list_append(e->calc_list, obj);
+        o->calc_node = eina_list_last(e->calc_list);
+     }
+   else
+     {
+        Evas *e = obj->layer->evas;
+        
+        if (o->need_recalculate)
+          {
+             if ((o->calc_node) && (e->calc_list_current != o->calc_node))
+                e->calc_list = eina_list_remove_list(e->calc_list, 
+                                                     o->calc_node);
+             o->calc_node = NULL;
+          }
+     }
    if (o->need_recalculate == value)
      return;
 
@@ -568,11 +600,14 @@ evas_object_smart_need_recalculate_set(Evas_Object *obj, Eina_Bool value)
     * XXX: on _evas_render_call_smart_calculate() will check for the flag
     * XXX: and it will be unset after the first.
     */
+   
+/*   
    if (o->need_recalculate)
      {
         Evas *e = obj->layer->evas;
         eina_array_push(&e->calculate_objects, obj);
      }
+ */
    /* TODO: else, remove from array */
 }
 
@@ -638,31 +673,31 @@ evas_call_smarts_calculate(Evas *e)
 {
    Eina_Array *calculate;
    Evas_Object *obj;
-   Eina_Array_Iterator it;
-   unsigned int i;
+   Eina_List *l;
 
+//   printf("+CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAALC-----------v\n");
    evas_event_freeze(e);
    e->in_smart_calc++;
-   calculate = &e->calculate_objects;
-   for (i = 0; i < eina_array_count_get(calculate); ++i)
+   
+   EINA_LIST_FOREACH(e->calc_list, l, obj)
      {
-        Evas_Object_Smart *o;
-
-        obj = eina_array_data_get(calculate, i);
-        if (obj->delete_me)
-          continue;
-
-        o = obj->object_data;
+        Evas_Object_Smart *o = obj->object_data;
+        
+        if (obj->delete_me) continue;
+        e->calc_list_current = l;
         if (o->need_recalculate)
           {
              o->need_recalculate = 0;
              obj->smart.smart->smart_class->calculate(obj);
           }
+        if (o->calc_node == l) o->calc_node = NULL;
+        e->calc_list_current = NULL;
      }
-   EINA_ARRAY_ITER_NEXT(calculate, i, obj, it)
+   EINA_LIST_FREE(e->calc_list, obj)
      {
         obj->recalculate_cycle = 0;
      }
+   e->calc_list_current = NULL;
    e->in_smart_calc--;
    if (e->in_smart_calc == 0)
      {
@@ -671,6 +706,7 @@ evas_call_smarts_calculate(Evas *e)
      }
    evas_event_thaw(e);
    evas_event_thaw_eval(e);
+//   printf("-CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAALC-----------^\n");
 }
 
 EAPI void
@@ -731,13 +767,19 @@ evas_object_smart_cleanup(Evas_Object *obj)
    o = (Evas_Object_Smart *)(obj->object_data);
    if (o->magic == MAGIC_OBJ_SMART)
      {
+        Evas *e = obj->layer->evas;
+
+        if ((o->calc_node) && (e->calc_list_current != o->calc_node))
+           e->calc_list = eina_list_remove_list(e->calc_list, 
+                                                o->calc_node);
+        o->calc_node = NULL;
         while (o->contained)
-          evas_object_smart_member_del((Evas_Object *)o->contained);
+           evas_object_smart_member_del((Evas_Object *)o->contained);
 
         while (o->callbacks)
           {
              Evas_Smart_Callback *cb;
-
+             
              cb = o->callbacks->data;
              o->callbacks = eina_list_remove(o->callbacks, cb);
              if (cb->event) eina_stringshare_del(cb->event);
