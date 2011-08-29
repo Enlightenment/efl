@@ -249,6 +249,8 @@ evas_free(Evas *e)
    eina_array_flush(&e->calculate_objects);
    eina_array_flush(&e->clip_changes);
 
+   eina_list_free(e->calc_list);
+   
    e->magic = 0;
    free(e);
 }
