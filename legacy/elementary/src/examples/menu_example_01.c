@@ -24,7 +24,7 @@ _show(void *data, Evas *e, Evas_Object *obj, void *event_info)
    evas_object_show(data);
 }
 
-EAPI int
+EAPI_MAIN int
 elm_main(int argc, char **argv)
 {
    Evas_Object *win, *bg, *menu, *button, *rect;

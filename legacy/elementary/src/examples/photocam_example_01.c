@@ -11,7 +11,7 @@ static void _unfit(void *data, Evas_Object *obj, void *event_info);
 static void _zoom(void *data, Evas_Object *obj, void *event_info);
 static void _bring_in(void *data, Evas_Object *obj, void *event_info);
 
-EAPI int
+EAPI_MAIN int
 elm_main(int argc, char **argv)
 {
    Evas_Object *win, *bg, *bx, *obj, *photocam;

@@ -26,7 +26,7 @@ _format_month_year(struct tm *stime)
    return strdup(buf);
 }
 
-EAPI int
+EAPI_MAIN int
 elm_main(int argc __UNUSED__, char **argv __UNUSED__)
 {
    Evas_Object *win, *bg, *cal;

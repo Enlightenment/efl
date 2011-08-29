@@ -72,7 +72,7 @@ _list_item_cb2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
    elm_list_item_selected_set(event_info, EINA_FALSE);
 }
 
-EAPI int
+EAPI_MAIN int
 elm_main(int argc, char **argv)
 {
    Evas_Object *win, *bg, *list;

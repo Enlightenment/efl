@@ -25,7 +25,7 @@ _btn_clear_cb(void *data, Evas_Object *btn __UNUSED__, void *ev __UNUSED__)
    elm_calendar_marks_draw(cal);
 }
 
-EAPI int
+EAPI_MAIN int
 elm_main(int argc __UNUSED__, char **argv __UNUSED__)
 {
    Evas_Object *win, *bg, *bt, *bx, *cal;

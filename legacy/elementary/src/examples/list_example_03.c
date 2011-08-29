@@ -245,7 +245,7 @@ _disable_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__
    elm_list_item_disabled_set(selected_item, EINA_TRUE);
 }
 
-EAPI int
+EAPI_MAIN int
 elm_main(int argc __UNUSED__, char **argv __UNUSED__)
 {
    Evas_Object *win, *bg, *bx, *hbx, *li, *bt;

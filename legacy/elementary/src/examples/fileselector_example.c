@@ -113,7 +113,7 @@ _path_get_clicked(void        *data,
           elm_fileselector_path_get(fs));
 }
 
-EAPI int
+EAPI_MAIN int
 elm_main(int    argc __UNUSED__,
          char **argv __UNUSED__)
 {

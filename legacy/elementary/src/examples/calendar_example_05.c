@@ -41,7 +41,7 @@ _print_cal_info_cb(void *data __UNUSED__, Evas_Object *obj, void *event_info __U
           wds[0], wds[1], wds[2], wds[3], wds[4], wds[5], wds[6]);
 }
 
-EAPI int
+EAPI_MAIN int
 elm_main(int argc __UNUSED__, char **argv __UNUSED__)
 {
    Evas_Object *win, *bg, *cal;

@@ -146,7 +146,7 @@ _on_keydown(void              *data,
      }
 }
 
-EAPI int
+EAPI_MAIN int
 elm_main(int argc __UNUSED__, char **argv __UNUSED__)
 {
    unsigned int i;

@@ -197,7 +197,7 @@ _select_prev_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUS
      elm_diskselector_item_selected_set(prev_item, EINA_TRUE);
 }
 
-EAPI int
+EAPI_MAIN int
 elm_main(int argc __UNUSED__, char **argv __UNUSED__)
 {
    Evas_Object *win, *bg, *bx, *hbx, *ds, *bt;

@@ -44,7 +44,7 @@ _smooth_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
    elm_mapbuf_smooth_set(mb, elm_check_state_get(obj));
 }
 
-EAPI int
+EAPI_MAIN int
 elm_main(int argc __UNUSED__, char **argv __UNUSED__)
 {
    Evas_Object *win, *bg, *bx, *hbx, *tg, *ck, *mb, *tb, *ic;

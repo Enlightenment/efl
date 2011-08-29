@@ -90,7 +90,7 @@ _expandable_toggle(void            *data,
    printf("Expandable folders mode set to: %s\n", old_val ? "false" : "true");
 }
 
-EAPI int
+EAPI_MAIN int
 elm_main(int    argc __UNUSED__,
          char **argv __UNUSED__)
 {

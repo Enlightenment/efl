@@ -6,7 +6,7 @@
 # include "elementary_config.h"
 #endif
 
-EAPI int
+EAPI_MAIN int
 elm_main(int argc, char **argv)
 {
    Evas_Object *win, *bg, *rect, *table;

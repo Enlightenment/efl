@@ -19,7 +19,7 @@
 
 #define SECS_DAY 86400
 
-EAPI int
+EAPI_MAIN int
 elm_main(int argc __UNUSED__, char **argv __UNUSED__)
 {
    Evas_Object *win, *bg, *bx, *cal, *cal2;

@@ -8,7 +8,7 @@
 
 static void _change_color(void *data, Evas_Object *obj, void *event_info);
 
-EAPI int
+EAPI_MAIN int
 elm_main(int argc, char **argv)
 {
    Evas_Object *win, *bg, *cs, *frame, *rect;

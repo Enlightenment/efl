@@ -106,7 +106,7 @@ Aliquam diam leo, ultrices a sodales sed, laoreet id purus. Nullam eleifend leo 
 <br>\
 Nam scelerisque nulla ut neque tempor blandit volutpat nisl vehicula. Nam orci enim, luctus ut venenatis et, egestas id nunc. Phasellus risus sem, scelerisque sed vestibulum a, aliquam at sem. Sed venenatis tristique nisi id eleifend. Morbi urna tellus, cursus ac porttitor rhoncus, commodo at mi. Mauris ac magna nisi. Maecenas rutrum lobortis sapien, sed dapibus neque hendrerit a. Aliquam fringilla lectus nec arcu tempor et molestie dui suscipit. Proin et felis velit, vel pellentesque ligula. Donec tempus, mi at mollis porttitor, mauris urna congue elit, at varius nisi elit et est. Quisque eu libero lorem, eget tincidunt velit. Nullam hendrerit metus quis urna adipiscing quis tristique tortor condimentum. Integer iaculis scelerisque sem, vitae consectetur lorem facilisis eu. Phasellus consectetur blandit auctor. Morbi eleifend mollis ipsum, id facilisis leo euismod ut. Nunc id est tellus.";
 
-EAPI int
+EAPI_MAIN int
 elm_main(int argc, char **argv)
 {
    Evas_Object *win, *bg, *label, *scroller;

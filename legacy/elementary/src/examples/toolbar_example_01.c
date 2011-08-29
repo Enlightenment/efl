@@ -46,7 +46,7 @@ _item_3_pressed(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUS
    elm_object_text_set(bt, "Create and send email");
 }
 
-EAPI int
+EAPI_MAIN int
 elm_main(int argc __UNUSED__, char **argv __UNUSED__)
 {
    Evas_Object *win, *bg, *bx, *tb, *bt;

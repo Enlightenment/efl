@@ -10,7 +10,7 @@ static int val = 1;
 
 static void _cb(void *data, Evas_Object *obj, void *event_info);
 
-EAPI int
+EAPI_MAIN int
 elm_main(int argc, char **argv)
 {
    Evas_Object *win, *bg, *bx, *radio, *group, *ic;

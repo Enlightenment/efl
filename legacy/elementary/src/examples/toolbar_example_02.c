@@ -32,7 +32,7 @@ _item_pressed(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    elm_toolbar_item_selected_set(item, EINA_FALSE);
 }
 
-EAPI int
+EAPI_MAIN int
 elm_main(int argc __UNUSED__, char **argv __UNUSED__)
 {
    Evas_Object *win, *bg, *bx, *tb, *bt;

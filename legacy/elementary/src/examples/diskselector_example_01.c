@@ -24,7 +24,7 @@ _on_done(void *data __UNUSED__,
    elm_exit();
 }
 
-EAPI int
+EAPI_MAIN int
 elm_main(int argc __UNUSED__, char **argv __UNUSED__)
 {
    Evas_Object *win, *bg, *bx, *ds;
