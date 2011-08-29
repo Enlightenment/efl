@@ -72,6 +72,7 @@ struct _Smart_Data
 
    struct {
       Evas_Coord w, h;
+      Eina_Bool resized : 1;
    } child;
    struct {
       Evas_Coord x, y;
@@ -146,6 +147,8 @@ static void _smart_color_set(Evas_Object *obj, int r, int g, int b, int a);
 static void _smart_clip_set(Evas_Object *obj, Evas_Object *clip);
 static void _smart_clip_unset(Evas_Object *obj);
 static void _smart_init(void);
+
+static void _elm_smart_scroller_wanted_region_set(Evas_Object *obj);
 
 /* local subsystem globals */
 static Evas_Smart *_smart = NULL;
@@ -328,6 +331,8 @@ elm_smart_scroller_momentum_animator_disabled_set(Evas_Object *obj, Eina_Bool di
           {
              ecore_animator_del(sd->down.momentum_animator);
              sd->down.momentum_animator = NULL;
+             if (sd->child.resized)
+                _elm_smart_scroller_wanted_region_set(sd->smart_obj);
           }
      }
 }
@@ -474,6 +479,8 @@ _smart_momentum_end(Smart_Data *sd)
         sd->down.dy = 0;
         sd->down.pdx = 0;
         sd->down.pdy = 0;
+        if (sd->child.resized)
+           _elm_smart_scroller_wanted_region_set(sd->smart_obj);
      }
 }
 
@@ -509,6 +516,8 @@ _smart_scrollto_x(Smart_Data *sd, double t_in, Evas_Coord pos_x)
         ecore_animator_del(sd->down.bounce_x_animator);
         sd->down.bounce_x_animator = NULL;
         _smart_momentum_end(sd);
+        if (sd->child.resized)
+           _elm_smart_scroller_wanted_region_set(sd->smart_obj);
      }
    sd->bouncemex = 0;
 }
@@ -573,6 +582,8 @@ _smart_scrollto_y(Smart_Data *sd, double t_in, Evas_Coord pos_y)
         ecore_animator_del(sd->down.bounce_y_animator);
         sd->down.bounce_y_animator = NULL;
         _smart_momentum_end(sd);
+        if (sd->child.resized)
+           _elm_smart_scroller_wanted_region_set(sd->smart_obj);
      }
    sd->bouncemey = 0;
 }
@@ -683,6 +694,8 @@ _smart_bounce_x_animator(void *data)
              sd->down.pdx = 0;
              sd->bouncemex = 0;
              _smart_momentum_end(sd);
+             if (sd->child.resized)
+                _elm_smart_scroller_wanted_region_set(sd->smart_obj);
              return ECORE_CALLBACK_CANCEL;
           }
      }
@@ -721,6 +734,8 @@ _smart_bounce_y_animator(void *data)
              sd->down.pdy = 0;
              sd->bouncemey = 0;
              _smart_momentum_end(sd);
+             if (sd->child.resized)
+                _elm_smart_scroller_wanted_region_set(sd->smart_obj);
              return ECORE_CALLBACK_CANCEL;
           }
      }
@@ -838,6 +853,8 @@ _smart_momentum_animator(void *data)
              sd->down.ay = 0;
              sd->down.pdx = 0;
              sd->down.pdy = 0;
+             if (sd->child.resized)
+                _elm_smart_scroller_wanted_region_set(sd->smart_obj);
              return ECORE_CALLBACK_CANCEL;
           }
      }
@@ -856,11 +873,15 @@ bounce_eval(Smart_Data *sd)
      {
         ecore_animator_del(sd->down.onhold_animator);
         sd->down.onhold_animator = NULL;
+        if (sd->child.resized)
+           _elm_smart_scroller_wanted_region_set(sd->smart_obj);
      }
    if (sd->down.hold_animator)
      {
         ecore_animator_del(sd->down.hold_animator);
         sd->down.hold_animator = NULL;
+        if (sd->child.resized)
+           _elm_smart_scroller_wanted_region_set(sd->smart_obj);
      }
    sd->pan_func.max_get(sd->pan_obj, &mx, &my);
    sd->pan_func.min_get(sd->pan_obj, &minx, &miny);
@@ -1052,18 +1073,24 @@ _elm_smart_scroller_child_region_show_internal(Evas_Object *obj, Evas_Coord *_x,
         ecore_animator_del(sd->down.bounce_x_animator);
         sd->down.bounce_x_animator = NULL;
         sd->bouncemex = 0;
+        if (sd->child.resized)
+           _elm_smart_scroller_wanted_region_set(sd->smart_obj);
      }
    if (sd->down.bounce_y_animator)
      {
         ecore_animator_del(sd->down.bounce_y_animator);
         sd->down.bounce_y_animator = NULL;
         sd->bouncemey = 0;
+        if (sd->child.resized)
+           _elm_smart_scroller_wanted_region_set(sd->smart_obj);
      }
    if (sd->down.hold_animator)
      {
         ecore_animator_del(sd->down.hold_animator);
         sd->down.hold_animator = NULL;
         _smart_drag_stop(sd->smart_obj);
+        if (sd->child.resized)
+           _elm_smart_scroller_wanted_region_set(sd->smart_obj);
      }
    if (sd->down.momentum_animator)
      {
@@ -1075,6 +1102,8 @@ _elm_smart_scroller_child_region_show_internal(Evas_Object *obj, Evas_Coord *_x,
         sd->down.ay = 0;
         sd->down.pdx = 0;
         sd->down.pdy = 0;
+        if (sd->child.resized)
+           _elm_smart_scroller_wanted_region_set(sd->smart_obj);
      }
 
    x = nx;
@@ -1259,6 +1288,8 @@ elm_smart_scroller_freeze_set(Evas_Object *obj, Eina_Bool freeze)
           {
              ecore_animator_del(sd->down.onhold_animator);
              sd->down.onhold_animator = NULL;
+             if (sd->child.resized)
+                _elm_smart_scroller_wanted_region_set(sd->smart_obj);
           }
      }
    else
@@ -1389,8 +1420,10 @@ _elm_smart_scroller_wanted_region_set(Evas_Object *obj)
        sd->down.bounce_x_animator || sd->down.bounce_y_animator ||
        sd->down.hold_animator || sd->down.onhold_animator) return;
 
+   sd->child.resized = EINA_FALSE;
+   
    /* Flip to RTL cords only if init in RTL mode */
-   if(sd->is_mirrored)
+   if (sd->is_mirrored)
      wx = _elm_smart_scroller_x_mirrored_get(obj, sd->wx);
 
    if (sd->ww == -1)
@@ -1494,6 +1527,7 @@ _smart_pan_changed_hook(void *data, Evas_Object *obj __UNUSED__, void *event_inf
         sd->child.h = h;
         _smart_scrollbar_size_adjust(sd);
         evas_object_size_hint_min_set(sd->smart_obj, sd->child.w, sd->child.h);
+        sd->child.resized = EINA_TRUE;
         _elm_smart_scroller_wanted_region_set(sd->smart_obj);
      }
 }
@@ -1524,12 +1558,16 @@ _smart_pan_pan_changed_hook(void *data, Evas_Object *obj __UNUSED__, void *event
         ecore_animator_del(sd->down.bounce_x_animator);
         sd->down.bounce_x_animator = NULL;
         sd->bouncemex = 0;
+        if (sd->child.resized)
+           _elm_smart_scroller_wanted_region_set(sd->smart_obj);
      }
    if (sd->down.bounce_y_animator)
      {
         ecore_animator_del(sd->down.bounce_y_animator);
         sd->down.bounce_y_animator = NULL;
         sd->bouncemey = 0;
+        if (sd->child.resized)
+           _elm_smart_scroller_wanted_region_set(sd->smart_obj);
      }
    _elm_smart_scroller_wanted_region_set(sd->smart_obj);
 }
@@ -1572,12 +1610,16 @@ _smart_event_wheel(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, 
         ecore_animator_del(sd->down.bounce_x_animator);
         sd->down.bounce_x_animator = NULL;
         sd->bouncemex = 0;
+        if (sd->child.resized)
+           _elm_smart_scroller_wanted_region_set(sd->smart_obj);
      }
    if (sd->down.bounce_y_animator)
      {
         ecore_animator_del(sd->down.bounce_y_animator);
         sd->down.bounce_y_animator = NULL;
         sd->bouncemey = 0;
+        if (sd->child.resized)
+           _elm_smart_scroller_wanted_region_set(sd->smart_obj);
      }
    if (!ev->direction)
      y += ev->z * sd->step.y;
@@ -1628,18 +1670,24 @@ _smart_event_mouse_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSE
              ecore_animator_del(sd->down.bounce_x_animator);
              sd->down.bounce_x_animator = NULL;
              sd->bouncemex = 0;
+             if (sd->child.resized)
+                _elm_smart_scroller_wanted_region_set(sd->smart_obj);
           }
         if (sd->down.bounce_y_animator)
           {
              ecore_animator_del(sd->down.bounce_y_animator);
              sd->down.bounce_y_animator = NULL;
              sd->bouncemey = 0;
+             if (sd->child.resized)
+                _elm_smart_scroller_wanted_region_set(sd->smart_obj);
           }
         if (sd->down.hold_animator)
           {
              ecore_animator_del(sd->down.hold_animator);
              sd->down.hold_animator = NULL;
              _smart_drag_stop(sd->smart_obj);
+             if (sd->child.resized)
+                _elm_smart_scroller_wanted_region_set(sd->smart_obj);
           }
         if (sd->down.momentum_animator)
           {
@@ -1649,6 +1697,8 @@ _smart_event_mouse_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSE
              sd->down.bounce_y_hold = 0;
              sd->down.ax = 0;
              sd->down.ay = 0;
+             if (sd->child.resized)
+                _elm_smart_scroller_wanted_region_set(sd->smart_obj);
           }
         if (ev->button == 1)
           {
@@ -1861,6 +1911,8 @@ _smart_event_mouse_up(void *data, Evas *e, Evas_Object *obj __UNUSED__, void *ev
                {
                   ecore_animator_del(sd->down.onhold_animator);
                   sd->down.onhold_animator = NULL;
+                  if (sd->child.resized)
+                     _elm_smart_scroller_wanted_region_set(sd->smart_obj);
                }
              x = ev->canvas.x - sd->down.x;
              y = ev->canvas.y - sd->down.y;
@@ -1964,6 +2016,8 @@ _smart_event_mouse_up(void *data, Evas *e, Evas_Object *obj __UNUSED__, void *ev
                          {
                             ecore_animator_del(sd->down.hold_animator);
                             sd->down.hold_animator = NULL;
+                            if (sd->child.resized)
+                               _elm_smart_scroller_wanted_region_set(sd->smart_obj);
                          }
                     }
                   else
@@ -2025,6 +2079,8 @@ _smart_event_mouse_up(void *data, Evas *e, Evas_Object *obj __UNUSED__, void *ev
                     {
                        ecore_animator_del(sd->down.hold_animator);
                        sd->down.hold_animator = NULL;
+                       if (sd->child.resized)
+                          _elm_smart_scroller_wanted_region_set(sd->smart_obj);
                     }
                }
              if (sd->down.scroll)
@@ -2046,6 +2102,9 @@ _smart_event_mouse_up(void *data, Evas *e, Evas_Object *obj __UNUSED__, void *ev
              elm_smart_scroller_child_pos_get(sd->smart_obj, &x, &y);
              elm_smart_scroller_child_pos_set(sd->smart_obj, x, y);
              _update_wanted_coordinates(sd, x, y);
+             
+             if (sd->child.resized)
+                _elm_smart_scroller_wanted_region_set(sd->smart_obj);
 
              if (!_smart_do_page(sd))
                bounce_eval(sd);
@@ -2394,6 +2453,8 @@ _smart_event_mouse_move(void *data, Evas *e, Evas_Object *obj __UNUSED__, void *
                          {
                             ecore_animator_del(sd->down.onhold_animator);
                             sd->down.onhold_animator = NULL;
+                            if (sd->child.resized)
+                               _elm_smart_scroller_wanted_region_set(sd->smart_obj);
                          }
                     }
                }
