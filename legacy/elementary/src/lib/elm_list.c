@@ -695,7 +695,7 @@ _item_highlight(Elm_List_Item *it)
 
    if (!wd) return;
    ELM_LIST_ITEM_CHECK_DELETED_RETURN(it);
-   if (it->highlighted) return;
+   if ((it->highlighted) || (it->disabled)) return;
 
    evas_object_ref(obj);
    _elm_list_walk(wd);
@@ -718,6 +718,7 @@ _item_select(Elm_List_Item *it)
 
    if (!wd) return;
    ELM_LIST_ITEM_CHECK_DELETED_RETURN(it);
+   if (it->disabled) return;
    if (it->selected)
      {
         if (wd->always_select) goto call;
