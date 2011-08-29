@@ -75,115 +75,114 @@ ecore_evas_engine_type_supported_get(Ecore_Evas_Engine_Type engine)
      {
       case ECORE_EVAS_ENGINE_SOFTWARE_BUFFER:
 #ifdef BUILD_ECORE_EVAS_SOFTWARE_BUFFER
-        return 1;
+        return EINA_TRUE;
 #else
-        return 0;
+        return EINA_FALSE;
 #endif
       case ECORE_EVAS_ENGINE_SOFTWARE_XLIB:
 #ifdef BUILD_ECORE_EVAS_SOFTWARE_XLIB
-        return 1;
+        return EINA_TRUE;
 #else
-        return 0;
+        return EINA_FALSE;
 #endif
       case ECORE_EVAS_ENGINE_XRENDER_X11:
-        return 0;
+        return EINA_FALSE;
       case ECORE_EVAS_ENGINE_OPENGL_X11:
 #ifdef BUILD_ECORE_EVAS_OPENGL_X11
-        return 1;
+        return EINA_TRUE;
 #else
-        return 0;
+        return EINA_FALSE;
 #endif
       case ECORE_EVAS_ENGINE_SOFTWARE_XCB:
 #ifdef BUILD_ECORE_EVAS_SOFTWARE_XCB
-        return 1;
+        return EINA_TRUE;
 #else
-        return 0;
+        return EINA_FALSE;
 #endif
       case ECORE_EVAS_ENGINE_XRENDER_XCB:
-        return 0;
+        return EINA_FALSE;
       case ECORE_EVAS_ENGINE_SOFTWARE_GDI:
 #ifdef BUILD_ECORE_EVAS_SOFTWARE_GDI
-        return 1;
+        return EINA_TRUE;
 #else
-        return 0;
+        return EINA_FALSE;
 #endif
       case ECORE_EVAS_ENGINE_SOFTWARE_DDRAW:
 #ifdef BUILD_ECORE_EVAS_SOFTWARE_DDRAW
-        return 1;
+        return EINA_TRUE;
 #else
-        return 0;
+        return EINA_FALSE;
 #endif
       case ECORE_EVAS_ENGINE_DIRECT3D:
 #ifdef BUILD_ECORE_EVAS_DIRECT3D
-        return 1;
+        return EINA_TRUE;
 #else
-        return 0;
+        return EINA_FALSE;
 #endif
       case ECORE_EVAS_ENGINE_OPENGL_GLEW:
 #ifdef BUILD_ECORE_EVAS_OPENGL_GLEW
-        return 1;
+        return EINA_TRUE;
 #else
-        return 0;
+        return EINA_FALSE;
 #endif
      case ECORE_EVAS_ENGINE_SOFTWARE_SDL:
 #ifdef BUILD_ECORE_EVAS_SOFTWARE_SDL
-        return 1;
+        return EINA_TRUE;
 #else
-        return 0;
+        return EINA_FALSE;
 #endif
      case ECORE_EVAS_ENGINE_OPENGL_SDL:
 #ifdef BUILD_ECORE_EVAS_OPENGL_SDL
-        return 1;
+        return EINA_TRUE;
 #else
-        return 0;
+        return EINA_FALSE;
 #endif
       case ECORE_EVAS_ENGINE_DIRECTFB:
 #ifdef BUILD_ECORE_EVAS_DIRECTFB
-        return 1;
+        return EINA_TRUE;
 #else
-        return 0;
+        return EINA_FALSE;
 #endif
       case ECORE_EVAS_ENGINE_SOFTWARE_FB:
 #ifdef BUILD_ECORE_EVAS_FB
-        return 1;
+        return EINA_TRUE;
 #else
-        return 0;
+        return EINA_FALSE;
 #endif
 
           case ECORE_EVAS_ENGINE_SOFTWARE_8_X11:
 #ifdef BUILD_ECORE_EVAS_SOFTWARE_8_X11
-        return 1;
+        return EINA_TRUE;
 #else
-        return 0;
+        return EINA_FALSE;
 #endif
 
       case ECORE_EVAS_ENGINE_SOFTWARE_16_X11:
 #ifdef BUILD_ECORE_EVAS_SOFTWARE_16_X11
-        return 1;
+        return EINA_TRUE;
 #else
-        return 0;
+        return EINA_FALSE;
 #endif
       case ECORE_EVAS_ENGINE_SOFTWARE_16_DDRAW:
 #ifdef BUILD_ECORE_EVAS_SOFTWARE_16_DDRAW
-        return 1;
+        return EINA_TRUE;
 #else
-        return 0;
+        return EINA_FALSE;
 #endif
       case ECORE_EVAS_ENGINE_SOFTWARE_16_WINCE:
 #ifdef BUILD_ECORE_EVAS_SOFTWARE_16_WINCE
-        return 1;
+        return EINA_TRUE;
 #else
-        return 0;
+        return EINA_FALSE;
 #endif
       case ECORE_EVAS_ENGINE_COCOA:
 #ifdef BUILD_ECORE_EVAS_COCOA
-         return 1;
+        return EINA_TRUE;
 #else
-         return 0;
+        return EINA_FALSE;
 #endif
       default:
-        return 0;
-        break;
+        return EINA_FALSE;
      };
 }
 
