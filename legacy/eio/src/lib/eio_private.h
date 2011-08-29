@@ -49,6 +49,8 @@
 #define EIO_PACKET_SIZE 65536
 #define EIO_PACKET_COUNT 256
 
+#define EIO_PACKED_TIME 0.001
+
 typedef struct _Eio_File_Ls Eio_File_Ls;
 typedef struct _Eio_File_Direct_Ls Eio_File_Direct_Ls;
 typedef struct _Eio_File_Char_Ls Eio_File_Char_Ls;
@@ -119,6 +121,9 @@ struct _Eio_File_Direct_Ls
 
    Eio_Filter_Direct_Cb filter_cb;
    Eio_Main_Direct_Cb main_cb;
+
+   Eina_List *pack;
+   double start;
 };
 
 struct _Eio_File_Char_Ls

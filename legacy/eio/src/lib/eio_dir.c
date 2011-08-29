@@ -828,6 +828,7 @@ _eio_dir_stat_find_forward(Eio_File_Direct_Ls *async,
                            const Eina_File_Direct_Info *info)
 {
    Eina_Bool filter = EINA_TRUE;
+   double current;
 
    if (async->filter_cb)
      {
@@ -842,8 +843,23 @@ _eio_dir_stat_find_forward(Eio_File_Direct_Ls *async,
         if (!send) return EINA_FALSE;
 
         memcpy(&send->info, info, sizeof (Eina_File_Direct_Info));
+	send->associated = async->ls.common.worker.associated;
+	async->ls.common.worker.associated = NULL;
 
-        ecore_thread_feedback(handler->thread, send);
+        async->pack = eina_list_append(async->pack, send);
+     }
+   else if (async->ls.common.worker.associated)
+     {
+        eina_hash_free(async->ls.common.worker.associated);
+        async->ls.common.worker.associated = NULL;
+     }
+
+   current = ecore_time_get();
+   if (current - async->start > EIO_PACKED_TIME)
+     {
+        async->start = current;
+        ecore_thread_feedback(handler->thread, async->pack);
+        async->pack = NULL;
      }
 
    return EINA_TRUE;
@@ -855,29 +871,38 @@ _eio_dir_stat_find_heavy(void *data, Ecore_Thread *thread)
    Eio_File_Direct_Ls *async = data;
 
    async->ls.common.thread = thread;
+   async->pack = NULL;
+   async->start = ecore_time_get();
 
    _eio_file_recursiv_ls(thread, &async->ls.common,
                          (Eio_Filter_Direct_Cb) _eio_dir_stat_find_forward,
                          async, async->ls.directory);
+
+   if (async->pack) ecore_thread_feedback(thread, async->pack);
+   async->pack = NULL;
 }
 
 static void
 _eio_dir_stat_find_notify(void *data, Ecore_Thread *thread __UNUSED__, void *msg_data)
 {
    Eio_File_Direct_Ls *async = data;
-   Eio_File_Direct_Info *info = msg_data;
+   Eina_List *pack = msg_data;
+   Eio_File_Direct_Info *info;
 
-   async->ls.common.main.associated = info->associated;
-
-   async->main_cb((void*) async->ls.common.data, &async->ls.common, &info->info);
-
-   if (async->ls.common.main.associated)
+   EINA_LIST_FREE(pack, info)
      {
-        eina_hash_free(async->ls.common.main.associated);
-        async->ls.common.main.associated = NULL;
-     }
+        async->ls.common.main.associated = info->associated;
 
-   eio_direct_info_free(info);
+        async->main_cb((void*) async->ls.common.data, &async->ls.common, &info->info);
+
+        if (async->ls.common.main.associated)
+          {
+             eina_hash_free(async->ls.common.main.associated);
+             async->ls.common.main.associated = NULL;
+          }
+
+        eio_direct_info_free(info);
+     }
 }
 
 static void
