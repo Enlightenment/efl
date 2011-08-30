@@ -36,6 +36,12 @@ static Eina_Hash *comment = NULL;
 static Eina_Hash *exec = NULL;
 
 static int
+strcmplen(const void *data1, const void *data2)
+{
+    return strncmp(data1, data2, eina_stringshare_strlen(data1));
+}
+
+static int
 cache_add(const char *path, const char *file_id, int priority __UNUSED__, int *changed)
 {
     Efreet_Desktop *desk;
@@ -200,7 +206,7 @@ main(int argc, char **argv)
     Efreet_Cache_Hash hash;
     Efreet_Cache_Version version;
     Eina_List *dirs = NULL;
-    Eina_List *scanned = NULL;
+    Eina_List *system = NULL;
     Efreet_Cache_Array_String *user_dirs = NULL;
     Eina_List *extra_dirs = NULL;
     Eina_List *store_dirs = NULL;
@@ -320,7 +326,7 @@ main(int argc, char **argv)
         char file_id[PATH_MAX] = { '\0' };
 
         if (!cache_scan(path, file_id, priority++, 1, &changed)) goto error;
-        scanned = eina_list_append(scanned, path);
+        system = eina_list_append(system, path);
     }
 
     if (user_dirs)
@@ -329,11 +335,10 @@ main(int argc, char **argv)
 
         for (j = 0; j < user_dirs->array_count; j++)
         {
-            if (eina_list_search_unsorted_list(scanned, EINA_COMPARE_CB(strcmp), user_dirs->array[j]))
+            if (eina_list_search_unsorted_list(system, strcmplen, user_dirs->array[j]))
                 continue;
             if (!ecore_file_is_dir(user_dirs->array[j])) continue;
             if (!cache_scan(user_dirs->array[j], NULL, priority, 0, &changed)) goto error;
-            scanned = eina_list_append(scanned, eina_stringshare_add(user_dirs->array[j]));
 
             store_dirs = eina_list_append(store_dirs, user_dirs->array[j]);
         }
@@ -346,7 +351,9 @@ main(int argc, char **argv)
 
         EINA_LIST_FOREACH(extra_dirs, l, path)
         {
-            if (eina_list_search_unsorted_list(scanned, EINA_COMPARE_CB(strcmp), path))
+            if (eina_list_search_unsorted_list(system, strcmplen, path))
+                continue;
+            if (eina_list_search_unsorted_list(store_dirs, EINA_COMPARE_CB(strcmp), path))
                 continue;
             if (!ecore_file_is_dir(path)) continue;
 
@@ -479,7 +486,7 @@ main(int argc, char **argv)
         close(tmpfd);
     }
 
-    EINA_LIST_FREE(scanned, dir)
+    EINA_LIST_FREE(system, dir)
         eina_stringshare_del(dir);
     eina_list_free(extra_dirs);
     eina_list_free(store_dirs);
@@ -500,7 +507,7 @@ efreet_error:
 ecore_error:
     eet_shutdown();
 eet_error:
-    EINA_LIST_FREE(scanned, dir)
+    EINA_LIST_FREE(system, dir)
         eina_stringshare_del(dir);
     eina_list_free(extra_dirs);
     eina_list_free(store_dirs);

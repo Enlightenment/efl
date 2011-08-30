@@ -109,8 +109,6 @@ static void icon_cache_update_free(void *data, void *ev);
 
 static void *hash_array_string_add(void *hash, const char *key, void *data);
 
-static int strcmplen(const void *data1, const void *data2);
-
 EAPI int EFREET_EVENT_ICON_CACHE_UPDATE = 0;
 EAPI int EFREET_EVENT_DESKTOP_CACHE_UPDATE = 0;
 EAPI int EFREET_EVENT_DESKTOP_CACHE_BUILD = 0;
@@ -928,7 +926,7 @@ efreet_cache_desktop_add(Efreet_Desktop *desktop)
         }
         efreet_cache_array_string_free(arr);
     }
-    if (!eina_list_search_unsorted_list(desktop_dirs_add, strcmplen, dir))
+    if (!eina_list_search_unsorted_list(desktop_dirs_add, EINA_COMPARE_CB(strcmp), dir))
         desktop_dirs_add = eina_list_append(desktop_dirs_add, eina_stringshare_add(dir));
 
     efreet_cache_desktop_update();
@@ -1385,10 +1383,3 @@ hash_array_string_add(void *hash, const char *key, void *data)
     eina_hash_add(hash, key, data);
     return hash;
 }
-
-static int
-strcmplen(const void *data1, const void *data2)
-{
-    return strncmp(data1, data2, strlen(data1));
-}
-
