@@ -585,15 +585,13 @@ evas_object_smart_need_recalculate_set(Evas_Object *obj, Eina_Bool value)
    
    if (o->need_recalculate == value) return;
 
-   if (obj->recalculate_cycle > 64)
+   if (obj->recalculate_cycle > 256)
      {
         ERR("Object %p is not stable during recalc loop", obj);
         return;
      }
    if (obj->layer->evas->in_smart_calc) obj->recalculate_cycle++;
    o->need_recalculate = value;
-
-   if (!obj->smart.smart->smart_class->calculate) return;
 }
 
 EAPI Eina_Bool
