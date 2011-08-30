@@ -151,60 +151,15 @@ group { name: "elm/segment_control/item/default";
             }
          }
       }
-      part { name: "padding_left";
-         type: RECT;
-         scale: 1;
-         mouse_events: 0;
-         description { state: "default" 0.0;
-            align: 0.0 0.0;
-            rel1.relative: 0.0 0.0;
-            rel2.relative: 0.0 1.0;
-            min: 2 2;
-            max: 2 2;
-            fixed: 1 0;
-            color: 0 0 0 0;
-         }
-      }
-      part { name: "padding_right";
+      part { name: "padding_frame";
          type: RECT;
          scale: 1;
          mouse_events: 0;
          description { state: "default" 0.0;
             visible: 0;
-            align: 1.0 0.0;
-            rel1.relative: 1.0 0.0;
-            rel2.relative: 1.0 1.0;
-            min: 2 2;
-            max: 2 2;
-            fixed: 1 0;
-         }
-      }
-      part { name: "padding_top";
-         type: RECT;
-         scale: 1;
-         mouse_events: 0;
-         description { state: "default" 0.0;
-            visible: 0;
-            align: 0.0 0.0;
-            rel1.relative: 0.0 0.0;
-            rel2.relative: 1.0 0.0;
-            min: 2 2;
-            max: 2 2;
-            fixed: 0 1;
-         }
-      }
-      part { name: "padding_bottom";
-         type: RECT;
-         scale: 1;
-         mouse_events: 0;
-         description { state: "default" 0.0;
-            visible: 0;
-            align: 1.0 1.0;
-            rel1.relative: 0.0 1.0;
-            rel2.relative: 1.0 1.0;
-            min: 2 2;
-            max: 2 2;
-            fixed: 0 1;
+            /* Add a padding of 2 pxs in all directions */
+            rel1.offset: 2 2;
+            rel2.offset: -3 -3;
          }
       }
       part { name: "icon.bg";
@@ -214,16 +169,8 @@ group { name: "elm/segment_control/item/default";
          description { state: "default" 0.0;
             visible: 0;
             fixed: 1 0;
-            rel1 {
-               to_x: "padding_left";
-               to_y: "padding_top";
-               relative: 1.0 1.0;
-            }
-            rel2 {
-               to: "elm.swallow.icon";
-               relative: 1.0 1.0;
-            }
-            align: 0.0 0.5;
+            rel1.to: "elm.swallow.icon";
+            rel2.to: "elm.swallow.icon";
          }
       }
       part { name: "padding_icon_text";
@@ -241,15 +188,13 @@ group { name: "elm/segment_control/item/default";
                to: "icon.bg";
                relative: 1.0 1.0;
             }
-            fixed: 1 0;
-            min: 0 0;
          }
          description { state: "icononly" 0.0;
             inherit: "default" 0.0;
          }
          description { state: "visible" 0.0; //when icon is visible
             inherit: "default" 0.0;
-            min: 2 0;
+            rel2.offset: 2 0;
          }
       }
       part { name: "elm.swallow.icon";
@@ -257,37 +202,22 @@ group { name: "elm/segment_control/item/default";
          scale: 1;
          description { state: "default" 0.0;
             visible: 0;
-            align: 0.0 0.5;
-            rel1 {
-               to_x: "padding_left";
-               to_y: "padding_top";
-               relative: 1.0 1.0;
-            }
-            rel2 {
-               to_y: "padding_bottom";
-               relative: 0.0 0.0;
-            }
-            fixed: 1 0;
+            align: 0.5 0.5;
+            rel1.to: "padding_frame";
+            rel2.to: "padding_frame";
+            rel2.relative: 0.0 0.0;
             aspect: 1.0 1.0;
             aspect_preference: BOTH;
          }
          description { state: "visible" 0.0;
             inherit: "default" 0.0;
             visible: 1;
-            rel2 {
-               to_y: "padding_bottom";
-               relative: 0.3 0.0;
-            }
+            rel2.relative: 0.3 1.0;
          }
          description { state: "icononly" 0.0;
             inherit: "default" 0.0;
             visible: 1;
-            rel2 {
-               to_x: "padding_right";
-               to_y: "padding_bottom";
-               relative: 0.0 0.0;
-            }
-            align: 0.5 0.5;
+            rel2.relative: 1.0 1.0;
          }
       }
       part { name: "elm.text";
@@ -301,12 +231,9 @@ group { name: "elm/segment_control/item/default";
             min: 1 1;
             rel1 {
                to_x: "padding_icon_text";
-               relative: 1.0 1.0;
+               relative: 1.0 0.0;
             }
-            rel2 {
-               to_x: "padding_right";
-               relative: 0.0 0.0;
-            }
+            rel2.to: "padding_frame";
             color: 224 224 224 255;
             color3: 0 0 0 64;
             text {
