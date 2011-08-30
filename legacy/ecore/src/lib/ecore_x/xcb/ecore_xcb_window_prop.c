@@ -136,6 +136,7 @@ ecore_x_window_prop_xid_set(Ecore_X_Window win, Ecore_X_Atom atom, Ecore_X_Atom 
 #if SIZEOF_INT == SIZEOF_LONG
    xcb_change_property(_ecore_xcb_conn, XCB_PROP_MODE_REPLACE, win, atom, 
                        type, 32, num, (unsigned char *)xids);
+   ecore_x_flush();
 #else
    long *v2;
    unsigned int i;
@@ -442,34 +443,6 @@ ecore_x_window_prop_xid_list_get(Ecore_X_Window win, Ecore_X_Atom atom, Ecore_X_
 
    free(reply);
    return num;
-
-   /* if ((reply->type == XCB_NONE) || (reply->value_len == 0))  */
-   /*   num = 0; */
-   /* else if ((reply->type == ECORE_X_ATOM_CARDINAL) && (reply->format == 32))  */
-   /*   { */
-   /*      num = xcb_get_property_value_length(reply); */
-   /*      if (xids)  */
-   /*        { */
-   /*           uint32_t *val; */
-   /*           int i = 0; */
-   /*           void *value; */
-
-   /*           val = (uint32_t *)malloc(num * sizeof(Ecore_X_ID)); */
-   /*           if (!val)  */
-   /*             { */
-   /*                free(reply); */
-   /*                return -1; */
-   /*             } */
-
-   /*           for (i = 0; i < num; i++) */
-   /*             val[i] = ((unsigned long *)value)[i]; */
-
-   /*           *xids = val; */
-   /*        } */
-   /*   } */
-
-   /* free(reply); */
-   /* return num; */
 }
 
 EAPI void 
