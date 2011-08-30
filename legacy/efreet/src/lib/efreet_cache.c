@@ -1128,11 +1128,11 @@ cache_update_cb(void *data __UNUSED__, Ecore_File_Monitor *em __UNUSED__,
                 d->hash = desktops;
                 d->ef = desktop_cache;
                 old_desktop_caches = eina_list_append(old_desktop_caches, d);
-                
+
                 desktops = eina_hash_string_superfast_new(NULL);
-                desktop_cache = NULL;
             }
-            
+            desktop_cache = NULL;
+
             efreet_cache_array_string_free(util_cache_names);
             util_cache_names = NULL;
 
