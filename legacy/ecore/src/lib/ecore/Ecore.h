@@ -648,8 +648,8 @@ extern "C" {
         ECORE_EXE_PIPE_READ = 1, /**< Exe Pipe Read mask */
         ECORE_EXE_PIPE_WRITE = 2, /**< Exe Pipe Write mask */
         ECORE_EXE_PIPE_ERROR = 4, /**< Exe Pipe error mask */
-        ECORE_EXE_PIPE_READ_LINE_BUFFERED = 8, /**< Reads are buffered until a newline and delivered 1 event per line */
-        ECORE_EXE_PIPE_ERROR_LINE_BUFFERED = 16, /**< Errors are buffered until a newline and delivered 1 event per line */
+        ECORE_EXE_PIPE_READ_LINE_BUFFERED = 8, /**< Reads are buffered until a newline and split 1 line per Ecore_Exe_Event_Data_Line */
+        ECORE_EXE_PIPE_ERROR_LINE_BUFFERED = 16, /**< Errors are buffered until a newline and split 1 line per Ecore_Exe_Event_Data_Line */
         ECORE_EXE_PIPE_AUTO = 32, /**< stdout and stderr are buffered automatically */
         ECORE_EXE_RESPAWN = 64, /**< FIXME: Exe is restarted if it dies */
         ECORE_EXE_USE_SH = 128, /**< Use /bin/sh to run the command. */
