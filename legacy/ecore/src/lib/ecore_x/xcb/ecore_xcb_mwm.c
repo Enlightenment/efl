@@ -39,7 +39,7 @@ ecore_x_mwm_borderless_set(Ecore_X_Window win, Eina_Bool borderless)
    data[0] = 2;
    data[2] = !borderless;
 
-   ecore_x_window_prop_property_set(win ? win : ((xcb_screen_t *)_ecore_xcb_screen)->root, 
+   ecore_x_window_prop_property_set(win, 
                                     ECORE_X_ATOM_MOTIF_WM_HINTS, 
                                     ECORE_X_ATOM_MOTIF_WM_HINTS, 32, 
                                     (void *)data, 5);
