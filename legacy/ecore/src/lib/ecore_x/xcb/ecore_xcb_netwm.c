@@ -80,22 +80,13 @@ ecore_x_netwm_window_type_get(Ecore_X_Window win, Ecore_X_Window_Type *type)
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
+   if (type) *type = ECORE_X_WINDOW_TYPE_NORMAL;
+
    num = 
      ecore_x_window_prop_atom_list_get(win, 
                                        ECORE_X_ATOM_NET_WM_WINDOW_TYPE, &atoms);
    if ((type) && (num >= 1) && (atoms))
      *type = _ecore_xcb_netwm_window_type_type_get(atoms[0]);
-
-   /* if (type)  */
-   /*   { */
-   /*      int i = 0; */
-
-   /*      for (i = 0; i < num; i++)  */
-   /*        { */
-   /*           *type = _ecore_xcb_netwm_window_type_type_get(atoms[i]); */
-   /*           if (*type != ECORE_X_WINDOW_TYPE_UNKNOWN) break; */
-   /*        } */
-   /*   } */
 
    if (atoms) free(atoms);
 
@@ -286,6 +277,7 @@ ecore_x_netwm_desk_names_set(Ecore_X_Window root, const char **names, unsigned i
    xcb_change_property(_ecore_xcb_conn, XCB_PROP_MODE_REPLACE, root,
                        ECORE_X_ATOM_NET_DESKTOP_NAMES, 
                        ECORE_X_ATOM_UTF8_STRING, 8, len, (const void *)buf);
+   ecore_x_flush();
    free(buf);
 }
 
@@ -402,6 +394,7 @@ ecore_x_netwm_state_request_send(Ecore_X_Window win, Ecore_X_Window root, Ecore_
    xcb_send_event(_ecore_xcb_conn, 0, root, 
                   (XCB_EVENT_MASK_SUBSTRUCTURE_REDIRECT | 
                       XCB_EVENT_MASK_SUBSTRUCTURE_NOTIFY), (const char *)&ev);
+   ecore_x_flush();
 }
 
 EAPI void 
@@ -493,6 +486,7 @@ ecore_x_netwm_client_active_request(Ecore_X_Window root, Ecore_X_Window win, int
    xcb_send_event(_ecore_xcb_conn, 0, root, 
                   (XCB_EVENT_MASK_SUBSTRUCTURE_REDIRECT | 
                       XCB_EVENT_MASK_SUBSTRUCTURE_NOTIFY), (const char *)&ev);
+   ecore_x_flush();
 }
 
 EAPI void 
@@ -578,29 +572,25 @@ ecore_x_screen_is_composited_set(int screen, Ecore_X_Window win)
 EAPI void 
 ecore_x_netwm_ping_send(Ecore_X_Window win) 
 {
-//   xcb_client_message_event_t ev;
+   xcb_client_message_event_t ev;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    if (!win) return;
 
-   ecore_x_client_message32_send(win, ECORE_X_ATOM_WM_PROTOCOLS, 
-                                 XCB_EVENT_MASK_NO_EVENT, 
-                                 ECORE_X_ATOM_NET_WM_PING, 
-                                 ecore_x_current_time_get(), win, 0, 0);
+   ev.response_type = XCB_CLIENT_MESSAGE;
+   ev.format = 32;
+   ev.window = win;
+   ev.type = ECORE_X_ATOM_WM_PROTOCOLS;
+   ev.data.data32[0] = ECORE_X_ATOM_NET_WM_PING;
+   ev.data.data32[1] = ecore_x_current_time_get();
+   ev.data.data32[2] = win;
+   ev.data.data32[3] = 0;
+   ev.data.data32[4] = 0;
 
-   /* ev.response_type = XCB_CLIENT_MESSAGE; */
-   /* ev.format = 32; */
-   /* ev.window = win; */
-   /* ev.type = ECORE_X_ATOM_WM_PROTOCOLS; */
-   /* ev.data.data32[0] = ECORE_X_ATOM_NET_WM_PING; */
-   /* ev.data.data32[1] = ecore_x_current_time_get(); */
-   /* ev.data.data32[2] = win; */
-   /* ev.data.data32[3] = 0; */
-   /* ev.data.data32[4] = 0; */
-
-   /* xcb_send_event(_ecore_xcb_conn, 0, win,  */
-   /*                XCB_EVENT_MASK_NO_EVENT, (const char *)&ev); */
+   xcb_send_event(_ecore_xcb_conn, 0, win, 
+                  XCB_EVENT_MASK_NO_EVENT, (const char *)&ev);
+   ecore_x_flush();
 }
 
 EAPI void 
@@ -641,32 +631,28 @@ ecore_x_netwm_frame_size_get(Ecore_X_Window win, int *fl, int *fr, int *ft, int 
 EAPI void 
 ecore_x_netwm_sync_request_send(Ecore_X_Window win, unsigned int serial) 
 {
-//   xcb_client_message_event_t ev;
+   xcb_client_message_event_t ev;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    if (!win) return;
 
-   ecore_x_client_message32_send(win, ECORE_X_ATOM_WM_PROTOCOLS, 
-                                 XCB_EVENT_MASK_NO_EVENT, 
-                                 ECORE_X_ATOM_NET_WM_SYNC_REQUEST, 
-                                 _ecore_xcb_events_last_time_get(), 
-                                 serial, 0, 0);
+   /* FIXME: Maybe need XSyncIntToValue ?? */
+   memset(&ev, 0, sizeof(xcb_client_message_event_t));
 
-   /* memset(&ev, 0, sizeof(xcb_client_message_event_t)); */
+   ev.response_type = XCB_CLIENT_MESSAGE;
+   ev.format = 32;
+   ev.window = win;
+   ev.type = ECORE_X_ATOM_WM_PROTOCOLS;
+   ev.data.data32[0] = ECORE_X_ATOM_NET_WM_SYNC_REQUEST;
+   ev.data.data32[1] = _ecore_xcb_events_last_time_get();
+   ev.data.data32[2] = serial;
+   ev.data.data32[3] = 0;
+   ev.data.data32[4] = 0;
 
-   /* ev.response_type = XCB_CLIENT_MESSAGE; */
-   /* ev.format = 32; */
-   /* ev.window = win; */
-   /* ev.type = ECORE_X_ATOM_WM_PROTOCOLS; */
-   /* ev.data.data32[0] = ECORE_X_ATOM_NET_WM_SYNC_REQUEST; */
-   /* ev.data.data32[1] = _ecore_xcb_events_last_time_get(); */
-   /* ev.data.data32[2] = serial; */
-   /* ev.data.data32[3] = 0; */
-   /* ev.data.data32[4] = 0; */
-
-   /* xcb_send_event(_ecore_xcb_conn, 0, win,  */
-   /*                XCB_EVENT_MASK_NO_EVENT, (const char *)&ev); */
+   xcb_send_event(_ecore_xcb_conn, 0, win, 
+                  XCB_EVENT_MASK_NO_EVENT, (const char *)&ev);
+   ecore_x_flush();
 }
 
 EAPI void 
