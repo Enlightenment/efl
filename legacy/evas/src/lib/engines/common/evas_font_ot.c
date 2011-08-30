@@ -283,7 +283,7 @@ evas_common_font_ot_populate_text_props(const Eina_Unicode *text,
         slen = len;
      }
 
-   buffer = hb_buffer_create(slen);
+   buffer = hb_buffer_create();
    hb_buffer_set_unicode_funcs(buffer, _evas_common_font_ot_unicode_funcs_get());
    hb_buffer_set_language(buffer, hb_language_from_string(
             evas_common_language_from_locale_get()));
