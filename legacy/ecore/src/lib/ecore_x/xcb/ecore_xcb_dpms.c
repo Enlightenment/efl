@@ -67,7 +67,7 @@ _ecore_xcb_dpms_finalize(void)
 EAPI Eina_Bool 
 ecore_x_dpms_query(void) 
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+//   LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    return _dpms_avail;
 }
@@ -80,7 +80,7 @@ ecore_x_dpms_query(void)
 EAPI Eina_Bool 
 ecore_x_dpms_capable_get(void) 
 {
-   int ret = EINA_FALSE;
+   Eina_Bool ret = EINA_FALSE;
 #ifdef ECORE_XCB_DPMS
    xcb_dpms_capable_cookie_t cookie;
    xcb_dpms_capable_reply_t *reply;
@@ -111,7 +111,7 @@ ecore_x_dpms_capable_get(void)
 EAPI Eina_Bool 
 ecore_x_dpms_enabled_get(void) 
 {
-   int ret = EINA_FALSE;
+   Eina_Bool ret = EINA_FALSE;
 #ifdef ECORE_XCB_DPMS
    xcb_dpms_info_cookie_t cookie;
    xcb_dpms_info_reply_t *reply;
@@ -201,6 +201,7 @@ ecore_x_dpms_timeouts_set(unsigned int standby, unsigned int suspend, unsigned i
    if (!_dpms_avail) return EINA_FALSE;
 
 #ifdef ECORE_XCB_DPMS
+   // FIXME: Add request check
    xcb_dpms_set_timeouts(_ecore_xcb_conn, standby, suspend, off);
    return EINA_TRUE;
 #endif
