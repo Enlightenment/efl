@@ -936,7 +936,7 @@ ecore_x_window_client_manage(Ecore_X_Window win)
                                 XCB_CW_EVENT_MASK, &list);
 
 #ifdef ECORE_XCB_SHAPE
-   xcb_shape_select_input(_ecore_xcb_conn, win, 1);
+   xcb_shape_select_input(_ecore_xcb_conn, win, EINA_TRUE);
 #endif
    ecore_x_flush();
 }
@@ -973,7 +973,7 @@ ecore_x_window_client_sniff(Ecore_X_Window win)
    xcb_change_window_attributes(_ecore_xcb_conn, win, 
                                 XCB_CW_EVENT_MASK, &list);
 #ifdef ECORE_XCB_SHAPE
-   xcb_shape_select_input(_ecore_xcb_conn, win, 1);
+   xcb_shape_select_input(_ecore_xcb_conn, win, EINA_TRUE);
 #endif
    ecore_x_flush();
 }
@@ -1072,8 +1072,7 @@ ecore_x_window_manage(Ecore_X_Window win)
    reply = xcb_get_window_attributes_reply(_ecore_xcb_conn, cookie, NULL);
    if (!reply) return EINA_FALSE;
 
-   ecore_x_flush(); // needed
-//   ecore_x_sync(); // needed
+   ecore_x_sync(); // needed
 
    list = (XCB_EVENT_MASK_ENTER_WINDOW | XCB_EVENT_MASK_LEAVE_WINDOW | 
            XCB_EVENT_MASK_PROPERTY_CHANGE | XCB_EVENT_MASK_RESIZE_REDIRECT | 
@@ -1087,11 +1086,15 @@ ecore_x_window_manage(Ecore_X_Window win)
    change_cookie = xcb_change_window_attributes(_ecore_xcb_conn, win, 
                                                 XCB_CW_EVENT_MASK, &list);
 
-   ecore_x_flush(); // needed
-//   ecore_x_sync(); // needed
+   ecore_x_sync(); // needed
 
    err = xcb_request_check(_ecore_xcb_conn, change_cookie);
-   if (err) return EINA_FALSE;
+   if (err) 
+     {
+        _ecore_xcb_error_handle(err);
+        free(err);
+        return EINA_FALSE;
+     }
 
    return EINA_TRUE;
 }
@@ -1338,6 +1341,7 @@ ecore_x_window_root_list(int *num_ret)
                     }
                }
              *num_ret = k;
+             free(reply);
           }
         else 
           {
@@ -1429,8 +1433,6 @@ ecore_x_window_root_get(Ecore_X_Window win)
 EAPI Ecore_X_Window 
 ecore_x_window_root_first_get(void) 
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
-
    return ((xcb_screen_t *)_ecore_xcb_screen)->root;
 }
 
