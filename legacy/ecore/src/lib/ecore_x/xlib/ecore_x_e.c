@@ -894,10 +894,10 @@ ecore_x_e_comp_sync_supported_get(Ecore_X_Window root)
                                        ECORE_X_ATOM_WINDOW,
                                        &win2, 1);
         if ((ret == 1) && (win2 == win))
-           return 1;
+           return EINA_TRUE;
      }
 
-   return 0;
+   return EINA_FALSE;
 } /* ecore_x_e_comp_sync_supported_get */
 
 EAPI void
