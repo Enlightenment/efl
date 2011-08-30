@@ -118,6 +118,7 @@ ecore_x_dnd_send_status(Eina_Bool will_accept, Eina_Bool suppress, Ecore_X_Recta
 
    xcb_send_event(_ecore_xcb_conn, 0, _target->source, 
                   XCB_EVENT_MASK_NO_EVENT, (const char *)&ev);
+   ecore_x_flush();
 }
 
 EAPI Eina_Bool 
@@ -145,6 +146,7 @@ ecore_x_dnd_drop(void)
 
              xcb_send_event(_ecore_xcb_conn, 0, _source->dest, 
                             XCB_EVENT_MASK_NO_EVENT, (const char *)&ev);
+             ecore_x_flush();
              _source->state = ECORE_X_DND_SOURCE_DROPPED;
              status = EINA_TRUE;
           }
@@ -153,6 +155,7 @@ ecore_x_dnd_drop(void)
              ev.type = ECORE_X_ATOM_XDND_LEAVE;
              xcb_send_event(_ecore_xcb_conn, 0, _source->dest, 
                             XCB_EVENT_MASK_NO_EVENT, (const char *)&ev);
+             ecore_x_flush();
              _source->state = ECORE_X_DND_SOURCE_IDLE;
           }
      }
@@ -458,6 +461,7 @@ ecore_x_dnd_send_finished(void)
 
    xcb_send_event(_ecore_xcb_conn, 0, _target->source, 
                   XCB_EVENT_MASK_NO_EVENT, (const char *)&ev);
+   ecore_x_flush();
    _target->state = ECORE_X_DND_TARGET_IDLE;
 }
 
@@ -515,6 +519,7 @@ _ecore_xcb_dnd_drag(Ecore_X_Window root, int x, int y)
 
         xcb_send_event(_ecore_xcb_conn, 0, _source->dest, 
                        XCB_EVENT_MASK_NO_EVENT, (const char *)&ev);
+        ecore_x_flush();
         _source->suppress = 0;
      }
 
@@ -553,6 +558,7 @@ _ecore_xcb_dnd_drag(Ecore_X_Window root, int x, int y)
 
              xcb_send_event(_ecore_xcb_conn, 0, win, 
                             XCB_EVENT_MASK_NO_EVENT, (const char *)&ev);
+             ecore_x_flush();
              _source->await_status = 0;
              _source->will_accept = 0;
           }
@@ -575,6 +581,7 @@ _ecore_xcb_dnd_drag(Ecore_X_Window root, int x, int y)
 
              xcb_send_event(_ecore_xcb_conn, 0, win, 
                             XCB_EVENT_MASK_NO_EVENT, (const char *)&ev);
+             ecore_x_flush();
              _source->await_status = 1;
           }
      }
