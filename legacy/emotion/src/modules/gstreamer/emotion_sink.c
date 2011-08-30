@@ -103,10 +103,12 @@ evas_video_sink_set_property(GObject * object, guint prop_id,
        eina_lock_take(&priv->m);
        evas_object_event_callback_del(priv->o, EVAS_CALLBACK_FREE, _cleanup_priv);
        priv->o = g_value_get_pointer (value);
+       INF("sink set Evas_Object %p.", priv->o);
        evas_object_event_callback_add(priv->o, EVAS_CALLBACK_FREE, _cleanup_priv, priv);
        eina_lock_release(&priv->m);
        break;
     case PROP_EV:
+       INF("sink set ev.");
        eina_lock_take(&priv->m);
        priv->ev = g_value_get_pointer (value);
        eina_lock_release(&priv->m);
@@ -130,21 +132,25 @@ evas_video_sink_get_property(GObject * object, guint prop_id,
 
    switch (prop_id) {
     case PROP_EVAS_OBJECT:
+       INF("sink get property.");
        eina_lock_take(&priv->m);
-       g_value_set_pointer (value, priv->o);
+       g_value_set_pointer(value, priv->o);
        eina_lock_release(&priv->m);
        break;
     case PROP_WIDTH:
+       INF("sink get width.");
        eina_lock_take(&priv->m);
        g_value_set_int(value, priv->width);
        eina_lock_release(&priv->m);
        break;
     case PROP_HEIGHT:
+       INF("sink get height.");
        eina_lock_take(&priv->m);
        g_value_set_int (value, priv->height);
        eina_lock_release(&priv->m);
        break;
     case PROP_EV:
+       INF("sink get ev.");
        eina_lock_take(&priv->m);
        g_value_set_pointer (value, priv->ev);
        eina_lock_release(&priv->m);
@@ -161,6 +167,8 @@ evas_video_sink_dispose(GObject* object)
 {
    EvasVideoSink* sink;
    EvasVideoSinkPrivate* priv;
+
+   INF("dispose.");
 
    sink = EVAS_VIDEO_SINK(object);
    priv = sink->priv;
@@ -202,24 +210,27 @@ gboolean evas_video_sink_set_caps(GstBaseSink *bsink, GstCaps *caps)
           {
            case GST_MAKE_FOURCC('I', '4', '2', '0'):
               priv->eformat = EVAS_COLORSPACE_YCBCR422P601_PL;
-              printf ("I420\n");
+              priv->gformat = GST_VIDEO_FORMAT_I420;
+              INF("sink set colorspace I420 [%i, %i]", priv->width, priv->height);
               break;
            case GST_MAKE_FOURCC('Y', 'V', '1', '2'):
               priv->eformat = EVAS_COLORSPACE_YCBCR422P601_PL;
-              printf ("YV12\n");
+              priv->gformat = GST_VIDEO_FORMAT_YV12;
+              INF("sink set colorspace YV12 [%i, %i]", priv->width, priv->height);
               break;
            case GST_MAKE_FOURCC('Y', 'U', 'Y', '2'):
               priv->eformat = EVAS_COLORSPACE_YCBCR422601_PL;
-              printf("YUY2\n");
+              priv->gformat = GST_VIDEO_FORMAT_YUY2;
+              INF("sink set colorspace YUY2 [%i, %i]", priv->width, priv->height);
               break;
            case GST_MAKE_FOURCC('N', 'V', '1', '2'):
               priv->eformat = EVAS_COLORSPACE_YCBCR420NV12601_PL;
-              printf("NV12\n");
+              INF("sink set colorspace NV12 [%i, %i]", priv->width, priv->height);
               break;
            case GST_MAKE_FOURCC('S', 'T', '1', '2'):
            case GST_MAKE_FOURCC('T', 'M', '1', '2'):
               priv->eformat = EVAS_COLORSPACE_YCBCR420TM12601_PL;
-              printf("ST12\n");
+              INF("sink set colorspace ST12 [%i, %i]", priv->width, priv->height);
               break;
            default:
               goto test_format;
@@ -228,6 +239,7 @@ gboolean evas_video_sink_set_caps(GstBaseSink *bsink, GstCaps *caps)
    else
      {
      test_format:
+        INF("fallback code !");
         if (!gst_video_format_parse_caps(caps, &format, &priv->width, &priv->height))
           {
              ERR("Unable to parse caps.");
@@ -237,20 +249,20 @@ gboolean evas_video_sink_set_caps(GstBaseSink *bsink, GstCaps *caps)
         switch (format)
           {
            case GST_VIDEO_FORMAT_BGR: priv->eformat = EVAS_COLORSPACE_ARGB8888;
-              printf ("BGR\n");
+              INF("sink set colorspace BGR [%i, %i]", priv->width, priv->height);
               break;
            case GST_VIDEO_FORMAT_BGRx: priv->eformat = EVAS_COLORSPACE_ARGB8888;
-              printf ("BGRx\n");
+              INF("sink set colorspace BGRx [%i, %i]", priv->width, priv->height);
               break;
            case GST_VIDEO_FORMAT_BGRA: priv->eformat = EVAS_COLORSPACE_ARGB8888;
-              printf ("BGRA\n");
+              INF("sink set colorspace BGRA [%i, %i]", priv->width, priv->height);
               break;
            default:
               ERR("unsupported : %d\n", format);
               return FALSE;
           }
+        priv->gformat = format;
      }
-   priv->gformat = format;
 
    return TRUE;
 }
@@ -260,6 +272,8 @@ evas_video_sink_start(GstBaseSink* base_sink)
 {
    EvasVideoSinkPrivate* priv;
    gboolean res = TRUE;
+
+   INF("sink start");
 
    priv = EVAS_VIDEO_SINK(base_sink)->priv;
    eina_lock_take(&priv->m);
@@ -276,6 +290,8 @@ evas_video_sink_stop(GstBaseSink* base_sink)
 {
    EvasVideoSinkPrivate* priv = EVAS_VIDEO_SINK(base_sink)->priv;
 
+   INF("sink stop");
+
    unlock_buffer_mutex(priv);
    return TRUE;
 }
@@ -284,6 +300,8 @@ static gboolean
 evas_video_sink_unlock(GstBaseSink* object)
 {
    EvasVideoSink* sink;
+
+   INF("sink unlock");
 
    sink = EVAS_VIDEO_SINK(object);
 
@@ -302,6 +320,8 @@ evas_video_sink_unlock_stop(GstBaseSink* object)
    sink = EVAS_VIDEO_SINK(object);
    priv = sink->priv;
 
+   INF("sink unlock stop");
+
    eina_lock_take(&priv->m);
    priv->unlocked = FALSE;
    eina_lock_release(&priv->m);
@@ -316,6 +336,14 @@ evas_video_sink_preroll(GstBaseSink* bsink, GstBuffer* buffer)
    Emotion_Gstreamer_Buffer *send;
    EvasVideoSinkPrivate *priv;
    EvasVideoSink *sink;
+
+   INF("sink preroll %p [%i]", GST_BUFFER_DATA(buffer), GST_BUFFER_SIZE(buffer));
+
+   if (GST_BUFFER_SIZE(buffer) <= 0)
+     {
+        WRN("empty buffer");
+        return GST_FLOW_OK;
+     }
 
    sink = EVAS_VIDEO_SINK(bsink);
    priv = sink->priv;
@@ -334,6 +362,14 @@ evas_video_sink_render(GstBaseSink* bsink, GstBuffer* buffer)
    Emotion_Gstreamer_Buffer *send;
    EvasVideoSinkPrivate *priv;
    EvasVideoSink *sink;
+
+   INF("sink render %p [%i]", GST_BUFFER_DATA(buffer), GST_BUFFER_SIZE(buffer));
+
+   if (GST_BUFFER_SIZE(buffer) <= 0)
+     {
+        WRN("empty buffer");
+        return GST_FLOW_OK;
+     }
 
    sink = EVAS_VIDEO_SINK(bsink);
    priv = sink->priv;
@@ -400,6 +436,8 @@ evas_video_sink_main_render(void *data)
    evas_object_image_size_get(priv->o, &w, &h);
    if (w != priv->width || h != priv->height)
      goto exit_point;
+
+   INF("sink main render [%i, %i]", w, h);
 
    evas_object_image_size_set(priv->o, priv->width, priv->height);
    evas_object_image_alpha_set(priv->o, 0);
@@ -538,7 +576,6 @@ evas_video_sink_main_render(void *data)
         }
 
       default:
-
          switch (priv->eformat)
            {
             case EVAS_COLORSPACE_YCBCR420NV12601_PL:
@@ -578,6 +615,8 @@ evas_video_sink_main_render(void *data)
                    rows[i] = &gst_data[priv->height * priv->width + i * (priv->width / 2) * 2 * 16];
                  break;
               }
+            default:
+               WRN("No way to decode %x colorspace !", priv->eformat);
            }
      }
 
