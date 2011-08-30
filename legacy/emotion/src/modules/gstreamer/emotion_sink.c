@@ -186,22 +186,15 @@ gboolean evas_video_sink_set_caps(GstBaseSink *bsink, GstCaps *caps)
    GstStructure *structure;
    GstVideoFormat format;
    guint32 fourcc;
-   int width;
-   int height;
 
    sink = EVAS_VIDEO_SINK(bsink);
    priv = sink->priv;
 
-   if (!gst_video_format_parse_caps(caps, &format, &width, &height))
-     {
-        ERR("Unable to parse caps.");
-        return FALSE;
-     }
-
-   priv->width = width;
-   priv->height = height;
-
    structure = gst_caps_get_structure(caps, 0);
+
+   if (!((gst_structure_get_int(structure, "width", &priv->width)
+	  && gst_structure_get_int(structure, "height", &priv->height))))
+     goto test_format;
 
    if (gst_structure_get_fourcc(structure, "format", &fourcc))
      {
@@ -235,6 +228,12 @@ gboolean evas_video_sink_set_caps(GstBaseSink *bsink, GstCaps *caps)
    else
      {
      test_format:
+        if (!gst_video_format_parse_caps(caps, &format, &priv->width, &priv->height))
+          {
+             ERR("Unable to parse caps.");
+             return FALSE;
+          }
+
         switch (format)
           {
            case GST_VIDEO_FORMAT_BGR: priv->eformat = EVAS_COLORSPACE_ARGB8888;
