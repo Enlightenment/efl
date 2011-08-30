@@ -368,6 +368,7 @@ ecore_x_atom_name_get(Ecore_X_Atom atom)
    memcpy(name, xcb_get_atom_name_name(reply), len);
    name[len] = '\0';
 
+   free(reply);
    return name;
 }
 
