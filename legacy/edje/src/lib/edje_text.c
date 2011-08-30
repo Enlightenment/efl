@@ -337,7 +337,6 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
 			Edje_Part_Description_Text *chosen_desc)
 {
    const char	*text = NULL;
-   const char   *str;
    const char	*font;
    char		*font2 = NULL;
    char         *sfont = NULL;
@@ -345,6 +344,7 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
    Evas_Coord	 tw, th;
    Evas_Coord	 sw, sh;
    int		 inlined_font = 0, free_text = 0;
+   Eina_Bool     same_text = EINA_FALSE;
    FLOAT_T       sc;
 
    sc = ed->scale;
@@ -352,7 +352,7 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
    text = edje_string_get(&chosen_desc->text.text);
    font = _edje_text_class_font_get(ed, chosen_desc, &size, &sfont);
 
-   if (ep->text.text) text = (char *) ep->text.text;
+   if (ep->text.text) text = ep->text.text;
    if (ep->text.font) font = ep->text.font;
    if (ep->text.size > 0) size = ep->text.size;
 
@@ -408,28 +408,35 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
      }
 
    size = params->type.text.size;
+   if (!text) text = "";
+
+   if ((text == ep->text.cache.in_str)
+       || (text && ep->text.cache.in_str && !strcmp(ep->text.cache.in_str, text)))
+     {
+        text = ep->text.cache.in_str;
+        same_text = EINA_TRUE;
+     }
 
    if ((ep->text.cache.in_size == size) &&
        (ep->text.cache.in_w == sw) &&
        (ep->text.cache.in_h == sh) &&
        (ep->text.cache.in_str) &&
-       (text) &&
-       (!strcmp(ep->text.cache.in_str, text)) &&
+       same_text &&
        (ep->text.cache.align_x == params->type.text.align.x) &&
        (ep->text.cache.align_y == params->type.text.align.y) &&
        (ep->text.cache.elipsis == params->type.text.elipsis) &&
        (ep->text.cache.fit_x == chosen_desc->text.fit_x) &&
        (ep->text.cache.fit_y == chosen_desc->text.fit_y))
      {
-	text = (char *)ep->text.cache.out_str;
+	text = ep->text.cache.out_str;
 	size = ep->text.cache.out_size;
-
-	if (!text) text = "";
 
 	goto arrange_text;
      }
-   if (ep->text.cache.in_str) eina_stringshare_del(ep->text.cache.in_str);
-   ep->text.cache.in_str = eina_stringshare_add(text);
+   if (!same_text)
+     {
+        eina_stringshare_replace(&ep->text.cache.in_str, text);
+     }
    ep->text.cache.in_size = size;
    if (chosen_desc->text.fit_x && (ep->text.cache.in_str && eina_stringshare_strlen(ep->text.cache.in_str) > 0))
      {
@@ -570,9 +577,7 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
 	text = _edje_text_fit_x(ed, ep, params, text, font, size, sw, &free_text);
      }
 
-   str = eina_stringshare_add(text);
-   if (ep->text.cache.out_str) eina_stringshare_del(ep->text.cache.out_str);
-   ep->text.cache.out_str = str;
+   eina_stringshare_replace(&ep->text.cache.out_str, text);
    ep->text.cache.in_w = sw;
    ep->text.cache.in_h = sh;
    ep->text.cache.out_size = size;
