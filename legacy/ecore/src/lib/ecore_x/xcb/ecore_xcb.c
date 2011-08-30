@@ -293,8 +293,6 @@ ecore_x_init(const char *name)
 EAPI int 
 ecore_x_shutdown(void) 
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
-
    return _ecore_xcb_shutdown(EINA_TRUE);
 }
 
@@ -308,8 +306,6 @@ ecore_x_shutdown(void)
 EAPI int 
 ecore_x_disconnect(void) 
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
-
    return _ecore_xcb_shutdown(EINA_FALSE);
 }
 
@@ -327,7 +323,7 @@ ecore_x_disconnect(void)
 EAPI void 
 ecore_x_flush(void) 
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+//   LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    xcb_flush(_ecore_xcb_conn);
 }
@@ -359,8 +355,6 @@ ecore_x_connection_get(void)
 EAPI Ecore_X_Time 
 ecore_x_current_time_get(void) 
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
-
    return _ecore_xcb_events_last_time_get();
 }
 
@@ -437,6 +431,9 @@ ecore_x_client_message32_send(Ecore_X_Window win, Ecore_X_Atom type, Ecore_X_Eve
    // FIXME: Use unchecked version after development is ironed out
    cookie = 
      xcb_send_event_checked(_ecore_xcb_conn, 0, win, mask, (const char *)&ev);
+
+   ecore_x_flush();
+
    err = xcb_request_check(_ecore_xcb_conn, cookie);
    if (err) 
      {
@@ -484,6 +481,9 @@ ecore_x_client_message8_send(Ecore_X_Window win, Ecore_X_Atom type, const void *
    cookie = 
      xcb_send_event_checked(_ecore_xcb_conn, 0, win, 
                             XCB_EVENT_MASK_NO_EVENT, (const char *)&ev);
+
+   ecore_x_flush();
+
    err = xcb_request_check(_ecore_xcb_conn, cookie);
    if (err) 
      {
@@ -535,6 +535,9 @@ ecore_x_mouse_down_send(Ecore_X_Window win, int x, int y, int b)
    vcookie = 
      xcb_send_event_checked(_ecore_xcb_conn, 1, win, 
                             XCB_EVENT_MASK_BUTTON_PRESS, (const char *)&ev);
+
+   ecore_x_flush();
+
    err = xcb_request_check(_ecore_xcb_conn, vcookie);
    if (err) 
      {
@@ -583,6 +586,9 @@ ecore_x_mouse_up_send(Ecore_X_Window win, int x, int y, int b)
    vcookie = 
      xcb_send_event_checked(_ecore_xcb_conn, 1, win, 
                             XCB_EVENT_MASK_BUTTON_RELEASE, (const char *)&ev);
+
+   ecore_x_flush();
+
    err = xcb_request_check(_ecore_xcb_conn, vcookie);
    if (err) 
      {
@@ -631,6 +637,9 @@ ecore_x_mouse_move_send(Ecore_X_Window win, int x, int y)
    vcookie = 
      xcb_send_event_checked(_ecore_xcb_conn, 1, win, 
                             XCB_EVENT_MASK_POINTER_MOTION, (const char *)&ev);
+
+   ecore_x_flush();
+
    err = xcb_request_check(_ecore_xcb_conn, vcookie);
    if (err) 
      {
@@ -673,7 +682,7 @@ ecore_x_pointer_xy_get(Ecore_X_Window win, int *x, int *y)
    xcb_query_pointer_cookie_t cookie;
    xcb_query_pointer_reply_t *reply;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+//   LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
 //   if (!win) win = ((xcb_screen_t *)_ecore_xcb_screen)->root;
 
@@ -891,8 +900,6 @@ ecore_x_bell(int percent)
    xcb_void_cookie_t cookie;
    xcb_generic_error_t *err;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
-
    // FIXME: Use unchecked version after development is ironed out
    cookie = xcb_bell_checked(_ecore_xcb_conn, percent);
    err = xcb_request_check(_ecore_xcb_conn, cookie);
@@ -1038,7 +1045,7 @@ ecore_x_killall(Ecore_X_Window root)
  * Return the screen DPI
  *
  * This is a simplistic call to get DPI. It does not account for differing
- * DPI in the x amd y axes nor does it accoutn for multihead or xinerama and
+ * DPI in the x amd y axes nor does it account for multihead or xinerama and
  * xrander where different parts of the screen may have differen DPI etc.
  *
  * @return the general screen DPI (dots/pixels per inch).
@@ -1071,8 +1078,6 @@ EAPI Ecore_X_Display *
 ecore_x_display_get(void) 
 {
    char *gl = NULL;
-
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    /* if we have the 'dont use xlib' env var, then we are not using 
     * XLib and thus cannot return a real XDisplay.
@@ -1358,8 +1363,6 @@ _ecore_xcb_fd_handle(void *data, Ecore_Fd_Handler *hdlr __UNUSED__)
    xcb_generic_event_t *ev = NULL;
    xcb_generic_event_t *ev_mouse = NULL;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
-
    conn = (xcb_connection_t *)data;
 
    if (_ecore_xcb_event_buffered) 
@@ -1417,8 +1420,6 @@ _ecore_xcb_fd_handle_buff(void *data, Ecore_Fd_Handler *hdlr __UNUSED__)
 {
    xcb_connection_t *conn;
    xcb_generic_event_t *ev = NULL;
-
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    conn = (xcb_connection_t *)data;
    ev = xcb_poll_for_event(conn);
