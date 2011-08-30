@@ -22,17 +22,69 @@
 #define CODESET "INVALID"
 #endif /* ifndef CODESET */
 
-static Window _ecore_x_mouse_down_last_win = 0;
-static Window _ecore_x_mouse_down_last_last_win = 0;
-static Window _ecore_x_mouse_down_last_event_win = 0;
-static Window _ecore_x_mouse_down_last_last_event_win = 0;
-static Time _ecore_x_mouse_down_last_time = 0;
-static Time _ecore_x_mouse_down_last_last_time = 0;
-// static int _ecore_x_mouse_up_count = 0;
-static int _ecore_x_mouse_down_did_double = 0;
-static int _ecore_x_mouse_down_did_triple = 0;
+typedef struct _Ecore_X_Mouse_Down_Info
+{
+   EINA_INLIST;
+   int dev;
+   Window last_win;
+   Window last_last_win;
+   Window last_event_win;
+   Window last_last_event_win;
+   Time last_time;
+   Time last_last_time;
+   Eina_Bool did_double : 1;
+   Eina_Bool did_triple : 1;
+} Ecore_X_Mouse_Down_Info;
+
 static int _ecore_x_last_event_mouse_move = 0;
 static Ecore_Event *_ecore_x_last_event_mouse_move_event = NULL;
+static Eina_Inlist *_ecore_x_mouse_down_info_list = NULL;
+
+static void
+_ecore_x_mouse_down_info_clear(void)
+{
+   Eina_Inlist *l = _ecore_x_mouse_down_info_list;
+   Ecore_X_Mouse_Down_Info *info = NULL;
+   while (l)
+     {
+        info = EINA_INLIST_CONTAINER_GET(l, Ecore_X_Mouse_Down_Info);
+        l = eina_inlist_remove(l, l);
+        free(info);
+     }
+   _ecore_x_mouse_down_info_list = NULL;
+}
+
+void
+_ecore_x_events_init(void)
+{
+   //Actually, Nothing to do. 
+}
+
+void
+_ecore_x_events_shutdown(void)
+{
+   _ecore_x_mouse_down_info_clear();
+}
+
+static Ecore_X_Mouse_Down_Info *
+_ecore_x_mouse_down_info_get(int dev)
+{
+   Eina_Inlist *l = _ecore_x_mouse_down_info_list;
+   Ecore_X_Mouse_Down_Info *info = NULL;
+
+   //Return the exist info
+   EINA_INLIST_FOREACH(l, info)
+     if (info->dev == dev) return info;
+
+   //New Device. Add it. 
+   info = calloc(1, sizeof(Ecore_X_Mouse_Down_Info));
+   if (!info) return NULL;
+
+   info->dev = dev;
+   l = eina_inlist_append(l, (Eina_Inlist*) info);
+   _ecore_x_mouse_down_info_list = l;
+   return info;
+}
 
 static void
 _ecore_x_event_free_mouse_move(void *data __UNUSED__, void *ev)
@@ -328,49 +380,64 @@ _ecore_mouse_button(int          event,
    e->root.x = x_root;
    e->root.y = y_root;
 
-   if (event_window == window)
+   Ecore_X_Mouse_Down_Info *down_info = _ecore_x_mouse_down_info_get(dev);
+
+   if (down_info)
      {
-        if (event == ECORE_EVENT_MOUSE_BUTTON_DOWN)
+        if ((event == ECORE_EVENT_MOUSE_BUTTON_DOWN) &&
+            down_info->did_triple)
           {
-             if (((int)(timestamp - _ecore_x_mouse_down_last_time) <=
-                  (int)(1000 * _ecore_x_double_click_time)) &&
-                 (window == _ecore_x_mouse_down_last_win) &&
-                 (event_window == _ecore_x_mouse_down_last_event_win)
-                )
+             down_info->last_win = 0;
+             down_info->last_last_win = 0;
+             down_info->last_event_win = 0;
+             down_info->last_last_event_win = 0;
+             down_info->last_time = 0;
+             down_info->last_last_time = 0;
+          }
+        if (event_window == window)
+          {
+             if (event == ECORE_EVENT_MOUSE_BUTTON_DOWN)
                {
-                  e->double_click = 1;
-                  _ecore_x_mouse_down_did_double = 1;
+                  //Check Double Clicked
+                  if (((int)(timestamp - down_info->last_time) <=
+                       (int)(1000 * _ecore_x_double_click_time)) &&
+                      (window == down_info->last_win) &&
+                      (event_window == down_info->last_event_win))
+                    {
+                       e->double_click = 1;
+                       down_info->did_double = EINA_TRUE;
+                    }
+                  else
+                    {
+                       down_info->did_double = EINA_FALSE;
+                       down_info->did_triple = EINA_FALSE;
+                    }
+
+                  //Check Triple Clicked
+                  if (((int)(timestamp - down_info->last_last_time) <=
+                       (int)(2 * 1000 * _ecore_x_double_click_time)) &&
+                      (window == down_info->last_win) &&
+                      (window == down_info->last_last_win) &&
+                      (event_window == down_info->last_event_win) &&
+                      (event_window == down_info->last_last_event_win)
+                     )
+                    {
+                       e->triple_click = 1;
+                       down_info->did_triple = EINA_TRUE;
+                    }
+                  else
+                    {
+                       down_info->did_triple = EINA_FALSE;
+                    }
                }
              else
                {
-                  _ecore_x_mouse_down_did_double = 0;
-                  _ecore_x_mouse_down_did_triple = 0;
-               }
-
-             if (((int)(timestamp - _ecore_x_mouse_down_last_last_time) <=
-                  (int)(2 * 1000 * _ecore_x_double_click_time)) &&
-                 (window == _ecore_x_mouse_down_last_win) &&
-                 (window == _ecore_x_mouse_down_last_last_win) &&
-                 (event_window == _ecore_x_mouse_down_last_event_win) &&
-                 (event_window == _ecore_x_mouse_down_last_last_event_win)
-                )
-               {
-                  e->triple_click = 1;
-                  _ecore_x_mouse_down_did_triple = 1;
-               }
-             else
-               {
-                  _ecore_x_mouse_down_did_triple = 0;
+                  if (down_info->did_double)
+                    e->double_click = 1;
+                  if (down_info->did_triple)
+                    e->triple_click = 1;
                }
           }
-        else
-          {
-             if (_ecore_x_mouse_down_did_double)
-                e->double_click = 1;
-             if (_ecore_x_mouse_down_did_triple)
-                e->triple_click = 1;
-          }
-
      }
 
    /* NB: Block commented out as _ecore_x_mouse_up_count appears to have
@@ -400,6 +467,19 @@ _ecore_mouse_button(int          event,
    _ecore_x_event_last_root_y = y_root;
 
    ecore_event_add(event, e, NULL, NULL);
+
+   if ((down_info) &&
+       (event == ECORE_EVENT_MOUSE_BUTTON_DOWN) &&
+       (window == event_window) &&
+       (!down_info->did_triple))
+     {
+        down_info->last_last_win = down_info->last_win;
+        down_info->last_win = window;
+        down_info->last_last_event_win = down_info->last_event_win;
+        down_info->last_event_win = event_window;
+        down_info->last_last_time = down_info->last_time;
+        down_info->last_time = timestamp;
+     }
 
    return e;
 } /* _ecore_mouse_button */
@@ -520,16 +600,6 @@ _ecore_x_event_handle_button_press(XEvent *xevent)
            int event_window;
            int window;
 
-           if (_ecore_x_mouse_down_did_triple)
-             {
-                _ecore_x_mouse_down_last_win = 0;
-                _ecore_x_mouse_down_last_last_win = 0;
-                _ecore_x_mouse_down_last_event_win = 0;
-                _ecore_x_mouse_down_last_last_event_win = 0;
-                _ecore_x_mouse_down_last_time = 0;
-                _ecore_x_mouse_down_last_last_time = 0;
-             }
-
            window =
               (xevent->xbutton.subwindow ? xevent->xbutton.subwindow : xevent->
                xbutton.window);
@@ -582,25 +652,6 @@ _ecore_x_event_handle_button_press(XEvent *xevent)
                         break;
                      }
                 }
-
-           if (window == event_window)
-              if (!_ecore_x_mouse_down_did_triple)
-                {
-                   _ecore_x_mouse_down_last_last_win =
-                      _ecore_x_mouse_down_last_win;
-                   if (xevent->xbutton.subwindow)
-                      _ecore_x_mouse_down_last_win = xevent->xbutton.subwindow;
-                   else
-                      _ecore_x_mouse_down_last_win = xevent->xbutton.window;
-
-                   _ecore_x_mouse_down_last_last_event_win =
-                      _ecore_x_mouse_down_last_event_win;
-                   _ecore_x_mouse_down_last_event_win = xevent->xbutton.window;
-                   _ecore_x_mouse_down_last_last_time =
-                      _ecore_x_mouse_down_last_time;
-                   _ecore_x_mouse_down_last_time = xevent->xbutton.time;
-                }
-
         }
      }
 } /* _ecore_x_event_handle_button_press */

@@ -314,6 +314,9 @@ void                      _ecore_x_atoms_init(void);
 
 extern int _ecore_x_xi2_opcode;
 
+void                      _ecore_x_events_init(void);
+void                      _ecore_x_events_shutdown(void);
+
 void                      _ecore_x_input_init(void);
 void                      _ecore_x_input_shutdown(void);
 void                      _ecore_x_input_handler(XEvent *xevent);
