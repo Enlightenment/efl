@@ -1290,6 +1290,7 @@ elm_ctxpopup_item_append(Evas_Object *obj, const char *label,
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
 
    Widget_Data *wd;
+   Evas_Object *content;
    Elm_Ctxpopup_Item *item;
 
    wd = elm_widget_data_get(obj);
@@ -1299,8 +1300,8 @@ elm_ctxpopup_item_append(Evas_Object *obj, const char *label,
    if (!item) return NULL;
 
    //The first item is appended.
-   if (wd->content)
-     evas_object_del(elm_object_content_unset(obj));
+   content = elm_object_content_unset(obj);
+   if (content) evas_object_del(content);
 
    if (!wd->items)
      _list_new(obj);
