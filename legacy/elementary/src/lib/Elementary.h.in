@@ -5312,10 +5312,6 @@ extern "C" {
     */
    EAPI Eina_Bool        elm_image_aspect_ratio_retained_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
 
-   /* smart callbacks called:
-    * "clicked" - the user clicked the image
-    */
-
    /**
     * @}
     */
