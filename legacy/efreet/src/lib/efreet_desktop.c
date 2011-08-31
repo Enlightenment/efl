@@ -167,7 +167,19 @@ efreet_desktop_get(const char *file)
 
     /* If we didn't find this file in the eet cache, add path to search path */
     if (!desktop->eet)
-        efreet_cache_desktop_add(desktop);
+    {
+        /* Check whether the desktop type is a system type,
+         * and therefor known by the cache builder */
+        Efreet_Desktop_Type_Info *info;
+
+        info = eina_list_nth(efreet_desktop_types, desktop->type);
+        if (info && (
+                info->id == EFREET_DESKTOP_TYPE_APPLICATION ||
+                info->id == EFREET_DESKTOP_TYPE_LINK ||
+                info->id == EFREET_DESKTOP_TYPE_DIRECTORY
+                ))
+            efreet_cache_desktop_add(desktop);
+    }
 
     return desktop;
 }
