@@ -203,6 +203,18 @@ eina_rwlock_release(Eina_RWLock *mutex)
    return EINA_LOCK_FAIL;
 }
 
+static inline Eina_Lock_Result
+eina_rwlock_take_read(Eina_RWLock *mutex)
+{
+   return EINA_LOCK_FAIL;
+}
+
+static inline Eina_Lock_Result
+eina_rwlock_take_write(Eina_RWLock *mutex)
+{
+   return EINA_LOCK_FAIL;
+}
+
 /**
  * @}
  */
