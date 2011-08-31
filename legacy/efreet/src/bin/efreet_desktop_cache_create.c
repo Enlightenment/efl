@@ -206,7 +206,7 @@ main(int argc, char **argv)
     Efreet_Cache_Hash hash;
     Efreet_Cache_Version version;
     Eina_List *dirs = NULL;
-    Eina_List *system = NULL;
+    Eina_List *systemdirs = NULL;
     Efreet_Cache_Array_String *user_dirs = NULL;
     Eina_List *extra_dirs = NULL;
     Eina_List *store_dirs = NULL;
@@ -326,7 +326,7 @@ main(int argc, char **argv)
         char file_id[PATH_MAX] = { '\0' };
 
         if (!cache_scan(path, file_id, priority++, 1, &changed)) goto error;
-        system = eina_list_append(system, path);
+        systemdirs = eina_list_append(systemdirs, path);
     }
 
     if (user_dirs)
@@ -335,7 +335,7 @@ main(int argc, char **argv)
 
         for (j = 0; j < user_dirs->array_count; j++)
         {
-            if (eina_list_search_unsorted_list(system, strcmplen, user_dirs->array[j]))
+            if (eina_list_search_unsorted_list(systemdirs, strcmplen, user_dirs->array[j]))
                 continue;
             if (!ecore_file_is_dir(user_dirs->array[j])) continue;
             if (!cache_scan(user_dirs->array[j], NULL, priority, 0, &changed)) goto error;
@@ -351,7 +351,7 @@ main(int argc, char **argv)
 
         EINA_LIST_FOREACH(extra_dirs, l, path)
         {
-            if (eina_list_search_unsorted_list(system, strcmplen, path))
+            if (eina_list_search_unsorted_list(systemdirs, strcmplen, path))
                 continue;
             if (eina_list_search_unsorted_list(store_dirs, EINA_COMPARE_CB(strcmp), path))
                 continue;
@@ -486,7 +486,7 @@ main(int argc, char **argv)
         close(tmpfd);
     }
 
-    EINA_LIST_FREE(system, dir)
+    EINA_LIST_FREE(systemdirs, dir)
         eina_stringshare_del(dir);
     eina_list_free(extra_dirs);
     eina_list_free(store_dirs);
@@ -507,7 +507,7 @@ efreet_error:
 ecore_error:
     eet_shutdown();
 eet_error:
-    EINA_LIST_FREE(system, dir)
+    EINA_LIST_FREE(systemdirs, dir)
         eina_stringshare_del(dir);
     eina_list_free(extra_dirs);
     eina_list_free(store_dirs);
