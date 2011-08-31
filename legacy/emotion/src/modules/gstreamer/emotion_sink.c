@@ -799,6 +799,7 @@ gstreamer_video_sink_new(Emotion_Gstreamer_Video *ev,
    GstElement *playbin;
    GstElement *sink;
    Evas_Object *obj;
+   int flags;
 
    obj = emotion_object_image_get(o);
    if (!obj)
@@ -821,9 +822,15 @@ gstreamer_video_sink_new(Emotion_Gstreamer_Video *ev,
         goto unref_pipeline;
      }
 
+#define GST_PLAY_FLAG_NATIVE_VIDEO  (1 << 6)
+#define GST_PLAY_FLAG_DOWNLOAD      (1 << 7)
+#define GST_PLAY_FLAG_BUFFERING     (1 << 8)
+
    g_object_set(G_OBJECT(sink), "evas-object", obj, NULL);
    g_object_set(G_OBJECT(sink), "ev", ev, NULL);
 
+   g_object_get(G_OBJECT(playbin), "flags", &flags, NULL);
+   g_object_set(G_OBJECT(playbin), "flags", flags | GST_PLAY_FLAG_NATIVE_VIDEO | GST_PLAY_FLAG_DOWNLOAD | GST_PLAY_FLAG_BUFFERING, NULL);
    g_object_set(G_OBJECT(playbin), "video-sink", sink, NULL);
    g_object_set(G_OBJECT(playbin), "uri", uri, NULL);
 
