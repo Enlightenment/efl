@@ -2075,6 +2075,7 @@ elm_entry_add(Evas_Object *parent)
 
    wd->scroller = elm_smart_scroller_add(e);
    elm_widget_sub_object_add(obj, wd->scroller);
+   evas_object_smart_member_add(wd->scroller, obj);
    elm_smart_scroller_widget_set(wd->scroller, obj);
    elm_smart_scroller_object_theme_set(obj, wd->scroller, "scroller", "entry",
                                        elm_widget_style_get(obj));
