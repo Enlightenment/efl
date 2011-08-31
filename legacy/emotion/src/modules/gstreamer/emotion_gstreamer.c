@@ -1474,9 +1474,10 @@ _eos_main_fct(void *data)
       case GST_MESSAGE_STREAM_STATUS:
          break;
       default:
-         ERR("bus say: %s [%i]",
+         ERR("bus say: %s [%i - %s]",
              GST_MESSAGE_SRC_NAME(msg),
-             GST_MESSAGE_TYPE(msg));
+             GST_MESSAGE_TYPE(msg),
+	     GST_MESSAGE_TYPE_NAME(msg));
          break;
      }
 
@@ -1502,10 +1503,22 @@ _eos_sync_fct(GstBus *bus, GstMessage *msg, gpointer data)
 
          break;
 
+      case GST_MESSAGE_STATE_CHANGED:
+        {
+           GstState old_state, new_state;
+
+           gst_message_parse_state_changed (msg, &old_state, &new_state, NULL);
+           INF("Element %s changed state from %s to %s.",
+               GST_OBJECT_NAME(msg->src),
+               gst_element_state_get_name(old_state),
+               gst_element_state_get_name(new_state));
+           break;
+        }
       default:
-         WRN("bus say: %s [%i]",
+         WRN("bus say: %s [%i - %s]",
              GST_MESSAGE_SRC_NAME(msg),
-             GST_MESSAGE_TYPE(msg));
+             GST_MESSAGE_TYPE(msg),
+	     GST_MESSAGE_TYPE_NAME(msg));
          break;
      }
 

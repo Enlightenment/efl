@@ -768,6 +768,8 @@ _emotion_gstreamer_cancel(void *data, Ecore_Thread *thread)
 
    ev->threads = eina_list_remove(ev->threads, thread);
 
+   if (getenv("EMOTION_GSTREAMER_DOT")) GST_DEBUG_BIN_TO_DOT_FILE_WITH_TS(GST_BIN(ev->pipeline), GST_DEBUG_GRAPH_SHOW_ALL, getenv("EMOTION_GSTREAMER_DOT"));
+
    if (ev->in == ev->out && ev->threads == NULL && ev->delete_me)
      em_shutdown(ev);
 }
@@ -784,6 +786,8 @@ _emotion_gstreamer_end(void *data, Ecore_Thread *thread)
         gst_element_set_state(ev->pipeline, GST_STATE_PLAYING);
         ev->play_started = 1;
      }
+
+   if (getenv("EMOTION_GSTREAMER_DOT")) GST_DEBUG_BIN_TO_DOT_FILE_WITH_TS(GST_BIN(ev->pipeline), GST_DEBUG_GRAPH_SHOW_ALL, getenv("EMOTION_GSTREAMER_DOT"));
 
    if (ev->in == ev->out && ev->threads == NULL && ev->delete_me)
      em_shutdown(ev);
