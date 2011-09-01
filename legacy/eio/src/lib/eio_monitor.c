@@ -55,9 +55,9 @@ _eio_monitor_free(Eio_Monitor *monitor)
 }
 
 static void
-_eio_monitor_error_cleanup_cb(void *user_data, __UNUSED__ void *func_data)
+_eio_monitor_error_cleanup_cb(__UNUSED__ void *user_data, void *func_data)
 {
-   Eio_Monitor_Error *ev = user_data;
+   Eio_Monitor_Error *ev = func_data;
 
    EINA_REFCOUNT_UNREF(ev->monitor)
      _eio_monitor_free(ev->monitor);
@@ -65,9 +65,9 @@ _eio_monitor_error_cleanup_cb(void *user_data, __UNUSED__ void *func_data)
 }
 
 static void
-_eio_monitor_event_cleanup_cb(void *user_data, __UNUSED__ void *func_data)
+_eio_monitor_event_cleanup_cb(__UNUSED__ void *user_data, void *func_data)
 {
-   Eio_Monitor_Event *ev = user_data;
+   Eio_Monitor_Event *ev = func_data;
 
    EINA_REFCOUNT_UNREF(ev->monitor)
      _eio_monitor_free(ev->monitor);
