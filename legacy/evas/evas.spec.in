@@ -376,7 +376,7 @@ Software SDL X11 rendering engine module for Evas
 %package module_engine_software_xcb
 Summary: Software XCB X11 rendering engine module for Evas
 Group: System Environment/Libraries
-BuildRequires: xcb-devel
+BuildRequires: libxcb-devel
 Requires: evas-module_engine_software_generic
 Requires: evas
 %description module_engine_software_xcb
