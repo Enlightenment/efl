@@ -24,7 +24,9 @@ struct _default_players {
 int _emotion_generic_log_domain = -1;
 
 static struct _default_players players[] = {
+#ifdef EMOTION_BUILD_VLC
        { "vlc", "em_generic_vlc" },
+#endif
        { NULL, NULL }
 };
 
