@@ -59,12 +59,5 @@ struct _Emotion_Generic_Video
    struct _Emotion_Generic_Audio_Channel *audio_channels;
 };
 
-extern int _emotion_generic_log_domain;
-#define DBG(...) EINA_LOG_DOM_DBG(_emotion_generic_log_domain, __VA_ARGS__)
-#define INF(...) EINA_LOG_DOM_INFO(_emotion_generic_log_domain, __VA_ARGS__)
-#define WRN(...) EINA_LOG_DOM_WARN(_emotion_generic_log_domain, __VA_ARGS__)
-#define ERR(...) EINA_LOG_DOM_ERR(_emotion_generic_log_domain, __VA_ARGS__)
-#define CRITICAL(...) EINA_LOG_DOM_CRIT(_emotion_generic_log_domain, __VA_ARGS__)
-
 #endif
 

@@ -16,12 +16,18 @@
 
 static Eina_Prefix *pfx = NULL;
 
+static int _emotion_generic_log_domain = -1;
+#define DBG(...) EINA_LOG_DOM_DBG(_emotion_generic_log_domain, __VA_ARGS__)
+#define INF(...) EINA_LOG_DOM_INFO(_emotion_generic_log_domain, __VA_ARGS__)
+#define WRN(...) EINA_LOG_DOM_WARN(_emotion_generic_log_domain, __VA_ARGS__)
+#define ERR(...) EINA_LOG_DOM_ERR(_emotion_generic_log_domain, __VA_ARGS__)
+#define CRITICAL(...) EINA_LOG_DOM_CRIT(_emotion_generic_log_domain, __VA_ARGS__)
+
+
 struct _default_players {
    const char *name;
    const char *cmdline;
 };
-
-int _emotion_generic_log_domain = -1;
 
 static struct _default_players players[] = {
 #ifdef EMOTION_BUILD_VLC
