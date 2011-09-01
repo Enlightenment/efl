@@ -27,6 +27,8 @@ test_photo(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
         "wood_01.jpg"
      };
 
+   elm_need_ethumb();
+
    win = elm_win_add(NULL, "photo", ELM_WIN_BASIC);
    elm_win_title_set(win, "Photo");
    elm_win_autodel_set(win, EINA_TRUE);
@@ -50,7 +52,10 @@ test_photo(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
              n++;
              if (n >= 9) n = 0;
              elm_photo_size_set(ph, 80);
-             elm_photo_file_set(ph, buf);
+             if (n == 8)
+               elm_photo_thumb_set(ph, buf, NULL);
+             else
+               elm_photo_file_set(ph, buf);
              elm_photo_editable_set(ph, 1);
              evas_object_size_hint_weight_set(ph, EVAS_HINT_EXPAND,
                                               EVAS_HINT_EXPAND);

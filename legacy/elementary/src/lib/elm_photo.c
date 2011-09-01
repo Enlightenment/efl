@@ -10,7 +10,35 @@ struct _Widget_Data
    int size;
    Eina_Bool fill;
    Ecore_Timer *longtimer;
+
+#ifdef HAVE_ELEMENTARY_ETHUMB
+   struct {
+      int id;
+
+      struct {
+         const char *path;
+         const char *key;
+      } file, thumb;
+
+      Ethumb_Exists *exists;
+
+      Ecore_Event_Handler *eeh;
+
+      Ethumb_Thumb_Format format;
+
+      Eina_Bool retry : 1;
+   } thumb;
+#endif
+
 };
+
+#ifdef HAVE_ELEMENTARY_ETHUMB
+static Eina_List *_elm_icon_retry = NULL;
+static int _icon_pending_request = 0;
+
+static void _icon_thumb_exists(Ethumb_Client *client __UNUSED__, Ethumb_Exists *thread, Eina_Bool exists, void *data);
+static void _icon_thumb_stop(Widget_Data *wd, void *ethumbd);
+#endif
 
 static const char *widtype = NULL;
 static void _del_hook(Evas_Object *obj);
@@ -36,7 +64,24 @@ static void
 _del_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
+#ifdef HAVE_ELEMENTARY_ETHUMB
+   Ethumb_Client *ethumbd;
+#endif
    if (!wd) return;
+
+#ifdef HAVE_ELEMENTARY_ETHUMB
+   ethumbd = elm_thumb_ethumb_client_get();
+   _icon_thumb_stop(wd, ethumbd);
+
+   eina_stringshare_del(wd->thumb.file.path);
+   eina_stringshare_del(wd->thumb.file.key);
+   eina_stringshare_del(wd->thumb.thumb.path);
+   eina_stringshare_del(wd->thumb.thumb.key);
+
+   if (wd->thumb.eeh)
+     ecore_event_handler_del(wd->thumb.eeh);
+#endif
+
    free(wd);
 }
 
@@ -107,6 +152,11 @@ _icon_move_resize(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, v
 
         edje_object_message_send(wd->frm, EDJE_MESSAGE_INT_SET, 0, msg);
      }
+
+#ifdef HAVE_ELEMENTARY_ETHUMB
+   if (wd->thumb.file.path)
+     elm_photo_thumb_set(data, wd->thumb.file.path, wd->thumb.file.key);
+#endif
 }
 
 
@@ -198,6 +248,227 @@ _mouse_up(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *eve
    evas_object_smart_callback_call(data, SIG_CLICKED, NULL);
 }
 
+static inline int
+_icon_size_min_get(Evas_Object *icon)
+{
+   int size;
+   _els_smart_icon_size_get(icon, &size, NULL);
+   return (size < 32) ? 32 : size;
+}
+
+
+#ifdef HAVE_ELEMENTARY_ETHUMB
+static void
+_icon_thumb_stop(Widget_Data *wd, void *ethumbd)
+{
+   if (wd->thumb.id >= 0)
+     {
+        ethumb_client_generate_cancel(ethumbd, wd->thumb.id, NULL, NULL, NULL);
+        wd->thumb.id = -1;
+        _icon_pending_request--;
+     }
+
+   if (wd->thumb.exists)
+     {
+        ethumb_client_thumb_exists_cancel(wd->thumb.exists, _icon_thumb_exists, wd);
+        wd->thumb.exists = NULL;
+        _icon_pending_request--;
+     }
+
+   if (wd->thumb.retry)
+     {
+        _elm_icon_retry = eina_list_remove(_elm_icon_retry, wd);
+        wd->thumb.retry = EINA_FALSE;
+     }
+}
+
+static Eina_Bool
+_icon_thumb_display(Widget_Data *wd)
+{
+   Eina_Bool ret = EINA_FALSE;
+
+   if (wd->thumb.format == ETHUMB_THUMB_EET)
+     {
+        static const char *extensions[] = {
+          ".avi", ".mp4", ".ogv", ".mov", ".mpg", ".wmv", NULL
+        };
+        const char **ext, *ptr;
+        int prefix_size;
+        Eina_Bool video = EINA_FALSE;
+
+        prefix_size = eina_stringshare_strlen(wd->thumb.file.path) - 4;
+        if (prefix_size >= 0)
+          {
+             ptr = wd->thumb.file.path + prefix_size;
+             for (ext = extensions; *ext; ++ext)
+               if (!strcasecmp(ptr, *ext))
+                 {
+                    video = EINA_TRUE;
+                    break;
+                 }
+          }
+
+        if (video)
+          ret = _els_smart_icon_file_edje_set(wd->img, wd->thumb.thumb.path, wd->thumb.thumb.key);
+     }
+
+   if (!ret)
+     ret = _els_smart_icon_file_key_set(wd->img, wd->thumb.thumb.path, wd->thumb.thumb.key);
+
+   return ret;
+}
+
+static Eina_Bool
+_icon_thumb_retry(Widget_Data *wd)
+{
+   return _icon_thumb_display(wd);
+}
+
+static void
+_icon_thumb_cleanup(Ethumb_Client *ethumbd)
+{
+   Eina_List *l, *ll;
+   Widget_Data *wd;
+
+   EINA_LIST_FOREACH_SAFE(_elm_icon_retry, l, ll, wd)
+     if (_icon_thumb_retry(wd))
+       {
+          _elm_icon_retry = eina_list_remove_list(_elm_icon_retry, l);
+          wd->thumb.retry = EINA_FALSE;
+       }
+
+   if (_icon_pending_request == 0)
+     EINA_LIST_FREE(_elm_icon_retry, wd)
+       _icon_thumb_stop(wd, ethumbd);
+}
+
+static void
+_icon_thumb_finish(Widget_Data *wd, Ethumb_Client *ethumbd)
+{
+   const char *file = NULL, *group = NULL;
+   Eina_Bool ret;
+
+   _els_smart_icon_file_get(wd->img, &file, &group);
+   file = eina_stringshare_ref(file);
+   group = eina_stringshare_ref(group);
+
+   ret = _icon_thumb_display(wd);
+
+   if (!ret && file)
+     {
+        const char *p;
+
+        if (!wd->thumb.retry)
+          {
+             _elm_icon_retry = eina_list_append(_elm_icon_retry, wd);
+             wd->thumb.retry = EINA_TRUE;
+          }
+
+        /* Back to previous image */
+        if (((p = strrchr(file, '.'))) && (!strcasecmp(p, ".edj")))
+          _els_smart_icon_file_edje_set(wd->img, file, group);
+        else
+          _els_smart_icon_file_key_set(wd->img, file, group);
+     }
+
+   _icon_thumb_cleanup(ethumbd);
+
+   eina_stringshare_del(file);
+   eina_stringshare_del(group);
+}
+
+static void
+_icon_thumb_cb(void *data,
+               Ethumb_Client *ethumbd,
+               int id,
+               const char *file __UNUSED__,
+               const char *key __UNUSED__,
+               const char *thumb_path,
+               const char *thumb_key,
+               Eina_Bool success)
+{
+   Widget_Data *wd = data;
+
+   EINA_SAFETY_ON_FALSE_RETURN(wd->thumb.id == id);
+   wd->thumb.id = -1;
+
+   _icon_pending_request--;
+
+   if (success)
+     {
+        eina_stringshare_replace(&wd->thumb.thumb.path, thumb_path);
+        eina_stringshare_replace(&wd->thumb.thumb.key, thumb_key);
+        wd->thumb.format = ethumb_client_format_get(ethumbd);
+
+        _icon_thumb_finish(wd, ethumbd);
+     }
+   else
+     {
+        ERR("could not generate thumbnail for %s (key: %s)", file, key);
+        _icon_thumb_cleanup(ethumbd);
+     }
+}
+
+static void
+_icon_thumb_exists(Ethumb_Client *client __UNUSED__, Ethumb_Exists *thread, Eina_Bool exists, void *data)
+{
+   Widget_Data *wd = data;
+   Ethumb_Client *ethumbd;
+
+   if (ethumb_client_thumb_exists_check(thread))
+     return ;
+
+   wd->thumb.exists = NULL;
+
+   ethumbd = elm_thumb_ethumb_client_get();
+
+   if (exists)
+     {
+        const char *thumb_path, *thumb_key;
+
+        _icon_pending_request--;
+        ethumb_client_thumb_path_get(ethumbd, &thumb_path, &thumb_key);
+        eina_stringshare_replace(&wd->thumb.thumb.path, thumb_path);
+        eina_stringshare_replace(&wd->thumb.thumb.key, thumb_key);
+        wd->thumb.format = ethumb_client_format_get(ethumbd);
+
+        _icon_thumb_finish(wd, ethumbd);
+     }
+   else if ((wd->thumb.id = ethumb_client_generate(ethumbd, _icon_thumb_cb, wd, NULL)) == -1)
+     {
+        ERR("Generate was unable to start !");
+        /* Failed to generate thumbnail */
+        _icon_pending_request--;
+     }
+}
+
+static void
+_icon_thumb_apply(Widget_Data *wd)
+{
+   Ethumb_Client *ethumbd;
+
+   ethumbd = elm_thumb_ethumb_client_get();
+
+   _icon_thumb_stop(wd, ethumbd);
+
+   if (!wd->thumb.file.path) return ;
+
+   _icon_pending_request++;
+   if (!ethumb_client_file_set(ethumbd, wd->thumb.file.path, wd->thumb.file.key)) return ;
+   ethumb_client_size_set(ethumbd, _icon_size_min_get(wd->img), _icon_size_min_get(wd->img));
+   wd->thumb.exists = ethumb_client_thumb_exists(ethumbd, _icon_thumb_exists, wd);
+}
+
+static Eina_Bool
+_icon_thumb_apply_cb(void *data, int type __UNUSED__, void *ev __UNUSED__)
+{
+   Widget_Data *wd = data;
+
+   _icon_thumb_apply(wd);
+   return ECORE_CALLBACK_RENEW;
+}
+#endif
+
 EAPI Evas_Object *
 elm_photo_add(Evas_Object *parent)
 {
@@ -247,6 +518,10 @@ elm_photo_add(Evas_Object *parent)
                                   _icon_move_resize, obj);
 
    evas_object_smart_callbacks_descriptions_set(obj, _signals);
+
+#ifdef HAVE_ELEMENTARY_ETHUMB
+   wd->thumb.id = -1;
+#endif
 
    _mirrored_set(obj, elm_widget_mirrored_get(obj));
    _sizing_eval(obj);
@@ -301,6 +576,34 @@ elm_photo_editable_set(Evas_Object *obj, Eina_Bool set)
 
    if (!wd) return;;
    _els_smart_icon_edit_set(wd->img, set, obj);
+}
+
+EAPI void
+elm_photo_thumb_set(const Evas_Object *obj, const char *file, const char *group)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+
+#ifdef HAVE_ELEMENTARY_ETHUMB
+   eina_stringshare_replace(&wd->thumb.file.path, file);
+   eina_stringshare_replace(&wd->thumb.file.key, group);
+
+   if (elm_thumb_ethumb_client_connected())
+     {
+        _icon_thumb_apply(wd);
+        return ;
+     }
+
+   if (!wd->thumb.eeh)
+     {
+        wd->thumb.eeh = ecore_event_handler_add(ELM_ECORE_EVENT_ETHUMB_CONNECT, _icon_thumb_apply_cb, wd);
+     }
+#else
+   (void) obj;
+   (void) file;
+   (void) group;
+#endif
 }
 
 /* vim:set ts=8 sw=3 sts=3 expandtab cino=>5n-3f0^-2{2(0W1st0 :*/

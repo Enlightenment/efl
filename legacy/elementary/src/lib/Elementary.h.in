@@ -12033,6 +12033,17 @@ extern "C" {
     */
    EAPI Eina_Bool    elm_photo_file_set(Evas_Object *obj, const char *file) EINA_ARG_NONNULL(1);
 
+    /**
+    * Set the file that will be used as thumbnail in the photo.
+    *
+    * @param obj The photo object.
+    * @param file The path to file that will be used as thumb.
+    * @param group The key used in case of an EET file.
+    *
+    * @ingroup Photo
+    */
+   EAPI void         elm_photo_thumb_set(const Evas_Object *obj, const char *file, const char *group) EINA_ARG_NONNULL(1, 2);
+
    /**
     * Set the size that will be used on the photo
     *
