@@ -10,9 +10,8 @@ AM_CPPFLAGS = \
 -DPACKAGE_DATA_DIR=\"$(datadir)/$(PACKAGE)\" \
 @VLC_CFLAGS@
 
-pkgdir = $(libdir)/emotion/generic_players/$(MODULE_ARCH)
-
-bin_PROGRAMS = em_generic_vlc
+internal_bindir = $(libdir)/emotion/utils
+internal_bin_PROGRAMS = em_generic_vlc
 
 em_generic_vlc_SOURCES = emotion_generic_vlc.c
 em_generic_vlc_DEPENDENCIES = $(top_srcdir)/src/modules/generic/Emotion_Generic_Plugin.h
