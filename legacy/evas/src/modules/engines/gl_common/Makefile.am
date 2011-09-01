@@ -51,6 +51,8 @@ shader/img_bgra_nomul_vert.h \
 shader/img_bgra_nomul_vert_bin_s3c6410.h \
 shader/img_mask_frag.h \
 shader/img_mask_vert.h \
+shader/nv12_nomul_vert.h \
+shader/nv12_vert.h \
 shader/yuv_frag.h \
 shader/yuv_frag_bin_s3c6410.h \
 shader/yuv_vert.h \
