@@ -15,7 +15,7 @@ static const Ecore_Getopt options = {
    "emotion_test",
    "%prog [options] <filename>",
    "1.0.0",
-   "(C) 2010 Enlightenment",
+   "(C) 2011 Enlightenment",
    "BSD\nThis is a 3 clause bsd bla bla",
    "a simple test program for emotion.",
    1,
@@ -28,6 +28,7 @@ static const Ecore_Getopt options = {
       ECORE_GETOPT_STORE_STR('b', "backend", "backend to use"),
       ECORE_GETOPT_STORE_INT('v', "vis", "visualization type"),
       ECORE_GETOPT_COUNT('v', "verbose", "be more verbose"),
+      ECORE_GETOPT_STORE_TRUE('R', "reflex", "show video reflex effect"),
       ECORE_GETOPT_VERSION('V', "version"),
       ECORE_GETOPT_COPYRIGHT('R', "copyright"),
       ECORE_GETOPT_LICENSE('L', "license"),
@@ -64,6 +65,7 @@ static int          starth     = 600;
 
 static Eina_List   *video_objs = NULL;
 static Emotion_Vis  vis        = EMOTION_VIS_NONE;
+static unsigned char reflex    = 0;
 
 static void
 main_resize(Ecore_Evas *ee)
@@ -582,7 +584,10 @@ init_video_object(const char *module_filename, const char *filename)
 
    oe = edje_object_add(evas);
    evas_object_data_set(oe, "frame_data", fd);
-   edje_object_file_set(oe, PACKAGE_DATA_DIR"/data/theme.edj", "video_controller");
+   if (reflex)
+     edje_object_file_set(oe, PACKAGE_DATA_DIR"/data/theme.edj", "video_controller/reflex");
+   else
+     edje_object_file_set(oe, PACKAGE_DATA_DIR"/data/theme.edj", "video_controller");
    edje_extern_object_min_size_set(o, w, h);
    edje_object_part_swallow(oe, "video_swallow", o);
    edje_object_size_min_calc(oe, &w, &h);
@@ -673,6 +678,7 @@ main(int argc, char **argv)
       ECORE_GETOPT_VALUE_STR(backend),
       ECORE_GETOPT_VALUE_INT(visual),
       ECORE_GETOPT_VALUE_INT(verbose),
+      ECORE_GETOPT_VALUE_BOOL(reflex),
       ECORE_GETOPT_VALUE_NONE,
       ECORE_GETOPT_VALUE_NONE,
       ECORE_GETOPT_VALUE_NONE,
