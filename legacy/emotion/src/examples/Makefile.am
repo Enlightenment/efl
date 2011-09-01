@@ -16,6 +16,7 @@ LDADD = \
 
 SRCS = \
 	emotion_basic_example.c \
+	emotion_generic_example.c \
 	emotion_signals_example.c
 
 EXTRA_DIST = $(SRCS)
@@ -30,6 +31,7 @@ endif
 if EFL_BUILD_EXAMPLES
 pkglib_PROGRAMS += \
 	emotion_basic_example \
+	emotion_generic_example \
 	emotion_signals_example
 endif
 

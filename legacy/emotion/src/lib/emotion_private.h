@@ -41,6 +41,7 @@ enum _Emotion_Format
 
 struct _Emotion_Module_Options
 {
+   const char *player;
    Eina_Bool no_video : 1;
    Eina_Bool no_audio : 1;
 };

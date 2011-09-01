@@ -54,6 +54,7 @@ VMAJ=v_maj
 AC_SUBST(VMAJ)
 
 want_vlc="no"
+want_generic="yes"
 case "$host_os" in
    mingw* | cegcc*)
       want_xine="no"
@@ -230,6 +231,7 @@ AC_MSG_RESULT([${have_v4l2}])
 EMOTION_CHECK_MODULE([Xine], [${want_xine}])
 EMOTION_CHECK_MODULE([Gstreamer], [${want_gstreamer}])
 EMOTION_CHECK_MODULE([VLC], [${want_vlc}])
+EMOTION_CHECK_MODULE([generic], [${want_generic}])
 
 #disabled vlc
 #if test "x${enable_xine}" = "xno" && test "x${enable_gstreamer}" = "xno" && test "x${enable_vlc}" = "xno" ; then
@@ -269,7 +271,10 @@ src/lib/Makefile
 src/modules/Makefile
 src/modules/xine/Makefile
 src/modules/gstreamer/Makefile
+src/modules/generic/Makefile
 src/edje_external/Makefile
+src/generic_players/Makefile
+src/generic_players/vlc/Makefile
 src/bin/Makefile
 src/examples/Makefile
 doc/Makefile

@@ -124,7 +124,8 @@ static int _log_domain = -1;
 static const char *_backend_priority[] = {
   "gstreamer",
   "xine",
-  "vlc"
+  "vlc",
+  "generic"
 };
 
 static const char SIG_FRAME_DECODE[] = "frame_decode";
@@ -312,6 +313,9 @@ emotion_object_module_option_set(Evas_Object *obj, const char *opt, const char *
 
    E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
    if ((!opt) || (!val)) return;
+
+   if (!strcmp(opt, "player"))
+     eina_stringshare_replace(&sd->module_options.player, val);
 }
 
 EAPI Eina_Bool

@@ -71,6 +71,28 @@ AS_IF([test "x$have_dep" = "xyes"], [$2], [$3])
 
 ])
 
+dnl use: EMOTION_CHECK_DEP_GENERIC(want_static[, ACTION-IF-FOUND[, ACTION-IF-NOT-FOUND]])
+
+AC_DEFUN([EMOTION_CHECK_DEP_GENERIC],
+[
+
+requirement=""
+
+PKG_CHECK_MODULES([GENERIC],
+   [evas >= 0.9.9],
+   [
+    have_dep="yes"
+   ],
+   [have_dep="no"])
+
+if test "x$1" = "xstatic" ; then
+   requirement_emotion="${requirement} ${requirement_emotion}"
+fi
+
+AS_IF([test "x$have_dep" = "xyes"], [$2], [$3])
+
+])
+
 dnl use: EMOTION_CHECK_MODULE(description, want_module[, ACTION-IF-FOUND[, ACTION-IF-NOT-FOUND]])
 AC_DEFUN([EMOTION_CHECK_MODULE],
 [

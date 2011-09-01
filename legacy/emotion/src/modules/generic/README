@@ -1,0 +1,79 @@
+Generic - emotion backend
+=========================
+
+This generic player backend executes a separate player in another
+process. It receives the bytes to be drawn on the emotion object through
+a shared memory, and communicates with the player through a pipe, using
+the player standard input/output.
+
+The player must communicate with emotion using the defined commands
+specified in the Emotion_Generic_Plugin.h. It doesn't need to link
+against emotion, just include this file for easier implementation.
+
+
+How does it work?
+=================
+
+When the module is initialized for an emotion object, it starts another process
+that runs the specified player. The player command line is specified using:
+
+   emotion_object_module_option_set(object, "player", <command>);
+
+A player using libvlc is being provided now, and the generic module internally
+checks if the command given was "vlc", in which case it will use this provided
+vlc player.
+
+When a file is set to this object, it will send the file name to the player, and
+expect an answer that will tell that the player already decoded a bit of the
+file, and the video size is already set on the module, so it can allocate a
+shared memory with correct size.
+
+The module then allocates the memory, sends a message to the player and expect
+an answer. After this last answer, the "open_done" signal is sent and the module
+knows that it is ready for playing. Commands sent before the module being ready
+are now applied (and play is resumed if necessary).
+
+During this setup stage, info about the file set will be stored in the module,
+so commands like meta data get, length get and so will be available to sync
+calls like emotion_object_play_length_get();
+
+If the player dies for any reason, a "decode_stop" signal is sent (should change
+to something more like an error signal), and if play is called again, it will be
+restarted. The playback should start from the same point it was before the
+player crashed, if the player supports seek on the current media format).
+
+TODO
+====
+
+ - Provide better description for commands;
+ - Explain in details the communication emotion <-> player;
+ - Make more common functions for players;
+ - (maybe) add support for named pipes, so we don't rely on standard in/out
+ for communication;
+ - Add a detection on the player to know that the emotion process died (so it
+ can just exit);
+ - shmname should contain the child pid too;
+ - better names for commands, maybe add namespace everywhere;
+
+
+questions
+=========
+
+ - Using semaphores to lock the critical region between process, and pthread
+   mutexes for the threads inside the player. Should move to only one type
+   (semphores or mutexes)?
+ - There are 2 inline functions insde Emotion_Generic_Plugin.h to make it easier
+   for the player to get the shared memory correctly. Any problem with this?
+   Would be good to add more functions/macros to make common tasks like
+   parsing commands there too?
+ - Should move players to another project (outside of emotion)?
+
+
+problems
+========
+ - file_set has some critical time when file is not set yet when we can't call
+ some functions (I think only another file_set now);
+ - comunication player -> emotion depends on '\n' to delimitate commands, will
+ remove this soon (fix this urgently!);
+ - need to implement missing APIs;
+
