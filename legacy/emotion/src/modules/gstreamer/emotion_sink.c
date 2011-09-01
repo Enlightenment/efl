@@ -40,8 +40,224 @@ GST_BOILERPLATE_FULL(EvasVideoSink,
 
 
 static void unlock_buffer_mutex(EvasVideoSinkPrivate* priv);
-
 static void evas_video_sink_main_render(void *data);
+static void evas_video_sink_samsung_main_render(void *data);
+
+static void
+_evas_video_bgrx_step(unsigned char *evas_data, const unsigned char *gst_data,
+                      unsigned int w, unsigned int h, unsigned int step)
+{
+   unsigned int x;
+   unsigned int y;
+
+   for (y = 0; y < h; ++y)
+     {
+        for (x = 0; x < w; x++)
+          {
+             evas_data[0] = gst_data[0];
+             evas_data[1] = gst_data[1];
+             evas_data[2] = gst_data[2];
+             evas_data[3] = 255;
+             gst_data += step;
+             evas_data += 4;
+          }
+     }
+}
+
+static void
+_evas_video_bgr(unsigned char *evas_data, const unsigned char *gst_data, unsigned int w, unsigned int h)
+{
+   _evas_video_bgrx_step(evas_data, gst_data, w, h, 3);
+}
+
+static void
+_evas_video_bgrx(unsigned char *evas_data, const unsigned char *gst_data, unsigned int w, unsigned int h)
+{
+   _evas_video_bgrx_step(evas_data, gst_data, w, h, 4);
+}
+
+static void
+_evas_video_bgra(unsigned char *evas_data, const unsigned char *gst_data, unsigned int w, unsigned int h)
+{
+   unsigned int x;
+   unsigned int y;
+
+   for (y = 0; y < h; ++y)
+     {
+        unsigned char alpha;
+
+        for (x = 0; x < w; ++x)
+          {
+             alpha = gst_data[3];
+             evas_data[0] = (gst_data[0] * alpha) / 255;
+             evas_data[1] = (gst_data[1] * alpha) / 255;
+             evas_data[2] = (gst_data[2] * alpha) / 255;
+             evas_data[3] = alpha;
+             gst_data += 4;
+             evas_data += 4;
+          }
+     }
+}
+
+static void
+_evas_video_i420(unsigned char *evas_data, const unsigned char *gst_data, unsigned int w, unsigned int h)
+{
+   const unsigned char **rows;
+   unsigned int i;
+
+   rows = (const unsigned char **)evas_data;
+
+   for (i = 0; i < h; i++)
+     rows[i] = &gst_data[i * w];
+
+   rows += h;
+   for (i = 0; i < (h / 2); i++)
+     rows[i] = &gst_data[h * w + i * (w / 2)];
+
+   rows += h / 2;
+   for (i = 0; i < (h / 2); i++)
+     rows[i] = &gst_data[h * w + h * (w /4) + i * (w / 2)];
+}
+
+static void
+_evas_video_yv12(unsigned char *evas_data, const unsigned char *gst_data, unsigned int w, unsigned int h)
+{
+   const unsigned char **rows;
+   unsigned int i;
+
+   rows = (const unsigned char **)evas_data;
+
+   for (i = 0; i < h; i++)
+     rows[i] = &gst_data[i * w];
+
+   rows += h;
+   for (i = 0; i < (h / 2); i++)
+     rows[i] = &gst_data[h * w + h * (w /4) + i * (w / 2)];
+
+   rows += h / 2;
+   for (i = 0; i < (h / 2); i++)
+     rows[i] = &gst_data[h * w + i * (w / 2)];
+}
+
+static void
+_evas_video_yuy2(unsigned char *evas_data, const unsigned char *gst_data, unsigned int w, unsigned int h)
+{
+   const unsigned char **rows;
+   unsigned int i;
+
+   rows = (const unsigned char **)evas_data;
+
+   for (i = 0; i < h; i++)
+     rows[i] = &gst_data[i * w * 2];
+}
+
+static void
+_evas_video_nv12(unsigned char *evas_data, const unsigned char *gst_data, unsigned int w, unsigned int h)
+{
+   const unsigned char **rows;
+   unsigned int i, j;
+
+   rows = (const unsigned char **)evas_data;
+
+   for (i = 0; i < h; i++)
+     rows[i] = &gst_data[i * w];
+
+   rows += h;
+   for (j = 0; j < (h / 2); j++, i++)
+     rows[i] = &gst_data[h * w + j * w];
+}
+
+static void
+_evas_video_mt12(unsigned char *evas_data, const unsigned char *gst_data, unsigned int w, unsigned int h)
+{
+   const unsigned char **rows;
+   unsigned int i;
+   unsigned int j;
+
+   rows = (const unsigned char **)evas_data;
+
+   for (i = 0; i < (h / 32) / 2; i++)
+     rows[i] = &gst_data[i * w * 2 * 32];
+
+   if ((h / 32) % 2)
+     {
+        rows[i] = &gst_data[i * w * 2 * 32];
+        i++;
+     }
+
+   rows += h;
+   for (j = 0; j < ((h / 2) / 32) / 2; ++j, ++i)
+     rows[i] = &gst_data[h * w + j * (w / 2) * 2 * 16];
+}
+
+static void
+_evas_video_st12_multiplane(unsigned char *evas_data, const unsigned char *gst_data, unsigned int w, unsigned int h)
+{
+   const GstMultiPlaneImageBuffer *mp_buf = (const GstMultiPlaneImageBuffer *) gst_data;
+   const unsigned char **rows;
+   unsigned int i;
+   unsigned int j;
+
+   rows = (const unsigned char **)evas_data;
+
+   for (i = 0; i < (h / 32) / 2; i++)
+     rows[i] = mp_buf->uaddr[0] + i * w * 2 * 32;
+   if ((h / 32) % 2)
+     {
+        rows[i] = mp_buf->uaddr[0] + i * w * 2 * 32;
+        i++;
+     }
+
+   for (j = 0; j < ((h / 2) / 16) / 2; j++, i++)
+     rows[i] = mp_buf->uaddr[1] + j * w * 2 * 16;
+   if (((h / 2) / 16) % 2)
+     rows[i] = mp_buf->uaddr[0] + j * w * 2 * 16;
+}
+
+static void
+_evas_video_st12(unsigned char *evas_data, const unsigned char *gst_data, unsigned int w, unsigned int h)
+{
+   const SCMN_IMGB *imgb = (const SCMN_IMGB *) gst_data;
+   const unsigned char **rows;
+   unsigned int i, j;
+
+   rows = (const unsigned char **)evas_data;
+
+   for (i = 0; i < (h / 32) / 2; i++)
+     rows[i] = imgb->uaddr[0] + i * w * 2 * 32;
+   if ((h / 32) % 2)
+     {
+        rows[i] = imgb->uaddr[0] + i * w * 2 * 32;
+        i++;
+     }
+
+   for (j = 0; j < ((h / 2) / 16) / 2; j++, i++)
+     rows[i] = imgb->uaddr[1] + j * w * 2 * 16;
+   if (((h / 2) / 16) % 2)
+     rows[i] = imgb->uaddr[1] + j * w * 2 * 16;
+}
+
+static const struct {
+   guint32 fourcc;
+   Evas_Colorspace eformat;
+   Evas_Video_Convert_Cb func;
+} colorspace_fourcc_convertion[] = {
+  { GST_MAKE_FOURCC('I', '4', '2', '0'), EVAS_COLORSPACE_YCBCR422P601_PL, _evas_video_i420 },
+  { GST_MAKE_FOURCC('Y', 'V', '1', '2'), EVAS_COLORSPACE_YCBCR422P601_PL, _evas_video_yv12 },
+  { GST_MAKE_FOURCC('Y', 'U', 'Y', '2'), EVAS_COLORSPACE_YCBCR422601_PL, _evas_video_yuy2 },
+  { GST_MAKE_FOURCC('N', 'V', '1', '2'), EVAS_COLORSPACE_YCBCR420NV12601_PL, _evas_video_nv12 },
+  { GST_MAKE_FOURCC('T', 'M', '1', '2'), EVAS_COLORSPACE_YCBCR420TM12601_PL, _evas_video_mt12 }
+};
+
+static const struct {
+   GstVideoFormat format;
+   Evas_Colorspace eformat;
+   Evas_Video_Convert_Cb func;
+} colorspace_format_convertion[] = {
+  { GST_VIDEO_FORMAT_BGR, EVAS_COLORSPACE_ARGB8888, _evas_video_bgr },
+  { GST_VIDEO_FORMAT_BGRx, EVAS_COLORSPACE_ARGB8888, _evas_video_bgrx },
+  { GST_VIDEO_FORMAT_BGRA, EVAS_COLORSPACE_ARGB8888, _evas_video_bgra }
+};
 
 static void
 evas_video_sink_base_init(gpointer g_class)
@@ -66,8 +282,9 @@ evas_video_sink_init(EvasVideoSink* sink, EvasVideoSinkClass* klass __UNUSED__)
    priv->last_buffer = NULL;
    priv->width = 0;
    priv->height = 0;
-   priv->gformat = GST_VIDEO_FORMAT_UNKNOWN;
+   priv->func = NULL;
    priv->eformat = EVAS_COLORSPACE_ARGB8888;
+   priv->samsung = EINA_FALSE;
    eina_lock_new(&priv->m);
    eina_condition_new(&priv->c, &priv->m);
    priv->unlocked = EINA_FALSE;
@@ -194,77 +411,50 @@ gboolean evas_video_sink_set_caps(GstBaseSink *bsink, GstCaps *caps)
    GstStructure *structure;
    GstVideoFormat format;
    guint32 fourcc;
+   unsigned int i;
 
    sink = EVAS_VIDEO_SINK(bsink);
    priv = sink->priv;
 
    structure = gst_caps_get_structure(caps, 0);
 
-   if (!((gst_structure_get_int(structure, "width", &priv->width)
-	  && gst_structure_get_int(structure, "height", &priv->height))))
-     goto test_format;
-
-   if (gst_structure_get_fourcc(structure, "format", &fourcc))
+   if (gst_structure_get_int(structure, "width", &priv->width)
+       && gst_structure_get_int(structure, "height", &priv->height)
+       && gst_structure_get_fourcc(structure, "format", &fourcc))
      {
-        switch (fourcc)
+        for (i = 0; i < sizeof (colorspace_fourcc_convertion) / sizeof (colorspace_fourcc_convertion[0]); ++i)
+          if (fourcc == colorspace_fourcc_convertion[i].fourcc)
+            {
+               priv->eformat = colorspace_fourcc_convertion[i].eformat;
+               priv->func = colorspace_fourcc_convertion[i].func;
+               return TRUE;
+            }
+
+        if (fourcc == GST_MAKE_FOURCC('S', 'T', '1', '2'))
           {
-           case GST_MAKE_FOURCC('I', '4', '2', '0'):
-              priv->eformat = EVAS_COLORSPACE_YCBCR422P601_PL;
-              priv->gformat = GST_VIDEO_FORMAT_I420;
-              INF("sink set colorspace I420 [%i, %i]", priv->width, priv->height);
-              break;
-           case GST_MAKE_FOURCC('Y', 'V', '1', '2'):
-              priv->eformat = EVAS_COLORSPACE_YCBCR422P601_PL;
-              priv->gformat = GST_VIDEO_FORMAT_YV12;
-              INF("sink set colorspace YV12 [%i, %i]", priv->width, priv->height);
-              break;
-           case GST_MAKE_FOURCC('Y', 'U', 'Y', '2'):
-              priv->eformat = EVAS_COLORSPACE_YCBCR422601_PL;
-              priv->gformat = GST_VIDEO_FORMAT_YUY2;
-              INF("sink set colorspace YUY2 [%i, %i]", priv->width, priv->height);
-              break;
-           case GST_MAKE_FOURCC('N', 'V', '1', '2'):
-              priv->eformat = EVAS_COLORSPACE_YCBCR420NV12601_PL;
-              INF("sink set colorspace NV12 [%i, %i]", priv->width, priv->height);
-              break;
-           case GST_MAKE_FOURCC('S', 'T', '1', '2'):
-           case GST_MAKE_FOURCC('T', 'M', '1', '2'):
-              priv->eformat = EVAS_COLORSPACE_YCBCR420TM12601_PL;
-              INF("sink set colorspace ST12 [%i, %i]", priv->width, priv->height);
-              break;
-           default:
-              goto test_format;
+             priv->eformat = EVAS_COLORSPACE_YCBCR420TM12601_PL;
+             priv->samsung = EINA_TRUE;
+             priv->func = NULL;
           }
      }
-   else
-     {
-     test_format:
-        INF("fallback code !");
-        if (!gst_video_format_parse_caps(caps, &format, &priv->width, &priv->height))
-          {
-             ERR("Unable to parse caps.");
-             return FALSE;
-          }
 
-        switch (format)
-          {
-           case GST_VIDEO_FORMAT_BGR: priv->eformat = EVAS_COLORSPACE_ARGB8888;
-              INF("sink set colorspace BGR [%i, %i]", priv->width, priv->height);
-              break;
-           case GST_VIDEO_FORMAT_BGRx: priv->eformat = EVAS_COLORSPACE_ARGB8888;
-              INF("sink set colorspace BGRx [%i, %i]", priv->width, priv->height);
-              break;
-           case GST_VIDEO_FORMAT_BGRA: priv->eformat = EVAS_COLORSPACE_ARGB8888;
-              INF("sink set colorspace BGRA [%i, %i]", priv->width, priv->height);
-              break;
-           default:
-              ERR("unsupported : %d\n", format);
-              return FALSE;
-          }
-        priv->gformat = format;
+   INF("fallback code !");
+   if (!gst_video_format_parse_caps(caps, &format, &priv->width, &priv->height))
+     {
+        ERR("Unable to parse caps.");
+        return FALSE;
      }
 
-   return TRUE;
+   for (i = 0; i < sizeof (colorspace_format_convertion) / sizeof (colorspace_format_convertion[0]); ++i)
+     if (format == colorspace_format_convertion[i].format)
+       {
+          priv->eformat = colorspace_format_convertion[i].eformat;
+          priv->func = colorspace_format_convertion[i].func;
+          return TRUE;
+       }
+
+   ERR("unsupported : %d\n", format);
+   return FALSE;
 }
 
 static gboolean
@@ -339,19 +529,42 @@ evas_video_sink_preroll(GstBaseSink* bsink, GstBuffer* buffer)
 
    INF("sink preroll %p [%i]", GST_BUFFER_DATA(buffer), GST_BUFFER_SIZE(buffer));
 
-   if (GST_BUFFER_SIZE(buffer) <= 0)
+   sink = EVAS_VIDEO_SINK(bsink);
+   priv = sink->priv;
+
+   if (GST_BUFFER_SIZE(buffer) <= 0 && !priv->samsung)
      {
         WRN("empty buffer");
         return GST_FLOW_OK;
      }
 
-   sink = EVAS_VIDEO_SINK(bsink);
-   priv = sink->priv;
-
    send = emotion_gstreamer_buffer_alloc(priv, buffer, EINA_TRUE);
 
    if (send)
-     ecore_main_loop_thread_safe_call_async(evas_video_sink_main_render, send);
+     {
+        if (priv->samsung)
+          {
+             if (!priv->func)
+               {
+                  GstStructure *structure;
+                  GstCaps *caps;
+                  gboolean is_multiplane = FALSE;
+
+                  caps = GST_BUFFER_CAPS(buffer);
+                  structure = gst_caps_get_structure (caps, 0);
+                  gst_structure_get_boolean(structure, "multiplane", &is_multiplane);
+
+                  if (is_multiplane)
+                    priv->func = _evas_video_st12_multiplane;
+                  else
+                    priv->func = _evas_video_st12;
+               }
+
+             ecore_main_loop_thread_safe_call_async(evas_video_sink_samsung_main_render, send);
+          }
+        else
+          ecore_main_loop_thread_safe_call_async(evas_video_sink_main_render, send);
+     }
 
    return GST_FLOW_OK;
 }
@@ -364,12 +577,6 @@ evas_video_sink_render(GstBaseSink* bsink, GstBuffer* buffer)
    EvasVideoSink *sink;
 
    INF("sink render %p [%i]", GST_BUFFER_DATA(buffer), GST_BUFFER_SIZE(buffer));
-
-   if (GST_BUFFER_SIZE(buffer) <= 0)
-     {
-        WRN("empty buffer");
-        return GST_FLOW_OK;
-     }
 
    sink = EVAS_VIDEO_SINK(bsink);
    priv = sink->priv;
@@ -388,12 +595,134 @@ evas_video_sink_render(GstBaseSink* bsink, GstBuffer* buffer)
       return GST_FLOW_ERROR;
    }
 
-   ecore_main_loop_thread_safe_call_async(evas_video_sink_main_render, send);
+   if (priv->samsung)
+     {
+        if (!priv->func)
+          {
+             GstStructure *structure;
+             GstCaps *caps;
+             gboolean is_multiplane = FALSE;
+
+             caps = GST_BUFFER_CAPS(buffer);
+             structure = gst_caps_get_structure (caps, 0);
+             gst_structure_get_boolean(structure, "multiplane", &is_multiplane);
+
+             if (is_multiplane)
+               priv->func = _evas_video_st12_multiplane;
+             else
+               priv->func = _evas_video_st12;
+          }
+
+        ecore_main_loop_thread_safe_call_async(evas_video_sink_samsung_main_render, send);
+     }
+   else
+     ecore_main_loop_thread_safe_call_async(evas_video_sink_main_render, send);
 
    eina_condition_wait(&priv->c);
    eina_lock_release(&priv->m);
 
    return GST_FLOW_OK;
+}
+
+static void
+evas_video_sink_samsung_main_render(void *data)
+{
+   Emotion_Gstreamer_Buffer *send;
+   Emotion_Video_Stream *vstream;
+   EvasVideoSinkPrivate* priv;
+   GstBuffer* buffer;
+   unsigned char *evas_data;
+   const guint8 *gst_data;
+   GstFormat fmt = GST_FORMAT_TIME;
+   gint64 pos;
+   Eina_Bool preroll;
+   int stride, elevation;
+   Evas_Coord w, h;
+
+   send = data;
+
+   if (!send) goto exit_point;
+
+   priv = send->sink;
+   buffer = send->frame;
+   preroll = send->preroll;
+
+   if (!priv || !priv->o || priv->unlocked || !send->ev)
+     goto exit_point;
+
+   _emotion_gstreamer_video_pipeline_parse(send->ev, EINA_TRUE);
+
+   /* Getting stride to compute the right size and then fill the object properly */
+   /* Y => [0] and UV in [1] */
+   if (priv->func == _evas_video_st12_multiplane)
+     {
+        const GstMultiPlaneImageBuffer *mp_buf = (const GstMultiPlaneImageBuffer *) buffer;
+
+        stride = mp_buf->stride[0];
+        elevation = mp_buf->elevation[0];
+        priv->width = mp_buf->width[0];
+        priv->height = mp_buf->height[0];
+
+        gst_data = (const guint8 *) mp_buf;
+     }
+   else
+     {
+        const SCMN_IMGB *imgb = (const SCMN_IMGB *) GST_BUFFER_MALLOCDATA(buffer);
+
+        stride = imgb->stride[0];
+        elevation = imgb->elevation[0];
+        priv->width = imgb->width[0];
+        priv->height = imgb->height[0];
+
+        gst_data = (const guint8 *) imgb;
+     }
+
+   INF("sink main render [%i, %i] - [%i, %i]", priv->width, priv->height, stride, elevation);
+
+   evas_object_image_alpha_set(priv->o, 0);
+   evas_object_image_colorspace_set(priv->o, priv->eformat);
+   evas_object_image_size_set(priv->o, stride, elevation);
+   evas_object_geometry_get(priv->o, NULL, NULL, &w, &h);
+   evas_object_image_fill_set(priv->o, 0, 0, stride * w / priv->width, elevation * h / priv->height);
+
+   evas_data = evas_object_image_data_get(priv->o, 1);
+
+   if (priv->func)
+     priv->func(evas_data, gst_data, stride, elevation);
+   else
+     WRN("No way to decode %x colorspace !", priv->eformat);
+
+   evas_object_image_data_set(priv->o, evas_data);
+   evas_object_image_data_update_add(priv->o, 0, 0, priv->width, priv->height);
+   evas_object_image_pixels_dirty_set(priv->o, 0);
+
+   _emotion_frame_new(send->ev->obj);
+
+   vstream = eina_list_nth(send->ev->video_streams, send->ev->video_stream_nbr - 1);
+
+   gst_element_query_position(send->ev->pipeline, &fmt, &pos);
+   send->ev->position = (double)pos / (double)GST_SECOND;
+
+   vstream->width = priv->width;
+   vstream->height = priv->height;
+   send->ev->ratio = (double) priv->width / (double) priv->height;
+
+   _emotion_video_pos_update(send->ev->obj, send->ev->position, vstream->length_time);
+   _emotion_frame_resize(send->ev->obj, priv->width, priv->height, send->ev->ratio);
+
+   if (priv->last_buffer) gst_buffer_unref(priv->last_buffer);
+   priv->last_buffer = gst_buffer_ref(buffer);
+
+ exit_point:
+   emotion_gstreamer_buffer_free(send);
+
+   if (preroll || !priv->o || !send->ev) return ;
+
+   eina_lock_take(&priv->m);
+   if (!priv->unlocked)
+     eina_condition_signal(&priv->c);
+
+   eina_lock_release(&priv->m);
 }
 
 static void
@@ -405,223 +734,39 @@ evas_video_sink_main_render(void *data)
    EvasVideoSinkPrivate* priv;
    GstBuffer* buffer;
    unsigned char *evas_data;
-   const guint8 *gst_data;
    GstFormat fmt = GST_FORMAT_TIME;
-   Evas_Coord w, h;
    gint64 pos;
    Eina_Bool preroll;
 
    send = data;
 
-   priv = send->sink;
-   if (!priv) goto exit_point;
-   if (!priv->o) goto exit_point;
+   if (!send) goto exit_point;
 
+   priv = send->sink;
    buffer = send->frame;
    preroll = send->preroll;
-
-   if (priv->unlocked) goto exit_point;
-
-   gst_data = GST_BUFFER_DATA(buffer);
-   if (!gst_data) goto exit_point;
-
    ev = send->ev;
-   if (!ev) goto exit_point;
+
+   if (!priv || !priv->o || priv->unlocked || !ev)
+     goto exit_point;
 
    _emotion_gstreamer_video_pipeline_parse(ev, EINA_TRUE);
 
-   // This prevent a race condition when data are still in the pipe
-   // but the buffer size as changed because of a request from
-   // emotion smart (like on a file set).
-   evas_object_image_size_get(priv->o, &w, &h);
-   if (w != priv->width || h != priv->height)
-     goto exit_point;
+   INF("sink main render [%i, %i]", priv->width, priv->height);
 
-   INF("sink main render [%i, %i]", w, h);
-
-   evas_object_image_size_set(priv->o, priv->width, priv->height);
    evas_object_image_alpha_set(priv->o, 0);
    evas_object_image_colorspace_set(priv->o, priv->eformat);
+   evas_object_image_size_set(priv->o, priv->width, priv->height);
 
-   evas_data = (unsigned char *)evas_object_image_data_get(priv->o, 1);
+   evas_data = evas_object_image_data_get(priv->o, 1);
 
-   // Evas's BGRA has pre-multiplied alpha while GStreamer's doesn't.
-   // Here we convert to Evas's BGRA.
-   switch (priv->gformat)
-     {
-      case GST_VIDEO_FORMAT_BGR:
-        {
-           unsigned char *evas_tmp;
-           int x;
-           int y;
+   if (priv->func)
+     priv->func(evas_data, GST_BUFFER_DATA(buffer), priv->width, priv->height);
+   else
+     WRN("No way to decode %x colorspace !", priv->eformat);
 
-           evas_tmp = evas_data;
-           /* FIXME: could this be optimized ? */
-           for (x = 0; x < priv->height; x++) {
-              for (y = 0; y < priv->width; y++) {
-                 evas_tmp[0] = gst_data[0];
-                 evas_tmp[1] = gst_data[1];
-                 evas_tmp[2] = gst_data[2];
-                 evas_tmp[3] = 255;
-                 gst_data += 3;
-                 evas_tmp += 4;
-              }
-           }
-           break;
-        }
-
-        // Evas's BGRA has pre-multiplied alpha while GStreamer's doesn't.
-        // Here we convert to Evas's BGRA.
-      case GST_VIDEO_FORMAT_BGRx:
-        {
-           unsigned char *evas_tmp;
-           int x;
-           int y;
-
-           evas_tmp = evas_data;
-           /* FIXME: could this be optimized ? */
-           for (x = 0; x < priv->height; x++) {
-              for (y = 0; y < priv->width; y++) {
-                 evas_tmp[0] = gst_data[0];
-                 evas_tmp[1] = gst_data[1];
-                 evas_tmp[2] = gst_data[2];
-                 evas_tmp[3] = 255;
-                 gst_data += 4;
-                 evas_tmp += 4;
-              }
-           }
-           break;
-        }
-
-        // Evas's BGRA has pre-multiplied alpha while GStreamer's doesn't.
-        // Here we convert to Evas's BGRA.
-      case GST_VIDEO_FORMAT_BGRA:
-        {
-           unsigned char *evas_tmp;
-           int x;
-           int y;
-           unsigned char alpha;
-
-           evas_tmp = evas_data;
-           /* FIXME: could this be optimized ? */
-           for (x = 0; x < priv->height; x++) {
-              for (y = 0; y < priv->width; y++) {
-                 alpha = gst_data[3];
-                 evas_tmp[0] = (gst_data[0] * alpha) / 255;
-                 evas_tmp[1] = (gst_data[1] * alpha) / 255;
-                 evas_tmp[2] = (gst_data[2] * alpha) / 255;
-                 evas_tmp[3] = alpha;
-                 gst_data += 4;
-                 evas_tmp += 4;
-              }
-           }
-           break;
-        }
-
-      case GST_VIDEO_FORMAT_I420:
-        {
-           int i;
-           const unsigned char **rows;
-
-           evas_object_image_pixels_dirty_set(priv->o, 1);
-           rows = (const unsigned char **)evas_data;
-
-           for (i = 0; i < priv->height; i++)
-             rows[i] = &gst_data[i * priv->width];
-
-           rows += priv->height;
-           for (i = 0; i < (priv->height / 2); i++)
-             rows[i] = &gst_data[priv->height * priv->width + i * (priv->width / 2)];
-
-           rows += priv->height / 2;
-           for (i = 0; i < (priv->height / 2); i++)
-             rows[i] = &gst_data[priv->height * priv->width + priv->height * (priv->width /4) + i * (priv->width / 2)];
-           break;
-        }
-
-      case GST_VIDEO_FORMAT_YV12:
-        {
-           int i;
-           const unsigned char **rows;
-
-           evas_object_image_pixels_dirty_set(priv->o, 1);
-
-           rows = (const unsigned char **)evas_data;
-
-           for (i = 0; i < priv->height; i++)
-             rows[i] = &gst_data[i * priv->width];
-
-           rows += priv->height;
-           for (i = 0; i < (priv->height / 2); i++)
-             rows[i] = &gst_data[priv->height * priv->width + priv->height * (priv->width /4) + i * (priv->width / 2)];
-
-           rows += priv->height / 2;
-           for (i = 0; i < (priv->height / 2); i++)
-             rows[i] = &gst_data[priv->height * priv->width + i * (priv->width / 2)];
-           break;
-        }
-
-      case GST_VIDEO_FORMAT_YUY2:
-        {
-           int i;
-           const unsigned char **rows;
-
-           evas_object_image_pixels_dirty_set(priv->o, 1);
-
-           rows = (const unsigned char **)evas_data;
-
-           for (i = 0; i < priv->height; i++)
-             rows[i] = &gst_data[i * priv->width * 2];
-           break;
-        }
-
-      default:
-         switch (priv->eformat)
-           {
-            case EVAS_COLORSPACE_YCBCR420NV12601_PL:
-	      {
-                 int i;
-                 const unsigned char **rows;
-
-                 evas_object_image_pixels_dirty_set(priv->o, 1);
-
-                 rows = (const unsigned char **)evas_data;
-
-                 for (i = 0; i < priv->height; i++)
-                   rows[i] = &gst_data[i * priv->width];
-
-                 rows += priv->height;
-                 for (i = 0; i < (priv->height / 2); i++)
-                   rows[i] = &gst_data[priv->height * priv->width + i * priv->width];
-                 break;
-	      }
-            case EVAS_COLORSPACE_YCBCR420TM12601_PL:
-              {
-                 int i;
-                 const unsigned char **rows;
-
-                 evas_object_image_pixels_dirty_set(priv->o, 1);
-
-                 rows = (const unsigned char **)evas_data;
-
-                 for (i = 0; i < (priv->height / 32) / 2; i++)
-                   rows[i] = &gst_data[i * priv->width * 2 * 32];
-
-                 if ((priv->height / 32) % 2)
-                   rows[i] = &gst_data[i * priv->width * 2 * 32];
-
-                 rows += priv->height;
-                 for (i = 0; i < ((priv->height / 2) / 32) / 2; ++i)
-                   rows[i] = &gst_data[priv->height * priv->width + i * (priv->width / 2) * 2 * 16];
-                 break;
-              }
-            default:
-               WRN("No way to decode %x colorspace !", priv->eformat);
-           }
-     }
-
-   evas_object_image_data_update_add(priv->o, 0, 0, priv->width, priv->height);
    evas_object_image_data_set(priv->o, evas_data);
+   evas_object_image_data_update_add(priv->o, 0, 0, priv->width, priv->height);
    evas_object_image_pixels_dirty_set(priv->o, 0);
 
    _emotion_frame_new(ev->obj);

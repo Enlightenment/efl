@@ -1,7 +1,6 @@
 #ifndef __EMOTION_GSTREAMER_H__
 #define __EMOTION_GSTREAMER_H__
 
-
 #include <Evas.h>
 #include <Ecore.h>
 
@@ -14,6 +13,11 @@
 #include <gst/video/video.h>
 
 #include "emotion_private.h"
+
+typedef void (*Evas_Video_Convert_Cb)(unsigned char *evas_data,
+				      const unsigned char *gst_data,
+				      unsigned int w,
+				      unsigned int h);
 
 typedef struct _EvasVideoSinkPrivate EvasVideoSinkPrivate;
 typedef struct _EvasVideoSink        EvasVideoSink;
@@ -116,10 +120,11 @@ struct _EvasVideoSinkPrivate {
 
    Emotion_Gstreamer_Video *ev;
 
+   Evas_Video_Convert_Cb func;
+
    int width;
    int height;
    Evas_Colorspace eformat;
-   GstVideoFormat gformat;
 
    Eina_Lock m;
    Eina_Condition c;
@@ -136,6 +141,7 @@ struct _EvasVideoSinkPrivate {
    //
    // Protected by the buffer mutex
    Eina_Bool unlocked : 1;
+   Eina_Bool samsung : 1; /** ST12 will only define a Samsung specific GstBuffer */
 };
 
 struct _Emotion_Gstreamer_Buffer
@@ -191,7 +197,7 @@ GstElement *gstreamer_video_sink_new(Emotion_Gstreamer_Video *ev,
 gboolean    gstreamer_plugin_init(GstPlugin *plugin);
 
 Emotion_Gstreamer_Buffer *emotion_gstreamer_buffer_alloc(EvasVideoSinkPrivate *sink,
-                                                         GstBuffer *buffer,
+							 GstBuffer *buffer,
                                                          Eina_Bool preroll);
 void emotion_gstreamer_buffer_free(Emotion_Gstreamer_Buffer *send);
 
@@ -202,5 +208,64 @@ Eina_Bool _emotion_gstreamer_video_pipeline_parse(Emotion_Gstreamer_Video *ev,
                                                   Eina_Bool force);
 
 int em_shutdown(void *video);
+
+/** Samsung specific infrastructure - do not touch, do not modify */
+#define MPLANE_IMGB_MAX_COUNT 4
+#define SCMN_IMGB_MAX_PLANE 4
+
+typedef struct _GstMultiPlaneImageBuffer GstMultiPlaneImageBuffer;
+typedef struct _SCMN_IMGB SCMN_IMGB;
+
+struct _GstMultiPlaneImageBuffer
+{
+   GstBuffer buffer;
+
+   /* width of each image plane */
+   gint      width[MPLANE_IMGB_MAX_COUNT];
+   /* height of each image plane */
+   gint      height[MPLANE_IMGB_MAX_COUNT];
+   /* stride of each image plane */
+   gint      stride[MPLANE_IMGB_MAX_COUNT];
+   /* elevation of each image plane */
+   gint      elevation[MPLANE_IMGB_MAX_COUNT];
+   /* user space address of each image plane */
+   gpointer uaddr[MPLANE_IMGB_MAX_COUNT];
+   /* Index of real address of each image plane, if needs */
+   gpointer index[MPLANE_IMGB_MAX_COUNT];
+   /* left postion, if needs */
+   gint      x;
+   /* top position, if needs */
+   gint      y;
+   /* to align memory */
+   gint      __dummy2;
+   /* arbitrary data */
+   gint      data[16];
+};
+
+struct _SCMN_IMGB
+{
+   /* width of each image plane */
+   int      width[SCMN_IMGB_MAX_PLANE];
+   /* height of each image plane */
+   int      height[SCMN_IMGB_MAX_PLANE];
+   /* stride of each image plane */
+   int      stride[SCMN_IMGB_MAX_PLANE];
+   /* elevation of each image plane */
+   int      elevation[SCMN_IMGB_MAX_PLANE];
+   /* user space address of each image plane */
+   void   * uaddr[SCMN_IMGB_MAX_PLANE];
+   /* physical address of each image plane, if needs */
+   void   * p[SCMN_IMGB_MAX_PLANE];
+   /* color space type of image */
+   int      cs;
+   /* left postion, if needs */
+   int      x;
+   /* top position, if needs */
+   int      y;
+   /* to align memory */
+   int      __dummy2;
+   /* arbitrary data */
+   int      data[16];
+};
 
 #endif /* __EMOTION_GSTREAMER_H__ */
