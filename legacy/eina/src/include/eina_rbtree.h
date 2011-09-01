@@ -105,7 +105,7 @@ struct _Eina_Rbtree
  * @def EINA_RBTREE_GET
  * access the inlined node if it was created with #EINA_RBTREE.
  */
-#define EINA_RBTREE_GET(Rbtree) & ((Rbtree)->__rbtree)
+#define EINA_RBTREE_GET(Rbtree) (&((Rbtree)->__rbtree))
 
 /**
  * @def EINA_RBTREE_CONTAINER_GET
