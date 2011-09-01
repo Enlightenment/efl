@@ -1675,7 +1675,7 @@ _ecore_xcb_event_handle_client_message(xcb_generic_event_t *event)
           return;
 
         e->win = ev->window;
-        e->message_type = ev->response_type; //NB: Was ev->type;
+        e->message_type = ev->type;
         e->format = ev->format;
         for (i = 0; i < 5; i++)
           e->data.l[i] = ev->data.data32[i];
