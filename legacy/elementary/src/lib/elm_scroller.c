@@ -650,7 +650,7 @@ elm_scroller_page_size_set(Evas_Object *obj, Evas_Coord h_pagesize, Evas_Coord v
 }
 
 EAPI void
-elm_scroller_current_page_get(Evas_Object *obj, int *h_pagenumber, int *v_pagenumber)
+elm_scroller_current_page_get(const Evas_Object *obj, int *h_pagenumber, int *v_pagenumber)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -660,7 +660,7 @@ elm_scroller_current_page_get(Evas_Object *obj, int *h_pagenumber, int *v_pagenu
 }
 
 EAPI void
-elm_scroller_last_page_get(Evas_Object *obj, int *h_pagenumber, int *v_pagenumber)
+elm_scroller_last_page_get(const Evas_Object *obj, int *h_pagenumber, int *v_pagenumber)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);

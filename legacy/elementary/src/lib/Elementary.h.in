@@ -7018,7 +7018,7 @@ extern "C" {
     * @see elm_scroller_page_show()
     * @see elm_scroller_page_brint_in()
     */
-   EAPI void         elm_scroller_current_page_get(Evas_Object *obj, int *h_pagenumber, int *v_pagenumber) EINA_ARG_NONNULL(1);
+   EAPI void         elm_scroller_current_page_get(const Evas_Object *obj, int *h_pagenumber, int *v_pagenumber) EINA_ARG_NONNULL(1);
    /**
     * @brief Get scroll last page number.
     *
@@ -7033,7 +7033,7 @@ extern "C" {
     * @see elm_scroller_page_show()
     * @see elm_scroller_page_brint_in()
     */
-   EAPI void         elm_scroller_last_page_get(Evas_Object *obj, int *h_pagenumber, int *v_pagenumber) EINA_ARG_NONNULL(1);
+   EAPI void         elm_scroller_last_page_get(const Evas_Object *obj, int *h_pagenumber, int *v_pagenumber) EINA_ARG_NONNULL(1);
    /**
     * Show a specific virtual region within the scroller content object by page number.
     *
