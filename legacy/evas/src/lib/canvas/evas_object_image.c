@@ -2798,6 +2798,8 @@ evas_object_image_render(Evas_Object *obj, void *output, void *context, void *su
 	     if (o->func.get_pixels)
 	       {
 		  o->func.get_pixels(o->func.get_pixels_data, obj);
+		  if (o->engine_data != pixels)
+		    pixels = o->engine_data;
 		  o->engine_data = obj->layer->evas->engine.func->image_dirty_region
                      (obj->layer->evas->engine.data.output, o->engine_data,
                          0, 0, o->cur.image.w, o->cur.image.h);
