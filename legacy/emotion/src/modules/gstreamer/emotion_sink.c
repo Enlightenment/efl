@@ -435,6 +435,7 @@ gboolean evas_video_sink_set_caps(GstBaseSink *bsink, GstCaps *caps)
              priv->eformat = EVAS_COLORSPACE_YCBCR420TM12601_PL;
              priv->samsung = EINA_TRUE;
              priv->func = NULL;
+	     return TRUE;
           }
      }
 

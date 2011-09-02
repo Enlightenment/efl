@@ -163,13 +163,13 @@ static void
 _emotion_image_data_zero(Evas_Object *img)
 {
    void *data;
-   
+
    data = evas_object_image_data_get(img, 1);
    if (data)
      {
         int w, h, sz = 0;
         Evas_Colorspace cs;
-        
+
         evas_object_image_size_get(img, &w, &h);
         cs = evas_object_image_colorspace_get(img);
         if (cs == EVAS_COLORSPACE_ARGB8888)
@@ -386,13 +386,10 @@ emotion_object_file_set(Evas_Object *obj, const char *file)
 	sd->module->file_close(sd->video);
         evas_object_image_data_set(sd->obj, NULL);
 	evas_object_image_size_set(sd->obj, 1, 1);
+        _emotion_image_data_zero(sd->obj);
         sd->open = 0;
 	if (!sd->module->file_open(sd->file, obj, sd->video))
 	  return EINA_FALSE;
-	sd->module->size_get(sd->video, &w, &h);
-	evas_object_image_size_set(sd->obj, w, h);
-        _emotion_image_data_zero(sd->obj);
-	sd->ratio = sd->module->ratio_get(sd->video);
 	sd->pos = 0.0;
 	if (sd->play) sd->module->play(sd->video, 0.0);
      }
@@ -1242,7 +1239,6 @@ _emotion_frame_resize(Evas_Object *obj, int w, int h, double ratio)
    evas_object_image_size_get(sd->obj, &iw, &ih);
    if ((w != iw) || (h != ih))
      {
-	evas_object_image_size_set(sd->obj, w, h);
         _emotion_image_data_zero(sd->obj);
 	changed = 1;
      }
@@ -1458,22 +1454,19 @@ _pixels_get(void *data, Evas_Object *obj)
    unsigned char *bgra_data;
 
    sd = data;
-   evas_object_image_size_get(obj, &iw, &ih);
    sd->module->video_data_size_get(sd->video, &w, &h);
    w = (w >> 1) << 1;
    h = (h >> 1) << 1;
-   if ((w != iw) || (h != ih))
+
+   evas_object_image_colorspace_set(obj, EVAS_COLORSPACE_YCBCR422P601_PL);
+   evas_object_image_alpha_set(obj, 0);
+   evas_object_image_size_set(obj, w, h);
+   iw = w;
+   ih = h;
+
+   if ((iw <= 1) || (ih <= 1))
      {
-	evas_object_image_colorspace_set(obj, EVAS_COLORSPACE_YCBCR422P601_PL);
-        evas_object_image_alpha_set(obj, 0);
-	evas_object_image_size_set(obj, w, h);
         _emotion_image_data_zero(sd->obj);
-	iw = w;
-	ih = h;
-     }
-   if ((iw < 1) || (ih < 1))
-     {
-//	printf("pix get set 0 (1)\n");
 	evas_object_image_pixels_dirty_set(obj, 0);
      }
    else
@@ -1494,7 +1487,6 @@ _pixels_get(void *data, Evas_Object *obj)
 		    evas_object_image_data_update_add(obj, 0, 0, iw, ih);
 	       }
 	     evas_object_image_data_set(obj, rows);
-//	     printf("pix get set 0 (2)\n");
 	     evas_object_image_pixels_dirty_set(obj, 0);
 	  }
 	else if (format == EMOTION_FORMAT_BGRA)
@@ -1503,62 +1495,10 @@ _pixels_get(void *data, Evas_Object *obj)
 	     if (sd->module->bgra_data_get(sd->video, &bgra_data))
 	       {
 		  evas_object_image_data_set(obj, bgra_data);
-//		  printf("pix get set 0 (3)\n");
 		  evas_object_image_pixels_dirty_set(obj, 0);
 	       }
 	  }
      }
-// no need for this because on any new frame decode info from the decoder
-// module, the previous "current frame" is released (done) for us anyway
-//   sd->module->frame_done(sd->video);
-
-/*
-   evas_object_image_size_get(obj, &iw, &ih);
-   sd->module->video_data_size_get(sd->video, &w, &h);
-   if ((w != iw) || (h != ih))
-     {
-	evas_object_image_size_set(obj, w, h);
-        _emotion_image_data_zero(sd->obj);
-	iw = w;
-	ih = h;
-     }
-   format = sd->module->format_get(sd->video);
-   if ((format == EMOTION_FORMAT_YV12) || (format == EMOTION_FORMAT_I420))
-     {
-	unsigned char **rows;
-	Evas_Pixel_Import_Source ps;
-
-	ps.format = EVAS_PIXEL_FORMAT_YUV420P_601;
-	ps.w = iw;
-	ps.h = ih;
-
-	ps.rows = malloc(ps.h * 2 * sizeof(void *));
-	if (!ps.rows)
-	  {
-	     sd->module->frame_done(sd->video);
-	     return;
-	  }
-
-	rows = (unsigned char **)ps.rows;
-
-	if (sd->module->yuv_rows_get(sd->video, iw, ih,
-				     rows,
-				     &rows[ps.h],
-				     &rows[ps.h + (ps.h / 2)]))
-	  evas_object_image_pixels_import(obj, &ps);
-	evas_object_image_pixels_dirty_set(obj, 0);
-	free(ps.rows);
-     }
-   else if (format == EMOTION_FORMAT_BGRA)
-     {
-	if (sd->module->bgra_data_get(sd->video, &bgra_data));
-	  {
-	     evas_object_image_data_set(obj, bgra_data);
-	     evas_object_image_pixels_dirty_set(obj, 0);
-	  }
-     }
-   sd->module->frame_done(sd->video);
- */
 }
 
 /*******************************************/
