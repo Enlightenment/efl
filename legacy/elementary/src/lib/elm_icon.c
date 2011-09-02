@@ -99,7 +99,7 @@ _icon_size_min_get(Evas_Object *icon)
 {
    int size;
    _els_smart_icon_size_get(icon, &size, NULL);
-   return (size < 32) ? 32 : size;
+   return (size < 16) ? 16 : size;
 }
 
 #ifdef HAVE_ELEMENTARY_ETHUMB
