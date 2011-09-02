@@ -14,6 +14,9 @@
 #include <pthread.h>
 #include <poll.h>
 
+#include <sys/prctl.h>
+#include <signal.h>
+
 #include <vlc/vlc.h>
 #include <Emotion_Generic_Plugin.h>
 
@@ -616,7 +619,7 @@ main(int argc, const char *argv[])
 {
    struct _App app;
    Emotion_Generic_Video_Shared *vs;
-   struct pollfd fds[2]; // watching on 2 file descriptors
+   struct pollfd fds[3];
    int tpipe[2]; // pipe for comunicating events from threads
    char shmname[256];
    char cwidth[64], cheight[64], cpitch[64], chroma[64];
@@ -641,6 +644,17 @@ main(int argc, const char *argv[])
    snprintf(cheight, sizeof(cheight), "%d", DEFAULTHEIGHT);
    snprintf(cpitch, sizeof(cpitch), "%d", DEFAULTWIDTH * 4);
    snprintf(chroma, sizeof(chroma), "RV32");
+
+   /*
+    * Naughty xattr in emotion uses ecore_thread to run its thing, this
+    * may leave emotion's reference count high and it won't kill us...
+    * letting us play the video in the background.  not good.
+    *
+    * prctl(PR_SET_PDEATHSIG) is a linux only thing. Need to find ways
+    * to do it on other platforms. Until then leave it breaking on
+    * such platforms so people port it instead of ignoring.
+    */
+   prctl(PR_SET_PDEATHSIG, SIGHUP);
 
    app.libvlc = libvlc_new(vlc_argc, vlc_argv);
    app.mp = NULL;
@@ -672,24 +686,43 @@ main(int argc, const char *argv[])
    fds[0].events = POLLIN;
    fds[1].fd = app.fd_read;
    fds[1].events = POLLIN;
+   fds[2].fd = STDERR_FILENO;
+   fds[2].events = 0;
 
    while (1)
      {
 	int r;
 
-	r = poll(fds, 2, 30);
+	r = poll(fds, 3, -1);
 	if (r == 0)
 	  continue;
 	else if (r < 0)
 	  {
-	     fprintf(stderr, "an error ocurred on poll().\n");
+	     fprintf(stderr,
+                     "emotion_generic_vlc: an error ocurred on poll(): %s\n",
+                     strerror(errno));
 	     break;
 	  }
+
+        if (fds[0].revents & (POLLERR | POLLHUP | POLLNVAL))
+          {
+             fputs("emotion_generic_vlc: error communicating with stdin\n",
+                   stderr);
+             break;
+          }
+        if (fds[1].revents & (POLLERR | POLLHUP | POLLNVAL))
+          {
+             fputs("emotion_generic_vlc: error communicating with thread\n",
+                   stderr);
+             break;
+          }
 
 	if (fds[0].revents & POLLIN)
 	  _process_emotion_commands(&app);
 	if (fds[1].revents & POLLIN)
 	  _process_thread_events(&app);
+        if (fds[2].revents & (POLLERR | POLLHUP | POLLNVAL))
+          break;
      }
 
    libvlc_release(app.libvlc);
