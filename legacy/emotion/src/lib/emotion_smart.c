@@ -62,9 +62,6 @@ struct _Smart_Data
 
 #ifdef HAVE_EIO
    Eio_File *load_xattr;
-   Eio_File *save_xattr;
-
-   const char *time_seek;
 #endif
 
    struct {
@@ -1122,30 +1119,13 @@ emotion_object_last_position_load(Evas_Object *obj)
 
 #ifdef HAVE_EIO
 static void
-_eio_save_xattr_cleanup(Smart_Data *sd)
+_eio_save_xattr_done(void *data __UNUSED__, Eio_File *handler __UNUSED__)
 {
-   sd->save_xattr = NULL;
-   eina_stringshare_del(sd->time_seek);
-   sd->time_seek = NULL;
-
-   EINA_REFCOUNT_UNREF(sd)
-     _smart_data_free(sd);
 }
 
 static void
-_eio_save_xattr_done(void *data, Eio_File *handler __UNUSED__)
+_eio_save_xattr_error(void *data __UNUSED__, Eio_File *handler __UNUSED__, int err __UNUSED__)
 {
-   Smart_Data *sd = data;
-
-   _eio_save_xattr_cleanup(sd);
-}
-
-static void
-_eio_save_xattr_error(void *data, Eio_File *handler __UNUSED__, int err __UNUSED__)
-{
-   Smart_Data *sd = data;
-
-   _eio_save_xattr_cleanup(sd);
 }
 #endif
 
@@ -1169,14 +1149,9 @@ emotion_object_last_position_save(Evas_Object *obj)
    eina_convert_dtoa(emotion_object_position_get(obj), double_to_string);
 
 #ifdef HAVE_EIO
-   if (sd->save_xattr) return ;
-
-   EINA_REFCOUNT_REF(sd);
-
-   sd->time_seek = eina_stringshare_add(double_to_string);
-   sd->save_xattr = eio_file_xattr_set(tmp, "user.e.time_seek",
-                                       sd->time_seek, eina_stringshare_strlen(sd->time_seek) + 1, 0,
-                                       _eio_save_xattr_done, _eio_save_xattr_error, sd);
+   eio_file_xattr_set(tmp, "user.e.time_seek",
+		      double_to_string, strlen(double_to_string) + 1, 0,
+		      _eio_save_xattr_done, _eio_save_xattr_error, sd);
 #else
 # ifdef HAVE_XATTR
    setxattr(tmp, "user.e.time_seek", double_to_string, strlen(double_to_string), 0);
