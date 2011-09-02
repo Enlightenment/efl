@@ -9,7 +9,7 @@ struct _Widget_Data
 {
    Evas_Object *obj;
    Evas_Object *content;
-   int last_calc_count; 
+   int last_calc_count;
    Evas_Coord maxminw, maxminh;
    Eina_Bool eval : 1;
    Eina_Bool szeval : 1;
@@ -46,7 +46,7 @@ _del_hook(Evas_Object *obj)
    if (wd->content)
      {
         Evas_Object *o = wd->content;
-        
+
         evas_object_event_callback_del_full(o,
                                             EVAS_CALLBACK_CHANGED_SIZE_HINTS,
                                             _child_change, obj);
@@ -129,7 +129,7 @@ _eval(Evas_Object *obj)
                   if (evas_object_smart_data_get(wd->content))
                      evas_object_smart_calculate(wd->content);
                }
-             wd->last_calc_count = 
+             wd->last_calc_count =
                 evas_smart_objects_calculate_count_get(evas_object_evas_get(obj));
           }
      }
@@ -137,7 +137,7 @@ _eval(Evas_Object *obj)
      {
         if (wd->content)
           {
-             if (wd->last_calc_count != 
+             if (wd->last_calc_count !=
                 evas_smart_objects_calculate_count_get(evas_object_evas_get(obj)))
                 evas_object_smart_callback_call(obj, SIG_UNREALIZE, NULL);
           }

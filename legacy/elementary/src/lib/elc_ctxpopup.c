@@ -175,7 +175,7 @@ _on_focus_hook(void *data __UNUSED__, Evas_Object *obj)
 
    if (elm_widget_focus_get(obj))
      {
-        //FIXME: 
+        //FIXME:
      }
    else
      {
@@ -1107,7 +1107,7 @@ elm_ctxpopup_add(Evas_Object *parent)
 
    evas_object_smart_callbacks_descriptions_set(obj, _signals);
 
-   //default parent is to be hover parent 
+   //default parent is to be hover parent
    elm_ctxpopup_hover_parent_set(obj, parent);
 
    return obj;
@@ -1203,7 +1203,7 @@ elm_ctxpopup_hover_parent_set(Evas_Object *obj, Evas_Object *parent)
    elm_widget_sub_object_add(parent, obj);
    wd->parent = parent;
 
-   //Update Background 
+   //Update Background
    evas_object_geometry_get(parent, &x, &y, &w, &h);
    evas_object_move(wd->bg, x, y);
    evas_object_resize(wd->bg, w, h);

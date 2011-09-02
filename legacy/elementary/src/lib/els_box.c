@@ -20,7 +20,7 @@ _smart_extents_calculate(Evas_Object *box, Evas_Object_Box_Data *priv, int horiz
              evas_object_size_hint_min_get(opt->obj, &mnw, &mnh);
              if (minh < mnh) minh = mnh;
              if (minw < mnw) minw = mnw;
-             
+
              evas_object_size_hint_max_get(opt->obj, &mnw, &mnh);
              if (mnh >= 0)
                {

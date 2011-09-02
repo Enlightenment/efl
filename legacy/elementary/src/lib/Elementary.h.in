@@ -1424,7 +1424,7 @@ extern "C" {
     * Last show feature of password mode enables user to view
     * the last input entered for few seconds before masking it.
     * These functions allow to set this feature in password mode
-    * of entry widget and also allow to manipulate the duration 
+    * of entry widget and also allow to manipulate the duration
     * for which the input has to be visible.
     *
     * @{
@@ -1433,7 +1433,7 @@ extern "C" {
    /**
     * Get show last setting of password mode.
     *
-    * This gets the show last input setting of password mode which might be 
+    * This gets the show last input setting of password mode which might be
     * enabled or disabled.
     *
     * @return @c EINA_TRUE, if the last input show setting is enabled, @c EINA_FALSE

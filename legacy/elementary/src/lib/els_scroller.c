@@ -1421,7 +1421,7 @@ _elm_smart_scroller_wanted_region_set(Evas_Object *obj)
        sd->down.hold_animator || sd->down.onhold_animator) return;
 
    sd->child.resized = EINA_FALSE;
-   
+
    /* Flip to RTL cords only if init in RTL mode */
    if (sd->is_mirrored)
      wx = _elm_smart_scroller_x_mirrored_get(obj, sd->wx);
@@ -2102,7 +2102,7 @@ _smart_event_mouse_up(void *data, Evas *e, Evas_Object *obj __UNUSED__, void *ev
              elm_smart_scroller_child_pos_get(sd->smart_obj, &x, &y);
              elm_smart_scroller_child_pos_set(sd->smart_obj, x, y);
              _update_wanted_coordinates(sd, x, y);
-             
+
              if (sd->child.resized)
                 _elm_smart_scroller_wanted_region_set(sd->smart_obj);
 

@@ -29,13 +29,13 @@ fac_realize_end(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 
    bx = elm_box_add(win);
    printf("   ADD lv 3 = %p [%i]\n", bx, (BLOK * (int)evas_object_data_get(obj, "num")));
-#ifdef HOMOG   
+#ifdef HOMOG
    elm_box_homogeneous_set(bx, EINA_TRUE);
 #endif
-#ifdef ZEROALIGN   
+#ifdef ZEROALIGN
    elm_box_align_set(bx, 0.0, 0.0);
 #endif
-   
+
    for (i = 0; i < BLOK; i++)
      {
         char buf[32];
@@ -64,13 +64,13 @@ fac_realize2(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 
    bx = elm_box_add(win);
    printf("  ADD lv 2 = %p [%i]\n", bx, (BLOK * (int)evas_object_data_get(obj, "num")));
-#ifdef HOMOG   
+#ifdef HOMOG
    elm_box_homogeneous_set(bx, EINA_TRUE);
 #endif
-#ifdef ZEROALIGN   
+#ifdef ZEROALIGN
    elm_box_align_set(bx, 0.0, 0.0);
 #endif
-   
+
    for (i = 0; i < BLOK; i++)
      {
         fc = elm_factory_add(win);
@@ -102,13 +102,13 @@ fac_realize1(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 
    bx = elm_box_add(win);
    printf(" ADD lv 1 = %p [%i]\n", bx, (BLOK * (int)evas_object_data_get(obj, "num")));
-#ifdef HOMOG   
+#ifdef HOMOG
    elm_box_homogeneous_set(bx, EINA_TRUE);
 #endif
-#ifdef ZEROALIGN   
+#ifdef ZEROALIGN
    elm_box_align_set(bx, 0.0, 0.0);
 #endif
-   
+
    for (i = 0; i < BLOK; i++)
      {
         fc = elm_factory_add(win);
@@ -147,12 +147,12 @@ test_factory(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_inf
    evas_object_show(bg);
 
    bx = elm_box_add(win);
-#ifdef HOMOG   
+#ifdef HOMOG
    elm_box_homogeneous_set(bx, EINA_TRUE);
-#endif   
-#ifdef ZEROALIGN   
+#endif
+#ifdef ZEROALIGN
    elm_box_align_set(bx, 0.0, 0.0);
-#endif   
+#endif
    evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, 0.0);
 
    for (i = 0; i < BLOK; i++)

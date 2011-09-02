@@ -24,7 +24,7 @@ test_hoversel(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    evas_object_show(bx);
 
    bt = elm_hoversel_add(win);
-// FIXME: need to add horizontal hoversel theme to default some day   
+// FIXME: need to add horizontal hoversel theme to default some day
 //   elm_hoversel_horizontal_set(bt, 1);
    elm_hoversel_hover_parent_set(bt, win);
    elm_object_text_set(bt, "Labels");
