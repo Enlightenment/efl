@@ -95,7 +95,7 @@ _ecore_idler_shutdown(void)
 }
 
 int
-_ecore_idler_call(void)
+_ecore_idler_all_call(void)
 {
    if (!idler_current)
      {

@@ -103,6 +103,12 @@ _ecore_signal_init(void)
 #endif
 }
 
+void
+_ecore_signal_received_process(void)
+{
+   while (_ecore_signal_count_get()) _ecore_signal_call();
+}
+
 int
 _ecore_signal_count_get(void)
 {

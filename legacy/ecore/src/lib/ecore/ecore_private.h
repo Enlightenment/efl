@@ -128,11 +128,13 @@ void          _ecore_timer_shutdown(void);
 void          _ecore_timer_cleanup(void);
 void          _ecore_timer_enable_new(void);
 double        _ecore_timer_next_get(void);
+void          _ecore_timer_expired_timers_call(double when);
 int           _ecore_timers_exists(void);
-int           _ecore_timer_call(double when);
+
+int           _ecore_timer_expired_call(double when);
 
 void          _ecore_idler_shutdown(void);
-int           _ecore_idler_call(void);
+int           _ecore_idler_all_call(void);
 int           _ecore_idler_exist(void);
 
 void          _ecore_idle_enterer_shutdown(void);
@@ -165,11 +167,13 @@ void          _ecore_main_shutdown(void);
 #ifdef _WIN32
 static inline void _ecore_signal_shutdown(void) { }
 static inline void _ecore_signal_init(void) { }
+static inline void _ecore_signal_received_process(void) { }
 static inline int  _ecore_signal_count_get(void) { return 0; }
 static inline void _ecore_signal_call(void) { }
 #else
 void          _ecore_signal_shutdown(void);
 void          _ecore_signal_init(void);
+void          _ecore_signal_received_process(void);
 int           _ecore_signal_count_get(void);
 void          _ecore_signal_call(void);
 #endif

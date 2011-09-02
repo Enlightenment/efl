@@ -494,7 +494,7 @@ _ecore_main_gsource_prepare(GSource *source __UNUSED__, gint *next_time)
    if (!ecore_idling && !_ecore_glib_idle_enterer_called)
      {
         _ecore_time_loop_time = ecore_time_get();
-        while (_ecore_timer_call(_ecore_time_loop_time));
+        _ecore_timer_expired_timers_call(_ecore_time_loop_time);
         _ecore_timer_cleanup();
 
         _ecore_idle_enterer_call();
@@ -505,7 +505,7 @@ _ecore_main_gsource_prepare(GSource *source __UNUSED__, gint *next_time)
           _ecore_main_fd_handlers_buf_call();
      }
 
-   while (_ecore_signal_count_get()) _ecore_signal_call();
+   _ecore_signal_received_process();
 
    /* don't check fds if somebody quit */
    if (g_main_loop_is_running(ecore_main_loop))
@@ -673,11 +673,11 @@ _ecore_main_gsource_dispatch(GSource *source __UNUSED__, GSourceFunc callback __
         _ecore_main_fd_handlers_call();
         if (fd_handlers_with_buffer)
           _ecore_main_fd_handlers_buf_call();
-        while (_ecore_signal_count_get()) _ecore_signal_call();
+        _ecore_signal_received_process();
         _ecore_event_call();
         _ecore_main_fd_handlers_cleanup();
 
-        while (_ecore_timer_call(_ecore_time_loop_time));
+        _ecore_timer_expired_timers_call(_ecore_time_loop_time);
         _ecore_timer_cleanup();
 
         _ecore_idle_enterer_call();
@@ -1600,157 +1600,207 @@ _ecore_main_fd_handlers_buf_call(void)
 }
 
 #ifndef USE_G_MAIN_LOOP
+
+enum {
+   SPIN_MORE,
+   SPIN_RESTART,
+   LOOP_CONTINUE
+};
+
+static int
+_ecore_main_loop_spin_core(void)
+{
+   /* as we are spinning we need to update loop time per spin */
+   _ecore_time_loop_time = ecore_time_get();
+   /* call all idlers, which returns false if no more idelrs exist */
+   if (!_ecore_idler_all_call()) return SPIN_RESTART;
+   /* sneaky - drop through or if checks - the first one to succeed
+    * drops through and returns "continue" so further ones dont run */
+   if ((_ecore_main_select(0.0) > 0) || (_ecore_event_exist()) ||
+       (_ecore_signal_count_get() > 0) || (do_quit))
+      return LOOP_CONTINUE;
+   /* default - spin more */
+   return SPIN_MORE;
+}
+
+static int
+_ecore_main_loop_spin_no_timers(void)
+{
+   /* if we have idlers we HAVE to spin and handle everything
+    * in a polling way - spin in a tight polling loop */
+   for (;;)
+     {
+        int action = _ecore_main_loop_spin_core();
+        if (action != SPIN_MORE) return action;
+        /* if an idler has added a timer then we need to go through
+         * the start of the spin cycle again to handle cases properly */
+        if (_ecore_timers_exists()) return SPIN_RESTART;
+     }
+   /* just contiune handling events etc. */
+   return LOOP_CONTINUE;
+}
+
+static int
+_ecore_main_loop_spin_timers(void)
+{
+   /* if we have idlers we HAVE to spin and handle everything
+    * in a polling way - spin in a tight polling loop */
+   for (;;)
+     {
+        int action = _ecore_main_loop_spin_core();
+        if (action != SPIN_MORE) return action;
+        /* if next timer expires now or in the past - stop spinning and
+         * continue the mainloop walk as our "select" timeout has
+         * expired now */
+        if (_ecore_timer_next_get() <= 0.0) return LOOP_CONTINUE;
+     }
+   /* just contiune handling events etc. */
+   return LOOP_CONTINUE;
+}
+
+static void
+_ecore_fps_marker_1(void)
+{
+   if (!_ecore_fps_debug) return;
+   t2 = ecore_time_get();
+   if ((t1 > 0.0) && (t2 > 0.0)) _ecore_fps_debug_runtime_add(t2 - t1);
+}
+
+static void
+_ecore_fps_marker_2(void)
+{
+   if (!_ecore_fps_debug) return;
+   t1 = ecore_time_get();
+}
+
 static void
 _ecore_main_loop_iterate_internal(int once_only)
 {
    double next_time = -1.0;
-   int    have_event = 0;
-   int    have_signal;
 
    in_main_loop++;
    /* expire any timers */
-   while (_ecore_timer_call(_ecore_time_loop_time));
+   _ecore_timer_expired_timers_call(_ecore_time_loop_time);
    _ecore_timer_cleanup();
 
    /* process signals into events .... */
-   while (_ecore_signal_count_get()) _ecore_signal_call();
+   _ecore_signal_received_process();
+   /* if as a result of timers/animators or signals we have accumulated
+    * events, then instantly handle them */
    if (_ecore_event_exist())
      {
+        /* but first conceptually enter an idle state */
         _ecore_idle_enterer_call();
         _ecore_throttle();
-        have_event = 1;
+        /* now quickly poll to see which input fd's are active */
         _ecore_main_select(0.0);
+        /* allow newly queued timers to expire from now on */
         _ecore_timer_enable_new();
-        goto process_events;
+        /* go straight to processing the events we had queued */
+        goto process_all;
      }
-   /* call idle enterers ... */
-   if (!once_only)
+   
+   if (once_only)
      {
-        _ecore_idle_enterer_call();
-        _ecore_throttle();
+        /* in once_only mode we should quickly poll for inputs, signals
+         * if we got any events or signals, allow new timers to process.
+         * use bitwise or to force both conditions to be tested and
+         * merged together */
+        if (_ecore_main_select(0.0) | _ecore_signal_count_get())
+          {
+             _ecore_timer_enable_new();
+             goto process_all;
+          }
      }
    else
      {
-        have_event = have_signal = 0;
-
-        if (_ecore_main_select(0.0) > 0) have_event = 1;
-        if (_ecore_signal_count_get() > 0) have_signal = 1;
-        if (have_signal || have_event)
-          {
-             _ecore_timer_enable_new();
-             goto process_events;
-          }
+        /* call idle enterers ... */
+        _ecore_idle_enterer_call();
+        _ecore_throttle();
      }
 
    /* if these calls caused any buffered events to appear - deal with them */
    if (fd_handlers_with_buffer)
      _ecore_main_fd_handlers_buf_call();
 
-   /* if there are any - jump to processing them */
+   /* if there are any (buffered fd handling may generate them) 
+    * then jump to processing them */
    if (_ecore_event_exist())
      {
-        have_event = 1;
         _ecore_main_select(0.0);
         _ecore_timer_enable_new();
-        goto process_events;
-     }
-   if (once_only)
-     {
-        _ecore_idle_enterer_call();
-        _ecore_throttle();
-        in_main_loop--;
-        _ecore_timer_enable_new();
-        return;
-     }
-
-   if (_ecore_fps_debug)
-     {
-        t2 = ecore_time_get();
-        if ((t1 > 0.0) && (t2 > 0.0))
-           _ecore_fps_debug_runtime_add(t2 - t1);
-     }
-   start_loop:
-   /* any timers re-added as a result of these are allowed to go */
-   _ecore_timer_enable_new();
-   if (do_quit)
-     {
-        in_main_loop--;
-        _ecore_timer_enable_new();
-        return;
-     }
-   /* init flags */
-   have_event = have_signal = 0;
-   next_time = _ecore_timer_next_get();
-   /* no timers */
-   if (next_time < 0)
-     {
-        /* no idlers */
-        if (!_ecore_idler_exist())
-          {
-             if (_ecore_main_select(-1.0) > 0) have_event = 1;
-          }
-        /* idlers */
-        else
-          {
-             for (;;)
-               {
-                  _ecore_time_loop_time = ecore_time_get();
-                  if (!_ecore_idler_call()) goto start_loop;
-                  if (_ecore_main_select(0.0) > 0) break;
-                  if (_ecore_event_exist()) break;
-                  if (_ecore_signal_count_get() > 0) break;
-                  if (_ecore_timers_exists()) goto start_loop;
-                  if (do_quit) break;
-               }
-          }
-     }
-   /* timers */
-   else
-     {
-        /* no idlers */
-        if (!_ecore_idler_exist())
-          {
-             if (_ecore_main_select(next_time) > 0) have_event = 1;
-          }
-        /* idlers */
-        else
-          {
-             for (;;)
-               {
-                  _ecore_time_loop_time = ecore_time_get();
-                  if (!_ecore_idler_call()) goto start_loop;
-                  if (_ecore_main_select(0.0) > 0) break;
-                  if (_ecore_event_exist()) break;
-                  if (_ecore_signal_count_get() > 0) break;
-                  if (have_event || have_signal) break;
-                  next_time = _ecore_timer_next_get();
-                  if (next_time <= 0) break;
-                  if (do_quit) break;
-               }
-          }
+        goto process_all;
      }
    
-   if (_ecore_fps_debug) t1 = ecore_time_get();
+   if (once_only)
+     {
+        /* in once_only mode enter idle here instead and then return */
+        _ecore_idle_enterer_call();
+        _ecore_throttle();
+        _ecore_timer_enable_new();
+        goto done;
+     }
+
+   _ecore_fps_marker_1();
+   
+   /* start of the sleeping or looping section */
+start_loop: /***************************************************************/
+   /* any timers re-added as a result of these are allowed to go */
+   _ecore_timer_enable_new();
+   /* if we have been asked to quit the mainloop then exit at this point */
+   if (do_quit)
+     {
+        _ecore_timer_enable_new();
+        goto done;
+     }
+   if (!_ecore_event_exist())
+     {
+        /* init flags */
+        next_time = _ecore_timer_next_get();
+        /* no idlers */
+        if (!_ecore_idler_exist())
+          {
+             /* sleep until timeout or forever (-1.0) waiting for on fds */
+             _ecore_main_select(next_time);
+          }
+        else
+          {
+             int action = LOOP_CONTINUE;
+             
+             /* no timers - spin */
+             if (next_time < 0) action = _ecore_main_loop_spin_no_timers();
+             /* timers - spin */
+             else action = _ecore_main_loop_spin_timers();
+             if (action == SPIN_RESTART) goto start_loop;
+          }
+     }
+   _ecore_fps_marker_2();
+
+   
+   /* actually wake up and deal with input, events etc. */
+process_all: /***********************************************************/
+   
    /* we came out of our "wait state" so idle has exited */
-   process_events:
    if (!once_only) _ecore_idle_exiter_call();
    /* call the fd handler per fd that became alive... */
    /* this should read or write any data to the monitored fd and then */
    /* post events onto the ecore event pipe if necessary */
    _ecore_main_fd_handlers_call();
-   if (fd_handlers_with_buffer)
-     _ecore_main_fd_handlers_buf_call();
+   if (fd_handlers_with_buffer) _ecore_main_fd_handlers_buf_call();
    /* process signals into events .... */
-   while (_ecore_signal_count_get()) _ecore_signal_call();
+   _ecore_signal_received_process();
    /* handle events ... */
    _ecore_event_call();
    _ecore_main_fd_handlers_cleanup();
 
    if (once_only)
      {
+        /* if in once_only mode handle idle exiting */
         _ecore_idle_enterer_call();
         _ecore_throttle();
      }
+   
+done: /*******************************************************************/
    in_main_loop--;
 }
 #endif

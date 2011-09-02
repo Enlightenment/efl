@@ -678,8 +678,16 @@ _ecore_timer_reschedule(Ecore_Timer *timer, double when)
 }
 
 /* assume that we hold the ecore lock when entering this function */
+void
+_ecore_timer_expired_timers_call(double when)
+{
+   /* call the first expired timer until no expired timers exist */
+   while (_ecore_timer_expired_call(when));
+}
+
+/* assume that we hold the ecore lock when entering this function */
 int
-_ecore_timer_call(double when)
+_ecore_timer_expired_call(double when)
 {
    if (!timers) return 0;
    if (last_check > when)
