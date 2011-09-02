@@ -1157,7 +1157,7 @@ static void module_close(Emotion_Video_Module *module, void *video)
 }
 
 
-Eina_Bool
+static Eina_Bool
 generic_module_init(void)
 {
    if (!pfx)
@@ -1173,7 +1173,7 @@ generic_module_init(void)
    return _emotion_module_register("generic", module_open, module_close);
 }
 
-void
+static void
 generic_module_shutdown(void)
 {
    if (pfx)
