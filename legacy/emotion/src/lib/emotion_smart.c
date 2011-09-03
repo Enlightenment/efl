@@ -380,8 +380,6 @@ emotion_object_file_set(Evas_Object *obj, const char *file)
    if ((file) && (sd->file) && (file == sd->file || !strcmp(file, sd->file))) return EINA_FALSE;
    if ((file) && (file[0] != 0))
      {
-        int w, h;
-
 	eina_stringshare_replace(&sd->file, file);
 	sd->module->file_close(sd->video);
         evas_object_image_data_set(sd->obj, NULL);
