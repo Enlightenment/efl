@@ -237,7 +237,7 @@ _player_ready(Emotion_Generic_Video *ev)
    (src) = (char *)(src) + len;
 
 static int
-_player_int_read(Emotion_Generic_Video *ev, void **data)
+_player_int_read(Emotion_Generic_Video *ev __UNUSED__, void **data)
 {
    int number;
    memcpy(&number, *data, sizeof(number));
@@ -402,7 +402,7 @@ _player_open_done(Emotion_Generic_Video *ev)
 }
 
 static void
-_player_read_cmd(Emotion_Generic_Video *ev, void *line, int size)
+_player_read_cmd(Emotion_Generic_Video *ev, void *line, int size __UNUSED__)
 {
    int type;
    RCV_CMD_PARAM(line, type);
@@ -495,7 +495,7 @@ _player_add_cb(void *data, int type __UNUSED__, void *event)
 }
 
 static Eina_Bool
-_player_del_cb(void *data, int type __UNUSED__, void *event)
+_player_del_cb(void *data, int type __UNUSED__, void *event __UNUSED__)
 {
    Ecore_Exe_Event_Del *event_del = event;
    Ecore_Exe *player = event_del->exe;
@@ -510,7 +510,7 @@ _player_del_cb(void *data, int type __UNUSED__, void *event)
 }
 
 static Eina_Bool
-_fork_and_exec(Evas_Object *obj, Emotion_Generic_Video *ev)
+_fork_and_exec(Evas_Object *obj __UNUSED__, Emotion_Generic_Video *ev)
 {
    char shmname[256];
    struct timeval tv;
@@ -599,7 +599,7 @@ em_shutdown(void *data)
 }
 
 static unsigned char
-em_file_open(const char *file, Evas_Object *obj, void *data)
+em_file_open(const char *file, Evas_Object *obj __UNUSED__, void *data)
 {
    Emotion_Generic_Video *ev = data;
    INF("file set: %s", file);
@@ -632,7 +632,7 @@ em_file_close(void *data)
 }
 
 static Emotion_Format
-em_format_get(void *ef)
+em_format_get(void *ef __UNUSED__)
 {
    return EMOTION_FORMAT_BGRA;
 }
@@ -728,7 +728,7 @@ em_fps_num_get(void *data)
 }
 
 static int
-em_fps_den_get(void *ef)
+em_fps_den_get(void *ef __UNUSED__)
 {
    return 1000;
 }
@@ -748,7 +748,7 @@ em_pos_get(void *data)
 }
 
 static void
-em_vis_set(void *ef, Emotion_Vis vis)
+em_vis_set(void *ef __UNUSED__, Emotion_Vis vis __UNUSED__)
 {
 }
 
@@ -760,7 +760,7 @@ em_vis_get(void *data)
 }
 
 static Eina_Bool
-em_vis_supported(void *ef, Emotion_Vis vis)
+em_vis_supported(void *ef __UNUSED__, Emotion_Vis vis __UNUSED__)
 {
    return EINA_FALSE;
 }
@@ -772,13 +772,13 @@ em_ratio_get(void *data)
    return ev->ratio;
 }
 
-static int em_video_handled(void *ef)
+static int em_video_handled(void *ef __UNUSED__)
 {
    fprintf(stderr, "video handled!\n");
    return 1;
 }
 
-static int em_audio_handled(void *ef)
+static int em_audio_handled(void *ef __UNUSED__)
 {
    fprintf(stderr, "audio handled!\n");
    return 1;
@@ -790,12 +790,12 @@ static int em_seekable(void *data)
    return ev->seekable;
 }
 
-static void em_frame_done(void *ef)
+static void em_frame_done(void *ef __UNUSED__)
 {
 }
 
 static int
-em_yuv_rows_get(void *data, int w, int h, unsigned char **yrows, unsigned char **urows, unsigned char **vrows)
+em_yuv_rows_get(void *data __UNUSED__, int w __UNUSED__, int h __UNUSED__, unsigned char **yrows __UNUSED__, unsigned char **urows __UNUSED__, unsigned char **vrows __UNUSED__)
 {
    Emotion_Generic_Video *ev;
    volatile Emotion_Generic_Video_Shared *vs;
@@ -829,46 +829,46 @@ em_bgra_data_get(void *data, unsigned char **bgra_data)
 }
 
 static void
-em_event_feed(void *ef, int event)
+em_event_feed(void *ef __UNUSED__, int event __UNUSED__)
 {
 }
 
 static void
-em_event_mouse_button_feed(void *ef, int button, int x, int y)
+em_event_mouse_button_feed(void *ef __UNUSED__, int button __UNUSED__, int x __UNUSED__, int y __UNUSED__)
 {
 }
 
 static void
-em_event_mouse_move_feed(void *ef, int x, int y)
+em_event_mouse_move_feed(void *ef __UNUSED__, int x __UNUSED__, int y __UNUSED__)
 {
 }
 
 static int
-em_video_channel_count(void *ef)
+em_video_channel_count(void *ef __UNUSED__)
 {
    int ret  = 0;
    return ret;
 }
 
 static void
-em_video_channel_set(void *ef, int channel)
+em_video_channel_set(void *ef __UNUSED__, int channel __UNUSED__)
 {
 }
 
 static int
-em_video_channel_get(void *ef)
+em_video_channel_get(void *ef __UNUSED__)
 {
    return 1;
 }
 
 static const char *
-em_video_channel_name_get(void *ef, int channel)
+em_video_channel_name_get(void *ef __UNUSED__, int channel __UNUSED__)
 {
    return NULL;
 }
 
 static void
-em_video_channel_mute_set(void *ef, int mute)
+em_video_channel_mute_set(void *ef __UNUSED__, int mute __UNUSED__)
 {
 }
 
@@ -965,62 +965,62 @@ em_audio_channel_volume_get(void *data)
 }
 
 static int
-em_spu_channel_count(void *ef)
+em_spu_channel_count(void *ef __UNUSED__)
 {
    return 0;
 }
 
 static void
-em_spu_channel_set(void *ef, int channel)
+em_spu_channel_set(void *ef __UNUSED__, int channel __UNUSED__)
 {
 }
 
 static int
-em_spu_channel_get(void *ef)
+em_spu_channel_get(void *ef __UNUSED__)
 {
    int num = 0;
    return num;
 }
 
 static const char *
-em_spu_channel_name_get(void *ef, int channel)
+em_spu_channel_name_get(void *ef __UNUSED__, int channel __UNUSED__)
 {
    return NULL;
 }
 
 static void
-em_spu_channel_mute_set(void *ef, int mute)
+em_spu_channel_mute_set(void *ef __UNUSED__, int mute __UNUSED__)
 {
    return;
 }
 
 static int
-em_spu_channel_mute_get(void *ef)
+em_spu_channel_mute_get(void *ef __UNUSED__)
 {
    return 0;
 }
 
 static int
-em_chapter_count(void *ef)
+em_chapter_count(void *ef __UNUSED__)
 {
    int num = 0;
    return num;
 }
 
 static void
-em_chapter_set(void *ef, int chapter)
+em_chapter_set(void *ef __UNUSED__, int chapter __UNUSED__)
 {
 }
 
 static int
-em_chapter_get(void *ef)
+em_chapter_get(void *ef __UNUSED__)
 {
    int num = 0;
    return num;
 }
 
 static const char *
-em_chapter_name_get(void *ef, int chapter)
+em_chapter_name_get(void *ef __UNUSED__, int chapter __UNUSED__)
 {
    return NULL;
 }
@@ -1045,13 +1045,13 @@ em_speed_get(void *data)
 }
 
 static int
-em_eject(void *ef)
+em_eject(void *ef __UNUSED__)
 {
    return 1;
 }
 
 static const char *
-em_meta_get(void *ef, int meta)
+em_meta_get(void *ef __UNUSED__, int meta __UNUSED__)
 {
    char * meta_data = NULL;
    return meta_data;
@@ -1148,7 +1148,7 @@ module_open(Evas_Object *obj, const Emotion_Video_Module **module, void **video,
    return EINA_TRUE;
 }
 
-static void module_close(Emotion_Video_Module *module, void *video)
+static void module_close(Emotion_Video_Module *module __UNUSED__, void *video)
 {
 	em_module.shutdown(video);
 }
