@@ -81,7 +81,8 @@ test "x$RPM_BUILD_ROOT" != "x/" && rm -rf $RPM_BUILD_ROOT
 %files devel
 %defattr(-, root, root)
 %doc doc/html
-%{_libdir}/elementary/modules/test_*/*/module.*
+%{_libdir}/elementary/modules/*/*/module.*
+
 %{_libdir}/pkgconfig/*
 %{_includedir}/elementary-0/*.h
 
