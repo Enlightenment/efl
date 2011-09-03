@@ -1485,7 +1485,7 @@ _eos_main_fct(void *data)
 }
 
 static GstBusSyncReply
-_eos_sync_fct(GstBus *bus, GstMessage *msg, gpointer data)
+_eos_sync_fct(GstBus *bus __UNUSED__, GstMessage *msg, gpointer data)
 {
    Emotion_Gstreamer_Video *ev = data;
    Emotion_Gstreamer_Message *send;

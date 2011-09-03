@@ -233,8 +233,8 @@ _emotion_enumerate_all_webcams(void)
 static void
 _emotion_eeze_events(const char *syspath,
                      Eeze_Udev_Event ev,
-                     void *data,
-                     Eeze_Udev_Watch *watcher)
+                     void *data __UNUSED__,
+                     Eeze_Udev_Watch *watcher __UNUSED__)
 {
    if (ev == EEZE_UDEV_EVENT_REMOVE)
      {
