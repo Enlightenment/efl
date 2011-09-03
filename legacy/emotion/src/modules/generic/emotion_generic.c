@@ -453,8 +453,6 @@ _player_data_cb(void *data, int type __UNUSED__, void *event)
 {
    Ecore_Exe_Event_Data *ev = event;
    Emotion_Generic_Video *evideo = data;
-   int psize;
-   char *pdata;
    int i;
 
    if (ev->exe != evideo->player.exe)
@@ -497,8 +495,6 @@ _player_add_cb(void *data, int type __UNUSED__, void *event)
 static Eina_Bool
 _player_del_cb(void *data, int type __UNUSED__, void *event __UNUSED__)
 {
-   Ecore_Exe_Event_Del *event_del = event;
-   Ecore_Exe *player = event_del->exe;
    Emotion_Generic_Video *ev = data;
    ERR("player died.");
 
@@ -797,8 +793,6 @@ static void em_frame_done(void *ef __UNUSED__)
 static int
 em_yuv_rows_get(void *data __UNUSED__, int w __UNUSED__, int h __UNUSED__, unsigned char **yrows __UNUSED__, unsigned char **urows __UNUSED__, unsigned char **vrows __UNUSED__)
 {
-   Emotion_Generic_Video *ev;
-   volatile Emotion_Generic_Video_Shared *vs;
    return 0;
 }
 
