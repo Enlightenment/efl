@@ -13,6 +13,7 @@ AM_CPPFLAGS = \
 
 if HAVE_RAW
 bin_PROGRAMS = evas_image_loader.raw
+bindir = $(libdir)/evas/utils
 
 evas_image_loader_raw_SOURCES = main.c $(top_srcdir)/src/bin/common/shmfile.c
 evas_image_loader_raw_CFLAGS = @LIBRAW_CFLAGS@
@@ -21,22 +22,22 @@ evas_image_loader_raw_LDFLAGS =
 endif
 
 install-data-hook:
-	ln -sf evas_image_loader.raw $(DESTDIR)$(bindir)/evas_image_loader.arw
-	ln -sf evas_image_loader.raw $(DESTDIR)$(bindir)/evas_image_loader.cr2
-	ln -sf evas_image_loader.raw $(DESTDIR)$(bindir)/evas_image_loader.crw
-	ln -sf evas_image_loader.raw $(DESTDIR)$(bindir)/evas_image_loader.dcr
-	ln -sf evas_image_loader.raw $(DESTDIR)$(bindir)/evas_image_loader.dng
-	ln -sf evas_image_loader.raw $(DESTDIR)$(bindir)/evas_image_loader.k25
-	ln -sf evas_image_loader.raw $(DESTDIR)$(bindir)/evas_image_loader.kdc
-	ln -sf evas_image_loader.raw $(DESTDIR)$(bindir)/evas_image_loader.erf
-	ln -sf evas_image_loader.raw $(DESTDIR)$(bindir)/evas_image_loader.mrw
-	ln -sf evas_image_loader.raw $(DESTDIR)$(bindir)/evas_image_loader.nef
-	ln -sf evas_image_loader.raw $(DESTDIR)$(bindir)/evas_image_loader.nrf
-	ln -sf evas_image_loader.raw $(DESTDIR)$(bindir)/evas_image_loader.nrw
-	ln -sf evas_image_loader.raw $(DESTDIR)$(bindir)/evas_image_loader.orf
-	ln -sf evas_image_loader.raw $(DESTDIR)$(bindir)/evas_image_loader.rw2
-	ln -sf evas_image_loader.raw $(DESTDIR)$(bindir)/evas_image_loader.pef
-	ln -sf evas_image_loader.raw $(DESTDIR)$(bindir)/evas_image_loader.raf
-	ln -sf evas_image_loader.raw $(DESTDIR)$(bindir)/evas_image_loader.sr2
-	ln -sf evas_image_loader.raw $(DESTDIR)$(bindir)/evas_image_loader.srf
-	ln -sf evas_image_loader.raw $(DESTDIR)$(bindir)/evas_image_loader.x3f
+	ln -sf evas_image_loader.raw $(DESTDIR)$(libdir)/evas/utils/evas_image_loader.arw
+	ln -sf evas_image_loader.raw $(DESTDIR)$(libdir)/evas/utils/evas_image_loader.cr2
+	ln -sf evas_image_loader.raw $(DESTDIR)$(libdir)/evas/utils/evas_image_loader.crw
+	ln -sf evas_image_loader.raw $(DESTDIR)$(libdir)/evas/utils/evas_image_loader.dcr
+	ln -sf evas_image_loader.raw $(DESTDIR)$(libdir)/evas/utils/evas_image_loader.dng
+	ln -sf evas_image_loader.raw $(DESTDIR)$(libdir)/evas/utils/evas_image_loader.k25
+	ln -sf evas_image_loader.raw $(DESTDIR)$(libdir)/evas/utils/evas_image_loader.kdc
+	ln -sf evas_image_loader.raw $(DESTDIR)$(libdir)/evas/utils/evas_image_loader.erf
+	ln -sf evas_image_loader.raw $(DESTDIR)$(libdir)/evas/utils/evas_image_loader.mrw
+	ln -sf evas_image_loader.raw $(DESTDIR)$(libdir)/evas/utils/evas_image_loader.nef
+	ln -sf evas_image_loader.raw $(DESTDIR)$(libdir)/evas/utils/evas_image_loader.nrf
+	ln -sf evas_image_loader.raw $(DESTDIR)$(libdir)/evas/utils/evas_image_loader.nrw
+	ln -sf evas_image_loader.raw $(DESTDIR)$(libdir)/evas/utils/evas_image_loader.orf
+	ln -sf evas_image_loader.raw $(DESTDIR)$(libdir)/evas/utils/evas_image_loader.rw2
+	ln -sf evas_image_loader.raw $(DESTDIR)$(libdir)/evas/utils/evas_image_loader.pef
+	ln -sf evas_image_loader.raw $(DESTDIR)$(libdir)/evas/utils/evas_image_loader.raf
+	ln -sf evas_image_loader.raw $(DESTDIR)$(libdir)/evas/utils/evas_image_loader.sr2
+	ln -sf evas_image_loader.raw $(DESTDIR)$(libdir)/evas/utils/evas_image_loader.srf
+	ln -sf evas_image_loader.raw $(DESTDIR)$(libdir)/evas/utils/evas_image_loader.x3f

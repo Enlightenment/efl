@@ -12,6 +12,7 @@ AM_CPPFLAGS = \
 @EINA_CFLAGS@
 
 bin_PROGRAMS = evas_image_loader.xcf
+bindir = $(libdir)/evas/utils
 
 evas_image_loader_xcf_SOURCES = \
 main.c pixelfuncs.c common.h \
@@ -21,4 +22,4 @@ evas_image_loader_xcf_LDADD = @EINA_LIBS@ -lz -lm @SHM_OPEN_LIBS@
 evas_image_loader_xcf_LDFLAGS =
 
 install-data-hook:
-	ln -sf evas_image_loader.xcf $(DESTDIR)$(bindir)/evas_image_loader.xcf.gz
+	ln -sf evas_image_loader.xcf $(DESTDIR)$(libdir)/evas/utils/evas_image_loader.xcf.gz

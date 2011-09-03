@@ -13,6 +13,7 @@ AM_CPPFLAGS = \
 @SPECTRE_CFLAGS@
 
 bin_PROGRAMS = evas_image_loader.ps
+bindir = $(libdir)/evas/utils
 
 evas_image_loader_ps_SOURCES = \
 main.c \

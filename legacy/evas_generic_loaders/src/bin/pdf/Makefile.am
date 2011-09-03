@@ -13,6 +13,7 @@ AM_CPPFLAGS = \
 @POPPLER_CFLAGS@
 
 bin_PROGRAMS = evas_image_loader.pdf
+bindir = $(libdir)/evas/utils
 
 evas_image_loader_pdf_SOURCES = \
 main.cpp \

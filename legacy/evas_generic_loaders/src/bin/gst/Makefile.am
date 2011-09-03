@@ -13,6 +13,7 @@ AM_CPPFLAGS = \
 @GSTREAMER_CFLAGS@
 
 bin_PROGRAMS = evas_image_loader.gst
+bindir = $(libdir)/evas/utils
 
 evas_image_loader_gst_SOURCES = \
 main.cpp \
@@ -25,50 +26,50 @@ evas_image_loader_gst_LDFLAGS =
 ## http://www.fileinfo.com/filetypes/video
 ## should check which ones gst does support and make sure they are here
 install-data-hook:
-	ln -sf evas_image_loader.gst $(DESTDIR)$(bindir)/evas_image_loader.264
-	ln -sf evas_image_loader.gst $(DESTDIR)$(bindir)/evas_image_loader.3g2
-	ln -sf evas_image_loader.gst $(DESTDIR)$(bindir)/evas_image_loader.3gp
-	ln -sf evas_image_loader.gst $(DESTDIR)$(bindir)/evas_image_loader.3gp2
-	ln -sf evas_image_loader.gst $(DESTDIR)$(bindir)/evas_image_loader.3gpp
-	ln -sf evas_image_loader.gst $(DESTDIR)$(bindir)/evas_image_loader.3gpp2
-	ln -sf evas_image_loader.gst $(DESTDIR)$(bindir)/evas_image_loader.3p2
-	ln -sf evas_image_loader.gst $(DESTDIR)$(bindir)/evas_image_loader.asf
-	ln -sf evas_image_loader.gst $(DESTDIR)$(bindir)/evas_image_loader.avi
-	ln -sf evas_image_loader.gst $(DESTDIR)$(bindir)/evas_image_loader.bdm
-	ln -sf evas_image_loader.gst $(DESTDIR)$(bindir)/evas_image_loader.bdmv
-	ln -sf evas_image_loader.gst $(DESTDIR)$(bindir)/evas_image_loader.clpi
-	ln -sf evas_image_loader.gst $(DESTDIR)$(bindir)/evas_image_loader.cpi
-	ln -sf evas_image_loader.gst $(DESTDIR)$(bindir)/evas_image_loader.fla
-	ln -sf evas_image_loader.gst $(DESTDIR)$(bindir)/evas_image_loader.flv
-	ln -sf evas_image_loader.gst $(DESTDIR)$(bindir)/evas_image_loader.m1v
-	ln -sf evas_image_loader.gst $(DESTDIR)$(bindir)/evas_image_loader.m2t
-	ln -sf evas_image_loader.gst $(DESTDIR)$(bindir)/evas_image_loader.m2v
-	ln -sf evas_image_loader.gst $(DESTDIR)$(bindir)/evas_image_loader.m4v
-	ln -sf evas_image_loader.gst $(DESTDIR)$(bindir)/evas_image_loader.mkv
-	ln -sf evas_image_loader.gst $(DESTDIR)$(bindir)/evas_image_loader.mov
-	ln -sf evas_image_loader.gst $(DESTDIR)$(bindir)/evas_image_loader.mp2
-	ln -sf evas_image_loader.gst $(DESTDIR)$(bindir)/evas_image_loader.mp2ts
-	ln -sf evas_image_loader.gst $(DESTDIR)$(bindir)/evas_image_loader.mp4
-	ln -sf evas_image_loader.gst $(DESTDIR)$(bindir)/evas_image_loader.mpe
-	ln -sf evas_image_loader.gst $(DESTDIR)$(bindir)/evas_image_loader.mpeg
-	ln -sf evas_image_loader.gst $(DESTDIR)$(bindir)/evas_image_loader.mpg
-	ln -sf evas_image_loader.gst $(DESTDIR)$(bindir)/evas_image_loader.mpl
-	ln -sf evas_image_loader.gst $(DESTDIR)$(bindir)/evas_image_loader.mpls
-	ln -sf evas_image_loader.gst $(DESTDIR)$(bindir)/evas_image_loader.mts
-	ln -sf evas_image_loader.gst $(DESTDIR)$(bindir)/evas_image_loader.mxf
-	ln -sf evas_image_loader.gst $(DESTDIR)$(bindir)/evas_image_loader.nut
-	ln -sf evas_image_loader.gst $(DESTDIR)$(bindir)/evas_image_loader.nuv
-	ln -sf evas_image_loader.gst $(DESTDIR)$(bindir)/evas_image_loader.ogg
-	ln -sf evas_image_loader.gst $(DESTDIR)$(bindir)/evas_image_loader.ogm
-	ln -sf evas_image_loader.gst $(DESTDIR)$(bindir)/evas_image_loader.ogv
-	ln -sf evas_image_loader.gst $(DESTDIR)$(bindir)/evas_image_loader.rm
-	ln -sf evas_image_loader.gst $(DESTDIR)$(bindir)/evas_image_loader.rmj
-	ln -sf evas_image_loader.gst $(DESTDIR)$(bindir)/evas_image_loader.rmm
-	ln -sf evas_image_loader.gst $(DESTDIR)$(bindir)/evas_image_loader.rms
-	ln -sf evas_image_loader.gst $(DESTDIR)$(bindir)/evas_image_loader.rmx
-	ln -sf evas_image_loader.gst $(DESTDIR)$(bindir)/evas_image_loader.rmvb
-	ln -sf evas_image_loader.gst $(DESTDIR)$(bindir)/evas_image_loader.swf
-	ln -sf evas_image_loader.gst $(DESTDIR)$(bindir)/evas_image_loader.ts
-	ln -sf evas_image_loader.gst $(DESTDIR)$(bindir)/evas_image_loader.webm
-	ln -sf evas_image_loader.gst $(DESTDIR)$(bindir)/evas_image_loader.weba
-	ln -sf evas_image_loader.gst $(DESTDIR)$(bindir)/evas_image_loader.wmv
+	ln -sf evas_image_loader.gst $(DESTDIR)$(libdir)/evas/utils/evas_image_loader.264
+	ln -sf evas_image_loader.gst $(DESTDIR)$(libdir)/evas/utils/evas_image_loader.3g2
+	ln -sf evas_image_loader.gst $(DESTDIR)$(libdir)/evas/utils/evas_image_loader.3gp
+	ln -sf evas_image_loader.gst $(DESTDIR)$(libdir)/evas/utils/evas_image_loader.3gp2
+	ln -sf evas_image_loader.gst $(DESTDIR)$(libdir)/evas/utils/evas_image_loader.3gpp
+	ln -sf evas_image_loader.gst $(DESTDIR)$(libdir)/evas/utils/evas_image_loader.3gpp2
+	ln -sf evas_image_loader.gst $(DESTDIR)$(libdir)/evas/utils/evas_image_loader.3p2
+	ln -sf evas_image_loader.gst $(DESTDIR)$(libdir)/evas/utils/evas_image_loader.asf
+	ln -sf evas_image_loader.gst $(DESTDIR)$(libdir)/evas/utils/evas_image_loader.avi
+	ln -sf evas_image_loader.gst $(DESTDIR)$(libdir)/evas/utils/evas_image_loader.bdm
+	ln -sf evas_image_loader.gst $(DESTDIR)$(libdir)/evas/utils/evas_image_loader.bdmv
+	ln -sf evas_image_loader.gst $(DESTDIR)$(libdir)/evas/utils/evas_image_loader.clpi
+	ln -sf evas_image_loader.gst $(DESTDIR)$(libdir)/evas/utils/evas_image_loader.cpi
+	ln -sf evas_image_loader.gst $(DESTDIR)$(libdir)/evas/utils/evas_image_loader.fla
+	ln -sf evas_image_loader.gst $(DESTDIR)$(libdir)/evas/utils/evas_image_loader.flv
+	ln -sf evas_image_loader.gst $(DESTDIR)$(libdir)/evas/utils/evas_image_loader.m1v
+	ln -sf evas_image_loader.gst $(DESTDIR)$(libdir)/evas/utils/evas_image_loader.m2t
+	ln -sf evas_image_loader.gst $(DESTDIR)$(libdir)/evas/utils/evas_image_loader.m2v
+	ln -sf evas_image_loader.gst $(DESTDIR)$(libdir)/evas/utils/evas_image_loader.m4v
+	ln -sf evas_image_loader.gst $(DESTDIR)$(libdir)/evas/utils/evas_image_loader.mkv
+	ln -sf evas_image_loader.gst $(DESTDIR)$(libdir)/evas/utils/evas_image_loader.mov
+	ln -sf evas_image_loader.gst $(DESTDIR)$(libdir)/evas/utils/evas_image_loader.mp2
+	ln -sf evas_image_loader.gst $(DESTDIR)$(libdir)/evas/utils/evas_image_loader.mp2ts
+	ln -sf evas_image_loader.gst $(DESTDIR)$(libdir)/evas/utils/evas_image_loader.mp4
+	ln -sf evas_image_loader.gst $(DESTDIR)$(libdir)/evas/utils/evas_image_loader.mpe
+	ln -sf evas_image_loader.gst $(DESTDIR)$(libdir)/evas/utils/evas_image_loader.mpeg
+	ln -sf evas_image_loader.gst $(DESTDIR)$(libdir)/evas/utils/evas_image_loader.mpg
+	ln -sf evas_image_loader.gst $(DESTDIR)$(libdir)/evas/utils/evas_image_loader.mpl
+	ln -sf evas_image_loader.gst $(DESTDIR)$(libdir)/evas/utils/evas_image_loader.mpls
+	ln -sf evas_image_loader.gst $(DESTDIR)$(libdir)/evas/utils/evas_image_loader.mts
+	ln -sf evas_image_loader.gst $(DESTDIR)$(libdir)/evas/utils/evas_image_loader.mxf
+	ln -sf evas_image_loader.gst $(DESTDIR)$(libdir)/evas/utils/evas_image_loader.nut
+	ln -sf evas_image_loader.gst $(DESTDIR)$(libdir)/evas/utils/evas_image_loader.nuv
+	ln -sf evas_image_loader.gst $(DESTDIR)$(libdir)/evas/utils/evas_image_loader.ogg
+	ln -sf evas_image_loader.gst $(DESTDIR)$(libdir)/evas/utils/evas_image_loader.ogm
+	ln -sf evas_image_loader.gst $(DESTDIR)$(libdir)/evas/utils/evas_image_loader.ogv
+	ln -sf evas_image_loader.gst $(DESTDIR)$(libdir)/evas/utils/evas_image_loader.rm
+	ln -sf evas_image_loader.gst $(DESTDIR)$(libdir)/evas/utils/evas_image_loader.rmj
+	ln -sf evas_image_loader.gst $(DESTDIR)$(libdir)/evas/utils/evas_image_loader.rmm
+	ln -sf evas_image_loader.gst $(DESTDIR)$(libdir)/evas/utils/evas_image_loader.rms
+	ln -sf evas_image_loader.gst $(DESTDIR)$(libdir)/evas/utils/evas_image_loader.rmx
+	ln -sf evas_image_loader.gst $(DESTDIR)$(libdir)/evas/utils/evas_image_loader.rmvb
+	ln -sf evas_image_loader.gst $(DESTDIR)$(libdir)/evas/utils/evas_image_loader.swf
+	ln -sf evas_image_loader.gst $(DESTDIR)$(libdir)/evas/utils/evas_image_loader.ts
+	ln -sf evas_image_loader.gst $(DESTDIR)$(libdir)/evas/utils/evas_image_loader.webm
+	ln -sf evas_image_loader.gst $(DESTDIR)$(libdir)/evas/utils/evas_image_loader.weba
+	ln -sf evas_image_loader.gst $(DESTDIR)$(libdir)/evas/utils/evas_image_loader.wmv
