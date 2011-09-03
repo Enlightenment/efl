@@ -109,20 +109,27 @@ _load(Image_Entry *ie, const char *file, const char *key, int *error, Eina_Bool 
    int w = 0, h = 0, alpha = 0;
    const char *dot1 = NULL, *dot2 = NULL, *end, *p;
    char *cmd = NULL, decoders[3][128], buf[4096];
-   char *img_loader = "evas_image_loader"; // FIXME: specific path
+   char *loader = "/evas/utils/evas_image_loader";
+   char *img_loader = NULL;
+   const char *libdir;
    // eg $libdir/evas/generic_loaders
    int cmd_len, len, decoders_num = 0, try_count = 0;
    int read_data = 0;
    char *tmpfname = NULL, *shmfname = NULL;
-
    DATA32 *body;
    FILE *f;
 
-   // enough for command + params excluding filem key and loadopts
-   cmd_len = 1024 + strlen(img_loader);
+   libdir = _evas_module_libdir_get();
+   cmd_len = strlen(libdir);
+   cmd_len += strlen(loader);
+   img_loader = alloca(cmd_len + 1);
+   strcpy(img_loader, libdir);
+   strcat(img_loader, loader);
+   // params excluding file, key and loadopts
+   cmd_len += 1024;
    cmd_len += strlen(file) * 2;
    if (key) cmd_len += strlen(key) * 2;
-   cmd = alloca(cmd_len);
+   cmd = alloca(cmd_len + 1);
 
    len = strlen(file);
    if (len < 1)

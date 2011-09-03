@@ -554,3 +554,15 @@ _evas_module_engine_inherit(Evas_Func *funcs, char *name)
      }
    return 0;
 }
+
+static Eina_Prefix *pfx = NULL;
+
+EAPI const char *
+_evas_module_libdir_get(void)
+{
+   if (!pfx) pfx = eina_prefix_new
+      (NULL, _evas_module_libdir_get, "EVAS", "evas", NULL,
+       PACKAGE_BIN_DIR, PACKAGE_LIB_DIR, PACKAGE_DATA_DIR, PACKAGE_DATA_DIR);
+   if (!pfx) return NULL;
+   return eina_prefix_lib_get(pfx);
+}
