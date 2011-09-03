@@ -98,9 +98,9 @@ emotion_generic_shm_get(const char *shmname, Emotion_Generic_Video_Shared **vs, 
    munmap(t_vs, sizeof(*t_vs));
    t_vs = mmap(NULL, size, PROT_READ|PROT_WRITE, MAP_SHARED, shmfd, 0);
 
-   vf->frames[0] = (char *)t_vs + sizeof(*t_vs);
-   vf->frames[1] = (char *)t_vs + sizeof(*t_vs) + t_vs->height * t_vs->width * t_vs->pitch;
-   vf->frames[2] = (char *)t_vs + sizeof(*t_vs) + 2 * t_vs->height * t_vs->width * t_vs->pitch;
+   vf->frames[0] = (unsigned char *)t_vs + sizeof(*t_vs);
+   vf->frames[1] = (unsigned char *)t_vs + sizeof(*t_vs) + t_vs->height * t_vs->width * t_vs->pitch;
+   vf->frames[2] = (unsigned char *)t_vs + sizeof(*t_vs) + 2 * t_vs->height * t_vs->width * t_vs->pitch;
 
    *vs = t_vs;
 }

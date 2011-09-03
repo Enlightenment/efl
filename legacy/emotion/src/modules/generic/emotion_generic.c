@@ -170,9 +170,9 @@ _create_shm_data(Emotion_Generic_Video *ev, const char *shmname)
    vs->frame.last = 2;
    vs->frame.next = 2;
    sem_init(&vs->lock, 1, 1);
-   ev->frame.frames[0] = (char *)vs + sizeof(*vs);
-   ev->frame.frames[1] = (char *)vs + sizeof(*vs) + vs->height * vs->width * vs->pitch;
-   ev->frame.frames[2] = (char *)vs + sizeof(*vs) + 2 * vs->height * vs->width * vs->pitch;
+   ev->frame.frames[0] = (unsigned char *)vs + sizeof(*vs);
+   ev->frame.frames[1] = (unsigned char *)vs + sizeof(*vs) + vs->height * vs->width * vs->pitch;
+   ev->frame.frames[2] = (unsigned char *)vs + sizeof(*vs) + 2 * vs->height * vs->width * vs->pitch;
 
    if (ev->shared)
      munmap(ev->shared, ev->shared->size);
