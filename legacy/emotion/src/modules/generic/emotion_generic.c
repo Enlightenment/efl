@@ -144,7 +144,6 @@ _create_shm_data(Emotion_Generic_Video *ev, const char *shmname)
 
    npages = (int)(size / getpagesize()) + 1;
    size = npages * getpagesize();
-   char *buf = malloc(size);
 
    if (ftruncate(shmfd, size))
      {
@@ -158,8 +157,6 @@ _create_shm_data(Emotion_Generic_Video *ev, const char *shmname)
 	ERR("error when mapping shared memory.\n");
 	return EINA_FALSE;
      }
-
-   memcmp(vs, buf, size);
 
    vs->size = size;
    vs->width = ev->w;
