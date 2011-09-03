@@ -15,9 +15,10 @@
 #include "emotion_private.h"
 
 typedef void (*Evas_Video_Convert_Cb)(unsigned char *evas_data,
-				      const unsigned char *gst_data,
-				      unsigned int w,
-				      unsigned int h);
+                                      const unsigned char *gst_data,
+                                      unsigned int w,
+                                      unsigned int h,
+                                      unsigned int output_height);
 
 typedef struct _EvasVideoSinkPrivate EvasVideoSinkPrivate;
 typedef struct _EvasVideoSink        EvasVideoSink;
@@ -122,8 +123,9 @@ struct _EvasVideoSinkPrivate {
 
    Evas_Video_Convert_Cb func;
 
-   int width;
-   int height;
+   unsigned int width;
+   unsigned int height;
+   unsigned int source_height;
    Evas_Colorspace eformat;
 
    Eina_Lock m;
