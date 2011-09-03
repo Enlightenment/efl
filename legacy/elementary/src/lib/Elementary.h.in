@@ -1013,7 +1013,7 @@ extern "C" {
     * Set a content of an object item
     *
     * @param it The Elementary object item
-    * @param part The content part name to unset (NULL for the default content)
+    * @param part The content part name to set (NULL for the default content)
     * @param content The new content of the object item
     *
     * @note Elementary object items may have many contents
