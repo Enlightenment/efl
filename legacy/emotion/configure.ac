@@ -230,7 +230,7 @@ AC_MSG_RESULT([${have_v4l2}])
 
 EMOTION_CHECK_MODULE([Xine], [${want_xine}])
 EMOTION_CHECK_MODULE([Gstreamer], [${want_gstreamer}])
-EMOTION_CHECK_MODULE([VLC], [${want_vlc}])
+#disabled vlc EMOTION_CHECK_MODULE([VLC], [${want_vlc}])
 EMOTION_CHECK_MODULE([generic], [${want_generic}])
 
 #disabled vlc

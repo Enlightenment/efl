@@ -3,6 +3,6 @@ MAINTAINERCLEANFILES = Makefile.in
 
 SUBDIRS =
 
-if EMOTION_BUILD_VLC
-SUBDIRS += vlc
-endif
+#if EMOTION_BUILD_VLC
+#SUBDIRS += vlc
+#endif
