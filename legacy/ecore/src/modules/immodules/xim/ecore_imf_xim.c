@@ -925,6 +925,12 @@ get_ic(Ecore_IMF_Context *ctx)
         XIMStyle im_style = 0;
         XPoint spot = { 0, 0 };
         char *name = NULL;
+
+        if (!im_info)
+          {
+             EINA_LOG_WARN("Doesn't open XIM.");
+             return NULL;
+          }
         
         // supported styles
 #if 0
