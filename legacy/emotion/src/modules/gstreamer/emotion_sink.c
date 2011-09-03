@@ -118,7 +118,6 @@ _evas_video_i420(unsigned char *evas_data, const unsigned char *gst_data, unsign
 
    for (j = 0; j < (rh / 2); j++, i++)
      rows[i] = &gst_data[h * w + h * (w / 4) + j * (w / 2)];
-   WRN("I420: %i (max: %i for height %i, real height = %i) = %p", i, 2 * h, h, rh, evas_data);
 }
 
 static void
@@ -140,7 +139,6 @@ _evas_video_yv12(unsigned char *evas_data, const unsigned char *gst_data, unsign
 
    for (j = 0; j < (rh / 2); j++, i++)
      rows[i] = &gst_data[h * w + j * (w / 2)];
-   WRN("YV12: %i (max: %i for height %i, real height = %i) = %p", i, 2 * h, h, rh, evas_data);
 }
 
 static void
