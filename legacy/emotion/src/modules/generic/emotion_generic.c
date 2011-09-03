@@ -1163,7 +1163,7 @@ generic_module_init(void)
    if (!pfx)
      {
         pfx = eina_prefix_new(NULL, emotion_object_add,
-                              "EMOTION", "emotion", "AUTHORS",
+                              "EMOTION", "emotion", NULL,
                               PACKAGE_BIN_DIR,
                               PACKAGE_LIB_DIR,
                               PACKAGE_DATA_DIR,
