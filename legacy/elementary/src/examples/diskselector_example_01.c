@@ -83,6 +83,7 @@ elm_main(int argc __UNUSED__, char **argv __UNUSED__)
    for (i = 0; i < sizeof(lbl) / sizeof(lbl[0]); i++)
      elm_diskselector_item_append(ds, lbl[i], NULL, NULL, NULL);
    elm_diskselector_display_item_num_set(ds, 5);
+   printf("Number of Items in DiskSelector : %d\n", elm_diskselector_display_item_num_get(ds));
    evas_object_show(ds);
 
    /* set bounce and scroller policy */

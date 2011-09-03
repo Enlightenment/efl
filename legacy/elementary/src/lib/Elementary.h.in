@@ -24131,6 +24131,15 @@ extern "C" {
    EAPI void                   elm_diskselector_display_item_num_set(Evas_Object *obj, int num) EINA_ARG_NONNULL(1);
 
    /**
+    * Get the number of items in the diskselector object.
+    *
+    * @param obj The diskselector object.
+    *
+    * @ingroup Diskselector
+    */
+   EAPI int                   elm_diskselector_display_item_num_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+
+   /**
     * Set bouncing behaviour when the scrolled content reaches an edge.
     *
     * Tell the internal scroller object whether it should bounce or not

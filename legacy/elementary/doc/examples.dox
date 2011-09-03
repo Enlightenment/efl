@@ -2099,6 +2099,10 @@
  *
  * @note You can't set less than 3 items to be displayed.
  *
+ * You can get the number of items in the diskselector by calling
+ * elm_diskselector_display_item_num_get(), as you can see here:
+ * @skipline elm_diskselector_add
+ *
  * Finally, if a bounce effect is required, or you would like to see
  * scrollbars, it is possible. But, for default theme, diskselector
  * scrollbars will be invisible anyway.

@@ -1364,3 +1364,12 @@ elm_diskselector_display_item_num_set(Evas_Object *obj, int num)
    wd->display_item_num = num;
    wd->display_item_num_by_api = EINA_TRUE;
 }
+
+EAPI int
+elm_diskselector_display_item_num_get(const Evas_Object *item)
+{
+   ELM_CHECK_WIDTYPE(item, widtype) (-1);
+   Widget_Data *wd = elm_widget_data_get(item);
+   if (!wd) return -1;
+   return wd->display_item_num;
+}

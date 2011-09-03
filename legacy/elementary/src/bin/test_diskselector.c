@@ -155,6 +155,7 @@ test_diskselector(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *even
    // displayed item number setting example
    disk = elm_diskselector_add(win);
    elm_diskselector_display_item_num_set(disk, 5);
+   printf("Number of Items in DiskSelector : %d\n", elm_diskselector_display_item_num_get(disk));
 
    for (idx = 0; idx < (int)(sizeof(month_list) / sizeof(month_list[0])); idx++)
      {
@@ -172,6 +173,7 @@ test_diskselector(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *even
    // displayed item number setting example
    disk = elm_diskselector_add(win);
    elm_diskselector_display_item_num_set(disk, 7);
+   printf("Number of Items in DiskSelector : %d\n", elm_diskselector_display_item_num_get(disk));
 
    for (idx = 1; idx < 31; idx++)
      {
