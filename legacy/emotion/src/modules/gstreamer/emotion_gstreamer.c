@@ -1433,19 +1433,6 @@ _eos_main_fct(void *data)
 
    switch (GST_MESSAGE_TYPE(msg))
      {
-      case GST_MESSAGE_ERROR:
-        {
-           gchar *debug;
-           GError *err;
-
-           gst_message_parse_error(msg, &err, &debug);
-           g_free(debug);
-
-           ERR("Error: %s", err->message);
-           g_error_free(err);
-
-           break;
-        }
       case GST_MESSAGE_EOS:
          if (!ev->delete_me)
            {
@@ -1492,7 +1479,6 @@ _eos_sync_fct(GstBus *bus __UNUSED__, GstMessage *msg, gpointer data)
 
    switch (GST_MESSAGE_TYPE(msg))
      {
-      case GST_MESSAGE_ERROR:
       case GST_MESSAGE_EOS:
       case GST_MESSAGE_TAG:
       case GST_MESSAGE_ASYNC_DONE:
@@ -1514,14 +1500,26 @@ _eos_sync_fct(GstBus *bus __UNUSED__, GstMessage *msg, gpointer data)
                gst_element_state_get_name(new_state));
            break;
         }
+      case GST_MESSAGE_ERROR:
+	{
+           GError *error;
+           gchar *debug;
+
+	   gst_message_parse_error(msg, &error, &debug);
+	   ERR("WARNING from element %s: %s", GST_OBJECT_NAME(msg->src), error->message);
+	   ERR("Debugging info: %s", (debug) ? debug : "none");
+	   g_error_free(error);
+	   g_free(debug);
+	   break;
+	}
       case GST_MESSAGE_WARNING:
         {
            GError *error;
            gchar *debug;
 
            gst_message_parse_warning(msg, &error, &debug);
-           WRN("WARNING from element %s: %s\n", GST_OBJECT_NAME(msg->src), error->message);
-           WRN("Debugging info: %s\n", (debug) ? debug : "none");
+           WRN("WARNING from element %s: %s", GST_OBJECT_NAME(msg->src), error->message);
+           WRN("Debugging info: %s", (debug) ? debug : "none");
            g_error_free(error);
            g_free(debug);
            break;
