@@ -255,7 +255,7 @@ struct _Evas_GL_Shared
 #define RTYPE_MAP   5 /* need to merge with image */
 #define RTYPE_IMASK 6
 #define RTYPE_YUY2  7
-
+#define RTYPE_NV12  8
 
 struct _Evas_Engine_GL_Context
 {

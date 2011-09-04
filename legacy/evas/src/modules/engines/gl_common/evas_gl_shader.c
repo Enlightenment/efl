@@ -239,6 +239,46 @@ Evas_GL_Program_Source shader_nv12_vert_src =
 #endif
 };
 
+#if defined (GLES_VARIETY_S3C6410)
+const unsigned int nv12_nomul_frag_bin[] =
+{
+# include "shader/nv12_nomul_frag_bin_s3c6410.h"
+};
+#endif
+
+const char nv12_frag_glsl[] =
+#include "shader/nv12_frag.h"
+  ;
+Evas_GL_Program_Source shader_nv12_frag_src =
+{
+   nv12_frag_glsl,
+#if defined (GLES_VARIETY_S3C6410)
+     nv12_frag_bin, sizeof(nv12_frag_bin)
+#else
+     NULL, 0
+#endif
+};
+
+#if defined (GLES_VARIETY_S3C6410)
+const unsigned int nv12_nomul_frag_bin[] =
+{
+# include "shader/nv12_nomul_frag_bin_s3c6410.h"
+};
+#endif
+
+const char nv12_nomul_frag_glsl[] =
+#include "shader/nv12_nomul_frag.h"
+  ;
+Evas_GL_Program_Source shader_nv12_nomul_frag_src =
+{
+   nv12_nomul_frag_glsl,
+#if defined (GLES_VARIETY_S3C6410)
+     nv12_nomul_frag_bin, sizeof(nv12_nomul_frag_bin)
+#else
+     NULL, 0
+#endif
+};
+
 /////////////////////////////////////////////
 #if defined (GLES_VARIETY_S3C6410)
 const unsigned int yuv_nomul_frag_bin[] =
@@ -1068,8 +1108,8 @@ static const struct {
   SHADER_SOURCE_LINE(YUV_NOMUL, yuv_nomul),
   SHADER_SOURCE_LINE(YUY2, yuy2),
   SHADER_SOURCE_LINE(YUY2_NOMUL, yuy2_nomul),
-  { SHADER_NV12, &(shader_nv12_vert_src), &(shader_yuy2_frag_src), "nv12" },
-  { SHADER_NV12_NOMUL, &(shader_nv12_nomul_vert_src), &(shader_yuy2_nomul_frag_src), "nv12_nomul" },
+  SHADER_SOURCE_LINE(NV12, nv12),
+  SHADER_SOURCE_LINE(NV12_NOMUL, nv12_nomul),
   SHADER_SOURCE_LINE(TEX, tex),
   SHADER_SOURCE_LINE(TEX_NOMUL, tex_nomul),
    /* Most of the filters use the image fragment shader */

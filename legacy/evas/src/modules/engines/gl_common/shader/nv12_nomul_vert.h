@@ -10,5 +10,5 @@
 "{\n"
 "   gl_Position = mvp * vertex;\n"
 "   tex_c = tex_coord;\n"
-"   tex_cuv = tex_coord2;\n"
+"   tex_cuv = tex_coord2 * 0.5;\n"
 "}\n"

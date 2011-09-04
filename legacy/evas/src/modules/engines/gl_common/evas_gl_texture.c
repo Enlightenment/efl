@@ -1067,7 +1067,9 @@ evas_gl_common_texture_yuv_update(Evas_GL_Texture *tex, DATA8 **rows, unsigned i
 static Evas_GL_Texture *
 _evas_gl_common_texture_y2uv_new(Evas_Engine_GL_Context *gc,
 				 unsigned int yw, unsigned int yh,
-				 unsigned int uvw, unsigned int uvh)
+				 unsigned int uvw, unsigned int uvh,
+                                 GLenum y_ifmt, GLenum y_fmt,
+                                 GLenum uv_ifmt, GLenum uv_fmt)
 {
    Evas_GL_Texture *tex;
 
@@ -1076,7 +1078,7 @@ _evas_gl_common_texture_y2uv_new(Evas_Engine_GL_Context *gc,
 
    tex->gc = gc;
    tex->references = 1;
-   tex->pt = _pool_tex_new(gc, yw + 1, yh  + 1, lum_alpha_ifmt, lum_alpha_fmt);
+   tex->pt = _pool_tex_new(gc, yw + 1, yh  + 1, y_ifmt, y_fmt);
    if (!tex->pt)
      {
         free(tex);
@@ -1086,7 +1088,7 @@ _evas_gl_common_texture_y2uv_new(Evas_Engine_GL_Context *gc,
    tex->pt->slot = -1;
    tex->pt->fslot = -1;
    tex->pt->whole = 1;
-   tex->ptuv = _pool_tex_new(gc, uvw + 1, uvh  + 1, rgba8_ifmt, rgba8_fmt);
+   tex->ptuv = _pool_tex_new(gc, uvw + 1, uvh  + 1, uv_ifmt, uv_fmt);
    if (!tex->ptuv)
      {
         pt_unref(tex->pt);
@@ -1113,7 +1115,7 @@ evas_gl_common_texture_yuy2_new(Evas_Engine_GL_Context *gc, DATA8 **rows, unsign
 {
    Evas_GL_Texture *tex;
 
-   tex = _evas_gl_common_texture_y2uv_new(gc, w, h, w / 2, h);
+   tex = _evas_gl_common_texture_y2uv_new(gc, w, h, w / 2, h, lum_alpha_ifmt, lum_alpha_fmt, rgba8_ifmt, rgba8_fmt);
    evas_gl_common_texture_yuy2_update(tex, rows, w, h);
    return tex;
 }
@@ -1123,7 +1125,7 @@ evas_gl_common_texture_nv12_new(Evas_Engine_GL_Context *gc, DATA8 **rows, unsign
 {
    Evas_GL_Texture *tex;
 
-   tex = _evas_gl_common_texture_y2uv_new(gc, w, h, w / 2, h / 2);
+   tex = _evas_gl_common_texture_y2uv_new(gc, w, h, w / 2, h / 2, alpha_ifmt, alpha_fmt, lum_alpha_ifmt, lum_alpha_fmt);
    evas_gl_common_texture_nv12_update(tex, rows, w, h);
    return tex;
 }
@@ -1133,7 +1135,7 @@ evas_gl_common_texture_nv12tiled_new(Evas_Engine_GL_Context *gc, DATA8 **rows, u
 {
    Evas_GL_Texture *tex;
 
-   tex = _evas_gl_common_texture_y2uv_new(gc, w, h, w / 2, h / 2);
+   tex = _evas_gl_common_texture_y2uv_new(gc, w, h, w / 2, h / 2, alpha_ifmt, alpha_fmt, lum_alpha_ifmt, lum_alpha_fmt);
    evas_gl_common_texture_nv12tiled_update(tex, rows, w, h);
    return tex;
 }
@@ -1227,7 +1229,104 @@ evas_gl_common_texture_nv12_update(Evas_GL_Texture *tex, DATA8 **rows, unsigned 
 void
 evas_gl_common_texture_nv12tiled_update(Evas_GL_Texture *tex, DATA8 **rows, unsigned int w, unsigned int h)
 {
+   unsigned int mb_x, mb_y, mb_w, mb_h;
+   unsigned int base_h;
+
    if (!tex->pt) return;
-   // FIXME: not done yet
-   abort();
+
+   glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+   glBindTexture(GL_TEXTURE_2D, tex->pt->texture);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+
+   mb_w = w / 64;
+   mb_h = h / 32;
+
+   /* Iterate each Y macroblock like we do in evas_convert_yuv.c */
+   for (mb_y = 0; mb_y < (mb_h >> 1); mb_y++)
+     {
+        int step = 2;
+        int offset = 0;
+        int x = 0;
+        int rmb_x = 0;
+        int ry[2];
+
+        ry[0] = mb_y * 2 * 32;
+        ry[1] = ry[0] + 32;
+
+        for (mb_x = 0; mb_x < mb_w * 2; mb_x++, rmb_x += 64 * 32)
+          {
+             _tex_sub_2d(x, ry[offset], 64, 32, tex->pt->format, tex->pt->dataformat, rows[mb_y] + rmb_x);
+
+             step++;
+             if ((step & 0x3) == 0)
+               {
+                  offset = 1 - offset;
+                  x -= 64;
+               }
+             else
+               {
+                  x += 64;
+               }
+          }
+     }
+
+   if (mb_h & 0x1)
+     {
+        int rmb_x = 0;
+        int x = 0;
+        int ry;
+
+        ry = mb_y * 2 * 32;
+
+        for (mb_x = 0; mb_x < mb_w; mb_x++, x += 64, rmb_x += 64 * 32)
+          _tex_sub_2d(x, ry, 64, 32, tex->pt->format, tex->pt->dataformat, rows[mb_y] + rmb_x);
+     }
+
+   glBindTexture(GL_TEXTURE_2D, tex->ptuv->texture);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+
+   /* Iterate each UV macroblock like we do in evas_convert_yuv.c */
+   base_h = (mb_h >> 1) + (mb_h & 0x1);
+   for (mb_y = 0; mb_y < (mb_h >> 2); mb_y++)
+     {
+        int step = 2;
+        int offset = 0;
+        int x = 0;
+        int rmb_x = 0;
+        int ry[2];
+
+        ry[0] = mb_y * 2 * 32;
+        ry[1] = ry[0] + 32;
+
+        for (mb_x = 0; mb_x < mb_w * 2; mb_x++, rmb_x += 64 * 32)
+          {
+             _tex_sub_2d(x, ry[offset], 32, 32,
+                         tex->ptuv->format, tex->ptuv->dataformat,
+                         rows[mb_y + base_h] + rmb_x);
+
+             step++;
+             if ((step & 0x3) == 0)
+               {
+                  offset = 1 - offset;
+                  x -= 32;
+               }
+             else
+               {
+                  x += 32;
+               }
+          }
+     }
+
+   if (mb_h & 0x1)
+     {
+        int rmb_x = 0;
+        int x = 0;
+        int ry;
+
+        ry = mb_y * 2 * 32;
+
+        for (mb_x = 0; mb_x < mb_w; mb_x++, x += 32, rmb_x += 64 * 32)
+          _tex_sub_2d(x, ry, 64, 32, tex->ptuv->format, tex->ptuv->dataformat, rows[mb_y + base_h] + rmb_x);
+     }
 }

@@ -1936,6 +1936,100 @@ evas_gl_common_context_yuy2_push(Evas_Engine_GL_Context *gc,
 }
 
 void
+evas_gl_common_context_nv12_push(Evas_Engine_GL_Context *gc,
+				 Evas_GL_Texture *tex,
+				 double sx, double sy, double sw, double sh,
+				 int x, int y, int w, int h,
+				 int r, int g, int b, int a,
+				 Eina_Bool smooth)
+{
+   int pnum, nv, nc, nu, nu2, nu3, nt, i;
+   GLfloat tx1, tx2, ty1, ty2, t2x1, t2x2, t2y1, t2y2;
+   Eina_Bool blend = 0;
+   GLuint prog;
+   int pn = 0;
+
+   if (a < 255) blend = 1;
+
+   prog = gc->shared->shader[evas_gl_common_shader_choice(0, NULL, r, g, b, a,
+                                                          SHADER_NV12_NOMUL, SHADER_NV12)].prog;
+
+   pn = _evas_gl_common_context_push(RTYPE_NV12,
+				     gc, tex, NULL,
+				     prog,
+				     x, y, w, h,
+				     blend,
+				     smooth,
+				     0, 0, 0, 0, 0);
+
+   gc->pipe[pn].region.type = RTYPE_NV12;
+   gc->pipe[pn].shader.cur_tex = tex->pt->texture;
+   gc->pipe[pn].shader.cur_texu = tex->ptuv->texture;
+   gc->pipe[pn].shader.cur_prog = prog;
+   gc->pipe[pn].shader.smooth = smooth;
+   gc->pipe[pn].shader.blend = blend;
+   gc->pipe[pn].shader.render_op = gc->dc->render_op;
+   gc->pipe[pn].shader.clip = 0;
+   gc->pipe[pn].shader.cx = 0;
+   gc->pipe[pn].shader.cy = 0;
+   gc->pipe[pn].shader.cw = 0;
+   gc->pipe[pn].shader.ch = 0;
+   gc->pipe[pn].array.line = 0;
+   gc->pipe[pn].array.use_vertex = 1;
+   gc->pipe[pn].array.use_color = 1;
+   gc->pipe[pn].array.use_texuv = 1;
+   gc->pipe[pn].array.use_texuv2 = 1;
+   gc->pipe[pn].array.use_texuv3 = 0;
+
+   pipe_region_expand(gc, pn, x, y, w, h);
+
+   pnum = gc->pipe[pn].array.num;
+   nv = pnum * 3; nc = pnum * 4; nu = pnum * 2;
+   nu2 = pnum * 2; nu3 = pnum * 2; nt = pnum * 4;
+   gc->pipe[pn].array.num += 6;
+   array_alloc(gc, pn);
+
+   tx1 = (sx) / (double)tex->pt->w;
+   ty1 = (sy) / (double)tex->pt->h;
+   tx2 = (sx + sw) / (double)tex->pt->w;
+   ty2 = (sy + sh) / (double)tex->pt->h;
+
+   t2x1 = sx / (double)tex->ptuv->w;
+   t2y1 = sy / (double)tex->ptuv->h;
+   t2x2 = (sx + sw) / (double)tex->ptuv->w;
+   t2y2 = (sy + sh) / (double)tex->ptuv->h;
+
+   PUSH_VERTEX(pn, x    , y    , 0);
+   PUSH_VERTEX(pn, x + w, y    , 0);
+   PUSH_VERTEX(pn, x    , y + h, 0);
+
+   PUSH_TEXUV(pn, tx1, ty1);
+   PUSH_TEXUV(pn, tx2, ty1);
+   PUSH_TEXUV(pn, tx1, ty2);
+
+   PUSH_TEXUV2(pn, t2x1, t2y1);
+   PUSH_TEXUV2(pn, t2x2, t2y1);
+   PUSH_TEXUV2(pn, t2x1, t2y2);
+
+   PUSH_VERTEX(pn, x + w, y    , 0);
+   PUSH_VERTEX(pn, x + w, y + h, 0);
+   PUSH_VERTEX(pn, x    , y + h, 0);
+
+   PUSH_TEXUV(pn, tx2, ty1);
+   PUSH_TEXUV(pn, tx2, ty2);
+   PUSH_TEXUV(pn, tx1, ty2);
+
+   PUSH_TEXUV2(pn, t2x2, t2y1);
+   PUSH_TEXUV2(pn, t2x2, t2y2);
+   PUSH_TEXUV2(pn, t2x1, t2y2);
+
+   for (i = 0; i < 6; i++)
+     {
+        PUSH_COLOR(pn, r, g, b, a);
+     }
+}
+
+void
 evas_gl_common_context_image_map_push(Evas_Engine_GL_Context *gc,
                                       Evas_GL_Texture *tex,
                                       int npoints,

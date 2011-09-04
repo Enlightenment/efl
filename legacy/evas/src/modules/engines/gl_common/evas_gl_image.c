@@ -266,6 +266,9 @@ evas_gl_common_image_new(Evas_Engine_GL_Context *gc, unsigned int w, unsigned in
 	break;
       case EVAS_COLORSPACE_YCBCR422P601_PL:
       case EVAS_COLORSPACE_YCBCR422P709_PL:
+      case EVAS_COLORSPACE_YCBCR422601_PL:
+      case EVAS_COLORSPACE_YCBCR420NV12601_PL:
+      case EVAS_COLORSPACE_YCBCR420TM12601_PL:
 //        if (im->tex) evas_gl_common_texture_free(im->tex);
 	im->tex = NULL;
 	im->cs.no_free = 0;
@@ -625,8 +628,6 @@ evas_gl_common_image_map_draw(Evas_Engine_GL_Context *gc, Evas_GL_Image *im,
    RGBA_Draw_Context *dc;
    int r, g, b, a;
    int c, cx, cy, cw, ch;
-   Eina_Bool yuv = 0;
-   Eina_Bool yuy2 = 0;
 
    dc = gc->dc;
    if (dc->mul.use)
@@ -668,6 +669,7 @@ evas_gl_common_image_draw(Evas_Engine_GL_Context *gc, Evas_GL_Image *im, int sx,
    int i;
    int yuv = 0;
    int yuy2 = 0;
+   int nv12 = 0;
 
    if (sw < 1) sw = 1;
    if (sh < 1) sh = 1;
@@ -702,6 +704,9 @@ evas_gl_common_image_draw(Evas_Engine_GL_Context *gc, Evas_GL_Image *im, int sx,
      yuv = 1;
    if (im->cs.space == EVAS_COLORSPACE_YCBCR422601_PL)
      yuy2 = 1;
+   if ((im->cs.space == EVAS_COLORSPACE_YCBCR420NV12601_PL) ||
+       (im->cs.space == EVAS_COLORSPACE_YCBCR420TM12601_PL))
+     nv12 = 1;
 
    im->tex->im = im;
    if (imm) imm->tex->im = imm;
@@ -730,6 +735,13 @@ evas_gl_common_image_draw(Evas_Engine_GL_Context *gc, Evas_GL_Image *im, int sx,
                                                     smooth);
                   else if (yuy2)
                     evas_gl_common_context_yuy2_push(gc,
+						     im->tex,
+						     sx, sy, sw, sh,
+						     dx, dy, dw, dh,
+						     r, g, b, a,
+						     smooth);
+                  else if (nv12)
+                    evas_gl_common_context_nv12_push(gc,
 						     im->tex,
 						     sx, sy, sw, sh,
 						     dx, dy, dw, dh,
@@ -785,6 +797,13 @@ evas_gl_common_image_draw(Evas_Engine_GL_Context *gc, Evas_GL_Image *im, int sx,
 						nx, ny, nw, nh,
 						r, g, b, a,
 						smooth);
+             else if (nv12)
+               evas_gl_common_context_nv12_push(gc,
+						im->tex,
+						ssx, ssy, ssw, ssh,
+						nx, ny, nw, nh,
+						r, g, b, a,
+						smooth);
              else
                evas_gl_common_context_image_push(gc,
                                                  im->tex,
@@ -804,6 +823,13 @@ evas_gl_common_image_draw(Evas_Engine_GL_Context *gc, Evas_GL_Image *im, int sx,
                                                smooth);
              else if (yuy2)
                evas_gl_common_context_yuy2_push(gc,
+						im->tex,
+						sx, sy, sw, sh,
+						dx, dy, dw, dh,
+						r, g, b, a,
+						smooth);
+             else if (nv12)
+               evas_gl_common_context_nv12_push(gc,
 						im->tex,
 						sx, sy, sw, sh,
 						dx, dy, dw, dh,
@@ -855,6 +881,13 @@ evas_gl_common_image_draw(Evas_Engine_GL_Context *gc, Evas_GL_Image *im, int sx,
 						dx, dy, dw, dh,
 						r, g, b, a,
 						smooth);
+             else if (nv12)
+               evas_gl_common_context_nv12_push(gc,
+						im->tex,
+						sx, sy, sw, sh,
+						dx, dy, dw, dh,
+						r, g, b, a,
+						smooth);
              else
                evas_gl_common_context_image_push(gc,
                                                  im->tex,
@@ -877,6 +910,13 @@ evas_gl_common_image_draw(Evas_Engine_GL_Context *gc, Evas_GL_Image *im, int sx,
                                           smooth);
         else if (yuy2)
           evas_gl_common_context_yuy2_push(gc,
+					   im->tex,
+					   ssx, ssy, ssw, ssh,
+					   nx, ny, nw, nh,
+					   r, g, b, a,
+					   smooth);
+        else if (nv12)
+          evas_gl_common_context_nv12_push(gc,
 					   im->tex,
 					   ssx, ssy, ssw, ssh,
 					   nx, ny, nw, nh,
