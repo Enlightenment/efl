@@ -8,11 +8,11 @@ AM_CPPFLAGS = \
 -DPACKAGE_BIN_DIR=\"$(bindir)\" \
 -DPACKAGE_LIB_DIR=\"$(libdir)\" \
 -DPACKAGE_DATA_DIR=\"$(datadir)/$(PACKAGE)\" \
-@VLC_CFLAGS@
+@GENERIC_VLC_CFLAGS@
 
 internal_bindir = $(libdir)/emotion/utils
 internal_bin_PROGRAMS = em_generic_vlc
 
 em_generic_vlc_SOURCES = emotion_generic_vlc.c
 em_generic_vlc_DEPENDENCIES = $(top_srcdir)/src/modules/generic/Emotion_Generic_Plugin.h
-em_generic_vlc_LDADD = @VLC_LIBS@
+em_generic_vlc_LDADD = @GENERIC_VLC_LIBS@

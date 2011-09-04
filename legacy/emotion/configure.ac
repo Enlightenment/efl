@@ -53,16 +53,17 @@ AC_SUBST(release_info)
 VMAJ=v_maj
 AC_SUBST(VMAJ)
 
-want_vlc="no"
 want_generic="yes"
 case "$host_os" in
    mingw* | cegcc*)
       want_xine="no"
       want_gstreamer="yes"
+      want_generic_vlc="no"
       ;;
    *)
       want_xine="yes"
       want_gstreamer="yes"
+      want_generic_vlc="yes"
       ;;
 esac
 
@@ -230,16 +231,14 @@ AC_MSG_RESULT([${have_v4l2}])
 
 EMOTION_CHECK_MODULE([Xine], [${want_xine}])
 EMOTION_CHECK_MODULE([Gstreamer], [${want_gstreamer}])
-#disabled vlc EMOTION_CHECK_MODULE([VLC], [${want_vlc}])
-EMOTION_CHECK_MODULE([generic], [${want_generic}])
+EMOTION_CHECK_MODULE([Generic], [${want_generic}])
 
-#disabled vlc
-#if test "x${enable_xine}" = "xno" && test "x${enable_gstreamer}" = "xno" && test "x${enable_vlc}" = "xno" ; then
-if test "x${enable_xine}" = "xno" && test "x${enable_gstreamer}" = "xno"; then
-#disabled vlc
-#   AC_MSG_ERROR([Xine, Gstreamer or VLC backends must be selected to build Emotion])
-   AC_MSG_ERROR([Xine or Gstreamer backends must be selected to build Emotion])
+EMOTION_CHECK_GENERIC_PLAYER([VLC], [${want_generic_vlc}])
+
+if test "x${enable_xine}" = "xno" && test "x${enable_gstreamer}" = "xno" && test "x${enable_generic}" = "xno" ; then
+   AC_MSG_ERROR([Xine, Gstreamer or Generic backends must be selected to build Emotion])
 fi
+
 
 PKG_CHECK_MODULES([EIO],
 	[eio],
@@ -258,9 +257,6 @@ EFL_CHECK_BUILD_EXAMPLES([enable_build_examples="yes"], [enable_build_examples="
 EFL_CHECK_INSTALL_EXAMPLES([enable_install_examples="yes"], [enable_install_examples="no"])
 
 AC_SUBST(requirement_emotion)
-
-#disabled vlc
-#src/modules/vlc/Makefile
 
 AC_OUTPUT([
 Makefile
@@ -297,8 +293,15 @@ echo "Configuration Options Summary:"
 echo
 echo "  Modules:"
 echo "    Xine...............: ${enable_xine}"
-#echo "    Vlc................: ${enable_vlc}"
 echo "    Gstreamer..........: ${enable_gstreamer}"
+echo "    Generic............: ${enable_generic}"
+
+if test "x${enable_generic}" = "xyes"; then
+echo
+echo "  Generic Players:"
+echo "    VLC................: ${enable_generic_vlc}"
+fi
+
 echo
 echo "  Build emotion_test...: $have_emotion_test"
 echo "  edje_cc..............: ${edje_cc}"

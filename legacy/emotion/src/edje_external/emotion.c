@@ -57,8 +57,8 @@ static const char *_external_emotion_engines[] = {
 #ifdef EMOTION_BUILD_GSTREAMER
   "gstreamer",
 #endif
-#ifdef EMOTION_BUILD_VLC
-  "vlc",
+#ifdef EMOTION_BUILD_GENERIC
+  "generic",
 #endif
   NULL,
 };
@@ -68,8 +68,8 @@ static const char _external_emotion_engine_def[] =
   "xine";
 #elif defined(EMOTION_BUILD_GSTREAMER)
   "gstreamer";
-#elif defined(EMOTION_BUILD_VLC)
-  "vlc";
+#elif defined(EMOTION_BUILD_GENERIC)
+  "generic";
 #else
   "impossible";
 #endif

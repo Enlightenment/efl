@@ -30,7 +30,7 @@ struct _default_players {
 };
 
 static struct _default_players players[] = {
-#ifdef EMOTION_BUILD_VLC
+#ifdef EMOTION_BUILD_GENERIC_VLC
        { "vlc", "em_generic_vlc" },
 #endif
        { NULL, NULL }

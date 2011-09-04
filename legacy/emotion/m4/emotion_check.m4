@@ -48,15 +48,15 @@ AS_IF([test "x$have_dep" = "xyes"], [$2], [$3])
 
 ])
 
-dnl use: EMOTION_CHECK_DEP_VLC(want_static[, ACTION-IF-FOUND[, ACTION-IF-NOT-FOUND]])
+dnl use: EMOTION_CHECK_DEP_GENERIC_VLC(want_static[, ACTION-IF-FOUND[, ACTION-IF-NOT-FOUND]])
 
-AC_DEFUN([EMOTION_CHECK_DEP_VLC],
+AC_DEFUN([EMOTION_CHECK_DEP_GENERIC_VLC],
 [
 
 requirement=""
 
-PKG_CHECK_MODULES([VLC],
-   [libvlc >= 0.9 evas >= 0.9.9],
+PKG_CHECK_MODULES([GENERIC_VLC],
+   [libvlc >= 0.9],
    [
     have_dep="yes"
     requirement="libvlc"
@@ -145,6 +145,61 @@ enable_[]DOWN="no"
 if test "x${have_module}" = "xyes" ; then
    enable_[]DOWN=${enable_module}
    AC_DEFINE(EMOTION_BUILD_[]UP, 1, [Set to 1 if $1 is built])
+fi
+
+AS_IF([test "x$have_module" = "xyes"], [$3], [$4])
+
+m4_popdef([UP])
+m4_popdef([DOWN])
+])
+
+dnl use: EMOTION_CHECK_GENERIC_PLAYER(description, want_module[, ACTION-IF-FOUND[, ACTION-IF-NOT-FOUND]])
+AC_DEFUN([EMOTION_CHECK_GENERIC_PLAYER],
+[
+m4_pushdef([UP], m4_translit([$1], [-a-z], [_A-Z]))dnl
+m4_pushdef([DOWN], m4_translit([$1], [-A-Z], [_a-z]))dnl
+
+want_module="$2"
+
+AC_ARG_ENABLE(generic-[]DOWN,
+   [AC_HELP_STRING([--enable-generic-]DOWN, [enable build of Generic Player $1 @<:@default=yes@:>@])],
+   [
+    if test "x${enableval}" = "xyes" ; then
+       enable_module="yes"
+    else
+       enable_module="no"
+    fi
+   ],
+   [enable_module="auto"])
+
+if test "x${enable_generic}" != "xyes"; then
+   if test "x${enable_module}" = "xyes"; then
+      AC_MSG_WARN([Generic module is disabled, force disable of Generic Player $1])
+   fi
+   enable_module="no"
+   want_module="no"
+fi
+
+if test "x${enable_module}" = "xauto"; then
+   enable_module="${want_module}"
+elif test "x${enable_module}" = "xyes"; then
+   want_module="yes"
+fi
+
+have_module="no"
+if test "x${want_module}" = "xyes" && test "x${enable_module}" = "xyes"; then
+   m4_default([EMOTION_CHECK_DEP_GENERIC_]m4_defn([UP]))(${enable_module}, [have_module="yes"], [have_module="no"])
+fi
+
+AC_MSG_CHECKING([Whether to enable Generic Player $1])
+AC_MSG_RESULT([${have_module}])
+
+AM_CONDITIONAL(EMOTION_BUILD_GENERIC_[]UP, [test "x${have_module}" = "xyes"])
+
+enable_generic_[]DOWN="no"
+if test "x${have_module}" = "xyes" ; then
+   enable_generic_[]DOWN=${enable_module}
+   AC_DEFINE(EMOTION_BUILD_GENERIC_[]UP, 1, [Set to 1 if $1 is built])
 fi
 
 AS_IF([test "x$have_module" = "xyes"], [$3], [$4])

@@ -1505,9 +1505,6 @@ _pixels_get(void *data, Evas_Object *obj)
 #ifdef EMOTION_STATIC_BUILD_XINE
 Eina_Bool xine_module_init(void);
 #endif
-#ifdef EMOTION_STATIC_BUILD_VLC
-Eina_Bool vlc_module_init(void);
-#endif
 #ifdef EMOTION_STATIC_BUILD_GSTREAMER
 Eina_Bool gstreamer_module_init(void);
 #endif
@@ -1556,9 +1553,6 @@ _smart_init(void)
 	/* Init static module */
 #ifdef EMOTION_STATIC_BUILD_XINE
 	xine_module_init();
-#endif
-#ifdef EMOTION_STATIC_BUILD_VLC
-	vlc_module_init();
 #endif
 #ifdef EMOTION_STATIC_BUILD_GSTREAMER
 	gstreamer_module_init();
