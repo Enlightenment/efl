@@ -17,6 +17,7 @@ int
 e_prefix_determine(char *argv0)
 {
    if (pfx) return 1;
+   eina_init();
    pfx = eina_prefix_new(argv0, e_prefix_determine,
                          "EMBRYO", "embryo", "include/default.inc",
                          PACKAGE_BIN_DIR,
@@ -32,6 +33,7 @@ e_prefix_shutdown(void)
 {
    eina_prefix_free(pfx);
    pfx = NULL;
+   eina_shutdown();
 }
 
 const char *
