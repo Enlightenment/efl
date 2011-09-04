@@ -1148,7 +1148,7 @@ static void module_close(Emotion_Video_Module *module __UNUSED__, void *video)
 }
 
 
-static Eina_Bool
+Eina_Bool
 generic_module_init(void)
 {
    if (!pfx)

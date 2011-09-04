@@ -172,7 +172,7 @@ AC_ARG_ENABLE(generic-[]DOWN,
    ],
    [enable_module="auto"])
 
-if test "x${enable_generic}" != "xyes"; then
+if test "x${enable_generic}" != "xyes" && test "x${enable_generic}" != "xstatic"; then
    if test "x${enable_module}" = "xyes"; then
       AC_MSG_WARN([Generic module is disabled, force disable of Generic Player $1])
    fi

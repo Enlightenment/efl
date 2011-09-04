@@ -296,7 +296,7 @@ echo "    Xine...............: ${enable_xine}"
 echo "    Gstreamer..........: ${enable_gstreamer}"
 echo "    Generic............: ${enable_generic}"
 
-if test "x${enable_generic}" = "xyes"; then
+if test "x${enable_generic}" = "xyes" || test "x${enable_generic}" = "xstatic"; then
 echo
 echo "  Generic Players:"
 echo "    VLC................: ${enable_generic_vlc}"

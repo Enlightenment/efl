@@ -21,10 +21,6 @@ if EMOTION_STATIC_BUILD_GSTREAMER
 AM_CPPFLAGS += @GSTREAMER_CFLAGS@
 endif
 
-#if EMOTION_STATIC_BUILD_VLC
-#AM_CPPFLAGS += @VLC_CFLAGS@
-#endif
-
 lib_LTLIBRARIES      = libemotion.la
 includes_HEADERS      = Emotion.h
 includesdir = $(includedir)/emotion-@VMAJ@
@@ -43,10 +39,10 @@ $(top_srcdir)/src/modules/gstreamer/emotion_gstreamer.c \
 $(top_srcdir)/src/modules/gstreamer/emotion_sink.c
 endif
 
-#if EMOTION_STATIC_BUILD_VLC
-#libemotion_la_SOURCES += \
-#$(top_srcdir)/src/modules/vlc/emotion_vlc.c
-#endif
+if EMOTION_STATIC_BUILD_GENERIC
+libemotion_la_SOURCES += \
+$(top_srcdir)/src/modules/generic/emotion_generic.c
+endif
 
 libemotion_la_LIBADD = @EMOTION_LIBS@ @EIO_LIBS@ @EEZE_LIBS@
 
@@ -57,10 +53,6 @@ endif
 if EMOTION_STATIC_BUILD_GSTREAMER
 libemotion_la_LIBADD += @GSTREAMER_LIBS@
 endif
-
-#if EMOTION_STATIC_BUILD_VLC
-#libemotion_la_LIBADD += @VLC_LIBS@
-#endif
 
 libemotion_la_LDFLAGS = -no-undefined @lt_enable_auto_import@ -version-info @version_info@
 
