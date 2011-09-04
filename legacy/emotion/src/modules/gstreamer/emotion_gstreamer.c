@@ -1514,6 +1514,18 @@ _eos_sync_fct(GstBus *bus __UNUSED__, GstMessage *msg, gpointer data)
                gst_element_state_get_name(new_state));
            break;
         }
+      case GST_MESSAGE_WARNING:
+        {
+           GError *error;
+           gchar *debug;
+
+           gst_message_parse_warning(msg, &error, &debug);
+           WRN("WARNING from element %s: %s\n", GST_OBJECT_NAME(msg->src), error->message);
+           WRN("Debugging info: %s\n", (debug) ? debug : "none");
+           g_error_free(error);
+           g_free(debug);
+           break;
+        }
       default:
          WRN("bus say: %s [%i - %s]",
              GST_MESSAGE_SRC_NAME(msg),

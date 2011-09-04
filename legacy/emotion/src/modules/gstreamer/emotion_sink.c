@@ -212,13 +212,15 @@ _evas_video_st12_multiplane(unsigned char *evas_data, const unsigned char *gst_d
      }
 
    for (j = 0; j < ((h / 2) / 16) / 2; j++, i++)
-     rows[i] = mp_buf->uaddr[1] + j * w * 2 * 16;
+     {
+       rows[i] = mp_buf->uaddr[1] + j * w * 2 * 16 * 2;
+     }
    if (((h / 2) / 16) % 2)
-     rows[i] = mp_buf->uaddr[0] + j * w * 2 * 16;
+     rows[i] = mp_buf->uaddr[1] + j * w * 2 * 16 * 2;
 }
 
 static void
-_evas_video_st12(unsigned char *evas_data, const unsigned char *gst_data, unsigned int w, unsigned int h, unsigned int output_height __UNUSED__)
+_evas_video_st12(unsigned char *evas_data, const unsigned char *gst_data, unsigned int w __UNUSED__, unsigned int h, unsigned int output_height __UNUSED__)
 {
    const SCMN_IMGB *imgb = (const SCMN_IMGB *) gst_data;
    const unsigned char **rows;
@@ -227,17 +229,17 @@ _evas_video_st12(unsigned char *evas_data, const unsigned char *gst_data, unsign
    rows = (const unsigned char **)evas_data;
 
    for (i = 0; i < (h / 32) / 2; i++)
-     rows[i] = imgb->uaddr[0] + i * w * 2 * 32;
+     rows[i] = imgb->uaddr[0] + i * imgb->stride[0] * 2 * 32;
    if ((h / 32) % 2)
      {
-        rows[i] = imgb->uaddr[0] + i * w * 2 * 32;
+        rows[i] = imgb->uaddr[0] + i * imgb->stride[0] * 2 * 32;
         i++;
      }
 
-   for (j = 0; j < ((h / 2) / 16) / 2; j++, i++)
-     rows[i] = imgb->uaddr[1] + j * w * 2 * 16;
-   if (((h / 2) / 16) % 2)
-     rows[i] = imgb->uaddr[1] + j * w * 2 * 16;
+   for (j = 0; j < (unsigned int) imgb->elevation[1] / 32 / 2; j++, i++)
+     rows[i] = imgb->uaddr[1] + j * imgb->stride[1] * 32 * 2;
+   if ((imgb->elevation[1] / 32) % 2)
+     rows[i++] = imgb->uaddr[1] + j * imgb->stride[1] * 32 * 2;
 }
 
 static const struct {
@@ -565,6 +567,7 @@ evas_video_sink_preroll(GstBaseSink* bsink, GstBuffer* buffer)
                   caps = GST_BUFFER_CAPS(buffer);
                   structure = gst_caps_get_structure (caps, 0);
                   gst_structure_get_boolean(structure, "multiplane", &is_multiplane);
+		  gst_caps_unref(caps);
 
                   if (is_multiplane)
                     priv->func = _evas_video_st12_multiplane;
@@ -618,6 +621,7 @@ evas_video_sink_render(GstBaseSink* bsink, GstBuffer* buffer)
              caps = GST_BUFFER_CAPS(buffer);
              structure = gst_caps_get_structure (caps, 0);
              gst_structure_get_boolean(structure, "multiplane", &is_multiplane);
+	     gst_caps_unref(caps);
 
              if (is_multiplane)
                priv->func = _evas_video_st12_multiplane;
@@ -689,12 +693,16 @@ evas_video_sink_samsung_main_render(void *data)
         gst_data = (const guint8 *) imgb;
      }
 
-   INF("sink main render [%i, %i] - [%i, %i]", priv->width, priv->height, stride, elevation);
+   evas_object_geometry_get(priv->o, NULL, NULL, &w, &h);
+   INF("sink main render [%i, %i] - [%i, %i] => [%i, %i] - [%i, %i]",
+       priv->width, priv->height,
+       stride, elevation,
+       w, h,
+       stride * w / priv->width, elevation * h / priv->height);
 
    evas_object_image_alpha_set(priv->o, 0);
    evas_object_image_colorspace_set(priv->o, priv->eformat);
    evas_object_image_size_set(priv->o, stride, elevation);
-   evas_object_geometry_get(priv->o, NULL, NULL, &w, &h);
    evas_object_image_fill_set(priv->o, 0, 0, stride * w / priv->width, elevation * h / priv->height);
 
    evas_data = evas_object_image_data_get(priv->o, 1);
@@ -721,9 +729,6 @@ evas_video_sink_samsung_main_render(void *data)
 
    _emotion_video_pos_update(send->ev->obj, send->ev->position, vstream->length_time);
    _emotion_frame_resize(send->ev->obj, priv->width, priv->height, send->ev->ratio);
-
-   if (priv->last_buffer) gst_buffer_unref(priv->last_buffer);
-   priv->last_buffer = gst_buffer_ref(buffer);
 
  exit_point:
    emotion_gstreamer_buffer_free(send);
@@ -985,7 +990,6 @@ gstreamer_video_sink_new(Emotion_Gstreamer_Video *ev,
 
 #define GST_PLAY_FLAG_NATIVE_VIDEO  (1 << 6)
 #define GST_PLAY_FLAG_DOWNLOAD      (1 << 7)
-#define GST_PLAY_FLAG_BUFFERING     (1 << 8)
 
    g_object_set(G_OBJECT(sink), "evas-object", obj, NULL);
    g_object_set(G_OBJECT(sink), "ev", ev, NULL);
@@ -993,9 +997,11 @@ gstreamer_video_sink_new(Emotion_Gstreamer_Video *ev,
    evas_object_image_pixels_get_callback_set(obj, NULL, NULL);
 
    g_object_get(G_OBJECT(playbin), "flags", &flags, NULL);
-   g_object_set(G_OBJECT(playbin), "flags", flags | GST_PLAY_FLAG_NATIVE_VIDEO | GST_PLAY_FLAG_DOWNLOAD | GST_PLAY_FLAG_BUFFERING, NULL);
+   g_object_set(G_OBJECT(playbin), "flags", flags | GST_PLAY_FLAG_NATIVE_VIDEO | GST_PLAY_FLAG_DOWNLOAD, NULL);
    g_object_set(G_OBJECT(playbin), "video-sink", sink, NULL);
    g_object_set(G_OBJECT(playbin), "uri", uri, NULL);
+
+   evas_object_image_pixels_get_callback_set(obj, NULL, NULL);
 
    ev->pipeline = playbin;
    ev->sink = sink;
