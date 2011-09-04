@@ -1039,8 +1039,8 @@ _evas_nv12tiledtorgb_raster(unsigned char **yuv, unsigned char *rgb, int w, int 
                YP1 += 2; YP2 += 2; UP += 2; VP += 2;                    \
             }                                                           \
                                                                         \
-          DP1 += sizeof (int) * w;                                      \
-          DP2 += sizeof (int) * w;                                      \
+          DP1 += sizeof (int) * (2 * w - 64);				\
+          DP2 += sizeof (int) * (2 * w - 64);				\
           YP1 += 64;                                                    \
           YP2 += 64;                                                    \
        }                                                                \
@@ -1048,10 +1048,12 @@ _evas_nv12tiledtorgb_raster(unsigned char **yuv, unsigned char *rgb, int w, int 
 
    /* One macro block is 32 lines of Y and 16 lines of UV */
    int mb_x, mb_y, mb_w, mb_h;
+   int base_h;
+   int uv_x, uv_y, uv_step;
 
    /* Idea iterate over each macroblock and convert each of them using _evas_nv12torgb_raster */
 
-   /* The layout of the macroblock order in RGB non tiled space : */
+   /* The layout of the Y macroblock order in RGB non tiled space : */
    /* --------------------------------------------------- */
    /* | 0  | 1  | 6  | 7  | 8  | 9  | 14 | 15 | 16 | 17 | */
    /* --------------------------------------------------- */
@@ -1063,69 +1065,101 @@ _evas_nv12tiledtorgb_raster(unsigned char **yuv, unsigned char *rgb, int w, int 
    /* --------------------------------------------------- */
    /* | 40 | 41 | 42 | 43 | 44 | 45 | 46 | 47 | 48 | 49 | */
    /* --------------------------------------------------- */
+   /* The layout of the UV macroblock order in the same RGB non tiled space : */
+   /* --------------------------------------------------- */
+   /* |    |    |    |    |    |    |    |    |    |    | */
+   /* - 0  - 1  - 6  - 7  - 8  - 9  - 14 - 15 - 16 - 17 - */
+   /* |    |    |    |    |    |    |    |    |    |    | */
+   /* --------------------------------------------------- */
+   /* |    |    |    |    |    |    |    |    |    |    | */
+   /* - 2  - 3  - 4  - 5  - 10 - 11 - 12 - 13 - 18 - 19 - */
+   /* |    |    |    |    |    |    |    |    |    |    | */
+   /* --------------------------------------------------- */
+   /* |    |    |    |    |    |    |    |    |    |    | */
+   /* - 20 - 21 - 22 - 22 - 23 - 24 - 25 - 26 - 27 - 28 - */
 
    /* the number of macroblock should be a multiple of 64x32 */
    mb_w = w / 64;
    mb_h = h / 32;
 
+   base_h = mb_h / 2 + mb_h % 2;
+
+   uv_x = 0; uv_y = 0;
+
    /* In this format we linearize macroblock on two line to form a Z and it's invert */
-   for (mb_y = 0; mb_y < (mb_h / 2); ++mb_y)
+   for (mb_y = 0; mb_y < mb_h / 2; mb_y++)
      {
-        int step = 1;
+        int step = 2;
         int offset = 0;
         int x = 0;
+	int ry;
 
-        for (mb_x = 0; mb_x < (mb_w * 2); ++mb_x)
-          {
-             unsigned char *yp1, *yp2, *up, *vp;
-             unsigned char *dp1, *dp2;
+	ry = mb_y * 2;
 
-             step++;
+	uv_step = mb_y % 2 == 0 ? 4 : 0;
+	uv_x = mb_y % 2 == 0 ? 0 : 2;
 
-             if (step % 4 == 0)
-               {
-                  x -= 2;
-                  offset = 1 - offset;
-               }
-             else
-               {
-                  x++;
-               }
+	for (mb_x = 0; mb_x < mb_w * 2; mb_x++)
+	  {
+	    unsigned char *yp1, *yp2, *up, *vp;
+	    unsigned char *dp1, *dp2;
 
-             /* Y mb addr = yuv[mb_y] + mb_x */
-             /* UV mb addr = yuv[mb_y + mb_h / 2] + mb_x / 2*/
-             /* visual addr = rgb + x * 64 + (mb_y + offset) * 2 * 32 * w */
+	    dp1 = rgb + (x * 64 + (ry + offset) * 32 * w) * sizeof (int);
+	    dp2 = dp1 + sizeof (int) * w;
 
-             dp1 = rgb + x * 64 + (mb_y + offset) * 2 * 32 * w;
-             dp2 = dp1 + sizeof (int) * w;
+	    yp1 = yuv[mb_y] + mb_x * 64 * 32;
+	    yp2 = yp1 + 64;
 
-             yp1 = yuv[mb_y] + mb_x * 64;
-             yp2 = yp1 + 64;
+	    /* UV plane is two time less bigger in pixel count, but it old two bytes each times */
+	    up = yuv[mb_y / 2 + base_h] + uv_x * 64 * 32 + offset * 64 * 16;
+	    vp = up + 1;
 
-             up = yuv[mb_y + mb_h / 2] + mb_x * 64; /* UV plane is two time less bigger in pixel count, but it old two bytes each times */
-             vp = up + 1;
+	    HANDLE_MACROBLOCK(yp1, yp2, up, vp, dp1, dp2);
 
-             HANDLE_MACROBLOCK(yp1, yp2, up, vp, dp1, dp2);
-          }
+	    step++;
+	    if (step % 4 == 0)
+	      {
+		x -= 1;
+		offset = 1 - offset;
+		uv_x--;
+	      }
+	    else
+	      {
+		x++;
+		uv_x++;
+	      }
+
+	    uv_step++;
+	    if (uv_step == 8)
+	      {
+		uv_step = 0;
+		uv_x += 4;
+	      }
+	  }
      }
 
    if (mb_h % 2)
      {
-        mb_y++;
         int x = 0;
+	int ry;
 
-        for (mb_x = 0; mb_x < mb_w; ++mb_x, ++x)
+	ry = mb_y * 2;
+
+	uv_step = 0;
+	uv_x = 0;
+
+        for (mb_x = 0; mb_x < mb_w; mb_x++, x++, uv_x++)
           {
              unsigned char *yp1, *yp2, *up, *vp;
              unsigned char *dp1, *dp2;
 
-             dp1 = rgb + x * 64 + mb_y * 2 * 32 *w;
+             dp1 = rgb + (x * 64 + (ry * 32 * w)) * sizeof (int);
              dp2 = dp1 + sizeof (int) * w;
 
-             yp1 = yuv[mb_y] + mb_x * 64;
+             yp1 = yuv[mb_y] + mb_x * 64 * 32;
              yp2 = yp1 + 64;
 
-             up = yuv[mb_y + mb_h / 2] + mb_x * 64;
+             up = yuv[mb_y / 2 + base_h] + uv_x * 64 * 32;
              vp = up + 1;
 
              HANDLE_MACROBLOCK(yp1, yp2, up, vp, dp1, dp2);
