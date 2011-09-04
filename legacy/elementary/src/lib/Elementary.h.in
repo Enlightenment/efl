@@ -26112,7 +26112,7 @@ extern "C" {
     * positioned at left.
     *
     * @see elm_segment_control_item_add()
-    * @see elm_segment_control_count_get()
+    * @see elm_segment_control_item_count_get()
     * @see elm_segment_control_item_del()
     *
     * @ingroup SegmentControl
