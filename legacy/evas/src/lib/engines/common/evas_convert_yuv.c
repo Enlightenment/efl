@@ -982,37 +982,78 @@ _evas_yuv2rgb_420_raster(unsigned char *yp1, unsigned char *yp2, unsigned char *
 {
    int y, u, v;
    int vmu;
+   int rgb;
 
    /* collect u & v for 4 pixels block */
    u = *up;
    v = *vp;
 
    /* save lookups */
+#ifdef MEM_BP
    vmu = _v813[v] + _v391[u];
    u = _v2018[u];
    v = _v1596[v];
+#else
+   u -= 128;
+   v -= 128;
+   vmu = v * CGV + u * CGU;
+   u = u * CBU;
+   v = v * CRV;
+#endif
 
    /* do the top 2 pixels of the 2x2 block which shared u & v */
    /* yuv to rgb */
+#ifdef MEM_BP
    y = _v1164[*yp1];
-   *((DATA32 *) dp1) = 0xff000000 + RGB_JOIN(LUT_CLIP(y + v), LUT_CLIP(y - vmu), LUT_CLIP(y + u));
+   rgb = RGB_JOIN(LUT_CLIP(y + v), LUT_CLIP(y - vmu), LUT_CLIP(y + u));
+#else
+   y = (*yp1 - 16 ) * YMUL;
+   rgb = RGB_JOIN(LUT_CLIP(((y + v) >> 16)),
+                  LUT_CLIP(((y - vmu + OFF) >> 16)),
+                  LUT_CLIP(((y + u + OFF) >> 16)));
+#endif
+   *((DATA32 *) dp1) = 0xff000000 + rgb;
 
    dp1 += 4; yp1++;
 
    /* yuv to rgb */
+#ifdef MEM_BP
    y = _v1164[*yp1];
-   *((DATA32 *) dp1) = 0xff000000 + RGB_JOIN(LUT_CLIP(y + v), LUT_CLIP(y - vmu), LUT_CLIP(y + u));
+   rgb = RGB_JOIN(LUT_CLIP(y + v), LUT_CLIP(y - vmu), LUT_CLIP(y + u));
+#else
+   y = (*yp1 - 16 ) * YMUL;
+   rgb = RGB_JOIN(LUT_CLIP(((y + v) >> 16)),
+                  LUT_CLIP(((y - vmu + OFF) >> 16)),
+                  LUT_CLIP(((y + u + OFF) >> 16)));
+#endif
+   *((DATA32 *) dp1) = 0xff000000 + rgb;
 
    /* do the bottom 2 pixels of the 2x2 block which shared u & v */
    /* yuv to rgb */
+#ifdef MEM_BP
    y = _v1164[*yp2];
-   *((DATA32 *) dp2) = 0xff000000 + RGB_JOIN(LUT_CLIP(y + v), LUT_CLIP(y - vmu), LUT_CLIP(y + u));
+   rgb = RGB_JOIN(LUT_CLIP(y + v), LUT_CLIP(y - vmu), LUT_CLIP(y + u));
+#else
+   y = (*yp2 - 16 ) * YMUL;
+   rgb = RGB_JOIN(LUT_CLIP(((y + v) >> 16)),
+                  LUT_CLIP(((y - vmu + OFF) >> 16)),
+                  LUT_CLIP(((y + u + OFF) >> 16)));
+#endif
+   *((DATA32 *) dp2) = 0xff000000 + rgb;
 
    dp2 += 4; yp2++;
 
    /* yuv to rgb */
+#ifdef MEM_BP
    y = _v1164[*yp2];
-   *((DATA32 *) dp2) = 0xff000000 + RGB_JOIN(LUT_CLIP(y + v), LUT_CLIP(y - vmu), LUT_CLIP(y + u));
+   rgb = RGB_JOIN(LUT_CLIP(y + v), LUT_CLIP(y - vmu), LUT_CLIP(y + u));
+#else
+   y = (*yp2 - 16 ) * YMUL;
+   rgb = RGB_JOIN(LUT_CLIP(((y + v) >> 16)),
+                  LUT_CLIP(((y - vmu + OFF) >> 16)),
+                  LUT_CLIP(((y + u + OFF) >> 16)));
+#endif
+   *((DATA32 *) dp2) = 0xff000000 + rgb;
 }
 #endif
 
@@ -1039,17 +1080,19 @@ _evas_nv12tiledtorgb_raster(unsigned char **yuv, unsigned char *rgb, int w, int 
                YP1 += 2; YP2 += 2; UP += 2; VP += 2;                    \
             }                                                           \
                                                                         \
-          DP1 += sizeof (int) * (2 * w - 64);				\
-          DP2 += sizeof (int) * (2 * w - 64);				\
+          DP1 += sizeof (int) * ((w << 1) - 64);			\
+          DP2 += sizeof (int) * ((w << 1) - 64);			\
           YP1 += 64;                                                    \
           YP2 += 64;                                                    \
        }                                                                \
    }
 
    /* One macro block is 32 lines of Y and 16 lines of UV */
+   const int offset_value[2] = { 0, 64 * 16 };
    int mb_x, mb_y, mb_w, mb_h;
    int base_h;
    int uv_x, uv_y, uv_step;
+   int stride;
 
    /* Idea iterate over each macroblock and convert each of them using _evas_nv12torgb_raster */
 
@@ -1082,68 +1125,71 @@ _evas_nv12tiledtorgb_raster(unsigned char **yuv, unsigned char *rgb, int w, int 
    mb_w = w / 64;
    mb_h = h / 32;
 
-   base_h = mb_h / 2 + mb_h % 2;
+   base_h = (mb_h >> 1) + (mb_h & 0x1);
+   stride = w * sizeof (int);
 
    uv_x = 0; uv_y = 0;
 
    /* In this format we linearize macroblock on two line to form a Z and it's invert */
-   for (mb_y = 0; mb_y < mb_h / 2; mb_y++)
+   for (mb_y = 0; mb_y < (mb_h >> 1); mb_y++)
      {
         int step = 2;
         int offset = 0;
         int x = 0;
-	int ry;
+	int rmb_x = 0;
+	int ry[2];
 
-	ry = mb_y * 2;
+	ry[0] = mb_y * 2 * 32 * stride;
+	ry[1] = ry[0] + 32 * stride;
 
-	uv_step = mb_y % 2 == 0 ? 4 : 0;
-	uv_x = mb_y % 2 == 0 ? 0 : 2;
+	uv_step = (mb_y & 0x1) == 0 ? 4 : 0;
+	uv_x = (mb_y & 0x1) == 0 ? 0 : 2 * 64 * 32;
 
-	for (mb_x = 0; mb_x < mb_w * 2; mb_x++)
+	for (mb_x = 0; mb_x < mb_w * 2; mb_x++, rmb_x += 64 * 32)
 	  {
 	    unsigned char *yp1, *yp2, *up, *vp;
 	    unsigned char *dp1, *dp2;
 
-	    dp1 = rgb + (x * 64 + (ry + offset) * 32 * w) * sizeof (int);
-	    dp2 = dp1 + sizeof (int) * w;
+	    dp1 = rgb + x + ry[offset];
+	    dp2 = dp1 + stride;
 
-	    yp1 = yuv[mb_y] + mb_x * 64 * 32;
+	    yp1 = yuv[mb_y] + rmb_x;
 	    yp2 = yp1 + 64;
 
 	    /* UV plane is two time less bigger in pixel count, but it old two bytes each times */
-	    up = yuv[mb_y / 2 + base_h] + uv_x * 64 * 32 + offset * 64 * 16;
+	    up = yuv[(mb_y >> 1) + base_h] + uv_x + offset_value[offset];
 	    vp = up + 1;
 
 	    HANDLE_MACROBLOCK(yp1, yp2, up, vp, dp1, dp2);
 
 	    step++;
-	    if (step % 4 == 0)
+	    if ((step & 0x3) == 0)
 	      {
-		x -= 1;
 		offset = 1 - offset;
-		uv_x--;
+		x -= 64 * sizeof (int);
+		uv_x -= 64 * 32;
 	      }
 	    else
 	      {
-		x++;
-		uv_x++;
+		x += 64 * sizeof (int);
+		uv_x += 64 * 32;
 	      }
 
 	    uv_step++;
 	    if (uv_step == 8)
 	      {
 		uv_step = 0;
-		uv_x += 4;
+		uv_x += 4 * 64 * 32;
 	      }
 	  }
      }
 
-   if (mb_h % 2)
+   if (mb_h & 0x1)
      {
         int x = 0;
 	int ry;
 
-	ry = mb_y * 2;
+	ry = mb_y << 1;
 
 	uv_step = 0;
 	uv_x = 0;
