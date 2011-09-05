@@ -1029,6 +1029,7 @@ _long_press(void *data)
 
         evas_object_raise(it->base.view);
         elm_smart_scroller_hold_set(it->wd->scr, EINA_TRUE);
+        elm_smart_scroller_bounce_allow_set(it->wd->scr, EINA_FALSE, EINA_FALSE);
 
         list = elm_genlist_realized_items_get(it->wd->obj);
         EINA_LIST_FOREACH(list, l, it_tmp)
@@ -1331,24 +1332,22 @@ _mouse_up(void        *data,
      {
         Evas_Coord it_scrl_y = ev->canvas.y - it->wd->reorder_it->dy;
 
-        if (it->wd->reorder_rel)
+        if (it->wd->reorder_rel && (it->wd->reorder_it->parent == it->wd->reorder_rel->parent))
           {
-             if (it->wd->reorder_it->parent == it->wd->reorder_rel->parent)
-               {
-                  if (it_scrl_y <= it->wd->reorder_rel->scrl_y)
-                     _item_move_before(it->wd->reorder_it, it->wd->reorder_rel);
-                  else
-                     _item_move_after(it->wd->reorder_it, it->wd->reorder_rel);
-               }
+             if (it_scrl_y <= it->wd->reorder_rel->scrl_y)
+               _item_move_before(it->wd->reorder_it, it->wd->reorder_rel);
              else
-               {
-                  if (it->wd->calc_job) ecore_job_del(it->wd->calc_job);
-                  it->wd->calc_job = ecore_job_add(_calc_job, it->wd);
-               }
+               _item_move_after(it->wd->reorder_it, it->wd->reorder_rel);
+          }
+        else
+          {
+             if (it->wd->calc_job) ecore_job_del(it->wd->calc_job);
+             it->wd->calc_job = ecore_job_add(_calc_job, it->wd);
           }
         edje_object_signal_emit(it->base.view, "elm,state,reorder,disabled", "elm");
         it->wd->reorder_it = it->wd->reorder_rel = NULL;
         elm_smart_scroller_hold_set(it->wd->scr, EINA_FALSE);
+        elm_smart_scroller_bounce_allow_set(it->wd->scr, EINA_FALSE, EINA_TRUE);
      }
    if (it->wd->longpressed)
      {
