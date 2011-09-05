@@ -476,6 +476,26 @@ _audio_track_set(struct _App *app)
 }
 
 static void
+_video_track_set(struct _App *app)
+{
+   int track;
+
+   _em_read_safe(app->em_read, &track, sizeof(track));
+
+   libvlc_video_set_track(app->mp, track);
+}
+
+static void
+_spu_track_set(struct _App *app)
+{
+   int track;
+
+   _em_read_safe(app->em_read, &track, sizeof(track));
+
+   libvlc_video_set_spu(app->mp, track);
+}
+
+static void
 _file_set_done(struct _App *app)
 {
    int r;
@@ -578,22 +598,18 @@ _process_emotion_commands(struct _App *app)
       case EM_CMD_AUDIO_TRACK_SET:
 	 _audio_track_set(app);
 	 break;
+      case EM_CMD_VIDEO_TRACK_SET:
+	 _video_track_set(app);
+	 break;
    };
 }
 
 static void
-_send_track_info(struct _App *app)
+_send_track_info(struct _App *app, int cmd, int current, int count, libvlc_track_description_t *desc)
 {
-   int track_count, current;
-   libvlc_track_description_t *desc;
-
-   current = libvlc_audio_get_track(app->mp);
-   track_count = libvlc_audio_get_track_count(app->mp);
-   desc = libvlc_audio_get_track_description(app->mp);
-
-   _send_cmd_start(app, EM_RESULT_AUDIO_TRACK_INFO);
+   _send_cmd_start(app, cmd);
    SEND_CMD_PARAM(app, current);
-   SEND_CMD_PARAM(app, track_count);
+   SEND_CMD_PARAM(app, count);
    while (desc)
      {
 	int tid = desc->i_id;
@@ -603,6 +619,34 @@ _send_track_info(struct _App *app)
 	desc = desc->p_next;
      }
    _send_cmd_finish(app);
+}
+
+static void
+_send_all_track_info(struct _App *app)
+{
+   int track_count, current;
+   libvlc_track_description_t *desc;
+
+   current = libvlc_audio_get_track(app->mp);
+   track_count = libvlc_audio_get_track_count(app->mp);
+   desc = libvlc_audio_get_track_description(app->mp);
+
+   _send_track_info(app, EM_RESULT_AUDIO_TRACK_INFO,
+		    current, track_count, desc);
+
+   current = libvlc_video_get_track(app->mp);
+   track_count = libvlc_video_get_track_count(app->mp);
+   desc = libvlc_video_get_track_description(app->mp);
+
+   _send_track_info(app, EM_RESULT_VIDEO_TRACK_INFO,
+		    current, track_count, desc);
+
+   current = libvlc_video_get_spu(app->mp);
+   track_count = libvlc_video_get_spu_count(app->mp);
+   desc = libvlc_video_get_spu_description(app->mp);
+
+   _send_track_info(app, EM_RESULT_SPU_TRACK_INFO,
+		    current, track_count, desc);
 }
 
 static void
@@ -619,7 +663,7 @@ _position_changed(struct _App *app)
    _send_resize(app, w, h);
 
    /* sending audio track info */
-   // _send_track_info(app);
+   _send_all_track_info(app);
 
    libvlc_media_player_stop(app->mp);
 }
