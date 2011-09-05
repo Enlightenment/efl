@@ -938,10 +938,12 @@ _mouse_move(void        *data,
              if (!it->wd->reorder_start_y)
                it->wd->reorder_start_y = it->block->y + it->y;
 
-             if (it_scrl_y < oy) y_pos = oy;
-             else if (it_scrl_y + it->wd->reorder_it->h > oy+oh)
-                y_pos = oy + oh - it->wd->reorder_it->h;
-             else y_pos = it_scrl_y;
+             if (it_scrl_y < oy)
+               y_pos = oy;
+             else if (it_scrl_y + it->wd->reorder_it->h > oy + oh)
+               y_pos = oy + oh - it->wd->reorder_it->h;
+             else
+               y_pos = it_scrl_y;
 
              _item_position(it, it->base.view, it->scrl_x, y_pos);
 
@@ -2127,7 +2129,7 @@ _get_space_for_reorder_item(Elm_Genlist_Item *it)
      {
         it->block->reorder_offset = it->wd->reorder_it->h * -1;
         if (it->block->count == 1)
-           it->wd->reorder_rel = it;
+          it->wd->reorder_rel = it;
      }
    else if ((it->wd->reorder_start_y >= it->block->y) &&
             (roy - oy + (roh / 2) <= it->block->y - it->wd->pan_y))
@@ -2246,7 +2248,7 @@ _item_block_position(Item_Block *itb,
                   if (vis)
                     {
                        if (it->wd->reorder_mode)
-                          y += _get_space_for_reorder_item(it);
+                         y += _get_space_for_reorder_item(it);
                        git = it->group_item;
                        if (git)
                          {
