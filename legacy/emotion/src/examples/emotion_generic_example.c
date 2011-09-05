@@ -72,7 +72,10 @@ _on_key_down(void *data, Evas *e, Evas_Object *o, void *event_info)
    else if (!strcmp(ev->keyname, "n"))
      {
 	const char *file;
-	curfile = eina_list_next(curfile);
+	if (!curfile)
+	  curfile = filenames;
+	else
+	  curfile = eina_list_next(curfile);
 	file = eina_list_data_get(curfile);
 	fprintf(stderr, "playing next file: %s\n", file);
 	emotion_object_file_set(em, file);
@@ -80,7 +83,10 @@ _on_key_down(void *data, Evas *e, Evas_Object *o, void *event_info)
    else if (!strcmp(ev->keyname, "p"))
      {
 	const char *file;
-	curfile = eina_list_prev(curfile);
+	if (!curfile)
+	  curfile = eina_list_last(filenames);
+	else
+	  curfile = eina_list_prev(curfile);
 	file = eina_list_data_get(curfile);
 	fprintf(stderr, "playing next file: %s\n", file);
 	emotion_object_file_set(em, file);

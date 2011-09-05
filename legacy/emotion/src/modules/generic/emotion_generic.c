@@ -200,7 +200,7 @@ _file_open(Emotion_Generic_Video *ev)
    INF("Opening file: %s", ev->filename);
    ev->drop = 0;
 
-   if (!ev->ready)
+   if (!ev->ready || !ev->filename)
      return;
    _player_send_cmd(ev, EM_CMD_FILE_SET);
    _player_send_str(ev, ev->filename, EINA_TRUE);
@@ -801,11 +801,11 @@ em_file_close(void *data)
 {
    Emotion_Generic_Video *ev = data;
 
-   if (!ev) return;
+   if (!ev || !ev->filename) return;
+
    INF("file close: %s", ev->filename);
 
-   if (!ev->filename)
-     return;
+   eina_stringshare_replace(&ev->filename, NULL);
 
    if (ev->opening)
      return;
