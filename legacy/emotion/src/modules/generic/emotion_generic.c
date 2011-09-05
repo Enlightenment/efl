@@ -198,11 +198,6 @@ static void
 _file_open(Emotion_Generic_Video *ev)
 {
    INF("Opening file: %s", ev->filename);
-   ev->w = DEFAULTWIDTH;
-   ev->h = DEFAULTHEIGHT;
-   ev->ratio = (double)DEFAULTWIDTH / DEFAULTHEIGHT;
-   ev->speed = 1.0;
-   ev->len = 0;
    ev->drop = 0;
 
    if (!ev->ready)
@@ -780,6 +775,11 @@ em_file_open(const char *file, Evas_Object *obj __UNUSED__, void *data)
    eina_stringshare_replace(&ev->filename, file);
 
    ev->pos = 0;
+   ev->w = 0;
+   ev->h = 0;
+   ev->ratio = 1;
+   ev->speed = 1.0;
+   ev->len = 0;
 
    if (ev->ready && ev->opening)
      {
