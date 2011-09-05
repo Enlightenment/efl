@@ -95,6 +95,11 @@ _on_key_down(void *data, Evas *e, Evas_Object *o, void *event_info)
      {
 	evas_object_del(em);
      }
+   else if (!strcmp(ev->keyname, "l"))
+     {
+	// force frame dropping
+	sleep(5);
+     }
    else
      {
 	fprintf(stderr, "unhandled key: %s\n", ev->keyname);

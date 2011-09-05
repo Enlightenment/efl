@@ -173,6 +173,7 @@ _create_shm_data(Emotion_Generic_Video *ev, const char *shmname)
    vs->frame.player = 1;
    vs->frame.last = 2;
    vs->frame.next = 2;
+   vs->frame_drop = 0;
    sem_init(&vs->lock, 1, 1);
    ev->frame.frames[0] = (unsigned char *)vs + sizeof(*vs);
    ev->frame.frames[1] = (unsigned char *)vs + sizeof(*vs) + vs->height * vs->width * vs->pitch;
@@ -190,8 +191,7 @@ _player_new_frame(Emotion_Generic_Video *ev)
 {
    if (ev->opening || ev->closing)
      return;
-   if (!ev->drop++)
-     _emotion_frame_new(ev->obj);
+   _emotion_frame_new(ev->obj);
 }
 
 static void
@@ -1102,6 +1102,10 @@ em_bgra_data_get(void *data, unsigned char **bgra_data)
 	ev->shared->frame.emotion = ev->shared->frame.last;
      }
    *bgra_data = ev->frame.frames[ev->shared->frame.emotion];
+
+   if (ev->shared->frame_drop > 1)
+     WRN("dropped frames: %d", ev->shared->frame_drop - 1);
+   ev->shared->frame_drop = 0;
 
    // unlock frame here
    sem_post(&ev->shared->lock);

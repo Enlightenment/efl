@@ -89,6 +89,7 @@ struct _Emotion_Generic_Video_Shared
 	int next;
    } frame;
    sem_t lock;
+   int frame_drop;
 };
 
 inline int

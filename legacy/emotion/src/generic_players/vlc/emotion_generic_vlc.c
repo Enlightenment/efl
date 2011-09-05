@@ -253,17 +253,6 @@ _lock(void *data, void **pixels)
 static void
 _unlock(void *data, void *id, void *const *pixels)
 {
-   struct _App *app = data;
-
-   if (!app->playing)
-     return;
-
-   sem_wait(&app->vs->lock);
-   app->vs->frame.last = app->vs->frame.player;
-   app->vs->frame.player = app->vs->frame.next;
-   app->vs->frame.next = app->vs->frame.last;
-
-   sem_post(&app->vs->lock);
 }
 
 static void
@@ -273,7 +262,13 @@ _display(void *data, void *id)
    if (!app->playing)
      return;
 
-   _send_cmd(app, EM_RESULT_FRAME_NEW);
+   sem_wait(&app->vs->lock);
+   app->vs->frame.last = app->vs->frame.player;
+   app->vs->frame.player = app->vs->frame.next;
+   app->vs->frame.next = app->vs->frame.last;
+   if (!app->vs->frame_drop++)
+     _send_cmd(app, EM_RESULT_FRAME_NEW);
+   sem_post(&app->vs->lock);
 }
 
 static void *
