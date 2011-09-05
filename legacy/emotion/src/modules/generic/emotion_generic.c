@@ -103,19 +103,19 @@ _player_send_cmd(Emotion_Generic_Video *ev, int cmd)
 	ERR("invalid command to player.");
 	return;
      }
-   ecore_exe_send(ev->player.exe, &cmd, sizeof(cmd));
+   write(ev->fd_write, &cmd, sizeof(cmd));
 }
 
 static void
 _player_send_int(Emotion_Generic_Video *ev, int number)
 {
-   ecore_exe_send(ev->player.exe, &number, sizeof(number));
+   write(ev->fd_write, &number, sizeof(number));
 }
 
 static void
 _player_send_float(Emotion_Generic_Video *ev, float number)
 {
-   ecore_exe_send(ev->player.exe, &number, sizeof(number));
+   write(ev->fd_write, &number, sizeof(number));
 }
 
 static void
@@ -127,8 +127,8 @@ _player_send_str(Emotion_Generic_Video *ev, const char *str, Eina_Bool stringsha
      len = eina_stringshare_strlen(str) + 1;
    else
      len = strlen(str) + 1;
-   ecore_exe_send(ev->player.exe, &len, sizeof(len));
-   ecore_exe_send(ev->player.exe, str, len);
+   write(ev->fd_write, &len, sizeof(len));
+   write(ev->fd_write, str, len);
 }
 
 static Eina_Bool
@@ -234,31 +234,94 @@ _player_ready(Emotion_Generic_Video *ev)
    _file_open(ev);
 }
 
-#define RCV_CMD_PARAM(src, param) \
-   memcpy(&(param), (src), sizeof((param))); \
-   (src) = (char *)(src) + sizeof((param));
-
-#define RCV_CMD_STR(src, buf, len) \
-   RCV_CMD_PARAM((src), (len)); \
-   memcpy((buf), (src), (len)); \
-   (src) = (char *)(src) + len;
-
 static int
-_player_int_read(Emotion_Generic_Video *ev __UNUSED__, void **data)
+_em_read_safe(int fd, void *buf, ssize_t size)
 {
-   int number;
-   memcpy(&number, *data, sizeof(number));
-   *data = (char *)(*data) + sizeof(number);
+   ssize_t todo;
+   char *p;
 
-   return number;
+   todo = size;
+   p = buf;
+
+   while (todo > 0)
+     {
+        ssize_t r;
+
+        r = read(fd, p, todo);
+        if (r > 0)
+          {
+             todo -= r;
+             p += r;
+          }
+        else if (r == 0)
+          return 0;
+        else
+          {
+             if (errno == EINTR || errno == EAGAIN)
+               continue;
+             else
+               {
+                  ERR("could not read from fd %d: %s", fd, strerror(errno));
+                  return 0;
+               }
+          }
+     }
+
+   return 1;
+}
+
+static Eina_Bool
+_player_int_read(Emotion_Generic_Video *ev, int *i)
+{
+   int n;
+   n = _em_read_safe(ev->fd_read, i, sizeof(*i));
+   if (n <= 0)
+     {
+	ERR("could not read int from fd_read %d\n", ev->fd_read);
+	return EINA_FALSE;
+     }
+
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_player_float_read(Emotion_Generic_Video *ev, float *f)
+{
+   int n;
+   n = _em_read_safe(ev->fd_read, f, sizeof(*f));
+   if (n <= 0)
+     {
+	ERR("could not read float from fd_read %d\n", ev->fd_read);
+	return EINA_FALSE;
+     }
+
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_player_str_read(Emotion_Generic_Video *ev, char *str, int *len)
+{
+   int n;
+
+   if (!_player_int_read(ev, len))
+     return EINA_FALSE;
+
+   n = _em_read_safe(ev->fd_read, str, *len);
+   if (n <= 0)
+     {
+	ERR("could not read string from fd_read %d\n", ev->fd_read);
+	return EINA_FALSE;
+     }
+
+   return EINA_TRUE;
 }
 
 static void
-_player_frame_resize(Emotion_Generic_Video *ev, void *line)
+_player_frame_resize(Emotion_Generic_Video *ev)
 {
    int w, h;
-   RCV_CMD_PARAM(line, w);
-   RCV_CMD_PARAM(line, h);
+   _player_int_read(ev, &w);
+   _player_int_read(ev, &h);
 
    INF("received frame resize: %dx%d", w, h);
    ev->w = w;
@@ -272,10 +335,10 @@ _player_frame_resize(Emotion_Generic_Video *ev, void *line)
 }
 
 static void
-_player_length_changed(Emotion_Generic_Video *ev, void *line)
+_player_length_changed(Emotion_Generic_Video *ev)
 {
    float length;
-   RCV_CMD_PARAM(line, length);
+   _player_float_read(ev, &length);
 
    INF("received length changed: %0.3f", length);
 
@@ -284,10 +347,10 @@ _player_length_changed(Emotion_Generic_Video *ev, void *line)
 }
 
 static void
-_player_position_changed(Emotion_Generic_Video *ev, void *line)
+_player_position_changed(Emotion_Generic_Video *ev)
 {
    float position;
-   RCV_CMD_PARAM(line, position);
+   _player_float_read(ev, &position);
 
    INF("received position changed: %0.3f", position);
 
@@ -305,10 +368,10 @@ _player_position_changed(Emotion_Generic_Video *ev, void *line)
 }
 
 static void
-_player_seekable_changed(Emotion_Generic_Video *ev, void *line)
+_player_seekable_changed(Emotion_Generic_Video *ev)
 {
    int seekable;
-   RCV_CMD_PARAM(line, seekable);
+   _player_int_read(ev, &seekable);
 
    INF("received seekable changed: %d", seekable);
 
@@ -318,10 +381,10 @@ _player_seekable_changed(Emotion_Generic_Video *ev, void *line)
 }
 
 static void
-_player_volume(Emotion_Generic_Video *ev, void *line)
+_player_volume(Emotion_Generic_Video *ev)
 {
    float vol, oldvol;
-   RCV_CMD_PARAM(line, vol);
+   _player_float_read(ev, &vol);
 
    INF("received volume: %0.3f", vol);
 
@@ -332,10 +395,10 @@ _player_volume(Emotion_Generic_Video *ev, void *line)
 }
 
 static void
-_player_audio_mute(Emotion_Generic_Video *ev, void *line)
+_player_audio_mute(Emotion_Generic_Video *ev)
 {
    int mute;
-   RCV_CMD_PARAM(line, mute);
+   _player_int_read(ev, &mute);
 
    INF("received audio mute: %d", mute);
 
@@ -353,7 +416,7 @@ _audio_channels_free(Emotion_Generic_Video *ev)
 }
 
 static void
-_player_audio_tracks_info(Emotion_Generic_Video *ev, void *line)
+_player_audio_tracks_info(Emotion_Generic_Video *ev)
 {
    int track_current, tracks_count;
    int i;
@@ -361,8 +424,8 @@ _player_audio_tracks_info(Emotion_Generic_Video *ev, void *line)
    if (ev->audio_channels_count)
      _audio_channels_free(ev);
 
-   RCV_CMD_PARAM(line, track_current);
-   RCV_CMD_PARAM(line, tracks_count);
+   _player_int_read(ev, &track_current);
+   _player_int_read(ev, &tracks_count);
    INF("video with %d audio tracks (current = %d):", tracks_count, track_current);
    ev->audio_channels = calloc(
       tracks_count, sizeof(Emotion_Generic_Audio_Channel));
@@ -372,8 +435,8 @@ _player_audio_tracks_info(Emotion_Generic_Video *ev, void *line)
      {
 	int tid, len;
 	char buf[PATH_MAX];
-	RCV_CMD_PARAM(line, tid);
-	RCV_CMD_STR(line, buf, len);
+	_player_int_read(ev, &tid);
+	_player_str_read(ev, buf, &len);
 	ev->audio_channels[i].id = tid;
 	ev->audio_channels[i].name = eina_stringshare_add_length(buf, len);
 	INF("\t%d: %s", tid, buf);
@@ -393,12 +456,12 @@ _player_file_closed(Emotion_Generic_Video *ev)
 }
 
 static void
-_player_open_done(Emotion_Generic_Video *ev, void *line)
+_player_open_done(Emotion_Generic_Video *ev)
 {
    int success;
 
    ev->opening = EINA_FALSE;
-   RCV_CMD_PARAM(line, success);
+   _player_int_read(ev, &success);
 
    shm_unlink(ev->shmname);
    if (!success)
@@ -419,10 +482,15 @@ _player_open_done(Emotion_Generic_Video *ev, void *line)
 }
 
 static void
-_player_read_cmd(Emotion_Generic_Video *ev, void *line, int size __UNUSED__)
+_player_read_cmd(Emotion_Generic_Video *ev)
 {
    int type;
-   RCV_CMD_PARAM(line, type);
+
+   if (!_player_int_read(ev, &type))
+     {
+	ERR("could not read command\n");
+	return;
+     }
 
    switch (type) {
       case EM_RESULT_INIT:
@@ -435,7 +503,7 @@ _player_read_cmd(Emotion_Generic_Video *ev, void *line, int size __UNUSED__)
 	 _player_file_set_done(ev);
 	 break;
       case EM_RESULT_FILE_SET_DONE:
-	 _player_open_done(ev, line);
+	 _player_open_done(ev);
 	 break;
       case EM_RESULT_FILE_CLOSE:
 	 _player_file_closed(ev);
@@ -444,26 +512,40 @@ _player_read_cmd(Emotion_Generic_Video *ev, void *line, int size __UNUSED__)
 	 _emotion_playback_finished(ev->obj);
 	 break;
       case EM_RESULT_FRAME_SIZE:
-	 _player_frame_resize(ev, line);
+	 _player_frame_resize(ev);
 	 break;
       case EM_RESULT_LENGTH_CHANGED:
-	 _player_length_changed(ev, line);
+	 _player_length_changed(ev);
 	 break;
       case EM_RESULT_POSITION_CHANGED:
-	 _player_position_changed(ev, line);
+	 _player_position_changed(ev);
 	 break;
       case EM_RESULT_SEEKABLE_CHANGED:
-	 _player_seekable_changed(ev, line);
+	 _player_seekable_changed(ev);
 	 break;
       case EM_RESULT_AUDIO_TRACK_INFO:
-	 _player_audio_tracks_info(ev, line);
+	 _player_audio_tracks_info(ev);
 	 break;
       default:
 	 WRN("received wrong command: %d", type);
    };
 }
 
-#undef RCV_CMD_PARAM
+static Eina_Bool
+_player_cmd_handler_cb(void *data, Ecore_Fd_Handler *fd_handler)
+{
+   Emotion_Generic_Video *ev = data;
+
+   if (ecore_main_fd_handler_active_get(fd_handler, ECORE_FD_ERROR))
+     {
+	ERR("an error occurred on fd_read %d.", ev->fd_read);
+	return ECORE_CALLBACK_CANCEL;
+     }
+
+   _player_read_cmd(ev);
+
+   return ECORE_CALLBACK_RENEW;
+}
 
 static Eina_Bool
 _player_data_cb(void *data, int type __UNUSED__, void *event)
@@ -485,7 +567,7 @@ _player_data_cb(void *data, int type __UNUSED__, void *event)
      }
 
    for (i = 0; ev->lines[i].line; i++)
-     _player_read_cmd(evideo, ev->lines[i].line, ev->lines[i].size);
+     INF("received input from player: \"%s\"", ev->lines[i].line);
 
    return ECORE_CALLBACK_DONE;
 }
@@ -517,13 +599,70 @@ _player_del_cb(void *data, int type __UNUSED__, void *event __UNUSED__)
 
    ev->player.exe = NULL;
    ev->ready = EINA_FALSE;
+   ecore_main_fd_handler_del(ev->fd_handler);
+   close(ev->fd_read);
+   close(ev->fd_write);
+   ev->fd_read = -1;
+   ev->fd_write = -1;
    _emotion_decode_stop(ev->obj);
 
    return ECORE_CALLBACK_DONE;
 }
 
 static Eina_Bool
-_fork_and_exec(Evas_Object *obj __UNUSED__, Emotion_Generic_Video *ev)
+_player_exec(Emotion_Generic_Video *ev)
+{
+   int pipe_out[2];
+   int pipe_in[2];
+   char buf[PATH_MAX];
+
+   if (pipe(pipe_out) == -1)
+     {
+	ERR("could not create pipe for communication emotion -> player: %s", strerror(errno));
+	return EINA_FALSE;
+     }
+
+   if (pipe(pipe_in) == -1)
+     {
+	ERR("could not create pipe for communication player -> emotion: %s", strerror(errno));
+	close(pipe_out[0]);
+	close(pipe_out[1]);
+	return EINA_FALSE;
+     }
+
+   snprintf(buf, sizeof(buf), "%s %d %d\n", ev->cmdline, pipe_out[0], pipe_in[1]);
+
+   ev->player.exe = ecore_exe_pipe_run(
+      buf,
+      ECORE_EXE_PIPE_READ | ECORE_EXE_PIPE_WRITE |
+      ECORE_EXE_PIPE_READ_LINE_BUFFERED | ECORE_EXE_NOT_LEADER,
+      ev);
+
+   INF("created pipe emotion -> player: %d -> %d\n", pipe_out[1], pipe_out[0]);
+   INF("created pipe player -> emotion: %d -> %d\n", pipe_in[1], pipe_in[0]);
+
+   close(pipe_in[1]);
+   close(pipe_out[0]);
+
+   if (!ev->player.exe)
+     {
+	close(pipe_in[0]);
+	close(pipe_out[1]);
+	return EINA_FALSE;
+     }
+
+   ev->fd_read = pipe_in[0];
+   ev->fd_write = pipe_out[1];
+
+   ev->fd_handler = ecore_main_fd_handler_add(
+      ev->fd_read, ECORE_FD_READ | ECORE_FD_ERROR, _player_cmd_handler_cb, ev,
+      NULL, NULL);
+
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_fork_and_exec(Evas_Object *obj, Emotion_Generic_Video *ev)
 {
    char shmname[256];
    struct timeval tv;
@@ -541,13 +680,8 @@ _fork_and_exec(Evas_Object *obj __UNUSED__, Emotion_Generic_Video *ev)
    ev->player_data = ecore_event_handler_add(
       ECORE_EXE_EVENT_DATA, _player_data_cb, ev);
 
-   ev->player.exe = ecore_exe_pipe_run(
-      ev->cmdline,
-      ECORE_EXE_PIPE_READ | ECORE_EXE_PIPE_WRITE |
-      ECORE_EXE_PIPE_READ_LINE_BUFFERED | ECORE_EXE_NOT_LEADER,
-      ev);
 
-   if (!ev->player.exe)
+   if (!_player_exec(ev))
      {
         ERR("could not start player.");
         return EINA_FALSE;
@@ -571,6 +705,8 @@ em_init(Evas_Object *obj, void **emotion_video, Emotion_Module_Options *opt)
    ev = (Emotion_Generic_Video *)calloc(1, sizeof(*ev));
    if (!ev) return 0;
 
+   ev->fd_read = -1;
+   ev->fd_write = -1;
    ev->speed = 1.0;
    ev->volume = 0.5;
    ev->audio_mute = EINA_FALSE;
@@ -598,6 +734,13 @@ em_shutdown(void *data)
 
    if (ev->shared)
      munmap(ev->shared, ev->shared->size);
+
+   if (ev->fd_read >= 0)
+     close(ev->fd_read);
+   if (ev->fd_write >= 0)
+     close(ev->fd_write);
+   if (ev->fd_handler)
+     ecore_main_fd_handler_del(ev->fd_handler);
 
    _audio_channels_free(ev);
 
@@ -681,13 +824,7 @@ em_play(void *data, double pos)
 	return;
      }
 
-   ev->player.exe = ecore_exe_pipe_run(
-      ev->cmdline,
-      ECORE_EXE_PIPE_READ | ECORE_EXE_PIPE_WRITE |
-      ECORE_EXE_PIPE_READ_LINE_BUFFERED | ECORE_EXE_NOT_LEADER,
-      ev);
-
-   if (!ev->player.exe)
+   if (!_player_exec(ev))
      ERR("could not start player.");
 }
 

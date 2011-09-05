@@ -29,6 +29,8 @@ struct _Emotion_Generic_Video
    Emotion_Generic_Player    player;
    Ecore_Event_Handler	     *player_add, *player_del, *player_data;
    int			     drop;
+   int			     fd_read, fd_write;
+   Ecore_Fd_Handler	     *fd_handler;
 
    const char		     *filename;
    volatile double	     len;

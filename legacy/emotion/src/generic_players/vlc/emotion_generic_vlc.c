@@ -36,8 +36,10 @@ struct _App {
      char *filename;
      char *shmname;
      int w, h;
-     int fd_read;
-     int fd_write;
+     int fd_read; // read commands from theads here
+     int fd_write; // write commands from threads here
+     int em_read; // read commands from emotion here
+     int em_write; // write commands to emotion here
      int size_sent;
      int opening;
      int closing;
@@ -121,13 +123,13 @@ _em_write_safe(int fd, const void *buf, ssize_t size)
 }
 
 static int
-_em_str_read(char **str)
+_em_str_read(int fd, char **str)
 {
    int size;
    int r;
    char buf[PATH_MAX];
 
-   r = _em_read_safe(STDIN_FILENO, &size, sizeof(size));
+   r = _em_read_safe(fd, &size, sizeof(size));
    if (!r)
      {
         *str = NULL;
@@ -140,7 +142,7 @@ _em_str_read(char **str)
         return 1;
      }
 
-   r = _em_read_safe(STDIN_FILENO, buf, size);
+   r = _em_read_safe(fd, buf, size);
    if (!r)
      {
         *str = NULL;
@@ -152,86 +154,84 @@ _em_str_read(char **str)
 }
 
 static int
-_em_cmd_read(void)
+_em_cmd_read(struct _App *app)
 {
    int cmd;
-   _em_read_safe(STDIN_FILENO, &cmd, sizeof(cmd));
+   _em_read_safe(app->em_read, &cmd, sizeof(cmd));
 
    return cmd;
 }
 
 static void
-_send_cmd_start(int cmd)
+_send_cmd_start(struct _App *app, int cmd)
 {
    pthread_mutex_lock(&_mutex_fd);
-   _em_write_safe(STDOUT_FILENO, &cmd, sizeof(cmd));
+   _em_write_safe(app->em_write, &cmd, sizeof(cmd));
 }
 
 static void
-_send_cmd_finish(void)
+_send_cmd_finish(struct _App *app)
 {
-   static const char c = '\n';
-   _em_write_safe(STDOUT_FILENO, &c, sizeof(c));
    pthread_mutex_unlock(&_mutex_fd);
 }
 
 static void
-_send_cmd(int cmd)
+_send_cmd(struct _App *app, int cmd)
 {
-   _send_cmd_start(cmd);
-   _send_cmd_finish();
+   _send_cmd_start(app, cmd);
+   _send_cmd_finish(app);
 }
 
 static void
-_send_cmd_str(const char *str)
+_send_cmd_str(struct _App *app, const char *str)
 {
    int len;
    len = strlen(str) + 1;
-   _em_write_safe(STDOUT_FILENO, &len, sizeof(len));
-   _em_write_safe(STDOUT_FILENO, str, len);
+   _em_write_safe(app->em_write, &len, sizeof(len));
+   _em_write_safe(app->em_write, str, len);
 }
 
-#define SEND_CMD_PARAM(i) \
-   _em_write_safe(STDOUT_FILENO, &(i), sizeof((i)));
+#define SEND_CMD_PARAM(app, i) \
+   _em_write_safe((app)->em_write, &(i), sizeof((i)));
 
 static void
-_send_resize(int width, int height)
+_send_resize(struct _App *app, int width, int height)
 {
-   _send_cmd_start(EM_RESULT_FRAME_SIZE);
-   SEND_CMD_PARAM(width);
-   SEND_CMD_PARAM(height);
-   _send_cmd_finish();
+   _send_cmd_start(app, EM_RESULT_FRAME_SIZE);
+   SEND_CMD_PARAM(app, width);
+   SEND_CMD_PARAM(app, height);
+   _send_cmd_finish(app);
 }
 
 static void
-_send_length_changed(const struct libvlc_event_t *ev)
+_send_length_changed(struct _App *app, const struct libvlc_event_t *ev)
 {
    float length = ev->u.media_player_length_changed.new_length;
    length /= 1000;
 
    fprintf(stderr, "length changed: %0.3f\n", length);
-   _send_cmd_start(EM_RESULT_LENGTH_CHANGED);
-   SEND_CMD_PARAM(length);
-   _send_cmd_finish();
+   _send_cmd_start(app, EM_RESULT_LENGTH_CHANGED);
+   SEND_CMD_PARAM(app, length);
+   _send_cmd_finish(app);
 }
 
 static void
-_send_time_changed(const struct libvlc_event_t *ev)
+_send_time_changed(struct _App *app, const struct libvlc_event_t *ev)
 {
    float new_time = ev->u.media_player_time_changed.new_time;
    new_time /= 1000;
-   _send_cmd_start(EM_RESULT_POSITION_CHANGED);
-   SEND_CMD_PARAM(new_time);
-   _send_cmd_finish();
+   _send_cmd_start(app, EM_RESULT_POSITION_CHANGED);
+   SEND_CMD_PARAM(app, new_time);
+   _send_cmd_finish(app);
 }
 
 static void
-_send_seekable_changed(const struct libvlc_event_t *ev)
+_send_seekable_changed(struct _App *app, const struct libvlc_event_t *ev)
 {
    int seekable = ev->u.media_player_seekable_changed.new_seekable;
-   _send_cmd_start(EM_RESULT_SEEKABLE_CHANGED);
-   SEND_CMD_PARAM(seekable);
-   _send_cmd_finish();
+   _send_cmd_start(app, EM_RESULT_SEEKABLE_CHANGED);
+   SEND_CMD_PARAM(app, seekable);
+   _send_cmd_finish(app);
 }
 
 static void *
@@ -270,7 +270,7 @@ _display(void *data, void *id)
    if (!app->playing)
      return;
 
-   _send_cmd(EM_RESULT_FRAME_NEW);
+   _send_cmd(app, EM_RESULT_FRAME_NEW);
 }
 
 static void *
@@ -298,7 +298,7 @@ _play(struct _App *app)
    if (!app->mp)
      return;
 
-   _em_read_safe(STDIN_FILENO, &pos, sizeof(pos));
+   _em_read_safe(app->em_read, &pos, sizeof(pos));
 
    if (app->playing)
      {
@@ -325,14 +325,14 @@ _send_file_closed(struct _App *app)
 {
    app->closing = 0;
    emotion_generic_shm_free(app->vs);
-   _send_cmd(EM_RESULT_FILE_CLOSE);
+   _send_cmd(app, EM_RESULT_FILE_CLOSE);
 }
 
 static void
 _send_file_set(struct _App *app)
 {
    if (app->opening)
-      _send_cmd(EM_RESULT_FILE_SET);
+      _send_cmd(app, EM_RESULT_FILE_SET);
 
    if (app->closing)
      _send_file_closed(app);
@@ -346,26 +346,26 @@ _event_cb(const struct libvlc_event_t *ev, void *data)
 
    switch (ev->type) {
       case libvlc_MediaPlayerTimeChanged:
-	 _send_time_changed(ev);
+	 _send_time_changed(app, ev);
 	 break;
       case libvlc_MediaPlayerPositionChanged:
 	 thread_event = EM_THREAD_POSITION_CHANGED;
 	 write(app->fd_write, &thread_event, sizeof(thread_event));
 	 break;
       case libvlc_MediaPlayerLengthChanged:
-	 _send_length_changed(ev);
+	 _send_length_changed(app, ev);
 	 break;
       case libvlc_MediaPlayerSeekableChanged:
-	 _send_seekable_changed(ev);
+	 _send_seekable_changed(app, ev);
 	 break;
       case libvlc_MediaPlayerPlaying:
-	 _send_resize(app->w, app->h);
+	 _send_resize(app, app->w, app->h);
 	 break;
       case libvlc_MediaPlayerStopped:
 	 _send_file_set(app);
 	 break;
       case libvlc_MediaPlayerEndReached:
-	 _send_cmd(EM_RESULT_PLAYBACK_STOPPED);
+	 _send_cmd(app, EM_RESULT_PLAYBACK_STOPPED);
 	 break;
    }
 }
@@ -373,7 +373,7 @@ _event_cb(const struct libvlc_event_t *ev, void *data)
 static void
 _file_set(struct _App *app)
 {
-   _em_str_read(&app->filename);
+   _em_str_read(app->em_read, &app->filename);
 
    app->m = libvlc_media_new_path(app->libvlc, app->filename);
    if (!app->m)
@@ -411,7 +411,7 @@ _position_set(struct _App *app)
      return;
 
    float position;
-   _em_read_safe(STDIN_FILENO, &position, sizeof(position));
+   _em_read_safe(app->em_read, &position, sizeof(position));
 
    libvlc_time_t new_time = position * 1000;
    libvlc_media_player_set_time(app->mp, new_time);
@@ -425,7 +425,7 @@ _speed_set(struct _App *app)
    if (!app->mp)
      return;
 
-   _em_read_safe(STDIN_FILENO, &rate, sizeof(rate));
+   _em_read_safe(app->em_read, &rate, sizeof(rate));
 
    libvlc_media_player_set_rate(app->mp, rate);
 }
@@ -438,7 +438,7 @@ _mute_set(struct _App *app)
    if (!app->mp)
      return;
 
-   _em_read_safe(STDIN_FILENO, &mute, sizeof(mute));
+   _em_read_safe(app->em_read, &mute, sizeof(mute));
 
    libvlc_audio_set_mute(app->mp, mute);
 }
@@ -452,7 +452,7 @@ _volume_set(struct _App *app)
    if (!app->mp)
      return;
 
-   _em_read_safe(STDIN_FILENO, &volume, sizeof(volume));
+   _em_read_safe(app->em_read, &volume, sizeof(volume));
    vol = volume * 100;
 
    libvlc_audio_set_volume(app->mp, vol);
@@ -463,7 +463,7 @@ _audio_track_set(struct _App *app)
 {
    int track;
 
-   _em_read_safe(STDIN_FILENO, &track, sizeof(track));
+   _em_read_safe(app->em_read, &track, sizeof(track));
 
    libvlc_audio_set_track(app->mp, track);
 }
@@ -484,9 +484,9 @@ _file_set_done(struct _App *app)
 	app->filename = NULL;
 	app->m = NULL;
 	app->mp = NULL;
-	_send_cmd_start(EM_RESULT_FILE_SET_DONE);
-	SEND_CMD_PARAM(r);
-	_send_cmd_finish();
+	_send_cmd_start(app, EM_RESULT_FILE_SET_DONE);
+	SEND_CMD_PARAM(app, r);
+	_send_cmd_finish(app);
      }
    app->w = app->vs->width;
    app->h = app->vs->height;
@@ -505,9 +505,9 @@ _file_set_done(struct _App *app)
 
    libvlc_audio_set_mute(app->mp, 0);
 
-   _send_cmd_start(EM_RESULT_FILE_SET_DONE);
-   SEND_CMD_PARAM(r);
-   _send_cmd_finish();
+   _send_cmd_start(app, EM_RESULT_FILE_SET_DONE);
+   SEND_CMD_PARAM(app, r);
+   _send_cmd_finish(app);
 }
 
 static void
@@ -534,7 +534,7 @@ _file_close(struct _App *app)
 static void
 _process_emotion_commands(struct _App *app)
 {
-   int cmd = _em_cmd_read();
+   int cmd = _em_cmd_read(app);
    switch (cmd) {
       case EM_CMD_FILE_SET:
 	 _file_set(app);
@@ -570,27 +570,27 @@ _process_emotion_commands(struct _App *app)
 }
 
 static void
-_send_track_info(libvlc_media_player_t *mp)
+_send_track_info(struct _App *app)
 {
    int track_count, current;
    libvlc_track_description_t *desc;
 
-   current = libvlc_audio_get_track(mp);
-   track_count = libvlc_audio_get_track_count(mp);
-   desc = libvlc_audio_get_track_description(mp);
+   current = libvlc_audio_get_track(app->mp);
+   track_count = libvlc_audio_get_track_count(app->mp);
+   desc = libvlc_audio_get_track_description(app->mp);
 
-   _send_cmd_start(EM_RESULT_AUDIO_TRACK_INFO);
-   SEND_CMD_PARAM(current);
-   SEND_CMD_PARAM(track_count);
+   _send_cmd_start(app, EM_RESULT_AUDIO_TRACK_INFO);
+   SEND_CMD_PARAM(app, current);
+   SEND_CMD_PARAM(app, track_count);
    while (desc)
      {
 	int tid = desc->i_id;
 	const char *name = desc->psz_name;
-	SEND_CMD_PARAM(tid);
-	_send_cmd_str(name);
+	SEND_CMD_PARAM(app, tid);
+	_send_cmd_str(app, name);
 	desc = desc->p_next;
      }
-   _send_cmd_finish();
+   _send_cmd_finish(app);
 }
 
 static void
@@ -604,10 +604,10 @@ _position_changed(struct _App *app)
    r = libvlc_video_get_size(app->mp, 0, &w, &h);
    if (r < 0)
      return;
-   _send_resize(w, h);
+   _send_resize(app, w, h);
 
    /* sending audio track info */
-   // _send_track_info(app->mp);
+   // _send_track_info(app);
 
    libvlc_media_player_stop(app->mp);
 }
@@ -657,6 +657,18 @@ main(int argc, const char *argv[])
 	chroma
      };
 
+   if (argc < 3)
+     {
+	fprintf(stderr, "player: missing paramters.\n");
+	fprintf(stderr, "syntax:\n\t%s <fd read> <fd write>\n", argv[0]);
+	return -1;
+     }
+
+   app.em_read = atoi(argv[1]);
+   app.em_write = atoi(argv[2]);
+
+   fprintf(stderr, "reading commands from fd: %d, writing on fd: %d\n", app.em_read, app.em_write);
+
    int vlc_argc = sizeof(vlc_argv) / sizeof(*vlc_argv);
    snprintf(cwidth, sizeof(cwidth), "%d", DEFAULTWIDTH);
    snprintf(cheight, sizeof(cheight), "%d", DEFAULTHEIGHT);
@@ -684,23 +696,23 @@ main(int argc, const char *argv[])
    app.playing = 0;
    app.closing = 0;
 
-   if (_em_cmd_read() != EM_CMD_INIT)
+   if (_em_cmd_read(&app) != EM_CMD_INIT)
      {
 	fprintf(stderr, "player: wrong init command!\n");
 	return -1;
      }
 
    int size;
-   _em_read_safe(STDIN_FILENO, &size, sizeof(size));
-   _em_read_safe(STDIN_FILENO, buf, size);
+   _em_read_safe(app.em_read, &size, sizeof(size));
+   _em_read_safe(app.em_read, buf, size);
    app.shmname = strdup(buf);
 
-   _send_cmd(EM_RESULT_INIT);
+   _send_cmd(&app, EM_RESULT_INIT);
 
    pipe(tpipe);
    app.fd_read = tpipe[0];
    app.fd_write = tpipe[1];
-   fds[0].fd = STDIN_FILENO;
+   fds[0].fd = app.em_read;
    fds[0].events = POLLIN;
    fds[1].fd = app.fd_read;
    fds[1].events = POLLIN;
