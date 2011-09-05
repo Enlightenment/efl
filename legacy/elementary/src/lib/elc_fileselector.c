@@ -594,6 +594,10 @@ _file_grid_cmp(const void *a, const void *b)
         if (cb != &grid_itc[ELM_DIRECTORY])
           return -1;
      }
+   else if (cb == &grid_itc[ELM_DIRECTORY])
+     {
+        return 1;
+     }
 
    return strcoll(elm_gengrid_item_data_get(ga), elm_gengrid_item_data_get(gb));
 }
@@ -610,6 +614,10 @@ _file_list_cmp(const void *a, const void *b)
      {
         if (cb != &list_itc[ELM_DIRECTORY])
           return -1;
+     }
+   else if (cb == &list_itc[ELM_DIRECTORY])
+     {
+        return 1;
      }
 
    return strcoll(elm_genlist_item_data_get(la), elm_genlist_item_data_get(lb));
