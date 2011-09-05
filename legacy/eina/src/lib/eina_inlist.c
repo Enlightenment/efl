@@ -23,6 +23,8 @@
 #include <stdlib.h>
 #include <assert.h>
 
+#include <stdio.h>
+
 #include "eina_config.h"
 #include "eina_private.h"
 #include "eina_error.h"
@@ -62,6 +64,16 @@ struct _Eina_Accessor_Inlist
    const Eina_Inlist *current;
 
    unsigned int index;
+};
+
+struct _Eina_Inlist_Sorted_State
+{
+   Eina_Inlist *jump_table[EINA_INLIST_JUMP_SIZE];
+
+   unsigned short jump_limit;
+   int jump_div;
+
+   int inserted;
 };
 
 static Eina_Bool
@@ -422,7 +434,100 @@ eina_inlist_count(const Eina_Inlist *list)
    return i;
 }
 
-#define EINA_INLIST_JUMP_SIZE 256
+EAPI void
+eina_inlist_sorted_state_init(Eina_Inlist_Sorted_State *state, Eina_Inlist *list)
+{
+   Eina_Inlist *ct = NULL;
+   int count = 0;
+   int jump_count = 1;
+
+   /*
+    * prepare a jump table to avoid doing unnecessary rewalk
+    * of the inlist as much as possible.
+    */
+   for (ct = list; ct; ct = ct->next, jump_count++, count++)
+     {
+        if (jump_count == state->jump_div)
+          {
+             if (state->jump_limit == EINA_INLIST_JUMP_SIZE)
+               {
+                  unsigned short i, j;
+
+                  /* compress the jump table */
+                  state->jump_div *= 2;
+                  state->jump_limit /= 2;
+
+                  for (i = 2, j = 1;
+                       i < EINA_INLIST_JUMP_SIZE;
+                       i += 2, j++)
+                    state->jump_table[j] = state->jump_table[i];
+               }
+
+             state->jump_table[state->jump_limit] = ct;
+             state->jump_limit++;
+             jump_count = 0;
+          }
+     }
+}
+
+EAPI Eina_Inlist_Sorted_State *
+eina_inlist_sorted_state_new(void)
+{
+   Eina_Inlist_Sorted_State *r;
+
+   r = calloc(1, sizeof (Eina_Inlist_Sorted_State));
+   if (!r) return NULL;
+
+   r->jump_div = 1;
+
+   return r;
+}
+
+EAPI void
+eina_inlist_sorted_state_free(Eina_Inlist_Sorted_State *state)
+{
+   free(state);
+}
+
+static void
+_eina_inlist_sorted_state_insert(Eina_Inlist_Sorted_State *state,
+                                 unsigned short index,
+                                 int offset)
+{
+   Eina_Inlist *last;
+   int jump_count;
+
+   state->inserted++;
+
+   if (offset != 0) index++;
+   for (; index < state->jump_limit; index++)
+     {
+        state->jump_table[index] = state->jump_table[index]->prev;
+     }
+
+   last = state->jump_table[state->jump_limit - 1];
+   for (jump_count = 0; last != NULL; last = last->next)
+     jump_count++;
+
+   if (jump_count == state->jump_div + 1)
+     {
+        if (state->jump_limit == EINA_INLIST_JUMP_SIZE)
+          {
+             unsigned short i, j;
+
+             /* compress the jump table */
+             state->jump_div *= 2;
+             state->jump_limit /= 2;
+
+             for (i = 2, j = 1;
+                  i < EINA_INLIST_JUMP_SIZE;
+                  i += 2, j++)
+               state->jump_table[j] = state->jump_table[i];
+          }
+        state->jump_table[state->jump_limit] = state->jump_table[0]->last;
+        state->jump_limit++;
+     }
+}
 
 EAPI Eina_Inlist *
 eina_inlist_sorted_insert(Eina_Inlist *list,
@@ -430,14 +535,11 @@ eina_inlist_sorted_insert(Eina_Inlist *list,
 			  Eina_Compare_Cb func)
 {
    Eina_Inlist *ct = NULL;
-   Eina_Inlist *jump_table[EINA_INLIST_JUMP_SIZE];
+   Eina_Inlist_Sorted_State state;
    int cmp = 0;
    int inf, sup;
    int cur = 0;
    int count = 0;
-   unsigned short jump_limit = 0;
-   int jump_div = 1;
-   int jump_count = 1;
 
    if (!list) return eina_inlist_append(NULL, item);
 
@@ -450,47 +552,23 @@ eina_inlist_sorted_insert(Eina_Inlist *list,
         return eina_inlist_prepend(list, item);
      }
 
-   /*
-    * prepare a jump table to avoid doing unnecessary rewalk
-    * of the inlist as much as possible.
-    */
-   for (ct = list; ct; ct = ct->next, jump_count++, count++)
-     {
-        if (jump_count == jump_div)
-          {
-             if (jump_limit == EINA_INLIST_JUMP_SIZE)
-               {
-                  unsigned short i, j;
-
-                  /* compress the jump table */
-                  jump_div *= 2;
-                  jump_limit /= 2;
-
-                  for (i = 2, j = 1;
-                       i < EINA_INLIST_JUMP_SIZE;
-                       i += 2, j++)
-                    jump_table[j] = jump_table[i];
-               }
-
-             jump_table[jump_limit] = ct;
-             jump_limit++;
-             jump_count = 0;
-          }
-     }
+   state.jump_div = 1;
+   state.jump_limit = 0;
+   eina_inlist_sorted_state_init(&state, list);
 
    /*
     * now do a dychotomic search directly inside the jump_table.
     */
    inf = 0;
-   sup = jump_limit - 1;
+   sup = state.jump_limit - 1;
    cur = 0;
-   ct = jump_table[cur];
+   ct = state.jump_table[cur];
    cmp = func(ct, item);
 
    while (inf <= sup)
      {
         cur = inf + ((sup - inf) >> 1);
-        ct = jump_table[cur];
+        ct = state.jump_table[cur];
 
         cmp = func(ct, item);
         if (cmp == 0)
@@ -521,9 +599,9 @@ eina_inlist_sorted_insert(Eina_Inlist *list,
    /*
     * Now do a dychotomic search between two entries inside the jump_table
     */
-   cur *= jump_div;
-   inf = cur - jump_div;
-   sup = cur + jump_div;
+   cur *= state.jump_div;
+   inf = cur - state.jump_div;
+   sup = cur + state.jump_div;
 
    if (sup > count - 1) sup = count - 1;
    if (inf < 0) inf = 0;
@@ -557,6 +635,148 @@ eina_inlist_sorted_insert(Eina_Inlist *list,
    if (cmp < 0)
      return eina_inlist_append_relative(list, item, ct);
    return eina_inlist_prepend_relative(list, item, ct);
+}
+
+EAPI Eina_Inlist *
+eina_inlist_sorted_state_insert(Eina_Inlist *list,
+                                Eina_Inlist *item,
+                                Eina_Compare_Cb func,
+                                Eina_Inlist_Sorted_State *state)
+{
+   Eina_Inlist *ct = NULL;
+   int cmp = 0;
+   int inf, sup;
+   int cur = 0;
+   int count = 0;
+   unsigned short head;
+   unsigned int offset;
+
+   if (!list)
+     {
+        state->inserted = 1;
+        state->jump_limit = 1;
+        state->jump_table[0] = item;
+        return eina_inlist_append(NULL, item);
+     }
+
+   if (!list->next)
+     {
+        cmp = func(list, item);
+
+        state->jump_limit = 2;
+        state->inserted = 2;
+
+        if (cmp < 0)
+          {
+             state->jump_table[1] = item;
+             return eina_inlist_append(list, item);
+          }
+        state->jump_table[1] = state->jump_table[0];
+        state->jump_table[0] = item;
+        return eina_inlist_prepend(list, item);
+     }
+
+   /*
+    * now do a dychotomic search directly inside the jump_table.
+    */
+   inf = 0;
+   sup = state->jump_limit - 1;
+   cur = 0;
+   ct = state->jump_table[cur];
+   cmp = func(ct, item);
+
+   while (inf <= sup)
+     {
+        cur = inf + ((sup - inf) >> 1);
+        ct = state->jump_table[cur];
+
+        cmp = func(ct, item);
+        if (cmp == 0)
+          break ;
+        else if (cmp < 0)
+          inf = cur + 1;
+        else if (cmp > 0)
+          {
+             if (cur > 0)
+               sup = cur - 1;
+             else
+               break;
+          }
+        else
+          break;
+     }
+
+   /* If at the beginning of the table and cmp < 0,
+    * insert just after the head */
+   if (cur == 0 && cmp > 0)
+     {
+        ct = eina_inlist_prepend_relative(list, item, ct);
+        _eina_inlist_sorted_state_insert(state, 0, 0);
+        return ct;
+     }
+
+   /* If at the end of the table and cmp >= 0,
+    * just append the item to the list */
+   if (cmp < 0 && ct == list->last)
+     {
+        ct = eina_inlist_append(list, item);
+        _eina_inlist_sorted_state_insert(state, state->jump_limit - 1, 1);
+        return ct;
+     }
+
+   /*
+    * Now do a dychotomic search between two entries inside the jump_table
+    */
+   cur *= state->jump_div;
+   inf = cur - state->jump_div;
+   sup = cur + state->jump_div;
+
+   if (sup > count - 1) sup = count - 1;
+   if (inf < 0)
+     inf = 0;
+
+   while (inf <= sup)
+     {
+        int tmp = cur;
+
+        cur = inf + ((sup - inf) >> 1);
+        if (tmp < cur)
+          for (; tmp != cur; tmp++, ct = ct->next);
+        else if (tmp > cur)
+          for (; tmp != cur; tmp--, ct = ct->prev);
+
+        cmp = func(ct, item);
+        if (cmp == 0)
+          break ;
+        else if (cmp < 0)
+          inf = cur + 1;
+        else if (cmp > 0)
+          {
+             if (cur > 0)
+               sup = cur - 1;
+             else
+               break;
+          }
+        else
+          break;
+     }
+
+   if (cmp < 0)
+     {
+        cur++;
+        head = cur / state->jump_div;
+        offset = cur % state->jump_div;
+
+        ct = eina_inlist_append_relative(list, item, ct);
+        _eina_inlist_sorted_state_insert(state, head, offset);
+        return ct;
+     }
+   head = cur / state->jump_div;
+   offset = cur % state->jump_div;
+
+   ct = eina_inlist_prepend_relative(list, item, ct);
+   _eina_inlist_sorted_state_insert(state, head, offset);
+   return ct;
 }
 
 EAPI Eina_Inlist *

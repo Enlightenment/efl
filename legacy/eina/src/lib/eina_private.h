@@ -48,6 +48,8 @@
                max) (((x) > (max)) ? (max) : (((x) < (min)) ? (min) : (x)))
 #endif
 
+#define EINA_INLIST_JUMP_SIZE 256
+
 #define READBUFSIZ 65536
 
 #define EINA_LOG_COLOR_DEFAULT "\033[36m"

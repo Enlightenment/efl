@@ -396,6 +396,7 @@
  * Inlined list type.
  */
 typedef struct _Eina_Inlist Eina_Inlist;
+typedef struct _Eina_Inlist_Sorted_State Eina_Inlist_Sorted_State;
 
 /**
  * @struct _Eina_Inlist
@@ -645,14 +646,78 @@ EAPI Eina_Accessor *eina_inlist_accessor_new(const Eina_Inlist *in_list) EINA_MA
  * returned. Otherwise, the old pointer is returned. See eina_error_get().
  *
  * @note O(log2(n)) comparisons (calls to @p func) average/worst case
- * performance as it uses eina_list_search_sorted_near_list() and thus
- * is bounded to that. As said in eina_list_search_sorted_near_list(),
+ * performance. As said in eina_list_search_sorted_near_list(),
  * lists do not have O(1) access time, so walking to the correct node
  * can be costly, consider worst case to be almost O(n) pointer
  * dereference (list walk).
  */
 EAPI Eina_Inlist *eina_inlist_sorted_insert(Eina_Inlist *list, Eina_Inlist *item, Eina_Compare_Cb func) EINA_ARG_NONNULL(2, 3) EINA_WARN_UNUSED_RESULT;
 
+/**
+ * @brief Create state with valid data in it.
+ *
+ * @return A valid Eina_Inlist_Sorted_State.
+ * @since 1.1.0
+ *
+ * See eina_inlist_sorted_state_insert() for more information.
+ */
+EAPI Eina_Inlist_Sorted_State *eina_inlist_sorted_state_new(void);
+
+/**
+ * @brief Force an Eina_Inlist_Sorted_State to match the content of a list.
+ *
+ * @param state The state to update
+ * @param list The list to match
+ * @since 1.1.0
+ *
+ * See eina_inlist_sorted_state_insert() for more information. This function is
+ * usefull if you didn't use eina_inlist_sorted_state_insert() at some point, but
+ * still think you have a sorted list. It will only correctly work on a sorted list.
+ */
+EAPI void eina_inlist_sorted_state_init(Eina_Inlist_Sorted_State *state, Eina_Inlist *list);
+
+/**
+ * @brief Free an Eina_Inlist_Sorted_State.
+ *
+ * @param state The state to destroy
+ * @since 1.1.0
+ *
+ * See eina_inlist_sorted_state_insert() for more information.
+ */
+EAPI void eina_inlist_sorted_state_free(Eina_Inlist_Sorted_State *state);
+
+/**
+ * @brief Insert a new node into a sorted list.
+ *
+ * @param list The given linked list, @b must be sorted.
+ * @param item list node to insert, must not be NULL.
+ * @param func The function called for the sort.
+ * @param state The current array for initial dichotomic search
+ * @return A list pointer.
+ * @since 1.1.0
+ *
+ * This function inserts item into a linked list assuming @p state match
+ * the exact content order of the list. It use @p state to do a fast
+ * first step dichotomic search before starting to walk the inlist itself.
+ * This make this code much faster than eina_inlist_sorted_insert() as it
+ * doesn't need to walk the list at all. The result is of course a sorted
+ * list with an updated state.. If @p list is @c NULLL, item
+ * is returned. On success, a new list pointer that should be
+ * used in place of the one given to this function is
+ * returned. Otherwise, the old pointer is returned. See eina_error_get().
+ *
+ * @note O(log2(n)) comparisons (calls to @p func) average/worst case
+ * performance. As said in eina_list_search_sorted_near_list(),
+ * lists do not have O(1) access time, so walking to the correct node
+ * can be costly, but this version try to minimize that by making it a
+ * O(log2(n)) for number small number. After n == 256, it start to add a
+ * linear cost again. Consider worst case to be almost O(n) pointer
+ * dereference (list walk).
+ */
+EAPI Eina_Inlist *eina_inlist_sorted_state_insert(Eina_Inlist *list,
+						  Eina_Inlist *item,
+						  Eina_Compare_Cb func,
+						  Eina_Inlist_Sorted_State *state);
 /**
  * @brief Sort a list according to the ordering func will return.
  *
