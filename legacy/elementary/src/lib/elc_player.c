@@ -395,6 +395,14 @@ _del_hook(Evas_Object *obj)
    Widget_Data *wd = elm_widget_data_get(obj);
 
    if (!wd) return;
+   evas_object_smart_callback_del(wd->forward, "clicked", _forward);
+   evas_object_smart_callback_del(wd->info, "clicked", _info);
+   evas_object_smart_callback_del(wd->next, "clicked", _next);
+   evas_object_smart_callback_del(wd->pause, "clicked", _pause);
+   evas_object_smart_callback_del(wd->play, "clicked", _play);
+   evas_object_smart_callback_del(wd->prev,  "clicked", _prev);
+   evas_object_smart_callback_del(wd->rewind, "clicked", _rewind);
+   evas_object_smart_callback_del(wd->next, "clicked", _next);
    _cleanup_callback(wd);
    free(wd);
 }
