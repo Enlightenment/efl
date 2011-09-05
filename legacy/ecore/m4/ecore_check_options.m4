@@ -314,7 +314,7 @@ AC_ARG_ENABLE(cares,
   ])
 
 if test "x${_ecore_want_cares}" = "xyes" -o "x${_ecore_want_cares}" = "xauto" ; then
-   PKG_CHECK_MODULES([CARES], [libcares >= 1.6.1],
+   PKG_CHECK_MODULES([CARES], [libcares >= 1.6.1 libcares != 1.7.5],
      [_ecore_have_cares="yes"],
      [_ecore_have_cares="no"])
 fi
