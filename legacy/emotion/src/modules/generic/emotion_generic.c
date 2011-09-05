@@ -188,6 +188,8 @@ _create_shm_data(Emotion_Generic_Video *ev, const char *shmname)
 static void
 _player_new_frame(Emotion_Generic_Video *ev)
 {
+   if (ev->opening || ev->closing)
+     return;
    if (!ev->drop++)
      _emotion_frame_new(ev->obj);
 }
