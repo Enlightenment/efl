@@ -649,7 +649,7 @@ struct _Evas_Font_Description
    Evas_Font_Weight weight;
    Evas_Font_Width width;
 
-   Eina_Bool new : 1;
+   Eina_Bool is_new : 1;
 };
 
 struct _Evas_Object_Func

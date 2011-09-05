@@ -417,7 +417,7 @@ evas_font_desc_new(void)
    Evas_Font_Description *fdesc;
    fdesc = calloc(1, sizeof(*fdesc));
    fdesc->ref = 1;
-   fdesc->new = EINA_TRUE;
+   fdesc->is_new = EINA_TRUE;
 
    return fdesc;
 }
@@ -429,7 +429,7 @@ evas_font_desc_dup(const Evas_Font_Description *fdesc)
    new = evas_font_desc_new();
    memcpy(new, fdesc, sizeof(*new));
    new->ref = 1;
-   new->new = EINA_TRUE;
+   new->is_new = EINA_TRUE;
    new->name = eina_stringshare_ref(new->name);
 
    return new;
@@ -499,7 +499,7 @@ evas_font_load(Evas *evas, Evas_Font_Description *fdesc, const char *source, Eva
    Font_Rend_Flags wanted_rend = 0;
 
    if (!fdesc) return NULL;
-   fdesc->new = EINA_FALSE;
+   fdesc->is_new = EINA_FALSE;
 
    if (fdesc->slant != EVAS_FONT_SLANT_NORMAL)
       wanted_rend |= FONT_REND_SLANT;

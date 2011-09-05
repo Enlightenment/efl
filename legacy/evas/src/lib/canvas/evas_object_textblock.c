@@ -218,7 +218,7 @@ struct _Evas_Object_Textblock_Node_Text
    Evas_Object_Textblock_Node_Format  *format_node;
    Evas_Object_Textblock_Paragraph    *par;
    Eina_Bool                           dirty : 1;
-   Eina_Bool                           new : 1;
+   Eina_Bool                           is_new : 1;
 };
 
 struct _Evas_Object_Textblock_Node_Format
@@ -231,7 +231,7 @@ struct _Evas_Object_Textblock_Node_Format
    unsigned char                       anchor : 2;
    Eina_Bool                           visible : 1;
    Eina_Bool                           format_change : 1;
-   Eina_Bool                           new : 1;
+   Eina_Bool                           is_new : 1;
 };
 
 #define ANCHOR_NONE 0
@@ -1164,7 +1164,7 @@ _format_command(Evas_Object *obj, Evas_Object_Textblock_Format *fmt, const char 
           {
              fmt->font.fdesc = evas_font_desc_new();
           }
-        else if (!fmt->font.fdesc->new)
+        else if (!fmt->font.fdesc->is_new)
           {
              Evas_Font_Description *old = fmt->font.fdesc;
              fmt->font.fdesc = evas_font_desc_dup(fmt->font.fdesc);
@@ -3551,7 +3551,7 @@ _layout_par(Ctxt *c)
      {
         /* Skip this paragraph if width is the same, there is no ellipsis
          * and we aren't just calculating. */
-        if (!c->par->text_node->new && !c->par->text_node->dirty &&
+        if (!c->par->text_node->is_new && !c->par->text_node->dirty &&
               !c->width_changed && c->par->lines &&
               !c->o->have_ellipsis)
           {
@@ -3564,7 +3564,7 @@ _layout_par(Ctxt *c)
              return 0;
           }
         c->par->text_node->dirty = EINA_FALSE;
-        c->par->text_node->new = EINA_FALSE;
+        c->par->text_node->is_new = EINA_FALSE;
         c->par->rendered = EINA_FALSE;
 
         /* Merge back and clear the paragraph */
@@ -3840,7 +3840,7 @@ _format_changes_invalidate_text_nodes(Ctxt *c)
    int balance = 0;
    while (fnode)
      {
-        if (fnode->new)
+        if (fnode->is_new)
           {
              const char *fstr = fnode->orig_format;
              /* balance < 0 means we gave up and everything should be
@@ -3950,7 +3950,7 @@ _layout_pre(Ctxt *c, int *style_pad_l, int *style_pad_r, int *style_pad_t,
 
              /* If it's not a new paragraph, either update it or skip it.
               * Remove all the paragraphs that were deleted */
-             if (!n->new)
+             if (!n->is_new)
                {
                   /* Remove all the deleted paragraphs at this point */
                   while (c->par->text_node != n)
@@ -4043,7 +4043,7 @@ _layout_pre(Ctxt *c, int *style_pad_l, int *style_pad_r, int *style_pad_t,
                     {
                        off = 0;
                     }
-                  fnode->new = EINA_FALSE;
+                  fnode->is_new = EINA_FALSE;
                   fnode = _NODE_FORMAT(EINA_INLIST_GET(fnode)->next);
                }
              _layout_text_append(c, c->fmt, n, start, -1, o->repch);
@@ -5129,7 +5129,7 @@ _evas_textblock_nodes_merge(Evas_Object_Textblock *o, Evas_Object_Textblock_Node
       to->par->text_node = NULL;
    to->par = NULL;
 
-   to->new = EINA_TRUE;
+   to->is_new = EINA_TRUE;
 
    _evas_textblock_cursors_set_node(o, from, to);
    _evas_textblock_node_text_remove(o, from);
@@ -6521,7 +6521,7 @@ _evas_textblock_node_text_new(void)
    n->unicode = eina_ustrbuf_new();
    /* We want to layout each paragraph at least once. */
    n->dirty = EINA_TRUE;
-   n->new = EINA_TRUE;
+   n->is_new = EINA_TRUE;
 
    return n;
 }
@@ -6918,7 +6918,7 @@ _evas_textblock_node_format_new(Evas_Object_Textblock *o, const char *_format)
      {
         o->anchors_item = eina_list_append(o->anchors_item, n);
      }
-   n->new = EINA_TRUE;
+   n->is_new = EINA_TRUE;
 
    return n;
 }
@@ -7054,7 +7054,7 @@ evas_textblock_cursor_format_append(Evas_Textblock_Cursor *cur, const char *form
           {
              /* Handle visible format nodes here */
              cur->node->dirty = EINA_TRUE;
-             n->new = EINA_FALSE;
+             n->is_new = EINA_FALSE;
           }
      }
    else
@@ -8272,14 +8272,17 @@ _evas_textblock_cursor_range_in_line_geometry_get(
         Evas_Coord x1, w1, x2, w2;
         Evas_Coord x, w, y, h;
         Evas_Object_Textblock_Text_Item *ti;
-        int ret;
+        int ret = 0;
 
         ti = _ITEM_TEXT(it1);
-        ret = cur->ENFN->font_pen_coords_get(cur->ENDT,
-              ti->parent.format->font.font,
-              &ti->text_props,
-              start,
-              &x1, &y, &w1, &h);
+        if (ti->parent.format->font.font)
+          {
+             ret = cur->ENFN->font_pen_coords_get(cur->ENDT,
+                   ti->parent.format->font.font,
+                   &ti->text_props,
+                   start,
+                   &x1, &y, &w1, &h);
+          }
         if (!ret)
           {
              return NULL;
