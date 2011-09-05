@@ -28,8 +28,12 @@ enum _Emotion_Generic_Cmd
    EM_CMD_POSITION_SET, // param: position (float)
    EM_CMD_SPEED_SET, // param: speed (float)
    EM_CMD_AUDIO_MUTE_SET, // param: muted (int)
+   EM_CMD_VIDEO_MUTE_SET, // param: muted (int)
+   EM_CMD_SPU_MUTE_SET, // param: muted (int)
    EM_CMD_VOLUME_SET, // param: volume (float)
    EM_CMD_AUDIO_TRACK_SET, // param: track id (int)
+   EM_CMD_VIDEO_TRACK_SET, // param: track id (int)
+   EM_CMD_SPU_TRACK_SET, // param: track id (int)
    EM_CMD_LAST
 };
 
@@ -46,6 +50,8 @@ enum _Emotion_Generic_Result
    EM_RESULT_POSITION_CHANGED, // param: float
    EM_RESULT_SEEKABLE_CHANGED, // param: int
    EM_RESULT_AUDIO_TRACK_INFO, // param: current track, track count, track_id, track_name, track_id2, track_name2, ...
+   EM_RESULT_VIDEO_TRACK_INFO, // param: current track, track count, track_id, track_name, track_id2, track_name2, ...
+   EM_RESULT_SPU_TRACK_INFO, // param: current spu, spu count, spu_id, spu_name, spu_id2, spu_name2, ...
 			       // (int, int, int, string, int, string, ...)
    EM_RESULT_LAST
 };

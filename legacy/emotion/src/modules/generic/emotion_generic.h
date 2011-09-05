@@ -7,14 +7,14 @@
 
 typedef struct _Emotion_Generic_Video       Emotion_Generic_Video;
 typedef struct _Emotion_Generic_Player       Emotion_Generic_Player;
-typedef struct _Emotion_Generic_Audio_Channel Emotion_Generic_Audio_Channel;
+typedef struct _Emotion_Generic_Channel Emotion_Generic_Channel;
 
 struct _Emotion_Generic_Player
 {
    Ecore_Exe *exe;
 };
 
-struct _Emotion_Generic_Audio_Channel
+struct _Emotion_Generic_Channel
 {
    int id;
    const char *name;
@@ -41,8 +41,6 @@ struct _Emotion_Generic_Video
    Evas_Object               *obj;
    Emotion_Generic_Video_Shared *shared;
    Emotion_Generic_Video_Frame frame;
-   volatile int              spu_channel;
-   volatile int              video_channel;
    volatile int              fq;
    int			     volume;
    float		     speed;
@@ -59,7 +57,13 @@ struct _Emotion_Generic_Video
    Eina_Bool		     file_changed : 1;
    int			     audio_channels_count;
    int			     audio_channel_current;
-   struct _Emotion_Generic_Audio_Channel *audio_channels;
+   struct _Emotion_Generic_Channel *audio_channels;
+   int			     video_channels_count;
+   int			     video_channel_current;
+   struct _Emotion_Generic_Channel *video_channels;
+   int			     spu_channels_count;
+   int			     spu_channel_current;
+   struct _Emotion_Generic_Channel *spu_channels;
 };
 
 #endif

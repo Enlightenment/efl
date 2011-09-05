@@ -420,31 +420,81 @@ _audio_channels_free(Emotion_Generic_Video *ev)
 }
 
 static void
-_player_audio_tracks_info(Emotion_Generic_Video *ev)
+_video_channels_free(Emotion_Generic_Video *ev)
 {
-   int track_current, tracks_count;
+   int i;
+   for (i = 0; i < ev->video_channels_count; i++)
+     eina_stringshare_del(ev->video_channels[i].name);
+   free(ev->video_channels);
+   ev->video_channels_count = 0;
+}
+
+static void
+_spu_channels_free(Emotion_Generic_Video *ev)
+{
+   int i;
+   for (i = 0; i < ev->spu_channels_count; i++)
+     eina_stringshare_del(ev->spu_channels[i].name);
+   free(ev->spu_channels);
+   ev->spu_channels_count = 0;
+}
+
+static void
+_player_tracks_info(Emotion_Generic_Video *ev, Emotion_Generic_Channel **channels, int *count, int *current)
+{
+   Emotion_Generic_Channel *pchannels;
    int i;
 
-   if (ev->audio_channels_count)
-     _audio_channels_free(ev);
+   _player_int_read(ev, current);
+   _player_int_read(ev, count);
 
-   _player_int_read(ev, &track_current);
-   _player_int_read(ev, &tracks_count);
-   INF("video with %d audio tracks (current = %d):", tracks_count, track_current);
-   ev->audio_channels = calloc(
-      tracks_count, sizeof(Emotion_Generic_Audio_Channel));
-   ev->audio_channels_count = tracks_count;
-   ev->audio_channel_current = track_current;
-   for (i = 0; i < tracks_count; i++)
+   INF("number of tracks: %d (current = %d):", *count, *current);
+   pchannels = calloc(*count, sizeof(Emotion_Generic_Channel));
+   for (i = 0; i < *count; i++)
      {
 	int tid, len;
 	char buf[PATH_MAX];
 	_player_int_read(ev, &tid);
 	_player_str_read(ev, buf, &len);
-	ev->audio_channels[i].id = tid;
-	ev->audio_channels[i].name = eina_stringshare_add_length(buf, len);
-	INF("\t%d: %s", tid, buf);
+	pchannels[i].id = tid;
+	pchannels[i].name = eina_stringshare_add_length(buf, len);
+	INF("\tchannel %d: %s", tid, buf);
      }
+
+   *channels = pchannels;
+}
+
+static void
+_player_audio_tracks_info(Emotion_Generic_Video *ev)
+{
+   INF("Receiving audio channels:");
+   if (ev->audio_channels_count)
+     _audio_channels_free(ev);
+
+   _player_tracks_info(ev, &ev->audio_channels, &ev->audio_channels_count,
+		       &ev->audio_channel_current);
+}
+
+static void
+_player_video_tracks_info(Emotion_Generic_Video *ev)
+{
+   INF("Receiving video channels:");
+   if (ev->video_channels_count)
+     _video_channels_free(ev);
+
+   _player_tracks_info(ev, &ev->video_channels, &ev->video_channels_count,
+		       &ev->video_channel_current);
+}
+
+static void
+_player_spu_tracks_info(Emotion_Generic_Video *ev)
+{
+   INF("Receiving spu channels:");
+   if (ev->spu_channels_count)
+     _spu_channels_free(ev);
+
+   _player_tracks_info(ev, &ev->spu_channels, &ev->spu_channels_count,
+		       &ev->spu_channel_current);
 }
 
 static void
@@ -536,6 +586,12 @@ _player_read_cmd(Emotion_Generic_Video *ev)
 	 break;
       case EM_RESULT_AUDIO_TRACK_INFO:
 	 _player_audio_tracks_info(ev);
+	 break;
+      case EM_RESULT_VIDEO_TRACK_INFO:
+	 _player_video_tracks_info(ev);
+	 break;
+      case EM_RESULT_SPU_TRACK_INFO:
+	 _player_spu_tracks_info(ev);
 	 break;
       default:
 	 WRN("received wrong command: %d", type);
@@ -754,6 +810,8 @@ em_shutdown(void *data)
      ecore_main_fd_handler_del(ev->fd_handler);
 
    _audio_channels_free(ev);
+   _video_channels_free(ev);
+   _spu_channels_free(ev);
 
    eina_stringshare_del(ev->cmdline);
    eina_stringshare_del(ev->shmname);
@@ -1019,32 +1077,56 @@ em_event_mouse_move_feed(void *ef __UNUSED__, int x __UNUSED__, int y __UNUSED__
 }
 
 static int
-em_video_channel_count(void *ef __UNUSED__)
+em_video_channel_count(void *data)
 {
-   int ret  = 0;
-   return ret;
+   Emotion_Generic_Video *ev = data;
+   return ev->video_channels_count;
 }
 
 static void
-em_video_channel_set(void *ef __UNUSED__, int channel __UNUSED__)
+em_video_channel_set(void *data, int channel)
 {
+   Emotion_Generic_Video *ev = data;
+
+   if (channel < 0 || channel >= ev->video_channels_count)
+     {
+	WRN("video channel out of range.");
+	return;
+     }
+
+   _player_send_cmd(ev, EM_CMD_VIDEO_TRACK_SET);
+   _player_send_int(ev, ev->video_channels[channel].id);
+   ev->video_channel_current = channel;
 }
 
 static int
-em_video_channel_get(void *ef __UNUSED__)
+em_video_channel_get(void *data)
 {
-   return 1;
+   Emotion_Generic_Video *ev = data;
+   return ev->video_channel_current;
 }
 
 static const char *
-em_video_channel_name_get(void *ef __UNUSED__, int channel __UNUSED__)
+em_video_channel_name_get(void *data, int channel)
 {
-   return NULL;
+   Emotion_Generic_Video *ev = data;
+
+   if (channel < 0 || channel >= ev->video_channels_count)
+     {
+	WRN("video channel out of range.");
+	return NULL;
+     }
+
+   return ev->video_channels[channel].name;
 }
 
 static void
-em_video_channel_mute_set(void *ef __UNUSED__, int mute __UNUSED__)
+em_video_channel_mute_set(void *data, int mute)
 {
+   Emotion_Generic_Video *ev = data;
+   _player_send_cmd(ev, EM_CMD_VIDEO_MUTE_SET);
+   _player_send_int(ev, mute);
+   ev->video_mute = !!mute;
 }
 
 static int
@@ -1065,17 +1147,16 @@ static void
 em_audio_channel_set(void *data, int channel)
 {
    Emotion_Generic_Video *ev = data;
-   int i;
 
-   for (i = 0; i < ev->audio_channels_count; i++)
+   if (channel < 0 || channel >= ev->audio_channels_count)
      {
-	if (ev->audio_channels[i].id == channel)
-	  {
-	     _player_send_cmd(ev, EM_CMD_AUDIO_TRACK_SET);
-	     _player_send_int(ev, channel);
-	     break;
-	  }
+	WRN("audio channel out of range.");
+	return;
      }
+
+   _player_send_cmd(ev, EM_CMD_AUDIO_TRACK_SET);
+   _player_send_int(ev, ev->audio_channels[channel].id);
+   ev->audio_channel_current = channel;
 }
 
 static int
@@ -1089,15 +1170,14 @@ static const char *
 em_audio_channel_name_get(void *data, int channel)
 {
    Emotion_Generic_Video *ev = data;
-   int i;
 
-   for (i = 0; i < ev->audio_channels_count; i++)
+   if (channel < 0 || channel >= ev->audio_channels_count)
      {
-	if (ev->audio_channels[i].id == channel)
-	  return ev->audio_channels[i].name;
+	WRN("audio channel out of range.");
+	return NULL;
      }
 
-   return NULL;
+   return ev->audio_channels[channel].name;
 }
 
 static void
@@ -1140,39 +1220,63 @@ em_audio_channel_volume_get(void *data)
 }
 
 static int
-em_spu_channel_count(void *ef __UNUSED__)
+em_spu_channel_count(void *data)
 {
-   return 0;
+   Emotion_Generic_Video *ev = data;
+   return ev->spu_channels_count;
 }
 
 static void
-em_spu_channel_set(void *ef __UNUSED__, int channel __UNUSED__)
+em_spu_channel_set(void *data, int channel)
 {
+   Emotion_Generic_Video *ev = data;
+
+   if (channel < 0 || channel >= ev->spu_channels_count)
+     {
+	WRN("spu channel out of range.");
+	return;
+     }
+
+   _player_send_cmd(ev, EM_CMD_SPU_TRACK_SET);
+   _player_send_int(ev, ev->spu_channels[channel].id);
+   ev->spu_channel_current = channel;
 }
 
 static int
-em_spu_channel_get(void *ef __UNUSED__)
+em_spu_channel_get(void *data)
 {
-   int num = 0;
-   return num;
+   Emotion_Generic_Video *ev = data;
+   return ev->spu_channel_current;
 }
 
 static const char *
-em_spu_channel_name_get(void *ef __UNUSED__, int channel __UNUSED__)
+em_spu_channel_name_get(void *data, int channel)
 {
-   return NULL;
+   Emotion_Generic_Video *ev = data;
+
+   if (channel < 0 || channel >= ev->spu_channels_count)
+     {
+	WRN("spu channel out of range.");
+	return NULL;
+     }
+
+   return ev->spu_channels[channel].name;
 }
 
 static void
-em_spu_channel_mute_set(void *ef __UNUSED__, int mute __UNUSED__)
+em_spu_channel_mute_set(void *data, int mute)
 {
-   return;
+   Emotion_Generic_Video *ev = data;
+   _player_send_cmd(ev, EM_CMD_SPU_MUTE_SET);
+   _player_send_int(ev, mute);
+   ev->spu_mute = !!mute;
 }
 
 static int
-em_spu_channel_mute_get(void *ef __UNUSED__)
+em_spu_channel_mute_get(void *data)
 {
-   return 0;
+   Emotion_Generic_Video *ev = data;
+   return ev->spu_mute;
 }
 
 static int
