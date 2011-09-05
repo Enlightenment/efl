@@ -656,7 +656,7 @@ _ecore_main_gsource_dispatch(GSource *source __UNUSED__, GSourceFunc callback __
 
    if (ecore_idling)
      {
-        _ecore_idler_call();
+        _ecore_idler_all_call();
 
         events_ready = _ecore_event_exist();
 
