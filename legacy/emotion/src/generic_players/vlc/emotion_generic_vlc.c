@@ -373,6 +373,13 @@ _event_cb(const struct libvlc_event_t *ev, void *data)
 static void
 _file_set(struct _App *app)
 {
+   if (app->opening)
+     {
+	libvlc_media_release(app->m);
+	libvlc_media_player_release(app->mp);
+	free(app->filename);
+     }
+
    _em_str_read(app->em_read, &app->filename);
 
    app->m = libvlc_media_new_path(app->libvlc, app->filename);
@@ -514,6 +521,9 @@ static void
 _file_close(struct _App *app)
 {
    app->playing = 0;
+   if (app->opening)
+     goto release_resources;
+
    if (libvlc_media_player_get_state(app->mp) != libvlc_Playing)
      {
 	_send_file_closed(app);
@@ -521,6 +531,8 @@ _file_close(struct _App *app)
      }
 
    app->closing = 1;
+
+release_resources:
    libvlc_media_player_stop(app->mp);
    if (app->filename)
      free(app->filename);

@@ -56,6 +56,7 @@ struct _Emotion_Generic_Video
    Eina_Bool		     seekable : 1;
    volatile Eina_Bool        opening : 1;
    volatile Eina_Bool        closing : 1;
+   Eina_Bool		     file_changed : 1;
    int			     audio_channels_count;
    int			     audio_channel_current;
    struct _Emotion_Generic_Audio_Channel *audio_channels;

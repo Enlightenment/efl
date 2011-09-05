@@ -193,17 +193,6 @@ _player_new_frame(Emotion_Generic_Video *ev)
 }
 
 static void
-_player_file_set_done(Emotion_Generic_Video *ev)
-{
-   if (!_create_shm_data(ev, ev->shmname))
-     {
-	ERR("could not create shared memory.");
-	return;
-     }
-   _player_send_cmd(ev, EM_CMD_FILE_SET_DONE);
-}
-
-static void
 _file_open(Emotion_Generic_Video *ev)
 {
    INF("Opening file: %s", ev->filename);
@@ -218,6 +207,24 @@ _file_open(Emotion_Generic_Video *ev)
      return;
    _player_send_cmd(ev, EM_CMD_FILE_SET);
    _player_send_str(ev, ev->filename, EINA_TRUE);
+}
+
+static void
+_player_file_set_done(Emotion_Generic_Video *ev)
+{
+   if (ev->file_changed)
+     {
+	_file_open(ev);
+	ev->file_changed = EINA_FALSE;
+	return;
+     }
+
+   if (!_create_shm_data(ev, ev->shmname))
+     {
+	ERR("could not create shared memory.");
+	return;
+     }
+   _player_send_cmd(ev, EM_CMD_FILE_SET_DONE);
 }
 
 static void
@@ -460,10 +467,17 @@ _player_open_done(Emotion_Generic_Video *ev)
 {
    int success;
 
-   ev->opening = EINA_FALSE;
    _player_int_read(ev, &success);
-
    shm_unlink(ev->shmname);
+
+   if (ev->file_changed)
+     {
+	_file_open(ev);
+	ev->file_changed = EINA_FALSE;
+	return;
+     }
+
+   ev->opening = EINA_FALSE;
    if (!success)
      {
 	ERR("Could not open file.");
@@ -761,10 +775,18 @@ em_file_open(const char *file, Evas_Object *obj __UNUSED__, void *data)
    INF("file set: %s", file);
    if (!ev) return 0;
 
-   ev->pos = 0;
-   ev->opening = EINA_TRUE;
-
    eina_stringshare_replace(&ev->filename, file);
+
+   ev->pos = 0;
+
+   if (ev->ready && ev->opening)
+     {
+	INF("file changed while opening.");
+	ev->file_changed = EINA_TRUE;
+	return 1;
+     }
+
+   ev->opening = EINA_TRUE;
 
    if (!ev->closing)
      _file_open(ev);
@@ -781,6 +803,9 @@ em_file_close(void *data)
    INF("file close: %s", ev->filename);
 
    if (!ev->filename)
+     return;
+
+   if (ev->opening)
      return;
 
    _player_send_cmd(ev, EM_CMD_FILE_CLOSE);
