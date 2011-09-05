@@ -6,7 +6,7 @@
 "void main()\n"
 "{\n"
 "  float y,u,v,vmu,r,g,b;\n"
-"  y=texture2D(tex,tex_c).a;\n"
+"  y=texture2D(tex,tex_c).g;\n"
 "  u=texture2D(texuv,tex_cuv).g;\n"
 "  v=texture2D(texuv,tex_cuv).a;\n"
 

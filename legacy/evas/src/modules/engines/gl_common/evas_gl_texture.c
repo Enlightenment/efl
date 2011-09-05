@@ -1141,7 +1141,7 @@ evas_gl_common_texture_nv12tiled_new(Evas_Engine_GL_Context *gc, DATA8 **rows, u
 {
    Evas_GL_Texture *tex;
 
-   tex = _evas_gl_common_texture_y2uv_new(gc, w, h, w / 2, h / 2, alpha_ifmt, alpha_fmt, lum_alpha_ifmt, lum_alpha_fmt);
+   tex = _evas_gl_common_texture_y2uv_new(gc, w, h, w, h, lum_ifmt, lum_fmt, lum_alpha_ifmt, lum_alpha_fmt);
    evas_gl_common_texture_nv12tiled_update(tex, rows, w, h);
    return tex;
 }
@@ -1301,7 +1301,7 @@ evas_gl_common_texture_nv12tiled_update(Evas_GL_Texture *tex, DATA8 **rows, unsi
    glBindTexture(GL_TEXTURE_2D, tex->ptuv->texture);
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
 
-   _tex_2d(tex->ptuv->intformat, w / 2, h / 2, tex->ptuv->format, tex->ptuv->dataformat);
+   _tex_2d(tex->ptuv->intformat, w, h, tex->ptuv->format, tex->ptuv->dataformat);
 
    /* Iterate each UV macroblock like we do in evas_convert_yuv.c */
    base_h = (mb_h >> 1) + (mb_h & 0x1);
