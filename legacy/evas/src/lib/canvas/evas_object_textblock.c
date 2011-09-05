@@ -1831,7 +1831,7 @@ _par_index_node_cmp(const Eina_Rbtree *left, const Eina_Rbtree *right,
    rpar = EINA_RBTREE_CONTAINER_GET(right, Evas_Object_Textblock_Paragraph);
    /* Because they can't be equal or overlap, we don't need to compare
     * anything except for the y position */
-   return (lpar->y < rpar->y) ? EINA_RBTREE_LEFT : EINA_RBTREE_RIGHT;
+   return (lpar->line_no < rpar->line_no) ? EINA_RBTREE_LEFT : EINA_RBTREE_RIGHT;
 }
 
 static int
@@ -2004,6 +2004,7 @@ _paragraph_free(const Evas_Object *obj, Evas_Object_Textblock_Paragraph *par)
    /* If we are the active par of the text node, set to NULL */
    if (par->text_node && (par->text_node->par == par))
       par->text_node->par = NULL;
+
    o->par_index = eina_rbtree_inline_remove(o->par_index,
             EINA_RBTREE_GET(par), _par_index_node_cmp, NULL);
 
@@ -2042,6 +2043,7 @@ _paragraphs_free(const Evas_Object *obj, Evas_Object_Textblock_Paragraph *pars)
 {
    Evas_Object_Textblock *o;
    o = (Evas_Object_Textblock *)(obj->object_data);
+
    o->par_index = NULL;
 
    while (pars)
@@ -3188,16 +3190,6 @@ _layout_update_par(Ctxt *c)
      {
         c->par->y = 0;
      }
-
-   /* Insert it to the index now that we calculated it's y
-    * We don't need to reinsert even if y (they key) changed, because the
-    * order remains the same. */
-   if (!c->par->indexed)
-     {
-        c->o->par_index = eina_rbtree_inline_insert(c->o->par_index,
-              EINA_RBTREE_GET(c->par), _par_index_node_cmp, NULL);
-        c->par->indexed = EINA_TRUE;
-     }
 }
 
 /* -1 means no wrap */
@@ -3547,6 +3539,17 @@ _layout_par(Ctxt *c)
    /* Check if we need to skip this paragraph because it's already layouted
     * correctly, and mark handled nodes as dirty. */
    c->par->line_no = c->line_no;
+
+   /* Insert it to the index now that we calculated it's y
+    * We don't need to reinsert even if y (they key) changed, because the
+    * order remains the same. */
+   if (!c->par->indexed)
+     {
+        c->o->par_index = eina_rbtree_inline_insert(c->o->par_index,
+              EINA_RBTREE_GET(c->par), _par_index_node_cmp, NULL);
+        c->par->indexed = EINA_TRUE;
+     }
+
    if (c->par->text_node)
      {
         /* Skip this paragraph if width is the same, there is no ellipsis
