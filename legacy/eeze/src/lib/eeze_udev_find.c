@@ -217,6 +217,7 @@ eeze_udev_find_by_type(Eeze_Udev_Type etype,
       case EEZE_UDEV_TYPE_POWER_BAT:
         udev_enumerate_add_match_subsystem(en, "power_supply");
         udev_enumerate_add_match_sysattr(en, "type", "Battery");
+        udev_enumerate_add_match_sysattr(en, "present", "1");
         break;
 
       case EEZE_UDEV_TYPE_NET:
