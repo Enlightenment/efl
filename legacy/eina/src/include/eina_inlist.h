@@ -396,6 +396,12 @@
  * Inlined list type.
  */
 typedef struct _Eina_Inlist Eina_Inlist;
+
+/**
+ * @typedef Eina_Inlist_Sorted_State
+ * @since 1.1.0
+ * State of sorted Eina_Inlist
+ */
 typedef struct _Eina_Inlist_Sorted_State Eina_Inlist_Sorted_State;
 
 /**
