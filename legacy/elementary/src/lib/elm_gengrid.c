@@ -59,6 +59,7 @@
 
 struct _Widget_Data
 {
+   Eina_Inlist_Sorted_State *state;
    Evas_Object      *self, *scr;
    Evas_Object      *pan_smart;
    Pan              *pan;
@@ -1901,9 +1902,12 @@ elm_gengrid_item_direct_sorted_insert(Evas_Object                  *obj,
    item = _item_create(wd, gic, data, func, func_data);
    if (!item) return NULL;
 
+   if (!wd->state)
+     wd->state = eina_inlist_sorted_state_new();
+
    _elm_gengrid_item_compare_cb = comp;
-   wd->items = eina_inlist_sorted_insert(wd->items, EINA_INLIST_GET(item),
-                                         _elm_gengrid_item_compare);
+   wd->items = eina_inlist_sorted_state_insert(wd->items, EINA_INLIST_GET(item),
+                                         _elm_gengrid_item_compare, wd->state);
    if (wd->calc_job) ecore_job_del(wd->calc_job);
    wd->calc_job = ecore_job_add(_calc_job, wd);
 
@@ -1972,6 +1976,11 @@ elm_gengrid_clear(Evas_Object *obj)
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
 
+   if (wd->state)
+     {
+        eina_inlist_sorted_state_free(wd->state);
+        wd->state = NULL;
+     }
    if (wd->calc_job)
      {
         ecore_job_del(wd->calc_job);

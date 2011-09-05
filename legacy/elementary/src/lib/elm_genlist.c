@@ -15,6 +15,7 @@ typedef struct _Item_Cache  Item_Cache;
 
 struct _Widget_Data
 {
+   Eina_Inlist_Sorted_State *state;
    Evas_Object      *obj, *scr, *pan_smart;
    Eina_Inlist      *items, *blocks;
    Eina_List        *group_items;
@@ -3652,11 +3653,16 @@ elm_genlist_item_direct_sorted_insert(Evas_Object                  *obj,
      }
    else
      {
+        if (!wd->state)
+          {
+             wd->state = eina_inlist_sorted_state_new();
+          }
+
         if (flags & ELM_GENLIST_ITEM_GROUP)
           wd->group_items = eina_list_append(wd->group_items, it);
 
-        wd->items = eina_inlist_sorted_insert(wd->items, EINA_INLIST_GET(it),
-                                              _elm_genlist_item_compare);
+        wd->items = eina_inlist_sorted_state_insert(wd->items, EINA_INLIST_GET(it),
+                                                    _elm_genlist_item_compare, wd->state);
 
         if (EINA_INLIST_GET(it)->next)
           {
@@ -3703,6 +3709,11 @@ elm_genlist_clear(Evas_Object *obj)
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
+   if (wd->state)
+     {
+        eina_inlist_sorted_state_free(wd->state);
+        wd->state = NULL;
+     }
    if (wd->walking > 0)
      {
         Elm_Genlist_Item *it;
