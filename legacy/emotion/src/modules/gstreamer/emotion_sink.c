@@ -673,7 +673,7 @@ evas_video_sink_samsung_main_render(void *data)
    buffer = send->frame;
    preroll = send->preroll;
 
-   if (!priv || !priv->o || priv->unlocked || !send->ev)
+   if (!priv || !priv->o || priv->unlocked)
      goto exit_point;
 
    _emotion_gstreamer_video_pipeline_parse(send->ev, EINA_TRUE);
@@ -746,7 +746,7 @@ evas_video_sink_samsung_main_render(void *data)
  exit_point:
    emotion_gstreamer_buffer_free(send);
 
-   if (preroll || !priv->o || !send->ev) return ;
+   if (preroll || !priv->o) return ;
 
    eina_lock_take(&priv->m);
    if (!priv->unlocked)
@@ -777,7 +777,7 @@ evas_video_sink_main_render(void *data)
    preroll = send->preroll;
    ev = send->ev;
 
-   if (!priv || !priv->o || priv->unlocked || !ev)
+   if (!priv || !priv->o || priv->unlocked)
      goto exit_point;
 
    _emotion_gstreamer_video_pipeline_parse(ev, EINA_TRUE);
@@ -819,7 +819,7 @@ evas_video_sink_main_render(void *data)
  exit_point:
    emotion_gstreamer_buffer_free(send);
 
-   if (preroll || !priv->o || !ev) return ;
+   if (preroll || !priv->o) return ;
 
    eina_lock_take(&priv->m);
    if (!priv->unlocked)
