@@ -7965,12 +7965,13 @@ evas_textblock_cursor_line_geometry_get(const Evas_Textblock_Cursor *cur, Evas_C
 EAPI Eina_Bool
 evas_textblock_cursor_visible_range_get(Evas_Textblock_Cursor *start, Evas_Textblock_Cursor *end)
 {
+   Evas *e;
    Evas_Coord cy, ch;
    Evas_Object *obj = start->obj;
    TB_HEAD_RETURN(EINA_FALSE);
-   /* Clip is relative to the object */
-   cy = obj->cur.cache.clip.y - obj->cur.geometry.y;
-   ch = obj->cur.cache.clip.h;
+   e = evas_object_evas_get(obj);
+   cy = 0 - obj->cur.geometry.y;
+   ch = e->viewport.h;
    evas_textblock_cursor_line_coord_set(start, cy);
    evas_textblock_cursor_line_coord_set(end, cy + ch);
    evas_textblock_cursor_line_char_last(end);
