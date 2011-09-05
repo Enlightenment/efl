@@ -186,7 +186,10 @@ static void
 _send_cmd_str(struct _App *app, const char *str)
 {
    int len;
-   len = strlen(str) + 1;
+   if (str)
+     len = strlen(str) + 1;
+   else
+     len = 0;
    _em_write_safe(app->em_write, &len, sizeof(len));
    _em_write_safe(app->em_write, str, len);
 }
@@ -650,6 +653,36 @@ _send_all_track_info(struct _App *app)
 }
 
 static void
+_send_all_meta_info(struct _App *app)
+{
+   const char *meta;
+
+   _send_cmd_start(app, EM_RESULT_META_INFO);
+
+   /*
+    * Will send in this order: title, artist, album, year,
+    * genre, comments, disc id and track count.
+    */
+   meta = libvlc_media_get_meta(app->m, libvlc_meta_Title);
+   _send_cmd_str(app, meta);
+   meta = libvlc_media_get_meta(app->m, libvlc_meta_Artist);
+   _send_cmd_str(app, meta);
+   meta = libvlc_media_get_meta(app->m, libvlc_meta_Album);
+   _send_cmd_str(app, meta);
+   meta = libvlc_media_get_meta(app->m, libvlc_meta_Date);
+   _send_cmd_str(app, meta);
+   meta = libvlc_media_get_meta(app->m, libvlc_meta_Genre);
+   _send_cmd_str(app, meta);
+   meta = NULL; // sending empty comments
+   _send_cmd_str(app, meta);
+   meta = NULL; // sending empty disc id
+   _send_cmd_str(app, meta);
+   meta = libvlc_media_get_meta(app->m, libvlc_meta_TrackNumber);
+   _send_cmd_str(app, meta);
+   _send_cmd_finish(app);
+}
+
+static void
 _position_changed(struct _App *app)
 {
    if (!app->opening)
@@ -664,6 +697,9 @@ _position_changed(struct _App *app)
 
    /* sending audio track info */
    _send_all_track_info(app);
+
+   /* sending meta info */
+   _send_all_meta_info(app);
 
    libvlc_media_player_stop(app->mp);
 }
