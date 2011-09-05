@@ -498,6 +498,51 @@ _player_spu_tracks_info(Emotion_Generic_Video *ev)
 }
 
 static void
+_player_helper_str_read(Emotion_Generic_Video *ev, const char **pstr)
+{
+   int len;
+   char buf[PATH_MAX];
+   if (_player_str_read(ev, buf, &len))
+     *pstr = eina_stringshare_add_length(buf, len);
+}
+
+static void
+_player_meta_info_free(Emotion_Generic_Video *ev)
+{
+   eina_stringshare_replace(&ev->meta.title, NULL);
+   eina_stringshare_replace(&ev->meta.artist, NULL);
+   eina_stringshare_replace(&ev->meta.album, NULL);
+   eina_stringshare_replace(&ev->meta.year, NULL);
+   eina_stringshare_replace(&ev->meta.genre, NULL);
+   eina_stringshare_replace(&ev->meta.comment, NULL);
+   eina_stringshare_replace(&ev->meta.disc_id, NULL);
+   eina_stringshare_replace(&ev->meta.count, NULL);
+}
+
+static void
+_player_meta_info_read(Emotion_Generic_Video *ev)
+{
+   INF("Receiving meta info:");
+   _player_meta_info_free(ev);
+   _player_helper_str_read(ev, &ev->meta.title);
+   _player_helper_str_read(ev, &ev->meta.artist);
+   _player_helper_str_read(ev, &ev->meta.album);
+   _player_helper_str_read(ev, &ev->meta.year);
+   _player_helper_str_read(ev, &ev->meta.genre);
+   _player_helper_str_read(ev, &ev->meta.comment);
+   _player_helper_str_read(ev, &ev->meta.disc_id);
+   _player_helper_str_read(ev, &ev->meta.count);
+   INF("title: '%s'", ev->meta.title);
+   INF("artist: '%s'", ev->meta.artist);
+   INF("album: '%s'", ev->meta.album);
+   INF("year: '%s'", ev->meta.year);
+   INF("genre: '%s'", ev->meta.genre);
+   INF("comment: '%s'", ev->meta.comment);
+   INF("disc_id: '%s'", ev->meta.disc_id);
+   INF("count: '%s'", ev->meta.count);
+}
+
+static void
 _player_file_closed(Emotion_Generic_Video *ev)
 {
    INF("Closed previous file.");
@@ -592,6 +637,9 @@ _player_read_cmd(Emotion_Generic_Video *ev)
 	 break;
       case EM_RESULT_SPU_TRACK_INFO:
 	 _player_spu_tracks_info(ev);
+	 break;
+      case EM_RESULT_META_INFO:
+	 _player_meta_info_read(ev);
 	 break;
       default:
 	 WRN("received wrong command: %d", type);
@@ -812,6 +860,7 @@ em_shutdown(void *data)
    _audio_channels_free(ev);
    _video_channels_free(ev);
    _spu_channels_free(ev);
+   _player_meta_info_free(ev);
 
    eina_stringshare_del(ev->cmdline);
    eina_stringshare_del(ev->shmname);
@@ -1330,10 +1379,30 @@ em_eject(void *ef __UNUSED__)
 }
 
 static const char *
-em_meta_get(void *ef __UNUSED__, int meta __UNUSED__)
+em_meta_get(void *data, int meta)
 {
-   char * meta_data = NULL;
-   return meta_data;
+   Emotion_Generic_Video *ev = data;
+
+   switch (meta) {
+      case EMOTION_META_INFO_TRACK_TITLE:
+	 return ev->meta.title;
+      case EMOTION_META_INFO_TRACK_ARTIST:
+	 return ev->meta.artist;
+      case EMOTION_META_INFO_TRACK_ALBUM:
+	 return ev->meta.album;
+      case EMOTION_META_INFO_TRACK_YEAR:
+	 return ev->meta.year;
+      case EMOTION_META_INFO_TRACK_GENRE:
+	 return ev->meta.genre;
+      case EMOTION_META_INFO_TRACK_COMMENT:
+	 return ev->meta.comment;
+      case EMOTION_META_INFO_TRACK_DISC_ID:
+	 return ev->meta.disc_id;
+      case EMOTION_META_INFO_TRACK_COUNT:
+	 return ev->meta.count;
+   }
+
+   return NULL;
 }
 
 static Emotion_Video_Module em_module =

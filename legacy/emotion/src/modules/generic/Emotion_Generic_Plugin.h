@@ -53,6 +53,7 @@ enum _Emotion_Generic_Result
    EM_RESULT_VIDEO_TRACK_INFO, // param: current track, track count, track_id, track_name, track_id2, track_name2, ...
    EM_RESULT_SPU_TRACK_INFO, // param: current spu, spu count, spu_id, spu_name, spu_id2, spu_name2, ...
 			       // (int, int, int, string, int, string, ...)
+   EM_RESULT_META_INFO, // param: title, artist, album, year, genre, comments, disc id, count (all int)
    EM_RESULT_LAST
 };
 
