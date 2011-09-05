@@ -876,8 +876,8 @@ static void
 em_size_get(void *data, int *w, int *h)
 {
    Emotion_Generic_Video *ev = data;
-   if(w) *w = ev->w;
-   if(h) *h = ev->h;
+   if (w) *w = ev->w;
+   if (h) *h = ev->h;
 }
 
 static void
