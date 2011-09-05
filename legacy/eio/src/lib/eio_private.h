@@ -49,7 +49,7 @@
 #define EIO_PACKET_SIZE 65536
 #define EIO_PACKET_COUNT 256
 
-#define EIO_PACKED_TIME 0.001
+#define EIO_PACKED_TIME 0.003
 
 typedef struct _Eio_File_Ls Eio_File_Ls;
 typedef struct _Eio_File_Direct_Ls Eio_File_Direct_Ls;
