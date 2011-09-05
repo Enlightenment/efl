@@ -23,7 +23,7 @@ enum _Emotion_Generic_Cmd
    EM_CMD_PLAY, // param: position (float)
    EM_CMD_STOP, // param: none
    EM_CMD_FILE_SET, // param: filename (string)
-   EM_CMD_FILE_SET_DONE, // param: none
+   EM_CMD_FILE_SET_DONE, // param: success (int)
    EM_CMD_FILE_CLOSE, // param: none
    EM_CMD_POSITION_SET, // param: position (float)
    EM_CMD_SPEED_SET, // param: speed (float)
@@ -84,7 +84,7 @@ struct _Emotion_Generic_Video_Shared
    sem_t lock;
 };
 
-inline void
+inline int
 emotion_generic_shm_get(const char *shmname, Emotion_Generic_Video_Shared **vs, Emotion_Generic_Video_Frame *vf)
 {
    int shmfd = -1;
@@ -92,11 +92,29 @@ emotion_generic_shm_get(const char *shmname, Emotion_Generic_Video_Shared **vs, 
    Emotion_Generic_Video_Shared *t_vs;
 
    shmfd = shm_open(shmname, O_RDWR, 0777);
+   if (shmfd == -1)
+     {
+	fprintf(stderr, "player: could not open shm: %s\n", shmname);
+	fprintf(stderr, "player: %s\n", strerror(errno));
+	return 0;
+     }
 
    t_vs = mmap(NULL, sizeof(*t_vs), PROT_READ|PROT_WRITE, MAP_SHARED, shmfd, 0);
+   if (t_vs == MAP_FAILED)
+     {
+	fprintf(stderr, "player: could not map shared memory.\n");
+	fprintf(stderr, "player: %s\n", strerror(errno));
+	return 0;
+     }
    size = t_vs->size;
    munmap(t_vs, sizeof(*t_vs));
    t_vs = mmap(NULL, size, PROT_READ|PROT_WRITE, MAP_SHARED, shmfd, 0);
+   if (t_vs == MAP_FAILED)
+     {
+	fprintf(stderr, "player: could not map shared memory.\n");
+	fprintf(stderr, "player: %s\n", strerror(errno));
+	return 0;
+     }
 
    vf->frames[0] = (unsigned char *)t_vs + sizeof(*t_vs);
    vf->frames[1] = (unsigned char *)t_vs + sizeof(*t_vs) + t_vs->height * t_vs->width * t_vs->pitch;

@@ -140,6 +140,12 @@ _create_shm_data(Emotion_Generic_Video *ev, const char *shmname)
    Emotion_Generic_Video_Shared *vs;
 
    shmfd = shm_open(shmname, O_CREAT | O_RDWR | O_TRUNC, 0777);
+   if (shmfd == -1)
+     {
+	ERR("player: could not open shm: %s", shmname);
+	ERR("player: %s", strerror(errno));
+	return 0;
+     }
    size = 3 * (ev->w * ev->h * DEFAULTPITCH) + sizeof(*vs);
 
    npages = (int)(size / getpagesize()) + 1;
@@ -149,6 +155,7 @@ _create_shm_data(Emotion_Generic_Video *ev, const char *shmname)
      {
 	ERR("error when allocating shared memory (size = %zd): "
 	    "%s", size, strerror(errno));
+	shm_unlink(shmname);
 	return EINA_FALSE;
      }
    vs = mmap(NULL, size, PROT_READ|PROT_WRITE, MAP_SHARED, shmfd, 0);
@@ -386,10 +393,20 @@ _player_file_closed(Emotion_Generic_Video *ev)
 }
 
 static void
-_player_open_done(Emotion_Generic_Video *ev)
+_player_open_done(Emotion_Generic_Video *ev, void *line)
 {
+   int success;
+
    ev->opening = EINA_FALSE;
+   RCV_CMD_PARAM(line, success);
+
    shm_unlink(ev->shmname);
+   if (!success)
+     {
+	ERR("Could not open file.");
+	return;
+     }
+
    _emotion_open_done(ev->obj);
 
    if (ev->play)
@@ -418,7 +435,7 @@ _player_read_cmd(Emotion_Generic_Video *ev, void *line, int size __UNUSED__)
 	 _player_file_set_done(ev);
 	 break;
       case EM_RESULT_FILE_SET_DONE:
-	 _player_open_done(ev);
+	 _player_open_done(ev, line);
 	 break;
       case EM_RESULT_FILE_CLOSE:
 	 _player_file_closed(ev);

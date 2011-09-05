@@ -471,12 +471,27 @@ _audio_track_set(struct _App *app)
 static void
 _file_set_done(struct _App *app)
 {
-   emotion_generic_shm_get(app->shmname, &app->vs, &app->vf);
+   int r;
+
+   app->opening = 0;
+
+   r = emotion_generic_shm_get(app->shmname, &app->vs, &app->vf);
+   if (!r)
+     {
+	free(app->filename);
+        libvlc_media_release(app->m);
+        libvlc_media_player_release(app->mp);
+	app->filename = NULL;
+	app->m = NULL;
+	app->mp = NULL;
+	_send_cmd_start(EM_RESULT_FILE_SET_DONE);
+	SEND_CMD_PARAM(r);
+	_send_cmd_finish();
+     }
    app->w = app->vs->width;
    app->h = app->vs->height;
    libvlc_video_set_format(app->mp, "RV32", app->w, app->h, app->w * 4);
    libvlc_video_set_callbacks(app->mp, _lock, _unlock, _display, app);
-   app->opening = 0;
 
 
    libvlc_event_attach(app->event_mgr, libvlc_MediaPlayerPlaying,
@@ -489,7 +504,10 @@ _file_set_done(struct _App *app)
 		       _event_cb, app);
 
    libvlc_audio_set_mute(app->mp, 0);
-   _send_cmd(EM_RESULT_FILE_SET_DONE);
+
+   _send_cmd_start(EM_RESULT_FILE_SET_DONE);
+   SEND_CMD_PARAM(r);
+   _send_cmd_finish();
 }
 
 static void
