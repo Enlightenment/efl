@@ -100,7 +100,7 @@ _evas_video_bgra(unsigned char *evas_data, const unsigned char *gst_data, unsign
 }
 
 static void
-_evas_video_i420(unsigned char *evas_data, const unsigned char *gst_data, unsigned int w, unsigned int h, unsigned int output_height)
+_evas_video_i420(unsigned char *evas_data, const unsigned char *gst_data, unsigned int w, unsigned int h __UNUSED__, unsigned int output_height)
 {
    const unsigned char **rows;
    unsigned int i, j;
@@ -117,11 +117,11 @@ _evas_video_i420(unsigned char *evas_data, const unsigned char *gst_data, unsign
      rows[i] = &gst_data[h * w + j * (w / 2)];
 
    for (j = 0; j < (rh / 2); j++, i++)
-     rows[i] = &gst_data[h * w + h * (w / 4) + j * (w / 2)];
+     rows[i] = &gst_data[h * w + rh * (w / 4) + j * (w / 2)];
 }
 
 static void
-_evas_video_yv12(unsigned char *evas_data, const unsigned char *gst_data, unsigned int w, unsigned int h, unsigned int output_height)
+_evas_video_yv12(unsigned char *evas_data, const unsigned char *gst_data, unsigned int w, unsigned int h __UNUSED__, unsigned int output_height)
 {
    const unsigned char **rows;
    unsigned int i, j;
@@ -135,7 +135,7 @@ _evas_video_yv12(unsigned char *evas_data, const unsigned char *gst_data, unsign
      rows[i] = &gst_data[i * w];
 
    for (j = 0; j < (rh / 2); j++, i++)
-     rows[i] = &gst_data[h * w + h * (w / 4) + j * (w / 2)];
+     rows[i] = &gst_data[h * w + rh * (w / 4) + j * (w / 2)];
 
    for (j = 0; j < (rh / 2); j++, i++)
      rows[i] = &gst_data[h * w + j * (w / 2)];
@@ -154,7 +154,7 @@ _evas_video_yuy2(unsigned char *evas_data, const unsigned char *gst_data, unsign
 }
 
 static void
-_evas_video_nv12(unsigned char *evas_data, const unsigned char *gst_data, unsigned int w, unsigned int h, unsigned int output_height)
+_evas_video_nv12(unsigned char *evas_data, const unsigned char *gst_data, unsigned int w, unsigned int h __UNUSED__, unsigned int output_height)
 {
    const unsigned char **rows;
    unsigned int i, j;
@@ -168,7 +168,7 @@ _evas_video_nv12(unsigned char *evas_data, const unsigned char *gst_data, unsign
      rows[i] = &gst_data[i * w];
 
    for (j = 0; j < (rh / 2); j++, i++)
-     rows[i] = &gst_data[h * w + j * w];
+     rows[i] = &gst_data[rh * w + j * w];
 }
 
 static void
@@ -243,26 +243,28 @@ _evas_video_st12(unsigned char *evas_data, const unsigned char *gst_data, unsign
 }
 
 static const struct {
+   const char *name;
    guint32 fourcc;
    Evas_Colorspace eformat;
    Evas_Video_Convert_Cb func;
    Eina_Bool force_height;
 } colorspace_fourcc_convertion[] = {
-  { GST_MAKE_FOURCC('I', '4', '2', '0'), EVAS_COLORSPACE_YCBCR422P601_PL, _evas_video_i420, EINA_TRUE },
-  { GST_MAKE_FOURCC('Y', 'V', '1', '2'), EVAS_COLORSPACE_YCBCR422P601_PL, _evas_video_yv12, EINA_TRUE },
-  { GST_MAKE_FOURCC('Y', 'U', 'Y', '2'), EVAS_COLORSPACE_YCBCR422601_PL, _evas_video_yuy2, EINA_FALSE },
-  { GST_MAKE_FOURCC('N', 'V', '1', '2'), EVAS_COLORSPACE_YCBCR420NV12601_PL, _evas_video_nv12, EINA_TRUE },
-  { GST_MAKE_FOURCC('T', 'M', '1', '2'), EVAS_COLORSPACE_YCBCR420TM12601_PL, _evas_video_mt12, EINA_TRUE }
+  { "I420", GST_MAKE_FOURCC('I', '4', '2', '0'), EVAS_COLORSPACE_YCBCR422P601_PL, _evas_video_i420, EINA_TRUE },
+  { "YV12", GST_MAKE_FOURCC('Y', 'V', '1', '2'), EVAS_COLORSPACE_YCBCR422P601_PL, _evas_video_yv12, EINA_TRUE },
+  { "YUY2", GST_MAKE_FOURCC('Y', 'U', 'Y', '2'), EVAS_COLORSPACE_YCBCR422601_PL, _evas_video_yuy2, EINA_FALSE },
+  { "NV12", GST_MAKE_FOURCC('N', 'V', '1', '2'), EVAS_COLORSPACE_YCBCR420NV12601_PL, _evas_video_nv12, EINA_TRUE },
+  { "TM12", GST_MAKE_FOURCC('T', 'M', '1', '2'), EVAS_COLORSPACE_YCBCR420TM12601_PL, _evas_video_mt12, EINA_TRUE }
 };
 
 static const struct {
+   const char *name;
    GstVideoFormat format;
    Evas_Colorspace eformat;
    Evas_Video_Convert_Cb func;
 } colorspace_format_convertion[] = {
-  { GST_VIDEO_FORMAT_BGR, EVAS_COLORSPACE_ARGB8888, _evas_video_bgr },
-  { GST_VIDEO_FORMAT_BGRx, EVAS_COLORSPACE_ARGB8888, _evas_video_bgrx },
-  { GST_VIDEO_FORMAT_BGRA, EVAS_COLORSPACE_ARGB8888, _evas_video_bgra }
+  { "BGR", GST_VIDEO_FORMAT_BGR, EVAS_COLORSPACE_ARGB8888, _evas_video_bgr },
+  { "BGRx", GST_VIDEO_FORMAT_BGRx, EVAS_COLORSPACE_ARGB8888, _evas_video_bgrx },
+  { "BGRA", GST_VIDEO_FORMAT_BGRA, EVAS_COLORSPACE_ARGB8888, _evas_video_bgra }
 };
 
 static void
@@ -285,7 +287,6 @@ evas_video_sink_init(EvasVideoSink* sink, EvasVideoSinkClass* klass __UNUSED__)
    INF("sink init");
    sink->priv = priv = G_TYPE_INSTANCE_GET_PRIVATE(sink, EVAS_TYPE_VIDEO_SINK, EvasVideoSinkPrivate);
    priv->o = NULL;
-   priv->last_buffer = NULL;
    priv->width = 0;
    priv->height = 0;
    priv->func = NULL;
@@ -333,6 +334,8 @@ evas_video_sink_set_property(GObject * object, guint prop_id,
        INF("sink set ev.");
        eina_lock_take(&priv->m);
        priv->ev = g_value_get_pointer (value);
+       if (priv->ev)
+         priv->ev->samsung = EINA_TRUE;
        eina_lock_release(&priv->m);
        break;
     default:
@@ -398,11 +401,6 @@ evas_video_sink_dispose(GObject* object)
    eina_lock_free(&priv->m);
    eina_condition_free(&priv->c);
 
-   if (priv->last_buffer) {
-      gst_buffer_unref(priv->last_buffer);
-      priv->last_buffer = NULL;
-   }
-
    G_OBJECT_CLASS(parent_class)->dispose(object);
 }
 
@@ -432,20 +430,29 @@ gboolean evas_video_sink_set_caps(GstBaseSink *bsink, GstCaps *caps)
         for (i = 0; i < sizeof (colorspace_fourcc_convertion) / sizeof (colorspace_fourcc_convertion[0]); ++i)
           if (fourcc == colorspace_fourcc_convertion[i].fourcc)
             {
+               fprintf(stderr, "Found '%s'\n", colorspace_fourcc_convertion[i].name);
                priv->eformat = colorspace_fourcc_convertion[i].eformat;
                priv->func = colorspace_fourcc_convertion[i].func;
                if (colorspace_fourcc_convertion[i].force_height)
                  {
                     priv->height = (priv->height >> 1) << 1;
                  }
+               if (priv->ev)
+                 priv->ev->kill_buffer = EINA_TRUE;
                return TRUE;
             }
 
         if (fourcc == GST_MAKE_FOURCC('S', 'T', '1', '2'))
           {
+             fprintf(stderr, "Found '%s'\n", "ST12");
              priv->eformat = EVAS_COLORSPACE_YCBCR420TM12601_PL;
              priv->samsung = EINA_TRUE;
              priv->func = NULL;
+             if (priv->ev)
+               {
+                  priv->ev->samsung = EINA_TRUE;
+                  priv->ev->kill_buffer = EINA_TRUE;
+               }
 	     return TRUE;
           }
      }
@@ -462,8 +469,11 @@ gboolean evas_video_sink_set_caps(GstBaseSink *bsink, GstCaps *caps)
    for (i = 0; i < sizeof (colorspace_format_convertion) / sizeof (colorspace_format_convertion[0]); ++i)
      if (format == colorspace_format_convertion[i].format)
        {
+          fprintf(stderr, "Found '%s'\n", colorspace_format_convertion[i].name);
           priv->eformat = colorspace_format_convertion[i].eformat;
           priv->func = colorspace_format_convertion[i].func;
+          if (priv->ev)
+            priv->ev->kill_buffer = EINA_FALSE;
           return TRUE;
        }
 
@@ -700,10 +710,13 @@ evas_video_sink_samsung_main_render(void *data)
        w, h,
        stride * w / priv->width, elevation * h / priv->height);
 
+   send->ev->fill.width = stride * w / priv->width;
+   send->ev->fill.height = elevation * h / priv->height;
+
    evas_object_image_alpha_set(priv->o, 0);
    evas_object_image_colorspace_set(priv->o, priv->eformat);
    evas_object_image_size_set(priv->o, stride, elevation);
-   evas_object_image_fill_set(priv->o, 0, 0, stride * w / priv->width, elevation * h / priv->height);
+   evas_object_image_fill_set(priv->o, 0, 0, send->ev->fill.width, send->ev->fill.height);
 
    evas_data = evas_object_image_data_get(priv->o, 1);
 
@@ -800,8 +813,8 @@ evas_video_sink_main_render(void *data)
    _emotion_video_pos_update(ev->obj, ev->position, vstream->length_time);
    _emotion_frame_resize(ev->obj, priv->width, priv->height, ev->ratio);
 
-   if (priv->last_buffer) gst_buffer_unref(priv->last_buffer);
-   priv->last_buffer = gst_buffer_ref(buffer);
+   if (ev->last_buffer) gst_buffer_unref(ev->last_buffer);
+   ev->last_buffer = gst_buffer_ref(buffer);
 
  exit_point:
    emotion_gstreamer_buffer_free(send);
@@ -957,6 +970,26 @@ _emotion_gstreamer_end(void *data, Ecore_Thread *thread)
      _emotion_gstreamer_video_pipeline_parse(data, EINA_TRUE);
 }
 
+static void
+_on_post_clear(void *data, Evas *e __UNUSED__, void *event_info __UNUSED__)
+{
+   Emotion_Gstreamer_Video *ev = data;
+
+   if (!ev->kill_buffer) return ;
+
+   if (ev->last_buffer) gst_buffer_unref(ev->last_buffer);
+   ev->last_buffer = NULL;
+}
+
+static void
+_on_resize_fill(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+{
+   Emotion_Gstreamer_Video *ev = data;
+
+   if (ev->samsung)
+     evas_object_image_fill_set(obj, 0, 0, ev->fill.width, ev->fill.height);
+}
+
 GstElement *
 gstreamer_video_sink_new(Emotion_Gstreamer_Video *ev,
 			 Evas_Object *o,
@@ -973,6 +1006,9 @@ gstreamer_video_sink_new(Emotion_Gstreamer_Video *ev,
         ERR("Not Evas_Object specified");
         return NULL;
      }
+
+   evas_object_event_callback_del_full(obj, EVAS_CALLBACK_RESIZE, _on_resize_fill, ev);
+   evas_event_callback_del_full(evas_object_evas_get(obj), EVAS_CALLBACK_RENDER_FLUSH_POST, _on_post_clear, ev);
 
    playbin = gst_element_factory_make("playbin2", "playbin");
    if (!playbin)
@@ -1002,6 +1038,8 @@ gstreamer_video_sink_new(Emotion_Gstreamer_Video *ev,
    g_object_set(G_OBJECT(playbin), "uri", uri, NULL);
 
    evas_object_image_pixels_get_callback_set(obj, NULL, NULL);
+   evas_object_event_callback_add(obj, EVAS_CALLBACK_RESIZE, _on_resize_fill, ev);
+   evas_event_callback_add(evas_object_evas_get(obj), EVAS_CALLBACK_RENDER_FLUSH_POST, _on_post_clear, ev);
 
    ev->pipeline = playbin;
    ev->sink = sink;

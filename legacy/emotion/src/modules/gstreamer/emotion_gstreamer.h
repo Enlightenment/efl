@@ -77,6 +77,9 @@ struct _Emotion_Gstreamer_Video
    int               video_stream_nbr;
    int               audio_stream_nbr;
 
+    /* We need to keep a copy of the last inserted buffer as evas doesn't copy YUV data around */
+   GstBuffer        *last_buffer;
+
    /* Evas object */
    Evas_Object      *obj;
 
@@ -95,12 +98,20 @@ struct _Emotion_Gstreamer_Video
    int               in;
    int               out;
 
+   struct
+   {
+      int            width;
+      int            height;
+   } fill;
+
    Eina_Bool         play         : 1;
    Eina_Bool         play_started : 1;
    Eina_Bool         video_mute   : 1;
    Eina_Bool         audio_mute   : 1;
    Eina_Bool         pipeline_parsed : 1;
    Eina_Bool         delete_me    : 1;
+   Eina_Bool         samsung      : 1;
+   Eina_Bool         kill_buffer  : 1;
 };
 
 struct _EvasVideoSink {
@@ -130,9 +141,6 @@ struct _EvasVideoSinkPrivate {
 
    Eina_Lock m;
    Eina_Condition c;
-
-    /* We need to keep a copy of the last inserted buffer as evas doesn't copy YUV data around */
-   GstBuffer *last_buffer;
 
    // If this is TRUE all processing should finish ASAP
    // This is necessary because there could be a race between

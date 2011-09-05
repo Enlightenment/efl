@@ -385,6 +385,13 @@ em_shutdown(void *video)
        g_object_set(G_OBJECT(ev->sink), "evas-object", NULL, NULL);
        gst_element_set_state(ev->pipeline, GST_STATE_NULL);
        gst_object_unref(ev->pipeline);
+
+       if (ev->last_buffer)
+	 {
+            gst_buffer_unref(ev->last_buffer);
+            ev->last_buffer = NULL;
+	 }
+
        ev->pipeline = NULL;
        ev->sink = NULL;
      }
