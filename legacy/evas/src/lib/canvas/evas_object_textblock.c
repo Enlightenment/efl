@@ -2020,9 +2020,7 @@ _paragraph_free(const Evas_Object *obj, Evas_Object_Textblock_Paragraph *par)
 static void
 _paragraphs_clear(const Evas_Object *obj, Evas_Object_Textblock_Paragraph *pars)
 {
-   Evas_Object_Textblock *o;
    Evas_Object_Textblock_Paragraph *par;
-   o = (Evas_Object_Textblock *)(obj->object_data);
 
    EINA_INLIST_FOREACH(EINA_INLIST_GET(pars), par)
      {
@@ -2788,7 +2786,6 @@ _layout_text_add_logical_item(Ctxt *c, Evas_Object_Textblock_Text_Item *ti,
 static void
 _layout_text_append(Ctxt *c, Evas_Object_Textblock_Format *fmt, Evas_Object_Textblock_Node_Text *n, int start, int off, const char *repch)
 {
-   int new_line, empty_item;
    const Eina_Unicode *str = EINA_UNICODE_EMPTY_STRING;
    const Eina_Unicode *tbase;
    Evas_Object_Textblock_Text_Item *ti;
@@ -2849,9 +2846,6 @@ _layout_text_append(Ctxt *c, Evas_Object_Textblock_Format *fmt, Evas_Object_Text
 
 skip:
    tbase = str;
-   new_line = 0;
-   empty_item = 0;
-
 
    /* If there's no parent text node, only create an empty item */
    if (!n)
@@ -4287,9 +4281,7 @@ _find_layout_item_line_match(Evas_Object *obj, Evas_Object_Textblock_Node_Text *
         EINA_INLIST_FOREACH(found_par->lines, ln)
           {
              Evas_Object_Textblock_Item *it;
-             Evas_Object_Textblock_Line *lnn;
 
-             lnn = (Evas_Object_Textblock_Line *)(((Eina_Inlist *)ln)->next);
              EINA_INLIST_FOREACH(ln->items, it)
                {
                   /* FIXME: p should be size_t, same goes for pos */
@@ -4978,12 +4970,10 @@ _markup_get_format_append(Evas_Object_Textblock *o __UNUSED__, Eina_Strbuf *txt,
    eina_strbuf_append_char(txt, '<');
      {
         const char *s;
-        int push = 0;
         int pop = 0;
 
         // FIXME: need to escape
         s = fnode->orig_format;
-        if (*s == '+') push = 1;
         if (*s == '-') pop = 1;
         while ((*s == ' ') || (*s == '+') || (*s == '-')) s++;
         if (pop) eina_strbuf_append_char(txt, '/');
@@ -7320,7 +7310,7 @@ static char *
 _evas_textblock_cursor_range_text_markup_get(const Evas_Textblock_Cursor *cur1, const Evas_Textblock_Cursor *_cur2)
 {
    Evas_Object_Textblock *o;
-   Evas_Object_Textblock_Node_Text *n1, *n2, *tnode;
+   Evas_Object_Textblock_Node_Text *tnode;
    Eina_Strbuf *buf;
    Evas_Textblock_Cursor *cur2;
    buf = eina_strbuf_new();
@@ -7337,8 +7327,6 @@ _evas_textblock_cursor_range_text_markup_get(const Evas_Textblock_Cursor *cur1, 
 	cur1 = _cur2;
 	_cur2 = tc;
      }
-   n1 = cur1->node;
-   n2 = _cur2->node;
    /* Work on a local copy of the cur */
    cur2 = alloca(sizeof(Evas_Textblock_Cursor));
    cur2->obj = _cur2->obj;
@@ -7441,7 +7429,6 @@ _evas_textblock_cursor_range_text_markup_get(const Evas_Textblock_Cursor *cur1, 
 static char *
 _evas_textblock_cursor_range_text_plain_get(const Evas_Textblock_Cursor *cur1, const Evas_Textblock_Cursor *_cur2)
 {
-   Evas_Object_Textblock *o;
    Eina_UStrbuf *buf;
    Evas_Object_Textblock_Node_Text *n1, *n2;
    Evas_Textblock_Cursor *cur2;
@@ -7451,7 +7438,6 @@ _evas_textblock_cursor_range_text_plain_get(const Evas_Textblock_Cursor *cur1, c
    if (!cur1 || !cur1->node) return NULL;
    if (!_cur2 || !_cur2->node) return NULL;
    if (cur1->obj != _cur2->obj) return NULL;
-   o = (Evas_Object_Textblock *)(cur1->obj->object_data);
    if (evas_textblock_cursor_compare(cur1, _cur2) > 0)
      {
 	const Evas_Textblock_Cursor *tc;
@@ -7822,7 +7808,7 @@ _evas_textblock_cursor_char_pen_geometry_common_get(int (*query_func) (void *dat
    Evas_Object_Textblock_Text_Item *ti = NULL;
    Evas_Object_Textblock_Format_Item *fi = NULL;
    int x = 0, y = 0, w = 0, h = 0;
-   int pos, ret;
+   int pos;
    Eina_Bool previous_format;
 
    if (!cur) return -1;
@@ -7863,12 +7849,11 @@ _evas_textblock_cursor_char_pen_geometry_common_get(int (*query_func) (void *dat
    if (ln && ti)
      {
         pos = cur->pos - ti->parent.text_pos;
-        ret = -1;
 
         if (pos < 0) pos = 0;
         if (ti->parent.format->font.font)
           {
-             ret = query_func(cur->ENDT,
+             query_func(cur->ENDT,
                    ti->parent.format->font.font,
                    &ti->text_props,
                    pos,
