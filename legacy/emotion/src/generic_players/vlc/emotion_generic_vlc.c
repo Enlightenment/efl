@@ -693,7 +693,7 @@ _position_changed(struct _App *app)
    _send_resize(app, w, h);
 
    /* sending audio track info */
-   // _send_all_track_info(app);
+   _send_all_track_info(app);
 
    /* sending meta info */
    // _send_all_meta_info(app);

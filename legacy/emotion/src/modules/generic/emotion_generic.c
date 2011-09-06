@@ -416,20 +416,6 @@ _player_seekable_changed(Emotion_Generic_Video *ev)
 }
 
 static void
-_player_volume(Emotion_Generic_Video *ev)
-{
-   float vol, oldvol;
-   _player_float_read(ev, &vol);
-
-   INF("received volume: %0.3f", vol);
-
-   oldvol = ev->volume;
-   ev->volume = vol;
-   if (vol != oldvol && !ev->opening)
-     _emotion_audio_level_change(ev->obj);
-}
-
-static void
 _audio_channels_free(Emotion_Generic_Video *ev)
 {
    int i;
@@ -465,20 +451,14 @@ _player_tracks_info(Emotion_Generic_Video *ev, Emotion_Generic_Channel **channel
    Emotion_Generic_Channel *pchannels;
    int i;
 
-   _player_int_read(ev, current);
-   _player_int_read(ev, count);
+   *count = ev->cmd.param.track.total;
+   *current = ev->cmd.param.track.current;
+   pchannels = ev->cmd.param.track.channels;
 
    INF("number of tracks: %d (current = %d):", *count, *current);
-   pchannels = calloc(*count, sizeof(Emotion_Generic_Channel));
    for (i = 0; i < *count; i++)
      {
-	int tid, len;
-	char buf[PATH_MAX];
-	_player_int_read(ev, &tid);
-	_player_str_read(ev, buf, &len);
-	pchannels[i].id = tid;
-	pchannels[i].name = eina_stringshare_add_length(buf, len);
-	INF("\tchannel %d: %s", tid, buf);
+	INF("\tchannel %d: %s", pchannels[i].id, pchannels[i].name);
      }
 
    *channels = pchannels;
@@ -725,14 +705,82 @@ _player_cmd_double_int_process(Emotion_Generic_Video *ev)
 }
 
 static void
+_player_cmd_track_info(Emotion_Generic_Video *ev)
+{
+   int param;
+   Eina_Bool r;
+   int i;
+
+   if (ev->cmd.num_params == 0)
+     {
+	ev->cmd.cur_param = 0;
+	ev->cmd.num_params = 2;
+	ev->cmd.param.track.channels = NULL;
+	ev->cmd.s_len = -1;
+     }
+
+   while (ev->cmd.cur_param < 2)
+     {
+	if (!_player_cmd_param_read(ev, &param, sizeof(param)))
+	  return;
+
+	if (ev->cmd.cur_param == 0)
+	  ev->cmd.param.track.current = param;
+	else
+	  {
+	     ev->cmd.param.track.total = param;
+	     ev->cmd.num_params += param * 2;
+	     ev->cmd.param.track.channels =
+		calloc(param, sizeof(*ev->cmd.param.track.channels));
+	  }
+	ev->cmd.cur_param++;
+     }
+
+   if (ev->cmd.cur_param == ev->cmd.num_params)
+     {
+	_player_cmd_process(ev);
+	return;
+     }
+
+   i = (ev->cmd.cur_param - 2) / 2;
+   if ((ev->cmd.cur_param % 2) == 0) // reading track id
+     {
+	if (!_player_cmd_param_read(ev, &param, sizeof(param)))
+	  return;
+	ev->cmd.param.track.channels[i].id = param;
+	ev->cmd.cur_param++;
+     }
+   else // reading track name
+     {
+	char buf[PATH_MAX];
+
+	if (ev->cmd.s_len == -1)
+	  {
+	     if (!_player_cmd_param_read(ev, &param, sizeof(param)))
+	       return;
+	     ev->cmd.s_len = param;
+	  }
+
+	if (!_player_cmd_param_read(ev, buf, ev->cmd.s_len))
+	  return;
+	ev->cmd.param.track.channels[i].name = 
+	   eina_stringshare_add_length(buf, ev->cmd.s_len);
+	ev->cmd.cur_param++;
+	ev->cmd.s_len = -1;
+     }
+
+   if (ev->cmd.cur_param == ev->cmd.num_params)
+     _player_cmd_process(ev);
+}
+
+static void
 _player_cmd_read(Emotion_Generic_Video *ev)
 {
    if (ev->cmd.type < 0)
      {
 	if (!_player_cmd_param_read(ev, &ev->cmd.type, sizeof(ev->cmd.type)))
 	  return;
-	else
-	  ev->cmd.num_params = 0;
+	ev->cmd.num_params = 0;
      }
 
    switch (ev->cmd.type) {
@@ -753,6 +801,11 @@ _player_cmd_read(Emotion_Generic_Video *ev)
 	 break;
       case EM_RESULT_FRAME_SIZE:
 	 _player_cmd_double_int_process(ev);
+	 break;
+      case EM_RESULT_AUDIO_TRACK_INFO:
+      case EM_RESULT_VIDEO_TRACK_INFO:
+      case EM_RESULT_SPU_TRACK_INFO:
+	 _player_cmd_track_info(ev);
 	 break;
 
       default:

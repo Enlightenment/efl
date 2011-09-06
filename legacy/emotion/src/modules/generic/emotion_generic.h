@@ -39,6 +39,7 @@ struct _Emotion_Generic_Cmd_Buffer
    char *tmp;
    int type;
    ssize_t i, total;
+   int s_len;
    int num_params, cur_param;
    int padding;
    union {
@@ -48,6 +49,11 @@ struct _Emotion_Generic_Cmd_Buffer
 	} size;
 	int i_num;
 	float f_num;
+	struct {
+	     int total;
+	     int current;
+	     Emotion_Generic_Channel *channels;
+	} track;
    } param;
 };
 
@@ -90,13 +96,13 @@ struct _Emotion_Generic_Video
    Eina_Bool		     file_ready : 1;
    int			     audio_channels_count;
    int			     audio_channel_current;
-   struct _Emotion_Generic_Channel *audio_channels;
+   Emotion_Generic_Channel  *audio_channels;
    int			     video_channels_count;
    int			     video_channel_current;
-   struct _Emotion_Generic_Channel *video_channels;
+   Emotion_Generic_Channel  *video_channels;
    int			     spu_channels_count;
    int			     spu_channel_current;
-   struct _Emotion_Generic_Channel *spu_channels;
+   Emotion_Generic_Channel  *spu_channels;
    Emotion_Generic_Meta	     meta;
 };
 
