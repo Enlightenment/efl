@@ -55,7 +55,7 @@ struct _Emotion_Generic_Video
    Emotion_Generic_Video_Shared *shared;
    Emotion_Generic_Video_Frame frame;
    volatile int              fq;
-   int			     volume;
+   float		     volume;
    float		     speed;
    Emotion_Vis               vis;
    Eina_Bool		     initializing : 1;
@@ -68,6 +68,7 @@ struct _Emotion_Generic_Video
    volatile Eina_Bool        opening : 1;
    volatile Eina_Bool        closing : 1;
    Eina_Bool		     file_changed : 1;
+   Eina_Bool		     file_ready : 1;
    int			     audio_channels_count;
    int			     audio_channel_current;
    struct _Emotion_Generic_Channel *audio_channels;

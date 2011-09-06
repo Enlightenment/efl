@@ -189,7 +189,7 @@ _create_shm_data(Emotion_Generic_Video *ev, const char *shmname)
 static void
 _player_new_frame(Emotion_Generic_Video *ev)
 {
-   if (ev->opening || ev->closing)
+   if (!ev->file_ready)
      return;
    _emotion_frame_new(ev->obj);
 }
@@ -576,6 +576,8 @@ _player_open_done(Emotion_Generic_Video *ev)
 	return;
      }
 
+   ev->file_ready = EINA_TRUE;
+
    _emotion_open_done(ev->obj);
 
    if (ev->play)
@@ -583,6 +585,24 @@ _player_open_done(Emotion_Generic_Video *ev)
 	_player_send_cmd(ev, EM_CMD_PLAY);
 	_player_send_float(ev, ev->pos);
      }
+
+   _player_send_cmd(ev, EM_CMD_VOLUME_SET);
+   _player_send_float(ev, ev->volume);
+
+   _player_send_cmd(ev, EM_CMD_SPEED_SET);
+   _player_send_float(ev, ev->speed);
+
+   int mute = ev->audio_mute;
+   _player_send_cmd(ev, EM_CMD_AUDIO_MUTE_SET);
+   _player_send_int(ev, mute);
+
+   mute = ev->video_mute;
+   _player_send_cmd(ev, EM_CMD_VIDEO_MUTE_SET);
+   _player_send_int(ev, mute);
+
+   mute = ev->spu_mute;
+   _player_send_cmd(ev, EM_CMD_SPU_MUTE_SET);
+   _player_send_int(ev, mute);
 
    INF("Open done");
 }
@@ -708,6 +728,7 @@ _player_del_cb(void *data, int type __UNUSED__, void *event __UNUSED__)
 
    ev->player.exe = NULL;
    ev->ready = EINA_FALSE;
+   ev->file_ready = EINA_FALSE;
    ecore_main_fd_handler_del(ev->fd_handler);
    close(ev->fd_read);
    close(ev->fd_write);
@@ -874,7 +895,6 @@ em_file_open(const char *file, Evas_Object *obj __UNUSED__, void *data)
    ev->w = 0;
    ev->h = 0;
    ev->ratio = 1;
-   ev->speed = 1.0;
    ev->len = 0;
 
    if (ev->ready && ev->opening)
@@ -967,7 +987,7 @@ em_stop(void *data)
 
    ev->play = EINA_FALSE;
 
-   if (!ev->ready)
+   if (!ev->file_ready)
      return;
 
    _player_send_cmd(ev, EM_CMD_STOP);
@@ -987,6 +1007,10 @@ em_pos_set(void *data, double pos)
 {
    Emotion_Generic_Video *ev = data;
    float position = pos;
+
+   if (!ev->file_ready)
+     return;
+
    _player_send_cmd(ev, EM_CMD_POSITION_SET);
    _player_send_float(ev, position);
    _emotion_seek_done(ev->obj);
@@ -1084,8 +1108,8 @@ em_bgra_data_get(void *data, unsigned char **bgra_data)
 {
    Emotion_Generic_Video *ev = data;
 
-   if (!ev || ev->opening || ev->closing)
-     return 0;
+   if (!ev || !ev->file_ready)
+     return;
 
    // lock frame here
    sem_wait(&ev->shared->lock);
@@ -1172,9 +1196,14 @@ static void
 em_video_channel_mute_set(void *data, int mute)
 {
    Emotion_Generic_Video *ev = data;
+
+   ev->video_mute = !!mute;
+
+   if (!ev || !ev->file_ready)
+     return;
+
    _player_send_cmd(ev, EM_CMD_VIDEO_MUTE_SET);
    _player_send_int(ev, mute);
-   ev->video_mute = !!mute;
 }
 
 static int
@@ -1232,9 +1261,14 @@ static void
 em_audio_channel_mute_set(void *data, int mute)
 {
    Emotion_Generic_Video *ev = data;
+
+   ev->audio_mute = !!mute;
+
+   if (!ev || !ev->file_ready)
+     return;
+
    _player_send_cmd(ev, EM_CMD_AUDIO_MUTE_SET);
    _player_send_int(ev, mute);
-   ev->audio_mute = !!mute;
 }
 
 static int
@@ -1248,16 +1282,17 @@ static void
 em_audio_channel_volume_set(void *data, double vol)
 {
    Emotion_Generic_Video *ev = data;
-   float fvol;
 
    if (vol > 1.0) vol = 1.0;
    if (vol < 0.0) vol = 0.0;
 
-   fvol = vol;
-   _player_send_cmd(ev, EM_CMD_VOLUME_SET);
-   _player_send_float(ev, fvol);
-
    ev->volume = vol;
+
+   if (!ev || !ev->file_ready)
+     return;
+
+   _player_send_cmd(ev, EM_CMD_VOLUME_SET);
+   _player_send_float(ev, ev->volume);
 }
 
 static double
@@ -1315,9 +1350,14 @@ static void
 em_spu_channel_mute_set(void *data, int mute)
 {
    Emotion_Generic_Video *ev = data;
+
+   ev->spu_mute = !!mute;
+
+   if (!ev || !ev->file_ready)
+     return;
+
    _player_send_cmd(ev, EM_CMD_SPU_MUTE_SET);
    _player_send_int(ev, mute);
-   ev->spu_mute = !!mute;
 }
 
 static int
@@ -1357,11 +1397,13 @@ em_speed_set(void *data, double speed)
 {
    Emotion_Generic_Video *ev = data;
    float rate = speed;
+   ev->speed = rate;
+
+   if (!ev || !ev->file_ready)
+     return;
 
    _player_send_cmd(ev, EM_CMD_SPEED_SET);
    _player_send_float(ev, rate);
-
-   ev->speed = rate;
 }
 
 static double
