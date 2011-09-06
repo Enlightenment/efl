@@ -250,16 +250,21 @@ eeze_udev_find_by_type(Eeze_Udev_Type etype,
 
         if (etype == EEZE_UDEV_TYPE_IS_IT_HOT_OR_IS_IT_COLD_SENSOR) /* ensure that temp input exists somewhere in this device chain */
           {
-             if (!_walk_parents_test_attr(device, "temp1_input", NULL))
-               goto out;
+             Eina_Bool one, two;
+             const char *t;
 
+             one = _walk_parents_test_attr(device, "temp1_input", NULL);
+             two = _walk_parents_test_attr(device, "temp2_input", NULL);
+             if ((!one) && (!two)) goto out;
+
+             t = one ? "temp1_input" : "temp2_input";
              /* if device is not the one which has the temp input, we must go up the chain */
-             if (!udev_device_get_sysattr_value(device, "temp1_input"))
+             if (!udev_device_get_sysattr_value(device, t))
                {
                   devname = NULL;
 
                   for (parent = udev_device_get_parent(device); parent; parent = udev_device_get_parent(parent)) /*check for parent */
-                    if ((udev_device_get_sysattr_value(parent, "temp1_input")))
+                    if ((udev_device_get_sysattr_value(parent, t)))
                       {
                          devname = udev_device_get_syspath(parent);
                          break;

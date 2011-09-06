@@ -239,19 +239,25 @@ _get_syspath_from_watch(void             *data,
         break;
 
       case EEZE_UDEV_TYPE_IS_IT_HOT_OR_IS_IT_COLD_SENSOR:
+      {
+        Eina_Bool one, two;
+        const char *t;
+
 #ifdef OLD_UDEV_RRRRRRRRRRRRRR
         if ((!(test = udev_device_get_subsystem(device)))
             || (strcmp(test, "hwmon")))
           goto error;
 #endif /* have to do stuff up here since we need info from the parent */
-        if (!_walk_parents_test_attr(device, "temp1_input", NULL))
-          goto error;
+        one = _walk_parents_test_attr(device, "temp1_input", NULL);
+        two = _walk_parents_test_attr(device, "temp2_input", NULL);
+        if ((!one) && (!two)) goto error;
 
+        t = one ? "temp1_input" : "temp2_input";
         /* if device is not the one which has the temp input, we must go up the chain */
-        if (!udev_device_get_sysattr_value(device, "temp1_input"))
+        if (!udev_device_get_sysattr_value(device, t))
           {
              for (parent = udev_device_get_parent(device); parent; parent = udev_device_get_parent(parent)) /*check for parent */
-               if (udev_device_get_sysattr_value(parent, "temp1_input"))
+               if (udev_device_get_sysattr_value(parent, t))
                  {
                     tmpdev = device;
 
@@ -264,7 +270,7 @@ _get_syspath_from_watch(void             *data,
           }
 
         break;
-
+      }
       case EEZE_UDEV_TYPE_V4L:
         if ((!(test = udev_device_get_subsystem(device)))
             || (strcmp(test, "video4linux")))
