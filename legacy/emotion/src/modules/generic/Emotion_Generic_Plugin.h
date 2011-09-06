@@ -41,7 +41,7 @@ enum _Emotion_Generic_Result
 {
    EM_RESULT_INIT, // param: none
    EM_RESULT_FILE_SET, // param: none
-   EM_RESULT_FILE_SET_DONE, // param: none
+   EM_RESULT_FILE_SET_DONE, // param: success (int)
    EM_RESULT_PLAYBACK_STOPPED, // param: none
    EM_RESULT_FILE_CLOSE, // param: none
    EM_RESULT_FRAME_NEW, // param: none
@@ -129,6 +129,8 @@ emotion_generic_shm_get(const char *shmname, Emotion_Generic_Video_Shared **vs, 
    vf->frames[2] = (unsigned char *)t_vs + sizeof(*t_vs) + 2 * t_vs->height * t_vs->width * t_vs->pitch;
 
    *vs = t_vs;
+
+   return 1;
 }
 
 inline void
