@@ -227,7 +227,7 @@ _get_syspath_from_watch(void             *data,
           goto error;
 #endif
         test = udev_device_get_property_value(device, "POWER_SUPPLY_PRESENT");
-        if (!test) goto error;
+        if ((!test) || (strcmp(test, "1"))) goto error;
         break;
 
       case EEZE_UDEV_TYPE_NET:
