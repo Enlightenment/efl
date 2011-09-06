@@ -857,11 +857,6 @@ em_shutdown(void *data)
    if (ev->fd_handler)
      ecore_main_fd_handler_del(ev->fd_handler);
 
-   _audio_channels_free(ev);
-   _video_channels_free(ev);
-   _spu_channels_free(ev);
-   _player_meta_info_free(ev);
-
    eina_stringshare_del(ev->cmdline);
    eina_stringshare_del(ev->shmname);
 
@@ -913,6 +908,12 @@ em_file_close(void *data)
    INF("file close: %s", ev->filename);
 
    eina_stringshare_replace(&ev->filename, NULL);
+
+   ev->file_ready = EINA_FALSE;
+   _audio_channels_free(ev);
+   _video_channels_free(ev);
+   _spu_channels_free(ev);
+   _player_meta_info_free(ev);
 
    if (ev->opening)
      return;
