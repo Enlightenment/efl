@@ -524,14 +524,14 @@ _player_meta_info_read(Emotion_Generic_Video *ev)
 {
    INF("Receiving meta info:");
    _player_meta_info_free(ev);
-   _player_helper_str_read(ev, &ev->meta.title);
-   _player_helper_str_read(ev, &ev->meta.artist);
-   _player_helper_str_read(ev, &ev->meta.album);
-   _player_helper_str_read(ev, &ev->meta.year);
-   _player_helper_str_read(ev, &ev->meta.genre);
-   _player_helper_str_read(ev, &ev->meta.comment);
-   _player_helper_str_read(ev, &ev->meta.disc_id);
-   _player_helper_str_read(ev, &ev->meta.count);
+   ev->meta.title = ev->cmd.param.meta.title;
+   ev->meta.artist = ev->cmd.param.meta.artist;
+   ev->meta.album = ev->cmd.param.meta.album;
+   ev->meta.year = ev->cmd.param.meta.year;
+   ev->meta.genre = ev->cmd.param.meta.genre;
+   ev->meta.comment = ev->cmd.param.meta.comment;
+   ev->meta.disc_id = ev->cmd.param.meta.disc_id;
+   ev->meta.count = ev->cmd.param.meta.count;
    INF("title: '%s'", ev->meta.title);
    INF("artist: '%s'", ev->meta.artist);
    INF("album: '%s'", ev->meta.album);
@@ -774,6 +774,64 @@ _player_cmd_track_info(Emotion_Generic_Video *ev)
 }
 
 static void
+_player_cmd_meta_info(Emotion_Generic_Video *ev)
+{
+   int param;
+   const char *info;
+   char buf[PATH_MAX];
+
+   if (ev->cmd.num_params == 0)
+     {
+	ev->cmd.cur_param = 0;
+	ev->cmd.num_params = 8;
+	ev->cmd.param.meta.title = NULL;
+	ev->cmd.param.meta.artist = NULL;
+	ev->cmd.param.meta.album = NULL;
+	ev->cmd.param.meta.year = NULL;
+	ev->cmd.param.meta.genre = NULL;
+	ev->cmd.param.meta.comment = NULL;
+	ev->cmd.param.meta.disc_id = NULL;
+	ev->cmd.param.meta.count = NULL;
+	ev->cmd.s_len = -1;
+     }
+
+   if (ev->cmd.s_len == -1)
+     {
+	if (!_player_cmd_param_read(ev, &param, sizeof(param)))
+	  return;
+	ev->cmd.s_len = param;
+     }
+
+   if (!_player_cmd_param_read(ev, buf, ev->cmd.s_len))
+     return;
+
+   info = eina_stringshare_add_length(buf, ev->cmd.s_len);
+   ev->cmd.s_len = -1;
+
+   if (ev->cmd.cur_param == 0)
+     ev->cmd.param.meta.title = info;
+   else if (ev->cmd.cur_param == 1)
+     ev->cmd.param.meta.artist = info;
+   else if (ev->cmd.cur_param == 2)
+     ev->cmd.param.meta.album = info;
+   else if (ev->cmd.cur_param == 3)
+     ev->cmd.param.meta.year = info;
+   else if (ev->cmd.cur_param == 4)
+     ev->cmd.param.meta.genre = info;
+   else if (ev->cmd.cur_param == 5)
+     ev->cmd.param.meta.comment = info;
+   else if (ev->cmd.cur_param == 6)
+     ev->cmd.param.meta.disc_id = info;
+   else if (ev->cmd.cur_param == 7)
+     ev->cmd.param.meta.count = info;
+
+   ev->cmd.cur_param++;
+
+   if (ev->cmd.cur_param == 8)
+     _player_cmd_process(ev);
+}
+
+static void
 _player_cmd_read(Emotion_Generic_Video *ev)
 {
    if (ev->cmd.type < 0)
@@ -806,6 +864,9 @@ _player_cmd_read(Emotion_Generic_Video *ev)
       case EM_RESULT_VIDEO_TRACK_INFO:
       case EM_RESULT_SPU_TRACK_INFO:
 	 _player_cmd_track_info(ev);
+	 break;
+      case EM_RESULT_META_INFO:
+	 _player_cmd_meta_info(ev);
 	 break;
 
       default:

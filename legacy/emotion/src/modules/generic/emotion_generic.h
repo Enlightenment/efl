@@ -54,6 +54,7 @@ struct _Emotion_Generic_Cmd_Buffer
 	     int current;
 	     Emotion_Generic_Channel *channels;
 	} track;
+	Emotion_Generic_Meta meta;
    } param;
 };
 
