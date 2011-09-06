@@ -22,6 +22,15 @@
  *                                   API                                      *
  *============================================================================*/
 
+EAPI _STRBUF_STRUCT_NAME *
+_FUNC_EXPAND(manage_new)(_STRBUF_DATA_TYPE *str)
+{
+   _STRBUF_STRUCT_NAME *buf = eina_strbuf_common_manage_new(_STRBUF_CSIZE,
+	 (void *) str, _STRBUF_STRLEN_FUNC(str));
+   EINA_MAGIC_SET(buf, _STRBUF_MAGIC);
+   return buf;
+}
+
 EAPI Eina_Bool
 _FUNC_EXPAND(append)(_STRBUF_STRUCT_NAME *buf, const _STRBUF_DATA_TYPE *str)
 {

@@ -80,6 +80,25 @@ typedef struct _Eina_Strbuf Eina_Strbuf;
 EAPI Eina_Strbuf *eina_strbuf_new(void) EINA_MALLOC EINA_WARN_UNUSED_RESULT;
 
 /**
+ * @brief Create a new string buffer using the passed string. The passed
+ * string is used directly as the buffer, it's somehow the opposite function of
+ * @ref eina_strbuf_string_steal . The passed string must be malloced.
+ *
+ * @param str the string to manage
+ * @return Newly allocated string buffer instance.
+ *
+ * This function creates a new string buffer. On error, @c NULL is
+ * returned and Eina error is set to #EINA_ERROR_OUT_OF_MEMORY. To
+ * free the resources, use eina_strbuf_free().
+ *
+ * @see eina_strbuf_free()
+ * @see eina_strbuf_append()
+ * @see eina_strbuf_string_get()
+ * @since 1.1.0
+ */
+EAPI Eina_Strbuf *eina_strbuf_manage_new(char *str) EINA_MALLOC EINA_WARN_UNUSED_RESULT;
+
+/**
  * @brief Free a string buffer.
  *
  * @param buf The string buffer to free.

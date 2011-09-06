@@ -102,6 +102,30 @@ _eina_strbuf_common_init(size_t csize, Eina_Strbuf *buf)
 /**
  * @internal
  *
+ * init the buffer without allocating the actual string (for managed)
+ * @param csize the character size
+ * @param buf the buffer to init
+ *
+ * @return #EINA_TRUE on success, #EINA_FALSE on failure.
+ */
+static Eina_Bool
+_eina_strbuf_common_manage_init(size_t csize __UNUSED__,
+                                 Eina_Strbuf *buf,
+                                 void *str,
+                                 size_t len)
+{
+   buf->len = len;
+   buf->size = len + 1;
+   buf->step = EINA_STRBUF_INIT_STEP;
+   buf->buf = str;
+
+   return EINA_TRUE;
+}
+
+
+/**
+ * @internal
+ *
  * resize the buffer
  * @param csize the character size
  * @param buf the buffer to resize
@@ -236,6 +260,46 @@ eina_strbuf_common_new(size_t csize)
      }
    if (EINA_UNLIKELY(!_eina_strbuf_common_init(csize, buf)))
      {
+        eina_strbuf_common_free(buf);
+        return NULL;
+     }
+   return buf;
+}
+
+/**
+ * @internal
+ * @brief Create a new string buffer managing str.
+ *
+ * @param csize the character size
+ * @param str the string to manage
+ * @param len the length of the string to manage
+ * @return Newly allocated string buffer instance.
+ *
+ * This function creates a new string buffer. On error, @c NULL is
+ * returned and Eina error is set to #EINA_ERROR_OUT_OF_MEMORY. To
+ * free the resources, use eina_strbuf_common_free().
+ *
+ * @see eina_strbuf_common_free()
+ * @see eina_strbuf_common_append()
+ * @see eina_strbuf_common_string_get()
+ * @since 1.1.0
+ */
+Eina_Strbuf *
+eina_strbuf_common_manage_new(size_t csize,
+                               void *str,
+                               size_t len)
+{
+   Eina_Strbuf *buf;
+
+   eina_error_set(0);
+   buf = malloc(sizeof(Eina_Strbuf));
+   if (EINA_UNLIKELY(!buf))
+     {
+        eina_error_set(EINA_ERROR_OUT_OF_MEMORY);
+        return NULL;
+     }
+  if (EINA_UNLIKELY(!_eina_strbuf_common_manage_init(csize, buf, str, len)))
+    {
         eina_strbuf_common_free(buf);
         return NULL;
      }

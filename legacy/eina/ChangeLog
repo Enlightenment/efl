@@ -130,3 +130,9 @@
 2011-09-05  Cedric Bail
 
 	* Add eina_inlist_sorted_state_insert and helper.
+
+2011-09-06  Tom Hacohen
+
+	* Strbuf + Ustrbuf: Added eina_(u)strbuf_manage_new. This lets us
+	take a string and use it as the string buffer instead of copying
+	and allocating.
