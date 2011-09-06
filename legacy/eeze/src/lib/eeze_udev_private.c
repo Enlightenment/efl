@@ -59,7 +59,7 @@ _walk_parents_test_attr(_udev_device *device,
           return EINA_TRUE;
      }
 
-   return EINA_TRUE;
+   return EINA_FALSE;
 }
 
 const char *
