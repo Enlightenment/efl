@@ -223,6 +223,8 @@ _send_time_changed(struct _App *app, const struct libvlc_event_t *ev)
 {
    float new_time = ev->u.media_player_time_changed.new_time;
    new_time /= 1000;
+   if (app->vs->frame_drop > 1)
+     return;
    _send_cmd_start(app, EM_RESULT_POSITION_CHANGED);
    SEND_CMD_PARAM(app, new_time);
    _send_cmd_finish(app);
