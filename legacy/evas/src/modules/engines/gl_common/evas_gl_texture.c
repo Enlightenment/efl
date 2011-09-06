@@ -649,6 +649,7 @@ evas_gl_texture_pool_empty(Evas_GL_Texture_Pool *pt)
 static void
 pt_unref(Evas_GL_Texture_Pool *pt)
 {
+   if (!pt) return;
    if (!pt->gc) return;
    pt->references--;
    if (pt->references != 0) return;
@@ -664,6 +665,17 @@ pt_unref(Evas_GL_Texture_Pool *pt)
      }
    evas_gl_texture_pool_empty(pt);
    free(pt);
+}
+
+static void
+pt_link(Evas_Engine_GL_Context *gc, Evas_GL_Texture *tex, Evas_GL_Texture_Pool *pt)
+{
+   gc->shared->tex.whole = eina_list_prepend(gc->shared->tex.whole, pt);
+   pt->slot = -1;
+   pt->fslot = -1;
+   pt->whole = 1;
+   pt->allocations = eina_list_prepend(pt->allocations, tex);
+   pt->references++;
 }
 
 Evas_GL_Texture *
@@ -874,15 +886,36 @@ evas_gl_common_texture_free(Evas_GL_Texture *tex)
    if (!tex) return;
    tex->references--;
    if (tex->references != 0) return;
-   if (tex->pt)
+   if (tex->double_buffer.pt[0])
      {
-//        printf("tex->pt = %p\n", tex->pt);
-//        printf("tex->pt->references = %i\n", tex->pt->references);
-        tex->pt->allocations = eina_list_remove(tex->pt->allocations, tex);
-        pt_unref(tex->pt);
+        tex->double_buffer.pt[0]->allocations = eina_list_remove(tex->double_buffer.pt[0]->allocations, tex);
+        tex->double_buffer.pt[1]->allocations = eina_list_remove(tex->double_buffer.pt[1]->allocations, tex);
+        tex->double_buffer.ptuv[0]->allocations = eina_list_remove(tex->double_buffer.ptuv[0]->allocations, tex);
+        tex->double_buffer.ptuv[1]->allocations = eina_list_remove(tex->double_buffer.ptuv[1]->allocations, tex);
      }
-   if (tex->ptu) pt_unref(tex->ptu);
-   if (tex->ptv) pt_unref(tex->ptv);
+   else
+     {
+        if (tex->pt)
+          {
+             tex->pt->allocations = eina_list_remove(tex->pt->allocations, tex);
+             pt_unref(tex->pt);
+          }
+        if (tex->ptu)
+          {
+             tex->ptu->allocations = eina_list_remove(tex->ptu->allocations, tex);
+             pt_unref(tex->ptu);
+          }
+        if (tex->ptv)
+          {
+             tex->ptv->allocations = eina_list_remove(tex->ptv->allocations, tex);
+             pt_unref(tex->ptv);
+          }
+        if (tex->ptuv)
+          {
+             tex->ptuv->allocations = eina_list_remove(tex->ptuv->allocations, tex);
+             pt_unref(tex->ptuv);
+          }
+     }
    free(tex);
 }
 
@@ -1077,43 +1110,49 @@ _evas_gl_common_texture_y2uv_new(Evas_Engine_GL_Context *gc,
                                  GLenum y_ifmt, GLenum y_fmt,
                                  GLenum uv_ifmt, GLenum uv_fmt)
 {
+   Evas_GL_Texture_Pool *pt[2] = { NULL, NULL };
+   Evas_GL_Texture_Pool *ptuv[2] = { NULL, NULL };
    Evas_GL_Texture *tex;
 
+   pt[0] = _pool_tex_new(gc, yw + 1, yh  + 1, y_ifmt, y_fmt);
+   pt[1] = _pool_tex_new(gc, yw + 1, yh  + 1, y_ifmt, y_fmt);
+
+   ptuv[0] = _pool_tex_new(gc, uvw + 1, uvh  + 1, uv_ifmt, uv_fmt);
+   ptuv[1] = _pool_tex_new(gc, uvw + 1, uvh  + 1, uv_ifmt, uv_fmt);
+
+   if (!pt[0] || !pt[1] || !ptuv[0] || !ptuv[1])
+     goto on_error;
+
    tex = calloc(1, sizeof(Evas_GL_Texture));
-   if (!tex) return NULL;
+   if (!tex)
+     goto on_error;
 
    tex->gc = gc;
    tex->references = 1;
-   tex->pt = _pool_tex_new(gc, yw + 1, yh  + 1, y_ifmt, y_fmt);
-   if (!tex->pt)
-     {
-        free(tex);
-        return NULL;
-     }
-   gc->shared->tex.whole = eina_list_prepend(gc->shared->tex.whole, tex->pt);
-   tex->pt->slot = -1;
-   tex->pt->fslot = -1;
-   tex->pt->whole = 1;
-   tex->ptuv = _pool_tex_new(gc, uvw + 1, uvh  + 1, uv_ifmt, uv_fmt);
-   if (!tex->ptuv)
-     {
-        pt_unref(tex->pt);
-        free(tex);
-        return NULL;
-     }
-   gc->shared->tex.whole = eina_list_prepend(gc->shared->tex.whole, tex->ptuv);
-   tex->ptuv->slot = -1;
-   tex->ptuv->fslot = -1;
-   tex->ptuv->whole = 1;
+   tex->pt = pt[0];
+   tex->ptuv = ptuv[0];
+
+   pt_link(gc, tex, pt[0]);
+   pt_link(gc, tex, pt[1]);
+   pt_link(gc, tex, ptuv[0]);
+   pt_link(gc, tex, ptuv[1]);
+
    tex->x = 0;
    tex->y = 0;
    tex->w = yw;
    tex->h = yh;
-   tex->pt->allocations = eina_list_prepend(tex->pt->allocations, tex);
-   tex->ptuv->allocations = eina_list_prepend(tex->ptuv->allocations, tex);
-   tex->pt->references++;
-   tex->ptuv->references++;
+   tex->double_buffer.source = 0;
+   memcpy(tex->double_buffer.pt, pt, sizeof (Evas_GL_Texture_Pool *) * 2);
+   memcpy(tex->double_buffer.ptuv, ptuv, sizeof (Evas_GL_Texture_Pool *) * 2);
+
    return tex;
+
+ on_error:
+   pt_unref(pt[0]);
+   pt_unref(pt[1]);
+   pt_unref(ptuv[0]);
+   pt_unref(ptuv[1]);
+   return NULL;
 }
 
 Evas_GL_Texture *
@@ -1131,7 +1170,7 @@ evas_gl_common_texture_nv12_new(Evas_Engine_GL_Context *gc, DATA8 **rows, unsign
 {
    Evas_GL_Texture *tex;
 
-   tex = _evas_gl_common_texture_y2uv_new(gc, w, h, w / 2, h / 2, alpha_ifmt, alpha_fmt, lum_alpha_ifmt, lum_alpha_fmt);
+   tex = _evas_gl_common_texture_y2uv_new(gc, w, h, w / 2, h / 2, lum_ifmt, lum_fmt, lum_alpha_ifmt, lum_alpha_fmt);
    evas_gl_common_texture_nv12_update(tex, rows, w, h);
    return tex;
 }
@@ -1152,6 +1191,10 @@ evas_gl_common_texture_yuy2_update(Evas_GL_Texture *tex, DATA8 **rows, unsigned 
    if (!tex->pt) return;
    // FIXME: works on lowest size 4 pixel high buffers. must also be multiple of 2
    unsigned int y;
+
+   tex->double_buffer.source = 1 - tex->double_buffer.source;
+   tex->pt = tex->double_buffer.pt[tex->double_buffer.source];
+   tex->ptuv = tex->double_buffer.ptuv[tex->double_buffer.source];
 
    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
@@ -1188,6 +1231,11 @@ void
 evas_gl_common_texture_nv12_update(Evas_GL_Texture *tex, DATA8 **rows, unsigned int w, unsigned int h)
 {
    if (!tex->pt) return;
+
+   tex->double_buffer.source = 1 - tex->double_buffer.source;
+   tex->pt = tex->double_buffer.pt[tex->double_buffer.source];
+   tex->ptuv = tex->double_buffer.ptuv[tex->double_buffer.source];
+
    // FIXME: works on lowest size 4 pixel high buffers. must also be multiple of 2
 #ifdef GL_UNPACK_ROW_LENGTH
    glPixelStorei(GL_UNPACK_ROW_LENGTH, rows[1] - rows[0]);
@@ -1246,13 +1294,18 @@ evas_gl_common_texture_nv12tiled_update(Evas_GL_Texture *tex, DATA8 **rows, unsi
 
    if (!tex->pt) return;
 
+   tex->double_buffer.source = 1 - tex->double_buffer.source;
+   tex->pt = tex->double_buffer.pt[tex->double_buffer.source];
+   tex->ptuv = tex->double_buffer.ptuv[tex->double_buffer.source];
+
    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-   glBindTexture(GL_TEXTURE_2D, tex->pt->texture);
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
 
    mb_w = w / 64;
    mb_h = h / 32;
+
+   glBindTexture(GL_TEXTURE_2D, tex->pt->texture);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
 
    // We are telling the driver to not swizzle back the buffer as we are going to replace all pixel
    _tex_2d(tex->pt->intformat, w, h, tex->pt->format, tex->pt->dataformat);
@@ -1321,7 +1374,6 @@ evas_gl_common_texture_nv12tiled_update(Evas_GL_Texture *tex, DATA8 **rows, unsi
              _tex_sub_2d(x, ry[offset], 32, 32,
                          tex->ptuv->format, tex->ptuv->dataformat,
                          rows[mb_y + base_h] + rmb_x);
-
              step++;
              if ((step & 0x3) == 0)
                {

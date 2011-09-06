@@ -362,10 +362,16 @@ struct _Evas_GL_Texture
 {
    Evas_Engine_GL_Context *gc;
    Evas_GL_Image   *im;
-  Evas_GL_Texture_Pool *pt, *ptu, *ptv, *ptuv;
+   Evas_GL_Texture_Pool *pt, *ptu, *ptv, *ptuv;
    int              x, y, w, h;
    double           sx1, sy1, sx2, sy2;
    int              references;
+
+   struct
+   {
+      Evas_GL_Texture_Pool *pt[2], *ptuv[2];
+      int              source;
+   } double_buffer;
 
    Eina_Bool        alpha : 1;
 };
