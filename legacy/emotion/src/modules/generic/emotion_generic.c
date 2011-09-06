@@ -675,12 +675,6 @@ _player_data_cb(void *data, int type __UNUSED__, void *event)
 	return ECORE_CALLBACK_DONE;
      }
 
-   if (ev->size < 4)
-     {
-	ERR("invalid command: missing bytes.");
-	return ECORE_CALLBACK_DONE;
-     }
-
    for (i = 0; ev->lines[i].line; i++)
      INF("received input from player: \"%s\"", ev->lines[i].line);
 
