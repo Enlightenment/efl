@@ -262,16 +262,63 @@ _em_read_safe(int fd, void *buf, ssize_t size)
         else
           {
              if (errno == EINTR || errno == EAGAIN)
-               continue;
+	       return size - todo;
              else
                {
                   ERR("could not read from fd %d: %s", fd, strerror(errno));
-                  return 0;
+                  return -1;
                }
           }
      }
 
-   return 1;
+   return size;
+}
+
+static Eina_Bool
+_player_cmd_param_read(Emotion_Generic_Video *ev, void *param, size_t size)
+{
+   ssize_t done, todo, i;
+
+   /* When a parameter must be read, we cannot make sure it will be entirely
+    * available. Thus we store the bytes that could be read in a temp buffer,
+    * and when more data is read we try to complete the buffer and finally use
+    * the read value.
+    */
+   if (!ev->cmd.tmp)
+     {
+	ev->cmd.tmp = malloc(size);
+	ev->cmd.i = 0;
+	ev->cmd.total = size;
+     }
+
+   todo = ev->cmd.total - ev->cmd.i;
+   i = ev->cmd.i;
+   done = read(ev->fd_read, &ev->cmd.tmp[i], todo);
+
+   if (done < 0 &&  errno != EINTR && errno != EAGAIN)
+     {
+	if (ev->cmd.tmp)
+	  {
+	     free(ev->cmd.tmp);
+	     ev->cmd.tmp = NULL;
+	  }
+	ERR("problem when reading parameter from pipe.");
+	ev->cmd.type = -1;
+	return EINA_FALSE;
+     }
+
+   if (done == todo)
+     {
+	memcpy(param, ev->cmd.tmp, size);
+	free(ev->cmd.tmp);
+	ev->cmd.tmp = NULL;
+	return EINA_TRUE;
+     }
+
+   if (done > 0)
+     ev->cmd.i += done;
+
+   return EINA_FALSE;
 }
 
 static Eina_Bool
@@ -282,20 +329,6 @@ _player_int_read(Emotion_Generic_Video *ev, int *i)
    if (n <= 0)
      {
 	ERR("could not read int from fd_read %d\n", ev->fd_read);
-	return EINA_FALSE;
-     }
-
-   return EINA_TRUE;
-}
-
-static Eina_Bool
-_player_float_read(Emotion_Generic_Video *ev, float *f)
-{
-   int n;
-   n = _em_read_safe(ev->fd_read, f, sizeof(*f));
-   if (n <= 0)
-     {
-	ERR("could not read float from fd_read %d\n", ev->fd_read);
 	return EINA_FALSE;
      }
 
@@ -324,8 +357,9 @@ static void
 _player_frame_resize(Emotion_Generic_Video *ev)
 {
    int w, h;
-   _player_int_read(ev, &w);
-   _player_int_read(ev, &h);
+
+   w = ev->cmd.param.size.width;
+   h = ev->cmd.param.size.height;
 
    INF("received frame resize: %dx%d", w, h);
    ev->w = w;
@@ -341,8 +375,7 @@ _player_frame_resize(Emotion_Generic_Video *ev)
 static void
 _player_length_changed(Emotion_Generic_Video *ev)
 {
-   float length;
-   _player_float_read(ev, &length);
+   float length = ev->cmd.param.f_num;
 
    INF("received length changed: %0.3f", length);
 
@@ -353,8 +386,7 @@ _player_length_changed(Emotion_Generic_Video *ev)
 static void
 _player_position_changed(Emotion_Generic_Video *ev)
 {
-   float position;
-   _player_float_read(ev, &position);
+   float position = ev->cmd.param.f_num;
 
    INF("received position changed: %0.3f", position);
 
@@ -374,8 +406,7 @@ _player_position_changed(Emotion_Generic_Video *ev)
 static void
 _player_seekable_changed(Emotion_Generic_Video *ev)
 {
-   int seekable;
-   _player_int_read(ev, &seekable);
+   int seekable = ev->cmd.param.i_num;
 
    INF("received seekable changed: %d", seekable);
 
@@ -396,17 +427,6 @@ _player_volume(Emotion_Generic_Video *ev)
    ev->volume = vol;
    if (vol != oldvol && !ev->opening)
      _emotion_audio_level_change(ev->obj);
-}
-
-static void
-_player_audio_mute(Emotion_Generic_Video *ev)
-{
-   int mute;
-   _player_int_read(ev, &mute);
-
-   INF("received audio mute: %d", mute);
-
-   ev->audio_mute = !!mute;
 }
 
 static void
@@ -559,7 +579,7 @@ _player_open_done(Emotion_Generic_Video *ev)
 {
    int success;
 
-   _player_int_read(ev, &success);
+   success = ev->cmd.param.i_num;
    shm_unlink(ev->shmname);
 
    if (ev->file_changed)
@@ -608,17 +628,9 @@ _player_open_done(Emotion_Generic_Video *ev)
 }
 
 static void
-_player_read_cmd(Emotion_Generic_Video *ev)
+_player_cmd_process(Emotion_Generic_Video *ev)
 {
-   int type;
-
-   if (!_player_int_read(ev, &type))
-     {
-	ERR("could not read command\n");
-	return;
-     }
-
-   switch (type) {
+   switch (ev->cmd.type) {
       case EM_RESULT_INIT:
 	 _player_ready(ev);
 	 break;
@@ -662,8 +674,91 @@ _player_read_cmd(Emotion_Generic_Video *ev)
 	 _player_meta_info_read(ev);
 	 break;
       default:
-	 WRN("received wrong command: %d", type);
-   };
+	 WRN("received wrong command: %d", ev->cmd.type);
+   }
+
+   ev->cmd.type = -1;
+}
+
+static void
+_player_cmd_single_int_process(Emotion_Generic_Video *ev)
+{
+   if (!_player_cmd_param_read(ev, &ev->cmd.param.i_num, sizeof(ev->cmd.param.i_num)))
+     return;
+
+   _player_cmd_process(ev);
+}
+
+static void
+_player_cmd_single_float_process(Emotion_Generic_Video *ev)
+{
+   if (!_player_cmd_param_read(ev, &ev->cmd.param.f_num, sizeof(ev->cmd.param.f_num)))
+     return;
+
+   _player_cmd_process(ev);
+}
+
+static void
+_player_cmd_double_int_process(Emotion_Generic_Video *ev)
+{
+   int param;
+
+   if (ev->cmd.num_params == 0)
+     {
+	ev->cmd.num_params = 2;
+	ev->cmd.cur_param = 0;
+	ev->cmd.param.size.width = 0;
+	ev->cmd.param.size.height = 0;
+     }
+
+   if (!_player_cmd_param_read(ev, &param, sizeof(param)))
+     return;
+
+   if (ev->cmd.cur_param == 0)
+     ev->cmd.param.size.width = param;
+   else
+     ev->cmd.param.size.height = param;
+
+   ev->cmd.cur_param++;
+   if (ev->cmd.cur_param == ev->cmd.num_params)
+     _player_cmd_process(ev);
+}
+
+static void
+_player_cmd_read(Emotion_Generic_Video *ev)
+{
+   if (ev->cmd.type < 0)
+     {
+	if (!_player_cmd_param_read(ev, &ev->cmd.type, sizeof(ev->cmd.type)))
+	  return;
+	else
+	  ev->cmd.num_params = 0;
+     }
+
+   switch (ev->cmd.type) {
+      case EM_RESULT_INIT:
+      case EM_RESULT_FILE_SET:
+      case EM_RESULT_PLAYBACK_STOPPED:
+      case EM_RESULT_FILE_CLOSE:
+      case EM_RESULT_FRAME_NEW:
+	 _player_cmd_process(ev);
+	 break;
+      case EM_RESULT_FILE_SET_DONE:
+      case EM_RESULT_SEEKABLE_CHANGED:
+	 _player_cmd_single_int_process(ev);
+	 break;
+      case EM_RESULT_LENGTH_CHANGED:
+      case EM_RESULT_POSITION_CHANGED:
+	 _player_cmd_single_float_process(ev);
+	 break;
+      case EM_RESULT_FRAME_SIZE:
+	 _player_cmd_double_int_process(ev);
+	 break;
+
+      default:
+	 WRN("received wrong command: %d", ev->cmd.type);
+	 ev->cmd.type = -1;
+   }
 }
 
 static Eina_Bool
@@ -677,7 +772,7 @@ _player_cmd_handler_cb(void *data, Ecore_Fd_Handler *fd_handler)
 	return ECORE_CALLBACK_CANCEL;
      }
 
-   _player_read_cmd(ev);
+   _player_cmd_read(ev);
 
    return ECORE_CALLBACK_RENEW;
 }
@@ -840,6 +935,7 @@ em_init(Evas_Object *obj, void **emotion_video, Emotion_Module_Options *opt)
    ev->speed = 1.0;
    ev->volume = 0.5;
    ev->audio_mute = EINA_FALSE;
+   ev->cmd.type = -1;
 
    ev->obj = obj;
    ev->cmdline = eina_stringshare_add(player);

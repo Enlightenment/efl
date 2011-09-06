@@ -7,6 +7,7 @@
 
 typedef struct _Emotion_Generic_Video       Emotion_Generic_Video;
 typedef struct _Emotion_Generic_Player       Emotion_Generic_Player;
+typedef struct _Emotion_Generic_Cmd_Buffer       Emotion_Generic_Cmd_Buffer;
 typedef struct _Emotion_Generic_Channel Emotion_Generic_Channel;
 typedef struct _Emotion_Generic_Meta	    Emotion_Generic_Meta;
 
@@ -33,6 +34,23 @@ struct _Emotion_Generic_Meta
    const char *count;
 };
 
+struct _Emotion_Generic_Cmd_Buffer
+{
+   char *tmp;
+   int type;
+   ssize_t i, total;
+   int num_params, cur_param;
+   int padding;
+   union {
+	struct {
+	     int width;
+	     int height;
+	} size;
+	int i_num;
+	float f_num;
+   } param;
+};
+
 /* emotion/generic main structure */
 struct _Emotion_Generic_Video
 {
@@ -40,6 +58,7 @@ struct _Emotion_Generic_Video
    const char		     *shmname;
 
    Emotion_Generic_Player    player;
+   Emotion_Generic_Cmd_Buffer	cmd;
    Ecore_Event_Handler	     *player_add, *player_del, *player_data;
    int			     drop;
    int			     fd_read, fd_write;

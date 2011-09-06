@@ -19,7 +19,7 @@ typedef struct _Emotion_Generic_Video_Shared Emotion_Generic_Video_Shared;
 
 enum _Emotion_Generic_Cmd
 {
-   EM_CMD_INIT, // param: shared memory identifier (string)
+   EM_CMD_INIT = 0, // param: shared memory identifier (string)
    EM_CMD_PLAY, // param: position (float)
    EM_CMD_STOP, // param: none
    EM_CMD_FILE_SET, // param: filename (string)
@@ -39,7 +39,7 @@ enum _Emotion_Generic_Cmd
 
 enum _Emotion_Generic_Result
 {
-   EM_RESULT_INIT, // param: none
+   EM_RESULT_INIT = 0, // param: none
    EM_RESULT_FILE_SET, // param: none
    EM_RESULT_FILE_SET_DONE, // param: success (int)
    EM_RESULT_PLAYBACK_STOPPED, // param: none
