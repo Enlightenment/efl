@@ -696,7 +696,7 @@ _position_changed(struct _App *app)
    _send_all_track_info(app);
 
    /* sending meta info */
-   // _send_all_meta_info(app);
+   _send_all_meta_info(app);
 
    libvlc_media_player_stop(app->mp);
 }
