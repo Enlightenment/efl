@@ -79,7 +79,7 @@ static inline Eina_Lock_Result eina_rwlock_release(Eina_RWLock *mutex);
 #ifdef EINA_HAVE_DEBUG_THREADS
 # define EINA_MAIN_LOOP_CHECK_RETURN_VAL(val)				\
   do {									\
-    if (EINA_UNLIKELY(eina_main_loop_is()))				\
+    if (EINA_UNLIKELY(!eina_main_loop_is()))				\
       {									\
 	eina_error_set(EINA_ERROR_NOT_MAIN_LOOP);			\
 	EINA_LOG_ERR("You are calling %s from outside"			\
@@ -92,7 +92,7 @@ static inline Eina_Lock_Result eina_rwlock_release(Eina_RWLock *mutex);
   } while (0)
 # define EINA_MAIN_LOOP_CHECK_RETURN					\
   do {									\
-    if (EINA_UNLIKELY(eina_main_loop_is()))				\
+    if (EINA_UNLIKELY(!eina_main_loop_is()))				\
       {									\
 	eina_error_set(EINA_ERROR_NOT_MAIN_LOOP);			\
 	EINA_LOG_ERR("You are calling %s from outside"			\
