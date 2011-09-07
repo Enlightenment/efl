@@ -457,6 +457,7 @@ _ecore_evas_constructor_sdl(int x __UNUSED__, int y __UNUSED__, int w, int h, co
    _ecore_evas_parse_extra_options_str(extra_options, "name=", &name);
    _ecore_evas_parse_extra_options_uint(extra_options, "fullscreen=", &fullscreen);
    _ecore_evas_parse_extra_options_uint(extra_options, "hwsurface=", &hwsurface);
+   _ecore_evas_parse_extra_options_uint(extra_options, "noframe=", &noframe);
    _ecore_evas_parse_extra_options_uint(extra_options, "alpha=", &alpha);
 
    ee = ecore_evas_sdl_new(name, w, h, fullscreen, hwsurface, noframe, alpha);
