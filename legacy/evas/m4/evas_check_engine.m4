@@ -446,6 +446,42 @@ fi
 
 ])
 
+
+dnl use: EVAS_CHECK_ENGINE_DEP_SOFTWARE_16_SDL(engine, simple, want_static[, ACTION-IF-FOUND[, ACTION-IF-NOT-FOUND]])
+
+AC_DEFUN([EVAS_CHECK_ENGINE_DEP_SOFTWARE_16_SDL],
+[
+
+requirement=""
+have_dep="no"
+evas_engine_[]$1[]_cflags=""
+evas_engine_[]$1[]_libs=""
+
+PKG_CHECK_MODULES([SDL],
+   [sdl >= 1.2.0],
+   [
+    have_dep="yes"
+    requirement="sdl"
+    evas_engine_[]$1[]_cflags="${SDL_CFLAGS}"
+    evas_engine_[]$1[]_libs="${SDL_LIBS}"
+   ]
+)
+
+AC_SUBST([evas_engine_$1_cflags])
+AC_SUBST([evas_engine_$1_libs])
+
+if test "x$3" = "xstatic" ; then
+   requirement_evas="${requirement} ${requirement_evas}"
+fi
+
+if test "x${have_dep}" = "xyes" ; then
+  m4_default([$4], [:])
+else
+  m4_default([$5], [:])
+fi
+
+])
+
 dnl use: EVAS_CHECK_ENGINE_DEP_GL_SDL(engine, simple, want_static[, ACTION-IF-FOUND[, ACTION-IF-NOT-FOUND]])
 
 AC_DEFUN([EVAS_CHECK_ENGINE_DEP_GL_SDL],
