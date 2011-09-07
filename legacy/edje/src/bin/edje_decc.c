@@ -361,7 +361,7 @@ output(void)
 	if (file_out)
 	  {
 	     snprintf(out, sizeof(out), "%s/%s", outdir, file_out);
-	     if (symlink(sf->name, out) != 0)
+	     if (ecore_file_symlink(sf->name, out) != EINA_TRUE)
                {
                   ERR("symlink %s -> %s failed\n", sf->name, out);
                }
