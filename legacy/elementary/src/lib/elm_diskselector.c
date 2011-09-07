@@ -1181,7 +1181,7 @@ elm_diskselector_item_selected_set(Elm_Diskselector_Item *it, Eina_Bool selected
      }
 
    if (!wd->idler)
-     ecore_idler_add(_move_scroller, it->base.widget);
+     wd->idler = ecore_idler_add(_move_scroller, it->base.widget);
 }
 
 EAPI Eina_Bool
