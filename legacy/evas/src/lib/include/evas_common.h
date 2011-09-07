@@ -158,7 +158,7 @@ extern EAPI int _evas_log_dom_global;
 # define LKI(x)
 # define LKD(x)
 # define LKL(x)
-# define LKT(x) 0
+# define LKT(x) 1
 # define LKU(x)
 # define TH(x)
 # define THI(x)
