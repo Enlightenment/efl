@@ -11,7 +11,9 @@ struct _ecore_sdl_keys_s
 static const struct _ecore_sdl_keys_s  keystable[] =
 {
    { SDLK_UNKNOWN,      "0x00",         "" },
+#ifndef BUILD_ECORE_EVAS_SDL_130
    { SDLK_FIRST,        "First",        "First" },
+#endif
    { SDLK_BACKSPACE,    "BackSpace",    "\010" },
    { SDLK_TAB,          "Tab",          "\011" },
    { SDLK_CLEAR,        "Clear",        "Clear" },
@@ -87,6 +89,7 @@ static const struct _ecore_sdl_keys_s  keystable[] =
    { SDLK_DELETE,       "Delete",       "\177" },
    /* End of ASCII mapped keysyms */
 
+#ifndef BUILD_ECORE_EVAS_SDL_130
    /* International keyboard syms */
    { SDLK_WORLD_0,      "w0",           "" }, /* 0xA0 */
    { SDLK_WORLD_1,      "w1",           "" },
@@ -184,7 +187,7 @@ static const struct _ecore_sdl_keys_s  keystable[] =
    { SDLK_WORLD_93,     "w93",          "" },
    { SDLK_WORLD_94,     "w94",          "" },
    { SDLK_WORLD_95,     "w95",          "" },
-
+#endif
    /* Numeric keypad */
    { SDLK_KP0,          "KP0",          "0" },
    { SDLK_KP1,          "KP1",          "1" },
