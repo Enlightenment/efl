@@ -35,7 +35,6 @@ static Ecore_Event_Handler      *ecore_evas_event_handlers[4] = {
 static const char               *ecore_evas_sdl_default = "EFL SDL";
 static int                      _ecore_evas_fps_debug = 0;
 static Ecore_Poller             *ecore_evas_event;
-static Ecore_Evas                *ecore_evases = NULL;
 
 static Ecore_Evas *
 _ecore_evas_sdl_match(void)
@@ -346,8 +345,6 @@ _ecore_evas_internal_sdl_new(int rmethod, const char* name, int w, int h, int fu
    if (!name)
      name = ecore_evas_sdl_default;
 
-   if (ecore_evases) return NULL;
-
    ee = calloc(1, sizeof(Ecore_Evas));
    if (!ee) return NULL;
 
@@ -384,7 +381,8 @@ _ecore_evas_internal_sdl_new(int rmethod, const char* name, int w, int h, int fu
    evas_output_size_set(ee->evas, w, h);
    evas_output_viewport_set(ee->evas, 0, 0, w, h);
 
-   if (rmethod == evas_render_method_lookup("software_sdl"))
+   if (rmethod == evas_render_method_lookup("software_sdl") ||
+       rmethod == evas_render_method_lookup("software_16_sdl") )
      {
 #ifdef BUILD_ECORE_EVAS_SOFTWARE_SDL
         einfo = evas_engine_info_get(ee->evas);
