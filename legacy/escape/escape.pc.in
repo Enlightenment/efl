@@ -3,8 +3,8 @@ exec_prefix=@exec_prefix@
 libdir=@libdir@
 includedir=@includedir@
 
-Name: evil
-Description: Library that ports on Windows some specific Unix functions.
+Name: escape
+Description: Library that ports on the PS3 some specific Unix functions.
 Version: @VERSION@
 Libs: -L${libdir} -lescape -lm -lnet
 Libs.private:
