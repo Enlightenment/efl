@@ -8751,6 +8751,17 @@ evas_object_textblock_style_insets_get(const Evas_Object *obj, Evas_Coord *l, Ev
    if (b) *b = o->style_pad.b;
 }
 
+/** @internal
+ * FIXME: DELETE ME! DELETE ME!
+ * This is an ugly workaround to get around the fact that
+ * evas_object_textblock_coords_recalc isn't really called when it's supposed
+ * to. When that bug is fixed please remove this. */
+static void
+_workaround_object_coords_recalc(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+{
+   evas_object_textblock_coords_recalc(obj);
+}
+
 /* all nice and private */
 static void
 evas_object_textblock_init(Evas_Object *obj)
@@ -8786,6 +8797,8 @@ evas_object_textblock_init(Evas_Object *obj)
    o = (Evas_Object_Textblock *)(obj->object_data);
    o->cursor->obj = obj;
    o->legacy_newline = EINA_TRUE;
+   evas_object_event_callback_priority_add(obj, EVAS_CALLBACK_RESIZE, -1000,
+         _workaround_object_coords_recalc, NULL);
 }
 
 static void *
