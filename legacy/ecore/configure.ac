@@ -1335,7 +1335,15 @@ if test "x${have_ecore_file}" = "xyes" ; then
 
    if test "x${have_ecore_con}" = "xyes" ; then
       requirements_ecore_file="ecore-con >= 1.0.0 ${requirements_ecore_file}"
+   else
+      ECORE_CHECK_CURL([${want_curl}],
+         [
+          have_curl="yes"
+          requirements_ecore_file="libcurl ${requirements_ecore_file}"
+         ],
+         [have_curl="no"])
    fi
+
 fi
 
 # ecore_config
