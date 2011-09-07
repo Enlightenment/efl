@@ -361,11 +361,14 @@ struct _Ecore_Pthread_Data
 };
 #endif
 
-static void _ecore_thread_handler(void *data __UNUSED__, void *buffer, unsigned int nbyte);
 
 static int _ecore_thread_count_max = 0;
 static int ECORE_THREAD_PIPE_DEL = 0;
 static Eina_Array *_ecore_thread_pipe = NULL;
+
+#ifdef EFL_HAVE_THREADS
+
+static void _ecore_thread_handler(void *data __UNUSED__, void *buffer, unsigned int nbyte);
 
 static Ecore_Pipe*
 _ecore_thread_pipe_get(void)
@@ -376,7 +379,6 @@ _ecore_thread_pipe_get(void)
    return ecore_pipe_add(_ecore_thread_handler, NULL);
 }
 
-#ifdef EFL_HAVE_THREADS
 static int _ecore_thread_count = 0;
 
 static Ecore_Event_Handler *del_handler = NULL;
