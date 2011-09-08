@@ -1220,6 +1220,18 @@ _ecore_xcb_netwm_window_type_type_get(Ecore_X_Atom atom)
      return ECORE_X_WINDOW_TYPE_DIALOG;
    else if (atom == ECORE_X_ATOM_NET_WM_WINDOW_TYPE_NORMAL)
      return ECORE_X_WINDOW_TYPE_NORMAL;
+   else if (atom == ECORE_X_ATOM_NET_WM_WINDOW_TYPE_DROPDOWN_MENU)
+      return ECORE_X_WINDOW_TYPE_DROPDOWN_MENU;
+   else if (atom == ECORE_X_ATOM_NET_WM_WINDOW_TYPE_POPUP_MENU)
+      return ECORE_X_WINDOW_TYPE_POPUP_MENU;
+   else if (atom == ECORE_X_ATOM_NET_WM_WINDOW_TYPE_TOOLTIP)
+      return ECORE_X_WINDOW_TYPE_TOOLTIP;
+   else if (atom == ECORE_X_ATOM_NET_WM_WINDOW_TYPE_NOTIFICATION)
+      return ECORE_X_WINDOW_TYPE_NOTIFICATION;
+   else if (atom == ECORE_X_ATOM_NET_WM_WINDOW_TYPE_COMBO)
+      return ECORE_X_WINDOW_TYPE_COMBO;
+   else if (atom == ECORE_X_ATOM_NET_WM_WINDOW_TYPE_DND)
+      return ECORE_X_WINDOW_TYPE_DND;
    else
      return ECORE_X_WINDOW_TYPE_UNKNOWN;
 }
