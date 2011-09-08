@@ -72,7 +72,7 @@ ecore_x_cursor_new(Ecore_X_Window win, int *pixels, int w, int h, int hot_x, int
    Ecore_X_Cursor cursor = 0;
    xcb_image_t *img;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+//   LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
 #ifdef ECORE_XCB_CURSOR
    if (_ecore_xcb_cursor) 
@@ -228,7 +228,7 @@ ecore_x_cursor_new(Ecore_X_Window win, int *pixels, int w, int h, int hot_x, int
 EAPI void 
 ecore_x_cursor_free(Ecore_X_Cursor c) 
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+//   LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    xcb_free_cursor(_ecore_xcb_conn, c);
 }
@@ -295,25 +295,34 @@ _ecore_xcb_cursor_format_get(void)
 static void 
 _ecore_xcb_cursor_default_size_get(void) 
 {
+   char *s = NULL;
+   int v = 0;
+
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
-   /* char *v = NULL; */
-
-   /* v = getenv("XCURSOR_SIZE"); */
-   /* if (!v)  */
-   /*   v = _ecore_xcb_resource_get_string("Xcursor", "size"); */
-   /* if (v) _ecore_xcb_cursor_size = ((atoi(v) * 16) / 72); */
+   s = getenv("XCURSOR_SIZE");
+   if (!s) 
+     {
+        _ecore_xcb_xdefaults_init();
+        v = _ecore_xcb_xdefaults_int_get("Xcursor", "size");
+        _ecore_xcb_xdefaults_shutdown();
+     }
+   else
+     v = atoi(s);
+   if (v) _ecore_xcb_cursor_size = ((v * 16) / 72);
 }
 
 static void 
 _ecore_xcb_cursor_dpi_size_get(void) 
 {
+   int v = 0;
+
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
-   /* int v = 0; */
-
-   /* v = _ecore_xcb_resource_get_int("Xft", "dpi"); */
-   /* if (v) _ecore_xcb_cursor_size = ((v * 16) / 72); */
+   _ecore_xcb_xdefaults_init();
+   v = _ecore_xcb_xdefaults_int_get("Xft", "dpi");
+   if (v) _ecore_xcb_cursor_size = ((v * 16) / 72);
+   _ecore_xcb_xdefaults_shutdown();
 }
 
 static void 

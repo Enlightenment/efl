@@ -337,4 +337,9 @@ int _ecore_xcb_io_error_handle(xcb_generic_error_t *err);
 
 xcb_image_t *_ecore_xcb_image_create_native(int w, int h, xcb_image_format_t format, uint8_t depth, void *base, uint32_t bytes, uint8_t *data);
 
+void _ecore_xcb_xdefaults_init(void);
+void _ecore_xcb_xdefaults_shutdown(void);
+char *_ecore_xcb_xdefaults_string_get(const char *prog, const char *param);
+int _ecore_xcb_xdefaults_int_get(const char *prog, const char *param);
+
 #endif

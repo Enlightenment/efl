@@ -76,6 +76,7 @@ _ecore_xcb_composite_finalize(void)
 EAPI Eina_Bool 
 ecore_x_composite_query(void) 
 {
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
    return _composite_avail;
 }
 

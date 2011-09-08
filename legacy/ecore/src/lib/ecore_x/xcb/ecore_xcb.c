@@ -1376,6 +1376,9 @@ _ecore_xcb_fd_handle(void *data, Ecore_Fd_Handler *hdlr __UNUSED__)
 
    while ((ev = xcb_poll_for_event(conn))) 
      {
+        /* NB: Ecore Xlib uses filterevent for xim, but xcb does not support 
+         * xim, so no need for it here */
+
         /* check for errors first */
         if (xcb_connection_has_error(conn))
           {
