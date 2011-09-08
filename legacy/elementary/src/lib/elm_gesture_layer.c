@@ -2663,25 +2663,6 @@ _zoom_test(Evas_Object *obj, Pointer_Event *pe, void *event_info,
                if (d < 0.0)
                  d = (-d);
 
-             if (wd->glayer_continues_enable)
-               {  /* START For contiunues gesture: compute momentum */
-                  _set_momentum(&st->momentum1, st->zoom_st.x, st->zoom_st.y,
-                        st->zoom_mv.x, st->zoom_mv.y,st->zoom_st.timestamp, st->zoom_st.timestamp,
-                        st->zoom_mv.timestamp);
-
-                  _set_momentum(&st->momentum2, st->zoom_st1.x, st->zoom_st1.y,
-                        st->zoom_mv1.x, st->zoom_mv1.y,st->zoom_st1.timestamp, st->zoom_st1.timestamp,
-                        st->zoom_mv1.timestamp);
-
-                  if (!(st->momentum1.mx + st->momentum1.my + st->momentum2.mx + st->momentum2.my))
-                    {
-                       ev_flag = _set_state(gesture_zoom, ELM_GESTURE_STATE_END,
-                             &st->info, EINA_FALSE);
-                       return;
-                    }
-               }  /* END For contiunues gesture: compute momentum */
-
-
                if (d >= wd->zoom_step)
                  {  /* Report move in steps */
                     st->next_step = st->info.zoom;
@@ -2909,24 +2890,6 @@ _rotate_test(Evas_Object *obj, Pointer_Event *pe, void *event_info,
              double d = st->info.angle - st->next_step;
              if (d < 0.0)
                d = (-d);
-
-             if (wd->glayer_continues_enable)
-               {  /* START For contiunues gesture: compute momentum */
-                  _set_momentum(&st->momentum1, st->rotate_st.x, st->rotate_st.y,
-                        st->rotate_mv.x, st->rotate_mv.y,st->rotate_st.timestamp, st->rotate_st.timestamp,
-                        st->rotate_mv.timestamp);
-
-                  _set_momentum(&st->momentum2, st->rotate_st1.x, st->rotate_st1.y,
-                        st->rotate_mv1.x, st->rotate_mv1.y,st->rotate_st1.timestamp, st->rotate_st1.timestamp,
-                        st->rotate_mv1.timestamp);
-
-                  if (!(st->momentum1.mx + st->momentum1.my + st->momentum2.mx + st->momentum2.my))
-                    {
-                       ev_flag = _set_state(gesture, ELM_GESTURE_STATE_END,
-                             &st->info, EINA_FALSE);
-                       return;
-                    }
-               }  /* END For contiunues gesture: compute momentum */
 
              if (d >= wd->rotate_step)
                {  /* Report move in steps */
