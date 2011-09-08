@@ -12126,7 +12126,17 @@ extern "C" {
     * @ref Elm_Gesture_Zoom_Info is the info reported for @ref ELM_GESTURE_ZOOM gesture.
     *
     * @ref Elm_Gesture_Rotate_Info is the info reported for @ref ELM_GESTURE_ROTATE gesture.
-    * */
+    *
+    *
+    * Gesture Layer Tweaks:
+    *
+    * Note that line, flick, gestures can start without the need to remove fingers from surface.
+    * When user fingers rests on same-spot gesture is ended and starts again when fingers moved.
+    *
+    * Setting glayer_continues_enable to false in @ref Config will change this behavior
+    * so gesture starts when user touches (a *DOWN event) touch-surface
+    * and ends when no fingers touches surface (a *UP event).
+    */
 
    /**
     * @enum _Elm_Gesture_Types
