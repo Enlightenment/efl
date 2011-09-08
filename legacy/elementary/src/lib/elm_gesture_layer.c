@@ -239,6 +239,7 @@ struct _Widget_Data
    double rotate_angular_tolerance;
    unsigned int flick_time_limit_ms;
    double long_tap_start_timeout;
+   Eina_Bool glayer_continues_enable;
 
    double zoom_step;
    double rotate_step;
@@ -2026,15 +2027,16 @@ _n_line_test(Evas_Object *obj, Pointer_Event *pe, void *event_info,
                   return;
                }
 
-             /* We may finish line if momentum is zero */
-             /* This is for continues-gesture */
-             if ((!st->info.momentum.mx) && (!st->info.momentum.my))
-               {  /* Finish line on zero momentum for continues gesture */
-                  line->line_end.x = pe->x;
-                  line->line_end.y = pe->y;
-                  line->t_end = pe->timestamp;
+             if (wd->glayer_continues_enable)
+               {  /* We may finish line if momentum is zero */
+                  /* This is for continues-gesture */
+                  if ((!st->info.momentum.mx) && (!st->info.momentum.my))
+                    {  /* Finish line on zero momentum for continues gesture */
+                       line->line_end.x = pe->x;
+                       line->line_end.y = pe->y;
+                       line->t_end = pe->timestamp;
+                    }
                }
-
           }
         else
           {  /* Record the line angle as it broke minimum length for line */
@@ -2169,7 +2171,7 @@ _n_line_test(Evas_Object *obj, Pointer_Event *pe, void *event_info,
       case EVAS_CALLBACK_MULTI_MOVE:
          if (started)
            {
-              if (started == ended)
+              if (wd->glayer_continues_enable && started == ended)
                 {  /*  For continues gesture */
                    ev_flag = _set_state(gesture, ELM_GESTURE_STATE_END,
                          &st->info, EINA_FALSE);
@@ -2661,22 +2663,23 @@ _zoom_test(Evas_Object *obj, Pointer_Event *pe, void *event_info,
                if (d < 0.0)
                  d = (-d);
 
-               /* START For contiunues gesture: compute momentum */
-               _set_momentum(&st->momentum1, st->zoom_st.x, st->zoom_st.y,
-                     st->zoom_mv.x, st->zoom_mv.y,st->zoom_st.timestamp, st->zoom_st.timestamp,
-                     st->zoom_mv.timestamp);
+             if (wd->glayer_continues_enable)
+               {  /* START For contiunues gesture: compute momentum */
+                  _set_momentum(&st->momentum1, st->zoom_st.x, st->zoom_st.y,
+                        st->zoom_mv.x, st->zoom_mv.y,st->zoom_st.timestamp, st->zoom_st.timestamp,
+                        st->zoom_mv.timestamp);
 
-               _set_momentum(&st->momentum2, st->zoom_st1.x, st->zoom_st1.y,
-                     st->zoom_mv1.x, st->zoom_mv1.y,st->zoom_st1.timestamp, st->zoom_st1.timestamp,
-                     st->zoom_mv1.timestamp);
+                  _set_momentum(&st->momentum2, st->zoom_st1.x, st->zoom_st1.y,
+                        st->zoom_mv1.x, st->zoom_mv1.y,st->zoom_st1.timestamp, st->zoom_st1.timestamp,
+                        st->zoom_mv1.timestamp);
 
-                 if (!(st->momentum1.mx + st->momentum1.my + st->momentum2.mx + st->momentum2.my))
-                 {
-                    ev_flag = _set_state(gesture_zoom, ELM_GESTURE_STATE_END,
-                          &st->info, EINA_FALSE);
-                    return;
-                 }
-               /* END For contiunues gesture: compute momentum */
+                  if (!(st->momentum1.mx + st->momentum1.my + st->momentum2.mx + st->momentum2.my))
+                    {
+                       ev_flag = _set_state(gesture_zoom, ELM_GESTURE_STATE_END,
+                             &st->info, EINA_FALSE);
+                       return;
+                    }
+               }  /* END For contiunues gesture: compute momentum */
 
 
                if (d >= wd->zoom_step)
@@ -2907,22 +2910,23 @@ _rotate_test(Evas_Object *obj, Pointer_Event *pe, void *event_info,
              if (d < 0.0)
                d = (-d);
 
-             /* START For contiunues gesture: compute momentum */
-             _set_momentum(&st->momentum1, st->rotate_st.x, st->rotate_st.y,
-                   st->rotate_mv.x, st->rotate_mv.y,st->rotate_st.timestamp, st->rotate_st.timestamp,
-                   st->rotate_mv.timestamp);
+             if (wd->glayer_continues_enable)
+               {  /* START For contiunues gesture: compute momentum */
+                  _set_momentum(&st->momentum1, st->rotate_st.x, st->rotate_st.y,
+                        st->rotate_mv.x, st->rotate_mv.y,st->rotate_st.timestamp, st->rotate_st.timestamp,
+                        st->rotate_mv.timestamp);
 
-             _set_momentum(&st->momentum2, st->rotate_st1.x, st->rotate_st1.y,
-                   st->rotate_mv1.x, st->rotate_mv1.y,st->rotate_st1.timestamp, st->rotate_st1.timestamp,
-                   st->rotate_mv1.timestamp);
+                  _set_momentum(&st->momentum2, st->rotate_st1.x, st->rotate_st1.y,
+                        st->rotate_mv1.x, st->rotate_mv1.y,st->rotate_st1.timestamp, st->rotate_st1.timestamp,
+                        st->rotate_mv1.timestamp);
 
-             if (!(st->momentum1.mx + st->momentum1.my + st->momentum2.mx + st->momentum2.my))
-               {
-                  ev_flag = _set_state(gesture, ELM_GESTURE_STATE_END,
-                        &st->info, EINA_FALSE);
-                  return;
-               }
-             /* END For contiunues gesture: compute momentum */
+                  if (!(st->momentum1.mx + st->momentum1.my + st->momentum2.mx + st->momentum2.my))
+                    {
+                       ev_flag = _set_state(gesture, ELM_GESTURE_STATE_END,
+                             &st->info, EINA_FALSE);
+                       return;
+                    }
+               }  /* END For contiunues gesture: compute momentum */
 
              if (d >= wd->rotate_step)
                {  /* Report move in steps */
@@ -3234,7 +3238,8 @@ _event_process(void *data, Evas_Object *obj __UNUSED__,
 
    /* Report current states and clear history if needed */
    Eina_Bool states_reset = _clear_if_finished(data);
-   continues_gestures_restart(data, states_reset);
+   if (wd->glayer_continues_enable)
+     continues_gestures_restart(data, states_reset);
 }
 
 
@@ -3464,10 +3469,11 @@ elm_gesture_layer_add(Evas_Object *parent)
    wd->flick_time_limit_ms = _elm_config->glayer_flick_time_limit_ms;
    wd->long_tap_start_timeout = _elm_config->glayer_long_tap_start_timeout;
    wd->repeat_events = EINA_TRUE;
+   wd->glayer_continues_enable = _elm_config->glayer_continues_enable;
 
 #if defined(DEBUG_GESTURE_LAYER)
    printf("size of Gestures = <%d>\n", sizeof(wd->gesture));
-   printf("initial values:\n\tzoom_finger_factor=<%f>\n\tzoom_distance_tolerance=<%d>\n\tline_min_length=<%d>\n\tline_distance_tolerance=<%d>\n\tzoom_wheel_factor=<%f>\n\trotate_angular_tolerance=<%f>\n\twd->line_angular_tolerance=<%f>\n\twd->flick_time_limit_ms=<%d>\n\twd->long_tap_start_timeout=<%f>\n\twd->zoom_step=<%f>\n\twd->rotate_step=<%f>\n", wd->zoom_finger_factor, wd->zoom_distance_tolerance, wd->line_min_length, wd->line_distance_tolerance, wd->zoom_wheel_factor, wd->rotate_angular_tolerance, wd->line_angular_tolerance, wd->flick_time_limit_ms, wd->long_tap_start_timeout, wd->zoom_step, wd->rotate_step);
+   printf("initial values:\n\tzoom_finger_factor=<%f>\n\tzoom_distance_tolerance=<%d>\n\tline_min_length=<%d>\n\tline_distance_tolerance=<%d>\n\tzoom_wheel_factor=<%f>\n\trotate_angular_tolerance=<%f>\n\twd->line_angular_tolerance=<%f>\n\twd->flick_time_limit_ms=<%d>\n\twd->long_tap_start_timeout=<%f>\n\twd->zoom_step=<%f>\n\twd->rotate_step=<%f>\n\twd->glayer_continues_enable=<%d>\n ", wd->zoom_finger_factor, wd->zoom_distance_tolerance, wd->line_min_length, wd->line_distance_tolerance, wd->zoom_wheel_factor, wd->rotate_angular_tolerance, wd->line_angular_tolerance, wd->flick_time_limit_ms, wd->long_tap_start_timeout, wd->zoom_step, wd->rotate_step, wd->glayer_continues_enable);
 #endif
    memset(wd->gesture, 0, sizeof(wd->gesture));
 

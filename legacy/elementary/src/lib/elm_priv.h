@@ -144,6 +144,7 @@ struct _Elm_Config
    unsigned int   glayer_flick_time_limit_ms;
    double         glayer_long_tap_start_timeout;
    int            access_mode;
+   Eina_Bool      glayer_continues_enable;
 };
 
 struct _Elm_Module
