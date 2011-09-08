@@ -131,7 +131,6 @@ struct _Elm_Config
    double         longpress_timeout;
    unsigned char  effect_enable;
    unsigned char  desktop_entry;
-   Eina_Bool      is_mirrored : 1;
    Eina_Bool      password_show_last;
    double         password_show_last_timeout;
    double         glayer_zoom_finger_factor;
@@ -145,6 +144,9 @@ struct _Elm_Config
    double         glayer_long_tap_start_timeout;
    int            access_mode;
    Eina_Bool      glayer_continues_enable;
+
+   /* Not part of the EET file */
+   Eina_Bool      is_mirrored : 1;
 };
 
 struct _Elm_Module
