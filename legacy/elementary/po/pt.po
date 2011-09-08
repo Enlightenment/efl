@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Elementary\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2011-08-04 18:52+0900\n"
+"POT-Creation-Date: 2011-09-08 10:39+0900\n"
 "PO-Revision-Date: 2011-02-16 11:42-0000\n"
 "Last-Translator: Sérgio Marques <smarquespt@gmail.com>\n"
 "Language-Team: \n"
@@ -16,38 +16,83 @@ msgstr ""
 "X-Poedit-Language: Portuguese\n"
 "X-Poedit-Country: Portugal\n"
 
-#: src/lib/elc_fileselector.c:835
+#: src/lib/elc_fileselector.c:843
 msgid "Up"
 msgstr ""
 
-#: src/lib/elc_fileselector.c:850
+#: src/lib/elc_fileselector.c:858
 msgid "Home"
 msgstr ""
 
-#: src/lib/elc_fileselector.c:994 src/lib/elm_entry.c:1067
+#: src/lib/elc_fileselector.c:1002 src/lib/elm_entry.c:1123
 msgid "Cancel"
 msgstr "Cancelar"
 
-#: src/lib/elc_fileselector.c:1004
+#: src/lib/elc_fileselector.c:1012
 msgid "OK"
 msgstr ""
 
-#: src/lib/elm_config.c:1600
+#: src/lib/elm_button.c:219
+msgid "Clicked"
+msgstr ""
+
+#: src/lib/elm_button.c:338 src/lib/elm_check.c:271 src/lib/elm_toolbar.c:653
+msgid "State: Disabled"
+msgstr ""
+
+#: src/lib/elm_button.c:388
+msgid "Button"
+msgstr ""
+
+#: src/lib/elm_check.c:216 src/lib/elm_check.c:273
+msgid "State: On"
+msgstr ""
+
+#: src/lib/elm_check.c:222 src/lib/elm_check.c:274
+msgid "State: Off"
+msgstr ""
+
+#: src/lib/elm_check.c:321
+msgid "Check"
+msgstr ""
+
+#: src/lib/elm_config.c:1601
 msgid "default:LTR"
 msgstr "omissão:LTR"
 
-#: src/lib/elm_entry.c:1061
+#: src/lib/elm_entry.c:1117
 msgid "Copy"
 msgstr "Copiar"
 
-#: src/lib/elm_entry.c:1064
+#: src/lib/elm_entry.c:1120
 msgid "Cut"
 msgstr "Cortar"
 
-#: src/lib/elm_entry.c:1078
+#: src/lib/elm_entry.c:1134
 msgid "Select"
 msgstr "Selecionar"
 
-#: src/lib/elm_entry.c:1084
+#: src/lib/elm_entry.c:1140
 msgid "Paste"
 msgstr "Colar"
+
+#: src/lib/elm_toolbar.c:606
+#, fuzzy
+msgid "Selected"
+msgstr "Selecionar"
+
+#: src/lib/elm_toolbar.c:651
+msgid "Separator"
+msgstr ""
+
+#: src/lib/elm_toolbar.c:655
+msgid "State: Selected"
+msgstr ""
+
+#: src/lib/elm_toolbar.c:657
+msgid "Has menu"
+msgstr ""
+
+#: src/lib/elm_toolbar.c:687
+msgid "Tool Item"
+msgstr ""
