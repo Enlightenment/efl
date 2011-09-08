@@ -263,7 +263,7 @@ AC_ARG_ENABLE([fontconfig],
 
 if test "x${want_fontconfig}" = "xyes" -o "x${want_fontconfig}" = "xauto" ; then
    PKG_CHECK_MODULES([FONTCONFIG],
-      [fontconfig],
+      [fontconfig >= 2.5.0],
       [
        have_fontconfig="yes"
        AC_DEFINE(HAVE_FONTCONFIG, 1, [have fontconfig searching capabilities])
