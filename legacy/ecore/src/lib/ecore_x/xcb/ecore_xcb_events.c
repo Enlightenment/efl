@@ -1358,6 +1358,7 @@ _ecore_xcb_event_handle_client_message(xcb_generic_event_t *event)
         Ecore_X_Event_Xdnd_Enter *e;
         Ecore_X_DND_Target *target;
 
+        DBG("Got Xdnd Enter Event");
         if (!(e = calloc(1, sizeof(Ecore_X_Event_Xdnd_Enter)))) return;
         target = _ecore_xcb_dnd_target_get();
         target->state = ECORE_X_DND_TARGET_ENTERED;
@@ -1379,7 +1380,7 @@ _ecore_xcb_event_handle_client_message(xcb_generic_event_t *event)
 
              if (!ecore_x_window_prop_property_get(target->source, 
                                                    ECORE_X_ATOM_XDND_TYPE_LIST, 
-                                                   XCB_ATOM_ATOM, 32, 
+                                                   ECORE_X_ATOM_ATOM, 32, 
                                                    &data, &num_ret)) 
                {
                   WRN("DND: Could not fetch data type list from source window");
@@ -1424,9 +1425,10 @@ _ecore_xcb_event_handle_client_message(xcb_generic_event_t *event)
         Ecore_X_Event_Xdnd_Position *e;
         Ecore_X_DND_Target *target;
 
+        DBG("Got Xdnd Position Event");
         target = _ecore_xcb_dnd_target_get();
         if ((target->source != (Ecore_X_Window)ev->data.data32[0]) || 
-            (target->win != ev->window)) return; // NB: Maybe ev->event ??
+            (target->win != ev->window)) return;
         target->pos.x = ev->data.data32[2] >> 16;
         target->pos.y = ev->data.data32[2] & 0xFFFFUL;
         target->action = ev->data.data32[4];
@@ -1447,6 +1449,7 @@ _ecore_xcb_event_handle_client_message(xcb_generic_event_t *event)
         Ecore_X_Event_Xdnd_Status *e;
         Ecore_X_DND_Source *source;
 
+        DBG("Got Xdnd Status Event");
         source = _ecore_xcb_dnd_source_get();
         if ((source->win != ev->window) || 
             (source->dest != (Ecore_X_Window)ev->data.data32[0]))
@@ -1479,6 +1482,7 @@ _ecore_xcb_event_handle_client_message(xcb_generic_event_t *event)
         Ecore_X_Event_Xdnd_Leave *e;
         Ecore_X_DND_Target *target;
 
+        DBG("Got Xdnd Leave Event");
         target = _ecore_xcb_dnd_target_get();
         if ((target->source != (Ecore_X_Window)ev->data.data32[0]) || 
             (target->win != ev->window)) 
@@ -1495,12 +1499,13 @@ _ecore_xcb_event_handle_client_message(xcb_generic_event_t *event)
         Ecore_X_Event_Xdnd_Drop *e;
         Ecore_X_DND_Target *target;
 
+        DBG("Got Xdnd Drop Event");
         target = _ecore_xcb_dnd_target_get();
         if ((target->source != (Ecore_X_Window)ev->data.data32[0]) || 
             (target->win != ev->window))
           return;
         target->time = (target->version >= 1) ? 
-          (Ecore_X_Time)ev->data.data32[2] : ecore_x_current_time_get();
+          (Ecore_X_Time)ev->data.data32[2] : _ecore_xcb_event_last_time;
 
         e = calloc(1, sizeof(Ecore_X_Event_Xdnd_Drop));
         if (!e) return;
@@ -1517,6 +1522,7 @@ _ecore_xcb_event_handle_client_message(xcb_generic_event_t *event)
         Ecore_X_DND_Source *source;
         Eina_Bool completed = EINA_TRUE;
 
+        DBG("Got Xdnd Finished Event");
         source = _ecore_xcb_dnd_source_get();
         if ((source->win != ev->window) || 
             (source->dest != (Ecore_X_Window)ev->data.data32[0]))

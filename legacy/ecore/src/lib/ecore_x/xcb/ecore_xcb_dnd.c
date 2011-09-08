@@ -15,7 +15,7 @@ typedef struct _Version_Cache_Item
 static Eina_Bool _ecore_xcb_dnd_converter_copy(char *target __UNUSED__, void *data, int size, void **data_ret, int *size_ret, Ecore_X_Atom *tprop __UNUSED__, int *count __UNUSED__);
 
 /* local variables */
-static int _ecore_xcb_dnd_init_count;
+static int _ecore_xcb_dnd_init_count = 0;
 static Ecore_X_DND_Source *_source = NULL;
 static Ecore_X_DND_Target *_target = NULL;
 static Version_Cache_Item *_version_cache = NULL;
@@ -90,6 +90,7 @@ ecore_x_dnd_send_status(Eina_Bool will_accept, Eina_Bool suppress, Ecore_X_Recta
 
    if (_target->state == ECORE_X_DND_TARGET_IDLE) return;
 
+   DBG("Ecore_X_Dnd_Send_Status");
    memset(&ev, 0, sizeof(xcb_client_message_event_t));
 
    _target->will_accept = will_accept;
@@ -131,17 +132,18 @@ ecore_x_dnd_drop(void)
 
    memset(&ev, 0, sizeof(xcb_client_message_event_t));
 
+   DBG("Ecore_X_Dnd_Drop");
    if (_source->dest) 
      {
         ev.response_type = XCB_CLIENT_MESSAGE;
         ev.format = 32;
         ev.window = _source->dest;
-        ev.data.data32[0] = _source->win;
-        ev.data.data32[1] = 0;
 
         if (_source->will_accept) 
           {
              ev.type = ECORE_X_ATOM_XDND_DROP;
+             ev.data.data32[0] = _source->win;
+             ev.data.data32[1] = 0;
              ev.data.data32[2] = _source->time;
 
              xcb_send_event(_ecore_xcb_conn, 0, _source->dest, 
@@ -153,6 +155,9 @@ ecore_x_dnd_drop(void)
         else 
           {
              ev.type = ECORE_X_ATOM_XDND_LEAVE;
+             ev.data.data32[0] = _source->win;
+             ev.data.data32[1] = 0;
+
              xcb_send_event(_ecore_xcb_conn, 0, _source->dest, 
                             XCB_EVENT_MASK_NO_EVENT, (const char *)&ev);
              ecore_x_flush();
@@ -178,6 +183,7 @@ ecore_x_dnd_aware_set(Ecore_X_Window win, Eina_Bool on)
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
+   DBG("Ecore_X_Dnd_Aware_Set");
    if (on)
      ecore_x_window_prop_property_set(win, ECORE_X_ATOM_XDND_AWARE, 
                                       ECORE_X_ATOM_ATOM, 32, &prop_data, 1);
@@ -284,6 +290,7 @@ ecore_x_dnd_type_set(Ecore_X_Window win, const char *type, Eina_Bool on)
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
+   DBG("Ecore_X_Dnd_Type_Set");
    atom = ecore_x_atom_get(type);
    ecore_x_window_prop_property_get(win, ECORE_X_ATOM_XDND_TYPE_LIST, 
                                     ECORE_X_ATOM_ATOM, 32, &old_data, &num);
@@ -337,6 +344,7 @@ ecore_x_dnd_types_set(Ecore_X_Window win, const char **types, unsigned int num_t
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
+   DBG("Ecore_X_Dnd_Types_Set");
    if (!num_types)
       ecore_x_window_prop_property_del(win, ECORE_X_ATOM_XDND_TYPE_LIST);
    else
@@ -366,6 +374,7 @@ ecore_x_dnd_actions_set(Ecore_X_Window win, Ecore_X_Atom *actions, unsigned int 
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
+   DBG("Ecore_X_Dnd_Actions_Set");
    if (!num_actions)
       ecore_x_window_prop_property_del(win, ECORE_X_ATOM_XDND_ACTION_LIST);
    else
@@ -408,6 +417,7 @@ ecore_x_dnd_begin(Ecore_X_Window source, unsigned char *data, int size)
 
    if (!ecore_x_dnd_version_get(source)) return EINA_FALSE;
 
+   DBG("Ecore_X_Dnd_Begin");
    /* Take ownership of XdndSelection */
    if (!ecore_x_selection_xdnd_set(source, data, size)) return EINA_FALSE;
 
@@ -444,6 +454,7 @@ ecore_x_dnd_send_finished(void)
 
    if (_target->state == ECORE_X_DND_TARGET_IDLE) return;
 
+   DBG("Ecore_X_Dnd_Send_Finished");
    memset(&ev, 0, sizeof(xcb_client_message_event_t));
 
    ev.response_type = XCB_CLIENT_MESSAGE;
@@ -500,6 +511,7 @@ _ecore_xcb_dnd_drag(Ecore_X_Window root, int x, int y)
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
+   DBG("Ecore_X_Dnd_Drag");
    memset(&ev, 0, sizeof(xcb_client_message_event_t));
 
    ev.response_type = XCB_CLIENT_MESSAGE;
