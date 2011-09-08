@@ -417,12 +417,12 @@ extern "C" {
    * @param callback The callback to call in the main loop
    * @param data The data to give to that call back
    *
-   * For all call that need to happen in the main loop (most EFL functions do),
-   * this helper function provide the infrastructure needed to do it safely
-   * by avoind dead lock, race condition and properly wake up the main loop.
+   * For all calls that need to happen in the main loop (most EFL functions do),
+   * this helper function provides the infrastructure needed to do it safely
+   * by avoiding dead lock, race condition and properly wake up the main loop.
    *
    * Remember after that function call, you should never touch again the @p data
-   * in the thread, it is owned by the main loop and you callback should take
+   * in the thread, it is owned by the main loop and your callback should take
    * care of freeing it if necessary.
    */
    EAPI void                 ecore_main_loop_thread_safe_call_async(Ecore_Cb callback, void *data);
@@ -435,9 +435,9 @@ extern "C" {
    * @param data The data to give to that call back
    * @return the value returned by the callback in the main loop
    *
-   * For all call that need to happen in the main loop (most EFL functions do),
-   * this helper function provide the infrastructure needed to do it safely
-   * by avoind dead lock, race condition and properly wake up the main loop.
+   * For all calls that need to happen in the main loop (most EFL functions do),
+   * this helper function provides the infrastructure needed to do it safely
+   * by avoiding dead lock, race condition and properly wake up the main loop.
    *
    * Remember this function will block until the callback is executed in the
    * main loop. It can take time and you have no guaranty about the timeline.
