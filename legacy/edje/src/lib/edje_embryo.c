@@ -185,11 +185,6 @@
  *
  * part_swallow(part_id, group_name)
  *
- * ** here print functions are for the debugging 
- * print_int(val)
- * print_float(Float:val)
- * print_str(val)
- *
  * external_param_get_int(id, param_name[])
  * external_param_set_int(id, param_name[], value)
  * Float:external_param_get_float(id, param_name[])
@@ -2941,34 +2936,6 @@ _edje_embryo_fn_external_param_set_bool(Embryo_Program *ep, Embryo_Cell *params)
    return _edje_external_param_set(NULL, rp, &eep);
 }
 
-static Embryo_Cell
-_edje_embryo_fn_print_int(Embryo_Program *ep, Embryo_Cell *params)
-{
-   printf("%d", (int) params[1]);
-   fflush(NULL);
-   return 0;
-}
-
-static Embryo_Cell
-_edje_embryo_fn_print_float(Embryo_Program *ep, Embryo_Cell *params)
-{
-   float v = EMBRYO_CELL_TO_FLOAT(params[1]);
-   printf("%f", v);
-   fflush(NULL);
-   return 0;
-}
-
-static Embryo_Cell
-_edje_embryo_fn_print_str(Embryo_Program *ep, Embryo_Cell *params)
-{
-   char *msg = NULL;
-   GETSTR(msg, params[1]);
-   if (!msg) return 0;
-   printf("%s", msg);
-   fflush(NULL);
-   return 0;
-}
-
 void
 _edje_embryo_script_init(Edje_Part_Collection *edc)
 {
@@ -3048,9 +3015,6 @@ _edje_embryo_script_init(Edje_Part_Collection *edc)
 
    embryo_program_native_call_add(ep, "part_swallow", _edje_embryo_fn_part_swallow);
 
-   embryo_program_native_call_add(ep, "print_int", _edje_embryo_fn_print_int);
-   embryo_program_native_call_add(ep, "print_float", _edje_embryo_fn_print_float);
-   embryo_program_native_call_add(ep, "print_str", _edje_embryo_fn_print_str);
    embryo_program_native_call_add(ep, "external_param_get_int", _edje_embryo_fn_external_param_get_int);
    embryo_program_native_call_add(ep, "external_param_set_int", _edje_embryo_fn_external_param_set_int);
    embryo_program_native_call_add(ep, "external_param_get_float", _edje_embryo_fn_external_param_get_float);
