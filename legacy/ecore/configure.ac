@@ -176,6 +176,8 @@ case "$host_os" in
       want_notify_win32="yes"
       want_curl="yes"
       want_glib="auto"
+      want_gnutls="auto"
+      want_openssl="auto"
       want_ecore_imf="yes"
       want_ecore_win32="yes"
       want_ecore_evas_software_gdi="yes"
