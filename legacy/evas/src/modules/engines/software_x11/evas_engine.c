@@ -12,6 +12,7 @@
 #ifdef BUILD_ENGINE_SOFTWARE_XCB
 # include "evas_xcb_outbuf.h"
 # include "evas_xcb_color.h"
+# include "evas_xcb_xdefaults.h"
 #endif
 
 int _evas_engine_soft_x11_log_dom = -1;
@@ -242,6 +243,7 @@ _output_xcb_setup(int w, int h, int rot, xcb_connection_t *conn,
                   int shape_dither, int destination_alpha)
 {
    Render_Engine *re;
+   int v = 0;
 
    if (!(re = calloc(1, sizeof(Render_Engine)))) return NULL;
 
@@ -250,7 +252,12 @@ _output_xcb_setup(int w, int h, int rot, xcb_connection_t *conn,
    evas_software_xcb_outbuf_init();
 
    // FIXME: re->xrdb
-   re->xr.dpi = 75000; // dpy * 1000
+   _evas_xcb_xdefaults_init();
+   v = _evas_xcb_xdefaults_int_get("Xft", "dpi");
+   _evas_xcb_xdefaults_shutdown();
+   if (v) re->xr.dpi = (v * 1000);
+   else re->xr.dpi = 75000; // dpy * 1000
+
    evas_common_font_dpi_set(re->xr.dpi / 1000);
 
    re->ob = 

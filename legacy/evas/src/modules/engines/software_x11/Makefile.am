@@ -40,6 +40,7 @@ AM_CPPFLAGS = \
 @evas_engine_software_xcb_cflags@
 
 SOFTWARE_X11_SOURCES += \
+evas_xcb_xdefaults.c \
 evas_xcb_outbuf.c \
 evas_xcb_buffer.c \
 evas_xcb_color.c \
@@ -79,4 +80,6 @@ evas_xlib_buffer.h \
 evas_xlib_color.h \
 evas_xcb_outbuf.h \
 evas_xcb_buffer.h \
-evas_xcb_color.h
+evas_xcb_color.h \
+evas_xcb_xdefaults.h
+
