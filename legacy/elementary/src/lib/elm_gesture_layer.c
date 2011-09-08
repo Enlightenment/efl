@@ -171,7 +171,7 @@ struct _Momentum_Type
    Evas_Coord_Point line_end;
    unsigned int t_st_x;  /* Time start on X */
    unsigned int t_st_y;  /* Time start on Y */
-   unsigned int t_end; /* Time end   */
+   unsigned int t_end;   /* Time end        */
    int xdir, ydir;
 };
 typedef struct _Momentum_Type Momentum_Type;
@@ -205,8 +205,8 @@ struct _Zoom_Type
    Evas_Event_Mouse_Wheel *zoom_wheel;
    Evas_Coord zoom_base;  /* Holds gap between fingers on zoom-start  */
    Evas_Coord zoom_distance_tolerance;
-   Elm_Gesture_Momentum_Info momentum1; /* For continues gesture */
-   Elm_Gesture_Momentum_Info momentum2; /* For continues gesture */
+   Elm_Gesture_Momentum_Info momentum1;      /* For continues gesture */
+   Elm_Gesture_Momentum_Info momentum2;      /* For continues gesture */
    double next_step;
 };
 typedef struct _Zoom_Type Zoom_Type;
@@ -220,8 +220,8 @@ struct _Rotate_Type
    Pointer_Event rotate_mv1;
    double rotate_angular_tolerance;
    double next_step;
-   Elm_Gesture_Momentum_Info momentum1; /* For continues gesture */
-   Elm_Gesture_Momentum_Info momentum2; /* For continues gesture */
+   Elm_Gesture_Momentum_Info momentum1;      /* For continues gesture */
+   Elm_Gesture_Momentum_Info momentum2;      /* For continues gesture */
 };
 typedef struct _Rotate_Type Rotate_Type;
 
@@ -616,7 +616,7 @@ _clear_if_finished(Evas_Object *obj)
 
 //   if ((!wd->touched) || (reset_s && !all_undefined))
    /* (!wd->touched && reset_s) - don't stop zoom with mouse-wheel */
-   if (reset_s && (/* !eina_list_count(wd->touched) || */ !all_undefined)) /* Aharon */
+   if (reset_s && (!all_undefined))
      return _event_history_clear(obj);
 
    return EINA_FALSE;
@@ -1055,7 +1055,6 @@ _event_history_clear(Evas_Object *obj)
         free(t);
      }
    _register_callbacks(obj);
-   printf("%s\n", __func__);
    return EINA_TRUE;
 }
 
@@ -2183,14 +2182,6 @@ _n_line_test(Evas_Object *obj, Pointer_Event *pe, void *event_info,
                    consume_event(wd, event_info, event_type, ev_flag);
                 }
            }
-/* old code
-         if (started)
-           {
-              ev_flag = _set_state(gesture, ELM_GESTURE_STATE_MOVE,
-                 &st->info, EINA_TRUE);
-              consume_event(wd, event_info, event_type, ev_flag);
-           }
-*/
          break;
 
       default:
@@ -3041,6 +3032,110 @@ _make_pointer_event(void *data, void *event_info,
 /**
  * @internal
  *
+ * This function restartes line, flick, zoom and rotate gestures
+ * when gesture-layer continues-gestures enabled.
+ * Example of continues-gesture:
+ * When doing a line, user stops moving finger but keeps fingers on touch.
+ * This will cause line-end, then as user continues moving his finger
+ * it re-starts line gesture.
+ * When continue mode is disabled, user has to lift finger from touch
+ * to end a gesture. Them touch-again to start a new one.
+ *
+ * @param data The gesture-layer object.
+ * @param wd gesture layer widget data.
+ * @param states_reset flag that marks gestures were reset in history clear.
+ *
+ * @ingroup Elm_Gesture_Layer
+ */
+void continues_gestures_restart(void *data, Eina_Bool states_reset)
+{
+   Widget_Data *wd = elm_widget_data_get(data);
+   if (!wd) return;
+
+   /* Run through events to restart gestures */
+   Gesture_Info *g;
+   Eina_Bool n_lines, n_flicks, zoom, rotate;
+#if defined(DEBUG_GESTURE_LAYER)
+   int i;
+   printf("Gesture | State | is tested\n");
+   for(i = ELM_GESTURE_N_TAPS; i < ELM_GESTURE_LAST; i++)
+     {
+        g = wd->gesture[i];
+        if(g)
+          printf("   %d       %d       %d\n", i, g->state, g->test);
+     }
+#endif
+   /* We turn-on flag for finished, aborted, not-started gestures */
+   g = wd->gesture[ELM_GESTURE_N_LINES];
+   n_lines = (g) ? ((states_reset) | ((g->state != ELM_GESTURE_STATE_START)
+         && (g->state != ELM_GESTURE_STATE_MOVE))) : EINA_FALSE;
+   if (n_lines)
+     {
+        _line_test_reset(wd->gesture[ELM_GESTURE_N_LINES]);
+        _set_state(g, ELM_GESTURE_STATE_UNDEFINED, NULL, EINA_FALSE);
+        SET_TEST_BIT(g);
+     }
+
+   g = wd->gesture[ELM_GESTURE_N_FLICKS];
+   n_flicks = (g) ? ((states_reset) | ((g->state != ELM_GESTURE_STATE_START)
+         && (g->state != ELM_GESTURE_STATE_MOVE))) : EINA_FALSE;
+   if (n_flicks)
+     {
+        _line_test_reset(wd->gesture[ELM_GESTURE_N_FLICKS]);
+        _set_state(g, ELM_GESTURE_STATE_UNDEFINED, NULL, EINA_FALSE);
+        SET_TEST_BIT(g);
+     }
+
+   g = wd->gesture[ELM_GESTURE_ZOOM];
+   zoom = (g) ? ((states_reset) | ((g->state != ELM_GESTURE_STATE_START)
+         && (g->state != ELM_GESTURE_STATE_MOVE))) : EINA_FALSE;
+   if (zoom)
+     {
+        _zoom_test_reset(wd->gesture[ELM_GESTURE_ZOOM]);
+        _set_state(g, ELM_GESTURE_STATE_UNDEFINED, NULL, EINA_FALSE);
+        SET_TEST_BIT(g);
+     }
+
+
+   g = wd->gesture[ELM_GESTURE_ROTATE];
+   rotate = (g) ? ((states_reset) | ((g->state != ELM_GESTURE_STATE_START)
+         && (g->state != ELM_GESTURE_STATE_MOVE))) : EINA_FALSE;
+   if (rotate)
+     {
+        _rotate_test_reset(wd->gesture[ELM_GESTURE_ROTATE]);
+        _set_state(g, ELM_GESTURE_STATE_UNDEFINED, NULL, EINA_FALSE);
+        SET_TEST_BIT(g);
+     }
+
+   Eina_List *l;
+   Pointer_Event *p;
+   EINA_LIST_FOREACH(wd->recent_device_event, l, p)
+     {  /* Generate a DOWN event */
+        Evas_Callback_Type e_type = p->event_type;
+        if(p->event_type == EVAS_CALLBACK_MULTI_MOVE)
+          e_type = EVAS_CALLBACK_MULTI_DOWN;
+        else
+          if(p->event_type == EVAS_CALLBACK_MOUSE_MOVE)
+            e_type = EVAS_CALLBACK_MOUSE_DOWN;
+
+
+        if (n_lines && (IS_TESTED(ELM_GESTURE_N_LINES)))
+          _n_line_test(data, p, NULL, e_type, ELM_GESTURE_N_LINES);
+
+        if (n_flicks && (IS_TESTED(ELM_GESTURE_N_FLICKS)))
+          _n_line_test(data, p, NULL, e_type, ELM_GESTURE_N_FLICKS);
+
+        if (zoom && (IS_TESTED(ELM_GESTURE_ZOOM)))
+          _zoom_test(data, p, NULL, e_type, ELM_GESTURE_ZOOM);
+
+        if (rotate && (IS_TESTED(ELM_GESTURE_ROTATE)))
+          _rotate_test(data, p, NULL, e_type, ELM_GESTURE_ROTATE);
+     }
+}
+
+/**
+ * @internal
+ *
  * This function the core-function where input handling is done.
  * Here we get user input and stream it to gesture testing.
  * We notify user about any gestures with new state:
@@ -3139,87 +3234,7 @@ _event_process(void *data, Evas_Object *obj __UNUSED__,
 
    /* Report current states and clear history if needed */
    Eina_Bool states_reset = _clear_if_finished(data);
-
-
-   /* Run through events to restart gestures */
-   Gesture_Info *g;
-   Eina_Bool n_lines, n_flicks, zoom, rotate;
-/*
-   int i;
-   printf("Gesture | State | tested\n");
-   for(i = ELM_GESTURE_N_TAPS; i < ELM_GESTURE_LAST; i++)
-     {
-        g = wd->gesture[i];
-        if(g)
-          printf("   %d       %d       %d\n", i, g->state, g->test);
-     }
-*/
-   /* We turn-on flag for finished, aborted, not-started gestures */
-   g = wd->gesture[ELM_GESTURE_N_LINES];
-   n_lines = (g) ? ((states_reset) | ((g->state != ELM_GESTURE_STATE_START)
-         && (g->state != ELM_GESTURE_STATE_MOVE))) : EINA_FALSE;
-   if (n_lines)
-     {
-        _line_test_reset(wd->gesture[ELM_GESTURE_N_LINES]);
-        _set_state(g, ELM_GESTURE_STATE_UNDEFINED, NULL, EINA_FALSE);
-        SET_TEST_BIT(g);
-     }
-
-   g = wd->gesture[ELM_GESTURE_N_FLICKS];
-   n_flicks = (g) ? ((states_reset) | ((g->state != ELM_GESTURE_STATE_START)
-         && (g->state != ELM_GESTURE_STATE_MOVE))) : EINA_FALSE;
-   if (n_flicks)
-     {
-        _line_test_reset(wd->gesture[ELM_GESTURE_N_FLICKS]);
-        _set_state(g, ELM_GESTURE_STATE_UNDEFINED, NULL, EINA_FALSE);
-        SET_TEST_BIT(g);
-     }
-
-   g = wd->gesture[ELM_GESTURE_ZOOM];
-   zoom = (g) ? ((states_reset) | ((g->state != ELM_GESTURE_STATE_START)
-         && (g->state != ELM_GESTURE_STATE_MOVE))) : EINA_FALSE;
-   if (zoom)
-     {
-        _zoom_test_reset(wd->gesture[ELM_GESTURE_ZOOM]);
-        _set_state(g, ELM_GESTURE_STATE_UNDEFINED, NULL, EINA_FALSE);
-        SET_TEST_BIT(g);
-     }
-
-
-   g = wd->gesture[ELM_GESTURE_ROTATE];
-   rotate = (g) ? ((states_reset) | ((g->state != ELM_GESTURE_STATE_START)
-         && (g->state != ELM_GESTURE_STATE_MOVE))) : EINA_FALSE;
-   if (rotate)
-     {
-        _rotate_test_reset(wd->gesture[ELM_GESTURE_ROTATE]);
-        _set_state(g, ELM_GESTURE_STATE_UNDEFINED, NULL, EINA_FALSE);
-        SET_TEST_BIT(g);
-     }
-
-   Eina_List *l;
-   Pointer_Event *p;
-   EINA_LIST_FOREACH(wd->recent_device_event, l, p)
-     {  /* Generate a DOWN event */
-        Evas_Callback_Type e_type = p->event_type;
-        if(p->event_type == EVAS_CALLBACK_MULTI_MOVE)
-          e_type = EVAS_CALLBACK_MULTI_DOWN;
-        else
-          if(p->event_type == EVAS_CALLBACK_MOUSE_MOVE)
-            e_type = EVAS_CALLBACK_MOUSE_DOWN;
-
-
-        if (n_lines && (IS_TESTED(ELM_GESTURE_N_LINES)))
-          _n_line_test(data, p, NULL, e_type, ELM_GESTURE_N_LINES);
-
-        if (n_flicks && (IS_TESTED(ELM_GESTURE_N_FLICKS)))
-          _n_line_test(data, p, NULL, e_type, ELM_GESTURE_N_FLICKS);
-
-        if (zoom && (IS_TESTED(ELM_GESTURE_ZOOM)))
-          _zoom_test(data, p, NULL, e_type, ELM_GESTURE_ZOOM);
-
-        if (rotate && (IS_TESTED(ELM_GESTURE_ROTATE)))
-          _rotate_test(data, p, NULL, e_type, ELM_GESTURE_ROTATE);
-     }
+   continues_gestures_restart(data, states_reset);
 }
 
 
