@@ -526,6 +526,25 @@ fi
 
 have_sdl="no"
 PKG_CHECK_MODULES([SDL], [sdl >= 1.2.0], [have_sdl="yes"], [have_sdl="no"])
+if test "x${have_sdl}" != "xyes" ; then
+   SDL_CONFIG="sdl-config"
+   AC_ARG_WITH([sdl-config],
+      [AC_HELP_STRING([--with-sdl-config=PATH], [use sdl-config specified])],
+      [
+       SDL_CONFIG=$withval
+       AC_MSG_NOTICE([using ${SDL_CONFIG} for sdl-config])
+      ])
+
+   AC_PATH_PROG([SDL_CONFIG], ["sdl-config"], [""], [$PATH])
+
+   if test -n "$SDL_CONFIG" ; then
+      SDL_CFLAGS=`$SDL_CONFIG --cflags`
+      SDL_LIBS=`$SDL_CONFIG --libs`
+      AC_SUBST(SDL_CFLAGS)
+      AC_SUBST(SDL_LIBS)
+      have_sdl="yes"
+   fi
+fi
 
 if test "x${have_sdl}" = "xyes" ; then
    PKG_CHECK_EXISTS([sdl >= 1.3.0],
