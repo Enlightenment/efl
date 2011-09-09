@@ -7907,6 +7907,7 @@ extern "C" {
     * This function inserts a new gengrid widget on the canvas.
     *
     * @see elm_gengrid_item_size_set()
+    * @see elm_gengrid_group_item_size_set()
     * @see elm_gengrid_horizontal_set()
     * @see elm_gengrid_item_append()
     * @see elm_gengrid_item_del()
@@ -7950,6 +7951,41 @@ extern "C" {
     * @ingroup Gengrid
     */
    EAPI void               elm_gengrid_item_size_get(const Evas_Object *obj, Evas_Coord *w, Evas_Coord *h) EINA_ARG_NONNULL(1);
+
+   /**
+    * Set the size for the group items of a given gengrid widget
+    *
+    * @param obj The gengrid object.
+    * @param w The group items' width.
+    * @param h The group items' height;
+    *
+    * A gengrid, after creation, has still no information on the size
+    * to give to each of its cells. So, you most probably will end up
+    * with squares one @ref Fingers "finger" wide, the default
+    * size. Use this function to force a custom size for you group items,
+    * making them as big as you wish.
+    *
+    * @see elm_gengrid_group_item_size_get()
+    *
+    * @ingroup Gengrid
+    */
+   EAPI void               elm_gengrid_group_item_size_set(Evas_Object *obj, Evas_Coord w, Evas_Coord h) EINA_ARG_NONNULL(1);
+
+   /**
+    * Get the size set for the group items of a given gengrid widget
+    *
+    * @param obj The gengrid object.
+    * @param w Pointer to a variable where to store the group items' width.
+    * @param h Pointer to a variable where to store the group items' height.
+    *
+    * @note Use @c NULL pointers on the size values you're not
+    * interested in: they'll be ignored by the function.
+    *
+    * @see elm_gengrid_group_item_size_get() for more details
+    *
+    * @ingroup Gengrid
+    */
+   EAPI void               elm_gengrid_group_item_size_get(const Evas_Object *obj, Evas_Coord *w, Evas_Coord *h) EINA_ARG_NONNULL(1);
 
    /**
     * Set the items grid's alignment within a given gengrid widget

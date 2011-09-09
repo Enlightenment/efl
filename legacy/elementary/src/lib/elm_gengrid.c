@@ -19,6 +19,7 @@
    EINA_INLIST;
    Evas_Object                  *spacer;
    const Elm_Gengrid_Item_Class *gic;
+   Elm_Gengrid_Item             *parent_group_item;
    Ecore_Timer                  *long_timer;
    Ecore_Animator               *item_moving_effect_timer;
    Widget_Data                  *wd;
@@ -29,10 +30,11 @@
         const void   *data;
      } func;
 
-   Evas_Coord   x, y, dx, dy, ox, oy, tx, ty, rx, ry;
+   Evas_Coord   x, y, gx, gy, dx, dy, ox, oy, tx, ty, rx, ry;
    unsigned int moving_effect_start_time;
    int          relcount;
    int          walking;
+   int          prev_group;
 
    struct
      {
@@ -45,7 +47,9 @@
 
    const char *mouse_cursor;
 
+   Eina_Bool   is_group : 1;
    Eina_Bool   want_unrealize : 1;
+   Eina_Bool   group_realized : 1;
    Eina_Bool   realized : 1;
    Eina_Bool   dragging : 1;
    Eina_Bool   down : 1;
@@ -64,6 +68,7 @@ struct _Widget_Data
    Evas_Object      *pan_smart;
    Pan              *pan;
    Eina_Inlist      *items;
+   Eina_List        *group_items;
    Ecore_Job        *calc_job;
    Eina_List        *selected;
    Elm_Gengrid_Item *last_selected_item, *reorder_item;
@@ -71,10 +76,12 @@ struct _Widget_Data
 
    Evas_Coord        pan_x, pan_y, old_pan_x, old_pan_y;
    Evas_Coord        item_width, item_height; /* Each item size */
+   Evas_Coord        group_item_width, group_item_height; /* Each group item size */
    Evas_Coord        minw, minh; /* Total obj size */
    Evas_Coord        reorder_item_x, reorder_item_y;
    unsigned int      nmax;
    long              count;
+   long              items_lost;
    int               walking;
 
    Eina_Bool         horizontal : 1;
@@ -978,29 +985,42 @@ _item_realize(Elm_Gengrid_Item *item)
           }
      }
 
-   if ((!item->wd->item_width) && (!item->wd->item_height))
+   if (item->is_group)
      {
-        edje_object_size_min_restricted_calc(item->base.view,
-                                             &item->wd->item_width,
-                                             &item->wd->item_height,
-                                             item->wd->item_width,
-                                             item->wd->item_height);
-        elm_coords_finger_size_adjust(1, &item->wd->item_width,
-                                      1, &item->wd->item_height);
+        if ((!item->wd->group_item_width) && (!item->wd->group_item_height))
+          {
+             edje_object_size_min_restricted_calc(item->base.view,
+                                                  &item->wd->group_item_width,
+                                                  &item->wd->group_item_height,
+                                                  item->wd->group_item_width,
+                                                  item->wd->group_item_height);
+          }
      }
+   else
+     {
+        if ((!item->wd->item_width) && (!item->wd->item_height))
+          {
+             edje_object_size_min_restricted_calc(item->base.view,
+                                                  &item->wd->item_width,
+                                                  &item->wd->item_height,
+                                                  item->wd->item_width,
+                                                  item->wd->item_height);
+             elm_coords_finger_size_adjust(1, &item->wd->item_width,
+                                           1, &item->wd->item_height);
+          }
 
-   evas_object_event_callback_add(item->base.view, EVAS_CALLBACK_MOUSE_DOWN,
-                                  _mouse_down, item);
-   evas_object_event_callback_add(item->base.view, EVAS_CALLBACK_MOUSE_UP,
-                                  _mouse_up, item);
-   evas_object_event_callback_add(item->base.view, EVAS_CALLBACK_MOUSE_MOVE,
-                                  _mouse_move, item);
+        evas_object_event_callback_add(item->base.view, EVAS_CALLBACK_MOUSE_DOWN,
+                                       _mouse_down, item);
+        evas_object_event_callback_add(item->base.view, EVAS_CALLBACK_MOUSE_UP,
+                                       _mouse_up, item);
+        evas_object_event_callback_add(item->base.view, EVAS_CALLBACK_MOUSE_MOVE,
+                                       _mouse_move, item);
 
-   if (item->selected)
-     edje_object_signal_emit(item->base.view, "elm,state,selected", "elm");
-   if (item->disabled)
-     edje_object_signal_emit(item->base.view, "elm,state,disabled", "elm");
-
+        if (item->selected)
+          edje_object_signal_emit(item->base.view, "elm,state,selected", "elm");
+        if (item->disabled)
+          edje_object_signal_emit(item->base.view, "elm,state,disabled", "elm");
+     }
    evas_object_show(item->base.view);
 
    if (item->tooltip.content_cb)
@@ -1075,26 +1095,87 @@ _reorder_item_moving_effect_timer_cb(void *data)
        (((dy > 0) && (item->ry >= item->ty)) || ((dy <= 0) && (item->ry <= item->ty))))
      {
         evas_object_move(item->base.view, item->tx, item->ty);
-        evas_object_resize(item->base.view, item->wd->item_width, item->wd->item_height);
+        if (item->is_group)
+          {
+             Evas_Coord vw, vh;
+             evas_object_geometry_get(item->wd->pan_smart, NULL, NULL, &vw, &vh);
+             if (item->wd->horizontal)
+               evas_object_resize(item->base.view, item->wd->group_item_width, vh);
+             else
+               evas_object_resize(item->base.view, vw, item->wd->group_item_height);
+          }
+        else
+          evas_object_resize(item->base.view, item->wd->item_width, item->wd->item_height);
         item->moving = EINA_FALSE;
         item->item_moving_effect_timer = NULL;
         return ECORE_CALLBACK_CANCEL;
      }
 
    evas_object_move(item->base.view, item->rx, item->ry);
-   evas_object_resize(item->base.view, item->wd->item_width, item->wd->item_height);
+   if (item->is_group)
+     {
+        Evas_Coord vw, vh;
+        evas_object_geometry_get(item->wd->pan_smart, NULL, NULL, &vw, &vh);
+        if (item->wd->horizontal)
+          evas_object_resize(item->base.view, item->wd->group_item_width, vh);
+        else
+          evas_object_resize(item->base.view, vw, item->wd->group_item_height);
+     }
+   else
+     evas_object_resize(item->base.view, item->wd->item_width, item->wd->item_height);
 
    return ECORE_CALLBACK_RENEW;
 }
+
+static void
+_group_item_place(Pan *sd)
+{
+   Evas_Coord iw, ih, vw, vh;
+   Eina_List *l;
+   Eina_Bool was_realized;
+   Elm_Gengrid_Item *it;
+   evas_object_geometry_get(sd->wd->pan_smart, NULL, NULL, &vw, &vh);
+   if (sd->wd->horizontal)
+     {
+        iw = sd->wd->group_item_width;
+        ih = vh;
+     }
+   else
+     {
+        iw = vw;
+        ih = sd->wd->group_item_height;
+     }
+   EINA_LIST_FOREACH(sd->wd->group_items, l, it)
+     {
+        was_realized = it->realized;
+        if (it->group_realized)
+          {
+             _item_realize(it);
+             if (!was_realized)
+               evas_object_smart_callback_call(it->wd->self, SIG_REALIZED, it);
+             evas_object_move(it->base.view, it->gx, it->gy);
+             evas_object_resize(it->base.view, iw, ih);
+             evas_object_raise(it->base.view);
+          }
+        else
+          {
+             _item_unrealize(it);
+             if (was_realized)
+               evas_object_smart_callback_call(it->wd->self, SIG_UNREALIZED, it);
+          }
+     }
+}
+
 
 static void
 _item_place(Elm_Gengrid_Item *item,
             Evas_Coord        cx,
             Evas_Coord        cy)
 {
-   Evas_Coord x, y, ox, oy, cvx, cvy, cvw, cvh;
+   Evas_Coord x, y, ox, oy, cvx, cvy, cvw, cvh, iw, ih, ww;
    Evas_Coord tch, tcw, alignw = 0, alignh = 0, vw, vh;
    Eina_Bool reorder_item_move_forward = EINA_FALSE;
+   long items_count;
    item->x = cx;
    item->y = cy;
    evas_object_geometry_get(item->wd->pan_smart, &ox, &oy, &vw, &vh);
@@ -1108,6 +1189,7 @@ _item_place(Elm_Gengrid_Item *item,
    alignh = 0;
    alignw = 0;
 
+   items_count = item->wd->count - eina_list_count(item->wd->group_items) + item->wd->items_lost;
    if (item->wd->horizontal)
      {
         int columns, items_visible = 0, items_row;
@@ -1117,11 +1199,11 @@ _item_place(Elm_Gengrid_Item *item,
         if (items_visible < 1)
           items_visible = 1;
 
-        columns = item->wd->count / items_visible;
-        if (item->wd->count % items_visible)
+        columns = items_count / items_visible;
+        if (items_count % items_visible)
           columns++;
 
-        tcw = item->wd->item_width * columns;
+        tcw = (item->wd->item_width * columns) + (item->wd->group_item_width * eina_list_count(item->wd->group_items));
         alignw = (vw - tcw) * item->wd->align_x;
 
         items_row = items_visible;
@@ -1139,11 +1221,11 @@ _item_place(Elm_Gengrid_Item *item,
         if (items_visible < 1)
           items_visible = 1;
 
-        rows = item->wd->count / items_visible;
-        if (item->wd->count % items_visible)
+        rows = items_count / items_visible;
+        if (items_count % items_visible)
           rows++;
 
-        tch = item->wd->item_height * rows;
+        tch = (item->wd->item_height * rows) + (item->wd->group_item_height * eina_list_count(item->wd->group_items));
         alignh = (vh - tch) * item->wd->align_y;
 
         items_col = items_visible;
@@ -1153,23 +1235,74 @@ _item_place(Elm_Gengrid_Item *item,
         alignw = (vw - tcw) * item->wd->align_x;
      }
 
-   x = cx * item->wd->item_width - item->wd->pan_x + ox + alignw;
-   if (elm_widget_mirrored_get(item->wd->self))
-     {  /* Switch items side and componsate for pan_x when in RTL mode */
-        Evas_Coord ww;
-        evas_object_geometry_get(item->wd->self, NULL, NULL, &ww, NULL);
-        x = ww - x - item->wd->item_width - item->wd->pan_x - item->wd->pan_x;
+   if (item->is_group)
+     {
+        if (item->wd->horizontal)
+          {
+             x = (((cx - item->prev_group) * item->wd->item_width) + (item->prev_group * item->wd->group_item_width)) - item->wd->pan_x + ox + alignw;
+             y = 0;
+             iw = item->wd->group_item_width;
+             ih = vh;
+          }
+        else
+          {
+             x = 0;
+             y = (((cy - item->prev_group) * item->wd->item_height) + (item->prev_group * item->wd->group_item_height)) - item->wd->pan_y + oy + alignh;
+             iw = vw;
+             ih = item->wd->group_item_height;
+          }
+        item->gx = x;
+        item->gy = y;
+     }
+   else
+     {
+        if (item->wd->horizontal)
+          {
+             x = (((cx - item->prev_group) * item->wd->item_width) + (item->prev_group * item->wd->group_item_width)) - item->wd->pan_x + ox + alignw;
+             y = (cy * item->wd->item_height) - item->wd->pan_y + oy + alignh;
+          }
+        else
+          {
+             x = (cx * item->wd->item_height) - item->wd->pan_x + ox + alignw;
+             y = (((cy - item->prev_group) * item->wd->item_height) + (item->prev_group * item->wd->group_item_height)) - item->wd->pan_y + oy + alignh;
+          }
+        if (elm_widget_mirrored_get(item->wd->self))
+          {  /* Switch items side and componsate for pan_x when in RTL mode */
+             evas_object_geometry_get(item->wd->self, NULL, NULL, &ww, NULL);
+             x = ww - x - item->wd->item_width - item->wd->pan_x - item->wd->pan_x;
+          }
+        iw = item->wd->item_width;
+        ih = item->wd->item_height;
      }
 
-   y = cy * item->wd->item_height - item->wd->pan_y + oy + alignh;
-
    Eina_Bool was_realized = item->realized;
-   if (ELM_RECTS_INTERSECT(x, y, item->wd->item_width, item->wd->item_height,
-                           cvx, cvy, cvw, cvh))
+   if (ELM_RECTS_INTERSECT(x, y, iw, ih, cvx, cvy, cvw, cvh))
      {
         _item_realize(item);
         if (!was_realized)
           evas_object_smart_callback_call(item->wd->self, SIG_REALIZED, item);
+        if (item->parent_group_item)
+          {
+             if (item->wd->horizontal)
+               {
+                  if (item->parent_group_item->gx < 0)
+                    {
+                       item->parent_group_item->gx = x + item->wd->item_width - item->wd->group_item_width;
+                       if (item->parent_group_item->gx > 0)
+                         item->parent_group_item->gx = 0;
+                    }
+               }
+             else
+               {
+                  if (item->parent_group_item->gy < 0)
+                    {
+                       item->parent_group_item->gy = y + item->wd->item_height - item->wd->group_item_height;
+                       if (item->parent_group_item->gy > 0)
+                         item->parent_group_item->gy = 0;
+                    }
+                  item->parent_group_item->group_realized = EINA_TRUE;
+               }
+          }
         if ((item->wd->reorder_mode) && (item->wd->reorder_item))
           {
              if (item->moving) return;
@@ -1183,8 +1316,7 @@ _item_place(Elm_Gengrid_Item *item,
                {
                   evas_object_move(item->base.view,
                                    item->wd->reorder_item_x, item->wd->reorder_item_y);
-                  evas_object_resize(item->base.view,
-                                     item->wd->item_width, item->wd->item_height);
+                  evas_object_resize(item->base.view, iw, ih);
                   return;
                }
              else
@@ -1209,10 +1341,36 @@ _item_place(Elm_Gengrid_Item *item,
                          }
                     }
 
-                  if (ELM_RECTS_INTERSECT(item->wd->reorder_item_x, item->wd->reorder_item_y,
-                                          item->wd->item_width, item->wd->item_height,
-                                          x+(item->wd->item_width/2), y+(item->wd->item_height/2),
-                                          1, 1))
+                  /* need fix here */
+                  Evas_Coord nx, ny, nw, nh;
+                  if (item->is_group)
+                    {
+                       if (item->wd->horizontal)
+                         {
+                            nx = x + (item->wd->group_item_width / 2);
+                            ny = y;
+                            nw = 1;
+                            nh = vh;
+                         }
+                       else
+                         {
+                            nx = x;
+                            ny = y + (item->wd->group_item_height / 2);
+                            nw = vw;
+                            nh = 1;
+                         }
+                    }
+                  else
+                    {
+                       nx = x + (item->wd->item_width / 2);
+                       ny = y + (item->wd->item_height / 2);
+                       nw = 1;
+                       nh = 1;
+                    }
+
+                  if ( ELM_RECTS_INTERSECT(item->wd->reorder_item_x, item->wd->reorder_item_y,
+                                           item->wd->item_width, item->wd->item_height,
+                                           nx, ny, nw, nh))
                     {
                        if (item->wd->horizontal)
                          {
@@ -1243,19 +1401,28 @@ _item_place(Elm_Gengrid_Item *item,
                        if (item->wd->calc_job) ecore_job_del(item->wd->calc_job);
                          item->wd->calc_job = ecore_job_add(_calc_job, item->wd);
 
-                       return;
+                         return;
                     }
                }
           }
-        evas_object_move(item->base.view, x, y);
-        evas_object_resize(item->base.view, item->wd->item_width,
-                           item->wd->item_height);
+        if (!item->is_group)
+          {
+             evas_object_move(item->base.view, x, y);
+             evas_object_resize(item->base.view, iw, ih);
+          }
+        else
+          item->group_realized = EINA_TRUE;
      }
    else
      {
-        _item_unrealize(item);
-        if (was_realized)
-          evas_object_smart_callback_call(item->wd->self, SIG_UNREALIZED, item);
+        if (!item->is_group)
+          {
+             _item_unrealize(item);
+             if (was_realized)
+               evas_object_smart_callback_call(item->wd->self, SIG_UNREALIZED, item);
+          }
+        else
+          item->group_realized = EINA_FALSE;
      }
 }
 
@@ -1284,7 +1451,9 @@ _item_create(Widget_Data                  *wd,
    item->func.func = func;
    item->func.data = func_data;
    item->mouse_cursor = NULL;
+   item->is_group = !strcmp(item->gic->item_style, "group_index");
    elm_widget_item_text_get_hook_set(item, _item_label_hook);
+
    return item;
 }
 
@@ -1304,6 +1473,8 @@ _item_del(Elm_Gengrid_Item *item)
      item->tooltip.del_cb((void *)item->tooltip.data, item->base.widget, item);
    item->wd->walking -= item->walking;
    item->wd->count--;
+   if (item->is_group)
+     item->wd->group_items = eina_list_remove(item->wd->group_items, item);
    if (item->wd->calc_job) ecore_job_del(item->wd->calc_job);
    item->wd->calc_job = ecore_job_add(_calc_job, item->wd);
    elm_widget_item_del(item);
@@ -1358,7 +1529,10 @@ _calc_job(void *data)
 {
    Widget_Data *wd = data;
    Evas_Coord minw = 0, minh = 0, nmax = 0, cvw, cvh;
-   int count;
+   Elm_Gengrid_Item *item, *group_item = NULL;
+   int count_group = 0;
+   long count = 0;
+   wd->items_lost = 0;
 
    evas_object_geometry_get(wd->pan_smart, NULL, NULL, &cvw, &cvh);
    if ((cvw != 0) || (cvh != 0))
@@ -1371,16 +1545,37 @@ _calc_job(void *data)
         if (nmax < 1)
           nmax = 1;
 
-        count = wd->count;
+        EINA_INLIST_FOREACH(wd->items, item)
+          {
+             if (item->prev_group != count_group)
+               item->prev_group = count_group;
+             if (item->is_group)
+               {
+                  count = count % nmax;
+                  if (count)
+                    wd->items_lost += nmax - count;
+                  //printf("%d items and I lost %d\n", count, wd->items_lost);
+                  count_group++;
+                  if (count) count = 0;
+                  group_item = item;
+               }
+             else
+               {
+                  if (item->parent_group_item != group_item)
+                    item->parent_group_item = group_item;
+                  count++;
+               }
+          }
+        count = wd->count + wd->items_lost - count_group;
         if (wd->horizontal)
           {
-             minw = ceil(count / (float)nmax) * wd->item_width;
+             minw = (ceil(count / (float)nmax) * wd->item_width) + (count_group * wd->group_item_height);
              minh = nmax * wd->item_height;
           }
         else
           {
              minw = nmax * wd->item_width;
-             minh = ceil(count / (float)nmax) * wd->item_height;
+             minh = (ceil(count / (float)nmax) * wd->item_height) + (count_group * wd->group_item_height);
           }
 
         if ((minw != wd->minw) || (minh != wd->minh))
@@ -1512,19 +1707,56 @@ _pan_calculate(Evas_Object *obj)
 
    EINA_INLIST_FOREACH(sd->wd->items, item)
      {
+        if (item->is_group)
+          {
+             if (sd->wd->horizontal)
+               {
+                  if (cy)
+                    {
+                       cx++;
+                       cy = 0;
+                    }
+               }
+             else
+               {
+                  if (cx)
+                    {
+                       cx = 0;
+                       cy++;
+                    }
+               }
+          }
         _item_place(item, cx, cy);
         if (sd->wd->reorder_item_changed) return;
-        if (sd->wd->horizontal)
+        if (item->is_group)
           {
-             cy = (cy + 1) % sd->wd->nmax;
-             if (!cy) cx++;
+             if (sd->wd->horizontal)
+               {
+                  cx++;
+                  cy = 0;
+               }
+             else
+               {
+                  cx = 0;
+                  cy++;
+               }
           }
         else
           {
-             cx = (cx + 1) % sd->wd->nmax;
-             if (!cx) cy++;
+             if (sd->wd->horizontal)
+               {
+                  cy = (cy + 1) % sd->wd->nmax;
+                  if (!cy) cx++;
+               }
+             else
+               {
+                  cx = (cx + 1) % sd->wd->nmax;
+                  if (!cx) cy++;
+               }
           }
      }
+   _group_item_place(sd);
+
 
    if ((sd->wd->reorder_mode) && (sd->wd->reorder_item))
      {
@@ -1756,6 +1988,33 @@ elm_gengrid_item_size_get(const Evas_Object *obj,
 }
 
 EAPI void
+elm_gengrid_group_item_size_set(Evas_Object *obj,
+                          Evas_Coord   w,
+                          Evas_Coord   h)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   if ((wd->group_item_width == w) && (wd->group_item_height == h)) return;
+   wd->group_item_width = w;
+   wd->group_item_height = h;
+   if (wd->calc_job) ecore_job_del(wd->calc_job);
+   wd->calc_job = ecore_job_add(_calc_job, wd);
+}
+
+EAPI void
+elm_gengrid_group_item_size_get(const Evas_Object *obj,
+                          Evas_Coord        *w,
+                          Evas_Coord        *h)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   if (w) *w = wd->group_item_width;
+   if (h) *h = wd->group_item_height;
+}
+
+EAPI void
 elm_gengrid_align_set(Evas_Object *obj,
                       double       align_x,
                       double       align_y)
@@ -1808,6 +2067,9 @@ elm_gengrid_item_append(Evas_Object                  *obj,
    if (!item) return NULL;
    wd->items = eina_inlist_append(wd->items, EINA_INLIST_GET(item));
 
+   if (item->is_group)
+     wd->group_items = eina_list_prepend(wd->group_items, item);
+
    if (wd->calc_job) ecore_job_del(wd->calc_job);
    wd->calc_job = ecore_job_add(_calc_job, wd);
 
@@ -1829,6 +2091,8 @@ elm_gengrid_item_prepend(Evas_Object                  *obj,
    item = _item_create(wd, gic, data, func, func_data);
    if (!item) return NULL;
    wd->items = eina_inlist_prepend(wd->items, EINA_INLIST_GET(item));
+   if (item->is_group)
+     wd->group_items = eina_list_append(wd->group_items, item);
 
    if (wd->calc_job) ecore_job_del(wd->calc_job);
    wd->calc_job = ecore_job_add(_calc_job, wd);
@@ -1854,6 +2118,8 @@ elm_gengrid_item_insert_before(Evas_Object                  *obj,
    if (!item) return NULL;
    wd->items = eina_inlist_prepend_relative
       (wd->items, EINA_INLIST_GET(item), EINA_INLIST_GET(relative));
+   if (item->is_group)
+     wd->group_items = eina_list_append_relative(wd->group_items, item, relative->parent_group_item);
 
    if (wd->calc_job) ecore_job_del(wd->calc_job);
    wd->calc_job = ecore_job_add(_calc_job, wd);
@@ -1879,6 +2145,8 @@ elm_gengrid_item_insert_after(Evas_Object                  *obj,
    if (!item) return NULL;
    wd->items = eina_inlist_append_relative
       (wd->items, EINA_INLIST_GET(item), EINA_INLIST_GET(relative));
+   if (item->is_group)
+     wd->group_items = eina_list_prepend_relative(wd->group_items, item, relative->parent_group_item);
 
    if (wd->calc_job) ecore_job_del(wd->calc_job);
    wd->calc_job = ecore_job_add(_calc_job, wd);
@@ -2548,9 +2816,16 @@ elm_gengrid_item_show(Elm_Gengrid_Item *item)
    if ((!item) || (item->delete_me)) return;
    _pan_min_get(wd->pan_smart, &minx, &miny);
 
-   elm_smart_scroller_child_region_show(item->wd->scr,
-                                        item->x * wd->item_width + minx,
+   if (wd->horizontal)
+     elm_smart_scroller_region_bring_in(item->wd->scr,
+                                        ((item->x - item->prev_group) * wd->item_width) + (item->prev_group * item->wd->group_item_width) + minx,
                                         item->y * wd->item_height + miny,
+                                        item->wd->item_width,
+                                        item->wd->item_height);
+   else
+     elm_smart_scroller_region_bring_in(item->wd->scr,
+                                        item->x * wd->item_width + minx,
+                                        ((item->y - item->prev_group)* wd->item_height) + (item->prev_group * item->wd->group_item_height) + miny,
                                         item->wd->item_width,
                                         item->wd->item_height);
 }
@@ -2566,9 +2841,16 @@ elm_gengrid_item_bring_in(Elm_Gengrid_Item *item)
    if (!wd) return;
    _pan_min_get(wd->pan_smart, &minx, &miny);
 
-   elm_smart_scroller_region_bring_in(item->wd->scr,
-                                      item->x * wd->item_width + minx,
-                                      item->y * wd->item_height + miny,
-                                      item->wd->item_width,
-                                      item->wd->item_height);
+   if (wd->horizontal)
+     elm_smart_scroller_region_bring_in(item->wd->scr,
+                                        ((item->x - item->prev_group) * wd->item_width) + (item->prev_group * item->wd->group_item_width) + minx,
+                                        item->y * wd->item_height + miny,
+                                        item->wd->item_width,
+                                        item->wd->item_height);
+   else
+     elm_smart_scroller_region_bring_in(item->wd->scr,
+                                        item->x * wd->item_width + minx,
+                                        ((item->y - item->prev_group)* wd->item_height) + (item->prev_group * item->wd->group_item_height) + miny,
+                                        item->wd->item_width,
+                                        item->wd->item_height);
 }
