@@ -2115,3 +2115,14 @@ elm_object_item_access_info_set(Elm_Object_Item *it, const char *txt)
    _elm_widget_item_access_info_set((Elm_Widget_Item *)it, txt);
 }
 
+EAPI void *
+elm_object_item_data_get(const Elm_Object_Item *it)
+{
+   return elm_widget_item_data_get(it);
+}
+
+EAPI void
+elm_object_item_data_set(Elm_Object_Item *it, void *data)
+{
+   elm_widget_item_data_set(it, data);
+}

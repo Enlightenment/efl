@@ -1105,6 +1105,24 @@ extern "C" {
 #define elm_object_item_text_get(it) elm_object_item_text_part_get((it), NULL)
 
    /**
+    * Get the data associated with an object item
+    * @param it The object item
+    * @return The data associated with @p it
+    *
+    * @ingroup General
+    */
+   EAPI void *elm_object_item_data_get(const Elm_Object_Item *it);
+
+   /**
+    * Set the data associated with an object item
+    * @param it The object item
+    * @param data The data to be associated with @p it
+    *
+    * @ingroup General
+    */
+   EAPI void elm_object_item_data_set(Elm_Object_Item *it, void *data);
+
+   /**
     * @}
     */
 
