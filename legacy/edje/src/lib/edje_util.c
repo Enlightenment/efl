@@ -518,7 +518,7 @@ edje_color_class_list(void)
 {
    Edje_List_Foreach_Data fdata;
 
-   if (!color_class) return NULL;
+   if (!_edje_color_class_member_hash) return NULL;
 
    memset(&fdata, 0, sizeof(Edje_List_Foreach_Data));
    eina_hash_foreach(_edje_color_class_member_hash,
