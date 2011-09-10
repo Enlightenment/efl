@@ -153,11 +153,11 @@ static const Escape escapes[] = {
   { "<ps>",  _PARAGRAPH_SEPARATOR },
   { "<br>",  "\n" },
   { "<\t>",  "\t" },
-  { "gt;",   ">" },
-  { "lt;",    "<" },
-  { "amp;",   "&" },
-  { "quot;",  "\'" },
-  { "dquot;", "\"" }
+  { "&gt;",   ">" },
+  { "&lt;",    "<" },
+  { "&amp;",   "&" },
+  { "&quot;",  "'" },
+  { "&dquot;", "\"" }
 };
 #define N_ESCAPES ((int)(sizeof(escapes) / sizeof(escapes[0])))
 
@@ -578,13 +578,20 @@ selection_notify(void *udata __UNUSED__, int type __UNUSED__, void *event)
 
 
 static Eina_Bool
-targets_converter(char *target __UNUSED__, void *data, int size __UNUSED__, void **data_ret, int *size_ret, Ecore_X_Atom *ttype, int *typesize)
+targets_converter(char *target __UNUSED__, void *data, int size, void **data_ret, int *size_ret, Ecore_X_Atom *ttype, int *typesize)
 {
    int i,count;
    Ecore_X_Atom *aret;
    Cnp_Selection *sel;
 
    if (!data_ret) return EINA_FALSE;
+
+   if (size != sizeof(int))
+     {
+        if (data_ret) *data_ret = strndup(data, size);
+        if (size_ret) *size_ret = size;
+        return EINA_TRUE;
+     }
 
    sel = selections + *((int *)data);
 
@@ -958,8 +965,8 @@ text_converter(char *target __UNUSED__, void *data, int size, void **data_ret, i
    cnp_debug("text converter\n");
    if (size != sizeof(int))
      {
-        if (data_ret) *data_ret = strndup(data, size - 1);
-        if (size_ret) *size_ret = size - 1;
+        if (data_ret) *data_ret = strndup(data, size);
+        if (size_ret) *size_ret = size;
         return EINA_TRUE;
      }
    sel = selections + *((int *)data);
@@ -1000,8 +1007,8 @@ general_converter(char *target __UNUSED__, void *data, int size, void **data_ret
      }
    else if (size)
      {
-        if (data_ret) *data_ret = strndup(data, size - 1);
-        if (size_ret) *size_ret = size - 1;
+        if (data_ret) *data_ret = strndup(data, size);
+        if (size_ret) *size_ret = size;
      }
    return EINA_TRUE;
 }
@@ -1032,40 +1039,69 @@ remove_tags(const char *p, int *len)
    int i;
    if (!p) return NULL;
 
-   q = malloc(strlen(p)+1);
+   q = malloc(strlen(p) + 1);
    if (!q) return NULL;
    ret = q;
 
    while (*p)
      {
-        if ((*p != '<') && (*p != '&')) *q++ = *p++;
-        else if (*p == '<')
+        Eina_Bool esc = EINA_TRUE;
+        const char *x;
+        switch (p[0])
           {
-             if ((p[1] == 'b') && (p[2] == 'r') &&
-                 ((p[3] == ' ') || (p[3] == '/') || (p[3] == '>')))
-               *q++ = '\n';
-             else if ((p[1] == 'p') && (p[2] == 's') && (p[3] == '>'))
+           case '<':
+             x = strchr(p + 3, '>');
+             if (!x)
                {
-                  strcpy(q, _PARAGRAPH_SEPARATOR);
-                  q += (sizeof(_PARAGRAPH_SEPARATOR)-1);
+                  strcpy(q, p);
+                  if (len) *len = strlen(ret);
+                  return ret;
                }
-             while ((*p) && (*p != '>')) p++;
-             p++;
-          }
-        else if (*p == '&')
-          {
-             p++;
-             for (i = 0 ; i < N_ESCAPES ; i++)
+             if (memcmp(p + 1, "br", 2) && memcmp(p + 1, "ps", 2))
                {
-                  if (!strncmp(p,escapes[i].escape, strlen(escapes[i].escape)))
+                  strncpy(q, p, x - p + 1);
+                  p = x + 1;
+                  break;
+               }
+             i = x - p - 1;
+             if (p[i] == '/') i--;
+             for (; i > 2; i++)
+               {
+                  if (p[i] != ' ')
                     {
-                       p += strlen(escapes[i].escape);
-                       strcpy(q, escapes[i].value);
-                       q += strlen(escapes[i].value);
+                       esc = EINA_FALSE;
                        break;
                     }
                }
+             if (!esc)
+               {
+                  strncpy(q, p, x - p + 1);
+                  p = x + 1;
+                  break;
+               }
+             if (p[1] == 'b')
+               *q++ = '\n';
+             else
+               {
+                  strcpy(q, _PARAGRAPH_SEPARATOR);
+                  q += sizeof(_PARAGRAPH_SEPARATOR) - 1;
+               }
+             p = x + 1;
+             break;
+           case '&':
+             for (i = 3 ; i < N_ESCAPES ; i++)
+               {
+                  if (strncmp(p, escapes[i].escape, strlen(escapes[i].escape)))
+                    continue;
+                  p += strlen(escapes[i].escape);
+                  strcpy(q, escapes[i].value);
+                  q += strlen(escapes[i].value);
+                  break;
+               }
              if (i == N_ESCAPES) *q ++= '&';
+             break;
+           default:
+             *q++ = *p++;
           }
      }
    *q = 0;
