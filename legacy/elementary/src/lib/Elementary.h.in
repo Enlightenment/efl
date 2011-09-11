@@ -7835,6 +7835,8 @@ extern "C" {
     *   is the gengrid item that was activated.
     * - @c "clicked,double" - The user has double-clicked an item.
     *   The @c event_info parameter is the gengrid item that was double-clicked.
+    * - @c "longpressed" - This is called when the item is pressed for a certain
+    *   amount of time. By default it's 1 second.
     * - @c "selected" - The user has made an item selected. The
     *   @c event_info parameter is the gengrid item that was selected.
     * - @c "unselected" - The user has made an item unselected. The

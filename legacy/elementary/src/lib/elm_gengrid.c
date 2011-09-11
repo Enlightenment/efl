@@ -135,6 +135,7 @@ static void _mirrored_set(Evas_Object *obj, Eina_Bool rtl);
 
 static const char SIG_ACTIVATED[] = "activated";
 static const char SIG_CLICKED_DOUBLE[] = "clicked,double";
+static const char SIG_LONGPRESSED[] = "longpressed";
 static const char SIG_SELECTED[] = "selected";
 static const char SIG_UNSELECTED[] = "unselected";
 static const char SIG_REALIZED[] = "realized";
@@ -156,6 +157,7 @@ static const char SIG_MOVED[] = "moved";
 static const Evas_Smart_Cb_Description _signals[] = {
    {SIG_ACTIVATED, ""},
    {SIG_CLICKED_DOUBLE, ""},
+   {SIG_LONGPRESSED, ""},
    {SIG_SELECTED, ""},
    {SIG_UNSELECTED, ""},
    {SIG_REALIZED, ""},
@@ -762,7 +764,7 @@ _long_press(void *data)
    item->long_timer = NULL;
    if ((item->disabled) || (item->dragging)) return ECORE_CALLBACK_CANCEL;
    item->wd->longpressed = EINA_TRUE;
-   evas_object_smart_callback_call(item->wd->self, "longpressed", item);
+   evas_object_smart_callback_call(item->wd->self, SIG_LONGPRESSED, item);
    if (item->wd->reorder_mode)
      {
         item->wd->reorder_item = item;

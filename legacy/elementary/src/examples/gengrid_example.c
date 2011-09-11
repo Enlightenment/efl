@@ -288,6 +288,16 @@ _double_click(void        *data __UNUSED__,
    fprintf(stdout, "Double click on item with handle %p\n", event_info);
 }
 
+/* item long press callback */
+static void
+_long_pressed(void        *data __UNUSED__,
+              Evas_Object *obj __UNUSED__,
+              void        *event_info)
+{
+   fprintf(stdout, "Long press on item with handle %p\n", event_info);
+}
+
+
 /* label fetching callback */
 static char *
 _grid_label_get(void        *data,
@@ -428,6 +438,7 @@ elm_main(int    argc __UNUSED__,
    evas_object_size_hint_min_set(grid, 600, 500);
    elm_box_pack_end(bx, grid);
    evas_object_smart_callback_add(grid, "clicked,double", _double_click, NULL);
+   evas_object_smart_callback_add(grid, "longpressed", _long_pressed, NULL);
    evas_object_show(grid);
 
    hbx_1 = elm_box_add(win);
