@@ -7,5 +7,5 @@ Name: escape
 Description: Library that ports on the PS3 some specific Unix functions.
 Version: @VERSION@
 Libs: -L${libdir} -lescape
-Libs.private: -lm -lnet
+Libs.private: -lm -lnet -lsysmodule -liberty
 Cflags: -I${includedir}/escape-@VMAJ@
