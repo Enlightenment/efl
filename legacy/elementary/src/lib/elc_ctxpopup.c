@@ -1351,15 +1351,19 @@ elm_ctxpopup_item_del(Elm_Object_Item *it)
 
    wd->items = eina_list_remove(wd->items, ctxpopup_it);
 
-   if (eina_list_count(wd->items) < 1)
-     wd->items = NULL;
-
    wd->dir = ELM_CTXPOPUP_DIRECTION_DONT_KNOW;
+
+   elm_widget_item_del(ctxpopup_it);
+
+   if (eina_list_count(wd->items) < 1)
+     {
+        evas_object_hide(ctxpopup_it->base.widget);
+        return;
+     }
 
    if (wd->visible)
      _sizing_eval(ctxpopup_it->base.widget);
 
-   free(ctxpopup_it);
 }
 
 EAPI void
