@@ -2447,7 +2447,8 @@ elm_widget_is_check(const Evas_Object *obj)
 
 EAPI Eina_Bool
 elm_widget_type_check(const Evas_Object *obj,
-                      const char        *type)
+                      const char        *type,
+                      const char        *func)
 {
    const char *provided, *expected = "(unknown)";
    static int abort_on_warn = -1;
@@ -2460,7 +2461,7 @@ elm_widget_type_check(const Evas_Object *obj,
         if ((!provided) || (!provided[0]))
           provided = "(unknown)";
      }
-   ERR("Passing Object: %p, of type: '%s' when expecting type: '%s'", obj, provided, expected);
+   ERR("Passing Object: %p in function: %s, of type: '%s' when expecting type: '%s'", obj, func, provided, expected);
    if (abort_on_warn == -1)
      {
         if (getenv("ELM_ERROR_ABORT")) abort_on_warn = 1;

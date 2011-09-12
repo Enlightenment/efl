@@ -401,7 +401,7 @@ EAPI Eina_Bool        elm_widget_theme_object_set(Evas_Object *obj, Evas_Object 
 EAPI void             elm_widget_type_register(const char **ptr);
 EAPI void             elm_widget_type_unregister(const char **ptr);
 EAPI Eina_Bool        elm_widget_is_check(const Evas_Object *obj);
-EAPI Eina_Bool        elm_widget_type_check(const Evas_Object *obj, const char *type);
+EAPI Eina_Bool        elm_widget_type_check(const Evas_Object *obj, const char *type, const char *func);
 EAPI Eina_List       *elm_widget_stringlist_get(const char *str);
 EAPI void             elm_widget_stringlist_free(Eina_List *list);
 EAPI void             elm_widget_focus_hide_handle(Evas_Object *obj);
@@ -676,7 +676,7 @@ EAPI void             elm_widget_tree_dot_dump(const Evas_Object *top, FILE *out
    if (!elm_widget_is_check(obj)) return
 
 #define ELM_CHECK_WIDTYPE(obj, widtype) \
-   if (!elm_widget_type_check((obj), (widtype))) return
+   if (!elm_widget_type_check((obj), (widtype), __func__)) return
 
 #define ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(it, ...)                \
    ELM_WIDGET_ITEM_CHECK_OR_RETURN((Elm_Widget_Item *)it, __VA_ARGS__); \
@@ -684,7 +684,7 @@ EAPI void             elm_widget_tree_dot_dump(const Evas_Object *top, FILE *out
 
 #define ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_GOTO(it, label)                \
    ELM_WIDGET_ITEM_CHECK_OR_GOTO((Elm_Widget_Item *)it, label);         \
-   if (!elm_widget_type_check((it->base.widget), (widtype))) goto label;
+   if (!elm_widget_type_check((it->base.widget), (widtype), __func__)) goto label;
 
 #define ELM_WIDGET_STANDARD_SETUP(wdat, wdtype, par, evas, ob, ret) \
    do { \
