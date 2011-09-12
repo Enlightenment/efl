@@ -888,6 +888,29 @@ ecore_con_client_flush(Ecore_Con_Client *cl)
    _ecore_con_client_flush(cl);
 }
 
+EAPI int
+ecore_con_server_fd_get(Ecore_Con_Server *svr)
+{
+   if (!ECORE_MAGIC_CHECK(svr, ECORE_MAGIC_CON_SERVER))
+     {
+        ECORE_MAGIC_FAIL(svr, ECORE_MAGIC_CON_SERVER, __func__);
+        return -1;
+     }
+   if (svr->created) return -1;
+   return ecore_main_fd_handler_fd_get(svr->fd_handler);
+}
+
+EAPI int
+ecore_con_client_fd_get(Ecore_Con_Client *cl)
+{
+   if (!ECORE_MAGIC_CHECK(cl, ECORE_MAGIC_CON_CLIENT))
+     {
+        ECORE_MAGIC_FAIL(cl, ECORE_MAGIC_CON_CLIENT, __func__);
+        return -1;
+     }
+   return ecore_main_fd_handler_fd_get(cl->fd_handler);
+}
+
 /**
  * @}
  */

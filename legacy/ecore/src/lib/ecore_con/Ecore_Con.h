@@ -958,6 +958,30 @@ EAPI void              ecore_con_server_timeout_set(Ecore_Con_Server *svr, doubl
 EAPI double            ecore_con_server_timeout_get(Ecore_Con_Server *svr);
 
 /**
+ * Get the fd that the server is connected to
+ *
+ * @param svr The server object
+ * @return The fd, or -1 on failure
+ *
+ * This function returns the fd which is used by the underlying server connection.
+ * It should not be tampered with unless you REALLY know what you are doing.
+ * @note This function is only valid for servers created with ecore_con_server_connect()
+ * @since 1.1
+ */
+EAPI int               ecore_con_server_fd_get(Ecore_Con_Server *svr);
+
+/**
+ * Get the fd that the client is connected to
+ *
+ * @param cl The client object
+ * @return The fd, or -1 on failure
+ *
+ * This function returns the fd which is used by the underlying client connection.
+ * It should not be tampered with unless you REALLY know what you are doing.
+ * @since 1.1
+ */
+EAPI int               ecore_con_client_fd_get(Ecore_Con_Client *cl);
+/**
  * @}
  */
 
