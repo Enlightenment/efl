@@ -702,7 +702,8 @@ elm_menu_item_object_icon_name_set(Elm_Menu_Item *item, const char *icon)
    if (!*icon) return;
    if ((item->icon_str) && (!strcmp(item->icon_str, icon))) return;
    if ((snprintf(icon_tmp, sizeof(icon_tmp), "menu/%s", icon) > 0) &&
-       (elm_icon_standard_set(item->content, icon_tmp)))
+       (elm_icon_standard_set(item->content, icon_tmp) ||
+        elm_icon_standard_set(item->content, icon)))
      {
         eina_stringshare_replace(&item->icon_str, icon);
         edje_object_signal_emit(item->base.view, "elm,state,icon,visible", "elm");
