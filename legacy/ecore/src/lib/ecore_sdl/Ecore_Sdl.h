@@ -36,14 +36,8 @@
 extern "C" {
 #endif
 
-EAPI extern int ECORE_SDL_EVENT_KEY_DOWN; /**< SDL Key Down event */
-EAPI extern int ECORE_SDL_EVENT_KEY_UP; /**< SDL Key Up event */
-EAPI extern int ECORE_SDL_EVENT_MOUSE_BUTTON_DOWN; /**< SDL Mouse Down event */
-EAPI extern int ECORE_SDL_EVENT_MOUSE_BUTTON_UP; /**< SDL Mouse Up event */
-EAPI extern int ECORE_SDL_EVENT_MOUSE_MOVE; /**< SDL Mouse Move event */
-EAPI extern int ECORE_SDL_EVENT_MOUSE_WHEEL; /**< SDL Mouse Wheel event */
-EAPI extern int ECORE_SDL_EVENT_GOT_FOCUS; /**< SDL Mouse Wheel event */
-EAPI extern int ECORE_SDL_EVENT_LOST_FOCUS; /**< SDL Mouse Wheel event */
+EAPI extern int ECORE_SDL_EVENT_GOT_FOCUS;
+EAPI extern int ECORE_SDL_EVENT_LOST_FOCUS;
 EAPI extern int ECORE_SDL_EVENT_RESIZE;
 EAPI extern int ECORE_SDL_EVENT_EXPOSE;
 

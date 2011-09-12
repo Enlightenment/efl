@@ -50,9 +50,9 @@ _ecore_sdl_pressed_node(const Ecore_SDL_Pressed *node,
 }
 
 /**
- * @defgroup Ecore_Sdl_Library_Group Framebuffer Library Functions
+ * @defgroup Ecore_Sdl_Library_Group SDL Library Functions
  *
- * Functions used to set up and shut down the Ecore_Framebuffer functions.
+ * Functions used to set up and shut down the Ecore_Sdl functions.
  */
 
 /**
@@ -96,8 +96,8 @@ ecore_sdl_init(const char *name __UNUSED__)
 EAPI int
 ecore_sdl_shutdown(void)
 {
-   if (--_ecore_sdl_init_count != 0);
-   return _ecore_sdl_init_count;
+   if (--_ecore_sdl_init_count != 0)
+     return _ecore_sdl_init_count;
 
    ecore_event_shutdown();
    eina_log_domain_unregister(_ecore_sdl_log_dom);
