@@ -157,7 +157,7 @@ eina_condition_wait(Eina_Condition *cond EINA_UNUSED)
 }
 
 static inline Eina_Bool
-eina_condition_timedwait(Eina_Condition *cond EINA_UNUSED, double val)
+eina_condition_timedwait(Eina_Condition *cond EINA_UNUSED, double val EINA_UNUSED)
 {
    return EINA_FALSE;
 }
@@ -198,19 +198,19 @@ eina_rwlock_write_take(Eina_RWLock *mutex EINA_UNUSED)
 }
 
 static inline Eina_Lock_Result
-eina_rwlock_release(Eina_RWLock *mutex)
+eina_rwlock_release(Eina_RWLock *mutex EINA_UNUSED)
 {
    return EINA_LOCK_FAIL;
 }
 
 static inline Eina_Lock_Result
-eina_rwlock_take_read(Eina_RWLock *mutex)
+eina_rwlock_take_read(Eina_RWLock *mutex EINA_UNUSED)
 {
    return EINA_LOCK_FAIL;
 }
 
 static inline Eina_Lock_Result
-eina_rwlock_take_write(Eina_RWLock *mutex)
+eina_rwlock_take_write(Eina_RWLock *mutex EINA_UNUSED)
 {
    return EINA_LOCK_FAIL;
 }
