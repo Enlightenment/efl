@@ -44,6 +44,7 @@ struct _Elm_Theme
    Eina_List  *themes;
    Eina_List  *extension;
    Eina_Hash  *cache;
+   Eina_Hash  *cache_data;
    Elm_Theme  *ref_theme;
    Eina_List  *referrers;
    const char *theme;

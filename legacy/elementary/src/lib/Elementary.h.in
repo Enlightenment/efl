@@ -3439,6 +3439,18 @@ extern "C" {
     * for more information.
     */
    EAPI Elm_Theme       *elm_object_theme_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+
+   /**
+    * Get a data item from a theme
+    *
+    * @param th The theme, or NULL for default theme
+    * @param key The data key to search with
+    * @return The data value, or NULL on failure
+    *
+    * This function is used to return data items from edc in @p th, an overlay, or an extension.
+    * It works the same way as edje_file_data_get() except that the return is stringshared.
+    */
+   EAPI const char      *elm_theme_data_get(Elm_Theme *th, const char *key) EINA_ARG_NONNULL(2);
    /**
     * @}
     */
