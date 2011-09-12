@@ -1343,7 +1343,7 @@ elm_ctxpopup_item_del(Elm_Object_Item *it)
    if (!wd) return;
 
    if (ctxpopup_it->icon)
-      evas_object_del(ctxpopup_it->icon);
+     evas_object_del(ctxpopup_it->icon);
    if (ctxpopup_it->base.view)
      evas_object_del(ctxpopup_it->base.view);
 
