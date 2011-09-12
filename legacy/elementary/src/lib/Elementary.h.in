@@ -7889,7 +7889,7 @@ extern "C" {
     * - @c "scroll,drag,stop" - called when dragging the content has
     *   stopped.
     *
-    * List of gendrid examples:
+    * List of gengrid examples:
     * @li @ref gengrid_example
     */
 
@@ -8237,7 +8237,7 @@ extern "C" {
     * @c EINA_FALSE otherwise
     *
     * This will make items in @p obj selectable or not. In the latter
-    * case, any user interacion on the gendrid items will neither make
+    * case, any user interaction on the gengrid items will neither make
     * them appear selected nor them call their selection callback
     * functions.
     *
