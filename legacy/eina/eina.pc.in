@@ -8,5 +8,5 @@ Description: A Library that implements fast data types and miscellaneous tools
 @pkgconfig_requires_private@: @requirement_eina@
 Version: @VERSION@
 Libs: -L${libdir} -leina @EFL_PTHREAD_LIBS@
-Libs.private: @EFL_FNMATCH_LIBS@ @EFL_PTHREAD_LIBS@ @rt_libs@ @iconv_libs@ -ldl -lm
+Libs.private: @EFL_FNMATCH_LIBS@ @EFL_PTHREAD_LIBS@ @rt_libs@ @iconv_libs@ @EINA_LIBS@
 Cflags: -I${includedir}/eina-@VMAJ@ -I${includedir}/eina-@VMAJ@/eina
