@@ -311,6 +311,20 @@ typedef struct _Ecore_Con_Event_Client_Data Ecore_Con_Event_Client_Data;
 typedef struct _Ecore_Con_Event_Server_Data Ecore_Con_Event_Server_Data;
 
 /**
+ * @typedef Ecore_Con_Event_Client_Write
+ * Used as the @p data param for the corresponding event
+ * @since 1.1
+ */
+typedef struct _Ecore_Con_Event_Client_Write Ecore_Con_Event_Client_Write;
+
+/**
+ * @typedef Ecore_Con_Event_Server_Write
+ * Used as the @p data param for the corresponding event
+ * @since 1.1
+ */
+typedef struct _Ecore_Con_Event_Server_Write Ecore_Con_Event_Server_Write;
+
+/**
  * @typedef Ecore_Con_Event_Url_Data
  * Used as the @p data param for the corresponding event
  * @ingroup Ecore_Con_Url_Group
@@ -430,6 +444,26 @@ struct _Ecore_Con_Event_Server_Data
 };
 
 /**
+ * @struct _Ecore_Con_Event_Client_Write
+ * Used as the @p data param for the @ref ECORE_CON_EVENT_CLIENT_WRITE event
+ */
+struct _Ecore_Con_Event_Client_Write
+{
+   Ecore_Con_Client *client; /**< the client that connected */
+   int size;                 /**< the length of the data sent */
+};
+
+/**
+ * @struct _Ecore_Con_Event_Server_Write
+ * Used as the @p data param for the @ref ECORE_CON_EVENT_SERVER_WRITE event
+ */
+struct _Ecore_Con_Event_Server_Write
+{
+   Ecore_Con_Server *server; /**< the server that was connected to */
+   int size;                 /**< the length of the data sent */
+};
+
+/**
  * @struct _Ecore_Con_Event_Url_Data
  * Used as the @p data param for the @ref ECORE_CON_EVENT_URL_DATA event
  * @ingroup Ecore_Con_Url_Group
@@ -492,6 +526,14 @@ EAPI extern int ECORE_CON_EVENT_SERVER_ERROR;
  * @since 1.1
  */
 EAPI extern int ECORE_CON_EVENT_SERVER_UPGRADE;
+/** A server connection has sent data to its client
+ * @since 1.1
+ */
+EAPI extern int ECORE_CON_EVENT_CLIENT_WRITE;
+/** A server connection object has sent data
+ * @since 1.1
+ */
+EAPI extern int ECORE_CON_EVENT_SERVER_WRITE;
 /** A client connected to the server has sent data */
 EAPI extern int ECORE_CON_EVENT_CLIENT_DATA;
 /** A server connection object has data */

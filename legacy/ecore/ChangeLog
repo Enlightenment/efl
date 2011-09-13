@@ -291,3 +291,8 @@
 
         * Add ecore_con_server_fd_get, ecore_con_client_fd_get for manipulating
           server file descriptors.
+
+2011-09-13  Mike Blumenkrantz
+
+        * Add ECORE_CON_EVENT_CLIENT_WRITE, ECORE_CON_EVENT_SERVER_WRITE for
+          obtaining progress of socket writes
