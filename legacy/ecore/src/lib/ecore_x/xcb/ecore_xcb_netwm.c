@@ -699,6 +699,7 @@ ecore_x_netwm_desktop_request_send(Ecore_X_Window win, Ecore_X_Window root, unsi
    xcb_send_event(_ecore_xcb_conn, 0, root, 
                   (XCB_EVENT_MASK_SUBSTRUCTURE_REDIRECT | 
                       XCB_EVENT_MASK_SUBSTRUCTURE_NOTIFY), (const char *)&ev);
+   ecore_x_flush();
 }
 
 EAPI void 

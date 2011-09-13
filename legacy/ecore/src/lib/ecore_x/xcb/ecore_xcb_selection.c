@@ -454,6 +454,7 @@ ecore_x_selection_notify_send(Ecore_X_Window requestor, Ecore_X_Atom selection, 
 
    xcb_send_event(_ecore_xcb_conn, 0, requestor, 
                   XCB_EVENT_MASK_NO_EVENT, (const char *)&ev);
+   ecore_x_flush();
 
    return EINA_TRUE;
 }
