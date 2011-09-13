@@ -903,7 +903,7 @@ ecore_x_icccm_iconic_request_send(Ecore_X_Window win, Ecore_X_Window root)
                   (XCB_EVENT_MASK_SUBSTRUCTURE_NOTIFY | 
                       XCB_EVENT_MASK_SUBSTRUCTURE_REDIRECT), 
                   (const char *)&ev);
-   ecore_x_flush();
+//   ecore_x_flush();
 }
 
 /**
@@ -1304,7 +1304,7 @@ ecore_x_icccm_move_resize_send(Ecore_X_Window win, int x, int y, int w, int h)
 
    xcb_send_event(_ecore_xcb_conn, 0, win, 
                   XCB_EVENT_MASK_STRUCTURE_NOTIFY, (const char *)&ev);
-   ecore_x_flush();
+//   ecore_x_flush();
 }
 
 /**

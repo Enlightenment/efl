@@ -277,7 +277,7 @@ ecore_x_netwm_desk_names_set(Ecore_X_Window root, const char **names, unsigned i
    xcb_change_property(_ecore_xcb_conn, XCB_PROP_MODE_REPLACE, root,
                        ECORE_X_ATOM_NET_DESKTOP_NAMES, 
                        ECORE_X_ATOM_UTF8_STRING, 8, len, (const void *)buf);
-   ecore_x_flush();
+//   ecore_x_flush();
    free(buf);
 }
 
@@ -394,7 +394,7 @@ ecore_x_netwm_state_request_send(Ecore_X_Window win, Ecore_X_Window root, Ecore_
    xcb_send_event(_ecore_xcb_conn, 0, root, 
                   (XCB_EVENT_MASK_SUBSTRUCTURE_REDIRECT | 
                       XCB_EVENT_MASK_SUBSTRUCTURE_NOTIFY), (const char *)&ev);
-   ecore_x_flush();
+//   ecore_x_flush();
 }
 
 EAPI void 
@@ -486,7 +486,7 @@ ecore_x_netwm_client_active_request(Ecore_X_Window root, Ecore_X_Window win, int
    xcb_send_event(_ecore_xcb_conn, 0, root, 
                   (XCB_EVENT_MASK_SUBSTRUCTURE_REDIRECT | 
                       XCB_EVENT_MASK_SUBSTRUCTURE_NOTIFY), (const char *)&ev);
-   ecore_x_flush();
+//   ecore_x_flush();
 }
 
 EAPI void 
@@ -590,7 +590,7 @@ ecore_x_netwm_ping_send(Ecore_X_Window win)
 
    xcb_send_event(_ecore_xcb_conn, 0, win, 
                   XCB_EVENT_MASK_NO_EVENT, (const char *)&ev);
-   ecore_x_flush();
+//   ecore_x_flush();
 }
 
 EAPI void 
@@ -652,7 +652,7 @@ ecore_x_netwm_sync_request_send(Ecore_X_Window win, unsigned int serial)
 
    xcb_send_event(_ecore_xcb_conn, 0, win, 
                   XCB_EVENT_MASK_NO_EVENT, (const char *)&ev);
-   ecore_x_flush();
+//   ecore_x_flush();
 }
 
 EAPI void 
@@ -699,7 +699,7 @@ ecore_x_netwm_desktop_request_send(Ecore_X_Window win, Ecore_X_Window root, unsi
    xcb_send_event(_ecore_xcb_conn, 0, root, 
                   (XCB_EVENT_MASK_SUBSTRUCTURE_REDIRECT | 
                       XCB_EVENT_MASK_SUBSTRUCTURE_NOTIFY), (const char *)&ev);
-   ecore_x_flush();
+//   ecore_x_flush();
 }
 
 EAPI void 

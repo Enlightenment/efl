@@ -31,7 +31,7 @@ ecore_x_pixmap_new(Ecore_X_Window win, int w, int h, int dep)
    pmap = xcb_generate_id(_ecore_xcb_conn);
    xcb_create_pixmap(_ecore_xcb_conn, dep, pmap, win, w, h);
 
-   ecore_x_flush();
+//   ecore_x_flush();
    return pmap;
 }
 
@@ -50,7 +50,7 @@ ecore_x_pixmap_free(Ecore_X_Pixmap pmap)
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    xcb_free_pixmap(_ecore_xcb_conn, pmap);
-   ecore_x_flush();
+//   ecore_x_flush();
 }
 
 /**
@@ -73,7 +73,7 @@ ecore_x_pixmap_paste(Ecore_X_Pixmap pmap, Ecore_X_Drawable dest, Ecore_X_GC gc, 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    xcb_copy_area(_ecore_xcb_conn, pmap, dest, gc, sx, sy, dx, dy, w, h);
-   ecore_x_flush();
+//   ecore_x_flush();
 }
 
 /**

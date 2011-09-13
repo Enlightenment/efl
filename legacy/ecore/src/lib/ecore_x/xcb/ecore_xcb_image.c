@@ -64,7 +64,7 @@ ecore_x_image_free(Ecore_X_Image *im)
      }
 
    free(im);
-   ecore_x_flush();
+//   ecore_x_flush();
 }
 
 EAPI Eina_Bool 

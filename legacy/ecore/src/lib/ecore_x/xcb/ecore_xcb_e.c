@@ -38,7 +38,7 @@ ecore_x_e_comp_sync_draw_done_send(Ecore_X_Window root, Ecore_X_Window win)
    xcb_send_event(_ecore_xcb_conn, 0, root, 
                   (XCB_EVENT_MASK_SUBSTRUCTURE_REDIRECT | 
                       XCB_EVENT_MASK_SUBSTRUCTURE_NOTIFY), (const char *)&ev);
-   ecore_x_flush();
+//   ecore_x_flush();
 }
 
 EAPI void 
@@ -65,7 +65,7 @@ ecore_x_e_comp_sync_draw_size_done_send(Ecore_X_Window root, Ecore_X_Window win,
    xcb_send_event(_ecore_xcb_conn, 0, root, 
                   (XCB_EVENT_MASK_SUBSTRUCTURE_REDIRECT | 
                       XCB_EVENT_MASK_SUBSTRUCTURE_NOTIFY), (const char *)&ev);
-   ecore_x_flush();
+//   ecore_x_flush();
 }
 
 EAPI void 
@@ -170,7 +170,7 @@ ecore_x_e_comp_sync_begin_send(Ecore_X_Window win)
 
    xcb_send_event(_ecore_xcb_conn, 0, win, 
                   XCB_EVENT_MASK_NO_EVENT, (const char *)&ev);
-   ecore_x_flush();
+//   ecore_x_flush();
 }
 
 EAPI void 
@@ -194,7 +194,7 @@ ecore_x_e_comp_sync_end_send(Ecore_X_Window win)
 
    xcb_send_event(_ecore_xcb_conn, 0, win, 
                   XCB_EVENT_MASK_NO_EVENT, (const char *)&ev);
-   ecore_x_flush();
+//   ecore_x_flush();
 }
 
 EAPI void 
@@ -218,7 +218,7 @@ ecore_x_e_comp_sync_cancel_send(Ecore_X_Window win)
 
    xcb_send_event(_ecore_xcb_conn, 0, win, 
                   XCB_EVENT_MASK_NO_EVENT, (const char *)&ev);
-   ecore_x_flush();
+//   ecore_x_flush();
 }
 
 EAPI void 
@@ -242,7 +242,7 @@ ecore_x_e_comp_flush_send(Ecore_X_Window win)
 
    xcb_send_event(_ecore_xcb_conn, 0, win, 
                   XCB_EVENT_MASK_NO_EVENT, (const char *)&ev);
-   ecore_x_flush();
+//   ecore_x_flush();
 }
 
 EAPI void 
@@ -266,7 +266,7 @@ ecore_x_e_comp_dump_send(Ecore_X_Window win)
 
    xcb_send_event(_ecore_xcb_conn, 0, win, 
                   XCB_EVENT_MASK_NO_EVENT, (const char *)&ev);
-   ecore_x_flush();
+//   ecore_x_flush();
 }
 
 EAPI void 

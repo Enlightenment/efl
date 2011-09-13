@@ -6,12 +6,14 @@
 static int _ecore_xcb_shutdown(Eina_Bool close_display);
 static Eina_Bool _ecore_xcb_fd_handle(void *data, Ecore_Fd_Handler *hdlr __UNUSED__);
 static Eina_Bool _ecore_xcb_fd_handle_buff(void *data, Ecore_Fd_Handler *hdlr __UNUSED__);
+static Eina_Bool _ecore_xcb_idle_enter(void *data __UNUSED__);
 
 /* local variables */
 static int _ecore_xcb_init_count = 0;
 static int _ecore_xcb_grab_count = 0;
 static Ecore_Fd_Handler *_ecore_xcb_fd_handler = NULL;
 static xcb_generic_event_t *_ecore_xcb_event_buffered = NULL;
+static Ecore_Idle_Enterer *_ecore_xcb_idle_enterer = NULL;
 
 /* external variables */
 int _ecore_xcb_log_dom = -1;
@@ -247,6 +249,9 @@ ecore_x_init(const char *name)
    if (!_ecore_xcb_fd_handler) 
      return _ecore_xcb_shutdown(EINA_TRUE);
 
+   _ecore_xcb_idle_enterer = 
+     ecore_idle_enterer_add(_ecore_xcb_idle_enter, NULL);
+
    /* prefetch atoms */
    _ecore_xcb_atoms_init();
 
@@ -432,7 +437,7 @@ ecore_x_client_message32_send(Ecore_X_Window win, Ecore_X_Atom type, Ecore_X_Eve
    cookie = 
      xcb_send_event_checked(_ecore_xcb_conn, 0, win, mask, (const char *)&ev);
 
-   ecore_x_flush();
+//   ecore_x_flush();
 
    err = xcb_request_check(_ecore_xcb_conn, cookie);
    if (err) 
@@ -482,7 +487,7 @@ ecore_x_client_message8_send(Ecore_X_Window win, Ecore_X_Atom type, const void *
      xcb_send_event_checked(_ecore_xcb_conn, 0, win, 
                             XCB_EVENT_MASK_NO_EVENT, (const char *)&ev);
 
-   ecore_x_flush();
+//   ecore_x_flush();
 
    err = xcb_request_check(_ecore_xcb_conn, cookie);
    if (err) 
@@ -536,7 +541,7 @@ ecore_x_mouse_down_send(Ecore_X_Window win, int x, int y, int b)
      xcb_send_event_checked(_ecore_xcb_conn, 1, win, 
                             XCB_EVENT_MASK_BUTTON_PRESS, (const char *)&ev);
 
-   ecore_x_flush();
+//   ecore_x_flush();
 
    err = xcb_request_check(_ecore_xcb_conn, vcookie);
    if (err) 
@@ -587,7 +592,7 @@ ecore_x_mouse_up_send(Ecore_X_Window win, int x, int y, int b)
      xcb_send_event_checked(_ecore_xcb_conn, 1, win, 
                             XCB_EVENT_MASK_BUTTON_RELEASE, (const char *)&ev);
 
-   ecore_x_flush();
+//   ecore_x_flush();
 
    err = xcb_request_check(_ecore_xcb_conn, vcookie);
    if (err) 
@@ -638,7 +643,7 @@ ecore_x_mouse_move_send(Ecore_X_Window win, int x, int y)
      xcb_send_event_checked(_ecore_xcb_conn, 1, win, 
                             XCB_EVENT_MASK_POINTER_MOTION, (const char *)&ev);
 
-   ecore_x_flush();
+//   ecore_x_flush();
 
    err = xcb_request_check(_ecore_xcb_conn, vcookie);
    if (err) 
@@ -967,7 +972,7 @@ ecore_x_focus_reset(void)
    xcb_set_input_focus(_ecore_xcb_conn, XCB_INPUT_FOCUS_POINTER_ROOT, 
                        ((xcb_screen_t *)_ecore_xcb_screen)->root, 
                        XCB_CURRENT_TIME);
-   ecore_x_flush();
+//   ecore_x_flush();
 }
 
 EAPI void 
@@ -976,7 +981,7 @@ ecore_x_events_allow_all(void)
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    xcb_allow_events(_ecore_xcb_conn, XCB_ALLOW_ASYNC_BOTH, XCB_CURRENT_TIME);
-   ecore_x_flush();
+//   ecore_x_flush();
 }
 
 /**
@@ -992,7 +997,7 @@ ecore_x_kill(Ecore_X_Window win)
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    xcb_kill_client(_ecore_xcb_conn, win);
-   ecore_x_flush();
+//   ecore_x_flush();
 }
 
 /**
@@ -1313,6 +1318,9 @@ _ecore_xcb_shutdown(Eina_Bool close_display)
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
+   ecore_idle_enterer_del(_ecore_xcb_idle_enterer);
+   _ecore_xcb_idle_enterer = NULL;
+
    if (_ecore_xcb_fd_handler)
      ecore_main_fd_handler_del(_ecore_xcb_fd_handler);
 
@@ -1372,7 +1380,7 @@ _ecore_xcb_fd_handle(void *data, Ecore_Fd_Handler *hdlr __UNUSED__)
         _ecore_xcb_event_buffered = NULL;
      }
 
-   xcb_flush(conn);
+//   xcb_flush(conn);
 
    while ((ev = xcb_poll_for_event(conn))) 
      {
@@ -1455,4 +1463,11 @@ _ecore_xcb_fd_handle_buff(void *data, Ecore_Fd_Handler *hdlr __UNUSED__)
           }
      }
    return ECORE_CALLBACK_CANCEL;
+}
+
+static Eina_Bool 
+_ecore_xcb_idle_enter(void *data __UNUSED__) 
+{
+   xcb_flush(_ecore_xcb_conn);
+   return ECORE_CALLBACK_RENEW;
 }

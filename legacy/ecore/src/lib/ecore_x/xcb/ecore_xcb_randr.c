@@ -2425,7 +2425,7 @@ ecore_x_randr_output_backlight_level_set(Ecore_X_Window root, Ecore_X_Randr_Outp
                                               _backlight, XCB_ATOM_INTEGER, 
                                               32, XCB_PROP_MODE_REPLACE, 
                                               1, (unsigned char *)&n);
-             ecore_x_flush(); // needed
+//             ecore_x_flush(); // needed
           }
 
         free(qreply);

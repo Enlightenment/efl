@@ -446,7 +446,7 @@ ecore_x_event_mask_set(Ecore_X_Window win, Ecore_X_Event_Mask mask)
    free(reply);
    xcb_change_window_attributes(_ecore_xcb_conn, win, 
                                 XCB_CW_EVENT_MASK, &list);
-   ecore_x_flush();
+//   ecore_x_flush();
 }
 
 EAPI void 
@@ -467,7 +467,7 @@ ecore_x_event_mask_unset(Ecore_X_Window win, Ecore_X_Event_Mask mask)
    free(reply);
    xcb_change_window_attributes(_ecore_xcb_conn, win, 
                                 XCB_CW_EVENT_MASK, &list);
-   ecore_x_flush();
+//   ecore_x_flush();
 }
 
 unsigned int 
@@ -1652,7 +1652,7 @@ _ecore_xcb_event_handle_client_message(xcb_generic_event_t *event)
                             (XCB_EVENT_MASK_SUBSTRUCTURE_REDIRECT | 
                                 XCB_EVENT_MASK_SUBSTRUCTURE_NOTIFY), 
                             (const char *)&ev);
-             ecore_x_flush();
+//             ecore_x_flush();
           }
      }
    else if ((ev->type == ECORE_X_ATOM_NET_STARTUP_INFO_BEGIN) && 

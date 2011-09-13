@@ -56,7 +56,7 @@ ecore_x_xregion_set(Ecore_X_XRegion *region, Ecore_X_GC gc)
    xcb_set_clip_rectangles(_ecore_xcb_conn, XCB_CLIP_ORDERING_YX_BANDED,
                            gc, 0, 0, num, rects);
 
-   ecore_x_flush();
+//   ecore_x_flush();
    return EINA_TRUE;
 }
 
