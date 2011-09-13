@@ -510,7 +510,9 @@ struct _Ecore_Con_Event_Url_Progress
 EAPI extern int ECORE_CON_EVENT_CLIENT_ADD;
 /** A client has disconnected from the server */
 EAPI extern int ECORE_CON_EVENT_CLIENT_DEL;
-/** A client experienced an error */
+/** A client experienced an error
+ * @since 1.1
+ */
 EAPI extern int ECORE_CON_EVENT_CLIENT_ERROR;
 /** A client connection has been upgraded to SSL
  * @since 1.1
@@ -520,7 +522,9 @@ EAPI extern int ECORE_CON_EVENT_CLIENT_UPGRADE;
 EAPI extern int ECORE_CON_EVENT_SERVER_ADD;
 /** A server connection was lost */
 EAPI extern int ECORE_CON_EVENT_SERVER_DEL;
-/** A server experienced an error */
+/** A server experienced an error
+ * @since 1.1
+ */
 EAPI extern int ECORE_CON_EVENT_SERVER_ERROR;
 /** A server connection has been upgraded to SSL
  * @since 1.1
