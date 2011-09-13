@@ -268,6 +268,7 @@ typedef struct _Ecore_Con_Event_Client_Del Ecore_Con_Event_Client_Del;
 /**
  * @typedef Ecore_Con_Event_Client_Error
  * Used as the @p data param for the corresponding event
+ * @since 1.1
  */
 typedef struct _Ecore_Con_Event_Client_Error Ecore_Con_Event_Client_Error;
 
@@ -293,6 +294,7 @@ typedef struct _Ecore_Con_Event_Server_Del Ecore_Con_Event_Server_Del;
 /**
  * @typedef Ecore_Con_Event_Server_Error
  * Used as the @p data param for the corresponding event
+ * @since 1.1
  */
 typedef struct _Ecore_Con_Event_Server_Error Ecore_Con_Event_Server_Error;
 
