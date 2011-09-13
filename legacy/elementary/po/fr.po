@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Elementary\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2011-09-08 10:39+0900\n"
+"POT-Creation-Date: 2011-09-14 01:53+0900\n"
 "PO-Revision-Date: 2011-03-26 08:13+0400\n"
 "Last-Translator: batden <batden@orange.fr>\n"
 "Language-Team: Enlightenment French Team <pourunmondesansgourou@gmail.com>\n"
@@ -38,12 +38,16 @@ msgstr "OK"
 msgid "Clicked"
 msgstr ""
 
-#: src/lib/elm_button.c:338 src/lib/elm_check.c:271 src/lib/elm_toolbar.c:653
+#: src/lib/elm_button.c:338 src/lib/elm_check.c:271 src/lib/elm_toolbar.c:659
 msgid "State: Disabled"
 msgstr ""
 
 #: src/lib/elm_button.c:388
 msgid "Button"
+msgstr ""
+
+#: src/lib/elm_calendar.c:158
+msgid "%B %Y"
 msgstr ""
 
 #: src/lib/elm_check.c:216 src/lib/elm_check.c:273
@@ -58,7 +62,7 @@ msgstr ""
 msgid "Check"
 msgstr ""
 
-#: src/lib/elm_config.c:1601
+#: src/lib/elm_config.c:1603
 msgid "default:LTR"
 msgstr "LTR par défaut"
 
@@ -78,23 +82,23 @@ msgstr "Sélectionner"
 msgid "Paste"
 msgstr "Coller"
 
-#: src/lib/elm_toolbar.c:606
+#: src/lib/elm_toolbar.c:612
 #, fuzzy
 msgid "Selected"
 msgstr "Sélectionner"
 
-#: src/lib/elm_toolbar.c:651
+#: src/lib/elm_toolbar.c:657
 msgid "Separator"
 msgstr ""
 
-#: src/lib/elm_toolbar.c:655
+#: src/lib/elm_toolbar.c:661
 msgid "State: Selected"
 msgstr ""
 
-#: src/lib/elm_toolbar.c:657
+#: src/lib/elm_toolbar.c:663
 msgid "Has menu"
 msgstr ""
 
-#: src/lib/elm_toolbar.c:687
+#: src/lib/elm_toolbar.c:693
 msgid "Tool Item"
 msgstr ""

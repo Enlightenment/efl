@@ -155,7 +155,8 @@ static char *
 _format_month_year(struct tm *selected_time)
 {
    char buf[32];
-   if (!strftime(buf, sizeof(buf), "%B %Y", selected_time)) return NULL;
+   if (!strftime(buf, sizeof(buf), E_("%B %Y"), selected_time)) return NULL;
+fprintf(stderr, "%s\n", buf);
    return strdup(buf);
 }
 
