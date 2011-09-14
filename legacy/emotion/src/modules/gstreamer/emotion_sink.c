@@ -801,20 +801,25 @@ evas_video_sink_main_render(void *data)
 
    _emotion_frame_new(ev->obj);
 
-   vstream = eina_list_nth(ev->video_streams, ev->video_stream_nbr - 1);
-
    gst_element_query_position(ev->pipeline, &fmt, &pos);
    ev->position = (double)pos / (double)GST_SECOND;
 
-   vstream->width = priv->width;
-   vstream->height = priv->height;
+   vstream = eina_list_nth(ev->video_streams, ev->video_stream_nbr - 1);
+
+   if (vstream)
+     {
+       vstream->width = priv->width;
+       vstream->height = priv->height;
+       _emotion_video_pos_update(ev->obj, ev->position, vstream->length_time);
+     }
+
    ev->ratio = (double) priv->width / (double) priv->height;
 
-   _emotion_video_pos_update(ev->obj, ev->position, vstream->length_time);
    _emotion_frame_resize(ev->obj, priv->width, priv->height, ev->ratio);
 
+   buffer = gst_buffer_ref(buffer);
    if (ev->last_buffer) gst_buffer_unref(ev->last_buffer);
-   ev->last_buffer = gst_buffer_ref(buffer);
+   ev->last_buffer = buffer;
 
  exit_point:
    emotion_gstreamer_buffer_free(send);
@@ -1009,6 +1014,9 @@ gstreamer_video_sink_new(Emotion_Gstreamer_Video *ev,
 
    evas_object_event_callback_del_full(obj, EVAS_CALLBACK_RESIZE, _on_resize_fill, ev);
    evas_event_callback_del_full(evas_object_evas_get(obj), EVAS_CALLBACK_RENDER_FLUSH_POST, _on_post_clear, ev);
+
+   if (!uri)
+     return NULL;
 
    playbin = gst_element_factory_make("playbin2", "playbin");
    if (!playbin)
