@@ -33,7 +33,6 @@ struct _Elm_Naviframe_Item
    Evas_Object       *title;
    Eina_List         *content_list;
    Eina_List         *text_list;
-
    Evas_Object       *content;
    Evas_Object       *title_prev_btn;
    Evas_Object       *title_next_btn;
@@ -230,13 +229,13 @@ _content_set_hook(Elm_Object_Item *it,
 
    if (!part) return;
 
-   //Special Part Contents
+   //specified parts
    if (!strcmp(part, "elm.swallow.content"))
      {
        _item_content_set(navi_it, content);
        return;
      }
-   if (!strcmp(part, "elm.swallow.prev_btn"))
+   else if (!strcmp(part, "elm.swallow.prev_btn"))
      {
        _title_prev_btn_set(navi_it, content, EINA_FALSE);
        return;
@@ -247,7 +246,7 @@ _content_set_hook(Elm_Object_Item *it,
        return;
      }
 
-   //Common Title Part Content
+   //common part
    _title_content_set(navi_it, pair, part, content);
 }
 
@@ -262,6 +261,15 @@ _content_get_hook(const Elm_Object_Item *it,
    Elm_Naviframe_Content_Item_Pair *pair = NULL;
    Elm_Naviframe_Item *navi_it = ELM_CAST(it);
 
+   //specified parts 
+   if (!strcmp(part, "elm.swallow.content"))
+     return navi_it->content;
+   else if (!strcmp(part, "elm.swallow.prev_btn"))
+     return navi_it->title_prev_btn;
+   else if(!strcmp(part, "elm.swallow.next_btn"))
+     return navi_it->title_next_btn;
+
+   //common parts
    EINA_LIST_FOREACH(navi_it->content_list, l, pair)
      {
         if (!strcmp(part, pair->part))
@@ -274,8 +282,52 @@ static Evas_Object *
 _content_unset_hook(Elm_Object_Item *it __UNUSED__,
                     const char *part __UNUSED__)
 {
-   //FIXME:
-   return NULL;
+   ELM_OBJ_ITEM_CHECK_OR_RETURN(it, NULL);
+   Eina_List *l = NULL;
+   Elm_Naviframe_Content_Item_Pair *pair = NULL;
+   Elm_Naviframe_Item *navi_it = ELM_CAST(it);
+   Evas_Object *content = NULL;
+   char buf[1028];
+
+  if (!part) return NULL;
+
+  //specified parts
+  //FIXME: could be unset the below specified contents also. 
+   if (!strcmp(part, "elm.swallow.content") ||
+       !strcmp(part, "elm.swallow.prev_btn") ||
+       !strcmp(part, "elm.swallow.next_btn"))
+     {
+        WRN("You can not unset the content! : naviframe=%p",
+            navi_it->base.widget);
+        return NULL;
+     }
+
+  //common parts
+   EINA_LIST_FOREACH(navi_it->content_list, l, pair)
+     {
+        if (!strcmp(part, pair->part))
+          {
+             content = pair->content;
+             eina_stringshare_del(pair->part);
+             navi_it->content_list = eina_list_remove(navi_it->content_list,
+                                                      pair);
+             free(pair);
+             break;
+          }
+     }
+
+   if (!content) return NULL;
+
+   elm_widget_sub_object_del(navi_it->base.widget, content);
+   edje_object_part_unswallow(navi_it->title, content);
+   snprintf(buf, sizeof(buf), "elm,state,%s,hide", part);
+   edje_object_signal_emit(navi_it->title, buf, "elm");
+   evas_object_event_callback_del(content,
+                                  EVAS_CALLBACK_DEL,
+                                  _title_content_del);
+   _item_sizing_eval(navi_it);
+
+   return content;
 }
 
 static void
