@@ -401,7 +401,7 @@ static Evas_Object *
 _back_btn_new(Evas_Object *obj)
 {
    Evas_Object *btn;
-   char buf[256];   //FIXME: How to guarantee the size of style name?
+   char buf[1024];
    btn = elm_button_add(obj);
    if (!btn) return NULL;
    evas_object_smart_callback_add(btn, "clicked", _back_btn_clicked, obj);
@@ -513,7 +513,7 @@ _title_content_set(Elm_Naviframe_Item *it,
 static void
 _title_prev_btn_set(Elm_Naviframe_Item *it, Evas_Object *btn, Eina_Bool back_btn)
 {
-   char buf[256];   //FIXME: How to guarantee the size of style name?
+   char buf[1024];
 
    if (it->title_prev_btn == btn) return;
 
@@ -546,7 +546,7 @@ _title_prev_btn_set(Elm_Naviframe_Item *it, Evas_Object *btn, Eina_Bool back_btn
 static void
 _title_next_btn_set(Elm_Naviframe_Item *it, Evas_Object *btn)
 {
-   char buf[256];   //FIXME: How to guarantee the size of style name?
+   char buf[1024];
 
    if (it->title_next_btn == btn) return;
 
