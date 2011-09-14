@@ -24,8 +24,8 @@ _print_current_dir(Evas_Object *obj)
       case ELM_CTXPOPUP_DIRECTION_DOWN:
          printf("ctxpopup direction: down!\n");
          break;
-      case ELM_CTXPOPUP_DIRECTION_DONT_KNOW:
-         printf("ctxpopup direction: dont know!\n");
+      case ELM_CTXPOPUP_DIRECTION_UNKNOWN:
+         printf("ctxpopup direction: unknow!\n");
          break;
      }
 }
