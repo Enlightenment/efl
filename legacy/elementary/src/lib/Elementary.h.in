@@ -26568,10 +26568,6 @@ extern "C" {
    EAPI Evas_Object        *elm_naviframe_item_pop(Evas_Object *obj) EINA_ARG_NONNULL(1);
    EAPI void                elm_naviframe_content_preserve_on_pop_set(Evas_Object *obj, Eina_Bool preserve) EINA_ARG_NONNULL(1);
    EAPI Eina_Bool           elm_naviframe_content_preserve_on_pop_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
-   EAPI void                elm_naviframe_item_title_label_set(Elm_Object_Item *it, const char *label) EINA_ARG_NONNULL(1);
-   EAPI const char         *elm_naviframe_item_title_label_get(const Elm_Object_Item *it) EINA_ARG_NONNULL(1);
-   EAPI void                elm_naviframe_item_subtitle_label_set(Elm_Object_Item *it, const char *label) EINA_ARG_NONNULL(1);
-   EAPI const char         *elm_naviframe_item_subtitle_label_get(const Elm_Object_Item *it) EINA_ARG_NONNULL(1);
    EAPI Elm_Object_Item    *elm_naviframe_top_item_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
    EAPI Elm_Object_Item    *elm_naviframe_bottom_item_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
    EAPI void                elm_naviframe_item_style_set(Elm_Object_Item *it, const char *item_style) EINA_ARG_NONNULL(1);
