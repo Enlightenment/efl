@@ -1225,7 +1225,13 @@ elm_diskselector_item_icon_set(Elm_Diskselector_Item *it, Evas_Object *icon)
      evas_object_del(it->icon);
    it->icon = icon;
    if (it->base.view)
-     edje_object_part_swallow(it->base.view, "elm.swallow.icon", icon);
+     {
+        evas_object_size_hint_min_set(it->icon, 24, 24);
+        evas_object_size_hint_max_set(it->icon, 40, 40);
+        edje_object_part_swallow(it->base.view, "elm.swallow.icon", it->icon);
+        evas_object_show(it->icon);
+        elm_widget_sub_object_add(it->base.widget, it->icon);
+     }
 }
 
 EAPI Elm_Diskselector_Item *
