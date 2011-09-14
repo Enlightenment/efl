@@ -24921,7 +24921,7 @@ extern "C" {
                                           the clicked area */
         ELM_CTXPOPUP_DIRECTION_UP, /**< ctxpopup show appear above the clicked
                                         area */
-        ELM_CTXPOPUP_DIRECTION_DONT_KNOW, /**< ctxpopup does not determine it's direction yet*/
+        ELM_CTXPOPUP_DIRECTION_UNKNOWN, /**< ctxpopup does not determine it's direction yet*/
      } Elm_Ctxpopup_Direction;
 
    /**
