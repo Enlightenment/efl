@@ -8,6 +8,9 @@
 # include <limits.h>
 #endif /* __MINGW32CE__ || _MSC_VER */
 
+#include <windows.h>
+#include <psapi.h> /*  EnumProcessModules(Ex) */
+
 #include "../Evil.h"
 
 #include "dlfcn.h"
@@ -115,19 +118,41 @@ dlclose(void* handle)
 void *
 dlsym(void *handle, const char *symbol)
 {
-   FARPROC fp;
+   FARPROC fp = NULL;
+   LPCTSTR new_symbol;
+
+   if (!symbol || !*symbol) return NULL;
 
 #ifdef UNICODE
-   {
-      wchar_t *wsymbol;
-
-      wsymbol = evil_char_to_wchar(symbol);
-      fp = GetProcAddress(handle, wsymbol);
-      free(wsymbol);
-   }
+   new_symbol = evil_char_to_wchar(symbol);
 #else
-   fp = GetProcAddress(handle, symbol);
-#endif /* ! UNICODE */
+   new_symbol = symbol;
+#endif /* UNICODE */
+
+   if (handle == RTLD_DEFAULT)
+     {
+        HMODULE modules[1024];
+        DWORD needed;
+        DWORD i;
+
+        /* TODO: use EnumProcessModulesEx() on Windows >= Vista */
+        if (!EnumProcessModules(GetCurrentProcess(),
+                                modules, sizeof(modules), &needed))
+          return NULL;
+
+        for (i = 0; i < (needed /  sizeof(HMODULE)); i++)
+          {
+            fp = GetProcAddress(modules[i], new_symbol);
+            if (fp) break;
+          }
+     }
+   else
+     fp = GetProcAddress(handle, new_symbol);
+
+#ifdef UNICODE
+   free(new_symbol);
+#endif /* UNICODE */
+
    if (!fp)
      get_last_error("GetProcAddress returned: ");
 

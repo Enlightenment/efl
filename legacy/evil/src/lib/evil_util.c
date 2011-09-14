@@ -81,7 +81,7 @@ evil_format_message(long err)
 #ifdef UNICODE
    str = evil_wchar_to_char(msg);
 #else
-   str = strdup(msg);
+   str = msg;
 #endif /* UNICODE */
 
    LocalFree(msg);
@@ -93,7 +93,9 @@ evil_format_message(long err)
    snprintf(disp, strlen(str) + strlen("(00000) ") + 1,
             "(%5ld) %s", err, str);
 
+#ifdef UNICODE
    free(str);
+#endif /* UNICODE */
 
    return disp;
 }

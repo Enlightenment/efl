@@ -59,12 +59,18 @@ extern "C" {
  * Symbols in this dlopen'ed obj are visible to other dlopen'ed objs
  */
 
+/**
+ * @def RTLD_DEFAULT
+ * Symbols are searched in all the DLL opened by the current process
+ */
+
 # define RTLD_LAZY    0x00001  /* lazy function call binding */
 # define RTLD_NOW     0x00002  /* immediate function call binding */
 # define RTLD_GLOBAL  0x00100  /* symbols in this dlopen'ed obj are visible
 			          to other dlopen'ed objs */
 #define RTLD_NODELETE 0x01000  /* do not delete object when closed.  */
 
+#define RTLD_DEFAULT ((void*)1) /* search the symbol on all the DLL of the current process */
 
 /**
  * @typedef Dl_info

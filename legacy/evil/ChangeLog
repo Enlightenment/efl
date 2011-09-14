@@ -1,3 +1,8 @@
+2011-09-14  Vincent Torri  <doursse at users dot sf dot net>
+
+	* src/lib/dlfcn/dlfcn.c:
+	add RTLD_DEFAULT support in dlsym()
+
 2011-05-19  Vincent Torri  <doursse at users dot sf dot net>
 
 	* src/lib/dlfcn/dlfcn.c:
