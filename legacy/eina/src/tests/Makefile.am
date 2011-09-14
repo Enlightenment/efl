@@ -131,3 +131,6 @@ EXTRA_DIST = eina_bench.h \
 	Evas_Data.h \
 	evas_mempool.h \
 	strlog
+
+clean-local:
+	rm -rf *.gcno *.gcda
