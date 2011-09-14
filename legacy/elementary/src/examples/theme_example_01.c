@@ -16,12 +16,12 @@ btn_extension_click_cb(void *data __UNUSED__, Evas_Object *btn, void *ev __UNUSE
    if (!strncmp(lbl, "Load", 4))
      {
         elm_theme_extension_add(NULL, "./theme_example.edj");
-        elm_button_label_set(btn, "Unload extension");
+        elm_object_text_set(btn, "Unload extension");
      }
    else if (!strncmp(lbl, "Unload", 6))
      {
         elm_theme_extension_del(NULL, "./theme_example.edj");
-        elm_button_label_set(btn, "Load extension");
+        elm_object_text_set(btn, "Load extension");
      }
 }
 
@@ -64,13 +64,13 @@ elm_main(int argc __UNUSED__, char *argv[] __UNUSED__)
    evas_object_show(box);
 
    btn = elm_button_add(win);
-   elm_button_label_set(btn, "Unload extension");
+   elm_object_text_set(btn, "Unload extension");
    elm_box_pack_end(box, btn);
    evas_object_show(btn);
    evas_object_smart_callback_add(btn, "clicked", btn_extension_click_cb, NULL);
 
    btn = elm_button_add(win);
-   elm_button_label_set(btn, "Switch style");
+   elm_object_text_set(btn, "Switch style");
    elm_object_style_set(btn, "chucknorris");
    elm_box_pack_end(box, btn);
    evas_object_show(btn);

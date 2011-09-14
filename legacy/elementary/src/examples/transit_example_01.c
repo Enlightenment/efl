@@ -34,7 +34,7 @@ elm_main(int argc __UNUSED__, char **argv __UNUSED__)
    evas_object_show(bg);
 
    bt = elm_button_add(win);
-   elm_button_label_set(bt, "Resizing Effect");
+   elm_object_text_set(bt, "Resizing Effect");
    evas_object_show(bt);
    evas_object_move(bt, 50, 100);
    evas_object_resize(bt, 100, 50);

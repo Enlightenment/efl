@@ -49,7 +49,7 @@ elm_main(int argc __UNUSED__, char *argv[] __UNUSED__)
    evas_object_show(box);
 
    frame = elm_frame_add(win);
-   elm_frame_label_set(frame, "Anchorblock");
+   elm_object_text_set(frame, "Anchorblock");
    evas_object_size_hint_align_set(frame, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_show(frame);
    elm_box_pack_end(box, frame);
@@ -64,7 +64,7 @@ elm_main(int argc __UNUSED__, char *argv[] __UNUSED__)
    elm_frame_content_set(frame, o);
 
    frame = elm_frame_add(win);
-   elm_frame_label_set(frame, "Anchorview");
+   elm_object_text_set(frame, "Anchorview");
    evas_object_size_hint_weight_set(frame, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(frame, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_show(frame);
@@ -136,7 +136,7 @@ _anchor_buttons_create(Evas_Object *ao, Elm_Entry_Anchorblock_Info *info, Evas_S
    p = strchr(info->name, ':');
    if (!p)
      {
-        elm_button_label_set(btn, "Nothing to see here");
+        elm_object_text_set(btn, "Nothing to see here");
         evas_object_smart_callback_add(btn, "clicked", btn_end_cb, ao);
         elm_hover_content_set(info->hover, "middle", btn);
         return;
@@ -146,10 +146,10 @@ _anchor_buttons_create(Evas_Object *ao, Elm_Entry_Anchorblock_Info *info, Evas_S
    if (!strncmp(info->name, "tel:", 4))
      {
         Evas_Object *o;
-        elm_button_label_set(btn, "Call");
+        elm_object_text_set(btn, "Call");
 
         secondary = elm_button_add(ao);
-        elm_button_label_set(secondary, "Send SMS");
+        elm_object_text_set(secondary, "Send SMS");
         evas_object_show(secondary);
         evas_object_smart_callback_add(secondary, "clicked", btn_end_cb, ao);
         evas_object_smart_callback_add(secondary, "clicked", _btn_clicked_cb,
@@ -159,14 +159,14 @@ _anchor_buttons_create(Evas_Object *ao, Elm_Entry_Anchorblock_Info *info, Evas_S
         evas_object_show(box);
 
         o = elm_button_add(ao);
-        elm_button_label_set(o, "Add to contacts");
+        elm_object_text_set(o, "Add to contacts");
         elm_box_pack_end(box, o);
         evas_object_show(o);
         evas_object_smart_callback_add(o, "clicked", btn_end_cb, ao);
         evas_object_smart_callback_add(o, "clicked", _btn_clicked_cb, str);
 
         o = elm_button_add(ao);
-        elm_button_label_set(o, "Send MMS");
+        elm_object_text_set(o, "Send MMS");
         elm_box_pack_end(box, o);
         evas_object_show(o);
         evas_object_smart_callback_add(o, "clicked", btn_end_cb, ao);
@@ -175,10 +175,10 @@ _anchor_buttons_create(Evas_Object *ao, Elm_Entry_Anchorblock_Info *info, Evas_S
    else if (!strncmp(info->name, "contact:", 8))
      {
         Evas_Object *o;
-        elm_button_label_set(btn, "Call");
+        elm_object_text_set(btn, "Call");
 
         secondary = elm_button_add(ao);
-        elm_button_label_set(secondary, "Send SMS");
+        elm_object_text_set(secondary, "Send SMS");
         evas_object_show(secondary);
         evas_object_smart_callback_add(secondary, "clicked", btn_end_cb, ao);
         evas_object_smart_callback_add(secondary, "clicked", _btn_clicked_cb,
@@ -188,7 +188,7 @@ _anchor_buttons_create(Evas_Object *ao, Elm_Entry_Anchorblock_Info *info, Evas_S
         evas_object_show(box);
 
         o = elm_button_add(ao);
-        elm_button_label_set(o, "Send MMS");
+        elm_object_text_set(o, "Send MMS");
         elm_box_pack_end(box, o);
         evas_object_show(o);
         evas_object_smart_callback_add(o, "clicked", btn_end_cb, ao);
@@ -196,10 +196,10 @@ _anchor_buttons_create(Evas_Object *ao, Elm_Entry_Anchorblock_Info *info, Evas_S
      }
    else if (!strncmp(info->name, "mailto:", 7))
      {
-        elm_button_label_set(btn, "Send E-Mail");
+        elm_object_text_set(btn, "Send E-Mail");
 
         secondary = elm_button_add(ao);
-        elm_button_label_set(secondary, "Add to contacts");
+        elm_object_text_set(secondary, "Add to contacts");
         evas_object_show(secondary);
         evas_object_smart_callback_add(secondary, "clicked", btn_end_cb, ao);
         evas_object_smart_callback_add(secondary, "clicked", _btn_clicked_cb,
@@ -208,20 +208,20 @@ _anchor_buttons_create(Evas_Object *ao, Elm_Entry_Anchorblock_Info *info, Evas_S
    else if (!strncmp(info->name, "url:", 4))
      {
         Evas_Object *o;
-        elm_button_label_set(btn, "Launch in browser");
+        elm_object_text_set(btn, "Launch in browser");
 
         box = elm_box_add(ao);
         evas_object_show(box);
 
         o = elm_button_add(ao);
-        elm_button_label_set(o, "Send as mail to...");
+        elm_object_text_set(o, "Send as mail to...");
         elm_box_pack_end(box, o);
         evas_object_show(o);
         evas_object_smart_callback_add(o, "clicked", btn_end_cb, ao);
         evas_object_smart_callback_add(o, "clicked", _btn_clicked_cb, str);
 
         o = elm_button_add(ao);
-        elm_button_label_set(o, "Send as SMS to...");
+        elm_object_text_set(o, "Send as SMS to...");
         elm_box_pack_end(box, o);
         evas_object_show(o);
         evas_object_smart_callback_add(o, "clicked", btn_end_cb, ao);

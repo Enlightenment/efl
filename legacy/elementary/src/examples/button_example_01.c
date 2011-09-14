@@ -130,19 +130,19 @@ elm_main(int argc __UNUSED__, char *argv[] __UNUSED__)
    evas_object_show(box2);
 
    btn = elm_button_add(win);
-   elm_button_label_set(btn, "Initial: 0.0");
+   elm_object_text_set(btn, "Initial: 0.0");
    elm_box_pack_end(box2, btn);
    evas_object_show(btn);
    evas_object_smart_callback_add(btn, "clicked", _btn_options_cb, &data);
 
    btn = elm_button_add(win);
-   elm_button_label_set(btn, "Initial: 1.0");
+   elm_object_text_set(btn, "Initial: 1.0");
    elm_box_pack_end(box2, btn);
    evas_object_show(btn);
    evas_object_smart_callback_add(btn, "clicked", _btn_options_cb, &data);
 
    btn = elm_button_add(win);
-   elm_button_label_set(btn, "Initial: 5.0");
+   elm_object_text_set(btn, "Initial: 5.0");
    elm_box_pack_end(box2, btn);
    evas_object_show(btn);
    evas_object_smart_callback_add(btn, "clicked", _btn_options_cb, &data);
@@ -154,19 +154,19 @@ elm_main(int argc __UNUSED__, char *argv[] __UNUSED__)
    evas_object_show(box2);
 
    btn = elm_button_add(win);
-   elm_button_label_set(btn, "Gap: 0.1");
+   elm_object_text_set(btn, "Gap: 0.1");
    elm_box_pack_end(box2, btn);
    evas_object_show(btn);
    evas_object_smart_callback_add(btn, "clicked", _btn_options_cb, &data);
 
    btn = elm_button_add(win);
-   elm_button_label_set(btn, "Gap: 0.5");
+   elm_object_text_set(btn, "Gap: 0.5");
    elm_box_pack_end(box2, btn);
    evas_object_show(btn);
    evas_object_smart_callback_add(btn, "clicked", _btn_options_cb, &data);
 
    btn = elm_button_add(win);
-   elm_button_label_set(btn, "Gap: 1.0");
+   elm_object_text_set(btn, "Gap: 1.0");
    elm_box_pack_end(box2, btn);
    evas_object_show(btn);
    evas_object_smart_callback_add(btn, "clicked", _btn_options_cb, &data);

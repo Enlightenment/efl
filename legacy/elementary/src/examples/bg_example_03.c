@@ -99,7 +99,7 @@ elm_main(int argc __UNUSED__, char **argv __UNUSED__)
 
    rd = elm_radio_add(win);
    elm_radio_state_value_set(rd, ELM_BG_OPTION_CENTER);
-   elm_radio_label_set(rd, "Center");
+   elm_object_text_set(rd, "Center");
    evas_object_size_hint_weight_set(rd, EVAS_HINT_EXPAND, EVAS_HINT_FILL);
    evas_object_smart_callback_add(rd, "changed", _cb_radio_changed, o_bg);
    elm_box_pack_end(hbox, rd);
@@ -109,7 +109,7 @@ elm_main(int argc __UNUSED__, char **argv __UNUSED__)
    rd = elm_radio_add(win);
    elm_radio_state_value_set(rd, ELM_BG_OPTION_SCALE);
    elm_radio_group_add(rd, rdg);
-   elm_radio_label_set(rd, "Scale");
+   elm_object_text_set(rd, "Scale");
    evas_object_size_hint_weight_set(rd, EVAS_HINT_EXPAND, EVAS_HINT_FILL);
    evas_object_smart_callback_add(rd, "changed", _cb_radio_changed, o_bg);
    elm_box_pack_end(hbox, rd);
@@ -118,7 +118,7 @@ elm_main(int argc __UNUSED__, char **argv __UNUSED__)
    rd = elm_radio_add(win);
    elm_radio_state_value_set(rd, ELM_BG_OPTION_STRETCH);
    elm_radio_group_add(rd, rdg);
-   elm_radio_label_set(rd, "Stretch");
+   elm_object_text_set(rd, "Stretch");
    evas_object_size_hint_weight_set(rd, EVAS_HINT_EXPAND, EVAS_HINT_FILL);
    evas_object_smart_callback_add(rd, "changed", _cb_radio_changed, o_bg);
    elm_box_pack_end(hbox, rd);
@@ -127,7 +127,7 @@ elm_main(int argc __UNUSED__, char **argv __UNUSED__)
    rd = elm_radio_add(win);
    elm_radio_state_value_set(rd, ELM_BG_OPTION_TILE);
    elm_radio_group_add(rd, rdg);
-   elm_radio_label_set(rd, "Tile");
+   elm_object_text_set(rd, "Tile");
    evas_object_size_hint_weight_set(rd, EVAS_HINT_EXPAND, EVAS_HINT_FILL);
    evas_object_smart_callback_add(rd, "changed", _cb_radio_changed, o_bg);
    elm_box_pack_end(hbox, rd);
@@ -136,7 +136,7 @@ elm_main(int argc __UNUSED__, char **argv __UNUSED__)
    elm_radio_value_set(rdg, ELM_BG_OPTION_SCALE);
 
    rd = elm_check_add(win);
-   elm_check_label_set(rd, "Show Overlay");
+   elm_object_text_set(rd, "Show Overlay");
    evas_object_size_hint_weight_set(rd, EVAS_HINT_EXPAND, EVAS_HINT_FILL);
    evas_object_smart_callback_add(rd, "changed", _cb_overlay_changed, o_bg);
    elm_box_pack_end(hbox, rd);

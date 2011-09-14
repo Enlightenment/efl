@@ -60,7 +60,7 @@ _checkbox_transition_add(Evas_Object *box, const char *label, Eina_Bool *checked
    Evas_Object *check = elm_check_add(elm_object_parent_widget_get(box));
    evas_object_size_hint_weight_set(check, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(check, 0.0, 0.0);
-   elm_check_label_set(check, label);
+   elm_object_text_set(check, label);
    elm_check_state_pointer_set(check, checked);
    elm_box_pack_end(box, check);
    evas_object_show(check);
@@ -128,7 +128,7 @@ elm_main(int argc __UNUSED__, char **argv __UNUSED__)
 
    /* add an object that we are going to play with */
    obj = elm_button_add(win);
-   elm_button_label_set(obj, "Transformed object!");
+   elm_object_text_set(obj, "Transformed object!");
    icon = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/icon_07.png", PACKAGE_DATA_DIR);
    elm_icon_file_set(icon, buf, NULL);
@@ -141,7 +141,7 @@ elm_main(int argc __UNUSED__, char **argv __UNUSED__)
 
    /* add another object that we are going to play with */
    obj = elm_button_add(win);
-   elm_button_label_set(obj, "Another object!");
+   elm_object_text_set(obj, "Another object!");
    icon = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/icon_08.png", PACKAGE_DATA_DIR);
    elm_icon_file_set(icon, buf, NULL);
@@ -153,7 +153,7 @@ elm_main(int argc __UNUSED__, char **argv __UNUSED__)
 
    btn = elm_button_add(win);
    evas_object_size_hint_weight_set(box, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   elm_button_label_set(btn, "Transit!");
+   elm_object_text_set(btn, "Transit!");
    elm_box_pack_end(box, btn);
    evas_object_show(btn);
 

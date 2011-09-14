@@ -34,25 +34,25 @@ elm_main(int argc __UNUSED__, char **argv __UNUSED__)
    evas_object_show(bg);
 
    bt = elm_button_add(win);
-   elm_button_label_set(bt, "Chain 1");
+   elm_object_text_set(bt, "Chain 1");
    evas_object_resize(bt, 100, 100);
    evas_object_move(bt, 0, 0);
    evas_object_show(bt);
 
    bt2 = elm_button_add(win);
-   elm_button_label_set(bt2, "Chain 2");
+   elm_object_text_set(bt2, "Chain 2");
    evas_object_resize(bt2, 100, 100);
    evas_object_move(bt2, 300, 0);
    evas_object_show(bt2);
 
    bt3 = elm_button_add(win);
-   elm_button_label_set(bt3, "Chain 3");
+   elm_object_text_set(bt3, "Chain 3");
    evas_object_resize(bt3, 100, 100);
    evas_object_move(bt3, 300, 300);
    evas_object_show(bt3);
 
    bt4 = elm_button_add(win);
-   elm_button_label_set(bt4, "Chain 4");
+   elm_object_text_set(bt4, "Chain 4");
    evas_object_resize(bt4, 100, 100);
    evas_object_move(bt4, 0, 300);
    evas_object_show(bt4);

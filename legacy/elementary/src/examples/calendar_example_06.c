@@ -85,7 +85,7 @@ elm_main(int argc __UNUSED__, char **argv __UNUSED__)
    bt = elm_button_add(win);
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   elm_button_label_set(bt, "Clear marks");
+   elm_object_text_set(bt, "Clear marks");
    evas_object_smart_callback_add(bt, "clicked", _btn_clear_cb, cal);
    elm_box_pack_end(bx, bt);
    evas_object_show(bt);

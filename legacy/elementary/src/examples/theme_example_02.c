@@ -44,25 +44,25 @@ elm_main(int argc __UNUSED__, char *argv[] __UNUSED__)
    evas_object_show(box);
 
    btn = elm_button_add(win);
-   elm_button_label_set(btn, "Button 1");
+   elm_object_text_set(btn, "Button 1");
    elm_box_pack_end(box, btn);
    evas_object_show(btn);
    evas_object_smart_callback_add(btn, "clicked", _btn_clicked_cb, NULL);
 
    btn = elm_button_add(win);
-   elm_button_label_set(btn, "Button 2");
+   elm_object_text_set(btn, "Button 2");
    elm_box_pack_end(box, btn);
    evas_object_show(btn);
    evas_object_smart_callback_add(btn, "clicked", _btn_clicked_cb, NULL);
 
    btn = elm_button_add(win);
-   elm_button_label_set(btn, "Button 3");
+   elm_object_text_set(btn, "Button 3");
    elm_box_pack_end(box, btn);
    evas_object_show(btn);
    evas_object_smart_callback_add(btn, "clicked", _btn_clicked_cb, NULL);
 
    btn = elm_button_add(win);
-   elm_button_label_set(btn, "Button 4");
+   elm_object_text_set(btn, "Button 4");
    elm_box_pack_end(box, btn);
    evas_object_show(btn);
    evas_object_smart_callback_add(btn, "clicked", _btn_clicked_cb, NULL);

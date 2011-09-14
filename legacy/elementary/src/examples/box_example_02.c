@@ -20,7 +20,7 @@ _add_cb(void *data, Evas_Object *obj __UNUSED__, void *ev __UNUSED__)
    Transitions_Data *tdata = data;
 
    btn = elm_button_add(tdata->box);
-   elm_button_label_set(btn, "I do nothing");
+   elm_object_text_set(btn, "I do nothing");
    children = (Eina_List *)elm_box_children_get(tdata->box);
    if (children)
      {
@@ -102,13 +102,13 @@ elm_main(int argc __UNUSED__, char *argv[] __UNUSED__)
    evas_object_show(bx);
 
    bt = elm_button_add(win);
-   elm_button_label_set(bt, "Add");
+   elm_object_text_set(bt, "Add");
    elm_box_pack_end(bx, bt);
    evas_object_show(bt);
    evas_object_smart_callback_add(bt, "clicked", _add_cb, &tdata);
 
    bt = elm_button_add(win);
-   elm_button_label_set(bt, "Clear");
+   elm_object_text_set(bt, "Clear");
    elm_box_pack_end(bx, bt);
    evas_object_show(bt);
    evas_object_smart_callback_add(bt, "clicked", _clear_cb, &tdata);
@@ -120,7 +120,7 @@ elm_main(int argc __UNUSED__, char *argv[] __UNUSED__)
    evas_object_show(bx);
 
    bt = elm_button_add(win);
-   elm_button_label_set(bt, "Button 1");
+   elm_object_text_set(bt, "Button 1");
    evas_object_smart_callback_add(bt, "clicked", _unpack_cb, &tdata);
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
@@ -128,7 +128,7 @@ elm_main(int argc __UNUSED__, char *argv[] __UNUSED__)
    evas_object_show(bt);
 
    bt = elm_button_add(win);
-   elm_button_label_set(bt, "Button 2");
+   elm_object_text_set(bt, "Button 2");
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(bt, 1.0, 0.5);
    evas_object_smart_callback_add(bt, "clicked", _unpack_cb, &tdata);
@@ -136,7 +136,7 @@ elm_main(int argc __UNUSED__, char *argv[] __UNUSED__)
    evas_object_show(bt);
 
    bt = elm_button_add(win);
-   elm_button_label_set(bt, "Button 3");
+   elm_object_text_set(bt, "Button 3");
    evas_object_smart_callback_add(bt, "clicked", _unpack_cb, &tdata);
    elm_box_pack_end(bx, bt);
    evas_object_show(bt);

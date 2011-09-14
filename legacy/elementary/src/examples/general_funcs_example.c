@@ -110,13 +110,13 @@ elm_main(int    argc __UNUSED__,
    evas_object_show(box);
 
    frame = elm_frame_add(win);
-   elm_frame_label_set(frame, "Button");
+   elm_object_text_set(frame, "Button");
    evas_object_size_hint_align_set(frame, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_show(frame);
    elm_box_pack_end(box, frame);
 
    d.btn = elm_button_add(win);
-   elm_button_label_set(d.btn, "Click me");
+   elm_object_text_set(d.btn, "Click me");
    elm_frame_content_set(frame, d.btn);
 
    fprintf(stdout, "Elementary's finger size is set to %d pixels\n.",
@@ -137,7 +137,7 @@ elm_main(int    argc __UNUSED__,
    check = elm_check_add(win);
    evas_object_size_hint_weight_set(check, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(check, 0.0, 0.0);
-   elm_check_label_set(check, "Button enabled");
+   elm_object_text_set(check, "Button enabled");
    elm_check_state_pointer_set(check, &d.btn_enabled);
    evas_object_smart_callback_add(check, "changed", _btn_enabled_cb, NULL);
    elm_box_pack_end(box, check);
@@ -146,7 +146,7 @@ elm_main(int    argc __UNUSED__,
    b = elm_button_add(win);
    evas_object_size_hint_weight_set(b, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(b, 0.0, 0.0);
-   elm_button_label_set(b, "Focus top button");
+   elm_object_text_set(b, "Focus top button");
    evas_object_smart_callback_add(b, "clicked", _btn_focus_cb, NULL);
    elm_box_pack_end(box, b);
    evas_object_show(b);
@@ -154,7 +154,7 @@ elm_main(int    argc __UNUSED__,
    b = elm_button_add(win);
    evas_object_size_hint_weight_set(b, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(b, 0.0, 0.0);
-   elm_button_label_set(b, "Unfocus top button");
+   elm_object_text_set(b, "Unfocus top button");
    evas_object_smart_callback_add(b, "clicked", _btn_unfocus_cb, NULL);
    elm_box_pack_end(box, b);
    evas_object_show(b);
@@ -162,7 +162,7 @@ elm_main(int    argc __UNUSED__,
    check = elm_check_add(win);
    evas_object_size_hint_weight_set(check, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(check, 0.0, 0.0);
-   elm_check_label_set(check, "Button gets focus");
+   elm_object_text_set(check, "Button gets focus");
    elm_check_state_pointer_set(check, &d.btn_gets_focus);
    evas_object_smart_callback_add(check, "changed", _btn_focus_allow_cb, NULL);
    elm_box_pack_end(box, check);
