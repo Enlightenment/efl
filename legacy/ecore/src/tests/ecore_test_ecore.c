@@ -2,12 +2,13 @@
 # include <config.h>
 #endif
 
-#include "ecore_suite.h"
-
-#include <Ecore.h>
-#include <Eina.h>
-#include <unistd.h>
 #include <stdio.h>
+#include <unistd.h>
+
+#include <Eina.h>
+#include <Ecore.h>
+
+#include "ecore_suite.h"
 
 static int _log_dom;
 #define INF(...) EINA_LOG_DOM_INFO(_log_dom, __VA_ARGS__)
