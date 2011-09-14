@@ -920,17 +920,17 @@ ecore_main_loop_select_func_get(void)
  * @p func will be called during the execution of @ref ecore_main_loop_begin
  * when the file descriptor is available for reading, or writing, or both.
  *
- * Normally the return value from the @p func is "zero means this handler is
- * finished and can be deleted" as is usual for handler callbacks.  However,
- * if the @p buf_func is supplied, then the return value from the @p func is
- * "non zero means the handler should be called again in a tight loop".
+ * Normally when @p func returns ECORE_CALLBACK_CANCEL, it indicates that the
+ * handler should be marked for deletion (identical to calling @ref ecore_main_fd_handler_del).
+ * However, if the @p buf_func is supplied, then the return value from the @p func indicates that
+ * @p func should be called repeatedly until it returns ECORE_CALLBACK_CANCEL.
  *
  * @p buf_func is called during event loop handling to check if data that has
  * been read from the file descriptor is in a buffer and is available to
  * read.  Some systems (notably xlib) handle their own buffering, and would
  * otherwise not work with select().  These systems should use a @p buf_func.
  * This is a most annoying hack, only ecore_x uses it, so refer to that for
- * an example.  NOTE - @p func should probably return "one" always if
+ * an example.  NOTE - @p func should probably return ECORE_CALLBACK_RENEW always if
  * @p buf_func is used, to avoid confusion with the other return value
  * semantics.
  *
@@ -944,6 +944,7 @@ ecore_main_loop_select_func_get(void)
  *                   buffered and already read from the fd.  Can be @c NULL.
  * @param   buf_data The data to pass to the @p buf_func function.
  * @return  A fd handler handle if successful.  @c NULL otherwise.
+ * @note This function CANNOT be used for reading/writing to regular files!
  * @ingroup Ecore_FD_Handler_Group
  */
 EAPI Ecore_Fd_Handler *
