@@ -133,4 +133,4 @@ libedje_la_LDFLAGS = -no-undefined @lt_enable_auto_import@ -version-info @versio
 EXTRA_DIST = edje_private.h edje_container.h edje_convert.h
 
 clean-local:
-	@rm -rf  edje_amalgamation.c
+	@rm -rf *.gcno edje_amalgamation.c

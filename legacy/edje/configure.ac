@@ -371,6 +371,17 @@ case "$host_os" in
       ;;
 esac
 
+### Unit tests, coverage and benchmarking
+
+EFL_CHECK_TESTS([enable_tests="yes"], [enable_tests="no"])
+
+EFL_CHECK_COVERAGE([${enable_tests}], [enable_coverage="yes"], [enable_coverage="no"])
+EDJE_CFLAGS="${EDJE_CFLAGS} ${EFL_COVERAGE_CFLAGS}"
+EDJE_LIBS="${EDJE_LIBS} ${EFL_COVERAGE_LIBS}"
+if test "x$enable_coverage" = "xyes" ; then
+   EDJE_CFLAGS="${EDJE_CFLAGS} ${EFL_DEBUG_CFLAGS}"
+fi
+
 ## Examples
 
 install_examples="yes"
@@ -421,6 +432,7 @@ src/Makefile
 src/lib/Makefile
 src/bin/Makefile
 src/bin/epp/Makefile
+src/tests/Makefile
 utils/Makefile
 src/examples/Makefile
 ])
@@ -444,6 +456,8 @@ echo "  EDJE_PROGRAM_CACHE...: $want_edje_program_cache"
 echo "  EDJE_CALC_CACHE......: $want_edje_calc_cache"
 echo "  Fixed point..........: $want_fixed_point"
 echo "  Documentation........: ${build_doc}"
+echo "  Tests................: ${enable_tests}"
+echo "  Coverage.............: ${enable_coverage}"
 echo "  Examples.............: install:${install_examples} build:${build_examples}"
 echo
 echo "Programs:"
