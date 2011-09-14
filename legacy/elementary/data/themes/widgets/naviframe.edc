@@ -144,7 +144,7 @@ group { name:"elm/naviframe/item/basic/default";
          target: "elm.swallow.content";
       }
       program { name: "title_show";
-         signal: "elm,state,title,show";
+         signal: "elm,state,elm.text.title,show";
          source: "elm";
          action: STATE_SET "default" 0.0;
          target: "title_clip";
