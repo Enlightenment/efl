@@ -7,15 +7,17 @@ struct _Widget_Data
 {
    Evas_Object *btn, *icon;
    const char *label;
-   Eina_Bool autorepeat;
-   Eina_Bool repeating;
    double ar_threshold;
    double ar_interval;
    Ecore_Timer *timer;
+   Eina_Bool autorepeat : 1;
+   Eina_Bool repeating : 1;
+   Eina_Bool delete_me : 1;
 };
 
 static const char *widtype = NULL;
 static void _del_hook(Evas_Object *obj);
+static void _del_pre_hook(Evas_Object *obj);
 static void _theme_hook(Evas_Object *obj);
 static void _disable_hook(Evas_Object *obj);
 static void _sizing_eval(Evas_Object *obj);
@@ -59,6 +61,14 @@ _event_hook(Evas_Object *obj, Evas_Object *src __UNUSED__, Evas_Callback_Type ty
    ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
    edje_object_signal_emit(wd->btn, "elm,anim,activate", "elm");
    return EINA_TRUE;
+}
+
+static void
+_del_pre_hook(Evas_Object *obj)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   wd->delete_me = EINA_TRUE;
 }
 
 static void
@@ -169,6 +179,7 @@ _sizing_eval(Evas_Object *obj)
    Evas_Coord minw = -1, minh = -1;
 
    if (!wd) return;
+   if (wd->delete_me) return;
    elm_coords_finger_size_adjust(1, &minw, 1, &minh);
    edje_object_size_min_restricted_calc(wd->btn, &minw, &minh, minw, minh);
    elm_coords_finger_size_adjust(1, &minw, 1, &minh);
@@ -354,6 +365,7 @@ elm_button_add(Evas_Object *parent)
    elm_widget_on_focus_hook_set(obj, _on_focus_hook, NULL);
    elm_widget_data_set(obj, wd);
    elm_widget_del_hook_set(obj, _del_hook);
+   elm_widget_del_pre_hook_set(obj, _del_pre_hook);
    elm_widget_theme_hook_set(obj, _theme_hook);
    elm_widget_disable_hook_set(obj, _disable_hook);
    elm_widget_can_focus_set(obj, EINA_TRUE);
