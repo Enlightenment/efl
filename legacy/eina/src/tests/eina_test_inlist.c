@@ -53,6 +53,8 @@ START_TEST(eina_inlist_simple)
    Eina_Test_Inlist *prev;
    int i = 0;
 
+   fail_if(!eina_init());
+
    tmp = _eina_test_inlist_build(42);
    lst = eina_inlist_append(lst, EINA_INLIST_GET(tmp));
    fail_if(!lst);
@@ -132,6 +134,8 @@ START_TEST(eina_inlist_simple)
 
    while (lst)
       lst = eina_inlist_remove(lst, lst);
+
+   eina_shutdown();
 }
 END_TEST
 
@@ -172,9 +176,11 @@ START_TEST(eina_inlist_sorted)
    Eina_Inlist *sorted = NULL;
    int i;
 
+   fail_if(!eina_init());
+
    srand(time(NULL));
 
-   for (i = 0; i < 1000; ++i)
+   for (i = 0; i < 2000; ++i)
      {
         tmp = malloc(sizeof (Eina_Test_Inlist_Sorted));
         if (!tmp) continue ;
@@ -203,6 +209,39 @@ START_TEST(eina_inlist_sorted)
      }
 
    _eina_test_inlist_check(sorted);
+
+   eina_shutdown();
+}
+END_TEST
+
+START_TEST(eina_inlist_sorted_state)
+{
+   Eina_Test_Inlist_Sorted *tmp;
+   Eina_Inlist_Sorted_State *state;
+   Eina_Inlist *list = NULL;
+   int i;
+
+   fail_if(!eina_init());
+
+   state = eina_inlist_sorted_state_new();
+   fail_if(!state);
+
+   for (i = 0; i < 2000; ++i)
+     {
+        tmp = malloc(sizeof (Eina_Test_Inlist_Sorted));
+        if (!tmp) continue ;
+
+        tmp->value = rand();
+
+        list = eina_inlist_sorted_state_insert(list, EINA_INLIST_GET(tmp), _eina_test_inlist_cmp, state);
+        _eina_test_inlist_check(list);
+     }
+
+   _eina_test_inlist_check(list);
+
+   eina_inlist_sorted_state_free(state);
+
+   eina_shutdown();
 }
 END_TEST
 
@@ -211,4 +250,5 @@ eina_test_inlist(TCase *tc)
 {
    tcase_add_test(tc, eina_inlist_simple);
    tcase_add_test(tc, eina_inlist_sorted);
+   tcase_add_test(tc, eina_inlist_sorted_state);
 }

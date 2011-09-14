@@ -674,13 +674,14 @@ EAPI Eina_Inlist_Sorted_State *eina_inlist_sorted_state_new(void);
  *
  * @param state The state to update
  * @param list The list to match
+ * @return The number of item in the actually in the list
  * @since 1.1.0
  *
  * See eina_inlist_sorted_state_insert() for more information. This function is
  * usefull if you didn't use eina_inlist_sorted_state_insert() at some point, but
  * still think you have a sorted list. It will only correctly work on a sorted list.
  */
-EAPI void eina_inlist_sorted_state_init(Eina_Inlist_Sorted_State *state, Eina_Inlist *list);
+EAPI int eina_inlist_sorted_state_init(Eina_Inlist_Sorted_State *state, Eina_Inlist *list);
 
 /**
  * @brief Free an Eina_Inlist_Sorted_State.

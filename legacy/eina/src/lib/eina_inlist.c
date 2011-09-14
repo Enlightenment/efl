@@ -190,6 +190,21 @@ eina_inlist_sort_rebuild_prev(Eina_Inlist *list)
    return prev;
 }
 
+static void
+_eina_inlist_sorted_state_compact(Eina_Inlist_Sorted_State *state)
+{
+   unsigned short i, j;
+
+   /* compress the jump table */
+   state->jump_div *= 2;
+   state->jump_limit /= 2;
+
+   for (i = 2, j = 1;
+        i < EINA_INLIST_JUMP_SIZE;
+        i += 2, j++)
+     state->jump_table[j] = state->jump_table[i];
+}
+
 /**
  * @endcond
  */
@@ -434,7 +449,7 @@ eina_inlist_count(const Eina_Inlist *list)
    return i;
 }
 
-EAPI void
+EAPI int
 eina_inlist_sorted_state_init(Eina_Inlist_Sorted_State *state, Eina_Inlist *list)
 {
    Eina_Inlist *ct = NULL;
@@ -451,16 +466,7 @@ eina_inlist_sorted_state_init(Eina_Inlist_Sorted_State *state, Eina_Inlist *list
           {
              if (state->jump_limit == EINA_INLIST_JUMP_SIZE)
                {
-                  unsigned short i, j;
-
-                  /* compress the jump table */
-                  state->jump_div *= 2;
-                  state->jump_limit /= 2;
-
-                  for (i = 2, j = 1;
-                       i < EINA_INLIST_JUMP_SIZE;
-                       i += 2, j++)
-                    state->jump_table[j] = state->jump_table[i];
+                  _eina_inlist_sorted_state_compact(state);
                }
 
              state->jump_table[state->jump_limit] = ct;
@@ -468,6 +474,9 @@ eina_inlist_sorted_state_init(Eina_Inlist_Sorted_State *state, Eina_Inlist *list
              jump_count = 0;
           }
      }
+
+   state->inserted = count;
+   return count;
 }
 
 EAPI Eina_Inlist_Sorted_State *
@@ -496,6 +505,7 @@ _eina_inlist_sorted_state_insert(Eina_Inlist_Sorted_State *state,
 {
    Eina_Inlist *last;
    int jump_count;
+   int start;
 
    state->inserted++;
 
@@ -505,27 +515,35 @@ _eina_inlist_sorted_state_insert(Eina_Inlist_Sorted_State *state,
         state->jump_table[index] = state->jump_table[index]->prev;
      }
 
-   last = state->jump_table[state->jump_limit - 1];
-   for (jump_count = 0; last != NULL; last = last->next)
-     jump_count++;
+   start = state->jump_limit - 3;
+   if (start < 0)
+     start = 0;
 
-   if (jump_count == state->jump_div + 1)
+   last = state->jump_table[start];
+   start++;
+
+   /* Correctly rebuild end of list */
+   for (jump_count = 0; last->next != NULL; last = last->next, jump_count++)
      {
-        if (state->jump_limit == EINA_INLIST_JUMP_SIZE)
+        if (jump_count == state->jump_div)
           {
-             unsigned short i, j;
+             if (state->jump_limit == start)
+               {
+                  if (state->jump_limit == EINA_INLIST_JUMP_SIZE)
+                    {
+                       _eina_inlist_sorted_state_compact(state);
+                       start = state->jump_limit - 1;
+                       continue ;
+                    }
+                  else
+                    {
+                       state->jump_limit++;
+                    }
+               }
 
-             /* compress the jump table */
-             state->jump_div *= 2;
-             state->jump_limit /= 2;
-
-             for (i = 2, j = 1;
-                  i < EINA_INLIST_JUMP_SIZE;
-                  i += 2, j++)
-               state->jump_table[j] = state->jump_table[i];
+             state->jump_table[start++] = last;
+             jump_count = 0;                  
           }
-        state->jump_table[state->jump_limit] = state->jump_table[0]->last;
-        state->jump_limit++;
      }
 }
 
@@ -539,7 +557,7 @@ eina_inlist_sorted_insert(Eina_Inlist *list,
    int cmp = 0;
    int inf, sup;
    int cur = 0;
-   int count = 0;
+   int count;
 
    if (!list) return eina_inlist_append(NULL, item);
 
@@ -554,7 +572,7 @@ eina_inlist_sorted_insert(Eina_Inlist *list,
 
    state.jump_div = 1;
    state.jump_limit = 0;
-   eina_inlist_sorted_state_init(&state, list);
+   count = eina_inlist_sorted_state_init(&state, list);
 
    /*
     * now do a dychotomic search directly inside the jump_table.
@@ -600,8 +618,8 @@ eina_inlist_sorted_insert(Eina_Inlist *list,
     * Now do a dychotomic search between two entries inside the jump_table
     */
    cur *= state.jump_div;
-   inf = cur - state.jump_div;
-   sup = cur + state.jump_div;
+   inf = cur - state.jump_div - 1;
+   sup = cur + state.jump_div + 1;
 
    if (sup > count - 1) sup = count - 1;
    if (inf < 0) inf = 0;
@@ -632,7 +650,7 @@ eina_inlist_sorted_insert(Eina_Inlist *list,
           break;
      }
 
-   if (cmp < 0)
+   if (cmp <= 0)
      return eina_inlist_append_relative(list, item, ct);
    return eina_inlist_prepend_relative(list, item, ct);
 }
@@ -647,7 +665,7 @@ eina_inlist_sorted_state_insert(Eina_Inlist *list,
    int cmp = 0;
    int inf, sup;
    int cur = 0;
-   int count = 0;
+   int count;
    unsigned short head;
    unsigned int offset;
 
@@ -675,6 +693,8 @@ eina_inlist_sorted_state_insert(Eina_Inlist *list,
         state->jump_table[0] = item;
         return eina_inlist_prepend(list, item);
      }
+
+   count = state->inserted;
 
    /*
     * now do a dychotomic search directly inside the jump_table.
@@ -728,12 +748,11 @@ eina_inlist_sorted_state_insert(Eina_Inlist *list,
     * Now do a dychotomic search between two entries inside the jump_table
     */
    cur *= state->jump_div;
-   inf = cur - state->jump_div;
-   sup = cur + state->jump_div;
+   inf = cur - state->jump_div - 1;
+   sup = cur + state->jump_div + 1;
 
    if (sup > count - 1) sup = count - 1;
-   if (inf < 0)
-     inf = 0;
+   if (inf < 0) inf = 0;
 
    while (inf <= sup)
      {
@@ -761,20 +780,20 @@ eina_inlist_sorted_state_insert(Eina_Inlist *list,
           break;
      }
 
-   if (cmp < 0)
+   if (cmp <= 0)
      {
         cur++;
-        head = cur / state->jump_div;
-        offset = cur % state->jump_div;
 
         ct = eina_inlist_append_relative(list, item, ct);
-        _eina_inlist_sorted_state_insert(state, head, offset);
-        return ct;
      }
+   else
+     {
+        ct = eina_inlist_prepend_relative(list, item, ct);
+     }
+
    head = cur / state->jump_div;
    offset = cur % state->jump_div;
 
-   ct = eina_inlist_prepend_relative(list, item, ct);
    _eina_inlist_sorted_state_insert(state, head, offset);
    return ct;
 }
