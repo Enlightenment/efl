@@ -523,14 +523,6 @@ _title_prev_btn_set(Elm_Naviframe_Item *it, Evas_Object *btn, Eina_Bool back_btn
 
    if (!btn) return;
 
-   if (!back_btn)
-     {
-        snprintf(buf,
-                 sizeof(buf),
-                 "naviframe/prev_btn/%s",
-                 elm_widget_style_get(it->base.widget));
-        elm_object_style_set(btn, buf);
-     }
    elm_widget_sub_object_add(it->base.widget, btn);
    evas_object_event_callback_add(btn,
                                   EVAS_CALLBACK_DEL,
@@ -556,10 +548,6 @@ _title_next_btn_set(Elm_Naviframe_Item *it, Evas_Object *btn)
 
    if (!btn) return;
 
-   snprintf(buf,
-            sizeof(buf),
-            "naviframe/next_btn/%s",
-            elm_widget_style_get(it->base.widget));
    elm_object_style_set(btn, buf);
    elm_widget_sub_object_add(it->base.widget, btn);
    evas_object_event_callback_add(btn,
