@@ -158,11 +158,14 @@ _text_set_hook(Elm_Object_Item *it, const char *part, const char *label)
    Elm_Naviframe_Item *navi_it = ELM_CAST(it);
    char buf[1024];
 
-   if (!part) return;
+   if (!part)
+     snprintf(buf, sizeof(buf), "elm.text.title");
+   else
+     snprintf(buf, sizeof(buf), "%s", part);
 
    EINA_LIST_FOREACH(navi_it->text_list, l, pair)
      {
-        if (!strcmp(part, pair->part))
+        if (!strcmp(buf, pair->part))
           {
              if (pair->text)
                {
@@ -181,14 +184,14 @@ _text_set_hook(Elm_Object_Item *it, const char *part, const char *label)
              ERR("Failed to allocate new text part of the item! : naviframe=%p", navi_it->base.widget);
              return;
           }
-        eina_stringshare_replace(&pair->part, part);
+        eina_stringshare_replace(&pair->part, buf);
         navi_it->text_list = eina_list_append(navi_it->text_list, pair);
      }
 
    eina_stringshare_replace(&pair->text, label);
-   edje_object_part_text_set(navi_it->base.view, part, label);
+   edje_object_part_text_set(navi_it->base.view, buf, label);
 
-   snprintf(buf, sizeof(buf), "elm,state,%s,show", part);
+   snprintf(buf, sizeof(buf), "elm,state,%s,show", buf);
 
    if (label)
      edje_object_signal_emit(navi_it->base.view, buf, "elm");
@@ -205,12 +208,16 @@ _text_get_hook(const Elm_Object_Item *it, const char *part)
    Eina_List *l = NULL;
    Elm_Naviframe_Text_Item_Pair *pair = NULL;
    Elm_Naviframe_Item *navi_it = ELM_CAST(it);
+   char buf[1024];
 
-   if (!part) return NULL;
+   if (!part)
+     snprintf(buf, sizeof(buf), "elm.text.title");
+   else
+     snprintf(buf, sizeof(buf), "%s", part);
 
    EINA_LIST_FOREACH(navi_it->text_list, l, pair)
      {
-        if (!strcmp(part, pair->part))
+        if (!strcmp(buf, pair->part))
           return pair->text;
      }
    return NULL;
@@ -226,10 +233,8 @@ _content_set_hook(Elm_Object_Item *it,
    Elm_Naviframe_Content_Item_Pair *pair = NULL;
    Elm_Naviframe_Item *navi_it = ELM_CAST(it);
 
-   if (!part) return;
-
    //specified parts
-   if (!strcmp(part, "elm.swallow.content"))
+   if ((!part) || (!strcmp(part, "elm.swallow.content")))
      {
        _item_content_set(navi_it, content);
        return;
@@ -261,7 +266,7 @@ _content_get_hook(const Elm_Object_Item *it,
    Elm_Naviframe_Item *navi_it = ELM_CAST(it);
 
    //specified parts
-   if (!strcmp(part, "elm.swallow.content"))
+   if ((!part) || (!strcmp(part, "elm.swallow.content")))
      return navi_it->content;
    else if (!strcmp(part, "elm.swallow.prev_btn"))
      return navi_it->title_prev_btn;
@@ -288,11 +293,10 @@ _content_unset_hook(Elm_Object_Item *it __UNUSED__,
    Evas_Object *content = NULL;
    char buf[1028];
 
-  if (!part) return NULL;
-
   //specified parts
   //FIXME: could be unset the below specified contents also.
-   if (!strcmp(part, "elm.swallow.content") ||
+   if (!part ||
+       !strcmp(part, "elm.swallow.content") ||
        !strcmp(part, "elm.swallow.prev_btn") ||
        !strcmp(part, "elm.swallow.next_btn"))
      {
@@ -512,8 +516,6 @@ _title_content_set(Elm_Naviframe_Item *it,
 static void
 _title_prev_btn_set(Elm_Naviframe_Item *it, Evas_Object *btn, Eina_Bool back_btn)
 {
-   char buf[1024];
-
    if (it->title_prev_btn == btn) return;
 
    if (it->title_prev_btn)
@@ -537,8 +539,6 @@ _title_prev_btn_set(Elm_Naviframe_Item *it, Evas_Object *btn, Eina_Bool back_btn
 static void
 _title_next_btn_set(Elm_Naviframe_Item *it, Evas_Object *btn)
 {
-   char buf[1024];
-
    if (it->title_next_btn == btn) return;
 
    if (it->title_next_btn)
@@ -548,7 +548,6 @@ _title_next_btn_set(Elm_Naviframe_Item *it, Evas_Object *btn)
 
    if (!btn) return;
 
-   elm_object_style_set(btn, buf);
    elm_widget_sub_object_add(it->base.widget, btn);
    evas_object_event_callback_add(btn,
                                   EVAS_CALLBACK_DEL,
