@@ -30,7 +30,6 @@ struct _Elm_Naviframe_Text_Item_Pair
 struct _Elm_Naviframe_Item
 {
    Elm_Widget_Item    base;
-   Evas_Object       *title;
    Eina_List         *content_list;
    Eina_List         *text_list;
    Evas_Object       *content;
@@ -187,14 +186,14 @@ _text_set_hook(Elm_Object_Item *it, const char *part, const char *label)
      }
 
    eina_stringshare_replace(&pair->text, label);
-   edje_object_part_text_set(navi_it->title, part, label);
+   edje_object_part_text_set(navi_it->base.view, part, label);
 
    snprintf(buf, sizeof(buf), "elm,state,%s,show", part);
 
    if (label)
-     edje_object_signal_emit(navi_it->title, buf, "elm");
+     edje_object_signal_emit(navi_it->base.view, buf, "elm");
    else
-     edje_object_signal_emit(navi_it->title, buf, "elm");
+     edje_object_signal_emit(navi_it->base.view, buf, "elm");
 
    _item_sizing_eval(navi_it);
 }
@@ -319,9 +318,9 @@ _content_unset_hook(Elm_Object_Item *it __UNUSED__,
    if (!content) return NULL;
 
    elm_widget_sub_object_del(navi_it->base.widget, content);
-   edje_object_part_unswallow(navi_it->title, content);
+   edje_object_part_unswallow(navi_it->base.view, content);
    snprintf(buf, sizeof(buf), "elm,state,%s,hide", part);
-   edje_object_signal_emit(navi_it->title, buf, "elm");
+   edje_object_signal_emit(navi_it->base.view, buf, "elm");
    evas_object_event_callback_del(content,
                                   EVAS_CALLBACK_DEL,
                                   _title_content_del);
@@ -420,7 +419,7 @@ _title_content_del(void *data,
    Elm_Naviframe_Content_Item_Pair *pair = data;
    Elm_Naviframe_Item *it = pair->it;
    snprintf(buf, sizeof(buf), "elm,state,%s,hide", pair->part);
-   edje_object_signal_emit(it->title, buf, "elm");
+   edje_object_signal_emit(it->base.view, buf, "elm");
    it->content_list = eina_list_remove(it->content_list, pair);
    eina_stringshare_del(pair->part);
    free(pair);
@@ -495,14 +494,14 @@ _title_content_set(Elm_Naviframe_Item *it,
    if (!content)
      {
         snprintf(buf, sizeof(buf), "elm,state,%s,hide", part);
-        edje_object_signal_emit(it->title, buf, "elm");
+        edje_object_signal_emit(it->base.view, buf, "elm");
         return;
      }
 
    elm_widget_sub_object_add(it->base.widget, content);
-   edje_object_part_swallow(it->title, part, content);
+   edje_object_part_swallow(it->base.view, part, content);
    snprintf(buf, sizeof(buf), "elm,state,%s,show", part);
-   edje_object_signal_emit(it->title, buf, "elm");
+   edje_object_signal_emit(it->base.view, buf, "elm");
    evas_object_event_callback_add(content,
                                   EVAS_CALLBACK_DEL,
                                   _title_content_del,
@@ -537,7 +536,7 @@ _title_prev_btn_set(Elm_Naviframe_Item *it, Evas_Object *btn, Eina_Bool back_btn
                                   EVAS_CALLBACK_DEL,
                                   _title_prev_btn_del,
                                   it);
-   edje_object_part_swallow(it->title, "elm.swallow.prev_btn", btn);
+   edje_object_part_swallow(it->base.view, "elm.swallow.prev_btn", btn);
    it->back_btn = back_btn;
 
    _item_sizing_eval(it);
@@ -567,7 +566,7 @@ _title_next_btn_set(Elm_Naviframe_Item *it, Evas_Object *btn)
                                   EVAS_CALLBACK_DEL,
                                   _title_next_btn_del,
                                   it);
-   edje_object_part_swallow(it->title, "elm.swallow.next_btn", btn);
+   edje_object_part_swallow(it->base.view, "elm.swallow.next_btn", btn);
 
    _item_sizing_eval(it);
 }
@@ -604,7 +603,6 @@ _item_del(Elm_Naviframe_Item *it)
    eina_list_free(it->content_list);
    eina_list_free(it->text_list);
 
-   evas_object_del(it->title);
    evas_object_del(it->base.view);
 
    wd->stack = eina_list_remove(wd->stack, it);
@@ -749,14 +747,8 @@ elm_naviframe_item_push(Evas_Object *obj, const char *title_label, Evas_Object *
    elm_naviframe_item_style_set(ELM_CAST(it), item_style);
 
    //title
-   it->title = edje_object_add(evas_object_evas_get(obj));
-   elm_widget_sub_object_add(obj, it->title);
-   _elm_theme_object_set(obj,
-                         it->title, "naviframe",
-                         "title",
-                         elm_widget_style_get(obj));
-   edje_object_signal_callback_add(it->title,
-                                   "elm,action,clicked",
+   edje_object_signal_callback_add(it->base.view,
+                                   "elm,title,clicked",
                                    "elm",
                                    _title_clicked, it);
 
@@ -772,7 +764,6 @@ elm_naviframe_item_push(Evas_Object *obj, const char *title_label, Evas_Object *
      _title_prev_btn_set(it, prev_btn, EINA_FALSE);
 
    _title_next_btn_set(it, next_btn);
-   edje_object_part_swallow(it->base.view, "elm.swallow.title", it->title);
 
    _item_content_set(it, content);
 
