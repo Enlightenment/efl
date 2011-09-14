@@ -78,6 +78,7 @@ static const char SIG_DELETE_REQUEST[] = "delete,request";
 static const char SIG_FOCUS_OUT[] = "focus,out";
 static const char SIG_FOCUS_IN[] = "focus,in";
 static const char SIG_MOVED[] = "moved";
+static const char SIG_THEME_CHANGED[] = "theme,changed";
 
 static const Evas_Smart_Cb_Description _signals[] = {
    {SIG_DELETE_REQUEST, ""},
@@ -2423,6 +2424,8 @@ _theme_hook(Evas_Object *obj)
    if (wd->content)
      edje_object_part_swallow(wd->frm, "elm.swallow.content", wd->content);
    _sizing_eval(obj);
+
+   evas_object_smart_callback_call(obj, SIG_THEME_CHANGED, NULL);
 }
 
 static Eina_Bool
