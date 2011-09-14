@@ -462,205 +462,6 @@ _elm_icon_animate_cb(void *data)
    return ECORE_CALLBACK_RENEW;
 }
 
-EAPI Evas_Object *
-elm_icon_add(Evas_Object *parent)
-{
-   Evas_Object *obj;
-   Evas *e;
-   Widget_Data *wd;
-
-   ELM_WIDGET_STANDARD_SETUP(wd, Widget_Data, parent, e, obj, NULL);
-
-   ELM_SET_WIDTYPE(widtype, "icon");
-   elm_widget_type_set(obj, "icon");
-   elm_widget_can_focus_set(obj, EINA_FALSE);
-   elm_widget_sub_object_add(parent, obj);
-   elm_widget_data_set(obj, wd);
-   elm_widget_del_hook_set(obj, _del_hook);
-   elm_widget_theme_hook_set(obj, _theme_hook);
-   elm_widget_signal_emit_hook_set(obj, _signal_emit_hook);
-   elm_widget_signal_callback_add_hook_set(obj, _signal_callback_add_hook);
-   elm_widget_signal_callback_del_hook_set(obj, _signal_callback_del_hook);
-
-   wd->lookup_order = ELM_ICON_LOOKUP_THEME_FDO;
-   wd->img = _els_smart_icon_add(e);
-   evas_object_event_callback_add(wd->img, EVAS_CALLBACK_MOUSE_UP,
-                                  _mouse_up, obj);
-   evas_object_repeat_events_set(wd->img, EINA_TRUE);
-   elm_widget_resize_object_set(obj, wd->img);
-
-   evas_object_smart_callbacks_descriptions_set(obj, _signals);
-
-#ifdef HAVE_ELEMENTARY_ETHUMB
-   wd->thumb.id = -1;
-#endif
-
-   wd->smooth = EINA_TRUE;
-   wd->scale_up = EINA_TRUE;
-   wd->scale_down = EINA_TRUE;
-
-   _sizing_eval(obj);
-   return obj;
-}
-
-EAPI Eina_Bool
-elm_icon_memfile_set(Evas_Object *obj, const void *img, size_t size, const char *format, const char *key)
-{
-   ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
-   Widget_Data *wd = elm_widget_data_get(obj);
-   Eina_Bool ret;
-
-   if (!wd) return EINA_FALSE;
-   EINA_SAFETY_ON_NULL_RETURN_VAL(img, EINA_FALSE);
-   EINA_SAFETY_ON_TRUE_RETURN_VAL(!size, EINA_FALSE);
-   eina_stringshare_del(wd->stdicon);
-   wd->stdicon = NULL;
-   ret = _els_smart_icon_memfile_set(wd->img, img, size, format, key);
-   _sizing_eval(obj);
-   return ret;
-}
-
-EAPI Eina_Bool
-elm_icon_file_set(Evas_Object *obj, const char *file, const char *group)
-{
-   ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
-   Widget_Data *wd = elm_widget_data_get(obj);
-   Eina_Bool ret;
-
-   if (!wd) return EINA_FALSE;
-   EINA_SAFETY_ON_NULL_RETURN_VAL(file, EINA_FALSE);
-   if (wd->stdicon) eina_stringshare_del(wd->stdicon);
-   wd->stdicon = NULL;
-   if (eina_str_has_extension(file, ".edj"))
-     ret = _els_smart_icon_file_edje_set(wd->img, file, group);
-   else
-     ret = _els_smart_icon_file_key_set(wd->img, file, group);
-   _sizing_eval(obj);
-   return ret;
-}
-
-EAPI void
-elm_icon_file_get(const Evas_Object *obj, const char **file, const char **group)
-{
-   ELM_CHECK_WIDTYPE(obj, widtype);
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return;
-   _els_smart_icon_file_get(wd->img, file, group);
-}
-
-EAPI void
-elm_icon_thumb_set(const Evas_Object *obj, const char *file, const char *group)
-{
-   ELM_CHECK_WIDTYPE(obj, widtype);
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return;
-
-#ifdef HAVE_ELEMENTARY_ETHUMB
-   eina_stringshare_replace(&wd->thumb.file.path, file);
-   eina_stringshare_replace(&wd->thumb.file.key, group);
-
-   if (elm_thumb_ethumb_client_connected())
-     {
-        _icon_thumb_apply(wd);
-        return ;
-     }
-
-   if (!wd->thumb.eeh)
-     {
-        wd->thumb.eeh = ecore_event_handler_add(ELM_ECORE_EVENT_ETHUMB_CONNECT, _icon_thumb_apply_cb, wd);
-     }
-#else
-   (void) obj;
-   (void) file;
-   (void) group;
-#endif
-}
-
-
-EAPI Eina_Bool
-elm_icon_animated_available_get(const Evas_Object *obj)
-{
-   ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
-   Evas_Object *img_obj ;
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return EINA_FALSE;
-
-   img_obj = _els_smart_icon_object_get(wd->img);
-
-   return evas_object_image_animated_get(img_obj);
-}
-
-EAPI void
-elm_icon_animated_set(Evas_Object *obj, Eina_Bool anim)
-{
-   ELM_CHECK_WIDTYPE(obj, widtype);
-   Evas_Object *img_obj ;
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return;
-   if (wd->anim == anim) return;
-
-   img_obj = _els_smart_icon_object_get(wd->img);
-   if (!evas_object_image_animated_get(img_obj)) return;
-   if (anim)
-     {
-        wd->frame_count = evas_object_image_animated_frame_count_get(img_obj);
-        wd->cur_frame = 1;
-        wd->duration = evas_object_image_animated_frame_duration_get(img_obj, wd->cur_frame, 0);
-        evas_object_image_animated_frame_set(img_obj, wd->cur_frame);
-     }
-   else
-     {
-        wd->frame_count = -1;
-        wd->cur_frame = -1;
-        wd->duration = -1;
-     }
-   wd->anim = anim;
-   return;
-}
-
-EAPI Eina_Bool
-elm_icon_animated_get(const Evas_Object *obj)
-{
-   ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return EINA_FALSE;
-   return wd->anim;
-}
-
-EAPI void
-elm_icon_animated_play_set(Evas_Object *obj, Eina_Bool play)
-{
-   ELM_CHECK_WIDTYPE(obj, widtype);
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return;
-   if (!wd->anim) return;
-   if (wd->play == play) return;
-
-   if (play)
-     {
-        wd->timer = ecore_timer_add(wd->duration, _elm_icon_animate_cb, wd);
-     }
-   else
-     {
-        if (wd->timer)
-          {
-             ecore_timer_del(wd->timer);
-             wd->timer = NULL;
-          }
-     }
-   wd->play = play;
-
-}
-
-EAPI Eina_Bool
-elm_icon_animated_play_get(const Evas_Object *obj)
-{
-   ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return EINA_FALSE;
-   return wd->play;
-}
-
 static Eina_Bool
 _icon_standard_set(Widget_Data *wd, Evas_Object *obj, const char *name)
 {
@@ -801,12 +602,228 @@ _elm_icon_standard_resize(void *data,
    if (!_elm_icon_standard_set(wd, obj, wd->stdicon, &fdo) || (!fdo))
      evas_object_event_callback_del_full(obj, EVAS_CALLBACK_RESIZE,
                                          _elm_icon_standard_resize, wd);
+   eina_stringshare_del(refup);
+}
+
 #ifdef HAVE_ELEMENTARY_ETHUMB
+static void
+_elm_icon_thumb_resize(void *data,
+		       Evas *e __UNUSED__,
+		       Evas_Object *obj,
+		       void *event_info __UNUSED__)
+{
+   Widget_Data *wd = data;
+
    if (wd->thumb.file.path)
      elm_icon_thumb_set(obj, wd->thumb.file.path, wd->thumb.file.key);
+}
 #endif
 
-   eina_stringshare_del(refup);
+EAPI Evas_Object *
+elm_icon_add(Evas_Object *parent)
+{
+   Evas_Object *obj;
+   Evas *e;
+   Widget_Data *wd;
+
+   ELM_WIDGET_STANDARD_SETUP(wd, Widget_Data, parent, e, obj, NULL);
+
+   ELM_SET_WIDTYPE(widtype, "icon");
+   elm_widget_type_set(obj, "icon");
+   elm_widget_can_focus_set(obj, EINA_FALSE);
+   elm_widget_sub_object_add(parent, obj);
+   elm_widget_data_set(obj, wd);
+   elm_widget_del_hook_set(obj, _del_hook);
+   elm_widget_theme_hook_set(obj, _theme_hook);
+   elm_widget_signal_emit_hook_set(obj, _signal_emit_hook);
+   elm_widget_signal_callback_add_hook_set(obj, _signal_callback_add_hook);
+   elm_widget_signal_callback_del_hook_set(obj, _signal_callback_del_hook);
+
+   wd->lookup_order = ELM_ICON_LOOKUP_THEME_FDO;
+   wd->img = _els_smart_icon_add(e);
+   evas_object_event_callback_add(wd->img, EVAS_CALLBACK_MOUSE_UP,
+                                  _mouse_up, obj);
+   evas_object_repeat_events_set(wd->img, EINA_TRUE);
+   elm_widget_resize_object_set(obj, wd->img);
+
+   evas_object_smart_callbacks_descriptions_set(obj, _signals);
+
+#ifdef HAVE_ELEMENTARY_ETHUMB
+   wd->thumb.id = -1;
+#endif
+
+   wd->smooth = EINA_TRUE;
+   wd->scale_up = EINA_TRUE;
+   wd->scale_down = EINA_TRUE;
+
+   _sizing_eval(obj);
+   return obj;
+}
+
+EAPI Eina_Bool
+elm_icon_memfile_set(Evas_Object *obj, const void *img, size_t size, const char *format, const char *key)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   Eina_Bool ret;
+
+   if (!wd) return EINA_FALSE;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(img, EINA_FALSE);
+   EINA_SAFETY_ON_TRUE_RETURN_VAL(!size, EINA_FALSE);
+   eina_stringshare_del(wd->stdicon);
+   wd->stdicon = NULL;
+   ret = _els_smart_icon_memfile_set(wd->img, img, size, format, key);
+   _sizing_eval(obj);
+   return ret;
+}
+
+EAPI Eina_Bool
+elm_icon_file_set(Evas_Object *obj, const char *file, const char *group)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   Eina_Bool ret;
+
+   if (!wd) return EINA_FALSE;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(file, EINA_FALSE);
+   if (wd->stdicon) eina_stringshare_del(wd->stdicon);
+   wd->stdicon = NULL;
+   if (eina_str_has_extension(file, ".edj"))
+     ret = _els_smart_icon_file_edje_set(wd->img, file, group);
+   else
+     ret = _els_smart_icon_file_key_set(wd->img, file, group);
+   _sizing_eval(obj);
+   return ret;
+}
+
+EAPI void
+elm_icon_file_get(const Evas_Object *obj, const char **file, const char **group)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   _els_smart_icon_file_get(wd->img, file, group);
+}
+
+EAPI void
+elm_icon_thumb_set(Evas_Object *obj, const char *file, const char *group)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+
+#ifdef HAVE_ELEMENTARY_ETHUMB
+   evas_object_event_callback_del_full(obj, EVAS_CALLBACK_RESIZE, 
+				       _elm_icon_standard_resize, wd);
+   evas_object_event_callback_del_full(obj, EVAS_CALLBACK_RESIZE,
+				       _elm_icon_thumb_resize, wd);
+
+   evas_object_event_callback_add(obj, EVAS_CALLBACK_RESIZE,
+				  _elm_icon_thumb_resize, wd);
+
+   eina_stringshare_replace(&wd->thumb.file.path, file);
+   eina_stringshare_replace(&wd->thumb.file.key, group);
+
+   if (elm_thumb_ethumb_client_connected())
+     {
+        _icon_thumb_apply(wd);
+        return ;
+     }
+
+   if (!wd->thumb.eeh)
+     {
+        wd->thumb.eeh = ecore_event_handler_add(ELM_ECORE_EVENT_ETHUMB_CONNECT, _icon_thumb_apply_cb, wd);
+     }
+#else
+   (void) obj;
+   (void) file;
+   (void) group;
+#endif
+}
+
+
+EAPI Eina_Bool
+elm_icon_animated_available_get(const Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
+   Evas_Object *img_obj ;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return EINA_FALSE;
+
+   img_obj = _els_smart_icon_object_get(wd->img);
+
+   return evas_object_image_animated_get(img_obj);
+}
+
+EAPI void
+elm_icon_animated_set(Evas_Object *obj, Eina_Bool anim)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Evas_Object *img_obj ;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   if (wd->anim == anim) return;
+
+   img_obj = _els_smart_icon_object_get(wd->img);
+   if (!evas_object_image_animated_get(img_obj)) return;
+   if (anim)
+     {
+        wd->frame_count = evas_object_image_animated_frame_count_get(img_obj);
+        wd->cur_frame = 1;
+        wd->duration = evas_object_image_animated_frame_duration_get(img_obj, wd->cur_frame, 0);
+        evas_object_image_animated_frame_set(img_obj, wd->cur_frame);
+     }
+   else
+     {
+        wd->frame_count = -1;
+        wd->cur_frame = -1;
+        wd->duration = -1;
+     }
+   wd->anim = anim;
+   return;
+}
+
+EAPI Eina_Bool
+elm_icon_animated_get(const Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return EINA_FALSE;
+   return wd->anim;
+}
+
+EAPI void
+elm_icon_animated_play_set(Evas_Object *obj, Eina_Bool play)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   if (!wd->anim) return;
+   if (wd->play == play) return;
+
+   if (play)
+     {
+        wd->timer = ecore_timer_add(wd->duration, _elm_icon_animate_cb, wd);
+     }
+   else
+     {
+        if (wd->timer)
+          {
+             ecore_timer_del(wd->timer);
+             wd->timer = NULL;
+          }
+     }
+   wd->play = play;
+
+}
+
+EAPI Eina_Bool
+elm_icon_animated_play_get(const Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return EINA_FALSE;
+   return wd->play;
 }
 
 EAPI Eina_Bool

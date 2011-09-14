@@ -4666,7 +4666,7 @@ extern "C" {
     * @ingroup Icon
     */
    EAPI void                  elm_icon_file_get(const Evas_Object *obj, const char **file, const char **group) EINA_ARG_NONNULL(1);
-   EAPI void                  elm_icon_thumb_set(const Evas_Object *obj, const char *file, const char *group) EINA_ARG_NONNULL(1, 2);
+   EAPI void                  elm_icon_thumb_set(Evas_Object *obj, const char *file, const char *group) EINA_ARG_NONNULL(1, 2);
    /**
     * Set the icon by icon standards names.
     *
