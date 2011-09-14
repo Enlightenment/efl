@@ -260,7 +260,7 @@ _content_get_hook(const Elm_Object_Item *it,
    Elm_Naviframe_Content_Item_Pair *pair = NULL;
    Elm_Naviframe_Item *navi_it = ELM_CAST(it);
 
-   //specified parts 
+   //specified parts
    if (!strcmp(part, "elm.swallow.content"))
      return navi_it->content;
    else if (!strcmp(part, "elm.swallow.prev_btn"))
@@ -291,7 +291,7 @@ _content_unset_hook(Elm_Object_Item *it __UNUSED__,
   if (!part) return NULL;
 
   //specified parts
-  //FIXME: could be unset the below specified contents also. 
+  //FIXME: could be unset the below specified contents also.
    if (!strcmp(part, "elm.swallow.content") ||
        !strcmp(part, "elm.swallow.prev_btn") ||
        !strcmp(part, "elm.swallow.next_btn"))
