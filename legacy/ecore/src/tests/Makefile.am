@@ -17,7 +17,8 @@ ecore_suite_SOURCES = \
 ecore_suite.c \
 ecore_test_ecore.c \
 ecore_test_ecore_con.c \
-ecore_test_ecore_x.c
+ecore_test_ecore_x.c \
+ecore_suite.h
 
 ecore_suite_LDADD = \
 @CHECK_LIBS@ \
@@ -31,4 +32,5 @@ endif
 
 endif
 
-EXTRA_DIST = ecore_suite.h
+clean-local:
+	rm -rf *.gcno *.gcda
