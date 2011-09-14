@@ -1019,16 +1019,18 @@ ecore_main_win32_handler_add(void *h __UNUSED__, Ecore_Win32_Handle_Cb func __UN
 
 
 /**
- * Deletes the given FD handler.
- * @param   fd_handler The given FD handler.
+ * Marks an FD handler for deletion.
+ * @param   fd_handler The FD handler.
  * @return  The data pointer set using @ref ecore_main_fd_handler_add,
  *          for @p fd_handler on success.  @c NULL otherwise.
  * @ingroup Ecore_FD_Handler_Group
+ * This function marks an fd handler to be deleted during an iteration of the main loop.
+ * It does NOT close the associated fd!
  *
- * Beware that if the fd is already closed, ecore may complain if it uses
- * epoll internally, and that in some rare cases this may be able to cause
+ * @note If the underlying fd is already closed ecore may complain if the main loop
+ * is using epoll internally, and also in some rare cases this may cause
  * crashes and instability. Remember to delete your fd handlers before the
- * fd's they listen to are closed.
+ * fds they listen to are closed.
  */
 EAPI void *
 ecore_main_fd_handler_del(Ecore_Fd_Handler *fd_handler)
