@@ -94,6 +94,7 @@ struct _Smart_Data
    Emotion_Module_Options module_options;
 
    Emotion_Suspend state;
+   Emotion_Aspect aspect;
 
    Eina_Bool open : 1;
    Eina_Bool play : 1;
@@ -289,16 +290,15 @@ _emotion_module_open(const char *name, Evas_Object *obj, Emotion_Video_Module **
 }
 
 static void
-_clipper_position_size_update(Evas_Object *obj, int vid_w, int vid_h)
+_clipper_position_size_update(Evas_Object *obj, int w, int h, int vid_w, int vid_h)
 {
    Smart_Data *sd;
    double scale_w, scale_h;
    int x, y;
-   int w, h;
 
    E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
 
-   evas_object_geometry_get(obj, &x, &y, &w, &h);
+   evas_object_geometry_get(obj, &x, &y, NULL, NULL);
    evas_object_move(sd->crop.clipper, x, y);
    scale_w = (double)w / (double)(vid_w - sd->crop.l - sd->crop.r);
    scale_h = (double)h / (double)(vid_h - sd->crop.t - sd->crop.b);
@@ -450,30 +450,25 @@ emotion_object_file_get(const Evas_Object *obj)
    return sd->file;
 }
 
-EAPI void
-emotion_object_border_set(Evas_Object *obj, int l, int r, int t, int b)
+static void
+_emotion_aspect_borders_apply(Evas_Object *obj, Smart_Data *sd, int w, int h, int iw, int ih)
 {
-   Smart_Data *sd;
-
-   E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
-   sd->crop.l = -l;
-   sd->crop.r = -r;
-   sd->crop.t = -t;
-   sd->crop.b = -b;
-   if (l == 0 && r == 0 && t == 0 && b == 0)
+   /* applying calculated borders */
+   if (sd->crop.l == 0 && sd->crop.r == 0 &&
+       sd->crop.t == 0 && sd->crop.b == 0)
      {
 	Evas_Object *old_clipper;
-	if (!sd->crop.clipper)
-	  return;
-	old_clipper = evas_object_clip_get(sd->crop.clipper);
-	evas_object_clip_unset(sd->obj);
-	evas_object_clip_set(sd->obj, old_clipper);
-	evas_object_del(sd->crop.clipper);
-	sd->crop.clipper = NULL;
+	if (sd->crop.clipper)
+	  {
+	     old_clipper = evas_object_clip_get(sd->crop.clipper);
+	     evas_object_clip_unset(sd->obj);
+	     evas_object_clip_set(sd->obj, old_clipper);
+	     evas_object_del(sd->crop.clipper);
+	     sd->crop.clipper = NULL;
+	  }
      }
    else
      {
-	int vid_w, vid_h;
 	if (!sd->crop.clipper)
 	  {
 	     Evas_Object *old_clipper;
@@ -487,9 +482,108 @@ emotion_object_border_set(Evas_Object *obj, int l, int r, int t, int b)
 	     if (evas_object_visible_get(sd->obj))
 	       evas_object_show(sd->crop.clipper);
 	  }
-	sd->module->video_data_size_get(sd->video, &vid_w, &vid_h);
-	_clipper_position_size_update(obj, vid_w, vid_h);
      }
+   _clipper_position_size_update(obj, w, h, iw, ih);
+}
+
+static void
+_emotion_object_aspect_border_apply(Evas_Object *obj, Smart_Data *sd, int w, int h)
+{
+   int iw, ih;
+   double ir;
+   double r;
+
+   int aspect_opt;
+   sd->module->video_data_size_get(sd->video, &iw, &ih);
+
+   ir = (double)iw / ih;
+   r = (double)w / h;
+
+   /* First check if we should fit the width or height of the video inside the
+    * width/height of the object.  This check takes into account the original
+    * aspect ratio and the object aspect ratio, if we are keeping both sizes or
+    * cropping the exceding area.
+    */
+   if (sd->aspect == EMOTION_ASPECT_KEEP_NONE)
+     {
+	sd->crop.l = 0;
+	sd->crop.r = 0;
+	sd->crop.t = 0;
+	sd->crop.b = 0;
+	aspect_opt = 0; // just ignore keep_aspect
+     }
+   else if (sd->aspect == EMOTION_ASPECT_KEEP_WIDTH)
+     {
+	aspect_opt = 1;
+     }
+   else if (sd->aspect == EMOTION_ASPECT_KEEP_HEIGHT)
+     {
+	aspect_opt = 2;
+     }
+   else if (sd->aspect == EMOTION_ASPECT_KEEP_BOTH)
+     {
+	if (ir > r)
+	  aspect_opt = 1;
+	else
+	  aspect_opt = 2;
+     }
+   else if (sd->aspect == EMOTION_ASPECT_CROP)
+     {
+	if (ir > r)
+	  aspect_opt = 2;
+	else
+	  aspect_opt = 1;
+     }
+   else if (sd->aspect == EMOTION_ASPECT_CUSTOM)
+     {
+	// nothing to do, just respect the border settings
+	aspect_opt = 0;
+     }
+
+   /* updating borders based on keep_aspect settings */
+   if (aspect_opt == 1) // keep width
+     {
+	int th, dh;
+	double scale;
+
+	sd->crop.l = 0;
+	sd->crop.r = 0;
+	scale = (double)iw / w;
+	th = h * scale;
+	dh = ih - th;
+	sd->crop.t = sd->crop.b = dh / 2;
+     }
+   else if (aspect_opt == 2) // keep height
+     {
+	int tw, dw;
+	double scale;
+
+	sd->crop.t = 0;
+	sd->crop.b = 0;
+	scale = (double)ih / h;
+	tw = w * scale;
+	dw = iw - tw;
+	sd->crop.l = sd->crop.r = dw / 2;
+     }
+
+   _emotion_aspect_borders_apply(obj, sd, w, h, iw, ih);
+}
+
+EAPI void
+emotion_object_border_set(Evas_Object *obj, int l, int r, int t, int b)
+{
+   Smart_Data *sd;
+   int w, h;
+
+   E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
+
+   sd->aspect = EMOTION_ASPECT_CUSTOM;
+   sd->crop.l = -l;
+   sd->crop.r = -r;
+   sd->crop.t = -t;
+   sd->crop.b = -b;
+   evas_object_geometry_get(obj, NULL, NULL, &w, &h);
+   _emotion_object_aspect_border_apply(obj, sd, w, h);
 }
 
 EAPI void
@@ -529,6 +623,32 @@ emotion_object_bg_color_get(const Evas_Object *obj, int *r, int *g, int *b, int 
 
    E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
    evas_object_color_get(sd->bg, r, g, b, a);
+}
+
+EAPI void
+emotion_object_keep_aspect_set(Evas_Object *obj, Emotion_Aspect a)
+{
+   Smart_Data *sd;
+   int w, h;
+
+   E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
+
+   if (a == sd->aspect)
+     return;
+
+   sd->aspect = a;
+   evas_object_geometry_get(obj, NULL, NULL, &w, &h);
+   _emotion_object_aspect_border_apply(obj, sd, w, h);
+}
+
+EAPI Emotion_Aspect
+emotion_object_keep_aspect_get(const Evas_Object *obj)
+{
+   Smart_Data *sd;
+
+   E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, EMOTION_ASPECT_KEEP_NONE);
+
+   return sd->aspect;
 }
 
 EAPI void
@@ -653,8 +773,6 @@ emotion_object_size_get(const Evas_Object *obj, int *iw, int *ih)
    if (ih) *ih = 0;
    E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
    evas_object_image_size_get(sd->obj, iw, ih);
-   *iw -= (sd->crop.l + sd->crop.r);
-   *ih -= (sd->crop.t + sd->crop.b);
 }
 
 EAPI void
@@ -1364,7 +1482,8 @@ _emotion_frame_resize(Evas_Object *obj, int w, int h, double ratio)
      {
 	evas_object_size_hint_request_set(obj, w, h);
 	evas_object_smart_callback_call(obj, SIG_FRAME_RESIZE, NULL);
-	_clipper_position_size_update(obj, w, h);
+	evas_object_geometry_get(obj, NULL, NULL, &w, &h);
+	_emotion_object_aspect_border_apply(obj, sd, w, h);
      }
 }
 
@@ -1750,7 +1869,8 @@ _smart_move(Evas_Object * obj, Evas_Coord x, Evas_Coord y)
 
    int vid_w, vid_h, w, h;
    sd->module->video_data_size_get(sd->video, &vid_w, &vid_h);
-   _clipper_position_size_update(obj, vid_w, vid_h);
+   evas_object_geometry_get(obj, NULL, NULL, &w, &h);
+   _clipper_position_size_update(obj, w, h, vid_w, vid_h);
    evas_object_move(sd->bg, x, y);
 }
 
@@ -1765,7 +1885,8 @@ _smart_resize(Evas_Object * obj, Evas_Coord w, Evas_Coord h)
    int vid_w, vid_h;
 
    sd->module->video_data_size_get(sd->video, &vid_w, &vid_h);
-   _clipper_position_size_update(obj, vid_w, vid_h);
+   fprintf(stderr, "smart resize: %dx%d\n", w, h);
+   _emotion_object_aspect_border_apply(obj, sd, w, h);
    evas_object_resize(sd->bg, w, h);
 }
 

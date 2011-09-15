@@ -210,10 +210,21 @@ typedef enum
   EMOTION_HIBERNATE
 } Emotion_Suspend;
 
+enum _Emotion_Aspect
+{
+  EMOTION_ASPECT_KEEP_NONE, /**< ignore video aspect ratio */
+  EMOTION_ASPECT_KEEP_WIDTH, /**< respect video aspect, fitting its width inside the object width */
+  EMOTION_ASPECT_KEEP_HEIGHT, /**< respect video aspect, fitting its height inside the object height */
+  EMOTION_ASPECT_KEEP_BOTH, /**< respect video aspect, fitting it inside the object area */
+  EMOTION_ASPECT_CROP, /**< respect video aspect, cropping exceding area */
+  EMOTION_ASPECT_CUSTOM, /**< use custom borders/crop for the video */
+};
+
 typedef enum _Emotion_Module    Emotion_Module;
 typedef enum _Emotion_Event     Emotion_Event;
 typedef enum _Emotion_Meta_Info Emotion_Meta_Info; /**< Meta info type to be retrieved. */
 typedef enum _Emotion_Vis       Emotion_Vis; /**< Type of visualization. */
+typedef enum _Emotion_Aspect    Emotion_Aspect; /**< Aspect ratio option. */
 
 #define EMOTION_CHANNEL_AUTO -1
 #define EMOTION_CHANNEL_DEFAULT 0
@@ -447,6 +458,59 @@ EAPI void emotion_object_bg_color_set(Evas_Object *obj, int r, int g, int b, int
  * @see emotion_object_bg_color_set()
  */
 EAPI void emotion_object_bg_color_get(const Evas_Object *obj, int *r, int *g, int *b, int *a);
+
+/**
+ * @brief Set whether emotion should keep the aspect ratio of the video.
+ *
+ * @param obj The emotion object where to set the aspect.
+ * @param a The aspect ratio policy.
+ *
+ * Instead of manually calculating the required border to set with
+ * emotion_object_border_set(), and using this to fix the aspect ratio of the
+ * video when the emotion object has a different aspect, it's possible to just
+ * set the policy to be used.
+ *
+ * The options are:
+ *
+ * - @b #EMOTION_ASPECT_KEEP_NONE - ignore the video aspect ratio, and reset any
+ *   border set to 0, stretching the video inside the emotion object area. This
+ *   option is similar to EVAS_ASPECT_CONTROL_NONE size hint.
+ * - @b #EMOTION_ASPECT_KEEP_WIDTH - respect the video aspect ratio, fitting the
+ *   video width inside the object width. This option is similar to
+ *   EVAS_ASPECT_CONTROL_HORIZONTAL size hint.
+ * - @b #EMOTION_ASPECT_KEEP_HEIGHT - respect the video aspect ratio, fitting
+ *   the video height inside the object height. This option is similar to
+ *   EVAS_ASPECT_CONTROL_VERTIAL size hint.
+ * - @b #EMOTION_ASPECT_KEEP_BOTH - respect the video aspect ratio, fitting both
+ *   its width and height inside the object area. This option is similar to
+ *   EVAS_ASPECT_CONTROL_BOTH size hint. It's the effect called letterboxing.
+ * - @b #EMOTION_ASPECT_CROP - respect the video aspect ratio, fitting the width
+ *   or height inside the object area, and cropping the exceding areas of the
+ *   video in height or width. It's the effect called pan-and-scan.
+ * - @b #EMOTION_ASPECT_CUSTOM - ignore the video aspect ratio, and use the
+ *   current set from emotion_object_border_set().
+ *
+ * @note Calling this function with any value except #EMOTION_ASPECT_CUSTOM will
+ * invalidate borders set with emotion_object_border_set().
+ *
+ * @note Calling emotion_object_border_set() will automatically set the aspect
+ * policy to #EMOTION_ASPECT_CUSTOM.
+ *
+ * @see emotion_object_border_set()
+ * @see emotion_object_keep_aspect_get()
+ */
+EAPI void emotion_object_keep_aspect_set(Evas_Object *obj, Emotion_Aspect a);
+
+/**
+ * @brief Get the current emotion aspect ratio policy.
+ *
+ * @param obj The emotion object from which we are fetching the aspect ratio
+ * policy.
+ * @return The current aspect ratio policy.
+ *
+ * @see emotion_object_keep_aspect_set()
+ */
+EAPI Emotion_Aspect emotion_object_keep_aspect_get(const Evas_Object *obj);
 
 /**
  * @brief Set the file to be played in the Emotion object.

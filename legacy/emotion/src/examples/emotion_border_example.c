@@ -70,6 +70,30 @@ _on_key_down(void *data, Evas *e, Evas_Object *o, void *event_info)
 	fprintf(stderr, "playing next file: %s\n", file);
 	emotion_object_file_set(em, file);
      }
+   else if (!strcmp(ev->keyname, "b"))
+     {
+	emotion_object_border_set(em, 0, 0, 50, 50);
+     }
+   else if (!strcmp(ev->keyname, "0"))
+     {
+	emotion_object_keep_aspect_set(em, EMOTION_ASPECT_KEEP_NONE);
+     }
+   else if (!strcmp(ev->keyname, "w"))
+     {
+	emotion_object_keep_aspect_set(em, EMOTION_ASPECT_KEEP_WIDTH);
+     }
+   else if (!strcmp(ev->keyname, "h"))
+     {
+	emotion_object_keep_aspect_set(em, EMOTION_ASPECT_KEEP_HEIGHT);
+     }
+   else if (!strcmp(ev->keyname, "2"))
+     {
+	emotion_object_keep_aspect_set(em, EMOTION_ASPECT_KEEP_BOTH);
+     }
+   else if (!strcmp(ev->keyname, "c"))
+     {
+	emotion_object_keep_aspect_set(em, EMOTION_ASPECT_CROP);
+     }
    else
      {
 	fprintf(stderr, "unhandled key: %s\n", ev->keyname);
@@ -179,7 +203,7 @@ main(int argc, const char *argv[])
    evas_object_move(em, 10, 10);
    evas_object_resize(em, WIDTH, HEIGHT);
    evas_object_resize(em, WIDTH - 20, HEIGHT - 20);
-   emotion_object_border_set(em, 0, 0, 50, 50);
+   emotion_object_keep_aspect_set(em, EMOTION_ASPECT_KEEP_BOTH);
    emotion_object_bg_color_set(em, 0, 128, 0, 255);
    evas_object_show(em);
 
