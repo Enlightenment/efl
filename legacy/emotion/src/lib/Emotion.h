@@ -411,6 +411,8 @@ EAPI Eina_Bool    emotion_object_init                  (Evas_Object *obj, const 
  *
  * @see emotion_object_border_get()
  * @see emotion_object_bg_color_set()
+ *
+ * @ingroup Emotion_Video
  */
 EAPI void emotion_object_border_set(Evas_Object *obj, int l, int r, int t, int b);
 
@@ -424,6 +426,8 @@ EAPI void emotion_object_border_set(Evas_Object *obj, int l, int r, int t, int b
  * @param b The bottom border.
  *
  * @see emotion_object_border_set()
+ *
+ * @ingroup Emotion_Video
  */
 EAPI void emotion_object_border_get(const Evas_Object *obj, int *l, int *r, int *t, int *b);
 
@@ -443,6 +447,8 @@ EAPI void emotion_object_border_get(const Evas_Object *obj, int *l, int *r, int 
  * The default color is 0, 0, 0, 0 (transparent).
  *
  * @see emotion_object_bg_color_get()
+ *
+ * @ingroup Emotion_Video
  */
 EAPI void emotion_object_bg_color_set(Evas_Object *obj, int r, int g, int b, int a);
 
@@ -456,6 +462,8 @@ EAPI void emotion_object_bg_color_set(Evas_Object *obj, int r, int g, int b, int
  * @param a AAlpha channel of the color.
  *
  * @see emotion_object_bg_color_set()
+ *
+ * @ingroup Emotion_Video
  */
 EAPI void emotion_object_bg_color_get(const Evas_Object *obj, int *r, int *g, int *b, int *a);
 
@@ -498,6 +506,8 @@ EAPI void emotion_object_bg_color_get(const Evas_Object *obj, int *r, int *g, in
  *
  * @see emotion_object_border_set()
  * @see emotion_object_keep_aspect_get()
+ *
+ * @ingroup Emotion_Video
  */
 EAPI void emotion_object_keep_aspect_set(Evas_Object *obj, Emotion_Aspect a);
 
@@ -509,6 +519,8 @@ EAPI void emotion_object_keep_aspect_set(Evas_Object *obj, Emotion_Aspect a);
  * @return The current aspect ratio policy.
  *
  * @see emotion_object_keep_aspect_set()
+ *
+ * @ingroup Emotion_Video
  */
 EAPI Emotion_Aspect emotion_object_keep_aspect_get(const Evas_Object *obj);
 
