@@ -1037,7 +1037,7 @@ extern "C" {
     */
    EAPI Evas_Object *elm_object_item_content_part_get(const Elm_Object_Item *it, const char *item);
 
-#define elm_object_item_content_get(it, content) elm_object_item_content_part_get((it), NULL, (content))
+#define elm_object_item_content_get(it) elm_object_item_content_part_get((it), NULL)
 
    /**
     * Unset a content of an object item
