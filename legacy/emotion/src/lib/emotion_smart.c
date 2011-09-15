@@ -1885,7 +1885,6 @@ _smart_resize(Evas_Object * obj, Evas_Coord w, Evas_Coord h)
    int vid_w, vid_h;
 
    sd->module->video_data_size_get(sd->video, &vid_w, &vid_h);
-   fprintf(stderr, "smart resize: %dx%d\n", w, h);
    _emotion_object_aspect_border_apply(obj, sd, w, h);
    evas_object_resize(sd->bg, w, h);
 }
