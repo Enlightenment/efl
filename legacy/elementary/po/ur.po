@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: elementary\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2011-09-14 01:53+0900\n"
+"POT-Creation-Date: 2011-09-15 23:35+0900\n"
 "PO-Revision-Date: 2010-12-26 10:05+0200\n"
 "Last-Translator: Tom Hacohen <tom.hacohen@partner.samsung.com>\n"
 "Language-Team: General\n"
@@ -31,15 +31,15 @@ msgstr ""
 msgid "OK"
 msgstr ""
 
-#: src/lib/elm_button.c:219
+#: src/lib/elm_button.c:230
 msgid "Clicked"
 msgstr ""
 
-#: src/lib/elm_button.c:338 src/lib/elm_check.c:271 src/lib/elm_toolbar.c:659
+#: src/lib/elm_button.c:349 src/lib/elm_check.c:271 src/lib/elm_toolbar.c:659
 msgid "State: Disabled"
 msgstr ""
 
-#: src/lib/elm_button.c:388
+#: src/lib/elm_button.c:400
 msgid "Button"
 msgstr ""
 
