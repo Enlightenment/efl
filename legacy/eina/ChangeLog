@@ -136,3 +136,9 @@
 	* Strbuf + Ustrbuf: Added eina_(u)strbuf_manage_new. This lets us
 	take a string and use it as the string buffer instead of copying
 	and allocating.
+
+2011-09-15  Cedric Bail
+
+	* Add eina_xattr_ls, eina_xattr_get, eina_xattr_set, eina_xattr_string_set,
+	eina_xattr_string_get, eina_xattr_double_set, eina_xattr_double_get,
+	eina_xattr_int_set, eina_xattr_int_get.

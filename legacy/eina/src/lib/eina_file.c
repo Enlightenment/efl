@@ -1,6 +1,6 @@
 /* EINA - EFL data type library
  * Copyright (C) 2007-2008 Jorge Luis Zapata Muga, Vincent Torri
- * Copyright (C) 2010 Cedric Bail
+ * Copyright (C) 2010-2011 Cedric Bail
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -46,10 +46,6 @@ void *alloca (size_t);
 #include <unistd.h>
 #include <sys/mman.h>
 #include <fcntl.h>
-
-#ifdef HAVE_XATTR
-# include <sys/xattr.h>
-#endif
 
 #define PATH_DELIM '/'
 
@@ -103,7 +99,6 @@ void *alloca (size_t);
 
 typedef struct _Eina_File_Iterator Eina_File_Iterator;
 typedef struct _Eina_File_Map Eina_File_Map;
-typedef struct _Eina_Xattr_Iterator Eina_Xattr_Iterator;
 
 struct _Eina_File_Iterator
 {
@@ -113,16 +108,6 @@ struct _Eina_File_Iterator
    int length;
 
    char dir[1];
-};
-
-struct _Eina_Xattr_Iterator
-{
-   Eina_Iterator iterator;
-
-   ssize_t length;
-   ssize_t offset;
-
-   char xattr[1];
 };
 
 struct _Eina_File
@@ -393,33 +378,6 @@ _eina_file_stat_ls_iterator_next(Eina_File_Direct_Iterator *it, void **data)
 
    return EINA_TRUE;
 }
-
-#ifdef HAVE_XATTR
-static Eina_Bool
-_eina_xattr_ls_iterator_next(Eina_Xattr_Iterator *it, void **data)
-{
-   if (it->offset >= it->length)
-     return EINA_FALSE;
-
-   *data = it->xattr + it->offset;
-   it->offset += strlen(it->xattr + it->offset) + 1;
-
-   return EINA_TRUE;
-}
-
-static void *
-_eina_xattr_ls_iterator_container(Eina_Xattr_Iterator *it __UNUSED__)
-{
-   return NULL;
-}
-
-static void
-_eina_xattr_ls_iterator_free(Eina_Xattr_Iterator *it)
-{
-   EINA_MAGIC_SET(&it->iterator, 0);
-   free(it);
-}
-#endif
 
 static void
 _eina_file_real_close(Eina_File *file)
@@ -773,95 +731,6 @@ eina_file_stat_ls(const char *dir)
    it->iterator.free = FUNC_ITERATOR_FREE(_eina_file_direct_ls_iterator_free);
 
    return &it->iterator;
-}
-
-EAPI Eina_Iterator *
-eina_xattr_ls(const char *file)
-{
-   Eina_Xattr_Iterator *it;
-   ssize_t length;
-
-   EINA_SAFETY_ON_NULL_RETURN_VAL(file, NULL);
-
-#ifdef HAVE_XATTR
-   length = listxattr(file, NULL, 0);
-   if (length <= 0) return NULL;
-
-   it = calloc(1, sizeof (Eina_Xattr_Iterator) + length - 1);
-   if (!it) return NULL;
-
-   EINA_MAGIC_SET(&it->iterator, EINA_MAGIC_ITERATOR);       
-
-   it->length = listxattr(file, it->xattr, length);
-   if (it->length != length)
-     {
-        free(it);
-	return NULL;
-     }
-
-   it->iterator.version = EINA_ITERATOR_VERSION;
-   it->iterator.next = FUNC_ITERATOR_NEXT(_eina_xattr_ls_iterator_next);
-   it->iterator.get_container = FUNC_ITERATOR_GET_CONTAINER(_eina_xattr_ls_iterator_container);
-   it->iterator.free = FUNC_ITERATOR_FREE(_eina_xattr_ls_iterator_free);
-
-   return &it->iterator;
-#else
-   return NULL;
-#endif
-}
-
-EAPI void *
-eina_xattr_get(const char *file, const char *attribute, ssize_t *size)
-{
-   void *ret = NULL;
-   ssize_t tmp;
-
-   EINA_SAFETY_ON_NULL_RETURN_VAL(file, NULL);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(attribute, NULL);
-   EINA_SAFETY_ON_TRUE_RETURN_VAL(!size, NULL);
-
-   *size = getxattr(file, attribute, NULL, 0);
-   /* Size should be less than 2MB (already huge in my opinion) */
-   if (!(*size > 0 && *size < 2 * 1024 * 1024))
-     goto on_error;
-
-   ret = malloc(*size);
-   if (!ret) return NULL;
-
-   tmp = getxattr(file, attribute, ret, *size);
-   if (tmp != *size)
-     goto on_error;
-
-   return ret;
-
- on_error:
-   free(ret);
-   *size = 0;
-   return NULL;
-}
-
-EAPI Eina_Bool
-eina_xattr_set(const char *file, const char *attribute, const void *data, ssize_t length, Eina_Xattr_Flags flags)
-{
-   int iflags;
-
-   EINA_SAFETY_ON_NULL_RETURN_VAL(file, EINA_FALSE);   
-   EINA_SAFETY_ON_NULL_RETURN_VAL(attribute, EINA_FALSE);    
-   EINA_SAFETY_ON_NULL_RETURN_VAL(data, EINA_FALSE);
-   EINA_SAFETY_ON_TRUE_RETURN_VAL(!(length > 0 && length < 2 * 1024 * 1024), EINA_FALSE);
-
-   switch (flags)
-     {
-     case EINA_XATTR_INSERT: iflags = 0; break;
-     case EINA_XATTR_REPLACE: iflags = XATTR_REPLACE; break;
-     case EINA_XATTR_CREATED: iflags = XATTR_CREATE; break;
-     default:
-       return EINA_FALSE;
-     }
-
-   if (setxattr(file, attribute, data, length, iflags))
-     return EINA_FALSE;
-   return EINA_TRUE;
 }
 
 EAPI Eina_File *

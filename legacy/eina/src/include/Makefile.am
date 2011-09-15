@@ -58,7 +58,8 @@ eina_simple_xml_parser.h \
 eina_lock.h \
 eina_prefix.h \
 eina_refcount.h \
-eina_mmap.h
+eina_mmap.h \
+eina_xattr.h
 
 # Will be back for developper after 1.1.
 # eina_object.h
