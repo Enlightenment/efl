@@ -376,6 +376,47 @@ EAPI void         emotion_object_module_option_set     (Evas_Object *obj, const 
 EAPI Eina_Bool    emotion_object_init                  (Evas_Object *obj, const char *module_filename);
 
 /**
+ * @brief Set borders for the emotion object.
+ *
+ * @param obj The emotion object where borders are being set.
+ * @param l The left border.
+ * @param r The right border.
+ * @param t The top border.
+ * @param b The bottom border.
+ *
+ * This function sets borders for the emotion video object (just when a video is
+ * present). When positive values are given to one of the parameters, a border
+ * will be added to the respective position of the object, representing that
+ * size on the original video size. However, if the video is scaled up or down
+ * (i.e. the emotion object size is different from the video size), the borders
+ * will be scaled respectively too.
+ *
+ * If a negative value is given to one of the parameters, instead of a border,
+ * that respective side of the video will be cropped.
+ *
+ * It's possible to set a color for the added borders (default is transparent)
+ * with emotion_object_border_color_set(). By default, an Emotion object doesn't
+ * have any border.
+ *
+ * @see emotion_object_border_get()
+ * @see emotion_object_border_color_set()
+ */
+EAPI void emotion_object_border_set(Evas_Object *obj, int l, int r, int t, int b);
+
+/**
+ * @brief Get the borders set for the emotion object.
+ *
+ * @param obj The emotion object from which the borders are being retrieved.
+ * @param l The left border.
+ * @param r The right border.
+ * @param t The top border.
+ * @param b The bottom border.
+ *
+ * @see emotion_object_border_set()
+ */
+EAPI void emotion_object_border_get(const Evas_Object *obj, int *l, int *r, int *t, int *b);
+
+/**
  * @brief Set the file to be played in the Emotion object.
  *
  * @param obj The emotion object where the file is being loaded.

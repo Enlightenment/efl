@@ -76,6 +76,13 @@ struct _Smart_Data
       int button_num;
       int button;
    } spu;
+   struct {
+      int l; /* left */
+      int r; /* right */
+      int t; /* top */
+      int b; /* bottom */
+      Evas_Object *clipper;
+   } crop;
 
    double         ratio;
    double         pos;
@@ -200,6 +207,7 @@ _smart_data_free(Smart_Data *sd)
    if (sd->video) sd->module->file_close(sd->video);
    _emotion_module_close(sd->module, sd->video);
    evas_object_del(sd->obj);
+   evas_object_del(sd->crop.clipper);
    eina_stringshare_del(sd->file);
    free(sd->module_name);
    if (sd->job) ecore_job_del(sd->job);
@@ -277,6 +285,27 @@ _emotion_module_open(const char *name, Evas_Object *obj, Emotion_Video_Module **
    ERR("Unable to load module: %s", name);
 
    return NULL;
+}
+
+static void
+_clipper_position_size_update(Evas_Object *obj, int vid_w, int vid_h)
+{
+   Smart_Data *sd;
+   double scale_w, scale_h;
+   int x, y;
+   int w, h;
+
+   E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
+
+   evas_object_geometry_get(obj, &x, &y, &w, &h);
+   evas_object_move(sd->crop.clipper, x, y);
+   scale_w = (double)w / (double)(vid_w - sd->crop.l - sd->crop.r);
+   scale_h = (double)h / (double)(vid_h - sd->crop.t - sd->crop.b);
+
+   evas_object_image_fill_set(sd->obj, 0, 0, vid_w * scale_w, vid_h * scale_h);
+   evas_object_resize(sd->obj, vid_w * scale_w, vid_h * scale_h);
+   evas_object_move(sd->obj, x - sd->crop.l * scale_w, y - sd->crop.t * scale_h);
+   evas_object_resize(sd->crop.clipper, w, h);
 }
 
 /*******************************/
@@ -421,6 +450,60 @@ emotion_object_file_get(const Evas_Object *obj)
 }
 
 EAPI void
+emotion_object_border_set(Evas_Object *obj, int l, int r, int t, int b)
+{
+   Smart_Data *sd;
+
+   E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
+   sd->crop.l = -l;
+   sd->crop.r = -r;
+   sd->crop.t = -t;
+   sd->crop.b = -b;
+   if (l == 0 && r == 0 && t == 0 && b == 0)
+     {
+	Evas_Object *old_clipper;
+	if (!sd->crop.clipper)
+	  return;
+	old_clipper = evas_object_clip_get(sd->crop.clipper);
+	evas_object_clip_unset(sd->obj);
+	evas_object_clip_set(sd->obj, old_clipper);
+	evas_object_del(sd->crop.clipper);
+	sd->crop.clipper = NULL;
+     }
+   else
+     {
+	int vid_w, vid_h;
+	if (!sd->crop.clipper)
+	  {
+	     Evas_Object *old_clipper;
+	     sd->crop.clipper = evas_object_rectangle_add(
+		evas_object_evas_get(obj));
+	     evas_object_color_set(sd->crop.clipper, 255, 255, 255, 255);
+	     evas_object_smart_member_add(sd->crop.clipper, obj);
+	     old_clipper = evas_object_clip_get(sd->obj);
+	     evas_object_clip_set(sd->obj, sd->crop.clipper);
+	     evas_object_clip_set(sd->crop.clipper, old_clipper);
+	     if (evas_object_visible_get(sd->obj))
+	       evas_object_show(sd->crop.clipper);
+	  }
+	sd->module->video_data_size_get(sd->video, &vid_w, &vid_h);
+	_clipper_position_size_update(obj, vid_w, vid_h);
+     }
+}
+
+EAPI void
+emotion_object_border_get(Evas_Object *obj, int *l, int *r, int *t, int *b)
+{
+   Smart_Data *sd;
+
+   E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
+   *l = -sd->crop.l;
+   *r = -sd->crop.r;
+   *t = -sd->crop.t;
+   *b = -sd->crop.b;
+}
+
+EAPI void
 emotion_object_play_set(Evas_Object *obj, Eina_Bool play)
 {
    Smart_Data *sd;
@@ -542,6 +625,8 @@ emotion_object_size_get(const Evas_Object *obj, int *iw, int *ih)
    if (ih) *ih = 0;
    E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
    evas_object_image_size_get(sd->obj, iw, ih);
+   *iw -= (sd->crop.l + sd->crop.r);
+   *ih -= (sd->crop.t + sd->crop.b);
 }
 
 EAPI void
@@ -1251,6 +1336,7 @@ _emotion_frame_resize(Evas_Object *obj, int w, int h, double ratio)
      {
 	evas_object_size_hint_request_set(obj, w, h);
 	evas_object_smart_callback_call(obj, SIG_FRAME_RESIZE, NULL);
+	_clipper_position_size_update(obj, w, h);
      }
 }
 
@@ -1629,7 +1715,10 @@ _smart_move(Evas_Object * obj, Evas_Coord x, Evas_Coord y)
 
    sd = evas_object_smart_data_get(obj);
    if (!sd) return;
-   evas_object_move(sd->obj, x, y);
+
+   int vid_w, vid_h, w, h;
+   sd->module->video_data_size_get(sd->video, &vid_w, &vid_h);
+   _clipper_position_size_update(obj, vid_w, vid_h);
 }
 
 static void
@@ -1639,8 +1728,11 @@ _smart_resize(Evas_Object * obj, Evas_Coord w, Evas_Coord h)
 
    sd = evas_object_smart_data_get(obj);
    if (!sd) return;
-   evas_object_image_fill_set(sd->obj, 0, 0, w, h);
-   evas_object_resize(sd->obj, w, h);
+
+   int vid_w, vid_h;
+
+   sd->module->video_data_size_get(sd->video, &vid_w, &vid_h);
+   _clipper_position_size_update(obj, vid_w, vid_h);
 }
 
 static void
@@ -1651,7 +1743,8 @@ _smart_show(Evas_Object * obj)
    sd = evas_object_smart_data_get(obj);
    if (!sd) return;
    evas_object_show(sd->obj);
-
+   if (sd->crop.clipper)
+     evas_object_show(sd->crop.clipper);
 }
 
 static void
@@ -1662,6 +1755,8 @@ _smart_hide(Evas_Object * obj)
    sd = evas_object_smart_data_get(obj);
    if (!sd) return;
    evas_object_hide(sd->obj);
+   if (sd->crop.clipper)
+     evas_object_hide(sd->crop.clipper);
 }
 
 static void
@@ -1672,6 +1767,7 @@ _smart_color_set(Evas_Object * obj, int r, int g, int b, int a)
    sd = evas_object_smart_data_get(obj);
    if (!sd) return;
    evas_object_color_set(sd->obj, r, g, b, a);
+   evas_object_color_set(sd->crop.clipper, r, g, b, a);
 }
 
 static void
@@ -1681,7 +1777,10 @@ _smart_clip_set(Evas_Object * obj, Evas_Object * clip)
 
    sd = evas_object_smart_data_get(obj);
    if (!sd) return;
-   evas_object_clip_set(sd->obj, clip);
+   if (sd->crop.clipper)
+     evas_object_clip_set(sd->crop.clipper, clip);
+   else
+     evas_object_clip_set(sd->obj, clip);
 }
 
 static void
@@ -1691,6 +1790,9 @@ _smart_clip_unset(Evas_Object * obj)
 
    sd = evas_object_smart_data_get(obj);
    if (!sd) return;
-   evas_object_clip_unset(sd->obj);
+   if (sd->crop.clipper)
+     evas_object_clip_unset(sd->crop.clipper);
+   else
+     evas_object_clip_unset(sd->obj);
 }
 
