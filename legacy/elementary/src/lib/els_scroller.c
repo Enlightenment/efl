@@ -1339,8 +1339,20 @@ elm_smart_scroller_current_page_get(Evas_Object *obj, int *pagenumber_h, int *pa
    API_ENTRY return;
    Evas_Coord x, y;
    elm_smart_scroller_child_pos_get(sd->smart_obj, &x, &y);
-   if (pagenumber_h) *pagenumber_h = (x + sd->pagesize_h - 1) / sd->pagesize_h;
-   if (pagenumber_v) *pagenumber_v = (y + sd->pagesize_v - 1) / sd->pagesize_v;
+   if (pagenumber_h)
+     {
+        if (sd->pagesize_h > 0)
+          *pagenumber_h = (x + sd->pagesize_h - 1) / sd->pagesize_h;
+        else
+          *pagenumber_h = 0;
+     }
+   if (pagenumber_v)
+     {
+        if (sd->pagesize_v > 0)
+          *pagenumber_v = (y + sd->pagesize_v - 1) / sd->pagesize_v;
+        else
+          *pagenumber_v = 0;
+     }
 }
 
 void

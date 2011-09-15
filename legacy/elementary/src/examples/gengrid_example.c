@@ -365,6 +365,18 @@ _grid_del(void        *data,
    free(it);
 }
 
+/* scrolling animation stopped callback */
+static void
+_grid_scroll_stopped_cb(void        *data __UNUSED__,
+                        Evas_Object *obj,
+                        void        *event_info __UNUSED__)
+{
+  int h_pagenumber = 0, v_pagenumber = 0;
+  elm_gengrid_current_page_get(obj, &h_pagenumber, &v_pagenumber);
+  fprintf(stdout, "Grid current horiz page is %d, vert page is %d\n",
+          h_pagenumber, v_pagenumber);
+}
+
 /* items grid horizontal alignment change */
 static void
 _h_align_change_cb(void        *data,
@@ -551,6 +563,7 @@ elm_main(int    argc __UNUSED__,
    evas_object_show(hbx_3);
 
    elm_gengrid_align_get(grid, &h, &v);
+   evas_object_smart_callback_add(grid, "scroll,anim,stop", _grid_scroll_stopped_cb, NULL);
 
    sl = elm_slider_add(win);
    elm_object_text_set(sl, "Horiz. alignment");
@@ -588,6 +601,7 @@ elm_main(int    argc __UNUSED__,
    elm_box_pack_end(hbx_3, sl);
    evas_object_show(sl);
 
+   _page_change_cb(grid, sl, NULL);
    evas_object_smart_callback_add(sl, "changed", _page_change_cb, grid);
 
    gic.item_style = "default";

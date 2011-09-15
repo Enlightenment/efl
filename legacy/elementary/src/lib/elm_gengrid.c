@@ -2750,6 +2750,46 @@ elm_gengrid_page_size_set(Evas_Object *obj,
                                  v_pagesize);
 }
 
+EAPI void
+elm_gengrid_current_page_get(const Evas_Object *obj, int *h_pagenumber, int *v_pagenumber)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   if (wd->scr)
+     elm_smart_scroller_current_page_get(wd->scr, h_pagenumber, v_pagenumber);
+}
+
+EAPI void
+elm_gengrid_last_page_get(const Evas_Object *obj, int *h_pagenumber, int *v_pagenumber)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   if (wd->scr)
+     elm_smart_scroller_last_page_get(wd->scr, h_pagenumber, v_pagenumber);
+}
+
+EAPI void
+elm_gengrid_page_show(const Evas_Object *obj, int h_pagenumber, int v_pagenumber)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   if (wd->scr)
+     elm_smart_scroller_page_show(wd->scr, h_pagenumber, v_pagenumber);
+}
+
+EAPI void
+elm_gengrid_page_bring_in(const Evas_Object *obj, int h_pagenumber, int v_pagenumber)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   if (wd->scr)
+     elm_smart_scroller_page_bring_in(wd->scr, h_pagenumber, v_pagenumber);
+}
+
 EAPI Elm_Gengrid_Item *
 elm_gengrid_first_item_get(const Evas_Object *obj)
 {
