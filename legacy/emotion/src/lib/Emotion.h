@@ -395,11 +395,11 @@ EAPI Eina_Bool    emotion_object_init                  (Evas_Object *obj, const 
  * that respective side of the video will be cropped.
  *
  * It's possible to set a color for the added borders (default is transparent)
- * with emotion_object_border_color_set(). By default, an Emotion object doesn't
+ * with emotion_object_bg_color_set(). By default, an Emotion object doesn't
  * have any border.
  *
  * @see emotion_object_border_get()
- * @see emotion_object_border_color_set()
+ * @see emotion_object_bg_color_set()
  */
 EAPI void emotion_object_border_set(Evas_Object *obj, int l, int r, int t, int b);
 
@@ -415,6 +415,38 @@ EAPI void emotion_object_border_set(Evas_Object *obj, int l, int r, int t, int b
  * @see emotion_object_border_set()
  */
 EAPI void emotion_object_border_get(const Evas_Object *obj, int *l, int *r, int *t, int *b);
+
+/**
+ * @brief Set a color for the background rectangle of this emotion object.
+ *
+ * @param obj The emotion object where the background color is being set.
+ * @param r Red component of the color.
+ * @param g Green component of the color.
+ * @param b Blue component of the color.
+ * @param a Alpha channel of the color.
+ *
+ * This is useful when a border is added to any side of the Emotion object. The
+ * area between the edge of the video and the edge of the object will be filled
+ * with the specified color.
+ *
+ * The default color is 0, 0, 0, 0 (transparent).
+ *
+ * @see emotion_object_bg_color_get()
+ */
+EAPI void emotion_object_bg_color_set(Evas_Object *obj, int r, int g, int b, int a);
+
+/**
+ * @brief Get the background color set for the emotion object.
+ *
+ * @param obj The emotion object from which the background color is being retrieved.
+ * @param r Red component of the color.
+ * @param g Green component of the color.
+ * @param b Blue component of the color.
+ * @param a AAlpha channel of the color.
+ *
+ * @see emotion_object_bg_color_set()
+ */
+EAPI void emotion_object_bg_color_get(const Evas_Object *obj, int *r, int *g, int *b, int *a);
 
 /**
  * @brief Set the file to be played in the Emotion object.

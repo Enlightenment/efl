@@ -122,7 +122,8 @@ _canvas_resize_cb(Ecore_Evas *ee)
    em = ecore_evas_data_get(ee, "emotion");
 
    evas_object_resize(bg, w, h);
-   evas_object_resize(em, w, h);
+   evas_object_move(em, 10, 10);
+   evas_object_resize(em, w - 20, h - 20);
 }
 
 int
@@ -175,9 +176,11 @@ main(int argc, const char *argv[])
    /* Creating the emotion object */
    em = _create_emotion_object(e);
    emotion_object_file_set(em, eina_list_data_get(curfile));
-   evas_object_move(em, 0, 0);
+   evas_object_move(em, 10, 10);
    evas_object_resize(em, WIDTH, HEIGHT);
-   emotion_object_border_set(em, -30, -30, -30, -30);
+   evas_object_resize(em, WIDTH - 20, HEIGHT - 20);
+   emotion_object_border_set(em, 0, 0, 50, 50);
+   emotion_object_bg_color_set(em, 0, 128, 0, 255);
    evas_object_show(em);
 
    ecore_evas_data_set(ee, "emotion", em);

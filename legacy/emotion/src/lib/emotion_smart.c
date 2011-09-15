@@ -55,6 +55,7 @@ struct _Smart_Data
 
    const char    *file;
    Evas_Object   *obj;
+   Evas_Object   *bg;
 
    Ecore_Job     *job;
 
@@ -492,7 +493,7 @@ emotion_object_border_set(Evas_Object *obj, int l, int r, int t, int b)
 }
 
 EAPI void
-emotion_object_border_get(Evas_Object *obj, int *l, int *r, int *t, int *b)
+emotion_object_border_get(const Evas_Object *obj, int *l, int *r, int *t, int *b)
 {
    Smart_Data *sd;
 
@@ -501,6 +502,33 @@ emotion_object_border_get(Evas_Object *obj, int *l, int *r, int *t, int *b)
    *r = -sd->crop.r;
    *t = -sd->crop.t;
    *b = -sd->crop.b;
+}
+
+EAPI void
+emotion_object_bg_color_set(Evas_Object *obj, int r, int g, int b, int a)
+{
+   Smart_Data *sd;
+
+   E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
+
+   evas_object_color_set(sd->bg, r, g, b, a);
+
+   if (!evas_object_visible_get(obj))
+     return;
+
+   if (a > 0)
+     evas_object_show(sd->bg);
+   else
+     evas_object_hide(sd->bg);
+}
+
+EAPI void
+emotion_object_bg_color_get(const Evas_Object *obj, int *r, int *g, int *b, int *a)
+{
+   Smart_Data *sd;
+
+   E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
+   evas_object_color_get(sd->bg, r, g, b, a);
 }
 
 EAPI void
@@ -1679,10 +1707,14 @@ _smart_add(Evas_Object * obj)
    EINA_REFCOUNT_INIT(sd);
    sd->state = EMOTION_WAKEUP;
    sd->obj = evas_object_image_add(evas_object_evas_get(obj));
+   sd->bg = evas_object_rectangle_add(evas_object_evas_get(obj));
+   evas_object_color_set(sd->bg, 0, 0, 0, 0);
    evas_object_event_callback_add(sd->obj, EVAS_CALLBACK_MOUSE_MOVE, _mouse_move, sd);
    evas_object_event_callback_add(sd->obj, EVAS_CALLBACK_MOUSE_DOWN, _mouse_down, sd);
    evas_object_image_pixels_get_callback_set(sd->obj, _pixels_get, sd);
    evas_object_smart_member_add(sd->obj, obj);
+   evas_object_smart_member_add(sd->bg, obj);
+   evas_object_lower(sd->bg);
    sd->ratio = 1.0;
    sd->spu.button = -1;
    evas_object_image_alpha_set(sd->obj, 0);
@@ -1719,6 +1751,7 @@ _smart_move(Evas_Object * obj, Evas_Coord x, Evas_Coord y)
    int vid_w, vid_h, w, h;
    sd->module->video_data_size_get(sd->video, &vid_w, &vid_h);
    _clipper_position_size_update(obj, vid_w, vid_h);
+   evas_object_move(sd->bg, x, y);
 }
 
 static void
@@ -1733,18 +1766,24 @@ _smart_resize(Evas_Object * obj, Evas_Coord w, Evas_Coord h)
 
    sd->module->video_data_size_get(sd->video, &vid_w, &vid_h);
    _clipper_position_size_update(obj, vid_w, vid_h);
+   evas_object_resize(sd->bg, w, h);
 }
 
 static void
 _smart_show(Evas_Object * obj)
 {
    Smart_Data *sd;
+   int a;
 
    sd = evas_object_smart_data_get(obj);
    if (!sd) return;
    evas_object_show(sd->obj);
    if (sd->crop.clipper)
      evas_object_show(sd->crop.clipper);
+
+   evas_object_color_get(sd->bg, NULL, NULL, NULL, &a);
+   if (a > 0)
+     evas_object_show(sd->bg);
 }
 
 static void
@@ -1757,6 +1796,7 @@ _smart_hide(Evas_Object * obj)
    evas_object_hide(sd->obj);
    if (sd->crop.clipper)
      evas_object_hide(sd->crop.clipper);
+   evas_object_hide(sd->bg);
 }
 
 static void
@@ -1781,6 +1821,7 @@ _smart_clip_set(Evas_Object * obj, Evas_Object * clip)
      evas_object_clip_set(sd->crop.clipper, clip);
    else
      evas_object_clip_set(sd->obj, clip);
+   evas_object_clip_set(sd->bg, clip);
 }
 
 static void
@@ -1794,5 +1835,6 @@ _smart_clip_unset(Evas_Object * obj)
      evas_object_clip_unset(sd->crop.clipper);
    else
      evas_object_clip_unset(sd->obj);
+   evas_object_clip_unset(sd->bg);
 }
 
