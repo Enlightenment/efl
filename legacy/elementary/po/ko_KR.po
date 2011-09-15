@@ -62,7 +62,7 @@ msgstr ""
 
 #: src/lib/elm_config.c:1603
 msgid "default:LTR"
-msgstr "default:RTL"
+msgstr "default:LTR"
 
 #: src/lib/elm_entry.c:1117
 msgid "Copy"
