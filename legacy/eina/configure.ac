@@ -621,6 +621,29 @@ fi
 
 AC_SUBST([rt_libs])
 
+### Check for extended attribute
+
+AC_COMPILE_IFELSE(
+   [AC_LANG_PROGRAM(
+       [[
+#include <stdlib.h>
+#include <sys/types.h>
+#include <sys/xattr.h>
+       ]],
+       [[
+size_t tmp = listxattr("/", NULL, 0);
+tmp = getxattr("/", "user.ethumb.md5", NULL, 0);
+setxattr("/", "user.ethumb.md5", NULL, 0, 0);
+       ]])],
+    [
+      AC_DEFINE(HAVE_XATTR, 1, [Define to 1 if you have 'listxattr', 'setxattr' and 'getxattr'])
+      have_xattr="yes"
+    ],
+    [have_xattr="no"])
+
+AC_MSG_CHECKING([for Xattr])
+AC_MSG_RESULT([${have_xattr}])
+
 ### Modules
 
 if test "x${have_default_mempool}" = "xyes" ; then
@@ -736,6 +759,7 @@ fi
 echo "  Amalgamation.........: ${do_amalgamation}"
 echo "  Iconv support........: ${have_iconv}"
 echo "  File dirfd...........: ${have_dirfd}"
+echo "  File xattr...........: ${have_xattr}"
 echo
 echo "  Documentation........: ${build_doc}"
 echo "  Tests................: ${enable_tests}"

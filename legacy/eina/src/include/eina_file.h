@@ -112,6 +112,12 @@ typedef enum {
   EINA_FILE_WHT      /**< Whiteout file type (unused on Windows). */
 } Eina_File_Type;
 
+typedef enum {
+  EINA_XATTR_INSERT, /**< This is the default behaviour, it will either create or replace the extended attribute */
+  EINA_XATTR_REPLACE, /**< This will only succeed if the extended attribute previously existed */
+  EINA_XATTR_CREATED /**< This will only succeed if the extended attribute wasn't previously set */
+} Eina_Xattr_Flags;
+
 typedef struct _Eina_File Eina_File;
 
 typedef enum {
@@ -272,6 +278,47 @@ EAPI Eina_Iterator *eina_file_stat_ls(const char *dir) EINA_WARN_UNUSED_RESULT E
  * @see eina_file_ls()
  */
 EAPI Eina_Iterator *eina_file_direct_ls(const char *dir) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_MALLOC;
+
+/**
+ * @brief Get an iterator that list all extended attribute of a file.
+ *
+ * @param file The filename to retrieve the extended attribute list from.
+ * @return an iterator.
+ *
+ * The iterator will not allocate any data during the iteration step, so you need to copy them yourself
+ * if you need.
+ *
+ * @since 1.1
+ */
+EAPI Eina_Iterator *eina_xattr_ls(const char *file);
+
+/**
+ * @brief Retrieve an extended attribute from a file.
+ *
+ * @param file The file to retrieve the extended attribute from.
+ * @param atttribute The extended attribute name to retrieve.
+ * @param size The size of the retrieved extended attribute.
+ * @return the allocated data that hold the extended attribute value.
+ *
+ * It will return NULL and *size will be @c 0 if it fails.
+ *
+ * @since 1.1
+ */
+EAPI void *eina_xattr_get(const char *file, const char *attribute, ssize_t *size);
+
+/**
+ * @brief Set an extended attribute on a file.
+ *
+ * @param file The file to set the extended attribute to.
+ * @param attribute The attribute to set.
+ * @param data The data to set.
+ * @param length The length of the data to set.
+ * @param flags Define the set policy
+ * @return EINA_TRUE on success, EINA_FALSE otherwise.
+ *
+ * @since 1.1
+ */
+EAPI Eina_Bool eina_xattr_set(const char *file, const char *attribute, const void *data, ssize_t length, Eina_Xattr_Flags flags);
 
 /**
  * @brief Get a read-only handler to a file.
