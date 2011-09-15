@@ -79,6 +79,8 @@ static Eina_Lock _thread_safety;
 static int _thread_loop = 0;
 static Eina_Lock _thread_mutex;
 static Eina_Condition _thread_cond;
+static Eina_Lock _thread_feedback_mutex;
+static Eina_Condition _thread_feedback_cond;
 
 Eina_Lock _ecore_main_loop_lock;
 int _ecore_main_lock_count;
@@ -159,6 +161,8 @@ ecore_init(void)
    eina_lock_new(&_thread_safety);
    eina_lock_new(&_thread_mutex);
    eina_condition_new(&_thread_cond, &_thread_mutex);
+   eina_lock_new(&_thread_feedback_mutex);
+   eina_condition_new(&_thread_feedback_cond, &_thread_feedback_mutex);
    _thread_call = ecore_pipe_add(_thread_callback, NULL);
 
    eina_lock_new(&_ecore_main_loop_lock);
@@ -208,6 +212,10 @@ ecore_shutdown(void)
 
    ecore_pipe_del(_thread_call);
    eina_lock_free(&_thread_safety);
+   eina_condition_free(&_thread_cond);
+   eina_lock_free(&_thread_mutex);
+   eina_condition_free(&_thread_feedback_cond);
+   eina_lock_free(&_thread_feedback_mutex);
 
    if (_ecore_fps_debug) _ecore_fps_debug_shutdown();
    _ecore_poller_shutdown();
@@ -370,6 +378,10 @@ ecore_thread_main_loop_end(void)
      return _thread_loop;
 
    eina_condition_broadcast(&_thread_cond);
+
+   eina_lock_take(&_thread_feedback_mutex);
+   eina_condition_wait(&_thread_feedback_cond);
+   eina_lock_release(&_thread_feedback_mutex);
 
    return 0;
 }
@@ -636,13 +648,16 @@ _thread_callback(void *data __UNUSED__,
      {
         if (call->suspend)
           {
+             eina_lock_take(&_thread_mutex);
+
              eina_condition_broadcast(&call->c);
 
-             eina_lock_take(&_thread_mutex);
              eina_condition_wait(&_thread_cond);
              eina_lock_release(&_thread_mutex);
 
              eina_main_loop_define();
+
+	     eina_condition_broadcast(&_thread_feedback_cond);
 
              _thread_safe_cleanup(call);
              free(call);
