@@ -713,7 +713,7 @@ elm_icon_thumb_set(Evas_Object *obj, const char *file, const char *group)
    if (!wd) return;
 
 #ifdef HAVE_ELEMENTARY_ETHUMB
-   evas_object_event_callback_del_full(obj, EVAS_CALLBACK_RESIZE, 
+   evas_object_event_callback_del_full(obj, EVAS_CALLBACK_RESIZE,
 				       _elm_icon_standard_resize, wd);
    evas_object_event_callback_del_full(obj, EVAS_CALLBACK_RESIZE,
 				       _elm_icon_thumb_resize, wd);
