@@ -4884,3 +4884,43 @@ eet_data_descriptor_encode(Eet_Data_Descriptor *edd,
    return eet_data_descriptor_encode_cipher(edd, data_in, NULL, size_ret);
 } /* eet_data_descriptor_encode */
 
+EAPI void *
+eet_data_xattr_cipher_get(const char *filename,
+			  const char *attribute,
+			  Eet_Data_Descriptor *edd,
+			  const char *cipher_key)
+{
+   void *blob;
+   void *ret;
+   int size;
+
+   blob = eina_xattr_get(filename, attribute, &size);
+   if (!blob) return NULL;
+
+   ret = eet_data_descriptor_decode_cipher(edd, blob, cipher_key, size);
+   free(blob);
+
+   return ret;
+}
+
+EAPI Eina_Bool
+eet_data_xattr_cipher_set(const char *filename,
+			  const char *attribute,
+			  Eet_Data_Descriptor *edd,
+			  const char *cipher_key,
+			  const void *data,
+			  Eina_Xattr_Flags flags)
+{
+   void *blob;
+   int size;
+   Eina_Bool ret;
+
+   blob = eet_data_descriptor_encode_cipher(edd, data, cipher_key, &size);
+   if (!blob) return EINA_FALSE;
+
+   ret = eina_xattr_set(filename, attribute, blob, size, flags);
+   free(blob);
+
+   return ret;
+}
+

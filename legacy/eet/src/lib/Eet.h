@@ -3326,6 +3326,35 @@ eet_data_read_cipher(Eet_File            *ef,
                      const char          *cipher_key);
 
 /**
+ * Read a data structure from an eet extended attribute and decodes it using a cipher.
+ * @param filename The file to extract the extended attribute from.
+ * @param attribute The attribute to get the data from.
+ * @param edd The data descriptor handle to use when decoding.
+ * @param cipher_key The key to use as cipher.
+ * @return A pointer to the decoded data structure.
+ *
+ * This function decodes a data structure stored in an eet extended attribute,
+ * returning a pointer to it if it decoded successfully, or NULL on failure.
+ * Eet can handle members being added or deleted from the data in
+ * storage and safely zero-fills unfilled members if they were not found
+ * in the data. It checks sizes and headers whenever it reads data, allowing
+ * the programmer to not worry about corrupt data.
+ *
+ * Once a data structure has been described by the programmer with the
+ * fields they wish to save or load, storing or retrieving a data structure
+ * from an eet file, from a chunk of memory or from an extended attribute
+ * is as simple as a single function call.
+ *
+ * @since 1.5.0
+ * @ingroup Eet_Data_Cipher_Group
+ */
+EAPI void *
+eet_data_xattr_cipher_get(const char *filename,
+			  const char *attribute,
+			  Eet_Data_Descriptor *edd,
+			  const char *cipher_key);
+
+/**
  * Write a data structure from memory and store in an eet file
  * using a cipher.
  * @param ef The eet file handle to write to.
@@ -3336,10 +3365,8 @@ eet_data_read_cipher(Eet_File            *ef,
  * @param compress Compression flags for storage.
  * @return bytes written on successful write, 0 on failure.
  *
- * This function is the reverse of eet_data_read(), saving a data structure
+ * This function is the reverse of eet_data_read_cipher(), saving a data structure
  * to an eet file.
- *
- * @see eet_data_write_cipher()
  *
  * @since 1.0.0
  * @ingroup Eet_Data_Cipher_Group
@@ -3351,6 +3378,31 @@ eet_data_write_cipher(Eet_File            *ef,
                       const char          *cipher_key,
                       const void          *data,
                       int                  compress);
+
+/**
+ * Write a data structure from memory and store in an eet extended attribute
+ * using a cipher.
+ * @param filename The file to write the extended attribute to.
+ * @param attribute The attribute to store the data to.
+ * @param edd The data descriptor to use when encoding.
+ * @param cipher_key The key to use as cipher.
+ * @param data A pointer to the data structure to ssave and encode.
+ * @param flags The policy to use when setting the data.
+ * @return EINA_TRUE on success, EINA_FALSE on failure.
+ *
+ * This function is the reverse of eet_data_xattr_cipher_get(), saving a data structure
+ * to an eet extended attribute.
+ *
+ * @since 1.5.0
+ * @ingroup Eet_Data_Cipher_Group
+ */
+EAPI Eina_Bool
+eet_data_xattr_cipher_set(const char *filename,
+			  const char *attribute,
+			  Eet_Data_Descriptor *edd,
+			  const char *cipher_key,
+			  const void *data,
+			  Eina_Xattr_Flags flags);
 
 /**
  * Dump an eet encoded data structure into ascii text using a cipher.
