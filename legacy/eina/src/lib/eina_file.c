@@ -643,8 +643,7 @@ eina_file_ls(const char *dir)
    Eina_File_Iterator *it;
    size_t length;
 
-   if (!dir)
-      return NULL;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(dir, NULL);
 
    length = strlen(dir);
    if (length < 1)
@@ -684,8 +683,7 @@ eina_file_direct_ls(const char *dir)
    Eina_File_Direct_Iterator *it;
    size_t length;
 
-   if (!dir)
-      return NULL;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(dir, NULL);
 
    length = strlen(dir);
    if (length < 1)
@@ -734,8 +732,7 @@ eina_file_stat_ls(const char *dir)
    Eina_File_Direct_Iterator *it;
    size_t length;
 
-   if (!dir)
-      return NULL;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(dir, NULL);
 
    length = strlen(dir);
    if (length < 1)
@@ -784,10 +781,9 @@ eina_xattr_ls(const char *file)
    Eina_Xattr_Iterator *it;
    ssize_t length;
 
-#ifdef HAVE_XATTR
-   if (!file)
-     return NULL;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(file, NULL);
 
+#ifdef HAVE_XATTR
    length = listxattr(file, NULL, 0);
    if (length <= 0) return NULL;
 
@@ -820,7 +816,10 @@ eina_xattr_get(const char *file, const char *attribute, ssize_t *size)
    void *ret = NULL;
    ssize_t tmp;
 
-   if (!size || !file || !attribute) return NULL;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(file, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(attribute, NULL);
+   EINA_SAFETY_ON_TRUE_RETURN_VAL(!size, NULL);
+
    *size = getxattr(file, attribute, NULL, 0);
    /* Size should be less than 2MB (already huge in my opinion) */
    if (!(*size > 0 && *size < 2 * 1024 * 1024))
@@ -846,8 +845,10 @@ eina_xattr_set(const char *file, const char *attribute, const void *data, ssize_
 {
    int iflags;
 
-   if (!file || !attribute || !data || length <= 0 || length > 2 * 1024 * 1024)
-     return EINA_FALSE;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(file, EINA_FALSE);   
+   EINA_SAFETY_ON_NULL_RETURN_VAL(attribute, EINA_FALSE);    
+   EINA_SAFETY_ON_NULL_RETURN_VAL(data, EINA_FALSE);
+   EINA_SAFETY_ON_TRUE_RETURN_VAL(!(length > 0 && length < 2 * 1024 * 1024), EINA_FALSE);
 
    switch (flags)
      {
@@ -871,6 +872,8 @@ eina_file_open(const char *filename, Eina_Bool shared)
    struct stat file_stat;
    int fd;
    int flags;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(filename, NULL);
 
    /*
      FIXME: always open absolute path
@@ -959,7 +962,8 @@ eina_file_open(const char *filename, Eina_Bool shared)
 EAPI void
 eina_file_close(Eina_File *file)
 {
-   if (!file) return;
+   EINA_SAFETY_ON_NULL_RETURN(file);
+ 
    eina_lock_take(&file->lock);
    file->refcount--;
    eina_lock_release(&file->lock);
@@ -971,21 +975,21 @@ eina_file_close(Eina_File *file)
 EAPI size_t
 eina_file_size_get(Eina_File *file)
 {
-   if (!file) return 0;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(file, 0);
    return file->length;
 }
 
 EAPI time_t
 eina_file_mtime_get(Eina_File *file)
 {
-   if (!file) return 0;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(file, 0);
    return file->mtime;
 }
 
 EAPI const char *
 eina_file_filename_get(Eina_File *file)
 {
-   if (!file) return NULL;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(file, NULL);
    return file->filename;
 }
 
@@ -994,6 +998,8 @@ eina_file_map_all(Eina_File *file, Eina_File_Populate rule)
 {
    int flags = MAP_SHARED;
    void *ret = NULL;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(file, NULL);
 
 // bsd people will lack this feature
 #ifdef MAP_POPULATE
@@ -1087,6 +1093,8 @@ eina_file_map_new(Eina_File *file, Eina_File_Populate rule,
 EAPI void
 eina_file_map_free(Eina_File *file, void *map)
 {
+   EINA_SAFETY_ON_NULL_RETURN(file);
+
    eina_lock_take(&file->lock);
 
    if (file->global_map == map)
