@@ -761,13 +761,12 @@ elm_naviframe_item_push(Evas_Object *obj, const char *title_label, Evas_Object *
                                    "elm,action,popped,finished",
                                    "",
                                    _popped_finished, it);
-   elm_naviframe_item_style_set(ELM_CAST(it), item_style);
-
-   //title
    edje_object_signal_callback_add(it->base.view,
-                                   "elm,title,clicked",
-                                   "elm",
+                                   "elm,action,title,clicked",
+                                   "",
                                    _title_clicked, it);
+
+   elm_naviframe_item_style_set(ELM_CAST(it), item_style);
 
    _item_text_set_hook(ELM_CAST(it), "elm.text.title", title_label);
 
