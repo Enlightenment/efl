@@ -1088,9 +1088,9 @@ ecore_x_display_get(void)
     * XLib and thus cannot return a real XDisplay.
     * 
     * NB: This may break EFL in some places and needs lots of testing !!! */
-   if ((gl = getenv("ECORE_X_NO_XLIB")))
+   if ((gl = getenv("ECORE_X_NO_XLIB"))) 
      return (Ecore_X_Display *)_ecore_xcb_conn;
-   else /* we can safely return an XDisplay var */
+   else /* we can safely return an XDisplay var */ 
      return (Ecore_X_Display *)_ecore_xcb_display;
 }
 
@@ -1167,13 +1167,15 @@ EAPI int
 ecore_x_screen_index_get(const Ecore_X_Screen *screen) 
 {
    xcb_screen_iterator_t iter;
+   int i = 0;
 
    iter = 
      xcb_setup_roots_iterator(xcb_get_setup((xcb_connection_t *)_ecore_xcb_conn));
    for (; iter.rem; xcb_screen_next(&iter)) 
      {
         if (iter.data == (xcb_screen_t *)screen) 
-          return iter.index;
+          return i;
+        i++;
      }
 
    return 0;
