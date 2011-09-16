@@ -3100,6 +3100,16 @@ _elm_widget_item_text_part_set(Elm_Widget_Item *item,
    item->on_text_set_func((Elm_Object_Item *) item, part, label);
 }
 
+EAPI void
+_elm_widget_item_signal_emit(Elm_Widget_Item *item,
+                             const char *emission,
+                             const char *source)
+{
+   ELM_WIDGET_ITEM_CHECK_OR_RETURN(item);
+   if (item->on_signal_emit_func)
+     item->on_signal_emit_func((Elm_Object_Item *) item, emission, source);
+}
+
 EAPI const char *
 _elm_widget_item_text_part_get(const Elm_Widget_Item *item,
                                const char *part)
@@ -3147,6 +3157,14 @@ _elm_widget_item_text_get_hook_set(Elm_Widget_Item *item,
 {
    ELM_WIDGET_ITEM_CHECK_OR_RETURN(item);
    item->on_text_get_func = func;
+}
+
+EAPI void
+_elm_widget_item_signal_emit_hook_set(Elm_Widget_Item *item,
+                                      Elm_Widget_On_Signal_Emit_Cb func)
+{
+   ELM_WIDGET_ITEM_CHECK_OR_RETURN(item);
+   item->on_signal_emit_func = func;
 }
 
 EAPI void

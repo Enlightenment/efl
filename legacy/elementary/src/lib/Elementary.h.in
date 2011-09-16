@@ -1123,6 +1123,20 @@ extern "C" {
    EAPI void elm_object_item_data_set(Elm_Object_Item *it, void *data);
 
    /**
+    * Send a signal to the edje object of the widget item.
+    *
+    * This function sends a signal to the edje object of the obj item. An
+    * edje program can respond to a signal by specifying matching
+    * 'signal' and 'source' fields.
+    *
+    * @param it The Elementary object item
+    * @param emission The signal's name.
+    * @param source The signal's source.
+    * @ingroup General
+    */
+   EAPI void             elm_object_item_signal_emit(Elm_Object_Item *it, const char *emission, const char *source) EINA_ARG_NONNULL(1);
+
+   /**
     * @}
     */
 
