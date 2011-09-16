@@ -53,6 +53,9 @@ static const Evas_Smart_Cb_Description _signals[] = {
 
 static void _del_hook(Evas_Object *obj);
 static void _theme_hook(Evas_Object *obj);
+static void _emit_hook(Evas_Object *obj,
+                       const char *emission,
+                       const char *source);
 static void _disable_hook(Evas_Object *obj);
 static void _text_set_hook(Elm_Object_Item *it,
                            const char *part,
@@ -140,6 +143,18 @@ static void
 _theme_hook(Evas_Object *obj __UNUSED__)
 {
    //FIXME:
+}
+
+static void _emit_hook(Evas_Object *obj,
+                       const char *emission,
+                       const char *source)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+
+   edje_object_signal_emit(wd->base, emission, source);
 }
 
 static void
@@ -676,6 +691,7 @@ elm_naviframe_add(Evas_Object *parent)
    elm_widget_del_hook_set(obj, _del_hook);
    elm_widget_disable_hook_set(obj, _disable_hook);
    elm_widget_theme_hook_set(obj, _theme_hook);
+   elm_widget_signal_emit_hook_set(obj, _emit_hook);
 
    //base
    wd->base = edje_object_add(e);
