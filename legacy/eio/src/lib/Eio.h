@@ -117,7 +117,10 @@ typedef void (*Eio_Main_Direct_Cb)(void *data, Eio_File *handler, const Eina_Fil
 typedef void (*Eio_Stat_Cb)(void *data, Eio_File *handler, const struct stat *stat);
 typedef void (*Eio_Progress_Cb)(void *data, Eio_File *handler, const Eio_Progress *info);
 
-typedef void (*Eio_Done_Length_Cb)(void *data, Eio_File *handler, const char *xattr_data, unsigned int xattr_size);
+typedef void (*Eio_Done_Data_Cb)(void *data, Eio_File *handler, const char *xattr_data, unsigned int xattr_size);
+typedef void (*Eio_Done_String_Cb)(void *data, Eio_File *handler, const char *xattr_string);
+typedef void (*Eio_Done_Double_Cb)(void *data, Eio_File *handler, double xattr_double);
+typedef void (*Eio_Done_Int_Cb)(void *data, Eio_File *handler, int xattr_int);
 
 typedef void (*Eio_Done_Cb)(void *data, Eio_File *handler);
 typedef void (*Eio_Error_Cb)(void *data, Eio_File *handler, int error);
@@ -246,12 +249,56 @@ EAPI Eio_File *eio_file_xattr_set(const char *path,
 				  Eio_Done_Cb done_cb,
 				  Eio_Error_Cb error_cb,
 				  const void *data);
+EAPI Eio_File *eio_file_xattr_int_set(const char *path,
+				      const char *attribute,
+				      int xattr_int,
+				      Eina_Xattr_Flags flags,
+				      Eio_Done_Cb done_cb,
+				      Eio_Error_Cb error_cb,
+				      const void *data);
+EAPI Eio_File *eio_file_xattr_double_set(const char *path,
+					 const char *attribute,
+					 double xattr_double,
+					 Eina_Xattr_Flags flags,
+					 Eio_Done_Cb done_cb,
+					 Eio_Error_Cb error_cb,
+					 const void *data);
+EAPI Eio_File *eio_file_xattr_string_set(const char *path,
+					 const char *attribute,
+					 const char *xattr_string,
+					 Eina_Xattr_Flags flags,
+					 Eio_Done_Cb done_cb,
+					 Eio_Error_Cb error_cb,
+					 const void *data);
+EAPI Eio_File *eio_file_xattr_set(const char *path,
+				  const char *attribute,
+				  const char *xattr_data,
+				  unsigned int xattr_size,
+				  Eina_Xattr_Flags flags,
+				  Eio_Done_Cb done_cb,
+				  Eio_Error_Cb error_cb,
+				  const void *data);
 
 EAPI Eio_File *eio_file_xattr_get(const char *path,
 				  const char *attribute,
-				  Eio_Done_Length_Cb done_cb,
+				  Eio_Done_Data_Cb done_cb,
 				  Eio_Error_Cb error_cb,
 				  const void *data);
+EAPI Eio_File *eio_file_xattr_int_get(const char *path,
+				      const char *attribute,
+				      Eio_Done_Int_Cb done_cb,
+				      Eio_Error_Cb error_cb,
+				      const void *data);
+EAPI Eio_File *eio_file_xattr_double_get(const char *path,
+					 const char *attribute,
+					 Eio_Done_Double_Cb done_cb,
+					 Eio_Error_Cb error_cb,
+					 const void *data);
+EAPI Eio_File *eio_file_xattr_string_get(const char *path,
+					 const char *attribute,
+					 Eio_Done_String_Cb done_cb,
+					 Eio_Error_Cb error_cb,
+					 const void *data);
 
 EAPI void *eio_file_container_get(Eio_File *ls);
 

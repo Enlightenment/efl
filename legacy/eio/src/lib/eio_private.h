@@ -159,18 +159,46 @@ struct _Eio_File_Stat
    const char *path;
 };
 
+typedef enum {
+  EIO_XATTR_DATA,
+  EIO_XATTR_STRING,
+  EIO_XATTR_DOUBLE,
+  EIO_XATTR_INT
+} Eio_File_Xattr_Op;
+
 struct _Eio_File_Xattr
 {
    Eio_File common;
-
-   Eio_Done_Length_Cb done_cb;
 
    const char *path;
    const char *attribute;
    Eina_Xattr_Flags flags;
 
-   char *xattr_data;
-   ssize_t xattr_size;
+   Eio_File_Xattr_Op op;
+
+   union {
+     struct {
+       Eio_Done_Data_Cb done_cb;
+
+       char *xattr_data;
+       ssize_t xattr_size;
+     } xdata;
+     struct {
+       Eio_Done_String_Cb done_cb;
+
+       char *xattr_string;
+     } xstring;
+     struct {
+       Eio_Done_Double_Cb done_cb;
+
+       double xattr_double;
+     } xdouble;
+     struct {
+       Eio_Done_Int_Cb done_cb;
+
+       int xattr_int;
+     } xint;
+   } todo;
 };
 
 struct _Eio_File_Progress
