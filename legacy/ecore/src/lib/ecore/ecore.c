@@ -377,9 +377,8 @@ ecore_thread_main_loop_end(void)
    if (_thread_loop > 0)
      return _thread_loop;
 
-   eina_condition_broadcast(&_thread_cond);
-
    eina_lock_take(&_thread_feedback_mutex);
+   eina_condition_broadcast(&_thread_cond);
    eina_condition_wait(&_thread_feedback_cond);
    eina_lock_release(&_thread_feedback_mutex);
 
