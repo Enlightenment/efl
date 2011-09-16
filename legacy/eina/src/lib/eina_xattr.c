@@ -119,6 +119,7 @@ eina_xattr_get(const char *file, const char *attribute, ssize_t *size)
    EINA_SAFETY_ON_NULL_RETURN_VAL(attribute, NULL);
    EINA_SAFETY_ON_TRUE_RETURN_VAL(!size, NULL);
 
+#ifdef HAVE_XATTR
    *size = getxattr(file, attribute, NULL, 0);
    /* Size should be less than 2MB (already huge in my opinion) */
    if (!(*size > 0 && *size < 2 * 1024 * 1024))
@@ -135,6 +136,7 @@ eina_xattr_get(const char *file, const char *attribute, ssize_t *size)
 
  on_error:
    free(ret);
+#endif
    *size = 0;
    return NULL;
 }
@@ -149,6 +151,7 @@ eina_xattr_set(const char *file, const char *attribute, const void *data, ssize_
    EINA_SAFETY_ON_NULL_RETURN_VAL(data, EINA_FALSE);
    EINA_SAFETY_ON_TRUE_RETURN_VAL(!(length > 0 && length < 2 * 1024 * 1024), EINA_FALSE);
 
+#ifdef HAVE_XATTR
    switch (flags)
      {
      case EINA_XATTR_INSERT: iflags = 0; break;
@@ -161,6 +164,9 @@ eina_xattr_set(const char *file, const char *attribute, const void *data, ssize_
    if (setxattr(file, attribute, data, length, iflags))
      return EINA_FALSE;
    return EINA_TRUE;
+#else
+   return EINA_FALSE;
+#endif
 }
 
 EAPI Eina_Bool
