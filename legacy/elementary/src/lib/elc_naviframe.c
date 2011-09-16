@@ -69,6 +69,9 @@ static Evas_Object *_item_content_get_hook(const Elm_Object_Item *it,
                                            const char *part);
 static Evas_Object *_item_content_unset_hook(Elm_Object_Item *it,
                                              const char *part);
+static void _item_signal_emit_hook(Elm_Object_Item *it,
+                                   const char *emission,
+                                   const char *source);
 static void _sizing_eval(Evas_Object *obj);
 static void _item_sizing_eval(Elm_Naviframe_Item *it);
 static void _move(void *data, Evas *e, Evas_Object *obj, void *event_info);
@@ -346,6 +349,16 @@ _item_content_unset_hook(Elm_Object_Item *it, const char *part)
    _item_sizing_eval(navi_it);
 
    return content;
+}
+
+static void
+_item_signal_emit_hook(Elm_Object_Item *it,
+                       const char *emission,
+                       const char *source)
+{
+   ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
+   Elm_Naviframe_Item *navi_it = ELM_CAST(it);
+   edje_object_signal_emit(navi_it->base.view, emission, source);
 }
 
 static void
@@ -730,6 +743,7 @@ elm_naviframe_item_push(Evas_Object *obj, const char *title_label, Evas_Object *
    elm_widget_item_content_set_hook_set(it, _item_content_set_hook);
    elm_widget_item_content_get_hook_set(it, _item_content_get_hook);
    elm_widget_item_content_unset_hook_set(it, _item_content_unset_hook);
+   elm_widget_item_signal_emit_hook_set(it, _item_signal_emit_hook);
 
    //item base layout
    it->base.view = edje_object_add(evas_object_evas_get(obj));
