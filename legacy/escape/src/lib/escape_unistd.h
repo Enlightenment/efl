@@ -12,6 +12,9 @@
  * @{
  */
 
+#include <sys/syslimits.h>
+
+
 /* Path function */
 /**
  * @brief return the canonicalized absolute pathname
