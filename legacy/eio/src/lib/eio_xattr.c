@@ -32,42 +32,34 @@
  * @cond LOCAL
  */
 
-#ifdef HAVE_XATTR
 static void
 _eio_ls_xattr_heavy(void *data, Ecore_Thread *thread)
 {
    Eio_File_Char_Ls *async = data;
-   char *tmp;
-   ssize_t length;
-   ssize_t i;
+   Eina_Iterator *it;
+   const char *tmp;
 
-   length = listxattr(async->ls.directory, NULL, 0);
+   it = eina_xattr_ls(async->ls.directory);
+   if (!it) return ;
 
-   if (length <= 0) return ;
-
-   tmp = alloca(length);
-   length = listxattr(async->ls.directory, tmp, length);
-
-   for (i = 0; i < length; i += strlen(tmp) + 1)
+   EINA_ITERATOR_FOREACH(it, tmp)
      {
-        const char *xattr;
         Eina_Bool filter = EINA_TRUE;
-
-        xattr = eina_stringshare_add(tmp);
 
         if (async->filter_cb)
           {
              filter = async->filter_cb((void*) async->ls.common.data,
                                        &async->ls.common,
-                                       xattr);
+                                       tmp);
           }
 
-        if (filter) ecore_thread_feedback(thread, xattr);
-        else eina_stringshare_del(xattr);
+        if (filter) ecore_thread_feedback(thread, eina_stringshare_add(tmp));
 
         if (ecore_thread_check(thread))
           break;
      }
+
+   eina_iterator_free(it);
 }
 
 static void
@@ -83,28 +75,12 @@ static void
 _eio_file_xattr_get(void *data, Ecore_Thread *thread)
 {
    Eio_File_Xattr *async = data;
-   ssize_t sz;
 
    async->xattr_size = 0;
    async->xattr_data = NULL;
 
-   sz = getxattr(async->path, async->attribute, NULL, 0);
-   if (sz > 0 && sz < 2 * 1024 * 1024) /* sz should be smaller than 2MB (already huge in my opinion) */
-     {
-        async->xattr_data = malloc(sz);
-        async->xattr_size = (unsigned int) sz;
-
-        sz = getxattr(async->path, async->attribute, async->xattr_data, async->xattr_size);
-        if (sz != async->xattr_size)
-          {
-             free(async->xattr_data);
-             async->xattr_data = NULL;
-             async->xattr_size = 0;
-
-             ecore_thread_cancel(thread);
-          }
-     }
-   else
+   async->xattr_data = eina_xattr_get(async->path, async->attribute, &async->xattr_size);
+   if (!async->xattr_data)
      ecore_thread_cancel(thread);
 }
 
@@ -142,7 +118,7 @@ _eio_file_xattr_set(void *data, Ecore_Thread *thread)
 {
    Eio_File_Xattr *async = data;
 
-   if (setxattr(async->path, async->attribute, async->xattr_data, async->xattr_size, async->flags))
+   if (eina_xattr_set(async->path, async->attribute, async->xattr_data, async->xattr_size, async->flags))
      eio_file_thread_error(&async->common, thread);
    async->xattr_data = NULL;
 }
@@ -166,8 +142,6 @@ _eio_file_xattr_set_error(void *data, Ecore_Thread *thread __UNUSED__)
    eio_file_error(&async->common);
    _eio_file_xattr_free(async);
 }
-
-#endif
 
 /**
  * @endcond
@@ -205,7 +179,6 @@ eio_file_xattr(const char *path,
 	       Eio_Error_Cb error_cb,
 	       const void *data)
 {
-#ifdef HAVE_XATTR
   Eio_File_Char_Ls *async;
 
   EINA_SAFETY_ON_NULL_RETURN_VAL(path, NULL);
@@ -231,9 +204,6 @@ eio_file_xattr(const char *path,
     return NULL;
 
   return &async->ls.common;
-#else
-  return NULL;
-#endif
 }
 
 /**
@@ -255,7 +225,6 @@ eio_file_xattr_get(const char *path,
 		   Eio_Error_Cb error_cb,
                    const void *data)
 {
-#ifdef HAVE_XATTR
    Eio_File_Xattr *async;
 
    if (!path || !attribute || !done_cb || !error_cb)
@@ -278,9 +247,6 @@ eio_file_xattr_get(const char *path,
      return NULL;
 
    return &async->common;
-#else
-   return NULL;
-#endif
 }
 
 /**
@@ -302,26 +268,15 @@ eio_file_xattr_set(const char *path,
                    const char *attribute,
                    const char *xattr_data,
                    unsigned int xattr_size,
-                   Eio_Xattr_Flags flags,
+                   Eina_Xattr_Flags flags,
                    Eio_Done_Cb done_cb,
                    Eio_Error_Cb error_cb,
                    const void *data)
 {
-#ifdef HAVE_XATTR
    Eio_File_Xattr *async;
-   int iflags;
 
    if (!path || !attribute || !done_cb || !xattr_data || !xattr_size || !error_cb)
      return NULL;
-
-   switch (flags)
-     {
-      case EIO_XATTR_INSERT: iflags = 0; break;
-      case EIO_XATTR_REPLACE: iflags = XATTR_REPLACE; break;
-      case EIO_XATTR_CREATED: iflags = XATTR_CREATE; break;
-      default:
-         return NULL;
-     }
 
    async = malloc(sizeof (Eio_File_Xattr) + xattr_size);
    if (!async) return NULL;
@@ -331,7 +286,7 @@ eio_file_xattr_set(const char *path,
    async->xattr_size = xattr_size;
    async->xattr_data = (char*) (async + 1);
    memcpy(async->xattr_data, xattr_data, xattr_size);
-   async->flags = iflags;
+   async->flags = flags;
 
    if (!eio_file_set(&async->common,
                      done_cb,
@@ -343,9 +298,6 @@ eio_file_xattr_set(const char *path,
      return NULL;
 
    return &async->common;
-#else
-   return NULL;
-#endif
 }
 
 /**

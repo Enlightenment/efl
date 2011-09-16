@@ -91,17 +91,6 @@ enum _Eio_File_Op
 };
 
 /**
- * @enum Eio_Xattr_Flags
- * Xattr creation flags
- */
-typedef enum
-{
-  EIO_XATTR_INSERT = 0, /**< Xattr will always be set */
-  EIO_XATTR_CREATED, /**< Xattr will be created, but will fail if already exists */
-  EIO_XATTR_REPLACE /**< Xattr will replace the existing value or fail if no value exist before */
-} Eio_Xattr_Flags;
-
-/**
  * @typedef Eio_File_Op
  * Input/Output operations on files.
  */
@@ -253,7 +242,7 @@ EAPI Eio_File *eio_file_xattr_set(const char *path,
 				  const char *attribute,
 				  const char *xattr_data,
 				  unsigned int xattr_size,
-				  Eio_Xattr_Flags flags,
+				  Eina_Xattr_Flags flags,
 				  Eio_Done_Cb done_cb,
 				  Eio_Error_Cb error_cb,
 				  const void *data);

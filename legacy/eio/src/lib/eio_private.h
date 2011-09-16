@@ -167,10 +167,10 @@ struct _Eio_File_Xattr
 
    const char *path;
    const char *attribute;
-   int flags;
+   Eina_Xattr_Flags flags;
 
    char *xattr_data;
-   unsigned int xattr_size;
+   ssize_t xattr_size;
 };
 
 struct _Eio_File_Progress

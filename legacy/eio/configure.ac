@@ -187,29 +187,6 @@ EIO_CHECK_NOTIFY_WIN32([${want_notify_win32}], [have_notify_win32="yes"], [have_
 AM_CONDITIONAL([EIO_HAVE_INOTIFY], [test "x$have_inotify" = "xyes"])
 AM_CONDITIONAL([EIO_HAVE_WINCHANGE], [test "x$have_notify_win32" = "xyes"])
 
-### Check for extended attribute
-
-AC_COMPILE_IFELSE(
-   [AC_LANG_PROGRAM(
-       [[
-#include <stdlib.h>
-#include <sys/types.h>
-#include <sys/xattr.h>
-       ]],
-       [[
-size_t tmp = listxattr("/", NULL, 0);
-tmp = getxattr("/", "user.ethumb.md5", NULL, 0);
-setxattr("/", "user.ethumb.md5", NULL, 0, 0);
-       ]])],
-    [
-      AC_DEFINE(HAVE_XATTR, 1, [Define to 1 if you have 'listxattr', 'setxattr' and 'getxattr'])
-      have_xattr="yes"
-    ],
-    [have_xattr="no"])
-
-AC_MSG_CHECKING([for Xattr])
-AC_MSG_RESULT([${have_xattr}])
-
 ## Report
 
 AC_OUTPUT([
@@ -232,7 +209,6 @@ echo
 echo
 echo "Configuration Options Summary:"
 echo
-echo "  Xattr................: ${have_xattr}"
 echo "  Thread Support.......: ${have_threads}"
 echo "  Inotify..............: ${have_inotify}"
 echo "  Windows notification.: ${have_notify_win32}"
