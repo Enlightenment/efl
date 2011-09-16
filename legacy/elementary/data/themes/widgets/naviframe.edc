@@ -265,8 +265,8 @@ group { name:"elm/naviframe/item/basic/default";
       program {
          name: "title_clicked";
          signal: "mouse,clicked,1";
-         source: "base";
-         action: SIGNAL_EMIT "elm,action,clicked" "elm";
+         source: "title_base";
+         action: SIGNAL_EMIT "elm,action,title,clicked" "";
       }
       program { name: "show_finished";
          action: SIGNAL_EMIT "elm,action,show,finished" "";
