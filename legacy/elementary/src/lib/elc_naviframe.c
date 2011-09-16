@@ -136,7 +136,7 @@ _del_hook(Evas_Object *obj)
    wd = elm_widget_data_get(obj);
    if (!wd) return;
 
-   EINA_LIST_FOREACH(wd->stack, list, it)
+   EINA_LIST_REVERSE_FOREACH(wd->stack, list, it)
      _item_del(it);
    eina_list_free(wd->stack);
    free(wd);
