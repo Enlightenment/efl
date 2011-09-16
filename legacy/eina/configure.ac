@@ -737,7 +737,7 @@ echo "    on/off support.....: ${have_on_off_threads}"
 fi
 echo "  Amalgamation.........: ${do_amalgamation}"
 echo "  Iconv support........: ${have_iconv}"
-echo "  File dirfd...........: ${have_dirfd}"
+echo "  File dirfd...........: ${ac_cv_func_dirfd}"
 echo "  File xattr...........: ${have_xattr}"
 echo
 echo "  Documentation........: ${build_doc}"
