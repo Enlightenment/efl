@@ -1093,6 +1093,8 @@ PKG_CHECK_MODULES([EVAS], [evas >= 1.0.0],
 
 ### Checks for header files
 
+AC_CHECK_HEADERS([sys/select.h])
+
 EFL_CHECK_PATH_MAX
 
 AC_HEADER_SYS_WAIT
