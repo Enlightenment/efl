@@ -178,6 +178,12 @@ ecore_sdl_feed_events(void)
              ev->root.x = ev->x;
              ev->root.y = ev->y;
 
+             /* Must set multi touch device to 0 or it will get ignored */
+             ev->multi.device = 0;
+             ev->multi.radius = ev->multi.radius_x = ev->multi.radius_y = 0;
+             ev->multi.pressure = ev->multi.angle = 0;
+             ev->multi.x = ev->multi.y = ev->multi.root.x = ev->multi.root.y = 0;
+
              ecore_event_add(ECORE_EVENT_MOUSE_MOVE, ev, NULL, NULL);
              break;
           }
@@ -215,6 +221,12 @@ ecore_sdl_feed_events(void)
                   ev->double_click = 0;
                   ev->triple_click = 0;
 
+                  /* Must set multi touch device to 0 or it will get ignored */
+                  ev->multi.device = 0;
+                  ev->multi.radius = ev->multi.radius_x = ev->multi.radius_y = 0;
+                  ev->multi.pressure = ev->multi.angle = 0;
+                  ev->multi.x = ev->multi.y = ev->multi.root.x = ev->multi.root.y = 0;
+
                   ecore_event_add(ECORE_EVENT_MOUSE_BUTTON_DOWN, ev, NULL, NULL);
                }
              break;
@@ -232,6 +244,12 @@ ecore_sdl_feed_events(void)
              ev->buttons = event.button.button;
              ev->double_click = 0;
              ev->triple_click = 0;
+
+             /* Must set multi touch device to 0 or it will get ignored */
+             ev->multi.device = 0;
+             ev->multi.radius = ev->multi.radius_x = ev->multi.radius_y = 0;
+             ev->multi.pressure = ev->multi.angle = 0;
+             ev->multi.x = ev->multi.y = ev->multi.root.x = ev->multi.root.y = 0;
 
              ecore_event_add(ECORE_EVENT_MOUSE_BUTTON_UP, ev, NULL, NULL);
              break;
