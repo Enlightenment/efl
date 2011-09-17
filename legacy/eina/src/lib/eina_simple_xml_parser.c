@@ -254,6 +254,12 @@ eina_simple_xml_shutdown(void)
    return EINA_TRUE;
 }
 
+
+/*============================================================================*
+ *                                   API                                      *
+ *============================================================================*/
+
+
 EAPI Eina_Bool
 eina_simple_xml_parse(const char *buf, unsigned buflen, Eina_Bool strip, Eina_Simple_XML_Cb func, const void *data)
 {

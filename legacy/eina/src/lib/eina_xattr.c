@@ -35,6 +35,14 @@
 #include "eina_xattr.h"
 #include "eina_convert.h"
 
+/*============================================================================*
+ *                                  Local                                     *
+ *============================================================================*/
+
+/**
+ * @cond LOCAL
+ */
+
 typedef struct _Eina_Xattr_Iterator Eina_Xattr_Iterator;
 
 struct _Eina_Xattr_Iterator
@@ -74,6 +82,21 @@ _eina_xattr_ls_iterator_free(Eina_Xattr_Iterator *it)
 }
 #endif
 
+/**
+ * @endcond
+ */
+
+
+/*============================================================================*
+ *                                 Global                                     *
+ *============================================================================*/
+
+
+/*============================================================================*
+ *                                   API                                      *
+ *============================================================================*/
+
+
 EAPI Eina_Iterator *
 eina_xattr_ls(const char *file)
 {
@@ -89,7 +112,7 @@ eina_xattr_ls(const char *file)
    it = calloc(1, sizeof (Eina_Xattr_Iterator) + length - 1);
    if (!it) return NULL;
 
-   EINA_MAGIC_SET(&it->iterator, EINA_MAGIC_ITERATOR);       
+   EINA_MAGIC_SET(&it->iterator, EINA_MAGIC_ITERATOR);
 
    it->length = listxattr(file, it->xattr, length);
    if (it->length != length)
@@ -146,8 +169,8 @@ eina_xattr_set(const char *file, const char *attribute, const void *data, ssize_
 {
    int iflags;
 
-   EINA_SAFETY_ON_NULL_RETURN_VAL(file, EINA_FALSE);   
-   EINA_SAFETY_ON_NULL_RETURN_VAL(attribute, EINA_FALSE);    
+   EINA_SAFETY_ON_NULL_RETURN_VAL(file, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(attribute, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(data, EINA_FALSE);
    EINA_SAFETY_ON_TRUE_RETURN_VAL(!(length > 0 && length < 2 * 1024 * 1024), EINA_FALSE);
 
@@ -172,7 +195,7 @@ eina_xattr_set(const char *file, const char *attribute, const void *data, ssize_
 EAPI Eina_Bool
 eina_xattr_string_set(const char *file, const char *attribute, const char *data, Eina_Xattr_Flags flags)
 {
-   EINA_SAFETY_ON_NULL_RETURN_VAL(data, EINA_FALSE);  
+   EINA_SAFETY_ON_NULL_RETURN_VAL(data, EINA_FALSE);
 
    return eina_xattr_set(file, attribute, data, strlen(data) + 1, flags);
 }
@@ -215,7 +238,7 @@ eina_xattr_double_get(const char *file, const char *attribute, double *value)
 
    tmp = eina_xattr_string_get(file, attribute);
    if (!tmp) return EINA_FALSE;
-   
+
    if (!eina_convert_atod(tmp, strlen(tmp), &m, &e))
      {
        free(tmp);
