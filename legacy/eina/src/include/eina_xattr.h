@@ -30,6 +30,8 @@
 /**
  * @typedef Eina_Xattr_Flags
  * define extended attribute creation
+ *
+ * @since 1.1
  */
 typedef enum {
   EINA_XATTR_INSERT, /**< This is the default behaviour, it will either create or replace the extended attribute */
