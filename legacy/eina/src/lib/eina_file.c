@@ -49,12 +49,6 @@ void *alloca (size_t);
 
 #define PATH_DELIM '/'
 
-#ifdef __sun
-# ifndef NAME_MAX
-#  define NAME_MAX 255
-# endif
-#endif
-
 #include "eina_config.h"
 #include "eina_private.h"
 
@@ -153,11 +147,10 @@ static int _eina_file_log_dom = -1;
  * The code and description of the issue can be found at :
  * http://womble.decadent.org.uk/readdir_r-advisory.html
  */
-static size_t
-_eina_dirent_buffer_size(DIR *dirp)
+static long
+_eina_name_max(DIR *dirp)
 {
    long name_max;
-   size_t name_end;
 
 #if defined(HAVE_FPATHCONF) && defined(HAVE_DIRFD) && defined(_PC_NAME_MAX)
    name_max = fpathconf(dirfd(dirp), _PC_NAME_MAX);
@@ -182,6 +175,16 @@ _eina_dirent_buffer_size(DIR *dirp)
 #  endif
 # endif
 #endif
+
+   return name_max;
+}
+
+static size_t
+_eina_dirent_buffer_size(DIR *dirp)
+{
+   long name_max = _eina_name_max(dirp);
+   size_t name_end;
+
    name_end = (size_t) offsetof(struct dirent, d_name) + name_max + 1;
 
    return (name_end > sizeof (struct dirent) ? name_end : sizeof (struct dirent));
@@ -647,9 +650,6 @@ eina_file_direct_ls(const char *dir)
    if (length < 1)
       return NULL;
 
-   if (length + NAME_MAX + 2 >= EINA_PATH_MAX)
-      return NULL;
-
    it = calloc(1, sizeof(Eina_File_Direct_Iterator) + length);
    if (!it)
       return NULL;
@@ -660,6 +660,12 @@ eina_file_direct_ls(const char *dir)
    if (!it->dirp)
      {
         free(it);
+        return NULL;
+     }
+
+   if (length + _eina_name_max(it->dirp) + 2 >= EINA_PATH_MAX)
+     {
+        _eina_file_direct_ls_iterator_free(it);
         return NULL;
      }
 
@@ -696,9 +702,6 @@ eina_file_stat_ls(const char *dir)
    if (length < 1)
       return NULL;
 
-   if (length + NAME_MAX + 2 >= EINA_PATH_MAX)
-      return NULL;
-
    it = calloc(1, sizeof(Eina_File_Direct_Iterator) + length);
    if (!it)
       return NULL;
@@ -709,6 +712,12 @@ eina_file_stat_ls(const char *dir)
    if (!it->dirp)
      {
         free(it);
+        return NULL;
+     }
+
+   if (length + _eina_name_max(it->dirp) + 2 >= EINA_PATH_MAX)
+     {
+        _eina_file_direct_ls_iterator_free(it);
         return NULL;
      }
 
