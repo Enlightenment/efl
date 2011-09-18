@@ -1658,12 +1658,33 @@ elm_mirrored_set(Eina_Bool mirrored)
    _elm_rescale();
 }
 
+static void
+_translation_init()
+{
+#ifdef ENABLE_NLS
+   const char *cur_dom = textdomain(NULL);
+   const char *trans_comment = gettext("");
+   const char *msg_locale = setlocale(LC_MESSAGES, NULL);
+
+   /* Same concept as what glib does:
+    * We shouldn't translate if there are no translations for the
+    * application in the current locale + domain. (Unless locale is
+    * en_/C where translating only parts of the interface make some
+    * sense).
+    */
+   _elm_config->translate = !(strcmp (cur_dom, "messages") &&
+         !*trans_comment && strncmp (msg_locale, "en_", 3) &&
+         strcmp (msg_locale, "C"));
+#endif
+}
+
 void
 _elm_config_init(void)
 {
    _desc_init();
    _profile_fetch_from_conf();
    _config_load();
+   _translation_init();
    _env_get();
    _config_apply();
    _elm_config_font_overlay_apply();

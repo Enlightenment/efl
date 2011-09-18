@@ -28,7 +28,7 @@
 
 #ifdef ENABLE_NLS
 # include <libintl.h>
-# define E_(string) dgettext(PACKAGE, string)
+# define E_(string) _elm_dgettext(string)
 #else
 # define bindtextdomain(domain,dir)
 # define E_(string) (string)
@@ -148,6 +148,7 @@ struct _Elm_Config
 
    /* Not part of the EET file */
    Eina_Bool      is_mirrored : 1;
+   Eina_Bool      translate : 1;
 };
 
 struct _Elm_Module
@@ -246,6 +247,20 @@ extern const char  *_elm_lib_dir;
 extern int          _elm_log_dom;
 extern Eina_List   *_elm_win_list;
 extern int          _elm_win_deferred_free;
+
+/* Our gettext wrapper, used to disable translation of elm if the app
+ * is not translated. */
+static inline const char *
+_elm_dgettext(const char *string)
+{
+   if (EINA_UNLIKELY(_elm_config->translate == EINA_FALSE))
+     {
+        return string;
+     }
+
+   return dgettext(PACKAGE, string);
+}
+
 
 /* Used by the paste handler */
 void _elm_entry_entry_paste(Evas_Object *obj, const char *entry);
