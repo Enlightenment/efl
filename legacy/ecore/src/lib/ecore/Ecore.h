@@ -566,7 +566,7 @@ extern "C" {
         int   number; /**< The signal number. Either 1 or 2 */
         void *ext_data; /**< Extension data - not used */
 
-#ifndef _WIN32
+#if !defined (_WIN32) && !defined (__ppulv2__)
         siginfo_t data; /**< Signal info */
 #endif
      };
@@ -575,7 +575,7 @@ extern "C" {
      {
         void *ext_data; /**< Extension data - not used */
 
-#ifndef _WIN32
+#if !defined (_WIN32) && !defined (__ppulv2__)
         siginfo_t data; /**< Signal info */
 #endif
      };
@@ -587,7 +587,7 @@ extern "C" {
         Eina_Bool   terminate : 1; /**< Set if the exit request was a terminate singal */
         void          *ext_data; /**< Extension data - not used */
 
-#ifndef _WIN32
+#if !defined (_WIN32) && !defined (__ppulv2__)
         siginfo_t data; /**< Signal info */
 #endif
      };
@@ -596,7 +596,7 @@ extern "C" {
      {
         void *ext_data; /**< Extension data - not used */
 
-#ifndef _WIN32
+#if !defined (_WIN32) && !defined (__ppulv2__)
         siginfo_t data; /**< Signal info */
 #endif
      };
@@ -605,7 +605,7 @@ extern "C" {
      {
         int num; /**< The realtime signal's number */
 
-#ifndef _WIN32
+#if !defined (_WIN32) && !defined (__ppulv2__)
         siginfo_t data; /**< Signal info */
 #endif
      };
@@ -698,7 +698,7 @@ extern "C" {
         Eina_Bool  exited    : 1; /** < set to 1 if the process exited of its own accord */
         Eina_Bool  signalled : 1; /** < set to 1 id the process exited due to uncaught signal */
         void         *ext_data; /**< Extension data - not used */
-#ifndef _WIN32
+#if !defined (_WIN32) && !defined (__ppulv2__)
         siginfo_t     data; /**< Signal info */
 #endif
      };
