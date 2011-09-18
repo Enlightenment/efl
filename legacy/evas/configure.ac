@@ -423,11 +423,12 @@ fi
 ### Checks for header files
 AC_HEADER_STDC
 AC_CHECK_HEADERS([unistd.h stdint.h sys/param.h netinet/in.h])
-
 EFL_CHECK_PATH_MAX
 
 
 ### Checks for types
+AC_CHECK_TYPES([struct sigaction], [], [],
+               [[#include <signal.h>]])
 
 
 ### Checks for structures
@@ -473,6 +474,7 @@ AC_SUBST(lt_enable_auto_import)
 ### Checks for library functions
 
 AC_ISC_POSIX
+AC_CHECK_FUNCS([siglongjmp])
 
 # alloca
 AC_FUNC_ALLOCA

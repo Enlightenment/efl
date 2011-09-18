@@ -3,7 +3,7 @@
 #include "evas_mmx.h"
 #endif
 
-#ifndef _WIN32
+#if defined (HAVE_STRUCT_SIGACTION) && defined (HAVE_SIGLONGJMP)
 #include <signal.h>
 #include <setjmp.h>
 #include <errno.h>
@@ -13,7 +13,7 @@ static sigjmp_buf detect_buf;
 
 static int cpu_feature_mask = 0;
 
-#ifndef _WIN32
+#if defined (HAVE_STRUCT_SIGACTION) && defined (HAVE_SIGLONGJMP)
 static void evas_common_cpu_catch_ill(int sig);
 static void evas_common_cpu_catch_segv(int sig);
 
@@ -99,7 +99,7 @@ evas_common_cpu_vis_test(void)
 int
 evas_common_cpu_feature_test(void (*feature)(void))
 {
-#ifndef _WIN32
+#if defined (HAVE_STRUCT_SIGACTION) && defined (HAVE_SIGLONGJMP)
    int enabled = 1;
    struct sigaction act, oact, oact2;
 
