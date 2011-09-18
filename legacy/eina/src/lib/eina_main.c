@@ -29,8 +29,10 @@
 #endif
 
 #ifdef EFL_HAVE_THREADS
-# if !(defined(_WIN32_WCE)) && !(defined(_WIN32))
+# ifdef HAVE_SYS_TYPES_H
 #  include <sys/types.h>
+# endif
+# ifdef HAVE_UNISTD_H
 #  include <unistd.h>
 # endif
 #endif
