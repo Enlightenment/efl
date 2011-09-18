@@ -769,6 +769,7 @@ eina_file_open(const char *filename, Eina_Bool shared)
 
    if (fd < 0) return NULL;
 
+#ifdef HAVE_EXECVP
    flags = fcntl(fd, F_GETFD);
    if (flags == -1)
      goto on_error;
@@ -776,6 +777,7 @@ eina_file_open(const char *filename, Eina_Bool shared)
    flags |= FD_CLOEXEC;
    if (fcntl(fd, F_SETFD, flags) == -1)
      goto on_error;
+#endif
 
    if (fstat(fd, &file_stat))
      goto on_error;

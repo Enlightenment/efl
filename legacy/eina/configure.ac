@@ -459,7 +459,7 @@ EFL_LINKER_FLAG([-fno-strict-aliasing])
 ### Checks for library functions
 AC_ISC_POSIX
 AC_FUNC_ALLOCA
-AC_CHECK_FUNCS([strlcpy dirfd openat fstatat fpathconf])
+AC_CHECK_FUNCS([strlcpy dirfd openat fstatat fpathconf execvp])
 
 # dlopen and dladdr
 dlopen_libs=""
