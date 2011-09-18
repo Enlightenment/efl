@@ -1,9 +1,10 @@
-#include <Elementary.h>
 #ifdef HAVE_CONFIG_H
 # include "elementary_config.h"
 #else
 # define __UNUSED__
 #endif
+
+#include <Elementary.h>
 
 EAPI_MAIN int
 elm_main(int argc __UNUSED__, char **argv)
