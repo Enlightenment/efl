@@ -76,6 +76,7 @@ ecore_app_args_get(int *argc, char ***argv)
 EAPI void
 ecore_app_restart(void)
 {
+#ifdef HAVE_EXECVP
    char *args[4096];
    int i;
 
@@ -84,6 +85,7 @@ ecore_app_restart(void)
    for (i = 0; i < app_argc; i++) args[i] = app_argv[i];
    args[i] = NULL;
    execvp(app_argv[0], args);
+#endif
 }
 
 /**
