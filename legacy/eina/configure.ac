@@ -358,7 +358,7 @@ AC_HEADER_ASSERT
 AC_HEADER_DIRENT
 AC_HEADER_TIME
 EFL_CHECK_PATH_MAX
-AC_CHECK_HEADERS([unistd.h libgen.h inttypes.h stdint.h sys/types.h])
+AC_CHECK_HEADERS([unistd.h libgen.h inttypes.h stdint.h sys/types.h siginfo.h])
 
 if test "x${ac_cv_header_inttypes_h}" = "xyes" ; then
    EINA_CONFIGURE_HAVE_INTTYPES_H="#define EINA_HAVE_INTTYPES_H"
@@ -377,6 +377,12 @@ AC_SUBST([EINA_CONFIGURE_HAVE_STDINT_H])
 AC_CHECK_SIZEOF([wchar_t])
 EINA_SIZEOF_WCHAR_T=$ac_cv_sizeof_wchar_t
 AC_SUBST([EINA_SIZEOF_WCHAR_T])
+AC_CHECK_TYPES([siginfo_t], [], [],
+   [[#include <signal.h>
+     #if HAVE_SIGINFO_H
+     # include <siginfo.h>
+     #endif
+   ]])
 
 ### Checks for structures
 

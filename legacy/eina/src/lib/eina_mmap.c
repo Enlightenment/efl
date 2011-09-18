@@ -20,7 +20,7 @@
 # include "config.h"
 #endif
 
-#ifndef _WIN32
+#ifdef HAVE_SIGINFO_T
 
 #ifdef STDC_HEADERS
 # include <stdlib.h>
@@ -41,7 +41,11 @@
 #include <signal.h>
 #include <errno.h>
 #include <fcntl.h>
-# include <unistd.h>
+#include <unistd.h>
+
+#if HAVE_SIGINFO_H
+# include <siginfo.h>
+#endif
 
 #endif
 
@@ -55,7 +59,8 @@
  *============================================================================*/
 
 static Eina_Bool mmap_safe = EINA_FALSE;
-#ifndef _WIN32
+#ifdef HAVE_SIGINFO_T
+
 static int _eina_mmap_log_dom = -1;
 static int _eina_mmap_zero_fd = -1;
 static long _eina_mmap_pagesize = -1;
@@ -117,7 +122,7 @@ _eina_mmap_safe_sigbus(int sig __UNUSED__,
 EAPI Eina_Bool
 eina_mmap_safety_enabled_set(Eina_Bool enabled)
 {
-#ifdef _WIN32
+#ifndef HAVE_SIGINFO_T
    return EINA_FALSE;
 #else
    if (_eina_mmap_log_dom < 0)
