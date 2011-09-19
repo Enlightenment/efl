@@ -442,6 +442,7 @@ EAPI Evas_Object     *_elm_widget_item_content_part_get(const Elm_Widget_Item *i
 EAPI Evas_Object     *_elm_widget_item_content_part_unset(Elm_Widget_Item *item, const char *part);
 EAPI void             _elm_widget_item_text_part_set(Elm_Widget_Item *item, const char *part, const char *label);
 EAPI const char      *_elm_widget_item_text_part_get(const Elm_Widget_Item *item, const char *part);
+EAPI void             _elm_widget_item_signal_emit(Elm_Widget_Item *item, const char *emission, const char *source);
 EAPI void             _elm_widget_item_content_set_hook_set(Elm_Widget_Item *item, Elm_Widget_On_Content_Set_Cb func);
 EAPI void             _elm_widget_item_content_get_hook_set(Elm_Widget_Item *item, Elm_Widget_On_Content_Get_Cb func);
 EAPI void             _elm_widget_item_content_unset_hook_set(Elm_Widget_Item *item, Elm_Widget_On_Content_Unset_Cb func);
