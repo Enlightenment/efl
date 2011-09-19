@@ -289,6 +289,20 @@ evas_module_register(const Evas_Module_Api *module, Evas_Module_Type type)
    return EINA_TRUE;
 }
 
+Eina_List *
+evas_module_engine_list(void)
+{
+   Evas_Module *em;
+   Eina_List *r = NULL;
+   Eina_Array_Iterator iterator;
+   unsigned int i;
+
+   EINA_ARRAY_ITER_NEXT(evas_engines, i, em, iterator)
+     r = eina_list_append(r, em->definition->name);
+
+   return r;
+}
+
 Eina_Bool
 evas_module_unregister(const Evas_Module_Api *module, Evas_Module_Type type)
 {

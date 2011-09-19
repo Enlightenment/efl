@@ -3611,7 +3611,6 @@ evas_object_image_data_convert_internal(Evas_Object_Image *o, void *data, Evas_C
 {
    void *out = NULL;
 
-   fprintf(stderr, "data: %p (%i)\n", data, o->cur.cspace);
    if (!data)
      return NULL;
 

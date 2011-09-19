@@ -460,50 +460,7 @@ evas_render_method_lookup(const char *name)
 EAPI Eina_List *
 evas_render_method_list(void)
 {
-   Eina_List *methods = NULL;
-
-   /* FIXME: get from modules - this is currently coded-in */
-#ifdef BUILD_ENGINE_SOFTWARE_GDI
-   methods = eina_list_append(methods, "software_gdi");
-#endif
-#ifdef BUILD_ENGINE_SOFTWARE_DDRAW
-   methods = eina_list_append(methods, "software_ddraw");
-#endif
-#ifdef BUILD_ENGINE_SOFTWARE_16_DDRAW
-   methods = eina_list_append(methods, "software_16_ddraw");
-#endif
-#ifdef BUILD_ENGINE_DIRECT3D
-   methods = eina_list_append(methods, "direct3d");
-#endif
-#ifdef BUILD_ENGINE_SOFTWARE_16_WINCE
-   methods = eina_list_append(methods, "software_16_wince");
-#endif
-#ifdef BUILD_ENGINE_SOFTWARE_X11
-   methods = eina_list_append(methods, "software_x11");
-#endif
-#ifdef BUILD_ENGINE_SOFTWARE_16_X11
-   methods = eina_list_append(methods, "software_16_x11");
-#endif
-#ifdef BUILD_ENGINE_GL_X11
-   methods = eina_list_append(methods, "gl_x11");
-#endif
-#ifdef BUILD_ENGINE_DIRECTFB
-   methods = eina_list_append(methods, "directfb");
-#endif
-#ifdef BUILD_ENGINE_FB
-   methods = eina_list_append(methods, "fb");
-#endif
-#ifdef BUILD_ENGINE_BUFFER
-   methods = eina_list_append(methods, "buffer");
-#endif
-#ifdef BUILD_ENGINE_SOFTWARE_WIN32_GDI
-   methods = eina_list_append(methods, "software_win32_gdi");
-#endif
-#ifdef BUILD_ENGINE_SOFTWARE_SDL
-   methods = eina_list_append(methods, "software_sdl");
-#endif
-
-   return methods;
+   return evas_module_engine_list();
 }
 
 EAPI void
