@@ -286,7 +286,7 @@ evas_common_font_ot_populate_text_props(const Eina_Unicode *text,
    buffer = hb_buffer_create();
    hb_buffer_set_unicode_funcs(buffer, _evas_common_font_ot_unicode_funcs_get());
    hb_buffer_set_language(buffer, hb_language_from_string(
-            evas_common_language_from_locale_get()));
+            evas_common_language_from_locale_get(), -1));
    hb_buffer_set_script(buffer, _evas_script_to_harfbuzz[props->script]);
    hb_buffer_set_direction(buffer,
          (props->bidi.dir == EVAS_BIDI_DIRECTION_RTL) ?
