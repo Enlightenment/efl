@@ -704,11 +704,6 @@ evas_video_sink_samsung_main_render(void *data)
      }
 
    evas_object_geometry_get(priv->o, NULL, NULL, &w, &h);
-   INF("sink main render [%i, %i] - [%i, %i] => [%i, %i] - [%i, %i]",
-       priv->width, priv->height,
-       stride, elevation,
-       w, h,
-       stride * w / priv->width, elevation * h / priv->height);
 
    send->ev->fill.width = stride * w / priv->width;
    send->ev->fill.height = elevation * h / priv->height;
@@ -743,16 +738,15 @@ evas_video_sink_samsung_main_render(void *data)
    _emotion_video_pos_update(send->ev->obj, send->ev->position, vstream->length_time);
    _emotion_frame_resize(send->ev->obj, priv->width, priv->height, send->ev->ratio);
 
+   /* FIXME: why is last buffer not protected ? */
+
  exit_point:
    emotion_gstreamer_buffer_free(send);
 
    if (preroll || !priv->o) return ;
 
-   eina_lock_take(&priv->m);
    if (!priv->unlocked)
      eina_condition_signal(&priv->c);
-
-   eina_lock_release(&priv->m);
 }
 
 static void
@@ -826,21 +820,16 @@ evas_video_sink_main_render(void *data)
 
    if (preroll || !priv->o) return ;
 
-   eina_lock_take(&priv->m);
    if (!priv->unlocked)
      eina_condition_signal(&priv->c);
-
-   eina_lock_release(&priv->m);
 }
 
 static void
 unlock_buffer_mutex(EvasVideoSinkPrivate* priv)
 {
-   eina_lock_take(&priv->m);
    priv->unlocked = EINA_TRUE;
 
    eina_condition_signal(&priv->c);
-   eina_lock_release(&priv->m);
 }
 
 static void
@@ -982,8 +971,10 @@ _on_post_clear(void *data, Evas *e __UNUSED__, void *event_info __UNUSED__)
 
    if (!ev->kill_buffer) return ;
 
+#if 0
    if (ev->last_buffer) gst_buffer_unref(ev->last_buffer);
    ev->last_buffer = NULL;
+#endif
 }
 
 static void
