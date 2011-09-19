@@ -618,11 +618,9 @@ _item_del(Elm_Naviframe_Item *it)
    eina_list_free(it->content_list);
    eina_list_free(it->text_list);
 
-   evas_object_del(it->base.view);
-
    wd->stack = eina_list_remove(wd->stack, it);
 
-   free(it);
+   elm_widget_item_del(it);
 }
 
 static void
