@@ -26624,7 +26624,7 @@ extern "C" {
     * going on inside the Emotion object. It does activate the remember
     * function on the linked Elm_Video object.
     *
-    * Signals that you cann add callback for are :
+    * Signals that you can add callback for are :
     *
     * "forward,clicked" - the user clicked the forward button.
     * "info,clicked" - the user clicked the info button.
