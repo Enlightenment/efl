@@ -112,8 +112,11 @@ _eio_file_xattr_free(Eio_File_Xattr *async)
 {
    eina_stringshare_del(async->path);
    eina_stringshare_del(async->attribute);
-   if (async->op == EIO_XATTR_DATA) free(async->todo.xdata.xattr_data);
-   if (async->op == EIO_XATTR_STRING) free(async->todo.xstring.xattr_string);
+   if (!async->set)
+     {
+       if (async->op == EIO_XATTR_DATA) free(async->todo.xdata.xattr_data);
+       if (async->op == EIO_XATTR_STRING) free(async->todo.xstring.xattr_string);
+     }
    free(async);
 }
 
@@ -215,6 +218,7 @@ _eio_file_xattr_setup_get(Eio_File_Xattr *async,
 {
    async->path = eina_stringshare_add(path);
    async->attribute = eina_stringshare_add(attribute);
+   async->set = EINA_FALSE;
 
    if (!eio_file_set(&async->common,
                      NULL,
@@ -240,6 +244,7 @@ _eio_file_xattr_setup_set(Eio_File_Xattr *async,
    async->path = eina_stringshare_add(path);
    async->attribute = eina_stringshare_add(attribute);
    async->flags = flags;
+   async->set = EINA_TRUE;
 
    if (!eio_file_set(&async->common,
                      done_cb,

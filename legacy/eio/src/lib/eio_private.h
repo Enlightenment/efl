@@ -199,6 +199,8 @@ struct _Eio_File_Xattr
        int xattr_int;
      } xint;
    } todo;
+
+   Eina_Bool set : 1;
 };
 
 struct _Eio_File_Progress
