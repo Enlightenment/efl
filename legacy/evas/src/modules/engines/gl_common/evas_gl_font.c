@@ -119,9 +119,9 @@ evas_gl_font_texture_draw(void *context, void *surface __UNUSED__, void *draw_co
    g = (dc->col.col >> 8 ) & 0xff;
    b = (dc->col.col      ) & 0xff;
    sx = 0; sy = 0; sw = tex->w, sh = tex->h;
-   if ((!gc->dc->cutout.rects)
-//       || (gc->dc->cutout.active > 32)
-       )
+   if ((!gc->dc->cutout.rects) ||
+       ((gc->shared->info.tune.cutout.max > 0) &&
+           (gc->dc->cutout.active > gc->shared->info.tune.cutout.max)))
      {
         if (gc->dc->clip.use)
           {
