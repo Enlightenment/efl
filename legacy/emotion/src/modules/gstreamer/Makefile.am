@@ -9,7 +9,9 @@ AM_CPPFLAGS = \
 @EMOTION_CFLAGS@ \
 @EMOTION_CPPFLAGS@ \
 @EFL_EMOTION_BUILD@ \
-@GSTREAMER_CFLAGS@
+@GSTREAMER_CFLAGS@ \
+@GSTREAMER_INTERFACE_CFLAGS@ \
+@ECORE_X_CFLAGS@
 
 if EMOTION_BUILD_GSTREAMER
 if !EMOTION_STATIC_BUILD_GSTREAMER
@@ -21,7 +23,7 @@ gstreamer_la_SOURCES = \
 emotion_gstreamer.c \
 emotion_sink.c \
 emotion_alloc.c
-gstreamer_la_LIBADD  = @GSTREAMER_LIBS@ $(top_builddir)/src/lib/libemotion.la
+gstreamer_la_LIBADD  = @ECORE_X_LIBS@ @GSTREAMER_LIBS@ @GSTREAMER_INTERFACE_LIBS@ $(top_builddir)/src/lib/libemotion.la
 gstreamer_la_LDFLAGS = -no-undefined @lt_enable_auto_import@ -module -avoid-version
 gstreamer_la_LIBTOOLFLAGS = --tag=disable-static
 gstreamer_la_DEPENDENCIES = $(top_builddir)/config.h

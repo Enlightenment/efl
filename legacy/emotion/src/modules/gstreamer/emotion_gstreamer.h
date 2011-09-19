@@ -1,8 +1,20 @@
 #ifndef __EMOTION_GSTREAMER_H__
 #define __EMOTION_GSTREAMER_H__
 
+#ifdef HAVE_CONFIG_H
+# include "config.h"
+#endif
+
 #include <Evas.h>
 #include <Ecore.h>
+
+#ifdef HAVE_ECORE_X
+# include <Ecore_X.h>
+# ifdef HAVE_XOVERLAY_H
+#  include <gst/interfaces/xoverlay.h>
+# endif
+#endif
+
 
 #define HTTP_STREAM 0
 #define RTSP_STREAM 1
@@ -92,6 +104,10 @@ struct _Emotion_Gstreamer_Video
    volatile int      get_poslen;
 
    Emotion_Gstreamer_Metadata *metadata;
+
+#ifdef HAVE_ECORE_X
+   Ecore_X_Window    win;
+#endif
 
    Emotion_Vis       vis;
 

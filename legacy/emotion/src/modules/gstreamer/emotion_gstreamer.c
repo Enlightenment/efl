@@ -396,6 +396,9 @@ em_shutdown(void *video)
 
        ev->pipeline = NULL;
        ev->sink = NULL;
+
+       if (ev->win) ecore_x_window_free(ev->win);
+       ev->win = 0;
      }
 
    EINA_LIST_FREE(ev->audio_streams, astream)

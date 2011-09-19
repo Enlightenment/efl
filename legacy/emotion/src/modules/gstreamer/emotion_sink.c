@@ -1,5 +1,3 @@
-#include <Ecore.h>
-
 #include "emotion_gstreamer.h"
 
 static GstStaticPadTemplate sinktemplate = GST_STATIC_PAD_TEMPLATE("sink",
@@ -992,9 +990,13 @@ gstreamer_video_sink_new(Emotion_Gstreamer_Video *ev,
 			 const char *uri)
 {
    GstElement *playbin;
-   GstElement *sink;
+   GstElement *sink = NULL;
    Evas_Object *obj;
    int flags;
+#if defined HAVE_ECORE_X && defined HAVE_XOVERLAY_H
+   const char *engine;
+   Eina_List *engines;
+#endif
 
    obj = emotion_object_image_get(o);
    if (!obj)
@@ -1016,20 +1018,57 @@ gstreamer_video_sink_new(Emotion_Gstreamer_Video *ev,
         return NULL;
      }
 
-   sink = gst_element_factory_make("emotion-sink", "sink");
+#if defined HAVE_ECORE_X && defined HAVE_XOVERLAY_H
+   engines = evas_render_method_list();
+
+   engine = eina_list_nth(engines, evas_output_method_get(evas_object_evas_get(obj)) - 1);
+
+   if (engine && strstr(engine, "_x11") != NULL)
+     {
+#if 0
+        Evas_Coord x, y, w, h;
+	Ecore_X_Window win;
+
+	evas_object_geometry_get(obj, &x, &y, &w, &h);
+
+	win = ecore_x_window_new(0, x, y, w, h);
+	if (win)
+	  {
+ 	     sink = gst_element_factory_make("xvimagesink", NULL);
+	     if (sink)
+	       {
+		  gst_x_overlay_set_window_handle(GST_X_OVERLAY(sink), win);
+		  ev->win = win;
+	       }
+	     else
+	       {
+		  ecore_x_window_free(win);
+	       }
+	  }
+#endif
+     }
+   evas_render_method_list_free(engines);
+#else
+# warning "no ecore_x or xoverlay"
+#endif
+   fprintf(stderr, "sink: %p\n", sink);
    if (!sink)
      {
-        ERR("Unable to create 'emotion-sink' GstElement.");
-        goto unref_pipeline;
+        sink = gst_element_factory_make("emotion-sink", "sink");
+	if (!sink)
+	  {
+	     ERR("Unable to create 'emotion-sink' GstElement.");
+	     goto unref_pipeline;
+	  }
+
+	g_object_set(G_OBJECT(sink), "evas-object", obj, NULL);
+	g_object_set(G_OBJECT(sink), "ev", ev, NULL);
+
+	evas_object_image_pixels_get_callback_set(obj, NULL, NULL);
      }
 
 #define GST_PLAY_FLAG_NATIVE_VIDEO  (1 << 6)
 #define GST_PLAY_FLAG_DOWNLOAD      (1 << 7)
-
-   g_object_set(G_OBJECT(sink), "evas-object", obj, NULL);
-   g_object_set(G_OBJECT(sink), "ev", ev, NULL);
-
-   evas_object_image_pixels_get_callback_set(obj, NULL, NULL);
 
    g_object_get(G_OBJECT(playbin), "flags", &flags, NULL);
    g_object_set(G_OBJECT(playbin), "flags", flags | GST_PLAY_FLAG_NATIVE_VIDEO | GST_PLAY_FLAG_DOWNLOAD, NULL);
