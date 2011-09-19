@@ -221,10 +221,16 @@ _activate(Evas_Object *obj)
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
    if (wd->group->value == wd->value) return;
-   wd->group->value = wd->value;
-   if (wd->group->valuep) *(wd->group->valuep) = wd->group->value;
-   _state_set_all(wd);
-   evas_object_smart_callback_call(obj, SIG_CHANGED, NULL);
+   if ((_elm_config->access_mode == ELM_ACCESS_MODE_OFF) ||
+       (_elm_access_2nd_click_timeout(obj)))
+     {
+        wd->group->value = wd->value;
+        if (wd->group->valuep) *(wd->group->valuep) = wd->group->value;
+        _state_set_all(wd);
+        if (_elm_config->access_mode != ELM_ACCESS_MODE_OFF)
+          _elm_access_say(E_("State: On"));
+        evas_object_smart_callback_call(obj, SIG_CHANGED, NULL);
+     }
 }
 
 static void
@@ -271,6 +277,27 @@ _elm_radio_label_get(const Evas_Object *obj, const char *item)
    return wd->label;
 }
 
+static char *
+_access_info_cb(void *data __UNUSED__, Evas_Object *obj, Elm_Widget_Item *item __UNUSED__)
+{
+   const char *txt = elm_widget_access_info_get(obj);
+   if (!txt) txt = _elm_radio_label_get(obj, NULL);
+   if (txt) return strdup(txt);
+   return NULL;
+}
+
+static char *
+_access_state_cb(void *data __UNUSED__, Evas_Object *obj, Elm_Widget_Item *item __UNUSED__)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return NULL;
+   if (elm_widget_disabled_get(obj))
+     return strdup(E_("State: Disabled"));
+   if (wd->state)
+     return strdup(E_("State: On"));
+   return strdup(E_("State: Off"));
+}
+
 EAPI Evas_Object *
 elm_radio_add(Evas_Object *parent)
 {
@@ -312,6 +339,15 @@ elm_radio_add(Evas_Object *parent)
    // TODO: convert Elementary to subclassing of Evas_Smart_Class
    // TODO: and save some bytes, making descriptions per-class and not instance!
    evas_object_smart_callbacks_descriptions_set(obj, _signals);
+
+   _elm_access_object_register(obj, wd->radio);
+   _elm_access_text_set(_elm_access_object_get(obj),
+                        ELM_ACCESS_TYPE, E_("Radio"));
+   _elm_access_callback_set(_elm_access_object_get(obj),
+                            ELM_ACCESS_INFO, _access_info_cb, obj);
+   _elm_access_callback_set(_elm_access_object_get(obj),
+                            ELM_ACCESS_STATE, _access_state_cb, obj);
+
    return obj;
 }
 
