@@ -2229,9 +2229,16 @@ _ecore_x_event_free_generic_event(void *data, void *ev)
 #ifdef ECORE_XI2
    Ecore_X_Event_Generic *e = (Ecore_X_Event_Generic *)ev;
 
-   if (e->data)
-      XFreeEventData(_ecore_x_disp, (XGenericEventCookie *)data);
-
+   if (data)
+     {
+        if (e->data)
+           XFreeEventData(_ecore_x_disp, (XGenericEventCookie *)data);
+        free(data);
+     }
+   free(e);
+#else   
+   return;
+   data = NULL; ev = NULL;
 #endif /* ifdef ECORE_XI2 */
 } /* _ecore_x_event_free_generic_event */
 
@@ -2241,7 +2248,8 @@ _ecore_x_event_handle_generic_event(XEvent *event)
 #ifdef ECORE_XI2
    XGenericEvent *generic_event;
    Ecore_X_Event_Generic *e;
-
+   XGenericEventCookie *data;
+   
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    generic_event = (XGenericEvent *)event;
 
@@ -2249,7 +2257,7 @@ _ecore_x_event_handle_generic_event(XEvent *event)
    if (!e)
       return;
 
-   if (XGetEventData(_ecore_x_disp, &event->xcookie))
+   if (XGetEventData(_ecore_x_disp, &(event->xcookie)))
      {
         e->cookie = event->xcookie.cookie;
         e->data = event->xcookie.data;
@@ -2265,11 +2273,16 @@ _ecore_x_event_handle_generic_event(XEvent *event)
 
    if (e->extension == _ecore_x_xi2_opcode)
       _ecore_x_input_handler(event);
-
+   
+   data = malloc(sizeof(XGenericEventCookie));
+   if (data) memcpy(data, &(event->xcookie), sizeof(XGenericEventCookie));
    ecore_event_add(ECORE_X_EVENT_GENERIC,
                    e,
                    _ecore_x_event_free_generic_event,
-                   event);
+                   data);
+#else
+   return;
+   event = NULL;
 #endif /* ifdef ECORE_XI2 */
 } /* _ecore_x_event_handle_generic_event */
 

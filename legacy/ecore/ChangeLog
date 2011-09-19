@@ -296,3 +296,8 @@
 
         * Add ECORE_CON_EVENT_CLIENT_WRITE, ECORE_CON_EVENT_SERVER_WRITE for
           obtaining progress of socket writes
+
+2011-09-18  Carsten Haitzler (The Rasterman)
+
+        * Fix bug in Ecore_X generic event handling for extended event
+          sizes when freeing (and allocating) the data.
