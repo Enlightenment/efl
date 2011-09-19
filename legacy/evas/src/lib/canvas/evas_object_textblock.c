@@ -272,7 +272,6 @@ struct _Evas_Object_Textblock_Node_Format
 struct _Evas_Object_Textblock_Paragraph
 {
    EINA_INLIST;
-   EINA_RBTREE;
    Evas_Object_Textblock_Line        *lines;
    Evas_Object_Textblock_Node_Text   *text_node;
    Eina_List                         *logical_items;
@@ -282,7 +281,6 @@ struct _Evas_Object_Textblock_Paragraph
    int                                line_no;
    Eina_Bool                          is_bidi : 1;
    Eina_Bool                          visible : 1;
-   Eina_Bool                          indexed : 1;
    Eina_Bool                          rendered : 1;
 };
 
@@ -398,6 +396,8 @@ struct _Evas_Textblock_Cursor
    Evas_Object_Textblock_Node_Text *node;
 };
 
+/* Size of the index array */
+#define TEXTBLOCK_PAR_INDEX_SIZE 10
 struct _Evas_Object_Textblock
 {
    DATA32                              magic;
@@ -406,9 +406,12 @@ struct _Evas_Object_Textblock
    Eina_List                          *cursors;
    Evas_Object_Textblock_Node_Text    *text_nodes;
    Evas_Object_Textblock_Node_Format  *format_nodes;
+
+   int                                 num_paragraphs;
    Evas_Object_Textblock_Paragraph    *paragraphs;
+   Evas_Object_Textblock_Paragraph    *par_index[TEXTBLOCK_PAR_INDEX_SIZE];
+
    Evas_Object_Textblock_Text_Item    *ellip_ti;
-   Eina_Rbtree                        *par_index;
    Eina_List                          *anchors_a;
    Eina_List                          *anchors_item;
    int                                 last_w, last_h;
@@ -1821,72 +1824,59 @@ _layout_line_new(Ctxt *c, Evas_Object_Textblock_Format *fmt)
    c->ln->par = c->par;
 }
 
-/* par index functions */
-static Eina_Rbtree_Direction
-_par_index_node_cmp(const Eina_Rbtree *left, const Eina_Rbtree *right,
-      void *data __UNUSED__)
-{
-   Evas_Object_Textblock_Paragraph *lpar, *rpar;
-   lpar = EINA_RBTREE_CONTAINER_GET(left, Evas_Object_Textblock_Paragraph);
-   rpar = EINA_RBTREE_CONTAINER_GET(right, Evas_Object_Textblock_Paragraph);
-   /* Because they can't be equal or overlap, we don't need to compare
-    * anything except for the y position */
-   return (lpar->line_no < rpar->line_no) ? EINA_RBTREE_LEFT : EINA_RBTREE_RIGHT;
-}
-
-static int
-_par_index_y_key_cmp(const Eina_Rbtree *node, const void *key,
-      int length __UNUSED__, void *data __UNUSED__)
-{
-   Evas_Coord y = *((const Evas_Coord *) key);
-   Evas_Object_Textblock_Paragraph *par;
-   par = EINA_RBTREE_CONTAINER_GET(node, Evas_Object_Textblock_Paragraph);
-
-   if (y < par->y)
-      return 1;
-   else if ((par->y <= y) && (y < par->y + par->h))
-      return 0;
-   else
-      return -1;
-}
-
-static int
-_par_index_line_no_key_cmp(const Eina_Rbtree *node, const void *key,
-      int length __UNUSED__, void *data __UNUSED__)
-{
-   int line_no = *((const int *) key);
-   Evas_Object_Textblock_Paragraph *par, *npar;
-   par = EINA_RBTREE_CONTAINER_GET(node, Evas_Object_Textblock_Paragraph);
-   npar = (Evas_Object_Textblock_Paragraph *) EINA_INLIST_GET(par)->next;
-
-   if (line_no < par->line_no)
-      return 1;
-   else if ((par->line_no <= par->line_no) &&
-         (!npar || (line_no < npar->line_no)))
-      return 0;
-   else return -1;
-}
-
 static inline Evas_Object_Textblock_Paragraph *
 _layout_find_paragraph_by_y(Evas_Object_Textblock *o, Evas_Coord y)
 {
-   Eina_Rbtree *tmp = eina_rbtree_inline_lookup(o->par_index, &y, 0,
-         _par_index_y_key_cmp, NULL);
+   Evas_Object_Textblock_Paragraph *start, *par;
+   int i;
 
-   return (tmp) ?
-      EINA_RBTREE_CONTAINER_GET(tmp, Evas_Object_Textblock_Paragraph) :
-      NULL;
+   start = o->paragraphs;
+
+   for (i = 0 ; i < TEXTBLOCK_PAR_INDEX_SIZE ; i++)
+     {
+        if (!o->par_index[i] || (o->par_index[i]->y > y))
+          {
+             break;
+          }
+        start = o->par_index[i];
+     }
+
+   EINA_INLIST_FOREACH(start, par)
+     {
+        if ((par->y <= y) && (y < par->y + par->h))
+           return par;
+     }
+
+   return NULL;
 }
 
 static inline Evas_Object_Textblock_Paragraph *
 _layout_find_paragraph_by_line_no(Evas_Object_Textblock *o, int line_no)
 {
-   Eina_Rbtree *tmp = eina_rbtree_inline_lookup(o->par_index,
-         &line_no, 0, _par_index_line_no_key_cmp, NULL);
+   Evas_Object_Textblock_Paragraph *start, *par;
+   int i;
 
-   return (tmp) ?
-      EINA_RBTREE_CONTAINER_GET(tmp, Evas_Object_Textblock_Paragraph) :
-      NULL;
+   start = o->paragraphs;
+
+   for (i = 0 ; i < TEXTBLOCK_PAR_INDEX_SIZE ; i++)
+     {
+        if (!o->par_index[i] || (o->par_index[i]->line_no > line_no))
+          {
+             break;
+          }
+        start = o->par_index[i];
+     }
+
+   EINA_INLIST_FOREACH(start, par)
+     {
+        Evas_Object_Textblock_Paragraph *npar =
+           (Evas_Object_Textblock_Paragraph *) EINA_INLIST_GET(par)->next;
+        if ((par->line_no <= line_no) &&
+              (!npar || (line_no < npar->line_no)))
+           return par;
+     }
+
+   return NULL;
 }
 /* End of rbtree index functios */
 
@@ -1924,6 +1914,7 @@ _layout_paragraph_new(Ctxt *c, Evas_Object_Textblock_Node_Text *n,
       n->par = c->par;
    c->par->line_no = -1;
    c->par->visible = 1;
+   c->o->num_paragraphs++;
 }
 
 #ifdef BIDI_SUPPORT
@@ -2005,8 +1996,7 @@ _paragraph_free(const Evas_Object *obj, Evas_Object_Textblock_Paragraph *par)
    if (par->text_node && (par->text_node->par == par))
       par->text_node->par = NULL;
 
-   o->par_index = eina_rbtree_inline_remove(o->par_index,
-            EINA_RBTREE_GET(par), _par_index_node_cmp, NULL);
+   o->num_paragraphs--;
 
    free(par);
 }
@@ -2044,7 +2034,7 @@ _paragraphs_free(const Evas_Object *obj, Evas_Object_Textblock_Paragraph *pars)
    Evas_Object_Textblock *o;
    o = (Evas_Object_Textblock *)(obj->object_data);
 
-   o->par_index = NULL;
+   o->num_paragraphs = 0;
 
    while (pars)
      {
@@ -3540,16 +3530,6 @@ _layout_par(Ctxt *c)
     * correctly, and mark handled nodes as dirty. */
    c->par->line_no = c->line_no;
 
-   /* Insert it to the index now that we calculated it's y
-    * We don't need to reinsert even if y (they key) changed, because the
-    * order remains the same. */
-   if (!c->par->indexed)
-     {
-        c->o->par_index = eina_rbtree_inline_insert(c->o->par_index,
-              EINA_RBTREE_GET(c->par), _par_index_node_cmp, NULL);
-        c->par->indexed = EINA_TRUE;
-     }
-
    if (c->par->text_node)
      {
         /* Skip this paragraph if width is the same, there is no ellipsis
@@ -4164,6 +4144,14 @@ _layout(const Evas_Object *obj, int w, int h, int *w_ret, int *h_ret)
    /* Start of visual layout creation */
    {
       Evas_Object_Textblock_Paragraph *last_vis_par = NULL;
+      int par_index_step = o->num_paragraphs / TEXTBLOCK_PAR_INDEX_SIZE;
+      int par_count = 1; /* Force it to take the first one */
+      int par_index_pos = 0;
+
+      if (par_index_step == 0) par_index_step = 1;
+
+      /* Clear all of the index */
+      memset(o->par_index, 0, sizeof(o->par_index));
 
       EINA_INLIST_FOREACH(c->paragraphs, c->par)
         {
@@ -4174,6 +4162,13 @@ _layout(const Evas_Object *obj, int w, int h, int *w_ret, int *h_ret)
              {
                 last_vis_par = c->par;
                 break;
+             }
+
+           if ((par_index_pos < TEXTBLOCK_PAR_INDEX_SIZE) && (--par_count == 0))
+             {
+                par_count = par_index_step;
+
+                o->par_index[par_index_pos++] = c->par;
              }
         }
 
