@@ -26662,6 +26662,7 @@ extern "C" {
    EAPI Evas_Object        *elm_naviframe_add(Evas_Object *parent) EINA_ARG_NONNULL(1);
    EAPI Elm_Object_Item    *elm_naviframe_item_push(Evas_Object *obj, const char *title_label, Evas_Object *prev_btn, Evas_Object *next_btn, Evas_Object *content, const char *item_style) EINA_ARG_NONNULL(1, 5);
    EAPI Evas_Object        *elm_naviframe_item_pop(Evas_Object *obj) EINA_ARG_NONNULL(1);
+   EAPI void                elm_naviframe_item_pop_to(Elm_Object_Item *it) EINA_ARG_NONNULL(1);
    EAPI void                elm_naviframe_content_preserve_on_pop_set(Evas_Object *obj, Eina_Bool preserve) EINA_ARG_NONNULL(1);
    EAPI Eina_Bool           elm_naviframe_content_preserve_on_pop_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
    EAPI Elm_Object_Item    *elm_naviframe_top_item_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);

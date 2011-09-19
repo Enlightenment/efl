@@ -842,6 +842,29 @@ elm_naviframe_item_pop(Evas_Object *obj)
 }
 
 EAPI void
+elm_naviframe_item_pop_to(Elm_Object_Item *it)
+{
+   ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
+   Elm_Naviframe_Item *navi_it = ELM_CAST(it);
+   Widget_Data *wd = elm_widget_data_get(navi_it->base.widget);
+   Eina_List *l, *prev_l;
+
+   if (it == elm_naviframe_top_item_get(navi_it->base.widget)) return;
+
+   l = eina_list_last(wd->stack)->prev;
+
+   while(l)
+     {
+        if (l->data == it) break;
+        prev_l = l->prev;
+        _item_del(l->data);
+        wd->stack = eina_list_remove(wd->stack, l);
+        l = prev_l;
+     }
+   elm_naviframe_item_pop(navi_it->base.widget);
+}
+
+EAPI void
 elm_naviframe_content_preserve_on_pop_set(Evas_Object *obj, Eina_Bool preserve)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
