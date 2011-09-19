@@ -1091,7 +1091,7 @@ vertex_array_size_check(Evas_Engine_GL_Context *gc, int pn, int n)
 }
 
 static inline Evas_GL_Shader
-evas_gl_common_shader_choice(int npoints,
+evas_gl_common_shader_choice(int npoints __UNUSED__,
 			     RGBA_Map_Point *p,
 			     int r, int g, int b, int a,
 			     Evas_GL_Shader nomul,
