@@ -185,29 +185,6 @@ case "$host_os" in
 esac
 AC_SUBST(lt_enable_auto_import)
 
-### Check for extended attribute
-
-AC_COMPILE_IFELSE(
-   [AC_LANG_PROGRAM(
-       [[
-#include <stdlib.h>
-#include <sys/types.h>
-#include <sys/xattr.h>
-       ]],
-       [[
-size_t tmp = listxattr("/", NULL, 0);
-tmp = getxattr("/", "user.ethumb.md5", NULL, 0);
-setxattr("/", "user.ethumb.md5", NULL, 0, 0);
-       ]])],
-    [
-      AC_DEFINE(HAVE_XATTR, 1, [Define to 1 if you have 'listxattr', 'setxattr' and 'getxattr'])
-      have_xattr="yes"
-    ],
-    [have_xattr="no"])
-
-AC_MSG_CHECKING([for Xattr])
-AC_MSG_RESULT([${have_xattr}])
-
 ### Check for video4linux
 
 AC_COMPILE_IFELSE(
@@ -356,7 +333,6 @@ echo "  edje_cc..............: ${edje_cc}"
 echo
 echo "  Edje EXTERNAL support: ${have_edje_external}"
 echo
-echo "  Xattr................: ${have_xattr}"
 echo "  Eio..................: ${have_eio}"
 echo "  V4L2.................: ${have_v4l2}"
 echo

@@ -4,11 +4,6 @@
 #ifdef HAVE_EIO
 # include <math.h>
 # include <Eio.h>
-#else
-# ifdef HAVE_XATTR
-#  include <math.h>
-#  include <sys/xattr.h>
-# endif
 #endif
 
 #define E_SMART_OBJ_GET(smart, o, type) \
@@ -1272,19 +1267,11 @@ _eio_load_xattr_cleanup(Smart_Data *sd, Eio_File *handler)
 }
 
 static void
-_eio_load_xattr_done(void *data, Eio_File *handler, const char *xattr_data, unsigned int xattr_size)
+_eio_load_xattr_done(void *data, Eio_File *handler, double xattr_double)
 {
    Smart_Data *sd = data;
 
-   if (xattr_size < 128 && xattr_data[xattr_size - 1] == '\0')
-     {
-        long long int m = 0;
-        long int e = 0;
-
-        eina_convert_atod(xattr_data, xattr_size, &m, &e);
-        emotion_object_position_set(evas_object_smart_parent_get(sd->obj), ldexp((double)m, e));
-     }
-
+   emotion_object_position_set(evas_object_smart_parent_get(sd->obj), xattr_double);
    _eio_load_xattr_cleanup(sd, handler);
 }
 
@@ -1302,6 +1289,9 @@ emotion_object_last_position_load(Evas_Object *obj)
 {
    Smart_Data *sd;
    const char *tmp;
+#ifndef HAVE_EIO
+   double xattr;
+#endif
 
    E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
    if (!sd->file) return ;
@@ -1318,27 +1308,16 @@ emotion_object_last_position_load(Evas_Object *obj)
 
    EINA_REFCOUNT_REF(sd);
 
-   sd->load_xattr = eio_file_xattr_get(tmp,
-                                       "user.e.time_seek",
-                                       _eio_load_xattr_done,
-                                       _eio_load_xattr_error,
-                                       sd);
+   sd->load_xattr = eio_file_xattr_double_get(tmp,
+					      "user.e.time_seek",
+					      _eio_load_xattr_done,
+					      _eio_load_xattr_error,
+					      sd);
 #else
-# ifdef HAVE_XATTR
-   {
-      char double_to_string[128];
-      ssize_t sz;
-      long long int m = 0;
-      long int e = 0;
-
-      sz = getxattr(tmp, "user.e.time_seek", double_to_string, 128);
-      if (sz <= 0 || sz > 128 || double_to_string[sz] != '\0')
-        return ;
-
-      eina_convert_atod(double_to_string, 128, &m, &e);
-      emotion_object_position_set(obj, ldexp((double)m, e));
-   }
-# endif
+   if (eina_xattr_double_get(tmp, "user.e.time_seek", &xattr))
+     {
+        emotion_object_position_set(obj, xattr);
+     }
 #endif
 }
 
@@ -1359,7 +1338,6 @@ emotion_object_last_position_save(Evas_Object *obj)
 {
    Smart_Data *sd;
    const char *tmp;
-   char double_to_string[128];
 
    E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
    if (!sd->file) return ;
@@ -1371,16 +1349,11 @@ emotion_object_last_position_save(Evas_Object *obj)
    else
      return ;
 
-   eina_convert_dtoa(emotion_object_position_get(obj), double_to_string);
-
 #ifdef HAVE_EIO
-   eio_file_xattr_set(tmp, "user.e.time_seek",
-		      double_to_string, strlen(double_to_string) + 1, 0,
-		      _eio_save_xattr_done, _eio_save_xattr_error, sd);
+   eio_file_xattr_double_set(tmp, "user.e.time_seek", emotion_object_position_get(obj), 0,
+			     _eio_save_xattr_done, _eio_save_xattr_error, sd);
 #else
-# ifdef HAVE_XATTR
-   setxattr(tmp, "user.e.time_seek", double_to_string, strlen(double_to_string), 0);
-# endif
+   eina_xattr_double_set(tmp, "user.e.time_seek", emotion_object_position_get(obj), 0);
 #endif
 }
 
