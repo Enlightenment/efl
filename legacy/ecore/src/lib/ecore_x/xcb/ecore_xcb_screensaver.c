@@ -68,6 +68,8 @@ ecore_x_screensaver_idle_time_get(void)
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
+   if (!_screensaver_avail) return 0;
+
 #ifdef ECORE_XCB_SCREENSAVER
    root = ((xcb_screen_t *)_ecore_xcb_screen)->root;
    cookie = xcb_screensaver_query_info_unchecked(_ecore_xcb_conn, root);
@@ -84,6 +86,8 @@ EAPI void
 ecore_x_screensaver_set(int timeout, int interval, int prefer_blanking, int allow_exposures) 
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   if (!_screensaver_avail) return;
 
 #ifdef ECORE_XCB_SCREENSAVER
    xcb_set_screen_saver(_ecore_xcb_conn, 
@@ -102,6 +106,8 @@ ecore_x_screensaver_timeout_set(int timeout)
 #endif
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   if (!_screensaver_avail) return;
 
 #ifdef ECORE_XCB_SCREENSAVER
    cookie = xcb_get_screen_saver_unchecked(_ecore_xcb_conn);
@@ -126,6 +132,8 @@ ecore_x_screensaver_timeout_get(void)
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
+   if (!_screensaver_avail) return 0;
+
 #ifdef ECORE_XCB_SCREENSAVER
    cookie = xcb_get_screen_saver_unchecked(_ecore_xcb_conn);
    reply = xcb_get_screen_saver_reply(_ecore_xcb_conn, cookie, NULL);
@@ -148,6 +156,8 @@ ecore_x_screensaver_blank_set(int blank)
 #endif
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   if (!_screensaver_avail) return;
 
 #ifdef ECORE_XCB_SCREENSAVER
    cookie = xcb_get_screen_saver_unchecked(_ecore_xcb_conn);
@@ -172,6 +182,8 @@ ecore_x_screensaver_blank_get(void)
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
+   if (!_screensaver_avail) return 0;
+
 #ifdef ECORE_XCB_SCREENSAVER
    cookie = xcb_get_screen_saver_unchecked(_ecore_xcb_conn);
    reply = xcb_get_screen_saver_reply(_ecore_xcb_conn, cookie, NULL);
@@ -194,6 +206,8 @@ ecore_x_screensaver_expose_set(int expose)
 #endif
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   if (!_screensaver_avail) return;
 
 #ifdef ECORE_XCB_SCREENSAVER
    cookie = xcb_get_screen_saver_unchecked(_ecore_xcb_conn);
@@ -218,6 +232,8 @@ ecore_x_screensaver_expose_get(void)
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
+   if (!_screensaver_avail) return 0;
+
 #ifdef ECORE_XCB_SCREENSAVER
    cookie = xcb_get_screen_saver_unchecked(_ecore_xcb_conn);
    reply = xcb_get_screen_saver_reply(_ecore_xcb_conn, cookie, NULL);
@@ -240,6 +256,8 @@ ecore_x_screensaver_interval_set(int interval)
 #endif
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   if (!_screensaver_avail) return;
 
 #ifdef ECORE_XCB_SCREENSAVER
    cookie = xcb_get_screen_saver_unchecked(_ecore_xcb_conn);
@@ -264,6 +282,8 @@ ecore_x_screensaver_interval_get(void)
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
+   if (!_screensaver_avail) return 0;
+
 #ifdef ECORE_XCB_SCREENSAVER
    cookie = xcb_get_screen_saver_unchecked(_ecore_xcb_conn);
    reply = xcb_get_screen_saver_reply(_ecore_xcb_conn, cookie, NULL);
@@ -283,6 +303,8 @@ ecore_x_screensaver_event_listen_set(Eina_Bool on)
 #endif
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   if (!_screensaver_avail) return;
 
 #ifdef ECORE_XCB_SCREENSAVER
    root = ((xcb_screen_t *)_ecore_xcb_screen)->root;
