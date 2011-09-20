@@ -26658,19 +26658,164 @@ extern "C" {
    EAPI Evas_Object *elm_player_add(Evas_Object *parent);
    EAPI void elm_player_video_set(Evas_Object *player, Evas_Object *video);
 
-  /* naviframe */
+   /**
+    * @defgroup Naviframe Naviframe 
+    *
+    * @brief Naviframe is a kind of view manager for the applications.
+    *
+    * Naviframe provies functions to switch the different pages with stack 
+    * mechanism. It means if one page(item) needs to be changed to the new one,
+    * then naviframe would push the new page to it's internal stack. Of course,
+    * it can be back to the previous page by popping the top page. Naviframe 
+    * provides some transition effect while the pages are switching (such as 
+    * pager).
+    *
+    * Since the each item could keep the different styles, users could keep the
+    * same look & feel for the pages or different styles for the items in it's 
+    * application. 
+    * 
+    * Signals that you can add callback for are:
+    *
+    * @li "transition,finished" - When the transition is finished in changing
+    *     the item 
+    * @li "title,clicked" - User clicked title area
+    *
+    * @ref tutorial_naviframe gives a good overview of the usage of the API.
+    * @{
+    */
+   /**
+    * @brief Add a new Naviframe object to the parent.
+    *
+    * @param parent Parent object
+    * @return New object or @c NULL, if it cannot be created
+    */
    EAPI Evas_Object        *elm_naviframe_add(Evas_Object *parent) EINA_ARG_NONNULL(1);
+   /**
+    * @brief Push a new item to the top of the naviframe stack (and show it).
+    *
+    * @param obj The naviframe object
+    * @param title_label The label in the title area. The name of the title 
+    *        label part is "elm.text.title"
+    * @param prev_btn The button to go to the previous item. If it is NULL, 
+    *        then naviframe will create a back button automatically. The name of
+    *        the prev_btn part is "elm.swallow.prev_btn"
+    * @param next_btn The button to go to the next item. Or It could be just an
+    *        extra function button. The name of the next_btn part is
+    *        "elm.swallow.next_btn"
+    * @param content The main content object. The name of content part is 
+    *        "elm.swallow.content"
+    * @param item_style The current item style name. @c NULL would be default.
+    * @return The created item or @c NULL upon failure.
+    *
+    * The item pushed becomes one page of the naviframe, this item will be 
+    * deleted when it is popped.
+    *
+    * @see also elm_naviframe_item_style_set()    
+    *
+    * The following styles are available for this item:
+    * @li @c "default"
+    */
    EAPI Elm_Object_Item    *elm_naviframe_item_push(Evas_Object *obj, const char *title_label, Evas_Object *prev_btn, Evas_Object *next_btn, Evas_Object *content, const char *item_style) EINA_ARG_NONNULL(1, 5);
+   /**
+    * @brief Pop an item that is on top of the stack
+    *
+    * @param obj The naviframe object
+    * @return @c NULL or the content object(if the 
+    *         elm_naviframe_content_preserve_on_pop_get is true).
+    *
+    * This pops an item that is on the top(visible) of the naviframe, makes it
+    * disappear, then deletes the item. The item that was underneath it on the 
+    * stack will become visible.
+    *  
+    * @see also elm_naviframe_content_preserve_on_pop_get()
+    */
    EAPI Evas_Object        *elm_naviframe_item_pop(Evas_Object *obj) EINA_ARG_NONNULL(1);
+   /**
+    * @brief Pop the items between the top and the above one on the given item. 
+    *
+    * @param it The naviframe item 
+    */
    EAPI void                elm_naviframe_item_pop_to(Elm_Object_Item *it) EINA_ARG_NONNULL(1);
+   /**
+    * @brief preserve the content objects when items are popped.  
+    *
+    * @param obj The naviframe object 
+    * @param preserve Enable the preserve mode if EINA_TRUE, disable otherwise
+    *
+    * @see also elm_naviframe_content_preserve_on_pop_get()
+    */
    EAPI void                elm_naviframe_content_preserve_on_pop_set(Evas_Object *obj, Eina_Bool preserve) EINA_ARG_NONNULL(1);
+   /**
+    * @brief Get a value whether preserve mode is enabled or not.  
+    *
+    * @param obj The naviframe object
+    * @return If @c EINA_TRUE, preserve mode is enabled 
+    *
+    * @see also elm_naviframe_content_preserve_on_pop_set()
+    */
    EAPI Eina_Bool           elm_naviframe_content_preserve_on_pop_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+   /**
+    * @brief Get a top item on the naviframe stack  
+    *
+    * @param obj The naviframe object
+    * @return The top item on the naviframe stack or @c NULL, if the stack is 
+    *         empty 
+    */
    EAPI Elm_Object_Item    *elm_naviframe_top_item_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+   /**
+    * @brief Get a bottom item on the naviframe stack  
+    *
+    * @param obj The naviframe object
+    * @return The bottom item on the naviframe stack or @c NULL, if the stack is
+    *         empty 
+    */
    EAPI Elm_Object_Item    *elm_naviframe_bottom_item_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+   /**
+    * @brief Set an item style
+    *
+    * @param obj The naviframe item
+    * @param item_style The current item style name. @c NULL would be default
+    * 
+    * The following styles are available for this item:
+    * @li @c "default"
+    *
+    * @see also elm_naviframe_item_style_get()
+    */
    EAPI void                elm_naviframe_item_style_set(Elm_Object_Item *it, const char *item_style) EINA_ARG_NONNULL(1);
+   /**
+    * @brief Get an item style
+    *
+    * @param obj The naviframe item
+    * @return The current item style name
+    * 
+    * @see also elm_naviframe_item_style_set()
+    */
    EAPI const char         *elm_naviframe_item_style_get(const Elm_Object_Item *it) EINA_ARG_NONNULL(1);
+   /**
+    * @brief Show/Hide the title area
+    *
+    * @param it The naviframe item
+    * @param visible If @c EINA_TRUE, title area will be visible, disable 
+    *        otherwise
+    * 
+    * When the title area is invisible, then the controls would be hidden so as     * to expand the content area to full-size.
+    * 
+    * @see also elm_naviframe_item_title_visible_get()
+    */
    EAPI void                elm_naviframe_item_title_visible_set(Elm_Object_Item *it, Eina_Bool visible) EINA_ARG_NONNULL(1);
+   /**
+    * @brief Get a value whether title area is visible or not. 
+    *
+    * @param it The naviframe item 
+    * @return If @c EINA_TRUE, title area is visible
+    * 
+    * @see also elm_naviframe_item_title_visible_set()
+    */
    EAPI Eina_Bool           elm_naviframe_item_title_visible_get(const Elm_Object_Item *it) EINA_ARG_NONNULL(1);
+
+   /**
+    * @}
+    */
 
 #ifdef __cplusplus
 }
