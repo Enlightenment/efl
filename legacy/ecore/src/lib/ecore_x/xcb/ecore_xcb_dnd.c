@@ -90,7 +90,6 @@ ecore_x_dnd_send_status(Eina_Bool will_accept, Eina_Bool suppress, Ecore_X_Recta
 
    if (_target->state == ECORE_X_DND_TARGET_IDLE) return;
 
-   DBG("Ecore_X_Dnd_Send_Status");
    memset(&ev, 0, sizeof(xcb_client_message_event_t));
 
    _target->will_accept = will_accept;
@@ -132,7 +131,6 @@ ecore_x_dnd_drop(void)
 
    memset(&ev, 0, sizeof(xcb_client_message_event_t));
 
-   DBG("Ecore_X_Dnd_Drop");
    if (_source->dest) 
      {
         ev.response_type = XCB_CLIENT_MESSAGE;
@@ -183,7 +181,6 @@ ecore_x_dnd_aware_set(Ecore_X_Window win, Eina_Bool on)
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
-   DBG("Ecore_X_Dnd_Aware_Set");
    if (on)
      ecore_x_window_prop_property_set(win, ECORE_X_ATOM_XDND_AWARE, 
                                       ECORE_X_ATOM_ATOM, 32, &prop_data, 1);
@@ -290,7 +287,6 @@ ecore_x_dnd_type_set(Ecore_X_Window win, const char *type, Eina_Bool on)
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
-   DBG("Ecore_X_Dnd_Type_Set");
    atom = ecore_x_atom_get(type);
    ecore_x_window_prop_property_get(win, ECORE_X_ATOM_XDND_TYPE_LIST, 
                                     ECORE_X_ATOM_ATOM, 32, &old_data, &num);
@@ -344,7 +340,6 @@ ecore_x_dnd_types_set(Ecore_X_Window win, const char **types, unsigned int num_t
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
-   DBG("Ecore_X_Dnd_Types_Set");
    if (!num_types)
       ecore_x_window_prop_property_del(win, ECORE_X_ATOM_XDND_TYPE_LIST);
    else
@@ -374,7 +369,6 @@ ecore_x_dnd_actions_set(Ecore_X_Window win, Ecore_X_Atom *actions, unsigned int 
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
-   DBG("Ecore_X_Dnd_Actions_Set");
    if (!num_actions)
       ecore_x_window_prop_property_del(win, ECORE_X_ATOM_XDND_ACTION_LIST);
    else
@@ -417,7 +411,6 @@ ecore_x_dnd_begin(Ecore_X_Window source, unsigned char *data, int size)
 
    if (!ecore_x_dnd_version_get(source)) return EINA_FALSE;
 
-   DBG("Ecore_X_Dnd_Begin");
    /* Take ownership of XdndSelection */
    if (!ecore_x_selection_xdnd_set(source, data, size)) return EINA_FALSE;
 
@@ -454,7 +447,6 @@ ecore_x_dnd_send_finished(void)
 
    if (_target->state == ECORE_X_DND_TARGET_IDLE) return;
 
-   DBG("Ecore_X_Dnd_Send_Finished");
    memset(&ev, 0, sizeof(xcb_client_message_event_t));
 
    ev.response_type = XCB_CLIENT_MESSAGE;
@@ -511,7 +503,6 @@ _ecore_xcb_dnd_drag(Ecore_X_Window root, int x, int y)
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
-   DBG("Ecore_X_Dnd_Drag");
    memset(&ev, 0, sizeof(xcb_client_message_event_t));
 
    ev.response_type = XCB_CLIENT_MESSAGE;

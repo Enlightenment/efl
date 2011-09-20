@@ -1270,7 +1270,6 @@ EAPI Ecore_X_Window *
 ecore_x_window_root_list(int *num_ret) 
 {
    xcb_screen_iterator_t iter;
-   const xcb_setup_t *setup;
    uint8_t i, num;
    Ecore_X_Window *roots = NULL;
 #ifdef ECORE_XCB_XPRINT
@@ -1280,10 +1279,15 @@ ecore_x_window_root_list(int *num_ret)
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    if (!num_ret) return NULL;
-   *num_ret = 0;
+   if (num_ret) *num_ret = 0;
 
-   setup = xcb_get_setup(_ecore_xcb_conn);
-   num = setup->roots_len;
+   /* if (xcb_connection_has_error(_ecore_xcb_conn))  */
+   /*   { */
+   /*      DBG("XCB Connection Has Error !!!"); */
+   /*      return NULL; */
+   /*   } */
+
+   num = ecore_x_screen_count_get();
 
 #ifdef ECORE_XCB_XPRINT
    ext_reply = xcb_get_extension_data(_ecore_xcb_conn, &xcb_x_print_id);
@@ -1306,10 +1310,12 @@ ecore_x_window_root_list(int *num_ret)
                {
                   for (j = 0; j < psnum; j++) 
                     {
-                       if ((_ecore_xcb_window_screen_of_display(i))->root == 
-                           screens[j]) 
+                       xcb_screen_t *s;
+
+                       if ((s = _ecore_xcb_window_screen_of_display(i))) 
                          {
-                            overlap++;
+                            if (s->root == screens[j]) 
+                              overlap++;
                          }
                     }
                }
@@ -1321,34 +1327,38 @@ ecore_x_window_root_list(int *num_ret)
 
                   for (j = 0; j < psnum; j++) 
                     {
-                       if ((_ecore_xcb_window_screen_of_display(i))->root == 
-                           screens[j]) 
+                       xcb_screen_t *s;
+
+                       if ((s = _ecore_xcb_window_screen_of_display(i))) 
                          {
-                            is_print = EINA_TRUE;
-                            break;
+                            if (s->root == screens[j]) 
+                              {
+                                 is_print = EINA_TRUE;
+                                 break;
+                              }
                          }
                     }
                   if (!is_print) 
                     {
                        xcb_screen_t *s;
 
-                       s = _ecore_xcb_window_screen_of_display(i);
-                       if (s) 
+                       if ((s = _ecore_xcb_window_screen_of_display(i)))
                          {
                             roots[k] = s->root;
                             k++;
                          }
                     }
                }
-             *num_ret = k;
+             if (num_ret) *num_ret = k;
              free(reply);
           }
         else 
           {
              /* Fallback to default method */
-             iter = xcb_setup_roots_iterator(setup);
+             iter = 
+               xcb_setup_roots_iterator(xcb_get_setup(_ecore_xcb_conn));
              if (!(roots = malloc(num * sizeof(Ecore_X_Window)))) return NULL;
-             *num_ret = num;
+             if (num_ret) *num_ret = num;
              for (i = 0; iter.rem; xcb_screen_next(&iter), i++)
                roots[i] = iter.data->root;
           }
@@ -1356,16 +1366,18 @@ ecore_x_window_root_list(int *num_ret)
    else 
      {
         /* Fallback to default method */
-        iter = xcb_setup_roots_iterator(setup);
+        iter = 
+          xcb_setup_roots_iterator(xcb_get_setup(_ecore_xcb_conn));
         if (!(roots = malloc(num * sizeof(Ecore_X_Window)))) return NULL;
-        *num_ret = num;
+        if (num_ret) *num_ret = num;
         for (i = 0; iter.rem; xcb_screen_next(&iter), i++)
           roots[i] = iter.data->root;
      }
 #else
-   iter = xcb_setup_roots_iterator(setup);
+   iter = 
+     xcb_setup_roots_iterator(xcb_get_setup(_ecore_xcb_conn));
    if (!(roots = malloc(num * sizeof(Ecore_X_Window)))) return NULL;
-   *num_ret = num;
+   if (num_ret) *num_ret = num;
    for (i = 0; iter.rem; xcb_screen_next(&iter), i++)
      roots[i] = iter.data->root;
 #endif

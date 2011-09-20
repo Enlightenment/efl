@@ -1,14 +1,14 @@
 #include "ecore_xcb_private.h"
 
 /* local function prototypes */
-static void _ecore_xcb_netwm_startup_info_free(void *data);
+/* static void _ecore_xcb_netwm_startup_info_free(void *data); */
 static Ecore_X_Atom _ecore_xcb_netwm_window_type_atom_get(Ecore_X_Window_Type type);
 static Ecore_X_Window_Type _ecore_xcb_netwm_window_type_type_get(Ecore_X_Atom atom);
 static Ecore_X_Atom _ecore_xcb_netwm_window_state_atom_get(Ecore_X_Window_State state);
 static Ecore_X_Atom _ecore_xcb_netwm_action_atom_get(Ecore_X_Action action);
 
 /* local variables */
-static Eina_Hash *_startup_info = NULL;
+//static Eina_Hash *_startup_info = NULL;
 
 /* local structures */
 typedef struct _Ecore_Xcb_Startup_Info Ecore_Xcb_Startup_Info;
@@ -33,8 +33,8 @@ ecore_x_netwm_init(void)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
-   _startup_info = 
-     eina_hash_string_superfast_new(_ecore_xcb_netwm_startup_info_free);
+//   _startup_info = 
+//     eina_hash_string_superfast_new(_ecore_xcb_netwm_startup_info_free);
 }
 
 EAPI void 
@@ -42,8 +42,8 @@ ecore_x_netwm_shutdown(void)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
-   if (_startup_info) eina_hash_free(_startup_info);
-   _startup_info = NULL;
+//   if (_startup_info) eina_hash_free(_startup_info);
+//   _startup_info = NULL;
 }
 
 EAPI Eina_Bool 
@@ -1146,23 +1146,23 @@ _ecore_xcb_netwm_startup_info(Ecore_X_Window win __UNUSED__, uint8_t data __UNUS
    return 1;
 }
 
-static void 
-_ecore_xcb_netwm_startup_info_free(void *data) 
-{
-   Ecore_Xcb_Startup_Info *info;
+/* static void  */
+/* _ecore_xcb_netwm_startup_info_free(void *data)  */
+/* { */
+/*    Ecore_Xcb_Startup_Info *info; */
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+/*    LOGFN(__FILE__, __LINE__, __FUNCTION__); */
 
-   if (!(info = data)) return;
-   if (info->buffer) free(info->buffer);
-   if (info->id) free(info->id);
-   if (info->name) free(info->name);
-   if (info->bin) free(info->bin);
-   if (info->icon) free(info->icon);
-   if (info->description) free(info->description);
-   if (info->wmclass) free(info->wmclass);
-   free(info);
-}
+/*    if (!(info = data)) return; */
+/*    if (info->buffer) free(info->buffer); */
+/*    if (info->id) free(info->id); */
+/*    if (info->name) free(info->name); */
+/*    if (info->bin) free(info->bin); */
+/*    if (info->icon) free(info->icon); */
+/*    if (info->description) free(info->description); */
+/*    if (info->wmclass) free(info->wmclass); */
+/*    free(info); */
+/* } */
 
 static Ecore_X_Atom 
 _ecore_xcb_netwm_window_type_atom_get(Ecore_X_Window_Type type) 

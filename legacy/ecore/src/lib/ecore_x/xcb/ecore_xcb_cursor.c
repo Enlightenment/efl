@@ -20,7 +20,8 @@ static void _ecore_xcb_cursor_image_destroy(xcb_image_t *img);
 static int _ecore_xcb_cursor_size = 0;
 static Eina_Bool _ecore_xcb_cursor = EINA_FALSE;
 #ifdef ECORE_XCB_CURSOR
-static xcb_render_pictforminfo_t *_ecore_xcb_cursor_format = NULL;
+static uint32_t _ecore_xcb_cursor_format_id = 0;
+//   static xcb_render_pictforminfo_t *_ecore_xcb_cursor_format = NULL;
 #endif
 
 void 
@@ -39,7 +40,8 @@ _ecore_xcb_cursor_finalize(void)
    _ecore_xcb_cursor = _ecore_xcb_render_argb_get();
 
    /* find render pict format */
-   _ecore_xcb_cursor_format = _ecore_xcb_cursor_format_get();
+   if (_ecore_xcb_cursor_format_id <= 0) 
+     _ecore_xcb_cursor_format_id = _ecore_xcb_cursor_format_get()->id;
 #endif
 
    /* try to grab cursor size from XDefaults */
@@ -360,7 +362,7 @@ _ecore_xcb_cursor_image_load_cursor(xcb_image_t *img, int hot_x, int hot_y)
 
    pict = xcb_generate_id(_ecore_xcb_conn);
    xcb_render_create_picture(_ecore_xcb_conn, pict, pmap, 
-                             _ecore_xcb_cursor_format->id, 0, NULL);
+                             _ecore_xcb_cursor_format_id, 0, NULL);
    xcb_free_pixmap(_ecore_xcb_conn, pmap);
 
    cursor = xcb_generate_id(_ecore_xcb_conn);

@@ -101,7 +101,7 @@ static Ecore_X_Mouse_Down_Info *_ecore_xcb_event_mouse_down_info_get(int dev);
 
 /* local variables */
 static Eina_Bool _ecore_xcb_event_last_mouse_move = EINA_FALSE;
-static Ecore_Event *_ecore_xcb_event_last_mouse_move_event = NULL;
+//static Ecore_Event *_ecore_xcb_event_last_mouse_move_event = NULL;
 static Eina_Inlist *_ecore_xcb_mouse_down_info_list = NULL;
 static Ecore_X_Time _ecore_xcb_event_last_time;
 static Ecore_X_Window _ecore_xcb_event_last_window = 0;
@@ -225,11 +225,11 @@ _ecore_xcb_events_shutdown(void)
    _ecore_xcb_event_mouse_down_info_clear();
 
    _ecore_xcb_event_last_mouse_move = EINA_FALSE;
-   if (_ecore_xcb_event_last_mouse_move_event) 
-     {
-        ecore_event_del(_ecore_xcb_event_last_mouse_move_event);
-        _ecore_xcb_event_last_mouse_move_event = NULL;
-     }
+//   if (_ecore_xcb_event_last_mouse_move_event) 
+//     {
+//        ecore_event_del(_ecore_xcb_event_last_mouse_move_event);
+//        _ecore_xcb_event_last_mouse_move_event = NULL;
+//     }
 }
 
 void 
@@ -282,23 +282,23 @@ _ecore_xcb_events_handle(xcb_generic_event_t *ev)
                return;
           }
 #endif
-        /* WRN("Got Event Error:"); */
-        /* WRN("\tMajor Code: %d", err->major_code); */
-        /* WRN("\tMinor Code: %d", err->minor_code); */
-        /* WRN("\tRequest: %s", xcb_event_get_request_label(err->major_code)); */
-        /* WRN("\tError: %s", xcb_event_get_error_label(err->error_code)); */
-        /* if (err->error_code == XCB_EVENT_ERROR_BAD_VALUE) */
-        /*   WRN("\tValue: %d", ((xcb_value_error_t *)err)->bad_value); */
-        /* else if (err->error_code == XCB_EVENT_ERROR_BAD_MATCH)  */
-        /*   WRN("\tMatch: %d", ((xcb_match_error_t *)err)->bad_value); */
+        WRN("Got Event Error:");
+        WRN("\tMajor Code: %d", err->major_code);
+        WRN("\tMinor Code: %d", err->minor_code);
+        WRN("\tRequest: %s", xcb_event_get_request_label(err->major_code));
+        WRN("\tError: %s", xcb_event_get_error_label(err->error_code));
+        if (err->error_code == XCB_EVENT_ERROR_BAD_VALUE)
+          WRN("\tValue: %d", ((xcb_value_error_t *)err)->bad_value);
+        else if (err->error_code == XCB_EVENT_ERROR_BAD_MATCH) 
+          WRN("\tMatch: %d", ((xcb_match_error_t *)err)->bad_value);
 
-        /* if (err->major_code == XCB_SEND_EVENT)  */
-        /*   { */
-        /*      WRN("\tSend Event Error"); */
-        /*      WRN("\t\tSeq: %d", ev->sequence); */
-        /*      WRN("\t\tFull Seq: %d", ev->full_sequence); */
-        /*      WRN("\t\tType: %d", ev->response_type); */
-        /*   } */
+        if (err->major_code == XCB_SEND_EVENT) 
+          {
+             WRN("\tSend Event Error");
+             WRN("\t\tSeq: %d", ev->sequence);
+             WRN("\t\tFull Seq: %d", ev->full_sequence);
+             WRN("\t\tType: %d", ev->response_type);
+          }
         /* if (err->major_code == 148)  */
         /*   { */
         /*      printf("GOT 148 Error\n"); */
@@ -2235,7 +2235,7 @@ _ecore_xcb_event_mouse_move(uint16_t timestamp, uint16_t modifiers, int16_t x, i
    _ecore_xcb_event_last_window = e->window;
    _ecore_xcb_event_last_root_x = root_x;
    _ecore_xcb_event_last_root_y = root_y;
-   _ecore_xcb_event_last_mouse_move_event = event;
+//   _ecore_xcb_event_last_mouse_move_event = event;
 }
 
 static void 
@@ -2244,11 +2244,11 @@ _ecore_xcb_event_mouse_move_free(void *data __UNUSED__, void *event)
    Ecore_Event_Mouse_Move *ev;
 
    ev = event;
-   if (_ecore_xcb_event_last_mouse_move_event) 
-     {
-        _ecore_xcb_event_last_mouse_move = EINA_FALSE;
-        _ecore_xcb_event_last_mouse_move_event = NULL;
-     }
+//   if (_ecore_xcb_event_last_mouse_move_event) 
+//     {
+//        _ecore_xcb_event_last_mouse_move = EINA_FALSE;
+//        _ecore_xcb_event_last_mouse_move_event = NULL;
+//     }
    if (ev) free(ev);
 }
 
