@@ -178,6 +178,8 @@ ecore_x_randr_screen_primary_output_orientations_get(Ecore_X_Window root)
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
+   if (!_randr_avail) return Ecore_X_Randr_None;
+
 #ifdef ECORE_XCB_RANDR
    cookie = xcb_randr_get_screen_info_unchecked(_ecore_xcb_conn, root);
    reply = xcb_randr_get_screen_info_reply(_ecore_xcb_conn, cookie, NULL);
@@ -205,6 +207,8 @@ ecore_x_randr_screen_primary_output_orientation_get(Ecore_X_Window root)
 #endif
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   if (!_randr_avail) return Ecore_X_Randr_None;
 
 #ifdef ECORE_XCB_RANDR
    cookie = xcb_randr_get_screen_info_unchecked(_ecore_xcb_conn, root);
@@ -235,6 +239,8 @@ ecore_x_randr_screen_primary_output_orientation_set(Ecore_X_Window root, Ecore_X
 #endif
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   if (!_randr_avail) return EINA_FALSE;
 
 #ifdef ECORE_XCB_RANDR
    cookie = xcb_randr_get_screen_info_unchecked(_ecore_xcb_conn, root);
@@ -283,6 +289,8 @@ ecore_x_randr_screen_primary_output_sizes_get(Ecore_X_Window root, int *num)
 #endif
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   if (!_randr_avail) return NULL;
 
 #ifdef ECORE_XCB_RANDR
    cookie = xcb_randr_get_screen_info_unchecked(_ecore_xcb_conn, root);
@@ -342,6 +350,8 @@ ecore_x_randr_screen_primary_output_current_size_get(Ecore_X_Window root, int *w
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
+   if (!_randr_avail) return;
+
 #ifdef ECORE_XCB_RANDR
    cookie = xcb_randr_get_screen_info_unchecked(_ecore_xcb_conn, root);
    reply = xcb_randr_get_screen_info_reply(_ecore_xcb_conn, cookie, NULL);
@@ -388,6 +398,8 @@ ecore_x_randr_screen_primary_output_size_set(Ecore_X_Window root, int size_index
 #endif
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   if (!_randr_avail) return EINA_FALSE;
 
 #ifdef ECORE_XCB_RANDR
    if (!((size_index >= 0) && (_ecore_xcb_randr_root_validate(root))))
@@ -451,6 +463,8 @@ ecore_x_randr_screen_primary_output_current_refresh_rate_get(Ecore_X_Window root
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
+   if (!_randr_avail) return 0.0;
+
 #ifdef ECORE_XCB_RANDR
    if (!_ecore_xcb_randr_root_validate(root)) return ret;
 
@@ -483,6 +497,8 @@ ecore_x_randr_screen_primary_output_refresh_rates_get(Ecore_X_Window root, int s
 #endif
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   if (!_randr_avail) return NULL;
 
 #ifdef ECORE_XCB_RANDR
    if (!_ecore_xcb_randr_root_validate(root)) return ret;
@@ -535,6 +551,8 @@ ecore_x_randr_screen_primary_output_refresh_rate_set(Ecore_X_Window root, int si
 #endif
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   if (!_randr_avail) return EINA_FALSE;
 
 #ifdef ECORE_XCB_RANDR
    cookie = xcb_randr_get_screen_info_unchecked(_ecore_xcb_conn, root);
@@ -600,6 +618,8 @@ ecore_x_randr_primary_output_get(Ecore_X_Window root)
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
+   if (!_randr_avail) return Ecore_X_Randr_None;
+
 #ifdef ECORE_XCB_RANDR
    if (!_ecore_xcb_randr_root_validate(root))
      return Ecore_X_Randr_None;
@@ -624,6 +644,8 @@ ecore_x_randr_primary_output_set(Ecore_X_Window root, Ecore_X_Randr_Output outpu
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
+   if (!_randr_avail) return;
+
 #ifdef ECORE_XCB_RANDR
    if ((output) && (_ecore_xcb_randr_root_validate(root))) 
      xcb_randr_set_output_primary(_ecore_xcb_conn, root, output);
@@ -640,6 +662,8 @@ ecore_x_randr_output_modes_get(Ecore_X_Window root, Ecore_X_Randr_Output output,
 #endif
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   if (!_randr_avail) return NULL;
 
 #ifdef ECORE_XCB_RANDR
    cookie = xcb_randr_get_screen_info_unchecked(_ecore_xcb_conn, root);
@@ -694,6 +718,8 @@ ecore_x_randr_mode_info_get(Ecore_X_Window root, Ecore_X_Randr_Mode mode)
 #endif
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   if (!_randr_avail) return NULL;
 
 #ifdef ECORE_XCB_RANDR
    if (!_ecore_xcb_randr_root_validate(root)) return NULL;
@@ -769,6 +795,7 @@ ecore_x_randr_modes_info_get(Ecore_X_Window root, int *num)
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    if (num) *num = 0;
+   if (!_randr_avail) return NULL;
 
 #ifdef ECORE_XCB_RANDR
    if (!_ecore_xcb_randr_root_validate(root)) return NULL;
@@ -850,6 +877,8 @@ ecore_x_randr_mode_size_get(Ecore_X_Window root, Ecore_X_Randr_Mode mode, int *w
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
+   if (!_randr_avail) return;
+
 #ifdef ECORE_XCB_RANDR
    if (mode == Ecore_X_Randr_None) return;
    cookie = xcb_randr_get_screen_resources_unchecked(_ecore_xcb_conn, root);
@@ -897,6 +926,8 @@ ecore_x_randr_output_edid_get(Ecore_X_Window root, Ecore_X_Randr_Output output, 
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
+   if (!_randr_avail) return NULL;
+
 #ifdef ECORE_XCB_RANDR
    if ((!length) || (!_ecore_xcb_randr_output_validate(root, output)))
      return NULL;
@@ -943,6 +974,8 @@ ecore_x_randr_output_clones_get(Ecore_X_Window root, Ecore_X_Randr_Output output
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
+   if (!_randr_avail) return NULL;
+
 #ifdef ECORE_XCB_RANDR
    if (output == Ecore_X_Randr_None) return NULL;
 
@@ -987,6 +1020,8 @@ ecore_x_randr_output_possible_crtcs_get(Ecore_X_Window root, Ecore_X_Randr_Outpu
 #endif
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   if (!_randr_avail) return NULL;
 
 #ifdef ECORE_XCB_RANDR
    if (output == Ecore_X_Randr_None) return NULL;
@@ -1038,6 +1073,8 @@ ecore_x_randr_output_name_get(Ecore_X_Window root, Ecore_X_Randr_Output output, 
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
+   if (!_randr_avail) return NULL;
+
 #ifdef ECORE_XCB_RANDR
    if (output == Ecore_X_Randr_None) return NULL;
 
@@ -1088,6 +1125,8 @@ ecore_x_randr_output_connection_status_get(Ecore_X_Window root, Ecore_X_Randr_Ou
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
+   if (!_randr_avail) return ret;
+
 #ifdef ECORE_XCB_RANDR
    if (output == Ecore_X_Randr_None) return ret;
 
@@ -1126,6 +1165,8 @@ ecore_x_randr_outputs_get(Ecore_X_Window root, int *num)
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
+   if (!_randr_avail) return NULL;
+
 #ifdef ECORE_XCB_RANDR
    cookie = xcb_randr_get_screen_resources_unchecked(_ecore_xcb_conn, root);
    reply = xcb_randr_get_screen_resources_reply(_ecore_xcb_conn, cookie, NULL);
@@ -1153,6 +1194,8 @@ ecore_x_randr_output_crtc_get(Ecore_X_Window root, Ecore_X_Randr_Output output)
 #endif
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   if (!_randr_avail) return Ecore_X_Randr_None;
 
 #ifdef ECORE_XCB_RANDR
    if (output == Ecore_X_Randr_None) return ret;
@@ -1211,6 +1254,8 @@ ecore_x_randr_crtc_settings_set(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc, Ec
 #endif
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   if (!_randr_avail) return EINA_FALSE;
 
 #ifdef ECORE_XCB_RANDR
    if (!_ecore_xcb_randr_crtc_validate(root, crtc)) return ret;
@@ -1290,6 +1335,8 @@ ecore_x_randr_crtc_mode_set(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc, Ecore_
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
+   if (!_randr_avail) return ret;
+
 #ifdef ECORE_XCB_RANDR
    if ((int)mode == Ecore_X_Randr_Unset) return ret;
    ret = 
@@ -1318,6 +1365,8 @@ ecore_x_randr_crtc_mode_get(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc)
 #endif
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   if (!_randr_avail) return Ecore_X_Randr_Unset;
 
 #ifdef ECORE_XCB_RANDR
    if (!_ecore_xcb_randr_crtc_validate(root, crtc)) return ret;
@@ -1357,6 +1406,8 @@ ecore_x_randr_crtc_orientation_get(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc)
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
+   if (!_randr_avail) return Ecore_X_Randr_None;
+
 #ifdef ECORE_XCB_RANDR
    if (!_ecore_xcb_randr_crtc_validate(root, crtc)) return ret;
 
@@ -1391,6 +1442,8 @@ ecore_x_randr_crtc_orientation_set(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc,
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
+   if (!_randr_avail) return EINA_FALSE;
+
 #ifdef ECORE_XCB_RANDR
    if (orientation != Ecore_X_Randr_None) 
      {
@@ -1414,6 +1467,8 @@ ecore_x_randr_crtc_orientations_get(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc
 #endif
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   if (!_randr_avail) return Ecore_X_Randr_None;
 
 #ifdef ECORE_XCB_RANDR
    if (!_ecore_xcb_randr_crtc_validate(root, crtc)) return ret;
@@ -1457,6 +1512,8 @@ ecore_x_randr_crtc_possible_outputs_get(Ecore_X_Window root, Ecore_X_Randr_Crtc 
 #endif
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   if (!_randr_avail) return NULL;
 
 #ifdef ECORE_XCB_RANDR
    if (!_ecore_xcb_randr_crtc_validate(root, crtc)) return ret;
@@ -1510,6 +1567,8 @@ ecore_x_randr_crtcs_get(Ecore_X_Window root, int *num)
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
+   if (!_randr_avail) return NULL;
+
 #ifdef ECORE_XCB_RANDR
    cookie = xcb_randr_get_screen_resources_unchecked(_ecore_xcb_conn, root);
    reply = xcb_randr_get_screen_resources_reply(_ecore_xcb_conn, cookie, NULL);
@@ -1542,6 +1601,8 @@ ecore_x_randr_crtc_outputs_get(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc, int
 #endif
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   if (!_randr_avail) return NULL;
 
 #ifdef ECORE_XCB_RANDR
    if (!_ecore_xcb_randr_crtc_validate(root, crtc)) return ret;
@@ -1583,6 +1644,8 @@ ecore_x_randr_crtc_geometry_get(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc, in
 #endif
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   if (!_randr_avail) return;
 
 #ifdef ECORE_XCB_RANDR
    if (!_ecore_xcb_randr_crtc_validate(root, crtc)) return;
@@ -1631,6 +1694,8 @@ ecore_x_randr_crtc_pos_relative_set(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc
 #endif
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   if (!_randr_avail) return EINA_FALSE;
 
 #ifdef ECORE_XCB_RANDR
    if ((ecore_x_randr_crtc_mode_get(root, crtc1) == 0) || 
@@ -1712,6 +1777,8 @@ ecore_x_randr_move_all_crtcs_but(Ecore_X_Window root, const Ecore_X_Randr_Crtc *
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
+   if (!_randr_avail) return EINA_FALSE;
+
 #ifdef ECORE_XCB_RANDR
    if ((num <= 0) || (!not_moved) || (!_ecore_xcb_randr_root_validate(root)))
      return EINA_FALSE;
@@ -1742,6 +1809,8 @@ ecore_x_randr_crtc_pos_get(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc, int *x,
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
+   if (!_randr_avail) return;
+
 #ifdef ECORE_XCB_RANDR
    ecore_x_randr_crtc_geometry_get(root, crtc, x, y, NULL, NULL);
 #endif
@@ -1765,6 +1834,8 @@ ecore_x_randr_crtc_pos_set(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc, int x, 
 #endif
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   if (!_randr_avail) return EINA_FALSE;
 
 #ifdef ECORE_XCB_RANDR
    ecore_x_randr_crtc_geometry_get(root, crtc, 
@@ -1794,6 +1865,8 @@ ecore_x_randr_crtc_size_get(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc, int *w
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
+   if (!_randr_avail) return;
+
 #ifdef ECORE_XCB_RANDR
    ecore_x_randr_crtc_geometry_get(root, crtc, NULL, NULL, w, h);
 #endif
@@ -1809,6 +1882,8 @@ ecore_x_randr_crtc_refresh_rate_get(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc
 #endif
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   if (!_randr_avail) return 0.0;
 
 #ifdef ECORE_XCB_RANDR
    if (!_ecore_xcb_randr_crtc_validate(root, crtc)) return 0.0;
@@ -1860,6 +1935,8 @@ ecore_x_randr_move_crtcs(Ecore_X_Window root, const Ecore_X_Randr_Crtc *crtcs, i
 #endif
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   if (!_randr_avail) return EINA_FALSE;
 
 #ifdef ECORE_XCB_RANDR
    if (!_ecore_xcb_randr_root_validate(root)) return EINA_FALSE;
@@ -1962,6 +2039,8 @@ ecore_x_randr_events_select(Ecore_X_Window win, Eina_Bool on)
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
+   if (!_randr_avail) return;
+
 #ifdef ECORE_XCB_RANDR
    if (on) 
      {
@@ -1995,6 +2074,8 @@ ecore_x_randr_screen_reset(Ecore_X_Window root)
 #endif
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   if (!_randr_avail) return;
 
 #ifdef ECORE_XCB_RANDR
    if (!_ecore_xcb_randr_root_validate(root)) return;
@@ -2068,6 +2149,8 @@ ecore_x_randr_screen_size_range_get(Ecore_X_Window root, int *minw, int *minh, i
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
+   if (!_randr_avail) return;
+
 #ifdef ECORE_XCB_RANDR
    cookie = xcb_randr_get_screen_size_range_unchecked(_ecore_xcb_conn, root);
    reply = xcb_randr_get_screen_size_range_reply(_ecore_xcb_conn, cookie, NULL);
@@ -2098,6 +2181,8 @@ ecore_x_randr_screen_current_size_get(Ecore_X_Window root, int *w, int *h, int *
 #endif
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   if (!_randr_avail) return;
 
 #ifdef ECORE_XCB_RANDR
    if (!RANDR_VALIDATE_ROOT(scr, root)) return;
@@ -2152,6 +2237,8 @@ ecore_x_randr_screen_current_size_set(Ecore_X_Window root, int w, int h, int w_m
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
+   if (!_randr_avail) return EINA_FALSE;
+
 #ifdef ECORE_XCB_RANDR
    if (!RANDR_VALIDATE_ROOT(scr, root)) return EINA_FALSE;
    ecore_x_randr_screen_current_size_get(root, &wc, &hc, &w_mm_c, &h_mm_c);
@@ -2198,6 +2285,7 @@ ecore_x_randr_window_outputs_get(Ecore_X_Window window, int *num)
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    if (num) *num = 0;
+   if (!_randr_avail) return NULL;
 
 #ifdef ECORE_XCB_RANDR
    if (_randr_version < ((1 << 16) | 2)) return NULL;
@@ -2284,7 +2372,13 @@ ecore_x_randr_output_backlight_level_get(Ecore_X_Window root, Ecore_X_Randr_Outp
    xcb_randr_query_output_property_reply_t *qreply;
    double dvalue;
    long value, max, min;
+#endif
 
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   if (!_randr_avail) return -1;
+
+#ifdef ECORE_XCB_RANDR
    acookie = 
      xcb_intern_atom_unchecked(_ecore_xcb_conn, 1, 
                                strlen("Backlight"), "Backlight");
@@ -2373,7 +2467,13 @@ ecore_x_randr_output_backlight_level_set(Ecore_X_Window root, Ecore_X_Randr_Outp
    xcb_intern_atom_reply_t *areply;
    xcb_randr_query_output_property_cookie_t qcookie;
    xcb_randr_query_output_property_reply_t *qreply;
+#endif
 
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   if (!_randr_avail) return EINA_FALSE;
+
+#ifdef ECORE_XCB_RANDR
    if ((level < 0) || (level > 1))
      {
         ERR("Backlight level should be between 0 and 1");
@@ -2443,6 +2543,8 @@ _ecore_xcb_randr_output_validate(Ecore_X_Window root, Ecore_X_Randr_Output outpu
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
+   if (!_randr_avail) return EINA_FALSE;
+
 #ifdef ECORE_XCB_RANDR
    if ((output) && (_ecore_xcb_randr_root_validate(root))) 
      {
@@ -2487,6 +2589,8 @@ _ecore_xcb_randr_crtc_validate(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc)
    Eina_Bool ret = EINA_FALSE;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   if (!_randr_avail) return EINA_FALSE;
 
 #ifdef ECORE_XCB_RANDR
    if (((int)crtc == Ecore_X_Randr_None) || ((int)crtc == Ecore_X_Randr_Unset))

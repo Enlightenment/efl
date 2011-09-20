@@ -31,8 +31,9 @@ _ecore_xcb_shape_finalize(void)
      {
         xcb_shape_query_version_cookie_t cookie;
         xcb_shape_query_version_reply_t *reply;
-        Eina_Bool _shape_avail = EINA_FALSE;
+        Eina_Bool _shape_avail;
 
+        _shape_avail = EINA_FALSE;
         cookie = xcb_shape_query_version_unchecked(_ecore_xcb_conn);
         reply = xcb_shape_query_version_reply(_ecore_xcb_conn, cookie, NULL);
         if (reply) 

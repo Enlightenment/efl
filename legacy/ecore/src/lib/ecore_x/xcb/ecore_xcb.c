@@ -899,7 +899,7 @@ ecore_x_bell(int percent)
 }
 
 EAPI void 
-ecore_x_display_size_get(Ecore_X_Display *dsp, int *w, int *h) 
+ecore_x_display_size_get(Ecore_X_Display *dsp __UNUSED__, int *w, int *h) 
 {
    xcb_screen_t *screen;
 
@@ -912,7 +912,7 @@ ecore_x_display_size_get(Ecore_X_Display *dsp, int *w, int *h)
 }
 
 EAPI unsigned long 
-ecore_x_display_black_pixel_get(Ecore_X_Display *dsp) 
+ecore_x_display_black_pixel_get(Ecore_X_Display *dsp __UNUSED__) 
 {
    xcb_screen_t *screen;
 
@@ -924,7 +924,7 @@ ecore_x_display_black_pixel_get(Ecore_X_Display *dsp)
 }
 
 EAPI unsigned long 
-ecore_x_display_white_pixel_get(Ecore_X_Display *dsp) 
+ecore_x_display_white_pixel_get(Ecore_X_Display *dsp __UNUSED__) 
 {
    xcb_screen_t *screen;
 

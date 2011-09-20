@@ -73,6 +73,7 @@ ecore_x_fixes_selection_notification_request(Ecore_X_Atom selection)
 #endif
 
    if (!_xfixes_avail) return EINA_FALSE;
+
 #ifdef ECORE_XCB_XFIXES
    root = ((xcb_screen_t *)_ecore_xcb_screen)->root;
 
@@ -128,6 +129,8 @@ ecore_x_region_new(Ecore_X_Rectangle *rects, int num)
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
+   if (!_xfixes_avail) return 0;
+
 #ifdef ECORE_XCB_XFIXES
    xrects = _ecore_xcb_rect_to_xcb(rects, num);
    region = xcb_generate_id(_ecore_xcb_conn);
@@ -154,6 +157,8 @@ ecore_x_region_new_from_bitmap(Ecore_X_Pixmap bitmap)
    Ecore_X_Region region = 0;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   if (!_xfixes_avail) return 0;
 
 #ifdef ECORE_XCB_XFIXES
    region = xcb_generate_id(_ecore_xcb_conn);
@@ -182,6 +187,8 @@ ecore_x_region_new_from_window(Ecore_X_Window win, Ecore_X_Region_Type type)
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
+   if (!_xfixes_avail) return 0;
+
 #ifdef ECORE_XCB_XFIXES
    region = xcb_generate_id(_ecore_xcb_conn);
    xcb_xfixes_create_region_from_window(_ecore_xcb_conn, region, win, type);
@@ -205,6 +212,8 @@ ecore_x_region_new_from_gc(Ecore_X_GC gc)
    Ecore_X_Region region = 0;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   if (!_xfixes_avail) return 0;
 
 #ifdef ECORE_XCB_XFIXES
    region = xcb_generate_id(_ecore_xcb_conn);
@@ -230,6 +239,8 @@ ecore_x_region_new_from_picture(Ecore_X_Picture picture)
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
+   if (!_xfixes_avail) return 0;
+
 #ifdef ECORE_XCB_XFIXES
    region = xcb_generate_id(_ecore_xcb_conn);
    xcb_xfixes_create_region_from_picture(_ecore_xcb_conn, region, picture);
@@ -250,6 +261,8 @@ EAPI void
 ecore_x_region_free(Ecore_X_Region region) 
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   if (!_xfixes_avail) return;
 
 #ifdef ECORE_XCB_XFIXES
    xcb_xfixes_destroy_region(_ecore_xcb_conn, region);
@@ -276,6 +289,8 @@ ecore_x_region_set(Ecore_X_Region region, Ecore_X_Rectangle *rects, int num)
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
+   if (!_xfixes_avail) return;
+
 #ifdef ECORE_XCB_XFIXES
    xrects = _ecore_xcb_rect_to_xcb(rects, num);
    xcb_xfixes_set_region(_ecore_xcb_conn, region, num, xrects);
@@ -296,6 +311,8 @@ EAPI void
 ecore_x_region_copy(Ecore_X_Region dest, Ecore_X_Region source) 
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   if (!_xfixes_avail) return;
 
    // NB: Hmmmm...this may need converting to/fro xcb_rectangle_t
 #ifdef ECORE_XCB_XFIXES
@@ -319,6 +336,8 @@ ecore_x_region_combine(Ecore_X_Region dest, Ecore_X_Region source1, Ecore_X_Regi
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
+   if (!_xfixes_avail) return;
+
 #ifdef ECORE_XCB_XFIXES
    xcb_xfixes_union_region(_ecore_xcb_conn, source1, source2, dest);
 //   ecore_x_flush();
@@ -340,6 +359,8 @@ ecore_x_region_intersect(Ecore_X_Region dest, Ecore_X_Region source1, Ecore_X_Re
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
+   if (!_xfixes_avail) return;
+
 #ifdef ECORE_XCB_XFIXES
    xcb_xfixes_intersect_region(_ecore_xcb_conn, source1, source2, dest);
 //   ecore_x_flush();
@@ -360,6 +381,8 @@ EAPI void
 ecore_x_region_subtract(Ecore_X_Region dest, Ecore_X_Region source1, Ecore_X_Region source2) 
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   if (!_xfixes_avail) return;
 
 #ifdef ECORE_XCB_XFIXES
    xcb_xfixes_subtract_region(_ecore_xcb_conn, source1, source2, dest);
@@ -387,6 +410,8 @@ ecore_x_region_invert(Ecore_X_Region dest, Ecore_X_Rectangle *bounds, Ecore_X_Re
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
+   if (!_xfixes_avail) return;
+
 #ifdef ECORE_XCB_XFIXES
    xrects.x = bounds->x;
    xrects.y = bounds->y;
@@ -412,6 +437,8 @@ ecore_x_region_translate(Ecore_X_Region region, int dx, int dy)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
+   if (!_xfixes_avail) return;
+
 #ifdef ECORE_XCB_XFIXES
    xcb_xfixes_translate_region(_ecore_xcb_conn, region, dx, dy);
 //   ecore_x_flush();
@@ -430,6 +457,8 @@ EAPI void
 ecore_x_region_extents(Ecore_X_Region dest, Ecore_X_Region source) 
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   if (!_xfixes_avail) return;
 
 #ifdef ECORE_XCB_XFIXES
    xcb_xfixes_region_extents(_ecore_xcb_conn, source, dest);
@@ -468,6 +497,7 @@ ecore_x_region_fetch(Ecore_X_Region region, int *num, Ecore_X_Rectangle *bounds)
 
    if (num) *num = 0;
    if (bounds) *bounds = extents;
+   if (!_xfixes_avail) return NULL;
 
 #ifdef ECORE_XCB_XFIXES
    cookie = xcb_xfixes_fetch_region_unchecked(_ecore_xcb_conn, region);
@@ -524,6 +554,8 @@ ecore_x_region_expand(Ecore_X_Region dest, Ecore_X_Region source, unsigned int l
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
+   if (!_xfixes_avail) return;
+
 #ifdef ECORE_XCB_XFIXES
    xcb_xfixes_expand_region(_ecore_xcb_conn, source, dest, left, right, top, bottom);
 //   ecore_x_flush();
@@ -551,6 +583,8 @@ ecore_x_region_gc_clip_set(Ecore_X_Region region, Ecore_X_GC gc, int x, int y)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
+   if (!_xfixes_avail) return;
+
 #ifdef ECORE_XCB_XFIXES
    xcb_xfixes_set_gc_clip_region(_ecore_xcb_conn, gc, region, x, y);
 //   ecore_x_flush();
@@ -574,6 +608,8 @@ EAPI void
 ecore_x_region_window_shape_set(Ecore_X_Region region, Ecore_X_Window dest, Ecore_X_Shape_Type type, int x, int y) 
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   if (!_xfixes_avail) return;
 
 #ifdef ECORE_XCB_XFIXES
    xcb_xfixes_set_window_shape_region(_ecore_xcb_conn, dest, type, x, y, region);
@@ -600,6 +636,8 @@ EAPI void
 ecore_x_region_picture_clip_set(Ecore_X_Region region, Ecore_X_Picture picture, int x, int y) 
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   if (!_xfixes_avail) return;
 
 #ifdef ECORE_XCB_XFIXES
    xcb_xfixes_set_picture_clip_region(_ecore_xcb_conn, picture, region, x, y);
