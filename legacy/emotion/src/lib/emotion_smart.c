@@ -285,23 +285,32 @@ _emotion_module_open(const char *name, Evas_Object *obj, Emotion_Video_Module **
 }
 
 static void
-_clipper_position_size_update(Evas_Object *obj, int w, int h, int vid_w, int vid_h)
+_clipper_position_size_update(Evas_Object *obj, int x, int y, int w, int h, int vid_w, int vid_h)
 {
    Smart_Data *sd;
    double scale_w, scale_h;
-   int x, y;
 
    E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
 
-   evas_object_geometry_get(obj, &x, &y, NULL, NULL);
-   evas_object_move(sd->crop.clipper, x, y);
-   scale_w = (double)w / (double)(vid_w - sd->crop.l - sd->crop.r);
-   scale_h = (double)h / (double)(vid_h - sd->crop.t - sd->crop.b);
+   if (vid_w == 0 || vid_h == 0)
+     {
+       evas_object_image_fill_set(sd->obj, 0, 0, 0, 0);
+       evas_object_move(sd->obj, x, y);
+       evas_object_resize(sd->obj, 0, 0);
+       evas_object_move(sd->crop.clipper, x, y);
+       evas_object_resize(sd->crop.clipper, 0, 0);
+     }
+   else
+     {
+       evas_object_move(sd->crop.clipper, x, y);
+       scale_w = (double)w / (double)(vid_w - sd->crop.l - sd->crop.r);
+       scale_h = (double)h / (double)(vid_h - sd->crop.t - sd->crop.b);
 
-   evas_object_image_fill_set(sd->obj, 0, 0, vid_w * scale_w, vid_h * scale_h);
-   evas_object_resize(sd->obj, vid_w * scale_w, vid_h * scale_h);
-   evas_object_move(sd->obj, x - sd->crop.l * scale_w, y - sd->crop.t * scale_h);
-   evas_object_resize(sd->crop.clipper, w, h);
+       evas_object_image_fill_set(sd->obj, 0, 0, vid_w * scale_w, vid_h * scale_h);
+       evas_object_resize(sd->obj, vid_w * scale_w, vid_h * scale_h);
+       evas_object_move(sd->obj, x - sd->crop.l * scale_w, y - sd->crop.t * scale_h);
+       evas_object_resize(sd->crop.clipper, w, h);
+     }
 }
 
 /*******************************/
@@ -448,6 +457,10 @@ emotion_object_file_get(const Evas_Object *obj)
 static void
 _emotion_aspect_borders_apply(Evas_Object *obj, Smart_Data *sd, int w, int h, int iw, int ih)
 {
+   int x, y;
+
+   evas_object_geometry_get(obj, &x, &y, NULL, NULL);
+
    /* applying calculated borders */
    if (sd->crop.l == 0 && sd->crop.r == 0 &&
        sd->crop.t == 0 && sd->crop.b == 0)
@@ -478,7 +491,7 @@ _emotion_aspect_borders_apply(Evas_Object *obj, Smart_Data *sd, int w, int h, in
 	       evas_object_show(sd->crop.clipper);
 	  }
      }
-   _clipper_position_size_update(obj, w, h, iw, ih);
+   _clipper_position_size_update(obj, x, y, w, h, iw, ih);
 }
 
 static void
@@ -1408,6 +1421,7 @@ _emotion_frame_new(Evas_Object *obj)
    Smart_Data *sd;
 
    E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
+
 //   printf("pix get set 1 %p\n", sd->obj);
    evas_object_image_pixels_dirty_set(sd->obj, 1);
    evas_object_smart_callback_call(obj, SIG_FRAME_DECODE, NULL);
@@ -1843,7 +1857,7 @@ _smart_move(Evas_Object * obj, Evas_Coord x, Evas_Coord y)
    int vid_w, vid_h, w, h;
    sd->module->video_data_size_get(sd->video, &vid_w, &vid_h);
    evas_object_geometry_get(obj, NULL, NULL, &w, &h);
-   _clipper_position_size_update(obj, w, h, vid_w, vid_h);
+   _clipper_position_size_update(obj, x, y, w, h, vid_w, vid_h);
    evas_object_move(sd->bg, x, y);
 }
 
