@@ -20,7 +20,6 @@ int _ecore_xcb_log_dom = -1;
 Ecore_X_Display *_ecore_xcb_display = NULL;
 Ecore_X_Connection *_ecore_xcb_conn = NULL;
 Ecore_X_Screen *_ecore_xcb_screen = NULL;
-int _ecore_xcb_event_handlers_num = 0;
 Ecore_X_Atom _ecore_xcb_atoms_wm_protocol[ECORE_X_WM_PROTOCOL_NUM];
 double _ecore_xcb_double_click_time = 0.25;
 
@@ -198,6 +197,8 @@ ecore_x_init(const char *name)
           }
      }
 
+   DBG("Ecore XCB Conn: %p", _ecore_xcb_conn);
+
    if (xcb_connection_has_error(_ecore_xcb_conn))
      {
         CRIT("XCB Connection has error");
@@ -249,9 +250,6 @@ ecore_x_init(const char *name)
    if (!_ecore_xcb_fd_handler) 
      return _ecore_xcb_shutdown(EINA_TRUE);
 
-   _ecore_xcb_idle_enterer = 
-     ecore_idle_enterer_add(_ecore_xcb_idle_enter, NULL);
-
    /* prefetch atoms */
    _ecore_xcb_atoms_init();
 
@@ -281,6 +279,9 @@ ecore_x_init(const char *name)
 
    /* setup dnd */
    _ecore_xcb_dnd_init();
+
+   _ecore_xcb_idle_enterer = 
+     ecore_idle_enterer_add(_ecore_xcb_idle_enter, NULL);
 
    return _ecore_xcb_init_count;
 }
@@ -433,11 +434,7 @@ ecore_x_client_message32_send(Ecore_X_Window win, Ecore_X_Atom type, Ecore_X_Eve
    ev.data.data32[3] = (uint32_t)d3;
    ev.data.data32[4] = (uint32_t)d4;
 
-   // FIXME: Use unchecked version after development is ironed out
-   cookie = 
-     xcb_send_event_checked(_ecore_xcb_conn, 0, win, mask, (const char *)&ev);
-
-//   ecore_x_flush();
+   cookie = xcb_send_event(_ecore_xcb_conn, 0, win, mask, (const char *)&ev);
 
    err = xcb_request_check(_ecore_xcb_conn, cookie);
    if (err) 
@@ -482,12 +479,8 @@ ecore_x_client_message8_send(Ecore_X_Window win, Ecore_X_Atom type, const void *
    memcpy(ev.data.data8, data, len);
    memset(ev.data.data8 + len, 0, 20 - len);
 
-   // FIXME: Use unchecked version after development is ironed out
-   cookie = 
-     xcb_send_event_checked(_ecore_xcb_conn, 0, win, 
-                            XCB_EVENT_MASK_NO_EVENT, (const char *)&ev);
-
-//   ecore_x_flush();
+   cookie = xcb_send_event(_ecore_xcb_conn, 0, win, 
+                           XCB_EVENT_MASK_NO_EVENT, (const char *)&ev);
 
    err = xcb_request_check(_ecore_xcb_conn, cookie);
    if (err) 
@@ -536,12 +529,8 @@ ecore_x_mouse_down_send(Ecore_X_Window win, int x, int y, int b)
    ev.time = ecore_x_current_time_get();
    free(reply);
 
-   // FIXME: Use unchecked version after development is ironed out
-   vcookie = 
-     xcb_send_event_checked(_ecore_xcb_conn, 1, win, 
+   vcookie = xcb_send_event(_ecore_xcb_conn, 1, win, 
                             XCB_EVENT_MASK_BUTTON_PRESS, (const char *)&ev);
-
-//   ecore_x_flush();
 
    err = xcb_request_check(_ecore_xcb_conn, vcookie);
    if (err) 
@@ -587,12 +576,8 @@ ecore_x_mouse_up_send(Ecore_X_Window win, int x, int y, int b)
    ev.time = ecore_x_current_time_get();
    free(reply);
 
-   // FIXME: Use unchecked version after development is ironed out
-   vcookie = 
-     xcb_send_event_checked(_ecore_xcb_conn, 1, win, 
+   vcookie = xcb_send_event(_ecore_xcb_conn, 1, win, 
                             XCB_EVENT_MASK_BUTTON_RELEASE, (const char *)&ev);
-
-//   ecore_x_flush();
 
    err = xcb_request_check(_ecore_xcb_conn, vcookie);
    if (err) 
@@ -638,12 +623,8 @@ ecore_x_mouse_move_send(Ecore_X_Window win, int x, int y)
    ev.time = ecore_x_current_time_get();
    free(reply);
 
-   // FIXME: Use unchecked version after development is ironed out
-   vcookie = 
-     xcb_send_event_checked(_ecore_xcb_conn, 1, win, 
+   vcookie = xcb_send_event(_ecore_xcb_conn, 1, win, 
                             XCB_EVENT_MASK_POINTER_MOTION, (const char *)&ev);
-
-//   ecore_x_flush();
 
    err = xcb_request_check(_ecore_xcb_conn, vcookie);
    if (err) 
@@ -711,9 +692,8 @@ ecore_x_pointer_control_set(int accel_num, int accel_denom, int threshold)
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    vcookie = 
-     xcb_change_pointer_control_checked(_ecore_xcb_conn, 
-                                        accel_num, accel_denom, threshold, 
-                                        1, 1);
+     xcb_change_pointer_control(_ecore_xcb_conn, 
+                                accel_num, accel_denom, threshold, 1, 1);
    err = xcb_request_check(_ecore_xcb_conn, vcookie);
    if (err) 
      {
@@ -926,7 +906,7 @@ ecore_x_display_size_get(Ecore_X_Display *dsp, int *w, int *h)
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    /* grab the default screen */
-   screen = xcb_setup_roots_iterator(xcb_get_setup(dsp)).data;
+   screen = xcb_setup_roots_iterator(xcb_get_setup(_ecore_xcb_conn)).data;
    if (w) *w = screen->width_in_pixels;
    if (h) *h = screen->height_in_pixels;
 }
@@ -939,7 +919,7 @@ ecore_x_display_black_pixel_get(Ecore_X_Display *dsp)
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    /* grab the default screen */
-   screen = xcb_setup_roots_iterator(xcb_get_setup(dsp)).data;
+   screen = xcb_setup_roots_iterator(xcb_get_setup(_ecore_xcb_conn)).data;
    return screen->black_pixel;
 }
 
@@ -951,7 +931,7 @@ ecore_x_display_white_pixel_get(Ecore_X_Display *dsp)
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    /* grab the default screen */
-   screen = xcb_setup_roots_iterator(xcb_get_setup(dsp)).data;
+   screen = xcb_setup_roots_iterator(xcb_get_setup(_ecore_xcb_conn)).data;
    return screen->white_pixel;
 }
 
@@ -1152,6 +1132,11 @@ ecore_x_screen_count_get(void)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
+   if (xcb_connection_has_error(_ecore_xcb_conn)) 
+     {
+        DBG("XCB Connection Has Error !!!");
+        return 0;
+     }
    return xcb_setup_roots_length(xcb_get_setup(_ecore_xcb_conn));
 }
 
@@ -1170,7 +1155,7 @@ ecore_x_screen_index_get(const Ecore_X_Screen *screen)
    int i = 0;
 
    iter = 
-     xcb_setup_roots_iterator(xcb_get_setup((xcb_connection_t *)_ecore_xcb_conn));
+     xcb_setup_roots_iterator(xcb_get_setup(_ecore_xcb_conn));
    for (; iter.rem; xcb_screen_next(&iter)) 
      {
         if (iter.data == (xcb_screen_t *)screen) 
@@ -1195,7 +1180,7 @@ ecore_x_screen_get(int index)
    xcb_screen_iterator_t iter;
 
    iter = 
-     xcb_setup_roots_iterator(xcb_get_setup((xcb_connection_t *)_ecore_xcb_conn));
+     xcb_setup_roots_iterator(xcb_get_setup(_ecore_xcb_conn));
    for (; iter.rem; xcb_screen_next(&iter)) 
      {
         if (iter.index == index) 
@@ -1330,7 +1315,10 @@ _ecore_xcb_shutdown(Eina_Bool close_display)
    if (close_display) 
      xcb_disconnect(_ecore_xcb_conn);
    else 
-     close(xcb_get_file_descriptor(_ecore_xcb_conn));
+     {
+        close(xcb_get_file_descriptor(_ecore_xcb_conn));
+        _ecore_xcb_conn = NULL;
+     }
 
    /* shutdown events */
    _ecore_xcb_events_shutdown();
