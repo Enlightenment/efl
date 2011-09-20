@@ -884,6 +884,14 @@ START_TEST(evas_textblock_format_removal)
    fnode = evas_textblock_node_format_next_get(fnode);
    fail_if (fnode);
 
+   /* Remove two pairs with the same name and same positions. */
+   evas_object_textblock_text_markup_set(tb, "<a><a>A</a></a>");
+   evas_textblock_cursor_pos_set(cur, 0);
+   evas_textblock_cursor_char_delete(cur);
+
+   fnode = evas_textblock_node_format_first_get(tb);
+   fail_if (fnode);
+
    /* Try to remove a format that doesn't have a pair (with a bad mkup) */
    evas_object_textblock_text_markup_set(tb, "a<b>b<i>c</>d</i>e");
    evas_textblock_cursor_pos_set(cur, 2);
