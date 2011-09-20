@@ -735,12 +735,10 @@ AC_ARG_ENABLE(software-xcb,
 if test "x$want_xcb" != "xno" ; then
   EVAS_CHECK_ENGINE([software-xcb], [${want_evas_engine_software_xcb}], [no], [Software XCB])
   if test "x$have_evas_engine_software_xcb" != "xno" ; then
-    if test "x$have_pixman" != "xno" ; then
-      build_software_xcb="yes"
-      have_evas_engine_software_x11="yes"
-      AC_DEFINE_UNQUOTED(BUILD_ENGINE_SOFTWARE_X11, [1], [Build software X11 engine])
-      AC_DEFINE_UNQUOTED(BUILD_ENGINE_SOFTWARE_XCB, [1], [Build software XCB backend])
-    fi
+    build_software_xcb="yes"
+    have_evas_engine_software_x11="yes"
+    AC_DEFINE_UNQUOTED(BUILD_ENGINE_SOFTWARE_X11, [1], [Build software X11 engine])
+    AC_DEFINE_UNQUOTED(BUILD_ENGINE_SOFTWARE_XCB, [1], [Build software XCB backend])
   fi
 else
   AC_MSG_RESULT(no)
