@@ -1051,7 +1051,6 @@ gstreamer_video_sink_new(Emotion_Gstreamer_Video *ev,
 #else
 # warning "no ecore_x or xoverlay"
 #endif
-   fprintf(stderr, "sink: %p\n", sink);
    if (!sink)
      {
         sink = gst_element_factory_make("emotion-sink", "sink");

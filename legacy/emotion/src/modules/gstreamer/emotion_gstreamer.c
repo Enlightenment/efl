@@ -870,8 +870,9 @@ em_video_data_size_get(void *video, int *w, int *h)
 
    ev = (Emotion_Gstreamer_Video *)video;
 
-   if (!_emotion_gstreamer_video_pipeline_parse(ev, EINA_FALSE))
-     goto on_error;
+   if (ev->pipeline && (!ev->video_stream_nbr || !ev->video_streams))
+     if (!_emotion_gstreamer_video_pipeline_parse(ev, EINA_FALSE))
+       goto on_error;
 
    vstream = eina_list_nth(ev->video_streams, ev->video_stream_nbr - 1);
    if (vstream)
