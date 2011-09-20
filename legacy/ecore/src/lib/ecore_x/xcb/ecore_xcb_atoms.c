@@ -268,6 +268,7 @@ _ecore_xcb_atoms_init(void)
    int i = 0, num = 0;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    num = (sizeof(atoms) / sizeof(Xcb_Atom));
    for (i = 0; i < num; i++)  
@@ -284,6 +285,7 @@ _ecore_xcb_atoms_finalize(void)
    int i = 0, num = 0;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    num = (sizeof(atoms) / sizeof(Xcb_Atom));
    for (i = 0; i < num; i++) 
@@ -328,6 +330,7 @@ ecore_x_atom_get(const char *name)
    Ecore_X_Atom a;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    cookie = xcb_intern_atom_unchecked(_ecore_xcb_conn, 0, strlen(name), name);
    reply = xcb_intern_atom_reply(_ecore_xcb_conn, cookie, NULL);
@@ -354,6 +357,7 @@ ecore_x_atom_name_get(Ecore_X_Atom atom)
    int len = 0;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    cookie = xcb_get_atom_name_unchecked(_ecore_xcb_conn, atom);
    reply = xcb_get_atom_name_reply(_ecore_xcb_conn, cookie, NULL);
@@ -379,6 +383,7 @@ ecore_x_atoms_get(const char **names, int num, Ecore_X_Atom *atoms)
    int i = 0;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    for (i = 0; i < num; i++) 
      {

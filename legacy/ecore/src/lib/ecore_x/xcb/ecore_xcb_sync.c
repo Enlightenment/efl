@@ -72,6 +72,7 @@ ecore_x_sync_alarm_new(Ecore_X_Sync_Counter counter)
 #endif
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    if ((!_sync_avail) || (!counter)) return 0;
 
@@ -103,6 +104,7 @@ EAPI Eina_Bool
 ecore_x_sync_alarm_free(Ecore_X_Sync_Alarm alarm) 
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    if ((!_sync_avail) || (!alarm)) return EINA_FALSE;
 
@@ -124,6 +126,7 @@ ecore_x_sync_counter_query(Ecore_X_Sync_Counter counter, unsigned int *val)
 #endif
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    if ((!_sync_avail) || (!counter)) return EINA_FALSE;
 
@@ -148,6 +151,7 @@ ecore_x_sync_counter_inc(Ecore_X_Sync_Counter counter, int by)
 #endif
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    if ((!_sync_avail) || (!counter)) return;
 
@@ -171,6 +175,7 @@ ecore_x_sync_counter_val_wait(Ecore_X_Sync_Counter counter, int val)
 #endif
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    if ((!_sync_avail) || (!counter)) return;
 
@@ -206,6 +211,7 @@ ecore_x_sync_counter_new(int val)
 #endif
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    if (!_sync_avail) return 0;
 
@@ -227,6 +233,7 @@ EAPI void
 ecore_x_sync_counter_free(Ecore_X_Sync_Counter counter) 
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    if ((!_sync_avail) || (!counter)) return;
 
@@ -244,6 +251,7 @@ ecore_x_sync_counter_set(Ecore_X_Sync_Counter counter, int val)
 #endif
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    if ((!_sync_avail) || (!counter)) return;
 
@@ -264,6 +272,7 @@ ecore_x_sync_counter_2_set(Ecore_X_Sync_Counter counter, int val_hi, unsigned in
 #endif
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    if ((!_sync_avail) || (!counter)) return;
 
@@ -286,6 +295,7 @@ ecore_x_sync_counter_2_query(Ecore_X_Sync_Counter counter, int *val_hi, unsigned
 #endif
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    if ((!_sync_avail) || (!counter)) return EINA_FALSE;
 

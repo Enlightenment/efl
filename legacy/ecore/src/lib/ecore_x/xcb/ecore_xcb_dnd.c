@@ -87,6 +87,7 @@ ecore_x_dnd_send_status(Eina_Bool will_accept, Eina_Bool suppress, Ecore_X_Recta
    xcb_client_message_event_t ev;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    if (_target->state == ECORE_X_DND_TARGET_IDLE) return;
 
@@ -128,6 +129,7 @@ ecore_x_dnd_drop(void)
    Eina_Bool status = EINA_FALSE;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    memset(&ev, 0, sizeof(xcb_client_message_event_t));
 
@@ -258,6 +260,7 @@ ecore_x_dnd_type_isset(Ecore_X_Window win, const char *type)
    Ecore_X_Atom *atoms, atom;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    if (!ecore_x_window_prop_property_get(win, ECORE_X_ATOM_XDND_TYPE_LIST, 
                                          ECORE_X_ATOM_ATOM, 32, &data, &num))
@@ -286,6 +289,7 @@ ecore_x_dnd_type_set(Ecore_X_Window win, const char *type, Eina_Bool on)
    unsigned char *data = NULL, *old_data = NULL;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    atom = ecore_x_atom_get(type);
    ecore_x_window_prop_property_get(win, ECORE_X_ATOM_XDND_TYPE_LIST, 
@@ -339,6 +343,7 @@ ecore_x_dnd_types_set(Ecore_X_Window win, const char **types, unsigned int num_t
    unsigned char *data = NULL;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    if (!num_types)
       ecore_x_window_prop_property_del(win, ECORE_X_ATOM_XDND_TYPE_LIST);
@@ -368,6 +373,7 @@ ecore_x_dnd_actions_set(Ecore_X_Window win, Ecore_X_Atom *actions, unsigned int 
    unsigned char *data = NULL;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    if (!num_actions)
       ecore_x_window_prop_property_del(win, ECORE_X_ATOM_XDND_ACTION_LIST);
@@ -444,6 +450,7 @@ ecore_x_dnd_send_finished(void)
    xcb_client_message_event_t ev;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    if (_target->state == ECORE_X_DND_TARGET_IDLE) return;
 
@@ -502,6 +509,7 @@ _ecore_xcb_dnd_drag(Ecore_X_Window root, int x, int y)
    if (_source->state != ECORE_X_DND_SOURCE_DRAGGING) return;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    memset(&ev, 0, sizeof(xcb_client_message_event_t));
 

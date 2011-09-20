@@ -44,6 +44,7 @@ EAPI void
 ecore_x_image_free(Ecore_X_Image *im) 
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    if (!im) return;
    if (im->shm) 
@@ -73,6 +74,7 @@ ecore_x_image_get(Ecore_X_Image *im, Ecore_X_Drawable draw, int x, int y, int sx
    Eina_Bool ret = EINA_TRUE;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    if (im->shm) 
      {
@@ -182,6 +184,7 @@ ecore_x_image_put(Ecore_X_Image *im, Ecore_X_Drawable draw, Ecore_X_GC gc, int x
    Ecore_X_GC tgc = 0;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    if (!gc) 
      {
@@ -218,6 +221,7 @@ ecore_x_image_is_argb32_get(Ecore_X_Image *im)
    xcb_visualtype_t *vis;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    vis = (xcb_visualtype_t *)im->vis;
    if (!im->xim) _ecore_xcb_image_shm_create(im);
@@ -260,6 +264,7 @@ ecore_x_image_to_argb_convert(void *src, int sbpp, int sbpl, Ecore_X_Colormap c,
      };
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    sbpp *= 8;
 
@@ -498,6 +503,7 @@ _ecore_xcb_image_shm_check(void)
    uint8_t depth = 0;
 
    if (_ecore_xcb_image_shm_can != -1) return;
+   CHECK_XCB_CONN;
 
    /* reply =  */
    /*   xcb_shm_query_version_reply(_ecore_xcb_conn,  */
@@ -578,6 +584,8 @@ _ecore_xcb_image_shm_check(void)
 static void 
 _ecore_xcb_image_shm_create(Ecore_X_Image *im) 
 {
+   CHECK_XCB_CONN;
+
    im->xim = 
      _ecore_xcb_image_create_native(im->w, im->h, XCB_IMAGE_FORMAT_Z_PIXMAP, 
                                     im->depth, NULL, ~0, NULL);
@@ -623,6 +631,8 @@ _ecore_xcb_image_create_native(int w, int h, xcb_image_format_t format, uint8_t 
    const xcb_setup_t *setup;
    xcb_image_format_t xif;
 
+   CHECK_XCB_CONN;
+
    /* NB: We cannot use xcb_image_create_native as it only creates images 
     * using MSB_FIRST, so this routine recreates that function and uses 
     * the endian-ness of the server setup */
@@ -663,6 +673,8 @@ static xcb_format_t *
 _ecore_xcb_image_find_format(const xcb_setup_t *setup, uint8_t depth) 
 {
    xcb_format_t *fmt, *fmtend;
+
+   CHECK_XCB_CONN;
 
    fmt = xcb_setup_pixmap_formats(setup);
    fmtend = fmt + xcb_setup_pixmap_formats_length(setup);

@@ -84,6 +84,7 @@ EAPI void
 ecore_x_composite_redirect_window(Ecore_X_Window win, Ecore_X_Composite_Update_Type type) 
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    if (!_composite_avail) return;
 
@@ -108,6 +109,7 @@ EAPI void
 ecore_x_composite_redirect_subwindows(Ecore_X_Window win, Ecore_X_Composite_Update_Type type) 
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    if (!_composite_avail) return;
 
@@ -132,6 +134,7 @@ EAPI void
 ecore_x_composite_unredirect_window(Ecore_X_Window win, Ecore_X_Composite_Update_Type type) 
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    if (!_composite_avail) return;
 
@@ -156,6 +159,7 @@ EAPI void
 ecore_x_composite_unredirect_subwindows(Ecore_X_Window win, Ecore_X_Composite_Update_Type type) 
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    if (!_composite_avail) return;
 
@@ -184,6 +188,7 @@ ecore_x_composite_name_window_pixmap_get(Ecore_X_Window win)
 #endif
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    if (!_composite_avail) return XCB_NONE;
 
@@ -200,6 +205,7 @@ EAPI void
 ecore_x_composite_window_events_disable(Ecore_X_Window win) 
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    if (!_composite_avail) return;
 
@@ -216,6 +222,7 @@ EAPI void
 ecore_x_composite_window_events_enable(Ecore_X_Window win) 
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    if (!_composite_avail) return;
 
@@ -238,6 +245,7 @@ ecore_x_composite_render_window_enable(Ecore_X_Window root)
 #endif
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    if (!_composite_avail) return 0;
 
@@ -261,6 +269,7 @@ EAPI void
 ecore_x_composite_render_window_disable(Ecore_X_Window win) 
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    if (!_composite_avail) return;
 

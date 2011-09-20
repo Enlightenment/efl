@@ -54,6 +54,7 @@ ecore_x_mwm_hints_get(Ecore_X_Window win, Ecore_X_MWM_Hint_Func *fhint, Ecore_X_
    int ret = EINA_FALSE;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    cookie = 
      xcb_get_property_unchecked(_ecore_xcb_conn, 0, win, 

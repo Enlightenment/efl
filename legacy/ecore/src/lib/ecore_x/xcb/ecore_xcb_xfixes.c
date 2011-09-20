@@ -72,6 +72,8 @@ ecore_x_fixes_selection_notification_request(Ecore_X_Atom selection)
    int mask = 0;
 #endif
 
+   CHECK_XCB_CONN;
+
    if (!_xfixes_avail) return EINA_FALSE;
 
 #ifdef ECORE_XCB_XFIXES
@@ -128,6 +130,7 @@ ecore_x_region_new(Ecore_X_Rectangle *rects, int num)
 #endif
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    if (!_xfixes_avail) return 0;
 
@@ -157,6 +160,7 @@ ecore_x_region_new_from_bitmap(Ecore_X_Pixmap bitmap)
    Ecore_X_Region region = 0;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    if (!_xfixes_avail) return 0;
 
@@ -186,6 +190,7 @@ ecore_x_region_new_from_window(Ecore_X_Window win, Ecore_X_Region_Type type)
    Ecore_X_Region region = 0;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    if (!_xfixes_avail) return 0;
 
@@ -212,6 +217,7 @@ ecore_x_region_new_from_gc(Ecore_X_GC gc)
    Ecore_X_Region region = 0;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    if (!_xfixes_avail) return 0;
 
@@ -238,6 +244,7 @@ ecore_x_region_new_from_picture(Ecore_X_Picture picture)
    Ecore_X_Region region = 0;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    if (!_xfixes_avail) return 0;
 
@@ -261,6 +268,7 @@ EAPI void
 ecore_x_region_free(Ecore_X_Region region) 
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    if (!_xfixes_avail) return;
 
@@ -288,6 +296,7 @@ ecore_x_region_set(Ecore_X_Region region, Ecore_X_Rectangle *rects, int num)
 #endif
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    if (!_xfixes_avail) return;
 
@@ -311,6 +320,7 @@ EAPI void
 ecore_x_region_copy(Ecore_X_Region dest, Ecore_X_Region source) 
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    if (!_xfixes_avail) return;
 
@@ -335,6 +345,7 @@ EAPI void
 ecore_x_region_combine(Ecore_X_Region dest, Ecore_X_Region source1, Ecore_X_Region source2) 
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    if (!_xfixes_avail) return;
 
@@ -358,6 +369,7 @@ EAPI void
 ecore_x_region_intersect(Ecore_X_Region dest, Ecore_X_Region source1, Ecore_X_Region source2) 
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    if (!_xfixes_avail) return;
 
@@ -381,6 +393,7 @@ EAPI void
 ecore_x_region_subtract(Ecore_X_Region dest, Ecore_X_Region source1, Ecore_X_Region source2) 
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    if (!_xfixes_avail) return;
 
@@ -409,6 +422,7 @@ ecore_x_region_invert(Ecore_X_Region dest, Ecore_X_Rectangle *bounds, Ecore_X_Re
 #endif
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    if (!_xfixes_avail) return;
 
@@ -436,6 +450,7 @@ EAPI void
 ecore_x_region_translate(Ecore_X_Region region, int dx, int dy) 
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    if (!_xfixes_avail) return;
 
@@ -457,6 +472,7 @@ EAPI void
 ecore_x_region_extents(Ecore_X_Region dest, Ecore_X_Region source) 
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    if (!_xfixes_avail) return;
 
@@ -494,6 +510,7 @@ ecore_x_region_fetch(Ecore_X_Region region, int *num, Ecore_X_Rectangle *bounds)
 #endif
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    if (num) *num = 0;
    if (bounds) *bounds = extents;
@@ -553,6 +570,7 @@ EAPI void
 ecore_x_region_expand(Ecore_X_Region dest, Ecore_X_Region source, unsigned int left, unsigned int right, unsigned int top, unsigned int bottom) 
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    if (!_xfixes_avail) return;
 
@@ -582,6 +600,7 @@ EAPI void
 ecore_x_region_gc_clip_set(Ecore_X_Region region, Ecore_X_GC gc, int x, int y) 
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    if (!_xfixes_avail) return;
 
@@ -608,6 +627,7 @@ EAPI void
 ecore_x_region_window_shape_set(Ecore_X_Region region, Ecore_X_Window dest, Ecore_X_Shape_Type type, int x, int y) 
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    if (!_xfixes_avail) return;
 
@@ -636,6 +656,7 @@ EAPI void
 ecore_x_region_picture_clip_set(Ecore_X_Region region, Ecore_X_Picture picture, int x, int y) 
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    if (!_xfixes_avail) return;
 

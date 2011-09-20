@@ -238,6 +238,7 @@ _ecore_xcb_events_handle(xcb_generic_event_t *ev)
    uint8_t response = 0;
 
 //   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    /* strip highest bit (set if event is generated) */
    response = (ev->response_type & ~0x80);
@@ -436,6 +437,7 @@ ecore_x_event_mask_set(Ecore_X_Window win, Ecore_X_Event_Mask mask)
    uint32_t list;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    if (!win) win = ((xcb_screen_t *)_ecore_xcb_screen)->root;
    cookie = xcb_get_window_attributes_unchecked(_ecore_xcb_conn, win);
@@ -457,6 +459,7 @@ ecore_x_event_mask_unset(Ecore_X_Window win, Ecore_X_Event_Mask mask)
    uint32_t list;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    if (!win) win = ((xcb_screen_t *)_ecore_xcb_screen)->root;
    cookie = xcb_get_window_attributes_unchecked(_ecore_xcb_conn, win);
@@ -1638,6 +1641,8 @@ _ecore_xcb_event_handle_client_message(xcb_generic_event_t *event)
         e->time = ev->data.data32[1];
         e->event_win = ev->data.data32[2];
         ecore_event_add(ECORE_X_EVENT_PING, e, NULL, NULL);
+
+        CHECK_XCB_CONN;
 
         count = xcb_setup_roots_length(xcb_get_setup(_ecore_xcb_conn));
         if (count > 1) 

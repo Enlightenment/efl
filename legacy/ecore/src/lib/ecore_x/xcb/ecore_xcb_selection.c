@@ -351,6 +351,7 @@ ecore_x_selection_xdnd_request(Ecore_X_Window win, const char *target)
    Ecore_X_DND_Target *_target;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    _target = _ecore_xcb_dnd_target_get();
    atom = _ecore_xcb_selection_target_atom_get(target);
@@ -442,6 +443,7 @@ ecore_x_selection_notify_send(Ecore_X_Window requestor, Ecore_X_Atom selection, 
    xcb_selection_notify_event_t ev;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    memset(&ev, 0, sizeof(xcb_selection_notify_event_t));
 
@@ -463,6 +465,7 @@ EAPI void
 ecore_x_selection_owner_set(Ecore_X_Window win, Ecore_X_Atom atom, Ecore_X_Time tim) 
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    xcb_set_selection_owner(_ecore_xcb_conn, win, atom, tim);
 }
@@ -475,6 +478,7 @@ ecore_x_selection_owner_get(Ecore_X_Atom atom)
    Ecore_X_Window ret;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    cookie = xcb_get_selection_owner(_ecore_xcb_conn, atom);
    reply = xcb_get_selection_owner_reply(_ecore_xcb_conn, cookie, NULL);
@@ -533,6 +537,7 @@ _ecore_xcb_selection_set(Ecore_X_Window win, const void *data, int size, Ecore_X
    int in = 0;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    xcb_set_selection_owner(_ecore_xcb_conn, win, selection, XCB_CURRENT_TIME);
 
@@ -587,6 +592,7 @@ _ecore_xcb_selection_request(Ecore_X_Window win, Ecore_X_Atom selection, const c
    Ecore_X_Atom atarget, prop;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    if (selection == ECORE_X_ATOM_SELECTION_PRIMARY)
      prop = ECORE_X_ATOM_SELECTION_PROP_PRIMARY;
@@ -611,6 +617,7 @@ _ecore_xcb_selection_converter_text(char *target, void *data, int size, void **d
    char *str;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    if ((!data) || (!size)) return EINA_FALSE;
 
@@ -790,6 +797,7 @@ _ecore_xcb_selection_parser_targets(const char *target __UNUSED__, void *data, i
    int i = 0;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    if (!(targets = (unsigned long *)data)) return NULL;
 

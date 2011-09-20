@@ -24,6 +24,7 @@ ecore_x_pixmap_new(Ecore_X_Window win, int w, int h, int dep)
    Ecore_X_Pixmap pmap;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    if (win == 0) win = ((xcb_screen_t *)_ecore_xcb_screen)->root;
    if (dep == 0) dep = ((xcb_screen_t *)_ecore_xcb_screen)->root_depth;
@@ -48,6 +49,7 @@ EAPI void
 ecore_x_pixmap_free(Ecore_X_Pixmap pmap) 
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    xcb_free_pixmap(_ecore_xcb_conn, pmap);
 //   ecore_x_flush();
@@ -71,6 +73,7 @@ EAPI void
 ecore_x_pixmap_paste(Ecore_X_Pixmap pmap, Ecore_X_Drawable dest, Ecore_X_GC gc, int sx, int sy, int w, int h, int dx, int dy) 
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    xcb_copy_area(_ecore_xcb_conn, pmap, dest, gc, sx, sy, dx, dy, w, h);
 //   ecore_x_flush();

@@ -37,6 +37,8 @@ ecore_x_xregion_set(Ecore_X_XRegion *region, Ecore_X_GC gc)
    pixman_box16_t *boxes;
    int num = 0, i = 0;
 
+   CHECK_XCB_CONN;
+
    if (!region) return EINA_FALSE;
 
    boxes = pixman_region_rectangles((pixman_region16_t *)region, &num);

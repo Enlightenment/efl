@@ -29,6 +29,8 @@ _ecore_x_window_tree_walk(Ecore_X_Window window)
    xcb_query_tree_cookie_t cookie_tree;
    int i, j;
 
+   CHECK_XCB_CONN;
+
    cookie_attr = xcb_get_window_attributes_unchecked(_ecore_xcb_conn, window);
    reply_attr = xcb_get_window_attributes_reply(_ecore_xcb_conn, cookie_attr, NULL);
    if (!reply_attr) return NULL;

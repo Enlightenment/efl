@@ -47,6 +47,7 @@ ecore_x_test_fake_key_down(const char *key __UNUSED__)
 #endif
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    if (!_test_avail) return EINA_FALSE;
 
@@ -84,6 +85,7 @@ ecore_x_test_fake_key_up(const char *key __UNUSED__)
 #endif
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    if (!_test_avail) return EINA_FALSE;
 
@@ -124,6 +126,7 @@ ecore_x_test_fake_key_press(const char *key __UNUSED__)
 #endif
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    if (!_test_avail) return EINA_FALSE;
 

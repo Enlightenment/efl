@@ -67,6 +67,7 @@ ecore_x_screensaver_idle_time_get(void)
 #endif
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    if (!_screensaver_avail) return 0;
 
@@ -86,6 +87,7 @@ EAPI void
 ecore_x_screensaver_set(int timeout, int interval, int prefer_blanking, int allow_exposures) 
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    if (!_screensaver_avail) return;
 
@@ -106,6 +108,7 @@ ecore_x_screensaver_timeout_set(int timeout)
 #endif
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    if (!_screensaver_avail) return;
 
@@ -131,6 +134,7 @@ ecore_x_screensaver_timeout_get(void)
 #endif
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    if (!_screensaver_avail) return 0;
 
@@ -156,6 +160,7 @@ ecore_x_screensaver_blank_set(int blank)
 #endif
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    if (!_screensaver_avail) return;
 
@@ -181,6 +186,7 @@ ecore_x_screensaver_blank_get(void)
 #endif
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    if (!_screensaver_avail) return 0;
 
@@ -206,6 +212,7 @@ ecore_x_screensaver_expose_set(int expose)
 #endif
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    if (!_screensaver_avail) return;
 
@@ -231,6 +238,7 @@ ecore_x_screensaver_expose_get(void)
 #endif
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    if (!_screensaver_avail) return 0;
 
@@ -256,6 +264,7 @@ ecore_x_screensaver_interval_set(int interval)
 #endif
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    if (!_screensaver_avail) return;
 
@@ -281,6 +290,7 @@ ecore_x_screensaver_interval_get(void)
 #endif
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    if (!_screensaver_avail) return 0;
 
@@ -303,6 +313,7 @@ ecore_x_screensaver_event_listen_set(Eina_Bool on)
 #endif
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    if (!_screensaver_avail) return;
 

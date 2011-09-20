@@ -74,6 +74,7 @@ ecore_x_xinerama_screen_count_get(void)
 #endif
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    if (!_xinerama_avail) return 0;
 
@@ -98,6 +99,7 @@ ecore_x_xinerama_screen_geometry_get(int screen, int *x, int *y, int *w, int *h)
 #endif
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    if (x) *x = 0;
    if (y) *y = 0;

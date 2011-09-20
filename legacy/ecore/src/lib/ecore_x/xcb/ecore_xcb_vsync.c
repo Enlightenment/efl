@@ -130,6 +130,7 @@ ecore_x_vsync_animator_tick_source_set(Ecore_X_Window win)
 #endif
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    if (!_dri2_avail) return EINA_FALSE;
 
@@ -245,6 +246,7 @@ _ecore_xcb_dri_start(void)
 #endif
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    if (!_dri2_avail) return EINA_FALSE;
 
@@ -340,6 +342,7 @@ _ecore_xcb_dri_tick_schedule(void)
 #endif
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
 #ifdef ECORE_XCB_DRI
    vbl.request.type = (DRM_VBLANK_RELATIVE | DRM_VBLANK_EVENT);

@@ -18,6 +18,7 @@ ecore_x_gc_new(Ecore_X_Drawable drawable, Ecore_X_GC_Value_Mask value_mask, cons
    int i = 0, mask = 0;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    if (!drawable) drawable = ((xcb_screen_t *)_ecore_xcb_screen)->root;
 
@@ -112,6 +113,7 @@ EAPI void
 ecore_x_gc_free(Ecore_X_GC gc) 
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    xcb_free_gc(_ecore_xcb_conn, gc);
 //   ecore_x_flush();
@@ -123,6 +125,7 @@ ecore_x_gc_foreground_set(Ecore_X_GC gc, unsigned long foreground)
    uint32_t list;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    list = foreground;
    xcb_change_gc(_ecore_xcb_conn, gc, XCB_GC_FOREGROUND, &list);
@@ -135,6 +138,7 @@ ecore_x_gc_background_set(Ecore_X_GC gc, unsigned long background)
    uint32_t list;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    list = background;
    xcb_change_gc(_ecore_xcb_conn, gc, XCB_GC_BACKGROUND, &list);

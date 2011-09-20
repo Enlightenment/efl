@@ -21,6 +21,7 @@ ecore_x_drawable_rectangle_fill(Ecore_X_Drawable draw, Ecore_X_GC gc, int x, int
    xcb_rectangle_t rect;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    rect.x = x;
    rect.y = y;
@@ -47,6 +48,7 @@ ecore_x_drawable_geometry_get(Ecore_X_Drawable draw, int *x, int *y, int *w, int
    xcb_get_geometry_reply_t *reply;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    if (x) *x = 0;
    if (y) *y = 0;
@@ -76,6 +78,7 @@ ecore_x_drawable_border_width_get(Ecore_X_Drawable d)
    int ret = 0;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    cookie = xcb_get_geometry_unchecked(_ecore_xcb_conn, d);
    reply = xcb_get_geometry_reply(_ecore_xcb_conn, cookie, NULL);
@@ -99,6 +102,7 @@ ecore_x_drawable_depth_get(Ecore_X_Drawable d)
    int ret = 0;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    cookie = xcb_get_geometry_unchecked(_ecore_xcb_conn, d);
    reply = xcb_get_geometry_reply(_ecore_xcb_conn, cookie, NULL);

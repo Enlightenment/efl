@@ -22,6 +22,7 @@ ecore_x_icccm_command_set(Ecore_X_Window win, int argc, char **argv)
    int nbytes, i;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    for (i = 0, nbytes = 0; i < argc; i++)
      nbytes += strlen(argv[i]) + 1;
@@ -65,6 +66,7 @@ ecore_x_icccm_command_get(Ecore_X_Window win, int *argc, char ***argv)
    int c = 0, i = 0, j = 0;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    if (argc) *argc = 0;
    if (argv) *argv = NULL;
@@ -170,6 +172,7 @@ ecore_x_icccm_title_get(Ecore_X_Window win)
    char *title = NULL;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    if (!win) return NULL;
 #ifdef OLD_XCB_VERSION
@@ -242,6 +245,7 @@ ecore_x_icccm_title_set(Ecore_X_Window win, const char *title)
    Eina_Bool ret = EINA_FALSE;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    if (!title) return;
 
@@ -298,6 +302,7 @@ ecore_x_icccm_name_class_get(Ecore_X_Window win, char **name, char **class)
    uint8_t ret = 0;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    if (name) *name = NULL;
    if (class) *class = NULL;
@@ -336,6 +341,7 @@ ecore_x_icccm_name_class_set(Ecore_X_Window win, const char *name, const char *c
    int length_name, length_class;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    length_name = strlen(name);
    length_class = strlen(class);
@@ -372,6 +378,7 @@ EAPI void
 ecore_x_icccm_transient_for_set(Ecore_X_Window win, Ecore_X_Window forwindow) 
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    xcb_change_property(_ecore_xcb_conn, XCB_PROP_MODE_REPLACE, win, 
                        ECORE_X_ATOM_WM_TRANSIENT_FOR, ECORE_X_ATOM_WINDOW, 32, 
@@ -402,6 +409,7 @@ ecore_x_icccm_transient_for_get(Ecore_X_Window win)
    xcb_get_property_cookie_t cookie;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
 #ifdef OLD_XCB_VERSION
    cookie = xcb_get_wm_transient_for_unchecked(_ecore_xcb_conn, win);
@@ -485,6 +493,7 @@ ecore_x_icccm_state_get(Ecore_X_Window win)
    uint8_t *prop;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    cookie = 
      xcb_get_property_unchecked(_ecore_xcb_conn, 0, win, 
@@ -545,6 +554,7 @@ ecore_x_icccm_state_set(Ecore_X_Window win, Ecore_X_Window_State_Hint state)
 #endif
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
 #ifdef OLD_XCB_VERSION
    xcb_wm_hints_set_none(&hints);
@@ -595,6 +605,7 @@ ecore_x_icccm_hints_set(Ecore_X_Window win, Eina_Bool accepts_focus, Ecore_X_Win
 #endif
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
 #ifdef OLD_XCB_VERSION
    xcb_wm_hints_set_none(&hints);
@@ -652,6 +663,7 @@ ecore_x_icccm_hints_get(Ecore_X_Window win, Eina_Bool *accepts_focus, Ecore_X_Wi
    uint8_t ret = 0;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    if (accepts_focus) *accepts_focus = EINA_TRUE;
    if (initial_state) *initial_state = ECORE_X_WINDOW_STATE_HINT_NORMAL;
@@ -759,6 +771,7 @@ ecore_x_icccm_icon_name_get(Ecore_X_Window win)
    char *tmp = NULL;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    if (!win) return NULL;
 
@@ -840,6 +853,7 @@ ecore_x_icccm_icon_name_set(Ecore_X_Window win, const char *name)
    Eina_Bool ret = EINA_FALSE;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    if ((!win) || (!name)) return;
 
@@ -883,6 +897,7 @@ ecore_x_icccm_iconic_request_send(Ecore_X_Window win, Ecore_X_Window root)
    xcb_client_message_event_t ev;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    if (!win) return;
    if (!root) root = ((xcb_screen_t *)_ecore_xcb_screen)->root;
@@ -925,6 +940,7 @@ ecore_x_icccm_protocol_set(Ecore_X_Window win, Ecore_X_WM_Protocol protocol, Ein
    int i = 0, count = 0, set = 0;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    if (protocol >= ECORE_X_WM_PROTOCOL_NUM) return;
    proto = _ecore_xcb_atoms_wm_protocol[protocol];
@@ -1033,6 +1049,7 @@ ecore_x_icccm_protocol_isset(Ecore_X_Window win, Ecore_X_WM_Protocol protocol)
    unsigned int i = 0;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    if (protocol >= ECORE_X_WM_PROTOCOL_NUM) return EINA_FALSE;
 
@@ -1072,6 +1089,7 @@ EAPI void
 ecore_x_icccm_protocol_atoms_set(Ecore_X_Window win, Ecore_X_Atom *protos, int num) 
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    if (num > 0) 
 #ifdef OLD_XCB_VERSION
@@ -1099,6 +1117,7 @@ ecore_x_icccm_size_pos_hints_get(Ecore_X_Window win, Eina_Bool *request_pos, Eco
    double mina = 0.0, maxa = 0.0;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    if (request_pos) *request_pos = EINA_FALSE;
    if (gravity) *gravity = ECORE_X_GRAVITY_NW;
@@ -1224,6 +1243,7 @@ ecore_x_icccm_size_pos_hints_set(Ecore_X_Window win, Eina_Bool request_pos, Ecor
    uint8_t ret = 0;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
 #ifdef OLD_XCB_VERSION
    cookie = xcb_get_wm_normal_hints_unchecked(_ecore_xcb_conn, win);
@@ -1286,6 +1306,7 @@ ecore_x_icccm_move_resize_send(Ecore_X_Window win, int x, int y, int w, int h)
    xcb_configure_notify_event_t ev;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    if (!win) return;
 
@@ -1327,6 +1348,7 @@ ecore_x_icccm_client_machine_get(Ecore_X_Window win)
    char *tmp = NULL;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
 #ifdef OLD_XCB_VERSION
    cookie = xcb_get_wm_client_machine_unchecked(_ecore_xcb_conn, win);

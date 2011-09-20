@@ -21,6 +21,7 @@ EAPI void
 ecore_x_window_shape_input_mask_set(Ecore_X_Window win, Ecore_X_Pixmap mask) 
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
 #ifdef ECORE_XCB_SHAPE
    xcb_shape_mask(_ecore_xcb_conn, XCB_SHAPE_SO_SET, XCB_SHAPE_SK_INPUT, 
@@ -44,6 +45,7 @@ EAPI void
 ecore_x_window_shape_mask_set(Ecore_X_Window win, Ecore_X_Pixmap mask) 
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
 #ifdef ECORE_XCB_SHAPE
    xcb_shape_mask(_ecore_xcb_conn, XCB_SHAPE_SO_SET, XCB_SHAPE_SK_BOUNDING, 
@@ -60,6 +62,7 @@ EAPI void
 ecore_x_window_shape_window_set(Ecore_X_Window win, Ecore_X_Window shape_win) 
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
 #ifdef ECORE_XCB_SHAPE
    xcb_shape_combine(_ecore_xcb_conn, XCB_SHAPE_SO_SET, XCB_SHAPE_SK_BOUNDING, 
@@ -76,6 +79,7 @@ EAPI void
 ecore_x_window_shape_window_set_xy(Ecore_X_Window win, Ecore_X_Window shape_win, int x, int y) 
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
 #ifdef ECORE_XCB_SHAPE
    xcb_shape_combine(_ecore_xcb_conn, XCB_SHAPE_SO_SET, XCB_SHAPE_SK_BOUNDING, 
@@ -98,6 +102,7 @@ ecore_x_window_shape_rectangle_set(Ecore_X_Window win, int x, int y, int w, int 
 #endif
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
 #ifdef ECORE_XCB_SHAPE
    rect.x = x;
@@ -126,6 +131,7 @@ ecore_x_window_shape_rectangles_set(Ecore_X_Window win, Ecore_X_Rectangle *rects
 #endif
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    if (!rects) return;
 
@@ -163,6 +169,7 @@ EAPI void
 ecore_x_window_shape_window_add(Ecore_X_Window win, Ecore_X_Window shape_win) 
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
 #ifdef ECORE_XCB_SHAPE
    xcb_shape_combine(_ecore_xcb_conn, XCB_SHAPE_SO_UNION, 
@@ -180,6 +187,7 @@ EAPI void
 ecore_x_window_shape_window_add_xy(Ecore_X_Window win, Ecore_X_Window shape_win, int x, int y) 
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
 #ifdef ECORE_XCB_SHAPE
    xcb_shape_combine(_ecore_xcb_conn, XCB_SHAPE_SO_UNION, 
@@ -203,6 +211,7 @@ ecore_x_window_shape_rectangle_add(Ecore_X_Window win, int x, int y, int w, int 
 #endif
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
 #ifdef ECORE_XCB_SHAPE
    rect.x = x;
@@ -231,6 +240,7 @@ ecore_x_window_shape_rectangle_subtract(Ecore_X_Window win, int x, int y, int w,
 #endif
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
 #ifdef ECORE_XCB_SHAPE
    rect.x = x;
@@ -259,6 +269,7 @@ ecore_x_window_shape_rectangle_clip(Ecore_X_Window win, int x, int y, int w, int
 #endif
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
 #ifdef ECORE_XCB_SHAPE
    rect.x = x;
@@ -287,6 +298,7 @@ ecore_x_window_shape_rectangles_add(Ecore_X_Window win, Ecore_X_Rectangle *rects
 #endif
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
 #ifdef ECORE_XCB_SHAPE
    if (num > 0) 
@@ -331,6 +343,7 @@ ecore_x_window_shape_rectangles_get(Ecore_X_Window win, int *num_ret)
 #endif
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    if (num_ret) *num_ret = 0;
 
@@ -377,6 +390,7 @@ EAPI void
 ecore_x_window_shape_events_select(Ecore_X_Window win, Eina_Bool on) 
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
 #ifdef ECORE_XCB_SHAPE
    xcb_shape_select_input(_ecore_xcb_conn, win, on);
@@ -400,6 +414,7 @@ ecore_x_window_shape_input_rectangles_get(Ecore_X_Window win, int *num_ret)
 #endif
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    if (num_ret) *num_ret = 0;
 
@@ -467,6 +482,7 @@ ecore_x_window_shape_input_rectangles_set(Ecore_X_Window win, Ecore_X_Rectangle 
 #endif
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    if (!rects) return;
 
@@ -508,6 +524,7 @@ ecore_x_window_shape_input_rectangle_subtract(Ecore_X_Window win, int x, int y, 
 #endif
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
 #ifdef ECORE_XCB_SHAPE
    rect.x = x;
@@ -536,6 +553,7 @@ ecore_x_window_shape_input_rectangle_add(Ecore_X_Window win, int x, int y, int w
 #endif
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
 #ifdef ECORE_XCB_SHAPE
    rect.x = x;
@@ -564,6 +582,7 @@ ecore_x_window_shape_input_rectangle_set(Ecore_X_Window win, int x, int y, int w
 #endif
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
 #ifdef ECORE_XCB_SHAPE
    rect.x = x;
@@ -588,6 +607,7 @@ EAPI void
 ecore_x_window_shape_input_window_set_xy(Ecore_X_Window win, Ecore_X_Window shape_win, int x, int y) 
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
 #ifdef ECORE_XCB_SHAPE
    xcb_shape_combine(_ecore_xcb_conn, XCB_SHAPE_SO_SET, XCB_SHAPE_SK_INPUT, 
@@ -606,6 +626,7 @@ EAPI void
 ecore_x_window_shape_input_window_add_xy(Ecore_X_Window win, Ecore_X_Window shape_win, int x, int y) 
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
 #ifdef ECORE_XCB_SHAPE
    xcb_shape_combine(_ecore_xcb_conn, XCB_SHAPE_SO_UNION, XCB_SHAPE_SK_INPUT, 
@@ -624,6 +645,7 @@ EAPI void
 ecore_x_window_shape_input_window_set(Ecore_X_Window win, Ecore_X_Window shape_win) 
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
 #ifdef ECORE_XCB_SHAPE
    xcb_shape_combine(_ecore_xcb_conn, XCB_SHAPE_SO_SET, XCB_SHAPE_SK_INPUT, 
@@ -644,6 +666,7 @@ ecore_x_window_shape_input_rectangle_clip(Ecore_X_Window win, int x, int y, int 
 #endif
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
 #ifdef ECORE_XCB_SHAPE
    rect.x = x;
@@ -672,6 +695,7 @@ ecore_x_window_shape_input_rectangles_add(Ecore_X_Window win, Ecore_X_Rectangle 
 #endif
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
 #ifdef ECORE_XCB_SHAPE
    if (num > 0) 

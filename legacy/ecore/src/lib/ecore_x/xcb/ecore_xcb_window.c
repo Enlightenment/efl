@@ -54,6 +54,7 @@ ecore_x_window_new(Ecore_X_Window parent, int x, int y, int w, int h)
    uint32_t mask, mask_list[9];
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    if (parent == 0)
      parent = ((xcb_screen_t *)_ecore_xcb_screen)->root;
@@ -113,6 +114,7 @@ ecore_x_window_override_new(Ecore_X_Window parent, int x, int y, int w, int h)
    uint32_t mask, mask_list[9];
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    if (parent == 0)
      parent = ((xcb_screen_t *)_ecore_xcb_screen)->root;
@@ -168,7 +170,8 @@ ecore_x_window_input_new(Ecore_X_Window parent, int x, int y, int w, int h)
    Ecore_X_Window win;
    uint32_t mask, mask_list[3];
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN(__FILE__, __LINE__, __FUNCTION__)
+   CHECK_XCB_CONN;
 
    if (parent == 0)
      parent = ((xcb_screen_t *)_ecore_xcb_screen)->root;
@@ -283,6 +286,7 @@ EAPI void
 ecore_x_window_free(Ecore_X_Window win) 
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    if (win) 
      {
@@ -344,6 +348,7 @@ ecore_x_window_configure(Ecore_X_Window win, Ecore_X_Window_Configure_Mask mask,
    unsigned int i = 0;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    if (!win) return;
 
@@ -411,6 +416,7 @@ ecore_x_window_move(Ecore_X_Window win, int x, int y)
    uint32_t list[2], mask;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    if (!win) return;
 
@@ -436,6 +442,7 @@ ecore_x_window_resize(Ecore_X_Window win, int w, int h)
    uint32_t list[2], mask;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    if (!win) return;
    if (w < 1) w = 1;
@@ -465,6 +472,7 @@ ecore_x_window_move_resize(Ecore_X_Window win, int x, int y, int w, int h)
    uint32_t list[4], mask;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    if (!win) return;
    if (w < 1) w = 1;
@@ -509,6 +517,7 @@ ecore_x_window_border_width_set(Ecore_X_Window win, int border_width)
    uint32_t list;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    if (!win) return;
 
@@ -536,6 +545,7 @@ ecore_x_window_raise(Ecore_X_Window win)
    uint32_t list[] = { XCB_STACK_MODE_ABOVE };
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    xcb_configure_window(_ecore_xcb_conn, win, 
                         XCB_CONFIG_WINDOW_STACK_MODE, list);
@@ -553,6 +563,7 @@ ecore_x_window_lower(Ecore_X_Window win)
    uint32_t list[] = { XCB_STACK_MODE_BELOW };
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    xcb_configure_window(_ecore_xcb_conn, win, 
                         XCB_CONFIG_WINDOW_STACK_MODE, list);
@@ -595,6 +606,7 @@ ecore_x_window_defaults_set(Ecore_X_Window win)
    pid_t pid;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    gethostname(buff, MAXHOSTNAMELEN);
    buff[MAXHOSTNAMELEN - 1] = '\0';
@@ -628,12 +640,10 @@ EAPI void
 ecore_x_window_show(Ecore_X_Window win) 
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    if (win) 
-     {
-        xcb_map_window(_ecore_xcb_conn, win);
-//        ecore_x_flush();
-     }
+     xcb_map_window(_ecore_xcb_conn, win);
 }
 
 /**
@@ -648,6 +658,7 @@ EAPI void
 ecore_x_window_hide(Ecore_X_Window win) 
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    if (win) 
      {
@@ -700,6 +711,7 @@ EAPI void
 ecore_x_window_focus(Ecore_X_Window win) 
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    if (!win) win = ((xcb_screen_t *)_ecore_xcb_screen)->root;
 
@@ -718,6 +730,7 @@ EAPI void
 ecore_x_window_focus_at_time(Ecore_X_Window win, Ecore_X_Time time) 
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    if (!win) win = ((xcb_screen_t *)_ecore_xcb_screen)->root;
    xcb_set_input_focus(_ecore_xcb_conn, XCB_INPUT_FOCUS_PARENT, win, time);
@@ -742,6 +755,7 @@ EAPI void
 ecore_x_window_reparent(Ecore_X_Window win, Ecore_X_Window parent, int x, int y) 
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    if (parent == 0) 
      parent = ((xcb_screen_t *)_ecore_xcb_screen)->root;
@@ -756,6 +770,7 @@ ecore_x_window_pixmap_set(Ecore_X_Window win, Ecore_X_Pixmap pixmap)
    uint32_t list;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    list = pixmap;
 
@@ -779,6 +794,7 @@ ecore_x_window_background_color_set(Ecore_X_Window win, unsigned short red, unsi
    uint32_t list;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    cookie = 
      xcb_alloc_color_unchecked(_ecore_xcb_conn, 
@@ -800,6 +816,7 @@ ecore_x_window_pixel_gravity_set(Ecore_X_Window win, Ecore_X_Gravity gravity)
    uint32_t list;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    list = gravity;
 
@@ -814,6 +831,7 @@ ecore_x_window_gravity_set(Ecore_X_Window win, Ecore_X_Gravity gravity)
    uint32_t list;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    list = gravity;
 
@@ -828,6 +846,7 @@ ecore_x_window_override_set(Ecore_X_Window win, Eina_Bool override)
    uint32_t list;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    list = override;
 
@@ -847,6 +866,7 @@ ecore_x_window_cursor_show(Ecore_X_Window win, Eina_Bool show)
    uint32_t list = 0;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    if (!win) win = ((xcb_screen_t *)_ecore_xcb_screen)->root;
 
@@ -896,6 +916,7 @@ ecore_x_window_cursor_set(Ecore_X_Window win, Ecore_X_Cursor cursor)
    uint32_t list;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    list = cursor;
 
@@ -909,6 +930,7 @@ ecore_x_window_container_manage(Ecore_X_Window win)
    uint32_t list;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    list = (XCB_EVENT_MASK_SUBSTRUCTURE_REDIRECT | 
            XCB_EVENT_MASK_SUBSTRUCTURE_NOTIFY);
@@ -924,6 +946,7 @@ ecore_x_window_client_manage(Ecore_X_Window win)
    uint32_t list;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    list = (XCB_EVENT_MASK_VISIBILITY_CHANGE | 
            XCB_EVENT_MASK_FOCUS_CHANGE | 
@@ -947,6 +970,7 @@ ecore_x_window_sniff(Ecore_X_Window win)
    uint32_t list;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    list = (XCB_EVENT_MASK_SUBSTRUCTURE_NOTIFY | 
            XCB_EVENT_MASK_PROPERTY_CHANGE);
@@ -962,6 +986,7 @@ ecore_x_window_client_sniff(Ecore_X_Window win)
    uint32_t list;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    list = (XCB_EVENT_MASK_VISIBILITY_CHANGE | 
            XCB_EVENT_MASK_STRUCTURE_NOTIFY | 
@@ -982,6 +1007,7 @@ EAPI void
 ecore_x_window_area_clear(Ecore_X_Window win, int x, int y, int w, int h) 
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    xcb_clear_area(_ecore_xcb_conn, 0, win, x, y, w, h);
 //   ecore_x_flush();
@@ -991,6 +1017,7 @@ EAPI void
 ecore_x_window_area_expose(Ecore_X_Window win, int x, int y, int w, int h) 
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    xcb_clear_area(_ecore_xcb_conn, 1, win, x, y, w, h);
 //   ecore_x_flush();
@@ -1000,6 +1027,7 @@ EAPI void
 ecore_x_window_save_set_add(Ecore_X_Window win) 
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    xcb_change_save_set(_ecore_xcb_conn, XCB_SET_MODE_INSERT, win);
 }
@@ -1008,6 +1036,7 @@ EAPI void
 ecore_x_window_save_set_del(Ecore_X_Window win) 
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    xcb_change_save_set(_ecore_xcb_conn, XCB_SET_MODE_DELETE, win);
 }
@@ -1025,6 +1054,7 @@ ecore_x_window_focus_get(void)
    Ecore_X_Window focus = 0;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    cookie = xcb_get_input_focus_unchecked(_ecore_xcb_conn);
    reply = xcb_get_input_focus_reply(_ecore_xcb_conn, cookie, NULL);
@@ -1043,6 +1073,7 @@ ecore_x_window_argb_get(Ecore_X_Window win)
 #endif
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
 //   if (!win) return ret;
 
@@ -1067,6 +1098,7 @@ ecore_x_window_manage(Ecore_X_Window win)
    uint32_t list;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    cookie = xcb_get_window_attributes(_ecore_xcb_conn, win);
    reply = xcb_get_window_attributes_reply(_ecore_xcb_conn, cookie, NULL);
@@ -1108,6 +1140,7 @@ ecore_x_window_attributes_get(Ecore_X_Window win, Ecore_X_Window_Attributes *att
    xcb_get_geometry_reply_t *greply;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    cookie = xcb_get_window_attributes_unchecked(_ecore_xcb_conn, win);
    reply = xcb_get_window_attributes_reply(_ecore_xcb_conn, cookie, NULL);
@@ -1184,6 +1217,7 @@ EAPI void
 ecore_x_window_size_get(Ecore_X_Window win, int *width, int *height) 
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    if (!win) win = ((xcb_screen_t *)_ecore_xcb_screen)->root;
    ecore_x_drawable_geometry_get(win, NULL, NULL, width, height);
@@ -1200,6 +1234,7 @@ ecore_x_window_ignore_set(Ecore_X_Window win, int ignore)
    int i = 0, j = 0, count = 0;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    if (ignore) 
      {
@@ -1277,6 +1312,7 @@ ecore_x_window_root_list(int *num_ret)
 #endif
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    if (!num_ret) return NULL;
    if (num_ret) *num_ret = 0;
@@ -1393,6 +1429,7 @@ ecore_x_window_children_get(Ecore_X_Window win, int *num)
    Ecore_X_Window *windows = NULL;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    if (num) *num = 0;
    cookie = xcb_query_tree_unchecked(_ecore_xcb_conn, win);
@@ -1432,6 +1469,7 @@ ecore_x_window_root_get(Ecore_X_Window win)
    Ecore_X_Window window = 0;
 
    /* LOGFN(__FILE__, __LINE__, __FUNCTION__); */
+   CHECK_XCB_CONN;
 
    gcookie = xcb_get_geometry_unchecked(_ecore_xcb_conn, win);
    greply = xcb_get_geometry_reply(_ecore_xcb_conn, gcookie, NULL);
@@ -1468,6 +1506,7 @@ EAPI void
 ecore_x_window_geometry_get(Ecore_X_Window win, int *x, int *y, int *w, int *h) 
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    if (!win) win = ((xcb_screen_t *)_ecore_xcb_screen)->root;
    ecore_x_drawable_geometry_get(win, x, y, w, h);
@@ -1486,6 +1525,7 @@ ecore_x_window_at_xy_get(int x, int y)
    Ecore_X_Window root, win = 0;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    root = ((xcb_screen_t *)_ecore_xcb_screen)->root;
 
@@ -1510,6 +1550,7 @@ ecore_x_window_at_xy_with_skip_get(int x, int y, Ecore_X_Window *skip, int skip_
    Ecore_X_Window root, win = 0;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    root = ((xcb_screen_t *)_ecore_xcb_screen)->root;
 
@@ -1526,6 +1567,7 @@ ecore_x_window_at_xy_begin_get(Ecore_X_Window begin, int x, int y)
    Ecore_X_Window win = 0;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    ecore_x_grab();
    win = _ecore_xcb_window_at_xy_get(begin, 0, 0, x, y, NULL, 0);
@@ -1548,6 +1590,7 @@ ecore_x_window_parent_get(Ecore_X_Window win)
    Ecore_X_Window window = 0;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
 //   if (!win) return 0;
    cookie = xcb_query_tree(_ecore_xcb_conn, win);
@@ -1573,6 +1616,7 @@ ecore_x_window_visible_get(Ecore_X_Window win)
    int ret = EINA_FALSE;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    cookie = xcb_get_window_attributes_unchecked(_ecore_xcb_conn, win);
    reply = xcb_get_window_attributes_reply(_ecore_xcb_conn, cookie, NULL);
@@ -1594,6 +1638,7 @@ ecore_x_window_button_grab(Ecore_X_Window win, int button, Ecore_X_Event_Mask ma
    Ecore_X_Window *t;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    b = button;
    if (b == 0)
@@ -1634,6 +1679,7 @@ ecore_x_window_button_ungrab(Ecore_X_Window win, int button, int mod, int any_mo
    uint8_t b;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    b = button;
    if (b == 0) b = XCB_BUTTON_INDEX_ANY;
@@ -1665,6 +1711,7 @@ ecore_x_window_key_grab(Ecore_X_Window win, const char *key, int mod, int any_mo
    Ecore_X_Window *t;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    keycode = _ecore_xcb_keymap_string_to_keycode(key);
    if (keycode == XCB_NO_SYMBOL) return;
@@ -1700,6 +1747,7 @@ ecore_x_window_key_ungrab(Ecore_X_Window win, const char *key, int mod, int any_
    int i = 0;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    keycode = _ecore_xcb_keymap_string_to_keycode(key);
    if (keycode == XCB_NO_SYMBOL) return;
@@ -1728,6 +1776,7 @@ _ecore_xcb_window_root_of_screen_get(int screen)
 {
    xcb_screen_iterator_t iter;
 
+   CHECK_XCB_CONN;
    iter = xcb_setup_roots_iterator(xcb_get_setup(_ecore_xcb_conn));
    for (; iter.rem; --screen, xcb_screen_next(&iter))
      if (screen == 0) 
@@ -1752,6 +1801,7 @@ _ecore_xcb_window_argb_internal_new(Ecore_X_Window parent, int x, int y, int w, 
 #endif
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
 #ifdef ECORE_XCB_RENDER
    if (parent == 0)
@@ -1813,6 +1863,7 @@ _ecore_xcb_window_at_xy_get(Ecore_X_Window base, int bx, int by, int x, int y, E
    Eina_Bool skipit = EINA_FALSE;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    if (!ecore_x_window_visible_get(base)) return 0;
 
@@ -1874,6 +1925,8 @@ _ecore_xcb_window_visual_get(Ecore_X_Window win)
    xcb_get_window_attributes_reply_t *reply;
    Ecore_X_Visual visual = 0;
 
+   CHECK_XCB_CONN;
+
    cookie = xcb_get_window_attributes(_ecore_xcb_conn, win);
    reply = xcb_get_window_attributes_reply(_ecore_xcb_conn, cookie, NULL);
    if (!reply) return 0;
@@ -1887,6 +1940,7 @@ void
 _ecore_xcb_window_button_grab_remove(Ecore_X_Window win) 
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    if (_ecore_xcb_button_grabs_num > 0) 
      {
@@ -1925,6 +1979,7 @@ void
 _ecore_xcb_window_key_grab_remove(Ecore_X_Window win) 
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    if (_ecore_xcb_key_grabs_num > 0) 
      {
@@ -1965,6 +2020,7 @@ _ecore_xcb_window_grab_allow_events(Ecore_X_Window event_win, Ecore_X_Window chi
    int i = 0;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    for (i = 0; i < _ecore_xcb_button_grabs_num; i++) 
      {
@@ -2025,6 +2081,7 @@ _ecore_xcb_window_find_visual_by_id(xcb_visualid_t id)
    xcb_depth_iterator_t diter;
    xcb_visualtype_iterator_t viter;
 
+   CHECK_XCB_CONN;
    diter = xcb_screen_allowed_depths_iterator(_ecore_xcb_screen);
    for (; diter.rem; xcb_depth_next(&diter)) 
      {
@@ -2044,6 +2101,7 @@ _ecore_xcb_window_screen_of_display(int screen)
 {
    xcb_screen_iterator_t iter;
 
+   CHECK_XCB_CONN;
    iter = xcb_setup_roots_iterator(xcb_get_setup(_ecore_xcb_conn));
    for (; iter.rem; --screen, xcb_screen_next(&iter))
      if (screen == 0)

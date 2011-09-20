@@ -40,6 +40,7 @@ _ecore_xcb_keymap_finalize(void)
    xcb_get_modifier_mapping_reply_t *reply;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    cookie = xcb_get_modifier_mapping_unchecked(_ecore_xcb_conn);
    reply = xcb_get_modifier_mapping_reply(_ecore_xcb_conn, cookie, NULL);
@@ -88,6 +89,7 @@ _ecore_xcb_keymap_shutdown(void)
 void 
 _ecore_xcb_keymap_refresh(xcb_mapping_notify_event_t *event) 
 {
+   CHECK_XCB_CONN;
    xcb_refresh_keyboard_mapping(_ecore_xcb_keysyms, event);
 }
 
@@ -96,6 +98,7 @@ _ecore_xcb_keymap_keycode_to_keysym(xcb_keycode_t keycode, int col)
 {
    xcb_keysym_t key0, key1;
 
+   CHECK_XCB_CONN;
    if (col & _ecore_xcb_mode_switch) 
      {
         key0 = xcb_key_symbols_get_keysym(_ecore_xcb_keysyms, keycode, 4);
@@ -137,6 +140,7 @@ _ecore_xcb_keymap_keycode_to_keysym(xcb_keycode_t keycode, int col)
 xcb_keycode_t *
 _ecore_xcb_keymap_keysym_to_keycode(xcb_keysym_t keysym) 
 {
+   CHECK_XCB_CONN;
    return xcb_key_symbols_get_keycode(_ecore_xcb_keysyms, keysym);
 }
 
@@ -147,6 +151,7 @@ _ecore_xcb_keymap_keysym_to_string(xcb_keysym_t keysym)
    const unsigned char *entry;
    unsigned char val1, val2, val3, val4;
 
+   CHECK_XCB_CONN;
    if (!keysym) return NULL;
    if (keysym == XK_VoidSymbol) keysym = 0;
    if (keysym <= 0x1fffffff) 
@@ -212,6 +217,8 @@ _ecore_xcb_keymap_string_to_keycode(const char *key)
         xcb_keycode_t *keycodes, keycode = 0;
         int i = 0;
 
+        CHECK_XCB_CONN;
+
         keysym = _ecore_xcb_keymap_string_to_keysym(key);
         if (keysym == XCB_NO_SYMBOL) return XCB_NO_SYMBOL;
 
@@ -237,6 +244,7 @@ _ecore_xcb_keymap_lookup_string(xcb_keycode_t keycode, int state, char *buffer, 
    unsigned int modifiers = 0;
    xcb_keysym_t keysym;
 
+   CHECK_XCB_CONN;
    if (!_ecore_xcb_keymap_translate_key(keycode, state, &modifiers, &keysym))
      return 0;
 
@@ -268,6 +276,7 @@ _ecore_xcb_keymap_mask_get(void *reply, xcb_keysym_t sym)
      };
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    rep = (xcb_get_modifier_mapping_reply_t *)reply;
    if ((rep) && (rep->keycodes_per_modifier > 0))

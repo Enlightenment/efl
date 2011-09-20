@@ -108,6 +108,7 @@ _ecore_xcb_render_visual_supports_alpha(Ecore_X_Visual visual)
 #endif
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    if (!visual) return EINA_FALSE;
    if (!_render_avail) return EINA_FALSE;
@@ -150,6 +151,7 @@ _ecore_xcb_render_find_visual_id(int type, Eina_Bool check_alpha)
 #endif
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    if (!_render_avail) return 0;
 

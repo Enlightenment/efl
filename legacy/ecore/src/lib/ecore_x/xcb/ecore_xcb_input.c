@@ -71,6 +71,7 @@ _ecore_xcb_input_handle_event(xcb_generic_event_t *event __UNUSED__)
 #endif
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
 #ifdef ECORE_XCB_XINPUT
    ev = (xcb_ge_event_t *)event;
@@ -145,6 +146,7 @@ ecore_x_input_multi_select(Ecore_X_Window win)
 #endif
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    if (!_input_avail) return EINA_FALSE;
 

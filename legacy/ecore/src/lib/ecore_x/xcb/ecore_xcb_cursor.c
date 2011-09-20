@@ -75,6 +75,7 @@ ecore_x_cursor_new(Ecore_X_Window win, int *pixels, int w, int h, int hot_x, int
    xcb_image_t *img;
 
 //   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
 #ifdef ECORE_XCB_CURSOR
    if (_ecore_xcb_cursor) 
@@ -231,6 +232,7 @@ EAPI void
 ecore_x_cursor_free(Ecore_X_Cursor c) 
 {
 //   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    xcb_free_cursor(_ecore_xcb_conn, c);
 }
@@ -247,6 +249,7 @@ ecore_x_cursor_shape_get(int shape)
    xcb_font_t font;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    font = xcb_generate_id(_ecore_xcb_conn);
    xcb_open_font(_ecore_xcb_conn, font, strlen("cursor"), "cursor");
@@ -284,6 +287,8 @@ _ecore_xcb_cursor_format_get(void)
 {
    const xcb_render_query_pict_formats_reply_t *reply;
    xcb_render_pictforminfo_t *ret = NULL;
+
+   CHECK_XCB_CONN;
 
    reply = xcb_render_util_query_formats(_ecore_xcb_conn);
    if (reply) 
@@ -349,6 +354,8 @@ _ecore_xcb_cursor_image_load_cursor(xcb_image_t *img, int hot_x, int hot_y)
    xcb_pixmap_t pmap;
    xcb_render_picture_t pict;
 
+   CHECK_XCB_CONN;
+
    pmap = xcb_generate_id(_ecore_xcb_conn);
    xcb_create_pixmap(_ecore_xcb_conn, img->depth, pmap, 
                      ((xcb_screen_t *)_ecore_xcb_screen)->root, 
@@ -376,5 +383,6 @@ _ecore_xcb_cursor_image_load_cursor(xcb_image_t *img, int hot_x, int hot_y)
 static void 
 _ecore_xcb_cursor_image_destroy(xcb_image_t *img) 
 {
+   CHECK_XCB_CONN;
    if (img) xcb_image_destroy(img);
 }

@@ -87,6 +87,7 @@ ecore_x_dpms_capable_get(void)
 #endif
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    if (!_dpms_avail) return EINA_FALSE;
 
@@ -118,6 +119,7 @@ ecore_x_dpms_enabled_get(void)
 #endif
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    if (!_dpms_avail) return EINA_FALSE;
 
@@ -141,6 +143,7 @@ EAPI void
 ecore_x_dpms_enabled_set(int enabled) 
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    if (!_dpms_avail) return;
 
@@ -168,6 +171,7 @@ ecore_x_dpms_timeouts_get(unsigned int *standby, unsigned int *suspend, unsigned
 #endif
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    if (standby) *standby = 0;
    if (suspend) *suspend = 0;
@@ -197,6 +201,7 @@ EAPI Eina_Bool
 ecore_x_dpms_timeouts_set(unsigned int standby, unsigned int suspend, unsigned int off) 
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    if (!_dpms_avail) return EINA_FALSE;
 

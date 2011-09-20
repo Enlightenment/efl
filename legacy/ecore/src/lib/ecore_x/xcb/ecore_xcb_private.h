@@ -72,6 +72,15 @@ extern int _ecore_xcb_log_dom;
 #  define MAX(a, b) ((a < b) ? b : a)
 # endif
 
+#define CHECK_XCB_CONN \
+   { \
+      if (xcb_connection_has_error(_ecore_xcb_conn)) \
+        { \
+           DBG("XCB Connection Has Error !!"); \
+           _ecore_xcb_io_error_handle(NULL); \
+        } \
+   }
+
 /* enums */
 typedef enum _Ecore_Xcb_Encoding_Style Ecore_Xcb_Encoding_Style;
 

@@ -20,6 +20,7 @@ ecore_x_e_comp_sync_draw_done_send(Ecore_X_Window root, Ecore_X_Window win)
    xcb_client_message_event_t ev;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    if (!root) root = ((xcb_screen_t *)_ecore_xcb_screen)->root;
 
@@ -47,6 +48,7 @@ ecore_x_e_comp_sync_draw_size_done_send(Ecore_X_Window root, Ecore_X_Window win,
    xcb_client_message_event_t ev;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    if (!root) root = ((xcb_screen_t *)_ecore_xcb_screen)->root;
 
@@ -155,6 +157,7 @@ ecore_x_e_comp_sync_begin_send(Ecore_X_Window win)
    xcb_client_message_event_t ev;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    memset(&ev, 0, sizeof(xcb_client_message_event_t));
 
@@ -179,6 +182,7 @@ ecore_x_e_comp_sync_end_send(Ecore_X_Window win)
    xcb_client_message_event_t ev;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    memset(&ev, 0, sizeof(xcb_client_message_event_t));
 
@@ -203,6 +207,7 @@ ecore_x_e_comp_sync_cancel_send(Ecore_X_Window win)
    xcb_client_message_event_t ev;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    memset(&ev, 0, sizeof(xcb_client_message_event_t));
 
@@ -227,6 +232,7 @@ ecore_x_e_comp_flush_send(Ecore_X_Window win)
    xcb_client_message_event_t ev;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    memset(&ev, 0, sizeof(xcb_client_message_event_t));
 
@@ -251,6 +257,7 @@ ecore_x_e_comp_dump_send(Ecore_X_Window win)
    xcb_client_message_event_t ev;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    memset(&ev, 0, sizeof(xcb_client_message_event_t));
 

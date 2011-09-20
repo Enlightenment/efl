@@ -253,6 +253,7 @@ ecore_x_netwm_desk_names_set(Ecore_X_Window root, const char **names, unsigned i
    uint32_t len = 0, i, l;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    for (i = 0; i < n_desks; i++)
      {
@@ -376,6 +377,7 @@ ecore_x_netwm_state_request_send(Ecore_X_Window win, Ecore_X_Window root, Ecore_
    xcb_client_message_event_t ev;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    if (!win) return;
    if (!root) root = ((xcb_screen_t *)_ecore_xcb_screen)->root;
@@ -470,6 +472,7 @@ ecore_x_netwm_client_active_request(Ecore_X_Window root, Ecore_X_Window win, int
    xcb_client_message_event_t ev;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    if (!root) root = ((xcb_screen_t *)_ecore_xcb_screen)->root;
 
@@ -517,6 +520,7 @@ ecore_x_screen_is_composited(int screen)
    static Ecore_X_Atom atom = XCB_NONE;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    snprintf(buff, sizeof(buff), "_NET_WM_CM_S%i", screen);
 
@@ -550,6 +554,7 @@ ecore_x_screen_is_composited_set(int screen, Ecore_X_Window win)
    char buff[32];
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    snprintf(buff, sizeof(buff), "_NET_WM_CM_S%i", screen);
    if (atom == XCB_NONE) 
@@ -575,6 +580,7 @@ ecore_x_netwm_ping_send(Ecore_X_Window win)
    xcb_client_message_event_t ev;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    if (!win) return;
 
@@ -634,6 +640,7 @@ ecore_x_netwm_sync_request_send(Ecore_X_Window win, unsigned int serial)
    xcb_client_message_event_t ev;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    if (!win) return;
 
@@ -685,6 +692,7 @@ ecore_x_netwm_desktop_request_send(Ecore_X_Window win, Ecore_X_Window root, unsi
    xcb_client_message_event_t ev;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    if (!root) root = ((xcb_screen_t *)_ecore_xcb_screen)->root;
 
