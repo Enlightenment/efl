@@ -26679,6 +26679,16 @@ extern "C" {
     * @li "transition,finished" - When the transition is finished in changing
     *     the item 
     * @li "title,clicked" - User clicked title area
+    * 
+    * Default contents parts for the naviframe items that you can use for are:
+    * 
+    * @li "elm.swallow.content" - The main content of the page 
+    * @li "elm.swallow.prev_btn" - The button to go to the previous page
+    * @li "elm.swallow.next_btn" - The button to go to the next page 
+    *
+    * Default text parts for the naviframe items that you can use for are:
+    * 
+    * @li "elm.text.title" - The title label in the title area 
     *
     * @ref tutorial_naviframe gives a good overview of the usage of the API.
     * @{
