@@ -37,6 +37,16 @@
 # endif
 #endif
 
+#ifdef HAVE_MCHECK
+# ifdef HAVE_MTRACE
+#  define MT 1
+# endif
+#endif
+
+#ifdef MT
+#include <mcheck.h>
+#endif
+
 #include "eina_lock.h"
 #include "eina_config.h"
 #include "eina_private.h"
@@ -95,6 +105,10 @@ EAPI DWORD _eina_main_loop;
 EAPI pthread_t _eina_main_loop;
 # endif
 static pid_t _eina_pid;
+#endif
+
+#ifdef MT
+static int _mt_enabled = 0;
 #endif
 
 #ifdef EINA_HAVE_DEBUG_THREADS
@@ -213,6 +227,14 @@ eina_init(void)
    if (EINA_LIKELY(_eina_main_count > 0))
       return ++_eina_main_count;
 
+#ifdef MT
+   if ((getenv("EINA_MTRACE")) && (getenv("MALLOC_TRACE")))
+     {
+        _mt_enabled = 1;
+        mtrace();
+     }
+#endif   
+   
    if (!eina_log_init())
      {
         fprintf(stderr, "Could not initialize eina logging system.\n");
@@ -273,6 +295,13 @@ eina_shutdown(void)
 #ifdef EINA_HAVE_DEBUG_THREADS
 	pthread_mutex_destroy(&_eina_tracking_lock);
 #endif
+#ifdef MT
+        if (_mt_enabled)
+          {
+             muntrace();
+             _mt_enabled = 0;
+          }
+#endif   
      }
 
    return _eina_main_count;

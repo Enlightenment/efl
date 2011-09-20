@@ -488,6 +488,9 @@ AC_SUBST([dlopen_libs])
 
 EFL_CHECK_FNMATCH([], [AC_MSG_ERROR([Cannot find fnmatch()])])
 
+AC_CHECK_HEADERS([mcheck.h], [AC_DEFINE([HAVE_MCHECK], [1], [Have mcheck.h])])
+AC_CHECK_FUNCS([mtrace], [AC_DEFINE([HAVE_MTRACE], [1], [Have mtrace])])
+
 # iconv library
 have_iconv="no"
 AC_ARG_WITH([iconv-link],
