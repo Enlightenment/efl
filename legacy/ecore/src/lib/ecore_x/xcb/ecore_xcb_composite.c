@@ -85,6 +85,8 @@ ecore_x_composite_redirect_window(Ecore_X_Window win, Ecore_X_Composite_Update_T
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
+   if (!_composite_avail) return;
+
 #ifdef ECORE_XCB_COMPOSITE
    uint8_t update = XCB_COMPOSITE_REDIRECT_AUTOMATIC;
 
@@ -106,6 +108,8 @@ EAPI void
 ecore_x_composite_redirect_subwindows(Ecore_X_Window win, Ecore_X_Composite_Update_Type type) 
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   if (!_composite_avail) return;
 
 #ifdef ECORE_XCB_COMPOSITE
    uint8_t update = XCB_COMPOSITE_REDIRECT_AUTOMATIC;
@@ -129,6 +133,8 @@ ecore_x_composite_unredirect_window(Ecore_X_Window win, Ecore_X_Composite_Update
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
+   if (!_composite_avail) return;
+
 #ifdef ECORE_XCB_COMPOSITE
    uint8_t update = XCB_COMPOSITE_REDIRECT_AUTOMATIC;
 
@@ -151,6 +157,8 @@ ecore_x_composite_unredirect_subwindows(Ecore_X_Window win, Ecore_X_Composite_Up
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
+   if (!_composite_avail) return;
+
 #ifdef ECORE_XCB_COMPOSITE
    uint8_t update = XCB_COMPOSITE_REDIRECT_AUTOMATIC;
 
@@ -171,9 +179,13 @@ ecore_x_composite_unredirect_subwindows(Ecore_X_Window win, Ecore_X_Composite_Up
 EAPI Ecore_X_Pixmap 
 ecore_x_composite_name_window_pixmap_get(Ecore_X_Window win) 
 {
+#ifdef ECORE_XCB_COMPOSITE
    Ecore_X_Pixmap pmap = XCB_NONE;
+#endif
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   if (!_composite_avail) return XCB_NONE;
 
 #ifdef ECORE_XCB_COMPOSITE
    pmap = xcb_generate_id(_ecore_xcb_conn);
@@ -189,6 +201,8 @@ ecore_x_composite_window_events_disable(Ecore_X_Window win)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
+   if (!_composite_avail) return;
+
 #ifdef ECORE_XCB_SHAPE
    ecore_x_window_shape_input_rectangle_set(win, -1, -1, 1, 1);
 //   ecore_x_flush();
@@ -202,6 +216,8 @@ EAPI void
 ecore_x_composite_window_events_enable(Ecore_X_Window win) 
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   if (!_composite_avail) return;
 
 #ifdef ECORE_XCB_SHAPE
    ecore_x_window_shape_input_rectangle_set(win, 0, 0, 65535, 65535);
@@ -223,6 +239,8 @@ ecore_x_composite_render_window_enable(Ecore_X_Window root)
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
+   if (!_composite_avail) return 0;
+
 #ifdef ECORE_XCB_COMPOSITE
    cookie = xcb_composite_get_overlay_window_unchecked(_ecore_xcb_conn, root);
    reply = 
@@ -243,6 +261,8 @@ EAPI void
 ecore_x_composite_render_window_disable(Ecore_X_Window win) 
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   if (!_composite_avail) return;
 
 #ifdef ECORE_XCB_COMPOSITE
    xcb_composite_release_overlay_window(_ecore_xcb_conn, win);
