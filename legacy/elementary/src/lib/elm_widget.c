@@ -2286,7 +2286,6 @@ elm_widget_access_info_get(Evas_Object *obj)
    return sd->access_info;
 }
 
-
 EAPI Elm_Theme *
 elm_widget_theme_get(const Evas_Object *obj)
 {
