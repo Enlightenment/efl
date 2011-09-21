@@ -2037,6 +2037,15 @@ _ecore_xcb_event_handle_generic_event(xcb_generic_event_t *event)
    Ecore_X_Event_Generic *e;
 
    ev = (xcb_ge_event_t *)event;
+
+   /* pad0 *IS* extension - bug in xcb */
+   if (ev->pad0 == _ecore_xcb_event_input)
+     {
+        _ecore_xcb_event_handle_input_event(event);
+// FIXME: should we generate generic events as WELL as input events?        
+//        return;
+     }
+
    if (!(e = calloc(1, sizeof(Ecore_X_Event_Generic))))
      return;
 
@@ -2049,14 +2058,17 @@ _ecore_xcb_event_handle_generic_event(xcb_generic_event_t *event)
     * XCB people have been notified of this issue */
    e->extension = ev->pad0;
    /* e->data = ev->pad1; */
+   if (ev->length > 0)
+     {
+        int len = ev->length * sizeof(int);
+        e->data = malloc(len);
+        if (e->data) memcpy(e->data, &(event[1]), len);
+     }
 
    e->evtype = ev->event_type;
 
-   if (e->extension == _ecore_xcb_event_input)
-     _ecore_xcb_event_handle_input_event(event);
-
    ecore_event_add(ECORE_X_EVENT_GENERIC, e, 
-                   _ecore_xcb_event_generic_event_free, event);
+                   _ecore_xcb_event_generic_event_free, e->data);
 }
 
 static void 
