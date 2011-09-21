@@ -785,16 +785,10 @@ evas_object_smart_member_cache_invalidate(Evas_Object *obj)
    obj->parent_cache_valid = 0;
 
    o = (Evas_Object_Smart *)(obj->object_data);
-   if (o->magic != MAGIC_OBJ_SMART)
-     return;
+   if (o->magic != MAGIC_OBJ_SMART) return;
 
    for (l = o->contained; l; l = l->next)
-     {
-        Evas_Object *obj2;
-
-        obj2 = (Evas_Object *)l;
-        evas_object_smart_member_cache_invalidate(obj2);
-     }
+     evas_object_smart_member_cache_invalidate((Evas_Object *) l);
 }
 
 void
