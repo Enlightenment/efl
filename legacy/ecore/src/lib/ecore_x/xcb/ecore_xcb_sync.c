@@ -55,9 +55,21 @@ _ecore_xcb_sync_finalize(void)
 void 
 _ecore_xcb_sync_magic_send(int val, Ecore_X_Window win) 
 {
+   xcb_client_message_event_t ev;
+
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
-   ecore_x_client_message32_send(win, 27777, XCB_EVENT_MASK_NO_EVENT, 
-                                 0x7162534, (0x10000000 + val), win, 0, 0);
+
+   memset(&ev, 0, sizeof(xcb_client_message_event_t));
+   ev.response_type = XCB_CLIENT_MESSAGE;
+   ev.format = 32;
+   ev.window = win;
+   ev.type = 27777;
+   ev.data.data32[0] = 0x7162534;
+   ev.data.data32[1] = (0x10000000 + val);
+   ev.data.data32[2] = win;
+
+   xcb_send_event(_ecore_xcb_conn, 0, win, XCB_EVENT_MASK_NO_EVENT, 
+                  (const char *)&ev);
 //   ecore_x_flush();
 }
 
