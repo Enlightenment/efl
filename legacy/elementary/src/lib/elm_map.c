@@ -735,6 +735,7 @@ obj_rotate_zoom(void *data, Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(data, widtype);
    Widget_Data *wd = elm_widget_data_get(data);
+   int ow, oh, iw, ih;
    if ((!wd->pinch.cx) && (!wd->pinch.cy))
      {
         wd->pinch.cx = wd->rotate.cx;
@@ -742,10 +743,9 @@ obj_rotate_zoom(void *data, Evas_Object *obj)
      }
 
    evas_map_util_points_populate_from_object_full(wd->map, obj, 0);
-   int ow, oh, iw, ih;
    evas_object_image_size_get(obj, &iw, &ih);
    evas_object_geometry_get(obj, NULL, NULL, &ow, &oh);
-   if (ow < iw || oh < ih)
+   if ((ow < iw) || (oh < ih))
      {
         ow *= (double)iw / ow;
         oh *= (double)ih / oh;
