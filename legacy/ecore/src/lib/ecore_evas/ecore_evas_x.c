@@ -1295,17 +1295,20 @@ _ecore_evas_x_move(Ecore_Evas *ee, int x, int y)
      }
    else
      {
-        ecore_x_window_move(ee->prop.window, x, y);
+        if ((ee->x != x) || (ee->y != y)) 
+          {
+             if (!ee->engine.x.managed)
+               {
+                  ee->x = x;
+                  ee->y = y;
+               }
+             ecore_x_window_move(ee->prop.window, x, y);
+          }
         if (!ee->should_be_visible)
           {
              /* We need to request pos */
              ee->prop.request_pos = 1;
              _ecore_evas_x_size_pos_hints_update(ee);
-          }
-        if (!ee->engine.x.managed)
-          {
-             ee->x = x;
-             ee->y = y;
           }
      }
 }
@@ -1362,7 +1365,7 @@ _ecore_evas_x_resize(Ecore_Evas *ee, int w, int h)
              if (ee->func.fn_resize) ee->func.fn_resize(ee);
           }
      }
-   else
+   else if ((ee->w != w) || (ee->h != h))
      ecore_x_window_resize(ee->prop.window, w, h);
 }
 
