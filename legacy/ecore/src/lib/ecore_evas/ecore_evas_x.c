@@ -1339,9 +1339,9 @@ _ecore_evas_x_resize(Ecore_Evas *ee, int w, int h)
      {
         if ((ee->w != w) || (ee->h != h))
           {
-             ecore_x_window_resize(ee->prop.window, w, h);
              ee->w = w;
              ee->h = h;
+             ecore_x_window_resize(ee->prop.window, w, h);
              if ((ee->rotation == 90) || (ee->rotation == 270))
                {
                   evas_output_size_set(ee->evas, ee->h, ee->w);
@@ -1487,9 +1487,9 @@ _ecore_evas_x_rotation_set_internal(Ecore_Evas *ee, int rotation, int resize,
           }
         else
           {
-             int w, h;
+             /* int w, h; */
 
-             ecore_x_window_size_get(ee->prop.window, &w, &h);
+             /* ecore_x_window_size_get(ee->prop.window, &w, &h); */
              if ((rotation == 0) || (rotation == 180))
                {
                   evas_output_size_set(ee->evas, ee->w, ee->h);
