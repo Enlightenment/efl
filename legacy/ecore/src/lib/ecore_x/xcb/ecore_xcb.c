@@ -197,8 +197,6 @@ ecore_x_init(const char *name)
           }
      }
 
-   DBG("Ecore XCB Conn: %p", _ecore_xcb_conn);
-
    if (xcb_connection_has_error(_ecore_xcb_conn))
      {
         CRIT("XCB Connection has error");
@@ -1494,6 +1492,7 @@ _ecore_xcb_fd_handle_buff(void *data, Ecore_Fd_Handler *hdlr __UNUSED__)
 static Eina_Bool 
 _ecore_xcb_idle_enter(void *data __UNUSED__) 
 {
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
    CHECK_XCB_CONN;
 
    xcb_flush(_ecore_xcb_conn);
