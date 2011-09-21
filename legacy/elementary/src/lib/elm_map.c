@@ -42,8 +42,8 @@ typedef struct _Track_Dump Track_Dump;
 #define NOMINATIM_ATTR_LON "lon"
 #define NOMINATIM_ATTR_LAT "lat"
 
-#define PINCH_ZOOM_MIN 0.1
-#define PINCH_ZOOM_MAX 5.0
+#define PINCH_ZOOM_MIN 0.25
+#define PINCH_ZOOM_MAX 4.0
 
 #define GPX_NAME "name>"
 #define GPX_COORDINATES "trkpt "
@@ -1915,27 +1915,26 @@ _mouse_wheel_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, voi
    half_w = (float)w * 0.5;
    half_h = (float)h * 0.5;
 
-   if (!wd->wheel_zoom) wd->wheel_zoom = 1.0;
    if (ev->z > 0)
      {
         wd->zoom_method = ZOOM_METHOD_OUT;
-        wd->wheel_zoom -= 0.05;
-        if (wd->wheel_zoom <= PINCH_ZOOM_MIN) wd->wheel_zoom = PINCH_ZOOM_MIN;
+        wd->wheel_zoom -= 0.1;
+        if (wd->wheel_zoom <= -2.0) wd->wheel_zoom = -2.0;
      }
    else
      {
         wd->zoom_method = ZOOM_METHOD_IN;
-        wd->wheel_zoom += 0.2;
-        if (wd->wheel_zoom >= PINCH_ZOOM_MAX) wd->wheel_zoom = PINCH_ZOOM_MAX;
+        wd->wheel_zoom += 0.1;
+        if (wd->wheel_zoom >= 2.0) wd->wheel_zoom = 2.0;
      }
 
    if (!wd->paused)
      {
-   wd->pinch.level = wd->wheel_zoom;
-   wd->pinch.cx = x + half_w;
-   wd->pinch.cy = y + half_h;
-   if (wd->calc_job) ecore_job_del(wd->calc_job);
-   wd->calc_job = ecore_job_add(_calc_job, wd);
+        wd->pinch.level = pow(2.0, wd->wheel_zoom);
+        wd->pinch.cx = x + half_w;
+        wd->pinch.cy = y + half_h;
+        if (wd->calc_job) ecore_job_del(wd->calc_job);
+        wd->calc_job = ecore_job_add(_calc_job, wd);
      }
 
    if (wd->wheel_timer) ecore_timer_del(wd->wheel_timer);
@@ -1962,17 +1961,20 @@ _wheel_timer_cb(void *data)
    int zoom;
 
    if (!wd) return ECORE_CALLBACK_CANCEL;
-   if (wd->zoom_method == ZOOM_METHOD_IN) zoom = (int)ceil(wd->wheel_zoom - 1.0);
-   else if (wd->zoom_method == ZOOM_METHOD_OUT) zoom = (int)floor((-1.0 / wd->wheel_zoom) + 1.0);
+   if (wd->zoom_method == ZOOM_METHOD_IN) zoom = (int)ceil(wd->wheel_zoom);
+   else if (wd->zoom_method == ZOOM_METHOD_OUT) zoom = (int)floor(wd->wheel_zoom);
    else
      {
         wd->wheel_timer = NULL;
         return ECORE_CALLBACK_CANCEL;
      }
+
    wd->mode = ELM_MAP_ZOOM_MODE_MANUAL;
+   wd->pinch.level = 1.0;
    elm_map_zoom_set(data, wd->zoom + zoom);
    wd->wheel_zoom = 0.0;
    wd->wheel_timer = NULL;
+   wd->zoom_method = ZOOM_METHOD_NONE;
    return ECORE_CALLBACK_CANCEL;
 }
 
