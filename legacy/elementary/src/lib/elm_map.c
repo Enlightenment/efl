@@ -742,6 +742,17 @@ obj_rotate_zoom(void *data, Evas_Object *obj)
      }
 
    evas_map_util_points_populate_from_object_full(wd->map, obj, 0);
+   int ow, oh, iw, ih;
+   evas_object_image_size_get(obj, &iw, &ih);
+   evas_object_geometry_get(obj, NULL, NULL, &ow, &oh);
+   if (ow < iw || oh < ih)
+     {
+        ow *= (double)iw / ow;
+        oh *= (double)ih / oh;
+        evas_map_point_image_uv_set(wd->map, 1, ow, 0);
+        evas_map_point_image_uv_set(wd->map, 2, ow, oh);
+        evas_map_point_image_uv_set(wd->map, 3, 0, oh);
+     }
    evas_map_util_zoom(wd->map, wd->pinch.level, wd->pinch.level, wd->pinch.cx, wd->pinch.cy);
    evas_map_util_rotate(wd->map, wd->rotate.d, wd->rotate.cx, wd->rotate.cy);
    evas_object_map_enable_set(obj, EINA_TRUE);
@@ -2290,7 +2301,7 @@ _pan_calculate(Evas_Object *obj)
    rect_place(sd->wd->obj, sd->wd->pan_x, sd->wd->pan_y, ox, oy, ow, oh);
    EINA_LIST_FOREACH(sd->wd->grids, l, g)
      {
-        if ((sd->wd->pinch.level == 1.0) || (sd->wd->pinch.level == 0.5)) grid_load(sd->wd->obj, g);
+        if (sd->wd->zoom == g->zoom) grid_load(sd->wd->obj, g);
         grid_place(sd->wd->obj, g, sd->wd->pan_x, sd->wd->pan_y, ox, oy, ow, oh);
         marker_place(sd->wd->obj, g, sd->wd->pan_x, sd->wd->pan_y, ox, oy, ow, oh);
         if (!sd->wd->zoom_animator) route_place(sd->wd->obj, g, sd->wd->pan_x, sd->wd->pan_y, ox, oy, ow, oh);
