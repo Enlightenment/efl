@@ -970,16 +970,16 @@ if test "x$want_ecore_x_xcb" = "xyes" ; then
       AC_MSG_NOTICE("cursor extension explicitly disabled")
     fi
 
-    if test "x$want_ecore_x_dri" != "xno"; then
-      PKG_CHECK_MODULES(XCB_DRI, xcb-dri2,
-        [ have_ecore_x_xcb_dri="yes"
-          requirements_ecore_x="xcb-dri2 ${requirements_ecore_x}"
-          AC_DEFINE(ECORE_XCB_DRI, 1, [Build support for XCB dri/dri2]) ],
-        [ have_ecore_x_xcb_dri="no" ])
-    else
-      have_ecore_x_xcb_dri="no"
-      AC_MSG_NOTICE("dri extension explicitly disabled")
-    fi
+#    if test "x$want_ecore_x_dri" != "xno"; then
+#      PKG_CHECK_MODULES(XCB_DRI, xcb-dri2,
+#        [ have_ecore_x_xcb_dri="yes"
+#          requirements_ecore_x="xcb-dri2 ${requirements_ecore_x}"
+#          AC_DEFINE(ECORE_XCB_DRI, 1, [Build support for XCB dri/dri2]) ],
+#        [ have_ecore_x_xcb_dri="no" ])
+#    else
+#      have_ecore_x_xcb_dri="no"
+#      AC_MSG_NOTICE("dri extension explicitly disabled")
+#    fi
 
     AC_DEFINE(HAVE_ECORE_X_XCB, 1, [Defined to 1 if XCB is enabled.])
 
