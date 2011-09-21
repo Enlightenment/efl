@@ -60,9 +60,9 @@ _ecore_xcb_extensions_init(void)
    _ecore_xcb_input_init();
 #endif
 
-#ifdef ECORE_XCB_DRI
-   _ecore_xcb_dri_init();
-#endif
+/* #ifdef ECORE_XCB_DRI */
+/*    _ecore_xcb_dri_init(); */
+/* #endif */
 
 #ifdef ECORE_XCB_XTEST
    _ecore_xcb_xtest_init();
@@ -127,9 +127,9 @@ _ecore_xcb_extensions_finalize(void)
    _ecore_xcb_input_finalize();
 #endif
 
-#ifdef ECORE_XCB_DRI
-   _ecore_xcb_dri_finalize();
-#endif
+/* #ifdef ECORE_XCB_DRI */
+/*    _ecore_xcb_dri_finalize(); */
+/* #endif */
 
 #ifdef ECORE_XCB_XTEST
    _ecore_xcb_xtest_finalize();

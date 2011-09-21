@@ -1,14 +1,12 @@
 #include "ecore_xcb_private.h"
-#ifdef ECORE_XCB_DRI
 # include <fcntl.h>
 # include <dlfcn.h>
-# include <xcb/dri2.h>
-#endif
+# include <X11/Xlib-xcb.h>
 
 #define ECORE_XCB_VSYNC_DRI2 1
 #define DRM_EVENT_CONTEXT_VERSION 2
 
-#ifdef ECORE_XCB_DRI
+#ifdef ECORE_XCB_VSYNC_DRI2
 
 /* relevant header bits of dri/drm inlined here to avoid needing external */
 /* headers to build drm */
@@ -57,7 +55,11 @@ static int (*sym_drmGetMagic) (int fd, drm_magic_t * magic) = NULL;
 static int (*sym_drmWaitVBlank) (int fd, drmVBlank *vbl) = NULL;
 static int (*sym_drmHandleEvent) (int fd, drmEventContext *evctx) = NULL;
 
-#endif
+/* dri */
+static Bool (*sym_DRI2QueryExtension) (Display *display, int *eventBase, int *errorBase) = NULL;
+static Bool (*sym_DRI2QueryVersion) (Display *display, int *major, int *minor) = NULL;
+static Bool (*sym_DRI2Connect) (Display *display, XID window, char **driverName, char **deviceName) = NULL;
+static Bool (*sym_DRI2Authenticate) (Display *display, XID window, drm_magic_t magic) = NULL;
 
 /* local function prototypes */
 static Eina_Bool _ecore_xcb_dri_link(void);
@@ -71,14 +73,13 @@ static void _ecore_xcb_dri_tick_schedule(void);
 static void _ecore_xcb_dri_vblank_handler(int fd __UNUSED__, unsigned int frame __UNUSED__, unsigned int sec __UNUSED__, unsigned int usec __UNUSED__, void *data __UNUSED__);
 
 /* local variables */
-static Eina_Bool _dri2_avail = EINA_FALSE;
 static Ecore_X_Window _vsync_root = 0;
 static int _drm_fd = -1;
 static Ecore_Fd_Handler *_drm_fdh = NULL;
 static unsigned int _drm_magic = 0;
 static Eina_Bool _drm_event_busy = EINA_FALSE;
 static void *_drm_lib = NULL;
-#ifdef ECORE_XCB_DRI
+static void *_dri_lib = NULL;
 static drmEventContext _drm_evctx;
 #endif
 
@@ -86,55 +87,25 @@ void
 _ecore_xcb_dri_init(void) 
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
-
-#ifdef ECORE_XCB_DRI
-   xcb_prefetch_extension_data(_ecore_xcb_conn, &xcb_dri2_id);
-#endif
 }
 
 void 
 _ecore_xcb_dri_finalize(void) 
 {
-#ifdef ECORE_XCB_DRI
-   const xcb_query_extension_reply_t *ext_reply;
-#endif
-
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
-
-#ifdef ECORE_XCB_DRI
-   ext_reply = xcb_get_extension_data(_ecore_xcb_conn, &xcb_dri2_id);
-   if ((ext_reply) && (ext_reply->present))
-     {
-        xcb_dri2_query_version_cookie_t dcookie;
-        xcb_dri2_query_version_reply_t *dreply;
-
-        dcookie = 
-          xcb_dri2_query_version_unchecked(_ecore_xcb_conn, 
-                                           XCB_DRI2_MAJOR_VERSION, 
-                                           XCB_DRI2_MINOR_VERSION);
-        dreply = xcb_dri2_query_version_reply(_ecore_xcb_conn, dcookie, NULL);
-        if (dreply) 
-          {
-             if (dreply->major_version >= 2) _dri2_avail = EINA_TRUE;
-             free(dreply);
-          }
-     }
-#endif
 }
 
 EAPI Eina_Bool 
 ecore_x_vsync_animator_tick_source_set(Ecore_X_Window win) 
 {
-#ifdef ECORE_XCB_DRI
+#ifdef ECORE_XCB_VSYNC_DRI2
    Ecore_X_Window root;
 #endif
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    CHECK_XCB_CONN;
 
-   if (!_dri2_avail) return EINA_FALSE;
-
-#ifdef ECORE_XCB_DRI
+#ifdef ECORE_XCB_VSYNC_DRI2
    root = ecore_x_window_root_get(win);
    if (root != _vsync_root) 
      {
@@ -180,10 +151,10 @@ ecore_x_vsync_animator_tick_source_set(Ecore_X_Window win)
 }
 
 /* local functions */
+#ifdef ECORE_XCB_VSYNC_DRI2
 static Eina_Bool 
 _ecore_xcb_dri_link(void) 
 {
-#ifdef ECORE_XCB_DRI
    const char *_drm_libs[] = 
      {
         "libdrm.so.2", 
@@ -192,12 +163,24 @@ _ecore_xcb_dri_link(void)
         "libdrm.so", 
         NULL,
      };
+   const char *_dri_libs[] = 
+     {
+        "libdri2.so.2",
+        "libdri2.so.1",
+        "libdri2.so.0",
+        "libdri2.so",
+        "libGL.so.4",
+        "libGL.so.3",
+        "libGL.so.2",
+        "libGL.so.1",
+        "libGL.so.0",
+        "libGL.so",
+        NULL,
+     };
    int i = 0, fail = 0;
-#endif
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
-#ifdef ECORE_XCB_DRI
 # define SYM(lib, xx) \
    do { \
       sym_## xx = dlsym(lib, #xx); \
@@ -229,53 +212,61 @@ _ecore_xcb_dri_link(void)
           }
      }
    if (!_drm_lib) return EINA_FALSE;
+   for (i = 0; _dri_libs[i]; i++) 
+     {
+        if ((_dri_lib = dlopen(_dri_libs[i], (RTLD_LOCAL | RTLD_LAZY)))) 
+          {
+             fail = 0;
+             SYM(_dri_lib, DRI2QueryExtension);
+             SYM(_dri_lib, DRI2QueryVersion);
+             SYM(_dri_lib, DRI2Connect);
+             SYM(_dri_lib, DRI2Authenticate);
+             if (fail) 
+               {
+                  dlclose(_dri_lib);
+                  _dri_lib = NULL;
+               }
+             else
+               break;
+          }
+     }
+   if (!_dri_lib) 
+     {
+        dlclose(_drm_lib);
+        _drm_lib = NULL;
+        return EINA_FALSE;
+     }
+
    return EINA_TRUE;
-#endif
-   return EINA_FALSE;
 }
 
 static Eina_Bool 
 _ecore_xcb_dri_start(void) 
 {
-#ifdef ECORE_XCB_DRI
-   xcb_dri2_connect_cookie_t cookie;
-   xcb_dri2_connect_reply_t *reply;
-   xcb_dri2_authenticate_cookie_t acookie;
-   xcb_dri2_authenticate_reply_t *areply;
-   char *device = NULL;
-#endif
+   Ecore_X_Display *disp;
+   int _dri2_event = 0, _dri2_error = 0;
+   int _dri2_major = 0, _dri2_minor = 0;
+   char *device = NULL, *driver = NULL;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
-   CHECK_XCB_CONN;
+   disp = ecore_x_display_get();
+   if (!sym_DRI2QueryExtension(disp, &_dri2_event, &_dri2_error))
+     return 0;
+   if (!sym_DRI2QueryVersion(disp, &_dri2_major, &_dri2_minor))
+     return 0;
+   if (_dri2_major < 2) return 0;
+   if (!sym_DRI2Connect(disp, _vsync_root, &driver, &device))
+     return 0;
 
-   if (!_dri2_avail) return EINA_FALSE;
-
-#ifdef ECORE_XCB_DRI
-   cookie = xcb_dri2_connect_unchecked(_ecore_xcb_conn, 
-                                       _vsync_root, XCB_DRI2_DRIVER_TYPE_DRI);
-   reply = xcb_dri2_connect_reply(_ecore_xcb_conn, cookie, NULL);
-   if (!reply) return EINA_FALSE;
-   device = xcb_dri2_connect_device_name(reply);
-   free(reply);
-
-   if (!(_drm_fd = open(device, O_RDWR))) 
-     {
-        _drm_fd = -1;
-        return EINA_FALSE;
-     }
+   _drm_fd = open(device, O_RDWR);
+   if (_drm_fd < 0) return 0;
 
    sym_drmGetMagic(_drm_fd, &_drm_magic);
-
-   acookie = 
-     xcb_dri2_authenticate_unchecked(_ecore_xcb_conn, _vsync_root, _drm_magic);
-   areply = xcb_dri2_authenticate_reply(_ecore_xcb_conn, acookie, NULL);
-   if (!areply) 
+   if (!sym_DRI2Authenticate(disp, _vsync_root, _drm_magic))
      {
         close(_drm_fd);
         _drm_fd = -1;
         return EINA_FALSE;
      }
-   free(areply);
 
    memset(&_drm_evctx, 0, sizeof(_drm_evctx));
    _drm_evctx.version = DRM_EVENT_CONTEXT_VERSION;
@@ -292,9 +283,6 @@ _ecore_xcb_dri_start(void)
      }
 
    return EINA_TRUE;
-#endif
-
-   return EINA_FALSE;
 }
 
 static void 
@@ -315,9 +303,7 @@ _ecore_xcb_dri_shutdown(void)
 static Eina_Bool 
 _ecore_xcb_dri_cb(void *data __UNUSED__, Ecore_Fd_Handler *fdh __UNUSED__) 
 {
-#ifdef ECORE_XCB_DRI
    sym_drmHandleEvent(_drm_fd, &_drm_evctx);
-#endif
    return ECORE_CALLBACK_RENEW;
 }
 
@@ -337,20 +323,16 @@ _ecore_xcb_dri_tick_end(void *data __UNUSED__)
 static void 
 _ecore_xcb_dri_tick_schedule(void) 
 {
-#ifdef ECORE_XCB_DRI
    drmVBlank vbl;
-#endif
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    CHECK_XCB_CONN;
 
-#ifdef ECORE_XCB_DRI
    vbl.request.type = (DRM_VBLANK_RELATIVE | DRM_VBLANK_EVENT);
    vbl.request.sequence = 1;
    vbl.request.signal = 0;
 
    sym_drmWaitVBlank(_drm_fd, &vbl);
-#endif
 }
 
 static void 
@@ -359,3 +341,4 @@ _ecore_xcb_dri_vblank_handler(int fd __UNUSED__, unsigned int frame __UNUSED__, 
    ecore_animator_custom_tick();
    if (_drm_event_busy) _ecore_xcb_dri_tick_schedule();
 }
+#endif
