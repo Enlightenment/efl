@@ -261,20 +261,21 @@ int
 _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *group, const char *parent, Eina_List *group_path)
 {
    Edje *ed;
+   Evas *tev;
+   Eina_List *old_swallows;
    unsigned int n;
    Eina_List *parts = NULL;
-   Eina_List *old_swallows;
    int group_path_started = 0;
-   Evas *tev = evas_object_evas_get(obj);
 
    ed = _edje_fetch(obj);
    if (!ed) return 0;
    if (!file) file = "";
    if (!group) group = "";
    if (((ed->path) && (!strcmp(file, ed->path))) &&
-	(ed->group) && (!strcmp(group, ed->group)))
+       (ed->group) && (!strcmp(group, ed->group)))
      return 1;
 
+   tev = evas_object_evas_get(obj);
    evas_event_freeze(tev);
    old_swallows = _edje_swallows_collect(ed);
 
@@ -282,10 +283,9 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *g
    if (_edje_lua_script_only(ed)) _edje_lua_script_only_shutdown(ed);
    _edje_file_del(ed);
 
-   if (ed->path) eina_stringshare_del(ed->path);
-   if (ed->group) eina_stringshare_del(ed->group);
-   ed->path = eina_stringshare_add(file);
-   ed->group = eina_stringshare_add(group);
+   eina_stringshare_replace(&ed->path, file);
+   eina_stringshare_replace(&ed->group, group);
+
    ed->parent = eina_stringshare_add(parent);
 
    ed->load_error = EDJE_LOAD_ERROR_NONE;
@@ -308,7 +308,7 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *g
      {
 	if (ed->collection->prop.orientation != EDJE_ORIENTATION_AUTO)
           ed->is_rtl = (ed->collection->prop.orientation ==
-                EDJE_ORIENTATION_RTL);
+                        EDJE_ORIENTATION_RTL);
 
 	if (ed->collection->script_only)
 	  {
@@ -387,8 +387,8 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *g
 		  _edje_ref(rp->edje);
 		  rp->part = ep;
 		  parts = eina_list_append(parts, rp);
-		  rp->param1.description = _edje_part_description_find(ed,
-                        rp, "default", 0.0);
+		  rp->param1.description = 
+                    _edje_part_description_find(ed, rp, "default", 0.0);
 		  rp->chosen_description = rp->param1.description;
 		  if (!rp->param1.description)
 		    ERR("no default part description!");
@@ -773,7 +773,7 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *g
 			 }
 		    }
 	       }
-	     
+
 	     if (group_path_started)
 	       {
 		  const char *str;
@@ -781,7 +781,7 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *g
 		  EINA_LIST_FREE(group_path, str)
 		    eina_stringshare_del(str);
 	       }
-	     
+
 	     /* reswallow any swallows that existed before setting the file */
 	     if (old_swallows)
 	       {
