@@ -1839,7 +1839,7 @@ _text_append_idler(void *data)
                   else if (tmp == '>')
                      tag_start = -1;
                }
-             else if (tag_start == -1)
+             if (tag_start == -1)
                {
                   if (tmp == '&')
                      esc_start = prev_pos;
