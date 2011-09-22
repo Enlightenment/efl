@@ -74,7 +74,7 @@ static void efreet_icon_changes_cb(void *data, Ecore_File_Monitor *em,
 int
 efreet_icon_init(void)
 {
-    const char *default_exts[] = {".png", ".xpm", NULL};
+    const char *default_exts[] = {".png", ".xpm", ".svg", NULL};
     int i;
 
     _efreet_icon_log_dom = eina_log_domain_register
