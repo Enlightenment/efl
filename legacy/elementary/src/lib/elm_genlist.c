@@ -212,6 +212,9 @@ static void      _signal_emit_hook(Evas_Object *obj,
                                    const char *source);
 static Eina_Bool _deselect_all_items(Widget_Data *wd);
 static void      _pan_calculate(Evas_Object *obj);
+static void      _pan_max_get(Evas_Object *obj,
+                              Evas_Coord  *x,
+                              Evas_Coord  *y);
 static void      _item_position(Elm_Genlist_Item *it,
                                 Evas_Object      *obj,
                                 Evas_Coord        it_x,
@@ -310,6 +313,7 @@ _event_hook(Evas_Object       *obj,
    if (type != EVAS_CALLBACK_KEY_DOWN) return EINA_FALSE;
    Evas_Event_Key_Down *ev = event_info;
    Widget_Data *wd = elm_widget_data_get(obj);
+   Evas_Coord pan_max_x = 0, pan_max_y = 0;
    if (!wd) return EINA_FALSE;
    if (!wd->items) return EINA_FALSE;
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return EINA_FALSE;
@@ -414,6 +418,11 @@ _event_hook(Evas_Object       *obj,
    else return EINA_FALSE;
 
    ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
+   _pan_max_get(wd->pan_smart, &pan_max_x, &pan_max_y);
+   if (x < 0) x = 0;
+   if (x > pan_max_x) x = pan_max_x;
+   if (y < 0) y = 0;
+   if (y > pan_max_y) y = pan_max_y;
    elm_smart_scroller_child_pos_set(wd->scr, x, y);
    return EINA_TRUE;
 }
