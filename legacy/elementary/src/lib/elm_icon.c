@@ -397,14 +397,16 @@ _sizing_eval(Evas_Object *obj)
 
    _els_smart_icon_size_get(wd->img, &w, &h);
 #ifdef ELM_EFREET
-   if ((wd->freedesktop.use) && (!((w - wd->freedesktop.requested_size) % 16)))
+   if (wd->freedesktop.use && wd->stdicon)
      {
+        int size;
         /* This icon has been set to a freedesktop icon, and the requested
            appears to have a different size than the requested size, so try to
            request another, higher resolution, icon.
 FIXME: Find a better heuristic to determine if there should be
 an icon with a different resolution. */
-        _icon_freedesktop_set(wd, obj, wd->stdicon, w);
+	size = ((w / 16) + 1) * 16;
+	_icon_freedesktop_set(wd, obj, wd->stdicon, size);
      }
 #endif
    _els_smart_icon_scale_up_set(wd->img, wd->scale_up);
@@ -683,11 +685,22 @@ elm_icon_file_set(Evas_Object *obj, const char *file, const char *group)
    ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
    Widget_Data *wd = elm_widget_data_get(obj);
    Eina_Bool ret;
+   const char *tmp_file;
+   const char *tmp_group;
 
    if (!wd) return EINA_FALSE;
    EINA_SAFETY_ON_NULL_RETURN_VAL(file, EINA_FALSE);
-   if (wd->stdicon) eina_stringshare_del(wd->stdicon);
-   wd->stdicon = NULL;
+
+   _els_smart_icon_file_get(wd->img, &tmp_file, &tmp_group);
+   if ((tmp_file == file || (file && tmp_file && !strcmp(tmp_file, file)))
+       && (group == tmp_group || (group && tmp_group && !strcmp(group, tmp_group))))
+     return EINA_TRUE;
+
+   if (!wd->freedesktop.use)
+     {
+        if (wd->stdicon) eina_stringshare_del(wd->stdicon);
+	wd->stdicon = NULL;
+     }
    if (eina_str_has_extension(file, ".edj"))
      ret = _els_smart_icon_file_edje_set(wd->img, file, group);
    else

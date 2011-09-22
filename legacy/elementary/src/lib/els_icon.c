@@ -117,6 +117,7 @@ Eina_Bool
 _els_smart_icon_file_key_set(Evas_Object *obj, const char *file, const char *key)
 {
    Smart_Data *sd;
+   Evas_Coord w, h;
 
    sd = evas_object_smart_data_get(obj);
    if (!sd) return EINA_FALSE;
@@ -126,6 +127,8 @@ _els_smart_icon_file_key_set(Evas_Object *obj, const char *file, const char *key
    sd->preloading = EINA_TRUE;
    sd->show = EINA_TRUE;
    evas_object_hide(sd->obj);
+   _els_smart_icon_size_get(obj, &w, &h);
+   evas_object_image_load_size_set(sd->obj, w, h);
    evas_object_image_preload(sd->obj, EINA_FALSE);
    if (evas_object_image_load_error_get(sd->obj) != EVAS_LOAD_ERROR_NONE)
      {
