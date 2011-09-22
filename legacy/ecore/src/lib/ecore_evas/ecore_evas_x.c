@@ -234,9 +234,9 @@ _ecore_evas_x_gl_window_new(Ecore_Evas *ee, Ecore_X_Window parent, int x, int y,
 static int
 _ecore_evas_x_render(Ecore_Evas *ee)
 {
-   Eina_Rectangle *r;
-   Eina_List *updates, *l;
    int rend = 0;
+   Eina_List *updates = NULL;
+
 #ifdef BUILD_ECORE_EVAS_SOFTWARE_BUFFER
    Eina_List *ll;
    Ecore_Evas *ee2;
@@ -253,25 +253,30 @@ _ecore_evas_x_render(Ecore_Evas *ee)
         if (ee2->func.fn_post_render) ee2->func.fn_post_render(ee2);
      }
 #endif
+
    if (ee->func.fn_pre_render) ee->func.fn_pre_render(ee);
-   if (ee->prop.avoid_damage)
+   updates = evas_render_updates(ee->evas);
+   if (ee->prop.avoid_damage) 
      {
-        updates = evas_render_updates(ee->evas);
-        if (ee->engine.x.using_bg_pixmap)
+        if (ee->engine.x.using_bg_pixmap) 
           {
-             if (updates)
+             if (updates) 
                {
+                  Eina_List *l = NULL;
+                  Eina_Rectangle *r;
+
                   EINA_LIST_FOREACH(updates, l, r)
-                    ecore_x_window_area_clear(ee->prop.window, r->x, r->y, r->w, r->h);
-                  if ((ee->shaped) && (updates))
+                    ecore_x_window_area_clear(ee->prop.window, 
+                                              r->x, r->y, r->w, r->h);
+                  if (ee->shaped) 
                     {
 #ifdef EVAS_FRAME_QUEUING
-                       /* wait until ee->engine.x.mask being updated */
                        evas_sync(ee->evas);
 #endif
-                       ecore_x_window_shape_mask_set(ee->prop.window, ee->engine.x.mask);
+                       ecore_x_window_shape_mask_set(ee->prop.window, 
+                                                     ee->engine.x.mask);
                     }
-                  if ((ee->alpha) && (updates))
+                  if (ee->alpha)
                     {
 #ifdef EVAS_FRAME_QUEUING
                        /* wait until ee->engine.x.mask being updated */
@@ -284,126 +289,118 @@ _ecore_evas_x_render(Ecore_Evas *ee)
                   rend = 1;
                }
           }
-        else
+        else 
           {
-             EINA_LIST_FOREACH(updates, l, r)
+             if (updates) 
                {
-                  Ecore_X_Rectangle rect;
-                  Ecore_X_XRegion  *tmpr;
+                  Eina_List *l = NULL;
+                  Eina_Rectangle *r;
 
-                  if (!ee->engine.x.damages)
-                    ee->engine.x.damages = ecore_x_xregion_new();
-                  tmpr = ecore_x_xregion_new();
-                  if (ee->rotation == 0)
+                  EINA_LIST_FOREACH(updates, l, r)
                     {
-                       rect.x = r->x;
-                       rect.y = r->y;
-                       rect.width = r->w;
-                       rect.height = r->h;
-                    }
-                  else if (ee->rotation == 90)
-                    {
-                       rect.x = r->y;
-                       rect.y = ee->h - r->x - r->w;
-                       rect.width = r->h;
-                       rect.height = r->w;
-                    }
-                  else if (ee->rotation == 180)
-                    {
-                       rect.x = ee->w - r->x - r->w;
-                       rect.y = ee->h - r->y - r->h;
-                       rect.width = r->w;
-                       rect.height = r->h;
-                    }
-                  else if (ee->rotation == 270)
-                    {
-                       rect.x = ee->w - r->y - r->h;
-                       rect.y = r->x;
-                       rect.width = r->h;
-                       rect.height = r->w;
-                    }
-                  ecore_x_xregion_union_rect(tmpr, ee->engine.x.damages, &rect);
-                  ecore_x_xregion_free(ee->engine.x.damages);
-                  ee->engine.x.damages = tmpr;
-               }
-             if (ee->engine.x.damages)
-               {
-                  /* if we have a damage pixmap - we can avoid exposures by
-                   * disabling them just for setting the mask */
-                  ecore_x_event_mask_set(ee->prop.window,
-                                         ECORE_X_EVENT_MASK_KEY_DOWN |
-                                         ECORE_X_EVENT_MASK_KEY_UP |
-                                         ECORE_X_EVENT_MASK_MOUSE_DOWN |
-                                         ECORE_X_EVENT_MASK_MOUSE_UP |
-                                         ECORE_X_EVENT_MASK_MOUSE_IN |
-                                         ECORE_X_EVENT_MASK_MOUSE_OUT |
-                                         ECORE_X_EVENT_MASK_MOUSE_MOVE |
-//                                         ECORE_X_EVENT_MASK_WINDOW_DAMAGE |
-                                         ECORE_X_EVENT_MASK_WINDOW_VISIBILITY |
-                                         ECORE_X_EVENT_MASK_WINDOW_CONFIGURE |
-                                         ECORE_X_EVENT_MASK_WINDOW_FOCUS_CHANGE |
-                                         ECORE_X_EVENT_MASK_WINDOW_PROPERTY |
-                                         ECORE_X_EVENT_MASK_WINDOW_COLORMAP
-                                         );
-                  if ((ee->shaped) && (updates))
-                    ecore_x_window_shape_mask_set(ee->prop.window, 
-                                                  ee->engine.x.mask);
-                  /* and re-enable them again */
-                  ecore_x_event_mask_set(ee->prop.window,
-                                         ECORE_X_EVENT_MASK_KEY_DOWN |
-                                         ECORE_X_EVENT_MASK_KEY_UP |
-                                         ECORE_X_EVENT_MASK_MOUSE_DOWN |
-                                         ECORE_X_EVENT_MASK_MOUSE_UP |
-                                         ECORE_X_EVENT_MASK_MOUSE_IN |
-                                         ECORE_X_EVENT_MASK_MOUSE_OUT |
-                                         ECORE_X_EVENT_MASK_MOUSE_MOVE |
-                                         ECORE_X_EVENT_MASK_WINDOW_DAMAGE |
-                                         ECORE_X_EVENT_MASK_WINDOW_VISIBILITY |
-                                         ECORE_X_EVENT_MASK_WINDOW_CONFIGURE |
-                                         ECORE_X_EVENT_MASK_WINDOW_FOCUS_CHANGE |
-                                         ECORE_X_EVENT_MASK_WINDOW_PROPERTY |
-                                         ECORE_X_EVENT_MASK_WINDOW_COLORMAP
-                                         );
-                  ecore_x_xregion_set(ee->engine.x.damages, ee->engine.x.gc);
+                       Ecore_X_Rectangle rect;
+                       Ecore_X_XRegion *tmpr;
 
-                  /* debug rendering */
-                  /*
-                   XSetForeground(ecore_x_display_get(), ee->engine.x.gc, rand());
-                   XFillRectangle(ecore_x_display_get(), ee->prop.window, ee->engine.x.gc,
-                   0, 0, ee->w, ee->h);
-                   XSync(ecore_x_display_get(), False);
-                   usleep(20000);
-                   XSync(ecore_x_display_get(), False);
-                   */
-
-                  ecore_x_pixmap_paste(ee->engine.x.pmap, ee->prop.window, 
-                                       ee->engine.x.gc, 0, 0, ee->w, ee->h, 
-                                       0, 0);
-                  ecore_x_xregion_free(ee->engine.x.damages);
-                  ee->engine.x.damages = NULL;
-               }
-             if (updates)
-               {
+                       if (!ee->engine.x.damages)
+                         ee->engine.x.damages = ecore_x_xregion_new();
+                       tmpr = ecore_x_xregion_new();
+                       if (ee->rotation == 0)
+                         {
+                            rect.x = r->x;
+                            rect.y = r->y;
+                            rect.width = r->w;
+                            rect.height = r->h;
+                         }
+                       else if (ee->rotation == 90)
+                         {
+                            rect.x = r->y;
+                            rect.y = ee->h - r->x - r->w;
+                            rect.width = r->h;
+                            rect.height = r->w;
+                         }
+                       else if (ee->rotation == 180)
+                         {
+                            rect.x = ee->w - r->x - r->w;
+                            rect.y = ee->h - r->y - r->h;
+                            rect.width = r->w;
+                            rect.height = r->h;
+                         }
+                       else if (ee->rotation == 270)
+                         {
+                            rect.x = ee->w - r->y - r->h;
+                            rect.y = r->x;
+                            rect.width = r->h;
+                            rect.height = r->w;
+                         }
+                       ecore_x_xregion_union_rect(tmpr, ee->engine.x.damages, 
+                                                  &rect);
+                       ecore_x_xregion_free(ee->engine.x.damages);
+                       ee->engine.x.damages = tmpr;
+                    }
+                  if (ee->engine.x.damages) 
+                    {
+                       /* if we have a damage pixmap - we can avoid exposures by
+                        * disabling them just for setting the mask */
+                       ecore_x_event_mask_set(ee->prop.window,
+                                              ECORE_X_EVENT_MASK_KEY_DOWN |
+                                              ECORE_X_EVENT_MASK_KEY_UP |
+                                              ECORE_X_EVENT_MASK_MOUSE_DOWN |
+                                              ECORE_X_EVENT_MASK_MOUSE_UP |
+                                              ECORE_X_EVENT_MASK_MOUSE_IN |
+                                              ECORE_X_EVENT_MASK_MOUSE_OUT |
+                                              ECORE_X_EVENT_MASK_MOUSE_MOVE |
+                                              //                                         ECORE_X_EVENT_MASK_WINDOW_DAMAGE |
+                                              ECORE_X_EVENT_MASK_WINDOW_VISIBILITY |
+                                              ECORE_X_EVENT_MASK_WINDOW_CONFIGURE |
+                                              ECORE_X_EVENT_MASK_WINDOW_FOCUS_CHANGE |
+                                              ECORE_X_EVENT_MASK_WINDOW_PROPERTY |
+                                              ECORE_X_EVENT_MASK_WINDOW_COLORMAP
+                                             );
+                       if (ee->shaped)
+                         ecore_x_window_shape_mask_set(ee->prop.window, 
+                                                       ee->engine.x.mask);
+                       /* and re-enable them again */
+                       ecore_x_event_mask_set(ee->prop.window,
+                                              ECORE_X_EVENT_MASK_KEY_DOWN |
+                                              ECORE_X_EVENT_MASK_KEY_UP |
+                                              ECORE_X_EVENT_MASK_MOUSE_DOWN |
+                                              ECORE_X_EVENT_MASK_MOUSE_UP |
+                                              ECORE_X_EVENT_MASK_MOUSE_IN |
+                                              ECORE_X_EVENT_MASK_MOUSE_OUT |
+                                              ECORE_X_EVENT_MASK_MOUSE_MOVE |
+                                              ECORE_X_EVENT_MASK_WINDOW_DAMAGE |
+                                              ECORE_X_EVENT_MASK_WINDOW_VISIBILITY |
+                                              ECORE_X_EVENT_MASK_WINDOW_CONFIGURE |
+                                              ECORE_X_EVENT_MASK_WINDOW_FOCUS_CHANGE |
+                                              ECORE_X_EVENT_MASK_WINDOW_PROPERTY |
+                                              ECORE_X_EVENT_MASK_WINDOW_COLORMAP
+                                             );
+                       ecore_x_xregion_set(ee->engine.x.damages, ee->engine.x.gc);
+                       ecore_x_pixmap_paste(ee->engine.x.pmap, ee->prop.window, 
+                                            ee->engine.x.gc, 0, 0, ee->w, ee->h, 
+                                            0, 0);
+                       ecore_x_xregion_free(ee->engine.x.damages);
+                       ee->engine.x.damages = NULL;
+                    }
                   evas_render_updates_free(updates);
                   _ecore_evas_idle_timeout_update(ee);
                   rend = 1;
                }
           }
      }
-   else if (((ee->visible) && (ee->draw_ok)) ||
-            ((ee->should_be_visible) && (ee->prop.fullscreen)) ||
-            ((ee->should_be_visible) && (ee->prop.override)))
+   else if (((ee->visible) && (ee->draw_ok)) || 
+            ((ee->should_be_visible) && (ee->prop.fullscreen)) || 
+            ((ee->should_be_visible) && (ee->prop.override))) 
      {
-        updates = evas_render_updates(ee->evas);
-        if (updates)
+        if (updates) 
           {
-             if (ee->shaped)
+             if (ee->shaped) 
                {
 #ifdef EVAS_FRAME_QUEUING
-                  /* wait until ee->engine.x.mask being updated */
                   evas_sync(ee->evas);
 #endif
-                  ecore_x_window_shape_mask_set(ee->prop.window, ee->engine.x.mask);
+                  ecore_x_window_shape_mask_set(ee->prop.window, 
+                                                ee->engine.x.mask);
                }
              if (ee->alpha)
                {
@@ -439,6 +436,7 @@ _ecore_evas_x_render(Ecore_Evas *ee)
           }
      }
  */
+
    return rend;
 }
 
