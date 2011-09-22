@@ -2873,7 +2873,6 @@ ecore_evas_software_x11_new(const char *disp_name, Ecore_X_Window parent,
    if (einfo)
      {
         Ecore_X_Screen *screen;
-        Ecore_X_Window_Attributes at;
 
         /* FIXME: this is inefficient as its 1 or more round trips */
         screen = ecore_x_default_screen_get();
@@ -2934,6 +2933,8 @@ ecore_evas_software_x11_new(const char *disp_name, Ecore_X_Window parent,
 
         if (argb)
           {
+             Ecore_X_Window_Attributes at;
+
              ecore_x_window_attributes_get(ee->prop.window, &at);
              einfo->info.visual = at.visual;
              einfo->info.colormap = at.colormap;
