@@ -2024,13 +2024,6 @@ _smart_event_mouse_up(void *data, Evas *e, Evas_Object *obj __UNUSED__, void *ev
                                    }
                               }
                          }
-                       if (sd->down.hold_animator)
-                         {
-                            ecore_animator_del(sd->down.hold_animator);
-                            sd->down.hold_animator = NULL;
-                            if (sd->child.resized)
-                              _elm_smart_scroller_wanted_region_set(sd->smart_obj);
-                         }
                     }
                   else
                     {
@@ -2087,13 +2080,13 @@ _smart_event_mouse_up(void *data, Evas *e, Evas_Object *obj __UNUSED__, void *ev
                             if (pgy != y) _smart_scrollto_y(sd, _elm_config->page_scroll_friction, pgy);
                          }
                     }
-                  if (sd->down.hold_animator)
-                    {
-                       ecore_animator_del(sd->down.hold_animator);
-                       sd->down.hold_animator = NULL;
-                       if (sd->child.resized)
-                         _elm_smart_scroller_wanted_region_set(sd->smart_obj);
-                    }
+               }
+             if (sd->down.hold_animator)
+               {
+                  ecore_animator_del(sd->down.hold_animator);
+                  sd->down.hold_animator = NULL;
+                  if (sd->child.resized)
+                    _elm_smart_scroller_wanted_region_set(sd->smart_obj);
                }
              if (sd->down.scroll)
                {
