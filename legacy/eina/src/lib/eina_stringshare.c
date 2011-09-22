@@ -54,7 +54,6 @@ void *alloca (size_t);
 #include "eina_config.h"
 #include "eina_private.h"
 #include "eina_hash.h"
-#include "eina_rbtree.h"
 #include "eina_error.h"
 #include "eina_log.h"
 #include "eina_stringshare.h"
