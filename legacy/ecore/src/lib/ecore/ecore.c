@@ -87,6 +87,7 @@ static Eina_Condition _thread_feedback_cond;
 static Eina_Lock _thread_id_lock;
 static int _thread_id = -1;
 static int _thread_id_max = 0;
+static int _thread_id_update = 0;
 
 Eina_Lock _ecore_main_loop_lock;
 int _ecore_main_lock_count;
@@ -361,9 +362,9 @@ ecore_thread_main_loop_begin(void)
    eina_condition_new(&order->c, &order->m);
    order->suspend = EINA_TRUE;
 
-   eina_lock_take(&order->m);
    _ecore_main_loop_thread_safe_call(order);
 
+   eina_lock_take(&order->m);
    while (order->current_id != _thread_id)
      eina_condition_wait(&order->c);
    eina_lock_release(&order->m);
@@ -400,6 +401,7 @@ ecore_thread_main_loop_end(void)
    current_id = _thread_id;
 
    eina_lock_take(&_thread_mutex);
+   _thread_id_update = _thread_id;
    eina_condition_broadcast(&_thread_cond);
    eina_lock_release(&_thread_mutex);
 
@@ -675,11 +677,13 @@ _thread_callback(void *data __UNUSED__,
           {
              eina_lock_take(&_thread_mutex);
 
+	     eina_lock_take(&call->m);
 	     _thread_id = call->current_id;
-
              eina_condition_broadcast(&call->c);
+	     eina_lock_release(&call->m);
 
-             eina_condition_wait(&_thread_cond);
+	     while (_thread_id_update != _thread_id)
+	       eina_condition_wait(&_thread_cond);
              eina_lock_release(&_thread_mutex);
 
 	     _thread_id = -1;
