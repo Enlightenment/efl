@@ -20,7 +20,7 @@ struct _Widget_Data
    Eina_Inlist      *items, *blocks;
    Eina_List        *group_items;
    Pan              *pan;
-   Evas_Coord        pan_x, pan_y, old_pan_y, w, h, minw, minh, realminw, prev_viewport_w;
+   Evas_Coord        pan_x, pan_y, reorder_old_pan_y, w, h, minw, minh, realminw, prev_viewport_w;
    Ecore_Job        *calc_job, *update_job;
    Ecore_Idle_Enterer *queue_idle_enterer;
    Ecore_Idler        *must_recalc_idler;
@@ -2736,11 +2736,11 @@ _pan_calculate(Evas_Object *obj)
       _group_items_recalc(sd->wd);
    if ((sd->wd->reorder_mode) && (sd->wd->reorder_it))
      {
-        if (sd->wd->pan_y != sd->wd->old_pan_y)
+        if (sd->wd->pan_y != sd->wd->reorder_old_pan_y)
            sd->wd->reorder_pan_move = EINA_TRUE;
         else sd->wd->reorder_pan_move = EINA_FALSE;
         evas_object_raise(sd->wd->reorder_it->base.view);
-        sd->wd->old_pan_y = sd->wd->pan_y;
+        sd->wd->reorder_old_pan_y = sd->wd->pan_y;
         sd->wd->start_time = ecore_loop_time_get();
      }
    _item_auto_scroll(sd->wd);
@@ -3800,7 +3800,7 @@ elm_genlist_clear(Evas_Object *obj)
    wd->show_item = NULL;
    wd->pan_x = 0;
    wd->pan_y = 0;
-   wd->old_pan_y = 0;
+   wd->reorder_old_pan_y = 0;
    wd->minw = 0;
    wd->minh = 0;
    if (wd->pan_smart)
