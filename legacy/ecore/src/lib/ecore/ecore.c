@@ -65,6 +65,8 @@ struct _Ecore_Safe_Call
    Eina_Lock m;
    Eina_Condition c;
 
+   int current_id;
+
    Eina_Bool sync : 1;
    Eina_Bool suspend : 1;
 };
@@ -81,6 +83,10 @@ static Eina_Lock _thread_mutex;
 static Eina_Condition _thread_cond;
 static Eina_Lock _thread_feedback_mutex;
 static Eina_Condition _thread_feedback_cond;
+
+static Eina_Lock _thread_id_lock;
+static int _thread_id = -1;
+static int _thread_id_max = 0;
 
 Eina_Lock _ecore_main_loop_lock;
 int _ecore_main_lock_count;
@@ -164,6 +170,7 @@ ecore_init(void)
    eina_lock_new(&_thread_feedback_mutex);
    eina_condition_new(&_thread_feedback_cond, &_thread_feedback_mutex);
    _thread_call = ecore_pipe_add(_thread_callback, NULL);
+   eina_lock_new(&_thread_id_lock);
 
    eina_lock_new(&_ecore_main_loop_lock);
 
@@ -216,6 +223,7 @@ ecore_shutdown(void)
    eina_lock_free(&_thread_mutex);
    eina_condition_free(&_thread_feedback_cond);
    eina_lock_free(&_thread_feedback_mutex);
+   eina_lock_free(&_thread_id_lock);
 
    if (_ecore_fps_debug) _ecore_fps_debug_shutdown();
    _ecore_poller_shutdown();
@@ -340,14 +348,24 @@ ecore_thread_main_loop_begin(void)
    order = malloc(sizeof (Ecore_Safe_Call));
    if (!order) return -1;
 
+   eina_lock_take(&_thread_id_lock);
+   order->current_id = ++_thread_id_max;
+   if (order->current_id < 0)
+     {
+        _thread_id_max = 0;
+	order->current_id = ++_thread_id_max;
+     }
+   eina_lock_release(&_thread_id_lock);
+
    eina_lock_new(&order->m);
    eina_condition_new(&order->c, &order->m);
    order->suspend = EINA_TRUE;
 
+   eina_lock_take(&order->m);
    _ecore_main_loop_thread_safe_call(order);
 
-   eina_lock_take(&order->m);
-   eina_condition_wait(&order->c);
+   while (order->current_id != _thread_id)
+     eina_condition_wait(&order->c);
    eina_lock_release(&order->m);
 
    eina_main_loop_define();
@@ -360,6 +378,8 @@ ecore_thread_main_loop_begin(void)
 EAPI int
 ecore_thread_main_loop_end(void)
 {
+   int current_id;
+
    if (_thread_loop == 0)
      {
         ERR("the main loop is not locked ! No matching call to ecore_thread_main_loop_begin().");
@@ -377,9 +397,15 @@ ecore_thread_main_loop_end(void)
    if (_thread_loop > 0)
      return _thread_loop;
 
-   eina_lock_take(&_thread_feedback_mutex);
+   current_id = _thread_id;
+
+   eina_lock_take(&_thread_mutex);
    eina_condition_broadcast(&_thread_cond);
-   eina_condition_wait(&_thread_feedback_cond);
+   eina_lock_release(&_thread_mutex);
+
+   eina_lock_take(&_thread_feedback_mutex);
+   while (current_id == _thread_id)
+     eina_condition_wait(&_thread_feedback_cond);
    eina_lock_release(&_thread_feedback_mutex);
 
    return 0;
@@ -649,14 +675,20 @@ _thread_callback(void *data __UNUSED__,
           {
              eina_lock_take(&_thread_mutex);
 
+	     _thread_id = call->current_id;
+
              eina_condition_broadcast(&call->c);
 
              eina_condition_wait(&_thread_cond);
              eina_lock_release(&_thread_mutex);
 
+	     _thread_id = -1;
+
              eina_main_loop_define();
 
+	     eina_lock_take(&_thread_feedback_mutex);
 	     eina_condition_broadcast(&_thread_feedback_cond);
+	     eina_lock_release(&_thread_feedback_mutex);
 
              _thread_safe_cleanup(call);
              free(call);
