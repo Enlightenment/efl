@@ -774,8 +774,18 @@ EAPI Eina_Inlist *eina_inlist_sort(Eina_Inlist *head, Eina_Compare_Cb func);
 
 /* This two macros are helpers for the _FOREACH ones, don't use them */
 #define _EINA_INLIST_OFFSET(ref)         ((char *)&(ref)->__in_list - (char *)(ref))
+
+#if !defined(__cplusplus)
 #define _EINA_INLIST_CONTAINER(ref, ptr) (void *)((char *)(ptr) - \
                                                   _EINA_INLIST_OFFSET(ref))
+#else
+/*
+ * In C++ we can't assign a "type*" pointer to void* so we rely on GCC's typeof
+ * operator.
+ */
+#define _EINA_INLIST_CONTAINER(ref, ptr) (typeof(ref))((char *)(ptr) - \
+                                                  _EINA_INLIST_OFFSET(ref))
+#endif
 
 #define EINA_INLIST_FOREACH(list, l)                                     \
   for (l = NULL, l = (list ? _EINA_INLIST_CONTAINER(l, list) : NULL); l; \
