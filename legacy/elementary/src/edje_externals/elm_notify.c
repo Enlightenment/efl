@@ -36,7 +36,7 @@ static Elm_Notify_Orient _orient_get(const char *orient)
    assert(sizeof(orients)/sizeof(orients[0]) ==
 	  ELM_NOTIFY_ORIENT_LAST + 1);
 
-   for (i = 0; i < sizeof(orients); i++)
+   for (i = 0; i < ELM_NOTIFY_ORIENT_LAST; i++)
      if (!strcmp(orient, orients[i])) return i;
 
    return ELM_NOTIFY_ORIENT_LAST;

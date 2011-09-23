@@ -24,7 +24,7 @@ _zoom_mode_get(const char *map_src)
    assert(sizeof(zoom_choices)/sizeof(zoom_choices[0]) ==
 	  ELM_MAP_ZOOM_MODE_LAST + 1);
 
-   for (i = 0; i < sizeof(zoom_choices); i++)
+   for (i = 0; i < ELM_MAP_ZOOM_MODE_LAST; i++)
      if (!strcmp(map_src, zoom_choices[i])) return i;
 
    return ELM_MAP_ZOOM_MODE_LAST;

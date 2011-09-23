@@ -17,7 +17,7 @@ _anim_setting_get(const char *anim_str)
 
    assert(sizeof(choices)/sizeof(choices[0]) == ELM_THUMB_ANIMATION_LAST + 1);
 
-   for (i = 0; i < sizeof(choices); i++)
+   for (i = 0; i < ELM_THUMB_ANIMATION_LAST; i++)
      {
 	if (!strcmp(anim_str, choices[i]))
 	  return i;

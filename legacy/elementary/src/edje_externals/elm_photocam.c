@@ -22,7 +22,7 @@ _zoom_mode_setting_get(const char *zoom_mode_str)
 
    assert(sizeof(choices)/sizeof(choices[0]) == ELM_PHOTOCAM_ZOOM_MODE_LAST + 1);
 
-   for (i = 0; i < sizeof(choices); i++)
+   for (i = 0; i < ELM_PHOTOCAM_ZOOM_MODE_LAST; i++)
      {
 	if (!strcmp(zoom_mode_str, choices[i]))
 	  return i;

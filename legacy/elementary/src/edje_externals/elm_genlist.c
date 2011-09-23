@@ -31,7 +31,7 @@ _list_horizontal_setting_get(const char *horizontal_str)
 
    assert(sizeof(list_horizontal_choices)/sizeof(list_horizontal_choices[0]) == ELM_LIST_LAST + 1);
 
-   for (i = 0; i < sizeof(list_horizontal_choices); i++)
+   for (i = 0; i < ELM_LIST_LAST; i++)
      {
 	if (!strcmp(horizontal_str, list_horizontal_choices[i]))
 	  return i;

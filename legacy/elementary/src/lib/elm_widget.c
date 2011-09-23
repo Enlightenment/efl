@@ -1790,7 +1790,7 @@ elm_widget_signal_callback_del(Evas_Object   *obj,
              break;
           }
      }
-   sd->callback_del_func(obj, emission, source, _edje_signal_callback, esd);
+   sd->callback_del_func(obj, emission, source, _edje_signal_callback, data);
    return data;
 }
 
