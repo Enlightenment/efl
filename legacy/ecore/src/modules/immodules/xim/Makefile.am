@@ -13,7 +13,6 @@ AM_CPPFLAGS = \
 -DPACKAGE_LIB_DIR=\"$(libdir)\" \
 -DPACKAGE_DATA_DIR=\"$(datadir)/$(PACKAGE)\" \
 @x_cflags@ \
-@XCB_CFLAGS@ \
 @EVAS_CFLAGS@ \
 @EINA_CFLAGS@
 
