@@ -18,7 +18,7 @@ AM_CPPFLAGS = \
   @XCB_XTEST_CFLAGS@ \
   @XCB_XINPUT_CFLAGS@ \
   @XCB_CURSOR_CFLAGS@ \
-  @XCB_CFLAGS@ \
+  @ECORE_XCB_CFLAGS@ \
   @PIXMAN_CFLAGS@ \
   -I$(top_srcdir)/src/lib/ecore \
   -I$(top_srcdir)/src/lib/ecore_x \
@@ -84,7 +84,7 @@ libecore_x_xcb_la_LIBADD = \
   @XCB_XTEST_LIBS@ \
   @XCB_XINPUT_LIBS@ \
   @XCB_CURSOR_LIBS@ \
-  @XCB_LIBS@ \
+  @ECORE_XCB_LIBS@ \
   @PIXMAN_LIBS@ \
   $(top_builddir)/src/lib/ecore/libecore.la \
   $(top_builddir)/src/lib/ecore_input/libecore_input.la \
