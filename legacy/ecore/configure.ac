@@ -786,12 +786,12 @@ if test "x$want_ecore_x_xcb" = "xyes" ; then
     fi
   fi
 
-  PKG_CHECK_MODULES(XCB, x11-xcb xcb xcb-shm xcb-event xcb-icccm >= 0.3.8 xcb-util >= 0.3.8 xcb-image xcb-keysyms,
+  PKG_CHECK_MODULES(ECORE_XCB, x11-xcb xcb xcb-shm xcb-event xcb-icccm >= 0.3.8 xcb-util >= 0.3.8 xcb-image xcb-keysyms >= 0.3.8,
     [ have_ecore_x_xcb="yes"
       requirements_ecore_x="x11-xcb xcb xcb-shm xcb-event xcb-icccm xcb-util xcb-image xcb-keysyms ${requirements_ecore_x}"
     ],
     [ 
-	PKG_CHECK_MODULES(XCB, x11-xcb xcb xcb-event xcb-shm xcb-icccm xcb-image xcb-keysyms, 
+	PKG_CHECK_MODULES(ECORE_XCB, x11-xcb xcb xcb-event xcb-shm xcb-icccm xcb-image xcb-keysyms, 
 	  [ have_ecore_x_xcb="yes"
 	    AC_DEFINE(OLD_XCB_VERSION, 1, [xcb version])
 	    requirements_ecore_x="x11-xcb xcb xcb-event xcb-shm xcb-icccm xcb-image xcb-keysyms ${requirements_ecore_x}" ],
