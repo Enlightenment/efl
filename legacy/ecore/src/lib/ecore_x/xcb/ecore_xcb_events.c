@@ -288,9 +288,9 @@ _ecore_xcb_events_handle(xcb_generic_event_t *ev)
         WRN("\tMinor Code: %d", err->minor_code);
         WRN("\tRequest: %s", xcb_event_get_request_label(err->major_code));
         WRN("\tError: %s", xcb_event_get_error_label(err->error_code));
-        if (err->error_code == XCB_EVENT_ERROR_BAD_VALUE)
+        if (err->error_code == 2) // bad value
           WRN("\tValue: %d", ((xcb_value_error_t *)err)->bad_value);
-        else if (err->error_code == XCB_EVENT_ERROR_BAD_MATCH) 
+        else if (err->error_code == 8) // bad match
           WRN("\tMatch: %d", ((xcb_match_error_t *)err)->bad_value);
 
         if (err->major_code == XCB_SEND_EVENT) 
