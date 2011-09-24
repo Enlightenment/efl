@@ -983,8 +983,8 @@ if test "x$want_ecore_x_xcb" = "xyes" ; then
 
     AC_DEFINE(HAVE_ECORE_X_XCB, 1, [Defined to 1 if XCB is enabled.])
 
-    x_cflags=$XCB_CFLAGS
-    x_libs=$XCB_LIBS
+    x_cflags=$ECORE_XCB_CFLAGS
+    x_libs=$ECORE_XCB_LIBS
     have_x="yes"
 
     have_ecore_x_xcb_define="-DHAVE_ECORE_X_XCB"
