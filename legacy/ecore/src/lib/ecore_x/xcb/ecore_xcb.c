@@ -1393,7 +1393,7 @@ _ecore_xcb_fd_handle(void *data, Ecore_Fd_Handler *hdlr __UNUSED__)
 {
    xcb_connection_t *conn;
    xcb_generic_event_t *ev = NULL;
-   xcb_generic_event_t *ev_mouse = NULL;
+//   xcb_generic_event_t *ev_mouse = NULL;
 
    conn = (xcb_connection_t *)data;
 
@@ -1427,25 +1427,25 @@ _ecore_xcb_fd_handle(void *data, Ecore_Fd_Handler *hdlr __UNUSED__)
               * 
               * NB: I've tested this extensively and have found no ill effects, 
               * but if someone notices something, please report it */
-             if ((ev->response_type & ~0x80) == XCB_MOTION_NOTIFY) 
-               {
-                  if (ev_mouse) free(ev_mouse);
-                  ev_mouse = ev;
-               }
-             else 
-               {
+             /* if ((ev->response_type & ~0x80) == XCB_MOTION_NOTIFY)  */
+             /*   { */
+             /*      if (ev_mouse) free(ev_mouse); */
+             /*      ev_mouse = ev; */
+             /*   } */
+             /* else  */
+             /*   { */
                   /* FIXME: Filter event for XIM */
                   _ecore_xcb_events_handle(ev);
                   free(ev);
-               }
+               /* } */
           }
      }
 
-   if (ev_mouse) 
-     {
-        _ecore_xcb_events_handle(ev_mouse);
-        free(ev_mouse);
-     }
+   /* if (ev_mouse)  */
+   /*   { */
+   /*      _ecore_xcb_events_handle(ev_mouse); */
+   /*      free(ev_mouse); */
+   /*   } */
 
    return ECORE_CALLBACK_RENEW;
 }
@@ -1475,12 +1475,12 @@ _ecore_xcb_fd_handle_buff(void *data, Ecore_Fd_Handler *hdlr __UNUSED__)
          * 
          * NB: I've tested this extensively and have found no ill effects, 
          * but if someone notices something, please report it */
-        else if ((ev->response_type & ~0x80) == XCB_MOTION_NOTIFY) 
-          {
-             free(ev);
-             return ECORE_CALLBACK_CANCEL;
-          }
-        else 
+        /* else if ((ev->response_type & ~0x80) == XCB_MOTION_NOTIFY)  */
+        /*   { */
+        /*      free(ev); */
+        /*      return ECORE_CALLBACK_CANCEL; */
+        /*   } */
+        /* else */ 
           {
              _ecore_xcb_event_buffered = ev;
              return ECORE_CALLBACK_RENEW;
