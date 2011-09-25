@@ -1891,10 +1891,13 @@ _text_append_idler(void *data)
 static void
 _add_chars_till_limit(Evas_Object *obj, char **text, int can_add, Length_Unit unit)
 {
-   int i = 0, unit_size;
-   int current_len = strlen(*text);
-   char *new_text = *text;
+   int i = 0, current_len = 0;
+   char *new_text;
+
+   if (!*text) return;
    if (unit >= LENGTH_UNIT_LAST) return;
+   new_text = *text;
+   current_len = strlen(*text);
    while (*new_text)
      {
         if (*new_text == '<')
@@ -1908,7 +1911,8 @@ _add_chars_till_limit(Evas_Object *obj, char **text, int can_add, Length_Unit un
           }
         else
           {
-             int idx = 0;
+             int idx = 0, unit_size = 0;
+             char *markup, *utfstr;
              if (*new_text == '&')
                {
                   while (*(new_text + idx) != ';')
@@ -1917,15 +1921,21 @@ _add_chars_till_limit(Evas_Object *obj, char **text, int can_add, Length_Unit un
                        if (!*(new_text + idx)) break;
                     }
                }
-             char *markup;
              idx = evas_string_char_next_get(new_text, idx, NULL);
              markup = malloc(idx + 1);
+             if (!markup) return;
              strncpy(markup, new_text, idx);
              markup[idx] = 0;
-             if (unit == LENGTH_UNIT_BYTE)
-               unit_size = strlen(elm_entry_markup_to_utf8(markup));
-             else if (unit == LENGTH_UNIT_CHAR)
-               unit_size = evas_string_char_len_get(elm_entry_markup_to_utf8(markup));
+             utfstr = elm_entry_markup_to_utf8(markup);
+             if (utfstr)
+               {
+                  if (unit == LENGTH_UNIT_BYTE)
+                    unit_size = strlen(utfstr);
+                  else if (unit == LENGTH_UNIT_CHAR)
+                    unit_size = evas_string_char_len_get(utfstr);
+                  free(utfstr);
+                  utfstr = NULL;
+               }
              if (markup)
                {
                   free(markup);
