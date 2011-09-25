@@ -1314,7 +1314,6 @@ _getbase(Evas_Object *obj)
                }
           }
      }
-   return "base";
 }
 
 static void
