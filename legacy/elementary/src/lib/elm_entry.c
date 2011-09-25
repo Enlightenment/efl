@@ -1923,21 +1923,20 @@ _add_chars_till_limit(Evas_Object *obj, char **text, int can_add, Length_Unit un
                }
              idx = evas_string_char_next_get(new_text, idx, NULL);
              markup = malloc(idx + 1);
-             if (!markup) return;
-             strncpy(markup, new_text, idx);
-             markup[idx] = 0;
-             utfstr = elm_entry_markup_to_utf8(markup);
-             if (utfstr)
-               {
-                  if (unit == LENGTH_UNIT_BYTE)
-                    unit_size = strlen(utfstr);
-                  else if (unit == LENGTH_UNIT_CHAR)
-                    unit_size = evas_string_char_len_get(utfstr);
-                  free(utfstr);
-                  utfstr = NULL;
-               }
              if (markup)
                {
+                  strncpy(markup, new_text, idx);
+                  markup[idx] = 0;
+                  utfstr = elm_entry_markup_to_utf8(markup);
+                  if (utfstr)
+                    {
+                       if (unit == LENGTH_UNIT_BYTE)
+                         unit_size = strlen(utfstr);
+                       else if (unit == LENGTH_UNIT_CHAR)
+                         unit_size = evas_string_char_len_get(utfstr);
+                       free(utfstr);
+                       utfstr = NULL;
+                    }
                   free(markup);
                   markup = NULL;
                }
