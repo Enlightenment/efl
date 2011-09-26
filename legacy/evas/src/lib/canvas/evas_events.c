@@ -248,16 +248,19 @@ evas_event_feed_mouse_down(Evas *e, int b, Evas_Button_Flags flags, unsigned int
    copy = evas_event_list_copy(e->pointer.object.in);
    EINA_LIST_FOREACH(copy, l, obj)
      {
-        if (obj->delete_me) continue;
-
-        ev.canvas.x = e->pointer.x;
-        ev.canvas.y = e->pointer.y;
-        _evas_event_havemap_adjust(obj, &ev.canvas.x, &ev.canvas.y, obj->mouse_grabbed);
         if (obj->pointer_mode != EVAS_OBJECT_POINTER_MODE_NOGRAB)
           {
              obj->mouse_grabbed++;
              e->pointer.mouse_grabbed++;
           }
+     }
+   EINA_LIST_FOREACH(copy, l, obj)
+     {
+        if (obj->delete_me) continue;
+
+        ev.canvas.x = e->pointer.x;
+        ev.canvas.y = e->pointer.y;
+        _evas_event_havemap_adjust(obj, &ev.canvas.x, &ev.canvas.y, obj->mouse_grabbed);
 
         if (e->events_frozen <= 0)
           evas_object_event_callback_call(obj, EVAS_CALLBACK_MOUSE_DOWN, &ev);
@@ -579,8 +582,8 @@ evas_event_feed_mouse_move(Evas *e, int x, int y, unsigned int timestamp, const 
                   ev.cur.canvas.x = e->pointer.x;
                   ev.cur.canvas.y = e->pointer.y;
                   _evas_event_havemap_adjust(obj, &ev.cur.canvas.x, &ev.cur.canvas.y, obj->mouse_grabbed);
-                  if ((obj->cur.visible) &&
-                      (evas_object_clippers_is_visible(obj)) &&
+                  if (((evas_object_clippers_is_visible(obj)) ||
+                       (obj->mouse_grabbed)) &&
                       (!evas_event_passes_through(obj)) &&
                       (!obj->clip.clipees))
                     {
@@ -698,8 +701,8 @@ evas_event_feed_mouse_move(Evas *e, int x, int y, unsigned int timestamp, const 
              // FIXME: i don't think we need this
              //	     evas_object_clip_recalc(obj);
              if (evas_object_is_in_output_rect(obj, x, y, 1, 1) &&
-                 (obj->cur.visible) &&
-                 (evas_object_clippers_is_visible(obj)) &&
+                 ((evas_object_clippers_is_visible(obj)) ||
+                     (obj->mouse_grabbed)) &&
                  (eina_list_data_find(ins, obj)) &&
                  (!evas_event_passes_through(obj)) &&
                  (!obj->clip.clipees) &&
@@ -933,6 +936,14 @@ evas_event_feed_multi_down(Evas *e,
    copy = evas_event_list_copy(e->pointer.object.in);
    EINA_LIST_FOREACH(copy, l, obj)
      {
+        if (obj->pointer_mode != EVAS_OBJECT_POINTER_MODE_NOGRAB)
+          {
+             obj->mouse_grabbed++;
+             e->pointer.mouse_grabbed++;
+          }
+     }
+   EINA_LIST_FOREACH(copy, l, obj)
+     {
         ev.canvas.x = x;
         ev.canvas.y = y;
         ev.canvas.xsub = fx;
@@ -942,11 +953,6 @@ evas_event_feed_multi_down(Evas *e,
           ev.canvas.xsub = ev.canvas.x; // fixme - lost precision
         if (y != ev.canvas.y)
           ev.canvas.ysub = ev.canvas.y; // fixme - lost precision
-        if (obj->pointer_mode != EVAS_OBJECT_POINTER_MODE_NOGRAB)
-          {
-             obj->mouse_grabbed++;
-             e->pointer.mouse_grabbed++;
-          }
         if (e->events_frozen <= 0)
           evas_object_event_callback_call(obj, EVAS_CALLBACK_MULTI_DOWN, &ev);
         if (e->delete_me) break;
@@ -1075,8 +1081,8 @@ evas_event_feed_multi_move(Evas *e,
         copy = evas_event_list_copy(e->pointer.object.in);
         EINA_LIST_FOREACH(copy, l, obj)
           {
-             if ((obj->cur.visible) &&
-                 (evas_object_clippers_is_visible(obj)) &&
+             if (((evas_object_clippers_is_visible(obj)) ||
+                  (obj->mouse_grabbed)) &&
                  (!evas_event_passes_through(obj)) &&
                  (!obj->clip.clipees))
                {
@@ -1134,8 +1140,8 @@ evas_event_feed_multi_move(Evas *e,
              // FIXME: i don't think we need this
              //	     evas_object_clip_recalc(obj);
              if (evas_object_is_in_output_rect(obj, x, y, 1, 1) &&
-                 (obj->cur.visible) &&
-                 (evas_object_clippers_is_visible(obj)) &&
+                 ((evas_object_clippers_is_visible(obj)) ||
+                     (obj->mouse_grabbed)) &&
                  (eina_list_data_find(ins, obj)) &&
                  (!evas_event_passes_through(obj)) &&
                  (!obj->clip.clipees) &&

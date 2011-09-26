@@ -904,19 +904,22 @@ evas_object_hide(Evas_Object *obj)
              if ((!obj->smart.smart) ||
                  ((obj->cur.map) && (obj->cur.map->count == 4) && (obj->cur.usemap)))
                {
-                  if (evas_object_is_in_output_rect(obj,
-                                                    obj->layer->evas->pointer.x,
-                                                    obj->layer->evas->pointer.y, 1, 1))
-                    evas_event_feed_mouse_move(obj->layer->evas,
-                                               obj->layer->evas->pointer.x,
-                                               obj->layer->evas->pointer.y,
-                                               obj->layer->evas->last_timestamp,
-                                               NULL);
-                  if (obj->delete_me) return;
+                  if (!obj->mouse_grabbed)
+                    {
+                       if (evas_object_is_in_output_rect(obj,
+                                                         obj->layer->evas->pointer.x,
+                                                         obj->layer->evas->pointer.y, 1, 1))
+                          evas_event_feed_mouse_move(obj->layer->evas,
+                                                     obj->layer->evas->pointer.x,
+                                                     obj->layer->evas->pointer.y,
+                                                     obj->layer->evas->last_timestamp,
+                                                     NULL);
+                    }
 /* this is at odds to handling events when an obj is moved out of the mouse
  * ore resized out or clipped out. if mouse is grabbed - regardless of
  * visibility, mouse move events should keep happening and mouse up.
  * for better or worse it's at least consistent.
+                  if (obj->delete_me) return;
                   if (obj->mouse_grabbed > 0)
                     obj->layer->evas->pointer.mouse_grabbed -= obj->mouse_grabbed;
                   if ((obj->mouse_in) || (obj->mouse_grabbed > 0))
