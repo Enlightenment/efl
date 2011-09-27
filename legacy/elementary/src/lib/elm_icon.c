@@ -479,7 +479,11 @@ _icon_standard_set(Widget_Data *wd, Evas_Object *obj, const char *name)
 }
 
 static Eina_Bool
+#ifdef ELM_EFREET
 _icon_file_set(Widget_Data *wd, Evas_Object *obj, const char *path)
+#else
+_icon_file_set(Widget_Data *wd __UNUSED__, Evas_Object *obj, const char *path)
+#endif
 {
    if (elm_icon_file_set(obj, path, NULL))
      {
@@ -493,7 +497,11 @@ _icon_file_set(Widget_Data *wd, Evas_Object *obj, const char *path)
 }
 
 static Eina_Bool
+#ifdef ELM_EFREET
 _icon_freedesktop_set(Widget_Data *wd, Evas_Object *obj, const char *name, int size)
+#else
+_icon_freedesktop_set(Widget_Data *wd __UNUSED__, Evas_Object *obj __UNUSED__, const char *name __UNUSED__, int size __UNUSED__)
+#endif
 {
 #ifdef ELM_EFREET
    const char *path;
@@ -696,11 +704,13 @@ elm_icon_file_set(Evas_Object *obj, const char *file, const char *group)
        && (group == tmp_group || (group && tmp_group && !strcmp(group, tmp_group))))
      return EINA_TRUE;
 
+#ifdef ELM_EFREET
    if (!wd->freedesktop.use)
      {
         if (wd->stdicon) eina_stringshare_del(wd->stdicon);
-	wd->stdicon = NULL;
+        wd->stdicon = NULL;
      }
+#endif
    if (eina_str_has_extension(file, ".edj"))
      ret = _els_smart_icon_file_edje_set(wd->img, file, group);
    else
