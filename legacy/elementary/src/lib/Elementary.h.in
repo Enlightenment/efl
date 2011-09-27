@@ -7902,6 +7902,14 @@ extern "C" {
     *   started.
     * - @c "scroll,drag,stop" - called when dragging the content has
     *   stopped.
+    * - @c "scroll,edge,top" - This is called when the gengrid is scrolled until
+    *   the top edge.
+    * - @c "scroll,edge,bottom" - This is called when the gengrid is scrolled
+    *   until the bottom edge.
+    * - @c "scroll,edge,left" - This is called when the gengrid is scrolled
+    *   until the left edge.
+    * - @c "scroll,edge,right" - This is called when the gengrid is scrolled
+    *   until the right edge.
     *
     * List of gengrid examples:
     * @li @ref gengrid_example
