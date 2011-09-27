@@ -292,7 +292,7 @@ _edje_part_description_find(Edje *ed, Edje_Real_Part *rp, const char *name,
      {
 	d = ep->other.desc[i];
 
-	if (d->state.name && !strcmp(d->state.name, name))
+	if (d->state.name && (d->state.name == name || !strcmp(d->state.name, name)))
 	  {
 	     double dst;
 
@@ -307,6 +307,36 @@ _edje_part_description_find(Edje *ed, Edje_Real_Part *rp, const char *name,
      }
 
    return ret;
+}
+
+static void
+_edje_real_part_rel_to_apply(Edje *ed, Edje_Real_Part *ep, Edje_Real_Part_State *state)
+{
+   state->rel1_to_x = state->rel1_to_y = NULL;
+   state->rel2_to_x = state->rel2_to_y = NULL;
+
+   if (state->description)
+     {
+        if (state->description->rel1.id_x >= 0)
+	  state->rel1_to_x = ed->table_parts[state->description->rel1.id_x % ed->table_parts_size];
+	if (state->description->rel1.id_y >= 0)
+	  state->rel1_to_y = ed->table_parts[state->description->rel1.id_y % ed->table_parts_size];
+	if (state->description->rel2.id_x >= 0)
+	  state->rel2_to_x = ed->table_parts[state->description->rel2.id_x % ed->table_parts_size];
+	if (state->description->rel2.id_y >= 0)
+	  state->rel2_to_y = ed->table_parts[state->description->rel2.id_y % ed->table_parts_size];
+
+	if (ep->part->type == EDJE_PART_TYPE_EXTERNAL)
+	  {
+	     Edje_Part_Description_External *external;
+
+	     external = (Edje_Part_Description_External*) state->description;
+
+	     if (state->external_params)
+	       _edje_external_parsed_params_free(ep->swallowed_object, state->external_params);
+	     state->external_params = _edje_external_params_parse(ep->swallowed_object, external->external_params);
+	  }
+     }
 }
 
 void
@@ -356,58 +386,13 @@ _edje_part_description_apply(Edje *ed, Edje_Real_Part *ep, const char *d1, doubl
    ep->param1.description = epd1;
    ep->chosen_description = epd1;
 
-   ep->param1.rel1_to_x = ep->param1.rel1_to_y = NULL;
-   ep->param1.rel2_to_x = ep->param1.rel2_to_y = NULL;
-
-   if (ep->param1.description->rel1.id_x >= 0)
-     ep->param1.rel1_to_x = ed->table_parts[ep->param1.description->rel1.id_x % ed->table_parts_size];
-   if (ep->param1.description->rel1.id_y >= 0)
-     ep->param1.rel1_to_y = ed->table_parts[ep->param1.description->rel1.id_y % ed->table_parts_size];
-   if (ep->param1.description->rel2.id_x >= 0)
-     ep->param1.rel2_to_x = ed->table_parts[ep->param1.description->rel2.id_x % ed->table_parts_size];
-   if (ep->param1.description->rel2.id_y >= 0)
-     ep->param1.rel2_to_y = ed->table_parts[ep->param1.description->rel2.id_y % ed->table_parts_size];
-
-   if (ep->part->type == EDJE_PART_TYPE_EXTERNAL)
-     {
-	Edje_Part_Description_External *external;
-
-	external = (Edje_Part_Description_External*) ep->param1.description;
-
-	if (ep->param1.external_params)
-	  _edje_external_parsed_params_free(ep->swallowed_object, ep->param1.external_params);
-	ep->param1.external_params = _edje_external_params_parse(ep->swallowed_object, external->external_params);
-     }
+   _edje_real_part_rel_to_apply(ed, ep, &ep->param1);
 
    if (ep->param2)
      {
 	ep->param2->description = epd2;
 
-	ep->param2->rel1_to_x = ep->param2->rel1_to_y = NULL;
-	ep->param2->rel2_to_x = ep->param2->rel2_to_y = NULL;
-
-	if (ep->param2->description)
-	  {
-	     if (ep->param2->description->rel1.id_x >= 0)
-	       ep->param2->rel1_to_x = ed->table_parts[ep->param2->description->rel1.id_x % ed->table_parts_size];
-	     if (ep->param2->description->rel1.id_y >= 0)
-	       ep->param2->rel1_to_y = ed->table_parts[ep->param2->description->rel1.id_y % ed->table_parts_size];
-	     if (ep->param2->description->rel2.id_x >= 0)
-	       ep->param2->rel2_to_x = ed->table_parts[ep->param2->description->rel2.id_x % ed->table_parts_size];
-	     if (ep->param2->description->rel2.id_y >= 0)
-	       ep->param2->rel2_to_y = ed->table_parts[ep->param2->description->rel2.id_y % ed->table_parts_size];
-
-	     if (ep->part->type == EDJE_PART_TYPE_EXTERNAL)
-	       {
-		  Edje_Part_Description_External *external;
-
-		  external = (Edje_Part_Description_External*) ep->param2->description;
-
-		  if (ep->param2->external_params)
-		    _edje_external_parsed_params_free(ep->swallowed_object, ep->param2->external_params);
-		  ep->param2->external_params = _edje_external_params_parse(ep->swallowed_object, external->external_params);
-	       }
-	  }
+	_edje_real_part_rel_to_apply(ed, ep, ep->param2);
 
 	if (ep->description_pos != 0.0)
 	  ep->chosen_description = epd2;
