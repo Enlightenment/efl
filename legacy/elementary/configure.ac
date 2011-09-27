@@ -553,7 +553,7 @@ EFL_ENABLE_BIN([elementary-test])
 EFL_ENABLE_BIN([elementary-config])
 
 m4_ifdef([AM_GNU_GETTEXT_VERSION], [
-AM_GNU_GETTEXT_VERSION([0.12.1])
+AM_GNU_GETTEXT_VERSION([0.17])
 ])
 
 m4_ifdef([AM_GNU_GETTEXT], [
