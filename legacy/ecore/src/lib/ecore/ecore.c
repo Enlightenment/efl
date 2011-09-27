@@ -406,7 +406,7 @@ ecore_thread_main_loop_end(void)
    eina_lock_release(&_thread_mutex);
 
    eina_lock_take(&_thread_feedback_mutex);
-   while (current_id == _thread_id)
+   while (current_id == _thread_id && _thread_id != -1)
      eina_condition_wait(&_thread_feedback_cond);
    eina_lock_release(&_thread_feedback_mutex);
 
@@ -686,11 +686,12 @@ _thread_callback(void *data __UNUSED__,
 	       eina_condition_wait(&_thread_cond);
              eina_lock_release(&_thread_mutex);
 
-	     _thread_id = -1;
-
              eina_main_loop_define();
 
 	     eina_lock_take(&_thread_feedback_mutex);
+
+	     _thread_id = -1;
+
 	     eina_condition_broadcast(&_thread_feedback_cond);
 	     eina_lock_release(&_thread_feedback_mutex);
 
