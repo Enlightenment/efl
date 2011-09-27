@@ -1,8 +1,15 @@
 #include <Elementary.h>
 #include "elm_priv.h"
 
-#define SIG_CHILD_ADDED "child,added"
-#define SIG_CHILD_REMOVED "child,removed"
+static const char SIG_CHILD_ADDED[] = "child,added";
+static const char SIG_CHILD_REMOVED[] = "child,removed";
+
+static const Evas_Smart_Cb_Description _signals[] = {
+  {SIG_CHILD_ADDED, ""},
+  {SIG_CHILD_REMOVED, ""},
+  {NULL, NULL}
+};
+
 
 typedef struct _Widget_Data Widget_Data;
 typedef struct _Transition_Animation_Data Transition_Animation_Data;
@@ -74,6 +81,22 @@ _elm_box_list_data_get(const Eina_List *list)
 {
    Evas_Object_Box_Option *opt = eina_list_data_get(list);
    return opt->obj;
+}
+
+static void
+_cb_proxy_child_added(void *data, Evas_Object *o __UNUSED__, void *event_info)
+{
+   Evas_Object *box = data;
+   Evas_Object_Box_Option *opt = event_info;
+   evas_object_smart_callback_call(box, SIG_CHILD_ADDED, opt->obj);
+}
+
+static void
+_cb_proxy_child_removed(void *data, Evas_Object *o __UNUSED__, void *event_info)
+{
+   Evas_Object *box = data;
+   Evas_Object *child = event_info;
+   evas_object_smart_callback_call(box, SIG_CHILD_REMOVED, child);
 }
 
 static Eina_Bool
@@ -349,6 +372,12 @@ elm_box_add(Evas_Object *parent)
    elm_widget_resize_object_set(obj, wd->box);
 
    evas_object_smart_callback_add(obj, "sub-object-del", _sub_del, obj);
+
+   evas_object_smart_callbacks_descriptions_set(obj, _signals);
+   evas_object_smart_callback_add
+     (wd->box, SIG_CHILD_ADDED, _cb_proxy_child_added, obj);
+   evas_object_smart_callback_add
+     (wd->box, SIG_CHILD_REMOVED, _cb_proxy_child_removed, obj);
 
    return obj;
 }
@@ -649,4 +678,14 @@ elm_box_align_get(const Evas_Object *obj, double *horizontal, double *vertical)
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
    evas_object_size_hint_align_get(wd->box, horizontal, vertical);
+}
+
+EAPI void
+elm_box_recalculate(Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   evas_object_smart_need_recalculate_set(wd->box, EINA_TRUE);
+   evas_object_smart_calculate(wd->box);
 }

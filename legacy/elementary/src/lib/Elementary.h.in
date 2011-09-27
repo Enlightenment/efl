@@ -5857,6 +5857,19 @@ extern "C" {
    EAPI void                elm_box_align_get(const Evas_Object *obj, double *horizontal, double *vertical) EINA_ARG_NONNULL(1);
 
    /**
+    * Force the box to recalculate its children packing.
+    *
+    * If any children was added or removed, box will not calculate the
+    * values immediately rather leaving it to the next main loop
+    * iteration. While this is great as it would save lots of
+    * recalculation, whenever you need to get the position of a just
+    * added item you must force recalculate before doing so.
+    *
+    * @param obj The box object.
+    */
+   EAPI void                 elm_box_recalculate(Evas_Object *obj);
+
+   /**
     * Set the layout defining function to be used by the box
     *
     * Whenever anything changes that requires the box in @p obj to recalculate
