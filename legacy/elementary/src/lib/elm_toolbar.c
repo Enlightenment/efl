@@ -1392,6 +1392,49 @@ elm_toolbar_item_icon_set(Elm_Toolbar_Item *item, const char *icon)
      }
 }
 
+EAPI Eina_Bool
+elm_toolbar_item_icon_memfile_set(Elm_Toolbar_Item *item, const void *img, size_t size, const char *format, const char *key)
+{
+   Evas_Object *icon_obj;
+   Widget_Data *wd;
+   Evas_Object *obj = item->base.widget;
+   Eina_Bool ret;
+
+   ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(item, EINA_FALSE);
+   wd = elm_widget_data_get(obj);
+   if (!wd) return EINA_FALSE;
+
+   if (img && size)
+     {
+        icon_obj = _els_smart_icon_add(evas_object_evas_get(obj));
+        evas_object_repeat_events_set(icon_obj, EINA_TRUE);
+        ret = _els_smart_icon_memfile_set(icon_obj, img, size, format, key);
+        if (!ret)
+          {
+             evas_object_del(icon_obj);
+             return EINA_FALSE;
+          }
+        _elm_toolbar_item_icon_obj_set(obj, item, icon_obj, NULL, wd->icon_size,
+                                         "elm,state,icon_set");
+     }
+   else
+     _elm_toolbar_item_icon_obj_set(obj, item, NULL, NULL, 0, "elm,state,icon_set");
+   return EINA_TRUE;
+}
+
+EAPI Evas_Object *
+elm_toolbar_item_icon_object_get(Elm_Toolbar_Item *item)
+{
+   Widget_Data *wd;
+   Evas_Object *obj = item->base.widget;
+
+   ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(item, NULL);
+   wd = elm_widget_data_get(obj);
+   if (!wd) return NULL;
+
+   return item->icon;
+}
+
 EAPI void
 elm_toolbar_item_del(Elm_Toolbar_Item *item)
 {
