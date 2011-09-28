@@ -2352,7 +2352,7 @@ _calc_job(void *data)
    Evas_Coord minw = -1, minh = 0, y = 0, ow;
    int in = 0;
    double t0, t;
-   Eina_Bool minw_change = EINA_FALSE, changed = EINA_FALSE;
+   Eina_Bool minw_change = EINA_FALSE;
    Eina_Bool did_must_recalc = EINA_FALSE;
    if (!wd) return;
 
@@ -2373,10 +2373,9 @@ _calc_job(void *data)
           {
              if (itb->realized) _item_block_unrealize(itb);
           }
-        if ((itb->changed) || (changed) ||
-            ((itb->must_recalc) && (!did_must_recalc)))
+        if ((itb->changed) || ((itb->must_recalc) && (!did_must_recalc)))
           {
-             if ((changed) || (itb->must_recalc))
+             if (itb->must_recalc)
                {
                   Eina_List *l;
                   Elm_Genlist_Item *it;
