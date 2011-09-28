@@ -1578,16 +1578,15 @@ _emotion_gstreamer_video_pipeline_parse(Emotion_Gstreamer_Video *ev,
      gst_element_set_state(ev->pipeline, GST_STATE_PLAYING);
 
    res = gst_element_get_state(ev->pipeline, NULL, NULL, GST_CLOCK_TIME_NONE);
+   /** NOTE: you need to set: GST_DEBUG_DUMP_DOT_DIR=/tmp EMOTION_ENGINE=gstreamer to save the $EMOTION_GSTREAMER_DOT file in '/tmp' */
+   /** then call dot -Tpng -oemotion_pipeline.png /tmp/$TIMESTAMP-$EMOTION_GSTREAMER_DOT.dot */
+   if (getenv("EMOTION_GSTREAMER_DOT"))
+     GST_DEBUG_BIN_TO_DOT_FILE_WITH_TS(GST_BIN(ev->pipeline),
+				       GST_DEBUG_GRAPH_SHOW_ALL,
+				       getenv("EMOTION_GSTREAMER_DOT"));
    if (!(res == GST_STATE_CHANGE_SUCCESS
          || res == GST_STATE_CHANGE_NO_PREROLL))
      {
-        /** NOTE: you need to set: GST_DEBUG_DUMP_DOT_DIR=/tmp EMOTION_ENGINE=gstreamer to save the $EMOTION_GSTREAMER_DOT file in '/tmp' */
-        /** then call dot -Tpng -oemotion_pipeline.png /tmp/$TIMESTAMP-$EMOTION_GSTREAMER_DOT.dot */
-        if (getenv("EMOTION_GSTREAMER_DOT"))
-          GST_DEBUG_BIN_TO_DOT_FILE_WITH_TS(GST_BIN(ev->pipeline),
-                                            GST_DEBUG_GRAPH_SHOW_ALL,
-                                            getenv("EMOTION_GSTREAMER_DOT"));
-
         ERR("Unable to get GST_CLOCK_TIME_NONE.");
         return EINA_FALSE;
      }
