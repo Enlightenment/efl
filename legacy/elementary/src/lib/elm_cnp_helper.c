@@ -32,6 +32,8 @@ typedef int       (*Notify_Handler_Cb)   (Cnp_Selection *sel, Ecore_X_Event_Sele
 enum
 {
    CNP_ATOM_TARGETS = 0,
+   CNP_ATOM_ATOM,
+   CNP_ATOM_LISTING_ATOMS = CNP_ATOM_ATOM,
    CNP_ATOM_text_uri,
    CNP_ATOM_text_urilist,
    CNP_ATOM_text_x_vcard,
@@ -164,6 +166,14 @@ static const Escape escapes[] = {
 static Cnp_Atom atoms[CNP_N_ATOMS] = {
      [CNP_ATOM_TARGETS] = {
           "TARGETS",
+          (Elm_Sel_Format) -1, // everything
+          targets_converter,
+          response_handler_targets,
+          notify_handler_targets,
+          0
+     },
+     [CNP_ATOM_ATOM] = {
+          "ATOM",
           (Elm_Sel_Format) -1, // everything
           targets_converter,
           response_handler_targets,
@@ -672,7 +682,7 @@ notify_handler_targets(Cnp_Selection *sel, Ecore_X_Event_Selection_Notify *notif
    targets = notify->data;
    atomlist = (Ecore_X_Atom *)(targets->data.data);
 
-   for (j = 1; j < CNP_N_ATOMS; j++)
+   for (j = (CNP_ATOM_LISTING_ATOMS+1); j < CNP_N_ATOMS; j++)
      {
         cnp_debug("\t%s %d\n", atoms[j].name, atoms[j].atom);
         if (!(atoms[j].formats & sel->requestformat)) continue;
