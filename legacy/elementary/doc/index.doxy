@@ -30,6 +30,9 @@
  * @li @ref widgetslist - These are the widgets you'll compose your UI out of.
  * @li @ref containerslist - These are the containers in which the widgets will
  *                           be laid out.
+ * 
+ * Also see other generic EFL programming guides:
+ * @li @ref threading
  */
 /**
  * @page widgetslist Widget list
@@ -289,4 +292,24 @@
  * The other two main groups in Elementary are:
  * @li @ref infralist - These are modules that deal with Elementary as a whole.
  * @li @ref widgetslist - These are the widgets you'll compose your UI out of.
+ */
+/**
+ * @page threading Threading
+ * 
+ * You may use threads with EFL, but only in specific ways. If you plan on
+ * using threads it is very important you see the following example guides.
+ * See the following
+ * 
+ * @ref efl_thread_1
+ * 
+ * @ref efl_thread_2
+ * 
+ * @ref efl_thread_3
+ * 
+ * @ref efl_thread_4
+ * 
+ * @ref efl_thread_5
+ * 
+ * @ref efl_thread_6
+ * 
  */

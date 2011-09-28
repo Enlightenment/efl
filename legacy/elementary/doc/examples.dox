@@ -92,6 +92,18 @@
  * @ref progressbar_example
  *
  * @ref slideshow_example
+ * 
+ * @ref efl_thread_1
+ * 
+ * @ref efl_thread_2
+ * 
+ * @ref efl_thread_3
+ * 
+ * @ref efl_thread_4
+ * 
+ * @ref efl_thread_5
+ * 
+ * @ref efl_thread_6
  */
 
 /**
@@ -5928,6 +5940,125 @@
  */
 
 /**
+ * @page efl_thread_1 EFL Threading example 1
+ *
+ * You can use threads with Elementary (and EFL) but you need to be careful
+ * to only use eina or eet calls inside a thread. Other libraries are not
+ * totally threadsafe except for some specific ecore calls designed for
+ * working from threads like the ecore_pipe_write() and ecore_thread calls.
+ * 
+ * Below is an example of how to use EFL calls from a native thread you have
+ * already created. You have to put the EFL calls inside the critical block
+ * between ecore_thread_main_loop_begin() and ecore_thread_main_loop_end()
+ * which ensure you gain a lock on the mainloop. Beware that this requires
+ * that the thread WAIT to synchronize with the mainloop at the beginning of
+ * the critical section. It is highly suggested you use as few of these
+ * in your thread as possible and probably put just a single 
+ * ecore_thread_main_loop_begin() / ecore_thread_main_loop_end() section
+ * at the end of the threads calculation or work when it is done and
+ * would otherwise exit to sit idle.
+ * 
+ * For a progression of examples that become more complex and show other
+ * ways to use threading with EFL, please see:
+ * 
+ * @ref efl_thread_2
+ * 
+ * @ref efl_thread_3
+ * 
+ * @ref efl_thread_4
+ * 
+ * @ref efl_thread_5
+ * 
+ * @ref efl_thread_6
+ *
+ * @include efl_thread_1.c
+ */
+
+/**
+ * @page efl_thread_2 EFL Threading example 2
+ *
+ * You can also use ecore_main_loop_thread_safe_call_sync() to call a
+ * specific function that needs to do EFL main loop operations. This call
+ * will block and wait to synchronise to the mainloop just like
+ * ecore_thread_main_loop_begin() / ecore_thread_main_loop_end() will,
+ * but instead you simply provide it the function callback to call instead
+ * of inlining your code.
+ *
+ * @ref efl_thread_3
+ * 
+ * @ref efl_thread_4
+ * 
+ * @ref efl_thread_5
+ * 
+ * @ref efl_thread_6
+ *
+ * @include efl_thread_2.c
+ */
+
+/**
+ * @page efl_thread_3 EFL Threading example 3
+ *
+ * Like with ecore_main_loop_thread_safe_call_sync() you can provide a
+ * callback to call inline in the mainloop, but this time with
+ * ecore_main_loop_thread_safe_call_async() the callback is queued and
+ * called asynchronously, without the thread blocking. The mainloop will
+ * call this function when it comes around to its synchronisation point. This
+ * acts as a "fire and forget" way of having the mainloop do some work
+ * for a thread that has finished processing some data and is read to hand it
+ * off to the mainloop and the thread wants to march on and do some more work
+ * while the main loop deals with "displaying" the results of the previous
+ * calculation.
+ *
+ * @ref efl_thread_4
+ * 
+ * @ref efl_thread_5
+ * 
+ * @ref efl_thread_6
+ *
+ * @include efl_thread_3.c
+ */
+
+/**
+ * @page efl_thread_4 EFL Threading example 4
+ *
+ * Now when you want to have a thread do some work, send back results to
+ * the mainloop and continue running but the mainloop controls when the
+ * thread should stop working, you need some extra flags. This is an example
+ * of how you might use ecore_main_loop_thread_safe_call_async() and pthreads
+ * to do this.
+ *
+ * @ref efl_thread_5
+ * 
+ * @ref efl_thread_6
+ *
+ * @include efl_thread_4.c
+ */
+
+/**
+ * @page efl_thread_5 EFL Threading example 5
+ *
+ * This is the same as @ref efl_thread_4 but now uses the ecore_thread
+ * infrastructure to have a running worker thread that feeds results back
+ * to the mainloop and can easily be cancelled. This saves some code in the
+ * application and makes for fewer problem spots if you forget a mutex.
+ *
+ * @ref efl_thread_6
+ *
+ * @include efl_thread_5.c
+ */
+
+/**
+ * @page efl_thread_6 EFL Threading example 6
+ *
+ * You can also use the ecore_thread infrastructure for compute tasks that
+ * don't send feedback as they go - they are one-shot compute jobs and when
+ * done they will trigger the end callback in the mainloop which is intended
+ * to pick up the results and "display them".
+ *
+ * @include efl_thread_6.c
+ */
+
+/**
  * @page bg_example_01_c bg_example_01.c
  * @include bg_example_01.c
  * @example bg_example_01.c
@@ -6086,4 +6217,40 @@
  * @page slideshow_example_c Slideshow example
  * @include slideshow_example.c
  * @example slideshow_example.c
+ */
+
+/**
+ * @page efl_thread_1_c EFL Threading example 1
+ * @include efl_thread_1.c
+ * @example efl_thread_1.c
+ */
+
+/**
+ * @page efl_thread_2_c EFL Threading example 2
+ * @include efl_thread_2.c
+ * @example efl_thread_2.c
+ */
+
+/**
+ * @page efl_thread_3_c EFL Threading example 3
+ * @include efl_thread_3.c
+ * @example efl_thread_3.c
+ */
+
+/**
+ * @page efl_thread_4_c EFL Threading example 4
+ * @include efl_thread_4.c
+ * @example efl_thread_4.c
+ */
+
+/**
+ * @page efl_thread_5_c EFL Threading example 5
+ * @include efl_thread_5.c
+ * @example efl_thread_5.c
+ */
+
+/**
+ * @page efl_thread_6_c EFL Threading example 6
+ * @include efl_thread_6.c
+ * @example efl_thread_6.c
  */

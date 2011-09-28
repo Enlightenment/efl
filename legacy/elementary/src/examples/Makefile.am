@@ -115,7 +115,13 @@ SRCS = \
 	table_example_02.c \
 	menu_example_01.c \
 	thumb_example_01.c \
-	win_example.c
+	win_example.c \
+        efl_thread_1.c \
+        efl_thread_2.c \
+        efl_thread_3.c \
+        efl_thread_4.c \
+        efl_thread_5.c \
+        efl_thread_6.c
 
 pkglib_PROGRAMS =
 
@@ -217,7 +223,13 @@ pkglib_PROGRAMS += \
 	table_example_02 \
 	menu_example_01 \
 	thumb_example_01 \
-	win_example
+	win_example \
+        efl_thread_1 \
+        efl_thread_2 \
+        efl_thread_3 \
+        efl_thread_4 \
+        efl_thread_5 \
+        efl_thread_6
 
 # This variable will hold the list of screenshots that will be made
 # by "make screenshots". Each item in the list is of the form:
