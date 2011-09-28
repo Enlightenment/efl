@@ -1034,7 +1034,7 @@ typedef void      (*Evas_Async_Events_Put_Cb)(void *target, Evas_Callback_Type t
  * @return The init counter value.
  *
  * This function initializes Evas and increments a counter of the
- * number of calls to it. It returs the new counter's value.
+ * number of calls to it. It returns the new counter's value.
  *
  * @see evas_shutdown().
  *
