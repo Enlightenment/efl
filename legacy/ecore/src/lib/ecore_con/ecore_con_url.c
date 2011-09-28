@@ -1357,14 +1357,20 @@ _ecore_con_url_perform(Ecore_Con_Url *url_con)
    int fd_max, fd;
    int flags, still_running;
    int completed_immediately = 0;
+   double start;
    CURLMcode ret;
 
    _url_con_list = eina_list_append(_url_con_list, url_con);
 
    url_con->active = EINA_TRUE;
    curl_multi_add_handle(_curlm, url_con->curl_easy);
-   /* This one can't be stopped, or the download never start. */
-   while (curl_multi_perform(_curlm, &still_running) == CURLM_CALL_MULTI_PERFORM) ;
+
+   start = ecore_time_get();
+   while (curl_multi_perform(_curlm, &still_running) == CURLM_CALL_MULTI_PERFORM)
+     if ((ecore_time_get() - start) > (0.7 * ecore_animator_frametime_get()))
+       {
+          break;
+       }
 
    completed_immediately = _ecore_con_url_process_completed_jobs(url_con);
 
@@ -1456,7 +1462,7 @@ _ecore_con_url_idler_handler(void *data)
    start = ecore_time_get();
    while (curl_multi_perform(_curlm, &still_running) == CURLM_CALL_MULTI_PERFORM)
      /* make this not more than a frametime to keep interactivity high */
-     if ((ecore_time_get() - start) > ecore_animator_frametime_get())
+     if ((ecore_time_get() - start) > (0.7 * ecore_animator_frametime_get()))
        {
           done = 0;
           break;
