@@ -1035,7 +1035,7 @@ extern "C" {
     *
     * @ingroup General
     */
-   EAPI Evas_Object *elm_object_item_content_part_get(const Elm_Object_Item *it, const char *item);
+   EAPI Evas_Object *elm_object_item_content_part_get(const Elm_Object_Item *it, const char *part);
 
 #define elm_object_item_content_get(it) elm_object_item_content_part_get((it), NULL)
 
@@ -1051,7 +1051,7 @@ extern "C" {
     */
    EAPI Evas_Object *elm_object_item_content_part_unset(Elm_Object_Item *it, const char *part);
 
-#define elm_object_item_content_unset(it, content) elm_object_item_content_part_unset((it), (content))
+#define elm_object_item_content_unset(it) elm_object_item_content_part_unset((it), NULL)
 
    /**
     * Set a label of an objec itemt
