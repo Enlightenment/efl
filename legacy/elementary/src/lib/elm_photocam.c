@@ -332,6 +332,7 @@ grid_create(Evas_Object *obj)
              g->grid[tn].wd = wd;
              g->grid[tn].img =
                 evas_object_image_add(evas_object_evas_get(obj));
+             evas_object_image_load_orientation_set(g->grid[tn].img, EINA_TRUE);
              evas_object_image_scale_hint_set
                 (g->grid[tn].img, EVAS_IMAGE_SCALE_HINT_DYNAMIC);
              evas_object_pass_events_set(g->grid[tn].img, EINA_TRUE);
@@ -1110,6 +1111,7 @@ elm_photocam_add(Evas_Object *parent)
    wd->tsize = 512;
 
    wd->img = evas_object_image_add(e);
+   evas_object_image_load_orientation_set(wd->img, EINA_TRUE);
    evas_object_image_scale_hint_set(wd->img, EVAS_IMAGE_SCALE_HINT_DYNAMIC);
    evas_object_event_callback_add(wd->img, EVAS_CALLBACK_MOUSE_DOWN,
                                   _mouse_down, obj);

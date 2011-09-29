@@ -77,6 +77,7 @@ _els_smart_icon_file_helper(Evas_Object *obj)
    pclip = evas_object_clip_get(sd->obj);
    if (sd->obj) sd->prev = sd->obj;
    sd->obj = evas_object_image_add(evas_object_evas_get(obj));
+   evas_object_image_load_orientation_set(sd->obj, EINA_TRUE);
    evas_object_event_callback_add(sd->obj, EVAS_CALLBACK_IMAGE_PRELOADED,
                                   _preloaded, sd);
    evas_object_smart_member_add(sd->obj, obj);
