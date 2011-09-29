@@ -445,6 +445,8 @@ _del_hook(Evas_Object *obj)
    Elm_Entry_Item_Provider *ip;
    Elm_Entry_Text_Filter *tf;
 
+   evas_event_freeze(evas_object_evas_get(obj));
+
    if (wd->file) eina_stringshare_del(wd->file);
 
    if (wd->hovdeljob) ecore_job_del(wd->hovdeljob);
@@ -484,6 +486,9 @@ _del_hook(Evas_Object *obj)
         _filter_free(tf);
      }
    free(wd);
+
+   evas_event_thaw(evas_object_evas_get(obj));
+   evas_event_thaw_eval(evas_object_evas_get(obj));
 }
 
 static void
@@ -498,6 +503,8 @@ _theme_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    const char *t;
+
+   evas_event_freeze(evas_object_evas_get(obj));
    _elm_widget_mirrored_reload(obj);
    _mirrored_set(obj, elm_widget_mirrored_get(obj));
 
@@ -531,6 +538,8 @@ _theme_hook(Evas_Object *obj)
           elm_widget_highlight_in_theme_set(obj, EINA_FALSE);
      }
    _sizing_eval(obj);
+   evas_event_thaw(evas_object_evas_get(obj));
+   evas_event_thaw_eval(evas_object_evas_get(obj));
 }
 
 static void
@@ -652,6 +661,7 @@ _sizing_eval(Evas_Object *obj)
    if (wd->linewrap)
      {
         if ((resw == wd->lastw) && (!wd->changed)) return;
+        evas_event_freeze(evas_object_evas_get(obj));
         wd->changed = EINA_FALSE;
         wd->lastw = resw;
         if (wd->scroll)
@@ -685,10 +695,13 @@ _sizing_eval(Evas_Object *obj)
              if (wd->deferred_recalc_job) ecore_job_del(wd->deferred_recalc_job);
              wd->deferred_recalc_job = ecore_job_add(_elm_deferred_recalc_job, obj);
           }
+        evas_event_thaw(evas_object_evas_get(obj));
+        evas_event_thaw_eval(evas_object_evas_get(obj));
      }
    else
      {
         if (!wd->changed) return;
+        evas_event_freeze(evas_object_evas_get(obj));
         wd->changed = EINA_FALSE;
         wd->lastw = resw;
         if (wd->scroll)
@@ -729,6 +742,8 @@ _sizing_eval(Evas_Object *obj)
              else
                evas_object_size_hint_max_set(obj, -1, -1);
           }
+        evas_event_thaw(evas_object_evas_get(obj));
+        evas_event_thaw_eval(evas_object_evas_get(obj));
      }
 
    _recalc_cursor_geometry(obj);
@@ -773,10 +788,13 @@ _content_set_hook(Evas_Object *obj, const char *part, Evas_Object *content)
    Widget_Data *wd = elm_widget_data_get(obj);
    if ((!wd) || (!content)) return;
 
+   evas_event_freeze(evas_object_evas_get(obj));
    elm_widget_sub_object_add(obj, content);
    evas_object_event_callback_add(content, EVAS_CALLBACK_DEL, _content_del, obj);
    edje_object_part_swallow(wd->ent, part, content);
    _sizing_eval(obj);
+   evas_event_thaw(evas_object_evas_get(obj));
+   evas_event_thaw_eval(evas_object_evas_get(obj));
 }
 
 static Evas_Object *
@@ -788,10 +806,13 @@ _content_unset_hook(Evas_Object *obj, const char *part)
 
    content = (Evas_Object *)edje_object_part_object_get(wd->ent, part);
    if (!content) return NULL;
+   evas_event_freeze(evas_object_evas_get(obj));
    elm_widget_sub_object_del(obj, content);
    evas_object_event_callback_del(content, EVAS_CALLBACK_DEL, _content_del);
    edje_object_part_unswallow(wd->ent, content);
    _sizing_eval(obj);
+   evas_event_thaw(evas_object_evas_get(obj));
+   evas_event_thaw_eval(evas_object_evas_get(obj));
 
    return content;
 }
@@ -1322,6 +1343,7 @@ _entry_changed_common_handling(void *data, const char *event)
    Widget_Data *wd = elm_widget_data_get(data);
    Evas_Coord minh;
    if (!wd) return;
+   evas_event_freeze(evas_object_evas_get(data));
    wd->changed = EINA_TRUE;
    /* Reset the size hints which are no more relevant.
     * Keep the height, this is a hack, but doesn't really matter
@@ -1337,6 +1359,8 @@ _entry_changed_common_handling(void *data, const char *event)
         ecore_timer_del(wd->delay_write);
         wd->delay_write = NULL;
      }
+   evas_event_thaw(evas_object_evas_get(data));
+   evas_event_thaw_eval(evas_object_evas_get(data));
    if ((!wd->autosave) || (!wd->file)) return;
    wd->delay_write = ecore_timer_add(2.0, _delay_write, data);
 }
@@ -1814,6 +1838,7 @@ _text_append_idler(void *data)
    char backup;
    Evas_Object *obj = (Evas_Object *) data;
    Widget_Data *wd = elm_widget_data_get(obj);
+   evas_event_freeze(evas_object_evas_get(obj));
    if (wd->text) eina_stringshare_del(wd->text);
    wd->text = NULL;
    wd->changed = EINA_TRUE;
@@ -1872,6 +1897,9 @@ _text_append_idler(void *data)
                                 wd->append_text_left + start);
 
    wd->append_text_left[wd->append_text_position] = backup;
+
+   evas_event_thaw(evas_object_evas_get(obj));
+   evas_event_thaw_eval(evas_object_evas_get(obj));
 
    /* If there's still more to go, renew the idler, else, cleanup */
    if (wd->append_text_position < wd->append_text_len)
@@ -1972,6 +2000,7 @@ _elm_entry_text_set(Evas_Object *obj, const char *item, const char *entry)
    if (item && strcmp(item, "default")) return;
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
+   evas_event_freeze(evas_object_evas_get(obj));
    if (!entry) entry = "";
    if (wd->text) eina_stringshare_del(wd->text);
    wd->text = NULL;
@@ -2007,6 +2036,8 @@ _elm_entry_text_set(Evas_Object *obj, const char *item, const char *entry)
      {
         edje_object_part_text_set(wd->ent, "elm.text", entry);
      }
+   evas_event_thaw(evas_object_evas_get(obj));
+   evas_event_thaw_eval(evas_object_evas_get(obj));
 }
 
 static const char *
