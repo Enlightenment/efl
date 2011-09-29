@@ -486,6 +486,7 @@ struct _RGBA_Image_Loadopts
    int                  scale_down_by; // if > 1 then use this
    double               dpi; // if > 0.0 use this
    unsigned int         w, h; // if > 0 use this
+   unsigned int         degree;//if>0 there is some info related with rotation
    struct {
       unsigned int      x, y, w, h;
    } region;
@@ -513,6 +514,7 @@ struct _Image_Entry_Flags
    Eina_Bool pending      : 1;
 #endif
    Eina_Bool animated     : 1;
+   Eina_Bool rotated      : 1;
 };
 
 struct _Image_Entry_Frame
