@@ -1394,10 +1394,12 @@ _ecore_con_cb_tcp_listen(void           *data,
 
    if ((svr->type & ECORE_CON_TYPE) == ECORE_CON_REMOTE_NODELAY)
      {
+#ifdef HAVE_NETINET_TCP_H
         int flag = 1;
 
         if (setsockopt(svr->fd, IPPROTO_TCP, TCP_NODELAY, (char *)&flag,
                        sizeof(int)) < 0)
+#endif
           {
              ecore_con_event_server_error(svr, strerror(errno));
              goto error;
@@ -1576,9 +1578,11 @@ _ecore_con_cb_tcp_connect(void           *data,
 
    if ((svr->type & ECORE_CON_TYPE) == ECORE_CON_REMOTE_NODELAY)
      {
+#ifdef HAVE_NETINET_TCP_H
         int flag = 1;
 
         if (setsockopt(svr->fd, IPPROTO_TCP, TCP_NODELAY, (char *)&flag, sizeof(int)) < 0)
+#endif
           {
              ecore_con_event_server_error(svr, strerror(errno));
              goto error;
