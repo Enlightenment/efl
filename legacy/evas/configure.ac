@@ -77,7 +77,7 @@ AC_CANONICAL_BUILD
 AC_CANONICAL_HOST
 
 case "$host_os" in
-   mingw32ce* | cegcc*)
+   mingw32ce*)
       MODULE_ARCH="$host_os-$host_cpu"
       ;;
    *)
@@ -130,7 +130,7 @@ want_evas_image_loader_generic="yes"
 want_evas_font_loader_eet="yes"
 
 case "$host_os" in
-   mingw32ce* | cegcc*)
+   mingw32ce*)
       want_fontconfig="no"
       want_evas_engine_software_16_wince="yes"
       want_evas_image_loader_edb="no"
@@ -224,7 +224,7 @@ EFL_CHECK_DOXYGEN([build_doc="yes"], [build_doc="no"])
 # Evil library for compilation on Windows CE
 
 case "$host_os" in
-   mingw* | cegcc*)
+   mingw*)
       PKG_CHECK_MODULES([EVIL], [evil])
       AC_DEFINE(HAVE_EVIL, 1, [Set to 1 if evil package is installed])
       requirement_evas="evil ${requirement_evas}"
@@ -437,12 +437,13 @@ AC_CHECK_TYPES([struct sigaction], [], [],
 ### Checks for compiler characteristics
 AC_C_CONST
 AC_C_BIGENDIAN
-AC_C___ATTRIBUTE__
 AM_PROG_CC_STDC
+EFL_ATTRIBUTE_UNUSED
+EFL_ATTRIBUTE_VECTOR
 
 WIN32_CPPFLAGS=""
 case "$host_os" in
-   mingw32ce* | cegcc*)
+   mingw32ce*)
       WIN32_CPPFLAGS="-D_WIN32_WCE=0x0420"
       ;;
    mingw*)
@@ -452,18 +453,13 @@ esac
 AC_SUBST(WIN32_CPPFLAGS)
 
 WIN32_CFLAGS=""
-case "${host_os}" in
-   cegcc*)
-      WIN32_CFLAGS="-mwin32"
-   ;;
-esac
 AC_SUBST(WIN32_CFLAGS)
 
 
 ### Checks for linker characteristics
 lt_enable_auto_import=""
 case "${host_os}" in
-   mingw* | cegcc*)
+   mingw*)
       AC_DEFINE(EFL_EVAS_BUILD, 1, [Define to mention that evas is built])
       lt_enable_auto_import="-Wl,--enable-auto-import"
    ;;
@@ -485,7 +481,7 @@ EFL_CHECK_FNMATCH([], [AC_MSG_ERROR([Cannot find fnmatch()])])
 # dlopen
 dlopen_libs=""
 case "$host_os" in
-  mingw32ce* | cegcc*)
+  mingw32ce*)
 # managed by evil
     AC_DEFINE(HAVE_DLADDR)
   ;;
@@ -944,7 +940,7 @@ dnl Windows has no sigsetjmp function, nor equivalent.
 dnl So we disable the jpeg saver.
 dnl TODO: must find a workaround
 case "$host_os" in
-   mingw* | cegcc*)
+   mingw*)
       ;;
    *)
       if test "x${have_evas_image_loader_jpeg}" = "xyes" ; then
