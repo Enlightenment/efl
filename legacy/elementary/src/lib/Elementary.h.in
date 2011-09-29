@@ -13694,6 +13694,18 @@ extern "C" {
    EAPI const char             *elm_toolbar_item_icon_get(const Elm_Toolbar_Item *item) EINA_ARG_NONNULL(1);
 
    /**
+    * Get the icon object of @p item.
+    *
+    * @param item The toolbar item.
+    * @return The icon object
+    *
+    * @see elm_toolbar_item_icon_set() or elm_toolbar_item_icon_memfile_set() for details.
+    *
+    * @ingroup Toolbar
+    */
+   EAPI Evas_Object            *elm_toolbar_item_icon_object_get(Elm_Toolbar_Item *item) EINA_ARG_NONNULL(1);
+
+   /**
     * Set the icon associated with @p item to an image in a binary buffer.
     *
     * @param item The toolbar item.
