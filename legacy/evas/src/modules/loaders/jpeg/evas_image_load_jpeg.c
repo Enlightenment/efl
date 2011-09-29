@@ -160,6 +160,93 @@ _evas_jpeg_membuf_src(j_decompress_ptr cinfo,
    return 0;
 }
 
+/*! Magic number for EXIF header & App1*/
+static const unsigned char ExifHeader[] = {0x45, 0x78, 0x69, 0x66, 0x00, 0x00};
+static const unsigned char App1[] = {0xff, 0xe1};
+typedef enum {
+     EXIF_BYTE_ALIGN_II,
+     EXIF_BYTE_ALIGN_MM
+}ExifByteAlign;
+
+static int
+_get_orientation(void *map, size_t length)
+{
+   int size;
+   char *buf;
+   unsigned char orientation[2];
+   ExifByteAlign byte_align;
+   int num_directory = 0;
+   int i, j;
+   int direction;
+
+   /* open file and get 22 byte frome file */
+   if (!map) return 0;
+   /* 1. read 22byte */
+   if (length < 22) return 0;
+   buf = (char *)map;
+
+   /* 2. check 2,3 bypte with APP1(0xFFE1) */
+   if (memcmp(buf + 2, App1, sizeof (App1))) return 0;
+
+   /* 3. check 6~11bype with Exif Header (0x45786966 0000) */
+   if (memcmp(buf + 6, ExifHeader, sizeof (ExifHeader))) return 0;
+
+   /* 4. get 12&13 byte  get info of "II(0x4949)" or "MM(0x4d4d)" */
+   /* 5. get [20]&[21] get directory entry # */
+   if (!strncmp(buf + 12, "MM", 2))
+     {
+        byte_align = EXIF_BYTE_ALIGN_MM;
+        num_directory = ((*(buf + 20) << 8) + *(buf + 21));
+        orientation[0] = 0x01;
+        orientation[1] = 0x12;
+     }
+   else if (!strncmp(buf + 12, "II", 2))
+     {
+        byte_align = EXIF_BYTE_ALIGN_II;
+        num_directory = ((*(buf + 21) << 8) + *(buf + 20));
+        orientation[0] = 0x12;
+        orientation[1] = 0x01;
+     }
+   else return 0;
+
+   buf = map + 22;
+
+   if (length < (12 * num_directory + 22)) return 0;
+
+
+   /* we get all info from file, close file first */
+
+   j = 0;
+
+   for (i = 0; i < num_directory; i++ )
+     {
+        if (!strncmp(buf + j, orientation, 2))
+          {
+             /*get orientation tag */
+             if (byte_align == EXIF_BYTE_ALIGN_MM)
+               direction = *(buf+ j + 11);
+             else direction = *(buf+ j + 8);
+             switch (direction)
+               {
+                case 3:
+                case 4:
+                   return 180;
+                case 6:
+                case 7:
+                   return 90;
+                case 5:
+                case 8:
+                   return 270;
+                default:
+                   return 0;
+               }
+          }
+        else
+          j = j + 12;
+     }
+   return 0;
+}
+
 static Eina_Bool
 evas_image_load_file_head_jpeg_internal(Image_Entry *ie,
                                         void *map, size_t length,
@@ -168,6 +255,11 @@ evas_image_load_file_head_jpeg_internal(Image_Entry *ie,
    unsigned int w, h, scalew, scaleh;
    struct jpeg_decompress_struct cinfo;
    struct _JPEG_error_mgr jerr;
+
+   /* for rotation decoding */
+   int degree = 0;
+   Eina_Bool change_wh = EINA_FALSE;
+   unsigned int load_opts_w, load_opts_h;
 
    cinfo.err = jpeg_std_error(&(jerr.pub));
    jerr.pub.error_exit = _JPEGFatalErrorHandler;
@@ -200,7 +292,22 @@ evas_image_load_file_head_jpeg_internal(Image_Entry *ie,
    cinfo.dither_mode = JDITHER_ORDERED;
    jpeg_start_decompress(&cinfo);
 
-/* head decoding */
+   /* rotation decoding */
+   if (ie->load_opts.orientation)
+     {
+        degree = _get_orientation(map, length);
+        if (degree != 0)
+          {
+             ie->load_opts.degree = degree;
+             ie->flags.rotated = EINA_TRUE;
+
+             if (degree == 90 || degree == 270)
+               change_wh = EINA_TRUE;
+          }
+
+     }
+
+   /* head decoding */
    w = cinfo.output_width;
    h = cinfo.output_height;
    if ((w < 1) || (h < 1) || (w > IMG_MAX_SIZE) || (h > IMG_MAX_SIZE) ||
@@ -226,7 +333,17 @@ evas_image_load_file_head_jpeg_internal(Image_Entry *ie,
      }
    else if ((ie->load_opts.w > 0) && (ie->load_opts.h > 0))
      {
-	unsigned int w2 = w, h2 = h;
+        unsigned int w2 = w, h2 = h;
+        /* user set load_opts' w,h on the assumption
+           that image already rotated according to it's orientation info */
+        if (change_wh)
+          {
+             load_opts_w = ie->load_opts.w;
+             load_opts_h = ie->load_opts.h;
+             ie->load_opts.w = load_opts_h;
+             ie->load_opts.h = load_opts_w;
+          }
+
 	if (ie->load_opts.w > 0)
 	  {
 	     w2 = ie->load_opts.w;
@@ -247,6 +364,11 @@ evas_image_load_file_head_jpeg_internal(Image_Entry *ie,
 	  }
 	w = w2;
 	h = h2;
+        if (change_wh)
+          {
+             ie->load_opts.w = load_opts_w;
+             ie->load_opts.h = load_opts_h;
+          }
      }
    if (w < 1) w = 1;
    if (h < 1) h = 1;
@@ -297,6 +419,38 @@ evas_image_load_file_head_jpeg_internal(Image_Entry *ie,
    // be nice and clip region to image. if its totally outside, fail load
    if ((ie->load_opts.region.w > 0) && (ie->load_opts.region.h > 0))
      {
+        unsigned int load_region_x, load_region_y, load_region_w, load_region_h;
+        if (ie->flags.rotated)
+          {
+             load_region_x = ie->load_opts.region.x;
+             load_region_y = ie->load_opts.region.y;
+             load_region_w = ie->load_opts.region.w;
+             load_region_h = ie->load_opts.region.h;
+
+             switch (degree)
+               {
+                case 90:
+                   ie->load_opts.region.x = load_region_y;
+                   ie->load_opts.region.y = h - (load_region_x + load_region_w);
+                   ie->load_opts.region.w = load_region_h;
+                   ie->load_opts.region.h = load_region_w;
+                   break;
+                case 180:
+                   ie->load_opts.region.x = w - (load_region_x+ load_region_w);
+                   ie->load_opts.region.y = h - (load_region_y + load_region_h);
+
+                   break;
+                case 270:
+                   ie->load_opts.region.x = w - (load_region_y + load_region_h);
+                   ie->load_opts.region.y = load_region_x;
+                   ie->load_opts.region.w = load_region_h;
+                   ie->load_opts.region.h = load_region_w;
+                   break;
+                default:
+                   break;
+               }
+
+          }
         RECTS_CLIP_TO_RECT(ie->load_opts.region.x, ie->load_opts.region.y,
                            ie->load_opts.region.w, ie->load_opts.region.h,
                            0, 0, ie->w, ie->h);
@@ -309,9 +463,23 @@ evas_image_load_file_head_jpeg_internal(Image_Entry *ie,
           }
         ie->w = ie->load_opts.region.w;
         ie->h = ie->load_opts.region.h;
+        if (ie->flags.rotated)
+          {
+             ie->load_opts.region.x = load_region_x;
+             ie->load_opts.region.y = load_region_y;
+             ie->load_opts.region.w = load_region_w;
+             ie->load_opts.region.h = load_region_h;
+          }
      }
 /* end head decoding */
 
+   if (change_wh)
+     {
+        unsigned int tmp;
+        tmp = ie->w;
+        ie->w = ie->h;
+        ie->h = tmp;
+     }
    jpeg_destroy_decompress(&cinfo);
    _evas_jpeg_membuf_src_term(&cinfo);
    *error = EVAS_LOAD_ERROR_NONE;
@@ -338,9 +506,22 @@ evas_image_load_file_data_jpeg_internal(Image_Entry *ie,
    struct jpeg_decompress_struct cinfo;
    struct _JPEG_error_mgr jerr;
    DATA8 *ptr, *line[16], *data;
-   DATA32 *ptr2;
+   DATA32 *ptr2,*ptr_rotate;
    unsigned int x, y, l, i, scans;
    int region = 0;
+
+   /* rotation setting */
+   unsigned int tmp, load_region_x, load_region_y, load_region_w, load_region_h;
+   int degree = 0;
+   Eina_Bool change_wh = EINA_FALSE;
+   Eina_Bool line_done = EINA_FALSE;
+
+   if (ie->flags.rotated)
+     {
+        degree = ie->load_opts.degree;
+        if (degree == 90 || degree == 270)
+          change_wh = EINA_TRUE;
+     }
 
    cinfo.err = jpeg_std_error(&(jerr.pub));
    jerr.pub.error_exit = _JPEGFatalErrorHandler;
@@ -400,9 +581,48 @@ evas_image_load_file_data_jpeg_internal(Image_Entry *ie,
    w = cinfo.output_width;
    h = cinfo.output_height;
 
+   if (change_wh)
+     {
+        tmp = ie->w;
+        ie->w = ie->h;
+        ie->h = tmp;
+     }
+
    if ((ie->load_opts.region.w > 0) && (ie->load_opts.region.h > 0))
      {
         region = 1;
+
+        if (ie->flags.rotated)
+          {
+             load_region_x = ie->load_opts.region.x;
+             load_region_y = ie->load_opts.region.y;
+             load_region_w = ie->load_opts.region.w;
+             load_region_h = ie->load_opts.region.h;
+
+             switch (degree)
+               {
+                case 90:
+                   ie->load_opts.region.x = load_region_y;
+                   ie->load_opts.region.y = h - (load_region_x + load_region_w);
+                   ie->load_opts.region.w = load_region_h;
+                   ie->load_opts.region.h = load_region_w;
+                   break;
+                case 180:
+                   ie->load_opts.region.x = w - (load_region_x+ load_region_w);
+                   ie->load_opts.region.y = h - (load_region_y + load_region_h);
+
+                   break;
+                case 270:
+                   ie->load_opts.region.x = w - (load_region_y + load_region_h);
+                   ie->load_opts.region.y = load_region_x;
+                   ie->load_opts.region.w = load_region_h;
+                   ie->load_opts.region.h = load_region_w;
+                   break;
+                default:
+                   break;
+               }
+
+          }
 #ifdef BUILD_LOADER_JPEG_REGION
         cinfo.region_x = ie->load_opts.region.x;
         cinfo.region_y = ie->load_opts.region.y;
@@ -452,9 +672,23 @@ evas_image_load_file_data_jpeg_internal(Image_Entry *ie,
 	jpeg_destroy_decompress(&cinfo);
         _evas_jpeg_membuf_src_term(&cinfo);
 	*error = EVAS_LOAD_ERROR_NONE;
+        if (region && ie->flags.rotated)
+          {
+             ie->load_opts.region.x = load_region_x;
+             ie->load_opts.region.y = load_region_y;
+             ie->load_opts.region.w = load_region_w;
+             ie->load_opts.region.h = load_region_h;
+          }
 	return EINA_TRUE;
      }
+   if ((ie->flags.rotated) && change_wh)
+     {
+        ptr2 = malloc(ie->w * ie->h * sizeof(DATA32));
+        ptr_rotate = ptr2;
+     }
+   else
    ptr2 = evas_cache_image_pixels(ie);
+
    if (!ptr2)
      {
         *error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
@@ -525,10 +759,13 @@ evas_image_load_file_data_jpeg_internal(Image_Entry *ie,
                   // if line # > region last line, break
                   if (l >= (ie->load_opts.region.y + ie->load_opts.region.h))
                     {
-                       jpeg_destroy_decompress(&cinfo);
-                       _evas_jpeg_membuf_src_term(&cinfo);
-		       *error = EVAS_LOAD_ERROR_NONE;
-                       return EINA_FALSE;
+                       line_done = EINA_TRUE;
+                       /* if rotation flag is set , we have to rotate image */
+                       goto done;
+                       /*jpeg_destroy_decompress(&cinfo);
+                         _evas_jpeg_membuf_src_term(&cinfo);
+                        *error = EVAS_LOAD_ERROR_NONE;
+                        return EINA_FALSE;*/
                     }
                   // els if scan block intersects region start or later
                   else if ((l + scans) > 
@@ -632,16 +869,12 @@ evas_image_load_file_data_jpeg_internal(Image_Entry *ie,
              else
                {
                   // if line # > region last line, break
+                  // but not return immediately for rotation job
                   if (l >= (ie->load_opts.region.y + ie->load_opts.region.h))
                     {
-                       jpeg_destroy_decompress(&cinfo);
-                       _evas_jpeg_membuf_src_term(&cinfo);
-/*                       
-                       t = get_time() - t;
-                       printf("%3.3f\n", t);
- */ 
-		       *error = EVAS_LOAD_ERROR_NONE;
-                       return EINA_TRUE;
+                       line_done = EINA_TRUE;
+                       /* if rotation flag is set , we have to rotate image */
+                       goto done;
                     }
                   // else if scan block intersects region start or later
                   else if ((l + scans) > 
@@ -700,10 +933,13 @@ evas_image_load_file_data_jpeg_internal(Image_Entry *ie,
                   // if line # > region last line, break
                   if (l >= (ie->load_opts.region.y + ie->load_opts.region.h))
                     {
-                       jpeg_destroy_decompress(&cinfo);
-                       _evas_jpeg_membuf_src_term(&cinfo);
-		       *error = EVAS_LOAD_ERROR_NONE;
-                       return EINA_TRUE;
+                       line_done = EINA_TRUE;
+                       /* if rotation flag is set , we have to rotate image */
+                       goto done;
+                       /*jpeg_destroy_decompress(&cinfo);
+                         _evas_jpeg_membuf_src_term(&cinfo);
+                        *error = EVAS_LOAD_ERROR_NONE;
+                        return EINA_TRUE;*/
                     }
                   // els if scan block intersects region start or later
                   else if ((l + scans) > 
@@ -730,7 +966,92 @@ evas_image_load_file_data_jpeg_internal(Image_Entry *ie,
                }
 	  }
      }
-/* end data decoding */
+   /* if rotation operation need, rotate it */
+done:
+
+   if (ie->flags.rotated)
+     {
+        DATA32             *data1, *data2,  *to, *from;
+        int                 x, y, w, h,  hw;
+
+        if (change_wh)
+          {
+             tmp = ie->w;
+             ie->w = ie->h;
+             ie->h = tmp;
+          }
+
+        w = ie->w;
+        h = ie->h;
+        hw =w * h;
+
+        data1 = evas_cache_image_pixels(ie);
+
+        if (degree == 180)
+          {
+             DATA32 tmp;
+
+             data2 = data1 + (h * w) -1;
+             for (x = (w * h) / 2; --x >= 0;)
+               {
+                  tmp = *data1;
+                  *data1 = *data2;
+                  *data2 = tmp;
+                  data1++;
+                  data2--;
+               }
+          }
+        else
+          {
+             data2 = ptr_rotate;
+
+             if (degree == 90)
+               {
+                  to = data1 + w - 1;
+                  hw = -hw - 1;
+               }
+
+             else if (degree == 270)
+               {
+                  to = data1 + hw - w;
+                  w = -w;
+                  hw = hw + 1;
+               }
+
+             from = data2;
+             for (x = ie->w; --x >= 0;)
+               {
+                  for (y =ie->h; --y >= 0;)
+                    {
+                       *to = *from;
+                       from++;
+                       to += w;
+                    }
+                  to += hw;
+               }
+             if (ptr_rotate)
+               {
+                  free(ptr_rotate);
+                  ptr_rotate = NULL;
+               }
+
+          }
+        if (region )
+          {
+             ie->load_opts.region.x = load_region_x;
+             ie->load_opts.region.y = load_region_y;
+             ie->load_opts.region.w = load_region_w;
+             ie->load_opts.region.h = load_region_h;
+          }
+     }
+   if (line_done)
+     {
+        jpeg_destroy_decompress(&cinfo);
+        _evas_jpeg_membuf_src_term(&cinfo);
+        *error = EVAS_LOAD_ERROR_NONE;
+        return EINA_FALSE;
+     }
+   /* end data decoding */
    jpeg_finish_decompress(&cinfo);
    jpeg_destroy_decompress(&cinfo);
    _evas_jpeg_membuf_src_term(&cinfo);
