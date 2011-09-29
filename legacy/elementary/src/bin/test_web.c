@@ -227,6 +227,12 @@ _file_selector_hook(void *data __UNUSED__, Evas_Object *obj __UNUSED__, Eina_Boo
 }
 
 static void
+_console_message_hook(void *data __UNUSED__, Evas_Object *obj __UNUSED__, const char *message, unsigned int line_number, const char *source_id)
+{
+   printf("CONSOLE: %s:%d:%s\n", source_id, line_number, message);
+}
+
+static void
 _js_popup_hooks_set(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Web_Test *wt = data;
@@ -239,6 +245,7 @@ _js_popup_hooks_set(void *data, Evas_Object *obj __UNUSED__, void *event_info __
         elm_web_dialog_prompt_hook_set(wt->web, _prompt_hook, NULL);
         elm_web_dialog_file_selector_hook_set(wt->web, _file_selector_hook,
                                               NULL);
+        elm_web_console_message_hook_set(wt->web, _console_message_hook, NULL);
      }
    else
      {
@@ -246,6 +253,7 @@ _js_popup_hooks_set(void *data, Evas_Object *obj __UNUSED__, void *event_info __
         elm_web_dialog_confirm_hook_set(wt->web, NULL, NULL);
         elm_web_dialog_prompt_hook_set(wt->web, NULL, NULL);
         elm_web_dialog_file_selector_hook_set(wt->web, NULL, NULL);
+        elm_web_console_message_hook_set(wt->web, NULL, NULL);
      }
 }
 

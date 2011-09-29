@@ -647,6 +647,17 @@ _view_smart_run_open_panel(Ewk_View_Smart_Data *esd, Evas_Object *frame __UNUSED
    return response;
 }
 
+static void
+_view_smart_add_console_message(Ewk_View_Smart_Data *esd, const char *message, unsigned int line_number, const char *source_id)
+{
+   Evas_Object *obj = evas_object_smart_parent_get(esd->self);
+   Widget_Data *wd = elm_widget_data_get(obj);
+
+   if (wd->hook.console_message)
+     wd->hook.console_message(wd->hook.console_message_data, obj, message,
+                              line_number, source_id);
+}
+
 static Eina_Bool
 _view_smart_focus_can_cycle(Ewk_View_Smart_Data *sd, Ewk_Focus_Direction direction)
 {
@@ -708,7 +719,7 @@ _view_add(Evas_Object *parent)
         api.mouse_down = _view_smart_mouse_down;
         api.mouse_up = _view_smart_mouse_up;
         api.mouse_move = _view_smart_mouse_move;
-        //api.add_console_message = _view_smart_add_console_message;
+        api.add_console_message = _view_smart_add_console_message;
         api.window_create = _view_smart_window_create;
         api.window_close = _view_smart_window_close;
         api.run_javascript_alert = _view_smart_run_javascript_alert;
