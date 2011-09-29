@@ -1802,9 +1802,9 @@ else
 fi
   echo "    GnuTLS.....................: $have_gnutls"
   echo "    CURL.......................: $have_curl"
-  echo "    Local Sockets..............: $want_local_sockets"
-if test "x$want_local_sockets" = "xyes" ; then
-  echo "      Abstract Sockets.........: $want_abstract_sockets"
+  echo "    Local Sockets..............: $want_ecore_con_local_sockets"
+if test "x$want_ecore_con_local_sockets" = "xyes" ; then
+  echo "      Abstract Sockets.........: $want_ecore_con_abstract_sockets"
 fi
   echo "    c-ares.....................: $have_cares"
 fi
