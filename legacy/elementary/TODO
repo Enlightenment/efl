@@ -1,0 +1,3 @@
+Bugs:
+  pager is not smooth at large sizes
+  large tooltips do not work with compositing enabled
