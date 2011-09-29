@@ -38,7 +38,7 @@ autogen.sh \
 eina.pc.in \
 eina.spec \
 eina.spec.in \
-m4/ac_attribute.m4 \
+m4/efl_attribute.m4 \
 m4/efl_benchmark.m4 \
 m4/efl_compiler_flag.m4 \
 m4/efl_coverage.m4 \
