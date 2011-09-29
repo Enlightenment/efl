@@ -14053,6 +14053,38 @@ extern "C" {
    EAPI Elm_Icon_Lookup_Order   elm_toolbar_icon_order_lookup_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
 
    /**
+    * Set whether the toolbar should always have an item selected.
+    *
+    * @param obj The toolbar object.
+    * @param wrap @c EINA_TRUE to enable always-select mode or @c EINA_FALSE to
+    * disable it.
+    *
+    * This will cause the toolbar to always have an item selected, and clicking
+    * the selected item will not cause a selected event to be emitted. Enabling this mode
+    * will immediately select the first toolbar item.
+    *
+    * Always-selected is disabled by default.
+    *
+    * @see elm_toolbar_always_select_mode_get().
+    *
+    * @ingroup Toolbar
+    */
+   EAPI void                    elm_toolbar_always_select_mode_set(Evas_Object *obj, Eina_Bool always_select) EINA_ARG_NONNULL(1);
+
+   /**
+    * Get whether the toolbar should always have an item selected.
+    *
+    * @param obj The toolbar object.
+    * @return @c EINA_TRUE means an item will always be selected, @c EINA_FALSE indicates
+    * that it is possible to have no items selected. If @p obj is @c NULL, @c EINA_FALSE is returned.
+    *
+    * @see elm_toolbar_always_select_mode_set() for details.
+    *
+    * @ingroup Toolbar
+    */
+   EAPI Eina_Bool               elm_toolbar_always_select_mode_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+
+   /**
     * Set whether the toolbar items' should be selected by the user or not.
     *
     * @param obj The toolbar object.
