@@ -869,7 +869,11 @@ ecore_con_client_port_get(Ecore_Con_Client *cl)
      }
    if (cl->client_addr->sa_family == AF_INET)
      return ((struct sockaddr_in*)cl->client_addr)->sin_port;
+#ifdef HAVE_IPV6
    return ((struct sockaddr_in6*)cl->client_addr)->sin6_port;
+#else
+   return -1;
+#endif
 }
 
 EAPI double
@@ -1440,7 +1444,9 @@ _ecore_con_cb_udp_listen(void           *data,
    Ecore_Con_Server *svr;
    Ecore_Con_Type type;
    struct ip_mreq mreq;
+#ifdef HAVE_IPV6
    struct ipv6_mreq mreq6;
+#endif
    const int on = 1;
 
    svr = data;
@@ -1477,6 +1483,7 @@ _ecore_con_cb_udp_listen(void           *data,
                   goto error;
                }
           }
+#ifdef HAVE_IPV6
         else if (net_info->info.ai_family == AF_INET6)
           {
              if (!inet_pton(net_info->info.ai_family, net_info->ip,
@@ -1493,6 +1500,7 @@ _ecore_con_cb_udp_listen(void           *data,
                   goto error;
                }
           }
+#endif
      }
 
    if (setsockopt(svr->fd, SOL_SOCKET, SO_REUSEADDR, (const void *)&on, sizeof(on)) != 0)
@@ -1765,6 +1773,9 @@ static const char *
 _ecore_con_pretty_ip(struct sockaddr *client_addr,
                      socklen_t        size)
 {
+#ifndef HAVE_IPV6
+   char ipbuf[INET_ADDRSTRLEN + 1];
+#else
    char ipbuf[INET6_ADDRSTRLEN + 1];
 
    /* show v4mapped address in pretty form */
@@ -1783,6 +1794,7 @@ _ecore_con_pretty_ip(struct sockaddr *client_addr,
              return eina_stringshare_add(ipbuf);
           }
      }
+#endif
 
    if (getnameinfo(client_addr, size, ipbuf, sizeof (ipbuf), NULL, 0, NI_NUMERICHOST))
      return eina_stringshare_add("0.0.0.0");

@@ -1303,6 +1303,22 @@ have_openssl="no"
 have_cares="no"
 if test "x${have_ecore_con}" = "xyes" ; then
 
+   # Verify IPV6 availability in headers
+   have_ipv6="no"
+   AC_CHECK_TYPES([struct ipv6_mreq], [have_ipv6="yes"], [have_ipv6="no"],
+               [[
+#ifdef HAVE_NETINET_IN_H
+# include <netinet/in.h>
+#endif
+#ifdef HAVE_WS2TCPIP_H
+# include <ws2tcpip.h>
+#endif
+        ]])
+
+   if test "x${have_ipv6}" = "xyes" ; then
+      AC_DEFINE(HAVE_IPV6, 1, [Define if IPV6 is supported])
+   fi
+
    ECORE_CHECK_CURL([${want_curl}],
       [
        have_curl="yes"

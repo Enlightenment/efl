@@ -41,7 +41,9 @@ struct _Ecore_Con_CAres
 
    union {
       struct in_addr  v4;
+#ifdef HAVE_IPV6
       struct in6_addr v6;
+#endif
    } addr;
 
    Eina_Bool byaddr : 1;
@@ -124,7 +126,11 @@ ecore_con_info_tcp_connect(Ecore_Con_Server *svr,
    struct addrinfo hints;
 
    memset(&hints, 0, sizeof(struct addrinfo));
+#ifdef HAVE_IPV6
    hints.ai_family = AF_INET6;
+#else
+   hints.ai_family = AF_INET;
+#endif
    hints.ai_socktype = SOCK_STREAM;
    hints.ai_flags = AI_CANONNAME;
    hints.ai_protocol = IPPROTO_TCP;
@@ -143,7 +149,11 @@ ecore_con_info_tcp_listen(Ecore_Con_Server *svr,
    struct addrinfo hints;
 
    memset(&hints, 0, sizeof(struct addrinfo));
+#ifdef HAVE_IPV6
    hints.ai_family = AF_INET6;
+#else
+   hints.ai_family = AF_INET;
+#endif
    hints.ai_socktype = SOCK_STREAM;
    hints.ai_flags = AI_PASSIVE;
    hints.ai_protocol = IPPROTO_TCP;
@@ -162,7 +172,11 @@ ecore_con_info_udp_connect(Ecore_Con_Server *svr,
    struct addrinfo hints;
 
    memset(&hints, 0, sizeof(struct addrinfo));
+#ifdef HAVE_IPV6
    hints.ai_family = AF_INET6;
+#else
+   hints.ai_family = AF_INET;
+#endif
    hints.ai_socktype = SOCK_DGRAM;
    hints.ai_flags = AI_CANONNAME;
    hints.ai_protocol = IPPROTO_UDP;
@@ -181,7 +195,11 @@ ecore_con_info_udp_listen(Ecore_Con_Server *svr,
    struct addrinfo hints;
 
    memset(&hints, 0, sizeof(struct addrinfo));
+#ifdef HAVE_IPV6
    hints.ai_family = AF_INET6;
+#else
+   hints.ai_family = AF_INET;
+#endif
    hints.ai_socktype = SOCK_DGRAM;
    hints.ai_flags = AI_PASSIVE;
    hints.ai_protocol = IPPROTO_UDP;
@@ -200,7 +218,11 @@ ecore_con_info_mcast_listen(Ecore_Con_Server *svr,
    struct addrinfo hints;
 
    memset(&hints, 0, sizeof(struct addrinfo));
+#ifdef HAVE_IPV6
    hints.ai_family = AF_INET6;
+#else
+   hints.ai_family = AF_INET;
+#endif
    hints.ai_socktype = SOCK_DGRAM;
    hints.ai_flags = 0;
    hints.ai_protocol = IPPROTO_UDP;
@@ -262,7 +284,11 @@ ecore_con_info_get(Ecore_Con_Server *svr,
                    struct addrinfo  *hints)
 {
    Ecore_Con_CAres *cares;
+#ifdef HAVE_IPV6
    int ai_family = AF_INET6;
+#else
+   int ai_family = AF_INET;
+#endif
 
    cares = calloc(1, sizeof(Ecore_Con_CAres));
    if (!cares)
@@ -288,6 +314,7 @@ ecore_con_info_get(Ecore_Con_Server *svr,
                            (ares_host_callback)_ecore_con_info_ares_host_cb,
                            cares);
      }
+#ifdef HAVE_IPV6
    else if (inet_pton(AF_INET6, svr->name, &cares->addr.v6) == 1)
      {
         cares->byaddr = EINA_TRUE;
@@ -298,6 +325,7 @@ ecore_con_info_get(Ecore_Con_Server *svr,
                            (ares_host_callback)_ecore_con_info_ares_host_cb,
                            cares);
      }
+#endif
    else
      {
         cares->byaddr = EINA_FALSE;
@@ -432,7 +460,7 @@ _ecore_con_info_ares_host_cb(Ecore_Con_CAres *arg,
               addr = (struct sockaddr *)addri;
               break;
            }
-
+#ifdef HAVE_IPV6
            case AF_INET6:
            {
               struct sockaddr_in6 *addri6;
@@ -454,7 +482,7 @@ _ecore_con_info_ares_host_cb(Ecore_Con_CAres *arg,
               addr = (struct sockaddr *)addri6;
               break;
            }
-
+#endif
            default:
              ERR("Unknown addrtype %i", hostent->h_addrtype);
              goto on_error;
@@ -470,6 +498,7 @@ _ecore_con_info_ares_host_cb(Ecore_Con_CAres *arg,
       case ARES_ENOTFOUND: /* address notfound */
         if (arg->byaddr)
           {
+#ifdef HAVE_IPV6
              /* This happen when host doesn't have a reverse. */
               if (arg->isv6)
                 {
@@ -492,6 +521,7 @@ _ecore_con_info_ares_host_cb(Ecore_Con_CAres *arg,
                    addr = (struct sockaddr *)addri6;
                 }
               else
+#endif
                 {
                    struct sockaddr_in *addri;
 
@@ -511,8 +541,11 @@ _ecore_con_info_ares_host_cb(Ecore_Con_CAres *arg,
                 }
 
               if (!_ecore_con_info_ares_getnameinfo(arg,
+#ifdef HAVE_IPV6
                                                     arg->isv6 ? AF_INET6 :
+#else
                                                     AF_INET,
+#endif
                                                     NULL, addr,
                                                     addrlen))
                 goto on_error;
