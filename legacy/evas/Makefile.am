@@ -48,7 +48,7 @@ evas-software-16-wince.pc.in \
 evas-software-sdl.pc.in \
 evas.spec.in \
 evas.spec \
-m4/ac_attribute.m4 \
+m4/efl_attribute.m4 \
 m4/efl_coverage.m4 \
 m4/efl_doxygen.m4 \
 m4/efl_fnmatch.m4 \
