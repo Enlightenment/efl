@@ -102,9 +102,7 @@ static void _ecore_con_event_client_write_free(Ecore_Con_Server *svr,
 static void _ecore_con_lookup_done(void           *data,
                                    Ecore_Con_Info *infos);
 
-static const char *
-_ecore_con_pretty_ip(struct sockaddr *client_addr,
-                     socklen_t        size);
+static const char * _ecore_con_pretty_ip(struct sockaddr *client_addr);
 
 EAPI int ECORE_CON_EVENT_CLIENT_ADD = 0;
 EAPI int ECORE_CON_EVENT_CLIENT_DEL = 0;
@@ -854,7 +852,7 @@ ecore_con_client_ip_get(Ecore_Con_Client *cl)
         return NULL;
      }
    if (!cl->ip)
-     cl->ip = _ecore_con_pretty_ip(cl->client_addr, cl->client_addr_len);
+     cl->ip = _ecore_con_pretty_ip(cl->client_addr);
 
    return cl->ip;
 }
@@ -1770,33 +1768,37 @@ svr_try_connect_plain(Ecore_Con_Server *svr)
 }
 
 static const char *
-_ecore_con_pretty_ip(struct sockaddr *client_addr,
-                     socklen_t        size)
+_ecore_con_pretty_ip(struct sockaddr *client_addr)
 {
 #ifndef HAVE_IPV6
    char ipbuf[INET_ADDRSTRLEN + 1];
 #else
    char ipbuf[INET6_ADDRSTRLEN + 1];
-
-   /* show v4mapped address in pretty form */
-   if (client_addr->sa_family == AF_INET6)
-     {
-        struct sockaddr_in6 *sa6;
-
-        sa6 = (struct sockaddr_in6 *)client_addr;
-        if (IN6_IS_ADDR_V4MAPPED(&sa6->sin6_addr))
-          {
-             snprintf(ipbuf, sizeof (ipbuf), "%u.%u.%u.%u",
-                      sa6->sin6_addr.s6_addr[12],
-                      sa6->sin6_addr.s6_addr[13],
-                      sa6->sin6_addr.s6_addr[14],
-                      sa6->sin6_addr.s6_addr[15]);
-             return eina_stringshare_add(ipbuf);
-          }
-     }
 #endif
+   int family = client_addr->sa_family;
+   void *src;
 
-   if (getnameinfo(client_addr, size, ipbuf, sizeof (ipbuf), NULL, 0, NI_NUMERICHOST))
+   switch(family)
+     {
+       case AF_INET:
+          src = &(((struct sockaddr_in *)client_addr)->sin_addr);
+          break;
+#ifdef HAVE_IPV6
+       case AF_INET6:
+          src = &(((struct sockaddr_in6 *)client_addr)->sin6_addr);
+
+          if (IN6_IS_ADDR_V4MAPPED(src))
+            {
+               family = AF_INET;
+               src = (char*)src + 12;
+            }
+          break;
+#endif
+       default:
+          return eina_stringshare_add("0.0.0.0");
+    }
+
+   if (!inet_ntop(family, src, ipbuf, sizeof(ipbuf)))
      return eina_stringshare_add("0.0.0.0");
 
    ipbuf[sizeof(ipbuf) - 1] = 0;
