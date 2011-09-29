@@ -1447,6 +1447,17 @@ _edje_key_up_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, voi
 }
 
 static void
+_edje_part_move_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
+{
+   Edje_Real_Part *rp = data;
+   Entry *en;
+   if (!rp) return;
+   en = rp->entry_data;
+   if (!en) return;
+   _edje_entry_imf_cursor_info_set(en);
+}
+
+static void
 _edje_part_mouse_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
 {
    Evas_Coord cx, cy;
@@ -1876,6 +1887,8 @@ _edje_entry_real_part_init(Edje_Real_Part *rp)
    if (!en) return;
    rp->entry_data = en;
    en->rp = rp;
+
+   evas_object_event_callback_add(rp->object, EVAS_CALLBACK_MOVE, _edje_part_move_cb, rp);
 
    evas_object_event_callback_add(rp->object, EVAS_CALLBACK_MOUSE_DOWN, _edje_part_mouse_down_cb, rp);
    evas_object_event_callback_add(rp->object, EVAS_CALLBACK_MOUSE_UP, _edje_part_mouse_up_cb, rp);
