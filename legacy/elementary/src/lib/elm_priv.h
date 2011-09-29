@@ -200,6 +200,7 @@ void                _elm_widget_mirrored_reload(Evas_Object *obj);
 void                _elm_config_init(void);
 void                _elm_config_sub_init(void);
 void                _elm_config_shutdown(void);
+void                _elm_config_sub_shutdown(void);
 Eina_Bool           _elm_config_save(void);
 void                _elm_config_reload(void);
 
