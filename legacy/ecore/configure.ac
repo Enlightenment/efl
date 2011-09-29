@@ -95,6 +95,7 @@ AC_CANONICAL_HOST
 
 # dependencies and options
 want_curl="no"
+want_local_sockets="yes"
 want_abstract_sockets="no"
 want_gnutls="no"
 want_openssl="no"
@@ -224,6 +225,11 @@ case "$host_os" in
       ;;
 esac
 
+case "$host_vendor" in
+  ps3*)
+      want_local_sockets="no"
+      ;;
+esac
 requirements_ecore=""
 requirements_ecore_con=""
 #requirements_ecore_config=""
@@ -291,6 +297,22 @@ fi
 
 if test "x${want_glib_integration_always}" = "xyes" -a "x${want_g_main_loop}" = "xyes"; then
   AC_MSG_ERROR([--enable-glib-integration-always and --enable-glib-main-loop are mutually exclusive])
+fi
+
+# local sockets (ecore_con.c)
+AC_ARG_ENABLE([local-sockets],
+   [AC_HELP_STRING([--disable-local-sockets], [disable local sockets.])],
+   [
+    if test "x${enableval}" = "xyes" ; then
+       want_ecore_con_local_sockets="yes"
+    else
+       want_ecore_con_local_sockets="no"
+    fi
+   ],
+   [want_ecore_con_local_sockets=${want_local_sockets}])
+
+if test "x${want_ecore_con_local_sockets}" = "xyes" ; then
+   AC_DEFINE([HAVE_LOCAL_SOCKETS], [1], [Have local sockets support])
 fi
 
 # abstract sockets (ecore_con.c)
@@ -1780,7 +1802,10 @@ else
 fi
   echo "    GnuTLS.....................: $have_gnutls"
   echo "    CURL.......................: $have_curl"
-  echo "    Abstract Sockets...........: $want_abstract_sockets"
+  echo "    Local Sockets..............: $want_local_sockets"
+if test "x$want_local_sockets" = "xyes" ; then
+  echo "      Abstract Sockets.........: $want_abstract_sockets"
+fi
   echo "    c-ares.....................: $have_cares"
 fi
 echo "  Ecore_Ipc....................: $have_ecore_ipc"

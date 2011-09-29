@@ -59,6 +59,9 @@ ecore_con_local_connect(Ecore_Con_Server *svr,
                         Eina_Bool (*cb_done)(void *data, Ecore_Fd_Handler *fd_handler),
                         void *data __UNUSED__)
 {
+#ifndef HAVE_LOCAL_SOCKETS
+   return 0;
+#else
    char buf[4096];
    struct sockaddr_un socket_unix;
    int curstate = 0;
@@ -158,6 +161,7 @@ ecore_con_local_connect(Ecore_Con_Server *svr,
    if (!svr->delete_me) ecore_con_event_server_add(svr);
 
    return 1;
+#endif
 }
 
 int
@@ -170,6 +174,7 @@ ecore_con_local_listen(
   void *data
   __UNUSED__)
 {
+#ifdef HAVE_LOCAL_SOCKETS
    char buf[4096];
    struct sockaddr_un socket_unix;
    struct linger lin;
@@ -306,6 +311,7 @@ start:
 error_umask:
    umask(pmode);
 error:
+#endif /* HAVE_LOCAL_SOCKETS */
    return 0;
 }
 
