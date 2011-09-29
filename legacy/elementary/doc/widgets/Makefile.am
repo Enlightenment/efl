@@ -91,7 +91,8 @@ widget_preview_scroller \
 widget_preview_table \
 widget_preview_win \
 widget_preview_menu \
-widget_preview_thumb
+widget_preview_thumb \
+widget_preview_web
 
 LDADD = $(top_builddir)/src/lib/libelementary.la @ELEMENTARY_EWEATHER_LIBS@ @ELEMENTARY_EDBUS_LIBS@ @ELEMENTARY_EFREET_LIBS@ @ELEMENTARY_EMAP_LIBS@ @ELEMENTARY_LIBS@ @EIO_LIBS@ @my_libs@
 
@@ -168,5 +169,6 @@ EXTRA_DIST = \
 	widget_preview_win.c \
 	widget_preview_menu.c \
 	widget_preview_thumb.c \
+	widget_preview_web.c \
 	widget_preview_tmpl_foot.c \
 	widget_preview_tmpl_head.c

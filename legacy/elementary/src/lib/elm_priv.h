@@ -193,6 +193,7 @@ void                _elm_widget_top_win_focused_set(Evas_Object *obj, Eina_Bool 
 Eina_Bool           _elm_widget_top_win_focused_get(const Evas_Object *obj);
 
 void                _elm_unneed_ethumb(void);
+void                _elm_unneed_web(void);
 
 void                _elm_rescale(void);
 void                _elm_widget_mirrored_reload(Evas_Object *obj);

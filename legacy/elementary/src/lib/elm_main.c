@@ -491,6 +491,7 @@ elm_quicklaunch_shutdown(void)
    _elm_unneed_efreet();
    _elm_unneed_e_dbus();
    _elm_unneed_ethumb();
+   _elm_unneed_web();
    ecore_file_shutdown();
 
 #ifdef HAVE_ELEMENTARY_EMAP

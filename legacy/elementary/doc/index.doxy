@@ -238,6 +238,10 @@
  * @image latex img/toolbar.eps
  * @li @ref Tooltips
  * @li @ref Video
+ * @li @ref Web
+ *
+ * @image html img/widget/web/preview-00.png
+ * @image latex img/widget/web/preview-00.eps
  * @li @ref Win
  *
  * @image html img/widget/win/preview-00.png

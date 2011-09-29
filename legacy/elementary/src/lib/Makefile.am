@@ -21,6 +21,7 @@ AM_CPPFLAGS = \
 @ELEMENTARY_EDBUS_CFLAGS@ \
 @ELEMENTARY_EFREET_CFLAGS@ \
 @ELEMENTARY_ETHUMB_CFLAGS@ \
+@ELEMENTARY_WEB_CFLAGS@ \
 @ELEMENTARY_EMAP_CFLAGS@ \
 @EVIL_CFLAGS@ \
 @EIO_CFLAGS@ \
@@ -112,6 +113,7 @@ elm_toolbar.c \
 elm_transit.c \
 elm_util.c \
 elm_video.c \
+elm_web.c \
 elm_widget.c \
 elm_win.c \
 els_box.c \
@@ -138,6 +140,7 @@ libelementary_la_LIBADD = \
 @ELEMENTARY_EDBUS_LIBS@ \
 @ELEMENTARY_EFREET_LIBS@ \
 @ELEMENTARY_ETHUMB_LIBS@ \
+@ELEMENTARY_WEB_LIBS@ \
 @ELEMENTARY_EMAP_LIBS@ \
 @EVIL_LIBS@ \
 @EIO_LIBS@ \

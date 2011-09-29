@@ -511,6 +511,38 @@ if test "x$want_elementary_ethumb" = "xyes" -a "x$have_elementary_ethumb" = "xno
 fi
 AC_SUBST(ELM_ETHUMB_DEF)
 
+ELM_WEB_DEF="#undef"
+have_elementary_web="no"
+want_elementary_web="auto"
+AC_ARG_ENABLE([web],
+   [AC_HELP_STRING([--disable-web], [disable web (WebKit) support. @<:@default=detect@:>@])],
+   [want_elementary_web=$enableval], [])
+
+if test "x$want_elementary_web" != "xno"; then
+    PKG_CHECK_MODULES([ELEMENTARY_WEB],
+       [
+        ewebkit
+       ],
+       [
+        AC_DEFINE(HAVE_ELEMENTARY_WEB, 1, [Web support for Elementary])
+        webkit_datadir=$($PKG_CONFIG ewebkit --variable=datadir)
+        AC_DEFINE_UNQUOTED(WEBKIT_DATADIR,
+                           "$webkit_datadir",
+                           "WebKit's data dir")
+        have_elementary_web="yes"
+        ELM_WEB_DEF="#define"
+        requirement_elm="web_client ${requirement_elm}"
+       ],
+       [have_elementary_web="no"]
+    )
+else
+    have_elementary_web="no"
+fi
+if test "x$want_elementary_web" = "xyes" -a "x$have_elementary_web" = "xno"; then
+    AC_MSG_ERROR([Web support requested, but no ewebkit found by pkg-config.])
+fi
+AC_SUBST(ELM_WEB_DEF)
+
 ELM_DEBUG_DEF="#undef"
 want_elementary_debug="no"
 AC_ARG_ENABLE([debug],
@@ -625,6 +657,7 @@ echo "    EFreet.................: ${have_elementary_efreet}"
 echo "    EWeather...............: ${have_elementary_eweather}"
 echo "    EMap...................: ${have_elementary_emap}"
 echo "    Ethumb.................: ${have_elementary_ethumb}"
+echo "    Web (WebKit)...........: ${have_elementary_web}"
 echo "    Quick Launch...........: ${have_fork}"
 echo "    EIO....................: ${have_eio}"
 echo "    Emotion................: ${have_emotion}"

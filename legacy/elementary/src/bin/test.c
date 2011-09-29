@@ -147,6 +147,9 @@ void test_factory(void *data, Evas_Object *obj, void *event_info);
 #ifdef HAVE_EIO
 void test_eio(void *data, Evas_Object *obj, void *event_info);
 #endif
+#ifdef HAVE_ELEMENTARY_WEB
+void test_web(void *data, Evas_Object *obj, void *event_info);
+#endif
 
 struct elm_test
 {
@@ -429,6 +432,9 @@ add_tests:
    ADD_TEST("Gesture Layer", test_gesture_layer);
    ADD_TEST("Naviframe", test_naviframe);
    ADD_TEST("Factory", test_factory);
+#ifdef HAVE_ELEMENTARY_WEB
+   ADD_TEST("Web", test_web);
+#endif
 #undef ADD_TEST
 
    if (autorun)
@@ -476,6 +482,8 @@ elm_main(int argc, char **argv)
 {
    Eina_Bool test_win_only = EINA_FALSE;
    char *autorun = NULL;
+
+   elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_CLOSED);
 
    /* tell elm about our app so it can figure out where to get files */
    elm_app_compile_bin_dir_set(PACKAGE_BIN_DIR);
