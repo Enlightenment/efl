@@ -391,8 +391,8 @@ AC_CHECK_TYPES([siginfo_t], [], [],
 AC_C_CONST
 AC_C_BIGENDIAN
 AC_C_INLINE
-AC_C___ATTRIBUTE__
 AC_PROG_CC_STDC
+EFL_ATTRIBUTE_UNUSED
 
 have_wince="no"
 have_win32="no"
