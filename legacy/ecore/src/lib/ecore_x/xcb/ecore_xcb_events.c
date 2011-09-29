@@ -1706,7 +1706,8 @@ _ecore_xcb_event_handle_mapping_notify(xcb_generic_event_t *event)
    if (!(e = calloc(1, sizeof(Ecore_X_Event_Mapping_Change)))) return;
 
    _ecore_xcb_keymap_refresh(ev);
-
+   _ecore_xcb_modifiers_get();
+   
    switch (ev->request) 
      {
       case XCB_MAPPING_MODIFIER:

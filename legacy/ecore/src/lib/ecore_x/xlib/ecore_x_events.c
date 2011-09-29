@@ -1910,6 +1910,7 @@ _ecore_x_event_handle_mapping_notify(XEvent *xevent)
 
    _ecore_x_last_event_mouse_move = 0;
    XRefreshKeyboardMapping((XMappingEvent *)xevent);
+   _ecore_x_modifiers_get();
    e = calloc(1, sizeof(Ecore_X_Event_Mapping_Change));
    if (!e) return;
    switch (xevent->xmapping.request)

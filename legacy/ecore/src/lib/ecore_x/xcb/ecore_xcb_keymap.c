@@ -78,6 +78,12 @@ _ecore_xcb_keymap_finalize(void)
    ECORE_X_LOCK_SHIFT = _ecore_xcb_keymap_mask_get(reply, XK_Shift_Lock);
 }
 
+void
+_ecore_xcb_modifiers_get(void)
+{
+   _ecore_xcb_keymap_finalize();
+}
+
 void 
 _ecore_xcb_keymap_shutdown(void) 
 {

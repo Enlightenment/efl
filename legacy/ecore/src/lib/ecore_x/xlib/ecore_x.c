@@ -195,6 +195,41 @@ _XReply(Display *disp, void *rep, int extra, Bool discard)
 
 #endif /* ifdef LOGRT */
 
+void
+_ecore_x_modifiers_get(void)
+{
+   /* everything has these... unless its like a pda... :) */
+   ECORE_X_MODIFIER_SHIFT = _ecore_x_key_mask_get(XK_Shift_L);
+   ECORE_X_MODIFIER_CTRL = _ecore_x_key_mask_get(XK_Control_L);
+
+   /* apple's xdarwin has no alt!!!! */
+   ECORE_X_MODIFIER_ALT = _ecore_x_key_mask_get(XK_Alt_L);
+   if (!ECORE_X_MODIFIER_ALT)
+      ECORE_X_MODIFIER_ALT = _ecore_x_key_mask_get(XK_Meta_L);
+   
+   if (!ECORE_X_MODIFIER_ALT)
+      ECORE_X_MODIFIER_ALT = _ecore_x_key_mask_get(XK_Super_L);
+   
+   /* the windows key... a valid modifier :) */
+   ECORE_X_MODIFIER_WIN = _ecore_x_key_mask_get(XK_Super_L);
+   if (!ECORE_X_MODIFIER_WIN)
+      ECORE_X_MODIFIER_WIN = _ecore_x_key_mask_get(XK_Mode_switch);
+
+   if (!ECORE_X_MODIFIER_WIN)
+      ECORE_X_MODIFIER_WIN = _ecore_x_key_mask_get(XK_Meta_L);
+
+   if (ECORE_X_MODIFIER_WIN == ECORE_X_MODIFIER_ALT)
+      ECORE_X_MODIFIER_WIN = 0;
+
+   if (ECORE_X_MODIFIER_ALT == ECORE_X_MODIFIER_CTRL)
+      ECORE_X_MODIFIER_ALT = 0;
+
+   ECORE_X_LOCK_SCROLL = _ecore_x_key_mask_get(XK_Scroll_Lock);
+   ECORE_X_LOCK_NUM = _ecore_x_key_mask_get(XK_Num_Lock);
+   ECORE_X_LOCK_CAPS = _ecore_x_key_mask_get(XK_Caps_Lock);
+   ECORE_X_LOCK_SHIFT = _ecore_x_key_mask_get(XK_Shift_Lock);
+}
+
 /**
  * @defgroup Ecore_X_Init_Group X Library Init and Shutdown Functions
  *
@@ -487,36 +522,7 @@ ecore_x_init(const char *name)
         ECORE_X_EVENT_GENERIC = ecore_event_type_new();
      }
 
-   /* everything has these... unless its like a pda... :) */
-   ECORE_X_MODIFIER_SHIFT = _ecore_x_key_mask_get(XK_Shift_L);
-   ECORE_X_MODIFIER_CTRL = _ecore_x_key_mask_get(XK_Control_L);
-
-   /* apple's xdarwin has no alt!!!! */
-   ECORE_X_MODIFIER_ALT = _ecore_x_key_mask_get(XK_Alt_L);
-   if (!ECORE_X_MODIFIER_ALT)
-      ECORE_X_MODIFIER_ALT = _ecore_x_key_mask_get(XK_Meta_L);
-
-   if (!ECORE_X_MODIFIER_ALT)
-      ECORE_X_MODIFIER_ALT = _ecore_x_key_mask_get(XK_Super_L);
-
-   /* the windows key... a valid modifier :) */
-   ECORE_X_MODIFIER_WIN = _ecore_x_key_mask_get(XK_Super_L);
-   if (!ECORE_X_MODIFIER_WIN)
-      ECORE_X_MODIFIER_WIN = _ecore_x_key_mask_get(XK_Mode_switch);
-
-   if (!ECORE_X_MODIFIER_WIN)
-      ECORE_X_MODIFIER_WIN = _ecore_x_key_mask_get(XK_Meta_L);
-
-   if (ECORE_X_MODIFIER_WIN == ECORE_X_MODIFIER_ALT)
-      ECORE_X_MODIFIER_WIN = 0;
-
-   if (ECORE_X_MODIFIER_ALT == ECORE_X_MODIFIER_CTRL)
-      ECORE_X_MODIFIER_ALT = 0;
-
-   ECORE_X_LOCK_SCROLL = _ecore_x_key_mask_get(XK_Scroll_Lock);
-   ECORE_X_LOCK_NUM = _ecore_x_key_mask_get(XK_Num_Lock);
-   ECORE_X_LOCK_CAPS = _ecore_x_key_mask_get(XK_Caps_Lock);
-   ECORE_X_LOCK_SHIFT = _ecore_x_key_mask_get(XK_Shift_Lock);
+   _ecore_x_modifiers_get();
 
    _ecore_x_fd_handler_handle =
       ecore_main_fd_handler_add(ConnectionNumber(_ecore_x_disp),

@@ -351,4 +351,6 @@ void _ecore_xcb_xdefaults_shutdown(void);
 char *_ecore_xcb_xdefaults_string_get(const char *prog, const char *param);
 int _ecore_xcb_xdefaults_int_get(const char *prog, const char *param);
 
+void _ecore_xcb_modifiers_get(void);
+
 #endif

@@ -363,6 +363,8 @@ Ecore_Event_Mouse_Button *    _ecore_mouse_button(int          event,
                                                   double       mrx,
                                                   double       mry);
 
+void _ecore_x_modifiers_get(void);
+
 //#define LOGFNS 1
 
 #ifdef LOGFNS
