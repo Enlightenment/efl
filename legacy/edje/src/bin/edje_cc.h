@@ -43,6 +43,10 @@ typedef struct _Code_Program          Code_Program;
 typedef struct _SrcFile               SrcFile;
 typedef struct _SrcFile_List          SrcFile_List;
 
+typedef struct _Edje_Program_Parser                  Edje_Program_Parser;
+typedef struct _Edje_Pack_Element_Parser             Edje_Pack_Element_Parser;
+typedef struct _Edje_Part_Parser                     Edje_Part_Parser;
+
 struct _New_Object_Handler
 {
    const char *type;
@@ -104,13 +108,44 @@ struct _SrcFile_List
    Eina_List *list;
 };
 
+struct _Edje_Program_Parser
+{
+   Edje_Program common;
+   Eina_Bool can_override;
+};
+
+struct _Edje_Pack_Element_Parser
+{
+   Edje_Pack_Element common;
+   Eina_Bool can_override;
+};
+
+struct _Edje_Part_Parser
+{
+   Edje_Part common;
+   struct {
+      Eina_Bool           done;
+      const char         *insert_before; /* the part name for insertion in front of */
+      const char         *insert_after; /* the part name for insertion behind of */
+      Edje_Part_Parser   *before;
+      Edje_Part_Parser   *after;
+      int                 linked_prev; /* the number linked previous part for reorder */
+      int                 linked_next; /* the number linked next part for reorder */
+   } reorder;
+   Eina_Bool can_override;
+};
+
 /* global fn calls */
 void    data_setup(void);
 void    data_write(void);
 void    data_queue_part_lookup(Edje_Part_Collection *pc, const char *name, int *dest);
+void    data_queue_copied_part_lookup(Edje_Part_Collection *pc, int *src, int *dest);
 void    data_queue_program_lookup(Edje_Part_Collection *pc, const char *name, int *dest);
+void    data_queue_copied_program_lookup(Edje_Part_Collection *pc, int *src, int *dest);
 void    data_queue_anonymous_lookup(Edje_Part_Collection *pc, Edje_Program *ep, int *dest);
+void    data_queue_copied_anonymous_lookup(Edje_Part_Collection *pc, int *src, int *dest);
 void    data_queue_image_lookup(char *name, int *dest, Eina_Bool *set);
+void    data_queue_copied_image_lookup(int *src, int *dest, Eina_Bool *set);
 void    data_queue_part_slave_lookup(int *master, int *slave);
 void    data_queue_image_slave_lookup(int *master, int *slave);
 void    data_queue_spectrum_lookup(char *name, int *dest);
@@ -144,6 +179,7 @@ void    check_min_arg_count(int n);
 int     object_handler_num(void);
 int     statement_handler_num(void);
 
+void    reorder_parts(void);
 void    source_edd(void);
 void    source_fetch(void);
 int     source_append(Eet_File *ef);

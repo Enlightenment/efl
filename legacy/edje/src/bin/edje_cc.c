@@ -221,6 +221,7 @@ main(int argc, char **argv)
 
    data_setup();
    compile();
+   reorder_parts();
    data_process_scripts();
    data_process_lookups();
    data_process_script_lookups();

@@ -1133,6 +1133,126 @@ data_write(void)
 }
 
 void
+reorder_parts(void)
+{
+   Edje_Part_Collection *pc;
+   Edje_Part **parts;
+   Edje_Part_Parser *ep, *ep2;
+   Eina_List *l;
+
+   /* sanity checks for parts and programs */
+   EINA_LIST_FOREACH(edje_collections, l, pc)
+     {
+        unsigned int i, j, k;
+	Eina_Bool found = EINA_FALSE;
+
+	for (i = 0; i < pc->parts_count; i++)
+          {
+             ep = (Edje_Part_Parser *)pc->parts[i];
+             if (ep->reorder.insert_before && ep->reorder.insert_after)
+               ERR("%s: Error. Unable to use together insert_before and insert_after in part \"%s\".", progname, pc->parts[i]->name);
+
+             if (ep->reorder.done)
+               {
+                  continue;
+               }
+             if (ep->reorder.insert_before || ep->reorder.insert_after)
+               {
+                  found = EINA_FALSE;
+                  for (j = 0; j < pc->parts_count; j++)
+                    {
+                       if (ep->reorder.insert_before &&
+                           !strcmp(ep->reorder.insert_before, pc->parts[j]->name))
+                         {
+                            ep2 = (Edje_Part_Parser *)pc->parts[j];
+                            if (ep2->reorder.after)
+                              ERR("%s: Error. The part \"%s\" is ambiguous ordered part.", progname, pc->parts[i]->name);
+                            if (ep2->reorder.linked_prev)
+                              ERR("%s: Error. Unable to insert two or more parts in same part \"%s\".", progname, pc->parts[j]->name);
+                            k = j - 1;
+			    found = EINA_TRUE;
+                            ep2->reorder.linked_prev += ep->reorder.linked_prev + 1;
+                            ep->reorder.before = (Edje_Part_Parser *)pc->parts[j];
+                            while (ep2->reorder.before)
+                              {
+                                 ep2->reorder.before->reorder.linked_prev = ep2->reorder.linked_prev + 1;
+                                 ep2 = ep2->reorder.before;
+                              }
+                            break;
+                         }
+                       else if (ep->reorder.insert_after &&
+                           !strcmp(ep->reorder.insert_after, pc->parts[j]->name))
+                         {
+                            ep2 = (Edje_Part_Parser *)pc->parts[j];
+                            if (ep2->reorder.before)
+                              ERR("%s: Error. The part \"%s\" is ambiguous ordered part.", progname, pc->parts[i]->name);
+                            if (ep2->reorder.linked_next)
+                              ERR("%s: Error. Unable to insert two or more parts in same part \"%s\".", progname, pc->parts[j]->name);
+                            k = j;
+			    found = EINA_TRUE;
+                            ep2->reorder.linked_next += ep->reorder.linked_next + 1;
+                            ep->reorder.after = (Edje_Part_Parser *)pc->parts[j];
+                            while (ep2->reorder.after)
+                              {
+                                 ep2->reorder.after->reorder.linked_next = ep2->reorder.linked_next + 1;
+                                 ep2 = ep2->reorder.after;
+                              }
+                            break;
+                         }
+                    }
+                  if (found)
+                    {
+		       unsigned int amount, linked;
+
+                       if (((i > k) && ((i - ep->reorder.linked_prev) <= k))
+                           || ((i < k) && ((i + ep->reorder.linked_next) >= k)))
+                         ERR("%s: Error. The part order is wrong. It has circular dependency.",
+                             progname);
+
+                       amount = ep->reorder.linked_prev + ep->reorder.linked_next + 1;
+                       linked = i - ep->reorder.linked_prev;
+                       parts = malloc(amount * sizeof(Edje_Part));
+                       for (j = 0 ; j < amount ; j++)
+                         {
+                            parts[j] = pc->parts[linked];
+                            linked++;
+                         }
+                       if (i > k)
+                         {
+                            for (j = i - ep->reorder.linked_prev - 1 ; j >= k ; j--)
+                              {
+                                 pc->parts[j + amount] = pc->parts[j];
+                                 pc->parts[j + amount]->id = j + amount;
+                              }
+                            for (j = 0 ; j < amount ; j++)
+                              {
+                                 pc->parts[j + k] = parts[j];
+                                 pc->parts[j + k]->id = j + k;
+                              }
+                         }
+                       else if (i < k)
+                         {
+                            for (j = i + ep->reorder.linked_next + 1 ; j <= k ; j++)
+                              {
+                                 pc->parts[j - amount] = pc->parts[j];
+                                 pc->parts[j - amount]->id = j - amount;
+                              }
+                            for (j = 0 ; j < amount ; j++)
+                              {
+                                 pc->parts[j + k - amount + 1] = parts[j];
+                                 pc->parts[j + k - amount + 1]->id = j + k - amount + 1;
+                              }
+                            i -= amount;
+                         }
+                       ep->reorder.done = EINA_TRUE;
+                       free(parts);
+                    }
+               }
+          }
+     }
+}
+
+void
 data_queue_group_lookup(char *name)
 {
    Group_Lookup *gl;
@@ -1145,7 +1265,18 @@ data_queue_group_lookup(char *name)
 void
 data_queue_part_lookup(Edje_Part_Collection *pc, const char *name, int *dest)
 {
+   Eina_List *l;
    Part_Lookup *pl;
+
+   EINA_LIST_FOREACH(part_lookups, l, pl)
+     {
+        if ((pl->pc == pc) && (pl->dest == dest))
+          {
+             free(pl->name);
+             pl->name = mem_strdup(name);
+             return;
+          }
+     }
 
    pl = mem_alloc(SZ(Part_Lookup));
    part_lookups = eina_list_append(part_lookups, pl);
@@ -1155,18 +1286,98 @@ data_queue_part_lookup(Edje_Part_Collection *pc, const char *name, int *dest)
 }
 
 void
+data_queue_copied_part_lookup(Edje_Part_Collection *pc, int *src, int *dest)
+{
+   Eina_List *l;
+   Part_Lookup *pl;
+
+   EINA_LIST_FOREACH(part_lookups, l, pl)
+     {
+        if (pl->dest == src)
+          data_queue_part_lookup(pc, pl->name, dest);
+     }
+}
+
+void
 data_queue_anonymous_lookup(Edje_Part_Collection *pc, Edje_Program *ep, int *dest)
 {
+   Eina_List *l, *l2;
    Program_Lookup *pl;
 
    if (!ep) return ; /* FIXME: should we stop compiling ? */
 
-   pl = mem_alloc(SZ(Program_Lookup));
-   program_lookups = eina_list_append(program_lookups, pl);
-   pl->pc = pc;
-   pl->u.ep = ep;
-   pl->dest = dest;
-   pl->anonymous = EINA_TRUE;
+   EINA_LIST_FOREACH(program_lookups, l, pl)
+     {
+        if (pl->u.ep == ep)
+          {
+             Code *cd;
+             Code_Program *cp;
+
+             cd = eina_list_data_get(eina_list_last(codes));
+
+             EINA_LIST_FOREACH(cd->programs, l2, cp)
+               {
+                  if (&(cp->id) == pl->dest)
+                    {
+                       cd->programs = eina_list_remove(cd->programs, cp);
+                       free(cp);
+                       cp = NULL;
+                    }
+               }
+             program_lookups = eina_list_remove(program_lookups, pl);
+             free(pl);
+          }
+     }
+
+   if (dest)
+     {
+        pl = mem_alloc(SZ(Program_Lookup));
+        program_lookups = eina_list_append(program_lookups, pl);
+        pl->pc = pc;
+        pl->u.ep = ep;
+        pl->dest = dest;
+        pl->anonymous = EINA_TRUE;
+     }
+}
+
+void
+data_queue_copied_anonymous_lookup(Edje_Part_Collection *pc, int *src, int *dest)
+{
+   Eina_List *l;
+   Program_Lookup *pl;
+   unsigned int i;
+
+   EINA_LIST_FOREACH(program_lookups, l, pl)
+     {
+        if (pl->dest == src)
+          {
+             for (i = 0 ; i < pc->programs.fnmatch_count ; i++)
+               {
+                  if (!strcmp(pl->u.ep->name, pc->programs.fnmatch[i]->name))
+                    data_queue_anonymous_lookup(pc, pc->programs.fnmatch[i], dest);
+               }
+             for (i = 0 ; i < pc->programs.strcmp_count ; i++)
+               {
+                  if (!strcmp(pl->u.ep->name, pc->programs.strcmp[i]->name))
+                    data_queue_anonymous_lookup(pc, pc->programs.strcmp[i], dest);
+               }
+             for (i = 0 ; i < pc->programs.strncmp_count ; i++)
+               {
+                  if (!strcmp(pl->u.ep->name, pc->programs.strncmp[i]->name))
+                    data_queue_anonymous_lookup(pc, pc->programs.strncmp[i], dest);
+               }
+             for (i = 0 ; i < pc->programs.strrncmp_count ; i++)
+               {
+                  if (!strcmp(pl->u.ep->name, pc->programs.strrncmp[i]->name))
+                    data_queue_anonymous_lookup(pc, pc->programs.strrncmp[i], dest);
+               }
+             for (i = 0 ; i < pc->programs.nocmp_count ; i++)
+               {
+                  if (!strcmp(pl->u.ep->name, pc->programs.nocmp[i]->name))
+                    data_queue_anonymous_lookup(pc, pc->programs.nocmp[i], dest);
+               }
+          }
+     }
 }
 
 void
@@ -1185,6 +1396,19 @@ data_queue_program_lookup(Edje_Part_Collection *pc, const char *name, int *dest)
 }
 
 void
+data_queue_copied_program_lookup(Edje_Part_Collection *pc, int *src, int *dest)
+{
+   Eina_List *l;
+   Program_Lookup *pl;
+
+   EINA_LIST_FOREACH(program_lookups, l, pl)
+     {
+        if (pl->dest == src)
+          data_queue_program_lookup(pc, pl->u.name, dest);
+     }
+}
+
+void
 data_queue_image_lookup(char *name, int *dest, Eina_Bool *set)
 {
    Image_Lookup *il;
@@ -1196,6 +1420,18 @@ data_queue_image_lookup(char *name, int *dest, Eina_Bool *set)
    il->set = set;
 }
 
+void
+data_queue_copied_image_lookup(int *src, int *dest, Eina_Bool *set)
+{
+   Eina_List *l;
+   Image_Lookup *il;
+
+   EINA_LIST_FOREACH(image_lookups, l, il)
+     {
+        if (il->dest == src)
+          data_queue_image_lookup(il->name, dest, set);
+     }
+}
 void
 data_queue_part_slave_lookup(int *master, int *slave)
 {
