@@ -41,7 +41,7 @@ esac
 AM_INIT_AUTOMAKE([1.6 dist-bzip2])
 m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
 
-LT_PREREQ([2.4])
+LT_PREREQ([2.2])
 
 VMAJ=v_maj
 AC_SUBST(VMAJ)
