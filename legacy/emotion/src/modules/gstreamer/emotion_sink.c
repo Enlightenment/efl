@@ -599,7 +599,7 @@ evas_video_sink_render(GstBaseSink* bsink, GstBuffer* buffer)
    EvasVideoSinkPrivate *priv;
    EvasVideoSink *sink;
 
-   INF("sink render %p [%i]", GST_BUFFER_DATA(buffer), GST_BUFFER_SIZE(buffer));
+   INF("sink render %p", buffer);
 
    sink = EVAS_VIDEO_SINK(bsink);
    priv = sink->priv;
@@ -729,11 +729,15 @@ evas_video_sink_samsung_main_render(void *data)
    gst_element_query_position(send->ev->pipeline, &fmt, &pos);
    send->ev->position = (double)pos / (double)GST_SECOND;
 
-   vstream->width = priv->width;
-   vstream->height = priv->height;
-   send->ev->ratio = (double) priv->width / (double) priv->height;
+   if (vstream)
+     {
+        vstream->width = priv->width;
+        vstream->height = priv->height;
 
-   _emotion_video_pos_update(send->ev->obj, send->ev->position, vstream->length_time);
+        _emotion_video_pos_update(send->ev->obj, send->ev->position, vstream->length_time);
+     }
+
+   send->ev->ratio = (double) priv->width / (double) priv->height;
    _emotion_frame_resize(send->ev->obj, priv->width, priv->height, send->ev->ratio);
 
    /* FIXME: why is last buffer not protected ? */
@@ -1068,9 +1072,11 @@ gstreamer_video_sink_new(Emotion_Gstreamer_Video *ev,
 
 #define GST_PLAY_FLAG_NATIVE_VIDEO  (1 << 6)
 #define GST_PLAY_FLAG_DOWNLOAD      (1 << 7)
+#define GST_PLAY_FLAG_AUDIO         (1 << 1)
+#define GST_PLAY_FLAG_NATIVE_AUDIO  (1 << 5)
 
    g_object_get(G_OBJECT(playbin), "flags", &flags, NULL);
-   g_object_set(G_OBJECT(playbin), "flags", flags | GST_PLAY_FLAG_NATIVE_VIDEO | GST_PLAY_FLAG_DOWNLOAD, NULL);
+   g_object_set(G_OBJECT(playbin), "flags", flags | GST_PLAY_FLAG_NATIVE_VIDEO | GST_PLAY_FLAG_DOWNLOAD | GST_PLAY_FLAG_NATIVE_AUDIO, NULL);
    g_object_set(G_OBJECT(playbin), "video-sink", sink, NULL);
    g_object_set(G_OBJECT(playbin), "uri", uri, NULL);
 
