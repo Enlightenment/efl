@@ -1220,6 +1220,49 @@ AC_ARG_ENABLE(cpu-sse,
 )
 
 #######################################
+## SSE3
+build_cpu_sse3="no"
+case $host_cpu in
+  i*86)
+    build_cpu_sse3="yes"
+    ;;
+  x86_64)
+    build_cpu_sse3="yes"
+    ;;
+  amd64)
+    build_cpu_sse3="yes"
+    ;;
+esac
+AC_MSG_CHECKING(whether to build sse3 code)
+AC_ARG_ENABLE(cpu-sse3,
+  AS_HELP_STRING([--enable-cpu-sse3],[enable sse3 code]),
+  [
+      if test "x$enableval" = "xyes" ; then
+        AC_MSG_RESULT(yes)
+        AC_DEFINE(BUILD_SSE3, 1, [Build SSE3 Code])
+        build_cpu_sse3="yes"
+      else
+        AC_MSG_RESULT(no)
+        build_cpu_sse3="no"
+      fi
+  ],
+  [
+    AC_MSG_RESULT($build_cpu_sse3)
+    if test "x$build_cpu_sse3" = "xyes" ; then
+      AC_DEFINE(BUILD_SSE3, 1, [Build SSE3 Code])
+    fi
+  ]
+)
+
+
+EVAS_SSE3_CFLAGS="-msse3 "
+if test "x$build_cpu_sse3" = "xyes" ; then
+   CFLAGS="${CFLAGS} ${EVAS_SSE3_CFLAGS}"
+fi
+
+AC_SUBST(CFLAGS)
+
+#######################################
 ## ALTIVEC
 build_cpu_altivec="no"
 case $host_cpu in
@@ -1883,6 +1926,7 @@ echo "CPU Specific Extensions:"
 echo "  Fallback C Code.........: $build_cpu_c"
 echo "  MMX.....................: $build_cpu_mmx"
 echo "  SSE.....................: $build_cpu_sse"
+echo "  SSE3....................: $build_cpu_sse3"
 echo "  ALTIVEC.................: $build_cpu_altivec"
 echo "  NEON....................: $build_cpu_neon"
 echo "  Thread Support..........: $build_pthreads"

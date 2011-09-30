@@ -458,7 +458,8 @@ typedef enum _CPU_Features
    CPU_FEATURE_ALTIVEC = (1 << 3),
    CPU_FEATURE_VIS     = (1 << 4),
    CPU_FEATURE_VIS2    = (1 << 5),
-   CPU_FEATURE_NEON    = (1 << 6)
+   CPU_FEATURE_NEON    = (1 << 6),
+   CPU_FEATURE_SSE3    = (1 << 7)
 } CPU_Features;
 
 typedef enum _Font_Hint_Flags

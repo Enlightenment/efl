@@ -416,6 +416,12 @@ ALTIVEC asm routines yet. :) arm owners will also have to rely on the c
 fallback routines as i haven't managed to come up with any arm assembly that 
 actually can beat the c code (when compiled with all optimizations) in speed.
 
+--enable-cpu-sse3
+
+this enables sse3 optimizations available in the Intel Pentium4, Core, Xeon,
+and Atom processors, as well as the AMD Athlon64, Phenom, Opteron, and Turion
+processors.
+
 
 --enable-cpu-neon
 

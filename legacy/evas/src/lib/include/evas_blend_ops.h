@@ -67,8 +67,10 @@
 #define CPU_SSE2 4
 /* cpu flags count */
 #define CPU_NEON 5
+/* CPU SSE3 */
+#define CPU_SSE3 6
 /* cpu flags count */
-#define CPU_LAST 6
+#define CPU_LAST 7
 
 
 /* some useful constants */

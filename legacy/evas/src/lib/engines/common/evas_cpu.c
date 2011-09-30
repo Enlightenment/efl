@@ -3,6 +3,10 @@
 #include "evas_mmx.h"
 #endif
 
+#if defined BUILD_SSE3
+#include <immintrin.h>
+#endif
+
 #if defined (HAVE_STRUCT_SIGACTION) && defined (HAVE_SIGLONGJMP)
 #include <signal.h>
 #include <setjmp.h>
@@ -57,6 +61,16 @@ evas_common_cpu_sse_test(void)
    int blah[16];
 
    movntq_r2m(mm0, blah);
+#endif
+}
+
+void
+evas_common_cpu_sse3_test(void)
+{
+#ifdef BUILD_SSE3
+   int data[4];
+
+   __m128i val = _mm_lddqu_si128((__m128i *)data);
 #endif
 }
 
@@ -154,6 +168,13 @@ evas_common_cpu_init(void)
    evas_common_cpu_end_opt();
    if (getenv("EVAS_CPU_NO_SSE"))
      cpu_feature_mask &= ~CPU_FEATURE_SSE;
+#ifdef BUILD_SSE3
+   cpu_feature_mask |= CPU_FEATURE_SSE3 *
+     evas_common_cpu_feature_test(evas_common_cpu_sse3_test);
+   evas_common_cpu_end_opt();
+   if(getenv("EVAS_CPU_NO_SSE3"))
+     cpu_feature_mask &= ~CPU_FEATURE_SSE3;
+#endif /* BUILD_SSE3 */
 #endif /* BUILD_SSE */
 #endif /* BUILD_MMX */
 #ifdef __POWERPC__
