@@ -680,7 +680,7 @@ evas_cache_image_request(Evas_Cache_Image *cache, const char *file,
    const char           *ckey = "(null)";
    char                 *hkey;
    Image_Entry          *im;
-   Evas_Image_Load_Opts  prevent = { 0, 0, 0, 0, { 0, 0, 0, 0 }, 0 };
+   Evas_Image_Load_Opts  prevent = { 0, 0.0, 0, 0, 0, { 0, 0, 0, 0 }, EINA_FALSE };
    size_t                size;
    int                   stat_done = 0, stat_failed = 0;
    size_t                file_length;
