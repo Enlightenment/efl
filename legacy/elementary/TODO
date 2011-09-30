@@ -1,6 +1,7 @@
 Bugs:
   pager is not smooth at large sizes
   large tooltips do not work with compositing enabled
+  toolbar sizing is broken in some cases (WEIGHT(0,0) in horizontal box with entry WEIGHT(EXPAND,EXPAND))
 
 Things That Just Need To Be Rewritten (tm):
   toolbar icon api is broken, should take an actual elm_icon. requires new elm_toolbar_item_update api as well
