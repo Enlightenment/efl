@@ -985,9 +985,7 @@ group { name: "elm/genlist/item_compress/default/default";
    data.item: "labels" "elm.text";
    parts {
       part { name: "elm.text";
-         description {
-            state: "default" 0.0;
-            color: 0 0 0 255;
+         description { state: "default" 0.0;
             text {
                min: 0 1;
             }
