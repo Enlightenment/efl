@@ -531,7 +531,10 @@ if test "x$want_elementary_web" != "xno"; then
                            "WebKit's data dir")
         have_elementary_web="yes"
         ELM_WEB_DEF="#define"
-        requirement_elm="web_client ${requirement_elm}"
+## web_client? how about ewebkit? at least in current upstreak webkit
+## there is no web_client.pc        
+#        requirement_elm="web_client ${requirement_elm}"
+        requirement_elm="ewebkit ${requirement_elm}"
        ],
        [have_elementary_web="no"]
     )
