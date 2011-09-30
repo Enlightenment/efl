@@ -41,6 +41,7 @@ _elm_recalc_job(void *data)
    Evas_Coord minw = -1, minh = -1;
    Evas_Coord resw;
    if (!wd) return;
+   evas_event_freeze(evas_object_evas_get(data));
    wd->deferred_recalc_job = NULL;
    evas_object_geometry_get(wd->lbl, NULL, NULL, &resw, NULL);
    if (wd->wrap_w > resw)
@@ -62,6 +63,8 @@ _elm_recalc_job(void *data)
    if ((wd->ellipsis) && (wd->linewrap) && (wd->wrap_h > 0) &&
        (_is_width_over(data) == 1))
      _ellipsis_label_to_width(data);
+   evas_event_thaw(evas_object_evas_get(data));
+   evas_event_thaw_eval(evas_object_evas_get(data));
 }
 
 static void
@@ -69,10 +72,13 @@ _del_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
+   evas_event_freeze(evas_object_evas_get(obj));
    if (wd->deferred_recalc_job) ecore_job_del(wd->deferred_recalc_job);
    if (wd->label) eina_stringshare_del(wd->label);
    if (wd->bg) evas_object_del(wd->bg);
    free(wd);
+   evas_event_thaw(evas_object_evas_get(obj));
+   evas_event_thaw_eval(evas_object_evas_get(obj));
 }
 
 static void
@@ -98,6 +104,7 @@ _theme_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
+   evas_event_freeze(evas_object_evas_get(obj));
    _elm_widget_mirrored_reload(obj);
    _mirrored_set(obj, elm_widget_mirrored_get(obj));
    _theme_change(obj);
@@ -107,6 +114,8 @@ _theme_hook(Evas_Object *obj)
                          _elm_config->scale);
    _label_sliding_change(obj);
    _sizing_eval(obj);
+   evas_event_thaw(evas_object_evas_get(obj));
+   evas_event_thaw_eval(evas_object_evas_get(obj));
 }
 
 static void
@@ -130,6 +139,7 @@ _sizing_eval(Evas_Object *obj)
      }
    else
      {
+        evas_event_freeze(evas_object_evas_get(obj));
         evas_object_geometry_get(wd->lbl, NULL, NULL, &resw, &resh);
         edje_object_size_min_calc(wd->lbl, &minw, &minh);
         if (wd->wrap_w > 0 && minw > wd->wrap_w) minw = wd->wrap_w;
@@ -138,6 +148,8 @@ _sizing_eval(Evas_Object *obj)
         evas_object_size_hint_max_set(obj, wd->wrap_w, wd->wrap_h);
         if ((wd->ellipsis) && (_is_width_over(obj) == 1))
           _ellipsis_label_to_width(obj);
+        evas_event_thaw(evas_object_evas_get(obj));
+        evas_event_thaw_eval(evas_object_evas_get(obj));
      }
 }
 
@@ -339,6 +351,7 @@ _is_width_over(Evas_Object *obj)
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return 0;
 
+   evas_event_freeze(evas_object_evas_get(obj));
    edje_object_part_geometry_get(wd->lbl, "elm.text", &x, &y, NULL, NULL);
    /* Calc the formatted size with ellipsis turned off */
    if (wd->ellipsis)
@@ -384,6 +397,8 @@ _is_width_over(Evas_Object *obj)
         evas_object_textblock_size_formatted_get(tb, &w, &h);
      }
    evas_object_geometry_get(obj, &vx, &vy, &vw, &vh);
+   evas_event_thaw(evas_object_evas_get(obj));
+   evas_event_thaw_eval(evas_object_evas_get(obj));
 
    if (w > wd->wrap_w || h > wd->wrap_h)
       return 1;
@@ -421,6 +436,7 @@ _ellipsis_label_to_width(Evas_Object *obj)
    const char *minfont, *deffont, *maxfont;
    int minfontsize, maxfontsize;
 
+   evas_event_freeze(evas_object_evas_get(obj));
    minfont = edje_object_data_get(wd->lbl, "min_font_size");
    if (minfont) minfontsize = atoi(minfont);
    else minfontsize = 1;
@@ -451,6 +467,8 @@ _ellipsis_label_to_width(Evas_Object *obj)
              break;
           }
      }
+   evas_event_thaw(evas_object_evas_get(obj));
+   evas_event_thaw_eval(evas_object_evas_get(obj));
 }
 
 static void
