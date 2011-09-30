@@ -83,9 +83,11 @@ _diskselector_object_resize(void *data, Evas *e __UNUSED__, Evas_Object *obj, vo
    wd = elm_widget_data_get(data);
    if (!wd) return;
 
-   if (wd->minw == -1 && wd->minh == -1) elm_coords_finger_size_adjust(6, &wd->minw, 1, &wd->minh);
-   edje_object_size_min_restricted_calc(elm_smart_scroller_edje_object_get(
-         wd->scroller), &wd->minw, &wd->minh, wd->minw, wd->minh);
+   if ((wd->minw == -1) && (wd->minh == -1))
+      elm_coords_finger_size_adjust(6, &wd->minw, 1, &wd->minh);
+   edje_object_size_min_restricted_calc
+      (elm_smart_scroller_edje_object_get
+          (wd->scroller), &wd->minw, &wd->minh, wd->minw, wd->minh);
    evas_object_size_hint_min_set(obj, wd->minw, wd->minh);
    evas_object_size_hint_max_set(obj, -1, -1);
 
