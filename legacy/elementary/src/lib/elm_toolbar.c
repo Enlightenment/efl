@@ -1387,9 +1387,10 @@ elm_toolbar_item_icon_set(Elm_Toolbar_Item *item, const char *icon)
 {
    Evas_Object *icon_obj;
    Widget_Data *wd;
-   Evas_Object *obj = item->base.widget;
+   Evas_Object *obj;
 
    ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(item);
+   obj = item->base.widget;
    wd = elm_widget_data_get(obj);
    if (!wd) return;
    if ((icon) && (item->icon_str) && (!strcmp(icon, item->icon_str))) return;
@@ -1412,10 +1413,11 @@ elm_toolbar_item_icon_memfile_set(Elm_Toolbar_Item *item, const void *img, size_
 {
    Evas_Object *icon_obj;
    Widget_Data *wd;
-   Evas_Object *obj = item->base.widget;
+   Evas_Object *obj;
    Eina_Bool ret;
 
    ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(item, EINA_FALSE);
+   obj = item->base.widget;
    wd = elm_widget_data_get(obj);
    if (!wd) return EINA_FALSE;
 
@@ -1441,9 +1443,10 @@ EAPI Evas_Object *
 elm_toolbar_item_object_get(Elm_Toolbar_Item *item)
 {
    Widget_Data *wd;
-   Evas_Object *obj = item->base.widget;
+   Evas_Object *obj;
 
    ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(item, NULL);
+   obj = item->base.widget;
    wd = elm_widget_data_get(obj);
    if (!wd) return NULL;
 
@@ -1454,9 +1457,10 @@ EAPI Evas_Object *
 elm_toolbar_item_icon_object_get(Elm_Toolbar_Item *item)
 {
    Widget_Data *wd;
-   Evas_Object *obj = item->base.widget;
+   Evas_Object *obj;
 
    ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(item, NULL);
+   obj = item->base.widget;
    wd = elm_widget_data_get(obj);
    if (!wd) return NULL;
 
