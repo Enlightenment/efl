@@ -2703,24 +2703,24 @@ st_collections_group_parts_part_type(void)
    check_arg_count(1);
 
    current_part->type = parse_enum(0,
-			 "NONE", EDJE_PART_TYPE_NONE,
-			 "RECT", EDJE_PART_TYPE_RECTANGLE,
-			 "TEXT", EDJE_PART_TYPE_TEXT,
-			 "IMAGE", EDJE_PART_TYPE_IMAGE,
-			 "SWALLOW", EDJE_PART_TYPE_SWALLOW,
-			 "TEXTBLOCK", EDJE_PART_TYPE_TEXTBLOCK,
-			 "GROUP", EDJE_PART_TYPE_GROUP,
-			 "BOX", EDJE_PART_TYPE_BOX,
-			 "TABLE", EDJE_PART_TYPE_TABLE,
-			 "EXTERNAL", EDJE_PART_TYPE_EXTERNAL,
-                         "PROXY", EDJE_PART_TYPE_PROXY,
-			 NULL);
+                                   "NONE", EDJE_PART_TYPE_NONE,
+                                   "RECT", EDJE_PART_TYPE_RECTANGLE,
+                                   "TEXT", EDJE_PART_TYPE_TEXT,
+                                   "IMAGE", EDJE_PART_TYPE_IMAGE,
+                                   "SWALLOW", EDJE_PART_TYPE_SWALLOW,
+                                   "TEXTBLOCK", EDJE_PART_TYPE_TEXTBLOCK,
+                                   "GROUP", EDJE_PART_TYPE_GROUP,
+                                   "BOX", EDJE_PART_TYPE_BOX,
+                                   "TABLE", EDJE_PART_TYPE_TABLE,
+                                   "EXTERNAL", EDJE_PART_TYPE_EXTERNAL,
+                                   "PROXY", EDJE_PART_TYPE_PROXY,
+                                   NULL);
 
    if (current_part->default_desc || current_part->other.desc_count > 0)
      {
-	ERR("%s: Error. parse error %s:%i. You can't change type after defining description in part of the name %s",
-	    progname, file_in, line - 1, current_part->name);
-	exit(-1);
+        ERR("%s: Error. parse error %s:%i. You can't change the part type in inherited group. (part: %s)",
+            progname, file_in, line - 1, current_part->name);
+        exit(-1);
      }
 }
 
