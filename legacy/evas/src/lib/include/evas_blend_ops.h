@@ -5,6 +5,10 @@
 #include "evas_mmx.h"
 #endif
 
+#if defined BUILD_SSE3
+#include <immintrin.h>
+#endif
+
 /* src pixel flags: */
 
 /* pixels none */
@@ -175,6 +179,193 @@ extern const DATA32 ALPHA_256;
 	psrlw_i2r(8, mmx); \
 	paddw_r2r(mmx, mmy); \
 	pand_r2r(mm255, mmy);
+
+#endif
+
+
+/* some useful SSE3 inline functions */
+
+#ifdef BUILD_SSE3
+
+static __m128i GA_MASK_SSE3;
+static __m128i RB_MASK_SSE3;
+static __m128i SYM4_MASK_SSE3;
+static __m128i RGB_MASK_SSE3;
+static __m128i A_MASK_SSE3;
+
+static __m128i ALPHA_SSE3;
+
+static always_inline __m128i
+mul_256_sse3(__m128i a, __m128i c) {
+
+   /* prepare alpha for word multiplication */
+   __m128i a_l = a;
+   __m128i a_h = a;
+   a_l = _mm_unpacklo_epi16(a_l, a_l);
+   a_h = _mm_unpackhi_epi16(a_h, a_h);
+   __m128i a0 = (__m128i) _mm_shuffle_ps( (__m128)a_l, (__m128)a_h, 0x88);
+
+   /* first half of calc */
+   __m128i c0 = c;
+   c0 = _mm_srli_epi32(c0, 8);
+   c0 = _mm_and_si128(GA_MASK_SSE3, c0);
+   c0 = _mm_mullo_epi16(a0, c0);
+   c0 = _mm_and_si128(RB_MASK_SSE3, c0);
+
+   /* second half of calc */
+   __m128i c1 = c;
+   c1 = _mm_and_si128(GA_MASK_SSE3, c1);
+   c1 = _mm_mullo_epi16(a0, c1);
+   c1 = _mm_srli_epi32(c1, 8);
+   c1 = _mm_and_si128(GA_MASK_SSE3, c1);
+
+   /* combine */
+   return _mm_add_epi32(c0, c1);
+}
+
+static always_inline __m128i
+sub4_alpha_sse3(__m128i c) {
+
+   __m128i c0 = c;
+
+   c0 = _mm_srli_epi32(c0, 24);
+   return _mm_sub_epi32(ALPHA_SSE3, c0);
+}
+
+static always_inline __m128i
+interp4_256_sse3(__m128i a, __m128i c0, __m128i c1)
+{
+   const __m128i zero = _mm_setzero_si128();
+
+   __m128i a_l = a;
+   __m128i a_h = a;
+   a_l = _mm_unpacklo_epi16(a_l, a_l);
+   a_h = _mm_unpackhi_epi16(a_h, a_h);
+
+   __m128i a_t = _mm_slli_epi64(a_l, 32);
+   __m128i a_t0 = _mm_slli_epi64(a_h, 32);
+
+   a_l = _mm_add_epi32(a_l, a_t);
+   a_h = _mm_add_epi32(a_h, a_t0);
+
+   __m128i c0_l = c0;
+   __m128i c0_h = c0;
+
+   c0_l = _mm_unpacklo_epi8(c0_l, zero);
+   c0_h = _mm_unpackhi_epi8(c0_h, zero);
+
+   __m128i c1_l = c1;
+   __m128i c1_h = c1;
+
+   c1_l = _mm_unpacklo_epi8(c1_l, zero);
+   c1_h = _mm_unpackhi_epi8(c1_h, zero);
+
+   __m128i cl_sub = _mm_sub_epi16(c0_l, c1_l);
+   __m128i ch_sub = _mm_sub_epi16(c0_h, c1_h);
+
+   cl_sub = _mm_mullo_epi16(cl_sub, a_l);
+   ch_sub = _mm_mullo_epi16(ch_sub, a_h);
+
+   __m128i c1ls = _mm_slli_epi16(c1_l, 8);
+   __m128i c1hs = _mm_slli_epi16(c1_h, 8);
+
+   cl_sub = _mm_add_epi16(cl_sub, c1ls);
+   ch_sub = _mm_add_epi16(ch_sub, c1hs);
+
+   cl_sub = _mm_and_si128(cl_sub, RB_MASK_SSE3);
+   ch_sub = _mm_and_si128(ch_sub, RB_MASK_SSE3);
+
+   cl_sub = _mm_srli_epi64(cl_sub, 8);
+   ch_sub = _mm_srli_epi64(ch_sub, 8);
+
+   cl_sub = _mm_packus_epi16(cl_sub, cl_sub);
+   ch_sub = _mm_packus_epi16(ch_sub, ch_sub);
+
+   return  (__m128i) _mm_shuffle_ps( (__m128)cl_sub, (__m128)ch_sub, 0x44);
+}
+
+static always_inline __m128i
+mul_sym_sse3(__m128i a, __m128i c) {
+
+      /* Prepare alpha for word mult */
+      __m128i a_l = a;
+      __m128i a_h = a;
+      a_l = _mm_unpacklo_epi16(a_l, a_l);
+      a_h = _mm_unpackhi_epi16(a_h, a_h);
+      __m128i a0 = (__m128i) _mm_shuffle_ps( (__m128)a_l, (__m128)a_h, 0x88);
+
+      /* first part */
+      __m128i c0 = c;
+      c0 = _mm_srli_epi32(c0, 8);
+      c0 = _mm_and_si128(GA_MASK_SSE3, c0);
+      c0 = _mm_mullo_epi16(a0, c0);
+      c0 = _mm_add_epi32(c0, GA_MASK_SSE3);
+      c0 = _mm_and_si128(RB_MASK_SSE3, c0);
+
+      /* second part */
+      __m128i c1 = c;
+      c1 = _mm_and_si128(GA_MASK_SSE3, c1);
+      c1 = _mm_mullo_epi16(a0, c1);
+      c1 = _mm_add_epi32(c1, GA_MASK_SSE3);
+      c1 = _mm_srli_epi32(c1, 8);
+      c1 = _mm_and_si128(GA_MASK_SSE3, c1);
+
+      return _mm_add_epi32(c0, c1);
+}
+
+static always_inline __m128i
+mul4_sym_sse3(__m128i x, __m128i y) {
+
+   const __m128i zero = _mm_setzero_si128();
+
+   __m128i x_l = _mm_unpacklo_epi8(x, zero);
+   __m128i x_h = _mm_unpackhi_epi8(x, zero);
+
+   __m128i y_l = _mm_unpacklo_epi8(y, zero);
+   __m128i y_h = _mm_unpackhi_epi8(y, zero);
+
+   __m128i r_l = _mm_mullo_epi16(x_l, y_l);
+   __m128i r_h = _mm_mullo_epi16(x_h, y_h);
+
+   r_l = _mm_add_epi16(r_l, SYM4_MASK_SSE3);
+   r_h = _mm_add_epi16(r_h, SYM4_MASK_SSE3);
+
+   r_l = _mm_srli_epi16(r_l, 8);
+   r_h = _mm_srli_epi16(r_h, 8);
+
+   return  _mm_packus_epi16(r_l, r_h);
+}
+
+static always_inline __m128i
+mul3_sym_sse3(__m128i x, __m128i y) {
+
+   __m128i res = mul4_sym_sse3(x, y);
+   return  _mm_and_si128(res, RGB_MASK_SSE3);
+}
+
+#define LOOP_ALIGNED_U1_A48_SSE3(D, LENGTH, UOP,A4OP, A8OP) \
+   { \
+      while((uintptr_t)d & 0xF && l) UOP \
+   \
+      while(l) { \
+         switch(l) { \
+            case 3: UOP \
+            case 2: UOP \
+            case 1: UOP \
+               break; \
+            case 7: \
+            case 6: \
+            case 5: \
+            case 4: \
+               A4OP \
+               break; \
+            default: \
+               A8OP \
+               break; \
+         } \
+      } \
+   }
+
 
 #endif
 

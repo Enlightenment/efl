@@ -51,4 +51,28 @@ if test "x${have_attribute_vector}" = "xyes" ; then
 fi
 ])
 
+dnl Usage: EFL_ATTRIBUTE_ALWAYS_INLINE
+dnl call AC_DEFINE for alway_inline if __attribute__((always_inline)) is available
+
+AC_DEFUN([EFL_ATTRIBUTE_ALWAYS_INLINE],
+[
+AC_MSG_CHECKING([for __attribute__ ((always_inline))])
+AC_COMPILE_IFELSE(
+   [AC_LANG_PROGRAM(
+       [[
+       ]],
+       [[
+__attribute__((always_inline)) void foo(void) {}
+       ]])],
+   [have_attribute_always_inline="yes"],
+   [have_attribute_always_inline="no"])
+AC_MSG_RESULT([${have_attribute_always_inline}])
+
+if test "x${have_attribute_always_inline}" = "xyes" ; then
+   AC_DEFINE([always_inline], [__attribute__ ((always_inline)) inline], [Macro declaring a function to always be inlined.])
+else
+   AC_DEFINE([always_inline], [inline], [Macro declaring a function to always be inlined.])
+fi
+])
+
 dnl End of efl_attribute.m4
