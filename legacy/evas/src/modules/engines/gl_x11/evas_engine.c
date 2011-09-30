@@ -1785,7 +1785,7 @@ eng_image_data_get(void *data, void *image, int to_write, DATA32 **image_data, i
 #if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
    eng_window_use(re->win);
 
-   if ((im->tex) && (im->tex->pt) && (im->tex->pt->dyn.img))
+   if ((im->tex) && (im->tex->pt) && (im->tex->pt->dyn.img) && (im->cs.space == EVAS_COLORSPACE_ARGB8888))
      {
         *image_data = im->tex->pt->dyn.data = glsym_eglMapImageSEC(re->win->egl_disp, im->tex->pt->dyn.img);
 
@@ -1875,13 +1875,16 @@ eng_image_data_put(void *data, void *image, DATA32 *image_data)
    im = image;
    if (im->native.data) return image;
    eng_window_use(re->win);
-   if ((im->tex) && (im->tex->pt) && (im->tex->pt->dyn.data))
+   if ((im->tex) && (im->tex->pt)
+       && (im->tex->pt->dyn.data)
+       && (im->cs.space == EVAS_COLORSPACE_ARGB8888))
      {
 #if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
         glsym_eglUnmapImageSEC(re->win->egl_disp, im->tex->pt->dyn.img);
 #endif
         if (im->tex->pt->dyn.data == image_data)
           {
+	     evas_gl_common_image_dirty(im, 0, 0, 0, 0);
              return image;
           }
         else
