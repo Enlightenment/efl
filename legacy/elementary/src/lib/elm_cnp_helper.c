@@ -789,7 +789,7 @@ notify_handler_uri(Cnp_Selection *sel, Ecore_X_Event_Selection_Notify *notify)
 {
    Ecore_X_Selection_Data *data;
    Ecore_X_Selection_Data_Files *files;
-   char *p;
+   char *p, *stripstr;
 
    data = notify->data;
    cnp_debug("data->format is %d %p %p\n", data->format, notify, data);
@@ -803,11 +803,11 @@ notify_handler_uri(Cnp_Selection *sel, Ecore_X_Event_Selection_Notify *notify)
              cnp_debug("more then one file: Bailing\n");
              return 0;
           }
-        p = files->files[0];
+        stripstr = p = strdup(files->files[0]);
      }
    else
      {
-        p = (char *)data->data;
+        stripstr = p = strndup((char *)data->data, data->length);
      }
 
    if (!p)
@@ -819,7 +819,11 @@ notify_handler_uri(Cnp_Selection *sel, Ecore_X_Event_Selection_Notify *notify)
    if (strncmp(p, "file://", 7))
      {
         /* Try and continue if it looks sane */
-        if (*p != '/') return 0;
+        if (*p != '/')
+          {
+             free(p);
+             return 0;
+          }
      }
    else
      {
@@ -836,6 +840,7 @@ notify_handler_uri(Cnp_Selection *sel, Ecore_X_Event_Selection_Notify *notify)
      {
         pasteimage_append(p, sel->requestwidget);
      }
+   free(stripstr);
    return 0;
 }
 
