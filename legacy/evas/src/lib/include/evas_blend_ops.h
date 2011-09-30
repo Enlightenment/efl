@@ -9,6 +9,15 @@
 #include <immintrin.h>
 #endif
 
+#ifndef always_inline
+#if defined(__GNUC__) && (__GNUC__ > 3 || __GNUC__ == 3 && __GNUC_MINOR__ > 0)
+#    define always_inline __attribute__((always_inline)) inline
+#else
+#    define always_inline inline
+#endif
+#endif
+
+
 /* src pixel flags: */
 
 /* pixels none */
@@ -191,7 +200,7 @@ static __m128i GA_MASK_SSE3;
 static __m128i RB_MASK_SSE3;
 static __m128i SYM4_MASK_SSE3;
 static __m128i RGB_MASK_SSE3;
-static __m128i A_MASK_SSE3;
+//static __m128i A_MASK_SSE3;
 
 static __m128i ALPHA_SSE3;
 

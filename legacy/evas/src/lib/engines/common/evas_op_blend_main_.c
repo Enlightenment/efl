@@ -84,6 +84,9 @@ evas_common_gfx_compositor_blend_rel_get(void)
 # include "./evas_op_blend/op_blend_mask_color_i386.c"
 //# include "./evas_op_blend/op_blend_pixel_mask_color_i386.c"
 
+#ifdef BUILD_SSE3
+static __m128i A_MASK_SSE3;
+#endif
 # include "./evas_op_blend/op_blend_pixel_sse3.c"
 # include "./evas_op_blend/op_blend_color_sse3.c"
 # include "./evas_op_blend/op_blend_pixel_color_sse3.c"
@@ -410,17 +413,17 @@ op_blend_rel_init(void)
    memset(op_blend_rel_span_funcs, 0, sizeof(op_blend_rel_span_funcs));
    memset(op_blend_rel_pt_funcs, 0, sizeof(op_blend_rel_pt_funcs));
 #ifdef BUILD_SSE3
-   init_blend_rel_pixel_span_funcs_c();
-   init_blend_rel_pixel_color_span_funcs_c();
-   init_blend_rel_pixel_mask_span_funcs_c();
-   init_blend_rel_color_span_funcs_c();
-   init_blend_rel_mask_color_span_funcs_c();
+   init_blend_rel_pixel_span_funcs_sse3();
+   init_blend_rel_pixel_color_span_funcs_sse3();
+   init_blend_rel_pixel_mask_span_funcs_sse3();
+   init_blend_rel_color_span_funcs_sse3();
+   init_blend_rel_mask_color_span_funcs_sse3();
 
-   init_blend_rel_pixel_pt_funcs_c();
-   init_blend_rel_pixel_color_pt_funcs_c();
-   init_blend_rel_pixel_mask_pt_funcs_c();
-   init_blend_rel_color_pt_funcs_c();
-   init_blend_rel_mask_color_pt_funcs_c();
+   init_blend_rel_pixel_pt_funcs_sse3();
+   init_blend_rel_pixel_color_pt_funcs_sse3();
+   init_blend_rel_pixel_mask_pt_funcs_sse3();
+   init_blend_rel_color_pt_funcs_sse3();
+   init_blend_rel_mask_color_pt_funcs_sse3();
 #endif
 #ifdef BUILD_MMX
    init_blend_rel_pixel_span_funcs_mmx();

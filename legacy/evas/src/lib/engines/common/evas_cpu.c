@@ -68,9 +68,9 @@ void
 evas_common_cpu_sse3_test(void)
 {
 #ifdef BUILD_SSE3
-   int data[4];
+   int data[4]; 
 
-   __m128i val = _mm_lddqu_si128((__m128i *)data);
+   _mm_lddqu_si128((__m128i *)data);
 #endif
 }
 
@@ -170,10 +170,10 @@ evas_common_cpu_init(void)
      cpu_feature_mask &= ~CPU_FEATURE_SSE;
 #ifdef BUILD_SSE3
    cpu_feature_mask |= CPU_FEATURE_SSE3 *
-     evas_common_cpu_feature_test(evas_common_cpu_sse3_test);
+     evas_common_cpu_feature_test(evas_common_cpu_sse3_test); 
    evas_common_cpu_end_opt();
    if(getenv("EVAS_CPU_NO_SSE3"))
-     cpu_feature_mask &= ~CPU_FEATURE_SSE3;
+     cpu_feature_mask &= ~CPU_FEATURE_SSE3; 
 #endif /* BUILD_SSE3 */
 #endif /* BUILD_SSE */
 #endif /* BUILD_MMX */
