@@ -4,15 +4,20 @@ EXTRA_DIST = \
 op_blend_color_.c \
 op_blend_color_i386.c \
 op_blend_color_neon.c \
+op_blend_color_sse3.c \
 op_blend_mask_color_.c \
 op_blend_mask_color_i386.c \
 op_blend_mask_color_neon.c \
+op_blend_mask_color_sse3.c \
 op_blend_pixel_.c \
 op_blend_pixel_color_.c \
 op_blend_pixel_color_i386.c \
 op_blend_pixel_color_neon.c \
+op_blend_pixel_color_sse3.c \
 op_blend_pixel_i386.c \
 op_blend_pixel_mask_.c \
 op_blend_pixel_mask_i386.c \
 op_blend_pixel_mask_neon.c \
-op_blend_pixel_neon.c
+op_blend_pixel_mask_sse3.c \
+op_blend_pixel_neon.c \
+op_blend_pixel_sse3.c
