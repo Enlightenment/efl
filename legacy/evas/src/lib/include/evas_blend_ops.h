@@ -9,6 +9,7 @@
 #include <immintrin.h>
 #endif
 
+#include "config.h"
 
 /* src pixel flags: */
 
