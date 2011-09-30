@@ -1964,7 +1964,9 @@ evas_gl_common_context_nv12_push(Evas_Engine_GL_Context *gc,
 
    gc->pipe[pn].region.type = RTYPE_NV12;
    gc->pipe[pn].shader.cur_tex = tex->pt->texture;
+   gc->pipe[pn].shader.cur_tex_dyn = tex->pt->dyn.img;
    gc->pipe[pn].shader.cur_texu = tex->ptuv->texture;
+   gc->pipe[pn].shader.cur_texu_dyn = tex->ptuv->dyn.img;
    gc->pipe[pn].shader.cur_prog = prog;
    gc->pipe[pn].shader.smooth = smooth;
    gc->pipe[pn].shader.blend = blend;
@@ -2188,11 +2190,14 @@ evas_gl_common_context_image_map_push(Evas_Engine_GL_Context *gc,
    if (utexture)
      {
        gc->pipe[pn].shader.cur_texu = tex->ptu->texture;
+       gc->pipe[pn].shader.cur_texu_dyn = tex->ptu->dyn.img;
        gc->pipe[pn].shader.cur_texv = tex->ptv->texture;
+       gc->pipe[pn].shader.cur_texv_dyn = tex->ptv->dyn.img;
      }
    else if (uvtexture)
      {
        gc->pipe[pn].shader.cur_texu = tex->ptuv->texture;
+       gc->pipe[pn].shader.cur_texu_dyn = tex->ptuv->dyn.img;
      }
    gc->pipe[pn].shader.cur_prog = prog;
    gc->pipe[pn].shader.smooth = smooth;
@@ -2566,14 +2571,21 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
                   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
                   glVertexAttribPointer(SHAD_TEXUV3, 2, GL_FLOAT, GL_FALSE, 0, gc->pipe[i].array.texuv3);
                   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+
                   glActiveTexture(GL_TEXTURE1);
                   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
                   glBindTexture(GL_TEXTURE_2D, gc->pipe[i].shader.cur_texu);
                   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+		  if (gc->pipe[i].shader.cur_texu_dyn)
+		    secsym_glEGLImageTargetTexture2DOES(GL_TEXTURE_2D, gc->pipe[i].shader.cur_texu_dyn);
+
                   glActiveTexture(GL_TEXTURE2);
                   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
                   glBindTexture(GL_TEXTURE_2D, gc->pipe[i].shader.cur_texv);
                   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+		  if (gc->pipe[i].shader.cur_texv_dyn)
+		    secsym_glEGLImageTargetTexture2DOES(GL_TEXTURE_2D, gc->pipe[i].shader.cur_texv_dyn);
+
                   glActiveTexture(GL_TEXTURE0);
                   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
                }
@@ -2583,9 +2595,14 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
                   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
                   glVertexAttribPointer(SHAD_TEXUV2, 2, GL_FLOAT, GL_FALSE, 0, gc->pipe[i].array.texuv2);
                   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+
                   glActiveTexture(GL_TEXTURE1);
                   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
                   glBindTexture(GL_TEXTURE_2D, gc->pipe[i].shader.cur_texu);
+                  GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+		  if (gc->pipe[i].shader.cur_texu_dyn)
+		    secsym_glEGLImageTargetTexture2DOES(GL_TEXTURE_2D, gc->pipe[i].shader.cur_texu_dyn);
+
                   glActiveTexture(GL_TEXTURE0);
                   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
                }

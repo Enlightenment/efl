@@ -78,14 +78,20 @@
 #ifndef EGL_MAP_GL_TEXTURE_RGBA_SEC
 # define EGL_MAP_GL_TEXTURE_RGBA_SEC 0x3206
 #endif
+#ifndef EGL_MAP_GL_TEXTURE_LUMINANCE_SEC
+# define EGL_MAP_GL_TEXTURE_LUMINANCE_SEC 0x3207
+#endif
+#ifndef EGL_MAP_GL_TEXTURE_LUMINANCE_ALPHA_SEC
+# define EGL_MAP_GL_TEXTURE_LUMINANCE_ALPHA_SEC	0x3208
+#endif
 #ifndef EGL_MAP_GL_TEXTURE_PIXEL_TYPE_SEC
-# define EGL_MAP_GL_TEXTURE_PIXEL_TYPE_SEC 0x3206
+# define EGL_MAP_GL_TEXTURE_PIXEL_TYPE_SEC 0x3209
 #endif
 #ifndef EGL_MAP_GL_TEXTURE_UNSIGNED_BYTE_SEC
-# define EGL_MAP_GL_TEXTURE_UNSIGNED_BYTE_SEC 0x3207
+# define EGL_MAP_GL_TEXTURE_UNSIGNED_BYTE_SEC 0x3210
 #endif
 #ifndef EGL_MAP_GL_TEXTURE_STRIDE_IN_BYTES_SEC
-# define EGL_MAP_GL_TEXTURE_STRIDE_IN_BYTES_SEC 0x3208
+# define EGL_MAP_GL_TEXTURE_STRIDE_IN_BYTES_SEC 0x3211
 #endif
 #ifndef GL_PROGRAM_BINARY_LENGTH
 # define GL_PROGRAM_BINARY_LENGTH 0x8741
@@ -295,7 +301,8 @@ struct _Evas_Engine_GL_Context
          Evas_GL_Image  *surface;
          GLuint          cur_prog;
          GLuint          cur_tex, cur_texu, cur_texv, cur_texm;
-         int             render_op;
+	 void           *cur_tex_dyn, *cur_texu_dyn, *cur_texv_dyn;
+	 int             render_op;
          int             cx, cy, cw, ch;
          int             smooth;
          int             blend;
@@ -374,6 +381,7 @@ struct _Evas_GL_Texture
    } double_buffer;
 
    Eina_Bool        alpha : 1;
+   Eina_Bool        dyn : 1;
 };
 
 struct _Evas_GL_Image
@@ -629,7 +637,7 @@ extern unsigned int   (*secsym_eglUnmapImageSEC)             (void *a, void *b);
 extern unsigned int   (*secsym_eglGetImageAttribSEC)         (void *a, void *b, int c, int *d);
 #endif
 
-//#define GL_ERRORS 1
+#define GL_ERRORS 1
 
 #ifdef GL_ERRORS
 # define GLERR(fn, fl, ln, op) \
