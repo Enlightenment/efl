@@ -3331,6 +3331,7 @@ EAPI Eina_Bool         evas_object_visible_get           (const Evas_Object *obj
  * @param a   The alpha component of the given color.
  *
  * @see evas_object_color_get() (for an example)
+ * @note These color values are expected to be premultiplied by @p a.
  *
  * @ingroup Evas_Object_Group_Basic
  */
@@ -3351,8 +3352,9 @@ EAPI void              evas_object_color_set             (Evas_Object *obj, int 
  *
  * Retrieves the “main” color's RGB component (and alpha channel)
  * values, <b>which range from 0 to 255</b>. For the alpha channel,
- * which defines the object's transparency level, the former value
- * means totally trasparent, while the latter means opaque.
+ * which defines the object's transparency level, 0 means totally
+ * trasparent, while 255 means opaque. These color values are
+ * premultiplied by the alpha value.
  *
  * Usually you’ll use this attribute for text and rectangle objects,
  * where the “main” color is their unique one. If set for objects
