@@ -1438,6 +1438,19 @@ elm_toolbar_item_icon_memfile_set(Elm_Toolbar_Item *item, const void *img, size_
 }
 
 EAPI Evas_Object *
+elm_toolbar_item_object_get(Elm_Toolbar_Item *item)
+{
+   Widget_Data *wd;
+   Evas_Object *obj = item->base.widget;
+
+   ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(item, NULL);
+   wd = elm_widget_data_get(obj);
+   if (!wd) return NULL;
+
+   return item->base.view;
+}
+
+EAPI Evas_Object *
 elm_toolbar_item_icon_object_get(Elm_Toolbar_Item *item)
 {
    Widget_Data *wd;

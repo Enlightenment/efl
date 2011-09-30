@@ -14526,6 +14526,16 @@ extern "C" {
    EAPI const char             *elm_toolbar_item_icon_get(const Elm_Toolbar_Item *item) EINA_ARG_NONNULL(1);
 
    /**
+    * Get the object of @p item.
+    *
+    * @param item The toolbar item.
+    * @return The object
+    *
+    * @ingroup Toolbar
+    */
+   EAPI Evas_Object            *elm_toolbar_item_object_get(Elm_Toolbar_Item *item) EINA_ARG_NONNULL(1);
+
+   /**
     * Get the icon object of @p item.
     *
     * @param item The toolbar item.
