@@ -166,17 +166,16 @@ static const unsigned char App1[] = {0xff, 0xe1};
 typedef enum {
      EXIF_BYTE_ALIGN_II,
      EXIF_BYTE_ALIGN_MM
-}ExifByteAlign;
+} ExifByteAlign;
 
 static int
 _get_orientation(void *map, size_t length)
 {
-   int size;
    char *buf;
-   unsigned char orientation[2];
+   char orientation[2];
    ExifByteAlign byte_align;
-   int num_directory = 0;
-   int i, j;
+   unsigned int num_directory = 0;
+   unsigned int i, j;
    int direction;
 
    /* open file and get 22 byte frome file */
@@ -212,9 +211,6 @@ _get_orientation(void *map, size_t length)
    buf = map + 22;
 
    if (length < (12 * num_directory + 22)) return 0;
-
-
-   /* we get all info from file, close file first */
 
    j = 0;
 
