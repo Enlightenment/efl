@@ -145,7 +145,7 @@ test_weather(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_inf
      elm_hoversel_item_add(hv, eweather_plugin_name_get(eweather, i), NULL, ELM_ICON_NONE, _hover_select_cb, NULL);
 
    en = elm_entry_add(win);
-   elm_entry_line_wrap_set(en, 0);
+   elm_entry_line_wrap_set(en, ELM_WRAP_NONE);
    elm_entry_single_line_set(en, EINA_TRUE);
    elm_entry_entry_set(en, "Paris");
    evas_object_size_hint_weight_set(en, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);

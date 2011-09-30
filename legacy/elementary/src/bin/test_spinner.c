@@ -25,7 +25,7 @@ test_spinner(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_inf
    sp = elm_spinner_add(win);
    elm_spinner_label_format_set(sp, "%1.1f units");
    elm_spinner_step_set(sp, 1.3);
-   elm_spinner_wrap_set(sp, 1);
+   elm_spinner_wrap_set(sp, ELM_WRAP_CHAR);
    elm_spinner_min_max_set(sp, -50.0, 250.0);
    evas_object_size_hint_align_set(sp, EVAS_HINT_FILL, 0.5);
    evas_object_size_hint_weight_set(sp, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -35,7 +35,7 @@ test_spinner(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_inf
    sp = elm_spinner_add(win);
    elm_spinner_label_format_set(sp, "Percentage %%%1.2f something");
    elm_spinner_step_set(sp, 5.0);
-   elm_spinner_wrap_set(sp, 1);
+   elm_spinner_wrap_set(sp, ELM_WRAP_CHAR);
    elm_spinner_min_max_set(sp, 0.0, 100.0);
    evas_object_size_hint_align_set(sp, EVAS_HINT_FILL, 0.5);
    evas_object_size_hint_weight_set(sp, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -45,7 +45,7 @@ test_spinner(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_inf
    sp = elm_spinner_add(win);
    elm_spinner_label_format_set(sp, "%1.1f units");
    elm_spinner_step_set(sp, 1.3);
-   elm_spinner_wrap_set(sp, 1);
+   elm_spinner_wrap_set(sp, ELM_WRAP_CHAR);
    elm_object_style_set (sp, "vertical");
    elm_spinner_min_max_set(sp, -50.0, 250.0);
    evas_object_size_hint_align_set(sp, EVAS_HINT_FILL, 0.5);

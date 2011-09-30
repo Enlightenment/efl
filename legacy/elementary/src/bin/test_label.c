@@ -44,7 +44,7 @@ test_label(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
    evas_object_show(lb);
 
    lb = elm_label_add(win);
-   elm_label_line_wrap_set(lb, 1);
+   elm_label_line_wrap_set(lb, ELM_WRAP_CHAR);
    elm_object_text_set(lb,
                        "<b>"
                        "This is more text designed to line-wrap here as "

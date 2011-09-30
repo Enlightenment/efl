@@ -134,7 +134,7 @@ test_fileselector_button(void *data       __UNUSED__,
    evas_object_show(lb);
 
    en = elm_entry_add(win);
-   elm_entry_line_wrap_set(en, EINA_FALSE);
+   elm_entry_line_wrap_set(en, ELM_WRAP_NONE);
    elm_entry_editable_set(en, EINA_FALSE);
    evas_object_smart_callback_add(fs_bt, "file,chosen", _file_chosen, en);
    elm_box_pack_end(vbox, en);

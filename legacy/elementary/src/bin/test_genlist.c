@@ -677,7 +677,7 @@ Evas_Object *gl3_icon_get(void *data, Evas_Object *obj, const char *part)
         Evas_Object *lb;
 
         lb = elm_label_add(obj);
-        elm_label_line_wrap_set(lb, 1);
+        elm_label_line_wrap_set(lb, ELM_WRAP_CHAR);
         elm_label_wrap_width_set(lb, 201);
         elm_object_text_set(lb, "ashj ascjscjh n asjkl hcjlh ls hzshnn zjh sh zxjcjsnd h dfw sdv edev efe fwefvv vsd cvs ws wf  fvwf wd fwe f  we wef we wfe rfwewef wfv wswf wefg sdfws w wsdcfwcf wsc vdv  sdsd sdcd cv wsc sdcv wsc d sdcdcsd sdcdsc wdvd sdcsd wscxcv wssvd sd");
         return lb;

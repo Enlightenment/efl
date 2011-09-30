@@ -272,7 +272,7 @@ test_flip2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
 
    en = elm_entry_add(win);
    elm_entry_scrollable_set(en, EINA_TRUE);
-   elm_entry_line_wrap_set(en, EINA_FALSE);
+   elm_entry_line_wrap_set(en, ELM_WRAP_NONE);
    snprintf(buf, sizeof(buf),
             "This is an entry widget in this window that<br>"
             "uses markup <b>like this</> for styling and<br>"
