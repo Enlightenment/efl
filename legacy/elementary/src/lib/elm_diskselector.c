@@ -30,8 +30,8 @@ struct _Widget_Data
    Eina_List *over_items;
    Eina_List *under_items;
    int item_count, len_threshold, len_side, display_item_num;
-   Ecore_Idler *idler;
-   Ecore_Idler *check_idler;
+   Ecore_Idle_Enterer *idler;
+   Ecore_Idle_Enterer *check_idler;
    Evas_Coord minw, minh;
    Eina_Bool init:1;
    Eina_Bool round:1;
@@ -99,7 +99,7 @@ _diskselector_object_resize(void *data, Evas *e __UNUSED__, Evas_Object *obj, vo
                                  (int)(w / wd->display_item_num), 0);
 
    if (!wd->idler)
-     wd->idler = ecore_idler_add(_move_scroller, data);
+     wd->idler = ecore_idle_enterer_before_add(_move_scroller, data);
 }
 
 static Elm_Diskselector_Item *
@@ -387,7 +387,7 @@ _event_hook(Evas_Object *obj, Evas_Object *src __UNUSED__, Evas_Callback_Type ty
      {
         wd->selected_item = it;
         if (!wd->idler)
-          wd->idler = ecore_idler_add(_move_scroller, obj);
+          wd->idler = ecore_idle_enterer_before_add(_move_scroller, obj);
      }
 
    ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
@@ -494,7 +494,7 @@ _check_string(void *data)
      }
 
    if (wd->check_idler)
-     ecore_idler_del(wd->check_idler);
+     ecore_idle_enterer_del(wd->check_idler);
    wd->check_idler = NULL;
    return EINA_FALSE;
 }
@@ -628,7 +628,7 @@ _move_scroller(void *data)
    _select_item(dit);
    if (wd->idler)
      {
-        ecore_idler_del(wd->idler);
+        ecore_idle_enterer_del(wd->idler);
         wd->idler = NULL;
      }
    wd->init = EINA_TRUE;
@@ -1032,7 +1032,7 @@ elm_diskselector_item_append(Evas_Object *obj, const char *label, Evas_Object *i
    if (!wd->selected_item)
      wd->selected_item = it;
    if (!wd->idler)
-     wd->idler = ecore_idler_add(_move_scroller, obj);
+     wd->idler = ecore_idle_enterer_before_add(_move_scroller, obj);
    _sizing_eval(obj);
    return it;
 }
@@ -1133,7 +1133,7 @@ elm_diskselector_item_del(Elm_Diskselector_Item * it)
                }
           }
      }
-   wd->check_idler = ecore_idler_add(_check_string, wd);
+   wd->check_idler = ecore_idle_enterer_before_add(_check_string, wd);
    _sizing_eval(wd->self);
 }
 
@@ -1181,7 +1181,7 @@ elm_diskselector_item_selected_set(Elm_Diskselector_Item *it, Eina_Bool selected
      }
 
    if (!wd->idler)
-     wd->idler = ecore_idler_add(_move_scroller, it->base.widget);
+     wd->idler = ecore_idle_enterer_before_add(_move_scroller, it->base.widget);
 }
 
 EAPI Eina_Bool
