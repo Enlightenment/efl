@@ -1550,6 +1550,9 @@ have_ecore_evas_software_xlib="no"
 have_ecore_evas_software_xcb="no"
 if test "x$have_ecore_evas_software_x11" = "xyes" ; then
    have_ecore_evas_software_xlib=`${PKG_CONFIG} --variable=Xlib evas-software-x11`
+   if test "x${have_ecore_evas_software_xlib}" = "xstatic"; then
+      have_ecore_evas_software_xlib="yes"
+   fi
    if test "x${have_ecore_evas_software_xlib}" = "xyes" -a "x${have_ecore_x_xlib}" = "xyes" ; then
       AC_DEFINE(BUILD_ECORE_EVAS_SOFTWARE_XLIB, 1, [Evas Software Xlib Engine Support])
    fi
