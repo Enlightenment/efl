@@ -1440,7 +1440,7 @@ elm_toolbar_item_icon_memfile_set(Elm_Toolbar_Item *item, const void *img, size_
 }
 
 EAPI Evas_Object *
-elm_toolbar_item_object_get(Elm_Toolbar_Item *item)
+elm_toolbar_item_object_get(const Elm_Toolbar_Item *item)
 {
    Widget_Data *wd;
    Evas_Object *obj;

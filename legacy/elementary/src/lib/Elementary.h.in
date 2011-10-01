@@ -14533,7 +14533,7 @@ extern "C" {
     *
     * @ingroup Toolbar
     */
-   EAPI Evas_Object            *elm_toolbar_item_object_get(Elm_Toolbar_Item *item) EINA_ARG_NONNULL(1);
+   EAPI Evas_Object            *elm_toolbar_item_object_get(const Elm_Toolbar_Item *item) EINA_ARG_NONNULL(1);
 
    /**
     * Get the icon object of @p item.
