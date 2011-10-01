@@ -6,7 +6,7 @@ msgstr ""
 "Project-Id-Version: Elementary\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
 "POT-Creation-Date: 2011-09-15 23:35+0900\n"
-"PO-Revision-Date: 2011-02-16 11:42-0000\n"
+"PO-Revision-Date: 2011-10-01 15:24-0000\n"
 "Last-Translator: Sérgio Marques <smarquespt@gmail.com>\n"
 "Language-Team: \n"
 "Language: \n"
@@ -18,51 +18,56 @@ msgstr ""
 
 #: src/lib/elc_fileselector.c:843
 msgid "Up"
-msgstr ""
+msgstr "Para cima"
 
 #: src/lib/elc_fileselector.c:858
 msgid "Home"
-msgstr ""
+msgstr "Pasta pessoal"
 
-#: src/lib/elc_fileselector.c:1002 src/lib/elm_entry.c:1123
+#: src/lib/elc_fileselector.c:1002
+#: src/lib/elm_entry.c:1123
 msgid "Cancel"
 msgstr "Cancelar"
 
 #: src/lib/elc_fileselector.c:1012
 msgid "OK"
-msgstr ""
+msgstr "OK"
 
 #: src/lib/elm_button.c:230
 msgid "Clicked"
-msgstr ""
+msgstr "Clicado"
 
-#: src/lib/elm_button.c:349 src/lib/elm_check.c:271 src/lib/elm_toolbar.c:659
+#: src/lib/elm_button.c:349
+#: src/lib/elm_check.c:271
+#: src/lib/elm_toolbar.c:659
 msgid "State: Disabled"
-msgstr ""
+msgstr "Estado: inativo"
 
 #: src/lib/elm_button.c:400
 msgid "Button"
-msgstr ""
+msgstr "Botão"
 
 #: src/lib/elm_calendar.c:158
 msgid "%B %Y"
-msgstr ""
+msgstr "%B %Y"
 
-#: src/lib/elm_check.c:216 src/lib/elm_check.c:273
+#: src/lib/elm_check.c:216
+#: src/lib/elm_check.c:273
 msgid "State: On"
-msgstr ""
+msgstr "Estado: ligado"
 
-#: src/lib/elm_check.c:222 src/lib/elm_check.c:274
+#: src/lib/elm_check.c:222
+#: src/lib/elm_check.c:274
 msgid "State: Off"
-msgstr ""
+msgstr "Estado: desligado"
 
 #: src/lib/elm_check.c:321
 msgid "Check"
-msgstr ""
+msgstr "Verificar"
 
 #: src/lib/elm_config.c:1603
 msgid "default:LTR"
-msgstr "omissão:LTR"
+msgstr "omissão: LTR"
 
 #: src/lib/elm_entry.c:1117
 msgid "Copy"
@@ -81,22 +86,22 @@ msgid "Paste"
 msgstr "Colar"
 
 #: src/lib/elm_toolbar.c:612
-#, fuzzy
 msgid "Selected"
-msgstr "Selecionar"
+msgstr "Selecionado"
 
 #: src/lib/elm_toolbar.c:657
 msgid "Separator"
-msgstr ""
+msgstr "Separador"
 
 #: src/lib/elm_toolbar.c:661
 msgid "State: Selected"
-msgstr ""
+msgstr "Estado: selecionado"
 
 #: src/lib/elm_toolbar.c:663
 msgid "Has menu"
-msgstr ""
+msgstr "Tem menu"
 
 #: src/lib/elm_toolbar.c:693
 msgid "Tool Item"
-msgstr ""
+msgstr "Ferramenta"
+
