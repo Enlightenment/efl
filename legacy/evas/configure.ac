@@ -1225,7 +1225,7 @@ AC_ARG_ENABLE(cpu-sse,
 build_cpu_sse3="no"
 case $host_cpu in
   i*86)
-    build_cpu_sse3="yes"
+    build_cpu_sse3="no"
     ;;
   x86_64)
     build_cpu_sse3="yes"
@@ -1236,7 +1236,7 @@ case $host_cpu in
 esac
 AC_MSG_CHECKING(whether to build sse3 code)
 AC_ARG_ENABLE(cpu-sse3,
-  AS_HELP_STRING([--enable-cpu-sse3],[enable sse3 code]),
+  AS_HELP_STRING([--enable-cpu-sse3], [enable sse3 code]),
   [
       if test "x$enableval" = "xyes" ; then
         AC_MSG_RESULT(yes)
@@ -1264,7 +1264,12 @@ AC_ARG_ENABLE(cpu-sse3,
 # person building choses to add optimization flags themselves
 # and decide the minimum baseline cpu arch is X then that's
 # their business, but NEVEr should it be done here. EVER.
-#EVAS_SSE3_CFLAGS="-msse3 "
+# i now have to do this due to the way this sse3 code wss done - using
+# intrinsics and "functions" (opcodes) and types that only compile *IF*
+# you compile with -msse3. this ALSO tries to optimize REGULAR c code
+# with sse3 asm.. and this breaks things so badly. so... sse3 will be
+# off until further notice for 32bit x86.
+EVAS_SSE3_CFLAGS="-msse3 "
 if test "x$build_cpu_sse3" = "xyes" ; then
    CFLAGS="${CFLAGS} ${EVAS_SSE3_CFLAGS}"
 fi
