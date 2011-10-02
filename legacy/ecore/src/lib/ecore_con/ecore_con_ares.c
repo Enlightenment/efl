@@ -543,9 +543,8 @@ _ecore_con_info_ares_host_cb(Ecore_Con_CAres *arg,
               if (!_ecore_con_info_ares_getnameinfo(arg,
 #ifdef HAVE_IPV6
                                                     arg->isv6 ? AF_INET6 :
-#else
-                                                    AF_INET,
 #endif
+                                                    AF_INET,
                                                     NULL, addr,
                                                     addrlen))
                 goto on_error;
