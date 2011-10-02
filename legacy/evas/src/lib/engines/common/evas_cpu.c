@@ -172,7 +172,7 @@ evas_common_cpu_init(void)
    cpu_feature_mask |= CPU_FEATURE_SSE3 *
      evas_common_cpu_feature_test(evas_common_cpu_sse3_test); 
    evas_common_cpu_end_opt();
-   if(getenv("EVAS_CPU_NO_SSE3"))
+   if (getenv("EVAS_CPU_NO_SSE3"))
      cpu_feature_mask &= ~CPU_FEATURE_SSE3; 
 #endif /* BUILD_SSE3 */
 #endif /* BUILD_SSE */
