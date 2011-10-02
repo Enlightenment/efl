@@ -4321,8 +4321,8 @@ st_collections_group_parts_part_description_max(void)
 {
    check_arg_count(2);
 
-   current_desc->max.w = parse_float_range(0, 0, 0x7fffffff);
-   current_desc->max.h = parse_float_range(1, 0, 0x7fffffff);
+   current_desc->max.w = parse_float_range(0, -1.0, 0x7fffffff);
+   current_desc->max.h = parse_float_range(1, -1.0, 0x7fffffff);
 }
 
 /**
