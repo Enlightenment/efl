@@ -162,3 +162,7 @@
 
 	* Add group's inheritance.
 	* Add insert_before, insert_after to can change the part's order.
+
+2011-10-02  Boris Faure (billiob)
+
+	* Fix edje_cc to accept -1 in description.max
