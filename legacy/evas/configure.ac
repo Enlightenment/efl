@@ -1256,7 +1256,15 @@ AC_ARG_ENABLE(cpu-sse3,
 )
 
 
-EVAS_SSE3_CFLAGS="-msse3 "
+# as a big warnign flag to anyone doing stuff like this...
+# NEVER EVER EVER EVER put **OPTIMIZATION** flags in
+# buidl flags in makefiles (from configure or anywhere else)
+# EVER as trhis scfrerws your abuility to build 1 binary and
+# cover ALL x86 arch's. this is the HEIGHT of WRONG. if the
+# person building choses to add optimization flags themselves
+# and decide the minimum baseline cpu arch is X then that's
+# their business, but NEVEr should it be done here. EVER.
+#EVAS_SSE3_CFLAGS="-msse3 "
 if test "x$build_cpu_sse3" = "xyes" ; then
    CFLAGS="${CFLAGS} ${EVAS_SSE3_CFLAGS}"
 fi
