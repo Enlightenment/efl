@@ -12975,16 +12975,12 @@ extern "C" {
    /**
     * The possibles types that the items in a menu can be
     */
-   typedef enum _Elm_Web_Menu_Item_Type Elm_Web_Menu_Item_Type;
-   /**
-    * The possibles types that the items in a menu can be
-    */
-   enum _Elm_Web_Menu_Item_Type
+   typedef enum _Elm_Web_Menu_Item_Type
      {
         ELM_WEB_MENU_SEPARATOR,
         ELM_WEB_MENU_GROUP,
         ELM_WEB_MENU_OPTION
-     };
+     } Elm_Web_Menu_Item_Type;
 
    /**
     * Structure describing the items in a menu
