@@ -1041,6 +1041,9 @@ EAPI Emotion_Vis  emotion_object_vis_get               (const Evas_Object *obj);
  */
 EAPI Eina_Bool    emotion_object_vis_supported         (const Evas_Object *obj, Emotion_Vis visualization);
 
+EAPI void         emotion_object_priority_set(Evas_Object *obj, Eina_Bool priority);
+EAPI Eina_Bool    emotion_object_priority_get(const Evas_Object *obj);
+
 EAPI void         emotion_object_last_position_load    (Evas_Object *obj);
 EAPI void         emotion_object_last_position_save    (Evas_Object *obj);
 
