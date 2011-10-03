@@ -545,6 +545,7 @@ elm_player_video_set(Evas_Object *player, Evas_Object *video)
    elm_object_disabled_set(wd->next, EINA_FALSE);
 
    wd->emotion = elm_video_emotion_get(wd->video);
+   emotion_object_priority_set(wd->emotion, EINA_TRUE);
    evas_object_event_callback_add(wd->video, EVAS_CALLBACK_DEL,
                                   _track_video, player);
 
