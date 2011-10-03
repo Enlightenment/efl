@@ -15,4 +15,4 @@ internal_bin_PROGRAMS = em_generic_vlc
 
 em_generic_vlc_SOURCES = emotion_generic_vlc.c
 em_generic_vlc_DEPENDENCIES = $(top_srcdir)/src/modules/generic/Emotion_Generic_Plugin.h
-em_generic_vlc_LDADD = @GENERIC_VLC_LIBS@
+em_generic_vlc_LDADD = @GENERIC_VLC_LIBS@ -lpthread -lrt
