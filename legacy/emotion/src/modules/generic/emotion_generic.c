@@ -238,42 +238,6 @@ _player_ready(Emotion_Generic_Video *ev)
    _file_open(ev);
 }
 
-static int
-_em_read_safe(int fd, void *buf, ssize_t size)
-{
-   ssize_t todo;
-   char *p;
-
-   todo = size;
-   p = buf;
-
-   while (todo > 0)
-     {
-        ssize_t r;
-
-        r = read(fd, p, todo);
-        if (r > 0)
-          {
-             todo -= r;
-             p += r;
-          }
-        else if (r == 0)
-          return 0;
-        else
-          {
-             if (errno == EINTR || errno == EAGAIN)
-	       return size - todo;
-             else
-               {
-                  ERR("could not read from fd %d: %s", fd, strerror(errno));
-                  return -1;
-               }
-          }
-     }
-
-   return size;
-}
-
 static Eina_Bool
 _player_cmd_param_read(Emotion_Generic_Video *ev, void *param, size_t size)
 {
@@ -319,38 +283,6 @@ _player_cmd_param_read(Emotion_Generic_Video *ev, void *param, size_t size)
      ev->cmd.i += done;
 
    return EINA_FALSE;
-}
-
-static Eina_Bool
-_player_int_read(Emotion_Generic_Video *ev, int *i)
-{
-   int n;
-   n = _em_read_safe(ev->fd_read, i, sizeof(*i));
-   if (n <= 0)
-     {
-	ERR("could not read int from fd_read %d\n", ev->fd_read);
-	return EINA_FALSE;
-     }
-
-   return EINA_TRUE;
-}
-
-static Eina_Bool
-_player_str_read(Emotion_Generic_Video *ev, char *str, int *len)
-{
-   int n;
-
-   if (!_player_int_read(ev, len))
-     return EINA_FALSE;
-
-   n = _em_read_safe(ev->fd_read, str, *len);
-   if (n <= 0)
-     {
-	ERR("could not read string from fd_read %d\n", ev->fd_read);
-	return EINA_FALSE;
-     }
-
-   return EINA_TRUE;
 }
 
 static void
@@ -495,15 +427,6 @@ _player_spu_tracks_info(Emotion_Generic_Video *ev)
 
    _player_tracks_info(ev, &ev->spu_channels, &ev->spu_channels_count,
 		       &ev->spu_channel_current);
-}
-
-static void
-_player_helper_str_read(Emotion_Generic_Video *ev, const char **pstr)
-{
-   int len;
-   char buf[PATH_MAX];
-   if (_player_str_read(ev, buf, &len))
-     *pstr = eina_stringshare_add_length(buf, len);
 }
 
 static void
@@ -708,7 +631,6 @@ static void
 _player_cmd_track_info(Emotion_Generic_Video *ev)
 {
    int param;
-   Eina_Bool r;
    int i;
 
    if (ev->cmd.num_params == 0)
@@ -1319,7 +1241,7 @@ em_bgra_data_get(void *data, unsigned char **bgra_data)
    Emotion_Generic_Video *ev = data;
 
    if (!ev || !ev->file_ready)
-     return;
+     return 0;
 
    // lock frame here
    sem_wait(&ev->shared->lock);
