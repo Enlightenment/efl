@@ -409,6 +409,7 @@ static void
 _item_menu_create(Widget_Data *wd, Elm_Toolbar_Item *item)
 {
    item->o_menu = elm_menu_add(item->base.view);
+   item->menu = EINA_TRUE;
    if (wd->menu_parent)
      elm_menu_parent_set(item->o_menu, wd->menu_parent);
    evas_object_event_callback_add(item->o_menu, EVAS_CALLBACK_HIDE,
@@ -425,6 +426,7 @@ _item_menu_destroy(Elm_Toolbar_Item *item)
         evas_object_del(item->o_menu);
         item->o_menu = NULL;
      }
+   item->menu = EINA_FALSE;
 }
 
 static int
@@ -1665,7 +1667,6 @@ elm_toolbar_item_menu_set(Elm_Toolbar_Item *item, Eina_Bool menu)
    if (!wd) return;
 
    if (item->menu == menu) return;
-   item->menu = menu;
    if (menu) _item_menu_create(wd, item);
    else _item_menu_destroy(item);
 }
