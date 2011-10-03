@@ -14847,7 +14847,7 @@ extern "C" {
     *
     * @ingroup Toolbar
     */
-   EAPI Evas_Object            *elm_toolbar_item_menu_get(Elm_Toolbar_Item *item) EINA_ARG_NONNULL(1);
+   EAPI Evas_Object            *elm_toolbar_item_menu_get(const Elm_Toolbar_Item *item) EINA_ARG_NONNULL(1);
 
    /**
     * Add a new state to @p item.

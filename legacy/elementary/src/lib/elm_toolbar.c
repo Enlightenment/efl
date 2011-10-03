@@ -1755,14 +1755,11 @@ elm_toolbar_item_cursor_engine_only_get(const Elm_Toolbar_Item *item)
 }
 
 EAPI Evas_Object *
-elm_toolbar_item_menu_get(Elm_Toolbar_Item *item)
+elm_toolbar_item_menu_get(const Elm_Toolbar_Item *item)
 {
    ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(item, NULL);
    Widget_Data *wd = elm_widget_data_get(item->base.widget);
-   if (!wd) return NULL;
-   /* FIXME: It's not ok. This function needs to be reviewed. And should
-    * receive a const item */
-   elm_toolbar_item_menu_set(item, 1);
+   if ((!wd) || (!item->menu)) return NULL;
    return item->o_menu;
 }
 
