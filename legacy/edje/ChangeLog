@@ -171,3 +171,7 @@
 2011-10-02  Boris Faure (billiob)
 
 	* Fix edje_cc to accept -1 in description.max
+
+2011-10-03  Tom Hacohen (TAsn)
+
+	* Entry: Added change information to entry,changed,user

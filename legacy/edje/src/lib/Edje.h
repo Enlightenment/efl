@@ -646,6 +646,29 @@ typedef enum _Edje_Cursor
    // more later
 } Edje_Cursor;
 
+struct _Edje_Entry_Change_Info
+{
+   union {
+        struct {
+             const char *content;
+             size_t pos;
+             size_t plain_length; /* Number of cursor positions represented
+                                     in content. */
+        } insert;
+        struct {
+             const char *content;
+             size_t start, end;
+        } del;
+   } change;
+   Eina_Bool insert : 1; /**< True if the "change" union's "insert" is valid */
+   Eina_Bool merge : 1; /**< True if can be merged with the previous one. Used for example with insertion when something is already selected. */
+};
+
+/**
+ * @since 1.1.0
+ */
+typedef struct _Edje_Entry_Change_Info        Edje_Entry_Change_Info;
+
 typedef struct _Edje_Message_String           Edje_Message_String;
 typedef struct _Edje_Message_Int              Edje_Message_Int;
 typedef struct _Edje_Message_Float            Edje_Message_Float;

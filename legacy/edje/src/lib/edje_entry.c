@@ -982,6 +982,41 @@ _anchors_get(Evas_Textblock_Cursor *c, Evas_Object *o, Entry *en)
      }
 }
 
+static void
+_free_entry_change_info(void *_info)
+{
+   Edje_Entry_Change_Info *info = (Edje_Entry_Change_Info *) _info;
+   if (info->insert)
+     {
+        eina_stringshare_del(info->change.insert.content);
+     }
+   else
+     {
+        eina_stringshare_del(info->change.del.content);
+     }
+   free(info);
+}
+
+static void
+_range_del_emit(Edje *ed, Evas_Textblock_Cursor *c __UNUSED__, Evas_Object *o __UNUSED__, Entry *en)
+{
+   size_t start, end;
+   char *tmp;
+   Edje_Entry_Change_Info *info = calloc(1, sizeof(*info));
+   info->insert = EINA_FALSE;
+   start = evas_textblock_cursor_pos_get(en->sel_start);
+   end = evas_textblock_cursor_pos_get(en->sel_end);
+   info->change.del.start = start;
+   info->change.del.end = end;
+
+   tmp = evas_textblock_cursor_range_text_get(en->sel_start, en->sel_end, EVAS_TEXTBLOCK_TEXT_MARKUP);
+   info->change.del.content = eina_stringshare_add(tmp);
+   if (tmp) free(tmp);
+   evas_textblock_cursor_range_delete(en->sel_start, en->sel_end);
+   _edje_emit(ed, "entry,changed", en->rp->part->name);
+   _edje_emit_full(ed, "entry,changed,user", en->rp->part->name, info,
+                   _free_entry_change_info);
+}
 
 static void
 _range_del(Evas_Textblock_Cursor *c __UNUSED__, Evas_Object *o __UNUSED__, Entry *en)
@@ -989,22 +1024,38 @@ _range_del(Evas_Textblock_Cursor *c __UNUSED__, Evas_Object *o __UNUSED__, Entry
    evas_textblock_cursor_range_delete(en->sel_start, en->sel_end);
 }
 
-/* Return true if changed something */
-static Eina_Bool
-_backspace(Evas_Textblock_Cursor *c, Evas_Object *o __UNUSED__, Entry *en __UNUSED__)
-{
-   if (evas_textblock_cursor_char_prev(c))
-     {
-        evas_textblock_cursor_char_delete(c);
-        return EINA_TRUE;
-     }
-   return EINA_FALSE;
-}
-
 static void
-_delete(Evas_Textblock_Cursor *c, Evas_Object *o __UNUSED__, Entry *en __UNUSED__)
+_delete_emit(Edje *ed, Evas_Textblock_Cursor *c, Entry *en, size_t pos,
+             Eina_Bool backspace)
 {
+   if (!evas_textblock_cursor_char_next(c))
+     {
+        return;
+     }
+   evas_textblock_cursor_char_prev(c);
+
+   Edje_Entry_Change_Info *info = calloc(1, sizeof(*info));
+   char *tmp = evas_textblock_cursor_content_get(c);
+
+   info->insert = EINA_FALSE;
+   if (backspace)
+     {
+        info->change.del.start = pos - 1;
+        info->change.del.end = pos;
+     }
+   else
+     {
+        info->change.del.start = pos + 1;
+        info->change.del.end = pos;
+     }
+
+   info->change.del.content = eina_stringshare_add(tmp);
+   if (tmp) free(tmp);
+
    evas_textblock_cursor_char_delete(c);
+   _edje_emit(ed, "entry,changed", en->rp->part->name);
+   _edje_emit_full(ed, "entry,changed,user", en->rp->part->name,
+                   info, _free_entry_change_info);
 }
 
 static void
@@ -1097,6 +1148,7 @@ _edje_key_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, v
                }
              ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
           }
+        _sel_clear(en->cursor, rp->object, en);
         _edje_emit(ed, "entry,key,up", rp->part->name);
      }
    else if (!strcmp(ev->key, "Down") || !strcmp(ev->key, "KP_Down"))
@@ -1115,6 +1167,7 @@ _edje_key_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, v
                }
              ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
           }
+        _sel_clear(en->cursor, rp->object, en);
         _edje_emit(ed, "entry,key,down", rp->part->name);
      }
    else if (!strcmp(ev->key, "Left") || !strcmp(ev->key, "KP_Left"))
@@ -1129,6 +1182,7 @@ _edje_key_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, v
           {
              if (shift) _sel_extend(en->cursor, rp->object, en);
           }
+        _sel_clear(en->cursor, rp->object, en);
         _edje_emit(ed, "entry,key,left", rp->part->name);
         ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
      }
@@ -1144,6 +1198,7 @@ _edje_key_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, v
           {
              if (shift) _sel_extend(en->cursor, rp->object, en);
           }
+        _sel_clear(en->cursor, rp->object, en);
         _edje_emit(ed, "entry,key,right", rp->part->name);
         ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
      }
@@ -1161,14 +1216,13 @@ _edje_key_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, v
           {
              if (en->have_selection)
                {
-                  _range_del(en->cursor, rp->object, en);
+                  _range_del_emit(ed, en->cursor, rp->object, en);
                }
              else
                {
-                  if (_backspace(en->cursor, rp->object, en))
+                  if (evas_textblock_cursor_char_prev(en->cursor))
                     {
-                       _edje_emit(ed, "entry,changed", rp->part->name);
-                       _edje_emit(ed, "entry,changed,user", rp->part->name);
+                       _delete_emit(ed, en->cursor, en, old_cur_pos, EINA_TRUE);
                     }
                }
           }
@@ -1190,14 +1244,16 @@ _edje_key_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, v
         else
           {
              if (en->have_selection)
-               _range_del(en->cursor, rp->object, en);
+               {
+                  _range_del_emit(ed, en->cursor, rp->object, en);
+               }
              else
-               _delete(en->cursor, rp->object, en);
+               {
+                  _delete_emit(ed, en->cursor, en, old_cur_pos, EINA_FALSE);
+               }
           }
         _sel_clear(en->cursor, rp->object, en);
         _anchors_get(en->cursor, rp->object, en);
-        _edje_emit(ed, "entry,changed", rp->part->name);
-        _edje_emit(ed, "entry,changed,user", rp->part->name);
         _edje_emit(ed, "entry,key,delete", rp->part->name);
         ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
      }
@@ -1305,12 +1361,26 @@ _edje_key_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, v
                }
              else
                {
+                  Edje_Entry_Change_Info *info = calloc(1, sizeof(*info));
+                  info->insert = EINA_TRUE;
+                  info->change.insert.plain_length = 1;
+
+                  if (en->have_selection)
+                    {
+                       _range_del_emit(ed, en->cursor, rp->object, en);
+                       info->merge = EINA_TRUE;
+                    }
+                  _sel_clear(en->cursor, rp->object, en);
+                  info->change.insert.pos =
+                     evas_textblock_cursor_pos_get(en->cursor);
+                  info->change.insert.content = eina_stringshare_add("<\t>");
                   //yy
 //                  evas_textblock_cursor_format_prepend(en->cursor, "\t");
                   _text_filter_format_prepend(en, en->cursor, "\t");
                   _anchors_get(en->cursor, rp->object, en);
                   _edje_emit(ed, "entry,changed", rp->part->name);
-                  _edje_emit(ed, "entry,changed,user", rp->part->name);
+                  _edje_emit_full(ed, "entry,changed,user", rp->part->name,
+                                  info, _free_entry_change_info);
                }
              ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
           }
@@ -1333,6 +1403,7 @@ _edje_key_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, v
           {
              if (shift) _sel_extend(en->cursor, rp->object, en);
           }
+        _sel_clear(en->cursor, rp->object, en);
         _edje_emit(ed, "entry,key,pgup", rp->part->name);
         ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
      }
@@ -1348,6 +1419,7 @@ _edje_key_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, v
           {
              if (shift) _sel_extend(en->cursor, rp->object, en);
           }
+        _sel_clear(en->cursor, rp->object, en);
         _edje_emit(ed, "entry,key,pgdn", rp->part->name);
         ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
      }
@@ -1355,24 +1427,36 @@ _edje_key_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, v
      {
         if (multiline)
           {
+             Edje_Entry_Change_Info *info = calloc(1, sizeof(*info));
+             info->insert = EINA_TRUE;
+             info->change.insert.plain_length = 1;
              if (en->have_selection)
-               _range_del(en->cursor, rp->object, en);
+               {
+                  _range_del_emit(ed, en->cursor, rp->object, en);
+                  info->merge = EINA_TRUE;
+               }
              _sel_clear(en->cursor, rp->object, en);
+
+             info->change.insert.pos =
+                evas_textblock_cursor_pos_get(en->cursor);
              if (shift)
                {
                   //yy
 //                  evas_textblock_cursor_format_prepend(en->cursor, "\n");
                   _text_filter_format_prepend(en, en->cursor, "\n");
+                  info->change.insert.content = eina_stringshare_add("<\n>");
                }
              else
                {
                   //yy
 //                  evas_textblock_cursor_format_prepend(en->cursor, "ps");
                   _text_filter_format_prepend(en, en->cursor, "ps");
+                  info->change.insert.content = eina_stringshare_add("<ps>");
                }
              _anchors_get(en->cursor, rp->object, en);
              _edje_emit(ed, "entry,changed", rp->part->name);
-             _edje_emit(ed, "entry,changed,user", rp->part->name);
+             _edje_emit_full(ed, "entry,changed,user", rp->part->name,
+                             info, _free_entry_change_info);
              _edje_emit(ed, "cursor,changed", rp->part->name);
              cursor_changed = EINA_TRUE;
              ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
@@ -1383,9 +1467,20 @@ _edje_key_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, v
      {
         if (ev->string)
           {
+             Edje_Entry_Change_Info *info = calloc(1, sizeof(*info));
+             info->insert = EINA_TRUE;
+             info->change.insert.plain_length = 1;
+             info->change.insert.content = eina_stringshare_add(ev->string);
+
              if (en->have_selection)
-               _range_del(en->cursor, rp->object, en);
+               {
+                  _range_del_emit(ed, en->cursor, rp->object, en);
+                  info->merge = EINA_TRUE;
+               }
              _sel_clear(en->cursor, rp->object, en);
+
+             info->change.insert.pos =
+                evas_textblock_cursor_pos_get(en->cursor);
              // if PASSWORD_SHOW_LAST mode, appending text with password=off tag
              if ((rp->part->entry_mode == EDJE_ENTRY_EDIT_MODE_PASSWORD) &&
                  _edje_password_show_last)
@@ -1406,7 +1501,8 @@ _edje_key_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, v
                _text_filter_text_prepend(en, en->cursor, ev->string);
              _anchors_get(en->cursor, rp->object, en);
              _edje_emit(ed, "entry,changed", rp->part->name);
-             _edje_emit(ed, "entry,changed,user", rp->part->name);
+             _edje_emit_full(ed, "entry,changed,user", rp->part->name,
+                             info, _free_entry_change_info);
              _edje_emit(ed, "cursor,changed", rp->part->name);
              cursor_changed = EINA_TRUE;
              ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
