@@ -4,6 +4,7 @@
 #include <Emotion.h>
 #include <stdio.h>
 #include <string.h>
+#include <unistd.h>
 
 #define WIDTH  (320)
 #define HEIGHT (240)
@@ -143,7 +144,6 @@ _frame_resize_cb(void *data, Evas_Object *o, void *event_info)
 int
 main(int argc, const char *argv[])
 {
-   int err;
    Ecore_Evas *ee;
    Evas *e;
    Evas_Object *bg, *em;

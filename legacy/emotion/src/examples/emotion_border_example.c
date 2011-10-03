@@ -153,7 +153,6 @@ _canvas_resize_cb(Ecore_Evas *ee)
 int
 main(int argc, const char *argv[])
 {
-   int err;
    Ecore_Evas *ee;
    Evas *e;
    Evas_Object *bg, *em;

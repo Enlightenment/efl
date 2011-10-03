@@ -100,7 +100,6 @@ _setup_emotion_callbacks(Evas_Object *o)
 int
 main(int argc, const char *argv[])
 {
-   int err;
    Ecore_Evas *ee;
    Evas *e;
    Evas_Object *bg, *em;
@@ -166,7 +165,6 @@ main(int argc, const char *argv[])
    ecore_evas_shutdown();
    return 0;
 
-emotion_error:
    ecore_evas_free(ee);
 
 error:
