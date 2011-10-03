@@ -35,6 +35,7 @@ struct _App {
      libvlc_event_manager_t *mevent_mgr;
      char *filename;
      char *shmname;
+     void *tmpbuffer;
      int w, h;
      int fd_read; // read commands from theads here
      int fd_write; // write commands from threads here
@@ -276,7 +277,8 @@ _display(void *data, void *id)
 static void *
 _tmp_lock(void *data, void **pixels)
 {
-   *pixels = NULL;
+   struct _App *app = data;
+   *pixels = app->tmpbuffer;
    return NULL;
 }
 
@@ -398,7 +400,7 @@ _file_set(struct _App *app)
 
    app->opening = 1;
    libvlc_video_set_format(app->mp, "RV32", DEFAULTWIDTH, DEFAULTHEIGHT, DEFAULTWIDTH * 4);
-   libvlc_video_set_callbacks(app->mp, _tmp_lock, _tmp_unlock, _tmp_display, NULL);
+   libvlc_video_set_callbacks(app->mp, _tmp_lock, _tmp_unlock, _tmp_display, app);
    app->event_mgr = libvlc_media_player_event_manager(app->mp);
    libvlc_event_attach(app->event_mgr, libvlc_MediaPlayerPositionChanged,
 		       _event_cb, app);
@@ -407,6 +409,7 @@ _file_set(struct _App *app)
 
    app->mevent_mgr = libvlc_media_event_manager(app->m);
 
+   app->tmpbuffer = malloc(sizeof(char) * DEFAULTWIDTH * DEFAULTHEIGHT * 4);
    libvlc_audio_set_mute(app->mp, 1);
    libvlc_media_player_play(app->mp);
 }
@@ -560,6 +563,7 @@ release_resources:
      {
         libvlc_media_release(app->m);
         libvlc_media_player_release(app->mp);
+	free(app->tmpbuffer);
      }
 }
 
