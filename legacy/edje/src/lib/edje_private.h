@@ -1370,10 +1370,19 @@ typedef enum _Edje_Queue
 typedef struct _Edje_Message_Signal Edje_Message_Signal;
 typedef struct _Edje_Message        Edje_Message;
 
+typedef struct _Edje_Message_Signal_Data Edje_Message_Signal_Data;
+struct _Edje_Message_Signal_Data
+{
+   int ref;
+   void *data;
+   void (*free_func)(void *);
+};
+
 struct _Edje_Message_Signal
 {
    const char *sig;
    const char *src;
+   Edje_Message_Signal_Data *data;
 };
 
 struct _Edje_Message
@@ -1540,7 +1549,8 @@ void  _edje_program_run(Edje *ed, Edje_Program *pr, Eina_Bool force, const char 
 void _edje_programs_patterns_clean(Edje *ed);
 void _edje_programs_patterns_init(Edje *ed);
 void  _edje_emit(Edje *ed, const char *sig, const char *src);
-void  _edje_emit_handle(Edje *ed, const char *sig, const char *src);
+void _edje_emit_full(Edje *ed, const char *sig, const char *src, void *data, void (*free_func)(void *));
+void _edje_emit_handle(Edje *ed, const char *sig, const char *src, Edje_Message_Signal_Data *data);
 void  _edje_signals_sources_patterns_clean(Edje_Signals_Sources_Patterns *ssp);
 void  _edje_callbacks_patterns_clean(Edje *ed);
 

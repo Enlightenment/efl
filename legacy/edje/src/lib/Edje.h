@@ -1929,6 +1929,19 @@ EAPI void        *edje_object_signal_callback_del_full(Evas_Object *obj, const c
 EAPI void         edje_object_signal_emit         (Evas_Object *obj, const char *emission, const char *source);
 
 /**
+ * @brief Get extra data passed to callbacks.
+ *
+ * @return the extra data for that callback.
+ *
+ * Some callbacks pass extra information. This function gives access to that
+ * extra information. It's somehow like event_info in smart callbacks.
+ *
+ * @see edje_object_signal_callback_add() for more on Edje signals.
+ * @since 1.1.0
+ */
+EAPI void *       edje_object_signal_callback_extra_data_get(void);
+
+/**
  * @brief Set the Edje object to playing or paused states.
  *
  * @param obj A handle to an Edje object.

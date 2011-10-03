@@ -158,6 +158,11 @@
 
 	* Add entry input panel layout setting api's
 
+2011-08-10  Tom Hacohen (TAsn)
+
+	* Signals: Added the ability to pass extra data with edje signals.
+	Added edje_object_signal_callback_extra_data_get to support that.
+
 2011-08-29  Jaehwan Kim
 
 	* Add group's inheritance.
