@@ -1412,7 +1412,7 @@ _edje_key_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, v
              ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
           }
      }
-   if ((old_cur_pos != evas_textblock_cursor_pos_get(en->cursor)) && (!cursor_changed))
+   if (!cursor_changed && (old_cur_pos != evas_textblock_cursor_pos_get(en->cursor)))
      _edje_emit(ed, "cursor,changed", rp->part->name);
 
    _edje_entry_imf_context_reset(en);
