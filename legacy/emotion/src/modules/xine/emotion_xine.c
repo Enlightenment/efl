@@ -1556,6 +1556,8 @@ static Emotion_Video_Module em_module =
      em_speed_get, /* speed_get */
      em_eject, /* eject */
      em_meta_get, /* meta_get */
+     NULL, /* priority_set */
+     NULL, /* priority_get */
      NULL /* handle */
 };
 

@@ -10,11 +10,11 @@
 
 #ifdef HAVE_ECORE_X
 # include <Ecore_X.h>
+# include <Ecore_Evas.h>
 # ifdef HAVE_XOVERLAY_H
 #  include <gst/interfaces/xoverlay.h>
 # endif
 #endif
-
 
 #define HTTP_STREAM 0
 #define RTSP_STREAM 1
@@ -77,6 +77,10 @@ struct _Emotion_Gstreamer_Video
    /* Gstreamer elements */
    GstElement       *pipeline;
    GstElement       *sink;
+   GstElement       *esink;
+   GstElement       *tee;
+   GstPad           *teepad;
+   GstPad           *xvpad;
    Eina_List        *threads;
 
    /* eos */
@@ -109,6 +113,12 @@ struct _Emotion_Gstreamer_Video
    Ecore_X_Window    win;
 #endif
 
+   const char       *uri;
+
+   Emotion_Gstreamer_Buffer *send;
+
+   EvasVideoSinkPrivate *sink_data;
+
    Emotion_Vis       vis;
 
    int               in;
@@ -128,6 +138,9 @@ struct _Emotion_Gstreamer_Video
    Eina_Bool         delete_me    : 1;
    Eina_Bool         samsung      : 1;
    Eina_Bool         kill_buffer  : 1;
+   Eina_Bool         linked       : 1;
+   Eina_Bool         stream       : 1;
+   Eina_Bool         priority     : 1;
 };
 
 struct _EvasVideoSink {
@@ -178,6 +191,7 @@ struct _Emotion_Gstreamer_Buffer
    GstBuffer *frame;
 
    Eina_Bool preroll : 1;
+   Eina_Bool force : 1;
 };
 
 struct _Emotion_Gstreamer_Message

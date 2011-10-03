@@ -164,6 +164,10 @@ static int            em_eject                    (void             *video);
 static const char    *em_meta_get                 (void             *video,
                                                    int               meta);
 
+static void           em_priority_set             (void             *video,
+						   Eina_Bool         pri);
+static Eina_Bool      em_priority_get             (void             *video);
+
 static GstBusSyncReply _eos_sync_fct(GstBus *bus,
 				     GstMessage *message,
 				     gpointer data);
@@ -228,6 +232,8 @@ static Emotion_Video_Module em_module =
    em_speed_get, /* speed_get */
    em_eject, /* eject */
    em_meta_get, /* meta_get */
+   em_priority_set, /* priority_set */
+   em_priority_get, /* priority_get */
    NULL /* handle */
 };
 
@@ -345,12 +351,73 @@ failure:
    return 0;
 }
 
+static void
+em_cleanup(Emotion_Gstreamer_Video *ev)
+{
+   Emotion_Audio_Stream *astream;
+   Emotion_Video_Stream *vstream;
+
+   if (ev->send)
+     {
+        emotion_gstreamer_buffer_free(ev->send);
+        ev->send = NULL;
+     }
+
+   if (ev->eos_bus)
+     {
+        gst_object_unref(GST_OBJECT(ev->eos_bus));
+        ev->eos_bus = NULL;
+     }
+
+   if (ev->metadata)
+     {
+        _free_metadata(ev->metadata);
+        ev->metadata = NULL;
+     }
+
+   if (ev->last_buffer)
+     {
+        gst_buffer_unref(ev->last_buffer);
+        ev->last_buffer = NULL;
+     }
+
+   if (!ev->stream)
+     {
+        evas_object_image_video_surface_set(emotion_object_image_get(ev->obj), NULL);
+        ev->stream = EINA_TRUE;
+     }
+
+   if (ev->pipeline)
+     {
+       gstreamer_video_sink_new(ev, ev->obj, NULL);
+
+       g_object_set(G_OBJECT(ev->esink), "ev", NULL, NULL);
+       g_object_set(G_OBJECT(ev->esink), "evas-object", NULL, NULL);
+       gst_element_set_state(ev->pipeline, GST_STATE_NULL);
+       gst_object_unref(ev->pipeline);
+
+       ev->pipeline = NULL;
+       ev->sink = NULL;
+
+       if (ev->teepad) gst_object_unref(ev->teepad);
+       ev->teepad = NULL;
+       if (ev->xvpad) gst_object_unref(ev->xvpad);
+       ev->xvpad = NULL;
+
+       if (ev->win) ecore_x_window_free(ev->win);
+       ev->win = 0;
+     }
+
+   EINA_LIST_FREE(ev->audio_streams, astream)
+     free(astream);
+   EINA_LIST_FREE(ev->video_streams, vstream)
+     free(vstream);
+}
+
 int
 em_shutdown(void *video)
 {
    Emotion_Gstreamer_Video *ev;
-   Emotion_Audio_Stream *astream;
-   Emotion_Video_Stream *vstream;
 
    ev = (Emotion_Gstreamer_Video *)video;
    if (!ev)
@@ -364,47 +431,16 @@ em_shutdown(void *video)
           ecore_thread_cancel(t);
 
         ev->delete_me = EINA_TRUE;
-        return 1;
+        return EINA_FALSE;
      }
 
    if (ev->in != ev->out)
      {
         ev->delete_me = EINA_TRUE;
-        return 1;
+        return EINA_FALSE;
      }
 
-   if (ev->eos_bus)
-     {
-        gst_object_unref(GST_OBJECT(ev->eos_bus));
-        ev->eos_bus = NULL;
-     }
-
-   if (ev->last_buffer)
-     {
-        gst_buffer_unref(ev->last_buffer);
-        ev->last_buffer = NULL;
-     }
-
-   if (ev->pipeline)
-     {
-       gstreamer_video_sink_new(ev, ev->obj, NULL);
-
-       g_object_set(G_OBJECT(ev->sink), "ev", NULL, NULL);
-       g_object_set(G_OBJECT(ev->sink), "evas-object", NULL, NULL);
-       gst_element_set_state(ev->pipeline, GST_STATE_NULL);
-       gst_object_unref(ev->pipeline);
-
-       ev->pipeline = NULL;
-       ev->sink = NULL;
-
-       if (ev->win) ecore_x_window_free(ev->win);
-       ev->win = 0;
-     }
-
-   EINA_LIST_FREE(ev->audio_streams, astream)
-     free(astream);
-   EINA_LIST_FREE(ev->video_streams, vstream)
-     free(vstream);
+   em_cleanup(ev);
 
    free(ev);
 
@@ -479,18 +515,10 @@ static void
 em_file_close(void *video)
 {
    Emotion_Gstreamer_Video *ev;
-   Emotion_Audio_Stream *astream;
-   Emotion_Video_Stream *vstream;
 
    ev = (Emotion_Gstreamer_Video *)video;
    if (!ev)
      return;
-
-   if (ev->eos_bus)
-     {
-        gst_object_unref(GST_OBJECT(ev->eos_bus));
-        ev->eos_bus = NULL;
-     }
 
    if (ev->threads)
      {
@@ -500,32 +528,10 @@ em_file_close(void *video)
           ecore_thread_cancel(t);
      }
 
-   if (ev->pipeline)
-     {
-        gstreamer_video_sink_new(ev, ev->obj, NULL);
+   em_cleanup(ev);
 
-        g_object_set(G_OBJECT(ev->sink), "ev", NULL, NULL);
-        g_object_set(G_OBJECT(ev->sink), "evas-object", NULL, NULL);
-        gst_element_set_state(ev->pipeline, GST_STATE_NULL);
-        gst_object_unref(ev->pipeline);
-        ev->pipeline = NULL;
-        ev->sink = NULL;
-     }
-
-   /* we clear the stream lists */
-   EINA_LIST_FREE(ev->audio_streams, astream)
-     free(astream);
-   EINA_LIST_FREE(ev->video_streams, vstream)
-     free(vstream);
    ev->pipeline_parsed = EINA_FALSE;
    ev->play_started = 0;
-
-   /* shutdown eos */
-   if (ev->metadata)
-     {
-        _free_metadata(ev->metadata);
-        ev->metadata = NULL;
-     }
 }
 
 static void
@@ -1214,6 +1220,24 @@ em_meta_get(void *video, int meta)
    return str;
 }
 
+static void
+em_priority_set(void *video, Eina_Bool pri)
+{
+   Emotion_Gstreamer_Video *ev;
+
+   ev = video;
+   ev->priority = pri;
+}
+
+static Eina_Bool
+em_priority_get(void *video)
+{
+   Emotion_Gstreamer_Video *ev;
+
+   ev = video;
+   return ev->stream;
+}
+
 static Eina_Bool
 module_open(Evas_Object           *obj,
             const Emotion_Video_Module **module,
@@ -1429,6 +1453,30 @@ _free_metadata(Emotion_Gstreamer_Metadata *m)
   free(m);
 }
 
+static Eina_Bool
+_em_restart_stream(void *data)
+{
+   Emotion_Gstreamer_Video *ev;
+
+   ev = data;
+
+   ev->pipeline = gstreamer_video_sink_new(ev, ev->obj, ev->uri);
+
+   if (ev->pipeline)
+     {
+        ev->eos_bus = gst_pipeline_get_bus(GST_PIPELINE(ev->pipeline));
+        if (!ev->eos_bus)
+          {
+             ERR("could not get the bus");
+             return EINA_FALSE;
+          }
+
+        gst_bus_set_sync_handler(ev->eos_bus, _eos_sync_fct, ev);
+     }
+
+   return ECORE_CALLBACK_CANCEL;
+}
+
 static void
 _eos_main_fct(void *data)
 {
@@ -1475,6 +1523,14 @@ _eos_main_fct(void *data)
          break;
       case GST_MESSAGE_STREAM_STATUS:
          break;
+      case GST_MESSAGE_ERROR:
+         ERR("Switching back to composited rendering.");
+         em_cleanup(ev);
+
+         ev->priority = EINA_FALSE;
+
+         ecore_idler_add(_em_restart_stream, ev);
+         break;
       default:
          ERR("bus say: %s [%i - %s]",
              GST_MESSAGE_SRC_NAME(msg),
@@ -1498,6 +1554,10 @@ _eos_sync_fct(GstBus *bus __UNUSED__, GstMessage *msg, gpointer data)
       case GST_MESSAGE_TAG:
       case GST_MESSAGE_ASYNC_DONE:
       case GST_MESSAGE_STREAM_STATUS:
+         INF("bus say: %s [%i - %s]",
+             GST_MESSAGE_SRC_NAME(msg),
+             GST_MESSAGE_TYPE(msg),
+	     GST_MESSAGE_TYPE_NAME(msg));
          send = emotion_gstreamer_message_alloc(ev, msg);
 
          if (send) ecore_main_loop_thread_safe_call_async(_eos_main_fct, send);
@@ -1508,7 +1568,7 @@ _eos_sync_fct(GstBus *bus __UNUSED__, GstMessage *msg, gpointer data)
         {
            GstState old_state, new_state;
 
-           gst_message_parse_state_changed (msg, &old_state, &new_state, NULL);
+           gst_message_parse_state_changed(msg, &old_state, &new_state, NULL);
            INF("Element %s changed state from %s to %s.",
                GST_OBJECT_NAME(msg->src),
                gst_element_state_get_name(old_state),
@@ -1521,10 +1581,17 @@ _eos_sync_fct(GstBus *bus __UNUSED__, GstMessage *msg, gpointer data)
            gchar *debug;
 
 	   gst_message_parse_error(msg, &error, &debug);
-	   ERR("WARNING from element %s: %s", GST_OBJECT_NAME(msg->src), error->message);
+	   ERR("ERROR from element %s: %s", GST_OBJECT_NAME(msg->src), error->message);
 	   ERR("Debugging info: %s", (debug) ? debug : "none");
 	   g_error_free(error);
 	   g_free(debug);
+
+           if (strncmp(GST_OBJECT_NAME(msg->src), "xvimagesink", 11) == 0)
+             {
+                send = emotion_gstreamer_message_alloc(ev, msg);
+
+                if (send) ecore_main_loop_thread_safe_call_async(_eos_main_fct, send);
+             }
 	   break;
 	}
       case GST_MESSAGE_WARNING:

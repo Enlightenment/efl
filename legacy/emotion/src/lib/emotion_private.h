@@ -110,6 +110,8 @@ struct _Emotion_Video_Module
    double         (*speed_get) (void *ef);
    int            (*eject) (void *ef);
    const char *   (*meta_get) (void *ef, int meta);
+   void           (*priority_set) (void *ef, Eina_Bool priority);
+   Eina_Bool      (*priority_get) (void *ef);
 
    Eina_Emotion_Plugins *plugin;
 };

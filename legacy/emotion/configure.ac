@@ -114,7 +114,7 @@ if test "x${have_emotion_test}" = "xyes" ; then
    PKG_CHECK_MODULES(EMOTION_BIN, [eina >= 1.0.0 evas >= 1.0.0 ecore >= 1.0.0 ecore-evas >= 1.0.0 edje >= 1.0.0])
 fi
 
-PKG_CHECK_MODULES(ECORE_X, [ecore-x >= 1.0.0], [have_ecore_x="yes"], [have_ecore_x="no"])
+PKG_CHECK_MODULES(ECORE_X, [ecore-x >= 1.0.0 ecore-evas >= 1.0.0], [have_ecore_x="yes"], [have_ecore_x="no"])
 
 PKG_CHECK_MODULES(ECORE_FB, [ecore-fb >= 1.0.0], [have_ecore_fb="yes"], [have_ecore_fb="no"])
 

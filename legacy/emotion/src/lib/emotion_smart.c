@@ -1269,6 +1269,32 @@ emotion_object_vis_supported(const Evas_Object *obj, Emotion_Vis visualization)
    return sd->module->vis_supported(sd->video, visualization);
 }
 
+EAPI void
+emotion_object_priority_set(Evas_Object *obj, Eina_Bool priority)
+{
+   Smart_Data *sd;
+
+   E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
+   fprintf(stderr, "priority set %p\n", sd->module);
+   if (!sd->module) return ;
+   if (!sd->video) return ;
+   if (!sd->module->priority_set) return ;
+   fprintf(stderr, "calling\n");
+   sd->module->priority_set(sd->video, priority);
+}
+
+EAPI Eina_Bool
+emotion_object_priority_get(const Evas_Object *obj)
+{
+   Smart_Data *sd;
+
+   E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, 0);
+   if (!sd->module) return EINA_FALSE;
+   if (!sd->video) return EINA_FALSE;
+   if (!sd->module->priority_get) return EINA_FALSE;
+   return sd->module->priority_get(sd->video);
+}
+
 #ifdef HAVE_EIO
 static void
 _eio_load_xattr_cleanup(Smart_Data *sd, Eio_File *handler)

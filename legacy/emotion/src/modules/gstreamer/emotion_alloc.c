@@ -22,6 +22,7 @@ emotion_gstreamer_buffer_alloc(EvasVideoSinkPrivate *sink,
    send->sink = sink;
    send->frame = gst_buffer_ref(buffer);
    send->preroll = preroll;
+   send->force = EINA_FALSE;
    sink->ev->out++;
    send->ev = sink->ev;
 

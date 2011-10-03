@@ -674,6 +674,14 @@ evas_video_sink_samsung_main_render(void *data)
    if (!priv || !priv->o || priv->unlocked)
      goto exit_point;
 
+   if (!send->ev->stream && !send->force)
+     {
+        if (send->ev->send)
+          emotion_gstreamer_buffer_free(send->ev->send);
+        send->ev->send = send;
+        goto exit_stream;
+     }
+
    _emotion_gstreamer_video_pipeline_parse(send->ev, EINA_TRUE);
 
    /* Getting stride to compute the right size and then fill the object properly */
@@ -745,6 +753,7 @@ evas_video_sink_samsung_main_render(void *data)
  exit_point:
    emotion_gstreamer_buffer_free(send);
 
+ exit_stream:
    if (preroll || !priv->o) return ;
 
    if (!priv->unlocked)
@@ -775,6 +784,14 @@ evas_video_sink_main_render(void *data)
 
    if (!priv || !priv->o || priv->unlocked)
      goto exit_point;
+
+   if (!ev->stream && !send->force)
+     {
+        if (ev->send)
+          emotion_gstreamer_buffer_free(ev->send);
+        ev->send = send;
+        goto exit_stream;
+     }
 
    _emotion_gstreamer_video_pipeline_parse(ev, EINA_TRUE);
 
@@ -820,6 +837,7 @@ evas_video_sink_main_render(void *data)
  exit_point:
    emotion_gstreamer_buffer_free(send);
 
+ exit_stream:
    if (preroll || !priv->o) return ;
 
    if (!priv->unlocked)
@@ -941,7 +959,7 @@ _emotion_gstreamer_cancel(void *data, Ecore_Thread *thread)
 
    if (getenv("EMOTION_GSTREAMER_DOT")) GST_DEBUG_BIN_TO_DOT_FILE_WITH_TS(GST_BIN(ev->pipeline), GST_DEBUG_GRAPH_SHOW_ALL, getenv("EMOTION_GSTREAMER_DOT"));
 
-   if (ev->in == ev->out && ev->threads == NULL && ev->delete_me)
+   if (ev->in == ev->out && ev->delete_me)
      em_shutdown(ev);
 }
 
@@ -960,23 +978,10 @@ _emotion_gstreamer_end(void *data, Ecore_Thread *thread)
 
    if (getenv("EMOTION_GSTREAMER_DOT")) GST_DEBUG_BIN_TO_DOT_FILE_WITH_TS(GST_BIN(ev->pipeline), GST_DEBUG_GRAPH_SHOW_ALL, getenv("EMOTION_GSTREAMER_DOT"));
 
-   if (ev->in == ev->out && ev->threads == NULL && ev->delete_me)
+   if (ev->in == ev->out && ev->delete_me)
      em_shutdown(ev);
    else
      _emotion_gstreamer_video_pipeline_parse(data, EINA_TRUE);
-}
-
-static void
-_on_post_clear(void *data, Evas *e __UNUSED__, void *event_info __UNUSED__)
-{
-   Emotion_Gstreamer_Video *ev = data;
-
-   if (!ev->kill_buffer) return ;
-
-#if 0
-   if (ev->last_buffer) gst_buffer_unref(ev->last_buffer);
-   ev->last_buffer = NULL;
-#endif
 }
 
 static void
@@ -988,14 +993,75 @@ _on_resize_fill(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_in
      evas_object_image_fill_set(obj, 0, 0, ev->fill.width, ev->fill.height);
 }
 
+static void
+_video_resize(void *data, Evas_Object *obj __UNUSED__, const Evas_Video_Surface *surface __UNUSED__,
+              Evas_Coord w, Evas_Coord h)
+{
+   Emotion_Gstreamer_Video *ev = data;
+
+   ecore_x_window_resize(ev->win, w, h);
+   fprintf(stderr, "resize: %i, %i\n", w, h);
+}
+
+static void
+_video_move(void *data, Evas_Object *obj __UNUSED__, const Evas_Video_Surface *surface __UNUSED__,
+            Evas_Coord x, Evas_Coord y)
+{
+   Emotion_Gstreamer_Video *ev = data;
+
+   ecore_x_window_move(ev->win, x, y);
+}
+
+static void
+_video_show(void *data, Evas_Object *obj __UNUSED__, const Evas_Video_Surface *surface __UNUSED__)
+{
+   Emotion_Gstreamer_Video *ev = data;
+
+   fprintf(stderr, "show xwin %i\n", ev->win);
+
+   ecore_x_window_show(ev->win);
+   gst_pad_link(ev->teepad, ev->xvpad);
+   ev->linked = EINA_TRUE;
+}
+
+static void
+_video_hide(void *data, Evas_Object *obj __UNUSED__, const Evas_Video_Surface *surface __UNUSED__)
+{
+   Emotion_Gstreamer_Video *ev = data;
+
+   fprintf(stderr, "hide xwin: %i\n", ev->win);
+
+   ecore_x_window_hide(ev->win);
+   gst_pad_unlink(ev->teepad, ev->xvpad);
+   ev->linked = EINA_FALSE;
+}
+
+static void
+_video_update_pixels(void *data, Evas_Object *obj, const Evas_Video_Surface *surface __UNUSED__)
+{
+   Emotion_Gstreamer_Video *ev = data;
+
+   if (!ev->send) return ;
+
+   ev->send->force = EINA_TRUE;
+   evas_video_sink_main_render(ev->send);
+   ev->send = NULL;
+}
+
 GstElement *
 gstreamer_video_sink_new(Emotion_Gstreamer_Video *ev,
 			 Evas_Object *o,
 			 const char *uri)
 {
    GstElement *playbin;
-   GstElement *sink = NULL;
+   GstElement *bin = NULL;
+   GstElement *esink = NULL;
+   GstElement *xvsink = NULL;
+   GstElement *tee = NULL;
+   GstElement *queue = NULL;
    Evas_Object *obj;
+   GstPad *pad;
+   GstPad *teepad;
    int flags;
 #if defined HAVE_ECORE_X && defined HAVE_XOVERLAY_H
    const char *engine;
@@ -1010,7 +1076,6 @@ gstreamer_video_sink_new(Emotion_Gstreamer_Video *ev,
      }
 
    evas_object_event_callback_del_full(obj, EVAS_CALLBACK_RESIZE, _on_resize_fill, ev);
-   evas_event_callback_del_full(evas_object_evas_get(obj), EVAS_CALLBACK_RENDER_FLUSH_POST, _on_post_clear, ev);
 
    if (!uri)
      return NULL;
@@ -1022,26 +1087,47 @@ gstreamer_video_sink_new(Emotion_Gstreamer_Video *ev,
         return NULL;
      }
 
+   bin = gst_bin_new(NULL);
+   if (!bin)
+     {
+       ERR("Unable to create GstBin !");
+       goto unref_pipeline;
+     }
+
+   tee = gst_element_factory_make("tee", NULL);
+   if (!tee)
+     {
+       ERR("Unable to create 'tee' GstElement.");
+       goto unref_pipeline;
+     }
+
+   fprintf(stderr, "priority: %i\n", ev->priority);
+
 #if defined HAVE_ECORE_X && defined HAVE_XOVERLAY_H
    engines = evas_render_method_list();
 
    engine = eina_list_nth(engines, evas_output_method_get(evas_object_evas_get(obj)) - 1);
 
-   if (engine && strstr(engine, "_x11") != NULL)
+   if (ev->priority && engine && strstr(engine, "_x11") != NULL)
      {
-#if 0
+        Ecore_Evas *ee;
         Evas_Coord x, y, w, h;
 	Ecore_X_Window win;
 
 	evas_object_geometry_get(obj, &x, &y, &w, &h);
 
-	win = ecore_x_window_new(0, x, y, w, h);
+        ee = ecore_evas_ecore_evas_get(evas_object_evas_get(obj));
+
+        if (w < 1) w = 1;
+        if (h < 1) h = 1;
+
+	win = ecore_x_window_new((Ecore_X_Window) ecore_evas_window_get(ee), x, y, w, h);
 	if (win)
 	  {
- 	     sink = gst_element_factory_make("xvimagesink", NULL);
-	     if (sink)
+             xvsink = gst_element_factory_make("xvimagesink", NULL);
+	     if (xvsink)
 	       {
-		  gst_x_overlay_set_window_handle(GST_X_OVERLAY(sink), win);
+		  gst_x_overlay_set_window_handle(GST_X_OVERLAY(xvsink), win);
 		  ev->win = win;
 	       }
 	     else
@@ -1049,26 +1135,67 @@ gstreamer_video_sink_new(Emotion_Gstreamer_Video *ev,
 		  ecore_x_window_free(win);
 	       }
 	  }
-#endif
      }
    evas_render_method_list_free(engines);
 #else
 # warning "no ecore_x or xoverlay"
 #endif
-   if (!sink)
+
+   esink = gst_element_factory_make("emotion-sink", "sink");
+   if (!esink)
      {
-        sink = gst_element_factory_make("emotion-sink", "sink");
-	if (!sink)
-	  {
-	     ERR("Unable to create 'emotion-sink' GstElement.");
-	     goto unref_pipeline;
-	  }
-
-	g_object_set(G_OBJECT(sink), "evas-object", obj, NULL);
-	g_object_set(G_OBJECT(sink), "ev", ev, NULL);
-
-	evas_object_image_pixels_get_callback_set(obj, NULL, NULL);
+        ERR("Unable to create 'emotion-sink' GstElement.");
+        goto unref_pipeline;
      }
+
+   g_object_set(G_OBJECT(esink), "evas-object", obj, NULL);
+   g_object_set(G_OBJECT(esink), "ev", ev, NULL);
+
+   evas_object_image_pixels_get_callback_set(obj, NULL, NULL);
+
+   /* We need queue to force each video sink to be in its own thread */
+   queue = gst_element_factory_make("queue", NULL);
+   if (!queue)
+     {
+        ERR("Unable to create 'queue' GstElement.");
+        goto unref_pipeline;
+     }
+
+   gst_bin_add_many(GST_BIN(bin), tee, queue, esink, xvsink, NULL);
+   gst_element_link_many(queue, esink, NULL);
+
+   /* link both sink to GstTee */
+   pad = gst_element_get_pad(queue, "sink");
+   teepad = gst_element_get_request_pad(tee, "src%d");
+   gst_pad_link(teepad, pad);
+   gst_object_unref(pad);
+   gst_object_unref(teepad);
+
+   if (xvsink)
+     {
+        queue = gst_element_factory_make("queue", NULL);
+        if (queue)
+          {
+	    gst_bin_add_many(GST_BIN(bin), queue, NULL);
+	    gst_element_link_many(queue, xvsink, NULL);
+
+	    pad = gst_element_get_pad(queue, "sink");
+	    teepad = gst_element_get_request_pad(tee, "src%d");
+	    gst_pad_link(teepad, pad);
+
+	    ev->teepad = teepad;
+	    ev->xvpad = pad;
+	  }
+	else
+	  {
+	    gst_object_unref(xvsink);
+	    xvsink = NULL;
+	  }
+     }
+
+   teepad = gst_element_get_pad(tee, "sink");
+   gst_element_add_pad(bin, gst_ghost_pad_new("sink", teepad));
+   gst_object_unref(teepad);
 
 #define GST_PLAY_FLAG_NATIVE_VIDEO  (1 << 6)
 #define GST_PLAY_FLAG_DOWNLOAD      (1 << 7)
@@ -1077,15 +1204,37 @@ gstreamer_video_sink_new(Emotion_Gstreamer_Video *ev,
 
    g_object_get(G_OBJECT(playbin), "flags", &flags, NULL);
    g_object_set(G_OBJECT(playbin), "flags", flags | GST_PLAY_FLAG_NATIVE_VIDEO | GST_PLAY_FLAG_DOWNLOAD | GST_PLAY_FLAG_NATIVE_AUDIO, NULL);
-   g_object_set(G_OBJECT(playbin), "video-sink", sink, NULL);
+   g_object_set(G_OBJECT(playbin), "video-sink", bin, NULL);
    g_object_set(G_OBJECT(playbin), "uri", uri, NULL);
 
    evas_object_image_pixels_get_callback_set(obj, NULL, NULL);
    evas_object_event_callback_add(obj, EVAS_CALLBACK_RESIZE, _on_resize_fill, ev);
-   evas_event_callback_add(evas_object_evas_get(obj), EVAS_CALLBACK_RENDER_FLUSH_POST, _on_post_clear, ev);
 
+   ev->stream = EINA_TRUE;
+
+   if (xvsink)
+     {
+        Evas_Video_Surface video;
+
+        video.version = EVAS_VIDEO_SURFACE_VERSION;
+        video.data = ev;
+        video.parent = NULL;
+        video.move = _video_move;
+        video.resize = _video_resize;
+        video.show = _video_show;
+        video.hide = _video_hide;
+        video.update_pixels = _video_update_pixels;
+
+        evas_object_image_video_surface_set(obj, &video);
+        ev->stream = EINA_FALSE;
+     }
+
+   eina_stringshare_replace(&ev->uri, uri);
+   ev->linked = EINA_TRUE;
    ev->pipeline = playbin;
-   ev->sink = sink;
+   ev->sink = bin;
+   ev->esink = esink;
+   ev->tee = tee;
    ev->threads = eina_list_append(ev->threads,
                                   ecore_thread_run(_emotion_gstreamer_pause,
                                                    _emotion_gstreamer_end,
@@ -1099,6 +1248,10 @@ gstreamer_video_sink_new(Emotion_Gstreamer_Video *ev,
    return playbin;
 
  unref_pipeline:
+   gst_object_unref(xvsink);
+   gst_object_unref(esink);
+   gst_object_unref(tee);
+   gst_object_unref(bin);
    gst_object_unref(playbin);
    return NULL;
 }
