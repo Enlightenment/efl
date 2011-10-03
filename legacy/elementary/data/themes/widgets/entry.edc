@@ -780,6 +780,7 @@ group { name: "elm/entry/base/default";
 }
 
 group { name: "elm/entry/base-mixedwrap/default";
+   inherit: "elm/entry/base/default";
    styles
    {
       style { name: "entry_textblock_style_mixedwrap";
@@ -805,18 +806,6 @@ group { name: "elm/entry/base-mixedwrap/default";
    }
    parts {
       part { name: "elm.text";
-         type: TEXTBLOCK;
-         mouse_events: 1;
-         scale: 1;
-         entry_mode: EDITABLE;
-         select_mode: EXPLICIT;
-         multiline: 1;
-         source: "elm/entry/selection/default"; // selection under
-                 //          source2: "X"; // selection over
-                 //          source3: "X"; // cursor under
-         source4: "elm/entry/cursor/default"; // cursorover
-         source5: "elm/entry/anchor/default"; // anchor under
-                  //          source6: "X"; // anchor over
          description { state: "default" 0.0;
             fixed: 1 0;
             text {
@@ -834,29 +823,10 @@ group { name: "elm/entry/base-mixedwrap/default";
          }
       }
    }
-   programs {
-      program { name: "focus";
-         signal: "load";
-         source: "";
-         action: FOCUS_SET;
-         target: "elm.text";
-      }
-      program { name: "disable";
-         signal: "elm,state,disabled";
-         source: "elm";
-         action: STATE_SET "disabled" 0.0;
-         target: "elm.text";
-      }
-      program { name: "enable";
-         signal: "elm,state,enabled";
-         source: "elm";
-         action: STATE_SET "default" 0.0;
-         target: "elm.text";
-      }
-   }
 }
 
 group { name: "elm/entry/base-charwrap/default";
+   inherit: "elm/entry/base/default";
    styles
    {
       style { name: "entry_textblock_style_charwrap";
@@ -882,18 +852,6 @@ group { name: "elm/entry/base-charwrap/default";
    }
    parts {
       part { name: "elm.text";
-         type: TEXTBLOCK;
-         mouse_events: 1;
-         scale: 1;
-         entry_mode: EDITABLE;
-         select_mode: EXPLICIT;
-         multiline: 1;
-         source: "elm/entry/selection/default"; // selection under
-                 //          source2: "X"; // selection over
-                 //          source3: "X"; // cursor under
-         source4: "elm/entry/cursor/default"; // cursorover
-         source5: "elm/entry/anchor/default"; // anchor under
-                  //          source6: "X"; // anchor over
          description { state: "default" 0.0;
             fixed: 1 0;
             text {
@@ -911,40 +869,12 @@ group { name: "elm/entry/base-charwrap/default";
          }
       }
    }
-   programs {
-      program { name: "focus";
-         signal: "load";
-         source: "";
-         action: FOCUS_SET;
-         target: "elm.text";
-      }
-      program { name: "disable";
-         signal: "elm,state,disabled";
-         source: "elm";
-         action: STATE_SET "disabled" 0.0;
-         target: "elm.text";
-      }
-      program { name: "enable";
-         signal: "elm,state,enabled";
-         source: "elm";
-         action: STATE_SET "default" 0.0;
-         target: "elm.text";
-      }
-   }
 }
 
 group { name: "elm/entry/base-nowrap/default";
+   inherit: "elm/entry/base/default";
    parts {
       part { name: "elm.text";
-         type: TEXTBLOCK;
-         mouse_events: 1;
-         scale: 1;
-         entry_mode: EDITABLE;
-         select_mode: EXPLICIT;
-         multiline: 1;
-         source: "elm/entry/selection/default"; // selection under
-         source4: "elm/entry/cursor/default"; // cursorover
-         source5: "elm/entry/anchor/default"; // anchor under
          description { state: "default" 0.0;
             text {
                style: "entry_textblock_style";
@@ -960,60 +890,11 @@ group { name: "elm/entry/base-nowrap/default";
             }
          }
       }
-      /*
-      part { name: "sel";
-      type: RECT;
-      mouse_events: 0;
-      description { state: "default" 0.0;
-      align: 1.0 1.0;
-      max: 16 16;
-      aspect: 1.0 1.0;
-      color: 255 0 0 0;
-      }
-         description { state: "visible" 0.0;
-         inherit: "default" 0.0;
-         color: 255 0 0 50;
-         }
-         }
-         */
-   }
-   programs {
-      program { name: "focus";
-         signal: "load";
-         source: "";
-         action: FOCUS_SET;
-         target: "elm.text";
-      }
-      program { name: "disable";
-         signal: "elm,state,disabled";
-         source: "elm";
-         action: STATE_SET "disabled" 0.0;
-         target: "elm.text";
-      }
-      program { name: "enable";
-         signal: "elm,state,enabled";
-         source: "elm";
-         action: STATE_SET "default" 0.0;
-         target: "elm.text";
-      }
-      /*
-      program { name: "selmode0";
-      signal: "elm,state,select,on";
-      source: "elm";
-      action: STATE_SET "visible" 0.0;
-      target: "sel";
-      }
-         program { name: "selmode1";
-         signal: "elm,state,select,off";
-         source: "elm";
-         action: STATE_SET "default" 0.0;
-         target: "sel";
-         }
-         */
    }
 }
 
 group { name: "elm/entry/base-single/default";
+   inherit: "elm/entry/base/default";
    styles
    {
       style { name: "entry_single_textblock_style";
@@ -1039,15 +920,7 @@ group { name: "elm/entry/base-single/default";
    }
    parts {
       part { name: "elm.text";
-         type: TEXTBLOCK;
-         mouse_events: 1;
-         scale: 1;
-         entry_mode: EDITABLE;
-         select_mode: EXPLICIT;
          multiline: 0;
-         source: "elm/entry/selection/default"; // selection under
-         source4: "elm/entry/cursor/default"; // cursorover
-         source5: "elm/entry/anchor/default"; // anchor under
          description { state: "default" 0.0;
             text {
                style: "entry_single_textblock_style";
@@ -1062,40 +935,18 @@ group { name: "elm/entry/base-single/default";
                style: "entry_single_textblock_disabled_style";
             }
          }
-      }
-   }
-   programs {
-      program { name: "focus";
-         signal: "load";
-         source: "";
-         action: FOCUS_SET;
-         target: "elm.text";
-      }
-      program { name: "disable";
-         signal: "elm,state,disabled";
-         source: "elm";
-         action: STATE_SET "disabled" 0.0;
-         target: "elm.text";
-      }
-      program { name: "enable";
-         signal: "elm,state,enabled";
-         source: "elm";
-         action: STATE_SET "default" 0.0;
-         target: "elm.text";
       }
    }
 }
 
 group { name: "elm/entry/base-single-noedit/default";
+   inherit: "elm/entry/base/default";
    parts {
       part { name: "elm.text";
-         type: TEXTBLOCK;
-         mouse_events: 1;
-         scale: 1;
          entry_mode: PLAIN;
-         select_mode: EXPLICIT;
          multiline: 0;
          source: "elm/entry/selection/default"; // selection under
+         source4: ""; // cursorover
          source5: "elm/entry/anchor/default"; // anchor under
          description { state: "default" 0.0;
             text {
@@ -1113,38 +964,15 @@ group { name: "elm/entry/base-single-noedit/default";
          }
       }
    }
-   programs {
-      program { name: "focus";
-         signal: "load";
-         source: "";
-         action: FOCUS_SET;
-         target: "elm.text";
-      }
-      program { name: "disable";
-         signal: "elm,state,disabled";
-         source: "elm";
-         action: STATE_SET "disabled" 0.0;
-         target: "elm.text";
-      }
-      program { name: "enable";
-         signal: "elm,state,enabled";
-         source: "elm";
-         action: STATE_SET "default" 0.0;
-         target: "elm.text";
-      }
-   }
 }
 
 group { name: "elm/entry/base-noedit/default";
+   inherit: "elm/entry/base/default";
    parts {
       part { name: "elm.text";
-         type: TEXTBLOCK;
-         mouse_events: 1;
-         scale: 1;
          entry_mode: PLAIN;
-         select_mode: EXPLICIT;
-         multiline: 1;
          source: "elm/entry/selection/default"; // selection under
+         source4: ""; // cursorover
          source5: "elm/entry/anchor/default"; // anchor under
          description { state: "default" 0.0;
             fixed: 1 0;
@@ -1162,38 +990,15 @@ group { name: "elm/entry/base-noedit/default";
          }
       }
    }
-   programs {
-      program { name: "focus";
-         signal: "load";
-         source: "";
-         action: FOCUS_SET;
-         target: "elm.text";
-      }
-      program { name: "disable";
-         signal: "elm,state,disabled";
-         source: "elm";
-         action: STATE_SET "disabled" 0.0;
-         target: "elm.text";
-      }
-      program { name: "enable";
-         signal: "elm,state,enabled";
-         source: "elm";
-         action: STATE_SET "default" 0.0;
-         target: "elm.text";
-      }
-   }
 }
 
 group { name: "elm/entry/base-noedit-mixedwrap/default";
+   inherit: "elm/entry/base/default";
    parts {
       part { name: "elm.text";
-         type: TEXTBLOCK;
-         mouse_events: 1;
-         scale: 1;
          entry_mode: PLAIN;
-         select_mode: EXPLICIT;
-         multiline: 1;
          source: "elm/entry/selection/default"; // selection under
+         source4: ""; // cursorover
          source5: "elm/entry/anchor/default"; // anchor under
          description { state: "default" 0.0;
             fixed: 1 0;
@@ -1211,38 +1016,15 @@ group { name: "elm/entry/base-noedit-mixedwrap/default";
          }
       }
    }
-   programs {
-      program { name: "focus";
-         signal: "load";
-         source: "";
-         action: FOCUS_SET;
-         target: "elm.text";
-      }
-      program { name: "disable";
-         signal: "elm,state,disabled";
-         source: "elm";
-         action: STATE_SET "disabled" 0.0;
-         target: "elm.text";
-      }
-      program { name: "enable";
-         signal: "elm,state,enabled";
-         source: "elm";
-         action: STATE_SET "default" 0.0;
-         target: "elm.text";
-      }
-   }
 }
 
 group { name: "elm/entry/base-noedit-charwrap/default";
+   inherit: "elm/entry/base/default";
    parts {
       part { name: "elm.text";
-         type: TEXTBLOCK;
-         mouse_events: 1;
-         scale: 1;
          entry_mode: PLAIN;
-         select_mode: EXPLICIT;
-         multiline: 1;
          source: "elm/entry/selection/default"; // selection under
+         source4: ""; // cursorover
          source5: "elm/entry/anchor/default"; // anchor under
          description { state: "default" 0.0;
             fixed: 1 0;
@@ -1260,38 +1042,15 @@ group { name: "elm/entry/base-noedit-charwrap/default";
          }
       }
    }
-   programs {
-      program { name: "focus";
-         signal: "load";
-         source: "";
-         action: FOCUS_SET;
-         target: "elm.text";
-      }
-      program { name: "disable";
-         signal: "elm,state,disabled";
-         source: "elm";
-         action: STATE_SET "disabled" 0.0;
-         target: "elm.text";
-      }
-      program { name: "enable";
-         signal: "elm,state,enabled";
-         source: "elm";
-         action: STATE_SET "default" 0.0;
-         target: "elm.text";
-      }
-   }
 }
 
 group { name: "elm/entry/base-nowrap-noedit/default";
+   inherit: "elm/entry/base/default";
    parts {
       part { name: "elm.text";
-         type: TEXTBLOCK;
-         mouse_events: 1;
-         scale: 1;
          entry_mode: PLAIN;
-         select_mode: EXPLICIT;
-         multiline: 1;
          source: "elm/entry/selection/default"; // selection under
+         source4: ""; // cursorover
          source5: "elm/entry/anchor/default"; // anchor under
          description { state: "default" 0.0;
             text {
@@ -1308,36 +1067,13 @@ group { name: "elm/entry/base-nowrap-noedit/default";
          }
       }
    }
-   programs {
-      program { name: "focus";
-         signal: "load";
-         source: "";
-         action: FOCUS_SET;
-         target: "elm.text";
-      }
-      program { name: "disable";
-         signal: "elm,state,disabled";
-         source: "elm";
-         action: STATE_SET "disabled" 0.0;
-         target: "elm.text";
-      }
-      program { name: "enable";
-         signal: "elm,state,enabled";
-         source: "elm";
-         action: STATE_SET "default" 0.0;
-         target: "elm.text";
-      }
-   }
 }
 
 group { name: "elm/entry/base-password/default";
+   inherit: "elm/entry/base/default";
    parts {
       part { name: "elm.text";
-         type: TEXTBLOCK;
-         mouse_events: 1;
-         scale: 1;
          entry_mode: PASSWORD;
-         select_mode: EXPLICIT;
          multiline: 0;
          source: "elm/entry/selection/default"; // selection under
          source4: "elm/entry/cursor/default"; // cursorover
@@ -1357,26 +1093,6 @@ group { name: "elm/entry/base-password/default";
                style: "entry_single_textblock_disabled_style";
             }
          }
-      }
-   }
-   programs {
-      program { name: "focus";
-         signal: "load";
-         source: "";
-         action: FOCUS_SET;
-         target: "elm.text";
-      }
-      program { name: "disable";
-         signal: "elm,state,disabled";
-         source: "elm";
-         action: STATE_SET "disabled" 0.0;
-         target: "elm.text";
-      }
-      program { name: "enable";
-         signal: "elm,state,enabled";
-         source: "elm";
-         action: STATE_SET "default" 0.0;
-         target: "elm.text";
       }
    }
 }
