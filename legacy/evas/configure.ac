@@ -1256,15 +1256,15 @@ AC_ARG_ENABLE(cpu-sse3,
 )
 
 
-# as a big warnign flag to anyone doing stuff like this...
+# as a big warning flag to anyone doing stuff like this...
 # NEVER EVER EVER EVER put **OPTIMIZATION** flags in
-# buidl flags in makefiles (from configure or anywhere else)
-# EVER as trhis scfrerws your abuility to build 1 binary and
-# cover ALL x86 arch's. this is the HEIGHT of WRONG. if the
+# build flags in makefiles (from configure or anywhere else)
+# EVER as this screws your ability to build 1 binary and
+# cover ALL x86 arch's. This is the HEIGHT of WRONG. If the
 # person building choses to add optimization flags themselves
 # and decide the minimum baseline cpu arch is X then that's
-# their business, but NEVEr should it be done here. EVER.
-# i now have to do this due to the way this sse3 code wss done - using
+# their business, but NEVER should it be done here. NEVER.
+# I now have to do this due to the way this sse3 code was done - using
 # intrinsics and "functions" (opcodes) and types that only compile *IF*
 # you compile with -msse3. this ALSO tries to optimize REGULAR c code
 # with sse3 asm.. and this breaks things so badly. so... sse3 will be
