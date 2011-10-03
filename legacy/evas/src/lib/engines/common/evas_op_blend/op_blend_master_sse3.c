@@ -61,12 +61,17 @@ evas_common_op_blend_rel_init_sse3(void)
 #endif   
 }
 
+//#pragma GCC push_options
+//#pragma GCC optimize ("O0")
 void
 evas_common_op_sse3_test(void)
 {
 #ifdef BUILD_SSE3
-   int data[4];
-
-   _mm_lddqu_si128((__m128i *)data);
+   DATA32 s[64] = {0x11883399}, d[64] = {0xff88cc33};
+   
+   s[0] = rand(); d[1] = rand();
+   _op_blend_pas_dp_sse3(s, NULL, 0, d, 64);
+   evas_common_cpu_end_opt();
 #endif   
 }
+//#pragma GCC pop_options
