@@ -1,7 +1,7 @@
 #include "evas_common.h"
 
-static RGBA_Gfx_Func     op_blend_span_funcs[SP_LAST][SM_LAST][SC_LAST][DP_LAST][CPU_LAST];
-static RGBA_Gfx_Pt_Func  op_blend_pt_funcs[SP_LAST][SM_LAST][SC_LAST][DP_LAST][CPU_LAST];
+RGBA_Gfx_Func     op_blend_span_funcs[SP_LAST][SM_LAST][SC_LAST][DP_LAST][CPU_LAST];
+RGBA_Gfx_Pt_Func  op_blend_pt_funcs[SP_LAST][SM_LAST][SC_LAST][DP_LAST][CPU_LAST];
 
 static void op_blend_init(void);
 static void op_blend_shutdown(void);
@@ -35,8 +35,8 @@ evas_common_gfx_compositor_blend_get(void)
 }
 
 
-static RGBA_Gfx_Func     op_blend_rel_span_funcs[SP_LAST][SM_LAST][SC_LAST][DP_LAST][CPU_LAST];
-static RGBA_Gfx_Pt_Func  op_blend_rel_pt_funcs[SP_LAST][SM_LAST][SC_LAST][DP_LAST][CPU_LAST];
+RGBA_Gfx_Func     op_blend_rel_span_funcs[SP_LAST][SM_LAST][SC_LAST][DP_LAST][CPU_LAST];
+RGBA_Gfx_Pt_Func  op_blend_rel_pt_funcs[SP_LAST][SM_LAST][SC_LAST][DP_LAST][CPU_LAST];
 
 static void op_blend_rel_init(void);
 static void op_blend_rel_shutdown(void);
@@ -84,15 +84,6 @@ evas_common_gfx_compositor_blend_rel_get(void)
 # include "./evas_op_blend/op_blend_mask_color_i386.c"
 //# include "./evas_op_blend/op_blend_pixel_mask_color_i386.c"
 
-#ifdef BUILD_SSE3
-static __m128i A_MASK_SSE3;
-#endif
-# include "./evas_op_blend/op_blend_pixel_sse3.c"
-# include "./evas_op_blend/op_blend_color_sse3.c"
-# include "./evas_op_blend/op_blend_pixel_color_sse3.c"
-# include "./evas_op_blend/op_blend_pixel_mask_sse3.c"
-# include "./evas_op_blend/op_blend_mask_color_sse3.c"
-
 # include "./evas_op_blend/op_blend_pixel_neon.c"
 # include "./evas_op_blend/op_blend_color_neon.c"
 # include "./evas_op_blend/op_blend_pixel_color_neon.c"
@@ -100,30 +91,17 @@ static __m128i A_MASK_SSE3;
 # include "./evas_op_blend/op_blend_mask_color_neon.c"
 //# include "./evas_op_blend/op_blend_pixel_mask_color_neon.c"
 
+#ifdef BUILD_SSE3
+void evas_common_op_blend_init_sse3(void);
+#endif
+
 static void
 op_blend_init(void)
 {
    memset(op_blend_span_funcs, 0, sizeof(op_blend_span_funcs));
    memset(op_blend_pt_funcs, 0, sizeof(op_blend_pt_funcs));
 #ifdef BUILD_SSE3
-   GA_MASK_SSE3 = _mm_set_epi32(0x00FF00FF, 0x00FF00FF, 0x00FF00FF, 0x00FF00FF);
-   RB_MASK_SSE3 = _mm_set_epi32(0xFF00FF00, 0xFF00FF00, 0xFF00FF00, 0xFF00FF00);
-   SYM4_MASK_SSE3 = _mm_set_epi32(0x00FF00FF, 0x000000FF, 0x00FF00FF, 0x000000FF);
-   RGB_MASK_SSE3 = _mm_set_epi32(0xFFFFFF, 0xFFFFFF, 0xFFFFFF, 0xFFFFFF);
-   A_MASK_SSE3 = _mm_set_epi32(0xFF000000, 0xFF000000, 0xFF000000, 0xFF000000);
-   ALPHA_SSE3 = _mm_set_epi32(256, 256, 256, 256);
-
-   init_blend_pixel_span_funcs_sse3();
-   init_blend_pixel_color_span_funcs_sse3();
-   init_blend_pixel_mask_span_funcs_sse3();
-   init_blend_color_span_funcs_sse3();
-   init_blend_mask_color_span_funcs_sse3();
-
-   init_blend_pixel_pt_funcs_sse3();
-   init_blend_pixel_color_pt_funcs_sse3();
-   init_blend_pixel_mask_pt_funcs_sse3();
-   init_blend_color_pt_funcs_sse3();
-   init_blend_mask_color_pt_funcs_sse3();
+   evas_common_op_blend_init_sse3();
 #endif
 #ifdef BUILD_MMX
    init_blend_pixel_span_funcs_mmx();
@@ -406,6 +384,7 @@ op_blend_pixel_mask_pt_get(Image_Entry_Flags src_flags, RGBA_Image *dst)
    return blend_gfx_pt_func_cpu(s, m, c, d);
 }
 
+void evas_common_op_blend_rel_init_sse3(void);
 
 static void
 op_blend_rel_init(void)
@@ -413,17 +392,7 @@ op_blend_rel_init(void)
    memset(op_blend_rel_span_funcs, 0, sizeof(op_blend_rel_span_funcs));
    memset(op_blend_rel_pt_funcs, 0, sizeof(op_blend_rel_pt_funcs));
 #ifdef BUILD_SSE3
-   init_blend_rel_pixel_span_funcs_sse3();
-   init_blend_rel_pixel_color_span_funcs_sse3();
-   init_blend_rel_pixel_mask_span_funcs_sse3();
-   init_blend_rel_color_span_funcs_sse3();
-   init_blend_rel_mask_color_span_funcs_sse3();
-
-   init_blend_rel_pixel_pt_funcs_sse3();
-   init_blend_rel_pixel_color_pt_funcs_sse3();
-   init_blend_rel_pixel_mask_pt_funcs_sse3();
-   init_blend_rel_color_pt_funcs_sse3();
-   init_blend_rel_mask_color_pt_funcs_sse3();
+   evas_common_op_blend_rel_init_sse3();
 #endif
 #ifdef BUILD_MMX
    init_blend_rel_pixel_span_funcs_mmx();

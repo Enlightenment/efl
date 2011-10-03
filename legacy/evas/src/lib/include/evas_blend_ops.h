@@ -5,11 +5,13 @@
 #include "evas_mmx.h"
 #endif
 
-#if defined BUILD_SSE3
-#include <immintrin.h>
-#endif
-
 #include "config.h"
+
+#ifdef NEED_SSE3
+# if defined BUILD_SSE3
+#  include <immintrin.h>
+# endif
+#endif
 
 /* src pixel flags: */
 
@@ -187,6 +189,7 @@ extern const DATA32 ALPHA_256;
 
 /* some useful SSE3 inline functions */
 
+#ifdef NEED_SSE3
 #ifdef BUILD_SSE3
 
 static __m128i GA_MASK_SSE3;
@@ -369,6 +372,7 @@ mul3_sym_sse3(__m128i x, __m128i y) {
    }
 
 
+#endif
 #endif
 
 #endif

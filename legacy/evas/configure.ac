@@ -1225,7 +1225,7 @@ AC_ARG_ENABLE(cpu-sse,
 build_cpu_sse3="no"
 case $host_cpu in
   i*86)
-    build_cpu_sse3="no"
+    build_cpu_sse3="yes"
     ;;
   x86_64)
     build_cpu_sse3="yes"
@@ -1269,12 +1269,14 @@ AC_ARG_ENABLE(cpu-sse3,
 # you compile with -msse3. this ALSO tries to optimize REGULAR c code
 # with sse3 asm.. and this breaks things so badly. so... sse3 will be
 # off until further notice for 32bit x86.
-EVAS_SSE3_CFLAGS="-msse3 "
+EVAS_SSE3_CFLAGS=" "
 if test "x$build_cpu_sse3" = "xyes" ; then
-   CFLAGS="${CFLAGS} ${EVAS_SSE3_CFLAGS}"
+    EVAS_SSE3_CFLAGS="-msse3 "
+#   CFLAGS="${CFLAGS} ${EVAS_SSE3_CFLAGS}"
 fi
 
 AC_SUBST(CFLAGS)
+AC_SUBST(EVAS_SSE3_CFLAGS)
 
 #######################################
 ## ALTIVEC

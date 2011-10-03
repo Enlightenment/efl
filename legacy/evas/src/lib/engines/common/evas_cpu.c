@@ -64,13 +64,13 @@ evas_common_cpu_sse_test(void)
 #endif
 }
 
+void evas_common_op_sse3_test(void);
+
 void
 evas_common_cpu_sse3_test(void)
 {
 #ifdef BUILD_SSE3
-   int data[4]; 
-
-   _mm_lddqu_si128((__m128i *)data);
+   evas_common_op_sse3_test();
 #endif
 }
 
