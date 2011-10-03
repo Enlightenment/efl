@@ -593,6 +593,7 @@ typedef struct _Evas_Modifier       Evas_Modifier; /**< An opaque type containin
 typedef struct _Evas_Lock           Evas_Lock; /**< An opaque type containing information on which lock keys are registered in an Evas canvas */
 typedef struct _Evas_Smart          Evas_Smart; /**< An Evas Smart Object handle */
 typedef struct _Evas_Native_Surface Evas_Native_Surface; /**< A generic datatype for engine specific native surface information */
+typedef struct _Evas_Video_Surface  Evas_Video_Surface; /**< A generic datatype for video specific surface information */
 typedef unsigned long long          Evas_Modifier_Mask; /**< An Evas modifier mask type */
 
 typedef int                         Evas_Coord;
@@ -730,6 +731,26 @@ struct _Evas_Native_Surface
        unsigned int   x, y, w, h; /**< region inside the texture to use (image size is assumed as texture size, with 0, 0 being the top-left and co-ordinates working down to the right and bottom being positive) */
      } opengl;
    } data;
+};
+
+/* magic version number to know what the video surf struct looks like */
+#define EVAS_VIDEO_SURFACE_VERSION 1
+
+typedef void (*Evas_Video_Cb)(void *data, Evas_Object *obj, const Evas_Video_Surface *surface);
+typedef void (*Evas_Video_Coord_Cb)(void *data, Evas_Object *obj, const Evas_Video_Surface *surface, Evas_Coord a, Evas_Coord b);
+
+struct _Evas_Video_Surface
+{
+   int version;
+
+   Evas_Video_Coord_Cb move; /**< Move the video surface to this position */
+   Evas_Video_Coord_Cb resize; /**< Resize the video surface to that size */
+   Evas_Video_Cb show; /**< Show the video overlay surface */
+   Evas_Video_Cb hide; /**< Hide the video overlay surface */
+   Evas_Video_Cb update_pixels; /**< Please update the Evas_Object_Image pixels when called */
+
+   Evas_Object   *parent;
+   void          *data;
 };
 
 #define EVAS_LAYER_MIN -32768 /**< bottom-most layer number */
@@ -7019,6 +7040,28 @@ EAPI void                     evas_object_image_native_surface_set     (Evas_Obj
  *
  */
 EAPI Evas_Native_Surface     *evas_object_image_native_surface_get     (const Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
+
+/**
+ * Set the video surface linked to a given image of the canvas
+ *
+ * @param obj The given canvas pointer.
+ * @param surf The new video surface.
+ *
+ * This function link a video surface to a given canvas image.
+ *
+ */
+EAPI void                     evas_object_image_video_surface_set      (Evas_Object *obj, Evas_Video_Surface *surf) EINA_ARG_NONNULL(1, 2);
+
+/**
+ * Get the video surface linekd to a given image of the canvas
+ *
+ * @param obj The given canvas pointer.
+ * @return The video surface of the given canvas image.
+ *
+ * This function returns the video surface linked to a given canvas image.
+ *
+ */
+EAPI const Evas_Video_Surface *evas_object_image_video_surface_get      (const Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
 
 /**
  * Set the scale hint of a given image of the canvas.

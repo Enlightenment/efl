@@ -646,6 +646,207 @@ pending_change(void *data, void *gdata __UNUSED__)
    }
    }
  */
+static Eina_Bool
+_evas_render_can_use_overlay(Evas *e, Evas_Object *obj)
+{
+   Eina_Rectangle *r;
+   Evas_Object *tmp;
+   Eina_List *alphas = NULL;
+   Eina_List *opaques = NULL;
+   Evas_Object *video_parent = NULL;
+   Eina_Rectangle zone;
+   Evas_Coord xc1, yc1, xc2, yc2;
+   unsigned int i;
+   Eina_Bool nooverlay;
+
+   /* fprintf(stderr, "object: %p\n", obj); */
+
+   video_parent = _evas_object_image_video_parent_get(obj);
+
+   /* Check if any one is the stack make this object mapped */
+   tmp = obj;
+   while (tmp && !_evas_render_has_map(tmp))
+     tmp = tmp->smart.parent;
+
+   /* fprintf(stderr, "mapped ?\n"); */
+   if (tmp && _evas_render_has_map(tmp)) return EINA_FALSE; /* we are mapped, we can't be an overlay */
+
+   /* fprintf(stderr, "visible ?\n"); */
+   if (!evas_object_is_visible(obj)) return EINA_FALSE; /* no need to update the overlay if it's not visible */
+
+   /* fprintf(stderr, "recoloring ? %i, %i, %i, %i\n", */
+   /* 	   obj->cur.cache.clip.r, obj->cur.cache.clip.g, obj->cur.cache.clip.b, obj->cur.cache.clip.a); */
+   /* If any recoloring of the surface is needed, n overlay to */
+   if ((obj->cur.cache.clip.r != 255) ||
+       (obj->cur.cache.clip.g != 255) ||
+       (obj->cur.cache.clip.b != 255) ||
+       (obj->cur.cache.clip.a != 255))
+     return EINA_FALSE;
+
+   /* Check presence of transparent object on top of the video object */
+   EINA_RECTANGLE_SET(&zone,
+                      obj->cur.cache.clip.x,
+                      obj->cur.cache.clip.y,
+                      obj->cur.cache.clip.w,
+                      obj->cur.cache.clip.h);
+
+   for (i = e->active_objects.count - 1; i > 0; i--)
+     {
+        Eina_Rectangle self;
+        Eina_Rectangle *match;
+        Evas_Object *current;
+        Eina_List *l;
+        int xm1, ym1, xm2, ym2;
+
+        current = eina_array_data_get(&e->active_objects, i);
+
+        /* Did we find the video object in the stack ? */
+        if (current == video_parent || current == obj)
+          break;
+
+        EINA_RECTANGLE_SET(&self,
+                           current->cur.cache.clip.x,
+                           current->cur.cache.clip.y,
+                           current->cur.cache.clip.w,
+                           current->cur.cache.clip.h);
+
+        /* This doesn't cover the area of the video object, so don't bother with that object */
+        if (!eina_rectangles_intersect(&zone, &self))
+          continue ;
+
+        xc1 = current->cur.cache.clip.x;
+        yc1 = current->cur.cache.clip.y;
+        xc2 = current->cur.cache.clip.x + current->cur.cache.clip.w;
+        yc2 = current->cur.cache.clip.y + current->cur.cache.clip.h;
+
+        if (evas_object_is_visible(current) &&
+            (!current->clip.clipees) &&
+            (current->cur.visible) &&
+            (!current->delete_me) &&
+            (current->cur.cache.clip.visible) &&
+            (!current->smart.smart))
+          {
+             Eina_Bool included = EINA_FALSE;
+
+             if (evas_object_is_opaque(current) ||
+                 ((current->func->has_opaque_rect) &&
+                  (current->func->has_opaque_rect(current))))
+               {
+                  /* The object is opaque */
+
+                  /* Check if the opaque object is inside another opaque object */
+                  EINA_LIST_FOREACH(opaques, l, match)
+                    {
+                       xm1 = match->x;
+                       ym1 = match->y;
+                       xm2 = match->x + match->w;
+                       ym2 = match->y + match->h;
+
+                       /* Both object are included */
+                       if (xc1 >= xm1 && yc1 >= ym1 && xc2 <= xm2 && yc2 <= ym2)
+                         {
+                            included = EINA_TRUE;
+                            break;
+                         }
+                    }
+
+                  /* Not included yet */
+                  if (!included)
+                    {
+                       Eina_List *ln;
+                       Evas_Coord xn2, yn2;
+
+                       r = eina_rectangle_new(current->cur.cache.clip.x, current->cur.cache.clip.y,
+                                              current->cur.cache.clip.w, current->cur.cache.clip.h);
+
+                       opaques = eina_list_append(opaques, r);
+
+                       xn2 = r->x + r->w;
+                       yn2 = r->y + r->h;
+
+                       /* Remove all the transparent object that are covered by the new opaque object */
+                       EINA_LIST_FOREACH_SAFE(alphas, l, ln, match)
+                         {
+                            xm1 = match->x;
+                            ym1 = match->y;
+                            xm2 = match->x + match->w;
+                            ym2 = match->y + match->h;
+
+                            if (xm1 >= r->x && ym1 >= r->y && xm2 <= xn2 && ym2 <= yn2)
+                              {
+                                 /* The new rectangle is over some transparent object,
+                                    so remove the transparent object */
+                                 alphas = eina_list_remove_list(alphas, l);
+                              }
+                         }
+                    }
+               }
+             else
+               {
+                  /* The object has some transparency */
+
+                  /* Check if the transparent object is inside any other transparent object */
+                  EINA_LIST_FOREACH(alphas, l, match)
+                    {
+                       xm1 = match->x;
+                       ym1 = match->y;
+                       xm2 = match->x + match->w;
+                       ym2 = match->y + match->h;
+
+                       /* Both object are included */
+                       if (xc1 >= xm1 && yc1 >= ym1 && xc2 <= xm2 && yc2 <= ym2)
+                         {
+                            included = EINA_TRUE;
+                            break;
+                         }
+                    }
+
+                  /* If not check if it is inside any opaque one */
+                  if (!included)
+                    {
+                       EINA_LIST_FOREACH(opaques, l, match)
+                         {
+                            xm1 = match->x;
+                            ym1 = match->y;
+                            xm2 = match->x + match->w;
+                            ym2 = match->y + match->h;
+
+                            /* Both object are included */
+                            if (xc1 >= xm1 && yc1 >= ym1 && xc2 <= xm2 && yc2 <= ym2)
+                              {
+                                 included = EINA_TRUE;
+                                 break;
+                              }
+                         }
+                    }
+
+                  /* No inclusion at all, so add it */
+                  if (!included)
+                    {
+                       r = eina_rectangle_new(current->cur.cache.clip.x, current->cur.cache.clip.y,
+                                              current->cur.cache.clip.w, current->cur.cache.clip.h);
+
+                       alphas = eina_list_append(alphas, r);
+                    }
+               }
+          }
+     }
+
+   /* If there is any pending transparent object, then no overlay */
+   nooverlay = !!eina_list_count(alphas);
+
+   /* fprintf(stderr, "count : %i\n", eina_list_count(alphas)); */
+
+   EINA_LIST_FREE(alphas, r)
+     eina_rectangle_free(r);
+   EINA_LIST_FREE(opaques, r)
+     eina_rectangle_free(r);
+
+   if (nooverlay)
+     return EINA_FALSE;
+
+   return EINA_TRUE;
+}
 
 Eina_Bool
 evas_render_mapped(Evas *e, Evas_Object *obj, void *context, void *surface,
@@ -1074,6 +1275,7 @@ evas_render_updates_internal(Evas *e,
                              unsigned char make_updates,
                              unsigned char do_draw)
 {
+   Evas_Object *obj;
    Eina_List *updates = NULL;
    Eina_List *ll;
    void *surface;
@@ -1111,11 +1313,22 @@ evas_render_updates_internal(Evas *e,
    _evas_render_phase1_direct(e, &e->active_objects, &e->restack_objects,
                               &e->delete_objects, &e->render_objects);
 
+   /* phase 1.5. check if the video should be inlined or stay in their overlay */
+   alpha = e->engine.func->canvas_alpha_get(e->engine.data.output,
+					    e->engine.data.context);
+
+   EINA_LIST_FOREACH(e->video_objects, ll, obj)
+     {
+        /* we need the surface to be transparent to display the underlying overlay */
+        if (alpha && _evas_render_can_use_overlay(e, obj))
+	  _evas_object_image_video_overlay_show(obj);
+        else
+	  _evas_object_image_video_overlay_hide(obj);
+     }
+
    /* phase 2. force updates for restacks */
    for (i = 0; i < e->restack_objects.count; ++i)
      {
-        Evas_Object *obj;
-
         obj = eina_array_data_get(&e->restack_objects, i);
         obj->func->render_pre(obj);
         _evas_render_prev_cur_clip_cache_add(e, obj);
@@ -1162,8 +1375,6 @@ evas_render_updates_internal(Evas *e,
    /* build obscure objects list of active objects that obscure */
    for (i = 0; i < e->active_objects.count; ++i)
      {
-        Evas_Object *obj;
-
         obj = eina_array_data_get(&e->active_objects, i);
         if (UNLIKELY((evas_object_is_opaque(obj) ||
                       ((obj->func->has_opaque_rect) &&
@@ -1177,6 +1388,7 @@ evas_render_updates_internal(Evas *e,
           /*	  obscuring_objects = eina_list_append(obscuring_objects, obj); */
           eina_array_push(&e->obscuring_objects, obj);
      }
+
    /* save this list */
    /*    obscuring_objects_orig = obscuring_objects; */
    /*    obscuring_objects = NULL; */
@@ -1185,8 +1397,6 @@ evas_render_updates_internal(Evas *e,
      {
         unsigned int offset = 0;
 
-        alpha = e->engine.func->canvas_alpha_get(e->engine.data.output,
-                                                 e->engine.data.context);
         while ((surface =
                 e->engine.func->output_redraws_next_update_get
                 (e->engine.data.output,
@@ -1210,8 +1420,6 @@ evas_render_updates_internal(Evas *e,
              /* build obscuring objects list (in order from bottom to top) */
              for (i = 0; i < e->obscuring_objects.count; ++i)
                {
-                  Evas_Object *obj;
-
                   obj = (Evas_Object *)eina_array_data_get
                      (&e->obscuring_objects, i);
                   if (evas_object_is_in_output_rect(obj, ux, uy, uw, uh))
@@ -1283,8 +1491,6 @@ evas_render_updates_internal(Evas *e,
              /* render all object that intersect with rect */
              for (i = 0; i < e->active_objects.count; ++i)
                {
-                  Evas_Object *obj;
-
                   obj = eina_array_data_get(&e->active_objects, i);
 
                   /* if it's in our outpout rect and it doesn't clip anything */
@@ -1408,8 +1614,6 @@ evas_render_updates_internal(Evas *e,
    /* and do a post render pass */
    for (i = 0; i < e->active_objects.count; ++i)
      {
-        Evas_Object *obj;
-
         obj = eina_array_data_get(&e->active_objects, i);
         obj->pre_render_done = 0;
         RD("    OBJ [%p] post... %i %i\n", obj, obj->changed, do_draw);
@@ -1451,8 +1655,6 @@ evas_render_updates_internal(Evas *e,
 
    for (i = 0; i < e->render_objects.count; ++i)
      {
-        Evas_Object *obj;
-
         obj = eina_array_data_get(&e->render_objects, i);
         obj->pre_render_done = 0;
      }
@@ -1460,8 +1662,6 @@ evas_render_updates_internal(Evas *e,
    /* delete all objects flagged for deletion now */
    for (i = 0; i < e->delete_objects.count; ++i)
      {
-        Evas_Object *obj;
-
         obj = eina_array_data_get(&e->delete_objects, i);
         evas_object_free(obj, 1);
      }

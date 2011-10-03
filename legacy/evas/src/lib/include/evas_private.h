@@ -346,9 +346,10 @@ struct _Evas
    Eina_Array     temporary_objects;
    Eina_Array     calculate_objects;
    Eina_Array     clip_changes;
-   
+
    Eina_List     *calc_list;
    Eina_List     *calc_list_current;
+   Eina_List     *video_objects;
 
    Eina_List     *post_events; // free me on evas_free
 
@@ -901,6 +902,9 @@ const Evas_Smart_Cb_Description *evas_smart_cb_description_find(const Evas_Smart
 Eina_Bool _evas_object_image_preloading_get(const Evas_Object *obj);
 void _evas_object_image_preloading_set(Evas_Object *obj, Eina_Bool preloading);
 void _evas_object_image_preloading_check(Evas_Object *obj);
+Evas_Object *_evas_object_image_video_parent_get(Evas_Object *obj);
+void _evas_object_image_video_overlay_show(Evas_Object *obj);
+void _evas_object_image_video_overlay_hide(Evas_Object *obj);
 void evas_object_smart_del(Evas_Object *obj);
 void evas_object_smart_cleanup(Evas_Object *obj);
 void evas_object_smart_member_raise(Evas_Object *member);
