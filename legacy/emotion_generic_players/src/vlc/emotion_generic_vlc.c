@@ -489,16 +489,6 @@ _video_track_set(struct _App *app)
 }
 
 static void
-_spu_track_set(struct _App *app)
-{
-   int track;
-
-   _em_read_safe(app->em_read, &track, sizeof(track));
-
-   libvlc_video_set_spu(app->mp, track);
-}
-
-static void
 _file_set_done(struct _App *app)
 {
    int r;
@@ -690,7 +680,8 @@ _position_changed(struct _App *app)
      return;
 
    /* sending size info only once */
-   int r, w, h;
+   int r;
+   unsigned int w, h;
    r = libvlc_video_get_size(app->mp, 0, &w, &h);
    if (r < 0)
      return;
@@ -729,10 +720,8 @@ int
 main(int argc, const char *argv[])
 {
    struct _App app;
-   Emotion_Generic_Video_Shared *vs;
    struct pollfd fds[3];
    int tpipe[2]; // pipe for comunicating events from threads
-   char shmname[256];
    char cwidth[64], cheight[64], cpitch[64], chroma[64];
    char buf[64];
    const char *vlc_argv[] =
