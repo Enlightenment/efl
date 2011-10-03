@@ -488,6 +488,8 @@ _elm_win_obj_callback_del(void *data, Evas *e, Evas_Object *obj, void *event_inf
    if (win->deferred_child_eval_job) ecore_job_del(win->deferred_child_eval_job);
    if (win->shot.info) eina_stringshare_del(win->shot.info);
    if (win->shot.timer) ecore_timer_del(win->shot.timer);
+   evas_object_event_callback_del_full(win->win_obj, EVAS_CALLBACK_DEL,
+                                       _elm_win_obj_callback_del, win);
    while (((child = evas_object_bottom_get(win->evas))) &&
           (child != obj))
      {

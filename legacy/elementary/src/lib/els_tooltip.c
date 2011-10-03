@@ -67,7 +67,7 @@ _elm_tooltip_content_del_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __U
    Elm_Tooltip *tt = data;
    tt->content = NULL;
    tt->visible_lock = EINA_FALSE;
-   _elm_tooltip_hide(tt);
+   if (tt->tooltip) _elm_tooltip_hide(tt);
 }
 
 static void
@@ -153,6 +153,7 @@ _elm_tooltip_content_del(Elm_Tooltip *tt)
 static void
 _elm_tooltip_hide(Elm_Tooltip *tt)
 {
+   Evas_Object *del;
    _elm_tooltip_show_timer_stop(tt);
    _elm_tooltip_hide_anim_stop(tt);
    _elm_tooltip_reconfigure_job_stop(tt);
@@ -169,12 +170,12 @@ _elm_tooltip_hide(Elm_Tooltip *tt)
    evas_object_event_callback_del_full
      (tt->eventarea, EVAS_CALLBACK_MOUSE_MOVE, _elm_tooltip_obj_mouse_move_cb, tt);
 
-   if (tt->tt_win) evas_object_del(tt->tt_win);
-   else evas_object_del(tt->tooltip);
+   del = tt->tt_win ?: tt->tooltip;
 
    tt->tt_win = NULL;
    tt->tt_evas = NULL;
    tt->tooltip = NULL;
+   evas_object_del(del);
 }
 
 static void
