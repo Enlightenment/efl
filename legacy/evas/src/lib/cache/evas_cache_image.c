@@ -747,8 +747,9 @@ evas_cache_image_request(Evas_Cache_Image *cache, const char *file,
 	if (lo->orientation)
 	  {
              hkey[size] = '/';
+             size += 1;
              hkey[size] = 'o';
-             size += 2;
+             size += 1;
 	  }
      }
    hkey[size] = '\0';
