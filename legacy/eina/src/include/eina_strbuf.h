@@ -183,7 +183,7 @@ EAPI Eina_Bool eina_strbuf_append_n(Eina_Strbuf *buf, const char *str, size_t ma
  * This function appends @p str to @p buf. @p str must be of size at
  * most @p length. It is slightly faster than eina_strbuf_append() as
  * it does not compute the size of @p str. It is useful when dealing
- * with strings of known size, such as eina_strngshare. If @p buf
+ * with strings of known size, such as eina_stringshare. If @p buf
  * can't append it, #EINA_FALSE is returned, otherwise #EINA_TRUE is
  * returned.
  *
@@ -191,7 +191,7 @@ EAPI Eina_Bool eina_strbuf_append_n(Eina_Strbuf *buf, const char *str, size_t ma
  * @see eina_strbuf_append()
  * @see eina_strbuf_append_n()
  */
-EAPI Eina_Bool eina_strbuf_append_length(Eina_Strbuf *buf, const char *str, size_t length) EINA_ARG_NONNULL(1, 2);
+EAPI Eina_Bool eina_strbuf_append_length(Eina_Strbuf *buf, const char *str, size_t length) EINA_ARG_NONNULL(1);
 
 /**
  * @brief Append a character to a string buffer, reallocating as

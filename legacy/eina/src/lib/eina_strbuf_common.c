@@ -447,7 +447,7 @@ eina_strbuf_common_append_length(size_t csize,
 
    if (EINA_UNLIKELY(!_eina_strbuf_common_grow(csize, buf, buf->len + length)))
       return EINA_FALSE;
-   memcpy(((unsigned char *)(buf->buf)) + (buf->len * csize), str, 
+   memcpy(((unsigned char *)(buf->buf)) + (buf->len * csize), str,
           length * csize);
    buf->len += length;
    memset(((unsigned char *)(buf->buf)) + (buf->len * csize), 0, csize);
