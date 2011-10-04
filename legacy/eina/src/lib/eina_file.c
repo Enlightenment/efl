@@ -117,6 +117,9 @@ struct _Eina_File
    unsigned long long length;
    time_t mtime;
    ino_t inode;
+#ifdef _STAT_VER_LINUX
+   unsigned long int mtime_nsec;
+#endif
 
    int refcount;
    int global_refcount;
@@ -473,6 +476,24 @@ _eina_file_map_rule_apply(Eina_File_Populate rule, void *addr, unsigned long int
    return tmp;
 }
 
+static Eina_Bool
+_eina_file_timestamp_compare(Eina_File *f, struct stat *st)
+{
+   if (f->mtime != st->st_mtime) return EINA_FALSE;
+   if (f->length != (unsigned long long) st->st_size) return EINA_FALSE;
+   if (f->inode != st->st_ino) return EINA_FALSE;
+#ifdef _STAT_VER_LINUX
+# if (defined __USE_MISC && defined st_mtime)
+   if (f->mtime_nsec != (unsigned long int)st->st_mtim.tv_nsec)
+     return EINA_FALSE;
+# else
+   if (f->mtime_nsec != (unsigned long int)st->st_mtimensec)
+     return EINA_FALSE;
+# endif
+#endif
+   return EINA_TRUE;
+}
+
 Eina_Bool
 eina_file_init(void)
 {
@@ -785,11 +806,7 @@ eina_file_open(const char *filename, Eina_Bool shared)
    eina_lock_take(&_eina_file_lock_cache);
 
    file = eina_hash_find(_eina_file_cache, filename);
-   if ((file) &&
-       ((file->mtime != file_stat.st_mtime) ||
-        (file->length != (unsigned long long) file_stat.st_size) ||
-        (file->inode != file_stat.st_ino)))
-      // FIXME: handle sub-second resolution correctness
+   if ((file) && _eina_file_timestamp_compare(file, &file_stat))
      {
         file->delete_me = EINA_TRUE;
         eina_hash_del(_eina_file_cache, file->filename, file);
