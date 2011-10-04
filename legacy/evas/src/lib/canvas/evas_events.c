@@ -270,6 +270,9 @@ evas_event_feed_mouse_down(Evas *e, int b, Evas_Button_Flags flags, unsigned int
    e->last_mouse_down_counter++;
    _evas_post_event_callback_call(e);
    _evas_unwalk(e);
+
+   /* process mouse down for touch */
+   _evas_event_touch_down(e, e->pointer.x, e->pointer.y, 0, timestamp);
 }
 
 static int
@@ -455,6 +458,9 @@ evas_event_feed_mouse_up(Evas *e, int b, Evas_Button_Flags flags, unsigned int t
      }
  */
    _evas_unwalk(e);
+
+   /* process mouse up for touch */
+   _evas_event_touch_up(e, e->pointer.x, e->pointer.y, 0, timestamp);
 }
 
 EAPI void
@@ -771,6 +777,9 @@ evas_event_feed_mouse_move(Evas *e, int x, int y, unsigned int timestamp, const 
         _evas_post_event_callback_call(e);
      }
    _evas_unwalk(e);
+
+   /* process mouse move for touch */
+   _evas_event_touch_move(e, e->pointer.x, e->pointer.y, 0, timestamp);
 }
 
 EAPI void
@@ -960,6 +969,9 @@ evas_event_feed_multi_down(Evas *e,
    if (copy) eina_list_free(copy);
    _evas_post_event_callback_call(e);
    _evas_unwalk(e);
+
+   /* process multi down for touch */
+   _evas_event_touch_down(e, x, y, d, timestamp);
 }
 
 EAPI void
@@ -1030,6 +1042,9 @@ evas_event_feed_multi_up(Evas *e,
    if ((e->pointer.mouse_grabbed == 0) && !_post_up_handle(e, timestamp, data))
       _evas_post_event_callback_call(e);
    _evas_unwalk(e);
+
+   /* process multi up for touch */
+   _evas_event_touch_up(e, x, y, d, timestamp);
 }
 
 EAPI void
@@ -1178,6 +1193,9 @@ evas_event_feed_multi_move(Evas *e,
         _evas_post_event_callback_call(e);
      }
    _evas_unwalk(e);
+
+   /* process multi move for touch */
+   _evas_event_touch_move(e, x, y, d, timestamp);
 }
 
 EAPI void

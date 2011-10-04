@@ -430,6 +430,7 @@ typedef enum _Evas_Callback_Type
     * More Evas object event types - see evas_object_event_callback_add():
     */
    EVAS_CALLBACK_IMAGE_UNLOADED, /**< Image data has been unloaded (by some mechanims in Evas that throw out original image data) */
+   EVAS_CALLBACK_TOUCH, /**< Touch Event */
 
    EVAS_CALLBACK_LAST /**< kept as last element/sentinel -- not really an event */
 } Evas_Callback_Type; /**< The types of events triggering a callback */
@@ -488,6 +489,29 @@ typedef enum _Evas_Event_Flags
 } Evas_Event_Flags; /**< Flags for Events */
 
 /**
+ * State of Evas_Coord_Touch_Point
+ */
+typedef enum _Evas_Touch_Point_State
+{
+   EVAS_TOUCH_POINT_DOWN, /**< Touch point is pressed down */
+   EVAS_TOUCH_POINT_UP, /**< Touch point is released */
+   EVAS_TOUCH_POINT_MOVE, /**< Touch point is moved */
+   EVAS_TOUCH_POINT_STILL, /**< Touch point is not moved after pressed */
+   EVAS_TOUCH_POINT_CANCEL /**< Touch point is calcelled */
+} Evas_Touch_Point_State;
+
+/**
+ * Types for Evas_Touch_Event
+ */
+typedef enum _Evas_Event_Touch_Type
+{
+   EVAS_EVENT_TOUCH_BEGIN, /**< Begin touch event with pressed new touch point */
+   EVAS_EVENT_TOUCH_END, /**< End touch event with released touch point */
+   EVAS_EVENT_TOUCH_MOVE, /**< Any touch point in the touch_points list is moved */
+   EVAS_EVENT_TOUCH_CANCEL /**< Touch event is cancelled */
+} Evas_Event_Touch_Type;
+
+/**
  * Flags for Font Hinting
  * @ingroup Evas_Font_Group
  */
@@ -534,6 +558,7 @@ typedef struct _Evas_Point                   Evas_Point; /**< integer point */
 
 typedef struct _Evas_Coord_Point             Evas_Coord_Point;  /**< Evas_Coord point */
 typedef struct _Evas_Coord_Precision_Point   Evas_Coord_Precision_Point; /**< Evas_Coord point with sub-pixel precision */
+typedef struct _Evas_Coord_Touch_Point       Evas_Coord_Touch_Point; /**< Evas_Coord point with touch type and id */
 
 typedef struct _Evas_Position                Evas_Position; /**< associates given point in Canvas and Output */
 typedef struct _Evas_Precision_Position      Evas_Precision_Position; /**< associates given point in Canvas and Output, with sub-pixel precision */
@@ -624,6 +649,13 @@ struct _Evas_Coord_Precision_Point
    double xsub, ysub;
 };
 
+struct _Evas_Coord_Touch_Point
+{
+   Evas_Coord x, y;
+   int id; /**< id in order to distinguish each point */
+   Evas_Touch_Point_State state;
+};
+
 struct _Evas_Position
 {
     Evas_Point output;
@@ -660,6 +692,7 @@ typedef struct _Evas_Event_Multi_Move Evas_Event_Multi_Move; /**< Event structur
 typedef struct _Evas_Event_Key_Down   Evas_Event_Key_Down; /**< Event structure for #EVAS_CALLBACK_KEY_DOWN event callbacks */
 typedef struct _Evas_Event_Key_Up     Evas_Event_Key_Up; /**< Event structure for #EVAS_CALLBACK_KEY_UP event callbacks */
 typedef struct _Evas_Event_Hold       Evas_Event_Hold; /**< Event structure for #EVAS_CALLBACK_HOLD event callbacks */
+typedef struct _Evas_Event_Touch      Evas_Event_Touch; /**< Event structure for #EVAS_CALLBACK_TOUCH event callbacks */
 
 typedef enum _Evas_Load_Error
 {
@@ -1014,6 +1047,14 @@ struct _Evas_Event_Hold /** Hold change event */
    unsigned int   timestamp;
    Evas_Event_Flags  event_flags;
    Evas_Device      *dev;
+};
+
+struct _Evas_Event_Touch /** Touch event */
+{
+   Eina_List            *points; /**< Evas_Coord_Touch_Point list */
+   Evas_Modifier        *modifiers;
+   unsigned int          timestamp;
+   Evas_Event_Touch_Type type; /**< Type for Evas_Event_Touch */
 };
 
 /**

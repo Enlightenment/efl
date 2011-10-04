@@ -378,6 +378,8 @@ struct _Evas
    unsigned char  invalidate : 1;
    unsigned char  cleanup : 1;
    unsigned char  focus : 1;
+
+   Eina_List     *touch_points;
 };
 
 struct _Evas_Layer
@@ -1009,6 +1011,11 @@ Eina_Bool evas_map_inside_get(const Evas_Map *m, Evas_Coord x, Evas_Coord y);
 Eina_Bool evas_map_coords_get(const Evas_Map *m, Evas_Coord x, Evas_Coord y, Evas_Coord *mx, Evas_Coord *my, int grab);
 
 Eina_List *evas_module_engine_list(void);
+
+/* for touch event */
+void _evas_event_touch_down(Evas *e, Evas_Coord x, Evas_Coord y, int id, unsigned int timestamp);
+void _evas_event_touch_up(Evas *e, Evas_Coord x, Evas_Coord y, int id, unsigned int timestamp);
+void _evas_event_touch_move(Evas *e, Evas_Coord x, Evas_Coord y, int id, unsigned int timestamp);
 
 /****************************************************************************/
 /*****************************************/
