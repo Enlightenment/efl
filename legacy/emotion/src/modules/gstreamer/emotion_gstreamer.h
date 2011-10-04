@@ -78,6 +78,7 @@ struct _Emotion_Gstreamer_Video
    GstElement       *pipeline;
    GstElement       *sink;
    GstElement       *esink;
+   GstElement       *xvsink;
    GstElement       *tee;
    GstPad           *teepad;
    GstPad           *xvpad;
@@ -138,7 +139,6 @@ struct _Emotion_Gstreamer_Video
    Eina_Bool         delete_me    : 1;
    Eina_Bool         samsung      : 1;
    Eina_Bool         kill_buffer  : 1;
-   Eina_Bool         linked       : 1;
    Eina_Bool         stream       : 1;
    Eina_Bool         priority     : 1;
 };
@@ -210,6 +210,8 @@ extern int _emotion_gstreamer_log_domain;
 
 #define EVAS_TYPE_VIDEO_SINK evas_video_sink_get_type()
 
+GType fakeeos_bin_get_type(void);
+
 #define EVAS_VIDEO_SINK(obj) \
     (G_TYPE_CHECK_INSTANCE_CAST((obj), \
     EVAS_TYPE_VIDEO_SINK, EvasVideoSink))
@@ -229,6 +231,8 @@ extern int _emotion_gstreamer_log_domain;
 #define EVAS_VIDEO_SINK_GET_CLASS(obj) \
     (G_TYPE_INSTANCE_GET_CLASS((obj), \
     EVAS_TYPE_VIDEO_SINK, EvasVideoSinkClass))
+
+#define GST_TYPE_FAKEEOS_BIN fakeeos_bin_get_type()
 
 GstElement *gstreamer_video_sink_new(Emotion_Gstreamer_Video *ev,
                                      Evas_Object *obj,

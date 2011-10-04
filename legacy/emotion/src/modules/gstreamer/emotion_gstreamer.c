@@ -237,6 +237,8 @@ static Emotion_Video_Module em_module =
    NULL /* handle */
 };
 
+static int priority_overide = 0;
+
 static Emotion_Video_Stream *
 emotion_video_stream_new(Emotion_Gstreamer_Video *ev)
 {
@@ -404,6 +406,7 @@ em_cleanup(Emotion_Gstreamer_Video *ev)
        if (ev->xvpad) gst_object_unref(ev->xvpad);
        ev->xvpad = NULL;
 
+       fprintf(stderr, "destroying window: %i\n", ev->win);
        if (ev->win) ecore_x_window_free(ev->win);
        ev->win = 0;
      }
@@ -1226,6 +1229,7 @@ em_priority_set(void *video, Eina_Bool pri)
    Emotion_Gstreamer_Video *ev;
 
    ev = video;
+   if (priority_overide > 3) return ; /* If we failed to much to create that pipeline, let's don't wast our time anymore */
    ev->priority = pri;
 }
 
@@ -1236,6 +1240,16 @@ em_priority_get(void *video)
 
    ev = video;
    return ev->stream;
+}
+
+static Eina_Bool
+_ecore_event_x_destroy(void *data, int type, void *event)
+{
+   Ecore_X_Event_Window_Destroy *ev = event;
+
+   fprintf(stderr, "killed window: %x (%x)\n", ev->win, ev->event_win);
+
+   return EINA_TRUE;
 }
 
 static Eina_Bool
@@ -1262,6 +1276,8 @@ module_open(Evas_Object           *obj,
 
    if (!em_module.init(obj, video, opt))
      return EINA_FALSE;
+
+   ecore_event_handler_add(ECORE_X_EVENT_WINDOW_DESTROY, _ecore_event_x_destroy, NULL);
 
    eina_threads_init();
 
@@ -1524,12 +1540,16 @@ _eos_main_fct(void *data)
       case GST_MESSAGE_STREAM_STATUS:
          break;
       case GST_MESSAGE_ERROR:
-         ERR("Switching back to composited rendering.");
          em_cleanup(ev);
 
-         ev->priority = EINA_FALSE;
+	 if (ev->priority)
+	   {
+	     ERR("Switching back to canvas rendering.");
+	     ev->priority = EINA_FALSE;
+	     priority_overide++;
 
-         ecore_idler_add(_em_restart_stream, ev);
+	     ecore_idler_add(_em_restart_stream, ev);
+	   }
          break;
       default:
          ERR("bus say: %s [%i - %s]",
@@ -1642,9 +1662,11 @@ _emotion_gstreamer_video_pipeline_parse(Emotion_Gstreamer_Video *ev,
 
    res = gst_element_get_state(ev->pipeline, NULL, NULL, GST_CLOCK_TIME_NONE);
    if (res == GST_STATE_CHANGE_NO_PREROLL)
-     gst_element_set_state(ev->pipeline, GST_STATE_PLAYING);
+     {
+       gst_element_set_state(ev->pipeline, GST_STATE_PLAYING);
 
-   res = gst_element_get_state(ev->pipeline, NULL, NULL, GST_CLOCK_TIME_NONE);
+       res = gst_element_get_state(ev->pipeline, NULL, NULL, GST_CLOCK_TIME_NONE);
+     }
 
    /** NOTE: you need to set: GST_DEBUG_DUMP_DOT_DIR=/tmp EMOTION_ENGINE=gstreamer to save the $EMOTION_GSTREAMER_DOT file in '/tmp' */
    /** then call dot -Tpng -oemotion_pipeline.png /tmp/$TIMESTAMP-$EMOTION_GSTREAMER_DOT.dot */
