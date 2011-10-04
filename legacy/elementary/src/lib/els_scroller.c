@@ -1912,6 +1912,8 @@ _smart_event_mouse_up(void *data, Evas *e, Evas_Object *obj __UNUSED__, void *ev
    sd = data;
    ev = event_info;
    sd->down.hold_parent = 0;
+   sd->down.dx = 0;
+   sd->down.dy = 0;
    //   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return ;
    evas_post_event_callback_push(e, _smart_event_post_up, sd);
    // FIXME: respect elm_widget_scroll_hold_get of parent container
