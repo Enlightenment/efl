@@ -618,7 +618,17 @@ typedef struct _Evas_Modifier       Evas_Modifier; /**< An opaque type containin
 typedef struct _Evas_Lock           Evas_Lock; /**< An opaque type containing information on which lock keys are registered in an Evas canvas */
 typedef struct _Evas_Smart          Evas_Smart; /**< An Evas Smart Object handle */
 typedef struct _Evas_Native_Surface Evas_Native_Surface; /**< A generic datatype for engine specific native surface information */
-typedef struct _Evas_Video_Surface  Evas_Video_Surface; /**< A generic datatype for video specific surface information */
+
+ /**
+  * @typedef Evas_Video_Surface
+  *
+  * A generic datatype for video specific surface information
+  * @see evas_object_image_video_surface_set
+  * @see evas_object_image_video_surface_get
+  * @since 1.1.0
+  */
+typedef struct _Evas_Video_Surface  Evas_Video_Surface;
+
 typedef unsigned long long          Evas_Modifier_Mask; /**< An Evas modifier mask type */
 
 typedef int                         Evas_Coord;
@@ -766,7 +776,11 @@ struct _Evas_Native_Surface
    } data;
 };
 
-/* magic version number to know what the video surf struct looks like */
+/**
+ * @def EVAS_VIDEO_SURFACE_VERSION
+ * Magic version number to know what the video surf struct looks like
+ * @since 1.1.0
+ */
 #define EVAS_VIDEO_SURFACE_VERSION 1
 
 typedef void (*Evas_Video_Cb)(void *data, Evas_Object *obj, const Evas_Video_Surface *surface);
@@ -7087,6 +7101,7 @@ EAPI Evas_Native_Surface     *evas_object_image_native_surface_get     (const Ev
  *
  * @param obj The given canvas pointer.
  * @param surf The new video surface.
+ * @since 1.1.0
  *
  * This function link a video surface to a given canvas image.
  *
@@ -7098,6 +7113,7 @@ EAPI void                     evas_object_image_video_surface_set      (Evas_Obj
  *
  * @param obj The given canvas pointer.
  * @return The video surface of the given canvas image.
+ * @since 1.1.0
  *
  * This function returns the video surface linked to a given canvas image.
  *
