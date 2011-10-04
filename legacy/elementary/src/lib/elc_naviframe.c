@@ -203,7 +203,8 @@ _item_text_set_hook(Elm_Object_Item *it,
         pair = ELM_NEW(Elm_Naviframe_Text_Item_Pair);
         if (!pair)
           {
-             ERR("Failed to allocate new text part of the item! : naviframe=%p", navi_it->base.widget);
+             ERR("Failed to allocate new text part of the item! : naviframe=%p",
+             navi_it->base.widget);
              return;
           }
         eina_stringshare_replace(&pair->part, buf);
@@ -883,12 +884,12 @@ elm_naviframe_item_pop(Evas_Object *obj)
              //FIXME:
              evas_object_pass_events_set(wd->base, EINA_TRUE);
           }
+        edje_object_signal_emit(it->base.view, "elm,state,popped", "elm");
         evas_object_show(prev_it->base.view);
         evas_object_raise(prev_it->base.view);
         edje_object_signal_emit(prev_it->base.view,
                                 "elm,state,show",
                                 "elm");
-        edje_object_signal_emit(it->base.view, "elm,state,popped", "elm");
      }
    else
      _item_del(it);
