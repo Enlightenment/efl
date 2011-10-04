@@ -530,3 +530,8 @@
 2011-09-15  Cedric Bail
 
 	* Add eet_data_xattr_cipher_get and eet_data_xattr_cipher_set.
+
+2011-10-04  Carsten Haitzler (The Rasterman)
+
+	* Fix issue where an empty eet file (no keys) is not openable
+        for read/write anymore. Allow it.

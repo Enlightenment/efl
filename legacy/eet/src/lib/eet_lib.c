@@ -882,8 +882,8 @@ eet_internal_read2(Eet_File *ef)
    bytes_dictionary_entries = EET_FILE2_DICTIONARY_ENTRY_SIZE *
       num_dictionary_entries;
 
-   /* we can't have <= 0 values here - invalid */
-   if (eet_test_close((num_directory_entries <= 0), ef))
+   /* we can't have > 0x7fffffff values here - invalid */
+   if (eet_test_close((num_directory_entries > 0x7fffffff), ef))
       return NULL;
 
    /* we can't have more bytes directory and bytes in dictionaries than the size of the file */
@@ -912,6 +912,10 @@ eet_internal_read2(Eet_File *ef)
       return NULL;
 
    signature_base_offset = 0;
+   if (num_directory_entries == 0)
+     {
+        signature_base_offset = ef->data_size;
+     }
 
    /* actually read the directory block - all of it, into ram */
    for (i = 0; i < num_directory_entries; ++i)
@@ -1134,7 +1138,8 @@ eet_internal_read1(Eet_File *ef)
    EXTRACT_INT(byte_entries, ef->data, idx);
 
    /* we can't have <= 0 values here - invalid */
-   if (eet_test_close((num_entries <= 0) || (byte_entries <= 0), ef))
+   if (eet_test_close((num_entries > 0x7fffffff) || 
+                      (byte_entries > 0x7fffffff), ef))
       return NULL;
 
    /* we can't have more entires than minimum bytes for those! invalid! */
@@ -1142,8 +1147,8 @@ eet_internal_read1(Eet_File *ef)
       return NULL;
 
    /* check we will not outrun the file limit */
-   if (eet_test_close(((byte_entries + (int)sizeof(int) * 3) > ef->data_size),
-                      ef))
+   if (eet_test_close(((byte_entries + (int)(sizeof(int) * 3)) > 
+                       ef->data_size), ef))
       return NULL;
 
    /* allocate header */
