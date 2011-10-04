@@ -166,6 +166,8 @@ _ecore_xcb_randr_root_to_screen(Ecore_X_Window root)
 {
    int count = 0, num = 0;
 
+   CHECK_XCB_CONN;
+
    count = xcb_setup_roots_length(xcb_get_setup(_ecore_xcb_conn));
    for (num = 0; num < count; num++)
      if (_ecore_xcb_window_root_of_screen_get(num) == root) 
@@ -210,6 +212,7 @@ ecore_x_randr_screen_primary_output_orientations_get(Ecore_X_Window root)
 #endif
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
 #ifdef ECORE_XCB_RANDR
    cookie = xcb_randr_get_screen_info_unchecked(_ecore_xcb_conn, root);
@@ -238,6 +241,7 @@ ecore_x_randr_screen_primary_output_orientation_get(Ecore_X_Window root)
 #endif
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
 #ifdef ECORE_XCB_RANDR
    cookie = xcb_randr_get_screen_info_unchecked(_ecore_xcb_conn, root);
@@ -268,6 +272,7 @@ ecore_x_randr_screen_primary_output_orientation_set(Ecore_X_Window root, Ecore_X
 #endif
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
 #ifdef ECORE_XCB_RANDR
    cookie = xcb_randr_get_screen_info_unchecked(_ecore_xcb_conn, root);
@@ -316,6 +321,7 @@ ecore_x_randr_screen_primary_output_sizes_get(Ecore_X_Window root, int *num)
 #endif
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
 #ifdef ECORE_XCB_RANDR
    cookie = xcb_randr_get_screen_info_unchecked(_ecore_xcb_conn, root);
@@ -374,6 +380,7 @@ ecore_x_randr_screen_primary_output_current_size_get(Ecore_X_Window root, int *w
 #endif
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
 #ifdef ECORE_XCB_RANDR
    cookie = xcb_randr_get_screen_info_unchecked(_ecore_xcb_conn, root);
@@ -421,6 +428,7 @@ ecore_x_randr_screen_primary_output_size_set(Ecore_X_Window root, int size_index
 #endif
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
 #ifdef ECORE_XCB_RANDR
    if (!((size_index >= 0) && (_ecore_xcb_randr_root_validate(root))))
@@ -483,6 +491,7 @@ ecore_x_randr_screen_primary_output_current_refresh_rate_get(Ecore_X_Window root
 #endif
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
 #ifdef ECORE_XCB_RANDR
    if (!_ecore_xcb_randr_root_validate(root)) return ret;
@@ -516,6 +525,7 @@ ecore_x_randr_screen_primary_output_refresh_rates_get(Ecore_X_Window root, int s
 #endif
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
 #ifdef ECORE_XCB_RANDR
    if (!_ecore_xcb_randr_root_validate(root)) return ret;
@@ -568,6 +578,7 @@ ecore_x_randr_screen_primary_output_refresh_rate_set(Ecore_X_Window root, int si
 #endif
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
 #ifdef ECORE_XCB_RANDR
    if (_randr_version < RANDR_1_1) return EINA_FALSE;
@@ -612,6 +623,7 @@ EAPI void
 ecore_x_randr_mode_info_free(Ecore_X_Randr_Mode_Info *mode_info) 
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    RANDR_CHECK_1_2_RET();
 
@@ -636,6 +648,7 @@ ecore_x_randr_primary_output_get(Ecore_X_Window root)
 #endif
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
 #ifdef ECORE_XCB_RANDR
    RANDR_CHECK_1_3_RET(Ecore_X_Randr_None);
@@ -662,6 +675,7 @@ EAPI void
 ecore_x_randr_primary_output_set(Ecore_X_Window root, Ecore_X_Randr_Output output) 
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
 #ifdef ECORE_XCB_RANDR
    RANDR_CHECK_1_3_RET();
@@ -677,6 +691,7 @@ ecore_x_randr_output_modes_get(Ecore_X_Window root, Ecore_X_Randr_Output output,
    Ecore_X_Randr_Mode *modes = NULL;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
 #ifdef ECORE_XCB_RANDR
    RANDR_CHECK_1_2_RET(NULL);
@@ -708,6 +723,7 @@ ecore_x_randr_mode_info_get(Ecore_X_Window root, Ecore_X_Randr_Mode mode)
    Ecore_X_Randr_Mode_Info *ret = NULL;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
 #ifdef ECORE_XCB_RANDR
    RANDR_CHECK_1_2_RET(NULL);
@@ -734,6 +750,7 @@ ecore_x_randr_modes_info_get(Ecore_X_Window root, int *num)
    Ecore_X_Randr_Mode_Info **ret = NULL;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    if (num) *num = 0;
 
@@ -760,6 +777,7 @@ EAPI void
 ecore_x_randr_mode_size_get(Ecore_X_Window root, Ecore_X_Randr_Mode mode, int *w, int *h) 
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
 #ifdef ECORE_XCB_RANDR
    RANDR_CHECK_1_2_RET();
@@ -792,6 +810,7 @@ ecore_x_randr_output_edid_get(Ecore_X_Window root, Ecore_X_Randr_Output output, 
 #endif
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
 #ifdef ECORE_XCB_RANDR
    RANDR_CHECK_1_2_RET(NULL);
@@ -836,6 +855,7 @@ ecore_x_randr_output_clones_get(Ecore_X_Window root, Ecore_X_Randr_Output output
    Ecore_X_Randr_Output *outputs = NULL;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
 #ifdef ECORE_XCB_RANDR
    RANDR_CHECK_1_2_RET(NULL);
@@ -856,6 +876,7 @@ ecore_x_randr_output_possible_crtcs_get(Ecore_X_Window root, Ecore_X_Randr_Outpu
    Ecore_X_Randr_Crtc *crtcs = NULL;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
 #ifdef ECORE_XCB_RANDR
    RANDR_CHECK_1_2_RET(NULL);
@@ -880,6 +901,7 @@ EAPI char *
 ecore_x_randr_output_name_get(Ecore_X_Window root, Ecore_X_Randr_Output output, int *len) 
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
 #ifdef ECORE_XCB_RANDR
    RANDR_CHECK_1_2_RET(NULL);
@@ -899,6 +921,7 @@ EAPI Ecore_X_Randr_Connection_Status
 ecore_x_randr_output_connection_status_get(Ecore_X_Window root, Ecore_X_Randr_Output output) 
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
 #ifdef ECORE_XCB_RANDR
    RANDR_CHECK_1_2_RET(ECORE_X_RANDR_CONNECTION_STATUS_UNKNOWN);
@@ -919,6 +942,7 @@ EAPI Ecore_X_Randr_Output *
 ecore_x_randr_outputs_get(Ecore_X_Window root, int *num) 
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
 #ifdef ECORE_XCB_RANDR
    RANDR_CHECK_1_2_RET(NULL);
@@ -936,6 +960,7 @@ EAPI Ecore_X_Randr_Crtc
 ecore_x_randr_output_crtc_get(Ecore_X_Window root, Ecore_X_Randr_Output output) 
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
 #ifdef ECORE_XCB_RANDR
    RANDR_CHECK_1_2_RET(Ecore_X_Randr_None);
@@ -982,6 +1007,7 @@ ecore_x_randr_crtc_settings_set(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc, Ec
 #endif
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
 #ifdef ECORE_XCB_RANDR
    RANDR_CHECK_1_2_RET(EINA_FALSE);
@@ -1057,6 +1083,7 @@ ecore_x_randr_crtc_mode_set(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc, Ecore_
    Eina_Bool ret = EINA_FALSE;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
 #ifdef ECORE_XCB_RANDR
    RANDR_CHECK_1_2_RET(EINA_FALSE);
@@ -1089,6 +1116,7 @@ ecore_x_randr_crtc_mode_get(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc)
 #endif
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
 #ifdef ECORE_XCB_RANDR
    RANDR_CHECK_1_2_RET(Ecore_X_Randr_Unset);
@@ -1124,6 +1152,7 @@ ecore_x_randr_crtc_orientation_get(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc)
 #endif
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
 #ifdef ECORE_XCB_RANDR
    RANDR_CHECK_1_2_RET(Ecore_X_Randr_None);
@@ -1154,6 +1183,7 @@ ecore_x_randr_crtc_orientation_set(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc,
    Eina_Bool ret = EINA_FALSE;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
 #ifdef ECORE_XCB_RANDR
    RANDR_CHECK_1_2_RET(EINA_FALSE);
@@ -1181,6 +1211,7 @@ ecore_x_randr_crtc_orientations_get(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc
 #endif
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
 #ifdef ECORE_XCB_RANDR
    RANDR_CHECK_1_2_RET(Ecore_X_Randr_None);
@@ -1222,6 +1253,7 @@ ecore_x_randr_crtc_possible_outputs_get(Ecore_X_Window root, Ecore_X_Randr_Crtc 
 #endif
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
 #ifdef ECORE_XCB_RANDR
    RANDR_CHECK_1_2_RET(NULL);
@@ -1266,6 +1298,7 @@ ecore_x_randr_crtcs_get(Ecore_X_Window root, int *num)
    Ecore_X_Randr_Crtc *ret = NULL;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
 #ifdef ECORE_XCB_RANDR
    RANDR_CHECK_1_2_RET(NULL);
@@ -1321,6 +1354,7 @@ ecore_x_randr_crtc_outputs_get(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc, int
 #endif
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
 #ifdef ECORE_XCB_RANDR
    RANDR_CHECK_1_2_RET(NULL);
@@ -1359,6 +1393,7 @@ ecore_x_randr_crtc_geometry_get(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc, in
 #endif
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
 #ifdef ECORE_XCB_RANDR
    RANDR_CHECK_1_2_RET();
@@ -1403,6 +1438,7 @@ ecore_x_randr_crtc_pos_relative_set(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc
 #endif
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
 #ifdef ECORE_XCB_RANDR
    RANDR_CHECK_1_2_RET(EINA_FALSE);
@@ -1485,6 +1521,7 @@ ecore_x_randr_move_all_crtcs_but(Ecore_X_Window root, const Ecore_X_Randr_Crtc *
 #endif
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
 #ifdef ECORE_XCB_RANDR
    if ((num <= 0) || (!not_moved) || (!_ecore_xcb_randr_root_validate(root)))
@@ -1515,6 +1552,7 @@ EAPI void
 ecore_x_randr_crtc_pos_get(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc, int *x, int *y) 
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
 #ifdef ECORE_XCB_RANDR
    RANDR_CHECK_1_2_RET();
@@ -1541,6 +1579,7 @@ ecore_x_randr_crtc_pos_set(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc, int x, 
 #endif
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
 #ifdef ECORE_XCB_RANDR
    RANDR_CHECK_1_2_RET(EINA_FALSE);
@@ -1571,6 +1610,7 @@ EAPI void
 ecore_x_randr_crtc_size_get(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc, int *w, int *h) 
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
 #ifdef ECORE_XCB_RANDR
    RANDR_CHECK_1_2_RET();
@@ -1584,6 +1624,7 @@ ecore_x_randr_crtc_refresh_rate_get(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc
    Ecore_X_Randr_Refresh_Rate ret = 0.0;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
 #ifdef ECORE_XCB_RANDR
    RANDR_CHECK_1_2_RET(0.0);
@@ -1676,6 +1717,7 @@ ecore_x_randr_move_crtcs(Ecore_X_Window root, const Ecore_X_Randr_Crtc *crtcs, i
 #endif
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
 #ifdef ECORE_XCB_RANDR
    RANDR_CHECK_1_2_RET(EINA_FALSE);
@@ -1774,6 +1816,7 @@ ecore_x_randr_events_select(Ecore_X_Window win, Eina_Bool on)
 #endif
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
 #ifdef ECORE_XCB_RANDR
    if (on) 
@@ -1807,6 +1850,7 @@ ecore_x_randr_screen_reset(Ecore_X_Window root)
 #endif
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
 #ifdef ECORE_XCB_RANDR
    if (!_ecore_xcb_randr_root_validate(root)) return;
@@ -1879,6 +1923,7 @@ ecore_x_randr_screen_size_range_get(Ecore_X_Window root, int *minw, int *minh, i
 #endif
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
 #ifdef ECORE_XCB_RANDR
    RANDR_CHECK_1_2_RET();
@@ -1911,6 +1956,7 @@ ecore_x_randr_screen_current_size_get(Ecore_X_Window root, int *w, int *h, int *
 #endif
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
 #ifdef ECORE_XCB_RANDR
    RANDR_CHECK_1_2_RET();
@@ -1947,6 +1993,7 @@ ecore_x_randr_screen_current_size_set(Ecore_X_Window root, int w, int h, int w_m
 #endif
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
 #ifdef ECORE_XCB_RANDR
    RANDR_CHECK_1_2_RET(EINA_FALSE);
@@ -1998,6 +2045,7 @@ ecore_x_randr_window_outputs_get(Ecore_X_Window window, int *num)
 #endif
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
    if (num) *num = 0;
 
@@ -2087,6 +2135,7 @@ ecore_x_randr_output_backlight_level_get(Ecore_X_Window root, Ecore_X_Randr_Outp
 #endif
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
 #ifdef ECORE_XCB_RANDR
    RANDR_CHECK_1_2_RET(-1);
@@ -2182,6 +2231,7 @@ ecore_x_randr_output_backlight_level_set(Ecore_X_Window root, Ecore_X_Randr_Outp
 #endif
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
 #ifdef ECORE_XCB_RANDR
    RANDR_CHECK_1_2_RET(EINA_FALSE);
@@ -2254,6 +2304,7 @@ _ecore_xcb_randr_output_validate(Ecore_X_Window root, Ecore_X_Randr_Output outpu
    Eina_Bool ret = EINA_FALSE;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
 #ifdef ECORE_XCB_RANDR
    RANDR_CHECK_1_2_RET(EINA_FALSE);
@@ -2325,6 +2376,7 @@ _ecore_xcb_randr_crtc_validate(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc)
    Eina_Bool ret = EINA_FALSE;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
 #ifdef ECORE_XCB_RANDR
    RANDR_CHECK_1_2_RET(EINA_FALSE);
