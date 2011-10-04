@@ -785,7 +785,7 @@ eina_file_open(const char *filename, Eina_Bool shared)
    eina_lock_take(&_eina_file_lock_cache);
 
    file = eina_hash_find(_eina_file_cache, filename);
-   if ((file) && 
+   if ((file) &&
        ((file->mtime != file_stat.st_mtime) ||
         (file->length != (unsigned long long) file_stat.st_size) ||
         (file->inode != file_stat.st_ino)))
@@ -799,7 +799,11 @@ eina_file_open(const char *filename, Eina_Bool shared)
    if (!file)
      {
         n = malloc(sizeof (Eina_File) + strlen(filename) + 1);
-        if (!n) goto on_error;
+        if (!n)
+	  {
+             eina_lock_release(&_eina_file_lock_cache);
+             goto on_error;
+	  }
 
         n->filename = (char*) (n + 1);
         strcpy((char*) n->filename, filename);
@@ -843,13 +847,17 @@ EAPI void
 eina_file_close(Eina_File *file)
 {
    EINA_SAFETY_ON_NULL_RETURN(file);
- 
+
    eina_lock_take(&file->lock);
    file->refcount--;
    eina_lock_release(&file->lock);
 
    if (file->refcount != 0) return;
+   eina_lock_take(&_eina_file_lock_cache);
+
    eina_hash_del(_eina_file_cache, file->filename, file);
+
+   eina_lock_release(&_eina_file_lock_cache);
 }
 
 EAPI size_t
