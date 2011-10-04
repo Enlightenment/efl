@@ -631,12 +631,18 @@ _item_del(Elm_Naviframe_Item *it)
      evas_object_del(it->content);
 
    EINA_LIST_FOREACH(it->content_list, l, content_pair)
-     evas_object_del(content_pair->content);
+     {
+        evas_object_event_callback_del(content_pair->content, EVAS_CALLBACK_DEL, _title_content_del);
+        evas_object_del(content_pair->content);
+        eina_stringshare_del(content_pair->part);
+        free(content_pair);
+     }
 
    EINA_LIST_FOREACH(it->text_list, l, text_pair)
      {
         eina_stringshare_del(text_pair->part);
         eina_stringshare_del(text_pair->text);
+        free(text_pair);
      }
 
    eina_list_free(it->content_list);
