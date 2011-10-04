@@ -3782,14 +3782,16 @@ _evas_object_image_video_overlay_show(Evas_Object *obj)
 {
    Evas_Object_Image *o = (Evas_Object_Image *)(obj->object_data);
 
-   if (!o->video_visible || o->created)
-     o->video.show(o->video.data, obj, &o->video);
    if (obj->cur.cache.clip.x != obj->prev.cache.clip.x ||
-       obj->cur.cache.clip.y != obj->prev.cache.clip.y)
+       obj->cur.cache.clip.y != obj->prev.cache.clip.y ||
+       o->created || !o->video_visible)
      o->video.move(o->video.data, obj, &o->video, obj->cur.cache.clip.x, obj->cur.cache.clip.y);
    if (obj->cur.cache.clip.w != obj->prev.cache.clip.w ||
-       obj->cur.cache.clip.h != obj->prev.cache.clip.h)
+       obj->cur.cache.clip.h != obj->prev.cache.clip.h ||
+       o->created || !o->video_visible)
      o->video.resize(o->video.data, obj, &o->video, obj->cur.cache.clip.w, obj->cur.cache.clip.h);
+   if (!o->video_visible || o->created)
+     o->video.show(o->video.data, obj, &o->video);
    o->video_visible = EINA_TRUE;
    o->created = EINA_FALSE;
 }

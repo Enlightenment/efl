@@ -659,8 +659,6 @@ _evas_render_can_use_overlay(Evas *e, Evas_Object *obj)
    unsigned int i;
    Eina_Bool nooverlay;
 
-   /* fprintf(stderr, "object: %p\n", obj); */
-
    video_parent = _evas_object_image_video_parent_get(obj);
 
    /* Check if any one is the stack make this object mapped */
@@ -668,14 +666,10 @@ _evas_render_can_use_overlay(Evas *e, Evas_Object *obj)
    while (tmp && !_evas_render_has_map(tmp))
      tmp = tmp->smart.parent;
 
-   /* fprintf(stderr, "mapped ?\n"); */
    if (tmp && _evas_render_has_map(tmp)) return EINA_FALSE; /* we are mapped, we can't be an overlay */
 
-   /* fprintf(stderr, "visible ?\n"); */
    if (!evas_object_is_visible(obj)) return EINA_FALSE; /* no need to update the overlay if it's not visible */
 
-   /* fprintf(stderr, "recoloring ? %i, %i, %i, %i\n", */
-   /* 	   obj->cur.cache.clip.r, obj->cur.cache.clip.g, obj->cur.cache.clip.b, obj->cur.cache.clip.a); */
    /* If any recoloring of the surface is needed, n overlay to */
    if ((obj->cur.cache.clip.r != 255) ||
        (obj->cur.cache.clip.g != 255) ||
@@ -834,8 +828,6 @@ _evas_render_can_use_overlay(Evas *e, Evas_Object *obj)
 
    /* If there is any pending transparent object, then no overlay */
    nooverlay = !!eina_list_count(alphas);
-
-   /* fprintf(stderr, "count : %i\n", eina_list_count(alphas)); */
 
    EINA_LIST_FREE(alphas, r)
      eina_rectangle_free(r);
