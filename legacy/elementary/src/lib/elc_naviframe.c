@@ -186,17 +186,7 @@ _item_text_set_hook(Elm_Object_Item *it,
      snprintf(buf, sizeof(buf), "%s", part);
 
    EINA_LIST_FOREACH(navi_it->text_list, l, pair)
-     {
-        if (!strcmp(buf, pair->part))
-          {
-             if (pair->text)
-               {
-                  if (!strcmp(pair->text, label))
-                    return;
-               }
-             break;
-          }
-     }
+     if (!strcmp(buf, pair->part)) break;
 
    if (!pair)
      {
@@ -530,13 +520,7 @@ _title_content_set(Elm_Naviframe_Item *it,
    char buf[1024];
 
    EINA_LIST_FOREACH(it->content_list, l, pair)
-     {
-        if (!strcmp(part, pair->part))
-          {
-             if (pair->content == content) return;
-             break;
-          }
-     }
+     if (!strcmp(part, pair->part)) break;
 
    if (!pair)
      {
@@ -551,24 +535,31 @@ _title_content_set(Elm_Naviframe_Item *it,
         it->content_list = eina_list_append(it->content_list, pair);
      }
 
-   if (pair->content) evas_object_del(pair->content);
-   pair->content = content;
+   if ((pair->content) && (pair->content != content))
+     evas_object_del(pair->content);
 
    if (!content)
      {
         snprintf(buf, sizeof(buf), "elm,state,%s,hide", part);
         edje_object_signal_emit(it->base.view, buf, "elm");
+        pair->content = NULL;
         return;
      }
 
-   elm_widget_sub_object_add(it->base.widget, content);
+   if (pair->content != content)
+     {
+        elm_widget_sub_object_add(it->base.widget, content);
+        evas_object_event_callback_add(content,
+                                       EVAS_CALLBACK_DEL,
+                                       _title_content_del,
+                                       pair);
+     }
+
+   pair->content = content;
+
    edje_object_part_swallow(it->base.view, part, content);
    snprintf(buf, sizeof(buf), "elm,state,%s,show", part);
    edje_object_signal_emit(it->base.view, buf, "elm");
-   evas_object_event_callback_add(content,
-                                  EVAS_CALLBACK_DEL,
-                                  _title_content_del,
-                                  pair);
    _item_sizing_eval(it);
 }
 
