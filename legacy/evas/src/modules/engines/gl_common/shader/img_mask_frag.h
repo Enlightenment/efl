@@ -1,5 +1,5 @@
 "#ifdef GL_ES\n"
-"precision mediump float;\n"
+"precision highp float;\n"
 "#endif\n"
 "uniform sampler2D tex, texm;\n"
 "varying vec4 col;\n"

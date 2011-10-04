@@ -1,5 +1,5 @@
 "#ifdef GL_ES\n"
-"precision mediump float;\n"
+"precision highp float;\n"
 "#endif\n"
 "attribute vec4 vertex;\n"
 "attribute vec4 color;\n"
