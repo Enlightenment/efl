@@ -47,11 +47,44 @@
 #define Ecore_X_Randr_None 0
 #define Ecore_X_Randr_Unset -1
 
+#define RANDR_1_1 ((1 << 16) | 1)
+#define RANDR_1_2 ((1 << 16) | 2)
+#define RANDR_1_3 ((1 << 16) | 3)
+
+#define RANDR_CHECK_1_1_RET(ret) if (_randr_version < RANDR_1_1) return ret
+#define RANDR_CHECK_1_2_RET(ret) if (_randr_version < RANDR_1_2) return ret
+#define RANDR_CHECK_1_3_RET(ret) if (_randr_version < RANDR_1_3) return ret
+
 /* local function prototypes */
 static Eina_Bool _ecore_xcb_randr_output_validate(Ecore_X_Window root, Ecore_X_Randr_Output output);
 static Eina_Bool _ecore_xcb_randr_crtc_validate(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc);
 static Eina_Bool _ecore_xcb_randr_root_validate(Ecore_X_Window root);
 static int _ecore_xcb_randr_root_to_screen(Ecore_X_Window root);
+static xcb_randr_get_screen_resources_reply_t *_ecore_xcb_randr_12_get_resources(Ecore_X_Window win);
+static xcb_randr_get_screen_resources_current_reply_t *_ecore_xcb_randr_13_get_resources(Ecore_X_Window win);
+static xcb_timestamp_t _ecore_xcb_randr_12_get_resource_timestamp(Ecore_X_Window win);
+static xcb_timestamp_t _ecore_xcb_randr_13_get_resource_timestamp(Ecore_X_Window win);
+
+static Ecore_X_Randr_Mode *_ecore_xcb_randr_12_output_modes_get(Ecore_X_Window root, Ecore_X_Randr_Output output, int *num, int *npreferred);
+static Ecore_X_Randr_Mode *_ecore_xcb_randr_13_output_modes_get(Ecore_X_Window root, Ecore_X_Randr_Output output, int *num, int *npreferred);
+static Ecore_X_Randr_Mode_Info *_ecore_xcb_randr_12_mode_info_get(Ecore_X_Window root, Ecore_X_Randr_Mode mode);
+static Ecore_X_Randr_Mode_Info *_ecore_xcb_randr_13_mode_info_get(Ecore_X_Window root, Ecore_X_Randr_Mode mode);
+static Ecore_X_Randr_Mode_Info **_ecore_xcb_randr_12_modes_info_get(Ecore_X_Window root, int *num);
+static Ecore_X_Randr_Mode_Info **_ecore_xcb_randr_13_modes_info_get(Ecore_X_Window root, int *num);
+static void _ecore_xcb_randr_12_mode_size_get(Ecore_X_Window root, Ecore_X_Randr_Mode mode, int *w, int *h);
+static void _ecore_xcb_randr_13_mode_size_get(Ecore_X_Window root, Ecore_X_Randr_Mode mode, int *w, int *h);
+static Ecore_X_Randr_Output *_ecore_xcb_randr_12_output_clones_get(Ecore_X_Window root, Ecore_X_Randr_Output output, int *num);
+static Ecore_X_Randr_Output *_ecore_xcb_randr_13_output_clones_get(Ecore_X_Window root, Ecore_X_Randr_Output output, int *num);
+static Ecore_X_Randr_Crtc *_ecore_xcb_randr_12_output_possible_crtcs_get(Ecore_X_Window root, Ecore_X_Randr_Output output, int *num);
+static Ecore_X_Randr_Crtc *_ecore_xcb_randr_13_output_possible_crtcs_get(Ecore_X_Window root, Ecore_X_Randr_Output output, int *num);
+static char *_ecore_xcb_randr_12_output_name_get(Ecore_X_Window root, Ecore_X_Randr_Output output, int *len);
+static char *_ecore_xcb_randr_13_output_name_get(Ecore_X_Window root, Ecore_X_Randr_Output output, int *len);
+static Ecore_X_Randr_Connection_Status _ecore_xcb_randr_12_output_connection_status_get(Ecore_X_Window root, Ecore_X_Randr_Output output);
+static Ecore_X_Randr_Connection_Status _ecore_xcb_randr_13_output_connection_status_get(Ecore_X_Window root, Ecore_X_Randr_Output output);
+static Ecore_X_Randr_Output *_ecore_xcb_randr_12_outputs_get(Ecore_X_Window root, int *num);
+static Ecore_X_Randr_Output *_ecore_xcb_randr_13_outputs_get(Ecore_X_Window root, int *num);
+static Ecore_X_Randr_Crtc _ecore_xcb_randr_12_output_crtc_get(Ecore_X_Window root, Ecore_X_Randr_Output output);
+static Ecore_X_Randr_Crtc _ecore_xcb_randr_13_output_crtc_get(Ecore_X_Window root, Ecore_X_Randr_Output output);
 
 /* local variables */
 static Eina_Bool _randr_avail = EINA_FALSE;
@@ -133,8 +166,6 @@ _ecore_xcb_randr_root_to_screen(Ecore_X_Window root)
 {
    int count = 0, num = 0;
 
-   CHECK_XCB_CONN;
-
    count = xcb_setup_roots_length(xcb_get_setup(_ecore_xcb_conn));
    for (num = 0; num < count; num++)
      if (_ecore_xcb_window_root_of_screen_get(num) == root) 
@@ -179,9 +210,6 @@ ecore_x_randr_screen_primary_output_orientations_get(Ecore_X_Window root)
 #endif
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
-   CHECK_XCB_CONN;
-
-   if (!_randr_avail) return Ecore_X_Randr_None;
 
 #ifdef ECORE_XCB_RANDR
    cookie = xcb_randr_get_screen_info_unchecked(_ecore_xcb_conn, root);
@@ -210,9 +238,6 @@ ecore_x_randr_screen_primary_output_orientation_get(Ecore_X_Window root)
 #endif
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
-   CHECK_XCB_CONN;
-
-   if (!_randr_avail) return Ecore_X_Randr_None;
 
 #ifdef ECORE_XCB_RANDR
    cookie = xcb_randr_get_screen_info_unchecked(_ecore_xcb_conn, root);
@@ -243,9 +268,6 @@ ecore_x_randr_screen_primary_output_orientation_set(Ecore_X_Window root, Ecore_X
 #endif
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
-   CHECK_XCB_CONN;
-
-   if (!_randr_avail) return EINA_FALSE;
 
 #ifdef ECORE_XCB_RANDR
    cookie = xcb_randr_get_screen_info_unchecked(_ecore_xcb_conn, root);
@@ -294,9 +316,6 @@ ecore_x_randr_screen_primary_output_sizes_get(Ecore_X_Window root, int *num)
 #endif
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
-   CHECK_XCB_CONN;
-
-   if (!_randr_avail) return NULL;
 
 #ifdef ECORE_XCB_RANDR
    cookie = xcb_randr_get_screen_info_unchecked(_ecore_xcb_conn, root);
@@ -355,9 +374,6 @@ ecore_x_randr_screen_primary_output_current_size_get(Ecore_X_Window root, int *w
 #endif
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
-   CHECK_XCB_CONN;
-
-   if (!_randr_avail) return;
 
 #ifdef ECORE_XCB_RANDR
    cookie = xcb_randr_get_screen_info_unchecked(_ecore_xcb_conn, root);
@@ -405,9 +421,6 @@ ecore_x_randr_screen_primary_output_size_set(Ecore_X_Window root, int size_index
 #endif
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
-   CHECK_XCB_CONN;
-
-   if (!_randr_avail) return EINA_FALSE;
 
 #ifdef ECORE_XCB_RANDR
    if (!((size_index >= 0) && (_ecore_xcb_randr_root_validate(root))))
@@ -470,9 +483,6 @@ ecore_x_randr_screen_primary_output_current_refresh_rate_get(Ecore_X_Window root
 #endif
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
-   CHECK_XCB_CONN;
-
-   if (!_randr_avail) return 0.0;
 
 #ifdef ECORE_XCB_RANDR
    if (!_ecore_xcb_randr_root_validate(root)) return ret;
@@ -506,9 +516,6 @@ ecore_x_randr_screen_primary_output_refresh_rates_get(Ecore_X_Window root, int s
 #endif
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
-   CHECK_XCB_CONN;
-
-   if (!_randr_avail) return NULL;
 
 #ifdef ECORE_XCB_RANDR
    if (!_ecore_xcb_randr_root_validate(root)) return ret;
@@ -561,11 +568,10 @@ ecore_x_randr_screen_primary_output_refresh_rate_set(Ecore_X_Window root, int si
 #endif
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
-   CHECK_XCB_CONN;
-
-   if (!_randr_avail) return EINA_FALSE;
 
 #ifdef ECORE_XCB_RANDR
+   if (_randr_version < RANDR_1_1) return EINA_FALSE;
+
    cookie = xcb_randr_get_screen_info_unchecked(_ecore_xcb_conn, root);
    reply = xcb_randr_get_screen_info_reply(_ecore_xcb_conn, cookie, NULL);
    if (reply) 
@@ -607,6 +613,8 @@ ecore_x_randr_mode_info_free(Ecore_X_Randr_Mode_Info *mode_info)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
+   RANDR_CHECK_1_2_RET();
+
    if (!mode_info) return;
 
    if (mode_info->name) free(mode_info->name);
@@ -628,11 +636,10 @@ ecore_x_randr_primary_output_get(Ecore_X_Window root)
 #endif
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
-   CHECK_XCB_CONN;
-
-   if (!_randr_avail) return Ecore_X_Randr_None;
 
 #ifdef ECORE_XCB_RANDR
+   RANDR_CHECK_1_3_RET(Ecore_X_Randr_None);
+
    if (!_ecore_xcb_randr_root_validate(root))
      return Ecore_X_Randr_None;
 
@@ -655,11 +662,10 @@ EAPI void
 ecore_x_randr_primary_output_set(Ecore_X_Window root, Ecore_X_Randr_Output output) 
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
-   CHECK_XCB_CONN;
-
-   if (!_randr_avail) return;
 
 #ifdef ECORE_XCB_RANDR
+   RANDR_CHECK_1_3_RET();
+
    if ((output) && (_ecore_xcb_randr_root_validate(root))) 
      xcb_randr_set_output_primary(_ecore_xcb_conn, root, output);
 #endif
@@ -669,47 +675,21 @@ EAPI Ecore_X_Randr_Mode *
 ecore_x_randr_output_modes_get(Ecore_X_Window root, Ecore_X_Randr_Output output, int *num, int *npreferred) 
 {
    Ecore_X_Randr_Mode *modes = NULL;
-#ifdef ECORE_XCB_RANDR
-   xcb_randr_get_screen_info_cookie_t cookie;
-   xcb_randr_get_screen_info_reply_t *reply;
-#endif
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
-   CHECK_XCB_CONN;
-
-   if (!_randr_avail) return NULL;
 
 #ifdef ECORE_XCB_RANDR
-   cookie = xcb_randr_get_screen_info_unchecked(_ecore_xcb_conn, root);
-   reply = xcb_randr_get_screen_info_reply(_ecore_xcb_conn, cookie, NULL);
-   if (reply) 
+   RANDR_CHECK_1_2_RET(NULL);
+
+   if (_randr_version >= RANDR_1_3) 
      {
-        xcb_randr_get_output_info_cookie_t ocookie;
-        xcb_randr_get_output_info_reply_t *oreply;
-
-        ocookie = 
-          xcb_randr_get_output_info_unchecked(_ecore_xcb_conn, output, 
-                                              reply->config_timestamp);
-        oreply = xcb_randr_get_output_info_reply(_ecore_xcb_conn, 
-                                                 ocookie, NULL);
-        if (oreply) 
-          {
-             if (num) *num = oreply->num_modes;
-             if (npreferred) *npreferred = oreply->num_preferred;
-
-             modes = malloc(sizeof(Ecore_X_Randr_Mode) * oreply->num_modes);
-             if (modes) 
-               {
-                  xcb_randr_mode_t *rmodes;
-                  int len = 0;
-
-                  len = xcb_randr_get_output_info_modes_length(oreply);
-                  rmodes = xcb_randr_get_output_info_modes(oreply);
-                  memcpy(modes, rmodes, sizeof(Ecore_X_Randr_Mode) * len);
-               }
-             free(oreply);
-          }
-        free(reply);
+        modes = 
+          _ecore_xcb_randr_13_output_modes_get(root, output, num, npreferred);
+     }
+   else if (_randr_version == RANDR_1_2) 
+     {
+        modes = 
+          _ecore_xcb_randr_12_output_modes_get(root, output, num, npreferred);
      }
 #endif
 
@@ -726,68 +706,18 @@ EAPI Ecore_X_Randr_Mode_Info *
 ecore_x_randr_mode_info_get(Ecore_X_Window root, Ecore_X_Randr_Mode mode) 
 {
    Ecore_X_Randr_Mode_Info *ret = NULL;
-#ifdef ECORE_XCB_RANDR
-   xcb_randr_get_screen_resources_cookie_t cookie;
-   xcb_randr_get_screen_resources_reply_t *reply;
-#endif
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
-   CHECK_XCB_CONN;
-
-   if (!_randr_avail) return NULL;
 
 #ifdef ECORE_XCB_RANDR
+   RANDR_CHECK_1_2_RET(NULL);
+
    if (!_ecore_xcb_randr_root_validate(root)) return NULL;
 
-   cookie = xcb_randr_get_screen_resources_unchecked(_ecore_xcb_conn, root);
-   reply = xcb_randr_get_screen_resources_reply(_ecore_xcb_conn, cookie, NULL);
-   if (reply) 
-     {
-        if ((ret = malloc(sizeof(Ecore_X_Randr_Mode_Info))))
-          {
-             uint8_t *nbuf;
-             xcb_randr_mode_info_iterator_t miter;
-
-             nbuf = xcb_randr_get_screen_resources_names(reply);
-             miter = xcb_randr_get_screen_resources_modes_iterator(reply);
-             while (miter.rem) 
-               {
-                  xcb_randr_mode_info_t *minfo;
-
-                  minfo = miter.data;
-                  nbuf += minfo->name_len;
-
-                  if (minfo->id == mode) 
-                    {
-                       ret->xid = minfo->id;
-                       ret->width = minfo->width;
-                       ret->height = minfo->height;
-                       ret->dotClock = minfo->dot_clock;
-                       ret->hSyncStart = minfo->hsync_start;
-                       ret->hSyncEnd = minfo->hsync_end;
-                       ret->hTotal = minfo->htotal;
-                       ret->vSyncStart = minfo->vsync_start;
-                       ret->vSyncEnd = minfo->vsync_end;
-                       ret->vTotal = minfo->vtotal;
-                       ret->modeFlags = minfo->mode_flags;
-
-                       ret->name = NULL;
-                       ret->nameLength = minfo->name_len;
-                       if (ret->nameLength > 0) 
-                         {
-                            ret->name = malloc(ret->nameLength + 1);
-                            if (ret->name) 
-                              memcpy(ret->name, nbuf, ret->nameLength + 1);
-                         }
-
-                       break;
-                    }
-                  xcb_randr_mode_info_next(&miter);
-               }
-          }
-
-        free(reply);
-     }
+   if (_randr_version >= RANDR_1_3) 
+     ret = _ecore_xcb_randr_13_mode_info_get(root, mode);
+   else if (_randr_version == RANDR_1_2) 
+     ret = _ecore_xcb_randr_12_mode_info_get(root, mode);
 #endif
    return ret;
 }
@@ -802,77 +732,20 @@ EAPI Ecore_X_Randr_Mode_Info **
 ecore_x_randr_modes_info_get(Ecore_X_Window root, int *num) 
 {
    Ecore_X_Randr_Mode_Info **ret = NULL;
-#ifdef ECORE_XCB_RANDR
-   xcb_randr_get_screen_resources_cookie_t cookie;
-   xcb_randr_get_screen_resources_reply_t *reply;
-#endif
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
-   CHECK_XCB_CONN;
 
    if (num) *num = 0;
-   if (!_randr_avail) return NULL;
 
 #ifdef ECORE_XCB_RANDR
+   RANDR_CHECK_1_2_RET(NULL);
+
    if (!_ecore_xcb_randr_root_validate(root)) return NULL;
 
-   cookie = xcb_randr_get_screen_resources_unchecked(_ecore_xcb_conn, root);
-   reply = xcb_randr_get_screen_resources_reply(_ecore_xcb_conn, cookie, NULL);
-   if (reply) 
-     {
-        if (num) *num = reply->num_modes;
-        ret = malloc(sizeof(Ecore_X_Randr_Mode_Info *) * reply->num_modes);
-        if (ret) 
-          {
-             xcb_randr_mode_info_iterator_t miter;
-             int i = 0;
-             uint8_t *nbuf;
-
-             nbuf = xcb_randr_get_screen_resources_names(reply);
-             miter = xcb_randr_get_screen_resources_modes_iterator(reply);
-             while (miter.rem) 
-               {
-                  xcb_randr_mode_info_t *minfo;
-
-                  minfo = miter.data;
-                  nbuf += minfo->name_len;
-                  if ((ret[i] = malloc(sizeof(Ecore_X_Randr_Mode_Info)))) 
-                    {
-                       ret[i]->xid = minfo->id;
-                       ret[i]->width = minfo->width;
-                       ret[i]->height = minfo->height;
-                       ret[i]->dotClock = minfo->dot_clock;
-                       ret[i]->hSyncStart = minfo->hsync_start;
-                       ret[i]->hSyncEnd = minfo->hsync_end;
-                       ret[i]->hTotal = minfo->htotal;
-                       ret[i]->vSyncStart = minfo->vsync_start;
-                       ret[i]->vSyncEnd = minfo->vsync_end;
-                       ret[i]->vTotal = minfo->vtotal;
-                       ret[i]->modeFlags = minfo->mode_flags;
-
-                       ret[i]->name = NULL;
-                       ret[i]->nameLength = minfo->name_len;
-                       if (ret[i]->nameLength > 0) 
-                         {
-                            ret[i]->name = malloc(ret[i]->nameLength + 1);
-                            if (ret[i]->name) 
-                              memcpy(ret[i]->name, nbuf, ret[i]->nameLength + 1);
-                         }
-                    }
-                  else 
-                    {
-                       while (i > 0) 
-                         free(ret[--i]);
-                       free(ret);
-                       ret = NULL;
-                       break;
-                    }
-                  i++;
-                  xcb_randr_mode_info_next(&miter);
-               }
-          }
-        free(reply);
-     }
+   if (_randr_version >= RANDR_1_3) 
+     ret = _ecore_xcb_randr_13_modes_info_get(root, num);
+   else if (_randr_version == RANDR_1_2) 
+     ret = _ecore_xcb_randr_12_modes_info_get(root, num);
 #endif
    return ret;
 }
@@ -886,40 +759,17 @@ ecore_x_randr_modes_info_get(Ecore_X_Window root, int *num)
 EAPI void 
 ecore_x_randr_mode_size_get(Ecore_X_Window root, Ecore_X_Randr_Mode mode, int *w, int *h) 
 {
-#ifdef ECORE_XCB_RANDR
-   xcb_randr_get_screen_resources_cookie_t cookie;
-   xcb_randr_get_screen_resources_reply_t *reply;
-#endif
-
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
-   CHECK_XCB_CONN;
-
-   if (!_randr_avail) return;
 
 #ifdef ECORE_XCB_RANDR
+   RANDR_CHECK_1_2_RET();
+
    if (mode == Ecore_X_Randr_None) return;
-   cookie = xcb_randr_get_screen_resources_unchecked(_ecore_xcb_conn, root);
-   reply = xcb_randr_get_screen_resources_reply(_ecore_xcb_conn, cookie, NULL);
-   if (reply) 
-     {
-        xcb_randr_mode_info_iterator_t miter;
 
-        miter = xcb_randr_get_screen_resources_modes_iterator(reply);
-        while (miter.rem) 
-          {
-             xcb_randr_mode_info_t *minfo;
-
-             minfo = miter.data;
-             if (minfo->id == mode) 
-               {
-                  if (w) *w = minfo->width;
-                  if (h) *h = minfo->height;
-                  break;
-               }
-             xcb_randr_mode_info_next(&miter);
-          }
-        free(reply);
-     }
+   if (_randr_version >= RANDR_1_3) 
+     _ecore_xcb_randr_13_mode_size_get(root, mode, w, h);
+   else if (_randr_version == RANDR_1_2) 
+     _ecore_xcb_randr_12_mode_size_get(root, mode, w, h);
 #endif
 }
 
@@ -942,11 +792,10 @@ ecore_x_randr_output_edid_get(Ecore_X_Window root, Ecore_X_Randr_Output output, 
 #endif
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
-   CHECK_XCB_CONN;
-
-   if (!_randr_avail) return NULL;
 
 #ifdef ECORE_XCB_RANDR
+   RANDR_CHECK_1_2_RET(NULL);
+
    if ((!length) || (!_ecore_xcb_randr_output_validate(root, output)))
      return NULL;
 
@@ -985,46 +834,18 @@ EAPI Ecore_X_Randr_Output *
 ecore_x_randr_output_clones_get(Ecore_X_Window root, Ecore_X_Randr_Output output, int *num) 
 {
    Ecore_X_Randr_Output *outputs = NULL;
-#ifdef ECORE_XCB_RANDR
-   xcb_randr_get_screen_resources_cookie_t cookie;
-   xcb_randr_get_screen_resources_reply_t *reply;
-#endif
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
-   CHECK_XCB_CONN;
-
-   if (!_randr_avail) return NULL;
 
 #ifdef ECORE_XCB_RANDR
+   RANDR_CHECK_1_2_RET(NULL);
+
    if (output == Ecore_X_Randr_None) return NULL;
 
-   cookie = xcb_randr_get_screen_resources_unchecked(_ecore_xcb_conn, root);
-   reply = xcb_randr_get_screen_resources_reply(_ecore_xcb_conn, cookie, NULL);
-   if (reply) 
-     {
-        xcb_randr_get_output_info_cookie_t ocookie;
-        xcb_randr_get_output_info_reply_t *oreply;
-
-        ocookie = 
-          xcb_randr_get_output_info_unchecked(_ecore_xcb_conn, output, 
-                                              reply->config_timestamp);
-        oreply = xcb_randr_get_output_info_reply(_ecore_xcb_conn, 
-                                                 ocookie, NULL);
-        if (oreply) 
-          {
-             if (num) *num = oreply->num_clones;
-
-             outputs = 
-               malloc(sizeof(Ecore_X_Randr_Output) * oreply->num_clones);
-             if (outputs) 
-               {
-                  memcpy(outputs, xcb_randr_get_output_info_clones(oreply), 
-                         sizeof(Ecore_X_Randr_Output) * oreply->num_clones);
-               }
-             free(oreply);
-          }
-        free(reply);
-     }
+   if (_randr_version >= RANDR_1_3) 
+     outputs = _ecore_xcb_randr_13_output_clones_get(root, output, num);
+   else if (_randr_version == RANDR_1_2) 
+     outputs = _ecore_xcb_randr_12_output_clones_get(root, output, num);
 #endif
    return outputs;
 }
@@ -1033,45 +854,18 @@ EAPI Ecore_X_Randr_Crtc *
 ecore_x_randr_output_possible_crtcs_get(Ecore_X_Window root, Ecore_X_Randr_Output output, int *num) 
 {
    Ecore_X_Randr_Crtc *crtcs = NULL;
-#ifdef ECORE_XCB_RANDR
-   xcb_randr_get_screen_resources_cookie_t cookie;
-   xcb_randr_get_screen_resources_reply_t *reply;
-#endif
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
-   CHECK_XCB_CONN;
-
-   if (!_randr_avail) return NULL;
 
 #ifdef ECORE_XCB_RANDR
+   RANDR_CHECK_1_2_RET(NULL);
+
    if (output == Ecore_X_Randr_None) return NULL;
 
-   cookie = xcb_randr_get_screen_resources_unchecked(_ecore_xcb_conn, root);
-   reply = xcb_randr_get_screen_resources_reply(_ecore_xcb_conn, cookie, NULL);
-   if (reply) 
-     {
-        xcb_randr_get_output_info_cookie_t ocookie;
-        xcb_randr_get_output_info_reply_t *oreply;
-
-        ocookie = 
-          xcb_randr_get_output_info_unchecked(_ecore_xcb_conn, output, 
-                                              reply->config_timestamp);
-        oreply = xcb_randr_get_output_info_reply(_ecore_xcb_conn, 
-                                                 ocookie, NULL);
-        if (oreply) 
-          {
-             if (num) *num = oreply->num_crtcs;
-
-             crtcs = malloc(sizeof(Ecore_X_Randr_Crtc) * oreply->num_crtcs);
-             if (crtcs) 
-               {
-                  memcpy(crtcs, xcb_randr_get_output_info_crtcs(oreply), 
-                         sizeof(Ecore_X_Randr_Crtc) * oreply->num_crtcs);
-               }
-             free(oreply);
-          }
-        free(reply);
-     }
+   if (_randr_version >= RANDR_1_3) 
+     crtcs = _ecore_xcb_randr_13_output_possible_crtcs_get(root, output, num);
+   else if (_randr_version == RANDR_1_2) 
+     crtcs = _ecore_xcb_randr_12_output_possible_crtcs_get(root, output, num);
 #endif
    return crtcs;
 }
@@ -1085,167 +879,76 @@ ecore_x_randr_output_possible_crtcs_get(Ecore_X_Window root, Ecore_X_Randr_Outpu
 EAPI char *
 ecore_x_randr_output_name_get(Ecore_X_Window root, Ecore_X_Randr_Output output, int *len) 
 {
-   char *ret = NULL;
-#ifdef ECORE_XCB_RANDR
-   xcb_randr_get_screen_resources_cookie_t cookie;
-   xcb_randr_get_screen_resources_reply_t *reply;
-#endif
-
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
-   CHECK_XCB_CONN;
-
-   if (!_randr_avail) return NULL;
 
 #ifdef ECORE_XCB_RANDR
+   RANDR_CHECK_1_2_RET(NULL);
+
    if (output == Ecore_X_Randr_None) return NULL;
 
-   cookie = xcb_randr_get_screen_resources_unchecked(_ecore_xcb_conn, root);
-   reply = xcb_randr_get_screen_resources_reply(_ecore_xcb_conn, cookie, NULL);
-   if (reply) 
-     {
-        xcb_randr_get_output_info_cookie_t ocookie;
-        xcb_randr_get_output_info_reply_t *oreply;
-
-        ocookie = 
-          xcb_randr_get_output_info_unchecked(_ecore_xcb_conn, output, 
-                                              reply->config_timestamp);
-        oreply = xcb_randr_get_output_info_reply(_ecore_xcb_conn, 
-                                                 ocookie, NULL);
-        if (oreply) 
-          {
-             uint8_t *nbuf;
-
-             nbuf = xcb_randr_get_output_info_name(oreply);
-             nbuf += oreply->name_len;
-
-             if (len) *len = oreply->name_len;
-             if (oreply->name_len > 0) 
-               {
-                  ret = malloc(oreply->name_len + 1);
-                  if (ret)
-                    memcpy(ret, nbuf, oreply->name_len + 1);
-               }
-
-             free(oreply);
-          }
-        free(reply);
-     }
+   if (_randr_version >= RANDR_1_3) 
+     return _ecore_xcb_randr_13_output_name_get(root, output, len);
+   else if (_randr_version == RANDR_1_2) 
+     return _ecore_xcb_randr_12_output_name_get(root, output, len);
 #endif
 
-   return ret;
+   return NULL;
 }
 
 EAPI Ecore_X_Randr_Connection_Status 
 ecore_x_randr_output_connection_status_get(Ecore_X_Window root, Ecore_X_Randr_Output output) 
 {
-   Ecore_X_Randr_Connection_Status ret = ECORE_X_RANDR_CONNECTION_STATUS_UNKNOWN;
-#ifdef ECORE_XCB_RANDR
-   xcb_randr_get_screen_resources_cookie_t cookie;
-   xcb_randr_get_screen_resources_reply_t *reply;
-#endif
-
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
-   CHECK_XCB_CONN;
-
-   if (!_randr_avail) return ret;
 
 #ifdef ECORE_XCB_RANDR
-   if (output == Ecore_X_Randr_None) return ret;
+   RANDR_CHECK_1_2_RET(ECORE_X_RANDR_CONNECTION_STATUS_UNKNOWN);
 
-   cookie = xcb_randr_get_screen_resources_unchecked(_ecore_xcb_conn, root);
-   reply = xcb_randr_get_screen_resources_reply(_ecore_xcb_conn, cookie, NULL);
-   if (reply) 
-     {
-        xcb_randr_get_output_info_cookie_t ocookie;
-        xcb_randr_get_output_info_reply_t *oreply;
+   if (output == Ecore_X_Randr_None) 
+     return ECORE_X_RANDR_CONNECTION_STATUS_UNKNOWN;
 
-        ocookie = 
-          xcb_randr_get_output_info_unchecked(_ecore_xcb_conn, output, 
-                                              reply->config_timestamp);
-        oreply = xcb_randr_get_output_info_reply(_ecore_xcb_conn, 
-                                                 ocookie, NULL);
-        if (oreply) 
-          {
-             ret = oreply->connection;
-             free(oreply);
-          }
-        free(reply);
-     }
+   if (_randr_version >= RANDR_1_3) 
+     return _ecore_xcb_randr_13_output_connection_status_get(root, output);
+   else if (_randr_version == RANDR_1_2) 
+     return _ecore_xcb_randr_12_output_connection_status_get(root, output);
 #endif
 
-   return ret;
+   return ECORE_X_RANDR_CONNECTION_STATUS_UNKNOWN;
 }
 
 EAPI Ecore_X_Randr_Output *
 ecore_x_randr_outputs_get(Ecore_X_Window root, int *num) 
 {
-   Ecore_X_Randr_Output *ret = NULL;
-#ifdef ECORE_XCB_RANDR
-   xcb_randr_get_screen_resources_cookie_t cookie;
-   xcb_randr_get_screen_resources_reply_t *reply;
-#endif
-
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
-   CHECK_XCB_CONN;
-
-   if (!_randr_avail) return NULL;
 
 #ifdef ECORE_XCB_RANDR
-   cookie = xcb_randr_get_screen_resources_unchecked(_ecore_xcb_conn, root);
-   reply = xcb_randr_get_screen_resources_reply(_ecore_xcb_conn, cookie, NULL);
-   if (reply) 
-     {
-        if (num) *num = reply->num_outputs;
-        ret = malloc(sizeof(Ecore_X_Randr_Output) * reply->num_outputs);
-        if (ret) 
-          memcpy(ret, xcb_randr_get_screen_resources_outputs(reply), 
-                 sizeof(Ecore_X_Randr_Output) * reply->num_outputs);
-        free(reply);
-     }
+   RANDR_CHECK_1_2_RET(NULL);
+
+   if (_randr_version >= RANDR_1_3) 
+     return _ecore_xcb_randr_13_outputs_get(root, num);
+   else if (_randr_version == RANDR_1_2) 
+     return _ecore_xcb_randr_12_outputs_get(root, num);
 #endif
 
-   return ret;
+   return NULL;
 }
 
 EAPI Ecore_X_Randr_Crtc 
 ecore_x_randr_output_crtc_get(Ecore_X_Window root, Ecore_X_Randr_Output output) 
 {
-   Ecore_X_Randr_Crtc ret = Ecore_X_Randr_None;
-#ifdef ECORE_XCB_RANDR
-   xcb_randr_get_screen_resources_cookie_t cookie;
-   xcb_randr_get_screen_resources_reply_t *reply;
-#endif
-
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
-   CHECK_XCB_CONN;
-
-   if (!_randr_avail) return Ecore_X_Randr_None;
 
 #ifdef ECORE_XCB_RANDR
-   if (output == Ecore_X_Randr_None) return ret;
+   RANDR_CHECK_1_2_RET(Ecore_X_Randr_None);
 
-   cookie = xcb_randr_get_screen_resources_unchecked(_ecore_xcb_conn, root);
-   reply = xcb_randr_get_screen_resources_reply(_ecore_xcb_conn, cookie, NULL);
-   if (reply) 
-     {
-        xcb_randr_get_output_info_cookie_t ocookie;
-        xcb_randr_get_output_info_reply_t *oreply;
+   if (output == Ecore_X_Randr_None) return Ecore_X_Randr_None;
 
-        ocookie = 
-          xcb_randr_get_output_info_unchecked(_ecore_xcb_conn, output, 
-                                              reply->config_timestamp);
-        oreply = xcb_randr_get_output_info_reply(_ecore_xcb_conn, 
-                                                 ocookie, NULL);
-        if (oreply) 
-          {
-             ret = oreply->crtc;
-             free(oreply);
-          }
-        free(reply);
-     }
+   if (_randr_version >= RANDR_1_3) 
+     return _ecore_xcb_randr_13_output_crtc_get(root, output);
+   else if (_randr_version == RANDR_1_2) 
+     return _ecore_xcb_randr_12_output_crtc_get(root, output);
 #endif
 
-   return ret;
+   return Ecore_X_Randr_None;
 }
 
 /**
@@ -1273,68 +976,63 @@ ecore_x_randr_crtc_settings_set(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc, Ec
 {
    Eina_Bool ret = EINA_FALSE;
 #ifdef ECORE_XCB_RANDR
-   xcb_randr_get_screen_resources_cookie_t cookie;
-   xcb_randr_get_screen_resources_reply_t *reply;
+   xcb_timestamp_t stamp = 0;
+   xcb_randr_get_crtc_info_cookie_t ccookie;
+   xcb_randr_get_crtc_info_reply_t *creply;
 #endif
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
-   CHECK_XCB_CONN;
-
-   if (!_randr_avail) return EINA_FALSE;
 
 #ifdef ECORE_XCB_RANDR
+   RANDR_CHECK_1_2_RET(EINA_FALSE);
+
    if (!_ecore_xcb_randr_crtc_validate(root, crtc)) return ret;
 
-   cookie = xcb_randr_get_screen_resources_unchecked(_ecore_xcb_conn, root);
-   reply = xcb_randr_get_screen_resources_reply(_ecore_xcb_conn, cookie, NULL);
-   if (reply) 
+   if (_randr_version >= RANDR_1_3) 
+     stamp = _ecore_xcb_randr_13_get_resource_timestamp(root);
+   else if (_randr_version == RANDR_1_2) 
+     stamp = _ecore_xcb_randr_12_get_resource_timestamp(root);
+
+   ccookie = 
+     xcb_randr_get_crtc_info_unchecked(_ecore_xcb_conn, crtc, stamp);
+   creply = 
+     xcb_randr_get_crtc_info_reply(_ecore_xcb_conn, ccookie, NULL);
+   if (creply) 
      {
-        xcb_randr_get_crtc_info_cookie_t ccookie;
-        xcb_randr_get_crtc_info_reply_t *creply;
+        xcb_randr_set_crtc_config_cookie_t scookie;
+        xcb_randr_set_crtc_config_reply_t *sreply;
 
-        ccookie = 
-          xcb_randr_get_crtc_info_unchecked(_ecore_xcb_conn, crtc, 
-                                            reply->config_timestamp);
-        creply = 
-          xcb_randr_get_crtc_info_reply(_ecore_xcb_conn, ccookie, NULL);
-        if (creply) 
+        if ((mode == Ecore_X_Randr_None) || 
+            (num == Ecore_X_Randr_None)) 
           {
-             xcb_randr_set_crtc_config_cookie_t scookie;
-             xcb_randr_set_crtc_config_reply_t *sreply;
-
-             if ((mode == Ecore_X_Randr_None) || (num == Ecore_X_Randr_None)) 
-               {
-                  outputs = NULL;
-                  num = 0;
-               }
-             else if (num == (int)Ecore_X_Randr_Unset) 
-               {
-                  outputs = xcb_randr_get_crtc_info_outputs(creply);
-                  num = creply->num_outputs;
-               }
-             if ((int)mode == Ecore_X_Randr_Unset) mode = creply->mode;
-             if (x < 0) x = creply->x;
-             if (y < 0) y = creply->y;
-             if ((int)orientation == Ecore_X_Randr_Unset)
-               orientation = creply->rotation;
-
-             scookie = 
-               xcb_randr_set_crtc_config_unchecked(_ecore_xcb_conn, 
-                                                   crtc, XCB_CURRENT_TIME, 
-                                                   reply->config_timestamp, 
-                                                   x, y, mode, orientation, 
-                                                   num, outputs);
-             sreply = 
-               xcb_randr_set_crtc_config_reply(_ecore_xcb_conn, scookie, NULL);
-             if (sreply) 
-               {
-                  ret = (sreply->status == XCB_RANDR_SET_CONFIG_SUCCESS) ? 
-                    EINA_TRUE : EINA_FALSE;
-                  free(sreply);
-               }
-             free(creply);
+             outputs = NULL;
+             num = 0;
           }
-        free(reply);
+        else if (num == (int)Ecore_X_Randr_Unset) 
+          {
+             outputs = xcb_randr_get_crtc_info_outputs(creply);
+             num = creply->num_outputs;
+          }
+        if ((int)mode == Ecore_X_Randr_Unset) mode = creply->mode;
+        if (x < 0) x = creply->x;
+        if (y < 0) y = creply->y;
+        if ((int)orientation == Ecore_X_Randr_Unset)
+          orientation = creply->rotation;
+
+        scookie = 
+          xcb_randr_set_crtc_config_unchecked(_ecore_xcb_conn, 
+                                              crtc, XCB_CURRENT_TIME, stamp, 
+                                              x, y, mode, orientation, 
+                                              num, outputs);
+        sreply = 
+          xcb_randr_set_crtc_config_reply(_ecore_xcb_conn, scookie, NULL);
+        if (sreply) 
+          {
+             ret = (sreply->status == XCB_RANDR_SET_CONFIG_SUCCESS) ? 
+               EINA_TRUE : EINA_FALSE;
+             free(sreply);
+          }
+        free(creply);
      }
 #endif
 
@@ -1359,11 +1057,10 @@ ecore_x_randr_crtc_mode_set(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc, Ecore_
    Eina_Bool ret = EINA_FALSE;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
-   CHECK_XCB_CONN;
-
-   if (!_randr_avail) return ret;
 
 #ifdef ECORE_XCB_RANDR
+   RANDR_CHECK_1_2_RET(EINA_FALSE);
+
    if ((int)mode == Ecore_X_Randr_Unset) return ret;
    ret = 
      ecore_x_randr_crtc_settings_set(root, crtc, outputs, num, 
@@ -1386,36 +1083,30 @@ ecore_x_randr_crtc_mode_get(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc)
 {
    Ecore_X_Randr_Mode ret = Ecore_X_Randr_Unset;
 #ifdef ECORE_XCB_RANDR
-   xcb_randr_get_screen_resources_cookie_t cookie;
-   xcb_randr_get_screen_resources_reply_t *reply;
+   xcb_timestamp_t stamp = 0;
+   xcb_randr_get_crtc_info_cookie_t ocookie;
+   xcb_randr_get_crtc_info_reply_t *oreply;
 #endif
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
-   CHECK_XCB_CONN;
-
-   if (!_randr_avail) return Ecore_X_Randr_Unset;
 
 #ifdef ECORE_XCB_RANDR
+   RANDR_CHECK_1_2_RET(Ecore_X_Randr_Unset);
+
    if (!_ecore_xcb_randr_crtc_validate(root, crtc)) return ret;
 
-   cookie = xcb_randr_get_screen_resources_unchecked(_ecore_xcb_conn, root);
-   reply = xcb_randr_get_screen_resources_reply(_ecore_xcb_conn, cookie, NULL);
-   if (reply) 
-     {
-        xcb_randr_get_crtc_info_cookie_t ocookie;
-        xcb_randr_get_crtc_info_reply_t *oreply;
+   if (_randr_version >= RANDR_1_3) 
+     stamp = _ecore_xcb_randr_13_get_resource_timestamp(root);
+   else if (_randr_version == RANDR_1_2) 
+     stamp = _ecore_xcb_randr_12_get_resource_timestamp(root);
 
-        ocookie = 
-          xcb_randr_get_crtc_info_unchecked(_ecore_xcb_conn, crtc, 
-                                            reply->config_timestamp);
-        oreply = xcb_randr_get_crtc_info_reply(_ecore_xcb_conn, 
-                                               ocookie, NULL);
-        if (oreply) 
-          {
-             ret = oreply->mode;
-             free(oreply);
-          }
-        free(reply);
+   ocookie = 
+     xcb_randr_get_crtc_info_unchecked(_ecore_xcb_conn, crtc, stamp);
+   oreply = xcb_randr_get_crtc_info_reply(_ecore_xcb_conn, ocookie, NULL);
+   if (oreply) 
+     {
+        ret = oreply->mode;
+        free(oreply);
      }
 #endif
 
@@ -1427,36 +1118,30 @@ ecore_x_randr_crtc_orientation_get(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc)
 {
    Ecore_X_Randr_Orientation ret = Ecore_X_Randr_None;
 #ifdef ECORE_XCB_RANDR
-   xcb_randr_get_screen_resources_cookie_t cookie;
-   xcb_randr_get_screen_resources_reply_t *reply;
+   xcb_timestamp_t stamp = 0;
+   xcb_randr_get_crtc_info_cookie_t ocookie;
+   xcb_randr_get_crtc_info_reply_t *oreply;
 #endif
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
-   CHECK_XCB_CONN;
-
-   if (!_randr_avail) return Ecore_X_Randr_None;
 
 #ifdef ECORE_XCB_RANDR
+   RANDR_CHECK_1_2_RET(Ecore_X_Randr_None);
+
    if (!_ecore_xcb_randr_crtc_validate(root, crtc)) return ret;
 
-   cookie = xcb_randr_get_screen_resources_unchecked(_ecore_xcb_conn, root);
-   reply = xcb_randr_get_screen_resources_reply(_ecore_xcb_conn, cookie, NULL);
-   if (reply) 
-     {
-        xcb_randr_get_crtc_info_cookie_t ocookie;
-        xcb_randr_get_crtc_info_reply_t *oreply;
+   if (_randr_version >= RANDR_1_3) 
+     stamp = _ecore_xcb_randr_13_get_resource_timestamp(root);
+   else if (_randr_version == RANDR_1_2) 
+     stamp = _ecore_xcb_randr_12_get_resource_timestamp(root);
 
-        ocookie = 
-          xcb_randr_get_crtc_info_unchecked(_ecore_xcb_conn, crtc, 
-                                            reply->config_timestamp);
-        oreply = xcb_randr_get_crtc_info_reply(_ecore_xcb_conn, 
-                                               ocookie, NULL);
-        if (oreply) 
-          {
-             ret = oreply->rotation;
-             free(oreply);
-          }
-        free(reply);
+   ocookie = 
+     xcb_randr_get_crtc_info_unchecked(_ecore_xcb_conn, crtc, stamp);
+   oreply = xcb_randr_get_crtc_info_reply(_ecore_xcb_conn, ocookie, NULL);
+   if (oreply) 
+     {
+        ret = oreply->rotation;
+        free(oreply);
      }
 #endif
 
@@ -1469,11 +1154,10 @@ ecore_x_randr_crtc_orientation_set(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc,
    Eina_Bool ret = EINA_FALSE;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
-   CHECK_XCB_CONN;
-
-   if (!_randr_avail) return EINA_FALSE;
 
 #ifdef ECORE_XCB_RANDR
+   RANDR_CHECK_1_2_RET(EINA_FALSE);
+
    if (orientation != Ecore_X_Randr_None) 
      {
         ret = 
@@ -1491,36 +1175,31 @@ ecore_x_randr_crtc_orientations_get(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc
 {
    Ecore_X_Randr_Orientation ret = Ecore_X_Randr_None;
 #ifdef ECORE_XCB_RANDR
-   xcb_randr_get_screen_resources_cookie_t cookie;
-   xcb_randr_get_screen_resources_reply_t *reply;
+   xcb_timestamp_t stamp = 0;
+   xcb_randr_get_crtc_info_cookie_t ocookie;
+   xcb_randr_get_crtc_info_reply_t *oreply;
 #endif
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
-   CHECK_XCB_CONN;
-
-   if (!_randr_avail) return Ecore_X_Randr_None;
 
 #ifdef ECORE_XCB_RANDR
+   RANDR_CHECK_1_2_RET(Ecore_X_Randr_None);
+
    if (!_ecore_xcb_randr_crtc_validate(root, crtc)) return ret;
 
-   cookie = xcb_randr_get_screen_resources_unchecked(_ecore_xcb_conn, root);
-   reply = xcb_randr_get_screen_resources_reply(_ecore_xcb_conn, cookie, NULL);
-   if (reply) 
-     {
-        xcb_randr_get_crtc_info_cookie_t ocookie;
-        xcb_randr_get_crtc_info_reply_t *oreply;
+   if (_randr_version >= RANDR_1_3) 
+     stamp = _ecore_xcb_randr_13_get_resource_timestamp(root);
+   else if (_randr_version == RANDR_1_2) 
+     stamp = _ecore_xcb_randr_12_get_resource_timestamp(root);
 
-        ocookie = 
-          xcb_randr_get_crtc_info_unchecked(_ecore_xcb_conn, crtc, 
-                                            reply->config_timestamp);
-        oreply = 
-          xcb_randr_get_crtc_info_reply(_ecore_xcb_conn, ocookie, NULL);
-        if (oreply) 
-          {
-             ret = oreply->rotations;
-             free(oreply);
-          }
-        free(reply);
+   ocookie = 
+     xcb_randr_get_crtc_info_unchecked(_ecore_xcb_conn, crtc, stamp);
+   oreply = 
+     xcb_randr_get_crtc_info_reply(_ecore_xcb_conn, ocookie, NULL);
+   if (oreply) 
+     {
+        ret = oreply->rotations;
+        free(oreply);
      }
 #endif
 
@@ -1537,44 +1216,38 @@ ecore_x_randr_crtc_possible_outputs_get(Ecore_X_Window root, Ecore_X_Randr_Crtc 
 {
    Ecore_X_Randr_Output *ret = NULL;
 #ifdef ECORE_XCB_RANDR
-   xcb_randr_get_screen_resources_cookie_t cookie;
-   xcb_randr_get_screen_resources_reply_t *reply;
+   xcb_timestamp_t stamp = 0;
+   xcb_randr_get_crtc_info_cookie_t ocookie;
+   xcb_randr_get_crtc_info_reply_t *oreply;
 #endif
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
-   CHECK_XCB_CONN;
-
-   if (!_randr_avail) return NULL;
 
 #ifdef ECORE_XCB_RANDR
+   RANDR_CHECK_1_2_RET(NULL);
+
    if (!_ecore_xcb_randr_crtc_validate(root, crtc)) return ret;
 
-   cookie = xcb_randr_get_screen_resources_unchecked(_ecore_xcb_conn, root);
-   reply = xcb_randr_get_screen_resources_reply(_ecore_xcb_conn, cookie, NULL);
-   if (reply) 
-     {
-        xcb_randr_get_crtc_info_cookie_t ocookie;
-        xcb_randr_get_crtc_info_reply_t *oreply;
+   if (_randr_version >= RANDR_1_3) 
+     stamp = _ecore_xcb_randr_13_get_resource_timestamp(root);
+   else if (_randr_version == RANDR_1_2) 
+     stamp = _ecore_xcb_randr_12_get_resource_timestamp(root);
 
-        ocookie = 
-          xcb_randr_get_crtc_info_unchecked(_ecore_xcb_conn, crtc, 
-                                            reply->config_timestamp);
-        oreply = xcb_randr_get_crtc_info_reply(_ecore_xcb_conn, 
-                                               ocookie, NULL);
-        if (oreply) 
+   ocookie = 
+     xcb_randr_get_crtc_info_unchecked(_ecore_xcb_conn, crtc, stamp);
+   oreply = xcb_randr_get_crtc_info_reply(_ecore_xcb_conn, ocookie, NULL);
+   if (oreply) 
+     {
+        if (num) *num = oreply->num_possible_outputs;
+        ret = malloc(sizeof(Ecore_X_Randr_Output) * 
+                     oreply->num_possible_outputs);
+        if (ret) 
           {
-             if (num) *num = oreply->num_possible_outputs;
-             ret = malloc(sizeof(Ecore_X_Randr_Output) * 
-                          oreply->num_possible_outputs);
-             if (ret) 
-               {
-                  memcpy(ret, xcb_randr_get_crtc_info_possible(oreply), 
-                         sizeof(Ecore_X_Randr_Output) * 
-                         oreply->num_possible_outputs);
-               }
-             free(oreply);
+             memcpy(ret, xcb_randr_get_crtc_info_possible(oreply), 
+                    sizeof(Ecore_X_Randr_Output) * 
+                    oreply->num_possible_outputs);
           }
-        free(reply);
+        free(oreply);
      }
 #endif
 
@@ -1591,27 +1264,41 @@ EAPI Ecore_X_Randr_Crtc *
 ecore_x_randr_crtcs_get(Ecore_X_Window root, int *num) 
 {
    Ecore_X_Randr_Crtc *ret = NULL;
-#ifdef ECORE_XCB_RANDR
-   xcb_randr_get_screen_resources_cookie_t cookie;
-   xcb_randr_get_screen_resources_reply_t *reply;
-#endif
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
-   CHECK_XCB_CONN;
-
-   if (!_randr_avail) return NULL;
 
 #ifdef ECORE_XCB_RANDR
-   cookie = xcb_randr_get_screen_resources_unchecked(_ecore_xcb_conn, root);
-   reply = xcb_randr_get_screen_resources_reply(_ecore_xcb_conn, cookie, NULL);
-   if (reply) 
+   RANDR_CHECK_1_2_RET(NULL);
+
+   if (_randr_version >= RANDR_1_3) 
      {
-        if (num) *num = reply->num_crtcs;
-        ret = malloc(sizeof(Ecore_X_Randr_Crtc) * reply->num_crtcs);
-        if (ret) 
-          memcpy(ret, xcb_randr_get_screen_resources_crtcs(reply), 
-                 sizeof(Ecore_X_Randr_Crtc) * reply->num_crtcs);
-        free(reply);
+        xcb_randr_get_screen_resources_current_reply_t *reply;
+
+        reply = _ecore_xcb_randr_13_get_resources(root);
+        if (reply) 
+          {
+             if (num) *num = reply->num_crtcs;
+             ret = malloc(sizeof(Ecore_X_Randr_Crtc) * reply->num_crtcs);
+             if (ret) 
+               memcpy(ret, xcb_randr_get_screen_resources_current_crtcs(reply), 
+                      sizeof(Ecore_X_Randr_Crtc) * reply->num_crtcs);
+             free(reply);
+          }
+     }
+   else if (_randr_version == RANDR_1_2) 
+     {
+        xcb_randr_get_screen_resources_reply_t *reply;
+
+        reply = _ecore_xcb_randr_12_get_resources(root);
+        if (reply) 
+          {
+             if (num) *num = reply->num_crtcs;
+             ret = malloc(sizeof(Ecore_X_Randr_Crtc) * reply->num_crtcs);
+             if (ret) 
+               memcpy(ret, xcb_randr_get_screen_resources_crtcs(reply), 
+                      sizeof(Ecore_X_Randr_Crtc) * reply->num_crtcs);
+             free(reply);
+          }
      }
 #endif
 
@@ -1628,40 +1315,34 @@ ecore_x_randr_crtc_outputs_get(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc, int
 {
    Ecore_X_Randr_Output *ret = NULL;
 #ifdef ECORE_XCB_RANDR
-   xcb_randr_get_screen_resources_cookie_t cookie;
-   xcb_randr_get_screen_resources_reply_t *reply;
+   xcb_timestamp_t stamp = 0;
+   xcb_randr_get_crtc_info_cookie_t ocookie;
+   xcb_randr_get_crtc_info_reply_t *oreply;
 #endif
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
-   CHECK_XCB_CONN;
-
-   if (!_randr_avail) return NULL;
 
 #ifdef ECORE_XCB_RANDR
+   RANDR_CHECK_1_2_RET(NULL);
+
    if (!_ecore_xcb_randr_crtc_validate(root, crtc)) return ret;
 
-   cookie = xcb_randr_get_screen_resources_unchecked(_ecore_xcb_conn, root);
-   reply = xcb_randr_get_screen_resources_reply(_ecore_xcb_conn, cookie, NULL);
-   if (reply) 
-     {
-        xcb_randr_get_crtc_info_cookie_t ocookie;
-        xcb_randr_get_crtc_info_reply_t *oreply;
+   if (_randr_version >= RANDR_1_3) 
+     stamp = _ecore_xcb_randr_13_get_resource_timestamp(root);
+   else if (_randr_version == RANDR_1_2) 
+     stamp = _ecore_xcb_randr_12_get_resource_timestamp(root);
 
-        ocookie = 
-          xcb_randr_get_crtc_info_unchecked(_ecore_xcb_conn, crtc, 
-                                            reply->config_timestamp);
-        oreply = xcb_randr_get_crtc_info_reply(_ecore_xcb_conn, 
-                                               ocookie, NULL);
-        if (oreply) 
-          {
-             if (num) *num = oreply->num_outputs;
-             ret = malloc(sizeof(Ecore_X_Randr_Output) * oreply->num_outputs);
-             if (ret)
-               memcpy(ret, xcb_randr_get_crtc_info_outputs(oreply), 
-                      sizeof(Ecore_X_Randr_Output) * oreply->num_outputs);
-             free(oreply);
-          }
-        free(reply);
+   ocookie = 
+     xcb_randr_get_crtc_info_unchecked(_ecore_xcb_conn, crtc, stamp);
+   oreply = xcb_randr_get_crtc_info_reply(_ecore_xcb_conn, ocookie, NULL);
+   if (oreply) 
+     {
+        if (num) *num = oreply->num_outputs;
+        ret = malloc(sizeof(Ecore_X_Randr_Output) * oreply->num_outputs);
+        if (ret)
+          memcpy(ret, xcb_randr_get_crtc_info_outputs(oreply), 
+                 sizeof(Ecore_X_Randr_Output) * oreply->num_outputs);
+        free(oreply);
      }
 #endif
 
@@ -1672,39 +1353,33 @@ EAPI void
 ecore_x_randr_crtc_geometry_get(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc, int *x, int *y, int *w, int *h) 
 {
 #ifdef ECORE_XCB_RANDR
-   xcb_randr_get_screen_resources_cookie_t cookie;
-   xcb_randr_get_screen_resources_reply_t *reply;
+   xcb_timestamp_t stamp = 0;
+   xcb_randr_get_crtc_info_cookie_t ocookie;
+   xcb_randr_get_crtc_info_reply_t *oreply;
 #endif
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
-   CHECK_XCB_CONN;
-
-   if (!_randr_avail) return;
 
 #ifdef ECORE_XCB_RANDR
+   RANDR_CHECK_1_2_RET();
+
    if (!_ecore_xcb_randr_crtc_validate(root, crtc)) return;
 
-   cookie = xcb_randr_get_screen_resources_unchecked(_ecore_xcb_conn, root);
-   reply = xcb_randr_get_screen_resources_reply(_ecore_xcb_conn, cookie, NULL);
-   if (reply) 
-     {
-        xcb_randr_get_crtc_info_cookie_t ocookie;
-        xcb_randr_get_crtc_info_reply_t *oreply;
+   if (_randr_version >= RANDR_1_3) 
+     stamp = _ecore_xcb_randr_13_get_resource_timestamp(root);
+   else if (_randr_version == RANDR_1_2) 
+     stamp = _ecore_xcb_randr_12_get_resource_timestamp(root);
 
-        ocookie = 
-          xcb_randr_get_crtc_info_unchecked(_ecore_xcb_conn, crtc, 
-                                            reply->config_timestamp);
-        oreply = xcb_randr_get_crtc_info_reply(_ecore_xcb_conn, 
-                                               ocookie, NULL);
-        if (oreply) 
-          {
-             if (x) *x = oreply->x;
-             if (y) *y = oreply->y;
-             if (w) *w = oreply->width;
-             if (h) *h = oreply->height;
-             free(oreply);
-          }
-        free(reply);
+   ocookie = 
+     xcb_randr_get_crtc_info_unchecked(_ecore_xcb_conn, crtc, stamp);
+   oreply = xcb_randr_get_crtc_info_reply(_ecore_xcb_conn, ocookie, NULL);
+   if (oreply) 
+     {
+        if (x) *x = oreply->x;
+        if (y) *y = oreply->y;
+        if (w) *w = oreply->width;
+        if (h) *h = oreply->height;
+        free(oreply);
      }
 #endif
 }
@@ -1728,11 +1403,10 @@ ecore_x_randr_crtc_pos_relative_set(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc
 #endif
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
-   CHECK_XCB_CONN;
-
-   if (!_randr_avail) return EINA_FALSE;
 
 #ifdef ECORE_XCB_RANDR
+   RANDR_CHECK_1_2_RET(EINA_FALSE);
+
    if ((ecore_x_randr_crtc_mode_get(root, crtc1) == 0) || 
        (ecore_x_randr_crtc_mode_get(root, crtc2) == 0))
      return EINA_FALSE;
@@ -1811,9 +1485,6 @@ ecore_x_randr_move_all_crtcs_but(Ecore_X_Window root, const Ecore_X_Randr_Crtc *
 #endif
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
-   CHECK_XCB_CONN;
-
-   if (!_randr_avail) return EINA_FALSE;
 
 #ifdef ECORE_XCB_RANDR
    if ((num <= 0) || (!not_moved) || (!_ecore_xcb_randr_root_validate(root)))
@@ -1844,11 +1515,10 @@ EAPI void
 ecore_x_randr_crtc_pos_get(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc, int *x, int *y) 
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
-   CHECK_XCB_CONN;
-
-   if (!_randr_avail) return;
 
 #ifdef ECORE_XCB_RANDR
+   RANDR_CHECK_1_2_RET();
+
    ecore_x_randr_crtc_geometry_get(root, crtc, x, y, NULL, NULL);
 #endif
 }
@@ -1871,11 +1541,10 @@ ecore_x_randr_crtc_pos_set(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc, int x, 
 #endif
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
-   CHECK_XCB_CONN;
-
-   if (!_randr_avail) return EINA_FALSE;
 
 #ifdef ECORE_XCB_RANDR
+   RANDR_CHECK_1_2_RET(EINA_FALSE);
+
    ecore_x_randr_crtc_geometry_get(root, crtc, 
                                    &rect.x, &rect.y, &rect.w, &rect.h);
    ecore_x_randr_screen_current_size_get(root, &w, &h, NULL, NULL);
@@ -1902,11 +1571,9 @@ EAPI void
 ecore_x_randr_crtc_size_get(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc, int *w, int *h) 
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
-   CHECK_XCB_CONN;
-
-   if (!_randr_avail) return;
 
 #ifdef ECORE_XCB_RANDR
+   RANDR_CHECK_1_2_RET();
    ecore_x_randr_crtc_geometry_get(root, crtc, NULL, NULL, w, h);
 #endif
 }
@@ -1915,42 +1582,74 @@ EAPI Ecore_X_Randr_Refresh_Rate
 ecore_x_randr_crtc_refresh_rate_get(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc, Ecore_X_Randr_Mode mode) 
 {
    Ecore_X_Randr_Refresh_Rate ret = 0.0;
-#ifdef ECORE_XCB_RANDR
-   xcb_randr_get_screen_resources_cookie_t cookie;
-   xcb_randr_get_screen_resources_reply_t *reply;
-#endif
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
-   CHECK_XCB_CONN;
-
-   if (!_randr_avail) return 0.0;
 
 #ifdef ECORE_XCB_RANDR
+   RANDR_CHECK_1_2_RET(0.0);
+
    if (!_ecore_xcb_randr_crtc_validate(root, crtc)) return 0.0;
-   cookie = xcb_randr_get_screen_resources_unchecked(_ecore_xcb_conn, root);
-   reply = xcb_randr_get_screen_resources_reply(_ecore_xcb_conn, cookie, NULL);
-   if (reply) 
+
+   if (_randr_version >= RANDR_1_3) 
      {
-        xcb_randr_mode_info_iterator_t miter;
+        xcb_randr_get_screen_resources_current_reply_t *reply;
 
-        miter = xcb_randr_get_screen_resources_modes_iterator(reply);
-        while (miter.rem) 
+        reply = _ecore_xcb_randr_13_get_resources(root);
+        if (reply) 
           {
-             xcb_randr_mode_info_t *minfo;
+             xcb_randr_mode_info_iterator_t miter;
 
-             minfo = miter.data;
-             if (minfo->id == mode) 
+             miter = 
+               xcb_randr_get_screen_resources_current_modes_iterator(reply);
+             while (miter.rem) 
                {
-                  if ((minfo->htotal) && (minfo->vtotal)) 
+                  xcb_randr_mode_info_t *minfo;
+
+                  minfo = miter.data;
+                  if (minfo->id == mode) 
                     {
-                       ret = ((double)minfo->dot_clock / 
-                              ((double)minfo->htotal * (double)minfo->vtotal));
+                       if ((minfo->htotal) && (minfo->vtotal)) 
+                         {
+                            ret = ((double)minfo->dot_clock / 
+                                   ((double)minfo->htotal * 
+                                       (double)minfo->vtotal));
+                         }
+                       break;
                     }
-                  break;
+                  xcb_randr_mode_info_next(&miter);
                }
-             xcb_randr_mode_info_next(&miter);
+             free(reply);
           }
-        free(reply);
+     }
+   else if (_randr_version == RANDR_1_2) 
+     {
+        xcb_randr_get_screen_resources_reply_t *reply;
+
+        reply = _ecore_xcb_randr_12_get_resources(root);
+        if (reply) 
+          {
+             xcb_randr_mode_info_iterator_t miter;
+
+             miter = xcb_randr_get_screen_resources_modes_iterator(reply);
+             while (miter.rem) 
+               {
+                  xcb_randr_mode_info_t *minfo;
+
+                  minfo = miter.data;
+                  if (minfo->id == mode) 
+                    {
+                       if ((minfo->htotal) && (minfo->vtotal)) 
+                         {
+                            ret = ((double)minfo->dot_clock / 
+                                   ((double)minfo->htotal * 
+                                       (double)minfo->vtotal));
+                         }
+                       break;
+                    }
+                  xcb_randr_mode_info_next(&miter);
+               }
+             free(reply);
+          }
      }
 #endif
    return ret;
@@ -1970,96 +1669,92 @@ ecore_x_randr_move_crtcs(Ecore_X_Window root, const Ecore_X_Randr_Crtc *crtcs, i
 {
    Eina_Bool ret = EINA_TRUE;
 #ifdef ECORE_XCB_RANDR
-   xcb_randr_get_screen_resources_cookie_t cookie;
-   xcb_randr_get_screen_resources_reply_t *reply;
+   xcb_timestamp_t stamp = 0;
+   xcb_randr_get_crtc_info_reply_t *oreply[num];
+   int i = 0, cw = 0, ch = 0;
+   int mw = 0, mh = 0, nw = 0, nh = 0;
 #endif
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
-   CHECK_XCB_CONN;
-
-   if (!_randr_avail) return EINA_FALSE;
 
 #ifdef ECORE_XCB_RANDR
+   RANDR_CHECK_1_2_RET(EINA_FALSE);
+
    if (!_ecore_xcb_randr_root_validate(root)) return EINA_FALSE;
 
-   cookie = xcb_randr_get_screen_resources_unchecked(_ecore_xcb_conn, root);
-   reply = xcb_randr_get_screen_resources_reply(_ecore_xcb_conn, cookie, NULL);
-   if (reply) 
+   if (_randr_version >= RANDR_1_3) 
+     stamp = _ecore_xcb_randr_13_get_resource_timestamp(root);
+   else if (_randr_version == RANDR_1_2) 
+     stamp = _ecore_xcb_randr_12_get_resource_timestamp(root);
+
+   ecore_x_randr_screen_size_range_get(root, NULL, NULL, &mw, &mh);
+   ecore_x_randr_screen_current_size_get(root, &cw, &ch, NULL, NULL);
+   nw = cw;
+   nh = ch;
+
+   for (i = 0; i < num; i++) 
      {
-        xcb_randr_get_crtc_info_reply_t *oreply[num];
-        int i = 0, cw = 0, ch = 0;
-        int mw = 0, mh = 0, nw = 0, nh = 0;
+        xcb_randr_get_crtc_info_cookie_t ocookie;
 
-        ecore_x_randr_screen_size_range_get(root, NULL, NULL, &mw, &mh);
-        ecore_x_randr_screen_current_size_get(root, &cw, &ch, NULL, NULL);
-        nw = cw;
-        nh = ch;
-
-        for (i = 0; i < num; i++) 
+        ocookie = 
+          xcb_randr_get_crtc_info_unchecked(_ecore_xcb_conn, crtcs[i], 
+                                            stamp);
+        oreply[i] = xcb_randr_get_crtc_info_reply(_ecore_xcb_conn, 
+                                                  ocookie, NULL);
+        if (oreply[i]) 
           {
-             xcb_randr_get_crtc_info_cookie_t ocookie;
-
-             ocookie = 
-               xcb_randr_get_crtc_info_unchecked(_ecore_xcb_conn, crtcs[i], 
-                                                 reply->config_timestamp);
-             oreply[i] = xcb_randr_get_crtc_info_reply(_ecore_xcb_conn, 
-                                                       ocookie, NULL);
-             if (oreply[i]) 
+             if (((oreply[i]->x + dx) < 0) || 
+                 ((oreply[i]->y + dy) < 0) || 
+                 ((oreply[i]->x + oreply[i]->width + dx) > mw) || 
+                 ((oreply[i]->y + oreply[i]->height + dy) > mh)) 
                {
-                  if (((oreply[i]->x + dx) < 0) || 
-                      ((oreply[i]->y + dy) < 0) || 
-                      ((oreply[i]->x + oreply[i]->width + dx) > mw) || 
-                      ((oreply[i]->y + oreply[i]->height + dy) > mh)) 
-                    {
-                       continue;
-                    }
-                  nw = MAX((int)(oreply[i]->x + oreply[i]->width + dx), nw);
-                  nh = MAX((int)(oreply[i]->y + oreply[i]->height + dy), nh);
+                  continue;
                }
+             nw = MAX((int)(oreply[i]->x + oreply[i]->width + dx), nw);
+             nh = MAX((int)(oreply[i]->y + oreply[i]->height + dy), nh);
           }
-        free(reply);
-
-        if ((nw > cw) || (nh > ch)) 
-          {
-             if (!ecore_x_randr_screen_current_size_set(root, nw, nh, -1, -1)) 
-               {
-                  for (i = 0; i < num; i++)
-                    if (oreply[i]) free(oreply[i]);
-
-                  return EINA_FALSE;
-               }
-          }
-
-        for (i = 0; ((i < num) && (oreply[i])); i++) 
-          {
-             if (!oreply[i]) continue;
-             if (!ecore_x_randr_crtc_settings_set(root, crtcs[i], NULL, -1, 
-                                                  (oreply[i]->x + dx), 
-                                                  (oreply[i]->y + dy), 
-                                                  oreply[i]->mode, 
-                                                  oreply[i]->rotation)) 
-               {
-                  ret = EINA_FALSE;
-                  break;
-               }
-          }
-
-        if (i < num) 
-          {
-             while (i-- >= 0) 
-               {
-                  if (oreply[i])
-                    ecore_x_randr_crtc_settings_set(root, crtcs[i], NULL, -1, 
-                                                    (oreply[i]->x - dx), 
-                                                    (oreply[i]->y - dy), 
-                                                    oreply[i]->mode, 
-                                                    oreply[i]->rotation);
-               }
-          }
-
-        for (i = 0; i < num; i++)
-          if (oreply[i]) free(oreply[i]);
      }
+
+   if ((nw > cw) || (nh > ch)) 
+     {
+        if (!ecore_x_randr_screen_current_size_set(root, nw, nh, -1, -1)) 
+          {
+             for (i = 0; i < num; i++)
+               if (oreply[i]) free(oreply[i]);
+
+             return EINA_FALSE;
+          }
+     }
+
+   for (i = 0; ((i < num) && (oreply[i])); i++) 
+     {
+        if (!oreply[i]) continue;
+        if (!ecore_x_randr_crtc_settings_set(root, crtcs[i], NULL, -1, 
+                                             (oreply[i]->x + dx), 
+                                             (oreply[i]->y + dy), 
+                                             oreply[i]->mode, 
+                                             oreply[i]->rotation)) 
+          {
+             ret = EINA_FALSE;
+             break;
+          }
+     }
+
+   if (i < num) 
+     {
+        while (i-- >= 0) 
+          {
+             if (oreply[i])
+               ecore_x_randr_crtc_settings_set(root, crtcs[i], NULL, -1, 
+                                               (oreply[i]->x - dx), 
+                                               (oreply[i]->y - dy), 
+                                               oreply[i]->mode, 
+                                               oreply[i]->rotation);
+          }
+     }
+
+   for (i = 0; i < num; i++)
+     if (oreply[i]) free(oreply[i]);
 #endif
 
    return ret;
@@ -2079,9 +1774,6 @@ ecore_x_randr_events_select(Ecore_X_Window win, Eina_Bool on)
 #endif
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
-   CHECK_XCB_CONN;
-
-   if (!_randr_avail) return;
 
 #ifdef ECORE_XCB_RANDR
    if (on) 
@@ -2108,70 +1800,66 @@ EAPI void
 ecore_x_randr_screen_reset(Ecore_X_Window root) 
 {
 #ifdef ECORE_XCB_RANDR
-   xcb_randr_get_screen_resources_cookie_t cookie;
-   xcb_randr_get_screen_resources_reply_t *reply;
+   xcb_timestamp_t stamp = 0;
    Ecore_X_Randr_Crtc *crtcs = NULL;
    int total = 0, i = 0, w = 0, h = 0;
    int dx = 100000, dy = 100000, num = 0;
 #endif
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
-   CHECK_XCB_CONN;
-
-   if (!_randr_avail) return;
 
 #ifdef ECORE_XCB_RANDR
    if (!_ecore_xcb_randr_root_validate(root)) return;
    crtcs = ecore_x_randr_crtcs_get(root, &total);
 
-   cookie = xcb_randr_get_screen_resources_unchecked(_ecore_xcb_conn, root);
-   reply = xcb_randr_get_screen_resources_reply(_ecore_xcb_conn, cookie, NULL);
-   if (reply) 
+   if (_randr_version >= RANDR_1_3) 
+     stamp = _ecore_xcb_randr_13_get_resource_timestamp(root);
+   else if (_randr_version == RANDR_1_2) 
+     stamp = _ecore_xcb_randr_12_get_resource_timestamp(root);
+
+   /* I hate declaring variables inside code like this, but we need the 
+    * value of 'total' before we can */
+   Ecore_X_Randr_Crtc enabled[total];
+
+   for (i = 0; i < total; i++) 
      {
-        Ecore_X_Randr_Crtc enabled[total];
+        xcb_randr_get_crtc_info_cookie_t ocookie;
+        xcb_randr_get_crtc_info_reply_t *oreply;
 
-        for (i = 0; i < total; i++) 
+        ocookie = 
+          xcb_randr_get_crtc_info_unchecked(_ecore_xcb_conn, crtcs[i], stamp);
+        oreply = xcb_randr_get_crtc_info_reply(_ecore_xcb_conn, 
+                                               ocookie, NULL);
+        if (!oreply) continue;
+        if ((oreply->mode <= 0) || (oreply->num_outputs == 0))
           {
-             xcb_randr_get_crtc_info_cookie_t ocookie;
-             xcb_randr_get_crtc_info_reply_t *oreply;
-
-             ocookie = 
-               xcb_randr_get_crtc_info_unchecked(_ecore_xcb_conn, crtcs[i], 
-                                                 reply->config_timestamp);
-             oreply = xcb_randr_get_crtc_info_reply(_ecore_xcb_conn, 
-                                                    ocookie, NULL);
-             if (!oreply) continue;
-             if ((oreply->mode <= 0) || (oreply->num_outputs == 0))
-               {
-                  free(oreply);
-                  continue;
-               }
-
-             enabled[num++] = crtcs[i];
-             if ((int)(oreply->x + oreply->width) > w)
-               w = (oreply->x + oreply->width);
-             if ((int)(oreply->y + oreply->height) > h)
-               h = (oreply->y + oreply->height);
-
-             if (oreply->x < dx) dx = oreply->x;
-             if (oreply->y < dy) dy = oreply->y;
-
              free(oreply);
-          }
-        free(reply);
-        free(crtcs);
-
-        if ((dx > 0) || (dy > 0)) 
-          {
-             if (ecore_x_randr_move_crtcs(root, enabled, num, -dx, -dy)) 
-               {
-                  w -= dx;
-                  h -= dy;
-               }
+             continue;
           }
 
-        ecore_x_randr_screen_current_size_set(root, w, h, -1, -1);
+        enabled[num++] = crtcs[i];
+        if ((int)(oreply->x + oreply->width) > w)
+          w = (oreply->x + oreply->width);
+        if ((int)(oreply->y + oreply->height) > h)
+          h = (oreply->y + oreply->height);
+
+        if (oreply->x < dx) dx = oreply->x;
+        if (oreply->y < dy) dy = oreply->y;
+
+        free(oreply);
      }
+   free(crtcs);
+
+   if ((dx > 0) || (dy > 0)) 
+     {
+        if (ecore_x_randr_move_crtcs(root, enabled, num, -dx, -dy)) 
+          {
+             w -= dx;
+             h -= dy;
+          }
+     }
+
+   ecore_x_randr_screen_current_size_set(root, w, h, -1, -1);
 #endif
 }
 
@@ -2191,11 +1879,10 @@ ecore_x_randr_screen_size_range_get(Ecore_X_Window root, int *minw, int *minh, i
 #endif
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
-   CHECK_XCB_CONN;
-
-   if (!_randr_avail) return;
 
 #ifdef ECORE_XCB_RANDR
+   RANDR_CHECK_1_2_RET();
+
    cookie = xcb_randr_get_screen_size_range_unchecked(_ecore_xcb_conn, root);
    reply = xcb_randr_get_screen_size_range_reply(_ecore_xcb_conn, cookie, NULL);
    if (reply) 
@@ -2217,45 +1904,24 @@ EAPI void
 ecore_x_randr_screen_current_size_get(Ecore_X_Window root, int *w, int *h, int *w_mm, int *h_mm) 
 {
 #ifdef ECORE_XCB_RANDR
-   xcb_randr_get_screen_info_cookie_t cookie;
-   xcb_randr_get_screen_info_reply_t *reply;
-   Ecore_X_Randr_Screen scr;
+   Ecore_X_Randr_Screen scr = 0;
+   xcb_screen_t *s;
 # define RANDR_VALIDATE_ROOT(screen, root) \
    ((screen == _ecore_xcb_randr_root_to_screen(root)) != -1)
 #endif
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
-   CHECK_XCB_CONN;
-
-   if (!_randr_avail) return;
 
 #ifdef ECORE_XCB_RANDR
+   RANDR_CHECK_1_2_RET();
+
    if (!RANDR_VALIDATE_ROOT(scr, root)) return;
 
-   cookie = xcb_randr_get_screen_info_unchecked(_ecore_xcb_conn, root);
-   reply = xcb_randr_get_screen_info_reply(_ecore_xcb_conn, cookie, NULL);
-   if (reply) 
-     {
-        int len = 0, idx = 0;
-        xcb_randr_screen_size_t *sizes;
-
-        len = xcb_randr_get_screen_info_sizes_length(reply);
-        sizes = xcb_randr_get_screen_info_sizes(reply);
-        if ((!sizes) || (len <= 0)) 
-          {
-             free(reply);
-             return;
-          }
-        idx = reply->sizeID;
-        if ((idx < len) && (idx >= 0)) 
-          {
-             if (w) *w = sizes[idx].width;
-             if (h) *h = sizes[idx].height;
-             if (w_mm) *w_mm = sizes[idx].mwidth;
-             if (h_mm) *h_mm = sizes[idx].mheight;
-          }
-        free(reply);
-     }
+   s = ecore_x_screen_get(scr);
+   if (w) *w = s->width_in_pixels;
+   if (h) *h = s->height_in_pixels;
+   if (w_mm) *w_mm = s->width_in_millimeters;
+   if (h_mm) *h_mm = s->height_in_millimeters;
 #endif
 }
 
@@ -2281,11 +1947,10 @@ ecore_x_randr_screen_current_size_set(Ecore_X_Window root, int w, int h, int w_m
 #endif
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
-   CHECK_XCB_CONN;
-
-   if (!_randr_avail) return EINA_FALSE;
 
 #ifdef ECORE_XCB_RANDR
+   RANDR_CHECK_1_2_RET(EINA_FALSE);
+
    if (!RANDR_VALIDATE_ROOT(scr, root)) return EINA_FALSE;
    ecore_x_randr_screen_current_size_get(root, &wc, &hc, &w_mm_c, &h_mm_c);
    if ((w == wc) && (h == hc) && (w_mm == w_mm_c) && (h_mm == h_mm_c))
@@ -2293,10 +1958,13 @@ ecore_x_randr_screen_current_size_set(Ecore_X_Window root, int w, int h, int w_m
    ecore_x_randr_screen_size_range_get(root, &mw, &mh, &xw, &xh);
    if (((w != 1) && ((w < mw) || (w > xw))) || 
        ((h != -1) && ((h < mh) || (h > xh)))) return EINA_FALSE;
+
    if (w <= 0)
      w = ((xcb_screen_t *)_ecore_xcb_screen)->width_in_pixels;
    if (h <= 0)
      h = ((xcb_screen_t *)_ecore_xcb_screen)->height_in_pixels;
+
+   /* NB: Hmmmm, xlib version divides w_mm by width ... that seems wrong */
    if (w_mm <= 0)
      w_mm = ((xcb_screen_t *)_ecore_xcb_screen)->width_in_millimeters;
    if (h_mm <= 0)
@@ -2325,17 +1993,16 @@ ecore_x_randr_window_outputs_get(Ecore_X_Window window, int *num)
    Ecore_X_Randr_Mode mode;
    Ecore_X_Randr_Output *outputs, *ret = NULL, *tret;
    int ncrtcs, noutputs, i, nret = 0;
+   xcb_translate_coordinates_cookie_t cookie;
    xcb_translate_coordinates_reply_t *trans;
 #endif
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
-   CHECK_XCB_CONN;
 
    if (num) *num = 0;
-   if (!_randr_avail) return NULL;
 
 #ifdef ECORE_XCB_RANDR
-   if (_randr_version < ((1 << 16) | 2)) return NULL;
+   RANDR_CHECK_1_2_RET(NULL);
 
    ecore_x_window_geometry_get(window, &w_geo.x, &w_geo.y, &w_geo.w, &w_geo.h);
 
@@ -2344,11 +2011,8 @@ ecore_x_randr_window_outputs_get(Ecore_X_Window window, int *num)
    if (!crtcs) return NULL;
 
    /* now get window RELATIVE to root window - thats what matters. */
-   trans = 
-     xcb_translate_coordinates_reply(_ecore_xcb_conn, 
-                                     xcb_translate_coordinates(_ecore_xcb_conn, 
-                                                               window, root, 0, 0), 
-                                    NULL);
+   cookie = xcb_translate_coordinates(_ecore_xcb_conn, window, root, 0, 0);
+   trans = xcb_translate_coordinates_reply(_ecore_xcb_conn, cookie, NULL);
    w_geo.x = trans->dst_x;
    w_geo.y = trans->dst_y;
    free(trans);
@@ -2374,7 +2038,8 @@ ecore_x_randr_window_outputs_get(Ecore_X_Window window, int *num)
                   free(crtcs);
                   return NULL;
                }
-             tret = realloc(ret, ((nret + noutputs) * sizeof(Ecore_X_Randr_Output)));
+             tret = realloc(ret, ((nret + noutputs) * 
+                                  sizeof(Ecore_X_Randr_Output)));
              if (!tret)
                {
                   if (num) *num = 0;
@@ -2422,11 +2087,10 @@ ecore_x_randr_output_backlight_level_get(Ecore_X_Window root, Ecore_X_Randr_Outp
 #endif
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
-   CHECK_XCB_CONN;
-
-   if (!_randr_avail) return -1;
 
 #ifdef ECORE_XCB_RANDR
+   RANDR_CHECK_1_2_RET(-1);
+
    acookie = 
      xcb_intern_atom_unchecked(_ecore_xcb_conn, 1, 
                                strlen("Backlight"), "Backlight");
@@ -2518,11 +2182,10 @@ ecore_x_randr_output_backlight_level_set(Ecore_X_Window root, Ecore_X_Randr_Outp
 #endif
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
-   CHECK_XCB_CONN;
-
-   if (!_randr_avail) return EINA_FALSE;
 
 #ifdef ECORE_XCB_RANDR
+   RANDR_CHECK_1_2_RET(EINA_FALSE);
+
    if ((level < 0) || (level > 1))
      {
         ERR("Backlight level should be between 0 and 1");
@@ -2574,7 +2237,7 @@ ecore_x_randr_output_backlight_level_set(Ecore_X_Window root, Ecore_X_Randr_Outp
                                               _backlight, XCB_ATOM_INTEGER, 
                                               32, XCB_PROP_MODE_REPLACE, 
                                               1, (unsigned char *)&n);
-//             ecore_x_flush(); // needed
+             ecore_x_flush(); // needed
           }
 
         free(qreply);
@@ -2591,36 +2254,59 @@ _ecore_xcb_randr_output_validate(Ecore_X_Window root, Ecore_X_Randr_Output outpu
    Eina_Bool ret = EINA_FALSE;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
-   CHECK_XCB_CONN;
-
-   if (!_randr_avail) return EINA_FALSE;
 
 #ifdef ECORE_XCB_RANDR
+   RANDR_CHECK_1_2_RET(EINA_FALSE);
+
    if ((output) && (_ecore_xcb_randr_root_validate(root))) 
      {
-        xcb_randr_get_screen_resources_cookie_t cookie;
-        xcb_randr_get_screen_resources_reply_t *reply;
-
-        cookie = 
-          xcb_randr_get_screen_resources_unchecked(_ecore_xcb_conn, root);
-        reply = 
-          xcb_randr_get_screen_resources_reply(_ecore_xcb_conn, cookie, NULL);
-        if (reply) 
+        if (_randr_version >= RANDR_1_3) 
           {
-             int len = 0, i = 0;
-             xcb_randr_output_t *outputs;
+             xcb_randr_get_screen_resources_current_reply_t *reply;
 
-             len = xcb_randr_get_screen_resources_outputs_length(reply);
-             outputs = xcb_randr_get_screen_resources_outputs(reply);
-             for (i = 0; i < len; i++) 
+             reply = _ecore_xcb_randr_13_get_resources(root);
+             if (reply) 
                {
-                  if (outputs[i] == output) 
+                  int len = 0, i = 0;
+                  xcb_randr_output_t *outputs;
+
+                  len = 
+                    xcb_randr_get_screen_resources_current_outputs_length(reply);
+                  outputs = 
+                    xcb_randr_get_screen_resources_current_outputs(reply);
+                  for (i = 0; i < len; i++) 
                     {
-                       ret = EINA_TRUE;
-                       break;
+                       if (outputs[i] == output) 
+                         {
+                            ret = EINA_TRUE;
+                            break;
+                         }
                     }
+                  free(reply);
                }
-             free(reply);
+          }
+        else if (_randr_version == RANDR_1_2) 
+          {
+             xcb_randr_get_screen_resources_reply_t *reply;
+
+             reply = _ecore_xcb_randr_12_get_resources(root);
+             if (reply) 
+               {
+                  int len = 0, i = 0;
+                  xcb_randr_output_t *outputs;
+
+                  len = xcb_randr_get_screen_resources_outputs_length(reply);
+                  outputs = xcb_randr_get_screen_resources_outputs(reply);
+                  for (i = 0; i < len; i++) 
+                    {
+                       if (outputs[i] == output) 
+                         {
+                            ret = EINA_TRUE;
+                            break;
+                         }
+                    }
+                  free(reply);
+               }
           }
      }
 #endif
@@ -2639,41 +2325,851 @@ _ecore_xcb_randr_crtc_validate(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc)
    Eina_Bool ret = EINA_FALSE;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
-   CHECK_XCB_CONN;
-
-   if (!_randr_avail) return EINA_FALSE;
 
 #ifdef ECORE_XCB_RANDR
+   RANDR_CHECK_1_2_RET(EINA_FALSE);
+
    if (((int)crtc == Ecore_X_Randr_None) || ((int)crtc == Ecore_X_Randr_Unset))
      return ret;
 
    if ((crtc) && (_ecore_xcb_randr_root_validate(root))) 
      {
-        xcb_randr_get_screen_resources_cookie_t cookie;
-        xcb_randr_get_screen_resources_reply_t *reply;
-
-        cookie = 
-          xcb_randr_get_screen_resources_unchecked(_ecore_xcb_conn, root);
-        reply = 
-          xcb_randr_get_screen_resources_reply(_ecore_xcb_conn, cookie, NULL);
-        if (reply) 
+        if (_randr_version >= RANDR_1_3) 
           {
-             int i = 0;
-             xcb_randr_crtc_t *crtcs;
+             xcb_randr_get_screen_resources_current_reply_t *reply;
 
-             crtcs = xcb_randr_get_screen_resources_crtcs(reply);
-             for (i = 0; i < reply->num_crtcs; i++) 
+             reply = _ecore_xcb_randr_13_get_resources(root);
+             if (reply) 
                {
-                  if (crtcs[i] == crtc) 
+                  int i = 0;
+                  xcb_randr_crtc_t *crtcs;
+
+                  crtcs = xcb_randr_get_screen_resources_current_crtcs(reply);
+                  for (i = 0; i < reply->num_crtcs; i++) 
                     {
-                       ret = EINA_TRUE;
-                       break;
+                       if (crtcs[i] == crtc) 
+                         {
+                            ret = EINA_TRUE;
+                            break;
+                         }
                     }
+                  free(reply);
                }
-             free(reply);
+          }
+        else if (_randr_version == RANDR_1_2) 
+          {
+             xcb_randr_get_screen_resources_reply_t *reply;
+
+             reply = _ecore_xcb_randr_12_get_resources(root);
+             if (reply) 
+               {
+                  int i = 0;
+                  xcb_randr_crtc_t *crtcs;
+
+                  crtcs = xcb_randr_get_screen_resources_crtcs(reply);
+                  for (i = 0; i < reply->num_crtcs; i++) 
+                    {
+                       if (crtcs[i] == crtc) 
+                         {
+                            ret = EINA_TRUE;
+                            break;
+                         }
+                    }
+                  free(reply);
+               }
           }
      }
 #endif
 
    return ret;
+}
+
+static Ecore_X_Randr_Mode *
+_ecore_xcb_randr_12_output_modes_get(Ecore_X_Window root, Ecore_X_Randr_Output output, int *num, int *npreferred) 
+{
+   Ecore_X_Randr_Mode *modes = NULL;
+   xcb_randr_get_screen_resources_reply_t *reply;
+
+   reply = _ecore_xcb_randr_12_get_resources(root);
+   if (reply) 
+     {
+        xcb_randr_get_output_info_cookie_t ocookie;
+        xcb_randr_get_output_info_reply_t *oreply;
+
+        ocookie = 
+          xcb_randr_get_output_info_unchecked(_ecore_xcb_conn, output, 
+                                              reply->config_timestamp);
+        oreply = xcb_randr_get_output_info_reply(_ecore_xcb_conn, 
+                                                 ocookie, NULL);
+        if (oreply) 
+          {
+             if (num) *num = oreply->num_modes;
+             if (npreferred) *npreferred = oreply->num_preferred;
+
+             modes = malloc(sizeof(Ecore_X_Randr_Mode) * 
+                            oreply->num_modes);
+             if (modes) 
+               {
+                  xcb_randr_mode_t *rmodes;
+                  int len = 0;
+
+                  len = xcb_randr_get_output_info_modes_length(oreply);
+                  rmodes = xcb_randr_get_output_info_modes(oreply);
+                  memcpy(modes, rmodes, sizeof(Ecore_X_Randr_Mode) * len);
+               }
+             free(oreply);
+          }
+        free(reply);
+     }
+
+   return modes;
+}
+
+static Ecore_X_Randr_Mode *
+_ecore_xcb_randr_13_output_modes_get(Ecore_X_Window root, Ecore_X_Randr_Output output, int *num, int *npreferred) 
+{
+   Ecore_X_Randr_Mode *modes = NULL;
+   xcb_timestamp_t stamp = 0;
+   xcb_randr_get_output_info_cookie_t ocookie;
+   xcb_randr_get_output_info_reply_t *oreply;
+
+   stamp = _ecore_xcb_randr_13_get_resource_timestamp(root);
+
+   ocookie = 
+     xcb_randr_get_output_info_unchecked(_ecore_xcb_conn, output, stamp);
+   oreply = xcb_randr_get_output_info_reply(_ecore_xcb_conn, ocookie, NULL);
+   if (oreply) 
+     {
+        if (num) *num = oreply->num_modes;
+        if (npreferred) *npreferred = oreply->num_preferred;
+
+        modes = malloc(sizeof(Ecore_X_Randr_Mode) * oreply->num_modes);
+        if (modes) 
+          {
+             xcb_randr_mode_t *rmodes;
+             int len = 0;
+
+             len = xcb_randr_get_output_info_modes_length(oreply);
+             rmodes = xcb_randr_get_output_info_modes(oreply);
+             memcpy(modes, rmodes, sizeof(Ecore_X_Randr_Mode) * len);
+          }
+        free(oreply);
+     }
+
+   return modes;
+}
+
+static Ecore_X_Randr_Mode_Info *
+_ecore_xcb_randr_12_mode_info_get(Ecore_X_Window root, Ecore_X_Randr_Mode mode) 
+{
+   Ecore_X_Randr_Mode_Info *ret = NULL;
+   xcb_randr_get_screen_resources_reply_t *reply;
+
+   reply = _ecore_xcb_randr_12_get_resources(root);
+   if (reply) 
+     {
+        if ((ret = malloc(sizeof(Ecore_X_Randr_Mode_Info))))
+          {
+             uint8_t *nbuf;
+             xcb_randr_mode_info_iterator_t miter;
+
+             nbuf = xcb_randr_get_screen_resources_names(reply);
+             miter = xcb_randr_get_screen_resources_modes_iterator(reply);
+             while (miter.rem) 
+               {
+                  xcb_randr_mode_info_t *minfo;
+
+                  minfo = miter.data;
+                  nbuf += minfo->name_len;
+
+                  if (minfo->id == mode) 
+                    {
+                       ret->xid = minfo->id;
+                       ret->width = minfo->width;
+                       ret->height = minfo->height;
+                       ret->dotClock = minfo->dot_clock;
+                       ret->hSyncStart = minfo->hsync_start;
+                       ret->hSyncEnd = minfo->hsync_end;
+                       ret->hTotal = minfo->htotal;
+                       ret->vSyncStart = minfo->vsync_start;
+                       ret->vSyncEnd = minfo->vsync_end;
+                       ret->vTotal = minfo->vtotal;
+                       ret->modeFlags = minfo->mode_flags;
+
+                       ret->name = NULL;
+                       ret->nameLength = minfo->name_len;
+                       if (ret->nameLength > 0) 
+                         {
+                            ret->name = malloc(ret->nameLength + 1);
+                            if (ret->name) 
+                              memcpy(ret->name, nbuf, ret->nameLength + 1);
+                         }
+
+                       break;
+                    }
+                  xcb_randr_mode_info_next(&miter);
+               }
+          }
+
+        free(reply);
+     }
+   return ret;
+}
+
+static Ecore_X_Randr_Mode_Info *
+_ecore_xcb_randr_13_mode_info_get(Ecore_X_Window root, Ecore_X_Randr_Mode mode) 
+{
+   Ecore_X_Randr_Mode_Info *ret = NULL;
+   xcb_randr_get_screen_resources_current_reply_t *reply;
+
+   reply = _ecore_xcb_randr_13_get_resources(root);
+   if (reply) 
+     {
+        if ((ret = malloc(sizeof(Ecore_X_Randr_Mode_Info))))
+          {
+             uint8_t *nbuf;
+             xcb_randr_mode_info_iterator_t miter;
+
+             nbuf = xcb_randr_get_screen_resources_current_names(reply);
+             miter = 
+               xcb_randr_get_screen_resources_current_modes_iterator(reply);
+             while (miter.rem) 
+               {
+                  xcb_randr_mode_info_t *minfo;
+
+                  minfo = miter.data;
+                  nbuf += minfo->name_len;
+
+                  if (minfo->id == mode) 
+                    {
+                       ret->xid = minfo->id;
+                       ret->width = minfo->width;
+                       ret->height = minfo->height;
+                       ret->dotClock = minfo->dot_clock;
+                       ret->hSyncStart = minfo->hsync_start;
+                       ret->hSyncEnd = minfo->hsync_end;
+                       ret->hTotal = minfo->htotal;
+                       ret->vSyncStart = minfo->vsync_start;
+                       ret->vSyncEnd = minfo->vsync_end;
+                       ret->vTotal = minfo->vtotal;
+                       ret->modeFlags = minfo->mode_flags;
+
+                       ret->name = NULL;
+                       ret->nameLength = minfo->name_len;
+                       if (ret->nameLength > 0) 
+                         {
+                            ret->name = malloc(ret->nameLength + 1);
+                            if (ret->name) 
+                              memcpy(ret->name, nbuf, ret->nameLength + 1);
+                         }
+
+                       break;
+                    }
+                  xcb_randr_mode_info_next(&miter);
+               }
+          }
+
+        free(reply);
+     }
+   return ret;
+}
+
+static Ecore_X_Randr_Mode_Info **
+_ecore_xcb_randr_12_modes_info_get(Ecore_X_Window root, int *num) 
+{
+   Ecore_X_Randr_Mode_Info **ret = NULL;
+   xcb_randr_get_screen_resources_reply_t *reply;
+
+   reply = _ecore_xcb_randr_12_get_resources(root);
+   if (reply) 
+     {
+        if (num) *num = reply->num_modes;
+        ret = malloc(sizeof(Ecore_X_Randr_Mode_Info *) * reply->num_modes);
+        if (ret) 
+          {
+             xcb_randr_mode_info_iterator_t miter;
+             int i = 0;
+             uint8_t *nbuf;
+
+             nbuf = xcb_randr_get_screen_resources_names(reply);
+             miter = xcb_randr_get_screen_resources_modes_iterator(reply);
+             while (miter.rem) 
+               {
+                  xcb_randr_mode_info_t *minfo;
+
+                  minfo = miter.data;
+                  nbuf += minfo->name_len;
+                  if ((ret[i] = malloc(sizeof(Ecore_X_Randr_Mode_Info)))) 
+                    {
+                       ret[i]->xid = minfo->id;
+                       ret[i]->width = minfo->width;
+                       ret[i]->height = minfo->height;
+                       ret[i]->dotClock = minfo->dot_clock;
+                       ret[i]->hSyncStart = minfo->hsync_start;
+                       ret[i]->hSyncEnd = minfo->hsync_end;
+                       ret[i]->hTotal = minfo->htotal;
+                       ret[i]->vSyncStart = minfo->vsync_start;
+                       ret[i]->vSyncEnd = minfo->vsync_end;
+                       ret[i]->vTotal = minfo->vtotal;
+                       ret[i]->modeFlags = minfo->mode_flags;
+
+                       ret[i]->name = NULL;
+                       ret[i]->nameLength = minfo->name_len;
+                       if (ret[i]->nameLength > 0) 
+                         {
+                            ret[i]->name = malloc(ret[i]->nameLength + 1);
+                            if (ret[i]->name) 
+                              memcpy(ret[i]->name, nbuf, 
+                                     ret[i]->nameLength + 1);
+                         }
+                    }
+                  else 
+                    {
+                       while (i > 0) 
+                         free(ret[--i]);
+                       free(ret);
+                       ret = NULL;
+                       break;
+                    }
+                  i++;
+                  xcb_randr_mode_info_next(&miter);
+               }
+          }
+        free(reply);
+     }
+   return ret;
+}
+
+static Ecore_X_Randr_Mode_Info **
+_ecore_xcb_randr_13_modes_info_get(Ecore_X_Window root, int *num) 
+{
+   Ecore_X_Randr_Mode_Info **ret = NULL;
+   xcb_randr_get_screen_resources_current_reply_t *reply;
+
+   reply = _ecore_xcb_randr_13_get_resources(root);
+   if (reply) 
+     {
+        if (num) *num = reply->num_modes;
+        ret = malloc(sizeof(Ecore_X_Randr_Mode_Info *) * reply->num_modes);
+        if (ret) 
+          {
+             xcb_randr_mode_info_iterator_t miter;
+             int i = 0;
+             uint8_t *nbuf;
+
+             nbuf = xcb_randr_get_screen_resources_current_names(reply);
+             miter = 
+               xcb_randr_get_screen_resources_current_modes_iterator(reply);
+             while (miter.rem) 
+               {
+                  xcb_randr_mode_info_t *minfo;
+
+                  minfo = miter.data;
+                  nbuf += minfo->name_len;
+                  if ((ret[i] = malloc(sizeof(Ecore_X_Randr_Mode_Info)))) 
+                    {
+                       ret[i]->xid = minfo->id;
+                       ret[i]->width = minfo->width;
+                       ret[i]->height = minfo->height;
+                       ret[i]->dotClock = minfo->dot_clock;
+                       ret[i]->hSyncStart = minfo->hsync_start;
+                       ret[i]->hSyncEnd = minfo->hsync_end;
+                       ret[i]->hTotal = minfo->htotal;
+                       ret[i]->vSyncStart = minfo->vsync_start;
+                       ret[i]->vSyncEnd = minfo->vsync_end;
+                       ret[i]->vTotal = minfo->vtotal;
+                       ret[i]->modeFlags = minfo->mode_flags;
+
+                       ret[i]->name = NULL;
+                       ret[i]->nameLength = minfo->name_len;
+                       if (ret[i]->nameLength > 0) 
+                         {
+                            ret[i]->name = malloc(ret[i]->nameLength + 1);
+                            if (ret[i]->name) 
+                              memcpy(ret[i]->name, nbuf, 
+                                     ret[i]->nameLength + 1);
+                         }
+                    }
+                  else 
+                    {
+                       while (i > 0) 
+                         free(ret[--i]);
+                       free(ret);
+                       ret = NULL;
+                       break;
+                    }
+                  i++;
+                  xcb_randr_mode_info_next(&miter);
+               }
+          }
+        free(reply);
+     }
+   return ret;
+}
+
+static void 
+_ecore_xcb_randr_12_mode_size_get(Ecore_X_Window root, Ecore_X_Randr_Mode mode, int *w, int *h) 
+{
+   xcb_randr_get_screen_resources_reply_t *reply;
+
+   reply = _ecore_xcb_randr_12_get_resources(root);
+   if (reply) 
+     {
+        xcb_randr_mode_info_iterator_t miter;
+
+        miter = xcb_randr_get_screen_resources_modes_iterator(reply);
+        while (miter.rem) 
+          {
+             xcb_randr_mode_info_t *minfo;
+
+             minfo = miter.data;
+             if (minfo->id == mode) 
+               {
+                  if (w) *w = minfo->width;
+                  if (h) *h = minfo->height;
+                  break;
+               }
+             xcb_randr_mode_info_next(&miter);
+          }
+        free(reply);
+     }
+}
+
+static void 
+_ecore_xcb_randr_13_mode_size_get(Ecore_X_Window root, Ecore_X_Randr_Mode mode, int *w, int *h) 
+{
+   xcb_randr_get_screen_resources_current_reply_t *reply;
+
+   reply = _ecore_xcb_randr_13_get_resources(root);
+   if (reply) 
+     {
+        xcb_randr_mode_info_iterator_t miter;
+
+        miter = xcb_randr_get_screen_resources_current_modes_iterator(reply);
+        while (miter.rem) 
+          {
+             xcb_randr_mode_info_t *minfo;
+
+             minfo = miter.data;
+             if (minfo->id == mode) 
+               {
+                  if (w) *w = minfo->width;
+                  if (h) *h = minfo->height;
+                  break;
+               }
+             xcb_randr_mode_info_next(&miter);
+          }
+        free(reply);
+     }
+}
+
+static Ecore_X_Randr_Output *
+_ecore_xcb_randr_12_output_clones_get(Ecore_X_Window root, Ecore_X_Randr_Output output, int *num) 
+{
+   Ecore_X_Randr_Output *outputs = NULL;
+   xcb_randr_get_screen_resources_reply_t *reply;
+
+   reply = _ecore_xcb_randr_12_get_resources(root);
+   if (reply) 
+     {
+        xcb_randr_get_output_info_cookie_t ocookie;
+        xcb_randr_get_output_info_reply_t *oreply;
+
+        ocookie = 
+          xcb_randr_get_output_info_unchecked(_ecore_xcb_conn, output, 
+                                              reply->config_timestamp);
+        oreply = xcb_randr_get_output_info_reply(_ecore_xcb_conn, 
+                                                 ocookie, NULL);
+        if (oreply) 
+          {
+             if (num) *num = oreply->num_clones;
+
+             outputs = 
+               malloc(sizeof(Ecore_X_Randr_Output) * oreply->num_clones);
+             if (outputs) 
+               {
+                  memcpy(outputs, xcb_randr_get_output_info_clones(oreply), 
+                         sizeof(Ecore_X_Randr_Output) * oreply->num_clones);
+               }
+             free(oreply);
+          }
+        free(reply);
+     }
+   return outputs;
+}
+
+static Ecore_X_Randr_Output *
+_ecore_xcb_randr_13_output_clones_get(Ecore_X_Window root, Ecore_X_Randr_Output output, int *num) 
+{
+   Ecore_X_Randr_Output *outputs = NULL;
+   xcb_randr_get_screen_resources_current_reply_t *reply;
+
+   reply = _ecore_xcb_randr_13_get_resources(root);
+   if (reply) 
+     {
+        xcb_randr_get_output_info_cookie_t ocookie;
+        xcb_randr_get_output_info_reply_t *oreply;
+
+        ocookie = 
+          xcb_randr_get_output_info_unchecked(_ecore_xcb_conn, output, 
+                                              reply->config_timestamp);
+        oreply = xcb_randr_get_output_info_reply(_ecore_xcb_conn, 
+                                                 ocookie, NULL);
+        if (oreply) 
+          {
+             if (num) *num = oreply->num_clones;
+
+             outputs = 
+               malloc(sizeof(Ecore_X_Randr_Output) * oreply->num_clones);
+             if (outputs) 
+               {
+                  memcpy(outputs, xcb_randr_get_output_info_clones(oreply), 
+                         sizeof(Ecore_X_Randr_Output) * oreply->num_clones);
+               }
+             free(oreply);
+          }
+        free(reply);
+     }
+   return outputs;
+}
+
+static Ecore_X_Randr_Crtc *
+_ecore_xcb_randr_12_output_possible_crtcs_get(Ecore_X_Window root, Ecore_X_Randr_Output output, int *num) 
+{
+   Ecore_X_Randr_Crtc *crtcs = NULL;
+   xcb_randr_get_screen_resources_reply_t *reply;
+
+   reply = _ecore_xcb_randr_12_get_resources(root);
+   if (reply) 
+     {
+        xcb_randr_get_output_info_cookie_t ocookie;
+        xcb_randr_get_output_info_reply_t *oreply;
+
+        ocookie = 
+          xcb_randr_get_output_info_unchecked(_ecore_xcb_conn, output, 
+                                              reply->config_timestamp);
+        oreply = xcb_randr_get_output_info_reply(_ecore_xcb_conn, 
+                                                 ocookie, NULL);
+        if (oreply) 
+          {
+             if (num) *num = oreply->num_crtcs;
+
+             crtcs = malloc(sizeof(Ecore_X_Randr_Crtc) * oreply->num_crtcs);
+             if (crtcs) 
+               {
+                  memcpy(crtcs, xcb_randr_get_output_info_crtcs(oreply), 
+                         sizeof(Ecore_X_Randr_Crtc) * oreply->num_crtcs);
+               }
+             free(oreply);
+          }
+        free(reply);
+     }
+   return crtcs;
+}
+
+static Ecore_X_Randr_Crtc *
+_ecore_xcb_randr_13_output_possible_crtcs_get(Ecore_X_Window root, Ecore_X_Randr_Output output, int *num) 
+{
+   Ecore_X_Randr_Crtc *crtcs = NULL;
+   xcb_randr_get_screen_resources_current_reply_t *reply;
+
+   reply = _ecore_xcb_randr_13_get_resources(root);
+   if (reply)
+     {
+        xcb_randr_get_output_info_cookie_t ocookie;
+        xcb_randr_get_output_info_reply_t *oreply;
+
+        ocookie = 
+          xcb_randr_get_output_info_unchecked(_ecore_xcb_conn, output, 
+                                              reply->config_timestamp);
+        oreply = xcb_randr_get_output_info_reply(_ecore_xcb_conn, 
+                                                 ocookie, NULL);
+        if (oreply) 
+          {
+             if (num) *num = oreply->num_crtcs;
+
+             crtcs = malloc(sizeof(Ecore_X_Randr_Crtc) * oreply->num_crtcs);
+             if (crtcs) 
+               {
+                  memcpy(crtcs, xcb_randr_get_output_info_crtcs(oreply), 
+                         sizeof(Ecore_X_Randr_Crtc) * oreply->num_crtcs);
+               }
+             free(oreply);
+          }
+        free(reply);
+     }
+   return crtcs;
+}
+
+static char *
+_ecore_xcb_randr_12_output_name_get(Ecore_X_Window root, Ecore_X_Randr_Output output, int *len) 
+{
+   char *ret = NULL;
+   xcb_randr_get_screen_resources_reply_t *reply;
+
+   reply = _ecore_xcb_randr_12_get_resources(root);
+   if (reply) 
+     {
+        xcb_randr_get_output_info_cookie_t ocookie;
+        xcb_randr_get_output_info_reply_t *oreply;
+
+        ocookie = 
+          xcb_randr_get_output_info_unchecked(_ecore_xcb_conn, output, 
+                                              reply->config_timestamp);
+        oreply = xcb_randr_get_output_info_reply(_ecore_xcb_conn, 
+                                                 ocookie, NULL);
+        if (oreply) 
+          {
+             uint8_t *nbuf;
+
+             nbuf = xcb_randr_get_output_info_name(oreply);
+             nbuf += oreply->name_len;
+
+             if (len) *len = oreply->name_len;
+             if (oreply->name_len > 0) 
+               {
+                  ret = malloc(oreply->name_len + 1);
+                  if (ret)
+                    memcpy(ret, nbuf, oreply->name_len + 1);
+               }
+
+             free(oreply);
+          }
+        free(reply);
+     }
+   return ret;
+}
+
+static char *
+_ecore_xcb_randr_13_output_name_get(Ecore_X_Window root, Ecore_X_Randr_Output output, int *len) 
+{
+   char *ret = NULL;
+   xcb_randr_get_screen_resources_current_reply_t *reply;
+
+   reply = _ecore_xcb_randr_13_get_resources(root);
+   if (reply) 
+     {
+        xcb_randr_get_output_info_cookie_t ocookie;
+        xcb_randr_get_output_info_reply_t *oreply;
+
+        ocookie = 
+          xcb_randr_get_output_info_unchecked(_ecore_xcb_conn, output, 
+                                              reply->config_timestamp);
+        oreply = xcb_randr_get_output_info_reply(_ecore_xcb_conn, 
+                                                 ocookie, NULL);
+        if (oreply) 
+          {
+             uint8_t *nbuf;
+
+             nbuf = xcb_randr_get_output_info_name(oreply);
+             nbuf += oreply->name_len;
+
+             if (len) *len = oreply->name_len;
+             if (oreply->name_len > 0) 
+               {
+                  ret = malloc(oreply->name_len + 1);
+                  if (ret)
+                    memcpy(ret, nbuf, oreply->name_len + 1);
+               }
+
+             free(oreply);
+          }
+        free(reply);
+     }
+   return ret;
+}
+
+static Ecore_X_Randr_Connection_Status 
+_ecore_xcb_randr_12_output_connection_status_get(Ecore_X_Window root, Ecore_X_Randr_Output output) 
+{
+   Ecore_X_Randr_Connection_Status ret = ECORE_X_RANDR_CONNECTION_STATUS_UNKNOWN;
+   xcb_randr_get_screen_resources_reply_t *reply;
+
+   reply = _ecore_xcb_randr_12_get_resources(root);
+   if (reply) 
+     {
+        xcb_randr_get_output_info_cookie_t ocookie;
+        xcb_randr_get_output_info_reply_t *oreply;
+
+        ocookie = 
+          xcb_randr_get_output_info_unchecked(_ecore_xcb_conn, output, 
+                                              reply->config_timestamp);
+        oreply = xcb_randr_get_output_info_reply(_ecore_xcb_conn, 
+                                                 ocookie, NULL);
+        if (oreply) 
+          {
+             ret = oreply->connection;
+             free(oreply);
+          }
+        free(reply);
+     }
+   return ret;
+}
+
+static Ecore_X_Randr_Connection_Status 
+_ecore_xcb_randr_13_output_connection_status_get(Ecore_X_Window root, Ecore_X_Randr_Output output) 
+{
+   Ecore_X_Randr_Connection_Status ret = ECORE_X_RANDR_CONNECTION_STATUS_UNKNOWN;
+   xcb_randr_get_screen_resources_current_reply_t *reply;
+
+   reply = _ecore_xcb_randr_13_get_resources(root);
+   if (reply) 
+     {
+        xcb_randr_get_output_info_cookie_t ocookie;
+        xcb_randr_get_output_info_reply_t *oreply;
+
+        ocookie = 
+          xcb_randr_get_output_info_unchecked(_ecore_xcb_conn, output, 
+                                              reply->config_timestamp);
+        oreply = xcb_randr_get_output_info_reply(_ecore_xcb_conn, 
+                                                 ocookie, NULL);
+        if (oreply) 
+          {
+             ret = oreply->connection;
+             free(oreply);
+          }
+        free(reply);
+     }
+   return ret;
+}
+
+static Ecore_X_Randr_Output *
+_ecore_xcb_randr_12_outputs_get(Ecore_X_Window root, int *num) 
+{
+   Ecore_X_Randr_Output *ret = NULL;
+   xcb_randr_get_screen_resources_reply_t *reply;
+
+   reply = _ecore_xcb_randr_12_get_resources(root);
+   if (reply) 
+     {
+        if (num) *num = reply->num_outputs;
+        ret = malloc(sizeof(Ecore_X_Randr_Output) * reply->num_outputs);
+        if (ret) 
+          memcpy(ret, xcb_randr_get_screen_resources_outputs(reply), 
+                 sizeof(Ecore_X_Randr_Output) * reply->num_outputs);
+        free(reply);
+     }
+   return ret;
+}
+
+static Ecore_X_Randr_Output *
+_ecore_xcb_randr_13_outputs_get(Ecore_X_Window root, int *num) 
+{
+   Ecore_X_Randr_Output *ret = NULL;
+   xcb_randr_get_screen_resources_current_reply_t *reply;
+
+   reply = _ecore_xcb_randr_13_get_resources(root);
+   if (reply) 
+     {
+        if (num) *num = reply->num_outputs;
+        ret = malloc(sizeof(Ecore_X_Randr_Output) * reply->num_outputs);
+        if (ret) 
+          memcpy(ret, xcb_randr_get_screen_resources_current_outputs(reply), 
+                 sizeof(Ecore_X_Randr_Output) * reply->num_outputs);
+        free(reply);
+     }
+   return ret;
+}
+
+static Ecore_X_Randr_Crtc 
+_ecore_xcb_randr_12_output_crtc_get(Ecore_X_Window root, Ecore_X_Randr_Output output) 
+{
+   Ecore_X_Randr_Crtc ret = Ecore_X_Randr_None;
+   xcb_randr_get_screen_resources_reply_t *reply;
+
+   reply = _ecore_xcb_randr_12_get_resources(root);
+   if (reply) 
+     {
+        xcb_randr_get_output_info_cookie_t ocookie;
+        xcb_randr_get_output_info_reply_t *oreply;
+
+        ocookie = 
+          xcb_randr_get_output_info_unchecked(_ecore_xcb_conn, output, 
+                                              reply->config_timestamp);
+        oreply = xcb_randr_get_output_info_reply(_ecore_xcb_conn, 
+                                                 ocookie, NULL);
+        if (oreply) 
+          {
+             ret = oreply->crtc;
+             free(oreply);
+          }
+        free(reply);
+     }
+   return ret;
+}
+
+static Ecore_X_Randr_Crtc 
+_ecore_xcb_randr_13_output_crtc_get(Ecore_X_Window root, Ecore_X_Randr_Output output) 
+{
+   Ecore_X_Randr_Crtc ret = Ecore_X_Randr_None;
+   xcb_randr_get_screen_resources_current_reply_t *reply;
+
+   reply = _ecore_xcb_randr_13_get_resources(root);
+   if (reply) 
+     {
+        xcb_randr_get_output_info_cookie_t ocookie;
+        xcb_randr_get_output_info_reply_t *oreply;
+
+        ocookie = 
+          xcb_randr_get_output_info_unchecked(_ecore_xcb_conn, output, 
+                                              reply->config_timestamp);
+        oreply = xcb_randr_get_output_info_reply(_ecore_xcb_conn, 
+                                                 ocookie, NULL);
+        if (oreply) 
+          {
+             ret = oreply->crtc;
+             free(oreply);
+          }
+        free(reply);
+     }
+   return ret;
+}
+
+static xcb_randr_get_screen_resources_reply_t *
+_ecore_xcb_randr_12_get_resources(Ecore_X_Window win)
+{
+   xcb_randr_get_screen_resources_cookie_t cookie;
+   xcb_randr_get_screen_resources_reply_t *reply;
+
+   cookie = xcb_randr_get_screen_resources_unchecked(_ecore_xcb_conn, win);
+   reply = xcb_randr_get_screen_resources_reply(_ecore_xcb_conn, cookie, NULL);
+   return reply;
+}
+
+static xcb_randr_get_screen_resources_current_reply_t *
+_ecore_xcb_randr_13_get_resources(Ecore_X_Window win)
+{
+   xcb_randr_get_screen_resources_current_cookie_t cookie;
+   xcb_randr_get_screen_resources_current_reply_t *reply;
+
+   cookie = 
+     xcb_randr_get_screen_resources_current_unchecked(_ecore_xcb_conn, win);
+   reply = 
+     xcb_randr_get_screen_resources_current_reply(_ecore_xcb_conn, 
+                                                  cookie, NULL);
+   return reply;
+}
+
+static xcb_timestamp_t 
+_ecore_xcb_randr_12_get_resource_timestamp(Ecore_X_Window win) 
+{
+   xcb_timestamp_t stamp = 0;
+   xcb_randr_get_screen_resources_reply_t *reply;
+
+   reply = _ecore_xcb_randr_12_get_resources(win);
+   stamp = reply->config_timestamp;
+   free(reply);
+   return stamp;
+}
+
+static xcb_timestamp_t 
+_ecore_xcb_randr_13_get_resource_timestamp(Ecore_X_Window win) 
+{
+   xcb_timestamp_t stamp = 0;
+   xcb_randr_get_screen_resources_current_reply_t *reply;
+
+   reply = _ecore_xcb_randr_13_get_resources(win);
+   stamp = reply->config_timestamp;
+   free(reply);
+   return stamp;
 }
