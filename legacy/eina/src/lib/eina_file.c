@@ -494,6 +494,89 @@ _eina_file_timestamp_compare(Eina_File *f, struct stat *st)
    return EINA_TRUE;
 }
 
+static void
+slprintf(char *str, size_t size, const char *format, ...)
+{
+   va_list ap;
+
+   va_start(ap, format);
+
+   vsnprintf(str, size, format, ap);
+   str[size - 1] = 0;
+
+   va_end(ap);
+}
+
+static char*
+_eina_file_escape(const char* path, int* length)
+{
+   char *result = strdup(path ? path : "");
+   char *p = result;
+   char *q = result;
+   int len;
+
+   if (!result)
+     return NULL;
+
+   if (length) len = *length;
+   else len = strlen(result);
+
+   while ((p = strchr(p, '/')))
+     {
+	// remove double `/'
+	if (p[1] == '/')
+	  {
+	     memmove(p, p + 1, --len - (p - result));
+	     result[len] = '\0';
+	  }
+	else
+	  if (p[1] == '.'
+	      && p[2] == '.')
+	    {
+	       // remove `/../'
+	       if (p[3] == '/')
+		 {
+		    char tmp;
+
+		    len -= p + 3 - q;
+		    memmove(q, p + 3, len - (q - result));
+		    result[len] = '\0';
+		    p = q;
+
+		    /* Update q correctly. */
+		    tmp = *p;
+		    *p = '\0';
+		    q = strrchr(result, '/');
+		    if (!q) q = result;
+		    *p = tmp;
+		 }
+	       else
+		 // remove '/..$'
+		 if (p[3] == '\0')
+		   {
+		      len -= p + 2 - q;
+		      result[len] = '\0';
+		      q = p;
+		      ++p;
+		   }
+		 else
+		   {
+		      q = p;
+		      ++p;
+		   }
+	    }
+	  else
+	    {
+	       q = p;
+	       ++p;
+	    }
+     }
+
+   if (length)
+     *length = len;
+   return result;
+}
+
 Eina_Bool
 eina_file_init(void)
 {
@@ -553,6 +636,35 @@ eina_file_shutdown(void)
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
+
+EAPI char *
+eina_file_path_sanitize(const char *path)
+{
+   char *result = NULL;
+   int len;
+
+   if (!path) return NULL;
+
+   len = strlen(path);
+
+   if (*path != '/')
+     {
+        char cwd[PATH_MAX];
+        char *tmp = NULL;
+
+        tmp = getcwd(cwd, PATH_MAX);
+        if (!tmp) return NULL;
+
+        len += strlen(cwd) + 2;
+        tmp = alloca(sizeof (char) * len);
+
+        slprintf(tmp, len, "%s/%s", cwd, path);
+
+        result = tmp;
+     }
+
+   return _eina_file_escape(result ? result : path, &len);
+}
 
 EAPI Eina_Bool
 eina_file_dir_list(const char *dir,
@@ -764,31 +876,30 @@ eina_file_stat_ls(const char *dir)
 }
 
 EAPI Eina_File *
-eina_file_open(const char *filename, Eina_Bool shared)
+eina_file_open(const char *path, Eina_Bool shared)
 {
    Eina_File *file;
    Eina_File *n;
+   char *filename;
    struct stat file_stat;
-   int fd;
+   int fd = -1;
    int flags;
 
-   EINA_SAFETY_ON_NULL_RETURN_VAL(filename, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(path, NULL);
 
-   /*
-     FIXME: always open absolute path
-     (need to fix filename according to current directory)
-   */
+   filename = eina_file_path_sanitize(path);
+   if (!filename) return NULL;
 
    if (shared)
 #ifdef HAVE_SHMOPEN
      fd = shm_open(filename, O_RDONLY, S_IRWXU | S_IRWXG | S_IRWXO);
 #else
-     return NULL;
+     goto on_error;
 #endif
    else
      fd = open(filename, O_RDONLY, S_IRWXU | S_IRWXG | S_IRWXO);
 
-   if (fd < 0) return NULL;
+   if (fd < 0) goto on_error;
 
 #ifdef HAVE_EXECVP
    flags = fcntl(fd, F_GETFD);
@@ -853,10 +964,13 @@ eina_file_open(const char *filename, Eina_Bool shared)
 
    eina_lock_release(&_eina_file_lock_cache);
 
+   free(filename);
+
    return n;
 
  on_error:
-   close(fd);
+   free(filename);
+   if (fd >= 0) close(fd);
    return NULL;
 }
 
