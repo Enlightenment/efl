@@ -641,6 +641,32 @@ _signal_emit_hook(Evas_Object *obj,
 }
 
 static void
+_signal_callback_add_hook(Evas_Object *obj,
+                          const char  *emission,
+                          const char  *source,
+                          Edje_Signal_Cb func_cb,
+                          void *data)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   edje_object_signal_callback_add(elm_smart_scroller_edje_object_get(wd->scr),
+                                   emission, source, func_cb, data);
+}
+
+static void
+_signal_callback_del_hook(Evas_Object *obj,
+                          const char  *emission,
+                          const char  *source,
+                          Edje_Signal_Cb func_cb,
+                          void *data)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   edje_object_signal_callback_del_full(elm_smart_scroller_edje_object_get(wd->scr),
+                                        emission, source, func_cb, data);
+}
+
+static void
 _mouse_move(void        *data,
             Evas *evas   __UNUSED__,
             Evas_Object *obj,
@@ -1952,6 +1978,8 @@ elm_gengrid_add(Evas_Object *parent)
    elm_widget_theme_hook_set(obj, _theme_hook);
    elm_widget_signal_emit_hook_set(obj, _signal_emit_hook);
    elm_widget_can_focus_set(obj, EINA_TRUE);
+   elm_widget_signal_callback_add_hook_set(obj, _signal_callback_add_hook);
+   elm_widget_signal_callback_del_hook_set(obj, _signal_callback_del_hook);
    elm_widget_event_hook_set(obj, _event_hook);
 
    wd->scr = elm_smart_scroller_add(e);
