@@ -2431,6 +2431,8 @@ _edje_entry_cursor_geometry_get(Edje_Real_Part *rp, Evas_Coord *cx, Evas_Coord *
    evas_object_geometry_get(rp->object, &x, &y, &w, &h);
    evas_textblock_cursor_geometry_get(en->cursor, &xx, &yy, &ww, &hh, NULL, cur_type);
    if (ww < 1) ww = 1;
+   if (rp->part->cursor_mode == EDJE_ENTRY_CURSOR_MODE_BEFORE)
+     edje_object_size_min_restricted_calc(en->cursor_fg, &ww, NULL, ww, 0);
    if (hh < 1) hh = 1;
    if (cx) *cx = x + xx;
    if (cy) *cy = y + yy;
