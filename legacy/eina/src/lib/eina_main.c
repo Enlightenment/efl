@@ -66,6 +66,7 @@
 #include "eina_magic.h"
 #include "eina_rectangle.h"
 #include "eina_safety_checks.h"
+#include "eina_inlist.h"
 
 /*============================================================================*
 *                                  Local                                     *
@@ -111,7 +112,7 @@ static pid_t _eina_pid;
 static int _mt_enabled = 0;
 #endif
 
-#ifdef EINA_HAVE_DEBUG_THREADS
+#ifdef EFL_HAVE_THREADS
 EAPI int _eina_threads_debug = 0;
 EAPI pthread_mutex_t _eina_tracking_lock;
 EAPI Eina_Inlist *_eina_tracking = NULL;
