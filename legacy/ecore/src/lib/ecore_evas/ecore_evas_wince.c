@@ -52,7 +52,8 @@ _ecore_evas_wince_render(Ecore_Evas *ee)
    EINA_LIST_FOREACH(ee->sub_ecore_evas, ll, ee2)
      {
         if (ee2->func.fn_pre_render) ee2->func.fn_pre_render(ee2);
-        rend |= _ecore_evas_buffer_render(ee2);
+        if (ee2->engine.func->fn_render)
+          rend |= ee2->engine.func->fn_render(ee2);
         if (ee2->func.fn_post_render) ee2->func.fn_post_render(ee2);
      }
 
