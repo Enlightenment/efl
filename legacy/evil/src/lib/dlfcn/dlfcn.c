@@ -9,7 +9,11 @@
 #endif /* __MINGW32CE__ || _MSC_VER */
 
 #include <windows.h>
-#include <psapi.h> /*  EnumProcessModules(Ex) */
+#ifdef _WIN32_WCE
+# include <tlhelp32.h> /* CreateToolhelp32Snapshot */
+#else
+# include <psapi.h> /*  EnumProcessModules(Ex) */
+#endif
 
 #include "../Evil.h"
 
@@ -131,6 +135,26 @@ dlsym(void *handle, const char *symbol)
 
    if (handle == RTLD_DEFAULT)
      {
+#ifdef _WIN32_WCE
+        HANDLE snapshot;
+        MODULEENTRY32 module;
+
+        snapshot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS |
+                                            TH32CS_SNAPMODULE |
+                                            TH32CS_GETALLMODS,
+                                            0);
+        if (!snapshot)
+          return NULL;
+
+        module.dwSize = sizeof(module);
+        if (Module32First(snapshot, &module))
+          do {
+            fp = GetProcAddress(module.hModule, new_symbol);
+            if (fp) break;
+          } while (Module32Next(snapshot, &module));
+
+        CloseToolhelp32Snapshot(snapshot);
+#else
         HMODULE modules[1024];
         DWORD needed;
         DWORD i;
@@ -145,6 +169,7 @@ dlsym(void *handle, const char *symbol)
             fp = GetProcAddress(modules[i], new_symbol);
             if (fp) break;
           }
+#endif
      }
    else
      fp = GetProcAddress(handle, new_symbol);
