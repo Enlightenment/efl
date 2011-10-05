@@ -143,5 +143,22 @@ shader/filter_sepia_bgra_nomul.shd \
 shader/filter_blur.shd \
 shader/filter_blur_nomul.shd \
 shader/filter_blur_bgra.shd \
-shader/filter_blur_bgra_nomul.shd
+shader/filter_blur_bgra_nomul.shd \
+shader/nv12_frag.h \
+shader/nv12_frag.shd \
+shader/nv12_nomul_frag.h \
+shader/nv12_nomul_frag.shd \
+shader/nv12_nomul_vert.h \
+shader/nv12_nomul_vert.shd \
+shader/nv12_vert.h \
+shader/nv12_vert.shd \
+shader/yuy2_frag.h \
+shader/yuy2_frag.shd \
+shader/yuy2_nomul_frag.h \
+shader/yuy2_nomul_frag.shd \
+shader/yuy2_nomul_vert.h \
+shader/yuy2_nomul_vert.shd \
+shader/yuy2_vert.h \
+shader/yuy2_vert.shd
+
 

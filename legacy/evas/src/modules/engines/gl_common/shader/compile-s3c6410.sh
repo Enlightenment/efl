@@ -40,4 +40,8 @@ compile yuv
 compile yuv_nomul
 compile tex
 compile tex_nomul
+compile nv12
+compile nv12_nomul
+compile yuy2
+compile yuy2_nomul
 ## FIXME: compile filter_*
