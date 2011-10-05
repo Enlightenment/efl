@@ -7710,7 +7710,7 @@ evas_textblock_cursor_geometry_get(const Evas_Textblock_Cursor *cur, Evas_Coord 
                    dir_cur, &x, &y, &w, &h);
 #ifdef BIDI_SUPPORT
              Eina_Bool is_rtl = EINA_FALSE;
-             if (dir_cur->node->par->is_bidi)
+             if (dir_cur->node && dir_cur->node->par->is_bidi)
                {
                   Evas_Object_Textblock_Line *ln;
                   Evas_Object_Textblock_Item *it;
