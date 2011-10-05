@@ -32,9 +32,9 @@ EAPI int evil_inet_pton(int af, const char *src, void *dst);
 
 #define inet_pton(x,y,z) evil_inet_pton(x,y,z)
 
-EAPI const char *evil_inet_ntop(int af, const char *src, void *dst);
+EAPI const char *evil_inet_ntop(int af, const char *src, void *dst, size_t size);
 
-#define inet_ntop(x,y,z) evil_inet_ntop(x,y,z)
+#define inet_ntop(x,y,z,s) evil_inet_ntop(x,y,z,s)
 
 
 

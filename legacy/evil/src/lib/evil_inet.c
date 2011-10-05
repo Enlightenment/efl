@@ -624,20 +624,9 @@ ares_inet_ntop(int af, const void *src, char *dst, size_t size)
   /* NOTREACHED */
 }
 
-const char *evil_inet_ntop(int af, const char *src, void *dst)
+const char *evil_inet_ntop(int af, const char *src, void *dst, size_t size)
 {
   const char *result;
-  size_t size;
-
-  if (af == AF_INET)
-    size = sizeof(struct in_addr);
-  else if (af == AF_INET6)
-    size = sizeof(struct ares_in6_addr);
-  else
-  {
-    SET_ERRNO(EAFNOSUPPORT);
-    return NULL;
-  }
   result = ares_inet_ntop(af, src, dst, size);
   if ((result == NULL) && (ERRNO == ENOSPC))
     return NULL;
