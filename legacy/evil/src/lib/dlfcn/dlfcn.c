@@ -150,7 +150,7 @@ dlsym(void *handle, const char *symbol)
      fp = GetProcAddress(handle, new_symbol);
 
 #ifdef UNICODE
-   free(new_symbol);
+   free((void *)new_symbol);
 #endif /* UNICODE */
 
    if (!fp)
