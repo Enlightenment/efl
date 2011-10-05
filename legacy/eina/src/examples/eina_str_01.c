@@ -8,6 +8,7 @@ int main(int argc, char **argv)
 {
    char *names = "Calvin;Leoben;D'anna;Simon;Doral;Six;Daniel;Sharon";
    char *str;
+   char *tmp;
    char *prologue;
    char *part1 = "The Cylons were created by man. They evolved. They rebelled.";
    char *part2 = "There are many copies. And they have a plan.";
@@ -20,8 +21,11 @@ int main(int argc, char **argv)
    for (i = 0; arr[i]; i++)
      printf("%s\n", arr[i]);
 
+   free(arr[0]);
+   free(arr);
+   
    str = malloc(sizeof(char) * 4);
-   sprintf(str, "%s", "bsg");
+   strcpy(str, "bsd");
 
    eina_str_toupper((char **)&str);
    printf("%s\n", str);
@@ -35,7 +39,9 @@ int main(int argc, char **argv)
    if (eina_str_has_extension(names, "sharon"))
       printf("Has extension 'sharon'\n");
 
-   printf("%s\n", eina_str_escape("They'll start going ripe on us pretty soon."));
+   tmp = eina_str_escape("They'll start going ripe on us pretty soon.");
+   printf("%s\n", tmp);
+   free(tmp);
 
    prologue = malloc(sizeof(char) * 106);
    eina_str_join_len(prologue, 106, ' ', part1, strlen(part1), part2, strlen(part2));
@@ -51,7 +57,8 @@ int main(int argc, char **argv)
    sprintf(str, "%s", "cylons+");
    eina_strlcat(str, "humans", 14);
    printf("%s\n", str);
-
+   free(str);
+   
    eina_shutdown();
 
    return 0;
