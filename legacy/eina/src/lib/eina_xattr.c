@@ -100,12 +100,12 @@ _eina_xattr_ls_iterator_free(Eina_Xattr_Iterator *it)
 EAPI Eina_Iterator *
 eina_xattr_ls(const char *file)
 {
+#ifdef HAVE_XATTR
    Eina_Xattr_Iterator *it;
    ssize_t length;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(file, NULL);
 
-#ifdef HAVE_XATTR
    length = listxattr(file, NULL, 0);
    if (length <= 0) return NULL;
 
@@ -129,12 +129,14 @@ eina_xattr_ls(const char *file)
    return &it->iterator;
 #else
    return NULL;
+   (void)file;
 #endif
 }
 
 EAPI void *
 eina_xattr_get(const char *file, const char *attribute, ssize_t *size)
 {
+#ifdef HAVE_XATTR
    void *ret = NULL;
    ssize_t tmp;
 
@@ -142,7 +144,6 @@ eina_xattr_get(const char *file, const char *attribute, ssize_t *size)
    EINA_SAFETY_ON_NULL_RETURN_VAL(attribute, NULL);
    EINA_SAFETY_ON_TRUE_RETURN_VAL(!size, NULL);
 
-#ifdef HAVE_XATTR
    *size = getxattr(file, attribute, NULL, 0);
    /* Size should be less than 2MB (already huge in my opinion) */
    if (!(*size > 0 && *size < 2 * 1024 * 1024))
@@ -159,14 +160,21 @@ eina_xattr_get(const char *file, const char *attribute, ssize_t *size)
 
  on_error:
    free(ret);
-#endif
    *size = 0;
    return NULL;
+#else
+   EINA_SAFETY_ON_TRUE_RETURN_VAL(!size, NULL);
+   *size = 0;
+   return NULL;
+   (void)file;
+   (void)attribute;
+#endif
 }
 
 EAPI Eina_Bool
 eina_xattr_set(const char *file, const char *attribute, const void *data, ssize_t length, Eina_Xattr_Flags flags)
 {
+#ifdef HAVE_XATTR
    int iflags;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(file, EINA_FALSE);
@@ -174,7 +182,6 @@ eina_xattr_set(const char *file, const char *attribute, const void *data, ssize_
    EINA_SAFETY_ON_NULL_RETURN_VAL(data, EINA_FALSE);
    EINA_SAFETY_ON_TRUE_RETURN_VAL(!(length > 0 && length < 2 * 1024 * 1024), EINA_FALSE);
 
-#ifdef HAVE_XATTR
    switch (flags)
      {
      case EINA_XATTR_INSERT: iflags = 0; break;
@@ -189,6 +196,11 @@ eina_xattr_set(const char *file, const char *attribute, const void *data, ssize_
    return EINA_TRUE;
 #else
    return EINA_FALSE;
+   (void)file;
+   (void)attribute;
+   (void)data;
+   (void)length;
+   (void)flags;
 #endif
 }
 

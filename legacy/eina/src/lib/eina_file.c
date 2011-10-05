@@ -945,6 +945,13 @@ eina_file_open(const char *path, Eina_Bool shared)
 	n->global_refcount = 0;
         n->length = file_stat.st_size;
         n->mtime = file_stat.st_mtime;
+#ifdef _STAT_VER_LINUX
+# if (defined __USE_MISC && defined st_mtime)
+        n->mtime_nsec = (unsigned long int)file_stat.st_mtim.tv_nsec;
+# else
+        n->mtime_nsec = (unsigned long int)file_stat.st_mtimensec;
+# endif
+#endif
         n->inode = file_stat.st_ino;
         n->refcount = 0;
         n->fd = fd;
