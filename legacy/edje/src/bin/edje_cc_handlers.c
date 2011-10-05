@@ -2023,7 +2023,6 @@ st_collections_group_inherit(void)
              es = mem_alloc(SZ(Edje_String));
              es = (Edje_String *)eina_hash_find(pc2->data, key);
              eina_hash_direct_add(pc->data, key, es);
-             free(key);
           }
      }
 
@@ -4206,19 +4205,19 @@ st_collections_group_parts_part_description_state(void)
                                       sizeof (Edje_Part_Description_Common*) * ep->other.desc_count);
              current_desc = ep->default_desc;
           }
-     }
-   if (ep->other.desc_count)
-     {
-        unsigned int i;
-        for (i = 0; i < ep->other.desc_count - 1; ++i)
+        else if (ep->other.desc_count)
           {
-             if (!strcmp(s, ep->other.desc[i]->state.name) && ed->state.value == ep->other.desc[i]->state.value)
+             unsigned int i;
+             for (i = 0; i < ep->other.desc_count - 1; ++i)
                {
-                  free(ed);
-                  ep->other.desc_count--;
-                  ep->other.desc = realloc(ep->other.desc,
-                                           sizeof (Edje_Part_Description_Common*) * ep->other.desc_count);
-                  current_desc = ep->other.desc[i];
+                  if (!strcmp(s, ep->other.desc[i]->state.name) && ed->state.value == ep->other.desc[i]->state.value)
+                    {
+                       free(ed);
+                       ep->other.desc_count--;
+                       ep->other.desc = realloc(ep->other.desc,
+                                                sizeof (Edje_Part_Description_Common*) * ep->other.desc_count);
+                       current_desc = ep->other.desc[i];
+                    }
                }
           }
      }
