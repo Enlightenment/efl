@@ -40,7 +40,7 @@ my_thread_run(void *arg)
         // and sleep and loop
         usleep(1000);
         t += 0.02;
-        // in case someone has asked us to cancel - then cacnel this loop
+        // in case someone has asked us to cancel - then cancel this loop
         // co-operatively (cancelling is co-operative)
         pthread_mutex_lock(&th_lock);
         do_exit = th_exit;

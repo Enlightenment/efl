@@ -33,7 +33,7 @@ th_do(void *data, Ecore_Thread *th)
         // and sleep and loop
         usleep(1000);
         t += 0.02;
-        // in case someone has asked us to cancel - then cacnel this loop
+        // in case someone has asked us to cancel - then cancel this loop
         // co-operatively (cancelling is co-operative)
         if (ecore_thread_check(th)) break;
      }
