@@ -8,6 +8,7 @@
 #include "Emotion.h"
 
 int _emotion_gstreamer_log_domain = -1;
+Eina_Bool debug_fps = EINA_FALSE;
 
 /* Callbacks to get the eos */
 static void _for_each_tag    (GstTagList const* list, gchar const* tag, void *data);
@@ -1278,6 +1279,8 @@ module_open(Evas_Object           *obj,
      return EINA_FALSE;
 
    ecore_event_handler_add(ECORE_X_EVENT_WINDOW_DESTROY, _ecore_event_x_destroy, NULL);
+
+   if (getenv("EMOTION_FPS_DEBUG")) debug_fps = EINA_TRUE;
 
    eina_threads_init();
 

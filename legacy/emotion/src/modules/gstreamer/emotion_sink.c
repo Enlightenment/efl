@@ -649,6 +649,31 @@ evas_video_sink_render(GstBaseSink* bsink, GstBuffer* buffer)
 }
 
 static void
+_update_emotion_fps(Emotion_Gstreamer_Video *ev)
+{
+   double tim;
+
+   if (!debug_fps) return ;
+
+   tim = ecore_time_get();
+   ev->frames++;
+
+   if (ev->rlapse == 0.0)
+     {
+        ev->rlapse = tim;
+        ev->flapse = ev->frames;
+     }
+   else if ((tim - ev->rlapse) >= 0.5)
+     {
+        printf("FRAME: %i, FPS: %3.1f\n",
+               ev->frames,
+               (ev->frames - ev->flapse) / (tim - ev->rlapse));
+        ev->rlapse = tim;
+        ev->flapse = ev->frames;
+     }
+}
+
+static void
 evas_video_sink_samsung_main_render(void *data)
 {
    Emotion_Gstreamer_Buffer *send;
@@ -718,6 +743,8 @@ evas_video_sink_samsung_main_render(void *data)
    evas_object_image_colorspace_set(priv->o, priv->eformat);
    evas_object_image_size_set(priv->o, stride, elevation);
    evas_object_image_fill_set(priv->o, 0, 0, send->ev->fill.width, send->ev->fill.height);
+
+   _update_emotion_fps(send->ev);
 
    evas_data = evas_object_image_data_get(priv->o, 1);
 

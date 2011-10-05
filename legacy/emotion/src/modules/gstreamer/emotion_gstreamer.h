@@ -125,6 +125,11 @@ struct _Emotion_Gstreamer_Video
    int               in;
    int               out;
 
+   int frames;
+   int flapse;
+   double rtime;
+   double rlapse;
+
    struct
    {
       int            width;
@@ -201,6 +206,7 @@ struct _Emotion_Gstreamer_Message
    GstMessage *msg;
 };
 
+extern Eina_Bool debug_fps;
 extern int _emotion_gstreamer_log_domain;
 #define DBG(...) EINA_LOG_DOM_DBG(_emotion_gstreamer_log_domain, __VA_ARGS__)
 #define INF(...) EINA_LOG_DOM_INFO(_emotion_gstreamer_log_domain, __VA_ARGS__)
