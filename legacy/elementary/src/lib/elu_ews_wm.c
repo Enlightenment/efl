@@ -328,6 +328,7 @@ _elm_ews_wm_add_cb(void *data __UNUSED__, int type __UNUSED__, void *event_info)
    x = (sw - w) / 2;
    y = (sh - h) / 2;
    ecore_evas_move(ee, x, y);
+   ecore_evas_focus_set(ee, EINA_TRUE);
 
    return EINA_TRUE;
 }
