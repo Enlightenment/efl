@@ -29,10 +29,6 @@
 #include <stdio.h>
 #include <string.h>
 
-#ifdef HAVE_EVIL
-# include <Evil.h>
-#endif
-
 #include "Embryo.h"
 #include "embryo_private.h"
 
@@ -290,7 +286,7 @@ embryo_program_load(const char *file)
    if (!f) return NULL;
    fseek(f, 0, SEEK_END);
    program_size = ftell(f);
-   rewind(f);
+   fseek(f, 0L, SEEK_SET);
    if (program_size < (int)sizeof(Embryo_Header))
      {
 	fclose(f);
@@ -301,7 +297,7 @@ embryo_program_load(const char *file)
 	fclose(f);
 	return NULL;
      }
-   rewind(f);
+   fseek(f, 0L, SEEK_SET);
 #ifdef WORDS_BIGENDIAN
    embryo_swap_32((unsigned int *)(&hdr.size));
 #endif

@@ -10,6 +10,7 @@ AM_CPPFLAGS = \
 -DPACKAGE_BIN_DIR=\"$(bindir)\" \
 -DPACKAGE_LIB_DIR=\"$(libdir)\" \
 -DPACKAGE_DATA_DIR=\"$(datadir)/$(PACKAGE)\" \
+@EVIL_CFLAGS@ \
 @EMBRYO_CPPFLAGS@ \
 @EFL_EMBRYO_BUILD@
 
@@ -28,7 +29,7 @@ embryo_str.c \
 embryo_time.c
 
 libembryo_la_CFLAGS = @EMBRYO_CFLAGS@
-libembryo_la_LIBADD = -lm
+libembryo_la_LIBADD = @EVIL_LIBS@ -lm
 libembryo_la_LDFLAGS = -no-undefined @lt_enable_auto_import@ -version-info @version_info@ @release_info@
 
 EXTRA_DIST = embryo_private.h

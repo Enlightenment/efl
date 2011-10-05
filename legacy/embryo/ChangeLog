@@ -9,3 +9,8 @@
 2011-07-16  Vincent Torri
 
 	* delete temporary files on Windows
+
+2011-10-05  Vincent Torri
+
+	* use fseek() instead of rewind() as the latter does not exist on
+	Windows CE and fix compilation with Evil.
