@@ -1,3 +1,11 @@
+2011-10-05  Vincent Torri  <doursse at users dot sf dot net>
+
+	* src/lib/evil_inet.c:
+	* src/lib/evil_inet.h:
+	* AUTHORS:
+	add inet_ntop() function. Implementation from c-ares library.
+	See AUTHORS.
+
 2011-09-14  Vincent Torri  <doursse at users dot sf dot net>
 
 	* src/lib/dlfcn/dlfcn.c:
@@ -13,7 +21,7 @@
 	* src/lib/Evil.h:
 	* src/lib/Makefile.am:
 	* AUTHORS:
-	add inet_pton() function. Implementation from curl library.
+	add inet_pton() function. Implementation from c-ares library.
 	See AUTHORS.
 
 2011-02-27  Vincent Torri  <doursse at users dot sf dot net>

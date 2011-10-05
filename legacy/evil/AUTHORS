@@ -3,5 +3,5 @@ Main Authors:
      Tor Lillqvist <tml at iki dot fi> (pipe function)
      Lance Fetters
      Vincent Richomme <vrichomme at smartmobili dot com>
-     Paul Vixie (ISC) (inet_pton function)
-     Daniel Stenberg (inet_pton function)
+     Paul Vixie (ISC) (inet_pton and inet_ntop functions)
+     Daniel Stenberg (inet_pton and inet_ntop functions)
