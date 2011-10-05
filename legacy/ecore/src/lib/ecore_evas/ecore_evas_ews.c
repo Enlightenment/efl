@@ -440,13 +440,16 @@ static void
 _ecore_evas_ews_focus_set(Ecore_Evas *ee, int val)
 {
    evas_object_focus_set(ee->engine.ews.image, val);
+   ee->prop.focused = val;
    if (val)
      {
+        evas_focus_in(ee->evas);
         if (ee->func.fn_focus_in) ee->func.fn_focus_in(ee);
         _ecore_evas_ews_event(ee, ECORE_EVAS_EWS_EVENT_FOCUS);
      }
    else
      {
+        evas_focus_out(ee->evas);
         if (ee->func.fn_focus_out) ee->func.fn_focus_out(ee);
         _ecore_evas_ews_event(ee, ECORE_EVAS_EWS_EVENT_UNFOCUS);
      }
