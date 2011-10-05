@@ -202,12 +202,22 @@ enum _Emotion_Vis
   EMOTION_VIS_LAST /* sentinel */
 };
 
+/**
+ * @enum Emotion_Suspend
+ *
+ * Used for emotion pipeline ressource management.
+ *
+ * @see emotion_object_suspend_set()
+ * @see emotion_object_suspend_get()
+ *
+ * @ingroup Emotion_Ressource
+ */
 typedef enum
 {
-  EMOTION_WAKEUP,
-  EMOTION_SLEEP,
-  EMOTION_DEEP_SLEEP,
-  EMOTION_HIBERNATE
+  EMOTION_WAKEUP, /**< pipeline is up and running */
+  EMOTION_SLEEP, /**< turn off hardware ressource usage like overlay */
+  EMOTION_DEEP_SLEEP, /**< destroy the pipeline, but keep full resolution pixels output around */
+  EMOTION_HIBERNATE /**< destroy the pipeline, and keep half resolution or object resolution if lower */
 } Emotion_Suspend;
 
 enum _Emotion_Aspect
@@ -307,6 +317,10 @@ extern "C" {
 
 /**
  * @defgroup Emotion_Info Miscellaneous information retrieval functions
+ */
+
+/**
+ * @defgroup Emotion_Ressource Video ressource management
  */
 
 EAPI Eina_Bool emotion_init(void);
@@ -931,6 +945,17 @@ EAPI void         emotion_object_video_mute_set        (Evas_Object *obj, Eina_B
  * @ingroup Emotion_Video
  */
 EAPI Eina_Bool    emotion_object_video_mute_get        (const Evas_Object *obj);
+
+/**
+ * @brief Get the number of available video channel
+ *
+ * @param obj The object which we are retrieving the channel count from
+ * @return the number of available channel.
+ *
+ * @see emotion_object_video_channel_name_get()
+ *
+ * @ingroup Emotion_Video
+ */
 EAPI int          emotion_object_video_channel_count   (const Evas_Object *obj);
 EAPI const char  *emotion_object_video_channel_name_get(const Evas_Object *obj, int channel);
 EAPI void         emotion_object_video_channel_set     (Evas_Object *obj, int channel);
@@ -1041,26 +1066,176 @@ EAPI Emotion_Vis  emotion_object_vis_get               (const Evas_Object *obj);
  */
 EAPI Eina_Bool    emotion_object_vis_supported         (const Evas_Object *obj, Emotion_Vis visualization);
 
+/**
+ * @brief Raise priority of an object so it will have a priviledged access to hardware ressource.
+ *
+ * @param obj The object which the query is being ran on.
+ * @param priority EINA_TRUE means give me a priority access to the hardware ressource.
+ *
+ * Hardware have a few dedicated hardware pipeline that process the video at no cost for the CPU.
+ * Especially on SoC, you mostly have one (on mobile phone SoC) or two (on Set Top Box SoC) when
+ * Picture in Picture is needed. And most application just have a few video stream that really
+ * deserve high frame rate, hiogh quality output. That's why this call is for.
+ *
+ * Please note that if Emotion can't acquire a priviledged hardware ressource, it will fallback
+ * to the no-priority path. This work on the first asking first get basis system.
+ *
+ * @see emotion_object_priority_get()
+ *
+ * @ingroup Emotion_Ressource
+ */
 EAPI void         emotion_object_priority_set(Evas_Object *obj, Eina_Bool priority);
+
+/**
+ * @brief Get the actual priority of an object.
+ *
+ * @param obj The object which the query is being ran on.
+ * @return EINA_TRUE if the object has a priority access to the hardware.
+ *
+ * This actually return the priority status of an object. If it failed to have a priviledged
+ * access to the hardware, it will return EINA_FALSE.
+ *
+ * @see emotion_object_priority_get()
+ *
+ * @ingroup Emotion_Ressource
+ */
 EAPI Eina_Bool    emotion_object_priority_get(const Evas_Object *obj);
 
-EAPI void         emotion_object_last_position_load    (Evas_Object *obj);
-EAPI void         emotion_object_last_position_save    (Evas_Object *obj);
+/**
+ * @brief Change the state of an object pipeline.
+ *
+ * @param obj The object which the query is being ran on.
+ * @param state The new state for the object.
+ *
+ * Changing the state of a pipeline should help preserve the battery of an embedded device.
+ * But it will only work sanely if the pipeline is not playing at the time you change its
+ * state. Depending on the engine all state may be not implemented.
+ *
+ * @see Emotion_Suspend
+ * @see emotion_object_suspend_get()
+ *
+ * @ingroup Emotion_Ressource
+ */
+EAPI void         emotion_object_suspend_set(Evas_Object *obj, Emotion_Suspend state);
 
-EAPI void         emotion_object_suspend_set           (Evas_Object *obj, Emotion_Suspend state);
-EAPI Emotion_Suspend emotion_object_suspend_get        (Evas_Object *obj);
+/**
+ * @brief Get the current state of the pipeline
+ *
+ * @param obj The object which the query is being ran on.
+ * @return the current state of the pipeline.
+ *
+ * @see Emotion_Suspend
+ * @see emotion_object_suspend_set()
+ *
+ * @ingroup Emotion_Ressource
+ */
+EAPI Emotion_Suspend emotion_object_suspend_get(Evas_Object *obj);
 
+/**
+ * @brief Load the last known position if available
+ *
+ * @param obj The object which the query is being ran on.
+ *
+ * By using Xattr, Emotion is able, if the system permitt it, to store and retrieve
+ * the latest position. It should trigger some smart callback to let the application
+ * know when it succeed or fail. Every operation is fully asynchronous and not
+ * linked to the actual engine used to play the vide.
+ *
+ * @see emotion_object_last_position_save()
+ *
+ * @ingroup Emotion_Info
+ */
+EAPI void         emotion_object_last_position_load(Evas_Object *obj);
+
+/**
+ * @brief Save the lastest position if possible
+ *
+ * @param obj The object which the query is being ran on.
+ *
+ * By using Xattr, Emotion is able, if the system permitt it, to store and retrieve
+ * the latest position. It should trigger some smart callback to let the application
+ * know when it succeed or fail. Every operation is fully asynchronous and not
+ * linked to the actual engine used to play the vide.
+ *
+ * @see emotion_object_last_position_load()
+ *
+ * @ingroup Emotion_Info
+ */
+EAPI void         emotion_object_last_position_save(Evas_Object *obj);
+
+/**
+ * @brief Do we have a chance to play that file
+ *
+ * @param file A stringshared filename that we want to know if Emotion can play.
+ *
+ * This just actually look at the extention of the file, it doesn't check the mime-type
+ * nor if the file is actually sane. So this is just an hint for your application.
+ *
+ * @see emotion_object_extension_may_play_get()
+ */
 EAPI Eina_Bool    emotion_object_extension_may_play_fast_get(const char *file);
+
+/**
+ * @brief Do we have a chance to play that file
+ *
+ * @param file A filename that we want to know if Emotion can play.
+ *
+ * This just actually look at the extention of the file, it doesn't check the mime-type
+ * nor if the file is actually sane. So this is just an hint for your application.
+ *
+ * @see emotion_object_extension_may_play_fast_get()
+ */
 EAPI Eina_Bool    emotion_object_extension_may_play_get(const char *file);
 
+/**
+ * @brief Get the actual image object that contains the pixels of the video stream
+ *
+ * @param obj The object which the query is being ran on.
+ *
+ * This function is usefull when you want to get a direct access to the pixels.
+ *
+ * @see emotion_object_image_get()
+ */
 EAPI Evas_Object *emotion_object_image_get(const Evas_Object *obj);
 
-typedef struct _Emotion_Webcam Emotion_Webcam;
+/**
+ * @defgroup Emotion_Webcam
+ */
 
-extern int EMOTION_WEBCAM_UPDATE;
+typedef struct _Emotion_Webcam Emotion_Webcam; /**< Webcam description */
 
+extern int EMOTION_WEBCAM_UPDATE; /**< Ecore_Event triggered when a new webcam is plugged in */
+
+/**
+ * @brief Get a list of active and available webcam
+ *
+ * @return the list of available webcam at the time of the call.
+ *
+ * It will return the current live list of webcam. It is updated before
+ * triggering EMOTION_WEBCAM_UPDATE and should never be modified.
+ *
+ * @ingroup Emotion_Webcam
+ */
 EAPI const Eina_List *emotion_webcams_get(void);
+
+/**
+ * @brief Get the human understandable name of a Webcam
+ *
+ * @param ew The webcam to get the name from.
+ * @return the actual human readable name.
+ *
+ * @ingroup Emotion_Webcam
+ */
 EAPI const char      *emotion_webcam_name_get(const Emotion_Webcam *ew);
+
+/**
+ * @brief Get the uri of a Webcam that will be understood by emotion
+ *
+ * @param ew The webcam to get the uri from.
+ * @return the actual uri that emotion will later understood.
+ *
+ * @ingroup Emotion_Webcam
+ */
 EAPI const char      *emotion_webcam_device_get(const Emotion_Webcam *ew);
 
 /**
