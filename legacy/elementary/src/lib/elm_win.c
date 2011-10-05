@@ -1479,6 +1479,10 @@ elm_win_add(Evas_Object *parent, const char *name, Elm_Win_Type type)
           {
              win->ee = ecore_evas_buffer_new(1, 1);
           }
+        else if (ENGINE_COMPARE(ELM_EWS))
+          {
+             win->ee = ecore_evas_ews_new(0, 0, 1, 1);
+          }
         else if (!strncmp(_elm_config->engine, "shot:", 5))
           {
              win->ee = ecore_evas_buffer_new(1, 1);

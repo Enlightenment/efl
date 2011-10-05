@@ -570,6 +570,7 @@ elm_theme_flush(Elm_Theme *th)
    if (th->cache_data) eina_hash_free(th->cache_data);
    th->cache_data = eina_hash_string_superfast_new(EINA_FREE_CB(eina_stringshare_del));
    _elm_win_rescale(th, EINA_TRUE);
+   _elm_ews_wm_rescale(th, EINA_TRUE);
    if (th->referrers)
      {
         Eina_List *l;

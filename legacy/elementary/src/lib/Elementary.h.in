@@ -1889,6 +1889,7 @@ extern "C" {
     * @li "software_16_sdl"
     * @li "opengl_sdl"
     * @li "buffer"
+    * @li "ews"
     *
     * @{
     */
@@ -3518,6 +3519,7 @@ extern "C" {
     * (Windows CE rendering via GDI with 16bit software renderer)
     * @li "sdl-16", "software-16-sdl", "software_16_sdl" (Rendering to SDL
     * buffer with 16bit software renderer)
+    * @li "ews" (rendering to EWS - Ecore + Evas Single Process Windowing System)
     *
     * All engines use a simple string to select the engine to render, EXCEPT
     * the "shot" engine. This actually encodes the output of the virtual

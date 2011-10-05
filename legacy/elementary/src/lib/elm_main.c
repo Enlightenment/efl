@@ -79,6 +79,7 @@ _elm_rescale(void)
 {
    edje_scale_set(_elm_config->scale);
    _elm_win_rescale(NULL, EINA_FALSE);
+   _elm_ews_wm_rescale(NULL, EINA_FALSE);
 }
 
 static void *app_mainfunc = NULL;
@@ -425,6 +426,7 @@ elm_quicklaunch_sub_init(int    argc,
         ecore_imf_init();
         ecore_con_init();
         ecore_con_url_init();
+        _elm_ews_wm_init();
      }
    return _elm_sub_init_count;
 }
@@ -444,6 +446,7 @@ elm_quicklaunch_sub_shutdown(void)
      {
         _elm_win_shutdown();
         _elm_module_shutdown();
+        _elm_ews_wm_shutdown();
         ecore_con_url_shutdown();
         ecore_con_shutdown();
         ecore_imf_shutdown();
@@ -458,7 +461,8 @@ elm_quicklaunch_sub_shutdown(void)
             ENGINE_COMPARE(ELM_SOFTWARE_16_SDL) ||
             ENGINE_COMPARE(ELM_OPENGL_SDL) ||
             ENGINE_COMPARE(ELM_SOFTWARE_WIN32) ||
-            ENGINE_COMPARE(ELM_SOFTWARE_16_WINCE))
+            ENGINE_COMPARE(ELM_SOFTWARE_16_WINCE) ||
+            ENGINE_COMPARE(ELM_EWS))
 #undef ENGINE_COMPARE
           evas_cserve_disconnect();
         edje_shutdown();

@@ -31,6 +31,7 @@ const char *_elm_engines[] = {
    "software_16_sdl",
    "opengl_sdl",
    "buffer",
+   "ews",
    NULL
 };
 
@@ -1469,6 +1470,8 @@ _env_get(void)
           eina_stringshare_replace(&_elm_config->engine, ELM_BUFFER);
         else if ((!strncmp(s, "shot:", 5)))
           eina_stringshare_replace(&_elm_config->engine, s);
+        else if ((!strcasecmp(s, "ews")))
+          eina_stringshare_replace(&_elm_config->engine, ELM_EWS);
      }
 
    s = getenv("ELM_VSYNC");

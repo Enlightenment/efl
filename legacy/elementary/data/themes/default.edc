@@ -365,4 +365,6 @@ collections {
 #include "widgets/video.edc"
 #include "widgets/naviframe.edc"
 
+#include "ews.edc"
+
 }

@@ -60,6 +60,7 @@ widgets/win.edc \
 widgets/entry.edc \
 widgets/map.edc \
 widgets/scroller.edc \
+ews.edc \
 arrow_down.png \
 arrow_up.png \
 bar_shine.png \

@@ -80,6 +80,7 @@ extern const char *_elm_engines[];
 #define ELM_SOFTWARE_16_SDL   (_elm_engines[10])
 #define ELM_OPENGL_SDL        (_elm_engines[11])
 #define ELM_BUFFER            (_elm_engines[12])
+#define ELM_EWS               (_elm_engines[13])
 
 #define ELM_FONT_TOKEN_STYLE ":style="
 
@@ -166,6 +167,10 @@ struct _Elm_Module
    int        (*shutdown_func) (Elm_Module *m);
    int          references;
 };
+
+int                 _elm_ews_wm_init(void);
+void                _elm_ews_wm_shutdown(void);
+void                _elm_ews_wm_rescale(Elm_Theme *th, Eina_Bool use_theme);
 
 void                _elm_win_shutdown(void);
 void                _elm_win_rescale(Elm_Theme *th, Eina_Bool use_theme);
