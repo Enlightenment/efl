@@ -27,9 +27,9 @@ mandel(int *pix, int w, int h)
    coy = (double)(rand() % 100) / 100.0;
    cox /= (magnify * 3.0);
    r = rand() % 255; g = rand() % 255; b = rand() % 255;
-   for (hy = 0; hy < h; hy++) 
+   for (hy = 0; hy < h; hy++)
      {
-        for (hx = 0; hx < w; hx++) 
+        for (hx = 0; hx < w; hx++)
           {
              cx = (((float)hx) / ((float)w) - 0.5) / (magnify * 3.0);
              cy = (((float)hy) / ((float)h) - 0.5) / (magnify * 3.0);
@@ -73,7 +73,7 @@ th_do(void *data, Ecore_Thread *th)
 
 static void // thread job finished - collect results and put in img obj
 th_end(void *data, Ecore_Thread *th)
-{ 
+{
    struct info *inf = data;
 
    // copy data to object, free calculated data and info struc
@@ -85,9 +85,9 @@ th_end(void *data, Ecore_Thread *th)
 
 static void // if the thread is cancelled - free pix, keep obj tho
 th_cancel(void *data, Ecore_Thread *th)
-{ 
+{
    struct info *inf = data;
-   
+
    // just free pixel data and info struct
    free(inf->pix);
    free(inf);
@@ -121,28 +121,28 @@ elm_main(int argc, char **argv)
 {
    Evas_Object *o, *bg;
    int i;
-   
-   win = elm_win_add(NULL, "efl-thread-1", ELM_WIN_BASIC);
-   elm_win_title_set(win, "EFL Thread 1");
+
+   win = elm_win_add(NULL, "efl-thread-6", ELM_WIN_BASIC);
+   elm_win_title_set(win, "EFL Thread 6");
    evas_object_resize(win, 400, 400);
    evas_object_show(win);
-   
+
    bg = elm_bg_add(win);
    elm_win_resize_object_add(win, bg);
    evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_show(bg);
-   
+
    // queue up 64 mandel generation thread jobs
    for (i = 0; i < 64; i++)
      {
         struct info *inf;
-        
+
         // create ecore thread to do some threaded job inside the worker pool
         inf = malloc(sizeof(struct info));
         if (inf)
           {
              Evas_Object *o;
-             
+
              o = evas_object_image_filled_add(evas_object_evas_get(win));
              evas_object_image_size_set(o, 256, 256);
              evas_object_image_alpha_set(o, EINA_TRUE);
@@ -155,7 +155,7 @@ elm_main(int argc, char **argv)
              ecore_animator_add(anim, o);
           }
      }
-   
+
    elm_run();
    return 0;
 }
