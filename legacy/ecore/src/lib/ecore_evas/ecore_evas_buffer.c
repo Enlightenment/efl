@@ -2,6 +2,8 @@
 # include <config.h>
 #endif
 
+// NOTE: if you fix this, consider fixing ecore_evas_ews.c as it is similar!
+
 #include <Ecore.h>
 #include "ecore_private.h"
 #include <Ecore_Input.h>
@@ -137,6 +139,7 @@ _ecore_evas_buffer_render(Ecore_Evas *ee)
    return updates ? 1 : rend;
 }
 
+// NOTE: if you fix this, consider fixing ecore_evas_ews.c as it is similar!
 static void
 _ecore_evas_buffer_coord_translate(Ecore_Evas *ee, Evas_Coord *x, Evas_Coord *y)
 {
@@ -525,6 +528,7 @@ ecore_evas_buffer_new(int w, int h)
 EAPI Ecore_Evas *
 ecore_evas_buffer_allocfunc_new(int w, int h, void *(*alloc_func) (void *data, int size), void (*free_func) (void *data, void *pix), const void *data)
 {
+// NOTE: if you fix this, consider fixing ecore_evas_ews.c as it is similar!
 #ifdef BUILD_ECORE_EVAS_SOFTWARE_BUFFER
    Evas_Engine_Info_Buffer *einfo;
    Ecore_Evas *ee;
@@ -651,6 +655,7 @@ ecore_evas_object_ecore_evas_get(Evas_Object *obj)
 EAPI Evas_Object *
 ecore_evas_object_image_new(Ecore_Evas *ee_target)
 {
+// NOTE: if you fix this, consider fixing ecore_evas_ews.c as it is similar!
 #ifdef BUILD_ECORE_EVAS_SOFTWARE_BUFFER
    Evas_Object *o;
    Evas_Engine_Info_Buffer *einfo;

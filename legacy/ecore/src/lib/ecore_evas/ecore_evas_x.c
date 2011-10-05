@@ -236,8 +236,6 @@ _ecore_evas_x_render(Ecore_Evas *ee)
 {
    int rend = 0;
    Eina_List *updates = NULL;
-
-#ifdef BUILD_ECORE_EVAS_SOFTWARE_BUFFER
    Eina_List *ll;
    Ecore_Evas *ee2;
 
@@ -252,7 +250,6 @@ _ecore_evas_x_render(Ecore_Evas *ee)
         rend |= _ecore_evas_buffer_render(ee2);
         if (ee2->func.fn_post_render) ee2->func.fn_post_render(ee2);
      }
-#endif
 
    if (ee->func.fn_pre_render) ee->func.fn_pre_render(ee);
    updates = evas_render_updates(ee->evas);

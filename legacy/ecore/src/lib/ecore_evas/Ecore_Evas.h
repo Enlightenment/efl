@@ -79,6 +79,7 @@ extern "C" {
 #define HAVE_ECORE_EVAS_COCOA 1
 #define HAVE_ECORE_EVAS_SDL 1
 #define HAVE_ECORE_EVAS_WINCE 1
+#define HAVE_ECORE_EVAS_EWS 1
 
 typedef enum _Ecore_Evas_Engine_Type
 {
@@ -100,7 +101,8 @@ typedef enum _Ecore_Evas_Engine_Type
    ECORE_EVAS_ENGINE_SOFTWARE_16_X11,
    ECORE_EVAS_ENGINE_SOFTWARE_16_DDRAW,
    ECORE_EVAS_ENGINE_SOFTWARE_16_WINCE,
-   ECORE_EVAS_ENGINE_OPENGL_SDL
+   ECORE_EVAS_ENGINE_OPENGL_SDL,
+   ECORE_EVAS_ENGINE_EWS
 } Ecore_Evas_Engine_Type;
 
 typedef enum _Ecore_Evas_Avoid_Damage_Type
@@ -733,6 +735,56 @@ EAPI Ecore_Evas     *ecore_evas_buffer_allocfunc_new(int w, int h, void *(*alloc
  * ecore_evas_object_image_new() helper function.
  */
 EAPI const void     *ecore_evas_buffer_pixels_get(Ecore_Evas *ee);
+
+/**
+ * @brief Create a new @c Ecore_Evas canvas bound to the Evas
+ * @b ews (Ecore + Evas Single Process Windowing System) engine
+ *
+ * EWS is a simple single process windowing system. The backing store
+ * is also an @c Ecore_Evas that can be setup with
+ * ecore_evas_ews_setup() and retrieved with
+ * ecore_evas_ews_ecore_evas_get(). It will allow window management
+ * using events prefixed with @c ECORE_EVAS_EVENT_EWS_.
+ *
+ * The EWS windows (returned by this function or
+ * ecore_evas_new("ews"...)) will all be software buffer windows
+ * automatic rendered to the backing store.
+ *
+ * @param x horizontal position of window, in pixels
+ * @param y vertical position of window, in pixels
+ * @param w The width of the canvas, in pixels
+ * @param h The height of the canvas, in pixels
+ * @return A new @c Ecore_Evas instance or @c NULL, on failure
+ *
+ * @see ecore_evas_ews_setup()
+ * @see ecore_evas_ews_ecore_evas_get()
+ *
+ * @since 1.1
+ */
+EAPI Ecore_Evas     *ecore_evas_ews_new(int x, int y, int w, int h);
+
+
+/**
+ * Returns the backing store image object that represents the given
+ * window in EWS.
+ *
+ * @note This should not be modified anyhow, but may be helpful to
+ *       determine stacking and geometry of it for window managers
+ *       that decorate windows.
+ *
+ * @see ecore_evas_ews_manager_set()
+ * @see ecore_evas_ews_evas_get()
+ * @since 1.1
+ */
+EAPI Evas_Object *ecore_evas_ews_backing_store_get(const Ecore_Evas *ee);
+
+/**
+ * Calls the window to be deleted (freed), but can let user decide to
+ * forbid it by using ecore_evas_callback_delete_request_set()
+ *
+ * @since 1.1
+ */
+EAPI void ecore_evas_ews_delete_request(Ecore_Evas *ee);
 
 /**
  * @brief Create an Evas image object with image data <b>bound to an
@@ -1421,6 +1473,122 @@ EAPI void           ecore_evas_x11_shape_input_rectangle_subtract(Ecore_Evas *ee
 EAPI void           ecore_evas_x11_shape_input_empty(Ecore_Evas *ee);
 EAPI void           ecore_evas_x11_shape_input_reset(Ecore_Evas *ee);
 EAPI void           ecore_evas_x11_shape_input_apply(Ecore_Evas *ee);
+
+/**
+ * @defgroup Ecore_Evas_Ews Ecore_Evas Single Process Windowing System.
+ *
+ * These are global scope functions to manage the EWS to be used by
+ * ecore_evas_ews_new().
+ *
+ * @since 1.1
+ * @{
+ */
+
+/**
+ * Sets the engine to be used by the backing store engine.
+ *
+ * @return EINA_TRUE on success, EINA_FALSE if ews is already in use.
+ * @since 1.1
+ */
+EAPI Eina_Bool ecore_evas_ews_engine_set(const char *engine, const char *options);
+
+/**
+ * Reconfigure the backing store used.
+ * @since 1.1
+ */
+EAPI Eina_Bool ecore_evas_ews_setup(int x, int y, int w, int h);
+
+/**
+ * Return the internal backing store in use.
+ *
+ * @note this will foced it to be created, making future calls to
+ * ecore_evas_ews_engine_set() void.
+ *
+ * @see ecore_evas_ews_evas_get()
+ * @since 1.1
+ */
+EAPI Ecore_Evas *ecore_evas_ews_ecore_evas_get(void);
+
+/**
+ * Return the internal backing store in use.
+ *
+ * @note this will foced it to be created, making future calls to
+ * ecore_evas_ews_engine_set() void.
+ *
+ * @see ecore_evas_ews_ecore_evas_get()
+ * @since 1.1
+ */
+EAPI Evas *ecore_evas_ews_evas_get(void);
+
+/**
+ * Get the current background.
+ */
+EAPI Evas_Object *ecore_evas_ews_background_get(void);
+
+/**
+ * Set the current background, must be created at evas ecore_evas_ews_evas_get()
+ *
+ * It will be kept at lowest layer (EVAS_LAYER_MIN) and below
+ * everything else. You can set any object, default is a black
+ * rectangle.
+ *
+ * @note previous object will be deleted!
+ */
+EAPI void ecore_evas_ews_background_set(Evas_Object *o);
+
+/**
+ * Return all Ecore_Evas* created by EWS.
+ *
+ * @note do not change the returned list or its contents.
+ * @since 1.1
+ */
+EAPI const Eina_List *ecore_evas_ews_children_get(void);
+
+/**
+ * Set the identifier of the manager taking care of internal windows.
+ *
+ * The ECORE_EVAS_EWS_EVENT_MANAGER_CHANGE event is issued. Consider
+ * handling it to know if you should stop handling events yourself
+ * (ie: another manager took over)
+ *
+ * @param manager any unique identifier address.
+ *
+ * @see ecore_evas_ews_manager_get()
+ * @since 1.1
+ */
+EAPI void        ecore_evas_ews_manager_set(const void *manager);
+
+/**
+ * Get the identifier of the manager taking care of internal windows.
+ *
+ * @return the value set by ecore_evas_ews_manager_set()
+ * @since 1.1
+ */
+EAPI const void *ecore_evas_ews_manager_get(void);
+
+EAPI extern int ECORE_EVAS_EWS_EVENT_MANAGER_CHANGE; /**< manager was changed */
+EAPI extern int ECORE_EVAS_EWS_EVENT_ADD; /**< window was created */
+EAPI extern int ECORE_EVAS_EWS_EVENT_DEL; /**< window was deleted, pointer is already invalid but may be used as reference for further cleanup work. */
+EAPI extern int ECORE_EVAS_EWS_EVENT_RESIZE; /**< window was resized */
+EAPI extern int ECORE_EVAS_EWS_EVENT_MOVE; /**< window was moved */
+EAPI extern int ECORE_EVAS_EWS_EVENT_SHOW; /**< window become visible */
+EAPI extern int ECORE_EVAS_EWS_EVENT_HIDE; /**< window become hidden */
+EAPI extern int ECORE_EVAS_EWS_EVENT_FOCUS; /**< window was focused */
+EAPI extern int ECORE_EVAS_EWS_EVENT_UNFOCUS; /**< window lost focus */
+EAPI extern int ECORE_EVAS_EWS_EVENT_RAISE; /**< window was raised */
+EAPI extern int ECORE_EVAS_EWS_EVENT_LOWER; /**< window was lowered */
+EAPI extern int ECORE_EVAS_EWS_EVENT_ACTIVATE; /**< window was activated */
+
+EAPI extern int ECORE_EVAS_EWS_EVENT_ICONIFIED_CHANGE; /**< window minimized/iconified changed */
+EAPI extern int ECORE_EVAS_EWS_EVENT_MAXIMIZED_CHANGE; /**< window maximized changed */
+EAPI extern int ECORE_EVAS_EWS_EVENT_LAYER_CHANGE; /**< window layer changed */
+EAPI extern int ECORE_EVAS_EWS_EVENT_FULLSCREEN_CHANGE; /**< window fullscreen changed */
+EAPI extern int ECORE_EVAS_EWS_EVENT_CONFIG_CHANGE; /**< some other window property changed (title, name, class, alpha, transparent, shaped...) */
+
+/**
+ * @}
+ */
+
 
 /**
  * @}

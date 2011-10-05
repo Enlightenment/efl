@@ -26,14 +26,13 @@ _ecore_evas_directfb_render(Ecore_Evas *ee)
    Ecore_Evas *ee2;
    int rend = 0;
 
-#ifdef BUILD_ECORE_EVAS_SOFTWARE_BUFFER
    EINA_LIST_FOREACH(ee->sub_ecore_evas, ll, ee2)
      {
         if (ee2->func.fn_pre_render) ee2->func.fn_pre_render(ee2);
         rend |= _ecore_evas_buffer_render(ee2);
         if (ee2->func.fn_post_render) ee2->func.fn_post_render(ee2);
      }
-#endif
+
    if (ee->func.fn_pre_render) ee->func.fn_pre_render(ee);
    updates = evas_render_updates(ee->evas);
    if (updates)

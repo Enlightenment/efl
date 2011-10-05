@@ -181,6 +181,14 @@ ecore_evas_engine_type_supported_get(Ecore_Evas_Engine_Type engine)
 #else
         return EINA_FALSE;
 #endif
+
+      case ECORE_EVAS_ENGINE_EWS:
+#ifdef BUILD_ECORE_EVAS_EWS
+        return EINA_TRUE;
+#else
+        return EINA_FALSE;
+#endif
+
       default:
         return EINA_FALSE;
      };
@@ -220,6 +228,10 @@ ecore_evas_init(void)
    if (getenv("ECORE_EVAS_FPS_DEBUG")) _ecore_evas_fps_debug = 1;
    if (_ecore_evas_fps_debug) _ecore_evas_fps_debug_init();
 
+#ifdef BUILD_ECORE_EVAS_EWS
+   _ecore_evas_ews_events_init();
+#endif
+
    return _ecore_evas_init_count;
 
  shutdown_ecore:
@@ -250,6 +262,9 @@ ecore_evas_shutdown(void)
 #endif
 #ifdef BUILD_ECORE_EVAS_FB
    while (_ecore_evas_fb_shutdown());
+#endif
+#ifdef BUILD_ECORE_EVAS_EWS
+   while (_ecore_evas_ews_shutdown());
 #endif
 #ifdef BUILD_ECORE_EVAS_SOFTWARE_BUFFER
    while (_ecore_evas_buffer_shutdown());
@@ -614,6 +629,14 @@ _ecore_evas_constructor_buffer(int x __UNUSED__, int y __UNUSED__, int w, int h,
 }
 #endif
 
+#ifdef BUILD_ECORE_EVAS_EWS
+static Ecore_Evas *
+_ecore_evas_constructor_ews(int x, int y, int w, int h, const char *extra_options __UNUSED__)
+{
+   return ecore_evas_ews_new(x, y, w, h);
+}
+#endif
+
 /* note: keep sorted by priority, highest first */
 static const struct ecore_evas_engine _engines[] = {
   /* unix */
@@ -677,6 +700,10 @@ static const struct ecore_evas_engine _engines[] = {
   /* independent */
 #ifdef BUILD_ECORE_EVAS_SOFTWARE_BUFFER
   {"buffer", _ecore_evas_constructor_buffer},
+#endif
+
+#ifdef BUILD_ECORE_EVAS_EWS
+  {"ews", _ecore_evas_constructor_ews},
 #endif
   {NULL, NULL}
 };
@@ -2213,8 +2240,29 @@ _ecore_evas_register(Ecore_Evas *ee)
 }
 
 void
+_ecore_evas_ref(Ecore_Evas *ee)
+{
+   ee->refcount++;
+}
+
+void
+_ecore_evas_unref(Ecore_Evas *ee)
+{
+   ee->refcount--;
+   if (ee->refcount == 0)
+     {
+        if (ee->deleted) _ecore_evas_free(ee);
+     }
+   else if (ee->refcount < -1)
+     ERR("Ecore_Evas %p->refcount=%d < 0", ee, ee->refcount);
+}
+
+void
 _ecore_evas_free(Ecore_Evas *ee)
 {
+   ee->deleted = EINA_TRUE;
+   if (ee->refcount > 0) return;
+
    if (ee->func.fn_pre_free) ee->func.fn_pre_free(ee);
    while (ee->sub_ecore_evas)
      {

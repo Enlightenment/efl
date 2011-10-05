@@ -85,7 +85,8 @@ ecore_evas_buffer.c \
 ecore_evas_directfb.c \
 ecore_evas_win32.c \
 ecore_evas_sdl.c \
-ecore_evas_wince.c
+ecore_evas_wince.c \
+ecore_evas_ews.c
 
 libecore_evas_la_LIBADD = \
 $(ECORE_X_LIB) \

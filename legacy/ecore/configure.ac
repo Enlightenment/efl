@@ -162,6 +162,7 @@ want_ecore_evas_gl_sdl="no"
 want_ecore_evas_directfb="no"
 want_ecore_evas_fb="no"
 want_ecore_evas_software_16_wince="no"
+want_ecore_evas_ews="yes"
 
 # ecore_imf modules
 want_ecore_imf_xim="no"
@@ -1697,6 +1698,13 @@ ECORE_EVAS_CHECK_MODULE([software-16-wince],
    [${have_ecore_wince}],
    [requirements_ecore_evas="ecore-wince >= 1.0.0 ${requirements_ecore_evas}"])
 
+# ecore_evas_ews
+
+ECORE_EVAS_CHECK_MODULE_FULL([ews], [software-buffer],
+   [${want_ecore_evas_ews}],
+   [Ecore Evas Single Process Windowing System],
+   [yes], [])
+
 ### install and build examples
 
 EFL_CHECK_BUILD_EXAMPLES([enable_build_examples="yes"], [enable_build_examples="no"])
@@ -1913,6 +1921,7 @@ if test "x${have_ecore_evas}" = "xyes" ; then
   echo "    Software 16bit X11.........: $have_ecore_evas_software_16_x11"
   echo "    Software 16bit DirectDraw..: $have_ecore_evas_software_16_ddraw"
   echo "    Software 16bit WinCE.......: $have_ecore_evas_software_16_wince"
+  echo "    Sing.Proc. Windowing System: $have_ecore_evas_ews"
 fi
 echo
 echo "  Tests................: ${enable_tests}"
