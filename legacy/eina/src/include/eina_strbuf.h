@@ -191,7 +191,7 @@ EAPI Eina_Bool eina_strbuf_append_n(Eina_Strbuf *buf, const char *str, size_t ma
  * @see eina_strbuf_append()
  * @see eina_strbuf_append_n()
  */
-EAPI Eina_Bool eina_strbuf_append_length(Eina_Strbuf *buf, const char *str, size_t length) EINA_ARG_NONNULL(1);
+EAPI Eina_Bool eina_strbuf_append_length(Eina_Strbuf *buf, const char *str, size_t length) EINA_ARG_NONNULL(1, 2);
 
 /**
  * @brief Append a character to a string buffer, reallocating as
