@@ -1207,16 +1207,14 @@ EAPI Ecore_X_Screen *
 ecore_x_screen_get(int index) 
 {
    xcb_screen_iterator_t iter;
+   int i = 0;
 
    CHECK_XCB_CONN;
 
    iter = 
      xcb_setup_roots_iterator(xcb_get_setup(_ecore_xcb_conn));
-   for (; iter.rem; xcb_screen_next(&iter)) 
-     {
-        if (iter.index == index) 
-          return iter.data;
-     }
+   for (i = 0; iter.rem; xcb_screen_next(&iter), i++) 
+     if (i == index) return iter.data;
 
    return NULL;
 }
