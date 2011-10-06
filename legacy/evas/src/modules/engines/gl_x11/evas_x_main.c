@@ -71,12 +71,12 @@ eng_window_new(Display *disp,
              vi_use = _evas_gl_x11_rgba_vi;
           }
 #else
-#ifdef NEWGL
+//#ifdef NEWGL
         if (_evas_gl_x11_rgba_vi)
           {
              vi_use = _evas_gl_x11_rgba_vi;
           }
-#endif
+//#endif
 #endif
      }
    gw->visualinfo = vi_use;
@@ -235,11 +235,11 @@ eng_window_new(Display *disp,
         if (indirect)
           context = glXCreateNewContext(gw->disp, fbconf,
                                         GLX_RGBA_TYPE, NULL,
-                                        GL_TRUE);
+                                        GL_FALSE);
         else
           context = glXCreateNewContext(gw->disp, fbconf,
                                         GLX_RGBA_TYPE, NULL,
-                                        GL_FALSE);
+                                        GL_TRUE);
 #else
         if (indirect)
           context = glXCreateContext(gw->disp, gw->visualinfo, NULL, GL_FALSE);
@@ -253,11 +253,11 @@ eng_window_new(Display *disp,
         if (indirect)
           rgba_context = glXCreateNewContext(gw->disp, rgba_fbconf,
                                              GLX_RGBA_TYPE, context,
-                                             GL_TRUE);
+                                             GL_FALSE);
         else
           rgba_context = glXCreateNewContext(gw->disp, rgba_fbconf,
                                              GLX_RGBA_TYPE, context,
-                                             GL_FALSE);
+                                             GL_TRUE);
      }
    if (gw->alpha)
      gw->glxwin = glXCreateWindow(gw->disp, rgba_fbconf, gw->win, NULL);
@@ -291,7 +291,7 @@ eng_window_new(Display *disp,
              if (!glXMakeContextCurrent(gw->disp, gw->glxwin, gw->glxwin,
                                         gw->context))
                {
-                  printf("Error: glXMakeContextCurrent(%p, %p, %p, %p)\n", (void *)gw->disp, (void *)gw->win, (void *)gw->win, (void *)gw->context);
+                  printf("Error: glXMakeContextCurrent(%p, %p, %p, %p)\n", (void *)gw->disp, (void *)gw->glxwin, (void *)gw->glxwin, (void *)gw->context);
                   eng_window_free(gw);
                   return NULL;
                }
@@ -605,7 +605,7 @@ eng_window_use(Evas_GL_X11_Window *gw)
                if (!glXMakeContextCurrent(gw->disp, gw->glxwin, gw->glxwin,
                                           gw->context))
                  {
-                   ERR("glXMakeContextCurrent(%p, %p, %p, %p)", (void *)gw->disp, (void *)gw->win, (void *)gw->win, (void *)gw->context);
+                   ERR("glXMakeContextCurrent(%p, %p, %p, %p)", (void *)gw->disp, (void *)gw->glxwin, (void *)gw->glxwin, (void *)gw->context);
                  }
              }
            else
@@ -683,7 +683,7 @@ eng_window_resurf(Evas_GL_X11_Window *gw)
    if (!glXMakeContextCurrent(gw->disp, gw->glxwin, gw->glxwin,
                               gw->context))
      {
-        ERR("glXMakeContextCurrent(%p, %p, %p, %p)", (void *)gw->disp, (void *)gw->win, (void *)gw->win, (void *)gw->context);
+        ERR("glXMakeContextCurrent(%p, %p, %p, %p)", (void *)gw->disp, (void *)gw->glxwin, (void *)gw->glxwin, (void *)gw->context);
      }
 #else
    if (!glXMakeCurrent(gw->disp, gw->win, gw->context))
@@ -793,7 +793,7 @@ eng_best_visual_get(Evas_Engine_Info_GL_X11 *einfo)
              config_attrs[i++] = GLX_TRANSPARENT_TYPE;
              config_attrs[i++] = GLX_NONE;//GLX_NONE;//GLX_TRANSPARENT_INDEX//GLX_TRANSPARENT_RGB;
              config_attrs[i++] = 0;
-
+             
              configs = glXChooseFBConfig(einfo->info.display,
                                          einfo->info.screen,
                                          config_attrs, &num);
@@ -850,9 +850,9 @@ eng_best_visual_get(Evas_Engine_Info_GL_X11 *einfo)
 #if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
         if (_evas_gl_x11_rgba_vi) return _evas_gl_x11_rgba_vi->visual;
 #else
-# ifdef NEWGL
+//# ifdef NEWGL
         if (_evas_gl_x11_rgba_vi) return _evas_gl_x11_rgba_vi->visual;
-# endif
+//# endif
 #endif
      }
    return _evas_gl_x11_vi->visual;
