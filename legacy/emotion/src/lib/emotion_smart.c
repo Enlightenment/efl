@@ -79,6 +79,8 @@ struct _Smart_Data
       int b; /* bottom */
       Evas_Object *clipper;
    } crop;
+   
+   int            w, h;
 
    double         ratio;
    double         pos;
@@ -410,7 +412,10 @@ emotion_object_file_set(Evas_Object *obj, const char *file)
    DBG("file=%s", file);
    if (!sd->module) return EINA_FALSE;
 
-   if ((file) && (sd->file) && (file == sd->file || !strcmp(file, sd->file))) return EINA_FALSE;
+   sd->w = 0;
+   sd->h = 0;
+   if ((file) && (sd->file) && 
+       ((file == sd->file) || (!strcmp(file, sd->file)))) return EINA_FALSE;
    if ((file) && (file[0] != 0))
      {
 	eina_stringshare_replace(&sd->file, file);
@@ -780,7 +785,8 @@ emotion_object_size_get(const Evas_Object *obj, int *iw, int *ih)
    if (iw) *iw = 0;
    if (ih) *ih = 0;
    E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
-   evas_object_image_size_get(sd->obj, iw, ih);
+   if (iw) *iw = sd->w;
+   if (ih) *ih = sd->h;
 }
 
 EAPI void
@@ -1480,6 +1486,8 @@ _emotion_frame_resize(Evas_Object *obj, int w, int h, double ratio)
    evas_object_image_size_get(sd->obj, &iw, &ih);
    if ((w != iw) || (h != ih))
      {
+        sd->w = w;
+        sd->h = h;
         _emotion_image_data_zero(sd->obj);
 	changed = 1;
      }
