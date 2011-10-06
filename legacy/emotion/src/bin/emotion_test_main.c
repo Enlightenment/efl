@@ -723,7 +723,7 @@ main(int argc, char **argv)
    if (!ecore_evas)
      goto shutdown_edje;
 
-   ecore_evas_alpha_set(ecore_evas, EINA_TRUE);
+//   ecore_evas_alpha_set(ecore_evas, EINA_TRUE);
 
    ecore_evas_callback_delete_request_set(ecore_evas, main_delete_request);
    ecore_evas_callback_resize_set(ecore_evas, main_resize);
