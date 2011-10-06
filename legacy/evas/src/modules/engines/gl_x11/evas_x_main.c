@@ -13,7 +13,7 @@ static GLXFBConfig rgba_fbconf = 0;
 #endif
 
 // fixme: something is up/wrong here - dont know what tho...
-// #define NEWGL 1
+#define NEWGL 1
 
 static XVisualInfo *_evas_gl_x11_vi = NULL;
 static XVisualInfo *_evas_gl_x11_rgba_vi = NULL;
