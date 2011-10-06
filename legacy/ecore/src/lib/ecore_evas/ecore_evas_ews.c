@@ -1335,19 +1335,26 @@ ecore_evas_ews_evas_get(void)
 EAPI Evas_Object *
 ecore_evas_ews_background_get(void)
 {
+#ifdef BUILD_ECORE_EVAS_EWS
    return _ews_bg;
+#else
+   return NULL;
+#endif
 }
 
+#ifdef BUILD_ECORE_EVAS_EWS
 static void
 _ecore_evas_ews_background_free(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *o __UNUSED__, void *event_info __UNUSED__)
 {
    _ews_bg = NULL;
    ecore_evas_ews_background_set(NULL);
 }
+#endif
 
 EAPI void
 ecore_evas_ews_background_set(Evas_Object *o)
 {
+#ifdef BUILD_ECORE_EVAS_EWS
    if ((o) && (o == _ews_bg)) return;
 
    if (_ews_bg)
@@ -1385,6 +1392,10 @@ ecore_evas_ews_background_set(Evas_Object *o)
      }
 
    _ews_bg = o;
+#else
+   return;
+   (void)o;
+#endif
 }
 
 
