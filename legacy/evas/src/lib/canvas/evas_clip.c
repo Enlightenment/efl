@@ -181,7 +181,7 @@ evas_object_clip_set(Evas_Object *obj, Evas_Object *clip)
    // illegal to set anything but a rect as a clip
    if (clip->type != o_rect_type)
      {
-        ERR("For now a clip on other object than a rectangle is disabled\n");
+        ERR("For now a clip on other object than a rectangle is disabled");
         return;
      }
    if (obj->smart.smart)
