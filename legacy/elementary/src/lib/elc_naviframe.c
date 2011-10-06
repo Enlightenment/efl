@@ -917,6 +917,24 @@ elm_naviframe_item_pop_to(Elm_Object_Item *it)
 }
 
 EAPI void
+elm_naviframe_item_del(Elm_Object_Item *it)
+{
+   ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
+   Elm_Naviframe_Item *navi_it = ELM_CAST(it);
+   Widget_Data *wd = elm_widget_data_get(navi_it->base.widget);
+   if (it == elm_naviframe_top_item_get(navi_it->base.widget))
+     {
+        _item_del(navi_it);
+        navi_it = ELM_CAST(eina_list_last(wd->stack)->data);
+        evas_object_show(navi_it->base.view);
+        evas_object_raise(navi_it->base.view);
+        edje_object_signal_emit(navi_it->base.view, "elm,state,visible", "elm");
+     }
+   else
+     _item_del(navi_it);
+}
+
+EAPI void
 elm_naviframe_content_preserve_on_pop_set(Evas_Object *obj, Eina_Bool preserve)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
