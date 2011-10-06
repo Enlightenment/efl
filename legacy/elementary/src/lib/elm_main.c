@@ -2052,6 +2052,12 @@ elm_longpress_timeout_get(void)
    return _elm_config->longpress_timeout;
 }
 
+EAPI Evas_Object *
+elm_object_item_object_get(const Elm_Object_Item *it)
+{
+   return ((Elm_Widget_Item *) it)->widget;
+}
+
 EAPI void
 elm_object_item_content_part_set(Elm_Object_Item *it,
                                  const char *part,
