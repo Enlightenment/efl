@@ -2625,6 +2625,7 @@ _elm_engine_supported(const char *engine)
       "sdl",
       "software_16_sdl",
       "opengl_sdl",
+      "ews",
       NULL
    };
 
