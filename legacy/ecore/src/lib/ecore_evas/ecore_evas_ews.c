@@ -71,6 +71,8 @@ _ecore_evas_ews_ee_new(void)
          _ews_engine, _ews_x, _ews_y, _ews_w, _ews_h, _ews_options);
    else
      {
+        ecore_evas_size_min_set(ee, _ews_w, _ews_h);
+        ecore_evas_size_max_set(ee, _ews_w, _ews_h);
         ecore_evas_callback_pre_free_set(ee, _ecore_evas_ews_pre_free);
         ecore_evas_callback_delete_request_set(ee, _ecore_evas_ews_del_request);
         ecore_evas_name_class_set(ee, "ecore_evas_ews", "ews");
@@ -1283,6 +1285,8 @@ ecore_evas_ews_setup(int x, int y, int w, int h)
 
    /* move-resize is not as implemented as move + resize */
    ecore_evas_move(_ews_ee, x, y);
+   ecore_evas_size_min_set(_ews_ee, w, h);
+   ecore_evas_size_max_set(_ews_ee, w, h);
    ecore_evas_resize(_ews_ee, w, h);
 
    ecore_evas_geometry_get(_ews_ee, &x, &y, &w, &h);
