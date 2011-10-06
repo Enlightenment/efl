@@ -911,7 +911,6 @@ elm_naviframe_item_pop_to(Elm_Object_Item *it)
         if (l->data == it) break;
         prev_l = l->prev;
         _item_del(l->data);
-        wd->stack = eina_list_remove(wd->stack, l);
         l = prev_l;
      }
    elm_naviframe_item_pop(navi_it->base.widget);
