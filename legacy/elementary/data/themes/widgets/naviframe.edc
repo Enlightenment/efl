@@ -81,21 +81,16 @@ group { name:"elm/naviframe/item/basic/default";
          clip_to: "content_clip";
          description { state: "default" 0.0;
             align: 0.0 0.0;
-            rel1.relative: 1.0 1.0;
-            rel1.to_y: "title_clip";
-            rel2.relative: 2.0 1.0;
-         }
-         description { state: "show" 0.0;
-            inherit: "default" 0.0;
             rel1.relative: 0.0 1.0;
+            rel1.to_y: "title_clip";
             rel2.relative: 1.0 1.0;
          }
-         description { state: "pushed" 0.0;
+         description { state: "left" 0.0;
             inherit: "default" 0.0;
             rel1.relative: -1.0 1.0;
             rel2.relative: 0.0 1.0;
          }
-         description { state: "popped" 0.0;
+         description { state: "right" 0.0;
             inherit: "default" 0.0;
             rel1.relative: 1.0 1.0;
             rel2.relative: 2.0 1.0;
@@ -218,29 +213,69 @@ group { name:"elm/naviframe/item/basic/default";
       }
    }
    programs {
-      program { name: "show";
-         signal: "elm,state,show";
-         source: "elm";
-         action: STATE_SET "show" 0.0;
-         target: "elm.swallow.content";
+      program { name: "content_new_pusehd";
+         signal: "elm,state,new,pushed,internal";
+         source: "";
+         action: STATE_SET "default" 0.0;
          transition: DECELERATE 0.5;
+         target: "elm.swallow.content";
          after: "show_finished";
       }
-      program { name: "pushed";
-         signal: "elm,state,pushed";
-         source: "elm";
-         action: STATE_SET "pushed" 0.0;
+      program { name: "content_cur_pusehd";
+         signal: "elm,state,cur,pushed,internal";
+         source: "";
+         action: STATE_SET "left" 0.0;
          target: "elm.swallow.content";
          transition: DECELERATE 0.5;
          after: "pushed_finished";
       }
-      program { name: "popped";
-         signal: "elm,state,popped";
-         source: "elm";
-         action: STATE_SET "popped" 0.0;
+      program { name: "content_prev_popped";
+         signal: "elm,state,prev,popped,internal";
+         source: "";
+         action: STATE_SET "default" 0.0;
+         target: "elm.swallow.content";
+         transition: DECELERATE 0.5;
+         after: "show_finished";
+      }
+      program { name: "content_cur_popped";
+         signal: "elm,state,cur,popped,internal";
+         source: "";
+         action: STATE_SET "right" 0.0;
          target: "elm.swallow.content";
          transition: DECELERATE 0.5;
          after: "popped_finished";
+      }
+      program { name: "cur_pushed";
+         signal: "elm,state,cur,pushed";
+         source: "elm";
+         script {
+            set_state(PART:"elm.swallow.content", "default", 0.0);
+            emit("elm,state,cur,pushed,internal", "");
+         }
+      }
+      program { name: "new_pushed";
+         signal: "elm,state,new,pushed";
+         source: "elm";
+         script {
+            set_state(PART:"elm.swallow.content", "right", 0.0);
+            emit("elm,state,new,pushed,internal", "");
+         }
+      }
+      program { name: "prev_popped";
+         signal: "elm,state,prev,popped";
+         source: "elm";
+         script {
+            set_state(PART:"elm.swallow.content", "left", 0.0);
+            emit("elm,state,prev,popped,internal", "");
+         }
+      }
+      program { name: "cur_popped";
+         signal: "elm,state,cur,popped";
+         source: "elm";
+         script {
+            set_state(PART:"elm.swallow.content", "default", 0.0);
+            emit("elm,state,cur,popped,internal", "");
+         }
       }
       program { name: "visible";
          signal: "elm,state,visible";

@@ -841,10 +841,10 @@ elm_naviframe_item_push(Evas_Object *obj,
              evas_object_pass_events_set(wd->base, EINA_TRUE);
           }
         edje_object_signal_emit(prev_it->base.view,
-                                "elm,state,pushed",
+                                "elm,state,cur,pushed",
                                 "elm");
         edje_object_signal_emit(it->base.view,
-                                "elm,state,show",
+                                "elm,state,new,pushed",
                                 "elm");
      }
    else
@@ -881,11 +881,11 @@ elm_naviframe_item_pop(Evas_Object *obj)
              //FIXME:
              evas_object_pass_events_set(wd->base, EINA_TRUE);
           }
-        edje_object_signal_emit(it->base.view, "elm,state,popped", "elm");
+        edje_object_signal_emit(it->base.view, "elm,state,cur,popped", "elm");
         evas_object_show(prev_it->base.view);
         evas_object_raise(prev_it->base.view);
         edje_object_signal_emit(prev_it->base.view,
-                                "elm,state,show",
+                                "elm,state,prev,popped",
                                 "elm");
      }
    else
@@ -968,10 +968,8 @@ elm_naviframe_item_style_set(Elm_Object_Item *it, const char *item_style)
    else
      {
         if (strlen(item_style) > sizeof(buf))
-          WRN("too much long style name! : naviframe=%p",
-              navi_it->base.widget);
-        else
-          sprintf(buf, "item/%s", item_style);
+          WRN("too much long style name! : naviframe=%p", navi_it->base.widget);
+        sprintf(buf, "item/%s", item_style);
      }
    _elm_theme_object_set(navi_it->base.widget,
                          navi_it->base.view,
