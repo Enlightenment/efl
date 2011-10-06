@@ -114,7 +114,7 @@ static int _mt_enabled = 0;
 
 #ifdef EFL_HAVE_THREADS
 EAPI int _eina_threads_debug = 0;
-EAPI pthread_mutex_t _eina_tracking_lock;
+EAPI Eina_Lock _eina_tracking_lock;
 EAPI Eina_Inlist *_eina_tracking = NULL;
 #endif
 
@@ -263,7 +263,7 @@ eina_init(void)
 #endif
 
 #ifdef EINA_HAVE_DEBUG_THREADS
-   pthread_mutex_init(&_eina_tracking_lock, NULL);
+   eina_lock_new(&_eina_tracking_lock);
 
    if (getenv("EINA_DEBUG_THREADS"))
      _eina_threads_debug = atoi(getenv("EINA_DEBUG_THREADS"));
@@ -294,7 +294,7 @@ eina_shutdown(void)
         _eina_shutdown_from_desc(_eina_desc_setup + _eina_desc_setup_len);
 
 #ifdef EINA_HAVE_DEBUG_THREADS
-	pthread_mutex_destroy(&_eina_tracking_lock);
+	eina_lock_free(&_eina_tracking_lock);
 #endif
 #ifdef MT
         if (_mt_enabled)
@@ -353,7 +353,7 @@ eina_threads_shutdown(void)
      return ret;
 
 #ifdef EINA_HAVE_DEBUG_THREADS
-   pthread_mutex_lock(&_eina_tracking_lock);
+   eina_lock_take(&_eina_tracking_lock);
    if (_eina_tracking)
      {
        fprintf(stderr, "*************************\n");
@@ -365,7 +365,7 @@ eina_threads_shutdown(void)
        fprintf(stderr, "*************************\n");
        abort();
      }
-   pthread_mutex_unlock(&_eina_tracking_lock);
+   eina_lock_release(&_eina_tracking_lock);
 #endif
 
    eina_share_common_threads_shutdown();
