@@ -99,7 +99,6 @@ requirements_eio="eina >= 1.0.0 ecore >= 1.0.0"
 PKG_CHECK_MODULES([EIO], [${requirements_eio}])
 
 ### Checks for header files
-AC_HEADER_ASSERT
 AC_HEADER_DIRENT
 AC_HEADER_TIME
 AC_CHECK_HEADERS([grp.h])
