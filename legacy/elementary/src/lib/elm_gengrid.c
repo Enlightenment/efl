@@ -1301,7 +1301,7 @@ _item_place(Elm_Gengrid_Item *item,
           }
         else
           {
-             x = (cx * item->wd->item_height) - item->wd->pan_x + ox + alignw;
+             x = (cx * item->wd->item_width) - item->wd->pan_x + ox + alignw;
              y = (((cy - item->prev_group) * item->wd->item_height) + (item->prev_group * item->wd->group_item_height)) - item->wd->pan_y + oy + alignh;
           }
         if (elm_widget_mirrored_get(item->wd->self))
@@ -1616,7 +1616,7 @@ _calc_job(void *data)
         count = wd->count + wd->items_lost - count_group;
         if (wd->horizontal)
           {
-             minw = (ceil(count / (float)nmax) * wd->item_width) + (count_group * wd->group_item_height);
+             minw = (ceil(count / (float)nmax) * wd->item_width) + (count_group * wd->group_item_width);
              minh = nmax * wd->item_height;
           }
         else
