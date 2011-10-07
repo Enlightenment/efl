@@ -62,6 +62,12 @@ Makefile.in
 /m4/wchar_t.m4
 /m4/wint_t.m4
 /m4/xsize.m4
+/m4/glibc2.m4
+/m4/intl.m4
+/m4/intldir.m4
+/m4/intlmacosx.m4
+/m4/lock.m4
+/m4/visibility.m4
 /missing
 /mkinstalldirs
 /po/Makefile.in.in
