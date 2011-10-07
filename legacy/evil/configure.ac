@@ -69,15 +69,19 @@ EFL_CHECK_DOXYGEN([build_doc="yes"], [build_doc="no"])
 ### Checks for libraries
 
 win32_libs=""
+win32_dl_libs=""
 case "$host_os" in
   mingw32ce*)
     win32_libs="-lws2"
+    win32_dl_libs="-ltoolhelp"
     ;;
   *)
     win32_libs="-lole32 -lws2_32 -lsecur32"
+    win32_dl_libs="-lpsapi"
     ;;
 esac
-AC_SUBST(win32_libs)
+AC_SUBST([win32_libs])
+AC_SUBST([win32_dl_libs])
 
 EFL_CHECK_MPATROL([have_mpatrol="yes"], [have_mpatrol="no"])
 
@@ -99,25 +103,21 @@ AC_C___ATTRIBUTE__
 win32_cppflags="-DEFL_EVIL_BUILD"
 win32_cflags="-Wall -Wextra -Wshadow -Wdeclaration-after-statement -Wmissing-prototypes -Wstrict-prototypes -Wredundant-decls"
 win32_cxxflags=""
-win32_libs=""
 have_wince="no"
 case "$host_os" in
   mingw32ce*)
     have_wince="yes"
     win32_cppflags="${win32_cppflags} -D_WIN32_WCE=0x0420"
-    win32_libs="-ltoolhelp"
     ;;
   *)
     have_wince="no"
     win32_cxxflags="-fno-rtti -fno-exceptions"
     win32_cppflags="${win32_cppflags} -D_WIN32_WINNT=0x0501 -DSECURITY_WIN32"
-    win32_libs="-lpsapi"
     ;;
 esac
 AC_SUBST([win32_cppflags])
 AC_SUBST([win32_cflags])
 AC_SUBST([win32_cxxflags])
-AC_SUBST([win32_libs])
 
 AM_CONDITIONAL(EVIL_HAVE_WINCE, test "x${have_wince}" = "xyes")
 
