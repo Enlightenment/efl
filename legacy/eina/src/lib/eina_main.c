@@ -114,6 +114,8 @@ static int _mt_enabled = 0;
 
 #ifdef EFL_HAVE_THREADS
 EAPI int _eina_threads_debug = 0;
+#endif
+#ifdef EINA_HAVE_DEBUG_THREADS
 EAPI pthread_mutex_t _eina_tracking_lock;
 EAPI Eina_Inlist *_eina_tracking = NULL;
 #endif
