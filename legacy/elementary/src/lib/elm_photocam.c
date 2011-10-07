@@ -1,5 +1,6 @@
 #include <Elementary.h>
 #include "elm_priv.h"
+#include "els_scroller.h"
 
 /*
  * TODO (maybe - optional future stuff):

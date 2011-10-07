@@ -1,5 +1,6 @@
 #include <Elementary.h>
 #include "elm_priv.h"
+#include "els_icon.h"
 
 static Elm_Theme theme_default =
 {

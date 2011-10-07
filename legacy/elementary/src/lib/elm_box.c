@@ -1,5 +1,6 @@
 #include <Elementary.h>
 #include "elm_priv.h"
+#include "els_box.h"
 
 static const char SIG_CHILD_ADDED[] = "child,added";
 static const char SIG_CHILD_REMOVED[] = "child,removed";

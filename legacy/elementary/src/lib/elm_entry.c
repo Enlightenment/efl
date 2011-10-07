@@ -1,6 +1,7 @@
 #include <Elementary.h>
 #include <Elementary_Cursor.h>
 #include "elm_priv.h"
+#include "els_scroller.h"
 
 
 /* Maximum chunk size to be inserted to the entry at once

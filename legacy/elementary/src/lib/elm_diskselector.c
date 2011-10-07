@@ -1,5 +1,6 @@
 #include <Elementary.h>
 #include "elm_priv.h"
+#include "els_scroller.h"
 
 #ifndef MAX
 # define MAX(a, b) (((a) > (b)) ? (a) : (b))

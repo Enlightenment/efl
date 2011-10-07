@@ -1,5 +1,6 @@
 #include <Elementary.h>
 #include "elm_priv.h"
+#include "els_icon.h"
 
 typedef struct _Smart_Data Smart_Data;
 

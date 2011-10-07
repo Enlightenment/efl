@@ -1,5 +1,8 @@
 #include <Elementary.h>
 #include "elm_priv.h"
+#include "els_scroller.h"
+#include "els_box.h"
+#include "els_icon.h"
 
 typedef struct _Widget_Data Widget_Data;
 

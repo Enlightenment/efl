@@ -3,6 +3,7 @@
 #include <Elementary.h>
 #include <Elementary_Cursor.h>
 #include "elm_priv.h"
+#include "els_scroller.h"
 
 #define SWIPE_MOVES         12
 #define MAX_ITEMS_PER_BLOCK 32

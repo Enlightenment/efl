@@ -1,5 +1,7 @@
 #include <Elementary.h>
 #include "elm_priv.h"
+#include "els_scroller.h"
+#include "els_box.h"
 
 typedef struct _Widget_Data Widget_Data;
 struct _Widget_Data

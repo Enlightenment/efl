@@ -13,11 +13,6 @@
 # include <Ecore_WinCE.h>
 #endif
 
-#include "els_pan.h"
-#include "els_scroller.h"
-#include "els_box.h"
-#include "els_icon.h"
-
 #include "elm_widget.h"
 
 #define CRITICAL(...) EINA_LOG_DOM_CRIT(_elm_log_dom, __VA_ARGS__)
