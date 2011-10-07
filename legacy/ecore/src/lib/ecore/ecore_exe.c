@@ -14,6 +14,7 @@
 #include <sys/types.h>
 #include <unistd.h>
 #include <fcntl.h>
+#include <sys/prctl.h>
 
 #ifdef HAVE_SYS_WAIT_H
 # include <sys/wait.h>
@@ -1507,6 +1508,11 @@ _ecore_exe_exec_it(const char *exe_cmd, Ecore_Exe_Flags flags)
                }
              args[num_tokens] = NULL;
           }
+     }
+
+   if ((flags & ECORE_EXE_TERM_WITH_PARENT))
+     {
+        prctl(PR_SET_PDEATHSIG, SIGTERM);
      }
 
    if (!(flags & ECORE_EXE_NOT_LEADER)) setsid();

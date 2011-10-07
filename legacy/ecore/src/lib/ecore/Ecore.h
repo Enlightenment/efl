@@ -654,7 +654,8 @@ extern "C" {
         ECORE_EXE_PIPE_AUTO = 32, /**< stdout and stderr are buffered automatically */
         ECORE_EXE_RESPAWN = 64, /**< FIXME: Exe is restarted if it dies */
         ECORE_EXE_USE_SH = 128, /**< Use /bin/sh to run the command. */
-        ECORE_EXE_NOT_LEADER = 256 /**< Do not use setsid() to have the executed process be its own session leader */
+        ECORE_EXE_NOT_LEADER = 256, /**< Do not use setsid() to have the executed process be its own session leader */
+        ECORE_EXE_TERM_WITH_PARENT = 512 /**< Makes child receive SIGTERM when parent dies. */
      };
    typedef enum _Ecore_Exe_Flags Ecore_Exe_Flags;
 
