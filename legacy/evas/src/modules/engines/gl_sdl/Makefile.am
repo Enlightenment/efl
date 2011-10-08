@@ -9,6 +9,7 @@ AM_CPPFLAGS = \
 @FREETYPE_CFLAGS@ \
 @PIXMAN_CFLAGS@ \
 @EINA_CFLAGS@ \
+@GL_EET_CFLAGS@ \
 @evas_engine_gl_sdl_cflags@
 
 if BUILD_ENGINE_GL_SDL
