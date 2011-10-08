@@ -58,6 +58,7 @@ static void _emit_hook(Evas_Object *obj,
                        const char *emission,
                        const char *source);
 static void _disable_hook(Evas_Object *obj);
+static void _mirrored_set(Evas_Object *obj, Eina_Bool rtl);
 static void _item_text_set_hook(Elm_Object_Item *it,
                                 const char *part,
                                 const char *label);
@@ -145,9 +146,11 @@ _del_hook(Evas_Object *obj)
 }
 
 static void
-_theme_hook(Evas_Object *obj __UNUSED__)
+_theme_hook(Evas_Object *obj)
 {
    //FIXME:
+   _elm_widget_mirrored_reload(obj);
+   _mirrored_set(obj, elm_widget_mirrored_get(obj));
 }
 
 static void _emit_hook(Evas_Object *obj,
@@ -166,6 +169,21 @@ static void
 _disable_hook(Evas_Object *obj __UNUSED__)
 {
    //FIXME:
+}
+
+static void
+_mirrored_set(Evas_Object *obj, Eina_Bool rtl)
+{
+   Widget_Data *wd;
+   Eina_List *l;
+   Elm_Naviframe_Item *it;
+
+   wd  = elm_widget_data_get(obj);
+   if (!wd) return;
+
+   EINA_LIST_FOREACH(wd->stack, l, it)
+     edje_object_mirrored_set(it->base.view, rtl);
+   edje_object_mirrored_set(wd->base, rtl);
 }
 
 static void
@@ -742,6 +760,7 @@ elm_naviframe_add(Evas_Object *parent)
 
    //base
    wd->base = edje_object_add(e);
+   edje_object_mirrored_set(wd->base, elm_widget_mirrored_get(obj));
    elm_widget_resize_object_set(obj, wd->base);
    _elm_theme_object_set(obj, wd->base, "naviframe", "base", "default");
 
@@ -792,6 +811,7 @@ elm_naviframe_item_push(Evas_Object *obj,
 
    //item base layout
    it->base.view = edje_object_add(evas_object_evas_get(obj));
+   edje_object_mirrored_set(it->base.view, elm_widget_mirrored_get(obj));
    evas_object_smart_member_add(it->base.view, wd->base);
    elm_widget_sub_object_add(obj, it->base.view);
    edje_object_signal_callback_add(it->base.view,
