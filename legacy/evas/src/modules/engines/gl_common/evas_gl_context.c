@@ -2126,18 +2126,18 @@ evas_gl_common_context_image_map_push(Evas_Engine_GL_Context *gc,
            }
      }
 
-   x = w = (p[points[0]].x >> FP);
-   y = h = (p[points[0]].y >> FP);
+   x = w = (p[0].x >> FP);
+   y = h = (p[0].y >> FP);
    for (i = 0; i < 4; i++)
      {
         tx[i] = ((double)(tex->x) + (((double)p[i].u) / FP1)) /
           (double)tex->pt->w;
         ty[i] = ((double)(tex->y) + (((double)p[i].v) / FP1)) /
           (double)tex->pt->h;
-        px = (p[points[i]].x >> FP);
+        px = (p[i].x >> FP);
         if      (px < x) x = px;
         else if (px > w) w = px;
-        py = (p[points[i]].y >> FP);
+        py = (p[i].y >> FP);
         if      (py < y) y = py;
         else if (py > h) h = py;
         if (utexture)
