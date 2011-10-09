@@ -12,9 +12,9 @@ AC_MSG_CHECKING([for __attribute__ ((unused))])
 AC_COMPILE_IFELSE(
    [AC_LANG_PROGRAM(
        [[
+void foo(int x __attribute__ ((unused))) {}
        ]],
        [[
-void foo(int x __attribute__ ((unused))) {}
        ]])],
    [have_attribute_unused="yes"],
    [have_attribute_unused="no"])
@@ -22,6 +22,8 @@ AC_MSG_RESULT([${have_attribute_unused}])
 
 if test "x${have_attribute_unused}" = "xyes" ; then
    AC_DEFINE([__UNUSED__], [__attribute__ ((unused))], [Macro declaring a function argument to be unused.])
+else
+   AC_DEFINE([__UNUSED__], [], [__attribute__ ((unused)) is not supported.])
 fi
 ])
 
