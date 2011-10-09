@@ -13061,6 +13061,16 @@ extern "C" {
      };
 
    /**
+    * Types of zoom available.
+    */
+   typedef enum _Elm_Web_Zoom_Mode
+     {
+        ELM_WEB_ZOOM_MODE_MANUAL = 0, /**< Zoom controled normally by elm_web_zoom_set */
+        ELM_WEB_ZOOM_MODE_AUTO_FIT, /**< Zoom until content fits in web object */
+        ELM_WEB_ZOOM_MODE_AUTO_FILL, /**< Zoom until content fills web object */
+        ELM_WEB_ZOOM_MODE_LAST
+     } Elm_Web_Zoom_Mode;
+   /**
     * Opaque handler containing the features (such as statusbar, menubar, etc)
     * that are to be set on a newly requested window.
     */
@@ -13605,6 +13615,59 @@ extern "C" {
     */
    EAPI void                         elm_web_history_enable_set(Evas_Object *obj, Eina_Bool enable);
    /**
+    * Sets the zoom level of the web object
+    *
+    * Zoom level matches the Webkit API, so 1.0 means normal zoom, with higher
+    * values meaning zoom in and lower meaning zoom out. This function will
+    * only affect the zoom level if the mode set with elm_web_zoom_mode_set()
+    * is ::ELM_WEB_ZOOM_MODE_MANUAL.
+    *
+    * @param obj The web object
+    * @param zoom The zoom level to set
+    */
+   EAPI void                         elm_web_zoom_set(Evas_Object *obj, double zoom);
+   /**
+    * Gets the current zoom level set on the web object
+    *
+    * Note that this is the zoom level set on the web object and not that
+    * of the underlying Webkit one. In the ::ELM_WEB_ZOOM_MODE_MANUAL mode,
+    * the two zoom levels should match, but for the other two modes the
+    * Webkit zoom is calculated internally to match the chosen mode without
+    * changing the zoom level set for the web object.
+    *
+    * @param obj The web object
+    *
+    * @return The zoom level set on the object
+    */
+   EAPI double                       elm_web_zoom_get(const Evas_Object *obj);
+   /**
+    * Sets the zoom mode to use
+    *
+    * The modes can be any of those defined in ::Elm_Web_Zoom_Mode, except
+    * ::ELM_WEB_ZOOM_MODE_LAST. The default is ::ELM_WEB_ZOOM_MODE_MANUAL.
+    *
+    * ::ELM_WEB_ZOOM_MODE_MANUAL means the zoom level will be controlled
+    * with the elm_web_zoom_set() function.
+    * ::ELM_WEB_ZOOM_MODE_AUTO_FIT will calculate the needed zoom level to
+    * make sure the entirety of the web object's contents are shown.
+    * ::ELM_WEB_ZOOM_MODE_AUTO_FILL will calculate the needed zoom level to
+    * fit the contents in the web object's size, without leaving any space
+    * unused.
+    *
+    * @param obj The web object
+    * @param mode The mode to set
+    */
+   EAPI void                         elm_web_zoom_mode_set(Evas_Object *obj, Elm_Web_Zoom_Mode mode);
+   /**
+    * Gets the currently set zoom mode
+    *
+    * @param obj The web object
+    *
+    * @return The current zoom mode set for the object, or
+    * ::ELM_WEB_ZOOM_MODE_LAST on error
+    */
+   EAPI Elm_Web_Zoom_Mode            elm_web_zoom_mode_get(const Evas_Object *obj);
+   /**
     * Gets whether text-only zoom is set
     *
     * @param obj The web object
@@ -13626,6 +13689,29 @@ extern "C" {
     * affect the entire page
     */
    EAPI void                         elm_web_zoom_text_only_set(Evas_Object *obj, Eina_Bool setting);
+   /**
+    * Shows the given region in the web object
+    *
+    * @param obj The web object
+    * @param x The x coordinate of the region to show
+    * @param y The y coordinate of the region to show
+    * @param w The width of the region to show
+    * @param h The height of the region to show
+    */
+   EAPI void                         elm_web_region_show(Evas_Object *obj, int x, int y, int w, int h);
+   /**
+    * Brings in the region to the visible area
+    *
+    * Like elm_web_region_show(), but it animates the scrolling of the object
+    * to show the area
+    *
+    * @param obj The web object
+    * @param x The x coordinate of the region to show
+    * @param y The y coordinate of the region to show
+    * @param w The width of the region to show
+    * @param h The height of the region to show
+    */
+   EAPI void                         elm_web_region_bring_in(Evas_Object *obj, int x, int y, int w, int h);
    /**
     * Sets the default dialogs to use an Inwin instead of a normal window
     *

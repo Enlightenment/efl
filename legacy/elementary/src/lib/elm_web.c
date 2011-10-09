@@ -49,6 +49,19 @@ struct _Widget_Data
       void *console_message_data;
    } hook;
    Elm_Win_Keyboard_Mode input_method;
+   struct {
+        Elm_Web_Zoom_Mode mode;
+        float current;
+        float min, max;
+        Eina_Bool no_anim;
+        Ecore_Timer *timer;
+   } zoom;
+   struct {
+        struct {
+             int x, y;
+        } start, end;
+        Ecore_Animator *animator;
+   } bring_in;
    Eina_Bool tab_propagate : 1;
    Eina_Bool inwin_mode : 1;
 #else
@@ -767,6 +780,66 @@ _ewk_view_load_started_cb(void *data, Evas_Object *obj, void *event_info __UNUSE
 }
 
 static void
+_ewk_view_load_finished_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info)
+{
+   Widget_Data *wd = data;
+
+   if (event_info)
+     return;
+
+   if (wd->zoom.mode != ELM_WEB_ZOOM_MODE_MANUAL)
+     {
+        float tz = wd->zoom.current;
+        wd->zoom.current = 0.0;
+        elm_web_zoom_set(wd->self, tz);
+     }
+}
+
+static void
+_ewk_view_viewport_changed_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
+{
+   Widget_Data *wd = data;
+
+   if (wd->zoom.mode != ELM_WEB_ZOOM_MODE_MANUAL)
+     {
+        ewk_view_zoom_set(obj, 1.0, 0, 0);
+        wd->zoom.no_anim = EINA_TRUE;
+     }
+}
+
+static Eina_Bool
+_restore_zoom_mode_timer_cb(void *data)
+{
+   Widget_Data *wd = data;
+   float tz = wd->zoom.current;
+   wd->zoom.timer = NULL;
+   wd->zoom.current = 0.0;
+   wd->zoom.no_anim = EINA_TRUE;
+   elm_web_zoom_set(wd->self, tz);
+   return EINA_FALSE;
+}
+
+static Eina_Bool
+_reset_zoom_timer_cb(void *data)
+{
+   Widget_Data *wd = data;
+   wd->zoom.timer = ecore_timer_add(0.0, _restore_zoom_mode_timer_cb, wd);
+   ewk_view_zoom_set(wd->ewk_view, 1.0, 0, 0);
+   return EINA_FALSE;
+}
+
+static void
+_ewk_view_resized_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+   Widget_Data *wd = data;
+   if (!(wd->zoom.mode != ELM_WEB_ZOOM_MODE_MANUAL))
+     return;
+   if (wd->zoom.timer)
+     ecore_timer_del(wd->zoom.timer);
+   wd->zoom.timer = ecore_timer_add(0.5, _reset_zoom_timer_cb, wd);
+}
+
+static void
 _popup_del_job(void *data)
 {
    evas_object_del(data);
@@ -902,6 +975,30 @@ _view_smart_callback_proxy(Evas_Object *view, Evas_Object *parent)
                                        _view_smart_callback_proxy_cb, ctxt);
      }
 }
+
+static Eina_Bool
+_bring_in_anim_cb(void *data, double pos)
+{
+   Widget_Data *wd = data;
+   Evas_Object *frame = ewk_view_frame_main_get(wd->ewk_view);
+   int sx, sy, rx, ry;
+
+   sx = wd->bring_in.start.x;
+   sy = wd->bring_in.start.y;
+   rx = (wd->bring_in.end.x - sx) * pos;
+   ry = (wd->bring_in.end.y - sy) * pos;
+
+   ewk_frame_scroll_set(frame, rx + sx, ry + sy);
+
+   if (pos == 1.0)
+     {
+        wd->bring_in.end.x = wd->bring_in.end.y = wd->bring_in.start.x =
+           wd->bring_in.start.y = 0;
+        wd->bring_in.animator = NULL;
+     }
+
+   return EINA_TRUE;
+}
 #endif
 
 #ifdef HAVE_ELEMENTARY_WEB
@@ -972,11 +1069,20 @@ elm_web_add(Evas_Object *parent)
                                   _ewk_view_load_started_cb, wd);
    evas_object_smart_callback_add(wd->ewk_view, "popup,create",
                                   _ewk_view_popup_create_cb, wd);
+   evas_object_smart_callback_add(wd->ewk_view, "load,finished",
+                                  _ewk_view_load_finished_cb, wd);
+   evas_object_smart_callback_add(wd->ewk_view, "viewport,changed",
+                                  _ewk_view_viewport_changed_cb, wd);
+   evas_object_smart_callback_add(wd->ewk_view, "view,resized",
+                                  _ewk_view_resized_cb, wd);
 
    elm_widget_resize_object_set(obj, wd->ewk_view);
 
    wd->tab_propagate = EINA_FALSE;
    wd->inwin_mode = _elm_config->inwin_dialogs_enable;
+   wd->zoom.min = ewk_view_zoom_range_min_get(wd->ewk_view);
+   wd->zoom.max = ewk_view_zoom_range_max_get(wd->ewk_view);
+   wd->zoom.current = 1.0;
 
    _view_smart_callback_proxy(wd->ewk_view, wd->self);
    evas_object_smart_callbacks_descriptions_set(obj, _elm_web_callback_names);
@@ -1468,6 +1574,130 @@ elm_web_history_enable_set(Evas_Object *obj, Eina_Bool enable)
 
 //EAPI Ewk_History *ewk_view_history_get(const Evas_Object *obj); // TODO:
 
+EAPI void
+elm_web_zoom_set(Evas_Object *obj, double zoom)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+#ifdef HAVE_ELEMENTARY_WEB
+   Widget_Data *wd = elm_widget_data_get(obj);
+   int vw, vh, cx, cy;
+   float z = 1.0;
+   evas_object_geometry_get(wd->ewk_view, NULL, NULL, &vw, &vh);
+   cx = vw / 2;
+   cy = vh / 2;
+   if (zoom > wd->zoom.max)
+     zoom = wd->zoom.max;
+   else if (zoom < wd->zoom.min)
+     zoom = wd->zoom.min;
+   if (zoom == wd->zoom.current) return;
+   wd->zoom.current = zoom;
+   if (wd->zoom.mode == ELM_WEB_ZOOM_MODE_MANUAL)
+     z = zoom;
+   else if (wd->zoom.mode == ELM_WEB_ZOOM_MODE_AUTO_FIT)
+     {
+        Evas_Object *frame = ewk_view_frame_main_get(wd->ewk_view);
+        Evas_Coord fw, fh, pw, ph;
+        if (!ewk_frame_contents_size_get(frame, &fw, &fh))
+          return;
+        z = ewk_frame_zoom_get(frame);
+        fw /= z;
+        fh /= z;
+        if ((fw > 0) && (fh > 0))
+          {
+             ph = (fh * vw) / fw;
+             if (ph > vh)
+               {
+                  pw = (fw * vh) / fh;
+                  ph = vh;
+               }
+             else
+               pw = vw;
+             if (fw > fh)
+               z = (float)pw / fw;
+             else
+               z = (float)ph / fh;
+          }
+     }
+   else if (wd->zoom.mode == ELM_WEB_ZOOM_MODE_AUTO_FILL)
+     {
+        Evas_Object *frame = ewk_view_frame_main_get(wd->ewk_view);
+        Evas_Coord fw, fh, pw, ph;
+        if (!ewk_frame_contents_size_get(frame, &fw, &fh))
+          return;
+        z = ewk_frame_zoom_get(frame);
+        fw /= z;
+        fh /= z;
+        if ((fw > 0) && (fh > 0))
+          {
+             ph = (fh * vw) / fw;
+             if (ph < vh)
+               {
+                  pw = (fw * vh) / fh;
+                  ph = vh;
+               }
+             else
+               pw = vw;
+             if (fw > fh)
+               z = (float)pw / fw;
+             else
+               z = (float)ph / fh;
+          }
+     }
+   if (wd->zoom.no_anim)
+     ewk_view_zoom_set(wd->ewk_view, z, cx, cy);
+   else
+     ewk_view_zoom_animated_set(wd->ewk_view, z, _elm_config->zoom_friction,
+                                cx, cy);
+   wd->zoom.no_anim = EINA_FALSE;
+#else
+   (void)zoom;
+#endif
+}
+
+EAPI double
+elm_web_zoom_get(const Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) -1.0;
+#ifdef HAVE_ELEMENTARY_WEB
+   Widget_Data *wd = elm_widget_data_get(obj);
+   return wd->zoom.current;
+#else
+   return -1.0;
+#endif
+}
+
+EAPI void
+elm_web_zoom_mode_set(Evas_Object *obj, Elm_Web_Zoom_Mode mode)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+#ifdef HAVE_ELEMENTARY_WEB
+   Widget_Data *wd = elm_widget_data_get(obj);
+   float tz;
+   if (mode >= ELM_WEB_ZOOM_MODE_LAST)
+     return;
+   if (mode == wd->zoom.mode)
+     return;
+   wd->zoom.mode = mode;
+   tz = wd->zoom.current;
+   wd->zoom.current = 0.0;
+   elm_web_zoom_set(obj, tz);
+#else
+   (void)mode;
+#endif
+}
+
+EAPI Elm_Web_Zoom_Mode
+elm_web_zoom_mode_get(const Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) ELM_WEB_ZOOM_MODE_LAST;
+#ifdef HAVE_ELEMENTARY_WEB
+   Widget_Data *wd = elm_widget_data_get(obj);
+   return wd->zoom.mode;
+#else
+   return ELM_WEB_ZOOM_MODE_LAST;
+#endif
+}
+
 EAPI Eina_Bool
 elm_web_zoom_text_only_get(const Evas_Object *obj)
 {
@@ -1491,6 +1721,65 @@ elm_web_zoom_text_only_set(Evas_Object *obj, Eina_Bool setting)
    ewk_view_zoom_text_only_set(wd->ewk_view, setting);
 #else
    (void)setting;
+#endif
+}
+
+EAPI void
+elm_web_region_show(Evas_Object *obj, int x, int y, int w __UNUSED__, int h __UNUSED__)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+#ifdef HAVE_ELEMENTARY_WEB
+   Widget_Data *wd = elm_widget_data_get(obj);
+   Evas_Object *frame = ewk_view_frame_main_get(wd->ewk_view);
+   int fw, fh, zw, zh, rx, ry;
+   float zoom;
+   ewk_frame_contents_size_get(frame, &fw, &fh);
+   zoom = ewk_frame_zoom_get(frame);
+   zw = fw / zoom;
+   zh = fh / zoom;
+   rx = (x * fw) / zw;
+   ry = (y * fh) / zh;
+   if (wd->bring_in.animator)
+     {
+        ecore_animator_del(wd->bring_in.animator);
+        wd->bring_in.animator = NULL;
+     }
+   ewk_frame_scroll_set(frame, rx, ry);
+#else
+   (void)x;
+   (void)y;
+#endif
+}
+
+EAPI void
+elm_web_region_bring_in(Evas_Object *obj, int x, int y, int w __UNUSED__, int h __UNUSED__)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+#ifdef HAVE_ELEMENTARY_WEB
+   Widget_Data *wd = elm_widget_data_get(obj);
+   Evas_Object *frame = ewk_view_frame_main_get(wd->ewk_view);
+   int fw, fh, zw, zh, rx, ry, sx, sy;
+   float zoom;
+   ewk_frame_contents_size_get(frame, &fw, &fh);
+   ewk_frame_scroll_pos_get(frame, &sx, &sy);
+   zoom = ewk_frame_zoom_get(frame);
+   zw = fw / zoom;
+   zh = fh / zoom;
+   rx = (x * fw) / zw;
+   ry = (y * fh) / zh;
+   if ((wd->bring_in.end.x == rx) && (wd->bring_in.end.y == ry))
+     return;
+   wd->bring_in.start.x = sx;
+   wd->bring_in.start.y = sy;
+   wd->bring_in.end.x = rx;
+   wd->bring_in.end.y = ry;
+   if (wd->bring_in.animator)
+     ecore_animator_del(wd->bring_in.animator);
+   wd->bring_in.animator = ecore_animator_timeline_add(
+      _elm_config->bring_in_scroll_friction, _bring_in_anim_cb, wd);
+#else
+   (void)x;
+   (void)y;
 #endif
 }
 

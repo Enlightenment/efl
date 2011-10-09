@@ -258,6 +258,68 @@ _js_popup_hooks_set(void *data, Evas_Object *obj __UNUSED__, void *event_info __
 }
 
 static void
+_zoom_out_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+   Web_Test *wt = data;
+   double zoom;
+
+   zoom = elm_web_zoom_get(wt->web);
+   if (zoom > 1)
+     zoom -= .5;
+   else
+     zoom /= 2;
+   if (zoom < .05)
+     zoom = .05;
+   elm_web_zoom_set(wt->web, zoom);
+}
+
+static void
+_zoom_in_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+   Web_Test *wt = data;
+   double zoom;
+
+   zoom = elm_web_zoom_get(wt->web);
+
+   if (zoom < 1)
+     zoom *= 2;
+   else
+     zoom += .5;
+   if (zoom > 4)
+     zoom = 4;
+   elm_web_zoom_set(wt->web, zoom);
+}
+
+static void
+_zoom_mode_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info)
+{
+   Web_Test *wt = data;
+   Elm_Hoversel_Item *it = event_info;
+   const char *lbl = elm_hoversel_item_label_get(it);
+
+   if (!strcmp(lbl, "Manual"))
+     elm_web_zoom_mode_set(wt->web, ELM_WEB_ZOOM_MODE_MANUAL);
+   else if (!strcmp(lbl, "Fit"))
+     elm_web_zoom_mode_set(wt->web, ELM_WEB_ZOOM_MODE_AUTO_FIT);
+   else
+     elm_web_zoom_mode_set(wt->web, ELM_WEB_ZOOM_MODE_AUTO_FILL);
+}
+
+static void
+_show_region_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+   Web_Test *wt = data;
+   elm_web_region_show(wt->web, 300, 300, 1, 1);
+}
+
+static void
+_bring_in_region_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+   Web_Test *wt = data;
+   elm_web_region_bring_in(wt->web, 50, 0, 1, 1);
+}
+
+static void
 _main_web_del_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Web_Test *wt = data;
@@ -360,6 +422,50 @@ test_web(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __
    evas_object_show(bt);
 
    evas_object_smart_callback_add(bt, "clicked", _js_popup_hooks_set, wt);
+
+   bt = elm_button_add(win);
+   elm_object_text_set(bt, "-");
+   elm_box_pack_end(bx2, bt);
+   evas_object_show(bt);
+
+   evas_object_smart_callback_add(bt, "clicked", _zoom_out_cb, wt);
+
+   bt = elm_button_add(win);
+   elm_object_text_set(bt, "+");
+   elm_box_pack_end(bx2, bt);
+   evas_object_show(bt);
+
+   evas_object_smart_callback_add(bt, "clicked", _zoom_in_cb, wt);
+
+   bt = elm_hoversel_add(win);
+   elm_object_text_set(bt, "Zoom Mode");
+   elm_box_pack_end(bx2, bt);
+   evas_object_show(bt);
+
+   elm_hoversel_item_add(bt, "Manual", NULL, ELM_ICON_NONE, _zoom_mode_cb, wt);
+   elm_hoversel_item_add(bt, "Fit", NULL, ELM_ICON_NONE, _zoom_mode_cb, wt);
+   elm_hoversel_item_add(bt, "Fill", NULL, ELM_ICON_NONE, _zoom_mode_cb, wt);
+
+   bx2 = elm_box_add(win);
+   elm_box_horizontal_set(bx2, EINA_TRUE);
+   evas_object_size_hint_weight_set(bx2, EVAS_HINT_EXPAND, 0);
+   evas_object_size_hint_align_set(bx2, EVAS_HINT_FILL, 0);
+   elm_box_pack_end(bx, bx2);
+   evas_object_show(bx2);
+
+   bt = elm_button_add(win);
+   elm_object_text_set(bt, "Show 300, 300");
+   elm_box_pack_end(bx2, bt);
+   evas_object_show(bt);
+
+   evas_object_smart_callback_add(bt, "clicked", _show_region_cb, wt);
+
+   bt = elm_button_add(win);
+   elm_object_text_set(bt, "Bring in 50, 0");
+   elm_box_pack_end(bx2, bt);
+   evas_object_show(bt);
+
+   evas_object_smart_callback_add(bt, "clicked", _bring_in_region_cb, wt);
 
    evas_object_smart_callback_add(web, "title,changed", _title_changed_cb, win);
    evas_object_smart_callback_add(web, "uri,changed", _uri_changed_cb, wt);
