@@ -188,12 +188,13 @@ static void
 _conformant_part_sizing_eval(Evas_Object *obj, Conformant_Part_Type part_type)
 {
    Ecore_X_Window zone = 0, xwin;
+   Evas_Object *top;
    int sx = -1, sy = -1, sw = -1, sh = -1;
    Widget_Data *wd = elm_widget_data_get(obj);
 
    if (!wd) return;
 
-   Evas_Object *top = elm_widget_top_get(obj);
+   top = elm_widget_top_get(obj);
 #ifdef HAVE_ELEMENTARY_X
    xwin = elm_win_xwindow_get(top);
    if (xwin)
