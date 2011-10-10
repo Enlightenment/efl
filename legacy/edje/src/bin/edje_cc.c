@@ -25,6 +25,7 @@ int        verbose = 0;
 int        no_lossy = 0;
 int        no_comp = 0;
 int        no_raw = 0;
+int        no_save = 0;
 int        min_quality = 0;
 int        max_quality = 100;
 
@@ -44,6 +45,7 @@ main_help(void)
       "-no-lossy                Do NOT allow images to be lossy\n"
       "-no-comp                 Do NOT allow images to be stored with lossless compression\n"
       "-no-raw                  Do NOT allow images to be stored with zero compression (raw)\n"
+      "-no-save                 Do NOT store the input EDC file in the EDJ file\n"
       "-min-quality VAL         Do NOT allow lossy images with quality < VAL (0-100)\n"
       "-max-quality VAL         Do NOT allow lossy images with quality > VAL (0-100)\n"
       "-Ddefine_val=to          CPP style define to define input macro definitions to the .edc source\n"
@@ -96,6 +98,10 @@ main(int argc, char **argv)
 	else if (!strcmp(argv[i], "-no-raw"))
 	  {
 	     no_raw = 1;
+	  }
+	else if (!strcmp(argv[i], "-no-save"))
+	  {
+	     no_save = 1;
 	  }
 	else if ((!strcmp(argv[i], "-id") || !strcmp(argv[i], "--image_dir")) && (i < (argc - 1)))
 	  {
