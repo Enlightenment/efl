@@ -55,6 +55,7 @@ struct _Widget_Data
    Eina_Bool         reorder_mode : 1;
    Eina_Bool         reorder_pan_move : 1;
    Eina_Bool         auto_scroll_enabled : 1;
+   Eina_Bool         pan_resized : 1;
    struct
    {
       Evas_Coord x, y;
@@ -2691,11 +2692,18 @@ _pan_resize(Evas_Object *obj,
    if ((ow == w) && (oh == h)) return;
    if ((sd->wd->height_for_width) && (ow != w))
      {
+        /* fix me later */
         if (sd->resize_job) ecore_job_del(sd->resize_job);
         sd->resize_job = ecore_job_add(_pan_resize_job, sd);
      }
+   sd->wd->pan_resized = EINA_TRUE;
+   evas_object_smart_changed(obj);
+   if (sd->wd->calc_job) ecore_job_del(sd->wd->calc_job);
+   sd->wd->calc_job = NULL;
+/* OLD
    if (sd->wd->calc_job) ecore_job_del(sd->wd->calc_job);
    sd->wd->calc_job = ecore_job_add(_calc_job, sd->wd);
+ */
 }
 
 static void
@@ -2710,6 +2718,13 @@ _pan_calculate(Evas_Object *obj)
 
    if (!sd) return;
    evas_event_freeze(evas_object_evas_get(obj));
+   
+   if (sd->wd->pan_resized)
+     {
+        _calc_job(sd->wd);
+        sd->wd->pan_resized = EINA_FALSE;
+     }
+   
    evas_object_geometry_get(obj, &ox, &oy, &ow, &oh);
    evas_output_viewport_get(evas_object_evas_get(obj), &cvx, &cvy, &cvw, &cvh);
    EINA_LIST_FOREACH(sd->wd->group_items, l, git)

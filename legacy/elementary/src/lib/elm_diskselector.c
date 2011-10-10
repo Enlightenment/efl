@@ -600,7 +600,7 @@ _move_scroller(void *data)
 {
    Evas_Object *obj = data;
    Widget_Data *wd;
-   Eina_List *l;
+   Eina_List *list, *l;
    Elm_Diskselector_Item *dit;
    Evas_Coord y, w, h;
    int i;
@@ -608,17 +608,26 @@ _move_scroller(void *data)
    wd = elm_widget_data_get(obj);
    if (!wd) return EINA_FALSE;
 
-   if (wd->round)
-     i = 1;
+   if (!wd->round)
+     {
+        i = 0;
+        list = wd->items;
+     }
    else
-     i = 0;
+     {
+        i = 1;
+        list = wd->r_items;
+     }
 
-   EINA_LIST_FOREACH(wd->items, l, dit)
+   EINA_LIST_FOREACH(list, l, dit)
      {
         if (wd->selected_item == dit)
-          break;
+           break;
         i++;
      }
+
+   if (wd->round) i -= CEIL(wd->display_item_num);
+
    if (!dit)
      {
         wd->selected_item =
@@ -748,6 +757,73 @@ _round_items_add(Widget_Data *wd)
         temp_it = _item_new(it->base.widget, it->icon, it->label, it->func, it->base.data);
         wd->under_items = eina_list_append(wd->under_items, temp_it);
         wd->r_items = eina_list_prepend(wd->r_items, temp_it);
+     }
+}
+
+static void
+_item_icon_set(Elm_Diskselector_Item *it, Evas_Object *icon)
+{
+   if (it->icon == icon) return;
+   if (it->icon)
+     evas_object_del(it->icon);
+   it->icon = icon;
+   if (it->base.view)
+     {
+        evas_object_size_hint_min_set(it->icon, 24, 24);
+        evas_object_size_hint_max_set(it->icon, 40, 40);
+        edje_object_part_swallow(it->base.view, "elm.swallow.icon", it->icon);
+        evas_object_show(it->icon);
+        elm_widget_sub_object_add(it->base.widget, it->icon);
+     }
+}
+
+static void
+_check_identical_item(Elm_Diskselector_Item *it, Evas_Object *icon)
+{
+   Widget_Data *wd;
+   Elm_Diskselector_Item *dit;
+   Eina_List *l;
+   int idx = 0;
+   int ic = 0;
+   int ac = 0;
+
+   wd = elm_widget_data_get(it->base.widget);
+   if (!wd) return;
+
+   if (wd->round)
+     {
+        // Get index from indentical item from round items
+        EINA_LIST_FOREACH(wd->r_items, l, dit)
+          {
+             if (it == dit) break;
+             idx++;
+          }
+
+        // No item to match
+        ic = eina_list_count(wd->r_items);
+        if (idx >= ic) return;
+        dit = NULL;
+
+        // Number of added items: CEIL(wd->display_item_num)
+        ac = CEIL(wd->display_item_num);
+
+        if (((idx >= 0) && (idx < ac)) ||
+            ((idx >= ac) && (idx < (2 * ac))))
+          {
+              // Selected item: under, low region
+             dit = eina_list_nth(wd->r_items,
+                                 idx + ic - (2 * ac));
+          }
+        else if (((idx >= (ic - ac)) && (idx < ic)) ||
+                 ((idx >= (ic - (2 * ac))) && (idx < ic - ac)))
+          {
+              // Selected item: over, high region
+              dit = eina_list_nth(wd->r_items,
+                                  idx - ic + (2 * ac));
+          }
+
+        if(dit) _item_icon_set(dit, icon);
+        _sizing_eval(wd->self);
      }
 }
 
@@ -1223,18 +1299,8 @@ EAPI void
 elm_diskselector_item_icon_set(Elm_Diskselector_Item *it, Evas_Object *icon)
 {
    ELM_DISKSELECTOR_ITEM_CHECK_OR_RETURN(it);
-   if (it->icon == icon) return;
-   if (it->icon)
-     evas_object_del(it->icon);
-   it->icon = icon;
-   if (it->base.view)
-     {
-        evas_object_size_hint_min_set(it->icon, 24, 24);
-        evas_object_size_hint_max_set(it->icon, 40, 40);
-        edje_object_part_swallow(it->base.view, "elm.swallow.icon", it->icon);
-        evas_object_show(it->icon);
-        elm_widget_sub_object_add(it->base.widget, it->icon);
-     }
+   _item_icon_set(it, icon);
+   _check_identical_item(it, icon);
 }
 
 EAPI Elm_Diskselector_Item *
