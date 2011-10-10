@@ -847,8 +847,11 @@ elm_calendar_min_max_year_set(Evas_Object *obj, int min, int max)
    max -= 1900;
    if ((wd->year_min == min) && (wd->year_max == max)) return;
    wd->year_min = min > 2 ? min : 2;
-   wd->year_max = max;
-   if ((max >= wd->year_min) && (wd->selected_time.tm_year > wd->year_max))
+   if (max > wd->year_min)
+     wd->year_max = max;
+   else
+     wd->year_max = wd->year_min;
+   if (wd->selected_time.tm_year > wd->year_max)
      wd->selected_time.tm_year = wd->year_max;
    if (wd->selected_time.tm_year < wd->year_min)
      wd->selected_time.tm_year = wd->year_min;
