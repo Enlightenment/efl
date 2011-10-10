@@ -122,9 +122,7 @@ evas_event_objects_event_list(Evas *e, Evas_Object *stop, int x, int y)
    if (!e->layers) return NULL;
    EINA_INLIST_REVERSE_FOREACH((EINA_INLIST_GET(e->layers)), lay)
      {
-        int norep;
-
-        norep = 0;
+        int norep = 0;
         in = _evas_event_object_list_in_get(e, in,
                                             EINA_INLIST_GET(lay->objects),
                                             stop, x, y, &norep);
