@@ -490,6 +490,7 @@ _pool_tex_dynamic_new(Evas_Engine_GL_Context *gc, int w, int h, int intformat, i
      case GL_LUMINANCE_ALPHA: attr[5] = EGL_MAP_GL_TEXTURE_LUMINANCE_ALPHA_SEC; break;
 #endif
      case GL_RGBA: attr[5] = EGL_MAP_GL_TEXTURE_RGBA_SEC; break;
+     case GL_BGRA: attr[5] = EGL_MAP_GL_TEXTURE_BGRA_SEC; break;
      default: fprintf(stderr, "unknown format\n"); return NULL;
      }
 

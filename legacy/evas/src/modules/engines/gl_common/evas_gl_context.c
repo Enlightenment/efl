@@ -1433,7 +1433,7 @@ evas_gl_common_context_image_push(Evas_Engine_GL_Context *gc,
         if (tex->pt->dyn.img)
           {
              prog = gc->shared->shader[evas_gl_common_shader_choice(0, NULL, r, g, b, a,
-                                                                    SHADER_IMG_NOMUL, SHADER_IMG)].prog;
+                                                                    SHADER_IMG_BGRA_NOMUL, SHADER_IMG_BGRA)].prog;
           }
         else
           {
@@ -2101,7 +2101,7 @@ evas_gl_common_context_image_map_push(Evas_Engine_GL_Context *gc,
               if (tex->pt->dyn.img)
                 {
                    prog = gc->shared->shader[evas_gl_common_shader_choice(npoints, p, r, g, b, a,
-                                                                          SHADER_IMG_NOMUL, SHADER_IMG)].prog;
+                                                                          SHADER_IMG_BGRA_NOMUL, SHADER_IMG_BGRA)].prog;
                 }
               else
                 {
