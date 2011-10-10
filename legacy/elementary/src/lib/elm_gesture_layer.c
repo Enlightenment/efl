@@ -1327,14 +1327,6 @@ _dbl_click_test(Evas_Object *obj, Pointer_Event *pe,
 
          if (st->count_ups == eina_list_count(st->l))
            {
-              /* Abort if we found a single click */
-              if ((taps == 1) && (st->count_ups == 1))
-                {
-                   ev_flag = _set_state(gesture, ELM_GESTURE_STATE_ABORT,
-                         &st->info, EINA_FALSE);
-                   consume_event(wd, event_info, event_type, ev_flag);
-                   break;
-                }
               st->info.n = st->count_ups;
               ev_flag =_set_state(gesture, ELM_GESTURE_STATE_END,
                     &st->info, EINA_FALSE);
