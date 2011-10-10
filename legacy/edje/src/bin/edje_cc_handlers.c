@@ -191,6 +191,7 @@ static void st_collections_group_parts_part_description_image_tween(void);
 static void st_collections_group_parts_part_description_image_border(void);
 static void st_collections_group_parts_part_description_image_middle(void);
 static void st_collections_group_parts_part_description_image_border_scale(void);
+static void st_collections_group_parts_part_description_image_border_scale_by(void);
 static void st_collections_group_parts_part_description_image_scale_hint(void);
 static void st_collections_group_parts_part_description_fill_smooth(void);
 static void st_collections_group_parts_part_description_fill_origin_relative(void);
@@ -450,6 +451,7 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.parts.part.description.image.border", st_collections_group_parts_part_description_image_border},
      {"collections.group.parts.part.description.image.middle", st_collections_group_parts_part_description_image_middle},
      {"collections.group.parts.part.description.image.border_scale", st_collections_group_parts_part_description_image_border_scale},
+     {"collections.group.parts.part.description.image.border_scale_by", st_collections_group_parts_part_description_image_border_scale_by},
      {"collections.group.parts.part.description.image.scale_hint", st_collections_group_parts_part_description_image_scale_hint},
      {"collections.group.parts.part.description.fill.smooth", st_collections_group_parts_part_description_fill_smooth},
      {"collections.group.parts.part.description.fill.origin.relative", st_collections_group_parts_part_description_fill_origin_relative},
@@ -4891,6 +4893,43 @@ st_collections_group_parts_part_description_image_middle(void)
 					  "NONE", 1,
 					  "SOLID", 2,
 					  NULL);
+}
+
+/**
+    @page edcref
+    @property
+        border_scale_by
+    @parameters
+        0.0 or bigger (0.0 or 1.0 to turn it off)
+    @effect
+        If border scaling is enabled then normally the OUTPUT border sizes
+        (e.g. if 3 pixels on the left edge are set as a border, then normally
+        at scale 1.0, those 3 columns will always be the exact 3 columns of
+        output, or at scale 2.0 they will be 6 columns, or 0.33 they will merge
+        into a single column). This property multiplies the input scale
+        factor by this multiplier, allowing the creation of "supersampled"
+        borders to make much higher resolution outputs possible by always using
+        the highest resolution artwork and then runtime scaling it down.
+    @endproperty
+*/
+static void
+st_collections_group_parts_part_description_image_border_scale_by(void)
+{
+   Edje_Part_Description_Image *ed;
+
+   check_arg_count(1);
+
+   if (current_part->type != EDJE_PART_TYPE_IMAGE)
+     {
+	ERR("%s: Error. parse error %s:%i. "
+	    "image attributes in non-IMAGE part.",
+	    progname, file_in, line - 1);
+	exit(-1);
+     }
+
+   ed = (Edje_Part_Description_Image*) current_desc;
+
+   ed->image.border.scale_by = FROM_DOUBLE(parse_float_range(0, 0.0, 999999999.0));
 }
 
 /**

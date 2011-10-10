@@ -1876,7 +1876,15 @@ _edje_image_recalc_apply(Edje *ed, Edje_Real_Part *ep, Edje_Calc_Params *p3, Edj
 			      p3->type.common.fill.w, p3->type.common.fill.h);
    evas_object_image_smooth_scale_set(ep->object, p3->smooth);
    if (chosen_desc->image.border.scale)
-     evas_object_image_border_scale_set(ep->object, TO_DOUBLE(sc));
+     {
+        if (chosen_desc->image.border.scale_by > FROM_DOUBLE(0.0))
+          {
+             FLOAT_T sc2 = MUL(sc, chosen_desc->image.border.scale_by);
+             evas_object_image_border_scale_set(ep->object, TO_DOUBLE(sc2));
+          }
+        else
+           evas_object_image_border_scale_set(ep->object, TO_DOUBLE(sc));
+     }
    else
      evas_object_image_border_scale_set(ep->object, 1.0);
    evas_object_image_border_set(ep->object, p3->type.common.spec.image.l, p3->type.common.spec.image.r,

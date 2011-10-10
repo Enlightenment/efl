@@ -847,6 +847,7 @@ struct _Edje_Part_Description_Spec_Border
    int            l, r, t, b; /* border scaling on image fill */
    unsigned char  no_fill; /* do we fill the center of the image if bordered? 1 == NO!!!! */
    unsigned char  scale; /* scale image border by same as scale factor */
+   FLOAT_T        scale_by; /* when border scale above is enabled, border width OUTPUT is scaled by the object or global scale factor. this value adds another multiplier that the global scale is multiplued by first. if <= 0.0 it is not used, and if 1.0 it i s "ineffective" */
 };
 
 struct _Edje_Part_Description_Spec_Image
