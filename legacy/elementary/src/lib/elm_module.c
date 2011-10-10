@@ -192,6 +192,8 @@ _elm_module_unload(Elm_Module *m)
         dlclose(m->handle);
         m->handle = NULL;
      }
+   m->shutdown_func = NULL;
+   m->init_func = NULL;
 }
 
 Elm_Module *
