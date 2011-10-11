@@ -19692,6 +19692,14 @@ extern "C" {
     */
    EAPI void         elm_pager_content_push(Evas_Object *obj, Evas_Object *content) EINA_ARG_NONNULL(1);
    /**
+    * @brief Delete an arbitrary page from the stack
+    * @param obj The pager object
+    * @param subobj The content object to remove
+    * This removes a content item from the pager stack. If necessary, elm_pager_content_pop()
+    * will be called to animate a change.
+    */
+   EAPI void         elm_pager_content_del(Evas_Object *obj, Evas_Object *subobj) EINA_ARG_NONNULL(1, 2);
+   /**
     * @brief Pop the object that is on top of the stack
     *
     * @param obj The pager object
