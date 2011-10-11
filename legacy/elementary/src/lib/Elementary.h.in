@@ -27119,16 +27119,16 @@ extern "C" {
 
    struct _Elm_Store_Item_Info
      {
-       Elm_Genlist_Item_Class       *item_class;
-       const Elm_Store_Item_Mapping *mapping;
-       void                         *data;
-       char                         *sort_id;
+        Elm_Genlist_Item_Class       *item_class;
+        const Elm_Store_Item_Mapping *mapping;
+        void                         *data;
+        char                         *sort_id;
      };
 
    struct _Elm_Store_Item_Info_Filesystem
      {
-       Elm_Store_Item_Info  base;
-       char                *path;
+        Elm_Store_Item_Info  base;
+        char                *path;
      };
 
 #define ELM_STORE_ITEM_MAPPING_END { ELM_STORE_ITEM_MAPPING_NONE, NULL, 0, { .empty = { EINA_TRUE } } }
