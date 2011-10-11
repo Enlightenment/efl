@@ -21,6 +21,7 @@
 #include "ecore_evas_private.h"
 #include "Ecore_Evas.h"
 
+Eina_Bool _ecore_evas_app_comp_sync = 1;
 int _ecore_evas_log_dom = -1;
 static int _ecore_evas_init_count = 0;
 static Ecore_Fd_Handler *_ecore_evas_async_events_fd = NULL;
@@ -232,6 +233,8 @@ ecore_evas_init(void)
    _ecore_evas_ews_events_init();
 #endif
 
+   if (getenv("ECORE_EVAS_COMP_NOSYNC"))
+      _ecore_evas_app_comp_sync = 0;
    return _ecore_evas_init_count;
 
  shutdown_ecore:
@@ -285,8 +288,6 @@ ecore_evas_shutdown(void)
 
    return _ecore_evas_init_count;
 }
-
-Eina_Bool _ecore_evas_app_comp_sync = 1;
 
 EAPI void
 ecore_evas_app_comp_sync_set(Eina_Bool do_sync)
