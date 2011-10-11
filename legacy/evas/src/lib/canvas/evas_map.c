@@ -93,6 +93,9 @@ _evas_map_calc_map_geometry(Evas_Object *obj)
         if (p->y < y1) y1 = p->y;
         if (p->y > y2) y2 = p->y;
      }
+   // add 1 pixel of fuzz around the map region to ensure updates are correct
+   x1 -= 1; y1 -= 1;
+   x2 += 1; y2 += 1;
    if (obj->cur.map->normal_geometry.x != x1) ch = 1;
    if (obj->cur.map->normal_geometry.y != y1) ch = 1;
    if (obj->cur.map->normal_geometry.w != (x2 - x1)) ch = 1;
