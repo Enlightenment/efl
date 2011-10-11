@@ -614,7 +614,7 @@ static void
 _select_filter(Elm_Toolbar_Item *it, Evas_Object *obj __UNUSED__, const char *emission, const char *source __UNUSED__)
 {
    int button;
-   char buf[sizeof("mouse,clicked,") + 1];
+   char buf[sizeof("elm,action,click,") + 1];
 
    button = atoi(emission + sizeof("mouse,clicked,") - 1);
    if (button == 1) return; /* regular left click event */
