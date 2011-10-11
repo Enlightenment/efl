@@ -40,16 +40,16 @@
                        ww = w;
                        u = span->u[0] << FPI;
                        if (u < 0) u = 0;
-                       else if (u >= swp) u = swp - 1;
+                       else if (u > swp) u = swp;
                        v = span->v[0] << FPI;
                        if (v < 0) v = 0;
-                       else if (v >= shp) v = shp - 1;
+                       else if (v > shp) v = shp;
                        ue = span->u[1] << FPI;
                        if (ue < 0) ue = 0;
-                       else if (ue >= swp) ue = swp - 1;
+                       else if (ue > swp) ue = swp;
                        ve = span->v[1] << FPI;
                        if (ve < 0) ve = 0;
-                       else if (ve >= shp) ve = shp - 1;
+                       else if (ve > shp) ve = shp;
                        ud = (ue - u) / w;
                        vd = (ve - v) / w;
                        tl = (long long)ud * (w << FP);
@@ -61,10 +61,14 @@
                        tl = tl / dv;
                        vd = tl;
                        v -= (vd * (span->o1 - (span->x1 << FP))) / FP1;
-                       
-                       if (ud < 0) u -= 1;
-                       if (vd < 0) v -= 1;
-                       
+
+                       if (ud < 0) u += ud;
+                       if (vd < 0) v += vd;
+                       if (u < 0) u = 0;
+                       else if (u >= swp) u = swp - 1;
+                       if (v < 0) v = 0;
+                       else if (v >= shp) v = shp - 1;
+
                        if (direct)
                          d = dst->image.data + (y * dst->cache_entry.w) + x;
                        else
@@ -146,23 +150,30 @@
                        ww = w;
                        u = span->u[0] << FPI;
                        if (u < 0) u = 0;
-                       else if (u >= swp) u = swp - 1;
+                       else if (u > swp) u = swp;
                        v = span->v[0] << FPI;
                        if (v < 0) v = 0;
-                       else if (v >= shp) v = shp - 1;
+                       else if (v > shp) v = shp;
                        ue = span->u[1] << FPI;
                        if (ue < 0) ue = 0;
-                       else if (ue >= swp) ue = swp - 1;
+                       else if (ue > swp) ue = swp;
                        ve = span->v[1] << FPI;
                        if (ve < 0) ve = 0;
-                       else if (ve >= shp) ve = shp - 1;
+                       else if (ve > shp) ve = shp;
                        ud = (ue - u) / w;
                        vd = (ve - v) / w;
                        if (direct)
                          d = dst->image.data + (y * dst->cache_entry.w) + x;
                        else
                          d = buf;
-                       
+
+                       if (ud < 0) u += ud;
+                       if (vd < 0) v += vd;
+                       if (u < 0) u = 0;
+                       else if (u >= swp) u = swp - 1;
+                       if (v < 0) v = 0;
+                       else if (v >= shp) v = shp - 1;
+
 #undef SMOOTH
 #ifdef COLMUL
                        c1 = span->col[0]; // col

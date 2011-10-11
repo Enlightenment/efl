@@ -82,10 +82,10 @@ _limit(Span *s, int c1, int c2, int nocol)
 static void
 _calc_spans(RGBA_Map_Point *p, Line *spans, int ystart, int yend, int cx, int cy __UNUSED__, int cw, int ch __UNUSED__)
 {
-   int i, y, yp;
+   int i, y, yp, yy;
    int py[4];
    int edge[4][4], edge_num, swapped, order[4];
-   FPc uv[4][2], u, v, x, h, t;
+   FPc uv[4][2], u, v, x, h, t, uu, vv;
    DATA32 col[4];
    
 #if 1 // maybe faster on x86?
@@ -169,7 +169,7 @@ _calc_spans(RGBA_Map_Point *p, Line *spans, int ystart, int yend, int cx, int cy
              
              h = (p[e2].y - p[e1].y) >> FP; // height of edge
              if (h < 1) h = 1;
-             t = (((y << FP) + (FP1 - 1)) - p[e1].y) >> FP;
+             t = (((y << FP) + (FP1 / 2) - 1) - p[e1].y) >> FP;
              x = p[e2].x - p[e1].x;
              x = p[e1].x + ((x * t) / h);
 
@@ -220,10 +220,42 @@ _calc_spans(RGBA_Map_Point *p, Line *spans, int ystart, int yend, int cx, int cy
                }
  */
              u = p[e2].u - p[e1].u;
-             u = p[e1].u + ((u * t) / h);
+             uu = u >> FP;
+             if (uu < 0) uu = -uu;
+             if (uu == h)
+               {
+                  yy = ((y << FP) - p[e1].y) >> FP;
+                  if (u > 0)
+                     u = p[e1].u + (yy << FP);
+                  else
+                     u = p[e1].u - (yy << FP) - (FP1 - 1);
+               }
+             else
+               {
+                  if (u >= 0)
+                     u = p[e1].u + ((u * t) / h);
+                  else
+                     u = p[e1].u + (((u * t) - (FP1 / 2)) / h);
+               }
              
              v = p[e2].v - p[e1].v;
-             v = p[e1].v + ((v * t) / h);
+             vv = v >> FP;
+             if (vv < 0) vv = -vv;
+             if (vv == h)
+               {
+                  yy = ((y << FP) - p[e1].y) >> FP;
+                  if (v > 0)
+                     v = p[e1].v + (yy << FP);
+                  else
+                     v = p[e1].v - (yy << FP) - (FP1 - 1);
+               }
+             else
+               {
+                  if (v >= 0)
+                     v = p[e1].v + ((v * t) / h);
+                  else
+                     v = p[e1].v + (((v * t) - (FP1 / 2)) / h);
+               }
 
              // FIXME: 3d accuracy for color too
              t256 = (t << 8) / h; // maybe * 255?
