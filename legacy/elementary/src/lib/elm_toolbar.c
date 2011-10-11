@@ -20,6 +20,8 @@ struct _Widget_Data
    Eina_Bool no_select : 1;
    Eina_Bool always_select : 1;
    Eina_Bool vertical : 1;
+   Eina_Bool long_press : 1;
+   Ecore_Timer *long_timer;
    Ecore_Job *resize_job;
 };
 
@@ -75,9 +77,13 @@ static void _elm_toolbar_item_icon_obj_set(Evas_Object *obj, Elm_Toolbar_Item *i
 static void _item_label_set(Elm_Toolbar_Item *item, const char *label, const char *signal);
 
 static const char SIG_CLICKED[] = "clicked";
+static const char SIG_LONGPRESSED[] = "longpressed";
+static const char SIG_CLICKED_DOUBLE[] = "clicked,double";
 
 static const Evas_Smart_Cb_Description _signals[] = {
    {SIG_CLICKED, ""},
+   {SIG_LONGPRESSED, ""},
+   {SIG_CLICKED_DOUBLE, ""},
    {NULL, NULL}
 };
 
@@ -268,6 +274,11 @@ _del_pre_hook(Evas_Object *obj)
      }
    if (wd->more_item)
      _item_del(wd->more_item);
+   if (wd->long_timer)
+     {
+        ecore_timer_del(wd->long_timer);
+        wd->long_timer = NULL;
+     }
 }
 
 static void
@@ -636,6 +647,42 @@ _select(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__
      }
 }
 
+static Eina_Bool
+_long_press(Elm_Toolbar_Item *it)
+{
+   Widget_Data *wd = elm_widget_data_get(it->base.widget);
+   wd->long_timer = NULL;
+   wd->long_press = EINA_TRUE;
+   evas_object_smart_callback_call(it->base.widget, SIG_LONGPRESSED, it);
+   return ECORE_CALLBACK_CANCEL;
+}
+
+static void
+_mouse_down(Elm_Toolbar_Item *it, Evas *evas __UNUSED__, Evas_Object *obj __UNUSED__, Evas_Event_Mouse_Down *ev)
+{
+   Widget_Data *wd = elm_widget_data_get(it->base.widget);
+   if (!wd) return;
+   if (ev->button != 1) return;
+   if (ev->flags & EVAS_BUTTON_DOUBLE_CLICK)
+     evas_object_smart_callback_call(it->base.widget, SIG_CLICKED_DOUBLE, it);
+   wd->long_press = EINA_FALSE;
+   if (wd->long_timer) ecore_timer_interval_set(wd->long_timer, _elm_config->longpress_timeout);
+   else wd->long_timer = ecore_timer_add(_elm_config->longpress_timeout, (Ecore_Task_Cb)_long_press, it);
+}
+
+static void
+_mouse_up(Elm_Toolbar_Item *it, Evas *evas __UNUSED__, Evas_Object *obj __UNUSED__, Evas_Event_Mouse_Up *ev)
+{
+   Widget_Data *wd = elm_widget_data_get(it->base.widget);
+   if (!wd) return;
+   if (ev->button != 1) return;
+   if (wd->long_timer)
+     {
+        ecore_timer_del(wd->long_timer);
+        wd->long_timer = NULL;
+     }
+}
+
 static void
 _mouse_in(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
 {
@@ -740,6 +787,10 @@ _item_new(Evas_Object *obj, const char *icon, const char *label, Evas_Smart_Cb f
                                    _mouse_in, it);
    edje_object_signal_callback_add(it->base.view, "elm,mouse,out", "elm",
                                    _mouse_out, it);
+   evas_object_event_callback_add(it->base.view, EVAS_CALLBACK_MOUSE_DOWN,
+                                  (Evas_Object_Event_Cb)_mouse_down, it);
+   evas_object_event_callback_add(it->base.view, EVAS_CALLBACK_MOUSE_UP,
+                                  (Evas_Object_Event_Cb)_mouse_up, it);
    elm_widget_sub_object_add(obj, it->base.view);
    if (it->icon)
      {
