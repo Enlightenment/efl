@@ -435,9 +435,11 @@ _elm_ews_wm_config_change_cb(void *data __UNUSED__, int type __UNUSED__, void *e
 void
 _elm_ews_wm_rescale(Elm_Theme *th, Eina_Bool use_theme)
 {
-   Eina_Iterator *it = eina_hash_iterator_tuple_new(_ews_borders);
+   Eina_Iterator *it;
    Eina_Hash_Tuple *tp = NULL;
 
+   if (!_ews_borders) return;
+   it = eina_hash_iterator_tuple_new(_ews_borders);
    if (!use_theme)
      {
         EINA_ITERATOR_FOREACH(it, tp)
