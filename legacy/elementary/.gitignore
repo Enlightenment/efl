@@ -10,6 +10,7 @@ Makefile
 Makefile.in
 *.so
 *.edj
+src/lib/note.txt
 src/lib/Elementary.h
 elementary_config
 elementary_quicklaunch
