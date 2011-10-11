@@ -2,6 +2,7 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <sys/mman.h>
+#include <math.h>
 
 #include "evas_common.h"
 #include "evas_private.h"
@@ -2887,14 +2888,14 @@ evas_object_image_render(Evas_Object *obj, void *output, void *context, void *su
              // draw geom +x +y
              for (; p < p_end; p++, pt++)
                {
-                  pt->x = (p->x + (double)x) * FP1;
-                  pt->y = (p->y + (double)y) * FP1;
-                  pt->z = (p->z)             * FP1;
+                  pt->x = (lround(p->x) + x) * FP1;
+                  pt->y = (lround(p->y) + y) * FP1;
+                  pt->z = (lround(p->z)    ) * FP1;
                   pt->fx = p->px;
                   pt->fy = p->py;
                   pt->fz = p->z;
-                  pt->u = ((p->u * imagew) / uvw) * FP1;
-                  pt->v = ((p->v * imageh) / uvh) * FP1;
+                  pt->u = ((lround(p->u) * imagew) / uvw) * FP1;
+                  pt->v = ((lround(p->v) * imageh) / uvh) * FP1;
                   if      (pt->u < 0) pt->u = 0;
                   else if (pt->u > (imagew * FP1)) pt->u = (imagew * FP1);
                   if      (pt->v < 0) pt->v = 0;

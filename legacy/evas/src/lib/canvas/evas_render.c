@@ -1,5 +1,6 @@
 #include "evas_common.h"
 #include "evas_private.h"
+#include <math.h>
 
 // debug rendering
 /* #define REND_DGB 1 */
@@ -911,14 +912,14 @@ evas_render_mapped(Evas *e, Evas_Object *obj, void *context, void *surface,
         pt = pts;
         for (; p < p_end; p++, pt++)
           {
-             pt->x = (p->x + (double)off_x) * FP1;
-             pt->y = (p->y + (double)off_y) * FP1;
-             pt->z = (p->z)                 * FP1;
+             pt->x = (lround(p->x) + off_x) * FP1;
+             pt->y = (lround(p->y) + off_y) * FP1;
+             pt->z = (lround(p->z)        ) * FP1;
              pt->fx = p->px;
              pt->fy = p->py;
              pt->fz = p->z;
-             pt->u = p->u * FP1;
-             pt->v = p->v * FP1;
+             pt->u = lround(p->u) * FP1;
+             pt->v = lround(p->v) * FP1;
              if      (pt->u < 0) pt->u = 0;
              else if (pt->u > (sw * FP1)) pt->u = (sw * FP1);
              if      (pt->v < 0) pt->v = 0;

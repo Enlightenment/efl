@@ -81,10 +81,10 @@ _evas_map_calc_map_geometry(Evas_Object *obj)
 
    p = obj->cur.map->points;
    p_end = p + obj->cur.map->count;
-   x1 = p->x;
-   x2 = p->x;
-   y1 = p->y;
-   y2 = p->y;
+   x1 = lround(p->x);
+   x2 = lround(p->x);
+   y1 = lround(p->y);
+   y2 = lround(p->y);
    p++;
    for (; p < p_end; p++)
      {
