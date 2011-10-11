@@ -29,6 +29,7 @@ struct _Widget_Data
 
    Eina_Bool clicked_double;
    Eina_Bool horizontal;
+   Eina_Bool fixed;
 };
 
 static const char *widtype = NULL;
@@ -88,6 +89,8 @@ _theme_hook(Evas_Object *obj)
      edje_object_part_swallow(wd->panes, "elm.swallow.left", wd->contents.left);
    if (wd->contents.right)
      edje_object_part_swallow(wd->panes, "elm.swallow.right", wd->contents.right);
+   if (wd->fixed)
+     edje_object_signal_emit(wd->panes, "elm.panes.fixed", "elm");
 
    edje_object_scale_set(wd->panes, elm_widget_scale_get(obj) *
                          _elm_config->scale);
@@ -380,4 +383,24 @@ elm_panes_horizontal_get(const Evas_Object *obj)
    ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
    Widget_Data *wd = elm_widget_data_get(obj);
    return wd->horizontal;
+}
+
+EAPI void
+elm_panes_fixed_set(Evas_Object *obj, Eina_Bool fixed)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   wd->fixed = fixed;
+   if (wd->fixed == EINA_TRUE)
+     edje_object_signal_emit(wd->panes, "elm.panes.fixed", "elm");
+   else
+     edje_object_signal_emit(wd->panes, "elm.panes.unfixed", "elm");
+}
+
+EAPI Eina_Bool
+elm_panes_fixed_get(const Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   return wd->fixed;
 }

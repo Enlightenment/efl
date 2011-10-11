@@ -23688,6 +23688,8 @@ extern "C" {
     * @ingroup Panes
     */
    EAPI Eina_Bool             elm_panes_horizontal_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+   EAPI void                  elm_panes_fixed_set(Evas_Object *obj, Eina_Bool fixed) EINA_ARG_NONNULL(1);
+   EAPI Eina_Bool             elm_panes_fixed_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
 
    /**
     * @}
