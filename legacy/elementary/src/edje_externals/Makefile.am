@@ -33,6 +33,7 @@ elm_anchorblock.c \
 elm_anchorview.c \
 elm_bubble.c \
 elm_button.c \
+elm_calendar.c \
 elm_check.c \
 elm_clock.c \
 elm_entry.c \
