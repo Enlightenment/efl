@@ -298,7 +298,7 @@ _view_smart_mouse_down(Ewk_View_Smart_Data *esd, const Evas_Event_Mouse_Down *ev
      return _parent_sc.mouse_down(esd, event);
 
    sd->mouse.pan_anim = ecore_animator_add(_view_pan_animator, sd);
-   sd->mouse.longpress_timer = ecore_timer_add(1.0, _view_longpress_timer, sd);
+   sd->mouse.longpress_timer = ecore_timer_add(_elm_config->longpress_timeout, _view_longpress_timer, sd);
    sd->mouse.move_count = 1;
    sd->mouse.x = event->canvas.x;
    sd->mouse.y = event->canvas.y;
