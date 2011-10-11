@@ -13,7 +13,7 @@ group { name: "elm/notify/block_events/default";
          name: "block_clicked";
          signal: "mouse,clicked,1";
          source: "block_events";
-         action: SIGNAL_EMIT "elm,action,clicked" "elm";
+         action: SIGNAL_EMIT "elm,action,click" "elm";
       }
    }
 }

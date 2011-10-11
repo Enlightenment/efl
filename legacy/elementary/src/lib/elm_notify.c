@@ -605,7 +605,7 @@ elm_notify_repeat_events_set(Evas_Object *obj, Eina_Bool repeat)
         wd->block_events = edje_object_add(evas_object_evas_get(obj));
         _block_events_theme_apply(obj);
         elm_widget_resize_object_set(obj, wd->block_events);
-        edje_object_signal_callback_add(wd->block_events, "elm,action,clicked",
+        edje_object_signal_callback_add(wd->block_events, "elm,action,click",
                                         "elm", _signal_block_clicked, obj);
      }
    else
