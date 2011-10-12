@@ -605,7 +605,8 @@ _ecore_x_shutdown(int close_display)
      {
         close(ConnectionNumber(_ecore_x_disp));
         // FIXME: may have to clean up x display internal here
-        XFree(_ecore_x_disp);
+// getting segv here? hmmm. odd. disable
+//        XFree(_ecore_x_disp);
      }
 
    free(_ecore_x_event_handlers);
