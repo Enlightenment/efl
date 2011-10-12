@@ -1314,14 +1314,14 @@ elm_web_selection_get(const Evas_Object *obj)
 }
 
 EAPI void
-elm_web_popup_selected_set(Evas_Object *obj, int index)
+elm_web_popup_selected_set(Evas_Object *obj, int idx)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
 #ifdef HAVE_ELEMENTARY_WEB
    Widget_Data *wd = elm_widget_data_get(obj);
-   ewk_view_popup_selected_set(wd->ewk_view, index);
+   ewk_view_popup_selected_set(wd->ewk_view, idx);
 #else
-   (void)index;
+   (void)idx;
 #endif
 }
 
