@@ -301,3 +301,9 @@
 
         * Fix bug in Ecore_X generic event handling for extended event
           sizes when freeing (and allocating) the data.
+
+2011-09-29  Youness Alaoui (KaKaRoTo)
+
+        * Port ecore-con to work on systems without IPv6 support
+        * Use inet_ntop instead of getnameinfo for ecore_con_client_get_ip
+        * Added ecore-con unit test
