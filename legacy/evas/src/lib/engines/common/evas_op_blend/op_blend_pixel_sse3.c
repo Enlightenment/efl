@@ -146,7 +146,9 @@ init_blend_pixel_span_funcs_sse3(void)
    op_blend_span_funcs[SP_AS][SM_N][SC_N][DP][CPU_SSE3] = _op_blend_pas_dp_sse3;
    op_blend_span_funcs[SP_AN][SM_N][SC_N][DP][CPU_SSE3] = _op_blend_pan_dp_sse3;
 
-   op_blend_span_funcs[SP][SM_N][SC_N][DP_AN][CPU_SSE3] = _op_blend_p_dpan_sse3;
+   
+// FIXME: BUGGY BUGGY Core i5 750 (32bit), 4.5.2 (Ubuntu/Linaro 4.5.2-8ubuntu4), ello (text and rectangle)
+//   op_blend_span_funcs[SP][SM_N][SC_N][DP_AN][CPU_SSE3] = _op_blend_p_dpan_sse3;
    op_blend_span_funcs[SP_AS][SM_N][SC_N][DP_AN][CPU_SSE3] = _op_blend_pas_dpan_sse3;
    op_blend_span_funcs[SP_AN][SM_N][SC_N][DP_AN][CPU_SSE3] = _op_blend_pan_dpan_sse3;
 }
