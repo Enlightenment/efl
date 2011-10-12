@@ -17,18 +17,24 @@ typedef struct _Item_Cache  Item_Cache;
 struct _Widget_Data
 {
    Eina_Inlist_Sorted_State *state;
-   Evas_Object      *obj, *scr, *pan_smart;
-   Eina_Inlist      *items, *blocks;
-   Eina_List        *group_items;
-   Pan              *pan;
+   Evas_Object      *obj; /* the genlist object */
+   Evas_Object      *scr; /* a smart scroller object which is used internally in genlist */
+   Evas_Object      *pan_smart; /* "elm_genlist_pan" evas smart object. this is an extern pan of smart scroller(scr). */
+   Eina_Inlist      *items; /* inlist of all items */
+   Eina_Inlist      *blocks; /* inlist of all blocks. a block consists of a certain number of items. maximum number of items in a block is 'max_items_per_block'. */
+   Eina_List        *group_items; /* list of groups index items */
+   Pan              *pan; /* pan_smart object's smart data */
    Evas_Coord        pan_x, pan_y, reorder_old_pan_y, w, h, minw, minh, realminw, prev_viewport_w;
    Ecore_Job        *calc_job, *update_job;
    Ecore_Idle_Enterer *queue_idle_enterer;
    Ecore_Idler        *must_recalc_idler;
    Eina_List        *queue, *selected;
-   Elm_Genlist_Item *show_item, *last_selected_item, *anchor_item, *mode_item, *reorder_it, *reorder_rel, *expanded_item;
-   Eina_Inlist      *item_cache;
-   Evas_Coord        anchor_y, reorder_start_y;
+   Elm_Genlist_Item *show_item, *anchor_item, *mode_item, *reorder_rel, *expanded_item;
+   Elm_Genlist_Item *last_selected_item; /* the last selected item. */
+   Elm_Genlist_Item *reorder_it; /* an item which is longpressed and in the moving state. */
+   Eina_Inlist      *item_cache; /* an inlist of edje object item cache. */
+   Evas_Coord        anchor_y;
+   Evas_Coord        reorder_start_y; /* reorder item's initial y coordinate in the pan. */
    Elm_List_Mode     mode;
    Ecore_Timer      *multi_timer, *scr_hold_timer;
    Ecore_Animator   *reorder_move_animator;
@@ -62,15 +68,15 @@ struct _Widget_Data
    } history[SWIPE_MOVES];
    int               multi_device;
    int               item_cache_count;
-   int               item_cache_max;
+   int               item_cache_max; /* maximum number of cached items */
    int               movements;
    int               walking;
    int               item_width;
    int               item_height;
    int               group_item_width;
    int               group_item_height;
-   int               max_items_per_block;
-   double            longpress_timeout;
+   int               max_items_per_block; /* maximum number of items per block */
+   double            longpress_timeout; /* longpress timeout. this value comes from _elm_config by default. this can be changed by elm_genlist_longpress_timeout_set() */
 };
 
 struct _Item_Block
