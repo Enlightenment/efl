@@ -1,3 +1,8 @@
+2011-10-12  Vincent Torri  <doursse at users dot sf dot net>
+
+	* src/lib/evil_util.c:
+	simplify evil_wchar_to_char()
+
 2011-10-05  Vincent Torri  <doursse at users dot sf dot net>
 
 	* src/lib/evil_inet.c:

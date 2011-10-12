@@ -38,21 +38,19 @@ char *
 evil_wchar_to_char(const wchar_t *text)
 {
    char  *atext;
-   size_t size;
    int    asize;
 
-   size = wcslen(text) + 1;
-
-   asize = WideCharToMultiByte(CP_ACP, 0, text, (int)size, NULL, 0, NULL, NULL);
+   asize = WideCharToMultiByte(CP_ACP, 0, text, -1, NULL, 0, NULL, NULL);
    if (asize == 0)
      return NULL;
 
-   atext = (char*)malloc((asize + 1) * sizeof(char));
+   atext = (char*)malloc(asize * sizeof(char));
+   if (!atext)
+     return NULL;
 
-   if (atext)
-     if (!WideCharToMultiByte(CP_ACP, 0, text, (int)size, atext, asize, NULL, NULL))
-       return NULL;
-   atext[asize] = '\0';
+   asize = WideCharToMultiByte(CP_ACP, 0, text, -1, atext, asize, NULL, NULL);
+   if (asize == 0)
+     return NULL;
 
    return atext;
 }
