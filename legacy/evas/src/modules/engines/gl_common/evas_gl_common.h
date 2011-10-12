@@ -640,7 +640,7 @@ extern unsigned int   (*secsym_eglUnmapImageSEC)             (void *a, void *b);
 extern unsigned int   (*secsym_eglGetImageAttribSEC)         (void *a, void *b, int c, int *d);
 #endif
 
-#define GL_ERRORS 1
+//#define GL_ERRORS 1
 
 #ifdef GL_ERRORS
 # define GLERR(fn, fl, ln, op) \

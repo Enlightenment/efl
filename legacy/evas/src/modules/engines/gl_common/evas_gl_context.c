@@ -1,5 +1,6 @@
 #include "evas_gl_private.h"
 
+#define PRG_INVALID 0xffffffff
 #define GLPIPES 1
 
 static int sym_done = 0;
@@ -454,7 +455,9 @@ _evas_gl_common_viewport_set(Evas_Engine_GL_Context *gc)
         GLERR(__FUNCTION__, __FILE__, __LINE__, "");
      }
 
-   glUseProgram(gc->state.current.cur_prog);
+   if (gc->state.current.cur_prog == PRG_INVALID)
+      glUseProgram(gc->shared->shader[0].prog);
+   else glUseProgram(gc->state.current.cur_prog);
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
 }
 
@@ -703,7 +706,9 @@ evas_gl_common_context_new(void)
         SHADER_TEXTURE_ADD(shared, IMG_MASK, tex);
         SHADER_TEXTURE_ADD(shared, IMG_MASK, texm);
 
-        glUseProgram(gc->state.current.cur_prog);
+        if (gc->state.current.cur_prog == PRG_INVALID)
+           glUseProgram(gc->shared->shader[0].prog);
+        else glUseProgram(gc->state.current.cur_prog);
         GLERR(__FUNCTION__, __FILE__, __LINE__, "");
 
         evas_gl_common_shader_program_init_done();
@@ -891,7 +896,9 @@ evas_gl_common_context_newframe(Evas_Engine_GL_Context *gc)
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
    glEnableVertexAttribArray(SHAD_COLOR);
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-   glUseProgram(gc->state.current.cur_prog);
+   if (gc->state.current.cur_prog == PRG_INVALID)
+      glUseProgram(gc->shared->shader[0].prog);
+   else glUseProgram(gc->state.current.cur_prog);
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
 
    glActiveTexture(GL_TEXTURE0);
@@ -922,7 +929,7 @@ evas_gl_common_context_target_surface_set(Evas_Engine_GL_Context *gc,
 
    evas_gl_common_context_flush(gc);
 
-   gc->state.current.cur_prog = -1;
+   gc->state.current.cur_prog = PRG_INVALID;
    gc->state.current.cur_tex = -1;
    gc->state.current.cur_texu = -1;
    gc->state.current.cur_texv = -1;
