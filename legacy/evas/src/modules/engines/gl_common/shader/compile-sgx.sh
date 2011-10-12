@@ -45,4 +45,4 @@ compile nv12
 compile nv12_nomul
 compile yuy2
 compile yuy2_nomul
-## FIXME: compile filter_*
+
