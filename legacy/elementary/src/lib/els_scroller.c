@@ -1385,8 +1385,8 @@ elm_smart_scroller_page_show(Evas_Object *obj, int pagenumber_h, int pagenumber_
    API_ENTRY return;
    Evas_Coord x, y, w, h;
    elm_smart_scroller_child_viewport_size_get(sd->smart_obj, &w, &h);
-   if (pagenumber_h) x = sd->pagesize_h * pagenumber_h;
-   if (pagenumber_v) y = sd->pagesize_v * pagenumber_v;
+   if (pagenumber_h >= 0) x = sd->pagesize_h * pagenumber_h;
+   if (pagenumber_v >= 0) y = sd->pagesize_v * pagenumber_v;
    if (_elm_smart_scroller_child_region_show_internal(obj, &x, &y, w, h))
      elm_smart_scroller_child_pos_set(obj, x, y);
 }
@@ -1397,8 +1397,8 @@ elm_smart_scroller_page_bring_in(Evas_Object *obj, int pagenumber_h, int pagenum
    API_ENTRY return;
    Evas_Coord x, y, w, h;
    elm_smart_scroller_child_viewport_size_get(sd->smart_obj, &w, &h);
-   if (pagenumber_h) x = sd->pagesize_h * pagenumber_h;
-   if (pagenumber_v) y = sd->pagesize_v * pagenumber_v;
+   if (pagenumber_h >= 0) x = sd->pagesize_h * pagenumber_h;
+   if (pagenumber_v >= 0) y = sd->pagesize_v * pagenumber_v;
    if (_elm_smart_scroller_child_region_show_internal(obj, &x, &y, w, h))
      {
         _smart_scrollto_x(sd, _elm_config->bring_in_scroll_friction, x);

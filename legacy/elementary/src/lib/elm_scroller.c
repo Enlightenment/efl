@@ -127,12 +127,12 @@ _on_focus_hook(void *data __UNUSED__, Evas_Object *obj)
    if (!wd) return;
    if (elm_widget_focus_get(obj))
      {
-        edje_object_signal_emit(wd->scr, "elm,action,focus", "elm");
+        edje_object_signal_emit(elm_smart_scroller_edje_object_get(wd->scr), "elm,action,focus", "elm");
         evas_object_focus_set(wd->scr, EINA_TRUE);
      }
    else
      {
-        edje_object_signal_emit(wd->scr, "elm,action,unfocus", "elm");
+        edje_object_signal_emit(elm_smart_scroller_edje_object_get(wd->scr), "elm,action,unfocus", "elm");
         evas_object_focus_set(wd->scr, EINA_FALSE);
      }
 }
@@ -526,7 +526,7 @@ elm_scroller_content_unset(Evas_Object *obj)
    if (!wd->content) return NULL;
    content = wd->content;
    elm_widget_sub_object_del(obj, wd->content);
-   edje_object_part_unswallow(wd->scr, wd->content);
+   edje_object_part_unswallow(elm_smart_scroller_edje_object_get(wd->scr), wd->content);
    wd->content = NULL;
    return content;
 }
