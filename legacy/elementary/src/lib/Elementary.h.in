@@ -13668,28 +13668,6 @@ extern "C" {
     */
    EAPI Elm_Web_Zoom_Mode            elm_web_zoom_mode_get(const Evas_Object *obj);
    /**
-    * Gets whether text-only zoom is set
-    *
-    * @param obj The web object
-    *
-    * @return EINA_TRUE if zoom is set to affect only text, EINA_FALSE
-    * otherwise
-    *
-    * @see elm_web_zoom_text_only_set()
-    */
-   EAPI Eina_Bool                    elm_web_zoom_text_only_get(const Evas_Object *obj);
-   /**
-    * Enables or disables zoom to affect only text
-    *
-    * If set, then the zoom level set to the page will only be applied on text,
-    * leaving other objects, such as images, at their original size.
-    *
-    * @param obj The web object
-    * @param setting EINA_TRUE to use text-only zoom, EINA_FALSE to have zoom
-    * affect the entire page
-    */
-   EAPI void                         elm_web_zoom_text_only_set(Evas_Object *obj, Eina_Bool setting);
-   /**
     * Shows the given region in the web object
     *
     * @param obj The web object

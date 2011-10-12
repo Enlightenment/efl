@@ -1599,7 +1599,7 @@ elm_web_zoom_set(Evas_Object *obj, double zoom)
         Evas_Coord fw, fh, pw, ph;
         if (!ewk_frame_contents_size_get(frame, &fw, &fh))
           return;
-        z = ewk_frame_zoom_get(frame);
+        z = ewk_frame_page_zoom_get(frame);
         fw /= z;
         fh /= z;
         if ((fw > 0) && (fh > 0))
@@ -1624,7 +1624,7 @@ elm_web_zoom_set(Evas_Object *obj, double zoom)
         Evas_Coord fw, fh, pw, ph;
         if (!ewk_frame_contents_size_get(frame, &fw, &fh))
           return;
-        z = ewk_frame_zoom_get(frame);
+        z = ewk_frame_page_zoom_get(frame);
         fw /= z;
         fh /= z;
         if ((fw > 0) && (fh > 0))
@@ -1698,32 +1698,6 @@ elm_web_zoom_mode_get(const Evas_Object *obj)
 #endif
 }
 
-EAPI Eina_Bool
-elm_web_zoom_text_only_get(const Evas_Object *obj)
-{
-   ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
-#ifdef HAVE_ELEMENTARY_WEB
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return EINA_FALSE;
-   return ewk_view_zoom_text_only_get(wd->ewk_view);
-#else
-   return EINA_FALSE;
-#endif
-}
-
-EAPI void
-elm_web_zoom_text_only_set(Evas_Object *obj, Eina_Bool setting)
-{
-   ELM_CHECK_WIDTYPE(obj, widtype);
-#ifdef HAVE_ELEMENTARY_WEB
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return;
-   ewk_view_zoom_text_only_set(wd->ewk_view, setting);
-#else
-   (void)setting;
-#endif
-}
-
 EAPI void
 elm_web_region_show(Evas_Object *obj, int x, int y, int w __UNUSED__, int h __UNUSED__)
 {
@@ -1734,7 +1708,7 @@ elm_web_region_show(Evas_Object *obj, int x, int y, int w __UNUSED__, int h __UN
    int fw, fh, zw, zh, rx, ry;
    float zoom;
    ewk_frame_contents_size_get(frame, &fw, &fh);
-   zoom = ewk_frame_zoom_get(frame);
+   zoom = ewk_frame_page_zoom_get(frame);
    zw = fw / zoom;
    zh = fh / zoom;
    rx = (x * fw) / zw;
@@ -1762,7 +1736,7 @@ elm_web_region_bring_in(Evas_Object *obj, int x, int y, int w __UNUSED__, int h 
    float zoom;
    ewk_frame_contents_size_get(frame, &fw, &fh);
    ewk_frame_scroll_pos_get(frame, &sx, &sy);
-   zoom = ewk_frame_zoom_get(frame);
+   zoom = ewk_frame_page_zoom_get(frame);
    zw = fw / zoom;
    zh = fh / zoom;
    rx = (x * fw) / zw;
