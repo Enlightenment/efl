@@ -372,21 +372,6 @@ elm_pager_content_push(Evas_Object *obj, Evas_Object *content)
 }
 
 EAPI void
-elm_pager_content_del(Evas_Object *obj, Evas_Object *subobj)
-{
-   ELM_CHECK_WIDTYPE(obj, widtype);
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!subobj) return;
-   if (!wd) return;
-   if (!wd->stack) return;
-
-   if (subobj == wd->top->content)
-     elm_pager_content_pop(obj);
-   else
-     _content_del(obj, NULL, subobj, NULL);
-}
-
-EAPI void
 elm_pager_content_pop(Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
