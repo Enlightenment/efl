@@ -29,6 +29,7 @@ void eina_test_log(TCase *tc);
 void eina_test_error(TCase *tc);
 void eina_test_magic(TCase *tc);
 void eina_test_inlist(TCase *tc);
+void eina_test_clist(TCase *tc);
 void eina_test_lalloc(TCase *tc);
 void eina_test_main(TCase *tc);
 void eina_test_counter(TCase *tc);

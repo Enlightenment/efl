@@ -148,6 +148,7 @@ extern "C" {
 #include "eina_main.h"
 #include "eina_fp.h"
 #include "eina_rectangle.h"
+#include "eina_clist.h"
 #include "eina_inlist.h"
 #include "eina_file.h"
 #include "eina_list.h"
