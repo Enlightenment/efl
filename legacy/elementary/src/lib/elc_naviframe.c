@@ -869,8 +869,6 @@ elm_naviframe_item_push(Evas_Object *obj,
                                 "elm,state,new,pushed",
                                 "elm");
      }
-   else
-     edje_object_signal_emit(it->base.view, "elm,state,visible", "elm");
    it->title_visible = EINA_TRUE;
    wd->stack = eina_list_append(wd->stack, it);
    return ELM_CAST(it);

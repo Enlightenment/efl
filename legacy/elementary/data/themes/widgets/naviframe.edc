@@ -280,7 +280,7 @@ group { name:"elm/naviframe/item/basic/default";
       program { name: "visible";
          signal: "elm,state,visible";
          source: "elm";
-         action: STATE_SET "show" 0.0;
+         action: STATE_SET "default" 0.0;
          target: "elm.swallow.content";
       }
       program { name: "title_show";
