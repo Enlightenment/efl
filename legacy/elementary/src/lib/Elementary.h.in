@@ -28053,6 +28053,29 @@ extern "C" {
    EAPI Eina_Bool           elm_naviframe_item_title_visible_get(const Elm_Object_Item *it) EINA_ARG_NONNULL(1);
 
    /**
+    * @brief Set creating prev button automatically or not
+    *
+    * @param obj The naviframe object
+    * @param auto_pushed If @c EINA_TRUE, the previous button(back button) will
+    *        be created internally when you pass the @c NULL to the prev_btn
+    *        parameter in elm_naviframe_item_push
+    *
+    * @see also elm_naviframe_item_push()
+    */
+   EAPI void                elm_naviframe_prev_btn_auto_pushed_set(Evas_Object *obj, Eina_Bool auto_pushed) EINA_ARG_NONNULL(1);
+   /**
+    * @brief Get a value whether prev button(back button) will be auto pushed or
+    *        not.
+    *
+    * @param obj The naviframe object
+    * @return If @c EINA_TRUE, prev button will be auto pushed.
+    *
+    * @see also elm_naviframe_item_push()
+    *           elm_naviframe_prev_btn_auto_pushed_set()
+    */
+   EAPI Eina_Bool           elm_naviframe_prev_btn_auto_pushed_get(const Evas_Object *obj); EINA_ARG_NONNULL(1);
+
+   /**
     * @}
     */
 

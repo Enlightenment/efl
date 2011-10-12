@@ -12,6 +12,7 @@ struct _Widget_Data
    Evas_Object  *base;
    Evas_Object  *rect;
    Eina_Bool     preserve: 1;
+   Eina_Bool     auto_pushed: 1;
    Eina_Bool     pass_events: 1;
 };
 
@@ -764,7 +765,7 @@ elm_naviframe_add(Evas_Object *parent)
    elm_widget_resize_object_set(obj, wd->base);
    _elm_theme_object_set(obj, wd->base, "naviframe", "base", "default");
 
-   //rect:
+   //rect
    wd->rect = evas_object_rectangle_add(e);
    evas_object_color_set(wd->rect, 0, 0, 0, 0);
    elm_widget_sub_object_add(obj, wd->rect);
@@ -774,6 +775,7 @@ elm_naviframe_add(Evas_Object *parent)
    evas_object_event_callback_add(obj, EVAS_CALLBACK_HIDE, _hide, obj);
    evas_object_smart_callbacks_descriptions_set(obj, _signals);
 
+   wd->auto_pushed = EINA_TRUE;
    wd->pass_events = EINA_TRUE;
 
    return obj;
@@ -836,7 +838,7 @@ elm_naviframe_item_push(Evas_Object *obj,
    _item_text_set_hook(ELM_CAST(it), "elm.text.title", title_label);
 
    //title buttons
-   if ((!prev_btn) && (eina_list_count(wd->stack)))
+   if ((!prev_btn) && wd->auto_pushed && eina_list_count(wd->stack))
      {
         prev_btn = _back_btn_new(obj);
         _title_prev_btn_set(it, prev_btn, EINA_TRUE);
@@ -1078,5 +1080,23 @@ elm_naviframe_item_title_visible_get(const Elm_Object_Item *it)
    ELM_OBJ_ITEM_CHECK_OR_RETURN(it, EINA_FALSE);
    Elm_Naviframe_Item *navi_it = ELM_CAST(it);
    return navi_it->title_visible;
+}
+
+EAPI void
+elm_naviframe_prev_btn_auto_pushed_set(Evas_Object *obj, Eina_Bool auto_pushed)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return NULL;
+   wd->auto_pushed = !!auto_pushed;
+}
+
+EAPI Eina_Bool
+elm_naviframe_prev_btn_auto_pushed_get(const Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return NULL;
+   return wd->auto_pushed;
 }
 
