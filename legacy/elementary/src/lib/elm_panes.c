@@ -390,7 +390,7 @@ elm_panes_fixed_set(Evas_Object *obj, Eina_Bool fixed)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
-   wd->fixed = fixed;
+   wd->fixed = !!fixed;
    if (wd->fixed == EINA_TRUE)
      edje_object_signal_emit(wd->panes, "elm.panes.fixed", "elm");
    else
