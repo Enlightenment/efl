@@ -454,7 +454,7 @@ _evas_gl_common_viewport_set(Evas_Engine_GL_Context *gc)
         GLERR(__FUNCTION__, __FILE__, __LINE__, "");
      }
 
-   glUseProgram(gc->pipe[0].shader.cur_prog);
+   glUseProgram(gc->state.current.cur_prog);
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
 }
 
@@ -703,7 +703,7 @@ evas_gl_common_context_new(void)
         SHADER_TEXTURE_ADD(shared, IMG_MASK, tex);
         SHADER_TEXTURE_ADD(shared, IMG_MASK, texm);
 
-        glUseProgram(gc->pipe[0].shader.cur_prog);
+        glUseProgram(gc->state.current.cur_prog);
         GLERR(__FUNCTION__, __FILE__, __LINE__, "");
 
         evas_gl_common_shader_program_init_done();
@@ -891,7 +891,7 @@ evas_gl_common_context_newframe(Evas_Engine_GL_Context *gc)
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
    glEnableVertexAttribArray(SHAD_COLOR);
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-   glUseProgram(gc->pipe[0].shader.cur_prog);
+   glUseProgram(gc->state.current.cur_prog);
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
 
    glActiveTexture(GL_TEXTURE0);
@@ -2184,7 +2184,6 @@ evas_gl_common_context_image_map_push(Evas_Engine_GL_Context *gc,
 				     blend,
 				     smooth,
 				     clip, cx, cy, cw, ch);
-
    gc->pipe[pn].region.type = RTYPE_MAP;
    gc->pipe[pn].shader.cur_tex = tex->pt->texture;
    if (utexture)
@@ -2648,14 +2647,14 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
 
         gc->state.current.cur_prog  = gc->pipe[i].shader.cur_prog;
         gc->state.current.cur_tex   = gc->pipe[i].shader.cur_tex;
-        gc->state.current.blend     = gc->pipe[i].shader.blend;
-        gc->state.current.smooth    = gc->pipe[i].shader.smooth;
         gc->state.current.render_op = gc->pipe[i].shader.render_op;
-        gc->state.current.clip      = gc->pipe[i].shader.clip;
         gc->state.current.cx        = gc->pipe[i].shader.cx;
         gc->state.current.cy        = gc->pipe[i].shader.cy;
         gc->state.current.cw        = gc->pipe[i].shader.cw;
         gc->state.current.ch        = gc->pipe[i].shader.ch;
+        gc->state.current.smooth    = gc->pipe[i].shader.smooth;
+        gc->state.current.blend     = gc->pipe[i].shader.blend;
+        gc->state.current.clip      = gc->pipe[i].shader.clip;
 
         if (gc->pipe[i].array.vertex) free(gc->pipe[i].array.vertex);
         if (gc->pipe[i].array.color) free(gc->pipe[i].array.color);
