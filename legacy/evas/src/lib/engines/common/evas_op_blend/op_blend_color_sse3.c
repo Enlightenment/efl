@@ -56,7 +56,7 @@ init_blend_color_span_funcs_sse3(void)
    op_blend_span_funcs[SP_N][SM_N][SC][DP][CPU_SSE3] = _op_blend_c_dp_sse3;
    op_blend_span_funcs[SP_N][SM_N][SC_AA][DP][CPU_SSE3] = _op_blend_caa_dp_sse3;
 
-// BUGGY BUGGY BUGGY!!!! <- disabled.
+// FIXME: BUGGY BUGGY Core i5 750 (32bit), 4.5.2 (Ubuntu/Linaro 4.5.2-8ubuntu4), ello (text and rectangle)
 //   op_blend_span_funcs[SP_N][SM_N][SC][DP_AN][CPU_SSE3] = _op_blend_c_dpan_sse3;
    op_blend_span_funcs[SP_N][SM_N][SC_AA][DP_AN][CPU_SSE3] = _op_blend_caa_dpan_sse3;
 }
