@@ -1,9 +1,5 @@
 #ifdef GL_ES
-#ifdef GL_FRAGMENT_PRECISION_HIGH
 precision highp float;
-#else
-precision mediump float;
-#endif
 #endif
 attribute vec4 vertex;
 attribute vec2 tex_coord, tex_coord2, tex_coord3;
