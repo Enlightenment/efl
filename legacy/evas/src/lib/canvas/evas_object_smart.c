@@ -11,7 +11,6 @@ struct _Evas_Object_Smart
    void             *data;
    Eina_List        *callbacks;
    Eina_Inlist      *contained;
-   Eina_List        *calc_node;
    Evas_Smart_Cb_Description_Array callbacks_descriptions;
    int               walking_list;
    Eina_Bool         deletions_waiting : 1;
@@ -551,38 +550,15 @@ evas_object_smart_need_recalculate_set(Evas_Object *obj, Eina_Bool value)
 
    // XXX: do i need this?
    if (obj->delete_me) return;
-      
+
+   /* remove this entry from calc_list or processed list */
+   if (eina_clist_element_is_linked(&obj->calc_entry))
+     eina_clist_remove(&obj->calc_entry);
+
    value = !!value;
    if (value)
-     {
-        Evas *e = obj->layer->evas;
-        
-        if (o->need_recalculate)
-          {
-             if ((o->calc_node) && (e->calc_list_current != o->calc_node))
-                e->calc_list = eina_list_demote_list(e->calc_list,
-                                                     o->calc_node);
-             else
-                e->calc_list = eina_list_append(e->calc_list, obj);
-          }
-        else
-           e->calc_list = eina_list_append(e->calc_list, obj);
-        o->calc_node = eina_list_last(e->calc_list);
-      }
-   else
-     {
-        Evas *e = obj->layer->evas;
-        
-        if (o->need_recalculate)
-          {
-             if ((o->calc_node) && (e->calc_list_current != o->calc_node))
-                e->calc_list = eina_list_remove_list(e->calc_list,
-                                                     o->calc_node);
-             o->calc_node = NULL;
-             
-          }
-      }
-   
+     eina_clist_add_tail(&obj->layer->evas->calc_list, &obj->calc_entry);
+
    if (o->need_recalculate == value) return;
 
    if (obj->recalculate_cycle > 256)
@@ -654,32 +630,40 @@ evas_smart_objects_calculate_count_get(const Evas *e)
 void
 evas_call_smarts_calculate(Evas *e)
 {
+   Eina_Clist processed = EINA_CLIST_INIT(processed);
+   Eina_Clist *elem;
    Evas_Object *obj;
-   Eina_List *l;
 
 //   printf("+CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAALC-----------v\n");
    evas_event_freeze(e);
    e->in_smart_calc++;
-   
-   EINA_LIST_FOREACH(e->calc_list, l, obj)
+
+   while (NULL != (elem = eina_clist_head(&e->calc_list)))
      {
-        Evas_Object_Smart *o = obj->object_data;
-        
+        Evas_Object_Smart *o;
+
+        /* move the item to the processed list */
+        obj = EINA_CLIST_ENTRY(elem, Evas_Object, calc_entry);
+        eina_clist_remove(&obj->calc_entry);
         if (obj->delete_me) continue;
-        e->calc_list_current = l;
+        eina_clist_add_tail(&processed, &obj->calc_entry);
+
+        o = obj->object_data;
+
         if (o->need_recalculate)
           {
              o->need_recalculate = 0;
              obj->smart.smart->smart_class->calculate(obj);
           }
-        if (o->calc_node == l) o->calc_node = NULL;
-        e->calc_list_current = NULL;
      }
-   EINA_LIST_FREE(e->calc_list, obj)
+
+   while (NULL != (elem = eina_clist_head(&processed)))
      {
+        obj = EINA_CLIST_ENTRY(elem, Evas_Object, calc_entry);
         obj->recalculate_cycle = 0;
+        eina_clist_remove(&obj->calc_entry);
      }
-   e->calc_list_current = NULL;
+
    e->in_smart_calc--;
    if (e->in_smart_calc == 0) e->smart_calc_count++;
    evas_event_thaw(e);
@@ -745,12 +729,9 @@ evas_object_smart_cleanup(Evas_Object *obj)
    o = (Evas_Object_Smart *)(obj->object_data);
    if (o->magic == MAGIC_OBJ_SMART)
      {
-        Evas *e = obj->layer->evas;
+        if (obj->calc_entry.next)
+          eina_clist_remove(&obj->calc_entry);
 
-        if ((o->calc_node) && (e->calc_list_current != o->calc_node))
-           e->calc_list = eina_list_remove_list(e->calc_list, 
-                                                o->calc_node);
-        o->calc_node = NULL;
         while (o->contained)
            evas_object_smart_member_del((Evas_Object *)o->contained);
 

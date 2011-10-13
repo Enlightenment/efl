@@ -347,8 +347,7 @@ struct _Evas
    Eina_Array     calculate_objects;
    Eina_Array     clip_changes;
 
-   Eina_List     *calc_list;
-   Eina_List     *calc_list_current;
+   Eina_Clist     calc_list;
    Eina_List     *video_objects;
 
    Eina_List     *post_events; // free me on evas_free
@@ -567,6 +566,7 @@ struct _Evas_Object
    unsigned char               delete_me;
 
    unsigned char               recalculate_cycle;
+   Eina_Clist                  calc_entry;
 
    Evas_Object_Pointer_Mode    pointer_mode : 1;
 
