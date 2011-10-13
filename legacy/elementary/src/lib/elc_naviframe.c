@@ -880,7 +880,7 @@ EAPI Evas_Object *
 elm_naviframe_item_pop(Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
-   Elm_Naviframe_Item *it, *prev_it;
+   Elm_Naviframe_Item *it, *prev_it = NULL;
    Widget_Data *wd;
    Evas_Object *content = NULL;
 
@@ -892,8 +892,9 @@ elm_naviframe_item_pop(Evas_Object *obj)
    if (wd->preserve)
      content = it->content;
 
-   prev_it = EINA_INLIST_CONTAINER_GET(wd->stack->last->prev,
-                                       Elm_Naviframe_Item);
+   if (wd->stack->last->prev)
+     prev_it = EINA_INLIST_CONTAINER_GET(wd->stack->last->prev,
+                                         Elm_Naviframe_Item);
    if (prev_it)
      {
         if (wd->freeze_events)
