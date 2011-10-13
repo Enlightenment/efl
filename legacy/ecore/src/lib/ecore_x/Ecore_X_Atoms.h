@@ -249,4 +249,7 @@ EAPI extern Ecore_X_Atom ECORE_X_ATOM_E_COMP_FLUSH;
 EAPI extern Ecore_X_Atom ECORE_X_ATOM_E_COMP_DUMP;
 EAPI extern Ecore_X_Atom ECORE_X_ATOM_E_COMP_PIXMAP;
 
+EAPI extern Ecore_X_Atom ECORE_X_ATOM_E_VIDEO_PARENT;
+EAPI extern Ecore_X_Atom ECORE_X_ATOM_E_VIDEO_POSITION;
+
 #endif /* _ECORE_X_ATOMS_H */

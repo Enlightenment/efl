@@ -280,7 +280,9 @@ _ecore_x_atoms_init(void)
 
       { "_E_COMP_FLUSH", &ECORE_X_ATOM_E_COMP_FLUSH },
       { "_E_COMP_DUMP", &ECORE_X_ATOM_E_COMP_DUMP },
-      { "_E_COMP_PIXMAP", &ECORE_X_ATOM_E_COMP_PIXMAP }
+      { "_E_COMP_PIXMAP", &ECORE_X_ATOM_E_COMP_PIXMAP },
+      { "_E_VIDEO_PARENT", &ECORE_X_ATOM_E_VIDEO_PARENT },
+      { "_E_VIDEO_POSITION", &ECORE_X_ATOM_E_VIDEO_POSITION }
    };
    Atom *atoms;
    char **names;

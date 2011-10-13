@@ -275,3 +275,7 @@ EAPI Ecore_X_Atom ECORE_X_ATOM_E_COMP_SYNC_CANCEL = 0;
 EAPI Ecore_X_Atom ECORE_X_ATOM_E_COMP_FLUSH = 0;
 EAPI Ecore_X_Atom ECORE_X_ATOM_E_COMP_DUMP = 0;
 EAPI Ecore_X_Atom ECORE_X_ATOM_E_COMP_PIXMAP = 0;
+
+/* currently Emotion and E17 specific extension */
+EAPI Ecore_X_Atom ECORE_X_ATOM_E_VIDEO_PARENT = 0;
+EAPI Ecore_X_Atom ECORE_X_ATOM_E_VIDEO_POSITION = 0;
