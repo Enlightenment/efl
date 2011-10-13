@@ -505,6 +505,12 @@ case "$host_os" in
 esac
 AC_SUBST(dlopen_libs)
 
+res=no
+AC_CHECK_LIB(m, lround, res=yes, res=no)
+if test "x$res" = "xyes"; then
+  AC_DEFINE(HAVE_LROUND, 1, C99 lround function exists)
+fi
+
 SHM_OPEN_LINK=""
 AC_MSG_CHECKING([whether shm_open() is present])
 LIBS_save=${LIBS}
