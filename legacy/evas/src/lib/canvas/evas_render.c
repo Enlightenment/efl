@@ -1303,9 +1303,6 @@ evas_render_updates_internal(Evas *e,
                                               &e->render_objects,
                                               &redraw_all);
 
-   _evas_render_phase1_direct(e, &e->active_objects, &e->restack_objects,
-                              &e->delete_objects, &e->render_objects);
-
    /* phase 1.5. check if the video should be inlined or stay in their overlay */
    alpha = e->engine.func->canvas_alpha_get(e->engine.data.output,
 					    e->engine.data.context);
@@ -1318,6 +1315,11 @@ evas_render_updates_internal(Evas *e,
         else
 	  _evas_object_image_video_overlay_hide(obj);
      }
+
+
+   /* phase 1.8. pre render for proxy */
+   _evas_render_phase1_direct(e, &e->active_objects, &e->restack_objects,
+                              &e->delete_objects, &e->render_objects);
 
    /* phase 2. force updates for restacks */
    for (i = 0; i < e->restack_objects.count; ++i)

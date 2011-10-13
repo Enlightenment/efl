@@ -3792,7 +3792,18 @@ _evas_object_image_video_overlay_show(Evas_Object *obj)
        o->created || !o->video_visible)
      o->video.resize(o->video.data, obj, &o->video, obj->cur.cache.clip.w, obj->cur.cache.clip.h);
    if (!o->video_visible || o->created)
-     o->video.show(o->video.data, obj, &o->video);
+     {
+        o->video.show(o->video.data, obj, &o->video);
+     }
+   else
+     {
+        /* Cancel dirty on the image */
+        Eina_Rectangle *r;
+
+        o->dirty_pixels = 0;
+        EINA_LIST_FREE(o->pixel_updates, r)
+          eina_rectangle_free(r);
+     }
    o->video_visible = EINA_TRUE;
    o->created = EINA_FALSE;
 }
