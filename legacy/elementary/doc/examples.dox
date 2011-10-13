@@ -5940,6 +5940,132 @@
  */
 
 /**
+ * @page web_example_01 Web - Simple example
+ *
+ * WebKit-EFL is independent of any particular toolkit, such as Elementary,
+ * so using it on applications requires that the programmer writes a lot of
+ * boiler plate code to manage to manage the web object.
+ *
+ * For a full featured browser this may make sense, as the programmer will
+ * want to have full control of every aspect of the web object, since it's the
+ * main component of the application. But other programs with simpler
+ * requirements, having to write so much code is undesired.
+ *
+ * This is where elm_web comes in. Its purpose is to provide a simple way
+ * for developers to embed a simple web object in their programs, simplifying
+ * the common use cases.
+ *
+ * This is not to say that a browser can't be made out of it, as this example
+ * shows.
+ *
+ * We'll be making a simple browser, consisting of one window with an URL bar,
+ * a toolbar to be used for the tabs and a pager to show one page at a time.
+ *
+ * When all tabs are closed, we'll be showing a default view with some custom
+ * content, for which we need to get the internal @c ewk_view object and use
+ * some WebKit functions on it, thus we need to include the necessary headers
+ * first.
+ *
+ * @dontinclude web_example.c
+ * @skip include
+ * @until EWebKit
+ *
+ * A struct to keep track of the different widgets in use and the currently
+ * shown tab. There's also an @c exiting flag, used to work around the overly
+ * simplistic way in which this example is written, just to avoid some
+ * warnings when closing the program.
+ *
+ * @skip typedef
+ * @skip typedef
+ * @until App_Data
+ *
+ * Each tab has its own struct too, but there's not much to it.
+ * @until };
+ *
+ * Whenever the currently selected tab changes, we need to update some state
+ * on the application. The back and forward buttons need to be disabled
+ * accordingly and the URL bar needs to show the right address.
+ *
+ * @skip static void
+ * @until pager_content_promote
+ * @until }
+ *
+ * Other updates happen based on events from the web object, like title change
+ * to update the name shown in the tab, and URL change which will update the
+ * URL bar if the event came from the currently selected tab.
+ *
+ * @skip tab_current_set
+ * @skip static void
+ * @until }
+ * @until }
+ *
+ * Adding a new tab is just a matter of creating a new web widget, its data
+ * and pushing it into the pager. A lot of the things that we should handle
+ * here, such as how to react to popups and JavaScript dialogs, are done
+ * already in the @c elm_web widget, so we can rely on their default
+ * implementations. For the JavaScript dialogs we are going to avoid having
+ * them open in a new window by setting the @c Inwin mode.
+ *
+ * There is no default implementation, however, for the requests to create a
+ * new window, so we have to handle them by setting a callback function that
+ * will ultimately call this very same function to add a new tab.
+ *
+ * @skip Tab_Data
+ * @until }
+ *
+ * Entering an address in the URL bar will check if a tab exists, and if not,
+ * create one and set the URL for it. The address needs to conform to the URI
+ * format, so we check that it does and add the protocol if it's missing.
+ *
+ * @skip static char
+ * @until eina_stringshare_del
+ * @until }
+ *
+ * The navigation buttons are simple enough. As for the refresh, it normally
+ * reloads the page using anything that may exist in the caches if applicable,
+ * but we can press it while holding the @c Shift key to avoid the cache.
+ *
+ * @skip static void
+ * @until web_forward
+ * @until }
+ *
+ * The callback set for the new window request creates a new tab and returns
+ * the web widget associated with it. This is important, this function must
+ * return a valid web widget returned by elm_web_add().
+ *
+ * @skip static Evas_Object
+ * @until }
+ *
+ * Pressing @c Ctrl-F will bring up the search box. Nothing about the box
+ * itself is worth mentioning here, but it works as you would expect from any
+ * other browser. While typing on it, it will highlight all occurrences of the
+ * searched word. Pressing @c Enter will go to the next instance and the two
+ * buttons next to the entry will move forward and backwards through the found
+ * keywords.
+ *
+ * @skip win_del_request
+ * @skip static void
+ * @until win_search_trigger
+ * @until }
+ *
+ * Last, create the main window and put all of the things used above in it. It
+ * contains a default web widget that will be shown when no tabs exist. This
+ * web object is not browsable per se, so history is disabled in it, and we
+ * set the same callback to create new windows, on top of setting some custom
+ * content of our own on it, with some links that will open new tabs to start
+ * browsing quickly.
+ *
+ * @skip static void
+ * @until ELM_MAIN
+ *
+ * Some parts of the code were left out, as they are not relevant to the
+ * example, but the full listing can be found at @ref web_example.c
+ * "web_example.c".
+ *
+ * @example web_example.c
+ */
+
+/**
  * @page efl_thread_1 EFL Threading example 1
  *
  * You can use threads with Elementary (and EFL) but you need to be careful

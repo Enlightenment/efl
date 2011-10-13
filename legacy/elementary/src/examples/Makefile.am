@@ -115,6 +115,7 @@ SRCS = \
 	table_example_02.c \
 	menu_example_01.c \
 	thumb_example_01.c \
+	web_example.c \
 	win_example.c \
         efl_thread_1.c \
         efl_thread_2.c \
@@ -223,6 +224,7 @@ pkglib_PROGRAMS += \
 	table_example_02 \
 	menu_example_01 \
 	thumb_example_01 \
+	web_example \
 	win_example \
         efl_thread_1 \
         efl_thread_2 \
