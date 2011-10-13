@@ -22,9 +22,11 @@
 #include <unistd.h>
 
 #ifndef HAVE_LROUND
-// right now i dont care about rendering bugs on platforms without lround
-// (e.g. windows/vc++... yay!)
-#define lround(x) ((long int)(x + (x / (2.0 * abs(x)))))
+/* right now i dont care about rendering bugs on platforms without lround
+ (e.g. windows/vc++... yay!)
+ FIXME: http://cgit.freedesktop.org/cairo/tree/src/cairo-misc.c#n487
+*/
+#define lround(x) (((x) < 0) ? (long int)ceil((x) - 0.5) : (long int)floor((x) + 0.5))
 #endif
 
 /* macros needed to log message through eina_log */
