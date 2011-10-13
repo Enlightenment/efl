@@ -34,6 +34,7 @@
  *  - O(N) time to calculate list length
  *  - requires one list entry in a struct per list (i.e. it's an inlist)
  *  - requires a head/tail pointer
+ *  - need to know the list head when moving to next or previous pointer
  *
  * Things to note:
  *  - there's no NULL at the end of the list, the last item points to the head
@@ -111,11 +112,25 @@ static inline void eina_clist_add_tail(Eina_Clist *list, Eina_Clist *elem)
    eina_clist_add_before(list, elem);
 }
 
+/* init an (unlinked) element */
+static inline void eina_clist_element_init(Eina_Clist *elem)
+{
+   elem->next = NULL;
+   elem->next = NULL;
+}
+
+/* check if an element is in a list or not */
+static inline int eina_clist_element_is_linked(Eina_Clist *elem)
+{
+   return (elem->next != NULL && elem->prev != NULL);
+}
+
 /* remove an element from its list */
 static inline void eina_clist_remove(Eina_Clist *elem)
 {
    elem->next->prev = elem->prev;
    elem->prev->next = elem->next;
+   eina_clist_element_init(elem);
 }
 
 /* get the next element */
