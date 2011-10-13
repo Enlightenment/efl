@@ -62,6 +62,7 @@
  * @li @ref Eina_Array_Group standard array of @c void* data.
  * @li @ref Eina_Hash_Group standard hash of @c void* data.
  * @li @ref Eina_Inline_List_Group list with nodes inlined into user type.
+ * @li @ref Eina_CList_Group compact inlined list.
  * @li @ref Eina_List_Group standard list of @c void* data.
  * @li @ref Eina_Iterator_Group Iterator functions.
  * @li @ref Eina_Matrixsparse_Group sparse matrix of @c void* data.
