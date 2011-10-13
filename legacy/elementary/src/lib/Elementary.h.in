@@ -19708,6 +19708,13 @@ extern "C" {
     * @return The top object or NULL if none
     */
    EAPI Evas_Object *elm_pager_content_top_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+   /**
+    * @brief  Enable or disable pager animations
+    *
+    * @param obj The pager object
+    * @param disable True if the animation should be disabled
+    */
+   EAPI void         elm_pager_animation_disabled_set(Evas_Object *obj, Eina_Bool disable); EINA_ARG_NONNULL(1);
 
    /**
     * @}

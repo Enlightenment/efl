@@ -9,6 +9,7 @@ struct _Widget_Data
    Eina_List *stack;
    Item *top, *oldtop;
    Evas_Object *rect, *clip;
+   Eina_Bool disable_animation: 1;
 };
 
 struct _Item
@@ -144,6 +145,7 @@ static void
 _eval_top(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
+   Eina_Bool show_noanimate = EINA_TRUE;
    Item *ittop;
    if (!wd) return;
    if (!wd->stack) return;
@@ -156,7 +158,13 @@ _eval_top(Evas_Object *obj)
         if (wd->top)
           {
              o = wd->top->base;
-             if (wd->top->popme)
+             if(wd->disable_animation)
+               {
+                  edje_object_signal_emit(o, "elm,action,hide,noanimate", "elm");
+                  if (wd->top->popme)
+                    wd->stack = eina_list_remove(wd->stack, wd->top);
+               }
+             else if (wd->top->popme)
                {
                   edje_object_signal_emit(o, "elm,action,pop", "elm");
                   wd->stack = eina_list_remove(wd->stack, wd->top);
@@ -170,11 +178,19 @@ _eval_top(Evas_Object *obj)
                   else if (!strcmp(onhide, "lower")) evas_object_lower(o);
                }
           }
+        else
+          {
+             show_noanimate = EINA_FALSE;
+          }
         wd->oldtop = wd->top;
         wd->top = ittop;
         o = wd->top->base;
         evas_object_show(o);
-        if (wd->oldtop)
+        if ((!show_noanimate)||(wd->disable_animation))
+          {
+             edje_object_signal_emit(o, "elm,action,show,noanimate", "elm");
+          }
+        else if (wd->oldtop)
           {
              if (elm_object_focus_get(wd->oldtop->content))
                elm_widget_focused_object_clear(wd->oldtop->content);
@@ -432,4 +448,20 @@ elm_pager_content_top_get(const Evas_Object *obj)
    if (!wd) return NULL;
    if (!wd->top) return NULL;
    return wd->top->content;
+}
+
+/**
+ * This disables content animation on push/pop.
+ *
+ * @param obj The pager object
+ * @param disable  if EINA_TRUE animation is disabled.
+ *
+ * @ingroup Pager
+ */
+EAPI void
+elm_pager_animation_disabled_set(Evas_Object *obj, Eina_Bool disable)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   wd->disable_animation = disable;
 }
