@@ -116,7 +116,7 @@ static inline void eina_clist_add_tail(Eina_Clist *list, Eina_Clist *elem)
 static inline void eina_clist_element_init(Eina_Clist *elem)
 {
    elem->next = NULL;
-   elem->next = NULL;
+   elem->prev = NULL;
 }
 
 /* check if an element is in a list or not */
