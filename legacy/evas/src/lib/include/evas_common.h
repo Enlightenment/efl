@@ -24,7 +24,7 @@
 #ifndef HAVE_LROUND
 // right now i dont care about rendering bugs on platforms without lround
 // (e.g. windows/vc++... yay!)
-#define lround(x) ((long int)(x + 0.5))
+#define lround(x) ((long int)(x + (x / (2.0 * abs(x)))))
 #endif
 
 /* macros needed to log message through eina_log */
