@@ -22,10 +22,13 @@
 #ifndef __EINA_CLIST_H__
 #define __EINA_CLIST_H__
 
-/*
- * Eina_Clist is a compact inline list implementation
+/**
+ * @addtogroup Eina_CList_Group Compact inline list
+ * @brief Eina_Clist is a compact (inline) list implementation
  *
- * Advantages over Eina_List and Eina_Inlist:
+ * Elements of this list are members of the structs stored in the list
+ *
+ * Advantages over @ref Eina_List and @ref Eina_Inlist:
  *  - uses less memory (two machine words per item)
  *  - allows removing items without knowing which list they're in using O(1) time
  *  - no need to keep updating the head pointer as the list is changed
@@ -36,12 +39,14 @@
  *  - requires a head/tail pointer
  *  - need to know the list head when moving to next or previous pointer
  *
- * Things to note:
- *  - there's no NULL at the end of the list, the last item points to the head
+ * @note There's no NULL at the end of the list, the last item points to the head.
+ *
+ * @note List heads must be initialized with EINA_CLIST_INIT or by calling eina_clist_element_init
  */
 
 /* Define a list like so:
  *
+ * @code
  *   struct gadget
  *   {
  *       struct Eina_Clist  entry;   <-- doesn't have to be the first item in the struct
@@ -49,40 +54,87 @@
  *   };
  *
  *   static Eina_Clist global_gadgets = EINA_CLIST_INIT( global_gadgets );
+ * @endcode
  *
  * or
  *
+ * @code
  *   struct some_global_thing
  *   {
  *       Eina_Clist gadgets;
  *   };
  *
  *   eina_clist_init( &some_global_thing->gadgets );
+ * @endcode
  *
  * Manipulate it like this:
  *
+ * @code
  *   eina_clist_add_head( &global_gadgets, &new_gadget->entry );
  *   eina_clist_remove( &new_gadget->entry );
  *   eina_clist_add_after( &some_random_gadget->entry, &new_gadget->entry );
+ * @endcode
  *
  * And to iterate over it:
  *
+ * @code
  *   struct gadget *gadget;
  *   EINA_CLIST_FOR_EACH_ENTRY( gadget, &global_gadgets, struct gadget, entry )
  *   {
  *       ...
  *   }
+ * @endcode
  *
  */
 
+/**
+ * @addtogroup Eina_Data_Types_Group Data Types
+ *
+ * @{
+ */
+
+/**
+ * @addtogroup Eina_Containers_Group Containers
+ *
+ * @{
+ */
+
+/**
+ * @defgroup Eina_CList_Group Compact list
+ *
+ * @{
+ */
+
+/**
+ * @typedef Eina_Clist
+ * This is the list head and the list entry.
+ * @since 1.1.0
+ */
 typedef struct _Eina_Clist Eina_Clist;
+
+/**
+ * @struct _Eina_Clist
+ * Compact list type
+ * @note This structure is used as both the list head and the list entry.
+ * @since 1.1.0
+ */
 struct _Eina_Clist
 {
    Eina_Clist *next;
    Eina_Clist *prev;
 };
 
-/* add an element after the specified one */
+/**
+ * Add an element after the specified one.
+ *
+ * @param elem An element in the list
+ * @param to_add The element to add to the list
+ * @pre The list head must be initialized once before adding anything.
+ * @pre The element is not in any list.
+ *
+ * @note There's no need to initialize an element before adding it to the list.
+ * @since 1.1.0
+ */
 static inline void eina_clist_add_after(Eina_Clist *elem, Eina_Clist *to_add)
 {
    to_add->next = elem->next;
@@ -91,7 +143,17 @@ static inline void eina_clist_add_after(Eina_Clist *elem, Eina_Clist *to_add)
    elem->next = to_add;
 }
 
-/* add an element before the specified one */
+/**
+ * Add an element before the specified one.
+ *
+ * @param elem An element in the list
+ * @param to_add The element to add to the list
+ * @pre The list head must be initialized once before adding anything.
+ * @pre The element is not in any list.
+ *
+ * @note There's no need to initialize an element before adding it to the list.
+ * @since 1.1.0
+ */
 static inline void eina_clist_add_before(Eina_Clist *elem, Eina_Clist *to_add)
 {
    to_add->next = elem;
@@ -100,32 +162,79 @@ static inline void eina_clist_add_before(Eina_Clist *elem, Eina_Clist *to_add)
    elem->prev = to_add;
 }
 
-/* add element at the head of the list */
+/**
+ * Add element at the head of the list.
+ *
+ * @param list The list
+ * @param elem An element
+ * @pre The list head must be initialized once before adding anything.
+ * @pre The element is not in any list.
+ *
+ * @note There's no need to initialize an element before adding it to the list.
+ * @since 1.1.0
+ */
 static inline void eina_clist_add_head(Eina_Clist *list, Eina_Clist *elem)
 {
    eina_clist_add_after(list, elem);
 }
 
-/* add element at the tail of the list */
+/**
+ * Add element at the tail of the list.
+ *
+ * @param list The list
+ * @param elem An element
+ * @pre The list head must be initialized once before adding anything.
+ * @pre The element is not in any list.
+ *
+ * @note There's no need to initialize an element before adding it to the list.
+ * @since 1.1.0
+ */
 static inline void eina_clist_add_tail(Eina_Clist *list, Eina_Clist *elem)
 {
    eina_clist_add_before(list, elem);
 }
 
-/* init an (unlinked) element */
+/**
+ * Init an (unlinked) element.
+ *
+ * Call this function on elements that have not been added to the list
+ * if you want eina_clist_element_init() to work correctly
+ *
+ * @param elem An element
+ * @pre The element is not in any list.
+ * @post The element is marked as not being in any list
+ *
+ * @note It is not necessary to call this before adding an element to this list.
+ * @since 1.1.0
+ */
 static inline void eina_clist_element_init(Eina_Clist *elem)
 {
    elem->next = NULL;
    elem->prev = NULL;
 }
 
-/* check if an element is in a list or not */
+/**
+ * Check if an element is in a list or not.
+ *
+ * @param elem An element
+ *
+ * @pre Either eina_clist_element_init() has been called on @a elem,
+ *      it has been added to a list or remove from a list.
+ * @since 1.1.0
+ */
 static inline int eina_clist_element_is_linked(Eina_Clist *elem)
 {
    return (elem->next != NULL && elem->prev != NULL);
 }
 
-/* remove an element from its list */
+/**
+ * Remove an element from its list.
+ *
+ * @param elem An element
+ * @pre The element is in a list already
+ * @post The element is marked as not being in any list
+ * @since 1.1.0
+ */
 static inline void eina_clist_remove(Eina_Clist *elem)
 {
    elem->next->prev = elem->prev;
@@ -133,7 +242,15 @@ static inline void eina_clist_remove(Eina_Clist *elem)
    eina_clist_element_init(elem);
 }
 
-/* get the next element */
+/**
+ * Get the next element.
+ *
+ * @param list The list
+ * @param elem An element
+ * @pre @a elem is in @a list
+ * @return The element after @elem in @list  or NULL if @a elem is last in @a list
+ * @since 1.1.0
+ */
 static inline Eina_Clist *eina_clist_next(const Eina_Clist *list, const Eina_Clist *elem)
 {
    Eina_Clist *ret = elem->next;
@@ -141,7 +258,15 @@ static inline Eina_Clist *eina_clist_next(const Eina_Clist *list, const Eina_Cli
    return ret;
 }
 
-/* get the previous element */
+/**
+ * Get the previous element.
+ *
+ * @param list The list
+ * @param elem An element
+ *
+ * @return The element before @a elem or NULL if @a elem is the first in the list
+ * @since 1.1.0
+ */
 static inline Eina_Clist *eina_clist_prev(const Eina_Clist *list, const Eina_Clist *elem)
 {
    Eina_Clist *ret = elem->prev;
@@ -149,31 +274,66 @@ static inline Eina_Clist *eina_clist_prev(const Eina_Clist *list, const Eina_Cli
    return ret;
 }
 
-/* get the first element */
+/**
+ * Get the first element.
+ *
+ * @param list The list
+ * @returns The first element in @a list or NULL if @a list is empty
+ * @since 1.1.0
+ */
 static inline Eina_Clist *eina_clist_head(const Eina_Clist *list)
 {
    return eina_clist_next(list, list);
 }
 
-/* get the last element */
+/**
+ * Get the last element.
+ *
+ * @param list The list
+ * @returns The last element in @a list or NULL if @list is empty
+ * @since 1.1.0
+ */
 static inline Eina_Clist *eina_clist_tail(const Eina_Clist *list)
 {
    return eina_clist_prev(list, list);
 }
 
-/* check if a list is empty */
+/**
+ * Check if a list is empty.
+ *
+ * @param list The list
+ * @returns non-zero if @a list is empty, zero if it is not
+ * @since 1.1.0
+ */
 static inline int eina_clist_empty(const Eina_Clist *list)
 {
    return list->next == list;
 }
 
-/* initialize a list */
+/**
+ * Initialize a list
+ *
+ * @param list The list
+ * @pre The list is uninitialized
+ * @post The list contains no items
+ *
+ * @note Don't call this function on a list with items
+ * @note This function must be called.  Don't try do
+ * initialize the list by zero'ing out the list head.
+ * @since 1.1.0
+ */
 static inline void eina_clist_init(Eina_Clist *list)
 {
    list->next = list->prev = list;
 }
 
-/* count the elements of a list */
+/**
+ * Count the elements of a list
+ *
+ * @param list The list
+ * @returns The number of items in the list
+ * @since 1.1.0
+ */
 static inline unsigned int eina_clist_count(const Eina_Clist *list)
 {
    unsigned count = 0;
@@ -182,7 +342,15 @@ static inline unsigned int eina_clist_count(const Eina_Clist *list)
    return count;
 }
 
-/* move all elements from src to the tail of dst */
+/**
+ * Move all elements from src to the tail of dst
+ *
+ * @param dst List to be appended to
+ * @param src List to append
+ *
+ * @post @a src is initialized but empty after this operation
+ * @since 1.1.0
+ */
 static inline void eina_clist_move_tail(Eina_Clist *dst, Eina_Clist *src)
 {
    if (eina_clist_empty(src)) return;
@@ -194,7 +362,15 @@ static inline void eina_clist_move_tail(Eina_Clist *dst, Eina_Clist *src)
    eina_clist_init(src);
 }
 
-/* move all elements from src to the head of dst */
+/**
+ * move all elements from src to the head of dst
+ *
+ * @param dst List to be prepended to
+ * @param src List to prepend
+ *
+ * @post @a src is initialized but empty after this operation
+ * @since 1.1.0
+ */
 static inline void eina_clist_move_head(Eina_Clist *dst, Eina_Clist *src)
 {
    if (eina_clist_empty(src)) return;
@@ -206,7 +382,9 @@ static inline void eina_clist_move_head(Eina_Clist *dst, Eina_Clist *src)
    eina_clist_init(src);
 }
 
-/* iterate through the list */
+/**
+ * iterate through the list
+ */
 #define EINA_CLIST_FOR_EACH(cursor,list) \
     for ((cursor) = (list)->next; (cursor) != (list); (cursor) = (cursor)->next)
 
@@ -262,5 +440,17 @@ static inline void eina_clist_move_head(Eina_Clist *dst, Eina_Clist *src)
 #undef EINA_CLIST_ENTRY
 #define EINA_CLIST_ENTRY(elem, type, field) \
     ((type *)((char *)(elem) - (unsigned long)(&((type *)0)->field)))
+
+/*
+ * @}
+ */
+
+/*
+ * @}
+ */
+
+/*
+ * @}
+ */
 
 #endif /* __EINA_CLIST_H__ */
