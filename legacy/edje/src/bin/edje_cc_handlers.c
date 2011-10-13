@@ -2647,13 +2647,14 @@ st_collections_group_parts_part_name(void)
    check_arg_count(1);
 
    pc = eina_list_data_get(eina_list_last(edje_collections));
-   ep = pc->parts[pc->parts_count - 1];
+   ep = current_part;
    ep->name = parse_str(0);
 
+   if (ep->name)
      {
         unsigned int i;
 
-        for (i = 0; i < pc->parts_count - 1; ++i)
+        for (i = 0; i < (pc->parts_count - 1); i++)
           {
              if (pc->parts[i]->name && (!strcmp(pc->parts[i]->name, ep->name)))
                {
@@ -2669,7 +2670,7 @@ st_collections_group_parts_part_name(void)
                        free(ep);
                        pc->parts_count--;
                        pc->parts = realloc(pc->parts, pc->parts_count * sizeof (Edje_Part *));
-                       current_part = pc->parts[i];
+                       ep = current_part = pc->parts[i];
                        epp->can_override = EINA_FALSE;
                     }
                }
