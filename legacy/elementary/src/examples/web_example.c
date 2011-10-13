@@ -2,7 +2,9 @@
  * gcc -o web_example web_example.c `pkg-config --cflags --libs elementary ewebkit` -D_GNU_SOURCE
  */
 #include <Elementary.h>
+#ifdef HAVE_ELEMENTARY_WEB
 #include <EWebKit.h>
+#endif
 #ifdef HAVE_CONFIG_H
 # include "elementary_config.h"
 #else
@@ -450,10 +452,12 @@ default_content_set(Evas_Object *web)
       "  </body>\n"
       "</html>\n";
 
+#ifdef HAVE_ELEMENTARY_WEB
    view = elm_web_webkit_view_get(web);
    frame = ewk_view_frame_main_get(view);
    ewk_frame_contents_set(frame, contents, sizeof(contents) - 1, "text/html",
                           "UTF-8", NULL);
+#endif
 }
 
 int
