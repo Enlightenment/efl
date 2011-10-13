@@ -1969,7 +1969,7 @@ _smart_event_mouse_up(void *data, Evas *e, Evas_Object *obj __UNUSED__, void *ev
                        ax /= (i + 1);
                        ay /= (i + 1);
                        at /= (i + 1);
-                       at *= 4.0; // magic number! just trial and error shows this makes it behave "nicer" and not run off at high speed all the time
+                       at /= _elm_config->thumbscroll_sensitivity_friction;
                        dx = ev->canvas.x - ax;
                        dy = ev->canvas.y - ay;
                        if (at > 0)

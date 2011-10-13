@@ -1887,6 +1887,44 @@ elm_scroll_thumbscroll_border_friction_all_set(double friction)
 #endif
 }
 
+EAPI double
+elm_scroll_thumbscroll_sensitivity_friction_get(void)
+{
+   return _elm_config->thumbscroll_sensitivity_friction;
+}
+
+EAPI void
+elm_scroll_thumbscroll_sensitivity_friction_set(double friction)
+{
+   if (friction < 0.1)
+     friction = 0.1;
+
+   if (friction > 1.0)
+     friction = 1.0;
+
+   _elm_config->thumbscroll_friction = friction;
+}
+
+EAPI void
+elm_scroll_thumbscroll_sensitivity_friction_all_set(double friction)
+{
+   if (friction < 0.1)
+     friction = 0.1;
+
+   if (friction > 1.0)
+     friction = 1.0;
+
+#ifdef HAVE_ELEMENTARY_X
+   static Ecore_X_Atom atom = 0;
+   unsigned int sensitivity_friction_i = (unsigned int)(friction * 1000.0);
+
+   if (!atom)
+     atom = ecore_x_atom_get("ENLIGHTENMENT_THUMBSCROLL_SENSITIVITY_FRICTION");
+   ecore_x_window_prop_card32_set(ecore_x_window_root_first_get(),
+                                  atom, &sensitivity_friction_i, 1);
+#endif
+}
+
 EAPI void
 elm_object_scroll_hold_push(Evas_Object *obj)
 {

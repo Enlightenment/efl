@@ -76,7 +76,7 @@ static size_t _elm_user_dir_snprintf(char       *dst,
 #ifdef HAVE_ELEMENTARY_X
 static Ecore_Event_Handler *_prop_change_handler = NULL;
 static Ecore_X_Window _root_1st = 0;
-#define ATOM_COUNT 22
+#define ATOM_COUNT 23
 static Ecore_X_Atom _atom[ATOM_COUNT];
 static Ecore_X_Atom _atom_config = 0;
 static const char *_atom_names[ATOM_COUNT] =
@@ -99,6 +99,7 @@ static const char *_atom_names[ATOM_COUNT] =
    "ENLIGHTENMENT_THUMBSCROLL_MOMENTUM_THRESHOLD",
    "ENLIGHTENMENT_THUMBSCROLL_FRICTION",
    "ENLIGHTENMENT_THUMBSCROLL_BORDER_FRICTION",
+   "ENLIGHTENMENT_THUMBSCROLL_SENSITIVITY_FRICTION",
    "ENLIGHTENMENT_THUMBSCROLL_PAGE_SCROLL_FRICTION",
    "ENLIGHTENMENT_THUMBSCROLL_BRING_IN_SCROLL_FRICTION",
    "ENLIGHTENMENT_THUMBSCROLL_ZOOM_FRICTION",
@@ -122,10 +123,11 @@ static const char *_atom_names[ATOM_COUNT] =
 #define ATOM_E_THUMBSCROLL_MOMENTUM_THRESHOLD       15
 #define ATOM_E_THUMBSCROLL_FRICTION                 16
 #define ATOM_E_THUMBSCROLL_BORDER_FRICTION          17
-#define ATOM_E_THUMBSCROLL_PAGE_SCROLL_FRICTION     18
-#define ATOM_E_THUMBSCROLL_BRING_IN_SCROLL_FRICTION 19
-#define ATOM_E_THUMBSCROLL_ZOOM_FRICTION            20
-#define ATOM_E_CONFIG                               21
+#define ATOM_E_THUMBSCROLL_SENSITIVITY_FRICTION     18
+#define ATOM_E_THUMBSCROLL_PAGE_SCROLL_FRICTION     19
+#define ATOM_E_THUMBSCROLL_BRING_IN_SCROLL_FRICTION 20
+#define ATOM_E_THUMBSCROLL_ZOOM_FRICTION            21
+#define ATOM_E_CONFIG                               22
 
 static Eina_Bool _prop_config_get(void);
 static Eina_Bool _prop_change(void *data  __UNUSED__,
@@ -466,6 +468,18 @@ _prop_change(void *data  __UNUSED__,
                      (double)val / 1000.0;
                }
           }
+		else if (event->atom == _atom[ATOM_E_THUMBSCROLL_SENSITIVITY_FRICTION])
+          {
+             unsigned int val = 1000;
+
+             if (ecore_x_window_prop_card32_get(event->win,
+                                                event->atom,
+                                                &val, 1) > 0)
+               {
+                  _elm_config->thumbscroll_sensitivity_friction =
+                     (double)val / 1000.0;
+               }
+          }
         else if (event->atom == _atom[ATOM_E_THUMBSCROLL_PAGE_SCROLL_FRICTION])
           {
              unsigned int val = 1000;
@@ -566,6 +580,7 @@ _desc_init(void)
    ELM_CONFIG_VAL(D, T, thumbscroll_friction, T_DOUBLE);
    ELM_CONFIG_VAL(D, T, thumbscroll_bounce_friction, T_DOUBLE);
    ELM_CONFIG_VAL(D, T, thumbscroll_border_friction, T_DOUBLE);
+   ELM_CONFIG_VAL(D, T, thumbscroll_sensitivity_friction, T_DOUBLE);
    ELM_CONFIG_VAL(D, T, page_scroll_friction, T_DOUBLE);
    ELM_CONFIG_VAL(D, T, bring_in_scroll_friction, T_DOUBLE);
    ELM_CONFIG_VAL(D, T, zoom_friction, T_DOUBLE);
@@ -1138,6 +1153,7 @@ _config_load(void)
    _elm_config->bring_in_scroll_friction = 0.5;
    _elm_config->zoom_friction = 0.5;
    _elm_config->thumbscroll_border_friction = 0.5;
+   _elm_config->thumbscroll_sensitivity_friction = 0.25; // magic number! just trial and error shows this makes it behave "nicer" and not run off at high speed all the time
    _elm_config->scroll_smooth_amount = 1.0;
    _elm_config->scroll_smooth_history_weight = 0.3;
    _elm_config->scroll_smooth_future_time = 0.0;
@@ -1507,6 +1523,18 @@ _env_get(void)
           friction = 1.0;
 
         _elm_config->thumbscroll_border_friction = friction;
+     }
+   s = getenv("ELM_THUMBSCROLL_SENSITIVITY_FRICTION");
+   if (s)
+     {
+        friction = atof(s);
+        if (friction < 0.1)
+          friction = 0.1;
+
+        if (friction > 1.0)
+          friction = 1.0;
+
+        _elm_config->thumbscroll_sensitivity_friction = friction;
      }
    s = getenv("ELM_SCROLL_SMOOTH_AMOUNT");
    if (s) _elm_config->scroll_smooth_amount = atof(s);

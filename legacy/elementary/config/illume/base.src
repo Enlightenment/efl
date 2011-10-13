@@ -12,6 +12,7 @@ group "Elm_Config" struct {
   value "bring_in_scroll_friction" double: 0.5;
   value "zoom_friction" double: 0.5;
   value "thumbscroll_border_friction" double: 0.5;
+  value "thumbscroll_sensitivity_friction" double: 0.25;
   value "scroll_smooth_amount" double: 1.0;
   value "scroll_smooth_history_weight" double: 0.3;
   value "scroll_smooth_future_time" double: 0.0;

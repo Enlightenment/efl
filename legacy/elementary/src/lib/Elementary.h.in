@@ -2831,6 +2831,46 @@ extern "C" {
    EAPI void             elm_scroll_thumbscroll_border_friction_all_set(double friction);
 
    /**
+    * Get the sensitivity amount which is be multiplied by the length of
+    * mouse dragging.
+    *
+    * @return the thumb scroll sensitivity friction
+    *
+    * @ingroup Scrolling
+    */
+   EAPI double           elm_scroll_thumbscroll_sensitivity_friction_get(void);
+
+   /**
+    * Set the sensitivity amount which is be multiplied by the length of
+    * mouse dragging.
+    *
+    * @param friction the thumb scroll sensitivity friction. @c 0.1 for
+    *        minimun sensitivity, @c 1.0 for maximum sensitivity. 0.25
+    *        is proper.
+    *
+    * @see elm_thumbscroll_sensitivity_friction_get()
+    * @note parameter value will get bound to 0.1 - 1.0 interval, always
+    *
+    * @ingroup Scrolling
+    */
+   EAPI void             elm_scroll_thumbscroll_sensitivity_friction_set(double friction);
+
+   /**
+    * Set the sensitivity amount which is be multiplied by the length of
+    * mouse dragging, for all Elementary application windows.
+    *
+    * @param friction the thumb scroll sensitivity friction. @c 0.1 for
+    *        minimun sensitivity, @c 1.0 for maximum sensitivity. 0.25
+    *        is proper.
+    *
+    * @see elm_thumbscroll_sensitivity_friction_get()
+    * @note parameter value will get bound to 0.1 - 1.0 interval, always
+    *
+    * @ingroup Scrolling
+    */
+   EAPI void             elm_scroll_thumbscroll_sensitivity_friction_all_set(double friction);
+
+   /**
     * @}
     */
 

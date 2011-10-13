@@ -12,6 +12,7 @@ group "Elm_Config" struct {
   value "bring_in_scroll_friction" double: 0.5;
   value "zoom_friction" double: 0.5;
   value "thumbscroll_border_friction" double: 0.5;
+  value "thumbscroll_sensitivity_friction" double: 0.25;
   value "scale" double: 1.0;
   value "bgpixmap" int: 0;
   value "compositing" int: 1;

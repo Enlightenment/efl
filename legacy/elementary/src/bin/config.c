@@ -362,6 +362,30 @@ tsbf_change(void *data       __UNUSED__,
 }
 
 static void
+tssf_round(void *data       __UNUSED__,
+           Evas_Object     *obj,
+           void *event_info __UNUSED__)
+{
+   double val = elm_slider_value_get(obj);
+   double v;
+
+   v = ((double)((int)(val * 20.0))) / 20.0;
+   if (v != val) elm_slider_value_set(obj, v);
+}
+
+static void
+tssf_change(void *data       __UNUSED__,
+            Evas_Object     *obj,
+            void *event_info __UNUSED__)
+{
+   double tssf = elm_scroll_thumbscroll_sensitivity_friction_get();
+   double val = elm_slider_value_get(obj);
+
+   if (tssf == val) return;
+   elm_scroll_thumbscroll_sensitivity_friction_all_set(val);
+}
+
+static void
 cf_enable(void *data,
           Evas_Object     *obj,
           void *event_info __UNUSED__)
@@ -864,7 +888,7 @@ _profile_change_do(Evas_Object *win,
 {
    int flush_interval, font_c, image_c, edje_file_c, edje_col_c, ts_threshould;
    double scale, s_bounce_friction, ts_momentum_threshold, ts_friction,
-          ts_border_friction, page_friction, bring_in_friction, zoom_friction;
+          ts_border_friction, ts_sensitivity_friction, page_friction, bring_in_friction, zoom_friction;
    const char *curr_theme, *curr_engine;
    const Eina_List *l_items, *l;
    Eina_Bool s_bounce, ts;
@@ -889,6 +913,7 @@ _profile_change_do(Evas_Object *win,
    ts_momentum_threshold = elm_scroll_thumbscroll_momentum_threshold_get();
    ts_friction = elm_scroll_thumbscroll_friction_get();
    ts_border_friction = elm_scroll_thumbscroll_border_friction_get();
+   ts_sensitivity_friction = elm_scroll_thumbscroll_sensitivity_friction_get();
    page_friction = elm_scroll_page_scroll_friction_get();
    bring_in_friction = elm_scroll_bring_in_scroll_friction_get();
    zoom_friction = elm_scroll_zoom_friction_get();
@@ -940,6 +965,9 @@ _profile_change_do(Evas_Object *win,
    elm_scroll_thumbscroll_border_friction_all_set(ts_border_friction);
    elm_slider_value_set(evas_object_data_get(win, "ts_border_friction_slider"),
                         ts_border_friction);
+   elm_scroll_thumbscroll_sensitivity_friction_all_set(ts_sensitivity_friction);
+   elm_slider_value_set(evas_object_data_get(win, "ts_sensitivity_friction_slider"),
+                        ts_sensitivity_friction);
    elm_scroll_page_scroll_friction_all_set(page_friction);
    elm_slider_value_set(evas_object_data_get(win,
                                              "page_scroll_friction_slider"),
@@ -2517,6 +2545,26 @@ _status_config_scrolling(Evas_Object *win,
 
    evas_object_smart_callback_add(sl, "changed", tsbf_round, NULL);
    evas_object_smart_callback_add(sl, "delay,changed", tsbf_change, NULL);
+
+   LABEL_FRAME_ADD("<hilight>Thumb scroll sensitivity friction</>");
+
+   sl = elm_slider_add(win);
+   elm_object_tooltip_text_set(sl, "This is the sensitivity amount which<br>"
+                                   "is be multiplied by the length of mouse<br>"
+                                   "dragging.");
+   evas_object_data_set(win, "ts_sensitivity_friction_slider", sl);
+   evas_object_size_hint_weight_set(sl, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(sl, EVAS_HINT_FILL, 0.5);
+   elm_slider_span_size_set(sl, 120);
+   elm_slider_unit_format_set(sl, "%1.2f");
+   elm_slider_indicator_format_set(sl, "%1.2f");
+   elm_slider_min_max_set(sl, 0.1, 1.0);
+   elm_slider_value_set(sl, elm_scroll_thumbscroll_sensitivity_friction_get());
+   elm_box_pack_end(bx, sl);
+   evas_object_show(sl);
+
+   evas_object_smart_callback_add(sl, "changed", tssf_round, NULL);
+   evas_object_smart_callback_add(sl, "delay,changed", tssf_change, NULL);
 
    sp = elm_separator_add(win);
    elm_separator_horizontal_set(sp, EINA_TRUE);
