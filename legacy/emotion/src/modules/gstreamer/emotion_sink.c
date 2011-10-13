@@ -1055,9 +1055,11 @@ _video_move(void *data, Evas_Object *obj __UNUSED__, const Evas_Video_Surface *s
             Evas_Coord x, Evas_Coord y)
 {
    Emotion_Gstreamer_Video *ev = data;
+   unsigned int pos[2];
 
    fprintf(stderr, "move: %i, %i\n", x, y);
-   ecore_x_window_move(ev->win, x, y);
+   pos[0] = x; pos[1] = y;
+   ecore_x_window_prop_card32_set(ev->win, ECORE_X_ATOM_E_VIDEO_POSITION, pos, 2);
 }
 
 #if 0
@@ -1099,6 +1101,7 @@ _video_show(void *data, Evas_Object *obj __UNUSED__, const Evas_Video_Surface *s
 {
    Emotion_Gstreamer_Video *ev = data;
 
+   fprintf(stderr, "show xv\n");
    ecore_x_window_show(ev->win);
    /* gst_pad_set_blocked_async(ev->teepad, TRUE, _block_pad_link_cb, ev); */
 }
@@ -1108,6 +1111,7 @@ _video_hide(void *data, Evas_Object *obj __UNUSED__, const Evas_Video_Surface *s
 {
    Emotion_Gstreamer_Video *ev = data;
 
+   fprintf(stderr, "hide xv\n");
    ecore_x_window_hide(ev->win);
    /* gst_pad_set_blocked_async(ev->teepad, TRUE, _block_pad_unlink_cb, ev); */
 }
@@ -1200,7 +1204,7 @@ gstreamer_video_sink_new(Emotion_Gstreamer_Video *ev,
         parent = (Ecore_X_Window) ecore_evas_window_get(ee);
         fprintf(stderr, "parent: %x\n", parent);
 
-	win = ecore_x_window_override_new(0, x, y, w, h);
+	win = ecore_x_window_new(0, x, y, w, h);
         fprintf(stderr, "creating window: %x [%i, %i, %i, %i]\n", win, x, y, w, h);
 	if (win)
 	  {
@@ -1208,16 +1212,15 @@ gstreamer_video_sink_new(Emotion_Gstreamer_Video *ev,
              xvsink = gst_element_factory_make("xvimagesink", NULL);
 	     if (xvsink)
 	       {
-                  Ecore_X_Atom atom;
+		  unsigned int pos[2];
 
 		  gst_x_overlay_set_window_handle(GST_X_OVERLAY(xvsink), win);
 		  ev->win = win;
 
-                  atom = ecore_x_atom_get("enlightenment.video");
-                  if (atom)
-                    {
-                       ecore_x_window_prop_card32_set(win, atom, &parent, 1);
-                    }
+		  ecore_x_window_prop_card32_set(win, ECORE_X_ATOM_E_VIDEO_PARENT, &parent, 1);
+
+		  pos[0] = x; pos[1] = y;
+		  ecore_x_window_prop_card32_set(win, ECORE_X_ATOM_E_VIDEO_POSITION, pos, 2);
 	       }
 	     else
 	       {
