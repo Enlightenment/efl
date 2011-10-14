@@ -65,8 +65,22 @@ _ecore_x_input_handler(XEvent *xevent)
 #ifdef ECORE_XI2
    XIDeviceEvent *evd = (XIDeviceEvent *)(xevent->xcookie.data);
    int devid = evd->deviceid;
-
-   //printf("deviceID = %d\n", devid);
+   int i;
+   
+   if (_ecore_x_xi2_devs)
+     {
+        for (i = 0; i < _ecore_x_xi2_num; i++)
+          {
+             XIDeviceInfo *dev = &(_ecore_x_xi2_devs[i]);
+             
+             if (devid == dev->deviceid)
+               {
+                  if (dev->use == XIMasterPointer) return;
+                  if ((dev->use == XISlavePointer) &&
+                      (evd->flags & XIPointerEmulated)) return;
+               }
+          }
+     }
    switch (xevent->xcookie.evtype)
      {
       case XI_Motion:
@@ -123,6 +137,67 @@ _ecore_x_input_handler(XEvent *xevent)
             evd->event_x, evd->event_y,
             evd->root_x, evd->root_y);
          break;
+
+#ifdef XI_TouchUpdate        
+      case XI_TouchUpdate:
+         _ecore_mouse_move
+            (evd->time,
+            0, // state
+            evd->event_x, evd->event_y,
+            evd->root_x, evd->root_y,
+            evd->event,
+            (evd->child ? evd->child : evd->event),
+            evd->root,
+            1, // same_screen
+            devid, 1, 1,
+            1.0, // pressure
+            0.0, // angle
+            evd->event_x, evd->event_y,
+            evd->root_x, evd->root_y);
+        break;
+#endif
+#ifdef XI_TouchBegin
+      case XI_TouchBegin:
+         _ecore_mouse_button
+            (ECORE_EVENT_MOUSE_BUTTON_DOWN,
+            evd->time,
+            0, // state
+            0, // button
+            evd->event_x, evd->event_y,
+            evd->root_x, evd->root_y,
+            evd->event,
+            (evd->child ? evd->child : evd->event),
+            evd->root,
+            1, // same_screen
+            devid, 1, 1,
+            1.0, // pressure
+            0.0, // angle
+            evd->event_x, evd->event_y,
+            evd->root_x, evd->root_y);
+        break;
+#endif
+#ifdef XI_TouchEnd
+      case XI_TouchEnd:
+         _ecore_mouse_button
+            (ECORE_EVENT_MOUSE_BUTTON_UP,
+            evd->time,
+            0, // state
+            0, // button
+            evd->event_x, evd->event_y,
+            evd->root_x, evd->root_y,
+            evd->event,
+            (evd->child ? evd->child : evd->event),
+            evd->root,
+            1, // same_screen
+            devid, 1, 1,
+            1.0, // pressure
+            0.0, // angle
+            evd->event_x, evd->event_y,
+            evd->root_x, evd->root_y);
+        break;
+#endif
+      default:
+        break;
      } /* switch */
 #endif /* ifdef ECORE_XI2 */
 } /* _ecore_x_input_handler */
@@ -145,7 +220,7 @@ ecore_x_input_multi_select(Ecore_X_Window win)
         if (dev->use == XIFloatingSlave)
           {
              XIEventMask eventmask;
-             unsigned char mask[1] = { 0 };
+             unsigned char mask[4] = { 0 };
 
              eventmask.deviceid = dev->deviceid;
              eventmask.mask_len = sizeof(mask);
@@ -153,6 +228,29 @@ ecore_x_input_multi_select(Ecore_X_Window win)
              XISetMask(mask, XI_ButtonPress);
              XISetMask(mask, XI_ButtonRelease);
              XISetMask(mask, XI_Motion);
+             XISelectEvents(_ecore_x_disp, win, &eventmask, 1);
+             find = EINA_TRUE;
+          }
+        else if (dev->use == XISlavePointer)
+          {
+             XIEventMask eventmask;
+             unsigned char mask[4] = { 0 };
+
+             eventmask.deviceid = dev->deviceid;
+             eventmask.mask_len = sizeof(mask);
+             eventmask.mask = mask;
+             XISetMask(mask, XI_ButtonPress);
+             XISetMask(mask, XI_ButtonRelease);
+             XISetMask(mask, XI_Motion);
+#ifdef XI_TouchUpdate
+             XISetMask(mask, XI_TouchUpdate);
+#endif             
+#ifdef XI_TouchBegin
+             XISetMask(mask, XI_TouchBegin);
+#endif             
+#ifdef XI_TouchEnd
+             XISetMask(mask, XI_TouchEnd);
+#endif             
              XISelectEvents(_ecore_x_disp, win, &eventmask, 1);
              find = EINA_TRUE;
           }
