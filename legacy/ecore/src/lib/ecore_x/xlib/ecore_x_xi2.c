@@ -14,6 +14,10 @@
 
 int _ecore_x_xi2_opcode = -1;
 
+#ifndef XIPointerEmulated
+#define XIPointerEmulated (1 << 16)
+#endif
+
 #ifdef ECORE_XI2
 static XIDeviceInfo *_ecore_x_xi2_devs = NULL;
 static int _ecore_x_xi2_num = 0;
