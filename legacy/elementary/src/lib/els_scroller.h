@@ -38,6 +38,8 @@ void elm_smart_scroller_page_show               (Evas_Object *obj, int pagenumbe
 void elm_smart_scroller_page_bring_in           (Evas_Object *obj, int pagenumber_h, int pagenumber_v);
 void elm_smart_scroller_region_bring_in         (Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h);
 void elm_smart_scroller_widget_set              (Evas_Object *obj, Evas_Object *wid);
+void elm_smart_scroller_gravity_set             (Evas_Object *obj, double x, double y);
+void elm_smart_scroller_gravity_get             (Evas_Object *obj, double *x, double *y);
 Eina_Bool elm_smart_scroller_momentum_animator_disabled_get   (Evas_Object *obj);
 void elm_smart_scroller_momentum_animator_disabled_set             (Evas_Object *obj, Eina_Bool disabled);
 void elm_smart_scroller_bounce_animator_disabled_set               (Evas_Object *obj, Eina_Bool disabled);

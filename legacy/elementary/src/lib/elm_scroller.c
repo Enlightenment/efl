@@ -718,3 +718,23 @@ elm_scroller_propagate_events_get(const Evas_Object *obj)
 
    return evas_object_propagate_events_get(wd->scr);
 }
+
+EAPI void
+elm_scroller_gravity_set(Evas_Object *obj, double x, double y)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return EINA_FALSE;
+
+   elm_smart_scroller_gravity_set(wd->scr, x, y);
+}
+
+EAPI void
+elm_scroller_gravity_get(Evas_Object *obj, double *x, double *y)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return EINA_FALSE;
+
+   elm_smart_scroller_gravity_get(wd->scr, x, y);
+}

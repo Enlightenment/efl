@@ -86,6 +86,8 @@ struct _Smart_Data
       void (*max_get) (Evas_Object *obj, Evas_Coord *x, Evas_Coord *y);
       void (*min_get) (Evas_Object *obj, Evas_Coord *x, Evas_Coord *y);
       void (*child_size_get) (Evas_Object *obj, Evas_Coord *x, Evas_Coord *y);
+      void (*gravity_set) (Evas_Object *obj, double x, double y);
+      void (*gravity_get) (Evas_Object *obj, double *x, double *y);
    } pan_func;
 
    struct {
@@ -227,6 +229,8 @@ elm_smart_scroller_child_set(Evas_Object *obj, Evas_Object *child)
    sd->pan_func.max_get = _elm_smart_pan_max_get;
    sd->pan_func.min_get = _elm_smart_pan_min_get;
    sd->pan_func.child_size_get = _elm_smart_pan_child_size_get;
+   sd->pan_func.gravity_set = _elm_smart_pan_gravity_set;
+   sd->pan_func.gravity_get = _elm_smart_pan_gravity_get;
 
    evas_object_event_callback_add(child, EVAS_CALLBACK_DEL, _smart_child_del_hook, sd);
    _elm_smart_pan_child_set(sd->pan_obj, child);
@@ -283,6 +287,8 @@ elm_smart_scroller_extern_pan_set(Evas_Object *obj, Evas_Object *pan,
    sd->pan_func.max_get = pan_max_get;
    sd->pan_func.min_get = pan_min_get;
    sd->pan_func.child_size_get = pan_child_size_get;
+   sd->pan_func.gravity_set = _elm_smart_pan_gravity_set;
+   sd->pan_func.gravity_get = _elm_smart_pan_gravity_get;
    sd->extern_pan = 1;
    evas_object_smart_callback_add(sd->pan_obj, "changed", _smart_pan_changed_hook, sd);
    evas_object_smart_callback_add(sd->pan_obj, "pan_changed", _smart_pan_pan_changed_hook, sd);
@@ -1584,6 +1590,22 @@ _smart_pan_pan_changed_hook(void *data, Evas_Object *obj __UNUSED__, void *event
           _elm_smart_scroller_wanted_region_set(sd->smart_obj);
      }
    _elm_smart_scroller_wanted_region_set(sd->smart_obj);
+}
+
+void
+elm_smart_scroller_gravity_set(Evas_Object *obj, double x, double y)
+{
+   API_ENTRY return;
+
+   sd->pan_func.gravity_set(sd->pan_obj, x, y);
+}
+
+void
+elm_smart_scroller_gravity_get(Evas_Object *obj, double *x, double *y)
+{
+   API_ENTRY return;
+
+   sd->pan_func.gravity_get(sd->pan_obj, x, y);
 }
 
 static void

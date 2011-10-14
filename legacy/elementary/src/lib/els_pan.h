@@ -6,3 +6,6 @@ void         _elm_smart_pan_get            (Evas_Object *obj, Evas_Coord *x, Eva
 void         _elm_smart_pan_max_get        (Evas_Object *obj, Evas_Coord *x, Evas_Coord *y);
 void         _elm_smart_pan_min_get        (Evas_Object *obj, Evas_Coord *x, Evas_Coord *y);
 void         _elm_smart_pan_child_size_get (Evas_Object *obj, Evas_Coord *w, Evas_Coord *h);
+void         _elm_smart_pan_gravity_set    (Evas_Object *obj, double x, double y);
+void         _elm_smart_pan_gravity_get    (Evas_Object *obj, double *x, double *y);
+

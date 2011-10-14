@@ -12,6 +12,8 @@ struct _Smart_Data
    Evas_Object *child_obj;
    Evas_Coord   x, y, w, h;
    Evas_Coord   child_w, child_h, px, py;
+   double       gravity_x, gravity_y;
+   Evas_Coord   prev_cw, prev_ch, delta_posx, delta_posy;
 };
 
 /* local subsystem functions */
@@ -140,6 +142,26 @@ _elm_smart_pan_child_size_get(Evas_Object *obj, Evas_Coord *w, Evas_Coord *h)
    if (h) *h = sd->child_h;
 }
 
+void
+_elm_smart_pan_gravity_set(Evas_Object *obj, double x, double y)
+{
+   API_ENTRY return;
+   sd->gravity_x = x;
+   sd->gravity_y = y;
+   sd->prev_cw = sd->child_w;
+   sd->prev_ch = sd->child_h;
+   sd->delta_posx = 0;
+   sd->delta_posy = 0;
+}
+
+void
+_elm_smart_pan_gravity_get(Evas_Object *obj, double *x, double *y)
+{
+   API_ENTRY return;
+   if (x) *x = sd->gravity_x;
+   if (y) *y = sd->gravity_y;
+}
+
 /* local subsystem functions */
 static void
 _smart_child_del_hook(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
@@ -171,7 +193,22 @@ _smart_child_resize_hook(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUS
 static void
 _smart_reconfigure(Smart_Data *sd)
 {
-   evas_object_move(sd->child_obj, sd->x - sd->px, sd->y - sd->py);
+   if (sd->gravity_x || sd->gravity_y)
+     {
+        sd->delta_posx += sd->child_w - sd->prev_cw;
+        sd->prev_cw = sd->child_w;
+        sd->delta_posy += sd->child_h - sd->prev_ch;
+        sd->prev_ch = sd->child_h;
+
+        evas_object_move(sd->child_obj,
+                         sd->x - sd->px - (sd->delta_posx*sd->gravity_x),
+                         sd->y - sd->py - (sd->delta_posy*sd->gravity_y));
+        sd->px += sd->delta_posx*sd->gravity_x;
+        sd->py += sd->delta_posy*sd->gravity_y;
+
+     }
+   else
+     evas_object_move(sd->child_obj, sd->x - sd->px, sd->y - sd->py);
 }
 
 static void
@@ -186,6 +223,8 @@ _smart_add(Evas_Object *obj)
    sd->y = 0;
    sd->w = 0;
    sd->h = 0;
+   sd->gravity_x = 0.0;
+   sd->gravity_y = 0.0;
    evas_object_smart_data_set(obj, sd);
 }
 
