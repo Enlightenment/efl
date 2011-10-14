@@ -18,6 +18,7 @@ struct _Widget_Data
 
 struct _Elm_Naviframe_Content_Item_Pair
 {
+   EINA_INLIST;
    const char *part;
    Evas_Object *content;
    Elm_Naviframe_Item *it;
@@ -25,6 +26,7 @@ struct _Elm_Naviframe_Content_Item_Pair
 
 struct _Elm_Naviframe_Text_Item_Pair
 {
+   EINA_INLIST;
    const char *part;
    const char *text;
 };
@@ -33,8 +35,8 @@ struct _Elm_Naviframe_Item
 {
    Elm_Widget_Item    base;
    EINA_INLIST;
-   Eina_List         *content_list;
-   Eina_List         *text_list;
+   Eina_Inlist       *content_list;
+   Eina_Inlist       *text_list;
    Evas_Object       *content;
    Evas_Object       *title_prev_btn;
    Evas_Object       *title_next_btn;
@@ -192,7 +194,6 @@ _item_text_set_hook(Elm_Object_Item *it,
 {
    ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
 
-   Eina_List *l = NULL;
    Elm_Naviframe_Text_Item_Pair *pair = NULL;
    Elm_Naviframe_Item *navi_it = ELM_CAST(it);
    char buf[1024];
@@ -202,7 +203,7 @@ _item_text_set_hook(Elm_Object_Item *it,
    else
      snprintf(buf, sizeof(buf), "%s", part);
 
-   EINA_LIST_FOREACH(navi_it->text_list, l, pair)
+   EINA_INLIST_FOREACH(navi_it->text_list, pair)
      if (!strcmp(buf, pair->part)) break;
 
    if (!pair)
@@ -215,7 +216,8 @@ _item_text_set_hook(Elm_Object_Item *it,
              return;
           }
         eina_stringshare_replace(&pair->part, buf);
-        navi_it->text_list = eina_list_append(navi_it->text_list, pair);
+        navi_it->text_list = eina_inlist_append(navi_it->text_list,
+                                                EINA_INLIST_GET(pair));
      }
 
    eina_stringshare_replace(&pair->text, label);
@@ -239,7 +241,6 @@ static const char *
 _item_text_get_hook(const Elm_Object_Item *it, const char *part)
 {
    ELM_OBJ_ITEM_CHECK_OR_RETURN(it, NULL);
-   Eina_List *l = NULL;
    Elm_Naviframe_Text_Item_Pair *pair = NULL;
    Elm_Naviframe_Item *navi_it = ELM_CAST(it);
    char buf[1024];
@@ -249,7 +250,7 @@ _item_text_get_hook(const Elm_Object_Item *it, const char *part)
    else
      snprintf(buf, sizeof(buf), "%s", part);
 
-   EINA_LIST_FOREACH(navi_it->text_list, l, pair)
+   EINA_INLIST_FOREACH(navi_it->text_list, pair)
      {
         if (!strcmp(buf, pair->part))
           return pair->text;
@@ -292,7 +293,6 @@ static Evas_Object *
 _item_content_get_hook(const Elm_Object_Item *it, const char *part)
 {
    ELM_OBJ_ITEM_CHECK_OR_RETURN(it, NULL);
-   Eina_List *l = NULL;
    Elm_Naviframe_Content_Item_Pair *pair = NULL;
    Elm_Naviframe_Item *navi_it = ELM_CAST(it);
 
@@ -305,7 +305,7 @@ _item_content_get_hook(const Elm_Object_Item *it, const char *part)
      return navi_it->title_next_btn;
 
    //common parts
-   EINA_LIST_FOREACH(navi_it->content_list, l, pair)
+   EINA_INLIST_FOREACH(navi_it->content_list, pair)
      {
         if (!strcmp(part, pair->part))
           return pair->content;
@@ -317,7 +317,6 @@ static Evas_Object *
 _item_content_unset_hook(Elm_Object_Item *it, const char *part)
 {
    ELM_OBJ_ITEM_CHECK_OR_RETURN(it, NULL);
-   Eina_List *l = NULL;
    Elm_Naviframe_Content_Item_Pair *pair = NULL;
    Elm_Naviframe_Item *navi_it = ELM_CAST(it);
    Evas_Object *content = NULL;
@@ -336,14 +335,14 @@ _item_content_unset_hook(Elm_Object_Item *it, const char *part)
      }
 
    //common parts
-   EINA_LIST_FOREACH(navi_it->content_list, l, pair)
+   EINA_INLIST_FOREACH(navi_it->content_list, pair)
      {
         if (!strcmp(part, pair->part))
           {
              content = pair->content;
              eina_stringshare_del(pair->part);
-             navi_it->content_list = eina_list_remove(navi_it->content_list,
-                                                      pair);
+             navi_it->content_list = eina_inlist_remove(navi_it->content_list,
+                                                        EINA_INLIST_GET(pair));
              free(pair);
              break;
           }
@@ -486,7 +485,8 @@ _title_content_del(void *data,
    Elm_Naviframe_Item *it = pair->it;
    snprintf(buf, sizeof(buf), "elm,state,%s,hide", pair->part);
    edje_object_signal_emit(it->base.view, buf, "elm");
-   it->content_list = eina_list_remove(it->content_list, pair);
+   it->content_list = eina_inlist_remove(it->content_list,
+                                         EINA_INLIST_GET(pair));
    eina_stringshare_del(pair->part);
    free(pair);
 }
@@ -531,10 +531,9 @@ _title_content_set(Elm_Naviframe_Item *it,
                    const char *part,
                    Evas_Object *content)
 {
-   Eina_List *l = NULL;
    char buf[1024];
 
-   EINA_LIST_FOREACH(it->content_list, l, pair)
+   EINA_INLIST_FOREACH(it->content_list, pair)
      if (!strcmp(part, pair->part)) break;
 
    if (!pair)
@@ -547,7 +546,8 @@ _title_content_set(Elm_Naviframe_Item *it,
           }
         pair->it = it;
         eina_stringshare_replace(&pair->part, part);
-        it->content_list = eina_list_append(it->content_list, pair);
+        it->content_list = eina_inlist_append(it->content_list,
+                                              EINA_INLIST_GET(pair));
      }
 
    if ((pair->content) && (pair->content != content))
@@ -643,9 +643,9 @@ static void
 _item_del(Elm_Naviframe_Item *it)
 {
    Widget_Data *wd;
-   Eina_List *l;
    Elm_Naviframe_Content_Item_Pair *content_pair;
    Elm_Naviframe_Text_Item_Pair *text_pair;
+   Eina_Inlist *l;
 
    if (!it) return;
 
@@ -659,23 +659,27 @@ _item_del(Elm_Naviframe_Item *it)
    if ((it->content) && (!wd->preserve))
      evas_object_del(it->content);
 
-   EINA_LIST_FOREACH(it->content_list, l, content_pair)
+   EINA_INLIST_FOREACH_SAFE(it->content_list, l, content_pair)
      {
-        evas_object_event_callback_del(content_pair->content, EVAS_CALLBACK_DEL, _title_content_del);
+        evas_object_event_callback_del(content_pair->content,
+                                       EVAS_CALLBACK_DEL,
+                                       _title_content_del);
         evas_object_del(content_pair->content);
         eina_stringshare_del(content_pair->part);
+        it->content_list =
+           eina_inlist_remove(it->content_list,
+                              EINA_INLIST_GET(content_pair));
         free(content_pair);
      }
 
-   EINA_LIST_FOREACH(it->text_list, l, text_pair)
+   EINA_INLIST_FOREACH_SAFE(it->text_list, l, text_pair)
      {
         eina_stringshare_del(text_pair->part);
         eina_stringshare_del(text_pair->text);
+        it->text_list = eina_inlist_remove(it->text_list,
+                                           EINA_INLIST_GET(text_pair));
         free(text_pair);
      }
-
-   eina_list_free(it->content_list);
-   eina_list_free(it->text_list);
 
    wd->stack = eina_inlist_remove(wd->stack, EINA_INLIST_GET(it));
 
@@ -996,7 +1000,6 @@ elm_naviframe_item_style_set(Elm_Object_Item *it, const char *item_style)
 {
    ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
    Elm_Naviframe_Item *navi_it = ELM_CAST(it);
-   Eina_List *l;
    Elm_Naviframe_Content_Item_Pair *content_pair;
    Elm_Naviframe_Text_Item_Pair *text_pair;
    Widget_Data *wd;
@@ -1016,10 +1019,10 @@ elm_naviframe_item_style_set(Elm_Object_Item *it, const char *item_style)
                          buf,
                          elm_widget_style_get(navi_it->base.widget));
    //recover item
-   EINA_LIST_FOREACH(navi_it->text_list, l, text_pair)
+   EINA_INLIST_FOREACH(navi_it->text_list, text_pair)
      _item_text_set_hook(it, text_pair->part, text_pair->text);
 
-   EINA_LIST_FOREACH(navi_it->content_list, l, content_pair)
+   EINA_INLIST_FOREACH(navi_it->content_list, content_pair)
      _item_content_set_hook(it, content_pair->part, content_pair->content);
 
    //content
