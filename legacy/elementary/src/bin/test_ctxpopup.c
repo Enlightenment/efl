@@ -4,6 +4,13 @@
 #endif
 #ifndef ELM_LIB_QUICKLAUNCH
 
+
+static void
+_hide_finished(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+{
+   evas_object_del(obj);
+}
+
 static void
 _print_current_dir(Evas_Object *obj)
 {
@@ -56,6 +63,10 @@ _list_item_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    Evas_Coord x,y;
 
    ctxpopup = elm_ctxpopup_add(obj);
+   evas_object_smart_callback_add(ctxpopup,
+                                  "dismissed",
+                                  _hide_finished,
+                                  NULL);
 
    ITEM_NEW(ctxpopup, "Go to home folder", "home");
    ITEM_NEW(ctxpopup, "Save file", "file");
@@ -81,6 +92,10 @@ _list_item_cb2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
    Evas_Coord x,y;
 
    ctxpopup = elm_ctxpopup_add(obj);
+   evas_object_smart_callback_add(ctxpopup,
+                                  "dismissed",
+                                  _hide_finished,
+                                  NULL);
 
    ITEM_NEW(ctxpopup, NULL, "home");
    ITEM_NEW(ctxpopup, NULL, "file");
@@ -105,6 +120,10 @@ _list_item_cb3(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
    Evas_Coord x,y;
 
    ctxpopup = elm_ctxpopup_add(obj);
+   evas_object_smart_callback_add(ctxpopup,
+                                  "dismissed",
+                                  _hide_finished,
+                                  NULL);
 
    ITEM_NEW(ctxpopup, "Eina", NULL);
    ITEM_NEW(ctxpopup, "Eet", NULL);
@@ -128,6 +147,11 @@ _list_item_cb4(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
    Evas_Coord x,y;
 
    ctxpopup = elm_ctxpopup_add(obj);
+   evas_object_smart_callback_add(ctxpopup,
+                                  "dismissed",
+                                  _hide_finished,
+                                  NULL);
+
    elm_ctxpopup_horizontal_set(ctxpopup, EINA_TRUE);
 
    ITEM_NEW(ctxpopup, NULL, "home");
@@ -169,6 +193,11 @@ _list_item_cb5(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
    elm_box_pack_end(bx, sc);
 
    ctxpopup = elm_ctxpopup_add(obj);
+   evas_object_smart_callback_add(ctxpopup,
+                                  "dismissed",
+                                  _hide_finished,
+                                  NULL);
+
    elm_object_content_set(ctxpopup, bx);
 
    evas_pointer_canvas_xy_get(evas_object_evas_get(obj), &x, &y);
