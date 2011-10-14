@@ -40,6 +40,7 @@ struct _Widget_Data
         Eina_Bool use : 1;
    } freedesktop;
 #endif
+   int in_eval;
    Eina_Bool scale_up : 1;
    Eina_Bool scale_down : 1;
    Eina_Bool smooth : 1;
@@ -396,6 +397,7 @@ _sizing_eval(Evas_Object *obj)
    Evas_Coord minw = -1, minh = -1, maxw = -1, maxh = -1;
    int w, h;
 
+   wd->in_eval++;
    _els_smart_icon_size_get(wd->img, &w, &h);
 #ifdef ELM_EFREET
    if (wd->freedesktop.use && wd->stdicon)
@@ -433,6 +435,7 @@ an icon with a different resolution. */
      }
    evas_object_size_hint_min_set(obj, minw, minh);
    evas_object_size_hint_max_set(obj, maxw, maxh);
+   wd->in_eval--;
 }
 
 static void
@@ -584,7 +587,7 @@ _elm_icon_standard_set(Widget_Data *wd, Evas_Object *obj, const char *name, Eina
    if (ret)
      {
         eina_stringshare_replace(&wd->stdicon, name);
-        _sizing_eval(obj);
+        if (!wd->in_eval) _sizing_eval(obj);
         return EINA_TRUE;
      }
 
@@ -684,7 +687,7 @@ elm_icon_memfile_set(Evas_Object *obj, const void *img, size_t size, const char 
    eina_stringshare_del(wd->stdicon);
    wd->stdicon = NULL;
    ret = _els_smart_icon_memfile_set(wd->img, img, size, format, key);
-   _sizing_eval(obj);
+   if (!wd->in_eval) _sizing_eval(obj);
    return ret;
 }
 
@@ -716,7 +719,7 @@ elm_icon_file_set(Evas_Object *obj, const char *file, const char *group)
      ret = _els_smart_icon_file_edje_set(wd->img, file, group);
    else
      ret = _els_smart_icon_file_key_set(wd->img, file, group);
-   _sizing_eval(obj);
+   if (!wd->in_eval) _sizing_eval(obj);
    return ret;
 }
 
@@ -906,7 +909,7 @@ elm_icon_smooth_set(Evas_Object *obj, Eina_Bool smooth)
 
    if (!wd) return;
    wd->smooth = smooth;
-   _sizing_eval(obj);
+   if (!wd->in_eval) _sizing_eval(obj);
 }
 
 EAPI Eina_Bool
@@ -927,7 +930,7 @@ elm_icon_no_scale_set(Evas_Object *obj, Eina_Bool no_scale)
 
    if (!wd) return;
    wd->no_scale = no_scale;
-   _sizing_eval(obj);
+   if (!wd->in_eval) _sizing_eval(obj);
 }
 
 EAPI Eina_Bool
@@ -948,7 +951,7 @@ elm_icon_scale_set(Evas_Object *obj, Eina_Bool scale_up, Eina_Bool scale_down)
    if (!wd) return;
    wd->scale_up = scale_up;
    wd->scale_down = scale_down;
-   _sizing_eval(obj);
+   if (!wd->in_eval) _sizing_eval(obj);
 }
 
 EAPI void
@@ -969,7 +972,7 @@ elm_icon_fill_outside_set(Evas_Object *obj, Eina_Bool fill_outside)
 
    if (!wd) return;
    wd->fill_outside = fill_outside;
-   _sizing_eval(obj);
+   if (!wd->in_eval) _sizing_eval(obj);
 }
 
 EAPI void
