@@ -1769,6 +1769,7 @@ elm_win_alpha_set(Evas_Object *obj, Eina_Bool alpha)
    else if (win->img_obj)
      {
         evas_object_image_alpha_set(win->img_obj, alpha);
+        ecore_evas_alpha_set(win->ee, alpha);
      }
    else
      {
@@ -1799,6 +1800,13 @@ elm_win_alpha_get(const Evas_Object *obj)
    ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
    win = elm_widget_data_get(obj);
    if (!win) return EINA_FALSE;
+   if (win->frame_obj)
+     {
+     }
+   else if (win->img_obj)
+     {
+        return evas_object_image_alpha_get(win->img_obj);
+     }
    return ecore_evas_alpha_get(win->ee);
 }
 
