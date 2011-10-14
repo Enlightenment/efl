@@ -49,7 +49,6 @@ elm_label.c \
 elm_list.c \
 elm_map.c \
 elm_notify.c \
-elm_pager.c \
 elm_panes.c \
 elm_photocam.c \
 elm_progressbar.c \
