@@ -6,7 +6,7 @@
 
 
 static void
-_hide_finished(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+_dismissed(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
    evas_object_del(obj);
 }
@@ -65,7 +65,7 @@ _list_item_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    ctxpopup = elm_ctxpopup_add(obj);
    evas_object_smart_callback_add(ctxpopup,
                                   "dismissed",
-                                  _hide_finished,
+                                  _dismissed,
                                   NULL);
 
    ITEM_NEW(ctxpopup, "Go to home folder", "home");
@@ -94,7 +94,7 @@ _list_item_cb2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
    ctxpopup = elm_ctxpopup_add(obj);
    evas_object_smart_callback_add(ctxpopup,
                                   "dismissed",
-                                  _hide_finished,
+                                  _dismissed,
                                   NULL);
 
    ITEM_NEW(ctxpopup, NULL, "home");
@@ -122,7 +122,7 @@ _list_item_cb3(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
    ctxpopup = elm_ctxpopup_add(obj);
    evas_object_smart_callback_add(ctxpopup,
                                   "dismissed",
-                                  _hide_finished,
+                                  _dismissed,
                                   NULL);
 
    ITEM_NEW(ctxpopup, "Eina", NULL);
@@ -149,7 +149,7 @@ _list_item_cb4(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
    ctxpopup = elm_ctxpopup_add(obj);
    evas_object_smart_callback_add(ctxpopup,
                                   "dismissed",
-                                  _hide_finished,
+                                  _dismissed,
                                   NULL);
 
    elm_ctxpopup_horizontal_set(ctxpopup, EINA_TRUE);
@@ -195,7 +195,7 @@ _list_item_cb5(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
    ctxpopup = elm_ctxpopup_add(obj);
    evas_object_smart_callback_add(ctxpopup,
                                   "dismissed",
-                                  _hide_finished,
+                                  _dismissed,
                                   NULL);
 
    elm_object_content_set(ctxpopup, bx);
