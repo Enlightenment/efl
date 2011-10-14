@@ -256,23 +256,28 @@ fi
 ## Check if gstreamer X Overlay is available
 build_xoverlay="no"
 if test "x$enable_gstreamer" = "xyes"; then
-   save_CFLAGS=$CFLAGS
-   CFLAGS="$CFLAGS ${GSTREAMER_CFLAGS}"
-   AC_CHECK_HEADER([gst/interfaces/xoverlay.h],
-     [
-        AC_DEFINE(HAVE_XOVERLAY_H, 1, [Build with Gstreamer Xoverlay support])
-	build_xoverlay="yes"
-     ], [
-     	build_xoverlay="no"
-     ]
-   )
-   CFLAGS=$save_CFLAGS
-   if test "x${build_xoverlay}" = "xyes"; then
-      PKG_CHECK_MODULES([GSTREAMER_INTERFACE],
+   PKG_CHECK_MODULES([GSTREAMER_INTERFACE],
 	[ gstreamer-interfaces-0.10 >= 0.10.34 ],
 	[ build_xoverlay="yes" ],
 	[ build_xoverlay="no" ]
+   )
+   if test "x${build_xoverlay}" = "xyes"; then
+      save_CPPFLAGS=$CPPFLAGS
+      CPPFLAGS="$CPPFLAGS ${GSTREAMER_CFLAGS} ${GSTREAMER_INTERFACE_CFLAGS}"
+      AC_CHECK_HEADER([gst/interfaces/xoverlay.h],
+	[
+	  AC_DEFINE(HAVE_XOVERLAY_H, 1, [Build with Gstreamer Xoverlay support])
+	  build_xoverlay="yes"
+	], [
+     	  build_xoverlay="no"
+     	]
       )
+      CPPFLAGS=$save_CPPFLAGS
+
+      save_LDFLAGS=$LDFLAGS
+      LDFLAGS="$LDFLAGS ${GSTREAMER_INTERFACES}"
+      AC_CHECK_LIB(gstinterfaces-0.10, gst_x_overlay_set_window_handle, AC_DEFINE(HAVE_X_OVERLAY_SET, 1, [Use gst_x_overlay_set_window_handle instead of old deprecated gst_x_overlay_set_xwindow_id]))
+      LDFLAGS=$sava_LDFLAGS
    fi
 fi
 

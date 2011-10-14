@@ -1214,7 +1214,11 @@ gstreamer_video_sink_new(Emotion_Gstreamer_Video *ev,
 	       {
 		  unsigned int pos[2];
 
+#ifdef HAVE_X_OVERLAY_SET
 		  gst_x_overlay_set_window_handle(GST_X_OVERLAY(xvsink), win);
+#else
+		  gst_x_overlay_set_xwindow_id(GST_X_OVERLAY(xvsink), win);
+#endif
 		  ev->win = win;
 
 		  ecore_x_window_prop_card32_set(win, ECORE_X_ATOM_E_VIDEO_PARENT, &parent, 1);
