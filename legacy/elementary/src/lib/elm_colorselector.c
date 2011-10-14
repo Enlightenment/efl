@@ -419,7 +419,11 @@ _draw_rects(void *data, double x)
          break;
       case ALPHA:
          wd->a = 255.0 * x;
-         evas_object_color_set(wd->cp[3]->arrow, wd->er, wd->eg, wd->eb, wd->a);
+         evas_object_color_set(wd->cp[3]->arrow,
+                               (wd->er * wd->a) / 255,
+                               (wd->eg * wd->a) / 255,
+                               (wd->eb * wd->a) / 255,
+                               wd->a);
          break;
       default:
          break;
