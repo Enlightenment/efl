@@ -306,21 +306,19 @@ _end(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, c
    item = wd->previous;
    if (item)
      {
-        edje_object_part_unswallow(NULL, item->base.view);
+        edje_object_part_unswallow(wd->slideshow, item->base.view);
         evas_object_hide(item->base.view);
         wd->previous = NULL;
      }
-
 
    item = wd->current;
    if ((!item) || (!item->base.view)) return;
 
    _item_realize(item);
-   edje_object_part_unswallow(NULL, item->base.view);
-   evas_object_show(item->base.view);
+   edje_object_part_unswallow(wd->slideshow, item->base.view);
 
-   edje_object_signal_emit(wd->slideshow, "anim,end", "slideshow");
    edje_object_part_swallow(wd->slideshow, "elm.swallow.1", item->base.view);
+   edje_object_signal_emit(wd->slideshow, "anim,end", "slideshow");
 }
 
 static Eina_Bool
@@ -445,7 +443,6 @@ elm_slideshow_show(Elm_Slideshow_Item *item)
      wd->timer = ecore_timer_add(wd->timeout, _timer_cb, item->base.widget);
    _item_realize(next);
    edje_object_part_swallow(wd->slideshow, "elm.swallow.2", next->base.view);
-   evas_object_show(next->base.view);
    snprintf(buf, sizeof(buf), "%s,next", wd->transition);
    edje_object_signal_emit(wd->slideshow, buf, "slideshow");
    wd->previous = wd->current;
@@ -477,7 +474,6 @@ elm_slideshow_next(Evas_Object *obj)
    _item_realize(next);
 
    edje_object_part_swallow(wd->slideshow, "elm.swallow.2", next->base.view);
-   evas_object_show(next->base.view);
 
    snprintf(buf, sizeof(buf), "%s,next", wd->transition);
    edje_object_signal_emit(wd->slideshow, buf, "slideshow");
@@ -511,7 +507,6 @@ elm_slideshow_previous(Evas_Object *obj)
    _item_realize(prev);
 
    edje_object_part_swallow(wd->slideshow, "elm.swallow.2", prev->base.view);
-   evas_object_show(prev->base.view);
 
    snprintf(buf, 1024, "%s,previous", wd->transition);
    edje_object_signal_emit(wd->slideshow, buf, "slideshow");
