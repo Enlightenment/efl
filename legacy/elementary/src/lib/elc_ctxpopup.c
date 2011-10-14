@@ -507,6 +507,8 @@ _update_arrow(Evas_Object *obj, Elm_Ctxpopup_Direction dir)
    evas_object_geometry_get(wd->base, &base_size.x, &base_size.y,
                             &base_size.w, &base_size.h);
 
+   edje_object_part_unswallow(wd->base, wd->arrow);
+
    switch (dir)
      {
       case ELM_CTXPOPUP_DIRECTION_RIGHT:
