@@ -367,6 +367,8 @@ _update_list(Widget_Data *wd)
 
         if (elm_widget_disabled_get(wd->obj))
           edje_object_signal_emit(it->base.view, "elm,state,disabled", "elm");
+        else
+          edje_object_signal_emit(it->base.view, "elm,state,enabled", "elm");
 
         _swallow_item_objects(it);
         return;
@@ -410,6 +412,8 @@ _update_list(Widget_Data *wd)
 
         if (elm_widget_disabled_get(wd->obj))
           edje_object_signal_emit(it->base.view, "elm,state,disabled", "elm");
+        else
+          edje_object_signal_emit(it->base.view, "elm,state,enabled", "elm");
 
         _swallow_item_objects(it);
         idx++;

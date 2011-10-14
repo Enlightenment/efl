@@ -377,6 +377,9 @@ group { name: "elm/segment_control/item/default";
                set_state(PART:"disabler", "disabled_right", 0.0);
                set_state(PART:"elm.text", "disabled", 0.0);
             }
+            else
+               set_state(PART:"disabler", "default", 0.0);
+            
          }
       }
       program {
