@@ -172,7 +172,7 @@ static void
 _signal_toggle_off(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
 {
    Widget_Data *wd = elm_widget_data_get(data);
-   if (!wd) return;
+   if (!wd || !wd->state) return;
    wd->state = 0;
    if (wd->statep) *wd->statep = wd->state;
    evas_object_smart_callback_call(data, SIG_CHANGED, NULL);
@@ -182,7 +182,7 @@ static void
 _signal_toggle_on(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
 {
    Widget_Data *wd = elm_widget_data_get(data);
-   if (!wd) return;
+   if (!wd || wd->state) return;
    wd->state = 1;
    if (wd->statep) *wd->statep = wd->state;
    evas_object_smart_callback_call(data, SIG_CHANGED, NULL);
