@@ -70,7 +70,7 @@ _ecore_x_input_handler(XEvent *xevent)
    XIDeviceEvent *evd = (XIDeviceEvent *)(xevent->xcookie.data);
    int devid = evd->deviceid;
    int i;
-   
+
    if (_ecore_x_xi2_devs)
      {
         for (i = 0; i < _ecore_x_xi2_num; i++)
@@ -237,26 +237,38 @@ ecore_x_input_multi_select(Ecore_X_Window win)
           }
         else if (dev->use == XISlavePointer)
           {
-             XIEventMask eventmask;
-             unsigned char mask[4] = { 0 };
-
-             eventmask.deviceid = dev->deviceid;
-             eventmask.mask_len = sizeof(mask);
-             eventmask.mask = mask;
-             XISetMask(mask, XI_ButtonPress);
-             XISetMask(mask, XI_ButtonRelease);
-             XISetMask(mask, XI_Motion);
-#ifdef XI_TouchUpdate
-             XISetMask(mask, XI_TouchUpdate);
-#endif             
-#ifdef XI_TouchBegin
-             XISetMask(mask, XI_TouchBegin);
-#endif             
-#ifdef XI_TouchEnd
-             XISetMask(mask, XI_TouchEnd);
-#endif             
-             XISelectEvents(_ecore_x_disp, win, &eventmask, 1);
-             find = EINA_TRUE;
+             XIDeviceInfo *atdev = NULL;
+             int j;
+             
+             for (j = 0; j < _ecore_x_xi2_num; j++)
+               {
+                  if (_ecore_x_xi2_devs[j].deviceid == dev->attachment)
+                     atdev = &(_ecore_x_xi2_devs[j]);
+               }
+             if (((atdev) && (atdev->use != XIMasterPointer)) ||
+                 (!atdev))
+               {
+                  XIEventMask eventmask;
+                  unsigned char mask[4] = { 0 };
+                  
+                  eventmask.deviceid = dev->deviceid;
+                  eventmask.mask_len = sizeof(mask);
+                  eventmask.mask = mask;
+                  XISetMask(mask, XI_ButtonPress);
+                  XISetMask(mask, XI_ButtonRelease);
+                  XISetMask(mask, XI_Motion);
+# ifdef XI_TouchUpdate
+                  XISetMask(mask, XI_TouchUpdate);
+# endif             
+# ifdef XI_TouchBegin
+                  XISetMask(mask, XI_TouchBegin);
+# endif             
+# ifdef XI_TouchEnd
+                  XISetMask(mask, XI_TouchEnd);
+# endif             
+                  XISelectEvents(_ecore_x_disp, win, &eventmask, 1);
+                  find = EINA_TRUE;
+               }
           }
      }
 
