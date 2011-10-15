@@ -201,7 +201,7 @@ if test "x$want_quicklaunch" != "xno"; then
         AC_DEFINE(HAVE_FORK)
    ])
 fi
-AM_CONDITIONAL([BUILD_QUICKLAUNCH], [test "x$have_fork" = "xyes" && "x$have_dlopen" = "xyes"])
+AM_CONDITIONAL([BUILD_QUICKLAUNCH], [test "x$have_fork" = "xyes" && test "x$have_dlopen" = "xyes"])
 
 AC_SUBST(dlopen_libs)
 AC_SUBST(lt_enable_auto_import)
