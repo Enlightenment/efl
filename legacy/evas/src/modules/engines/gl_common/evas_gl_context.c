@@ -48,11 +48,11 @@ gl_symbols(void)
    if (sym_done) return;
    sym_done = 1;
 
-#ifdef _EVAS_ENGINE_SDL_H
-# define FINDSYM(dst, sym, typ) if (!dst) dst = (typ)SDL_GL_GetProcAddress(sym)
-#else
-# define FINDSYM(dst, sym, typ) if (!dst) dst = (typ)dlsym(RTLD_DEFAULT, sym)
-#endif
+   /* FIXME: If using the SDL engine, we should use SDL_GL_GetProcAddress
+    * instead of dlsym
+    * if (!dst) dst = (typ)SDL_GL_GetProcAddress(sym)
+    */
+#define FINDSYM(dst, sym, typ) if (!dst) dst = (typ)dlsym(RTLD_DEFAULT, sym)
 #define FALLBAK(dst, typ) if (!dst) dst = (typ)sym_missing;
 
    FINDSYM(glsym_glGenFramebuffers, "glGenFramebuffers", glsym_func_void);
