@@ -564,6 +564,33 @@ EAPI Eina_Bool eina_strbuf_replace(Eina_Strbuf *buf, const char *str, const char
 EAPI int eina_strbuf_replace_all(Eina_Strbuf *buf, const char *str, const char *with) EINA_ARG_NONNULL(1, 2, 3);
 
 /**
+ * @brief Trim the string buffer
+
+ * @param buf the string buffer to work with.
+ *
+ * This function skips whitespaces in the beginning and the end of the buffer.
+ */
+EAPI void eina_strbuf_trim(Eina_Strbuf *buf) EINA_ARG_NONNULL(1);
+
+/**
+ * @brief Left trim the string buffer
+
+ * @param buf the string buffer to work with.
+ *
+ * This function skips whitespaces in the beginning of the buffer.
+ */
+EAPI void eina_strbuf_ltrim(Eina_Strbuf *buf) EINA_ARG_NONNULL(1);
+
+/**
+ * @brief Right trim the string buffer
+
+ * @param buf the string buffer to work with.
+ *
+ * This function skips whitespaces in the end of the buffer.
+ */
+EAPI void eina_strbuf_rtrim(Eina_Strbuf *buf) EINA_ARG_NONNULL(1);
+
+/**
  * @}
  */
 

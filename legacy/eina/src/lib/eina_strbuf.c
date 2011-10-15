@@ -4,6 +4,7 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <ctype.h>
 
 #ifdef HAVE_EVIL
 # include <Evil.h>
@@ -156,6 +157,44 @@ eina_strbuf_insert_vprintf(Eina_Strbuf *buf,
    ret = eina_strbuf_insert(buf, str, pos);
    free(str);
    return ret;
+}
+
+EAPI void
+eina_strbuf_trim(Eina_Strbuf *buf)
+{
+   char *c = buf->buf;
+
+   while (buf->len > 0 && isspace(((unsigned char*)(buf->buf))[buf->len - 1]))
+     buf->len--;
+   while (buf->len > 0 && isspace(*c))
+     {
+        c++;
+        buf->len--;
+     }
+   memmove(buf->buf, c, buf->len);
+   ((unsigned char *)buf->buf)[buf->len] = '\0';
+}
+
+EAPI void
+eina_strbuf_ltrim(Eina_Strbuf *buf)
+{
+   char *c = buf->buf;
+
+   while (buf->len > 0 && isspace(*c))
+     {
+        c++;
+        buf->len--;
+     }
+   memmove(buf->buf, c, buf->len);
+   ((unsigned char *)buf->buf)[buf->len] = '\0';
+}
+
+EAPI void
+eina_strbuf_rtrim(Eina_Strbuf *buf)
+{
+   while (buf->len > 0 && isspace(((unsigned char*)(buf->buf))[buf->len - 1]))
+     buf->len--;
+   ((unsigned char *)buf->buf)[buf->len] = '\0';
 }
 
 /* Unicode */
