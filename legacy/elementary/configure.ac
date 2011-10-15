@@ -167,15 +167,15 @@ dnl managed by evil
       ELM_UNIX_DEF="#define"
       AC_CHECK_FUNCS(dlopen, res=yes, res=no)
       if test "x$res" = "xyes"; then
-	AC_CHECK_FUNCS(dladdr, AC_DEFINE(HAVE_DLADDR))
+        AC_CHECK_FUNCS(dladdr, AC_DEFINE(HAVE_DLADDR))
         have_dlopen="yes"
       else
-	AC_CHECK_LIB(dl, dlopen, res=yes, res=no)
-	if test "x$res" = "xyes"; then
-	  AC_CHECK_LIB(dl, dladdr, AC_DEFINE(HAVE_DLADDR))
-	  dlopen_libs=-ldl
+        AC_CHECK_LIB(dl, dlopen, res=yes, res=no)
+        if test "x$res" = "xyes"; then
+          AC_CHECK_LIB(dl, dladdr, AC_DEFINE(HAVE_DLADDR))
+          dlopen_libs=-ldl
           have_dlopen="yes"
-	fi
+        fi
       fi
       have_socket="yes"
       ;;
@@ -192,13 +192,13 @@ m4_ifdef([v_mic],
 have_fork="no"
 want_quicklaunch="auto"
 AC_ARG_ENABLE([quick-launch],
-	[AC_HELP_STRING([--disable-quick-launch], [disable quick-launch support, @<:@default=detect@:>@])],
-	[want_quicklaunch=$enableval], [])
+        [AC_HELP_STRING([--disable-quick-launch], [disable quick-launch support, @<:@default=detect@:>@])],
+        [want_quicklaunch=$enableval], [])
 
 if test "x$want_quicklaunch" != "xno"; then
    AC_CHECK_FUNCS(fork, [
-   	have_fork="yes"
-  	AC_DEFINE(HAVE_FORK)
+        have_fork="yes"
+        AC_DEFINE(HAVE_FORK)
    ])
 fi
 AM_CONDITIONAL([BUILD_QUICKLAUNCH], [test "x$have_fork" = "xyes" && "x$have_dlopen" = "xyes"])
@@ -226,13 +226,13 @@ PKG_CHECK_MODULES([ELEMENTARY],
 )
 
 PKG_CHECK_MODULES([EIO],
-	[eio],
-	[
-	 have_eio="yes"
-	 AC_DEFINE(HAVE_EIO, 1, [Use EIO for asynchronous file access])
-	 requirement_elm="eio ${requirement_elm}"
-	],
-	[have_eio="no"])
+        [eio],
+        [
+         have_eio="yes"
+         AC_DEFINE(HAVE_EIO, 1, [Use EIO for asynchronous file access])
+         requirement_elm="eio ${requirement_elm}"
+        ],
+        [have_eio="no"])
 
 AM_CONDITIONAL([HAVE_EIO], [test "x${have_eio}" = "xyes"])
 
@@ -244,13 +244,13 @@ AC_ARG_ENABLE([emotion],
 
 if test "x$want_elementary_emotion" != "xno"; then
    PKG_CHECK_MODULES([EMOTION],
-	[emotion],
-	[
-	 have_emotion="yes"
-	 AC_DEFINE(HAVE_EMOTION, 1, [Use Emotion for asynchronous file access])
-	 requirement_elm="emotion ${requirement_elm}"
-	],
-	[have_emotion="no"])
+        [emotion],
+        [
+         have_emotion="yes"
+         AC_DEFINE(HAVE_EMOTION, 1, [Use Emotion for asynchronous file access])
+         requirement_elm="emotion ${requirement_elm}"
+        ],
+        [have_emotion="no"])
 fi
 
 AM_CONDITIONAL([HAVE_EMOTION], [test "x${have_emotion}" = "xyes"])
