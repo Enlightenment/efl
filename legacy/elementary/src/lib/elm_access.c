@@ -12,7 +12,6 @@ struct _Mod_Api
 };
 
 static int initted = 0;
-static Elm_Module *mod = NULL;
 static Mod_Api *mapi = NULL;
 
 static void
@@ -22,7 +21,6 @@ _access_init(void)
    initted++;
    if (initted > 1) return;
    if (!(m = _elm_module_find_as("access/api"))) return;
-   mod = m;
    m->api = malloc(sizeof(Mod_Api));
    if (!m->api) return;
    m->init_func(m);
