@@ -2,8 +2,6 @@
 #define _EVAS_GL_PRIVATE_H
 #include "evas_gl_common.h"
 
-#include <dlfcn.h>      /* dlopen,dlclose,etc */
-
 extern int _evas_engine_GL_common_log_dom;
 
 #ifdef ERR

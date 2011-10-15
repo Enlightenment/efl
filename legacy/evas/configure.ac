@@ -484,22 +484,24 @@ dlopen_libs=""
 case "$host_os" in
   mingw32ce*)
 # managed by evil
-    AC_DEFINE(HAVE_DLADDR)
+    AC_DEFINE(HAVE_DLSYM)
   ;;
   mingw*)
 # nothing on mingw platform
   ;;
   *)
-    AC_CHECK_FUNCS(dlopen, res=yes, res=no)
+    AC_CHECK_FUNCS(dlsym, res=yes, res=no)
     if test "x$res" = "xyes"; then
-      AC_CHECK_FUNCS(dladdr, AC_DEFINE(HAVE_DLADDR))
+      AC_DEFINE(HAVE_DLSYM)
     else
-      AC_CHECK_LIB(dl, dlopen, res=yes, res=no)
+      AC_CHECK_LIB(dl, dlsym, res=yes, res=no)
       if test "x$res" = "xyes"; then
-        AC_CHECK_LIB(dl, dladdr, AC_DEFINE(HAVE_DLADDR))
         dlopen_libs=-ldl
+        AC_DEFINE(HAVE_DLSYM)
       else
-        AC_MSG_ERROR(Cannot find dlopen)
+        want_evas_engine_gl_xlib="no"
+        want_evas_engine_gl_xcb="no"
+        want_evas_engine_gl_sdl="no"
       fi
     fi
 esac

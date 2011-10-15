@@ -1,5 +1,11 @@
 #include "evas_gl_private.h"
 
+#ifdef HAVE_DLSYM
+# include <dlfcn.h>      /* dlopen,dlclose,etc */
+#else
+# error gl_common should not get compiled if dlsym is not found on the system!
+#endif
+
 #define PRG_INVALID 0xffffffff
 #define GLPIPES 1
 

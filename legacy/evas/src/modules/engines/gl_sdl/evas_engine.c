@@ -1,8 +1,6 @@
 #include "evas_common.h" /* Also includes international specific stuff */
 #include "evas_engine.h"
 
-#include <dlfcn.h>      /* dlopen,dlclose,etc */
-
 static void*                     _sdl_output_setup	(int w, int h, int fullscreen, int noframe);
                 
 int _evas_engine_GL_SDL_log_dom = -1;

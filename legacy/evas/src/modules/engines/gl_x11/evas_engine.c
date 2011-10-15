@@ -1,7 +1,12 @@
 #include "evas_common.h" /* Also includes international specific stuff */
 #include "evas_engine.h"
 
-#include <dlfcn.h>      /* dlopen,dlclose,etc */
+#ifdef HAVE_DLSYM
+# include <dlfcn.h>      /* dlopen,dlclose,etc */
+#else
+# error gl_x11 should not get compiled if dlsym is not found on the system!
+#endif
+
 #define EVAS_GL_NO_GL_H_CHECK 1
 #include "Evas_GL.h"
 
