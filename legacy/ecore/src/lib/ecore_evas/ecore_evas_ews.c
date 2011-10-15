@@ -226,6 +226,7 @@ _ecore_evas_ews_resize_internal(Ecore_Evas *ee, int w, int h)
    einfo->info.alpha_threshold = 0;
    einfo->info.func.new_update_region = NULL;
    einfo->info.func.free_update_region = NULL;
+   evas_object_image_data_set(ee->engine.ews.image, pixels);
    if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
      {
         ERR("evas_engine_info_set() for engine '%s' failed.", ee->driver);
@@ -580,7 +581,8 @@ _ecore_evas_ews_render(Ecore_Evas *ee)
    Ecore_Evas *ee2;
    Eina_Rectangle *r;
    int w, h, rend = 0;
-
+   void *pixels;
+   
    EINA_LIST_FOREACH(ee->sub_ecore_evas, ll, ee2)
      {
         if (ee2->func.fn_pre_render) ee2->func.fn_pre_render(ee2);
@@ -592,8 +594,10 @@ _ecore_evas_ews_render(Ecore_Evas *ee)
    if ((w != ee->w) || (h != ee->h))
      ecore_evas_resize(ee, w, h);
 
+   pixels = evas_object_image_data_get(ee->engine.ews.image, 1);
    updates = evas_render_updates(ee->evas);
-
+   evas_object_image_data_set(ee->engine.ews.image, pixels);
+   
    EINA_LIST_FOREACH(updates, l, r)
      evas_object_image_data_update_add(ee->engine.ews.image,
                                        r->x, r->y, r->w, r->h);
@@ -1079,18 +1083,20 @@ ecore_evas_ews_new(int x, int y, int w, int h)
    ee = calloc(1, sizeof(Ecore_Evas));
    if (!ee) return NULL;
 
+   if (w < 1) w = 1;
+   if (h < 1) h = 1;
+
    o = evas_object_image_add(_ews_ee->evas);
    evas_object_image_content_hint_set(o, EVAS_IMAGE_CONTENT_HINT_DYNAMIC);
    evas_object_image_colorspace_set(o, EVAS_COLORSPACE_ARGB8888);
+   evas_object_image_size_set(o, w, h);
+   evas_object_image_alpha_set(o, 1);
 
    ECORE_MAGIC_SET(ee, ECORE_MAGIC_EVAS);
 
    ee->engine.func = (Ecore_Evas_Engine_Func *)&_ecore_ews_engine_func;
 
    ee->driver = EWS_ENGINE_NAME;
-
-   if (w < 1) w = 1;
-   if (h < 1) h = 1;
 
    ee->x = 0;
    ee->y = 0;
@@ -1110,8 +1116,6 @@ ecore_evas_ews_new(int x, int y, int w, int h)
 
    ee->engine.ews.image = o;
    evas_object_data_set(ee->engine.ews.image, "Ecore_Evas", ee);
-   evas_object_image_size_set(o, ee->w, ee->h);
-   evas_object_image_alpha_set(o, 1);
    evas_object_event_callback_add(ee->engine.ews.image,
                                   EVAS_CALLBACK_MOUSE_IN,
                                   _ecore_evas_ews_cb_mouse_in, ee);
@@ -1172,6 +1176,7 @@ ecore_evas_ews_new(int x, int y, int w, int h)
         einfo->info.alpha_threshold = 0;
         einfo->info.func.new_update_region = NULL;
         einfo->info.func.free_update_region = NULL;
+        evas_object_image_data_set(o, pixels);
         if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
           {
              ERR("evas_engine_info_set() for engine '%s' failed.", ee->driver);
