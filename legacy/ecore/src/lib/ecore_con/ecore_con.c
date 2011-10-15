@@ -1787,7 +1787,7 @@ _ecore_con_pretty_ip(struct sockaddr *client_addr)
        case AF_INET6:
           src = &(((struct sockaddr_in6 *)client_addr)->sin6_addr);
 
-          if (IN6_IS_ADDR_V4MAPPED(src))
+          if (IN6_IS_ADDR_V4MAPPED((struct in6_addr *)src))
             {
                family = AF_INET;
                src = (char*)src + 12;
