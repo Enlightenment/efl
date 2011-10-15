@@ -645,7 +645,6 @@ _item_del(Elm_Naviframe_Item *it)
    Widget_Data *wd;
    Elm_Naviframe_Content_Item_Pair *content_pair;
    Elm_Naviframe_Text_Item_Pair *text_pair;
-   Eina_Inlist *l;
 
    if (!it) return;
 
@@ -659,7 +658,7 @@ _item_del(Elm_Naviframe_Item *it)
    if ((it->content) && (!wd->preserve))
      evas_object_del(it->content);
 
-   EINA_INLIST_FOREACH_SAFE(it->content_list, l, content_pair)
+   EINA_INLIST_REVERSE_FOREACH(it->content_list, content_pair)
      {
         evas_object_event_callback_del(content_pair->content,
                                        EVAS_CALLBACK_DEL,
@@ -672,7 +671,7 @@ _item_del(Elm_Naviframe_Item *it)
         free(content_pair);
      }
 
-   EINA_INLIST_FOREACH_SAFE(it->text_list, l, text_pair)
+   EINA_INLIST_REVERSE_FOREACH(it->text_list, text_pair)
      {
         eina_stringshare_del(text_pair->part);
         eina_stringshare_del(text_pair->text);
