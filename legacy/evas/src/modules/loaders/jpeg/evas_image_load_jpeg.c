@@ -255,7 +255,7 @@ evas_image_load_file_head_jpeg_internal(Image_Entry *ie,
    /* for rotation decoding */
    int degree = 0;
    Eina_Bool change_wh = EINA_FALSE;
-   unsigned int load_opts_w, load_opts_h;
+   unsigned int load_opts_w = 0, load_opts_h = 0;
 
    cinfo.err = jpeg_std_error(&(jerr.pub));
    jerr.pub.error_exit = _JPEGFatalErrorHandler;
@@ -415,7 +415,8 @@ evas_image_load_file_head_jpeg_internal(Image_Entry *ie,
    // be nice and clip region to image. if its totally outside, fail load
    if ((ie->load_opts.region.w > 0) && (ie->load_opts.region.h > 0))
      {
-        unsigned int load_region_x, load_region_y, load_region_w, load_region_h;
+        unsigned int load_region_x = 0, load_region_y = 0;
+        unsigned int load_region_w = 0, load_region_h = 0;
         if (ie->flags.rotated)
           {
              load_region_x = ie->load_opts.region.x;
@@ -502,12 +503,14 @@ evas_image_load_file_data_jpeg_internal(Image_Entry *ie,
    struct jpeg_decompress_struct cinfo;
    struct _JPEG_error_mgr jerr;
    DATA8 *ptr, *line[16], *data;
-   DATA32 *ptr2,*ptr_rotate;
+   DATA32 *ptr2, *ptr_rotate;
    unsigned int x, y, l, i, scans;
    int region = 0;
 
    /* rotation setting */
-   unsigned int tmp, load_region_x, load_region_y, load_region_w, load_region_h;
+   unsigned int tmp;
+   unsigned int load_region_x = 0, load_region_y = 0;
+   unsigned int load_region_w = 0, load_region_h = 0;
    int degree = 0;
    Eina_Bool change_wh = EINA_FALSE;
    Eina_Bool line_done = EINA_FALSE;
