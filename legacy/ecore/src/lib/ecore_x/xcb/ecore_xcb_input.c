@@ -4,6 +4,23 @@
 # include <xcb/xcb_event.h>
 #endif
 
+/* FIXME: this is a guess. can't find defines for touch events in xcb libs
+ * online */
+/* these are not yet defined in xcb support for xi2 - so manually create */
+#ifndef XCB_INPUT_DEVICE_TOUCH_BEGIN
+#define XCB_INPUT_DEVICE_TOUCH_BEGIN    18
+#endif
+#ifndef XCB_INPUT_DEVICE_TOUCH_END
+#define XCB_INPUT_DEVICE_TOUCH_END      19
+#endif
+#ifndef XCB_INPUT_DEVICE_TOUCH_UPDATE
+#define XCB_INPUT_DEVICE_TOUCH_UPDATE   21
+#endif
+
+#ifndef XCB_INPUT_POINTER_EMULATED_MASK
+#define XCB_INPUT_POINTER_EMULATED_MASK (1 << 16)
+#endif
+
 /* local variables */
 static Eina_Bool _input_avail = EINA_FALSE;
 
@@ -73,6 +90,8 @@ _ecore_xcb_input_handle_event(xcb_generic_event_t *event __UNUSED__)
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    CHECK_XCB_CONN;
 
+   /* FIXME: look at xlib ecore_x_xi2.c to copy logic in when i can find an
+    * xcb-input lib to test with */
 #ifdef ECORE_XCB_XINPUT
    ev = (xcb_ge_event_t *)event;
    switch (ev->event_type) 
@@ -129,6 +148,58 @@ _ecore_xcb_input_handle_event(xcb_generic_event_t *event __UNUSED__)
                                            de->root_x, de->root_y);
           }
         break;
+      case XCB_INPUT_DEVICE_TOUCH_UPDATE:
+          {
+             xcb_input_device_motion_notify_event_t *de;
+             unsigned int child_win = 0;
+
+             de = (xcb_input_device_motion_notify_event_t *)ev->pad1;
+             child_win = (de->child ? de->child : de->event);
+             _ecore_xcb_event_mouse_move(de->time, de->state, de->event_x, 
+                                         de->event_y, de->root_x, de->root_y, 
+                                         de->event, child_win, de->root, 
+                                         de->same_screen, de->device_id, 
+                                         1, 1, 1.0, 0.0, 
+                                         de->event_x, de->event_y, 
+                                         de->root_x, de->root_y);
+          }
+        break;
+      case XCB_INPUT_DEVICE_TOUCH_BEGIN:
+          {
+             xcb_input_device_button_press_event_t *de;
+             unsigned int child_win = 0;
+
+             de = (xcb_input_device_button_press_event_t *)ev->pad1;
+             child_win = (de->child ? de->child : de->event);
+             _ecore_xcb_event_mouse_button(ECORE_EVENT_MOUSE_BUTTON_DOWN, 
+                                           de->time, de->state, de->detail, 
+                                           de->event_x, de->event_y, 
+                                           de->root_x, de->root_y, de->event, 
+                                           child_win, de->root, 
+                                           de->same_screen, de->device_id, 
+                                           1, 1, 1.0, 0.0, 
+                                           de->event_x, de->event_y, 
+                                           de->root_x, de->root_y);
+          }
+        break;
+      case XCB_INPUT_DEVICE_TOUCH_END:
+          {
+             xcb_input_device_button_release_event_t *de;
+             unsigned int child_win = 0;
+
+             de = (xcb_input_device_button_release_event_t *)ev->pad1;
+             child_win = (de->child ? de->child : de->event);
+             _ecore_xcb_event_mouse_button(ECORE_EVENT_MOUSE_BUTTON_UP, 
+                                           de->time, de->state, de->detail, 
+                                           de->event_x, de->event_y, 
+                                           de->root_x, de->root_y, de->event, 
+                                           child_win, de->root, 
+                                           de->same_screen, de->device_id, 
+                                           1, 1, 1.0, 0.0, 
+                                           de->event_x, de->event_y, 
+                                           de->root_x, de->root_y);
+          }
+        break;
       default:
         break;
      }
@@ -150,6 +221,9 @@ ecore_x_input_multi_select(Ecore_X_Window win)
 
    if (!_input_avail) return EINA_FALSE;
 
+   /* FIXME: i can't seemingly test this! no xcb input lib so can't look and
+    * test and look at types etc. - look at xlib code and copy logic over
+    * when we can */
 #ifdef ECORE_XCB_XINPUT
    dcookie = xcb_input_list_input_devices_unchecked(_ecore_xcb_conn);
    dreply = 
@@ -160,11 +234,14 @@ ecore_x_input_multi_select(Ecore_X_Window win)
    while (diter.rem) 
      {
         xcb_input_device_info_t *dev;
-        const xcb_input_event_class_t iclass = 
+        const xcb_input_event_class_t iclass[] = 
           {
-             XCB_INPUT_DEVICE_BUTTON_PRESS | 
-             XCB_INPUT_DEVICE_BUTTON_RELEASE | 
-             XCB_INPUT_DEVICE_MOTION_NOTIFY
+             XCB_INPUT_DEVICE_BUTTON_PRESS,
+             XCB_INPUT_DEVICE_BUTTON_RELEASE,
+             XCB_INPUT_DEVICE_MOTION_NOTIFY,
+             XCB_INPUT_DEVICE_TOUCH_BEGIN,
+             XCB_INPUT_DEVICE_TOUCH_END,
+             XCB_INPUT_DEVICE_TOUCH_UPDATE
           };
 
         dev = diter.data;
@@ -175,9 +252,9 @@ ecore_x_input_multi_select(Ecore_X_Window win)
              DBG("\tNum Classes: %d", dev->num_class_info);
              DBG("\tUse: %d", dev->device_use);
 
-             /* FIXME: This may not be correct !!
-              * I have no extra Input Devices to test with */
-             xcb_input_select_extension_event(_ecore_xcb_conn, win, 1, &iclass);
+             xcb_input_select_extension_event(_ecore_xcb_conn, win, 
+                                              sizeof(iclass) / sizeof(xcb_input_event_class_t),
+                                              iclass);
              find = EINA_TRUE;
           }
         xcb_input_device_info_next(&diter);
