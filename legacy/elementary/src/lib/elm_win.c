@@ -1349,12 +1349,13 @@ elm_win_add(Evas_Object *parent, const char *name, Elm_Win_Type type)
 
    win = ELM_NEW(Elm_Win);
 
-#define FALLBACK_TRY(engine)                                              \
-   if (!win->ee)                                                          \
-   do {                                                                   \
-        CRITICAL(engine " engine creation failed. Trying software X11."); \
-        elm_engine_set(ELM_SOFTWARE_X11);                                 \
-        win->ee = ecore_evas_software_x11_new(NULL, 0, 0, 0, 1, 1);       \
+#define FALLBACK_TRY(engine)                                            \
+   if (!win->ee)                                                        \
+      do {                                                              \
+         CRITICAL(engine " engine creation failed. Trying default.");   \
+         win->ee = ecore_evas_new(NULL, 0, 0, 1, 1, NULL);              \
+         if (win->ee)                                                   \
+            elm_engine_set(ecore_evas_engine_name_get(win->ee));        \
    } while (0)
 #define ENGINE_COMPARE(name) (!strcmp(_elm_config->engine, name))
 
@@ -1388,6 +1389,7 @@ elm_win_add(Evas_Object *parent, const char *name, Elm_Win_Type type)
              win->client_message_handler = ecore_event_handler_add
                 (ECORE_X_EVENT_CLIENT_MESSAGE, _elm_win_client_message, win);
 #endif
+             FALLBACK_TRY("Sofware X11");
           }
         else if (ENGINE_COMPARE(ELM_SOFTWARE_FB))
           {
