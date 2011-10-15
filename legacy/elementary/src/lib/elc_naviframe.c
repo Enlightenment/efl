@@ -78,6 +78,7 @@ static Evas_Object *_item_content_unset_hook(Elm_Object_Item *it,
 static void _item_signal_emit_hook(Elm_Object_Item *it,
                                    const char *emission,
                                    const char *source);
+static void _item_title_visible_update(Elm_Naviframe_Item *navi_it);
 static void _sizing_eval(Evas_Object *obj);
 static void _item_sizing_eval(Elm_Naviframe_Item *it);
 static void _move(void *data, Evas *e, Evas_Object *obj, void *event_info);
@@ -150,9 +151,29 @@ _del_hook(Evas_Object *obj)
 static void
 _theme_hook(Evas_Object *obj)
 {
-   //FIXME:
+   Widget_Data *wd;
+   Elm_Naviframe_Item *it;
+
+   wd  = elm_widget_data_get(obj);
+   if (!wd) return;
+
+   _elm_theme_object_set(obj,
+                         wd->base,
+                         "naviframe",
+                         "base",
+                         elm_widget_style_get(obj));
+
+   EINA_INLIST_FOREACH(wd->stack, it)
+     {
+        elm_naviframe_item_style_set(ELM_CAST(it), it->style);
+        _item_title_visible_update(it);
+     }
+
    _elm_widget_mirrored_reload(obj);
    _mirrored_set(obj, elm_widget_mirrored_get(obj));
+
+   evas_object_hide(wd->rect);
+
 }
 
 static void _emit_hook(Evas_Object *obj,
@@ -370,6 +391,15 @@ _item_signal_emit_hook(Elm_Object_Item *it,
    ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
    Elm_Naviframe_Item *navi_it = ELM_CAST(it);
    edje_object_signal_emit(navi_it->base.view, emission, source);
+}
+
+static void
+_item_title_visible_update(Elm_Naviframe_Item *navi_it)
+{
+   if (navi_it->title_visible)
+     edje_object_signal_emit(navi_it->base.view, "elm,state,title,show", "elm");
+   else
+     edje_object_signal_emit(navi_it->base.view, "elm,state,title,hide", "elm");
 }
 
 static void
@@ -1072,12 +1102,8 @@ elm_naviframe_item_title_visible_set(Elm_Object_Item *it, Eina_Bool visible)
    visible = !!visible;
    if (navi_it->title_visible == visible) return;
 
-   if (visible)
-     edje_object_signal_emit(navi_it->base.view, "elm,state,title,show", "elm");
-   else
-     edje_object_signal_emit(navi_it->base.view, "elm,state,title,hide", "elm");
-
    navi_it->title_visible = visible;
+   _item_title_visible_update(navi_it);
 }
 
 EAPI Eina_Bool
