@@ -2,7 +2,9 @@
 # include "elementary_config.h"
 #endif
 
+#ifdef HAVE_FORK
 #include <dlfcn.h> /* dlopen,dlclose,etc */
+#endif
 
 #ifdef HAVE_CRT_EXTERNS_H
 # include <crt_externs.h>

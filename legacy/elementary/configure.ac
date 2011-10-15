@@ -122,6 +122,7 @@ ELM_UNIX_DEF="#undef"
 ELM_WIN32_DEF="#undef"
 ELM_WINCE_DEF="#undef"
 have_windows="no"
+have_dlopen="no"
 case "$host_os" in
    mingw32ce* | cegcc*)
       PKG_CHECK_MODULES([EVIL], [evil])
@@ -131,6 +132,7 @@ case "$host_os" in
       have_windows="yes"
 dnl managed by evil
       AC_DEFINE(HAVE_DLADDR)
+      have_dlopen="yes"
       dlopen_libs=-ldl
       requirement_elm="evil"
       have_socket="no"
@@ -143,6 +145,7 @@ dnl managed by evil
       have_windows="yes"
 dnl managed by evil
       AC_DEFINE(HAVE_DLADDR)
+      have_dlopen="yes"
       dlopen_libs=-ldl
       requirement_elm="evil"
       have_socket="no"
@@ -150,11 +153,13 @@ dnl managed by evil
    *solaris*)
       ELM_UNIX_DEF="#define"
       have_socket="yes"
+      have_dlopen="yes"
       AC_CHECK_LIB([socket], [connect], [], [have_socket="no"])
       ;;
    darwin*)
       ELM_UNIX_DEF="#define"
       have_socket="yes"
+      have_dlopen="yes"
       AC_CHECK_HEADERS([crt_externs.h])
       AC_DEFINE([environ], [(*_NSGetEnviron())], ["apple doesn't follow POSIX in this case."])
       ;;
@@ -163,13 +168,13 @@ dnl managed by evil
       AC_CHECK_FUNCS(dlopen, res=yes, res=no)
       if test "x$res" = "xyes"; then
 	AC_CHECK_FUNCS(dladdr, AC_DEFINE(HAVE_DLADDR))
+        have_dlopen="yes"
       else
 	AC_CHECK_LIB(dl, dlopen, res=yes, res=no)
 	if test "x$res" = "xyes"; then
 	  AC_CHECK_LIB(dl, dladdr, AC_DEFINE(HAVE_DLADDR))
 	  dlopen_libs=-ldl
-	else
-	  AC_MSG_ERROR(Cannot find dlopen)
+          have_dlopen="yes"
 	fi
       fi
       have_socket="yes"
@@ -195,7 +200,7 @@ if test "x$want_quicklaunch" != "xno"; then
   	AC_DEFINE(HAVE_FORK)
    ])
 fi
-AM_CONDITIONAL([BUILD_QUICKLAUNCH], [test "x$have_fork" = "xyes"])
+AM_CONDITIONAL([BUILD_QUICKLAUNCH], [test "x$have_fork" = "xyes" && "x$have_dlopen" = "xyes"])
 
 AC_SUBST(dlopen_libs)
 AC_SUBST(lt_enable_auto_import)
