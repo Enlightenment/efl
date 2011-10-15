@@ -599,6 +599,8 @@ AM_CONDITIONAL([HAVE_PO], [true])
 AM_CONDITIONAL([HAVE_PO], [false])
 ])
 AC_SUBST(LTLIBINTL)
+EFL_CHECK_PATH_MAX
+
 
 ### Build and install examples
 EFL_CHECK_BUILD_EXAMPLES([enable_build_examples="yes"], [enable_build_examples="no"])
