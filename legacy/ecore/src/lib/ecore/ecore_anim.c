@@ -278,7 +278,6 @@ ecore_animator_pos_map(double pos, Ecore_Pos_Map map, double v1, double v2)
         return pos;
      }
    return pos;
-   v2 = 0.0;
 }
 
 EAPI void *
