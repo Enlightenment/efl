@@ -28,8 +28,7 @@
  *
  * The other two main groups in Elementary are:
  * @li @ref widgetslist - These are the widgets you'll compose your UI out of.
- * @li @ref containerslist - These are the containers in which the widgets will
- *                           be laid out.
+ * @li @ref containerslist - These are the containers which hold the widgets.
  * 
  * Also see other generic EFL programming guides:
  * @li @ref threading
@@ -249,8 +248,7 @@
  *
  * The other two main groups in Elementary are:
  * @li @ref infralist - These are modules that deal with Elementary as a whole.
- * @li @ref containerslist - These are the containers in which the widgets will be
- *                           layouted.
+ * @li @ref containerslist - These are the containers which will hold the widgets.
  */
 /**
  * @page containerslist Containers List

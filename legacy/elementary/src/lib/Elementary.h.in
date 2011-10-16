@@ -29,8 +29,7 @@ of flexibility.
 One can divide Elemementary into three main groups:
 @li @ref infralist - These are modules that deal with Elementary as a whole.
 @li @ref widgetslist - These are the widgets you'll compose your UI out of.
-@li @ref containerslist - These are the containers in which the widgets will be
-                          layouted.
+@li @ref containerslist - These are the containers which hold the widgets.
 
 @section license License
 
