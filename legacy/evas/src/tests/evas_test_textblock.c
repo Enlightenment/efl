@@ -1656,6 +1656,7 @@ START_TEST(evas_textblock_formats)
          "<color=#F210B3FF>color=#F210B3FF</><ps>"
          "<underline=single underline_color=#A2B3C4>underline=single underline_color=#A2B3C4</><ps>"
          "<underline=double underline_color=#F00 underline2_color=#00F>underline=double underline_color=#F00 underline2_color=#00F</><ps>"
+         "<underline=dashed underline_dash_color=#0F0 underline_dash_width=2 underline_dash_gap=1>underline=dashed underline_dash_color=#0F0 underline_dash_width=2 underline_dash_gap=1</><ps>"
          "<style=outline outline_color=#F0FA>style=outline outline_color=#F0FA</><ps>"
          "<style=shadow shadow_color=#F0F>style=shadow shadow_color=#F0F</><ps>"
          "<style=glow glow_color=#BBB>style=glow glow_color=#BBB</><ps>"

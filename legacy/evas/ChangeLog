@@ -475,3 +475,13 @@
 
 	* Add colorspaces NV12 and MT12 (64 * 32 macro block tiled
 	format, see Linux videodev documentation for more information).
+
+2011-10-17  Shilpa Singh
+
+	* Textblock: Added underline=dashed support.
+	Tag changes:
+	 - dashed is a legal value for underline
+	New tags:
+	 - underline_dash_color
+	 - underline_dash_width
+	 - underline_dash_gap
