@@ -577,7 +577,7 @@ _ecore_evas_ews_transparent_set(Ecore_Evas *ee, int val)
 static int
 _ecore_evas_ews_render(Ecore_Evas *ee)
 {
-   Eina_List *updates, *l, *ll;
+   Eina_List *updates = NULL, *l, *ll;
    Ecore_Evas *ee2;
    Eina_Rectangle *r;
    int w, h, rend = 0;
@@ -595,7 +595,10 @@ _ecore_evas_ews_render(Ecore_Evas *ee)
      ecore_evas_resize(ee, w, h);
 
    pixels = evas_object_image_data_get(ee->engine.ews.image, 1);
-   updates = evas_render_updates(ee->evas);
+   if (pixels)
+     {
+        updates = evas_render_updates(ee->evas);
+     }
    evas_object_image_data_set(ee->engine.ews.image, pixels);
    
    EINA_LIST_FOREACH(updates, l, r)
