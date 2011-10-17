@@ -730,7 +730,7 @@ elm_scroller_gravity_set(Evas_Object *obj, double x, double y)
 }
 
 EAPI void
-elm_scroller_gravity_get(Evas_Object *obj, double *x, double *y)
+elm_scroller_gravity_get(const Evas_Object *obj, double *x, double *y)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);

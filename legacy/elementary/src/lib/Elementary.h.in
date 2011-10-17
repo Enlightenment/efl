@@ -7230,7 +7230,7 @@ extern "C" {
     * This enables or disabled event propagation from the scroller content to
     * the scroller and its parent. By default event propagation is disabled.
     */
-   EAPI void         elm_scroller_propagate_events_set(Evas_Object *obj, Eina_Bool propagation);
+   EAPI void         elm_scroller_propagate_events_set(Evas_Object *obj, Eina_Bool propagation) EINA_ARG_NONNULL(1);
    /**
     * @brief Get event propagation for a scroller
     *
@@ -7241,7 +7241,7 @@ extern "C" {
     *
     * @see elm_scroller_propagate_events_set()
     */
-   EAPI Eina_Bool    elm_scroller_propagate_events_get(const Evas_Object *obj);
+   EAPI Eina_Bool    elm_scroller_propagate_events_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
    /**
     * @brief Set scrolling gravity on a scroller
     *
@@ -7256,7 +7256,7 @@ extern "C" {
     * To set y as 1.0 for upper growing child objects. And x is horizontal gravity.
     * By default 0.0 for x and y.
     */
-   EAPI void         elm_scroller_gravity_set(Evas_Object *obj, double x, double y);
+   EAPI void         elm_scroller_gravity_set(Evas_Object *obj, double x, double y) EINA_ARG_NONNULL(1);
    /**
     * @brief Get scrolling gravity values for a scroller
     *
@@ -7269,7 +7269,7 @@ extern "C" {
     * @see elm_scroller_gravity_set()
     *
     */
-   EAPI void         elm_scroller_gravity_get(Evas_Object *obj, double *x, double *y);
+   EAPI void         elm_scroller_gravity_get(const Evas_Object *obj, double *x, double *y) EINA_ARG_NONNULL(1);
    /**
     * @}
     */
