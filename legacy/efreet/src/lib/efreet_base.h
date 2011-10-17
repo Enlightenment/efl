@@ -19,8 +19,7 @@ EAPI const char *efreet_data_home_get(void);
 
 /**
  * @return Returns the Eina_List of preference ordered extra data directories
- * @brief Returns the Eina_List of prefernece oredred extra data
- * directories
+ * @brief Returns the Eina_List of preference ordered extra data directories
  *
  * @note The returned list is static inside Efreet. If you add/remove from the
  * list then the next call to efreet_data_dirs_get() will return your
@@ -37,7 +36,7 @@ EAPI const char *efreet_config_home_get(void);
 
 /**
  * @return Returns the Eina_List of preference ordered extra config directories
- * @brief Returns the Eina_List of prefernece ordered extra config
+ * @brief Returns the Eina_List of preference ordered extra config
  * directories
  *
  * @note The returned list is static inside Efreet. If you add/remove from the
