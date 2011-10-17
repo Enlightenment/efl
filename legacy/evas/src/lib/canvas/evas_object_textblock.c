@@ -8875,9 +8875,6 @@ evas_object_textblock_render(Evas_Object *obj, void *output, void *context, void
    Evas_Object_Textblock_Line *ln;
    Evas_Object_Textblock *o;
    int i, j;
-   unsigned char r = 0, g = 0, b = 0, a = 0;
-   unsigned char r2 = 0, g2 = 0, b2 = 0, a2 = 0;
-   unsigned char r3 = 0, g3 = 0, b3 = 0, a3 = 0;
    int cx, cy, cw, ch, clip;
    const char vals[5][5] =
      {
@@ -8990,53 +8987,55 @@ evas_object_textblock_render(Evas_Object *obj, void *output, void *context, void
      } \
    while (0)
 
-#define DRAW_FORMAT_DASHED(oname, oy, oh, or, og, ob, oa, dw, dp) \
+#define DRAW_FORMAT_DASHED(oname, oy, oh, dw, dp) \
    do \
      { \
         if (itr->format->oname) \
           { \
-             int i, dx = 0, dn, dr; \
-             or = itr->format->color.oname.r; \
-             og = itr->format->color.oname.g; \
-             ob = itr->format->color.oname.b; \
-             oa = itr->format->color.oname.a; \
+             unsigned char _or, _og, _ob, _oa; \
+             int _ind, _dx = 0, _dn, _dr; \
+             _or = itr->format->color.oname.r; \
+             _og = itr->format->color.oname.g; \
+             _ob = itr->format->color.oname.b; \
+             _oa = itr->format->color.oname.a; \
              if (!EINA_INLIST_GET(itr)->next) \
                { \
-                  dn = itr->w / (dw + dp); \
-                  dr = itr->w % (dw + dp); \
+                  _dn = itr->w / (dw + dp); \
+                  _dr = itr->w % (dw + dp); \
                } \
              else \
                { \
-                  dn = itr->adv / (dw + dp); \
-                  dr = itr->adv % (dw + dp); \
+                  _dn = itr->adv / (dw + dp); \
+                  _dr = itr->adv % (dw + dp); \
                } \
-             if (dr > dw) dr = dw; \
-             for (i = dn; i > 0 ; i--) \
+             if (_dr > dw) _dr = dw; \
+             for (_ind = _dn ; _ind > 0 ; _ind--) \
                { \
-                  DRAW_RECT(itr->x + dx, oy, dw, oh, or, og, ob, oa); \
-                  dx += dw + dp; \
+                  DRAW_RECT(itr->x + _dx, oy, dw, oh, _or, _og, _ob, _oa); \
+                  _dx += dw + dp; \
                } \
-             DRAW_RECT(itr->x + dx, oy, dr, oh, or, og, ob, oa); \
+             DRAW_RECT(itr->x + _dx, oy, _dr, oh, _or, _og, _ob, _oa); \
           } \
      } \
    while (0)
 
-#define DRAW_FORMAT(oname, oy, oh, or, og, ob, oa) \
+#define DRAW_FORMAT(oname, oy, oh) \
    do \
      { \
         if (itr->format->oname) \
           { \
-             or = itr->format->color.oname.r; \
-             og = itr->format->color.oname.g; \
-             ob = itr->format->color.oname.b; \
-             oa = itr->format->color.oname.a; \
+             unsigned char _or, _og, _ob, _oa; \
+             _or = itr->format->color.oname.r; \
+             _og = itr->format->color.oname.g; \
+             _ob = itr->format->color.oname.b; \
+             _oa = itr->format->color.oname.a; \
              if (!EINA_INLIST_GET(itr)->next) \
                { \
-                  DRAW_RECT(itr->x, oy, itr->w, oh, or, og, ob, oa); \
+                  DRAW_RECT(itr->x, oy, itr->w, oh, _or, _og, _ob, _oa); \
                } \
              else \
                { \
-                  DRAW_RECT(itr->x, oy, itr->adv, oh, or, og, ob, oa); \
+                  DRAW_RECT(itr->x, oy, itr->adv, oh, _or, _og, _ob, _oa); \
                } \
           } \
      } \
@@ -9060,7 +9059,7 @@ evas_object_textblock_render(Evas_Object *obj, void *output, void *context, void
 
    ITEM_WALK()
      {
-        DRAW_FORMAT(backing, 0, ln->h, r, g, b, a);
+        DRAW_FORMAT(backing, 0, ln->h);
      }
    ITEM_WALK_END();
 
@@ -9248,17 +9247,18 @@ evas_object_textblock_render(Evas_Object *obj, void *output, void *context, void
           }
 
         /* STRIKETHROUGH */
-        DRAW_FORMAT(strikethrough, (ln->h / 2), 1, r, g, b, a);
+        DRAW_FORMAT(strikethrough, (ln->h / 2), 1);
 
         /* UNDERLINE */
-        DRAW_FORMAT(underline, ln->baseline + 1, 1, r2, g2, b2, a2);
+        DRAW_FORMAT(underline, ln->baseline + 1, 1);
 
         /* UNDERLINE DASHED */
-        DRAW_FORMAT_DASHED(underline_dash, ln->baseline + 1, 1, r2, g2, b2, a2,
-                         ti->parent.format->underline_dash_width, ti->parent.format->underline_dash_gap);
+        DRAW_FORMAT_DASHED(underline_dash, ln->baseline + 1, 1,
+                         ti->parent.format->underline_dash_width,
+                         ti->parent.format->underline_dash_gap);
 
         /* UNDERLINE2 */
-        DRAW_FORMAT(underline2, ln->baseline + 3, 1, r3, g3, b3, a3);
+        DRAW_FORMAT(underline2, ln->baseline + 3, 1);
      }
    ITEM_WALK_END();
 }
