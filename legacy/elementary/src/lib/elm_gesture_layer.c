@@ -975,9 +975,9 @@ _event_history_clear(Evas_Object *obj)
      {  /* We do not clear a long-tap gesture if fingers still on surface */
         /* and gesture timer still pending to test gesture state          */
         Long_Tap_Type *st = wd->gesture[ELM_GESTURE_N_LONG_TAPS]->data;
-        if (st)  /* st not allocated if clear occurs before 1st input */
-          if((!eina_list_count(st->touched)) || (!st->timeout))
-            _n_long_tap_test_reset(wd->gesture[ELM_GESTURE_N_LONG_TAPS]);
+        if ((st) &&  /* st not allocated if clear occurs before 1st input */
+              ((!eina_list_count(st->touched)) || (!st->timeout)))
+          _n_long_tap_test_reset(wd->gesture[ELM_GESTURE_N_LONG_TAPS]);
      }
 
    if (wd->dbl_timeout)
