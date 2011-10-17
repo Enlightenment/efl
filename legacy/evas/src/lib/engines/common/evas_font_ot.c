@@ -283,19 +283,10 @@ evas_common_font_ot_populate_text_props(const Eina_Unicode *text,
         slen = len;
      }
 
-#if HB_VERSION_CHECK(0,7,0)
-   buffer = hb_buffer_create(slen);
-#else
    buffer = hb_buffer_create();
-#endif
    hb_buffer_set_unicode_funcs(buffer, _evas_common_font_ot_unicode_funcs_get());
-#if HB_VERSION_CHECK(0,7,0)
-   hb_buffer_set_language(buffer, hb_language_from_string(
-            evas_common_language_from_locale_get()));
-#else
    hb_buffer_set_language(buffer, hb_language_from_string(
             evas_common_language_from_locale_get(), -1));
-#endif
    hb_buffer_set_script(buffer, _evas_script_to_harfbuzz[props->script]);
    hb_buffer_set_direction(buffer,
          (props->bidi.dir == EVAS_BIDI_DIRECTION_RTL) ?
