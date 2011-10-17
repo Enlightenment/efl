@@ -148,6 +148,7 @@ _shot_file_get(Elm_Win *win)
                        sprintf(repname + (dotptr - tmp), "%03i",
                                win->shot.shot_counter + 1);
                        strcat(repname, dotptr);
+                       free(tmp);
                        return repname;
                     }
                }
@@ -2616,5 +2617,4 @@ elm_win_xwindow_get(const Evas_Object *obj)
    if (win->parent) return elm_win_xwindow_get(win->parent);
 #endif
    return 0;
-   win = NULL;
 }
