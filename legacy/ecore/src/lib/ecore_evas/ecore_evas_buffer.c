@@ -102,7 +102,7 @@ _ecore_evas_buffer_shutdown(void)
 int
 _ecore_evas_buffer_render(Ecore_Evas *ee)
 {
-   Eina_List *updates, *l, *ll;
+   Eina_List *updates = NULL, *l, *ll;
    Ecore_Evas *ee2;
    int rend = 0;
 
@@ -122,7 +122,10 @@ _ecore_evas_buffer_render(Ecore_Evas *ee)
            _ecore_evas_resize(ee, w, h);
         ee->engine.buffer.pixels = evas_object_image_data_get(ee->engine.buffer.image, 1);
      }
-   updates = evas_render_updates(ee->evas);
+   if (ee->engine.buffer.pixels)
+     {
+        updates = evas_render_updates(ee->evas);
+     }
    if (ee->engine.buffer.image)
      {
         Eina_Rectangle *r;
