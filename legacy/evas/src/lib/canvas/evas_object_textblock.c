@@ -9009,7 +9009,7 @@ evas_object_textblock_render(Evas_Object *obj, void *output, void *context, void
                   _dr = itr->adv % (dw + dp); \
                } \
              if (_dr > dw) _dr = dw; \
-             for (_ind = _dn ; _ind > 0 ; _ind--) \
+             for (_ind = 0 ; _ind < _dn ; _ind++) \
                { \
                   DRAW_RECT(itr->x + _dx, oy, dw, oh, _or, _og, _ob, _oa); \
                   _dx += dw + dp; \
