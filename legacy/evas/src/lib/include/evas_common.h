@@ -942,6 +942,9 @@ struct _RGBA_Font_Source
    struct {
       int            orig_upem;
       FT_Face        face;
+#ifdef USE_HARFBUZZ
+      void *hb_font;
+#endif
    } ft;
 };
 
