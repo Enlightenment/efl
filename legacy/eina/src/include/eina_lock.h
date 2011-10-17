@@ -76,6 +76,12 @@ static inline Eina_Lock_Result eina_rwlock_take_read(Eina_RWLock *mutex);
 static inline Eina_Lock_Result eina_rwlock_take_write(Eina_RWLock *mutex);
 static inline Eina_Lock_Result eina_rwlock_release(Eina_RWLock *mutex);
 
+static inline Eina_Bool eina_tls_new(Eina_TLS *key);
+static inline void eina_tls_free(Eina_TLS key);
+static inline void *eina_tls_get(Eina_TLS key);
+static inline Eina_Bool eina_tls_set(Eina_TLS key, const void *data);
+
+
 #ifdef EINA_HAVE_DEBUG_THREADS
 # define EINA_MAIN_LOOP_CHECK_RETURN_VAL(val)				\
   do {									\

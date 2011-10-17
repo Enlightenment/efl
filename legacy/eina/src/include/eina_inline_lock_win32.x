@@ -433,4 +433,32 @@ eina_rwlock_release(Eina_RWLock *mutex)
    return EINA_LOCK_SUCCEED;
 }
 
+static inline Eina_Bool 
+eina_tls_new(Eina_TLS *key)
+{
+   if (TlsAlloc() == TLS_OUT_OF_INDEXES)
+      return EINA_FALSE;
+   return EINA_TRUE;
+}
+
+static inline void 
+eina_tls_free(Eina_TLS key)
+{
+   TlsFree(key);
+}
+
+static inline void *
+eina_tls_get(Eina_TLS key)
+{
+   return (void*)TlsGetValue(key);
+}
+
+static inline Eina_Bool 
+eina_tls_set(Eina_TLS key, const void *data)
+{
+   if (TlsSetValue(key, (LPVOID)data) == 0)
+      return EINA_FALSE;
+   return EINA_TRUE;
+}
+
 #endif

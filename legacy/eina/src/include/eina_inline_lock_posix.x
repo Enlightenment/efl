@@ -44,6 +44,7 @@ typedef void (*Eina_Lock_Bt_Func) ();
 typedef struct _Eina_Lock Eina_Lock;
 typedef struct _Eina_RWLock Eina_RWLock;
 typedef struct _Eina_Condition Eina_Condition;
+typedef pthread_key_t Eina_TLS;
 
 struct _Eina_Lock
 {
@@ -475,6 +476,34 @@ eina_rwlock_release(Eina_RWLock *mutex)
    if (pthread_rwlock_unlock(&(mutex->mutex)) != 0)
      return EINA_LOCK_FAIL;
    return EINA_LOCK_SUCCEED;
+}
+
+static inline Eina_Bool 
+eina_tls_new(Eina_TLS *key)
+{
+   if (pthread_key_create(key, NULL) != 0)
+      return EINA_FALSE;
+   return EINA_TRUE;
+}
+
+static inline void 
+eina_tls_free(Eina_TLS key)
+{
+   pthread_key_delete(key);
+}
+
+static inline void * 
+eina_tls_get(Eina_TLS key)
+{
+   return pthread_getspecific(key);
+}
+
+static inline Eina_Bool 
+eina_tls_set(Eina_TLS key, const void *data)
+{
+   if (pthread_setspecific(key, data) != 0)
+      return EINA_FALSE;
+   return EINA_TRUE;
 }
 
 #endif
