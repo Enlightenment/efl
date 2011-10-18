@@ -246,19 +246,19 @@ static void
 _evas_common_font_ot_shape(hb_buffer_t *buffer, RGBA_Font_Int *fi)
 {
    /* Create hb_font if not previously created */
-   if (!fi->src->ft.hb_font)
+   if (!fi->ft.hb_font)
      {
         hb_font_t *hb_ft_font;
 
         hb_ft_font = hb_ft_font_create(fi->src->ft.face, NULL);
-        fi->src->ft.hb_font = hb_font_create_sub_font(hb_ft_font);
+        fi->ft.hb_font = hb_font_create_sub_font(hb_ft_font);
         hb_font_destroy(hb_ft_font);
 
-        hb_font_set_funcs(fi->src->ft.hb_font,
+        hb_font_set_funcs(fi->ft.hb_font,
               _evas_common_font_ot_font_funcs_get(), fi, NULL);
      }
 
-   hb_shape(fi->src->ft.hb_font, buffer, NULL, 0);
+   hb_shape(fi->ft.hb_font, buffer, NULL, 0);
 }
 
 EAPI Eina_Bool

@@ -906,6 +906,8 @@ struct _RGBA_Font
    unsigned char    sizeok : 1;
 };
 
+#include "../engines/common/evas_font_ot.h"
+
 struct _RGBA_Font_Int
 {
    EINA_INLIST;
@@ -919,6 +921,9 @@ struct _RGBA_Font_Int
    int               usage;
    struct {
       FT_Size       size;
+#ifdef USE_HARFBUZZ
+      void         *hb_font;
+#endif
    } ft;
    LK(ft_mutex);
    Font_Hint_Flags  hinting;
@@ -928,8 +933,6 @@ struct _RGBA_Font_Int
    unsigned char    sizeok : 1;
    unsigned char    inuse : 1;
 };
-
-#include "../engines/common/evas_font_ot.h"
 
 struct _RGBA_Font_Source
 {
@@ -942,9 +945,6 @@ struct _RGBA_Font_Source
    struct {
       int            orig_upem;
       FT_Face        face;
-#ifdef USE_HARFBUZZ
-      void *hb_font;
-#endif
    } ft;
 };
 

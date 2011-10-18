@@ -56,9 +56,6 @@ _evas_common_font_source_free(RGBA_Font_Source *fs)
 {
    FTLOCK();
    FT_Done_Face(fs->ft.face);
-#ifdef USE_HARFBUZZ
-   hb_font_destroy(fs->ft.hb_font);
-#endif
    FTUNLOCK();
    if (fs->name) eina_stringshare_del(fs->name);
    if (fs->file) eina_stringshare_del(fs->file);
@@ -76,6 +73,9 @@ _evas_common_font_int_free(RGBA_Font_Int *fi)
 
 #ifdef HAVE_PTHREAD
    pthread_mutex_destroy(&fi->ft_mutex);
+#endif
+#ifdef USE_HARFBUZZ
+   hb_font_destroy(fi->ft.hb_font);
 #endif
    evas_common_font_source_free(fi->src);
    if (fi->references == 0) fonts_lru = eina_list_remove(fonts_lru, fi);
