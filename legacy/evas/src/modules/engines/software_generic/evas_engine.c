@@ -1166,6 +1166,7 @@ static Evas_Func func =
      NULL, // FIXME: need software mesa for gl rendering <- gl_context_create
      NULL, // FIXME: need software mesa for gl rendering <- gl_context_destroy
      NULL, // FIXME: need software mesa for gl rendering <- gl_make_current
+     NULL, // FIXME: need software mesa for gl rendering <- gl_string_query
      NULL, // FIXME: need software mesa for gl rendering <- gl_proc_address_get
      NULL, // FIXME: need software mesa for gl rendering <- gl_native_surface_get
      NULL, // FIXME: need software mesa for gl rendering <- gl_api_get

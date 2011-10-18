@@ -22,6 +22,8 @@
 typedef struct _Render_Engine               Render_Engine;
 typedef struct _Render_Engine_GL_Surface    Render_Engine_GL_Surface;
 typedef struct _Render_Engine_GL_Context    Render_Engine_GL_Context;
+typedef struct _Render_Engine_GL_Resource   Render_Engine_GL_Resource;
+typedef struct _Extension_Entry             Extension_Entry;
 
 struct _Render_Engine
 {
@@ -37,24 +39,25 @@ struct _Render_Engine
 
    int w, h;
    int vsync;
+
 };
 
 struct _Render_Engine_GL_Surface
 {
-   int     initialized;
-   int     fbo_attached;
-   int     w, h;
-   int     depth_bits;
-   int     stencil_bits;
+   int      initialized;
+   int      fbo_attached;
+   int      w, h;
+   int      depth_bits;
+   int      stencil_bits;
 
    // Render target texture/buffers
-   GLuint  rt_tex;
-   GLint   rt_internal_fmt;
-   GLenum  rt_fmt;
-   GLuint  rb_depth;
-   GLenum  rb_depth_fmt;
-   GLuint  rb_stencil;
-   GLenum  rb_stencil_fmt;
+   GLuint   rt_tex;
+   GLint    rt_internal_fmt;
+   GLenum   rt_fmt;
+   GLuint   rb_depth;
+   GLenum   rb_depth_fmt;
+   GLuint   rb_stencil;
+   GLenum   rb_stencil_fmt;
 
    Render_Engine_GL_Context   *current_ctx;
 };
@@ -73,40 +76,70 @@ struct _Render_Engine_GL_Context
    Render_Engine_GL_Surface   *current_sfc;
 };
 
+// Resources used per thread
+struct _Render_Engine_GL_Resource
+{
+   // Resource context/surface per Thread in TLS for evasgl use 
+#if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
+   EGLContext context;
+   EGLSurface surface;
+#else
+   GLXContext context;
+#endif
+};
+
+// Extension Handling
+struct _Extension_Entry 
+{
+   const char *name;
+   const char *real_name;
+   int supported;
+};
+
 static int initted = 0;
 static int gl_wins = 0;
 static Render_Engine_GL_Context *current_evgl_ctx;
+static Render_Engine *current_engine;
+
+static char _gl_ext_string[1024];
+static char _evasgl_ext_string[1024];
+
+// Resource context/surface per Thread in TLS for evasgl use 
+static Eina_TLS   resource_key;
+static Eina_List *resource_list;
+LK(resource_lock);
+
+typedef void            (*_eng_fn) (void);
+typedef _eng_fn         (*glsym_func_eng_fn) ();
+typedef void            (*glsym_func_void) ();
+typedef void           *(*glsym_func_void_ptr) ();
+typedef int             (*glsym_func_int) ();
+typedef unsigned int    (*glsym_func_uint) ();
+typedef unsigned char   (*glsym_func_uchar) ();
+typedef unsigned char  *(*glsym_func_uchar_ptr) ();
+typedef const char     *(*glsym_func_const_char_ptr) ();
 
 #if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
 
 #ifndef EGL_NATIVE_PIXMAP_KHR
 # define EGL_NATIVE_PIXMAP_KHR 0x30b0
 #endif
-typedef void (*_eng_fn) (void);
-
-typedef _eng_fn (*glsym_func_eng_fn) ();
-typedef void    (*glsym_func_void) ();
-typedef void   *(*glsym_func_void_ptr) ();
-typedef unsigned int  (*glsym_func_uint) ();
-
 _eng_fn  (*glsym_eglGetProcAddress)            (const char *a) = NULL;
 void     (*glsym_eglBindTexImage)              (EGLDisplay a, EGLSurface b, int c) = NULL;
 void     (*glsym_eglReleaseTexImage)           (EGLDisplay a, EGLSurface b, int c) = NULL;
 void    *(*glsym_eglCreateImage)               (EGLDisplay a, EGLContext b, EGLenum c, EGLClientBuffer d, const int *e) = NULL;
 void     (*glsym_eglDestroyImage)              (EGLDisplay a, void *b) = NULL;
 void     (*glsym_glEGLImageTargetTexture2DOES) (int a, void *b)  = NULL;
-void          *(*glsym_eglMapImageSEC)               (void *a, void *b) = NULL;
-unsigned int   (*glsym_eglUnmapImageSEC)             (void *a, void *b) = NULL;
-#else
-typedef void (*_eng_fn) (void);
+void     (*glsym_glEGLImageTargetRenderbufferStorageOES) (int a, void *b)  = NULL;
+void          *(*glsym_eglMapImageSEC)         (void *a, void *b) = NULL;
+unsigned int   (*glsym_eglUnmapImageSEC)       (void *a, void *b) = NULL;
+const char    *(*glsym_eglQueryString)         (EGLDisplay a, int name) = NULL;
 
-typedef _eng_fn (*glsym_func_eng_fn) ();
-typedef void    (*glsym_func_void) ();
-typedef int     (*glsym_func_int) ();
+unsigned int   (*glsym_eglLockSurface)          (EGLDisplay a, EGLSurface b, const int *attrib_list) = NULL;
+unsigned int   (*glsym_eglUnlockSurface)        (EGLDisplay a, EGLSurface b) = NULL;
+
+#else
 typedef XID     (*glsym_func_xid) ();
-typedef unsigned int     (*glsym_func_uint) ();
-typedef unsigned char    (*glsym_func_uchar) ();
-typedef unsigned char   *(*glsym_func_uchar_ptr) ();
 
 _eng_fn  (*glsym_glXGetProcAddress)  (const char *a) = NULL;
 void     (*glsym_glXBindTexImage)    (Display *a, GLXDrawable b, int c, int *d) = NULL;
@@ -116,9 +149,171 @@ int      (*glsym_glXWaitVideoSync)   (int a, int b, unsigned int *c) = NULL;
 XID      (*glsym_glXCreatePixmap)    (Display *a, void *b, Pixmap c, const int *d) = NULL;
 void     (*glsym_glXDestroyPixmap)   (Display *a, XID b) = NULL;
 void     (*glsym_glXQueryDrawable)   (Display *a, XID b, int c, unsigned int *d) = NULL;
-int      (*glsym_glxSwapIntervalSGI) (int a) = NULL;
-void     (*glsym_glxSwapIntervalEXT) (Display *s, GLXDrawable b, int c) = NULL;
+int      (*glsym_glXSwapIntervalSGI) (int a) = NULL;
+void     (*glsym_glXSwapIntervalEXT) (Display *s, GLXDrawable b, int c) = NULL;
+
+const char *(*glsym_glXQueryExtensionsString) (Display *a, int screen) = NULL;
 #endif
+
+// GLES2 Extensions
+void 	(*glsym_glGetProgramBinaryOES) (GLuint program, GLsizei bufSize, GLsizei *length, GLenum *binaryFormat, void *binary) = NULL;
+void 	(*glsym_glProgramBinaryOES) (GLuint program, GLenum binaryFormat, const void *binary, GLint length) = NULL;   
+void* 	(*glsym_glMapBufferOES) (GLenum target, GLenum access) = NULL;
+unsigned char 	(*glsym_glUnmapBufferOES) (GLenum target) = NULL;
+void 	(*glsym_glGetBufferPointervOES) (GLenum target, GLenum pname, void** params) = NULL;
+void 	(*glsym_glTexImage3DOES) (GLenum target, GLint level, GLenum internalformat, GLsizei width, GLsizei height, GLsizei depth, GLint border, GLenum format, GLenum type, const void* pixels) = NULL;
+void 	(*glsym_glTexSubImage3DOES) (GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLsizei width, GLsizei height, GLsizei depth, GLenum format, GLenum type, const void* pixels) = NULL;
+void 	(*glsym_glCopyTexSubImage3DOES) (GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLint x, GLint y, GLsizei width, GLsizei height) = NULL;
+void 	(*glsym_glCompressedTexImage3DOES) (GLenum target, GLint level, GLenum internalformat, GLsizei width, GLsizei height, GLsizei depth, GLint border, GLsizei imageSize, const void* data) = NULL;
+void 	(*glsym_glCompressedTexSubImage3DOES) (GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLsizei width, GLsizei height, GLsizei depth, GLenum format, GLsizei imageSize, const void* data) = NULL;
+void 	(*glsym_glFramebufferTexture3DOES) (GLenum target, GLenum attachment, GLenum textarget, GLuint texture, GLint level, GLint zoffset) = NULL;
+void 	(*glsym_glGetPerfMonitorGroupsAMD) (GLint* numGroups, GLsizei groupsSize, GLuint* groups) = NULL;
+void 	(*glsym_glGetPerfMonitorCountersAMD) (GLuint group, GLint* numCounters, GLint* maxActiveCounters, GLsizei counterSize, GLuint* counters) = NULL;
+void 	(*glsym_glGetPerfMonitorGroupStringAMD) (GLuint group, GLsizei bufSize, GLsizei* length, char* groupString) = NULL;
+void 	(*glsym_glGetPerfMonitorCounterStringAMD) (GLuint group, GLuint counter, GLsizei bufSize, GLsizei* length, char* counterString) = NULL;
+void 	(*glsym_glGetPerfMonitorCounterInfoAMD) (GLuint group, GLuint counter, GLenum pname, void* data) = NULL;
+void 	(*glsym_glGenPerfMonitorsAMD) (GLsizei n, GLuint* monitors) = NULL;
+void 	(*glsym_glDeletePerfMonitorsAMD) (GLsizei n, GLuint* monitors) = NULL;
+void 	(*glsym_glSelectPerfMonitorCountersAMD) (GLuint monitor, GLboolean enable, GLuint group, GLint numCounters, GLuint* countersList) = NULL;
+void 	(*glsym_glBeginPerfMonitorAMD) (GLuint monitor) = NULL;
+void 	(*glsym_glEndPerfMonitorAMD) (GLuint monitor) = NULL;
+void 	(*glsym_glGetPerfMonitorCounterDataAMD) (GLuint monitor, GLenum pname, GLsizei dataSize, GLuint* data, GLint* bytesWritten) = NULL;
+void 	(*glsym_glDiscardFramebufferEXT) (GLenum target, GLsizei numAttachments, const GLenum* attachments) = NULL;
+void 	(*glsym_glMultiDrawArraysEXT) (GLenum mode, GLint* first, GLsizei* count, GLsizei primcount) = NULL;
+void 	(*glsym_glMultiDrawElementsEXT) (GLenum mode, const GLsizei* count, GLenum type, const GLvoid** indices, GLsizei primcount) = NULL;
+void 	(*glsym_glDeleteFencesNV) (GLsizei n, const GLuint* fences) = NULL;
+void 	(*glsym_glGenFencesNV) (GLsizei n, GLuint* fences) = NULL;
+unsigned char 	(*glsym_glIsFenceNV) (GLuint fence) = NULL;
+unsigned char 	(*glsym_glTestFenceNV) (GLuint fence) = NULL;
+void 	(*glsym_glGetFenceivNV) (GLuint fence, GLenum pname, GLint* params) = NULL;
+void 	(*glsym_glFinishFenceNV) (GLuint fence) = NULL;
+void 	(*glsym_glSetFenceNV) (GLuint, GLenum) = NULL;
+void 	(*glsym_glGetDriverControlsQCOM) (GLint* num, GLsizei size, GLuint* driverControls) = NULL;
+void 	(*glsym_glGetDriverControlStringQCOM) (GLuint driverControl, GLsizei bufSize, GLsizei* length, char* driverControlString) = NULL;
+void 	(*glsym_glEnableDriverControlQCOM) (GLuint driverControl) = NULL;
+void 	(*glsym_glDisableDriverControlQCOM) (GLuint driverControl) = NULL;
+void 	(*glsym_glExtGetTexturesQCOM) (GLuint* textures, GLint maxTextures, GLint* numTextures) = NULL;
+void 	(*glsym_glExtGetBuffersQCOM) (GLuint* buffers, GLint maxBuffers, GLint* numBuffers) = NULL;
+void 	(*glsym_glExtGetRenderbuffersQCOM) (GLuint* renderbuffers, GLint maxRenderbuffers, GLint* numRenderbuffers) = NULL;
+void 	(*glsym_glExtGetFramebuffersQCOM) (GLuint* framebuffers, GLint maxFramebuffers, GLint* numFramebuffers) = NULL;
+void 	(*glsym_glExtGetTexLevelParameterivQCOM) (GLuint texture, GLenum face, GLint level, GLenum pname, GLint* params) = NULL;
+void 	(*glsym_glExtTexObjectStateOverrideiQCOM) (GLenum target, GLenum pname, GLint param) = NULL;
+void 	(*glsym_glExtGetTexSubImageQCOM) (GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLsizei width, GLsizei height, GLsizei depth, GLenum format, GLenum type, void* texels) = NULL;
+void 	(*glsym_glExtGetBufferPointervQCOM) (GLenum target, void** params) = NULL;
+void 	(*glsym_glExtGetShadersQCOM) (GLuint* shaders, GLint maxShaders, GLint* numShaders) = NULL;
+void 	(*glsym_glExtGetProgramsQCOM) (GLuint* programs, GLint maxPrograms, GLint* numPrograms) = NULL;
+unsigned char 	(*glsym_glExtIsProgramBinaryQCOM) (GLuint program) = NULL;
+void 	(*glsym_glExtGetProgramBinarySourceQCOM) (GLuint program, GLenum shadertype, char* source, GLint* length) = NULL;
+
+
+//------ GLES 2.0 Extensions supported in EvasGL -----//
+static Extension_Entry _gl_ext_entries[] = {
+#if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
+       //--- Function Extensions ---//
+       { "GL_OES_get_program_binary", "get_program_binary", 0 },
+       { "GL_OES_mapbuffer", "mapbuffer", 0 },
+       { "GL_OES_texture_3D", "texture_3D", 0 },
+       { "AMD_performance_monitor", "AMD_performance_monitor", 0 },
+       { "GL_EXT_discard_framebuffer", "discard_framebuffer", 0 },
+       { "GL_EXT_multi_draw_arrays", "multi_draw_arrays", 0 },
+       { "GL_NV_fence", "NV_fence", 0 },
+       { "GL_QCOM_driver_control", "QCOM_driver_control", 0 },
+       { "GL_QCOM_extended_get", "QCOM_extended_get", 0 },
+       { "GL_QCOM_extended_get2", "QCOM_extended_get2", 0 },
+
+       //--- Define Extensions ---//
+       { "GL_OES_compressed_ETC1_RGB8_texture", "compressed_ETC1_RGB8_texture", 0 },
+       { "GL_OES_compressed_paletted_texture", "compressed_paletted_texture", 0 },
+       { "GL_OES_depth24", "depth24", 0 },
+       { "GL_OES_depth32", "depth32", 0 },
+       { "GL_OES_EvasGL_image", "EGL_image", 0 }, 
+       { "GL_OES_packed_depth_stencil", "packed_depth_stencil", 0 },
+       { "GL_OES_rgb8_rgba8", "rgb8_rgba8", 0 },
+       { "GL_OES_standard_derivatives", "standard_derivatives", 0 }, 
+       { "GL_OES_stencil1", "stencil1", 0 },
+       { "GL_OES_stencil4", "stencil4", 0 },
+       { "GL_OES_texture_float", "texture_float", 0 },
+       { "GL_OES_texture_half_float", "texture_half_float", 0 },
+       { "GL_OES_texture_half_float_linear", "texture_half_float_linear", 0 },
+       { "GL_OES_texture_npot", "texture_npot", 0 },     
+       { "GL_OES_vertex_half_float", "vertex_half_float", 0 }, 
+       { "GL_OES_vertex_type_10_10_10_2", "vertex_type_10_10_10_2", 0 },
+       { "GL_AMD_compressed_3DC_texture", "compressed_3DC_texture", 0 },
+       { "GL_AMD_compressed_ATC_texture", "compressed_ATC_texture", 0 },
+       { "GL_AMD_program_binary_Z400", "program_binary_Z400", 0 },
+       { "GL_EXT_blend_minmax", "blend_minmax", 0 },
+       { "GL_EXT_read_format_bgra", "read_format_bgra", 0 }, 
+       { "GL_EXT_texture_filter_anisotropic", "texture_filter_anisotrophic", 0 },
+       { "GL_EXT_texture_format_BGRA8888", "texture_format_BGRA8888", 0 }, 
+       { "GL_EXT_texture_type_2_10_10_10_REV", "texture_type_2_10_10_10_rev", 0 }, 
+       { "GL_IMG_program_binary", "IMG_program_binary", 0 }, 
+       { "GL_IMG_read_format", "IMG_read_format", 0 },
+       { "GL_IMG_shader_binary", "IMG_shader_binary", 0 },
+       { "GL_IMG_texture_compression_pvrtc", "IMG_texture_compression_pvrtc", 0 },
+       { "GL_QCOM_perfmon_global_mode", "QCOM_perfmon_global_mode", 0 },
+       { "GL_QCOM_writeonly_rendering", "QCOM_writeonly_rendering", 0 },
+#else
+       //--- Function Extensions ---//
+       { "GL_OES_get_program_binary", "get_program_binary", 0 },
+       { "GL_OES_mapbuffer", "mapbuffer", 0 },
+       { "GL_OES_texture_3D", "texture_3D", 0 },
+       { "AMD_performance_monitor", "AMD_performance_monitor", 0 },
+       { "GL_EXT_discard_framebuffer", "discard_framebuffer", 0 },
+       { "GL_EXT_multi_draw_arrays", "multi_draw_arrays", 0 },
+       { "GL_NV_fence", "NV_fence", 0 },
+       { "GL_QCOM_driver_control", "QCOM_driver_control", 0 },
+       { "GL_QCOM_extended_get", "QCOM_extended_get", 0 },
+       { "GL_QCOM_extended_get2", "QCOM_extended_get2", 0 },
+
+       //--- Define Extensions ---//
+       { "GL_OES_compressed_ETC1_RGB8_texture", "compressed_ETC1_RGB8_texture", 0 },
+       { "GL_OES_compressed_paletted_texture", "compressed_paletted_texture", 0 },
+       { "GL_OES_depth24", "depth24", 0 },
+       { "GL_OES_depth32", "depth32", 0 },
+       { "GL_OES_EvasGL_image", "EGL_image", 0 }, 
+       { "GL_OES_packed_depth_stencil", "packed_depth_stencil", 0 },
+       { "GL_OES_rgb8_rgba8", "rgb8_rgba8", 0 },
+       { "GL_OES_standard_derivatives", "standard_derivatives", 0 }, 
+       { "GL_OES_stencil1", "stencil1", 0 },
+       { "GL_OES_stencil4", "stencil4", 0 },
+       { "GL_OES_texture_float", "texture_float", 0 },
+       { "GL_OES_texture_half_float", "texture_half_float", 0 },
+       { "GL_OES_texture_half_float_linear", "texture_half_float_linear", 0 },
+       { "GL_OES_texture_npot", "texture_non_power_of_two", 0 },     // Desktop differs
+       { "GL_OES_vertex_half_float", "half_float_vertex", 0 }, // Desktop differs
+       { "GL_OES_vertex_type_10_10_10_2", "vertex_type_10_10_10_2", 0 },
+       { "GL_AMD_compressed_3DC_texture", "compressed_3DC_texture", 0 },
+       { "GL_AMD_compressed_ATC_texture", "compressed_ATC_texture", 0 },
+       { "GL_AMD_program_binary_Z400", "program_binary_Z400", 0 },
+       { "GL_EXT_blend_minmax", "blend_minmax", 0 },
+       { "GL_EXT_read_format_bgra", "bgra", 0 }, // Desktop differs
+       { "GL_EXT_texture_filter_anisotropic", "texture_filter_anisotrophic", 0 },
+       { "GL_EXT_texture_format_BGRA8888", "bgra", 0 }, // Desktop differs
+       { "GL_EXT_texture_type_2_10_10_10_REV", "vertex_type_2_10_10_10_rev", 0 },  // Desktop differs ???
+       { "GL_IMG_program_binary", "IMG_program_binary", 0 }, 
+       { "GL_IMG_read_format", "IMG_read_format", 0 },
+       { "GL_IMG_shader_binary", "IMG_shader_binary", 0 },
+       { "GL_IMG_texture_compression_pvrtc", "IMG_texture_compression_pvrtc", 0 },
+       { "GL_QCOM_perfmon_global_mode", "QCOM_perfmon_global_mode", 0 },
+       { "GL_QCOM_writeonly_rendering", "QCOM_writeonly_rendering", 0 },
+
+#endif
+       { NULL, NULL, 0}
+};
+
+//------ Extensions supported in EvasGL -----//
+static Extension_Entry _evasgl_ext_entries[] = {
+#if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
+       { "EvasGL_KHR_image", "EGL_KHR_image", 0 },
+       { "EvasGL_KHR_vg_parent_image", "EGL_KHR_vg_parent_image", 0 },
+       { "EvasGL_KHR_gl_texture_2D_image", "EGL_KHR_gl_texture_2D_image", 0 },
+       { "EvasGL_KHR_gl_texture_cubemap_image", "EGL_KHR_gl_texture_cubemap_image", 0 },
+       { "EvasGL_KHR_gl_texture_3D_image", "EGL_KHR_gl_texture_3D_image", 0 },
+       { "EvasGL_KHR_gl_renderbuffer_image", "EGL_KHR_gl_renderbuffer_image", 0 },
+#else
+#endif
+       { NULL, NULL, 0 }
+}; 
 
 static void
 _sym_init(void)
@@ -159,8 +354,23 @@ _sym_init(void)
 
    FINDSYM(glsym_glEGLImageTargetTexture2DOES, "glEGLImageTargetTexture2DOES", glsym_func_void);
 
+   FINDSYM(glsym_glEGLImageTargetRenderbufferStorageOES, "glEGLImageTargetRenderbufferStorageOES", glsym_func_void);
+
    FINDSYM(glsym_eglMapImageSEC, "eglMapImageSEC", glsym_func_void_ptr);
    FINDSYM(glsym_eglUnmapImageSEC, "eglUnmapImageSEC", glsym_func_uint);
+
+   FINDSYM(glsym_eglQueryString, "eglQueryString", glsym_func_const_char_ptr);
+
+   FINDSYM(glsym_eglLockSurface, "eglLockSurface", glsym_func_uint);
+   FINDSYM(glsym_eglLockSurface, "eglLockSurfaceEXT", glsym_func_uint);
+   FINDSYM(glsym_eglLockSurface, "eglLockSurfaceARB", glsym_func_uint);
+   FINDSYM(glsym_eglLockSurface, "eglLockSurfaceKHR", glsym_func_uint);
+
+   FINDSYM(glsym_eglUnlockSurface, "eglUnlockSurface", glsym_func_uint);
+   FINDSYM(glsym_eglUnlockSurface, "eglUnlockSurfaceEXT", glsym_func_uint);
+   FINDSYM(glsym_eglUnlockSurface, "eglUnlockSurfaceARB", glsym_func_uint);
+   FINDSYM(glsym_eglUnlockSurface, "eglUnlockSurfaceKHR", glsym_func_uint);
+
 #else
 #define FINDSYM(dst, sym, typ) \
    if ((!dst) && (glsym_glXGetProcAddress)) dst = (typ)glsym_glXGetProcAddress(sym); \
@@ -194,11 +404,204 @@ _sym_init(void)
    FINDSYM(glsym_glXQueryDrawable, "glXQueryDrawableEXT", glsym_func_void);
    FINDSYM(glsym_glXQueryDrawable, "glXQueryDrawableARB", glsym_func_void);
 
-   FINDSYM(glsym_glxSwapIntervalSGI, "glXSwapIntervalMESA", glsym_func_int);
-   FINDSYM(glsym_glxSwapIntervalSGI, "glXSwapIntervalSGI", glsym_func_int);
+   FINDSYM(glsym_glXSwapIntervalSGI, "glXSwapIntervalMESA", glsym_func_int);
+   FINDSYM(glsym_glXSwapIntervalSGI, "glXSwapIntervalSGI", glsym_func_int);
 
-   FINDSYM(glsym_glxSwapIntervalEXT, "glXSwapIntervalEXT", glsym_func_void);
+   FINDSYM(glsym_glXSwapIntervalEXT, "glXSwapIntervalEXT", glsym_func_void);
+
+   FINDSYM(glsym_glXQueryExtensionsString, "glXQueryExtensionsString", glsym_func_const_char_ptr);
 #endif
+
+   //----------- GLES 2.0 Extensions ------------//
+   // If the symbol's not found, they get set to NULL
+   // If one of the functions in the extension exists, the extension in supported
+   /* GL_OES_get_program_binary */
+   FINDSYM(glsym_glGetProgramBinaryOES, "glGetProgramBinary", glsym_func_void);
+   FINDSYM(glsym_glGetProgramBinaryOES, "glGetProgramBinaryEXT", glsym_func_void);
+   FINDSYM(glsym_glGetProgramBinaryOES, "glGetProgramBinaryARB", glsym_func_void);
+   FINDSYM(glsym_glGetProgramBinaryOES, "glGetProgramBinaryOES", glsym_func_void);
+
+   FINDSYM(glsym_glProgramBinaryOES, "glProgramBinary", glsym_func_void);
+   FINDSYM(glsym_glProgramBinaryOES, "glProgramBinaryEXT", glsym_func_void);
+   FINDSYM(glsym_glProgramBinaryOES, "glProgramBinaryARB", glsym_func_void);
+   FINDSYM(glsym_glProgramBinaryOES, "glProgramBinaryOES", glsym_func_void);
+
+   // Check the first function to see if the extension is supported...
+   if (glsym_glGetProgramBinaryOES) _gl_ext_entries[0].supported = 1;
+
+
+   /* GL_OES_mapbuffer */
+   FINDSYM(glsym_glMapBufferOES, "glMapBuffer", glsym_func_void_ptr);
+   FINDSYM(glsym_glMapBufferOES, "glMapBufferEXT", glsym_func_void_ptr);
+   FINDSYM(glsym_glMapBufferOES, "glMapBufferARB", glsym_func_void_ptr);
+   FINDSYM(glsym_glMapBufferOES, "glMapBufferOES", glsym_func_void_ptr);
+
+   FINDSYM(glsym_glUnmapBufferOES, "glUnmapBuffer", glsym_func_uchar);
+   FINDSYM(glsym_glUnmapBufferOES, "glUnmapBufferEXT", glsym_func_uchar);
+   FINDSYM(glsym_glUnmapBufferOES, "glUnmapBufferARB", glsym_func_uchar);
+   FINDSYM(glsym_glUnmapBufferOES, "glUnmapBufferOES", glsym_func_uchar);
+
+   FINDSYM(glsym_glGetBufferPointervOES, "glGetBufferPointerv", glsym_func_void);
+   FINDSYM(glsym_glGetBufferPointervOES, "glGetBufferPointervEXT", glsym_func_void);
+   FINDSYM(glsym_glGetBufferPointervOES, "glGetBufferPointervARB", glsym_func_void);
+   FINDSYM(glsym_glGetBufferPointervOES, "glGetBufferPointervOES", glsym_func_void);
+
+   if (glsym_glMapBufferOES) _gl_ext_entries[1].supported = 1;
+
+   /* GL_OES_texture_3D */
+   FINDSYM(glsym_glTexImage3DOES, "glTexImage3D", glsym_func_void);
+   FINDSYM(glsym_glTexImage3DOES, "glTexImage3DEXT", glsym_func_void);
+   FINDSYM(glsym_glTexImage3DOES, "glTexImage3DARB", glsym_func_void);
+   FINDSYM(glsym_glTexImage3DOES, "glTexImage3DOES", glsym_func_void);
+
+   FINDSYM(glsym_glTexSubImage3DOES, "glTexSubImage3D", glsym_func_void);
+   FINDSYM(glsym_glTexSubImage3DOES, "glTexSubImage3DEXT", glsym_func_void);
+   FINDSYM(glsym_glTexSubImage3DOES, "glTexSubImage3DARB", glsym_func_void);
+   FINDSYM(glsym_glTexSubImage3DOES, "glTexSubImage3DOES", glsym_func_void);
+
+   FINDSYM(glsym_glCopyTexSubImage3DOES, "glCopyTexSubImage3D", glsym_func_void);
+   FINDSYM(glsym_glCopyTexSubImage3DOES, "glCopyTexSubImage3DARB", glsym_func_void);
+   FINDSYM(glsym_glCopyTexSubImage3DOES, "glCopyTexSubImage3DEXT", glsym_func_void);
+   FINDSYM(glsym_glCopyTexSubImage3DOES, "glCopyTexSubImage3DOES", glsym_func_void);
+
+   FINDSYM(glsym_glCompressedTexImage3DOES, "glCompressedTexImage3D", glsym_func_void);
+   FINDSYM(glsym_glCompressedTexImage3DOES, "glCompressedTexImage3DARB", glsym_func_void);
+   FINDSYM(glsym_glCompressedTexImage3DOES, "glCompressedTexImage3DEXT", glsym_func_void);
+   FINDSYM(glsym_glCompressedTexImage3DOES, "glCompressedTexImage3DOES", glsym_func_void);
+
+   FINDSYM(glsym_glCompressedTexSubImage3DOES, "glCompressedTexSubImage3D", glsym_func_void);
+   FINDSYM(glsym_glCompressedTexSubImage3DOES, "glCompressedTexSubImage3DARB", glsym_func_void);
+   FINDSYM(glsym_glCompressedTexSubImage3DOES, "glCompressedTexSubImage3DEXT", glsym_func_void);
+   FINDSYM(glsym_glCompressedTexSubImage3DOES, "glCompressedTexSubImage3DOES", glsym_func_void);
+
+   FINDSYM(glsym_glFramebufferTexture3DOES, "glFramebufferTexture3D", glsym_func_void);
+   FINDSYM(glsym_glFramebufferTexture3DOES, "glFramebufferTexture3DARB", glsym_func_void);
+   FINDSYM(glsym_glFramebufferTexture3DOES, "glFramebufferTexture3DEXT", glsym_func_void);
+   FINDSYM(glsym_glFramebufferTexture3DOES, "glFramebufferTexture3DOES", glsym_func_void);
+
+   if (glsym_glTexSubImage3DOES) _gl_ext_entries[2].supported = 1;
+
+   /* AMD_performance_monitor */
+   FINDSYM(glsym_glGetPerfMonitorGroupsAMD, "glGetPerfMonitorGroupsAMD", glsym_func_void);
+   FINDSYM(glsym_glGetPerfMonitorCountersAMD, "glGetPerfMonitorCountersAMD", glsym_func_void);
+   FINDSYM(glsym_glGetPerfMonitorGroupStringAMD, "glGetPerfMonitorGroupStringAMD", glsym_func_void);
+   FINDSYM(glsym_glGetPerfMonitorCounterStringAMD, "glGetPerfMonitorCounterStringAMD", glsym_func_void);
+   FINDSYM(glsym_glGetPerfMonitorCounterInfoAMD, "glGetPerfMonitorCounterInfoAMD", glsym_func_void);
+   FINDSYM(glsym_glGenPerfMonitorsAMD, "glGenPerfMonitorsAMD", glsym_func_void);
+   FINDSYM(glsym_glDeletePerfMonitorsAMD, "glDeletePerfMonitorsAMD", glsym_func_void);
+   FINDSYM(glsym_glSelectPerfMonitorCountersAMD, "glSelectPerfMonitorCountersAMD", glsym_func_void);
+   FINDSYM(glsym_glBeginPerfMonitorAMD, "glBeginPerfMonitorAMD", glsym_func_void);
+   FINDSYM(glsym_glEndPerfMonitorAMD, "glEndPerfMonitorAMD", glsym_func_void);
+   FINDSYM(glsym_glGetPerfMonitorCounterDataAMD, "glGetPerfMonitorCounterDataAMD", glsym_func_void);
+
+   if (glsym_glGetPerfMonitorGroupsAMD) _gl_ext_entries[3].supported = 1;
+
+   /* GL_EXT_discard_framebuffer */
+   FINDSYM(glsym_glDiscardFramebufferEXT, "glDiscardFramebuffer", glsym_func_void);
+   FINDSYM(glsym_glDiscardFramebufferEXT, "glDiscardFramebufferARB", glsym_func_void);
+   FINDSYM(glsym_glDiscardFramebufferEXT, "glDiscardFramebufferEXT", glsym_func_void);
+
+   if (glsym_glDiscardFramebufferEXT) _gl_ext_entries[4].supported = 1;
+
+   /* GL_EXT_multi_draw_arrays */
+   FINDSYM(glsym_glMultiDrawArraysEXT, "glMultiDrawArrays", glsym_func_void);
+   FINDSYM(glsym_glMultiDrawArraysEXT, "glMultiDrawArraysARB", glsym_func_void);
+   FINDSYM(glsym_glMultiDrawArraysEXT, "glMultiDrawArraysEXT", glsym_func_void);
+
+   FINDSYM(glsym_glMultiDrawElementsEXT, "glMultiDrawElements", glsym_func_void);
+   FINDSYM(glsym_glMultiDrawElementsEXT, "glMultiDrawElementsARB", glsym_func_void);
+   FINDSYM(glsym_glMultiDrawElementsEXT, "glMultiDrawElementsEXT", glsym_func_void);
+
+   if (glsym_glMultiDrawArraysEXT) _gl_ext_entries[5].supported = 1;
+
+   /* GL_NV_fence */
+   FINDSYM(glsym_glDeleteFencesNV, "glDeleteFencesNV", glsym_func_void);
+   FINDSYM(glsym_glGenFencesNV, "glGenFencesNV", glsym_func_void);
+   FINDSYM(glsym_glIsFenceNV, "glIsFenceNV", glsym_func_uchar);
+   FINDSYM(glsym_glTestFenceNV, "glTestFenceNV", glsym_func_uchar);
+   FINDSYM(glsym_glGetFenceivNV, "glGetFenceivNV", glsym_func_void);
+   FINDSYM(glsym_glFinishFenceNV, "glFinishFenceNV", glsym_func_void);
+   FINDSYM(glsym_glSetFenceNV, "glSetFenceNV", glsym_func_void);
+
+   if (glsym_glDeleteFencesNV) _gl_ext_entries[6].supported = 1;
+
+   /* GL_QCOM_driver_control */
+   FINDSYM(glsym_glGetDriverControlsQCOM, "glGetDriverControlsQCOM", glsym_func_void);
+   FINDSYM(glsym_glGetDriverControlStringQCOM, "glGetDriverControlStringQCOM", glsym_func_void);
+   FINDSYM(glsym_glEnableDriverControlQCOM, "glEnableDriverControlQCOM", glsym_func_void);
+   FINDSYM(glsym_glDisableDriverControlQCOM, "glDisableDriverControlQCOM", glsym_func_void);
+
+   if (glsym_glGetDriverControlsQCOM) _gl_ext_entries[7].supported = 1;
+
+   /* GL_QCOM_extended_get */
+   FINDSYM(glsym_glExtGetTexturesQCOM, "glExtGetTexturesQCOM", glsym_func_void);
+   FINDSYM(glsym_glExtGetBuffersQCOM, "glExtGetBuffersQCOM", glsym_func_void);
+   FINDSYM(glsym_glExtGetRenderbuffersQCOM, "glExtGetRenderbuffersQCOM", glsym_func_void);
+   FINDSYM(glsym_glExtGetFramebuffersQCOM, "glExtGetFramebuffersQCOM", glsym_func_void);
+   FINDSYM(glsym_glExtGetTexLevelParameterivQCOM, "glExtGetTexLevelParameterivQCOM", glsym_func_void);
+   FINDSYM(glsym_glExtTexObjectStateOverrideiQCOM, "glExtTexObjectStateOverrideiQCOM", glsym_func_void);
+   FINDSYM(glsym_glExtGetTexSubImageQCOM, "glExtGetTexSubImageQCOM", glsym_func_void);
+   FINDSYM(glsym_glExtGetBufferPointervQCOM, "glExtGetBufferPointervQCOM", glsym_func_void);
+
+   if (glsym_glExtGetTexturesQCOM) _gl_ext_entries[8].supported = 1;
+
+   /* GL_QCOM_extended_get2 */
+   FINDSYM(glsym_glExtGetShadersQCOM, "glExtGetShadersQCOM", glsym_func_void);
+   FINDSYM(glsym_glExtGetProgramsQCOM, "glExtGetProgramsQCOM", glsym_func_void);
+   FINDSYM(glsym_glExtIsProgramBinaryQCOM, "glExtIsProgramBinaryQCOM", glsym_func_uchar);
+   FINDSYM(glsym_glExtGetProgramBinarySourceQCOM, "glExtGetProgramBinarySourceQCOM", glsym_func_void);
+
+   if (glsym_glExtGetShadersQCOM) _gl_ext_entries[9].supported = 1;
+}
+
+static void
+_extensions_init(Render_Engine *re)
+{
+   int i;
+   const char *glexts, *evasglexts;
+
+   memset(_gl_ext_string, 0, 1024);
+   memset(_evasgl_ext_string, 0, 1024);
+
+   // GLES 2.0 Extensions
+   glexts = (const char*)glGetString(GL_EXTENSIONS);
+
+   DBG("--------GLES 2.0 Extensions--------");
+   for (i = 0; _gl_ext_entries[i].name != NULL; i++)
+     {
+        if ( (strstr(glexts, _gl_ext_entries[i].name) != NULL) ||
+             (strstr(glexts, _gl_ext_entries[i].real_name) != NULL) )
+          {
+             _gl_ext_entries[i].supported = 1;
+             strcat(_gl_ext_string, _gl_ext_entries[i].name);
+             strcat(_gl_ext_string, " ");
+             DBG("\t%s", _gl_ext_entries[i].name);
+          }
+
+     }
+   DBG(" ");
+
+#if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
+   // EGL Extensions
+   evasglexts = glsym_eglQueryString(re->win->egl_disp, EGL_EXTENSIONS);
+#else
+   evasglexts = glXQueryExtensionsString(re->info->info.display, 
+                                         re->info->info.screen);
+#endif
+
+   DBG("--------EvasGL Extensions----------");
+   for (i = 0; _evasgl_ext_entries[i].name != NULL; i++)
+     {
+        if ( (strstr(evasglexts, _evasgl_ext_entries[i].name) != NULL) ||
+             (strstr(evasglexts, _evasgl_ext_entries[i].real_name) != NULL) )
+          {
+             _evasgl_ext_entries[i].supported = 1;
+             strcat(_evasgl_ext_string, _evasgl_ext_entries[i].name);
+             strcat(_evasgl_ext_string, " ");
+             DBG("\t%s", _evasgl_ext_entries[i].name);
+          }
+     }
+   DBG(" ");
 }
 
 int _evas_engine_GL_X11_log_dom = -1;
@@ -297,6 +700,138 @@ _re_winfree(Render_Engine *re)
    eng_window_unsurf(re->win);
 }
 
+static Render_Engine_GL_Resource *
+_create_internal_glue_resources(void *data)
+{
+   Render_Engine *re = (Render_Engine *)data;
+   Render_Engine_GL_Resource *rsc;
+
+   rsc = calloc(1, sizeof(Render_Engine_GL_Resource));
+
+   if (!rsc) return NULL;
+
+#if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
+   // EGL
+   int context_attrs[3];
+   context_attrs[0] = EGL_CONTEXT_CLIENT_VERSION;
+   context_attrs[1] = 2;
+   context_attrs[2] = EGL_NONE;
+
+   // Create resource surface for EGL
+   rsc->surface = eglCreateWindowSurface(re->win->egl_disp, 
+                                         re->win->egl_config,
+                                         (EGLNativeWindowType)DefaultRootWindow(re->info->info.display),
+                                         NULL);
+   if (!rsc->surface)
+     {
+        ERR("Creating internal resource surface failed.");
+        free(rsc);
+        return NULL;
+     }
+
+   // Create a resource context for EGL
+   rsc->context = eglCreateContext(re->win->egl_disp,
+                                   re->win->egl_config,
+                                   re->win->egl_context[0], // Evas' GL Context
+                                   context_attrs);
+   if (!rsc->context)
+     {   
+        ERR("Internal Resource Context Creations Failed.");
+        free(rsc);
+        return NULL;
+     }
+
+   // Add to the resource resource list for cleanup
+   LKL(resource_lock);
+   resource_list = eina_list_prepend(resource_list, rsc);
+   LKU(resource_lock);
+
+   // Set the resource in TLS
+   if (eina_tls_set(resource_key, (void*)rsc) == EINA_FALSE)
+     {
+        ERR("Failed setting TLS Resource");
+        free(rsc);
+        return NULL;
+     }
+
+#else
+   // GLX
+   rsc->context = glXCreateContext(re->info->info.display,
+                                   re->win->visualinfo,
+                                   re->win->context,      // Evas' GL Context
+                                   1);
+   if (!rsc->context)
+     {   
+        ERR("Internal Resource Context Creations Failed.");
+        free(rsc);
+        return NULL;
+     }
+
+   // Add to the resource resource list for cleanup
+   LKL(resource_lock);
+   resource_list = eina_list_prepend(resource_list, rsc);
+   LKU(resource_lock);
+
+   // Set the resource in TLS
+   if (eina_tls_set(resource_key, (void*)rsc) == EINA_FALSE)
+     {
+        ERR("Failed setting TLS Resource");
+        free(rsc);
+        return NULL;
+     }
+
+#endif
+
+
+   return rsc;
+}
+
+static int
+_destroy_internal_glue_resources(void *data)
+{
+   Render_Engine *re = (Render_Engine *)data;
+   Eina_List *l;
+   Render_Engine_GL_Resource *rsc;
+
+#if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
+   // EGL
+   // Delete the Resources
+   LKL(resource_lock);
+   EINA_LIST_FOREACH(resource_list, l, rsc)
+     {
+        if (rsc->surface) eglDestroySurface(re->win->egl_disp, rsc->surface);
+        if (rsc->context) eglDestroyContext(re->win->egl_disp, rsc->context);
+        free(rsc);
+     }
+   eina_list_free(resource_list);
+   LKU(resource_lock);
+
+   // Destroy TLS
+   eina_tls_free(resource_key);
+#else
+   // GLX
+   // Delete the Resources
+   LKL(resource_lock);
+   EINA_LIST_FOREACH(resource_list, l, rsc)
+     {
+        if (rsc) 
+          {
+             glXDestroyContext(re->info->info.display, rsc->context);
+             free(rsc);
+          }
+     }
+   eina_list_free(resource_list);
+   LKU(resource_lock);
+
+   // Destroy TLS
+   eina_tls_free(resource_key);
+#endif
+
+   return 1;
+}
+
+
+
 static int
 eng_setup(Evas *e, void *in)
 {
@@ -335,7 +870,8 @@ eng_setup(Evas *e, void *in)
 	     free(re);
 	     e->engine.data.output = NULL;
 	     return 0;
-	  }
+          }
+
         gl_wins++;
 
           {
@@ -345,8 +881,8 @@ eng_setup(Evas *e, void *in)
 
              re->xr.dpi = 75000; // dpy * 1000
 
-	     status = xrdb_user_query("Xft.dpi", "Xft.Dpi", &type, &val);
-	     if ((!status) || (!type))
+             status = xrdb_user_query("Xft.dpi", "Xft.Dpi", &type, &val);
+             if ((!status) || (!type))
 	       {
 		  if (!re->xrdb) re->xrdb = XrmGetDatabase(re->info->info.display);
 		  if (re->xrdb)
@@ -406,6 +942,12 @@ eng_setup(Evas *e, void *in)
              evas_common_font_init();
              evas_common_draw_init();
              evas_common_tilebuf_init();
+
+             // Initialize TLS
+             if (eina_tls_new(&resource_key) == EINA_FALSE)
+                ERR("Error creating tls key");
+             DBG("TLS KEY create... %d", resource_key);
+
              initted = 1;
           }
      }
@@ -492,6 +1034,10 @@ eng_setup(Evas *e, void *in)
      }
  */
    _sym_init();
+   _extensions_init(re);
+
+   // This is used in extensions.  Not pretty but can't get display otherwise.
+   current_engine = re;
 
    return 1;
 }
@@ -508,8 +1054,21 @@ eng_output_free(void *data)
 // NOTE: XrmGetDatabase() result is shared per connection, do not free it.
 //   if (re->xrdb) XrmDestroyDatabase(re->xrdb);
 
+#if 0
+#if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
+        // Destroy the resource surface
+        // Only required for EGL case
+        if (re->surface)
+           eglDestroySurface(re->win->egl_disp, re->surface);
+#endif
+
+        // Destroy the resource context
+        _destroy_internal_context(re, context);
+#endif
         if (re->win)
           {
+             if ((initted == 1) && (gl_wins == 1))
+                  _destroy_internal_glue_resources(re);
              eng_window_free(re->win);
              gl_wins--;
           }
@@ -745,21 +1304,21 @@ eng_output_flush(void *data)
 #ifdef VSYNC_TO_SCREEN
    if ((re->info->vsync)/* || (1)*/)
      {
-        if (glsym_glxSwapIntervalEXT)
+        if (glsym_glXSwapIntervalEXT)
           {
              if (!re->vsync)
                {
-                  if (re->info->vsync) glsym_glxSwapIntervalEXT(re->win->disp, re->win->win, 1);
-                  else glsym_glxSwapIntervalEXT(re->win->disp, re->win->win, 0);
+                  if (re->info->vsync) glsym_glXSwapIntervalEXT(re->win->disp, re->win->win, 1);
+                  else glsym_glXSwapIntervalEXT(re->win->disp, re->win->win, 0);
                   re->vsync = 1;
                }
           }
-        if (glsym_glxSwapIntervalSGI)
+        if (glsym_glXSwapIntervalSGI)
           {
              if (!re->vsync)
                {
-                  if (re->info->vsync) glsym_glxSwapIntervalSGI(1);
-                  else glsym_glxSwapIntervalSGI(0);
+                  if (re->info->vsync) glsym_glXSwapIntervalSGI(1);
+                  else glsym_glXSwapIntervalSGI(0);
                   re->vsync = 1;
                }
           }
@@ -2242,34 +2801,14 @@ _create_rt_buffers(Render_Engine *data __UNUSED__,
 {
    // Render Target texture
    glGenTextures(1, &sfc->rt_tex );
-   glBindTexture(GL_TEXTURE_2D, sfc->rt_tex );
-   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-   glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, sfc->w, sfc->h, 0,
-                GL_RGBA, GL_UNSIGNED_BYTE, NULL);
-   glBindTexture(GL_TEXTURE_2D, 0);
 
    // Depth RenderBuffer - Create storage here...
    if (sfc->depth_bits != EVAS_GL_DEPTH_NONE)
-     {
-        glGenRenderbuffers(1, &sfc->rb_depth);
-        glBindRenderbuffer(GL_RENDERBUFFER, sfc->rb_depth);
-        glRenderbufferStorage(GL_RENDERBUFFER, sfc->rb_depth_fmt,
-                              sfc->w, sfc->h);
-        glBindRenderbuffer(GL_RENDERBUFFER, 0);
-     }
+      glGenRenderbuffers(1, &sfc->rb_depth);
 
    // Stencil RenderBuffer - Create Storage here...
    if (sfc->stencil_bits != EVAS_GL_STENCIL_NONE)
-     {
-        glGenRenderbuffers(1, &sfc->rb_stencil);
-        glBindRenderbuffer(GL_RENDERBUFFER, sfc->rb_stencil);
-        glRenderbufferStorage(GL_RENDERBUFFER, sfc->rb_stencil_fmt,
-                              sfc->w, sfc->h);
-        glBindRenderbuffer(GL_RENDERBUFFER, 0);
-     }
+      glGenRenderbuffers(1, &sfc->rb_stencil);
 
    return 1;
 }
@@ -2281,7 +2820,18 @@ _attach_fbo_surface(Render_Engine *data __UNUSED__,
 {
    int fb_status;
 
-   // FBO
+   // Initialize Texture
+   glBindTexture(GL_TEXTURE_2D, sfc->rt_tex );
+   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+   glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, sfc->w, sfc->h, 0,
+                GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+   glBindTexture(GL_TEXTURE_2D, 0);
+
+
+   // Attach texture to FBO
    glBindFramebuffer(GL_FRAMEBUFFER, ctx->context_fbo);
    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
                           GL_TEXTURE_2D, sfc->rt_tex, 0);
@@ -2290,6 +2840,8 @@ _attach_fbo_surface(Render_Engine *data __UNUSED__,
    if (sfc->depth_bits != EVAS_GL_DEPTH_NONE)
      {
         glBindRenderbuffer(GL_RENDERBUFFER, sfc->rb_depth);
+        glRenderbufferStorage(GL_RENDERBUFFER, sfc->rb_depth_fmt,
+                              sfc->w, sfc->h);
         glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
                                   GL_RENDERBUFFER, sfc->rb_depth);
         glBindRenderbuffer(GL_RENDERBUFFER, 0);
@@ -2299,6 +2851,8 @@ _attach_fbo_surface(Render_Engine *data __UNUSED__,
    if (sfc->stencil_bits != EVAS_GL_STENCIL_NONE)
      {
         glBindRenderbuffer(GL_RENDERBUFFER, sfc->rb_stencil);
+        glRenderbufferStorage(GL_RENDERBUFFER, sfc->rb_stencil_fmt,
+                              sfc->w, sfc->h);
         glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT,
                                   GL_RENDERBUFFER, sfc->rb_stencil);
         glBindRenderbuffer(GL_RENDERBUFFER, 0);
@@ -2315,16 +2869,17 @@ _attach_fbo_surface(Render_Engine *data __UNUSED__,
    return 1;
 }
 
+
 static void *
 eng_gl_surface_create(void *data, void *config, int w, int h)
 {
    Render_Engine *re;
    Render_Engine_GL_Surface *sfc;
+   Render_Engine_GL_Resource *rsc;
    Evas_GL_Config *cfg;
    int ret;
 
    sfc = calloc(1, sizeof(Render_Engine_GL_Surface));
-
    if (!sfc) return NULL;
 
    re  = (Render_Engine *)data;
@@ -2348,47 +2903,52 @@ eng_gl_surface_create(void *data, void *config, int w, int h)
         return NULL;
      }
 
-   // Create Render Target Texture/Buffers if not initialized
-   if (!sfc->initialized)
+   // Create internal resource context if it hasn't been created already
+   if ((rsc = eina_tls_get(resource_key)) == NULL)
      {
-        // I'm using evas's original context to create the render target texture
-        // This is to prevent awkwardness in using native_surface_get() function
-        // If the rt texture creation is deferred till the context is created and
-        // make_current called, the user can't call native_surface_get() right
-        // after the surface is created. hence this is done here using evas' context.
-#if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
-        ret = eglMakeCurrent(re->win->egl_disp, re->win->egl_surface[0], re->win->egl_surface[0], re->win->egl_context[0]);
-#else
-        ret = glXMakeCurrent(re->info->info.display, re->win->win, re->win->context);
-#endif
-        if (!ret)
+        if ((rsc = _create_internal_glue_resources(re)) == NULL)
           {
-             ERR("xxxMakeCurrent() failed!");
+             ERR("Error creating internal resources.");
              free(sfc);
              return NULL;
           }
+     }
 
-        // Create Render texture
-        if (!_create_rt_buffers(re, sfc))
-          {
-             ERR("_create_rt_buffers() failed.");
-             free(sfc);
-             return NULL;
-          }
+   // I'm using evas's original context to create the render target texture
+   // This is to prevent awkwardness in using native_surface_get() function
+   // If the rt texture creation is deferred till the context is created and
+   // make_current called, the user can't call native_surface_get() right
+   // after the surface is created. hence this is done here using evas' context.
+#if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
+   ret = eglMakeCurrent(re->win->egl_disp, rsc->surface, rsc->surface, rsc->context);
+#else
+   ret = glXMakeCurrent(re->info->info.display, re->win->win, rsc->context);
+#endif
+   if (!ret)
+     {
+        ERR("xxxMakeCurrent() failed!");
+        free(sfc);
+        return NULL;
+     }
+
+   // Create Render texture
+   if (!_create_rt_buffers(re, sfc))
+     {
+        ERR("_create_rt_buffers() failed.");
+        free(sfc);
+        return NULL;
+     }
 
 #if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
-        ret = eglMakeCurrent(re->win->egl_disp, EGL_NO_SURFACE,
-                             EGL_NO_SURFACE, EGL_NO_CONTEXT);
+   ret = eglMakeCurrent(re->win->egl_disp, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
 #else
-        ret = glXMakeCurrent(re->info->info.display, None, NULL);
+   ret = glXMakeCurrent(re->info->info.display, None, NULL); 
 #endif
-        if (!ret)
-          {
-             ERR("xxxMakeCurrent() failed!");
-             free(sfc);
-             return 0;
-          }
-        sfc->initialized = 1;
+   if (!ret)
+     {
+        ERR("xxxMakeCurrent() failed!");
+        free(sfc);
+        return NULL;
      }
 
    return sfc;
@@ -2399,19 +2959,20 @@ eng_gl_surface_destroy(void *data, void *surface)
 {
    Render_Engine *re;
    Render_Engine_GL_Surface *sfc;
+   Render_Engine_GL_Resource *rsc;
    int ret;
 
    re  = (Render_Engine *)data;
    sfc = (Render_Engine_GL_Surface*)surface;
 
-   // I'm using evas's original context to delete the created fbo and texture
-   // This is because the fbo/texture was created in the user created context
-   // but the context can be destroyed already...
-   // I don't think this is the best way but at least for now this is A WAY.
+   if (!sfc) return 0;
+
+   if ((rsc = eina_tls_get(resource_key)) == EINA_FALSE) return 0;
+
 #if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
-   ret = eglMakeCurrent(re->win->egl_disp, re->win->egl_surface[0], re->win->egl_surface[0], re->win->egl_context[0]);
+   ret = eglMakeCurrent(re->win->egl_disp, rsc->surface, rsc->surface, rsc->context);
 #else
-   ret = glXMakeCurrent(re->info->info.display, re->win->win, re->win->context);
+   ret = glXMakeCurrent(re->info->info.display, re->win->win, rsc->context);
 #endif
    if (!ret)
      {
@@ -2420,15 +2981,14 @@ eng_gl_surface_destroy(void *data, void *surface)
      }
 
    // Delete FBO/RBO and Texture here
-   if (glIsTexture(sfc->rt_tex))
-     glDeleteTextures(1, &sfc->rt_tex);
+   if (sfc->rt_tex)
+      glDeleteTextures(1, &sfc->rt_tex);
 
-   if (glIsBuffer(sfc->rb_depth))
-     glDeleteRenderbuffers(1, &sfc->rb_depth);
+   if (sfc->rb_depth)
+      glDeleteRenderbuffers(1, &sfc->rb_depth);
 
-   if (glIsBuffer(sfc->rb_stencil))
-     glDeleteRenderbuffers(1, &sfc->rb_stencil);
-
+   if (sfc->rb_stencil)
+      glDeleteRenderbuffers(1, &sfc->rb_stencil);
 
 #if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
    ret = eglMakeCurrent(re->win->egl_disp, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
@@ -2438,6 +2998,7 @@ eng_gl_surface_destroy(void *data, void *surface)
    if (!ret)
      {
         ERR("xxxMakeCurrent() failed!");
+        free(sfc);
         return 0;
      }
 
@@ -2528,15 +3089,20 @@ eng_gl_context_destroy(void *data, void *context)
 {
    Render_Engine *re;
    Render_Engine_GL_Context *ctx;
+   Render_Engine_GL_Resource *rsc;
    int ret;
 
    re  = (Render_Engine *)data;
    ctx = (Render_Engine_GL_Context*)context;
 
+   if (!ctx) return 0;
+
+   if ((rsc = eina_tls_get(resource_key)) == EINA_FALSE) return 0;
+
    // 1. Do a make current with the given context
 #if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
-   ret = eglMakeCurrent(re->win->egl_disp, re->win->egl_surface[0],
-                        re->win->egl_surface[0], ctx->context);
+   ret = eglMakeCurrent(re->win->egl_disp, rsc->surface,
+                        rsc->surface, ctx->context);
 #else
    ret = glXMakeCurrent(re->info->info.display, re->win->win,
                         ctx->context);
@@ -2548,8 +3114,8 @@ eng_gl_context_destroy(void *data, void *context)
      }
 
    // 2. Delete the FBO
-   if (glIsBuffer(ctx->context_fbo))
-     glDeleteBuffers(1, &ctx->context_fbo);
+   if (ctx->context_fbo)
+        glDeleteFramebuffers(1, &ctx->context_fbo);
 
    // 3. Destroy the Context
 #if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
@@ -2584,6 +3150,7 @@ eng_gl_make_current(void *data, void *surface, void *context)
    Render_Engine *re;
    Render_Engine_GL_Surface *sfc;
    Render_Engine_GL_Context *ctx;
+   Render_Engine_GL_Resource *rsc;
    int ret = 0;
 
    re  = (Render_Engine *)data;
@@ -2605,52 +3172,46 @@ eng_gl_make_current(void *data, void *surface, void *context)
              return 0;
           }
 
-        ctx->current_sfc = NULL;
-        sfc->current_ctx = NULL;
+        if (ctx) ctx->current_sfc = NULL;
+        if (sfc) sfc->current_ctx = NULL;
         current_evgl_ctx = NULL;
-        return ret;
-     }
-
-   // Don't do a make current if it's already current
-#if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
-   if ((eglGetCurrentContext() == ctx->context) && 
-       (eglGetCurrentSurface(EGL_READ) == re->win->egl_surface[0]) &&
-       (eglGetCurrentSurface(EGL_DRAW) == re->win->egl_surface[0]) ) 
-     {
-
-        DBG("Context same\n");
         return 1;
      }
-#else
-   if ((glXGetCurrentContext() == ctx->context) &&
-       (glXGetCurrentDrawable() == re->win->win) )
-     {
-        DBG("Context same\n");
-        return 1;
-     }
-#endif
 
-
-   // Flush remainder of what's in Evas' pipeline
-   if (re->win)
-      eng_window_use(NULL);
-
-
-   // Set the context current
+   // Do a make current only if it's not already current
 #if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
-   ret = eglMakeCurrent(re->win->egl_disp, re->win->egl_surface[0], 
-                              re->win->egl_surface[0], ctx->context);
-   if (!ret)
+   if ((rsc = eina_tls_get(resource_key)) == EINA_FALSE) return 0;
+
+   if ((eglGetCurrentContext() != ctx->context) || 
+       (eglGetCurrentSurface(EGL_READ) != rsc->surface) ||
+       (eglGetCurrentSurface(EGL_DRAW) != rsc->surface) ) 
      {
-        ERR("xxxMakeCurrent() failed!");
-        return 0;
+        // Flush remainder of what's in Evas' pipeline
+        if (re->win) eng_window_use(NULL);
+
+        // Do a make current
+        ret = eglMakeCurrent(re->win->egl_disp, rsc->surface,
+                             rsc->surface, ctx->context);
+        if (!ret)
+          {
+             ERR("xxxMakeCurrent() failed!");
+             return 0;
+          }
      }
 #else
-   ret = glXMakeCurrent(re->info->info.display, re->win->win, ctx->context);
-   if (!ret) 
+   if ((glXGetCurrentContext() != ctx->context) ||
+       (glXGetCurrentDrawable() != re->win->win) )
      {
-        ERR("xxxMakeCurrent() failed!");
-        return 0;
+        // Flush remainder of what's in Evas' pipeline
+        if (re->win) eng_window_use(NULL);
+
+        // Do a make current
+        ret = glXMakeCurrent(re->info->info.display, re->win->win, ctx->context);
+        if (!ret) 
+          {
+             ERR("xxxMakeCurrent() failed!");
+             return 0;
+          }
      }
 #endif
 
@@ -2683,9 +3244,21 @@ eng_gl_make_current(void *data, void *surface, void *context)
    // Set the current surface/context
    ctx->current_sfc = sfc;
    sfc->current_ctx = ctx;
-   current_evgl_ctx = ctx; 
+   current_evgl_ctx = ctx;
 
    return 1;
+}
+
+static void *
+eng_gl_string_query(void *data, int name)
+{
+   switch(name)
+     {
+      case EVAS_GL_EXTENSIONS:
+         return (void*)_evasgl_ext_string;
+      default:
+         return NULL;
+     };
 }
 
 static void *
@@ -2714,8 +3287,6 @@ eng_gl_native_surface_get(void *data, void *surface, void *native_surface)
    ns->type = EVAS_NATIVE_SURFACE_OPENGL;
    ns->version = EVAS_NATIVE_SURFACE_VERSION;
    ns->data.opengl.texture_id = sfc->rt_tex;
-   //ns->data.opengl.framebuffer_id = sfc->fbo;
-   //ns->data.opengl.framebuffer_id = ctx->fbo;
    ns->data.opengl.x = 0;
    ns->data.opengl.y = 0;
    ns->data.opengl.w = sfc->w;
@@ -2724,7 +3295,16 @@ eng_gl_native_surface_get(void *data, void *surface, void *native_surface)
    return 1;
 }
 
-#if 1
+
+static const GLubyte *
+evgl_glGetString(GLenum name)
+{
+   if (name == GL_EXTENSIONS)
+      return (GLubyte *)_gl_ext_string; //glGetString(GL_EXTENSIONS); 
+   else
+      return glGetString(name);
+}
+
 static void
 evgl_glBindFramebuffer(GLenum target, GLuint framebuffer)
 {
@@ -2819,7 +3399,49 @@ evgl_glShaderBinary(GLsizei n, const GLuint* shaders, GLenum binaryformat, const
 #endif
 }
 
+//--------------------------------//
+#if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
+// EGL Extensions
+static void *
+evgl_evasglCreateImage(int target, void* buffer, int *attrib_list)
+{
+   if (current_engine)
+     {
+        return glsym_eglCreateImage(current_engine->win->egl_disp,
+                                    EGL_NO_CONTEXT,
+                                    target,
+                                    buffer,
+                                    attrib_list);
+     }
+   else
+      ERR("Invalid Engine... (Can't acccess EGL Display)\n");
+}
+
+static void 
+evgl_evasglDestroyImage(EvasGLImage image)
+{
+   if (current_engine)
+        glsym_eglDestroyImage(current_engine->win->egl_disp, image);
+   else
+      ERR("Invalid Engine... (Can't acccess EGL Display)\n");
+}
+
+static void
+evgl_glEvasGLImageTargetTexture2DOES(GLenum target, EvasGLImage image)
+{
+   glsym_glEGLImageTargetTexture2DOES(target, image);
+}
+
+static void
+evgl_glEvasGLImageTargetRenderbufferStorageOES(GLenum target, EvasGLImage image)
+{
+   glsym_glEGLImageTargetTexture2DOES(target, image);
+}
+#else
 #endif
+
+//--------------------------------//
+
 
 static void *
 eng_gl_api_get(void *data)
@@ -2829,8 +3451,9 @@ eng_gl_api_get(void *data)
    re  = (Render_Engine *)data;
 
    gl_funcs.version = EVAS_GL_API_VERSION;
-#if 1
+
 #define ORD(f) EVAS_API_OVERRIDE(f, &gl_funcs, )
+   // GLES 2.0
    ORD(glActiveTexture);
    ORD(glAttachShader);
    ORD(glBindAttribLocation);
@@ -2900,7 +3523,7 @@ eng_gl_api_get(void *data)
    ORD(glGetShaderInfoLog);
 //   ORD(glGetShaderPrecisionFormat);
    ORD(glGetShaderSource);
-   ORD(glGetString);
+//   ORD(glGetString);
    ORD(glGetTexParameterfv);
    ORD(glGetTexParameteriv);
    ORD(glGetUniformfv);
@@ -2973,20 +3596,81 @@ eng_gl_api_get(void *data)
    ORD(glViewport);
 #undef ORD
 
+#define ORD(f) EVAS_API_OVERRIDE(f, &gl_funcs, glsym_)
+   // Extensions
+   ORD(glGetProgramBinaryOES); 
+   ORD(glProgramBinaryOES); 
+   ORD(glMapBufferOES); 
+   ORD(glUnmapBufferOES); 
+   ORD(glGetBufferPointervOES); 
+   ORD(glTexImage3DOES); 
+   ORD(glTexSubImage3DOES); 
+   ORD(glCopyTexSubImage3DOES); 
+   ORD(glCompressedTexImage3DOES); 
+   ORD(glCompressedTexSubImage3DOES); 
+   ORD(glFramebufferTexture3DOES); 
+   ORD(glGetPerfMonitorGroupsAMD); 
+   ORD(glGetPerfMonitorCountersAMD); 
+   ORD(glGetPerfMonitorGroupStringAMD); 
+   ORD(glGetPerfMonitorCounterStringAMD); 
+   ORD(glGetPerfMonitorCounterInfoAMD); 
+   ORD(glGenPerfMonitorsAMD); 
+   ORD(glDeletePerfMonitorsAMD); 
+   ORD(glSelectPerfMonitorCountersAMD); 
+   ORD(glBeginPerfMonitorAMD); 
+   ORD(glEndPerfMonitorAMD); 
+   ORD(glGetPerfMonitorCounterDataAMD); 
+   ORD(glDiscardFramebufferEXT); 
+   ORD(glMultiDrawArraysEXT); 
+   ORD(glMultiDrawElementsEXT); 
+   ORD(glDeleteFencesNV); 
+   ORD(glGenFencesNV); 
+   ORD(glIsFenceNV); 
+   ORD(glTestFenceNV); 
+   ORD(glGetFenceivNV); 
+   ORD(glFinishFenceNV); 
+   ORD(glSetFenceNV); 
+   ORD(glGetDriverControlsQCOM); 
+   ORD(glGetDriverControlStringQCOM); 
+   ORD(glEnableDriverControlQCOM); 
+   ORD(glDisableDriverControlQCOM); 
+   ORD(glExtGetTexturesQCOM); 
+   ORD(glExtGetBuffersQCOM); 
+   ORD(glExtGetRenderbuffersQCOM); 
+   ORD(glExtGetFramebuffersQCOM); 
+   ORD(glExtGetTexLevelParameterivQCOM); 
+   ORD(glExtTexObjectStateOverrideiQCOM); 
+   ORD(glExtGetTexSubImageQCOM); 
+   ORD(glExtGetBufferPointervQCOM); 
+   ORD(glExtGetShadersQCOM); 
+   ORD(glExtGetProgramsQCOM); 
+   ORD(glExtIsProgramBinaryQCOM); 
+   ORD(glExtGetProgramBinarySourceQCOM); 
+#undef ORD
+
 // Override functions wrapped by Evas_GL
 #define ORD(f) EVAS_API_OVERRIDE(f, &gl_funcs, evgl_)
    ORD(glBindFramebuffer);
    ORD(glBindRenderbuffer);
 
-// GLES2.0 API compat on top of desktop gl
+   // GLES2.0 API compat on top of desktop gl
    ORD(glClearDepthf);
    ORD(glDepthRangef);
    ORD(glGetShaderPrecisionFormat);
    ORD(glReleaseShaderCompiler);
    ORD(glShaderBinary);
-#undef ORD
 
+   ORD(glGetString);
+
+#if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
+   // GLES 2.0 Extensions that needs wrapping
+   ORD(evasglCreateImage);
+   ORD(evasglDestroyImage);
+   ORD(glEvasGLImageTargetTexture2DOES);
+   ORD(glEvasGLImageTargetRenderbufferStorageOES);
 #endif
+
+#undef ORD
 
    return &gl_funcs;
 }
@@ -3170,9 +3854,9 @@ module_open(Evas_Module *em)
    ORD(gl_context_create);
    ORD(gl_context_destroy);
    ORD(gl_make_current);
+   ORD(gl_string_query);
    ORD(gl_proc_address_get);
    ORD(gl_native_surface_get);
-
    ORD(gl_api_get);
 
    ORD(image_load_error_get);

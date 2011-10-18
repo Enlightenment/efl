@@ -69,6 +69,12 @@ evas_gl_surface_create(Evas_GL *evas_gl, Evas_GL_Config *config, int width, int 
    return NULL;
    MAGIC_CHECK_END();
 
+   if (!config)
+     {
+        ERR("Invalid Config\n");
+        return NULL;
+     }
+
    surf = calloc(1, sizeof(Evas_GL_Surface));
 
    surf->data = evas_gl->evas->engine.func->gl_surface_create(evas_gl->evas->engine.data.output, config, width, height);
@@ -194,6 +200,16 @@ evas_gl_make_current(Evas_GL *evas_gl, Evas_GL_Surface *surf, Evas_GL_Context *c
      ret = (Eina_Bool)evas_gl->evas->engine.func->gl_make_current(evas_gl->evas->engine.data.output, surf->data, ctx->data);
 
    return ret;
+}
+
+EAPI const char *
+evas_gl_string_query(Evas_GL *evas_gl, int name)
+{
+   MAGIC_CHECK(evas_gl, Evas_GL, MAGIC_EVAS_GL);
+   return EINA_FALSE;
+   MAGIC_CHECK_END();
+
+   return (const char *)evas_gl->evas->engine.func->gl_string_query(evas_gl->evas->engine.data.output, name);
 }
 
 EAPI Evas_GL_Func

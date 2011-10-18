@@ -12,8 +12,9 @@ typedef struct _Evas_GL               Evas_GL;
 typedef struct _Evas_GL_Surface       Evas_GL_Surface;
 typedef struct _Evas_GL_Context       Evas_GL_Context;
 typedef struct _Evas_GL_Config        Evas_GL_Config;
-typedef void*                         Evas_GL_Func;
 typedef struct _Evas_GL_API           Evas_GL_API;
+typedef void                         *Evas_GL_Func;
+typedef void                         *EvasGLImage;
 
 typedef enum _Evas_GL_Color_Format
 {
@@ -48,6 +49,9 @@ struct _Evas_GL_Config
     Evas_GL_Depth_Bits       depth_bits;
     Evas_GL_Stencil_Bits     stencil_bits;
 };
+
+#define EVAS_GL_EXTENSIONS       1
+
 
 /**
  * @defgroup Evas_GL Rendering GL on Evas
@@ -246,6 +250,8 @@ on_pixels(void *data, Evas_Object *obj)
    // Draw a Triangle
    gl->glEnable(GL_BLEND);
 
+   gl->glUseProgram(gld->program);
+
    gl->glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, vVertices);
    gl->glEnableVertexAttribArray(0);
 
@@ -430,13 +436,20 @@ EAPI void                     evas_gl_context_destroy    (Evas_GL *evas_gl, Evas
 EAPI Eina_Bool                evas_gl_make_current       (Evas_GL *evas_gl, Evas_GL_Surface *surf, Evas_GL_Context *ctx) EINA_ARG_NONNULL(1,2);
 
 /**
+ * Returns a pointer to a static, zero-terminated string describing some aspect of evas_gl.
+ *
+ * @param evas_gl The given Evas_GL object.
+ * @param name Specifies a symbolic constant, one of EVAS_GL_EXTENSIONS...
+ */
+EAPI const char              *evas_gl_string_query       (Evas_GL *evas_gl, int name) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
+
+/**
  * Returns a GL or the Glue Layer's extension function.
  *
  * @param evas_gl The given Evas_GL object.
  * @param name The name of the function to return.
  */
 EAPI Evas_GL_Func             evas_gl_proc_address_get   (Evas_GL *evas_gl, const char *name) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1,2) EINA_PURE;
-
 
 /**
  * Fills in the Native Surface information from the given Evas GL surface.
@@ -929,23 +942,228 @@ typedef signed long int  GLsizeiptr;   // Changed khronos_ssize_t
 //---------------------------//
 // GLES extension defines
 
+/* GL_OES_compressed_ETC1_RGB8_texture */
+#define GL_ETC1_RGB8_OES                                        0x8D64
+
+/* GL_OES_compressed_paletted_texture */
+#define GL_PALETTE4_RGB8_OES                                    0x8B90
+#define GL_PALETTE4_RGBA8_OES                                   0x8B91
+#define GL_PALETTE4_R5_G6_B5_OES                                0x8B92
+#define GL_PALETTE4_RGBA4_OES                                   0x8B93
+#define GL_PALETTE4_RGB5_A1_OES                                 0x8B94
+#define GL_PALETTE8_RGB8_OES                                    0x8B95
+#define GL_PALETTE8_RGBA8_OES                                   0x8B96
+#define GL_PALETTE8_R5_G6_B5_OES                                0x8B97
+#define GL_PALETTE8_RGBA4_OES                                   0x8B98
+#define GL_PALETTE8_RGB5_A1_OES                                 0x8B99
+
+/* GL_OES_depth24 */
+#define GL_DEPTH_COMPONENT24_OES                                0x81A6
+
+/* GL_OES_depth32 */
+#define GL_DEPTH_COMPONENT32_OES                                0x81A7
+
+/* GL_OES_get_program_binary */
+#define GL_PROGRAM_BINARY_LENGTH_OES                            0x8741
+#define GL_NUM_PROGRAM_BINARY_FORMATS_OES                       0x87FE
+#define GL_PROGRAM_BINARY_FORMATS_OES                           0x87FF
+
+/* GL_OES_mapbuffer */
+#define GL_WRITE_ONLY_OES                                       0x88B9
+#define GL_BUFFER_ACCESS_OES                                    0x88BB
+#define GL_BUFFER_MAPPED_OES                                    0x88BC
+#define GL_BUFFER_MAP_POINTER_OES                               0x88BD
+
+/* GL_OES_packed_depth_stencil */
+#define GL_DEPTH_STENCIL_OES                                    0x84F9
+#define GL_UNSIGNED_INT_24_8_OES                                0x84FA
+#define GL_DEPTH24_STENCIL8_OES                                 0x88F0
+
+/* GL_OES_rgb8_rgba8 */
+#define GL_RGB8_OES                                             0x8051
+#define GL_RGBA8_OES                                            0x8058
+
+/* GL_OES_standard_derivatives */
+#define GL_FRAGMENT_SHADER_DERIVATIVE_HINT_OES                  0x8B8B
+
+/* GL_OES_stencil1 */
+#define GL_STENCIL_INDEX1_OES                                   0x8D46
+
+/* GL_OES_stencil4 */
+#define GL_STENCIL_INDEX4_OES                                   0x8D47
+
+/* GL_OES_texture_3D */
+#define GL_TEXTURE_WRAP_R_OES                                   0x8072
+#define GL_TEXTURE_3D_OES                                       0x806F
+#define GL_TEXTURE_BINDING_3D_OES                               0x806A
+#define GL_MAX_3D_TEXTURE_SIZE_OES                              0x8073
+#define GL_SAMPLER_3D_OES                                       0x8B5F
+#define GL_FRAMEBUFFER_ATTACHMENT_TEXTURE_3D_ZOFFSET_OES        0x8CD4
+
+/* GL_OES_texture_float */
+/* No new tokens introduced by this extension. */
+
+/* GL_OES_texture_float_linear */
+/* No new tokens introduced by this extension. */
+
+/* GL_OES_texture_half_float */
+#define GL_HALF_FLOAT_OES                                       0x8D61
+
+/* GL_OES_texture_half_float_linear */
+/* No new tokens introduced by this extension. */
+
+/* GL_OES_texture_npot */
+/* No new tokens introduced by this extension. */
+
+/* GL_OES_vertex_half_float */
+/* GL_HALF_FLOAT_OES defined in GL_OES_texture_half_float already. */
+
+/* GL_OES_vertex_type_10_10_10_2 */
+#define GL_UNSIGNED_INT_10_10_10_2_OES                          0x8DF6
+#define GL_INT_10_10_10_2_OES                                   0x8DF7
+
+/*------------------------------------------------------------------------*
+ * AMD extension tokens
+ *------------------------------------------------------------------------*/
+
+/* GL_AMD_compressed_3DC_texture */
+#define GL_3DC_X_AMD                                            0x87F9
+#define GL_3DC_XY_AMD                                           0x87FA
+
+/* GL_AMD_compressed_ATC_texture */
+#define GL_ATC_RGB_AMD                                          0x8C92
+#define GL_ATC_RGBA_EXPLICIT_ALPHA_AMD                          0x8C93
+#define GL_ATC_RGBA_INTERPOLATED_ALPHA_AMD                      0x87EE
+
+/* GL_AMD_performance_monitor */
+#define GL_COUNTER_TYPE_AMD                                     0x8BC0
+#define GL_COUNTER_RANGE_AMD                                    0x8BC1
+#define GL_UNSIGNED_INT64_AMD                                   0x8BC2
+#define GL_PERCENTAGE_AMD                                       0x8BC3
+#define GL_PERFMON_RESULT_AVAILABLE_AMD                         0x8BC4
+#define GL_PERFMON_RESULT_SIZE_AMD                              0x8BC5
+#define GL_PERFMON_RESULT_AMD                                   0x8BC6
+
+/* GL_AMD_program_binary_Z400 */
+#define GL_Z400_BINARY_AMD                                      0x8740
+
+/*------------------------------------------------------------------------*
+ * EXT extension tokens
+ *------------------------------------------------------------------------*/
+
+/* GL_EXT_blend_minmax */
+#define GL_MIN_EXT                                              0x8007
+#define GL_MAX_EXT                                              0x8008
+
+/* GL_EXT_discard_framebuffer */
+#define GL_COLOR_EXT                                            0x1800
+#define GL_DEPTH_EXT                                            0x1801
+#define GL_STENCIL_EXT                                          0x1802
+
+/* GL_EXT_multi_draw_arrays */
+/* No new tokens introduced by this extension. */
+
 /* GL_EXT_read_format_bgra */
-#ifndef GL_EXT_read_format_bgra
 #define GL_BGRA_EXT                                             0x80E1
 #define GL_UNSIGNED_SHORT_4_4_4_4_REV_EXT                       0x8365
 #define GL_UNSIGNED_SHORT_1_5_5_5_REV_EXT                       0x8366
-#endif
 
 /* GL_EXT_texture_filter_anisotropic */
-#ifndef GL_EXT_texture_filter_anisotropic
 #define GL_TEXTURE_MAX_ANISOTROPY_EXT                           0x84FE
 #define GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT                       0x84FF
-#endif
 
 /* GL_EXT_texture_format_BGRA8888 */
-#ifndef GL_EXT_texture_format_BGRA8888
 #define GL_BGRA_EXT                                             0x80E1
-#endif
+
+/* GL_EXT_texture_type_2_10_10_10_REV */
+#define GL_UNSIGNED_INT_2_10_10_10_REV_EXT                      0x8368
+
+/*------------------------------------------------------------------------*
+ * IMG extension tokens
+ *------------------------------------------------------------------------*/
+
+/* GL_IMG_program_binary */
+#define GL_SGX_PROGRAM_BINARY_IMG                               0x9130
+
+/* GL_IMG_read_format */
+#define GL_BGRA_IMG                                             0x80E1
+#define GL_UNSIGNED_SHORT_4_4_4_4_REV_IMG                       0x8365
+
+/* GL_IMG_shader_binary */
+#define GL_SGX_BINARY_IMG                                       0x8C0A
+
+/* GL_IMG_texture_compression_pvrtc */
+#define GL_COMPRESSED_RGB_PVRTC_4BPPV1_IMG                      0x8C00
+#define GL_COMPRESSED_RGB_PVRTC_2BPPV1_IMG                      0x8C01
+#define GL_COMPRESSED_RGBA_PVRTC_4BPPV1_IMG                     0x8C02
+#define GL_COMPRESSED_RGBA_PVRTC_2BPPV1_IMG                     0x8C03
+
+/*------------------------------------------------------------------------*
+ * NV extension tokens
+ *------------------------------------------------------------------------*/
+
+/* GL_NV_fence */
+#define GL_ALL_COMPLETED_NV                                     0x84F2
+#define GL_FENCE_STATUS_NV                                      0x84F3
+#define GL_FENCE_CONDITION_NV                                   0x84F4
+
+/*------------------------------------------------------------------------*
+ * QCOM extension tokens
+ *------------------------------------------------------------------------*/
+
+/* GL_QCOM_driver_control */
+/* No new tokens introduced by this extension. */
+
+/* GL_QCOM_extended_get */
+#define GL_TEXTURE_WIDTH_QCOM                                   0x8BD2
+#define GL_TEXTURE_HEIGHT_QCOM                                  0x8BD3
+#define GL_TEXTURE_DEPTH_QCOM                                   0x8BD4
+#define GL_TEXTURE_INTERNAL_FORMAT_QCOM                         0x8BD5
+#define GL_TEXTURE_FORMAT_QCOM                                  0x8BD6
+#define GL_TEXTURE_TYPE_QCOM                                    0x8BD7
+#define GL_TEXTURE_IMAGE_VALID_QCOM                             0x8BD8
+#define GL_TEXTURE_NUM_LEVELS_QCOM                              0x8BD9
+#define GL_TEXTURE_TARGET_QCOM                                  0x8BDA
+#define GL_TEXTURE_OBJECT_VALID_QCOM                            0x8BDB
+#define GL_STATE_RESTORE                                        0x8BDC
+
+/* GL_QCOM_extended_get2 */
+/* No new tokens introduced by this extension. */
+
+/* GL_QCOM_perfmon_global_mode */
+#define GL_PERFMON_GLOBAL_MODE_QCOM                             0x8FA0
+
+/* GL_QCOM_writeonly_rendering */
+#define GL_WRITEONLY_RENDERING_QCOM                             0x8823
+
+/*------------------------------------------------------------------------*
+ * End of extension tokens, start of corresponding extension functions
+ *------------------------------------------------------------------------*/
+
+/* EvasGL_KHR_image */
+#define EVAS_GL_NATIVE_PIXMAP                                   0x30B0  /* evasglCreateImage target */
+
+/* EvasGL_KHR_vg_parent_image */
+#define EVAS_VG_PARENT_IMAGE                                    0x30BA  /* evasglCreateImage target */
+
+/* EvasGL_KHR_gl_texture_2D_image */
+#define EVAS_GL_TEXTURE_2D                                      0x30B1  /* evasglCreateImage target */
+#define EVAS_GL_TEXTURE_LEVEL                                   0x30BC  /* evasglCreateImage attribute */
+
+/* EvasGL_KHR_gl_texture_cubemap_image */
+#define EVAS_GL_TEXTURE_CUBE_MAP_POSITIVE_X                     0x30B3  /* evasglCreateImage target */
+#define EVAS_GL_TEXTURE_CUBE_MAP_NEGATIVE_X                     0x30B4  /* evasglCreateImage target */
+#define EVAS_GL_TEXTURE_CUBE_MAP_POSITIVE_Y                     0x30B5  /* evasglCreateImage target */
+#define EVAS_GL_TEXTURE_CUBE_MAP_NEGATIVE_Y                     0x30B6  /* evasglCreateImage target */
+#define EVAS_GL_TEXTURE_CUBE_MAP_POSITIVE_Z                     0x30B7  /* evasglCreateImage target */
+#define EVAS_GL_TEXTURE_CUBE_MAP_NEGATIVE_Z                     0x30B8  /* evasglCreateImage target */
+
+/* EvasGL_KHR_gl_texture_3D_image */
+#define EVAS_GL_TEXTURE_3D                                      0x30B2  /* evasglCreateImage target */
+#define EVAS_GL_TEXTURE_ZOFFSET                                 0x30BD  /* evasglCreateImage attribute */
+
+/* EvasGL_KHR_gl_renderbuffer_image */
+#define EVAS_GL_RENDERBUFFER                                    0x30B9  /* evasglCreateImage target */
 
 #else
 # ifndef EVAS_GL_NO_GL_H_CHECK
@@ -959,6 +1177,7 @@ struct _Evas_GL_API
    int            version;
 
    /* version 1: */
+   /*------- GLES 2.0 -------*/
    void         (*glActiveTexture) (GLenum texture);
    void         (*glAttachShader) (GLuint program, GLuint shader);
    void         (*glBindAttribLocation) (GLuint program, GLuint index, const char* name);
@@ -1101,6 +1320,84 @@ struct _Evas_GL_API
    void         (*glVertexAttrib4fv) (GLuint indx, const GLfloat* values);
    void         (*glVertexAttribPointer) (GLuint indx, GLint size, GLenum type, GLboolean normalized, GLsizei stride, const void* ptr);
    void         (*glViewport) (GLint x, GLint y, GLsizei width, GLsizei height);
+
+   /*------- GLES 2.0 Extensions -------*/
+   // Notice these two names have been changed to fit Evas GL and not EGL!
+   /* GL_OES_EvasGL_image */
+   void         (*glEvasGLImageTargetTexture2DOES) (GLenum target, EvasGLImage image);
+   void         (*glEvasGLImageTargetRenderbufferStorageOES) (GLenum target, EvasGLImage image);
+
+   /* GL_OES_get_program_binary */
+   void 	(*glGetProgramBinaryOES) (GLuint program, GLsizei bufSize, GLsizei *length, GLenum *binaryFormat, void *binary);
+   void 	(*glProgramBinaryOES) (GLuint program, GLenum binaryFormat, const void *binary, GLint length);   
+   /* GL_OES_mapbuffer */
+   void* 	(*glMapBufferOES) (GLenum target, GLenum access);
+   GLboolean 	(*glUnmapBufferOES) (GLenum target);
+   void 	(*glGetBufferPointervOES) (GLenum target, GLenum pname, void** params);
+   /* GL_OES_texture_3D */
+   void 	(*glTexImage3DOES) (GLenum target, GLint level, GLenum internalformat, GLsizei width, GLsizei height, GLsizei depth, GLint border, GLenum format, GLenum type, const void* pixels);
+   void 	(*glTexSubImage3DOES) (GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLsizei width, GLsizei height, GLsizei depth, GLenum format, GLenum type, const void* pixels);
+   void 	(*glCopyTexSubImage3DOES) (GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLint x, GLint y, GLsizei width, GLsizei height);
+   void 	(*glCompressedTexImage3DOES) (GLenum target, GLint level, GLenum internalformat, GLsizei width, GLsizei height, GLsizei depth, GLint border, GLsizei imageSize, const void* data);
+   void 	(*glCompressedTexSubImage3DOES) (GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLsizei width, GLsizei height, GLsizei depth, GLenum format, GLsizei imageSize, const void* data);
+   void 	(*glFramebufferTexture3DOES) (GLenum target, GLenum attachment, GLenum textarget, GLuint texture, GLint level, GLint zoffset);
+
+   /* AMD_performance_monitor */
+   void 	(*glGetPerfMonitorGroupsAMD) (GLint* numGroups, GLsizei groupsSize, GLuint* groups);
+   void 	(*glGetPerfMonitorCountersAMD) (GLuint group, GLint* numCounters, GLint* maxActiveCounters, GLsizei counterSize, GLuint* counters);
+   void 	(*glGetPerfMonitorGroupStringAMD) (GLuint group, GLsizei bufSize, GLsizei* length, char* groupString);
+   void 	(*glGetPerfMonitorCounterStringAMD) (GLuint group, GLuint counter, GLsizei bufSize, GLsizei* length, char* counterString);
+   void 	(*glGetPerfMonitorCounterInfoAMD) (GLuint group, GLuint counter, GLenum pname, void* data);
+   void 	(*glGenPerfMonitorsAMD) (GLsizei n, GLuint* monitors);
+   void 	(*glDeletePerfMonitorsAMD) (GLsizei n, GLuint* monitors);
+   void 	(*glSelectPerfMonitorCountersAMD) (GLuint monitor, GLboolean enable, GLuint group, GLint numCounters, GLuint* countersList);
+   void 	(*glBeginPerfMonitorAMD) (GLuint monitor);
+   void 	(*glEndPerfMonitorAMD) (GLuint monitor);
+   void 	(*glGetPerfMonitorCounterDataAMD) (GLuint monitor, GLenum pname, GLsizei dataSize, GLuint* data, GLint* bytesWritten);
+
+   /* GL_EXT_discard_framebuffer */
+   void 	(*glDiscardFramebufferEXT) (GLenum target, GLsizei numAttachments, const GLenum* attachments);
+
+   /* GL_EXT_multi_draw_arrays */
+   void 	(*glMultiDrawArraysEXT) (GLenum mode, GLint* first, GLsizei* count, GLsizei primcount);
+   void 	(*glMultiDrawElementsEXT) (GLenum mode, const GLsizei* count, GLenum type, const GLvoid** indices, GLsizei primcount);
+
+   /* GL_NV_fence */
+   void 	(*glDeleteFencesNV) (GLsizei n, const GLuint* fences);
+   void 	(*glGenFencesNV) (GLsizei n, GLuint* fences);
+   GLboolean 	(*glIsFenceNV) (GLuint fence);
+   GLboolean 	(*glTestFenceNV) (GLuint fence);
+   void 	(*glGetFenceivNV) (GLuint fence, GLenum pname, GLint* params);
+   void 	(*glFinishFenceNV) (GLuint fence);
+   void 	(*glSetFenceNV) (GLuint, GLenum);
+
+   /* GL_QCOM_driver_control */
+   void 	(*glGetDriverControlsQCOM) (GLint* num, GLsizei size, GLuint* driverControls);
+   void 	(*glGetDriverControlStringQCOM) (GLuint driverControl, GLsizei bufSize, GLsizei* length, char* driverControlString);
+   void 	(*glEnableDriverControlQCOM) (GLuint driverControl);
+   void 	(*glDisableDriverControlQCOM) (GLuint driverControl);
+
+   /* GL_QCOM_extended_get */
+   void 	(*glExtGetTexturesQCOM) (GLuint* textures, GLint maxTextures, GLint* numTextures);
+   void 	(*glExtGetBuffersQCOM) (GLuint* buffers, GLint maxBuffers, GLint* numBuffers);
+   void 	(*glExtGetRenderbuffersQCOM) (GLuint* renderbuffers, GLint maxRenderbuffers, GLint* numRenderbuffers);
+   void 	(*glExtGetFramebuffersQCOM) (GLuint* framebuffers, GLint maxFramebuffers, GLint* numFramebuffers);
+   void 	(*glExtGetTexLevelParameterivQCOM) (GLuint texture, GLenum face, GLint level, GLenum pname, GLint* params);
+   void 	(*glExtTexObjectStateOverrideiQCOM) (GLenum target, GLenum pname, GLint param);
+   void 	(*glExtGetTexSubImageQCOM) (GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLsizei width, GLsizei height, GLsizei depth, GLenum format, GLenum type, void* texels);
+   void 	(*glExtGetBufferPointervQCOM) (GLenum target, void** params);
+
+
+   /* GL_QCOM_extended_get2 */
+   void 	(*glExtGetShadersQCOM) (GLuint* shaders, GLint maxShaders, GLint* numShaders);
+   void 	(*glExtGetProgramsQCOM) (GLuint* programs, GLint maxPrograms, GLint* numPrograms);
+   GLboolean 	(*glExtIsProgramBinaryQCOM) (GLuint program);
+   void 	(*glExtGetProgramBinarySourceQCOM) (GLuint program, GLenum shadertype, char* source, GLint* length);
+
+   //------- EGL Related Extensions -------//
+   /* EvasGL_KHR_image */
+   EvasGLImage  (*evasglCreateImage) (int target, void* buffer, int* attrib_list);
+   void         (*evasglDestroyImage) (EvasGLImage image);
 
    /* future calls will be added down here for expansion */
    /* version 2: */
