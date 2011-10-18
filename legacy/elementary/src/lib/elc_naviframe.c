@@ -48,6 +48,8 @@ struct _Elm_Naviframe_Item
 static const char *widtype = NULL;
 
 static const char SIG_TRANSITION_FINISHED[] = "transition,finished";
+static const char SIG_PUSH_FINISHED[] = "push,finished";
+static const char SIG_POP_FINISHED[] = "pop,finished";
 static const char SIG_TITLE_CLICKED[] = "title,clicked";
 
 static const Evas_Smart_Cb_Description _signals[] = {
@@ -724,6 +726,9 @@ _pushed_finished(void *data,
    Elm_Naviframe_Item *it = data;
    if (!it) return;
    evas_object_hide(it->base.view);
+   evas_object_smart_callback_call(it->base.widget,
+                                   SIG_PUSH_FINISHED,
+                                   data);
 }
 
 static void
@@ -732,6 +737,11 @@ _popped_finished(void *data,
                  const char *emission __UNUSED__,
                  const char *source __UNUSED__)
 {
+   Elm_Naviframe_Item *it = data;
+   if (!it) return;
+   evas_object_smart_callback_call(it->base.widget,
+                                   SIG_POP_FINISHED,
+                                   data);
    _item_del(data);
 }
 
@@ -751,7 +761,7 @@ _show_finished(void *data,
 
    evas_object_smart_callback_call(it->base.widget,
                                    SIG_TRANSITION_FINISHED,
-                                   (void *) EINA_TRUE);
+                                   data);
    if (wd->freeze_events)
      evas_object_hide(wd->rect);
 }
@@ -1068,15 +1078,25 @@ elm_naviframe_item_style_set(Elm_Object_Item *it, const char *item_style)
 
    //prev button
    if (navi_it->title_prev_btn)
-     edje_object_part_swallow(navi_it->base.view,
-                              "elm.swallow.prev_btn",
-                              navi_it->title_prev_btn);
+     {
+        edje_object_part_swallow(navi_it->base.view,
+                                 "elm.swallow.prev_btn",
+                                 navi_it->title_prev_btn);
+        edje_object_signal_emit(navi_it->base.view,
+                                "elm,state,prev_btn,show",
+                                "elm");
+     }
 
    //next button
    if (navi_it->title_next_btn)
-     edje_object_part_swallow(navi_it->base.view,
-                              "elm.swallow.next_btn",
-                              navi_it->title_next_btn);
+     {
+        edje_object_part_swallow(navi_it->base.view,
+                                 "elm.swallow.next_btn",
+                                 navi_it->title_next_btn);
+        edje_object_signal_emit(navi_it->base.view,
+                                "elm,state,next_btn,show",
+                                "elm");
+     }
 
    navi_it->title_visible = EINA_TRUE;
    _item_sizing_eval(navi_it);
