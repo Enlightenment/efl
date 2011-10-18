@@ -233,6 +233,24 @@ zoom_end(void *_po, void *event_info)
    return EVAS_EVENT_FLAG_NONE;
 }
 
+static void
+_win_del_req(void *data, Evas_Object *obj __UNUSED__,
+      void *event_info __UNUSED__)
+{
+   Photo_Object **photo_array = (Photo_Object **) data;
+
+   if (!photo_array)
+      return;
+
+   /* The content of the photo object is automatically deleted when the win
+    * is deleted. */
+   for ( ; *photo_array ; photo_array++)
+      free(*photo_array);
+
+   free(data);
+}
+
+
 Photo_Object *
 photo_object_add(Evas_Object *parent, Evas_Object *ic, const char *icon, Evas_Coord x,
       Evas_Coord y, Evas_Coord w, Evas_Coord h, int angle)
@@ -303,6 +321,9 @@ test_gesture_layer(void *data __UNUSED__, Evas_Object *obj __UNUSED__,
    Evas_Coord w, h;
    Evas_Object *win, *bg;
    char buf[PATH_MAX];
+   int ind = 0;
+   Photo_Object **photo_array;
+   photo_array = calloc(sizeof(*photo_array), 4);
 
    w = 480;
    h = 800;
@@ -319,10 +340,10 @@ test_gesture_layer(void *data __UNUSED__, Evas_Object *obj __UNUSED__,
    evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_show(bg);
 
-    snprintf(buf, sizeof(buf), "%s/images/pol_sky.png", elm_app_data_dir_get());
-   photo_object_add(win, NULL, buf, 200, 200, 365, 400, 0);
+   snprintf(buf, sizeof(buf), "%s/images/pol_sky.png", elm_app_data_dir_get());
+   photo_array[ind++] = photo_object_add(win, NULL, buf, 200, 200, 365, 400, 0);
    snprintf(buf, sizeof(buf), "%s/images/pol_twofish.png", elm_app_data_dir_get());
-   photo_object_add(win, NULL, buf, 40, 300, 365, 400, 45);
+   photo_array[ind++] = photo_object_add(win, NULL, buf, 40, 300, 365, 400, 45);
 
    Evas_Object *en = elm_entry_add(win);
    elm_entry_entry_set(en, "You can use whatever object you want, "
@@ -334,8 +355,11 @@ test_gesture_layer(void *data __UNUSED__, Evas_Object *obj __UNUSED__,
    elm_layout_file_set(postit, buf, "main");
    elm_layout_content_set(postit, "ent", en);
 
-   photo_object_add(win, postit, NULL, 50, 50, 382, 400, 355);
+   photo_array[ind++] = photo_object_add(win, postit, NULL, 50, 50, 382, 400, 355);
 
+   photo_array[ind] = NULL;
+   evas_object_smart_callback_add(win, "delete,request", _win_del_req,
+         photo_array);
    evas_object_show(win);
 }
 
