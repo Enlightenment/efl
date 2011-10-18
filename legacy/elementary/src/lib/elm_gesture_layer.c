@@ -2878,6 +2878,7 @@ _make_pointer_event(void *data, void *event_info,
    Widget_Data *wd = elm_widget_data_get(data);
    if (!wd) return EINA_FALSE;
 
+   memset(pe, '\0', sizeof(*pe));
    switch (event_type)
      {
       case EVAS_CALLBACK_MOUSE_DOWN:
