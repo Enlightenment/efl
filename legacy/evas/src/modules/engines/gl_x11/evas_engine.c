@@ -3688,20 +3688,26 @@ eng_image_load_error_get(void *data __UNUSED__, void *image)
 static Eina_Bool
 eng_image_animated_get(void *data __UNUSED__, void *image)
 {
+   Evas_GL_Image *gim = image;
    Image_Entry *im;
 
-   if (!image) return EINA_FALSE;
-   im = image;
+   if (!gim) return EINA_FALSE;
+   im = (Image_Entry *)gim->im;
+   if (!im) return EINA_FALSE;
+
    return im->flags.animated;
 }
 
 static int
 eng_image_animated_frame_count_get(void *data __UNUSED__, void *image)
 {
+   Evas_GL_Image *gim = image;
    Image_Entry *im;
 
-   if (!image) return -1;
-   im = image;
+   if (!gim) return -1;
+   im = (Image_Entry *)gim->im;
+   if (!im) return -1;
+
    if (!im->flags.animated) return -1;
    return im->frame_count;
 }
@@ -3709,10 +3715,13 @@ eng_image_animated_frame_count_get(void *data __UNUSED__, void *image)
 static Evas_Image_Animated_Loop_Hint
 eng_image_animated_loop_type_get(void *data __UNUSED__, void *image)
 {
+   Evas_GL_Image *gim = image;
    Image_Entry *im;
 
-   if (!image) return EVAS_IMAGE_ANIMATED_HINT_NONE;
-   im = image;
+   if (!gim) return EVAS_IMAGE_ANIMATED_HINT_NONE;
+   im = (Image_Entry *)gim->im;
+   if (!im) return EVAS_IMAGE_ANIMATED_HINT_NONE;
+
    if (!im->flags.animated) return EVAS_IMAGE_ANIMATED_HINT_NONE;
    return im->loop_hint;
 }
@@ -3720,10 +3729,13 @@ eng_image_animated_loop_type_get(void *data __UNUSED__, void *image)
 static int
 eng_image_animated_loop_count_get(void *data __UNUSED__, void *image)
 {
+   Evas_GL_Image *gim = image;
    Image_Entry *im;
 
-   if (!image) return -1;
-   im = image;
+   if (!gim) return -1;
+   im = (Image_Entry *)gim->im;
+   if (!im) return -1;
+
    if (!im->flags.animated) return -1;
    return im->loop_count;
 }
@@ -3731,10 +3743,13 @@ eng_image_animated_loop_count_get(void *data __UNUSED__, void *image)
 static double
 eng_image_animated_frame_duration_get(void *data __UNUSED__, void *image, int start_frame, int frame_num)
 {
+   Evas_GL_Image *gim = image;
    Image_Entry *im;
 
-   if (!image) return -1;
-   im = image;
+   if (!gim) return -1;
+   im = (Image_Entry *)gim->im;
+   if (!im) return -1;
+
    if (!im->flags.animated) return -1;
    return evas_common_load_rgba_image_frame_duration_from_file(im, start_frame, frame_num);
 }
@@ -3742,10 +3757,13 @@ eng_image_animated_frame_duration_get(void *data __UNUSED__, void *image, int st
 static Eina_Bool
 eng_image_animated_frame_set(void *data __UNUSED__, void *image, int frame_index)
 {
+   Evas_GL_Image *gim = image;
    Image_Entry *im;
 
-   if (!image) return EINA_FALSE;
-   im = image;
+   if (!gim) return EINA_FALSE;
+   im = (Image_Entry *)gim->im;
+   if (!im) return EINA_FALSE;
+
    if (!im->flags.animated) return EINA_FALSE;
    if (im->cur_frame == frame_index) return EINA_FALSE;
 
