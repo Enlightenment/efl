@@ -1119,7 +1119,7 @@ EAPI Evas_Object *
 elm_ctxpopup_item_icon_get(const Elm_Object_Item *it)
 {
    ELM_OBJ_ITEM_CHECK_OR_RETURN(it, NULL);
-   Elm_Ctxpopup_Item *ctxpopup_it = ELM_CAST(it);
+   Elm_Ctxpopup_Item *ctxpopup_it = (Elm_Ctxpopup_Item *) it;
    return ctxpopup_it->icon;
 }
 
@@ -1129,7 +1129,7 @@ elm_ctxpopup_item_icon_set(Elm_Object_Item *it, Evas_Object *icon)
    ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
 
    Widget_Data *wd;
-   Elm_Ctxpopup_Item *ctxpopup_it  = ELM_CAST(it);
+   Elm_Ctxpopup_Item *ctxpopup_it  = (Elm_Ctxpopup_Item *) it;
 
    wd = elm_widget_data_get(ctxpopup_it->base.widget);
    if (!wd) return;
@@ -1148,7 +1148,7 @@ EAPI const char *
 elm_ctxpopup_item_label_get(const Elm_Object_Item *it)
 {
    ELM_OBJ_ITEM_CHECK_OR_RETURN(it, NULL);
-   Elm_Ctxpopup_Item *ctxpopup_it = ELM_CAST(it);
+   Elm_Ctxpopup_Item *ctxpopup_it = (Elm_Ctxpopup_Item *) it;
    return ctxpopup_it->label;
 }
 
@@ -1158,7 +1158,7 @@ elm_ctxpopup_item_label_set(Elm_Object_Item *it, const char *label)
    ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
 
    Widget_Data *wd;
-   Elm_Ctxpopup_Item *ctxpopup_it = ELM_CAST(it);
+   Elm_Ctxpopup_Item *ctxpopup_it = (Elm_Ctxpopup_Item *) it;
 
    wd = elm_widget_data_get(ctxpopup_it->base.widget);
    if (!wd) return;
@@ -1330,7 +1330,7 @@ elm_ctxpopup_item_append(Evas_Object *obj, const char *label,
         _sizing_eval(obj);
      }
 
-   return ELM_CAST(item);
+   return (Elm_Object_Item *) item;
 }
 
 EAPI void
@@ -1339,7 +1339,7 @@ elm_ctxpopup_item_del(Elm_Object_Item *it)
    ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
 
    Widget_Data *wd;
-   Elm_Ctxpopup_Item *ctxpopup_it = ELM_CAST(it);
+   Elm_Ctxpopup_Item *ctxpopup_it = (Elm_Ctxpopup_Item *) it;
 
    wd = elm_widget_data_get(ctxpopup_it->base.widget);
    if (!wd) return;
@@ -1374,12 +1374,10 @@ elm_ctxpopup_item_disabled_set(Elm_Object_Item *it, Eina_Bool disabled)
    ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
 
    Widget_Data *wd;
-   Elm_Ctxpopup_Item *ctxpopup_it = ELM_CAST(it);
+   Elm_Ctxpopup_Item *ctxpopup_it = (Elm_Ctxpopup_Item *) it;
 
    wd = elm_widget_data_get(ctxpopup_it->base.widget);
    if (!wd) return;
-
-   ctxpopup_it = ELM_CAST(it);
 
    if (disabled == ctxpopup_it->disabled)
      return;
@@ -1396,7 +1394,7 @@ EAPI Eina_Bool
 elm_ctxpopup_item_disabled_get(const Elm_Object_Item *it)
 {
    ELM_OBJ_ITEM_CHECK_OR_RETURN(it, EINA_FALSE);
-   Elm_Ctxpopup_Item *ctxpopup_it = ELM_CAST(it);
+   Elm_Ctxpopup_Item *ctxpopup_it = (Elm_Ctxpopup_Item *) it;
    return ctxpopup_it->disabled;
 }
 

@@ -2103,20 +2103,20 @@ elm_object_item_content_part_set(Elm_Object_Item *it,
                                  const char *part,
                                  Evas_Object *content)
 {
-   _elm_widget_item_content_part_set(ELM_CAST(it), part, content);
+   _elm_widget_item_content_part_set((Elm_Widget_Item *) it, part, content);
 }
 
 EAPI Evas_Object *
 elm_object_item_content_part_get(const Elm_Object_Item *it,
                                  const char *part)
 {
-   return _elm_widget_item_content_part_get(ELM_CAST(it), part);
+   return _elm_widget_item_content_part_get((Elm_Widget_Item *) it, part);
 }
 
 EAPI Evas_Object *
 elm_object_item_content_part_unset(Elm_Object_Item *it, const char *part)
 {
-   return _elm_widget_item_content_part_unset(ELM_CAST(it), part);
+   return _elm_widget_item_content_part_unset((Elm_Widget_Item *) it, part);
 }
 
 EAPI void
@@ -2124,13 +2124,13 @@ elm_object_item_text_part_set(Elm_Object_Item *it,
                               const char *part,
                               const char *label)
 {
-   _elm_widget_item_text_part_set(ELM_CAST(it), part, label);
+   _elm_widget_item_text_part_set((Elm_Widget_Item *) it, part, label);
 }
 
 EAPI const char *
 elm_object_item_text_part_get(const Elm_Object_Item *it, const char *part)
 {
-   return _elm_widget_item_text_part_get(ELM_CAST(it), part);
+   return _elm_widget_item_text_part_get((Elm_Widget_Item *) it, part);
 }
 
 EAPI void
@@ -2142,7 +2142,7 @@ elm_object_access_info_set(Evas_Object *obj, const char *txt)
 EAPI void
 elm_object_item_access_info_set(Elm_Object_Item *it, const char *txt)
 {
-   _elm_widget_item_access_info_set(ELM_CAST(it), txt);
+   _elm_widget_item_access_info_set((Elm_Widget_Item *) it, txt);
 }
 
 EAPI void *
@@ -2160,5 +2160,5 @@ elm_object_item_data_set(Elm_Object_Item *it, void *data)
 EAPI void
 elm_object_item_signal_emit(Elm_Object_Item *it, const char *emission, const char *source)
 {
-   _elm_widget_item_signal_emit(ELM_CAST(it), emission, source);
+   _elm_widget_item_signal_emit((Elm_Widget_Item *) it, emission, source);
 }

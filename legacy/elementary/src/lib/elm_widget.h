@@ -269,8 +269,6 @@ struct _Elm_Object_Item
 
 #define ELM_NEW(t) calloc(1, sizeof(t))
 
-#define ELM_CAST(p) ((void *)(p))
-
 #define ELM_OBJ_ITEM_CHECK_OR_RETURN(it, ...)                               \
    ELM_WIDGET_ITEM_CHECK_OR_RETURN((Elm_Widget_Item *) (it), __VA_ARGS__);  \
    ELM_CHECK_WIDTYPE(it->it.widget, widtype) __VA_ARGS__;
