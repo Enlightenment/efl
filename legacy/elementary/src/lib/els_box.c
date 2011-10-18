@@ -110,7 +110,8 @@ _els_box_layout(Evas_Object *o, Evas_Object_Box_Data *priv, int horizontal, int 
    const Eina_List *l;
    Evas_Object *obj;
    Evas_Coord minw, minh, wdif, hdif;
-   int count = 0, expand = 0;
+   int count = 0;
+   double expand = 0.0;
    double ax, ay;
    Evas_Object_Box_Option *opt;
 
@@ -121,7 +122,6 @@ _els_box_layout(Evas_Object *o, Evas_Object_Box_Data *priv, int horizontal, int 
    evas_object_size_hint_min_get(o, &minw, &minh);
    evas_object_size_hint_align_get(o, &ax, &ay);
    if ((w < minw) || (h < minh)) return;
-//   printf("====== %i %i | %ix%i | %ix%i | %1.3f %1.3f\n", x, y, w, h, minw, minh, ax, ay);
    count = eina_list_count(priv->children);
    if (rtl) ax = 1.0 - ax;
 
@@ -142,11 +142,11 @@ _els_box_layout(Evas_Object *o, Evas_Object_Box_Data *priv, int horizontal, int 
         evas_object_size_hint_weight_get(opt->obj, &wx, &wy);
         if (horizontal)
           {
-             if (wx > 0.0) expand++;
+             if (wx > 0.0) expand += wx;
           }
         else
           {
-             if (wy > 0.0) expand++;
+             if (wy > 0.0) expand += wy;
           }
      }
    if (!expand)
@@ -168,7 +168,6 @@ _els_box_layout(Evas_Object *o, Evas_Object_Box_Data *priv, int horizontal, int 
    hdif = h - minh;
    xx = x;
    yy = y;
-//   printf("-------- SZ %ix%i | MIN %ix%i | POS %i %i\n", w, h, minw, minh, x, y);
    EINA_LIST_FOREACH(priv->children, l, opt)
      {
         Evas_Coord mnw, mnh, mxw, mxh;
@@ -200,8 +199,7 @@ _els_box_layout(Evas_Object *o, Evas_Object_Box_Data *priv, int horizontal, int 
                   ww = mnw;
                   if ((expand > 0) && (xw))
                     {
-                       if (expand == 1) ow = wdif;
-                       else ow = (w - minw) / expand;
+                       ow = ((w - minw) * wx) / expand;
                        wdif -= ow;
                        ww += ow;
                     }
@@ -234,8 +232,7 @@ _els_box_layout(Evas_Object *o, Evas_Object_Box_Data *priv, int horizontal, int 
                   hh = mnh;
                   if ((expand > 0) && (xh))
                     {
-                       if (expand == 1) oh = hdif;
-                       else oh = (h - minh) / expand;
+                       oh = ((h - minh) * wy) / expand;
                        hdif -= oh;
                        hh += oh;
                     }
@@ -247,8 +244,6 @@ _els_box_layout(Evas_Object *o, Evas_Object_Box_Data *priv, int horizontal, int 
              oh = mnh;
              if (fh) oh = hh;
              if ((mxh >= 0) && (mxh < oh)) oh = mxh;
-//             printf("mv: %p %i\n", obj,
-//                    yy + (Evas_Coord)(((double)(hh - oh)) * ay));
              evas_object_move(obj,
                               xx + (Evas_Coord)(((double)(ww - ow)) * ax),
                               yy + (Evas_Coord)(((double)(hh - oh)) * ay));
