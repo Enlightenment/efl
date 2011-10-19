@@ -138,6 +138,8 @@ struct _Eina_File_Map
    unsigned long int length;
 
    int refcount;
+
+   Eina_Bool hugetlb : 1;
 };
 
 static Eina_Hash *_eina_file_cache = NULL;
@@ -431,17 +433,13 @@ _eina_file_map_key_hash(const unsigned long int *key, int key_length __UNUSED__)
 
 #ifndef MAP_POPULATE
 static int
-_eina_file_map_populate(char *map, unsigned int size)
+_eina_file_map_populate(char *map, unsigned int size, Eina_Bool hugetlb)
 {
    int r = 0xDEADBEEF;
    int i;
    int s;
 
-#ifdef MAP_HUGETLB
-   s = size > EINA_HUGE_PAGE ? EINA_HUGE_PAGE : EINA_SMALL_PAGE;
-#else
-   s = EINA_SMALL_PAGE;
-#endif
+   s = hugetlb ? EINA_HUGE_PAGE : EINA_SMALL_PAGE;
 
    for (i = 0; i < size; i += s)
      r ^= map[i];
@@ -453,7 +451,7 @@ _eina_file_map_populate(char *map, unsigned int size)
 #endif
 
 static int
-_eina_file_map_rule_apply(Eina_File_Populate rule, void *addr, unsigned long int size)
+_eina_file_map_rule_apply(Eina_File_Populate rule, void *addr, unsigned long int size, Eina_Bool hugetlb)
 {
    int tmp = 42;
    int flag = MADV_RANDOM;
@@ -470,7 +468,9 @@ _eina_file_map_rule_apply(Eina_File_Populate rule, void *addr, unsigned long int
 
 #ifndef MAP_POPULATE
    if (rule == EINA_FILE_POPULATE)
-     tmp ^= _eina_file_map_populate(addr, size);
+     tmp ^= _eina_file_map_populate(addr, size, hugetlb);
+#else
+   (void) hugetlb;
 #endif
 
    return tmp;
@@ -1041,10 +1041,22 @@ eina_file_map_all(Eina_File *file, Eina_File_Populate rule)
    eina_lock_take(&file->lock);
    if (file->global_map == MAP_FAILED)
      file->global_map = mmap(NULL, file->length, PROT_READ, flags, file->fd, 0);
+#ifdef MAP_HUGETLB
+   if ((file->global_map == MAP_FAILED) && (flags & MAP_HUGETLB))
+     {
+       flags &= ~MAP_HUGETLB;
+       file->global_map = mmap(NULL, file->length, PROT_READ, flags, file->fd, 0);
+     }
+#endif
 
    if (file->global_map != MAP_FAILED)
      {
-        _eina_file_map_rule_apply(rule, file->global_map, file->length);
+        Eina_Bool hugetlb = EINA_FALSE;
+
+#ifdef MAP_HUGETLB
+        hugetlb = !!(flags & MAP_HUGETLB);
+#endif
+        _eina_file_map_rule_apply(rule, file->global_map, file->length, hugetlb);
         file->global_refcount++;
         ret = file->global_map;
      }
@@ -1093,6 +1105,17 @@ eina_file_map_new(Eina_File *file, Eina_File_Populate rule,
         if (!map) goto on_error;
 
         map->map = mmap(NULL, length, PROT_READ, flags, file->fd, offset);
+#ifdef MAP_HUGETLB
+        if (map->map == MAP_FAILED && (flags & MAP_HUGETLB))
+          {
+             flags &= ~MAP_HUGETLB;
+             map->map = mmap(NULL, length, PROT_READ, flags, file->fd, offset);
+          }
+
+        map->hugetlb = !!(flags & MAP_HUGETLB);
+#else
+        map->hugetlb = EINA_FALSE;
+#endif
         map->offset = offset;
         map->length = length;
         map->refcount = 0;
@@ -1105,7 +1128,7 @@ eina_file_map_new(Eina_File *file, Eina_File_Populate rule,
 
    map->refcount++;
 
-   _eina_file_map_rule_apply(rule, map->map, length);
+   _eina_file_map_rule_apply(rule, map->map, length, map->hugetlb);
 
    eina_lock_release(&file->lock);
 
