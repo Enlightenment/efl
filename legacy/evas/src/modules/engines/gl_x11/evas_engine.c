@@ -2443,26 +2443,24 @@ eng_image_data_put(void *data, void *image, DATA32 *image_data)
        && (im->tex->pt->dyn.data)
        && (im->cs.space == EVAS_COLORSPACE_ARGB8888))
      {
+        int w, h;
+
 #if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
         glsym_eglUnmapImageSEC(re->win->egl_disp, im->tex->pt->dyn.img);
 #endif
         if (im->tex->pt->dyn.data == image_data)
-           return image;
-        else
-          {
-	     int w, h;
+	  return image;
 
-	     w = im->im->cache_entry.w;
-	     h = im->im->cache_entry.h;
-	     im2 = eng_image_new_from_data(data, w, h, image_data,
-					   eng_image_alpha_get(data, image),
-					   eng_image_colorspace_get(data, image));
-	     if (!im2) return im;
-	     evas_gl_common_image_free(im);
-	     im = im2;
-             evas_gl_common_image_dirty(im, 0, 0, 0, 0);
-             return im;
-          }
+        w = im->im->cache_entry.w;
+        h = im->im->cache_entry.h;
+        im2 = eng_image_new_from_data(data, w, h, image_data,
+                                      eng_image_alpha_get(data, image),
+                                      eng_image_colorspace_get(data, image));
+        if (!im2) return im;
+        evas_gl_common_image_free(im);
+        im = im2;
+        evas_gl_common_image_dirty(im, 0, 0, 0, 0);
+        return im;
      }
    switch (im->cs.space)
      {
