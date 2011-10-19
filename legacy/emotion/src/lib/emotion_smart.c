@@ -207,6 +207,7 @@ _smart_data_free(Smart_Data *sd)
    _emotion_module_close(sd->module, sd->video);
    evas_object_del(sd->obj);
    evas_object_del(sd->crop.clipper);
+   evas_object_del(sd->bg);
    eina_stringshare_del(sd->file);
    free(sd->module_name);
    if (sd->job) ecore_job_del(sd->job);
