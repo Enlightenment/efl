@@ -653,7 +653,7 @@ EAPI void             elm_widget_tree_dot_dump(const Evas_Object *top, FILE *out
    if (!elm_widget_is_check(obj)) return
 
 #define ELM_CHECK_WIDTYPE(obj, widtype) \
-   if (!elm_widget_type_check((obj), (widtype), __func__)) return
+   if (!obj || !elm_widget_type_check((obj), (widtype), __func__)) return
 
 #define ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(it, ...)                \
    ELM_WIDGET_ITEM_CHECK_OR_RETURN((Elm_Widget_Item *)it, __VA_ARGS__); \
