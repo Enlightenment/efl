@@ -485,6 +485,7 @@ _del_hook(Evas_Object *obj)
      {
         _filter_free(tf);
      }
+   if (wd->delay_write) ecore_timer_del(wd->delay_write);
    free(wd);
 
    evas_event_thaw(evas_object_evas_get(obj));
