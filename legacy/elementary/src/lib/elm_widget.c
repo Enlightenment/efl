@@ -1011,6 +1011,7 @@ elm_widget_resize_object_set(Evas_Object *obj,
           }
      }
 
+   sd->resize_obj = sobj;
    if (!sobj) return;
 
    // orphan new resize obj
@@ -1033,7 +1034,6 @@ elm_widget_resize_object_set(Evas_Object *obj,
      }
 
    // set the resize obj up
-   sd->resize_obj = sobj;
    if (_elm_widget_is(sd->resize_obj))
      {
         Smart_Data *sd2 = evas_object_smart_data_get(sd->resize_obj);
