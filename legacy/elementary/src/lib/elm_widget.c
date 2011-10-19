@@ -1010,55 +1010,53 @@ elm_widget_resize_object_set(Evas_Object *obj,
              if (elm_widget_focus_get(sd->resize_obj)) _unfocus_parents(obj);
           }
      }
+
+   if (!sobj) return;
+
    // orphan new resize obj
-   if (sobj)
+   evas_object_data_del(sobj, "elm-parent");
+   if (_elm_widget_is(sobj))
      {
-        evas_object_data_del(sobj, "elm-parent");
-        if (_elm_widget_is(sobj))
-          {
-             Smart_Data *sd2 = evas_object_smart_data_get(sobj);
-             if (sd2) sd2->parent_obj = NULL;
-             evas_object_event_callback_del_full(sobj, EVAS_CALLBACK_HIDE,
-                                                 _sub_obj_hide, sd);
-          }
-        evas_object_event_callback_del_full(sobj, EVAS_CALLBACK_DEL,
-                                            _sub_obj_del, sd);
-        evas_object_event_callback_del_full(sobj, EVAS_CALLBACK_MOUSE_UP,
-                                            _sub_obj_mouse_up, sd);
-        evas_object_smart_member_del(sobj);
-        if (_elm_widget_is(sobj))
-          {
-             if (elm_widget_focus_get(sobj)) _unfocus_parents(obj);
-          }
+        Smart_Data *sd2 = evas_object_smart_data_get(sobj);
+        if (sd2) sd2->parent_obj = NULL;
+        evas_object_event_callback_del_full(sobj, EVAS_CALLBACK_HIDE,
+                                            _sub_obj_hide, sd);
      }
+   evas_object_event_callback_del_full(sobj, EVAS_CALLBACK_DEL,
+                                       _sub_obj_del, sd);
+   evas_object_event_callback_del_full(sobj, EVAS_CALLBACK_MOUSE_UP,
+                                       _sub_obj_mouse_up, sd);
+   evas_object_smart_member_del(sobj);
+   if (_elm_widget_is(sobj))
+     {
+        if (elm_widget_focus_get(sobj)) _unfocus_parents(obj);
+     }
+
    // set the resize obj up
    sd->resize_obj = sobj;
-   if (sd->resize_obj)
+   if (_elm_widget_is(sd->resize_obj))
      {
-        if (_elm_widget_is(sd->resize_obj))
+        Smart_Data *sd2 = evas_object_smart_data_get(sd->resize_obj);
+        if (sd2)
           {
-             Smart_Data *sd2 = evas_object_smart_data_get(sd->resize_obj);
-             if (sd2)
-               {
-                  sd2->parent_obj = obj;
-                  sd2->top_win_focused = sd->top_win_focused;
-               }
-             evas_object_event_callback_add(sobj, EVAS_CALLBACK_HIDE,
-                                            _sub_obj_hide, sd);
+             sd2->parent_obj = obj;
+             sd2->top_win_focused = sd->top_win_focused;
           }
-        evas_object_clip_set(sobj, evas_object_clip_get(obj));
-        evas_object_smart_member_add(sobj, obj);
-        evas_object_event_callback_add(sobj, EVAS_CALLBACK_DEL,
-                                       _sub_obj_del, sd);
-        evas_object_event_callback_add(sobj, EVAS_CALLBACK_MOUSE_UP,
-                                       _sub_obj_mouse_up, sd);
-        _smart_reconfigure(sd);
-        evas_object_data_set(sobj, "elm-parent", obj);
-        evas_object_smart_callback_call(obj, "sub-object-add", sobj);
-        if (_elm_widget_is(sobj))
-          {
-             if (elm_widget_focus_get(sobj)) _focus_parents(obj);
-          }
+        evas_object_event_callback_add(sobj, EVAS_CALLBACK_HIDE,
+                                       _sub_obj_hide, sd);
+     }
+   evas_object_clip_set(sobj, evas_object_clip_get(obj));
+   evas_object_smart_member_add(sobj, obj);
+   evas_object_event_callback_add(sobj, EVAS_CALLBACK_DEL,
+                                  _sub_obj_del, sd);
+   evas_object_event_callback_add(sobj, EVAS_CALLBACK_MOUSE_UP,
+                                  _sub_obj_mouse_up, sd);
+   _smart_reconfigure(sd);
+   evas_object_data_set(sobj, "elm-parent", obj);
+   evas_object_smart_callback_call(obj, "sub-object-add", sobj);
+   if (_elm_widget_is(sobj))
+     {
+        if (elm_widget_focus_get(sobj)) _focus_parents(obj);
      }
 }
 
