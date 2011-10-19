@@ -1277,7 +1277,13 @@ data_queue_part_lookup(Edje_Part_Collection *pc, const char *name, int *dest)
         if ((pl->pc == pc) && (pl->dest == dest))
           {
              free(pl->name);
-             pl->name = mem_strdup(name);
+             if (strlen(name) > 0)
+               pl->name = mem_strdup(name);
+             else
+               {
+                  part_lookups = eina_list_remove(part_lookups, pl);
+                  free(pl);
+               }
              return;
           }
      }
