@@ -135,6 +135,8 @@ static void _show_finished(void *data,
                            const char *source);
 static void _item_content_set(Elm_Naviframe_Item *navi_it,
                               Evas_Object *content);
+static void _item_style_set(Elm_Naviframe_Item *navi_it,
+                            const char *item_style);
 
 static void
 _del_hook(Evas_Object *obj)
@@ -167,7 +169,7 @@ _theme_hook(Evas_Object *obj)
 
    EINA_INLIST_FOREACH(wd->stack, it)
      {
-        elm_naviframe_item_style_set((Elm_Object_Item *) it, it->style);
+        _item_style_set(it, it->style);
         _item_title_visible_update(it);
      }
 
@@ -712,6 +714,8 @@ _item_del(Elm_Naviframe_Item *it)
         free(text_pair);
      }
 
+   eina_stringshare_del(it->style);
+
    wd->stack = eina_inlist_remove(wd->stack, EINA_INLIST_GET(it));
 
    elm_widget_item_del(it);
@@ -789,6 +793,88 @@ _item_content_set(Elm_Naviframe_Item *navi_it, Evas_Object *content)
                                   navi_it);
    navi_it->content = content;
    _item_sizing_eval(navi_it);
+}
+
+static void
+_item_style_set(Elm_Naviframe_Item *navi_it, const char *item_style)
+{
+   Elm_Naviframe_Content_Item_Pair *content_pair;
+   Elm_Naviframe_Text_Item_Pair *text_pair;
+   Widget_Data *wd;
+
+   char buf[256];
+
+   if (!item_style)
+     {
+        sprintf(buf, "item/basic");
+        eina_stringshare_replace(&navi_it->style, "basic");
+     }
+   else
+     {
+        if (strlen(item_style) > sizeof(buf))
+          WRN("too much long style name! : naviframe=%p", navi_it->base.widget);
+        sprintf(buf, "item/%s", item_style);
+        eina_stringshare_replace(&navi_it->style, item_style);
+     }
+   _elm_theme_object_set(navi_it->base.widget,
+                         navi_it->base.view,
+                         "naviframe",
+                         buf,
+                         elm_widget_style_get(navi_it->base.widget));
+   //recover item
+   EINA_INLIST_FOREACH(navi_it->text_list, text_pair)
+      _item_text_set_hook((Elm_Object_Item *) navi_it,
+                          text_pair->part,
+                          text_pair->text);
+
+   EINA_INLIST_FOREACH(navi_it->content_list, content_pair)
+      _item_content_set_hook((Elm_Object_Item *) navi_it,
+                             content_pair->part,
+                             content_pair->content);
+
+   //content
+   if (navi_it->content)
+     {
+        edje_object_part_swallow(navi_it->base.view,
+                                 "elm.swallow.content",
+                                 navi_it->content);
+        edje_object_signal_emit(navi_it->base.view,
+                                "elm,state,content,show",
+                                "elm");
+     }
+
+   //prev button
+   if (navi_it->title_prev_btn)
+     {
+        edje_object_part_swallow(navi_it->base.view,
+                                 "elm.swallow.prev_btn",
+                                 navi_it->title_prev_btn);
+        edje_object_signal_emit(navi_it->base.view,
+                                "elm,state,prev_btn,show",
+                                "elm");
+     }
+
+   //next button
+   if (navi_it->title_next_btn)
+     {
+        edje_object_part_swallow(navi_it->base.view,
+                                 "elm.swallow.next_btn",
+                                 navi_it->title_next_btn);
+        edje_object_signal_emit(navi_it->base.view,
+                                "elm,state,next_btn,show",
+                                "elm");
+     }
+
+   navi_it->title_visible = EINA_TRUE;
+   _item_sizing_eval(navi_it);
+
+   wd = elm_widget_data_get(navi_it->base.widget);
+   if (wd && wd->freeze_events)
+     {
+        evas_object_hide(wd->rect);
+        //FIXME:
+        evas_object_pass_events_set(wd->base, EINA_FALSE);
+     }
 }
 
 EAPI Evas_Object *
@@ -882,7 +968,7 @@ elm_naviframe_item_push(Evas_Object *obj,
                                    "",
                                    _title_clicked, it);
 
-   elm_naviframe_item_style_set((Elm_Object_Item *) it, item_style);
+   _item_style_set(it, item_style);
 
    _item_text_set_hook((Elm_Object_Item *) it, "elm.text.title", title_label);
 
@@ -1041,70 +1127,15 @@ elm_naviframe_item_style_set(Elm_Object_Item *it, const char *item_style)
 {
    ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
    Elm_Naviframe_Item *navi_it = (Elm_Naviframe_Item *) it;
-   Elm_Naviframe_Content_Item_Pair *content_pair;
-   Elm_Naviframe_Text_Item_Pair *text_pair;
-   Widget_Data *wd;
 
-   char buf[256];
+   //Return if new style is exsiting one.  
+   if (item_style)
+     if (!strcmp(item_style, navi_it->style)) return;
 
-   if (!item_style) sprintf(buf, "item/basic");
-   else
-     {
-        if (strlen(item_style) > sizeof(buf))
-          WRN("too much long style name! : naviframe=%p", navi_it->base.widget);
-        sprintf(buf, "item/%s", item_style);
-     }
-   _elm_theme_object_set(navi_it->base.widget,
-                         navi_it->base.view,
-                         "naviframe",
-                         buf,
-                         elm_widget_style_get(navi_it->base.widget));
-   //recover item
-   EINA_INLIST_FOREACH(navi_it->text_list, text_pair)
-     _item_text_set_hook(it, text_pair->part, text_pair->text);
+   if (!item_style)
+     if (!strcmp("basic", navi_it->style)) return;
 
-   EINA_INLIST_FOREACH(navi_it->content_list, content_pair)
-     _item_content_set_hook(it, content_pair->part, content_pair->content);
-
-   //content
-   if (navi_it->content)
-     {
-        edje_object_part_swallow(navi_it->base.view,
-                                 "elm.swallow.content",
-                                 navi_it->content);
-        edje_object_signal_emit(navi_it->base.view,
-                                "elm,state,content,show",
-                                "elm");
-     }
-
-   //prev button
-   if (navi_it->title_prev_btn)
-     {
-        edje_object_part_swallow(navi_it->base.view,
-                                 "elm.swallow.prev_btn",
-                                 navi_it->title_prev_btn);
-        edje_object_signal_emit(navi_it->base.view,
-                                "elm,state,prev_btn,show",
-                                "elm");
-     }
-
-   //next button
-   if (navi_it->title_next_btn)
-     {
-        edje_object_part_swallow(navi_it->base.view,
-                                 "elm.swallow.next_btn",
-                                 navi_it->title_next_btn);
-        edje_object_signal_emit(navi_it->base.view,
-                                "elm,state,next_btn,show",
-                                "elm");
-     }
-
-   navi_it->title_visible = EINA_TRUE;
-   _item_sizing_eval(navi_it);
-
-   wd = elm_widget_data_get(navi_it->base.widget);
-   if (wd && wd->freeze_events)
-     evas_object_hide(wd->rect);
+   _item_style_set(navi_it, item_style);
 }
 
 EAPI const char *
