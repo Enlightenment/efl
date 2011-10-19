@@ -2447,10 +2447,7 @@ eng_image_data_put(void *data, void *image, DATA32 *image_data)
         glsym_eglUnmapImageSEC(re->win->egl_disp, im->tex->pt->dyn.img);
 #endif
         if (im->tex->pt->dyn.data == image_data)
-          {
-	     evas_gl_common_image_dirty(im, 0, 0, 0, 0);
-             return image;
-          }
+           return image;
         else
           {
 	     int w, h;
