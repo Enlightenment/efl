@@ -2497,8 +2497,6 @@ eng_image_data_put(void *data, void *image, DATA32 *image_data)
 	abort();
 	break;
      }
-   /* hmmm - but if we wrote... why bother? */
-   evas_gl_common_image_dirty(im, 0, 0, 0, 0);
    return im;
 }
 
