@@ -7374,6 +7374,9 @@ extern "C" {
     * Custom themes can of course invent new markup tags and style them any way
     * they like.
     *
+    * The following signals may be emitted by the label widget:
+    * @li "language,changed": The program's language changed.
+    *
     * See @ref tutorial_label for a demonstration of how to use a label widget.
     * @{
     */
@@ -10866,6 +10869,7 @@ extern "C" {
     * @li "anchor,down": Mouse button has been pressed on an anchor. The event_info
     * parameter for the callback will be an #Elm_Entry_Anchor_Info.
     * @li "preedit,changed": The preedit string has changed.
+    * @li "language,changed": Program language changed.
     *
     * @section entry-examples
     *
@@ -14155,6 +14159,7 @@ extern "C" {
     *
     * Smart callbacks one can listen to:
     * - "clicked" - when the user clicks on a toolbar item and becomes selected.
+    * - "language,changed" - when the program language changes
     *
     * Available styles for it:
     * - @c "default"
@@ -15934,6 +15939,7 @@ extern "C" {
     * - "scroll,edge,bottom" - the list is scrolled until the bottom edge
     * - "scroll,edge,left" - the list is scrolled until the left edge
     * - "scroll,edge,right" - the list is scrolled until the right edge
+    * - "language,changed" - the program's language changed
     *
     * Available styles for it:
     * - @c "default"
@@ -18067,6 +18073,8 @@ extern "C" {
     *   pinched out.  "- @c multi,pinch,in" - This is called when the genlist is
     *   multi-touch pinched in.
     * - @c "swipe" - This is called when the genlist is swiped.
+    * - @c "language,changed" - This is called when the program's language is
+    *   changed.
     *
     * @section Genlist_Examples Examples
     *
