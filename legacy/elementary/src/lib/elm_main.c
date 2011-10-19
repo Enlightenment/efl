@@ -964,14 +964,8 @@ elm_scale_set(double scale)
 EAPI void
 elm_scale_all_set(double scale)
 {
-#ifdef HAVE_ELEMENTARY_X
-   static Ecore_X_Atom atom = 0;
-   unsigned int scale_i = (unsigned int)(scale * 1000.0);
-
-   if (!atom) atom = ecore_x_atom_get("ENLIGHTENMENT_SCALE");
-   ecore_x_window_prop_card32_set(ecore_x_window_root_first_get(),
-                                  atom, &scale_i, 1);
-#endif
+   elm_scale_set(scale);
+   _elm_config_all_update();
 }
 
 EAPI Eina_Bool
@@ -1088,13 +1082,8 @@ elm_profile_set(const char *profile)
 EAPI void
 elm_profile_all_set(const char *profile)
 {
-#ifdef HAVE_ELEMENTARY_X
-   static Ecore_X_Atom atom = 0;
-
-   if (!atom) atom = ecore_x_atom_get("ENLIGHTENMENT_PROFILE");
-   ecore_x_window_prop_string_set(ecore_x_window_root_first_get(),
-                                  atom, profile);
-#endif
+   _elm_config_profile_set(profile);
+   _elm_config_all_update();
 }
 
 EAPI const char *
@@ -1152,14 +1141,8 @@ elm_font_overlay_apply(void)
 EAPI void
 elm_font_overlay_all_apply(void)
 {
-#ifdef HAVE_ELEMENTARY_X
-   static Ecore_X_Atom atom = 0;
-   unsigned int dummy = (unsigned int)(1 * 1000.0);
-
-   if (!atom) atom = ecore_x_atom_get("ENLIGHTENMENT_FONT_OVERLAY");
-   ecore_x_window_prop_card32_set(ecore_x_window_root_first_get(), atom, &dummy,
-                                  1);
-#endif
+   elm_font_overlay_apply();
+   _elm_config_all_update();
 }
 
 EAPI Elm_Font_Properties *
@@ -1259,14 +1242,8 @@ elm_finger_size_set(Evas_Coord size)
 EAPI void
 elm_finger_size_all_set(Evas_Coord size)
 {
-#ifdef HAVE_ELEMENTARY_X
-   static Ecore_X_Atom atom = 0;
-   unsigned int size_i = (unsigned int)size;
-
-   if (!atom) atom = ecore_x_atom_get("ENLIGHTENMENT_FINGER_SIZE");
-   ecore_x_window_prop_card32_set(ecore_x_window_root_first_get(),
-                                  atom, &size_i, 1);
-#endif
+   elm_finger_size_set(size);
+   _elm_config_all_update();
 }
 
 EAPI void
@@ -1317,14 +1294,8 @@ elm_cache_flush_interval_set(int size)
 EAPI void
 elm_cache_flush_interval_all_set(int size)
 {
-#ifdef HAVE_ELEMENTARY_X
-   static Ecore_X_Atom atom = 0;
-   unsigned int size_i = (unsigned int)size;
-
-   if (!atom) atom = ecore_x_atom_get("ENLIGHTENMENT_CACHE_FLUSH_INTERVAL");
-   ecore_x_window_prop_card32_set(ecore_x_window_root_first_get(),
-                                  atom, &size_i, 1);
-#endif
+   elm_cache_flush_interval_set(size);
+   _elm_config_all_update();
 }
 
 EAPI Eina_Bool
@@ -1346,14 +1317,8 @@ elm_cache_flush_enabled_set(Eina_Bool enabled)
 EAPI void
 elm_cache_flush_enabled_all_set(Eina_Bool enabled)
 {
-#ifdef HAVE_ELEMENTARY_X
-   static Ecore_X_Atom atom = 0;
-   unsigned int enabled_i = (unsigned int)enabled;
-
-   if (!atom) atom = ecore_x_atom_get("ENLIGHTENMENT_CACHE_FLUSH_ENABLE");
-   ecore_x_window_prop_card32_set(ecore_x_window_root_first_get(),
-                                  atom, &enabled_i, 1);
-#endif
+   elm_cache_flush_enabled_set(enabled);
+   _elm_config_all_update();
 }
 
 EAPI int
@@ -1374,14 +1339,8 @@ elm_font_cache_set(int size)
 EAPI void
 elm_font_cache_all_set(int size)
 {
-#ifdef HAVE_ELEMENTARY_X
-   static Ecore_X_Atom atom = 0;
-   unsigned int size_i = (unsigned int)size;
-
-   if (!atom) atom = ecore_x_atom_get("ENLIGHTENMENT_FONT_CACHE");
-   ecore_x_window_prop_card32_set(ecore_x_window_root_first_get(),
-                                  atom, &size_i, 1);
-#endif
+   elm_font_cache_set(size);
+   _elm_config_all_update();
 }
 
 EAPI int
@@ -1402,14 +1361,8 @@ elm_image_cache_set(int size)
 EAPI void
 elm_image_cache_all_set(int size)
 {
-#ifdef HAVE_ELEMENTARY_X
-   static Ecore_X_Atom atom = 0;
-   unsigned int size_i = (unsigned int)size;
-
-   if (!atom) atom = ecore_x_atom_get("ENLIGHTENMENT_IMAGE_CACHE");
-   ecore_x_window_prop_card32_set(ecore_x_window_root_first_get(),
-                                  atom, &size_i, 1);
-#endif
+   elm_image_cache_set(size);
+   _elm_config_all_update();
 }
 
 EAPI int
@@ -1430,14 +1383,8 @@ elm_edje_file_cache_set(int size)
 EAPI void
 elm_edje_file_cache_all_set(int size)
 {
-#ifdef HAVE_ELEMENTARY_X
-   static Ecore_X_Atom atom = 0;
-   unsigned int size_i = (unsigned int)size;
-
-   if (!atom) atom = ecore_x_atom_get("ENLIGHTENMENT_EDJE_FILE_CACHE");
-   ecore_x_window_prop_card32_set(ecore_x_window_root_first_get(),
-                                  atom, &size_i, 1);
-#endif
+   elm_edje_file_cache_set(size);
+   _elm_config_all_update();
 }
 
 EAPI int
@@ -1458,14 +1405,8 @@ elm_edje_collection_cache_set(int size)
 EAPI void
 elm_edje_collection_cache_all_set(int size)
 {
-#ifdef HAVE_ELEMENTARY_X
-   static Ecore_X_Atom atom = 0;
-   unsigned int size_i = (unsigned int)size;
-
-   if (!atom) atom = ecore_x_atom_get("ENLIGHTENMENT_EDJE_COLLECTION_CACHE");
-   ecore_x_window_prop_card32_set(ecore_x_window_root_first_get(),
-                                  atom, &size_i, 1);
-#endif
+   elm_edje_collection_cache_set(size);
+   _elm_config_all_update();
 }
 
 EAPI Eina_Bool
@@ -1634,15 +1575,8 @@ elm_scroll_bounce_enabled_set(Eina_Bool enabled)
 EAPI void
 elm_scroll_bounce_enabled_all_set(Eina_Bool enabled)
 {
-#ifdef HAVE_ELEMENTARY_X
-   static Ecore_X_Atom atom = 0;
-   unsigned int bounce_enable_i = (unsigned int)enabled;
-
-   if (!atom)
-     atom = ecore_x_atom_get("ENLIGHTENMENT_THUMBSCROLL_BOUNCE_ENABLE");
-   ecore_x_window_prop_card32_set(ecore_x_window_root_first_get(),
-                                  atom, &bounce_enable_i, 1);
-#endif
+   elm_scroll_bounce_enabled_set(enabled);
+   _elm_config_all_update();
 }
 
 EAPI double
@@ -1660,15 +1594,8 @@ elm_scroll_bounce_friction_set(double friction)
 EAPI void
 elm_scroll_bounce_friction_all_set(double friction)
 {
-#ifdef HAVE_ELEMENTARY_X
-   static Ecore_X_Atom atom = 0;
-   unsigned int bounce_friction_i = (unsigned int)(friction * 1000.0);
-
-   if (!atom)
-     atom = ecore_x_atom_get("ENLIGHTENMENT_THUMBSCROLL_BOUNCE_FRICTION");
-   ecore_x_window_prop_card32_set(ecore_x_window_root_first_get(),
-                                  atom, &bounce_friction_i, 1);
-#endif
+   elm_scroll_bounce_friction_set(friction);
+   _elm_config_all_update();
 }
 
 EAPI double
@@ -1686,15 +1613,8 @@ elm_scroll_page_scroll_friction_set(double friction)
 EAPI void
 elm_scroll_page_scroll_friction_all_set(double friction)
 {
-#ifdef HAVE_ELEMENTARY_X
-   static Ecore_X_Atom atom = 0;
-   unsigned int page_scroll_friction_i = (unsigned int)(friction * 1000.0);
-
-   if (!atom)
-     atom = ecore_x_atom_get("ENLIGHTENMENT_THUMBSCROLL_PAGE_SCROLL_FRICTION");
-   ecore_x_window_prop_card32_set(ecore_x_window_root_first_get(),
-                                  atom, &page_scroll_friction_i, 1);
-#endif
+   elm_scroll_page_scroll_friction_set(friction);
+   _elm_config_all_update();
 }
 
 EAPI double
@@ -1712,16 +1632,8 @@ elm_scroll_bring_in_scroll_friction_set(double friction)
 EAPI void
 elm_scroll_bring_in_scroll_friction_all_set(double friction)
 {
-#ifdef HAVE_ELEMENTARY_X
-   static Ecore_X_Atom atom = 0;
-   unsigned int bring_in_scroll_friction_i = (unsigned int)(friction * 1000.0);
-
-   if (!atom)
-     atom =
-       ecore_x_atom_get("ENLIGHTENMENT_THUMBSCROLL_BRING_IN_SCROLL_FRICTION");
-   ecore_x_window_prop_card32_set(ecore_x_window_root_first_get(),
-                                  atom, &bring_in_scroll_friction_i, 1);
-#endif
+   elm_scroll_bring_in_scroll_friction_set(friction);
+   _elm_config_all_update();
 }
 
 EAPI double
@@ -1739,15 +1651,8 @@ elm_scroll_zoom_friction_set(double friction)
 EAPI void
 elm_scroll_zoom_friction_all_set(double friction)
 {
-#ifdef HAVE_ELEMENTARY_X
-   static Ecore_X_Atom atom = 0;
-   unsigned int zoom_friction_i = (unsigned int)(friction * 1000.0);
-
-   if (!atom)
-     atom = ecore_x_atom_get("ENLIGHTENMENT_THUMBSCROLL_ZOOM_FRICTION");
-   ecore_x_window_prop_card32_set(ecore_x_window_root_first_get(),
-                                  atom, &zoom_friction_i, 1);
-#endif
+   elm_scroll_zoom_friction_set(friction);
+   _elm_config_all_update();
 }
 
 EAPI Eina_Bool
@@ -1765,14 +1670,8 @@ elm_scroll_thumbscroll_enabled_set(Eina_Bool enabled)
 EAPI void
 elm_scroll_thumbscroll_enabled_all_set(Eina_Bool enabled)
 {
-#ifdef HAVE_ELEMENTARY_X
-   static Ecore_X_Atom atom = 0;
-   unsigned int ts_enable_i = (unsigned int)enabled;
-
-   if (!atom) atom = ecore_x_atom_get("ENLIGHTENMENT_THUMBSCROLL_ENABLE");
-   ecore_x_window_prop_card32_set(ecore_x_window_root_first_get(),
-                                  atom, &ts_enable_i, 1);
-#endif
+   elm_scroll_thumbscroll_enabled_set(enabled);
+   _elm_config_all_update();
 }
 
 EAPI unsigned int
@@ -1790,14 +1689,8 @@ elm_scroll_thumbscroll_threshold_set(unsigned int threshold)
 EAPI void
 elm_scroll_thumbscroll_threshold_all_set(unsigned int threshold)
 {
-#ifdef HAVE_ELEMENTARY_X
-   static Ecore_X_Atom atom = 0;
-   unsigned int ts_threshold_i = (unsigned int)threshold;
-
-   if (!atom) atom = ecore_x_atom_get("ENLIGHTENMENT_THUMBSCROLL_THRESHOLD");
-   ecore_x_window_prop_card32_set(ecore_x_window_root_first_get(),
-                                  atom, &ts_threshold_i, 1);
-#endif
+   elm_scroll_thumbscroll_threshold_set(threshold);
+   _elm_config_all_update();
 }
 
 EAPI double
@@ -1815,15 +1708,8 @@ elm_scroll_thumbscroll_momentum_threshold_set(double threshold)
 EAPI void
 elm_scroll_thumbscroll_momentum_threshold_all_set(double threshold)
 {
-#ifdef HAVE_ELEMENTARY_X
-   static Ecore_X_Atom atom = 0;
-   unsigned int ts_momentum_threshold_i = (unsigned int)(threshold * 1000.0);
-
-   if (!atom)
-     atom = ecore_x_atom_get("ENLIGHTENMENT_THUMBSCROLL_MOMENTUM_THRESHOLD");
-   ecore_x_window_prop_card32_set(ecore_x_window_root_first_get(),
-                                  atom, &ts_momentum_threshold_i, 1);
-#endif
+   elm_scroll_thumbscroll_momentum_threshold_set(threshold);
+   _elm_config_all_update();
 }
 
 EAPI double
@@ -1841,14 +1727,8 @@ elm_scroll_thumbscroll_friction_set(double friction)
 EAPI void
 elm_scroll_thumbscroll_friction_all_set(double friction)
 {
-#ifdef HAVE_ELEMENTARY_X
-   static Ecore_X_Atom atom = 0;
-   unsigned int ts_friction_i = (unsigned int)(friction * 1000.0);
-
-   if (!atom) atom = ecore_x_atom_get("ENLIGHTENMENT_THUMBSCROLL_FRICTION");
-   ecore_x_window_prop_card32_set(ecore_x_window_root_first_get(),
-                                  atom, &ts_friction_i, 1);
-#endif
+   elm_scroll_thumbscroll_friction_set(friction);
+   _elm_config_all_update();
 }
 
 EAPI double
@@ -1860,33 +1740,16 @@ elm_scroll_thumbscroll_border_friction_get(void)
 EAPI void
 elm_scroll_thumbscroll_border_friction_set(double friction)
 {
-   if (friction < 0.0)
-     friction = 0.0;
-
-   if (friction > 1.0)
-     friction = 1.0;
-
+   if (friction < 0.0) friction = 0.0;
+   if (friction > 1.0) friction = 1.0;
    _elm_config->thumbscroll_friction = friction;
 }
 
 EAPI void
 elm_scroll_thumbscroll_border_friction_all_set(double friction)
 {
-   if (friction < 0.0)
-     friction = 0.0;
-
-   if (friction > 1.0)
-     friction = 1.0;
-
-#ifdef HAVE_ELEMENTARY_X
-   static Ecore_X_Atom atom = 0;
-   unsigned int border_friction_i = (unsigned int)(friction * 1000.0);
-
-   if (!atom)
-     atom = ecore_x_atom_get("ENLIGHTENMENT_THUMBSCROLL_BORDER_FRICTION");
-   ecore_x_window_prop_card32_set(ecore_x_window_root_first_get(),
-                                  atom, &border_friction_i, 1);
-#endif
+   elm_scroll_thumbscroll_border_friction_set(friction);
+   _elm_config_all_update();
 }
 
 EAPI double
@@ -1898,33 +1761,16 @@ elm_scroll_thumbscroll_sensitivity_friction_get(void)
 EAPI void
 elm_scroll_thumbscroll_sensitivity_friction_set(double friction)
 {
-   if (friction < 0.1)
-     friction = 0.1;
-
-   if (friction > 1.0)
-     friction = 1.0;
-
+   if (friction < 0.1) friction = 0.1;
+   if (friction > 1.0) friction = 1.0;
    _elm_config->thumbscroll_friction = friction;
 }
 
 EAPI void
 elm_scroll_thumbscroll_sensitivity_friction_all_set(double friction)
 {
-   if (friction < 0.1)
-     friction = 0.1;
-
-   if (friction > 1.0)
-     friction = 1.0;
-
-#ifdef HAVE_ELEMENTARY_X
-   static Ecore_X_Atom atom = 0;
-   unsigned int sensitivity_friction_i = (unsigned int)(friction * 1000.0);
-
-   if (!atom)
-     atom = ecore_x_atom_get("ENLIGHTENMENT_THUMBSCROLL_SENSITIVITY_FRICTION");
-   ecore_x_window_prop_card32_set(ecore_x_window_root_first_get(),
-                                  atom, &sensitivity_friction_i, 1);
-#endif
+   elm_scroll_thumbscroll_sensitivity_friction_set(friction);
+   _elm_config_all_update();
 }
 
 EAPI void

@@ -211,6 +211,7 @@ void                _elm_recache(void);
 const char         *_elm_config_current_profile_get(void);
 const char         *_elm_config_profile_dir_get(const char *prof, Eina_Bool is_user);
 Eina_List          *_elm_config_profiles_list(void);
+void                _elm_config_all_update(void);
 void                _elm_config_profile_set(const char *profile);
 
 void                _elm_config_engine_set(const char *engine);

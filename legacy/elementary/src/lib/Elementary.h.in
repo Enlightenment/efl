@@ -491,6 +491,12 @@ extern "C" {
    EAPI extern int ELM_ECORE_EVENT_ETHUMB_CONNECT;
 
    /**
+    * Emitted when the application has reconfigured elementary settings due
+    * to an external configuration tool asking it to.
+    */
+   EAPI extern int ELM_EVENT_CONFIG_ALL_CHANGED;
+
+   /**
     * Emitted when any Elementary's policy value is changed.
     */
    EAPI extern int ELM_EVENT_POLICY_CHANGED;
