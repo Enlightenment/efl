@@ -285,8 +285,8 @@ elm_video_add(Evas_Object *parent)
 
    wd->emotion = emotion_object_add(e);
    emotion_object_init(wd->emotion, NULL);
-   edje_object_part_swallow(wd->layout, "elm.swallow.video", wd->emotion);
    elm_widget_sub_object_add(obj, wd->emotion);
+   edje_object_part_swallow(wd->layout, "elm.swallow.video", wd->emotion);
 
    evas_object_smart_callback_add(wd->emotion, "open_done", _open_done, obj);
    evas_object_smart_callback_add(wd->emotion, "playback_started", _playback_started, obj);
