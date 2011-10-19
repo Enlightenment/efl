@@ -295,6 +295,12 @@ _event_hook(Evas_Object *obj, Evas_Object *src __UNUSED__, Evas_Callback_Type ty
    return EINA_TRUE;
 }
 
+static void
+_translate_hook(Evas_Object *obj)
+{
+   evas_object_smart_callback_call(obj, "language,changed", NULL);
+}
+
 static Eina_Bool
 _deselect_all_items(Widget_Data *wd)
 {
@@ -1320,6 +1326,7 @@ elm_list_add(Evas_Object *parent)
    elm_widget_signal_callback_add_hook_set(obj, _signal_callback_add_hook);
    elm_widget_signal_callback_del_hook_set(obj, _signal_callback_del_hook);
    elm_widget_event_hook_set(obj, _event_hook);
+   elm_widget_translate_hook_set(obj, _translate_hook);
 
    wd->self = obj;
    wd->scr = elm_smart_scroller_add(e);

@@ -854,6 +854,12 @@ _content_get_hook(const Evas_Object *obj, const char *part)
 }
 
 static void
+_translate_hook(Evas_Object *obj)
+{
+   evas_object_smart_callback_call(obj, "language,changed", NULL);
+}
+
+static void
 _signal_emit_hook(Evas_Object *obj, const char *emission, const char *source)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -2159,6 +2165,7 @@ elm_entry_add(Evas_Object *parent)
    elm_widget_content_set_hook_set(obj, _content_set_hook);
    elm_widget_content_unset_hook_set(obj, _content_unset_hook);
    elm_widget_content_get_hook_set(obj, _content_get_hook);
+   elm_widget_translate_hook_set(obj, _translate_hook);
 
    evas_object_smart_callback_add(obj, "sub-object-del", _sub_del, wd);
 

@@ -953,6 +953,27 @@ extern "C" {
    EAPI int          elm_policy_get(unsigned int policy);
 
    /**
+    * Change the language of the current application
+    *
+    * The @p lang passed must be the full name of the locale to use, for
+    * example "en_US.utf8" or "es_ES@euro".
+    *
+    * Changing language with this function will make Elementary run through
+    * all its widgets, translating strings set with
+    * elm_object_domain_translatable_text_part_set(). This way, an entire
+    * UI can have its language changed without having to restart the program.
+    *
+    * For more complex cases, like having formatted strings that need
+    * translation, widgets will also emit a "language,changed" signal that
+    * the user can listen to to manually translate the text.
+    *
+    * @param lang Language to set, must be the full name of the locale
+    *
+    * @ingroup General
+    */
+   EAPI void         elm_language_set(const char *lang);
+
+   /**
     * Set a label of an object
     *
     * @param obj The Elementary object
@@ -981,6 +1002,53 @@ extern "C" {
    EAPI const char  *elm_object_text_part_get(const Evas_Object *obj, const char *part);
 
 #define elm_object_text_get(obj) elm_object_text_part_get((obj), NULL)
+
+   /**
+    * Set the text for an objects part, marking it as translatable
+    *
+    * The string to set as @p text must be the original one. Do not pass the
+    * return of @c gettext() here. Elementary will translate the string
+    * internally and set it on the object using elm_object_text_part_set(),
+    * also storing the original string so that it can be automatically
+    * translated when the language is changed with elm_language_set().
+    *
+    * The @p domain will be stored along to find the translation in the
+    * correct catalog. It can be NULL, in which case it will use whatever
+    * domain was set by the application with @c textdomain(). This is useful
+    * in case you are building a library on top of Elementary that will have
+    * its own translatable strings, that should not be mixed with those of
+    * programs using the library.
+    *
+    * @param obj The object
+    * @param part The name of the part to set
+    * @param domain The translation domain to use
+    * @param text The original, non-translated text to set
+    *
+    * @ingroup General
+    */
+   EAPI void         elm_object_domain_translatable_text_part_set(Evas_Object *obj, const char *part, const char *domain, const char *text);
+
+#define elm_object_domain_translatable_text_set(obj, domain, text) elm_object_domain_translatable_text_part_set((obj), NULL, (domain), (text))
+
+#define elm_object_translatable_text_set(obj, text) elm_object_domain_translatable_text_part_set((obj), NULL, NULL, (text))
+
+   /**
+    * Gets the original string set as translatable for an object
+    *
+    * When setting translated strings, the function elm_object_text_part_get()
+    * will return the translation returned by @c gettext(). To get the
+    * original string use this function.
+    *
+    * @param obj The object
+    * @param part The name of the part that was set
+    *
+    * @return The original, untranslated string
+    *
+    * @ingroup General
+    */
+   EAPI const char  *elm_object_translatable_text_part_get(const Evas_Object *obj, const char *part);
+
+#define elm_object_translatable_text_get(obj) elm_object_translatable_text_part_get((obj), NULL)
 
    /**
     * Set a content of an object
@@ -15361,6 +15429,8 @@ extern "C" {
    EAPI void         elm_object_tooltip_show(Evas_Object *obj) EINA_ARG_NONNULL(1);
    EAPI void         elm_object_tooltip_hide(Evas_Object *obj) EINA_ARG_NONNULL(1);
    EAPI void         elm_object_tooltip_text_set(Evas_Object *obj, const char *text) EINA_ARG_NONNULL(1, 2);
+   EAPI void         elm_object_tooltip_domain_translatable_text_set(Evas_Object *obj, const char *domain, const char *text) EINA_ARG_NONNULL(1, 3);
+#define elm_object_tooltip_translatable_text_set(obj, text) elm_object_tooltip_domain_translatable_text_set((obj), NULL, (text))
    EAPI void         elm_object_tooltip_content_cb_set(Evas_Object *obj, Elm_Tooltip_Content_Cb func, const void *data, Evas_Smart_Cb del_cb) EINA_ARG_NONNULL(1);
    EAPI void         elm_object_tooltip_unset(Evas_Object *obj) EINA_ARG_NONNULL(1);
    EAPI void         elm_object_tooltip_style_set(Evas_Object *obj, const char *style) EINA_ARG_NONNULL(1);

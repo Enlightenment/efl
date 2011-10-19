@@ -28,7 +28,7 @@
 # define bindtextdomain(domain,dir)
 # define E_(string) (string)
 #endif
-
+#define N_(string) (string)
 
 typedef struct _Elm_Config    Elm_Config;
 typedef struct _Elm_Module    Elm_Module;
@@ -170,6 +170,7 @@ void                _elm_ews_wm_rescale(Elm_Theme *th, Eina_Bool use_theme);
 
 void                _elm_win_shutdown(void);
 void                _elm_win_rescale(Elm_Theme *th, Eina_Bool use_theme);
+void                _elm_win_translate(void);
 
 Eina_Bool           _elm_theme_object_set(Evas_Object *parent, Evas_Object *o, const char *clas, const char *group, const char *style);
 Eina_Bool           _elm_theme_object_icon_set(Evas_Object *parent, Evas_Object *o, const char *group, const char *style);

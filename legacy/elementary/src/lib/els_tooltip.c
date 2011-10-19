@@ -565,10 +565,31 @@ _elm_tooltip_label_create(void *data, Evas_Object *obj __UNUSED__, Evas_Object *
    return label;
 }
 
+static Evas_Object *
+_elm_tooltip_trans_label_create(void *data, Evas_Object *obj __UNUSED__, Evas_Object *tooltip)
+{
+   Evas_Object *label = elm_label_add(tooltip);
+   const char **text = data;
+   if (!label)
+     return NULL;
+   elm_object_style_set(label, "tooltip");
+   elm_object_domain_translatable_text_set(label, text[0], text[1]);
+   return label;
+}
+
 static void
 _elm_tooltip_label_del_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    eina_stringshare_del(data);
+}
+
+static void
+_elm_tooltip_trans_label_del_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+   const char **text = data;
+   eina_stringshare_del(text[0]);
+   eina_stringshare_del(text[1]);
+   free(text);
 }
 
 static void
@@ -761,6 +782,24 @@ elm_object_tooltip_text_set(Evas_Object *obj, const char *text)
    text = eina_stringshare_add(text);
    elm_object_tooltip_content_cb_set
      (obj, _elm_tooltip_label_create, text, _elm_tooltip_label_del_cb);
+}
+
+/**
+ */
+EAPI void
+elm_object_tooltip_domain_translatable_text_set(Evas_Object *obj, const char *domain, const char *text)
+{
+   const char **data;
+   EINA_SAFETY_ON_NULL_RETURN(obj);
+   EINA_SAFETY_ON_NULL_RETURN(text);
+
+   data = malloc(2 * sizeof(char *));
+   if (!data) return;
+   data[0] = eina_stringshare_add(domain);
+   data[1] = eina_stringshare_add(text);
+   elm_object_tooltip_content_cb_set
+     (obj, _elm_tooltip_trans_label_create, data,
+      _elm_tooltip_trans_label_del_cb);
 }
 
 /**

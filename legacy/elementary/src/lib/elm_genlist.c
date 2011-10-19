@@ -638,6 +638,12 @@ _show_region_hook(void        *data,
 }
 
 static void
+_translate_hook(Evas_Object *obj)
+{
+   evas_object_smart_callback_call(obj, "language,changed", NULL);
+}
+
+static void
 _sizing_eval(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -3094,6 +3100,7 @@ elm_genlist_add(Evas_Object *parent)
    elm_widget_can_focus_set(obj, EINA_TRUE);
    elm_widget_event_hook_set(obj, _event_hook);
    elm_widget_on_show_region_hook_set(obj, _show_region_hook, obj);
+   elm_widget_translate_hook_set(obj, _translate_hook);
 
    wd->scr = elm_smart_scroller_add(e);
    elm_smart_scroller_widget_set(wd->scr, obj);

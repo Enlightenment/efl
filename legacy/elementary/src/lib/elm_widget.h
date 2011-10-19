@@ -281,6 +281,7 @@ EAPI void             elm_widget_focus_hook_set(Evas_Object *obj, void (*func) (
 EAPI void             elm_widget_activate_hook_set(Evas_Object *obj, void (*func) (Evas_Object *obj));
 EAPI void             elm_widget_disable_hook_set(Evas_Object *obj, void (*func) (Evas_Object *obj));
 EAPI void             elm_widget_theme_hook_set(Evas_Object *obj, void (*func) (Evas_Object *obj));
+EAPI void             elm_widget_translate_hook_set(Evas_Object *obj, void (*func) (Evas_Object *obj));
 EAPI void             elm_widget_event_hook_set(Evas_Object *obj, Eina_Bool (*func) (Evas_Object *obj, Evas_Object *source, Evas_Callback_Type type, void *event_info));
 EAPI void             elm_widget_changed_hook_set(Evas_Object *obj, void (*func) (Evas_Object *obj));
 EAPI void             elm_widget_signal_emit_hook_set(Evas_Object *obj, void (*func) (Evas_Object *obj, const char *emission, const char *source));
@@ -288,6 +289,7 @@ EAPI void             elm_widget_signal_callback_add_hook_set(Evas_Object *obj, 
 EAPI void             elm_widget_signal_callback_del_hook_set(Evas_Object *obj, void (*func) (Evas_Object *obj, const char *emission, const char *source, Edje_Signal_Cb func_cb, void *data));
 EAPI void             elm_widget_theme(Evas_Object *obj);
 EAPI void             elm_widget_theme_specific(Evas_Object *obj, Elm_Theme *th, Eina_Bool force);
+EAPI void             elm_widget_translate(Evas_Object *obj);
 EAPI void             elm_widget_focus_next_hook_set(Evas_Object *obj, Eina_Bool (*func) (const Evas_Object *obj, Elm_Focus_Direction dir, Evas_Object **next));
 EAPI void             elm_widget_on_focus_hook_set(Evas_Object *obj, void (*func) (void *data, Evas_Object *obj), void *data);
 EAPI void             elm_widget_on_change_hook_set(Evas_Object *obj, void (*func) (void *data, Evas_Object *obj), void *data);
@@ -410,6 +412,8 @@ EAPI void             elm_widget_focus_tree_unfocusable_handle(Evas_Object *obj)
 EAPI void             elm_widget_focus_disabled_handle(Evas_Object *obj);
 EAPI void             elm_widget_text_part_set(Evas_Object *obj, const char *part, const char *label);
 EAPI const char      *elm_widget_text_part_get(const Evas_Object *obj, const char *part);
+EAPI void             elm_widget_domain_translatable_text_part_set(Evas_Object *obj, const char *part, const char *domain, const char *text);
+EAPI const char      *elm_widget_translatable_text_part_get(const Evas_Object *obj, const char *part);
 EAPI void             elm_widget_content_part_set(Evas_Object *obj, const char *part, Evas_Object *content);
 EAPI Evas_Object     *elm_widget_content_part_get(const Evas_Object *obj, const char *part);
 EAPI Evas_Object     *elm_widget_content_part_unset(Evas_Object *obj, const char *part);
@@ -422,6 +426,7 @@ EAPI void             _elm_widget_item_del_cb_set(Elm_Widget_Item *item, Evas_Sm
 EAPI void             _elm_widget_item_data_set(Elm_Widget_Item *item, const void *data);
 EAPI void            *_elm_widget_item_data_get(const Elm_Widget_Item *item);
 EAPI void             _elm_widget_item_tooltip_text_set(Elm_Widget_Item *item, const char *text);
+EAPI void             _elm_widget_item_tooltip_translatable_text_set(Elm_Widget_Item *item, const char *text);
 EAPI void             _elm_widget_item_tooltip_content_cb_set(Elm_Widget_Item *item, Elm_Tooltip_Item_Content_Cb func, const void *data, Evas_Smart_Cb del_cb);
 EAPI void             _elm_widget_item_tooltip_unset(Elm_Widget_Item *item);
 EAPI void             _elm_widget_item_tooltip_style_set(Elm_Widget_Item *item, const char *style);
@@ -500,6 +505,12 @@ EAPI void             elm_widget_tree_dot_dump(const Evas_Object *top, FILE *out
  */
 #define elm_widget_item_tooltip_text_set(item, text) \
   _elm_widget_item_tooltip_text_set((Elm_Widget_Item *)item, text)
+/**
+ * Convenience function to set widget item tooltip as a text string.
+ * @see _elm_widget_item_tooltip_text_set()
+ */
+#define elm_widget_item_tooltip_translatable_text_set(item, text) \
+  _elm_widget_item_tooltip_translatable_text_set((Elm_Widget_Item *)item, text)
 /**
  * Convenience function to set widget item tooltip.
  * @see _elm_widget_item_tooltip_content_cb_set()

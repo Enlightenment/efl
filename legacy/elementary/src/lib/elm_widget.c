@@ -19,6 +19,7 @@ static const char SMART_NAME[] = "elm_widget";
 typedef struct _Smart_Data        Smart_Data;
 typedef struct _Edje_Signal_Data  Edje_Signal_Data;
 typedef struct _Elm_Event_Cb_Data Elm_Event_Cb_Data;
+typedef struct _Elm_Translate_String_Data Elm_Translate_String_Data;
 
 struct _Smart_Data
 {
@@ -37,6 +38,7 @@ struct _Smart_Data
    void       (*activate_func)(Evas_Object *obj);
    void       (*disable_func)(Evas_Object *obj);
    void       (*theme_func)(Evas_Object *obj);
+   void       (*translate_func)(Evas_Object *obj);
    Eina_Bool  (*event_func)(Evas_Object       *obj,
                             Evas_Object       *source,
                             Evas_Callback_Type type,
@@ -97,6 +99,7 @@ struct _Smart_Data
    int          child_drag_y_locked;
 
    Eina_List   *edje_signals;
+   Eina_List   *translate_strings;
 
    Eina_Bool    drag_x_locked : 1;
    Eina_Bool    drag_y_locked : 1;
@@ -129,6 +132,13 @@ struct _Elm_Event_Cb_Data
 {
    Elm_Event_Cb func;
    const void  *data;
+};
+
+struct _Elm_Translate_String_Data
+{
+   const char *id;
+   const char *domain;
+   const char *string;
 };
 
 /* local subsystem functions */
@@ -494,6 +504,14 @@ elm_widget_theme_hook_set(Evas_Object *obj,
 {
    API_ENTRY return;
    sd->theme_func = func;
+}
+
+EAPI void
+elm_widget_translate_hook_set(Evas_Object *obj,
+                              void       (*func)(Evas_Object *obj))
+{
+   API_ENTRY return;
+   sd->translate_func = func;
 }
 
 EAPI void
@@ -2244,6 +2262,100 @@ elm_widget_text_part_get(const Evas_Object *obj, const char *part)
 }
 
 EAPI void
+elm_widget_domain_translatable_text_part_set(Evas_Object *obj, const char *part, const char *domain, const char *label)
+{
+   const char *str;
+   Eina_List *l;
+   Elm_Translate_String_Data *ts = NULL;
+   API_ENTRY return;
+
+   str = eina_stringshare_add(part);
+   EINA_LIST_FOREACH(sd->translate_strings, l, ts)
+      if (ts->id == str)
+        break;
+      else
+        ts = NULL;
+
+   if (!ts && !label)
+     eina_stringshare_del(str);
+   else if (!ts)
+     {
+        ts = malloc(sizeof(Elm_Translate_String_Data));
+        if (!ts) return;
+
+        ts->id = str;
+        ts->domain = eina_stringshare_add(domain);
+        ts->string = eina_stringshare_add(label);
+        sd->translate_strings = eina_list_append(sd->translate_strings, ts);
+     }
+   else
+     {
+        if (label)
+          {
+             eina_stringshare_replace(&ts->domain, domain);
+             eina_stringshare_replace(&ts->string, label);
+          }
+        else
+          {
+             sd->translate_strings = eina_list_remove_list(
+                                                sd->translate_strings, l);
+             eina_stringshare_del(ts->id);
+             eina_stringshare_del(ts->domain);
+             eina_stringshare_del(ts->string);
+             free(ts);
+          }
+        eina_stringshare_del(str);
+     }
+
+#ifdef HAVE_GETTEXT
+   if (label && label[0])
+     label = dgettext(domain, label);
+#endif
+   elm_widget_text_part_set(obj, part, label);
+}
+
+EAPI const char *
+elm_widget_translatable_text_part_get(const Evas_Object *obj, const char *part)
+{
+   const char *str, *ret = NULL;
+   Eina_List *l;
+   Elm_Translate_String_Data *ts;
+   API_ENTRY return NULL;
+
+   str = eina_stringshare_add(part);
+   EINA_LIST_FOREACH(sd->translate_strings, l, ts)
+      if (ts->id == str)
+        {
+           ret = ts->string;
+           break;
+        }
+   eina_stringshare_del(str);
+   return ret;
+}
+
+EAPI void
+elm_widget_translate(Evas_Object *obj)
+{
+   const Eina_List *l;
+   Evas_Object *child;
+   Elm_Translate_String_Data *ts;
+
+   API_ENTRY return;
+   EINA_LIST_FOREACH(sd->subobjs, l, child) elm_widget_translate(child);
+   if (sd->resize_obj) elm_widget_translate(sd->resize_obj);
+   if (sd->hover_obj) elm_widget_translate(sd->hover_obj);
+   if (sd->translate_func) sd->translate_func(obj);
+
+#ifdef HAVE_GETTEXT
+   EINA_LIST_FOREACH(sd->translate_strings, l, ts)
+     {
+        const char *s = dgettext(ts->domain, ts->string);
+        elm_widget_text_part_set(obj, ts->id, s);
+     }
+#endif
+}
+
+EAPI void
 elm_widget_content_part_set(Evas_Object *obj, const char *part, Evas_Object *content)
 {
    API_ENTRY return;
@@ -2754,6 +2866,20 @@ _elm_widget_item_tooltip_label_create(void        *data,
    return label;
 }
 
+static Evas_Object *
+_elm_widget_item_tooltip_trans_label_create(void        *data,
+                                            Evas_Object *obj __UNUSED__,
+                                            Evas_Object *tooltip,
+                                            void        *item __UNUSED__)
+{
+   Evas_Object *label = elm_label_add(tooltip);
+   if (!label)
+     return NULL;
+   elm_object_style_set(label, "tooltip");
+   elm_object_translatable_text_set(label, data);
+   return label;
+}
+
 static void
 _elm_widget_item_tooltip_label_del_cb(void        *data,
                                       Evas_Object *obj __UNUSED__,
@@ -2785,6 +2911,19 @@ _elm_widget_item_tooltip_text_set(Elm_Widget_Item *item,
    text = eina_stringshare_add(text);
    _elm_widget_item_tooltip_content_cb_set
      (item, _elm_widget_item_tooltip_label_create, text,
+     _elm_widget_item_tooltip_label_del_cb);
+}
+
+EAPI void
+_elm_widget_item_tooltip_translatable_text_set(Elm_Widget_Item *item,
+                                               const char      *text)
+{
+   ELM_WIDGET_ITEM_CHECK_OR_RETURN(item);
+   EINA_SAFETY_ON_NULL_RETURN(text);
+
+   text = eina_stringshare_add(text);
+   _elm_widget_item_tooltip_content_cb_set
+     (item, _elm_widget_item_tooltip_trans_label_create, text,
      _elm_widget_item_tooltip_label_del_cb);
 }
 
@@ -3255,6 +3394,7 @@ _smart_del(Evas_Object *obj)
 {
    Evas_Object *sobj;
    Edje_Signal_Data *esd;
+   Elm_Translate_String_Data *ts;
 
    INTERNAL_ENTRY
 
@@ -3288,6 +3428,13 @@ _smart_del(Evas_Object *obj)
         eina_stringshare_del(esd->emission);
         eina_stringshare_del(esd->source);
         free(esd);
+     }
+   EINA_LIST_FREE(sd->translate_strings, ts)
+     {
+        eina_stringshare_del(ts->id);
+        eina_stringshare_del(ts->domain);
+        eina_stringshare_del(ts->string);
+        free(ts);
      }
    eina_list_free(sd->event_cb); /* should be empty anyway */
    if (sd->del_func) sd->del_func(obj);

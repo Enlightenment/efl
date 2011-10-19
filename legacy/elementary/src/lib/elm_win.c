@@ -887,6 +887,16 @@ _elm_win_rescale(Elm_Theme *th, Eina_Bool use_theme)
      }
 }
 
+void
+_elm_win_translate(void)
+{
+   const Eina_List *l;
+   Evas_Object *obj;
+
+   EINA_LIST_FOREACH(_elm_win_list, l, obj)
+      elm_widget_translate(obj);
+}
+
 #ifdef HAVE_ELEMENTARY_X
 static Eina_Bool
 _elm_win_client_message(void *data, int type __UNUSED__, void *event)

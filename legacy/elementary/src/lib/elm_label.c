@@ -551,6 +551,12 @@ _elm_label_label_get(const Evas_Object *obj, const char *item)
    return wd->label;
 }
 
+static void
+_translate_hook(Evas_Object *obj)
+{
+   evas_object_smart_callback_call(obj, "language,changed", NULL);
+}
+
 EAPI Evas_Object *
 elm_label_add(Evas_Object *parent)
 {
@@ -569,6 +575,7 @@ elm_label_add(Evas_Object *parent)
    elm_widget_can_focus_set(obj, EINA_FALSE);
    elm_widget_text_set_hook_set(obj, _elm_label_label_set);
    elm_widget_text_get_hook_set(obj, _elm_label_label_get);
+   elm_widget_translate_hook_set(obj, _translate_hook);
 
    wd->bgcolor = EINA_FALSE;
    wd->bg = evas_object_rectangle_add(e);

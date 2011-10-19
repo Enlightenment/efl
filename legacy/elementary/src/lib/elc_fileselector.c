@@ -840,7 +840,7 @@ elm_fileselector_add(Evas_Object *parent)
    bt = elm_button_add(parent);
    elm_widget_mirrored_automatic_set(bt, EINA_FALSE);
    elm_button_icon_set(bt, ic);
-   elm_object_text_set(bt, E_("Up"));
+   elm_object_domain_translatable_text_set(bt, PACKAGE, N_("Up"));
    evas_object_size_hint_align_set(bt, 0.0, 0.0);
 
    evas_object_smart_callback_add(bt, "clicked", _up, obj);
@@ -855,7 +855,7 @@ elm_fileselector_add(Evas_Object *parent)
    bt = elm_button_add(parent);
    elm_widget_mirrored_automatic_set(bt, EINA_FALSE);
    elm_button_icon_set(bt, ic);
-   elm_object_text_set(bt, E_("Home"));
+   elm_object_domain_translatable_text_set(bt, PACKAGE, N_("Home"));
    evas_object_size_hint_align_set(bt, 0.0, 0.0);
 
    evas_object_smart_callback_add(bt, "clicked", _home, obj);
@@ -999,7 +999,7 @@ elm_fileselector_buttons_ok_cancel_set(Evas_Object *obj,
         // cancel btn
         bt = elm_button_add(obj);
         elm_widget_mirrored_automatic_set(bt, EINA_FALSE);
-        elm_object_text_set(bt, E_("Cancel"));
+        elm_object_domain_translatable_text_set(bt, PACKAGE, N_("Cancel"));
 
         evas_object_smart_callback_add(bt, "clicked", _canc, obj);
 
@@ -1009,7 +1009,7 @@ elm_fileselector_buttons_ok_cancel_set(Evas_Object *obj,
         // ok btn
         bt = elm_button_add(obj);
         elm_widget_mirrored_automatic_set(bt, EINA_FALSE);
-        elm_object_text_set(bt, E_("OK"));
+        elm_object_domain_translatable_text_set(bt, PACKAGE, N_("OK"));
 
         evas_object_smart_callback_add(bt, "clicked", _ok, obj);
 
