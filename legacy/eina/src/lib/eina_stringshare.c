@@ -542,7 +542,7 @@ eina_stringshare_del(const char *str)
       return;
 
    /* special cases */
-   if      (str[0] == '\0')
+   if (str[0] == '\0')
       slen = 0;
    else if (str[1] == '\0')
       slen = 1;
