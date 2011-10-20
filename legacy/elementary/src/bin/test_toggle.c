@@ -28,13 +28,14 @@ test_toggle(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    elm_icon_file_set(ic, buf, NULL);
    evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
 
-   tg = elm_toggle_add(win);
+   tg = elm_check_add(win);
+   elm_object_style_set(tg, "toggle");
    evas_object_size_hint_weight_set(tg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(tg, EVAS_HINT_FILL, 0.5);
    elm_object_text_set(tg, "Icon sized to toggle");
-   elm_toggle_icon_set(tg, ic);
-   elm_toggle_state_set(tg, 1);
-   elm_toggle_states_labels_set(tg, "Yes", "No");
+   elm_check_icon_set(tg, ic);
+   elm_check_state_set(tg, 1);
+   elm_check_states_labels_set(tg, "Yes", "No");
    elm_box_pack_end(bx, tg);
    evas_object_show(tg);
    evas_object_show(ic);
@@ -44,9 +45,10 @@ test_toggle(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    elm_icon_file_set(ic, buf, NULL);
    elm_icon_scale_set(ic, 0, 0);
 
-   tg = elm_toggle_add(win);
+   tg = elm_check_add(win);
+   elm_object_style_set(tg, "toggle");
    elm_object_text_set(tg, "Icon no scale");
-   elm_toggle_icon_set(tg, ic);
+   elm_check_icon_set(tg, ic);
    elm_box_pack_end(bx, tg);
    evas_object_show(tg);
    evas_object_show(ic);
@@ -56,17 +58,19 @@ test_toggle(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    elm_icon_file_set(ic, buf, NULL);
    elm_icon_scale_set(ic, 0, 0);
 
-   tg = elm_toggle_add(win);
+   tg = elm_check_add(win);
+   elm_object_style_set(tg, "toggle");
    elm_object_text_set(tg, "Icon no scale");
-   elm_toggle_icon_set(tg, ic);
+   elm_check_icon_set(tg, ic);
    elm_object_disabled_set(tg, 1);
    elm_box_pack_end(bx, tg);
    evas_object_show(tg);
    evas_object_show(ic);
 
-   tg = elm_toggle_add(win);
+   tg = elm_check_add(win);
+   elm_object_style_set(tg, "toggle");
    elm_object_text_set(tg, "Label Only");
-   elm_toggle_states_labels_set(tg, "Big long fun times label",
+   elm_check_states_labels_set(tg, "Big long fun times label",
                                 "Small long happy fun label");
    elm_box_pack_end(bx, tg);
    evas_object_show(tg);
@@ -76,8 +80,9 @@ test_toggle(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    elm_icon_file_set(ic, buf, NULL);
    elm_icon_scale_set(ic, 0, 0);
 
-   tg = elm_toggle_add(win);
-   elm_toggle_icon_set(tg, ic);
+   tg = elm_check_add(win);
+   elm_object_style_set(tg, "toggle");
+   elm_check_icon_set(tg, ic);
    elm_box_pack_end(bx, tg);
    evas_object_show(tg);
    evas_object_show(ic);

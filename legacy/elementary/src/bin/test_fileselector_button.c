@@ -104,26 +104,30 @@ test_fileselector_button(void *data       __UNUSED__,
    elm_box_pack_end(vbox, hbox);
    evas_object_show(hbox);
 
-   bt = elm_toggle_add(win);
+   bt = elm_check_add(win);
+   elm_object_style_set(bt, "toggle");
    elm_object_text_set(bt, "current selection text entry");
    evas_object_smart_callback_add(bt, "changed", _current_sel_toggle, fs_bt);
    elm_box_pack_end(hbox, bt);
    evas_object_show(bt);
 
-   bt = elm_toggle_add(win);
+   bt = elm_check_add(win);
+   elm_object_style_set(bt, "toggle");
    elm_object_text_set(bt, "Inwin mode");
-   elm_toggle_state_set (bt, EINA_TRUE);
+   elm_check_state_set (bt, EINA_TRUE);
    evas_object_smart_callback_add(bt, "changed", _inwin_mode_toggle, fs_bt);
    elm_box_pack_end(hbox, bt);
    evas_object_show(bt);
 
-   bt = elm_toggle_add(win);
+   bt = elm_check_add(win);
+   elm_object_style_set(bt, "toggle");
    elm_object_text_set(bt, "Folder only mode");
    evas_object_smart_callback_add(bt, "changed", _folder_only_toggle, fs_bt);
    elm_box_pack_end(hbox, bt);
    evas_object_show(bt);
 
-   bt = elm_toggle_add(win);
+   bt = elm_check_add(win);
+   elm_object_style_set(bt, "toggle");
    elm_object_text_set(bt, "Expandable mode");
    evas_object_smart_callback_add(bt, "changed", _expandable_toggle, fs_bt);
    elm_box_pack_end(hbox, bt);

@@ -1789,7 +1789,7 @@ test_genlist10(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
 static void
 _reorder_tg_changed_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 {
-   elm_genlist_reorder_mode_set(data, elm_toggle_state_get(obj));
+   elm_genlist_reorder_mode_set(data, elm_check_state_get(obj));
 }
 
 /**
@@ -1850,9 +1850,10 @@ test_genlist11(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
    evas_object_size_hint_weight_set(gl, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_show(gl);
 
-   tg = elm_toggle_add(win);
+   tg = elm_check_add(win);
+   elm_object_style_set(tg, "toggle");
    elm_object_text_set(tg, "Reorder Mode:");
-   elm_toggle_state_set(tg, elm_mirrored_get());
+   elm_check_state_set(tg, elm_mirrored_get());
    evas_object_smart_callback_add(tg, "changed", _reorder_tg_changed_cb, gl);
    elm_box_pack_end(bx, tg);
    evas_object_show(tg);

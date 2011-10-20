@@ -24,22 +24,22 @@ external_toggle_state_set(void *data __UNUSED__, Evas_Object *obj, const void *f
    if (p->label)
      elm_object_text_set(obj, p->label);
    if (p->icon)
-     elm_toggle_icon_set(obj, p->icon);
+     elm_check_icon_set(obj, p->icon);
 
    if ((p->on) && (p->off))
-     elm_toggle_states_labels_set(obj, p->on, p->off);
+     elm_check_states_labels_set(obj, p->on, p->off);
    else if ((p->on) || (p->off))
      {
 	const char *on, *off;
-	elm_toggle_states_labels_get(obj, &on, &off);
+	elm_check_states_labels_get(obj, &on, &off);
 	if (p->on)
-	  elm_toggle_states_labels_set(obj, p->on, off);
+	  elm_check_states_labels_set(obj, p->on, off);
 	else
-	  elm_toggle_states_labels_set(obj, on, p->off);
+	  elm_check_states_labels_set(obj, on, p->off);
      }
 
    if (p->state_exists)
-     elm_toggle_state_set(obj, p->state);
+     elm_check_state_set(obj, p->state);
 }
 
 static Eina_Bool
@@ -59,7 +59,7 @@ external_toggle_param_set(void *data __UNUSED__, Evas_Object *obj, const Edje_Ex
 	  {
 	     Evas_Object *icon = external_common_param_icon_get(obj, param);
 	     if ((strcmp(param->s, "")) && (!icon)) return EINA_FALSE;
-	     elm_toggle_icon_set(obj, icon);
+	     elm_check_icon_set(obj, icon);
 	     return EINA_TRUE;
 	  }
      }
@@ -68,8 +68,8 @@ external_toggle_param_set(void *data __UNUSED__, Evas_Object *obj, const Edje_Ex
 	if (param->type == EDJE_EXTERNAL_PARAM_TYPE_STRING)
 	  {
 	     const char *on, *off;
-	     elm_toggle_states_labels_get(obj, &on, &off);
-	     elm_toggle_states_labels_set(obj, param->s, off);
+	     elm_check_states_labels_get(obj, &on, &off);
+	     elm_check_states_labels_set(obj, param->s, off);
 	     return EINA_TRUE;
 	  }
      }
@@ -78,8 +78,8 @@ external_toggle_param_set(void *data __UNUSED__, Evas_Object *obj, const Edje_Ex
 	if (param->type == EDJE_EXTERNAL_PARAM_TYPE_STRING)
 	  {
 	     const char *on, *off;
-	     elm_toggle_states_labels_get(obj, &on, &off);
-	     elm_toggle_states_labels_set(obj, on, param->s);
+	     elm_check_states_labels_get(obj, &on, &off);
+	     elm_check_states_labels_set(obj, on, param->s);
 	     return EINA_TRUE;
 	  }
      }
@@ -87,7 +87,7 @@ external_toggle_param_set(void *data __UNUSED__, Evas_Object *obj, const Edje_Ex
      {
 	if (param->type == EDJE_EXTERNAL_PARAM_TYPE_BOOL)
 	  {
-	     elm_toggle_state_set(obj, param->i);
+	     elm_check_state_set(obj, param->i);
 	     return EINA_TRUE;
 	  }
      }
@@ -119,7 +119,7 @@ external_toggle_param_get(void *data __UNUSED__, const Evas_Object *obj, Edje_Ex
 	if (param->type == EDJE_EXTERNAL_PARAM_TYPE_STRING)
 	  {
 	     const char *on, *off;
-	     elm_toggle_states_labels_get(obj, &on, &off);
+	     elm_check_states_labels_get(obj, &on, &off);
 	     param->s = on;
 	     return EINA_TRUE;
 	  }
@@ -129,7 +129,7 @@ external_toggle_param_get(void *data __UNUSED__, const Evas_Object *obj, Edje_Ex
 	if (param->type == EDJE_EXTERNAL_PARAM_TYPE_STRING)
 	  {
 	     const char *on, *off;
-	     elm_toggle_states_labels_get(obj, &on, &off);
+	     elm_check_states_labels_get(obj, &on, &off);
 	     param->s = off;
 	     return EINA_TRUE;
 	  }
@@ -138,7 +138,7 @@ external_toggle_param_get(void *data __UNUSED__, const Evas_Object *obj, Edje_Ex
      {
 	if (param->type == EDJE_EXTERNAL_PARAM_TYPE_BOOL)
 	  {
-	     param->i = elm_toggle_state_get(obj);
+	     param->i = elm_check_state_get(obj);
 	     return EINA_TRUE;
 	  }
      }
@@ -209,4 +209,21 @@ static Edje_External_Param_Info external_toggle_params[] = {
 };
 
 DEFINE_EXTERNAL_ICON_ADD(toggle, "toggle")
+#undef DEFINE_EXTERNAL_TYPE_SIMPLE
+#define DEFINE_EXTERNAL_TYPE_SIMPLE(type_name, name)    \
+static Evas_Object *                                \
+external_##type_name##_add(void *data __UNUSED__, Evas *evas __UNUSED__, Evas_Object *edje, const Eina_List *params __UNUSED__, const char *part_name) \
+{									\
+   Evas_Object *parent, *obj;						\
+   external_elm_init();                                                 \
+   parent = elm_widget_parent_widget_get(edje);			\
+   if (!parent) parent = edje;						\
+   obj = elm_check_add(parent);				\
+   elm_object_style_set(obj, "toggle"); \
+   external_signals_proxy(obj, edje, part_name);			\
+   return obj;								\
+}									\
+									\
+DEFINE_EXTERNAL_TYPE(type_name, name)
+
 DEFINE_EXTERNAL_TYPE_SIMPLE(toggle, "Toggle")
