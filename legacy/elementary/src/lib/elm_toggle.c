@@ -15,13 +15,13 @@ elm_toggle_add(Evas_Object *parent)
 EAPI void
 elm_toggle_label_set(Evas_Object *obj, const char *label)
 {
-   elm_check_label_set(obj, label);
+   elm_object_text_set(obj, label);
 }
 
 EAPI const char *
 elm_toggle_label_get(const Evas_Object *obj)
 {
-   return elm_check_label_get(obj);
+   return elm_object_text_get(obj);
 }
 
 EAPI void
@@ -51,7 +51,7 @@ elm_toggle_states_labels_set(Evas_Object *obj, const char *onlabel, const char *
 EAPI void
 elm_toggle_states_labels_get(const Evas_Object *obj, const char **onlabel, const char **offlabel)
 {
-   elm_check_states_labels_set(obj, onlabel, offlabel);
+   elm_check_states_labels_get(obj, onlabel, offlabel);
 }
 
 EAPI void
