@@ -19,7 +19,7 @@
    Elm_Widget_Item               base;
    EINA_INLIST;
    Evas_Object                  *spacer;
-   const Elm_Gengrid_Item_Class *gic;
+   const Elm_Gengrid_Item_Class *itc;
    Elm_Gengrid_Item             *parent;
    Ecore_Timer                  *long_timer;
    Ecore_Animator               *item_moving_effect_timer;
@@ -958,7 +958,7 @@ _item_realize(Elm_Gengrid_Item *it)
    evas_object_smart_member_add(it->base.view, it->wd->pan_smart);
    elm_widget_sub_object_add(it->wd->self, it->base.view);
    snprintf(style, sizeof(style), "it/%s",
-            it->gic->item_style ? it->gic->item_style : "default");
+            it->itc->item_style ? it->itc->item_style : "default");
    _elm_theme_object_set(it->wd->self, it->base.view, "gengrid", style,
                          elm_widget_style_get(it->wd->self));
    it->spacer =
@@ -968,7 +968,7 @@ _item_realize(Elm_Gengrid_Item *it)
    evas_object_size_hint_min_set(it->spacer, 2 * _elm_config->scale, 1);
    edje_object_part_swallow(it->base.view, "elm.swallow.pad", it->spacer);
 
-   if (it->gic->func.label_get)
+   if (it->itc->func.label_get)
      {
         const Eina_List *l;
         const char *key;
@@ -978,7 +978,7 @@ _item_realize(Elm_Gengrid_Item *it)
                                                           "labels"));
         EINA_LIST_FOREACH(it->labels, l, key)
           {
-             char *s = it->gic->func.label_get
+             char *s = it->itc->func.label_get
                 ((void *)it->base.data, it->wd->self, l->data);
              if (s)
                {
@@ -988,7 +988,7 @@ _item_realize(Elm_Gengrid_Item *it)
           }
      }
 
-   if (it->gic->func.icon_get)
+   if (it->itc->func.icon_get)
      {
         const Eina_List *l;
         const char *key;
@@ -998,7 +998,7 @@ _item_realize(Elm_Gengrid_Item *it)
                                                           "icons"));
         EINA_LIST_FOREACH(it->icons, l, key)
           {
-             Evas_Object *ic = it->gic->func.icon_get
+             Evas_Object *ic = it->itc->func.icon_get
                 ((void *)it->base.data, it->wd->self, l->data);
              if (ic)
                {
@@ -1010,7 +1010,7 @@ _item_realize(Elm_Gengrid_Item *it)
           }
      }
 
-   if (it->gic->func.state_get)
+   if (it->itc->func.state_get)
      {
         const Eina_List *l;
         const char *key;
@@ -1020,7 +1020,7 @@ _item_realize(Elm_Gengrid_Item *it)
                                                           "states"));
         EINA_LIST_FOREACH(it->states, l, key)
           {
-             Eina_Bool on = it->gic->func.state_get
+             Eina_Bool on = it->itc->func.state_get
                 ((void *)it->base.data, it->wd->self, l->data);
              if (on)
                {
@@ -1483,13 +1483,13 @@ _item_place(Elm_Gengrid_Item *it,
 static const char *
 _item_label_hook(Elm_Gengrid_Item *it, const char *part)
 {
-   if (!it->gic->func.label_get) return NULL;
+   if (!it->itc->func.label_get) return NULL;
    return edje_object_part_text_get(it->base.view, part);
 }
 
 static Elm_Gengrid_Item *
 _item_create(Widget_Data                  *wd,
-             const Elm_Gengrid_Item_Class *gic,
+             const Elm_Gengrid_Item_Class *itc,
              const void                   *data,
              Evas_Smart_Cb                 func,
              const void                   *func_data)
@@ -1500,12 +1500,12 @@ _item_create(Widget_Data                  *wd,
    if (!it) return NULL;
    wd->count++;
    it->wd = wd;
-   it->gic = gic;
+   it->itc = itc;
    it->base.data = data;
    it->func.func = func;
    it->func.data = func_data;
    it->mouse_cursor = NULL;
-   it->is_group = !strcmp(it->gic->item_style, "group_index");
+   it->is_group = !strcmp(it->itc->item_style, "group_index");
    elm_widget_item_text_get_hook_set(it, _item_label_hook);
 
    return it;
@@ -1518,8 +1518,8 @@ _item_del(Elm_Gengrid_Item *it)
    if (it->selected)
      it->wd->selected = eina_list_remove(it->wd->selected, it);
    if (it->realized) _item_unrealize(it);
-   if ((!it->delete_me) && (it->gic->func.del))
-     it->gic->func.del((void *)it->base.data, it->wd->self);
+   if ((!it->delete_me) && (it->itc->func.del))
+     it->itc->func.del((void *)it->base.data, it->wd->self);
    it->delete_me = EINA_TRUE;
    it->wd->items = eina_inlist_remove(it->wd->items, EINA_INLIST_GET(it));
    if (it->long_timer) ecore_timer_del(it->long_timer);
@@ -2150,7 +2150,7 @@ elm_gengrid_align_get(const Evas_Object *obj,
 
 EAPI Elm_Gengrid_Item *
 elm_gengrid_item_append(Evas_Object                  *obj,
-                        const Elm_Gengrid_Item_Class *gic,
+                        const Elm_Gengrid_Item_Class *itc,
                         const void                   *data,
                         Evas_Smart_Cb                 func,
                         const void                   *func_data)
@@ -2160,7 +2160,7 @@ elm_gengrid_item_append(Evas_Object                  *obj,
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return NULL;
 
-   it = _item_create(wd, gic, data, func, func_data);
+   it = _item_create(wd, itc, data, func, func_data);
    if (!it) return NULL;
    wd->items = eina_inlist_append(wd->items, EINA_INLIST_GET(it));
 
@@ -2175,7 +2175,7 @@ elm_gengrid_item_append(Evas_Object                  *obj,
 
 EAPI Elm_Gengrid_Item *
 elm_gengrid_item_prepend(Evas_Object                  *obj,
-                         const Elm_Gengrid_Item_Class *gic,
+                         const Elm_Gengrid_Item_Class *itc,
                          const void                   *data,
                          Evas_Smart_Cb                 func,
                          const void                   *func_data)
@@ -2185,7 +2185,7 @@ elm_gengrid_item_prepend(Evas_Object                  *obj,
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return NULL;
 
-   it = _item_create(wd, gic, data, func, func_data);
+   it = _item_create(wd, itc, data, func, func_data);
    if (!it) return NULL;
    wd->items = eina_inlist_prepend(wd->items, EINA_INLIST_GET(it));
    if (it->is_group)
@@ -2199,7 +2199,7 @@ elm_gengrid_item_prepend(Evas_Object                  *obj,
 
 EAPI Elm_Gengrid_Item *
 elm_gengrid_item_insert_before(Evas_Object                  *obj,
-                               const Elm_Gengrid_Item_Class *gic,
+                               const Elm_Gengrid_Item_Class *itc,
                                const void                   *data,
                                Elm_Gengrid_Item             *relative,
                                Evas_Smart_Cb                 func,
@@ -2211,7 +2211,7 @@ elm_gengrid_item_insert_before(Evas_Object                  *obj,
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return NULL;
 
-   it = _item_create(wd, gic, data, func, func_data);
+   it = _item_create(wd, itc, data, func, func_data);
    if (!it) return NULL;
    wd->items = eina_inlist_prepend_relative
       (wd->items, EINA_INLIST_GET(it), EINA_INLIST_GET(relative));
@@ -2226,7 +2226,7 @@ elm_gengrid_item_insert_before(Evas_Object                  *obj,
 
 EAPI Elm_Gengrid_Item *
 elm_gengrid_item_insert_after(Evas_Object                  *obj,
-                              const Elm_Gengrid_Item_Class *gic,
+                              const Elm_Gengrid_Item_Class *itc,
                               const void                   *data,
                               Elm_Gengrid_Item             *relative,
                               Evas_Smart_Cb                 func,
@@ -2238,7 +2238,7 @@ elm_gengrid_item_insert_after(Evas_Object                  *obj,
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return NULL;
 
-   it = _item_create(wd, gic, data, func, func_data);
+   it = _item_create(wd, itc, data, func, func_data);
    if (!it) return NULL;
    wd->items = eina_inlist_append_relative
       (wd->items, EINA_INLIST_GET(it), EINA_INLIST_GET(relative));
@@ -2253,7 +2253,7 @@ elm_gengrid_item_insert_after(Evas_Object                  *obj,
 
 EAPI Elm_Gengrid_Item *
 elm_gengrid_item_direct_sorted_insert(Evas_Object                  *obj,
-				      const Elm_Gengrid_Item_Class *gic,
+				      const Elm_Gengrid_Item_Class *itc,
 				      const void                   *data,
 				      Eina_Compare_Cb               comp,
 				      Evas_Smart_Cb                 func,
@@ -2264,7 +2264,7 @@ elm_gengrid_item_direct_sorted_insert(Evas_Object                  *obj,
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return NULL;
 
-   it = _item_create(wd, gic, data, func, func_data);
+   it = _item_create(wd, itc, data, func, func_data);
    if (!it) return NULL;
 
    if (!wd->state)
@@ -2281,7 +2281,7 @@ elm_gengrid_item_direct_sorted_insert(Evas_Object                  *obj,
 
 EAPI Elm_Gengrid_Item *
 elm_gengrid_item_sorted_insert(Evas_Object                  *obj,
-                               const Elm_Gengrid_Item_Class *gic,
+                               const Elm_Gengrid_Item_Class *itc,
                                const void                   *data,
                                Eina_Compare_Cb               comp,
                                Evas_Smart_Cb                 func,
@@ -2289,7 +2289,7 @@ elm_gengrid_item_sorted_insert(Evas_Object                  *obj,
 {
    _elm_gengrid_item_compare_data_cb = comp;
 
-   return elm_gengrid_item_direct_sorted_insert(obj, gic, data, _elm_gengrid_item_compare_data, func, func_data);
+   return elm_gengrid_item_direct_sorted_insert(obj, itc, data, _elm_gengrid_item_compare_data, func, func_data);
 }
 
 EAPI void
@@ -2302,8 +2302,8 @@ elm_gengrid_item_del(Elm_Gengrid_Item *it)
         elm_widget_item_pre_notify_del(it);
         if (it->selected)
           it->wd->selected = eina_list_remove(it->wd->selected, it);
-        if (it->gic->func.del)
-          it->gic->func.del((void *)it->base.data, it->wd->self);
+        if (it->itc->func.del)
+          it->itc->func.del((void *)it->base.data, it->wd->self);
         return;
      }
 
@@ -2368,8 +2368,8 @@ elm_gengrid_clear(Evas_Object *obj)
         wd->items = eina_inlist_remove(wd->items, wd->items);
         elm_widget_item_pre_notify_del(it);
         if (it->realized) _item_unrealize(it);
-        if (it->gic->func.del)
-          it->gic->func.del((void *)it->base.data, wd->self);
+        if (it->itc->func.del)
+          it->itc->func.del((void *)it->base.data, wd->self);
         if (it->long_timer) ecore_timer_del(it->long_timer);
         elm_widget_item_del(it);
      }
@@ -2427,17 +2427,17 @@ elm_gengrid_item_item_class_get(const Elm_Gengrid_Item *it)
 {
    ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(it, NULL);
    if (it->delete_me) return NULL;
-   return it->gic;
+   return it->itc;
 }
 
 EAPI void
 elm_gengrid_item_item_class_set(Elm_Gengrid_Item *it,
-                                const Elm_Gengrid_Item_Class *gic)
+                                const Elm_Gengrid_Item_Class *itc)
 {
    ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(it);
-   EINA_SAFETY_ON_NULL_RETURN(gic);
+   EINA_SAFETY_ON_NULL_RETURN(itc);
    if (it->delete_me) return;
-   it->gic = gic;
+   it->itc = itc;
    elm_gengrid_item_update(it);
 }
 
