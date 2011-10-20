@@ -9,6 +9,7 @@ struct _Widget_Data
    Eina_Bool state;
    Eina_Bool *statep;
    const char *label;
+   const char *ontext, *offtext;
 };
 
 static const char *widtype = NULL;
@@ -57,6 +58,8 @@ _del_hook(Evas_Object *obj)
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
    if (wd->label) eina_stringshare_del(wd->label);
+   if (wd->ontext) eina_stringshare_del(wd->ontext);
+   if (wd->offtext) eina_stringshare_del(wd->offtext);
    free(wd);
 }
 
@@ -98,14 +101,22 @@ _theme_hook(Evas_Object *obj)
    else
      edje_object_signal_emit(wd->chk, "elm,state,icon,hidden", "elm");
    if (wd->state)
-     edje_object_signal_emit(wd->chk, "elm,state,check,on", "elm");
+     {
+        edje_object_signal_emit(wd->chk, "elm,state,check,on", "elm");
+        edje_object_signal_emit(wd->chk, "elm,state,toggle,on", "elm");
+     }
    else
-     edje_object_signal_emit(wd->chk, "elm,state,check,off", "elm");
+     {
+        edje_object_signal_emit(wd->chk, "elm,state,check,off", "elm");
+        edje_object_signal_emit(wd->chk, "elm,state,toggle,off", "elm");
+     }
    if (wd->label)
      edje_object_signal_emit(wd->chk, "elm,state,text,visible", "elm");
    else
      edje_object_signal_emit(wd->chk, "elm,state,text,hidden", "elm");
    edje_object_part_text_set(wd->chk, "elm.text", wd->label);
+   edje_object_part_text_set(wd->chk, "elm.ontext", wd->ontext);
+   edje_object_part_text_set(wd->chk, "elm.offtext", wd->offtext);
    if (elm_widget_disabled_get(obj))
      edje_object_signal_emit(wd->chk, "elm,state,disabled", "elm");
    edje_object_message_signal_process(wd->chk);
@@ -143,8 +154,6 @@ _changed_size_hints(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *even
    Widget_Data *wd = elm_widget_data_get(data);
    if (!wd) return;
    if (obj != wd->icon) return;
-   Evas_Coord mw, mh;
-   evas_object_size_hint_min_get(obj, &mw, &mh);
    _sizing_eval(data);
 }
 
@@ -173,6 +182,7 @@ _signal_check_off(void *data, Evas_Object *obj __UNUSED__, const char *emission 
    wd->state = EINA_FALSE;
    if (wd->statep) *wd->statep = wd->state;
    edje_object_signal_emit(wd->chk, "elm,state,check,off", "elm");
+   edje_object_signal_emit(wd->chk, "elm,state,toggle,off", "elm");
    evas_object_smart_callback_call(data, SIG_CHANGED, NULL);
 }
 
@@ -184,6 +194,7 @@ _signal_check_on(void *data, Evas_Object *obj __UNUSED__, const char *emission _
    wd->state = EINA_TRUE;
    if (wd->statep) *wd->statep = wd->state;
    edje_object_signal_emit(wd->chk, "elm,state,check,on", "elm");
+   edje_object_signal_emit(wd->chk, "elm,state,toggle,on", "elm");
    evas_object_smart_callback_call(data, SIG_CHANGED, NULL);
 }
 
@@ -213,13 +224,27 @@ _activate(Evas_Object *obj)
           {
              edje_object_signal_emit(wd->chk, "elm,state,check,on", "elm");
              if (_elm_config->access_mode != ELM_ACCESS_MODE_OFF)
-                _elm_access_say(E_("State: On"));
+               {
+                  if (!wd->ontext)
+                    {
+                       _elm_access_say(E_("State: On"));
+                    }
+                  else
+                     _elm_access_say(E_("State: On"));
+               }
           }
         else
           {
              edje_object_signal_emit(wd->chk, "elm,state,check,off", "elm");
              if (_elm_config->access_mode != ELM_ACCESS_MODE_OFF)
-                _elm_access_say(E_("State: Off"));
+               {
+                  if (!wd->offtext)
+                    {
+                       _elm_access_say(E_("State: Off"));
+                    }
+                  else
+                     _elm_access_say(E_("State: Off"));
+               }
           }
         evas_object_smart_callback_call(obj, SIG_CHANGED, NULL);
      }
@@ -230,15 +255,27 @@ _elm_check_label_set(Evas_Object *obj, const char *item, const char *label)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
-   if (item && strcmp(item, "default")) return;
    if (!wd) return;
-   eina_stringshare_replace(&wd->label, label);
-   if (label)
-     edje_object_signal_emit(wd->chk, "elm,state,text,visible", "elm");
-   else
-     edje_object_signal_emit(wd->chk, "elm,state,text,hidden", "elm");
-   edje_object_message_signal_process(wd->chk);
-   edje_object_part_text_set(wd->chk, "elm.text", label);
+   if ((!item) || (!strcmp(item, "default")))
+     {
+        eina_stringshare_replace(&wd->label, label);
+        if (label)
+           edje_object_signal_emit(wd->chk, "elm,state,text,visible", "elm");
+        else
+           edje_object_signal_emit(wd->chk, "elm,state,text,hidden", "elm");
+        edje_object_message_signal_process(wd->chk);
+        edje_object_part_text_set(wd->chk, "elm.text", label);
+     }
+   else if ((item) && (!strcmp(item, "on")))
+     {
+        eina_stringshare_replace(&wd->ontext, label);
+        edje_object_part_text_set(wd->chk, "elm.ontext", wd->ontext);
+     }
+   else if ((item) && (!strcmp(item, "off")))
+     {
+        eina_stringshare_replace(&wd->offtext, label);
+        edje_object_part_text_set(wd->chk, "elm.offtext", wd->offtext);
+     }
    _sizing_eval(obj);
 }
 
@@ -247,9 +284,14 @@ _elm_check_label_get(const Evas_Object *obj, const char *item)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd = elm_widget_data_get(obj);
-   if (item && strcmp(item, "default")) return NULL;
    if (!wd) return NULL;
-   return wd->label;
+   if ((!item) || (!strcmp(item, "default")))
+      return wd->label;
+   else if ((item) && (!strcmp(item, "on")))
+      return wd->ontext;
+   else if ((item) && (!strcmp(item, "off")))
+      return wd->offtext;
+   return NULL;
 }
 
 static char *
@@ -270,7 +312,24 @@ _access_state_cb(void *data, Evas_Object *obj, Elm_Widget_Item *item __UNUSED__)
    if (elm_widget_disabled_get(obj))
      return strdup(E_("State: Disabled"));
    if (wd->state)
-     return strdup(E_("State: On"));
+     {
+        if (wd->ontext)
+          {
+             char buf[1024];
+             
+             snprintf(buf, sizeof(buf), "%s: %s", E_("State"), wd->ontext);
+             return strdup(buf);
+          }
+        else
+           return strdup(E_("State: On"));
+     }
+   if (wd->offtext)
+     {
+        char buf[1024];
+        
+        snprintf(buf, sizeof(buf), "%s: %s", E_("State"), wd->offtext);
+        return strdup(buf);
+     }
    return strdup(E_("State: Off"));
 }
 
@@ -339,6 +398,20 @@ elm_check_label_get(const Evas_Object *obj)
 }
 
 EAPI void
+elm_check_states_labels_set(Evas_Object *obj, const char *ontext, const char *offtext)
+{
+   _elm_check_label_set(obj, "on", ontext);
+   _elm_check_label_set(obj, "off", offtext);
+}
+
+EAPI void
+elm_check_states_labels_get(const Evas_Object *obj, const char **ontext, const char **offtext)
+{
+   if (ontext) *ontext = _elm_check_label_get(obj, "on");
+   if (offtext) *offtext = _elm_check_label_get(obj, "off");
+}
+
+EAPI void
 elm_check_icon_set(Evas_Object *obj, Evas_Object *icon)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
@@ -393,9 +466,15 @@ elm_check_state_set(Evas_Object *obj, Eina_Bool state)
         wd->state = state;
         if (wd->statep) *wd->statep = wd->state;
         if (wd->state)
-          edje_object_signal_emit(wd->chk, "elm,state,check,on", "elm");
+          {
+             edje_object_signal_emit(wd->chk, "elm,state,check,on", "elm");
+             edje_object_signal_emit(wd->chk, "elm,state,toggle,on", "elm");
+          }
         else
-          edje_object_signal_emit(wd->chk, "elm,state,check,off", "elm");
+          {
+             edje_object_signal_emit(wd->chk, "elm,state,check,off", "elm");
+             edje_object_signal_emit(wd->chk, "elm,state,toggle,off", "elm");
+          }
      }
    edje_object_message_signal_process(wd->chk);
 }
@@ -422,9 +501,15 @@ elm_check_state_pointer_set(Evas_Object *obj, Eina_Bool *statep)
           {
              wd->state = *wd->statep;
              if (wd->state)
-               edje_object_signal_emit(wd->chk, "elm,state,check,on", "elm");
+               {
+                  edje_object_signal_emit(wd->chk, "elm,state,check,on", "elm");
+                  edje_object_signal_emit(wd->chk, "elm,state,toggle,on", "elm");
+               }
              else
-               edje_object_signal_emit(wd->chk, "elm,state,check,off", "elm");
+               {
+                  edje_object_signal_emit(wd->chk, "elm,state,check,off", "elm");
+                  edje_object_signal_emit(wd->chk, "elm,state,toggle,off", "elm");
+               }
           }
      }
    else
