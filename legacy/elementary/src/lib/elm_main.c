@@ -553,7 +553,9 @@ elm_quicklaunch_seed(void)
 #endif
 }
 
+#ifdef HAVE_FORK
 static void *qr_handle = NULL;
+#endif
 static int (*qr_main)(int    argc,
                       char **argv) = NULL;
 
