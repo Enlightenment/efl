@@ -19611,6 +19611,7 @@ extern "C" {
     */
    EAPI void         elm_check_state_pointer_set(Evas_Object *obj, Eina_Bool *statep) EINA_ARG_NONNULL(1);
    EAPI void         elm_check_states_labels_set(Evas_Object *obj, const char *ontext, const char *offtext) EINA_ARG_NONNULL(1,2,3);
+   EAPI void         elm_check_states_labels_get(const Evas_Object *obj, const char **ontext, const char **offtext) EINA_ARG_NONNULL(1,2,3);
 
    /**
     * @}
