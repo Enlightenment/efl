@@ -3131,7 +3131,8 @@ ecore_evas_gl_x11_options_new(const char *disp_name, Ecore_X_Window parent,
    ee->engine.func = (Ecore_Evas_Engine_Func *)&_ecore_x_engine_func;
 
    ee->driver = "opengl_x11";
-   ee->semi_sync = 1; // gl engine doesn't need to sync - its whole swaps
+   if (!getenv("ECORE_EVAS_COMP_NOSEMISYNC"))
+      ee->semi_sync = 1; // gl engine doesn't need to sync - its whole swaps
 //   ee->no_comp_sync = 1; // gl engine doesn't need to sync - its whole swaps
    if (disp_name) ee->name = strdup(disp_name);
 
