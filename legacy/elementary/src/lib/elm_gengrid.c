@@ -325,8 +325,7 @@ _event_hook(Evas_Object       *obj,
         ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
         return EINA_TRUE;
      }
-   else if ((!strcmp(ev->keyname, "Prior")) ||
-            (!strcmp(ev->keyname, "KP_Prior")))
+   else if ((!strcmp(ev->keyname, "Prior")) || (!strcmp(ev->keyname, "KP_Prior")))
      {
         if (wd->horizontal)
           {

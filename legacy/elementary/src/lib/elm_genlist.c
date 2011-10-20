@@ -354,8 +354,7 @@ _event_hook(Evas_Object       *obj,
      {
         x -= step_x;
      }
-   else if ((!strcmp(ev->keyname, "Right")) ||
-            (!strcmp(ev->keyname, "KP_Right")))
+   else if ((!strcmp(ev->keyname, "Right")) || (!strcmp(ev->keyname, "KP_Right")))
      {
         x += step_x;
      }
@@ -383,37 +382,39 @@ _event_hook(Evas_Object       *obj,
         else
           y += step_y;
      }
-   else if ((!strcmp(ev->keyname, "Home")) ||
-            (!strcmp(ev->keyname, "KP_Home")))
+   else if ((!strcmp(ev->keyname, "Home")) || (!strcmp(ev->keyname, "KP_Home")))
      {
         it = elm_genlist_first_item_get(obj);
         elm_genlist_item_bring_in(it);
         ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
         return EINA_TRUE;
      }
-   else if ((!strcmp(ev->keyname, "End")) ||
-            (!strcmp(ev->keyname, "KP_End")))
+   else if ((!strcmp(ev->keyname, "End")) || (!strcmp(ev->keyname, "KP_End")))
      {
         it = elm_genlist_last_item_get(obj);
         elm_genlist_item_bring_in(it);
         ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
         return EINA_TRUE;
      }
-   else if ((!strcmp(ev->keyname, "Prior")) ||
-            (!strcmp(ev->keyname, "KP_Prior")))
+   else if ((!strcmp(ev->keyname, "Prior")) || (!strcmp(ev->keyname, "KP_Prior")))
      {
         if (page_y < 0)
           y -= -(page_y * v_h) / 100;
         else
           y -= page_y;
      }
-   else if ((!strcmp(ev->keyname, "Next")) ||
-            (!strcmp(ev->keyname, "KP_Next")))
+   else if ((!strcmp(ev->keyname, "Next")) || (!strcmp(ev->keyname, "KP_Next")))
      {
         if (page_y < 0)
           y += -(page_y * v_h) / 100;
         else
           y += page_y;
+     }
+   else if (!strcmp(ev->keyname, "Escape"))
+     {
+        if (!_deselect_all_items(wd)) return EINA_FALSE;
+        ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
+        return EINA_TRUE;
      }
    else if (((!strcmp(ev->keyname, "Return")) ||
             (!strcmp(ev->keyname, "KP_Enter")) ||
@@ -424,12 +425,6 @@ _event_hook(Evas_Object       *obj,
         elm_genlist_item_expanded_set(it,
                                       !elm_genlist_item_expanded_get(it));
         evas_object_smart_callback_call(it->base.widget, SIG_ACTIVATED, it);
-     }
-   else if (!strcmp(ev->keyname, "Escape"))
-     {
-        if (!_deselect_all_items(wd)) return EINA_FALSE;
-        ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
-        return EINA_TRUE;
      }
    else return EINA_FALSE;
 
