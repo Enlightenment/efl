@@ -261,10 +261,14 @@ static const char SIG_SCROLL_ANIM_START[] = "scroll,anim,start";
 static const char SIG_SCROLL_ANIM_STOP[] = "scroll,anim,stop";
 static const char SIG_SCROLL_DRAG_START[] = "scroll,drag,start";
 static const char SIG_SCROLL_DRAG_STOP[] = "scroll,drag,stop";
-static const char SIG_SCROLL_EDGE_TOP[] = "scroll,edge,top";
-static const char SIG_SCROLL_EDGE_BOTTOM[] = "scroll,edge,bottom";
-static const char SIG_SCROLL_EDGE_LEFT[] = "scroll,edge,left";
-static const char SIG_SCROLL_EDGE_RIGHT[] = "scroll,edge,right";
+static const char SIG_SCROLL_EDGE_TOP[] = "scroll,edge,top"; // TODO : remove this 
+static const char SIG_SCROLL_EDGE_BOTTOM[] = "scroll,edge,bottom"; // TODO : remove this 
+static const char SIG_SCROLL_EDGE_LEFT[] = "scroll,edge,left"; // TODO : remove this 
+static const char SIG_SCROLL_EDGE_RIGHT[] = "scroll,edge,right"; // TODO : remove this 
+static const char SIG_EDGE_TOP[] = "edge,top";
+static const char SIG_EDGE_BOTTOM[] = "edge,bottom";
+static const char SIG_EDGE_LEFT[] = "edge,left";
+static const char SIG_EDGE_RIGHT[] = "edge,right";
 static const char SIG_MULTI_SWIPE_LEFT[] = "multi,swipe,left";
 static const char SIG_MULTI_SWIPE_RIGHT[] = "multi,swipe,right";
 static const char SIG_MULTI_SWIPE_UP[] = "multi,swipe,up";
@@ -299,6 +303,10 @@ static const Evas_Smart_Cb_Description _signals[] = {
    {SIG_SCROLL_EDGE_BOTTOM, ""},
    {SIG_SCROLL_EDGE_LEFT, ""},
    {SIG_SCROLL_EDGE_RIGHT, ""},
+   {SIG_EDGE_TOP, ""},
+   {SIG_EDGE_BOTTOM, ""},
+   {SIG_EDGE_LEFT, ""},
+   {SIG_EDGE_RIGHT, ""},
    {SIG_MULTI_SWIPE_LEFT, ""},
    {SIG_MULTI_SWIPE_RIGHT, ""},
    {SIG_MULTI_SWIPE_UP, ""},
@@ -2871,39 +2879,43 @@ _scr_drag_stop(void            *data,
 }
 
 static void
-_scroll_edge_left(void        *data,
-                  Evas_Object *scr __UNUSED__,
-                  void        *event_info __UNUSED__)
+_edge_left(void        *data,
+           Evas_Object *scr __UNUSED__,
+           void        *event_info __UNUSED__)
 {
    Evas_Object *obj = data;
    evas_object_smart_callback_call(obj, SIG_SCROLL_EDGE_LEFT, NULL);
+   evas_object_smart_callback_call(obj, SIG_EDGE_LEFT, NULL);
 }
 
 static void
-_scroll_edge_right(void        *data,
-                   Evas_Object *scr __UNUSED__,
-                   void        *event_info __UNUSED__)
+_edge_right(void        *data,
+            Evas_Object *scr __UNUSED__,
+            void        *event_info __UNUSED__)
 {
    Evas_Object *obj = data;
    evas_object_smart_callback_call(obj, SIG_SCROLL_EDGE_RIGHT, NULL);
+   evas_object_smart_callback_call(obj, SIG_EDGE_RIGHT, NULL);
 }
 
 static void
-_scroll_edge_top(void        *data,
-                 Evas_Object *scr __UNUSED__,
-                 void        *event_info __UNUSED__)
+_edge_top(void        *data,
+          Evas_Object *scr __UNUSED__,
+          void        *event_info __UNUSED__)
 {
    Evas_Object *obj = data;
    evas_object_smart_callback_call(obj, SIG_SCROLL_EDGE_TOP, NULL);
+   evas_object_smart_callback_call(obj, SIG_EDGE_TOP, NULL);
 }
 
 static void
-_scroll_edge_bottom(void        *data,
-                    Evas_Object *scr __UNUSED__,
-                    void        *event_info __UNUSED__)
+_edge_bottom(void        *data,
+             Evas_Object *scr __UNUSED__,
+             void        *event_info __UNUSED__)
 {
    Evas_Object *obj = data;
    evas_object_smart_callback_call(obj, SIG_SCROLL_EDGE_BOTTOM, NULL);
+   evas_object_smart_callback_call(obj, SIG_EDGE_BOTTOM, NULL);
 }
 
 static void
@@ -3114,12 +3126,10 @@ elm_genlist_add(Evas_Object *parent)
    evas_object_smart_callback_add(wd->scr, "animate,stop", _scr_anim_stop, obj);
    evas_object_smart_callback_add(wd->scr, "drag,start", _scr_drag_start, obj);
    evas_object_smart_callback_add(wd->scr, "drag,stop", _scr_drag_stop, obj);
-   evas_object_smart_callback_add(wd->scr, "edge,left", _scroll_edge_left, obj);
-   evas_object_smart_callback_add(wd->scr, "edge,right", _scroll_edge_right,
-                                  obj);
-   evas_object_smart_callback_add(wd->scr, "edge,top", _scroll_edge_top, obj);
-   evas_object_smart_callback_add(wd->scr, "edge,bottom", _scroll_edge_bottom,
-                                  obj);
+   evas_object_smart_callback_add(wd->scr, "edge,left", _edge_left, obj);
+   evas_object_smart_callback_add(wd->scr, "edge,right", _edge_right, obj);
+   evas_object_smart_callback_add(wd->scr, "edge,top", _edge_top, obj);
+   evas_object_smart_callback_add(wd->scr, "edge,bottom", _edge_bottom, obj);
 
    wd->obj = obj;
    wd->mode = ELM_LIST_SCROLL;

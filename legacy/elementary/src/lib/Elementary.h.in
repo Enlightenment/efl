@@ -8093,13 +8093,13 @@ extern "C" {
     *   started.
     * - @c "scroll,drag,stop" - called when dragging the content has
     *   stopped.
-    * - @c "scroll,edge,top" - This is called when the gengrid is scrolled until
+    * - @c "edge,top" - This is called when the gengrid is scrolled until
     *   the top edge.
-    * - @c "scroll,edge,bottom" - This is called when the gengrid is scrolled
+    * - @c "edge,bottom" - This is called when the gengrid is scrolled
     *   until the bottom edge.
-    * - @c "scroll,edge,left" - This is called when the gengrid is scrolled
+    * - @c "edge,left" - This is called when the gengrid is scrolled
     *   until the left edge.
-    * - @c "scroll,edge,right" - This is called when the gengrid is scrolled
+    * - @c "edge,right" - This is called when the gengrid is scrolled
     *   until the right edge.
     *
     * List of gengrid examples:
@@ -15944,10 +15944,10 @@ extern "C" {
     * - "selected" - when the user selected an item
     * - "unselected" - when the user unselected an item
     * - "longpressed" - an item in the list is long-pressed
-    * - "scroll,edge,top" - the list is scrolled until the top edge
-    * - "scroll,edge,bottom" - the list is scrolled until the bottom edge
-    * - "scroll,edge,left" - the list is scrolled until the left edge
-    * - "scroll,edge,right" - the list is scrolled until the right edge
+    * - "edge,top" - the list is scrolled until the top edge
+    * - "edge,bottom" - the list is scrolled until the bottom edge
+    * - "edge,left" - the list is scrolled until the left edge
+    * - "edge,right" - the list is scrolled until the right edge
     * - "language,changed" - the program's language changed
     *
     * Available styles for it:
@@ -18062,13 +18062,13 @@ extern "C" {
     *   started.
     * - @c "scroll,drag,stop" - This is called when dragging the content has
     *   stopped.
-    * - @c "scroll,edge,top" - This is called when the genlist is scrolled until
+    * - @c "edge,top" - This is called when the genlist is scrolled until
     *   the top edge.
-    * - @c "scroll,edge,bottom" - This is called when the genlist is scrolled
+    * - @c "edge,bottom" - This is called when the genlist is scrolled
     *   until the bottom edge.
-    * - @c "scroll,edge,left" - This is called when the genlist is scrolled
+    * - @c "edge,left" - This is called when the genlist is scrolled
     *   until the left edge.
-    * - @c "scroll,edge,right" - This is called when the genlist is scrolled
+    * - @c "edge,right" - This is called when the genlist is scrolled
     *   until the right edge.
     * - @c "multi,swipe,left" - This is called when the genlist is multi-touch
     *   swiped left.
