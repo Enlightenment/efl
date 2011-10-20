@@ -14,6 +14,74 @@ typedef struct _Item_Block  Item_Block;
 typedef struct _Pan         Pan;
 typedef struct _Item_Cache  Item_Cache;
 
+struct _Elm_Genlist_Item
+{
+   Elm_Widget_Item               base;
+   EINA_INLIST;
+   Widget_Data                  *wd;
+   const Elm_Genlist_Item_Class *itc;
+   Elm_Genlist_Item             *parent;
+   Item_Block                   *block;
+   Eina_List                    *items;
+   Evas_Coord                    x, y, w, h, minw, minh;
+   Elm_Genlist_Item             *group_item;
+   Elm_Genlist_Item_Flags        flags;
+   struct
+   {
+      Evas_Smart_Cb func;
+      const void   *data;
+   } func;
+
+   Evas_Object                  *spacer;
+   Eina_List                    *labels, *icons, *states, *icon_objs;
+   Eina_List                    *mode_labels, *mode_icons, *mode_states, *mode_icon_objs;
+   Ecore_Timer                  *long_timer;
+   Ecore_Timer                  *swipe_timer;
+   Evas_Coord                    dx, dy;
+   Evas_Coord                    scrl_x, scrl_y, old_scrl_y;
+
+   Elm_Genlist_Item             *rel;
+   Evas_Object                  *mode_view;
+
+   struct
+   {
+      const void                 *data;
+      Elm_Tooltip_Item_Content_Cb content_cb;
+      Evas_Smart_Cb               del_cb;
+      const char                 *style;
+      Eina_Bool                   free_size : 1;
+   } tooltip;
+
+   const char                   *mouse_cursor;
+
+   int                           relcount;
+   int                           walking;
+   int                           expanded_depth;
+   int                           order_num_in;
+
+   Eina_Bool                     before : 1;
+
+   Eina_Bool                     want_unrealize : 1;
+   Eina_Bool                     want_realize : 1;
+   Eina_Bool                     realized : 1;
+   Eina_Bool                     selected : 1;
+   Eina_Bool                     highlighted : 1;
+   Eina_Bool                     expanded : 1;
+   Eina_Bool                     disabled : 1;
+   Eina_Bool                     display_only : 1;
+   Eina_Bool                     mincalcd : 1;
+   Eina_Bool                     queued : 1;
+   Eina_Bool                     showme : 1;
+   Eina_Bool                     delete_me : 1;
+   Eina_Bool                     down : 1;
+   Eina_Bool                     dragging : 1;
+   Eina_Bool                     updateme : 1;
+   Eina_Bool                     nocache : 1;
+   Eina_Bool                     stacking_even : 1;
+   Eina_Bool                     nostacking : 1;
+   Eina_Bool                     move_effect_enabled : 1;
+};
+
 struct _Widget_Data
 {
    Eina_Inlist_Sorted_State *state;
@@ -94,74 +162,6 @@ struct _Item_Block
    Eina_Bool    updateme : 1;
    Eina_Bool    showme : 1;
    Eina_Bool    must_recalc : 1;
-};
-
-struct _Elm_Genlist_Item
-{
-   Elm_Widget_Item               base;
-   EINA_INLIST;
-   Widget_Data                  *wd;
-   Item_Block                   *block;
-   Eina_List                    *items;
-   Evas_Coord                    x, y, w, h, minw, minh;
-   const Elm_Genlist_Item_Class *itc;
-   Elm_Genlist_Item             *parent;
-   Elm_Genlist_Item             *group_item;
-   Elm_Genlist_Item_Flags        flags;
-   struct
-   {
-      Evas_Smart_Cb func;
-      const void   *data;
-   } func;
-
-   Evas_Object                  *spacer;
-   Eina_List                    *labels, *icons, *states, *icon_objs;
-   Eina_List                    *mode_labels, *mode_icons, *mode_states, *mode_icon_objs;
-   Ecore_Timer                  *long_timer;
-   Ecore_Timer                  *swipe_timer;
-   Evas_Coord                    dx, dy;
-   Evas_Coord                    scrl_x, scrl_y, old_scrl_y;
-
-   Elm_Genlist_Item             *rel;
-   Evas_Object                  *mode_view;
-
-   struct
-   {
-      const void                 *data;
-      Elm_Tooltip_Item_Content_Cb content_cb;
-      Evas_Smart_Cb               del_cb;
-      const char                 *style;
-      Eina_Bool                   free_size : 1;
-   } tooltip;
-
-   const char                   *mouse_cursor;
-
-   int                           relcount;
-   int                           walking;
-   int                           expanded_depth;
-   int                           order_num_in;
-
-   Eina_Bool                     before : 1;
-
-   Eina_Bool                     want_unrealize : 1;
-   Eina_Bool                     want_realize : 1;
-   Eina_Bool                     realized : 1;
-   Eina_Bool                     selected : 1;
-   Eina_Bool                     highlighted : 1;
-   Eina_Bool                     expanded : 1;
-   Eina_Bool                     disabled : 1;
-   Eina_Bool                     display_only : 1;
-   Eina_Bool                     mincalcd : 1;
-   Eina_Bool                     queued : 1;
-   Eina_Bool                     showme : 1;
-   Eina_Bool                     delete_me : 1;
-   Eina_Bool                     down : 1;
-   Eina_Bool                     dragging : 1;
-   Eina_Bool                     updateme : 1;
-   Eina_Bool                     nocache : 1;
-   Eina_Bool                     stacking_even : 1;
-   Eina_Bool                     nostacking : 1;
-   Eina_Bool                     move_effect_enabled : 1;
 };
 
 struct _Item_Cache
