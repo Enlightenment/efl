@@ -39,11 +39,10 @@ _evas_event_object_list_in_get(Evas *e, Eina_List *in,
           {
              if (obj->smart.smart)
                {
-                  int norep;
+                  int norep = 0;
                   int inside;
 
-                  norep = 0;
-                  if (((obj->cur.map) && (obj->cur.map->count == 4) && (obj->cur.usemap)))
+                  if (((obj->cur.usemap) && (obj->cur.map) && (obj->cur.map->count == 4)))
                     {
                        inside = evas_object_is_in_output_rect(obj, x, y, 1, 1);
                        if (inside)
@@ -79,21 +78,16 @@ _evas_event_object_list_in_get(Evas *e, Eina_List *in,
                }
              else
                {
-                  int inside = 1;
+                  int inside = evas_object_is_in_output_rect(obj, x, y, 1, 1);
 
-                  if (((obj->cur.map) && (obj->cur.map->count == 4) && (obj->cur.usemap)))
+                  if (((obj->cur.usemap) && (obj->cur.map) && (obj->cur.map->count == 4)))
                     {
-                       inside = evas_object_is_in_output_rect(obj, x, y, 1, 1);
                        if ((inside) && (!evas_map_coords_get(obj->cur.map, x, y,
                                                              &(obj->cur.map->mx),
                                                              &(obj->cur.map->my), 0)))
                          {
                             inside = 0;
                          }
-                    }
-                  else
-                    {
-                       inside = evas_object_is_in_output_rect(obj, x, y, 1, 1);
                     }
 
                   if (inside && ((!obj->precise_is_inside) ||
