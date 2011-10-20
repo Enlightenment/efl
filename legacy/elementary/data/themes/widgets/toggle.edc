@@ -1,4 +1,5 @@
-group { name: "elm/toggle/base/default";
+group { name: "elm/check/base/toggle";
+   alias: "elm/toggle/base/default";
    images {
       image: "shelf_inset.png" COMP;
       image: "bt_basew.png" COMP;
