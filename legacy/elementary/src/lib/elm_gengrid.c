@@ -1085,11 +1085,13 @@ _item_realize(Elm_Gengrid_Item *it)
 }
 
 static void
-_item_unrealize(Elm_Gengrid_Item *it)
+_item_unrealize(Elm_Gengrid_Item *it, Eina_Bool calc)
 {
    Evas_Object *icon;
 
    if (!it->realized) return;
+   if (!calc)
+     evas_object_smart_callback_call(WIDGET(it), SIG_UNREALIZED, it);
    if (it->long_timer)
      {
         ecore_timer_del(it->long_timer);
@@ -1203,11 +1205,7 @@ _group_item_place(Pan *sd)
              evas_object_raise(VIEW(it));
           }
         else
-          {
-             _item_unrealize(it);
-             if (was_realized)
-               evas_object_smart_callback_call(it->wd->self, SIG_UNREALIZED, it);
-          }
+          _item_unrealize(it);
      }
 }
 
@@ -1470,11 +1468,7 @@ _item_place(Elm_Gengrid_Item *it,
    else
      {
         if (!it->is_group)
-          {
-             _item_unrealize(it);
-             if (was_realized)
-               evas_object_smart_callback_call(it->wd->self, SIG_UNREALIZED, it);
-          }
+          _item_unrealize(it);
         else
           it->group_realized = EINA_FALSE;
      }
