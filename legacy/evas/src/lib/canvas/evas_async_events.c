@@ -82,28 +82,32 @@ evas_async_events_process(void)
 
    if (_fd_read == -1) return 0;
 
-   do {
+   do 
+     {
 	check = read(_fd_read, &ev, sizeof (Evas_Event_Async *));
-
+        
 	if (check == sizeof (Evas_Event_Async *))
 	  {
              if (ev->func) ev->func((void *)ev->target, ev->type, ev->event_info);
 	     free(ev);
 	     count++;
 	  }
-   } while (check > 0);
+     } 
+   while (check > 0);
 
    evas_cache_image_wakeup();
 
    if (check < 0)
-     switch (errno)
-       {
-       case EBADF:
-       case EINVAL:
-       case EIO:
-       case EISDIR:
-          _fd_read = -1;
-       }
+     {
+        switch (errno)
+          {
+           case EBADF:
+           case EINVAL:
+           case EIO:
+           case EISDIR:
+             _fd_read = -1;
+          }
+     }
 
    return count;
 #else
@@ -130,23 +134,28 @@ evas_async_events_put(const void *target, Evas_Callback_Type type, void *event_i
    ev->type = type;
    ev->event_info = event_info;
 
-   do {
-      check = write(_fd_write, &ev, sizeof (Evas_Event_Async*));
-   } while ((check != sizeof (Evas_Event_Async*)) && ((errno == EINTR) || (errno == EAGAIN)));
+   do 
+     {
+        check = write(_fd_write, &ev, sizeof (Evas_Event_Async*));
+     }
+   while ((check != sizeof (Evas_Event_Async*)) && 
+          ((errno == EINTR) || (errno == EAGAIN)));
 
    evas_cache_image_wakeup();
 
    if (check == sizeof (Evas_Event_Async*))
      result = EINA_TRUE;
    else
-     switch (errno)
-       {
-       case EBADF:
-       case EINVAL:
-       case EIO:
-       case EPIPE:
-          _fd_write = -1;
-       }
+     {
+        switch (errno)
+          {
+           case EBADF:
+           case EINVAL:
+           case EIO:
+           case EPIPE:
+             _fd_write = -1;
+          }
+     }
 
    return result;
 #else
