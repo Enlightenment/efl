@@ -79,9 +79,9 @@ typedef enum {
 } Elm_Fileselector_Type;
 
 static Elm_Genlist_Item_Class list_itc[ELM_FILE_LAST] = {
-  { "default", { NULL, NULL, NULL, NULL, NULL }, NULL },
-  { "default", { NULL, NULL, NULL, NULL, NULL }, NULL },
-  { "default", { NULL, NULL, NULL, NULL, NULL }, NULL }
+  { "default", { NULL, NULL, NULL, NULL }, NULL },
+  { "default", { NULL, NULL, NULL, NULL }, NULL },
+  { "default", { NULL, NULL, NULL, NULL }, NULL }
 };
 static Elm_Gengrid_Item_Class grid_itc[ELM_FILE_LAST] = {
   { "default", { NULL, NULL, NULL, NULL } },
