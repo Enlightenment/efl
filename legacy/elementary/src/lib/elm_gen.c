@@ -1,7 +1,20 @@
 #include <Elementary.h>
 #include <Elementary_Cursor.h>
 #include "elm_priv.h"
+#include "els_scroller.h"
 #include "elm_gen.h"
+
+/* TEMPORARY */
+#undef ELM_CHECK_WIDTYPE
+#define ELM_CHECK_WIDTYPE(obj, widtype) \
+   if ((!obj) || (!elm_gen_type_check((obj), __func__))) return
+#undef ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN
+#define ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(it, ...)                \
+   ELM_WIDGET_ITEM_CHECK_OR_RETURN((Elm_Widget_Item *)it, __VA_ARGS__); \
+   ELM_CHECK_WIDTYPE(WIDGET((it)), widtype) __VA_ARGS__;
+
+static const char *_gengrid = NULL;
+static const char *_genlist = NULL;
 
 struct _Widget_Data
 {
@@ -19,6 +32,8 @@ struct _Widget_Data
    int               walking;
    int               item_width, item_height;
    int               group_item_width, group_item_height;
+   int               minw, minh;
+   long              count;
    Evas_Coord        pan_x, pan_y;
    Eina_Bool         reorder_mode : 1;
    Eina_Bool         on_hold : 1;
@@ -26,7 +41,76 @@ struct _Widget_Data
    Eina_Bool         no_select : 1;
    Eina_Bool         wasselected : 1;
    Eina_Bool         always_select : 1;
+   Eina_Bool         clear_me : 1;
+   Ecore_Cb          del_cb, calc_cb, sizing_cb;
+   Ecore_Cb          clear_cb;
 };
+
+static const char SIG_ACTIVATED[] = "activated";
+static const char SIG_CLICKED_DOUBLE[] = "clicked,double";
+static const char SIG_SELECTED[] = "selected";
+static const char SIG_UNSELECTED[] = "unselected";
+static const char SIG_EXPANDED[] = "expanded";
+static const char SIG_CONTRACTED[] = "contracted";
+static const char SIG_EXPAND_REQUEST[] = "expand,request";
+static const char SIG_CONTRACT_REQUEST[] = "contract,request";
+static const char SIG_REALIZED[] = "realized";
+static const char SIG_UNREALIZED[] = "unrealized";
+static const char SIG_DRAG_START_UP[] = "drag,start,up";
+static const char SIG_DRAG_START_DOWN[] = "drag,start,down";
+static const char SIG_DRAG_START_LEFT[] = "drag,start,left";
+static const char SIG_DRAG_START_RIGHT[] = "drag,start,right";
+static const char SIG_DRAG_STOP[] = "drag,stop";
+static const char SIG_DRAG[] = "drag";
+static const char SIG_LONGPRESSED[] = "longpressed";
+static const char SIG_SCROLL_ANIM_START[] = "scroll,anim,start";
+static const char SIG_SCROLL_ANIM_STOP[] = "scroll,anim,stop";
+static const char SIG_SCROLL_DRAG_START[] = "scroll,drag,start";
+static const char SIG_SCROLL_DRAG_STOP[] = "scroll,drag,stop";
+static const char SIG_SCROLL_EDGE_TOP[] = "scroll,edge,top"; // TODO : remove this
+static const char SIG_SCROLL_EDGE_BOTTOM[] = "scroll,edge,bottom"; // TODO : remove this
+static const char SIG_SCROLL_EDGE_LEFT[] = "scroll,edge,left"; // TODO : remove this
+static const char SIG_SCROLL_EDGE_RIGHT[] = "scroll,edge,right"; // TODO : remove this
+static const char SIG_EDGE_TOP[] = "edge,top";
+static const char SIG_EDGE_BOTTOM[] = "edge,bottom";
+static const char SIG_EDGE_LEFT[] = "edge,left";
+static const char SIG_EDGE_RIGHT[] = "edge,right";
+static const char SIG_MULTI_SWIPE_LEFT[] = "multi,swipe,left";
+static const char SIG_MULTI_SWIPE_RIGHT[] = "multi,swipe,right";
+static const char SIG_MULTI_SWIPE_UP[] = "multi,swipe,up";
+static const char SIG_MULTI_SWIPE_DOWN[] = "multi,swipe,down";
+static const char SIG_MULTI_PINCH_OUT[] = "multi,pinch,out";
+static const char SIG_MULTI_PINCH_IN[] = "multi,pinch,in";
+static const char SIG_SWIPE[] = "swipe";
+static const char SIG_MOVED[] = "moved";
+
+/* THIS FUNCTION IS HACKY AND TEMPORARY!!! */
+Eina_Bool
+elm_gen_type_check(const Evas_Object *obj,
+                   const char        *func)
+{
+   const char *provided, *expected = "(unknown)";
+   static int abort_on_warn = -1;
+   provided = elm_widget_type_get(obj);
+   if (!_genlist) _genlist = eina_stringshare_add("genlist");
+   if (!_gengrid) _gengrid = eina_stringshare_add("gengrid");
+   if (EINA_LIKELY(provided == _genlist) || EINA_LIKELY(provided == _gengrid))
+     return EINA_TRUE;
+   if ((!provided) || (!provided[0]))
+     {
+        provided = evas_object_type_get(obj);
+        if ((!provided) || (!provided[0]))
+          provided = "(unknown)";
+     }
+   ERR("Passing Object: %p in function: %s, of type: '%s' when expecting type: '%s'", obj, func, provided, expected);
+   if (abort_on_warn == -1)
+     {
+        if (getenv("ELM_ERROR_ABORT")) abort_on_warn = 1;
+        else abort_on_warn = 0;
+     }
+   if (abort_on_warn == 1) abort();
+   return EINA_FALSE;
+}
 
 static const char *
 _item_label_hook(Elm_Gen_Item *it, const char *part)
@@ -228,11 +312,44 @@ _item_single_select_right(Widget_Data *wd)
    return EINA_TRUE;
 }
 #endif
+
+
+static void
+_item_select(Elm_Gen_Item *it)
+{
+   if ((it->wd->no_select) || (it->delete_me) || (it->mode_set)) return;
+   if (!it->selected)
+     {
+        it->selected = EINA_TRUE;
+        it->wd->selected = eina_list_append(it->wd->selected, it);
+     }
+   else if (!it->wd->always_select) return;
+
+   evas_object_ref(WIDGET(it));
+   it->walking++;
+   it->wd->walking++;
+   if (it->func.func) it->func.func((void *)it->func.data, WIDGET(it), it);
+   if (!it->delete_me)
+     evas_object_smart_callback_call(WIDGET(it), SIG_SELECTED, it);
+   it->walking--;
+   it->wd->walking--;
+   if ((it->wd->clear_me) && (!it->wd->walking))
+     elm_gen_clear(WIDGET(it));
+   else
+     {
+        if ((!it->walking) && (it->delete_me))
+          {
+             if (!it->relcount) it->del_cb(it);
+          }
+        else
+          it->wd->last_selected_item = it;
+     }
+   evas_object_unref(WIDGET(it));
+}
 /******************************************************************************/
 void
 elm_gen_item_unrealize(Elm_Gen_Item *it,
-                       Eina_Bool     calc,
-                       Ecore_Cb      extra_cb)
+                       Eina_Bool     calc)
 {
    Evas_Object *icon;
 
@@ -240,7 +357,7 @@ elm_gen_item_unrealize(Elm_Gen_Item *it,
    if (it->wd->reorder_it == it) return;
    evas_event_freeze(evas_object_evas_get(WIDGET(it)));
    if (!calc)
-     evas_object_smart_callback_call(WIDGET(it), "unrealized", it);
+     evas_object_smart_callback_call(WIDGET(it), SIG_UNREALIZED, it);
    if (it->long_timer)
      {
         ecore_timer_del(it->long_timer);
@@ -257,7 +374,7 @@ elm_gen_item_unrealize(Elm_Gen_Item *it,
    EINA_LIST_FREE(it->icon_objs, icon)
      evas_object_del(icon);
 
-   if (extra_cb) extra_cb(it);
+   it->unrealize_cb(it);
 
    it->realized = EINA_FALSE;
    it->want_unrealize = EINA_FALSE;
@@ -277,13 +394,9 @@ elm_gen_item_del_notserious(Elm_Gen_Item *it)
 }
 
 void
-elm_gen_item_del_serious(Elm_Gen_Item *it, Ecore_Cb job)
+elm_gen_item_del_serious(Elm_Gen_Item *it)
 {
-   elm_widget_item_pre_notify_del(it);
-   if (it->selected) it->wd->selected = eina_list_remove(it->wd->selected, it);
-   it->delete_me = EINA_TRUE;
-   if ((!it->delete_me) && (it->itc->func.del))
-     it->itc->func.del((void *)it->base.data, WIDGET(it));
+   elm_gen_item_del_notserious(it);
    it->wd->items = eina_inlist_remove(it->wd->items, EINA_INLIST_GET(it));
    if (it->tooltip.del_cb)
      it->tooltip.del_cb((void *)it->tooltip.data, WIDGET(it), it);
@@ -293,7 +406,7 @@ elm_gen_item_del_serious(Elm_Gen_Item *it, Ecore_Cb job)
      it->wd->group_items = eina_list_remove(it->wd->group_items, it);
 
    if (it->wd->calc_job) ecore_job_del(it->wd->calc_job);
-   it->wd->calc_job = ecore_job_add(job, it->wd);
+   it->wd->calc_job = ecore_job_add(it->wd->calc_cb, it->wd);
    free(it->item);
    it->item = NULL;
    elm_widget_item_del(it);
@@ -317,8 +430,90 @@ elm_gen_item_new(Widget_Data              *wd,
    it->parent = parent;
    it->func.func = func;
    it->func.data = func_data;
+   /* TEMPORARY */
+   it->sel_cb = (Ecore_Cb)_item_select;
 
    elm_widget_item_text_get_hook_set(it, _item_label_hook);
    return it;
 }
 /******************************************************************************/
+
+EAPI void
+elm_gen_item_selected_set(Elm_Gen_Item *it,
+                          Eina_Bool     selected)
+{
+   ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(it);
+   Widget_Data *wd = it->wd;
+   if (!wd) return;
+   if ((it->delete_me) || (it->disabled)) return;
+   selected = !!selected;
+   if (it->selected == selected) return;
+
+   if (selected)
+     {
+        if (!wd->multi)
+          {
+             while (wd->selected)
+               {
+                  if (it->unhighlight_cb) it->unhighlight_cb(wd->selected->data);
+                  it->unsel_cb(wd->selected->data);
+               }
+          }
+        it->highlight_cb(it);
+        _item_select(it);
+        return;
+     }
+   if (it->unhighlight_cb) it->unhighlight_cb(it);
+   it->unsel_cb(it);
+}
+
+EAPI void
+elm_gen_clear(Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+
+   if (wd->state)
+     {
+        eina_inlist_sorted_state_free(wd->state);
+        wd->state = NULL;
+     }
+
+   if (wd->walking > 0)
+     {
+        Elm_Gen_Item *it;
+        wd->clear_me = 1;
+        EINA_INLIST_FOREACH(wd->items, it)
+           it->delete_me = 1;
+        return;
+     }
+   evas_event_freeze(evas_object_evas_get(wd->obj));
+   while (wd->items)
+     {
+        Elm_Gen_Item *it = ELM_GEN_ITEM_FROM_INLIST(wd->items);
+        it->del_cb(it);
+     }
+   wd->clear_me = 0;
+   if (wd->calc_job)
+     {
+        ecore_job_del(wd->calc_job);
+        wd->calc_job = NULL;
+     }
+   if (wd->selected) wd->selected = eina_list_free(wd->selected);
+   if (wd->clear_cb) wd->clear_cb(wd);
+   wd->pan_x = 0;
+   wd->pan_y = 0;
+   wd->minw = 0;
+   wd->minh = 0;
+   wd->count = 0;
+   if (wd->pan_smart)
+     {
+        evas_object_size_hint_min_set(wd->pan_smart, wd->minw, wd->minh);
+        evas_object_smart_callback_call(wd->pan_smart, "changed", NULL);
+     }
+   if (wd->sizing_cb) wd->sizing_cb(wd->obj);
+   elm_smart_scroller_child_region_show(wd->scr, 0, 0, 0, 0);
+   evas_event_thaw(evas_object_evas_get(wd->obj));
+   evas_event_thaw_eval(evas_object_evas_get(wd->obj));
+}

@@ -2,6 +2,9 @@
 #include <Elementary_Cursor.h>
 #include "elm_priv.h"
 
+#define ELM_GEN_ITEM_FROM_INLIST(it) \
+   ((it) ? EINA_INLIST_CONTAINER_GET(it, Elm_Gen_Item) : NULL)
+
 typedef struct Elm_Gen_Item_Type Elm_Gen_Item_Type;
 typedef struct Elm_Gen_Item_Tooltip Elm_Gen_Item_Tooltip;
 typedef struct _Widget_Data Widget_Data;
@@ -46,6 +49,8 @@ struct Elm_Gen_Item
    } func;
 
    Elm_Gen_Item_Tooltip tooltip;
+   Ecore_Cb    del_cb, sel_cb, highlight_cb;
+   Ecore_Cb    unsel_cb, unhighlight_cb, unrealize_cb;
 
    Eina_Bool   want_unrealize : 1;
    Eina_Bool   display_only : 1;
@@ -58,6 +63,7 @@ struct Elm_Gen_Item
    Eina_Bool   down : 1;
    Eina_Bool   group : 1;
    Eina_Bool   reorder : 1;
+   Eina_Bool   mode_set : 1; /* item uses style mode for highlight/select */
 };
 
 Elm_Gen_Item *
@@ -70,10 +76,9 @@ elm_gen_item_new(Widget_Data              *wd,
 
 void
 elm_gen_item_unrealize(Elm_Gen_Item *it,
-                       Eina_Bool     calc,
-                       Ecore_Cb      extra_cb);
+                       Eina_Bool     calc);
 void
-elm_gen_item_del_serious(Elm_Gen_Item *it, Ecore_Cb job);
+elm_gen_item_del_serious(Elm_Gen_Item *it);
 
 void
 elm_gen_item_del_notserious(Elm_Gen_Item *it);
