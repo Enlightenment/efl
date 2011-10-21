@@ -19,13 +19,13 @@ _eet_hash_gen(const char *key,
 
    /* no string - index 0 */
    if (!key)
-      return 0;
+     return 0;
 
    /* calc hash num */
    for (i = 0, ptr = (unsigned char *)key, value = (int)(*ptr);
         value;
         ptr++, i++, value = (int)(*ptr))
-      hash_num ^= (value | (value << 8)) >> (i & 0x7);
+     hash_num ^= (value | (value << 8)) >> (i & 0x7);
 
    /* mask it */
    mask = (1 << hash_size) - 1;

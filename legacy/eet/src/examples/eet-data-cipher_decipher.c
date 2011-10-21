@@ -27,7 +27,7 @@ main(void)
    if (!(file = tmpnam(file)))
      {
         fprintf(
-            stderr, "ERROR: could not create temporary file (%s).\n", file);
+          stderr, "ERROR: could not create temporary file (%s).\n", file);
         goto panic;
      }
 
@@ -36,14 +36,14 @@ main(void)
    if (!ef)
      {
         fprintf(
-            stderr, "ERROR: could not access file (%s).\n", file);
+          stderr, "ERROR: could not access file (%s).\n", file);
         goto error;
      }
 
    if (!eet_write_cipher(ef, "keys/tests", buffer, strlen(buffer) + 1, 0, key))
      {
         fprintf(
-            stderr, "ERROR: could not access file (%s).\n", file);
+          stderr, "ERROR: could not access file (%s).\n", file);
         goto error;
      }
 
@@ -54,7 +54,7 @@ main(void)
    if (!ef)
      {
         fprintf(
-            stderr, "ERROR: could not access file (%s).\n", file);
+          stderr, "ERROR: could not access file (%s).\n", file);
         goto error;
      }
 
@@ -62,22 +62,22 @@ main(void)
    if (!test)
      {
         fprintf(
-            stderr, "ERROR: could decript contents on file %s, with key %s.\n",
-            file, key);
+          stderr, "ERROR: could decript contents on file %s, with key %s.\n",
+          file, key);
         goto error;
      }
 
    if (size != (int)strlen(buffer) + 1)
      {
         fprintf(
-            stderr, "ERROR: something is wrong with the decripted data\n");
+          stderr, "ERROR: something is wrong with the decripted data\n");
         goto error;
      }
 
    if (memcmp(test, buffer, strlen(buffer) + 1) != 0)
      {
         fprintf(
-            stderr, "ERROR: something is wrong with the decripted data\n");
+          stderr, "ERROR: something is wrong with the decripted data\n");
         goto error;
      }
 
@@ -88,7 +88,7 @@ main(void)
    if (!ef)
      {
         fprintf(
-            stderr, "ERROR: could not access file (%s).\n", file);
+          stderr, "ERROR: could not access file (%s).\n", file);
         goto error;
      }
 
@@ -96,24 +96,24 @@ main(void)
 
    if (size == (int)strlen(buffer) + 1)
      if (memcmp(test, buffer, strlen(buffer) + 1) == 0)
-     {
-        fprintf(
+       {
+          fprintf(
             stderr, "ERROR: something is wrong with the contents of %s, as"
-            " we accessed it with a different key and it decripted our"
-            " information right.\n", file);
-        goto error;
-     }
+                    " we accessed it with a different key and it decripted our"
+                    " information right.\n", file);
+          goto error;
+       }
 
    eet_close(ef);
 
-  error:
+error:
    if (unlink(file) != 0)
      {
         fprintf(
-            stderr, "ERROR: could not unlink file (%s).\n", file);
+          stderr, "ERROR: could not unlink file (%s).\n", file);
      }
 
-  panic:
+panic:
    eet_shutdown();
 }
 

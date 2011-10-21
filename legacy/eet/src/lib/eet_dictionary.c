@@ -18,7 +18,7 @@ eet_dictionary_add(void)
 
    new = calloc(1, sizeof (Eet_Dictionary));
    if (!new)
-      return NULL;
+     return NULL;
 
    memset(new->hash, -1, sizeof (int) * 256);
 
@@ -48,7 +48,7 @@ eet_dictionary_free(Eet_Dictionary *ed)
 static int
 _eet_dictionary_lookup(Eet_Dictionary *ed,
                        const char     *string,
-		       int             len,
+                       int             len,
                        int             hash)
 {
    Eina_Bool found = EINA_FALSE;
@@ -59,22 +59,22 @@ _eet_dictionary_lookup(Eet_Dictionary *ed,
 
    while (current != -1)
      {
-	if (ed->all[current].len == len)
-	  {
+        if (ed->all[current].len == len)
+          {
              if (ed->all[current].str &&
                  (ed->all[current].str == string || strcmp(ed->all[current].str, string) == 0))
                {
                   found = EINA_TRUE;
                   break;
                }
-	  }
+          }
 
         prev = current;
         current = ed->all[current].next;
      }
 
    if (current == -1 && found)
-      return prev;
+     return prev;
 
    return current;
 } /* _eet_dictionary_lookup */
@@ -90,7 +90,7 @@ eet_dictionary_string_add(Eet_Dictionary *ed,
    int len;
 
    if (!ed)
-      return -1;
+     return -1;
 
    hash = _eet_hash_gen(string, 8);
    len = strlen(string) + 1;
@@ -99,7 +99,7 @@ eet_dictionary_string_add(Eet_Dictionary *ed,
 
    if (idx != -1)
      {
-        if (ed->all[idx].str && (ed->all[idx].str == string ||  strcmp(ed->all[idx].str, string) == 0))
+        if (ed->all[idx].str && (ed->all[idx].str == string || strcmp(ed->all[idx].str, string) == 0))
           return idx;
      }
 
@@ -112,7 +112,7 @@ eet_dictionary_string_add(Eet_Dictionary *ed,
 
         new = realloc(ed->all, sizeof (Eet_String) * total);
         if (!new)
-           return -1;
+          return -1;
 
         ed->all = new;
         ed->total = total;
@@ -120,7 +120,7 @@ eet_dictionary_string_add(Eet_Dictionary *ed,
 
    str = eina_stringshare_add(string);
    if (!str)
-      return -1;
+     return -1;
 
    current = ed->all + ed->count;
 
@@ -143,12 +143,12 @@ eet_dictionary_string_add(Eet_Dictionary *ed,
         current->prev = ed->all[idx].prev;
 
         if (current->next != -1)
-           ed->all[current->next].prev = ed->count;
+          ed->all[current->next].prev = ed->count;
 
         if (current->prev != -1)
-           ed->all[current->prev].next = ed->count;
+          ed->all[current->prev].next = ed->count;
         else
-           ed->hash[hash] = ed->count;
+          ed->hash[hash] = ed->count;
      }
 
    return ed->count++;
@@ -159,13 +159,13 @@ eet_dictionary_string_get_size(const Eet_Dictionary *ed,
                                int                   idx)
 {
    if (!ed)
-      return 0;
+     return 0;
 
    if (idx < 0)
-      return 0;
+     return 0;
 
    if (idx < ed->count)
-      return ed->all[idx].len;
+     return ed->all[idx].len;
 
    return 0;
 } /* eet_dictionary_string_get_size */
@@ -175,13 +175,13 @@ eet_dictionary_string_get_hash(const Eet_Dictionary *ed,
                                int                   idx)
 {
    if (!ed)
-      return -1;
+     return -1;
 
    if (idx < 0)
-      return -1;
+     return -1;
 
    if (idx < ed->count)
-      return ed->all[idx].hash;
+     return ed->all[idx].hash;
 
    return -1;
 } /* eet_dictionary_string_get_hash */
@@ -191,10 +191,10 @@ eet_dictionary_string_get_char(const Eet_Dictionary *ed,
                                int                   idx)
 {
    if (!ed)
-      return NULL;
+     return NULL;
 
    if (idx < 0)
-      return NULL;
+     return NULL;
 
    if (idx < ed->count)
      {
@@ -240,9 +240,9 @@ _eet_dictionary_string_get_float_cache(const char *s,
    if (_eet_dictionary_string_get_me_cache(s, len, &mantisse, &exponent))
      {
         if (s[4] == '+')
-           *result = (float)(mantisse << exponent);
+          *result = (float)(mantisse << exponent);
         else
-           *result = (float)mantisse / (float)(1 << exponent);
+          *result = (float)mantisse / (float)(1 << exponent);
 
         return EINA_TRUE;
      }
@@ -261,9 +261,9 @@ _eet_dictionary_string_get_double_cache(const char *s,
    if (_eet_dictionary_string_get_me_cache(s, len, &mantisse, &exponent))
      {
         if (s[4] == '+')
-           *result = (double)(mantisse << exponent);
+          *result = (double)(mantisse << exponent);
         else
-           *result = (double)mantisse / (float)(1 << exponent);
+          *result = (double)mantisse / (float)(1 << exponent);
 
         return EINA_TRUE;
      }
@@ -277,24 +277,24 @@ _eet_dictionary_test(const Eet_Dictionary *ed,
                      void                 *result)
 {
    if (!result)
-      return EINA_FALSE;
+     return EINA_FALSE;
 
    if (!ed)
-      return EINA_FALSE;
+     return EINA_FALSE;
 
    if (idx < 0)
-      return EINA_FALSE;
+     return EINA_FALSE;
 
    if (!(idx < ed->count))
-      return EINA_FALSE;
+     return EINA_FALSE;
 
    return EINA_TRUE;
 } /* _eet_dictionary_test */
 
 static Eet_Convert *
 eet_dictionary_convert_get(const Eet_Dictionary *ed,
-                           int idx,
-                           const char **str)
+                           int                   idx,
+                           const char          **str)
 {
    Eet_Convert *result;
 
@@ -302,7 +302,7 @@ eet_dictionary_convert_get(const Eet_Dictionary *ed,
 
    if (!ed->converts)
      {
-        ((Eet_Dictionary*)ed)->converts = eina_hash_int32_new(free);
+        ((Eet_Dictionary *)ed)->converts = eina_hash_int32_new(free);
 
         goto add_convert;
      }
@@ -310,7 +310,7 @@ eet_dictionary_convert_get(const Eet_Dictionary *ed,
    result = eina_hash_find(ed->converts, &idx);
    if (result) return result;
 
- add_convert:
+add_convert:
    result = calloc(1, sizeof (Eet_Convert));
 
    eina_hash_add(ed->converts, &idx, result);
@@ -326,7 +326,7 @@ eet_dictionary_string_get_float(const Eet_Dictionary *ed,
    const char *str;
 
    if (!_eet_dictionary_test(ed, idx, result))
-      return EINA_FALSE;
+     return EINA_FALSE;
 
    convert = eet_dictionary_convert_get(ed, idx, &str);
    if (!convert) return EINA_FALSE;
@@ -341,7 +341,7 @@ eet_dictionary_string_get_float(const Eet_Dictionary *ed,
 
              if (eina_convert_atod(str, ed->all[idx].len, &mantisse,
                                    &exponent) == EINA_FALSE)
-                return EINA_FALSE;
+               return EINA_FALSE;
 
              convert->f = ldexpf((float)mantisse, exponent);
           }
@@ -362,7 +362,7 @@ eet_dictionary_string_get_double(const Eet_Dictionary *ed,
    const char *str;
 
    if (!_eet_dictionary_test(ed, idx, result))
-      return EINA_FALSE;
+     return EINA_FALSE;
 
    convert = eet_dictionary_convert_get(ed, idx, &str);
    if (!convert) return EINA_FALSE;
@@ -377,7 +377,7 @@ eet_dictionary_string_get_double(const Eet_Dictionary *ed,
 
              if (eina_convert_atod(str, ed->all[idx].len, &mantisse,
                                    &exponent) == EINA_FALSE)
-                return EINA_FALSE;
+               return EINA_FALSE;
 
              convert->d = ldexp((double)mantisse, exponent);
           }
@@ -398,7 +398,7 @@ eet_dictionary_string_get_fp(const Eet_Dictionary *ed,
    const char *str;
 
    if (!_eet_dictionary_test(ed, idx, result))
-      return EINA_FALSE;
+     return EINA_FALSE;
 
    convert = eet_dictionary_convert_get(ed, idx, &str);
    if (!convert) return EINA_FALSE;
@@ -408,7 +408,7 @@ eet_dictionary_string_get_fp(const Eet_Dictionary *ed,
         Eina_F32p32 fp;
 
         if (!eina_convert_atofp(str, ed->all[idx].len, &fp))
-           return EINA_FALSE;
+          return EINA_FALSE;
 
         convert->fp = fp;
         convert->type |= EET_D_FIXED_POINT;
@@ -425,10 +425,10 @@ eet_dictionary_string_check(Eet_Dictionary *ed,
    int i;
 
    if ((!ed) || (!string))
-      return 0;
+     return 0;
 
    if ((ed->start <= string) && (string < ed->end))
-      return 1;
+     return 1;
 
    for (i = 0; i < ed->count; ++i)
      if ((ed->all[i].allocated) && ed->all[i].str == string)

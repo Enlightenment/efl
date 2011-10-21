@@ -82,48 +82,48 @@ _my_cache_descriptor_init(void)
    // Describe the members to be saved:
    // Use a temporary macro so we don't type a lot, also avoid errors:
 
-#define ADD_BASIC(member, eet_type)\
-   EET_DATA_DESCRIPTOR_ADD_BASIC\
-      (_my_message_descriptor, My_Message, # member, member, eet_type)
+#define ADD_BASIC(member, eet_type) \
+  EET_DATA_DESCRIPTOR_ADD_BASIC     \
+    (_my_message_descriptor, My_Message, # member, member, eet_type)
    ADD_BASIC(screen_name, EET_T_STRING);
-   ADD_BASIC(name,        EET_T_STRING);
-   ADD_BASIC(message,     EET_T_STRING);
-   ADD_BASIC(id,          EET_T_UINT);
-   ADD_BASIC(status_id,   EET_T_UINT);
-   ADD_BASIC(date,        EET_T_UINT);
-   ADD_BASIC(timeline,    EET_T_UINT);
+   ADD_BASIC(name, EET_T_STRING);
+   ADD_BASIC(message, EET_T_STRING);
+   ADD_BASIC(id, EET_T_UINT);
+   ADD_BASIC(status_id, EET_T_UINT);
+   ADD_BASIC(date, EET_T_UINT);
+   ADD_BASIC(timeline, EET_T_UINT);
 #undef ADD_BASIC
 
-#define ADD_BASIC(member, eet_type)\
-   EET_DATA_DESCRIPTOR_ADD_BASIC\
-      (_my_post_descriptor, My_Post, # member, member, eet_type)
-   ADD_BASIC(dm_to,   EET_T_STRING);
+#define ADD_BASIC(member, eet_type) \
+  EET_DATA_DESCRIPTOR_ADD_BASIC     \
+    (_my_post_descriptor, My_Post, # member, member, eet_type)
+   ADD_BASIC(dm_to, EET_T_STRING);
    ADD_BASIC(message, EET_T_STRING);
 #undef ADD_BASIC
 
-#define ADD_BASIC(member, eet_type)\
-   EET_DATA_DESCRIPTOR_ADD_BASIC\
-      (_my_account_descriptor, My_Account, # member, member, eet_type)
+#define ADD_BASIC(member, eet_type) \
+  EET_DATA_DESCRIPTOR_ADD_BASIC     \
+    (_my_account_descriptor, My_Account, # member, member, eet_type)
    ADD_BASIC(name, EET_T_STRING);
-   ADD_BASIC(id,   EET_T_UINT);
+   ADD_BASIC(id, EET_T_UINT);
 #undef ADD_BASIC
 
    EET_DATA_DESCRIPTOR_ADD_LIST
-      (_my_account_descriptor, My_Account, "messages", messages,
-      _my_message_descriptor);
+     (_my_account_descriptor, My_Account, "messages", messages,
+     _my_message_descriptor);
    EET_DATA_DESCRIPTOR_ADD_VAR_ARRAY
-      (_my_account_descriptor, My_Account, "posts",    posts,
-      _my_post_descriptor);
+     (_my_account_descriptor, My_Account, "posts", posts,
+     _my_post_descriptor);
 
-#define ADD_BASIC(member, eet_type)\
-   EET_DATA_DESCRIPTOR_ADD_BASIC\
-      (_my_cache_descriptor, My_Cache, # member, member, eet_type)
+#define ADD_BASIC(member, eet_type) \
+  EET_DATA_DESCRIPTOR_ADD_BASIC     \
+    (_my_cache_descriptor, My_Cache, # member, member, eet_type)
    ADD_BASIC(version, EET_T_UINT);
 #undef ADD_BASIC
 
    EET_DATA_DESCRIPTOR_ADD_HASH
-      (_my_cache_descriptor, My_Cache, "accounts", accounts,
-      _my_account_descriptor);
+     (_my_cache_descriptor, My_Cache, "accounts", accounts,
+     _my_account_descriptor);
 } /* _my_cache_descriptor_init */
 
 static void
@@ -138,21 +138,21 @@ _my_cache_descriptor_shutdown(void)
 // need to check if the pointer came from mmaped area in eet_dictionary
 // or it was allocated with eina_stringshare_add()
 static void
-_eet_string_free(const char * str)
+_eet_string_free(const char *str)
 {
    if (!str)
-      return;
+     return;
 
    if ((_my_cache_dict) && (eet_dictionary_string_check(_my_cache_dict, str)))
-      return;
+     return;
 
    eina_stringshare_del(str);
 } /* _eet_string_free */
 
 static My_Message *
-_my_message_new(const char * message)
+_my_message_new(const char *message)
 {
-   My_Message * msg = calloc(1, sizeof(My_Message));
+   My_Message *msg = calloc(1, sizeof(My_Message));
    if (!msg)
      {
         fprintf(stderr, "ERROR: could not calloc My_Message\n");
@@ -164,7 +164,7 @@ _my_message_new(const char * message)
 } /* _my_message_new */
 
 static void
-_my_message_free(My_Message * msg)
+_my_message_free(My_Message *msg)
 {
    _eet_string_free(msg->screen_name);
    _eet_string_free(msg->name);
@@ -173,7 +173,8 @@ _my_message_free(My_Message * msg)
 } /* _my_message_free */
 
 static Eina_Bool
-_my_post_add(My_Account *acc, const char * message)
+_my_post_add(My_Account *acc,
+             const char *message)
 {
    int new_count = acc->posts_count + 1;
    My_Post *post = realloc(acc->posts, new_count * sizeof(My_Post));
@@ -187,20 +188,20 @@ _my_post_add(My_Account *acc, const char * message)
    post[acc->posts_count].dm_to = NULL;
    acc->posts_count = new_count;
    acc->posts = post;
-   return EINA_TRUE;;
+   return EINA_TRUE;
 } /* _my_post_new */
 
 static void
-_my_post_free(My_Post * post)
+_my_post_free(My_Post *post)
 {
    _eet_string_free(post->dm_to);
    _eet_string_free(post->message);
 } /* _my_post_free */
 
 static My_Account *
-_my_account_new(const char * name)
+_my_account_new(const char *name)
 {
-   My_Account * acc = calloc(1, sizeof(My_Account));
+   My_Account *acc = calloc(1, sizeof(My_Account));
    if (!acc)
      {
         fprintf(stderr, "ERROR: could not calloc My_Account\n");
@@ -212,15 +213,15 @@ _my_account_new(const char * name)
 } /* _my_account_new */
 
 static void
-_my_account_free(My_Account * acc)
+_my_account_free(My_Account *acc)
 {
-   My_Message * m;
+   My_Message *m;
    int i;
 
    _eet_string_free(acc->name);
 
    EINA_LIST_FREE(acc->messages, m)
-      _my_message_free(m);
+     _my_message_free(m);
 
    for (i = 0; i < acc->posts_count; i++)
      _my_post_free(&acc->posts[i]);
@@ -232,7 +233,7 @@ _my_account_free(My_Account * acc)
 static My_Cache *
 _my_cache_new(void)
 {
-   My_Cache * my_cache = calloc(1, sizeof(My_Cache));
+   My_Cache *my_cache = calloc(1, sizeof(My_Cache));
    if (!my_cache)
      {
         fprintf(stderr, "ERROR: could not calloc My_Cache\n");
@@ -246,32 +247,36 @@ _my_cache_new(void)
 } /* _my_cache_new */
 
 static Eina_Bool
-_my_cache_account_free_cb(const Eina_Hash *hash, const void *key, void *data, void *fdata)
+_my_cache_account_free_cb(const Eina_Hash *hash,
+                          const void      *key,
+                          void            *data,
+                          void            *fdata)
 {
    _my_account_free(data);
    return EINA_TRUE;
 }
 
 static void
-_my_cache_free(My_Cache * my_cache)
+_my_cache_free(My_Cache *my_cache)
 {
-   My_Account * acc;
+   My_Account *acc;
    eina_hash_foreach(my_cache->accounts, _my_cache_account_free_cb, NULL);
    eina_hash_free(my_cache->accounts);
    free(my_cache);
 } /* _my_cache_free */
 
 static My_Account *
-_my_cache_account_find(My_Cache * my_cache, const char * name)
+_my_cache_account_find(My_Cache   *my_cache,
+                       const char *name)
 {
    return eina_hash_find(my_cache->accounts, name);
 } /* _my_cache_account_find */
 
 static My_Cache *
-_my_cache_load(const char * filename)
+_my_cache_load(const char *filename)
 {
-   My_Cache * my_cache;
-   Eet_File * ef = eet_open(filename, EET_FILE_MODE_READ);
+   My_Cache *my_cache;
+   Eet_File *ef = eet_open(filename, EET_FILE_MODE_READ);
    if (!ef)
      {
         fprintf(stderr, "ERROR: could not open '%s' for read\n", filename);
@@ -295,7 +300,7 @@ _my_cache_load(const char * filename)
      }
 
    if (_my_cache_file)
-      eet_close(_my_cache_file);
+     eet_close(_my_cache_file);
 
    _my_cache_file = ef;
    _my_cache_dict = eet_dictionary_get(ef);
@@ -304,10 +309,11 @@ _my_cache_load(const char * filename)
 } /* _my_cache_load */
 
 static Eina_Bool
-_my_cache_save(const My_Cache * my_cache, const char * filename)
+_my_cache_save(const My_Cache *my_cache,
+               const char     *filename)
 {
    char tmp[PATH_MAX];
-   Eet_File * ef;
+   Eet_File *ef;
    Eina_Bool ret;
    unsigned int i, len;
    struct stat st;
@@ -335,7 +341,7 @@ _my_cache_save(const My_Cache * my_cache, const char * filename)
      }
 
    ret = eet_data_write
-         (ef, _my_cache_descriptor, MY_CACHE_FILE_ENTRY, my_cache, EINA_TRUE);
+       (ef, _my_cache_descriptor, MY_CACHE_FILE_ENTRY, my_cache, EINA_TRUE);
 
    // VERY IMPORTANT NOTE:
    // after eet_close(), all strings mmaped from file will be GONE, invalid!
@@ -356,12 +362,14 @@ _my_cache_save(const My_Cache * my_cache, const char * filename)
    return ret;
 } /* _my_cache_save */
 
-int main(int argc, char * argv[])
+int
+main(int   argc,
+     char *argv[])
 {
-   My_Cache * my_cache;
-   const Eina_List * l_acc;
+   My_Cache *my_cache;
+   const Eina_List *l_acc;
    Eina_Iterator *it;
-   My_Account * acc;
+   My_Account *acc;
    int ret = 0;
 
    if (argc < 3)
@@ -399,58 +407,58 @@ int main(int argc, char * argv[])
           {
              if (argc == 5)
                {
-                  My_Account * acc = _my_cache_account_find(my_cache, argv[4]);
+                  My_Account *acc = _my_cache_account_find(my_cache, argv[4]);
                   if (!acc)
                     {
                        acc = _my_account_new(argv[4]);
                        eina_hash_direct_add(my_cache->accounts, acc->name, acc);
                     }
                   else
-                     fprintf(stderr, "ERROR: account '%s' already exists.\n",
-                             argv[4]);
+                    fprintf(stderr, "ERROR: account '%s' already exists.\n",
+                            argv[4]);
                }
              else
-                fprintf(stderr,
-                        "ERROR: wrong number of parameters (%d).\n",
-                        argc);
+               fprintf(stderr,
+                       "ERROR: wrong number of parameters (%d).\n",
+                       argc);
           }
         else if (strcmp(argv[3], "post") == 0)
           {
              if (argc == 6)
                {
-                  My_Account * acc = _my_cache_account_find(my_cache, argv[4]);
+                  My_Account *acc = _my_cache_account_find(my_cache, argv[4]);
                   if (acc)
                     {
                        _my_post_add(acc, argv[5]);
                     }
                   else
-                     fprintf(stderr, "ERROR: unknown account: '%s'\n", argv[4]);
+                    fprintf(stderr, "ERROR: unknown account: '%s'\n", argv[4]);
                }
              else
-                fprintf(stderr,
-                        "ERROR: wrong number of parameters (%d).\n",
-                        argc);
+               fprintf(stderr,
+                       "ERROR: wrong number of parameters (%d).\n",
+                       argc);
           }
         else if (strcmp(argv[3], "message") == 0)
           {
              if (argc == 6)
                {
-                  My_Account * acc = _my_cache_account_find(my_cache, argv[4]);
+                  My_Account *acc = _my_cache_account_find(my_cache, argv[4]);
                   if (acc)
                     {
-                       My_Message * msg = _my_message_new(argv[5]);
+                       My_Message *msg = _my_message_new(argv[5]);
                        acc->messages = eina_list_append(acc->messages, msg);
                     }
                   else
-                     fprintf(stderr, "ERROR: unknown account: '%s'\n", argv[4]);
+                    fprintf(stderr, "ERROR: unknown account: '%s'\n", argv[4]);
                }
              else
-                fprintf(stderr,
-                        "ERROR: wrong number of parameters (%d).\n",
-                        argc);
+               fprintf(stderr,
+                       "ERROR: wrong number of parameters (%d).\n",
+                       argc);
           }
         else
-           fprintf(stderr, "ERROR: unknown action '%s'\n", argv[2]);
+          fprintf(stderr, "ERROR: unknown action '%s'\n", argv[2]);
      }
 
    printf("My_Cache:\n"
@@ -460,52 +468,52 @@ int main(int argc, char * argv[])
           eina_hash_population(my_cache->accounts));
    it = eina_hash_iterator_data_new(my_cache->accounts);
    EINA_ITERATOR_FOREACH(it, acc)
-   {
-      const My_Post * post;
+     {
+        const My_Post *post;
 
-      printf("\t  > %-#8x '%.20s' stats: m=%u, p=%u\n",
-             acc->id, acc->name ? acc->name : "",
-             eina_list_count(acc->messages),
-             acc->posts_count);
+        printf("\t  > %-#8x '%.20s' stats: m=%u, p=%u\n",
+               acc->id, acc->name ? acc->name : "",
+               eina_list_count(acc->messages),
+               acc->posts_count);
 
-      if (eina_list_count(acc->messages))
-        {
-           const Eina_List * l;
-           const My_Message * msg;
-           printf("\t  |messages:\n");
+        if (eina_list_count(acc->messages))
+          {
+             const Eina_List *l;
+             const My_Message *msg;
+             printf("\t  |messages:\n");
 
-           EINA_LIST_FOREACH(acc->messages, l, msg)
-           {
-              printf("\t  |   %-8x '%s' [%s]: '%.20s'\n",
-                     msg->id,
-                     msg->name ? msg->name : "",
-                     msg->screen_name ? msg->screen_name : "",
-                     msg->message ? msg->message : "");
-           }
-        }
+             EINA_LIST_FOREACH(acc->messages, l, msg)
+               {
+                  printf("\t  |   %-8x '%s' [%s]: '%.20s'\n",
+                         msg->id,
+                         msg->name ? msg->name : "",
+                         msg->screen_name ? msg->screen_name : "",
+                         msg->message ? msg->message : "");
+               }
+          }
 
-      if (acc->posts_count)
-        {
-           const My_Post * post;
-           int i;
-           printf("\t  |posts:\n");
+        if (acc->posts_count)
+          {
+             const My_Post *post;
+             int i;
+             printf("\t  |posts:\n");
 
-           for (i = 0; i < acc->posts_count; i++)
-           {
-              post = &acc->posts[i];
-              if (post->dm_to)
-                 printf("\t  |  @%s: '%.20s'\n", post->dm_to, post->message);
-              else
-                 printf("\t  |  '%.20s'\n",      post->message);
-           }
-        }
+             for (i = 0; i < acc->posts_count; i++)
+               {
+                  post = &acc->posts[i];
+                  if (post->dm_to)
+                    printf("\t  |  @%s: '%.20s'\n", post->dm_to, post->message);
+                  else
+                    printf("\t  |  '%.20s'\n", post->message);
+               }
+          }
 
-      printf("\n");
-   }
+        printf("\n");
+     }
    eina_iterator_free(it);
 
    if (!_my_cache_save(my_cache, argv[2]))
-      ret = -3;
+     ret = -3;
 
    _my_cache_free(my_cache);
 

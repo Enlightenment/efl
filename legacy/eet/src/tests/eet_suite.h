@@ -3,6 +3,7 @@
 
 #include "Eet.h"
 
-void      eet_test_setup_eddc(Eet_Data_Descriptor_Class * eddc);
+void
+eet_test_setup_eddc(Eet_Data_Descriptor_Class *eddc);
 
 #endif /* _EET_SUITE_H */

@@ -3,7 +3,7 @@
 
 #include <Eina.h>
 
-typedef enum _Eet_Convert_Type   Eet_Convert_Type;
+typedef enum _Eet_Convert_Type Eet_Convert_Type;
 
 enum _Eet_Convert_Type
 {
@@ -13,8 +13,8 @@ enum _Eet_Convert_Type
    EET_D_FIXED_POINT   = 1 << 4
 };
 
-typedef struct _Eet_String   Eet_String;
-typedef struct _Eet_Convert  Eet_Convert;
+typedef struct _Eet_String  Eet_String;
+typedef struct _Eet_Convert Eet_Convert;
 
 struct _Eet_Convert
 {
@@ -27,15 +27,15 @@ struct _Eet_Convert
 
 struct _Eet_String
 {
-   const char      *str;
+   const char   *str;
 
-   int              len;
+   int           len;
 
-   int              next;
-   int              prev;
+   int           next;
+   int           prev;
 
-   unsigned char    hash;
-   unsigned char    allocated : 1;
+   unsigned char hash;
+   unsigned char allocated : 1;
 };
 struct _Eet_Dictionary
 {
@@ -101,61 +101,82 @@ extern int _eet_log_dom_global;
 #endif /* ifdef CRIT */
 #define CRIT(...) EINA_LOG_DOM_CRIT(_eet_log_dom_global, __VA_ARGS__)
 
-Eet_Dictionary *    eet_dictionary_add(void);
-void                eet_dictionary_free(Eet_Dictionary *ed);
-int                 eet_dictionary_string_add(Eet_Dictionary *ed,
-                                              const char     *string);
-int                 eet_dictionary_string_get_size(const Eet_Dictionary *ed,
-                                                   int                   index);
-const char *        eet_dictionary_string_get_char(const Eet_Dictionary *ed,
-                                                   int                   index);
-Eina_Bool           eet_dictionary_string_get_float(const Eet_Dictionary *ed,
-                                                    int                   index,
-                                                    float                *result);
-Eina_Bool           eet_dictionary_string_get_double(const Eet_Dictionary *ed,
-                                                     int                   index,
-                                                     double               *result);
-Eina_Bool           eet_dictionary_string_get_fp(const Eet_Dictionary *ed,
-                                                 int                   index,
-                                                 Eina_F32p32          *result);
-int                 eet_dictionary_string_get_hash(const Eet_Dictionary *ed,
-                                                   int                   index);
+Eet_Dictionary *
+ eet_dictionary_add(void);
+void
+ eet_dictionary_free(Eet_Dictionary *ed);
+int
+ eet_dictionary_string_add(Eet_Dictionary *ed,
+                          const char *string);
+int
+eet_dictionary_string_get_size(const Eet_Dictionary *ed,
+                               int index);
+const char *
+eet_dictionary_string_get_char(const Eet_Dictionary *ed,
+                               int index);
+Eina_Bool
+eet_dictionary_string_get_float(const Eet_Dictionary *ed,
+                                int index,
+                                float *result);
+Eina_Bool
+eet_dictionary_string_get_double(const Eet_Dictionary *ed,
+                                 int index,
+                                 double *result);
+Eina_Bool
+eet_dictionary_string_get_fp(const Eet_Dictionary *ed,
+                             int index,
+                             Eina_F32p32 *result);
+int
+eet_dictionary_string_get_hash(const Eet_Dictionary *ed,
+                               int index);
 
-int                 _eet_hash_gen(const char *key, int hash_size);
+int _eet_hash_gen(const char *key,
+                  int hash_size);
 
-const void *        eet_identity_check(const void   *data_base,
-                                       unsigned int  data_length,
-                                       void        **sha1,
-                                       int          *sha1_length,
-                                       const void   *signature_base,
-                                       unsigned int  signature_length,
-                                       const void  **raw_signature_base,
-                                       unsigned int *raw_signature_length,
-                                       int          *x509_length);
-void *         eet_identity_compute_sha1(const void  *data_base,
-                                         unsigned int data_length,
-                                         int         *sha1_length);
-Eet_Error      eet_cipher(const void   *data,
-                          unsigned int  size,
-                          const char   *key,
-                          unsigned int  length,
-                          void        **result,
-                          unsigned int *result_length);
-Eet_Error      eet_decipher(const void   *data,
-                            unsigned int  size,
-                            const char   *key,
-                            unsigned int  length,
-                            void        **result,
-                            unsigned int *result_length);
-Eet_Error      eet_identity_sign(FILE    *fp,
-                                 Eet_Key *key);
-void           eet_identity_unref(Eet_Key *key);
-void           eet_identity_ref(Eet_Key *key);
+const void *
+eet_identity_check(const void *data_base,
+                   unsigned int data_length,
+                   void **sha1,
+                   int *sha1_length,
+                   const void *signature_base,
+                   unsigned int signature_length,
+                   const void **raw_signature_base,
+                   unsigned int *raw_signature_length,
+                   int *x509_length);
+void *
+eet_identity_compute_sha1(const void *data_base,
+                          unsigned int data_length,
+                          int *sha1_length);
+Eet_Error
+eet_cipher(const void *data,
+           unsigned int size,
+           const char *key,
+           unsigned int length,
+           void **result,
+           unsigned int *result_length);
+Eet_Error
+eet_decipher(const void *data,
+             unsigned int size,
+             const char *key,
+             unsigned int length,
+             void **result,
+             unsigned int *result_length);
+Eet_Error
+eet_identity_sign(FILE *fp,
+                  Eet_Key *key);
+void
+ eet_identity_unref(Eet_Key *key);
+void
+ eet_identity_ref(Eet_Key *key);
 
-void           eet_node_shutdown(void);
-int            eet_node_init(void);
-Eet_Node *     eet_node_new(void);
-void           eet_node_free(Eet_Node *node);
+void
+ eet_node_shutdown(void);
+int
+ eet_node_init(void);
+Eet_Node *
+ eet_node_new(void);
+void
+ eet_node_free(Eet_Node *node);
 
 #ifndef PATH_MAX
 # define PATH_MAX 4096

@@ -16,7 +16,7 @@
 # ifdef  __cplusplus
 extern "C"
 # endif /* ifdef  __cplusplus */
-void *    alloca (size_t);
+void *alloca(size_t);
 #endif /* ifdef HAVE_ALLOCA_H */
 
 #include <string.h>
@@ -58,11 +58,11 @@ eet_connection_new(Eet_Read_Cb  *eet_read_cb,
    Eet_Connection *conn;
 
    if (!eet_read_cb || !eet_write_cb)
-      return NULL;
+     return NULL;
 
    conn = calloc(1, sizeof (Eet_Connection));
    if (!conn)
-      return NULL;
+     return NULL;
 
    conn->eet_read_cb = eet_read_cb;
    conn->eet_write_cb = eet_write_cb;
@@ -77,7 +77,7 @@ eet_connection_received(Eet_Connection *conn,
                         size_t          size)
 {
    if ((!conn) || (!data) || (!size))
-      return size;
+     return size;
 
    do {
         size_t copy_size;
@@ -88,31 +88,31 @@ eet_connection_received(Eet_Connection *conn,
              size_t packet_size;
 
              if (size < sizeof (int) * 2)
-                break;
+               break;
 
              msg = data;
              /* Check the magic */
              if (ntohl(msg[0]) != MAGIC_EET_DATA_PACKET)
-                break;
+               break;
 
              packet_size = ntohl(msg[1]);
              /* Message should always be under 64K */
              if (packet_size > 64 * 1024)
-                break;
+               break;
 
              data = (void *)(msg + 2);
              size -= sizeof (int) * 2;
              if ((size_t)packet_size <= size)
                {
-                  /* Not a partial receive, go the quick way. */
-                  if (!conn->eet_read_cb(data, packet_size, conn->user_data))
+     /* Not a partial receive, go the quick way. */
+                   if (!conn->eet_read_cb(data, packet_size, conn->user_data))
                      break;
 
-                  data = (void *)((char *)data + packet_size);
-                  size -= packet_size;
+                   data = (void *)((char *)data + packet_size);
+                   size -= packet_size;
 
-                  conn->received = 0;
-                  continue;
+                   conn->received = 0;
+                   continue;
                }
 
              conn->size = packet_size;
@@ -122,7 +122,7 @@ eet_connection_received(Eet_Connection *conn,
 
                   tmp = realloc(conn->buffer, conn->size);
                   if (!tmp)
-                     break;
+                    break;
 
                   conn->buffer = tmp;
                   conn->allocated = conn->size;
@@ -131,8 +131,8 @@ eet_connection_received(Eet_Connection *conn,
 
         /* Partial receive */
         copy_size =
-           (conn->size - conn->received >=
-            size) ? size : conn->size - conn->received;
+          (conn->size - conn->received >=
+           size) ? size : conn->size - conn->received;
         memcpy((char *)conn->buffer + conn->received, data, copy_size);
 
         conn->received += copy_size;
@@ -150,9 +150,9 @@ eet_connection_received(Eet_Connection *conn,
              /* Completed a packet. */
              if (!conn->eet_read_cb(conn->buffer, data_size, conn->user_data))
                {
-                  /* Something goes wrong. Stop now. */
-                  size += data_size;
-                  break;
+     /* Something goes wrong. Stop now. */
+                   size += data_size;
+                   break;
                }
           }
      } while (size > 0);
@@ -169,7 +169,7 @@ _eet_connection_raw_send(Eet_Connection *conn,
 
    /* Message should never be above 64K */
    if (data_size > 64 * 1024)
-      return EINA_FALSE;
+     return EINA_FALSE;
 
    message = alloca(data_size + sizeof (int) * 2);
    message[0] = htonl(MAGIC_EET_DATA_PACKET);
@@ -198,10 +198,10 @@ eet_connection_send(Eet_Connection      *conn,
                                                  cipher_key,
                                                  &data_size);
    if (!flat_data)
-      return EINA_FALSE;
+     return EINA_FALSE;
 
    if (_eet_connection_raw_send(conn, flat_data, data_size))
-      ret = EINA_TRUE;
+     ret = EINA_TRUE;
 
    free(flat_data);
    return ret;
@@ -218,10 +218,10 @@ eet_connection_node_send(Eet_Connection *conn,
 
    data = eet_data_node_encode_cipher(node, cipher_key, &data_size);
    if (!data)
-      return EINA_FALSE;
+     return EINA_FALSE;
 
    if (_eet_connection_raw_send(conn, data, data_size))
-      ret = EINA_TRUE;
+     ret = EINA_TRUE;
 
    free(data);
    return ret;
@@ -234,10 +234,10 @@ eet_connection_close(Eet_Connection *conn,
    void *user_data;
 
    if (!conn)
-      return NULL;
+     return NULL;
 
    if (on_going)
-      *on_going = conn->received == 0 ? EINA_FALSE : EINA_TRUE;
+     *on_going = conn->received == 0 ? EINA_FALSE : EINA_TRUE;
 
    user_data = conn->user_data;
 

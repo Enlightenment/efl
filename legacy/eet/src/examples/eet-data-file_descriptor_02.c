@@ -115,7 +115,9 @@ _st3_set(Example_Struct3 *st3,
    st3->body = v1;
 } /* _st3_set */
 
-static const char * /* union type_get() */
+static const char *
+/* union
+   type_get() */
 _union_type_get(const void *data,
                 Eina_Bool  *unknow)
 {
@@ -259,7 +261,8 @@ static Eet_Data_Descriptor *_variant_unified_descriptor;
 static Eet_File *_cache_file = NULL;
 static Eet_Dictionary *_cache_dict = NULL;
 
-static void /* declaring types */
+static void
+/* declaring types */
 _data_descriptors_init(void)
 {
    Eet_Data_Descriptor_Class eddc;
