@@ -132,8 +132,8 @@ struct _Emotion_Gstreamer_Video
 
    struct
    {
-      int            width;
-      int            height;
+      double         width;
+      double         height;
    } fill;
 
    Eina_Bool         play         : 1;

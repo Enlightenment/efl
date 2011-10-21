@@ -44,7 +44,7 @@ struct _Smart_Data
 {
    EINA_REFCOUNT;
    Emotion_Video_Module  *module;
-   void                  *video;
+   void                  *video_data;
 
    char                  *module_name;
 
@@ -79,8 +79,13 @@ struct _Smart_Data
       int b; /* bottom */
       Evas_Object *clipper;
    } crop;
-   
-   int            w, h;
+
+   struct {
+      int         w, h;
+   } video;
+   struct {
+      double      w, h;
+   } fill;
 
    double         ratio;
    double         pos;
@@ -203,8 +208,8 @@ _emotion_module_close(Emotion_Video_Module *mod, void *video)
 static void
 _smart_data_free(Smart_Data *sd)
 {
-   if (sd->video) sd->module->file_close(sd->video);
-   _emotion_module_close(sd->module, sd->video);
+   if (sd->video_data) sd->module->file_close(sd->video_data);
+   _emotion_module_close(sd->module, sd->video_data);
    evas_object_del(sd->obj);
    evas_object_del(sd->crop.clipper);
    evas_object_del(sd->bg);
@@ -309,7 +314,10 @@ _clipper_position_size_update(Evas_Object *obj, int x, int y, int w, int h, int 
        scale_w = (double)w / (double)(vid_w - sd->crop.l - sd->crop.r);
        scale_h = (double)h / (double)(vid_h - sd->crop.t - sd->crop.b);
 
-       evas_object_image_fill_set(sd->obj, 0, 0, vid_w * scale_w, vid_h * scale_h);
+       if (sd->fill.w < 0 && sd->fill.h < 0)
+         evas_object_image_fill_set(sd->obj, 0, 0, vid_w * scale_w, vid_h * scale_h);
+       else
+         evas_object_image_fill_set(sd->obj, 0, 0, sd->fill.w * w, sd->fill.h * h);
        evas_object_resize(sd->obj, vid_w * scale_w, vid_h * scale_h);
        evas_object_move(sd->obj, x - sd->crop.l * scale_w, y - sd->crop.t * scale_h);
        evas_object_resize(sd->crop.clipper, w, h);
@@ -384,11 +392,11 @@ emotion_object_init(Evas_Object *obj, const char *module_filename)
    sd->len = 0;
    sd->remember_play = 0;
 
-   _emotion_module_close(sd->module, sd->video);
+   _emotion_module_close(sd->module, sd->video_data);
    sd->module = NULL;
-   sd->video = NULL;
+   sd->video_data = NULL;
 
-   module_filename = _emotion_module_open(module_filename, obj, &sd->module, &sd->video);
+   module_filename = _emotion_module_open(module_filename, obj, &sd->module, &sd->video_data);
    if (!module_filename)
      return EINA_FALSE;
 
@@ -413,28 +421,28 @@ emotion_object_file_set(Evas_Object *obj, const char *file)
    DBG("file=%s", file);
    if (!sd->module) return EINA_FALSE;
 
-   sd->w = 0;
-   sd->h = 0;
-   if ((file) && (sd->file) && 
+   sd->video.w = 0;
+   sd->video.h = 0;
+   if ((file) && (sd->file) &&
        ((file == sd->file) || (!strcmp(file, sd->file)))) return EINA_FALSE;
    if ((file) && (file[0] != 0))
      {
 	eina_stringshare_replace(&sd->file, file);
-	sd->module->file_close(sd->video);
+	sd->module->file_close(sd->video_data);
         evas_object_image_data_set(sd->obj, NULL);
 	evas_object_image_size_set(sd->obj, 1, 1);
         _emotion_image_data_zero(sd->obj);
         sd->open = 0;
-	if (!sd->module->file_open(sd->file, obj, sd->video))
+	if (!sd->module->file_open(sd->file, obj, sd->video_data))
 	  return EINA_FALSE;
 	sd->pos = 0.0;
-	if (sd->play) sd->module->play(sd->video, 0.0);
+	if (sd->play) sd->module->play(sd->video_data, 0.0);
      }
    else
      {
-        if (sd->video && sd->module)
+        if (sd->video_data && sd->module)
 	  {
-	     sd->module->file_close(sd->video);
+	     sd->module->file_close(sd->video_data);
              evas_object_image_data_set(sd->obj, NULL);
 	     evas_object_image_size_set(sd->obj, 1, 1);
              _emotion_image_data_zero(sd->obj);
@@ -508,7 +516,9 @@ _emotion_object_aspect_border_apply(Evas_Object *obj, Smart_Data *sd, int w, int
    double r;
 
    int aspect_opt;
-   sd->module->video_data_size_get(sd->video, &iw, &ih);
+
+   iw = sd->video.w;
+   ih = sd->video.h;
 
    ir = (double)iw / ih;
    r = (double)w / h;
@@ -674,7 +684,7 @@ emotion_object_play_set(Evas_Object *obj, Eina_Bool play)
    DBG("play=%hhu, was=%hhu", play, sd->play);
    if (play == sd->play) return;
    if (!sd->module) return;
-   if (!sd->video) return;
+   if (!sd->video_data) return;
    if (!sd->open)
      {
         sd->remember_play = play;
@@ -683,8 +693,8 @@ emotion_object_play_set(Evas_Object *obj, Eina_Bool play)
    sd->play = play;
    sd->remember_play = play;
    if (sd->state != EMOTION_WAKEUP) emotion_object_suspend_set(obj, EMOTION_WAKEUP);
-   if (sd->play) sd->module->play(sd->video, sd->pos);
-   else sd->module->stop(sd->video);
+   if (sd->play) sd->module->play(sd->video_data, sd->pos);
+   else sd->module->stop(sd->video_data);
 }
 
 EAPI Eina_Bool
@@ -693,7 +703,7 @@ emotion_object_play_get(const Evas_Object *obj)
    Smart_Data *sd;
 
    E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, 0);
-   if (!sd->video) return EINA_FALSE;
+   if (!sd->video_data) return EINA_FALSE;
 
    return sd->play;
 }
@@ -706,7 +716,7 @@ emotion_object_position_set(Evas_Object *obj, double sec)
    E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
    DBG("sec=%f", sec);
    if (!sd->module) return;
-   if (!sd->video) return;
+   if (!sd->video_data) return;
    if (!sd->open)
      {
         sd->remember_jump = sec;
@@ -727,9 +737,9 @@ emotion_object_position_get(const Evas_Object *obj)
 
    E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, 0.0);
    if (!sd->module) return 0.0;
-   if (!sd->video) return 0.0;
+   if (!sd->video_data) return 0.0;
    if (!sd->module->pos_get) return 0.0;
-   sd->pos = sd->module->pos_get(sd->video);
+   sd->pos = sd->module->pos_get(sd->video_data);
    return sd->pos;
 }
 
@@ -740,8 +750,8 @@ emotion_object_seekable_get(const Evas_Object *obj)
 
    E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, 0);
    if (!sd->module) return EINA_FALSE;
-   if (!sd->video) return EINA_FALSE;
-   return sd->module->seekable(sd->video);
+   if (!sd->video_data) return EINA_FALSE;
+   return sd->module->seekable(sd->video_data);
 }
 
 EAPI Eina_Bool
@@ -751,8 +761,8 @@ emotion_object_video_handled_get(const Evas_Object *obj)
 
    E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, 0);
    if (!sd->module) return EINA_FALSE;
-   if (!sd->video) return EINA_FALSE;
-   return sd->module->video_handled(sd->video);
+   if (!sd->video_data) return EINA_FALSE;
+   return sd->module->video_handled(sd->video_data);
 }
 
 EAPI Eina_Bool
@@ -762,8 +772,8 @@ emotion_object_audio_handled_get(const Evas_Object *obj)
 
    E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, 0);
    if (!sd->module) return EINA_FALSE;
-   if (!sd->video) return EINA_FALSE;
-   return sd->module->audio_handled(sd->video);
+   if (!sd->video_data) return EINA_FALSE;
+   return sd->module->audio_handled(sd->video_data);
 }
 
 EAPI double
@@ -773,8 +783,8 @@ emotion_object_play_length_get(const Evas_Object *obj)
 
    E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, 0.0);
    if (!sd->module) return 0.0;
-   if (!sd->video) return 0.0;
-   sd->len = sd->module->len_get(sd->video);
+   if (!sd->video_data) return 0.0;
+   sd->len = sd->module->len_get(sd->video_data);
    return sd->len;
 }
 
@@ -786,8 +796,8 @@ emotion_object_size_get(const Evas_Object *obj, int *iw, int *ih)
    if (iw) *iw = 0;
    if (ih) *ih = 0;
    E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
-   if (iw) *iw = sd->w;
-   if (ih) *ih = sd->h;
+   if (iw) *iw = sd->video.w;
+   if (ih) *ih = sd->video.h;
 }
 
 EAPI void
@@ -815,7 +825,7 @@ emotion_object_ratio_get(const Evas_Object *obj)
 
    E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, 1.0);
    if (!sd->module) return 0.0;
-   if (!sd->video) return 0.0;
+   if (!sd->video_data) return 0.0;
    return sd->ratio;
 }
 
@@ -829,8 +839,8 @@ emotion_object_event_simple_send(Evas_Object *obj, Emotion_Event ev)
 
    E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
    if (!sd->module) return;
-   if (!sd->video) return;
-   sd->module->event_feed(sd->video, ev);
+   if (!sd->video_data) return;
+   sd->module->event_feed(sd->video_data, ev);
 }
 
 EAPI void
@@ -841,8 +851,8 @@ emotion_object_audio_volume_set(Evas_Object *obj, double vol)
    E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
    DBG("vol=%f", vol);
    if (!sd->module) return;
-   if (!sd->video) return;
-   sd->module->audio_channel_volume_set(sd->video, vol);
+   if (!sd->video_data) return;
+   sd->module->audio_channel_volume_set(sd->video_data, vol);
 }
 
 EAPI double
@@ -852,8 +862,8 @@ emotion_object_audio_volume_get(const Evas_Object *obj)
 
    E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, 1.0);
    if (!sd->module) return 0.0;
-   if (!sd->video) return 0.0;
-   return sd->module->audio_channel_volume_get(sd->video);
+   if (!sd->video_data) return 0.0;
+   return sd->module->audio_channel_volume_get(sd->video_data);
 }
 
 EAPI void
@@ -864,8 +874,8 @@ emotion_object_audio_mute_set(Evas_Object *obj, Eina_Bool mute)
    E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
    DBG("mute=%hhu", mute);
    if (!sd->module) return;
-   if (!sd->video) return;
-   sd->module->audio_channel_mute_set(sd->video, mute);
+   if (!sd->video_data) return;
+   sd->module->audio_channel_mute_set(sd->video_data, mute);
 }
 
 EAPI Eina_Bool
@@ -875,8 +885,8 @@ emotion_object_audio_mute_get(const Evas_Object *obj)
 
    E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, 0);
    if (!sd->module) return EINA_FALSE;
-   if (!sd->video) return EINA_FALSE;
-   return sd->module->audio_channel_mute_get(sd->video);
+   if (!sd->video_data) return EINA_FALSE;
+   return sd->module->audio_channel_mute_get(sd->video_data);
 }
 
 EAPI int
@@ -886,8 +896,8 @@ emotion_object_audio_channel_count(const Evas_Object *obj)
 
    E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, 0);
    if (!sd->module) return 0;
-   if (!sd->video) return 0;
-   return sd->module->audio_channel_count(sd->video);
+   if (!sd->video_data) return 0;
+   return sd->module->audio_channel_count(sd->video_data);
 }
 
 EAPI const char *
@@ -897,8 +907,8 @@ emotion_object_audio_channel_name_get(const Evas_Object *obj, int channel)
 
    E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, NULL);
    if (!sd->module) return NULL;
-   if (!sd->video) return NULL;
-   return sd->module->audio_channel_name_get(sd->video, channel);
+   if (!sd->video_data) return NULL;
+   return sd->module->audio_channel_name_get(sd->video_data, channel);
 }
 
 EAPI void
@@ -909,8 +919,8 @@ emotion_object_audio_channel_set(Evas_Object *obj, int channel)
    E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
    DBG("channel=%d", channel);
    if (!sd->module) return;
-   if (!sd->video) return;
-   sd->module->audio_channel_set(sd->video, channel);
+   if (!sd->video_data) return;
+   sd->module->audio_channel_set(sd->video_data, channel);
 }
 
 EAPI int
@@ -920,8 +930,8 @@ emotion_object_audio_channel_get(const Evas_Object *obj)
 
    E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, 0);
    if (!sd->module) return 0;
-   if (!sd->video) return 0;
-   return sd->module->audio_channel_get(sd->video);
+   if (!sd->video_data) return 0;
+   return sd->module->audio_channel_get(sd->video_data);
 }
 
 EAPI void
@@ -932,8 +942,8 @@ emotion_object_video_mute_set(Evas_Object *obj, Eina_Bool mute)
    E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
    DBG("mute=%hhu", mute);
    if (!sd->module) return;
-   if (!sd->video) return;
-   sd->module->video_channel_mute_set(sd->video, mute);
+   if (!sd->video_data) return;
+   sd->module->video_channel_mute_set(sd->video_data, mute);
 }
 
 EAPI Eina_Bool
@@ -943,8 +953,8 @@ emotion_object_video_mute_get(const Evas_Object *obj)
 
    E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, 0);
    if (!sd->module) return EINA_FALSE;
-   if (!sd->video) return EINA_FALSE;
-   return sd->module->video_channel_mute_get(sd->video);
+   if (!sd->video_data) return EINA_FALSE;
+   return sd->module->video_channel_mute_get(sd->video_data);
 }
 
 EAPI int
@@ -954,8 +964,8 @@ emotion_object_video_channel_count(const Evas_Object *obj)
 
    E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, 0);
    if (!sd->module) return EINA_FALSE;
-   if (!sd->video) return EINA_FALSE;
-   return sd->module->video_channel_count(sd->video);
+   if (!sd->video_data) return EINA_FALSE;
+   return sd->module->video_channel_count(sd->video_data);
 }
 
 EAPI const char *
@@ -965,8 +975,8 @@ emotion_object_video_channel_name_get(const Evas_Object *obj, int channel)
 
    E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, NULL);
    if (!sd->module) return NULL;
-   if (!sd->video) return NULL;
-   return sd->module->video_channel_name_get(sd->video, channel);
+   if (!sd->video_data) return NULL;
+   return sd->module->video_channel_name_get(sd->video_data, channel);
 }
 
 EAPI void
@@ -977,8 +987,8 @@ emotion_object_video_channel_set(Evas_Object *obj, int channel)
    E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
    DBG("channel=%d", channel);
    if (!sd->module) return;
-   if (!sd->video) return;
-   sd->module->video_channel_set(sd->video, channel);
+   if (!sd->video_data) return;
+   sd->module->video_channel_set(sd->video_data, channel);
 }
 
 EAPI int
@@ -988,8 +998,8 @@ emotion_object_video_channel_get(const Evas_Object *obj)
 
    E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, 0);
    if (!sd->module) return 0;
-   if (!sd->video) return 0;
-   return sd->module->video_channel_get(sd->video);
+   if (!sd->video_data) return 0;
+   return sd->module->video_channel_get(sd->video_data);
 }
 
 EAPI void
@@ -1000,8 +1010,8 @@ emotion_object_spu_mute_set(Evas_Object *obj, Eina_Bool mute)
    E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
    DBG("mute=%hhu", mute);
    if (!sd->module) return;
-   if (!sd->video) return;
-   sd->module->spu_channel_mute_set(sd->video, mute);
+   if (!sd->video_data) return;
+   sd->module->spu_channel_mute_set(sd->video_data, mute);
 }
 
 EAPI Eina_Bool
@@ -1011,8 +1021,8 @@ emotion_object_spu_mute_get(const Evas_Object *obj)
 
    E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, 0);
    if (!sd->module) return EINA_FALSE;
-   if (!sd->video) return EINA_FALSE;
-   return sd->module->spu_channel_mute_get(sd->video);
+   if (!sd->video_data) return EINA_FALSE;
+   return sd->module->spu_channel_mute_get(sd->video_data);
 }
 
 EAPI int
@@ -1022,8 +1032,8 @@ emotion_object_spu_channel_count(const Evas_Object *obj)
 
    E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, 0);
    if (!sd->module) return 0;
-   if (!sd->video) return 0;
-   return sd->module->spu_channel_count(sd->video);
+   if (!sd->video_data) return 0;
+   return sd->module->spu_channel_count(sd->video_data);
 }
 
 EAPI const char *
@@ -1033,8 +1043,8 @@ emotion_object_spu_channel_name_get(const Evas_Object *obj, int channel)
 
    E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, NULL);
    if (!sd->module) return NULL;
-   if (!sd->video) return NULL;
-   return sd->module->spu_channel_name_get(sd->video, channel);
+   if (!sd->video_data) return NULL;
+   return sd->module->spu_channel_name_get(sd->video_data, channel);
 }
 
 EAPI void
@@ -1045,8 +1055,8 @@ emotion_object_spu_channel_set(Evas_Object *obj, int channel)
    E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
    DBG("channel=%d", channel);
    if (!sd->module) return;
-   if (!sd->video) return;
-   sd->module->spu_channel_set(sd->video, channel);
+   if (!sd->video_data) return;
+   sd->module->spu_channel_set(sd->video_data, channel);
 }
 
 EAPI int
@@ -1056,8 +1066,8 @@ emotion_object_spu_channel_get(const Evas_Object *obj)
 
    E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, 0);
    if (!sd->module) return 0;
-   if (!sd->video) return 0;
-   return sd->module->spu_channel_get(sd->video);
+   if (!sd->video_data) return 0;
+   return sd->module->spu_channel_get(sd->video_data);
 }
 
 EAPI int
@@ -1067,8 +1077,8 @@ emotion_object_chapter_count(const Evas_Object *obj)
 
    E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, 0);
    if (!sd->module) return 0;
-   if (!sd->video) return 0;
-   return sd->module->chapter_count(sd->video);
+   if (!sd->video_data) return 0;
+   return sd->module->chapter_count(sd->video_data);
 }
 
 EAPI void
@@ -1079,8 +1089,8 @@ emotion_object_chapter_set(Evas_Object *obj, int chapter)
    E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
    DBG("chapter=%d", chapter);
    if (!sd->module) return;
-   if (!sd->video) return;
-   sd->module->chapter_set(sd->video, chapter);
+   if (!sd->video_data) return;
+   sd->module->chapter_set(sd->video_data, chapter);
 }
 
 EAPI int
@@ -1090,8 +1100,8 @@ emotion_object_chapter_get(const Evas_Object *obj)
 
    E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, 0);
    if (!sd->module) return 0;
-   if (!sd->video) return 0;
-   return sd->module->chapter_get(sd->video);
+   if (!sd->video_data) return 0;
+   return sd->module->chapter_get(sd->video_data);
 }
 
 EAPI const char *
@@ -1101,8 +1111,8 @@ emotion_object_chapter_name_get(const Evas_Object *obj, int chapter)
 
    E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, NULL);
    if (!sd->module) return NULL;
-   if (!sd->video) return NULL;
-   return sd->module->chapter_name_get(sd->video, chapter);
+   if (!sd->video_data) return NULL;
+   return sd->module->chapter_name_get(sd->video_data, chapter);
 }
 
 EAPI void
@@ -1113,8 +1123,8 @@ emotion_object_play_speed_set(Evas_Object *obj, double speed)
    E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
    DBG("speed=%f", speed);
    if (!sd->module) return;
-   if (!sd->video) return;
-   sd->module->speed_set(sd->video, speed);
+   if (!sd->video_data) return;
+   sd->module->speed_set(sd->video_data, speed);
 }
 
 EAPI double
@@ -1124,8 +1134,8 @@ emotion_object_play_speed_get(const Evas_Object *obj)
 
    E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, 0.0);
    if (!sd->module) return 0.0;
-   if (!sd->video) return 0.0;
-   return sd->module->speed_get(sd->video);
+   if (!sd->video_data) return 0.0;
+   return sd->module->speed_get(sd->video_data);
 }
 
 EAPI void
@@ -1135,8 +1145,8 @@ emotion_object_eject(Evas_Object *obj)
 
    E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
    if (!sd->module) return;
-   if (!sd->video) return;
-   sd->module->eject(sd->video);
+   if (!sd->video_data) return;
+   sd->module->eject(sd->video_data);
 }
 
 EAPI const char *
@@ -1209,30 +1219,23 @@ emotion_object_meta_info_get(const Evas_Object *obj, Emotion_Meta_Info meta)
 
    E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, NULL);
    if (!sd->module) return NULL;
-   if (!sd->video) return NULL;
+   if (!sd->video_data) return NULL;
    switch (meta)
      {
       case EMOTION_META_INFO_TRACK_TITLE:
-	return sd->module->meta_get(sd->video, META_TRACK_TITLE);
-	break;
+	return sd->module->meta_get(sd->video_data, META_TRACK_TITLE);
       case EMOTION_META_INFO_TRACK_ARTIST:
-	return sd->module->meta_get(sd->video, META_TRACK_ARTIST);
-	break;
+	return sd->module->meta_get(sd->video_data, META_TRACK_ARTIST);
       case EMOTION_META_INFO_TRACK_ALBUM:
-	return sd->module->meta_get(sd->video, META_TRACK_ALBUM);
-	break;
+	return sd->module->meta_get(sd->video_data, META_TRACK_ALBUM);
       case EMOTION_META_INFO_TRACK_YEAR:
-	return sd->module->meta_get(sd->video, META_TRACK_YEAR);
-	break;
+	return sd->module->meta_get(sd->video_data, META_TRACK_YEAR);
       case EMOTION_META_INFO_TRACK_GENRE:
-	return sd->module->meta_get(sd->video, META_TRACK_GENRE);
-	break;
+	return sd->module->meta_get(sd->video_data, META_TRACK_GENRE);
       case EMOTION_META_INFO_TRACK_COMMENT:
-	return sd->module->meta_get(sd->video, META_TRACK_COMMENT);
-	break;
+	return sd->module->meta_get(sd->video_data, META_TRACK_COMMENT);
       case EMOTION_META_INFO_TRACK_DISC_ID:
-	return sd->module->meta_get(sd->video, META_TRACK_DISCID);
-	break;
+	return sd->module->meta_get(sd->video_data, META_TRACK_DISCID);
       default:
 	break;
      }
@@ -1247,9 +1250,9 @@ emotion_object_vis_set(Evas_Object *obj, Emotion_Vis visualization)
    E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
    DBG("visualization=%d", visualization);
    if (!sd->module) return;
-   if (!sd->video) return;
+   if (!sd->video_data) return;
    if (!sd->module->vis_set) return;
-   sd->module->vis_set(sd->video, visualization);
+   sd->module->vis_set(sd->video_data, visualization);
 }
 
 EAPI Emotion_Vis
@@ -1259,9 +1262,9 @@ emotion_object_vis_get(const Evas_Object *obj)
 
    E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, EMOTION_VIS_NONE);
    if (!sd->module) return EMOTION_VIS_NONE;
-   if (!sd->video) return EMOTION_VIS_NONE;
+   if (!sd->video_data) return EMOTION_VIS_NONE;
    if (!sd->module->vis_get) return EMOTION_VIS_NONE;
-   return sd->module->vis_get(sd->video);
+   return sd->module->vis_get(sd->video_data);
 }
 
 EAPI Eina_Bool
@@ -1271,9 +1274,9 @@ emotion_object_vis_supported(const Evas_Object *obj, Emotion_Vis visualization)
 
    E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, 0);
    if (!sd->module) return EINA_FALSE;
-   if (!sd->video) return EINA_FALSE;
+   if (!sd->video_data) return EINA_FALSE;
    if (!sd->module->vis_supported) return EINA_FALSE;
-   return sd->module->vis_supported(sd->video, visualization);
+   return sd->module->vis_supported(sd->video_data, visualization);
 }
 
 EAPI void
@@ -1282,12 +1285,10 @@ emotion_object_priority_set(Evas_Object *obj, Eina_Bool priority)
    Smart_Data *sd;
 
    E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
-   fprintf(stderr, "priority set %p\n", sd->module);
    if (!sd->module) return ;
-   if (!sd->video) return ;
+   if (!sd->video_data) return ;
    if (!sd->module->priority_set) return ;
-   fprintf(stderr, "calling\n");
-   sd->module->priority_set(sd->video, priority);
+   sd->module->priority_set(sd->video_data, priority);
 }
 
 EAPI Eina_Bool
@@ -1297,9 +1298,9 @@ emotion_object_priority_get(const Evas_Object *obj)
 
    E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, 0);
    if (!sd->module) return EINA_FALSE;
-   if (!sd->video) return EINA_FALSE;
+   if (!sd->video_data) return EINA_FALSE;
    if (!sd->module->priority_get) return EINA_FALSE;
-   return sd->module->priority_get(sd->video);
+   return sd->module->priority_get(sd->video_data);
 }
 
 #ifdef HAVE_EIO
@@ -1445,7 +1446,7 @@ _emotion_video_get(const Evas_Object *obj)
    Smart_Data *sd;
 
    E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, NULL);
-   return sd->video;
+   return sd->video_data;
 }
 
 EAPI void
@@ -1479,16 +1480,14 @@ EAPI void
 _emotion_frame_resize(Evas_Object *obj, int w, int h, double ratio)
 {
    Smart_Data *sd;
-   int iw, ih;
    double tmp;
    int changed = 0;
 
    E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
-   evas_object_image_size_get(sd->obj, &iw, &ih);
-   if ((w != iw) || (h != ih))
+   if ((w != sd->video.w) || (h != sd->video.h))
      {
-        sd->w = w;
-        sd->h = h;
+        sd->video.w = w;
+        sd->video.h = h;
         _emotion_image_data_zero(sd->obj);
 	changed = 1;
      }
@@ -1632,7 +1631,38 @@ _emotion_seek_done(Evas_Object *obj)
      }
 }
 
+EAPI void
+_emotion_frame_refill(Evas_Object *obj, double w, double h)
+{
+   Smart_Data *sd;
 
+   E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
+   if (sd->fill.w != w || sd->fill.h != h)
+     {
+        Evas_Coord ow, oh;
+
+        evas_object_geometry_get(obj, NULL, NULL, &ow, &oh);
+        if (w <= 0 || h <= 0)
+          {
+             double scale_w, scale_h;
+
+             sd->fill.w = -1;
+             sd->fill.h = -1;
+
+             scale_w = (double) ow / (double)(sd->video.w - sd->crop.l - sd->crop.r);
+             scale_h = (double) oh / (double)(sd->video.h - sd->crop.t - sd->crop.b);
+
+             evas_object_image_fill_set(sd->obj, 0, 0, scale_w * sd->video.w, scale_h * sd->video.h);
+          }
+        else
+          {
+             sd->fill.w = w;
+             sd->fill.h = h;
+
+             evas_object_image_fill_set(sd->obj, 0, 0, w * ow, h * oh);
+          }
+     }
+}
 
 /****************************/
 /* Internal object routines */
@@ -1649,13 +1679,13 @@ _mouse_move(void *data, Evas *ev __UNUSED__, Evas_Object *obj, void *event_info)
    e = event_info;
    sd = data;
    if (!sd->module) return;
-   if (!sd->video) return;
+   if (!sd->video_data) return;
    evas_object_geometry_get(obj, &ox, &oy, &ow, &oh);
    evas_object_image_size_get(obj, &iw, &ih);
    if ((iw < 1) || (ih < 1)) return;
    x = (((int)e->cur.canvas.x - ox) * iw) / ow;
    y = (((int)e->cur.canvas.y - oy) * ih) / oh;
-   sd->module->event_mouse_move_feed(sd->video, x, y);
+   sd->module->event_mouse_move_feed(sd->video_data, x, y);
 }
 
 static void
@@ -1669,13 +1699,13 @@ _mouse_down(void *data, Evas *ev __UNUSED__, Evas_Object *obj, void *event_info)
    e = event_info;
    sd = data;
    if (!sd->module) return;
-   if (!sd->video) return;
+   if (!sd->video_data) return;
    evas_object_geometry_get(obj, &ox, &oy, &ow, &oh);
    evas_object_image_size_get(obj, &iw, &ih);
    if ((iw < 1) || (ih < 1)) return;
    x = (((int)e->canvas.x - ox) * iw) / ow;
    y = (((int)e->canvas.y - oy) * ih) / oh;
-   sd->module->event_mouse_button_feed(sd->video, 1, x, y);
+   sd->module->event_mouse_button_feed(sd->video_data, 1, x, y);
 }
 
 static void
@@ -1691,7 +1721,7 @@ _pos_set_job(void *data)
    if (sd->seek)
      {
         sd->seeking = 1;
-	sd->module->pos_set(sd->video, sd->seek_pos);
+	sd->module->pos_set(sd->video_data, sd->seek_pos);
 	sd->seek = 0;
      }
 }
@@ -1706,7 +1736,7 @@ _pixels_get(void *data, Evas_Object *obj)
    unsigned char *bgra_data;
 
    sd = data;
-   sd->module->video_data_size_get(sd->video, &w, &h);
+   sd->module->video_data_size_get(sd->video_data, &w, &h);
    w = (w >> 1) << 1;
    h = (h >> 1) << 1;
 
@@ -1723,7 +1753,7 @@ _pixels_get(void *data, Evas_Object *obj)
      }
    else
      {
-	format = sd->module->format_get(sd->video);
+	format = sd->module->format_get(sd->video_data);
 	if ((format == EMOTION_FORMAT_YV12) || (format == EMOTION_FORMAT_I420))
 	  {
 	     unsigned char **rows;
@@ -1732,7 +1762,7 @@ _pixels_get(void *data, Evas_Object *obj)
 	     rows = evas_object_image_data_get(obj, 1);
 	     if (rows)
 	       {
-		  if (sd->module->yuv_rows_get(sd->video, iw, ih,
+		  if (sd->module->yuv_rows_get(sd->video_data, iw, ih,
 					       rows,
 					       &rows[ih],
 					       &rows[ih + (ih / 2)]))
@@ -1744,7 +1774,7 @@ _pixels_get(void *data, Evas_Object *obj)
 	else if (format == EMOTION_FORMAT_BGRA)
 	  {
 	     evas_object_image_colorspace_set(obj, EVAS_COLORSPACE_ARGB8888);
-	     if (sd->module->bgra_data_get(sd->video, &bgra_data))
+	     if (sd->module->bgra_data_get(sd->video_data, &bgra_data))
 	       {
 		  evas_object_image_data_set(obj, bgra_data);
 		  evas_object_image_pixels_dirty_set(obj, 0);
@@ -1858,6 +1888,8 @@ _smart_add(Evas_Object * obj)
    evas_object_lower(sd->bg);
    sd->ratio = 1.0;
    sd->spu.button = -1;
+   sd->fill.w = -1;
+   sd->fill.h = -1;
    evas_object_image_alpha_set(sd->obj, 0);
    pixel = evas_object_image_data_get(sd->obj, 1);
    if (pixel)
@@ -1885,14 +1917,13 @@ static void
 _smart_move(Evas_Object * obj, Evas_Coord x, Evas_Coord y)
 {
    Smart_Data *sd;
+   int w, h;
 
    sd = evas_object_smart_data_get(obj);
    if (!sd) return;
 
-   int vid_w, vid_h, w, h;
-   sd->module->video_data_size_get(sd->video, &vid_w, &vid_h);
    evas_object_geometry_get(obj, NULL, NULL, &w, &h);
-   _clipper_position_size_update(obj, x, y, w, h, vid_w, vid_h);
+   _clipper_position_size_update(obj, x, y, w, h, sd->video.w, sd->video.h);
    evas_object_move(sd->bg, x, y);
 }
 
@@ -1904,9 +1935,6 @@ _smart_resize(Evas_Object * obj, Evas_Coord w, Evas_Coord h)
    sd = evas_object_smart_data_get(obj);
    if (!sd) return;
 
-   int vid_w, vid_h;
-
-   sd->module->video_data_size_get(sd->video, &vid_w, &vid_h);
    _emotion_object_aspect_border_apply(obj, sd, w, h);
    evas_object_resize(sd->bg, w, h);
 }

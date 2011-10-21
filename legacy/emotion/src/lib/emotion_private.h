@@ -120,6 +120,7 @@ EAPI void *_emotion_video_get(const Evas_Object *obj);
 EAPI void  _emotion_frame_new(Evas_Object *obj);
 EAPI void  _emotion_video_pos_update(Evas_Object *obj, double pos, double len);
 EAPI void  _emotion_frame_resize(Evas_Object *obj, int w, int h, double ratio);
+EAPI void  _emotion_frame_refill(Evas_Object *obj, double w, double h);
 EAPI void  _emotion_decode_stop(Evas_Object *obj);
 EAPI void  _emotion_open_done(Evas_Object *obj);
 EAPI void  _emotion_playback_started(Evas_Object *obj);

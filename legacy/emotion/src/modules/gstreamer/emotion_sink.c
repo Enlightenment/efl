@@ -736,13 +736,12 @@ evas_video_sink_samsung_main_render(void *data)
 
    evas_object_geometry_get(priv->o, NULL, NULL, &w, &h);
 
-   send->ev->fill.width = stride * w / priv->width;
-   send->ev->fill.height = elevation * h / priv->height;
+   send->ev->fill.width = (double) stride / priv->width;
+   send->ev->fill.height = (double) elevation / priv->height;
 
    evas_object_image_alpha_set(priv->o, 0);
    evas_object_image_colorspace_set(priv->o, priv->eformat);
    evas_object_image_size_set(priv->o, stride, elevation);
-   evas_object_image_fill_set(priv->o, 0, 0, send->ev->fill.width, send->ev->fill.height);
 
    _update_emotion_fps(send->ev);
 
@@ -779,9 +778,12 @@ evas_video_sink_samsung_main_render(void *data)
      }
 
    send->ev->ratio = (double) priv->width / (double) priv->height;
+   _emotion_frame_refill(send->ev->obj, send->ev->fill.width, send->ev->fill.height);
    _emotion_frame_resize(send->ev->obj, priv->width, priv->height, send->ev->ratio);
 
-   /* FIXME: why is last buffer not protected ? */
+   buffer = gst_buffer_ref(buffer);
+   if (send->ev->last_buffer) gst_buffer_unref(send->ev->last_buffer);
+   send->ev->last_buffer = buffer;
 
  exit_point:
    emotion_gstreamer_buffer_free(send);
@@ -1032,15 +1034,6 @@ _emotion_gstreamer_end(void *data, Ecore_Thread *thread)
 }
 
 static void
-_on_resize_fill(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
-{
-   Emotion_Gstreamer_Video *ev = data;
-
-   if (ev->samsung)
-     evas_object_image_fill_set(obj, 0, 0, ev->fill.width, ev->fill.height);
-}
-
-static void
 _video_resize(void *data, Evas_Object *obj __UNUSED__, const Evas_Video_Surface *surface __UNUSED__,
               Evas_Coord w, Evas_Coord h)
 {
@@ -1117,7 +1110,7 @@ _video_hide(void *data, Evas_Object *obj __UNUSED__, const Evas_Video_Surface *s
 }
 
 static void
-_video_update_pixels(void *data, Evas_Object *obj, const Evas_Video_Surface *surface __UNUSED__)
+_video_update_pixels(void *data, Evas_Object *obj __UNUSED__, const Evas_Video_Surface *surface __UNUSED__)
 {
    Emotion_Gstreamer_Video *ev = data;
 
@@ -1154,8 +1147,6 @@ gstreamer_video_sink_new(Emotion_Gstreamer_Video *ev,
         ERR("Not Evas_Object specified");
         return NULL;
      }
-
-   evas_object_event_callback_del_full(obj, EVAS_CALLBACK_RESIZE, _on_resize_fill, ev);
 
    if (!uri)
      return NULL;
@@ -1208,6 +1199,7 @@ gstreamer_video_sink_new(Emotion_Gstreamer_Video *ev,
         fprintf(stderr, "creating window: %x [%i, %i, %i, %i]\n", win, x, y, w, h);
 	if (win)
 	  {
+             ecore_x_mwm_borderless_set(win, EINA_TRUE);
              ecore_x_window_show(win);
              xvsink = gst_element_factory_make("xvimagesink", NULL);
 	     if (xvsink)
@@ -1318,7 +1310,6 @@ gstreamer_video_sink_new(Emotion_Gstreamer_Video *ev,
    g_object_set(G_OBJECT(playbin), "uri", uri, NULL);
 
    evas_object_image_pixels_get_callback_set(obj, NULL, NULL);
-   evas_object_event_callback_add(obj, EVAS_CALLBACK_RESIZE, _on_resize_fill, ev);
 
    ev->stream = EINA_TRUE;
 
