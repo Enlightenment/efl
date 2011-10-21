@@ -820,14 +820,14 @@ call:
    evas_object_ref(parent);
    it->walking++;
    it->wd->walking++;
-   if (it->func.func) it->func.func((void *)it->func.data, parent, it);
+   if (it->func.func) it->func.func((void *)it->func.data, WIDGET(it), it);
    if (!it->delete_me)
-     evas_object_smart_callback_call(parent, SIG_SELECTED, it);
+     evas_object_smart_callback_call(WIDGET(it), SIG_SELECTED, it);
    it->walking--;
    it->wd->walking--;
    if ((it->wd->clear_me) && (!it->wd->walking))
      {
-        elm_genlist_clear(parent);
+        elm_genlist_clear(WIDGET(it));
         goto end;
      }
    else
