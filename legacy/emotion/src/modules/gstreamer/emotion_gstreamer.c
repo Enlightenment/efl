@@ -7,6 +7,7 @@
 #include "emotion_gstreamer.h"
 #include "Emotion.h"
 
+Eina_Bool window_manager_video = EINA_FALSE;
 int _emotion_gstreamer_log_domain = -1;
 Eina_Bool debug_fps = EINA_FALSE;
 
@@ -1259,6 +1260,11 @@ module_open(Evas_Object           *obj,
             void                 **video,
             Emotion_Module_Options *opt)
 {
+#ifdef HAVE_ECORE_X
+   Ecore_X_Window *roots;
+   int num;
+#endif
+
    if (!module)
      return EINA_FALSE;
 
@@ -1283,6 +1289,54 @@ module_open(Evas_Object           *obj,
    if (getenv("EMOTION_FPS_DEBUG")) debug_fps = EINA_TRUE;
 
    eina_threads_init();
+
+#ifdef HAVE_ECORE_X
+   /* Check if the window manager is able to handle our special Xv window. */
+   roots = ecore_x_window_root_list(&num);
+   if (roots && num > 0)
+     {
+        Ecore_X_Window  win, twin;
+        int nwins;
+
+        nwins = ecore_x_window_prop_window_get(roots[0],
+                                               ECORE_X_ATOM_NET_SUPPORTING_WM_CHECK,
+                                               &win, 1);
+        if (nwins > 0)
+          {
+             nwins = ecore_x_window_prop_window_get(win,
+                                                    ECORE_X_ATOM_NET_SUPPORTING_WM_CHECK,
+                                                    &twin, 1);
+             if (nwins > 0 && twin == win)
+               {
+                  Ecore_X_Atom *supported;
+                  int supported_num;
+                  int i;
+
+                  if (ecore_x_netwm_supported_get(roots[0], &supported, &supported_num))
+                    {
+                       Eina_Bool parent = EINA_FALSE;
+                       Eina_Bool video_position = EINA_FALSE;
+
+                       for (i = 0; i < supported_num; ++i)
+                         {
+                            if (supported[i] == ECORE_X_ATOM_E_VIDEO_PARENT)
+                              parent = EINA_TRUE;
+                            else if (supported[i] == ECORE_X_ATOM_E_VIDEO_POSITION)
+                              video_position = EINA_TRUE;
+                            if (parent && video_position)
+                              break;
+                         }
+
+                       if (parent && video_position)
+                         {
+                            window_manager_video = EINA_TRUE;
+                         }
+                    }
+               }
+          }
+     }
+   free(roots);
+#endif
 
    *module = &em_module;
    return EINA_TRUE;

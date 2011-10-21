@@ -206,6 +206,7 @@ struct _Emotion_Gstreamer_Message
    GstMessage *msg;
 };
 
+extern Eina_Bool window_manager_video;
 extern Eina_Bool debug_fps;
 extern int _emotion_gstreamer_log_domain;
 #define DBG(...) EINA_LOG_DOM_DBG(_emotion_gstreamer_log_domain, __VA_ARGS__)

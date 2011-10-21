@@ -1173,59 +1173,62 @@ gstreamer_video_sink_new(Emotion_Gstreamer_Video *ev,
      }
 
 #if defined HAVE_ECORE_X && defined HAVE_XOVERLAY_H
-   engines = evas_render_method_list();
-
-   engine = eina_list_nth(engines, evas_output_method_get(evas_object_evas_get(obj)) - 1);
-
-   if (ev->priority && engine && strstr(engine, "_x11") != NULL)
+   if (window_manager_video)
      {
-        Ecore_Evas *ee;
-        Evas_Coord x, y, w, h;
-	Ecore_X_Window win;
-        Ecore_X_Window parent;
+       engines = evas_render_method_list();
 
-	evas_object_geometry_get(obj, &x, &y, &w, &h);
+       engine = eina_list_nth(engines, evas_output_method_get(evas_object_evas_get(obj)) - 1);
 
-        ee = ecore_evas_ecore_evas_get(evas_object_evas_get(obj));
+       if (ev->priority && engine && strstr(engine, "_x11") != NULL)
+	 {
+	   Ecore_Evas *ee;
+	   Evas_Coord x, y, w, h;
+	   Ecore_X_Window win;
+	   Ecore_X_Window parent;
 
-        if (w < 4) w = 4;
-        if (h < 2) h = 2;
+	   evas_object_geometry_get(obj, &x, &y, &w, &h);
 
-        /* Here we really need to have the help of the window manager, this code will change when we update E17. */
-        parent = (Ecore_X_Window) ecore_evas_window_get(ee);
-        fprintf(stderr, "parent: %x\n", parent);
+	   ee = ecore_evas_ecore_evas_get(evas_object_evas_get(obj));
 
-	win = ecore_x_window_new(0, x, y, w, h);
-        fprintf(stderr, "creating window: %x [%i, %i, %i, %i]\n", win, x, y, w, h);
-	if (win)
-	  {
-             ecore_x_mwm_borderless_set(win, EINA_TRUE);
-             ecore_x_window_show(win);
-             xvsink = gst_element_factory_make("xvimagesink", NULL);
-	     if (xvsink)
-	       {
-		  unsigned int pos[2];
+	   if (w < 4) w = 4;
+	   if (h < 2) h = 2;
+
+	   /* Here we really need to have the help of the window manager, this code will change when we update E17. */
+	   parent = (Ecore_X_Window) ecore_evas_window_get(ee);
+	   fprintf(stderr, "parent: %x\n", parent);
+
+	   win = ecore_x_window_new(0, x, y, w, h);
+	   fprintf(stderr, "creating window: %x [%i, %i, %i, %i]\n", win, x, y, w, h);
+	   if (win)
+	     {
+	       /* ecore_x_mwm_borderless_set(win, EINA_TRUE); */
+	       ecore_x_window_hide(win);
+	       xvsink = gst_element_factory_make("xvimagesink", NULL);
+	       if (xvsink)
+		 {
+		   unsigned int pos[2];
 
 #ifdef HAVE_X_OVERLAY_SET
-		  gst_x_overlay_set_window_handle(GST_X_OVERLAY(xvsink), win);
+		   gst_x_overlay_set_window_handle(GST_X_OVERLAY(xvsink), win);
 #else
-		  gst_x_overlay_set_xwindow_id(GST_X_OVERLAY(xvsink), win);
+		   gst_x_overlay_set_xwindow_id(GST_X_OVERLAY(xvsink), win);
 #endif
-		  ev->win = win;
+		   ev->win = win;
 
-		  ecore_x_window_prop_card32_set(win, ECORE_X_ATOM_E_VIDEO_PARENT, &parent, 1);
+		   ecore_x_window_prop_card32_set(win, ECORE_X_ATOM_E_VIDEO_PARENT, &parent, 1);
 
-		  pos[0] = x; pos[1] = y;
-		  ecore_x_window_prop_card32_set(win, ECORE_X_ATOM_E_VIDEO_POSITION, pos, 2);
-	       }
-	     else
-	       {
-                  fprintf(stderr, "destroying win: %x\n", win);
-		  ecore_x_window_free(win);
-	       }
-	  }
+		   pos[0] = x; pos[1] = y;
+		   ecore_x_window_prop_card32_set(win, ECORE_X_ATOM_E_VIDEO_POSITION, pos, 2);
+		 }
+	       else
+		 {
+		   fprintf(stderr, "destroying win: %x\n", win);
+		   ecore_x_window_free(win);
+		 }
+	     }
+	 }
+       evas_render_method_list_free(engines);
      }
-   evas_render_method_list_free(engines);
 #else
 # warning "no ecore_x or xoverlay"
 #endif
