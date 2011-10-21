@@ -7,15 +7,12 @@ _evas_event_havemap_adjust(Evas_Object *obj, Evas_Coord *x, Evas_Coord *y, Eina_
    if (obj->smart.parent)
       _evas_event_havemap_adjust(obj->smart.parent, x, y, mouse_grabbed);
 
-   if ((!obj->cur.map) || (!obj->cur.map->count == 4) || (!obj->cur.usemap))
+   if ((!obj->cur.usemap) || (!obj->cur.map) || (!obj->cur.map->count == 4))
       return;
 
-   if (obj->cur.map)
-     {
-        evas_map_coords_get(obj->cur.map, *x, *y, x, y, mouse_grabbed);
-        *x += obj->cur.geometry.x;
-        *y += obj->cur.geometry.y;
-     }
+   evas_map_coords_get(obj->cur.map, *x, *y, x, y, mouse_grabbed);
+   *x += obj->cur.geometry.x;
+   *y += obj->cur.geometry.y;
 }
 
 static Eina_List *
