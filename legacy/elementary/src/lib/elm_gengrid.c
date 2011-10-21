@@ -29,7 +29,7 @@ struct Elm_Gen_Item_Type
 struct _Widget_Data
 {
    Eina_Inlist_Sorted_State *state;
-   Evas_Object *self;
+   Evas_Object      *obj; /* the gengrid object */
    Eina_List        *selected;
    Eina_List        *group_items; /* list of groups index items */
    Eina_Inlist      *items; /* inlist of all items */
@@ -51,7 +51,7 @@ struct _Widget_Data
    unsigned int      nmax;
    long              count;
    long              items_lost;
-   
+
    Eina_Bool         horizontal : 1;
    Eina_Bool         on_hold : 1;
    Eina_Bool         longpressed : 1;
@@ -337,7 +337,7 @@ _event_hook(Evas_Object       *obj,
             (!strcmp(ev->keyname, "space")))
      {
         it = elm_gengrid_selected_item_get(obj);
-        evas_object_smart_callback_call(it->wd->self, SIG_ACTIVATED, it);
+        evas_object_smart_callback_call(WIDGET(it), SIG_ACTIVATED, it);
      }
    else return EINA_FALSE;
 
@@ -546,15 +546,15 @@ _on_focus_hook(void *data   __UNUSED__,
    if (!wd) return;
    if (elm_widget_focus_get(obj))
      {
-        edje_object_signal_emit(wd->self, "elm,action,focus", "elm");
-        evas_object_focus_set(wd->self, EINA_TRUE);
+        edje_object_signal_emit(wd->obj, "elm,action,focus", "elm");
+        evas_object_focus_set(wd->obj, EINA_TRUE);
         if ((wd->selected) && (!wd->last_selected_item))
           wd->last_selected_item = eina_list_data_get(wd->selected);
      }
    else
      {
-        edje_object_signal_emit(wd->self, "elm,action,unfocus", "elm");
-        evas_object_focus_set(wd->self, EINA_FALSE);
+        edje_object_signal_emit(wd->obj, "elm,action,unfocus", "elm");
+        evas_object_focus_set(wd->obj, EINA_FALSE);
      }
 }
 
@@ -669,7 +669,7 @@ _mouse_move(void        *data,
              ecore_timer_del(it->long_timer);
              it->long_timer = NULL;
           }
-        evas_object_smart_callback_call(it->wd->self, SIG_DRAG, it);
+        evas_object_smart_callback_call(WIDGET(it), SIG_DRAG, it);
         return;
      }
    if ((!it->down) || (it->wd->longpressed))
@@ -717,7 +717,7 @@ _mouse_move(void        *data,
    if ((adx > minw) || (ady > minh))
      {
         const char *left_drag, *right_drag;
-        if (!elm_widget_mirrored_get(it->wd->self))
+        if (!elm_widget_mirrored_get(WIDGET(it)))
           {
              left_drag = SIG_DRAG_START_LEFT;
              right_drag = SIG_DRAG_START_RIGHT;
@@ -739,27 +739,27 @@ _mouse_move(void        *data,
         if (dy < 0)
           {
              if (ady > adx)
-               evas_object_smart_callback_call(it->wd->self, SIG_DRAG_START_UP,
+               evas_object_smart_callback_call(WIDGET(it), SIG_DRAG_START_UP,
                                                it);
              else
                {
                   if (dx < 0)
-                    evas_object_smart_callback_call(it->wd->self,
+                    evas_object_smart_callback_call(WIDGET(it),
                                                     left_drag, it);
                }
           }
         else
           {
              if (ady > adx)
-               evas_object_smart_callback_call(it->wd->self,
+               evas_object_smart_callback_call(WIDGET(it),
                                                SIG_DRAG_START_DOWN, it);
              else
                {
                   if (dx < 0)
-                    evas_object_smart_callback_call(it->wd->self,
+                    evas_object_smart_callback_call(WIDGET(it),
                                                     left_drag, it);
                   else
-                    evas_object_smart_callback_call(it->wd->self,
+                    evas_object_smart_callback_call(WIDGET(it),
                                                     right_drag, it);
                }
           }
@@ -774,7 +774,7 @@ _long_press(void *data)
    it->long_timer = NULL;
    if ((it->disabled) || (it->dragging)) return ECORE_CALLBACK_CANCEL;
    it->wd->longpressed = EINA_TRUE;
-   evas_object_smart_callback_call(it->wd->self, SIG_LONGPRESSED, it);
+   evas_object_smart_callback_call(WIDGET(it), SIG_LONGPRESSED, it);
    if (it->wd->reorder_mode)
      {
         it->wd->reorder_it = it;
@@ -809,8 +809,8 @@ _mouse_down(void        *data,
    _item_highlight(it);
    if (ev->flags & EVAS_BUTTON_DOUBLE_CLICK)
      {
-        evas_object_smart_callback_call(it->wd->self, SIG_CLICKED_DOUBLE, it);
-        evas_object_smart_callback_call(it->wd->self, SIG_ACTIVATED, it);
+        evas_object_smart_callback_call(WIDGET(it), SIG_CLICKED_DOUBLE, it);
+        evas_object_smart_callback_call(WIDGET(it), SIG_ACTIVATED, it);
      }
    if (it->long_timer) ecore_timer_del(it->long_timer);
    if (it->realized)
@@ -842,7 +842,7 @@ _mouse_up(void            *data,
    if (it->dragging)
      {
         it->dragging = EINA_FALSE;
-        evas_object_smart_callback_call(it->wd->self, SIG_DRAG_STOP, it);
+        evas_object_smart_callback_call(WIDGET(it), SIG_DRAG_STOP, it);
         dragged = EINA_TRUE;
      }
    if (it->wd->on_hold)
@@ -853,7 +853,7 @@ _mouse_up(void            *data,
      }
    if ((it->wd->reorder_mode) && (it->wd->reorder_it))
      {
-        evas_object_smart_callback_call(it->wd->self, SIG_MOVED, it->wd->reorder_it);
+        evas_object_smart_callback_call(WIDGET(it), SIG_MOVED, it->wd->reorder_it);
         it->wd->reorder_it = NULL;
         it->wd->move_effect_enabled = EINA_FALSE;
         if (it->wd->calc_job) ecore_job_del(it->wd->calc_job);
@@ -920,20 +920,20 @@ _item_realize(Elm_Gen_Item *it)
    char style[1024];
 
    if ((it->realized) || (it->delete_me)) return;
-   VIEW(it) = edje_object_add(evas_object_evas_get(it->wd->self));
-   edje_object_scale_set(VIEW(it), elm_widget_scale_get(it->wd->self) *
+   VIEW(it) = edje_object_add(evas_object_evas_get(WIDGET(it)));
+   edje_object_scale_set(VIEW(it), elm_widget_scale_get(WIDGET(it)) *
                          _elm_config->scale);
    edje_object_mirrored_set(VIEW(it), elm_widget_mirrored_get(WIDGET(it)));
    evas_object_smart_member_add(VIEW(it), it->wd->pan_smart);
-   elm_widget_sub_object_add(it->wd->self, VIEW(it));
+   elm_widget_sub_object_add(WIDGET(it), VIEW(it));
    snprintf(style, sizeof(style), "item/%s",
             it->itc->item_style ? it->itc->item_style : "default");
-   _elm_theme_object_set(it->wd->self, VIEW(it), "gengrid", style,
-                         elm_widget_style_get(it->wd->self));
+   _elm_theme_object_set(WIDGET(it), VIEW(it), "gengrid", style,
+                         elm_widget_style_get(WIDGET(it)));
    it->spacer =
-      evas_object_rectangle_add(evas_object_evas_get(it->wd->self));
+      evas_object_rectangle_add(evas_object_evas_get(WIDGET(it)));
    evas_object_color_set(it->spacer, 0, 0, 0, 0);
-   elm_widget_sub_object_add(it->wd->self, it->spacer);
+   elm_widget_sub_object_add(WIDGET(it), it->spacer);
    evas_object_size_hint_min_set(it->spacer, 2 * _elm_config->scale, 1);
    edje_object_part_swallow(VIEW(it), "elm.swallow.pad", it->spacer);
 
@@ -948,7 +948,7 @@ _item_realize(Elm_Gen_Item *it)
         EINA_LIST_FOREACH(it->labels, l, key)
           {
              char *s = it->itc->func.label_get
-                ((void *)it->base.data, it->wd->self, l->data);
+                ((void *)it->base.data, WIDGET(it), l->data);
              if (s)
                {
                   edje_object_part_text_set(VIEW(it), l->data, s);
@@ -968,13 +968,13 @@ _item_realize(Elm_Gen_Item *it)
         EINA_LIST_FOREACH(it->icons, l, key)
           {
              Evas_Object *ic = it->itc->func.icon_get
-                ((void *)it->base.data, it->wd->self, l->data);
+                ((void *)it->base.data, WIDGET(it), l->data);
              if (ic)
                {
                   it->icon_objs = eina_list_append(it->icon_objs, ic);
                   edje_object_part_swallow(VIEW(it), key, ic);
                   evas_object_show(ic);
-                  elm_widget_sub_object_add(it->wd->self, ic);
+                  elm_widget_sub_object_add(WIDGET(it), ic);
                }
           }
      }
@@ -990,7 +990,7 @@ _item_realize(Elm_Gen_Item *it)
         EINA_LIST_FOREACH(it->states, l, key)
           {
              Eina_Bool on = it->itc->func.state_get
-                ((void *)it->base.data, it->wd->self, l->data);
+                ((void *)it->base.data, WIDGET(it), l->data);
              if (on)
                {
                   snprintf(buf, sizeof(buf), "elm,state,%s,active", key);
@@ -1146,7 +1146,7 @@ _group_item_place(Pan *sd)
           {
              _item_realize(it);
              if (!was_realized)
-               evas_object_smart_callback_call(it->wd->self, SIG_REALIZED, it);
+               evas_object_smart_callback_call(WIDGET(it), SIG_REALIZED, it);
              evas_object_move(VIEW(it), it->item->gx, it->item->gy);
              evas_object_resize(VIEW(it), iw, ih);
              evas_object_raise(VIEW(it));
@@ -1256,9 +1256,9 @@ _item_place(Elm_Gen_Item *it,
              x = (cx * it->wd->item_width) - it->wd->pan_x + ox + alignw;
              y = (((cy - it->item->prev_group) * it->wd->item_height) + (it->item->prev_group * it->wd->group_item_height)) - it->wd->pan_y + oy + alignh;
           }
-        if (elm_widget_mirrored_get(it->wd->self))
+        if (elm_widget_mirrored_get(WIDGET(it)))
           {  /* Switch items side and componsate for pan_x when in RTL mode */
-             evas_object_geometry_get(it->wd->self, NULL, NULL, &ww, NULL);
+             evas_object_geometry_get(WIDGET(it), NULL, NULL, &ww, NULL);
              x = ww - x - it->wd->item_width - it->wd->pan_x - it->wd->pan_x;
           }
         iw = it->wd->item_width;
@@ -1270,7 +1270,7 @@ _item_place(Elm_Gen_Item *it,
      {
         _item_realize(it);
         if (!was_realized)
-          evas_object_smart_callback_call(it->wd->self, SIG_REALIZED, it);
+          evas_object_smart_callback_call(WIDGET(it), SIG_REALIZED, it);
         if (it->parent)
           {
              if (it->wd->horizontal)
@@ -1468,9 +1468,9 @@ call:
    it->walking++;
    it->wd->walking++;
    if (it->func.func)
-     it->func.func((void *)it->func.data, it->wd->self, it);
+     it->func.func((void *)it->func.data, WIDGET(it), it);
    if (!it->delete_me)
-     evas_object_smart_callback_call(it->wd->self, SIG_SELECTED, it);
+     evas_object_smart_callback_call(WIDGET(it), SIG_SELECTED, it);
    it->walking--;
    it->wd->walking--;
    it->wd->last_selected_item = it;
@@ -1493,7 +1493,7 @@ _item_unselect(Elm_Gen_Item *it)
      {
         it->selected = EINA_FALSE;
         it->wd->selected = eina_list_remove(it->wd->selected, it);
-        evas_object_smart_callback_call(it->wd->self, SIG_UNSELECTED, it);
+        evas_object_smart_callback_call(WIDGET(it), SIG_UNSELECTED, it);
      }
 }
 
@@ -1740,7 +1740,7 @@ _pan_calculate(Evas_Object *obj)
           }
         sd->wd->move_effect_enabled = EINA_FALSE;
      }
-   evas_object_smart_callback_call(sd->wd->self, SIG_CHANGED, NULL);
+   evas_object_smart_callback_call(sd->wd->obj, SIG_CHANGED, NULL);
 }
 
 static void
@@ -1947,7 +1947,7 @@ elm_gengrid_add(Evas_Object *parent)
                                   obj);
    evas_object_smart_callback_add(wd->scr, "scroll", _scr_scroll, obj);
 
-   wd->self = obj;
+   wd->obj = obj;
    wd->align_x = 0.5;
    wd->align_y = 0.5;
    wd->h_bounce = bounce;
@@ -2279,7 +2279,7 @@ elm_gengrid_clear(Evas_Object *obj)
         elm_widget_item_pre_notify_del(it);
         if (it->realized) elm_gen_item_unrealize(it, EINA_FALSE, (Ecore_Cb)_item_unrealize_cb);
         if (it->itc->func.del)
-          it->itc->func.del((void *)it->base.data, wd->self);
+          it->itc->func.del((void *)it->base.data, wd->obj);
         if (it->long_timer) ecore_timer_del(it->long_timer);
         free(it->item);
         elm_widget_item_del(it);
@@ -2857,7 +2857,7 @@ EAPI void
 elm_gengrid_item_show(Elm_Gen_Item *it)
 {
    ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(it);
-   Widget_Data *wd = elm_widget_data_get(it->wd->self);
+   Widget_Data *wd = elm_widget_data_get(WIDGET(it));
    Evas_Coord minx = 0, miny = 0;
 
    if (!wd) return;
@@ -2885,7 +2885,7 @@ elm_gengrid_item_bring_in(Elm_Gen_Item *it)
    if (it->delete_me) return;
 
    Evas_Coord minx = 0, miny = 0;
-   Widget_Data *wd = elm_widget_data_get(it->wd->self);
+   Widget_Data *wd = elm_widget_data_get(WIDGET(it));
    if (!wd) return;
    _pan_min_get(wd->pan_smart, &minx, &miny);
 
