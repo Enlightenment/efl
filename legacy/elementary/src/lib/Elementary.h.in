@@ -8119,11 +8119,6 @@ extern "C" {
    typedef Eina_Bool    (*Elm_Gengrid_Item_State_Get_Cb) (void *data, Evas_Object *obj, const char *part); /**< State fetching class function for gengrid item classes. */
    typedef void         (*Elm_Gengrid_Item_Del_Cb)      (void *data, Evas_Object *obj); /**< Deletion class function for gengrid item classes. */
 
-   typedef char        *(*GridItemLabelGetFunc) (void *data, Evas_Object *obj, const char *part) EINA_DEPRECATED; /** DEPRECATED. Use Elm_Gengrid_Item_Label_Get_Cb. */
-   typedef Evas_Object *(*GridItemIconGetFunc)  (void *data, Evas_Object *obj, const char *part) EINA_DEPRECATED; /** DEPRECATED. Use Elm_Gengrid_Item_Icon_Get_Cb. */
-   typedef Eina_Bool    (*GridItemStateGetFunc) (void *data, Evas_Object *obj, const char *part) EINA_DEPRECATED; /** DEPRECATED. Use Elm_Gengrid_Item_State_Get_Cb. */
-   typedef void         (*GridItemDelFunc)      (void *data, Evas_Object *obj) EINA_DEPRECATED; /** DEPRECATED. Use Elm_Gengrid_Item_Del_Cb. */
-
    /**
     * @struct _Elm_Gengrid_Item_Class
     *
@@ -18124,11 +18119,6 @@ extern "C" {
    typedef Evas_Object *(*Elm_Genlist_Item_Icon_Get_Cb)  (void *data, Evas_Object *obj, const char *part); /**< Icon fetching class function for genlist item classes. */
    typedef Eina_Bool    (*Elm_Genlist_Item_State_Get_Cb) (void *data, Evas_Object *obj, const char *part); /**< State fetching class function for genlist item classes. */
    typedef void         (*Elm_Genlist_Item_Del_Cb)      (void *data, Evas_Object *obj); /**< Deletion class function for genlist item classes. */
-
-   typedef char        *(*GenlistItemLabelGetFunc) (void *data, Evas_Object *obj, const char *part) EINA_DEPRECATED; /** DEPRECATED. Use Elm_Genlist_Item_Label_Get_Cb instead. */
-   typedef Evas_Object *(*GenlistItemIconGetFunc)  (void *data, Evas_Object *obj, const char *part) EINA_DEPRECATED; /** DEPRECATED. Use Elm_Genlist_Item_Icon_Get_Cb instead. */
-   typedef Eina_Bool    (*GenlistItemStateGetFunc) (void *data, Evas_Object *obj, const char *part) EINA_DEPRECATED; /** DEPRECATED. Use Elm_Genlist_Item_State_Get_Cb instead. */
-   typedef void         (*GenlistItemDelFunc)      (void *data, Evas_Object *obj) EINA_DEPRECATED; /** DEPRECATED. Use Elm_Genlist_Item_Del_Cb instead. */
 
    /**
     * @struct _Elm_Genlist_Item_Class
