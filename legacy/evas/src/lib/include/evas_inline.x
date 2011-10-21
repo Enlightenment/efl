@@ -15,9 +15,9 @@ evas_object_was_visible(Evas_Object *obj)
        ((obj->prev.cache.clip.a > 0 && obj->prev.render_op == EVAS_RENDER_BLEND)
        || obj->prev.render_op != EVAS_RENDER_BLEND))
      {
-	if (obj->func->was_visible)
-	  return obj->func->was_visible(obj);
-	return 1;
+        if (obj->func->was_visible)
+          return obj->func->was_visible(obj);
+        return 1;
      }
    return 0;
 }
@@ -39,8 +39,8 @@ evas_common_draw_context_cutouts_add(Cutout_Rects* rects,
 
    if (rects->max < (rects->active + 1))
      {
-	rects->max += 128;
-	rects->rects = (Cutout_Rect *)realloc(rects->rects, sizeof(Cutout_Rect) * rects->max);
+        rects->max += 128;
+        rects->rects = (Cutout_Rect *)realloc(rects->rects, sizeof(Cutout_Rect) * rects->max);
      }
 
    rect = rects->rects + rects->active;
@@ -61,9 +61,9 @@ evas_object_is_opaque(Evas_Object *obj)
    if (obj->cur.mask) return 0;
    if (obj->cur.cache.clip.a == 255)
      {
-	if (obj->func->is_opaque)
-	  return obj->func->is_opaque(obj);
-	return 1;
+        if (obj->func->is_opaque)
+          return obj->func->is_opaque(obj);
+        return 1;
      }
    if (obj->cur.render_op == EVAS_RENDER_COPY)
      return 1;
@@ -78,12 +78,12 @@ evas_event_passes_through(Evas_Object *obj)
    if (obj->parent_cache_valid) return obj->parent_pass_events;
    if (obj->smart.parent)
      {
-	int par_pass;
+        int par_pass;
 
-	par_pass = evas_event_passes_through(obj->smart.parent);
-	obj->parent_cache_valid = 1;
-	obj->parent_pass_events = par_pass;
-	return par_pass;
+        par_pass = evas_event_passes_through(obj->smart.parent);
+        obj->parent_cache_valid = 1;
+        obj->parent_pass_events = par_pass;
+        return par_pass;
      }
    return 0;
 }
@@ -96,9 +96,9 @@ evas_object_is_visible(Evas_Object *obj)
        ((obj->cur.cache.clip.a > 0 && obj->cur.render_op == EVAS_RENDER_BLEND)
        || obj->cur.render_op != EVAS_RENDER_BLEND))
      {
-	if (obj->func->is_visible)
-	  return obj->func->is_visible(obj);
-	return 1;
+        if (obj->func->is_visible)
+          return obj->func->is_visible(obj);
+        return 1;
      }
    return 0;
 }
@@ -108,9 +108,9 @@ evas_object_clippers_is_visible(Evas_Object *obj)
 {
    if (obj->cur.visible)
      {
-	if (obj->cur.clipper)
-	  return evas_object_clippers_is_visible(obj->cur.clipper);
-	return 1;
+        if (obj->cur.clipper)
+          return evas_object_clippers_is_visible(obj->cur.clipper);
+        return 1;
      }
    return 0;
 }
@@ -120,10 +120,10 @@ evas_object_is_in_output_rect(Evas_Object *obj, int x, int y, int w, int h)
 {
    /* assumes coords have been recalced */
    if ((RECTS_INTERSECT(x, y, w, h,
-			obj->cur.cache.clip.x,
-			obj->cur.cache.clip.y,
-			obj->cur.cache.clip.w,
-			obj->cur.cache.clip.h)))
+                        obj->cur.cache.clip.x,
+                        obj->cur.cache.clip.y,
+                        obj->cur.cache.clip.w,
+                        obj->cur.cache.clip.h)))
      return 1;
    return 0;
 }
