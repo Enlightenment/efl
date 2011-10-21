@@ -107,6 +107,7 @@ struct _Widget_Data
    Ecore_Timer      *multi_timer, *scr_hold_timer;
    Ecore_Animator   *reorder_move_animator;
    const char       *mode_type;
+   const char       *mode_item_style;
    unsigned int      start_time;
    Evas_Coord        prev_x, prev_y, prev_mx, prev_my;
    Evas_Coord        cur_x, cur_y, cur_mx, cur_my;
@@ -2916,10 +2917,25 @@ _edge_bottom(void        *data,
 }
 
 static void
-_mode_item_realize(Elm_Genlist_Item *it)
+_mode_item_realize_theme(Elm_Genlist_Item *it)
 {
    char buf[1024];
 
+   strncpy(buf, "item", sizeof(buf));
+   if (it->wd->compress)
+     strncat(buf, "_compress", sizeof(buf) - strlen(buf));
+
+   if (it->order_num_in & 0x1) strncat(buf, "_odd", sizeof(buf) - strlen(buf));
+   strncat(buf, "/", sizeof(buf) - strlen(buf));
+   strncat(buf, it->wd->mode_item_style, sizeof(buf) - strlen(buf));
+
+   _elm_theme_object_set(WIDGET(it), it->mode_view, "genlist", buf,
+                         elm_widget_style_get(WIDGET(it)));
+}
+
+static void
+_mode_item_realize(Elm_Genlist_Item *it)
+{
    if ((it->mode_view) || (it->delete_me)) return;
 
    evas_event_freeze(evas_object_evas_get(it->wd->obj));
@@ -2930,16 +2946,7 @@ _mode_item_realize(Elm_Genlist_Item *it)
    evas_object_smart_member_add(it->mode_view, it->wd->pan_smart);
    elm_widget_sub_object_add(WIDGET(it), it->mode_view);
 
-   strncpy(buf, "item", sizeof(buf));
-   if (it->wd->compress)
-     strncat(buf, "_compress", sizeof(buf) - strlen(buf));
-
-   if (it->order_num_in & 0x1) strncat(buf, "_odd", sizeof(buf) - strlen(buf));
-   strncat(buf, "/", sizeof(buf) - strlen(buf));
-   strncat(buf, it->itc->mode_item_style, sizeof(buf) - strlen(buf));
-
-   _elm_theme_object_set(WIDGET(it), it->mode_view, "genlist", buf,
-                         elm_widget_style_get(WIDGET(it)));
+   _mode_item_realize_theme(it);
    edje_object_mirrored_set(it->mode_view,
                             elm_widget_mirrored_get(WIDGET(it)));
 
@@ -4874,7 +4881,7 @@ elm_genlist_item_mode_set(Elm_Genlist_Item *it,
        (!strcmp(mode_type, wd->mode_type)) &&
        (mode_set))
       return;
-   if (!it->itc->mode_item_style) return;
+   if (!wd->mode_item_style) return;
 
    if (wd->multi)
      {
@@ -4896,6 +4903,28 @@ elm_genlist_item_mode_set(Elm_Genlist_Item *it,
 
    eina_stringshare_replace(&wd->mode_type, mode_type);
    if (mode_set) _item_mode_set(it);
+}
+
+EAPI const char *
+elm_genlist_mode_item_style_get(const Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return NULL;
+   return wd->mode_item_style;
+}
+
+EAPI void
+elm_genlist_mode_item_style_set(Evas_Object *obj, const char *style)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   if ((style == wd->mode_item_style) || (style && wd->mode_item_style &&
+       (!strcmp(style, wd->mode_item_style))))
+     return;
+   eina_stringshare_replace(&wd->mode_item_style, style);
+   elm_genlist_realized_items_update(obj);
 }
 
 EAPI const char *

@@ -1767,7 +1767,7 @@ test_genlist10(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
    itc10.func.icon_get  = gl10_icon_get;
    itc10.func.state_get = gl_state_get;
    itc10.func.del       = gl_del;
-   itc10.mode_item_style = "mode";
+   elm_genlist_mode_item_style_set(gl, "mode");
 
    for (i = 0; i < 50; i++)
      elm_genlist_item_append(gl,

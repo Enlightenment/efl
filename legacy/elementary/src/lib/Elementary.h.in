@@ -17795,10 +17795,6 @@ extern "C" {
     * - @c item_style - This is a constant string and simply defines the name
     *   of the item style. It @b must be specified and the default should be @c
     *   "default".
-    * - @c mode_item_style - This is a constant string and simply defines the
-    *   name of the style that will be used for mode animations. It can be left
-    *   as @c NULL if you don't plan to use Genlist mode. See
-    *   elm_genlist_item_mode_set() for more info.
     *
     * - @c func - A struct with pointers to functions that will be called when
     *   an item is going to be actually created. All of them receive a @c data
@@ -18140,7 +18136,6 @@ extern "C" {
              Elm_Genlist_Item_State_Get_Cb  state_get; /**< State fetching class function for genlist item classes. */
              Elm_Genlist_Item_Del_Cb        del; /**< Deletion class function for genlist item classes. */
           } func;
-        const char                *mode_item_style;
      };
 
    /**
@@ -18627,6 +18622,32 @@ extern "C" {
     * @ingroup Genlist
     */
    EAPI const Eina_List  *elm_genlist_selected_items_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+   /**
+    * Get the mode item style of items in the genlist
+    * @param obj The genlist object
+    * @return The mode item style string, or NULL if none is specified
+    * 
+    * This is a constant string and simply defines the name of the
+    * style that will be used for mode animations. It can be
+    * @c NULL if you don't plan to use Genlist mode. See
+    * elm_genlist_item_mode_set() for more info.
+    * 
+    * @ingroup Genlist
+    */
+   EAPI const char       *elm_genlist_mode_item_style_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+   /**
+    * Set the mode item style of items in the genlist
+    * @param obj The genlist object
+    * @param style The mode item style string, or NULL if none is desired
+    * 
+    * This is a constant string and simply defines the name of the
+    * style that will be used for mode animations. It can be
+    * @c NULL if you don't plan to use Genlist mode. See
+    * elm_genlist_item_mode_set() for more info.
+    * 
+    * @ingroup Genlist
+    */
+   EAPI void              elm_genlist_mode_item_style_set(Evas_Object *obj, const char *style) EINA_ARG_NONNULL(1);
    /**
     * Get a list of realized items in genlist
     *
