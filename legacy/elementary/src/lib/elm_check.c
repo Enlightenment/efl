@@ -316,7 +316,7 @@ _access_state_cb(void *data, Evas_Object *obj, Elm_Widget_Item *item __UNUSED__)
         if (wd->ontext)
           {
              char buf[1024];
-             
+
              snprintf(buf, sizeof(buf), "%s: %s", E_("State"), wd->ontext);
              return strdup(buf);
           }
@@ -326,7 +326,7 @@ _access_state_cb(void *data, Evas_Object *obj, Elm_Widget_Item *item __UNUSED__)
    if (wd->offtext)
      {
         char buf[1024];
-        
+
         snprintf(buf, sizeof(buf), "%s: %s", E_("State"), wd->offtext);
         return strdup(buf);
      }

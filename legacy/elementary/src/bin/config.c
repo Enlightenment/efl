@@ -940,7 +940,7 @@ _config_display_update(Evas_Object *win)
    elm_slider_value_set(evas_object_data_get(win,
                                              "edje_collection_cache_slider"),
                         edje_col_c);
-   
+
 //   elm_scroll_bounce_enabled_all_set(s_bounce);
    elm_check_state_set(evas_object_data_get(win, "scroll_bounce_check"),
                        s_bounce);
@@ -3025,7 +3025,7 @@ status_win(void)
 
    ecore_event_handler_add(ELM_EVENT_CONFIG_ALL_CHANGED, _config_all_changed,
                            win);
-   
+
    evas_object_smart_callback_add(win, "delete,request", config_exit, NULL);
    bg = elm_bg_add(win);
    evas_object_size_hint_weight_set(bg, 1.0, 1.0);

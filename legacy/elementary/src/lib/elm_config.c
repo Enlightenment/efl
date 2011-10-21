@@ -101,7 +101,7 @@ static Eina_Bool
 _prop_all_update_cb(void *data __UNUSED__)
 {
    _prop_config_set();
-   ecore_x_window_prop_string_set(_root_1st, _atom[ATOM_E_PROFILE], 
+   ecore_x_window_prop_string_set(_root_1st, _atom[ATOM_E_PROFILE],
                                   _elm_profile);
    _prop_all_update_timer = NULL;
    return EINA_FALSE;
@@ -166,13 +166,13 @@ _prop_config_set(void)
 {
    unsigned char *config_data = NULL;
    int size = 0;
-   
+
    config_data = eet_data_descriptor_encode(_config_edd, _elm_config, &size);
    if (config_data)
      {
         Ecore_X_Atom atom;
         char buf[512];
-        
+
         snprintf(buf, sizeof(buf), "ELM_CONFIG_%s", _elm_profile);
         atom = ecore_x_atom_get(buf);
         _atom_config = atom;
@@ -188,7 +188,7 @@ static Eina_Bool
 _prop_change_delay_cb(void *data __UNUSED__)
 {
    char *s;
-   
+
    s = ecore_x_window_prop_string_get(_root_1st, _atom[ATOM_E_PROFILE]);
    if (s)
      {
@@ -1514,9 +1514,9 @@ _elm_config_all_update(void)
    if (_prop_all_update_timer) ecore_timer_del(_prop_all_update_timer);
    _prop_all_update_timer = ecore_timer_add(0.1, _prop_all_update_cb, NULL);
    _prop_config_set();
-   ecore_x_window_prop_string_set(_root_1st, _atom[ATOM_E_PROFILE], 
+   ecore_x_window_prop_string_set(_root_1st, _atom[ATOM_E_PROFILE],
                                   _elm_profile);
-#endif   
+#endif
 }
 
 void
@@ -1557,7 +1557,7 @@ _elm_config_shutdown(void)
    if (_prop_change_delay_timer) ecore_timer_del(_prop_change_delay_timer);
    _prop_change_delay_timer = NULL;
 #endif
-   
+
 #define ENGINE_COMPARE(name) (!strcmp(_elm_config->engine, name))
    if (ENGINE_COMPARE(ELM_SOFTWARE_X11) ||
        ENGINE_COMPARE(ELM_SOFTWARE_16_X11) ||

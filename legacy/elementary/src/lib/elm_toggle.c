@@ -5,7 +5,7 @@ EAPI Evas_Object *
 elm_toggle_add(Evas_Object *parent)
 {
    Evas_Object *obj;
-   
+
    obj = elm_check_add(parent);
    elm_object_style_set(obj, "toggle");
    elm_check_states_labels_set(obj, E_("ON"), E_("OFF"));

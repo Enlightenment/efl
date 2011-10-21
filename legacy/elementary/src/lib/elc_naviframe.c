@@ -795,7 +795,7 @@ _item_content_set(Elm_Naviframe_Item *navi_it, Evas_Object *content)
    _item_sizing_eval(navi_it);
 }
 
-//FIXME: need to handle if this function is called while transition 
+//FIXME: need to handle if this function is called while transition
 static void
 _item_style_set(Elm_Naviframe_Item *navi_it, const char *item_style)
 {
@@ -1129,7 +1129,7 @@ elm_naviframe_item_style_set(Elm_Object_Item *it, const char *item_style)
    ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
    Elm_Naviframe_Item *navi_it = (Elm_Naviframe_Item *) it;
 
-   //Return if new style is exsiting one.  
+   //Return if new style is exsiting one.
    if (item_style)
      if (!strcmp(item_style, navi_it->style)) return;
 
