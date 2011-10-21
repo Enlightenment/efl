@@ -6,3 +6,6 @@ Bugs:
 Things That Just Need To Be Rewritten (tm):
   toolbar icon api is broken, should take an actual elm_icon. requires new elm_toolbar_item_update api as well
   panel edc
+
+"Features"
+  elm_object_icon_s/get() should be implemented for most widgets to reduce api
