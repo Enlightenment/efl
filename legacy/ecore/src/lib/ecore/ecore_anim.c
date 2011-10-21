@@ -8,38 +8,36 @@
 #include "Ecore.h"
 #include "ecore_private.h"
 
-
 struct _Ecore_Animator
 {
    EINA_INLIST;
-   ECORE_MAGIC;
+                     ECORE_MAGIC;
 
-   Ecore_Task_Cb func;
-   void          *data;
+   Ecore_Task_Cb     func;
+   void             *data;
 
-   double             start, run;
-   Ecore_Timeline_Cb  run_func;
-   void              *run_data;
+   double            start, run;
+   Ecore_Timeline_Cb run_func;
+   void             *run_data;
 
-   Eina_Bool     delete_me : 1;
-   Eina_Bool     suspended : 1;
+   Eina_Bool         delete_me : 1;
+   Eina_Bool         suspended : 1;
 };
-
 
 static Eina_Bool _ecore_animator_run(void *data);
 static Eina_Bool _ecore_animator(void *data);
 
-static int                    animators_delete_me = 0;
-static Ecore_Animator        *animators = NULL;
-static double                 animators_frametime = 1.0 / 30.0;
+static int animators_delete_me = 0;
+static Ecore_Animator *animators = NULL;
+static double animators_frametime = 1.0 / 30.0;
 
-static Ecore_Animator_Source  src = ECORE_ANIMATOR_SOURCE_TIMER;
-static Ecore_Timer           *timer = NULL;
-static int                    ticking = 0;
-static Ecore_Cb               begin_tick_cb = NULL;
-static const void            *begin_tick_data = NULL;
-static Ecore_Cb               end_tick_cb = NULL;
-static const void            *end_tick_data = NULL;
+static Ecore_Animator_Source src = ECORE_ANIMATOR_SOURCE_TIMER;
+static Ecore_Timer *timer = NULL;
+static int ticking = 0;
+static Ecore_Cb begin_tick_cb = NULL;
+static const void *begin_tick_data = NULL;
+static Ecore_Cb end_tick_cb = NULL;
+static const void *end_tick_data = NULL;
 
 static void
 _begin_tick(void)
@@ -56,13 +54,15 @@ _begin_tick(void)
              double d = -fmod(t_loop - sync_0, animators_frametime);
 
              timer = _ecore_timer_loop_add(animators_frametime,
-                                                    _ecore_animator, NULL);
+                                           _ecore_animator, NULL);
              _ecore_timer_delay(timer, d);
           }
         break;
+
       case ECORE_ANIMATOR_SOURCE_CUSTOM:
         if (begin_tick_cb) begin_tick_cb((void *)begin_tick_data);
         break;
+
       default:
         break;
      }
@@ -82,9 +82,11 @@ _end_tick(void)
              timer = NULL;
           }
         break;
+
       case ECORE_ANIMATOR_SOURCE_CUSTOM:
         if (end_tick_cb) end_tick_cb((void *)end_tick_data);
         break;
+
       default:
         break;
      }
@@ -109,15 +111,15 @@ _do_tick(void)
    if (animators_delete_me)
      {
         Ecore_Animator *l;
-        for (l = animators; l;)
+        for (l = animators; l; )
           {
              animator = l;
-             l = (Ecore_Animator *) EINA_INLIST_GET(l)->next;
+             l = (Ecore_Animator *)EINA_INLIST_GET(l)->next;
              if (animator->delete_me)
                {
                   animators = (Ecore_Animator *)
-                     eina_inlist_remove(EINA_INLIST_GET(animators), 
-                                        EINA_INLIST_GET(animator));
+                    eina_inlist_remove(EINA_INLIST_GET(animators),
+                                       EINA_INLIST_GET(animator));
                   ECORE_MAGIC_SET(animator, ECORE_MAGIC_NONE);
                   free(animator);
                   animators_delete_me--;
@@ -134,7 +136,8 @@ _do_tick(void)
 }
 
 static Ecore_Animator *
-_ecore_animator_add(Ecore_Task_Cb func, const void *data)
+_ecore_animator_add(Ecore_Task_Cb func,
+                    const void   *data)
 {
    Ecore_Animator *animator = NULL;
 
@@ -150,7 +153,8 @@ _ecore_animator_add(Ecore_Task_Cb func, const void *data)
 }
 
 EAPI Ecore_Animator *
-ecore_animator_add(Ecore_Task_Cb func, const void *data)
+ecore_animator_add(Ecore_Task_Cb func,
+                   const void   *data)
 {
    Ecore_Animator *animator;
 
@@ -162,7 +166,9 @@ ecore_animator_add(Ecore_Task_Cb func, const void *data)
 }
 
 EAPI Ecore_Animator *
-ecore_animator_timeline_add(double runtime, Ecore_Timeline_Cb func, const void *data)
+ecore_animator_timeline_add(double            runtime,
+                            Ecore_Timeline_Cb func,
+                            const void       *data)
 {
    Ecore_Animator *animator;
 
@@ -191,7 +197,8 @@ _pos_map_cos(double in)
 }
 
 static double
-_pos_map_accel_factor(double pos, double v1)
+_pos_map_accel_factor(double pos,
+                      double v1)
 {
    int i, fact = (int)v1;
    double p, o1 = pos, o2 = pos, v;
@@ -208,7 +215,9 @@ _pos_map_accel_factor(double pos, double v1)
 }
 
 static double
-_pos_map_pow(double pos, double divis, int p)
+_pos_map_pow(double pos,
+             double divis,
+             int    p)
 {
    double v = 1.0;
    int i;
@@ -217,7 +226,9 @@ _pos_map_pow(double pos, double divis, int p)
 }
 
 static double
-_pos_map_spring(double pos, int bounces, double decfac)
+_pos_map_spring(double pos,
+                int    bounces,
+                double decfac)
 {
    int segnum, segpos, b1, b2;
    double len, decay, decpos, p2;
@@ -235,49 +246,63 @@ _pos_map_spring(double pos, int bounces, double decfac)
 }
 
 EAPI double
-ecore_animator_pos_map(double pos, Ecore_Pos_Map map, double v1, double v2)
+ecore_animator_pos_map(double        pos,
+                       Ecore_Pos_Map map,
+                       double        v1,
+                       double        v2)
 {
    /* purely functional - locking not required */
-   if (pos > 1.0) pos = 1.0;
-   else if (pos < 0.0) pos = 0.0;
-   switch (map)
-     {
-      case ECORE_POS_MAP_LINEAR:
-        return pos;
-      case ECORE_POS_MAP_ACCELERATE:
-        pos = 1.0 - _pos_map_sin((M_PI / 2.0) + ((pos * M_PI) / 2.0));
-        return pos;
-      case ECORE_POS_MAP_DECELERATE:
-        pos = _pos_map_sin((pos * M_PI) / 2.0);
-        return pos;
-      case ECORE_POS_MAP_SINUSOIDAL:
-        pos = (1.0 - _pos_map_cos(pos * M_PI)) / 2.0;
-        return pos;
-      case ECORE_POS_MAP_ACCELERATE_FACTOR:
-        pos = _pos_map_accel_factor(pos, v1);
-        return pos;
-      case ECORE_POS_MAP_DECELERATE_FACTOR:
-        pos = 1.0 - _pos_map_accel_factor(1.0 - pos, v1);
-        return pos;
-      case ECORE_POS_MAP_SINUSOIDAL_FACTOR:
-        if (pos < 0.5) pos = _pos_map_accel_factor(pos * 2.0, v1) / 2.0;
-        else pos = 1.0 - (_pos_map_accel_factor((1.0 - pos) * 2.0, v1) / 2.0);
-        return pos;
-      case ECORE_POS_MAP_DIVISOR_INTERP:
-        pos = _pos_map_pow(pos, v1, (int)v2);
-        return pos;
-      case ECORE_POS_MAP_BOUNCE:
-        pos = _pos_map_spring(pos, (int)v2, v1);
-        if (pos < 0.0) pos = -pos;
-        pos = 1.0 - pos;
-        return pos;
-      case ECORE_POS_MAP_SPRING:
-        pos = 1.0 - _pos_map_spring(pos, (int)v2, v1);
-        return pos;
-      default:
-        return pos;
-     }
-   return pos;
+    if (pos > 1.0) pos = 1.0;
+    else if (pos < 0.0)
+      pos = 0.0;
+    switch (map)
+      {
+       case ECORE_POS_MAP_LINEAR:
+         return pos;
+
+       case ECORE_POS_MAP_ACCELERATE:
+         pos = 1.0 - _pos_map_sin((M_PI / 2.0) + ((pos * M_PI) / 2.0));
+         return pos;
+
+       case ECORE_POS_MAP_DECELERATE:
+         pos = _pos_map_sin((pos * M_PI) / 2.0);
+         return pos;
+
+       case ECORE_POS_MAP_SINUSOIDAL:
+         pos = (1.0 - _pos_map_cos(pos * M_PI)) / 2.0;
+         return pos;
+
+       case ECORE_POS_MAP_ACCELERATE_FACTOR:
+         pos = _pos_map_accel_factor(pos, v1);
+         return pos;
+
+       case ECORE_POS_MAP_DECELERATE_FACTOR:
+         pos = 1.0 - _pos_map_accel_factor(1.0 - pos, v1);
+         return pos;
+
+       case ECORE_POS_MAP_SINUSOIDAL_FACTOR:
+         if (pos < 0.5) pos = _pos_map_accel_factor(pos * 2.0, v1) / 2.0;
+         else pos = 1.0 - (_pos_map_accel_factor((1.0 - pos) * 2.0, v1) / 2.0);
+         return pos;
+
+       case ECORE_POS_MAP_DIVISOR_INTERP:
+         pos = _pos_map_pow(pos, v1, (int)v2);
+         return pos;
+
+       case ECORE_POS_MAP_BOUNCE:
+         pos = _pos_map_spring(pos, (int)v2, v1);
+         if (pos < 0.0) pos = -pos;
+         pos = 1.0 - pos;
+         return pos;
+
+       case ECORE_POS_MAP_SPRING:
+         pos = 1.0 - _pos_map_spring(pos, (int)v2, v1);
+         return pos;
+
+       default:
+         return pos;
+      }
+    return pos;
 }
 
 EAPI void *
@@ -376,7 +401,8 @@ ecore_animator_source_get(void)
 }
 
 EAPI void
-ecore_animator_custom_source_tick_begin_callback_set(Ecore_Cb func, const void *data)
+ecore_animator_custom_source_tick_begin_callback_set(Ecore_Cb    func,
+                                                     const void *data)
 {
    _ecore_lock();
    begin_tick_cb = func;
@@ -387,7 +413,8 @@ ecore_animator_custom_source_tick_begin_callback_set(Ecore_Cb func, const void *
 }
 
 EAPI void
-ecore_animator_custom_source_tick_end_callback_set(Ecore_Cb func, const void *data)
+ecore_animator_custom_source_tick_end_callback_set(Ecore_Cb    func,
+                                                   const void *data)
 {
    _ecore_lock();
    end_tick_cb = func;
@@ -414,7 +441,7 @@ _ecore_animator_shutdown(void)
         Ecore_Animator *animator;
 
         animator = animators;
-        animators = (Ecore_Animator *) eina_inlist_remove(EINA_INLIST_GET(animators), EINA_INLIST_GET(animators));
+        animators = (Ecore_Animator *)eina_inlist_remove(EINA_INLIST_GET(animators), EINA_INLIST_GET(animators));
         ECORE_MAGIC_SET(animator, ECORE_MAGIC_NONE);
         free(animator);
      }
@@ -432,7 +459,8 @@ _ecore_animator_run(void *data)
      {
         pos = (t - animator->start) / animator->run;
         if (pos > 1.0) pos = 1.0;
-        else if (pos < 0.0) pos = 0.0;
+        else if (pos < 0.0)
+          pos = 0.0;
      }
    run_ret = animator->run_func(animator->run_data, pos);
    if (t >= (animator->start + animator->run)) run_ret = EINA_FALSE;
@@ -448,3 +476,4 @@ _ecore_animator(void *data __UNUSED__)
    _ecore_unlock();
    return r;
 }
+

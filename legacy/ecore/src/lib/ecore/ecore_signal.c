@@ -18,17 +18,36 @@
 
 typedef void (*Signal_Handler)(int sig, siginfo_t *si, void *foo);
 
-static void _ecore_signal_callback_set(int sig, Signal_Handler func);
-static void _ecore_signal_callback_ignore(int sig, siginfo_t *si, void *foo);
-static void _ecore_signal_callback_sigchld(int sig, siginfo_t *si, void *foo);
-static void _ecore_signal_callback_sigusr1(int sig, siginfo_t *si, void *foo);
-static void _ecore_signal_callback_sigusr2(int sig, siginfo_t *si, void *foo);
-static void _ecore_signal_callback_sighup(int sig, siginfo_t *si, void *foo);
-static void _ecore_signal_callback_sigquit(int sig, siginfo_t *si, void *foo);
-static void _ecore_signal_callback_sigint(int sig, siginfo_t *si, void *foo);
-static void _ecore_signal_callback_sigterm(int sig, siginfo_t *si, void *foo);
+static void _ecore_signal_callback_set(int            sig,
+                                       Signal_Handler func);
+static void _ecore_signal_callback_ignore(int        sig,
+                                          siginfo_t *si,
+                                          void      *foo);
+static void _ecore_signal_callback_sigchld(int        sig,
+                                           siginfo_t *si,
+                                           void      *foo);
+static void _ecore_signal_callback_sigusr1(int        sig,
+                                           siginfo_t *si,
+                                           void      *foo);
+static void _ecore_signal_callback_sigusr2(int        sig,
+                                           siginfo_t *si,
+                                           void      *foo);
+static void _ecore_signal_callback_sighup(int        sig,
+                                          siginfo_t *si,
+                                          void      *foo);
+static void _ecore_signal_callback_sigquit(int        sig,
+                                           siginfo_t *si,
+                                           void      *foo);
+static void _ecore_signal_callback_sigint(int        sig,
+                                          siginfo_t *si,
+                                          void      *foo);
+static void _ecore_signal_callback_sigterm(int        sig,
+                                           siginfo_t *si,
+                                           void      *foo);
 #ifdef SIGPWR
-static void _ecore_signal_callback_sigpwr(int sig, siginfo_t *si, void *foo);
+static void _ecore_signal_callback_sigpwr(int        sig,
+                                          siginfo_t *si,
+                                          void      *foo);
 #endif
 
 static Eina_Bool _ecore_signal_exe_exit_delay(void *data);
@@ -62,17 +81,17 @@ static volatile siginfo_t sigpwr_info[MAXSIGQ];
 void
 _ecore_signal_shutdown(void)
 {
-   _ecore_signal_callback_set(SIGPIPE, (Signal_Handler) SIG_DFL);
-   _ecore_signal_callback_set(SIGALRM, (Signal_Handler) SIG_DFL);
-   _ecore_signal_callback_set(SIGCHLD, (Signal_Handler) SIG_DFL);
-   _ecore_signal_callback_set(SIGUSR1, (Signal_Handler) SIG_DFL);
-   _ecore_signal_callback_set(SIGUSR2, (Signal_Handler) SIG_DFL);
-   _ecore_signal_callback_set(SIGHUP,  (Signal_Handler) SIG_DFL);
-   _ecore_signal_callback_set(SIGQUIT, (Signal_Handler) SIG_DFL);
-   _ecore_signal_callback_set(SIGINT,  (Signal_Handler) SIG_DFL);
-   _ecore_signal_callback_set(SIGTERM, (Signal_Handler) SIG_DFL);
+   _ecore_signal_callback_set(SIGPIPE, (Signal_Handler)SIG_DFL);
+   _ecore_signal_callback_set(SIGALRM, (Signal_Handler)SIG_DFL);
+   _ecore_signal_callback_set(SIGCHLD, (Signal_Handler)SIG_DFL);
+   _ecore_signal_callback_set(SIGUSR1, (Signal_Handler)SIG_DFL);
+   _ecore_signal_callback_set(SIGUSR2, (Signal_Handler)SIG_DFL);
+   _ecore_signal_callback_set(SIGHUP, (Signal_Handler)SIG_DFL);
+   _ecore_signal_callback_set(SIGQUIT, (Signal_Handler)SIG_DFL);
+   _ecore_signal_callback_set(SIGINT, (Signal_Handler)SIG_DFL);
+   _ecore_signal_callback_set(SIGTERM, (Signal_Handler)SIG_DFL);
 #ifdef SIGPWR
-   _ecore_signal_callback_set(SIGPWR, (Signal_Handler) SIG_DFL);
+   _ecore_signal_callback_set(SIGPWR, (Signal_Handler)SIG_DFL);
    sigpwr_count = 0;
 #endif
    sigchld_count = 0;
@@ -83,7 +102,6 @@ _ecore_signal_shutdown(void)
    sigint_count = 0;
    sigterm_count = 0;
    sig_count = 0;
-
 }
 
 void
@@ -94,12 +112,12 @@ _ecore_signal_init(void)
    _ecore_signal_callback_set(SIGCHLD, _ecore_signal_callback_sigchld);
    _ecore_signal_callback_set(SIGUSR1, _ecore_signal_callback_sigusr1);
    _ecore_signal_callback_set(SIGUSR2, _ecore_signal_callback_sigusr2);
-   _ecore_signal_callback_set(SIGHUP,  _ecore_signal_callback_sighup);
+   _ecore_signal_callback_set(SIGHUP, _ecore_signal_callback_sighup);
    _ecore_signal_callback_set(SIGQUIT, _ecore_signal_callback_sigquit);
-   _ecore_signal_callback_set(SIGINT,  _ecore_signal_callback_sigint);
+   _ecore_signal_callback_set(SIGINT, _ecore_signal_callback_sigint);
    _ecore_signal_callback_set(SIGTERM, _ecore_signal_callback_sigterm);
 #ifdef SIGPWR
-   _ecore_signal_callback_set(SIGPWR,  _ecore_signal_callback_sigpwr);
+   _ecore_signal_callback_set(SIGPWR, _ecore_signal_callback_sigpwr);
 #endif
 }
 
@@ -138,7 +156,7 @@ _ecore_signal_call(void)
    sigprocmask(SIG_BLOCK, &newset, &oldset);
    if (sigchld_count > MAXSIGQ)
      WRN("%i SIGCHLD in queue. max queue size %i. losing "
-          "siginfo for extra signals.", sigchld_count, MAXSIGQ);
+         "siginfo for extra signals.", sigchld_count, MAXSIGQ);
    for (n = 0; n < sigchld_count; n++)
      {
         pid_t pid;
@@ -168,46 +186,46 @@ _ecore_signal_call(void)
                   e->exe = _ecore_exe_find(pid);
 
                   if ((n < MAXSIGQ) && (sigchld_info[n].si_signo))
-                    e->data = sigchld_info[n]; /* No need to clone this. */
+                    e->data = sigchld_info[n];  /* No need to clone this. */
 
                   if ((e->exe) && (ecore_exe_flags_get(e->exe) & (ECORE_EXE_PIPE_READ | ECORE_EXE_PIPE_ERROR)))
-                     {
-                        /* We want to report the Last Words of the exe, so delay this event.
-                         * This is twice as relevant for stderr.
-                         * There are three possibilities here -
-                         *  1 There are no Last Words.
-                         *  2 There are Last Words, they are not ready to be read.
-                         *  3 There are Last Words, they are ready to be read.
-                         *
-                         * For 1 we don't want to delay, for 3 we want to delay.
-                         * 2 is the problem.  If we check for data now and there
-                         * is none, then there is no way to differentiate 1 and 2.
-                         * If we don't delay, we may loose data, but if we do delay,
-                         * there may not be data and the exit event never gets sent.
-                         *
-                         * Any way you look at it, there has to be some time passed
-                         * before the exit event gets sent.  So the strategy here is
-                         * to setup a timer event that will send the exit event after
-                         * an arbitrary, but brief, time.
-                         *
-                         * This is probably paranoid, for the less paraniod, we could
-                         * check to see for Last Words, and only delay if there are any.
-                         * This has it's own set of problems.
-                         */
-                        Ecore_Timer *doomsday_clock;
+                    {
+     /* We want to report the Last Words of the exe, so delay this event.
+      * This is twice as relevant for stderr.
+      * There are three possibilities here -
+      *  1 There are no Last Words.
+      *  2 There are Last Words, they are not ready to be read.
+      *  3 There are Last Words, they are ready to be read.
+      *
+      * For 1 we don't want to delay, for 3 we want to delay.
+      * 2 is the problem.  If we check for data now and there
+      * is none, then there is no way to differentiate 1 and 2.
+      * If we don't delay, we may loose data, but if we do delay,
+      * there may not be data and the exit event never gets sent.
+      *
+      * Any way you look at it, there has to be some time passed
+      * before the exit event gets sent.  So the strategy here is
+      * to setup a timer event that will send the exit event after
+      * an arbitrary, but brief, time.
+      *
+      * This is probably paranoid, for the less paraniod, we could
+      * check to see for Last Words, and only delay if there are any.
+      * This has it's own set of problems.
+      */
+                         Ecore_Timer *doomsday_clock;
 
-                        doomsday_clock = _ecore_exe_doomsday_clock_get(e->exe);
-                        IF_FN_DEL(ecore_timer_del, doomsday_clock);
-                        _ecore_unlock();
-                        doomsday_clock = ecore_timer_add
-                           (0.1, _ecore_signal_exe_exit_delay, e);
-                        _ecore_lock();
-                        _ecore_exe_doomsday_clock_set(e->exe, doomsday_clock);
-                     }
+                         doomsday_clock = _ecore_exe_doomsday_clock_get(e->exe);
+                         IF_FN_DEL(ecore_timer_del, doomsday_clock);
+                         _ecore_unlock();
+                         doomsday_clock = ecore_timer_add
+                             (0.1, _ecore_signal_exe_exit_delay, e);
+                         _ecore_lock();
+                         _ecore_exe_doomsday_clock_set(e->exe, doomsday_clock);
+                    }
                   else
                     {
                        _ecore_event_add(ECORE_EXE_EVENT_DEL, e,
-                                   _ecore_exe_event_del_free, NULL);
+                                        _ecore_exe_event_del_free, NULL);
                     }
                }
           }
@@ -364,9 +382,10 @@ _ecore_signal_call(void)
 }
 
 static void
-_ecore_signal_callback_set(int sig, Signal_Handler func)
+_ecore_signal_callback_set(int            sig,
+                           Signal_Handler func)
 {
-   struct sigaction  sa;
+   struct sigaction sa;
 
    sa.sa_sigaction = func;
    sa.sa_flags = SA_RESTART | SA_SIGINFO;
@@ -375,12 +394,16 @@ _ecore_signal_callback_set(int sig, Signal_Handler func)
 }
 
 static void
-_ecore_signal_callback_ignore(int sig __UNUSED__, siginfo_t *si __UNUSED__, void *foo __UNUSED__)
+_ecore_signal_callback_ignore(int        sig __UNUSED__,
+                              siginfo_t *si __UNUSED__,
+                              void      *foo __UNUSED__)
 {
 }
 
 static void
-_ecore_signal_callback_sigchld(int sig __UNUSED__, siginfo_t *si, void *foo __UNUSED__)
+_ecore_signal_callback_sigchld(int        sig __UNUSED__,
+                               siginfo_t *si,
+                               void      *foo __UNUSED__)
 {
    volatile sig_atomic_t n;
    n = sigchld_count;
@@ -397,7 +420,9 @@ _ecore_signal_callback_sigchld(int sig __UNUSED__, siginfo_t *si, void *foo __UN
 }
 
 static void
-_ecore_signal_callback_sigusr1(int sig __UNUSED__, siginfo_t *si, void *foo __UNUSED__)
+_ecore_signal_callback_sigusr1(int        sig __UNUSED__,
+                               siginfo_t *si,
+                               void      *foo __UNUSED__)
 {
    volatile sig_atomic_t n;
    n = sigusr1_count;
@@ -413,7 +438,9 @@ _ecore_signal_callback_sigusr1(int sig __UNUSED__, siginfo_t *si, void *foo __UN
 }
 
 static void
-_ecore_signal_callback_sigusr2(int sig __UNUSED__, siginfo_t *si, void *foo __UNUSED__)
+_ecore_signal_callback_sigusr2(int        sig __UNUSED__,
+                               siginfo_t *si,
+                               void      *foo __UNUSED__)
 {
    volatile sig_atomic_t n;
    n = sigusr2_count;
@@ -429,7 +456,9 @@ _ecore_signal_callback_sigusr2(int sig __UNUSED__, siginfo_t *si, void *foo __UN
 }
 
 static void
-_ecore_signal_callback_sighup(int sig __UNUSED__, siginfo_t *si, void *foo __UNUSED__)
+_ecore_signal_callback_sighup(int        sig __UNUSED__,
+                              siginfo_t *si,
+                              void      *foo __UNUSED__)
 {
    volatile sig_atomic_t n;
    n = sighup_count;
@@ -445,7 +474,9 @@ _ecore_signal_callback_sighup(int sig __UNUSED__, siginfo_t *si, void *foo __UNU
 }
 
 static void
-_ecore_signal_callback_sigquit(int sig __UNUSED__, siginfo_t *si, void *foo __UNUSED__)
+_ecore_signal_callback_sigquit(int        sig __UNUSED__,
+                               siginfo_t *si,
+                               void      *foo __UNUSED__)
 {
    volatile sig_atomic_t n;
    n = sigquit_count;
@@ -461,7 +492,9 @@ _ecore_signal_callback_sigquit(int sig __UNUSED__, siginfo_t *si, void *foo __UN
 }
 
 static void
-_ecore_signal_callback_sigint(int sig __UNUSED__, siginfo_t *si, void *foo __UNUSED__)
+_ecore_signal_callback_sigint(int        sig __UNUSED__,
+                              siginfo_t *si,
+                              void      *foo __UNUSED__)
 {
    volatile sig_atomic_t n;
    n = sigint_count;
@@ -477,7 +510,9 @@ _ecore_signal_callback_sigint(int sig __UNUSED__, siginfo_t *si, void *foo __UNU
 }
 
 static void
-_ecore_signal_callback_sigterm(int sig __UNUSED__, siginfo_t *si, void *foo __UNUSED__)
+_ecore_signal_callback_sigterm(int        sig __UNUSED__,
+                               siginfo_t *si,
+                               void      *foo __UNUSED__)
 {
    volatile sig_atomic_t n;
    n = sigterm_count;
@@ -494,7 +529,9 @@ _ecore_signal_callback_sigterm(int sig __UNUSED__, siginfo_t *si, void *foo __UN
 
 #ifdef SIGPWR
 static void
-_ecore_signal_callback_sigpwr(int sig __UNUSED__, siginfo_t *si, void *foo __UNUSED__)
+_ecore_signal_callback_sigpwr(int        sig __UNUSED__,
+                              siginfo_t *si,
+                              void      *foo __UNUSED__)
 {
    volatile sig_atomic_t n;
    n = sigpwr_count;
@@ -508,6 +545,7 @@ _ecore_signal_callback_sigpwr(int sig __UNUSED__, siginfo_t *si, void *foo __UNU
    sigpwr_count++;
    sig_count++;
 }
+
 #endif
 
 static Eina_Bool
@@ -524,3 +562,4 @@ _ecore_signal_exe_exit_delay(void *data)
      }
    return ECORE_CALLBACK_CANCEL;
 }
+

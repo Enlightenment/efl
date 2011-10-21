@@ -56,7 +56,7 @@ ecore_time_get(void)
    struct timespec t;
 
    if (EINA_UNLIKELY(_ecore_time_clock_id < 0))
-      return ecore_time_unix_get();
+     return ecore_time_unix_get();
 
    if (EINA_UNLIKELY(clock_gettime(_ecore_time_clock_id, &t)))
      {
@@ -69,7 +69,7 @@ ecore_time_get(void)
 #elif defined(HAVE_EVIL)
    return evil_time_get();
 #elif defined(__APPLE__) && defined(__MACH__)
-   return _ecore_time_clock_conversion * (double) mach_absolute_time();
+   return _ecore_time_clock_conversion * (double)mach_absolute_time();
 #else
    return ecore_time_unix_get();
 #endif
@@ -127,7 +127,6 @@ ecore_loop_time_get(void)
  * @}
  */
 
-
 /**********************   Internal methods   ********************************/
 
 /* TODO: Documentation says "All  implementations  support  the  system-wide
@@ -150,8 +149,8 @@ _ecore_time_init(void)
    else if (!clock_gettime(CLOCK_REALTIME, &t))
      {
         /* may go backwards */
-        _ecore_time_clock_id = CLOCK_REALTIME;
-        WRN("CLOCK_MONOTONIC not available. Fallback to CLOCK_REALTIME.");
+         _ecore_time_clock_id = CLOCK_REALTIME;
+         WRN("CLOCK_MONOTONIC not available. Fallback to CLOCK_REALTIME.");
      }
    else
      {
@@ -166,7 +165,7 @@ _ecore_time_init(void)
    kern_return_t err = mach_timebase_info(&info);
    if (err == 0)
      {
-        _ecore_time_clock_conversion = 1e-9 * (double) info.numer / (double) info.denom;
+        _ecore_time_clock_conversion = 1e-9 * (double)info.numer / (double)info.denom;
      }
    else
      {
@@ -182,3 +181,4 @@ _ecore_time_init(void)
 
    _ecore_time_loop_time = ecore_time_get();
 }
+

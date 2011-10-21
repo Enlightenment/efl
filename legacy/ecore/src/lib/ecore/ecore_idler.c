@@ -7,27 +7,26 @@
 #include "Ecore.h"
 #include "ecore_private.h"
 
-
 struct _Ecore_Idler
 {
    EINA_INLIST;
-   ECORE_MAGIC;
+                 ECORE_MAGIC;
    Ecore_Task_Cb func;
-   void        *data;
-   int          references;
-   Eina_Bool    delete_me : 1;
+   void         *data;
+   int           references;
+   Eina_Bool     delete_me : 1;
 };
-
 
 static Ecore_Idler *idlers = NULL;
 static Ecore_Idler *idler_current = NULL;
-static int          idlers_delete_me = 0;
+static int idlers_delete_me = 0;
 
 static void *
 _ecore_idler_del(Ecore_Idler *idler);
 
 EAPI Ecore_Idler *
-ecore_idler_add(Ecore_Task_Cb func, const void *data)
+ecore_idler_add(Ecore_Task_Cb func,
+                const void   *data)
 {
    Ecore_Idler *ie = NULL;
 
@@ -38,7 +37,7 @@ ecore_idler_add(Ecore_Task_Cb func, const void *data)
    ECORE_MAGIC_SET(ie, ECORE_MAGIC_IDLER);
    ie->func = func;
    ie->data = (void *)data;
-   idlers = (Ecore_Idler *) eina_inlist_append(EINA_INLIST_GET(idlers), EINA_INLIST_GET(ie));
+   idlers = (Ecore_Idler *)eina_inlist_append(EINA_INLIST_GET(idlers), EINA_INLIST_GET(ie));
 unlock:
    _ecore_unlock();
    return ie;
@@ -79,14 +78,13 @@ _ecore_idler_del(Ecore_Idler *idler)
    return idler->data;
 }
 
-
 void
 _ecore_idler_shutdown(void)
 {
    Ecore_Idler *ie;
    while ((ie = idlers))
      {
-        idlers = (Ecore_Idler *) eina_inlist_remove(EINA_INLIST_GET(idlers), EINA_INLIST_GET(idlers));
+        idlers = (Ecore_Idler *)eina_inlist_remove(EINA_INLIST_GET(idlers), EINA_INLIST_GET(idlers));
         ECORE_MAGIC_SET(ie, ECORE_MAGIC_NONE);
         free(ie);
      }
@@ -100,12 +98,12 @@ _ecore_idler_all_call(void)
    if (!idler_current)
      {
         /* regular main loop, start from head */
-        idler_current = idlers;
+         idler_current = idlers;
      }
    else
      {
         /* recursive main loop, continue from where we were */
-        idler_current = (Ecore_Idler *)EINA_INLIST_GET(idler_current)->next;
+         idler_current = (Ecore_Idler *)EINA_INLIST_GET(idler_current)->next;
      }
 
    while (idler_current)
@@ -127,10 +125,10 @@ _ecore_idler_all_call(void)
      {
         Ecore_Idler *l;
         int deleted_idlers_in_use = 0;
-        for (l = idlers; l;)
+        for (l = idlers; l; )
           {
              Ecore_Idler *ie = l;
-             l = (Ecore_Idler *) EINA_INLIST_GET(l)->next;
+             l = (Ecore_Idler *)EINA_INLIST_GET(l)->next;
              if (ie->delete_me)
                {
                   if (ie->references)
@@ -139,7 +137,7 @@ _ecore_idler_all_call(void)
                        continue;
                     }
 
-                  idlers = (Ecore_Idler *) eina_inlist_remove(EINA_INLIST_GET(idlers), EINA_INLIST_GET(ie));
+                  idlers = (Ecore_Idler *)eina_inlist_remove(EINA_INLIST_GET(idlers), EINA_INLIST_GET(ie));
                   ECORE_MAGIC_SET(ie, ECORE_MAGIC_NONE);
                   free(ie);
                }
@@ -157,3 +155,4 @@ _ecore_idler_exist(void)
    if (idlers) return 1;
    return 0;
 }
+

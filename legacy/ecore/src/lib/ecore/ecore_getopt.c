@@ -16,7 +16,7 @@
 # ifdef  __cplusplus
 extern "C"
 # endif
-void *alloca (size_t);
+void *alloca(size_t);
 #endif
 
 #include <stdio.h>
@@ -27,11 +27,11 @@ void *alloca (size_t);
 #ifdef ENABLE_NLS
 # include <libintl.h>
 #else
-# define gettext(x) (x)
+# define gettext(x)          (x)
 # define dgettext(domain, x) (x)
 #endif
 
-#define _(x) dgettext("ecore", x)
+#define _(x)                 dgettext("ecore", x)
 
 #ifdef _WIN32_WCE
 # include <Evil.h>
@@ -47,7 +47,9 @@ static int cols = 80;
 static int helpcol = 80 / 3;
 
 static void
-_ecore_getopt_help_print_replace_program(FILE *fp, const Ecore_Getopt *parser __UNUSED__, const char *text)
+_ecore_getopt_help_print_replace_program(FILE               *fp,
+                                         const Ecore_Getopt *parser __UNUSED__,
+                                         const char         *text)
 {
    do
      {
@@ -82,7 +84,8 @@ _ecore_getopt_help_print_replace_program(FILE *fp, const Ecore_Getopt *parser __
 }
 
 static void
-_ecore_getopt_version(FILE *fp, const Ecore_Getopt *parser)
+_ecore_getopt_version(FILE               *fp,
+                      const Ecore_Getopt *parser)
 {
    fputs(_("Version:"), fp);
    fputc(' ', fp);
@@ -90,7 +93,8 @@ _ecore_getopt_version(FILE *fp, const Ecore_Getopt *parser)
 }
 
 static void
-_ecore_getopt_help_usage(FILE *fp, const Ecore_Getopt *parser)
+_ecore_getopt_help_usage(FILE               *fp,
+                         const Ecore_Getopt *parser)
 {
    fputs(_("Usage:"), fp);
    fputc(' ', fp);
@@ -105,80 +109,85 @@ _ecore_getopt_help_usage(FILE *fp, const Ecore_Getopt *parser)
 }
 
 static int
-_ecore_getopt_help_line(FILE *fp, const int base, const int total, int used, const char *text, int len)
+_ecore_getopt_help_line(FILE       *fp,
+                        const int   base,
+                        const int   total,
+                        int         used,
+                        const char *text,
+                        int         len)
 {
    int linebreak = 0;
    do
      {
         /* process line considering spaces (new line and tabs are spaces!) */
-        while ((used < total) && (len > 0))
-          {
-             const char *space = NULL;
-             int i, todo;
+         while ((used < total) && (len > 0))
+           {
+              const char *space = NULL;
+              int i, todo;
 
-             todo = total - used;
-             if (todo > len)
-               todo = len;
+              todo = total - used;
+              if (todo > len)
+                todo = len;
 
-             for (i = 0; i < todo; i++)
-               if (isspace(text[i]))
-                 {
-                    space = text + i;
-                    break;
-                 }
+              for (i = 0; i < todo; i++)
+                if (isspace(text[i]))
+                  {
+                     space = text + i;
+                     break;
+                  }
 
-             if (space)
-               {
-                  i = fwrite(text, 1, i, fp);
-                  i++;
-                  text += i;
-                  len -= i;
-                  used += i;
+              if (space)
+                {
+                   i = fwrite(text, 1, i, fp);
+                   i++;
+                   text += i;
+                   len -= i;
+                   used += i;
 
-                  if (linebreak)
-                    {
-                       linebreak = 0;
-                       continue;
-                    }
+                   if (linebreak)
+                     {
+                        linebreak = 0;
+                        continue;
+                     }
 
-                  if (space[0] == '\n')
-                    break;
-                  else if (space[0] == '\t')
-                    {
-                       int c;
+                   if (space[0] == '\n')
+                     break;
+                   else if (space[0] == '\t')
+                     {
+                        int c;
 
-                       used--;
-                       c = ((used / 8) + 1) * 8;
-                       if (c < total)
-                         {
-                            for (; used < c; used++)
-                              fputc(' ', fp);
-                         }
-                       else
-                         {
-                            text--;
-                            len++;
-                            break;
-                         }
-                    }
-                  else if (used < total)
-                    fputc(space[0], fp);
-               }
-             else
-               {
-                  i = fwrite(text, 1, i, fp);
-                  text += i;
-                  len -= i;
-                  used += i;
-               }
-             linebreak = 0;
-          }
-        if (len <= 0)
-          break;
-        linebreak = 1;
-        fputc('\n', fp);
-        for (used = 0; used < base; used++)
-          fputc(' ', fp);
+                        used--;
+                        c = ((used / 8) + 1) * 8;
+                        if (c < total)
+                          {
+                             for (; used < c; used++)
+                               fputc(' ', fp);
+                          }
+                        else
+                          {
+                             text--;
+                             len++;
+                             break;
+                          }
+                     }
+                   else if (used < total)
+                     fputc(space[0], fp);
+                }
+              else
+                {
+                   i = fwrite(text, 1, i, fp);
+                   text += i;
+                   len -= i;
+                   used += i;
+                }
+              linebreak = 0;
+           }
+         if (len <= 0)
+           break;
+         linebreak = 1;
+         fputc('\n', fp);
+         for (used = 0; used < base; used++)
+           fputc(' ', fp);
      }
    while (1);
 
@@ -186,7 +195,8 @@ _ecore_getopt_help_line(FILE *fp, const int base, const int total, int used, con
 }
 
 static void
-_ecore_getopt_help_description(FILE *fp, const Ecore_Getopt *parser)
+_ecore_getopt_help_description(FILE               *fp,
+                               const Ecore_Getopt *parser)
 {
    const char *p, *prg, *ver;
    int used, prglen, verlen;
@@ -242,7 +252,8 @@ _ecore_getopt_help_description(FILE *fp, const Ecore_Getopt *parser)
 }
 
 static void
-_ecore_getopt_copyright(FILE *fp, const Ecore_Getopt *parser)
+_ecore_getopt_copyright(FILE               *fp,
+                        const Ecore_Getopt *parser)
 {
    const char *txt = gettext(parser->copyright);
    fputs(_("Copyright:"), fp);
@@ -253,7 +264,8 @@ _ecore_getopt_copyright(FILE *fp, const Ecore_Getopt *parser)
 }
 
 static void
-_ecore_getopt_license(FILE *fp, const Ecore_Getopt *parser)
+_ecore_getopt_license(FILE               *fp,
+                      const Ecore_Getopt *parser)
 {
    const char *txt = gettext(parser->license);
    fputs(_("License:"), fp);
@@ -269,32 +281,45 @@ _ecore_getopt_desc_arg_requirement(const Ecore_Getopt_Desc *desc)
    switch (desc->action)
      {
       case ECORE_GETOPT_ACTION_STORE:
-         return desc->action_param.store.arg_req;
+        return desc->action_param.store.arg_req;
+
       case ECORE_GETOPT_ACTION_STORE_CONST:
-         return ECORE_GETOPT_DESC_ARG_REQUIREMENT_NO;
+        return ECORE_GETOPT_DESC_ARG_REQUIREMENT_NO;
+
       case ECORE_GETOPT_ACTION_STORE_TRUE:
-         return ECORE_GETOPT_DESC_ARG_REQUIREMENT_NO;
+        return ECORE_GETOPT_DESC_ARG_REQUIREMENT_NO;
+
       case ECORE_GETOPT_ACTION_STORE_FALSE:
-         return ECORE_GETOPT_DESC_ARG_REQUIREMENT_NO;
+        return ECORE_GETOPT_DESC_ARG_REQUIREMENT_NO;
+
       case ECORE_GETOPT_ACTION_CHOICE:
-         return ECORE_GETOPT_DESC_ARG_REQUIREMENT_YES;
+        return ECORE_GETOPT_DESC_ARG_REQUIREMENT_YES;
+
       case ECORE_GETOPT_ACTION_APPEND:
-         return ECORE_GETOPT_DESC_ARG_REQUIREMENT_YES;
+        return ECORE_GETOPT_DESC_ARG_REQUIREMENT_YES;
+
       case ECORE_GETOPT_ACTION_COUNT:
-         return ECORE_GETOPT_DESC_ARG_REQUIREMENT_NO;
+        return ECORE_GETOPT_DESC_ARG_REQUIREMENT_NO;
+
       case ECORE_GETOPT_ACTION_CALLBACK:
-         return desc->action_param.callback.arg_req;
+        return desc->action_param.callback.arg_req;
+
       case ECORE_GETOPT_ACTION_HELP:
-         return ECORE_GETOPT_DESC_ARG_REQUIREMENT_NO;
+        return ECORE_GETOPT_DESC_ARG_REQUIREMENT_NO;
+
       case ECORE_GETOPT_ACTION_VERSION:
-         return ECORE_GETOPT_DESC_ARG_REQUIREMENT_NO;
+        return ECORE_GETOPT_DESC_ARG_REQUIREMENT_NO;
+
       default:
-         return ECORE_GETOPT_DESC_ARG_REQUIREMENT_NO;
+        return ECORE_GETOPT_DESC_ARG_REQUIREMENT_NO;
      }
 }
 
 static void
-_ecore_getopt_help_desc_setup_metavar(const Ecore_Getopt_Desc *desc, char *metavar, int *metavarlen, int maxsize)
+_ecore_getopt_help_desc_setup_metavar(const Ecore_Getopt_Desc *desc,
+                                      char                    *metavar,
+                                      int                     *metavarlen,
+                                      int                      maxsize)
 {
    if (desc->metavar)
      {
@@ -321,7 +346,10 @@ _ecore_getopt_help_desc_setup_metavar(const Ecore_Getopt_Desc *desc, char *metav
 }
 
 static int
-_ecore_getopt_help_desc_show_arg(FILE *fp, Ecore_Getopt_Desc_Arg_Requirement requirement, const char *metavar, int metavarlen)
+_ecore_getopt_help_desc_show_arg(FILE                             *fp,
+                                 Ecore_Getopt_Desc_Arg_Requirement requirement,
+                                 const char                       *metavar,
+                                 int                               metavarlen)
 {
    int used;
 
@@ -353,7 +381,11 @@ _ecore_getopt_help_desc_show_arg(FILE *fp, Ecore_Getopt_Desc_Arg_Requirement req
 }
 
 static int
-_ecore_getopt_help_desc_store(FILE *fp, const int base, const int total, int used, const Ecore_Getopt_Desc *desc)
+_ecore_getopt_help_desc_store(FILE                    *fp,
+                              const int                base,
+                              const int                total,
+                              int                      used,
+                              const Ecore_Getopt_Desc *desc)
 {
    const Ecore_Getopt_Desc_Store *store = &desc->action_param.store;
    char buf[64];
@@ -367,123 +399,145 @@ _ecore_getopt_help_desc_store(FILE *fp, const int base, const int total, int use
    switch (store->type)
      {
       case ECORE_GETOPT_TYPE_STR:
-         str = "STR";
-         len = sizeof("STR") - 1;
-         break;
+        str = "STR";
+        len = sizeof("STR") - 1;
+        break;
+
       case ECORE_GETOPT_TYPE_BOOL:
-         str = "BOOL";
-         len = sizeof("BOOL") - 1;
-         break;
+        str = "BOOL";
+        len = sizeof("BOOL") - 1;
+        break;
+
       case ECORE_GETOPT_TYPE_SHORT:
-         str = "SHORT";
-         len = sizeof("SHORT") - 1;
-         break;
+        str = "SHORT";
+        len = sizeof("SHORT") - 1;
+        break;
+
       case ECORE_GETOPT_TYPE_INT:
-         str = "INT";
-         len = sizeof("INT") - 1;
-         break;
+        str = "INT";
+        len = sizeof("INT") - 1;
+        break;
+
       case ECORE_GETOPT_TYPE_LONG:
-         str = "LONG";
-         len = sizeof("LONG") - 1;
-         break;
+        str = "LONG";
+        len = sizeof("LONG") - 1;
+        break;
+
       case ECORE_GETOPT_TYPE_USHORT:
-         str = "USHORT";
-         len = sizeof("USHORT") - 1;
-         break;
+        str = "USHORT";
+        len = sizeof("USHORT") - 1;
+        break;
+
       case ECORE_GETOPT_TYPE_UINT:
-         str = "UINT";
-         len = sizeof("UINT") - 1;
-         break;
+        str = "UINT";
+        len = sizeof("UINT") - 1;
+        break;
+
       case ECORE_GETOPT_TYPE_ULONG:
-         str = "ULONG";
-         len = sizeof("ULONG") - 1;
-         break;
+        str = "ULONG";
+        len = sizeof("ULONG") - 1;
+        break;
+
       case ECORE_GETOPT_TYPE_DOUBLE:
-         str = "DOUBLE";
-         len = sizeof("DOUBLE") - 1;
-         break;
+        str = "DOUBLE";
+        len = sizeof("DOUBLE") - 1;
+        break;
+
       default:
-         str = "???";
-         len = sizeof("???") - 1;
+        str = "???";
+        len = sizeof("???") - 1;
      }
 
    used = _ecore_getopt_help_line
-     (fp, base, total, used, _("Type: "), strlen(_("Type: ")));
+       (fp, base, total, used, _("Type: "), strlen(_("Type: ")));
    used = _ecore_getopt_help_line(fp, base, total, used, str, len);
 
    if (store->arg_req == ECORE_GETOPT_DESC_ARG_REQUIREMENT_YES)
      goto end;
 
    used = _ecore_getopt_help_line
-     (fp, base, total, used, ". ", sizeof(". ") - 1);
+       (fp, base, total, used, ". ", sizeof(". ") - 1);
 
    switch (store->type)
      {
       case ECORE_GETOPT_TYPE_STR:
-         str = store->def.strv;
-         len = str ? strlen(str) : 0;
-         break;
+        str = store->def.strv;
+        len = str ? strlen(str) : 0;
+        break;
+
       case ECORE_GETOPT_TYPE_BOOL:
-         str = store->def.boolv ? "true" : "false";
-         len = strlen(str);
-         break;
+        str = store->def.boolv ? "true" : "false";
+        len = strlen(str);
+        break;
+
       case ECORE_GETOPT_TYPE_SHORT:
-         str = buf;
-         len = snprintf(buf, sizeof(buf), "%hd", store->def.shortv);
-         if (len > sizeof(buf) - 1)
-           len = sizeof(buf) - 1;
-         break;
+        str = buf;
+        len = snprintf(buf, sizeof(buf), "%hd", store->def.shortv);
+        if (len > sizeof(buf) - 1)
+          len = sizeof(buf) - 1;
+        break;
+
       case ECORE_GETOPT_TYPE_INT:
-         str = buf;
-         len = snprintf(buf, sizeof(buf), "%d", store->def.intv);
-         if (len > sizeof(buf) - 1)
-           len = sizeof(buf) - 1;
-         break;
+        str = buf;
+        len = snprintf(buf, sizeof(buf), "%d", store->def.intv);
+        if (len > sizeof(buf) - 1)
+          len = sizeof(buf) - 1;
+        break;
+
       case ECORE_GETOPT_TYPE_LONG:
-         str = buf;
-         len = snprintf(buf, sizeof(buf), "%ld", store->def.longv);
-         if (len > sizeof(buf) - 1)
-           len = sizeof(buf) - 1;
-         break;
+        str = buf;
+        len = snprintf(buf, sizeof(buf), "%ld", store->def.longv);
+        if (len > sizeof(buf) - 1)
+          len = sizeof(buf) - 1;
+        break;
+
       case ECORE_GETOPT_TYPE_USHORT:
-         str = buf;
-         len = snprintf(buf, sizeof(buf), "%hu", store->def.ushortv);
-         if (len > sizeof(buf) - 1)
-           len = sizeof(buf) - 1;
-         break;
+        str = buf;
+        len = snprintf(buf, sizeof(buf), "%hu", store->def.ushortv);
+        if (len > sizeof(buf) - 1)
+          len = sizeof(buf) - 1;
+        break;
+
       case ECORE_GETOPT_TYPE_UINT:
-         str = buf;
-         len = snprintf(buf, sizeof(buf), "%u", store->def.uintv);
-         if (len > sizeof(buf) - 1)
-           len = sizeof(buf) - 1;
-         break;
+        str = buf;
+        len = snprintf(buf, sizeof(buf), "%u", store->def.uintv);
+        if (len > sizeof(buf) - 1)
+          len = sizeof(buf) - 1;
+        break;
+
       case ECORE_GETOPT_TYPE_ULONG:
-         str = buf;
-         len = snprintf(buf, sizeof(buf), "%lu", store->def.ulongv);
-         if (len > sizeof(buf) - 1)
-           len = sizeof(buf) - 1;
-         break;
+        str = buf;
+        len = snprintf(buf, sizeof(buf), "%lu", store->def.ulongv);
+        if (len > sizeof(buf) - 1)
+          len = sizeof(buf) - 1;
+        break;
+
       case ECORE_GETOPT_TYPE_DOUBLE:
-         str = buf;
-         len = snprintf(buf, sizeof(buf), "%f", store->def.doublev);
-         if (len > sizeof(buf) - 1)
-           len = sizeof(buf) - 1;
-         break;
+        str = buf;
+        len = snprintf(buf, sizeof(buf), "%f", store->def.doublev);
+        if (len > sizeof(buf) - 1)
+          len = sizeof(buf) - 1;
+        break;
+
       default:
-         str = "???";
-         len = sizeof("???") - 1;
+        str = "???";
+        len = sizeof("???") - 1;
      }
 
    used = _ecore_getopt_help_line
-     (fp, base, total, used, _("Default: "), strlen(_("Default: ")));
+       (fp, base, total, used, _("Default: "), strlen(_("Default: ")));
    used = _ecore_getopt_help_line(fp, base, total, used, str, len);
 
- end:
+end:
    return _ecore_getopt_help_line(fp, base, total, used, ".", 1);
 }
 
 static int
-_ecore_getopt_help_desc_choices(FILE *fp, const int base, const int total, int used, const Ecore_Getopt_Desc *desc)
+_ecore_getopt_help_desc_choices(FILE                    *fp,
+                                const int                base,
+                                const int                total,
+                                int                      used,
+                                const Ecore_Getopt_Desc *desc)
 {
    const char *const *itr;
    const char sep[] = ", ";
@@ -498,12 +552,12 @@ _ecore_getopt_help_desc_choices(FILE *fp, const int base, const int total, int u
      fputc(' ', fp);
 
    used = _ecore_getopt_help_line
-     (fp, base, total, used, _("Choices: "), strlen(_("Choices: ")));
+       (fp, base, total, used, _("Choices: "), strlen(_("Choices: ")));
 
    for (itr = desc->action_param.choices; *itr; itr++)
      {
         used = _ecore_getopt_help_line
-          (fp, base, total, used, *itr, strlen(*itr));
+            (fp, base, total, used, *itr, strlen(*itr));
         if (itr[1])
           used = _ecore_getopt_help_line(fp, base, total, used, sep, seplen);
      }
@@ -512,7 +566,8 @@ _ecore_getopt_help_desc_choices(FILE *fp, const int base, const int total, int u
 }
 
 static void
-_ecore_getopt_help_desc(FILE *fp, const Ecore_Getopt_Desc *desc)
+_ecore_getopt_help_desc(FILE                    *fp,
+                        const Ecore_Getopt_Desc *desc)
 {
    Ecore_Getopt_Desc_Arg_Requirement arg_req;
    char metavar[32] = "ARG";
@@ -533,7 +588,7 @@ _ecore_getopt_help_desc(FILE *fp, const Ecore_Getopt_Desc *desc)
         fputc(desc->shortname, fp);
         used += 2;
         used += _ecore_getopt_help_desc_show_arg
-          (fp, arg_req, metavar, metavarlen);
+            (fp, arg_req, metavar, metavarlen);
      }
 
    if (desc->shortname && desc->longname)
@@ -550,7 +605,7 @@ _ecore_getopt_help_desc(FILE *fp, const Ecore_Getopt_Desc *desc)
         fputs(desc->longname, fp);
         used += 2 + namelen;
         used += _ecore_getopt_help_desc_show_arg
-          (fp, arg_req, metavar, metavarlen);
+            (fp, arg_req, metavar, metavarlen);
      }
 
    if (!desc->help)
@@ -566,21 +621,23 @@ _ecore_getopt_help_desc(FILE *fp, const Ecore_Getopt_Desc *desc)
      fputc(' ', fp);
 
    used = _ecore_getopt_help_line
-     (fp, helpcol, cols, used, desc->help, strlen(desc->help));
+       (fp, helpcol, cols, used, desc->help, strlen(desc->help));
 
    switch (desc->action)
      {
       case ECORE_GETOPT_ACTION_STORE:
-         _ecore_getopt_help_desc_store(fp, helpcol, cols, used, desc);
-         break;
+        _ecore_getopt_help_desc_store(fp, helpcol, cols, used, desc);
+        break;
+
       case ECORE_GETOPT_ACTION_CHOICE:
-         _ecore_getopt_help_desc_choices(fp, helpcol, cols, used, desc);
-         break;
+        _ecore_getopt_help_desc_choices(fp, helpcol, cols, used, desc);
+        break;
+
       default:
-         break;
+        break;
      }
 
- end:
+end:
    fputc('\n', fp);
 }
 
@@ -591,7 +648,8 @@ _ecore_getopt_desc_is_sentinel(const Ecore_Getopt_Desc *desc)
 }
 
 static void
-_ecore_getopt_help_options(FILE *fp, const Ecore_Getopt *parser)
+_ecore_getopt_help_options(FILE               *fp,
+                           const Ecore_Getopt *parser)
 {
    const Ecore_Getopt_Desc *desc;
 
@@ -609,7 +667,8 @@ _ecore_getopt_help_options(FILE *fp, const Ecore_Getopt *parser)
  * Message will be print to stderr.
  */
 void
-ecore_getopt_help(FILE *fp, const Ecore_Getopt *parser)
+ecore_getopt_help(FILE               *fp,
+                  const Ecore_Getopt *parser)
 {
    const char *var;
 
@@ -640,7 +699,8 @@ ecore_getopt_help(FILE *fp, const Ecore_Getopt *parser)
 }
 
 static const Ecore_Getopt_Desc *
-_ecore_getopt_parse_find_long(const Ecore_Getopt *parser, const char *name)
+_ecore_getopt_parse_find_long(const Ecore_Getopt *parser,
+                              const char         *name)
 {
    const Ecore_Getopt_Desc *desc = parser->descs;
    const char *p = strchr(name, '=');
@@ -671,7 +731,8 @@ _ecore_getopt_parse_find_long(const Ecore_Getopt *parser, const char *name)
 }
 
 static const Ecore_Getopt_Desc *
-_ecore_getopt_parse_find_short(const Ecore_Getopt *parser, char name)
+_ecore_getopt_parse_find_short(const Ecore_Getopt *parser,
+                               char                name)
 {
    const Ecore_Getopt_Desc *desc = parser->descs;
    for (; !_ecore_getopt_desc_is_sentinel(desc); desc++)
@@ -681,12 +742,14 @@ _ecore_getopt_parse_find_short(const Ecore_Getopt *parser, char name)
 }
 
 static int
-_ecore_getopt_parse_find_nonargs_base(const Ecore_Getopt *parser, int argc, char **argv)
+_ecore_getopt_parse_find_nonargs_base(const Ecore_Getopt *parser,
+                                      int                 argc,
+                                      char              **argv)
 {
    char **nonargs;
    int src, dst, used, base;
 
-   nonargs = alloca(sizeof(char*) * argc);
+   nonargs = alloca(sizeof(char *) * argc);
    src = 1;
    dst = 1;
    used = 0;
@@ -748,7 +811,7 @@ _ecore_getopt_parse_find_nonargs_base(const Ecore_Getopt *parser, int argc, char
         dst++;
         continue;
 
-     found_nonarg:
+found_nonarg:
         nonargs[used] = arg;
         used++;
         src++;
@@ -769,7 +832,9 @@ _ecore_getopt_parse_find_nonargs_base(const Ecore_Getopt *parser, int argc, char
 }
 
 static void
-_ecore_getopt_desc_print_error(const Ecore_Getopt_Desc *desc, const char *fmt, ...)
+_ecore_getopt_desc_print_error(const Ecore_Getopt_Desc *desc,
+                               const char              *fmt,
+                               ...)
 {
    va_list ap;
 
@@ -798,7 +863,8 @@ _ecore_getopt_desc_print_error(const Ecore_Getopt_Desc *desc, const char *fmt, .
 }
 
 static Eina_Bool
-_ecore_getopt_parse_bool(const char *str, Eina_Bool *v)
+_ecore_getopt_parse_bool(const char *str,
+                         Eina_Bool  *v)
 {
    if ((strcmp(str, "0") == 0) ||
        (strcasecmp(str, "f") == 0) ||
@@ -825,7 +891,8 @@ _ecore_getopt_parse_bool(const char *str, Eina_Bool *v)
 }
 
 static Eina_Bool
-_ecore_getopt_parse_long(const char *str, long int *v)
+_ecore_getopt_parse_long(const char *str,
+                         long int   *v)
 {
    char *endptr = NULL;
    *v = strtol(str, &endptr, 0);
@@ -833,7 +900,8 @@ _ecore_getopt_parse_long(const char *str, long int *v)
 }
 
 static Eina_Bool
-_ecore_getopt_parse_double(const char *str, double *v)
+_ecore_getopt_parse_double(const char *str,
+                           double     *v)
 {
    char *endptr = NULL;
    *v = strtod(str, &endptr);
@@ -841,7 +909,10 @@ _ecore_getopt_parse_double(const char *str, double *v)
 }
 
 static Eina_Bool
-_ecore_getopt_parse_store(const Ecore_Getopt *parser __UNUSED__, const Ecore_Getopt_Desc *desc, Ecore_Getopt_Value *value, const char *arg_val)
+_ecore_getopt_parse_store(const Ecore_Getopt      *parser __UNUSED__,
+                          const Ecore_Getopt_Desc *desc,
+                          Ecore_Getopt_Value      *value,
+                          const char              *arg_val)
 {
    const Ecore_Getopt_Desc_Store *store = &desc->action_param.store;
    long int v;
@@ -857,112 +928,133 @@ _ecore_getopt_parse_store(const Ecore_Getopt *parser __UNUSED__, const Ecore_Get
    switch (store->arg_req)
      {
       case ECORE_GETOPT_DESC_ARG_REQUIREMENT_NO:
-         goto use_optional;
+        goto use_optional;
+
       case ECORE_GETOPT_DESC_ARG_REQUIREMENT_OPTIONAL:
-         if (!arg_val)
-           goto use_optional;
+        if (!arg_val)
+          goto use_optional;
+
       case ECORE_GETOPT_DESC_ARG_REQUIREMENT_YES:
-         break;
+        break;
      }
 
    switch (store->type)
      {
       case ECORE_GETOPT_TYPE_STR:
-         *value->strp = (char *)arg_val;
-         return EINA_TRUE;
+        *value->strp = (char *)arg_val;
+        return EINA_TRUE;
+
       case ECORE_GETOPT_TYPE_BOOL:
-         if (_ecore_getopt_parse_bool(arg_val, &b))
-           {
-              *value->boolp = b;
-              return EINA_TRUE;
-           }
-         else
-           {
-              _ecore_getopt_desc_print_error
-                (desc, _("unknown boolean value %s.\n"), arg_val);
-              return EINA_FALSE;
-           }
+        if (_ecore_getopt_parse_bool(arg_val, &b))
+          {
+             *value->boolp = b;
+             return EINA_TRUE;
+          }
+        else
+          {
+             _ecore_getopt_desc_print_error
+               (desc, _("unknown boolean value %s.\n"), arg_val);
+             return EINA_FALSE;
+          }
+
       case ECORE_GETOPT_TYPE_SHORT:
-         if (!_ecore_getopt_parse_long(arg_val, &v))
-           goto error;
-         *value->shortp = v;
-         return EINA_TRUE;
+        if (!_ecore_getopt_parse_long(arg_val, &v))
+          goto error;
+        *value->shortp = v;
+        return EINA_TRUE;
+
       case ECORE_GETOPT_TYPE_INT:
-         if (!_ecore_getopt_parse_long(arg_val, &v))
-           goto error;
-         *value->intp = v;
-         return EINA_TRUE;
+        if (!_ecore_getopt_parse_long(arg_val, &v))
+          goto error;
+        *value->intp = v;
+        return EINA_TRUE;
+
       case ECORE_GETOPT_TYPE_LONG:
-         if (!_ecore_getopt_parse_long(arg_val, &v))
-           goto error;
-         *value->longp = v;
-         return EINA_TRUE;
+        if (!_ecore_getopt_parse_long(arg_val, &v))
+          goto error;
+        *value->longp = v;
+        return EINA_TRUE;
+
       case ECORE_GETOPT_TYPE_USHORT:
-         if (!_ecore_getopt_parse_long(arg_val, &v))
-           goto error;
-         *value->ushortp = v;
-         return EINA_TRUE;
+        if (!_ecore_getopt_parse_long(arg_val, &v))
+          goto error;
+        *value->ushortp = v;
+        return EINA_TRUE;
+
       case ECORE_GETOPT_TYPE_UINT:
-         if (!_ecore_getopt_parse_long(arg_val, &v))
-           goto error;
-         *value->uintp = v;
-         return EINA_TRUE;
+        if (!_ecore_getopt_parse_long(arg_val, &v))
+          goto error;
+        *value->uintp = v;
+        return EINA_TRUE;
+
       case ECORE_GETOPT_TYPE_ULONG:
-         if (!_ecore_getopt_parse_long(arg_val, &v))
-           goto error;
-         *value->ulongp = v;
-         return EINA_TRUE;
+        if (!_ecore_getopt_parse_long(arg_val, &v))
+          goto error;
+        *value->ulongp = v;
+        return EINA_TRUE;
+
       case ECORE_GETOPT_TYPE_DOUBLE:
-         if (!_ecore_getopt_parse_double(arg_val, &d))
-           goto error;
-         *value->doublep = d;
-         break;
+        if (!_ecore_getopt_parse_double(arg_val, &d))
+          goto error;
+        *value->doublep = d;
+        break;
      }
 
    return EINA_TRUE;
 
- error:
+error:
    _ecore_getopt_desc_print_error
      (desc, _("invalid number format %s\n"), arg_val);
    return EINA_FALSE;
 
- use_optional:
+use_optional:
    switch (store->type)
      {
       case ECORE_GETOPT_TYPE_STR:
-         *value->strp = (char *)store->def.strv;
-         break;
+        *value->strp = (char *)store->def.strv;
+        break;
+
       case ECORE_GETOPT_TYPE_BOOL:
-         *value->boolp = store->def.boolv;
-         break;
+        *value->boolp = store->def.boolv;
+        break;
+
       case ECORE_GETOPT_TYPE_SHORT:
-         *value->shortp = store->def.shortv;
-         break;
+        *value->shortp = store->def.shortv;
+        break;
+
       case ECORE_GETOPT_TYPE_INT:
-         *value->intp = store->def.intv;
-         break;
+        *value->intp = store->def.intv;
+        break;
+
       case ECORE_GETOPT_TYPE_LONG:
-         *value->longp = store->def.longv;
-         break;
+        *value->longp = store->def.longv;
+        break;
+
       case ECORE_GETOPT_TYPE_USHORT:
-         *value->ushortp = store->def.ushortv;
-         break;
+        *value->ushortp = store->def.ushortv;
+        break;
+
       case ECORE_GETOPT_TYPE_UINT:
-         *value->uintp = store->def.uintv;
-         break;
+        *value->uintp = store->def.uintv;
+        break;
+
       case ECORE_GETOPT_TYPE_ULONG:
-         *value->ulongp = store->def.ulongv;
-         break;
+        *value->ulongp = store->def.ulongv;
+        break;
+
       case ECORE_GETOPT_TYPE_DOUBLE:
-         *value->doublep = store->def.doublev;
-         break;
+        *value->doublep = store->def.doublev;
+        break;
      }
 
    return EINA_TRUE;
 }
 
 static Eina_Bool
-_ecore_getopt_parse_store_const(const Ecore_Getopt *parser __UNUSED__, const Ecore_Getopt_Desc *desc, Ecore_Getopt_Value *val, const char *arg_val __UNUSED__)
+_ecore_getopt_parse_store_const(const Ecore_Getopt      *parser __UNUSED__,
+                                const Ecore_Getopt_Desc *desc,
+                                Ecore_Getopt_Value      *val,
+                                const char              *arg_val __UNUSED__)
 {
    if (!val->ptrp)
      {
@@ -975,7 +1067,10 @@ _ecore_getopt_parse_store_const(const Ecore_Getopt *parser __UNUSED__, const Eco
 }
 
 static Eina_Bool
-_ecore_getopt_parse_store_true(const Ecore_Getopt *parser __UNUSED__, const Ecore_Getopt_Desc *desc, Ecore_Getopt_Value *val, const char *arg_val __UNUSED__)
+_ecore_getopt_parse_store_true(const Ecore_Getopt      *parser __UNUSED__,
+                               const Ecore_Getopt_Desc *desc,
+                               Ecore_Getopt_Value      *val,
+                               const char              *arg_val __UNUSED__)
 {
    if (!val->boolp)
      {
@@ -987,7 +1082,10 @@ _ecore_getopt_parse_store_true(const Ecore_Getopt *parser __UNUSED__, const Ecor
 }
 
 static Eina_Bool
-_ecore_getopt_parse_store_false(const Ecore_Getopt *parser __UNUSED__, const Ecore_Getopt_Desc *desc, Ecore_Getopt_Value *val, const char *arg_val __UNUSED__)
+_ecore_getopt_parse_store_false(const Ecore_Getopt      *parser __UNUSED__,
+                                const Ecore_Getopt_Desc *desc,
+                                Ecore_Getopt_Value      *val,
+                                const char              *arg_val __UNUSED__)
 {
    if (!val->boolp)
      {
@@ -999,9 +1097,12 @@ _ecore_getopt_parse_store_false(const Ecore_Getopt *parser __UNUSED__, const Eco
 }
 
 static Eina_Bool
-_ecore_getopt_parse_choice(const Ecore_Getopt *parser __UNUSED__, const Ecore_Getopt_Desc *desc, Ecore_Getopt_Value *val, const char *arg_val)
+_ecore_getopt_parse_choice(const Ecore_Getopt      *parser __UNUSED__,
+                           const Ecore_Getopt_Desc *desc,
+                           Ecore_Getopt_Value      *val,
+                           const char              *arg_val)
 {
-   const char * const *pchoice;
+   const char *const *pchoice;
 
    if (!val->strp)
      {
@@ -1033,7 +1134,10 @@ _ecore_getopt_parse_choice(const Ecore_Getopt *parser __UNUSED__, const Ecore_Ge
 }
 
 static Eina_Bool
-_ecore_getopt_parse_append(const Ecore_Getopt *parser __UNUSED__, const Ecore_Getopt_Desc *desc, Ecore_Getopt_Value *val, const char *arg_val)
+_ecore_getopt_parse_append(const Ecore_Getopt      *parser __UNUSED__,
+                           const Ecore_Getopt_Desc *desc,
+                           Ecore_Getopt_Value      *val,
+                           const char              *arg_val)
 {
    void *data;
    long int v;
@@ -1056,104 +1160,116 @@ _ecore_getopt_parse_append(const Ecore_Getopt *parser __UNUSED__, const Ecore_Ge
    switch (desc->action_param.append_type)
      {
       case ECORE_GETOPT_TYPE_STR:
-         data = strdup(arg_val);
-         break;
+        data = strdup(arg_val);
+        break;
+
       case ECORE_GETOPT_TYPE_BOOL:
-        {
-           if (_ecore_getopt_parse_bool(arg_val, &b))
-             {
-                data = malloc(sizeof(Eina_Bool));
-                if (data)
-                  *(Eina_Bool *)data = b;
-             }
-           else
-             {
-                _ecore_getopt_desc_print_error(desc, _("unknown boolean value %s.\n"), arg_val);
-                return EINA_FALSE;
-             }
-        }
-        break;
+      {
+         if (_ecore_getopt_parse_bool(arg_val, &b))
+           {
+              data = malloc(sizeof(Eina_Bool));
+              if (data)
+                *(Eina_Bool *)data = b;
+           }
+         else
+           {
+              _ecore_getopt_desc_print_error(desc, _("unknown boolean value %s.\n"), arg_val);
+              return EINA_FALSE;
+           }
+      }
+      break;
+
       case ECORE_GETOPT_TYPE_SHORT:
-        {
-           if (!_ecore_getopt_parse_long(arg_val, &v))
-             goto error;
-           data = malloc(sizeof(short));
-           if (data)
-             *(short *)data = (short)v;
-        }
-        break;
+      {
+         if (!_ecore_getopt_parse_long(arg_val, &v))
+           goto error;
+         data = malloc(sizeof(short));
+         if (data)
+           *(short *)data = (short)v;
+      }
+      break;
+
       case ECORE_GETOPT_TYPE_INT:
-        {
-           if (!_ecore_getopt_parse_long(arg_val, &v))
-             goto error;
-           data = malloc(sizeof(int));
-           if (data)
-             *(int *)data = (int)v;
-        }
-        break;
+      {
+         if (!_ecore_getopt_parse_long(arg_val, &v))
+           goto error;
+         data = malloc(sizeof(int));
+         if (data)
+           *(int *)data = (int)v;
+      }
+      break;
+
       case ECORE_GETOPT_TYPE_LONG:
-        {
-           if (!_ecore_getopt_parse_long(arg_val, &v))
-             goto error;
-           data = malloc(sizeof(long));
-           if (data)
-             *(long *)data = v;
-        }
-        break;
+      {
+         if (!_ecore_getopt_parse_long(arg_val, &v))
+           goto error;
+         data = malloc(sizeof(long));
+         if (data)
+           *(long *)data = v;
+      }
+      break;
+
       case ECORE_GETOPT_TYPE_USHORT:
-        {
-           if (!_ecore_getopt_parse_long(arg_val, &v))
-             goto error;
-           data = malloc(sizeof(unsigned short));
-           if (data)
-             *(unsigned short *)data = (unsigned short)v;
-        }
-        break;
+      {
+         if (!_ecore_getopt_parse_long(arg_val, &v))
+           goto error;
+         data = malloc(sizeof(unsigned short));
+         if (data)
+           *(unsigned short *)data = (unsigned short)v;
+      }
+      break;
+
       case ECORE_GETOPT_TYPE_UINT:
-        {
-           if (!_ecore_getopt_parse_long(arg_val, &v))
-             goto error;
-           data = malloc(sizeof(unsigned int));
-           if (data)
-             *(unsigned int *)data = (unsigned int)v;
-        }
-        break;
+      {
+         if (!_ecore_getopt_parse_long(arg_val, &v))
+           goto error;
+         data = malloc(sizeof(unsigned int));
+         if (data)
+           *(unsigned int *)data = (unsigned int)v;
+      }
+      break;
+
       case ECORE_GETOPT_TYPE_ULONG:
-        {
-           if (!_ecore_getopt_parse_long(arg_val, &v))
-             goto error;
-           data = malloc(sizeof(unsigned long));
-           if (data)
-             *(unsigned long *)data = v;
-        }
-        break;
+      {
+         if (!_ecore_getopt_parse_long(arg_val, &v))
+           goto error;
+         data = malloc(sizeof(unsigned long));
+         if (data)
+           *(unsigned long *)data = v;
+      }
+      break;
+
       case ECORE_GETOPT_TYPE_DOUBLE:
-        {
-           if (!_ecore_getopt_parse_double(arg_val, &d))
-             goto error;
-           data = malloc(sizeof(double));
-           if (data)
-             *(double *)data = d;
-        }
-        break;
+      {
+         if (!_ecore_getopt_parse_double(arg_val, &d))
+           goto error;
+         data = malloc(sizeof(double));
+         if (data)
+           *(double *)data = d;
+      }
+      break;
+
       default:
-        {
-           _ecore_getopt_desc_print_error(desc, _("could not parse value.\n"));
-           return EINA_FALSE;
-        }
+      {
+         _ecore_getopt_desc_print_error(desc, _("could not parse value.\n"));
+         return EINA_FALSE;
+      }
      }
 
    *val->listp = eina_list_append(*val->listp, data);
    return EINA_TRUE;
 
- error:
+error:
    _ecore_getopt_desc_print_error
      (desc, _("invalid number format %s\n"), arg_val);
    return EINA_FALSE;
 }
 
 static Eina_Bool
-_ecore_getopt_parse_count(const Ecore_Getopt *parser __UNUSED__, const Ecore_Getopt_Desc *desc, Ecore_Getopt_Value *val, const char *arg_val __UNUSED__)
+_ecore_getopt_parse_count(const Ecore_Getopt      *parser __UNUSED__,
+                          const Ecore_Getopt_Desc *desc,
+                          Ecore_Getopt_Value      *val,
+                          const char              *arg_val __UNUSED__)
 {
    if (!val->intp)
      {
@@ -1166,21 +1282,26 @@ _ecore_getopt_parse_count(const Ecore_Getopt *parser __UNUSED__, const Ecore_Get
 }
 
 static Eina_Bool
-_ecore_getopt_parse_callback(const Ecore_Getopt *parser, const Ecore_Getopt_Desc *desc, Ecore_Getopt_Value *val, const char *arg_val)
+_ecore_getopt_parse_callback(const Ecore_Getopt      *parser,
+                             const Ecore_Getopt_Desc *desc,
+                             Ecore_Getopt_Value      *val,
+                             const char              *arg_val)
 {
    const Ecore_Getopt_Desc_Callback *cb = &desc->action_param.callback;
 
    switch (cb->arg_req)
      {
       case ECORE_GETOPT_DESC_ARG_REQUIREMENT_NO:
-         arg_val = cb->def;
-         break;
+        arg_val = cb->def;
+        break;
+
       case ECORE_GETOPT_DESC_ARG_REQUIREMENT_OPTIONAL:
-         if (!arg_val)
-           arg_val = cb->def;
-         break;
+        if (!arg_val)
+          arg_val = cb->def;
+        break;
+
       case ECORE_GETOPT_DESC_ARG_REQUIREMENT_YES:
-         break;
+        break;
      }
 
    if (cb->arg_req != ECORE_GETOPT_DESC_ARG_REQUIREMENT_NO)
@@ -1208,7 +1329,10 @@ _ecore_getopt_parse_callback(const Ecore_Getopt *parser, const Ecore_Getopt_Desc
 }
 
 static Eina_Bool
-_ecore_getopt_parse_help(const Ecore_Getopt *parser, const Ecore_Getopt_Desc *desc __UNUSED__, Ecore_Getopt_Value *val, const char *arg_val __UNUSED__)
+_ecore_getopt_parse_help(const Ecore_Getopt      *parser,
+                         const Ecore_Getopt_Desc *desc __UNUSED__,
+                         Ecore_Getopt_Value      *val,
+                         const char              *arg_val __UNUSED__)
 {
    if (val->boolp)
      (*val->boolp) = EINA_TRUE;
@@ -1217,7 +1341,10 @@ _ecore_getopt_parse_help(const Ecore_Getopt *parser, const Ecore_Getopt_Desc *de
 }
 
 static Eina_Bool
-_ecore_getopt_parse_version(const Ecore_Getopt *parser, const Ecore_Getopt_Desc *desc, Ecore_Getopt_Value *val, const char *arg_val __UNUSED__)
+_ecore_getopt_parse_version(const Ecore_Getopt      *parser,
+                            const Ecore_Getopt_Desc *desc,
+                            Ecore_Getopt_Value      *val,
+                            const char              *arg_val __UNUSED__)
 {
    if (val->boolp)
      (*val->boolp) = EINA_TRUE;
@@ -1231,7 +1358,10 @@ _ecore_getopt_parse_version(const Ecore_Getopt *parser, const Ecore_Getopt_Desc 
 }
 
 static Eina_Bool
-_ecore_getopt_parse_copyright(const Ecore_Getopt *parser, const Ecore_Getopt_Desc *desc, Ecore_Getopt_Value *val, const char *arg_val __UNUSED__)
+_ecore_getopt_parse_copyright(const Ecore_Getopt      *parser,
+                              const Ecore_Getopt_Desc *desc,
+                              Ecore_Getopt_Value      *val,
+                              const char              *arg_val __UNUSED__)
 {
    if (val->boolp)
      (*val->boolp) = EINA_TRUE;
@@ -1245,7 +1375,10 @@ _ecore_getopt_parse_copyright(const Ecore_Getopt *parser, const Ecore_Getopt_Des
 }
 
 static Eina_Bool
-_ecore_getopt_parse_license(const Ecore_Getopt *parser, const Ecore_Getopt_Desc *desc, Ecore_Getopt_Value *val, const char *arg_val __UNUSED__)
+_ecore_getopt_parse_license(const Ecore_Getopt      *parser,
+                            const Ecore_Getopt_Desc *desc,
+                            Ecore_Getopt_Value      *val,
+                            const char              *arg_val __UNUSED__)
 {
    if (val->boolp)
      (*val->boolp) = EINA_TRUE;
@@ -1259,41 +1392,62 @@ _ecore_getopt_parse_license(const Ecore_Getopt *parser, const Ecore_Getopt_Desc 
 }
 
 static Eina_Bool
-_ecore_getopt_desc_handle(const Ecore_Getopt *parser, const Ecore_Getopt_Desc *desc, Ecore_Getopt_Value *value, const char *arg_val)
+_ecore_getopt_desc_handle(const Ecore_Getopt      *parser,
+                          const Ecore_Getopt_Desc *desc,
+                          Ecore_Getopt_Value      *value,
+                          const char              *arg_val)
 {
    switch (desc->action)
      {
       case ECORE_GETOPT_ACTION_STORE:
-         return _ecore_getopt_parse_store(parser, desc, value, arg_val);
+        return _ecore_getopt_parse_store(parser, desc, value, arg_val);
+
       case ECORE_GETOPT_ACTION_STORE_CONST:
-         return _ecore_getopt_parse_store_const(parser, desc, value, arg_val);
+        return _ecore_getopt_parse_store_const(parser, desc, value, arg_val);
+
       case ECORE_GETOPT_ACTION_STORE_TRUE:
-         return _ecore_getopt_parse_store_true(parser, desc, value, arg_val);
+        return _ecore_getopt_parse_store_true(parser, desc, value, arg_val);
+
       case ECORE_GETOPT_ACTION_STORE_FALSE:
-         return _ecore_getopt_parse_store_false(parser, desc, value, arg_val);
+        return _ecore_getopt_parse_store_false(parser, desc, value, arg_val);
+
       case ECORE_GETOPT_ACTION_CHOICE:
-         return _ecore_getopt_parse_choice(parser, desc, value, arg_val);
+        return _ecore_getopt_parse_choice(parser, desc, value, arg_val);
+
       case ECORE_GETOPT_ACTION_APPEND:
-         return _ecore_getopt_parse_append(parser, desc, value, arg_val);
+        return _ecore_getopt_parse_append(parser, desc, value, arg_val);
+
       case ECORE_GETOPT_ACTION_COUNT:
-         return _ecore_getopt_parse_count(parser, desc, value, arg_val);
+        return _ecore_getopt_parse_count(parser, desc, value, arg_val);
+
       case ECORE_GETOPT_ACTION_CALLBACK:
-         return _ecore_getopt_parse_callback(parser, desc, value, arg_val);
+        return _ecore_getopt_parse_callback(parser, desc, value, arg_val);
+
       case ECORE_GETOPT_ACTION_HELP:
-         return _ecore_getopt_parse_help(parser, desc, value, arg_val);
+        return _ecore_getopt_parse_help(parser, desc, value, arg_val);
+
       case ECORE_GETOPT_ACTION_VERSION:
-         return _ecore_getopt_parse_version(parser, desc, value, arg_val);
+        return _ecore_getopt_parse_version(parser, desc, value, arg_val);
+
       case ECORE_GETOPT_ACTION_COPYRIGHT:
-         return _ecore_getopt_parse_copyright(parser, desc, value, arg_val);
+        return _ecore_getopt_parse_copyright(parser, desc, value, arg_val);
+
       case ECORE_GETOPT_ACTION_LICENSE:
-         return _ecore_getopt_parse_license(parser, desc, value, arg_val);
+        return _ecore_getopt_parse_license(parser, desc, value, arg_val);
+
       default:
-         return EINA_FALSE;
+        return EINA_FALSE;
      }
 }
 
 static Eina_Bool
-_ecore_getopt_parse_arg_long(const Ecore_Getopt *parser, Ecore_Getopt_Value *values, int argc __UNUSED__, char **argv, int *idx, int *nonargs, const char *arg)
+_ecore_getopt_parse_arg_long(const Ecore_Getopt *parser,
+                             Ecore_Getopt_Value *values,
+                             int                 argc __UNUSED__,
+                             char              **argv,
+                             int                *idx,
+                             int                *nonargs,
+                             const char         *arg)
 {
    const Ecore_Getopt_Desc *desc;
    Ecore_Getopt_Desc_Arg_Requirement arg_req;
@@ -1357,7 +1511,13 @@ _ecore_getopt_parse_arg_long(const Ecore_Getopt *parser, Ecore_Getopt_Value *val
 }
 
 static Eina_Bool
-_ecore_getopt_parse_arg_short(const Ecore_Getopt *parser, Ecore_Getopt_Value *values, int argc __UNUSED__, char **argv, int *idx, int *nonargs, const char *arg)
+_ecore_getopt_parse_arg_short(const Ecore_Getopt *parser,
+                              Ecore_Getopt_Value *values,
+                              int                 argc __UNUSED__,
+                              char              **argv,
+                              int                *idx,
+                              int                *nonargs,
+                              const char         *arg)
 {
    int run = 1;
    while (run && (arg[0] != '\0'))
@@ -1413,7 +1573,7 @@ _ecore_getopt_parse_arg_short(const Ecore_Getopt *parser, Ecore_Getopt_Value *va
                {
                   fprintf
                     (stderr, _("ERROR: option -%c requires an argument!\n"),
-                     opt);
+                    opt);
                   if (parser->strict)
                     return EINA_FALSE;
                   return EINA_TRUE;
@@ -1436,7 +1596,12 @@ _ecore_getopt_parse_arg_short(const Ecore_Getopt *parser, Ecore_Getopt_Value *va
 }
 
 static Eina_Bool
-_ecore_getopt_parse_arg(const Ecore_Getopt *parser, Ecore_Getopt_Value *values, int argc, char **argv, int *idx, int *nonargs)
+_ecore_getopt_parse_arg(const Ecore_Getopt *parser,
+                        Ecore_Getopt_Value *values,
+                        int                 argc,
+                        char              **argv,
+                        int                *idx,
+                        int                *nonargs)
 {
    char *arg = argv[*idx];
 
@@ -1463,7 +1628,8 @@ _ecore_getopt_parse_arg(const Ecore_Getopt *parser, Ecore_Getopt_Value *values, 
 }
 
 static const Ecore_Getopt_Desc *
-_ecore_getopt_parse_find_short_other(const Ecore_Getopt *parser, const Ecore_Getopt_Desc *orig)
+_ecore_getopt_parse_find_short_other(const Ecore_Getopt      *parser,
+                                     const Ecore_Getopt_Desc *orig)
 {
    const Ecore_Getopt_Desc *desc = parser->descs;
    const char c = orig->shortname;
@@ -1481,7 +1647,8 @@ _ecore_getopt_parse_find_short_other(const Ecore_Getopt *parser, const Ecore_Get
 }
 
 static const Ecore_Getopt_Desc *
-_ecore_getopt_parse_find_long_other(const Ecore_Getopt *parser, const Ecore_Getopt_Desc *orig)
+_ecore_getopt_parse_find_long_other(const Ecore_Getopt      *parser,
+                                    const Ecore_Getopt_Desc *orig)
 {
    const Ecore_Getopt_Desc *desc = parser->descs;
    const char *name = orig->longname;
@@ -1509,37 +1676,37 @@ ecore_getopt_parser_has_duplicates(const Ecore_Getopt *parser)
    const Ecore_Getopt_Desc *desc = parser->descs;
    for (; !_ecore_getopt_desc_is_sentinel(desc); desc++)
      {
-       if (desc->shortname)
-         {
-           const Ecore_Getopt_Desc *other;
-           other = _ecore_getopt_parse_find_short_other(parser, desc);
-           if (other)
-             {
-                _ecore_getopt_desc_print_error(desc, "short name -%c already exists.", desc->shortname);
+        if (desc->shortname)
+          {
+             const Ecore_Getopt_Desc *other;
+             other = _ecore_getopt_parse_find_short_other(parser, desc);
+             if (other)
+               {
+                  _ecore_getopt_desc_print_error(desc, "short name -%c already exists.", desc->shortname);
 
-                if (other->longname)
-                  fprintf(stderr, " Other is --%s.\n", other->longname);
-                else
-                  fputc('\n', stderr);
-                return EINA_TRUE;
-             }
-         }
+                  if (other->longname)
+                    fprintf(stderr, " Other is --%s.\n", other->longname);
+                  else
+                    fputc('\n', stderr);
+                  return EINA_TRUE;
+               }
+          }
 
-       if (desc->longname)
-         {
-           const Ecore_Getopt_Desc *other;
-           other = _ecore_getopt_parse_find_long_other(parser, desc);
-           if (other)
-             {
-                _ecore_getopt_desc_print_error(desc, "long name --%s already exists.", desc->longname);
+        if (desc->longname)
+          {
+             const Ecore_Getopt_Desc *other;
+             other = _ecore_getopt_parse_find_long_other(parser, desc);
+             if (other)
+               {
+                  _ecore_getopt_desc_print_error(desc, "long name --%s already exists.", desc->longname);
 
-                if (other->shortname)
-                  fprintf(stderr, " Other is -%c.\n", other->shortname);
-                else
-                  fputc('\n', stderr);
-                return EINA_TRUE;
-             }
-         }
+                  if (other->shortname)
+                    fprintf(stderr, " Other is -%c.\n", other->shortname);
+                  else
+                    fputc('\n', stderr);
+                  return EINA_TRUE;
+               }
+          }
      }
    return EINA_FALSE;
 }
@@ -1605,7 +1772,10 @@ _ecore_getopt_find_help(const Ecore_Getopt *parser)
  * @return index of first non-option parameter or -1 on error.
  */
 int
-ecore_getopt_parse(const Ecore_Getopt *parser, Ecore_Getopt_Value *values, int argc, char **argv)
+ecore_getopt_parse(const Ecore_Getopt *parser,
+                   Ecore_Getopt_Value *values,
+                   int                 argc,
+                   char              **argv)
 {
    int i, nonargs;
 
@@ -1648,7 +1818,7 @@ ecore_getopt_parse(const Ecore_Getopt *parser, Ecore_Getopt_Value *values, int a
 
    return nonargs;
 
- error:
+error:
    {
       const Ecore_Getopt_Desc *help;
       fputs(_("ERROR: invalid options found."), stderr);
@@ -1690,7 +1860,11 @@ ecore_getopt_list_free(Eina_List *list)
  * @c callback_data value is ignored, you can safely use @c NULL.
  */
 Eina_Bool
-ecore_getopt_callback_geometry_parse(const Ecore_Getopt *parser __UNUSED__, const Ecore_Getopt_Desc *desc __UNUSED__, const char *str, void *data __UNUSED__, Ecore_Getopt_Value *storage)
+ecore_getopt_callback_geometry_parse(const Ecore_Getopt      *parser __UNUSED__,
+                                     const Ecore_Getopt_Desc *desc __UNUSED__,
+                                     const char              *str,
+                                     void                    *data __UNUSED__,
+                                     Ecore_Getopt_Value      *storage)
 {
    Eina_Rectangle *v = (Eina_Rectangle *)storage->ptrp;
 
@@ -1713,7 +1887,11 @@ ecore_getopt_callback_geometry_parse(const Ecore_Getopt *parser __UNUSED__, cons
  * @c callback_data value is ignored, you can safely use @c NULL.
  */
 Eina_Bool
-ecore_getopt_callback_size_parse(const Ecore_Getopt *parser __UNUSED__, const Ecore_Getopt_Desc *desc __UNUSED__, const char *str, void *data __UNUSED__, Ecore_Getopt_Value *storage)
+ecore_getopt_callback_size_parse(const Ecore_Getopt      *parser __UNUSED__,
+                                 const Ecore_Getopt_Desc *desc __UNUSED__,
+                                 const char              *str,
+                                 void                    *data __UNUSED__,
+                                 Ecore_Getopt_Value      *storage)
 {
    Eina_Rectangle *v = (Eina_Rectangle *)storage->ptrp;
 
@@ -1727,3 +1905,4 @@ ecore_getopt_callback_size_parse(const Ecore_Getopt *parser __UNUSED__, const Ec
 
    return EINA_TRUE;
 }
+

@@ -7,18 +7,21 @@
 #include "Ecore.h"
 #include "ecore_private.h"
 
-static Eina_Bool _ecore_job_event_handler(void *data, int type, void *ev);
-static void _ecore_job_event_free(void *data, void *ev);
+static Eina_Bool _ecore_job_event_handler(void *data,
+                                          int   type,
+                                          void *ev);
+static void _ecore_job_event_free(void *data,
+                                  void *ev);
 
 static int ecore_event_job_type = 0;
-static Ecore_Event_Handler* _ecore_job_handler = NULL;
+static Ecore_Event_Handler *_ecore_job_handler = NULL;
 
 struct _Ecore_Job
 {
-   ECORE_MAGIC;
-   Ecore_Event  *event;
-   Ecore_Cb func;
-   void         *data;
+                ECORE_MAGIC;
+   Ecore_Event *event;
+   Ecore_Cb     func;
+   void        *data;
 };
 
 void
@@ -51,7 +54,8 @@ _ecore_job_shutdown(void)
  * @note    Once the job has been executed, the job handle is invalid.
  */
 EAPI Ecore_Job *
-ecore_job_add(Ecore_Cb func, const void *data)
+ecore_job_add(Ecore_Cb    func,
+              const void *data)
 {
    Ecore_Job *job;
 
@@ -98,7 +102,9 @@ ecore_job_del(Ecore_Job *job)
  */
 
 static Eina_Bool
-_ecore_job_event_handler(void *data __UNUSED__, int type __UNUSED__, void *ev)
+_ecore_job_event_handler(void *data __UNUSED__,
+                         int   type __UNUSED__,
+                         void *ev)
 {
    Ecore_Job *job;
 
@@ -108,7 +114,9 @@ _ecore_job_event_handler(void *data __UNUSED__, int type __UNUSED__, void *ev)
 }
 
 static void
-_ecore_job_event_free(void *data __UNUSED__, void *ev)
+_ecore_job_event_free(void *data __UNUSED__,
+                      void *ev)
 {
    free(ev);
 }
+

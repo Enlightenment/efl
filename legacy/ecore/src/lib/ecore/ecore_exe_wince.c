@@ -18,3 +18,4 @@ void
 _ecore_exe_shutdown(void)
 {
 }
+

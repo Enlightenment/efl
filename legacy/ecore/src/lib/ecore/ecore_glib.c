@@ -37,7 +37,9 @@ _ecore_glib_fds_resize(size_t size)
 }
 
 static int
-_ecore_glib_context_query(GMainContext *ctx, int priority, int *p_timer)
+_ecore_glib_context_query(GMainContext *ctx,
+                          int           priority,
+                          int          *p_timer)
 {
    int reqfds;
 
@@ -51,7 +53,7 @@ _ecore_glib_context_query(GMainContext *ctx, int priority, int *p_timer)
         size_t size;
 
         reqfds = g_main_context_query
-          (ctx, priority, p_timer, _ecore_glib_fds, _ecore_glib_fds_size);
+            (ctx, priority, p_timer, _ecore_glib_fds, _ecore_glib_fds_size);
         if (reqfds <= (int)_ecore_glib_fds_size) break;
 
         size = (1 + reqfds / ECORE_GLIB_FDS_STEP) * ECORE_GLIB_FDS_STEP;
@@ -70,7 +72,11 @@ _ecore_glib_context_query(GMainContext *ctx, int priority, int *p_timer)
 }
 
 static int
-_ecore_glib_context_poll_from(const GPollFD *pfds, int count, fd_set *rfds, fd_set *wfds, fd_set *efds)
+_ecore_glib_context_poll_from(const GPollFD *pfds,
+                              int            count,
+                              fd_set        *rfds,
+                              fd_set        *wfds,
+                              fd_set        *efds)
 {
    const GPollFD *itr = pfds, *itr_end = pfds + count;
    int glib_fds = -1;
@@ -92,7 +98,12 @@ _ecore_glib_context_poll_from(const GPollFD *pfds, int count, fd_set *rfds, fd_s
 }
 
 static int
-_ecore_glib_context_poll_to(GPollFD *pfds, int count, const fd_set *rfds, const fd_set *wfds, const fd_set *efds, int ready)
+_ecore_glib_context_poll_to(GPollFD      *pfds,
+                            int           count,
+                            const fd_set *rfds,
+                            const fd_set *wfds,
+                            const fd_set *efds,
+                            int           ready)
 {
    GPollFD *itr = pfds, *itr_end = pfds + count;
 
@@ -119,7 +130,12 @@ _ecore_glib_context_poll_to(GPollFD *pfds, int count, const fd_set *rfds, const 
 }
 
 static int
-_ecore_glib_select__locked(GMainContext *ctx, int ecore_fds, fd_set *rfds, fd_set *wfds, fd_set *efds, struct timeval *ecore_timeout)
+_ecore_glib_select__locked(GMainContext   *ctx,
+                           int             ecore_fds,
+                           fd_set         *rfds,
+                           fd_set         *wfds,
+                           fd_set         *efds,
+                           struct timeval *ecore_timeout)
 {
    int priority, maxfds, glib_fds, reqfds, reqtimeout, ret;
    struct timeval *timeout, glib_timeout;
@@ -129,7 +145,7 @@ _ecore_glib_select__locked(GMainContext *ctx, int ecore_fds, fd_set *rfds, fd_se
    if (reqfds < 0) goto error;
 
    glib_fds = _ecore_glib_context_poll_from
-     (_ecore_glib_fds, reqfds, rfds, wfds, efds);
+       (_ecore_glib_fds, reqfds, rfds, wfds, efds);
 
    if (reqtimeout == -1)
      timeout = ecore_timeout;
@@ -148,20 +164,24 @@ _ecore_glib_select__locked(GMainContext *ctx, int ecore_fds, fd_set *rfds, fd_se
    ret = _ecore_glib_select_original(maxfds, rfds, wfds, efds, timeout);
 
    ret = _ecore_glib_context_poll_to
-     (_ecore_glib_fds, reqfds, rfds, wfds, efds, ret);
+       (_ecore_glib_fds, reqfds, rfds, wfds, efds, ret);
 
    if (g_main_context_check(ctx, priority, _ecore_glib_fds, reqfds))
      g_main_context_dispatch(ctx);
 
    return ret;
 
- error:
+error:
    return _ecore_glib_select_original
-     (ecore_fds, rfds, wfds, efds, ecore_timeout);
+            (ecore_fds, rfds, wfds, efds, ecore_timeout);
 }
 
 static int
-_ecore_glib_select(int ecore_fds, fd_set *rfds, fd_set *wfds, fd_set *efds, struct timeval *ecore_timeout)
+_ecore_glib_select(int             ecore_fds,
+                   fd_set         *rfds,
+                   fd_set         *wfds,
+                   fd_set         *efds,
+                   struct timeval *ecore_timeout)
 {
    GStaticMutex lock = G_STATIC_MUTEX_INIT;
    GMutex *mutex = g_static_mutex_get_mutex(&lock);
@@ -180,13 +200,14 @@ _ecore_glib_select(int ecore_fds, fd_set *rfds, fd_set *wfds, fd_set *efds, stru
      }
 
    ret = _ecore_glib_select__locked
-     (ctx, ecore_fds, rfds, wfds, efds, ecore_timeout);
+       (ctx, ecore_fds, rfds, wfds, efds, ecore_timeout);
 
    g_mutex_unlock(mutex);
    g_main_context_release(ctx);
 
    return ret;
 }
+
 #endif
 
 void

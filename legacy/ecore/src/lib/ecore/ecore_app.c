@@ -35,7 +35,8 @@ static char **app_argv = NULL;
  * for later use by ecore_app_restart() or ecore_app_args_get().
  */
 EAPI void
-ecore_app_args_set(int argc, const char **argv)
+ecore_app_args_set(int          argc,
+                   const char **argv)
 {
    EINA_MAIN_LOOP_CHECK_RETURN;
 
@@ -57,7 +58,8 @@ ecore_app_args_set(int argc, const char **argv)
  * same set by ecore_app_args_set().
  */
 EAPI void
-ecore_app_args_get(int *argc, char ***argv)
+ecore_app_args_get(int    *argc,
+                   char ***argv)
 {
    EINA_MAIN_LOOP_CHECK_RETURN;
 

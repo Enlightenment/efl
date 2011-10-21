@@ -12,42 +12,45 @@
 # include <string.h>
 # include <execinfo.h>
 # define ECORE_TIMER_DEBUG_BT_NUM 64
-   typedef void (*Ecore_Timer_Bt_Func) ();
+typedef void (*Ecore_Timer_Bt_Func)();
 #endif
 
 struct _Ecore_Timer
 {
    EINA_INLIST;
-   ECORE_MAGIC;
-   double          in;
-   double          at;
-   double          pending;
-   Ecore_Task_Cb   func;
-   void           *data;
+                       ECORE_MAGIC;
+   double              in;
+   double              at;
+   double              pending;
+   Ecore_Task_Cb       func;
+   void               *data;
 
 #ifdef WANT_ECORE_TIMER_DUMP
    Ecore_Timer_Bt_Func timer_bt[ECORE_TIMER_DEBUG_BT_NUM];
    int                 timer_bt_num;
 #endif
 
-   int             references;
-   unsigned char   delete_me : 1;
-   unsigned char   just_added : 1;
-   unsigned char   frozen : 1;
+   int                 references;
+   unsigned char       delete_me : 1;
+   unsigned char       just_added : 1;
+   unsigned char       frozen : 1;
 };
 
+static void _ecore_timer_set(Ecore_Timer  *timer,
+                             double        at,
+                             double        in,
+                             Ecore_Task_Cb func,
+                             void         *data);
+static int _ecore_timer_cmp(const void *d1,
+                            const void *d2);
 
-static void _ecore_timer_set(Ecore_Timer *timer, double at, double in, Ecore_Task_Cb func, void *data);
-static int _ecore_timer_cmp(const void *d1, const void *d2);
-
-static int          timers_added = 0;
-static int          timers_delete_me = 0;
+static int timers_added = 0;
+static int timers_delete_me = 0;
 static Ecore_Timer *timers = NULL;
 static Ecore_Timer *timer_current = NULL;
 static Ecore_Timer *suspended = NULL;
-static double       last_check = 0.0;
-static double       precision = 10.0 / 1000000.0;
-
+static double last_check = 0.0;
+static double precision = 10.0 / 1000000.0;
 
 /**
  * @addtogroup Ecore_Time_Group
@@ -125,7 +128,9 @@ unlock:
  * invalid.
  */
 EAPI Ecore_Timer *
-ecore_timer_add(double in, Ecore_Task_Cb func, const void *data)
+ecore_timer_add(double        in,
+                Ecore_Task_Cb func,
+                const void   *data)
 {
    double now;
    Ecore_Timer *timer = NULL;
@@ -139,7 +144,7 @@ ecore_timer_add(double in, Ecore_Task_Cb func, const void *data)
    now = ecore_time_get();
 
 #ifdef WANT_ECORE_TIMER_DUMP
-   timer->timer_bt_num = backtrace((void**) (timer->timer_bt),
+   timer->timer_bt_num = backtrace((void **)(timer->timer_bt),
                                    ECORE_TIMER_DEBUG_BT_NUM);
 #endif
 
@@ -162,7 +167,9 @@ unlock:
  * ecore_timer_add() for more details.
  */
 EAPI Ecore_Timer *
-ecore_timer_loop_add(double in, Ecore_Task_Cb func, const void *data)
+ecore_timer_loop_add(double        in,
+                     Ecore_Task_Cb func,
+                     const void   *data)
 {
    Ecore_Timer *timer;
 
@@ -211,7 +218,8 @@ unlock:
  * @param   in    The interval in seconds.
  */
 EAPI void
-ecore_timer_interval_set(Ecore_Timer *timer, double in)
+ecore_timer_interval_set(Ecore_Timer *timer,
+                         double       in)
 {
    _ecore_lock();
 
@@ -261,7 +269,8 @@ unlock:
  * @param   add   The dalay to add to the next iteration.
  */
 EAPI void
-ecore_timer_delay(Ecore_Timer *timer, double add)
+ecore_timer_delay(Ecore_Timer *timer,
+                  double       add)
 {
    if (!ECORE_MAGIC_CHECK(timer, ECORE_MAGIC_TIMER))
      {
@@ -284,8 +293,8 @@ ecore_timer_delay(Ecore_Timer *timer, double add)
 EAPI double
 ecore_timer_pending_get(Ecore_Timer *timer)
 {
-   double        now;
-   double        ret = 0.0;
+   double now;
+   double ret = 0.0;
 
    _ecore_lock();
 
@@ -339,8 +348,8 @@ ecore_timer_freeze(Ecore_Timer *timer)
    if (timer->frozen)
      goto unlock;
 
-   timers = (Ecore_Timer *) eina_inlist_remove(EINA_INLIST_GET(timers), EINA_INLIST_GET(timer));
-   suspended = (Ecore_Timer *) eina_inlist_prepend(EINA_INLIST_GET(suspended), EINA_INLIST_GET(timer));
+   timers = (Ecore_Timer *)eina_inlist_remove(EINA_INLIST_GET(timers), EINA_INLIST_GET(timer));
+   suspended = (Ecore_Timer *)eina_inlist_prepend(EINA_INLIST_GET(suspended), EINA_INLIST_GET(timer));
 
    now = ecore_time_get();
 
@@ -382,7 +391,7 @@ ecore_timer_thaw(Ecore_Timer *timer)
    if (!timer->frozen)
      goto unlock;
 
-   suspended = (Ecore_Timer *) eina_inlist_remove(EINA_INLIST_GET(suspended), EINA_INLIST_GET(timer));
+   suspended = (Ecore_Timer *)eina_inlist_remove(EINA_INLIST_GET(suspended), EINA_INLIST_GET(timer));
    now = ecore_time_get();
 
    _ecore_timer_set(timer, timer->pending + now, timer->in, timer->func, timer->data);
@@ -412,15 +421,15 @@ ecore_timer_dump(void)
         char **strings;
         int j;
 
-	if (!tm->frozen && !tm->delete_me)
-	  living_timer++;
+        if (!tm->frozen && !tm->delete_me)
+          living_timer++;
 
-        strings = backtrace_symbols((void**) tm->timer_bt, tm->timer_bt_num);
+        strings = backtrace_symbols((void **)tm->timer_bt, tm->timer_bt_num);
         if (tm->timer_bt_num <= 0 || strings == NULL)
-	  {
-	    unknow_timer++;
-	    continue ;
-	  }
+          {
+             unknow_timer++;
+             continue;
+          }
 
         eina_strbuf_append_printf(result, "*** timer: %f ***\n", tm->in);
         if (tm->frozen)
@@ -450,7 +459,9 @@ ecore_timer_dump(void)
  */
 
 Ecore_Timer *
-_ecore_timer_loop_add(double in, Ecore_Task_Cb func, const void *data)
+_ecore_timer_loop_add(double        in,
+                      Ecore_Task_Cb func,
+                      const void   *data)
 {
    double now;
    Ecore_Timer *timer = NULL;
@@ -463,7 +474,7 @@ _ecore_timer_loop_add(double in, Ecore_Task_Cb func, const void *data)
    now = ecore_loop_time_get();
 
 #ifdef WANT_ECORE_TIMER_DUMP
-   timer->timer_bt_num = backtrace((void**) (timer->timer_bt),
+   timer->timer_bt_num = backtrace((void **)(timer->timer_bt),
                                    ECORE_TIMER_DEBUG_BT_NUM);
 #endif
    _ecore_timer_set(timer, now + in, in, func, (void *)data);
@@ -471,7 +482,8 @@ _ecore_timer_loop_add(double in, Ecore_Task_Cb func, const void *data)
 }
 
 EAPI void
-_ecore_timer_delay(Ecore_Timer *timer, double add)
+_ecore_timer_delay(Ecore_Timer *timer,
+                   double       add)
 {
    if (timer->frozen)
      {
@@ -479,11 +491,10 @@ _ecore_timer_delay(Ecore_Timer *timer, double add)
      }
    else
      {
-        timers = (Ecore_Timer *) eina_inlist_remove(EINA_INLIST_GET(timers), EINA_INLIST_GET(timer));
+        timers = (Ecore_Timer *)eina_inlist_remove(EINA_INLIST_GET(timers), EINA_INLIST_GET(timer));
         _ecore_timer_set(timer, timer->at + add, timer->in, timer->func, timer->data);
      }
 }
-
 
 void *
 _ecore_timer_del(Ecore_Timer *timer)
@@ -492,7 +503,7 @@ _ecore_timer_del(Ecore_Timer *timer)
      {
         void *data = timer->data;
 
-        suspended = (Ecore_Timer *) eina_inlist_remove(EINA_INLIST_GET(suspended), EINA_INLIST_GET(timer));
+        suspended = (Ecore_Timer *)eina_inlist_remove(EINA_INLIST_GET(suspended), EINA_INLIST_GET(timer));
 
         if (timer->delete_me)
           timers_delete_me--;
@@ -514,14 +525,14 @@ _ecore_timer_shutdown(void)
 
    while ((timer = timers))
      {
-        timers = (Ecore_Timer *) eina_inlist_remove(EINA_INLIST_GET(timers), EINA_INLIST_GET(timers));
+        timers = (Ecore_Timer *)eina_inlist_remove(EINA_INLIST_GET(timers), EINA_INLIST_GET(timers));
         ECORE_MAGIC_SET(timer, ECORE_MAGIC_NONE);
         free(timer);
      }
 
    while ((timer = suspended))
      {
-        suspended = (Ecore_Timer *) eina_inlist_remove(EINA_INLIST_GET(suspended), EINA_INLIST_GET(suspended));
+        suspended = (Ecore_Timer *)eina_inlist_remove(EINA_INLIST_GET(suspended), EINA_INLIST_GET(suspended));
         ECORE_MAGIC_SET(timer, ECORE_MAGIC_NONE);
         free(timer);
      }
@@ -536,11 +547,11 @@ _ecore_timer_cleanup(void)
    int in_use = 0, todo = timers_delete_me, done = 0;
 
    if (!timers_delete_me) return;
-   for (l = timers; l;)
+   for (l = timers; l; )
      {
         Ecore_Timer *timer = l;
 
-        l = (Ecore_Timer *) EINA_INLIST_GET(l)->next;
+        l = (Ecore_Timer *)EINA_INLIST_GET(l)->next;
         if (timer->delete_me)
           {
              if (timer->references)
@@ -548,7 +559,7 @@ _ecore_timer_cleanup(void)
                   in_use++;
                   continue;
                }
-             timers = (Ecore_Timer *) eina_inlist_remove(EINA_INLIST_GET(timers), EINA_INLIST_GET(timer));
+             timers = (Ecore_Timer *)eina_inlist_remove(EINA_INLIST_GET(timers), EINA_INLIST_GET(timer));
              ECORE_MAGIC_SET(timer, ECORE_MAGIC_NONE);
              free(timer);
              timers_delete_me--;
@@ -556,11 +567,11 @@ _ecore_timer_cleanup(void)
              if (timers_delete_me == 0) return;
           }
      }
-   for (l = suspended; l;)
+   for (l = suspended; l; )
      {
         Ecore_Timer *timer = l;
 
-        l = (Ecore_Timer *) EINA_INLIST_GET(l)->next;
+        l = (Ecore_Timer *)EINA_INLIST_GET(l)->next;
         if (timer->delete_me)
           {
              if (timer->references)
@@ -568,7 +579,7 @@ _ecore_timer_cleanup(void)
                   in_use++;
                   continue;
                }
-             suspended = (Ecore_Timer *) eina_inlist_remove(EINA_INLIST_GET(suspended), EINA_INLIST_GET(timer));
+             suspended = (Ecore_Timer *)eina_inlist_remove(EINA_INLIST_GET(suspended), EINA_INLIST_GET(timer));
              ECORE_MAGIC_SET(timer, ECORE_MAGIC_NONE);
              free(timer);
              timers_delete_me--;
@@ -614,7 +625,7 @@ _ecore_timer_first_get(void)
    Ecore_Timer *timer = timers;
 
    while ((timer) && ((timer->delete_me) || (timer->just_added)))
-     timer = (Ecore_Timer *) EINA_INLIST_GET(timer)->next;
+     timer = (Ecore_Timer *)EINA_INLIST_GET(timer)->next;
 
    return timer;
 }
@@ -622,15 +633,15 @@ _ecore_timer_first_get(void)
 static inline Ecore_Timer *
 _ecore_timer_after_get(Ecore_Timer *base)
 {
-   Ecore_Timer *timer = (Ecore_Timer *) EINA_INLIST_GET(base)->next;
+   Ecore_Timer *timer = (Ecore_Timer *)EINA_INLIST_GET(base)->next;
    Ecore_Timer *valid_timer = NULL;
    double maxtime = base->at + precision;
 
    while ((timer) && (timer->at < maxtime))
      {
         if (!((timer->delete_me) || (timer->just_added)))
-           valid_timer = timer;
-        timer = (Ecore_Timer *) EINA_INLIST_GET(timer)->next;
+          valid_timer = timer;
+        timer = (Ecore_Timer *)EINA_INLIST_GET(timer)->next;
      }
 
    return valid_timer;
@@ -656,11 +667,12 @@ _ecore_timer_next_get(void)
 }
 
 static inline void
-_ecore_timer_reschedule(Ecore_Timer *timer, double when)
+_ecore_timer_reschedule(Ecore_Timer *timer,
+                        double       when)
 {
    if ((timer->delete_me) || (timer->frozen)) return;
 
-   timers = (Ecore_Timer *) eina_inlist_remove(EINA_INLIST_GET(timers), EINA_INLIST_GET(timer));
+   timers = (Ecore_Timer *)eina_inlist_remove(EINA_INLIST_GET(timers), EINA_INLIST_GET(timer));
 
    /* if the timer would have gone off more than 15 seconds ago,
     * assume that the system hung and set the timer to go off
@@ -682,7 +694,7 @@ void
 _ecore_timer_expired_timers_call(double when)
 {
    /* call the first expired timer until no expired timers exist */
-   while (_ecore_timer_expired_call(when));
+    while (_ecore_timer_expired_call(when)) ;
 }
 
 /* assume that we hold the ecore lock when entering this function */
@@ -701,14 +713,14 @@ _ecore_timer_expired_call(double when)
    if (!timer_current)
      {
         /* regular main loop, start from head */
-        timer_current = timers;
+         timer_current = timers;
      }
    else
      {
         /* recursive main loop, continue from where we were */
-        Ecore_Timer *timer_old = timer_current;
-        timer_current = (Ecore_Timer *)EINA_INLIST_GET(timer_current)->next;
-        _ecore_timer_reschedule(timer_old, when);
+         Ecore_Timer *timer_old = timer_current;
+         timer_current = (Ecore_Timer *)EINA_INLIST_GET(timer_current)->next;
+         _ecore_timer_reschedule(timer_old, when);
      }
 
    while (timer_current)
@@ -723,7 +735,7 @@ _ecore_timer_expired_call(double when)
 
         if ((timer->just_added) || (timer->delete_me))
           {
-             timer_current = (Ecore_Timer*)EINA_INLIST_GET(timer_current)->next;
+             timer_current = (Ecore_Timer *)EINA_INLIST_GET(timer_current)->next;
              continue;
           }
 
@@ -743,7 +755,11 @@ _ecore_timer_expired_call(double when)
 }
 
 static void
-_ecore_timer_set(Ecore_Timer *timer, double at, double in, Ecore_Task_Cb func, void *data)
+_ecore_timer_set(Ecore_Timer  *timer,
+                 double        at,
+                 double        in,
+                 Ecore_Task_Cb func,
+                 void         *data)
 {
    Ecore_Timer *t2;
 
@@ -761,19 +777,21 @@ _ecore_timer_set(Ecore_Timer *timer, double at, double in, Ecore_Task_Cb func, v
           {
              if (timer->at > t2->at)
                {
-                  timers = (Ecore_Timer *) eina_inlist_append_relative(EINA_INLIST_GET(timers), EINA_INLIST_GET(timer), EINA_INLIST_GET(t2));
+                  timers = (Ecore_Timer *)eina_inlist_append_relative(EINA_INLIST_GET(timers), EINA_INLIST_GET(timer), EINA_INLIST_GET(t2));
                   return;
                }
           }
      }
-   timers = (Ecore_Timer *) eina_inlist_prepend(EINA_INLIST_GET(timers), EINA_INLIST_GET(timer));
+   timers = (Ecore_Timer *)eina_inlist_prepend(EINA_INLIST_GET(timers), EINA_INLIST_GET(timer));
 }
 
 static int
-_ecore_timer_cmp(const void *d1, const void *d2)
+_ecore_timer_cmp(const void *d1,
+                 const void *d2)
 {
    const Ecore_Timer *t1 = d1;
    const Ecore_Timer *t2 = d2;
 
-   return (int) ((t1->in - t2->in) * 100);
+   return (int)((t1->in - t2->in) * 100);
 }
+

@@ -38,9 +38,9 @@
 static Ecore_Version _version = { VERS_MAJ, VERS_MIN, VERS_MIC, VERS_REV };
 EAPI Ecore_Version *ecore_version = &_version;
 
-#define KEEP_MAX(Global, Local)                        \
-   if (Global < (Local))                        \
-     Global = Local;
+#define KEEP_MAX(Global, Local) \
+  if (Global < (Local))         \
+    Global = Local;
 
 static Eina_Bool _ecore_memory_statistic(void *data);
 static int _ecore_memory_max_total = 0;
@@ -57,23 +57,25 @@ typedef struct _Ecore_Safe_Call Ecore_Safe_Call;
 struct _Ecore_Safe_Call
 {
    union {
-      Ecore_Cb async;
+      Ecore_Cb      async;
       Ecore_Data_Cb sync;
    } cb;
-   void *data;
+   void          *data;
 
-   Eina_Lock m;
+   Eina_Lock      m;
    Eina_Condition c;
 
-   int current_id;
+   int            current_id;
 
-   Eina_Bool sync : 1;
-   Eina_Bool suspend : 1;
+   Eina_Bool      sync : 1;
+   Eina_Bool      suspend : 1;
 };
 
 static void _ecore_main_loop_thread_safe_call(Ecore_Safe_Call *order);
 static void _thread_safe_cleanup(void *data);
-static void _thread_callback(void *data, void *buffer, unsigned int nbyte);
+static void _thread_callback(void        *data,
+                             void        *buffer,
+                             unsigned int nbyte);
 static Eina_List *_thread_cb = NULL;
 static Ecore_Pipe *_thread_call = NULL;
 static Eina_Lock _thread_safety;
@@ -138,11 +140,11 @@ ecore_init(void)
    setlocale(LC_CTYPE, "");
 #endif
    /*
-     if (strcmp(nl_langinfo(CODESET), "UTF-8"))
-     {
+      if (strcmp(nl_langinfo(CODESET), "UTF-8"))
+      {
         WRN("Not a utf8 locale!");
-     }
-   */
+      }
+    */
 #ifdef HAVE_EVIL
    if (!evil_init())
      return --_ecore_init_count;
@@ -189,9 +191,9 @@ ecore_init(void)
 
    return _ecore_init_count;
 
- shutdown_log_dom:
+shutdown_log_dom:
    eina_shutdown();
- shutdown_evil:
+shutdown_evil:
 #ifdef HAVE_EVIL
    evil_shutdown();
 #endif
@@ -214,56 +216,56 @@ ecore_shutdown(void)
    /*
     * take a lock here because _ecore_event_shutdown() does callbacks
     */
-   _ecore_lock();
-   if (--_ecore_init_count != 0)
-     goto unlock;
+     _ecore_lock();
+     if (--_ecore_init_count != 0)
+       goto unlock;
 
-   ecore_pipe_del(_thread_call);
-   eina_lock_free(&_thread_safety);
-   eina_condition_free(&_thread_cond);
-   eina_lock_free(&_thread_mutex);
-   eina_condition_free(&_thread_feedback_cond);
-   eina_lock_free(&_thread_feedback_mutex);
-   eina_lock_free(&_thread_id_lock);
+     ecore_pipe_del(_thread_call);
+     eina_lock_free(&_thread_safety);
+     eina_condition_free(&_thread_cond);
+     eina_lock_free(&_thread_mutex);
+     eina_condition_free(&_thread_feedback_cond);
+     eina_lock_free(&_thread_feedback_mutex);
+     eina_lock_free(&_thread_id_lock);
 
-   if (_ecore_fps_debug) _ecore_fps_debug_shutdown();
-   _ecore_poller_shutdown();
-   _ecore_animator_shutdown();
-   _ecore_glib_shutdown();
-   _ecore_job_shutdown();
-   _ecore_thread_shutdown();
-   _ecore_exe_shutdown();
-   _ecore_idle_enterer_shutdown();
-   _ecore_idle_exiter_shutdown();
-   _ecore_idler_shutdown();
-   _ecore_timer_shutdown();
-   _ecore_event_shutdown();
-   _ecore_main_shutdown();
-   _ecore_signal_shutdown();
-   _ecore_main_loop_shutdown();
+     if (_ecore_fps_debug) _ecore_fps_debug_shutdown();
+     _ecore_poller_shutdown();
+     _ecore_animator_shutdown();
+     _ecore_glib_shutdown();
+     _ecore_job_shutdown();
+     _ecore_thread_shutdown();
+     _ecore_exe_shutdown();
+     _ecore_idle_enterer_shutdown();
+     _ecore_idle_exiter_shutdown();
+     _ecore_idler_shutdown();
+     _ecore_timer_shutdown();
+     _ecore_event_shutdown();
+     _ecore_main_shutdown();
+     _ecore_signal_shutdown();
+     _ecore_main_loop_shutdown();
 
 #if HAVE_MALLINFO
-   if (getenv("ECORE_MEM_STAT"))
-     {
-        _ecore_memory_statistic(NULL);
+     if (getenv("ECORE_MEM_STAT"))
+       {
+          _ecore_memory_statistic(NULL);
 
-        ERR("[%i] Memory MAX total: %i, free: %i",
-            _ecore_memory_pid,
-            _ecore_memory_max_total,
-            _ecore_memory_max_free);
-     }
+          ERR("[%i] Memory MAX total: %i, free: %i",
+              _ecore_memory_pid,
+              _ecore_memory_max_total,
+              _ecore_memory_max_free);
+       }
 #endif
 
-   eina_log_domain_unregister(_ecore_log_dom);
-   _ecore_log_dom = -1;
-   eina_shutdown();
+     eina_log_domain_unregister(_ecore_log_dom);
+     _ecore_log_dom = -1;
+     eina_shutdown();
 #ifdef HAVE_EVIL
-   evil_shutdown();
+     evil_shutdown();
 #endif
 unlock:
-   _ecore_unlock();
+     _ecore_unlock();
 
-   return _ecore_init_count;
+     return _ecore_init_count;
 }
 
 /**
@@ -273,20 +275,21 @@ unlock:
 static int wakeup = 42;
 
 EAPI void
-ecore_main_loop_thread_safe_call_async(Ecore_Cb callback, void *data)
+ecore_main_loop_thread_safe_call_async(Ecore_Cb callback,
+                                       void    *data)
 {
    Ecore_Safe_Call *order;
 
-   if (!callback) return ;
+   if (!callback) return;
 
    if (eina_main_loop_is())
      {
         callback(data);
-        return ;
+        return;
      }
 
    order = malloc(sizeof (Ecore_Safe_Call));
-   if (!order) return ;
+   if (!order) return;
 
    order->cb.async = callback;
    order->data = data;
@@ -297,7 +300,8 @@ ecore_main_loop_thread_safe_call_async(Ecore_Cb callback, void *data)
 }
 
 EAPI void *
-ecore_main_loop_thread_safe_call_sync(Ecore_Data_Cb callback, void *data)
+ecore_main_loop_thread_safe_call_sync(Ecore_Data_Cb callback,
+                                      void         *data)
 {
    Ecore_Safe_Call *order;
    void *ret;
@@ -354,7 +358,7 @@ ecore_thread_main_loop_begin(void)
    if (order->current_id < 0)
      {
         _thread_id_max = 0;
-	order->current_id = ++_thread_id_max;
+        order->current_id = ++_thread_id_max;
      }
    eina_lock_release(&_thread_id_lock);
 
@@ -414,7 +418,8 @@ ecore_thread_main_loop_end(void)
 }
 
 EAPI void
-ecore_print_warning(const char *function, const char *sparam)
+ecore_print_warning(const char *function,
+                    const char *sparam)
 {
    WRN("***** Developer Warning ***** :\n"
        "\tThis program is calling:\n\n"
@@ -426,7 +431,10 @@ ecore_print_warning(const char *function, const char *sparam)
 }
 
 EAPI void
-_ecore_magic_fail(const void *d, Ecore_Magic m, Ecore_Magic req_m, const char *fname)
+_ecore_magic_fail(const void *d,
+                  Ecore_Magic m,
+                  Ecore_Magic req_m,
+                  const char *fname)
 {
    ERR("\n"
        "*** ECORE ERROR: Ecore Magic Check Failed!!!\n"
@@ -441,9 +449,9 @@ _ecore_magic_fail(const void *d, Ecore_Magic m, Ecore_Magic req_m, const char *f
          "    Supplied: %08x - %s",
          (unsigned int)req_m, _ecore_magic_string_get(req_m),
          (unsigned int)m, _ecore_magic_string_get(m));
-     ERR("*** NAUGHTY PROGRAMMER!!!\n"
-         "*** SPANK SPANK SPANK!!!\n"
-         "*** Now go fix your code. Tut tut tut!");
+   ERR("*** NAUGHTY PROGRAMMER!!!\n"
+       "*** SPANK SPANK SPANK!!!\n"
+       "*** Now go fix your code. Tut tut tut!");
    if (getenv("ECORE_ERROR_ABORT")) abort();
 }
 
@@ -455,36 +463,46 @@ _ecore_magic_string_get(Ecore_Magic m)
       case ECORE_MAGIC_NONE:
         return "None (Freed Object)";
         break;
+
       case ECORE_MAGIC_EXE:
         return "Ecore_Exe (Executable)";
         break;
+
       case ECORE_MAGIC_TIMER:
         return "Ecore_Timer (Timer)";
         break;
+
       case ECORE_MAGIC_IDLER:
         return "Ecore_Idler (Idler)";
         break;
+
       case ECORE_MAGIC_IDLE_ENTERER:
         return "Ecore_Idle_Enterer (Idler Enterer)";
         break;
+
       case ECORE_MAGIC_IDLE_EXITER:
         return "Ecore_Idle_Exiter (Idler Exiter)";
         break;
+
       case ECORE_MAGIC_FD_HANDLER:
         return "Ecore_Fd_Handler (Fd Handler)";
         break;
+
       case ECORE_MAGIC_WIN32_HANDLER:
         return "Ecore_Win32_Handler (Win32 Handler)";
         break;
+
       case ECORE_MAGIC_EVENT_HANDLER:
         return "Ecore_Event_Handler (Event Handler)";
         break;
+
       case ECORE_MAGIC_EVENT:
         return "Ecore_Event (Event)";
         break;
+
       default:
         return "<UNKNOWN>";
-     };
+     }
 }
 
 /* fps debug calls - for debugging how much time your app actually spends */
@@ -498,9 +516,9 @@ unsigned int *_ecore_fps_runtime_mmap = NULL;
 void
 _ecore_fps_debug_init(void)
 {
-   char  buf[PATH_MAX];
+   char buf[PATH_MAX];
    const char *tmp;
-   int   pid;
+   int pid;
 
    _ecore_fps_debug_init_count++;
    if (_ecore_fps_debug_init_count > 1) return;
@@ -561,14 +579,14 @@ _ecore_fps_debug_shutdown(void)
      {
         char buf[4096];
         const char *tmp;
-        int   pid;
+        int pid;
 
 #ifndef HAVE_EVIL
-   tmp = "/tmp";
+        tmp = "/tmp";
 #else
-   tmp = (char *)evil_tmpdir_get ();
+        tmp = (char *)evil_tmpdir_get ();
 #endif /* HAVE_EVIL */
-   pid = (int)getpid();
+        pid = (int)getpid();
         snprintf(buf, sizeof(buf), "%s/.ecore_fps_debug-%i", tmp, pid);
         unlink(buf);
         if (_ecore_fps_runtime_mmap)
@@ -611,12 +629,12 @@ _ecore_memory_statistic(__UNUSED__ void *data)
 
    mi = mallinfo();
 
-#define HAS_CHANGED(Global, Local)                \
-   if (Global != Local)                                \
-     {                                                \
-        Global = Local;                                \
-        changed = EINA_TRUE;                        \
-     }
+#define HAS_CHANGED(Global, Local) \
+  if (Global != Local)             \
+    {                              \
+       Global = Local;             \
+       changed = EINA_TRUE;        \
+    }
 
    HAS_CHANGED(uordblks, mi.uordblks);
    HAS_CHANGED(fordblks, mi.fordblks);
@@ -659,8 +677,8 @@ _thread_safe_cleanup(void *data)
 }
 
 static void
-_thread_callback(void *data __UNUSED__,
-                 void *buffer __UNUSED__,
+_thread_callback(void        *data __UNUSED__,
+                 void        *buffer __UNUSED__,
                  unsigned int nbyte __UNUSED__)
 {
    Ecore_Safe_Call *call;
@@ -677,23 +695,23 @@ _thread_callback(void *data __UNUSED__,
           {
              eina_lock_take(&_thread_mutex);
 
-	     eina_lock_take(&call->m);
-	     _thread_id = call->current_id;
+             eina_lock_take(&call->m);
+             _thread_id = call->current_id;
              eina_condition_broadcast(&call->c);
-	     eina_lock_release(&call->m);
+             eina_lock_release(&call->m);
 
-	     while (_thread_id_update != _thread_id)
-	       eina_condition_wait(&_thread_cond);
+             while (_thread_id_update != _thread_id)
+               eina_condition_wait(&_thread_cond);
              eina_lock_release(&_thread_mutex);
 
              eina_main_loop_define();
 
-	     eina_lock_take(&_thread_feedback_mutex);
+             eina_lock_take(&_thread_feedback_mutex);
 
-	     _thread_id = -1;
+             _thread_id = -1;
 
-	     eina_condition_broadcast(&_thread_feedback_cond);
-	     eina_lock_release(&_thread_feedback_mutex);
+             eina_condition_broadcast(&_thread_feedback_cond);
+             eina_lock_release(&_thread_feedback_mutex);
 
              _thread_safe_cleanup(call);
              free(call);
@@ -710,3 +728,4 @@ _thread_callback(void *data __UNUSED__,
           }
      }
 }
+
