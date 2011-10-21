@@ -325,8 +325,8 @@ fb_getmode(void)
         return NULL;
      }
    
-   mode->width = mode->fb_var.xres;
-   mode->height = mode->fb_var.yres;
+   mode->width = mode->fb_var.xres_virtual;
+   mode->height = mode->fb_var.yres_virtual;
    hpix =
       mode->fb_var.left_margin +
       mode->fb_var.xres +
