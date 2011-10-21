@@ -2544,6 +2544,7 @@ eng_image_data_put(void *data, void *image, DATA32 *image_data)
 	       }
 	     im->cs.data = image_data;
 	  }
+	evas_gl_common_image_dirty(im, 0, 0, 0, 0);
 	break;
       default:
 	abort();

@@ -2737,8 +2737,6 @@ evas_object_image_render(Evas_Object *obj, void *output, void *context, void *su
    /* We are displaying the overlay */
    if (o->video_visible)
      {
-        fprintf(stderr, "overlay visible, make a hole\n");
-
         /* Create a transparent rectangle */
         obj->layer->evas->engine.func->context_color_set(output,
                                                          context,

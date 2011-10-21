@@ -481,8 +481,8 @@ eng_image_data_put(void *data, void *image, DATA32 *image_data)
 		  if (!im->cs.no_free) free(im->cs.data);
 	       }
 	     im->cs.data = image_data;
-	     evas_common_image_colorspace_dirty(im);
 	  }
+        evas_common_image_colorspace_dirty(im);
         break;
       default:
 	abort();
