@@ -1085,13 +1085,12 @@ _item_realize(Elm_Gengrid_Item *it)
 }
 
 static void
-_item_unrealize(Elm_Gengrid_Item *it, Eina_Bool calc)
+_item_unrealize(Elm_Gengrid_Item *it)
 {
    Evas_Object *icon;
 
    if (!it->realized) return;
-   if (!calc)
-     evas_object_smart_callback_call(WIDGET(it), SIG_UNREALIZED, it);
+   evas_object_smart_callback_call(WIDGET(it), SIG_UNREALIZED, it);
    if (it->long_timer)
      {
         ecore_timer_del(it->long_timer);
