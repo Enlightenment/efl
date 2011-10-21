@@ -25,7 +25,12 @@
 # include <libintl.h>
 # define E_(string) _elm_dgettext(string)
 #else
-# define bindtextdomain(domain,dir)
+# ifndef setlocale
+#  define setlocale(c, l)
+# endif
+# ifndef bindtextdomain
+#  define bindtextdomain(domain,dir)
+# endif
 # define E_(string) (string)
 #endif
 #define N_(string) (string)
