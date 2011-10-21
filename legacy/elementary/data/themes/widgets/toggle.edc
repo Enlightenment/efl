@@ -1,5 +1,4 @@
 group { name: "elm/check/base/toggle";
-   alias: "elm/toggle/base/default";
    images {
       image: "shelf_inset.png" COMP;
       image: "bt_basew.png" COMP;
@@ -313,16 +312,16 @@ group { name: "elm/check/base/toggle";
             }
             if (((get_int(is_rtl) == 1) && (dx <= 0.5)) ||
             (get_int(is_rtl) == 0) && (dx > 0.5)) {
-               emit("elm,action,toggle,on", "");
+               emit("elm,action,check,on", "");
             }
             else {
-               emit("elm,action,toggle,off", "");
+               emit("elm,action,check,off", "");
             }
 
          }
       }
-      program { name: "toggle_on";
-         signal: "elm,state,toggle,on";
+      program { name: "check_on";
+         signal: "elm,state,check,on";
          source: "elm";
          script {
             new Float:drag;
@@ -335,8 +334,8 @@ group { name: "elm/check/base/toggle";
             set_drag(PART:"button", drag, 0.0);
          }
       }
-      program { name: "toggle_off";
-         signal: "elm,state,toggle,off";
+      program { name: "check_off";
+         signal: "elm,state,check,off";
          source: "elm";
          script {
             new Float:drag;

@@ -101,15 +101,9 @@ _theme_hook(Evas_Object *obj)
    else
      edje_object_signal_emit(wd->chk, "elm,state,icon,hidden", "elm");
    if (wd->state)
-     {
-        edje_object_signal_emit(wd->chk, "elm,state,check,on", "elm");
-        edje_object_signal_emit(wd->chk, "elm,state,toggle,on", "elm");
-     }
+     edje_object_signal_emit(wd->chk, "elm,state,check,on", "elm");
    else
-     {
-        edje_object_signal_emit(wd->chk, "elm,state,check,off", "elm");
-        edje_object_signal_emit(wd->chk, "elm,state,toggle,off", "elm");
-     }
+     edje_object_signal_emit(wd->chk, "elm,state,check,off", "elm");
    if (wd->label)
      edje_object_signal_emit(wd->chk, "elm,state,text,visible", "elm");
    else
@@ -182,7 +176,6 @@ _signal_check_off(void *data, Evas_Object *obj __UNUSED__, const char *emission 
    wd->state = EINA_FALSE;
    if (wd->statep) *wd->statep = wd->state;
    edje_object_signal_emit(wd->chk, "elm,state,check,off", "elm");
-   edje_object_signal_emit(wd->chk, "elm,state,toggle,off", "elm");
    evas_object_smart_callback_call(data, SIG_CHANGED, NULL);
 }
 
@@ -194,7 +187,6 @@ _signal_check_on(void *data, Evas_Object *obj __UNUSED__, const char *emission _
    wd->state = EINA_TRUE;
    if (wd->statep) *wd->statep = wd->state;
    edje_object_signal_emit(wd->chk, "elm,state,check,on", "elm");
-   edje_object_signal_emit(wd->chk, "elm,state,toggle,on", "elm");
    evas_object_smart_callback_call(data, SIG_CHANGED, NULL);
 }
 
@@ -466,15 +458,9 @@ elm_check_state_set(Evas_Object *obj, Eina_Bool state)
         wd->state = state;
         if (wd->statep) *wd->statep = wd->state;
         if (wd->state)
-          {
-             edje_object_signal_emit(wd->chk, "elm,state,check,on", "elm");
-             edje_object_signal_emit(wd->chk, "elm,state,toggle,on", "elm");
-          }
+          edje_object_signal_emit(wd->chk, "elm,state,check,on", "elm");
         else
-          {
-             edje_object_signal_emit(wd->chk, "elm,state,check,off", "elm");
-             edje_object_signal_emit(wd->chk, "elm,state,toggle,off", "elm");
-          }
+          edje_object_signal_emit(wd->chk, "elm,state,check,off", "elm");
      }
    edje_object_message_signal_process(wd->chk);
 }
@@ -501,15 +487,9 @@ elm_check_state_pointer_set(Evas_Object *obj, Eina_Bool *statep)
           {
              wd->state = *wd->statep;
              if (wd->state)
-               {
-                  edje_object_signal_emit(wd->chk, "elm,state,check,on", "elm");
-                  edje_object_signal_emit(wd->chk, "elm,state,toggle,on", "elm");
-               }
+               edje_object_signal_emit(wd->chk, "elm,state,check,on", "elm");
              else
-               {
-                  edje_object_signal_emit(wd->chk, "elm,state,check,off", "elm");
-                  edje_object_signal_emit(wd->chk, "elm,state,toggle,off", "elm");
-               }
+               edje_object_signal_emit(wd->chk, "elm,state,check,off", "elm");
           }
      }
    else
