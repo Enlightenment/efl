@@ -1295,7 +1295,7 @@ evas_render_updates_internal(Evas *e,
      _evas_render_check_pending_objects(&e->pending_objects, e);
 
    /* phase 1. add extra updates for changed objects */
-   if (e->invalidate || e->render_objects.count <= 0)
+/*   if (e->invalidate || e->render_objects.count <= 0)*/
      clean_them = _evas_render_phase1_process(e,
                                               &e->active_objects,
                                               &e->restack_objects,
