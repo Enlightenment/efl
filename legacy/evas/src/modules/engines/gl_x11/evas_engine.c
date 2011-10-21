@@ -30,6 +30,7 @@ struct _Render_Engine
    Evas_GL_X11_Window      *win;
    Evas_Engine_Info_GL_X11 *info;
    Evas                    *evas;
+   Tilebuf                 *tb;
    int                      end;
 
    XrmDatabase   xrdb; // xres - dpi
@@ -1020,19 +1021,25 @@ eng_setup(Evas *e, void *in)
         free(re);
         return 0;
      }
+   re->tb = evas_common_tilebuf_new(re->win->w, re->win->h);   
+   if (!re->tb)
+     {
+        if (re->win)
+          {
+             eng_window_free(re->win);
+             gl_wins--;
+          }
+        free(re);
+        return 0;
+     }
+   evas_common_tilebuf_set_tile_size(re->tb, TILESIZE, TILESIZE);
+   
    if (!e->engine.data.context)
      e->engine.data.context =
      e->engine.func->context_new(e->engine.data.output);
    eng_window_use(re->win);
 
    re->vsync = 0;
-/* we don't need this actually as evas_render does it  
-   if (re->win->alpha)
-     {
-        glClearColor(0.0, 0.0, 0.0, 0.0);
-        glClear(GL_COLOR_BUFFER_BIT);
-     }
- */
    _sym_init();
    _extensions_init(re);
 
@@ -1072,6 +1079,7 @@ eng_output_free(void *data)
              eng_window_free(re->win);
              gl_wins--;
           }
+        evas_common_tilebuf_free(re->tb);
         free(re);
      }
    if ((initted == 1) && (gl_wins == 0))
@@ -1092,11 +1100,19 @@ eng_output_resize(void *data, int w, int h)
    re->win->h = h;
    eng_window_use(re->win);
    evas_gl_common_context_resize(re->win->gl_context, w, h, re->win->rot);
+   evas_common_tilebuf_free(re->tb);
+   re->tb = evas_common_tilebuf_new(w, h);
+   if (re->tb)
+     evas_common_tilebuf_set_tile_size(re->tb, TILESIZE, TILESIZE);
 }
 
 static void
-eng_output_tile_size_set(void *data __UNUSED__, int w __UNUSED__, int h __UNUSED__)
+eng_output_tile_size_set(void *data, int w, int h)
 {
+   Render_Engine *re;
+        
+   re = (Render_Engine *)data;
+   evas_common_tilebuf_set_tile_size(re->tb, w, h);
 }
 
 static void
@@ -1107,7 +1123,8 @@ eng_output_redraws_rect_add(void *data, int x, int y, int w, int h)
    re = (Render_Engine *)data;
    eng_window_use(re->win);
    evas_gl_common_context_resize(re->win->gl_context, re->win->w, re->win->h, re->win->rot);
-   /* smple bounding box */
+   evas_common_tilebuf_add_redraw(re->tb, x, y, w, h);
+/*
    RECTS_CLIP_TO_RECT(x, y, w, h, 0, 0, re->win->w, re->win->h);
    if ((w <= 0) || (h <= 0)) return;
    if (!re->win->draw.redraw)
@@ -1132,11 +1149,16 @@ eng_output_redraws_rect_add(void *data, int x, int y, int w, int h)
 	if ((y + h - 1) > re->win->draw.y2) re->win->draw.y2 = y + h - 1;
      }
    re->win->draw.redraw = 1;
+ */
 }
 
 static void
 eng_output_redraws_rect_del(void *data __UNUSED__, int x __UNUSED__, int y __UNUSED__, int w __UNUSED__, int h __UNUSED__)
 {
+   Render_Engine *re;
+
+   re = (Render_Engine *)data;
+   evas_common_tilebuf_del_redraw(re->tb, x, y, w, h);
 }
 
 static void
@@ -1145,7 +1167,8 @@ eng_output_redraws_clear(void *data)
    Render_Engine *re;
 
    re = (Render_Engine *)data;
-   re->win->draw.redraw = 0;
+   evas_common_tilebuf_clear(re->tb);
+/*   re->win->draw.redraw = 0;*/
 //   INF("GL: finish update cycle!");
 }
 
@@ -1156,9 +1179,36 @@ static void *
 eng_output_redraws_next_update_get(void *data, int *x, int *y, int *w, int *h, int *cx, int *cy, int *cw, int *ch)
 {
    Render_Engine *re;
+   Tilebuf_Rect *rects;
 
    re = (Render_Engine *)data;
    /* get the upate rect surface - return engine data as dummy */
+   rects = evas_common_tilebuf_get_render_rects(re->tb);
+   if (rects)
+     {
+        evas_common_tilebuf_free_render_rects(rects);
+        evas_common_tilebuf_clear(re->tb);
+#if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
+        // dont need to for egl - eng_window_use() can check for other ctxt's
+#else
+        eng_window_use(NULL);
+#endif
+        eng_window_use(re->win);
+        if (!_re_wincheck(re)) return NULL;
+        evas_gl_common_context_flush(re->win->gl_context);
+        evas_gl_common_context_newframe(re->win->gl_context);
+        if (x) *x = 0;
+        if (y) *y = 0;
+        if (w) *w = re->win->w;
+        if (h) *h = re->win->h;
+        if (cx) *cx = 0;
+        if (cy) *cy = 0;
+        if (cw) *cw = re->win->w;
+        if (ch) *ch = re->win->h;
+        return re->win->gl_context->def_surface;
+     }
+   return NULL;
+/*   
    if (!re->win->draw.redraw) return NULL;
 #if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
    // dont need to for egl - eng_window_use() can check for other ctxt's
@@ -1177,15 +1227,8 @@ eng_output_redraws_next_update_get(void *data, int *x, int *y, int *w, int *h, i
    if (cy) *cy = re->win->draw.y1;
    if (cw) *cw = re->win->draw.x2 - re->win->draw.x1 + 1;
    if (ch) *ch = re->win->draw.y2 - re->win->draw.y1 + 1;
-
-/* we don't need this actually as evas_render does it  
-   if (re->win->alpha)
-     {
-        glClearColor(0.0, 0.0, 0.0, 0.0);
-        glClear(GL_COLOR_BUFFER_BIT);
-     }
- */
    return re->win->gl_context->def_surface;
+ */
 }
 
 //#define FRAMECOUNT 1
