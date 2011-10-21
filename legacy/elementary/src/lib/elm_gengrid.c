@@ -1897,6 +1897,22 @@ elm_gengrid_add(Evas_Object *parent)
    static Evas_Smart *smart = NULL;
    Eina_Bool bounce = _elm_config->thumbscroll_bounce_enable;
 
+   if (!smart)
+     {
+        static Evas_Smart_Class sc;
+
+        evas_object_smart_clipped_smart_set(&_pan_sc);
+        sc = _pan_sc;
+        sc.name = "elm_gengrid_pan";
+        sc.version = EVAS_SMART_CLASS_VERSION;
+        sc.add = _pan_add;
+        sc.del = _pan_del;
+        sc.resize = _pan_resize;
+        sc.move = _pan_move;
+        sc.calculate = _pan_calculate;
+        if (!(smart = evas_smart_class_new(&sc))) return NULL;
+     }
+
    ELM_WIDGET_STANDARD_SETUP(wd, Widget_Data, parent, e, obj, NULL);
 
    ELM_SET_WIDTYPE(widtype, "gengrid");
@@ -1917,6 +1933,7 @@ elm_gengrid_add(Evas_Object *parent)
    elm_smart_scroller_widget_set(wd->scr, obj);
    elm_smart_scroller_object_theme_set(obj, wd->scr, "gengrid", "base",
                                        "default");
+   elm_smart_scroller_bounce_allow_set(wd->scr, bounce, bounce);
    elm_widget_resize_object_set(obj, wd->scr);
 
    evas_object_smart_callback_add(wd->scr, "animate,start", _scr_anim_start, obj);
@@ -1930,47 +1947,26 @@ elm_gengrid_add(Evas_Object *parent)
                                   obj);
    evas_object_smart_callback_add(wd->scr, "scroll", _scr_scroll, obj);
 
-   elm_smart_scroller_bounce_allow_set(wd->scr, bounce, bounce);
-
    wd->self = obj;
    wd->align_x = 0.5;
    wd->align_y = 0.5;
    wd->h_bounce = bounce;
    wd->v_bounce = bounce;
-   wd->no_select = EINA_FALSE;
 
    evas_object_smart_callback_add(obj, "scroll-hold-on", _hold_on, obj);
    evas_object_smart_callback_add(obj, "scroll-hold-off", _hold_off, obj);
    evas_object_smart_callback_add(obj, "scroll-freeze-on", _freeze_on, obj);
    evas_object_smart_callback_add(obj, "scroll-freeze-off", _freeze_off, obj);
 
-   evas_object_smart_callbacks_descriptions_set(obj, _signals);
-
-   if (!smart)
-     {
-        static Evas_Smart_Class sc;
-
-        evas_object_smart_clipped_smart_set(&_pan_sc);
-        sc = _pan_sc;
-        sc.name = "elm_gengrid_pan";
-        sc.version = EVAS_SMART_CLASS_VERSION;
-        sc.add = _pan_add;
-        sc.del = _pan_del;
-        sc.resize = _pan_resize;
-        sc.move = _pan_move;
-        sc.calculate = _pan_calculate;
-        smart = evas_smart_class_new(&sc);
-     }
-   if (smart)
-     {
-        wd->pan_smart = evas_object_smart_add(e, smart);
-        wd->pan = evas_object_smart_data_get(wd->pan_smart);
-        wd->pan->wd = wd;
-     }
+   wd->pan_smart = evas_object_smart_add(e, smart);
+   wd->pan = evas_object_smart_data_get(wd->pan_smart);
+   wd->pan->wd = wd;
 
    elm_smart_scroller_extern_pan_set(wd->scr, wd->pan_smart,
                                      _pan_set, _pan_get, _pan_max_get,
                                      _pan_min_get, _pan_child_size_get);
+
+   evas_object_smart_callbacks_descriptions_set(obj, _signals);
 
    _mirrored_set(obj, elm_widget_mirrored_get(obj));
    return obj;
