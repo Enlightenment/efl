@@ -17,6 +17,8 @@ struct _Widget_Data
    Pan              *pan; /* pan_smart object's smart data */
    Ecore_Job        *calc_job;
    int               walking;
+   int               item_width, item_height;
+   int               group_item_width, group_item_height;
    Evas_Coord        pan_x, pan_y;
    Eina_Bool         reorder_mode : 1;
    Eina_Bool         on_hold : 1;

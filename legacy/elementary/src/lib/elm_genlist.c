@@ -58,6 +58,8 @@ struct _Widget_Data
    Pan              *pan; /* pan_smart object's smart data */
    Ecore_Job        *calc_job;
    int               walking;
+   int               item_width, item_height;
+   int               group_item_width, group_item_height;
    Evas_Coord        pan_x, pan_y;
    Eina_Bool         reorder_mode : 1;
    Eina_Bool         on_hold : 1;
@@ -106,10 +108,6 @@ struct _Widget_Data
    int               item_cache_count;
    int               item_cache_max; /* maximum number of cached items */
    int               movements;
-   int               item_width;
-   int               item_height;
-   int               group_item_width;
-   int               group_item_height;
    int               max_items_per_block; /* maximum number of items per block */
    double            longpress_timeout; /* longpress timeout. this value comes from _elm_config by default. this can be changed by elm_genlist_longpress_timeout_set() */
 };
