@@ -151,8 +151,9 @@ _evas_render_phase1_direct(Evas *e,
    unsigned int i;
    Eina_List *l;
    Evas_Object *proxy;
+   int tdbg = 1;
 
-//   printf("--------------------\n");
+   if (tdbg) printf("--------------------\n");
    RD("  [--- PHASE 1 DIRECT\n");
    for (i = 0; i < active_objects->count; i++)
      {
@@ -175,7 +176,11 @@ _evas_render_phase1_direct(Evas *e,
         Evas_Object *obj;
 
         obj = eina_array_data_get(render_objects, i);
-//        printf("R: %p %s - %i %i %ix%i D:%i\n", obj, obj->type, obj->cur.geometry.x, obj->cur.geometry.y, obj->cur.geometry.w, obj->cur.geometry.h, obj->rect_del);
+        if (tdbg)
+          {
+             printf("R: %p %s - %i %i %ix%i\n", obj, obj->type, obj->cur.geometry.x, obj->cur.geometry.y, obj->cur.geometry.w, obj->cur.geometry.h);
+             printf("  ch=%i rdel=%i\n", obj->changed, obj->rect_del);
+          }
         RD("    OBJ [%p] changed %i\n", obj, obj->changed);
         if (obj->changed)
           {
@@ -230,8 +235,10 @@ _evas_render_phase1_direct(Evas *e,
                   _evas_render_cur_clip_cache_del(e, obj);
                }
           }
+        if (tdbg) printf("       -next-\n");
      }
    RD("  ---]\n");
+   if (tdbg) printf(".....................\n");
 }
 
 static Eina_Bool

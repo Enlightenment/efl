@@ -3342,6 +3342,9 @@ evas_object_image_render_pre(Evas_Object *obj)
                                  r.h = ((rr->h + 2) * h) / o->cur.image.h;
                                  r.x += obj->cur.geometry.x + x;
                                  r.y += obj->cur.geometry.y + y;
+                                 RECTS_CLIP_TO_RECT(r.x, r.y, r.w, r.h,
+                                                    obj->cur.cache.clip.x, obj->cur.cache.clip.y,
+                                                    obj->cur.cache.clip.w, obj->cur.cache.clip.h);
                                  evas_add_rect(&e->clip_changes, r.x, r.y, r.w, r.h);
                                  idy += h;
                               }
@@ -3377,10 +3380,10 @@ evas_object_image_render_pre(Evas_Object *obj)
        evas_object_is_opaque(obj))
      {
          e->engine.func->output_redraws_rect_del(e->engine.data.output,
-                                                               obj->cur.cache.clip.x,
-                                                               obj->cur.cache.clip.y,
-                                                               obj->cur.cache.clip.w,
-                                                               obj->cur.cache.clip.h);
+                                                 obj->cur.cache.clip.x,
+                                                 obj->cur.cache.clip.y,
+                                                 obj->cur.cache.clip.w,
+                                                 obj->cur.cache.clip.h);
      }
    done:
    evas_object_render_pre_effect_updates(&e->clip_changes, obj, is_v, was_v);
@@ -3442,30 +3445,66 @@ evas_object_image_is_opaque(Evas_Object *obj)
    /* this returns 1 if the internal object data implies that the object is */
    /* currently fully opaque over the entire rectangle it occupies */
    o = (Evas_Object_Image *)(obj->object_data);
+/*  disable caching due tyo maps screwing with this
+   o->cur.opaque_valid = 0;
    if (o->cur.opaque_valid)
      {
         if (!o->cur.opaque) return 0;
      }
    else
+*/
      {
         o->cur.opaque = 0;
-        o->cur.opaque_valid = 1;
+/* disable caching */
+/*        o->cur.opaque_valid = 1; */
         if ((o->cur.fill.w < 1) || (o->cur.fill.h < 1))
-           return 0;
+           return o->cur.opaque;
         if (((o->cur.border.l != 0) ||
              (o->cur.border.r != 0) ||
              (o->cur.border.t != 0) ||
              (o->cur.border.b != 0)) &&
-            (!o->cur.border.fill)) return 0;
-        if (!o->engine_data) return 0;
+            (!o->cur.border.fill)) return o->cur.opaque;
+        if (!o->engine_data) return o->cur.opaque;
         o->cur.opaque = 1;
      }
    // FIXME: use proxy
-   if (o->cur.source) return 0; /* FIXME: Should go poke at the object */
-   if ((obj->cur.map) && (obj->cur.usemap)) return 0;
-   if (obj->cur.render_op == EVAS_RENDER_COPY) return 1;
-   if (o->cur.has_alpha) return 0;
-   return 1;
+   if (o->cur.source)
+     {
+        o->cur.opaque = evas_object_is_opaque(o->cur.source);
+        return o->cur.opaque; /* FIXME: Should go poke at the object */
+     }
+   if (o->cur.has_alpha)
+     {
+        o->cur.opaque = 0;
+        return o->cur.opaque;
+     }
+   if ((obj->cur.map) && (obj->cur.usemap))
+     {
+        Evas_Map *m = obj->cur.map;
+        
+        if ((m->points[0].a == 255) &&
+            (m->points[1].a == 255) &&
+            (m->points[2].a == 255) &&
+            (m->points[3].a == 255))
+          {
+             if (
+                 ((m->points[0].x == m->points[3].x) &&
+                     (m->points[1].x == m->points[2].x) &&
+                     (m->points[0].y == m->points[1].y) &&
+                     (m->points[2].y == m->points[3].y))
+                 ||
+                 ((m->points[0].x == m->points[1].x) &&
+                     (m->points[2].x == m->points[3].x) &&
+                     (m->points[0].y == m->points[3].y) &&
+                     (m->points[1].y == m->points[2].y))
+                )
+               return o->cur.opaque;
+          }
+        o->cur.opaque = 0;
+        return o->cur.opaque;
+     }
+   if (obj->cur.render_op == EVAS_RENDER_COPY) return o->cur.opaque;
+   return o->cur.opaque;
 }
 
 static int
