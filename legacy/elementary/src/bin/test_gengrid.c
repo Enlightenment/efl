@@ -244,6 +244,19 @@ _after_bt_clicked(void *data, Evas_Object *obj __UNUSED__, void *event_info __UN
 }
 
 static void
+_delete_bt_clicked(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+   Evas_Object *grid = data;
+   Eina_List *l, *l2, *l3;
+   Elm_Gengrid_Item *it;
+
+   l = elm_gengrid_selected_items_get(grid);
+   if (!l) return;
+   EINA_LIST_FOREACH_SAFE(l, l2, l3, it)
+     elm_gengrid_item_del(it);
+}
+
+static void
 _prepend_bt_clicked(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Testitem *ti;
@@ -335,6 +348,12 @@ test_gengrid2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    bt = elm_button_add(win);
    elm_object_text_set(bt, "Insert after");
    evas_object_smart_callback_add(bt, "clicked", _after_bt_clicked, grid);
+   elm_box_pack_end(hbx, bt);
+   evas_object_show(bt);
+
+   bt = elm_button_add(win);
+   elm_object_text_set(bt, "Delete");
+   evas_object_smart_callback_add(bt, "clicked", _delete_bt_clicked, grid);
    elm_box_pack_end(hbx, bt);
    evas_object_show(bt);
 
