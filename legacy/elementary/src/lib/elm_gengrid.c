@@ -1488,7 +1488,7 @@ _item_label_hook(Elm_Gengrid_Item *it, const char *part)
 }
 
 static Elm_Gengrid_Item *
-_item_create(Widget_Data                  *wd,
+_item_new(Widget_Data                  *wd,
              const Elm_Gengrid_Item_Class *itc,
              const void                   *data,
              Evas_Smart_Cb                 func,
@@ -2160,7 +2160,7 @@ elm_gengrid_item_append(Evas_Object                  *obj,
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return NULL;
 
-   it = _item_create(wd, itc, data, func, func_data);
+   it = _item_new(wd, itc, data, func, func_data);
    if (!it) return NULL;
    wd->items = eina_inlist_append(wd->items, EINA_INLIST_GET(it));
 
@@ -2185,7 +2185,7 @@ elm_gengrid_item_prepend(Evas_Object                  *obj,
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return NULL;
 
-   it = _item_create(wd, itc, data, func, func_data);
+   it = _item_new(wd, itc, data, func, func_data);
    if (!it) return NULL;
    wd->items = eina_inlist_prepend(wd->items, EINA_INLIST_GET(it));
    if (it->is_group)
@@ -2211,7 +2211,7 @@ elm_gengrid_item_insert_before(Evas_Object                  *obj,
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return NULL;
 
-   it = _item_create(wd, itc, data, func, func_data);
+   it = _item_new(wd, itc, data, func, func_data);
    if (!it) return NULL;
    wd->items = eina_inlist_prepend_relative
       (wd->items, EINA_INLIST_GET(it), EINA_INLIST_GET(relative));
@@ -2238,7 +2238,7 @@ elm_gengrid_item_insert_after(Evas_Object                  *obj,
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return NULL;
 
-   it = _item_create(wd, itc, data, func, func_data);
+   it = _item_new(wd, itc, data, func, func_data);
    if (!it) return NULL;
    wd->items = eina_inlist_append_relative
       (wd->items, EINA_INLIST_GET(it), EINA_INLIST_GET(relative));
@@ -2264,7 +2264,7 @@ elm_gengrid_item_direct_sorted_insert(Evas_Object                  *obj,
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return NULL;
 
-   it = _item_create(wd, itc, data, func, func_data);
+   it = _item_new(wd, itc, data, func, func_data);
    if (!it) return NULL;
 
    if (!wd->state)
