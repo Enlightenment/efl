@@ -109,8 +109,16 @@ _tex_format_index(GLuint format)
 static void
 _tex_2d(int intfmt, int w, int h, int fmt, int type)
 {
+   int intfmtret = -1;
    glTexImage2D(GL_TEXTURE_2D, 0, intfmt, w, h, 0, fmt, type, NULL);
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+   glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, 
+                            GL_TEXTURE_INTERNAL_FORMAT, &intfmtret);
+   if (intfmtret != intfmt)
+     {
+        ERR("Fail tex alloc %ix%i", w, h);
+//        XXX send async err to evas
+     }
 }
 
 static void
