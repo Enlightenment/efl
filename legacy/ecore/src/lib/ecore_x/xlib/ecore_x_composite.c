@@ -50,12 +50,12 @@ ecore_x_composite_redirect_window(Ecore_X_Window                win,
    switch(type)
      {
       case ECORE_X_COMPOSITE_UPDATE_AUTOMATIC:
-         update = CompositeRedirectAutomatic;
-         break;
+        update = CompositeRedirectAutomatic;
+        break;
 
       case ECORE_X_COMPOSITE_UPDATE_MANUAL:
-         update = CompositeRedirectManual;
-         break;
+        update = CompositeRedirectManual;
+        break;
      } /* switch */
    XCompositeRedirectWindow(_ecore_x_disp, win, update);
 #endif /* ifdef ECORE_XCOMPOSITE */
@@ -72,12 +72,12 @@ ecore_x_composite_redirect_subwindows(Ecore_X_Window                win,
    switch(type)
      {
       case ECORE_X_COMPOSITE_UPDATE_AUTOMATIC:
-         update = CompositeRedirectAutomatic;
-         break;
+        update = CompositeRedirectAutomatic;
+        break;
 
       case ECORE_X_COMPOSITE_UPDATE_MANUAL:
-         update = CompositeRedirectManual;
-         break;
+        update = CompositeRedirectManual;
+        break;
      } /* switch */
    XCompositeRedirectSubwindows(_ecore_x_disp, win, update);
 #endif /* ifdef ECORE_XCOMPOSITE */
@@ -94,12 +94,12 @@ ecore_x_composite_unredirect_window(Ecore_X_Window                win,
    switch(type)
      {
       case ECORE_X_COMPOSITE_UPDATE_AUTOMATIC:
-         update = CompositeRedirectAutomatic;
-         break;
+        update = CompositeRedirectAutomatic;
+        break;
 
       case ECORE_X_COMPOSITE_UPDATE_MANUAL:
-         update = CompositeRedirectManual;
-         break;
+        update = CompositeRedirectManual;
+        break;
      } /* switch */
    XCompositeUnredirectWindow(_ecore_x_disp, win, update);
 #endif /* ifdef ECORE_XCOMPOSITE */
@@ -116,12 +116,12 @@ ecore_x_composite_unredirect_subwindows(Ecore_X_Window                win,
    switch(type)
      {
       case ECORE_X_COMPOSITE_UPDATE_AUTOMATIC:
-         update = CompositeRedirectAutomatic;
-         break;
+        update = CompositeRedirectAutomatic;
+        break;
 
       case ECORE_X_COMPOSITE_UPDATE_MANUAL:
-         update = CompositeRedirectManual;
-         break;
+        update = CompositeRedirectManual;
+        break;
      } /* switch */
    XCompositeUnredirectSubwindows(_ecore_x_disp, win, update);
 #endif /* ifdef ECORE_XCOMPOSITE */

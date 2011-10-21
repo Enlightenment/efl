@@ -19,9 +19,9 @@ _ecore_x_damage_init(void)
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    if (XDamageQueryVersion(_ecore_x_disp, &_damage_major, &_damage_minor))
-      _damage_available = EINA_TRUE;
+     _damage_available = EINA_TRUE;
    else
-      _damage_available = EINA_FALSE;
+     _damage_available = EINA_FALSE;
 
 #else /* ifdef ECORE_XDAMAGE */
    _damage_available = EINA_FALSE;
@@ -35,7 +35,8 @@ ecore_x_damage_query(void)
 } /* ecore_x_damage_query */
 
 EAPI Ecore_X_Damage
-ecore_x_damage_new(Ecore_X_Drawable d, Ecore_X_Damage_Report_Level level)
+ecore_x_damage_new(Ecore_X_Drawable            d,
+                   Ecore_X_Damage_Report_Level level)
 {
 #ifdef ECORE_XDAMAGE
    Ecore_X_Damage damage;

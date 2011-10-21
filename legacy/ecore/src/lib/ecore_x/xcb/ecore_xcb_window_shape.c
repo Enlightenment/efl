@@ -17,14 +17,15 @@
  *               window.
  * @ingroup Ecore_X_Window_Shape
  */
-EAPI void 
-ecore_x_window_shape_input_mask_set(Ecore_X_Window win, Ecore_X_Pixmap mask) 
+EAPI void
+ecore_x_window_shape_input_mask_set(Ecore_X_Window win,
+                                    Ecore_X_Pixmap mask)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    CHECK_XCB_CONN;
 
 #ifdef ECORE_XCB_SHAPE
-   xcb_shape_mask(_ecore_xcb_conn, XCB_SHAPE_SO_SET, XCB_SHAPE_SK_INPUT, 
+   xcb_shape_mask(_ecore_xcb_conn, XCB_SHAPE_SO_SET, XCB_SHAPE_SK_INPUT,
                   win, 0, 0, mask);
 //   ecore_x_flush();
 #else
@@ -41,14 +42,15 @@ ecore_x_window_shape_input_mask_set(Ecore_X_Window win, Ecore_X_Pixmap mask)
  *               window.
  * @ingroup Ecore_X_Window_Shape
  */
-EAPI void 
-ecore_x_window_shape_mask_set(Ecore_X_Window win, Ecore_X_Pixmap mask) 
+EAPI void
+ecore_x_window_shape_mask_set(Ecore_X_Window win,
+                              Ecore_X_Pixmap mask)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    CHECK_XCB_CONN;
 
 #ifdef ECORE_XCB_SHAPE
-   xcb_shape_mask(_ecore_xcb_conn, XCB_SHAPE_SO_SET, XCB_SHAPE_SK_BOUNDING, 
+   xcb_shape_mask(_ecore_xcb_conn, XCB_SHAPE_SO_SET, XCB_SHAPE_SK_BOUNDING,
                   win, 0, 0, mask);
 //   ecore_x_flush();
 #else
@@ -58,14 +60,15 @@ ecore_x_window_shape_mask_set(Ecore_X_Window win, Ecore_X_Pixmap mask)
 #endif
 }
 
-EAPI void 
-ecore_x_window_shape_window_set(Ecore_X_Window win, Ecore_X_Window shape_win) 
+EAPI void
+ecore_x_window_shape_window_set(Ecore_X_Window win,
+                                Ecore_X_Window shape_win)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    CHECK_XCB_CONN;
 
 #ifdef ECORE_XCB_SHAPE
-   xcb_shape_combine(_ecore_xcb_conn, XCB_SHAPE_SO_SET, XCB_SHAPE_SK_BOUNDING, 
+   xcb_shape_combine(_ecore_xcb_conn, XCB_SHAPE_SO_SET, XCB_SHAPE_SK_BOUNDING,
                      XCB_SHAPE_SK_BOUNDING, win, 0, 0, shape_win);
 //   ecore_x_flush();
 #else
@@ -75,14 +78,17 @@ ecore_x_window_shape_window_set(Ecore_X_Window win, Ecore_X_Window shape_win)
 #endif
 }
 
-EAPI void 
-ecore_x_window_shape_window_set_xy(Ecore_X_Window win, Ecore_X_Window shape_win, int x, int y) 
+EAPI void
+ecore_x_window_shape_window_set_xy(Ecore_X_Window win,
+                                   Ecore_X_Window shape_win,
+                                   int            x,
+                                   int            y)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    CHECK_XCB_CONN;
 
 #ifdef ECORE_XCB_SHAPE
-   xcb_shape_combine(_ecore_xcb_conn, XCB_SHAPE_SO_SET, XCB_SHAPE_SK_BOUNDING, 
+   xcb_shape_combine(_ecore_xcb_conn, XCB_SHAPE_SO_SET, XCB_SHAPE_SK_BOUNDING,
                      XCB_SHAPE_SK_BOUNDING, win, x, y, shape_win);
 //   ecore_x_flush();
 #else
@@ -94,8 +100,12 @@ ecore_x_window_shape_window_set_xy(Ecore_X_Window win, Ecore_X_Window shape_win,
 #endif
 }
 
-EAPI void 
-ecore_x_window_shape_rectangle_set(Ecore_X_Window win, int x, int y, int w, int h) 
+EAPI void
+ecore_x_window_shape_rectangle_set(Ecore_X_Window win,
+                                   int            x,
+                                   int            y,
+                                   int            w,
+                                   int            h)
 {
 #ifdef ECORE_XCB_SHAPE
    xcb_rectangle_t rect;
@@ -109,8 +119,8 @@ ecore_x_window_shape_rectangle_set(Ecore_X_Window win, int x, int y, int w, int 
    rect.y = y;
    rect.width = w;
    rect.height = h;
-   xcb_shape_rectangles(_ecore_xcb_conn, XCB_SHAPE_SO_SET, 
-                        XCB_SHAPE_SK_BOUNDING, XCB_CLIP_ORDERING_UNSORTED, 
+   xcb_shape_rectangles(_ecore_xcb_conn, XCB_SHAPE_SO_SET,
+                        XCB_SHAPE_SK_BOUNDING, XCB_CLIP_ORDERING_UNSORTED,
                         win, 0, 0, 1, &rect);
 //   ecore_x_flush();
 #else
@@ -123,8 +133,10 @@ ecore_x_window_shape_rectangle_set(Ecore_X_Window win, int x, int y, int w, int 
 #endif
 }
 
-EAPI void 
-ecore_x_window_shape_rectangles_set(Ecore_X_Window win, Ecore_X_Rectangle *rects, int num) 
+EAPI void
+ecore_x_window_shape_rectangles_set(Ecore_X_Window     win,
+                                    Ecore_X_Rectangle *rects,
+                                    int                num)
 {
 #ifdef ECORE_XCB_SHAPE
    xcb_rectangle_t *rect = NULL;
@@ -136,14 +148,14 @@ ecore_x_window_shape_rectangles_set(Ecore_X_Window win, Ecore_X_Rectangle *rects
    if (!rects) return;
 
 #ifdef ECORE_XCB_SHAPE
-   if (num > 0) 
+   if (num > 0)
      {
         int i = 0;
 
         if (!(rect = malloc(sizeof(xcb_rectangle_t) * num)))
           return;
 
-        for (i = 0; i < num; i++) 
+        for (i = 0; i < num; i++)
           {
              rect[i].x = rects[i].x;
              rect[i].y = rects[i].y;
@@ -151,8 +163,8 @@ ecore_x_window_shape_rectangles_set(Ecore_X_Window win, Ecore_X_Rectangle *rects
              rect[i].height = rects[i].height;
           }
      }
-   xcb_shape_rectangles(_ecore_xcb_conn, XCB_SHAPE_SO_SET, 
-                        XCB_SHAPE_SK_BOUNDING, XCB_CLIP_ORDERING_UNSORTED, 
+   xcb_shape_rectangles(_ecore_xcb_conn, XCB_SHAPE_SO_SET,
+                        XCB_SHAPE_SK_BOUNDING, XCB_CLIP_ORDERING_UNSORTED,
                         win, 0, 0, num, (xcb_rectangle_t *)rect);
 
    if (rect) free(rect);
@@ -165,15 +177,16 @@ ecore_x_window_shape_rectangles_set(Ecore_X_Window win, Ecore_X_Rectangle *rects
 #endif
 }
 
-EAPI void 
-ecore_x_window_shape_window_add(Ecore_X_Window win, Ecore_X_Window shape_win) 
+EAPI void
+ecore_x_window_shape_window_add(Ecore_X_Window win,
+                                Ecore_X_Window shape_win)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    CHECK_XCB_CONN;
 
 #ifdef ECORE_XCB_SHAPE
-   xcb_shape_combine(_ecore_xcb_conn, XCB_SHAPE_SO_UNION, 
-                     XCB_SHAPE_SK_BOUNDING, XCB_SHAPE_SK_BOUNDING, 
+   xcb_shape_combine(_ecore_xcb_conn, XCB_SHAPE_SO_UNION,
+                     XCB_SHAPE_SK_BOUNDING, XCB_SHAPE_SK_BOUNDING,
                      win, 0, 0, shape_win);
 //   ecore_x_flush();
 #else
@@ -183,15 +196,18 @@ ecore_x_window_shape_window_add(Ecore_X_Window win, Ecore_X_Window shape_win)
 #endif
 }
 
-EAPI void 
-ecore_x_window_shape_window_add_xy(Ecore_X_Window win, Ecore_X_Window shape_win, int x, int y) 
+EAPI void
+ecore_x_window_shape_window_add_xy(Ecore_X_Window win,
+                                   Ecore_X_Window shape_win,
+                                   int            x,
+                                   int            y)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    CHECK_XCB_CONN;
 
 #ifdef ECORE_XCB_SHAPE
-   xcb_shape_combine(_ecore_xcb_conn, XCB_SHAPE_SO_UNION, 
-                     XCB_SHAPE_SK_BOUNDING, XCB_SHAPE_SK_BOUNDING, 
+   xcb_shape_combine(_ecore_xcb_conn, XCB_SHAPE_SO_UNION,
+                     XCB_SHAPE_SK_BOUNDING, XCB_SHAPE_SK_BOUNDING,
                      win, x, y, shape_win);
 //   ecore_x_flush();
 #else
@@ -203,8 +219,12 @@ ecore_x_window_shape_window_add_xy(Ecore_X_Window win, Ecore_X_Window shape_win,
 #endif
 }
 
-EAPI void 
-ecore_x_window_shape_rectangle_add(Ecore_X_Window win, int x, int y, int w, int h) 
+EAPI void
+ecore_x_window_shape_rectangle_add(Ecore_X_Window win,
+                                   int            x,
+                                   int            y,
+                                   int            w,
+                                   int            h)
 {
 #ifdef ECORE_XCB_SHAPE
    xcb_rectangle_t rect;
@@ -218,8 +238,8 @@ ecore_x_window_shape_rectangle_add(Ecore_X_Window win, int x, int y, int w, int 
    rect.y = y;
    rect.width = w;
    rect.height = h;
-   xcb_shape_rectangles(_ecore_xcb_conn, XCB_SHAPE_SO_UNION, 
-                        XCB_SHAPE_SK_BOUNDING, XCB_CLIP_ORDERING_UNSORTED, 
+   xcb_shape_rectangles(_ecore_xcb_conn, XCB_SHAPE_SO_UNION,
+                        XCB_SHAPE_SK_BOUNDING, XCB_CLIP_ORDERING_UNSORTED,
                         win, 0, 0, 1, &rect);
 //   ecore_x_flush();
 #else
@@ -232,8 +252,12 @@ ecore_x_window_shape_rectangle_add(Ecore_X_Window win, int x, int y, int w, int 
 #endif
 }
 
-EAPI void 
-ecore_x_window_shape_rectangle_subtract(Ecore_X_Window win, int x, int y, int w, int h) 
+EAPI void
+ecore_x_window_shape_rectangle_subtract(Ecore_X_Window win,
+                                        int            x,
+                                        int            y,
+                                        int            w,
+                                        int            h)
 {
 #ifdef ECORE_XCB_SHAPE
    xcb_rectangle_t rect;
@@ -247,8 +271,8 @@ ecore_x_window_shape_rectangle_subtract(Ecore_X_Window win, int x, int y, int w,
    rect.y = y;
    rect.width = w;
    rect.height = h;
-   xcb_shape_rectangles(_ecore_xcb_conn, XCB_SHAPE_SO_SUBTRACT, 
-                        XCB_SHAPE_SK_BOUNDING, XCB_CLIP_ORDERING_UNSORTED, 
+   xcb_shape_rectangles(_ecore_xcb_conn, XCB_SHAPE_SO_SUBTRACT,
+                        XCB_SHAPE_SK_BOUNDING, XCB_CLIP_ORDERING_UNSORTED,
                         win, 0, 0, 1, &rect);
 //   ecore_x_flush();
 #else
@@ -261,8 +285,12 @@ ecore_x_window_shape_rectangle_subtract(Ecore_X_Window win, int x, int y, int w,
 #endif
 }
 
-EAPI void 
-ecore_x_window_shape_rectangle_clip(Ecore_X_Window win, int x, int y, int w, int h) 
+EAPI void
+ecore_x_window_shape_rectangle_clip(Ecore_X_Window win,
+                                    int            x,
+                                    int            y,
+                                    int            w,
+                                    int            h)
 {
 #ifdef ECORE_XCB_SHAPE
    xcb_rectangle_t rect;
@@ -276,8 +304,8 @@ ecore_x_window_shape_rectangle_clip(Ecore_X_Window win, int x, int y, int w, int
    rect.y = y;
    rect.width = w;
    rect.height = h;
-   xcb_shape_rectangles(_ecore_xcb_conn, XCB_SHAPE_SO_INTERSECT, 
-                        XCB_SHAPE_SK_BOUNDING, XCB_CLIP_ORDERING_UNSORTED, 
+   xcb_shape_rectangles(_ecore_xcb_conn, XCB_SHAPE_SO_INTERSECT,
+                        XCB_SHAPE_SK_BOUNDING, XCB_CLIP_ORDERING_UNSORTED,
                         win, 0, 0, 1, &rect);
 //   ecore_x_flush();
 #else
@@ -290,8 +318,10 @@ ecore_x_window_shape_rectangle_clip(Ecore_X_Window win, int x, int y, int w, int
 #endif
 }
 
-EAPI void 
-ecore_x_window_shape_rectangles_add(Ecore_X_Window win, Ecore_X_Rectangle *rects, int num) 
+EAPI void
+ecore_x_window_shape_rectangles_add(Ecore_X_Window     win,
+                                    Ecore_X_Rectangle *rects,
+                                    int                num)
 {
 #ifdef ECORE_XCB_SHAPE
    xcb_rectangle_t *rect = NULL;
@@ -301,14 +331,14 @@ ecore_x_window_shape_rectangles_add(Ecore_X_Window win, Ecore_X_Rectangle *rects
    CHECK_XCB_CONN;
 
 #ifdef ECORE_XCB_SHAPE
-   if (num > 0) 
+   if (num > 0)
      {
         int i = 0;
 
         if (!(rect = malloc(sizeof(xcb_rectangle_t) * num)))
           return;
 
-        for (i = 0; i < num; i++) 
+        for (i = 0; i < num; i++)
           {
              rect[i].x = rects[i].x;
              rect[i].y = rects[i].y;
@@ -317,8 +347,8 @@ ecore_x_window_shape_rectangles_add(Ecore_X_Window win, Ecore_X_Rectangle *rects
           }
      }
 
-   xcb_shape_rectangles(_ecore_xcb_conn, XCB_SHAPE_SO_UNION, 
-                        XCB_SHAPE_SK_BOUNDING, XCB_CLIP_ORDERING_UNSORTED, 
+   xcb_shape_rectangles(_ecore_xcb_conn, XCB_SHAPE_SO_UNION,
+                        XCB_SHAPE_SK_BOUNDING, XCB_CLIP_ORDERING_UNSORTED,
                         win, 0, 0, num, (xcb_rectangle_t *)&rect);
 
    if (rect) free(rect);
@@ -332,7 +362,8 @@ ecore_x_window_shape_rectangles_add(Ecore_X_Window win, Ecore_X_Rectangle *rects
 }
 
 EAPI Ecore_X_Rectangle *
-ecore_x_window_shape_rectangles_get(Ecore_X_Window win, int *num_ret) 
+ecore_x_window_shape_rectangles_get(Ecore_X_Window win,
+                                    int           *num_ret)
 {
    Ecore_X_Rectangle *rects = NULL;
 #ifdef ECORE_XCB_SHAPE
@@ -348,13 +379,13 @@ ecore_x_window_shape_rectangles_get(Ecore_X_Window win, int *num_ret)
    if (num_ret) *num_ret = 0;
 
 #ifdef ECORE_XCB_SHAPE
-   cookie = 
+   cookie =
      xcb_shape_get_rectangles(_ecore_xcb_conn, win, XCB_SHAPE_SK_BOUNDING);
    reply = xcb_shape_get_rectangles_reply(_ecore_xcb_conn, cookie, NULL);
    if (!reply) return NULL;
    if (num_ret) *num_ret = reply->rectangles_len;
 
-   if (reply->rectangles_len < 1) 
+   if (reply->rectangles_len < 1)
      {
         free(reply);
         if (num_ret) *num_ret = 0;
@@ -362,14 +393,14 @@ ecore_x_window_shape_rectangles_get(Ecore_X_Window win, int *num_ret)
      }
 
    rects = malloc(sizeof(Ecore_X_Rectangle) * reply->rectangles_len);
-   if (!rects) 
+   if (!rects)
      {
         free(reply);
         if (num_ret) *num_ret = 0;
         return NULL;
      }
    r = xcb_shape_get_rectangles_rectangles(reply);
-   for (i = 0; i < reply->rectangles_len; i++) 
+   for (i = 0; i < reply->rectangles_len; i++)
      {
         rects[i].x = r[i].x;
         rects[i].y = r[i].y;
@@ -386,8 +417,9 @@ ecore_x_window_shape_rectangles_get(Ecore_X_Window win, int *num_ret)
 #endif
 }
 
-EAPI void 
-ecore_x_window_shape_events_select(Ecore_X_Window win, Eina_Bool on) 
+EAPI void
+ecore_x_window_shape_events_select(Ecore_X_Window win,
+                                   Eina_Bool      on)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    CHECK_XCB_CONN;
@@ -403,7 +435,8 @@ ecore_x_window_shape_events_select(Ecore_X_Window win, Eina_Bool on)
 }
 
 EAPI Ecore_X_Rectangle *
-ecore_x_window_shape_input_rectangles_get(Ecore_X_Window win, int *num_ret) 
+ecore_x_window_shape_input_rectangles_get(Ecore_X_Window win,
+                                          int           *num_ret)
 {
    Ecore_X_Rectangle *rects = NULL;
 #ifdef ECORE_XCB_SHAPE
@@ -419,13 +452,13 @@ ecore_x_window_shape_input_rectangles_get(Ecore_X_Window win, int *num_ret)
    if (num_ret) *num_ret = 0;
 
 #ifdef ECORE_XCB_SHAPE
-   cookie = 
+   cookie =
      xcb_shape_get_rectangles(_ecore_xcb_conn, win, XCB_SHAPE_SK_INPUT);
    reply = xcb_shape_get_rectangles_reply(_ecore_xcb_conn, cookie, NULL);
    if (!reply) return NULL;
    if (num_ret) *num_ret = reply->rectangles_len;
 
-   if (reply->rectangles_len < 1) 
+   if (reply->rectangles_len < 1)
      {
         free(reply);
         if (num_ret) *num_ret = 0;
@@ -433,14 +466,14 @@ ecore_x_window_shape_input_rectangles_get(Ecore_X_Window win, int *num_ret)
      }
 
    rects = malloc(sizeof(Ecore_X_Rectangle) * reply->rectangles_len);
-   if (!rects) 
+   if (!rects)
      {
         free(reply);
         if (num_ret) *num_ret = 0;
         return NULL;
      }
    r = xcb_shape_get_rectangles_rectangles(reply);
-   for (i = 0; i < reply->rectangles_len; i++) 
+   for (i = 0; i < reply->rectangles_len; i++)
      {
         rects[i].x = r[i].x;
         rects[i].y = r[i].y;
@@ -461,7 +494,7 @@ ecore_x_window_shape_input_rectangles_get(Ecore_X_Window win, int *num_ret)
    /* get geometry */
    cookie = xcb_get_geometry_unchecked(_ecore_xcb_conn, win);
    reply = xcb_get_geometry_reply(_ecore_xcb_conn, cookie, NULL);
-   if (reply) 
+   if (reply)
      {
         rects[0].x = reply->x;
         rects[0].y = reply->y;
@@ -474,8 +507,10 @@ ecore_x_window_shape_input_rectangles_get(Ecore_X_Window win, int *num_ret)
 #endif
 }
 
-EAPI void 
-ecore_x_window_shape_input_rectangles_set(Ecore_X_Window win, Ecore_X_Rectangle *rects, int num) 
+EAPI void
+ecore_x_window_shape_input_rectangles_set(Ecore_X_Window     win,
+                                          Ecore_X_Rectangle *rects,
+                                          int                num)
 {
 #ifdef ECORE_XCB_SHAPE
    xcb_rectangle_t *rect = NULL;
@@ -487,14 +522,14 @@ ecore_x_window_shape_input_rectangles_set(Ecore_X_Window win, Ecore_X_Rectangle 
    if (!rects) return;
 
 #ifdef ECORE_XCB_SHAPE
-   if (num > 0) 
+   if (num > 0)
      {
         int i = 0;
 
         if (!(rect = malloc(sizeof(xcb_rectangle_t) * num)))
           return;
 
-        for (i = 0; i < num; i++) 
+        for (i = 0; i < num; i++)
           {
              rect[i].x = rects[i].x;
              rect[i].y = rects[i].y;
@@ -502,8 +537,8 @@ ecore_x_window_shape_input_rectangles_set(Ecore_X_Window win, Ecore_X_Rectangle 
              rect[i].height = rects[i].height;
           }
      }
-   xcb_shape_rectangles(_ecore_xcb_conn, XCB_SHAPE_SO_SET, 
-                        XCB_SHAPE_SK_INPUT, XCB_CLIP_ORDERING_UNSORTED, 
+   xcb_shape_rectangles(_ecore_xcb_conn, XCB_SHAPE_SO_SET,
+                        XCB_SHAPE_SK_INPUT, XCB_CLIP_ORDERING_UNSORTED,
                         win, 0, 0, num, (xcb_rectangle_t *)rect);
 
    if (rect) free(rect);
@@ -516,8 +551,12 @@ ecore_x_window_shape_input_rectangles_set(Ecore_X_Window win, Ecore_X_Rectangle 
 #endif
 }
 
-EAPI void 
-ecore_x_window_shape_input_rectangle_subtract(Ecore_X_Window win, int x, int y, int w, int h) 
+EAPI void
+ecore_x_window_shape_input_rectangle_subtract(Ecore_X_Window win,
+                                              int            x,
+                                              int            y,
+                                              int            w,
+                                              int            h)
 {
 #ifdef ECORE_XCB_SHAPE
    xcb_rectangle_t rect;
@@ -531,8 +570,8 @@ ecore_x_window_shape_input_rectangle_subtract(Ecore_X_Window win, int x, int y, 
    rect.y = y;
    rect.width = w;
    rect.height = h;
-   xcb_shape_rectangles(_ecore_xcb_conn, XCB_SHAPE_SO_SUBTRACT, 
-                        XCB_SHAPE_SK_INPUT, XCB_CLIP_ORDERING_UNSORTED, 
+   xcb_shape_rectangles(_ecore_xcb_conn, XCB_SHAPE_SO_SUBTRACT,
+                        XCB_SHAPE_SK_INPUT, XCB_CLIP_ORDERING_UNSORTED,
                         win, 0, 0, 1, &rect);
 //   ecore_x_flush();
 #else
@@ -545,8 +584,12 @@ ecore_x_window_shape_input_rectangle_subtract(Ecore_X_Window win, int x, int y, 
 #endif
 }
 
-EAPI void 
-ecore_x_window_shape_input_rectangle_add(Ecore_X_Window win, int x, int y, int w, int h) 
+EAPI void
+ecore_x_window_shape_input_rectangle_add(Ecore_X_Window win,
+                                         int            x,
+                                         int            y,
+                                         int            w,
+                                         int            h)
 {
 #ifdef ECORE_XCB_SHAPE
    xcb_rectangle_t rect;
@@ -560,8 +603,8 @@ ecore_x_window_shape_input_rectangle_add(Ecore_X_Window win, int x, int y, int w
    rect.y = y;
    rect.width = w;
    rect.height = h;
-   xcb_shape_rectangles(_ecore_xcb_conn, XCB_SHAPE_SO_UNION, 
-                        XCB_SHAPE_SK_INPUT, XCB_CLIP_ORDERING_UNSORTED, 
+   xcb_shape_rectangles(_ecore_xcb_conn, XCB_SHAPE_SO_UNION,
+                        XCB_SHAPE_SK_INPUT, XCB_CLIP_ORDERING_UNSORTED,
                         win, 0, 0, 1, &rect);
 //   ecore_x_flush();
 #else
@@ -574,8 +617,12 @@ ecore_x_window_shape_input_rectangle_add(Ecore_X_Window win, int x, int y, int w
 #endif
 }
 
-EAPI void 
-ecore_x_window_shape_input_rectangle_set(Ecore_X_Window win, int x, int y, int w, int h) 
+EAPI void
+ecore_x_window_shape_input_rectangle_set(Ecore_X_Window win,
+                                         int            x,
+                                         int            y,
+                                         int            w,
+                                         int            h)
 {
 #ifdef ECORE_XCB_SHAPE
    xcb_rectangle_t rect;
@@ -589,8 +636,8 @@ ecore_x_window_shape_input_rectangle_set(Ecore_X_Window win, int x, int y, int w
    rect.y = y;
    rect.width = w;
    rect.height = h;
-   xcb_shape_rectangles(_ecore_xcb_conn, XCB_SHAPE_SO_SET, 
-                        XCB_SHAPE_SK_INPUT, XCB_CLIP_ORDERING_UNSORTED, 
+   xcb_shape_rectangles(_ecore_xcb_conn, XCB_SHAPE_SO_SET,
+                        XCB_SHAPE_SK_INPUT, XCB_CLIP_ORDERING_UNSORTED,
                         win, 0, 0, 1, &rect);
 //   ecore_x_flush();
 #else
@@ -603,14 +650,17 @@ ecore_x_window_shape_input_rectangle_set(Ecore_X_Window win, int x, int y, int w
 #endif
 }
 
-EAPI void 
-ecore_x_window_shape_input_window_set_xy(Ecore_X_Window win, Ecore_X_Window shape_win, int x, int y) 
+EAPI void
+ecore_x_window_shape_input_window_set_xy(Ecore_X_Window win,
+                                         Ecore_X_Window shape_win,
+                                         int            x,
+                                         int            y)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    CHECK_XCB_CONN;
 
 #ifdef ECORE_XCB_SHAPE
-   xcb_shape_combine(_ecore_xcb_conn, XCB_SHAPE_SO_SET, XCB_SHAPE_SK_INPUT, 
+   xcb_shape_combine(_ecore_xcb_conn, XCB_SHAPE_SO_SET, XCB_SHAPE_SK_INPUT,
                      XCB_SHAPE_SK_INPUT, win, x, y, shape_win);
 //   ecore_x_flush();
 #else
@@ -622,14 +672,17 @@ ecore_x_window_shape_input_window_set_xy(Ecore_X_Window win, Ecore_X_Window shap
 #endif
 }
 
-EAPI void 
-ecore_x_window_shape_input_window_add_xy(Ecore_X_Window win, Ecore_X_Window shape_win, int x, int y) 
+EAPI void
+ecore_x_window_shape_input_window_add_xy(Ecore_X_Window win,
+                                         Ecore_X_Window shape_win,
+                                         int            x,
+                                         int            y)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    CHECK_XCB_CONN;
 
 #ifdef ECORE_XCB_SHAPE
-   xcb_shape_combine(_ecore_xcb_conn, XCB_SHAPE_SO_UNION, XCB_SHAPE_SK_INPUT, 
+   xcb_shape_combine(_ecore_xcb_conn, XCB_SHAPE_SO_UNION, XCB_SHAPE_SK_INPUT,
                      XCB_SHAPE_SK_INPUT, win, x, y, shape_win);
 //   ecore_x_flush();
 #else
@@ -641,14 +694,15 @@ ecore_x_window_shape_input_window_add_xy(Ecore_X_Window win, Ecore_X_Window shap
 #endif
 }
 
-EAPI void 
-ecore_x_window_shape_input_window_set(Ecore_X_Window win, Ecore_X_Window shape_win) 
+EAPI void
+ecore_x_window_shape_input_window_set(Ecore_X_Window win,
+                                      Ecore_X_Window shape_win)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    CHECK_XCB_CONN;
 
 #ifdef ECORE_XCB_SHAPE
-   xcb_shape_combine(_ecore_xcb_conn, XCB_SHAPE_SO_SET, XCB_SHAPE_SK_INPUT, 
+   xcb_shape_combine(_ecore_xcb_conn, XCB_SHAPE_SO_SET, XCB_SHAPE_SK_INPUT,
                      XCB_SHAPE_SK_INPUT, win, 0, 0, shape_win);
 //   ecore_x_flush();
 #else
@@ -658,8 +712,12 @@ ecore_x_window_shape_input_window_set(Ecore_X_Window win, Ecore_X_Window shape_w
 #endif
 }
 
-EAPI void 
-ecore_x_window_shape_input_rectangle_clip(Ecore_X_Window win, int x, int y, int w, int h) 
+EAPI void
+ecore_x_window_shape_input_rectangle_clip(Ecore_X_Window win,
+                                          int            x,
+                                          int            y,
+                                          int            w,
+                                          int            h)
 {
 #ifdef ECORE_XCB_SHAPE
    xcb_rectangle_t rect;
@@ -673,8 +731,8 @@ ecore_x_window_shape_input_rectangle_clip(Ecore_X_Window win, int x, int y, int 
    rect.y = y;
    rect.width = w;
    rect.height = h;
-   xcb_shape_rectangles(_ecore_xcb_conn, XCB_SHAPE_SO_INTERSECT, 
-                        XCB_SHAPE_SK_INPUT, XCB_CLIP_ORDERING_UNSORTED, 
+   xcb_shape_rectangles(_ecore_xcb_conn, XCB_SHAPE_SO_INTERSECT,
+                        XCB_SHAPE_SK_INPUT, XCB_CLIP_ORDERING_UNSORTED,
                         win, 0, 0, 1, &rect);
 //   ecore_x_flush();
 #else
@@ -687,8 +745,10 @@ ecore_x_window_shape_input_rectangle_clip(Ecore_X_Window win, int x, int y, int 
 #endif
 }
 
-EAPI void 
-ecore_x_window_shape_input_rectangles_add(Ecore_X_Window win, Ecore_X_Rectangle *rects, int num) 
+EAPI void
+ecore_x_window_shape_input_rectangles_add(Ecore_X_Window     win,
+                                          Ecore_X_Rectangle *rects,
+                                          int                num)
 {
 #ifdef ECORE_XCB_SHAPE
    xcb_rectangle_t *rect = NULL;
@@ -698,14 +758,14 @@ ecore_x_window_shape_input_rectangles_add(Ecore_X_Window win, Ecore_X_Rectangle 
    CHECK_XCB_CONN;
 
 #ifdef ECORE_XCB_SHAPE
-   if (num > 0) 
+   if (num > 0)
      {
         int i = 0;
 
         if (!(rect = malloc(sizeof(xcb_rectangle_t) * num)))
           return;
 
-        for (i = 0; i < num; i++) 
+        for (i = 0; i < num; i++)
           {
              rect[i].x = rects[i].x;
              rect[i].y = rects[i].y;
@@ -714,8 +774,8 @@ ecore_x_window_shape_input_rectangles_add(Ecore_X_Window win, Ecore_X_Rectangle 
           }
      }
 
-   xcb_shape_rectangles(_ecore_xcb_conn, XCB_SHAPE_SO_UNION, 
-                        XCB_SHAPE_SK_INPUT, XCB_CLIP_ORDERING_UNSORTED, 
+   xcb_shape_rectangles(_ecore_xcb_conn, XCB_SHAPE_SO_UNION,
+                        XCB_SHAPE_SK_INPUT, XCB_CLIP_ORDERING_UNSORTED,
                         win, 0, 0, num, (xcb_rectangle_t *)&rect);
 
    if (rect) free(rect);
@@ -727,3 +787,4 @@ ecore_x_window_shape_input_rectangles_add(Ecore_X_Window win, Ecore_X_Rectangle 
    rects = NULL;
 #endif
 }
+

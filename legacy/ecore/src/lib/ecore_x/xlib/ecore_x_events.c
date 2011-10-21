@@ -25,13 +25,13 @@
 typedef struct _Ecore_X_Mouse_Down_Info
 {
    EINA_INLIST;
-   int dev;
-   Window last_win;
-   Window last_last_win;
-   Window last_event_win;
-   Window last_last_event_win;
-   Time last_time;
-   Time last_last_time;
+   int       dev;
+   Window    last_win;
+   Window    last_last_win;
+   Window    last_event_win;
+   Window    last_last_event_win;
+   Time      last_time;
+   Time      last_last_time;
    Eina_Bool did_double : 1;
    Eina_Bool did_triple : 1;
 } Ecore_X_Mouse_Down_Info;
@@ -57,7 +57,7 @@ _ecore_x_mouse_down_info_clear(void)
 void
 _ecore_x_events_init(void)
 {
-   //Actually, Nothing to do. 
+   //Actually, Nothing to do.
 }
 
 void
@@ -76,18 +76,19 @@ _ecore_x_mouse_down_info_get(int dev)
    EINA_INLIST_FOREACH(l, info)
      if (info->dev == dev) return info;
 
-   //New Device. Add it. 
+   //New Device. Add it.
    info = calloc(1, sizeof(Ecore_X_Mouse_Down_Info));
    if (!info) return NULL;
 
    info->dev = dev;
-   l = eina_inlist_append(l, (Eina_Inlist*) info);
+   l = eina_inlist_append(l, (Eina_Inlist *)info);
    _ecore_x_mouse_down_info_list = l;
    return info;
 }
 
 static void
-_ecore_x_event_free_mouse_move(void *data __UNUSED__, void *ev)
+_ecore_x_event_free_mouse_move(void *data __UNUSED__,
+                               void *ev)
 {
    Ecore_Event_Mouse_Move *e;
 
@@ -102,14 +103,15 @@ _ecore_x_event_free_mouse_move(void *data __UNUSED__, void *ev)
 } /* _ecore_x_event_free_mouse_move */
 
 EAPI void
-ecore_x_event_mask_set(Ecore_X_Window w, Ecore_X_Event_Mask mask)
+ecore_x_event_mask_set(Ecore_X_Window     w,
+                       Ecore_X_Event_Mask mask)
 {
    XWindowAttributes attr;
    XSetWindowAttributes s_attr;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    if (!w)
-      w = DefaultRootWindow(_ecore_x_disp);
+     w = DefaultRootWindow(_ecore_x_disp);
 
    memset(&attr, 0, sizeof(XWindowAttributes));
    XGetWindowAttributes(_ecore_x_disp, w, &attr);
@@ -118,14 +120,15 @@ ecore_x_event_mask_set(Ecore_X_Window w, Ecore_X_Event_Mask mask)
 } /* ecore_x_event_mask_set */
 
 EAPI void
-ecore_x_event_mask_unset(Ecore_X_Window w, Ecore_X_Event_Mask mask)
+ecore_x_event_mask_unset(Ecore_X_Window     w,
+                         Ecore_X_Event_Mask mask)
 {
    XWindowAttributes attr;
    XSetWindowAttributes s_attr;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    if (!w)
-      w = DefaultRootWindow(_ecore_x_disp);
+     w = DefaultRootWindow(_ecore_x_disp);
 
    memset(&attr, 0, sizeof(XWindowAttributes));
    XGetWindowAttributes(_ecore_x_disp, w, &attr);
@@ -134,20 +137,22 @@ ecore_x_event_mask_unset(Ecore_X_Window w, Ecore_X_Event_Mask mask)
 } /* ecore_x_event_mask_unset */
 
 static void
-_ecore_x_event_free_xdnd_enter(void *data __UNUSED__, void *ev)
+_ecore_x_event_free_xdnd_enter(void *data __UNUSED__,
+                               void *ev)
 {
    Ecore_X_Event_Xdnd_Enter *e;
    int i;
 
    e = ev;
    for (i = 0; i < e->num_types; i++)
-      XFree(e->types[i]);
+     XFree(e->types[i]);
    free(e->types);
    free(e);
 } /* _ecore_x_event_free_xdnd_enter */
 
 static void
-_ecore_x_event_free_selection_notify(void *data __UNUSED__, void *ev)
+_ecore_x_event_free_selection_notify(void *data __UNUSED__,
+                                     void *ev)
 {
    Ecore_X_Event_Selection_Notify *e;
    Ecore_X_Selection_Data *sel;
@@ -155,7 +160,7 @@ _ecore_x_event_free_selection_notify(void *data __UNUSED__, void *ev)
    e = ev;
    sel = e->data;
    if (sel->free)
-      sel->free(sel);
+     sel->free(sel);
 
    free(e->target);
    free(e);
@@ -167,28 +172,28 @@ _ecore_x_event_modifiers(unsigned int state)
    unsigned int modifiers = 0;
 
    if (state & ECORE_X_MODIFIER_SHIFT)
-      modifiers |= ECORE_EVENT_MODIFIER_SHIFT;
+     modifiers |= ECORE_EVENT_MODIFIER_SHIFT;
 
    if (state & ECORE_X_MODIFIER_CTRL)
-      modifiers |= ECORE_EVENT_MODIFIER_CTRL;
+     modifiers |= ECORE_EVENT_MODIFIER_CTRL;
 
    if (state & ECORE_X_MODIFIER_ALT)
-      modifiers |= ECORE_EVENT_MODIFIER_ALT;
+     modifiers |= ECORE_EVENT_MODIFIER_ALT;
 
    if (state & ECORE_X_MODIFIER_WIN)
-      modifiers |= ECORE_EVENT_MODIFIER_WIN;
+     modifiers |= ECORE_EVENT_MODIFIER_WIN;
 
    if (state & ECORE_X_LOCK_SCROLL)
-      modifiers |= ECORE_EVENT_LOCK_SCROLL;
+     modifiers |= ECORE_EVENT_LOCK_SCROLL;
 
    if (state & ECORE_X_LOCK_NUM)
-      modifiers |= ECORE_EVENT_LOCK_NUM;
+     modifiers |= ECORE_EVENT_LOCK_NUM;
 
    if (state & ECORE_X_LOCK_CAPS)
-      modifiers |= ECORE_EVENT_LOCK_CAPS;
+     modifiers |= ECORE_EVENT_LOCK_CAPS;
 
    if (state & ECORE_X_LOCK_SHIFT)
-      modifiers |= ECORE_EVENT_LOCK_SHIFT;
+     modifiers |= ECORE_EVENT_LOCK_SHIFT;
 
    return modifiers;
 } /* _ecore_x_event_modifiers */
@@ -219,7 +224,7 @@ _ecore_mouse_move(unsigned int timestamp,
 
    e = malloc(sizeof(Ecore_Event_Mouse_Move));
    if (!e)
-      return;
+     return;
 
    e->window = window;
    e->root_window = root_win;
@@ -258,7 +263,8 @@ _ecore_mouse_move(unsigned int timestamp,
 } /* _ecore_mouse_move */
 
 static void
-_ecore_key_press(int event, XKeyEvent *xevent)
+_ecore_key_press(int        event,
+                 XKeyEvent *xevent)
 {
    Ecore_Event_Key *e;
    char *compose = NULL;
@@ -292,22 +298,22 @@ _ecore_key_press(int event, XKeyEvent *xevent)
                        &sym,
                        &status);
    if (val > 0)
-       {
-          compose_buffer[val] = 0;
-          compose = eina_str_convert(nl_langinfo(CODESET), "UTF-8",
-                                     compose_buffer);
-          tmp = compose;
-       }
+     {
+        compose_buffer[val] = 0;
+        compose = eina_str_convert(nl_langinfo(CODESET), "UTF-8",
+                                   compose_buffer);
+        tmp = compose;
+     }
 
    key = XKeysymToString(sym);
    if (!key)
-      key = keyname;
+     key = keyname;
 
    e =
-      malloc(sizeof(Ecore_Event_Key) + strlen(key) + strlen(keyname) +
-             (compose ? strlen(compose) : 0) + 3);
+     malloc(sizeof(Ecore_Event_Key) + strlen(key) + strlen(keyname) +
+            (compose ? strlen(compose) : 0) + 3);
    if (!e)
-      goto on_error;
+     goto on_error;
 
    e->keyname = (char *)(e + 1);
    e->key = e->keyname + strlen(keyname) + 1;
@@ -315,9 +321,9 @@ _ecore_key_press(int event, XKeyEvent *xevent)
    e->string = e->compose;
 
    strcpy((char *)e->keyname, keyname);
-   strcpy((char *)e->key,     key);
+   strcpy((char *)e->key, key);
    if (compose)
-      strcpy((char *)e->compose, compose);
+     strcpy((char *)e->compose, compose);
 
    e->modifiers = _ecore_x_event_modifiers(xevent->state);
 
@@ -333,7 +339,7 @@ _ecore_key_press(int event, XKeyEvent *xevent)
 
 on_error:
    if (tmp)
-      free(tmp);
+     free(tmp);
 } /* _ecore_key_press */
 
 Ecore_Event_Mouse_Button *
@@ -363,7 +369,7 @@ _ecore_mouse_button(int          event,
 
    e = malloc(sizeof(Ecore_Event_Mouse_Button));
    if (!e)
-      return NULL;
+     return NULL;
 
    e->window = window;
    e->root_window = root_win;
@@ -398,37 +404,37 @@ _ecore_mouse_button(int          event,
           {
              if (event == ECORE_EVENT_MOUSE_BUTTON_DOWN)
                {
-                  //Check Double Clicked
-                  if (((int)(timestamp - down_info->last_time) <=
-                       (int)(1000 * _ecore_x_double_click_time)) &&
-                      (window == down_info->last_win) &&
-                      (event_window == down_info->last_event_win))
-                    {
-                       e->double_click = 1;
-                       down_info->did_double = EINA_TRUE;
-                    }
-                  else
-                    {
-                       down_info->did_double = EINA_FALSE;
-                       down_info->did_triple = EINA_FALSE;
-                    }
+     //Check Double Clicked
+                    if (((int)(timestamp - down_info->last_time) <=
+                         (int)(1000 * _ecore_x_double_click_time)) &&
+                        (window == down_info->last_win) &&
+                        (event_window == down_info->last_event_win))
+                      {
+                         e->double_click = 1;
+                         down_info->did_double = EINA_TRUE;
+                      }
+                    else
+                      {
+                         down_info->did_double = EINA_FALSE;
+                         down_info->did_triple = EINA_FALSE;
+                      }
 
-                  //Check Triple Clicked
-                  if (((int)(timestamp - down_info->last_last_time) <=
-                       (int)(2 * 1000 * _ecore_x_double_click_time)) &&
-                      (window == down_info->last_win) &&
-                      (window == down_info->last_last_win) &&
-                      (event_window == down_info->last_event_win) &&
-                      (event_window == down_info->last_last_event_win)
-                     )
-                    {
-                       e->triple_click = 1;
-                       down_info->did_triple = EINA_TRUE;
-                    }
-                  else
-                    {
-                       down_info->did_triple = EINA_FALSE;
-                    }
+     //Check Triple Clicked
+                    if (((int)(timestamp - down_info->last_last_time) <=
+                         (int)(2 * 1000 * _ecore_x_double_click_time)) &&
+                        (window == down_info->last_win) &&
+                        (window == down_info->last_last_win) &&
+                        (event_window == down_info->last_event_win) &&
+                        (event_window == down_info->last_last_event_win)
+                        )
+                      {
+                         e->triple_click = 1;
+                         down_info->did_triple = EINA_TRUE;
+                      }
+                    else
+                      {
+                         down_info->did_triple = EINA_FALSE;
+                      }
                }
              else
                {
@@ -444,7 +450,7 @@ _ecore_mouse_button(int          event,
     * no use. The variable is also commented out above. This code block is
     * the only place that this variable is used, and appears to serve no
     * purpose. - dh
-   if (event == ECORE_EVENT_MOUSE_BUTTON_DOWN
+      if (event == ECORE_EVENT_MOUSE_BUTTON_DOWN
        && !e->double_click
        && !e->triple_click)
       _ecore_x_mouse_up_count = 0;
@@ -517,7 +523,7 @@ _ecore_x_event_handle_button_press(XEvent *xevent)
 
         e = malloc(sizeof(Ecore_Event_Mouse_Wheel));
         if (!e)
-           return;
+          return;
 
         e->timestamp = xevent->xbutton.time;
         e->modifiers = _ecore_x_event_modifiers(xevent->xbutton.state);
@@ -540,9 +546,9 @@ _ecore_x_event_handle_button_press(XEvent *xevent)
         e->root.y = xevent->xbutton.y_root;
 
         if (xevent->xbutton.subwindow)
-           e->window = xevent->xbutton.subwindow;
+          e->window = xevent->xbutton.subwindow;
         else
-           e->window = xevent->xbutton.window;
+          e->window = xevent->xbutton.window;
 
         e->event_window = xevent->xbutton.window;
         e->same_screen = xevent->xbutton.same_screen;
@@ -562,17 +568,17 @@ _ecore_x_event_handle_button_press(XEvent *xevent)
                   Eina_Bool replay = EINA_FALSE;
 
                   if (_ecore_window_grab_replay_func)
-                     replay = _ecore_window_grab_replay_func(
-                           _ecore_window_grab_replay_data,
-                           ECORE_EVENT_MOUSE_WHEEL,
-                           e);
+                    replay = _ecore_window_grab_replay_func(
+                        _ecore_window_grab_replay_data,
+                        ECORE_EVENT_MOUSE_WHEEL,
+                        e);
 
                   if (replay)
-                     XAllowEvents(xevent->xbutton.display,
-                                  ReplayPointer, xevent->xbutton.time);
+                    XAllowEvents(xevent->xbutton.display,
+                                 ReplayPointer, xevent->xbutton.time);
                   else
-                     XAllowEvents(xevent->xbutton.display,
-                                  AsyncPointer, xevent->xbutton.time);
+                    XAllowEvents(xevent->xbutton.display,
+                                 AsyncPointer, xevent->xbutton.time);
 
                   break;
                }
@@ -601,8 +607,8 @@ _ecore_x_event_handle_button_press(XEvent *xevent)
            int window;
 
            window =
-              (xevent->xbutton.subwindow ? xevent->xbutton.subwindow : xevent->
-               xbutton.window);
+             (xevent->xbutton.subwindow ? xevent->xbutton.subwindow : xevent->
+              xbutton.window);
            event_window = xevent->xbutton.window;
 
            e = _ecore_mouse_button(ECORE_EVENT_MOUSE_BUTTON_DOWN,
@@ -629,29 +635,29 @@ _ecore_x_event_handle_button_press(XEvent *xevent)
                                    xevent->xbutton.x_root,
                                    xevent->xbutton.y_root);
            if (e)
-              for (i = 0; i < _ecore_window_grabs_num; i++)
-                {
-                   if ((_ecore_window_grabs[i] == xevent->xbutton.window) ||
-                       (_ecore_window_grabs[i] == xevent->xbutton.subwindow))
-                     {
-                        Eina_Bool replay = EINA_FALSE;
+             for (i = 0; i < _ecore_window_grabs_num; i++)
+               {
+                  if ((_ecore_window_grabs[i] == xevent->xbutton.window) ||
+                      (_ecore_window_grabs[i] == xevent->xbutton.subwindow))
+                    {
+                       Eina_Bool replay = EINA_FALSE;
 
-                        if (_ecore_window_grab_replay_func)
-                           replay = _ecore_window_grab_replay_func(
-                                 _ecore_window_grab_replay_data,
-                                 ECORE_EVENT_MOUSE_BUTTON_DOWN,
-                                 e);
+                       if (_ecore_window_grab_replay_func)
+                         replay = _ecore_window_grab_replay_func(
+                             _ecore_window_grab_replay_data,
+                             ECORE_EVENT_MOUSE_BUTTON_DOWN,
+                             e);
 
-                        if (replay)
-                           XAllowEvents(xevent->xbutton.display,
-                                        ReplayPointer, xevent->xbutton.time);
-                        else
-                           XAllowEvents(xevent->xbutton.display,
-                                        AsyncPointer, xevent->xbutton.time);
+                       if (replay)
+                         XAllowEvents(xevent->xbutton.display,
+                                      ReplayPointer, xevent->xbutton.time);
+                       else
+                         XAllowEvents(xevent->xbutton.display,
+                                      AsyncPointer, xevent->xbutton.time);
 
-                        break;
-                     }
-                }
+                       break;
+                    }
+               }
         }
      }
 } /* _ecore_x_event_handle_button_press */
@@ -706,26 +712,26 @@ _ecore_x_event_handle_motion_notify(XEvent *xevent)
         _ecore_x_last_event_mouse_move_event = NULL;
      }
  */
-   _ecore_mouse_move(xevent->xmotion.time, xevent->xmotion.state,
-                     xevent->xmotion.x, xevent->xmotion.y,
-                     xevent->xmotion.x_root, xevent->xmotion.y_root,
-                     xevent->xmotion.window,
-                     (xevent->xmotion.subwindow ? xevent->xmotion.subwindow :
-                      xevent->xmotion.window),
-                     xevent->xmotion.root,
-                     xevent->xmotion.same_screen,
-                     0, 1, 1,
-                     1.0, // pressure
-                     0.0, // angle
-                     xevent->xmotion.x, xevent->xmotion.y,
-                     xevent->xmotion.x_root, xevent->xmotion.y_root);
+     _ecore_mouse_move(xevent->xmotion.time, xevent->xmotion.state,
+                       xevent->xmotion.x, xevent->xmotion.y,
+                       xevent->xmotion.x_root, xevent->xmotion.y_root,
+                       xevent->xmotion.window,
+                       (xevent->xmotion.subwindow ? xevent->xmotion.subwindow :
+                        xevent->xmotion.window),
+                       xevent->xmotion.root,
+                       xevent->xmotion.same_screen,
+                       0, 1, 1,
+                       1.0, // pressure
+                       0.0, // angle
+                       xevent->xmotion.x, xevent->xmotion.y,
+                       xevent->xmotion.x_root, xevent->xmotion.y_root);
 
-   _ecore_x_last_event_mouse_move = 1;
+     _ecore_x_last_event_mouse_move = 1;
 
-   /* Xdnd handling */
-   _ecore_x_dnd_drag(xevent->xmotion.root,
-                     xevent->xmotion.x_root,
-                     xevent->xmotion.y_root);
+     /* Xdnd handling */
+     _ecore_x_dnd_drag(xevent->xmotion.root,
+                       xevent->xmotion.x_root,
+                       xevent->xmotion.y_root);
 } /* _ecore_x_event_handle_motion_notify */
 
 void
@@ -752,7 +758,7 @@ _ecore_x_event_handle_enter_notify(XEvent *xevent)
 
       e = calloc(1, sizeof(Ecore_X_Event_Mouse_In));
       if (!e)
-         return;
+        return;
 
       e->modifiers = _ecore_x_event_modifiers(xevent->xcrossing.state);
       e->x = xevent->xcrossing.x;
@@ -760,31 +766,31 @@ _ecore_x_event_handle_enter_notify(XEvent *xevent)
       e->root.x = xevent->xcrossing.x_root;
       e->root.y = xevent->xcrossing.y_root;
       if (xevent->xcrossing.subwindow)
-         e->win = xevent->xcrossing.subwindow;
+        e->win = xevent->xcrossing.subwindow;
       else
-         e->win = xevent->xcrossing.window;
+        e->win = xevent->xcrossing.window;
 
       e->same_screen = xevent->xcrossing.same_screen;
       e->root_win = xevent->xcrossing.root;
       e->event_win = xevent->xcrossing.window;
 
       if (xevent->xcrossing.mode == NotifyNormal)
-         e->mode = ECORE_X_EVENT_MODE_NORMAL;
+        e->mode = ECORE_X_EVENT_MODE_NORMAL;
       else if (xevent->xcrossing.mode == NotifyGrab)
-         e->mode = ECORE_X_EVENT_MODE_GRAB;
+        e->mode = ECORE_X_EVENT_MODE_GRAB;
       else if (xevent->xcrossing.mode == NotifyUngrab)
-         e->mode = ECORE_X_EVENT_MODE_UNGRAB;
+        e->mode = ECORE_X_EVENT_MODE_UNGRAB;
 
       if (xevent->xcrossing.detail == NotifyAncestor)
-         e->detail = ECORE_X_EVENT_DETAIL_ANCESTOR;
+        e->detail = ECORE_X_EVENT_DETAIL_ANCESTOR;
       else if (xevent->xcrossing.detail == NotifyVirtual)
-         e->detail = ECORE_X_EVENT_DETAIL_VIRTUAL;
+        e->detail = ECORE_X_EVENT_DETAIL_VIRTUAL;
       else if (xevent->xcrossing.detail == NotifyInferior)
-         e->detail = ECORE_X_EVENT_DETAIL_INFERIOR;
+        e->detail = ECORE_X_EVENT_DETAIL_INFERIOR;
       else if (xevent->xcrossing.detail == NotifyNonlinear)
-         e->detail = ECORE_X_EVENT_DETAIL_NON_LINEAR;
+        e->detail = ECORE_X_EVENT_DETAIL_NON_LINEAR;
       else if (xevent->xcrossing.detail == NotifyNonlinearVirtual)
-         e->detail = ECORE_X_EVENT_DETAIL_NON_LINEAR_VIRTUAL;
+        e->detail = ECORE_X_EVENT_DETAIL_NON_LINEAR_VIRTUAL;
 
       e->time = xevent->xcrossing.time;
       _ecore_x_event_last_time = e->time;
@@ -816,7 +822,7 @@ _ecore_x_event_handle_leave_notify(XEvent *xevent)
 
       e = calloc(1, sizeof(Ecore_X_Event_Mouse_Out));
       if (!e)
-         return;
+        return;
 
       e->modifiers = _ecore_x_event_modifiers(xevent->xcrossing.state);
       e->x = xevent->xcrossing.x;
@@ -824,31 +830,31 @@ _ecore_x_event_handle_leave_notify(XEvent *xevent)
       e->root.x = xevent->xcrossing.x_root;
       e->root.y = xevent->xcrossing.y_root;
       if (xevent->xcrossing.subwindow)
-         e->win = xevent->xcrossing.subwindow;
+        e->win = xevent->xcrossing.subwindow;
       else
-         e->win = xevent->xcrossing.window;
+        e->win = xevent->xcrossing.window;
 
       e->same_screen = xevent->xcrossing.same_screen;
       e->root_win = xevent->xcrossing.root;
       e->event_win = xevent->xcrossing.window;
 
       if (xevent->xcrossing.mode == NotifyNormal)
-         e->mode = ECORE_X_EVENT_MODE_NORMAL;
+        e->mode = ECORE_X_EVENT_MODE_NORMAL;
       else if (xevent->xcrossing.mode == NotifyGrab)
-         e->mode = ECORE_X_EVENT_MODE_GRAB;
+        e->mode = ECORE_X_EVENT_MODE_GRAB;
       else if (xevent->xcrossing.mode == NotifyUngrab)
-         e->mode = ECORE_X_EVENT_MODE_UNGRAB;
+        e->mode = ECORE_X_EVENT_MODE_UNGRAB;
 
       if (xevent->xcrossing.detail == NotifyAncestor)
-         e->detail = ECORE_X_EVENT_DETAIL_ANCESTOR;
+        e->detail = ECORE_X_EVENT_DETAIL_ANCESTOR;
       else if (xevent->xcrossing.detail == NotifyVirtual)
-         e->detail = ECORE_X_EVENT_DETAIL_VIRTUAL;
+        e->detail = ECORE_X_EVENT_DETAIL_VIRTUAL;
       else if (xevent->xcrossing.detail == NotifyInferior)
-         e->detail = ECORE_X_EVENT_DETAIL_INFERIOR;
+        e->detail = ECORE_X_EVENT_DETAIL_INFERIOR;
       else if (xevent->xcrossing.detail == NotifyNonlinear)
-         e->detail = ECORE_X_EVENT_DETAIL_NON_LINEAR;
+        e->detail = ECORE_X_EVENT_DETAIL_NON_LINEAR;
       else if (xevent->xcrossing.detail == NotifyNonlinearVirtual)
-         e->detail = ECORE_X_EVENT_DETAIL_NON_LINEAR_VIRTUAL;
+        e->detail = ECORE_X_EVENT_DETAIL_NON_LINEAR_VIRTUAL;
 
       e->time = xevent->xcrossing.time;
       _ecore_x_event_last_time = e->time;
@@ -868,35 +874,35 @@ _ecore_x_event_handle_focus_in(XEvent *xevent)
 
    e = calloc(1, sizeof(Ecore_X_Event_Window_Focus_In));
    if (!e)
-      return;
+     return;
 
    e->win = xevent->xfocus.window;
 
    if (xevent->xfocus.mode == NotifyNormal)
-      e->mode = ECORE_X_EVENT_MODE_NORMAL;
+     e->mode = ECORE_X_EVENT_MODE_NORMAL;
    else if (xevent->xfocus.mode == NotifyWhileGrabbed)
-      e->mode = ECORE_X_EVENT_MODE_WHILE_GRABBED;
+     e->mode = ECORE_X_EVENT_MODE_WHILE_GRABBED;
    else if (xevent->xfocus.mode == NotifyGrab)
-      e->mode = ECORE_X_EVENT_MODE_GRAB;
+     e->mode = ECORE_X_EVENT_MODE_GRAB;
    else if (xevent->xfocus.mode == NotifyUngrab)
-      e->mode = ECORE_X_EVENT_MODE_UNGRAB;
+     e->mode = ECORE_X_EVENT_MODE_UNGRAB;
 
    if (xevent->xfocus.detail == NotifyAncestor)
-      e->detail = ECORE_X_EVENT_DETAIL_ANCESTOR;
+     e->detail = ECORE_X_EVENT_DETAIL_ANCESTOR;
    else if (xevent->xfocus.detail == NotifyVirtual)
-      e->detail = ECORE_X_EVENT_DETAIL_VIRTUAL;
+     e->detail = ECORE_X_EVENT_DETAIL_VIRTUAL;
    else if (xevent->xfocus.detail == NotifyInferior)
-      e->detail = ECORE_X_EVENT_DETAIL_INFERIOR;
+     e->detail = ECORE_X_EVENT_DETAIL_INFERIOR;
    else if (xevent->xfocus.detail == NotifyNonlinear)
-      e->detail = ECORE_X_EVENT_DETAIL_NON_LINEAR;
+     e->detail = ECORE_X_EVENT_DETAIL_NON_LINEAR;
    else if (xevent->xfocus.detail == NotifyNonlinearVirtual)
-      e->detail = ECORE_X_EVENT_DETAIL_NON_LINEAR_VIRTUAL;
+     e->detail = ECORE_X_EVENT_DETAIL_NON_LINEAR_VIRTUAL;
    else if (xevent->xfocus.detail == NotifyPointer)
-      e->detail = ECORE_X_EVENT_DETAIL_POINTER;
+     e->detail = ECORE_X_EVENT_DETAIL_POINTER;
    else if (xevent->xfocus.detail == NotifyPointerRoot)
-      e->detail = ECORE_X_EVENT_DETAIL_POINTER_ROOT;
+     e->detail = ECORE_X_EVENT_DETAIL_POINTER_ROOT;
    else if (xevent->xfocus.detail == NotifyDetailNone)
-      e->detail = ECORE_X_EVENT_DETAIL_DETAIL_NONE;
+     e->detail = ECORE_X_EVENT_DETAIL_DETAIL_NONE;
 
    e->time = _ecore_x_event_last_time;
    _ecore_x_event_last_time = e->time;
@@ -912,35 +918,35 @@ _ecore_x_event_handle_focus_out(XEvent *xevent)
 
    e = calloc(1, sizeof(Ecore_X_Event_Window_Focus_Out));
    if (!e)
-      return;
+     return;
 
    e->win = xevent->xfocus.window;
 
    if (xevent->xfocus.mode == NotifyNormal)
-      e->mode = ECORE_X_EVENT_MODE_NORMAL;
+     e->mode = ECORE_X_EVENT_MODE_NORMAL;
    else if (xevent->xfocus.mode == NotifyWhileGrabbed)
-      e->mode = ECORE_X_EVENT_MODE_WHILE_GRABBED;
+     e->mode = ECORE_X_EVENT_MODE_WHILE_GRABBED;
    else if (xevent->xfocus.mode == NotifyGrab)
-      e->mode = ECORE_X_EVENT_MODE_GRAB;
+     e->mode = ECORE_X_EVENT_MODE_GRAB;
    else if (xevent->xfocus.mode == NotifyUngrab)
-      e->mode = ECORE_X_EVENT_MODE_UNGRAB;
+     e->mode = ECORE_X_EVENT_MODE_UNGRAB;
 
    if (xevent->xfocus.detail == NotifyAncestor)
-      e->detail = ECORE_X_EVENT_DETAIL_ANCESTOR;
+     e->detail = ECORE_X_EVENT_DETAIL_ANCESTOR;
    else if (xevent->xfocus.detail == NotifyVirtual)
-      e->detail = ECORE_X_EVENT_DETAIL_VIRTUAL;
+     e->detail = ECORE_X_EVENT_DETAIL_VIRTUAL;
    else if (xevent->xfocus.detail == NotifyInferior)
-      e->detail = ECORE_X_EVENT_DETAIL_INFERIOR;
+     e->detail = ECORE_X_EVENT_DETAIL_INFERIOR;
    else if (xevent->xfocus.detail == NotifyNonlinear)
-      e->detail = ECORE_X_EVENT_DETAIL_NON_LINEAR;
+     e->detail = ECORE_X_EVENT_DETAIL_NON_LINEAR;
    else if (xevent->xfocus.detail == NotifyNonlinearVirtual)
-      e->detail = ECORE_X_EVENT_DETAIL_NON_LINEAR_VIRTUAL;
+     e->detail = ECORE_X_EVENT_DETAIL_NON_LINEAR_VIRTUAL;
    else if (xevent->xfocus.detail == NotifyPointer)
-      e->detail = ECORE_X_EVENT_DETAIL_POINTER;
+     e->detail = ECORE_X_EVENT_DETAIL_POINTER;
    else if (xevent->xfocus.detail == NotifyPointerRoot)
-      e->detail = ECORE_X_EVENT_DETAIL_POINTER_ROOT;
+     e->detail = ECORE_X_EVENT_DETAIL_POINTER_ROOT;
    else if (xevent->xfocus.detail == NotifyDetailNone)
-      e->detail = ECORE_X_EVENT_DETAIL_DETAIL_NONE;
+     e->detail = ECORE_X_EVENT_DETAIL_DETAIL_NONE;
 
    e->time = _ecore_x_event_last_time;
    _ecore_x_event_last_time = e->time;
@@ -962,7 +968,7 @@ _ecore_x_event_handle_expose(XEvent *xevent)
    _ecore_x_last_event_mouse_move = 0;
    e = calloc(1, sizeof(Ecore_X_Event_Window_Damage));
    if (!e)
-      return;
+     return;
 
    e->win = xevent->xexpose.window;
    e->time = _ecore_x_event_last_time;
@@ -982,7 +988,7 @@ _ecore_x_event_handle_graphics_expose(XEvent *xevent)
    _ecore_x_last_event_mouse_move = 0;
    e = calloc(1, sizeof(Ecore_X_Event_Window_Damage));
    if (!e)
-      return;
+     return;
 
    e->win = xevent->xgraphicsexpose.drawable;
    e->time = _ecore_x_event_last_time;
@@ -1004,14 +1010,14 @@ _ecore_x_event_handle_visibility_notify(XEvent *xevent)
 
       e = calloc(1, sizeof(Ecore_X_Event_Window_Visibility_Change));
       if (!e)
-         return;
+        return;
 
       e->win = xevent->xvisibility.window;
       e->time = _ecore_x_event_last_time;
       if (xevent->xvisibility.state == VisibilityFullyObscured)
-         e->fully_obscured = 1;
+        e->fully_obscured = 1;
       else
-         e->fully_obscured = 0;
+        e->fully_obscured = 0;
 
       ecore_event_add(ECORE_X_EVENT_WINDOW_VISIBILITY_CHANGE, e, NULL, NULL);
    }
@@ -1025,14 +1031,14 @@ _ecore_x_event_handle_create_notify(XEvent *xevent)
    _ecore_x_last_event_mouse_move = 0;
    e = calloc(1, sizeof(Ecore_X_Event_Window_Create));
    if (!e)
-      return;
+     return;
 
    e->win = xevent->xcreatewindow.window;
    e->parent = xevent->xcreatewindow.parent;
    if (xevent->xcreatewindow.override_redirect)
-      e->override = 1;
+     e->override = 1;
    else
-      e->override = 0;
+     e->override = 0;
 
    e->x = xevent->xcreatewindow.x;
    e->y = xevent->xcreatewindow.y;
@@ -1051,13 +1057,13 @@ _ecore_x_event_handle_destroy_notify(XEvent *xevent)
    _ecore_x_last_event_mouse_move = 0;
    e = calloc(1, sizeof(Ecore_X_Event_Window_Destroy));
    if (!e)
-      return;
+     return;
 
    e->win = xevent->xdestroywindow.window;
    e->event_win = xevent->xdestroywindow.event;
    e->time = _ecore_x_event_last_time;
    if (e->win == _ecore_x_event_last_win)
-      _ecore_x_event_last_win = 0;
+     _ecore_x_event_last_win = 0;
 
    ecore_event_add(ECORE_X_EVENT_WINDOW_DESTROY, e, NULL, NULL);
 } /* _ecore_x_event_handle_destroy_notify */
@@ -1070,7 +1076,7 @@ _ecore_x_event_handle_unmap_notify(XEvent *xevent)
    _ecore_x_last_event_mouse_move = 0;
    e = calloc(1, sizeof(Ecore_X_Event_Window_Hide));
    if (!e)
-      return;
+     return;
 
    e->win = xevent->xunmap.window;
    e->event_win = xevent->xunmap.event;
@@ -1086,7 +1092,7 @@ _ecore_x_event_handle_map_notify(XEvent *xevent)
    _ecore_x_last_event_mouse_move = 0;
    e = calloc(1, sizeof(Ecore_X_Event_Window_Show));
    if (!e)
-      return;
+     return;
 
    e->win = xevent->xmap.window;
    e->event_win = xevent->xmap.event;
@@ -1102,7 +1108,7 @@ _ecore_x_event_handle_map_request(XEvent *xevent)
    _ecore_x_last_event_mouse_move = 0;
    e = calloc(1, sizeof(Ecore_X_Event_Window_Show_Request));
    if (!e)
-      return;
+     return;
 
    e->win = xevent->xmaprequest.window;
    e->time = _ecore_x_event_last_time;
@@ -1118,7 +1124,7 @@ _ecore_x_event_handle_reparent_notify(XEvent *xevent)
    _ecore_x_last_event_mouse_move = 0;
    e = calloc(1, sizeof(Ecore_X_Event_Window_Reparent));
    if (!e)
-      return;
+     return;
 
    e->win = xevent->xreparent.window;
    e->event_win = xevent->xreparent.event;
@@ -1135,7 +1141,7 @@ _ecore_x_event_handle_configure_notify(XEvent *xevent)
    _ecore_x_last_event_mouse_move = 0;
    e = calloc(1, sizeof(Ecore_X_Event_Window_Configure));
    if (!e)
-      return;
+     return;
 
    e->win = xevent->xconfigure.window;
    e->event_win = xevent->xconfigure.event;
@@ -1159,7 +1165,7 @@ _ecore_x_event_handle_configure_request(XEvent *xevent)
    _ecore_x_last_event_mouse_move = 0;
    e = calloc(1, sizeof(Ecore_X_Event_Window_Configure_Request));
    if (!e)
-      return;
+     return;
 
    e->win = xevent->xconfigurerequest.window;
    e->parent_win = xevent->xconfigurerequest.parent;
@@ -1173,15 +1179,15 @@ _ecore_x_event_handle_configure_request(XEvent *xevent)
    e->time = _ecore_x_event_last_time;
 
    if (xevent->xconfigurerequest.detail == Above)
-      e->detail = ECORE_X_WINDOW_STACK_ABOVE;
+     e->detail = ECORE_X_WINDOW_STACK_ABOVE;
    else if (xevent->xconfigurerequest.detail == Below)
-      e->detail = ECORE_X_WINDOW_STACK_BELOW;
+     e->detail = ECORE_X_WINDOW_STACK_BELOW;
    else if (xevent->xconfigurerequest.detail == TopIf)
-      e->detail = ECORE_X_WINDOW_STACK_TOP_IF;
+     e->detail = ECORE_X_WINDOW_STACK_TOP_IF;
    else if (xevent->xconfigurerequest.detail == BottomIf)
-      e->detail = ECORE_X_WINDOW_STACK_BOTTOM_IF;
+     e->detail = ECORE_X_WINDOW_STACK_BOTTOM_IF;
    else if (xevent->xconfigurerequest.detail == Opposite)
-      e->detail = ECORE_X_WINDOW_STACK_OPPOSITE;
+     e->detail = ECORE_X_WINDOW_STACK_OPPOSITE;
 
    ecore_event_add(ECORE_X_EVENT_WINDOW_CONFIGURE_REQUEST, e, NULL, NULL);
 } /* _ecore_x_event_handle_configure_request */
@@ -1201,7 +1207,7 @@ _ecore_x_event_handle_resize_request(XEvent *xevent)
    _ecore_x_last_event_mouse_move = 0;
    e = calloc(1, sizeof(Ecore_X_Event_Window_Resize_Request));
    if (!e)
-      return;
+     return;
 
    e->win = xevent->xresizerequest.window;
    e->w = xevent->xresizerequest.width;
@@ -1218,14 +1224,14 @@ _ecore_x_event_handle_circulate_notify(XEvent *xevent)
    _ecore_x_last_event_mouse_move = 0;
    e = calloc(1, sizeof(Ecore_X_Event_Window_Stack));
    if (!e)
-      return;
+     return;
 
    e->win = xevent->xcirculate.window;
    e->event_win = xevent->xcirculate.event;
    if (xevent->xcirculate.place == PlaceOnTop)
-      e->detail = ECORE_X_WINDOW_STACK_ABOVE;
+     e->detail = ECORE_X_WINDOW_STACK_ABOVE;
    else
-      e->detail = ECORE_X_WINDOW_STACK_BELOW;
+     e->detail = ECORE_X_WINDOW_STACK_BELOW;
 
    e->time = _ecore_x_event_last_time;
    ecore_event_add(ECORE_X_EVENT_WINDOW_STACK, e, NULL, NULL);
@@ -1239,14 +1245,14 @@ _ecore_x_event_handle_circulate_request(XEvent *xevent)
    _ecore_x_last_event_mouse_move = 0;
    e = calloc(1, sizeof(Ecore_X_Event_Window_Stack_Request));
    if (!e)
-      return;
+     return;
 
    e->win = xevent->xcirculaterequest.window;
    e->parent = xevent->xcirculaterequest.parent;
    if (xevent->xcirculaterequest.place == PlaceOnTop)
-      e->detail = ECORE_X_WINDOW_STACK_ABOVE;
+     e->detail = ECORE_X_WINDOW_STACK_ABOVE;
    else
-      e->detail = ECORE_X_WINDOW_STACK_BELOW;
+     e->detail = ECORE_X_WINDOW_STACK_BELOW;
 
    e->time = _ecore_x_event_last_time;
    ecore_event_add(ECORE_X_EVENT_WINDOW_STACK_REQUEST, e, NULL, NULL);
@@ -1261,7 +1267,7 @@ _ecore_x_event_handle_property_notify(XEvent *xevent)
 
       e = calloc(1, sizeof(Ecore_X_Event_Window_Property));
       if (!e)
-         return;
+        return;
 
       e->win = xevent->xproperty.window;
       e->atom = xevent->xproperty.atom;
@@ -1275,11 +1281,11 @@ void
 _ecore_x_event_handle_selection_clear(XEvent *xevent)
 {
 //   Ecore_X_Selection_Intern *d;
-   Ecore_X_Event_Selection_Clear *e;
-   Ecore_X_Atom sel;
+     Ecore_X_Event_Selection_Clear *e;
+     Ecore_X_Atom sel;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
-   _ecore_x_last_event_mouse_move = 0;
+     LOGFN(__FILE__, __LINE__, __FUNCTION__);
+     _ecore_x_last_event_mouse_move = 0;
 /* errr..... why? paranoia.
    d = _ecore_x_selection_get(xevent->xselectionclear.selection);
    if (d && (xevent->xselectionclear.time > d->time))
@@ -1289,20 +1295,20 @@ _ecore_x_event_handle_selection_clear(XEvent *xevent)
      }
  */
 /* Generate event for app cleanup */
-   e = malloc(sizeof(Ecore_X_Event_Selection_Clear));
-   e->win = xevent->xselectionclear.window;
-   e->time = xevent->xselectionclear.time;
-   e->atom = sel = xevent->xselectionclear.selection;
-   if (sel == ECORE_X_ATOM_SELECTION_PRIMARY)
-      e->selection = ECORE_X_SELECTION_PRIMARY;
-   else if (sel == ECORE_X_ATOM_SELECTION_SECONDARY)
-      e->selection = ECORE_X_SELECTION_SECONDARY;
-   else if (sel == ECORE_X_ATOM_SELECTION_CLIPBOARD)
-      e->selection = ECORE_X_SELECTION_CLIPBOARD;
-   else
-      e->selection = ECORE_X_SELECTION_OTHER;
+     e = malloc(sizeof(Ecore_X_Event_Selection_Clear));
+     e->win = xevent->xselectionclear.window;
+     e->time = xevent->xselectionclear.time;
+     e->atom = sel = xevent->xselectionclear.selection;
+     if (sel == ECORE_X_ATOM_SELECTION_PRIMARY)
+       e->selection = ECORE_X_SELECTION_PRIMARY;
+     else if (sel == ECORE_X_ATOM_SELECTION_SECONDARY)
+       e->selection = ECORE_X_SELECTION_SECONDARY;
+     else if (sel == ECORE_X_ATOM_SELECTION_CLIPBOARD)
+       e->selection = ECORE_X_SELECTION_CLIPBOARD;
+     else
+       e->selection = ECORE_X_SELECTION_OTHER;
 
-   ecore_event_add(ECORE_X_EVENT_SELECTION_CLEAR, e, NULL, NULL);
+     ecore_event_add(ECORE_X_EVENT_SELECTION_CLEAR, e, NULL, NULL);
 } /* _ecore_x_event_handle_selection_clear */
 
 void
@@ -1347,12 +1353,12 @@ _ecore_x_event_handle_selection_request(XEvent *xevent)
              if (!ecore_x_selection_convert(xevent->xselectionrequest.selection,
                                             xevent->xselectionrequest.target,
                                             &data, &len, &type, &typesize))
-                /* Refuse selection, conversion to requested target failed */
-                property = None;
+               /* Refuse selection, conversion to requested target failed */
+               property = None;
              else if (data)
                {
-                  /* FIXME: This does not properly handle large data transfers */
-                  ecore_x_window_prop_property_set(
+     /* FIXME: This does not properly handle large data transfers */
+                   ecore_x_window_prop_property_set(
                      xevent->xselectionrequest.requestor,
                      xevent->xselectionrequest.
                      property,
@@ -1360,8 +1366,8 @@ _ecore_x_event_handle_selection_request(XEvent *xevent)
                      typesize,
                      data,
                      len);
-                  property = xevent->xselectionrequest.property;
-                  free(data);
+                   property = xevent->xselectionrequest.property;
+                   free(data);
                }
 
              ecore_x_selection_notify_send(xevent->xselectionrequest.requestor,
@@ -1391,7 +1397,7 @@ _ecore_x_event_handle_selection_notify(XEvent *xevent)
                                                   xevent->xselection.property,
                                                   XA_ATOM, 32, &data, &num_ret);
         if (!format)
-           return;
+          return;
      }
    else
      {
@@ -1400,12 +1406,12 @@ _ecore_x_event_handle_selection_notify(XEvent *xevent)
                                                   AnyPropertyType, 8, &data,
                                                   &num_ret);
         if (!format)
-           return;
+          return;
      }
 
    e = calloc(1, sizeof(Ecore_X_Event_Selection_Notify));
    if (!e)
-      return;
+     return;
 
    e->win = xevent->xselection.requestor;
    e->time = xevent->xselection.time;
@@ -1413,15 +1419,15 @@ _ecore_x_event_handle_selection_notify(XEvent *xevent)
    e->target = _ecore_x_selection_target_get(xevent->xselection.target);
 
    if (selection == ECORE_X_ATOM_SELECTION_PRIMARY)
-      e->selection = ECORE_X_SELECTION_PRIMARY;
+     e->selection = ECORE_X_SELECTION_PRIMARY;
    else if (selection == ECORE_X_ATOM_SELECTION_SECONDARY)
-      e->selection = ECORE_X_SELECTION_SECONDARY;
+     e->selection = ECORE_X_SELECTION_SECONDARY;
    else if (selection == ECORE_X_ATOM_SELECTION_XDND)
-      e->selection = ECORE_X_SELECTION_XDND;
+     e->selection = ECORE_X_SELECTION_XDND;
    else if (selection == ECORE_X_ATOM_SELECTION_CLIPBOARD)
-      e->selection = ECORE_X_SELECTION_CLIPBOARD;
+     e->selection = ECORE_X_SELECTION_CLIPBOARD;
    else
-      e->selection = ECORE_X_SELECTION_OTHER;
+     e->selection = ECORE_X_SELECTION_OTHER;
 
    e->data = _ecore_x_selection_parse(e->target, data, num_ret, format);
 
@@ -1435,17 +1441,17 @@ _ecore_x_event_handle_colormap_notify(XEvent *xevent)
    Ecore_X_Event_Window_Colormap *e;
 
    _ecore_x_last_event_mouse_move = 0;
-   e = calloc(1,sizeof(Ecore_X_Event_Window_Colormap));
+   e = calloc(1, sizeof(Ecore_X_Event_Window_Colormap));
    if (!e)
-      return;
+     return;
 
    e->win = xevent->xcolormap.window;
    e->cmap = xevent->xcolormap.colormap;
    e->time = _ecore_x_event_last_time;
    if (xevent->xcolormap.state == ColormapInstalled)
-      e->installed = EINA_TRUE;
+     e->installed = EINA_TRUE;
    else
-      e->installed = EINA_FALSE;
+     e->installed = EINA_FALSE;
 
    ecore_event_add(ECORE_X_EVENT_WINDOW_COLORMAP, e, NULL, NULL);
 } /* _ecore_x_event_handle_colormap_notify */
@@ -1466,7 +1472,7 @@ _ecore_x_event_handle_client_message(XEvent *xevent)
 
         e = calloc(1, sizeof(Ecore_X_Event_Window_Delete_Request));
         if (!e)
-           return;
+          return;
 
         e->win = xevent->xclient.window;
         e->time = _ecore_x_event_last_time;
@@ -1481,7 +1487,7 @@ _ecore_x_event_handle_client_message(XEvent *xevent)
 
         e = calloc(1, sizeof(Ecore_X_Event_Window_Move_Resize_Request));
         if (!e)
-           return;
+          return;
 
         e->win = xevent->xclient.window;
         e->x = xevent->xclient.data.l[0];
@@ -1519,32 +1525,32 @@ _ecore_x_event_handle_client_message(XEvent *xevent)
         if (xevent->xclient.data.l[1] & 0x1UL)
           {
              /* source supports more than 3 types, fetch property */
-             unsigned char *data;
-             Ecore_X_Atom *types;
-             int i, num_ret;
+              unsigned char *data;
+              Ecore_X_Atom *types;
+              int i, num_ret;
 
-             LOGFN(__FILE__, __LINE__, __FUNCTION__);
-             if (!(ecore_x_window_prop_property_get(target->source,
-                                                    ECORE_X_ATOM_XDND_TYPE_LIST,
-                                                    XA_ATOM,
-                                                    32, &data, &num_ret)))
-               {
-                  WRN(
+              LOGFN(__FILE__, __LINE__, __FUNCTION__);
+              if (!(ecore_x_window_prop_property_get(target->source,
+                                                     ECORE_X_ATOM_XDND_TYPE_LIST,
+                                                     XA_ATOM,
+                                                     32, &data, &num_ret)))
+                {
+                   WRN(
                      "DND: Could not fetch data type list from source window, aborting.");
-                  free(e);
-                  return;
-               }
+                   free(e);
+                   return;
+                }
 
-             types = (Ecore_X_Atom *)data;
-             e->types = calloc(num_ret, sizeof(char *));
-             if (e->types)
-               {
-                  LOGFN(__FILE__, __LINE__, __FUNCTION__);
-                  for (i = 0; i < num_ret; i++)
+              types = (Ecore_X_Atom *)data;
+              e->types = calloc(num_ret, sizeof(char *));
+              if (e->types)
+                {
+                   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+                   for (i = 0; i < num_ret; i++)
                      e->types[i] = XGetAtomName(_ecore_x_disp, types[i]);
-               }
+                }
 
-             e->num_types = num_ret;
+              e->num_types = num_ret;
           }
         else
           {
@@ -1678,7 +1684,7 @@ _ecore_x_event_handle_client_message(XEvent *xevent)
           return;
 
         target->time = (target->version >= 1) ?
-           (Time)xevent->xclient.data.l[2] : _ecore_x_event_last_time;
+          (Time)xevent->xclient.data.l[2] : _ecore_x_event_last_time;
 
         e = calloc(1, sizeof(Ecore_X_Event_Xdnd_Drop));
         if (!e) return;
@@ -1749,11 +1755,11 @@ _ecore_x_event_handle_client_message(XEvent *xevent)
 
         e->win = xevent->xclient.window;
         if (xevent->xclient.data.l[0] == 0)
-           e->action = ECORE_X_WINDOW_STATE_ACTION_REMOVE;
+          e->action = ECORE_X_WINDOW_STATE_ACTION_REMOVE;
         else if (xevent->xclient.data.l[0] == 1)
-           e->action = ECORE_X_WINDOW_STATE_ACTION_ADD;
+          e->action = ECORE_X_WINDOW_STATE_ACTION_ADD;
         else if (xevent->xclient.data.l[0] == 2)
-           e->action = ECORE_X_WINDOW_STATE_ACTION_TOGGLE;
+          e->action = ECORE_X_WINDOW_STATE_ACTION_TOGGLE;
         else
           {
              free(e);
@@ -1765,7 +1771,7 @@ _ecore_x_event_handle_client_message(XEvent *xevent)
         if (e->state[0] == ECORE_X_WINDOW_STATE_UNKNOWN)
           {
 //	     char *name;
-           LOGFN(__FILE__, __LINE__, __FUNCTION__);
+               LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
 //	     name = XGetAtomName(_ecore_x_disp, xevent->xclient.data.l[1]);
 //	     if (name) ERR("Unknown state: %s", name);
@@ -1775,7 +1781,7 @@ _ecore_x_event_handle_client_message(XEvent *xevent)
         if (e->state[1] == ECORE_X_WINDOW_STATE_UNKNOWN)
           {
 //	     char *name;
-           LOGFN(__FILE__, __LINE__, __FUNCTION__);
+               LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
 //	     name = XGetAtomName(_ecore_x_disp, xevent->xclient.data.l[2]);
 //	     if (name) ERR("Unknown state: %s", name);
@@ -1794,7 +1800,7 @@ _ecore_x_event_handle_client_message(XEvent *xevent)
 
         e = calloc(1, sizeof(Ecore_X_Event_Window_State_Request));
         if (!e)
-           return;
+          return;
 
         e->win = xevent->xclient.window;
         e->action = ECORE_X_WINDOW_STATE_ACTION_ADD;
@@ -1809,7 +1815,7 @@ _ecore_x_event_handle_client_message(XEvent *xevent)
 
         e = calloc(1, sizeof(Ecore_X_Event_Desktop_Change));
         if (!e)
-           return;
+          return;
 
         e->win = xevent->xclient.window;
         e->desk = xevent->xclient.data.l[0];
@@ -1824,7 +1830,7 @@ _ecore_x_event_handle_client_message(XEvent *xevent)
 
         e = calloc(1, sizeof(Ecore_X_Event_Frame_Extents_Request));
         if (!e)
-           return;
+          return;
 
         e->win = xevent->xclient.window;
 
@@ -1840,7 +1846,7 @@ _ecore_x_event_handle_client_message(XEvent *xevent)
 
         e = calloc(1, sizeof(Ecore_X_Event_Ping));
         if (!e)
-           return;
+          return;
 
         e->win = xevent->xclient.window;
         e->time = xevent->xclient.data.l[1];
@@ -1854,7 +1860,7 @@ _ecore_x_event_handle_client_message(XEvent *xevent)
              root = ecore_x_window_root_get(e->win);
           }
         else
-           root = DefaultRootWindow(_ecore_x_disp);
+          root = DefaultRootWindow(_ecore_x_disp);
 
         if (xevent->xclient.window != root)
           {
@@ -1867,21 +1873,21 @@ _ecore_x_event_handle_client_message(XEvent *xevent)
    else if ((xevent->xclient.message_type ==
              ECORE_X_ATOM_NET_STARTUP_INFO_BEGIN) &&
             (xevent->xclient.format == 8))
-      _ecore_x_netwm_startup_info_begin(xevent->xclient.window,
-                                        xevent->xclient.data.b);
+     _ecore_x_netwm_startup_info_begin(xevent->xclient.window,
+                                       xevent->xclient.data.b);
    else if ((xevent->xclient.message_type == ECORE_X_ATOM_NET_STARTUP_INFO) &&
             (xevent->xclient.format == 8))
-      _ecore_x_netwm_startup_info(xevent->xclient.window,
-                                  xevent->xclient.data.b);
+     _ecore_x_netwm_startup_info(xevent->xclient.window,
+                                 xevent->xclient.data.b);
    else if ((xevent->xclient.message_type == 27777)
             && (xevent->xclient.data.l[0] == 0x7162534)
             && (xevent->xclient.format == 32)
             && (xevent->xclient.window == _ecore_x_private_win))
      {
         /* a grab sync marker */
-        if (xevent->xclient.data.l[1] == 0x10000001)
+         if (xevent->xclient.data.l[1] == 0x10000001)
            _ecore_x_window_grab_remove(xevent->xclient.data.l[2]);
-        else if (xevent->xclient.data.l[1] == 0x10000002)
+         else if (xevent->xclient.data.l[1] == 0x10000002)
            _ecore_x_key_grab_remove(xevent->xclient.data.l[2]);
      }
    else
@@ -1891,13 +1897,13 @@ _ecore_x_event_handle_client_message(XEvent *xevent)
 
         e = calloc(1, sizeof(Ecore_X_Event_Client_Message));
         if (!e)
-           return;
+          return;
 
         e->win = xevent->xclient.window;
         e->message_type = xevent->xclient.message_type;
         e->format = xevent->xclient.format;
         for (i = 0; i < 5; i++)
-           e->data.l[i] = xevent->xclient.data.l[i];
+          e->data.l[i] = xevent->xclient.data.l[i];
 
         ecore_event_add(ECORE_X_EVENT_CLIENT_MESSAGE, e, NULL, NULL);
      }
@@ -1914,18 +1920,20 @@ _ecore_x_event_handle_mapping_notify(XEvent *xevent)
    e = calloc(1, sizeof(Ecore_X_Event_Mapping_Change));
    if (!e) return;
    switch (xevent->xmapping.request)
-      {
+     {
       case MappingModifier:
-         e->type = ECORE_X_MAPPING_MODIFIER;
-         break;
+        e->type = ECORE_X_MAPPING_MODIFIER;
+        break;
+
       case MappingKeyboard:
-         e->type = ECORE_X_MAPPING_KEYBOARD;
-         break;
+        e->type = ECORE_X_MAPPING_KEYBOARD;
+        break;
+
       case MappingPointer:
       default:
-         e->type = ECORE_X_MAPPING_MOUSE;
-         break;
-      }
+        e->type = ECORE_X_MAPPING_MOUSE;
+        break;
+     }
    e->keycode = xevent->xmapping.first_keycode;
    e->num = xevent->xmapping.count;
    ecore_event_add(ECORE_X_EVENT_MAPPING_CHANGE, e, NULL, NULL);
@@ -1941,22 +1949,25 @@ _ecore_x_event_handle_shape_change(XEvent *xevent)
    shape_event = (XShapeEvent *)xevent;
    e = calloc(1, sizeof(Ecore_X_Event_Window_Shape));
    if (!e)
-      return;
+     return;
 
    e->win = shape_event->window;
    e->time = shape_event->time;
    switch (shape_event->kind)
      {
-     case ShapeBounding:
+      case ShapeBounding:
         e->type = ECORE_X_SHAPE_BOUNDING;
         break;
-     case ShapeClip:
+
+      case ShapeClip:
         e->type = ECORE_X_SHAPE_CLIP;
         break;
-     case ShapeInput:
+
+      case ShapeInput:
         e->type = ECORE_X_SHAPE_INPUT;
         break;
-     default:
+
+      default:
         break;
      }
    e->x = shape_event->x;
@@ -1978,13 +1989,13 @@ _ecore_x_event_handle_screensaver_notify(XEvent *xevent)
    screensaver_event = (XScreenSaverNotifyEvent *)xevent;
    e = calloc(1, sizeof(Ecore_X_Event_Screensaver_Notify));
    if (!e)
-      return;
+     return;
 
    e->win = screensaver_event->window;
    if (screensaver_event->state == ScreenSaverOn)
-      e->on = EINA_TRUE;
+     e->on = EINA_TRUE;
    else
-      e->on = EINA_FALSE;
+     e->on = EINA_FALSE;
 
    e->time = screensaver_event->time;
    ecore_event_add(ECORE_X_EVENT_SCREENSAVER_NOTIFY, e, NULL, NULL);
@@ -2003,7 +2014,7 @@ _ecore_x_event_handle_sync_counter(XEvent *xevent)
    sync_counter_event = (XSyncCounterNotifyEvent *)xevent;
    e = calloc(1, sizeof(Ecore_X_Event_Sync_Counter));
    if (!e)
-      return;
+     return;
 
    e->time = sync_counter_event->time;
    ecore_event_add(ECORE_X_EVENT_SYNC_COUNTER, e, NULL, NULL);
@@ -2020,7 +2031,7 @@ _ecore_x_event_handle_sync_alarm(XEvent *xevent)
 
    e = calloc(1, sizeof(Ecore_X_Event_Sync_Alarm));
    if (!e)
-      return;
+     return;
 
    e->time = sync_alarm_event->time;
    e->alarm = sync_alarm_event->alarm;
@@ -2037,11 +2048,11 @@ _ecore_x_event_handle_randr_change(XEvent *xevent)
    _ecore_x_last_event_mouse_move = 0;
    randr_event = (XRRScreenChangeNotifyEvent *)xevent;
    if (!XRRUpdateConfiguration(xevent))
-      ERR("Can't update RR config!");
+     ERR("Can't update RR config!");
 
    e = calloc(1, sizeof(Ecore_X_Event_Screen_Change));
    if (!e)
-      return;
+     return;
 
    e->win = randr_event->window;
    e->root = randr_event->root;
@@ -2066,7 +2077,7 @@ _ecore_x_event_handle_randr_notify_crtc_change(const XRRNotifyEvent *xevent)
 
    e = calloc(1, sizeof(Ecore_X_Event_Randr_Crtc_Change));
    if (!e)
-      return;
+     return;
 
    e->win = randr_event->window;
    e->crtc = randr_event->crtc;
@@ -2089,7 +2100,7 @@ _ecore_x_event_handle_randr_notify_output_change(const XRRNotifyEvent *xevent)
 
    e = calloc(1, sizeof(Ecore_X_Event_Randr_Output_Change));
    if (!e)
-      return;
+     return;
 
    e->win = randr_event->window;
    e->output = randr_event->output;
@@ -2111,16 +2122,16 @@ _ecore_x_event_handle_randr_notify_output_property(const XRRNotifyEvent *xevent)
 
    e = calloc(1, sizeof(Ecore_X_Event_Randr_Output_Property_Notify));
    if (!e)
-      return;
+     return;
 
    e->win = randr_event->window;
    e->output = randr_event->output;
    e->property = randr_event->property;
    e->time = randr_event->timestamp;
    if (randr_event->state == PropertyNewValue)
-      e->state = ECORE_X_RANDR_PROPERTY_CHANGE_ADD;
+     e->state = ECORE_X_RANDR_PROPERTY_CHANGE_ADD;
    else
-      e->state = ECORE_X_RANDR_PROPERTY_CHANGE_DEL;
+     e->state = ECORE_X_RANDR_PROPERTY_CHANGE_DEL;
    ecore_event_add(ECORE_X_EVENT_RANDR_OUTPUT_PROPERTY_NOTIFY, e, NULL, NULL);
 } /* _ecore_x_event_handle_randr_notify_output_property */
 
@@ -2135,21 +2146,21 @@ _ecore_x_event_handle_randr_notify(XEvent *xevent)
    switch (randr_event->subtype)
      {
       case RRNotify_CrtcChange:
-         _ecore_x_event_handle_randr_notify_crtc_change(randr_event);
-         break;
+        _ecore_x_event_handle_randr_notify_crtc_change(randr_event);
+        break;
 
       case RRNotify_OutputChange:
-         _ecore_x_event_handle_randr_notify_output_change(randr_event);
-         break;
+        _ecore_x_event_handle_randr_notify_output_change(randr_event);
+        break;
 
       case RRNotify_OutputProperty:
-         _ecore_x_event_handle_randr_notify_output_property(randr_event);
-         break;
+        _ecore_x_event_handle_randr_notify_output_property(randr_event);
+        break;
 
       default:
-         ERR("Unknown XRandR RRNotify subtype: %d.",
-             randr_event->subtype);
-         break;
+        ERR("Unknown XRandR RRNotify subtype: %d.",
+            randr_event->subtype);
+        break;
      } /* switch */
 } /* _ecore_x_event_handle_randr_notify */
 
@@ -2160,7 +2171,7 @@ void
 _ecore_x_event_handle_fixes_selection_notify(XEvent *event)
 {
    XFixesSelectionNotifyEvent *notify_event =
-      (XFixesSelectionNotifyEvent *) event;
+     (XFixesSelectionNotifyEvent *)event;
    Ecore_X_Event_Fixes_Selection_Notify *e;
    Ecore_X_Atom sel;
 
@@ -2169,7 +2180,7 @@ _ecore_x_event_handle_fixes_selection_notify(XEvent *event)
 
    e = calloc(1, sizeof(*e));
    if (!e)
-      return;
+     return;
 
    e->win = notify_event->window;
    e->owner = notify_event->owner;
@@ -2177,13 +2188,13 @@ _ecore_x_event_handle_fixes_selection_notify(XEvent *event)
    e->selection_time = notify_event->selection_timestamp;
    e->atom = sel = notify_event->selection;
    if (sel == ECORE_X_ATOM_SELECTION_PRIMARY)
-      e->selection = ECORE_X_SELECTION_PRIMARY;
+     e->selection = ECORE_X_SELECTION_PRIMARY;
    else if (sel == ECORE_X_ATOM_SELECTION_SECONDARY)
-      e->selection = ECORE_X_SELECTION_SECONDARY;
+     e->selection = ECORE_X_SELECTION_SECONDARY;
    else if (sel == ECORE_X_ATOM_SELECTION_CLIPBOARD)
-      e->selection = ECORE_X_SELECTION_CLIPBOARD;
+     e->selection = ECORE_X_SELECTION_CLIPBOARD;
    else
-      e->selection = ECORE_X_SELECTION_OTHER;
+     e->selection = ECORE_X_SELECTION_OTHER;
    e->reason = notify_event->subtype;
 
    ecore_event_add(ECORE_X_EVENT_FIXES_SELECTION_NOTIFY, e, NULL, NULL);
@@ -2203,7 +2214,7 @@ _ecore_x_event_handle_damage_notify(XEvent *event)
 
    e = calloc(1, sizeof(Ecore_X_Event_Damage));
    if (!e)
-      return;
+     return;
 
    e->level = damage_event->level;
    e->drawable = damage_event->drawable;
@@ -2225,7 +2236,8 @@ _ecore_x_event_handle_damage_notify(XEvent *event)
 #endif /* ifdef ECORE_XDAMAGE */
 
 static void
-_ecore_x_event_free_generic_event(void *data, void *ev)
+_ecore_x_event_free_generic_event(void *data,
+                                  void *ev)
 {
 #ifdef ECORE_XI2
    Ecore_X_Event_Generic *e = (Ecore_X_Event_Generic *)ev;
@@ -2233,11 +2245,11 @@ _ecore_x_event_free_generic_event(void *data, void *ev)
    if (data)
      {
         if (e->data)
-           XFreeEventData(_ecore_x_disp, (XGenericEventCookie *)data);
+          XFreeEventData(_ecore_x_disp, (XGenericEventCookie *)data);
         free(data);
      }
    free(e);
-#else   
+#else
    return;
    data = NULL; ev = NULL;
 #endif /* ifdef ECORE_XI2 */
@@ -2250,13 +2262,13 @@ _ecore_x_event_handle_generic_event(XEvent *event)
    XGenericEvent *generic_event;
    Ecore_X_Event_Generic *e;
    XGenericEventCookie *data;
-   
+
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    generic_event = (XGenericEvent *)event;
 
    e = calloc(1, sizeof(Ecore_X_Event_Generic));
    if (!e)
-      return;
+     return;
 
    if (XGetEventData(_ecore_x_disp, &(event->xcookie)))
      {
@@ -2273,8 +2285,8 @@ _ecore_x_event_handle_generic_event(XEvent *event)
    e->evtype = generic_event->evtype;
 
    if (e->extension == _ecore_x_xi2_opcode)
-      _ecore_x_input_handler(event);
-   
+     _ecore_x_input_handler(event);
+
    data = malloc(sizeof(XGenericEventCookie));
    if (data) memcpy(data, &(event->xcookie), sizeof(XGenericEventCookie));
    ecore_event_add(ECORE_X_EVENT_GENERIC,

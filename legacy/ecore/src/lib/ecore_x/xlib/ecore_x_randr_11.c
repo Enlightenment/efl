@@ -14,16 +14,16 @@
 
 #define RANDR_1_1          ((1 << 16) | 1)
 
-#define RANDR_VALIDATE_ROOT(screen,\
-                            root) ((screen =\
-                                       XRRRootToScreen(_ecore_x_disp,\
-                                                       root)) != -1)
+#define RANDR_VALIDATE_ROOT(screen,                                  \
+                            root) ((screen =                         \
+                                      XRRRootToScreen(_ecore_x_disp, \
+                                                      root)) != -1)
 #define RANDR_CHECK_1_1_RET(ret)  if(_randr_version < RANDR_1_1) return ret
 
-extern XRRScreenResources * (*_ecore_x_randr_get_screen_resources)(Display *
-                                                                   dpy,
-                                                                   Window
-                                                                   window);
+extern XRRScreenResources *(*_ecore_x_randr_get_screen_resources)(Display *
+                                                                  dpy,
+                                                                  Window
+                                                                  window);
 extern int _randr_version;
 #endif /* ifdef ECORE_XRANDR */
 
@@ -38,8 +38,8 @@ ecore_x_randr_screen_primary_output_orientations_get(Ecore_X_Window root)
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    rot =
-      XRRRotations(_ecore_x_disp, XRRRootToScreen(_ecore_x_disp,
-                                                        root), &crot);
+     XRRRotations(_ecore_x_disp, XRRRootToScreen(_ecore_x_disp,
+                                                 root), &crot);
    return rot;
 #else /* ifdef ECORE_XRANDR */
    return Ecore_X_Randr_None;
@@ -56,7 +56,7 @@ ecore_x_randr_screen_primary_output_orientation_get(Ecore_X_Window root)
 #ifdef ECORE_XRANDR
    Rotation crot = Ecore_X_Randr_None;
    XRRRotations(_ecore_x_disp, XRRRootToScreen(_ecore_x_disp,
-                                                     root), &crot);
+                                               root), &crot);
    return crot;
 #else /* ifdef ECORE_XRANDR */
    return Ecore_X_Randr_None;
@@ -71,9 +71,9 @@ ecore_x_randr_screen_primary_output_orientation_get(Ecore_X_Window root)
  */
 EAPI Eina_Bool
 ecore_x_randr_screen_primary_output_orientation_set(
-   Ecore_X_Window root,
-   Ecore_X_Randr_Orientation
-   orientation)
+  Ecore_X_Window root,
+  Ecore_X_Randr_Orientation
+  orientation)
 {
 #ifdef ECORE_XRANDR
    XRRScreenConfiguration *xrr_screen_cfg = NULL;
@@ -81,15 +81,15 @@ ecore_x_randr_screen_primary_output_orientation_set(
    Rotation crot;
    Eina_Bool ret = EINA_FALSE;
    if (!(xrr_screen_cfg = XRRGetScreenInfo(_ecore_x_disp, root)))
-      return EINA_FALSE;
+     return EINA_FALSE;
 
    sizeid = XRRConfigCurrentConfiguration(xrr_screen_cfg, &crot);
    if (!XRRSetScreenConfig(_ecore_x_disp, xrr_screen_cfg, root, sizeid,
                            orientation, CurrentTime))
-      ret = EINA_TRUE;
+     ret = EINA_TRUE;
 
    if (xrr_screen_cfg)
-      XRRFreeScreenConfigInfo(xrr_screen_cfg);
+     XRRFreeScreenConfigInfo(xrr_screen_cfg);
 
    return ret;
 #else /* ifdef ECORE_XRANDR */
@@ -104,7 +104,8 @@ ecore_x_randr_screen_primary_output_orientation_set(
  * @return an array of sizes reported as supported by the screen's primary output or - if query failed - NULL
  */
 EAPI Ecore_X_Randr_Screen_Size_MM *
-ecore_x_randr_screen_primary_output_sizes_get(Ecore_X_Window root, int *num)
+ecore_x_randr_screen_primary_output_sizes_get(Ecore_X_Window root,
+                                              int           *num)
 {
 #ifdef ECORE_XRANDR
    Ecore_X_Randr_Screen_Size_MM *ret = NULL;
@@ -113,15 +114,15 @@ ecore_x_randr_screen_primary_output_sizes_get(Ecore_X_Window root, int *num)
 
    /* we don't have to free sizes, because they're hold in a cache inside X*/
    sizes =
-      XRRSizes(_ecore_x_disp, XRRRootToScreen(_ecore_x_disp,
-                                                    root), &n);
+     XRRSizes(_ecore_x_disp, XRRRootToScreen(_ecore_x_disp,
+                                             root), &n);
    if ((!sizes) || (n <= 0)) return NULL;
    ret = calloc(n, sizeof(Ecore_X_Randr_Screen_Size_MM));
    if (!ret)
-      return NULL;
+     return NULL;
 
    if (num)
-      *num = n;
+     *num = n;
 
    for (i = 0; i < n; i++)
      {
@@ -169,24 +170,24 @@ ecore_x_randr_screen_primary_output_current_size_get(Ecore_X_Window root,
    idx = XRRConfigCurrentConfiguration(sc, &orientation);
 
    sizes =
-      XRRSizes(_ecore_x_disp, XRRRootToScreen(_ecore_x_disp,
-                                                    root), &n);
+     XRRSizes(_ecore_x_disp, XRRRootToScreen(_ecore_x_disp,
+                                             root), &n);
    if ((idx < n) && (idx >= 0))
      {
         if (w)
-           *w = sizes[idx].width;
+          *w = sizes[idx].width;
 
         if (h)
-           *h = sizes[idx].height;
+          *h = sizes[idx].height;
 
         if (w_mm)
-           *w_mm = sizes[idx].mwidth;
+          *w_mm = sizes[idx].mwidth;
 
         if (h_mm)
-           *h_mm = sizes[idx].mheight;
+          *h_mm = sizes[idx].mheight;
 
         if (size_index)
-           *size_index = idx;
+          *size_index = idx;
      }
 
    XRRFreeScreenConfigInfo(sc);
@@ -212,8 +213,8 @@ ecore_x_randr_screen_primary_output_size_set(Ecore_X_Window root,
    if (size_index >= 0 && _ecore_x_randr_root_validate(root))
      {
         sizes =
-           XRRSizes(_ecore_x_disp, XRRRootToScreen(_ecore_x_disp,
-                                                         root), &nsizes);
+          XRRSizes(_ecore_x_disp, XRRRootToScreen(_ecore_x_disp,
+                                                  root), &nsizes);
 
         if (size_index < nsizes)
           {
@@ -226,7 +227,7 @@ ecore_x_randr_screen_primary_output_size_set(Ecore_X_Window root,
                }
 
              if (sc)
-                XRRFreeScreenConfigInfo(sc);
+               XRRFreeScreenConfigInfo(sc);
           }
      }
 
@@ -242,7 +243,7 @@ ecore_x_randr_screen_primary_output_size_set(Ecore_X_Window root,
  */
 EAPI Ecore_X_Randr_Refresh_Rate
 ecore_x_randr_screen_primary_output_current_refresh_rate_get(
-   Ecore_X_Window root)
+  Ecore_X_Window root)
 {
 #ifdef ECORE_XRANDR
    Ecore_X_Randr_Refresh_Rate ret = 0.0;
@@ -250,11 +251,11 @@ ecore_x_randr_screen_primary_output_current_refresh_rate_get(
 
    if (!_ecore_x_randr_root_validate(root) ||
        !(sc = XRRGetScreenInfo(_ecore_x_disp, root)))
-      return ret;
+     return ret;
 
    ret = XRRConfigCurrentRate(sc);
    if (sc)
-      XRRFreeScreenConfigInfo(sc);
+     XRRFreeScreenConfigInfo(sc);
 
    return ret;
 #else /* ifdef ECORE_XRANDR */
@@ -304,10 +305,10 @@ ecore_x_randr_screen_primary_output_refresh_rates_get(Ecore_X_Window root,
  */
 EAPI Eina_Bool
 ecore_x_randr_screen_primary_output_refresh_rate_set(
-   Ecore_X_Window root,
-   int            size_index,
-   Ecore_X_Randr_Refresh_Rate
-   rate)
+  Ecore_X_Window root,
+  int            size_index,
+  Ecore_X_Randr_Refresh_Rate
+  rate)
 {
 #ifdef ECORE_XRANDR
    RANDR_CHECK_1_1_RET(EINA_FALSE);
@@ -315,12 +316,12 @@ ecore_x_randr_screen_primary_output_refresh_rate_set(
    XRRScreenConfiguration *sc = NULL;
 
    if (!(sc = XRRGetScreenInfo(_ecore_x_disp, root)))
-      return ret;
+     return ret;
 
    if (!XRRSetScreenConfigAndRate(_ecore_x_disp, sc,
                                   root, size_index,
                                   RR_Rotate_0, rate, CurrentTime))
-      ret = EINA_TRUE;
+     ret = EINA_TRUE;
 
    XRRFreeScreenConfigInfo(sc);
    return ret;
@@ -328,3 +329,4 @@ ecore_x_randr_screen_primary_output_refresh_rate_set(
    return EINA_FALSE;
 #endif /* ifdef ECORE_XRANDR */
 } /* ecore_x_randr_screen_primary_output_refresh_rate_set */
+

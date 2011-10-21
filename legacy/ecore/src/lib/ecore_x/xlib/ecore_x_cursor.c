@@ -43,7 +43,7 @@ ecore_x_cursor_new(Ecore_X_Window win,
 //		  r = (((pixels[i] >> 16) & 0xff) * a) / 0xff;
 //		  g = (((pixels[i] >> 8 ) & 0xff) * a) / 0xff;
 //		  b = (((pixels[i]      ) & 0xff) * a) / 0xff;
-                  xci->pixels[i] = pixels[i];
+                              xci->pixels[i] = pixels[i];
 //		    (a << 24) | (r << 16) | (g << 8) | (b);
                }
              c = XcursorImageLoadCursor(_ecore_x_disp, xci);
@@ -127,23 +127,23 @@ ecore_x_cursor_new(Ecore_X_Window win,
                 g = (pix[0] >> 8) & 0xff;
                 b = (pix[0]) & 0xff;
                 d1 =
-                   ((r - fr) * (r - fr)) +
-                   ((g - fg) * (g - fg)) +
-                   ((b - fb) * (b - fb));
+                  ((r - fr) * (r - fr)) +
+                  ((g - fg) * (g - fg)) +
+                  ((b - fb) * (b - fb));
                 d2 =
-                   ((r - br) * (r - br)) +
-                   ((g - bg) * (g - bg)) +
-                   ((b - bb) * (b - bb));
+                  ((r - br) * (r - br)) +
+                  ((g - bg) * (g - bg)) +
+                  ((b - bb) * (b - bb));
                 if (d1 + d2)
                   {
                      v = (((d2 * 255) / (d1 + d2)) * 5) / 256;
                      if (v > dither[x & 0x1][y & 0x1])
-                        v = 1;
+                       v = 1;
                      else
-                        v = 0;
+                       v = 0;
                   }
                 else
-                   v = 0;
+                  v = 0;
 
                 XPutPixel(xim, x, y, v);
                 pix++;
@@ -162,9 +162,9 @@ ecore_x_cursor_new(Ecore_X_Window win,
 
                 v = (((pix[0] >> 24) & 0xff) * 5) / 256;
                 if (v > dither[x & 0x1][y & 0x1])
-                   v = 1;
+                  v = 1;
                 else
-                   v = 0;
+                  v = 0;
 
                 XPutPixel(xim, x, y, v);
                 pix++;

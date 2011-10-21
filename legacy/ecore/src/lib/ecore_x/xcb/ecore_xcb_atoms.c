@@ -5,9 +5,9 @@
 #define ECORE_X_ATOMS_COUNT 199
 
 typedef struct _Xcb_Atom Xcb_Atom;
-struct _Xcb_Atom 
+struct _Xcb_Atom
 {
-   const char *name;
+   const char   *name;
    Ecore_X_Atom *atom;
 };
 
@@ -15,7 +15,7 @@ struct _Xcb_Atom
 
 /* local variables */
 static xcb_intern_atom_cookie_t cookies[ECORE_X_ATOMS_COUNT];
-static Xcb_Atom atoms[] = 
+static Xcb_Atom atoms[] =
 {
    { "ATOM", &ECORE_X_ATOM_ATOM },
    { "CARDINAL", &ECORE_X_ATOM_CARDINAL },
@@ -124,12 +124,12 @@ static Xcb_Atom atoms[] =
    { "_NET_WM_WINDOW_TYPE_DIALOG", &ECORE_X_ATOM_NET_WM_WINDOW_TYPE_DIALOG },
    { "_NET_WM_WINDOW_TYPE_NORMAL", &ECORE_X_ATOM_NET_WM_WINDOW_TYPE_NORMAL },
    { "_NET_WM_WINDOW_TYPE_DROPDOWN_MENU",
-        &ECORE_X_ATOM_NET_WM_WINDOW_TYPE_DROPDOWN_MENU },
+     &ECORE_X_ATOM_NET_WM_WINDOW_TYPE_DROPDOWN_MENU },
    { "_NET_WM_WINDOW_TYPE_POPUP_MENU",
-        &ECORE_X_ATOM_NET_WM_WINDOW_TYPE_POPUP_MENU },
+     &ECORE_X_ATOM_NET_WM_WINDOW_TYPE_POPUP_MENU },
    { "_NET_WM_WINDOW_TYPE_TOOLTIP", &ECORE_X_ATOM_NET_WM_WINDOW_TYPE_TOOLTIP },
    { "_NET_WM_WINDOW_TYPE_NOTIFICATION",
-        &ECORE_X_ATOM_NET_WM_WINDOW_TYPE_NOTIFICATION },
+     &ECORE_X_ATOM_NET_WM_WINDOW_TYPE_NOTIFICATION },
    { "_NET_WM_WINDOW_TYPE_COMBO", &ECORE_X_ATOM_NET_WM_WINDOW_TYPE_COMBO },
    { "_NET_WM_WINDOW_TYPE_DND", &ECORE_X_ATOM_NET_WM_WINDOW_TYPE_DND },
 
@@ -137,9 +137,9 @@ static Xcb_Atom atoms[] =
    { "_NET_WM_STATE_MODAL", &ECORE_X_ATOM_NET_WM_STATE_MODAL },
    { "_NET_WM_STATE_STICKY", &ECORE_X_ATOM_NET_WM_STATE_STICKY },
    { "_NET_WM_STATE_MAXIMIZED_VERT",
-        &ECORE_X_ATOM_NET_WM_STATE_MAXIMIZED_VERT },
+     &ECORE_X_ATOM_NET_WM_STATE_MAXIMIZED_VERT },
    { "_NET_WM_STATE_MAXIMIZED_HORZ",
-        &ECORE_X_ATOM_NET_WM_STATE_MAXIMIZED_HORZ },
+     &ECORE_X_ATOM_NET_WM_STATE_MAXIMIZED_HORZ },
    { "_NET_WM_STATE_SHADED", &ECORE_X_ATOM_NET_WM_STATE_SHADED },
    { "_NET_WM_STATE_SKIP_TASKBAR", &ECORE_X_ATOM_NET_WM_STATE_SKIP_TASKBAR },
    { "_NET_WM_STATE_SKIP_PAGER", &ECORE_X_ATOM_NET_WM_STATE_SKIP_PAGER },
@@ -148,7 +148,7 @@ static Xcb_Atom atoms[] =
    { "_NET_WM_STATE_ABOVE", &ECORE_X_ATOM_NET_WM_STATE_ABOVE },
    { "_NET_WM_STATE_BELOW", &ECORE_X_ATOM_NET_WM_STATE_BELOW },
    { "_NET_WM_STATE_DEMANDS_ATTENTION",
-        &ECORE_X_ATOM_NET_WM_STATE_DEMANDS_ATTENTION },
+     &ECORE_X_ATOM_NET_WM_STATE_DEMANDS_ATTENTION },
 
    { "_NET_WM_ALLOWED_ACTIONS", &ECORE_X_ATOM_NET_WM_ALLOWED_ACTIONS },
    { "_NET_WM_ACTION_MOVE", &ECORE_X_ATOM_NET_WM_ACTION_MOVE },
@@ -157,12 +157,12 @@ static Xcb_Atom atoms[] =
    { "_NET_WM_ACTION_SHADE", &ECORE_X_ATOM_NET_WM_ACTION_SHADE },
    { "_NET_WM_ACTION_STICK", &ECORE_X_ATOM_NET_WM_ACTION_STICK },
    { "_NET_WM_ACTION_MAXIMIZE_HORZ",
-        &ECORE_X_ATOM_NET_WM_ACTION_MAXIMIZE_HORZ },
+     &ECORE_X_ATOM_NET_WM_ACTION_MAXIMIZE_HORZ },
    { "_NET_WM_ACTION_MAXIMIZE_VERT",
-        &ECORE_X_ATOM_NET_WM_ACTION_MAXIMIZE_VERT },
+     &ECORE_X_ATOM_NET_WM_ACTION_MAXIMIZE_VERT },
    { "_NET_WM_ACTION_FULLSCREEN", &ECORE_X_ATOM_NET_WM_ACTION_FULLSCREEN },
    { "_NET_WM_ACTION_CHANGE_DESKTOP",
-        &ECORE_X_ATOM_NET_WM_ACTION_CHANGE_DESKTOP },
+     &ECORE_X_ATOM_NET_WM_ACTION_CHANGE_DESKTOP },
    { "_NET_WM_ACTION_CLOSE", &ECORE_X_ATOM_NET_WM_ACTION_CLOSE },
    { "_NET_WM_ACTION_ABOVE", &ECORE_X_ATOM_NET_WM_ACTION_ABOVE },
    { "_NET_WM_ACTION_BELOW", &ECORE_X_ATOM_NET_WM_ACTION_BELOW },
@@ -180,7 +180,7 @@ static Xcb_Atom atoms[] =
    { "_NET_WM_PING", &ECORE_X_ATOM_NET_WM_PING },
    { "_NET_WM_SYNC_REQUEST", &ECORE_X_ATOM_NET_WM_SYNC_REQUEST },
    { "_NET_WM_SYNC_REQUEST_COUNTER",
-        &ECORE_X_ATOM_NET_WM_SYNC_REQUEST_COUNTER },
+     &ECORE_X_ATOM_NET_WM_SYNC_REQUEST_COUNTER },
 
    { "_NET_WM_WINDOW_OPACITY", &ECORE_X_ATOM_NET_WM_WINDOW_OPACITY },
    { "_NET_WM_WINDOW_SHADOW", &ECORE_X_ATOM_NET_WM_WINDOW_SHADOW },
@@ -202,12 +202,12 @@ static Xcb_Atom atoms[] =
    { "_E_VIRTUAL_KEYBOARD_NUMERIC", &ECORE_X_ATOM_E_VIRTUAL_KEYBOARD_NUMERIC },
    { "_E_VIRTUAL_KEYBOARD_PIN", &ECORE_X_ATOM_E_VIRTUAL_KEYBOARD_PIN },
    { "_E_VIRTUAL_KEYBOARD_PHONE_NUMBER",
-        &ECORE_X_ATOM_E_VIRTUAL_KEYBOARD_PHONE_NUMBER },
+     &ECORE_X_ATOM_E_VIRTUAL_KEYBOARD_PHONE_NUMBER },
    { "_E_VIRTUAL_KEYBOARD_HEX", &ECORE_X_ATOM_E_VIRTUAL_KEYBOARD_HEX },
    { "_E_VIRTUAL_KEYBOARD_TERMINAL",
-        &ECORE_X_ATOM_E_VIRTUAL_KEYBOARD_TERMINAL },
-   { "_E_VIRTUAL_KEYBOARD_PASSWORD", 
-        &ECORE_X_ATOM_E_VIRTUAL_KEYBOARD_PASSWORD },
+     &ECORE_X_ATOM_E_VIRTUAL_KEYBOARD_TERMINAL },
+   { "_E_VIRTUAL_KEYBOARD_PASSWORD",
+     &ECORE_X_ATOM_E_VIRTUAL_KEYBOARD_PASSWORD },
    { "_E_VIRTUAL_KEYBOARD_IP", &ECORE_X_ATOM_E_VIRTUAL_KEYBOARD_IP },
    { "_E_VIRTUAL_KEYBOARD_HOST", &ECORE_X_ATOM_E_VIRTUAL_KEYBOARD_HOST },
    { "_E_VIRTUAL_KEYBOARD_FILE", &ECORE_X_ATOM_E_VIRTUAL_KEYBOARD_FILE },
@@ -233,22 +233,22 @@ static Xcb_Atom atoms[] =
    { "_E_ILLUME_DRAG_START", &ECORE_X_ATOM_E_ILLUME_DRAG_START },
    { "_E_ILLUME_DRAG_END", &ECORE_X_ATOM_E_ILLUME_DRAG_END },
    { "_E_ILLUME_INDICATOR_GEOMETRY",
-        &ECORE_X_ATOM_E_ILLUME_INDICATOR_GEOMETRY },
+     &ECORE_X_ATOM_E_ILLUME_INDICATOR_GEOMETRY },
    { "_E_ILLUME_SOFTKEY_GEOMETRY", &ECORE_X_ATOM_E_ILLUME_SOFTKEY_GEOMETRY },
    { "_E_ILLUME_KEYBOARD_GEOMETRY", &ECORE_X_ATOM_E_ILLUME_KEYBOARD_GEOMETRY },
    { "_E_ILLUME_QUICKPANEL", &ECORE_X_ATOM_E_ILLUME_QUICKPANEL },
    { "_E_ILLUME_QUICKPANEL_STATE", &ECORE_X_ATOM_E_ILLUME_QUICKPANEL_STATE },
    { "_E_ILLUME_QUICKPANEL_STATE_TOGGLE",
-        &ECORE_X_ATOM_E_ILLUME_QUICKPANEL_STATE_TOGGLE },
+     &ECORE_X_ATOM_E_ILLUME_QUICKPANEL_STATE_TOGGLE },
    { "_E_ILLUME_QUICKPANEL_ON", &ECORE_X_ATOM_E_ILLUME_QUICKPANEL_ON },
    { "_E_ILLUME_QUICKPANEL_OFF", &ECORE_X_ATOM_E_ILLUME_QUICKPANEL_OFF },
    { "_E_ILLUME_QUICKPANEL_PRIORITY_MAJOR",
-        &ECORE_X_ATOM_E_ILLUME_QUICKPANEL_PRIORITY_MAJOR },
+     &ECORE_X_ATOM_E_ILLUME_QUICKPANEL_PRIORITY_MAJOR },
    { "_E_ILLUME_QUICKPANEL_PRIORITY_MINOR",
-        &ECORE_X_ATOM_E_ILLUME_QUICKPANEL_PRIORITY_MINOR },
+     &ECORE_X_ATOM_E_ILLUME_QUICKPANEL_PRIORITY_MINOR },
    { "_E_ILLUME_QUICKPANEL_ZONE", &ECORE_X_ATOM_E_ILLUME_QUICKPANEL_ZONE },
    { "_E_ILLUME_QUICKPANEL_POSITION_UPDATE",
-        &ECORE_X_ATOM_E_ILLUME_QUICKPANEL_POSITION_UPDATE },
+     &ECORE_X_ATOM_E_ILLUME_QUICKPANEL_POSITION_UPDATE },
 
    { "_E_COMP_SYNC_COUNTER", &ECORE_X_ATOM_E_COMP_SYNC_COUNTER },
    { "_E_COMP_SYNC_DRAW_DONE", &ECORE_X_ATOM_E_COMP_SYNC_DRAW_DONE },
@@ -264,8 +264,8 @@ static Xcb_Atom atoms[] =
    { "_E_VIDEO_POSITION", &ECORE_X_ATOM_E_VIDEO_POSITION }
 };
 
-void 
-_ecore_xcb_atoms_init(void) 
+void
+_ecore_xcb_atoms_init(void)
 {
    int i = 0, num = 0;
 
@@ -273,16 +273,16 @@ _ecore_xcb_atoms_init(void)
    CHECK_XCB_CONN;
 
    num = (sizeof(atoms) / sizeof(Xcb_Atom));
-   for (i = 0; i < num; i++)  
+   for (i = 0; i < num; i++)
      {
-        cookies[i] = 
-          xcb_intern_atom_unchecked(_ecore_xcb_conn, 0, 
+        cookies[i] =
+          xcb_intern_atom_unchecked(_ecore_xcb_conn, 0,
                                     strlen(atoms[i].name), atoms[i].name);
      }
 }
 
-void 
-_ecore_xcb_atoms_finalize(void) 
+void
+_ecore_xcb_atoms_finalize(void)
 {
    int i = 0, num = 0;
 
@@ -290,7 +290,7 @@ _ecore_xcb_atoms_finalize(void)
    CHECK_XCB_CONN;
 
    num = (sizeof(atoms) / sizeof(Xcb_Atom));
-   for (i = 0; i < num; i++) 
+   for (i = 0; i < num; i++)
      {
         xcb_intern_atom_reply_t *reply = NULL;
 
@@ -303,13 +303,13 @@ _ecore_xcb_atoms_finalize(void)
 
 /**
  * @defgroup Ecore_X_Atom_Group XCB Atom Functions
- * 
+ *
  * Functions that operate on atoms
  */
 
 /**
  * Retrieves the atom value associated to a name.
- * 
+ *
  * @param  name Unused.
  * @return      Associated atom value.
  *
@@ -321,11 +321,11 @@ _ecore_xcb_atoms_finalize(void)
  * To use this function, you must call before, and in order,
  * ecore_x_atom_get_prefetch(), which sends the InternAtom request,
  * then ecore_x_atom_get_fetch(), which gets the reply.
- * 
+ *
  * @ingroup Ecore_X_Atom_Group
  */
-EAPI Ecore_X_Atom 
-ecore_x_atom_get(const char *name) 
+EAPI Ecore_X_Atom
+ecore_x_atom_get(const char *name)
 {
    xcb_intern_atom_cookie_t cookie;
    xcb_intern_atom_reply_t *reply;
@@ -344,14 +344,14 @@ ecore_x_atom_get(const char *name)
 
 /**
  * Retrieves the name of the given atom.
- * 
- * @param  atom 
+ *
+ * @param  atom
  * @return      The name of the atom.
  *
  * @ingroup Ecore_X_Atom_Group
  */
 EAPI char *
-ecore_x_atom_name_get(Ecore_X_Atom atom) 
+ecore_x_atom_name_get(Ecore_X_Atom atom)
 {
    xcb_get_atom_name_cookie_t cookie;
    xcb_get_atom_name_reply_t *reply;
@@ -366,7 +366,7 @@ ecore_x_atom_name_get(Ecore_X_Atom atom)
    if (!reply) return NULL;
    len = xcb_get_atom_name_name_length(reply);
    name = (char *)malloc(sizeof(char) * (len + 1));
-   if (!name) 
+   if (!name)
      {
         free(reply);
         return NULL;
@@ -378,8 +378,10 @@ ecore_x_atom_name_get(Ecore_X_Atom atom)
    return name;
 }
 
-EAPI void 
-ecore_x_atoms_get(const char **names, int num, Ecore_X_Atom *atoms) 
+EAPI void
+ecore_x_atoms_get(const char  **names,
+                  int           num,
+                  Ecore_X_Atom *atoms)
 {
    xcb_intern_atom_cookie_t cookies[num];
    int i = 0;
@@ -387,13 +389,13 @@ ecore_x_atoms_get(const char **names, int num, Ecore_X_Atom *atoms)
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    CHECK_XCB_CONN;
 
-   for (i = 0; i < num; i++) 
+   for (i = 0; i < num; i++)
      {
-        cookies[i] = 
-          xcb_intern_atom_unchecked(_ecore_xcb_conn, 0, 
+        cookies[i] =
+          xcb_intern_atom_unchecked(_ecore_xcb_conn, 0,
                                     strlen(names[i]), names[i]);
      }
-   for (i = 0; i < num; i++) 
+   for (i = 0; i < num; i++)
      {
         xcb_intern_atom_reply_t *reply = NULL;
 
@@ -403,3 +405,4 @@ ecore_x_atoms_get(const char **names, int num, Ecore_X_Atom *atoms)
         free(reply);
      }
 }
+

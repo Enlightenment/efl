@@ -9,31 +9,31 @@
 #include "ecore_x_private.h"
 #include "ecore_x_randr.h"
 
-#define Ecore_X_Randr_None   (Ecore_X_Randr_Crtc)0
-#define Ecore_X_Randr_Unset  (Ecore_X_Randr_Crtc)-1
+#define Ecore_X_Randr_None  (Ecore_X_Randr_Crtc)0
+#define Ecore_X_Randr_Unset (Ecore_X_Randr_Crtc) - 1
 
 #ifdef ECORE_XRANDR
 
-#define RANDR_1_2 ((1 << 16) | 2)
+#define RANDR_1_2           ((1 << 16) | 2)
 
 #define RANDR_VALIDATE_ROOT(screen, root) \
-   ((screen = XRRRootToScreen(_ecore_x_disp, root)) != -1)
+  ((screen = XRRRootToScreen(_ecore_x_disp, root)) != -1)
 
 #define RANDR_CHECK_1_2_RET(ret) if(_randr_version < RANDR_1_2) return ret
 
-#define RANDR_PROPERTY_EDID                     "EDID"
-#define RANDR_PROPERTY_BACKLIGHT                "Backlight"
-#define RANDR_PROPERTY_SIGNAL_FORMAT            "SignalFormat"
-#define RANDR_PROPERTY_SIGNAL_PROPERTIES        "SignalProperties"
-#define RANDR_PROPERTY_CONNECTOR_TYPE           "ConnectorType"
-#define RANDR_PROPERTY_CONNECTOR_NUMBER         "ConnectorNumber"
-#define RANDR_PROPERTY_COMPATIBILITY_LIST       "CompatibilityList"
-#define RANDR_PROPERTY_CLONE_LIST               "CloneList"
+#define RANDR_PROPERTY_EDID               "EDID"
+#define RANDR_PROPERTY_BACKLIGHT          "Backlight"
+#define RANDR_PROPERTY_SIGNAL_FORMAT      "SignalFormat"
+#define RANDR_PROPERTY_SIGNAL_PROPERTIES  "SignalProperties"
+#define RANDR_PROPERTY_CONNECTOR_TYPE     "ConnectorType"
+#define RANDR_PROPERTY_CONNECTOR_NUMBER   "ConnectorNumber"
+#define RANDR_PROPERTY_COMPATIBILITY_LIST "CompatibilityList"
+#define RANDR_PROPERTY_CLONE_LIST         "CloneList"
 
-extern XRRScreenResources * (*_ecore_x_randr_get_screen_resources)(Display *
-                                                                   dpy,
-                                                                   Window
-                                                                   window);
+extern XRRScreenResources *(*_ecore_x_randr_get_screen_resources)(Display *
+                                                                  dpy,
+                                                                  Window
+                                                                  window);
 extern int _randr_version;
 #endif
 
@@ -44,21 +44,22 @@ extern int _randr_version;
  * @param on enable/disable selecting
  */
 EAPI void
-ecore_x_randr_events_select(Ecore_X_Window win, Eina_Bool on)
+ecore_x_randr_events_select(Ecore_X_Window win,
+                            Eina_Bool      on)
 {
 #ifdef ECORE_XRANDR
    int mask;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    if (!on)
-      mask = 0;
+     mask = 0;
    else
      {
         mask = RRScreenChangeNotifyMask;
         if (_randr_version >= RANDR_1_2)
-           mask |= (RRCrtcChangeNotifyMask |
-                    RROutputChangeNotifyMask |
-                    RROutputPropertyNotifyMask);
+          mask |= (RRCrtcChangeNotifyMask |
+                   RROutputChangeNotifyMask |
+                   RROutputPropertyNotifyMask);
      }
 
    XRRSelectInput(_ecore_x_disp, win, mask);
@@ -72,7 +73,8 @@ ecore_x_randr_events_select(Ecore_X_Window win, Eina_Bool on)
  * @return in case it is found EINA_TRUE will be returned. Else EINA_FALSE is returned.
  */
 static inline Eina_Bool
-_ecore_x_randr_crtc_validate(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc)
+_ecore_x_randr_crtc_validate(Ecore_X_Window     root,
+                             Ecore_X_Randr_Crtc crtc)
 {
 #ifdef ECORE_XRANDR
    RANDR_CHECK_1_2_RET(EINA_FALSE);
@@ -83,7 +85,7 @@ _ecore_x_randr_crtc_validate(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc)
 
    if ((crtc == Ecore_X_Randr_None) ||
        (crtc == Ecore_X_Randr_Unset))
-      return ret;
+     return ret;
 
    if (_ecore_x_randr_root_validate(root) && crtc &&
        (res = _ecore_x_randr_get_screen_resources (_ecore_x_disp, root)))
@@ -106,7 +108,8 @@ _ecore_x_randr_crtc_validate(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc)
 }
 
 Eina_Bool
-_ecore_x_randr_output_validate(Ecore_X_Window root, Ecore_X_Randr_Output output)
+_ecore_x_randr_output_validate(Ecore_X_Window       root,
+                               Ecore_X_Randr_Output output)
 {
 #ifdef ECORE_XRANDR
    RANDR_CHECK_1_2_RET(EINA_FALSE);
@@ -136,7 +139,8 @@ _ecore_x_randr_output_validate(Ecore_X_Window root, Ecore_X_Randr_Output output)
 }
 
 static inline Eina_Bool
-_ecore_x_randr_mode_validate(Ecore_X_Window root, Ecore_X_Randr_Mode mode)
+_ecore_x_randr_mode_validate(Ecore_X_Window     root,
+                             Ecore_X_Randr_Mode mode)
 {
 #ifdef ECORE_XRANDR
    RANDR_CHECK_1_2_RET(EINA_FALSE);
@@ -171,29 +175,29 @@ _ecore_x_randr_mode_validate(Ecore_X_Window root, Ecore_X_Randr_Mode mode)
  */
 EAPI void
 ecore_x_randr_screen_current_size_get(Ecore_X_Window root,
-                                      int *w,
-                                      int *h,
-                                      int *w_mm,
-                                      int *h_mm)
+                                      int           *w,
+                                      int           *h,
+                                      int           *w_mm,
+                                      int           *h_mm)
 {
 #ifdef ECORE_XRANDR
    RANDR_CHECK_1_2_RET();
    Ecore_X_Randr_Screen scr;
 
    if (!RANDR_VALIDATE_ROOT(scr, root))
-      return;
+     return;
 
    if (w)
-      *w = DisplayWidth(_ecore_x_disp, scr);
+     *w = DisplayWidth(_ecore_x_disp, scr);
 
    if (h)
-      *h = DisplayHeight(_ecore_x_disp, scr);
+     *h = DisplayHeight(_ecore_x_disp, scr);
 
    if (w_mm)
-      *w_mm = DisplayWidthMM(_ecore_x_disp, scr);
+     *w_mm = DisplayWidthMM(_ecore_x_disp, scr);
 
    if (h_mm)
-      *h_mm = DisplayHeightMM(_ecore_x_disp, scr);
+     *h_mm = DisplayHeightMM(_ecore_x_disp, scr);
 
 #endif
 }
@@ -207,10 +211,10 @@ ecore_x_randr_screen_current_size_get(Ecore_X_Window root,
  */
 EAPI void
 ecore_x_randr_screen_size_range_get(Ecore_X_Window root,
-                                    int *wmin,
-                                    int *hmin,
-                                    int *wmax,
-                                    int *hmax)
+                                    int           *wmin,
+                                    int           *hmin,
+                                    int           *wmax,
+                                    int           *hmax)
 {
 #ifdef ECORE_XRANDR
    RANDR_CHECK_1_2_RET();
@@ -219,16 +223,16 @@ ecore_x_randr_screen_size_range_get(Ecore_X_Window root,
                               &thmax))
      {
         if (wmin)
-           *wmin = twmin;
+          *wmin = twmin;
 
         if (hmin)
-           *hmin = thmin;
+          *hmin = thmin;
 
         if (wmax)
-           *wmax = twmax;
+          *wmax = twmax;
 
         if (hmax)
-           *hmax = thmax;
+          *hmax = thmax;
      }
 
 #endif
@@ -245,10 +249,10 @@ ecore_x_randr_screen_size_range_get(Ecore_X_Window root,
  */
 EAPI Eina_Bool
 ecore_x_randr_screen_current_size_set(Ecore_X_Window root,
-                                      int w,
-                                      int h,
-                                      int w_mm,
-                                      int h_mm)
+                                      int            w,
+                                      int            h,
+                                      int            w_mm,
+                                      int            h_mm)
 {
 #ifdef ECORE_XRANDR
    RANDR_CHECK_1_2_RET(EINA_FALSE);
@@ -257,11 +261,11 @@ ecore_x_randr_screen_current_size_set(Ecore_X_Window root,
    int w_c, h_c, w_mm_c, h_mm_c, twmin, thmin, twmax, thmax;
 
    if (!RANDR_VALIDATE_ROOT(scr, root))
-      return EINA_FALSE;
+     return EINA_FALSE;
 
    ecore_x_randr_screen_current_size_get(root, &w_c, &h_c, &w_mm_c, &h_mm_c);
    if ((w == w_c) && (h == h_c) && (w_mm_c == w_mm) && (h_mm_c == h_mm))
-      return EINA_TRUE;
+     return EINA_TRUE;
 
    ecore_x_randr_screen_size_range_get(root, &twmin, &thmin, &twmax, &thmax);
 
@@ -269,27 +273,27 @@ ecore_x_randr_screen_current_size_set(Ecore_X_Window root,
         ((w < twmin) ||
          (w > twmax))) ||
        ((h != Ecore_X_Randr_None) && ((h < thmin) || (h > thmax))))
-      return EINA_FALSE;
+     return EINA_FALSE;
 
    if (w <= 0)
-      w = DisplayWidth(_ecore_x_disp, scr);
+     w = DisplayWidth(_ecore_x_disp, scr);
 
    if (h <= 0)
-      h = DisplayHeight(_ecore_x_disp, scr);
+     h = DisplayHeight(_ecore_x_disp, scr);
 
    if(w_mm <= 0)
-      w_mm =
-         (int)(((double)(DisplayWidthMM(_ecore_x_disp,
-                                        scr) /
-                         (double)DisplayWidth(_ecore_x_disp,
-                                              scr))) * (double)w);
+     w_mm =
+       (int)(((double)(DisplayWidthMM(_ecore_x_disp,
+                                      scr) /
+                       (double)DisplayWidth(_ecore_x_disp,
+                                            scr))) * (double)w);
 
    if(h_mm <= 0)
-      h_mm =
-         (int)(((double)(DisplayHeightMM(_ecore_x_disp,
-                                         scr) /
-                         (double)DisplayHeight(_ecore_x_disp,
-                                               scr))) * (double)h);
+     h_mm =
+       (int)(((double)(DisplayHeightMM(_ecore_x_disp,
+                                       scr) /
+                       (double)DisplayHeight(_ecore_x_disp,
+                                             scr))) * (double)h);
 
    XRRSetScreenSize (_ecore_x_disp, root, w, h, w_mm, h_mm);
    return EINA_TRUE;
@@ -305,7 +309,8 @@ ecore_x_randr_screen_current_size_set(Ecore_X_Window root,
  * @return modes' information
  */
 EAPI Ecore_X_Randr_Mode_Info **
-ecore_x_randr_modes_info_get(Ecore_X_Window root, int *num)
+ecore_x_randr_modes_info_get(Ecore_X_Window root,
+                             int           *num)
 {
 #ifdef ECORE_XRANDR
    RANDR_CHECK_1_2_RET(NULL);
@@ -317,10 +322,10 @@ ecore_x_randr_modes_info_get(Ecore_X_Window root, int *num)
        (res = _ecore_x_randr_get_screen_resources (_ecore_x_disp, root)))
      {
         if ((ret =
-                (Ecore_X_Randr_Mode_Info **)malloc(sizeof(
-                                                      Ecore_X_Randr_Mode_Info *)
-                                                   *
-                                                   res->nmode)))
+               (Ecore_X_Randr_Mode_Info **)malloc(sizeof(
+                                                    Ecore_X_Randr_Mode_Info *)
+                                                  *
+                                                  res->nmode)))
           {
              for (i = 0; i < res->nmode; i++)
                {
@@ -338,10 +343,10 @@ ecore_x_randr_modes_info_get(Ecore_X_Window root, int *num)
                        ret[i]->vSyncEnd = res->modes[i].vSyncEnd;
                        ret[i]->vTotal = res->modes[i].vTotal;
                        if ((ret[i]->name = (malloc(res->modes[i].nameLength))))
-                          strncpy(ret[i]->name, res->modes[i].name,
-                                  res->modes[i].nameLength);
+                         strncpy(ret[i]->name, res->modes[i].name,
+                                 res->modes[i].nameLength);
                        else
-                          ret[i]->name = NULL;
+                         ret[i]->name = NULL;
 
                        ret[i]->nameLength = res->modes[i].nameLength;
                        ret[i]->modeFlags = res->modes[i].modeFlags;
@@ -349,8 +354,8 @@ ecore_x_randr_modes_info_get(Ecore_X_Window root, int *num)
                   else
                     {
                        while(i > 0)
-                          free(ret[--i]);
-                          free(ret);
+                         free(ret[--i]);
+                       free(ret);
                        ret = NULL;
                        break;
                     }
@@ -358,7 +363,7 @@ ecore_x_randr_modes_info_get(Ecore_X_Window root, int *num)
           }
 
         if (ret && num)
-           *num = res->nmode;
+          *num = res->nmode;
 
         XRRFreeScreenResources(res);
      }
@@ -376,7 +381,8 @@ ecore_x_randr_modes_info_get(Ecore_X_Window root, int *num)
  * @return mode's detailed information
  */
 EAPI Ecore_X_Randr_Mode_Info *
-ecore_x_randr_mode_info_get(Ecore_X_Window root, Ecore_X_Randr_Mode mode)
+ecore_x_randr_mode_info_get(Ecore_X_Window     root,
+                            Ecore_X_Randr_Mode mode)
 {
 #ifdef ECORE_XRANDR
    RANDR_CHECK_1_2_RET(NULL);
@@ -454,7 +460,8 @@ ecore_x_randr_mode_info_free(Ecore_X_Randr_Mode_Info *mode_info)
  * @return CRTC IDs
  */
 EAPI Ecore_X_Randr_Crtc *
-ecore_x_randr_crtcs_get(Ecore_X_Window root, int *num)
+ecore_x_randr_crtcs_get(Ecore_X_Window root,
+                        int           *num)
 {
 #ifdef ECORE_XRANDR
    RANDR_CHECK_1_2_RET(NULL);
@@ -480,7 +487,8 @@ ecore_x_randr_crtcs_get(Ecore_X_Window root, int *num)
 }
 
 EAPI Ecore_X_Randr_Output *
-ecore_x_randr_outputs_get(Ecore_X_Window root, int *num)
+ecore_x_randr_outputs_get(Ecore_X_Window root,
+                          int           *num)
 {
 #ifdef ECORE_XRANDR
    RANDR_CHECK_1_2_RET(NULL);
@@ -495,11 +503,11 @@ ecore_x_randr_outputs_get(Ecore_X_Window root, int *num)
              memcpy(ret, res->outputs,
                     (sizeof(Ecore_X_Randr_Output) * res->noutput));
              if (num)
-                *num = res->noutput;
+               *num = res->noutput;
           }
 
         if (res)
-           XRRFreeScreenResources(res);
+          XRRFreeScreenResources(res);
      }
 
    return ret;
@@ -515,9 +523,9 @@ ecore_x_randr_outputs_get(Ecore_X_Window root, int *num)
  * @param num number of outputs referenced by given CRTC
  */
 EAPI Ecore_X_Randr_Output *
-ecore_x_randr_crtc_outputs_get(Ecore_X_Window root,
+ecore_x_randr_crtc_outputs_get(Ecore_X_Window     root,
                                Ecore_X_Randr_Crtc crtc,
-                               int *num)
+                               int               *num)
 {
 #ifdef ECORE_XRANDR
    RANDR_CHECK_1_2_RET(NULL);
@@ -528,8 +536,8 @@ ecore_x_randr_crtc_outputs_get(Ecore_X_Window root,
    if (_ecore_x_randr_crtc_validate(root,
                                     crtc) &&
        (res =
-           _ecore_x_randr_get_screen_resources (_ecore_x_disp,
-                                                root)) &&
+          _ecore_x_randr_get_screen_resources (_ecore_x_disp,
+                                               root)) &&
        (crtc_info = XRRGetCrtcInfo(_ecore_x_disp, res, crtc)))
      {
         if ((ret = malloc(sizeof(Ecore_X_Randr_Output) * crtc_info->noutput)))
@@ -537,14 +545,14 @@ ecore_x_randr_crtc_outputs_get(Ecore_X_Window root,
              memcpy(ret, crtc_info->outputs,
                     (sizeof(Ecore_X_Randr_Output) * crtc_info->noutput));
              if (num)
-                *num = crtc_info->noutput;
+               *num = crtc_info->noutput;
           }
 
         if (crtc_info)
-           XRRFreeCrtcInfo(crtc_info);
+          XRRFreeCrtcInfo(crtc_info);
 
         if (res)
-           XRRFreeScreenResources(res);
+          XRRFreeScreenResources(res);
      }
 
    return ret;
@@ -559,9 +567,9 @@ ecore_x_randr_crtc_outputs_get(Ecore_X_Window root,
  * @param num number of possible outputs referenced by given CRTC
  */
 EAPI Ecore_X_Randr_Output *
-ecore_x_randr_crtc_possible_outputs_get(Ecore_X_Window root,
+ecore_x_randr_crtc_possible_outputs_get(Ecore_X_Window     root,
                                         Ecore_X_Randr_Crtc crtc,
-                                        int *num)
+                                        int               *num)
 {
 #ifdef ECORE_XRANDR
    RANDR_CHECK_1_2_RET(NULL);
@@ -576,12 +584,12 @@ ecore_x_randr_crtc_possible_outputs_get(Ecore_X_Window root,
         if((crtc_info = XRRGetCrtcInfo(_ecore_x_disp, res, crtc)))
           {
              if ((ret =
-                     malloc(sizeof(Ecore_X_Randr_Output) * crtc_info->npossible)))
+                    malloc(sizeof(Ecore_X_Randr_Output) * crtc_info->npossible)))
                {
                   memcpy(ret, crtc_info->possible,
                          (sizeof(Ecore_X_Randr_Output) * crtc_info->npossible));
                   if (num)
-                     *num = res->ncrtc;
+                    *num = res->ncrtc;
                }
 
              XRRFreeCrtcInfo(crtc_info);
@@ -597,12 +605,12 @@ ecore_x_randr_crtc_possible_outputs_get(Ecore_X_Window root,
 }
 
 EAPI void
-ecore_x_randr_crtc_geometry_get(Ecore_X_Window root,
+ecore_x_randr_crtc_geometry_get(Ecore_X_Window     root,
                                 Ecore_X_Randr_Crtc crtc,
-                                int *x,
-                                int *y,
-                                int *w,
-                                int *h)
+                                int               *x,
+                                int               *y,
+                                int               *w,
+                                int               *h)
 {
 #ifdef ECORE_XRANDR
    RANDR_CHECK_1_2_RET();
@@ -612,21 +620,21 @@ ecore_x_randr_crtc_geometry_get(Ecore_X_Window root,
    if (_ecore_x_randr_crtc_validate(root,
                                     crtc) &&
        (res =
-           _ecore_x_randr_get_screen_resources (_ecore_x_disp,
-                                                root)) &&
+          _ecore_x_randr_get_screen_resources (_ecore_x_disp,
+                                               root)) &&
        (crtc_info = XRRGetCrtcInfo(_ecore_x_disp, res, crtc)))
      {
         if (x)
-           *x = crtc_info->x;
+          *x = crtc_info->x;
 
         if (y)
-           *y = crtc_info->y;
+          *y = crtc_info->y;
 
         if (w)
-           *w = crtc_info->width;
+          *w = crtc_info->width;
 
         if (h)
-           *h = crtc_info->height;
+          *h = crtc_info->height;
 
         XRRFreeCrtcInfo(crtc_info);
         XRRFreeScreenResources(res);
@@ -644,10 +652,10 @@ ecore_x_randr_crtc_geometry_get(Ecore_X_Window root,
  * @return EINA_TRUE if position could be successfully be altered.
  */
 EAPI Eina_Bool
-ecore_x_randr_crtc_pos_set(Ecore_X_Window root,
+ecore_x_randr_crtc_pos_set(Ecore_X_Window     root,
                            Ecore_X_Randr_Crtc crtc,
-                           int x,
-                           int y)
+                           int                x,
+                           int                y)
 {
 #ifdef ECORE_XRANDR
    RANDR_CHECK_1_2_RET(EINA_FALSE);
@@ -662,20 +670,20 @@ ecore_x_randr_crtc_pos_set(Ecore_X_Window root,
                                    &crtc_geo.h);
    ecore_x_randr_screen_current_size_get(root, &w_c, &h_c, NULL, NULL);
    if (x < 0)
-      x = crtc_geo.x;
+     x = crtc_geo.x;
 
    if (y < 0)
-      y = crtc_geo.y;
+     y = crtc_geo.y;
 
    if ((x + crtc_geo.w) > w_c)
-      w_new = x + crtc_geo.w;
+     w_new = x + crtc_geo.w;
 
    if ((y + crtc_geo.h) > h_c)
-      h_new = y + crtc_geo.h;
+     h_new = y + crtc_geo.h;
 
    if ((w_new != 0) || (h_new != 0))
-      if (!ecore_x_randr_screen_current_size_set(root, w_new, h_new, 0, 0))
-         return EINA_FALSE;
+     if (!ecore_x_randr_screen_current_size_set(root, w_new, h_new, 0, 0))
+       return EINA_FALSE;
 
    return ecore_x_randr_crtc_settings_set(root,
                                           crtc,
@@ -698,7 +706,8 @@ ecore_x_randr_crtc_pos_set(Ecore_X_Window root,
  * Ecore_X_Randr_Unset
  */
 EAPI Ecore_X_Randr_Mode
-ecore_x_randr_crtc_mode_get(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc)
+ecore_x_randr_crtc_mode_get(Ecore_X_Window     root,
+                            Ecore_X_Randr_Crtc crtc)
 {
 #ifdef ECORE_XRANDR
    RANDR_CHECK_1_2_RET(Ecore_X_Randr_Unset);
@@ -709,8 +718,8 @@ ecore_x_randr_crtc_mode_get(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc)
        _ecore_x_randr_crtc_validate(root,
                                     crtc) &&
        (res =
-           _ecore_x_randr_get_screen_resources(_ecore_x_disp,
-                                               root)) &&
+          _ecore_x_randr_get_screen_resources(_ecore_x_disp,
+                                              root)) &&
        (crtc_info = XRRGetCrtcInfo(_ecore_x_disp, res, crtc)))
      {
         ret = crtc_info->mode;
@@ -737,17 +746,17 @@ ecore_x_randr_crtc_mode_get(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc)
  * @return EINA_TRUE if mode setting was successful. Else EINA_FALSE
  */
 EAPI Eina_Bool
-ecore_x_randr_crtc_mode_set(Ecore_X_Window root,
-                            Ecore_X_Randr_Crtc crtc,
+ecore_x_randr_crtc_mode_set(Ecore_X_Window        root,
+                            Ecore_X_Randr_Crtc    crtc,
                             Ecore_X_Randr_Output *outputs,
-                            int noutputs,
-                            Ecore_X_Randr_Mode mode)
+                            int                   noutputs,
+                            Ecore_X_Randr_Mode    mode)
 {
 #ifdef ECORE_XRANDR
    RANDR_CHECK_1_2_RET(EINA_FALSE);
 
    if (mode == Ecore_X_Randr_Unset)
-      return EINA_FALSE;
+     return EINA_FALSE;
 
    return ecore_x_randr_crtc_settings_set(root,
                                           crtc,
@@ -763,10 +772,10 @@ ecore_x_randr_crtc_mode_set(Ecore_X_Window root,
 }
 
 EAPI void
-ecore_x_randr_crtc_size_get(Ecore_X_Window root,
+ecore_x_randr_crtc_size_get(Ecore_X_Window     root,
                             Ecore_X_Randr_Crtc crtc,
-                            int *w,
-                            int *h)
+                            int               *w,
+                            int               *h)
 {
 #ifdef ECORE_XRANDR
    RANDR_CHECK_1_2_RET();
@@ -775,7 +784,7 @@ ecore_x_randr_crtc_size_get(Ecore_X_Window root,
 }
 
 EAPI Ecore_X_Randr_Refresh_Rate
-ecore_x_randr_crtc_refresh_rate_get(Ecore_X_Window root,
+ecore_x_randr_crtc_refresh_rate_get(Ecore_X_Window     root,
                                     Ecore_X_Randr_Crtc crtc,
                                     Ecore_X_Randr_Mode mode)
 {
@@ -791,23 +800,22 @@ ecore_x_randr_crtc_refresh_rate_get(Ecore_X_Window root,
        (res = _ecore_x_randr_get_screen_resources (_ecore_x_disp, root)))
      {
         for (i = 0; i < res->nmode; i++)
-           if (res->modes[i].id == mode)
-             {
-                if (res->modes[i].hTotal && res->modes[i].vTotal)
-                   ret = ((double)res->modes[i].dotClock /
-                          ((double)res->modes[i].hTotal *
-                           (double)res->modes[i].vTotal));
+          if (res->modes[i].id == mode)
+            {
+               if (res->modes[i].hTotal && res->modes[i].vTotal)
+                 ret = ((double)res->modes[i].dotClock /
+                        ((double)res->modes[i].hTotal *
+                         (double)res->modes[i].vTotal));
 
-                break;
-             }
-
+               break;
+            }
      }
 
    if (crtc_info)
-      XRRFreeCrtcInfo(crtc_info);
+     XRRFreeCrtcInfo(crtc_info);
 
    if (res)
-      XRRFreeScreenResources(res);
+     XRRFreeScreenResources(res);
 
    return ret;
 #else
@@ -816,7 +824,7 @@ ecore_x_randr_crtc_refresh_rate_get(Ecore_X_Window root,
 }
 
 EAPI Ecore_X_Randr_Orientation
-ecore_x_randr_crtc_orientations_get(Ecore_X_Window root,
+ecore_x_randr_crtc_orientations_get(Ecore_X_Window     root,
                                     Ecore_X_Randr_Crtc crtc)
 {
 #ifdef ECORE_XRANDR
@@ -828,17 +836,17 @@ ecore_x_randr_crtc_orientations_get(Ecore_X_Window root,
    if (_ecore_x_randr_crtc_validate(root,
                                     crtc) &&
        (res =
-           _ecore_x_randr_get_screen_resources (_ecore_x_disp,
-                                                root)) &&
+          _ecore_x_randr_get_screen_resources (_ecore_x_disp,
+                                               root)) &&
        (crtc_info = XRRGetCrtcInfo(_ecore_x_disp, res, crtc)))
      {
         ret = crtc_info->rotations;
      }
    if (crtc_info)
-      XRRFreeCrtcInfo(crtc_info);
+     XRRFreeCrtcInfo(crtc_info);
 
    if (res)
-      XRRFreeScreenResources(res);
+     XRRFreeScreenResources(res);
 
    return ret;
 #else
@@ -847,7 +855,8 @@ ecore_x_randr_crtc_orientations_get(Ecore_X_Window root,
 }
 
 EAPI Ecore_X_Randr_Orientation
-ecore_x_randr_crtc_orientation_get(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc)
+ecore_x_randr_crtc_orientation_get(Ecore_X_Window     root,
+                                   Ecore_X_Randr_Crtc crtc)
 {
 #ifdef ECORE_XRANDR
    RANDR_CHECK_1_2_RET(Ecore_X_Randr_None);
@@ -858,17 +867,17 @@ ecore_x_randr_crtc_orientation_get(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc)
    if (_ecore_x_randr_crtc_validate(root,
                                     crtc) &&
        (res =
-           _ecore_x_randr_get_screen_resources (_ecore_x_disp,
-                                                root)) &&
+          _ecore_x_randr_get_screen_resources (_ecore_x_disp,
+                                               root)) &&
        (crtc_info = XRRGetCrtcInfo(_ecore_x_disp, res, crtc)))
      {
         ret = crtc_info->rotation;
      }
    if (crtc_info)
-      XRRFreeCrtcInfo(crtc_info);
+     XRRFreeCrtcInfo(crtc_info);
 
    if (res)
-      XRRFreeScreenResources(res);
+     XRRFreeScreenResources(res);
 
    return ret;
 #else
@@ -877,8 +886,8 @@ ecore_x_randr_crtc_orientation_get(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc)
 }
 
 EAPI Eina_Bool
-ecore_x_randr_crtc_orientation_set(Ecore_X_Window root,
-                                   Ecore_X_Randr_Crtc crtc,
+ecore_x_randr_crtc_orientation_set(Ecore_X_Window            root,
+                                   Ecore_X_Randr_Crtc        crtc,
                                    Ecore_X_Randr_Orientation orientation)
 {
 #ifdef ECORE_XRANDR
@@ -904,10 +913,10 @@ ecore_x_randr_crtc_orientation_set(Ecore_X_Window root,
 }
 
 EAPI void
-ecore_x_randr_crtc_pos_get(Ecore_X_Window root,
+ecore_x_randr_crtc_pos_get(Ecore_X_Window     root,
                            Ecore_X_Randr_Crtc crtc,
-                           int *x,
-                           int *y)
+                           int               *x,
+                           int               *y)
 {
 #ifdef ECORE_XRANDR
    RANDR_CHECK_1_2_RET();
@@ -917,7 +926,7 @@ ecore_x_randr_crtc_pos_get(Ecore_X_Window root,
 }
 
 EAPI Eina_Bool
-ecore_x_randr_crtc_clone_set(Ecore_X_Window root,
+ecore_x_randr_crtc_clone_set(Ecore_X_Window     root,
                              Ecore_X_Randr_Crtc original,
                              Ecore_X_Randr_Crtc clon)
 {
@@ -932,13 +941,13 @@ ecore_x_randr_crtc_clone_set(Ecore_X_Window root,
    int x, y;
 
    if (_ecore_x_randr_root_validate(root) &&
-           _ecore_x_randr_crtc_validate(root,
+       _ecore_x_randr_crtc_validate(root,
                                     original) &&
-           _ecore_x_randr_crtc_validate(root,
+       _ecore_x_randr_crtc_validate(root,
                                     clon) &&
        (res =
-           _ecore_x_randr_get_screen_resources (_ecore_x_disp,
-                                                root)) &&
+          _ecore_x_randr_get_screen_resources (_ecore_x_disp,
+                                               root)) &&
        (clone_crtc_info = XRRGetCrtcInfo(_ecore_x_disp, res, clon)))
      {
         ecore_x_randr_crtc_geometry_get(root, original, &x, &y, NULL, NULL);
@@ -984,13 +993,13 @@ ecore_x_randr_crtc_clone_set(Ecore_X_Window root,
  * EINA_FALSE
  */
 EAPI Eina_Bool
-ecore_x_randr_crtc_settings_set(Ecore_X_Window root,
-                                Ecore_X_Randr_Crtc crtc,
-                                Ecore_X_Randr_Output *outputs,
-                                int noutputs,
-                                int x,
-                                int y,
-                                Ecore_X_Randr_Mode mode,
+ecore_x_randr_crtc_settings_set(Ecore_X_Window            root,
+                                Ecore_X_Randr_Crtc        crtc,
+                                Ecore_X_Randr_Output     *outputs,
+                                int                       noutputs,
+                                int                       x,
+                                int                       y,
+                                Ecore_X_Randr_Mode        mode,
                                 Ecore_X_Randr_Orientation orientation)
 {
 #ifdef ECORE_XRANDR
@@ -1018,21 +1027,21 @@ ecore_x_randr_crtc_settings_set(Ecore_X_Window root,
                }
 
              if (mode == Ecore_X_Randr_Unset)
-                mode = crtc_info->mode;
+               mode = crtc_info->mode;
 
              if (x < 0)
-                x = crtc_info->x;
+               x = crtc_info->x;
 
              if (y < 0)
-                y = crtc_info->y;
+               y = crtc_info->y;
 
              if (orientation == Ecore_X_Randr_Unset)
-                orientation = crtc_info->rotation;
+               orientation = crtc_info->rotation;
 
              if (!XRRSetCrtcConfig(_ecore_x_disp, res, crtc, CurrentTime,
                                    x, y, mode, orientation, (RROutput *)outputs,
                                    noutputs))
-                ret = EINA_TRUE;
+               ret = EINA_TRUE;
 
              XRRFreeCrtcInfo(crtc_info);
           }
@@ -1057,10 +1066,10 @@ ecore_x_randr_crtc_settings_set(Ecore_X_Window root,
  * repositioning failed or if position of new crtc would be out of given screen's min/max bounds.
  */
 EAPI Eina_Bool
-ecore_x_randr_crtc_pos_relative_set(Ecore_X_Window root,
-                                    Ecore_X_Randr_Crtc crtc_r1,
-                                    Ecore_X_Randr_Crtc crtc_r2,
-                                    Ecore_X_Randr_Output_Policy policy,
+ecore_x_randr_crtc_pos_relative_set(Ecore_X_Window                   root,
+                                    Ecore_X_Randr_Crtc               crtc_r1,
+                                    Ecore_X_Randr_Crtc               crtc_r2,
+                                    Ecore_X_Randr_Output_Policy      policy,
                                     Ecore_X_Randr_Relative_Alignment alignment)
 {
 #ifdef ECORE_XRANDR
@@ -1068,21 +1077,21 @@ ecore_x_randr_crtc_pos_relative_set(Ecore_X_Window root,
 
    Eina_Rectangle r1_geo, r2_geo;
    int w_max, h_max, cw, ch, x_n = Ecore_X_Randr_Unset, y_n =
-      Ecore_X_Randr_Unset;
+     Ecore_X_Randr_Unset;
    /*
-   int r1_noutputs, r2_noutputs, r1_nmodes, i, j, outputs_mode_found, mode_w, mode_h;
-   Ecore_X_Randr_Output *r1_outputs, *r2_outputs, *r2_r1_outputs;
-   Ecore_X_Randr_Mode *r1_modes, r2_mode, r1_mode;
-   Eina_Bool ret;
-   */
+      int r1_noutputs, r2_noutputs, r1_nmodes, i, j, outputs_mode_found, mode_w, mode_h;
+      Ecore_X_Randr_Output *r1_outputs, *r2_outputs, *r2_r1_outputs;
+      Ecore_X_Randr_Mode *r1_modes, r2_mode, r1_mode;
+      Eina_Bool ret;
+    */
 
    if ((ecore_x_randr_crtc_mode_get(root, crtc_r1) == Ecore_X_Randr_None)
        || (ecore_x_randr_crtc_mode_get(root, crtc_r2) == Ecore_X_Randr_None))
-      return EINA_FALSE;
+     return EINA_FALSE;
 
    if (!_ecore_x_randr_crtc_validate(root, crtc_r1) ||
        (!(crtc_r1 != crtc_r2) &&
-           !_ecore_x_randr_crtc_validate(root, crtc_r2)))
+        !_ecore_x_randr_crtc_validate(root, crtc_r2)))
      return EINA_FALSE;
 
    ecore_x_randr_crtc_geometry_get(root,
@@ -1103,246 +1112,246 @@ ecore_x_randr_crtc_pos_relative_set(Ecore_X_Window root,
    switch (policy)
      {
       case ECORE_X_RANDR_OUTPUT_POLICY_RIGHT:
-         //set r1 right of r2
-         x_n = r2_geo.x + r2_geo.w;
+        //set r1 right of r2
+        x_n = r2_geo.x + r2_geo.w;
 
-         switch (alignment)
-           {
-            case ECORE_X_RANDR_RELATIVE_ALIGNMENT_NONE:
-               y_n = Ecore_X_Randr_Unset;
-               break;
+        switch (alignment)
+          {
+           case ECORE_X_RANDR_RELATIVE_ALIGNMENT_NONE:
+             y_n = Ecore_X_Randr_Unset;
+             break;
 
-            case ECORE_X_RANDR_RELATIVE_ALIGNMENT_CENTER_REL:
-               y_n =
-                  ((int)(((double)r2_geo.h /
-                          2.0) + (double)r2_geo.y - ((double)r1_geo.h / 2.0)));
-               break;
+           case ECORE_X_RANDR_RELATIVE_ALIGNMENT_CENTER_REL:
+             y_n =
+               ((int)(((double)r2_geo.h /
+                       2.0) + (double)r2_geo.y - ((double)r1_geo.h / 2.0)));
+             break;
 
-            case ECORE_X_RANDR_RELATIVE_ALIGNMENT_CENTER_SCR:
-               y_n = ((int)((double)ch / 2.0) - ((double)r1_geo.h / 2.0));
-               break;
-           }
-         break;
+           case ECORE_X_RANDR_RELATIVE_ALIGNMENT_CENTER_SCR:
+             y_n = ((int)((double)ch / 2.0) - ((double)r1_geo.h / 2.0));
+             break;
+          }
+        break;
 
       case ECORE_X_RANDR_OUTPUT_POLICY_LEFT:
-         //set r1 left of r2
-         x_n = r2_geo.x - r1_geo.w;
+        //set r1 left of r2
+        x_n = r2_geo.x - r1_geo.w;
 
-         switch (alignment)
-           {
-            case ECORE_X_RANDR_RELATIVE_ALIGNMENT_NONE:
-               y_n = Ecore_X_Randr_Unset;
-               break;
+        switch (alignment)
+          {
+           case ECORE_X_RANDR_RELATIVE_ALIGNMENT_NONE:
+             y_n = Ecore_X_Randr_Unset;
+             break;
 
-            case ECORE_X_RANDR_RELATIVE_ALIGNMENT_CENTER_REL:
-               y_n =
-                  ((int)(((double)r2_geo.h /
-                          2.0) + r2_geo.y - ((double)r1_geo.h / 2.0)));
-               break;
+           case ECORE_X_RANDR_RELATIVE_ALIGNMENT_CENTER_REL:
+             y_n =
+               ((int)(((double)r2_geo.h /
+                       2.0) + r2_geo.y - ((double)r1_geo.h / 2.0)));
+             break;
 
-            case ECORE_X_RANDR_RELATIVE_ALIGNMENT_CENTER_SCR:
-               y_n = ((int)(((double)ch / 2.0) - ((double)r1_geo.h / 2.0)));
-               break;
-           }
-         break;
+           case ECORE_X_RANDR_RELATIVE_ALIGNMENT_CENTER_SCR:
+             y_n = ((int)(((double)ch / 2.0) - ((double)r1_geo.h / 2.0)));
+             break;
+          }
+        break;
 
       case ECORE_X_RANDR_OUTPUT_POLICY_BELOW:
-         //set r1 below r2
-         y_n = r2_geo.y + r2_geo.h;
+        //set r1 below r2
+        y_n = r2_geo.y + r2_geo.h;
 
-         switch (alignment)
-           {
-            case ECORE_X_RANDR_RELATIVE_ALIGNMENT_NONE:
-               x_n = Ecore_X_Randr_Unset;
-               break;
+        switch (alignment)
+          {
+           case ECORE_X_RANDR_RELATIVE_ALIGNMENT_NONE:
+             x_n = Ecore_X_Randr_Unset;
+             break;
 
-            case ECORE_X_RANDR_RELATIVE_ALIGNMENT_CENTER_REL:
-               x_n =
-                  ((int)((((double)r2_geo.x +
-                           (double)r2_geo.w) / 2.0) - ((double)r1_geo.w / 2.0)));
-               break;
+           case ECORE_X_RANDR_RELATIVE_ALIGNMENT_CENTER_REL:
+             x_n =
+               ((int)((((double)r2_geo.x +
+                        (double)r2_geo.w) / 2.0) - ((double)r1_geo.w / 2.0)));
+             break;
 
-            case ECORE_X_RANDR_RELATIVE_ALIGNMENT_CENTER_SCR:
-               x_n = ((int)((double)cw / 2.0));
-               break;
-           }
-         break;
+           case ECORE_X_RANDR_RELATIVE_ALIGNMENT_CENTER_SCR:
+             x_n = ((int)((double)cw / 2.0));
+             break;
+          }
+        break;
 
       case ECORE_X_RANDR_OUTPUT_POLICY_ABOVE:
-         y_n = r2_geo.y - r1_geo.h;
+        y_n = r2_geo.y - r1_geo.h;
 
-         //set r1 above r2
-         switch (alignment)
-           {
-            case ECORE_X_RANDR_RELATIVE_ALIGNMENT_NONE:
-               x_n = Ecore_X_Randr_Unset;
-               break;
+        //set r1 above r2
+        switch (alignment)
+          {
+           case ECORE_X_RANDR_RELATIVE_ALIGNMENT_NONE:
+             x_n = Ecore_X_Randr_Unset;
+             break;
 
-            case ECORE_X_RANDR_RELATIVE_ALIGNMENT_CENTER_REL:
-               x_n =
-                  ((int)((((double)r2_geo.x +
-                           (double)r2_geo.w) / 2.0) - ((double)r1_geo.w / 2.0)));
-               break;
+           case ECORE_X_RANDR_RELATIVE_ALIGNMENT_CENTER_REL:
+             x_n =
+               ((int)((((double)r2_geo.x +
+                        (double)r2_geo.w) / 2.0) - ((double)r1_geo.w / 2.0)));
+             break;
 
-            case ECORE_X_RANDR_RELATIVE_ALIGNMENT_CENTER_SCR:
-               x_n = ((int)((double)cw / 2.0));
-               break;
-           }
-	 break;
+           case ECORE_X_RANDR_RELATIVE_ALIGNMENT_CENTER_SCR:
+             x_n = ((int)((double)cw / 2.0));
+             break;
+          }
+        break;
 
       case ECORE_X_RANDR_OUTPUT_POLICY_CLONE:
-	 return  ecore_x_randr_crtc_pos_set(root, crtc_r1, r2_geo.x, r2_geo.y);
+        return ecore_x_randr_crtc_pos_set(root, crtc_r1, r2_geo.x, r2_geo.y);
 
-	 /* entire cloning (including modesetting)
+      /* entire cloning (including modesetting)
          //all outputs of crtc1 capable of crtc2's current mode?
          r2_mode = ecore_x_randr_crtc_mode_get(root, crtc_r2);
          if (!(r1_outputs =
-                  ecore_x_randr_crtc_outputs_get(root, crtc_r1,
-                                                 &r1_noutputs)) ||
-             (r1_noutputs == 0))
-            return EINA_FALSE;
+               ecore_x_randr_crtc_outputs_get(root, crtc_r1,
+                                              &r1_noutputs)) ||
+          (r1_noutputs == 0))
+         return EINA_FALSE;
 
          for (i = 0, outputs_mode_found = 0; i < r1_noutputs; i++)
-           {
-              if (!(r1_modes =
-                       ecore_x_randr_output_modes_get(root, r1_outputs[i],
-                                                      &r1_nmodes, NULL)))
-                {
-                   free(r1_outputs);
-                   return EINA_FALSE;
-                }
+         {
+           if (!(r1_modes =
+                    ecore_x_randr_output_modes_get(root, r1_outputs[i],
+                                                   &r1_nmodes, NULL)))
+             {
+                free(r1_outputs);
+                return EINA_FALSE;
+             }
 
-              for (j = 0; j < r1_nmodes; j++)
-                {
-                   ecore_x_randr_mode_size_get(root,
-                                               r1_modes[j],
-                                               &mode_w,
-                                               &mode_h);
-                   if ((mode_w == r2_geo.w) && (mode_h == r2_geo.h))
-                     {
-                        r1_mode = r1_modes[j];
-                        ++outputs_mode_found;
-                        free(r1_modes);
-                        r1_modes = NULL;
-                        break;
-                     }
-                }
-              if (r1_modes)
-                        free(r1_modes);
+           for (j = 0; j < r1_nmodes; j++)
+             {
+                ecore_x_randr_mode_size_get(root,
+                                            r1_modes[j],
+                                            &mode_w,
+                                            &mode_h);
+                if ((mode_w == r2_geo.w) && (mode_h == r2_geo.h))
+                  {
+                     r1_mode = r1_modes[j];
+         ++outputs_mode_found;
+                     free(r1_modes);
+                     r1_modes = NULL;
+                     break;
+                  }
+             }
+           if (r1_modes)
+                     free(r1_modes);
 
-              if (outputs_mode_found <= i)
-                {
-                   //an output doesn't support the set mode, cancel!
-                        free(r1_outputs);
-                   return EINA_FALSE;
-                }
-           }
-                        free (r1_outputs);
+           if (outputs_mode_found <= i)
+             {
+                //an output doesn't support the set mode, cancel!
+                     free(r1_outputs);
+                return EINA_FALSE;
+             }
+         }
+                     free (r1_outputs);
          //CRTC 1's outputs support a mode of same geometry as CRTC 2.
          ret =
-            (ecore_x_randr_crtc_mode_set(root, crtc_r1, Ecore_X_Randr_None,
-                                         Ecore_X_Randr_None,
-                                         r1_mode) &&
-             ecore_x_randr_crtc_pos_set(root, crtc_r1, r2_geo.x, r2_geo.y));
+         (ecore_x_randr_crtc_mode_set(root, crtc_r1, Ecore_X_Randr_None,
+                                      Ecore_X_Randr_None,
+                                      r1_mode) &&
+          ecore_x_randr_crtc_pos_set(root, crtc_r1, r2_geo.x, r2_geo.y));
          return ret;
-	 */
+       */
 
-	 /* entire cloning on same CRTC
+      /* entire cloning on same CRTC
          //all outputs of crtc1 capable of crtc2's current mode?
          r2_mode = ecore_x_randr_crtc_mode_get(root, crtc_r2);
          if (!(r1_outputs =
-                  ecore_x_randr_crtc_outputs_get(root, crtc_r1,
-                                                 &r1_noutputs)) ||
-             (r1_noutputs == 0))
-            return EINA_FALSE;
+               ecore_x_randr_crtc_outputs_get(root, crtc_r1,
+                                              &r1_noutputs)) ||
+          (r1_noutputs == 0))
+         return EINA_FALSE;
 
          for (i = 0, outputs_mode_found = 0; i < r1_noutputs; i++)
-           {
-              if (!(r1_modes =
-                       ecore_x_randr_output_modes_get(root, r1_outputs[i],
-                                                      &r1_nmodes, NULL)))
-                {
-                        free(r1_outputs);
-                   return EINA_FALSE;
-                }
+         {
+           if (!(r1_modes =
+                    ecore_x_randr_output_modes_get(root, r1_outputs[i],
+                                                   &r1_nmodes, NULL)))
+             {
+                     free(r1_outputs);
+                return EINA_FALSE;
+             }
 
-              for (j = 0; j < r1_nmodes; j++)
-                {
-                   if (r1_modes[j] == r2_mode)
-                     {
-                        ++outputs_mode_found;
-                        free(r1_modes);
-                        r1_modes = NULL;
-                        break;
-                     }
-                }
-              if (r1_modes)
-                        free(r1_modes);
+           for (j = 0; j < r1_nmodes; j++)
+             {
+                if (r1_modes[j] == r2_mode)
+                  {
+         ++outputs_mode_found;
+                     free(r1_modes);
+                     r1_modes = NULL;
+                     break;
+                  }
+             }
+           if (r1_modes)
+                     free(r1_modes);
 
-              if (outputs_mode_found <= i)
-                {
-                   //an output doesn't support the set mode, cancel!
-                        free(r1_outputs);
-                   return EINA_FALSE;
-                }
-           }
+           if (outputs_mode_found <= i)
+             {
+                //an output doesn't support the set mode, cancel!
+                     free(r1_outputs);
+                return EINA_FALSE;
+             }
+         }
          //check whether crtc r2 can use all outputs of r1.
          if (!(r2_outputs =
-                  ecore_x_randr_crtc_possible_outputs_get(root, crtc_r2,
-                                                          &r2_noutputs)) ||
-             (r2_noutputs == 0))
-           {
-                   free(r1_outputs);
-              return EINA_FALSE;
-           }
+               ecore_x_randr_crtc_possible_outputs_get(root, crtc_r2,
+                                                       &r2_noutputs)) ||
+          (r2_noutputs == 0))
+         {
+                free(r1_outputs);
+           return EINA_FALSE;
+         }
 
          for (i = 0; i < r1_noutputs; i++)
-           {
-              for (j = 0; j < r2_noutputs; )
-                {
-                   if (r1_outputs[i] == r2_outputs[j])
-                      break;
+         {
+           for (j = 0; j < r2_noutputs; )
+             {
+                if (r1_outputs[i] == r2_outputs[j])
+                   break;
 
-                   j++;
-                }
-              if (j == r2_noutputs)
-                {
-                   //didn't find the output!
-                   free (r1_outputs);
-                   free (r2_outputs);
-                   return EINA_FALSE;
-                }
-           }
+                j++;
+             }
+           if (j == r2_noutputs)
+             {
+                //didn't find the output!
+                free (r1_outputs);
+                free (r2_outputs);
+                return EINA_FALSE;
+             }
+         }
 
          //apparently crtc2 supports all outputs of r1
          //TODO: check with the compatible list of outputs (property in RR1.3)
          r2_r1_outputs =
-            malloc(sizeof(Ecore_X_Randr_Output) * (r1_noutputs + r2_noutputs));
+         malloc(sizeof(Ecore_X_Randr_Output) * (r1_noutputs + r2_noutputs));
          for (i = 0; i < r1_noutputs; i++)
-           {
-              r2_r1_outputs[i] = r1_outputs[i];
-           }
-            free(r1_outputs);
+         {
+           r2_r1_outputs[i] = r1_outputs[i];
+         }
+         free(r1_outputs);
          for (; i < r2_noutputs; i++)
-           {
-              r2_r1_outputs[i] = r2_outputs[i];
-           }
-            free(r2_outputs);
+         {
+           r2_r1_outputs[i] = r2_outputs[i];
+         }
+         free(r2_outputs);
          ret =
-            ecore_x_randr_crtc_mode_set(root, crtc_r2, r2_r1_outputs,
-                                        (r1_noutputs + r1_noutputs), r2_mode);
+         ecore_x_randr_crtc_mode_set(root, crtc_r2, r2_r1_outputs,
+                                     (r1_noutputs + r1_noutputs), r2_mode);
          free (r2_r1_outputs);
          return ret;
-	 */
+       */
       case ECORE_X_RANDR_OUTPUT_POLICY_NONE:
         break;
      }
    if ((x_n == r1_geo.x) && (y_n == r1_geo.x))
-      return EINA_TRUE;
+     return EINA_TRUE;
 
    //out of possible bounds?
    if (((y_n + r1_geo.h) > h_max) || ((x_n + r1_geo.w) > w_max))
-      return EINA_FALSE;
+     return EINA_FALSE;
 
    return ecore_x_randr_crtc_pos_set(root, crtc_r1, x_n, y_n);
 #else
@@ -1350,12 +1359,11 @@ ecore_x_randr_crtc_pos_relative_set(Ecore_X_Window root,
 #endif
 }
 
-
 EAPI Ecore_X_Randr_Mode *
-ecore_x_randr_output_modes_get(Ecore_X_Window root,
+ecore_x_randr_output_modes_get(Ecore_X_Window       root,
                                Ecore_X_Randr_Output output,
-                               int *num,
-                               int *npreferred)
+                               int                 *num,
+                               int                 *npreferred)
 {
 #ifdef ECORE_XRANDR
    RANDR_CHECK_1_2_RET(NULL);
@@ -1366,25 +1374,25 @@ ecore_x_randr_output_modes_get(Ecore_X_Window root,
    if ((output != Ecore_X_Randr_None)
        && (res = _ecore_x_randr_get_screen_resources(_ecore_x_disp, root))
        && (output_info =
-              XRRGetOutputInfo(_ecore_x_disp, res, (RROutput)output)))
+             XRRGetOutputInfo(_ecore_x_disp, res, (RROutput)output)))
      {
         if ((modes = malloc(sizeof(Ecore_X_Randr_Mode) * output_info->nmode)))
           {
              memcpy(modes, output_info->modes,
                     (sizeof(Ecore_X_Randr_Mode) * output_info->nmode));
              if (num)
-                *num = output_info->nmode;
+               *num = output_info->nmode;
 
              if (npreferred)
-                *npreferred = output_info->npreferred;
+               *npreferred = output_info->npreferred;
           }
      }
 
    if (output_info)
-      XRRFreeOutputInfo(output_info);
+     XRRFreeOutputInfo(output_info);
 
    if (res)
-      XRRFreeScreenResources(res);
+     XRRFreeScreenResources(res);
 
    return modes;
 #else
@@ -1393,7 +1401,9 @@ ecore_x_randr_output_modes_get(Ecore_X_Window root,
 }
 
 EAPI Ecore_X_Randr_Crtc *
-ecore_x_randr_output_possible_crtcs_get(Ecore_X_Window root, Ecore_X_Randr_Output output, int *num)
+ecore_x_randr_output_possible_crtcs_get(Ecore_X_Window       root,
+                                        Ecore_X_Randr_Output output,
+                                        int                 *num)
 {
 #ifdef ECORE_XRANDR
    RANDR_CHECK_1_2_RET(NULL);
@@ -1403,21 +1413,21 @@ ecore_x_randr_output_possible_crtcs_get(Ecore_X_Window root, Ecore_X_Randr_Outpu
 
    if ((output != Ecore_X_Randr_None))
      {
-	if ((res = _ecore_x_randr_get_screen_resources(_ecore_x_disp, root)))
-	  {
-	     if ((output_info = XRRGetOutputInfo(_ecore_x_disp, res, output)))
-	       {
-		  if ((crtcs = malloc(sizeof(Ecore_X_Randr_Crtc) * output_info->ncrtc)))
-		    {
-		       memcpy(crtcs, output_info->crtcs, (sizeof(Ecore_X_Randr_Crtc) * output_info->ncrtc));
-		       if (num) *num = output_info->ncrtc;
-		    }
-		  XRRFreeOutputInfo(output_info);
-	       }
-	     XRRFreeScreenResources(res);
-	  }
+        if ((res = _ecore_x_randr_get_screen_resources(_ecore_x_disp, root)))
+          {
+             if ((output_info = XRRGetOutputInfo(_ecore_x_disp, res, output)))
+               {
+                  if ((crtcs = malloc(sizeof(Ecore_X_Randr_Crtc) * output_info->ncrtc)))
+                    {
+                       memcpy(crtcs, output_info->crtcs, (sizeof(Ecore_X_Randr_Crtc) * output_info->ncrtc));
+                       if (num) *num = output_info->ncrtc;
+                    }
+                  XRRFreeOutputInfo(output_info);
+               }
+             XRRFreeScreenResources(res);
+          }
      }
-     return crtcs;
+   return crtcs;
 #else
    return Ecore_X_Randr_None;
 #endif
@@ -1431,7 +1441,9 @@ ecore_x_randr_output_possible_crtcs_get(Ecore_X_Window root, Ecore_X_Randr_Outpu
  * @param num number of possible clones
  */
 EAPI Ecore_X_Randr_Output *
-ecore_x_randr_output_clones_get(Ecore_X_Window root, Ecore_X_Randr_Output output, int *num)
+ecore_x_randr_output_clones_get(Ecore_X_Window       root,
+                                Ecore_X_Randr_Output output,
+                                int                 *num)
 {
 #ifdef ECORE_XRANDR
    RANDR_CHECK_1_2_RET(NULL);
@@ -1441,28 +1453,29 @@ ecore_x_randr_output_clones_get(Ecore_X_Window root, Ecore_X_Randr_Output output
 
    if ((output != Ecore_X_Randr_None))
      {
-	if ((res = _ecore_x_randr_get_screen_resources(_ecore_x_disp, root)))
-	  {
-	     if ((output_info = XRRGetOutputInfo(_ecore_x_disp, res, output)))
-	       {
-		  if ((outputs = malloc(sizeof(Ecore_X_Randr_Output) * output_info->nclone)))
-		    {
-		       memcpy(outputs, output_info->clones, (sizeof(Ecore_X_Randr_Output) * output_info->nclone));
-		       if (num) *num = output_info->nclone;
-		    }
-		  XRRFreeOutputInfo(output_info);
-	       }
-	     XRRFreeScreenResources(res);
-	  }
+        if ((res = _ecore_x_randr_get_screen_resources(_ecore_x_disp, root)))
+          {
+             if ((output_info = XRRGetOutputInfo(_ecore_x_disp, res, output)))
+               {
+                  if ((outputs = malloc(sizeof(Ecore_X_Randr_Output) * output_info->nclone)))
+                    {
+                       memcpy(outputs, output_info->clones, (sizeof(Ecore_X_Randr_Output) * output_info->nclone));
+                       if (num) *num = output_info->nclone;
+                    }
+                  XRRFreeOutputInfo(output_info);
+               }
+             XRRFreeScreenResources(res);
+          }
      }
-     return outputs;
+   return outputs;
 #else
    return Ecore_X_Randr_None;
 #endif
 }
 
 EAPI Ecore_X_Randr_Crtc
-ecore_x_randr_output_crtc_get(Ecore_X_Window root, Ecore_X_Randr_Output output)
+ecore_x_randr_output_crtc_get(Ecore_X_Window       root,
+                              Ecore_X_Randr_Output output)
 {
 #ifdef ECORE_XRANDR
    RANDR_CHECK_1_2_RET(Ecore_X_Randr_None);
@@ -1472,15 +1485,15 @@ ecore_x_randr_output_crtc_get(Ecore_X_Window root, Ecore_X_Randr_Output output)
 
    if ((output != Ecore_X_Randr_None))
      {
-	if ((res = _ecore_x_randr_get_screen_resources(_ecore_x_disp, root)))
-	  {
-	     if ((output_info = XRRGetOutputInfo(_ecore_x_disp, res, output)))
-	       {
-		  ret = output_info->crtc;
-		  XRRFreeOutputInfo(output_info);
-	       }
-	     XRRFreeScreenResources(res);
-	  }
+        if ((res = _ecore_x_randr_get_screen_resources(_ecore_x_disp, root)))
+          {
+             if ((output_info = XRRGetOutputInfo(_ecore_x_disp, res, output)))
+               {
+                  ret = output_info->crtc;
+                  XRRFreeOutputInfo(output_info);
+               }
+             XRRFreeScreenResources(res);
+          }
      }
 
    return ret;
@@ -1496,7 +1509,9 @@ ecore_x_randr_output_crtc_get(Ecore_X_Window root, Ecore_X_Randr_Output output)
  * @return name of the output as reported by X
  */
 EAPI char *
-ecore_x_randr_output_name_get(Ecore_X_Window root, Ecore_X_Randr_Output output, int *len)
+ecore_x_randr_output_name_get(Ecore_X_Window       root,
+                              Ecore_X_Randr_Output output,
+                              int                 *len)
 {
 #ifdef ECORE_XRANDR
    RANDR_CHECK_1_2_RET(NULL);
@@ -1508,19 +1523,19 @@ ecore_x_randr_output_name_get(Ecore_X_Window root, Ecore_X_Randr_Output output, 
        && (res = _ecore_x_randr_get_screen_resources(_ecore_x_disp, root))
        && (output_info = XRRGetOutputInfo(_ecore_x_disp, res, output)))
      {
-	/*
-	 * Actually the below command is correct, but due to a bug in libXrandr
-	 * it doesn't work. Therefore we stick with strlen().
-	 * Replace the line below with the following once this bug is
-	 * fixed within libXrandr.
-	 *
-	 *    *len = output_info->nameLen;
-	 *
-	 */
-	if ((ret = strdup(output_info->name)) && len)
-	  *len = strlen(ret);
+        /*
+         * Actually the below command is correct, but due to a bug in libXrandr
+         * it doesn't work. Therefore we stick with strlen().
+         * Replace the line below with the following once this bug is
+         * fixed within libXrandr.
+         *
+         *    *len = output_info->nameLen;
+         *
+         */
+          if ((ret = strdup(output_info->name)) && len)
+            *len = strlen(ret);
 
-	XRRFreeOutputInfo(output_info);
+          XRRFreeOutputInfo(output_info);
      }
 
    if (res)
@@ -1539,7 +1554,10 @@ ecore_x_randr_output_name_get(Ecore_X_Window root, Ecore_X_Randr_Output output, 
  * @param h height of given mode in px
  */
 EAPI void
-ecore_x_randr_mode_size_get(Ecore_X_Window root, Ecore_X_Randr_Mode mode, int *w, int *h)
+ecore_x_randr_mode_size_get(Ecore_X_Window     root,
+                            Ecore_X_Randr_Mode mode,
+                            int               *w,
+                            int               *h)
 {
 #ifdef ECORE_XRANDR
    RANDR_CHECK_1_2_RET();
@@ -1550,19 +1568,19 @@ ecore_x_randr_mode_size_get(Ecore_X_Window root, Ecore_X_Randr_Mode mode, int *w
        && (w || h)
        && (res = _ecore_x_randr_get_screen_resources(_ecore_x_disp, root)))
      {
-	for (i = 0; i < res->nmode; i++)
-	  {
-	     if (res->modes[i].id == mode)
-	       {
-		  if (w)
-		    *w = res->modes[i].width;
+        for (i = 0; i < res->nmode; i++)
+          {
+             if (res->modes[i].id == mode)
+               {
+                  if (w)
+                    *w = res->modes[i].width;
 
-		  if (h)
-		    *h = res->modes[i].height;
+                  if (h)
+                    *h = res->modes[i].height;
 
-		  break;
-	       }
-	  }
+                  break;
+               }
+          }
      }
 
    if (res)
@@ -1580,9 +1598,9 @@ ecore_x_randr_mode_size_get(Ecore_X_Window root, Ecore_X_Randr_Mode mode, int *w
  * @param length length of the byte-array. If NULL, request will fail.
  */
 EAPI unsigned char *
-ecore_x_randr_output_edid_get(Ecore_X_Window root,
+ecore_x_randr_output_edid_get(Ecore_X_Window       root,
                               Ecore_X_Randr_Output output,
-                              unsigned long *length)
+                              unsigned long       *length)
 {
 #ifdef ECORE_XRANDR
    RANDR_CHECK_1_2_RET(NULL);
@@ -1593,7 +1611,7 @@ ecore_x_randr_output_edid_get(Ecore_X_Window root,
    Atom actual_type;
 
    if (!length || !_ecore_x_randr_output_validate(root, output))
-      return NULL;
+     return NULL;
 
    if(XRRGetOutputProperty (_ecore_x_disp, output, name,
                             0, 100, False, False,
@@ -1607,7 +1625,7 @@ ecore_x_randr_output_edid_get(Ecore_X_Window root,
                {
                   if(length &&
                      (memcpy(ret, prop_data, (nitems * sizeof(unsigned char)))))
-                     *length = nitems;
+                    *length = nitems;
 
                   return ret;
                }
@@ -1621,7 +1639,7 @@ ecore_x_randr_output_edid_get(Ecore_X_Window root,
 }
 
 EAPI Ecore_X_Randr_Connection_Status
-ecore_x_randr_output_connection_status_get(Ecore_X_Window root,
+ecore_x_randr_output_connection_status_get(Ecore_X_Window       root,
                                            Ecore_X_Randr_Output output)
 {
 #ifdef ECORE_XRANDR
@@ -1629,7 +1647,7 @@ ecore_x_randr_output_connection_status_get(Ecore_X_Window root,
    XRRScreenResources *res = NULL;
    XRROutputInfo *output_info = NULL;
    Ecore_X_Randr_Connection_Status ret =
-      ECORE_X_RANDR_CONNECTION_STATUS_UNKNOWN;
+     ECORE_X_RANDR_CONNECTION_STATUS_UNKNOWN;
 
    if ((output != Ecore_X_Randr_None)
        && (res = _ecore_x_randr_get_screen_resources(_ecore_x_disp, root))
@@ -1639,10 +1657,10 @@ ecore_x_randr_output_connection_status_get(Ecore_X_Window root,
      }
 
    if (output_info)
-      XRRFreeOutputInfo(output_info);
+     XRRFreeOutputInfo(output_info);
 
    if (res)
-      XRRFreeScreenResources(res);
+     XRRFreeScreenResources(res);
 
    return ret;
 #else
@@ -1651,10 +1669,10 @@ ecore_x_randr_output_connection_status_get(Ecore_X_Window root,
 }
 
 EAPI void
-ecore_x_randr_output_size_mm_get(Ecore_X_Window root,
+ecore_x_randr_output_size_mm_get(Ecore_X_Window       root,
                                  Ecore_X_Randr_Output output,
-                                 int *w_mm,
-                                 int *h_mm)
+                                 int                 *w_mm,
+                                 int                 *h_mm)
 {
 #ifdef ECORE_XRANDR
    RANDR_CHECK_1_2_RET();
@@ -1665,13 +1683,13 @@ ecore_x_randr_output_size_mm_get(Ecore_X_Window root,
        && (res = _ecore_x_randr_get_screen_resources(_ecore_x_disp, root)))
      {
         if ((output_info =
-                XRRGetOutputInfo(_ecore_x_disp, res, (RROutput)output)))
+               XRRGetOutputInfo(_ecore_x_disp, res, (RROutput)output)))
           {
              if (w_mm)
-                *w_mm = output_info->mm_width;
+               *w_mm = output_info->mm_width;
 
              if (h_mm)
-                *h_mm = output_info->mm_height;
+               *h_mm = output_info->mm_height;
 
              XRRFreeOutputInfo(output_info);
           }
@@ -1683,11 +1701,11 @@ ecore_x_randr_output_size_mm_get(Ecore_X_Window root,
 }
 
 EAPI Eina_Bool
-ecore_x_randr_move_all_crtcs_but(Ecore_X_Window root,
+ecore_x_randr_move_all_crtcs_but(Ecore_X_Window            root,
                                  const Ecore_X_Randr_Crtc *not_moved,
-                                 int nnot_moved,
-                                 int dx,
-                                 int dy)
+                                 int                       nnot_moved,
+                                 int                       dx,
+                                 int                       dy)
 {
 #ifdef ECORE_XRANDR
    Ecore_X_Randr_Crtc *crtcs_to_be_moved = NULL;
@@ -1695,12 +1713,11 @@ ecore_x_randr_move_all_crtcs_but(Ecore_X_Window root,
    int i, j, k, n;
    Eina_Bool ret;
 
-
    if ((nnot_moved <= 0) || (!not_moved)
        || !_ecore_x_randr_root_validate(root)
        || !(res =
-               _ecore_x_randr_get_screen_resources (_ecore_x_disp, root)))
-      return EINA_FALSE;
+              _ecore_x_randr_get_screen_resources (_ecore_x_disp, root)))
+     return EINA_FALSE;
 
    n = (res->ncrtc - nnot_moved);
    if ((crtcs_to_be_moved = malloc(sizeof(Ecore_X_Randr_Crtc) * n)))
@@ -1710,11 +1727,11 @@ ecore_x_randr_move_all_crtcs_but(Ecore_X_Window root,
              for (j = 0; j < nnot_moved; j++)
                {
                   if (res->crtcs[i] == not_moved[j])
-                     break;
+                    break;
                }
              if (j == nnot_moved)
-                //crtcs[i] is not in the 'not to move'-list
-                crtcs_to_be_moved[k++] = res->crtcs[i];
+               //crtcs[i] is not in the 'not to move'-list
+               crtcs_to_be_moved[k++] = res->crtcs[i];
           }
      }
 
@@ -1737,11 +1754,11 @@ ecore_x_randr_move_all_crtcs_but(Ecore_X_Window root,
  * @return EINA_TRUE if all crtcs could be moved successfully.
  */
 EAPI Eina_Bool
-ecore_x_randr_move_crtcs(Ecore_X_Window root,
+ecore_x_randr_move_crtcs(Ecore_X_Window            root,
                          const Ecore_X_Randr_Crtc *crtcs,
-                         int ncrtc,
-                         int dx,
-                         int dy)
+                         int                       ncrtc,
+                         int                       dx,
+                         int                       dy)
 {
 #ifdef ECORE_XRANDR
    RANDR_CHECK_1_2_RET(EINA_FALSE);
@@ -1770,7 +1787,7 @@ ecore_x_randr_move_crtcs(Ecore_X_Window root,
                  || ((crtc_info[i]->y + dy) < 0) ||
                  ((int)(crtc_info[i]->y + crtc_info[i]->height + dy) > h_max)
                  )
-                goto _ecore_x_randr_move_crtcs_fail_free_crtc_info;
+               goto _ecore_x_randr_move_crtcs_fail_free_crtc_info;
 
              nw = MAX((int)(crtc_info[i]->x + crtc_info[i]->width + dx), nw);
              nh = MAX((int)(crtc_info[i]->y + crtc_info[i]->height + dy), nh);
@@ -1783,7 +1800,7 @@ ecore_x_randr_move_crtcs(Ecore_X_Window root,
               ecore_x_randr_screen_current_size_set(root, nw, nh,
                                                     Ecore_X_Randr_Unset,
                                                     Ecore_X_Randr_Unset)))
-           goto _ecore_x_randr_move_crtcs_fail_free_crtc_info;
+          goto _ecore_x_randr_move_crtcs_fail_free_crtc_info;
 
         //actually move all the crtcs, keep their rotation and mode.
         for (i = 0; (i < ncrtc) && crtc_info[i]; i++)
@@ -1804,18 +1821,18 @@ ecore_x_randr_move_crtcs(Ecore_X_Window root,
           {
              //something went wrong, let's try to move the already moved crtcs
              //back.
-             while ((i--) >= 0)
-               {
-                  if (crtc_info[i])
-                     ecore_x_randr_crtc_settings_set(root,
-                                                     crtcs[i],
-                                                     NULL,
-                                                     Ecore_X_Randr_Unset,
-                                                     (crtc_info[i]->x - dx),
-                                                     (crtc_info[i]->y - dy),
-                                                     crtc_info[i]->mode,
-                                                     crtc_info[i]->rotation);
-               }
+                 while ((i--) >= 0)
+                   {
+                      if (crtc_info[i])
+                        ecore_x_randr_crtc_settings_set(root,
+                                                        crtcs[i],
+                                                        NULL,
+                                                        Ecore_X_Randr_Unset,
+                                                        (crtc_info[i]->x - dx),
+                                                        (crtc_info[i]->y - dy),
+                                                        crtc_info[i]->mode,
+                                                        crtc_info[i]->rotation);
+                   }
           }
 
         for (i = 0; i < ncrtc; i++)
@@ -1829,7 +1846,7 @@ ecore_x_randr_move_crtcs(Ecore_X_Window root,
    return ret;
 _ecore_x_randr_move_crtcs_fail_free_crtc_info:
    while (i-- > 0)
-      XRRFreeCrtcInfo(crtc_info[i]);
+     XRRFreeCrtcInfo(crtc_info[i]);
    XRRFreeScreenResources(res);
    return EINA_FALSE;
 #else
@@ -1853,43 +1870,43 @@ ecore_x_randr_screen_reset(Ecore_X_Window root)
 
    if (!_ecore_x_randr_root_validate(root) ||
        !(res = _ecore_x_randr_get_screen_resources(_ecore_x_disp, root)))
-      return;
+     return;
 
    Ecore_X_Randr_Crtc enabled_crtcs[res->ncrtc];
 
    for (i = 0; i < res->ncrtc; i++)
      {
         if (!(crtc_info =
-                 XRRGetCrtcInfo(_ecore_x_disp, res,
-                                res->crtcs[i])) ||
+                XRRGetCrtcInfo(_ecore_x_disp, res,
+                               res->crtcs[i])) ||
             (crtc_info->mode == Ecore_X_Randr_None) ||
             (crtc_info->mode == Ecore_X_Randr_Unset)
             || ((crtc_info->noutput == 0)))
-           continue;
+          continue;
 
-	enabled_crtcs[nenabled_crtcs++] = res->crtcs[i];
+        enabled_crtcs[nenabled_crtcs++] = res->crtcs[i];
 
         if ((int)(crtc_info->x + crtc_info->width) > w_n)
-           w_n = (crtc_info->x + crtc_info->width);
+          w_n = (crtc_info->x + crtc_info->width);
 
         if ((int)(crtc_info->y + crtc_info->height) > h_n)
-           h_n = (crtc_info->y + crtc_info->height);
+          h_n = (crtc_info->y + crtc_info->height);
 
-	if (crtc_info->x < dx_min)
-	  dx_min = crtc_info->x;
-	if (crtc_info->y < dy_min)
-	  dy_min = crtc_info->y;
+        if (crtc_info->x < dx_min)
+          dx_min = crtc_info->x;
+        if (crtc_info->y < dy_min)
+          dy_min = crtc_info->y;
 
         XRRFreeCrtcInfo(crtc_info);
      }
    fprintf(stderr, "E_RANDR: babam, resize! Trying to move all CRTCs with dx %d and dy %d", dx_min, dy_min);
    if ((dx_min > 0) || (dy_min > 0))
      {
-	if (ecore_x_randr_move_crtcs(root, enabled_crtcs, nenabled_crtcs, -dx_min, -dy_min))
-	  {
-	     w_n -= dx_min;
-	     h_n -= dy_min;
-	  }
+        if (ecore_x_randr_move_crtcs(root, enabled_crtcs, nenabled_crtcs, -dx_min, -dy_min))
+          {
+             w_n -= dx_min;
+             h_n -= dy_min;
+          }
      }
    ecore_x_randr_screen_current_size_set(root,
                                          w_n,
@@ -2091,7 +2108,7 @@ ecore_x_randr_output_backlight_level_set(Ecore_X_Window       root,
 
 EAPI Ecore_X_Randr_Output *
 ecore_x_randr_window_outputs_get(Ecore_X_Window window,
-                                 int *num)
+                                 int           *num)
 {
 #ifdef ECORE_XRANDR
    Ecore_X_Window root;
@@ -2120,39 +2137,39 @@ ecore_x_randr_window_outputs_get(Ecore_X_Window window,
    for (i = 0; i < ncrtcs; i++)
      {
         /* if crtc is not enabled, don't bother about it any further */
-        mode = ecore_x_randr_crtc_mode_get(root, crtcs[i]);
-        if (mode == Ecore_X_Randr_None) continue;
+         mode = ecore_x_randr_crtc_mode_get(root, crtcs[i]);
+         if (mode == Ecore_X_Randr_None) continue;
 
-        ecore_x_randr_crtc_geometry_get(root, crtcs[i],
-                                        &c_geo.x, &c_geo.y,
-                                        &c_geo.w, &c_geo.h);
-        if (eina_rectangles_intersect(&w_geo, &c_geo))
-          {
-             outputs = ecore_x_randr_crtc_outputs_get(root, crtcs[i],
-                                                      &noutputs);
-             /* The case below should be impossible, but for safety reasons
-              * remains */
-             if (!outputs)
-               {
-                  if (num) *num = 0;
-                  free(ret);
-                  free(crtcs);
-                  return NULL;
-               }
-             tret = realloc(ret, ((nret + noutputs) * sizeof(Ecore_X_Randr_Output)));
-             if (!tret)
-               {
-                  if (num) *num = 0;
-                  free(outputs);
-                  free(ret);
-                  free(crtcs);
-                  return NULL;
-               }
-             ret = tret;
-             memcpy(&ret[nret], outputs, (noutputs * sizeof(Ecore_X_Randr_Output)));
-             nret += noutputs;
-             free(outputs);
-          }
+         ecore_x_randr_crtc_geometry_get(root, crtcs[i],
+                                         &c_geo.x, &c_geo.y,
+                                         &c_geo.w, &c_geo.h);
+         if (eina_rectangles_intersect(&w_geo, &c_geo))
+           {
+              outputs = ecore_x_randr_crtc_outputs_get(root, crtcs[i],
+                                                       &noutputs);
+     /* The case below should be impossible, but for safety reasons
+      * remains */
+              if (!outputs)
+                {
+                   if (num) *num = 0;
+                   free(ret);
+                   free(crtcs);
+                   return NULL;
+                }
+              tret = realloc(ret, ((nret + noutputs) * sizeof(Ecore_X_Randr_Output)));
+              if (!tret)
+                {
+                   if (num) *num = 0;
+                   free(outputs);
+                   free(ret);
+                   free(crtcs);
+                   return NULL;
+                }
+              ret = tret;
+              memcpy(&ret[nret], outputs, (noutputs * sizeof(Ecore_X_Randr_Output)));
+              nret += noutputs;
+              free(outputs);
+           }
      }
    free(crtcs);
 
@@ -2176,7 +2193,8 @@ _ecore_x_randr_current_output_get_fail:
 
 EINA_DEPRECATED EAPI Ecore_X_Randr_Output *
 ecore_x_randr_current_output_get(Ecore_X_Window window,
-                                 int *num)
+                                 int           *num)
 {
    return ecore_x_randr_window_outputs_get(window, num);
 }
+

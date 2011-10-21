@@ -17,7 +17,7 @@ EAPI Eina_Bool
 ecore_x_screensaver_event_available_get(void)
 {
    if (_screensaver_available >= 0)
-      return _screensaver_available;
+     return _screensaver_available;
 
 #ifdef ECORE_XSS
    int _screensaver_major, _screensaver_minor;
@@ -28,9 +28,9 @@ ecore_x_screensaver_event_available_get(void)
 
    if (XScreenSaverQueryVersion(_ecore_x_disp, &_screensaver_major,
                                 &_screensaver_minor))
-      _screensaver_available = 1;
+     _screensaver_available = 1;
    else
-      _screensaver_available = 0;
+     _screensaver_available = 0;
 
 #else /* ifdef ECORE_XSS */
    _screensaver_available = 0;
@@ -49,7 +49,7 @@ ecore_x_screensaver_idle_time_get(void)
    xss = XScreenSaverAllocInfo();
    XScreenSaverQueryInfo(_ecore_x_disp,
                          RootWindow(_ecore_x_disp, DefaultScreen(
-                                       _ecore_x_disp)), xss);
+                                      _ecore_x_disp)), xss);
    idle = xss->idle / 1000;
    XFree(xss);
 
@@ -162,9 +162,9 @@ ecore_x_screensaver_event_listen_set(Eina_Bool on)
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    root = DefaultRootWindow(_ecore_x_disp);
    if (on)
-      XScreenSaverSelectInput(_ecore_x_disp, root, ScreenSaverNotifyMask);
+     XScreenSaverSelectInput(_ecore_x_disp, root, ScreenSaverNotifyMask);
    else
-      XScreenSaverSelectInput(_ecore_x_disp, root, 0);
+     XScreenSaverSelectInput(_ecore_x_disp, root, 0);
 #else
    return;
    on = EINA_FALSE;

@@ -24,14 +24,14 @@ ecore_x_xinerama_screen_count_get(void)
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    if (_xin_info)
-      XFree(_xin_info);
+     XFree(_xin_info);
 
    _xin_info = NULL;
    if (XineramaQueryExtension(_ecore_x_disp, &event_base, &error_base))
      {
         _xin_info = XineramaQueryScreens(_ecore_x_disp, &_xin_scr_num);
         if (_xin_info)
-           return _xin_scr_num;
+          return _xin_scr_num;
      }
 
 #endif /* ifdef ECORE_XINERAMA */
@@ -39,7 +39,11 @@ ecore_x_xinerama_screen_count_get(void)
 } /* ecore_x_xinerama_screen_count_get */
 
 EAPI Eina_Bool
-ecore_x_xinerama_screen_geometry_get(int screen, int *x, int *y, int *w, int *h)
+ecore_x_xinerama_screen_geometry_get(int  screen,
+                                     int *x,
+                                     int *y,
+                                     int *w,
+                                     int *h)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 #ifdef ECORE_XINERAMA
@@ -52,16 +56,16 @@ ecore_x_xinerama_screen_geometry_get(int screen, int *x, int *y, int *w, int *h)
              if (_xin_info[i].screen_number == screen)
                {
                   if (x)
-                     *x = _xin_info[i].x_org;
+                    *x = _xin_info[i].x_org;
 
                   if (y)
-                     *y = _xin_info[i].y_org;
+                    *y = _xin_info[i].y_org;
 
                   if (w)
-                     *w = _xin_info[i].width;
+                    *w = _xin_info[i].width;
 
                   if (h)
-                     *h = _xin_info[i].height;
+                    *h = _xin_info[i].height;
 
                   return EINA_TRUE;
                }
@@ -70,16 +74,16 @@ ecore_x_xinerama_screen_geometry_get(int screen, int *x, int *y, int *w, int *h)
 
 #endif /* ifdef ECORE_XINERAMA */
    if (x)
-      *x = 0;
+     *x = 0;
 
    if (y)
-      *y = 0;
+     *y = 0;
 
    if (w)
-      *w = DisplayWidth(_ecore_x_disp, 0);
+     *w = DisplayWidth(_ecore_x_disp, 0);
 
    if (h)
-      *h = DisplayHeight(_ecore_x_disp, 0);
+     *h = DisplayHeight(_ecore_x_disp, 0);
 
    return EINA_FALSE;
    screen = 0;

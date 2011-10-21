@@ -9,8 +9,8 @@ static Eina_Bool _sync_avail = EINA_FALSE;
 /* external variables */
 int _ecore_xcb_event_sync = -1;
 
-void 
-_ecore_xcb_sync_init(void) 
+void
+_ecore_xcb_sync_init(void)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
@@ -19,8 +19,8 @@ _ecore_xcb_sync_init(void)
 #endif
 }
 
-void 
-_ecore_xcb_sync_finalize(void) 
+void
+_ecore_xcb_sync_finalize(void)
 {
 #ifdef ECORE_XCB_SYNC
    const xcb_query_extension_reply_t *ext_reply;
@@ -30,17 +30,17 @@ _ecore_xcb_sync_finalize(void)
 
 #ifdef ECORE_XCB_SYNC
    ext_reply = xcb_get_extension_data(_ecore_xcb_conn, &xcb_sync_id);
-   if ((ext_reply) && (ext_reply->present)) 
+   if ((ext_reply) && (ext_reply->present))
      {
         xcb_sync_initialize_cookie_t cookie;
         xcb_sync_initialize_reply_t *reply;
 
-        cookie = 
-          xcb_sync_initialize_unchecked(_ecore_xcb_conn, 
-                                        XCB_SYNC_MAJOR_VERSION, 
+        cookie =
+          xcb_sync_initialize_unchecked(_ecore_xcb_conn,
+                                        XCB_SYNC_MAJOR_VERSION,
                                         XCB_SYNC_MINOR_VERSION);
         reply = xcb_sync_initialize_reply(_ecore_xcb_conn, cookie, NULL);
-        if (reply) 
+        if (reply)
           {
              if (reply->major_version >= 3) _sync_avail = EINA_TRUE;
              free(reply);
@@ -52,8 +52,9 @@ _ecore_xcb_sync_finalize(void)
 #endif
 }
 
-void 
-_ecore_xcb_sync_magic_send(int val, Ecore_X_Window win) 
+void
+_ecore_xcb_sync_magic_send(int            val,
+                           Ecore_X_Window win)
 {
    xcb_client_message_event_t ev;
 
@@ -68,14 +69,14 @@ _ecore_xcb_sync_magic_send(int val, Ecore_X_Window win)
    ev.data.data32[1] = (0x10000000 + val);
    ev.data.data32[2] = win;
 
-   xcb_send_event(_ecore_xcb_conn, 0, win, XCB_EVENT_MASK_NO_EVENT, 
+   xcb_send_event(_ecore_xcb_conn, 0, win, XCB_EVENT_MASK_NO_EVENT,
                   (const char *)&ev);
 //   ecore_x_flush();
 }
 
 /* public functions */
-EAPI Ecore_X_Sync_Alarm 
-ecore_x_sync_alarm_new(Ecore_X_Sync_Counter counter) 
+EAPI Ecore_X_Sync_Alarm
+ecore_x_sync_alarm_new(Ecore_X_Sync_Counter counter)
 {
 #ifdef ECORE_XCB_SYNC
    uint32_t list[6], mask;
@@ -93,8 +94,8 @@ ecore_x_sync_alarm_new(Ecore_X_Sync_Counter counter)
    init.hi = 0;
    xcb_sync_set_counter(_ecore_xcb_conn, counter, init);
 
-   mask = (XCB_SYNC_CA_COUNTER | XCB_SYNC_CA_VALUE_TYPE | 
-           XCB_SYNC_CA_VALUE | XCB_SYNC_CA_TEST_TYPE | 
+   mask = (XCB_SYNC_CA_COUNTER | XCB_SYNC_CA_VALUE_TYPE |
+           XCB_SYNC_CA_VALUE | XCB_SYNC_CA_TEST_TYPE |
            XCB_SYNC_CA_DELTA | XCB_SYNC_CA_EVENTS);
    list[0] = counter;
    list[1] = XCB_SYNC_VALUETYPE_ABSOLUTE;
@@ -112,8 +113,8 @@ ecore_x_sync_alarm_new(Ecore_X_Sync_Counter counter)
    return 0;
 }
 
-EAPI Eina_Bool 
-ecore_x_sync_alarm_free(Ecore_X_Sync_Alarm alarm) 
+EAPI Eina_Bool
+ecore_x_sync_alarm_free(Ecore_X_Sync_Alarm alarm)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    CHECK_XCB_CONN;
@@ -129,8 +130,9 @@ ecore_x_sync_alarm_free(Ecore_X_Sync_Alarm alarm)
    return EINA_FALSE;
 }
 
-EAPI Eina_Bool 
-ecore_x_sync_counter_query(Ecore_X_Sync_Counter counter, unsigned int *val) 
+EAPI Eina_Bool
+ecore_x_sync_counter_query(Ecore_X_Sync_Counter counter,
+                           unsigned int        *val)
 {
 #ifdef ECORE_XCB_SYNC
    xcb_sync_query_counter_cookie_t cookie;
@@ -145,7 +147,7 @@ ecore_x_sync_counter_query(Ecore_X_Sync_Counter counter, unsigned int *val)
 #ifdef ECORE_XCB_SYNC
    cookie = xcb_sync_query_counter_unchecked(_ecore_xcb_conn, counter);
    reply = xcb_sync_query_counter_reply(_ecore_xcb_conn, cookie, NULL);
-   if (reply) 
+   if (reply)
      {
         if (val) *val = (unsigned int)reply->counter_value.lo;
         free(reply);
@@ -155,8 +157,9 @@ ecore_x_sync_counter_query(Ecore_X_Sync_Counter counter, unsigned int *val)
    return EINA_FALSE;
 }
 
-EAPI void 
-ecore_x_sync_counter_inc(Ecore_X_Sync_Counter counter, int by) 
+EAPI void
+ecore_x_sync_counter_inc(Ecore_X_Sync_Counter counter,
+                         int                  by)
 {
 #ifdef ECORE_XCB_SYNC
    xcb_sync_int64_t v;
@@ -176,8 +179,9 @@ ecore_x_sync_counter_inc(Ecore_X_Sync_Counter counter, int by)
 #endif
 }
 
-EAPI void 
-ecore_x_sync_counter_val_wait(Ecore_X_Sync_Counter counter, int val) 
+EAPI void
+ecore_x_sync_counter_val_wait(Ecore_X_Sync_Counter counter,
+                              int                  val)
 {
 #ifdef ECORE_XCB_SYNC
    xcb_sync_query_counter_cookie_t cookie;
@@ -214,8 +218,8 @@ ecore_x_sync_counter_val_wait(Ecore_X_Sync_Counter counter, int val)
 #endif
 }
 
-EAPI Ecore_X_Sync_Counter 
-ecore_x_sync_counter_new(int val) 
+EAPI Ecore_X_Sync_Counter
+ecore_x_sync_counter_new(int val)
 {
 #ifdef ECORE_XCB_SYNC
    xcb_sync_counter_t counter;
@@ -241,8 +245,8 @@ ecore_x_sync_counter_new(int val)
    return 0;
 }
 
-EAPI void 
-ecore_x_sync_counter_free(Ecore_X_Sync_Counter counter) 
+EAPI void
+ecore_x_sync_counter_free(Ecore_X_Sync_Counter counter)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    CHECK_XCB_CONN;
@@ -255,8 +259,9 @@ ecore_x_sync_counter_free(Ecore_X_Sync_Counter counter)
 #endif
 }
 
-EAPI void 
-ecore_x_sync_counter_set(Ecore_X_Sync_Counter counter, int val) 
+EAPI void
+ecore_x_sync_counter_set(Ecore_X_Sync_Counter counter,
+                         int                  val)
 {
 #ifdef ECORE_XCB_SYNC
    xcb_sync_int64_t v;
@@ -276,8 +281,10 @@ ecore_x_sync_counter_set(Ecore_X_Sync_Counter counter, int val)
 #endif
 }
 
-EAPI void 
-ecore_x_sync_counter_2_set(Ecore_X_Sync_Counter counter, int val_hi, unsigned int val_lo) 
+EAPI void
+ecore_x_sync_counter_2_set(Ecore_X_Sync_Counter counter,
+                           int                  val_hi,
+                           unsigned int         val_lo)
 {
 #ifdef ECORE_XCB_SYNC
    xcb_sync_int64_t v;
@@ -297,8 +304,10 @@ ecore_x_sync_counter_2_set(Ecore_X_Sync_Counter counter, int val_hi, unsigned in
 #endif
 }
 
-EAPI Eina_Bool 
-ecore_x_sync_counter_2_query(Ecore_X_Sync_Counter counter, int *val_hi, unsigned int *val_lo) 
+EAPI Eina_Bool
+ecore_x_sync_counter_2_query(Ecore_X_Sync_Counter counter,
+                             int                 *val_hi,
+                             unsigned int        *val_lo)
 {
 #ifdef ECORE_XCB_SYNC
    xcb_sync_query_counter_cookie_t cookie;
@@ -312,8 +321,8 @@ ecore_x_sync_counter_2_query(Ecore_X_Sync_Counter counter, int *val_hi, unsigned
    if ((!_sync_avail) || (!counter)) return EINA_FALSE;
 
 #ifdef ECORE_XCB_SYNC
-   cookie = 
-     xcb_sync_query_counter_unchecked(_ecore_xcb_conn, 
+   cookie =
+     xcb_sync_query_counter_unchecked(_ecore_xcb_conn,
                                       (xcb_sync_counter_t)counter);
    reply = xcb_sync_query_counter_reply(_ecore_xcb_conn, cookie, NULL);
    if (!reply) return EINA_FALSE;
@@ -326,3 +335,4 @@ ecore_x_sync_counter_2_query(Ecore_X_Sync_Counter counter, int *val_hi, unsigned
 
    return EINA_FALSE;
 }
+

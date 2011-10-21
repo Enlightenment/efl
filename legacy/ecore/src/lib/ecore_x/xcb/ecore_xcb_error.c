@@ -16,8 +16,9 @@ static int _error_code = 0;
  *
  * Set the X error handler function
  */
-EAPI void 
-ecore_x_error_handler_set(void (*func)(void *data), const void *data) 
+EAPI void
+ecore_x_error_handler_set(void        (*func)(void *data),
+                          const void *data)
 {
    _error_func = func;
    _error_data = (void *)data;
@@ -30,8 +31,9 @@ ecore_x_error_handler_set(void (*func)(void *data), const void *data)
  *
  * Set the X I/O error handler function
  */
-EAPI void 
-ecore_x_io_error_handler_set(void (*func)(void *data), const void *data) 
+EAPI void
+ecore_x_io_error_handler_set(void        (*func)(void *data),
+                             const void *data)
 {
    _io_error_func = func;
    _io_error_data = (void *)data;
@@ -43,8 +45,8 @@ ecore_x_io_error_handler_set(void (*func)(void *data), const void *data)
  *
  * Return the X request code that caused the last X error
  */
-EAPI int 
-ecore_x_error_request_get(void) 
+EAPI int
+ecore_x_error_request_get(void)
 {
    return _error_request_code;
 }
@@ -55,14 +57,14 @@ ecore_x_error_request_get(void)
  *
  * Return the error code from the last X error
  */
-EAPI int 
-ecore_x_error_code_get(void) 
+EAPI int
+ecore_x_error_code_get(void)
 {
    return _error_code;
 }
 
-int 
-_ecore_xcb_error_handle(xcb_generic_error_t *err) 
+int
+_ecore_xcb_error_handle(xcb_generic_error_t *err)
 {
    WRN("Got Error:");
    WRN("\tEvent: %s", xcb_event_get_request_label(err->major_code));
@@ -71,12 +73,12 @@ _ecore_xcb_error_handle(xcb_generic_error_t *err)
 #ifdef OLD_XCB_VERSION
    if (err->error_code == XCB_EVENT_ERROR_BAD_VALUE)
      WRN("\tBad Value: %d", ((xcb_value_error_t *)err)->bad_value);
-   else if (err->error_code == XCB_EVENT_ERROR_BAD_WINDOW) 
+   else if (err->error_code == XCB_EVENT_ERROR_BAD_WINDOW)
      WRN("\tBad Window: %d", ((xcb_window_error_t *)err)->bad_value);
 #else
    if (err->error_code == XCB_VALUE)
      WRN("\tBad Value: %d", ((xcb_value_error_t *)err)->bad_value);
-   else if (err->error_code == XCB_WINDOW) 
+   else if (err->error_code == XCB_WINDOW)
      WRN("\tBad Window: %d", ((xcb_window_error_t *)err)->bad_value);
 #endif
 
@@ -88,11 +90,11 @@ _ecore_xcb_error_handle(xcb_generic_error_t *err)
    return 0;
 }
 
-int 
-_ecore_xcb_io_error_handle(xcb_generic_error_t *err) 
+int
+_ecore_xcb_io_error_handle(xcb_generic_error_t *err)
 {
    CRIT("IO Error:");
-   if (err) 
+   if (err)
      {
         CRIT("\tRequest: %d", err->sequence);
         CRIT("\tCode: %d", err->error_code);
@@ -104,3 +106,4 @@ _ecore_xcb_io_error_handle(xcb_generic_error_t *err)
 
    return 0;
 }
+

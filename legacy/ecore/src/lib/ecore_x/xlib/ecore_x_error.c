@@ -9,8 +9,9 @@
 #include "ecore_x_private.h"
 #include "Ecore_X.h"
 
-static int       _ecore_x_error_handle(Display *d, XErrorEvent *ev);
-static int       _ecore_x_io_error_handle(Display *d);
+static int _ecore_x_error_handle(Display     *d,
+                                 XErrorEvent *ev);
+static int _ecore_x_io_error_handle(Display *d);
 
 static void (*_error_func)(void *data) = NULL;
 static void *_error_data = NULL;
@@ -27,7 +28,8 @@ static int _error_code = 0;
  * Set the X error handler function
  */
 EAPI void
-ecore_x_error_handler_set(void (*func)(void *data), const void *data)
+ecore_x_error_handler_set(void        (*func)(void *data),
+                          const void *data)
 {
    _error_func = func;
    _error_data = (void *)data;
@@ -41,7 +43,8 @@ ecore_x_error_handler_set(void (*func)(void *data), const void *data)
  * Set the X I/O error handler function
  */
 EAPI void
-ecore_x_io_error_handler_set(void (*func)(void *data), const void *data)
+ecore_x_io_error_handler_set(void        (*func)(void *data),
+                             const void *data)
 {
    _io_error_func = func;
    _io_error_data = (void *)data;
@@ -79,14 +82,15 @@ _ecore_x_error_handler_init(void)
 } /* _ecore_x_error_handler_init */
 
 static int
-_ecore_x_error_handle(Display *d, XErrorEvent *ev)
+_ecore_x_error_handle(Display     *d,
+                      XErrorEvent *ev)
 {
    if (d == _ecore_x_disp)
      {
         _error_request_code = ev->request_code;
         _error_code = ev->error_code;
         if (_error_func)
-           _error_func(_error_data);
+          _error_func(_error_data);
      }
    return 0;
 } /* _ecore_x_error_handle */
@@ -97,9 +101,9 @@ _ecore_x_io_error_handle(Display *d)
    if (d == _ecore_x_disp)
      {
         if (_io_error_func)
-           _io_error_func(_io_error_data);
+          _io_error_func(_io_error_data);
         else
-           exit(-1);
+          exit(-1);
      }
 
    return 0;

@@ -39,24 +39,27 @@ ecore_x_xregion_free(Ecore_X_XRegion *region)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    if (!region)
-      return;
+     return;
 
    XDestroyRegion((Region)region);
 } /* ecore_x_xregion_free */
 
 EAPI Eina_Bool
-ecore_x_xregion_set(Ecore_X_XRegion *region, Ecore_X_GC gc)
+ecore_x_xregion_set(Ecore_X_XRegion *region,
+                    Ecore_X_GC       gc)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    return XSetRegion(_ecore_x_disp, gc, (Region)region) ? EINA_TRUE : EINA_FALSE;
 } /* ecore_x_xregion_set */
 
 EAPI void
-ecore_x_xregion_translate(Ecore_X_XRegion *region, int x, int y)
+ecore_x_xregion_translate(Ecore_X_XRegion *region,
+                          int              x,
+                          int              y)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    if (!region)
-      return;
+     return;
 
    /* return value not used */
    XOffsetRegion((Region)region, x, y);
@@ -109,37 +112,41 @@ EAPI Eina_Bool
 ecore_x_xregion_is_empty(Ecore_X_XRegion *region)
 {
    if (!region)
-      return EINA_TRUE;
+     return EINA_TRUE;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    return XEmptyRegion((Region)region) ? EINA_TRUE : EINA_FALSE;
 } /* ecore_x_xregion_is_empty */
 
 EAPI Eina_Bool
-ecore_x_xregion_is_equal(Ecore_X_XRegion *r1, Ecore_X_XRegion *r2)
+ecore_x_xregion_is_equal(Ecore_X_XRegion *r1,
+                         Ecore_X_XRegion *r2)
 {
    if (!r1 || !r2)
-      return EINA_FALSE;
+     return EINA_FALSE;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    return XEqualRegion((Region)r1, (Region)r1) ? EINA_TRUE : EINA_FALSE;
 } /* ecore_x_xregion_is_equal */
 
 EAPI Eina_Bool
-ecore_x_xregion_point_contain(Ecore_X_XRegion *region, int x, int y)
+ecore_x_xregion_point_contain(Ecore_X_XRegion *region,
+                              int              x,
+                              int              y)
 {
    if (!region)
-      return EINA_FALSE;
+     return EINA_FALSE;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    return XPointInRegion((Region)region, x, y) ? EINA_TRUE : EINA_FALSE;
 } /* ecore_x_xregion_point_contain */
 
 EAPI Eina_Bool
-ecore_x_xregion_rect_contain(Ecore_X_XRegion *region, Ecore_X_Rectangle *rect)
+ecore_x_xregion_rect_contain(Ecore_X_XRegion   *region,
+                             Ecore_X_Rectangle *rect)
 {
    if (!region || !rect)
-      return EINA_FALSE;
+     return EINA_FALSE;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    return XRectInRegion((Region)region,

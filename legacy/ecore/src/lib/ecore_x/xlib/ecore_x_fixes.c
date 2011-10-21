@@ -27,7 +27,7 @@ _ecore_x_fixes_init(void)
         ECORE_X_EVENT_FIXES_SELECTION_NOTIFY = ecore_event_type_new();
      }
    else
-      _fixes_available = 0;
+     _fixes_available = 0;
 
 #else /* ifdef ECORE_XFIXES */
    _fixes_available = 0;
@@ -37,17 +37,18 @@ _ecore_x_fixes_init(void)
 #ifdef ECORE_XFIXES
 /* I don't know what to call this function. */
 static XRectangle *
-_ecore_x_rectangle_ecore_to_x(Ecore_X_Rectangle *rects, int num)
+_ecore_x_rectangle_ecore_to_x(Ecore_X_Rectangle *rects,
+                              int                num)
 {
    XRectangle *xrect;
    int i;
 
    if (num == 0)
-      return NULL;
+     return NULL;
 
    xrect = malloc(sizeof(XRectangle) * num);
    if (!xrect)
-      return NULL;
+     return NULL;
 
    for (i = 0; i < num; i++)
      {
@@ -60,17 +61,18 @@ _ecore_x_rectangle_ecore_to_x(Ecore_X_Rectangle *rects, int num)
 } /* _ecore_x_rectangle_ecore_to_x */
 
 static Ecore_X_Rectangle *
-_ecore_x_rectangle_x_to_ecore(XRectangle *xrect, int num)
+_ecore_x_rectangle_x_to_ecore(XRectangle *xrect,
+                              int         num)
 {
    Ecore_X_Rectangle *rects;
    int i;
 
    if (num == 0)
-      return NULL;
+     return NULL;
 
    rects = malloc(sizeof(Ecore_X_Rectangle) * num);
    if (!rects)
-      return NULL;
+     return NULL;
 
    for (i = 0; i < num; i++)
      {
@@ -91,11 +93,11 @@ ecore_x_fixes_selection_notification_request(Ecore_X_Atom selection)
    if (_fixes_available)
      {
         XFixesSelectSelectionInput (_ecore_x_disp,
-              DefaultRootWindow(_ecore_x_disp),
-              selection,
-              XFixesSetSelectionOwnerNotifyMask |
-              XFixesSelectionWindowDestroyNotifyMask |
-              XFixesSelectionClientCloseNotifyMask);
+                                    DefaultRootWindow(_ecore_x_disp),
+                                    selection,
+                                    XFixesSetSelectionOwnerNotifyMask |
+                                    XFixesSelectionWindowDestroyNotifyMask |
+                                    XFixesSelectionClientCloseNotifyMask);
         return EINA_TRUE;
      }
 #endif
@@ -103,7 +105,8 @@ ecore_x_fixes_selection_notification_request(Ecore_X_Atom selection)
 }
 
 EAPI Ecore_X_Region
-ecore_x_region_new(Ecore_X_Rectangle *rects, int num)
+ecore_x_region_new(Ecore_X_Rectangle *rects,
+                   int                num)
 {
 #ifdef ECORE_XFIXES
    Ecore_X_Region region;
@@ -134,7 +137,8 @@ ecore_x_region_new_from_bitmap(Ecore_X_Pixmap bitmap)
 } /* ecore_x_region_new_from_bitmap */
 
 EAPI Ecore_X_Region
-ecore_x_region_new_from_window(Ecore_X_Window win, Ecore_X_Region_Type type)
+ecore_x_region_new_from_window(Ecore_X_Window      win,
+                               Ecore_X_Region_Type type)
 {
 #ifdef ECORE_XFIXES
    Ecore_X_Region region;
@@ -185,7 +189,9 @@ ecore_x_region_free(Ecore_X_Region region)
 } /* ecore_x_region_free */
 
 EAPI void
-ecore_x_region_set(Ecore_X_Region region, Ecore_X_Rectangle *rects, int num)
+ecore_x_region_set(Ecore_X_Region     region,
+                   Ecore_X_Rectangle *rects,
+                   int                num)
 {
 #ifdef ECORE_XFIXES
    XRectangle *xrect = _ecore_x_rectangle_ecore_to_x(rects, num);
@@ -195,7 +201,8 @@ ecore_x_region_set(Ecore_X_Region region, Ecore_X_Rectangle *rects, int num)
 } /* ecore_x_region_set */
 
 EAPI void
-ecore_x_region_copy(Ecore_X_Region dest, Ecore_X_Region source)
+ecore_x_region_copy(Ecore_X_Region dest,
+                    Ecore_X_Region source)
 {
 #ifdef ECORE_XFIXES
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
@@ -254,7 +261,9 @@ ecore_x_region_invert(Ecore_X_Region     dest,
 } /* ecore_x_region_invert */
 
 EAPI void
-ecore_x_region_translate(Ecore_X_Region region, int dx, int dy)
+ecore_x_region_translate(Ecore_X_Region region,
+                         int            dx,
+                         int            dy)
 {
 #ifdef ECORE_XFIXES
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
@@ -263,7 +272,8 @@ ecore_x_region_translate(Ecore_X_Region region, int dx, int dy)
 } /* ecore_x_region_translate */
 
 EAPI void
-ecore_x_region_extents(Ecore_X_Region dest, Ecore_X_Region source)
+ecore_x_region_extents(Ecore_X_Region dest,
+                       Ecore_X_Region source)
 {
 #ifdef ECORE_XFIXES
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
@@ -272,7 +282,8 @@ ecore_x_region_extents(Ecore_X_Region dest, Ecore_X_Region source)
 } /* ecore_x_region_extents */
 
 EAPI Ecore_X_Rectangle *
-ecore_x_region_fetch(Ecore_X_Region region, int *num,
+ecore_x_region_fetch(Ecore_X_Region     region,
+                     int               *num,
                      Ecore_X_Rectangle *bounds){
 #ifdef ECORE_XFIXES
    Ecore_X_Rectangle *rects;

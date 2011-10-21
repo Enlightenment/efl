@@ -1,7 +1,7 @@
 #include "ecore_xcb_private.h"
 
-void 
-_ecore_xcb_extensions_init(void) 
+void
+_ecore_xcb_extensions_init(void)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
@@ -71,8 +71,8 @@ _ecore_xcb_extensions_init(void)
    xcb_prefetch_maximum_request_length(_ecore_xcb_conn);
 }
 
-void 
-_ecore_xcb_extensions_finalize(void) 
+void
+_ecore_xcb_extensions_finalize(void)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
@@ -137,3 +137,4 @@ _ecore_xcb_extensions_finalize(void)
 
    xcb_get_maximum_request_length(_ecore_xcb_conn);
 }
+

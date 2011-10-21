@@ -5,14 +5,20 @@
 #endif
 
 /* local structures */
-typedef struct _Version_Cache_Item 
+typedef struct _Version_Cache_Item
 {
    Ecore_X_Window win;
-   int ver;
+   int            ver;
 } Version_Cache_Item;
 
 /* local function prototypes */
-static Eina_Bool _ecore_xcb_dnd_converter_copy(char *target __UNUSED__, void *data, int size, void **data_ret, int *size_ret, Ecore_X_Atom *tprop __UNUSED__, int *count __UNUSED__);
+static Eina_Bool _ecore_xcb_dnd_converter_copy(char         *target __UNUSED__,
+                                               void         *data,
+                                               int           size,
+                                               void        **data_ret,
+                                               int          *size_ret,
+                                               Ecore_X_Atom *tprop __UNUSED__,
+                                               int          *count __UNUSED__);
 
 /* local variables */
 static int _ecore_xcb_dnd_init_count = 0;
@@ -20,7 +26,8 @@ static Ecore_X_DND_Source *_source = NULL;
 static Ecore_X_DND_Target *_target = NULL;
 static Version_Cache_Item *_version_cache = NULL;
 static int _version_cache_num = 0, _version_cache_alloc = 0;
-static void (*_posupdatecb)(void *, Ecore_X_Xdnd_Position *);
+static void (*_posupdatecb)(void *,
+                            Ecore_X_Xdnd_Position *);
 static void *_posupdatedata;
 
 /* external variables */
@@ -31,12 +38,12 @@ EAPI int ECORE_X_EVENT_XDND_LEAVE = 0;
 EAPI int ECORE_X_EVENT_XDND_DROP = 0;
 EAPI int ECORE_X_EVENT_XDND_FINISHED = 0;
 
-void 
-_ecore_xcb_dnd_init(void) 
+void
+_ecore_xcb_dnd_init(void)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
-   if (!_ecore_xcb_dnd_init_count) 
+   if (!_ecore_xcb_dnd_init_count)
      {
         _source = calloc(1, sizeof(Ecore_X_DND_Source));
         if (!_source) return;
@@ -47,7 +54,7 @@ _ecore_xcb_dnd_init(void)
         _source->prev.window = 0;
 
         _target = calloc(1, sizeof(Ecore_X_DND_Target));
-        if (!_target) 
+        if (!_target)
           {
              free(_source);
              _source = NULL;
@@ -67,8 +74,8 @@ _ecore_xcb_dnd_init(void)
    _ecore_xcb_dnd_init_count++;
 }
 
-void 
-_ecore_xcb_dnd_shutdown(void) 
+void
+_ecore_xcb_dnd_shutdown(void)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
@@ -81,8 +88,11 @@ _ecore_xcb_dnd_shutdown(void)
    _ecore_xcb_dnd_init_count = 0;
 }
 
-EAPI void 
-ecore_x_dnd_send_status(Eina_Bool will_accept, Eina_Bool suppress, Ecore_X_Rectangle rect, Ecore_X_Atom action) 
+EAPI void
+ecore_x_dnd_send_status(Eina_Bool         will_accept,
+                        Eina_Bool         suppress,
+                        Ecore_X_Rectangle rect,
+                        Ecore_X_Atom      action)
 {
    xcb_client_message_event_t ev;
 
@@ -111,19 +121,19 @@ ecore_x_dnd_send_status(Eina_Bool will_accept, Eina_Bool suppress, Ecore_X_Recta
    ev.data.data32[3] <<= 16;
    ev.data.data32[3] |= rect.height;
 
-   if (will_accept) 
+   if (will_accept)
      ev.data.data32[4] = action;
-   else 
+   else
      ev.data.data32[4] = XCB_NONE;
    _target->accepted_action = action;
 
-   xcb_send_event(_ecore_xcb_conn, 0, _target->source, 
+   xcb_send_event(_ecore_xcb_conn, 0, _target->source,
                   XCB_EVENT_MASK_NO_EVENT, (const char *)&ev);
 //   ecore_x_flush();
 }
 
-EAPI Eina_Bool 
-ecore_x_dnd_drop(void) 
+EAPI Eina_Bool
+ecore_x_dnd_drop(void)
 {
    xcb_client_message_event_t ev;
    Eina_Bool status = EINA_FALSE;
@@ -133,38 +143,38 @@ ecore_x_dnd_drop(void)
 
    memset(&ev, 0, sizeof(xcb_client_message_event_t));
 
-   if (_source->dest) 
+   if (_source->dest)
      {
         ev.response_type = XCB_CLIENT_MESSAGE;
         ev.format = 32;
         ev.window = _source->dest;
 
-        if (_source->will_accept) 
+        if (_source->will_accept)
           {
              ev.type = ECORE_X_ATOM_XDND_DROP;
              ev.data.data32[0] = _source->win;
              ev.data.data32[1] = 0;
              ev.data.data32[2] = _source->time;
 
-             xcb_send_event(_ecore_xcb_conn, 0, _source->dest, 
+             xcb_send_event(_ecore_xcb_conn, 0, _source->dest,
                             XCB_EVENT_MASK_NO_EVENT, (const char *)&ev);
 //             ecore_x_flush();
              _source->state = ECORE_X_DND_SOURCE_DROPPED;
              status = EINA_TRUE;
           }
-        else 
+        else
           {
              ev.type = ECORE_X_ATOM_XDND_LEAVE;
              ev.data.data32[0] = _source->win;
              ev.data.data32[1] = 0;
 
-             xcb_send_event(_ecore_xcb_conn, 0, _source->dest, 
+             xcb_send_event(_ecore_xcb_conn, 0, _source->dest,
                             XCB_EVENT_MASK_NO_EVENT, (const char *)&ev);
 //             ecore_x_flush();
              _source->state = ECORE_X_DND_SOURCE_IDLE;
           }
      }
-   else 
+   else
      {
         ecore_x_selection_xdnd_clear();
         _source->state = ECORE_X_DND_SOURCE_IDLE;
@@ -176,22 +186,23 @@ ecore_x_dnd_drop(void)
    return status;
 }
 
-EAPI void 
-ecore_x_dnd_aware_set(Ecore_X_Window win, Eina_Bool on) 
+EAPI void
+ecore_x_dnd_aware_set(Ecore_X_Window win,
+                      Eina_Bool      on)
 {
    Ecore_X_Atom prop_data = ECORE_X_DND_VERSION;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    if (on)
-     ecore_x_window_prop_property_set(win, ECORE_X_ATOM_XDND_AWARE, 
+     ecore_x_window_prop_property_set(win, ECORE_X_ATOM_XDND_AWARE,
                                       ECORE_X_ATOM_ATOM, 32, &prop_data, 1);
    else
      ecore_x_window_prop_property_del(win, ECORE_X_ATOM_XDND_AWARE);
 }
 
-EAPI int 
-ecore_x_dnd_version_get(Ecore_X_Window win) 
+EAPI int
+ecore_x_dnd_version_get(Ecore_X_Window win)
 {
    unsigned char *data;
    int num = 0;
@@ -199,13 +210,13 @@ ecore_x_dnd_version_get(Ecore_X_Window win)
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
-   if (_source->state == ECORE_X_DND_SOURCE_DRAGGING) 
+   if (_source->state == ECORE_X_DND_SOURCE_DRAGGING)
      {
-        if (_version_cache) 
+        if (_version_cache)
           {
              int i = 0;
 
-             for (i = 0; i < _version_cache_num; i++) 
+             for (i = 0; i < _version_cache_num; i++)
                {
                   if (_version_cache[i].win == win)
                     return _version_cache[i].ver;
@@ -213,19 +224,19 @@ ecore_x_dnd_version_get(Ecore_X_Window win)
           }
      }
 
-   if (ecore_x_window_prop_property_get(win, ECORE_X_ATOM_XDND_AWARE, 
-                                        ECORE_X_ATOM_ATOM, 32, &data, &num)) 
+   if (ecore_x_window_prop_property_get(win, ECORE_X_ATOM_XDND_AWARE,
+                                        ECORE_X_ATOM_ATOM, 32, &data, &num))
      {
         int version = 0;
 
         version = (int)*data;
         free(data);
-        if (_source->state == ECORE_X_DND_SOURCE_DRAGGING) 
+        if (_source->state == ECORE_X_DND_SOURCE_DRAGGING)
           {
              _version_cache_num++;
              if (_version_cache_num > _version_cache_alloc)
                _version_cache_alloc += 16;
-             t = realloc(_version_cache, 
+             t = realloc(_version_cache,
                          _version_cache_alloc * sizeof(Version_Cache_Item));
              if (!t) return 0;
              _version_cache = t;
@@ -235,12 +246,12 @@ ecore_x_dnd_version_get(Ecore_X_Window win)
         return version;
      }
 
-   if (_source->state == ECORE_X_DND_SOURCE_DRAGGING) 
+   if (_source->state == ECORE_X_DND_SOURCE_DRAGGING)
      {
         _version_cache_num++;
         if (_version_cache_num > _version_cache_alloc)
           _version_cache_alloc += 16;
-        t = realloc(_version_cache, 
+        t = realloc(_version_cache,
                     _version_cache_alloc * sizeof(Version_Cache_Item));
         if (!t) return 0;
         _version_cache = t;
@@ -251,8 +262,9 @@ ecore_x_dnd_version_get(Ecore_X_Window win)
    return 0;
 }
 
-EAPI Eina_Bool 
-ecore_x_dnd_type_isset(Ecore_X_Window win, const char *type) 
+EAPI Eina_Bool
+ecore_x_dnd_type_isset(Ecore_X_Window win,
+                       const char    *type)
 {
    int num = 0, i = 0;
    Eina_Bool ret = EINA_FALSE;
@@ -262,15 +274,15 @@ ecore_x_dnd_type_isset(Ecore_X_Window win, const char *type)
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    CHECK_XCB_CONN;
 
-   if (!ecore_x_window_prop_property_get(win, ECORE_X_ATOM_XDND_TYPE_LIST, 
+   if (!ecore_x_window_prop_property_get(win, ECORE_X_ATOM_XDND_TYPE_LIST,
                                          ECORE_X_ATOM_ATOM, 32, &data, &num))
      return ret;
 
    atom = ecore_x_atom_get(type);
    atoms = (Ecore_X_Atom *)data;
-   for (i = 0; i < num; ++i) 
+   for (i = 0; i < num; ++i)
      {
-        if (atom == atoms[i]) 
+        if (atom == atoms[i])
           {
              ret = EINA_TRUE;
              break;
@@ -281,8 +293,10 @@ ecore_x_dnd_type_isset(Ecore_X_Window win, const char *type)
    return ret;
 }
 
-EAPI void 
-ecore_x_dnd_type_set(Ecore_X_Window win, const char *type, Eina_Bool on) 
+EAPI void
+ecore_x_dnd_type_set(Ecore_X_Window win,
+                     const char    *type,
+                     Eina_Bool      on)
 {
    Ecore_X_Atom atom, *oldset = NULL, *newset = NULL;
    int i = 0, j = 0, num = 0;
@@ -292,12 +306,12 @@ ecore_x_dnd_type_set(Ecore_X_Window win, const char *type, Eina_Bool on)
    CHECK_XCB_CONN;
 
    atom = ecore_x_atom_get(type);
-   ecore_x_window_prop_property_get(win, ECORE_X_ATOM_XDND_TYPE_LIST, 
+   ecore_x_window_prop_property_get(win, ECORE_X_ATOM_XDND_TYPE_LIST,
                                     ECORE_X_ATOM_ATOM, 32, &old_data, &num);
    oldset = (Ecore_X_Atom *)old_data;
-   if (on) 
+   if (on)
      {
-        if (ecore_x_dnd_type_isset(win, type)) 
+        if (ecore_x_dnd_type_isset(win, type))
           {
              free(old_data);
              return;
@@ -308,27 +322,27 @@ ecore_x_dnd_type_set(Ecore_X_Window win, const char *type, Eina_Bool on)
         for (i = 0; i < num; i++)
           newset[i + 1] = oldset[i];
         newset[0] = atom;
-        ecore_x_window_prop_property_set(win, ECORE_X_ATOM_XDND_TYPE_LIST, 
+        ecore_x_window_prop_property_set(win, ECORE_X_ATOM_XDND_TYPE_LIST,
                                          ECORE_X_ATOM_ATOM, 32, data, num + 1);
      }
-   else 
+   else
      {
-        if (!ecore_x_dnd_type_isset(win, type)) 
+        if (!ecore_x_dnd_type_isset(win, type))
           {
              free(old_data);
              return;
           }
         newset = calloc(num - 1, sizeof(Ecore_X_Atom));
-        if (!newset) 
+        if (!newset)
           {
              free(old_data);
              return;
           }
         data = (unsigned char *)newset;
         for (i = 0; i < num; i++)
-          if (oldset[i] != atom) 
+          if (oldset[i] != atom)
             newset[j++] = oldset[i];
-        ecore_x_window_prop_property_set(win, ECORE_X_ATOM_XDND_TYPE_LIST, 
+        ecore_x_window_prop_property_set(win, ECORE_X_ATOM_XDND_TYPE_LIST,
                                          ECORE_X_ATOM_ATOM, 32, data, num - 1);
      }
    free(oldset);
@@ -336,7 +350,9 @@ ecore_x_dnd_type_set(Ecore_X_Window win, const char *type, Eina_Bool on)
 }
 
 EAPI void
-ecore_x_dnd_types_set(Ecore_X_Window win, const char **types, unsigned int num_types)
+ecore_x_dnd_types_set(Ecore_X_Window win,
+                      const char   **types,
+                      unsigned int   num_types)
 {
    Ecore_X_Atom *newset = NULL;
    unsigned int i;
@@ -346,7 +362,7 @@ ecore_x_dnd_types_set(Ecore_X_Window win, const char **types, unsigned int num_t
    CHECK_XCB_CONN;
 
    if (!num_types)
-      ecore_x_window_prop_property_del(win, ECORE_X_ATOM_XDND_TYPE_LIST);
+     ecore_x_window_prop_property_del(win, ECORE_X_ATOM_XDND_TYPE_LIST);
    else
      {
         newset = calloc(num_types, sizeof(Ecore_X_Atom));
@@ -360,14 +376,16 @@ ecore_x_dnd_types_set(Ecore_X_Window win, const char **types, unsigned int num_t
                                                   _ecore_xcb_dnd_converter_copy);
           }
         ecore_x_window_prop_property_set(win, ECORE_X_ATOM_XDND_TYPE_LIST,
-                                         ECORE_X_ATOM_ATOM, 32, data, 
+                                         ECORE_X_ATOM_ATOM, 32, data,
                                          num_types);
         free(newset);
      }
 }
 
 EAPI void
-ecore_x_dnd_actions_set(Ecore_X_Window win, Ecore_X_Atom *actions, unsigned int num_actions)
+ecore_x_dnd_actions_set(Ecore_X_Window win,
+                        Ecore_X_Atom  *actions,
+                        unsigned int   num_actions)
 {
    unsigned int i;
    unsigned char *data = NULL;
@@ -376,7 +394,7 @@ ecore_x_dnd_actions_set(Ecore_X_Window win, Ecore_X_Atom *actions, unsigned int 
    CHECK_XCB_CONN;
 
    if (!num_actions)
-      ecore_x_window_prop_property_del(win, ECORE_X_ATOM_XDND_ACTION_LIST);
+     ecore_x_window_prop_property_del(win, ECORE_X_ATOM_XDND_ACTION_LIST);
    else
      {
         data = (unsigned char *)actions;
@@ -384,7 +402,7 @@ ecore_x_dnd_actions_set(Ecore_X_Window win, Ecore_X_Atom *actions, unsigned int 
           ecore_x_selection_converter_atom_add(actions[i],
                                                _ecore_xcb_dnd_converter_copy);
         ecore_x_window_prop_property_set(win, ECORE_X_ATOM_XDND_ACTION_LIST,
-                                         ECORE_X_ATOM_ATOM, 32, data, 
+                                         ECORE_X_ATOM_ATOM, 32, data,
                                          num_actions);
      }
 }
@@ -404,14 +422,18 @@ ecore_x_dnd_actions_set(Ecore_X_Window win, Ecore_X_Atom *actions, unsigned int 
  * @param data User data.
  */
 EAPI void
-ecore_x_dnd_callback_pos_update_set(void (*cb)(void *, Ecore_X_Xdnd_Position *data), const void *data)
+ecore_x_dnd_callback_pos_update_set(void                                                           (*cb)(void *,
+                                                                            Ecore_X_Xdnd_Position *data),
+                                    const void                                                    *data)
 {
    _posupdatecb = cb;
    _posupdatedata = (void *)data;
 }
 
-EAPI Eina_Bool 
-ecore_x_dnd_begin(Ecore_X_Window source, unsigned char *data, int size) 
+EAPI Eina_Bool
+ecore_x_dnd_begin(Ecore_X_Window source,
+                  unsigned char *data,
+                  int            size)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
@@ -444,8 +466,8 @@ ecore_x_dnd_begin(Ecore_X_Window source, unsigned char *data, int size)
    return EINA_TRUE;
 }
 
-EAPI void 
-ecore_x_dnd_send_finished(void) 
+EAPI void
+ecore_x_dnd_send_finished(void)
 {
    xcb_client_message_event_t ev;
 
@@ -463,43 +485,45 @@ ecore_x_dnd_send_finished(void)
    ev.data.data32[0] = _target->win;
    ev.data.data32[1] = 0;
    ev.data.data32[2] = 0;
-   if (_target->will_accept) 
+   if (_target->will_accept)
      {
         ev.data.data32[1] |= 0x1UL;
         ev.data.data32[2] = _target->accepted_action;
      }
 
-   xcb_send_event(_ecore_xcb_conn, 0, _target->source, 
+   xcb_send_event(_ecore_xcb_conn, 0, _target->source,
                   XCB_EVENT_MASK_NO_EVENT, (const char *)&ev);
 //   ecore_x_flush();
    _target->state = ECORE_X_DND_TARGET_IDLE;
 }
 
-EAPI void 
-ecore_x_dnd_source_action_set(Ecore_X_Atom action) 
+EAPI void
+ecore_x_dnd_source_action_set(Ecore_X_Atom action)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    _source->action = action;
    if (_source->prev.window)
-     _ecore_xcb_dnd_drag(_source->prev.window, 
+     _ecore_xcb_dnd_drag(_source->prev.window,
                          _source->prev.x, _source->prev.y);
 }
 
 Ecore_X_DND_Source *
-_ecore_xcb_dnd_source_get(void) 
+_ecore_xcb_dnd_source_get(void)
 {
    return _source;
 }
 
 Ecore_X_DND_Target *
-_ecore_xcb_dnd_target_get(void) 
+_ecore_xcb_dnd_target_get(void)
 {
    return _target;
 }
 
-void 
-_ecore_xcb_dnd_drag(Ecore_X_Window root, int x, int y) 
+void
+_ecore_xcb_dnd_drag(Ecore_X_Window root,
+                    int            x,
+                    int            y)
 {
    xcb_client_message_event_t ev;
    Ecore_X_Window win, *skip;
@@ -521,34 +545,34 @@ _ecore_xcb_dnd_drag(Ecore_X_Window root, int x, int y)
    while ((win) && !(ecore_x_dnd_version_get(win)))
      win = ecore_x_window_shadow_parent_get(root, win);
 
-   if ((_source->dest) && (win != _source->dest)) 
+   if ((_source->dest) && (win != _source->dest))
      {
         ev.window = _source->dest;
         ev.type = ECORE_X_ATOM_XDND_LEAVE;
         ev.data.data32[0] = _source->win;
         ev.data.data32[1] = 0;
 
-        xcb_send_event(_ecore_xcb_conn, 0, _source->dest, 
+        xcb_send_event(_ecore_xcb_conn, 0, _source->dest,
                        XCB_EVENT_MASK_NO_EVENT, (const char *)&ev);
 //        ecore_x_flush();
         _source->suppress = 0;
      }
 
-   if (win) 
+   if (win)
      {
         int x1, x2, y1, y2;
 
-        _source->version = MIN(ECORE_X_DND_VERSION, 
+        _source->version = MIN(ECORE_X_DND_VERSION,
                                ecore_x_dnd_version_get(win));
-        if (win != _source->dest) 
+        if (win != _source->dest)
           {
              int i = 0;
              unsigned char *data;
              Ecore_X_Atom *types;
 
-             ecore_x_window_prop_property_get(_source->win, 
-                                              ECORE_X_ATOM_XDND_TYPE_LIST, 
-                                              ECORE_X_ATOM_ATOM, 32, 
+             ecore_x_window_prop_property_get(_source->win,
+                                              ECORE_X_ATOM_XDND_TYPE_LIST,
+                                              ECORE_X_ATOM_ATOM, 32,
                                               &data, &num);
              types = (Ecore_X_Atom *)data;
              ev.window = win;
@@ -567,7 +591,7 @@ _ecore_xcb_dnd_drag(Ecore_X_Window root, int x, int y)
                ev.data.data32[i + 2] = types[i];
              free(data);
 
-             xcb_send_event(_ecore_xcb_conn, 0, win, 
+             xcb_send_event(_ecore_xcb_conn, 0, win,
                             XCB_EVENT_MASK_NO_EVENT, (const char *)&ev);
 //             ecore_x_flush();
              _source->await_status = 0;
@@ -579,8 +603,8 @@ _ecore_xcb_dnd_drag(Ecore_X_Window root, int x, int y)
         y1 = _source->rectangle.y;
         y2 = _source->rectangle.y + _source->rectangle.height;
 
-        if ((!_source->await_status) || (!_source->suppress) || 
-            ((x < x1) || (x > x2) || (y < y1) || (y > y2))) 
+        if ((!_source->await_status) || (!_source->suppress) ||
+            ((x < x1) || (x > x2) || (y < y1) || (y > y2)))
           {
              ev.window = win;
              ev.type = ECORE_X_ATOM_XDND_POSITION;
@@ -590,14 +614,14 @@ _ecore_xcb_dnd_drag(Ecore_X_Window root, int x, int y)
              ev.data.data32[3] = _source->time;
              ev.data.data32[4] = _source->action;
 
-             xcb_send_event(_ecore_xcb_conn, 0, win, 
+             xcb_send_event(_ecore_xcb_conn, 0, win,
                             XCB_EVENT_MASK_NO_EVENT, (const char *)&ev);
 //             ecore_x_flush();
              _source->await_status = 1;
           }
      }
 
-   if (_posupdatecb) 
+   if (_posupdatecb)
      {
         pos.position.x = x;
         pos.position.y = y;
@@ -612,15 +636,21 @@ _ecore_xcb_dnd_drag(Ecore_X_Window root, int x, int y)
    _source->dest = win;
 }
 
-EAPI Ecore_X_Atom 
-ecore_x_dnd_source_action_get(void) 
+EAPI Ecore_X_Atom
+ecore_x_dnd_source_action_get(void)
 {
    return _source->action;
 }
 
 /* local functions */
-static Eina_Bool 
-_ecore_xcb_dnd_converter_copy(char *target __UNUSED__, void *data, int size, void **data_ret, int *size_ret, Ecore_X_Atom *tprop __UNUSED__, int *count __UNUSED__) 
+static Eina_Bool
+_ecore_xcb_dnd_converter_copy(char         *target __UNUSED__,
+                              void         *data,
+                              int           size,
+                              void        **data_ret,
+                              int          *size_ret,
+                              Ecore_X_Atom *tprop __UNUSED__,
+                              int          *count __UNUSED__)
 {
    Ecore_Xcb_Textproperty text_prop;
    Ecore_Xcb_Encoding_Style style = XcbTextStyle;
@@ -634,12 +664,12 @@ _ecore_xcb_dnd_converter_copy(char *target __UNUSED__, void *data, int size, voi
    if (!mystr) return EINA_FALSE;
 
    memcpy(mystr, data, size);
-   if (_ecore_xcb_mb_textlist_to_textproperty(&mystr, 1, style, &text_prop)) 
+   if (_ecore_xcb_mb_textlist_to_textproperty(&mystr, 1, style, &text_prop))
      {
         int len;
 
         len = strlen((char *)text_prop.value) + 1;
-        if (!(*data_ret = malloc(len))) 
+        if (!(*data_ret = malloc(len)))
           {
              free(mystr);
              return EINA_FALSE;
@@ -650,9 +680,10 @@ _ecore_xcb_dnd_converter_copy(char *target __UNUSED__, void *data, int size, voi
         free(mystr);
         return EINA_TRUE;
      }
-   else 
+   else
      {
         free(mystr);
         return EINA_FALSE;
      }
 }
+

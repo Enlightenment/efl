@@ -28,7 +28,8 @@ typedef struct _Version_Cache_Item
 } Version_Cache_Item;
 static Version_Cache_Item *_version_cache = NULL;
 static int _version_cache_num = 0, _version_cache_alloc = 0;
-static void (*_posupdatecb)(void *, Ecore_X_Xdnd_Position *);
+static void (*_posupdatecb)(void *,
+                            Ecore_X_Xdnd_Position *);
 static void *_posupdatedata;
 
 void
@@ -71,15 +72,15 @@ _ecore_x_dnd_shutdown(void)
 {
    _ecore_x_dnd_init_count--;
    if (_ecore_x_dnd_init_count > 0)
-      return;
+     return;
 
    if (_source)
-      free(_source);
+     free(_source);
 
    _source = NULL;
 
    if (_target)
-      free(_target);
+     free(_target);
 
    _target = NULL;
 
@@ -87,7 +88,7 @@ _ecore_x_dnd_shutdown(void)
 } /* _ecore_x_dnd_shutdown */
 
 static Eina_Bool
-_ecore_x_dnd_converter_copy(char *target  __UNUSED__,
+_ecore_x_dnd_converter_copy(char         *target __UNUSED__,
                             void         *data,
                             int           size,
                             void        **data_ret,
@@ -100,11 +101,11 @@ _ecore_x_dnd_converter_copy(char *target  __UNUSED__,
    XICCEncodingStyle style = XTextStyle;
 
    if (!data || !size)
-      return EINA_FALSE;
+     return EINA_FALSE;
 
    mystr = calloc(1, size + 1);
    if (!mystr)
-      return EINA_FALSE;
+     return EINA_FALSE;
 
    memcpy(mystr, data, size);
 
@@ -132,16 +133,17 @@ _ecore_x_dnd_converter_copy(char *target  __UNUSED__,
 } /* _ecore_x_dnd_converter_copy */
 
 EAPI void
-ecore_x_dnd_aware_set(Ecore_X_Window win, Eina_Bool on)
+ecore_x_dnd_aware_set(Ecore_X_Window win,
+                      Eina_Bool      on)
 {
    Ecore_X_Atom prop_data = ECORE_X_DND_VERSION;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    if (on)
-      ecore_x_window_prop_property_set(win, ECORE_X_ATOM_XDND_AWARE,
-                                       XA_ATOM, 32, &prop_data, 1);
+     ecore_x_window_prop_property_set(win, ECORE_X_ATOM_XDND_AWARE,
+                                      XA_ATOM, 32, &prop_data, 1);
    else
-      ecore_x_window_prop_property_del(win, ECORE_X_ATOM_XDND_AWARE);
+     ecore_x_window_prop_property_del(win, ECORE_X_ATOM_XDND_AWARE);
 } /* ecore_x_dnd_aware_set */
 
 EAPI int
@@ -157,16 +159,16 @@ ecore_x_dnd_version_get(Ecore_X_Window win)
    // move and going to and from x multiple times per move is EXPENSIVE
    // and slows things down, puts lots of load on x etc.
    if (_source->state == ECORE_X_DND_SOURCE_DRAGGING)
-      if (_version_cache)
-        {
-           int i;
+     if (_version_cache)
+       {
+          int i;
 
-           for (i = 0; i < _version_cache_num; i++)
-             {
-                if (_version_cache[i].win == win)
-                   return _version_cache[i].ver;
-             }
-        }
+          for (i = 0; i < _version_cache_num; i++)
+            {
+               if (_version_cache[i].win == win)
+                 return _version_cache[i].ver;
+            }
+       }
 
    if (ecore_x_window_prop_property_get(win, ECORE_X_ATOM_XDND_AWARE,
                                         XA_ATOM, 32, &prop_data, &num))
@@ -177,7 +179,7 @@ ecore_x_dnd_version_get(Ecore_X_Window win)
           {
              _version_cache_num++;
              if (_version_cache_num > _version_cache_alloc)
-                _version_cache_alloc += 16;
+               _version_cache_alloc += 16;
 
              t = realloc(_version_cache,
                          _version_cache_alloc *
@@ -195,7 +197,7 @@ ecore_x_dnd_version_get(Ecore_X_Window win)
      {
         _version_cache_num++;
         if (_version_cache_num > _version_cache_alloc)
-           _version_cache_alloc += 16;
+          _version_cache_alloc += 16;
 
         t = realloc(_version_cache, _version_cache_alloc *
                     sizeof(Version_Cache_Item));
@@ -209,7 +211,8 @@ ecore_x_dnd_version_get(Ecore_X_Window win)
 } /* ecore_x_dnd_version_get */
 
 EAPI Eina_Bool
-ecore_x_dnd_type_isset(Ecore_X_Window win, const char *type)
+ecore_x_dnd_type_isset(Ecore_X_Window win,
+                       const char    *type)
 {
    int num, i, ret = EINA_FALSE;
    unsigned char *data;
@@ -218,7 +221,7 @@ ecore_x_dnd_type_isset(Ecore_X_Window win, const char *type)
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    if (!ecore_x_window_prop_property_get(win, ECORE_X_ATOM_XDND_TYPE_LIST,
                                          XA_ATOM, 32, &data, &num))
-      return ret;
+     return ret;
 
    atom = ecore_x_atom_get(type);
    atoms = (Ecore_X_Atom *)data;
@@ -237,7 +240,9 @@ ecore_x_dnd_type_isset(Ecore_X_Window win, const char *type)
 } /* ecore_x_dnd_type_isset */
 
 EAPI void
-ecore_x_dnd_type_set(Ecore_X_Window win, const char *type, Eina_Bool on)
+ecore_x_dnd_type_set(Ecore_X_Window win,
+                     const char    *type,
+                     Eina_Bool      on)
 {
    Ecore_X_Atom atom;
    Ecore_X_Atom *oldset = NULL, *newset = NULL;
@@ -262,12 +267,12 @@ ecore_x_dnd_type_set(Ecore_X_Window win, const char *type, Eina_Bool on)
 
         newset = calloc(num + 1, sizeof(Ecore_X_Atom));
         if (!newset)
-           return;
+          return;
 
         data = (unsigned char *)newset;
 
         for (i = 0; i < num; i++)
-           newset[i + 1] = oldset[i];
+          newset[i + 1] = oldset[i];
         /* prepend the new type */
         newset[0] = atom;
 
@@ -291,8 +296,8 @@ ecore_x_dnd_type_set(Ecore_X_Window win, const char *type, Eina_Bool on)
 
         data = (unsigned char *)newset;
         for (i = 0; i < num; i++)
-           if (oldset[i] != atom)
-              newset[j++] = oldset[i];
+          if (oldset[i] != atom)
+            newset[j++] = oldset[i];
 
         ecore_x_window_prop_property_set(win, ECORE_X_ATOM_XDND_TYPE_LIST,
                                          XA_ATOM, 32, data, num - 1);
@@ -313,12 +318,12 @@ ecore_x_dnd_types_set(Ecore_X_Window win,
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    if (!num_types)
-      ecore_x_window_prop_property_del(win, ECORE_X_ATOM_XDND_TYPE_LIST);
+     ecore_x_window_prop_property_del(win, ECORE_X_ATOM_XDND_TYPE_LIST);
    else
      {
         newset = calloc(num_types, sizeof(Ecore_X_Atom));
         if (!newset)
-           return;
+          return;
 
         data = (unsigned char *)newset;
         for (i = 0; i < num_types; i++)
@@ -343,7 +348,7 @@ ecore_x_dnd_actions_set(Ecore_X_Window win,
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    if (!num_actions)
-      ecore_x_window_prop_property_del(win, ECORE_X_ATOM_XDND_ACTION_LIST);
+     ecore_x_window_prop_property_del(win, ECORE_X_ATOM_XDND_ACTION_LIST);
    else
      {
         data = (unsigned char *)actions;
@@ -373,8 +378,9 @@ ecore_x_dnd_actions_set(Ecore_X_Window win,
  */
 EAPI void
 ecore_x_dnd_callback_pos_update_set(
-                           void (*cb)(void *, Ecore_X_Xdnd_Position *data),
-			   const void *data)
+  void                                                           (*cb)(void *,
+                                          Ecore_X_Xdnd_Position *data),
+  const void                                                    *data)
 {
    _posupdatecb = cb;
    _posupdatedata = (void *)data; /* Discard the const early */
@@ -393,15 +399,17 @@ _ecore_x_dnd_target_get(void)
 } /* _ecore_x_dnd_target_get */
 
 EAPI Eina_Bool
-ecore_x_dnd_begin(Ecore_X_Window source, unsigned char *data, int size)
+ecore_x_dnd_begin(Ecore_X_Window source,
+                  unsigned char *data,
+                  int            size)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    if (!ecore_x_dnd_version_get(source))
-      return EINA_FALSE;
+     return EINA_FALSE;
 
    /* Take ownership of XdndSelection */
    if (!ecore_x_selection_xdnd_set(source, data, size))
-      return EINA_FALSE;
+     return EINA_FALSE;
 
    if (_version_cache)
      {
@@ -463,8 +471,8 @@ ecore_x_dnd_drop(void)
    else
      {
         /* Dropping on nothing */
-        ecore_x_selection_xdnd_clear();
-        _source->state = ECORE_X_DND_SOURCE_IDLE;
+         ecore_x_selection_xdnd_clear();
+         _source->state = ECORE_X_DND_SOURCE_IDLE;
      }
 
    ecore_x_window_ignore_set(_source->win, 0);
@@ -483,7 +491,7 @@ ecore_x_dnd_send_status(Eina_Bool         will_accept,
    XEvent xev;
 
    if (_target->state == ECORE_X_DND_TARGET_IDLE)
-      return;
+     return;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    memset(&xev, 0, sizeof(XEvent));
@@ -499,10 +507,10 @@ ecore_x_dnd_send_status(Eina_Bool         will_accept,
    xev.xclient.data.l[0] = _target->win;
    xev.xclient.data.l[1] = 0;
    if (will_accept)
-      xev.xclient.data.l[1] |= 0x1UL;
+     xev.xclient.data.l[1] |= 0x1UL;
 
    if (!suppress)
-      xev.xclient.data.l[1] |= 0x2UL;
+     xev.xclient.data.l[1] |= 0x2UL;
 
    /* Set rectangle information */
    xev.xclient.data.l[2] = rectangle.x;
@@ -532,7 +540,7 @@ ecore_x_dnd_send_finished(void)
    XEvent xev;
 
    if (_target->state == ECORE_X_DND_TARGET_IDLE)
-      return;
+     return;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    xev.xany.type = ClientMessage;
@@ -560,7 +568,7 @@ ecore_x_dnd_source_action_set(Ecore_X_Atom action)
 {
    _source->action = action;
    if (_source->prev.window)
-      _ecore_x_dnd_drag(_source->prev.window, _source->prev.x, _source->prev.y);
+     _ecore_x_dnd_drag(_source->prev.window, _source->prev.x, _source->prev.y);
 } /* ecore_x_dnd_source_action_set */
 
 EAPI Ecore_X_Atom
@@ -570,7 +578,9 @@ ecore_x_dnd_source_action_get(void)
 } /* ecore_x_dnd_source_action_get */
 
 void
-_ecore_x_dnd_drag(Ecore_X_Window root, int x, int y)
+_ecore_x_dnd_drag(Ecore_X_Window root,
+                  int            x,
+                  int            y)
 {
    XEvent xev;
    Ecore_X_Window win;
@@ -579,7 +589,7 @@ _ecore_x_dnd_drag(Ecore_X_Window root, int x, int y)
    int num;
 
    if (_source->state != ECORE_X_DND_SOURCE_DRAGGING)
-      return;
+     return;
 
    /* Preinitialize XEvent struct */
    memset(&xev, 0, sizeof(XEvent));
@@ -599,7 +609,7 @@ _ecore_x_dnd_drag(Ecore_X_Window root, int x, int y)
 //   while ((win) && !(ecore_x_dnd_version_get(win)))
 //     win = ecore_x_window_parent_get(win);
    while ((win) && !(ecore_x_dnd_version_get(win)))
-      win = ecore_x_window_shadow_parent_get(root, win);
+     win = ecore_x_window_shadow_parent_get(root, win);
 
    /* Send XdndLeave to current destination window if we have left it */
    if ((_source->dest) && (win != _source->dest))
@@ -639,16 +649,16 @@ _ecore_x_dnd_drag(Ecore_X_Window root, int x, int y)
              xev.xclient.data.l[0] = _source->win;
              xev.xclient.data.l[1] = 0;
              if (num > 3)
-                xev.xclient.data.l[1] |= 0x1UL;
+               xev.xclient.data.l[1] |= 0x1UL;
              else
-                xev.xclient.data.l[1] &= 0xfffffffeUL;
+               xev.xclient.data.l[1] &= 0xfffffffeUL;
 
              xev.xclient.data.l[1] |= ((unsigned long)_source->version) << 24;
 
              for (i = 2; i < 5; i++)
-                xev.xclient.data.l[i] = 0;
+               xev.xclient.data.l[i] = 0;
              for (i = 0; i < MIN(num, 3); ++i)
-                xev.xclient.data.l[i + 2] = types[i];
+               xev.xclient.data.l[i + 2] = types[i];
              XFree(data);
              XSendEvent(_ecore_x_disp, win, False, 0, &xev);
              _source->await_status = 0;
@@ -691,10 +701,6 @@ _ecore_x_dnd_drag(Ecore_X_Window root, int x, int y)
    _source->prev.y = y;
    _source->prev.window = root;
    _source->dest = win;
-
-
 } /* _ecore_x_dnd_drag */
-
-
 
 /* vim:set ts=8 sw=3 sts=3 expandtab cino=>5n-2f0^-2{2(0W1st0 :*/

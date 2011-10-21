@@ -16,7 +16,7 @@
 # ifdef  __cplusplus
 extern "C"
 # endif /* ifdef  __cplusplus */
-void *    alloca (size_t);
+void *alloca(size_t);
 #endif /* ifdef HAVE_ALLOCA_H */
 
 #include <string.h>
@@ -305,26 +305,28 @@ EAPI Ecore_X_Atom
 ecore_x_atom_get(const char *name)
 {
    if (!_ecore_x_disp)
-      return 0;
+     return 0;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    return XInternAtom(_ecore_x_disp, name, False);
 } /* ecore_x_atom_get */
 
 EAPI void
-ecore_x_atoms_get(const char **names, int num, Ecore_X_Atom *atoms)
+ecore_x_atoms_get(const char  **names,
+                  int           num,
+                  Ecore_X_Atom *atoms)
 {
    Atom *atoms_int;
    int i;
 
    if (!_ecore_x_disp)
-      return;
+     return;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    atoms_int = alloca(num * sizeof(Atom));
    XInternAtoms(_ecore_x_disp, (char **)names, num, False, atoms_int);
    for (i = 0; i < num; i++)
-      atoms[i] = atoms_int[i];
+     atoms[i] = atoms_int[i];
 } /* ecore_x_atoms_get */
 
 EAPI char *
@@ -334,13 +336,13 @@ ecore_x_atom_name_get(Ecore_X_Atom atom)
    char *xname;
 
    if (!_ecore_x_disp)
-      return NULL;
+     return NULL;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    xname = XGetAtomName(_ecore_x_disp, atom);
    if (!xname)
-      return NULL;
+     return NULL;
 
    name = strdup(xname);
    XFree(xname);

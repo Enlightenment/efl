@@ -7,8 +7,8 @@
 static Eina_Bool _xinerama_avail = EINA_FALSE;
 static Eina_Bool _xinerama_active = EINA_FALSE;
 
-void 
-_ecore_xcb_xinerama_init(void) 
+void
+_ecore_xcb_xinerama_init(void)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
@@ -17,8 +17,8 @@ _ecore_xcb_xinerama_init(void)
 #endif
 }
 
-void 
-_ecore_xcb_xinerama_finalize(void) 
+void
+_ecore_xcb_xinerama_finalize(void)
 {
 #ifdef ECORE_XCB_XINERAMA
    const xcb_query_extension_reply_t *ext_reply;
@@ -28,33 +28,33 @@ _ecore_xcb_xinerama_finalize(void)
 
 #ifdef ECORE_XCB_XINERAMA
    ext_reply = xcb_get_extension_data(_ecore_xcb_conn, &xcb_xinerama_id);
-   if ((ext_reply) && (ext_reply->present)) 
+   if ((ext_reply) && (ext_reply->present))
      {
         xcb_xinerama_query_version_cookie_t cookie;
         xcb_xinerama_query_version_reply_t *reply;
 
-        cookie = 
-          xcb_xinerama_query_version_unchecked(_ecore_xcb_conn, 
-                                               XCB_XINERAMA_MAJOR_VERSION, 
+        cookie =
+          xcb_xinerama_query_version_unchecked(_ecore_xcb_conn,
+                                               XCB_XINERAMA_MAJOR_VERSION,
                                                XCB_XINERAMA_MINOR_VERSION);
-        reply = 
+        reply =
           xcb_xinerama_query_version_reply(_ecore_xcb_conn, cookie, NULL);
-        if (reply) 
+        if (reply)
           {
              _xinerama_avail = EINA_TRUE;
              // NB: Do we need to compare version numbers here ?
              free(reply);
           }
 
-        if (_xinerama_avail) 
+        if (_xinerama_avail)
           {
              xcb_xinerama_is_active_cookie_t acookie;
              xcb_xinerama_is_active_reply_t *areply;
 
              acookie = xcb_xinerama_is_active_unchecked(_ecore_xcb_conn);
-             areply = 
+             areply =
                xcb_xinerama_is_active_reply(_ecore_xcb_conn, acookie, NULL);
-             if (areply) 
+             if (areply)
                {
                   _xinerama_active = areply->state;
                   free(areply);
@@ -64,8 +64,8 @@ _ecore_xcb_xinerama_finalize(void)
 #endif
 }
 
-EAPI int 
-ecore_x_xinerama_screen_count_get(void) 
+EAPI int
+ecore_x_xinerama_screen_count_get(void)
 {
    int count = 0;
 #ifdef ECORE_XCB_XINERAMA
@@ -80,7 +80,7 @@ ecore_x_xinerama_screen_count_get(void)
 
 #ifdef ECORE_XCB_XINERAMA
    cookie = xcb_xinerama_query_screens_unchecked(_ecore_xcb_conn);
-   reply = 
+   reply =
      xcb_xinerama_query_screens_reply(_ecore_xcb_conn, cookie, NULL);
    if (!reply) return 0;
    count = reply->number;
@@ -89,8 +89,12 @@ ecore_x_xinerama_screen_count_get(void)
    return count;
 }
 
-EAPI Eina_Bool 
-ecore_x_xinerama_screen_geometry_get(int screen, int *x, int *y, int *w, int *h) 
+EAPI Eina_Bool
+ecore_x_xinerama_screen_geometry_get(int  screen,
+                                     int *x,
+                                     int *y,
+                                     int *w,
+                                     int *h)
 {
 #ifdef ECORE_XCB_XINERAMA
    xcb_xinerama_query_screens_cookie_t cookie;
@@ -110,12 +114,12 @@ ecore_x_xinerama_screen_geometry_get(int screen, int *x, int *y, int *w, int *h)
 
 #ifdef ECORE_XCB_XINERAMA
    cookie = xcb_xinerama_query_screens_unchecked(_ecore_xcb_conn);
-   reply = 
+   reply =
      xcb_xinerama_query_screens_reply(_ecore_xcb_conn, cookie, NULL);
    if (!reply) return EINA_FALSE;
 
    info = xcb_xinerama_query_screens_screen_info(reply);
-   if (!info) 
+   if (!info)
      {
         free(reply);
         return EINA_FALSE;
@@ -132,3 +136,4 @@ ecore_x_xinerama_screen_geometry_get(int screen, int *x, int *y, int *w, int *h)
 
    return EINA_FALSE;
 }
+

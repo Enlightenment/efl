@@ -31,7 +31,8 @@ ecore_x_xregion_free(Ecore_X_XRegion *region)
 }
 
 EAPI Eina_Bool
-ecore_x_xregion_set(Ecore_X_XRegion *region, Ecore_X_GC gc)
+ecore_x_xregion_set(Ecore_X_XRegion *region,
+                    Ecore_X_GC       gc)
 {
    xcb_rectangle_t *rects;
    pixman_box16_t *boxes;
@@ -63,7 +64,9 @@ ecore_x_xregion_set(Ecore_X_XRegion *region, Ecore_X_GC gc)
 }
 
 EAPI void
-ecore_x_xregion_translate(Ecore_X_XRegion *region, int x, int y)
+ecore_x_xregion_translate(Ecore_X_XRegion *region,
+                          int              x,
+                          int              y)
 {
    if (!region) return;
 
@@ -71,34 +74,42 @@ ecore_x_xregion_translate(Ecore_X_XRegion *region, int x, int y)
 }
 
 EAPI Eina_Bool
-ecore_x_xregion_intersect(Ecore_X_XRegion *dst, Ecore_X_XRegion *r1, Ecore_X_XRegion *r2)
+ecore_x_xregion_intersect(Ecore_X_XRegion *dst,
+                          Ecore_X_XRegion *r1,
+                          Ecore_X_XRegion *r2)
 {
-   return pixman_region_intersect((pixman_region16_t *)dst, 
-                                  (pixman_region16_t *)r1, 
+   return pixman_region_intersect((pixman_region16_t *)dst,
+                                  (pixman_region16_t *)r1,
                                   (pixman_region16_t *)r2);
 }
 
 EAPI Eina_Bool
-ecore_x_xregion_union(Ecore_X_XRegion *dst, Ecore_X_XRegion *r1, Ecore_X_XRegion *r2)
+ecore_x_xregion_union(Ecore_X_XRegion *dst,
+                      Ecore_X_XRegion *r1,
+                      Ecore_X_XRegion *r2)
 {
-   return pixman_region_union((pixman_region16_t *)dst, 
-                              (pixman_region16_t *)r1, 
+   return pixman_region_union((pixman_region16_t *)dst,
+                              (pixman_region16_t *)r1,
                               (pixman_region16_t *)r2);
 }
 
 EAPI Eina_Bool
-ecore_x_xregion_union_rect(Ecore_X_XRegion *dst, Ecore_X_XRegion *src, Ecore_X_Rectangle *rect)
+ecore_x_xregion_union_rect(Ecore_X_XRegion   *dst,
+                           Ecore_X_XRegion   *src,
+                           Ecore_X_Rectangle *rect)
 {
-   return pixman_region_union_rect((pixman_region16_t *)dst, 
+   return pixman_region_union_rect((pixman_region16_t *)dst,
                                    (pixman_region16_t *)src,
                                    rect->x, rect->y, rect->width, rect->height);
 }
 
 EAPI Eina_Bool
-ecore_x_xregion_subtract(Ecore_X_XRegion *dst, Ecore_X_XRegion *rm, Ecore_X_XRegion *rs)
+ecore_x_xregion_subtract(Ecore_X_XRegion *dst,
+                         Ecore_X_XRegion *rm,
+                         Ecore_X_XRegion *rs)
 {
-   return pixman_region_subtract((pixman_region16_t *)dst, 
-                                 (pixman_region16_t *)rm, 
+   return pixman_region_subtract((pixman_region16_t *)dst,
+                                 (pixman_region16_t *)rm,
                                  (pixman_region16_t *)rs);
 }
 
@@ -111,16 +122,19 @@ ecore_x_xregion_is_empty(Ecore_X_XRegion *region)
 }
 
 EAPI Eina_Bool
-ecore_x_xregion_is_equal(Ecore_X_XRegion *r1, Ecore_X_XRegion *r2)
+ecore_x_xregion_is_equal(Ecore_X_XRegion *r1,
+                         Ecore_X_XRegion *r2)
 {
    if ((!r1) || (!r2)) return EINA_FALSE;
 
-   return pixman_region_equal((pixman_region16_t *)r1, 
+   return pixman_region_equal((pixman_region16_t *)r1,
                               (pixman_region16_t *)r2);
 }
 
 EAPI Eina_Bool
-ecore_x_xregion_point_contain(Ecore_X_XRegion *region, int x, int y)
+ecore_x_xregion_point_contain(Ecore_X_XRegion *region,
+                              int              x,
+                              int              y)
 {
    if (!region) return EINA_FALSE;
 
@@ -128,7 +142,8 @@ ecore_x_xregion_point_contain(Ecore_X_XRegion *region, int x, int y)
 }
 
 EAPI Eina_Bool
-ecore_x_xregion_rect_contain(Ecore_X_XRegion *region, Ecore_X_Rectangle *rect)
+ecore_x_xregion_rect_contain(Ecore_X_XRegion   *region,
+                             Ecore_X_Rectangle *rect)
 {
    pixman_box16_t box;
 
@@ -141,3 +156,4 @@ ecore_x_xregion_rect_contain(Ecore_X_XRegion *region, Ecore_X_Rectangle *rect)
 
    return pixman_region_contains_rectangle((pixman_region16_t *)region, &box);
 }
+

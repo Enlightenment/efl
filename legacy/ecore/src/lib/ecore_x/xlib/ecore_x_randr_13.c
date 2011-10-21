@@ -9,18 +9,18 @@
 #include "ecore_x_private.h"
 #include "ecore_x_randr.h"
 
-#define Ecore_X_Randr_None   0
+#define Ecore_X_Randr_None  0
 #define Ecore_X_Randr_Unset -1
 
 #ifdef ECORE_XRANDR
 
-#define RANDR_1_3 ((1 << 16) | 3)
+#define RANDR_1_3           ((1 << 16) | 3)
 #define RANDR_CHECK_1_3_RET(ret) if(_randr_version < RANDR_1_3) return ret
 
-extern XRRScreenResources * (*_ecore_x_randr_get_screen_resources)(Display *
-                                                                   dpy,
-                                                                   Window
-                                                                   window);
+extern XRRScreenResources *(*_ecore_x_randr_get_screen_resources)(Display *
+                                                                  dpy,
+                                                                  Window
+                                                                  window);
 extern int _randr_version;
 #endif
 
@@ -34,7 +34,7 @@ ecore_x_randr_primary_output_get(Ecore_X_Window root)
 #ifdef ECORE_XRANDR
    RANDR_CHECK_1_3_RET(Ecore_X_Randr_None);
    if (!_ecore_x_randr_root_validate(root))
-      return Ecore_X_Randr_None;
+     return Ecore_X_Randr_None;
 
    return XRRGetOutputPrimary(_ecore_x_disp, root);
 #else
@@ -47,7 +47,7 @@ ecore_x_randr_primary_output_get(Ecore_X_Window root)
  * @param output that should be set as given root window's screen primary output
  */
 EAPI void
-ecore_x_randr_primary_output_set(Ecore_X_Window root,
+ecore_x_randr_primary_output_set(Ecore_X_Window       root,
                                  Ecore_X_Randr_Output output)
 {
 #ifdef ECORE_XRANDR
@@ -60,3 +60,4 @@ ecore_x_randr_primary_output_set(Ecore_X_Window root,
 
 #endif
 }
+

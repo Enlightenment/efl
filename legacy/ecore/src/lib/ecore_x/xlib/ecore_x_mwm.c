@@ -48,7 +48,7 @@ ecore_x_mwm_hints_get(Ecore_X_Window          win,
                                          ECORE_X_ATOM_MOTIF_WM_HINTS,
                                          ECORE_X_ATOM_MOTIF_WM_HINTS,
                                          32, &p, &num))
-      return EINA_FALSE;
+     return EINA_FALSE;
 
    mwmhints = (MWMHints *)p;
    if (mwmhints)
@@ -58,25 +58,25 @@ ecore_x_mwm_hints_get(Ecore_X_Window          win,
              if (dhint)
                {
                   if (mwmhints->flags & ECORE_X_MWM_HINTS_DECORATIONS)
-                     *dhint = mwmhints->decorations;
+                    *dhint = mwmhints->decorations;
                   else
-                     *dhint = ECORE_X_MWM_HINT_DECOR_ALL;
+                    *dhint = ECORE_X_MWM_HINT_DECOR_ALL;
                }
 
              if (fhint)
                {
                   if (mwmhints->flags & ECORE_X_MWM_HINTS_FUNCTIONS)
-                     *fhint = mwmhints->functions;
+                    *fhint = mwmhints->functions;
                   else
-                     *fhint = ECORE_X_MWM_HINT_FUNC_ALL;
+                    *fhint = ECORE_X_MWM_HINT_FUNC_ALL;
                }
 
              if (ihint)
                {
                   if (mwmhints->flags & ECORE_X_MWM_HINTS_INPUT_MODE)
-                     *ihint = mwmhints->inputmode;
+                    *ihint = mwmhints->inputmode;
                   else
-                     *ihint = ECORE_X_MWM_HINT_INPUT_MODELESS;
+                    *ihint = ECORE_X_MWM_HINT_INPUT_MODELESS;
                }
 
              ret = EINA_TRUE;
@@ -89,7 +89,8 @@ ecore_x_mwm_hints_get(Ecore_X_Window          win,
 } /* ecore_x_mwm_hints_get */
 
 EAPI void
-ecore_x_mwm_borderless_set(Ecore_X_Window win, Eina_Bool borderless)
+ecore_x_mwm_borderless_set(Ecore_X_Window win,
+                           Eina_Bool      borderless)
 {
    unsigned int data[5] = {0, 0, 0, 0, 0};
 

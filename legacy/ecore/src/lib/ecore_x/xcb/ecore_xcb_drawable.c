@@ -15,8 +15,13 @@
  * @param width The width of the rectangle.
  * @param height The height of the rectangle.
  */
-EAPI void 
-ecore_x_drawable_rectangle_fill(Ecore_X_Drawable draw, Ecore_X_GC gc, int x, int y, int w, int h) 
+EAPI void
+ecore_x_drawable_rectangle_fill(Ecore_X_Drawable draw,
+                                Ecore_X_GC       gc,
+                                int              x,
+                                int              y,
+                                int              w,
+                                int              h)
 {
    xcb_rectangle_t rect;
 
@@ -27,7 +32,7 @@ ecore_x_drawable_rectangle_fill(Ecore_X_Drawable draw, Ecore_X_GC gc, int x, int
    rect.y = y;
    rect.width = w;
    rect.height = h;
-   xcb_poly_fill_rectangle(_ecore_xcb_conn, draw, gc, 1, 
+   xcb_poly_fill_rectangle(_ecore_xcb_conn, draw, gc, 1,
                            (const xcb_rectangle_t *)&rect);
 //   ecore_x_flush();
 }
@@ -41,8 +46,12 @@ ecore_x_drawable_rectangle_fill(Ecore_X_Drawable draw, Ecore_X_GC gc, int x, int
  * @param h Pointer to an integer into which the height is to be stored.
  * @ingroup Ecore_X_Drawable_Group
  */
-EAPI void 
-ecore_x_drawable_geometry_get(Ecore_X_Drawable draw, int *x, int *y, int *w, int *h) 
+EAPI void
+ecore_x_drawable_geometry_get(Ecore_X_Drawable draw,
+                              int             *x,
+                              int             *y,
+                              int             *w,
+                              int             *h)
 {
    xcb_get_geometry_cookie_t cookie;
    xcb_get_geometry_reply_t *reply;
@@ -70,8 +79,8 @@ ecore_x_drawable_geometry_get(Ecore_X_Drawable draw, int *x, int *y, int *w, int
  * @return The border width of the given drawable.
  * @ingroup Ecore_X_Drawable_Group
  */
-EAPI int 
-ecore_x_drawable_border_width_get(Ecore_X_Drawable d) 
+EAPI int
+ecore_x_drawable_border_width_get(Ecore_X_Drawable d)
 {
    xcb_get_geometry_cookie_t cookie;
    xcb_get_geometry_reply_t *reply;
@@ -94,8 +103,8 @@ ecore_x_drawable_border_width_get(Ecore_X_Drawable d)
  * @return The depth of the given drawable.
  * @ingroup Ecore_X_Drawable_Group
  */
-EAPI int 
-ecore_x_drawable_depth_get(Ecore_X_Drawable d) 
+EAPI int
+ecore_x_drawable_depth_get(Ecore_X_Drawable d)
 {
    xcb_get_geometry_cookie_t cookie;
    xcb_get_geometry_reply_t *reply;
@@ -111,3 +120,4 @@ ecore_x_drawable_depth_get(Ecore_X_Drawable d)
    free(reply);
    return ret;
 }
+

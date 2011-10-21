@@ -16,9 +16,9 @@ _ecore_x_dpms_init(void)
    _dpms_minor = 0;
 
    if (DPMSGetVersion(_ecore_x_disp, &_dpms_major, &_dpms_minor))
-      _dpms_available = EINA_TRUE;
+     _dpms_available = EINA_TRUE;
    else
-      _dpms_available = EINA_FALSE;
+     _dpms_available = EINA_FALSE;
 
 #else /* ifdef ECORE_XDPMS */
    _dpms_available = EINA_FALSE;
@@ -89,9 +89,9 @@ ecore_x_dpms_enabled_set(int enabled)
 #ifdef ECORE_XDPMS
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    if (enabled)
-      DPMSEnable(_ecore_x_disp);
+     DPMSEnable(_ecore_x_disp);
    else
-      DPMSDisable(_ecore_x_disp);
+     DPMSDisable(_ecore_x_disp);
 
 #endif /* ifdef ECORE_XDPMS */
 } /* ecore_x_dpms_enabled_set */

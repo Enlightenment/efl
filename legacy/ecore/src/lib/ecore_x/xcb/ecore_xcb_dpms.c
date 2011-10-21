@@ -6,8 +6,8 @@
 /* local variables */
 static Eina_Bool _dpms_avail = EINA_FALSE;
 
-void 
-_ecore_xcb_dpms_init(void) 
+void
+_ecore_xcb_dpms_init(void)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
@@ -16,8 +16,8 @@ _ecore_xcb_dpms_init(void)
 #endif
 }
 
-void 
-_ecore_xcb_dpms_finalize(void) 
+void
+_ecore_xcb_dpms_finalize(void)
 {
 #ifdef ECORE_XCB_DPMS
    const xcb_query_extension_reply_t *ext_reply;
@@ -25,21 +25,21 @@ _ecore_xcb_dpms_finalize(void)
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
-#ifdef ECORE_XCB_DPMS 
+#ifdef ECORE_XCB_DPMS
    ext_reply = xcb_get_extension_data(_ecore_xcb_conn, &xcb_dpms_id);
-   if ((ext_reply) && (ext_reply->present)) 
+   if ((ext_reply) && (ext_reply->present))
      {
         xcb_dpms_get_version_cookie_t cookie;
         xcb_dpms_get_version_reply_t *reply;
 
-        cookie = 
-          xcb_dpms_get_version_unchecked(_ecore_xcb_conn, 
-                                         XCB_DPMS_MAJOR_VERSION, 
+        cookie =
+          xcb_dpms_get_version_unchecked(_ecore_xcb_conn,
+                                         XCB_DPMS_MAJOR_VERSION,
                                          XCB_DPMS_MINOR_VERSION);
         reply = xcb_dpms_get_version_reply(_ecore_xcb_conn, cookie, NULL);
-        if (reply) 
+        if (reply)
           {
-             if (reply->server_major_version >= 1) 
+             if (reply->server_major_version >= 1)
                _dpms_avail = EINA_TRUE;
              free(reply);
           }
@@ -49,27 +49,27 @@ _ecore_xcb_dpms_finalize(void)
 
 /**
  * @defgroup Ecore_X_DPMS_Group X DPMS Extension Functions
- * 
+ *
  * Functions related to the X DPMS Extension
  */
 
 /**
  * Checks if the DPMS extension is available or not.
- * 
- * @return @c EINA_TRUE if the DPMS extension is available, 
+ *
+ * @return @c EINA_TRUE if the DPMS extension is available,
  * @c EINA_FALSE otherwise.
  *
  * Return EINA_TRUE if the X server supports the DPMS Extension version 1.0,
  * EINA_FALSE otherwise.
- * 
+ *
  * @ingroup Ecore_X_DPMS_Group
  */
-EAPI Eina_Bool 
-ecore_x_dpms_query(void) 
+EAPI Eina_Bool
+ecore_x_dpms_query(void)
 {
 //   LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
-   return _dpms_avail;
+     return _dpms_avail;
 }
 
 /**
@@ -77,8 +77,8 @@ ecore_x_dpms_query(void)
  * @return @c 1 if the X server is capable of DPMS, @c 0 otherwise.
  * @ingroup Ecore_X_DPMS_Group
  */
-EAPI Eina_Bool 
-ecore_x_dpms_capable_get(void) 
+EAPI Eina_Bool
+ecore_x_dpms_capable_get(void)
 {
    Eina_Bool ret = EINA_FALSE;
 #ifdef ECORE_XCB_DPMS
@@ -94,7 +94,7 @@ ecore_x_dpms_capable_get(void)
 #ifdef ECORE_XCB_DPMS
    cookie = xcb_dpms_capable_unchecked(_ecore_xcb_conn);
    reply = xcb_dpms_capable_reply(_ecore_xcb_conn, cookie, NULL);
-   if (reply) 
+   if (reply)
      {
         ret = reply->capable;
         free(reply);
@@ -109,8 +109,8 @@ ecore_x_dpms_capable_get(void)
  * @return @c EINA_TRUE if DPMS is enabled, @c EINA_FALSE otherwise.
  * @ingroup Ecore_X_DPMS_Group
  */
-EAPI Eina_Bool 
-ecore_x_dpms_enabled_get(void) 
+EAPI Eina_Bool
+ecore_x_dpms_enabled_get(void)
 {
    Eina_Bool ret = EINA_FALSE;
 #ifdef ECORE_XCB_DPMS
@@ -139,8 +139,8 @@ ecore_x_dpms_enabled_get(void)
  * @param enabled @c 0 to disable DPMS characteristics of the server, enable it otherwise.
  * @ingroup Ecore_X_DPMS_Group
  */
-EAPI void 
-ecore_x_dpms_enabled_set(int enabled) 
+EAPI void
+ecore_x_dpms_enabled_set(int enabled)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    CHECK_XCB_CONN;
@@ -148,9 +148,9 @@ ecore_x_dpms_enabled_set(int enabled)
    if (!_dpms_avail) return;
 
 #ifdef ECORE_XCB_DPMS
-   if (enabled) 
+   if (enabled)
      xcb_dpms_enable(_ecore_xcb_conn);
-   else 
+   else
      xcb_dpms_disable(_ecore_xcb_conn);
 #endif
 }
@@ -162,8 +162,10 @@ ecore_x_dpms_enabled_set(int enabled)
  * @param off     Amount of time of inactivity before the monitor is shut off.
  * @ingroup Ecore_X_DPMS_Group
  */
-EAPI void 
-ecore_x_dpms_timeouts_get(unsigned int *standby, unsigned int *suspend, unsigned int *off) 
+EAPI void
+ecore_x_dpms_timeouts_get(unsigned int *standby,
+                          unsigned int *suspend,
+                          unsigned int *off)
 {
 #ifdef ECORE_XCB_DPMS
    xcb_dpms_get_timeouts_cookie_t cookie;
@@ -197,8 +199,10 @@ ecore_x_dpms_timeouts_get(unsigned int *standby, unsigned int *suspend, unsigned
  * @param off     Amount of time of inactivity before the monitor is shut off.
  * @ingroup Ecore_X_DPMS_Group
  */
-EAPI Eina_Bool 
-ecore_x_dpms_timeouts_set(unsigned int standby, unsigned int suspend, unsigned int off) 
+EAPI Eina_Bool
+ecore_x_dpms_timeouts_set(unsigned int standby,
+                          unsigned int suspend,
+                          unsigned int off)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    CHECK_XCB_CONN;
@@ -219,8 +223,8 @@ ecore_x_dpms_timeouts_set(unsigned int standby, unsigned int suspend, unsigned i
  * @return The standby timeout value.
  * @ingroup Ecore_X_DPMS_Group
  */
-EAPI unsigned int 
-ecore_x_dpms_timeout_standby_get(void) 
+EAPI unsigned int
+ecore_x_dpms_timeout_standby_get(void)
 {
    unsigned int standby = 0;
 
@@ -236,8 +240,8 @@ ecore_x_dpms_timeout_standby_get(void)
  * @return The suspend timeout value.
  * @ingroup Ecore_X_DPMS_Group
  */
-EAPI unsigned int 
-ecore_x_dpms_timeout_suspend_get(void) 
+EAPI unsigned int
+ecore_x_dpms_timeout_suspend_get(void)
 {
    unsigned int suspend = 0;
 
@@ -253,8 +257,8 @@ ecore_x_dpms_timeout_suspend_get(void)
  * @return The off timeout value.
  * @ingroup Ecore_X_DPMS_Group
  */
-EAPI unsigned int 
-ecore_x_dpms_timeout_off_get(void) 
+EAPI unsigned int
+ecore_x_dpms_timeout_off_get(void)
 {
    unsigned int off = 0;
 
@@ -269,8 +273,8 @@ ecore_x_dpms_timeout_off_get(void)
  * @param new_standby Amount of time of inactivity before standby mode will be invoked.
  * @ingroup Ecore_X_DPMS_Group
  */
-EAPI void 
-ecore_x_dpms_timeout_standby_set(unsigned int new_timeout) 
+EAPI void
+ecore_x_dpms_timeout_standby_set(unsigned int new_timeout)
 {
    unsigned int standby = 0, suspend = 0, off = 0;
 
@@ -285,8 +289,8 @@ ecore_x_dpms_timeout_standby_set(unsigned int new_timeout)
  * @param suspend Amount of time of inactivity before the screen is placed into suspend mode.
  * @ingroup Ecore_X_DPMS_Group
  */
-EAPI void 
-ecore_x_dpms_timeout_suspend_set(unsigned int new_timeout) 
+EAPI void
+ecore_x_dpms_timeout_suspend_set(unsigned int new_timeout)
 {
    unsigned int standby = 0, suspend = 0, off = 0;
 
@@ -301,8 +305,8 @@ ecore_x_dpms_timeout_suspend_set(unsigned int new_timeout)
  * @param off     Amount of time of inactivity before the monitor is shut off.
  * @ingroup Ecore_X_DPMS_Group
  */
-EAPI void 
-ecore_x_dpms_timeout_off_set(unsigned int new_timeout) 
+EAPI void
+ecore_x_dpms_timeout_off_set(unsigned int new_timeout)
 {
    unsigned int standby = 0, suspend = 0, off = 0;
 
@@ -311,3 +315,4 @@ ecore_x_dpms_timeout_off_set(unsigned int new_timeout)
    ecore_x_dpms_timeouts_get(&standby, &suspend, &off);
    ecore_x_dpms_timeouts_set(standby, suspend, new_timeout);
 }
+

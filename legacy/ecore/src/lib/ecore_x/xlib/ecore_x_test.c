@@ -25,18 +25,18 @@ ecore_x_test_fake_key_down(const char *key __UNUSED__)
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    if (!strncmp(key, "Keycode-", 8))
-      keycode = atoi(key + 8);
+     keycode = atoi(key + 8);
    else
      {
         keysym = XStringToKeysym(key);
         if (keysym == NoSymbol)
-           return EINA_FALSE;
+          return EINA_FALSE;
 
         keycode = XKeysymToKeycode(_ecore_x_disp, keysym);
      }
 
    if (keycode == 0)
-      return EINA_FALSE;
+     return EINA_FALSE;
 
    return XTestFakeKeyEvent(_ecore_x_disp, keycode, 1, 0) ? EINA_TRUE : EINA_FALSE;
 #else /* ifdef ECORE_XTEST */
@@ -57,18 +57,18 @@ ecore_x_test_fake_key_up(const char *key __UNUSED__)
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    if (!strncmp(key, "Keycode-", 8))
-      keycode = atoi(key + 8);
+     keycode = atoi(key + 8);
    else
      {
         keysym = XStringToKeysym(key);
         if (keysym == NoSymbol)
-           return EINA_FALSE;
+          return EINA_FALSE;
 
         keycode = XKeysymToKeycode(_ecore_x_disp, keysym);
      }
 
    if (keycode == 0)
-      return EINA_FALSE;
+     return EINA_FALSE;
 
    return XTestFakeKeyEvent(_ecore_x_disp, keycode, 0, 0) ? EINA_TRUE : EINA_FALSE;
 #else /* ifdef ECORE_XTEST */
@@ -90,23 +90,23 @@ ecore_x_test_fake_key_press(const char *key __UNUSED__)
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    if (!strncmp(key, "Keycode-", 8))
-      keycode = atoi(key + 8);
+     keycode = atoi(key + 8);
    else
      {
         keysym = XStringToKeysym(key);
         if (keysym == NoSymbol)
-           return EINA_FALSE;
+          return EINA_FALSE;
 
         keycode = XKeysymToKeycode(_ecore_x_disp, keysym);
         if (XKeycodeToKeysym(_ecore_x_disp, keycode, 0) != keysym)
           {
              if (XKeycodeToKeysym(_ecore_x_disp, keycode, 1) == keysym)
-                shift = 1;
+               shift = 1;
              else
-                keycode = 0;
+               keycode = 0;
           }
         else
-           shift = 0;
+          shift = 0;
      }
 
    if (keycode == 0)
@@ -132,14 +132,14 @@ ecore_x_test_fake_key_press(const char *key __UNUSED__)
      }
 
    if (shift)
-      XTestFakeKeyEvent(_ecore_x_disp,
-                        XKeysymToKeycode(_ecore_x_disp, XK_Shift_L), 1, 0);
+     XTestFakeKeyEvent(_ecore_x_disp,
+                       XKeysymToKeycode(_ecore_x_disp, XK_Shift_L), 1, 0);
 
    XTestFakeKeyEvent(_ecore_x_disp, keycode, 1, 0);
    XTestFakeKeyEvent(_ecore_x_disp, keycode, 0, 0);
    if (shift)
-      XTestFakeKeyEvent(_ecore_x_disp,
-                        XKeysymToKeycode(_ecore_x_disp, XK_Shift_L), 0, 0);
+     XTestFakeKeyEvent(_ecore_x_disp,
+                       XKeysymToKeycode(_ecore_x_disp, XK_Shift_L), 0, 0);
 
    return EINA_TRUE;
 #else /* ifdef ECORE_XTEST */

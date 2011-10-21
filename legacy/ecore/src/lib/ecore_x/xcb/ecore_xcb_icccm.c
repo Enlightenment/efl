@@ -1,10 +1,9 @@
 #include "ecore_xcb_private.h"
 #include <xcb/xcb_icccm.h>
 
-EAPI void 
-ecore_x_icccm_init(void) 
+EAPI void
+ecore_x_icccm_init(void)
 {
-
 }
 
 /**
@@ -14,8 +13,10 @@ ecore_x_icccm_init(void)
  * @param argc Number of arguments.
  * @param argv Arguments.
  */
-EAPI void 
-ecore_x_icccm_command_set(Ecore_X_Window win, int argc, char **argv) 
+EAPI void
+ecore_x_icccm_command_set(Ecore_X_Window win,
+                          int            argc,
+                          char         **argv)
 {
    void *buf;
    char *b;
@@ -41,8 +42,8 @@ ecore_x_icccm_command_set(Ecore_X_Window win, int argc, char **argv)
         else
           *b++ = '\0';
      }
-   xcb_change_property(_ecore_xcb_conn, XCB_PROP_MODE_REPLACE, win, 
-                       ECORE_X_ATOM_WM_COMMAND, ECORE_X_ATOM_STRING, 8, 
+   xcb_change_property(_ecore_xcb_conn, XCB_PROP_MODE_REPLACE, win,
+                       ECORE_X_ATOM_WM_COMMAND, ECORE_X_ATOM_STRING, 8,
                        nbytes, buf);
    free(buf);
 }
@@ -56,8 +57,10 @@ ecore_x_icccm_command_set(Ecore_X_Window win, int argc, char **argv)
  * @param argc Number of arguments.
  * @param argv Arguments.
  */
-EAPI void 
-ecore_x_icccm_command_get(Ecore_X_Window win, int *argc, char ***argv) 
+EAPI void
+ecore_x_icccm_command_get(Ecore_X_Window win,
+                          int           *argc,
+                          char        ***argv)
 {
    xcb_get_property_cookie_t cookie;
    xcb_get_property_reply_t *reply;
@@ -78,14 +81,14 @@ ecore_x_icccm_command_get(Ecore_X_Window win, int *argc, char ***argv)
    reply = xcb_get_property_reply(_ecore_xcb_conn, cookie, NULL);
    if (!reply) return;
 
-   if ((reply->type != ECORE_X_ATOM_STRING) || (reply->format != 8)) 
+   if ((reply->type != ECORE_X_ATOM_STRING) || (reply->format != 8))
      {
         free(reply);
         return;
      }
 
    len = reply->value_len;
-   if (len < 1) 
+   if (len < 1)
      {
         free(reply);
         return;
@@ -100,7 +103,7 @@ ecore_x_icccm_command_get(Ecore_X_Window win, int *argc, char ***argv)
      if (*cp == '\0') c++;
 
    v = (char **)malloc((c + 1) * sizeof(char *));
-   if (!v) 
+   if (!v)
      {
         free(reply);
         return;
@@ -116,7 +119,7 @@ ecore_x_icccm_command_get(Ecore_X_Window win, int *argc, char ***argv)
 
    memcpy(start, (char *)data, len);
    start[len] = '\0';
-   for (cp = start, i = len + 1, j = 0; i > 0; cp++, i--) 
+   for (cp = start, i = len + 1, j = 0; i > 0; cp++, i--)
      {
         if (*cp == '\0')
           {
@@ -160,7 +163,7 @@ ecore_x_icccm_command_get(Ecore_X_Window win, int *argc, char ***argv)
 }
 
 EAPI char *
-ecore_x_icccm_title_get(Ecore_X_Window win) 
+ecore_x_icccm_title_get(Ecore_X_Window win)
 {
    xcb_get_property_cookie_t cookie;
 #ifdef OLD_XCB_VERSION
@@ -183,7 +186,7 @@ ecore_x_icccm_title_get(Ecore_X_Window win)
    ret = xcb_icccm_get_wm_name_reply(_ecore_xcb_conn, cookie, &prop, NULL);
 #endif
    if (ret == 0) return NULL;
-   if (prop.name_len < 1) 
+   if (prop.name_len < 1)
      {
 #ifdef OLD_XCB_VERSION
         xcb_get_text_property_reply_wipe(&prop);
@@ -194,7 +197,7 @@ ecore_x_icccm_title_get(Ecore_X_Window win)
      }
 
    if (!(title = malloc((prop.name_len + 1) * sizeof(char *))))
-     { 
+     {
 #ifdef OLD_XCB_VERSION
         xcb_get_text_property_reply_wipe(&prop);
 #else
@@ -205,7 +208,7 @@ ecore_x_icccm_title_get(Ecore_X_Window win)
    memcpy(title, prop.name, sizeof(char *) * prop.name_len);
    title[prop.name_len] = '\0';
 
-   if (prop.encoding != ECORE_X_ATOM_UTF8_STRING) 
+   if (prop.encoding != ECORE_X_ATOM_UTF8_STRING)
      {
         Ecore_Xcb_Textproperty tp;
         int count = 0;
@@ -237,8 +240,9 @@ ecore_x_icccm_title_get(Ecore_X_Window win)
    return title;
 }
 
-EAPI void 
-ecore_x_icccm_title_set(Ecore_X_Window win, const char *title) 
+EAPI void
+ecore_x_icccm_title_set(Ecore_X_Window win,
+                        const char    *title)
 {
    Ecore_Xcb_Textproperty prop;
    char *list[1];
@@ -253,31 +257,31 @@ ecore_x_icccm_title_set(Ecore_X_Window win, const char *title)
    list[0] = strdup(title);
 
 #ifdef HAVE_ICONV
-   ret = _ecore_xcb_utf8_textlist_to_textproperty(list, 1, XcbUTF8StringStyle, 
+   ret = _ecore_xcb_utf8_textlist_to_textproperty(list, 1, XcbUTF8StringStyle,
                                                   &prop);
 #else
-   ret = _ecore_xcb_mb_textlist_to_textproperty(list, 1, XcbStdICCTextStyle, 
+   ret = _ecore_xcb_mb_textlist_to_textproperty(list, 1, XcbStdICCTextStyle,
                                                 &prop);
 #endif
 
-   if (ret) 
+   if (ret)
      {
 #ifdef OLD_XCB_VERSION
-        xcb_set_wm_name(_ecore_xcb_conn, win, ECORE_X_ATOM_STRING, 
+        xcb_set_wm_name(_ecore_xcb_conn, win, ECORE_X_ATOM_STRING,
                         strlen(prop.value), prop.value);
 #else
-        xcb_icccm_set_wm_name(_ecore_xcb_conn, win, ECORE_X_ATOM_STRING, 8, 
+        xcb_icccm_set_wm_name(_ecore_xcb_conn, win, ECORE_X_ATOM_STRING, 8,
                               strlen(prop.value), prop.value);
 #endif
         if (prop.value) free(prop.value);
      }
-   else 
+   else
 #ifdef OLD_XCB_VERSION
-        xcb_set_wm_name(_ecore_xcb_conn, win, ECORE_X_ATOM_STRING, 
-                        strlen(title), title);
+     xcb_set_wm_name(_ecore_xcb_conn, win, ECORE_X_ATOM_STRING,
+                     strlen(title), title);
 #else
-        xcb_icccm_set_wm_name(_ecore_xcb_conn, win, ECORE_X_ATOM_STRING, 8, 
-                              strlen(title), title);
+     xcb_icccm_set_wm_name(_ecore_xcb_conn, win, ECORE_X_ATOM_STRING, 8,
+                           strlen(title), title);
 #endif
    free(list[0]);
 }
@@ -290,8 +294,10 @@ ecore_x_icccm_title_set(Ecore_X_Window win, const char *title)
  *
  * Get a window name * class
  */
-EAPI void 
-ecore_x_icccm_name_class_get(Ecore_X_Window win, char **name, char **class) 
+EAPI void
+ecore_x_icccm_name_class_get(Ecore_X_Window win,
+                             char         **name,
+                             char         **class)
 {
    xcb_get_property_cookie_t cookie;
 #ifdef OLD_XCB_VERSION
@@ -334,8 +340,10 @@ ecore_x_icccm_name_class_get(Ecore_X_Window win, char **name, char **class)
  *
  * Set a window name * class
  */
-EAPI void 
-ecore_x_icccm_name_class_set(Ecore_X_Window win, const char *name, const char *class) 
+EAPI void
+ecore_x_icccm_name_class_set(Ecore_X_Window win,
+                             const char    *name,
+                             const char    *class)
 {
    char *class_string, *s;
    int length_name, length_class;
@@ -345,7 +353,7 @@ ecore_x_icccm_name_class_set(Ecore_X_Window win, const char *name, const char *c
 
    length_name = strlen(name);
    length_class = strlen(class);
-   class_string = 
+   class_string =
      (char *)malloc(sizeof(char) * (length_name + length_class + 2));
    if (!class_string) return;
 
@@ -356,7 +364,7 @@ ecore_x_icccm_name_class_set(Ecore_X_Window win, const char *name, const char *c
         s += length_name + 1;
      }
    else
-      *s++ = '\0';
+     *s++ = '\0';
 
    if (length_class)
      strcpy(s, class);
@@ -374,14 +382,15 @@ ecore_x_icccm_name_class_set(Ecore_X_Window win, const char *name, const char *c
  * @param win the transient window
  * @param forwin the toplevel window
  */
-EAPI void 
-ecore_x_icccm_transient_for_set(Ecore_X_Window win, Ecore_X_Window forwindow) 
+EAPI void
+ecore_x_icccm_transient_for_set(Ecore_X_Window win,
+                                Ecore_X_Window forwindow)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    CHECK_XCB_CONN;
 
-   xcb_change_property(_ecore_xcb_conn, XCB_PROP_MODE_REPLACE, win, 
-                       ECORE_X_ATOM_WM_TRANSIENT_FOR, ECORE_X_ATOM_WINDOW, 32, 
+   xcb_change_property(_ecore_xcb_conn, XCB_PROP_MODE_REPLACE, win,
+                       ECORE_X_ATOM_WM_TRANSIENT_FOR, ECORE_X_ATOM_WINDOW, 32,
                        1, (void *)&forwindow);
 }
 
@@ -389,8 +398,8 @@ ecore_x_icccm_transient_for_set(Ecore_X_Window win, Ecore_X_Window forwindow)
  * Remove the transient_for setting from a window.
  * @param The window
  */
-EAPI void 
-ecore_x_icccm_transient_for_unset(Ecore_X_Window win) 
+EAPI void
+ecore_x_icccm_transient_for_unset(Ecore_X_Window win)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
@@ -402,8 +411,8 @@ ecore_x_icccm_transient_for_unset(Ecore_X_Window win)
  * @param win The window to check
  * @return The window ID of the top-level window, or 0 if the property does not exist.
  */
-EAPI Ecore_X_Window 
-ecore_x_icccm_transient_for_get(Ecore_X_Window win) 
+EAPI Ecore_X_Window
+ecore_x_icccm_transient_for_get(Ecore_X_Window win)
 {
    Ecore_X_Window forwin = 0;
    xcb_get_property_cookie_t cookie;
@@ -428,7 +437,7 @@ ecore_x_icccm_transient_for_get(Ecore_X_Window win)
  * @return The window's role string.
  */
 EAPI char *
-ecore_x_icccm_window_role_get(Ecore_X_Window win) 
+ecore_x_icccm_window_role_get(Ecore_X_Window win)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
@@ -440,8 +449,9 @@ ecore_x_icccm_window_role_get(Ecore_X_Window win)
  * @param win The window
  * @param role The role string
  */
-EAPI void 
-ecore_x_icccm_window_role_set(Ecore_X_Window win, const char *role) 
+EAPI void
+ecore_x_icccm_window_role_set(Ecore_X_Window win,
+                              const char    *role)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
@@ -453,14 +463,14 @@ ecore_x_icccm_window_role_set(Ecore_X_Window win, const char *role)
  * @param win The window
  * @return The window's client leader window, or 0 if unset
  */
-EAPI Ecore_X_Window 
-ecore_x_icccm_client_leader_get(Ecore_X_Window win) 
+EAPI Ecore_X_Window
+ecore_x_icccm_client_leader_get(Ecore_X_Window win)
 {
    Ecore_X_Window leader;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
-   if (ecore_x_window_prop_window_get(win, ECORE_X_ATOM_WM_CLIENT_LEADER, 
+   if (ecore_x_window_prop_window_get(win, ECORE_X_ATOM_WM_CLIENT_LEADER,
                                       &leader, 1) > 0)
      return leader;
 
@@ -475,17 +485,18 @@ ecore_x_icccm_client_leader_get(Ecore_X_Window win)
  * All non-transient top-level windows created by an app other than
  * the main window must have this property set to the app's main window.
  */
-EAPI void 
-ecore_x_icccm_client_leader_set(Ecore_X_Window win, Ecore_X_Window leader) 
+EAPI void
+ecore_x_icccm_client_leader_set(Ecore_X_Window win,
+                                Ecore_X_Window leader)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
-   ecore_x_window_prop_window_set(win, ECORE_X_ATOM_WM_CLIENT_LEADER, 
+   ecore_x_window_prop_window_set(win, ECORE_X_ATOM_WM_CLIENT_LEADER,
                                   &leader, 1);
 }
 
-EAPI Ecore_X_Window_State_Hint 
-ecore_x_icccm_state_get(Ecore_X_Window win) 
+EAPI Ecore_X_Window_State_Hint
+ecore_x_icccm_state_get(Ecore_X_Window win)
 {
    xcb_get_property_cookie_t cookie;
    xcb_get_property_reply_t *reply;
@@ -495,13 +506,13 @@ ecore_x_icccm_state_get(Ecore_X_Window win)
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    CHECK_XCB_CONN;
 
-   cookie = 
-     xcb_get_property_unchecked(_ecore_xcb_conn, 0, win, 
-                                ECORE_X_ATOM_WM_STATE, ECORE_X_ATOM_WM_STATE, 
+   cookie =
+     xcb_get_property_unchecked(_ecore_xcb_conn, 0, win,
+                                ECORE_X_ATOM_WM_STATE, ECORE_X_ATOM_WM_STATE,
                                 0L, 0x7fffffff);
    reply = xcb_get_property_reply(_ecore_xcb_conn, cookie, NULL);
    if (!reply) return hint;
-   if ((reply->type == 0) || (reply->format != 8) || (reply->value_len != 2)) 
+   if ((reply->type == 0) || (reply->format != 8) || (reply->value_len != 2))
      {
         free(reply);
         return hint;
@@ -509,32 +520,38 @@ ecore_x_icccm_state_get(Ecore_X_Window win)
 
    prop = (uint8_t *)xcb_get_property_value(reply);
 #ifdef OLD_XCB_VERSION
-   switch (prop[0]) 
+   switch (prop[0])
      {
       case XCB_WM_STATE_WITHDRAWN:
         hint = ECORE_X_WINDOW_STATE_HINT_WITHDRAWN;
         break;
+
       case XCB_WM_STATE_NORMAL:
         hint = ECORE_X_WINDOW_STATE_HINT_NORMAL;
         break;
+
       case XCB_WM_STATE_ICONIC:
         hint = ECORE_X_WINDOW_STATE_HINT_ICONIC;
         break;
+
       default:
         break;
      }
 #else
-   switch (prop[0]) 
+   switch (prop[0])
      {
       case XCB_ICCCM_WM_STATE_WITHDRAWN:
         hint = ECORE_X_WINDOW_STATE_HINT_WITHDRAWN;
         break;
+
       case XCB_ICCCM_WM_STATE_NORMAL:
         hint = ECORE_X_WINDOW_STATE_HINT_NORMAL;
         break;
+
       case XCB_ICCCM_WM_STATE_ICONIC:
         hint = ECORE_X_WINDOW_STATE_HINT_ICONIC;
         break;
+
       default:
         break;
      }
@@ -544,8 +561,9 @@ ecore_x_icccm_state_get(Ecore_X_Window win)
    return hint;
 }
 
-EAPI void 
-ecore_x_icccm_state_set(Ecore_X_Window win, Ecore_X_Window_State_Hint state) 
+EAPI void
+ecore_x_icccm_state_set(Ecore_X_Window            win,
+                        Ecore_X_Window_State_Hint state)
 {
 #ifdef OLD_XCB_VERSION
    xcb_wm_hints_t hints;
@@ -583,20 +601,27 @@ ecore_x_icccm_state_set(Ecore_X_Window win, Ecore_X_Window_State_Hint state)
 
    xcb_icccm_set_wm_hints(_ecore_xcb_conn, win, &hints);
 #endif
-
 }
 
-EAPI void 
-ecore_x_icccm_delete_window_send(Ecore_X_Window win, Ecore_X_Time t) 
+EAPI void
+ecore_x_icccm_delete_window_send(Ecore_X_Window win,
+                                 Ecore_X_Time   t)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
-   ecore_x_client_message32_send(win, ECORE_X_ATOM_WM_PROTOCOLS, 
-                                 ECORE_X_EVENT_MASK_NONE, 
+   ecore_x_client_message32_send(win, ECORE_X_ATOM_WM_PROTOCOLS,
+                                 ECORE_X_EVENT_MASK_NONE,
                                  ECORE_X_ATOM_WM_DELETE_WINDOW, t, 0, 0, 0);
 }
 
-EAPI void 
-ecore_x_icccm_hints_set(Ecore_X_Window win, Eina_Bool accepts_focus, Ecore_X_Window_State_Hint initial_state, Ecore_X_Pixmap icon_pixmap, Ecore_X_Pixmap icon_mask, Ecore_X_Window icon_window, Ecore_X_Window window_group, Eina_Bool is_urgent) 
+EAPI void
+ecore_x_icccm_hints_set(Ecore_X_Window            win,
+                        Eina_Bool                 accepts_focus,
+                        Ecore_X_Window_State_Hint initial_state,
+                        Ecore_X_Pixmap            icon_pixmap,
+                        Ecore_X_Pixmap            icon_mask,
+                        Ecore_X_Window            icon_window,
+                        Ecore_X_Window            window_group,
+                        Eina_Bool                 is_urgent)
 {
 #ifdef OLD_XCB_VERSION
    xcb_wm_hints_t hints;
@@ -636,23 +661,30 @@ ecore_x_icccm_hints_set(Ecore_X_Window win, Eina_Bool accepts_focus, Ecore_X_Win
    else if (initial_state == ECORE_X_WINDOW_STATE_HINT_ICONIC)
      xcb_icccm_wm_hints_set_iconic(&hints);
 
-   if (icon_pixmap != 0) 
+   if (icon_pixmap != 0)
      xcb_icccm_wm_hints_set_icon_pixmap(&hints, icon_pixmap);
-   if (icon_mask != 0) 
+   if (icon_mask != 0)
      xcb_icccm_wm_hints_set_icon_mask(&hints, icon_mask);
-   if (icon_window != 0) 
+   if (icon_window != 0)
      xcb_icccm_wm_hints_set_icon_window(&hints, icon_window);
-   if (window_group != 0) 
+   if (window_group != 0)
      xcb_icccm_wm_hints_set_window_group(&hints, window_group);
-   if (is_urgent) 
+   if (is_urgent)
      xcb_icccm_wm_hints_set_urgency(&hints);
 
    xcb_icccm_set_wm_hints(_ecore_xcb_conn, win, &hints);
 #endif
 }
 
-EAPI Eina_Bool 
-ecore_x_icccm_hints_get(Ecore_X_Window win, Eina_Bool *accepts_focus, Ecore_X_Window_State_Hint *initial_state, Ecore_X_Pixmap *icon_pixmap, Ecore_X_Pixmap *icon_mask, Ecore_X_Window *icon_window, Ecore_X_Window *window_group, Eina_Bool *is_urgent) 
+EAPI Eina_Bool
+ecore_x_icccm_hints_get(Ecore_X_Window             win,
+                        Eina_Bool                 *accepts_focus,
+                        Ecore_X_Window_State_Hint *initial_state,
+                        Ecore_X_Pixmap            *icon_pixmap,
+                        Ecore_X_Pixmap            *icon_mask,
+                        Ecore_X_Window            *icon_window,
+                        Ecore_X_Window            *window_group,
+                        Eina_Bool                 *is_urgent)
 {
    xcb_get_property_cookie_t cookie;
 #ifdef OLD_XCB_VERSION
@@ -759,7 +791,7 @@ ecore_x_icccm_hints_get(Ecore_X_Window win, Eina_Bool *accepts_focus, Ecore_X_Wi
  * Return the icon name of a window. String must be free'd when done with.
  */
 EAPI char *
-ecore_x_icccm_icon_name_get(Ecore_X_Window win) 
+ecore_x_icccm_icon_name_get(Ecore_X_Window win)
 {
    xcb_get_property_cookie_t cookie;
 #ifdef OLD_XCB_VERSION
@@ -784,7 +816,7 @@ ecore_x_icccm_icon_name_get(Ecore_X_Window win)
 #endif
    if (ret == 0) return NULL;
 
-   if (prop.name_len < 1) 
+   if (prop.name_len < 1)
      {
 #ifdef OLD_XCB_VERSION
         xcb_get_text_property_reply_wipe(&prop);
@@ -795,7 +827,7 @@ ecore_x_icccm_icon_name_get(Ecore_X_Window win)
      }
 
    if (!(tmp = malloc((prop.name_len + 1) * sizeof(char *))))
-     { 
+     {
 #ifdef OLD_XCB_VERSION
         xcb_get_text_property_reply_wipe(&prop);
 #else
@@ -806,7 +838,7 @@ ecore_x_icccm_icon_name_get(Ecore_X_Window win)
    memcpy(tmp, prop.name, sizeof(char *) * prop.name_len);
    tmp[prop.name_len] = '\0';
 
-   if (prop.encoding != ECORE_X_ATOM_UTF8_STRING) 
+   if (prop.encoding != ECORE_X_ATOM_UTF8_STRING)
      {
         Ecore_Xcb_Textproperty tp;
         int count = 0;
@@ -845,8 +877,9 @@ ecore_x_icccm_icon_name_get(Ecore_X_Window win)
  *
  * Set a window icon name
  */
-EAPI void 
-ecore_x_icccm_icon_name_set(Ecore_X_Window win, const char *name) 
+EAPI void
+ecore_x_icccm_icon_name_set(Ecore_X_Window win,
+                            const char    *name)
 {
    Ecore_Xcb_Textproperty prop;
    char *list[1];
@@ -861,38 +894,39 @@ ecore_x_icccm_icon_name_set(Ecore_X_Window win, const char *name)
    list[0] = strdup(name);
 
 #ifdef HAVE_ICONV
-   ret = _ecore_xcb_utf8_textlist_to_textproperty(list, 1, XcbUTF8StringStyle, 
+   ret = _ecore_xcb_utf8_textlist_to_textproperty(list, 1, XcbUTF8StringStyle,
                                                   &prop);
 #else
-   ret = _ecore_xcb_mb_textlist_to_textproperty(list, 1, XcbStdICCTextStyle, 
+   ret = _ecore_xcb_mb_textlist_to_textproperty(list, 1, XcbStdICCTextStyle,
                                                 &prop);
 #endif
 
-   if (ret) 
+   if (ret)
      {
 #ifdef OLD_XCB_VERSION
-        xcb_set_wm_icon_name(_ecore_xcb_conn, win, ECORE_X_ATOM_STRING, 
+        xcb_set_wm_icon_name(_ecore_xcb_conn, win, ECORE_X_ATOM_STRING,
                              strlen(prop.value), prop.value);
 #else
-        xcb_icccm_set_wm_icon_name(_ecore_xcb_conn, win, ECORE_X_ATOM_STRING, 
+        xcb_icccm_set_wm_icon_name(_ecore_xcb_conn, win, ECORE_X_ATOM_STRING,
                                    8, strlen(prop.value), prop.value);
 #endif
         if (prop.value) free(prop.value);
      }
-   else 
+   else
 #ifdef OLD_XCB_VERSION
-     xcb_set_wm_icon_name(_ecore_xcb_conn, win, ECORE_X_ATOM_STRING, 
+     xcb_set_wm_icon_name(_ecore_xcb_conn, win, ECORE_X_ATOM_STRING,
                           strlen(name), name);
 #else
-     xcb_icccm_set_wm_icon_name(_ecore_xcb_conn, win, ECORE_X_ATOM_STRING, 
+     xcb_icccm_set_wm_icon_name(_ecore_xcb_conn, win, ECORE_X_ATOM_STRING,
                                 8, strlen(name), name);
 #endif
 
    free(list[0]);
 }
 
-EAPI void 
-ecore_x_icccm_iconic_request_send(Ecore_X_Window win, Ecore_X_Window root) 
+EAPI void
+ecore_x_icccm_iconic_request_send(Ecore_X_Window win,
+                                  Ecore_X_Window root)
 {
    xcb_client_message_event_t ev;
 
@@ -914,9 +948,9 @@ ecore_x_icccm_iconic_request_send(Ecore_X_Window win, Ecore_X_Window root)
    ev.data.data32[0] = XCB_ICCCM_WM_STATE_ICONIC;
 #endif
 
-   xcb_send_event(_ecore_xcb_conn, 0, root, 
-                  (XCB_EVENT_MASK_SUBSTRUCTURE_NOTIFY | 
-                      XCB_EVENT_MASK_SUBSTRUCTURE_REDIRECT), 
+   xcb_send_event(_ecore_xcb_conn, 0, root,
+                  (XCB_EVENT_MASK_SUBSTRUCTURE_NOTIFY |
+                   XCB_EVENT_MASK_SUBSTRUCTURE_REDIRECT),
                   (const char *)&ev);
 //   ecore_x_flush();
 }
@@ -927,8 +961,10 @@ ecore_x_icccm_iconic_request_send(Ecore_X_Window win, Ecore_X_Window root)
  * @param protocol The protocol to enable/disable
  * @param on On/Off
  */
-EAPI void 
-ecore_x_icccm_protocol_set(Ecore_X_Window win, Ecore_X_WM_Protocol protocol, Eina_Bool on) 
+EAPI void
+ecore_x_icccm_protocol_set(Ecore_X_Window      win,
+                           Ecore_X_WM_Protocol protocol,
+                           Eina_Bool           on)
 {
    Ecore_X_Atom proto;
    xcb_get_property_cookie_t cookie;
@@ -955,65 +991,65 @@ ecore_x_icccm_protocol_set(Ecore_X_Window win, Ecore_X_WM_Protocol protocol, Ein
    else
      count = protos.atoms_len;
 
-   for (i = 0; i < count; i++) 
+   for (i = 0; i < count; i++)
      {
-        if (protos.atoms[i] == proto) 
+        if (protos.atoms[i] == proto)
           {
              set = 1;
              break;
           }
      }
 
-   if (on) 
+   if (on)
      {
-        if (!set) 
+        if (!set)
           {
              Ecore_X_Atom *atoms = NULL;
 
              atoms = malloc((count + 1) * sizeof(Ecore_X_Atom));
-             if (atoms) 
+             if (atoms)
                {
                   for (i = 0; i < count; i++)
                     atoms[i] = protos.atoms[i];
                   atoms[count] = proto;
 #ifdef OLD_XCB_VERSION
-                  xcb_set_wm_protocols(_ecore_xcb_conn, 
-                                       ECORE_X_ATOM_WM_PROTOCOLS, 
+                  xcb_set_wm_protocols(_ecore_xcb_conn,
+                                       ECORE_X_ATOM_WM_PROTOCOLS,
                                        win, count, atoms);
 #else
-                  xcb_icccm_set_wm_protocols(_ecore_xcb_conn, 
-                                             ECORE_X_ATOM_WM_PROTOCOLS, 
+                  xcb_icccm_set_wm_protocols(_ecore_xcb_conn,
+                                             ECORE_X_ATOM_WM_PROTOCOLS,
                                              win, count, atoms);
 #endif
                   free(atoms);
                }
           }
      }
-   else 
+   else
      {
-        if (set) 
+        if (set)
           {
-             for (i = 0; i < count; i++) 
+             for (i = 0; i < count; i++)
                {
-                  if (protos.atoms[i] == proto) 
+                  if (protos.atoms[i] == proto)
                     {
                        int j = 0;
 
                        for (j = (i + 1); j < count; j++)
                          protos.atoms[j - 1] = protos.atoms[j];
-                       if (count > 1) 
+                       if (count > 1)
 #ifdef OLD_XCB_VERSION
-                         xcb_set_wm_protocols(_ecore_xcb_conn, 
-                                              ECORE_X_ATOM_WM_PROTOCOLS, 
+                         xcb_set_wm_protocols(_ecore_xcb_conn,
+                                              ECORE_X_ATOM_WM_PROTOCOLS,
                                               win, count - 1, protos.atoms);
 #else
-                         xcb_icccm_set_wm_protocols(_ecore_xcb_conn, 
-                                                    ECORE_X_ATOM_WM_PROTOCOLS, 
-                                                    win, count - 1, 
+                         xcb_icccm_set_wm_protocols(_ecore_xcb_conn,
+                                                    ECORE_X_ATOM_WM_PROTOCOLS,
+                                                    win, count - 1,
                                                     protos.atoms);
 #endif
                        else
-                         ecore_x_window_prop_property_del(win, 
+                         ecore_x_window_prop_property_del(win,
                                                           ECORE_X_ATOM_WM_PROTOCOLS);
                        break;
                     }
@@ -1034,8 +1070,9 @@ ecore_x_icccm_protocol_set(Ecore_X_Window win, Ecore_X_WM_Protocol protocol, Ein
  * @param protocol The protocol to query
  * @return 1 if the protocol is set, else 0.
  */
-EAPI Eina_Bool 
-ecore_x_icccm_protocol_isset(Ecore_X_Window win, Ecore_X_WM_Protocol protocol) 
+EAPI Eina_Bool
+ecore_x_icccm_protocol_isset(Ecore_X_Window      win,
+                             Ecore_X_WM_Protocol protocol)
 {
    Ecore_X_Atom proto;
    Eina_Bool ret = EINA_FALSE;
@@ -1064,7 +1101,7 @@ ecore_x_icccm_protocol_isset(Ecore_X_Window win, Ecore_X_WM_Protocol protocol)
    if (!val) return EINA_FALSE;
 
    for (i = 0; i < reply.atoms_len; i++)
-     if (reply.atoms[i] == proto) 
+     if (reply.atoms[i] == proto)
        {
           ret = EINA_TRUE;
           break;
@@ -1085,27 +1122,40 @@ ecore_x_icccm_protocol_isset(Ecore_X_Window win, Ecore_X_WM_Protocol protocol)
  * @param protos An array of protocol atoms
  * @param num the number of members of the array
  */
-EAPI void 
-ecore_x_icccm_protocol_atoms_set(Ecore_X_Window win, Ecore_X_Atom *protos, int num) 
+EAPI void
+ecore_x_icccm_protocol_atoms_set(Ecore_X_Window win,
+                                 Ecore_X_Atom  *protos,
+                                 int            num)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    CHECK_XCB_CONN;
 
-   if (num > 0) 
+   if (num > 0)
 #ifdef OLD_XCB_VERSION
-     xcb_set_wm_protocols(_ecore_xcb_conn, ECORE_X_ATOM_WM_PROTOCOLS, 
+     xcb_set_wm_protocols(_ecore_xcb_conn, ECORE_X_ATOM_WM_PROTOCOLS,
                           win, num, protos);
 #else
-     xcb_icccm_set_wm_protocols(_ecore_xcb_conn, ECORE_X_ATOM_WM_PROTOCOLS, 
+     xcb_icccm_set_wm_protocols(_ecore_xcb_conn, ECORE_X_ATOM_WM_PROTOCOLS,
                                 win, num, protos);
 #endif
-   else 
+   else
      ecore_x_window_prop_property_del(win, ECORE_X_ATOM_WM_PROTOCOLS);
-
 }
 
-EAPI Eina_Bool 
-ecore_x_icccm_size_pos_hints_get(Ecore_X_Window win, Eina_Bool *request_pos, Ecore_X_Gravity *gravity, int *min_w, int *min_h, int *max_w, int *max_h, int *base_w, int *base_h, int *step_x, int *step_y, double *min_aspect, double *max_aspect) 
+EAPI Eina_Bool
+ecore_x_icccm_size_pos_hints_get(Ecore_X_Window   win,
+                                 Eina_Bool       *request_pos,
+                                 Ecore_X_Gravity *gravity,
+                                 int             *min_w,
+                                 int             *min_h,
+                                 int             *max_w,
+                                 int             *max_h,
+                                 int             *base_w,
+                                 int             *base_h,
+                                 int             *step_x,
+                                 int             *step_y,
+                                 double          *min_aspect,
+                                 double          *max_aspect)
 {
    xcb_size_hints_t hints;
    xcb_get_property_cookie_t cookie;
@@ -1137,17 +1187,17 @@ ecore_x_icccm_size_pos_hints_get(Ecore_X_Window win, Eina_Bool *request_pos, Eco
    ret = xcb_get_wm_normal_hints_reply(_ecore_xcb_conn, cookie, &hints, NULL);
 #else
    cookie = xcb_icccm_get_wm_normal_hints_unchecked(_ecore_xcb_conn, win);
-   ret = xcb_icccm_get_wm_normal_hints_reply(_ecore_xcb_conn, cookie, 
+   ret = xcb_icccm_get_wm_normal_hints_reply(_ecore_xcb_conn, cookie,
                                              &hints, NULL);
 #endif
    if (!ret) return EINA_FALSE;
 
 #ifdef OLD_XCB_VERSION
-   if ((hints.flags & XCB_SIZE_HINT_US_POSITION) || 
-       (hints.flags & XCB_SIZE_HINT_P_POSITION)) 
+   if ((hints.flags & XCB_SIZE_HINT_US_POSITION) ||
+       (hints.flags & XCB_SIZE_HINT_P_POSITION))
 #else
-   if ((hints.flags & XCB_ICCCM_SIZE_HINT_US_POSITION) || 
-       (hints.flags & XCB_ICCCM_SIZE_HINT_P_POSITION)) 
+   if ((hints.flags & XCB_ICCCM_SIZE_HINT_US_POSITION) ||
+       (hints.flags & XCB_ICCCM_SIZE_HINT_P_POSITION))
 #endif
      {
         if (request_pos) *request_pos = EINA_TRUE;
@@ -1236,7 +1286,19 @@ ecore_x_icccm_size_pos_hints_get(Ecore_X_Window win, Eina_Bool *request_pos, Eco
 }
 
 EAPI void
-ecore_x_icccm_size_pos_hints_set(Ecore_X_Window win, Eina_Bool request_pos, Ecore_X_Gravity gravity, int min_w, int min_h, int max_w, int max_h, int base_w, int base_h, int step_x, int step_y, double min_aspect, double max_aspect)
+ecore_x_icccm_size_pos_hints_set(Ecore_X_Window  win,
+                                 Eina_Bool       request_pos,
+                                 Ecore_X_Gravity gravity,
+                                 int             min_w,
+                                 int             min_h,
+                                 int             max_w,
+                                 int             max_h,
+                                 int             base_w,
+                                 int             base_h,
+                                 int             step_x,
+                                 int             step_y,
+                                 double          min_aspect,
+                                 double          max_aspect)
 {
    xcb_get_property_cookie_t cookie;
    xcb_size_hints_t hints;
@@ -1250,7 +1312,7 @@ ecore_x_icccm_size_pos_hints_set(Ecore_X_Window win, Eina_Bool request_pos, Ecor
    ret = xcb_get_wm_normal_hints_reply(_ecore_xcb_conn, cookie, &hints, NULL);
 #else
    cookie = xcb_icccm_get_wm_normal_hints_unchecked(_ecore_xcb_conn, win);
-   ret = xcb_icccm_get_wm_normal_hints_reply(_ecore_xcb_conn, cookie, 
+   ret = xcb_icccm_get_wm_normal_hints_reply(_ecore_xcb_conn, cookie,
                                              &hints, NULL);
 #endif
    if (!ret) memset(&hints, 0, sizeof(xcb_size_hints_t));
@@ -1258,50 +1320,54 @@ ecore_x_icccm_size_pos_hints_set(Ecore_X_Window win, Eina_Bool request_pos, Ecor
    hints.flags = 0;
 
 #ifdef OLD_XCB_VERSION
-   if (request_pos) 
+   if (request_pos)
      hints.flags |= XCB_SIZE_HINT_US_POSITION;
 
    if (gravity != ECORE_X_GRAVITY_NW)
      xcb_size_hints_set_win_gravity(&hints, gravity);
-   if ((min_w > 0) || (min_h > 0)) 
+   if ((min_w > 0) || (min_h > 0))
      xcb_size_hints_set_min_size(&hints, min_w, min_h);
    if ((max_w > 0) || (max_h > 0))
      xcb_size_hints_set_max_size(&hints, max_w, max_h);
-   if ((base_w > 0) || (base_h > 0)) 
+   if ((base_w > 0) || (base_h > 0))
      xcb_size_hints_set_base_size(&hints, base_w, base_h);
-   if ((step_x > 1) || (step_y > 1)) 
+   if ((step_x > 1) || (step_y > 1))
      xcb_size_hints_set_resize_inc(&hints, step_x, step_y);
-   if ((min_aspect > 0.0) || (max_aspect > 0.0)) 
-     xcb_size_hints_set_aspect(&hints, 
-                               (int32_t)(min_aspect * 10000), 10000, 
+   if ((min_aspect > 0.0) || (max_aspect > 0.0))
+     xcb_size_hints_set_aspect(&hints,
+                               (int32_t)(min_aspect * 10000), 10000,
                                (int32_t)(max_aspect * 10000), 10000);
 
    xcb_set_wm_normal_hints(_ecore_xcb_conn, win, &hints);
 #else
-   if (request_pos) 
+   if (request_pos)
      hints.flags |= XCB_ICCCM_SIZE_HINT_US_POSITION;
 
    if (gravity != ECORE_X_GRAVITY_NW)
      xcb_icccm_size_hints_set_win_gravity(&hints, gravity);
-   if ((min_w > 0) || (min_h > 0)) 
+   if ((min_w > 0) || (min_h > 0))
      xcb_icccm_size_hints_set_min_size(&hints, min_w, min_h);
    if ((max_w > 0) || (max_h > 0))
      xcb_icccm_size_hints_set_max_size(&hints, max_w, max_h);
-   if ((base_w > 0) || (base_h > 0)) 
+   if ((base_w > 0) || (base_h > 0))
      xcb_icccm_size_hints_set_base_size(&hints, base_w, base_h);
-   if ((step_x > 1) || (step_y > 1)) 
+   if ((step_x > 1) || (step_y > 1))
      xcb_icccm_size_hints_set_resize_inc(&hints, step_x, step_y);
-   if ((min_aspect > 0.0) || (max_aspect > 0.0)) 
-     xcb_icccm_size_hints_set_aspect(&hints, 
-                                     (int32_t)(min_aspect * 10000), 10000, 
+   if ((min_aspect > 0.0) || (max_aspect > 0.0))
+     xcb_icccm_size_hints_set_aspect(&hints,
+                                     (int32_t)(min_aspect * 10000), 10000,
                                      (int32_t)(max_aspect * 10000), 10000);
 
    xcb_icccm_set_wm_normal_hints(_ecore_xcb_conn, win, &hints);
 #endif
 }
 
-EAPI void 
-ecore_x_icccm_move_resize_send(Ecore_X_Window win, int x, int y, int w, int h) 
+EAPI void
+ecore_x_icccm_move_resize_send(Ecore_X_Window win,
+                               int            x,
+                               int            y,
+                               int            w,
+                               int            h)
 {
    xcb_configure_notify_event_t ev;
 
@@ -1323,7 +1389,7 @@ ecore_x_icccm_move_resize_send(Ecore_X_Window win, int x, int y, int w, int h)
    ev.border_width = 0;
    ev.override_redirect = 0;
 
-   xcb_send_event(_ecore_xcb_conn, 0, win, 
+   xcb_send_event(_ecore_xcb_conn, 0, win,
                   XCB_EVENT_MASK_STRUCTURE_NOTIFY, (const char *)&ev);
 //   ecore_x_flush();
 }
@@ -1336,7 +1402,7 @@ ecore_x_icccm_move_resize_send(Ecore_X_Window win, int x, int y, int w, int h)
  * Return the client machine of a window. String must be free'd when done with.
  */
 EAPI char *
-ecore_x_icccm_client_machine_get(Ecore_X_Window win) 
+ecore_x_icccm_client_machine_get(Ecore_X_Window win)
 {
    xcb_get_property_cookie_t cookie;
 #ifdef OLD_XCB_VERSION
@@ -1355,14 +1421,14 @@ ecore_x_icccm_client_machine_get(Ecore_X_Window win)
    ret = xcb_get_wm_client_machine_reply(_ecore_xcb_conn, cookie, &prop, NULL);
 #else
    cookie = xcb_icccm_get_wm_client_machine_unchecked(_ecore_xcb_conn, win);
-   ret = xcb_icccm_get_wm_client_machine_reply(_ecore_xcb_conn, cookie, 
+   ret = xcb_icccm_get_wm_client_machine_reply(_ecore_xcb_conn, cookie,
                                                &prop, NULL);
 #endif
    if (ret == 0) return NULL;
 
    tmp = malloc((prop.name_len + 1) * sizeof(char *));
-   if (!tmp) 
-     { 
+   if (!tmp)
+     {
 #ifdef OLD_XCB_VERSION
         xcb_get_text_property_reply_wipe(&prop);
 #else
@@ -1382,22 +1448,24 @@ ecore_x_icccm_client_machine_get(Ecore_X_Window win)
    return tmp;
 }
 
-EAPI void 
-ecore_x_icccm_take_focus_send(Ecore_X_Window win, Ecore_X_Time t) 
+EAPI void
+ecore_x_icccm_take_focus_send(Ecore_X_Window win,
+                              Ecore_X_Time   t)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
-   ecore_x_client_message32_send(win, ECORE_X_ATOM_WM_PROTOCOLS, 
-                                 XCB_EVENT_MASK_NO_EVENT, 
+   ecore_x_client_message32_send(win, ECORE_X_ATOM_WM_PROTOCOLS,
+                                 XCB_EVENT_MASK_NO_EVENT,
                                  ECORE_X_ATOM_WM_TAKE_FOCUS, t, 0, 0, 0);
 }
 
-EAPI void 
-ecore_x_icccm_save_yourself_send(Ecore_X_Window win, Ecore_X_Time t) 
+EAPI void
+ecore_x_icccm_save_yourself_send(Ecore_X_Window win,
+                                 Ecore_X_Time   t)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
-   ecore_x_client_message32_send(win, ECORE_X_ATOM_WM_PROTOCOLS, 
-                                 XCB_EVENT_MASK_NO_EVENT, 
+   ecore_x_client_message32_send(win, ECORE_X_ATOM_WM_PROTOCOLS,
+                                 XCB_EVENT_MASK_NO_EVENT,
                                  ECORE_X_ATOM_WM_SAVE_YOURSELF, t, 0, 0, 0);
 }
 
@@ -1406,8 +1474,9 @@ ecore_x_icccm_save_yourself_send(Ecore_X_Window win, Ecore_X_Time t)
  * @param win The toplevel window
  * @param subwin The subwindow to be added to the colormap windows list
  */
-EAPI void 
-ecore_x_icccm_colormap_window_set(Ecore_X_Window win, Ecore_X_Window subwin) 
+EAPI void
+ecore_x_icccm_colormap_window_set(Ecore_X_Window win,
+                                  Ecore_X_Window subwin)
 {
    int num = 0, i = 0;
    unsigned char *odata = NULL, *data = NULL;
@@ -1415,21 +1484,21 @@ ecore_x_icccm_colormap_window_set(Ecore_X_Window win, Ecore_X_Window subwin)
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
-   if (!ecore_x_window_prop_property_get(win, ECORE_X_ATOM_WM_COLORMAP_WINDOWS, 
-                                         ECORE_X_ATOM_WINDOW, 32, &odata, &num)) 
+   if (!ecore_x_window_prop_property_get(win, ECORE_X_ATOM_WM_COLORMAP_WINDOWS,
+                                         ECORE_X_ATOM_WINDOW, 32, &odata, &num))
      {
         if (!(newset = calloc(1, sizeof(Ecore_X_Window)))) return;
         newset[0] = subwin;
         num = 1;
         data = (unsigned char *)newset;
      }
-   else 
+   else
      {
         if (!(newset = calloc(num + 1, sizeof(Ecore_X_Window)))) return;
         oldset = (Ecore_X_Window *)odata;
-        for (i = 0; i < num; i++) 
+        for (i = 0; i < num; i++)
           {
-             if (oldset[i] == subwin) 
+             if (oldset[i] == subwin)
                {
                   if (odata) free(odata);
                   odata = NULL;
@@ -1442,7 +1511,7 @@ ecore_x_icccm_colormap_window_set(Ecore_X_Window win, Ecore_X_Window subwin)
         if (odata) free(odata);
         data = (unsigned char *)newset;
      }
-   ecore_x_window_prop_property_set(win, ECORE_X_ATOM_WM_COLORMAP_WINDOWS, 
+   ecore_x_window_prop_property_set(win, ECORE_X_ATOM_WM_COLORMAP_WINDOWS,
                                     ECORE_X_ATOM_WINDOW, 32, data, num);
    free(newset);
 }
@@ -1452,8 +1521,9 @@ ecore_x_icccm_colormap_window_set(Ecore_X_Window win, Ecore_X_Window subwin)
  * @param win The toplevel window
  * @param subwin The window to be removed from the colormap window list.
  */
-EAPI void 
-ecore_x_icccm_colormap_window_unset(Ecore_X_Window win, Ecore_X_Window subwin) 
+EAPI void
+ecore_x_icccm_colormap_window_unset(Ecore_X_Window win,
+                                    Ecore_X_Window subwin)
 {
    int num = 0, i = 0, j = 0, k = 0;
    unsigned char *odata = NULL, *data = NULL;
@@ -1461,23 +1531,23 @@ ecore_x_icccm_colormap_window_unset(Ecore_X_Window win, Ecore_X_Window subwin)
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
-   if (!ecore_x_window_prop_property_get(win, ECORE_X_ATOM_WM_COLORMAP_WINDOWS, 
-                                         ECORE_X_ATOM_WINDOW, 32, &odata, &num)) 
+   if (!ecore_x_window_prop_property_get(win, ECORE_X_ATOM_WM_COLORMAP_WINDOWS,
+                                         ECORE_X_ATOM_WINDOW, 32, &odata, &num))
      return;
 
    oldset = (Ecore_X_Window *)odata;
-   for (i = 0; i < num; i++) 
+   for (i = 0; i < num; i++)
      {
-        if (oldset[i] == subwin) 
+        if (oldset[i] == subwin)
           {
-             if (num == 1) 
+             if (num == 1)
                {
                   ecore_x_window_prop_property_del(win, ECORE_X_ATOM_WM_COLORMAP_WINDOWS);
                   if (odata) free(odata);
                   odata = NULL;
                   return;
                }
-             else 
+             else
                {
                   newset = calloc(num - 1, sizeof(Ecore_X_Window));
                   data = (unsigned char *)newset;
@@ -1485,7 +1555,7 @@ ecore_x_icccm_colormap_window_unset(Ecore_X_Window win, Ecore_X_Window subwin)
                     if (oldset[j] != subwin)
                       newset[k++] = oldset[j];
 
-                  ecore_x_window_prop_property_set(win, ECORE_X_ATOM_WM_COLORMAP_WINDOWS, 
+                  ecore_x_window_prop_property_set(win, ECORE_X_ATOM_WM_COLORMAP_WINDOWS,
                                                    ECORE_X_ATOM_WINDOW, 32, data, k);
                   if (odata) free(odata);
                   odata = NULL;
@@ -1496,3 +1566,4 @@ ecore_x_icccm_colormap_window_unset(Ecore_X_Window win, Ecore_X_Window subwin)
      }
    if (odata) free(odata);
 }
+

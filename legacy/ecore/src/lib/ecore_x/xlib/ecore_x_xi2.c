@@ -76,7 +76,7 @@ _ecore_x_input_handler(XEvent *xevent)
         for (i = 0; i < _ecore_x_xi2_num; i++)
           {
              XIDeviceInfo *dev = &(_ecore_x_xi2_devs[i]);
-             
+
              if (devid == dev->deviceid)
                {
                   if (dev->use == XIMasterPointer) return;
@@ -88,117 +88,120 @@ _ecore_x_input_handler(XEvent *xevent)
    switch (xevent->xcookie.evtype)
      {
       case XI_Motion:
-         _ecore_mouse_move
-            (evd->time,
-            0, // state
-            evd->event_x, evd->event_y,
-            evd->root_x, evd->root_y,
-            evd->event,
-            (evd->child ? evd->child : evd->event),
-            evd->root,
-            1, // same_screen
-            devid, 1, 1,
-            1.0, // pressure
-            0.0, // angle
-            evd->event_x, evd->event_y,
-            evd->root_x, evd->root_y);
-         break;
+        _ecore_mouse_move
+          (evd->time,
+          0,   // state
+          evd->event_x, evd->event_y,
+          evd->root_x, evd->root_y,
+          evd->event,
+          (evd->child ? evd->child : evd->event),
+          evd->root,
+          1,   // same_screen
+          devid, 1, 1,
+          1.0,   // pressure
+          0.0,   // angle
+          evd->event_x, evd->event_y,
+          evd->root_x, evd->root_y);
+        break;
 
       case XI_ButtonPress:
-         _ecore_mouse_button
-            (ECORE_EVENT_MOUSE_BUTTON_DOWN,
-            evd->time,
-            0, // state
-            0, // button
-            evd->event_x, evd->event_y,
-            evd->root_x, evd->root_y,
-            evd->event,
-            (evd->child ? evd->child : evd->event),
-            evd->root,
-            1, // same_screen
-            devid, 1, 1,
-            1.0, // pressure
-            0.0, // angle
-            evd->event_x, evd->event_y,
-            evd->root_x, evd->root_y);
-         break;
+        _ecore_mouse_button
+          (ECORE_EVENT_MOUSE_BUTTON_DOWN,
+          evd->time,
+          0,   // state
+          0,   // button
+          evd->event_x, evd->event_y,
+          evd->root_x, evd->root_y,
+          evd->event,
+          (evd->child ? evd->child : evd->event),
+          evd->root,
+          1,   // same_screen
+          devid, 1, 1,
+          1.0,   // pressure
+          0.0,   // angle
+          evd->event_x, evd->event_y,
+          evd->root_x, evd->root_y);
+        break;
 
       case XI_ButtonRelease:
-         _ecore_mouse_button
-            (ECORE_EVENT_MOUSE_BUTTON_UP,
-            evd->time,
-            0, // state
-            0, // button
-            evd->event_x, evd->event_y,
-            evd->root_x, evd->root_y,
-            evd->event,
-            (evd->child ? evd->child : evd->event),
-            evd->root,
-            1, // same_screen
-            devid, 1, 1,
-            1.0, // pressure
-            0.0, // angle
-            evd->event_x, evd->event_y,
-            evd->root_x, evd->root_y);
-         break;
-
-#ifdef XI_TouchUpdate        
-      case XI_TouchUpdate:
-         _ecore_mouse_move
-            (evd->time,
-            0, // state
-            evd->event_x, evd->event_y,
-            evd->root_x, evd->root_y,
-            evd->event,
-            (evd->child ? evd->child : evd->event),
-            evd->root,
-            1, // same_screen
-            devid, 1, 1,
-            1.0, // pressure
-            0.0, // angle
-            evd->event_x, evd->event_y,
-            evd->root_x, evd->root_y);
+        _ecore_mouse_button
+          (ECORE_EVENT_MOUSE_BUTTON_UP,
+          evd->time,
+          0,   // state
+          0,   // button
+          evd->event_x, evd->event_y,
+          evd->root_x, evd->root_y,
+          evd->event,
+          (evd->child ? evd->child : evd->event),
+          evd->root,
+          1,   // same_screen
+          devid, 1, 1,
+          1.0,   // pressure
+          0.0,   // angle
+          evd->event_x, evd->event_y,
+          evd->root_x, evd->root_y);
         break;
+
+#ifdef XI_TouchUpdate
+      case XI_TouchUpdate:
+        _ecore_mouse_move
+          (evd->time,
+          0,   // state
+          evd->event_x, evd->event_y,
+          evd->root_x, evd->root_y,
+          evd->event,
+          (evd->child ? evd->child : evd->event),
+          evd->root,
+          1,   // same_screen
+          devid, 1, 1,
+          1.0,   // pressure
+          0.0,   // angle
+          evd->event_x, evd->event_y,
+          evd->root_x, evd->root_y);
+        break;
+
 #endif
 #ifdef XI_TouchBegin
       case XI_TouchBegin:
-         _ecore_mouse_button
-            (ECORE_EVENT_MOUSE_BUTTON_DOWN,
-            evd->time,
-            0, // state
-            0, // button
-            evd->event_x, evd->event_y,
-            evd->root_x, evd->root_y,
-            evd->event,
-            (evd->child ? evd->child : evd->event),
-            evd->root,
-            1, // same_screen
-            devid, 1, 1,
-            1.0, // pressure
-            0.0, // angle
-            evd->event_x, evd->event_y,
-            evd->root_x, evd->root_y);
+        _ecore_mouse_button
+          (ECORE_EVENT_MOUSE_BUTTON_DOWN,
+          evd->time,
+          0,   // state
+          0,   // button
+          evd->event_x, evd->event_y,
+          evd->root_x, evd->root_y,
+          evd->event,
+          (evd->child ? evd->child : evd->event),
+          evd->root,
+          1,   // same_screen
+          devid, 1, 1,
+          1.0,   // pressure
+          0.0,   // angle
+          evd->event_x, evd->event_y,
+          evd->root_x, evd->root_y);
         break;
+
 #endif
 #ifdef XI_TouchEnd
       case XI_TouchEnd:
-         _ecore_mouse_button
-            (ECORE_EVENT_MOUSE_BUTTON_UP,
-            evd->time,
-            0, // state
-            0, // button
-            evd->event_x, evd->event_y,
-            evd->root_x, evd->root_y,
-            evd->event,
-            (evd->child ? evd->child : evd->event),
-            evd->root,
-            1, // same_screen
-            devid, 1, 1,
-            1.0, // pressure
-            0.0, // angle
-            evd->event_x, evd->event_y,
-            evd->root_x, evd->root_y);
+        _ecore_mouse_button
+          (ECORE_EVENT_MOUSE_BUTTON_UP,
+          evd->time,
+          0,   // state
+          0,   // button
+          evd->event_x, evd->event_y,
+          evd->root_x, evd->root_y,
+          evd->event,
+          (evd->child ? evd->child : evd->event),
+          evd->root,
+          1,   // same_screen
+          devid, 1, 1,
+          1.0,   // pressure
+          0.0,   // angle
+          evd->event_x, evd->event_y,
+          evd->root_x, evd->root_y);
         break;
+
 #endif
       default:
         break;
@@ -214,7 +217,7 @@ ecore_x_input_multi_select(Ecore_X_Window win)
    Eina_Bool find = EINA_FALSE;
 
    if (!_ecore_x_xi2_devs)
-      return 0;
+     return 0;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    for (i = 0; i < _ecore_x_xi2_num; i++)
@@ -239,18 +242,18 @@ ecore_x_input_multi_select(Ecore_X_Window win)
           {
              XIDeviceInfo *atdev = NULL;
              int j;
-             
+
              for (j = 0; j < _ecore_x_xi2_num; j++)
                {
                   if (_ecore_x_xi2_devs[j].deviceid == dev->attachment)
-                     atdev = &(_ecore_x_xi2_devs[j]);
+                    atdev = &(_ecore_x_xi2_devs[j]);
                }
              if (((atdev) && (atdev->use != XIMasterPointer)) ||
                  (!atdev))
                {
                   XIEventMask eventmask;
                   unsigned char mask[4] = { 0 };
-                  
+
                   eventmask.deviceid = dev->deviceid;
                   eventmask.mask_len = sizeof(mask);
                   eventmask.mask = mask;
@@ -259,13 +262,13 @@ ecore_x_input_multi_select(Ecore_X_Window win)
                   XISetMask(mask, XI_Motion);
 # ifdef XI_TouchUpdate
                   XISetMask(mask, XI_TouchUpdate);
-# endif             
+# endif
 # ifdef XI_TouchBegin
                   XISetMask(mask, XI_TouchBegin);
-# endif             
+# endif
 # ifdef XI_TouchEnd
                   XISetMask(mask, XI_TouchEnd);
-# endif             
+# endif
                   XISelectEvents(_ecore_x_disp, win, &eventmask, 1);
                   find = EINA_TRUE;
                }

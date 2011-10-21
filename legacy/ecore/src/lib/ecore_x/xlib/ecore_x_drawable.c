@@ -12,7 +12,7 @@
 
 /**
  * Retrieves the geometry of the given drawable.
-* @param d The given drawable.
+ * @param d The given drawable.
  * @param x Pointer to an integer into which the X position is to be stored.
  * @param y Pointer to an integer into which the Y position is to be stored.
  * @param w Pointer to an integer into which the width is to be stored.
@@ -41,16 +41,16 @@ ecore_x_drawable_geometry_get(Ecore_X_Drawable d,
      }
 
    if (x)
-      *x = ret_x;
+     *x = ret_x;
 
    if (y)
-      *y = ret_y;
+     *y = ret_y;
 
    if (w)
-      *w = (int)ret_w;
+     *w = (int)ret_w;
 
    if (h)
-      *h = (int)ret_h;
+     *h = (int)ret_h;
 } /* ecore_x_drawable_geometry_get */
 
 /**
@@ -69,7 +69,7 @@ ecore_x_drawable_border_width_get(Ecore_X_Drawable d)
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    if (!XGetGeometry(_ecore_x_disp, d, &dummy_win, &dummy_x, &dummy_y,
                      &dummy_w, &dummy_h, &border_ret, &dummy_depth))
-      border_ret = 0;
+     border_ret = 0;
 
    return (int)border_ret;
 } /* ecore_x_drawable_border_width_get */
@@ -90,7 +90,7 @@ ecore_x_drawable_depth_get(Ecore_X_Drawable d)
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    if (!XGetGeometry(_ecore_x_disp, d, &dummy_win, &dummy_x, &dummy_y,
                      &dummy_w, &dummy_h, &dummy_border, &depth_ret))
-      depth_ret = 0;
+     depth_ret = 0;
 
    return (int)depth_ret;
 } /* ecore_x_drawable_depth_get */
