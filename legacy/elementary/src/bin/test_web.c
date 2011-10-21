@@ -218,7 +218,7 @@ _prompt_hook(void *data __UNUSED__, Evas_Object *obj __UNUSED__, const char *mes
 }
 
 static Evas_Object *
-_file_selector_hook(void *data __UNUSED__, Evas_Object *obj __UNUSED__, Eina_Bool allow_multiple __UNUSED__, const char *accept_types __UNUSED__, Eina_List **selected_files, Eina_Bool *response)
+_file_selector_hook(void *data __UNUSED__, Evas_Object *obj __UNUSED__, Eina_Bool allow_multiple __UNUSED__, Eina_List *accept_types __UNUSED__, Eina_List **selected_files, Eina_Bool *response)
 {
    *selected_files = eina_list_append(NULL,
                                       strdup("/path/to/non_existing_file"));

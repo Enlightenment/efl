@@ -455,7 +455,7 @@ _dialog_new(Evas_Object *parent)
 }
 
 static Evas_Object *
-_run_dialog(Evas_Object *parent, enum Dialog_Type type, const char *message, const char *default_entry_value, char **entry_value, Eina_Bool allows_multiple_files __UNUSED__, const char *accept_types __UNUSED__, Eina_List **selected_filenames, Eina_Bool *response)
+_run_dialog(Evas_Object *parent, enum Dialog_Type type, const char *message, const char *default_entry_value, char **entry_value, Eina_Bool allows_multiple_files __UNUSED__, Eina_List *accept_types __UNUSED__, Eina_List **selected_filenames, Eina_Bool *response)
 {
    EINA_SAFETY_ON_TRUE_RETURN_VAL((type != DIALOG_PROMPT) && (!!default_entry_value), EINA_FALSE);
    EINA_SAFETY_ON_TRUE_RETURN_VAL((type != DIALOG_PROMPT) && (!!entry_value), EINA_FALSE);
@@ -638,7 +638,7 @@ _view_smart_run_javascript_prompt(Ewk_View_Smart_Data *esd, Evas_Object *frame _
 }
 
 static Eina_Bool
-_view_smart_run_open_panel(Ewk_View_Smart_Data *esd, Evas_Object *frame __UNUSED__, Eina_Bool allows_multiple_files, const char *accept_types, Eina_List **selected_filenames)
+_view_smart_run_open_panel(Ewk_View_Smart_Data *esd, Evas_Object *frame __UNUSED__, Eina_Bool allows_multiple_files, Eina_List *accept_types, Eina_List **selected_filenames)
 {
    View_Smart_Data *sd = (View_Smart_Data *)esd;
    Evas_Object *view = sd->base.self;

@@ -13357,7 +13357,7 @@ extern "C" {
     *
     * @see elm_web_dialog_file selector_hook_set()
     */
-   typedef Evas_Object *(*Elm_Web_Dialog_File_Selector)(void *data, Evas_Object *obj, Eina_Bool allows_multiple, const char *accept_types, Eina_List **selected, Eina_Bool *ret);
+   typedef Evas_Object *(*Elm_Web_Dialog_File_Selector)(void *data, Evas_Object *obj, Eina_Bool allows_multiple, Eina_List *accept_types, Eina_List **selected, Eina_Bool *ret);
    /**
     * Callback type for the JS console message hook.
     *
