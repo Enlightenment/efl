@@ -105,11 +105,11 @@ _theme_hook(Evas_Object *obj)
 
    EINA_LIST_FOREACH(wd->seg_items, l, it)
      {
-        _elm_theme_object_set(obj, it->base.view, "segment_control",
+        _elm_theme_object_set(obj, VIEW(it), "segment_control",
                               "item", elm_widget_style_get(obj));
-        edje_object_scale_set(it->base.view, elm_widget_scale_get(it->base.view)
+        edje_object_scale_set(VIEW(it), elm_widget_scale_get(VIEW(it))
                               *_elm_config->scale);
-        edje_object_mirrored_set(it->base.view, rtl);
+        edje_object_mirrored_set(VIEW(it), rtl);
      }
 
    _update_list(wd);
@@ -136,8 +136,8 @@ _elm_list_data_get(const Eina_List *list)
 
    if (it) return NULL;
 
-   edje_object_signal_emit(it->base.view, "elm,state,segment,selected", "elm");
-   return it->base.view;
+   edje_object_signal_emit(VIEW(it), "elm,state,segment,selected", "elm");
+   return VIEW(it);
 }
 
 static Eina_Bool
@@ -197,7 +197,7 @@ _segment_off(Elm_Segment_Item *it)
    wd = elm_widget_item_data_get(it);
    if (!wd) return;
 
-   edje_object_signal_emit(it->base.view, "elm,state,segment,normal", "elm");
+   edje_object_signal_emit(VIEW(it), "elm,state,segment,normal", "elm");
 
    if (wd->selected_item == it) wd->selected_item = NULL;
 }
@@ -215,7 +215,7 @@ _segment_on(Elm_Segment_Item *it)
 
    if (wd->selected_item) _segment_off(wd->selected_item);
 
-   edje_object_signal_emit(it->base.view, "elm,state,segment,selected", "elm");
+   edje_object_signal_emit(VIEW(it), "elm,state,segment,selected", "elm");
 
    wd->selected_item = it;
    evas_object_smart_callback_call(wd->obj, SIG_CHANGED, (void *)(unsigned long)it->seg_index);
@@ -243,8 +243,8 @@ _position_items(Widget_Data *wd)
 
    EINA_LIST_FOREACH(wd->seg_items, l, it)
      {
-        evas_object_move(it->base.view, pos, by);
-        evas_object_resize(it->base.view, wd->item_width, bh);
+        evas_object_move(VIEW(it), pos, by);
+        evas_object_resize(VIEW(it), wd->item_width, bh);
         if (rtl)
           pos -= wd->item_width;
         else
@@ -286,13 +286,13 @@ _mouse_up(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__,
    if (it == wd->selected_item) return;
 
    ev = event_info;
-   evas_object_geometry_get(it->base.view, &x, &y, &w, &h);
+   evas_object_geometry_get(VIEW(it), &x, &y, &w, &h);
 
    if ((ev->canvas.x >= x) && (ev->output.x <= (x + w)) && (ev->canvas.y >= y)
        && (ev->canvas.y <= (y + h)))
      _segment_on(it);
    else
-     edje_object_signal_emit(it->base.view, "elm,state,segment,normal", "elm");
+     edje_object_signal_emit(VIEW(it), "elm,state,segment,normal", "elm");
 }
 
 static void
@@ -312,7 +312,7 @@ _mouse_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__,
 
    if (it == wd->selected_item) return;
 
-   edje_object_signal_emit(it->base.view, "elm,state,segment,pressed", "elm");
+   edje_object_signal_emit(VIEW(it), "elm,state,segment,pressed", "elm");
 }
 
 static void
@@ -322,20 +322,20 @@ _swallow_item_objects(Elm_Segment_Item *it)
 
    if (it->icon)
      {
-        edje_object_part_swallow(it->base.view, "elm.swallow.icon", it->icon);
-        edje_object_signal_emit(it->base.view, "elm,state,icon,visible", "elm");
+        edje_object_part_swallow(VIEW(it), "elm.swallow.icon", it->icon);
+        edje_object_signal_emit(VIEW(it), "elm,state,icon,visible", "elm");
      }
    else
-     edje_object_signal_emit(it->base.view, "elm,state,icon,hidden", "elm");
+     edje_object_signal_emit(VIEW(it), "elm,state,icon,hidden", "elm");
 
    if (it->label)
      {
-        edje_object_part_text_set(it->base.view, "elm.text", it->label);
-        edje_object_signal_emit(it->base.view, "elm,state,text,visible", "elm");
+        edje_object_part_text_set(VIEW(it), "elm.text", it->label);
+        edje_object_signal_emit(VIEW(it), "elm,state,text,visible", "elm");
      }
    else
-     edje_object_signal_emit(it->base.view, "elm,state,text,hidden", "elm");
-   edje_object_message_signal_process(it->base.view);
+     edje_object_signal_emit(VIEW(it), "elm,state,text,hidden", "elm");
+   edje_object_message_signal_process(VIEW(it));
 }
 
 static void
@@ -354,21 +354,21 @@ _update_list(Widget_Data *wd)
         it->seg_index = 0;
 
         //Set the segment type
-        edje_object_signal_emit(it->base.view,
+        edje_object_signal_emit(VIEW(it),
                                 "elm,type,segment,single", "elm");
 
         //Set the segment state
         if (wd->selected_item == it)
-          edje_object_signal_emit(it->base.view,
+          edje_object_signal_emit(VIEW(it),
                                   "elm,state,segment,selected", "elm");
         else
-          edje_object_signal_emit(it->base.view,
+          edje_object_signal_emit(VIEW(it),
                                   "elm,state,segment,normal", "elm");
 
         if (elm_widget_disabled_get(wd->obj))
-          edje_object_signal_emit(it->base.view, "elm,state,disabled", "elm");
+          edje_object_signal_emit(VIEW(it), "elm,state,disabled", "elm");
         else
-          edje_object_signal_emit(it->base.view, "elm,state,enabled", "elm");
+          edje_object_signal_emit(VIEW(it), "elm,state,enabled", "elm");
 
         _swallow_item_objects(it);
         return;
@@ -383,37 +383,37 @@ _update_list(Widget_Data *wd)
         if (idx == 0)
           {
              if (rtl)
-               edje_object_signal_emit(it->base.view,
+               edje_object_signal_emit(VIEW(it),
                                        "elm,type,segment,right", "elm");
              else
-               edje_object_signal_emit(it->base.view,
+               edje_object_signal_emit(VIEW(it),
                                        "elm,type,segment,left", "elm");
           }
         else if (idx == (wd->item_count - 1))
           {
              if (rtl)
-               edje_object_signal_emit(it->base.view,
+               edje_object_signal_emit(VIEW(it),
                                        "elm,type,segment,left", "elm");
              else
-               edje_object_signal_emit(it->base.view,
+               edje_object_signal_emit(VIEW(it),
                                        "elm,type,segment,right", "elm");
           }
         else
-          edje_object_signal_emit(it->base.view,
+          edje_object_signal_emit(VIEW(it),
                                   "elm,type,segment,middle", "elm");
 
         //Set the segment state
         if (wd->selected_item == it)
-          edje_object_signal_emit(it->base.view,
+          edje_object_signal_emit(VIEW(it),
                                   "elm,state,segment,selected", "elm");
         else
-          edje_object_signal_emit(it->base.view,
+          edje_object_signal_emit(VIEW(it),
                                   "elm,state,segment,normal", "elm");
 
         if (elm_widget_disabled_get(wd->obj))
-          edje_object_signal_emit(it->base.view, "elm,state,disabled", "elm");
+          edje_object_signal_emit(VIEW(it), "elm,state,disabled", "elm");
         else
-          edje_object_signal_emit(it->base.view, "elm,state,enabled", "elm");
+          edje_object_signal_emit(VIEW(it), "elm,state,enabled", "elm");
 
         _swallow_item_objects(it);
         idx++;
@@ -446,34 +446,34 @@ _item_new(Evas_Object *obj, Evas_Object *icon, const char *label)
    if (!it) return NULL;
    elm_widget_item_data_set(it, wd);
 
-   it->base.view = edje_object_add(evas_object_evas_get(obj));
-   edje_object_scale_set(it->base.view, elm_widget_scale_get(it->base.view)
+   VIEW(it) = edje_object_add(evas_object_evas_get(obj));
+   edje_object_scale_set(VIEW(it), elm_widget_scale_get(VIEW(it))
                          *_elm_config->scale);
-   evas_object_smart_member_add(it->base.view, obj);
-   elm_widget_sub_object_add(obj, it->base.view);
-   evas_object_clip_set(it->base.view, evas_object_clip_get(obj));
+   evas_object_smart_member_add(VIEW(it), obj);
+   elm_widget_sub_object_add(obj, VIEW(it));
+   evas_object_clip_set(VIEW(it), evas_object_clip_get(obj));
 
-   _elm_theme_object_set(obj, it->base.view, "segment_control", "item",
+   _elm_theme_object_set(obj, VIEW(it), "segment_control", "item",
                          elm_object_style_get(obj));
-   edje_object_mirrored_set(it->base.view,
-                            elm_widget_mirrored_get(it->base.widget));
+   edje_object_mirrored_set(VIEW(it),
+                            elm_widget_mirrored_get(WIDGET(it)));
 
    if (label)
      eina_stringshare_replace(&it->label, label);
    if (it->label)
-     edje_object_signal_emit(it->base.view, "elm,state,text,visible", "elm");
+     edje_object_signal_emit(VIEW(it), "elm,state,text,visible", "elm");
    else
-     edje_object_signal_emit(it->base.view, "elm,state,text,hidden", "elm");
-   edje_object_message_signal_process(it->base.view);
-   edje_object_part_text_set(it->base.view, "elm.text", label);
+     edje_object_signal_emit(VIEW(it), "elm,state,text,hidden", "elm");
+   edje_object_message_signal_process(VIEW(it));
+   edje_object_part_text_set(VIEW(it), "elm.text", label);
 
    it->icon = icon;
-   if (it->icon) elm_widget_sub_object_add(it->base.view, it->icon);
-   evas_object_event_callback_add(it->base.view, EVAS_CALLBACK_MOUSE_DOWN,
+   if (it->icon) elm_widget_sub_object_add(VIEW(it), it->icon);
+   evas_object_event_callback_add(VIEW(it), EVAS_CALLBACK_MOUSE_DOWN,
                                   _mouse_down, it);
-   evas_object_event_callback_add(it->base.view, EVAS_CALLBACK_MOUSE_UP,
+   evas_object_event_callback_add(VIEW(it), EVAS_CALLBACK_MOUSE_UP,
                                   _mouse_up, it);
-   evas_object_show(it->base.view);
+   evas_object_show(VIEW(it));
 
    return it;
 }
@@ -615,12 +615,12 @@ elm_segment_control_item_label_set(Elm_Segment_Item* it, const char* label)
 
    eina_stringshare_replace(&it->label, label);
    if (it->label)
-     edje_object_signal_emit(it->base.view, "elm,state,text,visible", "elm");
+     edje_object_signal_emit(VIEW(it), "elm,state,text,visible", "elm");
    else
-     edje_object_signal_emit(it->base.view, "elm,state,text,hidden", "elm");
-   edje_object_message_signal_process(it->base.view);
+     edje_object_signal_emit(VIEW(it), "elm,state,text,hidden", "elm");
+   edje_object_message_signal_process(VIEW(it));
    //label can be NULL also.
-   edje_object_part_text_set(it->base.view, "elm.text", it->label);
+   edje_object_part_text_set(VIEW(it), "elm.text", it->label);
 }
 
 EAPI Evas_Object *
@@ -643,7 +643,7 @@ elm_segment_control_item_icon_set(Elm_Segment_Item *it, Evas_Object *icon)
    //Remove the existing icon
    if (it->icon)
      {
-        edje_object_part_unswallow(it->base.view, it->icon);
+        edje_object_part_unswallow(VIEW(it), it->icon);
         evas_object_del(it->icon);
         it->icon = NULL;
      }
@@ -651,12 +651,12 @@ elm_segment_control_item_icon_set(Elm_Segment_Item *it, Evas_Object *icon)
    it->icon = icon;
    if (it->icon)
      {
-        elm_widget_sub_object_add(it->base.view, it->icon);
-        edje_object_part_swallow(it->base.view, "elm.swallow.icon", it->icon);
-        edje_object_signal_emit(it->base.view, "elm,state,icon,visible", "elm");
+        elm_widget_sub_object_add(VIEW(it), it->icon);
+        edje_object_part_swallow(VIEW(it), "elm.swallow.icon", it->icon);
+        edje_object_signal_emit(VIEW(it), "elm,state,icon,visible", "elm");
      }
    else
-     edje_object_signal_emit(it->base.view, "elm,state,icon,hidden", "elm");
+     edje_object_signal_emit(VIEW(it), "elm,state,icon,hidden", "elm");
 }
 
 EAPI int
@@ -676,7 +676,7 @@ elm_segment_control_item_object_get(const Elm_Segment_Item *it)
 {
    ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(it, NULL);
 
-   return it->base.view;
+   return VIEW(it);
 }
 
 EAPI Elm_Segment_Item*

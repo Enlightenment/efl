@@ -247,6 +247,9 @@ struct _Elm_Widget_Item
 #define ELM_WIDGET_ITEM_MAGIC 0xef1e1301
    EINA_MAGIC;
 
+/* simple accessor macros */
+#define VIEW(X) X->base.view
+#define WIDGET(X) X->base.widget
    Evas_Object   *widget; /**< the owner widget that owns this item */
    Evas_Object   *view; /**< the base view object */
    const void    *data; /**< item specific data */

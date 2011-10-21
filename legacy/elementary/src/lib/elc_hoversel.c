@@ -141,7 +141,7 @@ static void
 _item_clicked(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Elm_Hoversel_Item *item = data;
-   Evas_Object *obj2 = item->base.widget;
+   Evas_Object *obj2 = WIDGET(item);
 
    elm_hoversel_hover_end(obj2);
    if (item->func) item->func((void *)item->base.data, obj2, item);
@@ -466,9 +466,9 @@ EAPI void
 elm_hoversel_item_del(Elm_Hoversel_Item *item)
 {
    ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(item);
-   Widget_Data *wd = elm_widget_data_get(item->base.widget);
+   Widget_Data *wd = elm_widget_data_get(WIDGET(item));
    if (!wd) return;
-   elm_hoversel_hover_end(item->base.widget);
+   elm_hoversel_hover_end(WIDGET(item));
    wd->items = eina_list_remove(wd->items, item);
    elm_widget_item_pre_notify_del(item);
    eina_stringshare_del(item->label);

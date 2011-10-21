@@ -52,7 +52,7 @@ static const char *widtype = NULL;
 
 #define ELM_DISKSELECTOR_ITEM_CHECK_OR_RETURN(it, ...)                  \
    ELM_WIDGET_ITEM_CHECK_OR_RETURN((Elm_Widget_Item *)it, __VA_ARGS__); \
-   ELM_CHECK_WIDTYPE(it->base.widget, widtype) __VA_ARGS__;
+   ELM_CHECK_WIDTYPE(WIDGET(it), widtype) __VA_ARGS__;
 
 static Eina_Bool _move_scroller(void *data);
 static void _del_hook(Evas_Object * obj);
@@ -118,24 +118,24 @@ _item_new(Evas_Object *obj, Evas_Object *icon, const char *label, Evas_Smart_Cb 
    it->icon = icon;
    it->func = func;
    it->base.data = data;
-   it->base.view = edje_object_add(evas_object_evas_get(obj));
-   _elm_theme_object_set(obj, it->base.view, "diskselector", "item", style);
-   evas_object_size_hint_weight_set(it->base.view, EVAS_HINT_EXPAND,
+   VIEW(it) = edje_object_add(evas_object_evas_get(obj));
+   _elm_theme_object_set(obj, VIEW(it), "diskselector", "item", style);
+   evas_object_size_hint_weight_set(VIEW(it), EVAS_HINT_EXPAND,
                                     EVAS_HINT_EXPAND);
-   evas_object_size_hint_align_set(it->base.view, EVAS_HINT_FILL,
+   evas_object_size_hint_align_set(VIEW(it), EVAS_HINT_FILL,
                                    EVAS_HINT_FILL);
-   evas_object_show(it->base.view);
+   evas_object_show(VIEW(it));
 
    if (it->label)
      {
-        edje_object_part_text_set(it->base.view, "elm.text", it->label);
-        edje_object_signal_callback_add(it->base.view, "elm,action,click", "", _item_click_cb, it);
+        edje_object_part_text_set(VIEW(it), "elm.text", it->label);
+        edje_object_signal_callback_add(VIEW(it), "elm,action,click", "", _item_click_cb, it);
      }
    if (it->icon)
      {
         evas_object_size_hint_min_set(it->icon, 24, 24);
         evas_object_size_hint_max_set(it->icon, 40, 40);
-        edje_object_part_swallow(it->base.view, "elm.swallow.icon", it->icon);
+        edje_object_part_swallow(VIEW(it), "elm.swallow.icon", it->icon);
         evas_object_show(it->icon);
         elm_widget_sub_object_add(obj, it->icon);
      }
@@ -200,25 +200,25 @@ _del_pre_hook(Evas_Object * obj)
    if (wd->last)
      {
         eina_stringshare_del(wd->last->label);
-        evas_object_del(wd->last->base.view);
+        evas_object_del(wd->VIEW(last));
         free(wd->last);
      }
    if (wd->s_last)
      {
         eina_stringshare_del(wd->s_last->label);
-        evas_object_del(wd->s_last->base.view);
+        evas_object_del(wd->VIEW(s_last));
         free(wd->s_last);
      }
    if (wd->second)
      {
         eina_stringshare_del(wd->second->label);
-        evas_object_del(wd->second->base.view);
+        evas_object_del(wd->VIEW(second));
         free(wd->second);
      }
    if (wd->first)
      {
         eina_stringshare_del(wd->first->label);
-        evas_object_del(wd->first->base.view);
+        evas_object_del(wd->VIEW(first));
         free(wd->first);
      }
 
@@ -227,7 +227,7 @@ _del_pre_hook(Evas_Object * obj)
         if (it)
           {
              eina_stringshare_del(it->label);
-             evas_object_del(it->base.view);
+             evas_object_del(VIEW(it));
              free(it);
           }
      }
@@ -237,7 +237,7 @@ _del_pre_hook(Evas_Object * obj)
      if (it)
         {
            eina_stringshare_del(it->label);
-           evas_object_del(it->base.view);
+           evas_object_del(VIEW(it));
            free(it);
         }
    }
@@ -269,18 +269,18 @@ _theme_hook(Evas_Object * obj)
      {
         EINA_LIST_FOREACH(wd->r_items, l, it)
           {
-             _elm_theme_object_set(obj, it->base.view, "diskselector", "item",
+             _elm_theme_object_set(obj, VIEW(it), "diskselector", "item",
                                    elm_widget_style_get(obj));
-             edje_object_part_text_set(it->base.view, "elm.text", it->label);
+             edje_object_part_text_set(VIEW(it), "elm.text", it->label);
           }
      }
    else
      {
         EINA_LIST_FOREACH(wd->items, l, it)
           {
-             _elm_theme_object_set(obj, it->base.view, "diskselector", "item",
+             _elm_theme_object_set(obj, VIEW(it), "diskselector", "item",
                                    elm_widget_style_get(obj));
-             edje_object_part_text_set(it->base.view, "elm.text", it->label);
+             edje_object_part_text_set(VIEW(it), "elm.text", it->label);
           }
      }
    _elm_theme_object_set(obj, wd->right_blank, "diskselector", "item",
@@ -319,11 +319,11 @@ static void
 _select_item(Elm_Diskselector_Item *it)
 {
    if (!it) return;
-   Widget_Data *wd = elm_widget_data_get(it->base.widget);
+   Widget_Data *wd = elm_widget_data_get(WIDGET(it));
    wd->selected_item = it;
    _selected_item_indicate(wd->selected_item);
-   if (it->func) it->func((void *)it->base.data, it->base.widget, it);
-   evas_object_smart_callback_call(it->base.widget, SIG_SELECTED, it);
+   if (it->func) it->func((void *)it->base.data, WIDGET(it), it);
+   evas_object_smart_callback_call(WIDGET(it), SIG_SELECTED, it);
 }
 
 static void
@@ -450,7 +450,7 @@ _check_string(void *data)
      {
         Evas_Coord x, w;
         int len;
-        evas_object_geometry_get(it->base.view, &x, NULL, &w, NULL);
+        evas_object_geometry_get(VIEW(it), &x, NULL, &w, NULL);
         /* item not visible */
         if ((x + w <= ox) || (x >= ox + ow))
           continue;
@@ -460,18 +460,18 @@ _check_string(void *data)
 //        len = eina_stringshare_strlen(it->label);
 
         if (x <= ox + 5)
-          edje_object_signal_emit(it->base.view, "elm,state,left_side",
+          edje_object_signal_emit(VIEW(it), "elm,state,left_side",
                                   "elm");
         else if (x + w >= ox + ow - 5)
-          edje_object_signal_emit(it->base.view, "elm,state,right_side",
+          edje_object_signal_emit(VIEW(it), "elm,state,right_side",
                                   "elm");
         else
           {
              if ((wd->len_threshold) && (len > wd->len_threshold))
-               edje_object_signal_emit(it->base.view, "elm,state,center_small",
+               edje_object_signal_emit(VIEW(it), "elm,state,center_small",
                                        "elm");
              else
-               edje_object_signal_emit(it->base.view, "elm,state,center",
+               edje_object_signal_emit(VIEW(it), "elm,state,center",
                                        "elm");
           }
 
@@ -493,7 +493,7 @@ _check_string(void *data)
         // cut it off at byte mark returned form _check_letter
         strncpy(buf, it->label, length);
         buf[length] = '\0';
-        edje_object_part_text_set(it->base.view, "elm.text", buf);
+        edje_object_part_text_set(VIEW(it), "elm.text", buf);
      }
 
    if (wd->check_idler)
@@ -508,15 +508,15 @@ _selected_item_indicate(Elm_Diskselector_Item *it)
    Elm_Diskselector_Item *item;
    Eina_List *l;
    Widget_Data *wd;
-   wd = elm_widget_data_get(it->base.widget);
+   wd = elm_widget_data_get(WIDGET(it));
 
    if (!wd) return;
 
    EINA_LIST_FOREACH(wd->r_items, l, item)
      {
-        if (!strcmp(item->label, it->label)) edje_object_signal_emit(item->base.view, "elm,state,selected", "elm");
+        if (!strcmp(item->label, it->label)) edje_object_signal_emit(VIEW(item), "elm,state,selected", "elm");
         else
-           edje_object_signal_emit(item->base.view, "elm,state,default", "elm");
+           edje_object_signal_emit(VIEW(item), "elm,state,default", "elm");
      }
 }
 
@@ -529,7 +529,7 @@ _item_click_cb(void *data, Evas_Object *obj __UNUSED__,
    if (!it) return;
 
    Widget_Data *wd;
-   wd = elm_widget_data_get(it->base.widget);
+   wd = elm_widget_data_get(WIDGET(it));
 
    if (!wd) return;
 
@@ -539,7 +539,7 @@ _item_click_cb(void *data, Evas_Object *obj __UNUSED__,
         _selected_item_indicate(wd->selected_item);
      }
 
-   if (it->func) it->func((void *)it->base.data, it->base.widget, it);
+   if (it->func) it->func((void *)it->base.data, WIDGET(it), it);
 }
 
 static void
@@ -584,7 +584,7 @@ _scroller_stop_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UN
    evas_object_geometry_get(wd->scroller, NULL, NULL, &ow, NULL);
    EINA_LIST_FOREACH(list, l, it)
      {
-        evas_object_geometry_get(it->base.view, &x, NULL, &w, NULL);
+        evas_object_geometry_get(VIEW(it), &x, NULL, &w, NULL);
         if (abs((int)(ow / 2 - (int)(x + w / 2))) < 10)
           break;
      }
@@ -653,10 +653,10 @@ static void
 _round_item_del(Widget_Data *wd, Elm_Diskselector_Item *it)
 {
    if (!it) return;
-   elm_box_unpack(wd->main_box, it->base.view);
+   elm_box_unpack(wd->main_box, VIEW(it));
    wd->r_items = eina_list_remove(wd->r_items, it);
    eina_stringshare_del(it->label);
-   evas_object_del(it->base.view);
+   evas_object_del(VIEW(it));
    free(it);
 }
 
@@ -700,7 +700,7 @@ _round_items_add(Widget_Data *wd)
 
    if (!wd->first)
      {
-        wd->first = _item_new(it->base.widget, it->icon, it->label, it->func,
+        wd->first = _item_new(WIDGET(it), it->icon, it->label, it->func,
                               it->base.data);
         wd->first->node = it->node;
         wd->r_items = eina_list_append(wd->r_items, wd->first);
@@ -711,7 +711,7 @@ _round_items_add(Widget_Data *wd)
      it = dit;
    if (!wd->second)
      {
-        wd->second = _item_new(it->base.widget, it->icon, it->label, it->func,
+        wd->second = _item_new(WIDGET(it), it->icon, it->label, it->func,
                                it->base.data);
         wd->second->node = it->node;
         wd->r_items = eina_list_append(wd->r_items, wd->second);
@@ -722,7 +722,7 @@ _round_items_add(Widget_Data *wd)
      {
         it = eina_list_nth(wd->items, i);
         if (!it) it = dit;
-        temp_it = _item_new(it->base.widget, it->icon, it->label, it->func, it->base.data);
+        temp_it = _item_new(WIDGET(it), it->icon, it->label, it->func, it->base.data);
         wd->over_items = eina_list_append(wd->over_items, temp_it);
         wd->r_items = eina_list_append(wd->r_items, temp_it);
      }
@@ -732,7 +732,7 @@ _round_items_add(Widget_Data *wd)
      it = dit;
    if (!wd->last)
      {
-        wd->last = _item_new(it->base.widget, it->icon, it->label, it->func,
+        wd->last = _item_new(WIDGET(it), it->icon, it->label, it->func,
                              it->base.data);
         wd->last->node = it->node;
         wd->r_items = eina_list_prepend(wd->r_items, wd->last);
@@ -743,7 +743,7 @@ _round_items_add(Widget_Data *wd)
      it = dit;
    if (!wd->s_last)
      {
-        wd->s_last = _item_new(it->base.widget, it->icon, it->label, it->func,
+        wd->s_last = _item_new(WIDGET(it), it->icon, it->label, it->func,
                                it->base.data);
         wd->s_last->node = it->node;
         wd->r_items = eina_list_prepend(wd->r_items, wd->s_last);
@@ -754,7 +754,7 @@ _round_items_add(Widget_Data *wd)
      {
         it = eina_list_nth(wd->items, wd->item_count - i);
         if (!it) it = dit;
-        temp_it = _item_new(it->base.widget, it->icon, it->label, it->func, it->base.data);
+        temp_it = _item_new(WIDGET(it), it->icon, it->label, it->func, it->base.data);
         wd->under_items = eina_list_append(wd->under_items, temp_it);
         wd->r_items = eina_list_prepend(wd->r_items, temp_it);
      }
@@ -767,13 +767,13 @@ _item_icon_set(Elm_Diskselector_Item *it, Evas_Object *icon)
    if (it->icon)
      evas_object_del(it->icon);
    it->icon = icon;
-   if (it->base.view)
+   if (VIEW(it))
      {
         evas_object_size_hint_min_set(it->icon, 24, 24);
         evas_object_size_hint_max_set(it->icon, 40, 40);
-        edje_object_part_swallow(it->base.view, "elm.swallow.icon", it->icon);
+        edje_object_part_swallow(VIEW(it), "elm.swallow.icon", it->icon);
         evas_object_show(it->icon);
-        elm_widget_sub_object_add(it->base.widget, it->icon);
+        elm_widget_sub_object_add(WIDGET(it), it->icon);
      }
 }
 
@@ -787,7 +787,7 @@ _check_identical_item(Elm_Diskselector_Item *it, Evas_Object *icon)
    int ic = 0;
    int ac = 0;
 
-   wd = elm_widget_data_get(it->base.widget);
+   wd = elm_widget_data_get(WIDGET(it));
    if (!wd) return;
 
    if (wd->round)
@@ -947,22 +947,22 @@ elm_diskselector_round_set(Evas_Object * obj, Eina_Bool round)
         _round_items_add(wd);
 
         if (wd->last)
-          elm_box_pack_start(wd->main_box, wd->last->base.view);
+          elm_box_pack_start(wd->main_box, wd->VIEW(last));
         if (wd->s_last)
-          elm_box_pack_start(wd->main_box, wd->s_last->base.view);
+          elm_box_pack_start(wd->main_box, wd->VIEW(s_last));
 
         // if more than 3 items should be displayed
         EINA_LIST_FOREACH(wd->under_items, elist, it)
-           elm_box_pack_start(wd->main_box, it->base.view);
+           elm_box_pack_start(wd->main_box, VIEW(it));
 
         if (wd->first)
-          elm_box_pack_end(wd->main_box, wd->first->base.view);
+          elm_box_pack_end(wd->main_box, wd->VIEW(first));
         if (wd->second)
-          elm_box_pack_end(wd->main_box, wd->second->base.view);
+          elm_box_pack_end(wd->main_box, wd->VIEW(second));
 
         // if more than 3 items should be displayed
         EINA_LIST_FOREACH(wd->over_items, elist, it)
-           elm_box_pack_end(wd->main_box, it->base.view);
+           elm_box_pack_end(wd->main_box, VIEW(it));
      }
    else
      {
@@ -1093,19 +1093,19 @@ elm_diskselector_item_append(Evas_Object *obj, const char *label, Evas_Object *i
         wd->r_items = eina_list_append(wd->r_items, it);
         _round_items_add(wd);
         if (wd->last)
-          elm_box_pack_start(wd->main_box, wd->last->base.view);
+          elm_box_pack_start(wd->main_box, wd->VIEW(last));
         if (wd->s_last)
-          elm_box_pack_start(wd->main_box, wd->s_last->base.view);
-        elm_box_pack_end(wd->main_box, it->base.view);
+          elm_box_pack_start(wd->main_box, wd->VIEW(s_last));
+        elm_box_pack_end(wd->main_box, VIEW(it));
         if (wd->first)
-          elm_box_pack_end(wd->main_box, wd->first->base.view);
+          elm_box_pack_end(wd->main_box, wd->VIEW(first));
         if (wd->second)
-          elm_box_pack_end(wd->main_box, wd->second->base.view);
+          elm_box_pack_end(wd->main_box, wd->VIEW(second));
      }
    else
      {
         elm_box_unpack(wd->main_box, wd->right_blank);
-        elm_box_pack_end(wd->main_box, it->base.view);
+        elm_box_pack_end(wd->main_box, VIEW(it));
         elm_box_pack_end(wd->main_box, wd->right_blank);
      }
    if (!wd->selected_item)
@@ -1124,10 +1124,10 @@ elm_diskselector_item_del(Elm_Diskselector_Item * it)
    Elm_Diskselector_Item *item;
    Eina_List *l;
    int i = 0;
-   Widget_Data *wd = elm_widget_data_get(it->base.widget);
+   Widget_Data *wd = elm_widget_data_get(WIDGET(it));
    if (!wd) return;
 
-   elm_box_unpack(wd->main_box, it->base.view);
+   elm_box_unpack(wd->main_box, VIEW(it));
 
    if (wd->round)
      wd->r_items = eina_list_remove(wd->r_items, it);
@@ -1152,16 +1152,16 @@ elm_diskselector_item_del(Elm_Diskselector_Item * it)
      {
         if (!wd->item_count)
           {
-             evas_object_hide(wd->first->base.view);
-             evas_object_hide(wd->second->base.view);
-             evas_object_hide(wd->last->base.view);
-             evas_object_hide(wd->s_last->base.view);
+             evas_object_hide(wd->VIEW(first));
+             evas_object_hide(wd->VIEW(second));
+             evas_object_hide(wd->VIEW(last));
+             evas_object_hide(wd->VIEW(s_last));
 
              EINA_LIST_FOREACH(wd->under_items, l, item)
-                evas_object_hide(item->base.view);
+                evas_object_hide(VIEW(item));
 
              EINA_LIST_FOREACH(wd->over_items, l, item)
-                evas_object_hide(item->base.view);
+                evas_object_hide(VIEW(item));
           }
         else
           {
@@ -1169,14 +1169,14 @@ elm_diskselector_item_del(Elm_Diskselector_Item * it)
              if (dit)
                {
                   eina_stringshare_replace(&wd->first->label, dit->label);
-                  edje_object_part_text_set(wd->first->base.view, "elm.text",
+                  edje_object_part_text_set(wd->VIEW(first), "elm.text",
                                             wd->first->label);
                }
              dit = eina_list_nth(wd->items, 1);
              if (dit)
                {
                   eina_stringshare_replace(&wd->second->label, dit->label);
-                  edje_object_part_text_set(wd->second->base.view, "elm.text",
+                  edje_object_part_text_set(wd->VIEW(second), "elm.text",
                                             wd->second->label);
                }
              // if more than 3 itmes should be displayed
@@ -1185,21 +1185,21 @@ elm_diskselector_item_del(Elm_Diskselector_Item * it)
                   dit = eina_list_nth(wd->items, i);
                   item = eina_list_nth(wd->over_items, i - 2);
                   eina_stringshare_replace(&item->label, dit->label);
-                  edje_object_part_text_set(item->base.view, "elm.text", item->label);
+                  edje_object_part_text_set(VIEW(item), "elm.text", item->label);
                }
 
              dit = eina_list_nth(wd->items, eina_list_count(wd->items) - 1);
              if (dit)
                {
                   eina_stringshare_replace(&wd->last->label, dit->label);
-                  edje_object_part_text_set(wd->last->base.view, "elm.text",
+                  edje_object_part_text_set(wd->VIEW(last), "elm.text",
                                             wd->last->label);
                }
              dit = eina_list_nth(wd->items, eina_list_count(wd->items) - 2);
              if (dit)
                {
                   eina_stringshare_replace(&wd->s_last->label, dit->label);
-                  edje_object_part_text_set(wd->s_last->base.view, "elm.text",
+                  edje_object_part_text_set(wd->VIEW(s_last), "elm.text",
                                             wd->s_last->label);
                }
              // if more than 3 itmes should be displayed
@@ -1208,7 +1208,7 @@ elm_diskselector_item_del(Elm_Diskselector_Item * it)
                   dit = eina_list_nth(wd->items, wd->item_count - i);
                   item = eina_list_nth(wd->under_items, i - 3);
                   eina_stringshare_replace(&item->label, dit->label);
-                  edje_object_part_text_set(item->base.view, "elm.text", item->label);
+                  edje_object_part_text_set(VIEW(item), "elm.text", item->label);
                }
           }
      }
@@ -1228,7 +1228,7 @@ elm_diskselector_item_label_set(Elm_Diskselector_Item * it, const char *label)
 {
    ELM_DISKSELECTOR_ITEM_CHECK_OR_RETURN(it);
    eina_stringshare_replace(&it->label, label);
-   edje_object_part_text_set(it->base.view, "elm.text", it->label);
+   edje_object_part_text_set(VIEW(it), "elm.text", it->label);
 }
 
 EAPI Elm_Diskselector_Item *
@@ -1245,7 +1245,7 @@ elm_diskselector_item_selected_set(Elm_Diskselector_Item *it, Eina_Bool selected
 {
    ELM_DISKSELECTOR_ITEM_CHECK_OR_RETURN(it);
    Widget_Data *wd;
-   wd = elm_widget_data_get(it->base.widget);
+   wd = elm_widget_data_get(WIDGET(it));
    if (!wd) return;
 
    if ((wd->selected_item == it) && (selected))
@@ -1260,7 +1260,7 @@ elm_diskselector_item_selected_set(Elm_Diskselector_Item *it, Eina_Bool selected
      }
 
    if (!wd->idler)
-     wd->idler = ecore_idle_enterer_before_add(_move_scroller, it->base.widget);
+     wd->idler = ecore_idle_enterer_before_add(_move_scroller, WIDGET(it));
 }
 
 EAPI Eina_Bool
@@ -1269,7 +1269,7 @@ elm_diskselector_item_selected_get(const Elm_Diskselector_Item *it)
    ELM_DISKSELECTOR_ITEM_CHECK_OR_RETURN(it, EINA_FALSE);
    Widget_Data *wd;
 
-   wd = elm_widget_data_get(it->base.widget);
+   wd = elm_widget_data_get(WIDGET(it));
    if (!wd) return EINA_FALSE;
    return (wd->selected_item == it);
 }
