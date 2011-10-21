@@ -1186,6 +1186,15 @@ eng_output_redraws_next_update_get(void *data, int *x, int *y, int *w, int *h, i
    rects = evas_common_tilebuf_get_render_rects(re->tb);
    if (rects)
      {
+/*        
+        Tilebuf_Rect *r;
+        
+        printf("REAAAAACCTS\n");
+        EINA_INLIST_FOREACH(EINA_INLIST_GET(rects), r)
+          {
+             printf("  %i %i %ix%i\n", r->x, r->y, r->w, r->h);
+          }
+ */
         evas_common_tilebuf_free_render_rects(rects);
         evas_common_tilebuf_clear(re->tb);
 #if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
