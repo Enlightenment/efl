@@ -598,7 +598,11 @@ targets_converter(char *target __UNUSED__, void *data, int size, void **data_ret
 
    if (size != sizeof(int))
      {
-        if (data_ret) *data_ret = strndup(data, size);
+        if (data_ret)
+          {
+             memcpy(*data_ret, data, size);
+             ((char**)(data_ret))[0][size] = 0;
+          }
         if (size_ret) *size_ret = size;
         return EINA_TRUE;
      }
@@ -807,7 +811,9 @@ notify_handler_uri(Cnp_Selection *sel, Ecore_X_Event_Selection_Notify *notify)
      }
    else
      {
-        stripstr = p = strndup((char *)data->data, data->length);
+        memcpy(stripstr, data->data, data->length);
+        stripstr[data->length] = 0;
+        p = stripstr;
      }
 
    if (!p)
@@ -980,7 +986,11 @@ text_converter(char *target __UNUSED__, void *data, int size, void **data_ret, i
    cnp_debug("text converter\n");
    if (size != sizeof(int))
      {
-        if (data_ret) *data_ret = strndup(data, size);
+        if (data_ret)
+          {
+             memcpy(*data_ret, data, size);
+             ((char**)(data_ret))[0][size] = 0;
+          }
         if (size_ret) *size_ret = size;
         return EINA_TRUE;
      }
@@ -1022,7 +1032,11 @@ general_converter(char *target __UNUSED__, void *data, int size, void **data_ret
      }
    else if (size)
      {
-        if (data_ret) *data_ret = strndup(data, size);
+        if (data_ret)
+          {
+             memcpy(*data_ret, data, size);
+             ((char**)(data_ret))[0][size] = 0;
+          }
         if (size_ret) *size_ret = size;
      }
    return EINA_TRUE;
