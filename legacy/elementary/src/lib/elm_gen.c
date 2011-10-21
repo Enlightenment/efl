@@ -6,13 +6,18 @@
 struct _Widget_Data
 {
    Eina_Inlist_Sorted_State *state;
-   Evas_Object *obj;
-   Eina_List *selected;
-   Eina_List *group_items;
+   Evas_Object      *obj;
+   Evas_Object      *scr; /* a smart scroller object which is used internally in genlist */
+   Evas_Object      *pan_smart; /* "elm_genlist_pan" evas smart object. this is an extern pan of smart scroller(scr). */
+   Eina_List        *selected;
+   Eina_List        *group_items;
    Eina_Inlist      *items; /* inlist of all items */
    Elm_Gen_Item     *reorder_it; /* item currently being repositioned */
+   Elm_Gen_Item     *last_selected_item;
+   Pan              *pan; /* pan_smart object's smart data */
    Ecore_Job        *calc_job;
-   int        walking;
+   int               walking;
+   Evas_Coord        pan_x, pan_y;
    Eina_Bool         reorder_mode : 1;
    Eina_Bool         on_hold : 1;
    Eina_Bool         multi : 1;
@@ -221,7 +226,7 @@ _item_single_select_right(Widget_Data *wd)
    return EINA_TRUE;
 }
 #endif
-
+/******************************************************************************/
 void
 elm_gen_item_unrealize(Elm_Gen_Item *it,
                        Eina_Bool     calc,
@@ -314,3 +319,4 @@ elm_gen_item_new(Widget_Data              *wd,
    elm_widget_item_text_get_hook_set(it, _item_label_hook);
    return it;
 }
+/******************************************************************************/

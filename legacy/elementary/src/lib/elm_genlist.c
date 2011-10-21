@@ -11,7 +11,6 @@
 #define REORDER_EFFECT_TIME 0.5
 
 typedef struct _Item_Block  Item_Block;
-typedef struct _Pan         Pan;
 typedef struct _Item_Cache  Item_Cache;
 
 struct Elm_Gen_Item_Type
@@ -49,12 +48,17 @@ struct _Widget_Data
 {
    Eina_Inlist_Sorted_State *state;
    Evas_Object      *obj; /* the genlist object */
+   Evas_Object      *scr; /* a smart scroller object which is used internally in genlist */
+   Evas_Object      *pan_smart; /* "elm_genlist_pan" evas smart object. this is an extern pan of smart scroller(scr). */
    Eina_List        *selected;
    Eina_List        *group_items; /* list of groups index items */
    Eina_Inlist      *items; /* inlist of all items */
    Elm_Gen_Item     *reorder_it; /* item currently being repositioned */
+   Elm_Gen_Item     *last_selected_item;
+   Pan              *pan; /* pan_smart object's smart data */
    Ecore_Job        *calc_job;
    int               walking;
+   Evas_Coord        pan_x, pan_y;
    Eina_Bool         reorder_mode : 1;
    Eina_Bool         on_hold : 1;
    Eina_Bool         multi : 1;
@@ -62,17 +66,13 @@ struct _Widget_Data
    Eina_Bool         wasselected : 1;
    Eina_Bool         always_select : 1;
    ////////////////////////////////////
-   Evas_Object      *scr; /* a smart scroller object which is used internally in genlist */
-   Evas_Object      *pan_smart; /* "elm_genlist_pan" evas smart object. this is an extern pan of smart scroller(scr). */
    Eina_Inlist      *blocks; /* inlist of all blocks. a block consists of a certain number of items. maximum number of items in a block is 'max_items_per_block'. */
-   Pan              *pan; /* pan_smart object's smart data */
-   Evas_Coord        pan_x, pan_y, reorder_old_pan_y, w, h, minw, minh, realminw, prev_viewport_w;
+   Evas_Coord        reorder_old_pan_y, w, h, minw, minh, realminw, prev_viewport_w;
    Ecore_Job        *update_job;
    Ecore_Idle_Enterer *queue_idle_enterer;
    Ecore_Idler        *must_recalc_idler;
    Eina_List        *queue;
    Elm_Gen_Item *show_item, *anchor_item, *mode_item, *reorder_rel, *expanded_item;
-   Elm_Gen_Item *last_selected_item; /* the last selected it. */
    Eina_Inlist      *item_cache; /* an inlist of edje object it cache. */
    Evas_Coord        anchor_y;
    Evas_Coord        reorder_start_y; /* reorder it's initial y coordinate in the pan. */
@@ -148,13 +148,6 @@ struct _Item_Cache
 
 #define ELM_GENLIST_ITEM_FROM_INLIST(it) \
   ((it) ? EINA_INLIST_CONTAINER_GET(it, Elm_Gen_Item) : NULL)
-
-struct _Pan
-{
-   Evas_Object_Smart_Clipped_Data __clipped_data;
-   Widget_Data                   *wd;
-   Ecore_Job                     *resize_job;
-};
 
 static const char *widtype = NULL;
 static void      _item_cache_zero(Widget_Data *wd);
