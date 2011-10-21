@@ -195,7 +195,7 @@ test_gengrid(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_inf
 	ti[i].path = eina_stringshare_add(buf);
 	ti[i].item = elm_gengrid_item_append(grid, &gic, &(ti[i]), grid_sel, NULL);
 	if (!(i % 5))
-	  elm_gengrid_item_selected_set(ti[i].item, EINA_TRUE);
+	  elm_gen_item_selected_set(ti[i].item, EINA_TRUE);
      }
 
    evas_object_show(grid);
@@ -443,7 +443,7 @@ test_gengrid3(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
         else
           ti[i].item = elm_gengrid_item_append(grid, &gic, &(ti[i]), grid_sel, NULL);
 	if (!(i % 5))
-	  elm_gengrid_item_selected_set(ti[i].item, EINA_TRUE);
+	  elm_gen_item_selected_set(ti[i].item, EINA_TRUE);
      }
 
    evas_object_show(grid);

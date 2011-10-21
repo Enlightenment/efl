@@ -416,7 +416,7 @@ _deselect_all_items(Widget_Data *wd)
 {
    if (!wd->selected) return EINA_FALSE;
    while (wd->selected)
-     elm_genlist_item_selected_set(wd->selected->data, EINA_FALSE);
+     elm_gen_item_selected_set(wd->selected->data, EINA_FALSE);
 
    return EINA_TRUE;
 }
@@ -432,13 +432,13 @@ _item_multi_select_up(Widget_Data *wd)
 
    if (elm_genlist_item_selected_get(prev))
      {
-        elm_genlist_item_selected_set(wd->last_selected_item, EINA_FALSE);
+        elm_gen_item_selected_set(wd->last_selected_item, EINA_FALSE);
         wd->last_selected_item = prev;
         elm_genlist_item_show(wd->last_selected_item);
      }
    else
      {
-        elm_genlist_item_selected_set(prev, EINA_TRUE);
+        elm_gen_item_selected_set(prev, EINA_TRUE);
         elm_genlist_item_show(prev);
      }
    return EINA_TRUE;
@@ -455,13 +455,13 @@ _item_multi_select_down(Widget_Data *wd)
 
    if (elm_genlist_item_selected_get(next))
      {
-        elm_genlist_item_selected_set(wd->last_selected_item, EINA_FALSE);
+        elm_gen_item_selected_set(wd->last_selected_item, EINA_FALSE);
         wd->last_selected_item = next;
         elm_genlist_item_show(wd->last_selected_item);
      }
    else
      {
-        elm_genlist_item_selected_set(next, EINA_TRUE);
+        elm_gen_item_selected_set(next, EINA_TRUE);
         elm_genlist_item_show(next);
      }
    return EINA_TRUE;
@@ -483,7 +483,7 @@ _item_single_select_up(Widget_Data *wd)
 
    _deselect_all_items(wd);
 
-   elm_genlist_item_selected_set(prev, EINA_TRUE);
+   elm_gen_item_selected_set(prev, EINA_TRUE);
    elm_genlist_item_show(prev);
    return EINA_TRUE;
 }
@@ -504,7 +504,7 @@ _item_single_select_down(Widget_Data *wd)
 
    _deselect_all_items(wd);
 
-   elm_genlist_item_selected_set(next, EINA_TRUE);
+   elm_gen_item_selected_set(next, EINA_TRUE);
    elm_genlist_item_show(next);
    return EINA_TRUE;
 }
@@ -3934,7 +3934,7 @@ elm_genlist_item_disabled_set(Elm_Gen_Item *it,
    if (it->delete_me) return;
    it->disabled = !!disabled;
    if (it->selected)
-     elm_genlist_item_selected_set(it, EINA_FALSE);
+     elm_gen_item_selected_set(it, EINA_FALSE);
    if (it->realized)
      {
         if (it->disabled)
@@ -4667,13 +4667,13 @@ elm_genlist_item_mode_set(Elm_Gen_Item *it,
      {
         EINA_LIST_FOREACH(wd->selected, l, it2)
           if (it2->realized)
-            elm_genlist_item_selected_set(it2, EINA_FALSE);
+            elm_gen_item_selected_set(it2, EINA_FALSE);
      }
    else
      {
         it2 = elm_genlist_selected_item_get(wd->obj);
         if ((it2) && (it2->realized))
-          elm_genlist_item_selected_set(it2, EINA_FALSE);
+          elm_gen_item_selected_set(it2, EINA_FALSE);
      }
 
    if (((wd->mode_type) && (strcmp(mode_type, wd->mode_type))) ||

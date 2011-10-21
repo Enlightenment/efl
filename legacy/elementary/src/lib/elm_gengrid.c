@@ -351,7 +351,7 @@ _deselect_all_items(Widget_Data *wd)
 {
    if (!wd->selected) return EINA_FALSE;
    while (wd->selected)
-     elm_gengrid_item_selected_set(wd->selected->data, EINA_FALSE);
+     elm_gen_item_selected_set(wd->selected->data, EINA_FALSE);
 
    return EINA_TRUE;
 }
@@ -365,13 +365,13 @@ _item_multi_select_left(Widget_Data *wd)
    if (!prev) return EINA_TRUE;
    if (elm_gengrid_item_selected_get(prev))
      {
-        elm_gengrid_item_selected_set(wd->last_selected_item, EINA_FALSE);
+        elm_gen_item_selected_set(wd->last_selected_item, EINA_FALSE);
         wd->last_selected_item = prev;
         elm_gengrid_item_show(wd->last_selected_item);
      }
    else
      {
-        elm_gengrid_item_selected_set(prev, EINA_TRUE);
+        elm_gen_item_selected_set(prev, EINA_TRUE);
         elm_gengrid_item_show(prev);
      }
 
@@ -387,13 +387,13 @@ _item_multi_select_right(Widget_Data *wd)
    if (!next) return EINA_TRUE;
    if (elm_gengrid_item_selected_get(next))
      {
-        elm_gengrid_item_selected_set(wd->last_selected_item, EINA_FALSE);
+        elm_gen_item_selected_set(wd->last_selected_item, EINA_FALSE);
         wd->last_selected_item = next;
         elm_gengrid_item_show(wd->last_selected_item);
      }
    else
      {
-        elm_gengrid_item_selected_set(next, EINA_TRUE);
+        elm_gen_item_selected_set(next, EINA_TRUE);
         elm_gengrid_item_show(next);
      }
 
@@ -440,7 +440,7 @@ _item_single_select_up(Widget_Data *wd)
         prev = ELM_GEN_ITEM_FROM_INLIST(wd->items->last);
         while ((prev) && (prev->delete_me))
           prev = ELM_GEN_ITEM_FROM_INLIST(EINA_INLIST_GET(prev)->prev);
-        elm_gengrid_item_selected_set(prev, EINA_TRUE);
+        elm_gen_item_selected_set(prev, EINA_TRUE);
         elm_gengrid_item_show(prev);
         return EINA_TRUE;
      }
@@ -457,7 +457,7 @@ _item_single_select_up(Widget_Data *wd)
 
    _deselect_all_items(wd);
 
-   elm_gengrid_item_selected_set(prev, EINA_TRUE);
+   elm_gen_item_selected_set(prev, EINA_TRUE);
    elm_gengrid_item_show(prev);
    return EINA_TRUE;
 }
@@ -474,7 +474,7 @@ _item_single_select_down(Widget_Data *wd)
         next = ELM_GEN_ITEM_FROM_INLIST(wd->items);
         while ((next) && (next->delete_me))
           next = ELM_GEN_ITEM_FROM_INLIST(EINA_INLIST_GET(next)->next);
-        elm_gengrid_item_selected_set(next, EINA_TRUE);
+        elm_gen_item_selected_set(next, EINA_TRUE);
         elm_gengrid_item_show(next);
         return EINA_TRUE;
      }
@@ -491,7 +491,7 @@ _item_single_select_down(Widget_Data *wd)
 
    _deselect_all_items(wd);
 
-   elm_gengrid_item_selected_set(next, EINA_TRUE);
+   elm_gen_item_selected_set(next, EINA_TRUE);
    elm_gengrid_item_show(next);
    return EINA_TRUE;
 }
@@ -512,7 +512,7 @@ _item_single_select_left(Widget_Data *wd)
 
    _deselect_all_items(wd);
 
-   elm_gengrid_item_selected_set(prev, EINA_TRUE);
+   elm_gen_item_selected_set(prev, EINA_TRUE);
    elm_gengrid_item_show(prev);
    return EINA_TRUE;
 }
@@ -533,7 +533,7 @@ _item_single_select_right(Widget_Data *wd)
 
    _deselect_all_items(wd);
 
-   elm_gengrid_item_selected_set(next, EINA_TRUE);
+   elm_gen_item_selected_set(next, EINA_TRUE);
    elm_gengrid_item_show(next);
    return EINA_TRUE;
 }

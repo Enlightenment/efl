@@ -275,7 +275,7 @@ test_cursor2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_inf
         else
            elm_gengrid_item_cursor_set(ti[i].item, ELM_CURSOR_CLOCK);
         if (!(i % 5))
-           elm_gengrid_item_selected_set(ti[i].item, EINA_TRUE);
+           elm_gen_item_selected_set(ti[i].item, EINA_TRUE);
      }
    elm_box_pack_end(bx, grid);
    evas_object_show(grid);

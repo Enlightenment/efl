@@ -287,7 +287,7 @@ my_gl_disable(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED
         return;
      }
    elm_genlist_item_disabled_set(gli, 1);
-   elm_genlist_item_selected_set(gli, 0);
+   elm_gen_item_selected_set(gli, 0);
    elm_genlist_item_update(gli);
 }
 
@@ -313,7 +313,7 @@ my_gl_first(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__
    Elm_Genlist_Item *gli = elm_genlist_first_item_get(gl);
    if (!gli) return;
    elm_genlist_item_show(gli);
-   elm_genlist_item_selected_set(gli, 1);
+   elm_gen_item_selected_set(gli, 1);
 }
 
 static void
@@ -323,7 +323,7 @@ my_gl_last(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
    Elm_Genlist_Item *gli = elm_genlist_last_item_get(gl);
    if (!gli) return;
    elm_genlist_item_show(gli);
-   elm_genlist_item_selected_set(gli, 1);
+   elm_gen_item_selected_set(gli, 1);
 }
 
 static Eina_Bool

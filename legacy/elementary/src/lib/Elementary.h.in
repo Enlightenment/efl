@@ -8939,7 +8939,7 @@ extern "C" {
     *
     * @ingroup Gengrid
     */
-   EAPI void               elm_gengrid_item_selected_set(Elm_Gengrid_Item *item, Eina_Bool selected) EINA_ARG_NONNULL(1);
+   EINA_DEPRECATED EAPI void elm_gengrid_item_selected_set(Elm_Gengrid_Item *item, Eina_Bool selected) EINA_ARG_NONNULL(1);
 
    /**
     * Get whether a given gengrid item is selected or not
@@ -18852,7 +18852,7 @@ extern "C" {
     *
     * @ingroup Genlist
     */
-   EAPI void               elm_genlist_item_selected_set(Elm_Genlist_Item *item, Eina_Bool selected) EINA_ARG_NONNULL(1);
+   EINA_DEPRECATED EAPI void elm_genlist_item_selected_set(Elm_Genlist_Item *item, Eina_Bool selected) EINA_ARG_NONNULL(1);
    /**
     * Get whether a given genlist item is selected or not
     *

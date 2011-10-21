@@ -565,7 +565,7 @@ test_tooltip2(void *data       __UNUSED__,
         else
           elm_gengrid_item_tooltip_text_set(ti[i].item, "Testing Y");
         if (!(i % 5))
-          elm_gengrid_item_selected_set(ti[i].item, EINA_TRUE);
+          elm_gen_item_selected_set(ti[i].item, EINA_TRUE);
      }
 
    elm_box_pack_end(bx, grid);
