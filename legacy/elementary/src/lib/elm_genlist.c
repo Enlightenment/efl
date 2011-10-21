@@ -83,6 +83,8 @@ struct _Widget_Data
    Eina_Bool         wasselected : 1;
    Eina_Bool         always_select : 1;
    Eina_Bool         clear_me : 1;
+   Eina_Bool         h_bounce : 1;
+   Eina_Bool         v_bounce : 1;
    Ecore_Cb          del_cb, calc_cb, sizing_cb;
    Ecore_Cb          clear_cb;
    ////////////////////////////////////
@@ -1323,7 +1325,7 @@ _mouse_up(void        *data,
         edje_object_signal_emit(VIEW(it), "elm,state,reorder,disabled", "elm");
         it->wd->reorder_it = it->wd->reorder_rel = NULL;
         elm_smart_scroller_hold_set(it->wd->scr, EINA_FALSE);
-        elm_smart_scroller_bounce_allow_set(it->wd->scr, EINA_FALSE, EINA_TRUE);
+        elm_smart_scroller_bounce_allow_set(it->wd->scr, it->wd->h_bounce, it->wd->v_bounce);
      }
    if (it->wd->longpressed)
      {
@@ -4528,6 +4530,8 @@ elm_genlist_bounce_set(Evas_Object *obj,
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
    elm_smart_scroller_bounce_allow_set(wd->scr, h_bounce, v_bounce);
+   wd->h_bounce = h_bounce;
+   wd->v_bounce = v_bounce;
 }
 
 EAPI void
@@ -4538,7 +4542,8 @@ elm_genlist_bounce_get(const Evas_Object *obj,
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
-   elm_smart_scroller_bounce_allow_get(wd->scr, h_bounce, v_bounce);
+   if (h_bounce) *h_bounce = wd->h_bounce;
+   if (v_bounce) *v_bounce = wd->v_bounce;
 }
 
 EAPI void

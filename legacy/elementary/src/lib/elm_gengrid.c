@@ -59,6 +59,8 @@ struct _Widget_Data
    Eina_Bool         wasselected : 1;
    Eina_Bool         always_select : 1;
    Eina_Bool         clear_me : 1;
+   Eina_Bool         h_bounce : 1;
+   Eina_Bool         v_bounce : 1;
    Ecore_Cb          del_cb, calc_cb, sizing_cb;
    Ecore_Cb          clear_cb;
    ////////////////////////////////////
@@ -71,8 +73,6 @@ struct _Widget_Data
 
    Eina_Bool         horizontal : 1;
    Eina_Bool         longpressed : 1;
-   Eina_Bool         h_bounce : 1;
-   Eina_Bool         v_bounce : 1;
    Eina_Bool         reorder_item_changed : 1;
    Eina_Bool         move_effect_enabled : 1;
 };
