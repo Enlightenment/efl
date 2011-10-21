@@ -3975,7 +3975,7 @@ elm_genlist_item_selected_set(Elm_Gen_Item *it,
                               Eina_Bool         selected)
 {
    ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(it);
-   Widget_Data *wd = elm_widget_data_get(WIDGET(it));
+   Widget_Data *wd = it->wd;
    if (!wd) return;
    if ((it->delete_me) || (it->disabled)) return;
    selected = !!selected;

@@ -2857,7 +2857,7 @@ EAPI void
 elm_gengrid_item_show(Elm_Gen_Item *it)
 {
    ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(it);
-   Widget_Data *wd = elm_widget_data_get(WIDGET(it));
+   Widget_Data *wd = it->wd;
    Evas_Coord minx = 0, miny = 0;
 
    if (!wd) return;
@@ -2885,7 +2885,7 @@ elm_gengrid_item_bring_in(Elm_Gen_Item *it)
    if (it->delete_me) return;
 
    Evas_Coord minx = 0, miny = 0;
-   Widget_Data *wd = elm_widget_data_get(WIDGET(it));
+   Widget_Data *wd = it->wd;
    if (!wd) return;
    _pan_min_get(wd->pan_smart, &minx, &miny);
 
