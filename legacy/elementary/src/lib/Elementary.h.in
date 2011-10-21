@@ -9294,7 +9294,7 @@ extern "C" {
     *
     * @ingroup Gengrid
     */
-   EAPI void               elm_gengrid_clear(Evas_Object *obj) EINA_ARG_NONNULL(1);
+   EINA_DEPRECATED EAPI void elm_gengrid_clear(Evas_Object *obj) EINA_ARG_NONNULL(1);
 
    /**
     * Get the selected item in a given gengrid widget
@@ -18191,7 +18191,7 @@ extern "C" {
     *
     * @ingroup Genlist
     */
-   EAPI void              elm_genlist_clear(Evas_Object *obj) EINA_ARG_NONNULL(1);
+   EINA_DEPRECATED EAPI void elm_genlist_clear(Evas_Object *obj) EINA_ARG_NONNULL(1);
    /**
     * Enable or disable multi-selection in the genlist
     *

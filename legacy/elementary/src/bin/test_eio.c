@@ -111,7 +111,7 @@ _gl_del(void *data __UNUSED__, Evas_Object *obj __UNUSED__)
 static void
 _test_eio_clear(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
 {
-   elm_genlist_clear(data);
+   elm_gen_clear(data);
 }
 
 void

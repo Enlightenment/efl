@@ -630,8 +630,8 @@ _signal_first(Widget_Request *wr)
    evas_object_smart_callback_call(wr->obj, SIG_DIRECTORY_OPEN, (void *)wr->path);
    if (!wr->parent)
      {
-        elm_genlist_clear(wr->wd->files_list);
-        elm_gengrid_clear(wr->wd->files_grid);
+        elm_gen_clear(wr->wd->files_list);
+        elm_gen_clear(wr->wd->files_grid);
         eina_stringshare_replace(&wr->wd->path, wr->path);
         _do_anchors(wr->obj, wr->path);
      }
@@ -727,8 +727,8 @@ _populate(Evas_Object      *obj,
    evas_object_smart_callback_call(obj, SIG_DIRECTORY_OPEN, (void *)path);
    if (!parent)
      {
-        elm_genlist_clear(wd->files_list);
-        elm_gengrid_clear(wd->files_grid);
+        elm_gen_clear(wd->files_list);
+        elm_gen_clear(wd->files_grid);
         eina_stringshare_replace(&wd->path, path);
         _do_anchors(obj, path);
      }

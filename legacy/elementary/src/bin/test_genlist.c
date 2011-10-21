@@ -179,7 +179,7 @@ static void
 my_gl_clear(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *gl = data;
-   elm_genlist_clear(gl);
+   elm_gen_clear(gl);
 }
 
 static void
