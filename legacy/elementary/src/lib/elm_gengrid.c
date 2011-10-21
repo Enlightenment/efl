@@ -363,7 +363,7 @@ _item_multi_select_left(Widget_Data *wd)
 
    Elm_Gen_Item *prev = elm_gengrid_item_prev_get(wd->last_selected_item);
    if (!prev) return EINA_TRUE;
-   if (elm_gengrid_item_selected_get(prev))
+   if (elm_gen_item_selected_get(prev))
      {
         elm_gen_item_selected_set(wd->last_selected_item, EINA_FALSE);
         wd->last_selected_item = prev;
@@ -385,7 +385,7 @@ _item_multi_select_right(Widget_Data *wd)
 
    Elm_Gen_Item *next = elm_gengrid_item_next_get(wd->last_selected_item);
    if (!next) return EINA_TRUE;
-   if (elm_gengrid_item_selected_get(next))
+   if (elm_gen_item_selected_get(next))
      {
         elm_gen_item_selected_set(wd->last_selected_item, EINA_FALSE);
         wd->last_selected_item = next;

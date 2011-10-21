@@ -8952,7 +8952,7 @@ extern "C" {
     *
     * @ingroup Gengrid
     */
-   EAPI Eina_Bool          elm_gengrid_item_selected_get(const Elm_Gengrid_Item *item) EINA_ARG_NONNULL(1);
+   EINA_DEPRECATED EAPI Eina_Bool elm_gengrid_item_selected_get(const Elm_Gengrid_Item *item) EINA_ARG_NONNULL(1);
 
    /**
     * Get the real Evas object created to implement the view of a
@@ -18864,7 +18864,7 @@ extern "C" {
     *
     * @ingroup Genlist
     */
-   EAPI Eina_Bool          elm_genlist_item_selected_get(const Elm_Genlist_Item *item) EINA_ARG_NONNULL(1);
+   EINA_DEPRECATED EAPI Eina_Bool elm_genlist_item_selected_get(const Elm_Genlist_Item *item) EINA_ARG_NONNULL(1);
    /**
     * Sets the expanded state of an item.
     *
