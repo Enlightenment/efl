@@ -1866,7 +1866,7 @@ _item_realize(Elm_Genlist_Item *it,
 
         if (it->flags & ELM_GENLIST_ITEM_SUBITEMS)
           strncpy(buf, "tree", sizeof(buf));
-        else strncpy(buf, "it", sizeof(buf));
+        else strncpy(buf, "item", sizeof(buf));
         if (it->wd->compress)
           strncat(buf, "_compress", sizeof(buf) - strlen(buf));
 
@@ -2930,7 +2930,7 @@ _mode_item_realize(Elm_Genlist_Item *it)
    evas_object_smart_member_add(it->mode_view, it->wd->pan_smart);
    elm_widget_sub_object_add(WIDGET(it), it->mode_view);
 
-   strncpy(buf, "it", sizeof(buf));
+   strncpy(buf, "item", sizeof(buf));
    if (it->wd->compress)
      strncat(buf, "_compress", sizeof(buf) - strlen(buf));
 
