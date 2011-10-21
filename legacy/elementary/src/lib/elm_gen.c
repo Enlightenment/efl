@@ -517,3 +517,10 @@ elm_gen_clear(Evas_Object *obj)
    evas_event_thaw(evas_object_evas_get(wd->obj));
    evas_event_thaw_eval(evas_object_evas_get(wd->obj));
 }
+
+EAPI Eina_Bool
+elm_gen_item_selected_get(const Elm_Gen_Item *it)
+{
+   ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(it, EINA_FALSE);
+   return it->selected;
+}

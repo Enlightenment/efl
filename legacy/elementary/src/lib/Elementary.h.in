@@ -7922,6 +7922,7 @@ extern "C" {
      };
    EAPI void elm_gen_clear(Evas_Object *obj);
    EAPI void elm_gen_item_selected_set(Elm_Gen_Item *it, Eina_Bool selected);
+   EAPI Eina_Bool elm_gen_item_selected_get(const Elm_Gen_Item *it);
 
    /**
     * @defgroup Gengrid Gengrid (Generic grid)
