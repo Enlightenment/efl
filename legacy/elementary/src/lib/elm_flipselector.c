@@ -26,7 +26,7 @@
 
 struct _Elm_Flipselector_Item
 {
-   Elm_Widget_Item base;
+   ELM_WIDGET_ITEM;
    const char *label;
    Evas_Smart_Cb func;
    void *data;

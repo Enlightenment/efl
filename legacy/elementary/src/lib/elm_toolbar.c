@@ -27,7 +27,7 @@ struct _Widget_Data
 
 struct _Elm_Toolbar_Item
 {
-   Elm_Widget_Item base;
+   ELM_WIDGET_ITEM;
    EINA_INLIST;
    const char *label;
    const char *icon_str;

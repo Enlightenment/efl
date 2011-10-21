@@ -32,7 +32,7 @@ struct _Widget_Data
 
 struct _Elm_List_Item
 {
-   Elm_Widget_Item base;
+   ELM_WIDGET_ITEM;
    Widget_Data *wd;
    Eina_List *node;
    const char *label;

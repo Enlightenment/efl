@@ -14,7 +14,7 @@ struct _Widget_Data
 
 struct _Elm_Hoversel_Item
 {
-   Elm_Widget_Item base;
+   ELM_WIDGET_ITEM;
    const char *label;
    const char *icon_file;
    const char *icon_group;

@@ -41,7 +41,7 @@ struct _Widget_Data
 
 struct _Elm_Diskselector_Item
 {
-   Elm_Widget_Item base;
+   ELM_WIDGET_ITEM;
    Eina_List *node;
    Evas_Object *icon;
    const char *label;

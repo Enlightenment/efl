@@ -15,7 +15,7 @@ struct _Widget_Data
 
 struct _Elm_Segment_Item
 {
-   Elm_Widget_Item base;
+   ELM_WIDGET_ITEM;
    Evas_Object *icon;
    const char *label;
    int seg_index;

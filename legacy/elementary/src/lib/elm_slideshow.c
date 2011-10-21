@@ -5,7 +5,7 @@ typedef struct _Widget_Data Widget_Data;
 
 struct _Elm_Slideshow_Item
 {
-   Elm_Widget_Item base;
+   ELM_WIDGET_ITEM;
 
    Eina_List *l, *l_built;
 

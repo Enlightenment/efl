@@ -16,7 +16,7 @@ typedef struct _Item_Cache  Item_Cache;
 
 struct _Elm_Genlist_Item
 {
-   Elm_Widget_Item               base;
+   ELM_WIDGET_ITEM;
    EINA_INLIST;
    Widget_Data                  *wd;
    const Elm_Genlist_Item_Class *itc;

@@ -33,7 +33,7 @@ struct _Elm_Naviframe_Text_Item_Pair
 
 struct _Elm_Naviframe_Item
 {
-   Elm_Widget_Item    base;
+   ELM_WIDGET_ITEM;
    EINA_INLIST;
    Eina_Inlist       *content_list;
    Eina_Inlist       *text_list;

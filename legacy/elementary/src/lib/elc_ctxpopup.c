@@ -6,7 +6,7 @@ typedef struct _Elm_Ctxpopup_Item Elm_Ctxpopup_Item;
 
 struct _Elm_Ctxpopup_Item
 {
-   Elm_Widget_Item base;
+   ELM_WIDGET_ITEM;
    const char *label;
    Evas_Object *icon;
    Evas_Smart_Cb func;
