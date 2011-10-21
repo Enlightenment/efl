@@ -276,6 +276,7 @@ static const char SIG_MULTI_SWIPE_DOWN[] = "multi,swipe,down";
 static const char SIG_MULTI_PINCH_OUT[] = "multi,pinch,out";
 static const char SIG_MULTI_PINCH_IN[] = "multi,pinch,in";
 static const char SIG_SWIPE[] = "swipe";
+static const char SIG_MOVED[] = "moved";
 
 static const Evas_Smart_Cb_Description _signals[] = {
    {SIG_CLICKED_DOUBLE, ""},
@@ -314,6 +315,7 @@ static const Evas_Smart_Cb_Description _signals[] = {
    {SIG_MULTI_PINCH_OUT, ""},
    {SIG_MULTI_PINCH_IN, ""},
    {SIG_SWIPE, ""},
+   {SIG_MOVED, ""},
    {NULL, NULL}
 };
 
@@ -3474,9 +3476,7 @@ _item_move_after(Elm_Genlist_Item *it, Elm_Genlist_Item *after)
    if (after->group_item) it->group_item = after->group_item;
    _item_queue(it->wd, it);
 
-   // TODO: change this to smart callback
-   if (it->itc->func.moved)
-     it->itc->func.moved(WIDGET(it), it, after, EINA_TRUE);
+   evas_object_smart_callback_call(WIDGET(it), SIG_MOVED, it);
 }
 
 static void
@@ -3494,9 +3494,7 @@ _item_move_before(Elm_Genlist_Item *it, Elm_Genlist_Item *before)
    if (before->group_item) it->group_item = before->group_item;
    _item_queue(it->wd, it);
 
-   // TODO: change this to smart callback
-   if (it->itc->func.moved)
-     it->itc->func.moved(WIDGET(it), it, before, EINA_FALSE);
+   evas_object_smart_callback_call(WIDGET(it), SIG_MOVED, it);
 }
 
 EAPI Elm_Genlist_Item *

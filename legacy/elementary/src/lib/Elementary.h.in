@@ -18082,6 +18082,7 @@ extern "C" {
     *   pinched out.  "- @c multi,pinch,in" - This is called when the genlist is
     *   multi-touch pinched in.
     * - @c "swipe" - This is called when the genlist is swiped.
+    * - @c "moved" - This is called when a genlist item is moved.
     * - @c "language,changed" - This is called when the program's language is
     *   changed.
     *
@@ -18123,7 +18124,6 @@ extern "C" {
    typedef Evas_Object *(*Elm_Genlist_Item_Icon_Get_Cb)  (void *data, Evas_Object *obj, const char *part); /**< Icon fetching class function for genlist item classes. */
    typedef Eina_Bool    (*Elm_Genlist_Item_State_Get_Cb) (void *data, Evas_Object *obj, const char *part); /**< State fetching class function for genlist item classes. */
    typedef void         (*Elm_Genlist_Item_Del_Cb)      (void *data, Evas_Object *obj); /**< Deletion class function for genlist item classes. */
-   typedef void         (*GenlistItemMovedFunc)    (Evas_Object *obj, Elm_Genlist_Item *item, Elm_Genlist_Item *rel_item, Eina_Bool move_after); /** TODO: remove this by SeoZ **/
 
    typedef char        *(*GenlistItemLabelGetFunc) (void *data, Evas_Object *obj, const char *part) EINA_DEPRECATED; /** DEPRECATED. Use Elm_Genlist_Item_Label_Get_Cb instead. */
    typedef Evas_Object *(*GenlistItemIconGetFunc)  (void *data, Evas_Object *obj, const char *part) EINA_DEPRECATED; /** DEPRECATED. Use Elm_Genlist_Item_Icon_Get_Cb instead. */
@@ -18149,7 +18149,6 @@ extern "C" {
              Elm_Genlist_Item_Icon_Get_Cb   icon_get; /**< Icon fetching class function for genlist item classes. */
              Elm_Genlist_Item_State_Get_Cb  state_get; /**< State fetching class function for genlist item classes. */
              Elm_Genlist_Item_Del_Cb        del; /**< Deletion class function for genlist item classes. */
-             GenlistItemMovedFunc     moved; // TODO: do not use this. change this to smart callback.
           } func;
         const char                *mode_item_style;
      };
