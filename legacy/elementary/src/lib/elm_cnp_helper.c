@@ -600,6 +600,7 @@ targets_converter(char *target __UNUSED__, void *data, int size, void **data_ret
      {
         if (data_ret)
           {
+             *data_ret = malloc(size * sizeof(char) + 1);
              memcpy(*data_ret, data, size);
              ((char**)(data_ret))[0][size] = 0;
           }
@@ -811,9 +812,9 @@ notify_handler_uri(Cnp_Selection *sel, Ecore_X_Event_Selection_Notify *notify)
      }
    else
      {
+        stripstr = p = malloc(data->length * sizeof(char) + 1);
         memcpy(stripstr, data->data, data->length);
         stripstr[data->length] = 0;
-        p = stripstr;
      }
 
    if (!p)
@@ -988,6 +989,7 @@ text_converter(char *target __UNUSED__, void *data, int size, void **data_ret, i
      {
         if (data_ret)
           {
+             *data_ret = malloc(size * sizeof(char) + 1);
              memcpy(*data_ret, data, size);
              ((char**)(data_ret))[0][size] = 0;
           }
@@ -1034,6 +1036,7 @@ general_converter(char *target __UNUSED__, void *data, int size, void **data_ret
      {
         if (data_ret)
           {
+             *data_ret = malloc(size * sizeof(char) + 1);
              memcpy(*data_ret, data, size);
              ((char**)(data_ret))[0][size] = 0;
           }
