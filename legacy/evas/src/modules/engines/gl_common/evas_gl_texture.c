@@ -112,6 +112,8 @@ _tex_2d(int intfmt, int w, int h, int fmt, int type)
    int intfmtret = -1;
    glTexImage2D(GL_TEXTURE_2D, 0, intfmt, w, h, 0, fmt, type, NULL);
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+#ifdef GL_TEXTURE_INTERNAL_FORMAT
+// this is not in opengles!!! hrrrm   
    glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, 
                             GL_TEXTURE_INTERNAL_FORMAT, &intfmtret);
    if (intfmtret != intfmt)
@@ -119,6 +121,7 @@ _tex_2d(int intfmt, int w, int h, int fmt, int type)
         ERR("Fail tex alloc %ix%i", w, h);
 //        XXX send async err to evas
      }
+#endif   
 }
 
 static void
