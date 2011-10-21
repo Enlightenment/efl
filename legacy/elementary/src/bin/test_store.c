@@ -34,7 +34,7 @@ _st_longpress(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
 // store callbacks to handle loading/parsing/freeing of store items from src
 static Elm_Genlist_Item_Class itc1 =
 {
-  "message", { NULL, NULL, NULL, NULL, NULL }, NULL
+  "message", { NULL, NULL, NULL, NULL}
 };
 
 static const Elm_Store_Item_Mapping it1_mapping[] =
