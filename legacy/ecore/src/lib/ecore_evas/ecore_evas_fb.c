@@ -188,7 +188,6 @@ _ecore_evas_event_mouse_wheel(void *data __UNUSED__, int type __UNUSED__, void *
    return EINA_FALSE; /* dont pass it on */
 }
 
-/* XXX: unused
 static int
 _ecore_evas_fb_render(Ecore_Evas *ee)
 {
@@ -223,7 +222,6 @@ _ecore_evas_fb_render(Ecore_Evas *ee)
      evas_norender(ee->evas);
    return rend;
 }
-*/
 
 static int
 _ecore_evas_fb_init(int w, int h)
@@ -675,7 +673,7 @@ ecore_evas_fb_new(const char *disp_name, int rotation, int w, int h)
    evas_key_lock_add(ee->evas, "Num_Lock");
    evas_key_lock_add(ee->evas, "Scroll_Lock");
 
-   ee->engine.func->fn_render = _ecore_evas_buffer_render;
+   ee->engine.func->fn_render = _ecore_evas_fb_render;
    _ecore_evas_register(ee);
    fb_ee = ee;
 
