@@ -36,6 +36,12 @@ struct _Widget_Data
    Elm_Gen_Item     *reorder_it; /* item currently being repositioned */
    Ecore_Job        *calc_job;
    int               walking;
+   Eina_Bool         reorder_mode : 1;
+   Eina_Bool         on_hold : 1;
+   Eina_Bool         multi : 1;
+   Eina_Bool         no_select : 1;
+   Eina_Bool         wasselected : 1;
+   Eina_Bool         always_select : 1;
    ////////////////////////////////////
    Evas_Object      *scr;
    Evas_Object      *pan_smart;
@@ -53,16 +59,10 @@ struct _Widget_Data
    long              items_lost;
 
    Eina_Bool         horizontal : 1;
-   Eina_Bool         on_hold : 1;
    Eina_Bool         longpressed : 1;
-   Eina_Bool         multi : 1;
-   Eina_Bool         no_select : 1;
-   Eina_Bool         wasselected : 1;
-   Eina_Bool         always_select : 1;
    Eina_Bool         clear_me : 1;
    Eina_Bool         h_bounce : 1;
    Eina_Bool         v_bounce : 1;
-   Eina_Bool         reorder_mode : 1;
    Eina_Bool         reorder_item_changed : 1;
    Eina_Bool         move_effect_enabled : 1;
 };

@@ -55,6 +55,12 @@ struct _Widget_Data
    Elm_Gen_Item     *reorder_it; /* item currently being repositioned */
    Ecore_Job        *calc_job;
    int               walking;
+   Eina_Bool         reorder_mode : 1;
+   Eina_Bool         on_hold : 1;
+   Eina_Bool         multi : 1;
+   Eina_Bool         no_select : 1;
+   Eina_Bool         wasselected : 1;
+   Eina_Bool         always_select : 1;
    ////////////////////////////////////
    Evas_Object      *scr; /* a smart scroller object which is used internally in genlist */
    Evas_Object      *pan_smart; /* "elm_genlist_pan" evas smart object. this is an extern pan of smart scroller(scr). */
@@ -82,19 +88,13 @@ struct _Widget_Data
    Eina_Bool         multi_down : 1;
    Eina_Bool         multi_timeout : 1;
    Eina_Bool         multitouched : 1;
-   Eina_Bool         on_hold : 1;
-   Eina_Bool         multi : 1;
-   Eina_Bool         always_select : 1;
    Eina_Bool         longpressed : 1;
-   Eina_Bool         wasselected : 1;
-   Eina_Bool         no_select : 1;
    Eina_Bool         bring_in : 1;
    Eina_Bool         compress : 1;
    Eina_Bool         height_for_width : 1;
    Eina_Bool         homogeneous : 1;
    Eina_Bool         clear_me : 1;
    Eina_Bool         swipe : 1;
-   Eina_Bool         reorder_mode : 1;
    Eina_Bool         reorder_pan_move : 1;
    Eina_Bool         auto_scroll_enabled : 1;
    Eina_Bool         pan_resized : 1;

@@ -13,6 +13,12 @@ struct _Widget_Data
    Elm_Gen_Item     *reorder_it; /* item currently being repositioned */
    Ecore_Job        *calc_job;
    int        walking;
+   Eina_Bool         reorder_mode : 1;
+   Eina_Bool         on_hold : 1;
+   Eina_Bool         multi : 1;
+   Eina_Bool         no_select : 1;
+   Eina_Bool         wasselected : 1;
+   Eina_Bool         always_select : 1;
 };
 
 static const char *
