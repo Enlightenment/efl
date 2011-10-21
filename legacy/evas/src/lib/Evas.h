@@ -2653,20 +2653,36 @@ EAPI void              evas_image_cache_reload           (Evas *e) EINA_ARG_NONN
  * @param e The given evas pointer.
  * @param size The cache size.
  *
- * This function sets the image cache of canvas.
+ * This function sets the image cache of canvas in bytes.
  *
  */
 EAPI void              evas_image_cache_set              (Evas *e, int size) EINA_ARG_NONNULL(1);
 
 /**
- * Set the image cache
+ * Get the image cache
  *
  * @param e The given evas pointer.
  *
- * This function returns the image cache of canvas.
+ * This function returns the image cache size of canvas in bytes.
  *
  */
 EAPI int               evas_image_cache_get              (const Evas *e) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
+
+/**
+ * Get the maximum image size evas can possibly handle
+ *
+ * @param e The given evas pointer.
+ * @param maxw Pointer to hold the return value in pixels of the maxumum width
+ * @param maxh Pointer to hold the return value in pixels of the maximum height
+ *
+ * This function returns the larges image or surface size that evas can handle
+ * in pixels, and if there is one, returns EINA_TRUE. It returns EINA_FALSE
+ * if no extra constraint on maximum image size exists. You still should
+ * check the return values of @p maxw and @p maxh as there may still be a
+ * limit, just a much higher one.
+ *
+ */
+EAPI Eina_Bool         evas_image_max_size_get           (const Evas *e, int *maxw, int *maxh) EINA_ARG_NONNULL(1) EINA_PURE;
 
 /**
  * @}

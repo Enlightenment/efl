@@ -834,6 +834,9 @@ struct _Evas_Func
    int (*image_animated_loop_count_get)  (void *data, void *image);
    double (*image_animated_frame_duration_get) (void *data, void *image, int start_frame, int frame_num);
    Eina_Bool (*image_animated_frame_set) (void *data, void *image, int frame_index);
+
+   /* max size query */
+   void (*image_max_size_get)            (void *data, int *maxw, int *maxh);
 };
 
 struct _Evas_Image_Load_Func

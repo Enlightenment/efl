@@ -3764,6 +3764,14 @@ eng_image_animated_frame_set(void *data __UNUSED__, void *image, int frame_index
    return EINA_TRUE;
 }
 
+static void
+eng_image_max_size_get(void *data, int *maxw, int *maxh)
+{
+   Render_Engine *re = (Render_Engine *)data;
+   if (maxw) *maxw = re->win->gl_context->shared->info.max_texture_size;
+   if (maxh) *maxh = re->win->gl_context->shared->info.max_texture_size;
+}
+
 static int
 module_open(Evas_Module *em)
 {
@@ -3880,6 +3888,8 @@ module_open(Evas_Module *em)
    ORD(image_animated_frame_duration_get);
    ORD(image_animated_frame_set);
 
+   ORD(image_max_size_get);
+   
    /* now advertise out own api */
    em->functions = (void *)(&func);
    return 1;
