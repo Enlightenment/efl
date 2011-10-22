@@ -749,7 +749,7 @@ extern "C" {
     * shared data directory for data files. For example, if the system
     * directory is @c /usr/local/share, then this directory name is
     * appended, creating @c /usr/local/share/myapp, if it @p was @c
-    * "myapp". It is expected the application installs data files in
+    * "myapp". It is expected that the application installs data files in
     * this directory.
     *
     * The @p checkfile is a file name or path of something inside the
@@ -773,7 +773,7 @@ extern "C" {
 
    /**
     * Provide information on the @b fallback application's binaries
-    * directory, on scenarios where they get overriden by
+    * directory, in scenarios where they get overriden by
     * elm_app_info_set().
     *
     * @param dir The path to the default binaries directory (compile time
@@ -843,7 +843,7 @@ extern "C" {
     * elm_app_info_set() and the way (environment) the application was
     * run from.
     *
-    * @return The directory prefix the application is actually using
+    * @return The directory prefix the application is actually using.
     */
    EAPI const char  *elm_app_prefix_dir_get(void);
 
@@ -853,7 +853,7 @@ extern "C" {
     * was run from.
     *
     * @return The binaries directory prefix the application is actually
-    * using
+    * using.
     */
    EAPI const char  *elm_app_bin_dir_get(void);
 
@@ -863,7 +863,7 @@ extern "C" {
     * was run from.
     *
     * @return The libraries directory prefix the application is actually
-    * using
+    * using.
     */
    EAPI const char  *elm_app_lib_dir_get(void);
 
@@ -873,7 +873,7 @@ extern "C" {
     * was run from.
     *
     * @return The data directory prefix the application is actually
-    * using
+    * using.
     */
    EAPI const char  *elm_app_data_dir_get(void);
 
@@ -883,7 +883,7 @@ extern "C" {
     * was run from.
     *
     * @return The locale directory prefix the application is actually
-    * using
+    * using.
     */
    EAPI const char  *elm_app_locale_dir_get(void);
 
@@ -904,7 +904,7 @@ extern "C" {
    EAPI Eina_Bool    elm_need_e_dbus(void);
 
    /**
-    * This must be called before any other function that handle with
+    * This must be called before any other function that deals with
     * elm_thumb objects or ethumb_client instances.
     *
     * @ingroup Thumb
@@ -912,7 +912,7 @@ extern "C" {
    EAPI Eina_Bool    elm_need_ethumb(void);
 
    /**
-    * This must be called before any other function that handle with
+    * This must be called before any other function that deals with
     * elm_web objects or ewk_view instances.
     *
     * @ingroup Web
@@ -942,7 +942,7 @@ extern "C" {
    EAPI Eina_Bool    elm_policy_set(unsigned int policy, int value);
 
    /**
-    * Gets the policy value set for given policy identifier.
+    * Gets the policy value for given policy identifier.
     *
     * @param policy policy identifier, as in #Elm_Policy.
     * @return The currently set policy value, for that
