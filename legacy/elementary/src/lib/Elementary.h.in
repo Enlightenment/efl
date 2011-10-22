@@ -10535,6 +10535,10 @@ extern "C" {
     * hover is clicked it is dismissed(hidden), if the contents of the hover are
     * clicked that @b doesn't cause the hover to be dismissed.
     *
+    * A Hover object has two parents. One parent that owns it during creation
+    * and the other parent being the one over which the hover object spans.
+    *
+    *
     * @note The hover object will take up the entire space of @p target
     * object.
     *
@@ -17678,10 +17682,19 @@ extern "C" {
     * @image html img/widget/actionslider/preview-00.png
     * @image latex img/widget/actionslider/preview-00.eps
     *
-    * A actionslider is a switcher for 2 or 3 labels with customizable magnet
-    * properties. The indicator is the element the user drags to choose a label.
-    * When the position is set with magnet, when released the indicator will be
-    * moved to it if it's nearest the magnetized position.
+    * An actionslider is a switcher for 2 or 3 labels with customizable magnet
+    * properties. The user drags and releases the indicator, to choose a label.
+    *
+    * Labels occupy the following positions.
+    * a. Left
+    * b. Right
+    * c. Center
+    *
+    * Positions can be enabled or disabled.
+    *
+    * Magnets can be set on the above positions.
+    *
+    * When the indicator is released, it will move to its nearest "enabled and magnetized" position.
     *
     * @note By default all positions are set as enabled.
     *
