@@ -25,8 +25,8 @@ ecore_x_icccm_command_set(Ecore_X_Window win,
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    CHECK_XCB_CONN;
 
-   for (i = 0, nbytes = 0; i < argc; i++)
-     nbytes += strlen(argv[i]) + 1;
+   for (i = 0, nbytes = 0; i < argc; i++) 
+     if (argv[i]) nbytes += strlen(argv[i]) + 1;
 
    buf = malloc(sizeof(char) * nbytes);
    if (!buf) return;
