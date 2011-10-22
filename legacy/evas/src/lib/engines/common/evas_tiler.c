@@ -1121,6 +1121,8 @@ evas_common_tilebuf_clear(Tilebuf *tb)
    evas_common_regionbuf_clear(tb->rb);
  */
 #elif defined(EVAS_RECT_SPLIT)
+   tb->prev_add.x = tb->prev_add.y = tb->prev_add.w = tb->prev_add.h = 0;
+   tb->prev_del.x = tb->prev_del.y = tb->prev_del.w = tb->prev_del.h = 0;
    rect_list_clear(&tb->rects);
    tb->need_merge = 0;
 #else
