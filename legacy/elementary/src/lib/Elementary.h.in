@@ -1004,7 +1004,7 @@ extern "C" {
 #define elm_object_text_get(obj) elm_object_text_part_get((obj), NULL)
 
    /**
-    * Set the text for an objects part, marking it as translatable
+    * Set the text for an objects' part, marking it as translatable.
     *
     * The string to set as @p text must be the original one. Do not pass the
     * return of @c gettext() here. Elementary will translate the string
@@ -1019,7 +1019,7 @@ extern "C" {
     * its own translatable strings, that should not be mixed with those of
     * programs using the library.
     *
-    * @param obj The object
+    * @param obj The object containing the text part
     * @param part The name of the part to set
     * @param domain The translation domain to use
     * @param text The original, non-translated text to set
@@ -1095,9 +1095,9 @@ extern "C" {
 #define elm_object_content_unset(obj) elm_object_content_part_unset((obj), NULL)
 
    /**
-    * Get the wiget object's handle which contains a given item
+    * Get the widget object's handle which contains a given item
     *
-    * @param item The Elementary object item 
+    * @param item The Elementary object item
     * @return The widget object
     *
     * @note This returns the widget object itself that an item belongs to.
@@ -1166,7 +1166,7 @@ extern "C" {
 #define elm_object_item_text_set(it, label) elm_object_item_text_part_set((it), NULL, (label))
 
    /**
-    * Get a label of an object
+    * Get a label of an object item
     *
     * @param it The Elementary object item
     * @param part The text part name to get (NULL for the default label)
@@ -1321,7 +1321,7 @@ extern "C" {
    /**
     * Set the configured cache flush enabled state
     *
-    * This sets the globally configured cache flush enabled state
+    * This sets the globally configured cache flush enabled state.
     *
     * @param size The cache flush enabled state
     * @ingroup Caches
@@ -1345,7 +1345,7 @@ extern "C" {
    /**
     * Get the configured font cache size
     *
-    * This gets the globally configured font cache size, in bytes
+    * This gets the globally configured font cache size, in bytes.
     *
     * @return The font cache size
     * @ingroup Caches
@@ -4777,7 +4777,7 @@ extern "C" {
     *
     * @param obj The icon object
     * @param file The path to file that will be used as icon image
-    * @param group The group that the icon belongs to in edje file
+    * @param group The group that the icon belongs to an edje file
     *
     * @return (@c EINA_TRUE = success, @c EINA_FALSE = error)
     *
@@ -4810,8 +4810,8 @@ extern "C" {
     * Get the file that will be used as icon.
     *
     * @param obj The icon object
-    * @param file The path to file that will be used as icon icon image
-    * @param group The group that the icon belongs to in edje file
+    * @param file The path to file that will be used as the icon image
+    * @param group The group that the icon belongs to, in edje file
     *
     * @see elm_icon_file_set()
     *
@@ -4860,7 +4860,7 @@ extern "C" {
     */
    EAPI const char           *elm_icon_standard_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
    /**
-    * Set the smooth effect for an icon object.
+    * Set the smooth scaling for an icon object.
     *
     * @param obj The icon object
     * @param smooth @c EINA_TRUE if smooth scaling should be used, @c EINA_FALSE
@@ -4880,7 +4880,7 @@ extern "C" {
     */
    EAPI void                  elm_icon_smooth_set(Evas_Object *obj, Eina_Bool smooth) EINA_ARG_NONNULL(1);
    /**
-    * Get the smooth effect for an icon object.
+    * Get whether smooth scaling is enabled for an icon object.
     *
     * @param obj The icon object
     * @return @c EINA_TRUE if smooth scaling is enabled, @c EINA_FALSE otherwise.
@@ -12380,7 +12380,7 @@ extern "C" {
     *
     * This function sets the corner of the bubble. The corner will be used to
     * determine where the arrow in the frame points to and where label, icon and
-    * info arre shown.
+    * info are shown.
     *
     * Possible values for corner are:
     * @li "top_left" - Default
