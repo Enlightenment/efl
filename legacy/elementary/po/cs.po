@@ -1,0 +1,130 @@
+# Header entry was created by Lokalize.
+#
+# Vít Pelčák <vit@pelcak.org>, 2011.
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
+"POT-Creation-Date: 2011-10-23 01:29+0200\n"
+"PO-Revision-Date: 2011-10-23 01:31+0100\n"
+"Last-Translator: Daniel Kolesa <quaker66@gmail.com>\n"
+"Language-Team: Czech <kde-i18n-doc@kde.org>\n"
+"Language: cs\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Lokalize 1.2\n"
+"Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
+
+#: .././src/lib/elc_fileselector.c:843
+msgid "Up"
+msgstr "Nahoru"
+
+#: .././src/lib/elc_fileselector.c:858
+msgid "Home"
+msgstr "Domů"
+
+#: .././src/lib/elc_fileselector.c:1002
+#: .././src/lib/elm_entry.c:1198
+msgid "Cancel"
+msgstr "Zrušit"
+
+#: .././src/lib/elc_fileselector.c:1012
+msgid "OK"
+msgstr "OK"
+
+#: .././src/lib/elm_button.c:230
+msgid "Clicked"
+msgstr "Kliknuto"
+
+#: .././src/lib/elm_button.c:349
+#: .././src/lib/elm_check.c:305
+#: .././src/lib/elm_radio.c:295
+#: .././src/lib/elm_toolbar.c:734
+msgid "State: Disabled"
+msgstr "Stav: Zakázáno"
+
+#: .././src/lib/elm_button.c:400
+msgid "Button"
+msgstr "Tlačítko"
+
+#: .././src/lib/elm_calendar.c:158
+msgid "%B %Y"
+msgstr "%B %Y"
+
+#: .././src/lib/elm_check.c:222
+#: .././src/lib/elm_check.c:225
+#: .././src/lib/elm_check.c:316
+#: .././src/lib/elm_radio.c:231
+#: .././src/lib/elm_radio.c:297
+msgid "State: On"
+msgstr "Stav: Zapnuto"
+
+#: .././src/lib/elm_check.c:235
+#: .././src/lib/elm_check.c:238
+#: .././src/lib/elm_check.c:325
+#: .././src/lib/elm_radio.c:298
+msgid "State: Off"
+msgstr "Stav: Vypnuto"
+
+#: .././src/lib/elm_check.c:312
+#: .././src/lib/elm_check.c:322
+msgid "State"
+msgstr "Stav"
+
+#: .././src/lib/elm_check.c:372
+msgid "Check"
+msgstr "Ověřit"
+
+#: .././src/lib/elm_config.c:1331
+msgid "default:LTR"
+msgstr "výchozí:LTR"
+
+#: .././src/lib/elm_entry.c:1192
+msgid "Copy"
+msgstr "Kopírovat"
+
+#: .././src/lib/elm_entry.c:1195
+msgid "Cut"
+msgstr "Vyjmout"
+
+#: .././src/lib/elm_entry.c:1209
+msgid "Select"
+msgstr "Vybrat"
+
+#: .././src/lib/elm_entry.c:1215
+msgid "Paste"
+msgstr "Vložit"
+
+#: .././src/lib/elm_radio.c:345
+msgid "Radio"
+msgstr "Přepínač"
+
+#: .././src/lib/elm_toggle.c:11
+msgid "ON"
+msgstr "ZAPNUTO"
+
+#: .././src/lib/elm_toggle.c:11
+msgid "OFF"
+msgstr "VYPNUTO"
+
+#: .././src/lib/elm_toolbar.c:651
+msgid "Selected"
+msgstr "Vybrané"
+
+#: .././src/lib/elm_toolbar.c:732
+msgid "Separator"
+msgstr "Oddělovač"
+
+#: .././src/lib/elm_toolbar.c:736
+msgid "State: Selected"
+msgstr "Stav: Vybráno"
+
+#: .././src/lib/elm_toolbar.c:738
+msgid "Has menu"
+msgstr "Má nabídku"
+
+#: .././src/lib/elm_toolbar.c:768
+msgid "Tool Item"
+msgstr "Položka nástrojů"
+
