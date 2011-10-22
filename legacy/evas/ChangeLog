@@ -485,3 +485,9 @@
 	 - underline_dash_color
 	 - underline_dash_width
 	 - underline_dash_gap
+
+2011-10-21  Carsten Haitzler (The Rasterman)
+
+	* Add function to request what the largest possible image (or texture)
+        size is from evas.
+

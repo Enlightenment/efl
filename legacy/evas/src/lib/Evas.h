@@ -2681,6 +2681,7 @@ EAPI int               evas_image_cache_get              (const Evas *e) EINA_WA
  * check the return values of @p maxw and @p maxh as there may still be a
  * limit, just a much higher one.
  *
+ * @since 1.1
  */
 EAPI Eina_Bool         evas_image_max_size_get           (const Evas *e, int *maxw, int *maxh) EINA_ARG_NONNULL(1) EINA_PURE;
 
