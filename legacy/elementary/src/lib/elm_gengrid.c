@@ -1853,7 +1853,7 @@ _item_new(Widget_Data                  *wd,
    if (!it) return NULL;
    it->item = ELM_NEW(Elm_Gen_Item_Type);
    wd->count++;
-   it->group = !strcmp(it->itc->item_style, "group_index");
+   it->group = it->itc->item_style && (!strcmp(it->itc->item_style, "group_index"));
    ELM_GEN_ITEM_SETUP(it);
 
    return it;
