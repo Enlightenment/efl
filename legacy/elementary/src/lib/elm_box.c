@@ -371,7 +371,6 @@ elm_box_add(Evas_Object *parent)
    evas_object_event_callback_add(wd->box, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
                                   _changed_size_hints, obj);
    elm_widget_resize_object_set(obj, wd->box);
-   elm_widget_sub_object_add(obj, wd->box);
 
    evas_object_smart_callback_add(obj, "sub-object-del", _sub_del, obj);
 

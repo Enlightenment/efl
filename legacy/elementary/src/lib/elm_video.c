@@ -279,7 +279,6 @@ elm_video_add(Evas_Object *parent)
    wd->layout = edje_object_add(e);
    _elm_theme_object_set(obj, wd->layout, "video", "base", "default");
    elm_widget_resize_object_set(obj, wd->layout);
-   elm_widget_sub_object_add(obj, wd->layout);
    evas_object_show(wd->layout);
    evas_object_size_hint_weight_set(wd->layout, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
 
