@@ -280,14 +280,14 @@ _event_hook(Evas_Object       *obj,
      }
    else if ((!strcmp(ev->keyname, "Home")) || (!strcmp(ev->keyname, "KP_Home")))
      {
-        it = elm_gengrid_first_item_get(obj);
+        it = elm_gen_first_item_get(obj);
         elm_gengrid_item_bring_in(it);
         ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
         return EINA_TRUE;
      }
    else if ((!strcmp(ev->keyname, "End")) || (!strcmp(ev->keyname, "KP_End")))
      {
-        it = elm_gengrid_last_item_get(obj);
+        it = elm_gen_last_item_get(obj);
         elm_gengrid_item_bring_in(it);
         ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
         return EINA_TRUE;
@@ -361,7 +361,7 @@ _item_multi_select_left(Widget_Data *wd)
 {
    if (!wd->selected) return EINA_FALSE;
 
-   Elm_Gen_Item *prev = elm_gengrid_item_prev_get(wd->last_selected_item);
+   Elm_Gen_Item *prev = elm_gen_item_prev_get(wd->last_selected_item);
    if (!prev) return EINA_TRUE;
    if (elm_gen_item_selected_get(prev))
      {
@@ -383,7 +383,7 @@ _item_multi_select_right(Widget_Data *wd)
 {
    if (!wd->selected) return EINA_FALSE;
 
-   Elm_Gen_Item *next = elm_gengrid_item_next_get(wd->last_selected_item);
+   Elm_Gen_Item *next = elm_gen_item_next_get(wd->last_selected_item);
    if (!next) return EINA_TRUE;
    if (elm_gen_item_selected_get(next))
      {
@@ -444,13 +444,13 @@ _item_single_select_up(Widget_Data *wd)
         elm_gengrid_item_show(prev);
         return EINA_TRUE;
      }
-   else prev = elm_gengrid_item_prev_get(wd->last_selected_item);
+   else prev = elm_gen_item_prev_get(wd->last_selected_item);
 
    if (!prev) return EINA_FALSE;
 
    for (i = 1; i < wd->nmax; i++)
      {
-        Elm_Gen_Item *tmp = elm_gengrid_item_prev_get(prev);
+        Elm_Gen_Item *tmp = elm_gen_item_prev_get(prev);
         if (!tmp) return EINA_FALSE;
         prev = tmp;
      }
@@ -478,13 +478,13 @@ _item_single_select_down(Widget_Data *wd)
         elm_gengrid_item_show(next);
         return EINA_TRUE;
      }
-   else next = elm_gengrid_item_next_get(wd->last_selected_item);
+   else next = elm_gen_item_next_get(wd->last_selected_item);
 
    if (!next) return EINA_FALSE;
 
    for (i = 1; i < wd->nmax; i++)
      {
-        Elm_Gen_Item *tmp = elm_gengrid_item_next_get(next);
+        Elm_Gen_Item *tmp = elm_gen_item_next_get(next);
         if (!tmp) return EINA_FALSE;
         next = tmp;
      }
@@ -506,7 +506,7 @@ _item_single_select_left(Widget_Data *wd)
         while ((prev) && (prev->delete_me))
           prev = ELM_GEN_ITEM_FROM_INLIST(EINA_INLIST_GET(prev)->prev);
      }
-   else prev = elm_gengrid_item_prev_get(wd->last_selected_item);
+   else prev = elm_gen_item_prev_get(wd->last_selected_item);
 
    if (!prev) return EINA_FALSE;
 
@@ -527,7 +527,7 @@ _item_single_select_right(Widget_Data *wd)
         while ((next) && (next->delete_me))
           next = ELM_GEN_ITEM_FROM_INLIST(EINA_INLIST_GET(next)->next);
      }
-   else next = elm_gengrid_item_next_get(wd->last_selected_item);
+   else next = elm_gen_item_next_get(wd->last_selected_item);
 
    if (!next) return EINA_FALSE;
 
@@ -2558,38 +2558,26 @@ EAPI void
 elm_gengrid_always_select_mode_set(Evas_Object *obj,
                                    Eina_Bool    always_select)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype);
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return;
-   wd->always_select = always_select;
+   elm_gen_always_select_mode_set(obj, always_select);
 }
 
 EAPI Eina_Bool
 elm_gengrid_always_select_mode_get(const Evas_Object *obj)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return EINA_FALSE;
-   return wd->always_select;
+   return elm_gen_always_select_mode_get(obj);
 }
 
 EAPI void
 elm_gengrid_no_select_mode_set(Evas_Object *obj,
                                Eina_Bool    no_select)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype);
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return;
-   wd->no_select = no_select;
+   elm_gen_no_select_mode_set(obj, no_select);
 }
 
 EAPI Eina_Bool
 elm_gengrid_no_select_mode_get(const Evas_Object *obj)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return EINA_FALSE;
-   return wd->no_select;
+   return elm_gen_no_select_mode_get(obj);
 }
 
 EAPI void
@@ -2597,12 +2585,7 @@ elm_gengrid_bounce_set(Evas_Object *obj,
                        Eina_Bool    h_bounce,
                        Eina_Bool    v_bounce)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype);
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return;
-   elm_smart_scroller_bounce_allow_set(wd->scr, h_bounce, v_bounce);
-   wd->h_bounce = h_bounce;
-   wd->v_bounce = v_bounce;
+   elm_gen_bounce_set(obj, h_bounce, v_bounce);
 }
 
 EAPI void
@@ -2610,11 +2593,7 @@ elm_gengrid_bounce_get(const Evas_Object *obj,
                        Eina_Bool         *h_bounce,
                        Eina_Bool         *v_bounce)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype);
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return;
-   if (h_bounce) *h_bounce = wd->h_bounce;
-   if (v_bounce) *v_bounce = wd->v_bounce;
+   return elm_gen_bounce_get(obj, h_bounce, v_bounce);
 }
 
 EAPI void
@@ -2622,26 +2601,13 @@ elm_gengrid_page_relative_set(Evas_Object *obj,
                               double       h_pagerel,
                               double       v_pagerel)
 {
-   Evas_Coord pagesize_h;
-   Evas_Coord pagesize_v;
-
-   ELM_CHECK_WIDTYPE(obj, widtype);
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return;
-
-   elm_smart_scroller_paging_get(wd->scr, NULL, NULL, &pagesize_h, &pagesize_v);
-   elm_smart_scroller_paging_set(wd->scr, h_pagerel, v_pagerel, pagesize_h,
-                                 pagesize_v);
+   elm_gen_page_relative_set(obj, h_pagerel, v_pagerel);
 }
 
 EAPI void
 elm_gengrid_page_relative_get(const Evas_Object *obj, double *h_pagerel, double *v_pagerel)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype);
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return;
-
-   elm_smart_scroller_paging_get(wd->scr, h_pagerel, v_pagerel, NULL, NULL);
+   elm_gen_page_relative_get(obj, h_pagerel, v_pagerel);
 }
 
 EAPI void
@@ -2649,112 +2615,61 @@ elm_gengrid_page_size_set(Evas_Object *obj,
                           Evas_Coord   h_pagesize,
                           Evas_Coord   v_pagesize)
 {
-   double pagerel_h;
-   double pagerel_v;
-
-   ELM_CHECK_WIDTYPE(obj, widtype);
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return;
-   elm_smart_scroller_paging_get(wd->scr, &pagerel_h, &pagerel_v, NULL, NULL);
-   elm_smart_scroller_paging_set(wd->scr, pagerel_h, pagerel_v, h_pagesize,
-                                 v_pagesize);
+   elm_gen_page_size_set(obj, h_pagesize, v_pagesize);
 }
 
 EAPI void
 elm_gengrid_current_page_get(const Evas_Object *obj, int *h_pagenumber, int *v_pagenumber)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype);
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return;
-   if (wd->scr)
-     elm_smart_scroller_current_page_get(wd->scr, h_pagenumber, v_pagenumber);
+   elm_gen_current_page_get(obj, h_pagenumber, v_pagenumber);
 }
 
 EAPI void
 elm_gengrid_last_page_get(const Evas_Object *obj, int *h_pagenumber, int *v_pagenumber)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype);
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return;
-   if (wd->scr)
-     elm_smart_scroller_last_page_get(wd->scr, h_pagenumber, v_pagenumber);
+   elm_gen_last_page_get(obj, h_pagenumber, v_pagenumber);
 }
 
 EAPI void
 elm_gengrid_page_show(const Evas_Object *obj, int h_pagenumber, int v_pagenumber)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype);
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return;
-   if (wd->scr)
-     elm_smart_scroller_page_show(wd->scr, h_pagenumber, v_pagenumber);
+   elm_gen_page_show(obj, h_pagenumber, v_pagenumber);
 }
 
 EAPI void
 elm_gengrid_page_bring_in(const Evas_Object *obj, int h_pagenumber, int v_pagenumber)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype);
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return;
-   if (wd->scr)
-     elm_smart_scroller_page_bring_in(wd->scr, h_pagenumber, v_pagenumber);
+   elm_gen_page_bring_in(obj, h_pagenumber, v_pagenumber);
 }
 
 EAPI Elm_Gen_Item *
 elm_gengrid_first_item_get(const Evas_Object *obj)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return NULL;
-   if (!wd->items) return NULL;
-   Elm_Gen_Item *it = ELM_GEN_ITEM_FROM_INLIST(wd->items);
-   while ((it) && (it->delete_me))
-     it = ELM_GEN_ITEM_FROM_INLIST(EINA_INLIST_GET(it)->next);
-   return it;
+   return elm_gen_first_item_get(obj);
 }
 
 EAPI Elm_Gen_Item *
 elm_gengrid_last_item_get(const Evas_Object *obj)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return NULL;
-   if (!wd->items) return NULL;
-   Elm_Gen_Item *it = ELM_GEN_ITEM_FROM_INLIST(wd->items->last);
-   while ((it) && (it->delete_me))
-     it = ELM_GEN_ITEM_FROM_INLIST(EINA_INLIST_GET(it)->prev);
-   return it;
+   return elm_gen_last_item_get(obj);
 }
 
 EAPI Elm_Gen_Item *
 elm_gengrid_item_next_get(const Elm_Gen_Item *it)
 {
-   ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(it, NULL);
-   while (it)
-     {
-        it = ELM_GEN_ITEM_FROM_INLIST(EINA_INLIST_GET(it)->next);
-        if ((it) && (!it->delete_me)) break;
-     }
-   return (Elm_Gen_Item *)it;
+   return elm_gen_item_next_get(it);
 }
 
 EAPI Elm_Gen_Item *
 elm_gengrid_item_prev_get(const Elm_Gen_Item *it)
 {
-   ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(it, NULL);
-   while (it)
-     {
-        it = ELM_GEN_ITEM_FROM_INLIST(EINA_INLIST_GET(it)->prev);
-        if ((it) && (!it->delete_me)) break;
-     }
-   return (Elm_Gen_Item *)it;
+   return elm_gen_item_prev_get(it);
 }
 
 EAPI Evas_Object *
 elm_gengrid_item_gengrid_get(const Elm_Gen_Item *it)
 {
-   ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(it, NULL);
-   return WIDGET(it);
+   return elm_gen_item_widget_get(it);
 }
 
 EAPI void

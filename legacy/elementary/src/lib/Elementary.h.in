@@ -7940,7 +7940,7 @@ extern "C" {
    EAPI Elm_Gen_Item *elm_gen_last_item_get(const Evas_Object *obj);
    EAPI Elm_Gen_Item *elm_gen_item_next_get(const Elm_Gen_Item *it);
    EAPI Elm_Gen_Item *elm_gen_item_prev_get(const Elm_Gen_Item *it);
-   EAPI Evas_Object *elm_gen_item_gen_get(const Elm_Gen_Item *it);
+   EAPI Evas_Object *elm_gen_item_widget_get(const Elm_Gen_Item *it);
 
    /**
     * @defgroup Gengrid Gengrid (Generic grid)
@@ -8463,7 +8463,7 @@ extern "C" {
     *
     * @ingroup Gengrid
     */
-   EAPI void               elm_gengrid_always_select_mode_set(Evas_Object *obj, Eina_Bool always_select) EINA_ARG_NONNULL(1);
+   EINA_DEPRECATED EAPI void               elm_gengrid_always_select_mode_set(Evas_Object *obj, Eina_Bool always_select) EINA_ARG_NONNULL(1);
 
    /**
     * Get whether items on a given gengrid widget have their selection
@@ -8478,7 +8478,7 @@ extern "C" {
     *
     * @ingroup Gengrid
     */
-   EAPI Eina_Bool          elm_gengrid_always_select_mode_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+   EINA_DEPRECATED EAPI Eina_Bool          elm_gengrid_always_select_mode_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
 
    /**
     * Set whether items on a given gengrid widget can be selected or not.
@@ -8496,7 +8496,7 @@ extern "C" {
     *
     * @ingroup Gengrid
     */
-   EAPI void               elm_gengrid_no_select_mode_set(Evas_Object *obj, Eina_Bool no_select) EINA_ARG_NONNULL(1);
+   EINA_DEPRECATED EAPI void               elm_gengrid_no_select_mode_set(Evas_Object *obj, Eina_Bool no_select) EINA_ARG_NONNULL(1);
 
    /**
     * Get whether items on a given gengrid widget can be selected or
@@ -8510,7 +8510,7 @@ extern "C" {
     *
     * @ingroup Gengrid
     */
-   EAPI Eina_Bool          elm_gengrid_no_select_mode_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+   EINA_DEPRECATED EAPI Eina_Bool          elm_gengrid_no_select_mode_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
 
    /**
     * Enable or disable multi-selection in a given gengrid widget
@@ -8568,7 +8568,7 @@ extern "C" {
     *
     * @ingroup Gengrid
     */
-   EAPI void               elm_gengrid_bounce_set(Evas_Object *obj, Eina_Bool h_bounce, Eina_Bool v_bounce) EINA_ARG_NONNULL(1);
+   EINA_DEPRECATED EAPI void               elm_gengrid_bounce_set(Evas_Object *obj, Eina_Bool h_bounce, Eina_Bool v_bounce) EINA_ARG_NONNULL(1);
 
    /**
     * Get whether bouncing effects are enabled or disabled, for a
@@ -8584,7 +8584,7 @@ extern "C" {
     *
     * @ingroup Gengrid
     */
-   EAPI void               elm_gengrid_bounce_get(const Evas_Object *obj, Eina_Bool *h_bounce, Eina_Bool *v_bounce) EINA_ARG_NONNULL(1);
+   EINA_DEPRECATED EAPI void               elm_gengrid_bounce_get(const Evas_Object *obj, Eina_Bool *h_bounce, Eina_Bool *v_bounce) EINA_ARG_NONNULL(1);
 
    /**
     * Set a given gengrid widget's scrolling page size, relative to
@@ -8618,7 +8618,7 @@ extern "C" {
     *
     * @ingroup Gengrid
     */
-   EAPI void               elm_gengrid_page_relative_set(Evas_Object *obj, double h_pagerel, double v_pagerel) EINA_ARG_NONNULL(1);
+   EINA_DEPRECATED EAPI void               elm_gengrid_page_relative_set(Evas_Object *obj, double h_pagerel, double v_pagerel) EINA_ARG_NONNULL(1);
 
    /**
     * Get a given gengrid widget's scrolling page size, relative to
@@ -8634,7 +8634,7 @@ extern "C" {
     *
     * @ingroup Gengrid
     */
-   EAPI void               elm_gengrid_page_relative_get(const Evas_Object *obj, double *h_pagerel, double *v_pagerel) EINA_ARG_NONNULL(1);
+   EINA_DEPRECATED EAPI void               elm_gengrid_page_relative_get(const Evas_Object *obj, double *h_pagerel, double *v_pagerel) EINA_ARG_NONNULL(1);
 
    /**
     * Set a given gengrid widget's scrolling page size
@@ -8662,7 +8662,7 @@ extern "C" {
     *
     * @ingroup Gengrid
     */
-   EAPI void               elm_gengrid_page_size_set(Evas_Object *obj, Evas_Coord h_pagesize, Evas_Coord v_pagesize) EINA_ARG_NONNULL(1);
+   EINA_DEPRECATED EAPI void               elm_gengrid_page_size_set(Evas_Object *obj, Evas_Coord h_pagesize, Evas_Coord v_pagesize) EINA_ARG_NONNULL(1);
 
    /**
     * @brief Get gengrid current page number.
@@ -8680,7 +8680,7 @@ extern "C" {
     * @see elm_gengrid_page_show()
     * @see elm_gengrid_page_brint_in()
     */
-   EAPI void         elm_gengrid_current_page_get(const Evas_Object *obj, int *h_pagenumber, int *v_pagenumber) EINA_ARG_NONNULL(1);
+   EINA_DEPRECATED EAPI void         elm_gengrid_current_page_get(const Evas_Object *obj, int *h_pagenumber, int *v_pagenumber) EINA_ARG_NONNULL(1);
 
    /**
     * @brief Get scroll last page number.
@@ -8696,7 +8696,7 @@ extern "C" {
     * @see elm_gengrid_page_show()
     * @see elm_gengrid_page_brint_in()
     */
-   EAPI void         elm_gengrid_last_page_get(const Evas_Object *obj, int *h_pagenumber, int *v_pagenumber) EINA_ARG_NONNULL(1);
+   EINA_DEPRECATED EAPI void         elm_gengrid_last_page_get(const Evas_Object *obj, int *h_pagenumber, int *v_pagenumber) EINA_ARG_NONNULL(1);
 
    /**
     * Show a specific virtual region within the gengrid content object by page number.
@@ -8720,7 +8720,7 @@ extern "C" {
     *
     * @see elm_gengrid_page_bring_in()
     */
-   EAPI void         elm_gengrid_page_show(const Evas_Object *obj, int h_pagenumber, int v_pagenumber) EINA_ARG_NONNULL(1);
+   EINA_DEPRECATED EAPI void         elm_gengrid_page_show(const Evas_Object *obj, int h_pagenumber, int v_pagenumber) EINA_ARG_NONNULL(1);
 
    /**
     * Show a specific virtual region within the gengrid content object by page number.
@@ -8744,7 +8744,7 @@ extern "C" {
     *
     * @see elm_gengrid_page_show()
     */
-    EAPI void         elm_gengrid_page_bring_in(const Evas_Object *obj, int h_pagenumber, int v_pagenumber) EINA_ARG_NONNULL(1);
+    EINA_DEPRECATED EAPI void         elm_gengrid_page_bring_in(const Evas_Object *obj, int h_pagenumber, int v_pagenumber) EINA_ARG_NONNULL(1);
 
    /**
     * Set for what direction a given gengrid widget will expand while
@@ -8796,7 +8796,7 @@ extern "C" {
     *
     * @ingroup Gengrid
     */
-   EAPI Elm_Gengrid_Item  *elm_gengrid_first_item_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+   EINA_DEPRECATED EAPI Elm_Gengrid_Item  *elm_gengrid_first_item_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
 
    /**
     * Get the last item in a given gengrid widget
@@ -8812,7 +8812,7 @@ extern "C" {
     *
     * @ingroup Gengrid
     */
-   EAPI Elm_Gengrid_Item  *elm_gengrid_last_item_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+   EINA_DEPRECATED EAPI Elm_Gengrid_Item  *elm_gengrid_last_item_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
 
    /**
     * Get the @b next item in a gengrid widget's internal list of items,
@@ -8829,7 +8829,7 @@ extern "C" {
     *
     * @ingroup Gengrid
     */
-   EAPI Elm_Gengrid_Item  *elm_gengrid_item_next_get(const Elm_Gengrid_Item *item) EINA_ARG_NONNULL(1);
+   EINA_DEPRECATED EAPI Elm_Gengrid_Item  *elm_gengrid_item_next_get(const Elm_Gengrid_Item *item) EINA_ARG_NONNULL(1);
 
    /**
     * Get the @b previous item in a gengrid widget's internal list of items,
@@ -8846,7 +8846,7 @@ extern "C" {
     *
     * @ingroup Gengrid
     */
-   EAPI Elm_Gengrid_Item  *elm_gengrid_item_prev_get(const Elm_Gengrid_Item *item) EINA_ARG_NONNULL(1);
+   EINA_DEPRECATED EAPI Elm_Gengrid_Item  *elm_gengrid_item_prev_get(const Elm_Gengrid_Item *item) EINA_ARG_NONNULL(1);
 
    /**
     * Get the gengrid object's handle which contains a given gengrid
@@ -8859,7 +8859,7 @@ extern "C" {
     *
     * @ingroup Gengrid
     */
-   EAPI Evas_Object       *elm_gengrid_item_gengrid_get(const Elm_Gengrid_Item *item) EINA_ARG_NONNULL(1);
+   EINA_DEPRECATED EAPI Evas_Object       *elm_gengrid_item_gengrid_get(const Elm_Gengrid_Item *item) EINA_ARG_NONNULL(1);
 
    /**
     * Remove a gengrid item from the its parent, deleting it.
@@ -18289,7 +18289,7 @@ extern "C" {
     *
     * @ingroup Genlist
     */
-   EAPI void              elm_genlist_always_select_mode_set(Evas_Object *obj, Eina_Bool always_select) EINA_ARG_NONNULL(1);
+   EINA_DEPRECATED EAPI void              elm_genlist_always_select_mode_set(Evas_Object *obj, Eina_Bool always_select) EINA_ARG_NONNULL(1);
    /**
     * Get the always select mode.
     *
@@ -18301,7 +18301,7 @@ extern "C" {
     *
     * @ingroup Genlist
     */
-   EAPI Eina_Bool         elm_genlist_always_select_mode_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+   EINA_DEPRECATED EAPI Eina_Bool         elm_genlist_always_select_mode_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
    /**
     * Enable/disable the no select mode.
     *
@@ -18316,7 +18316,7 @@ extern "C" {
     *
     * @ingroup Genlist
     */
-   EAPI void              elm_genlist_no_select_mode_set(Evas_Object *obj, Eina_Bool no_select) EINA_ARG_NONNULL(1);
+   EINA_DEPRECATED EAPI void              elm_genlist_no_select_mode_set(Evas_Object *obj, Eina_Bool no_select) EINA_ARG_NONNULL(1);
    /**
     * Gets whether the no select mode is enabled.
     *
@@ -18328,7 +18328,7 @@ extern "C" {
     *
     * @ingroup Genlist
     */
-   EAPI Eina_Bool         elm_genlist_no_select_mode_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+   EINA_DEPRECATED EAPI Eina_Bool         elm_genlist_no_select_mode_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
    /**
     * Enable/disable compress mode.
     *
@@ -18410,7 +18410,7 @@ extern "C" {
     *
     * @ingroup Genlist
     */
-   EAPI void              elm_genlist_bounce_set(Evas_Object *obj, Eina_Bool h_bounce, Eina_Bool v_bounce) EINA_ARG_NONNULL(1);
+   EINA_DEPRECATED EAPI void              elm_genlist_bounce_set(Evas_Object *obj, Eina_Bool h_bounce, Eina_Bool v_bounce) EINA_ARG_NONNULL(1);
    /**
     * Get whether the horizontal and vertical bouncing effect is enabled.
     *
@@ -18424,7 +18424,7 @@ extern "C" {
     *
     * @ingroup Genlist
     */
-   EAPI void              elm_genlist_bounce_get(const Evas_Object *obj, Eina_Bool *h_bounce, Eina_Bool *v_bounce) EINA_ARG_NONNULL(1);
+   EINA_DEPRECATED EAPI void              elm_genlist_bounce_get(const Evas_Object *obj, Eina_Bool *h_bounce, Eina_Bool *v_bounce) EINA_ARG_NONNULL(1);
    /**
     * Enable/disable homogenous mode.
     *
@@ -18742,7 +18742,7 @@ extern "C" {
     *
     * @ingroup Genlist
     */
-   EAPI Elm_Genlist_Item *elm_genlist_first_item_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+   EINA_DEPRECATED EAPI Elm_Genlist_Item *elm_genlist_first_item_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
    /**
     * Get the last item in the genlist
     *
@@ -18752,7 +18752,7 @@ extern "C" {
     *
     * @ingroup Genlist
     */
-   EAPI Elm_Genlist_Item *elm_genlist_last_item_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+   EINA_DEPRECATED EAPI Elm_Genlist_Item *elm_genlist_last_item_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
    /**
     * Set the scrollbar policy
     *
@@ -18800,7 +18800,7 @@ extern "C" {
     *
     * @ingroup Genlist
     */
-   EAPI Elm_Genlist_Item  *elm_genlist_item_next_get(const Elm_Genlist_Item *item) EINA_ARG_NONNULL(1);
+   EINA_DEPRECATED EAPI Elm_Genlist_Item  *elm_genlist_item_next_get(const Elm_Genlist_Item *item) EINA_ARG_NONNULL(1);
    /**
     * Get the @b previous item in a genlist widget's internal list of items,
     * given a handle to one of those items.
@@ -18816,7 +18816,7 @@ extern "C" {
     *
     * @ingroup Genlist
     */
-   EAPI Elm_Genlist_Item  *elm_genlist_item_prev_get(const Elm_Genlist_Item *item) EINA_ARG_NONNULL(1);
+   EINA_DEPRECATED EAPI Elm_Genlist_Item  *elm_genlist_item_prev_get(const Elm_Genlist_Item *item) EINA_ARG_NONNULL(1);
    /**
     * Get the genlist object's handle which contains a given genlist
     * item
@@ -18828,7 +18828,7 @@ extern "C" {
     *
     * @ingroup Genlist
     */
-   EAPI Evas_Object       *elm_genlist_item_genlist_get(const Elm_Genlist_Item *item) EINA_ARG_NONNULL(1);
+   EINA_DEPRECATED EAPI Evas_Object       *elm_genlist_item_genlist_get(const Elm_Genlist_Item *item) EINA_ARG_NONNULL(1);
    /**
     * Get the parent item of the given item
     *

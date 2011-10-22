@@ -296,13 +296,13 @@ my_gl_update_all(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNU
 {
    Evas_Object *gl = data;
    int i = 0;
-   Elm_Genlist_Item *it = elm_genlist_first_item_get(gl);
+   Elm_Genlist_Item *it = elm_gen_first_item_get(gl);
    while (it)
      {
         elm_genlist_item_update(it);
         printf("%i\n", i);
         i++;
-        it = elm_genlist_item_next_get(it);
+        it = elm_gen_item_next_get(it);
      }
 }
 
@@ -310,7 +310,7 @@ static void
 my_gl_first(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *gl = data;
-   Elm_Genlist_Item *gli = elm_genlist_first_item_get(gl);
+   Elm_Genlist_Item *gli = elm_gen_first_item_get(gl);
    if (!gli) return;
    elm_genlist_item_show(gli);
    elm_gen_item_selected_set(gli, 1);
@@ -320,7 +320,7 @@ static void
 my_gl_last(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *gl = data;
-   Elm_Genlist_Item *gli = elm_genlist_last_item_get(gl);
+   Elm_Genlist_Item *gli = elm_gen_last_item_get(gl);
    if (!gli) return;
    elm_genlist_item_show(gli);
    elm_gen_item_selected_set(gli, 1);
@@ -943,7 +943,7 @@ test_genlist5(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    evas_object_show(bx);
 
    gl = elm_genlist_add(win);
-   elm_genlist_always_select_mode_set(gl, 1);
+   elm_gen_always_select_mode_set(gl, 1);
    evas_object_size_hint_align_set(gl, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(gl, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_show(gl);
@@ -1036,7 +1036,7 @@ static void
 gl4_exp(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
 {
    Elm_Genlist_Item *it = event_info;
-   Evas_Object *gl = elm_genlist_item_genlist_get(it);
+   Evas_Object *gl = elm_gen_item_widget_get(it);
    int val = (int)(long)elm_genlist_item_data_get(it);
    val *= 10;
    elm_genlist_item_append(gl, &itc4,
@@ -1519,7 +1519,7 @@ static void
 gl9_exp(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
 {
    Elm_Genlist_Item *it = event_info;
-   Evas_Object *gl = elm_genlist_item_genlist_get(it);
+   Evas_Object *gl = elm_gen_item_widget_get(it);
    int val = (int)(long)elm_genlist_item_data_get(it);
    val *= 10;
    elm_genlist_item_append(gl, &itc1,

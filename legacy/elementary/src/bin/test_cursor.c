@@ -46,7 +46,7 @@ static void
 glt_exp(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
 {
    Elm_Genlist_Item *it = event_info;
-   Evas_Object *gl = elm_genlist_item_genlist_get(it);
+   Evas_Object *gl = elm_gen_item_widget_get(it);
    int val = (int)(long)elm_genlist_item_data_get(it);
    Elm_Genlist_Item *it1, *it2, *it3;
 

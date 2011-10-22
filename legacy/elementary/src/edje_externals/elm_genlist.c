@@ -58,24 +58,24 @@ external_genlist_state_set(void *data __UNUSED__, Evas_Object *obj, const void *
    if (p->multi_exists)
      elm_genlist_multi_select_set(obj, p->multi);
    if (p->always_select_exists)
-     elm_genlist_always_select_mode_set(obj, p->always_select);
+     elm_gen_always_select_mode_set(obj, p->always_select);
    if (p->no_select_exists)
-     elm_genlist_no_select_mode_set(obj, p->no_select);
+     elm_gen_no_select_mode_set(obj, p->no_select);
    if (p->compress_exists)
      elm_genlist_compress_mode_set(obj, p->compress);
    if (p->homogeneous_exists)
      elm_genlist_homogeneous_set(obj, p->homogeneous);
    if ((p->h_bounce_exists) && (p->v_bounce_exists))
-     elm_genlist_bounce_set(obj, p->h_bounce, p->v_bounce);
+     elm_gen_bounce_set(obj, p->h_bounce, p->v_bounce);
    else if ((p->h_bounce_exists) || (p->v_bounce_exists))
      {
 	Eina_Bool h_bounce, v_bounce;
 
-	elm_genlist_bounce_get(obj, &h_bounce, &v_bounce);
+	elm_gen_bounce_get(obj, &h_bounce, &v_bounce);
 	if (p->h_bounce_exists)
-	  elm_genlist_bounce_set(obj, p->h_bounce, v_bounce);
+	  elm_gen_bounce_set(obj, p->h_bounce, v_bounce);
 	else
-	  elm_genlist_bounce_set(obj, h_bounce, p->v_bounce);
+	  elm_gen_bounce_set(obj, h_bounce, p->v_bounce);
      }
 }
 
@@ -105,7 +105,7 @@ external_genlist_param_set(void *data __UNUSED__, Evas_Object *obj, const Edje_E
      {
 	if (param->type == EDJE_EXTERNAL_PARAM_TYPE_BOOL)
 	  {
-	     elm_genlist_always_select_mode_set(obj, param->i);
+	     elm_gen_always_select_mode_set(obj, param->i);
 	     return EINA_TRUE;
 	  }
      }
@@ -113,7 +113,7 @@ external_genlist_param_set(void *data __UNUSED__, Evas_Object *obj, const Edje_E
      {
 	if (param->type == EDJE_EXTERNAL_PARAM_TYPE_BOOL)
 	  {
-	     elm_genlist_no_select_mode_set(obj, param->i);
+	     elm_gen_no_select_mode_set(obj, param->i);
 	     return EINA_TRUE;
 	  }
      }
@@ -138,8 +138,8 @@ external_genlist_param_set(void *data __UNUSED__, Evas_Object *obj, const Edje_E
 	if (param->type == EDJE_EXTERNAL_PARAM_TYPE_BOOL)
 	  {
 	     Eina_Bool h_bounce, v_bounce;
-	     elm_genlist_bounce_get(obj, &h_bounce, &v_bounce);
-	     elm_genlist_bounce_set(obj, param->i, v_bounce);
+	     elm_gen_bounce_get(obj, &h_bounce, &v_bounce);
+	     elm_gen_bounce_set(obj, param->i, v_bounce);
 	     return EINA_TRUE;
 	  }
      }
@@ -148,8 +148,8 @@ external_genlist_param_set(void *data __UNUSED__, Evas_Object *obj, const Edje_E
 	if (param->type == EDJE_EXTERNAL_PARAM_TYPE_BOOL)
 	  {
 	     Eina_Bool h_bounce, v_bounce;
-	     elm_genlist_bounce_get(obj, &h_bounce, &v_bounce);
-	     elm_genlist_bounce_set(obj, h_bounce, param->i);
+	     elm_gen_bounce_get(obj, &h_bounce, &v_bounce);
+	     elm_gen_bounce_set(obj, h_bounce, param->i);
 	     return EINA_TRUE;
 	  }
      }
@@ -188,7 +188,7 @@ external_genlist_param_get(void *data __UNUSED__, const Evas_Object *obj, Edje_E
      {
 	if (param->type == EDJE_EXTERNAL_PARAM_TYPE_BOOL)
 	  {
-	     param->i = elm_genlist_always_select_mode_get(obj);
+	     param->i = elm_gen_always_select_mode_get(obj);
 	     return EINA_TRUE;
 	  }
      }
@@ -196,7 +196,7 @@ external_genlist_param_get(void *data __UNUSED__, const Evas_Object *obj, Edje_E
      {
 	if (param->type == EDJE_EXTERNAL_PARAM_TYPE_BOOL)
 	  {
-	     param->i = elm_genlist_no_select_mode_get(obj);
+	     param->i = elm_gen_no_select_mode_get(obj);
 	     return EINA_TRUE;
 	  }
      }
@@ -221,7 +221,7 @@ external_genlist_param_get(void *data __UNUSED__, const Evas_Object *obj, Edje_E
 	if (param->type == EDJE_EXTERNAL_PARAM_TYPE_BOOL)
 	  {
 	     Eina_Bool h_bounce, v_bounce;
-	     elm_genlist_bounce_get(obj, &h_bounce, &v_bounce);
+	     elm_gen_bounce_get(obj, &h_bounce, &v_bounce);
 	     param->i = h_bounce;
 	     return EINA_TRUE;
 	  }
@@ -231,7 +231,7 @@ external_genlist_param_get(void *data __UNUSED__, const Evas_Object *obj, Edje_E
 	if (param->type == EDJE_EXTERNAL_PARAM_TYPE_BOOL)
 	  {
 	     Eina_Bool h_bounce, v_bounce;
-	     elm_genlist_bounce_get(obj, &h_bounce, &v_bounce);
+	     elm_gen_bounce_get(obj, &h_bounce, &v_bounce);
 	     param->i = v_bounce;
 	     return EINA_TRUE;
 	  }

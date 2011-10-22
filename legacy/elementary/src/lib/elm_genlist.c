@@ -359,14 +359,14 @@ _event_hook(Evas_Object       *obj,
      }
    else if ((!strcmp(ev->keyname, "Home")) || (!strcmp(ev->keyname, "KP_Home")))
      {
-        it = elm_genlist_first_item_get(obj);
+        it = elm_gen_first_item_get(obj);
         elm_genlist_item_bring_in(it);
         ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
         return EINA_TRUE;
      }
    else if ((!strcmp(ev->keyname, "End")) || (!strcmp(ev->keyname, "KP_End")))
      {
-        it = elm_genlist_last_item_get(obj);
+        it = elm_gen_last_item_get(obj);
         elm_genlist_item_bring_in(it);
         ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
         return EINA_TRUE;
@@ -429,7 +429,7 @@ _item_multi_select_up(Widget_Data *wd)
    if (!wd->selected) return EINA_FALSE;
    if (!wd->multi) return EINA_FALSE;
 
-   Elm_Gen_Item *prev = elm_genlist_item_prev_get(wd->last_selected_item);
+   Elm_Gen_Item *prev = elm_gen_item_prev_get(wd->last_selected_item);
    if (!prev) return EINA_TRUE;
 
    if (elm_gen_item_selected_get(prev))
@@ -452,7 +452,7 @@ _item_multi_select_down(Widget_Data *wd)
    if (!wd->selected) return EINA_FALSE;
    if (!wd->multi) return EINA_FALSE;
 
-   Elm_Gen_Item *next = elm_genlist_item_next_get(wd->last_selected_item);
+   Elm_Gen_Item *next = elm_gen_item_next_get(wd->last_selected_item);
    if (!next) return EINA_TRUE;
 
    if (elm_gen_item_selected_get(next))
@@ -479,7 +479,7 @@ _item_single_select_up(Widget_Data *wd)
         while ((prev) && (prev->delete_me))
           prev = ELM_GEN_ITEM_FROM_INLIST(EINA_INLIST_GET(prev)->prev);
      }
-   else prev = elm_genlist_item_prev_get(wd->last_selected_item);
+   else prev = elm_gen_item_prev_get(wd->last_selected_item);
 
    if (!prev) return EINA_FALSE;
 
@@ -500,7 +500,7 @@ _item_single_select_down(Widget_Data *wd)
         while ((next) && (next->delete_me))
           next = ELM_GEN_ITEM_FROM_INLIST(EINA_INLIST_GET(next)->next);
      }
-   else next = elm_genlist_item_next_get(wd->last_selected_item);
+   else next = elm_gen_item_next_get(wd->last_selected_item);
 
    if (!next) return EINA_FALSE;
 
@@ -3799,58 +3799,31 @@ elm_genlist_at_xy_item_get(const Evas_Object *obj,
 EAPI Elm_Gen_Item *
 elm_genlist_first_item_get(const Evas_Object *obj)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return NULL;
-   if (!wd->items) return NULL;
-   Elm_Gen_Item *it = ELM_GEN_ITEM_FROM_INLIST(wd->items);
-   while ((it) && (it->delete_me))
-     it = ELM_GEN_ITEM_FROM_INLIST(EINA_INLIST_GET(it)->next);
-   return it;
+   return elm_gen_first_item_get(obj);
 }
 
 EAPI Elm_Gen_Item *
 elm_genlist_last_item_get(const Evas_Object *obj)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return NULL;
-   if (!wd->items) return NULL;
-   Elm_Gen_Item *it = ELM_GEN_ITEM_FROM_INLIST(wd->items->last);
-   while ((it) && (it->delete_me))
-     it = ELM_GEN_ITEM_FROM_INLIST(EINA_INLIST_GET(it)->prev);
-   return it;
+   return elm_gen_last_item_get(obj);
 }
 
 EAPI Elm_Gen_Item *
 elm_genlist_item_next_get(const Elm_Gen_Item *it)
 {
-   ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(it, NULL);
-   while (it)
-     {
-        it = ELM_GEN_ITEM_FROM_INLIST(EINA_INLIST_GET(it)->next);
-        if ((it) && (!it->delete_me)) break;
-     }
-   return (Elm_Gen_Item *)it;
+   return elm_gen_item_next_get(it);
 }
 
 EAPI Elm_Gen_Item *
 elm_genlist_item_prev_get(const Elm_Gen_Item *it)
 {
-   ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(it, NULL);
-   while (it)
-     {
-        it = ELM_GEN_ITEM_FROM_INLIST(EINA_INLIST_GET(it)->prev);
-        if ((it) && (!it->delete_me)) break;
-     }
-   return (Elm_Gen_Item *)it;
+   return elm_gen_item_prev_get(it);
 }
 
 EAPI Evas_Object *
 elm_genlist_item_genlist_get(const Elm_Gen_Item *it)
 {
-   ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(it, NULL);
-   return WIDGET(it);
+   return elm_gen_item_widget_get(it);
 }
 
 EAPI Elm_Gen_Item *
@@ -3883,8 +3856,7 @@ elm_genlist_item_selected_set(Elm_Gen_Item *it,
 EAPI Eina_Bool
 elm_genlist_item_selected_get(const Elm_Gen_Item *it)
 {
-   ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(it, EINA_FALSE);
-   return it->selected;
+   return elm_gen_item_selected_get(it);
 }
 
 EAPI void
@@ -4443,38 +4415,26 @@ EAPI void
 elm_genlist_always_select_mode_set(Evas_Object *obj,
                                    Eina_Bool    always_select)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype);
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return;
-   wd->always_select = always_select;
+   elm_gen_always_select_mode_set(obj, always_select);
 }
 
 EAPI Eina_Bool
 elm_genlist_always_select_mode_get(const Evas_Object *obj)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return EINA_FALSE;
-   return wd->always_select;
+   return elm_gen_always_select_mode_get(obj);
 }
 
 EAPI void
 elm_genlist_no_select_mode_set(Evas_Object *obj,
                                Eina_Bool    no_select)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype);
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return;
-   wd->no_select = no_select;
+   elm_gen_no_select_mode_set(obj, no_select);
 }
 
 EAPI Eina_Bool
 elm_genlist_no_select_mode_get(const Evas_Object *obj)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return EINA_FALSE;
-   return wd->no_select;
+   return elm_gen_no_select_mode_get(obj);
 }
 
 EAPI void
@@ -4526,12 +4486,7 @@ elm_genlist_bounce_set(Evas_Object *obj,
                        Eina_Bool    h_bounce,
                        Eina_Bool    v_bounce)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype);
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return;
-   elm_smart_scroller_bounce_allow_set(wd->scr, h_bounce, v_bounce);
-   wd->h_bounce = h_bounce;
-   wd->v_bounce = v_bounce;
+   elm_gen_bounce_set(obj, h_bounce, v_bounce);
 }
 
 EAPI void
@@ -4539,11 +4494,7 @@ elm_genlist_bounce_get(const Evas_Object *obj,
                        Eina_Bool         *h_bounce,
                        Eina_Bool         *v_bounce)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype);
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return;
-   if (h_bounce) *h_bounce = wd->h_bounce;
-   if (v_bounce) *v_bounce = wd->v_bounce;
+   elm_gen_bounce_get(obj, h_bounce, v_bounce);
 }
 
 EAPI void
