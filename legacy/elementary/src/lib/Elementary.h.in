@@ -686,8 +686,8 @@ extern "C" {
     * @see elm_init() for an example. There, just after a request to
     * close the window comes, the main loop will be left.
     *
-    * @note By using the #ELM_POLICY_QUIT on your Elementary
-    * applications, you'll this function called automatically for you.
+    * @note By using the appropriate #ELM_POLICY_QUIT on your Elementary
+    * applications, you'll be able to get this function called automatically for you.
     *
     * @ingroup General
     */
