@@ -990,9 +990,10 @@ message(void *fdata __UNUSED__, Server *s __UNUSED__, Client *c, int opcode, int
              Op_Load *rep;
              Op_Load_Reply msg;
              Img *img;
-             RGBA_Image_Loadopts lopt = {0, 0.0, 0, 0, {0, 0, 0, 0}, 0};
+             RGBA_Image_Loadopts lopt;
              char *file = NULL, *key = NULL;
-             
+
+             memset(&lopt, 0, sizeof lopt);
              DBG("OP_LOAD %i", c->pid);
              rep = (Op_Load *)tdata;
              file = (char*) (data + sizeof(Op_Load));
