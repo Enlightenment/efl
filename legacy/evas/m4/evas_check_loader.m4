@@ -179,7 +179,7 @@ evas_image_loader_[]$1[]_libs=""
 dnl libpng.pc is the latest version of libpng that ahs been installed.
 dnl We check it first.
 PKG_CHECK_MODULES([PNG],
-   [libpng],
+   [libpng >= 1.2.10],
    [have_dep="yes" requirement="libpng"],
    [have_dep="no"])
 
@@ -199,15 +199,8 @@ fi
 
 if test "x${have_dep}" = "xno" ; then
    PKG_CHECK_MODULES([PNG],
-      [libpng12],
+      [libpng12 >= 1.2.10],
       [have_dep="yes" requirement="libpng12"],
-      [have_dep="no"])
-fi
-
-if test "x${have_dep}" = "xno" ; then
-   PKG_CHECK_MODULES([PNG],
-      [libpng10],
-      [have_dep="yes" requirement="libpng10"],
       [have_dep="no"])
 fi
 
