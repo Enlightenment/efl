@@ -843,11 +843,15 @@ rect_list_add_split_fuzzy_and_merge(list_t *rects,
 #ifdef RECTUPDATE
 #elif defined(EVAS_RECT_SPLIT)
 #else
+/*
 static int  tilebuf_x_intersect(Tilebuf *tb, int x, int w, int *x1, int *x2, int *x1_fill, int *x2_fill);
 static int  tilebuf_y_intersect(Tilebuf *tb, int y, int h, int *y1, int *y2, int *y1_fill, int *y2_fill);
 static int  tilebuf_intersect(int tsize, int tlen, int tnum, int x, int w, int *x1, int *x2, int *x1_fill, int *x2_fill);
+ */
 #endif
+/*
 static void tilebuf_setup(Tilebuf *tb);
+ */
 
 EAPI void
 evas_common_tilebuf_init(void)
@@ -874,12 +878,16 @@ EAPI void
 evas_common_tilebuf_free(Tilebuf *tb)
 {
 #ifdef RECTUPDATE
+/*   
    evas_common_regionbuf_free(tb->rb);
+ */
 #elif defined(EVAS_RECT_SPLIT)
    rect_list_clear(&tb->rects);
    rect_list_node_pool_flush();
 #else
+/*   
    if (tb->tiles.tiles) free(tb->tiles.tiles);
+ */
 #endif
    free(tb);
 }
@@ -889,7 +897,9 @@ evas_common_tilebuf_set_tile_size(Tilebuf *tb, int tw, int th)
 {
    tb->tile_size.w = tw;
    tb->tile_size.h = th;
+/*   
    tilebuf_setup(tb);
+ */
 }
 
 EAPI void
@@ -901,21 +911,18 @@ evas_common_tilebuf_get_tile_size(Tilebuf *tb, int *tw, int *th)
 
 #ifdef EVAS_RECT_SPLIT
 static inline int
-_add_redraw(list_t *rects, int max_w, int max_h, int x, int y, int w, int h)
+_add_redraw(list_t *rects, int x, int y, int w, int h)
 {
    rect_node_t *rn;
-
-   if ((w <= 0) || (h <= 0)) return 0;
-   RECTS_CLIP_TO_RECT(x, y, w, h, 0, 0, max_w, max_h);
-   if ((w <= 0) || (h <= 0)) return 0;
-
+/* we dont need to do this fuzz stuff - it actually creates overdraw bugs
+ * when evas shouldnt draw at all.
    x >>= 1;
    y >>= 1;
    w += 2;
    w >>= 1;
    h += 2;
    h >>= 1;
-
+ */
    rn = (rect_node_t *)rect_list_node_pool_get();
    rn->_lst = list_node_zeroed;
    rect_init(&rn->rect, x, y, w, h);
@@ -932,6 +939,7 @@ EAPI int
 evas_common_tilebuf_add_redraw(Tilebuf *tb, int x, int y, int w, int h)
 {
 #ifdef RECTUPDATE
+/*   
    int i;
 
    if ((w <= 0) || (h <= 0)) return 0;
@@ -940,9 +948,20 @@ evas_common_tilebuf_add_redraw(Tilebuf *tb, int x, int y, int w, int h)
    for (i = 0; i < h; i++)
      evas_common_regionbuf_span_add(tb->rb, x, x + w - 1, y + i);
    return 1;
+ */
 #elif defined(EVAS_RECT_SPLIT)
-   return _add_redraw(&tb->rects, tb->outbuf_w, tb->outbuf_h, x, y, w, h);
+   if ((w <= 0) || (h <= 0)) return 0;
+   RECTS_CLIP_TO_RECT(x, y, w, h, 0, 0, tb->outbuf_w, tb->outbuf_h);
+   if ((w <= 0) || (h <= 0)) return 0;
+   // optimize a common case -> adding the exact same rect 2x in a row
+   if ((tb->prev_add.x == x) && (tb->prev_add.y == y) && 
+       (tb->prev_add.w == w) && (tb->prev_add.h == h)) return 1;
+   tb->prev_add.x = x; tb->prev_add.y = y;
+   tb->prev_add.w = w; tb->prev_add.h = h;
+   tb->prev_del.w = 0; tb->prev_del.h = 0;
+   return _add_redraw(&tb->rects, x, y, w, h);
 #else
+/*   
    int tx1, tx2, ty1, ty2, tfx1, tfx2, tfy1, tfy2, xx, yy;
    int num;
 
@@ -950,7 +969,7 @@ evas_common_tilebuf_add_redraw(Tilebuf *tb, int x, int y, int w, int h)
    RECTS_CLIP_TO_RECT(x, y, w, h, 0, 0, tb->outbuf_w, tb->outbuf_h);
    if ((w <= 0) || (h <= 0)) return 0;
    num = 0;
-   /* wipes out any motion vectors in tiles it touches into redraws */
+   // wipes out any motion vectors in tiles it touches into redraws
    if (tilebuf_x_intersect(tb, x, w, &tx1, &tx2, &tfx1, &tfx2) &&
        tilebuf_y_intersect(tb, y, h, &ty1, &ty2, &tfy1, &tfy2))
      {
@@ -976,6 +995,7 @@ evas_common_tilebuf_add_redraw(Tilebuf *tb, int x, int y, int w, int h)
 	num = (tx2 - tx1 + 1) * (ty2 - ty1 + 1);
      }
    return num;
+ */
 #endif
 }
 
@@ -983,10 +1003,12 @@ EAPI int
 evas_common_tilebuf_del_redraw(Tilebuf *tb, int x, int y, int w, int h)
 {
 #ifdef RECTUPDATE
+/*   
    int i;
 
    for (i = 0; i < h; i++)
      evas_common_regionbuf_span_del(tb->rb, x, x + w - 1, y + i);
+ */
 #elif defined(EVAS_RECT_SPLIT)
    rect_t r;
 
@@ -994,7 +1016,9 @@ evas_common_tilebuf_del_redraw(Tilebuf *tb, int x, int y, int w, int h)
    if ((w <= 0) || (h <= 0)) return 0;
    RECTS_CLIP_TO_RECT(x, y, w, h, 0, 0, tb->outbuf_w, tb->outbuf_h);
    if ((w <= 0) || (h <= 0)) return 0;
-
+   
+/* we dont need to do this fuzz stuff - it actually creates overdraw bugs
+ * when evas shouldnt draw at all.
    x += 1;
    y += 1;
    x >>= 1;
@@ -1005,19 +1029,26 @@ evas_common_tilebuf_del_redraw(Tilebuf *tb, int x, int y, int w, int h)
    h >>= 1;
 
    if ((w <= 0) || (h <= 0)) return 0;
-
+ */
+   
+   // optimize a common case -> deleting the exact same rect 2x in a row
+   if ((tb->prev_del.x == x) && (tb->prev_del.y == y) && 
+       (tb->prev_del.w == w) && (tb->prev_del.h == h)) return 1;
+   tb->prev_del.x = x; tb->prev_del.y = y;
+   tb->prev_del.w = w; tb->prev_del.h = h;
+   tb->prev_add.w = 0; tb->prev_add.h = 0;
    rect_init(&r, x, y, w, h);
-   //ERR("ACCOUNTING: del_redraw: %4d,%4d %3dx%3d", x, y, w, h);
 
    rect_list_del_split_strict(&tb->rects, r);
    tb->need_merge = 1;
    return 0;
 #else
+/*   
    int tx1, tx2, ty1, ty2, tfx1, tfx2, tfy1, tfy2, xx, yy;
    int num;
 
    num = 0;
-   /* wipes out any motion vectors in tiles it touches into redraws */
+   // wipes out any motion vectors in tiles it touches into redraws
    if (tilebuf_x_intersect(tb, x, w, &tx1, &tx2, &tfx1, &tfx2) &&
        tilebuf_y_intersect(tb, y, h, &ty1, &ty2, &tfy1, &tfy2))
      {
@@ -1048,18 +1079,20 @@ evas_common_tilebuf_del_redraw(Tilebuf *tb, int x, int y, int w, int h)
 	num = (tx2 - tx1 + 1) * (ty2 - ty1 + 1);
      }
    return num;
+ */
 #endif
 }
 
 EAPI int
-evas_common_tilebuf_add_motion_vector(Tilebuf *tb, int x, int y, int w, int h, int dx, int dy, int alpha __UNUSED__)
+evas_common_tilebuf_add_motion_vector(Tilebuf *tb __UNUSED__, int x __UNUSED__, int y __UNUSED__, int w __UNUSED__, int h __UNUSED__, int dx __UNUSED__, int dy __UNUSED__, int alpha __UNUSED__)
 {
 #ifdef EVAS_RECT_SPLIT
+/* motion vector handling never has been used -> disable it   
    list_t lr = list_zeroed;
    int num;
 
-   num = _add_redraw(&lr, tb->outbuf_w, tb->outbuf_h, x, y, w, h);
-   num += _add_redraw(&lr, tb->outbuf_w, tb->outbuf_h, x + dx, y + dy, w, h);
+   num = _add_redraw(&lr, x, y, w, h);
+   num += _add_redraw(&lr, x + dx, y + dy, w, h);
    while (lr.head)
      {
         list_node_t *node = rect_list_unlink_next(&lr, NULL);
@@ -1067,14 +1100,16 @@ evas_common_tilebuf_add_motion_vector(Tilebuf *tb, int x, int y, int w, int h, i
                                             FUZZ * FUZZ, FUZZ * FUZZ);
      }
    return num;
+ */
+   return 0;
 #else
-   /* FIXME: need to actually implement motion vectors. for now it just */
-   /*        implements redraws */
+/*   
    int num;
 
    num = evas_common_tilebuf_add_redraw(tb, x, y, w, h);
    num += evas_common_tilebuf_add_redraw(tb, x + dx, y + dy, w, h);
    return num;
+ */
 #endif
 }
 
@@ -1082,13 +1117,17 @@ EAPI void
 evas_common_tilebuf_clear(Tilebuf *tb)
 {
 #ifdef RECTUPDATE
+/*   
    evas_common_regionbuf_clear(tb->rb);
+ */
 #elif defined(EVAS_RECT_SPLIT)
    rect_list_clear(&tb->rects);
    tb->need_merge = 0;
 #else
+/*   
    if (!tb->tiles.tiles) return;
    memset(tb->tiles.tiles, 0, tb->tiles.w * tb->tiles.h * sizeof(Tilebuf_Tile));
+ */
 #endif
 }
 
@@ -1096,7 +1135,9 @@ EAPI Tilebuf_Rect *
 evas_common_tilebuf_get_render_rects(Tilebuf *tb)
 {
 #ifdef RECTUPDATE
+/*   
    return evas_common_regionbuf_rects_get(tb->rb);
+ */
 #elif defined(EVAS_RECT_SPLIT)
    list_node_t *n;
    Tilebuf_Rect *rects = NULL;
@@ -1113,12 +1154,12 @@ evas_common_tilebuf_get_render_rects(Tilebuf *tb)
        rect_t cur;
 
        cur = ((rect_node_t *)n)->rect;
-
+/* disable fuzz - created bugs.
        cur.left <<= 1;
        cur.top <<= 1;
        cur.width <<= 1;
        cur.height <<= 1;
-
+ */
        RECTS_CLIP_TO_RECT(cur.left, cur.top, cur.width, cur.height,
 			  0, 0, tb->outbuf_w, tb->outbuf_h);
        if ((cur.width > 0) && (cur.height > 0))
@@ -1137,6 +1178,7 @@ evas_common_tilebuf_get_render_rects(Tilebuf *tb)
    return rects;
 
 #else
+/*   
    Tilebuf_Rect *rects = NULL;
    Tilebuf_Tile *tbt;
    int x, y;
@@ -1157,7 +1199,7 @@ evas_common_tilebuf_get_render_rects(Tilebuf *tb)
                   r->_list_data.prev = NULL;
                   r->_list_data.last = NULL;
 
-/* amalgamate tiles */
+                  // amalgamate tiles
 #if 1
                   tbti = tbt;
 		  while (can_expand_x)
@@ -1219,6 +1261,7 @@ evas_common_tilebuf_get_render_rects(Tilebuf *tb)
 	  }
      }
    return rects;
+ */
 #endif
 }
 
@@ -1242,7 +1285,7 @@ evas_common_tilebuf_free_render_rects(Tilebuf_Rect *rects)
 
 
 /* internal usage */
-
+/*
 static void
 tilebuf_setup(Tilebuf *tb)
 {
@@ -1269,10 +1312,12 @@ tilebuf_setup(Tilebuf *tb)
    memset(tb->tiles.tiles, 0, tb->tiles.w * tb->tiles.h * sizeof(Tilebuf_Tile));
 #endif
 }
+*/
 
 #ifdef RECTUPDATE
 #elif defined(EVAS_RECT_SPLIT)
 #else
+/*
 static int
 tilebuf_x_intersect(Tilebuf *tb, int x, int w, int *x1, int *x2, int *x1_fill, int *x2_fill)
 {
@@ -1292,11 +1337,11 @@ tilebuf_intersect(int tsize, int tlen, int tnum, int x, int w, int *x1, int *x2,
 {
    int p1, p2;
 
-   /* initial clip out of region */
+   // initial clip out of region
    if ((x + w) <= 0) return 0;
    if (x >= tlen) return 0;
 
-   /* adjust x & w so it all fits in region */
+   // adjust x & w so it all fits in region
    if (x < 0)
      {
 	w += x;
@@ -1305,13 +1350,13 @@ tilebuf_intersect(int tsize, int tlen, int tnum, int x, int w, int *x1, int *x2,
    if (w < 0) return 0;
    if ((x + w) > tlen) w = tlen - x;
 
-   /* now figure if the first edge is fully filling its tile */
+   // now figure if the first edge is fully filling its tile
    p1 = (x) / tsize;
    if ((p1 * tsize) == (x)) *x1_fill = 1;
    else                     *x1_fill = 0;
    *x1 = p1;
 
-   /* now figure if the last edge is fully filling its tile */
+   // now figure if the last edge is fully filling its tile
    p2 = (x + w - 1) / tsize;
    if (((p2 + 1) * tsize) == (x + w)) *x2_fill = 1;
    else                               *x2_fill = 0;
@@ -1320,4 +1365,5 @@ tilebuf_intersect(int tsize, int tlen, int tnum, int x, int w, int *x1, int *x2,
    return 1;
    tnum = 0;
 }
+*/
 #endif

@@ -1045,16 +1045,23 @@ struct _Tilebuf
       int           w, h;
    } tile_size;
 
+   struct {
+      int x, y, w, h;
+   } prev_add, prev_del;
 #ifdef RECTUPDATE
+/*   
    Regionbuf *rb;
+ */
 #elif defined(EVAS_RECT_SPLIT)
    int need_merge;
    list_t rects;
 #else
+/*   
    struct {
       int           w, h;
       Tilebuf_Tile *tiles;
    } tiles;
+ */
 #endif
 };
 
