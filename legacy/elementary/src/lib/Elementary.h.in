@@ -5076,11 +5076,11 @@ extern "C" {
     * @param anim @c EINA_TRUE if the object do animation job,
     * @c EINA_FALSE otherwise. Default is @c EINA_FALSE.
     *
-    * Even though elm icon's file can be animated,
-    * sometimes appication developer want to just first page of image.
-    * In that time, don't call this function, because default value is EINA_FALSE
-    * Only when you want icon support anition,
-    * use this function and set animated to EINA_TURE
+    * Since the default animation mode is set to EINA_FALSE, 
+    * the icon is shown without animation.
+    * This might be desirable when the application developer wants to show
+    * a snapshot of the animated icon.
+    * Set it to EINA_TRUE when the icon needs to be animated.
     * @ingroup Icon
     */
    EAPI void                elm_icon_animated_set(Evas_Object *obj, Eina_Bool animated) EINA_ARG_NONNULL(1);
@@ -5100,7 +5100,7 @@ extern "C" {
     * @param play @c EINA_TRUE the object play animation images,
     * @c EINA_FALSE otherwise. Default is @c EINA_FALSE.
     *
-    * If you want to play elm icon's animation, you set play to EINA_TURE.
+    * To play elm icon's animation, set play to EINA_TURE.
     * For example, you make gif player using this set/get API and click event.
     *
     * 1. Click event occurs
@@ -5116,7 +5116,7 @@ extern "C" {
     * @param obj The icon object
     * @return The play mode of the icon object
     *
-    * @see elm_icon_animated_lay_get
+    * @see elm_icon_animated_play_get
     * @ingroup Icon
     */
    EAPI Eina_Bool           elm_icon_animated_play_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
