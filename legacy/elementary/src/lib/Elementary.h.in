@@ -5249,6 +5249,7 @@ extern "C" {
     * @ingroup Image
     */
    EAPI Eina_Bool        elm_image_smooth_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+
    /**
     * Gets the current size of the image.
     *
@@ -5324,7 +5325,7 @@ extern "C" {
     */
    EAPI void             elm_image_scale_get(const Evas_Object *obj, Eina_Bool *scale_up, Eina_Bool *scale_down) EINA_ARG_NONNULL(1);
    /**
-    * Set if the image fill the entire object area when keeping the aspect ratio.
+    * Set if the image fills the entire object area, when keeping the aspect ratio.
     *
     * @param obj The image object
     * @param fill_outside @c EINA_TRUE if the object is filled outside,
@@ -5394,11 +5395,7 @@ extern "C" {
     * Set the image orientation.
     *
     * @param obj The image object
-    * @param orient The image orientation
-    * (one of #ELM_IMAGE_ORIENT_NONE, #ELM_IMAGE_ROTATE_90_CW,
-    *  #ELM_IMAGE_ROTATE_180_CW, #ELM_IMAGE_ROTATE_90_CCW,
-    *  #ELM_IMAGE_FLIP_HORIZONTAL, #ELM_IMAGE_FLIP_VERTICAL,
-    *  #ELM_IMAGE_FLIP_TRANSPOSE, #ELM_IMAGE_FLIP_TRANSVERSE).
+    * @param orient The image orientation @ref Elm_Image_Orient
     *  Default is #ELM_IMAGE_ORIENT_NONE.
     *
     * This function allows to rotate or flip the given image.
@@ -5413,11 +5410,7 @@ extern "C" {
     * Get the image orientation.
     *
     * @param obj The image object
-    * @return The image orientation
-    * (one of #ELM_IMAGE_ORIENT_NONE, #ELM_IMAGE_ROTATE_90_CW,
-    *  #ELM_IMAGE_ROTATE_180_CW, #ELM_IMAGE_ROTATE_90_CCW,
-    *  #ELM_IMAGE_FLIP_HORIZONTAL, #ELM_IMAGE_FLIP_VERTICAL,
-    *  #ELM_IMAGE_FLIP_TRANSPOSE, #ELM_IMAGE_FLIP_TRANSVERSE)
+    * @return The image orientation @ref Elm_Image_Orient
     *
     * @see elm_image_orient_set()
     * @see @ref Elm_Image_Orient
@@ -5438,13 +5431,13 @@ extern "C" {
     */
    EAPI void             elm_image_editable_set(Evas_Object *obj, Eina_Bool set) EINA_ARG_NONNULL(1);
    /**
-    * Make the image 'editable'.
+    * Check if the image 'editable'.
     *
     * @param obj Image object.
     * @return Editability.
     *
-    * This means the image is a valid drag target for drag and drop, and can be
-    * cut or pasted too.
+    * A return value of EINA_TRUE means the image is a valid drag target
+    * for drag and drop, and can be cut or pasted too.
     *
     * @ingroup Image
     */
