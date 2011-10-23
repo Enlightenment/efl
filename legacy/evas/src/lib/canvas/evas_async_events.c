@@ -3,11 +3,11 @@
 
 #ifdef BUILD_ASYNC_EVENTS
 
-#ifndef _MSC_VER
-# include <unistd.h>
-#endif
-#include <fcntl.h>
-#include <errno.h>
+# ifndef _MSC_VER
+#  include <unistd.h>
+# endif
+# include <fcntl.h>
+# include <errno.h>
 
 static int _fd_write = -1;
 static int _fd_read = -1;
@@ -28,21 +28,21 @@ int
 evas_async_events_init(void)
 {
    int filedes[2];
-
+   
    _init_evas_event++;
    if (_init_evas_event > 1) return _init_evas_event;
-
+   
    if (pipe(filedes) == -1)
      {
 	_init_evas_event = 0;
 	return 0;
      }
-
+   
    _fd_read = filedes[0];
    _fd_write = filedes[1];
-
+   
    fcntl(_fd_read, F_SETFL, O_NONBLOCK);
-
+   
    return _init_evas_event;
 }
 
@@ -51,12 +51,12 @@ evas_async_events_shutdown(void)
 {
    _init_evas_event--;
    if (_init_evas_event > 0) return _init_evas_event;
-
+   
    close(_fd_read);
    close(_fd_write);
    _fd_read = -1;
    _fd_write = -1;
-
+   
    return _init_evas_event;
 }
 
@@ -79,10 +79,10 @@ evas_async_events_process(void)
    Evas_Event_Async *ev;
    int check;
    int count = 0;
-
+   
    if (_fd_read == -1) return 0;
-
-   do 
+   
+   do
      {
 	check = read(_fd_read, &ev, sizeof (Evas_Event_Async *));
         
@@ -92,11 +92,11 @@ evas_async_events_process(void)
 	     free(ev);
 	     count++;
 	  }
-     } 
+     }
    while (check > 0);
-
+   
    evas_cache_image_wakeup();
-
+   
    if (check < 0)
      {
         switch (errno)
@@ -108,7 +108,7 @@ evas_async_events_process(void)
              _fd_read = -1;
           }
      }
-
+   
    return count;
 #else
    return 0;
@@ -122,27 +122,27 @@ evas_async_events_put(const void *target, Evas_Callback_Type type, void *event_i
    Evas_Event_Async *ev;
    ssize_t check;
    Eina_Bool result = EINA_FALSE;
-
+   
    if (!func) return 0;
    if (_fd_write == -1) return 0;
-
+   
    ev = calloc(1, sizeof (Evas_Event_Async));
    if (!ev) return 0;
-
+   
    ev->func = func;
    ev->target = target;
    ev->type = type;
    ev->event_info = event_info;
-
-   do 
+   
+   do
      {
         check = write(_fd_write, &ev, sizeof (Evas_Event_Async*));
      }
-   while ((check != sizeof (Evas_Event_Async*)) && 
+   while ((check != sizeof (Evas_Event_Async*)) &&
           ((errno == EINTR) || (errno == EAGAIN)));
-
+   
    evas_cache_image_wakeup();
-
+   
    if (check == sizeof (Evas_Event_Async*))
      result = EINA_TRUE;
    else
@@ -156,7 +156,7 @@ evas_async_events_put(const void *target, Evas_Callback_Type type, void *event_i
              _fd_write = -1;
           }
      }
-
+   
    return result;
 #else
    func(target, type, event_info);
