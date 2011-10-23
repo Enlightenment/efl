@@ -1201,7 +1201,9 @@ gstreamer_video_sink_new(Emotion_Gstreamer_Video *ev,
 	   fprintf(stderr, "creating window: %x [%i, %i, %i, %i]\n", win, x, y, w, h);
 	   if (win)
 	     {
-	       /* ecore_x_mwm_borderless_set(win, EINA_TRUE); */
+	       Ecore_X_Window_State state[] = { ECORE_X_WINDOW_STATE_SKIP_TASKBAR, ECORE_X_WINDOW_STATE_SKIP_PAGER };
+
+	       ecore_x_netwm_window_state_set(win, state, 2);
 	       ecore_x_window_hide(win);
 	       xvsink = gst_element_factory_make("xvimagesink", NULL);
 	       if (xvsink)
