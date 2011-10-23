@@ -706,11 +706,8 @@ _item_highlight(Elm_Gen_Item *it)
 static void
 _item_unhighlight(Elm_Gen_Item *it)
 {
-   const char *stacking, *selectraise;
    if ((it->delete_me) || (!it->highlighted)) return;
    edje_object_signal_emit(VIEW(it), "elm,state,unselected", "elm");
-   stacking = edje_object_data_get(VIEW(it), "stacking");
-   selectraise = edje_object_data_get(VIEW(it), "selectraise");
    if (!it->item->nostacking)
      {
        if ((it->item->order_num_in & 0x1) ^ it->item->stacking_even) evas_object_lower(VIEW(it));
@@ -2300,12 +2297,10 @@ _calc_job(void *data)
    Item_Block *itb, *chb = NULL;
    Evas_Coord minw = -1, minh = 0, y = 0, ow;
    int in = 0;
-   double t0, t;
    Eina_Bool minw_change = EINA_FALSE;
    Eina_Bool did_must_recalc = EINA_FALSE;
    if (!wd) return;
 
-   t0 = ecore_time_get();
    evas_object_geometry_get(wd->pan_smart, NULL, NULL, &ow, &wd->h);
    if (wd->w != ow)
      wd->w = ow;
@@ -2409,7 +2404,6 @@ _calc_job(void *data)
              wd->anchor_y = it_y;
           }
      }
-   t = ecore_time_get();
    if (did_must_recalc)
      {
         if (!wd->must_recalc_idler)
