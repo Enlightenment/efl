@@ -1039,7 +1039,9 @@ _video_resize(void *data, Evas_Object *obj __UNUSED__, const Evas_Video_Surface 
 {
    Emotion_Gstreamer_Video *ev = data;
 
+#ifdef HAVE_ECORE_X
    ecore_x_window_resize(ev->win, w, h);
+#endif
    fprintf(stderr, "resize: %i, %i\n", w, h);
 }
 
@@ -1048,11 +1050,13 @@ _video_move(void *data, Evas_Object *obj __UNUSED__, const Evas_Video_Surface *s
             Evas_Coord x, Evas_Coord y)
 {
    Emotion_Gstreamer_Video *ev = data;
+#ifdef HAVE_ECORE_X
    unsigned int pos[2];
 
    fprintf(stderr, "move: %i, %i\n", x, y);
    pos[0] = x; pos[1] = y;
    ecore_x_window_prop_card32_set(ev->win, ECORE_X_ATOM_E_VIDEO_POSITION, pos, 2);
+#endif
 }
 
 #if 0
@@ -1095,7 +1099,9 @@ _video_show(void *data, Evas_Object *obj __UNUSED__, const Evas_Video_Surface *s
    Emotion_Gstreamer_Video *ev = data;
 
    fprintf(stderr, "show xv\n");
+#ifdef HAVE_ECORE_X
    ecore_x_window_show(ev->win);
+#endif
    /* gst_pad_set_blocked_async(ev->teepad, TRUE, _block_pad_link_cb, ev); */
 }
 
@@ -1105,7 +1111,9 @@ _video_hide(void *data, Evas_Object *obj __UNUSED__, const Evas_Video_Surface *s
    Emotion_Gstreamer_Video *ev = data;
 
    fprintf(stderr, "hide xv\n");
+#ifdef HAVE_ECORE_X
    ecore_x_window_hide(ev->win);
+#endif
    /* gst_pad_set_blocked_async(ev->teepad, TRUE, _block_pad_unlink_cb, ev); */
 }
 
