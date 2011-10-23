@@ -3,11 +3,9 @@
 #include <dlfcn.h>
 
 /* local function prototypes */
-static int       _ecore_xcb_shutdown(Eina_Bool close_display);
-static Eina_Bool _ecore_xcb_fd_handle(void             *data,
-                                      Ecore_Fd_Handler *hdlr __UNUSED__);
-static Eina_Bool _ecore_xcb_fd_handle_buff(void             *data,
-                                           Ecore_Fd_Handler *hdlr __UNUSED__);
+static int _ecore_xcb_shutdown(Eina_Bool close_display);
+static Eina_Bool _ecore_xcb_fd_handle(void *data, Ecore_Fd_Handler *hdlr __UNUSED__);
+static Eina_Bool _ecore_xcb_fd_handle_buff(void *data, Ecore_Fd_Handler *hdlr __UNUSED__);
 static Eina_Bool _ecore_xcb_idle_enter(void *data __UNUSED__);
 
 /* local variables */
@@ -102,102 +100,101 @@ ecore_x_init(const char *name)
         /* we found the env var that says 'Yes, we are not ever gonna try
          * OpenGL so it is safe to not use XLib at all' */
 
-          /* try to connect to the display server */
-           _ecore_xcb_conn = xcb_connect(name, NULL);
+        /* try to connect to the display server */
+        _ecore_xcb_conn = xcb_connect(name, NULL);
      }
    else
      {
         /* env var was not specified, so we will assume that the user
          * may want opengl @ some point. connect this way for opengl to work */
-          void *libxcb, *libxlib;
-          Display *(*_real_display)(const char *display);
-          xcb_connection_t *(*_real_connection)(Display * dpy);
-          void (*_real_queue)(Display              *dpy,
-                              enum XEventQueueOwner owner);
-          int (*_real_close)(Display *dpy);
+        void *libxcb, *libxlib;
+        Display *(*_real_display)(const char *display);
+        xcb_connection_t *(*_real_connection)(Display * dpy);
+        void (*_real_queue)(Display *dpy, enum XEventQueueOwner owner);
+        int (*_real_close)(Display *dpy);
 #ifdef EVAS_FRAME_QUEUING
-          Status (*_real_threads)(void);
+        Status (*_real_threads)(void);
 #endif
 
-          /* want to dlopen here to avoid actual library linkage */
-          libxlib = dlopen("libX11.so", (RTLD_LAZY | RTLD_GLOBAL));
-          if (!libxlib)
-            libxlib = dlopen("libX11.so.6", (RTLD_LAZY | RTLD_GLOBAL));
-          if (!libxlib)
-            libxlib = dlopen("libX11.so.6.3.0", (RTLD_LAZY | RTLD_GLOBAL));
-          if (!libxlib)
-            {
-               ERR("Could not dlsym to libX11");
-     /* unregister log domain */
-               eina_log_domain_unregister(_ecore_xcb_log_dom);
-               _ecore_xcb_log_dom = -1;
-               ecore_event_shutdown();
-               ecore_shutdown();
-               eina_shutdown();
-               return --_ecore_xcb_init_count;
-            }
+        /* want to dlopen here to avoid actual library linkage */
+        libxlib = dlopen("libX11.so", (RTLD_LAZY | RTLD_GLOBAL));
+        if (!libxlib)
+          libxlib = dlopen("libX11.so.6", (RTLD_LAZY | RTLD_GLOBAL));
+        if (!libxlib)
+          libxlib = dlopen("libX11.so.6.3.0", (RTLD_LAZY | RTLD_GLOBAL));
+        if (!libxlib)
+          {
+             ERR("Could not dlsym to libX11");
+             /* unregister log domain */
+             eina_log_domain_unregister(_ecore_xcb_log_dom);
+             _ecore_xcb_log_dom = -1;
+             ecore_event_shutdown();
+             ecore_shutdown();
+             eina_shutdown();
+             return --_ecore_xcb_init_count;
+          }
 
-          libxcb = dlopen("libX11-xcb.so", (RTLD_LAZY | RTLD_GLOBAL));
-          if (!libxcb)
-            libxcb = dlopen("libX11-xcb.so.1", (RTLD_LAZY | RTLD_GLOBAL));
-          if (!libxcb)
-            libxcb = dlopen("libX11-xcb.so.1.0.0", (RTLD_LAZY | RTLD_GLOBAL));
-          if (!libxcb)
-            {
-               ERR("Could not dlsym to libX11-xcb");
-     /* unregister log domain */
-               eina_log_domain_unregister(_ecore_xcb_log_dom);
-               _ecore_xcb_log_dom = -1;
-               ecore_event_shutdown();
-               ecore_shutdown();
-               eina_shutdown();
-               return --_ecore_xcb_init_count;
-            }
+        libxcb = dlopen("libX11-xcb.so", (RTLD_LAZY | RTLD_GLOBAL));
+        if (!libxcb)
+          libxcb = dlopen("libX11-xcb.so.1", (RTLD_LAZY | RTLD_GLOBAL));
+        if (!libxcb)
+          libxcb = dlopen("libX11-xcb.so.1.0.0", (RTLD_LAZY | RTLD_GLOBAL));
+        if (!libxcb)
+          {
+             ERR("Could not dlsym to libX11-xcb");
+             /* unregister log domain */
+             eina_log_domain_unregister(_ecore_xcb_log_dom);
+             _ecore_xcb_log_dom = -1;
+             ecore_event_shutdown();
+             ecore_shutdown();
+             eina_shutdown();
+             return --_ecore_xcb_init_count;
+          }
 
-          _real_display = dlsym(libxlib, "XOpenDisplay");
-          _real_close = dlsym(libxlib, "XCloseDisplay");
-          _real_connection = dlsym(libxcb, "XGetXCBConnection");
-          _real_queue = dlsym(libxcb, "XSetEventQueueOwner");
+        _real_display = dlsym(libxlib, "XOpenDisplay");
+        _real_close = dlsym(libxlib, "XCloseDisplay");
+        _real_connection = dlsym(libxcb, "XGetXCBConnection");
+        _real_queue = dlsym(libxcb, "XSetEventQueueOwner");
 #ifdef EVAS_FRAME_QUEUING
-          _real_threads = dlsym(libxlib, "XInitThreads");
+        _real_threads = dlsym(libxlib, "XInitThreads");
 #endif
 
-          if (_real_display)
-            {
+        if (_real_display)
+          {
 #ifdef EVAS_FRAME_QUEUING
-               if (_real_threads) _real_threads();
+             if (_real_threads) _real_threads();
 #endif
-               _ecore_xcb_display = _real_display(name);
-               if (!_ecore_xcb_display)
-                 {
-                    ERR("Could not open Display via XLib");
-     /* unregister log domain */
-                    eina_log_domain_unregister(_ecore_xcb_log_dom);
-                    _ecore_xcb_log_dom = -1;
-                    ecore_event_shutdown();
-                    ecore_shutdown();
-                    eina_shutdown();
-                    return --_ecore_xcb_init_count;
-                 }
-               if (_real_connection)
-                 _ecore_xcb_conn = _real_connection(_ecore_xcb_display);
-               if (!_ecore_xcb_conn)
-                 {
-                    ERR("Could not get XCB Connection from XLib");
+             _ecore_xcb_display = _real_display(name);
+             if (!_ecore_xcb_display)
+               {
+                  ERR("Could not open Display via XLib");
+                  /* unregister log domain */
+                  eina_log_domain_unregister(_ecore_xcb_log_dom);
+                  _ecore_xcb_log_dom = -1;
+                  ecore_event_shutdown();
+                  ecore_shutdown();
+                  eina_shutdown();
+                  return --_ecore_xcb_init_count;
+               }
+             if (_real_connection)
+               _ecore_xcb_conn = _real_connection(_ecore_xcb_display);
+             if (!_ecore_xcb_conn)
+               {
+                  ERR("Could not get XCB Connection from XLib");
 
-                    if (_real_close) _real_close(_ecore_xcb_display);
+                  if (_real_close) _real_close(_ecore_xcb_display);
 
-     /* unregister log domain */
-                    eina_log_domain_unregister(_ecore_xcb_log_dom);
-                    _ecore_xcb_log_dom = -1;
-                    ecore_event_shutdown();
-                    ecore_shutdown();
-                    eina_shutdown();
-                    return --_ecore_xcb_init_count;
-                 }
-               if (_real_queue)
-                 _real_queue(_ecore_xcb_display, XCBOwnsEventQueue);
-            }
+                  /* unregister log domain */
+                  eina_log_domain_unregister(_ecore_xcb_log_dom);
+                  _ecore_xcb_log_dom = -1;
+                  ecore_event_shutdown();
+                  ecore_shutdown();
+                  eina_shutdown();
+                  return --_ecore_xcb_init_count;
+               }
+             if (_real_queue)
+               _real_queue(_ecore_xcb_display, XCBOwnsEventQueue);
+          }
      }
 
    if (xcb_connection_has_error(_ecore_xcb_conn))
@@ -332,8 +329,8 @@ ecore_x_flush(void)
 {
 //   LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
-     CHECK_XCB_CONN;
-     xcb_flush(_ecore_xcb_conn);
+   CHECK_XCB_CONN;
+   xcb_flush(_ecore_xcb_conn);
 }
 
 /**
@@ -420,14 +417,9 @@ ecore_x_ungrab(void)
  * @return EINA_TRUE on success EINA_FALSE otherwise.
  */
 EAPI Eina_Bool
-ecore_x_client_message32_send(Ecore_X_Window     win,
-                              Ecore_X_Atom       type,
+ecore_x_client_message32_send(Ecore_X_Window win, Ecore_X_Atom type,
                               Ecore_X_Event_Mask mask,
-                              long               d0,
-                              long               d1,
-                              long               d2,
-                              long               d3,
-                              long               d4)
+                              long d0, long d1, long d2, long d3, long d4)
 {
    xcb_client_message_event_t ev;
    xcb_void_cookie_t cookie;
@@ -475,10 +467,8 @@ ecore_x_client_message32_send(Ecore_X_Window     win,
  * @return EINA_TRUE on success EINA_FALSE otherwise.
  */
 EAPI Eina_Bool
-ecore_x_client_message8_send(Ecore_X_Window win,
-                             Ecore_X_Atom   type,
-                             const void    *data,
-                             int            len)
+ecore_x_client_message8_send(Ecore_X_Window win, Ecore_X_Atom type,
+                             const void *data, int len)
 {
    xcb_client_message_event_t ev;
    xcb_void_cookie_t cookie;
@@ -515,10 +505,7 @@ ecore_x_client_message8_send(Ecore_X_Window win,
 }
 
 EAPI Eina_Bool
-ecore_x_mouse_down_send(Ecore_X_Window win,
-                        int            x,
-                        int            y,
-                        int            b)
+ecore_x_mouse_down_send(Ecore_X_Window win, int x, int y, int b)
 {
    xcb_translate_coordinates_cookie_t cookie;
    xcb_translate_coordinates_reply_t *reply;
@@ -566,10 +553,7 @@ ecore_x_mouse_down_send(Ecore_X_Window win,
 }
 
 EAPI Eina_Bool
-ecore_x_mouse_up_send(Ecore_X_Window win,
-                      int            x,
-                      int            y,
-                      int            b)
+ecore_x_mouse_up_send(Ecore_X_Window win, int x, int y, int b)
 {
    xcb_translate_coordinates_cookie_t cookie;
    xcb_translate_coordinates_reply_t *reply;
@@ -617,9 +601,7 @@ ecore_x_mouse_up_send(Ecore_X_Window win,
 }
 
 EAPI Eina_Bool
-ecore_x_mouse_move_send(Ecore_X_Window win,
-                        int            x,
-                        int            y)
+ecore_x_mouse_move_send(Ecore_X_Window win, int x, int y)
 {
    xcb_translate_coordinates_cookie_t cookie;
    xcb_translate_coordinates_reply_t *reply;
@@ -694,9 +676,7 @@ ecore_x_keyboard_ungrab(void)
 }
 
 EAPI void
-ecore_x_pointer_xy_get(Ecore_X_Window win,
-                       int           *x,
-                       int           *y)
+ecore_x_pointer_xy_get(Ecore_X_Window win, int *x, int *y)
 {
    xcb_query_pointer_cookie_t cookie;
    xcb_query_pointer_reply_t *reply;
@@ -718,9 +698,7 @@ ecore_x_pointer_xy_get(Ecore_X_Window win,
 }
 
 EAPI Eina_Bool
-ecore_x_pointer_control_set(int accel_num,
-                            int accel_denom,
-                            int threshold)
+ecore_x_pointer_control_set(int accel_num, int accel_denom, int threshold)
 {
    xcb_void_cookie_t vcookie;
    xcb_generic_error_t *err;
@@ -743,9 +721,7 @@ ecore_x_pointer_control_set(int accel_num,
 }
 
 EAPI Eina_Bool
-ecore_x_pointer_control_get(int *accel_num,
-                            int *accel_denom,
-                            int *threshold)
+ecore_x_pointer_control_get(int *accel_num, int *accel_denom, int *threshold)
 {
    xcb_get_pointer_control_cookie_t cookie;
    xcb_get_pointer_control_reply_t *reply;
@@ -770,8 +746,7 @@ ecore_x_pointer_control_get(int *accel_num,
 }
 
 EAPI Eina_Bool
-ecore_x_pointer_mapping_set(unsigned char *map,
-                            int            nmap)
+ecore_x_pointer_mapping_set(unsigned char *map, int nmap)
 {
    xcb_set_pointer_mapping_cookie_t cookie;
    xcb_set_pointer_mapping_reply_t *reply;
@@ -791,8 +766,7 @@ ecore_x_pointer_mapping_set(unsigned char *map,
 }
 
 EAPI Eina_Bool
-ecore_x_pointer_mapping_get(unsigned char *map,
-                            int            nmap)
+ecore_x_pointer_mapping_get(unsigned char *map, int nmap)
 {
    xcb_get_pointer_mapping_cookie_t cookie;
    xcb_get_pointer_mapping_reply_t *reply;
@@ -894,9 +868,7 @@ ecore_x_pointer_ungrab(void)
 }
 
 EAPI Eina_Bool
-ecore_x_pointer_warp(Ecore_X_Window win,
-                     int            x,
-                     int            y)
+ecore_x_pointer_warp(Ecore_X_Window win, int x, int y)
 {
    xcb_void_cookie_t vcookie;
    xcb_generic_error_t *err;
@@ -951,9 +923,7 @@ ecore_x_bell(int percent)
 }
 
 EAPI void
-ecore_x_display_size_get(Ecore_X_Display *dsp __UNUSED__,
-                         int             *w,
-                         int             *h)
+ecore_x_display_size_get(Ecore_X_Display *dsp __UNUSED__, int *w, int *h)
 {
    xcb_screen_t *screen;
 
@@ -993,8 +963,7 @@ ecore_x_display_white_pixel_get(Ecore_X_Display *dsp __UNUSED__)
 }
 
 EAPI void
-ecore_x_pointer_last_xy_get(int *x,
-                            int *y)
+ecore_x_pointer_last_xy_get(int *x, int *y)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
@@ -1152,10 +1121,8 @@ ecore_x_fd_get(void)
 }
 
 EAPI void
-ecore_x_passive_grab_replay_func_set(Eina_Bool                             (*func)(void *data,
-                                                                     int   type,
-                                                                     void *event),
-                                     void                                 *data)
+ecore_x_passive_grab_replay_func_set(Eina_Bool (*func)(void *data, int type, void *event),
+                                     void *data)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
@@ -1174,9 +1141,7 @@ ecore_x_passive_grab_replay_func_set(Eina_Bool                             (*fun
  * @since 1.1
  */
 EAPI void
-ecore_x_screen_size_get(const Ecore_X_Screen *screen,
-                        int                  *w,
-                        int                  *h)
+ecore_x_screen_size_get(const Ecore_X_Screen *screen, int *w, int *h)
 {
    xcb_screen_t *s;
 
@@ -1274,8 +1239,7 @@ ecore_x_visual_id_get(Ecore_X_Visual visual)
  * @since 1.1.0
  */
 EAPI Ecore_X_Visual
-ecore_x_default_visual_get(Ecore_X_Display *disp __UNUSED__,
-                           Ecore_X_Screen  *screen)
+ecore_x_default_visual_get(Ecore_X_Display *disp __UNUSED__, Ecore_X_Screen *screen)
 {
    xcb_screen_t *s;
    xcb_depth_iterator_t diter;
@@ -1307,8 +1271,7 @@ ecore_x_default_visual_get(Ecore_X_Display *disp __UNUSED__,
  * @since 1.1.0
  */
 EAPI Ecore_X_Colormap
-ecore_x_default_colormap_get(Ecore_X_Display *disp __UNUSED__,
-                             Ecore_X_Screen  *screen)
+ecore_x_default_colormap_get(Ecore_X_Display *disp __UNUSED__, Ecore_X_Screen *screen)
 {
    xcb_screen_t *s;
 
@@ -1326,8 +1289,7 @@ ecore_x_default_colormap_get(Ecore_X_Display *disp __UNUSED__,
  * @since 1.1.0
  */
 EAPI int
-ecore_x_default_depth_get(Ecore_X_Display *disp __UNUSED__,
-                          Ecore_X_Screen  *screen)
+ecore_x_default_depth_get(Ecore_X_Display *disp __UNUSED__, Ecore_X_Screen *screen)
 {
    xcb_screen_t *s;
 
@@ -1429,12 +1391,10 @@ _ecore_xcb_shutdown(Eina_Bool close_display)
 }
 
 static Eina_Bool
-_ecore_xcb_fd_handle(void             *data,
-                     Ecore_Fd_Handler *hdlr __UNUSED__)
+_ecore_xcb_fd_handle(void *data, Ecore_Fd_Handler *hdlr __UNUSED__)
 {
    xcb_connection_t *conn;
    xcb_generic_event_t *ev = NULL;
-//   xcb_generic_event_t *ev_mouse = NULL;
 
    conn = (xcb_connection_t *)data;
 
@@ -1462,38 +1422,17 @@ _ecore_xcb_fd_handle(void             *data,
              }
            else
              {
-     /* trap mouse motion events and filter out all but the last one.
-      * we do this because handling every one is fairly cpu intensive
-      * (especially on under-powered devices).
-      *
-      * NB: I've tested this extensively and have found no ill effects,
-      * but if someone notices something, please report it */
-                  /* if ((ev->response_type & ~0x80) == XCB_MOTION_NOTIFY)  */
-     /*   { */
-                    /*      if (ev_mouse) free(ev_mouse); */
-     /*      ev_mouse = ev; */
-                      /*   } */
-     /* else  */
-                        /*   { */
-     /* FIXME: Filter event for XIM */
-                          _ecore_xcb_events_handle(ev);
-                          free(ev);
-     /* } */
+                /* FIXME: Filter event for XIM */
+                _ecore_xcb_events_handle(ev);
+                free(ev);
              }
      }
-
-   /* if (ev_mouse)  */
-   /*   { */
-   /*      _ecore_xcb_events_handle(ev_mouse); */
-   /*      free(ev_mouse); */
-   /*   } */
 
    return ECORE_CALLBACK_RENEW;
 }
 
 static Eina_Bool
-_ecore_xcb_fd_handle_buff(void             *data,
-                          Ecore_Fd_Handler *hdlr __UNUSED__)
+_ecore_xcb_fd_handle_buff(void *data, Ecore_Fd_Handler *hdlr __UNUSED__)
 {
    xcb_connection_t *conn;
    xcb_generic_event_t *ev = NULL;
@@ -1503,30 +1442,16 @@ _ecore_xcb_fd_handle_buff(void             *data,
    if (ev)
      {
         /* check for errors first */
-         if (xcb_connection_has_error(conn))
-           {
-              xcb_generic_error_t *err;
+        if (xcb_connection_has_error(conn))
+          {
+             xcb_generic_error_t *err;
 
-              err = (xcb_generic_error_t *)ev;
-              _ecore_xcb_io_error_handle(err);
-              return ECORE_CALLBACK_CANCEL;
-           }
-         /* trap mouse motion events and filter out all but the last one.
-          * we do this because handling every one is fairly cpu intensive
-          * (especially on under-powered devices).
-          *
-          * NB: I've tested this extensively and have found no ill effects,
-          * but if someone notices something, please report it */
-         /* else if ((ev->response_type & ~0x80) == XCB_MOTION_NOTIFY)  */
-         /*   { */
-         /*      free(ev); */
-         /*      return ECORE_CALLBACK_CANCEL; */
-         /*   } */
-         /* else */
-         {
-            _ecore_xcb_event_buffered = ev;
-            return ECORE_CALLBACK_RENEW;
-         }
+             err = (xcb_generic_error_t *)ev;
+             _ecore_xcb_io_error_handle(err);
+             return ECORE_CALLBACK_CANCEL;
+          }
+        _ecore_xcb_event_buffered = ev;
+        return ECORE_CALLBACK_RENEW;
      }
    return ECORE_CALLBACK_CANCEL;
 }
@@ -1540,4 +1465,3 @@ _ecore_xcb_idle_enter(void *data __UNUSED__)
    xcb_flush(_ecore_xcb_conn);
    return ECORE_CALLBACK_RENEW;
 }
-
