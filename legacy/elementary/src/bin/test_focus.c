@@ -104,7 +104,8 @@ test_focus(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
           {
              Evas_Object *tg = elm_check_add(win);
              elm_object_style_set(tg, "toggle");
-             elm_check_states_labels_set(tg, "Yes", "No");
+             elm_object_text_part_set(tg, "on", "Yes");
+             elm_object_text_part_set(tg, "off", "No");
              elm_box_pack_end(bx, tg);
              my_show(tg);
           }
