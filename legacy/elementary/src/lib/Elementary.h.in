@@ -7198,9 +7198,9 @@ extern "C" {
     * @param v_pagenumber The vertical page number
     *
     * The page number starts from 0. 0 is the first page.
-    * Current page means the page which meet the top-left of the viewport.
-    * If there are two or more pages in the viewport, it returns the number of page
-    * which meet the top-left of the viewport.
+    * Current page means the page which meets the top-left of the viewport.
+    * If there are two or more pages in the viewport, it returns the number of the page
+    * which meets the top-left of the viewport.
     *
     * @see elm_scroller_last_page_get()
     * @see elm_scroller_page_show()
@@ -7316,12 +7316,17 @@ extern "C" {
     * @param x The scrolling horizontal gravity
     * @param y The scrolling vertical gravity
     *
-    * It set scrolling gravity. It adds scrolling weight values
-    * to the scroller. Usually it uses for stopping the scroller.
-    * To set y as 0.0 for lower growing child objects,
-    * even though child objects are added to bottom, the scroller doesn't move.
-    * To set y as 1.0 for upper growing child objects. And x is horizontal gravity.
-    * By default 0.0 for x and y.
+    * The gravity, defines how the scroller will adjust its view
+    * when the size of the scroller contents increase.
+    *
+    * The scroller will adjust the view to glue itself as follows.
+    *
+    *  x=0.0, for showing the left most region of the content.
+    *  x=1.0, for showing the right most region of the content.
+    *  y=0.0, for showing the bottom most region of the content.
+    *  y=1.0, for showing the top most region of the content.
+    *
+    * Default values for x and y are 0.0
     */
    EAPI void         elm_scroller_gravity_set(Evas_Object *obj, double x, double y) EINA_ARG_NONNULL(1);
    /**
