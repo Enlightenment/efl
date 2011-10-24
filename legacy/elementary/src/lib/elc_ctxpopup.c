@@ -713,13 +713,19 @@ _theme_hook(Evas_Object *obj)
    Widget_Data *wd;
    Eina_List *elist;
    Elm_Ctxpopup_Item *item;
+   Eina_Bool rtl;
 
    wd = elm_widget_data_get(obj);
    if (!wd) return;
 
+   _elm_widget_mirrored_reload(obj);
+   rtl = elm_widget_mirrored_get(obj);
+
    //Items
    EINA_LIST_FOREACH(wd->items, elist, item)
      {
+        edje_object_mirrored_set(VIEW(item), rtl);
+
         if (item->label && item->icon)
           _elm_theme_object_set(obj, VIEW(item), "ctxpopup",
                                 "icon_text_style_item",
@@ -978,6 +984,7 @@ _item_new(Elm_Ctxpopup_Item *item, char *group_name)
    if (!wd) return;
 
    VIEW(item) = edje_object_add(evas_object_evas_get(wd->base));
+   edje_object_mirrored_set(VIEW(item), elm_widget_mirrored_get(WIDGET(item)));
    _elm_theme_object_set(WIDGET(item), VIEW(item), "ctxpopup", group_name,
                          elm_widget_style_get(WIDGET(item)));
    edje_object_signal_callback_add(VIEW(item), "elm,action,click", "",
