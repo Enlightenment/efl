@@ -6971,7 +6971,7 @@ extern "C" {
     * A scroller holds a single object and "scrolls it around". This means that
     * it allows the user to use a scrollbar (or a finger) to drag the viewable
     * region around, allowing to move through a much larger object that is
-    * contained in the scroller. The scroiller will always have a small minimum
+    * contained in the scroller. The scroller will always have a small minimum
     * size by default as it won't be limited by the contents of the scroller.
     *
     * Signals that you can add callbacks for are:
@@ -7129,8 +7129,8 @@ extern "C" {
     * @brief Get the size of the content object
     *
     * @param obj The scroller object
-    * @param w Width return
-    * @param h Height return
+    * @param w Width of the content object.
+    * @param h Height of the content object.
     *
     * This gets the size of the content object of the scroller.
     */
@@ -7139,21 +7139,21 @@ extern "C" {
     * @brief Set bouncing behavior
     *
     * @param obj The scroller object
-    * @param h_bounce Will the scroller bounce horizontally or not
-    * @param v_bounce Will the scroller bounce vertically or not
+    * @param h_bounce Allow bounce horizontally
+    * @param v_bounce Allow bounce vertically
     *
     * When scrolling, the scroller may "bounce" when reaching an edge of the
     * content object. This is a visual way to indicate the end has been reached.
-    * This is enabled by default for both axis. This will set if it is enabled
-    * for that axis with the boolean parameters for each axis.
+    * This is enabled by default for both axis. This API will set if it is enabled
+    * for the given axis with the boolean parameters for each axis.
     */
    EAPI void         elm_scroller_bounce_set(Evas_Object *obj, Eina_Bool h_bounce, Eina_Bool v_bounce) EINA_ARG_NONNULL(1);
    /**
-    * @brief Get the bounce mode
+    * @brief Get the bounce behaviour
     *
     * @param obj The Scroller object
-    * @param h_bounce Allow bounce horizontally
-    * @param v_bounce Allow bounce vertically
+    * @param h_bounce Will the scroller bounce horizontally or not
+    * @param v_bounce Will the scroller bounce vertically or not
     *
     * @see elm_scroller_bounce_set()
     */
@@ -7172,7 +7172,7 @@ extern "C" {
     * viewport" is size (horizontally or vertically). 0.0 turns it off in that
     * axis. This is mutually exclusive with page size
     * (see elm_scroller_page_size_set()  for more information). Likewise 0.5
-    * is "half a viewport". Sane usable valus are normally between 0.0 and 1.0
+    * is "half a viewport". Sane usable values are normally between 0.0 and 1.0
     * including 1.0. If you only want 1 axis to be page "limited", use 0.0 for
     * the other axis.
     */
