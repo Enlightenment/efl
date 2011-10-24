@@ -3,11 +3,12 @@
 # batden <batden@orange.fr>, 2011.
 # dazibao <dazibao@sfr.fr>, 2011.
 #
+#: src/lib/elm_config.c:1394
 msgid ""
 msgstr ""
 "Project-Id-Version: Elementary\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2011-09-29 11:42+0200\n"
+"POT-Creation-Date: 2011-10-24 08:08+0900\n"
 "PO-Revision-Date: 2011-09-29 14:09+0200\n"
 "Last-Translator: dazibao <dazibao@sfr.fr>\n"
 "Language-Team: French <sansgourou@gmail.com>\n"
@@ -28,7 +29,7 @@ msgstr "Monter"
 msgid "Home"
 msgstr "Home"
 
-#: src/lib/elc_fileselector.c:1002 src/lib/elm_entry.c:1123
+#: src/lib/elc_fileselector.c:1002 src/lib/elm_entry.c:1198
 msgid "Cancel"
 msgstr "Annuler"
 
@@ -40,8 +41,8 @@ msgstr "OK"
 msgid "Clicked"
 msgstr "Cliqué"
 
-#: src/lib/elm_button.c:349 src/lib/elm_check.c:271 src/lib/elm_radio.c:295
-#: src/lib/elm_toolbar.c:659
+#: src/lib/elm_button.c:349 src/lib/elm_check.c:305 src/lib/elm_radio.c:295
+#: src/lib/elm_toolbar.c:734
 msgid "State: Disabled"
 msgstr "État : désactivé"
 
@@ -53,36 +54,42 @@ msgstr "Bouton"
 msgid "%B %Y"
 msgstr "%B %Y"
 
-#: src/lib/elm_check.c:216 src/lib/elm_check.c:273 src/lib/elm_radio.c:231
-#: src/lib/elm_radio.c:297
+#: src/lib/elm_check.c:222 src/lib/elm_check.c:225 src/lib/elm_check.c:316
+#: src/lib/elm_radio.c:231 src/lib/elm_radio.c:297
 msgid "State: On"
 msgstr "État : activé"
 
-#: src/lib/elm_check.c:222 src/lib/elm_check.c:274 src/lib/elm_radio.c:298
+#: src/lib/elm_check.c:235 src/lib/elm_check.c:238 src/lib/elm_check.c:325
+#: src/lib/elm_radio.c:298
 msgid "State: Off"
 msgstr "État : désactivé"
 
-#: src/lib/elm_check.c:321
+#: src/lib/elm_check.c:312 src/lib/elm_check.c:322
+#, fuzzy
+msgid "State"
+msgstr "État : activé"
+
+#: src/lib/elm_check.c:372
 msgid "Check"
 msgstr "À cocher"
 
-#: src/lib/elm_config.c:1602
+#: src/lib/elm_config.c:1331
 msgid "default:LTR"
 msgstr "LTR par défaut"
 
-#: src/lib/elm_entry.c:1117
+#: src/lib/elm_entry.c:1192
 msgid "Copy"
 msgstr "Copier"
 
-#: src/lib/elm_entry.c:1120
+#: src/lib/elm_entry.c:1195
 msgid "Cut"
 msgstr "Couper"
 
-#: src/lib/elm_entry.c:1134
+#: src/lib/elm_entry.c:1209
 msgid "Select"
 msgstr "Sélectionner"
 
-#: src/lib/elm_entry.c:1140
+#: src/lib/elm_entry.c:1215
 msgid "Paste"
 msgstr "Coller"
 
@@ -90,22 +97,30 @@ msgstr "Coller"
 msgid "Radio"
 msgstr "Radio"
 
-#: src/lib/elm_toolbar.c:612
+#: src/lib/elm_toggle.c:11
+msgid "ON"
+msgstr ""
+
+#: src/lib/elm_toggle.c:11
+msgid "OFF"
+msgstr ""
+
+#: src/lib/elm_toolbar.c:651
 msgid "Selected"
 msgstr "Sélectionné"
 
-#: src/lib/elm_toolbar.c:657
+#: src/lib/elm_toolbar.c:732
 msgid "Separator"
 msgstr "Séparateur"
 
-#: src/lib/elm_toolbar.c:661
+#: src/lib/elm_toolbar.c:736
 msgid "State: Selected"
 msgstr "État : sélectionné"
 
-#: src/lib/elm_toolbar.c:663
+#: src/lib/elm_toolbar.c:738
 msgid "Has menu"
 msgstr "Possède un menu"
 
-#: src/lib/elm_toolbar.c:693
+#: src/lib/elm_toolbar.c:768
 msgid "Tool Item"
 msgstr "Élément outil"

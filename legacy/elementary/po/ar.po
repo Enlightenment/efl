@@ -2,11 +2,12 @@
 # This file is distributed under the same license as the Elementary package.
 # FIRST AUTHOR <tom.hacohen@partner.samsung.com>, 2010.
 #
+#: src/lib/elm_config.c:1394
 msgid ""
 msgstr ""
 "Project-Id-Version: elementary\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2011-09-15 23:35+0900\n"
+"POT-Creation-Date: 2011-10-24 08:08+0900\n"
 "PO-Revision-Date: 2010-12-26 10:05+0200\n"
 "Last-Translator: Tom Hacohen <tom.hacohen@partner.samsung.com>\n"
 "Language-Team: General\n"
@@ -25,7 +26,7 @@ msgstr ""
 msgid "Home"
 msgstr ""
 
-#: src/lib/elc_fileselector.c:1002 src/lib/elm_entry.c:1123
+#: src/lib/elc_fileselector.c:1002 src/lib/elm_entry.c:1198
 msgid "Cancel"
 msgstr ""
 
@@ -37,7 +38,8 @@ msgstr ""
 msgid "Clicked"
 msgstr ""
 
-#: src/lib/elm_button.c:349 src/lib/elm_check.c:271 src/lib/elm_toolbar.c:659
+#: src/lib/elm_button.c:349 src/lib/elm_check.c:305 src/lib/elm_radio.c:295
+#: src/lib/elm_toolbar.c:734
 msgid "State: Disabled"
 msgstr ""
 
@@ -49,54 +51,72 @@ msgstr ""
 msgid "%B %Y"
 msgstr ""
 
-#: src/lib/elm_check.c:216 src/lib/elm_check.c:273
+#: src/lib/elm_check.c:222 src/lib/elm_check.c:225 src/lib/elm_check.c:316
+#: src/lib/elm_radio.c:231 src/lib/elm_radio.c:297
 msgid "State: On"
 msgstr ""
 
-#: src/lib/elm_check.c:222 src/lib/elm_check.c:274
+#: src/lib/elm_check.c:235 src/lib/elm_check.c:238 src/lib/elm_check.c:325
+#: src/lib/elm_radio.c:298
 msgid "State: Off"
 msgstr ""
 
-#: src/lib/elm_check.c:321
+#: src/lib/elm_check.c:312 src/lib/elm_check.c:322
+msgid "State"
+msgstr ""
+
+#: src/lib/elm_check.c:372
 msgid "Check"
 msgstr ""
 
-#: src/lib/elm_config.c:1603
+#: src/lib/elm_config.c:1331
 msgid "default:LTR"
 msgstr "default:RTL"
 
-#: src/lib/elm_entry.c:1117
+#: src/lib/elm_entry.c:1192
 msgid "Copy"
 msgstr ""
 
-#: src/lib/elm_entry.c:1120
+#: src/lib/elm_entry.c:1195
 msgid "Cut"
 msgstr ""
 
-#: src/lib/elm_entry.c:1134
+#: src/lib/elm_entry.c:1209
 msgid "Select"
 msgstr ""
 
-#: src/lib/elm_entry.c:1140
+#: src/lib/elm_entry.c:1215
 msgid "Paste"
 msgstr ""
 
-#: src/lib/elm_toolbar.c:612
+#: src/lib/elm_radio.c:345
+msgid "Radio"
+msgstr ""
+
+#: src/lib/elm_toggle.c:11
+msgid "ON"
+msgstr ""
+
+#: src/lib/elm_toggle.c:11
+msgid "OFF"
+msgstr ""
+
+#: src/lib/elm_toolbar.c:651
 msgid "Selected"
 msgstr ""
 
-#: src/lib/elm_toolbar.c:657
+#: src/lib/elm_toolbar.c:732
 msgid "Separator"
 msgstr ""
 
-#: src/lib/elm_toolbar.c:661
+#: src/lib/elm_toolbar.c:736
 msgid "State: Selected"
 msgstr ""
 
-#: src/lib/elm_toolbar.c:663
+#: src/lib/elm_toolbar.c:738
 msgid "Has menu"
 msgstr ""
 
-#: src/lib/elm_toolbar.c:693
+#: src/lib/elm_toolbar.c:768
 msgid "Tool Item"
 msgstr ""
