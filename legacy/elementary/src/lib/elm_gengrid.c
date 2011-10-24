@@ -965,7 +965,7 @@ _item_realize(Elm_Gen_Item *it)
 
         it->contents =
            elm_widget_stringlist_get(edje_object_data_get(VIEW(it),
-                                                          "icons"));
+                                                          "contents"));
         EINA_LIST_FOREACH(it->contents, l, key)
           {
              if (it->itc->func.content_get)

@@ -1,7 +1,7 @@
 group { name: "elm/genlist/item/default/default";
    data.item: "selectraise" "on";
    data.item: "labels" "elm.text";
-   data.item: "icons" "elm.swallow.icon elm.swallow.end";
+   data.item: "contents" "elm.swallow.icon elm.swallow.end";
    data.item: "treesize" "20";
    //      data.item: "states" "";
    images {
@@ -369,7 +369,7 @@ group { name: "elm/genlist/item/group_index/default";
    alias: "elm/genlist/item_compress/group_index/default";
    data.item: "selectraise" "on";
    data.item: "labels" "elm.text";
-   data.item: "icons" "elm.swallow.icon elm.swallow.end";
+   data.item: "contents" "elm.swallow.icon elm.swallow.end";
    data.item: "treesize" "20";
    //      data.item: "states" "";
    images {
@@ -643,7 +643,7 @@ group { name: "elm/genlist/item/group_index/default";
 group { name: "elm/genlist/item_compress/message/default";
    data.item: "selectraise" "on";
    data.item: "labels" "elm.title.1 elm.title.2 elm.text";
-   //      data.item: "icons" "elm.swallow.icon elm.swallow.end";
+   //      data.item: "contents" "elm.swallow.icon elm.swallow.end";
    data.item: "treesize" "20";
    //      data.item: "states" "";
    images {
@@ -997,7 +997,7 @@ group { name: "elm/genlist/item_compress/default/default";
 group { name: "elm/genlist/tree/default/default";
    data.item: "selectraise" "on";
    data.item: "labels" "elm.text";
-   data.item: "icons" "elm.swallow.icon elm.swallow.end";
+   data.item: "contents" "elm.swallow.icon elm.swallow.end";
    data.item: "treesize" "20";
    //      data.item: "states" "";
    images {
@@ -1426,7 +1426,7 @@ group { name: "elm/genlist/tree_compress/default/default";
    data.item: "stacking" "above";
    data.item: "selectraise" "on";
    data.item: "labels" "elm.text";
-   data.item: "icons" "elm.swallow.icon elm.swallow.end";
+   data.item: "contents" "elm.swallow.icon elm.swallow.end";
    data.item: "treesize" "20";
    //      data.item: "states" "";
    images {
@@ -1833,7 +1833,7 @@ group { name: "elm/genlist/item/default_style/default";
    data.item: "stacking" "above";
    data.item: "selectraise" "on";
    data.item: "labels" "elm.text";
-   data.item: "icons" "elm.swallow.icon elm.swallow.end";
+   data.item: "contents" "elm.swallow.icon elm.swallow.end";
    data.item: "treesize" "20";
    images {
       image: "bt_sm_base1.png" COMP;
@@ -2105,7 +2105,7 @@ group { name: "elm/genlist/item_odd/default_style/default";
    data.item: "stacking" "below";
    data.item: "selectraise" "on";
    data.item: "labels" "elm.text";
-   data.item: "icons" "elm.swallow.icon elm.swallow.end";
+   data.item: "contents" "elm.swallow.icon elm.swallow.end";
    data.item: "treesize" "20";
    images {
       image: "bt_sm_base1.png" COMP;
@@ -2352,7 +2352,7 @@ group { name: "elm/genlist/tree/default_style/default";
    data.item: "stacking" "above";
    data.item: "selectraise" "on";
    data.item: "labels" "elm.text";
-   data.item: "icons" "elm.swallow.icon elm.swallow.end";
+   data.item: "contents" "elm.swallow.icon elm.swallow.end";
    data.item: "treesize" "20";
    images {
       image: "bt_sm_base1.png" COMP;
@@ -2671,7 +2671,7 @@ group { name: "elm/genlist/tree_odd/default_style/default";
    data.item: "stacking" "below";
    data.item: "selectraise" "on";
    data.item: "labels" "elm.text";
-   data.item: "icons" "elm.swallow.icon elm.swallow.end";
+   data.item: "contents" "elm.swallow.icon elm.swallow.end";
    data.item: "treesize" "20";
    images {
       image: "bt_sm_base1.png" COMP;
@@ -2967,7 +2967,7 @@ group { name: "elm/genlist/item/double_label/default";
    data.item: "stacking" "above";
    data.item: "selectraise" "on";
    data.item: "labels" "elm.text elm.text.sub";
-   data.item: "icons" "elm.swallow.icon elm.swallow.end";
+   data.item: "contents" "elm.swallow.icon elm.swallow.end";
    data.item: "treesize" "20";
    //      data.item: "states" "";
    images {
@@ -3279,7 +3279,7 @@ group { name: "elm/genlist/item_compress/double_label/default";
    data.item: "stacking" "above";
    data.item: "selectraise" "on";
    data.item: "labels" "elm.text elm.text.sub";
-   data.item: "icons" "elm.swallow.icon elm.swallow.end";
+   data.item: "contents" "elm.swallow.icon elm.swallow.end";
    data.item: "treesize" "20";
    //      data.item: "states" "";
    images {
@@ -3591,7 +3591,7 @@ group { name: "elm/genlist/item_odd/double_label/default";
    data.item: "stacking" "below";
    data.item: "selectraise" "on";
    data.item: "labels" "elm.text elm.text.sub";
-   data.item: "icons" "elm.swallow.icon elm.swallow.end";
+   data.item: "contents" "elm.swallow.icon elm.swallow.end";
    data.item: "treesize" "20";
    //      data.item: "states" "";
    images {
@@ -3877,7 +3877,7 @@ group { name: "elm/genlist/item_compress_odd/double_label/default";
    data.item: "stacking" "below";
    data.item: "selectraise" "on";
    data.item: "labels" "elm.text elm.text.sub";
-   data.item: "icons" "elm.swallow.icon elm.swallow.end";
+   data.item: "contents" "elm.swallow.icon elm.swallow.end";
    data.item: "treesize" "20";
    //      data.item: "states" "";
    images {
@@ -4164,7 +4164,7 @@ group { name: "elm/genlist/tree/double_label/default";
    data.item: "stacking" "above";
    data.item: "selectraise" "on";
    data.item: "labels" "elm.text elm.text.sub";
-   data.item: "icons" "elm.swallow.icon elm.swallow.end";
+   data.item: "contents" "elm.swallow.icon elm.swallow.end";
    data.item: "treesize" "20";
    //      data.item: "states" "";
    images {
@@ -4522,7 +4522,7 @@ group { name: "elm/genlist/tree_compress/double_label/default";
    data.item: "stacking" "above";
    data.item: "selectraise" "on";
    data.item: "labels" "elm.text elm.text.sub";
-   data.item: "icons" "elm.swallow.icon elm.swallow.end";
+   data.item: "contents" "elm.swallow.icon elm.swallow.end";
    data.item: "treesize" "20";
    //      data.item: "states" "";
    images {
@@ -4880,7 +4880,7 @@ group { name: "elm/genlist/tree_odd/double_label/default";
    data.item: "stacking" "below";
    data.item: "selectraise" "on";
    data.item: "labels" "elm.text elm.text.sub";
-   data.item: "icons" "elm.swallow.icon elm.swallow.end";
+   data.item: "contents" "elm.swallow.icon elm.swallow.end";
    data.item: "treesize" "20";
    //      data.item: "states" "";
    images {
@@ -5214,7 +5214,7 @@ group { name: "elm/genlist/item/icon_top_text_bottom/default";
    data.item: "stacking" "above";
    data.item: "selectraise" "on";
    data.item: "labels" "elm.text";
-   data.item: "icons" "elm.swallow.icon";
+   data.item: "contents" "elm.swallow.icon";
    data.item: "treesize" "20";
    //      data.item: "states" "";
    images {
@@ -5470,7 +5470,7 @@ group { name: "elm/genlist/item_odd/icon_top_text_bottom/default";
    data.item: "stacking" "below";
    data.item: "selectraise" "on";
    data.item: "labels" "elm.text";
-   data.item: "icons" "elm.swallow.icon";
+   data.item: "contents" "elm.swallow.icon";
    data.item: "treesize" "20";
    //      data.item: "states" "";
    images {
@@ -5701,7 +5701,7 @@ group { name: "elm/genlist/tree/icon_top_text_bottom/default";
    data.item: "stacking" "above";
    data.item: "selectraise" "on";
    data.item: "labels" "elm.text";
-   data.item: "icons" "elm.swallow.icon";
+   data.item: "contents" "elm.swallow.icon";
    data.item: "treesize" "20";
    //      data.item: "states" "";
    images {
@@ -6002,7 +6002,7 @@ group { name: "elm/genlist/tree_odd/icon_top_text_bottom/default";
    data.item: "stacking" "below";
    data.item: "selectraise" "on";
    data.item: "labels" "elm.text";
-   data.item: "icons" "elm.swallow.icon";
+   data.item: "contents" "elm.swallow.icon";
    data.item: "treesize" "20";
    //      data.item: "states" "";
    images {
@@ -6281,7 +6281,7 @@ group { name: "elm/genlist/tree_compress_odd/double_label/default";
    data.item: "stacking" "below";
    data.item: "selectraise" "on";
    data.item: "labels" "elm.text elm.text.sub";
-   data.item: "icons" "elm.swallow.icon elm.swallow.end";
+   data.item: "contents" "elm.swallow.icon elm.swallow.end";
    data.item: "treesize" "20";
    //      data.item: "states" "";
    images {
@@ -7849,7 +7849,7 @@ group { name: "elm/genlist/item_compress/media-preview/default";
    data.item: "stacking" "above";
    data.item: "selectraise" "on";
    data.item: "labels" "elm.text.title elm.text.artist";
-   data.item: "icons" "elm.swallow.preview";
+   data.item: "contents" "elm.swallow.preview";
    data.item: "treesize" "20";
    images {
       image: "bt_sm_base1.png" COMP;
@@ -8136,7 +8136,7 @@ group { name: "elm/genlist/item_compress_odd/media-preview/default";
    data.item: "stacking" "below";
    data.item: "selectraise" "on";
    data.item: "labels" "elm.text.title elm.text.artist";
-   data.item: "icons" "elm.swallow.preview";
+   data.item: "contents" "elm.swallow.preview";
    data.item: "treesize" "20";
    images {
       image: "bt_sm_base1.png" COMP;
@@ -8397,7 +8397,7 @@ group { name: "elm/genlist/item_compress_odd/media-preview/default";
 group { name: "elm/genlist/item/mode/default";
    data.item: "selectraise" "on";
    data.item: "labels" "elm.text.mode";
-   data.item: "icons" "elm.swallow.mode";
+   data.item: "contents" "elm.swallow.mode";
    data.item: "mode_part" "elm.swallow.origin";
    data.item: "treesize" "20";
    images {
@@ -8796,7 +8796,7 @@ group { name: "elm/genlist/item_odd/mode/default";
    data.item: "stacking" "below";
    data.item: "selectraise" "on";
    data.item: "labels" "elm.text.mode";
-   data.item: "icons" "elm.swallow.mode";
+   data.item: "contents" "elm.swallow.mode";
    data.item: "mode_part" "elm.swallow.origin";
    data.item: "treesize" "20";
    images {

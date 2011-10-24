@@ -1702,7 +1702,7 @@ _item_content_realize(Elm_Gen_Item *it,
         const char *key;
         Evas_Object *ic = NULL;
 
-        *source = elm_widget_stringlist_get(edje_object_data_get(target, "icons"));
+        *source = elm_widget_stringlist_get(edje_object_data_get(target, "contents"));
         EINA_LIST_FOREACH(*source, l, key)
           {
              if (it->itc->func.content_get)

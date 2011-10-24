@@ -1,6 +1,6 @@
 group { name: "elm/gengrid/item/default/default";
    data.item: "labels" "elm.text";
-   data.item: "icons" "elm.swallow.icon elm.swallow.end";
+   data.item: "contents" "elm.swallow.icon elm.swallow.end";
    images {
       image: "bt_sm_base1.png" COMP;
       image: "bt_sm_shine.png" COMP;
@@ -314,7 +314,7 @@ group { name: "elm/gengrid/item/default_style/default";
       }
    }
    data.item: "labels" "elm.text";
-   data.item: "icons" "elm.swallow.icon elm.swallow.end";
+   data.item: "contents" "elm.swallow.icon elm.swallow.end";
    images {
       image: "bt_sm_base1.png" COMP;
       image: "bt_sm_shine.png" COMP;
@@ -742,7 +742,7 @@ group { name: "elm/gengrid/item/up/default";
 
 group { name: "elm/gengrid/item/album-preview/default";
    data.item: "labels" "elm.text";
-   data.item: "icons" "elm.swallow.icon.1 elm.swallow.icon.2 elm.swallow.icon.3 elm.swallow.icon.4";
+   data.item: "contents" "elm.swallow.icon.1 elm.swallow.icon.2 elm.swallow.icon.3 elm.swallow.icon.4";
    data.item: "states" "have_files";
    images {
       image: "bt_sm_base1.png" COMP;
@@ -1029,7 +1029,7 @@ group { name: "elm/gengrid/item/album-preview/default";
 
 group { name: "elm/gengrid/item/thumb/default";
    data {
-      item: "icons" "elm.swallow.icon";
+      item: "contents" "elm.swallow.icon";
       item: "labels" "elm.text";
    }
    images {
@@ -1202,7 +1202,7 @@ group { name: "elm/gengrid/item/thumb/default";
 group { name: "elm/gengrid/item/group_index/default";
    data.item: "selectraise" "on";
    data.item: "labels" "elm.text";
-   data.item: "icons" "elm.swallow.icon elm.swallow.end";
+   data.item: "contents" "elm.swallow.icon elm.swallow.end";
    //      data.item: "states" "";
    images {
       image: "bt_sm_base1.png" COMP;
