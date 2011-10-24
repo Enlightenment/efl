@@ -997,7 +997,7 @@ _long_press(void *data)
      return ECORE_CALLBACK_CANCEL;
    it->wd->longpressed = EINA_TRUE;
    evas_object_smart_callback_call(WIDGET(it), SIG_LONGPRESSED, it);
-   if ((it->wd->reorder_mode) && (it->item->flags != ELM_GENLIST_ITEM_GROUP))
+   if ((it->wd->reorder_mode) && (!it->group))
      {
         it->wd->reorder_it = it;
         it->wd->reorder_start_y = 0;
@@ -1836,7 +1836,7 @@ _item_realize(Elm_Gen_Item *it,
 
    for (it2 = it, depth = 0; it2->parent; it2 = it2->parent)
      {
-        if (it2->parent->item->flags != ELM_GENLIST_ITEM_GROUP) depth += 1;
+        if (!it2->parent->group) depth += 1;
      }
    it->item->expanded_depth = depth;
    treesize = edje_object_data_get(VIEW(it), "treesize");
@@ -1876,7 +1876,7 @@ _item_realize(Elm_Gen_Item *it,
         /* homogenous genlist shortcut */
         if (!it->item->mincalcd)
           {
-             if (it->item->flags & ELM_GENLIST_ITEM_GROUP)
+             if (it->group)
                {
                   it->item->w = it->item->minw = it->wd->group_item_width;
                   it->item->h = it->item->minh = it->wd->group_item_height;
@@ -1914,7 +1914,7 @@ _item_realize(Elm_Gen_Item *it,
              it->item->h = it->item->minh = mh;
              it->item->mincalcd = EINA_TRUE;
 
-             if ((!it->wd->group_item_width) && (it->item->flags == ELM_GENLIST_ITEM_GROUP))
+             if ((!it->wd->group_item_width) && (it->group))
                {
                   it->wd->group_item_width = mw;
                   it->wd->group_item_height = mh;
@@ -2047,7 +2047,7 @@ _item_block_unrealize(Item_Block *itb)
    evas_event_freeze(evas_object_evas_get(itb->wd->obj));
    EINA_LIST_FOREACH(itb->items, l, it)
      {
-        if (it->item->flags != ELM_GENLIST_ITEM_GROUP)
+        if (!it->group)
           {
              if (it->dragging)
                {
@@ -2193,7 +2193,7 @@ _item_block_position(Item_Block *itb,
 
         vis = (ELM_RECTS_INTERSECT(it->item->scrl_x, it->item->scrl_y, it->item->w, it->item->h,
                                    cvx, cvy, cvw, cvh));
-        if (it->item->flags != ELM_GENLIST_ITEM_GROUP)
+        if (!it->group)
           {
              if ((itb->realized) && (!it->realized))
                {
@@ -3423,7 +3423,7 @@ elm_genlist_item_append(Evas_Object                  *obj,
    if (!it) return NULL;
    if (!it->parent)
      {
-        if (flags & ELM_GENLIST_ITEM_GROUP)
+        if (it->group)
           wd->group_items = eina_list_append(wd->group_items, it);
         wd->items = eina_inlist_append(wd->items, EINA_INLIST_GET(it));
         it->item->rel = NULL;
@@ -3463,7 +3463,7 @@ elm_genlist_item_prepend(Evas_Object                  *obj,
    if (!it) return NULL;
    if (!it->parent)
      {
-        if (flags & ELM_GENLIST_ITEM_GROUP)
+        if (it->group)
           wd->group_items = eina_list_prepend(wd->group_items, it);
         wd->items = eina_inlist_prepend(wd->items, EINA_INLIST_GET(it));
         it->item->rel = NULL;
@@ -3508,8 +3508,8 @@ elm_genlist_item_insert_after(Evas_Object                  *obj,
 
    if (!it->parent)
      {
-        if ((flags & ELM_GENLIST_ITEM_GROUP) &&
-            (after->item->flags & ELM_GENLIST_ITEM_GROUP))
+        if ((it->group) &&
+            (after->group))
           wd->group_items = eina_list_append_relative(wd->group_items, it,
                                                       after);
      }
@@ -3549,8 +3549,7 @@ elm_genlist_item_insert_before(Evas_Object                  *obj,
 
    if (!it->parent)
      {
-        if ((flags & ELM_GENLIST_ITEM_GROUP) &&
-            (before->item->flags & ELM_GENLIST_ITEM_GROUP))
+        if (it->group && before->group)
           wd->group_items = eina_list_prepend_relative(wd->group_items, it,
                                                        before);
      }
@@ -3621,7 +3620,7 @@ elm_genlist_item_direct_sorted_insert(Evas_Object                  *obj,
              wd->state = eina_inlist_sorted_state_new();
           }
 
-        if (flags & ELM_GENLIST_ITEM_GROUP)
+        if (it->group)
           wd->group_items = eina_list_append(wd->group_items, it);
 
         wd->items = eina_inlist_sorted_state_insert(wd->items, EINA_INLIST_GET(it),
